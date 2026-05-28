@@ -358,7 +358,7 @@ Required current aggregate roots:
 
 ```text
 Accommodation.ResourceSetup -> Room, Bed
-Accommodation.CheckIn -> Deposit, FinanceConfirmation
+Accommodation.CheckIn -> Lead, Booking, Resident, Stay, GuestFolio, DepositLiability, Payment, FinanceReconciliation, OperatingMetrics
 Repair.Dispatch -> RepairStation, Technician, Vehicle
 ```
 
@@ -376,6 +376,40 @@ Aggregate rules:
   the source of truth for writable objects.
 - Runtime contract tests must assert that slice aggregate tables are created and
   populated for the current production slice sample.
+
+## 14B. Hostel Ledger Runtime Rule
+
+The hostel check-in slice is a ledger runtime, not a simple form flow.
+
+The production loop is:
+
+```text
+LeadCaptured
+-> BookingConfirmed
+-> ResidentRegistered
+-> BedAssigned
+-> TariffAssigned
+-> DepositRequired
+-> PaymentRecordedByFrontDesk
+-> PaymentConfirmedByFinance
+-> StayCheckedIn
+-> OperatingMetricsReviewed
+```
+
+Required ledgers:
+
+- Lead and booking ledger.
+- Stay lifecycle ledger.
+- Guest folio ledger.
+- Deposit liability ledger.
+- Payment ledger.
+- Finance reconciliation ledger.
+- Operating metrics ledger.
+
+Deposits must stay separate from revenue. Front-desk payment capture is not a
+trusted finance confirmation until a finance actor confirms it. Every production
+loop must update operating metrics and expose the result through the projection
+bench.
 
 ## 15. Contract Drift Rule
 

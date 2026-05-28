@@ -18,7 +18,7 @@ ResetPostgres(connectionString);
     ValidateProjectionEnvelopeAgainstContract(projection);
 
     Assert(projection.Workspaces.Count == 8, $"expected 8 workspaces, got {projection.Workspaces.Count}");
-    Assert(cards.Length == 32, $"expected 32 cards, got {cards.Length}");
+    Assert(cards.Length == 37, $"expected 37 cards, got {cards.Length}");
 
     foreach (var card in cards)
     {
@@ -35,9 +35,11 @@ ResetPostgres(connectionString);
 
     var resource = projection.Workspaces.Single(workspace => workspace.Id == "W-STAY-RESOURCE");
     AssertSequence(resource, "room", "bed", "activate");
+    ValidateFieldContracts(resource);
 
     var checkin = projection.Workspaces.Single(workspace => workspace.Id == "W-STAY-CHECKIN");
-    AssertSequence(checkin, "application", "stayOrder", "deposit", "finance", "checkin");
+    AssertSequence(checkin, "lead", "booking", "resident", "bedAssign", "tariff", "depositRequirement", "payment", "finance", "checkin", "operatingDashboard");
+    ValidateFieldContracts(checkin);
 
     var prepared = runtime.Prepare("W-STAY-RESOURCE", "room");
     Assert(prepared is not null, "prepare should return room card payload");
@@ -72,7 +74,7 @@ ResetPostgres(connectionString);
     Assert(runtime.Confirm("W-STAY-RESOURCE", "activate", Human("resource-activate"), operatorToken).Status == ConfirmStatus.Confirmed, "resource activation should pass");
     runtime.ProcessPendingOutbox();
 
-    foreach (var cardId in new[] { "application", "stayOrder", "deposit", "finance", "checkin" })
+    foreach (var cardId in new[] { "lead", "booking", "resident", "bedAssign", "tariff", "depositRequirement", "payment", "finance", "checkin", "operatingDashboard" })
     {
         var token = cardId == "finance" ? financeToken : operatorToken;
         var result = runtime.Confirm("W-STAY-CHECKIN", cardId, Human($"checkin-{cardId}"), token);
@@ -89,25 +91,33 @@ ResetPostgres(connectionString);
     Assert(reloaded.Events.All(item => !string.IsNullOrWhiteSpace(item.CorrelationId)), "audit events must include correlationId");
     Assert(reloaded.Events.All(item => !string.IsNullOrWhiteSpace(item.RequestId)), "audit events must include requestId");
     AssertEventSequence(reloaded.Events.Where(item => item.WorkspaceId == "W-STAY-RESOURCE").Select(item => item.EventType).ToArray(), "RoomCreated", "BedCreated", "BedActivated");
-    AssertEventSequence(reloaded.Events.Where(item => item.WorkspaceId == "W-STAY-CHECKIN").Select(item => item.EventType).ToArray(), "ApplicationApproved", "StayOrderPrepared", "DepositEvidenceSubmitted", "FinanceDepositConfirmed", "CheckInConfirmed");
+    AssertEventSequence(reloaded.Events.Where(item => item.WorkspaceId == "W-STAY-CHECKIN").Select(item => item.EventType).ToArray(), "LeadCaptured", "BookingConfirmed", "ResidentRegistered", "BedAssigned", "TariffAssigned", "DepositRequired", "PaymentRecordedByFrontDesk", "PaymentConfirmedByFinance", "StayCheckedIn", "OperatingMetricsReviewed");
     Assert(reloadedResource.Cards.Single(card => card.Id == "room").Status == "done", "room status should persist as done");
     Assert(reloadedResource.Cards.All(card => card.Status == "done"), "resource cards should all be done");
 
     var reloadedCheckin = reloaded.Workspaces.Single(workspace => workspace.Id == "W-STAY-CHECKIN");
     Assert(reloadedCheckin.Cards.All(card => card.Status == "done"), "check-in cards should all be done");
     var reloadedRuntime = ProjectionRuntime.OpenPostgres(connectionString);
-    Assert(CountRows(connectionString, "schema_migrations") >= 5, "schema migrations should be recorded in PostgreSQL");
+    Assert(CountRows(connectionString, "schema_migrations") >= 6, "schema migrations should be recorded in PostgreSQL");
     Assert(CountRows(connectionString, "accommodation_rooms") >= 1, "Room aggregate should persist in accommodation_rooms");
     Assert(CountRows(connectionString, "accommodation_beds") >= 1, "Bed aggregate should persist in accommodation_beds");
     Assert(CountRows(connectionString, "accommodation_deposits") >= 1, "Deposit aggregate should persist in accommodation_deposits");
     Assert(CountRows(connectionString, "finance_confirmations") >= 1, "FinanceConfirmation aggregate should persist in finance_confirmations");
+    Assert(CountRows(connectionString, "hostel_leads") >= 1, "Hostel lead should persist in hostel_leads");
+    Assert(CountRows(connectionString, "hostel_bookings") >= 1, "Hostel booking should persist in hostel_bookings");
+    Assert(CountRows(connectionString, "hostel_stays") >= 1, "Hostel stay should persist in hostel_stays");
+    Assert(CountRows(connectionString, "guest_folios") >= 1, "Guest folio should persist in guest_folios");
+    Assert(CountRows(connectionString, "deposit_liabilities") >= 1, "Deposit liability should persist in deposit_liabilities");
+    Assert(CountRows(connectionString, "hostel_payments") >= 1, "Payment should persist in hostel_payments");
+    Assert(CountRows(connectionString, "finance_reconciliations") >= 1, "Finance reconciliation should persist in finance_reconciliations");
+    Assert(CountRows(connectionString, "hostel_operating_metrics") >= 1, "Operating metrics should persist in hostel_operating_metrics");
     Assert(CountRows(connectionString, "repair_stations") >= 2, "RepairStation aggregate roots should persist in repair_stations");
     Assert(CountRows(connectionString, "repair_technicians") >= 2, "Technician aggregate roots should persist in repair_technicians");
     Assert(CountRows(connectionString, "repair_vehicles") >= 2, "Vehicle aggregate roots should persist in repair_vehicles");
-    Assert(reloadedRuntime.GetAuditEvents("W-STAY-CHECKIN").Count == 5, "check-in audit events should persist in PostgreSQL");
+    Assert(reloadedRuntime.GetAuditEvents("W-STAY-CHECKIN").Count == 10, "check-in audit events should persist in PostgreSQL");
     Assert(reloadedRuntime.GetBehaviorEvents().Any(item => item.EventId == "beh-test"), "behavior event should persist in PostgreSQL");
     var outbox = reloadedRuntime.GetOutboxMessages();
-    Assert(outbox.Count == 8, $"expected 8 outbox messages, got {outbox.Count}");
+    Assert(outbox.Count == 13, $"expected 13 outbox messages, got {outbox.Count}");
     Assert(outbox.All(item => !string.IsNullOrWhiteSpace(item.CorrelationId)), "outbox messages must include correlationId");
     Assert(outbox.All(item => !string.IsNullOrWhiteSpace(item.RequestId)), "outbox messages must include requestId");
     Assert(outbox.All(item => !string.IsNullOrWhiteSpace(item.CausationId)), "outbox messages must include causationId");
@@ -115,9 +125,9 @@ ResetPostgres(connectionString);
     Assert(reloadedRuntime.ProcessPendingOutbox() == 0, "outbox projector should be idempotent after processing");
     var observation = reloadedRuntime.Observe();
     Assert(observation.WorkspaceCount == 8, $"observability workspaceCount expected 8, got {observation.WorkspaceCount}");
-    Assert(observation.CardCount == 32, $"observability cardCount expected 32, got {observation.CardCount}");
-    Assert(observation.AuditEventCount == 8, $"observability auditEventCount expected 8, got {observation.AuditEventCount}");
-    Assert(observation.OutboxCount == 8, $"observability outboxCount expected 8, got {observation.OutboxCount}");
+    Assert(observation.CardCount == 37, $"observability cardCount expected 37, got {observation.CardCount}");
+    Assert(observation.AuditEventCount == 13, $"observability auditEventCount expected 13, got {observation.AuditEventCount}");
+    Assert(observation.OutboxCount == 13, $"observability outboxCount expected 13, got {observation.OutboxCount}");
     Assert(observation.PendingOutboxCount == 0, "observability pending outbox count should be zero after processing");
     Assert(observation.BehaviorEventCount >= 1, "observability behavior event count should include persisted behavior events");
 
@@ -134,6 +144,62 @@ static void AssertEventSequence(string[] actual, params string[] expected)
 {
     Assert(actual.SequenceEqual(expected), $"event sequence expected {string.Join(" -> ", expected)}, got {string.Join(" -> ", actual)}");
 }
+
+static void ValidateFieldContracts(WorkspaceProjection workspace)
+{
+    foreach (var card in workspace.Cards)
+    {
+        foreach (var field in card.Fields.Business)
+        {
+            var label = field.Label["zh-CN"];
+            if (new[] { "房间号", "床位号", "凭证编号", "付款人", "姓名", "电话" }.Contains(label))
+            {
+                Assert(field.Type != "searchSelect", $"{workspace.Id}.{card.Id}.{label} creates or records data and must not be searchSelect");
+                Assert(field.Ui.Control != "searchSelect", $"{workspace.Id}.{card.Id}.{label} must not render as searchSelect");
+                Assert(field.Source == "userInput", $"{workspace.Id}.{card.Id}.{label} must come from userInput");
+            }
+
+            if (field.Type == "readonly" || field.Ui.Readonly)
+            {
+                Assert(field.Source is "system" or "projection", $"{workspace.Id}.{card.Id}.{label} readonly field must declare system or projection source");
+                Assert(field.Ui.Control == "readonly", $"{workspace.Id}.{card.Id}.{label} readonly field must render with readonly control");
+            }
+
+            if (IsDateLabel(label))
+            {
+                Assert(field.Type == "dateTime", $"{workspace.Id}.{card.Id}.{label} must use dateTime type");
+                Assert(field.Ui.Control is "dateTime" or "dateTimeRange", $"{workspace.Id}.{card.Id}.{label} must render with date/time control");
+            }
+
+            if (field.Ui.Control == "select")
+            {
+                Assert(!string.IsNullOrWhiteSpace(field.Ui.OptionSet), $"{workspace.Id}.{card.Id}.{label} select must declare optionSet");
+                Assert(field.Ui.Options.Count > 0, $"{workspace.Id}.{card.Id}.{label} select must include options");
+            }
+        }
+    }
+
+    var room = workspace.Cards.FirstOrDefault(card => card.Id == "room");
+    if (room is not null)
+    {
+        Assert(Field(room, "房间号").Ui.Control == "text", "房间号 must be text on room creation");
+        Assert(Field(room, "容量").Ui.Control == "readonly", "容量 must be readonly derived field");
+        Assert(Field(room, "容量").Ui.DerivedFrom == "房型", "容量 must derive from 房型");
+    }
+
+    var bed = workspace.Cards.FirstOrDefault(card => card.Id == "bed");
+    if (bed is not null)
+    {
+        Assert(Field(bed, "所属房间").Ui.Control == "searchSelect", "所属房间 must select an existing room");
+        Assert(Field(bed, "床位号").Ui.Control == "text", "床位号 must be text on bed creation");
+    }
+}
+
+static bool IsDateLabel(string label) =>
+    new[] { "联系日期", "入住日期", "计划退住日期", "预计入住/退房", "入住周期", "可分配时间", "押金截止时间", "付款时间", "到账时间", "实际入住时间" }.Contains(label);
+
+static FieldProjection Field(CardProjection card, string zhLabel) =>
+    card.Fields.Business.Single(field => field.Label["zh-CN"] == zhLabel);
 
 static ConfirmCardRequest Human(string idempotencyKey, IReadOnlyDictionary<string, string>? fieldValues = null) =>
     new("zh-CN", idempotencyKey, fieldValues ?? new Dictionary<string, string>(), Array.Empty<string>());
@@ -303,6 +369,14 @@ static void ResetPostgres(string connectionString)
     command.CommandText = """
         drop table if exists finance_confirmations;
         drop table if exists accommodation_deposits;
+        drop table if exists hostel_operating_metrics;
+        drop table if exists finance_reconciliations;
+        drop table if exists hostel_payments;
+        drop table if exists deposit_liabilities;
+        drop table if exists guest_folios;
+        drop table if exists hostel_stays;
+        drop table if exists hostel_bookings;
+        drop table if exists hostel_leads;
         drop table if exists accommodation_beds;
         drop table if exists accommodation_rooms;
         drop table if exists repair_vehicles;

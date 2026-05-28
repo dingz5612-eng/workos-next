@@ -7,7 +7,8 @@ internal static class ConfirmationPolicyCatalog
         var critical = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {
             "finance", "checkin", "checkoutFinance", "checkoutClose", "review", "returnBusiness",
-            "dispatch", "diagnosis", "inspection", "feeMaterial", "customerConfirm", "close"
+            "dispatch", "diagnosis", "inspection", "feeMaterial", "customerConfirm", "close",
+            "depositRequirement", "payment", "operatingDashboard"
         };
         return new ConfirmationPolicy(
             status != "done" && critical.Contains(cardId),

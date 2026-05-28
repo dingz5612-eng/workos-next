@@ -13,11 +13,16 @@ internal static class EventContractCatalog
         "room" => new[] { ResourceSetupEvents.RoomCreated },
         "bed" => new[] { ResourceSetupEvents.BedCreated },
         "activate" => new[] { ResourceSetupEvents.BedActivated },
-        "application" => new[] { CheckInEvents.ApplicationApproved },
-        "stayOrder" => new[] { CheckInEvents.StayOrderPrepared, CheckInEvents.BedSelected },
-        "deposit" => new[] { CheckInEvents.DepositEvidenceSubmitted, CheckInEvents.DepositBlocked },
-        "finance" => new[] { CheckInEvents.FinanceDepositConfirmed },
-        "checkin" => new[] { CheckInEvents.CheckInConfirmed },
+        "lead" => new[] { CheckInEvents.LeadCaptured },
+        "booking" => new[] { CheckInEvents.BookingConfirmed },
+        "resident" => new[] { CheckInEvents.ResidentRegistered },
+        "bedAssign" => new[] { CheckInEvents.BedAssigned },
+        "tariff" => new[] { CheckInEvents.TariffAssigned },
+        "depositRequirement" => new[] { CheckInEvents.DepositRequired },
+        "payment" => new[] { CheckInEvents.PaymentRecordedByFrontDesk },
+        "finance" => new[] { CheckInEvents.PaymentConfirmedByFinance },
+        "checkin" => new[] { CheckInEvents.StayCheckedIn },
+        "operatingDashboard" => new[] { CheckInEvents.OperatingMetricsReviewed },
         _ => new[] { $"{char.ToUpperInvariant(cardId[0])}{cardId[1..]}Confirmed" }
     };
 
@@ -29,6 +34,11 @@ internal static class EventContractCatalog
         "SearchProjection",
         "ScenarioCoachProjection",
         "AiContextProjection",
-        "AuditEvidenceProjection"
+        "AuditEvidenceProjection",
+        "GuestFolioProjection",
+        "DepositLiabilityProjection",
+        "PaymentReconciliationProjection",
+        "HostelOperatingDashboardProjection",
+        "DecisionQueueProjection"
     };
 }

@@ -12,10 +12,10 @@
     {
       "id": "Accommodation.CheckIn",
       "workspaceId": "W-STAY-CHECKIN",
-      "cards": ["application", "stayOrder", "deposit", "finance", "checkin"],
-      "events": ["ApplicationApproved", "StayOrderPrepared", "DepositEvidenceSubmitted", "FinanceDepositConfirmed", "CheckInConfirmed"],
-      "ownsAggregates": ["Application", "StayOrder", "Deposit", "FinanceConfirmation", "CheckInRecord"],
-      "status": "runtime-skeleton"
+      "cards": ["lead", "booking", "resident", "bedAssign", "tariff", "depositRequirement", "payment", "finance", "checkin", "operatingDashboard"],
+      "events": ["LeadCaptured", "BookingConfirmed", "ResidentRegistered", "BedAssigned", "TariffAssigned", "DepositRequired", "PaymentRecordedByFrontDesk", "PaymentConfirmedByFinance", "StayCheckedIn", "OperatingMetricsReviewed"],
+      "ownsAggregates": ["Lead", "Booking", "Resident", "Stay", "GuestFolio", "DepositLiability", "Payment", "FinanceReconciliation", "OperatingMetrics"],
+      "status": "production-slice"
     },
     {
       "id": "Accommodation.CheckOut",

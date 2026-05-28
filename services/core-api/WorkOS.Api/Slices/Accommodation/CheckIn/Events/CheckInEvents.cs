@@ -2,11 +2,14 @@ namespace WorkOS.Api.Slices.Accommodation.CheckIn.Events;
 
 public static class CheckInEvents
 {
-    public const string ApplicationApproved = "ApplicationApproved";
-    public const string StayOrderPrepared = "StayOrderPrepared";
-    public const string BedSelected = "BedSelected";
-    public const string DepositEvidenceSubmitted = "DepositEvidenceSubmitted";
-    public const string DepositBlocked = "DepositBlocked";
-    public const string FinanceDepositConfirmed = "FinanceDepositConfirmed";
-    public const string CheckInConfirmed = "CheckInConfirmed";
+    public const string LeadCaptured = "LeadCaptured";
+    public const string BookingConfirmed = "BookingConfirmed";
+    public const string ResidentRegistered = "ResidentRegistered";
+    public const string BedAssigned = "BedAssigned";
+    public const string TariffAssigned = "TariffAssigned";
+    public const string DepositRequired = "DepositRequired";
+    public const string PaymentRecordedByFrontDesk = "PaymentRecordedByFrontDesk";
+    public const string PaymentConfirmedByFinance = "PaymentConfirmedByFinance";
+    public const string StayCheckedIn = "StayCheckedIn";
+    public const string OperatingMetricsReviewed = "OperatingMetricsReviewed";
 }

@@ -10,24 +10,29 @@ internal static class WorkspaceSeedCatalog
             new[]
             {
                 Card("room", "ready", "房间建档卡", "Комната", new[] { "roomId", "buildingId" }, new[] { "楼栋", "房间号", "房型", "容量" }, new[] { "duplicateRoomCount" }),
-                Card("bed", "notStarted", "床位建档卡", "Койка", new[] { "bedId", "roomId" }, new[] { "床位号", "上/下铺", "价格规则", "检查状态" }, new[] { "capacityConflictCount" }),
-                Card("activate", "notStarted", "资源启用卡", "Активация", new[] { "bedId", "operatorId" }, new[] { "启用范围", "可分配时间", "启用备注" }, new[] { "activationDuration" })
+                Card("bed", "notStarted", "床位建档卡", "Койка", new[] { "bedId", "roomId" }, new[] { "所属房间", "床位号", "上/下铺", "价格规则", "维护状态" }, new[] { "capacityConflictCount" }),
+                Card("activate", "notStarted", "资源启用卡", "Активация", new[] { "bedId", "operatorId" }, new[] { "启用对象", "启用范围", "可分配时间", "初始可用状态", "启用备注" }, new[] { "activationDuration" })
             },
             "先创建房间，再创建床位，最后启用可分配资源。",
             "Сначала комната, затем койка, затем активация ресурса."),
-        Workspace("W-STAY-CHECKIN", "stay", "T-STAY-DEPOSIT", "我要安排入住", "Оформить заселение",
-            "一件事内完成申请、住宿单、押金、财务和入住确认。",
-            "Заявка, ордер, депозит, финансы и заселение в одной области.",
+        Workspace("W-STAY-CHECKIN", "stay", "T-STAY-DEPOSIT", "我要安排入住收款", "Оформить заселение и оплату",
+            "从线索、预订、分床、计费、押金、收款、财务确认到经营驾驶舱形成完整宿舍闭环。",
+            "Лид, бронь, койка, тариф, депозит, оплата, финансы и операционная аналитика в одном цикле.",
             new[]
             {
-                Card("application", "ready", "申请卡", "Заявка", new[] { "applicationId", "residentId", "approverId" }, new[] { "入住人", "入住原因", "预计入住/退房", "审批意见" }, new[] { "approvalLeadTime", "approvalReturnCount" }),
-                Card("stayOrder", "notStarted", "住宿单卡", "Ордер", new[] { "stayOrderId", "roomId", "bedId" }, new[] { "已审批申请", "房间床位", "入住周期", "押金/费用规则" }, new[] { "bedLockDuration", "assignmentDuration" }),
-                Card("deposit", "notStarted", "押金卡", "Депозит", new[] { "depositEvidenceId", "stayOrderId" }, new[] { "押金金额", "币种", "付款方式", "凭证编号" }, new[] { "depositSubmitDuration", "depositReturnCount" }),
-                Card("finance", "notStarted", "财务卡", "Финансы", new[] { "financeReviewId", "depositEvidenceId" }, new[] { "到账状态", "确认金额", "退回原因", "财务确认人" }, new[] { "financeReviewDuration", "financePassRate" }),
-                Card("checkin", "notStarted", "入住确认卡", "Подтверждение", new[] { "auditTraceId", "bedId", "stayOrderId" }, new[] { "实际入住时间", "钥匙/物品交接", "人工确认摘要" }, new[] { "totalCheckinDuration", "manualConfirmCount" })
+                Card("lead", "ready", "线索登记卡", "Лид", new[] { "leadId", "operatorId" }, new[] { "联系日期", "姓名", "电话", "需要床位", "住宿时长", "线索来源", "线索状态", "备注" }, new[] { "leadCaptureDuration", "sourceChannel" }),
+                Card("booking", "notStarted", "预订确认卡", "Бронь", new[] { "bookingId", "leadId" }, new[] { "入住日期", "预订人数", "预留房间/床位", "线索状态", "备注" }, new[] { "bookingConversionDuration", "bookingConversionRate" }),
+                Card("resident", "notStarted", "入住人建档卡", "Жилец", new[] { "residentId", "bookingId" }, new[] { "姓名", "电话", "入住日期", "计划退住日期", "住客状态", "备注" }, new[] { "residentRegistrationDuration" }),
+                Card("bedAssign", "notStarted", "分配床位卡", "Назначение койки", new[] { "stayId", "roomId", "bedId" }, new[] { "入住人", "房间床位", "入住周期", "床位锁定备注" }, new[] { "bedAssignmentDuration", "occupancyImpact" }),
+                Card("tariff", "notStarted", "计费确认卡", "Тариф", new[] { "folioId", "stayId" }, new[] { "计费方式", "单价", "天数/周数/月数", "应收金额", "押金规则" }, new[] { "chargeAmount", "folioBalance" }),
+                Card("depositRequirement", "notStarted", "押金要求卡", "Требование депозита", new[] { "depositId", "folioId", "liabilityAccountId" }, new[] { "押金规则", "应收押金", "押金币种", "押金截止时间", "是否允许免押", "免押原因" }, new[] { "depositLiabilityAmount", "depositDueLeadTime" }),
+                Card("payment", "notStarted", "收款登记卡", "Платеж", new[] { "paymentId", "folioId", "depositId" }, new[] { "付款人", "付款时间", "付款金额", "币种", "付款方式", "收款用途", "凭证编号", "备注" }, new[] { "paymentRecordDuration", "unconfirmedPaymentAmount" }),
+                Card("finance", "notStarted", "财务到账确认卡", "Фин. подтверждение", new[] { "financeReviewId", "paymentId", "depositId" }, new[] { "支付记录", "银行/钱包渠道", "到账金额", "到账时间", "财务确认人", "匹配结果", "差异原因", "处理意见" }, new[] { "financeReviewDuration", "financeVarianceAmount" }),
+                Card("checkin", "notStarted", "入住确认卡", "Подтверждение заселения", new[] { "auditTraceId", "bedId", "stayId" }, new[] { "实际入住时间", "钥匙/物品交接", "人工确认摘要" }, new[] { "totalCheckinDuration", "manualConfirmCount" }),
+                Card("operatingDashboard", "notStarted", "经营驾驶舱卡", "Операционная панель", new[] { "metricsProjectionId", "folioId", "depositId" }, new[] { "复盘结论", "后续行动", "负责人", "处理状态" }, new[] { "occupancyRate", "leadBookingConversionRate", "bookingCheckinConversionRate", "depositLiabilityBalance", "unconfirmedPaymentAmount", "financeVarianceAmount", "folioBalance" })
             },
-            "资源启用后，从申请卡开始进入入住办理闭环。",
-            "После активации ресурса начните заселение с заявки."),
+            "先把线索转预订，再分配床位、生成账本、完成押金和财务确认。",
+            "Сначала лид и бронь, затем койка, фолио, депозит и финансы."),
         Workspace("W-STAY-CHECKOUT", "stay", "T-STAY-CHECKOUT", "我要办理退房", "Оформить выселение",
             "退房发起、房间检查、费用结算、财务确认和释放床位在一个办理面完成。",
             "Выселение, проверка, расчет, финансы и освобождение койки вместе.",

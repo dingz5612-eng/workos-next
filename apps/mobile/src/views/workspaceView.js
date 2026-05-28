@@ -111,9 +111,10 @@ export function operationControl(field, item, card, disabled, ctx) {
     return `<label><span>${ctx.localTerm(field)}</span><div class="datetime-range"><input data-operation-field-start="${field.id}" type="datetime-local" value="${start}" ${disabled} /><input data-operation-field-end="${field.id}" type="datetime-local" value="${end}" ${disabled} /></div>${help ? `<small>${help}</small>` : ""}</label>`;
   }
   if (kind === "dateTime") return `<label><span>${ctx.localTerm(field)}</span><input data-operation-field="${field.id}" type="datetime-local" value="${value}" ${disabled} />${help ? `<small>${help}</small>` : ""}</label>`;
+  if (kind === "readonly") return `<label><span>${ctx.localTerm(field)}</span><input data-operation-field="${field.id}" value="${value}" readonly ${disabled} />${help ? `<small>${help}</small>` : ""}</label>`;
   if (kind === "number") {
     const readonly = isDerivedReadonlyField(field) ? `readonly data-derived-from="${field.ui?.derivedFrom || ""}"` : "";
-    return `<label><span>${ctx.localTerm(field)}</span><input data-operation-field="${field.id}" data-field-id="${field.id}" inputmode="decimal" value="${value}" ${readonly} ${disabled} />${help ? `<small>${help}</small>` : ""}</label>`;
+    return `<label><span>${ctx.localTerm(field)}</span><input data-operation-field="${field.id}" data-field-id="${field.id}" type="number" inputmode="decimal" value="${value}" ${readonly} ${disabled} />${help ? `<small>${help}</small>` : ""}</label>`;
   }
   return `<label><span>${ctx.localTerm(field)}</span><input data-operation-field="${field.id}" value="${value}" ${disabled} />${help ? `<small>${help}</small>` : ""}</label>`;
 }

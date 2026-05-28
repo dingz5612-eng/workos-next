@@ -6,21 +6,26 @@ export let intentWorkspaces = [
     { "zh-CN": "房间、床位和资源启用在同一资源建档办理面完成。", "ru-RU": "Комнаты, койки и активация ресурсов вместе." },
     [
       cardModel("room", "ready", "房间建档卡", "Комната", ["roomId", "buildingId"], ["楼栋", "房间号", "房型", "容量"], ["duplicateRoomCount"]),
-      cardModel("bed", "notStarted", "床位建档卡", "Койка", ["bedId", "roomId"], ["床位号", "上/下铺", "价格规则", "检查状态"], ["capacityConflictCount"]),
-      cardModel("activate", "notStarted", "资源启用卡", "Активация", ["bedId", "operatorId"], ["启用范围", "可分配时间", "启用备注"], ["activationDuration"])
+      cardModel("bed", "notStarted", "床位建档卡", "Койка", ["bedId", "roomId"], ["所属房间", "床位号", "上/下铺", "价格规则", "维护状态"], ["capacityConflictCount"]),
+      cardModel("activate", "notStarted", "资源启用卡", "Активация", ["bedId", "operatorId"], ["启用对象", "启用范围", "可分配时间", "初始可用状态", "启用备注"], ["activationDuration"])
     ],
     { "zh-CN": "先创建房间，再创建床位，最后启用可分配资源。", "ru-RU": "Сначала комната, затем койка, затем активация ресурса." }),
   workspaceModel("W-STAY-CHECKIN", "stay", "T-STAY-DEPOSIT",
-    { "zh-CN": "我要安排入住", "ru-RU": "Оформить заселение" },
-    { "zh-CN": "一件事内完成申请、住宿单、押金、财务和入住确认。", "ru-RU": "Заявка, ордер, депозит, финансы и заселение в одной области." },
+    { "zh-CN": "我要安排入住收款", "ru-RU": "Оформить заселение и оплату" },
+    { "zh-CN": "从线索、预订、分床、计费、押金、收款、财务确认到经营驾驶舱形成完整宿舍闭环。", "ru-RU": "Лид, бронь, койка, тариф, депозит, оплата, финансы и операционная аналитика в одном цикле." },
     [
-      cardModel("application", "ready", "申请卡", "Заявка", ["applicationId", "residentId", "approverId"], ["入住人", "入住原因", "预计入住/退房", "审批意见"], ["approvalLeadTime", "approvalReturnCount"]),
-      cardModel("stayOrder", "notStarted", "住宿单卡", "Ордер", ["stayOrderId", "roomId", "bedId"], ["已审批申请", "房间床位", "入住周期", "押金/费用规则"], ["bedLockDuration", "assignmentDuration"]),
-      cardModel("deposit", "notStarted", "押金卡", "Депозит", ["depositEvidenceId", "stayOrderId"], ["押金金额", "币种", "付款方式", "凭证编号"], ["depositSubmitDuration", "depositReturnCount"]),
-      cardModel("finance", "notStarted", "财务卡", "Финансы", ["financeReviewId", "depositEvidenceId"], ["到账状态", "确认金额", "退回原因", "财务确认人"], ["financeReviewDuration", "financePassRate"]),
-      cardModel("checkin", "notStarted", "入住确认卡", "Подтверждение", ["auditTraceId", "bedId", "stayOrderId"], ["实际入住时间", "钥匙/物品交接", "人工确认摘要"], ["totalCheckinDuration", "manualConfirmCount"])
+      cardModel("lead", "ready", "线索登记卡", "Лид", ["leadId", "operatorId"], ["联系日期", "姓名", "电话", "需要床位", "住宿时长", "线索来源", "线索状态", "备注"], ["leadCaptureDuration", "sourceChannel"]),
+      cardModel("booking", "notStarted", "预订确认卡", "Бронь", ["bookingId", "leadId"], ["入住日期", "预订人数", "预留房间/床位", "线索状态", "备注"], ["leadBookingConversionRate", "bookingHoldDuration"]),
+      cardModel("resident", "notStarted", "入住人建档卡", "Жилец", ["residentId", "bookingId"], ["姓名", "电话", "入住日期", "计划退住日期", "住客状态", "备注"], ["residentRegistrationDuration"]),
+      cardModel("bedAssign", "notStarted", "分配床位卡", "Назначение койки", ["stayId", "roomId", "bedId"], ["入住人", "房间床位", "入住周期", "床位锁定备注"], ["bedAssignmentDuration", "occupancyImpact"]),
+      cardModel("tariff", "notStarted", "计费确认卡", "Тариф", ["folioId", "stayId"], ["计费方式", "单价", "天数/周数/月数", "应收金额", "押金规则"], ["chargeAmount", "folioBalance"]),
+      cardModel("depositRequirement", "notStarted", "押金要求卡", "Требование депозита", ["depositId", "folioId", "liabilityAccountId"], ["押金规则", "应收押金", "押金币种", "押金截止时间", "是否允许免押", "免押原因"], ["depositLiabilityAmount", "depositDueLeadTime"]),
+      cardModel("payment", "notStarted", "收款登记卡", "Платеж", ["paymentId", "folioId", "depositId"], ["付款人", "付款时间", "付款金额", "币种", "付款方式", "收款用途", "凭证编号", "备注"], ["paymentRecordDuration", "unconfirmedPaymentAmount"]),
+      cardModel("finance", "notStarted", "财务到账确认卡", "Фин. подтверждение", ["financeReviewId", "paymentId", "depositId"], ["支付记录", "银行/钱包渠道", "到账金额", "到账时间", "财务确认人", "匹配结果", "差异原因", "处理意见"], ["financeReviewDuration", "financeVarianceAmount"]),
+      cardModel("checkin", "notStarted", "入住确认卡", "Подтверждение заселения", ["auditTraceId", "bedId", "stayId"], ["实际入住时间", "钥匙/物品交接", "人工确认摘要"], ["bookingCheckinConversionRate", "manualConfirmCount"]),
+      cardModel("operatingDashboard", "notStarted", "经营驾驶舱卡", "Операционная панель", ["metricsProjectionId", "folioId", "depositId"], ["复盘结论", "后续行动", "负责人", "处理状态"], ["occupancyRate", "leadBookingConversionRate", "bookingCheckinConversionRate", "depositLiabilityBalance", "unconfirmedPaymentAmount", "financeVarianceAmount", "folioBalance"])
     ],
-    { "zh-CN": "资源启用后，从申请卡开始进入入住办理闭环。", "ru-RU": "После активации ресурса начните заселение с заявки." }),
+    { "zh-CN": "先把线索转预订，再分配床位、生成账本、完成押金和财务确认。", "ru-RU": "Сначала лид и бронь, затем койка, фолио, депозит и финансы." }),
   workspaceModel("W-STAY-CHECKOUT", "stay", "T-STAY-CHECKOUT",
     { "zh-CN": "我要办理退房", "ru-RU": "Оформить выселение" },
     { "zh-CN": "退房发起、房间检查、费用结算、财务确认和释放床位在一个办理面完成。", "ru-RU": "Выселение, проверка, расчет, финансы и освобождение койки вместе." },
@@ -161,10 +166,10 @@ function fieldId(label) {
 
 function fieldType(label, layer) {
   if (layer === "system" || layer === "analytics") return "readonly";
-  if (label.includes("房型") || label.includes("上/下铺") || label.includes("启用范围") || label.includes("可用状态") || label.includes("维护状态")) return "select";
-  if (label.includes("房间") || label.includes("床位") || label.includes("客户") || label.includes("车辆") || label.includes("技师") || label.includes("工位")) return "searchSelect";
-  if (label.includes("预计") || label.includes("周期") || label.includes("时间")) return "dateTime";
-  if (label.includes("金额") || label.includes("费用") || label.includes("押金") || label.includes("应退") || label.includes("应补")) return "money";
+  if (["房型", "上/下铺", "启用范围", "初始可用状态", "维护状态", "线索来源", "线索状态", "住客状态", "计费方式", "押金规则", "押金币种", "是否允许免押", "币种", "付款方式", "收款用途", "银行/钱包渠道", "匹配结果", "处理状态", "钥匙/物品交接"].some((item) => label === item)) return "select";
+  if (["所属房间", "启用对象", "预留房间/床位", "入住人", "房间床位", "支付记录", "客户", "车辆", "技师", "工位"].some((item) => label === item || label.includes(item))) return "searchSelect";
+  if (["联系日期", "入住日期", "计划退住日期", "押金截止时间", "付款时间", "到账时间", "实际入住时间"].some((item) => label === item) || label.includes("预计") || label.includes("周期") || label.includes("时间")) return "dateTime";
+  if (["预订人数", "需要床位", "单价", "天数/周数/月数", "应收金额", "应收押金", "付款金额", "到账金额"].some((item) => label === item) || label.includes("金额") || label.includes("费用") || label.includes("应退") || label.includes("应补")) return "money";
   if (label.includes("照片") || label.includes("凭证") || label.includes("材料") || label.includes("签字")) return "evidenceUpload";
   if (label.includes("确认") || label.includes("关闭") || label.includes("通过") || label.includes("退回")) return "confirmation";
   return "text";
@@ -173,13 +178,21 @@ function fieldType(label, layer) {
 function fieldSource(label, layer) {
   if (layer === "system") return "system";
   if (layer === "analytics") return "projection";
-  if (["房间床位", "已审批申请", "客户", "车辆", "技师", "工位"].some((item) => label.includes(item))) return "searchableProjection";
-  if (["币种", "付款方式", "优先级", "紧急程度", "房型", "上/下铺", "可用状态", "维护状态", "启用范围"].some((item) => label.includes(item))) return "optionSet";
+  if (["所属房间", "启用对象", "预留房间/床位", "入住人", "房间床位", "支付记录", "已审批申请", "客户", "车辆", "技师", "工位"].some((item) => label === item || label.includes(item))) return "searchableProjection";
+  if (["币种", "付款方式", "优先级", "紧急程度", "房型", "上/下铺", "可用状态", "初始可用状态", "维护状态", "启用范围", "线索来源", "线索状态", "住客状态", "计费方式", "押金规则", "押金币种", "是否允许免押", "收款用途", "银行/钱包渠道", "匹配结果", "处理状态", "钥匙/物品交接"].some((item) => label === item || label.includes(item))) return "optionSet";
   return "userInput";
 }
 
 function evidenceRequirements(cardId) {
   const map = {
+    lead: ["联系方式记录", "来源渠道记录"],
+    booking: ["预订确认记录", "床位预留记录"],
+    resident: ["入住人身份记录", "联系电话记录"],
+    bedAssign: ["床位可用校验", "床位锁定记录"],
+    tariff: ["计费规则记录", "应收生成记录"],
+    depositRequirement: ["押金规则记录", "押金责任账本记录"],
+    payment: ["付款截图", "收据编号", "收款人记录"],
+    operatingDashboard: ["经营指标快照", "后续行动记录"],
     application: ["已审批申请", "审批意见"],
     stayOrder: ["已审批申请", "房间床位"],
     deposit: ["付款截图", "收据编号", "付款人", "付款时间"],
@@ -229,6 +242,14 @@ function evidenceProjection(label) {
 
 function systemChecks(cardId) {
   const map = {
+    lead: ["联系方式完整", "线索未重复"],
+    booking: ["床位可预留", "入住日期有效"],
+    resident: ["住客未重复在住", "计划退住日期有效"],
+    bedAssign: ["床位可用", "入住周期无冲突", "房间未维修阻断"],
+    tariff: ["计费方式有效", "应收金额可计算", "Folio 可生成"],
+    depositRequirement: ["押金规则有效", "责任账本可入账", "免押原因已记录"],
+    payment: ["收款用途有效", "凭证编号未重复", "支付待财务确认"],
+    operatingDashboard: ["入住率已更新", "押金责任已更新", "未确认金额已更新", "转化率已更新"],
     application: ["申请已审批", "入住人未重复入住"],
     stayOrder: ["床位可用", "入住周期无冲突", "押金/费用规则可用"],
     deposit: ["金额匹配", "币种匹配", "付款人匹配", "凭证清晰"],
@@ -276,9 +297,15 @@ function checkProjection(label) {
 
 function blockerRules(cardId, status) {
   const map = {
+    booking: ["无可用床位", "入住日期无效"],
+    bedAssign: ["床位不可用", "入住周期冲突", "房间维修阻断"],
+    tariff: ["计费规则缺失", "应收金额不可计算"],
+    depositRequirement: ["押金规则缺失", "免押原因缺失"],
+    payment: ["凭证编号重复", "付款用途不匹配"],
     deposit: ["押金金额不匹配", "付款人不一致", "凭证不清晰"],
     finance: ["未到账", "确认金额不一致", "财务权限不足"],
     checkin: ["押金未通过", "床位已释放", "入住确认缺失"],
+    operatingDashboard: ["经营指标未更新", "后续行动责任人缺失"],
     stayOrder: ["无可用床位", "入住周期冲突", "申请未审批"],
     roomInspection: ["房间损坏未处理", "检查照片缺失"],
     checkoutFinance: ["退款未确认", "补款未到账"],
@@ -305,6 +332,14 @@ function blockerRules(cardId, status) {
 
 function eventDefinitions(cardId) {
   const map = {
+    lead: ["LeadCaptured"],
+    booking: ["BookingConfirmed"],
+    resident: ["ResidentRegistered"],
+    bedAssign: ["BedAssigned"],
+    tariff: ["TariffAssigned"],
+    depositRequirement: ["DepositRequired"],
+    payment: ["PaymentRecordedByFrontDesk"],
+    operatingDashboard: ["OperatingMetricsReviewed"],
     application: ["ApplicationApproved"],
     stayOrder: ["StayOrderPrepared", "BedSelected"],
     deposit: ["DepositEvidenceSubmitted", "DepositBlocked"],
@@ -354,7 +389,7 @@ function transitionDefinitions(cardId) {
 }
 
 function confirmationPolicy(cardId, status) {
-  const criticalCards = ["finance", "checkin", "checkoutFinance", "checkoutClose", "review", "returnBusiness", "dispatch", "diagnosis", "inspection", "feeMaterial", "customerConfirm", "close"];
+  const criticalCards = ["depositRequirement", "payment", "finance", "checkin", "operatingDashboard", "checkoutFinance", "checkoutClose", "review", "returnBusiness", "dispatch", "diagnosis", "inspection", "feeMaterial", "customerConfirm", "close"];
   return {
     required: status !== "done" && criticalCards.includes(cardId),
     forbiddenForAi: true,

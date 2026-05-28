@@ -13,6 +13,14 @@ internal static class EvidenceContractCatalog
 
     private static string[] Labels(string cardId) => cardId switch
     {
+        "lead" => new[] { "联系方式记录", "来源渠道记录" },
+        "booking" => new[] { "预订确认记录", "床位预留记录" },
+        "resident" => new[] { "入住人身份记录", "联系电话记录" },
+        "bedAssign" => new[] { "床位可用校验", "床位锁定记录" },
+        "tariff" => new[] { "计费规则记录", "应收生成记录" },
+        "depositRequirement" => new[] { "押金规则记录", "押金责任账本记录" },
+        "payment" => new[] { "付款截图", "收据编号", "收款人记录" },
+        "operatingDashboard" => new[] { "经营指标快照", "后续行动记录" },
         "application" => new[] { "已审批申请", "审批意见" },
         "stayOrder" => new[] { "已审批申请", "房间床位" },
         "deposit" => new[] { "付款截图", "收据编号", "付款人", "付款时间" },
