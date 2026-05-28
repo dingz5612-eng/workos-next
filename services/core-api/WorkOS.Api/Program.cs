@@ -13,10 +13,13 @@ builder.Services.AddCors(options =>
     });
 });
 
-var app = builder.Build();
 var connectionString = builder.Configuration.GetConnectionString("WorkOSRuntime")
     ?? "Host=localhost;Port=54329;Database=workosnext;Username=workosnext;Password=workosnext_dev";
 var runtime = ProjectionRuntime.OpenPostgres(connectionString);
+builder.Services.AddSingleton(runtime);
+builder.Services.AddHostedService<ProjectionOutboxWorker>();
+
+var app = builder.Build();
 
 app.UseCors();
 
@@ -58,9 +61,10 @@ app.MapPost("/api/workspaces/{workspaceId}/cards/{cardId}/prepare", (string work
     return prepared is null ? Results.NotFound(new { error = "card_not_found", workspaceId, cardId }) : Results.Ok(prepared);
 });
 
-app.MapPost("/api/workspaces/{workspaceId}/cards/{cardId}/confirm", (string workspaceId, string cardId, ConfirmCardRequest request) =>
+app.MapPost("/api/workspaces/{workspaceId}/cards/{cardId}/confirm", (string workspaceId, string cardId, ConfirmCardRequest request, HttpRequest httpRequest) =>
 {
-    var result = runtime.Confirm(workspaceId, cardId, request);
+    var token = httpRequest.Headers["X-WorkOS-Actor-Token"].FirstOrDefault() ?? string.Empty;
+    var result = runtime.Confirm(workspaceId, cardId, request, token);
     return result.Status switch
     {
         ConfirmStatus.NotFound => Results.NotFound(new { error = "card_not_found", workspaceId, cardId }),

@@ -23,7 +23,8 @@ const state = {
   coachStage: 0,
   sort: "smartSort",
   operationMessage: "",
-  apiStatus: "checking"
+  apiStatus: "checking",
+  actorSessions: {}
 };
 
 const params = new URLSearchParams(window.location.search);
@@ -52,6 +53,8 @@ if (state.view === "task" || state.view === "object") {
 }
 
 function resolveApiBaseUrl() {
+  const envBaseUrl = import.meta.env.VITE_WORKOS_API_BASE_URL;
+  if (envBaseUrl) return envBaseUrl.replace(/\/$/, "");
   const configured = localStorage.getItem("workosnext.apiBaseUrl");
   if (configured) return configured.replace(/\/$/, "");
   return `${window.location.protocol}//${window.location.hostname}:5180`;
@@ -914,7 +917,9 @@ async function submitCurrentCard() {
   render();
 
   try {
+    const actor = await actorSessionForCard(card);
     const fieldValues = collectOperationValues();
+    const idempotencyKey = `${item.id}:${card.id}:${actor.actorId}`;
     const prepareResponse = await fetch(`${apiBaseUrl}/api/workspaces/${item.id}/cards/${card.id}/prepare`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -925,11 +930,13 @@ async function submitCurrentCard() {
 
     const confirmResponse = await fetch(`${apiBaseUrl}/api/workspaces/${item.id}/cards/${card.id}/confirm`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "X-WorkOS-Actor-Token": actor.token
+      },
       body: JSON.stringify({
-        actorType: actorRoleForCard(card),
-        actorId: actorIdForCard(card),
         language: state.lang,
+        idempotencyKey,
         fieldValues,
         evidenceIds: []
       }),
@@ -938,7 +945,7 @@ async function submitCurrentCard() {
     if (!confirmResponse.ok) throw new Error("confirm_failed");
 
     const result = await confirmResponse.json();
-    replaceIntentWorkspaces(result.projection.workspaces);
+    await waitForProjectionEvent(result.event.eventId);
     state.selectedCardIndex = -1;
     state.operationMessage = tr("submitDone");
   } catch {
@@ -947,6 +954,33 @@ async function submitCurrentCard() {
   }
 
   render(true);
+}
+
+async function actorSessionForCard(card) {
+  const role = actorRoleForCard(card);
+  if (state.actorSessions[role]) return state.actorSessions[role];
+  const response = await fetch(`${apiBaseUrl}/api/auth/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username: role, password: "dev" }),
+    signal: AbortSignal.timeout(2400)
+  });
+  if (!response.ok) throw new Error("login_failed");
+  const session = await response.json();
+  state.actorSessions[role] = session;
+  return session;
+}
+
+async function waitForProjectionEvent(eventId) {
+  for (let attempt = 0; attempt < 8; attempt += 1) {
+    const response = await fetch(`${apiBaseUrl}/api/workspaces`, { signal: AbortSignal.timeout(2400) });
+    if (response.ok) {
+      const payload = await response.json();
+      replaceIntentWorkspaces(payload.workspaces);
+      if ((payload.events || []).some((item) => item.eventId === eventId)) return;
+    }
+    await new Promise((resolve) => setTimeout(resolve, 250));
+  }
 }
 
 function actorRoleForCard(card) {

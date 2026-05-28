@@ -36,22 +36,37 @@ ResetPostgres(connectionString);
     var prepared = runtime.Prepare("W-STAY-RESOURCE", "room");
     Assert(prepared is not null, "prepare should return room card payload");
 
-    var aiFinance = runtime.Confirm("W-STAY-CHECKIN", "finance", new ConfirmCardRequest("ai", "ai-agent", "zh-CN", null, null));
+    var operatorToken = LoginToken(runtime, "operator");
+    var financeToken = LoginToken(runtime, "finance");
+    var aiToken = LoginToken(runtime, "ai");
+
+    var missingToken = runtime.Confirm("W-STAY-CHECKIN", "finance", Human("missing-token-finance"), "");
+    Assert(missingToken.Status == ConfirmStatus.Forbidden, "confirm must require a trusted backend session token");
+
+    var aiFinance = runtime.Confirm("W-STAY-CHECKIN", "finance", Human("ai-finance"), aiToken);
     Assert(aiFinance.Status == ConfirmStatus.Forbidden, "AI finance confirmation must be rejected");
 
-    var operatorFinance = runtime.Confirm("W-STAY-CHECKIN", "finance", Human("u-operator"));
+    var operatorFinance = runtime.Confirm("W-STAY-CHECKIN", "finance", Human("operator-finance"), operatorToken);
     Assert(operatorFinance.Status == ConfirmStatus.Forbidden, "operator must not confirm finance card");
 
-    var humanRoom = runtime.Confirm("W-STAY-RESOURCE", "room", new ConfirmCardRequest("operator", "u-operator", "zh-CN", new Dictionary<string, string> { ["房间号"] = "A302" }, Array.Empty<string>()));
+    var humanRoom = runtime.Confirm("W-STAY-RESOURCE", "room", Human("resource-room", new Dictionary<string, string> { ["房间号"] = "A302" }), operatorToken);
     Assert(humanRoom.Status == ConfirmStatus.Confirmed, "human room confirmation should pass");
+    runtime.ProcessPendingOutbox();
 
-    Assert(runtime.Confirm("W-STAY-RESOURCE", "bed", Human("u-operator")).Status == ConfirmStatus.Confirmed, "bed confirmation should pass");
-    Assert(runtime.Confirm("W-STAY-RESOURCE", "activate", Human("u-operator")).Status == ConfirmStatus.Confirmed, "resource activation should pass");
+    var duplicateRoom = runtime.Confirm("W-STAY-RESOURCE", "room", Human("resource-room"), operatorToken);
+    Assert(duplicateRoom.Status == ConfirmStatus.Duplicate, "same idempotency key should return duplicate instead of writing another event");
+
+    Assert(runtime.Confirm("W-STAY-RESOURCE", "bed", Human("resource-bed"), operatorToken).Status == ConfirmStatus.Confirmed, "bed confirmation should pass");
+    runtime.ProcessPendingOutbox();
+    Assert(runtime.Confirm("W-STAY-RESOURCE", "activate", Human("resource-activate"), operatorToken).Status == ConfirmStatus.Confirmed, "resource activation should pass");
+    runtime.ProcessPendingOutbox();
 
     foreach (var cardId in new[] { "application", "stayOrder", "deposit", "finance", "checkin" })
     {
-        var result = runtime.Confirm("W-STAY-CHECKIN", cardId, Human(cardId == "finance" ? "u-finance" : "u-operator"));
+        var token = cardId == "finance" ? financeToken : operatorToken;
+        var result = runtime.Confirm("W-STAY-CHECKIN", cardId, Human($"checkin-{cardId}"), token);
         Assert(result.Status == ConfirmStatus.Confirmed, $"{cardId} confirmation should pass");
+        runtime.ProcessPendingOutbox();
     }
 
     var behavior = runtime.AppendBehaviorEvent(new BehaviorEventRecord("beh-test", "WorkspaceOpened", "workspace", "W-STAY-CHECKIN", "zh-CN", "contract-test", DateTimeOffset.UtcNow));
@@ -68,6 +83,7 @@ ResetPostgres(connectionString);
     var reloadedCheckin = reloaded.Workspaces.Single(workspace => workspace.Id == "W-STAY-CHECKIN");
     Assert(reloadedCheckin.Cards.All(card => card.Status == "done"), "check-in cards should all be done");
     var reloadedRuntime = ProjectionRuntime.OpenPostgres(connectionString);
+    Assert(CountRows(connectionString, "schema_migrations") >= 3, "schema migrations should be recorded in PostgreSQL");
     Assert(reloadedRuntime.GetAuditEvents("W-STAY-CHECKIN").Count == 5, "check-in audit events should persist in PostgreSQL");
     Assert(reloadedRuntime.GetBehaviorEvents().Any(item => item.EventId == "beh-test"), "behavior event should persist in PostgreSQL");
     var outbox = reloadedRuntime.GetOutboxMessages();
@@ -89,8 +105,30 @@ static void AssertEventSequence(string[] actual, params string[] expected)
     Assert(actual.SequenceEqual(expected), $"event sequence expected {string.Join(" -> ", expected)}, got {string.Join(" -> ", actual)}");
 }
 
-static ConfirmCardRequest Human(string actorId) =>
-    new("operator", actorId, "zh-CN", new Dictionary<string, string>(), Array.Empty<string>());
+static ConfirmCardRequest Human(string idempotencyKey, IReadOnlyDictionary<string, string>? fieldValues = null) =>
+    new("zh-CN", idempotencyKey, fieldValues ?? new Dictionary<string, string>(), Array.Empty<string>());
+
+static string LoginToken(ProjectionRuntime runtime, string username)
+{
+    var login = runtime.Login(new LoginRequest(username, "dev"));
+    if (login is null)
+    {
+        throw new InvalidOperationException($"login should succeed for {username}");
+    }
+
+    var token = login.GetType().GetProperty("token")?.GetValue(login)?.ToString();
+    Assert(!string.IsNullOrWhiteSpace(token), $"login token should be issued for {username}");
+    return token!;
+}
+
+static int CountRows(string connectionString, string tableName)
+{
+    using var connection = new NpgsqlConnection(connectionString);
+    connection.Open();
+    using var command = connection.CreateCommand();
+    command.CommandText = $"select count(*) from {tableName}";
+    return Convert.ToInt32(command.ExecuteScalar());
+}
 
 static void ResetPostgres(string connectionString)
 {
@@ -99,9 +137,11 @@ static void ResetPostgres(string connectionString)
     using var command = connection.CreateCommand();
     command.CommandText = """
         drop table if exists behavior_events;
+        drop table if exists runtime_sessions;
         drop table if exists outbox_messages;
         drop table if exists audit_events;
         drop table if exists runtime_documents;
+        drop table if exists schema_migrations;
         """;
     command.ExecuteNonQuery();
 }

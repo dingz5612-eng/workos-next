@@ -1,0 +1,72 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: workosnext
+          POSTGRES_USER: workosnext
+          POSTGRES_PASSWORD: workosnext_dev
+        ports:
+          - 54329:5432
+        options: >-
+          --health-cmd "pg_isready -U workosnext -d workosnext"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: apps/mobile/package-lock.json
+
+      - name: Install mobile dependencies
+        working-directory: apps/mobile
+        run: npm ci
+
+      - name: Audit mobile dependencies
+        working-directory: apps/mobile
+        run: npm audit --audit-level=low
+
+      - name: Build mobile
+        working-directory: apps/mobile
+        run: npm run build
+
+      - name: Build backend
+        run: dotnet build WorkOSNext.sln -c Release
+
+      - name: Run runtime contract tests
+        env:
+          WORKOS_TEST_CONNECTION: Host=localhost;Port=54329;Database=workosnext;Username=workosnext;Password=workosnext_dev
+        run: dotnet run --project tests/WorkOS.RuntimeContractTests/WorkOS.RuntimeContractTests.csproj -c Release
+
+      - name: Residual old-model scan
+        shell: pwsh
+        run: |
+          $matches = rg -n "scenarioFlows|data-task|data-scenario|taskView|objectView" apps docs/product docs/ux
+          if ($LASTEXITCODE -eq 0) {
+            $matches
+            exit 1
+          }
+          exit 0
+
+      - name: Diff whitespace check
+        run: git diff --check

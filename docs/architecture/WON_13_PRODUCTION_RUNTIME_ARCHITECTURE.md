@@ -34,6 +34,25 @@ IntentWorkspaceProjection + WorkspaceCardProjection
 Do not introduce independent page models, task models, object models, search
 models, learning models, or AI prompt models for the same business behavior.
 
+## Non-Negotiable Runtime Guarantees
+
+Every production slice must preserve these six guarantees:
+
+- CI guarantee: every push and pull request runs backend build, frontend build,
+  runtime contract tests, dependency audit, residual old-model scan, and diff
+  whitespace check.
+- Idempotency guarantee: every confirm request carries an idempotency key; the
+  backend must reject duplicate writes by returning the existing event result.
+- Migration guarantee: database schema changes are applied through ordered
+  migrations recorded in `schema_migrations`; do not rely on ad hoc manual DDL.
+- Trusted actor guarantee: the backend identifies the actor from a server-issued
+  session token, not from self-declared request body fields.
+- Outbox Worker guarantee: confirmed audit events create outbox messages, and a
+  worker processes pending messages into read models.
+- Configuration guarantee: local and deployed environments use configuration
+  files or environment variables; do not hard-code deployment endpoints in UI or
+  backend logic.
+
 ## API Shape
 
 ### Core Projection API
@@ -53,6 +72,8 @@ POST /api/workspaces/{workspaceId}/cards/{cardId}/confirm
 ```
 
 Every business write must go through prepare and confirm.
+Confirm requires `X-WorkOS-Actor-Token` and an idempotency key. The actor role is
+derived from the session token.
 
 Do not create direct write APIs such as:
 
@@ -104,7 +125,9 @@ WON-13 production runtime uses PostgreSQL.
 
 Required persistence surfaces:
 
+- `schema_migrations`: applied migration ledger.
 - `runtime_documents`: current projection snapshot.
+- `runtime_sessions`: server-issued actor sessions.
 - `audit_events`: confirmed business events.
 - `outbox_messages`: pending and processed projection messages.
 - `behavior_events`: UI and behavior telemetry.
@@ -128,6 +151,8 @@ Rules:
 - Finance cards require finance role.
 - Terminal business actions remain human-confirmed.
 - Manager can confirm operator actions, but not finance actions unless explicitly allowed later.
+- Request bodies must not be trusted for actor identity. `actorType` and
+  `actorId` are derived from the session token.
 
 ## Outbox-Driven Projection
 
@@ -135,10 +160,11 @@ The runtime write path is:
 
 ```text
 confirm
--> validate actor and role
+-> validate actor session token and role
+-> enforce idempotency key
 -> append AuditEvent journal row
 -> append OutboxMessage
--> projector consumes pending outbox
+-> Outbox Worker consumes pending outbox
 -> update Workspace read model
 -> mark outbox processed
 ```
@@ -205,6 +231,9 @@ The runtime contract test must verify:
 - Room, bed, and resource activation event sequence.
 - Application, stay order, deposit, finance, and check-in event sequence.
 - PostgreSQL persistence after runtime reload.
+- Schema migrations applied through `schema_migrations`.
+- Confirm idempotency.
+- Backend actor identification via session token.
 - AuditEvent journal append.
 - Outbox message append and processed marker.
 - Outbox projector idempotency.

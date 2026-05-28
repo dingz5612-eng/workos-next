@@ -109,13 +109,18 @@ public sealed record WorkspaceEvent(
     IReadOnlyList<string> ProjectionTargets);
 
 public sealed record ConfirmCardRequest(
-    string ActorType,
-    string ActorId,
     string? Language,
+    string? IdempotencyKey,
     IReadOnlyDictionary<string, string>? FieldValues,
     IReadOnlyList<string>? EvidenceIds);
 
 public sealed record LoginRequest(string Username, string Password);
+
+public sealed record RuntimeSession(
+    string Token,
+    string UserId,
+    DateTimeOffset IssuedAtUtc,
+    DateTimeOffset ExpiresAtUtc);
 
 public sealed record RuntimeUser(
     string UserId,
@@ -136,6 +141,7 @@ public sealed record BehaviorEventRecord(
 public enum ConfirmStatus
 {
     Confirmed,
+    Duplicate,
     Forbidden,
     NotFound
 }

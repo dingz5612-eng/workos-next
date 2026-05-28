@@ -105,7 +105,7 @@ public sealed class ProjectionRuntime
         }
     }
 
-    public ConfirmResult Confirm(string workspaceId, string cardId, ConfirmCardRequest request)
+    public ConfirmResult Confirm(string workspaceId, string cardId, ConfirmCardRequest request, string actorToken)
     {
         lock (gate)
         {
@@ -124,20 +124,36 @@ public sealed class ProjectionRuntime
             }
 
             var card = cards[cardIndex];
-            if (card.Confirmation.ForbiddenForAi && request.ActorType.Equals("ai", StringComparison.OrdinalIgnoreCase))
-            {
-                return new ConfirmResult(ConfirmStatus.Forbidden, "AI can prepare and explain, but cannot confirm finance or terminal business actions.", null);
-            }
-
-            var actor = FindActor(request.ActorId, request.ActorType);
+            var actor = store.FindUserBySessionToken(actorToken);
             if (actor is null)
             {
-                return new ConfirmResult(ConfirmStatus.Forbidden, $"Actor {request.ActorId} is not enabled for confirmation.", null);
+                return new ConfirmResult(ConfirmStatus.Forbidden, "A valid actor session token is required for confirmation.", null);
+            }
+
+            if (card.Confirmation.ForbiddenForAi && actor.Role.Equals("ai", StringComparison.OrdinalIgnoreCase))
+            {
+                return new ConfirmResult(ConfirmStatus.Forbidden, "AI can prepare and explain, but cannot confirm finance or terminal business actions.", null);
             }
 
             if (!RoleCanConfirm(actor.Role, card.Confirmation.RequiredRole))
             {
                 return new ConfirmResult(ConfirmStatus.Forbidden, $"Role {actor.Role} cannot confirm card {card.Id}; required role is {card.Confirmation.RequiredRole}.", null);
+            }
+
+            var idempotencyKey = request.IdempotencyKey ?? $"{workspaceId}:{cardId}:{actor.UserId}";
+            var existingEvent = store.FindEventByIdempotencyKey(idempotencyKey);
+            if (existingEvent is not null)
+            {
+                return new ConfirmResult(ConfirmStatus.Duplicate, null, new
+                {
+                    confirmed = true,
+                    duplicate = true,
+                    workspaceId = workspace.Id,
+                    cardId = card.Id,
+                    @event = existingEvent,
+                    workspace,
+                    projection = Envelope()
+                });
             }
 
             var eventDefinition = card.Events.First();
@@ -146,23 +162,22 @@ public sealed class ProjectionRuntime
                 workspace.Id,
                 card.Id,
                 eventDefinition.EventType,
-                request.ActorType,
-                request.ActorId,
+                actor.Role,
+                actor.UserId,
                 DateTimeOffset.UtcNow,
                 request.FieldValues ?? new Dictionary<string, string>(),
                 eventDefinition.ProjectionTargets);
 
-            store.AppendAuditEventAndOutbox(workspaceEvent);
-            ProcessPendingOutboxUnlocked();
-            var updatedWorkspace = FindWorkspaceUnlocked(workspace.Id) ?? workspace;
+            store.AppendAuditEventAndOutbox(workspaceEvent, idempotencyKey);
 
             return new ConfirmResult(ConfirmStatus.Confirmed, null, new
             {
                 confirmed = true,
+                duplicate = false,
                 workspaceId = workspace.Id,
                 cardId = card.Id,
                 @event = workspaceEvent,
-                workspace = updatedWorkspace,
+                workspace,
                 projection = Envelope()
             });
         }
@@ -176,13 +191,16 @@ public sealed class ProjectionRuntime
                 item.Enabled &&
                 item.Username.Equals(request.Username, StringComparison.OrdinalIgnoreCase));
 
-            return user is null ? null : new
+            var session = user is null ? null : store.CreateSession(user);
+            return user is null || session is null ? null : new
             {
                 authenticated = true,
                 actorId = user.UserId,
                 actorType = user.Role,
                 displayName = user.DisplayName,
-                role = user.Role
+                role = user.Role,
+                token = session.Token,
+                expiresAtUtc = session.ExpiresAtUtc
             };
         }
     }
@@ -266,15 +284,6 @@ public sealed class ProjectionRuntime
         };
         state.Events.Add(workspaceEvent);
     }
-
-    private RuntimeUser? FindActor(string actorId, string actorType) =>
-        state.Users.FirstOrDefault(item =>
-            item.Enabled &&
-            (item.UserId.Equals(actorId, StringComparison.OrdinalIgnoreCase) ||
-             item.Username.Equals(actorId, StringComparison.OrdinalIgnoreCase))) ??
-        state.Users.FirstOrDefault(item =>
-            item.Enabled &&
-            item.Role.Equals(actorType, StringComparison.OrdinalIgnoreCase));
 
     private static bool RoleCanConfirm(string actorRole, string requiredRole)
     {

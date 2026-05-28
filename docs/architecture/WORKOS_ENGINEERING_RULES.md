@@ -178,3 +178,21 @@ POST /api/workspaces/{workspaceId}/cards/{cardId}/confirm
 ```
 
 These APIs should return or accept the same center projection contract. Search, workbench, learning, AI, and voice must not bypass prepare and confirm.
+
+## 13. Production Runtime Guarantees
+
+For backend runtime work, CI, idempotency, migrations, trusted actor identity,
+outbox worker processing, and configuration separation are mandatory.
+
+- CI must run backend build, frontend build, runtime contract tests, npm audit,
+  residual old-model scan, and `git diff --check`.
+- Confirm commands must use idempotency keys and must not write duplicate audit
+  events for repeated submissions.
+- PostgreSQL schema changes must be versioned through migrations recorded in
+  `schema_migrations`.
+- Backend actor identity must come from a server-issued session token, not from
+  request body claims.
+- Confirmed audit events must produce outbox messages; projections must be
+  updated by the outbox worker.
+- API URLs, connection strings, and poll intervals must be configuration-driven,
+  not hard-coded for one local machine.

@@ -16,7 +16,7 @@ public sealed class PostgresProjectionStore : IProjectionStore
     public PostgresProjectionStore(string connectionString)
     {
         this.connectionString = connectionString;
-        EnsureSchema();
+        RunMigrations();
     }
 
     public RuntimeState LoadOrSeed(Func<RuntimeState> seedFactory)
@@ -49,7 +49,57 @@ public sealed class PostgresProjectionStore : IProjectionStore
         command.ExecuteNonQuery();
     }
 
-    public void AppendAuditEventAndOutbox(WorkspaceEvent workspaceEvent)
+    public RuntimeSession CreateSession(RuntimeUser user)
+    {
+        var session = new RuntimeSession(
+            $"sess-{Guid.NewGuid():N}",
+            user.UserId,
+            DateTimeOffset.UtcNow,
+            DateTimeOffset.UtcNow.AddHours(8));
+
+        using var connection = OpenConnection();
+        using var command = connection.CreateCommand();
+        command.CommandText = """
+            insert into runtime_sessions(token, user_id, issued_at_utc, expires_at_utc, body)
+            values (@token, @userId, @issuedAtUtc, @expiresAtUtc, @body::jsonb)
+            """;
+        command.Parameters.AddWithValue("token", session.Token);
+        command.Parameters.AddWithValue("userId", session.UserId);
+        command.Parameters.AddWithValue("issuedAtUtc", session.IssuedAtUtc);
+        command.Parameters.AddWithValue("expiresAtUtc", session.ExpiresAtUtc);
+        command.Parameters.AddWithValue("body", NpgsqlDbType.Jsonb, JsonSerializer.Serialize(session, JsonOptions));
+        command.ExecuteNonQuery();
+        return session;
+    }
+
+    public RuntimeUser? FindUserBySessionToken(string token)
+    {
+        using var connection = OpenConnection();
+        using var command = connection.CreateCommand();
+        command.CommandText = "select user_id from runtime_sessions where token = @token and expires_at_utc > @now";
+        command.Parameters.AddWithValue("token", token);
+        command.Parameters.AddWithValue("now", DateTimeOffset.UtcNow);
+        var userId = command.ExecuteScalar() as string;
+        if (string.IsNullOrWhiteSpace(userId))
+        {
+            return null;
+        }
+
+        var state = LoadOrSeed(ProjectionSeed.Create);
+        return state.Users.FirstOrDefault(user => user.Enabled && user.UserId == userId);
+    }
+
+    public WorkspaceEvent? FindEventByIdempotencyKey(string idempotencyKey)
+    {
+        using var connection = OpenConnection();
+        using var command = connection.CreateCommand();
+        command.CommandText = "select body from audit_events where idempotency_key = @idempotencyKey";
+        command.Parameters.AddWithValue("idempotencyKey", idempotencyKey);
+        var raw = command.ExecuteScalar() as string;
+        return string.IsNullOrWhiteSpace(raw) ? null : JsonSerializer.Deserialize<WorkspaceEvent>(raw, JsonOptions);
+    }
+
+    public void AppendAuditEventAndOutbox(WorkspaceEvent workspaceEvent, string idempotencyKey)
     {
         using var connection = OpenConnection();
         using var transaction = connection.BeginTransaction();
@@ -58,11 +108,12 @@ public sealed class PostgresProjectionStore : IProjectionStore
         {
             command.Transaction = transaction;
             command.CommandText = """
-            insert into audit_events(event_id, workspace_id, card_id, event_type, actor_type, actor_id, occurred_at_utc, body)
-            values (@eventId, @workspaceId, @cardId, @eventType, @actorType, @actorId, @occurredAtUtc, @body::jsonb)
+            insert into audit_events(event_id, idempotency_key, workspace_id, card_id, event_type, actor_type, actor_id, occurred_at_utc, body)
+            values (@eventId, @idempotencyKey, @workspaceId, @cardId, @eventType, @actorType, @actorId, @occurredAtUtc, @body::jsonb)
             on conflict(event_id) do nothing
             """;
             command.Parameters.AddWithValue("eventId", workspaceEvent.EventId);
+            command.Parameters.AddWithValue("idempotencyKey", idempotencyKey);
             command.Parameters.AddWithValue("workspaceId", workspaceEvent.WorkspaceId);
             command.Parameters.AddWithValue("cardId", workspaceEvent.CardId);
             command.Parameters.AddWithValue("eventType", workspaceEvent.EventType);
@@ -87,12 +138,13 @@ public sealed class PostgresProjectionStore : IProjectionStore
         {
             command.Transaction = transaction;
             command.CommandText = """
-            insert into outbox_messages(message_id, event_id, workspace_id, card_id, event_type, created_at_utc, processed_at_utc, body)
-            values (@messageId, @eventId, @workspaceId, @cardId, @eventType, @createdAtUtc, @processedAtUtc, @body::jsonb)
+            insert into outbox_messages(message_id, event_id, idempotency_key, workspace_id, card_id, event_type, created_at_utc, processed_at_utc, body)
+            values (@messageId, @eventId, @idempotencyKey, @workspaceId, @cardId, @eventType, @createdAtUtc, @processedAtUtc, @body::jsonb)
             on conflict(message_id) do nothing
             """;
             command.Parameters.AddWithValue("messageId", outboxMessage.MessageId);
             command.Parameters.AddWithValue("eventId", outboxMessage.EventId);
+            command.Parameters.AddWithValue("idempotencyKey", idempotencyKey);
             command.Parameters.AddWithValue("workspaceId", outboxMessage.WorkspaceId);
             command.Parameters.AddWithValue("cardId", outboxMessage.CardId);
             command.Parameters.AddWithValue("eventType", outboxMessage.EventType);
@@ -216,11 +268,19 @@ public sealed class PostgresProjectionStore : IProjectionStore
         return connection;
     }
 
-    private void EnsureSchema()
+    private void RunMigrations()
     {
         using var connection = OpenConnection();
-        using var command = connection.CreateCommand();
-        command.CommandText = """
+        using var bootstrap = connection.CreateCommand();
+        bootstrap.CommandText = """
+            create table if not exists schema_migrations (
+                migration_id text primary key,
+                applied_at_utc timestamptz not null
+            );
+            """;
+        bootstrap.ExecuteNonQuery();
+
+        ApplyMigration(connection, "001_runtime_core", """
             create table if not exists runtime_documents (
                 id text primary key,
                 body jsonb not null,
@@ -229,6 +289,7 @@ public sealed class PostgresProjectionStore : IProjectionStore
 
             create table if not exists audit_events (
                 event_id text primary key,
+                idempotency_key text null unique,
                 workspace_id text not null,
                 card_id text not null,
                 event_type text not null,
@@ -243,6 +304,7 @@ public sealed class PostgresProjectionStore : IProjectionStore
             create table if not exists outbox_messages (
                 message_id text primary key,
                 event_id text not null,
+                idempotency_key text null,
                 workspace_id text not null,
                 card_id text not null,
                 event_type text not null,
@@ -265,8 +327,50 @@ public sealed class PostgresProjectionStore : IProjectionStore
             );
 
             create index if not exists ix_behavior_events_object on behavior_events(object_type, object_id, occurred_at_utc);
-            """;
+            """);
+        ApplyMigration(connection, "002_runtime_sessions", """
+            create table if not exists runtime_sessions (
+                token text primary key,
+                user_id text not null,
+                issued_at_utc timestamptz not null,
+                expires_at_utc timestamptz not null,
+                body jsonb not null
+            );
+
+            create index if not exists ix_runtime_sessions_user on runtime_sessions(user_id, expires_at_utc);
+            """);
+        ApplyMigration(connection, "003_idempotency_columns", """
+            alter table audit_events add column if not exists idempotency_key text null;
+            create unique index if not exists ux_audit_events_idempotency_key
+                on audit_events(idempotency_key)
+                where idempotency_key is not null;
+            alter table outbox_messages add column if not exists idempotency_key text null;
+            """);
+    }
+
+    private static void ApplyMigration(NpgsqlConnection connection, string migrationId, string sql)
+    {
+        using var exists = connection.CreateCommand();
+        exists.CommandText = "select 1 from schema_migrations where migration_id = @migrationId";
+        exists.Parameters.AddWithValue("migrationId", migrationId);
+        if (exists.ExecuteScalar() is not null)
+        {
+            return;
+        }
+
+        using var transaction = connection.BeginTransaction();
+        using var command = connection.CreateCommand();
+        command.Transaction = transaction;
+        command.CommandText = sql;
         command.ExecuteNonQuery();
+
+        using var insert = connection.CreateCommand();
+        insert.Transaction = transaction;
+        insert.CommandText = "insert into schema_migrations(migration_id, applied_at_utc) values (@migrationId, @appliedAtUtc)";
+        insert.Parameters.AddWithValue("migrationId", migrationId);
+        insert.Parameters.AddWithValue("appliedAtUtc", DateTimeOffset.UtcNow);
+        insert.ExecuteNonQuery();
+        transaction.Commit();
     }
 
     private static IReadOnlyList<OutboxMessage> ReadOutboxMessages(NpgsqlCommand command)

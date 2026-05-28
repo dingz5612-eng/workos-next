@@ -6,7 +6,13 @@ public interface IProjectionStore
 
     void SaveState(RuntimeState state);
 
-    void AppendAuditEventAndOutbox(WorkspaceEvent workspaceEvent);
+    RuntimeSession CreateSession(RuntimeUser user);
+
+    RuntimeUser? FindUserBySessionToken(string token);
+
+    WorkspaceEvent? FindEventByIdempotencyKey(string idempotencyKey);
+
+    void AppendAuditEventAndOutbox(WorkspaceEvent workspaceEvent, string idempotencyKey);
 
     IReadOnlyList<OutboxMessage> GetPendingOutboxMessages(int take = 50);
 
