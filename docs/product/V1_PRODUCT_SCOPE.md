@@ -31,16 +31,18 @@ Accommodation:
 - Checkout.
 - Settlement confirmation.
 
-Maintenance:
+Automotive repair:
 
-- Repair asset.
+- Vehicle.
+- Driver.
 - Repair request.
-- Dispatch.
+- Technician assignment.
 - Diagnosis.
 - Repair handling.
 - Inspection.
+- Parts requirement.
 - Fee material.
-- Work order close.
+- Repair order close.
 
 ## Not In V1.0
 
@@ -59,4 +61,3 @@ Maintenance:
 - All user-visible copy supports Chinese and Russian.
 - Critical actions show confirmation before completion.
 - Behavior data starts accumulating for later personalization.
-

@@ -38,4 +38,6 @@ http://127.0.0.1:5173
 
 ## Toolchain Note
 
-The backend scaffold targets `.NET 10 LTS`. Flutter is still the target mobile runtime, while this Phase 0-1 UI remains a mobile-first PWA prototype until Flutter SDK is available locally.
+The backend scaffold targets `.NET 10 LTS`. Use the .NET CLI or VS Code if the installed Visual Studio version does not support `net10.0` yet.
+
+Flutter is still the target mobile runtime, while this Phase 0-1 UI remains a mobile-first PWA prototype until Flutter SDK is available locally.

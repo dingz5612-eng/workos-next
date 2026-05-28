@@ -18,6 +18,8 @@
 - Confirm Sheet.
 - After Action.
 - Help and AI boundary.
+- Accommodation and automotive repair reference objects.
+- Clean active UI only; no retained obsolete prototype components.
 
 ## WON-02: Product Model Schema
 
@@ -68,4 +70,3 @@
 - Personalized ranking.
 - Model versioning.
 - Default-rule fallback.
-

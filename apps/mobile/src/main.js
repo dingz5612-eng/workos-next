@@ -1,550 +1,566 @@
 import "./styles.css";
 
-const translations = {
+const i18n = {
   "zh-CN": {
-    appName: "WorkOSNext",
-    appSubtitle: "移动端业务操作系统",
-    language: "语言",
-    role: "当前角色",
-    roleValue: "运营经办人",
+    app: "WorkOSNext",
+    subtitle: "移动端业务操作系统",
+    role: "运营经办人",
     home: "首页",
-    intent: "我要找 / 我要办",
-    workbench: "今天该我处理",
-    objects: "对象",
-    task: "任务",
+    search: "搜索",
+    workbench: "工作台",
     help: "帮助",
-    tutorialTitle: "先说意图，再处理任务",
-    tutorialText: "你可以搜索业务对象，也可以从工作台接收系统分配的任务。每个任务页只做一件事，关键动作前必须人工确认。",
-    searchPlaceholder: "试试：张三入住 / 维修空调 / 押金未通过",
-    searchButton: "搜索",
-    important: "重要事项",
-    recentObjects: "最近对象",
-    startTask: "进入任务",
-    openObject: "打开对象",
-    todayWork: "今日工作",
-    blockedWork: "阻断任务",
+    todayFocus: "现在最该处理",
+    activeEntry: "我要找 / 我要办",
+    passiveEntry: "今天该我处理",
+    searchPlaceholder: "搜索人、车辆、房间、维修单",
+    searchAction: "搜索",
+    handleNow: "立即处理",
+    viewDetails: "查看详情",
+    continueTask: "继续办理",
+    bestMatch: "最佳匹配",
+    relatedObjects: "相关对象",
+    availableTasks: "可处理任务",
+    blockers: "阻断原因",
+    workFirst: "先处理",
+    dueToday: "今天到期",
     waitingConfirm: "等我确认",
-    recommended: "推荐下一步",
-    objectWorkspace: "对象工作区",
-    objectSummary: "对象摘要",
-    currentState: "当前状态",
-    blocker: "当前阻断",
-    related: "相关对象",
-    timeline: "流程时间线",
-    taskSurface: "任务执行页",
-    contextBar: "当前对象",
-    journey: "流程位置",
-    actionPanel: "办理操作",
-    guidance: "下一步 / 提示 / 帮助",
-    prepareAction: "准备动作",
-    confirmAction: "人工确认",
-    confirmTitle: "确认前请核对",
-    confirmText: "系统只准备动作，不自动绕过权限、状态机或人工确认。",
-    finish: "完成并记录证据",
-    resultTitle: "动作已完成",
-    resultText: "已生成审计证据，下一步回到对象页或工作台继续处理。",
-    feedback: "提交反馈",
-    aiBoundary: "AI 只做推荐、解释、草稿和搜索理解，不直接执行关键业务动作。",
-    stats: "数据占位",
-    statsText: "V1.0 先采集行为事件，完整统计分析后续版本启用。",
-    domainAccommodation: "住宿",
-    domainMaintenance: "维修",
-    statusReady: "待处理",
+    returned: "被退回",
+    newlyAssigned: "新分配",
+    recent: "最近处理",
+    objectWorkspace: "业务对象",
+    currentProblem: "当前问题",
+    nextStep: "下一步",
+    owner: "责任人",
+    keyInfo: "关键信息",
+    related: "相关信息",
+    timeline: "时间线",
+    taskSurface: "办理任务",
+    checkBefore: "办理前核对",
+    actionInfo: "填写信息",
+    guidance: "提示与帮助",
+    confirm: "确认办理",
+    confirmTitle: "确认前核对影响",
+    finish: "确认完成",
+    resultTitle: "已完成并记录证据",
+    resultBody: "系统已记录操作证据，下一步会回到对象页继续推荐。",
+    aiBoundary: "AI 可解释、总结和推荐，但不能替你确认、扣费、退款、核销或关闭终态。",
+    language: "语言",
+    zh: "中文",
+    ru: "Русский",
+    domainStay: "住宿",
+    domainAuto: "汽车维修",
+    priorityCritical: "先处理",
+    priorityToday: "今天处理",
+    priorityConfirm: "待确认",
     statusBlocked: "已阻断",
+    statusReady: "待处理",
+    statusInspecting: "待诊断",
     statusConfirm: "待确认",
-    navHome: "首页",
-    navIntent: "搜索",
-    navWorkbench: "工作台",
-    navHelp: "帮助"
+    bottomActionDeposit: "补交押金材料",
+    bottomActionDiagnostic: "安排技师检查",
+    fieldAmount: "押金金额",
+    fieldNote: "补充说明",
+    fieldTechnician: "维修技师",
+    fieldSlot: "到场时间",
+    helpWhy: "为什么不能继续？",
+    helpField: "这个字段怎么填？",
+    helpImpact: "会影响哪些业务？",
+    metricTasks: "今日任务",
+    metricBlocked: "阻断",
+    metricConfirm: "待确认"
   },
   "ru-RU": {
-    appName: "WorkOSNext",
-    appSubtitle: "Мобильная бизнес ОС",
-    language: "Язык",
-    role: "Текущая роль",
-    roleValue: "Операционный сотрудник",
+    app: "WorkOSNext",
+    subtitle: "Мобильная бизнес ОС",
+    role: "Операционный сотрудник",
     home: "Главная",
-    intent: "Найти / выполнить",
-    workbench: "Моя работа сегодня",
-    objects: "Объекты",
-    task: "Задача",
+    search: "Поиск",
+    workbench: "Работа",
     help: "Помощь",
-    tutorialTitle: "Сначала намерение, затем задача",
-    tutorialText: "Ищите бизнес-объект или берите задачу из рабочего стола. Каждая страница задачи выполняет только одно действие, а важные действия требуют подтверждения человеком.",
-    searchPlaceholder: "Например: заселить Чжана / ремонт кондиционера / депозит заблокирован",
-    searchButton: "Искать",
-    important: "Важные уведомления",
-    recentObjects: "Недавние объекты",
-    startTask: "Открыть задачу",
-    openObject: "Открыть объект",
-    todayWork: "Работа сегодня",
-    blockedWork: "Заблокированные",
+    todayFocus: "Главное сейчас",
+    activeEntry: "Найти / выполнить",
+    passiveEntry: "Моя работа сегодня",
+    searchPlaceholder: "Поиск гостя, авто, комнаты, заявки",
+    searchAction: "Искать",
+    handleNow: "Обработать",
+    viewDetails: "Открыть",
+    continueTask: "Продолжить",
+    bestMatch: "Лучшее совпадение",
+    relatedObjects: "Связанные объекты",
+    availableTasks: "Доступные задачи",
+    blockers: "Причины блокировки",
+    workFirst: "Сначала",
+    dueToday: "Сегодня",
     waitingConfirm: "Ждет подтверждения",
-    recommended: "Рекомендованный шаг",
-    objectWorkspace: "Рабочее место объекта",
-    objectSummary: "Сводка объекта",
-    currentState: "Текущий статус",
-    blocker: "Текущая блокировка",
-    related: "Связанные объекты",
-    timeline: "Лента процесса",
-    taskSurface: "Страница задачи",
-    contextBar: "Текущий объект",
-    journey: "Позиция в процессе",
-    actionPanel: "Действие",
-    guidance: "Следующий шаг / подсказка / помощь",
-    prepareAction: "Подготовить действие",
-    confirmAction: "Подтвердить человеком",
-    confirmTitle: "Проверьте перед подтверждением",
-    confirmText: "Система только готовит действие и не обходит права, состояние или подтверждение человека.",
-    finish: "Завершить и записать доказательство",
-    resultTitle: "Действие завершено",
-    resultText: "Аудит записан. Вернитесь к объекту или рабочему столу для следующего шага.",
-    feedback: "Отправить отзыв",
-    aiBoundary: "AI только рекомендует, объясняет, создает черновик и понимает поиск. Он не выполняет критические действия.",
-    stats: "Заглушка аналитики",
-    statsText: "V1.0 сначала собирает события поведения. Полная аналитика будет позже.",
-    domainAccommodation: "Проживание",
-    domainMaintenance: "Ремонт",
-    statusReady: "В работе",
+    returned: "Возвращено",
+    newlyAssigned: "Новое",
+    recent: "Недавнее",
+    objectWorkspace: "Бизнес-объект",
+    currentProblem: "Текущая проблема",
+    nextStep: "Следующий шаг",
+    owner: "Ответственный",
+    keyInfo: "Ключевые данные",
+    related: "Связанные данные",
+    timeline: "История",
+    taskSurface: "Задача",
+    checkBefore: "Проверить перед действием",
+    actionInfo: "Заполнить данные",
+    guidance: "Подсказка и помощь",
+    confirm: "Подтвердить",
+    confirmTitle: "Проверьте влияние",
+    finish: "Завершить",
+    resultTitle: "Готово, доказательство записано",
+    resultBody: "Система записала аудит и вернется к объекту для следующего шага.",
+    aiBoundary: "AI может объяснять, резюмировать и рекомендовать, но не подтверждает, не списывает, не возвращает деньги и не закрывает конечные состояния.",
+    language: "Язык",
+    zh: "中文",
+    ru: "Русский",
+    domainStay: "Проживание",
+    domainAuto: "Авторемонт",
+    priorityCritical: "Сначала",
+    priorityToday: "Сегодня",
+    priorityConfirm: "Подтвердить",
     statusBlocked: "Заблокировано",
-    statusConfirm: "Ждет подтверждения",
-    navHome: "Главная",
-    navIntent: "Поиск",
-    navWorkbench: "Работа",
-    navHelp: "Помощь"
+    statusReady: "Ожидает",
+    statusInspecting: "Диагностика",
+    statusConfirm: "Подтверждение",
+    bottomActionDeposit: "Дополнить депозит",
+    bottomActionDiagnostic: "Назначить техника",
+    fieldAmount: "Сумма депозита",
+    fieldNote: "Комментарий",
+    fieldTechnician: "Механик",
+    fieldSlot: "Время визита",
+    helpWhy: "Почему нельзя продолжить?",
+    helpField: "Как заполнить поле?",
+    helpImpact: "На что это влияет?",
+    metricTasks: "Задачи",
+    metricBlocked: "Блок",
+    metricConfirm: "Подтв."
   }
 };
 
 const state = {
   lang: localStorage.getItem("workosnext.lang") || "zh-CN",
   view: "home",
-  selectedObjectId: "stay-1001",
-  selectedTaskId: "task-deposit"
+  selectedId: "SO-20260528-001",
+  query: ""
 };
 
-const data = {
-  objects: [
-    {
-      id: "stay-1001",
-      domain: "domainAccommodation",
-      title: { "zh-CN": "张三的住宿单", "ru-RU": "Проживание Чжана" },
-      statusKey: "statusBlocked",
-      blocker: { "zh-CN": "押金未通过，不能办理入住。", "ru-RU": "Депозит не прошел проверку, заселение недоступно." },
-      nextTaskId: "task-deposit"
+const projections = [
+  {
+    id: "SO-20260528-001",
+    type: "stayOrder",
+    domainKey: "domainStay",
+    priorityKey: "priorityCritical",
+    statusKey: "statusBlocked",
+    title: { "zh-CN": "张三的住宿单", "ru-RU": "Ордер проживания Чжана" },
+    subtitle: { "zh-CN": "A301 · A301-02 下铺", "ru-RU": "A301 · нижняя койка A301-02" },
+    problem: { "zh-CN": "押金 3000 KGS 财务未通过，不能办理入住。", "ru-RU": "Депозит 3000 KGS не прошел фин. проверку, заселение недоступно." },
+    next: { "zh-CN": "补交押金材料，等待财务确认。", "ru-RU": "Дополнить материалы депозита и ждать фин. подтверждения." },
+    owner: { "zh-CN": "宿舍经办人 / 财务经办人", "ru-RU": "Оператор проживания / Финансы" },
+    primaryTaskId: "TASK-STAY-DEPOSIT",
+    primaryActionKey: "bottomActionDeposit",
+    facts: [
+      ["住宿单号", "SO-20260528-001", "Номер ордера", "SO-20260528-001"],
+      ["入住人", "张三", "Гость", "Чжан Сан"],
+      ["房间", "A301", "Комната", "A301"],
+      ["床位", "A301-02 下铺", "Койка", "A301-02 нижняя"],
+      ["计划入住", "2026-05-28", "План заселения", "2026-05-28"],
+      ["押金", "3000 KGS · 财务未通过", "Депозит", "3000 KGS · не подтвержден"]
+    ],
+    related: { "zh-CN": "入住申请 APP-20260528-018 · 财务门禁 DEP-GATE-009", "ru-RU": "Заявка APP-20260528-018 · фин. проверка DEP-GATE-009" },
+    timeline: {
+      "zh-CN": ["申请已审批", "已选择 A301-02 床位", "押金材料被退回"],
+      "ru-RU": ["Заявка одобрена", "Выбрана койка A301-02", "Материалы депозита возвращены"]
     },
-    {
-      id: "repair-2001",
-      domain: "domainMaintenance",
-      title: { "zh-CN": "A301 空调维修单", "ru-RU": "Заявка на ремонт кондиционера A301" },
-      statusKey: "statusReady",
-      blocker: { "zh-CN": "等待维修经办人派工。", "ru-RU": "Ожидает назначения ремонтного сотрудника." },
-      nextTaskId: "task-dispatch"
-    }
-  ],
-  tasks: [
-    {
-      id: "task-deposit",
-      objectId: "stay-1001",
-      title: { "zh-CN": "提交押金材料", "ru-RU": "Подать материалы по депозиту" },
-      journey: ["申请", "选房", "住宿单", "押金", "入住", "退房"],
-      journeyRu: ["Заявка", "Комната", "Ордер", "Депозит", "Заселение", "Выезд"],
+    task: {
+      title: { "zh-CN": "补交押金材料", "ru-RU": "Дополнить депозит" },
+      journey: {
+        "zh-CN": ["申请", "选床", "住宿单", "押金", "入住"],
+        "ru-RU": ["Заявка", "Койка", "Ордер", "Депозит", "Заселение"]
+      },
       activeStep: 3,
-      risk: { "zh-CN": "押金只提交材料，不代表财务已接收或核销。", "ru-RU": "Депозит является только материалом, это не прием или сверка финансов." },
-      action: { "zh-CN": "填写押金金额并提交材料", "ru-RU": "Введите сумму депозита и отправьте материалы" }
-    },
-    {
-      id: "task-dispatch",
-      objectId: "repair-2001",
-      title: { "zh-CN": "维修派工", "ru-RU": "Назначить ремонт" },
-      journey: ["报修", "派工", "诊断", "维修", "验收", "关闭"],
-      journeyRu: ["Заявка", "Назначение", "Диагностика", "Ремонт", "Приемка", "Закрытие"],
-      activeStep: 1,
-      risk: { "zh-CN": "派工后会通知维修人员，不会自动关闭工单。", "ru-RU": "После назначения сотрудник получит уведомление, заявка не закроется автоматически." },
-      action: { "zh-CN": "选择维修人员并派工", "ru-RU": "Выберите исполнителя и назначьте работу" }
+      checklist: {
+        "zh-CN": ["住宿单号是否正确", "押金金额是否为 3000 KGS", "付款主体是否和申请一致"],
+        "ru-RU": ["Номер ордера верный", "Сумма депозита 3000 KGS", "Плательщик совпадает с заявкой"]
+      },
+      fields: ["amount", "note"],
+      risk: { "zh-CN": "提交后只生成押金材料，不代表财务已收款或核销。", "ru-RU": "После отправки создается материал депозита, это не оплата и не сверка." }
     }
-  ],
-  events: []
-};
+  },
+  {
+    id: "AR-20260528-004",
+    type: "autoRepair",
+    domainKey: "domainAuto",
+    priorityKey: "priorityToday",
+    statusKey: "statusInspecting",
+    title: { "zh-CN": "Toyota Camry 发动机异响", "ru-RU": "Toyota Camry: шум двигателя" },
+    subtitle: { "zh-CN": "01KG123ABC · 司机 Иван Петров", "ru-RU": "01KG123ABC · водитель Иван Петров" },
+    problem: { "zh-CN": "车辆已到场，等待安排技师检查。", "ru-RU": "Автомобиль на месте, ожидает назначения техника." },
+    next: { "zh-CN": "安排技师诊断，记录预计检查时间。", "ru-RU": "Назначить механика и указать время диагностики." },
+    owner: { "zh-CN": "维修主管", "ru-RU": "Руководитель сервиса" },
+    primaryTaskId: "TASK-AUTO-DIAGNOSE",
+    primaryActionKey: "bottomActionDiagnostic",
+    facts: [
+      ["维修单", "AR-20260528-004", "Заявка", "AR-20260528-004"],
+      ["车辆", "Toyota Camry · 01KG123ABC", "Авто", "Toyota Camry · 01KG123ABC"],
+      ["司机", "Иван Петров", "Водитель", "Иван Петров"],
+      ["问题", "发动机异响", "Проблема", "Шум двигателя"],
+      ["优先级", "今天处理", "Приоритет", "Сегодня"],
+      ["当前状态", "等待诊断", "Статус", "Ожидает диагностики"]
+    ],
+    related: { "zh-CN": "车辆档案 VEH-00129 · 上次保养 2026-04-15", "ru-RU": "Карточка VEH-00129 · ТО 2026-04-15" },
+    timeline: {
+      "zh-CN": ["司机提交报修", "车辆已到场", "等待维修主管派诊断"],
+      "ru-RU": ["Водитель подал заявку", "Авто прибыло", "Ожидает назначения диагностики"]
+    },
+    task: {
+      title: { "zh-CN": "安排技师检查", "ru-RU": "Назначить диагностику" },
+      journey: {
+        "zh-CN": ["报修", "到场", "诊断", "维修", "验收", "关闭"],
+        "ru-RU": ["Заявка", "Прибыло", "Диагностика", "Ремонт", "Приемка", "Закрытие"]
+      },
+      activeStep: 2,
+      checklist: {
+        "zh-CN": ["车辆牌照是否一致", "司机描述是否完整", "是否需要紧急停运"],
+        "ru-RU": ["Номер авто совпадает", "Описание водителя полное", "Нужна ли срочная остановка"]
+      },
+      fields: ["technician", "slot", "note"],
+      risk: { "zh-CN": "派工会通知技师，不会自动确认维修完成或生成费用。", "ru-RU": "Назначение уведомит механика, но не завершит ремонт и не создаст расходы." }
+    }
+  }
+];
 
-function t(key) {
-  return translations[state.lang][key] || translations["zh-CN"][key] || key;
+const analytics = [];
+
+function tr(key) {
+  return i18n[state.lang][key] || i18n["zh-CN"][key] || key;
 }
 
-function text(value) {
-  if (typeof value === "string") return value;
-  return value[state.lang] || value["zh-CN"];
+function tx(value) {
+  return typeof value === "string" ? value : value[state.lang] || value["zh-CN"];
 }
 
-function track(eventType, payload = {}) {
-  data.events.unshift({
-    eventType,
-    language: state.lang,
-    at: new Date().toISOString(),
-    ...payload
-  });
+function currentObject() {
+  return projections.find((item) => item.id === state.selectedId) || projections[0];
 }
 
 function setView(view) {
   state.view = view;
-  track("view_opened", { source: view });
+  record("view", view);
   render();
 }
 
 function setLanguage(lang) {
   state.lang = lang;
   localStorage.setItem("workosnext.lang", lang);
-  track("language_changed", { source: lang });
+  record("language", lang);
   render();
 }
 
-function selectObject(objectId) {
-  state.selectedObjectId = objectId;
-  const obj = data.objects.find((item) => item.id === objectId);
-  state.selectedTaskId = obj?.nextTaskId || state.selectedTaskId;
-  setView("object");
+function selectObject(id, view = "object") {
+  state.selectedId = id;
+  record("object", id);
+  setView(view);
 }
 
-function selectTask(taskId) {
-  state.selectedTaskId = taskId;
-  const task = data.tasks.find((item) => item.id === taskId);
-  state.selectedObjectId = task?.objectId || state.selectedObjectId;
-  setView("task");
-}
-
-function selectedObject() {
-  return data.objects.find((item) => item.id === state.selectedObjectId) || data.objects[0];
-}
-
-function selectedTask() {
-  return data.tasks.find((item) => item.id === state.selectedTaskId) || data.tasks[0];
+function record(type, value) {
+  analytics.unshift({ type, value, language: state.lang, time: new Date().toISOString() });
 }
 
 function shell(content) {
   return `
-    <main class="phone-shell">
+    <main class="app-shell">
       <header class="topbar">
         <div>
-          <strong>${t("appName")}</strong>
-          <span>${t("appSubtitle")}</span>
+          <strong>${tr("app")}</strong>
+          <span>${tr("subtitle")}</span>
         </div>
-        <select aria-label="${t("language")}" class="lang-select" id="lang-select">
-          <option value="zh-CN" ${state.lang === "zh-CN" ? "selected" : ""}>中文</option>
-          <option value="ru-RU" ${state.lang === "ru-RU" ? "selected" : ""}>Русский</option>
+        <select id="language" aria-label="${tr("language")}">
+          <option value="zh-CN" ${state.lang === "zh-CN" ? "selected" : ""}>${tr("zh")}</option>
+          <option value="ru-RU" ${state.lang === "ru-RU" ? "selected" : ""}>${tr("ru")}</option>
         </select>
       </header>
-      <section class="role-card">
-        <span>${t("role")}</span>
-        <strong>${t("roleValue")}</strong>
-      </section>
       ${content}
-      <nav class="bottom-nav" aria-label="primary">
-        <button data-view="home" class="${state.view === "home" ? "active" : ""}">${t("navHome")}</button>
-        <button data-view="intent" class="${state.view === "intent" ? "active" : ""}">${t("navIntent")}</button>
-        <button data-view="workbench" class="${state.view === "workbench" ? "active" : ""}">${t("navWorkbench")}</button>
-        <button data-view="help" class="${state.view === "help" ? "active" : ""}">${t("navHelp")}</button>
+      <nav class="bottom-nav">
+        ${navButton("home", "home")}
+        ${navButton("search", "search")}
+        ${navButton("workbench", "workbench")}
+        ${navButton("help", "help")}
       </nav>
     </main>
   `;
 }
 
+function navButton(view, labelKey) {
+  return `<button data-view="${view}" class="${state.view === view ? "active" : ""}">${tr(labelKey)}</button>`;
+}
+
 function homeView() {
+  const focus = projections[0];
   return shell(`
-    <section class="hero">
-      <p>${t("tutorialTitle")}</p>
-      <h1>${t("intent")}</h1>
-      <div class="search-box">
-        <input id="home-search" placeholder="${t("searchPlaceholder")}" />
-        <button id="home-search-button">${t("searchButton")}</button>
+    <section class="focus-card">
+      <span>${tr("todayFocus")} · ${tr(focus.domainKey)}</span>
+      <h1>${tx(focus.title)}</h1>
+      <p>${tx(focus.problem)}</p>
+      <button data-object="${focus.id}" data-target="task">${tr("handleNow")}</button>
+    </section>
+    <section class="intent-card">
+      <label>${tr("activeEntry")}</label>
+      <div class="search-line">
+        <input id="query" value="${state.query}" placeholder="${tr("searchPlaceholder")}" />
+        <button id="searchNow">${tr("searchAction")}</button>
       </div>
     </section>
-    <section class="split-actions">
-      <button class="big-action" data-view="intent">
-        <span>${t("intent")}</span>
-        <strong>${t("searchButton")}</strong>
-      </button>
-      <button class="big-action muted-action" data-view="workbench">
-        <span>${t("workbench")}</span>
-        <strong>${data.tasks.length}</strong>
-      </button>
+    <section class="metric-row">
+      <div><span>${tr("metricTasks")}</span><strong>7</strong></div>
+      <div><span>${tr("metricBlocked")}</span><strong>2</strong></div>
+      <div><span>${tr("metricConfirm")}</span><strong>3</strong></div>
     </section>
-    <section class="card">
-      <h2>${t("tutorialTitle")}</h2>
-      <p>${t("tutorialText")}</p>
+    <section class="section-block">
+      <div class="section-title">
+        <h2>${tr("passiveEntry")}</h2>
+        <button data-view="workbench">${tr("viewDetails")}</button>
+      </div>
+      ${compactWorkItem(projections[1])}
     </section>
-    <section class="card warning">
-      <h2>${t("important")}</h2>
-      <p>${selectedObject().blocker[state.lang]}</p>
-    </section>
-    <section class="card">
-      <h2>${t("recentObjects")}</h2>
-      ${objectList()}
+    <section class="section-block">
+      <h2>${tr("recent")}</h2>
+      ${projections.map((item) => objectRow(item)).join("")}
     </section>
   `);
 }
 
-function intentView() {
+function searchView() {
+  const query = state.query || (state.lang === "zh-CN" ? "张三 押金未通过" : "Чжан депозит");
   return shell(`
-    <section class="page-title">
+    <section class="page-head">
       <span>Intent Hub</span>
-      <h1>${t("intent")}</h1>
-    </section>
-    <section class="card">
-      <div class="search-box">
-        <input id="intent-search" value="${state.lang === "zh-CN" ? "张三 押金未通过" : "Чжан депозит"}" />
-        <button id="intent-search-button">${t("searchButton")}</button>
+      <h1>${tr("activeEntry")}</h1>
+      <div class="search-line">
+        <input id="query" value="${query}" />
+        <button id="searchNow">${tr("searchAction")}</button>
       </div>
     </section>
-    <section class="result-group">
-      <h2>${t("objects")}</h2>
-      ${objectList()}
+    <section class="best-match">
+      <span>${tr("bestMatch")}</span>
+      ${decisionCard(projections[0])}
     </section>
-    <section class="result-group">
-      <h2>${t("task")}</h2>
-      ${taskList()}
+    <section class="section-block">
+      <h2>${tr("relatedObjects")}</h2>
+      ${projections.map((item) => objectRow(item)).join("")}
     </section>
-    <section class="card">
-      <h2>${t("blockedWork")}</h2>
-      <p>${selectedObject().blocker[state.lang]}</p>
+    <section class="section-block">
+      <h2>${tr("availableTasks")}</h2>
+      ${projections.map((item) => taskRow(item)).join("")}
+    </section>
+    <section class="hint-card">
+      <h2>${tr("blockers")}</h2>
+      <p>${tx(projections[0].problem)}</p>
     </section>
   `);
 }
 
 function workbenchView() {
   return shell(`
-    <section class="page-title">
+    <section class="page-head compact">
       <span>Work Queue</span>
-      <h1>${t("workbench")}</h1>
+      <h1>${tr("passiveEntry")}</h1>
     </section>
-    ${metricRow()}
-    <section class="lane">
-      <h2>${t("todayWork")}</h2>
-      ${taskList()}
-    </section>
-    <section class="lane">
-      <h2>${t("blockedWork")}</h2>
-      ${workItem(data.objects[0])}
-    </section>
-    <section class="lane">
-      <h2>${t("recommended")}</h2>
-      ${workItem(data.objects[1])}
-    </section>
+    ${workLane("workFirst", [projections[0]])}
+    ${workLane("dueToday", [projections[1]])}
+    ${workLane("waitingConfirm", [projections[0]])}
+    ${workLane("newlyAssigned", [projections[1]])}
+    ${workLane("recent", projections)}
   `);
 }
 
 function objectView() {
-  const obj = selectedObject();
+  const item = currentObject();
   return shell(`
-    <section class="page-title">
-      <span>${t("objectWorkspace")}</span>
-      <h1>${text(obj.title)}</h1>
-    </section>
-    <section class="object-card">
-      <div>
-        <span>${t("objectSummary")}</span>
-        <strong>${obj.id}</strong>
-      </div>
-      <div>
-        <span>${t("currentState")}</span>
-        <strong>${t(obj.statusKey)}</strong>
-      </div>
-      <div>
-        <span>${t("blocker")}</span>
-        <strong>${text(obj.blocker)}</strong>
+    <section class="object-hero">
+      <span>${tr("objectWorkspace")} · ${tr(item.domainKey)}</span>
+      <h1>${tx(item.title)}</h1>
+      <p>${tx(item.subtitle)}</p>
+      <div class="status-strip">
+        <b>${tr(item.statusKey)}</b>
+        <span>${tr(item.priorityKey)}</span>
       </div>
     </section>
-    <section class="card">
-      <h2>${t("related")}</h2>
-      <p>${obj.domain === "domainAccommodation" ? "Room A301 · Deposit · Finance Gate" : "Asset AC-A301 · Technician · Inspection"}</p>
+    <section class="issue-card">
+      <span>${tr("currentProblem")}</span>
+      <strong>${tx(item.problem)}</strong>
+      <p>${tr("nextStep")}: ${tx(item.next)}</p>
     </section>
-    <section class="card">
-      <h2>${t("task")}</h2>
-      ${taskList(obj.id)}
+    <section class="section-block">
+      <h2>${tr("keyInfo")}</h2>
+      <div class="fact-list">${item.facts.map((fact) => factRow(fact)).join("")}</div>
     </section>
-    <section class="card">
-      <h2>${t("timeline")}</h2>
-      <ol class="timeline">
-        <li>${state.lang === "zh-CN" ? "对象已创建" : "Объект создан"}</li>
-        <li>${state.lang === "zh-CN" ? "进入当前任务" : "Открыта текущая задача"}</li>
-        <li>${state.lang === "zh-CN" ? "等待人工确认" : "Ожидает подтверждения"}</li>
-      </ol>
+    <section class="section-block">
+      <h2>${tr("availableTasks")}</h2>
+      ${taskRow(item)}
+    </section>
+    <section class="section-block">
+      <h2>${tr("related")}</h2>
+      <p>${tx(item.related)}</p>
+    </section>
+    <section class="section-block">
+      <h2>${tr("timeline")}</h2>
+      <ol class="timeline">${item.timeline[state.lang].map((step) => `<li>${step}</li>`).join("")}</ol>
     </section>
   `);
 }
 
 function taskView() {
-  const obj = selectedObject();
-  const task = selectedTask();
-  const steps = state.lang === "zh-CN" ? task.journey : task.journeyRu;
+  const item = currentObject();
+  const task = item.task;
+  const steps = task.journey[state.lang];
   return shell(`
-    <section class="page-title">
-      <span>${t("taskSurface")}</span>
-      <h1>${text(task.title)}</h1>
+    <section class="task-head">
+      <span>${tr("taskSurface")} · ${tr(item.domainKey)}</span>
+      <h1>${tx(task.title)}</h1>
+      <p>${tx(item.title)} · ${tx(item.subtitle)}</p>
     </section>
-    <section class="context-bar">
-      <span>${t("contextBar")}</span>
-      <strong>${text(obj.title)}</strong>
-      <em>${t(obj.statusKey)}</em>
+    <section class="journey">${steps.map((step, index) => `<span class="${index === task.activeStep ? "current" : index < task.activeStep ? "done" : ""}">${step}</span>`).join("")}</section>
+    <section class="section-block">
+      <h2>${tr("checkBefore")}</h2>
+      <ul class="check-list">${task.checklist[state.lang].map((step) => `<li>${step}</li>`).join("")}</ul>
     </section>
-    <section class="journey-strip" aria-label="${t("journey")}">
-      ${steps.map((step, index) => `<span class="${index === task.activeStep ? "current" : index < task.activeStep ? "done" : ""}">${step}</span>`).join("")}
+    <section class="section-block">
+      <h2>${tr("actionInfo")}</h2>
+      ${task.fields.map((field) => inputField(field)).join("")}
     </section>
-    <section class="action-panel">
-      <h2>${t("actionPanel")}</h2>
-      <p>${text(task.action)}</p>
-      <label>
-        ${state.lang === "zh-CN" ? "金额 / 说明" : "Сумма / описание"}
-        <input value="${task.id === "task-deposit" ? "3000" : "A301"}" />
-      </label>
-      <button id="prepare-action">${t("prepareAction")}</button>
+    <section class="hint-card">
+      <h2>${tr("guidance")}</h2>
+      <p>${tx(task.risk)}</p>
+      <button data-view="help">${tr("help")}</button>
     </section>
-    <section class="guidance-dock">
-      <h2>${t("guidance")}</h2>
-      <p>${text(task.risk)}</p>
-      <button data-view="help">${t("help")}</button>
-      <button id="feedback">${t("feedback")}</button>
-    </section>
+    <div class="sticky-action">
+      <button id="confirmAction">${tr("confirm")}</button>
+    </div>
   `);
 }
 
 function confirmView() {
-  const task = selectedTask();
-  const obj = selectedObject();
+  const item = currentObject();
   return shell(`
-    <section class="confirm-sheet">
-      <span>${t("confirmAction")}</span>
-      <h1>${t("confirmTitle")}</h1>
-      <p>${t("confirmText")}</p>
-      <dl>
-        <dt>${t("objects")}</dt><dd>${text(obj.title)}</dd>
-        <dt>${t("task")}</dt><dd>${text(task.title)}</dd>
-        <dt>${t("guidance")}</dt><dd>${text(task.risk)}</dd>
-      </dl>
-      <button id="finish-action">${t("finish")}</button>
+    <section class="confirm-panel">
+      <span>${tr("confirm")}</span>
+      <h1>${tr("confirmTitle")}</h1>
+      <p>${tx(item.task.risk)}</p>
+      <div class="confirm-grid">
+        <div><span>${tr("objectWorkspace")}</span><strong>${tx(item.title)}</strong></div>
+        <div><span>${tr("owner")}</span><strong>${tx(item.owner)}</strong></div>
+        <div><span>${tr("nextStep")}</span><strong>${tx(item.next)}</strong></div>
+      </div>
+      <button id="finishAction">${tr("finish")}</button>
     </section>
   `);
 }
 
 function resultView() {
+  const item = currentObject();
   return shell(`
-    <section class="result-screen">
+    <section class="result-panel">
       <span>After Action</span>
-      <h1>${t("resultTitle")}</h1>
-      <p>${t("resultText")}</p>
-      <button data-view="object">${t("openObject")}</button>
-      <button data-view="workbench">${t("workbench")}</button>
+      <h1>${tr("resultTitle")}</h1>
+      <p>${tr("resultBody")}</p>
+      <button data-object="${item.id}" data-target="object">${tr("viewDetails")}</button>
+      <button data-view="workbench">${tr("workbench")}</button>
     </section>
   `);
 }
 
 function helpView() {
   return shell(`
-    <section class="page-title">
+    <section class="page-head compact">
       <span>Guidance Dock</span>
-      <h1>${t("help")}</h1>
+      <h1>${tr("help")}</h1>
     </section>
-    <section class="card">
-      <h2>${t("guidance")}</h2>
-      <p>${t("tutorialText")}</p>
-    </section>
-    <section class="card">
-      <h2>AI</h2>
-      <p>${t("aiBoundary")}</p>
-    </section>
-    <section class="card">
-      <h2>${t("stats")}</h2>
-      <p>${t("statsText")}</p>
-      <ul class="event-list">
-        ${data.events.slice(0, 5).map((event) => `<li>${event.eventType} · ${event.language}</li>`).join("") || "<li>no events yet</li>"}
-      </ul>
+    <section class="help-grid">
+      ${helpCard("helpWhy", projections[0].problem)}
+      ${helpCard("helpField", projections[0].next)}
+      ${helpCard("helpImpact", { "zh-CN": "押金影响入住，维修派工影响车辆停运和费用材料。", "ru-RU": "Депозит влияет на заселение, назначение ремонта влияет на простой авто и материалы расходов." })}
+      ${helpCard("AI", { "zh-CN": tr("aiBoundary"), "ru-RU": tr("aiBoundary") })}
     </section>
   `);
 }
 
-function objectList() {
-  return data.objects.map((obj) => workItem(obj)).join("");
+function workLane(labelKey, items) {
+  return `<section class="section-block"><h2>${tr(labelKey)}</h2>${items.map((item) => compactWorkItem(item)).join("")}</section>`;
 }
 
-function taskList(objectId) {
-  return data.tasks
-    .filter((task) => !objectId || task.objectId === objectId)
-    .map((task) => `
-      <article class="work-item">
-        <div>
-          <span>${t(data.objects.find((obj) => obj.id === task.objectId)?.domain || "domainAccommodation")}</span>
-          <strong>${text(task.title)}</strong>
-          <p>${text(task.risk)}</p>
-        </div>
-        <button data-task="${task.id}">${t("startTask")}</button>
-      </article>
-    `).join("");
+function compactWorkItem(item) {
+  return `<article class="compact-item">
+    <div><span>${tr(item.domainKey)} · ${tr(item.priorityKey)}</span><strong>${tx(item.title)}</strong><p>${tx(item.problem)}</p></div>
+    <button data-object="${item.id}" data-target="task">${tr("continueTask")}</button>
+  </article>`;
 }
 
-function workItem(obj) {
-  return `
-    <article class="work-item">
-      <div>
-        <span>${t(obj.domain)}</span>
-        <strong>${text(obj.title)}</strong>
-        <p>${text(obj.blocker)}</p>
-      </div>
-      <button data-object="${obj.id}">${t("openObject")}</button>
-    </article>
-  `;
+function objectRow(item) {
+  return `<article class="object-row">
+    <div><span>${tr(item.domainKey)}</span><strong>${tx(item.title)}</strong><p>${tx(item.subtitle)}</p></div>
+    <button data-object="${item.id}" data-target="object">${tr("viewDetails")}</button>
+  </article>`;
 }
 
-function metricRow() {
-  return `
-    <section class="metrics">
-      <div><span>${t("todayWork")}</span><strong>8</strong></div>
-      <div><span>${t("blockedWork")}</span><strong>3</strong></div>
-      <div><span>${t("waitingConfirm")}</span><strong>2</strong></div>
-    </section>
-  `;
+function taskRow(item) {
+  return `<article class="object-row task-row">
+    <div><span>${tr(item.statusKey)}</span><strong>${tx(item.task.title)}</strong><p>${tx(item.next)}</p></div>
+    <button data-object="${item.id}" data-target="task">${tr("continueTask")}</button>
+  </article>`;
+}
+
+function decisionCard(item) {
+  return `<article class="decision-card">
+    <div><span>${tr(item.domainKey)} · ${tr(item.statusKey)}</span><strong>${tx(item.title)}</strong><p>${tx(item.problem)}</p></div>
+    <button data-object="${item.id}" data-target="task">${tr(item.primaryActionKey)}</button>
+  </article>`;
+}
+
+function factRow(fact) {
+  const label = state.lang === "zh-CN" ? fact[0] : fact[2];
+  const value = state.lang === "zh-CN" ? fact[1] : fact[3];
+  return `<div><span>${label}</span><strong>${value}</strong></div>`;
+}
+
+function inputField(field) {
+  const labels = {
+    amount: tr("fieldAmount"),
+    note: tr("fieldNote"),
+    technician: tr("fieldTechnician"),
+    slot: tr("fieldSlot")
+  };
+  const values = {
+    amount: "3000 KGS",
+    note: state.lang === "zh-CN" ? "补交付款截图和收据编号" : "Добавить чек и номер квитанции",
+    technician: state.lang === "zh-CN" ? "Алексей Смирнов" : "Алексей Смирнов",
+    slot: "16:30"
+  };
+  return `<label class="field"><span>${labels[field]}</span><input value="${values[field] || ""}" /></label>`;
+}
+
+function helpCard(labelKey, body) {
+  return `<article class="hint-card"><h2>${tr(labelKey)}</h2><p>${tx(body)}</p></article>`;
 }
 
 function render() {
-  const views = {
-    home: homeView,
-    intent: intentView,
-    workbench: workbenchView,
-    object: objectView,
-    task: taskView,
-    confirm: confirmView,
-    result: resultView,
-    help: helpView
-  };
-
+  const views = { home: homeView, search: searchView, workbench: workbenchView, object: objectView, task: taskView, confirm: confirmView, result: resultView, help: helpView };
   document.documentElement.lang = state.lang;
   document.querySelector("#app").innerHTML = views[state.view]();
   bind();
 }
 
 function bind() {
-  document.querySelector("#lang-select")?.addEventListener("change", (event) => setLanguage(event.target.value));
-  document.querySelectorAll("[data-view]").forEach((button) => {
-    button.addEventListener("click", () => setView(button.dataset.view));
-  });
-  document.querySelectorAll("[data-object]").forEach((button) => {
-    button.addEventListener("click", () => selectObject(button.dataset.object));
-  });
-  document.querySelectorAll("[data-task]").forEach((button) => {
-    button.addEventListener("click", () => selectTask(button.dataset.task));
-  });
-  document.querySelector("#home-search-button")?.addEventListener("click", () => setView("intent"));
-  document.querySelector("#intent-search-button")?.addEventListener("click", () => track("search_submitted", { source: "intent" }));
-  document.querySelector("#prepare-action")?.addEventListener("click", () => {
-    track("action_prepared", { objectId: selectedObject().id, taskId: selectedTask().id });
-    setView("confirm");
-  });
-  document.querySelector("#finish-action")?.addEventListener("click", () => {
-    track("action_confirmed", { objectId: selectedObject().id, taskId: selectedTask().id });
-    setView("result");
-  });
-  document.querySelector("#feedback")?.addEventListener("click", () => {
-    track("feedback_opened", { objectId: selectedObject().id, taskId: selectedTask().id });
-    setView("help");
-  });
+  document.querySelector("#language")?.addEventListener("change", (event) => setLanguage(event.target.value));
+  document.querySelectorAll("[data-view]").forEach((node) => node.addEventListener("click", () => setView(node.dataset.view)));
+  document.querySelectorAll("[data-object]").forEach((node) => node.addEventListener("click", () => selectObject(node.dataset.object, node.dataset.target || "object")));
+  document.querySelectorAll("#searchNow").forEach((node) => node.addEventListener("click", () => {
+    state.query = document.querySelector("#query")?.value || "";
+    setView("search");
+  }));
+  document.querySelector("#confirmAction")?.addEventListener("click", () => setView("confirm"));
+  document.querySelector("#finishAction")?.addEventListener("click", () => setView("result"));
 }
 
 render();
-

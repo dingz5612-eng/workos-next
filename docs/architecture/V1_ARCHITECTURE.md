@@ -50,7 +50,7 @@ Docker Compose locally, low-cost VPS later
 
 ## Local Phase 0-1 Stack
 
-The current machine does not have Flutter SDK installed. Phase 0-1 therefore ships a mobile-first PWA UI shell so the UX can be evaluated immediately. The backend already targets .NET 10 LTS.
+The current machine does not have Flutter SDK installed. Phase 0-1 therefore ships a mobile-first PWA UI shell so the UX can be evaluated immediately. The backend targets .NET 10 LTS.
 
 This is not a change in target architecture. It is a bootstrapping choice:
 
