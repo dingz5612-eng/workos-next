@@ -214,6 +214,40 @@ Delete old code when a new model replaces it.
 
 Do not keep compatibility task pages, object pages, old scenario dictionaries, or duplicate help/search systems unless there is an explicit migration reason documented in the same commit.
 
+## 10A. Clean Baseline Gate
+
+The repository must not carry obsolete code, unused files, dead exports, stale
+demos, or legacy architecture paths into the current baseline.
+
+When a new model replaces an old model, the old implementation must be removed
+in the same change.
+
+Allowed temporary legacy code must have:
+
+- Explicit migration reason.
+- Owner.
+- Removal condition.
+- Target removal milestone.
+
+Clean baseline checks are owned by:
+
+```text
+scripts/clean-baseline.ps1
+```
+
+The clean baseline gate checks:
+
+- Unreferenced JavaScript files under `apps/mobile/src`.
+- Unused i18n keys.
+- Old architecture keywords and stale docs.
+- Forbidden legacy, obsolete, fallback, or mock-only file names.
+- Mock-only references from production runtime and mobile code.
+- Long-term unused CSS classes, with explicit allowlist only when a class is a
+  documented transitional style.
+
+Do not hide obsolete code by renaming it. Delete it, or document the temporary
+legacy exception with owner and removal milestone in the same change.
+
 Before committing, run a residual scan for:
 
 ```text
@@ -235,6 +269,7 @@ npm.cmd audit --audit-level=low
 dotnet build WorkOSNext.sln -c Release
 dotnet run --project tests\WorkOS.RuntimeContractTests\WorkOS.RuntimeContractTests.csproj -c Release
 pwsh ./scripts/guard-architecture.ps1
+pwsh ./scripts/clean-baseline.ps1
 node scripts/validate-contracts.mjs
 node scripts/validate-runtime-api.mjs
 node scripts/generate-contract-dtos.mjs --check
@@ -263,8 +298,8 @@ For backend runtime work, CI, idempotency, migrations, trusted actor identity,
 outbox worker processing, and configuration separation are mandatory.
 
 - CI must run backend build, frontend build, runtime contract tests, npm audit,
-  residual old-model scan, real API response contract validation, and
-  `git diff --check`.
+  residual old-model scan, clean baseline gate, real API response contract
+  validation, and `git diff --check`.
 - Confirm commands must use idempotency keys and must not write duplicate audit
   events for repeated submissions.
 - PostgreSQL schema changes must be versioned through migrations recorded in

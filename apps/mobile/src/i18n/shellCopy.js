@@ -22,19 +22,11 @@ export const shellCopy = {
     "globalReason": "住宿押金阻断入住，维修未诊断会影响车辆复运。",
     "globalImpact": "先补押金材料，再派维修诊断；两条线都不会自动执行关键动作。",
     "homeSearch": "熟悉系统？直接搜索",
-    "todayCard": "今日指挥卡",
-    "nowDo": "现在最该处理",
     "reason": "原因",
     "impact": "影响",
-    "nextUrgent": "下一件紧急任务",
-    "enterTask": "进入任务",
-    "open": "查看",
-    "continue": "继续处理",
     "activeSearch": "主动办理",
     "searchPlaceholder": "输入人、房间、车牌或业务动作",
     "bestNext": "最佳下一步",
-    "runnableTasks": "可办理任务",
-    "relatedObjects": "相关对象",
     "queueTitle": "被动任务队列",
     "filterMore": "展开",
     "filterLess": "收起",
@@ -51,8 +43,7 @@ export const shellCopy = {
     "waiting": "等待他人",
     "notes": "笔记",
     "reminders": "提醒",
-    "feedback": "反馈",
-    "tutorial": "教程"
+    "feedback": "反馈"
   },
   "ru-RU": {
     "app": "WorkOSNext",
@@ -77,19 +68,11 @@ export const shellCopy = {
     "globalReason": "Депозит блокирует заселение, ремонт без диагностики задержит возврат авто.",
     "globalImpact": "Сначала депозит, затем диагностика; критические действия не выполняются автоматически.",
     "homeSearch": "Знаете задачу? Ищите сразу",
-    "todayCard": "Командная карточка",
-    "nowDo": "Сейчас важно",
     "reason": "Причина",
     "impact": "Влияние",
-    "nextUrgent": "Следующая срочная задача",
-    "enterTask": "Задача",
-    "open": "Открыть",
-    "continue": "Продолжить",
     "activeSearch": "Активное действие",
     "searchPlaceholder": "Гость, комната, номер авто или действие",
     "bestNext": "Лучший следующий шаг",
-    "runnableTasks": "Доступные задачи",
-    "relatedObjects": "Связанные объекты",
     "queueTitle": "Пассивная очередь",
     "filterMore": "Еще",
     "filterLess": "Скрыть",
@@ -106,7 +89,6 @@ export const shellCopy = {
     "waiting": "Ждем",
     "notes": "Заметки",
     "reminders": "Напоминания",
-    "feedback": "Отзыв",
-    "tutorial": "Обучение"
+    "feedback": "Отзыв"
   }
 };

@@ -22,13 +22,11 @@ export const coachCopy = {
     "stageConfirm": "谁来确认",
     "stageAfter": "完成后进入什么状态",
     "stageNext": "下一步是什么",
-    "enterRelatedTask": "进入相关任务",
     "openRelatedObject": "打开相关对象",
     "coachHowToUse": "搜索后会直接高亮并展开相关闭环阶段；不再把知识拆成脱离业务的结果列表。",
     "quickStart": "快速上手",
     "sceneLearning": "场景学习",
     "roleLearning": "角色与边界",
-    "currentCapability": "当前系统能力",
     "aiCanDo": "AI 可以解释、推荐、总结和生成草稿。",
     "aiCannotDo": "AI 不能自动确认、扣费、退款、核销或关闭终态。"
   },
@@ -55,13 +53,11 @@ export const coachCopy = {
     "stageConfirm": "Кто подтверждает",
     "stageAfter": "Состояние после шага",
     "stageNext": "Следующий шаг",
-    "enterRelatedTask": "Открыть задачу",
     "openRelatedObject": "Открыть объект",
     "coachHowToUse": "Поиск сразу подсвечивает и раскрывает этап сценария; знания не отделены от бизнес-действия.",
     "quickStart": "Быстрый старт",
     "sceneLearning": "Сценарии",
     "roleLearning": "Роли и границы",
-    "currentCapability": "Текущие возможности",
     "aiCanDo": "AI объясняет, рекомендует, резюмирует и готовит черновики.",
     "aiCannotDo": "AI не подтверждает, не списывает, не возвращает деньги и не закрывает финальные статусы."
   }

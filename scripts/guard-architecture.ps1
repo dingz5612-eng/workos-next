@@ -59,6 +59,7 @@ Assert-Exists "docs/architecture/WORKOS_ENGINEERING_RULES.md"
 Assert-Exists "docs/architecture/WORKOS_BACKEND_RUNTIME_RULES.md"
 Assert-Exists "docs/architecture/WORKOS_FRONTEND_BOUNDARY_RULES.md"
 Assert-Exists "docs/architecture/WORKOS_CONTRACT_RULES.md"
+Assert-Exists "scripts/clean-baseline.ps1"
 
 $migrationFiles = Get-ChildItem "infra/db/migrations" -Filter "*.sql" -ErrorAction SilentlyContinue
 if (-not $migrationFiles -or $migrationFiles.Count -lt 3) {

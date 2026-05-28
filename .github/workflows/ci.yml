@@ -68,5 +68,9 @@ jobs:
         shell: pwsh
         run: ./scripts/guard-architecture.ps1
 
+      - name: Clean baseline gate
+        shell: pwsh
+        run: ./scripts/clean-baseline.ps1
+
       - name: Diff whitespace check
         run: git diff --check
