@@ -37,6 +37,18 @@ function Assert-MaxLines($path, $max, $message) {
   }
 }
 
+function Warn-OverLines($path, $max, $message) {
+  $lines = (Get-Content $path).Count
+  if ($lines -gt $max) {
+    Write-Warning "$message Current: $lines, warning threshold: $max, file: $path"
+  }
+}
+
+function Assert-LineBudget($path, $warn, $fail, $message) {
+  Warn-OverLines $path $warn "$message"
+  Assert-MaxLines $path $fail "$message"
+}
+
 Assert-Exists "docs/contracts/projection-contract.schema.json"
 Assert-Exists "docs/contracts/workos-runtime.openapi.json"
 Assert-Exists "docs/contracts/slice-manifest.json"
@@ -64,6 +76,7 @@ Assert-NoMatches @("apps/mobile/src/main.js") "confirmCard" "main.js must not ca
 Assert-NoMatches @("apps/mobile/src/controls/fieldControls.js") "房型|上/下铺|押金|币种|付款方式|客户|车辆|技师|工位" "fieldControls.js must consume field.ui contract metadata, not infer business rules from labels."
 Assert-NoMatches @("apps/mobile/src/views") "fetch|/api/" "View modules must not own API transport; use apiClient.js and operationRuntime.js."
 Assert-NoMatches @("apps/mobile/src/i18n.js") "RoomCreated|BedCreated|DepositEvidenceSubmitted|FinanceDepositConfirmed|CheckInConfirmed" "i18n.js must not own event contracts or business runtime definitions."
+Assert-NoMatches @("apps/mobile/src/i18n.js") "depositTask|repairTask|stayObject|repairObject|Flow|流程|闭环|押金|住宿单|维修" "i18n.js must not own demo business objects or process copy; use focused i18n modules or projection/i18n contracts."
 
 Assert-NoMatches @("services/core-api/WorkOS.Api/Runtime") "ai_confirmation_forbidden|role_confirmation_forbidden" "Role and AI confirmation policy denials must live outside Runtime in Slices/Policies/CardConfirmationPolicy."
 Assert-NoMatches @("services/core-api/WorkOS.Api/Runtime/PostgresProjectionStore.cs") "CardConfirmationPolicy|ProjectionTargets|ApplyEventToReadModel|PriorityFor|SearchText|SearchResult|RequiredRole" "Store classes must not own policy, projector, lens, or business contract rules."
@@ -172,9 +185,15 @@ foreach ($sliceModule in $requiredMigratedSliceModules) {
   Assert-Exists $sliceModule
 }
 
-Assert-NoMatches @("services/core-api/WorkOS.Api/Runtime/ProjectionRuntime.cs") "ApplyEventToReadModel|SearchText|SearchResult|PriorityFor" "ProjectionRuntime must stay a facade; keep projector, search, and lens logic in focused services."
+Assert-NoMatches @("services/core-api/WorkOS.Api/Runtime/ProjectionRuntime.cs") "ApplyEventToReadModel|SearchText|SearchResult|PriorityFor|select |insert into|update |delete from|schema_migrations|Migration|FieldUi|OptionSet|UiMetadata" "ProjectionRuntime must stay a facade; keep projector, search, SQL, migrations, and UI metadata in focused services."
 Assert-NoMatches @("services/core-api/WorkOS.Api/Runtime/PostgresProjectionStore.cs") "insert into runtime_sessions|insert into audit_events|outbox_messages|schema_migrations|NpgsqlConnection" "PostgresProjectionStore must stay a storage facade; keep session, event, outbox, and migration details in focused storage helpers."
+Assert-NoMatches @("services/core-api/WorkOS.Api/Runtime/PostgresProjectionStore.cs") "RequiredRole|ForbiddenForAi|BlockerRule|EventDefinition|FieldUi|OptionSet|ConfirmationPolicy|ProjectionTargets|ApplyEventToReadModel|PriorityFor|SearchText|SearchResult" "PostgresProjectionStore must not own business rules, projection rules, policy rules, lens ranking, or UI metadata."
 Assert-NoMatches @("services/core-api/WorkOS.Api/Runtime/ProjectionSeed.cs") "EvidenceRequirement|SystemCheck|EventDefinition|FieldUi|OptionSet|TermRu|FieldId" "ProjectionSeed must stay a seed assembler; keep evidence, checks, events, field UI, option sets, and terms in focused catalogs."
+
+Assert-LineBudget "apps/mobile/src/main.js" 800 800 "main.js must stay under the transition budget while moving toward a tiny composition shell."
+Assert-LineBudget "services/core-api/WorkOS.Api/Runtime/ProjectionRuntime.cs" 350 450 "ProjectionRuntime.cs exceeded the facade budget."
+Assert-LineBudget "services/core-api/WorkOS.Api/Runtime/PostgresProjectionStore.cs" 300 400 "PostgresProjectionStore.cs exceeded the composed-store budget."
+Assert-LineBudget "services/core-api/WorkOS.Api/Runtime/ProjectionSeed.cs" 400 500 "ProjectionSeed.cs exceeded the seed-assembler budget."
 
 Assert-MaxLines "apps/mobile/src/main.js" 250 "main.js must stay as a composition shell."
 Assert-MaxLines "services/core-api/WorkOS.Api/Runtime/ProjectionRuntime.cs" 180 "ProjectionRuntime must stay as a backend facade."

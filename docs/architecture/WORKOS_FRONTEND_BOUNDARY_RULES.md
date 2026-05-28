@@ -31,6 +31,10 @@ fetch(
 confirmCard
 ```
 
+`main.js` must stay under the 800-line transition budget and under the current
+stricter composition-shell guard. Do not raise the stricter guard without a
+documented migration reason.
+
 `main.js` must stay between 150 and 250 lines when the application grows; tiny
 composition-only versions may be shorter. It should only initialize state, read
 URL params through `appState.js`, hydrate the API, assemble routes, render, and
@@ -62,11 +66,13 @@ Ownership:
 Other guarded frontend hubs:
 
 - `controls/fieldControls.js` must render from `field.ui` metadata and must not
-  infer business behavior from labels.
+  infer business behavior from Chinese or Russian labels.
 - `i18n.js` is only the i18n composition manifest. Copy lives in focused modules
-  under `apps/mobile/src/i18n`.
+  under `apps/mobile/src/i18n`; demo business objects and process/flow copy do
+  not belong in the manifest.
 - `styles.css` is only the style import manifest. CSS lives in focused modules
-  under `apps/mobile/src/styles`.
+  under `apps/mobile/src/styles`; when a stylesheet grows beyond the guard
+  threshold, split it by page or surface.
 - Frontend API paths must come from generated contract artifacts under
   `apps/mobile/src/generated`, not hand-written endpoint strings in views or
   operation modules.

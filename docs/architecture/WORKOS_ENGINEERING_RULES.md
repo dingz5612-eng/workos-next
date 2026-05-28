@@ -123,6 +123,26 @@ If a function mixes data selection, business rules, and HTML generation, split i
 
 No file may become a multi-responsibility hub.
 
+The following hub boundaries are mandatory and enforced by
+`scripts/guard-architecture.ps1`:
+
+1. `main.js` only does composition. It must not contain view details, API
+   transport, business judgment, confirmation actions, field controls, or
+   learning-center rules.
+2. `ProjectionRuntime.cs` only acts as the runtime facade. It must not directly
+   own Lens, Auth, Projector, search text construction, SQL, migrations, or UI
+   metadata.
+3. `PostgresProjectionStore.cs` only acts as the composed `IProjectionStore`.
+   It must not directly accumulate every table operation or any business rule.
+4. `ProjectionSeed.cs` only assembles seed contracts. It must not permanently
+   carry all event, evidence, field UI, option-set, or terminology catalogs.
+5. `fieldControls.js` only consumes `field.ui` contract metadata. It must not
+   infer business behavior from Chinese labels.
+6. `i18n.js` is only the composition manifest. It must not carry demo business
+   objects, task names, or process/flow copy.
+7. `styles.css` is only the import manifest. If styles grow beyond the guarded
+   threshold, they must be split by page or surface under `apps/mobile/src/styles`.
+
 Frontend boundaries:
 
 - `main.js` only composes state, routing, render, and event binding.
@@ -150,6 +170,19 @@ Backend boundaries:
 - `ProjectionSeed` only assembles seed contracts. Evidence, events, checks,
   option sets, field UI, and bilingual terms live in focused catalogs.
 - New slice rules must live under slice modules, not shared runtime files.
+
+Guarded line budgets:
+
+```text
+ProjectionRuntime.cs: warn > 350 lines, fail > 450 lines.
+PostgresProjectionStore.cs: warn > 300 lines, fail > 400 lines.
+ProjectionSeed.cs: warn > 400 lines, fail > 500 lines.
+main.js: transition budget <= 800 lines, with current stricter facade budget <= 250 lines.
+```
+
+Current local budgets may be stricter than the transition budgets above. Do not
+relax a stricter budget unless the architecture rules are updated in the same
+commit with a concrete migration reason.
 
 ## 8. Business Completion Rules
 

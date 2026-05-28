@@ -49,7 +49,8 @@ Do not put new slice policy directly in `ProjectionRuntime`.
 
 `ProjectionRuntime` is a facade only. It may coordinate services under a lock,
 but it must not own lens ranking, search text construction, prepare/confirm
-policy details, session validation, or outbox projection rules.
+policy details, session validation, outbox projection rules, SQL, migrations,
+or UI metadata.
 
 `CardConfirmationPolicy` must live outside `Runtime`, currently under:
 
@@ -78,6 +79,19 @@ Other guarded backend hubs:
   UI, option sets, and bilingual terms live in focused contract catalogs.
 - Store classes must not contain slice policies, projector rules, lens ranking,
   search text construction, or action confirmation policy.
+- `PostgresProjectionStore.cs` must remain a composed store facade. It must not
+  grow back into a single class containing session, audit, outbox, behavior,
+  migration, and document SQL.
+
+Guarded backend line budgets:
+
+```text
+ProjectionRuntime.cs: warn > 350 lines, fail > 450 lines.
+PostgresProjectionStore.cs: warn > 300 lines, fail > 400 lines.
+ProjectionSeed.cs: warn > 400 lines, fail > 500 lines.
+```
+
+The repository may enforce stricter budgets after a split has already landed.
 
 Required storage boundaries:
 
