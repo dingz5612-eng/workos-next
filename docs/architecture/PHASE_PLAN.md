@@ -118,3 +118,10 @@
 - Personalized ranking.
 - Model versioning.
 - Default-rule fallback.
+
+## Standing Engineering Rules
+
+- All future work must follow `docs/architecture/WORKOS_ENGINEERING_RULES.md`.
+- Backend contract drafts must follow `docs/architecture/WORKSPACE_CARD_BACKEND_CONTRACT.md`.
+- `IntentWorkspaceProjection + WorkspaceCardProjection` is the single center model for frontend, backend, search, workbench, scenario coach, and AI.
+- Do not create separate page models, search models, learning models, or AI models for the same business behavior.

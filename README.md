@@ -4,6 +4,16 @@ Mobile-first, bilingual Business Work OS platform.
 
 V1.0 is not a hotel-only product. It is a platform shell for multiple business domains, starting with accommodation and maintenance as reference domains.
 
+## Engineering Rules
+
+All future tasks must follow:
+
+```text
+docs/architecture/WORKOS_ENGINEERING_RULES.md
+```
+
+The center model is `IntentWorkspaceProjection + WorkspaceCardProjection`. Do not create separate page, search, learning, or AI models for the same business behavior.
+
 ## Phase 0-1 Scope
 
 - Project scaffold.

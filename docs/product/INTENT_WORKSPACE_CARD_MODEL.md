@@ -56,6 +56,18 @@ Each card has:
 
 This supports user operation, backend DTO design, projection design, audit evidence, and later analytics.
 
+The active frontend contract is implemented in:
+
+```text
+apps/mobile/src/workspaceProjections.js
+```
+
+The backend DTO / Event / Projection draft is:
+
+```text
+docs/architecture/WORKSPACE_CARD_BACKEND_CONTRACT.md
+```
+
 ## Check-in Example
 
 `W-STAY-CHECKIN` is one workspace with five cards:
