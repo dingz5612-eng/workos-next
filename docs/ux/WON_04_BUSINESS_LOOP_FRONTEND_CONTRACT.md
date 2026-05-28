@@ -14,12 +14,20 @@ Home has three layers:
 
 The global card is cross-business. It must not represent only one domain.
 
-The local business cards currently cover:
+The local cards must be scenario flows, not module flows. They currently cover:
 
-- Accommodation closed loop.
-- Repair closed loop.
+- Accommodation check-in.
+- Accommodation checkout.
+- Room creation.
+- Bed creation.
+- Deposit exception.
+- Repair dispatch and diagnosis.
+- Repair inspection and close.
+- Vehicle creation.
 
-## Accommodation Loop
+## Accommodation Scenario Flows
+
+### Check-In Flow
 
 ```text
 Application approval
@@ -44,7 +52,60 @@ Human confirmation boundary:
 - Deposit confirmation.
 - Check-in confirmation.
 
-## Repair Loop
+### Checkout Flow
+
+```text
+Start checkout
+  -> room inspection
+  -> fee settlement
+  -> finance confirmation
+  -> release bed
+  -> close stay order
+```
+
+Frontend field model:
+
+- Stay order number.
+- Resident.
+- Room inspection result.
+- Fee settlement state.
+- Deposit refund state.
+
+### Room Creation Flow
+
+```text
+Building / zone
+  -> room number
+  -> room type and capacity
+  -> duplicate check
+  -> create room
+  -> create beds
+```
+
+### Bed Creation Flow
+
+```text
+Select room
+  -> bed number
+  -> bed type
+  -> price / inspection state
+  -> capacity check
+  -> create bed
+```
+
+### Deposit Exception Flow
+
+```text
+Find exception
+  -> locate stay order
+  -> submit corrected evidence
+  -> finance review
+  -> return to check-in
+```
+
+## Repair Scenario Flows
+
+### Dispatch And Diagnosis Flow
 
 ```text
 Repair request
@@ -73,6 +134,38 @@ Human confirmation boundary:
 - Fee confirmation.
 - Repair order close.
 
+### Inspection And Close Flow
+
+```text
+Submit inspection
+  -> responsible user checks
+  -> inspection passed
+  -> fee material
+  -> close repair order
+```
+
+### Vehicle Creation Flow
+
+```text
+Select customer
+  -> plate number
+  -> brand and model
+  -> VIN / engine number
+  -> duplicate check
+  -> create vehicle profile
+```
+
+### Repair Customer Creation Flow
+
+```text
+Customer name
+  -> contact person and phone
+  -> customer type
+  -> duplicate check
+  -> create customer
+  -> bind vehicle
+```
+
 ## Search Contract
 
 Home search and search page use the same intent behavior.
@@ -91,6 +184,8 @@ Search supports:
 - Need reminder and note persistence model.
 - Need audit event schema for every manual confirmation.
 - Need bilingual labels from one source instead of duplicated UI strings.
+- Need scenario flow definitions as backend seed data, not hard-coded page logic.
+- Need create-object flows before business flows, otherwise search-not-found cannot route cleanly.
 
 Final UX verdict for this package:
 

@@ -68,6 +68,12 @@
 
 ## WON-05: Search And Workbench Enhancement
 
+- Frontend business model is scenario-flow based:
+  - Object creation flows are first-class.
+  - Business handling flows are first-class.
+  - Exception handling flows are first-class.
+  - Home local cards show scenario flows, not large module loops.
+  - Search-not-found should route into creation flows.
 - Chinese/Russian search dictionaries.
 - Blocker search.
 - Help search.
