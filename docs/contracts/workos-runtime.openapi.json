@@ -46,6 +46,58 @@
         }
       }
     },
+    "/api/workspaces/{workspaceId}": {
+      "get": {
+        "parameters": [
+          { "name": "workspaceId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Single workspace projection" },
+          "404": { "description": "Workspace not found" }
+        }
+      }
+    },
+    "/api/bootstrap": {
+      "get": {
+        "responses": {
+          "200": { "description": "Development bootstrap payload" }
+        }
+      }
+    },
+    "/api/work-queue": {
+      "get": {
+        "responses": {
+          "200": { "description": "Workbench queue lens" }
+        }
+      }
+    },
+    "/api/search": {
+      "get": {
+        "parameters": [
+          { "name": "q", "in": "query", "required": false, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Search lens results" }
+        }
+      }
+    },
+    "/api/lenses/work-queue": {
+      "get": {
+        "responses": {
+          "200": { "description": "Workbench queue lens" }
+        }
+      }
+    },
+    "/api/lenses/search": {
+      "get": {
+        "parameters": [
+          { "name": "q", "in": "query", "required": false, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Search lens results" }
+        }
+      }
+    },
     "/api/workspaces/{workspaceId}/cards/{cardId}/prepare": {
       "post": {
         "parameters": [
@@ -78,6 +130,57 @@
           "200": { "description": "Confirmed or duplicate event" },
           "400": { "description": "Forbidden by confirmation policy" },
           "404": { "description": "Card not found" }
+        }
+      }
+    },
+    "/api/workspaces/{workspaceId}/events": {
+      "get": {
+        "parameters": [
+          { "name": "workspaceId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Audit events for one workspace" }
+        }
+      }
+    },
+    "/api/audit-events": {
+      "get": {
+        "responses": {
+          "200": { "description": "Audit event journal" }
+        }
+      }
+    },
+    "/api/outbox": {
+      "get": {
+        "responses": {
+          "200": { "description": "Outbox messages" }
+        }
+      }
+    },
+    "/api/projections/process-outbox": {
+      "post": {
+        "responses": {
+          "200": { "description": "Processes pending projection outbox messages" }
+        }
+      }
+    },
+    "/api/behavior-events": {
+      "get": {
+        "responses": {
+          "200": { "description": "Behavior event stream" }
+        }
+      },
+      "post": {
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/BehaviorEventRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Behavior event accepted" }
         }
       }
     },
@@ -137,6 +240,20 @@
           "pendingOutboxCount": { "type": "integer" },
           "behaviorEventCount": { "type": "integer" },
           "lastAuditEventAtUtc": { "type": ["string", "null"], "format": "date-time" }
+        }
+      },
+      "BehaviorEventRequest": {
+        "type": "object",
+        "required": ["eventType", "workspaceId", "cardId"],
+        "properties": {
+          "eventType": { "type": "string" },
+          "workspaceId": { "type": "string" },
+          "cardId": { "type": "string" },
+          "actorId": { "type": ["string", "null"] },
+          "payload": {
+            "type": "object",
+            "additionalProperties": { "type": "string" }
+          }
         }
       }
     }

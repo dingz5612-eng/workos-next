@@ -21,7 +21,7 @@ export function shell(content, ctx) {
 
 function apiBanner({ state, tr }) {
   const label = state.apiStatus === "online" ? tr("apiOnline") : state.apiStatus === "checking" ? tr("apiChecking") : tr("apiOffline");
-  return `<section class="api-status ${state.apiStatus}"><span>${label}</span><small>${apiBaseUrl}</small>${state.apiStatus === "offline" ? `<button id="retryApi">${tr("retryApi")}</button>` : ""}</section>`;
+  return `<section class="api-status ${state.apiStatus}"><span>${label}</span><small>${apiBaseUrl()}</small>${state.apiStatus === "offline" ? `<button id="retryApi">${tr("retryApi")}</button>` : ""}</section>`;
 }
 
 function bottomNav(ctx) {

@@ -29,6 +29,14 @@ Assert-NoMatches @("docs") "local scaffold currently targets net9\.0" "Stale .NE
 Assert-NoMatches @("services") "obsolete|legacy|temp|fallback|mock-only" "Runtime services must not carry obsolete, legacy, temp, fallback, or mock-only code."
 Assert-NoMatches @("apps", "services", "tests") "mock-only" "Production runtime and mobile code must not reference mock-only files or flows."
 
+$solutionText = Get-Content "WorkOSNext.sln" -Raw
+$unreferencedProjects = Get-ChildItem -Recurse -Filter "*.csproj" -Path "services", "tests" |
+  Where-Object { $solutionText -notmatch [regex]::Escape($_.FullName.Replace((Get-Location).Path + "\", "")) }
+if ($unreferencedProjects) {
+  $unreferencedProjects | ForEach-Object { $_.FullName }
+  Fail "Every active .csproj under services or tests must be referenced by WorkOSNext.sln."
+}
+
 $legacyFileNames = Get-ChildItem -Recurse -File -Path "apps", "services", "tests" |
   Where-Object { $_.Name -match "(legacy|obsolete|deprecated|mock-only|fallback)" }
 if ($legacyFileNames) {
@@ -63,17 +71,28 @@ const jsFiles = walk(mobileRoot, (file) => file.endsWith(".js"));
 const entryFiles = new Set([
   path.normalize("apps/mobile/src/main.js")
 ]);
-const importedFiles = new Set(entryFiles);
+const importGraph = new Map();
 
 for (const file of jsFiles) {
   const source = fs.readFileSync(file, "utf8");
+  const imports = [];
   for (const match of source.matchAll(/import\s+(?:[^"']+?\s+from\s+)?["'](.+?)["']/g)) {
     const specifier = match[1];
     if (!specifier.startsWith(".")) continue;
     let target = path.normalize(path.join(path.dirname(file), specifier));
     if (!path.extname(target)) target += ".js";
-    if (fs.existsSync(target)) importedFiles.add(target);
+    if (fs.existsSync(target)) imports.push(target);
   }
+  importGraph.set(file, imports);
+}
+
+const importedFiles = new Set();
+const stack = [...entryFiles];
+while (stack.length > 0) {
+  const file = stack.pop();
+  if (importedFiles.has(file)) continue;
+  importedFiles.add(file);
+  for (const target of importGraph.get(file) || []) stack.push(target);
 }
 
 const unreferencedJs = jsFiles.filter((file) => !importedFiles.has(file));
@@ -121,6 +140,31 @@ const allowedUnusedCss = new Set([
 const unusedCssClasses = [...cssClasses].filter((className) => !appSource.includes(className) && !allowedUnusedCss.has(className));
 if (unusedCssClasses.length > 0) {
   fail("Unused CSS classes are not allowed unless explicitly allowlisted.", unusedCssClasses);
+}
+
+const csFiles = [
+  ...walk("services", (file) => file.endsWith(".cs")),
+  ...walk("tests", (file) => file.endsWith(".cs"))
+].filter((file) => !file.includes(`${path.sep}bin${path.sep}`) && !file.includes(`${path.sep}obj${path.sep}`));
+const csSource = csFiles.map((file) => fs.readFileSync(file, "utf8")).join("\n");
+const documentedSkeletonDirs = [
+  `${path.sep}Slices${path.sep}Accommodation${path.sep}ResourceSetup${path.sep}`,
+  `${path.sep}Slices${path.sep}Accommodation${path.sep}CheckIn${path.sep}`,
+  `${path.sep}Slices${path.sep}Repair${path.sep}Dispatch${path.sep}`
+];
+const unusedTypes = [];
+for (const file of csFiles) {
+  const source = fs.readFileSync(file, "utf8");
+  for (const match of source.matchAll(/\b(?:public|internal|file)?\s*(?:sealed\s+|abstract\s+|static\s+|partial\s+)*(class|record|interface|struct)\s+([A-Z][A-Za-z0-9_]*)/g)) {
+    const typeName = match[2];
+    const count = [...csSource.matchAll(new RegExp(`\\b${typeName}\\b`, "g"))].length;
+    const isDocumentedSliceSkeleton = documentedSkeletonDirs.some((dir) => file.includes(dir));
+    if (count <= 1 && !isDocumentedSliceSkeleton) unusedTypes.push(`${file}: ${typeName}`);
+  }
+}
+
+if (unusedTypes.length > 0) {
+  fail("Potentially unused C# types are not allowed outside documented slice skeletons.", unusedTypes);
 }
 
 console.log("Clean baseline JavaScript/i18n/CSS checks: PASS");

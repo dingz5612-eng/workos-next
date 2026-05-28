@@ -13,6 +13,11 @@ appState.js
 appShell.js
 appRouter.js
 eventBinder.js
+navigationController.js
+authController.js
+operationController.js
+queueController.js
+coachController.js
 apiClient.js
 operationRuntime.js
 operationDrafts.js
@@ -52,8 +57,20 @@ bind events.
 It must never own business judgment, field controls, API calls, confirmation
 actions, or learning-center rules.
 
+`eventBinder.js` is only the top-level DOM binding shell. It may attach event
+listeners and delegate to controllers, but it must not own auth flow, operation
+submit/draft collection, queue filtering, learning filters, navigation state
+rules, or derived-field updates.
+
 Ownership:
 
+- `navigationController.js` owns `setView`, onboarding, language changes,
+  workspace/card selection, and search navigation.
+- `authController.js` owns login and logout.
+- `operationController.js` owns operation drafts, operation value collection,
+  derived fields, and submit orchestration delegation.
+- `queueController.js` owns queue filter and sort state updates.
+- `coachController.js` owns learning-center filters and coach stage selection.
 - `views/workspaceView.js` owns workspace cards, operation panels, confirmation
   text, operation controls, operation values, and next-card display.
 - `views/coachView.js` owns learning center rendering and scenario coach

@@ -55,6 +55,11 @@ Assert-Exists "docs/contracts/slice-manifest.json"
 Assert-Exists "docs/contracts/policy-contract.json"
 Assert-Exists "apps/mobile/src/generated/workosContracts.d.ts"
 Assert-Exists "apps/mobile/src/generated/runtimeApiPaths.js"
+Assert-Exists "apps/mobile/src/authController.js"
+Assert-Exists "apps/mobile/src/navigationController.js"
+Assert-Exists "apps/mobile/src/operationController.js"
+Assert-Exists "apps/mobile/src/queueController.js"
+Assert-Exists "apps/mobile/src/coachController.js"
 Assert-Exists "docs/architecture/WORKOS_ENGINEERING_RULES.md"
 Assert-Exists "docs/architecture/WORKOS_BACKEND_RUNTIME_RULES.md"
 Assert-Exists "docs/architecture/WORKOS_FRONTEND_BOUNDARY_RULES.md"
@@ -74,6 +79,7 @@ Assert-NoMatches @("services/core-api/WorkOS.Api") "AllowAnyOrigin" "CORS must b
 Assert-NoMatches @("apps/mobile/src/main.js") "fetch\s*\(" "main.js must not contain direct fetch calls; use apiClient.js."
 Assert-NoMatches @("apps/mobile/src/main.js") "/api/" "main.js must not contain API paths; use apiClient.js."
 Assert-NoMatches @("apps/mobile/src/main.js") "confirmCard" "main.js must not call confirmCard directly; use operationRuntime.js."
+Assert-NoMatches @("apps/mobile/src/eventBinder.js") "loginActor|submitCardOperation|collectOperationValues|updateDerivedFields" "eventBinder.js must only bind top-level events; use focused controllers for auth, operations, and derived fields."
 Assert-NoMatches @("apps/mobile/src/controls/fieldControls.js") "房型|上/下铺|押金|币种|付款方式|客户|车辆|技师|工位" "fieldControls.js must consume field.ui contract metadata, not infer business rules from labels."
 Assert-NoMatches @("apps/mobile/src/views") "fetch|/api/" "View modules must not own API transport; use apiClient.js and operationRuntime.js."
 Assert-NoMatches @("apps/mobile/src/i18n.js") "RoomCreated|BedCreated|DepositEvidenceSubmitted|FinanceDepositConfirmed|CheckInConfirmed" "i18n.js must not own event contracts or business runtime definitions."
@@ -203,6 +209,7 @@ Assert-LineBudget "services/core-api/WorkOS.Api/Runtime/PostgresProjectionStore.
 Assert-LineBudget "services/core-api/WorkOS.Api/Runtime/ProjectionSeed.cs" 400 500 "ProjectionSeed.cs exceeded the seed-assembler budget."
 
 Assert-MaxLines "apps/mobile/src/main.js" 250 "main.js must stay as a composition shell."
+Assert-MaxLines "apps/mobile/src/eventBinder.js" 120 "eventBinder.js must stay as a top-level event binding shell."
 Assert-MaxLines "services/core-api/WorkOS.Api/Runtime/ProjectionRuntime.cs" 180 "ProjectionRuntime must stay as a backend facade."
 Assert-MaxLines "services/core-api/WorkOS.Api/Runtime/PostgresProjectionStore.cs" 140 "PostgresProjectionStore must stay as a storage facade."
 Assert-MaxLines "services/core-api/WorkOS.Api/Runtime/ProjectionSeed.cs" 80 "ProjectionSeed must stay as a seed assembler."
@@ -213,7 +220,10 @@ Assert-MaxLines "apps/mobile/src/styles.css" 40 "styles.css must stay as a style
 $program = Get-Content "services/core-api/WorkOS.Api/Program.cs" -Raw
 $openApi = Get-Content "docs/contracts/workos-runtime.openapi.json" -Raw | ConvertFrom-Json
 $requiredPaths = @(
+  "/health",
+  "/api/auth/login",
   "/api/workspaces",
+  "/api/workspaces/{workspaceId}",
   "/api/workspaces/{workspaceId}/cards/{cardId}/prepare",
   "/api/workspaces/{workspaceId}/cards/{cardId}/confirm",
   "/api/observability/runtime"
@@ -226,7 +236,10 @@ foreach ($path in $requiredPaths) {
 }
 
 $requiredEndpointPatterns = @(
+  'MapGet\("/health"',
+  'MapPost\("/api/auth/login"',
   'MapGet\("/api/workspaces"',
+  'MapGet\("/api/workspaces/\{workspaceId\}"',
   'MapPost\("/api/workspaces/\{workspaceId\}/cards/\{cardId\}/prepare"',
   'MapPost\("/api/workspaces/\{workspaceId\}/cards/\{cardId\}/confirm"',
   'MapGet\("/api/observability/runtime"'
@@ -246,11 +259,50 @@ $allowedMapPostPaths = @(
   "/api/behavior-events"
 )
 
+$allowedMapGetPaths = @(
+  "/",
+  "/health",
+  "/api/bootstrap",
+  "/api/workspaces",
+  "/api/workspaces/{workspaceId}",
+  "/api/work-queue",
+  "/api/search",
+  "/api/lenses/work-queue",
+  "/api/lenses/search",
+  "/api/workspaces/{workspaceId}/events",
+  "/api/audit-events",
+  "/api/outbox",
+  "/api/behavior-events",
+  "/api/observability/runtime"
+)
+
+$openApiPaths = @($openApi.paths.PSObject.Properties.Name)
+$mapGetMatches = [regex]::Matches($program, 'MapGet\("([^"]+)"')
+foreach ($match in $mapGetMatches) {
+  $path = $match.Groups[1].Value
+  if (-not $allowedMapGetPaths.Contains($path)) {
+    Fail "MapGet endpoint is not in the architecture allowlist: $path"
+  }
+  if ($path.StartsWith("/api/") -and -not $openApiPaths.Contains($path)) {
+    Fail "OpenAPI contract missing MapGet path: $path"
+  }
+}
+
 $mapPostMatches = [regex]::Matches($program, 'MapPost\("([^"]+)"')
 foreach ($match in $mapPostMatches) {
   $path = $match.Groups[1].Value
   if (-not $allowedMapPostPaths.Contains($path)) {
     Fail "MapPost endpoint is not in the architecture allowlist: $path"
+  }
+  if ($path.StartsWith("/api/") -and -not $openApiPaths.Contains($path)) {
+    Fail "OpenAPI contract missing MapPost path: $path"
+  }
+}
+
+$minimalApiPaths = @($mapGetMatches | ForEach-Object { $_.Groups[1].Value }) + @($mapPostMatches | ForEach-Object { $_.Groups[1].Value })
+foreach ($path in $openApiPaths) {
+  if (($path.StartsWith("/api/") -or $path -eq "/health") -and -not $minimalApiPaths.Contains($path)) {
+    Fail "OpenAPI path has no matching Minimal API endpoint: $path"
   }
 }
 

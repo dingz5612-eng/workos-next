@@ -146,6 +146,14 @@ The following hub boundaries are mandatory and enforced by
 Frontend boundaries:
 
 - `main.js` only composes state, routing, render, and event binding.
+- `eventBinder.js` only binds top-level DOM events to controllers. It must not
+  own login, logout, submit, draft collection, queue filtering, learning filter,
+  derived-field, or navigation logic.
+- Frontend controller responsibilities are split as:
+  `navigationController.js` for setView/onboarding/language/search navigation,
+  `authController.js` for login/logout, `operationController.js` for draft,
+  submit, and derived fields, `queueController.js` for queue filter/sort, and
+  `coachController.js` for learning-center filters and stage selection.
 - View rendering must live in focused modules under `apps/mobile/src/views`.
 - API transport must live only in `apiClient.js`.
 - Action submit/confirm orchestration must live only in `operationRuntime.js`.
@@ -178,6 +186,7 @@ ProjectionRuntime.cs: warn > 350 lines, fail > 450 lines.
 PostgresProjectionStore.cs: warn > 300 lines, fail > 400 lines.
 ProjectionSeed.cs: warn > 400 lines, fail > 500 lines.
 main.js: transition budget <= 800 lines, with current stricter facade budget <= 250 lines.
+eventBinder.js: <= 120 lines.
 ```
 
 Current local budgets may be stricter than the transition budgets above. Do not
@@ -238,8 +247,13 @@ scripts/clean-baseline.ps1
 The clean baseline gate checks:
 
 - Unreferenced JavaScript files under `apps/mobile/src`.
+- Unreferenced JavaScript files are checked by reachability from `main.js`, not
+  by loose import-name matching.
 - Unused i18n keys.
 - Old architecture keywords and stale docs.
+- `.csproj` files under `services` or `tests` that are not referenced by
+  `WorkOSNext.sln`.
+- Potentially unused C# types outside documented slice skeletons.
 - Forbidden legacy, obsolete, fallback, or mock-only file names.
 - Mock-only references from production runtime and mobile code.
 - Long-term unused CSS classes, with explicit allowlist only when a class is a
@@ -387,6 +401,11 @@ appState.js
 appShell.js
 appRouter.js
 eventBinder.js
+navigationController.js
+authController.js
+operationController.js
+queueController.js
+coachController.js
 apiClient.js
 operationRuntime.js
 operationDrafts.js
@@ -403,6 +422,10 @@ rules directly to `main.js`.
 `main.js` is a composition shell. It should not own page rendering, queue/search
 selectors, workspace card rendering, learning center explanations, field widget
 selection, draft collection, login flow, or submit flow.
+
+`eventBinder.js` is an event binding shell. It should only attach listeners and
+delegate to controllers. It must not import `apiClient.js`, call `loginActor`,
+call `submitCardOperation`, collect operation values, or update derived fields.
 
 Allowed `main.js` responsibilities are only:
 
