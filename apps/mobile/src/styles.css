@@ -197,6 +197,7 @@ dd {
 .next-card,
 .page-title,
 .search-box,
+.home-search,
 .scenario-list,
 .result-focus,
 .compact-section,
@@ -237,6 +238,16 @@ dd {
 
 .next-card button {
   margin-top: 12px;
+}
+
+.home-search {
+  display: grid;
+  gap: 9px;
+}
+
+.home-search > span {
+  color: #66788c;
+  font-size: 12px;
 }
 
 .search-line {
@@ -291,6 +302,101 @@ dd {
   color: #23384b;
   background: #fff;
   font-size: 13px;
+}
+
+.business-focus {
+  margin-top: 12px;
+}
+
+.business-focus h2 {
+  margin: 0 0 10px;
+  font-size: 22px;
+}
+
+.loop-card {
+  margin-top: 10px;
+  padding: 14px;
+  border: 1px solid #d9e7ee;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, .96);
+  box-shadow: 0 12px 28px rgba(17, 39, 55, .06);
+}
+
+.loop-card.stay {
+  border-color: #cfe3ff;
+  background: linear-gradient(135deg, #ffffff, #f4f9ff);
+}
+
+.loop-card.repair {
+  border-color: #b9ded8;
+  background: linear-gradient(135deg, #ffffff, #effaf7);
+}
+
+.loop-head {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+  align-items: center;
+}
+
+.loop-head span,
+.loop-meta span {
+  display: block;
+  color: #66788c;
+  font-size: 12px;
+}
+
+.loop-head strong {
+  display: block;
+  margin-top: 2px;
+  font-size: 20px;
+}
+
+.loop-head button {
+  color: #102033;
+  background: #eaf2f5;
+}
+
+.loop-card p {
+  margin-top: 8px;
+  color: #52677b;
+  font-size: 13px;
+}
+
+.loop-steps {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  margin-top: 12px;
+  padding-bottom: 2px;
+}
+
+.loop-steps span {
+  flex: 0 0 auto;
+  padding: 7px 10px;
+  border: 1px solid #d4e3eb;
+  border-radius: 999px;
+  color: #52677b;
+  background: #fff;
+  font-size: 12px;
+}
+
+.loop-steps .done {
+  color: #0b6f63;
+  background: #e6f8f2;
+}
+
+.loop-steps .current {
+  color: #102033;
+  background: #ffd166;
+  border-color: #ffd166;
+  font-weight: 850;
+}
+
+.loop-meta {
+  display: grid;
+  gap: 5px;
+  margin-top: 10px;
 }
 
 .task-card,
@@ -458,6 +564,34 @@ dd {
   font-weight: 850;
 }
 
+.field-grid {
+  display: grid;
+  gap: 8px;
+}
+
+.field-grid div {
+  display: grid;
+  grid-template-columns: 106px 1fr;
+  gap: 8px;
+  align-items: center;
+  padding: 10px;
+  border-radius: 14px;
+  background: #f1f7f9;
+}
+
+.field-grid span {
+  color: #66788c;
+  font-size: 12px;
+}
+
+.field-grid strong {
+  font-size: 14px;
+}
+
+.task-steps {
+  margin-top: 0;
+}
+
 .help-card {
   border-color: #b9ded8;
   background: #f0faf7;
@@ -478,13 +612,13 @@ dd {
 .feedback-fab {
   position: fixed;
   right: calc(50% - min(50%, 215px) + 12px);
-  top: 86px;
+  top: 92px;
   z-index: 2;
   min-height: 34px;
   border-radius: 999px;
   padding: 0 11px;
   color: #0b6f63;
-  background: #fff;
+  background: rgba(255, 255, 255, .92);
   border: 1px solid #d9e7ee;
   box-shadow: 0 10px 24px rgba(17, 39, 55, .12);
   font-size: 12px;

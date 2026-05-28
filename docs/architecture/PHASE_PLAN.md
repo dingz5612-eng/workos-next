@@ -54,6 +54,12 @@
 
 ## WON-04: Projection Worker
 
+- Backend work starts from the frontend closed-loop model:
+  - Accommodation must cover application, room/bed, stay order, deposit evidence, finance confirmation, and check-in.
+  - Repair must cover repair request, vehicle arrival, technician assignment, diagnosis, repair execution, inspection, fee material, and close.
+  - Home requires global command projection plus per-business local focus projection.
+  - Search must reuse the same intent function from home and search pages.
+  - Task pages must expose field models that can become backend DTOs.
 - Outbox.
 - Work item projection.
 - Search index projection.

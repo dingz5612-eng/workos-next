@@ -13,12 +13,24 @@ const i18n = {
     role: "运营经办人",
     start: "开始使用",
     skip: "跳过",
-    guideTitle: "四种工作模式",
-    guideBody: "先理解入口，再处理任务。WorkOSNext 不按页面找功能，而按工作方式进入。",
-    todayMode: "首页：今天先做什么",
-    intentMode: "搜索：我要找 / 我要办",
-    queueMode: "工作台：系统分配给我的任务",
-    personalMode: "我的：账号、笔记、提醒和反馈",
+    guideTitle: "先看判断，再办任务",
+    guideBody: "每天先看首页的判断；知道要找什么就直接搜索；系统派给你的事进工作台；自己的记录、提醒和反馈放在我的。",
+    todayMode: "首页：看全局优先级和每个业务最急的一件事",
+    intentMode: "搜索：用人、房间、车牌或动作直接进入业务",
+    queueMode: "工作台：只处理系统分配给你的被动任务",
+    personalMode: "我的：管理笔记、提醒、统计、语言和反馈",
+    globalCommand: "全局指挥",
+    globalCommandTitle: "今天先清两个阻断",
+    globalReason: "住宿押金阻断入住，维修未诊断会影响车辆复运。",
+    globalImpact: "先补押金材料，再派维修诊断；两条线都不会自动执行关键动作。",
+    homeSearch: "熟悉系统？直接搜索",
+    businessFocus: "业务局部闭环",
+    stayClosedLoop: "住宿闭环",
+    repairClosedLoop: "维修闭环",
+    fieldModel: "后端字段模型",
+    flowStage: "流程阶段",
+    evidence: "证据",
+    policy: "人工确认边界",
     todayCard: "今日指挥卡",
     nowDo: "现在最该处理",
     reason: "原因",
@@ -103,12 +115,24 @@ const i18n = {
     role: "Операционный сотрудник",
     start: "Начать",
     skip: "Пропустить",
-    guideTitle: "Четыре рабочих режима",
-    guideBody: "Сначала понять входы, затем выполнять задачи. WorkOSNext работает по режимам, а не по страницам.",
-    todayMode: "Главная: что делать сейчас",
-    intentMode: "Поиск: найти / выполнить",
-    queueMode: "Работа: назначенные задачи",
-    personalMode: "Мой: аккаунт, заметки, напоминания, отзыв",
+    guideTitle: "Сначала решение, затем задача",
+    guideBody: "Сначала смотрите решение на главной; если знаете, что нужно, ищите напрямую; назначенные задачи открывайте в работе; свои заметки и напоминания держите в моем разделе.",
+    todayMode: "Главная: общий приоритет и срочная задача по каждому бизнесу",
+    intentMode: "Поиск: вход по человеку, комнате, номеру авто или действию",
+    queueMode: "Работа: пассивные задачи, назначенные системой",
+    personalMode: "Мой: заметки, напоминания, статистика, язык и отзыв",
+    globalCommand: "Общее решение",
+    globalCommandTitle: "Сегодня снять две блокировки",
+    globalReason: "Депозит блокирует заселение, ремонт без диагностики задержит возврат авто.",
+    globalImpact: "Сначала депозит, затем диагностика; критические действия не выполняются автоматически.",
+    homeSearch: "Знаете задачу? Ищите сразу",
+    businessFocus: "Бизнес-циклы",
+    stayClosedLoop: "Цикл проживания",
+    repairClosedLoop: "Цикл ремонта",
+    fieldModel: "Поля для backend",
+    flowStage: "Этап",
+    evidence: "Доказательство",
+    policy: "Граница ручного подтверждения",
     todayCard: "Командная карточка",
     nowDo: "Сейчас важно",
     reason: "Причина",
@@ -228,6 +252,41 @@ const tasks = [
   }
 ];
 
+const businessLoops = {
+  stay: {
+    label: "stayClosedLoop",
+    taskId: "T-STAY-DEPOSIT",
+    stages: {
+      "zh-CN": ["申请审批", "选择房间床位", "创建住宿单", "押金材料", "财务确认", "办理入住"],
+      "ru-RU": ["Заявка", "Комната/койка", "Ордер", "Депозит", "Финансы", "Заселение"]
+    },
+    fields: [
+      ["住宿单号", "SO-20260528-001", "Ордер", "SO-20260528-001"],
+      ["入住人", "张三", "Гость", "Чжан Сан"],
+      ["房间/床位", "A301 / A301-02 下铺", "Комната/койка", "A301 / A301-02"],
+      ["押金凭证", "DEP-009 · 3000 KGS", "Депозит", "DEP-009 · 3000 KGS"]
+    ],
+    evidence: { "zh-CN": "付款截图、收据编号、财务确认记录", "ru-RU": "Чек, номер квитанции, фин. подтверждение" },
+    policy: { "zh-CN": "押金确认、入住确认必须人工确认。", "ru-RU": "Депозит и заселение подтверждает человек." }
+  },
+  repair: {
+    label: "repairClosedLoop",
+    taskId: "T-AUTO-DIAGNOSE",
+    stages: {
+      "zh-CN": ["报修", "车辆到场", "派工诊断", "维修执行", "验收", "费用材料", "关闭"],
+      "ru-RU": ["Заявка", "Прибыло", "Диагностика", "Ремонт", "Приемка", "Расходы", "Закрытие"]
+    },
+    fields: [
+      ["维修单号", "AR-20260528-004", "Заявка", "AR-20260528-004"],
+      ["车辆", "Toyota Camry · 01KG123ABC", "Авто", "Toyota Camry · 01KG123ABC"],
+      ["司机", "Иван Петров", "Водитель", "Иван Петров"],
+      ["诊断技师", "Алексей Смирнов · 16:30", "Механик", "Алексей Смирнов · 16:30"]
+    ],
+    evidence: { "zh-CN": "诊断记录、维修照片、验收签字、费用材料", "ru-RU": "Диагностика, фото ремонта, приемка, расходы" },
+    policy: { "zh-CN": "维修完成、费用确认、关闭维修单必须人工确认。", "ru-RU": "Завершение, расходы и закрытие подтверждает человек." }
+  }
+};
+
 const objects = {
   "SO-20260528-001": { title: "stayObject", domain: "stay", line: { "zh-CN": "张三 · A301 · A301-02 下铺", "ru-RU": "Чжан Сан · A301 · нижняя койка" } },
   "AR-20260528-004": { title: "repairObject", domain: "repair", line: { "zh-CN": "01KG123ABC · 司机 Иван Петров", "ru-RU": "01KG123ABC · водитель Иван Петров" } },
@@ -341,32 +400,36 @@ function onboardingView() {
 }
 
 function modeCard(view, key) {
-  return `<article><b>${tr(key)}</b><span>${tr(view)}</span></article>`;
+  return `<article><b>${tr(key)}</b></article>`;
 }
 
 function homeView() {
-  const primary = tasks[0];
-  const secondary = tasks[1];
   return shell(`
     <section class="command-card">
-      <span>${tr("todayCard")}</span>
-      <h1>${tr(primary.title)}</h1>
+      <span>${tr("globalCommand")}</span>
+      <h1>${tr("globalCommandTitle")}</h1>
       <dl>
-        <dt>${tr("reason")}</dt><dd>${tr(primary.problem)}</dd>
-        <dt>${tr("impact")}</dt><dd>${tx(primary.delay)}</dd>
+        <dt>${tr("reason")}</dt><dd>${tr("globalReason")}</dd>
+        <dt>${tr("impact")}</dt><dd>${tr("globalImpact")}</dd>
       </dl>
-      <button data-task="${primary.id}" data-target="task">${tr("enterTask")}</button>
+      <button data-view="workbench">${tr("workbench")}</button>
+    </section>
+    <section class="home-search">
+      <span>${tr("homeSearch")}</span>
+      <div class="search-line">
+        <input id="query" value="${state.query}" placeholder="${tr("searchPlaceholder")}" />
+        <button id="searchNow">${tr("search")}</button>
+      </div>
     </section>
     <section class="metric-grid">
       ${metric("7", "mine")}
       ${metric("2", "blocked")}
       ${metric("3", "confirm")}
     </section>
-    <section class="next-card">
-      <span>${tr("nextUrgent")}</span>
-      <strong>${tr(secondary.title)}</strong>
-      <p>${tr(secondary.problem)}</p>
-      <button data-task="${secondary.id}" data-target="task">${tr("continue")}</button>
+    <section class="business-focus">
+      <h2>${tr("businessFocus")}</h2>
+      ${businessLoopCard("stay")}
+      ${businessLoopCard("repair")}
     </section>
   `);
 }
@@ -401,6 +464,23 @@ function scenario(domain, actions) {
   return `<article class="scenario-card ${domain}">
     <h3>${tr(domain)}</h3>
     <div>${actions.map((key) => `<button data-scenario="${key}">${tr(key)}</button>`).join("")}</div>
+  </article>`;
+}
+
+function businessLoopCard(domain) {
+  const loop = businessLoops[domain];
+  const item = tasks.find((entry) => entry.id === loop.taskId);
+  return `<article class="loop-card ${domain}">
+    <div class="loop-head">
+      <div><span>${tr(loop.label)}</span><strong>${tr(item.title)}</strong></div>
+      <button data-task="${item.id}" data-target="task">${tr("continue")}</button>
+    </div>
+    <p>${tr(item.problem)}</p>
+    <div class="loop-steps">${loop.stages[state.lang].map((stage, index) => `<span class="${index < 3 ? "done" : index === 3 ? "current" : ""}">${stage}</span>`).join("")}</div>
+    <div class="loop-meta">
+      <span>${tr("evidence")}: ${tx(loop.evidence)}</span>
+      <span>${tr("policy")}: ${tx(loop.policy)}</span>
+    </div>
   </article>`;
 }
 
@@ -531,11 +611,20 @@ function personal(view, title, body) {
 
 function taskView() {
   const item = task();
+  const loop = businessLoops[item.domain];
   return shell(`
     <section class="task-page">
       <span>${tr(item.domain)} · ${item.due}</span>
       <h1>${tr(item.title)}</h1>
       <p>${tr(item.object)}</p>
+    </section>
+    <section class="compact-section">
+      <h2>${tr("flowStage")}</h2>
+      <div class="loop-steps task-steps">${loop.stages[state.lang].map((stage, index) => `<span class="${index < 3 ? "done" : index === 3 ? "current" : ""}">${stage}</span>`).join("")}</div>
+    </section>
+    <section class="compact-section">
+      <h2>${tr("fieldModel")}</h2>
+      <div class="field-grid">${loop.fields.map(fieldRow).join("")}</div>
     </section>
     <section class="compact-section">
       <h2>${tr("whyMe")}</h2>
@@ -557,9 +646,19 @@ function taskView() {
 
 function operationFields(item) {
   if (item.domain === "repair") {
-    return `<label><span>${tr("repair")}</span><input value="Алексей Смирнов · 16:30" /></label>`;
+    return `
+      <label><span>Technician</span><input value="Алексей Смирнов" /></label>
+      <label><span>Arrival slot</span><input value="2026-05-28 16:30" /></label>
+      <label><span>Vehicle status</span><input value="On site · not diagnosed" /></label>`;
   }
-  return `<label><span>${tr("finance")}</span><input value="3000 KGS · DEP-009" /></label>`;
+  return `
+    <label><span>Deposit evidence</span><input value="DEP-009 · 3000 KGS" /></label>
+    <label><span>Receipt number</span><input value="RCPT-20260528-009" /></label>
+    <label><span>Stay order</span><input value="SO-20260528-001 · A301-02" /></label>`;
+}
+
+function fieldRow(field) {
+  return `<div><span>${state.lang === "zh-CN" ? field[0] : field[2]}</span><strong>${state.lang === "zh-CN" ? field[1] : field[3]}</strong></div>`;
 }
 
 function objectView() {
@@ -659,7 +758,8 @@ function bind() {
   });
   document.querySelector("#searchNow")?.addEventListener("click", () => {
     state.query = document.querySelector("#query")?.value || "";
-    render();
+    state.view = "search";
+    render(true);
   });
   document.querySelectorAll("[data-filter-field]").forEach((node) => node.addEventListener("click", () => {
     state[node.dataset.filterField] = node.dataset.filterValue;
