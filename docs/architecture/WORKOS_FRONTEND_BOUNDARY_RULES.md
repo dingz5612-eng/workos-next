@@ -47,6 +47,15 @@ Ownership:
 - `controls/fieldControls.js` owns field widget selection from projection
   metadata.
 
+Other guarded frontend hubs:
+
+- `controls/fieldControls.js` must render from `field.ui` metadata and must not
+  infer business behavior from labels.
+- `i18n.js` must not become the long-term home for demo tasks, scenario
+  coaching, operation policy copy, or business object dictionaries.
+- `styles.css` must not become a style version of `main.js`; new major surfaces
+  should move toward focused style files or bounded sections.
+
 ## Field Runtime
 
 Writable fields must not be plain text by default.

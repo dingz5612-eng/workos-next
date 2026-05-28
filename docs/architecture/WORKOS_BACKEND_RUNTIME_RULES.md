@@ -62,6 +62,18 @@ AuthSessionService.cs
 OutboxProjector.cs
 ```
 
+Other guarded backend hubs:
+
+- `PostgresProjectionStore.cs` is a temporary aggregate store implementation.
+  It may implement `IProjectionStore`, but new storage responsibilities should
+  move toward focused helpers such as document, session, audit event, outbox,
+  behavior event, and migration storage.
+- `ProjectionSeed.cs` is a temporary contract seed assembler. As catalogs grow,
+  field UI, option sets, evidence, checks, events, and confirmation policies
+  must move into focused contract catalog classes.
+- Store classes must not contain slice policies, projector rules, lens ranking,
+  search text construction, or action confirmation policy.
+
 `docs/contracts/slice-manifest.json` is the executable slice registry. When a
 slice, card chain, event chain, or aggregate ownership changes, update the
 manifest in the same commit and keep the matching `services/core-api/WorkOS.Api/Slices/*`

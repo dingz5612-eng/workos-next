@@ -30,6 +30,13 @@ function Assert-NoMatches($paths, $pattern, $message, $excludePattern = $null) {
   }
 }
 
+function Assert-MaxLines($path, $max, $message) {
+  $lines = (Get-Content $path).Count
+  if ($lines -gt $max) {
+    Fail "$message Current: $lines, max: $max, file: $path"
+  }
+}
+
 Assert-Exists "docs/contracts/projection-contract.schema.json"
 Assert-Exists "docs/contracts/workos-runtime.openapi.json"
 Assert-Exists "docs/contracts/slice-manifest.json"
@@ -53,8 +60,12 @@ Assert-NoMatches @("services/core-api/WorkOS.Api") "AllowAnyOrigin" "CORS must b
 Assert-NoMatches @("apps/mobile/src/main.js") "fetch\s*\(" "main.js must not contain direct fetch calls; use apiClient.js."
 Assert-NoMatches @("apps/mobile/src/main.js") "/api/" "main.js must not contain API paths; use apiClient.js."
 Assert-NoMatches @("apps/mobile/src/main.js") "confirmCard" "main.js must not call confirmCard directly; use operationRuntime.js."
+Assert-NoMatches @("apps/mobile/src/controls/fieldControls.js") "房型|上/下铺|押金|币种|付款方式|客户|车辆|技师|工位" "fieldControls.js must consume field.ui contract metadata, not infer business rules from labels."
+Assert-NoMatches @("apps/mobile/src/views") "fetch|/api/" "View modules must not own API transport; use apiClient.js and operationRuntime.js."
+Assert-NoMatches @("apps/mobile/src/i18n.js") "RoomCreated|BedCreated|DepositEvidenceSubmitted|FinanceDepositConfirmed|CheckInConfirmed" "i18n.js must not own event contracts or business runtime definitions."
 
 Assert-NoMatches @("services/core-api/WorkOS.Api/Runtime/ProjectionRuntime.cs") "ai_confirmation_forbidden|role_confirmation_forbidden" "Role and AI confirmation policy denials must live in CardConfirmationPolicy."
+Assert-NoMatches @("services/core-api/WorkOS.Api/Runtime/PostgresProjectionStore.cs") "CardConfirmationPolicy|ProjectionTargets|ApplyEventToReadModel|PriorityFor|SearchText|SearchResult|RequiredRole" "Store classes must not own policy, projector, lens, or business contract rules."
 
 $requiredSliceDirs = @(
   "services/core-api/WorkOS.Api/Slices/Accommodation/ResourceSetup",
@@ -84,10 +95,13 @@ foreach ($runtimeService in $requiredRuntimeServices) {
 
 Assert-NoMatches @("services/core-api/WorkOS.Api/Runtime/ProjectionRuntime.cs") "ApplyEventToReadModel|SearchText|SearchResult|PriorityFor" "ProjectionRuntime must stay a facade; keep projector, search, and lens logic in focused services."
 
-$mainLines = (Get-Content "apps/mobile/src/main.js").Count
-if ($mainLines -gt 250) {
-  Fail "apps/mobile/src/main.js is $mainLines lines; main.js must stay as a 150-250 line composition shell."
-}
+Assert-MaxLines "apps/mobile/src/main.js" 250 "main.js must stay as a composition shell."
+Assert-MaxLines "services/core-api/WorkOS.Api/Runtime/ProjectionRuntime.cs" 180 "ProjectionRuntime must stay as a backend facade."
+Assert-MaxLines "services/core-api/WorkOS.Api/Runtime/PostgresProjectionStore.cs" 380 "PostgresProjectionStore is over the temporary store-hub budget; split storage helpers before adding more."
+Assert-MaxLines "services/core-api/WorkOS.Api/Runtime/ProjectionSeed.cs" 520 "ProjectionSeed is over the temporary seed-hub budget; split contract catalogs before adding more."
+Assert-MaxLines "apps/mobile/src/controls/fieldControls.js" 80 "fieldControls.js must stay a small contract-metadata renderer."
+Assert-MaxLines "apps/mobile/src/i18n.js" 430 "i18n.js is over the temporary dictionary budget; split copy modules before adding more."
+Assert-MaxLines "apps/mobile/src/styles.css" 1100 "styles.css is over the temporary stylesheet budget; split style modules before adding more."
 
 $program = Get-Content "services/core-api/WorkOS.Api/Program.cs" -Raw
 $openApi = Get-Content "docs/contracts/workos-runtime.openapi.json" -Raw | ConvertFrom-Json

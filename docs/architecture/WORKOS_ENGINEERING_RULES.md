@@ -119,6 +119,35 @@ If a function needs comments to explain several internal phases, split it.
 
 If a function mixes data selection, business rules, and HTML generation, split it.
 
+## 7A. Responsibility Boundary Rule
+
+No file may become a multi-responsibility hub.
+
+Frontend boundaries:
+
+- `main.js` only composes state, routing, render, and event binding.
+- View rendering must live in focused modules under `apps/mobile/src/views`.
+- API transport must live only in `apiClient.js`.
+- Action submit/confirm orchestration must live only in `operationRuntime.js`.
+- Field control rendering must consume contract metadata from `field.ui`; it
+  must not infer business rules from Chinese or Russian labels.
+- `i18n.js` is a temporary root dictionary. New large demo, coach, or operation
+  copy should move toward focused i18n/copy modules or projection/i18n
+  contracts.
+- `styles.css` is allowed as the current stylesheet only while guarded. New
+  major UI surfaces should move toward `styles/*` modules or clearly bounded
+  sections.
+
+Backend boundaries:
+
+- `ProjectionRuntime` is a facade, not the owner of lens queries, action
+  runtime, auth, projector, or policy.
+- Store classes persist and load data only; they must not own business rules,
+  projection rules, policy rules, or lens/search ranking.
+- `ProjectionSeed` only assembles seed contracts. Evidence, events, checks,
+  option sets, and field UI must move to focused catalogs as they grow.
+- New slice rules must live under slice modules, not shared runtime files.
+
 ## 8. Business Completion Rules
 
 Every accommodation and repair scenario must be able to answer:
