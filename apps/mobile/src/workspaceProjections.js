@@ -1,3 +1,5 @@
+import { fieldMetadata, localizedText } from "./projectionMetadata.js";
+
 export let intentWorkspaces = [
   workspaceModel("W-STAY-RESOURCE", "stay", "T-ROOM-CREATE",
     { "zh-CN": "我要创建住宿资源", "ru-RU": "Создать ресурсы проживания" },
@@ -136,15 +138,20 @@ function cardModel(id, status, zhTitle, ruTitle, system, business, analytics) {
 }
 
 function fieldProjection(label, layer) {
+  const type = fieldType(label, layer);
+  const source = fieldSource(label, layer);
+  const metadata = fieldMetadata(label, type, source);
   return {
     id: fieldId(label),
-    label: { "zh-CN": label, "ru-RU": label },
+    label: metadata.label,
     layer,
-    type: fieldType(label, layer),
+    type,
     required: layer !== "analytics",
-    source: fieldSource(label, layer),
+    source,
     visibleToUser: layer === "business",
-    analyticsKey: layer === "analytics" ? label : ""
+    analyticsKey: layer === "analytics" ? label : "",
+    ui: metadata.ui,
+    help: metadata.help
   };
 }
 
@@ -212,10 +219,11 @@ function evidenceRequirements(cardId) {
 function evidenceProjection(label) {
   return {
     id: fieldId(label),
-    label: { "zh-CN": label, "ru-RU": label },
+    label: localizedText(label),
     required: true,
     source: label.includes("照片") || label.includes("截图") || label.includes("凭证") ? "upload" : "record",
-    auditEventField: fieldId(label)
+    auditEventField: fieldId(label),
+    help: localizedText("提交前需要核对这项证据，确认后会进入审计事件。")
   };
 }
 

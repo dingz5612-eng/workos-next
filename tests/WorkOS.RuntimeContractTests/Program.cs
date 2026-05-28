@@ -170,6 +170,21 @@ static void ValidateProjectionEnvelopeAgainstContract(ProjectionEnvelope project
             AssertLocalized(card.Title, $"{card.Id} title");
             Assert(new[] { "notStarted", "ready", "blocked", "inProgress", "done" }.Contains(card.Status), $"{card.Id} status invalid");
             Assert(card.Fields.System.Count > 0 && card.Fields.Business.Count > 0 && card.Fields.Analytics.Count > 0, $"{card.Id} fields incomplete");
+            foreach (var field in card.Fields.Business)
+            {
+                AssertLocalized(field.Label, $"{card.Id}.{field.Id} field label");
+                AssertLocalized(field.Help, $"{card.Id}.{field.Id} field help");
+                Assert(!string.IsNullOrWhiteSpace(field.Ui.Control), $"{card.Id}.{field.Id} missing ui control");
+                if (field.Ui.Control is "select" or "searchSelect")
+                {
+                    Assert(field.Ui.Options.Count > 0, $"{card.Id}.{field.Id} selectable field missing contract options");
+                    Assert(field.Ui.Options.All(option => !string.IsNullOrWhiteSpace(option.Value)), $"{card.Id}.{field.Id} option missing value");
+                    foreach (var option in field.Ui.Options)
+                    {
+                        AssertLocalized(option.Label, $"{card.Id}.{field.Id} option {option.Value}");
+                    }
+                }
+            }
             Assert(card.Evidence.Count > 0, $"{card.Id} evidence missing");
             Assert(card.Checks.Count > 0, $"{card.Id} checks missing");
             Assert(card.Events.Count > 0, $"{card.Id} events missing");

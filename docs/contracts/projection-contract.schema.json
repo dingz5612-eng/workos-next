@@ -97,7 +97,7 @@
     },
     "field": {
       "type": "object",
-      "required": ["id", "label", "layer", "type", "required", "source", "visibleToUser", "analyticsKey"],
+      "required": ["id", "label", "layer", "type", "required", "source", "visibleToUser", "analyticsKey", "ui", "help"],
       "properties": {
         "id": { "type": "string", "minLength": 1 },
         "label": { "$ref": "#/$defs/localized" },
@@ -106,7 +106,32 @@
         "required": { "type": "boolean" },
         "source": { "type": "string" },
         "visibleToUser": { "type": "boolean" },
-        "analyticsKey": { "type": "string" }
+        "analyticsKey": { "type": "string" },
+        "ui": { "$ref": "#/$defs/fieldUi" },
+        "help": { "$ref": "#/$defs/localized" }
+      }
+    },
+    "fieldUi": {
+      "type": "object",
+      "required": ["control", "optionSet", "options", "defaultValue", "derivedFrom", "readonly"],
+      "properties": {
+        "control": { "type": "string" },
+        "optionSet": { "type": "string" },
+        "options": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/fieldOption" }
+        },
+        "defaultValue": { "type": "string" },
+        "derivedFrom": { "type": "string" },
+        "readonly": { "type": "boolean" }
+      }
+    },
+    "fieldOption": {
+      "type": "object",
+      "required": ["value", "label"],
+      "properties": {
+        "value": { "type": "string" },
+        "label": { "$ref": "#/$defs/localized" }
       }
     },
     "evidence": {
@@ -117,7 +142,8 @@
         "label": { "$ref": "#/$defs/localized" },
         "required": { "type": "boolean" },
         "source": { "type": "string" },
-        "auditEventField": { "type": "string" }
+        "auditEventField": { "type": "string" },
+        "help": { "$ref": "#/$defs/localized" }
       }
     },
     "systemCheck": {

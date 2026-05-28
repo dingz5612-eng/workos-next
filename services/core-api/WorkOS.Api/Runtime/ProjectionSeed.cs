@@ -134,11 +134,31 @@ public static class ProjectionSeed
         new TransitionDefinition($"{seed.Id}.prepared", $"{seed.Id}.confirmed", $"{seed.Id}.blocked"),
         Confirmation(seed.Id, seed.Status));
 
-    private static FieldProjection Field(string label, string layer) =>
-        new(FieldId(label), Text(label, label), layer, FieldType(label, layer), layer != "analytics", FieldSource(label, layer), layer == "business", layer == "analytics" ? label : string.Empty);
+    private static FieldProjection Field(string label, string layer)
+    {
+        var type = FieldType(label, layer);
+        var source = FieldSource(label, layer);
+        return new FieldProjection(
+            FieldId(label),
+            Text(label, TermRu(label)),
+            layer,
+            type,
+            layer != "analytics",
+            source,
+            layer == "business",
+            layer == "analytics" ? label : string.Empty,
+            FieldUi(label, type, source),
+            FieldHelp(label, type, source));
+    }
 
     private static IReadOnlyList<EvidenceRequirement> Evidence(string cardId) =>
-        EvidenceLabels(cardId).Select(label => new EvidenceRequirement(FieldId(label), Text(label, label), true, label.Contains("照片") || label.Contains("截图") || label.Contains("凭证") ? "upload" : "record", FieldId(label))).ToArray();
+        EvidenceLabels(cardId).Select(label => new EvidenceRequirement(
+            FieldId(label),
+            Text(label, TermRu(label)),
+            true,
+            label.Contains("照片") || label.Contains("截图") || label.Contains("凭证") ? "upload" : "record",
+            FieldId(label),
+            Text("提交前需要核对这项证据，确认后会进入审计事件。", "Проверьте это доказательство перед отправкой; после подтверждения оно попадет в аудит."))).ToArray();
 
     private static IReadOnlyList<SystemCheck> Checks(string cardId) =>
         CheckLabels(cardId).Select(label => new SystemCheck(FieldId(label), Text(label, label), "blocking", "pending")).ToArray();
@@ -232,6 +252,176 @@ public static class ProjectionSeed
 
     private static IReadOnlyDictionary<string, string> Text(string zhCn, string ruRu) =>
         new Dictionary<string, string> { ["zh-CN"] = zhCn, ["ru-RU"] = ruRu };
+
+    private static FieldUi FieldUi(string label, string type, string source)
+    {
+        var optionSet = OptionSet(label);
+        return new FieldUi(
+            Control(label, type, source),
+            optionSet,
+            Options(optionSet),
+            DefaultValue(label),
+            label == "容量" ? "房型" : string.Empty,
+            label == "容量" || type == "readonly");
+    }
+
+    private static IReadOnlyList<FieldOption> Options(string optionSet) =>
+        OptionValues(optionSet).Select(value => new FieldOption(value, Text(value, TermRu(value)))).ToArray();
+
+    private static IReadOnlyDictionary<string, string> FieldHelp(string label, string type, string source)
+    {
+        if (label == "容量") return Text("容量由房型自动带出，不需要手填。", "Вместимость заполняется по типу комнаты автоматически.");
+        if (Control(label, type, source) == "select") return Text("从合同给出的业务选项中选择。", "Выберите из вариантов, заданных контрактом.");
+        if (Control(label, type, source) == "searchSelect") return Text("从投影候选对象中搜索选择，不手写对象。", "Выберите объект из кандидатов проекции, не вводите вручную.");
+        if (Control(label, type, source) is "dateTime" or "dateTimeRange") return Text("使用日期时间控件，便于后端校验周期冲突。", "Используйте дату и время, чтобы backend мог проверить конфликты периода.");
+        if (Control(label, type, source) == "number") return Text("填写数值，提交后由系统检查规则。", "Введите число; система проверит правила после отправки.");
+        return Text("填写当前卡需要的业务信息。", "Заполните бизнес-данные для текущей карточки.");
+    }
+
+    private static string Control(string label, string type, string source)
+    {
+        if (label is "预计入住/退房" or "入住周期") return "dateTimeRange";
+        if (label == "容量") return "number";
+        if (type == "searchSelect" || source == "searchableProjection") return "searchSelect";
+        if (type == "select" || source == "optionSet") return "select";
+        if (type == "money") return "number";
+        if (type == "evidenceUpload") return "evidence";
+        if (type == "confirmation") return "select";
+        if (type == "readonly") return "readonly";
+        if (type == "dateTime") return "dateTime";
+        return "text";
+    }
+
+    private static string OptionSet(string label)
+    {
+        if (label.Contains("房型")) return "roomType";
+        if (label.Contains("上/下铺")) return "bunkType";
+        if (label.Contains("启用范围")) return "activationScope";
+        if (label.Contains("可用状态")) return "availability";
+        if (label.Contains("维护状态")) return "maintenance";
+        if (label.Contains("到账状态")) return "paymentStatus";
+        if (label.Contains("审批意见")) return "approvalDecision";
+        if (label.Contains("币种")) return "currency";
+        if (label.Contains("付款方式")) return "paymentMethod";
+        if (ContainsAny(label, "优先级", "紧急程度")) return "priority";
+        if (label.Contains("已审批申请")) return "approvedApplicationCandidates";
+        if (ContainsAny(label, "房间", "床位")) return "roomBedCandidates";
+        if (label.Contains("客户")) return "customerCandidates";
+        if (label.Contains("车辆")) return "vehicleCandidates";
+        if (label.Contains("技师")) return "technicianCandidates";
+        if (label.Contains("工位")) return "workbayCandidates";
+        if (ContainsAny(label, "确认", "关闭", "通过", "退回", "需人工沟通", "是否可派工")) return "genericConfirm";
+        return string.Empty;
+    }
+
+    private static IReadOnlyList<string> OptionValues(string optionSet) => optionSet switch
+    {
+        "roomType" => new[] { "单人间", "双人间", "四人间", "六人间" },
+        "bunkType" => new[] { "下铺", "上铺", "整床" },
+        "activationScope" => new[] { "当前床位", "当前房间全部床位" },
+        "availability" => new[] { "可分配", "暂不开放", "仅内部预留" },
+        "maintenance" => new[] { "检查通过", "待保洁", "待维修" },
+        "paymentStatus" => new[] { "已到账", "未到账", "金额不一致" },
+        "approvalDecision" => new[] { "通过", "退回补充", "需主管复核" },
+        "currency" => new[] { "KGS", "RUB", "USD" },
+        "paymentMethod" => new[] { "现金", "银行转账", "POS" },
+        "priority" => new[] { "高", "中", "低" },
+        "approvedApplicationCandidates" => new[] { "APP-2026-009 / 张三", "APP-2026-010 / Fleet Partner 01", "新审批申请" },
+        "roomBedCandidates" => new[] { "A301 / A301-02", "A302 / A302-01", "B201 / B201-03" },
+        "customerCandidates" => new[] { "张三汽修客户", "Fleet Partner 01", "新客户" },
+        "vehicleCandidates" => new[] { "Toyota Camry · 01KG123ABC", "Mercedes Sprinter · 01KG777", "新车辆" },
+        "technicianCandidates" => new[] { "Алексей Смирнов", "Иван Орлов", "维修主管分配" },
+        "workbayCandidates" => new[] { "2 号位", "1 号位", "等待空位" },
+        "genericConfirm" => new[] { "已确认", "待补充", "需要人工确认" },
+        _ => Array.Empty<string>()
+    };
+
+    private static string DefaultValue(string label) => label switch
+    {
+        "入住人" => "张三",
+        "房型" => "四人间",
+        "容量" => "4",
+        "上/下铺" => "下铺",
+        "启用范围" => "当前床位",
+        "可分配时间" => "2026-05-29T10:00",
+        "启用备注" => "检查通过，可进入分配池",
+        "房间床位" => "A301 / A301-02",
+        "押金金额" => "3000",
+        "币种" => "KGS",
+        "付款方式" => "现金",
+        "凭证编号" => "DEP-009",
+        "技师" => "Алексей Смирнов",
+        "工位" => "2 号位",
+        "预计开始时间" => "2026-05-29T16:30",
+        "到场时间" => "2026-05-29T15:40",
+        "车辆状态" => "已到场，待诊断",
+        "接车人" => "维修主管",
+        _ => string.Empty
+    };
+
+    private static string TermRu(string zhCn) => zhCn switch
+    {
+        "楼栋" => "Корпус",
+        "房间号" => "Номер комнаты",
+        "房型" => "Тип комнаты",
+        "容量" => "Вместимость",
+        "床位号" => "Номер койки",
+        "上/下铺" => "Верх/низ",
+        "价格规则" => "Тариф",
+        "检查状态" => "Проверка",
+        "启用范围" => "Объем активации",
+        "可分配时间" => "Время доступности",
+        "启用备注" => "Комментарий активации",
+        "入住人" => "Гость",
+        "入住原因" => "Причина",
+        "预计入住/退房" => "План въезда/выезда",
+        "审批意见" => "Решение",
+        "已审批申请" => "Одобренная заявка",
+        "房间床位" => "Комната/койка",
+        "入住周期" => "Период",
+        "押金/费用规则" => "Депозит/тариф",
+        "押金金额" => "Сумма депозита",
+        "币种" => "Валюта",
+        "付款方式" => "Способ оплаты",
+        "凭证编号" => "Номер документа",
+        "到账状态" => "Статус оплаты",
+        "确认金额" => "Подтвержденная сумма",
+        "退回原因" => "Причина возврата",
+        "财务确认人" => "Фин. проверяющий",
+        "实际入住时间" => "Фактическое заселение",
+        "钥匙/物品交接" => "Ключи/имущество",
+        "人工确认摘要" => "Ручное подтверждение",
+        "单人间" => "Одноместная",
+        "双人间" => "Двухместная",
+        "四人间" => "Четырехместная",
+        "六人间" => "Шестиместная",
+        "下铺" => "Нижняя",
+        "上铺" => "Верхняя",
+        "整床" => "Целая кровать",
+        "当前床位" => "Текущая койка",
+        "当前房间全部床位" => "Все койки комнаты",
+        "可分配" => "Доступно",
+        "暂不开放" => "Недоступно",
+        "仅内部预留" => "Внутренний резерв",
+        "检查通过" => "Проверка пройдена",
+        "待保洁" => "Ждет уборки",
+        "待维修" => "Ждет ремонта",
+        "已到账" => "Получено",
+        "未到账" => "Не получено",
+        "金额不一致" => "Сумма не совпадает",
+        "通过" => "Принять",
+        "退回补充" => "Вернуть на дополнение",
+        "需主管复核" => "Нужна проверка руководителя",
+        "现金" => "Наличные",
+        "银行转账" => "Банковский перевод",
+        "高" => "Высокий",
+        "中" => "Средний",
+        "低" => "Низкий",
+        "已确认" => "Подтверждено",
+        "待补充" => "Нужно дополнить",
+        "需要人工确认" => "Нужно ручное подтверждение",
+        _ => zhCn
+    };
 
     private static string FieldId(string label)
     {

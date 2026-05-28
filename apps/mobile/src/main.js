@@ -2,7 +2,7 @@ import "./styles.css";
 import { apiBaseUrl, checkHealth, fetchWorkspaceProjection, loginActor } from "./apiClient.js";
 import { learningDomainFilters, learningTypeFilters } from "./coachView.js";
 import { tasks } from "./demoQueue.js";
-import { capacityForRoomType, defaultValueForLabel, fieldControlKind, optionsForLabel } from "./fieldControls.js";
+import { capacityForRoomType, defaultValueForField, fieldControlKind, isDerivedReadonlyField, optionsForField } from "./fieldControls.js";
 import { i18n } from "./i18n.js";
 import { clearDraft, loadDraft, saveDraft } from "./operationDrafts.js";
 import { submitCardOperation } from "./operationRuntime.js";
@@ -92,8 +92,7 @@ function localList(items) {
 function localTerm(value, lang = state.lang) {
   if (value && typeof value === "object") {
     if (value.eventType) return value.eventType;
-    const raw = value.label?.["zh-CN"] || value.title?.["zh-CN"] || txFor(value.label || value.title || value, "zh-CN");
-    return lang === "zh-CN" ? raw : translateTerm(raw, lang) || txFor(value.label || value.title || value, lang);
+    return txFor(value.label || value.title || value, lang);
   }
 
   return translateTerm(value, lang);
@@ -545,20 +544,8 @@ function cardPurpose(card) {
 
 function cardFieldGuidance(card) {
   const hints = card.fields.business.map((field) => {
-    const label = localTerm(field, "zh-CN");
-    if (field.type === "searchSelect") {
-      return `${localTerm(field)}: ${tr("searchableSelect")}`;
-    }
-    if (field.type === "select" || field.source === "optionSet") {
-      return `${localTerm(field)}: ${state.lang === "zh-CN" ? "下拉选择" : "выбор из списка"}`;
-    }
-    if (field.type === "money") {
-      return `${localTerm(field)}: ${state.lang === "zh-CN" ? "金额字段，系统核对币种和规则" : "сумма, система проверит валюту и правило"}`;
-    }
-    if (field.type === "evidenceUpload") {
-      return `${localTerm(field)}: ${state.lang === "zh-CN" ? "提交或关联证据" : "прикрепите или свяжите доказательство"}`;
-    }
-    return `${localTerm(field)}${field.required && label ? "" : ""}`;
+    const help = tx(field.help);
+    return help ? `${localTerm(field)}: ${help}` : localTerm(field);
   });
   return hints.join(" · ");
 }
@@ -573,7 +560,7 @@ function cardJudgement(card) {
 
 function cardConfirmation(card) {
   if (card.status === "done") return tr("done");
-  return state.lang === "zh-CN" ? "关键动作需要人工确认，AI 只能生成草稿和解释原因。" : "Ключевое действие требует ручного подтверждения; AI только готовит черновик и объяснение.";
+  return `${tx(card.confirmation?.label || card.Confirmation?.label)} ${tr("aiCannotDo")}`;
 }
 
 function cardAfterState(card) {
@@ -700,27 +687,28 @@ function operationInputFields(card) {
 }
 
 function operationControl(field, item, card, disabled) {
-  const label = localTerm(field, "zh-CN");
   const value = operationValue(field, item, card);
-  const kind = fieldControlKind(label, field.type);
+  const kind = fieldControlKind(field);
+  const options = optionsForField(field, state.lang);
+  const help = tx(field.help);
   if (kind === "searchSelect") {
-    return `<label class="search-select"><span>${localTerm(field)} · ${tr("searchableSelect")}</span><input data-operation-field="${field.id}" list="${field.id}Options" value="${value}" ${disabled} /><datalist id="${field.id}Options">${optionsForLabel(label).map((entry) => `<option value="${entry}">`).join("")}</datalist></label>`;
+    return `<label class="search-select"><span>${localTerm(field)} · ${tr("searchableSelect")}</span><input data-operation-field="${field.id}" list="${field.id}Options" value="${value}" ${disabled} /><datalist id="${field.id}Options">${options.map((entry) => `<option value="${entry.value}" label="${entry.label}">`).join("")}</datalist>${help ? `<small>${help}</small>` : ""}</label>`;
   }
   if (kind === "select") {
-    return `<label><span>${localTerm(field)}</span><select data-operation-field="${field.id}" data-field-label="${label}" ${disabled}>${optionsForLabel(label).map((entry) => `<option ${entry === value ? "selected" : ""}>${entry}</option>`).join("")}</select></label>`;
+    return `<label><span>${localTerm(field)}</span><select data-operation-field="${field.id}" data-field-id="${field.id}" ${disabled}>${options.map((entry) => `<option value="${entry.value}" ${entry.value === value ? "selected" : ""}>${entry.label}</option>`).join("")}</select>${help ? `<small>${help}</small>` : ""}</label>`;
   }
   if (kind === "dateTimeRange") {
     const [start = "", end = ""] = String(value || "").split(" 至 ");
-    return `<label><span>${localTerm(field)}</span><div class="datetime-range"><input data-operation-field-start="${field.id}" type="datetime-local" value="${start}" ${disabled} /><input data-operation-field-end="${field.id}" type="datetime-local" value="${end}" ${disabled} /></div></label>`;
+    return `<label><span>${localTerm(field)}</span><div class="datetime-range"><input data-operation-field-start="${field.id}" type="datetime-local" value="${start}" ${disabled} /><input data-operation-field-end="${field.id}" type="datetime-local" value="${end}" ${disabled} /></div>${help ? `<small>${help}</small>` : ""}</label>`;
   }
   if (kind === "dateTime") {
-    return `<label><span>${localTerm(field)}</span><input data-operation-field="${field.id}" type="datetime-local" value="${value}" ${disabled} /></label>`;
+    return `<label><span>${localTerm(field)}</span><input data-operation-field="${field.id}" type="datetime-local" value="${value}" ${disabled} />${help ? `<small>${help}</small>` : ""}</label>`;
   }
   if (kind === "number") {
-    const readonly = label === "容量" ? "readonly data-derived-capacity" : "";
-    return `<label><span>${localTerm(field)}</span><input data-operation-field="${field.id}" data-field-label="${label}" inputmode="decimal" value="${value}" ${readonly} ${disabled} /></label>`;
+    const readonly = isDerivedReadonlyField(field) ? `readonly data-derived-from="${field.ui?.derivedFrom || ""}"` : "";
+    return `<label><span>${localTerm(field)}</span><input data-operation-field="${field.id}" data-field-id="${field.id}" inputmode="decimal" value="${value}" ${readonly} ${disabled} />${help ? `<small>${help}</small>` : ""}</label>`;
   }
-  return `<label><span>${localTerm(field)}</span><input data-operation-field="${field.id}" value="${value}" ${disabled} /></label>`;
+  return `<label><span>${localTerm(field)}</span><input data-operation-field="${field.id}" value="${value}" ${disabled} />${help ? `<small>${help}</small>` : ""}</label>`;
 }
 
 function operationValue(field, item, card) {
@@ -732,7 +720,7 @@ function operationValue(field, item, card) {
     const roomType = Object.entries(values).find(([, candidate]) => ["单人间", "双人间", "四人间", "六人间"].includes(candidate))?.[1] || "四人间";
     return capacityForRoomType(roomType);
   }
-  return defaultValueForLabel(label);
+  return defaultValueForField(field);
 }
 
 function nextCardTitle(card, item) {
@@ -823,8 +811,12 @@ function saveCurrentDraft() {
 }
 
 function updateDerivedFields() {
-  const roomType = document.querySelector('[data-field-label="房型"]')?.value;
-  const capacity = document.querySelector("[data-derived-capacity]");
+  const item = workspace();
+  const card = activeWorkspaceCard(item);
+  const roomTypeField = card?.fields?.business?.find((field) => field.ui?.optionSet === "roomType");
+  const capacityField = card?.fields?.business?.find((field) => field.ui?.derivedFrom === "房型");
+  const roomType = roomTypeField ? document.querySelector(`[data-operation-field="${roomTypeField.id}"]`)?.value : "";
+  const capacity = capacityField ? document.querySelector(`[data-operation-field="${capacityField.id}"]`) : null;
   if (roomType && capacity) {
     capacity.value = capacityForRoomType(roomType);
   }

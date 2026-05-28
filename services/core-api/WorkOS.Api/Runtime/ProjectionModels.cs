@@ -60,14 +60,29 @@ public sealed record FieldProjection(
     bool Required,
     string Source,
     bool VisibleToUser,
-    string AnalyticsKey);
+    string AnalyticsKey,
+    FieldUi Ui,
+    IReadOnlyDictionary<string, string> Help);
+
+public sealed record FieldUi(
+    string Control,
+    string OptionSet,
+    IReadOnlyList<FieldOption> Options,
+    string DefaultValue,
+    string DerivedFrom,
+    bool Readonly);
+
+public sealed record FieldOption(
+    string Value,
+    IReadOnlyDictionary<string, string> Label);
 
 public sealed record EvidenceRequirement(
     string Id,
     IReadOnlyDictionary<string, string> Label,
     bool Required,
     string Source,
-    string AuditEventField);
+    string AuditEventField,
+    IReadOnlyDictionary<string, string> Help);
 
 public sealed record SystemCheck(
     string Id,

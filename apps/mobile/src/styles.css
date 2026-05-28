@@ -895,6 +895,12 @@ dd {
   font-size: 12px;
 }
 
+.operation-inputs small {
+  color: rgba(255, 255, 255, .68);
+  font-size: 11px;
+  line-height: 1.35;
+}
+
 .evidence-row {
   display: flex;
   flex-wrap: wrap;
