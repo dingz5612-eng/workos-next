@@ -96,6 +96,10 @@
 - Scenario Semantic Model is the backend runtime target:
   - Objects, fields, states, tasks, actions, evidence, policy, analytics, and exceptions must be defined together.
   - `docs/product/SCENARIO_SEMANTIC_MODEL.md` is the current architecture source before seed data.
+- Semantic Action Surface is the task execution target:
+  - Task operation UI must be derived from the semantic model rather than a loose page form.
+  - Each task shows current action, system judgement, business fields, evidence, human confirmation, after state, and analytics hints.
+  - `docs/product/SEMANTIC_ACTION_SURFACE.md` defines the current frontend-to-backend action contract.
 - User habit profile.
 - Personalized ranking.
 - Model versioning.

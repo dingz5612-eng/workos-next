@@ -48,6 +48,18 @@ const i18n = {
     analyticsContract: "统计指标",
     exceptionBranches: "异常分支",
     systemJudgement: "系统判断",
+    semanticActionSurface: "语义操作区",
+    currentAction: "当前动作",
+    businessFields: "业务字段",
+    evidenceMaterials: "证据材料",
+    humanConfirmationSummary: "人工确认摘要",
+    afterState: "执行后状态",
+    analyticsHint: "统计埋点",
+    actionSurfaceLearning: "如何理解操作区",
+    actionSurfaceLearningBody: "操作区不是普通表单。先看系统判断，再核对业务字段和证据，最后由人确认关键动作；确认后才推进对象状态。",
+    actionSurfaceRule: "动作来自场景语义模型，页面只展示可办理、可解释、可审计的下一步。",
+    noCriticalBlocker: "当前没有新的系统阻断，但关键动作仍需要人工确认。",
+    confirmationDraft: "确认前请核对对象、金额、责任人、证据和影响范围。",
     flowStage: "流程阶段",
     evidence: "证据",
     policy: "人工确认边界",
@@ -184,6 +196,18 @@ const i18n = {
     analyticsContract: "Метрики",
     exceptionBranches: "Исключения",
     systemJudgement: "Системное решение",
+    semanticActionSurface: "Семантическая операция",
+    currentAction: "Текущее действие",
+    businessFields: "Бизнес-поля",
+    evidenceMaterials: "Материалы",
+    humanConfirmationSummary: "Ручное подтверждение",
+    afterState: "Статус после действия",
+    analyticsHint: "Метрики",
+    actionSurfaceLearning: "Как читать операцию",
+    actionSurfaceLearningBody: "Операция не является обычной формой. Сначала смотрите системное решение, затем поля и доказательства, после этого человек подтверждает критическое действие.",
+    actionSurfaceRule: "Действие строится из семантической модели сценария: доступный шаг должен быть понятным, проверяемым и аудируемым.",
+    noCriticalBlocker: "Новых системных блокировок нет, но критическое действие все равно подтверждает человек.",
+    confirmationDraft: "Перед подтверждением проверьте объект, сумму, ответственного, доказательства и влияние.",
     flowStage: "Этап",
     evidence: "Доказательство",
     policy: "Граница ручного подтверждения",
@@ -966,6 +990,18 @@ function learningView() {
         ${modeCard("me", "personalMode")}
       </div>
     </section>
+    <section class="compact-section action-learning">
+      <h2>${tr("actionSurfaceLearning")}</h2>
+      <p>${tr("actionSurfaceLearningBody")}</p>
+      <p>${tr("actionSurfaceRule")}</p>
+      <div class="surface-mini">
+        <span>${tr("systemJudgement")}</span>
+        <span>${tr("businessFields")}</span>
+        <span>${tr("evidenceMaterials")}</span>
+        <span>${tr("humanConfirmationSummary")}</span>
+        <span>${tr("afterState")}</span>
+      </div>
+    </section>
     <section class="compact-section">
       <h2>${tr("sceneLearning")}</h2>
       ${Object.entries(scenarioFlows).map(([key, flow]) => learningScenarioCard(key, flow)).join("")}
@@ -1006,6 +1042,7 @@ function taskView() {
       <h2>${tr("flowStage")}</h2>
       <div class="loop-steps task-steps">${loop.stages[state.lang].map((stage, index) => `<span class="${index < 3 ? "done" : index === 3 ? "current" : ""}">${stage}</span>`).join("")}</div>
     </section>
+    ${actionSurface(item, loop)}
     <section class="compact-section">
       <h2>${tr("fieldModel")}</h2>
       <div class="field-grid">${loop.fields.map(fieldRow).join("")}</div>
@@ -1027,10 +1064,6 @@ function taskView() {
       <h2>${tr("ifDelay")}</h2>
       <p>${tx(item.delay)}</p>
     </section>
-    <section class="compact-section">
-      <h2>${tr("operation")}</h2>
-      ${operationFields(item)}
-    </section>
     <section class="help-card">
       <span>${tr("guidance")}</span>
       <p>${tx(item.next)}</p>
@@ -1039,47 +1072,66 @@ function taskView() {
   `);
 }
 
+function actionSurface(item, flow) {
+  const action = actionName(item, flow);
+  const afterStates = flow.semantic.states.slice(-3);
+  const blockers = flow.semantic.exceptions.slice(0, 3);
+  const analytics = flow.semantic.analytics.slice(0, 3);
+
+  return `<section class="action-surface">
+    <div class="surface-title">
+      <span>${tr("semanticActionSurface")}</span>
+      <h2>${action}</h2>
+      <p>${tr("actionSurfaceRule")}</p>
+    </div>
+    <div class="action-grid">
+      <article class="action-panel primary">
+        <span>${tr("currentAction")}</span>
+        <strong>${action}</strong>
+        <p>${tx(item.next)}</p>
+      </article>
+      <article class="action-panel">
+        <span>${tr("systemJudgement")}</span>
+        <strong>${tr("noCriticalBlocker")}</strong>
+        <p>${blockers.join(" · ")}</p>
+      </article>
+      <article class="action-panel wide">
+        <span>${tr("businessFields")}</span>
+        <div class="action-fields">${operationFields(item, flow)}</div>
+      </article>
+      <article class="action-panel">
+        <span>${tr("evidenceMaterials")}</span>
+        <strong>${tx(flow.evidence)}</strong>
+      </article>
+      <article class="action-panel">
+        <span>${tr("humanConfirmationSummary")}</span>
+        <strong>${tx(flow.policy)}</strong>
+        <p>${tr("confirmationDraft")}</p>
+      </article>
+      <article class="action-panel">
+        <span>${tr("afterState")}</span>
+        <strong>${afterStates.join(" · ")}</strong>
+      </article>
+      <article class="action-panel">
+        <span>${tr("analyticsHint")}</span>
+        <strong>${analytics.join(" · ")}</strong>
+      </article>
+    </div>
+  </section>`;
+}
+
+function actionName(item, flow) {
+  const stage = flow.stages[state.lang][Math.min(3, flow.stages[state.lang].length - 1)];
+  return `${tr(item.title)} · ${stage}`;
+}
+
 function operationFields(item) {
-  if (item.flow === "roomCreation") {
-    return `
-      <label><span>Building / zone</span><input value="宿舍 A 栋" /></label>
-      <label><span>Room number</span><input value="A302" /></label>
-      <label><span>Capacity</span><input value="4" /></label>`;
-  }
-  if (item.flow === "bedCreation") {
-    return `
-      <label><span>Room</span><input value="A302" /></label>
-      <label><span>Bed number</span><input value="A302-01" /></label>
-      <label><span>Bed type</span><input value="下铺" /></label>`;
-  }
-  if (item.flow === "vehicleCreation") {
-    return `
-      <label><span>Customer</span><input value="张三汽修客户" /></label>
-      <label><span>Plate</span><input value="01KG999XYZ" /></label>
-      <label><span>VIN</span><input value="VIN-PENDING-009" /></label>`;
-  }
-  if (item.flow === "stayCheckout") {
-    return `
-      <label><span>Room inspection</span><input value="待检查" /></label>
-      <label><span>Fee settlement</span><input value="待核对" /></label>
-      <label><span>Deposit refund</span><input value="待财务确认" /></label>`;
-  }
-  if (item.flow === "repairClose") {
-    return `
-      <label><span>Inspection result</span><input value="待验收" /></label>
-      <label><span>Fee material</span><input value="待确认" /></label>
-      <label><span>Close policy</span><input value="人工确认" /></label>`;
-  }
-  if (item.domain === "repair") {
-    return `
-      <label><span>Technician</span><input value="Алексей Смирнов" /></label>
-      <label><span>Arrival slot</span><input value="2026-05-28 16:30" /></label>
-      <label><span>Vehicle status</span><input value="On site · not diagnosed" /></label>`;
-  }
-  return `
-    <label><span>Deposit evidence</span><input value="DEP-009 · 3000 KGS" /></label>
-    <label><span>Receipt number</span><input value="RCPT-20260528-009" /></label>
-    <label><span>Stay order</span><input value="SO-20260528-001 · A301-02" /></label>`;
+  const flow = scenarioFlows[item.flow];
+  return flow.fields.map((field) => {
+    const label = state.lang === "zh-CN" ? field[0] : field[2];
+    const value = state.lang === "zh-CN" ? field[1] : field[3];
+    return `<label><span>${label}</span><input value="${value}" /></label>`;
+  }).join("");
 }
 
 function fieldRow(field) {
