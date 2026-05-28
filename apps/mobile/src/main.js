@@ -1,9 +1,11 @@
 import "./styles.css";
+import { apiBaseUrl, checkHealth, fetchWorkspaceProjection, loginActor } from "./apiClient.js";
+import { learningDomainFilters, learningTypeFilters } from "./coachView.js";
 import { tasks } from "./demoQueue.js";
 import { i18n } from "./i18n.js";
+import { submitCardOperation } from "./operationRuntime.js";
+import { activeWorkspaceCard as resolveActiveWorkspaceCard, isCardActionDisabled } from "./workspaceView.js";
 import { intentWorkspaces, replaceIntentWorkspaces, workspaceIdForTask } from "./workspaceProjections.js";
-
-const apiBaseUrl = resolveApiBaseUrl();
 
 const state = {
   lang: localStorage.getItem("workosnext.lang") || "zh-CN",
@@ -54,14 +56,6 @@ if (state.view === "task" || state.view === "object") {
 }
 if (!state.currentActor && state.view !== "login") {
   state.view = "login";
-}
-
-function resolveApiBaseUrl() {
-  const envBaseUrl = import.meta.env.VITE_WORKOS_API_BASE_URL;
-  if (envBaseUrl) return envBaseUrl.replace(/\/$/, "");
-  const configured = localStorage.getItem("workosnext.apiBaseUrl");
-  if (configured) return configured.replace(/\/$/, "");
-  return `${window.location.protocol}//${window.location.hostname}:5180`;
 }
 
 function savedActor() {
@@ -558,9 +552,9 @@ function learningView() {
         <input id="learningQuery" value="${state.learningQuery}" placeholder="${tr("coachSearchPlaceholder")}" />
         <button id="learningSearch">${tr("search")}</button>
       </div>
-      <div class="filter-row">${learningDomainFilters()}</div>
+      <div class="filter-row">${learningDomainFilters({ state, tr })}</div>
       <span>${tr("coachPerspective")}</span>
-      <div class="filter-row">${learningTypeFilters()}</div>
+      <div class="filter-row">${learningTypeFilters({ state, tr })}</div>
     </section>
     <section class="compact-section">
       <h2>${tr("sceneLearning")}</h2>
@@ -582,20 +576,6 @@ function learningView() {
       <p>${tr("aiCannotDo")}</p>
     </section>
   `);
-}
-
-function learningDomainFilters() {
-  return ["all", "stay", "repair", "finance"].map((key) => {
-    const active = state.learningDomain === key ? "active" : "";
-    return `<button class="pill ${active}" data-learning-domain="${key}">${tr(key)}</button>`;
-  }).join("");
-}
-
-function learningTypeFilters() {
-  return ["coachAll", "coachHowTo", "coachFields", "coachException", "coachConfirm", "coachNext", "coachAi"].map((key) => {
-    const active = state.learningType === key ? "active" : "";
-    return `<button class="pill ${active}" data-learning-type="${key}">${tr(key)}</button>`;
-  }).join("");
 }
 
 function scenarioCoachEntries() {
@@ -756,7 +736,7 @@ function workspaceCardPanel(card, item, expanded = false) {
 }
 
 function cardOperation(card, item) {
-  const disabled = ["notStarted", "done"].includes(card.status) ? "disabled" : "";
+  const disabled = isCardActionDisabled(card) ? "disabled" : "";
   const visibleBlockers = card.blockerRules.length ? card.blockerRules : item.blockers;
   return `<div class="card-operation">
     <span>${tr("cardOperation")}</span>
@@ -913,12 +893,9 @@ function metric(value, label) {
 
 async function hydrateProjectionFromApi() {
   try {
-    const health = await fetch(`${apiBaseUrl}/health`, { signal: AbortSignal.timeout(1600) });
-    if (!health.ok) throw new Error("health_failed");
+    await checkHealth();
     state.apiStatus = "online";
-    const response = await fetch(`${apiBaseUrl}/api/workspaces`, { signal: AbortSignal.timeout(2400) });
-    if (!response.ok) throw new Error("projection_failed");
-    const payload = await response.json();
+    const payload = await fetchWorkspaceProjection();
     replaceIntentWorkspaces(payload.workspaces);
   } catch {
     state.apiStatus = "offline";
@@ -927,9 +904,7 @@ async function hydrateProjectionFromApi() {
 }
 
 function activeWorkspaceCard(item) {
-  const defaultIndex = item.cards.findIndex((card) => ["ready", "blocked", "inProgress"].includes(card.status));
-  const activeIndex = Number.isInteger(state.selectedCardIndex) && state.selectedCardIndex >= 0 ? state.selectedCardIndex : defaultIndex;
-  return item.cards[activeIndex >= 0 ? activeIndex : 0] || item.cards[0];
+  return resolveActiveWorkspaceCard(item, state.selectedCardIndex);
 }
 
 function collectOperationValues() {
@@ -947,7 +922,7 @@ function saveCurrentDraft() {
 async function submitCurrentCard() {
   const item = workspace();
   const card = activeWorkspaceCard(item);
-  if (!item || !card || ["notStarted", "done"].includes(card.status)) return;
+  if (!item || !card || isCardActionDisabled(card)) return;
   if (!state.currentActor) {
     state.loginMessage = tr("loginRequired");
     setView("login");
@@ -968,33 +943,14 @@ async function submitCurrentCard() {
   try {
     const actor = state.currentActor;
     const fieldValues = collectOperationValues();
-    const idempotencyKey = `${item.id}:${card.id}:${actor.actorId}`;
-    const prepareResponse = await fetch(`${apiBaseUrl}/api/workspaces/${item.id}/cards/${card.id}/prepare`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: "{}",
-      signal: AbortSignal.timeout(3200)
+    await submitCardOperation({
+      workspace: item,
+      card,
+      actor,
+      language: state.lang,
+      fieldValues,
+      onProjection: (payload) => replaceIntentWorkspaces(payload.workspaces)
     });
-    if (!prepareResponse.ok) throw new Error("prepare_failed");
-
-    const confirmResponse = await fetch(`${apiBaseUrl}/api/workspaces/${item.id}/cards/${card.id}/confirm`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "X-WorkOS-Actor-Token": actor.token
-      },
-      body: JSON.stringify({
-        language: state.lang,
-        idempotencyKey,
-        fieldValues,
-        evidenceIds: []
-      }),
-      signal: AbortSignal.timeout(4200)
-    });
-    if (!confirmResponse.ok) throw new Error("confirm_failed");
-
-    const result = await confirmResponse.json();
-    await waitForProjectionEvent(result.event.eventId);
     state.selectedCardIndex = -1;
     state.operationMessage = tr("submitDone");
   } catch {
@@ -1015,19 +971,15 @@ async function login() {
 
   const username = document.querySelector("#loginRole")?.value || "operator";
   const password = document.querySelector("#loginPassword")?.value || "dev";
-  const response = await fetch(`${apiBaseUrl}/api/auth/login`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ username, password }),
-    signal: AbortSignal.timeout(2400)
-  });
-  if (!response.ok) {
+  let session;
+  try {
+    session = await loginActor(username, password);
+  } catch {
     state.loginMessage = tr("loginFailed");
     render();
     return;
   }
 
-  const session = await response.json();
   state.currentActor = session;
   state.loginMessage = "";
   localStorage.setItem("workosnext.actorSession", JSON.stringify(session));
@@ -1039,26 +991,6 @@ function logout() {
   state.loginMessage = "";
   localStorage.removeItem("workosnext.actorSession");
   setView("login");
-}
-
-async function waitForProjectionEvent(eventId) {
-  for (let attempt = 0; attempt < 8; attempt += 1) {
-    const response = await fetch(`${apiBaseUrl}/api/workspaces`, { signal: AbortSignal.timeout(2400) });
-    if (response.ok) {
-      const payload = await response.json();
-      replaceIntentWorkspaces(payload.workspaces);
-      if ((payload.events || []).some((item) => item.eventId === eventId)) return;
-    }
-    await new Promise((resolve) => setTimeout(resolve, 250));
-  }
-}
-
-function actorRoleForCard(card) {
-  return ["finance", "checkoutFinance", "review", "feeMaterial"].includes(card.id) ? "finance" : "operator";
-}
-
-function actorIdForCard(card) {
-  return actorRoleForCard(card) === "finance" ? "u-finance" : "u-operator";
 }
 
 function render(scrollTop = false) {

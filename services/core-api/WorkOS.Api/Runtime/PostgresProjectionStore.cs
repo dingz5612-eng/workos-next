@@ -12,10 +12,12 @@ public sealed class PostgresProjectionStore : IProjectionStore
     };
 
     private readonly string connectionString;
+    private readonly string? migrationsPath;
 
-    public PostgresProjectionStore(string connectionString)
+    public PostgresProjectionStore(string connectionString, string? migrationsPath = null)
     {
         this.connectionString = connectionString;
+        this.migrationsPath = migrationsPath;
         RunMigrations();
     }
 
@@ -280,72 +282,10 @@ public sealed class PostgresProjectionStore : IProjectionStore
             """;
         bootstrap.ExecuteNonQuery();
 
-        ApplyMigration(connection, "001_runtime_core", """
-            create table if not exists runtime_documents (
-                id text primary key,
-                body jsonb not null,
-                updated_at_utc timestamptz not null
-            );
-
-            create table if not exists audit_events (
-                event_id text primary key,
-                idempotency_key text null unique,
-                workspace_id text not null,
-                card_id text not null,
-                event_type text not null,
-                actor_type text not null,
-                actor_id text not null,
-                occurred_at_utc timestamptz not null,
-                body jsonb not null
-            );
-
-            create index if not exists ix_audit_events_workspace on audit_events(workspace_id, occurred_at_utc);
-
-            create table if not exists outbox_messages (
-                message_id text primary key,
-                event_id text not null,
-                idempotency_key text null,
-                workspace_id text not null,
-                card_id text not null,
-                event_type text not null,
-                created_at_utc timestamptz not null,
-                processed_at_utc timestamptz null,
-                body jsonb not null
-            );
-
-            create index if not exists ix_outbox_pending on outbox_messages(processed_at_utc, created_at_utc);
-
-            create table if not exists behavior_events (
-                event_id text primary key,
-                event_type text not null,
-                object_type text null,
-                object_id text null,
-                language text not null,
-                source text null,
-                occurred_at_utc timestamptz not null,
-                body jsonb not null
-            );
-
-            create index if not exists ix_behavior_events_object on behavior_events(object_type, object_id, occurred_at_utc);
-            """);
-        ApplyMigration(connection, "002_runtime_sessions", """
-            create table if not exists runtime_sessions (
-                token text primary key,
-                user_id text not null,
-                issued_at_utc timestamptz not null,
-                expires_at_utc timestamptz not null,
-                body jsonb not null
-            );
-
-            create index if not exists ix_runtime_sessions_user on runtime_sessions(user_id, expires_at_utc);
-            """);
-        ApplyMigration(connection, "003_idempotency_columns", """
-            alter table audit_events add column if not exists idempotency_key text null;
-            create unique index if not exists ux_audit_events_idempotency_key
-                on audit_events(idempotency_key)
-                where idempotency_key is not null;
-            alter table outbox_messages add column if not exists idempotency_key text null;
-            """);
+        foreach (var migration in MigrationScriptLoader.Load(migrationsPath))
+        {
+            ApplyMigration(connection, migration.MigrationId, migration.Sql);
+        }
     }
 
     private static void ApplyMigration(NpgsqlConnection connection, string migrationId, string sql)

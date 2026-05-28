@@ -189,10 +189,61 @@ outbox worker processing, and configuration separation are mandatory.
 - Confirm commands must use idempotency keys and must not write duplicate audit
   events for repeated submissions.
 - PostgreSQL schema changes must be versioned through migrations recorded in
-  `schema_migrations`.
+  `schema_migrations`; migration SQL must live in `infra/db/migrations/*.sql`.
 - Backend actor identity must come from a server-issued session token, not from
   request body claims.
 - Confirmed audit events must produce outbox messages; projections must be
   updated by the outbox worker.
 - API URLs, connection strings, and poll intervals must be configuration-driven,
   not hard-coded for one local machine.
+- CORS must be restricted by `Cors:AllowedOrigins`; do not use `AllowAnyOrigin`.
+- Dev login must still verify a configured password hash; do not reintroduce
+  username-only authentication.
+
+## 14. Slice Ownership Rule
+
+Business work must be organized by production slice, not by page.
+
+Required slices:
+
+```text
+Accommodation.ResourceSetup
+Accommodation.CheckIn
+Accommodation.CheckOut
+Finance.DepositException
+Repair.Dispatch
+Repair.Close
+```
+
+Each slice owns Commands, Policies, Events, Projector Rules, Tests, and aggregate
+persistence tables when it mutates real objects. Do not put new slice policy in
+`ProjectionRuntime`; use focused policy classes such as `CardConfirmationPolicy`.
+
+## 15. Contract Drift Rule
+
+Projection and API shape must be treated as contracts.
+
+- Projection responses must converge on
+  `docs/contracts/projection-contract.schema.json`.
+- Runtime APIs must converge on `docs/contracts/workos-runtime.openapi.json`.
+- Frontend DTOs should be generated from contracts before more large workflows
+  are added.
+- Bilingual terminology should come from projection/i18n contracts; do not add
+  new hard-coded local term dictionaries unless it is a documented temporary
+  bridge.
+
+## 16. Frontend Boundary Rule
+
+`apps/mobile/src/main.js` is only the composition shell.
+
+New work must go into focused modules:
+
+```text
+apiClient.js
+operationRuntime.js
+workspaceView.js
+coachView.js
+```
+
+Do not add new fetch calls, action confirm logic, or learning-center business
+rules directly to `main.js`.

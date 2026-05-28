@@ -142,6 +142,7 @@ public enum ConfirmStatus
 {
     Confirmed,
     Duplicate,
+    Invalid,
     Forbidden,
     NotFound
 }

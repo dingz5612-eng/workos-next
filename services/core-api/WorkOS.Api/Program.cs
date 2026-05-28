@@ -1,21 +1,32 @@
 using WorkOS.Api.Runtime;
 
 var builder = WebApplication.CreateBuilder(args);
+var corsOptions = builder.Configuration.GetSection("Cors").Get<RuntimeCorsOptions>() ?? new RuntimeCorsOptions();
+if (corsOptions.AllowedOrigins.Length == 0)
+{
+    corsOptions = new RuntimeCorsOptions();
+}
 
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
         policy
+            .WithOrigins(corsOptions.AllowedOrigins)
             .AllowAnyHeader()
-            .AllowAnyMethod()
-            .AllowAnyOrigin();
+            .AllowAnyMethod();
     });
 });
 
 var connectionString = builder.Configuration.GetConnectionString("WorkOSRuntime")
     ?? "Host=localhost;Port=54329;Database=workosnext;Username=workosnext;Password=workosnext_dev";
-var runtime = ProjectionRuntime.OpenPostgres(connectionString);
+var authOptions = builder.Configuration.GetSection("Auth").Get<RuntimeAuthOptions>() ?? RuntimeAuthOptions.Development;
+if (authOptions.PasswordSha256ByUsername.Count == 0)
+{
+    authOptions = RuntimeAuthOptions.Development;
+}
+var migrationsPath = builder.Configuration["Migrations:Path"];
+var runtime = ProjectionRuntime.OpenPostgres(connectionString, authOptions, migrationsPath);
 builder.Services.AddSingleton(runtime);
 builder.Services.AddHostedService<ProjectionOutboxWorker>();
 
@@ -68,6 +79,7 @@ app.MapPost("/api/workspaces/{workspaceId}/cards/{cardId}/confirm", (string work
     return result.Status switch
     {
         ConfirmStatus.NotFound => Results.NotFound(new { error = "card_not_found", workspaceId, cardId }),
+        ConfirmStatus.Invalid => Results.BadRequest(new { error = "confirmation_invalid", result.Reason }),
         ConfirmStatus.Forbidden => Results.BadRequest(new { error = "confirmation_forbidden", result.Reason }),
         _ => Results.Ok(result.Payload)
     };

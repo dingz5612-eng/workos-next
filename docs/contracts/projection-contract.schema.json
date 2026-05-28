@@ -1,0 +1,187 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://workosnext.local/contracts/projection-contract.schema.json",
+  "title": "WorkOSNext Projection Contract",
+  "type": "object",
+  "required": ["projection", "version", "languages", "sourceOfTruth", "workspaces", "events"],
+  "properties": {
+    "projection": { "const": "IntentWorkspaceProjection" },
+    "version": { "type": "string" },
+    "languages": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 1
+    },
+    "sourceOfTruth": { "type": "string" },
+    "workspaces": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/workspace" }
+    },
+    "events": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/workspaceEvent" }
+    }
+  },
+  "$defs": {
+    "localized": {
+      "type": "object",
+      "required": ["zh-CN", "ru-RU"],
+      "properties": {
+        "zh-CN": { "type": "string", "minLength": 1 },
+        "ru-RU": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": { "type": "string" }
+    },
+    "workspace": {
+      "type": "object",
+      "required": ["projectionType", "id", "domain", "taskId", "title", "summary", "cards", "next", "blockers"],
+      "properties": {
+        "projectionType": { "const": "IntentWorkspace" },
+        "id": { "type": "string", "minLength": 1 },
+        "domain": { "type": "string", "minLength": 1 },
+        "taskId": { "type": "string", "minLength": 1 },
+        "title": { "$ref": "#/$defs/localized" },
+        "summary": { "$ref": "#/$defs/localized" },
+        "cards": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/card" },
+          "minItems": 1
+        },
+        "next": { "$ref": "#/$defs/localized" },
+        "blockers": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/blocker" }
+        }
+      }
+    },
+    "card": {
+      "type": "object",
+      "required": ["projectionType", "id", "status", "title", "fields", "evidence", "checks", "blockerRules", "events", "transitions", "confirmation"],
+      "properties": {
+        "projectionType": { "const": "WorkspaceCard" },
+        "id": { "type": "string", "minLength": 1 },
+        "status": { "enum": ["notStarted", "ready", "blocked", "inProgress", "done"] },
+        "title": { "$ref": "#/$defs/localized" },
+        "fields": { "$ref": "#/$defs/fieldSet" },
+        "evidence": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/evidence" },
+          "minItems": 1
+        },
+        "checks": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/systemCheck" },
+          "minItems": 1
+        },
+        "blockerRules": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/blocker" }
+        },
+        "events": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/eventDefinition" },
+          "minItems": 1
+        },
+        "transitions": { "$ref": "#/$defs/transitions" },
+        "confirmation": { "$ref": "#/$defs/confirmation" }
+      }
+    },
+    "fieldSet": {
+      "type": "object",
+      "required": ["system", "business", "analytics"],
+      "properties": {
+        "system": { "type": "array", "items": { "$ref": "#/$defs/field" }, "minItems": 1 },
+        "business": { "type": "array", "items": { "$ref": "#/$defs/field" }, "minItems": 1 },
+        "analytics": { "type": "array", "items": { "$ref": "#/$defs/field" }, "minItems": 1 }
+      }
+    },
+    "field": {
+      "type": "object",
+      "required": ["id", "label", "layer", "type", "required", "source", "visibleToUser", "analyticsKey"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "label": { "$ref": "#/$defs/localized" },
+        "layer": { "type": "string" },
+        "type": { "type": "string" },
+        "required": { "type": "boolean" },
+        "source": { "type": "string" },
+        "visibleToUser": { "type": "boolean" },
+        "analyticsKey": { "type": "string" }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "required": ["id", "label", "required", "source", "auditEventField"],
+      "properties": {
+        "id": { "type": "string" },
+        "label": { "$ref": "#/$defs/localized" },
+        "required": { "type": "boolean" },
+        "source": { "type": "string" },
+        "auditEventField": { "type": "string" }
+      }
+    },
+    "systemCheck": {
+      "type": "object",
+      "required": ["id", "label", "severity", "result"],
+      "properties": {
+        "id": { "type": "string" },
+        "label": { "$ref": "#/$defs/localized" },
+        "severity": { "type": "string" },
+        "result": { "type": "string" }
+      }
+    },
+    "blocker": {
+      "type": "object",
+      "required": ["id", "title", "ownerRole", "unblockAction"],
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "$ref": "#/$defs/localized" },
+        "ownerRole": { "type": "string" },
+        "unblockAction": { "$ref": "#/$defs/localized" }
+      }
+    },
+    "eventDefinition": {
+      "type": "object",
+      "required": ["eventType", "auditRequired", "projectionTargets"],
+      "properties": {
+        "eventType": { "type": "string" },
+        "auditRequired": { "type": "boolean" },
+        "projectionTargets": { "type": "array", "items": { "type": "string" }, "minItems": 1 }
+      }
+    },
+    "transitions": {
+      "type": "object",
+      "required": ["onPrepare", "onConfirm", "onBlock"],
+      "properties": {
+        "onPrepare": { "type": "string" },
+        "onConfirm": { "type": "string" },
+        "onBlock": { "type": "string" }
+      }
+    },
+    "confirmation": {
+      "type": "object",
+      "required": ["required", "forbiddenForAi", "requiredRole", "label"],
+      "properties": {
+        "required": { "type": "boolean" },
+        "forbiddenForAi": { "type": "boolean" },
+        "requiredRole": { "type": "string" },
+        "label": { "$ref": "#/$defs/localized" }
+      }
+    },
+    "workspaceEvent": {
+      "type": "object",
+      "required": ["eventId", "workspaceId", "cardId", "eventType", "actorType", "actorId", "occurredAtUtc", "payload", "projectionTargets"],
+      "properties": {
+        "eventId": { "type": "string" },
+        "workspaceId": { "type": "string" },
+        "cardId": { "type": "string" },
+        "eventType": { "type": "string" },
+        "actorType": { "type": "string" },
+        "actorId": { "type": "string" },
+        "occurredAtUtc": { "type": "string", "format": "date-time" },
+        "payload": { "type": "object", "additionalProperties": { "type": "string" } },
+        "projectionTargets": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}

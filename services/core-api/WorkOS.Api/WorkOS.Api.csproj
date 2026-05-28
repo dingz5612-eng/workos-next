@@ -10,4 +10,8 @@
     <PackageReference Include="Npgsql" Version="10.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Include="..\..\..\infra\db\migrations\*.sql" Link="infra\db\migrations\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
 </Project>

@@ -35,6 +35,7 @@ ResetPostgres(connectionString);
 
     var prepared = runtime.Prepare("W-STAY-RESOURCE", "room");
     Assert(prepared is not null, "prepare should return room card payload");
+    Assert(runtime.Login(new LoginRequest("operator", "wrong-password")) is null, "login must reject invalid password");
 
     var operatorToken = LoginToken(runtime, "operator");
     var financeToken = LoginToken(runtime, "finance");
@@ -42,6 +43,8 @@ ResetPostgres(connectionString);
 
     var missingToken = runtime.Confirm("W-STAY-CHECKIN", "finance", Human("missing-token-finance"), "");
     Assert(missingToken.Status == ConfirmStatus.Forbidden, "confirm must require a trusted backend session token");
+    var missingIdempotencyKey = runtime.Confirm("W-STAY-RESOURCE", "room", new ConfirmCardRequest("zh-CN", "", new Dictionary<string, string>(), Array.Empty<string>()), operatorToken);
+    Assert(missingIdempotencyKey.Status == ConfirmStatus.Invalid, "confirm must require idempotency key");
 
     var aiFinance = runtime.Confirm("W-STAY-CHECKIN", "finance", Human("ai-finance"), aiToken);
     Assert(aiFinance.Status == ConfirmStatus.Forbidden, "AI finance confirmation must be rejected");

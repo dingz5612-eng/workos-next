@@ -1,0 +1,112 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "WorkOSNext Runtime API",
+    "version": "0.13.0"
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Runtime health"
+          }
+        }
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/LoginRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Actor session issued" },
+          "401": { "description": "Invalid credentials" }
+        }
+      }
+    },
+    "/api/workspaces": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Projection envelope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "./projection-contract.schema.json"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/workspaces/{workspaceId}/cards/{cardId}/prepare": {
+      "post": {
+        "parameters": [
+          { "name": "workspaceId", "in": "path", "required": true, "schema": { "type": "string" } },
+          { "name": "cardId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Prepared card" },
+          "404": { "description": "Card not found" }
+        }
+      }
+    },
+    "/api/workspaces/{workspaceId}/cards/{cardId}/confirm": {
+      "post": {
+        "parameters": [
+          { "name": "workspaceId", "in": "path", "required": true, "schema": { "type": "string" } },
+          { "name": "cardId", "in": "path", "required": true, "schema": { "type": "string" } },
+          { "name": "X-WorkOS-Actor-Token", "in": "header", "required": true, "schema": { "type": "string" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ConfirmCardRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Confirmed or duplicate event" },
+          "400": { "description": "Forbidden by confirmation policy" },
+          "404": { "description": "Card not found" }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "LoginRequest": {
+        "type": "object",
+        "required": ["username", "password"],
+        "properties": {
+          "username": { "type": "string" },
+          "password": { "type": "string" }
+        }
+      },
+      "ConfirmCardRequest": {
+        "type": "object",
+        "required": ["language", "idempotencyKey", "fieldValues", "evidenceIds"],
+        "properties": {
+          "language": { "type": "string" },
+          "idempotencyKey": { "type": "string" },
+          "fieldValues": {
+            "type": "object",
+            "additionalProperties": { "type": "string" }
+          },
+          "evidenceIds": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
+        }
+      }
+    }
+  }
+}

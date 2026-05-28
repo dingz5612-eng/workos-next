@@ -4,15 +4,22 @@ public sealed class ProjectionRuntime
 {
     private readonly object gate = new();
     private readonly IProjectionStore store;
+    private readonly RuntimeAuthOptions authOptions;
+    private readonly CardConfirmationPolicy confirmationPolicy = new();
     private RuntimeState state;
 
-    private ProjectionRuntime(IProjectionStore store)
+    private ProjectionRuntime(IProjectionStore store, RuntimeAuthOptions authOptions)
     {
         this.store = store;
+        this.authOptions = authOptions;
         state = store.LoadOrSeed(ProjectionSeed.Create);
     }
 
-    public static ProjectionRuntime OpenPostgres(string connectionString) => new(new PostgresProjectionStore(connectionString));
+    public static ProjectionRuntime OpenPostgres(
+        string connectionString,
+        RuntimeAuthOptions? authOptions = null,
+        string? migrationsPath = null) =>
+        new(new PostgresProjectionStore(connectionString, migrationsPath), authOptions ?? RuntimeAuthOptions.Development);
 
     public ProjectionEnvelope GetAll()
     {
@@ -124,23 +131,24 @@ public sealed class ProjectionRuntime
             }
 
             var card = cards[cardIndex];
+            if (string.IsNullOrWhiteSpace(request.IdempotencyKey))
+            {
+                return new ConfirmResult(ConfirmStatus.Invalid, "Confirm requires an idempotency key.", null);
+            }
+
             var actor = store.FindUserBySessionToken(actorToken);
             if (actor is null)
             {
                 return new ConfirmResult(ConfirmStatus.Forbidden, "A valid actor session token is required for confirmation.", null);
             }
 
-            if (card.Confirmation.ForbiddenForAi && actor.Role.Equals("ai", StringComparison.OrdinalIgnoreCase))
+            var policyFailure = confirmationPolicy.Authorize(card, actor);
+            if (policyFailure is not null)
             {
-                return new ConfirmResult(ConfirmStatus.Forbidden, "AI can prepare and explain, but cannot confirm finance or terminal business actions.", null);
+                return policyFailure;
             }
 
-            if (!RoleCanConfirm(actor.Role, card.Confirmation.RequiredRole))
-            {
-                return new ConfirmResult(ConfirmStatus.Forbidden, $"Role {actor.Role} cannot confirm card {card.Id}; required role is {card.Confirmation.RequiredRole}.", null);
-            }
-
-            var idempotencyKey = request.IdempotencyKey ?? $"{workspaceId}:{cardId}:{actor.UserId}";
+            var idempotencyKey = request.IdempotencyKey;
             var existingEvent = store.FindEventByIdempotencyKey(idempotencyKey);
             if (existingEvent is not null)
             {
@@ -190,6 +198,13 @@ public sealed class ProjectionRuntime
             var user = state.Users.FirstOrDefault(item =>
                 item.Enabled &&
                 item.Username.Equals(request.Username, StringComparison.OrdinalIgnoreCase));
+
+            if (user is null ||
+                !authOptions.PasswordSha256ByUsername.TryGetValue(user.Username, out var passwordHash) ||
+                !RuntimePasswordHasher.Verify(request.Password, passwordHash))
+            {
+                return null;
+            }
 
             var session = user is null ? null : store.CreateSession(user);
             return user is null || session is null ? null : new
@@ -283,14 +298,6 @@ public sealed class ProjectionRuntime
             Blockers = cards.SelectMany(item => item.BlockerRules).ToArray()
         };
         state.Events.Add(workspaceEvent);
-    }
-
-    private static bool RoleCanConfirm(string actorRole, string requiredRole)
-    {
-        if (actorRole.Equals("admin", StringComparison.OrdinalIgnoreCase)) return true;
-        if (requiredRole.Equals("operator", StringComparison.OrdinalIgnoreCase) &&
-            actorRole.Equals("manager", StringComparison.OrdinalIgnoreCase)) return true;
-        return actorRole.Equals(requiredRole, StringComparison.OrdinalIgnoreCase);
     }
 
     private static CardProjection? CurrentCard(WorkspaceProjection workspace) =>

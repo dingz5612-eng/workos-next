@@ -44,14 +44,18 @@ Every production slice must preserve these six guarantees:
 - Idempotency guarantee: every confirm request carries an idempotency key; the
   backend must reject duplicate writes by returning the existing event result.
 - Migration guarantee: database schema changes are applied through ordered
-  migrations recorded in `schema_migrations`; do not rely on ad hoc manual DDL.
+  migrations from `infra/db/migrations/*.sql` recorded in
+  `schema_migrations`; do not rely on ad hoc manual DDL or C# string migrations.
 - Trusted actor guarantee: the backend identifies the actor from a server-issued
-  session token, not from self-declared request body fields.
+  session token and verified credentials, not from self-declared request body
+  fields.
 - Outbox Worker guarantee: confirmed audit events create outbox messages, and a
   worker processes pending messages into read models.
 - Configuration guarantee: local and deployed environments use configuration
   files or environment variables; do not hard-code deployment endpoints in UI or
   backend logic.
+- CORS guarantee: the API only accepts configured origins; no production runtime
+  may use wildcard browser origins.
 
 ## API Shape
 
@@ -131,6 +135,10 @@ Required persistence surfaces:
 - `audit_events`: confirmed business events.
 - `outbox_messages`: pending and processed projection messages.
 - `behavior_events`: UI and behavior telemetry.
+
+Upcoming aggregate persistence surfaces must be introduced per slice. Room, bed,
+deposit, finance confirmation, repair station, technician, and vehicle cannot
+remain projection-only once they become writable business objects.
 
 SQLite is not the target runtime persistence for WON-13. It may only be used for
 throwaway local experiments, not production slice work.
