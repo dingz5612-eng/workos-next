@@ -93,6 +93,14 @@ const i18n = {
     reminders: "提醒",
     feedback: "反馈",
     tutorial: "教程",
+    learningCenter: "学习中心",
+    learningCenterBody: "按工作模式和业务场景学习系统现在能做什么、为什么这样流转、哪些动作必须人工确认。",
+    quickStart: "快速上手",
+    sceneLearning: "场景学习",
+    roleLearning: "角色与边界",
+    currentCapability: "当前系统能力",
+    aiCanDo: "AI 可以解释、推荐、总结和生成草稿。",
+    aiCannotDo: "AI 不能自动确认、扣费、退款、核销或关闭终态。",
     stats: "统计",
     permission: "权限范围",
     commonSearch: "常用搜索",
@@ -213,6 +221,14 @@ const i18n = {
     reminders: "Напоминания",
     feedback: "Отзыв",
     tutorial: "Обучение",
+    learningCenter: "Учебный центр",
+    learningCenterBody: "Учитесь по режимам и сценариям: что система умеет, почему так идет процесс и где нужно ручное подтверждение.",
+    quickStart: "Быстрый старт",
+    sceneLearning: "Сценарии",
+    roleLearning: "Роли и границы",
+    currentCapability: "Текущие возможности",
+    aiCanDo: "AI объясняет, рекомендует, резюмирует и готовит черновики.",
+    aiCannotDo: "AI не подтверждает, не списывает, не возвращает деньги и не закрывает финальные статусы.",
     stats: "Статистика",
     permission: "Права",
     commonSearch: "Частый поиск",
@@ -822,8 +838,8 @@ function meView() {
     <section class="personal-grid">
       ${personal("notes", "noteTitle", "noteBody")}
       ${personal("reminders", "reminderTitle", "reminderBody")}
+      ${personal("learning", "learningCenter", "learningCenterBody")}
       ${personal("feedback", "feedbackTitle", "feedbackBody")}
-      ${personal("onboarding", "tutorial", "guideBody")}
     </section>
     <section class="compact-section">
       <h2>${tr(commonLabel())}</h2>
@@ -839,6 +855,46 @@ function commonLabel() {
 
 function personal(view, title, body) {
   return `<button class="personal-card" data-view="${view}"><strong>${tr(title)}</strong><span>${tr(body)}</span></button>`;
+}
+
+function learningView() {
+  return shell(`
+    <section class="profile-card">
+      <span>${tr("me")}</span>
+      <h1>${tr("learningCenter")}</h1>
+      <p>${tr("learningCenterBody")}</p>
+    </section>
+    <section class="compact-section">
+      <h2>${tr("quickStart")}</h2>
+      <div class="mode-list light">
+        ${modeCard("home", "todayMode")}
+        ${modeCard("search", "intentMode")}
+        ${modeCard("workbench", "queueMode")}
+        ${modeCard("me", "personalMode")}
+      </div>
+    </section>
+    <section class="compact-section">
+      <h2>${tr("sceneLearning")}</h2>
+      ${Object.entries(scenarioFlows).map(([key, flow]) => learningScenarioCard(key, flow)).join("")}
+    </section>
+    <section class="help-card">
+      <span>${tr("roleLearning")}</span>
+      <p>${tr("permission")}: ${tr("stay")} · ${tr("repair")} · ${tr("finance")}</p>
+      <p>${tr("aiCanDo")}</p>
+      <p>${tr("aiCannotDo")}</p>
+    </section>
+  `);
+}
+
+function learningScenarioCard(key, flow) {
+  return `<article class="learning-card">
+    <span>${tr(flow.category)}</span>
+    <strong>${tr(flow.label)}</strong>
+    <div class="loop-steps">${flow.stages[state.lang].map((stage) => `<span>${stage}</span>`).join("")}</div>
+    <p>${tr("fieldModel")}: ${flow.fields.map((field) => state.lang === "zh-CN" ? field[0] : field[2]).join(" · ")}</p>
+    <p>${tr("evidence")}: ${tx(flow.evidence)}</p>
+    <p>${tr("policy")}: ${tx(flow.policy)}</p>
+  </article>`;
 }
 
 function taskView() {
@@ -992,6 +1048,7 @@ function render(scrollTop = false) {
     object: objectView,
     notes: () => simpleView("noteTitle", "noteBody"),
     reminders: () => simpleView("reminderTitle", "reminderBody"),
+    learning: learningView,
     feedback: () => simpleView("feedbackTitle", "feedbackBody"),
     confirmPage: confirmPageView,
     result: resultView

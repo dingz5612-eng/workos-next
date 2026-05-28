@@ -81,6 +81,10 @@
 
 ## WON-06: AI Adapter
 
+- Learning Center and Review Manual are separate but share scenario language:
+  - End users read `Me -> Learning Center`.
+  - Builders use `docs/review/PROJECT_REVIEW_MANUAL.md`.
+  - `docs/product/SCENARIO_FLOW_CATALOG.md` is the temporary single knowledge source before backend seed data.
 - Intent parse adapter.
 - Help answer adapter.
 - Object summary adapter.

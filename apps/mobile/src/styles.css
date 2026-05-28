@@ -138,10 +138,19 @@ dd {
   margin: 16px 0;
 }
 
+.mode-list.light {
+  margin: 0;
+}
+
 .mode-list article {
   padding: 12px;
   border-radius: 16px;
   background: rgba(255, 255, 255, .12);
+}
+
+.mode-list.light article {
+  border: 1px solid #d9e7ee;
+  background: #f7fbfc;
 }
 
 .mode-list b {
@@ -550,6 +559,32 @@ dd {
   color: #102033;
   background: #fbfdfe;
   text-align: left;
+}
+
+.learning-card {
+  margin-top: 10px;
+  padding: 12px;
+  border: 1px solid #d9e7ee;
+  border-radius: 18px;
+  background: #fbfdfe;
+}
+
+.learning-card span {
+  display: block;
+  color: #66788c;
+  font-size: 12px;
+}
+
+.learning-card strong {
+  display: block;
+  margin-top: 2px;
+  font-size: 18px;
+}
+
+.learning-card p {
+  margin-top: 8px;
+  color: #52677b;
+  font-size: 13px;
 }
 
 .task-page {
