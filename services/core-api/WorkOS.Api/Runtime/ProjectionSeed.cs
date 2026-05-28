@@ -21,7 +21,7 @@ public static class ProjectionSeed
             {
                 Card("room", "ready", "房间建档卡", "Комната", new[] { "roomId", "buildingId" }, new[] { "楼栋", "房间号", "房型", "容量" }, new[] { "duplicateRoomCount" }),
                 Card("bed", "notStarted", "床位建档卡", "Койка", new[] { "bedId", "roomId" }, new[] { "床位号", "上/下铺", "价格规则", "检查状态" }, new[] { "capacityConflictCount" }),
-                Card("activate", "notStarted", "资源启用卡", "Активация", new[] { "bedId", "operatorId" }, new[] { "可用状态", "维护状态", "锁定原因" }, new[] { "activationDuration" })
+                Card("activate", "notStarted", "资源启用卡", "Активация", new[] { "bedId", "operatorId" }, new[] { "启用范围", "可分配时间", "启用备注" }, new[] { "activationDuration" })
             },
             "先创建房间，再创建床位，最后启用可分配资源。",
             "Сначала комната, затем койка, затем активация ресурса."),
@@ -242,8 +242,9 @@ public static class ProjectionSeed
     private static string FieldType(string label, string layer)
     {
         if (layer is "system" or "analytics") return "readonly";
+        if (ContainsAny(label, "房型", "上/下铺", "启用范围", "可用状态", "维护状态")) return "select";
         if (ContainsAny(label, "房间", "床位", "客户", "车辆", "技师", "工位")) return "searchSelect";
-        if (ContainsAny(label, "预计", "周期", "时间")) return "select";
+        if (ContainsAny(label, "预计", "周期", "时间")) return "dateTime";
         if (ContainsAny(label, "金额", "费用", "押金", "应退", "应补")) return "money";
         if (ContainsAny(label, "照片", "凭证", "材料", "签字")) return "evidenceUpload";
         if (ContainsAny(label, "确认", "关闭", "通过", "退回")) return "confirmation";
@@ -255,7 +256,7 @@ public static class ProjectionSeed
         if (layer == "system") return "system";
         if (layer == "analytics") return "projection";
         if (ContainsAny(label, "房间床位", "已审批申请", "客户", "车辆", "技师", "工位")) return "searchableProjection";
-        if (ContainsAny(label, "币种", "付款方式", "优先级", "紧急程度", "房型", "上/下铺", "可用状态")) return "optionSet";
+        if (ContainsAny(label, "币种", "付款方式", "优先级", "紧急程度", "房型", "上/下铺", "可用状态", "维护状态", "启用范围")) return "optionSet";
         return "userInput";
     }
 

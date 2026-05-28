@@ -5,7 +5,7 @@ export let intentWorkspaces = [
     [
       cardModel("room", "ready", "房间建档卡", "Комната", ["roomId", "buildingId"], ["楼栋", "房间号", "房型", "容量"], ["duplicateRoomCount"]),
       cardModel("bed", "notStarted", "床位建档卡", "Койка", ["bedId", "roomId"], ["床位号", "上/下铺", "价格规则", "检查状态"], ["capacityConflictCount"]),
-      cardModel("activate", "notStarted", "资源启用卡", "Активация", ["bedId", "operatorId"], ["可用状态", "维护状态", "锁定原因"], ["activationDuration"])
+      cardModel("activate", "notStarted", "资源启用卡", "Активация", ["bedId", "operatorId"], ["启用范围", "可分配时间", "启用备注"], ["activationDuration"])
     ],
     { "zh-CN": "先创建房间，再创建床位，最后启用可分配资源。", "ru-RU": "Сначала комната, затем койка, затем активация ресурса." }),
   workspaceModel("W-STAY-CHECKIN", "stay", "T-STAY-DEPOSIT",
@@ -154,8 +154,9 @@ function fieldId(label) {
 
 function fieldType(label, layer) {
   if (layer === "system" || layer === "analytics") return "readonly";
+  if (label.includes("房型") || label.includes("上/下铺") || label.includes("启用范围") || label.includes("可用状态") || label.includes("维护状态")) return "select";
   if (label.includes("房间") || label.includes("床位") || label.includes("客户") || label.includes("车辆") || label.includes("技师") || label.includes("工位")) return "searchSelect";
-  if (label.includes("预计") || label.includes("周期") || label.includes("时间")) return "select";
+  if (label.includes("预计") || label.includes("周期") || label.includes("时间")) return "dateTime";
   if (label.includes("金额") || label.includes("费用") || label.includes("押金") || label.includes("应退") || label.includes("应补")) return "money";
   if (label.includes("照片") || label.includes("凭证") || label.includes("材料") || label.includes("签字")) return "evidenceUpload";
   if (label.includes("确认") || label.includes("关闭") || label.includes("通过") || label.includes("退回")) return "confirmation";
@@ -166,7 +167,7 @@ function fieldSource(label, layer) {
   if (layer === "system") return "system";
   if (layer === "analytics") return "projection";
   if (["房间床位", "已审批申请", "客户", "车辆", "技师", "工位"].some((item) => label.includes(item))) return "searchableProjection";
-  if (["币种", "付款方式", "优先级", "紧急程度", "房型", "上/下铺", "可用状态"].some((item) => label.includes(item))) return "optionSet";
+  if (["币种", "付款方式", "优先级", "紧急程度", "房型", "上/下铺", "可用状态", "维护状态", "启用范围"].some((item) => label.includes(item))) return "optionSet";
   return "userInput";
 }
 

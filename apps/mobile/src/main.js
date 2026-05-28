@@ -2,7 +2,9 @@ import "./styles.css";
 import { apiBaseUrl, checkHealth, fetchWorkspaceProjection, loginActor } from "./apiClient.js";
 import { learningDomainFilters, learningTypeFilters } from "./coachView.js";
 import { tasks } from "./demoQueue.js";
+import { capacityForRoomType, defaultValueForLabel, fieldControlKind, optionsForLabel } from "./fieldControls.js";
 import { i18n } from "./i18n.js";
+import { clearDraft, loadDraft, saveDraft } from "./operationDrafts.js";
 import { submitCardOperation } from "./operationRuntime.js";
 import { activeWorkspaceCard as resolveActiveWorkspaceCard, isCardActionDisabled } from "./workspaceView.js";
 import { intentWorkspaces, replaceIntentWorkspaces, workspaceIdForTask } from "./workspaceProjections.js";
@@ -145,6 +147,9 @@ function localTerm(value, lang = state.lang) {
     "可用状态": "Доступность",
     "维护状态": "Ремонтный статус",
     "锁定原因": "Причина блокировки",
+    "启用范围": "Объем активации",
+    "可分配时间": "Время доступности",
+    "启用备注": "Комментарий активации",
     "客户": "Клиент",
     "车牌": "Номер авто",
     "车型": "Модель",
@@ -748,7 +753,7 @@ function cardOperation(card, item) {
     <section>
       <b>${tr("cardInput")}</b>
       <div class="operation-inputs">
-        ${operationInputFields(card).map((field) => operationControl(field, disabled)).join("")}
+        ${operationInputFields(card).map((field) => operationControl(field, item, card, disabled)).join("")}
       </div>
     </section>
     <section>
@@ -782,6 +787,11 @@ function cardOperation(card, item) {
 }
 
 function operationActionText(card, item) {
+  if (card.id === "activate") {
+    return state.lang === "zh-CN"
+      ? "确认房间和床位检查通过，把资源从建档状态切换为可分配状态。不会自动分配给入住人。"
+      : "Подтвердите проверку комнаты и койки, затем переведите ресурс в доступный для назначения статус.";
+  }
   if (card.status === "blocked") return tx(item.next);
   return state.lang === "zh-CN"
     ? `处理“${tx(card.title)}”，提交前系统会校验字段、证据和人工确认边界。`
@@ -793,53 +803,40 @@ function operationInputFields(card) {
   return priority;
 }
 
-function operationControl(field, disabled) {
+function operationControl(field, item, card, disabled) {
   const label = localTerm(field, "zh-CN");
-  if (field.type === "searchSelect") {
-    return `<label class="search-select"><span>${localTerm(field)} · ${tr("searchableSelect")}</span><input data-operation-field="${field.id}" list="${field.id}Options" value="${operationValue(field)}" ${disabled} /><datalist id="${field.id}Options">${optionValues(label).map((item) => `<option value="${item}">`).join("")}</datalist></label>`;
+  const value = operationValue(field, item, card);
+  const kind = fieldControlKind(label, field.type);
+  if (kind === "searchSelect") {
+    return `<label class="search-select"><span>${localTerm(field)} · ${tr("searchableSelect")}</span><input data-operation-field="${field.id}" list="${field.id}Options" value="${value}" ${disabled} /><datalist id="${field.id}Options">${optionsForLabel(label).map((entry) => `<option value="${entry}">`).join("")}</datalist></label>`;
   }
-  if (field.type === "select") {
-    return `<label><span>${localTerm(field)}</span><select data-operation-field="${field.id}" ${disabled}>${optionValues(label).map((item) => `<option>${item}</option>`).join("")}</select></label>`;
+  if (kind === "select") {
+    return `<label><span>${localTerm(field)}</span><select data-operation-field="${field.id}" data-field-label="${label}" ${disabled}>${optionsForLabel(label).map((entry) => `<option ${entry === value ? "selected" : ""}>${entry}</option>`).join("")}</select></label>`;
   }
-  if (field.type === "money") {
-    return `<label><span>${localTerm(field)}</span><input data-operation-field="${field.id}" inputmode="decimal" value="${operationValue(field)}" ${disabled} /></label>`;
+  if (kind === "dateTimeRange") {
+    const [start = "", end = ""] = String(value || "").split(" 至 ");
+    return `<label><span>${localTerm(field)}</span><div class="datetime-range"><input data-operation-field-start="${field.id}" type="datetime-local" value="${start}" ${disabled} /><input data-operation-field-end="${field.id}" type="datetime-local" value="${end}" ${disabled} /></div></label>`;
   }
-  if (field.type === "evidenceUpload") {
-    return `<label><span>${localTerm(field)}</span><input data-operation-field="${field.id}" value="${operationValue(field)}" ${disabled} /></label>`;
+  if (kind === "dateTime") {
+    return `<label><span>${localTerm(field)}</span><input data-operation-field="${field.id}" type="datetime-local" value="${value}" ${disabled} /></label>`;
   }
-  return `<label><span>${localTerm(field)}</span><input data-operation-field="${field.id}" value="${operationValue(field)}" ${disabled} /></label>`;
+  if (kind === "number") {
+    const readonly = label === "容量" ? "readonly data-derived-capacity" : "";
+    return `<label><span>${localTerm(field)}</span><input data-operation-field="${field.id}" data-field-label="${label}" inputmode="decimal" value="${value}" ${readonly} ${disabled} /></label>`;
+  }
+  return `<label><span>${localTerm(field)}</span><input data-operation-field="${field.id}" value="${value}" ${disabled} /></label>`;
 }
 
-function optionValues(label) {
-  if (label.includes("房间") || label.includes("床位")) return ["A301 / A301-02", "A302 / A302-01", "B201 / B201-03"];
-  if (label.includes("客户")) return ["张三汽修客户", "Fleet Partner 01", "新客户"];
-  if (label.includes("车辆")) return ["Toyota Camry · 01KG123ABC", "Mercedes Sprinter · 01KG777", "新车辆"];
-  if (label.includes("技师")) return ["Алексей Смирнов", "Иван Орлов", "维修主管分配"];
-  if (label.includes("工位")) return ["2 号位", "1 号位", "等待空位"];
-  if (label.includes("币种")) return ["KGS", "RUB", "USD"];
-  if (label.includes("付款方式")) return ["现金", "银行转账", "POS"];
-  if (label.includes("优先级") || label.includes("紧急程度")) return ["高", "中", "低"];
-  if (label.includes("预计") || label.includes("周期") || label.includes("时间")) return ["今天 18:00", "明天 10:00", "本周内"];
-  return ["已确认", "待补充", "需要人工确认"];
-}
-
-function operationValue(field) {
+function operationValue(field, item, card) {
   const label = localTerm(field, "zh-CN");
-  const samples = {
-    "入住人": "张三",
-    "房间床位": "A301 / A301-02",
-    "入住周期": "2026-05-28 至 2026-06-28",
-    "押金金额": "3000 KGS",
-    "付款方式": "现金 / 转账",
-    "凭证编号": "DEP-009",
-    "技师": "Алексей Смирнов",
-    "工位": "2 号位",
-    "预计开始时间": "2026-05-28 16:30",
-    "到场时间": "2026-05-28 15:40",
-    "车辆状态": "已到场，待诊断",
-    "接车人": "维修主管"
-  };
-  return samples[label] || localTerm(field);
+  const draft = loadDraft(item.id, card.id);
+  const values = draft.values || {};
+  if (values[field.id]) return values[field.id];
+  if (label === "容量") {
+    const roomType = Object.entries(values).find(([, candidate]) => ["单人间", "双人间", "四人间", "六人间"].includes(candidate))?.[1] || "四人间";
+    return capacityForRoomType(roomType);
+  }
+  return defaultValueForLabel(label);
 }
 
 function nextCardTitle(card, item) {
@@ -908,15 +905,42 @@ function activeWorkspaceCard(item) {
 }
 
 function collectOperationValues() {
-  return Array.from(document.querySelectorAll("[data-operation-field]")).reduce((values, node) => {
-    values[node.dataset.operationField] = node.value || "";
-    return values;
+  const values = Array.from(document.querySelectorAll("[data-operation-field]")).reduce((current, node) => {
+    current[node.dataset.operationField] = node.value || "";
+    return current;
   }, {});
+  Array.from(document.querySelectorAll("[data-operation-field-start]")).forEach((node) => {
+    const key = node.dataset.operationFieldStart;
+    const end = document.querySelector(`[data-operation-field-end="${key}"]`)?.value || "";
+    values[key] = [node.value, end].filter(Boolean).join(" 至 ");
+  });
+  return values;
 }
 
 function saveCurrentDraft() {
+  const item = workspace();
+  const card = activeWorkspaceCard(item);
+  if (!item || !card) return;
+  saveDraft(item.id, card.id, collectOperationValues());
   state.operationMessage = tr("draftSaved");
   render();
+}
+
+function updateDerivedFields() {
+  const roomType = document.querySelector('[data-field-label="房型"]')?.value;
+  const capacity = document.querySelector("[data-derived-capacity]");
+  if (roomType && capacity) {
+    capacity.value = capacityForRoomType(roomType);
+  }
+}
+
+function collectDraftingValuesOnInput(event) {
+  if (!event.target.matches("[data-operation-field], [data-operation-field-start], [data-operation-field-end]")) return;
+  updateDerivedFields();
+  const item = workspace();
+  const card = activeWorkspaceCard(item);
+  if (!item || !card) return;
+  saveDraft(item.id, card.id, collectOperationValues());
 }
 
 async function submitCurrentCard() {
@@ -951,6 +975,7 @@ async function submitCurrentCard() {
       fieldValues,
       onProjection: (payload) => replaceIntentWorkspaces(payload.workspaces)
     });
+    clearDraft(item.id, card.id);
     state.selectedCardIndex = -1;
     state.operationMessage = tr("submitDone");
   } catch {
@@ -1081,6 +1106,8 @@ function bind() {
     state.sort = event.target.value;
     render();
   });
+  document.querySelector(".operation-inputs")?.addEventListener("input", collectDraftingValuesOnInput);
+  document.querySelector(".operation-inputs")?.addEventListener("change", collectDraftingValuesOnInput);
   document.querySelector("#finish")?.addEventListener("click", () => setView("result"));
   document.querySelector("[data-save-draft]")?.addEventListener("click", saveCurrentDraft);
   document.querySelectorAll("[data-submit-card]").forEach((node) => node.addEventListener("click", submitCurrentCard));

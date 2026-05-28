@@ -879,6 +879,17 @@ dd {
   background: #fff;
 }
 
+.datetime-range {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.operation-inputs input[readonly] {
+  color: #52677b;
+  background: #edf6f6;
+}
+
 .operation-inputs span {
   color: rgba(255, 255, 255, .78);
   font-size: 12px;

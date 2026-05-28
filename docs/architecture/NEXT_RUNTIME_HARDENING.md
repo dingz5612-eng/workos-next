@@ -9,6 +9,23 @@ This document records the remaining architecture gaps and the mandatory directio
 - Bilingual local terminology is still partly hard-coded in the PWA. Future terms must come from the projection/i18n contract.
 - C# DTO records and JavaScript projections can drift unless every shape is validated against a shared schema and OpenAPI contract.
 
+## Field UX Rule
+
+Projection fields are not enough for business-grade operation. Every writable
+field must eventually carry control metadata:
+
+- control kind: text, number, money, date-time, date-time range, select,
+  searchable select, evidence upload, derived value.
+- option source: static contract options or a lookup API.
+- derivation rule: for example room type derives capacity.
+- draft behavior: local draft, server draft, or no draft.
+- validation rule: required, range, role, object existence, uniqueness.
+
+Do not make users type values that the system can derive or select safely. Room
+type should drive capacity; stay dates should use date-time controls; bunk type
+should be selected; resource activation should explain what resource enters the
+allocation pool.
+
 ## Required Business Slices
 
 Every new slice must be implemented as a production slice:

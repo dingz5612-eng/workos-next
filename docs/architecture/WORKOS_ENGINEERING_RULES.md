@@ -247,3 +247,18 @@ coachView.js
 
 Do not add new fetch calls, action confirm logic, or learning-center business
 rules directly to `main.js`.
+
+## 17. Field Runtime Rule
+
+Writable fields must not be plain text by default.
+
+- Use selects for bounded business options such as room type, bunk type, payment
+  method, and activation scope.
+- Use date-time controls for stay dates, check-in/check-out dates, arrival time,
+  and planned start time.
+- Use derived read-only fields when the value follows from another field, such
+  as room capacity from room type.
+- Save draft must persist values and restore them when the same workspace card
+  is reopened.
+- Temporary front-end field catalogs are allowed only as a bridge toward a
+  projection/i18n field contract.
