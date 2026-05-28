@@ -39,25 +39,7 @@ const i18n = {
     repairCloseFlow: "验收关闭闭环",
     repairCustomerFlow: "维修客户建档闭环",
     vehicleCreationFlow: "车辆资料建档闭环",
-    fieldModel: "后端字段模型",
-    semanticModel: "场景语义模型",
-    businessObjects: "业务对象",
-    stateContract: "状态变化",
-    taskContract: "任务生成",
-    actionContract: "动作边界",
-    analyticsContract: "统计指标",
-    exceptionBranches: "异常分支",
-    systemJudgement: "系统判断",
-    semanticActionSurface: "语义操作区",
-    currentAction: "当前动作",
     businessFields: "业务字段",
-    evidenceMaterials: "证据材料",
-    humanConfirmationSummary: "人工确认摘要",
-    afterState: "执行后状态",
-    analyticsHint: "统计埋点",
-    actionSurfaceLearning: "如何理解操作区",
-    actionSurfaceLearningBody: "操作区不是普通表单。先看系统判断，再核对业务字段和证据，最后由人确认关键动作；确认后才推进对象状态。",
-    actionSurfaceRule: "动作来自场景语义模型，页面只展示可办理、可解释、可审计的下一步。",
     noCriticalBlocker: "当前没有新的系统阻断，但关键动作仍需要人工确认。",
     confirmationDraft: "确认前请核对对象、金额、责任人、证据和影响范围。",
     flowStage: "流程阶段",
@@ -136,6 +118,26 @@ const i18n = {
     enterRelatedTask: "进入相关任务",
     openRelatedObject: "打开相关对象",
     coachHowToUse: "搜索后会直接高亮并展开相关闭环阶段；不再把知识拆成脱离业务的结果列表。",
+    intentWorkspace: "意图办理面",
+    cardFields: "字段分层",
+    systemFields: "系统字段",
+    analyticsFields: "统计分析字段",
+    cardOperation: "办理操作",
+    cardAction: "当前动作",
+    cardInput: "操作输入",
+    searchableSelect: "可搜索选择",
+    cardEvidence: "提交证据",
+    cardConfirm: "人工确认",
+    cardNext: "完成后",
+    saveDraft: "保存草稿",
+    submitForReview: "提交处理",
+    blockers: "阻断",
+    nextBestAction: "最佳下一步",
+    openWorkspace: "进入办理面",
+    notStarted: "未开始",
+    ready: "可办理",
+    inProgress: "处理中",
+    done: "已完成",
     quickStart: "快速上手",
     sceneLearning: "场景学习",
     roleLearning: "角色与边界",
@@ -208,25 +210,7 @@ const i18n = {
     repairCloseFlow: "Приемка и закрытие",
     repairCustomerFlow: "Клиент ремонта",
     vehicleCreationFlow: "Карточка авто",
-    fieldModel: "Поля для backend",
-    semanticModel: "Семантическая модель",
-    businessObjects: "Бизнес-объекты",
-    stateContract: "Состояния",
-    taskContract: "Задачи",
-    actionContract: "Действия",
-    analyticsContract: "Метрики",
-    exceptionBranches: "Исключения",
-    systemJudgement: "Системное решение",
-    semanticActionSurface: "Семантическая операция",
-    currentAction: "Текущее действие",
     businessFields: "Бизнес-поля",
-    evidenceMaterials: "Материалы",
-    humanConfirmationSummary: "Ручное подтверждение",
-    afterState: "Статус после действия",
-    analyticsHint: "Метрики",
-    actionSurfaceLearning: "Как читать операцию",
-    actionSurfaceLearningBody: "Операция не является обычной формой. Сначала смотрите системное решение, затем поля и доказательства, после этого человек подтверждает критическое действие.",
-    actionSurfaceRule: "Действие строится из семантической модели сценария: доступный шаг должен быть понятным, проверяемым и аудируемым.",
     noCriticalBlocker: "Новых системных блокировок нет, но критическое действие все равно подтверждает человек.",
     confirmationDraft: "Перед подтверждением проверьте объект, сумму, ответственного, доказательства и влияние.",
     flowStage: "Этап",
@@ -305,6 +289,26 @@ const i18n = {
     enterRelatedTask: "Открыть задачу",
     openRelatedObject: "Открыть объект",
     coachHowToUse: "Поиск сразу подсвечивает и раскрывает этап сценария; знания не отделены от бизнес-действия.",
+    intentWorkspace: "Рабочая область намерения",
+    cardFields: "Слои полей",
+    systemFields: "Системные поля",
+    analyticsFields: "Поля аналитики",
+    cardOperation: "Операция",
+    cardAction: "Текущее действие",
+    cardInput: "Ввод",
+    searchableSelect: "Поиск и выбор",
+    cardEvidence: "Доказательство",
+    cardConfirm: "Ручное подтверждение",
+    cardNext: "После выполнения",
+    saveDraft: "Сохранить",
+    submitForReview: "Отправить",
+    blockers: "Блокировки",
+    nextBestAction: "Лучшее следующее действие",
+    openWorkspace: "Открыть область",
+    notStarted: "Не начато",
+    ready: "Готово",
+    inProgress: "В работе",
+    done: "Готово",
     quickStart: "Быстрый старт",
     sceneLearning: "Сценарии",
     roleLearning: "Роли и границы",
@@ -464,237 +468,106 @@ const tasks = [
   }
 ];
 
-const scenarioFlows = {
-  stayCheckin: {
-    category: "businessHandling",
-    label: "stayCheckinFlow",
-    taskId: "T-STAY-DEPOSIT",
-    stages: {
-      "zh-CN": ["申请审批", "选择房间床位", "创建住宿单", "押金材料", "财务确认", "办理入住"],
-      "ru-RU": ["Заявка", "Комната/койка", "Ордер", "Депозит", "Финансы", "Заселение"]
-    },
-    fields: [
-      ["住宿单号", "SO-20260528-001", "Ордер", "SO-20260528-001"],
-      ["入住人", "张三", "Гость", "Чжан Сан"],
-      ["房间/床位", "A301 / A301-02 下铺", "Комната/койка", "A301 / A301-02"],
-      ["押金凭证", "DEP-009 · 3000 KGS", "Депозит", "DEP-009 · 3000 KGS"]
+const intentWorkspaces = [
+  workspaceModel("W-STAY-CHECKIN", "stay", "T-STAY-DEPOSIT",
+    { "zh-CN": "我要安排入住", "ru-RU": "Оформить заселение" },
+    { "zh-CN": "一件事内完成申请、住宿单、押金、财务和入住确认。", "ru-RU": "Заявка, ордер, депозит, финансы и заселение в одной области." },
+    [
+      cardModel("application", "done", "申请卡", "Заявка", ["applicationId", "residentId", "approverId"], ["入住人", "入住原因", "预计入住/退房", "审批意见"], ["approvalLeadTime", "approvalReturnCount"]),
+      cardModel("stayOrder", "ready", "住宿单卡", "Ордер", ["stayOrderId", "roomId", "bedId"], ["已审批申请", "房间床位", "入住周期", "押金/费用规则"], ["bedLockDuration", "assignmentDuration"]),
+      cardModel("deposit", "blocked", "押金卡", "Депозит", ["depositEvidenceId", "stayOrderId"], ["押金金额", "币种", "付款方式", "凭证编号"], ["depositSubmitDuration", "depositReturnCount"]),
+      cardModel("finance", "notStarted", "财务卡", "Финансы", ["financeReviewId", "depositEvidenceId"], ["到账状态", "确认金额", "退回原因", "财务确认人"], ["financeReviewDuration", "financePassRate"]),
+      cardModel("checkin", "notStarted", "入住确认卡", "Подтверждение", ["auditTraceId", "bedId", "stayOrderId"], ["实际入住时间", "钥匙/物品交接", "人工确认摘要"], ["totalCheckinDuration", "manualConfirmCount"])
     ],
-    evidence: { "zh-CN": "付款截图、收据编号、财务确认记录", "ru-RU": "Чек, номер квитанции, фин. подтверждение" },
-    policy: { "zh-CN": "押金确认、入住确认必须人工确认。", "ru-RU": "Депозит и заселение подтверждает человек." }
-  },
-  stayCheckout: {
-    category: "businessHandling",
-    label: "stayCheckoutFlow",
-    taskId: "T-STAY-CHECKOUT",
-    stages: {
-      "zh-CN": ["发起退房", "房间检查", "费用核对", "财务确认", "释放床位", "关闭住宿单"],
-      "ru-RU": ["Выселение", "Проверка", "Расходы", "Финансы", "Освободить", "Закрыть"]
-    },
-    fields: [
-      ["住宿单号", "SO-20260520-003", "Ордер", "SO-20260520-003"],
-      ["退房人", "张三", "Гость", "Чжан Сан"],
-      ["检查结果", "待检查", "Проверка", "Ожидает"],
-      ["费用状态", "待核对", "Расходы", "Ожидает"]
+    { "zh-CN": "补齐押金材料，创建住宿单和选床在同一张住宿单卡内完成。", "ru-RU": "Дополните депозит; ордер и койка оформляются в одной карточке." }),
+  workspaceModel("W-STAY-CHECKOUT", "stay", "T-STAY-CHECKOUT",
+    { "zh-CN": "我要办理退房", "ru-RU": "Оформить выселение" },
+    { "zh-CN": "退房发起、房间检查、费用结算、财务确认和释放床位在一个办理面完成。", "ru-RU": "Выселение, проверка, расчет, финансы и освобождение койки вместе." },
+    [
+      cardModel("checkoutStart", "ready", "退房发起卡", "Начало", ["checkoutId", "stayOrderId"], ["退房人", "退房原因", "预计退房时间"], ["checkoutStartLeadTime"]),
+      cardModel("roomInspection", "notStarted", "房间检查卡", "Проверка", ["inspectionId", "roomId", "bedId"], ["房间状态", "物品/损坏检查", "照片证据"], ["damageCount", "inspectionDuration"]),
+      cardModel("feeSettlement", "notStarted", "费用结算卡", "Расчет", ["settlementId", "stayOrderId"], ["住宿费用", "额外费用", "押金抵扣", "应退/应补"], ["settlementDuration", "refundAmount"]),
+      cardModel("checkoutFinance", "notStarted", "财务确认卡", "Финансы", ["financeReviewId", "settlementId"], ["退款/补款确认", "财务凭证", "确认人"], ["refundDuration"]),
+      cardModel("checkoutClose", "notStarted", "退房关闭卡", "Закрытие", ["auditTraceId", "bedId"], ["释放床位", "关闭住宿单", "人工确认摘要"], ["checkoutTotalDuration"])
     ],
-    evidence: { "zh-CN": "房间检查记录、费用明细、退款确认", "ru-RU": "Проверка комнаты, расходы, возврат" },
-    policy: { "zh-CN": "退房关闭和押金退款必须人工确认。", "ru-RU": "Закрытие и возврат подтверждает человек." }
-  },
-  stayDepositException: {
-    category: "exceptionHandling",
-    label: "stayDepositExceptionFlow",
-    taskId: "T-FIN-DEPOSIT",
-    stages: {
-      "zh-CN": ["发现异常", "定位住宿单", "补交材料", "财务复核", "回到入住"],
-      "ru-RU": ["Ошибка", "Найти ордер", "Дополнить", "Финансы", "Вернуть"]
-    },
-    fields: [
-      ["凭证号", "DEP-009", "Документ", "DEP-009"],
-      ["异常类型", "金额/凭证待核", "Тип", "Сумма/чек"],
-      ["金额", "3000 KGS", "Сумма", "3000 KGS"],
-      ["复核人", "财务经办人", "Проверка", "Финансы"]
+    { "zh-CN": "先发起退房并完成房间检查。", "ru-RU": "Начните выселение и проверьте комнату." }),
+  workspaceModel("W-STAY-DEPOSIT-EXCEPTION", "finance", "T-FIN-DEPOSIT",
+    { "zh-CN": "我要处理押金异常", "ru-RU": "Разобрать исключение депозита" },
+    { "zh-CN": "围绕押金异常原因、补交材料、财务复核和回到业务闭环处理。", "ru-RU": "Причина, материалы, фин. проверка и возврат в процесс." },
+    [
+      cardModel("reason", "done", "异常原因卡", "Причина", ["exceptionId", "depositEvidenceId"], ["金额不一致", "凭证不清晰", "付款人不一致"], ["exceptionTypeCount"]),
+      cardModel("resubmit", "ready", "补交材料卡", "Материалы", ["depositEvidenceId", "stayOrderId"], ["新凭证", "收据编号", "补充说明"], ["resubmitDuration"]),
+      cardModel("review", "notStarted", "财务复核卡", "Проверка", ["financeReviewId", "reviewerId"], ["通过", "退回", "需人工沟通"], ["reviewDuration", "returnCount"]),
+      cardModel("returnBusiness", "notStarted", "回到业务卡", "Возврат", ["stayOrderId", "currentStage"], ["回到入住", "回到退房", "保持阻断"], ["exceptionResolutionDuration"])
     ],
-    evidence: { "zh-CN": "原凭证、补交凭证、退回原因、复核结果", "ru-RU": "Исходный чек, новый чек, причина, результат" },
-    policy: { "zh-CN": "异常通过或退回必须由财务人工确认。", "ru-RU": "Принять или вернуть может только финансы." }
-  },
-  roomCreation: {
-    category: "objectCreation",
-    label: "roomCreationFlow",
-    taskId: "T-ROOM-CREATE",
-    stages: {
-      "zh-CN": ["录入楼栋", "录入房间号", "房型容量", "重复校验", "创建房间", "创建床位"],
-      "ru-RU": ["Корпус", "Номер", "Тип/места", "Дубликат", "Создать", "Койки"]
-    },
-    fields: [
-      ["楼栋/区域", "宿舍 A 栋", "Корпус", "A"],
-      ["房间号", "A302", "Комната", "A302"],
-      ["房型/容量", "四人间 / 4", "Тип/места", "4 места"],
-      ["重复校验", "未重复", "Дубликат", "Нет"]
+    { "zh-CN": "补交材料后等待财务复核。", "ru-RU": "После материалов ждите фин. проверку." }),
+  workspaceModel("W-STAY-RESOURCE", "stay", "T-ROOM-CREATE",
+    { "zh-CN": "我要创建住宿资源", "ru-RU": "Создать ресурсы проживания" },
+    { "zh-CN": "房间、床位和资源启用在同一资源建档办理面完成。", "ru-RU": "Комнаты, койки и активация ресурсов вместе." },
+    [
+      cardModel("room", "ready", "房间建档卡", "Комната", ["roomId", "buildingId"], ["楼栋", "房间号", "房型", "容量"], ["duplicateRoomCount"]),
+      cardModel("bed", "notStarted", "床位建档卡", "Койка", ["bedId", "roomId"], ["床位号", "上/下铺", "价格规则", "检查状态"], ["capacityConflictCount"]),
+      cardModel("activate", "notStarted", "资源启用卡", "Активация", ["bedId", "operatorId"], ["可用状态", "维护状态", "锁定原因"], ["activationDuration"])
     ],
-    evidence: { "zh-CN": "建档人、建档时间、重复校验结果", "ru-RU": "Автор, время, проверка дублей" },
-    policy: { "zh-CN": "房间建档需要住宿管理员权限。", "ru-RU": "Создание комнаты требует права администратора." }
-  },
-  bedCreation: {
-    category: "objectCreation",
-    label: "bedCreationFlow",
-    taskId: "T-BED-CREATE",
-    stages: {
-      "zh-CN": ["选择房间", "录入床位号", "床位类型", "价格/检查", "容量校验", "创建床位"],
-      "ru-RU": ["Комната", "Номер койки", "Тип", "Цена/проверка", "Места", "Создать"]
-    },
-    fields: [
-      ["房间", "A302", "Комната", "A302"],
-      ["床位号", "A302-01", "Койка", "A302-01"],
-      ["床位类型", "下铺", "Тип", "Нижняя"],
-      ["检查状态", "待检查", "Проверка", "Ожидает"]
+    { "zh-CN": "先创建房间，再在同一办理面继续创建床位。", "ru-RU": "Сначала комната, затем койки в этой же области." }),
+  workspaceModel("W-REPAIR-REQUEST", "repair", "T-AUTO-DIAGNOSE",
+    { "zh-CN": "我要处理报修", "ru-RU": "Обработать заявку ремонта" },
+    { "zh-CN": "客户车辆、报修信息、到场确认和派工入口形成报修闭环。", "ru-RU": "Клиент, авто, заявка, прибытие и готовность к назначению." },
+    [
+      cardModel("customerVehicle", "done", "客户车辆卡", "Клиент/авто", ["repairCustomerId", "vehicleId"], ["客户", "车牌", "车型", "VIN", "联系方式"], ["vehicleMatchRate"]),
+      cardModel("request", "done", "报修信息卡", "Заявка", ["repairOrderId", "driverId"], ["故障描述", "车辆位置", "司机", "紧急程度"], ["requestCompleteness"]),
+      cardModel("arrival", "ready", "到场确认卡", "Прибытие", ["arrivalId", "vehicleId"], ["到场时间", "车辆状态", "接车人", "初步风险"], ["arrivalLeadTime"]),
+      cardModel("dispatchEntry", "notStarted", "派工入口卡", "Назначение", ["repairOrderId", "queueItemId"], ["是否可派工", "阻断原因", "下一步责任人"], ["dispatchReadyRate"])
     ],
-    evidence: { "zh-CN": "房间容量校验、床位编号校验、检查状态", "ru-RU": "Проверка мест, номера койки и статуса" },
-    policy: { "zh-CN": "超过容量或未选房间时不能创建床位。", "ru-RU": "Нельзя создать без комнаты или сверх вместимости." }
-  },
-  repairDispatch: {
-    category: "businessHandling",
-    label: "repairDispatchFlow",
-    taskId: "T-AUTO-DIAGNOSE",
-    stages: {
-      "zh-CN": ["报修", "车辆到场", "派工诊断", "维修执行", "验收", "费用材料", "关闭"],
-      "ru-RU": ["Заявка", "Прибыло", "Диагностика", "Ремонт", "Приемка", "Расходы", "Закрытие"]
-    },
-    fields: [
-      ["维修单号", "AR-20260528-004", "Заявка", "AR-20260528-004"],
-      ["车辆", "Toyota Camry · 01KG123ABC", "Авто", "Toyota Camry · 01KG123ABC"],
-      ["司机", "Иван Петров", "Водитель", "Иван Петров"],
-      ["诊断技师", "Алексей Смирнов · 16:30", "Механик", "Алексей Смирнов · 16:30"]
+    { "zh-CN": "确认车辆到场后进入派工。", "ru-RU": "После прибытия можно назначать диагностику." }),
+  workspaceModel("W-REPAIR-DISPATCH", "repair", "T-AUTO-DIAGNOSE",
+    { "zh-CN": "我要安排维修", "ru-RU": "Назначить ремонт" },
+    { "zh-CN": "派工、诊断、维修执行和阻断恢复在一个维修办理面中处理。", "ru-RU": "Назначение, диагностика, ремонт и блокировки в одной области." },
+    [
+      cardModel("dispatch", "ready", "派工卡", "Назначение", ["technicianId", "workbayId"], ["技师", "工位", "预计开始时间", "优先级"], ["dispatchLeadTime"]),
+      cardModel("diagnosis", "notStarted", "诊断卡", "Диагностика", ["diagnosisId", "repairOrderId"], ["故障分类", "诊断结论", "所需配件", "预计费用"], ["diagnosisDuration"]),
+      cardModel("execution", "notStarted", "维修执行卡", "Ремонт", ["repairProgressId", "partsRequestId"], ["维修项目", "工时", "配件", "过程照片"], ["vehicleDowntime"]),
+      cardModel("repairBlocker", "notStarted", "阻断卡", "Блокировка", ["blockerId", "repairOrderId"], ["无技师", "缺配件", "费用待确认", "客户不同意"], ["blockerDuration"])
     ],
-    evidence: { "zh-CN": "诊断记录、维修照片、验收签字、费用材料", "ru-RU": "Диагностика, фото ремонта, приемка, расходы" },
-    policy: { "zh-CN": "维修完成、费用确认、关闭维修单必须人工确认。", "ru-RU": "Завершение, расходы и закрытие подтверждает человек." }
-  },
-  repairClose: {
-    category: "businessHandling",
-    label: "repairCloseFlow",
-    taskId: "T-REPAIR-CLOSE",
-    stages: {
-      "zh-CN": ["提交验收", "负责人检查", "验收通过", "费用材料", "关闭维修单"],
-      "ru-RU": ["Приемка", "Проверка", "Принято", "Расходы", "Закрыть"]
-    },
-    fields: [
-      ["维修单号", "AR-20260527-002", "Заявка", "AR-20260527-002"],
-      ["验收人", "车队负责人", "Приемка", "Ответственный"],
-      ["费用材料", "待确认", "Расходы", "Ожидает"],
-      ["关闭状态", "未关闭", "Закрытие", "Не закрыто"]
+    { "zh-CN": "先选择技师和工位，不会自动关闭维修单。", "ru-RU": "Выберите механика и пост; заявка не закроется автоматически." }),
+  workspaceModel("W-REPAIR-CLOSE", "repair", "T-REPAIR-CLOSE",
+    { "zh-CN": "我要验收关闭", "ru-RU": "Принять и закрыть ремонт" },
+    { "zh-CN": "验收、费用材料、客户确认和关闭摘要形成关闭闭环。", "ru-RU": "Приемка, расходы, клиент и закрытие." },
+    [
+      cardModel("inspection", "ready", "验收卡", "Приемка", ["inspectionId", "repairOrderId"], ["维修结果", "试车结果", "验收照片", "验收人"], ["inspectionDuration"]),
+      cardModel("feeMaterial", "notStarted", "费用材料卡", "Расходы", ["feeMaterialId", "repairOrderId"], ["工时费", "配件费", "其它费用", "财务材料"], ["feeMaterialDuration"]),
+      cardModel("customerConfirm", "notStarted", "客户确认卡", "Клиент", ["customerConfirmId", "driverId"], ["客户签字", "司机确认", "异议说明"], ["disputeCount"]),
+      cardModel("close", "notStarted", "关闭卡", "Закрытие", ["auditTraceId", "repairOrderId"], ["关闭摘要", "车辆恢复状态", "人工确认关闭"], ["closeDuration"])
     ],
-    evidence: { "zh-CN": "验收照片、验收签字、材料费用、关闭记录", "ru-RU": "Фото, подпись, расходы, закрытие" },
-    policy: { "zh-CN": "验收不通过或费用缺失时不能关闭。", "ru-RU": "Нельзя закрыть без приемки и расходов." }
-  },
-  vehicleCreation: {
-    category: "objectCreation",
-    label: "vehicleCreationFlow",
-    taskId: "T-VEHICLE-CREATE",
-    stages: {
-      "zh-CN": ["选择客户", "录入车牌", "品牌车型", "VIN/发动机", "重复校验", "创建车辆"],
-      "ru-RU": ["Клиент", "Номер", "Модель", "VIN/двиг.", "Дубликат", "Создать"]
-    },
-    fields: [
-      ["客户", "张三汽修客户", "Клиент", "Клиент Чжан"],
-      ["车牌", "01KG999XYZ", "Номер", "01KG999XYZ"],
-      ["车型", "Toyota Camry", "Модель", "Toyota Camry"],
-      ["VIN", "VIN-PENDING-009", "VIN", "VIN-PENDING-009"]
+    { "zh-CN": "先完成验收，费用材料齐全后才能关闭。", "ru-RU": "Сначала приемка; закрыть можно после расходов." }),
+  workspaceModel("W-REPAIR-MASTER-DATA", "repair", "T-VEHICLE-CREATE",
+    { "zh-CN": "我要创建维修资料", "ru-RU": "Создать ремонтные справочники" },
+    { "zh-CN": "客户、车辆和服务规则在同一资料建档办理面完成。", "ru-RU": "Клиент, авто и правила сервиса вместе." },
+    [
+      cardModel("customer", "ready", "客户建档卡", "Клиент", ["repairCustomerId", "operatorId"], ["客户名称", "联系人", "电话", "类型"], ["customerCreationDuration"]),
+      cardModel("vehicle", "ready", "车辆建档卡", "Авто", ["vehicleId", "repairCustomerId"], ["车牌", "品牌车型", "VIN", "发动机号", "里程"], ["duplicatePlateCount", "duplicateVinCount"]),
+      cardModel("serviceRule", "notStarted", "服务规则卡", "Правила", ["serviceRuleId", "vehicleId"], ["结算方式", "常用司机", "维修优先级", "授权规则"], ["ruleCompletionRate"])
     ],
-    evidence: { "zh-CN": "客户授权、车辆证件、车牌/VIN 重复校验", "ru-RU": "Клиент, документы, проверка номера/VIN" },
-    policy: { "zh-CN": "无客户或车牌/VIN 重复时不能建档。", "ru-RU": "Нельзя без клиента или при дубле номера/VIN." }
-  }
-};
+    { "zh-CN": "先建客户和车辆，再补服务规则。", "ru-RU": "Создайте клиента и авто, затем правила." })
+];
 
-const objects = {
-  "SO-20260528-001": { title: "stayObject", domain: "stay", line: { "zh-CN": "张三 · A301 · A301-02 下铺", "ru-RU": "Чжан Сан · A301 · нижняя койка" } },
-  "AR-20260528-004": { title: "repairObject", domain: "repair", line: { "zh-CN": "01KG123ABC · 司机 Иван Петров", "ru-RU": "01KG123ABC · водитель Иван Петров" } },
-  "FIN-20260528-009": { title: "financeObject", domain: "finance", line: { "zh-CN": "张三住宿单 · 3000 KGS", "ru-RU": "Ордер Чжана · 3000 KGS" } },
-  "SO-20260520-003": { title: "stayObject", domain: "stay", line: { "zh-CN": "张三 · 待退房 · A301-02", "ru-RU": "Чжан Сан · выселение · A301-02" } },
-  "ROOM-DRAFT-A302": { title: "createRoom", domain: "stay", line: { "zh-CN": "A302 · 宿舍 A 栋 · 待建档", "ru-RU": "A302 · корпус A · черновик" } },
-  "BED-DRAFT-A302-01": { title: "createBed", domain: "stay", line: { "zh-CN": "A302-01 · 下铺 · 待检查", "ru-RU": "A302-01 · нижняя · проверка" } },
-  "VEH-DRAFT-01KG999": { title: "createVehicle", domain: "repair", line: { "zh-CN": "01KG999XYZ · Toyota Camry · 待建档", "ru-RU": "01KG999XYZ · Toyota Camry · черновик" } },
-  "AR-20260527-002": { title: "repairObject", domain: "repair", line: { "zh-CN": "维修完成 · 待验收关闭", "ru-RU": "Ремонт завершен · приемка" } }
+const taskWorkspaceMap = {
+  "T-STAY-DEPOSIT": "W-STAY-CHECKIN",
+  "T-FIN-DEPOSIT": "W-STAY-DEPOSIT-EXCEPTION",
+  "T-STAY-CHECKOUT": "W-STAY-CHECKOUT",
+  "T-ROOM-CREATE": "W-STAY-RESOURCE",
+  "T-BED-CREATE": "W-STAY-RESOURCE",
+  "T-AUTO-DIAGNOSE": "W-REPAIR-DISPATCH",
+  "T-REPAIR-CLOSE": "W-REPAIR-CLOSE",
+  "T-VEHICLE-CREATE": "W-REPAIR-MASTER-DATA"
 };
-
-const semanticPresets = {
-  stay: {
-    objects: ["Resident", "Application", "Room", "Bed", "StayOrder", "DepositEvidence"],
-    states: ["Application.Approved", "Bed.Reserved", "StayOrder.ReadyForCheckIn"],
-    tasks: ["SelectBed", "SubmitDepositEvidence", "FinanceConfirm", "ConfirmCheckIn"],
-    actions: ["prepare", "submitEvidence", "humanConfirm"],
-    analytics: ["leadTime", "depositReviewDuration", "bedAssignmentDuration", "manualConfirmCount"],
-    exceptions: ["NoAvailableBed", "DepositRejected", "PermissionDenied", "MissingEvidence"]
-  },
-  repair: {
-    objects: ["RepairCustomer", "Vehicle", "RepairOrder", "Technician", "Diagnosis", "Inspection"],
-    states: ["Vehicle.Arrived", "RepairOrder.WaitingDiagnosis", "RepairOrder.InProgress"],
-    tasks: ["AssignTechnician", "SubmitDiagnosis", "InspectRepair", "CloseRepair"],
-    actions: ["prepare", "assign", "submitEvidence", "humanConfirm"],
-    analytics: ["dispatchLeadTime", "diagnosisDuration", "vehicleDowntime", "reworkCount"],
-    exceptions: ["VehicleMissing", "NoTechnician", "DiagnosisIncomplete", "InspectionFailed"]
-  },
-  finance: {
-    objects: ["PaymentEvidence", "StayOrder", "FinanceReview", "AuditEvent"],
-    states: ["Evidence.Submitted", "FinanceReview.Pending", "FinanceReview.AcceptedOrReturned"],
-    tasks: ["ReviewEvidence", "ReturnEvidence", "ConfirmPayment"],
-    actions: ["review", "return", "humanConfirm"],
-    analytics: ["reviewDuration", "returnCount", "amountMismatchCount"],
-    exceptions: ["AmountMismatch", "PayerMismatch", "UnclearEvidence", "DuplicateEvidence"]
-  }
-};
-
-const flowSemanticOverrides = {
-  roomCreation: {
-    objects: ["Building", "Room", "RoomType", "AuditEvent"],
-    states: ["Room.Draft", "Room.Active"],
-    tasks: ["ValidateRoom", "CreateRoom", "CreateBeds"],
-    analytics: ["roomCreationDuration", "duplicateRoomCount"]
-  },
-  bedCreation: {
-    objects: ["Room", "Bed", "BedPrice", "InspectionState"],
-    states: ["Bed.Draft", "Bed.Available", "Bed.PendingInspection"],
-    tasks: ["ValidateCapacity", "CreateBed", "InspectBed"],
-    analytics: ["bedCreationDuration", "capacityConflictCount"]
-  },
-  vehicleCreation: {
-    objects: ["RepairCustomer", "Vehicle", "VehicleDocument", "AuditEvent"],
-    states: ["Vehicle.Draft", "Vehicle.Active"],
-    tasks: ["ValidateVehicle", "CreateVehicle", "BindCustomer"],
-    analytics: ["vehicleCreationDuration", "duplicatePlateCount", "duplicateVinCount"]
-  },
-  stayCheckout: {
-    states: ["StayOrder.InResidence", "StayOrder.CheckoutPending", "StayOrder.Closed", "Bed.Available"],
-    tasks: ["InspectRoom", "SettleFee", "ConfirmRefund", "ReleaseBed"],
-    analytics: ["checkoutDuration", "damageCount", "refundDuration"]
-  },
-  stayDepositException: {
-    states: ["Evidence.Returned", "Evidence.Resubmitted", "FinanceReview.Pending"],
-    tasks: ["FixEvidence", "ReviewDeposit", "ReturnToCheckIn"],
-    analytics: ["depositReturnCount", "exceptionResolutionDuration"]
-  },
-  repairClose: {
-    states: ["RepairOrder.WaitingInspection", "RepairOrder.WaitingFee", "RepairOrder.Closed"],
-    tasks: ["InspectRepair", "ConfirmFeeMaterial", "CloseRepair"],
-    analytics: ["inspectionDuration", "reworkCount", "closeDuration"]
-  }
-};
-
-Object.entries(scenarioFlows).forEach(([flowId, flow]) => {
-  const taskForFlow = tasks.find((item) => item.id === flow.taskId);
-  const preset = semanticPresets[taskForFlow?.domain] || semanticPresets.stay;
-  const override = flowSemanticOverrides[flowId] || {};
-  flow.semantic = {
-    objects: override.objects || preset.objects,
-    states: override.states || preset.states,
-    tasks: override.tasks || preset.tasks,
-    actions: override.actions || preset.actions,
-    analytics: override.analytics || preset.analytics,
-    exceptions: override.exceptions || preset.exceptions
-  };
-});
 
 const state = {
   lang: localStorage.getItem("workosnext.lang") || "zh-CN",
   view: localStorage.getItem("workosnext.onboarded") ? "home" : "onboarding",
   selectedTask: "T-STAY-DEPOSIT",
+  selectedWorkspace: "W-STAY-CHECKIN",
+  selectedCardIndex: -1,
   query: "",
   filterOpen: false,
   advancedOpen: false,
@@ -717,10 +590,17 @@ if (params.has("view")) {
 }
 if (params.has("task")) {
   state.selectedTask = params.get("task");
+  state.selectedWorkspace = workspaceIdForTask(state.selectedTask);
+}
+if (params.has("workspace")) {
+  state.selectedWorkspace = params.get("workspace");
 }
 if (params.has("q")) {
   state.query = params.get("q");
   state.learningQuery = params.get("q");
+}
+if (state.view === "task" || state.view === "object") {
+  state.view = "workspace";
 }
 
 function tr(key) {
@@ -733,6 +613,154 @@ function tx(value) {
 
 function task() {
   return tasks.find((item) => item.id === state.selectedTask) || tasks[0];
+}
+
+function workspace() {
+  return intentWorkspaces.find((item) => item.id === state.selectedWorkspace) || intentWorkspaces[0];
+}
+
+function workspaceIdForTask(taskId) {
+  return taskWorkspaceMap[taskId] || intentWorkspaces.find((item) => item.taskId === taskId)?.id || "W-STAY-CHECKIN";
+}
+
+function workspaceModel(id, domain, taskId, title, summary, cards, next) {
+  return { id, domain, taskId, title, summary, cards, next, blockers: cards.filter((card) => card.status === "blocked") };
+}
+
+function cardModel(id, status, zhTitle, ruTitle, system, business, analytics) {
+  return {
+    id,
+    status,
+    title: { "zh-CN": zhTitle, "ru-RU": ruTitle },
+    fields: { system, business, analytics },
+    evidence: business.slice(0, 2),
+    checks: business.slice(-2),
+    confirmation: status === "done" ? "done" : "confirm"
+  };
+}
+
+function localList(items) {
+  return items.map(localTerm).join(" · ");
+}
+
+function localTerm(value) {
+  if (state.lang === "zh-CN") return value;
+  const terms = {
+    "入住人": "Гость",
+    "入住原因": "Причина",
+    "预计入住/退房": "План въезда/выезда",
+    "审批意见": "Решение",
+    "已审批申请": "Одобренная заявка",
+    "房间床位": "Комната/койка",
+    "入住周期": "Период",
+    "押金/费用规则": "Депозит/тариф",
+    "押金金额": "Сумма депозита",
+    "币种": "Валюта",
+    "付款方式": "Способ оплаты",
+    "凭证编号": "Номер документа",
+    "到账状态": "Статус оплаты",
+    "确认金额": "Подтвержденная сумма",
+    "退回原因": "Причина возврата",
+    "财务确认人": "Фин. проверяющий",
+    "实际入住时间": "Фактическое заселение",
+    "钥匙/物品交接": "Ключи/имущество",
+    "人工确认摘要": "Ручное подтверждение",
+    "退房人": "Гость",
+    "退房原因": "Причина выезда",
+    "预计退房时间": "План выезда",
+    "房间状态": "Состояние комнаты",
+    "物品/损坏检查": "Имущество/повреждения",
+    "照片证据": "Фото",
+    "住宿费用": "Стоимость проживания",
+    "额外费用": "Доп. расходы",
+    "押金抵扣": "Зачет депозита",
+    "应退/应补": "Возврат/доплата",
+    "退款/补款确认": "Возврат/доплата",
+    "财务凭证": "Фин. документ",
+    "确认人": "Подтвердил",
+    "释放床位": "Освободить койку",
+    "关闭住宿单": "Закрыть ордер",
+    "金额不一致": "Сумма не совпадает",
+    "凭证不清晰": "Документ нечеткий",
+    "付款人不一致": "Плательщик не совпадает",
+    "新凭证": "Новый документ",
+    "收据编号": "Номер квитанции",
+    "补充说明": "Комментарий",
+    "通过": "Принять",
+    "退回": "Вернуть",
+    "需人工沟通": "Нужно вручную",
+    "回到入住": "Вернуть к заселению",
+    "回到退房": "Вернуть к выселению",
+    "保持阻断": "Оставить блокировку",
+    "楼栋": "Корпус",
+    "房间号": "Номер комнаты",
+    "房型": "Тип комнаты",
+    "容量": "Вместимость",
+    "床位号": "Номер койки",
+    "上/下铺": "Верх/низ",
+    "价格规则": "Тариф",
+    "检查状态": "Проверка",
+    "可用状态": "Доступность",
+    "维护状态": "Ремонтный статус",
+    "锁定原因": "Причина блокировки",
+    "客户": "Клиент",
+    "车牌": "Номер авто",
+    "车型": "Модель",
+    "联系方式": "Контакт",
+    "故障描述": "Описание неисправности",
+    "车辆位置": "Место авто",
+    "司机": "Водитель",
+    "紧急程度": "Срочность",
+    "到场时间": "Время прибытия",
+    "车辆状态": "Состояние авто",
+    "接车人": "Принял авто",
+    "初步风险": "Первичный риск",
+    "是否可派工": "Можно назначить",
+    "阻断原因": "Причина блокировки",
+    "下一步责任人": "Ответственный",
+    "技师": "Механик",
+    "工位": "Пост",
+    "预计开始时间": "План начала",
+    "优先级": "Приоритет",
+    "故障分类": "Категория",
+    "诊断结论": "Диагноз",
+    "所需配件": "Нужные детали",
+    "预计费用": "Плановая стоимость",
+    "维修项目": "Работы",
+    "工时": "Нормочасы",
+    "配件": "Детали",
+    "过程照片": "Фото процесса",
+    "无技师": "Нет механика",
+    "缺配件": "Нет деталей",
+    "费用待确认": "Стоимость ждет подтверждения",
+    "客户不同意": "Клиент не согласен",
+    "维修结果": "Результат ремонта",
+    "试车结果": "Тест-драйв",
+    "验收照片": "Фото приемки",
+    "验收人": "Приемщик",
+    "工时费": "Работа",
+    "配件费": "Детали",
+    "其它费用": "Прочие расходы",
+    "财务材料": "Фин. материалы",
+    "客户签字": "Подпись клиента",
+    "司机确认": "Подтверждение водителя",
+    "异议说明": "Спор",
+    "关闭摘要": "Итог закрытия",
+    "车辆恢复状态": "Статус авто",
+    "人工确认关闭": "Ручное закрытие",
+    "客户名称": "Клиент",
+    "联系人": "Контакт",
+    "电话": "Телефон",
+    "类型": "Тип",
+    "品牌车型": "Марка/модель",
+    "发动机号": "Номер двигателя",
+    "里程": "Пробег",
+    "结算方式": "Расчет",
+    "常用司机": "Водитель",
+    "维修优先级": "Приоритет ремонта",
+    "授权规则": "Правила доступа"
+  };
+  return terms[value] || value;
 }
 
 function setView(view) {
@@ -832,16 +860,16 @@ function homeView() {
     </section>
     <section class="business-focus">
       <h2>${tr("scenarioFocus")}</h2>
-      ${scenarioFlowCard("stayCheckin")}
-      ${scenarioFlowCard("repairDispatch")}
-      ${scenarioFlowCard("stayCheckout")}
-      ${scenarioFlowCard("vehicleCreation")}
+      ${workspaceCard(intentWorkspaces.find((item) => item.id === "W-STAY-CHECKIN"))}
+      ${workspaceCard(intentWorkspaces.find((item) => item.id === "W-REPAIR-REQUEST"))}
+      ${workspaceCard(intentWorkspaces.find((item) => item.id === "W-STAY-CHECKOUT"))}
+      ${workspaceCard(intentWorkspaces.find((item) => item.id === "W-REPAIR-DISPATCH"))}
     </section>
   `);
 }
 
 function searchView() {
-  const results = searchResults();
+  const results = searchWorkspaceResults();
   return shell(`
     <section class="page-title">
       <span>${tr("activeSearch")}</span>
@@ -860,72 +888,71 @@ function searchView() {
 function scenarioBlocks() {
   return `<section class="scenario-list">
     <h2>${tr("scenarios")}</h2>
-    ${scenario("stay", ["createRoom", "createBed", "createResident", "checkin", "checkout", "depositBlocked"])}
-    ${scenario("repair", ["createRepairCustomer", "createVehicle", "createRepair", "assignRepair", "repairInspect"])}
-    ${scenario("finance", ["confirmPayment", "returnEvidence"])}
+    ${scenario("stay", intentWorkspaces.filter((item) => item.domain === "stay"))}
+    ${scenario("repair", intentWorkspaces.filter((item) => item.domain === "repair"))}
+    ${scenario("finance", intentWorkspaces.filter((item) => item.domain === "finance"))}
   </section>`;
 }
 
-function scenario(domain, actions) {
+function scenario(domain, workspaces) {
   return `<article class="scenario-card ${domain}">
     <h3>${tr(domain)}</h3>
-    <div>${actions.map((key) => `<button data-scenario="${key}">${tr(key)}</button>`).join("")}</div>
-  </article>`;
-}
-
-function scenarioFlowCard(flowKey) {
-  const loop = scenarioFlows[flowKey];
-  const item = tasks.find((entry) => entry.id === loop.taskId);
-  return `<article class="loop-card ${item.domain}">
-    <div class="loop-head">
-      <div><span>${tr(loop.category)} · ${tr(loop.label)}</span><strong>${tr(item.title)}</strong></div>
-      <button data-task="${item.id}" data-target="task">${tr("continue")}</button>
-    </div>
-    <p>${tr(item.problem)}</p>
-    <div class="loop-steps">${loop.stages[state.lang].map((stage, index) => `<span class="${index < 3 ? "done" : index === 3 ? "current" : ""}">${stage}</span>`).join("")}</div>
-    <div class="loop-meta">
-      <span>${tr("evidence")}: ${tx(loop.evidence)}</span>
-      <span>${tr("policy")}: ${tx(loop.policy)}</span>
-    </div>
+    <div>${workspaces.length ? workspaces.map((item) => `<button data-workspace="${item.id}">${tx(item.title)}</button>`).join("") : `<button data-workspace="W-STAY-DEPOSIT-EXCEPTION">${tr("confirmPayment")}</button>`}</div>
   </article>`;
 }
 
 function searchResultBlocks(results) {
-  const first = results[0] || tasks[0];
+  const first = results[0] || intentWorkspaces[0];
   return `
     <section class="result-focus">
       <span>${tr("bestNext")}</span>
-      ${taskCard(first)}
+      ${workspaceCard(first)}
     </section>
     <section class="compact-section">
-      <h2>${tr("runnableTasks")}</h2>
-      ${results.map(taskCard).join("")}
-    </section>
-    <section class="compact-section">
-      <h2>${tr("relatedObjects")}</h2>
-      ${results.map((item) => objectRow(item.objectId)).join("")}
+      <h2>${tr("intentWorkspace")}</h2>
+      ${results.map(workspaceCard).join("")}
     </section>
     <section class="help-card">
       <span>${tr("helpExplain")}</span>
-      <p>${tr(first.problem)} ${tx(first.next)}</p>
+      <p>${tx(first.summary)} ${tx(first.next)}</p>
     </section>`;
 }
 
-function searchResults() {
-  const q = state.query.toLowerCase();
+function searchWorkspaceResults() {
+  const q = normalize(state.query);
   if (!q) return [];
-  const found = tasks.filter((item) => {
-    const flow = scenarioFlows[item.flow];
-    return [tr(item.title), tr(item.object), tr(item.problem), tr(flow.label), tr(flow.category), item.objectId].join(" ").toLowerCase().includes(q);
-  });
+  const found = intentWorkspaces.filter((item) => normalize(workspaceSearchText(item)).includes(q));
   if (found.length) return found;
-  if (q.includes("房间") || q.includes("комнат")) return [tasks.find((item) => item.id === "T-ROOM-CREATE")];
-  if (q.includes("床位") || q.includes("койк")) return [tasks.find((item) => item.id === "T-BED-CREATE")];
-  if (q.includes("车辆") || q.includes("车牌") || q.includes("vin") || q.includes("авто")) return [tasks.find((item) => item.id === "T-VEHICLE-CREATE")];
-  if (q.includes("退房") || q.includes("высел")) return [tasks.find((item) => item.id === "T-STAY-CHECKOUT")];
-  if (q.includes("维修") || q.includes("ремонт") || q.includes("toyota")) return [tasks[1]];
-  if (q.includes("押金") || q.includes("депозит")) return [tasks[0], tasks[2]];
-  return tasks;
+  if (q.includes("房间") || q.includes("床位") || q.includes("комнат") || q.includes("койк")) return [intentWorkspaces.find((item) => item.id === "W-STAY-RESOURCE")];
+  if (q.includes("车辆") || q.includes("车牌") || q.includes("vin") || q.includes("авто")) return [intentWorkspaces.find((item) => item.id === "W-REPAIR-MASTER-DATA")];
+  if (q.includes("退房") || q.includes("высел")) return [intentWorkspaces.find((item) => item.id === "W-STAY-CHECKOUT")];
+  if (q.includes("报修")) return [intentWorkspaces.find((item) => item.id === "W-REPAIR-REQUEST")];
+  if (q.includes("维修") || q.includes("派工") || q.includes("ремонт") || q.includes("toyota")) return [intentWorkspaces.find((item) => item.id === "W-REPAIR-DISPATCH")];
+  if (q.includes("押金") || q.includes("депозит")) return [intentWorkspaces.find((item) => item.id === "W-STAY-CHECKIN"), intentWorkspaces.find((item) => item.id === "W-STAY-DEPOSIT-EXCEPTION")];
+  return intentWorkspaces;
+}
+
+function workspaceSearchText(item) {
+  return [
+    item.id,
+    tr(item.domain),
+    tx(item.title),
+    tx(item.summary),
+    tx(item.next),
+    item.cards.map(cardSearchText).join(" ")
+  ].join(" ");
+}
+
+function cardSearchText(card) {
+  return [
+    card.id,
+    tx(card.title),
+    localList(card.fields.business),
+    localList(card.evidence),
+    localList(card.checks),
+    localList(card.fields.system),
+    localList(card.fields.analytics)
+  ].join(" ");
 }
 
 function workbenchView() {
@@ -1042,7 +1069,7 @@ function learningView() {
     </section>
     <section class="compact-section">
       <h2>${tr("sceneLearning")}</h2>
-      ${coachEntries.length ? coachEntries.map(([key, flow]) => learningScenarioCard(key, flow)).join("") : `<p>${tr("coachNoMatch")}</p>`}
+      ${coachEntries.length ? coachEntries.map(learningScenarioCard).join("") : `<p>${tr("coachNoMatch")}</p>`}
     </section>
     <section class="compact-section">
       <h2>${tr("quickStart")}</h2>
@@ -1051,18 +1078,6 @@ function learningView() {
         ${modeCard("search", "intentMode")}
         ${modeCard("workbench", "queueMode")}
         ${modeCard("me", "personalMode")}
-      </div>
-    </section>
-    <section class="compact-section action-learning">
-      <h2>${tr("actionSurfaceLearning")}</h2>
-      <p>${tr("actionSurfaceLearningBody")}</p>
-      <p>${tr("actionSurfaceRule")}</p>
-      <div class="surface-mini">
-        <span>${tr("systemJudgement")}</span>
-        <span>${tr("businessFields")}</span>
-        <span>${tr("evidenceMaterials")}</span>
-        <span>${tr("humanConfirmationSummary")}</span>
-        <span>${tr("afterState")}</span>
       </div>
     </section>
     <section class="help-card">
@@ -1090,58 +1105,63 @@ function learningTypeFilters() {
 
 function scenarioCoachEntries() {
   const query = normalize(state.learningQuery);
-  return Object.entries(scenarioFlows)
-    .filter(([, flow]) => learningDomainMatch(flow))
-    .filter(([key, flow]) => !query || normalize(coachSearchText(key, flow)).includes(query));
+  return intentWorkspaces
+    .filter((item) => learningDomainMatch(item))
+    .filter((item) => !query || normalize(workspaceSearchText(item)).includes(query));
 }
 
-function learningDomainMatch(flow) {
+function learningDomainMatch(item) {
   if (state.learningDomain === "all") return true;
-  const item = tasks.find((candidate) => candidate.id === flow.taskId);
-  return item?.domain === state.learningDomain;
+  return item.domain === state.learningDomain;
 }
 
 function normalize(value) {
   return String(value || "").toLocaleLowerCase();
 }
 
-function learningScenarioCard(key, flow) {
-  const activeStage = activeCoachStage(key, flow);
-  const stage = flow.stages[state.lang][activeStage];
+function learningScenarioCard(item) {
+  const activeStage = activeCoachStage(item);
+  const card = item.cards[activeStage] || item.cards[0];
   return `<article class="learning-card">
-    <span>${tr(flow.category)}</span>
-    <strong>${tr(flow.label)}</strong>
-    <div class="coach-stages">${flow.stages[state.lang].map((item, index) => `<button class="${index === activeStage ? "active" : ""}" data-coach-flow="${key}" data-coach-stage="${index}">${item}</button>`).join("")}</div>
+    <span>${tr(item.domain)}</span>
+    <strong>${tx(item.title)}</strong>
+    <p>${tx(item.summary)}</p>
+    <div class="coach-stages">${item.cards.map((entry, index) => `<button class="${index === activeStage ? "active" : ""} ${entry.status}" data-coach-flow="${item.id}" data-coach-stage="${index}">${tx(entry.title)}</button>`).join("")}</div>
     <div class="stage-coach">
-      <span>${tr("flowStage")}</span>
-      <h3>${stage}</h3>
-      ${coachDetailSections(flow, activeStage)}
+      <span>${tr("cardOperation")}</span>
+      <h3>${tx(card.title)}</h3>
+      ${coachDetailSections(item, card)}
       <div class="coach-actions">
-        <button data-task="${flow.taskId}" data-target="task">${tr("enterRelatedTask")}</button>
-        <button data-task="${flow.taskId}" data-target="object">${tr("openRelatedObject")}</button>
+        <button data-workspace="${item.id}">${tr("openWorkspace")}</button>
+        <button data-workspace="${item.id}">${tr("openRelatedObject")}</button>
       </div>
     </div>
   </article>`;
 }
 
-function activeCoachStage(key, flow) {
-  if (state.coachFlow === key) return Number(state.coachStage) || 0;
+function activeCoachStage(item) {
+  if (state.coachFlow === item.id) return Number(state.coachStage) || 0;
   const query = normalize(state.learningQuery);
-  if (!query) return 0;
-  const matched = flow.stages[state.lang].findIndex((stage) => normalize(stage).includes(query));
+  if (!query) return preferredCoachCardIndex(item);
+  const matched = item.cards.findIndex((card) => normalize(cardSearchText(card)).includes(query));
   if (matched >= 0) return matched;
-  return 0;
+  return preferredCoachCardIndex(item);
 }
 
-function coachDetailSections(flow, stageIndex) {
+function preferredCoachCardIndex(item) {
+  const index = item.cards.findIndex((card) => ["ready", "blocked", "inProgress"].includes(card.status));
+  return index >= 0 ? index : 0;
+}
+
+function coachDetailSections(item, card) {
   const sections = [
-    coachDetail("coachHowTo", "stageWhat", stagePurpose(flow, stageIndex)),
-    coachDetail("coachFields", "stageFields", stageFields(flow, stageIndex).join(" · ")),
-    coachDetail("coachException", "stageJudgement", stageJudgement(flow, stageIndex)),
-    coachDetail("coachConfirm", "stageEvidence", tx(flow.evidence)),
-    coachDetail("coachConfirm", "stageConfirm", tx(flow.policy)),
-    coachDetail("coachNext", "stageAfter", businessState(flow, stageIndex)),
-    coachDetail("coachNext", "stageNext", nextStage(flow, stageIndex)),
+    coachDetail("coachHowTo", "stageWhat", cardPurpose(card)),
+    coachDetail("coachFields", "stageFields", cardFieldGuidance(card)),
+    coachDetail("coachException", "stageJudgement", cardJudgement(card)),
+    coachDetail("coachConfirm", "stageEvidence", localList(card.evidence)),
+    coachDetail("coachConfirm", "stageConfirm", cardConfirmation(card)),
+    coachDetail("coachNext", "stageAfter", cardAfterState(card)),
+    coachDetail("coachNext", "stageNext", `${nextCardTitle(card, item)} · ${tx(item.next)}`),
     coachDetail("coachAi", "coachAi", `${tr("aiCanDo")} ${tr("aiCannotDo")}`)
   ];
   return sections.filter((section) => state.learningType === "coachAll" || section.type === state.learningType).map((section) => section.html).join("");
@@ -1154,175 +1174,190 @@ function coachDetail(type, titleKey, body) {
   };
 }
 
-function stagePurpose(flow, stageIndex) {
-  const stage = flow.stages[state.lang][stageIndex];
-  const fieldText = stageFields(flow, stageIndex).join(state.lang === "zh-CN" ? "、" : ", ");
+function cardPurpose(card) {
+  const fields = card.fields.business.map(localTerm).join(state.lang === "zh-CN" ? "、" : ", ");
   return state.lang === "zh-CN"
-    ? `围绕“${stage}”完成本阶段处理，重点核对 ${fieldText}。`
-    : `На этапе "${stage}" проверьте: ${fieldText}.`;
+    ? `围绕“${tx(card.title)}”完成当前任务卡。先选系统候选项，再补充必要业务字段：${fields}。`
+    : `На карточке "${tx(card.title)}" сначала выбирайте системные варианты, затем заполните нужные поля: ${fields}.`;
 }
 
-function stageFields(flow, stageIndex) {
-  const labels = flow.fields.map((field) => state.lang === "zh-CN" ? field[0] : field[2]);
-  if (labels.length <= 2) return labels;
-  const first = labels[stageIndex % labels.length];
-  const second = labels[(stageIndex + 1) % labels.length];
-  return Array.from(new Set([first, second]));
+function cardFieldGuidance(card) {
+  const hints = card.fields.business.map((field) => {
+    if (field.includes("房间") || field.includes("床位") || field.includes("Комната") || field.includes("койка")) {
+      return `${localTerm(field)}: ${tr("searchableSelect")}`;
+    }
+    if (field.includes("预计") || field.includes("周期") || field.includes("План") || field.includes("Период")) {
+      return `${localTerm(field)}: ${state.lang === "zh-CN" ? "下拉选择" : "выбор из списка"}`;
+    }
+    if (field.includes("技师") || field.includes("工位") || field.includes("付款") || field.includes("币种")) {
+      return `${localTerm(field)}: ${state.lang === "zh-CN" ? "下拉选择" : "выбор из списка"}`;
+    }
+    return localTerm(field);
+  });
+  return hints.join(" · ");
 }
 
-function stageJudgement(flow, stageIndex) {
-  const stage = flow.stages[state.lang][stageIndex];
+function cardJudgement(card) {
+  const checks = localList(card.checks);
   if (state.lang === "zh-CN") {
-    return `系统会检查“${stage}”是否具备继续条件、材料是否完整、权限和人工确认是否满足。`;
+    return `系统会检查 ${checks}，并确认材料完整、权限满足、关键动作已人工确认。`;
   }
-  return `Система проверит этап "${stage}": полноту материалов, право доступа и ручное подтверждение.`;
+  return `Система проверит: ${checks}; также полноту материалов, право доступа и ручное подтверждение.`;
 }
 
-function businessState(flow, stageIndex) {
-  const stage = flow.stages[state.lang][stageIndex];
-  return state.lang === "zh-CN" ? `${stage}完成，业务进入下一处理阶段。` : `${stage}: этап завершен, процесс переходит дальше.`;
+function cardConfirmation(card) {
+  if (card.status === "done") return tr("done");
+  return state.lang === "zh-CN" ? "关键动作需要人工确认，AI 只能生成草稿和解释原因。" : "Ключевое действие требует ручного подтверждения; AI только готовит черновик и объяснение.";
 }
 
-function nextStage(flow, stageIndex) {
-  const stages = flow.stages[state.lang];
-  return stages[stageIndex + 1] || tr("finish");
+function cardAfterState(card) {
+  return state.lang === "zh-CN"
+    ? `${tx(card.title)}完成后，系统会更新工作区状态并把下一张任务卡推到前面。`
+    : `После карточки "${tx(card.title)}" система обновит рабочую область и выведет следующую карточку.`;
 }
 
-function coachSearchText(key, flow) {
-  return [
-    key,
-    tr(flow.label),
-    tr(flow.category),
-    flow.stages[state.lang].join(" "),
-    flow.fields.flat().join(" "),
-    tx(flow.evidence),
-    tx(flow.policy)
-  ].join(" ");
-}
-
-function taskView() {
-  const item = task();
-  const loop = scenarioFlows[item.flow];
+function workspaceView() {
+  const item = workspace();
+  const defaultIndex = item.cards.findIndex((card) => ["ready", "blocked", "inProgress"].includes(card.status));
+  const activeIndex = Number.isInteger(state.selectedCardIndex) && state.selectedCardIndex >= 0 ? state.selectedCardIndex : defaultIndex;
+  const activeCard = item.cards[activeIndex >= 0 ? activeIndex : 0] || item.cards[0];
   return shell(`
-    <section class="task-page">
-      <span>${tr(item.domain)} · ${item.due}</span>
-      <h1>${tr(item.title)}</h1>
-      <p>${tr(item.object)}</p>
+    <section class="workspace-page ${item.domain}">
+      <span>${tr("intentWorkspace")} · ${tr(item.domain)}</span>
+      <h1>${tx(item.title)}</h1>
+      <p>${tx(item.summary)}</p>
     </section>
-    <section class="compact-section">
-      <h2>${tr("flowStage")}</h2>
-      <div class="loop-steps task-steps">${loop.stages[state.lang].map((stage, index) => `<span class="${index < 3 ? "done" : index === 3 ? "current" : ""}">${stage}</span>`).join("")}</div>
-    </section>
-    ${actionSurface(item, loop)}
-    <section class="compact-section">
-      <h2>${tr("fieldModel")}</h2>
-      <div class="field-grid">${loop.fields.map(fieldRow).join("")}</div>
-    </section>
-    <section class="compact-section">
-      <h2>${tr("semanticModel")}</h2>
-      <div class="semantic-grid">
-        ${semanticBlock("businessObjects", loop.semantic.objects)}
-        ${semanticBlock("stateContract", loop.semantic.states)}
-        ${semanticBlock("taskContract", loop.semantic.tasks)}
-        ${semanticBlock("actionContract", loop.semantic.actions)}
-        ${semanticBlock("analyticsContract", loop.semantic.analytics)}
-        ${semanticBlock("exceptionBranches", loop.semantic.exceptions)}
-      </div>
-    </section>
-    <section class="compact-section">
-      <h2>${tr("whyMe")}</h2>
-      <p>${tx(item.why)}</p>
-      <h2>${tr("ifDelay")}</h2>
-      <p>${tx(item.delay)}</p>
-    </section>
-    <section class="help-card">
-      <span>${tr("guidance")}</span>
-      <p>${tx(item.next)}</p>
+    <section class="workspace-control">
+      <div class="card-tabs">${item.cards.map((card, index) => `<button class="${card.id === activeCard.id ? "active" : ""} ${card.status}" data-card-index="${index}">${tx(card.title)}</button>`).join("")}</div>
+      ${workspaceCardPanel(activeCard, item, true)}
     </section>
     <div class="sticky-action"><button data-view="confirmPage">${tr("confirmAction")}</button></div>
   `);
 }
 
-function actionSurface(item, flow) {
-  const action = actionName(item, flow);
-  const afterStates = flow.semantic.states.slice(-3);
-  const blockers = flow.semantic.exceptions.slice(0, 3);
-  const analytics = flow.semantic.analytics.slice(0, 3);
-
-  return `<section class="action-surface">
-    <div class="surface-title">
-      <span>${tr("semanticActionSurface")}</span>
-      <h2>${action}</h2>
-      <p>${tr("actionSurfaceRule")}</p>
+function workspaceCard(item) {
+  if (!item) return "";
+  const activeCard = item.cards.find((card) => ["ready", "blocked", "inProgress"].includes(card.status)) || item.cards[0];
+  return `<article class="workspace-card ${item.domain}">
+    <div class="loop-head">
+      <div><span>${tr(item.domain)} · ${tr("intentWorkspace")}</span><strong>${tx(item.title)}</strong></div>
+      <button data-workspace="${item.id}">${tr("openWorkspace")}</button>
     </div>
-    <div class="action-grid">
-      <article class="action-panel primary">
-        <span>${tr("currentAction")}</span>
-        <strong>${action}</strong>
-        <p>${tx(item.next)}</p>
-      </article>
-      <article class="action-panel">
-        <span>${tr("systemJudgement")}</span>
-        <strong>${tr("noCriticalBlocker")}</strong>
-        <p>${blockers.join(" · ")}</p>
-      </article>
-      <article class="action-panel wide">
-        <span>${tr("businessFields")}</span>
-        <div class="action-fields">${operationFields(item, flow)}</div>
-      </article>
-      <article class="action-panel">
-        <span>${tr("evidenceMaterials")}</span>
-        <strong>${tx(flow.evidence)}</strong>
-      </article>
-      <article class="action-panel">
-        <span>${tr("humanConfirmationSummary")}</span>
-        <strong>${tx(flow.policy)}</strong>
-        <p>${tr("confirmationDraft")}</p>
-      </article>
-      <article class="action-panel">
-        <span>${tr("afterState")}</span>
-        <strong>${afterStates.join(" · ")}</strong>
-      </article>
-      <article class="action-panel">
-        <span>${tr("analyticsHint")}</span>
-        <strong>${analytics.join(" · ")}</strong>
-      </article>
+    <p>${tx(item.summary)}</p>
+    <div class="workspace-card-strip">${item.cards.map((card) => `<span class="${card.status}">${tx(card.title)}</span>`).join("")}</div>
+    <div class="loop-meta">
+      <span>${tx(activeCard.title)} · ${tr(activeCard.status)}</span>
+      <span>${tr("nextBestAction")}: ${tx(item.next)}</span>
     </div>
-  </section>`;
+  </article>`;
 }
 
-function actionName(item, flow) {
-  const stage = flow.stages[state.lang][Math.min(3, flow.stages[state.lang].length - 1)];
-  return `${tr(item.title)} · ${stage}`;
+function workspaceCardPanel(card, item, expanded = false) {
+  return `<article class="intent-card ${card.status} ${expanded ? "expanded" : ""}">
+    ${expanded || ["ready", "blocked", "inProgress"].includes(card.status) ? cardOperation(card, item) : ""}
+  </article>`;
 }
 
-function operationFields(item) {
-  const flow = scenarioFlows[item.flow];
-  return flow.fields.map((field) => {
-    const label = state.lang === "zh-CN" ? field[0] : field[2];
-    const value = state.lang === "zh-CN" ? field[1] : field[3];
-    return `<label><span>${label}</span><input value="${value}" /></label>`;
-  }).join("");
-}
-
-function fieldRow(field) {
-  return `<div><span>${state.lang === "zh-CN" ? field[0] : field[2]}</span><strong>${state.lang === "zh-CN" ? field[1] : field[3]}</strong></div>`;
-}
-
-function semanticBlock(labelKey, values) {
-  return `<article><span>${tr(labelKey)}</span><strong>${values.join(" · ")}</strong></article>`;
-}
-
-function objectView() {
-  const object = objects[task().objectId];
-  return shell(`
-    <section class="task-page">
-      <span>${tr(object.domain)}</span>
-      <h1>${tr(object.title)}</h1>
-      <p>${tx(object.line)}</p>
+function cardOperation(card, item) {
+  const disabled = card.status === "blocked" ? "disabled" : "";
+  return `<div class="card-operation">
+    <span>${tr("cardOperation")}</span>
+    <h3>${tx(card.title)}</h3>
+    <section>
+      <b>${tr("cardAction")}</b>
+      <p>${operationActionText(card, item)}</p>
     </section>
-    <section class="compact-section">${taskCard(task())}</section>
-  `);
+    <section>
+      <b>${tr("cardInput")}</b>
+      <div class="operation-inputs">
+        ${operationInputFields(card).map((field) => operationControl(field, disabled)).join("")}
+      </div>
+    </section>
+    <section>
+      <b>${tr("cardEvidence")}</b>
+      <div class="evidence-row">
+        ${card.evidence.map((field) => `<button ${disabled}>${localTerm(field)}</button>`).join("")}
+      </div>
+    </section>
+    <section>
+      <b>${tr("cardConfirm")}</b>
+      <p>${card.status === "blocked" ? tx(item.next) : tr("confirmationDraft")}</p>
+    </section>
+    <section>
+      <b>${tr("cardNext")}</b>
+      <p>${nextCardTitle(card, item)}</p>
+    </section>
+    <section>
+      <b>${tr("nextBestAction")}</b>
+      <p>${tx(item.next)}</p>
+    </section>
+    <section>
+      <b>${tr("blockers")}</b>
+      <p>${item.blockers.length ? item.blockers.map((entry) => tx(entry.title)).join(" · ") : tr("noCriticalBlocker")}</p>
+    </section>
+    <div class="operation-actions">
+      <button class="secondary" ${disabled}>${tr("saveDraft")}</button>
+      <button ${disabled}>${tr("submitForReview")}</button>
+    </div>
+  </div>`;
+}
+
+function operationActionText(card, item) {
+  if (card.status === "blocked") return tx(item.next);
+  return state.lang === "zh-CN"
+    ? `处理“${tx(card.title)}”，提交前系统会校验字段、证据和人工确认边界。`
+    : `Обработайте "${tx(card.title)}"; перед отправкой система проверит поля, доказательства и подтверждение.`;
+}
+
+function operationInputFields(card) {
+  const priority = card.fields.business.filter((field) => !["备注", "补充说明", "异议说明"].includes(field));
+  return priority;
+}
+
+function operationControl(field, disabled) {
+  if (field.includes("房间") || field.includes("床位")) {
+    return `<label class="search-select"><span>${localTerm(field)} · ${tr("searchableSelect")}</span><input list="roomBedOptions" value="${operationValue(field)}" ${disabled} /><datalist id="roomBedOptions"><option value="A301 / A301-02"><option value="A302 / A302-01"><option value="B201 / B201-03"></datalist></label>`;
+  }
+  if (field.includes("预计入住") || field.includes("入住周期") || field.includes("预计退房") || field.includes("预计开始")) {
+    return `<label><span>${localTerm(field)}</span><select ${disabled}><option>${operationValue(field)}</option><option>今天 18:00</option><option>明天 10:00</option><option>本周内</option></select></label>`;
+  }
+  if (field.includes("付款方式")) {
+    return `<label><span>${localTerm(field)}</span><select ${disabled}><option>现金</option><option>银行转账</option><option>POS</option></select></label>`;
+  }
+  if (field.includes("币种")) {
+    return `<label><span>${localTerm(field)}</span><select ${disabled}><option>KGS</option><option>RUB</option><option>USD</option></select></label>`;
+  }
+  if (field.includes("技师")) {
+    return `<label><span>${localTerm(field)}</span><select ${disabled}><option>Алексей Смирнов</option><option>Иван Орлов</option><option>维修主管分配</option></select></label>`;
+  }
+  if (field.includes("工位")) {
+    return `<label><span>${localTerm(field)}</span><select ${disabled}><option>2 号位</option><option>1 号位</option><option>等待空位</option></select></label>`;
+  }
+  return `<label><span>${localTerm(field)}</span><input value="${operationValue(field)}" ${disabled} /></label>`;
+}
+
+function operationValue(field) {
+  const samples = {
+    "入住人": "张三",
+    "房间床位": "A301 / A301-02",
+    "入住周期": "2026-05-28 至 2026-06-28",
+    "押金金额": "3000 KGS",
+    "付款方式": "现金 / 转账",
+    "凭证编号": "DEP-009",
+    "技师": "Алексей Смирнов",
+    "工位": "2 号位",
+    "预计开始时间": "2026-05-28 16:30",
+    "到场时间": "2026-05-28 15:40",
+    "车辆状态": "已到场，待诊断",
+    "接车人": "维修主管"
+  };
+  return samples[field] || localTerm(field);
+}
+
+function nextCardTitle(card, item) {
+  const index = item.cards.findIndex((entry) => entry.id === card.id);
+  const next = item.cards[index + 1];
+  return next ? tx(next.title) : tr("finish");
 }
 
 function simpleView(titleKey, bodyKey) {
@@ -1356,15 +1391,12 @@ function resultView() {
 }
 
 function taskCard(item) {
+  const itemWorkspace = intentWorkspaces.find((entry) => entry.id === workspaceIdForTask(item.id)) || intentWorkspaces[0];
+  const activeCard = itemWorkspace.cards.find((card) => ["ready", "blocked", "inProgress"].includes(card.status)) || itemWorkspace.cards[0];
   return `<article class="task-card">
-    <div><span>${tr(item.domain)} · ${tr(item.badges[0])} · ${item.due}</span><strong>${tr(item.title)}</strong><p>${tr(item.object)}</p><p>${tr("whyMe")}: ${tx(item.why)}</p></div>
-    <button data-task="${item.id}" data-target="task">${tr("enterTask")}</button>
+    <div><span>${tr(item.domain)} · ${tr(item.badges[0])} · ${item.due}</span><strong>${tx(itemWorkspace.title)}</strong><p>${tx(activeCard.title)} · ${tr(activeCard.status)}</p><p>${tr("whyMe")}: ${tx(item.why)}</p></div>
+    <button data-workspace="${itemWorkspace.id}">${tr("openWorkspace")}</button>
   </article>`;
-}
-
-function objectRow(id) {
-  const object = objects[id];
-  return `<article class="object-row"><div><span>${tr(object.domain)}</span><strong>${tr(object.title)}</strong><p>${tx(object.line)}</p></div><button data-task="${tasks.find((item) => item.objectId === id)?.id}" data-target="object">${tr("open")}</button></article>`;
 }
 
 function metric(value, label) {
@@ -1378,8 +1410,7 @@ function render(scrollTop = false) {
     search: searchView,
     workbench: workbenchView,
     me: meView,
-    task: taskView,
-    object: objectView,
+    workspace: workspaceView,
     notes: () => simpleView("noteTitle", "noteBody"),
     reminders: () => simpleView("reminderTitle", "reminderBody"),
     learning: learningView,
@@ -1398,13 +1429,16 @@ function bind() {
   document.querySelector("#start")?.addEventListener("click", onboard);
   document.querySelector("#skip")?.addEventListener("click", onboard);
   document.querySelectorAll("[data-view]").forEach((node) => node.addEventListener("click", () => setView(node.dataset.view)));
-  document.querySelectorAll("[data-task]").forEach((node) => node.addEventListener("click", () => {
-    state.selectedTask = node.dataset.task || state.selectedTask;
-    setView(node.dataset.target || "task");
+  document.querySelectorAll("[data-workspace]").forEach((node) => node.addEventListener("click", () => {
+    state.selectedWorkspace = node.dataset.workspace;
+    state.selectedCardIndex = -1;
+    const linked = intentWorkspaces.find((entry) => entry.id === state.selectedWorkspace);
+    state.selectedTask = linked?.taskId || state.selectedTask;
+    setView("workspace");
   }));
-  document.querySelectorAll("[data-scenario]").forEach((node) => node.addEventListener("click", () => {
-    state.query = node.textContent.trim();
-    setView("search");
+  document.querySelectorAll("[data-card-index]").forEach((node) => node.addEventListener("click", () => {
+    state.selectedCardIndex = Number(node.dataset.cardIndex) || 0;
+    render(true);
   }));
   document.querySelector("#query")?.addEventListener("input", (event) => {
     state.query = event.target.value;

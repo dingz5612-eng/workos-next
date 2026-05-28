@@ -1,67 +1,72 @@
 # Semantic Action Surface
 
-WON-08 turns the task operation area into a semantic action surface.
+WON-11 turns the operation area into a workspace-card action surface.
 
-The operation area is no longer a loose form. It is derived from the scenario semantic model and shows the same execution contract that the backend must later enforce.
+The operation area is no longer a loose form or a separate task page. It is derived from the selected `IntentWorkspace` card and shows the same execution contract that search, workbench, scenario coach, and the backend must later enforce.
 
 ## Surface Layout
 
-Every task page operation surface has six required parts:
+Every card operation surface has six required parts:
 
-- Current action: the task title plus the current scenario stage.
-- System judgement: blockers and exception branches that explain whether the action can continue.
-- Business fields: scenario fields that can become backend DTO fields.
+- Current action: the selected workspace card.
+- Business fields: card fields that can become backend DTO fields.
 - Evidence materials: the documents, photos, receipts, signatures, or review records needed for audit.
 - Human confirmation summary: the policy text that makes critical actions explicit.
-- After state: the object states expected after the action is confirmed.
+- Next card: what becomes available after this card is completed.
+- Blockers and best next action: shown inside the operation surface, not as a detached panel.
 
-The surface can also show analytics hints. These are not user obligations; they are backend and product signals that should be collected later.
+System fields and analytics fields are part of the card contract, but they are not shown to normal users as technical labels. They are backend and product signals that should be collected later.
 
 ## Semantic Sources
 
 The frontend currently reads the action surface from:
 
-- `scenarioFlows[*].fields`
-- `scenarioFlows[*].evidence`
-- `scenarioFlows[*].policy`
-- `scenarioFlows[*].semantic.actions`
-- `scenarioFlows[*].semantic.states`
-- `scenarioFlows[*].semantic.analytics`
-- `scenarioFlows[*].semantic.exceptions`
+- `intentWorkspaces[*].cards[*].title`
+- `intentWorkspaces[*].cards[*].fields.business`
+- `intentWorkspaces[*].cards[*].fields.system`
+- `intentWorkspaces[*].cards[*].fields.analytics`
+- `intentWorkspaces[*].cards[*].evidence`
+- `intentWorkspaces[*].cards[*].checks`
+- `intentWorkspaces[*].cards[*].status`
 
 This keeps UI, backend DTO design, audit evidence, and user guidance aligned.
 
 ## Accommodation Example
 
-For the deposit task, the surface shows:
+For the check-in workspace, the surface shows:
 
-- Stay order, resident, room/bed, and deposit evidence fields.
-- Deposit evidence and finance confirmation records.
-- Human confirmation boundary for deposit and check-in.
-- Expected states such as `Application.Approved`, `Bed.Reserved`, and `StayOrder.ReadyForCheckIn`.
+- Application card.
+- Stay order card, including room and bed selection.
+- Deposit card.
+- Finance card.
+- Check-in confirmation card.
+- Human confirmation boundary for deposit, finance confirmation, and check-in.
 
 ## Repair Example
 
-For repair dispatch, the surface shows:
+For repair workspaces, the surface shows:
 
-- Repair order, vehicle, driver, and technician assignment fields.
-- Diagnosis records, repair photos, acceptance signature, and fee materials.
-- Human confirmation boundary for completion, fee confirmation, and repair closure.
-- Expected states such as `Vehicle.Arrived`, `RepairOrder.WaitingDiagnosis`, and `RepairOrder.InProgress`.
+- Repair request card, vehicle arrival card, and dispatch entry card.
+- Dispatch, diagnosis, execution, and blocker cards.
+- Inspection, fee material, customer confirmation, and close cards.
+- Human confirmation boundary for completion, fee confirmation, customer confirmation, and close.
 
 ## Backend Contract Direction
 
-The backend should later expose an action preparation endpoint that returns this surface as data:
+The backend should later expose workspace card preparation endpoints that return this surface as data:
 
+- `workspaceId`
+- `cardId`
 - `actionId`
-- `taskId`
-- `objectId`
 - `currentAction`
-- `systemJudgement`
-- `fields`
+- `businessFields`
+- `systemFields`
+- `analyticsFields`
 - `evidenceRequirements`
+- `systemChecks`
 - `confirmationPolicy`
-- `afterStates`
+- `nextCard`
+- `blockers`
 - `analyticsEvents`
 
-The confirm endpoint should accept only the action payload and evidence references produced by this surface. Search, workbench, AI, and voice entry must not bypass this preparation and confirmation flow.
+The confirm endpoint should accept only the action payload and evidence references produced by this surface. Search, workbench, AI, voice entry, and scenario coach must not bypass this preparation and confirmation flow.

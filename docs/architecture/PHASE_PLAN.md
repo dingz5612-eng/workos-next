@@ -108,6 +108,12 @@
   - Search and filters highlight scenario stages rather than producing detached knowledge result lists.
   - Stage guides explain one business step with fields, checks, evidence, confirmation, next step, AI boundary, and related task entry.
   - `docs/product/SCENARIO_COACH_LEARNING_CENTER.md` defines the StageHelpProjection direction.
+- Intent Workspace Card Model is the mobile operation target:
+  - Accommodation and repair business are organized by intent workspaces, not page-per-step routes.
+  - Each workspace contains dynamic cards with business fields, system fields, analytics fields, evidence, checks, operation inputs, and confirmation boundaries.
+  - Legacy task/object pages are removed from active routing; task links resolve to workspaces.
+  - Workspaces open on the current actionable card; card switching happens through tags inside the current-card area, without a second detached card list.
+  - `docs/product/INTENT_WORKSPACE_CARD_MODEL.md` defines the WorkspaceProjection and CardProjection direction.
 - User habit profile.
 - Personalized ranking.
 - Model versioning.
