@@ -175,7 +175,18 @@ export const i18n = {
     draftSaved: "草稿已保存在当前页面。",
     apiChecking: "正在连接后端 API",
     apiOnline: "后端 API 已连接",
-    apiOffline: "后端 API 未连接，当前使用本地投影预览。"
+    apiOffline: "后端 API 未连接，当前使用本地投影预览。",
+    loginTitle: "登录到运行时",
+    loginBody: "请选择当前办理人。后端会签发 actor session，关键动作只能用这个 session 确认。",
+    loginRole: "办理角色",
+    loginPassword: "密码",
+    loginSubmit: "登录",
+    loginFailed: "登录失败，请检查 API 和账号。",
+    loginRequired: "请先登录后再办理。",
+    logout: "退出登录",
+    operatorRole: "运营经办人",
+    financeRole: "财务确认人",
+    managerRole: "主管"
   },
   "ru-RU": {
     app: "WorkOSNext",
@@ -353,6 +364,17 @@ export const i18n = {
     draftSaved: "Черновик сохранен на странице.",
     apiChecking: "Подключение к API",
     apiOnline: "API подключен",
-    apiOffline: "API не подключен; показана локальная проекция."
+    apiOffline: "API не подключен; показана локальная проекция.",
+    loginTitle: "Вход в runtime",
+    loginBody: "Выберите исполнителя. Сервер выдаст actor session; ключевые действия подтверждаются только этой сессией.",
+    loginRole: "Роль",
+    loginPassword: "Пароль",
+    loginSubmit: "Войти",
+    loginFailed: "Ошибка входа, проверьте API и учетную запись.",
+    loginRequired: "Сначала войдите в систему.",
+    logout: "Выйти",
+    operatorRole: "Оператор",
+    financeRole: "Финансист",
+    managerRole: "Руководитель"
   }
 };

@@ -127,6 +127,7 @@ dd {
 }
 
 .onboarding,
+.login-panel,
 .command-card,
 .confirm-panel {
   margin-top: 12px;
@@ -138,6 +139,7 @@ dd {
 }
 
 .onboarding h1,
+.login-panel h1,
 .command-card h1,
 .page-title h1,
 .queue-head h1,
@@ -150,9 +152,37 @@ dd {
 }
 
 .onboarding p,
+.login-panel p,
 .command-card dd,
 .confirm-panel p {
   color: #dcecf0;
+}
+
+.login-panel {
+  display: grid;
+  gap: 12px;
+}
+
+.login-panel label {
+  display: grid;
+  gap: 6px;
+}
+
+.login-panel label span,
+.login-panel > span {
+  color: rgba(255, 255, 255, .78);
+  font-size: 12px;
+  font-weight: 850;
+}
+
+.login-panel button {
+  color: #102033;
+  background: #ffd166;
+}
+
+.login-message {
+  color: #fff;
+  font-weight: 850;
 }
 
 .mode-list {
@@ -165,19 +195,29 @@ dd {
   margin: 0;
 }
 
-.mode-list article {
+.mode-list article,
+.mode-card {
   padding: 12px;
   border-radius: 16px;
   background: rgba(255, 255, 255, .12);
 }
 
-.mode-list.light article {
+.mode-list.light article,
+.mode-list.light .mode-card {
   border: 1px solid #d9e7ee;
+  color: #102033;
   background: #f7fbfc;
 }
 
 .mode-list b {
   display: block;
+}
+
+.mode-card {
+  min-height: 0;
+  color: #fff;
+  text-align: left;
+  box-shadow: none;
 }
 
 .onboarding button,

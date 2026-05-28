@@ -7,7 +7,7 @@ const apiBaseUrl = resolveApiBaseUrl();
 
 const state = {
   lang: localStorage.getItem("workosnext.lang") || "zh-CN",
-  view: localStorage.getItem("workosnext.onboarded") ? "home" : "onboarding",
+  view: savedActor() ? (localStorage.getItem("workosnext.onboarded") ? "home" : "onboarding") : "login",
   selectedTask: "T-STAY-DEPOSIT",
   selectedWorkspace: "W-STAY-CHECKIN",
   selectedCardIndex: -1,
@@ -24,7 +24,8 @@ const state = {
   sort: "smartSort",
   operationMessage: "",
   apiStatus: "checking",
-  actorSessions: {}
+  currentActor: savedActor(),
+  loginMessage: ""
 };
 
 const params = new URLSearchParams(window.location.search);
@@ -51,6 +52,9 @@ if (params.has("q")) {
 if (state.view === "task" || state.view === "object") {
   state.view = "workspace";
 }
+if (!state.currentActor && state.view !== "login") {
+  state.view = "login";
+}
 
 function resolveApiBaseUrl() {
   const envBaseUrl = import.meta.env.VITE_WORKOS_API_BASE_URL;
@@ -58,6 +62,15 @@ function resolveApiBaseUrl() {
   const configured = localStorage.getItem("workosnext.apiBaseUrl");
   if (configured) return configured.replace(/\/$/, "");
   return `${window.location.protocol}//${window.location.hostname}:5180`;
+}
+
+function savedActor() {
+  try {
+    const raw = localStorage.getItem("workosnext.actorSession");
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
 }
 
 function tr(key) {
@@ -80,12 +93,6 @@ function localList(items) {
 }
 
 function localTerm(value, lang = state.lang) {
-  if (value && typeof value === "object") {
-    if (value.eventType) return value.eventType;
-    const raw = value.label?.["zh-CN"] || value.title?.["zh-CN"] || txFor(value.label || value.title || value, "zh-CN");
-    return lang === "zh-CN" ? raw : terms[raw] || txFor(value.label || value.title || value, lang);
-  }
-  if (lang === "zh-CN") return value;
   const terms = {
     "入住人": "Гость",
     "入住原因": "Причина",
@@ -201,6 +208,13 @@ function localTerm(value, lang = state.lang) {
     "维修优先级": "Приоритет ремонта",
     "授权规则": "Правила доступа"
   };
+  if (value && typeof value === "object") {
+    if (value.eventType) return value.eventType;
+    const raw = value.label?.["zh-CN"] || value.title?.["zh-CN"] || txFor(value.label || value.title || value, "zh-CN");
+    return lang === "zh-CN" ? raw : terms[raw] || txFor(value.label || value.title || value, lang);
+  }
+
+  if (lang === "zh-CN") return value;
   return terms[value] || value;
 }
 
@@ -209,6 +223,11 @@ function txFor(value, lang) {
 }
 
 function setView(view) {
+  if (!state.currentActor && view !== "login") {
+    state.view = "login";
+    render(true);
+    return;
+  }
   state.view = view;
   render(true);
 }
@@ -228,7 +247,7 @@ function shell(content) {
   return `
     <main class="app-shell view-${state.view}">
       <header class="topbar">
-        <div><strong>${tr("app")}</strong><span>${tr("subtitle")}</span></div>
+        <div><strong>${tr("app")}</strong><span>${state.currentActor ? `${state.currentActor.displayName} · ${state.currentActor.role}` : tr("subtitle")}</span></div>
         <select id="language" aria-label="${tr("language")}">
           <option value="zh-CN" ${state.lang === "zh-CN" ? "selected" : ""}>${tr("zh")}</option>
           <option value="ru-RU" ${state.lang === "ru-RU" ? "selected" : ""}>${tr("ru")}</option>
@@ -237,7 +256,7 @@ function shell(content) {
       ${apiBanner()}
       ${content}
       ${feedbackButton()}
-      ${state.view !== "onboarding" ? bottomNav() : ""}
+      ${state.view !== "onboarding" && state.view !== "login" ? bottomNav() : ""}
     </main>
   `;
 }
@@ -261,7 +280,31 @@ function nav(view, key) {
 }
 
 function feedbackButton() {
-  return state.view === "onboarding" ? "" : `<button class="feedback-fab" data-view="feedback">${tr("feedback")}</button>`;
+  return ["onboarding", "login"].includes(state.view) ? "" : `<button class="feedback-fab" data-view="feedback">${tr("feedback")}</button>`;
+}
+
+function loginView() {
+  return shell(`
+    <section class="login-panel">
+      <span>${tr("loginTitle")}</span>
+      <h1>${tr("app")}</h1>
+      <p>${tr("loginBody")}</p>
+      <label>
+        <span>${tr("loginRole")}</span>
+        <select id="loginRole">
+          <option value="operator">${tr("operatorRole")}</option>
+          <option value="finance">${tr("financeRole")}</option>
+          <option value="manager">${tr("managerRole")}</option>
+        </select>
+      </label>
+      <label>
+        <span>${tr("loginPassword")}</span>
+        <input id="loginPassword" type="password" value="dev" autocomplete="current-password" />
+      </label>
+      <button id="loginSubmit">${tr("loginSubmit")}</button>
+      ${state.loginMessage ? `<p class="login-message">${state.loginMessage}</p>` : ""}
+    </section>
+  `);
 }
 
 function onboardingView() {
@@ -283,7 +326,7 @@ function onboardingView() {
 }
 
 function modeCard(view, key) {
-  return `<article><b>${tr(key)}</b></article>`;
+  return `<button class="mode-card" data-view="${view}"><b>${tr(key)}</b></button>`;
 }
 
 function homeView() {
@@ -474,8 +517,9 @@ function meView() {
   return shell(`
     <section class="profile-card">
       <span>${tr("role")}</span>
-      <h1>${tr("personalMode")}</h1>
-      <p>${tr("permission")}: ${tr("stay")} · ${tr("repair")} · ${tr("finance")}</p>
+      <h1>${state.currentActor?.displayName || tr("personalMode")}</h1>
+      <p>${tr("permission")}: ${state.currentActor?.role || "-"} · ${tr("stay")} · ${tr("repair")} · ${tr("finance")}</p>
+      <button id="logout" class="secondary">${tr("logout")}</button>
     </section>
     <section class="metric-grid">${metric("11", "stats")}${metric("2", "blocked")}${metric("18m", "smartSort")}</section>
     <section class="personal-grid">
@@ -904,6 +948,11 @@ async function submitCurrentCard() {
   const item = workspace();
   const card = activeWorkspaceCard(item);
   if (!item || !card || ["notStarted", "done"].includes(card.status)) return;
+  if (!state.currentActor) {
+    state.loginMessage = tr("loginRequired");
+    setView("login");
+    return;
+  }
   if (state.apiStatus !== "online") {
     await hydrateProjectionFromApi();
     if (state.apiStatus !== "online") {
@@ -917,7 +966,7 @@ async function submitCurrentCard() {
   render();
 
   try {
-    const actor = await actorSessionForCard(card);
+    const actor = state.currentActor;
     const fieldValues = collectOperationValues();
     const idempotencyKey = `${item.id}:${card.id}:${actor.actorId}`;
     const prepareResponse = await fetch(`${apiBaseUrl}/api/workspaces/${item.id}/cards/${card.id}/prepare`, {
@@ -956,19 +1005,40 @@ async function submitCurrentCard() {
   render(true);
 }
 
-async function actorSessionForCard(card) {
-  const role = actorRoleForCard(card);
-  if (state.actorSessions[role]) return state.actorSessions[role];
+async function login() {
+  await hydrateProjectionFromApi();
+  if (state.apiStatus !== "online") {
+    state.loginMessage = tr("apiOffline");
+    render();
+    return;
+  }
+
+  const username = document.querySelector("#loginRole")?.value || "operator";
+  const password = document.querySelector("#loginPassword")?.value || "dev";
   const response = await fetch(`${apiBaseUrl}/api/auth/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ username: role, password: "dev" }),
+    body: JSON.stringify({ username, password }),
     signal: AbortSignal.timeout(2400)
   });
-  if (!response.ok) throw new Error("login_failed");
+  if (!response.ok) {
+    state.loginMessage = tr("loginFailed");
+    render();
+    return;
+  }
+
   const session = await response.json();
-  state.actorSessions[role] = session;
-  return session;
+  state.currentActor = session;
+  state.loginMessage = "";
+  localStorage.setItem("workosnext.actorSession", JSON.stringify(session));
+  setView(localStorage.getItem("workosnext.onboarded") ? "home" : "onboarding");
+}
+
+function logout() {
+  state.currentActor = null;
+  state.loginMessage = "";
+  localStorage.removeItem("workosnext.actorSession");
+  setView("login");
 }
 
 async function waitForProjectionEvent(eventId) {
@@ -993,6 +1063,7 @@ function actorIdForCard(card) {
 
 function render(scrollTop = false) {
   const views = {
+    login: loginView,
     onboarding: onboardingView,
     home: homeView,
     search: searchView,
@@ -1014,6 +1085,8 @@ function render(scrollTop = false) {
 
 function bind() {
   document.querySelector("#language")?.addEventListener("change", (event) => setLang(event.target.value));
+  document.querySelector("#loginSubmit")?.addEventListener("click", login);
+  document.querySelector("#logout")?.addEventListener("click", logout);
   document.querySelector("#start")?.addEventListener("click", onboard);
   document.querySelector("#skip")?.addEventListener("click", onboard);
   document.querySelectorAll("[data-view]").forEach((node) => node.addEventListener("click", () => setView(node.dataset.view)));
