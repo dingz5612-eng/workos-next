@@ -69,6 +69,21 @@ foreach ($sliceDir in $requiredSliceDirs) {
   Assert-Exists "$sliceDir/README.md"
 }
 
+$requiredRuntimeServices = @(
+  "services/core-api/WorkOS.Api/Runtime/RuntimeQueryService.cs",
+  "services/core-api/WorkOS.Api/Runtime/LensQueryService.cs",
+  "services/core-api/WorkOS.Api/Runtime/SearchProjectionService.cs",
+  "services/core-api/WorkOS.Api/Runtime/ActionRuntimeService.cs",
+  "services/core-api/WorkOS.Api/Runtime/AuthSessionService.cs",
+  "services/core-api/WorkOS.Api/Runtime/OutboxProjector.cs"
+)
+
+foreach ($runtimeService in $requiredRuntimeServices) {
+  Assert-Exists $runtimeService
+}
+
+Assert-NoMatches @("services/core-api/WorkOS.Api/Runtime/ProjectionRuntime.cs") "ApplyEventToReadModel|SearchText|SearchResult|PriorityFor" "ProjectionRuntime must stay a facade; keep projector, search, and lens logic in focused services."
+
 $mainLines = (Get-Content "apps/mobile/src/main.js").Count
 if ($mainLines -gt 250) {
   Fail "apps/mobile/src/main.js is $mainLines lines; main.js must stay as a 150-250 line composition shell."

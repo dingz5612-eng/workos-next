@@ -47,6 +47,21 @@ services/core-api/WorkOS.Api/Slices/Repair/Close
 
 Do not put new slice policy directly in `ProjectionRuntime`.
 
+`ProjectionRuntime` is a facade only. It may coordinate services under a lock,
+but it must not own lens ranking, search text construction, prepare/confirm
+policy details, session validation, or outbox projection rules.
+
+Required runtime service boundaries:
+
+```text
+RuntimeQueryService.cs
+LensQueryService.cs
+SearchProjectionService.cs
+ActionRuntimeService.cs
+AuthSessionService.cs
+OutboxProjector.cs
+```
+
 `docs/contracts/slice-manifest.json` is the executable slice registry. When a
 slice, card chain, event chain, or aggregate ownership changes, update the
 manifest in the same commit and keep the matching `services/core-api/WorkOS.Api/Slices/*`
