@@ -206,6 +206,7 @@ dd {
 .next-card,
 .page-title,
 .search-box,
+.knowledge-search,
 .home-search,
 .scenario-list,
 .result-focus,
@@ -257,6 +258,17 @@ dd {
 .home-search > span {
   color: #66788c;
   font-size: 12px;
+}
+
+.knowledge-search {
+  display: grid;
+  gap: 11px;
+}
+
+.knowledge-search > span {
+  color: #52677b;
+  font-size: 13px;
+  line-height: 1.5;
 }
 
 .search-line {
@@ -559,6 +571,62 @@ dd {
   color: #102033;
   background: #fbfdfe;
   text-align: left;
+}
+
+.learning-recommend {
+  display: grid;
+  gap: 9px;
+}
+
+.knowledge-recommend-card {
+  display: grid;
+  gap: 5px;
+  min-height: 88px;
+  padding: 12px;
+  border: 1px solid #cfe2e8;
+  border-radius: 17px;
+  color: #071b31;
+  background: linear-gradient(135deg, #f7fbfc, #eef9f7);
+  text-align: left;
+}
+
+.knowledge-recommend-card span,
+.knowledge-result span {
+  color: #5d7286;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.knowledge-recommend-card strong,
+.knowledge-result strong {
+  display: block;
+  color: #061a2f;
+  font-size: 17px;
+}
+
+.knowledge-recommend-card p,
+.knowledge-result p {
+  color: #52677b;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.knowledge-result {
+  display: grid;
+  gap: 7px;
+  margin-top: 10px;
+  padding: 12px;
+  border: 1px solid #d9e7ee;
+  border-radius: 18px;
+  background: #fbfdfe;
+}
+
+.knowledge-result button {
+  justify-self: start;
+  min-height: 36px;
+  padding: 0 14px;
+  border-radius: 999px;
+  font-size: 13px;
 }
 
 .learning-card {

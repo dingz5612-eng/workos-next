@@ -100,6 +100,10 @@
   - Task operation UI must be derived from the semantic model rather than a loose page form.
   - Each task shows current action, system judgement, business fields, evidence, human confirmation, after state, and analytics hints.
   - `docs/product/SEMANTIC_ACTION_SURFACE.md` defines the current frontend-to-backend action contract.
+- Knowledge Command Center is the learning and help target:
+  - Learning content is generated from the same scenario semantic model instead of a separate manual.
+  - Users can search and filter by business domain and knowledge type.
+  - `docs/product/KNOWLEDGE_COMMAND_CENTER.md` defines the current knowledge-index projection direction.
 - User habit profile.
 - Personalized ranking.
 - Model versioning.

@@ -114,7 +114,20 @@ const i18n = {
     feedback: "反馈",
     tutorial: "教程",
     learningCenter: "学习中心",
-    learningCenterBody: "按工作模式和业务场景学习系统现在能做什么、为什么这样流转、哪些动作必须人工确认。",
+    learningCenterBody: "搜索业务问题、字段、流程和异常；系统会按场景、证据、状态和人工确认边界解释。",
+    knowledgeCommandCenter: "知识指挥中心",
+    knowledgeSearchPlaceholder: "搜索押金、入住、派工、字段、为什么不能继续",
+    contextRecommend: "当前推荐",
+    knowledgeResults: "知识结果",
+    knowledgeNoResults: "没有找到匹配内容，换一个业务词或动作词试试。",
+    knowledgeAllTypes: "全部类型",
+    knowledgeScenario: "场景",
+    knowledgeField: "字段",
+    knowledgeException: "异常",
+    knowledgeConfirm: "确认",
+    knowledgeState: "状态",
+    knowledgeEvidence: "证据",
+    knowledgeHowToUse: "先搜你遇到的问题，再看它属于哪个场景、需要哪些字段和证据、谁必须人工确认。",
     quickStart: "快速上手",
     sceneLearning: "场景学习",
     roleLearning: "角色与边界",
@@ -262,7 +275,20 @@ const i18n = {
     feedback: "Отзыв",
     tutorial: "Обучение",
     learningCenter: "Учебный центр",
-    learningCenterBody: "Учитесь по режимам и сценариям: что система умеет, почему так идет процесс и где нужно ручное подтверждение.",
+    learningCenterBody: "Ищите бизнес-вопросы, поля, процессы и исключения; система объяснит сценарий, доказательства, состояния и ручное подтверждение.",
+    knowledgeCommandCenter: "Центр знаний",
+    knowledgeSearchPlaceholder: "Депозит, заселение, диагностика, поле, почему нельзя продолжить",
+    contextRecommend: "Рекомендации",
+    knowledgeResults: "Результаты",
+    knowledgeNoResults: "Ничего не найдено. Попробуйте другой бизнес-термин или действие.",
+    knowledgeAllTypes: "Все типы",
+    knowledgeScenario: "Сценарий",
+    knowledgeField: "Поле",
+    knowledgeException: "Исключение",
+    knowledgeConfirm: "Подтверждение",
+    knowledgeState: "Состояние",
+    knowledgeEvidence: "Доказательство",
+    knowledgeHowToUse: "Сначала найдите проблему, затем смотрите сценарий, поля, доказательства и кто должен подтвердить.",
     quickStart: "Быстрый старт",
     sceneLearning: "Сценарии",
     roleLearning: "Роли и границы",
@@ -658,6 +684,9 @@ const state = {
   advancedOpen: false,
   queueDomain: "all",
   queueBadge: "mine",
+  learningQuery: "",
+  learningDomain: "all",
+  learningType: "knowledgeAllTypes",
   sort: "smartSort"
 };
 
@@ -673,6 +702,7 @@ if (params.has("task")) {
 }
 if (params.has("q")) {
   state.query = params.get("q");
+  state.learningQuery = params.get("q");
 }
 
 function tr(key) {
@@ -975,11 +1005,31 @@ function personal(view, title, body) {
 }
 
 function learningView() {
+  const results = knowledgeResults();
   return shell(`
     <section class="profile-card">
       <span>${tr("me")}</span>
-      <h1>${tr("learningCenter")}</h1>
+      <h1>${tr("knowledgeCommandCenter")}</h1>
       <p>${tr("learningCenterBody")}</p>
+    </section>
+    <section class="knowledge-search">
+      <span>${tr("knowledgeHowToUse")}</span>
+      <div class="search-line">
+        <input id="learningQuery" value="${state.learningQuery}" placeholder="${tr("knowledgeSearchPlaceholder")}" />
+        <button id="learningSearch">${tr("search")}</button>
+      </div>
+      <div class="filter-row">${learningDomainFilters()}</div>
+      <div class="filter-row">${learningTypeFilters()}</div>
+    </section>
+    <section class="compact-section">
+      <h2>${tr("contextRecommend")}</h2>
+      <div class="learning-recommend">
+        ${tasks.slice(0, 3).map((item) => knowledgeRecommendCard(item)).join("")}
+      </div>
+    </section>
+    <section class="compact-section">
+      <h2>${tr("knowledgeResults")}</h2>
+      ${results.length ? results.map(knowledgeResultCard).join("") : `<p>${tr("knowledgeNoResults")}</p>`}
     </section>
     <section class="compact-section">
       <h2>${tr("quickStart")}</h2>
@@ -1004,7 +1054,7 @@ function learningView() {
     </section>
     <section class="compact-section">
       <h2>${tr("sceneLearning")}</h2>
-      ${Object.entries(scenarioFlows).map(([key, flow]) => learningScenarioCard(key, flow)).join("")}
+      ${Object.entries(scenarioFlows).filter(([, flow]) => learningDomainMatch(flow)).map(([key, flow]) => learningScenarioCard(key, flow)).join("")}
     </section>
     <section class="help-card">
       <span>${tr("roleLearning")}</span>
@@ -1013,6 +1063,80 @@ function learningView() {
       <p>${tr("aiCannotDo")}</p>
     </section>
   `);
+}
+
+function learningDomainFilters() {
+  return ["all", "stay", "repair", "finance"].map((key) => {
+    const active = state.learningDomain === key ? "active" : "";
+    return `<button class="pill ${active}" data-learning-domain="${key}">${tr(key)}</button>`;
+  }).join("");
+}
+
+function learningTypeFilters() {
+  return ["knowledgeAllTypes", "knowledgeScenario", "knowledgeField", "knowledgeException", "knowledgeConfirm", "knowledgeState", "knowledgeEvidence"].map((key) => {
+    const active = state.learningType === key ? "active" : "";
+    return `<button class="pill ${active}" data-learning-type="${key}">${tr(key)}</button>`;
+  }).join("");
+}
+
+function knowledgeRecommendCard(item) {
+  const flow = scenarioFlows[item.flow];
+  return `<button class="knowledge-recommend-card" data-task="${item.id}" data-target="task">
+    <span>${tr(flow.label)}</span>
+    <strong>${tr(item.title)}</strong>
+    <p>${tx(item.next)}</p>
+  </button>`;
+}
+
+function knowledgeResults() {
+  const entries = knowledgeIndex();
+  const query = normalize(state.learningQuery);
+  return entries
+    .filter((entry) => state.learningDomain === "all" || entry.domain === state.learningDomain)
+    .filter((entry) => state.learningType === "knowledgeAllTypes" || entry.type === state.learningType)
+    .filter((entry) => !query || normalize([entry.title, entry.body, entry.meta].join(" ")).includes(query))
+    .slice(0, 18);
+}
+
+function knowledgeIndex() {
+  return Object.entries(scenarioFlows).flatMap(([key, flow]) => {
+    const item = tasks.find((candidate) => candidate.flow === key);
+    const domain = item?.domain || "stay";
+    const stages = flow.stages[state.lang].join(" · ");
+    const fields = flow.fields.map((field) => state.lang === "zh-CN" ? field[0] : field[2]).join(" · ");
+    return [
+      knowledgeEntry(domain, "knowledgeScenario", tr(flow.label), stages, tr(flow.category), item?.id),
+      knowledgeEntry(domain, "knowledgeField", `${tr(flow.label)} · ${tr("businessFields")}`, fields, tr("fieldModel"), item?.id),
+      knowledgeEntry(domain, "knowledgeException", `${tr(flow.label)} · ${tr("exceptionBranches")}`, flow.semantic.exceptions.join(" · "), tr("systemJudgement"), item?.id),
+      knowledgeEntry(domain, "knowledgeConfirm", `${tr(flow.label)} · ${tr("humanConfirmationSummary")}`, tx(flow.policy), tr("policy"), item?.id),
+      knowledgeEntry(domain, "knowledgeState", `${tr(flow.label)} · ${tr("afterState")}`, flow.semantic.states.join(" · "), tr("stateContract"), item?.id),
+      knowledgeEntry(domain, "knowledgeEvidence", `${tr(flow.label)} · ${tr("evidenceMaterials")}`, tx(flow.evidence), tr("evidence"), item?.id)
+    ];
+  });
+}
+
+function knowledgeEntry(domain, type, title, body, meta, taskId) {
+  return { domain, type, title, body, meta, taskId };
+}
+
+function knowledgeResultCard(entry) {
+  const taskAttr = entry.taskId ? ` data-task="${entry.taskId}" data-target="task"` : "";
+  return `<article class="knowledge-result">
+    <span>${tr(entry.domain)} · ${tr(entry.type)}</span>
+    <strong>${entry.title}</strong>
+    <p>${entry.body}</p>
+    <button${taskAttr}>${tr("open")}</button>
+  </article>`;
+}
+
+function learningDomainMatch(flow) {
+  if (state.learningDomain === "all") return true;
+  const item = tasks.find((candidate) => candidate.id === flow.taskId);
+  return item?.domain === state.learningDomain;
+}
+
+function normalize(value) {
+  return String(value || "").toLocaleLowerCase();
 }
 
 function learningScenarioCard(key, flow) {
@@ -1243,6 +1367,21 @@ function bind() {
     state.view = "search";
     render(true);
   });
+  document.querySelector("#learningQuery")?.addEventListener("input", (event) => {
+    state.learningQuery = event.target.value;
+  });
+  document.querySelector("#learningSearch")?.addEventListener("click", () => {
+    state.learningQuery = document.querySelector("#learningQuery")?.value || "";
+    render(true);
+  });
+  document.querySelectorAll("[data-learning-domain]").forEach((node) => node.addEventListener("click", () => {
+    state.learningDomain = node.dataset.learningDomain;
+    render();
+  }));
+  document.querySelectorAll("[data-learning-type]").forEach((node) => node.addEventListener("click", () => {
+    state.learningType = node.dataset.learningType;
+    render();
+  }));
   document.querySelectorAll("[data-filter-field]").forEach((node) => node.addEventListener("click", () => {
     state[node.dataset.filterField] = node.dataset.filterValue;
     render();
