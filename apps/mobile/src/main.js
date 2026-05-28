@@ -114,20 +114,28 @@ const i18n = {
     feedback: "反馈",
     tutorial: "教程",
     learningCenter: "学习中心",
-    learningCenterBody: "搜索业务问题、字段、流程和异常；系统会按场景、证据、状态和人工确认边界解释。",
-    knowledgeCommandCenter: "知识指挥中心",
-    knowledgeSearchPlaceholder: "搜索押金、入住、派工、字段、为什么不能继续",
-    contextRecommend: "当前推荐",
-    knowledgeResults: "知识结果",
-    knowledgeNoResults: "没有找到匹配内容，换一个业务词或动作词试试。",
-    knowledgeAllTypes: "全部类型",
-    knowledgeScenario: "场景",
-    knowledgeField: "字段",
-    knowledgeException: "异常",
-    knowledgeConfirm: "确认",
-    knowledgeState: "状态",
-    knowledgeEvidence: "证据",
-    knowledgeHowToUse: "先搜你遇到的问题，再看它属于哪个场景、需要哪些字段和证据、谁必须人工确认。",
+    learningCenterBody: "你卡在哪一步？搜索业务词或点击闭环阶段，系统只展开这一阶段的字段、判断、证据、确认和下一步。",
+    scenarioCoach: "场景教练",
+    coachSearchPlaceholder: "搜索押金、报修、车辆到场、谁确认、缺什么材料",
+    coachPerspective: "学习视角",
+    coachNoMatch: "没有匹配的场景阶段，换一个业务词或动作词试试。",
+    coachAll: "全部",
+    coachHowTo: "怎么办理",
+    coachFields: "需要字段",
+    coachException: "异常阻断",
+    coachConfirm: "人工确认",
+    coachNext: "下一步",
+    coachAi: "AI 边界",
+    stageWhat: "这一步做什么",
+    stageFields: "需要填写什么",
+    stageJudgement: "系统会检查什么",
+    stageEvidence: "需要什么证据",
+    stageConfirm: "谁来确认",
+    stageAfter: "完成后进入什么状态",
+    stageNext: "下一步是什么",
+    enterRelatedTask: "进入相关任务",
+    openRelatedObject: "打开相关对象",
+    coachHowToUse: "搜索后会直接高亮并展开相关闭环阶段；不再把知识拆成脱离业务的结果列表。",
     quickStart: "快速上手",
     sceneLearning: "场景学习",
     roleLearning: "角色与边界",
@@ -275,20 +283,28 @@ const i18n = {
     feedback: "Отзыв",
     tutorial: "Обучение",
     learningCenter: "Учебный центр",
-    learningCenterBody: "Ищите бизнес-вопросы, поля, процессы и исключения; система объяснит сценарий, доказательства, состояния и ручное подтверждение.",
-    knowledgeCommandCenter: "Центр знаний",
-    knowledgeSearchPlaceholder: "Депозит, заселение, диагностика, поле, почему нельзя продолжить",
-    contextRecommend: "Рекомендации",
-    knowledgeResults: "Результаты",
-    knowledgeNoResults: "Ничего не найдено. Попробуйте другой бизнес-термин или действие.",
-    knowledgeAllTypes: "Все типы",
-    knowledgeScenario: "Сценарий",
-    knowledgeField: "Поле",
-    knowledgeException: "Исключение",
-    knowledgeConfirm: "Подтверждение",
-    knowledgeState: "Состояние",
-    knowledgeEvidence: "Доказательство",
-    knowledgeHowToUse: "Сначала найдите проблему, затем смотрите сценарий, поля, доказательства и кто должен подтвердить.",
+    learningCenterBody: "Где вы застряли? Ищите бизнес-термин или выберите этап, система покажет поля, проверки, доказательства, подтверждение и следующий шаг.",
+    scenarioCoach: "Тренер сценариев",
+    coachSearchPlaceholder: "Депозит, заявка, прибытие авто, кто подтверждает, какие материалы",
+    coachPerspective: "Фокус обучения",
+    coachNoMatch: "Подходящий этап не найден. Попробуйте другой бизнес-термин или действие.",
+    coachAll: "Все",
+    coachHowTo: "Как выполнить",
+    coachFields: "Поля",
+    coachException: "Блокировки",
+    coachConfirm: "Подтверждение",
+    coachNext: "Следующий шаг",
+    coachAi: "Граница AI",
+    stageWhat: "Что сделать",
+    stageFields: "Какие поля нужны",
+    stageJudgement: "Что проверит система",
+    stageEvidence: "Какие доказательства нужны",
+    stageConfirm: "Кто подтверждает",
+    stageAfter: "Состояние после шага",
+    stageNext: "Следующий шаг",
+    enterRelatedTask: "Открыть задачу",
+    openRelatedObject: "Открыть объект",
+    coachHowToUse: "Поиск сразу подсвечивает и раскрывает этап сценария; знания не отделены от бизнес-действия.",
     quickStart: "Быстрый старт",
     sceneLearning: "Сценарии",
     roleLearning: "Роли и границы",
@@ -686,7 +702,9 @@ const state = {
   queueBadge: "mine",
   learningQuery: "",
   learningDomain: "all",
-  learningType: "knowledgeAllTypes",
+  learningType: "coachAll",
+  coachFlow: "",
+  coachStage: 0,
   sort: "smartSort"
 };
 
@@ -1005,31 +1023,26 @@ function personal(view, title, body) {
 }
 
 function learningView() {
-  const results = knowledgeResults();
+  const coachEntries = scenarioCoachEntries();
   return shell(`
     <section class="profile-card">
       <span>${tr("me")}</span>
-      <h1>${tr("knowledgeCommandCenter")}</h1>
+      <h1>${tr("scenarioCoach")}</h1>
       <p>${tr("learningCenterBody")}</p>
     </section>
     <section class="knowledge-search">
-      <span>${tr("knowledgeHowToUse")}</span>
+      <span>${tr("coachHowToUse")}</span>
       <div class="search-line">
-        <input id="learningQuery" value="${state.learningQuery}" placeholder="${tr("knowledgeSearchPlaceholder")}" />
+        <input id="learningQuery" value="${state.learningQuery}" placeholder="${tr("coachSearchPlaceholder")}" />
         <button id="learningSearch">${tr("search")}</button>
       </div>
       <div class="filter-row">${learningDomainFilters()}</div>
+      <span>${tr("coachPerspective")}</span>
       <div class="filter-row">${learningTypeFilters()}</div>
     </section>
     <section class="compact-section">
-      <h2>${tr("contextRecommend")}</h2>
-      <div class="learning-recommend">
-        ${tasks.slice(0, 3).map((item) => knowledgeRecommendCard(item)).join("")}
-      </div>
-    </section>
-    <section class="compact-section">
-      <h2>${tr("knowledgeResults")}</h2>
-      ${results.length ? results.map(knowledgeResultCard).join("") : `<p>${tr("knowledgeNoResults")}</p>`}
+      <h2>${tr("sceneLearning")}</h2>
+      ${coachEntries.length ? coachEntries.map(([key, flow]) => learningScenarioCard(key, flow)).join("") : `<p>${tr("coachNoMatch")}</p>`}
     </section>
     <section class="compact-section">
       <h2>${tr("quickStart")}</h2>
@@ -1052,10 +1065,6 @@ function learningView() {
         <span>${tr("afterState")}</span>
       </div>
     </section>
-    <section class="compact-section">
-      <h2>${tr("sceneLearning")}</h2>
-      ${Object.entries(scenarioFlows).filter(([, flow]) => learningDomainMatch(flow)).map(([key, flow]) => learningScenarioCard(key, flow)).join("")}
-    </section>
     <section class="help-card">
       <span>${tr("roleLearning")}</span>
       <p>${tr("permission")}: ${tr("stay")} · ${tr("repair")} · ${tr("finance")}</p>
@@ -1073,60 +1082,17 @@ function learningDomainFilters() {
 }
 
 function learningTypeFilters() {
-  return ["knowledgeAllTypes", "knowledgeScenario", "knowledgeField", "knowledgeException", "knowledgeConfirm", "knowledgeState", "knowledgeEvidence"].map((key) => {
+  return ["coachAll", "coachHowTo", "coachFields", "coachException", "coachConfirm", "coachNext", "coachAi"].map((key) => {
     const active = state.learningType === key ? "active" : "";
     return `<button class="pill ${active}" data-learning-type="${key}">${tr(key)}</button>`;
   }).join("");
 }
 
-function knowledgeRecommendCard(item) {
-  const flow = scenarioFlows[item.flow];
-  return `<button class="knowledge-recommend-card" data-task="${item.id}" data-target="task">
-    <span>${tr(flow.label)}</span>
-    <strong>${tr(item.title)}</strong>
-    <p>${tx(item.next)}</p>
-  </button>`;
-}
-
-function knowledgeResults() {
-  const entries = knowledgeIndex();
+function scenarioCoachEntries() {
   const query = normalize(state.learningQuery);
-  return entries
-    .filter((entry) => state.learningDomain === "all" || entry.domain === state.learningDomain)
-    .filter((entry) => state.learningType === "knowledgeAllTypes" || entry.type === state.learningType)
-    .filter((entry) => !query || normalize([entry.title, entry.body, entry.meta].join(" ")).includes(query))
-    .slice(0, 18);
-}
-
-function knowledgeIndex() {
-  return Object.entries(scenarioFlows).flatMap(([key, flow]) => {
-    const item = tasks.find((candidate) => candidate.flow === key);
-    const domain = item?.domain || "stay";
-    const stages = flow.stages[state.lang].join(" · ");
-    const fields = flow.fields.map((field) => state.lang === "zh-CN" ? field[0] : field[2]).join(" · ");
-    return [
-      knowledgeEntry(domain, "knowledgeScenario", tr(flow.label), stages, tr(flow.category), item?.id),
-      knowledgeEntry(domain, "knowledgeField", `${tr(flow.label)} · ${tr("businessFields")}`, fields, tr("fieldModel"), item?.id),
-      knowledgeEntry(domain, "knowledgeException", `${tr(flow.label)} · ${tr("exceptionBranches")}`, flow.semantic.exceptions.join(" · "), tr("systemJudgement"), item?.id),
-      knowledgeEntry(domain, "knowledgeConfirm", `${tr(flow.label)} · ${tr("humanConfirmationSummary")}`, tx(flow.policy), tr("policy"), item?.id),
-      knowledgeEntry(domain, "knowledgeState", `${tr(flow.label)} · ${tr("afterState")}`, flow.semantic.states.join(" · "), tr("stateContract"), item?.id),
-      knowledgeEntry(domain, "knowledgeEvidence", `${tr(flow.label)} · ${tr("evidenceMaterials")}`, tx(flow.evidence), tr("evidence"), item?.id)
-    ];
-  });
-}
-
-function knowledgeEntry(domain, type, title, body, meta, taskId) {
-  return { domain, type, title, body, meta, taskId };
-}
-
-function knowledgeResultCard(entry) {
-  const taskAttr = entry.taskId ? ` data-task="${entry.taskId}" data-target="task"` : "";
-  return `<article class="knowledge-result">
-    <span>${tr(entry.domain)} · ${tr(entry.type)}</span>
-    <strong>${entry.title}</strong>
-    <p>${entry.body}</p>
-    <button${taskAttr}>${tr("open")}</button>
-  </article>`;
+  return Object.entries(scenarioFlows)
+    .filter(([, flow]) => learningDomainMatch(flow))
+    .filter(([key, flow]) => !query || normalize(coachSearchText(key, flow)).includes(query));
 }
 
 function learningDomainMatch(flow) {
@@ -1140,17 +1106,98 @@ function normalize(value) {
 }
 
 function learningScenarioCard(key, flow) {
+  const activeStage = activeCoachStage(key, flow);
+  const stage = flow.stages[state.lang][activeStage];
   return `<article class="learning-card">
     <span>${tr(flow.category)}</span>
     <strong>${tr(flow.label)}</strong>
-    <div class="loop-steps">${flow.stages[state.lang].map((stage) => `<span>${stage}</span>`).join("")}</div>
-    <p>${tr("businessObjects")}: ${flow.semantic.objects.join(" · ")}</p>
-    <p>${tr("fieldModel")}: ${flow.fields.map((field) => state.lang === "zh-CN" ? field[0] : field[2]).join(" · ")}</p>
-    <p>${tr("stateContract")}: ${flow.semantic.states.join(" · ")}</p>
-    <p>${tr("evidence")}: ${tx(flow.evidence)}</p>
-    <p>${tr("analyticsContract")}: ${flow.semantic.analytics.join(" · ")}</p>
-    <p>${tr("policy")}: ${tx(flow.policy)}</p>
+    <div class="coach-stages">${flow.stages[state.lang].map((item, index) => `<button class="${index === activeStage ? "active" : ""}" data-coach-flow="${key}" data-coach-stage="${index}">${item}</button>`).join("")}</div>
+    <div class="stage-coach">
+      <span>${tr("flowStage")}</span>
+      <h3>${stage}</h3>
+      ${coachDetailSections(flow, activeStage)}
+      <div class="coach-actions">
+        <button data-task="${flow.taskId}" data-target="task">${tr("enterRelatedTask")}</button>
+        <button data-task="${flow.taskId}" data-target="object">${tr("openRelatedObject")}</button>
+      </div>
+    </div>
   </article>`;
+}
+
+function activeCoachStage(key, flow) {
+  if (state.coachFlow === key) return Number(state.coachStage) || 0;
+  const query = normalize(state.learningQuery);
+  if (!query) return 0;
+  const matched = flow.stages[state.lang].findIndex((stage) => normalize(stage).includes(query));
+  if (matched >= 0) return matched;
+  return 0;
+}
+
+function coachDetailSections(flow, stageIndex) {
+  const sections = [
+    coachDetail("coachHowTo", "stageWhat", stagePurpose(flow, stageIndex)),
+    coachDetail("coachFields", "stageFields", stageFields(flow, stageIndex).join(" · ")),
+    coachDetail("coachException", "stageJudgement", stageJudgement(flow, stageIndex)),
+    coachDetail("coachConfirm", "stageEvidence", tx(flow.evidence)),
+    coachDetail("coachConfirm", "stageConfirm", tx(flow.policy)),
+    coachDetail("coachNext", "stageAfter", businessState(flow, stageIndex)),
+    coachDetail("coachNext", "stageNext", nextStage(flow, stageIndex)),
+    coachDetail("coachAi", "coachAi", `${tr("aiCanDo")} ${tr("aiCannotDo")}`)
+  ];
+  return sections.filter((section) => state.learningType === "coachAll" || section.type === state.learningType).map((section) => section.html).join("");
+}
+
+function coachDetail(type, titleKey, body) {
+  return {
+    type,
+    html: `<section><b>${tr(titleKey)}</b><p>${body}</p></section>`
+  };
+}
+
+function stagePurpose(flow, stageIndex) {
+  const stage = flow.stages[state.lang][stageIndex];
+  const fieldText = stageFields(flow, stageIndex).join(state.lang === "zh-CN" ? "、" : ", ");
+  return state.lang === "zh-CN"
+    ? `围绕“${stage}”完成本阶段处理，重点核对 ${fieldText}。`
+    : `На этапе "${stage}" проверьте: ${fieldText}.`;
+}
+
+function stageFields(flow, stageIndex) {
+  const labels = flow.fields.map((field) => state.lang === "zh-CN" ? field[0] : field[2]);
+  if (labels.length <= 2) return labels;
+  const first = labels[stageIndex % labels.length];
+  const second = labels[(stageIndex + 1) % labels.length];
+  return Array.from(new Set([first, second]));
+}
+
+function stageJudgement(flow, stageIndex) {
+  const stage = flow.stages[state.lang][stageIndex];
+  if (state.lang === "zh-CN") {
+    return `系统会检查“${stage}”是否具备继续条件、材料是否完整、权限和人工确认是否满足。`;
+  }
+  return `Система проверит этап "${stage}": полноту материалов, право доступа и ручное подтверждение.`;
+}
+
+function businessState(flow, stageIndex) {
+  const stage = flow.stages[state.lang][stageIndex];
+  return state.lang === "zh-CN" ? `${stage}完成，业务进入下一处理阶段。` : `${stage}: этап завершен, процесс переходит дальше.`;
+}
+
+function nextStage(flow, stageIndex) {
+  const stages = flow.stages[state.lang];
+  return stages[stageIndex + 1] || tr("finish");
+}
+
+function coachSearchText(key, flow) {
+  return [
+    key,
+    tr(flow.label),
+    tr(flow.category),
+    flow.stages[state.lang].join(" "),
+    flow.fields.flat().join(" "),
+    tx(flow.evidence),
+    tx(flow.policy)
+  ].join(" ");
 }
 
 function taskView() {
@@ -1380,6 +1427,11 @@ function bind() {
   }));
   document.querySelectorAll("[data-learning-type]").forEach((node) => node.addEventListener("click", () => {
     state.learningType = node.dataset.learningType;
+    render();
+  }));
+  document.querySelectorAll("[data-coach-flow]").forEach((node) => node.addEventListener("click", () => {
+    state.coachFlow = node.dataset.coachFlow;
+    state.coachStage = Number(node.dataset.coachStage) || 0;
     render();
   }));
   document.querySelectorAll("[data-filter-field]").forEach((node) => node.addEventListener("click", () => {

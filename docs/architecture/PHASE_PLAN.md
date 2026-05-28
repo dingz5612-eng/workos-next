@@ -104,6 +104,10 @@
   - Learning content is generated from the same scenario semantic model instead of a separate manual.
   - Users can search and filter by business domain and knowledge type.
   - `docs/product/KNOWLEDGE_COMMAND_CENTER.md` defines the current knowledge-index projection direction.
+- Scenario Coach is the refined learning target:
+  - Search and filters highlight scenario stages rather than producing detached knowledge result lists.
+  - Stage guides explain one business step with fields, checks, evidence, confirmation, next step, AI boundary, and related task entry.
+  - `docs/product/SCENARIO_COACH_LEARNING_CENTER.md` defines the StageHelpProjection direction.
 - User habit profile.
 - Personalized ranking.
 - Model versioning.

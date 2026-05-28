@@ -573,62 +573,6 @@ dd {
   text-align: left;
 }
 
-.learning-recommend {
-  display: grid;
-  gap: 9px;
-}
-
-.knowledge-recommend-card {
-  display: grid;
-  gap: 5px;
-  min-height: 88px;
-  padding: 12px;
-  border: 1px solid #cfe2e8;
-  border-radius: 17px;
-  color: #071b31;
-  background: linear-gradient(135deg, #f7fbfc, #eef9f7);
-  text-align: left;
-}
-
-.knowledge-recommend-card span,
-.knowledge-result span {
-  color: #5d7286;
-  font-size: 12px;
-  font-weight: 800;
-}
-
-.knowledge-recommend-card strong,
-.knowledge-result strong {
-  display: block;
-  color: #061a2f;
-  font-size: 17px;
-}
-
-.knowledge-recommend-card p,
-.knowledge-result p {
-  color: #52677b;
-  font-size: 13px;
-  line-height: 1.5;
-}
-
-.knowledge-result {
-  display: grid;
-  gap: 7px;
-  margin-top: 10px;
-  padding: 12px;
-  border: 1px solid #d9e7ee;
-  border-radius: 18px;
-  background: #fbfdfe;
-}
-
-.knowledge-result button {
-  justify-self: start;
-  min-height: 36px;
-  padding: 0 14px;
-  border-radius: 999px;
-  font-size: 13px;
-}
-
 .learning-card {
   margin-top: 10px;
   padding: 12px;
@@ -652,6 +596,73 @@ dd {
 .learning-card p {
   margin-top: 8px;
   color: #52677b;
+  font-size: 13px;
+}
+
+.coach-stages {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.coach-stages button {
+  min-height: 34px;
+  padding: 0 12px;
+  border: 1px solid #d4e3eb;
+  border-radius: 999px;
+  color: #52677b;
+  background: #fff;
+  font-size: 12px;
+}
+
+.coach-stages button.active {
+  color: #102033;
+  background: #ffd166;
+  border-color: #ffd166;
+  font-weight: 850;
+}
+
+.stage-coach {
+  display: grid;
+  gap: 10px;
+  margin-top: 12px;
+  padding: 12px;
+  border: 1px solid #cfe2e8;
+  border-radius: 17px;
+  background: linear-gradient(135deg, #ffffff, #f3faf8);
+}
+
+.stage-coach > span {
+  color: #5d7286;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.stage-coach h3 {
+  font-size: 20px;
+}
+
+.stage-coach section {
+  padding: 10px;
+  border-radius: 14px;
+  background: rgba(238, 247, 249, .85);
+}
+
+.stage-coach b {
+  color: #0d2d45;
+  font-size: 13px;
+}
+
+.coach-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.coach-actions button {
+  min-height: 42px;
+  border-radius: 14px;
   font-size: 13px;
 }
 
