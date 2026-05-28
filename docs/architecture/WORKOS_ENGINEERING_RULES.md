@@ -2,6 +2,13 @@
 
 These rules are mandatory for all future WorkOSNext tasks.
 
+Detailed rule files:
+
+- `docs/architecture/WORKOS_BACKEND_RUNTIME_RULES.md`
+- `docs/architecture/WORKOS_FRONTEND_BOUNDARY_RULES.md`
+- `docs/architecture/WORKOS_CONTRACT_RULES.md`
+- `docs/architecture/AI_TASK_TEMPLATE.md`
+
 ## 1. One Center Model
 
 The system has one source of truth:
@@ -159,7 +166,11 @@ Before commit:
 
 ```powershell
 npm.cmd run build
+npm.cmd audit --audit-level=low
 dotnet build WorkOSNext.sln -c Release
+dotnet run --project tests\WorkOS.RuntimeContractTests\WorkOS.RuntimeContractTests.csproj -c Release
+pwsh ./scripts/guard-architecture.ps1
+node scripts/validate-contracts.mjs
 git diff --check
 git status --short
 ```

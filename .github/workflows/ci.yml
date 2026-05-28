@@ -58,15 +58,12 @@ jobs:
           WORKOS_TEST_CONNECTION: Host=localhost;Port=54329;Database=workosnext;Username=workosnext;Password=workosnext_dev
         run: dotnet run --project tests/WorkOS.RuntimeContractTests/WorkOS.RuntimeContractTests.csproj -c Release
 
-      - name: Residual old-model scan
+      - name: Validate contract files
+        run: node scripts/validate-contracts.mjs
+
+      - name: Architecture guard
         shell: pwsh
-        run: |
-          $matches = rg -n "scenarioFlows|data-task|data-scenario|taskView|objectView" apps docs/product docs/ux
-          if ($LASTEXITCODE -eq 0) {
-            $matches
-            exit 1
-          }
-          exit 0
+        run: ./scripts/guard-architecture.ps1
 
       - name: Diff whitespace check
         run: git diff --check

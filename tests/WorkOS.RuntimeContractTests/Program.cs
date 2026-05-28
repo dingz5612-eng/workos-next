@@ -1,5 +1,6 @@
 using WorkOS.Api.Runtime;
 using Npgsql;
+using System.Text.Json;
 
 var connectionString = Environment.GetEnvironmentVariable("WORKOS_TEST_CONNECTION")
     ?? "Host=localhost;Port=54329;Database=workosnext;Username=workosnext;Password=workosnext_dev";
@@ -10,6 +11,9 @@ ResetPostgres(connectionString);
     var runtime = ProjectionRuntime.OpenPostgres(connectionString);
     var projection = runtime.GetAll();
     var cards = projection.Workspaces.SelectMany(workspace => workspace.Cards).ToArray();
+
+    ValidateProjectionContractFiles();
+    ValidateProjectionEnvelopeAgainstContract(projection);
 
     Assert(projection.Workspaces.Count == 8, $"expected 8 workspaces, got {projection.Workspaces.Count}");
     Assert(cards.Length == 32, $"expected 32 cards, got {cards.Length}");
@@ -110,6 +114,78 @@ static void AssertEventSequence(string[] actual, params string[] expected)
 
 static ConfirmCardRequest Human(string idempotencyKey, IReadOnlyDictionary<string, string>? fieldValues = null) =>
     new("zh-CN", idempotencyKey, fieldValues ?? new Dictionary<string, string>(), Array.Empty<string>());
+
+static void ValidateProjectionContractFiles()
+{
+    using var projectionSchema = JsonDocument.Parse(File.ReadAllText(Path.Combine("docs", "contracts", "projection-contract.schema.json")));
+    var required = projectionSchema.RootElement.GetProperty("required").EnumerateArray().Select(item => item.GetString()).ToHashSet();
+    foreach (var field in new[] { "projection", "version", "languages", "sourceOfTruth", "workspaces", "events" })
+    {
+        Assert(required.Contains(field), $"projection schema must require {field}");
+    }
+
+    using var openApi = JsonDocument.Parse(File.ReadAllText(Path.Combine("docs", "contracts", "workos-runtime.openapi.json")));
+    var confirm = openApi.RootElement
+        .GetProperty("paths")
+        .GetProperty("/api/workspaces/{workspaceId}/cards/{cardId}/confirm")
+        .GetProperty("post");
+
+    var hasActorHeader = confirm.GetProperty("parameters").EnumerateArray().Any(item =>
+        item.GetProperty("name").GetString() == "X-WorkOS-Actor-Token" &&
+        item.GetProperty("in").GetString() == "header" &&
+        item.GetProperty("required").GetBoolean());
+    Assert(hasActorHeader, "OpenAPI confirm must require X-WorkOS-Actor-Token");
+
+    var confirmRequired = openApi.RootElement
+        .GetProperty("components")
+        .GetProperty("schemas")
+        .GetProperty("ConfirmCardRequest")
+        .GetProperty("required")
+        .EnumerateArray()
+        .Select(item => item.GetString())
+        .ToHashSet();
+    foreach (var field in new[] { "language", "idempotencyKey", "fieldValues", "evidenceIds" })
+    {
+        Assert(confirmRequired.Contains(field), $"OpenAPI ConfirmCardRequest must require {field}");
+    }
+}
+
+static void ValidateProjectionEnvelopeAgainstContract(ProjectionEnvelope projection)
+{
+    Assert(projection.Projection == "IntentWorkspaceProjection", "projection envelope type must match contract");
+    Assert(!string.IsNullOrWhiteSpace(projection.Version), "projection envelope missing version");
+    Assert(projection.Languages.Contains("zh-CN") && projection.Languages.Contains("ru-RU"), "projection languages must include zh-CN and ru-RU");
+    Assert(!string.IsNullOrWhiteSpace(projection.SourceOfTruth), "projection sourceOfTruth missing");
+    Assert(projection.Workspaces.Count > 0, "projection workspaces missing");
+
+    foreach (var workspace in projection.Workspaces)
+    {
+        Assert(workspace.ProjectionType == "IntentWorkspaceProjection", $"{workspace.Id} projectionType mismatch");
+        AssertLocalized(workspace.Title, $"{workspace.Id} title");
+        AssertLocalized(workspace.Summary, $"{workspace.Id} summary");
+        Assert(workspace.Cards.Count > 0, $"{workspace.Id} cards missing");
+        foreach (var card in workspace.Cards)
+        {
+            Assert(card.ProjectionType == "WorkspaceCardProjection", $"{card.Id} projectionType mismatch");
+            AssertLocalized(card.Title, $"{card.Id} title");
+            Assert(new[] { "notStarted", "ready", "blocked", "inProgress", "done" }.Contains(card.Status), $"{card.Id} status invalid");
+            Assert(card.Fields.System.Count > 0 && card.Fields.Business.Count > 0 && card.Fields.Analytics.Count > 0, $"{card.Id} fields incomplete");
+            Assert(card.Evidence.Count > 0, $"{card.Id} evidence missing");
+            Assert(card.Checks.Count > 0, $"{card.Id} checks missing");
+            Assert(card.Events.Count > 0, $"{card.Id} events missing");
+            Assert(!string.IsNullOrWhiteSpace(card.Transitions.OnPrepare), $"{card.Id} onPrepare missing");
+            Assert(!string.IsNullOrWhiteSpace(card.Transitions.OnConfirm), $"{card.Id} onConfirm missing");
+            Assert(!string.IsNullOrWhiteSpace(card.Confirmation.RequiredRole), $"{card.Id} confirmation requiredRole missing");
+            AssertLocalized(card.Confirmation.Label, $"{card.Id} confirmation label");
+        }
+    }
+}
+
+static void AssertLocalized(IReadOnlyDictionary<string, string> value, string label)
+{
+    Assert(value.TryGetValue("zh-CN", out var zh) && !string.IsNullOrWhiteSpace(zh), $"{label} missing zh-CN");
+    Assert(value.TryGetValue("ru-RU", out var ru) && !string.IsNullOrWhiteSpace(ru), $"{label} missing ru-RU");
+}
 
 static string LoginToken(ProjectionRuntime runtime, string username)
 {

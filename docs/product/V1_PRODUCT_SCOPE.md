@@ -57,7 +57,7 @@ Automotive repair:
 
 - A user can understand the active path: "I want to find or do something."
 - A user can understand the passive path: "This is what I should handle today."
-- Accommodation and maintenance share the same object/task model.
+- Accommodation and maintenance share the same workspace/card projection contract.
 - All user-visible copy supports Chinese and Russian.
 - Critical actions show confirmation before completion.
 - Behavior data starts accumulating for later personalization.
