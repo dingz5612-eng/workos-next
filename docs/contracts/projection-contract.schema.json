@@ -36,7 +36,7 @@
       "type": "object",
       "required": ["projectionType", "id", "domain", "taskId", "title", "summary", "cards", "next", "blockers"],
       "properties": {
-        "projectionType": { "const": "IntentWorkspace" },
+        "projectionType": { "const": "IntentWorkspaceProjection" },
         "id": { "type": "string", "minLength": 1 },
         "domain": { "type": "string", "minLength": 1 },
         "taskId": { "type": "string", "minLength": 1 },
@@ -58,7 +58,7 @@
       "type": "object",
       "required": ["projectionType", "id", "status", "title", "fields", "evidence", "checks", "blockerRules", "events", "transitions", "confirmation"],
       "properties": {
-        "projectionType": { "const": "WorkspaceCard" },
+        "projectionType": { "const": "WorkspaceCardProjection" },
         "id": { "type": "string", "minLength": 1 },
         "status": { "enum": ["notStarted", "ready", "blocked", "inProgress", "done"] },
         "title": { "$ref": "#/$defs/localized" },
@@ -196,12 +196,15 @@
     },
     "workspaceEvent": {
       "type": "object",
-      "required": ["eventId", "workspaceId", "cardId", "eventType", "actorType", "actorId", "occurredAtUtc", "payload", "projectionTargets"],
+      "required": ["eventId", "workspaceId", "cardId", "eventType", "correlationId", "causationId", "requestId", "actorType", "actorId", "occurredAtUtc", "payload", "projectionTargets"],
       "properties": {
         "eventId": { "type": "string" },
         "workspaceId": { "type": "string" },
         "cardId": { "type": "string" },
         "eventType": { "type": "string" },
+        "correlationId": { "type": "string" },
+        "causationId": { "type": ["string", "null"] },
+        "requestId": { "type": "string" },
         "actorType": { "type": "string" },
         "actorId": { "type": "string" },
         "occurredAtUtc": { "type": "string", "format": "date-time" },

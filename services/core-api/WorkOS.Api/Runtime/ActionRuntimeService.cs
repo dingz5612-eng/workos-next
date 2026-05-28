@@ -1,3 +1,5 @@
+using WorkOS.Api.Slices.Policies;
+
 namespace WorkOS.Api.Runtime;
 
 public sealed class ActionRuntimeService
@@ -95,11 +97,15 @@ public sealed class ActionRuntimeService
         }
 
         var eventDefinition = card.Events.First();
+        var correlationId = request.IdempotencyKey;
         var workspaceEvent = new WorkspaceEvent(
             $"evt-{Guid.NewGuid():N}",
             workspace.Id,
             card.Id,
             eventDefinition.EventType,
+            correlationId,
+            null,
+            request.RequestId ?? correlationId,
             actor.Role,
             actor.UserId,
             DateTimeOffset.UtcNow,

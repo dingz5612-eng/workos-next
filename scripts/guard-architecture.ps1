@@ -42,6 +42,7 @@ Assert-Exists "docs/contracts/workos-runtime.openapi.json"
 Assert-Exists "docs/contracts/slice-manifest.json"
 Assert-Exists "docs/contracts/policy-contract.json"
 Assert-Exists "apps/mobile/src/generated/workosContracts.d.ts"
+Assert-Exists "apps/mobile/src/generated/runtimeApiPaths.js"
 Assert-Exists "docs/architecture/WORKOS_ENGINEERING_RULES.md"
 Assert-Exists "docs/architecture/WORKOS_BACKEND_RUNTIME_RULES.md"
 Assert-Exists "docs/architecture/WORKOS_FRONTEND_BOUNDARY_RULES.md"
@@ -64,7 +65,7 @@ Assert-NoMatches @("apps/mobile/src/controls/fieldControls.js") "房型|上/下�
 Assert-NoMatches @("apps/mobile/src/views") "fetch|/api/" "View modules must not own API transport; use apiClient.js and operationRuntime.js."
 Assert-NoMatches @("apps/mobile/src/i18n.js") "RoomCreated|BedCreated|DepositEvidenceSubmitted|FinanceDepositConfirmed|CheckInConfirmed" "i18n.js must not own event contracts or business runtime definitions."
 
-Assert-NoMatches @("services/core-api/WorkOS.Api/Runtime/ProjectionRuntime.cs") "ai_confirmation_forbidden|role_confirmation_forbidden" "Role and AI confirmation policy denials must live in CardConfirmationPolicy."
+Assert-NoMatches @("services/core-api/WorkOS.Api/Runtime") "ai_confirmation_forbidden|role_confirmation_forbidden" "Role and AI confirmation policy denials must live outside Runtime in Slices/Policies/CardConfirmationPolicy."
 Assert-NoMatches @("services/core-api/WorkOS.Api/Runtime/PostgresProjectionStore.cs") "CardConfirmationPolicy|ProjectionTargets|ApplyEventToReadModel|PriorityFor|SearchText|SearchResult|RequiredRole" "Store classes must not own policy, projector, lens, or business contract rules."
 
 $requiredSliceDirs = @(
@@ -92,6 +93,9 @@ $requiredRuntimeServices = @(
 foreach ($runtimeService in $requiredRuntimeServices) {
   Assert-Exists $runtimeService
 }
+
+Assert-Exists "services/core-api/WorkOS.Api/Slices/Policies/CardConfirmationPolicy.cs"
+Assert-NoMatches @("services/core-api/WorkOS.Api/Runtime") "class CardConfirmationPolicy" "CardConfirmationPolicy must not live under Runtime."
 
 $requiredStorageServices = @(
   "services/core-api/WorkOS.Api/Runtime/PostgresConnectionFactory.cs",
@@ -149,6 +153,25 @@ foreach ($styleModule in $requiredStyleModules) {
   Assert-Exists $styleModule
 }
 
+$requiredMigratedSliceModules = @(
+  "services/core-api/WorkOS.Api/Slices/Accommodation/ResourceSetup/ResourceSetupSlice.cs",
+  "services/core-api/WorkOS.Api/Slices/Accommodation/ResourceSetup/Commands/ResourceSetupCommands.cs",
+  "services/core-api/WorkOS.Api/Slices/Accommodation/ResourceSetup/Events/ResourceSetupEvents.cs",
+  "services/core-api/WorkOS.Api/Slices/Accommodation/ResourceSetup/Policies/ResourceSetupPolicy.cs",
+  "services/core-api/WorkOS.Api/Slices/Accommodation/ResourceSetup/ProjectorRules/ResourceSetupProjectorRules.cs",
+  "services/core-api/WorkOS.Api/Slices/Accommodation/ResourceSetup/Tests/ResourceSetupSliceTests.cs",
+  "services/core-api/WorkOS.Api/Slices/Accommodation/CheckIn/CheckInSlice.cs",
+  "services/core-api/WorkOS.Api/Slices/Accommodation/CheckIn/Commands/CheckInCommands.cs",
+  "services/core-api/WorkOS.Api/Slices/Accommodation/CheckIn/Events/CheckInEvents.cs",
+  "services/core-api/WorkOS.Api/Slices/Accommodation/CheckIn/Policies/CheckInPolicy.cs",
+  "services/core-api/WorkOS.Api/Slices/Accommodation/CheckIn/ProjectorRules/CheckInProjectorRules.cs",
+  "services/core-api/WorkOS.Api/Slices/Accommodation/CheckIn/Tests/CheckInSliceTests.cs"
+)
+
+foreach ($sliceModule in $requiredMigratedSliceModules) {
+  Assert-Exists $sliceModule
+}
+
 Assert-NoMatches @("services/core-api/WorkOS.Api/Runtime/ProjectionRuntime.cs") "ApplyEventToReadModel|SearchText|SearchResult|PriorityFor" "ProjectionRuntime must stay a facade; keep projector, search, and lens logic in focused services."
 Assert-NoMatches @("services/core-api/WorkOS.Api/Runtime/PostgresProjectionStore.cs") "insert into runtime_sessions|insert into audit_events|outbox_messages|schema_migrations|NpgsqlConnection" "PostgresProjectionStore must stay a storage facade; keep session, event, outbox, and migration details in focused storage helpers."
 Assert-NoMatches @("services/core-api/WorkOS.Api/Runtime/ProjectionSeed.cs") "EvidenceRequirement|SystemCheck|EventDefinition|FieldUi|OptionSet|TermRu|FieldId" "ProjectionSeed must stay a seed assembler; keep evidence, checks, events, field UI, option sets, and terms in focused catalogs."
@@ -189,6 +212,23 @@ foreach ($pattern in $requiredEndpointPatterns) {
   }
 }
 
+$allowedMapPostPaths = @(
+  "/api/auth/login",
+  "/api/workspaces/{workspaceId}/cards/{cardId}/prepare",
+  "/api/workspaces/{workspaceId}/cards/{cardId}/confirm",
+  "/api/projections/process-outbox",
+  "/api/behavior-events"
+)
+
+$mapPostMatches = [regex]::Matches($program, 'MapPost\("([^"]+)"')
+foreach ($match in $mapPostMatches) {
+  $path = $match.Groups[1].Value
+  if (-not $allowedMapPostPaths.Contains($path)) {
+    Fail "MapPost endpoint is not in the architecture allowlist: $path"
+  }
+}
+
 node scripts/generate-contract-dtos.mjs --check
+node scripts/validate-runtime-api.mjs
 
 Write-Host "Architecture guard: PASS"

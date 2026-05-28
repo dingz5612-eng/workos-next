@@ -1,3 +1,6 @@
+using WorkOS.Api.Slices.Accommodation.CheckIn.Events;
+using WorkOS.Api.Slices.Accommodation.ResourceSetup.Events;
+
 namespace WorkOS.Api.Runtime;
 
 internal static class EventContractCatalog
@@ -7,14 +10,14 @@ internal static class EventContractCatalog
 
     private static string[] Types(string cardId) => cardId switch
     {
-        "room" => new[] { "RoomCreated" },
-        "bed" => new[] { "BedCreated" },
-        "activate" => new[] { "BedActivated" },
-        "application" => new[] { "ApplicationApproved" },
-        "stayOrder" => new[] { "StayOrderPrepared", "BedSelected" },
-        "deposit" => new[] { "DepositEvidenceSubmitted", "DepositBlocked" },
-        "finance" => new[] { "FinanceDepositConfirmed" },
-        "checkin" => new[] { "CheckInConfirmed" },
+        "room" => new[] { ResourceSetupEvents.RoomCreated },
+        "bed" => new[] { ResourceSetupEvents.BedCreated },
+        "activate" => new[] { ResourceSetupEvents.BedActivated },
+        "application" => new[] { CheckInEvents.ApplicationApproved },
+        "stayOrder" => new[] { CheckInEvents.StayOrderPrepared, CheckInEvents.BedSelected },
+        "deposit" => new[] { CheckInEvents.DepositEvidenceSubmitted, CheckInEvents.DepositBlocked },
+        "finance" => new[] { CheckInEvents.FinanceDepositConfirmed },
+        "checkin" => new[] { CheckInEvents.CheckInConfirmed },
         _ => new[] { $"{char.ToUpperInvariant(cardId[0])}{cardId[1..]}Confirmed" }
     };
 

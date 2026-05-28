@@ -51,6 +51,12 @@ Do not put new slice policy directly in `ProjectionRuntime`.
 but it must not own lens ranking, search text construction, prepare/confirm
 policy details, session validation, or outbox projection rules.
 
+`CardConfirmationPolicy` must live outside `Runtime`, currently under:
+
+```text
+services/core-api/WorkOS.Api/Slices/Policies/CardConfirmationPolicy.cs
+```
+
 Required runtime service boundaries:
 
 ```text
@@ -106,6 +112,11 @@ slice, card chain, event chain, or aggregate ownership changes, update the
 manifest in the same commit and keep the matching `services/core-api/WorkOS.Api/Slices/*`
 directory present.
 
+Only `Accommodation.ResourceSetup` and `Accommodation.CheckIn` have migrated
+slice modules at this stage. Their slice directories must contain Commands,
+Policies, Events, ProjectorRules, and Tests. Other slices may remain
+contract-only until deliberately migrated.
+
 ## Policy Boundary
 
 Confirmation policy belongs in focused policy classes, starting with
@@ -129,8 +140,28 @@ rules.
 - Dev login still verifies configured password hashes.
 - Confirmed events append to audit journal and outbox.
 - Outbox worker updates projections.
+- Audit events and outbox messages include correlationId, causationId, and
+  requestId.
 - PostgreSQL schema changes live in `infra/db/migrations/*.sql`.
 - CORS is restricted by `Cors:AllowedOrigins`; `AllowAnyOrigin` is forbidden.
+
+## Endpoint Allowlist
+
+Every `MapPost` endpoint must be in the architecture allowlist enforced by
+`scripts/guard-architecture.ps1`.
+
+Allowed POST endpoints:
+
+```text
+/api/auth/login
+/api/workspaces/{workspaceId}/cards/{cardId}/prepare
+/api/workspaces/{workspaceId}/cards/{cardId}/confirm
+/api/projections/process-outbox
+/api/behavior-events
+```
+
+Do not add a new POST endpoint without updating OpenAPI, rules, and the guard
+in the same commit.
 
 ## Persistence Direction
 

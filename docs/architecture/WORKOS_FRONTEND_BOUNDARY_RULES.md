@@ -36,6 +36,18 @@ composition-only versions may be shorter. It should only initialize state, read
 URL params through `appState.js`, hydrate the API, assemble routes, render, and
 bind events.
 
+`main.js` may only:
+
+- Initialize state.
+- Read URL parameters through `appState.js`.
+- Initialize API hydration.
+- Assemble routes.
+- Call `render`.
+- Call `bindEvents`.
+
+It must never own business judgment, field controls, API calls, confirmation
+actions, or learning-center rules.
+
 Ownership:
 
 - `views/workspaceView.js` owns workspace cards, operation panels, confirmation
@@ -55,6 +67,9 @@ Other guarded frontend hubs:
   under `apps/mobile/src/i18n`.
 - `styles.css` is only the style import manifest. CSS lives in focused modules
   under `apps/mobile/src/styles`.
+- Frontend API paths must come from generated contract artifacts under
+  `apps/mobile/src/generated`, not hand-written endpoint strings in views or
+  operation modules.
 
 Required copy modules:
 

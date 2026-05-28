@@ -36,6 +36,26 @@ for (const field of ["service", "version", "persistence", "workspaceCount", "car
   }
 }
 
+const workspaceProjectionType = projectionSchema.$defs?.workspace?.properties?.projectionType?.const;
+if (workspaceProjectionType !== "IntentWorkspaceProjection") {
+  throw new Error("Projection schema workspace projectionType must match runtime API output.");
+}
+
+const cardProjectionType = projectionSchema.$defs?.card?.properties?.projectionType?.const;
+if (cardProjectionType !== "WorkspaceCardProjection") {
+  throw new Error("Projection schema card projectionType must match runtime API output.");
+}
+
+for (const field of ["correlationId", "causationId", "requestId"]) {
+  if (!projectionSchema.$defs?.workspaceEvent?.required?.includes(field)) {
+    throw new Error(`Projection schema workspaceEvent must require ${field}`);
+  }
+}
+
+if (!fs.existsSync("scripts/validate-runtime-api.mjs")) {
+  throw new Error("Runtime API response validation script is required.");
+}
+
 const requiredSlices = [
   "Accommodation.ResourceSetup",
   "Accommodation.CheckIn",

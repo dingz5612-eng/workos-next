@@ -31,8 +31,8 @@ internal sealed class RuntimeEventStorage
         {
             command.Transaction = transaction;
             command.CommandText = """
-            insert into audit_events(event_id, idempotency_key, workspace_id, card_id, event_type, actor_type, actor_id, occurred_at_utc, body)
-            values (@eventId, @idempotencyKey, @workspaceId, @cardId, @eventType, @actorType, @actorId, @occurredAtUtc, @body::jsonb)
+            insert into audit_events(event_id, idempotency_key, workspace_id, card_id, event_type, correlation_id, causation_id, request_id, actor_type, actor_id, occurred_at_utc, body)
+            values (@eventId, @idempotencyKey, @workspaceId, @cardId, @eventType, @correlationId, @causationId, @requestId, @actorType, @actorId, @occurredAtUtc, @body::jsonb)
             on conflict(event_id) do nothing
             """;
             command.Parameters.AddWithValue("eventId", workspaceEvent.EventId);
@@ -40,6 +40,9 @@ internal sealed class RuntimeEventStorage
             command.Parameters.AddWithValue("workspaceId", workspaceEvent.WorkspaceId);
             command.Parameters.AddWithValue("cardId", workspaceEvent.CardId);
             command.Parameters.AddWithValue("eventType", workspaceEvent.EventType);
+            command.Parameters.AddWithValue("correlationId", workspaceEvent.CorrelationId);
+            command.Parameters.AddWithValue("causationId", (object?)workspaceEvent.CausationId ?? DBNull.Value);
+            command.Parameters.AddWithValue("requestId", workspaceEvent.RequestId);
             command.Parameters.AddWithValue("actorType", workspaceEvent.ActorType);
             command.Parameters.AddWithValue("actorId", workspaceEvent.ActorId);
             command.Parameters.AddWithValue("occurredAtUtc", workspaceEvent.OccurredAtUtc);
@@ -53,6 +56,9 @@ internal sealed class RuntimeEventStorage
             workspaceEvent.WorkspaceId,
             workspaceEvent.CardId,
             workspaceEvent.EventType,
+            workspaceEvent.CorrelationId,
+            workspaceEvent.EventId,
+            workspaceEvent.RequestId,
             DateTimeOffset.UtcNow,
             null,
             workspaceEvent);
@@ -61,8 +67,8 @@ internal sealed class RuntimeEventStorage
         {
             command.Transaction = transaction;
             command.CommandText = """
-            insert into outbox_messages(message_id, event_id, idempotency_key, workspace_id, card_id, event_type, created_at_utc, processed_at_utc, body)
-            values (@messageId, @eventId, @idempotencyKey, @workspaceId, @cardId, @eventType, @createdAtUtc, @processedAtUtc, @body::jsonb)
+            insert into outbox_messages(message_id, event_id, idempotency_key, workspace_id, card_id, event_type, correlation_id, causation_id, request_id, created_at_utc, processed_at_utc, body)
+            values (@messageId, @eventId, @idempotencyKey, @workspaceId, @cardId, @eventType, @correlationId, @causationId, @requestId, @createdAtUtc, @processedAtUtc, @body::jsonb)
             on conflict(message_id) do nothing
             """;
             command.Parameters.AddWithValue("messageId", outboxMessage.MessageId);
@@ -71,6 +77,9 @@ internal sealed class RuntimeEventStorage
             command.Parameters.AddWithValue("workspaceId", outboxMessage.WorkspaceId);
             command.Parameters.AddWithValue("cardId", outboxMessage.CardId);
             command.Parameters.AddWithValue("eventType", outboxMessage.EventType);
+            command.Parameters.AddWithValue("correlationId", outboxMessage.CorrelationId);
+            command.Parameters.AddWithValue("causationId", (object?)outboxMessage.CausationId ?? DBNull.Value);
+            command.Parameters.AddWithValue("requestId", outboxMessage.RequestId);
             command.Parameters.AddWithValue("createdAtUtc", outboxMessage.CreatedAtUtc);
             command.Parameters.AddWithValue("processedAtUtc", DBNull.Value);
             command.Parameters.AddWithValue("body", NpgsqlDbType.Jsonb, JsonSerializer.Serialize(outboxMessage, PostgresProjectionStore.JsonOptions));

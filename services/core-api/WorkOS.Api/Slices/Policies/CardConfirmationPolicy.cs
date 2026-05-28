@@ -1,4 +1,6 @@
-namespace WorkOS.Api.Runtime;
+using WorkOS.Api.Runtime;
+
+namespace WorkOS.Api.Slices.Policies;
 
 public sealed class CardConfirmationPolicy
 {

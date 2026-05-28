@@ -142,6 +142,8 @@ Backend boundaries:
 
 - `ProjectionRuntime` is a facade, not the owner of lens queries, action
   runtime, auth, projector, or policy.
+- `CardConfirmationPolicy` lives outside `Runtime` under slice policy
+  boundaries. Runtime may call it, but must not own policy decisions.
 - Store classes persist and load data only; they must not own business rules,
   projection rules, policy rules, or lens/search ranking.
 - `PostgresProjectionStore` is a facade over focused PostgreSQL storage helpers.
@@ -201,6 +203,8 @@ dotnet build WorkOSNext.sln -c Release
 dotnet run --project tests\WorkOS.RuntimeContractTests\WorkOS.RuntimeContractTests.csproj -c Release
 pwsh ./scripts/guard-architecture.ps1
 node scripts/validate-contracts.mjs
+node scripts/validate-runtime-api.mjs
+node scripts/generate-contract-dtos.mjs --check
 git diff --check
 git status --short
 ```
@@ -226,7 +230,8 @@ For backend runtime work, CI, idempotency, migrations, trusted actor identity,
 outbox worker processing, and configuration separation are mandatory.
 
 - CI must run backend build, frontend build, runtime contract tests, npm audit,
-  residual old-model scan, and `git diff --check`.
+  residual old-model scan, real API response contract validation, and
+  `git diff --check`.
 - Confirm commands must use idempotency keys and must not write duplicate audit
   events for repeated submissions.
 - PostgreSQL schema changes must be versioned through migrations recorded in
@@ -235,6 +240,8 @@ outbox worker processing, and configuration separation are mandatory.
   request body claims.
 - Confirmed audit events must produce outbox messages; projections must be
   updated by the outbox worker.
+- Audit events and outbox messages must carry `correlationId`, `causationId`,
+  and `requestId` for traceability.
 - API URLs, connection strings, and poll intervals must be configuration-driven,
   not hard-coded for one local machine.
 - CORS must be restricted by `Cors:AllowedOrigins`; do not use `AllowAnyOrigin`.
@@ -300,6 +307,18 @@ rules directly to `main.js`.
 `main.js` is a composition shell. It should not own page rendering, queue/search
 selectors, workspace card rendering, learning center explanations, field widget
 selection, draft collection, login flow, or submit flow.
+
+Allowed `main.js` responsibilities are only:
+
+- Initialize state.
+- Read URL parameters through `appState.js`.
+- Initialize API hydration.
+- Assemble routes.
+- Call `render`.
+- Call `bindEvents`.
+
+No business judgment, field controls, API calls, confirmation actions, or
+learning-center rules may be added to `main.js`.
 
 ## 17. Field Runtime Rule
 

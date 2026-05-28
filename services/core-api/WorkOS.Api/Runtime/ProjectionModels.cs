@@ -11,6 +11,9 @@ public sealed record OutboxMessage(
     string WorkspaceId,
     string CardId,
     string EventType,
+    string CorrelationId,
+    string? CausationId,
+    string RequestId,
     DateTimeOffset CreatedAtUtc,
     DateTimeOffset? ProcessedAtUtc,
     WorkspaceEvent Event);
@@ -117,6 +120,9 @@ public sealed record WorkspaceEvent(
     string WorkspaceId,
     string CardId,
     string EventType,
+    string CorrelationId,
+    string? CausationId,
+    string RequestId,
     string ActorType,
     string ActorId,
     DateTimeOffset OccurredAtUtc,
@@ -127,7 +133,8 @@ public sealed record ConfirmCardRequest(
     string? Language,
     string? IdempotencyKey,
     IReadOnlyDictionary<string, string>? FieldValues,
-    IReadOnlyList<string>? EvidenceIds);
+    IReadOnlyList<string>? EvidenceIds,
+    string? RequestId = null);
 
 public sealed record LoginRequest(string Username, string Password);
 

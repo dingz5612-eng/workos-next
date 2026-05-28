@@ -63,7 +63,8 @@
         "parameters": [
           { "name": "workspaceId", "in": "path", "required": true, "schema": { "type": "string" } },
           { "name": "cardId", "in": "path", "required": true, "schema": { "type": "string" } },
-          { "name": "X-WorkOS-Actor-Token", "in": "header", "required": true, "schema": { "type": "string" } }
+          { "name": "X-WorkOS-Actor-Token", "in": "header", "required": true, "schema": { "type": "string" } },
+          { "name": "X-Request-Id", "in": "header", "required": false, "schema": { "type": "string" } }
         ],
         "requestBody": {
           "required": true,
@@ -118,7 +119,8 @@
           "evidenceIds": {
             "type": "array",
             "items": { "type": "string" }
-          }
+          },
+          "requestId": { "type": ["string", "null"] }
         }
       },
       "RuntimeObservation": {

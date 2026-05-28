@@ -86,6 +86,8 @@ ResetPostgres(connectionString);
     var reloaded = ProjectionRuntime.OpenPostgres(connectionString).GetAll();
     var reloadedResource = reloaded.Workspaces.Single(workspace => workspace.Id == "W-STAY-RESOURCE");
     Assert(reloaded.Events.Any(item => item.EventType == "RoomCreated"), "RoomCreated event should be persisted");
+    Assert(reloaded.Events.All(item => !string.IsNullOrWhiteSpace(item.CorrelationId)), "audit events must include correlationId");
+    Assert(reloaded.Events.All(item => !string.IsNullOrWhiteSpace(item.RequestId)), "audit events must include requestId");
     AssertEventSequence(reloaded.Events.Where(item => item.WorkspaceId == "W-STAY-RESOURCE").Select(item => item.EventType).ToArray(), "RoomCreated", "BedCreated", "BedActivated");
     AssertEventSequence(reloaded.Events.Where(item => item.WorkspaceId == "W-STAY-CHECKIN").Select(item => item.EventType).ToArray(), "ApplicationApproved", "StayOrderPrepared", "DepositEvidenceSubmitted", "FinanceDepositConfirmed", "CheckInConfirmed");
     Assert(reloadedResource.Cards.Single(card => card.Id == "room").Status == "done", "room status should persist as done");
@@ -94,11 +96,14 @@ ResetPostgres(connectionString);
     var reloadedCheckin = reloaded.Workspaces.Single(workspace => workspace.Id == "W-STAY-CHECKIN");
     Assert(reloadedCheckin.Cards.All(card => card.Status == "done"), "check-in cards should all be done");
     var reloadedRuntime = ProjectionRuntime.OpenPostgres(connectionString);
-    Assert(CountRows(connectionString, "schema_migrations") >= 3, "schema migrations should be recorded in PostgreSQL");
+    Assert(CountRows(connectionString, "schema_migrations") >= 4, "schema migrations should be recorded in PostgreSQL");
     Assert(reloadedRuntime.GetAuditEvents("W-STAY-CHECKIN").Count == 5, "check-in audit events should persist in PostgreSQL");
     Assert(reloadedRuntime.GetBehaviorEvents().Any(item => item.EventId == "beh-test"), "behavior event should persist in PostgreSQL");
     var outbox = reloadedRuntime.GetOutboxMessages();
     Assert(outbox.Count == 8, $"expected 8 outbox messages, got {outbox.Count}");
+    Assert(outbox.All(item => !string.IsNullOrWhiteSpace(item.CorrelationId)), "outbox messages must include correlationId");
+    Assert(outbox.All(item => !string.IsNullOrWhiteSpace(item.RequestId)), "outbox messages must include requestId");
+    Assert(outbox.All(item => !string.IsNullOrWhiteSpace(item.CausationId)), "outbox messages must include causationId");
     Assert(outbox.All(item => item.ProcessedAtUtc is not null), "all outbox messages should be processed by projector");
     Assert(reloadedRuntime.ProcessPendingOutbox() == 0, "outbox projector should be idempotent after processing");
     var observation = reloadedRuntime.Observe();
@@ -133,6 +138,18 @@ static void ValidateProjectionContractFiles()
     foreach (var field in new[] { "projection", "version", "languages", "sourceOfTruth", "workspaces", "events" })
     {
         Assert(required.Contains(field), $"projection schema must require {field}");
+    }
+
+    var eventRequired = projectionSchema.RootElement
+        .GetProperty("$defs")
+        .GetProperty("workspaceEvent")
+        .GetProperty("required")
+        .EnumerateArray()
+        .Select(item => item.GetString())
+        .ToHashSet();
+    foreach (var field in new[] { "correlationId", "causationId", "requestId" })
+    {
+        Assert(eventRequired.Contains(field), $"projection schema workspaceEvent must require {field}");
     }
 
     using var openApi = JsonDocument.Parse(File.ReadAllText(Path.Combine("docs", "contracts", "workos-runtime.openapi.json")));
@@ -177,6 +194,8 @@ static void ValidateGeneratedDtos()
     {
         Assert(generated.Contains($"export type {typeName}"), $"generated DTOs must include {typeName}");
     }
+    Assert(generated.Contains("correlationId: string"), "generated DTOs must include WorkspaceEvent correlationId");
+    Assert(File.Exists(Path.Combine("apps", "mobile", "src", "generated", "runtimeApiPaths.js")), "generated runtime API paths module must exist");
 }
 
 static void ValidateSliceManifest(ProjectionEnvelope projection)

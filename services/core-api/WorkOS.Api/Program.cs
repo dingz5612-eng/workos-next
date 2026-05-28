@@ -75,7 +75,8 @@ app.MapPost("/api/workspaces/{workspaceId}/cards/{cardId}/prepare", (string work
 app.MapPost("/api/workspaces/{workspaceId}/cards/{cardId}/confirm", (string workspaceId, string cardId, ConfirmCardRequest request, HttpRequest httpRequest) =>
 {
     var token = httpRequest.Headers["X-WorkOS-Actor-Token"].FirstOrDefault() ?? string.Empty;
-    var result = runtime.Confirm(workspaceId, cardId, request, token);
+    var requestId = httpRequest.Headers["X-Request-Id"].FirstOrDefault() ?? httpRequest.HttpContext.TraceIdentifier;
+    var result = runtime.Confirm(workspaceId, cardId, request with { RequestId = requestId }, token);
     return result.Status switch
     {
         ConfirmStatus.NotFound => Results.NotFound(new { error = "card_not_found", workspaceId, cardId }),

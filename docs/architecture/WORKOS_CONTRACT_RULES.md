@@ -17,6 +17,9 @@ Runtime contract tests must verify:
 
 - Projection envelope has `projection`, `version`, `languages`, `sourceOfTruth`, `workspaces`, and `events`.
 - Every workspace card has fields, evidence, checks, events, transitions, and confirmation policy.
+- Real API responses from `GET /api/workspaces`, `POST /prepare`,
+  `POST /confirm`, and `GET /api/observability/runtime` match the projection
+  and runtime contract shape.
 - Confirm OpenAPI requires `X-WorkOS-Actor-Token`.
 - Confirm request requires `language`, `idempotencyKey`, `fieldValues`, and `evidenceIds`.
 
@@ -52,6 +55,7 @@ Generated DTOs are mandatory:
 
 ```text
 apps/mobile/src/generated/workosContracts.d.ts
+apps/mobile/src/generated/runtimeApiPaths.js
 ```
 
 Run this after changing projection schema or OpenAPI:
