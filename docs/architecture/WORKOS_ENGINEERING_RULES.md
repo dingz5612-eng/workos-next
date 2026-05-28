@@ -250,14 +250,26 @@ Projection and API shape must be treated as contracts.
 New work must go into focused modules:
 
 ```text
+appState.js
+appShell.js
+appRouter.js
+eventBinder.js
 apiClient.js
 operationRuntime.js
+operationDrafts.js
+views/*.js
+selectors/*.js
+controls/*.js
 workspaceView.js
 coachView.js
 ```
 
 Do not add new fetch calls, action confirm logic, or learning-center business
 rules directly to `main.js`.
+
+`main.js` is a composition shell. It should not own page rendering, queue/search
+selectors, workspace card rendering, learning center explanations, field widget
+selection, draft collection, login flow, or submit flow.
 
 ## 17. Field Runtime Rule
 

@@ -1,4 +1,4 @@
-import { capacityForRoomType } from "./projectionMetadata.js";
+import { capacityForRoomType } from "../projectionMetadata.js";
 
 export { capacityForRoomType };
 

@@ -9,12 +9,18 @@ The PWA is a Projection Contract Lab and business acceptance bench. It must cons
 New work goes into focused modules:
 
 ```text
+appState.js
+appShell.js
+appRouter.js
+eventBinder.js
 apiClient.js
 operationRuntime.js
+operationDrafts.js
+views/*.js
+selectors/*.js
+controls/*.js
 workspaceView.js
 coachView.js
-fieldControls.js
-operationDrafts.js
 ```
 
 Forbidden in `main.js`:
@@ -25,7 +31,21 @@ fetch(
 confirmCard
 ```
 
-`main.js` should continue shrinking toward an 800-line target.
+`main.js` must stay between 150 and 250 lines when the application grows; tiny
+composition-only versions may be shorter. It should only initialize state, read
+URL params through `appState.js`, hydrate the API, assemble routes, render, and
+bind events.
+
+Ownership:
+
+- `views/workspaceView.js` owns workspace cards, operation panels, confirmation
+  text, operation controls, operation values, and next-card display.
+- `views/coachView.js` owns learning center rendering and scenario coach
+  explanations.
+- `selectors/searchSelectors.js` owns search ranking/search text.
+- `selectors/queueSelectors.js` owns queue counts and queue filtering.
+- `controls/fieldControls.js` owns field widget selection from projection
+  metadata.
 
 ## Field Runtime
 

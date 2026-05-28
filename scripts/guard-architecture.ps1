@@ -52,8 +52,8 @@ Assert-NoMatches @("apps/mobile/src/main.js") "/api/" "main.js must not contain 
 Assert-NoMatches @("apps/mobile/src/main.js") "confirmCard" "main.js must not call confirmCard directly; use operationRuntime.js."
 
 $mainLines = (Get-Content "apps/mobile/src/main.js").Count
-if ($mainLines -gt 1100) {
-  Fail "apps/mobile/src/main.js is $mainLines lines; keep shrinking it toward the 800-line target."
+if ($mainLines -gt 250) {
+  Fail "apps/mobile/src/main.js is $mainLines lines; main.js must stay as a 150-250 line composition shell."
 }
 
 $program = Get-Content "services/core-api/WorkOS.Api/Program.cs" -Raw
