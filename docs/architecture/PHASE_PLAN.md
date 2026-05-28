@@ -123,5 +123,6 @@
 
 - All future work must follow `docs/architecture/WORKOS_ENGINEERING_RULES.md`.
 - Backend contract drafts must follow `docs/architecture/WORKSPACE_CARD_BACKEND_CONTRACT.md`.
+- WON-13 backend runtime work must follow `docs/architecture/WON_13_PRODUCTION_RUNTIME_ARCHITECTURE.md`.
 - `IntentWorkspaceProjection + WorkspaceCardProjection` is the single center model for frontend, backend, search, workbench, scenario coach, and AI.
 - Do not create separate page models, search models, learning models, or AI models for the same business behavior.

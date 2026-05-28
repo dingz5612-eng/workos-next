@@ -1,15 +1,24 @@
-export const intentWorkspaces = [
+export let intentWorkspaces = [
+  workspaceModel("W-STAY-RESOURCE", "stay", "T-ROOM-CREATE",
+    { "zh-CN": "我要创建住宿资源", "ru-RU": "Создать ресурсы проживания" },
+    { "zh-CN": "房间、床位和资源启用在同一资源建档办理面完成。", "ru-RU": "Комнаты, койки и активация ресурсов вместе." },
+    [
+      cardModel("room", "ready", "房间建档卡", "Комната", ["roomId", "buildingId"], ["楼栋", "房间号", "房型", "容量"], ["duplicateRoomCount"]),
+      cardModel("bed", "notStarted", "床位建档卡", "Койка", ["bedId", "roomId"], ["床位号", "上/下铺", "价格规则", "检查状态"], ["capacityConflictCount"]),
+      cardModel("activate", "notStarted", "资源启用卡", "Активация", ["bedId", "operatorId"], ["可用状态", "维护状态", "锁定原因"], ["activationDuration"])
+    ],
+    { "zh-CN": "先创建房间，再创建床位，最后启用可分配资源。", "ru-RU": "Сначала комната, затем койка, затем активация ресурса." }),
   workspaceModel("W-STAY-CHECKIN", "stay", "T-STAY-DEPOSIT",
     { "zh-CN": "我要安排入住", "ru-RU": "Оформить заселение" },
     { "zh-CN": "一件事内完成申请、住宿单、押金、财务和入住确认。", "ru-RU": "Заявка, ордер, депозит, финансы и заселение в одной области." },
     [
-      cardModel("application", "done", "申请卡", "Заявка", ["applicationId", "residentId", "approverId"], ["入住人", "入住原因", "预计入住/退房", "审批意见"], ["approvalLeadTime", "approvalReturnCount"]),
-      cardModel("stayOrder", "ready", "住宿单卡", "Ордер", ["stayOrderId", "roomId", "bedId"], ["已审批申请", "房间床位", "入住周期", "押金/费用规则"], ["bedLockDuration", "assignmentDuration"]),
-      cardModel("deposit", "blocked", "押金卡", "Депозит", ["depositEvidenceId", "stayOrderId"], ["押金金额", "币种", "付款方式", "凭证编号"], ["depositSubmitDuration", "depositReturnCount"]),
+      cardModel("application", "ready", "申请卡", "Заявка", ["applicationId", "residentId", "approverId"], ["入住人", "入住原因", "预计入住/退房", "审批意见"], ["approvalLeadTime", "approvalReturnCount"]),
+      cardModel("stayOrder", "notStarted", "住宿单卡", "Ордер", ["stayOrderId", "roomId", "bedId"], ["已审批申请", "房间床位", "入住周期", "押金/费用规则"], ["bedLockDuration", "assignmentDuration"]),
+      cardModel("deposit", "notStarted", "押金卡", "Депозит", ["depositEvidenceId", "stayOrderId"], ["押金金额", "币种", "付款方式", "凭证编号"], ["depositSubmitDuration", "depositReturnCount"]),
       cardModel("finance", "notStarted", "财务卡", "Финансы", ["financeReviewId", "depositEvidenceId"], ["到账状态", "确认金额", "退回原因", "财务确认人"], ["financeReviewDuration", "financePassRate"]),
       cardModel("checkin", "notStarted", "入住确认卡", "Подтверждение", ["auditTraceId", "bedId", "stayOrderId"], ["实际入住时间", "钥匙/物品交接", "人工确认摘要"], ["totalCheckinDuration", "manualConfirmCount"])
     ],
-    { "zh-CN": "补齐押金材料，创建住宿单和选床在同一张住宿单卡内完成。", "ru-RU": "Дополните депозит; ордер и койка оформляются в одной карточке." }),
+    { "zh-CN": "资源启用后，从申请卡开始进入入住办理闭环。", "ru-RU": "После активации ресурса начните заселение с заявки." }),
   workspaceModel("W-STAY-CHECKOUT", "stay", "T-STAY-CHECKOUT",
     { "zh-CN": "我要办理退房", "ru-RU": "Оформить выселение" },
     { "zh-CN": "退房发起、房间检查、费用结算、财务确认和释放床位在一个办理面完成。", "ru-RU": "Выселение, проверка, расчет, финансы и освобождение койки вместе." },
@@ -31,15 +40,6 @@ export const intentWorkspaces = [
       cardModel("returnBusiness", "notStarted", "回到业务卡", "Возврат", ["stayOrderId", "currentStage"], ["回到入住", "回到退房", "保持阻断"], ["exceptionResolutionDuration"])
     ],
     { "zh-CN": "补交材料后等待财务复核。", "ru-RU": "После материалов ждите фин. проверку." }),
-  workspaceModel("W-STAY-RESOURCE", "stay", "T-ROOM-CREATE",
-    { "zh-CN": "我要创建住宿资源", "ru-RU": "Создать ресурсы проживания" },
-    { "zh-CN": "房间、床位和资源启用在同一资源建档办理面完成。", "ru-RU": "Комнаты, койки и активация ресурсов вместе." },
-    [
-      cardModel("room", "ready", "房间建档卡", "Комната", ["roomId", "buildingId"], ["楼栋", "房间号", "房型", "容量"], ["duplicateRoomCount"]),
-      cardModel("bed", "notStarted", "床位建档卡", "Койка", ["bedId", "roomId"], ["床位号", "上/下铺", "价格规则", "检查状态"], ["capacityConflictCount"]),
-      cardModel("activate", "notStarted", "资源启用卡", "Активация", ["bedId", "operatorId"], ["可用状态", "维护状态", "锁定原因"], ["activationDuration"])
-    ],
-    { "zh-CN": "先创建房间，再在同一办理面继续创建床位。", "ru-RU": "Сначала комната, затем койки в этой же области." }),
   workspaceModel("W-REPAIR-REQUEST", "repair", "T-AUTO-DIAGNOSE",
     { "zh-CN": "我要处理报修", "ru-RU": "Обработать заявку ремонта" },
     { "zh-CN": "客户车辆、报修信息、到场确认和派工入口形成报修闭环。", "ru-RU": "Клиент, авто, заявка, прибытие и готовность к назначению." },
@@ -80,6 +80,12 @@ export const intentWorkspaces = [
     ],
     { "zh-CN": "先建客户和车辆，再补服务规则。", "ru-RU": "Создайте клиента и авто, затем правила." })
 ];
+
+export function replaceIntentWorkspaces(nextWorkspaces) {
+  if (Array.isArray(nextWorkspaces) && nextWorkspaces.length) {
+    intentWorkspaces = nextWorkspaces;
+  }
+}
 
 export const taskWorkspaceMap = {
   "T-STAY-DEPOSIT": "W-STAY-CHECKIN",

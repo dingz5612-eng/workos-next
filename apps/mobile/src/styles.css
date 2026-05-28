@@ -864,6 +864,12 @@ dd {
   gap: 8px;
 }
 
+.operation-message {
+  margin: 8px 0 0;
+  color: #d6fff4;
+  font-weight: 850;
+}
+
 .compact-section label {
   display: grid;
   gap: 6px;

@@ -14,6 +14,12 @@ docs/architecture/WORKOS_ENGINEERING_RULES.md
 
 The center model is `IntentWorkspaceProjection + WorkspaceCardProjection`. Do not create separate page, search, learning, or AI models for the same business behavior.
 
+WON-13 production runtime work must also follow:
+
+```text
+docs/architecture/WON_13_PRODUCTION_RUNTIME_ARCHITECTURE.md
+```
+
 ## Phase 0-1 Scope
 
 - Project scaffold.

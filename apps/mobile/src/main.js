@@ -1,7 +1,7 @@
 import "./styles.css";
 import { tasks } from "./demoQueue.js";
 import { i18n } from "./i18n.js";
-import { intentWorkspaces, workspaceIdForTask } from "./workspaceProjections.js";
+import { intentWorkspaces, replaceIntentWorkspaces, workspaceIdForTask } from "./workspaceProjections.js";
 
 
 
@@ -21,7 +21,8 @@ const state = {
   learningType: "coachAll",
   coachFlow: "",
   coachStage: 0,
-  sort: "smartSort"
+  sort: "smartSort",
+  operationMessage: ""
 };
 
 const params = new URLSearchParams(window.location.search);
@@ -653,9 +654,7 @@ function cardAfterState(card) {
 
 function workspaceView() {
   const item = workspace();
-  const defaultIndex = item.cards.findIndex((card) => ["ready", "blocked", "inProgress"].includes(card.status));
-  const activeIndex = Number.isInteger(state.selectedCardIndex) && state.selectedCardIndex >= 0 ? state.selectedCardIndex : defaultIndex;
-  const activeCard = item.cards[activeIndex >= 0 ? activeIndex : 0] || item.cards[0];
+  const activeCard = activeWorkspaceCard(item);
   return shell(`
     <section class="workspace-page ${item.domain}">
       <span>${tr("intentWorkspace")} · ${tr(item.domain)}</span>
@@ -666,7 +665,7 @@ function workspaceView() {
       <div class="card-tabs">${item.cards.map((card, index) => `<button class="${card.id === activeCard.id ? "active" : ""} ${card.status}" data-card-index="${index}">${tx(card.title)}</button>`).join("")}</div>
       ${workspaceCardPanel(activeCard, item, true)}
     </section>
-    <div class="sticky-action"><button data-view="confirmPage">${tr("confirmAction")}</button></div>
+    <div class="sticky-action"><button data-submit-card>${tr("confirmAction")}</button></div>
   `);
 }
 
@@ -732,9 +731,10 @@ function cardOperation(card, item) {
       <p>${visibleBlockers.length ? visibleBlockers.map((entry) => tx(entry.title)).join(" · ") : tr("noCriticalBlocker")}</p>
     </section>
     <div class="operation-actions">
-      <button class="secondary" ${disabled}>${tr("saveDraft")}</button>
-      <button ${disabled}>${tr("submitForReview")}</button>
+      <button class="secondary" data-save-draft ${disabled}>${tr("saveDraft")}</button>
+      <button data-submit-card ${disabled}>${tr("submitForReview")}</button>
     </div>
+    ${state.operationMessage ? `<p class="operation-message">${state.operationMessage}</p>` : ""}
   </div>`;
 }
 
@@ -753,18 +753,18 @@ function operationInputFields(card) {
 function operationControl(field, disabled) {
   const label = localTerm(field, "zh-CN");
   if (field.type === "searchSelect") {
-    return `<label class="search-select"><span>${localTerm(field)} · ${tr("searchableSelect")}</span><input list="${field.id}Options" value="${operationValue(field)}" ${disabled} /><datalist id="${field.id}Options">${optionValues(label).map((item) => `<option value="${item}">`).join("")}</datalist></label>`;
+    return `<label class="search-select"><span>${localTerm(field)} · ${tr("searchableSelect")}</span><input data-operation-field="${field.id}" list="${field.id}Options" value="${operationValue(field)}" ${disabled} /><datalist id="${field.id}Options">${optionValues(label).map((item) => `<option value="${item}">`).join("")}</datalist></label>`;
   }
   if (field.type === "select") {
-    return `<label><span>${localTerm(field)}</span><select ${disabled}>${optionValues(label).map((item) => `<option>${item}</option>`).join("")}</select></label>`;
+    return `<label><span>${localTerm(field)}</span><select data-operation-field="${field.id}" ${disabled}>${optionValues(label).map((item) => `<option>${item}</option>`).join("")}</select></label>`;
   }
   if (field.type === "money") {
-    return `<label><span>${localTerm(field)}</span><input inputmode="decimal" value="${operationValue(field)}" ${disabled} /></label>`;
+    return `<label><span>${localTerm(field)}</span><input data-operation-field="${field.id}" inputmode="decimal" value="${operationValue(field)}" ${disabled} /></label>`;
   }
   if (field.type === "evidenceUpload") {
-    return `<label><span>${localTerm(field)}</span><input value="${operationValue(field)}" ${disabled} /></label>`;
+    return `<label><span>${localTerm(field)}</span><input data-operation-field="${field.id}" value="${operationValue(field)}" ${disabled} /></label>`;
   }
-  return `<label><span>${localTerm(field)}</span><input value="${operationValue(field)}" ${disabled} /></label>`;
+  return `<label><span>${localTerm(field)}</span><input data-operation-field="${field.id}" value="${operationValue(field)}" ${disabled} /></label>`;
 }
 
 function optionValues(label) {
@@ -846,6 +846,84 @@ function taskCard(item) {
 
 function metric(value, label) {
   return `<article><span>${tr(label)}</span><strong>${value}</strong></article>`;
+}
+
+async function hydrateProjectionFromApi() {
+  try {
+    const response = await fetch("http://localhost:5180/api/workspaces");
+    if (!response.ok) return;
+    const payload = await response.json();
+    replaceIntentWorkspaces(payload.workspaces);
+  } catch {
+    // Local projection remains the fallback when the backend is not running.
+  }
+}
+
+function activeWorkspaceCard(item) {
+  const defaultIndex = item.cards.findIndex((card) => ["ready", "blocked", "inProgress"].includes(card.status));
+  const activeIndex = Number.isInteger(state.selectedCardIndex) && state.selectedCardIndex >= 0 ? state.selectedCardIndex : defaultIndex;
+  return item.cards[activeIndex >= 0 ? activeIndex : 0] || item.cards[0];
+}
+
+function collectOperationValues() {
+  return Array.from(document.querySelectorAll("[data-operation-field]")).reduce((values, node) => {
+    values[node.dataset.operationField] = node.value || "";
+    return values;
+  }, {});
+}
+
+function saveCurrentDraft() {
+  state.operationMessage = tr("draftSaved");
+  render();
+}
+
+async function submitCurrentCard() {
+  const item = workspace();
+  const card = activeWorkspaceCard(item);
+  if (!item || !card || ["notStarted", "done"].includes(card.status)) return;
+
+  state.operationMessage = tr("submitting");
+  render();
+
+  try {
+    const fieldValues = collectOperationValues();
+    const prepareResponse = await fetch(`http://localhost:5180/api/workspaces/${item.id}/cards/${card.id}/prepare`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: "{}"
+    });
+    if (!prepareResponse.ok) throw new Error("prepare_failed");
+
+    const confirmResponse = await fetch(`http://localhost:5180/api/workspaces/${item.id}/cards/${card.id}/confirm`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        actorType: actorRoleForCard(card),
+        actorId: actorIdForCard(card),
+        language: state.lang,
+        fieldValues,
+        evidenceIds: []
+      })
+    });
+    if (!confirmResponse.ok) throw new Error("confirm_failed");
+
+    const result = await confirmResponse.json();
+    replaceIntentWorkspaces(result.projection.workspaces);
+    state.selectedCardIndex = -1;
+    state.operationMessage = tr("submitDone");
+  } catch {
+    state.operationMessage = tr("submitFailed");
+  }
+
+  render(true);
+}
+
+function actorRoleForCard(card) {
+  return ["finance", "checkoutFinance", "review", "feeMaterial"].includes(card.id) ? "finance" : "operator";
+}
+
+function actorIdForCard(card) {
+  return actorRoleForCard(card) === "finance" ? "u-finance" : "u-operator";
 }
 
 function render(scrollTop = false) {
@@ -934,6 +1012,8 @@ function bind() {
     render();
   });
   document.querySelector("#finish")?.addEventListener("click", () => setView("result"));
+  document.querySelector("[data-save-draft]")?.addEventListener("click", saveCurrentDraft);
+  document.querySelectorAll("[data-submit-card]").forEach((node) => node.addEventListener("click", submitCurrentCard));
 }
 
-render();
+hydrateProjectionFromApi().finally(() => render());

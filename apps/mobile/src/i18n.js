@@ -168,7 +168,11 @@ export const i18n = {
     guidance: "下一步 / 提示 / 帮助",
     confirmAction: "确认办理",
     finish: "确认完成",
-    evidenceDone: "已记录操作证据"
+    evidenceDone: "已记录操作证据",
+    submitting: "正在提交并写入事件...",
+    submitDone: "已提交，事件已写入，投影已刷新。",
+    submitFailed: "提交失败：请确认后端 API 正在运行。",
+    draftSaved: "草稿已保存在当前页面。"
   },
   "ru-RU": {
     app: "WorkOSNext",
@@ -339,6 +343,10 @@ export const i18n = {
     guidance: "Следующий шаг / помощь",
     confirmAction: "Подтвердить",
     finish: "Завершить",
-    evidenceDone: "Аудит записан"
+    evidenceDone: "Аудит записан",
+    submitting: "Отправка и запись события...",
+    submitDone: "Отправлено, событие записано, проекция обновлена.",
+    submitFailed: "Ошибка отправки: проверьте, что API запущен.",
+    draftSaved: "Черновик сохранен на странице."
   }
 };
