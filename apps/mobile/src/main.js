@@ -3,7 +3,7 @@ import { tasks } from "./demoQueue.js";
 import { i18n } from "./i18n.js";
 import { intentWorkspaces, replaceIntentWorkspaces, workspaceIdForTask } from "./workspaceProjections.js";
 
-
+const apiBaseUrl = resolveApiBaseUrl();
 
 const state = {
   lang: localStorage.getItem("workosnext.lang") || "zh-CN",
@@ -22,10 +22,14 @@ const state = {
   coachFlow: "",
   coachStage: 0,
   sort: "smartSort",
-  operationMessage: ""
+  operationMessage: "",
+  apiStatus: "checking"
 };
 
 const params = new URLSearchParams(window.location.search);
+if (params.has("api")) {
+  localStorage.setItem("workosnext.apiBaseUrl", params.get("api"));
+}
 if (params.has("lang")) {
   state.lang = params.get("lang");
 }
@@ -45,6 +49,12 @@ if (params.has("q")) {
 }
 if (state.view === "task" || state.view === "object") {
   state.view = "workspace";
+}
+
+function resolveApiBaseUrl() {
+  const configured = localStorage.getItem("workosnext.apiBaseUrl");
+  if (configured) return configured.replace(/\/$/, "");
+  return `${window.location.protocol}//${window.location.hostname}:5180`;
 }
 
 function tr(key) {
@@ -221,11 +231,17 @@ function shell(content) {
           <option value="ru-RU" ${state.lang === "ru-RU" ? "selected" : ""}>${tr("ru")}</option>
         </select>
       </header>
+      ${apiBanner()}
       ${content}
       ${feedbackButton()}
       ${state.view !== "onboarding" ? bottomNav() : ""}
     </main>
   `;
+}
+
+function apiBanner() {
+  const label = state.apiStatus === "online" ? tr("apiOnline") : state.apiStatus === "checking" ? tr("apiChecking") : tr("apiOffline");
+  return `<section class="api-status ${state.apiStatus}"><span>${label}</span><small>${apiBaseUrl}</small></section>`;
 }
 
 function bottomNav() {
@@ -850,12 +866,16 @@ function metric(value, label) {
 
 async function hydrateProjectionFromApi() {
   try {
-    const response = await fetch("http://localhost:5180/api/workspaces");
-    if (!response.ok) return;
+    const health = await fetch(`${apiBaseUrl}/health`, { signal: AbortSignal.timeout(1600) });
+    if (!health.ok) throw new Error("health_failed");
+    state.apiStatus = "online";
+    const response = await fetch(`${apiBaseUrl}/api/workspaces`, { signal: AbortSignal.timeout(2400) });
+    if (!response.ok) throw new Error("projection_failed");
     const payload = await response.json();
     replaceIntentWorkspaces(payload.workspaces);
   } catch {
-    // Local projection remains the fallback when the backend is not running.
+    state.apiStatus = "offline";
+    state.operationMessage = tr("apiOffline");
   }
 }
 
@@ -881,20 +901,29 @@ async function submitCurrentCard() {
   const item = workspace();
   const card = activeWorkspaceCard(item);
   if (!item || !card || ["notStarted", "done"].includes(card.status)) return;
+  if (state.apiStatus !== "online") {
+    await hydrateProjectionFromApi();
+    if (state.apiStatus !== "online") {
+      state.operationMessage = tr("apiOffline");
+      render();
+      return;
+    }
+  }
 
   state.operationMessage = tr("submitting");
   render();
 
   try {
     const fieldValues = collectOperationValues();
-    const prepareResponse = await fetch(`http://localhost:5180/api/workspaces/${item.id}/cards/${card.id}/prepare`, {
+    const prepareResponse = await fetch(`${apiBaseUrl}/api/workspaces/${item.id}/cards/${card.id}/prepare`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: "{}"
+      body: "{}",
+      signal: AbortSignal.timeout(3200)
     });
     if (!prepareResponse.ok) throw new Error("prepare_failed");
 
-    const confirmResponse = await fetch(`http://localhost:5180/api/workspaces/${item.id}/cards/${card.id}/confirm`, {
+    const confirmResponse = await fetch(`${apiBaseUrl}/api/workspaces/${item.id}/cards/${card.id}/confirm`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -903,7 +932,8 @@ async function submitCurrentCard() {
         language: state.lang,
         fieldValues,
         evidenceIds: []
-      })
+      }),
+      signal: AbortSignal.timeout(4200)
     });
     if (!confirmResponse.ok) throw new Error("confirm_failed");
 
@@ -912,6 +942,7 @@ async function submitCurrentCard() {
     state.selectedCardIndex = -1;
     state.operationMessage = tr("submitDone");
   } catch {
+    state.apiStatus = "offline";
     state.operationMessage = tr("submitFailed");
   }
 

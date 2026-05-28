@@ -171,8 +171,11 @@ export const i18n = {
     evidenceDone: "已记录操作证据",
     submitting: "正在提交并写入事件...",
     submitDone: "已提交，事件已写入，投影已刷新。",
-    submitFailed: "提交失败：请确认后端 API 正在运行。",
-    draftSaved: "草稿已保存在当前页面。"
+    submitFailed: "提交失败：后端连接中断，请检查 API 状态。",
+    draftSaved: "草稿已保存在当前页面。",
+    apiChecking: "正在连接后端 API",
+    apiOnline: "后端 API 已连接",
+    apiOffline: "后端 API 未连接，当前使用本地投影预览。"
   },
   "ru-RU": {
     app: "WorkOSNext",
@@ -346,7 +349,10 @@ export const i18n = {
     evidenceDone: "Аудит записан",
     submitting: "Отправка и запись события...",
     submitDone: "Отправлено, событие записано, проекция обновлена.",
-    submitFailed: "Ошибка отправки: проверьте, что API запущен.",
-    draftSaved: "Черновик сохранен на странице."
+    submitFailed: "Ошибка отправки: соединение с API прервано.",
+    draftSaved: "Черновик сохранен на странице.",
+    apiChecking: "Подключение к API",
+    apiOnline: "API подключен",
+    apiOffline: "API не подключен; показана локальная проекция."
   }
 };
