@@ -14,6 +14,8 @@ public interface IProjectionStore
 
     void AppendAuditEventAndOutbox(WorkspaceEvent workspaceEvent, string idempotencyKey);
 
+    void ApplySliceAggregate(WorkspaceEvent workspaceEvent);
+
     IReadOnlyList<OutboxMessage> GetPendingOutboxMessages(int take = 50);
 
     IReadOnlyList<OutboxMessage> GetOutboxMessages();

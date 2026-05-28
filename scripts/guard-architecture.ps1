@@ -169,12 +169,14 @@ foreach ($styleModule in $requiredStyleModules) {
 
 $requiredMigratedSliceModules = @(
   "services/core-api/WorkOS.Api/Slices/Accommodation/ResourceSetup/ResourceSetupSlice.cs",
+  "services/core-api/WorkOS.Api/Slices/Accommodation/ResourceSetup/Aggregates/ResourceSetupAggregates.cs",
   "services/core-api/WorkOS.Api/Slices/Accommodation/ResourceSetup/Commands/ResourceSetupCommands.cs",
   "services/core-api/WorkOS.Api/Slices/Accommodation/ResourceSetup/Events/ResourceSetupEvents.cs",
   "services/core-api/WorkOS.Api/Slices/Accommodation/ResourceSetup/Policies/ResourceSetupPolicy.cs",
   "services/core-api/WorkOS.Api/Slices/Accommodation/ResourceSetup/ProjectorRules/ResourceSetupProjectorRules.cs",
   "services/core-api/WorkOS.Api/Slices/Accommodation/ResourceSetup/Tests/ResourceSetupSliceTests.cs",
   "services/core-api/WorkOS.Api/Slices/Accommodation/CheckIn/CheckInSlice.cs",
+  "services/core-api/WorkOS.Api/Slices/Accommodation/CheckIn/Aggregates/CheckInAggregates.cs",
   "services/core-api/WorkOS.Api/Slices/Accommodation/CheckIn/Commands/CheckInCommands.cs",
   "services/core-api/WorkOS.Api/Slices/Accommodation/CheckIn/Events/CheckInEvents.cs",
   "services/core-api/WorkOS.Api/Slices/Accommodation/CheckIn/Policies/CheckInPolicy.cs",
@@ -185,6 +187,10 @@ $requiredMigratedSliceModules = @(
 foreach ($sliceModule in $requiredMigratedSliceModules) {
   Assert-Exists $sliceModule
 }
+
+Assert-Exists "services/core-api/WorkOS.Api/Slices/Repair/Dispatch/Aggregates/RepairDispatchAggregates.cs"
+Assert-Exists "services/core-api/WorkOS.Api/Slices/Persistence/SliceAggregateStorage.cs"
+Assert-Exists "infra/db/migrations/005_slice_aggregate_roots.sql"
 
 Assert-NoMatches @("services/core-api/WorkOS.Api/Runtime/ProjectionRuntime.cs") "ApplyEventToReadModel|SearchText|SearchResult|PriorityFor|select |insert into|update |delete from|schema_migrations|Migration|FieldUi|OptionSet|UiMetadata" "ProjectionRuntime must stay a facade; keep projector, search, SQL, migrations, and UI metadata in focused services."
 Assert-NoMatches @("services/core-api/WorkOS.Api/Runtime/PostgresProjectionStore.cs") "insert into runtime_sessions|insert into audit_events|outbox_messages|schema_migrations|NpgsqlConnection" "PostgresProjectionStore must stay a storage facade; keep session, event, outbox, and migration details in focused storage helpers."

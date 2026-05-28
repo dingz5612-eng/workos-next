@@ -1,4 +1,5 @@
 using System.Text.Json;
+using WorkOS.Api.Slices.Persistence;
 
 namespace WorkOS.Api.Runtime;
 
@@ -14,6 +15,7 @@ public sealed class PostgresProjectionStore : IProjectionStore
     private readonly RuntimeEventStorage events;
     private readonly RuntimeOutboxStorage outbox;
     private readonly RuntimeBehaviorEventStorage behaviorEvents;
+    private readonly SliceAggregateStorage sliceAggregates;
 
     public PostgresProjectionStore(string connectionString, string? migrationsPath = null)
     {
@@ -25,6 +27,7 @@ public sealed class PostgresProjectionStore : IProjectionStore
         events = new RuntimeEventStorage(connections);
         outbox = new RuntimeOutboxStorage(connections);
         behaviorEvents = new RuntimeBehaviorEventStorage(connections);
+        sliceAggregates = new SliceAggregateStorage(connections);
     }
 
     public RuntimeState LoadOrSeed(Func<RuntimeState> seedFactory) =>
@@ -53,6 +56,9 @@ public sealed class PostgresProjectionStore : IProjectionStore
 
     public void AppendAuditEventAndOutbox(WorkspaceEvent workspaceEvent, string idempotencyKey) =>
         events.AppendAuditEventAndOutbox(workspaceEvent, idempotencyKey);
+
+    public void ApplySliceAggregate(WorkspaceEvent workspaceEvent) =>
+        sliceAggregates.Apply(workspaceEvent);
 
     public IReadOnlyList<OutboxMessage> GetPendingOutboxMessages(int take = 50) =>
         outbox.GetPending(take);

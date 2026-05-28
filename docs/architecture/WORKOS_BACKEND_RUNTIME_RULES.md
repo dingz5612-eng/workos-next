@@ -202,6 +202,24 @@ Aggregate commands produce audit events; audit events produce outbox messages;
 outbox projector rules update read models. Direct projection mutation is only
 allowed inside projector rules.
 
+Current aggregate-root baseline:
+
+```text
+Accommodation.ResourceSetup -> Room, Bed
+Accommodation.CheckIn -> Deposit, FinanceConfirmation
+Repair.Dispatch -> RepairStation, Technician, Vehicle
+```
+
+Aggregate persistence must stay slice-owned:
+
+- Aggregate model files live in `Slices/*/*/Aggregates`.
+- Aggregate SQL lives in `infra/db/migrations/*.sql`.
+- Aggregate event application lives in slice persistence modules.
+- `ProjectionRuntime` coordinates only; it must not contain aggregate SQL or
+  table-specific business rules.
+- `PostgresProjectionStore` composes storage only; it must not become the owner
+  of every aggregate table operation.
+
 ## Observability Boundary
 
 Runtime observability is part of the backend contract.

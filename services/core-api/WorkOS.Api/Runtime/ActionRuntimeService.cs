@@ -113,6 +113,7 @@ public sealed class ActionRuntimeService
             eventDefinition.ProjectionTargets);
 
         store.AppendAuditEventAndOutbox(workspaceEvent, request.IdempotencyKey);
+        store.ApplySliceAggregate(workspaceEvent);
 
         return new ConfirmResult(ConfirmStatus.Confirmed, null, new
         {

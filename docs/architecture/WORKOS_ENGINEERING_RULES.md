@@ -335,6 +335,34 @@ Each slice owns Commands, Policies, Events, Projector Rules, Tests, and aggregat
 persistence tables when it mutates real objects. Do not put new slice policy in
 `ProjectionRuntime`; use focused policy classes such as `CardConfirmationPolicy`.
 
+## 14A. Slice Aggregate Rule
+
+Writable business concepts must become slice-owned aggregate roots and business
+tables before their slice is treated as production-grade.
+
+Required current aggregate roots:
+
+```text
+Accommodation.ResourceSetup -> Room, Bed
+Accommodation.CheckIn -> Deposit, FinanceConfirmation
+Repair.Dispatch -> RepairStation, Technician, Vehicle
+```
+
+Aggregate rules:
+
+- Aggregate records live under the owning slice's `Aggregates` directory.
+- Aggregate persistence lives under slice persistence modules, not inside
+  `ProjectionRuntime`, `PostgresProjectionStore`, render functions, or
+  projection seed catalogs.
+- Aggregate tables live in versioned SQL migrations under
+  `infra/db/migrations/*.sql`.
+- Confirmed commands produce audit events; slice aggregate persistence consumes
+  those events and upserts business tables.
+- Projection read models may reflect aggregate state, but projection JSON is not
+  the source of truth for writable objects.
+- Runtime contract tests must assert that slice aggregate tables are created and
+  populated for the current production slice sample.
+
 ## 15. Contract Drift Rule
 
 Projection and API shape must be treated as contracts.
