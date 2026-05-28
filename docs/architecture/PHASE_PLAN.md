@@ -23,6 +23,11 @@
 
 ## WON-02: Product Model Schema
 
+- Bottom navigation becomes Home / Search / Workbench / Me.
+- Help becomes contextual guidance and searchable content, not a primary tab.
+- Workbench becomes a task command center with domain, context, status, sorting, and advanced filters.
+- Accommodation and automotive repair must remain first-class reference domains.
+- Deprecated active UI paths must be deleted rather than hidden behind new screens.
 - Object schema.
 - Task schema.
 - Action schema.
