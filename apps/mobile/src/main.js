@@ -4,314 +4,261 @@ const i18n = {
   "zh-CN": {
     app: "WorkOSNext",
     subtitle: "移动端业务操作系统",
-    role: "运营经办人",
     home: "首页",
     search: "搜索",
     workbench: "工作台",
     me: "我的",
-    language: "语言",
     zh: "中文",
     ru: "Русский",
-    todayCommand: "今天先处理这些",
-    todaySummary: "2 个紧急阻断，3 个待确认，维修与住宿都需要推进。",
-    activeIntent: "我要找 / 我要办",
-    searchPlaceholder: "搜索人、房间、车牌、业务动作",
-    searchAction: "搜索",
-    suggestedIntents: "默认意图",
-    dynamicIntents: "根据习惯推荐",
-    searchHint: "搜索只导航到对象或任务，关键动作仍需人工确认。",
-    workByDomain: "按业务处理",
-    domainAll: "全部",
-    domainStay: "住宿",
-    domainAuto: "维修",
-    domainFinance: "财务",
-    domainApproval: "审批",
-    contextAll: "全部工作",
-    contextMine: "待我处理",
-    contextConfirm: "待我确认",
-    contextWaiting: "等待他人",
-    contextBlocked: "异常阻断",
-    contextStarted: "我发起的",
-    statusToday: "今天到期",
-    statusSoon: "即将到期",
-    statusOverdue: "已超时",
-    statusHigh: "高优先级",
-    statusEvidence: "缺证据",
-    sortSmart: "智能推荐",
-    sortDue: "截止时间",
-    sortUpdated: "最近更新",
-    sortImpact: "影响度",
-    advancedFilters: "高级筛选",
-    owner: "责任人",
-    location: "地点",
-    amount: "金额",
-    hasBlocker: "有阻断",
-    requiresConfirm: "需确认",
-    viewObject: "打开对象",
+    role: "运营经办人",
+    start: "开始使用",
+    skip: "跳过",
+    guideTitle: "四种工作模式",
+    guideBody: "先理解入口，再处理任务。WorkOSNext 不按页面找功能，而按工作方式进入。",
+    todayMode: "首页：今天先做什么",
+    intentMode: "搜索：我要找 / 我要办",
+    queueMode: "工作台：系统分配给我的任务",
+    personalMode: "我的：账号、笔记、提醒和反馈",
+    todayCard: "今日指挥卡",
+    nowDo: "现在最该处理",
+    reason: "原因",
+    impact: "影响",
+    nextUrgent: "下一件紧急任务",
     enterTask: "进入任务",
-    confirmAction: "确认办理",
-    finish: "确认完成",
-    objectWorkspace: "业务对象",
-    currentProblem: "当前问题",
-    nextStep: "下一步",
-    whyMe: "为什么给我",
-    ifDelay: "不处理会怎样",
-    facts: "业务事实",
-    related: "相关对象",
-    timeline: "流程时间线",
-    taskSurface: "办理任务",
-    operationArea: "操作区",
-    guidanceArea: "下一步 / 提示 / 帮助",
-    checklist: "办理前核对",
-    helpQuestion: "上下文帮助",
-    account: "账号",
-    profile: "个人工作画像",
+    open: "查看",
+    continue: "继续处理",
+    activeSearch: "主动办理",
+    searchPlaceholder: "输入人、房间、车牌或业务动作",
+    bestNext: "最佳下一步",
+    runnableTasks: "可办理任务",
+    relatedObjects: "相关对象",
+    helpExplain: "帮助解释",
+    scenarios: "业务场景",
+    stay: "住宿",
+    repair: "维修",
+    finance: "财务",
+    checkin: "办理入住",
+    depositBlocked: "押金未通过",
+    createStay: "创建住宿单",
+    createRepair: "创建维修单",
+    assignRepair: "维修派工",
+    repairInspect: "维修验收",
+    confirmPayment: "确认收款",
+    returnEvidence: "退回凭证",
+    queueTitle: "被动任务队列",
+    filterMore: "展开",
+    filterLess: "收起",
+    sort: "排序",
+    smartSort: "智能推荐",
+    dueSort: "截止时间",
+    filter: "筛选",
+    advancedFilter: "高级筛选",
+    all: "全部",
+    mine: "待我处理",
+    confirm: "待确认",
+    blocked: "异常",
+    soon: "即将到期",
+    waiting: "等待他人",
+    notes: "笔记",
+    reminders: "提醒",
+    feedback: "反馈",
+    tutorial: "教程",
+    stats: "统计",
     permission: "权限范围",
-    stats: "任务统计",
-    preferences: "偏好设置",
     commonSearch: "常用搜索",
-    savedFilters: "常用筛选",
-    helpFeedback: "帮助与反馈",
-    aiBoundary: "AI 可以解释、推荐和生成草稿，但不能自动确认、扣费、退款、核销或关闭终态。",
-    resultTitle: "已记录操作证据",
-    resultBody: "动作已进入人工确认后的业务链路，系统会继续推荐下一步。",
+    savedFilter: "常用筛选",
+    noteTitle: "业务笔记",
+    reminderTitle: "时间提醒",
+    feedbackTitle: "页面反馈",
+    noteBody: "记录和业务对象有关的非正式信息，可设置时间提醒。",
+    reminderBody: "提醒可以来自笔记，也可以来自任务截止时间。",
+    feedbackBody: "反馈会自动带上页面、角色、语言和当前业务上下文。",
+    actionBoundary: "关键动作需要人工确认，AI 只能解释、推荐和生成草稿。",
     depositTask: "补交押金材料",
     repairTask: "安排技师诊断",
     financeTask: "确认押金收款",
-    stayTitle: "张三的住宿单",
-    autoTitle: "Toyota Camry 发动机异响",
-    financeTitle: "押金收款确认",
-    depositBlocked: "押金 3000 KGS 财务未通过，不能办理入住。",
-    autoWaiting: "车辆已到场，等待安排技师检查。",
-    financeWaiting: "住宿经办人已补交材料，等待财务人工确认。",
-    doneToday: "今日完成",
-    overdue: "已超时",
-    avgTime: "平均处理",
-    recentObjects: "最近对象"
+    stayObject: "张三的住宿单",
+    repairObject: "Toyota Camry 发动机异响",
+    financeObject: "押金收款确认",
+    depositProblem: "押金 3000 KGS 财务未通过，不能办理入住。",
+    repairProblem: "车辆已到场，等待维修主管安排技师诊断。",
+    financeProblem: "住宿经办人已补交材料，等待财务人工确认。",
+    whyMe: "为什么给我",
+    ifDelay: "不处理会怎样",
+    operation: "操作区",
+    guidance: "下一步 / 提示 / 帮助",
+    confirmAction: "确认办理",
+    finish: "确认完成",
+    evidenceDone: "已记录操作证据"
   },
   "ru-RU": {
     app: "WorkOSNext",
     subtitle: "Мобильная бизнес ОС",
-    role: "Операционный сотрудник",
     home: "Главная",
     search: "Поиск",
     workbench: "Работа",
     me: "Мой",
-    language: "Язык",
     zh: "中文",
     ru: "Русский",
-    todayCommand: "Что делать сначала",
-    todaySummary: "2 срочные блокировки, 3 подтверждения; проживание и ремонт нужно продвинуть.",
-    activeIntent: "Найти / выполнить",
-    searchPlaceholder: "Гость, комната, номер авто, действие",
-    searchAction: "Искать",
-    suggestedIntents: "Стандартные запросы",
-    dynamicIntents: "Рекомендации по привычкам",
-    searchHint: "Поиск открывает объект или задачу. Критические действия требуют человека.",
-    workByDomain: "По бизнесу",
-    domainAll: "Все",
-    domainStay: "Проживание",
-    domainAuto: "Ремонт",
-    domainFinance: "Финансы",
-    domainApproval: "Согласование",
-    contextAll: "Все",
-    contextMine: "Мои задачи",
-    contextConfirm: "Подтвердить",
-    contextWaiting: "Ждем других",
-    contextBlocked: "Блокировки",
-    contextStarted: "Я создал",
-    statusToday: "Сегодня",
-    statusSoon: "Скоро",
-    statusOverdue: "Просрочено",
-    statusHigh: "Высокий",
-    statusEvidence: "Нет доказ.",
-    sortSmart: "Умно",
-    sortDue: "Срок",
-    sortUpdated: "Обновлено",
-    sortImpact: "Влияние",
-    advancedFilters: "Фильтры",
-    owner: "Ответственный",
-    location: "Место",
-    amount: "Сумма",
-    hasBlocker: "Блок",
-    requiresConfirm: "Подтвердить",
-    viewObject: "Объект",
+    role: "Операционный сотрудник",
+    start: "Начать",
+    skip: "Пропустить",
+    guideTitle: "Четыре рабочих режима",
+    guideBody: "Сначала понять входы, затем выполнять задачи. WorkOSNext работает по режимам, а не по страницам.",
+    todayMode: "Главная: что делать сейчас",
+    intentMode: "Поиск: найти / выполнить",
+    queueMode: "Работа: назначенные задачи",
+    personalMode: "Мой: аккаунт, заметки, напоминания, отзыв",
+    todayCard: "Командная карточка",
+    nowDo: "Сейчас важно",
+    reason: "Причина",
+    impact: "Влияние",
+    nextUrgent: "Следующая срочная задача",
     enterTask: "Задача",
-    confirmAction: "Подтвердить",
-    finish: "Завершить",
-    objectWorkspace: "Бизнес-объект",
-    currentProblem: "Проблема",
-    nextStep: "Следующий шаг",
-    whyMe: "Почему мне",
-    ifDelay: "Если задержать",
-    facts: "Факты",
-    related: "Связанные объекты",
-    timeline: "История",
-    taskSurface: "Задача",
-    operationArea: "Операция",
-    guidanceArea: "Следующий шаг / помощь",
-    checklist: "Проверка",
-    helpQuestion: "Контекстная помощь",
-    account: "Аккаунт",
-    profile: "Рабочий профиль",
-    permission: "Права",
+    open: "Открыть",
+    continue: "Продолжить",
+    activeSearch: "Активное действие",
+    searchPlaceholder: "Гость, комната, номер авто или действие",
+    bestNext: "Лучший следующий шаг",
+    runnableTasks: "Доступные задачи",
+    relatedObjects: "Связанные объекты",
+    helpExplain: "Объяснение",
+    scenarios: "Сценарии",
+    stay: "Проживание",
+    repair: "Ремонт",
+    finance: "Финансы",
+    checkin: "Заселение",
+    depositBlocked: "Депозит не прошел",
+    createStay: "Создать ордер",
+    createRepair: "Создать ремонт",
+    assignRepair: "Назначить ремонт",
+    repairInspect: "Приемка ремонта",
+    confirmPayment: "Подтвердить оплату",
+    returnEvidence: "Вернуть документ",
+    queueTitle: "Пассивная очередь",
+    filterMore: "Еще",
+    filterLess: "Скрыть",
+    sort: "Сортировка",
+    smartSort: "Умно",
+    dueSort: "Срок",
+    filter: "Фильтр",
+    advancedFilter: "Фильтры",
+    all: "Все",
+    mine: "Мои",
+    confirm: "Подтвердить",
+    blocked: "Блок",
+    soon: "Скоро",
+    waiting: "Ждем",
+    notes: "Заметки",
+    reminders: "Напоминания",
+    feedback: "Отзыв",
+    tutorial: "Обучение",
     stats: "Статистика",
-    preferences: "Настройки",
+    permission: "Права",
     commonSearch: "Частый поиск",
-    savedFilters: "Сохраненные фильтры",
-    helpFeedback: "Помощь и отзыв",
-    aiBoundary: "AI объясняет, рекомендует и готовит черновики, но не подтверждает, не списывает, не возвращает и не закрывает финальные статусы.",
-    resultTitle: "Аудит записан",
-    resultBody: "Действие вошло в цепочку после ручного подтверждения, система предложит следующий шаг.",
+    savedFilter: "Фильтр",
+    noteTitle: "Бизнес-заметки",
+    reminderTitle: "Напоминания",
+    feedbackTitle: "Отзыв по странице",
+    noteBody: "Неформальные заметки по объекту можно связать с напоминанием.",
+    reminderBody: "Напоминания приходят из заметок и сроков задач.",
+    feedbackBody: "Отзыв автоматически включает страницу, роль, язык и контекст.",
+    actionBoundary: "Критические действия подтверждает человек. AI только объясняет, рекомендует и готовит черновики.",
     depositTask: "Дополнить депозит",
     repairTask: "Назначить диагностику",
     financeTask: "Подтвердить депозит",
-    stayTitle: "Ордер проживания Чжана",
-    autoTitle: "Toyota Camry: шум двигателя",
-    financeTitle: "Подтверждение депозита",
-    depositBlocked: "Депозит 3000 KGS не прошел фин. проверку, заселение недоступно.",
-    autoWaiting: "Авто прибыло, ожидает назначения механика.",
-    financeWaiting: "Оператор дополнил материалы, ожидается ручное подтверждение финансов.",
-    doneToday: "Готово",
-    overdue: "Просрочено",
-    avgTime: "Среднее",
-    recentObjects: "Недавние"
+    stayObject: "Ордер проживания Чжана",
+    repairObject: "Toyota Camry: шум двигателя",
+    financeObject: "Подтверждение депозита",
+    depositProblem: "Депозит 3000 KGS не прошел фин. проверку, заселение недоступно.",
+    repairProblem: "Авто прибыло, руководитель должен назначить диагностику.",
+    financeProblem: "Материалы дополнены, требуется ручная проверка финансов.",
+    whyMe: "Почему мне",
+    ifDelay: "Если задержать",
+    operation: "Операция",
+    guidance: "Следующий шаг / помощь",
+    confirmAction: "Подтвердить",
+    finish: "Завершить",
+    evidenceDone: "Аудит записан"
   }
-};
-
-const state = {
-  lang: localStorage.getItem("workosnext.lang") || "zh-CN",
-  view: "home",
-  selectedId: "SO-20260528-001",
-  domain: "domainAll",
-  context: "contextMine",
-  status: "statusToday",
-  sort: "sortSmart",
-  query: "",
-  searchOpen: false,
-  scrollTopNext: false
 };
 
 const tasks = [
   {
     id: "T-STAY-DEPOSIT",
     objectId: "SO-20260528-001",
-    domain: "domainStay",
-    context: ["contextMine", "contextBlocked"],
-    status: ["statusToday", "statusHigh", "statusEvidence"],
-    priority: 98,
+    domain: "stay",
+    title: "depositTask",
+    object: "stayObject",
+    problem: "depositProblem",
     due: "18:00",
-    titleKey: "depositTask",
-    objectTitleKey: "stayTitle",
-    problemKey: "depositBlocked",
-    location: "A301",
-    owner: { "zh-CN": "宿舍经办人", "ru-RU": "Оператор проживания" },
-    why: { "zh-CN": "你负责住宿单材料补交，财务确认前不能入住。", "ru-RU": "Вы отвечаете за материалы ордера; без финансов заселение недоступно." },
-    delay: { "zh-CN": "入住会停在押金节点，床位不能释放给下一步。", "ru-RU": "Заселение останется на депозите, койка не перейдет дальше." },
-    next: { "zh-CN": "补交付款截图和收据编号，等待财务人工确认。", "ru-RU": "Добавьте чек и номер квитанции, затем ждите финансов." }
+    badges: ["mine", "blocked"],
+    priority: 99,
+    why: { "zh-CN": "你负责住宿材料补交，财务确认前不能入住。", "ru-RU": "Вы отвечаете за материалы; без финансов заселение недоступно." },
+    delay: { "zh-CN": "张三无法入住，A301-02 会停留在锁定状态。", "ru-RU": "Чжан не заселится, койка A301-02 останется заблокированной." },
+    next: { "zh-CN": "补交付款截图和收据编号，再等待财务确认。", "ru-RU": "Добавьте чек и номер квитанции, затем ждите финансы." }
   },
   {
     id: "T-AUTO-DIAGNOSE",
     objectId: "AR-20260528-004",
-    domain: "domainAuto",
-    context: ["contextMine"],
-    status: ["statusToday", "statusHigh"],
-    priority: 91,
+    domain: "repair",
+    title: "repairTask",
+    object: "repairObject",
+    problem: "repairProblem",
     due: "17:30",
-    titleKey: "repairTask",
-    objectTitleKey: "autoTitle",
-    problemKey: "autoWaiting",
-    location: "维修场 2 号位",
-    owner: { "zh-CN": "维修主管", "ru-RU": "Руководитель сервиса" },
-    why: { "zh-CN": "你负责维修派工，车辆到场后必须先安排诊断。", "ru-RU": "Вы назначаете ремонт; после прибытия авто нужна диагностика." },
+    badges: ["mine", "soon"],
+    priority: 93,
+    why: { "zh-CN": "你负责维修派工，车辆到场后必须先诊断。", "ru-RU": "Вы назначаете ремонт; после прибытия нужна диагностика." },
     delay: { "zh-CN": "车辆继续停运，后续配件和费用无法估算。", "ru-RU": "Авто простаивает, детали и стоимость нельзя оценить." },
     next: { "zh-CN": "选择技师和到场时间，不会自动关闭维修单。", "ru-RU": "Выберите механика и время, заявка не закроется автоматически." }
   },
   {
     id: "T-FIN-DEPOSIT",
     objectId: "FIN-20260528-009",
-    domain: "domainFinance",
-    context: ["contextConfirm", "contextWaiting"],
-    status: ["statusSoon"],
-    priority: 82,
+    domain: "finance",
+    title: "financeTask",
+    object: "financeObject",
+    problem: "financeProblem",
     due: "明天 12:00",
-    titleKey: "financeTask",
-    objectTitleKey: "financeTitle",
-    problemKey: "financeWaiting",
-    location: "财务",
-    owner: { "zh-CN": "财务经办人", "ru-RU": "Финансовый оператор" },
-    why: { "zh-CN": "住宿押金已补交，需要你人工核对收款证据。", "ru-RU": "Материалы депозита дополнены, требуется ручная проверка." },
+    badges: ["confirm", "waiting"],
+    priority: 86,
+    why: { "zh-CN": "你是财务确认人，需要人工核对收款证据。", "ru-RU": "Вы финансовый проверяющий, нужна ручная проверка." },
     delay: { "zh-CN": "住宿经办人无法继续办理入住。", "ru-RU": "Оператор проживания не сможет продолжить заселение." },
-    next: { "zh-CN": "核对凭证后确认或退回，不能由 AI 自动通过。", "ru-RU": "Проверьте доказательства и подтвердите или верните; AI не проходит автоматически." }
+    next: { "zh-CN": "核对凭证后确认或退回，AI 不可自动通过。", "ru-RU": "Проверьте и подтвердите или верните; AI не проходит автоматически." }
   }
 ];
 
 const objects = {
-  "SO-20260528-001": {
-    domain: "domainStay",
-    titleKey: "stayTitle",
-    subtitle: { "zh-CN": "张三 · A301 · A301-02 下铺", "ru-RU": "Чжан Сан · A301 · нижняя койка A301-02" },
-    problemKey: "depositBlocked",
-    next: tasks[0].next,
-    facts: [
-      ["住宿单号", "SO-20260528-001", "Ордер", "SO-20260528-001"],
-      ["入住人", "张三", "Гость", "Чжан Сан"],
-      ["房间/床位", "A301 / A301-02 下铺", "Комната/койка", "A301 / A301-02 нижняя"],
-      ["押金", "3000 KGS · 待财务确认", "Депозит", "3000 KGS · ждет финансов"]
-    ],
-    related: { "zh-CN": "入住申请 APP-018 · 床位 BED-A301-02 · 押金凭证 DEP-009", "ru-RU": "Заявка APP-018 · койка BED-A301-02 · депозит DEP-009" },
-    timeline: {
-      "zh-CN": ["申请审批通过", "已选择 A301-02", "押金材料被退回", "等待补交"],
-      "ru-RU": ["Заявка одобрена", "Выбрана A301-02", "Материалы возвращены", "Ждет дополнения"]
-    }
-  },
-  "AR-20260528-004": {
-    domain: "domainAuto",
-    titleKey: "autoTitle",
-    subtitle: { "zh-CN": "01KG123ABC · 司机 Иван Петров · 维修场 2 号位", "ru-RU": "01KG123ABC · водитель Иван Петров · пост 2" },
-    problemKey: "autoWaiting",
-    next: tasks[1].next,
-    facts: [
-      ["维修单号", "AR-20260528-004", "Заявка", "AR-20260528-004"],
-      ["车辆", "Toyota Camry · 01KG123ABC", "Авто", "Toyota Camry · 01KG123ABC"],
-      ["司机", "Иван Петров", "Водитель", "Иван Петров"],
-      ["故障", "发动机异响", "Проблема", "Шум двигателя"]
-    ],
-    related: { "zh-CN": "车辆档案 VEH-00129 · 上次保养 2026-04-15 · 司机反馈 FB-102", "ru-RU": "Карточка VEH-00129 · ТО 2026-04-15 · отзыв FB-102" },
-    timeline: {
-      "zh-CN": ["司机提交报修", "车辆已到场", "等待维修主管派诊断"],
-      "ru-RU": ["Водитель подал заявку", "Авто прибыло", "Ожидает диагностики"]
-    }
-  },
-  "FIN-20260528-009": {
-    domain: "domainFinance",
-    titleKey: "financeTitle",
-    subtitle: { "zh-CN": "张三住宿单 · 3000 KGS · 人工确认", "ru-RU": "Ордер Чжана · 3000 KGS · ручное подтверждение" },
-    problemKey: "financeWaiting",
-    next: tasks[2].next,
-    facts: [
-      ["凭证号", "DEP-009", "Документ", "DEP-009"],
-      ["金额", "3000 KGS", "Сумма", "3000 KGS"],
-      ["来源", "住宿押金", "Источник", "Депозит проживания"],
-      ["边界", "AI 不可自动确认", "Граница", "AI не подтверждает"]
-    ],
-    related: { "zh-CN": "住宿单 SO-20260528-001 · 入住申请 APP-018", "ru-RU": "Ордер SO-20260528-001 · заявка APP-018" },
-    timeline: {
-      "zh-CN": ["押金材料退回", "经办人补交", "等待财务确认"],
-      "ru-RU": ["Материалы возвращены", "Оператор дополнил", "Ждет финансы"]
-    }
-  }
+  "SO-20260528-001": { title: "stayObject", domain: "stay", line: { "zh-CN": "张三 · A301 · A301-02 下铺", "ru-RU": "Чжан Сан · A301 · нижняя койка" } },
+  "AR-20260528-004": { title: "repairObject", domain: "repair", line: { "zh-CN": "01KG123ABC · 司机 Иван Петров", "ru-RU": "01KG123ABC · водитель Иван Петров" } },
+  "FIN-20260528-009": { title: "financeObject", domain: "finance", line: { "zh-CN": "张三住宿单 · 3000 KGS", "ru-RU": "Ордер Чжана · 3000 KGS" } }
 };
 
-const defaultIntents = {
-  "zh-CN": ["办理入住", "押金未通过", "A301", "创建维修单", "维修派工", "今天到期"],
-  "ru-RU": ["Заселение", "Депозит не прошел", "A301", "Создать ремонт", "Назначить механика", "Сегодня"]
+const state = {
+  lang: localStorage.getItem("workosnext.lang") || "zh-CN",
+  view: localStorage.getItem("workosnext.onboarded") ? "home" : "onboarding",
+  selectedTask: "T-STAY-DEPOSIT",
+  query: "",
+  filterOpen: false,
+  advancedOpen: false,
+  queueDomain: "all",
+  queueBadge: "mine",
+  sort: "smartSort"
 };
 
-const dynamicIntents = {
-  "zh-CN": ["张三住宿单", "Toyota Camry", "待我确认", "异常阻断"],
-  "ru-RU": ["Ордер Чжана", "Toyota Camry", "Подтвердить", "Блокировки"]
-};
+const params = new URLSearchParams(window.location.search);
+if (params.has("lang")) {
+  state.lang = params.get("lang");
+}
+if (params.has("view")) {
+  state.view = params.get("view");
+}
+if (params.has("task")) {
+  state.selectedTask = params.get("task");
+}
+if (params.has("q")) {
+  state.query = params.get("q");
+}
 
 function tr(key) {
   return i18n[state.lang][key] || key;
@@ -321,91 +268,105 @@ function tx(value) {
   return typeof value === "string" ? value : value[state.lang] || value["zh-CN"];
 }
 
-function currentTask() {
-  return tasks.find((task) => task.objectId === state.selectedId) || tasks[0];
-}
-
-function currentObject() {
-  return objects[state.selectedId] || objects["SO-20260528-001"];
+function task() {
+  return tasks.find((item) => item.id === state.selectedTask) || tasks[0];
 }
 
 function setView(view) {
   state.view = view;
-  state.searchOpen = false;
-  state.scrollTopNext = true;
-  render();
+  render(true);
 }
 
-function setLanguage(lang) {
+function setLang(lang) {
   state.lang = lang;
   localStorage.setItem("workosnext.lang", lang);
   render();
 }
 
-function selectObject(objectId, view = "object") {
-  state.selectedId = objectId;
-  setView(view);
+function onboard() {
+  localStorage.setItem("workosnext.onboarded", "1");
+  setView("home");
 }
 
 function shell(content) {
   return `
     <main class="app-shell view-${state.view}">
       <header class="topbar">
-        <div>
-          <strong>${tr("app")}</strong>
-          <span>${tr("subtitle")}</span>
-        </div>
+        <div><strong>${tr("app")}</strong><span>${tr("subtitle")}</span></div>
         <select id="language" aria-label="${tr("language")}">
           <option value="zh-CN" ${state.lang === "zh-CN" ? "selected" : ""}>${tr("zh")}</option>
           <option value="ru-RU" ${state.lang === "ru-RU" ? "selected" : ""}>${tr("ru")}</option>
         </select>
       </header>
-      <section class="role-strip">
-        <span>${tr("role")}</span>
-        <strong>${tr("aiBoundary")}</strong>
-      </section>
       ${content}
-      <nav class="bottom-nav">
-        ${navButton("home", "home")}
-        ${navButton("search", "search")}
-        ${navButton("workbench", "workbench")}
-        ${navButton("me", "me")}
-      </nav>
+      ${feedbackButton()}
+      ${state.view !== "onboarding" ? bottomNav() : ""}
     </main>
   `;
 }
 
-function navButton(view, labelKey) {
-  return `<button data-view="${view}" class="${state.view === view ? "active" : ""}">${tr(labelKey)}</button>`;
+function bottomNav() {
+  return `<nav class="bottom-nav">
+    ${nav("home", "home")}
+    ${nav("search", "search")}
+    ${nav("workbench", "workbench")}
+    ${nav("me", "me")}
+  </nav>`;
+}
+
+function nav(view, key) {
+  return `<button data-view="${view}" class="${state.view === view ? "active" : ""}">${tr(key)}</button>`;
+}
+
+function feedbackButton() {
+  return state.view === "onboarding" ? "" : `<button class="feedback-fab" data-view="feedback">${tr("feedback")}</button>`;
+}
+
+function onboardingView() {
+  return shell(`
+    <section class="onboarding">
+      <span>${tr("guideTitle")}</span>
+      <h1>${tr("app")}</h1>
+      <p>${tr("guideBody")}</p>
+      <div class="mode-list">
+        ${modeCard("home", "todayMode")}
+        ${modeCard("search", "intentMode")}
+        ${modeCard("workbench", "queueMode")}
+        ${modeCard("me", "personalMode")}
+      </div>
+      <button id="start">${tr("start")}</button>
+      <button class="ghost" id="skip">${tr("skip")}</button>
+    </section>
+  `);
+}
+
+function modeCard(view, key) {
+  return `<article><b>${tr(key)}</b><span>${tr(view)}</span></article>`;
 }
 
 function homeView() {
   const primary = tasks[0];
+  const secondary = tasks[1];
   return shell(`
-    <section class="hero-panel">
-      <span>${tr("todayCommand")}</span>
-      <h1>${tr(primary.objectTitleKey)}</h1>
-      <p>${tr("todaySummary")}</p>
-      <button data-object="${primary.objectId}" data-target="task">${tr("enterTask")}</button>
+    <section class="command-card">
+      <span>${tr("todayCard")}</span>
+      <h1>${tr(primary.title)}</h1>
+      <dl>
+        <dt>${tr("reason")}</dt><dd>${tr(primary.problem)}</dd>
+        <dt>${tr("impact")}</dt><dd>${tx(primary.delay)}</dd>
+      </dl>
+      <button data-task="${primary.id}" data-target="task">${tr("enterTask")}</button>
     </section>
-    ${searchBlock("home")}
     <section class="metric-grid">
-      ${metric("metric", "7", tr("contextMine"))}
-      ${metric("warning", "2", tr("contextBlocked"))}
-      ${metric("confirm", "3", tr("contextConfirm"))}
+      ${metric("7", "mine")}
+      ${metric("2", "blocked")}
+      ${metric("3", "confirm")}
     </section>
-    <section class="section-block">
-      <div class="section-title">
-        <h2>${tr("workByDomain")}</h2>
-        <button data-view="workbench">${tr("workbench")}</button>
-      </div>
-      ${domainHighlight("domainStay", tasks[0])}
-      ${domainHighlight("domainAuto", tasks[1])}
-      ${domainHighlight("domainFinance", tasks[2])}
-    </section>
-    <section class="section-block">
-      <h2>${tr("recentObjects")}</h2>
-      ${Object.entries(objects).map(([id, object]) => objectRow(id, object)).join("")}
+    <section class="next-card">
+      <span>${tr("nextUrgent")}</span>
+      <strong>${tr(secondary.title)}</strong>
+      <p>${tr(secondary.problem)}</p>
+      <button data-task="${secondary.id}" data-target="task">${tr("continue")}</button>
     </section>
   `);
 }
@@ -413,371 +374,314 @@ function homeView() {
 function searchView() {
   const results = searchResults();
   return shell(`
-    <section class="page-head">
-      <span>Intent Hub</span>
-      <h1>${tr("activeIntent")}</h1>
-      <p>${tr("searchHint")}</p>
+    <section class="page-title">
+      <span>${tr("activeSearch")}</span>
+      <h1>${tr("intentMode")}</h1>
     </section>
-    ${searchBlock("search")}
-    <section class="suggestion-panel">
-      <h2>${tr("suggestedIntents")}</h2>
-      <div class="chip-grid">${defaultIntents[state.lang].map((item) => intentChip(item)).join("")}</div>
-      <h2>${tr("dynamicIntents")}</h2>
-      <div class="chip-grid">${dynamicIntents[state.lang].map((item) => intentChip(item, "soft")).join("")}</div>
+    <section class="search-box">
+      <div class="search-line">
+        <input id="query" value="${state.query}" placeholder="${tr("searchPlaceholder")}" />
+        <button id="searchNow">${tr("search")}</button>
+      </div>
     </section>
-    <section class="section-block">
-      <h2>${tr("objectWorkspace")}</h2>
-      ${results.map((id) => objectRow(id, objects[id])).join("")}
-    </section>
-    <section class="section-block">
-      <h2>${tr("taskSurface")}</h2>
-      ${tasks.filter((task) => results.includes(task.objectId)).map((task) => taskCard(task)).join("")}
-    </section>
-    ${contextHelpCard(tasks[0])}
+    ${state.query ? searchResultBlocks(results) : scenarioBlocks()}
   `);
+}
+
+function scenarioBlocks() {
+  return `<section class="scenario-list">
+    <h2>${tr("scenarios")}</h2>
+    ${scenario("stay", ["checkin", "depositBlocked", "createStay"])}
+    ${scenario("repair", ["createRepair", "assignRepair", "repairInspect"])}
+    ${scenario("finance", ["confirmPayment", "returnEvidence"])}
+  </section>`;
+}
+
+function scenario(domain, actions) {
+  return `<article class="scenario-card ${domain}">
+    <h3>${tr(domain)}</h3>
+    <div>${actions.map((key) => `<button data-scenario="${key}">${tr(key)}</button>`).join("")}</div>
+  </article>`;
+}
+
+function searchResultBlocks(results) {
+  const first = results[0] || tasks[0];
+  return `
+    <section class="result-focus">
+      <span>${tr("bestNext")}</span>
+      ${taskCard(first)}
+    </section>
+    <section class="compact-section">
+      <h2>${tr("runnableTasks")}</h2>
+      ${results.map(taskCard).join("")}
+    </section>
+    <section class="compact-section">
+      <h2>${tr("relatedObjects")}</h2>
+      ${results.map((item) => objectRow(item.objectId)).join("")}
+    </section>
+    <section class="help-card">
+      <span>${tr("helpExplain")}</span>
+      <p>${tr(first.problem)} ${tx(first.next)}</p>
+    </section>`;
+}
+
+function searchResults() {
+  const q = state.query.toLowerCase();
+  if (!q) return [];
+  const found = tasks.filter((item) => [tr(item.title), tr(item.object), tr(item.problem), item.objectId].join(" ").toLowerCase().includes(q));
+  if (found.length) return found;
+  if (q.includes("维修") || q.includes("ремонт") || q.includes("toyota")) return [tasks[1]];
+  if (q.includes("押金") || q.includes("депозит")) return [tasks[0], tasks[2]];
+  return tasks;
 }
 
 function workbenchView() {
-  const visible = filteredTasks();
+  const list = queueTasks();
   return shell(`
-    <section class="page-head">
-      <span>Task Command Center</span>
+    <section class="queue-head">
+      <span>${tr("queueTitle")}</span>
       <h1>${tr("workbench")}</h1>
-      <p>${tr("todaySummary")}</p>
+      <strong>${list.length}</strong>
     </section>
-    <section class="filter-panel">
-      <h2>${tr("workByDomain")}</h2>
-      <div class="tab-row">${["domainAll", "domainStay", "domainAuto", "domainFinance", "domainApproval"].map((key) => filterButton("domain", key)).join("")}</div>
-      <h2>${tr("contextMine")}</h2>
-      <div class="context-grid">${["contextMine", "contextConfirm", "contextWaiting", "contextBlocked", "contextStarted"].map((key) => filterButton("context", key)).join("")}</div>
-      <div class="chip-grid status-row">${["statusToday", "statusSoon", "statusOverdue", "statusHigh", "statusEvidence"].map((key) => filterButton("status", key, "chip")).join("")}</div>
-      <label class="sort-line">
-        <span>${tr("sortSmart")}</span>
-        <select id="sortSelect">
-          ${["sortSmart", "sortDue", "sortUpdated", "sortImpact"].map((key) => `<option value="${key}" ${state.sort === key ? "selected" : ""}>${tr(key)}</option>`).join("")}
-        </select>
-      </label>
+    <section class="queue-filter">
+      <div class="filter-row">${domainFilters()}</div>
+      <div class="filter-row ${state.filterOpen ? "expanded" : "collapsed"}">${badgeFilters()}</div>
+      <button class="link-button" id="toggleFilters">${tr(state.filterOpen ? "filterLess" : "filterMore")}</button>
     </section>
-    <section class="section-block task-list">
-      ${visible.map((task) => taskCard(task)).join("") || emptyState()}
+    <section class="queue-toolbar">
+      <label>${tr("sort")}<select id="sort"><option value="smartSort">${tr("smartSort")}</option><option value="dueSort">${tr("dueSort")}</option></select></label>
+      <button id="advanced">${tr("filter")}</button>
     </section>
-    <section class="advanced-panel">
-      <h2>${tr("advancedFilters")}</h2>
-      <div>${tr("owner")} · ${tr("location")} · ${tr("amount")} · ${tr("hasBlocker")} · ${tr("requiresConfirm")}</div>
-    </section>
+    <section class="task-stack">${list.map(taskCard).join("")}</section>
+    ${state.advancedOpen ? advancedSheet() : ""}
   `);
 }
 
-function objectView() {
-  const object = currentObject();
-  const task = currentTask();
-  return shell(`
-    <section class="object-hero">
-      <span>${tr("objectWorkspace")} · ${tr(object.domain)}</span>
-      <h1>${tr(object.titleKey)}</h1>
-      <p>${tx(object.subtitle)}</p>
-    </section>
-    <section class="three-zone">
-      <article>
-        <span>${tr("currentProblem")}</span>
-        <strong>${tr(object.problemKey)}</strong>
-      </article>
-      <article>
-        <span>${tr("nextStep")}</span>
-        <strong>${tx(object.next)}</strong>
-      </article>
-    </section>
-    <section class="section-block">
-      <h2>${tr("facts")}</h2>
-      <div class="fact-list">${object.facts.map((fact) => factRow(fact)).join("")}</div>
-    </section>
-    <section class="section-block">
-      <h2>${tr("taskSurface")}</h2>
-      ${taskCard(task)}
-    </section>
-    <section class="section-block">
-      <h2>${tr("related")}</h2>
-      <p>${tx(object.related)}</p>
-    </section>
-    <section class="section-block">
-      <h2>${tr("timeline")}</h2>
-      <ol class="timeline">${object.timeline[state.lang].map((item) => `<li>${item}</li>`).join("")}</ol>
-    </section>
-  `);
+function domainFilters() {
+  return ["all", "stay", "repair", "finance"].map((key) => filterPill("queueDomain", key, countDomain(key))).join("");
 }
 
-function taskView() {
-  const task = currentTask();
-  const object = objects[task.objectId];
-  const fields = task.domain === "domainAuto" ? repairFields() : depositFields();
-  return shell(`
-    <section class="task-head">
-      <span>${tr("taskSurface")} · ${tr(task.domain)}</span>
-      <h1>${tr(task.titleKey)}</h1>
-      <p>${tr(task.objectTitleKey)} · ${task.location} · ${task.due}</p>
-    </section>
-    <section class="process-rail">
-      ${processSteps(task.domain).map((step, index) => `<span class="${index === 2 ? "current" : index < 2 ? "done" : ""}">${step}</span>`).join("")}
-    </section>
-    <section class="section-block">
-      <h2>${tr("checklist")}</h2>
-      <ul class="check-list">
-        <li>${tr(task.problemKey)}</li>
-        <li>${tr("whyMe")}: ${tx(task.why)}</li>
-        <li>${tr("ifDelay")}: ${tx(task.delay)}</li>
-      </ul>
-    </section>
-    <section class="section-block">
-      <h2>${tr("operationArea")}</h2>
-      ${fields}
-    </section>
-    ${contextHelpCard(task)}
-    <div class="sticky-action"><button id="confirmAction">${tr("confirmAction")}</button></div>
-  `);
+function badgeFilters() {
+  return ["mine", "confirm", "blocked", "soon", "waiting"].map((key) => filterPill("queueBadge", key, countBadge(key))).join("");
 }
 
-function confirmView() {
-  const task = currentTask();
-  return shell(`
-    <section class="confirm-panel">
-      <span>${tr("confirmAction")}</span>
-      <h1>${tr(task.titleKey)}</h1>
-      <p>${tx(task.next)}</p>
-      <div class="confirm-grid">
-        <div><span>${tr("objectWorkspace")}</span><strong>${tr(task.objectTitleKey)}</strong></div>
-        <div><span>${tr("whyMe")}</span><strong>${tx(task.why)}</strong></div>
-        <div><span>${tr("aiBoundary")}</span><strong>${tr("requiresConfirm")}</strong></div>
-      </div>
-      <button id="finishAction">${tr("finish")}</button>
-    </section>
-  `);
+function filterPill(field, key, count) {
+  const active = state[field] === key;
+  return `<button class="pill ${active ? "active" : ""}" data-filter-field="${field}" data-filter-value="${key}">${tr(key)}<b>${count}</b></button>`;
 }
 
-function resultView() {
-  const task = currentTask();
-  return shell(`
-    <section class="result-panel">
-      <span>Audit Evidence</span>
-      <h1>${tr("resultTitle")}</h1>
-      <p>${tr("resultBody")}</p>
-      <button data-object="${task.objectId}" data-target="object">${tr("viewObject")}</button>
-      <button data-view="workbench">${tr("workbench")}</button>
-    </section>
-  `);
+function countDomain(key) {
+  return key === "all" ? tasks.length : tasks.filter((item) => item.domain === key).length;
+}
+
+function countBadge(key) {
+  return tasks.filter((item) => item.badges.includes(key)).length;
+}
+
+function queueTasks() {
+  return tasks
+    .filter((item) => state.queueDomain === "all" || item.domain === state.queueDomain)
+    .filter((item) => item.badges.includes(state.queueBadge))
+    .sort((a, b) => state.sort === "dueSort" ? a.due.localeCompare(b.due) : b.priority - a.priority);
+}
+
+function advancedSheet() {
+  return `<section class="sheet">
+    <div class="sheet-head"><h2>${tr("advancedFilter")}</h2><button id="closeAdvanced">×</button></div>
+    <div class="sheet-grid">
+      <button>${tr("role")}</button>
+      <button>${tr("stay")}</button>
+      <button>${tr("repair")}</button>
+      <button>${tr("blocked")}</button>
+      <button>${tr("confirm")}</button>
+      <button>${tr("soon")}</button>
+    </div>
+  </section>`;
 }
 
 function meView() {
   return shell(`
     <section class="profile-card">
-      <span>${tr("account")}</span>
-      <h1>${tr("role")}</h1>
-      <p>${tr("permission")}: ${tr("domainStay")} · ${tr("domainAuto")} · ${tr("domainFinance")}</p>
+      <span>${tr("role")}</span>
+      <h1>${tr("personalMode")}</h1>
+      <p>${tr("permission")}: ${tr("stay")} · ${tr("repair")} · ${tr("finance")}</p>
     </section>
-    <section class="metric-grid">
-      ${metric("metric", "11", tr("doneToday"))}
-      ${metric("warning", "1", tr("overdue"))}
-      ${metric("confirm", "18m", tr("avgTime"))}
+    <section class="metric-grid">${metric("11", "stats")}${metric("2", "blocked")}${metric("18m", "smartSort")}</section>
+    <section class="personal-grid">
+      ${personal("notes", "noteTitle", "noteBody")}
+      ${personal("reminders", "reminderTitle", "reminderBody")}
+      ${personal("feedback", "feedbackTitle", "feedbackBody")}
+      ${personal("onboarding", "tutorial", "guideBody")}
     </section>
-    <section class="section-block">
-      <h2>${tr("profile")}</h2>
-      ${profileRow(tr("commonSearch"), dynamicIntents[state.lang].join(" · "))}
-      ${profileRow(tr("savedFilters"), `${tr("domainAuto")} + ${tr("contextMine")} + ${tr("statusToday")}`)}
-      ${profileRow(tr("preferences"), `${tr("language")}: ${state.lang === "zh-CN" ? tr("zh") : tr("ru")}`)}
-    </section>
-    <section class="section-block">
-      <h2>${tr("helpFeedback")}</h2>
-      <p>${tr("aiBoundary")}</p>
+    <section class="compact-section">
+      <h2>${tr(commonLabel())}</h2>
+      <p>${tr("commonSearch")}: ${tr("depositBlocked")} · Toyota Camry · A301</p>
+      <p>${tr("savedFilter")}: ${tr("repair")} + ${tr("mine")} + ${tr("soon")}</p>
     </section>
   `);
 }
 
-function searchBlock(source) {
-  const isOpen = state.searchOpen || source === "search";
-  return `
-    <section class="intent-card ${isOpen ? "open" : ""}">
-      <div class="search-line">
-        <input id="query" value="${state.query}" placeholder="${tr("searchPlaceholder")}" />
-        <button id="searchNow">${tr("searchAction")}</button>
-      </div>
-      <div class="search-popover" ${isOpen ? "" : "hidden"}>${searchResults().map((id) => objectRow(id, objects[id])).join("")}</div>
+function commonLabel() {
+  return "stats";
+}
+
+function personal(view, title, body) {
+  return `<button class="personal-card" data-view="${view}"><strong>${tr(title)}</strong><span>${tr(body)}</span></button>`;
+}
+
+function taskView() {
+  const item = task();
+  return shell(`
+    <section class="task-page">
+      <span>${tr(item.domain)} · ${item.due}</span>
+      <h1>${tr(item.title)}</h1>
+      <p>${tr(item.object)}</p>
     </section>
-  `;
+    <section class="compact-section">
+      <h2>${tr("whyMe")}</h2>
+      <p>${tx(item.why)}</p>
+      <h2>${tr("ifDelay")}</h2>
+      <p>${tx(item.delay)}</p>
+    </section>
+    <section class="compact-section">
+      <h2>${tr("operation")}</h2>
+      ${operationFields(item)}
+    </section>
+    <section class="help-card">
+      <span>${tr("guidance")}</span>
+      <p>${tx(item.next)}</p>
+    </section>
+    <div class="sticky-action"><button data-view="confirmPage">${tr("confirmAction")}</button></div>
+  `);
 }
 
-function searchResults() {
-  const query = state.query.toLowerCase();
-  if (!query) {
-    return ["SO-20260528-001", "AR-20260528-004", "FIN-20260528-009"];
+function operationFields(item) {
+  if (item.domain === "repair") {
+    return `<label><span>${tr("repair")}</span><input value="Алексей Смирнов · 16:30" /></label>`;
   }
-
-  return Object.keys(objects).filter((id) => {
-    const object = objects[id];
-    const text = [id, tr(object.titleKey), tx(object.subtitle), tr(object.problemKey), tx(object.related)].join(" ").toLowerCase();
-    return text.includes(query);
-  }).concat(query.includes("押金") || query.includes("депозит") ? ["FIN-20260528-009"] : []).filter((id, index, list) => list.indexOf(id) === index);
+  return `<label><span>${tr("finance")}</span><input value="3000 KGS · DEP-009" /></label>`;
 }
 
-function filteredTasks() {
-  return tasks
-    .filter((task) => state.domain === "domainAll" || task.domain === state.domain)
-    .filter((task) => state.context === "contextAll" || task.context.includes(state.context))
-    .filter((task) => task.status.includes(state.status))
-    .sort((a, b) => state.sort === "sortImpact" ? b.priority - a.priority : a.due.localeCompare(b.due));
-}
-
-function domainHighlight(domain, task) {
-  return `<article class="domain-card ${domain}">
-    <span>${tr(domain)}</span>
-    <strong>${tr(task.titleKey)}</strong>
-    <p>${tr(task.problemKey)}</p>
-    <button data-object="${task.objectId}" data-target="task">${tr("enterTask")}</button>
-  </article>`;
-}
-
-function taskCard(task) {
-  return `<article class="task-card">
-    <div>
-      <span>${tr(task.domain)} · ${tr(task.status[0])} · ${task.due}</span>
-      <strong>${tr(task.titleKey)}</strong>
-      <p>${tr(task.objectTitleKey)}</p>
-      <p>${tr("whyMe")}: ${tx(task.why)}</p>
-    </div>
-    <button data-object="${task.objectId}" data-target="task">${tr("enterTask")}</button>
-  </article>`;
-}
-
-function objectRow(id, object) {
-  return `<article class="object-row">
-    <div>
+function objectView() {
+  const object = objects[task().objectId];
+  return shell(`
+    <section class="task-page">
       <span>${tr(object.domain)}</span>
-      <strong>${tr(object.titleKey)}</strong>
-      <p>${tx(object.subtitle)}</p>
-    </div>
-    <button data-object="${id}" data-target="object">${tr("viewObject")}</button>
+      <h1>${tr(object.title)}</h1>
+      <p>${tx(object.line)}</p>
+    </section>
+    <section class="compact-section">${taskCard(task())}</section>
+  `);
+}
+
+function simpleView(titleKey, bodyKey) {
+  return shell(`
+    <section class="profile-card">
+      <span>${tr("me")}</span>
+      <h1>${tr(titleKey)}</h1>
+      <p>${tr(bodyKey)}</p>
+    </section>
+    <section class="compact-section">
+      <label><span>${tr(titleKey)}</span><input value="${tr(task().object)}" /></label>
+      <label><span>${tr("reminders")}</span><input value="2026-05-28 18:00" /></label>
+    </section>
+  `);
+}
+
+function confirmPageView() {
+  const item = task();
+  return shell(`
+    <section class="confirm-panel">
+      <span>${tr("confirmAction")}</span>
+      <h1>${tr(item.title)}</h1>
+      <p>${tr("actionBoundary")}</p>
+      <button id="finish">${tr("finish")}</button>
+    </section>
+  `);
+}
+
+function resultView() {
+  return shell(`<section class="confirm-panel"><span>Audit</span><h1>${tr("evidenceDone")}</h1><p>${tr("actionBoundary")}</p><button data-view="workbench">${tr("workbench")}</button></section>`);
+}
+
+function taskCard(item) {
+  return `<article class="task-card">
+    <div><span>${tr(item.domain)} · ${tr(item.badges[0])} · ${item.due}</span><strong>${tr(item.title)}</strong><p>${tr(item.object)}</p><p>${tr("whyMe")}: ${tx(item.why)}</p></div>
+    <button data-task="${item.id}" data-target="task">${tr("enterTask")}</button>
   </article>`;
 }
 
-function filterButton(kind, key, style = "") {
-  const active = state[kind] === key;
-  return `<button class="${style} ${active ? "active" : ""}" data-filter-kind="${kind}" data-filter-value="${key}">${tr(key)}</button>`;
+function objectRow(id) {
+  const object = objects[id];
+  return `<article class="object-row"><div><span>${tr(object.domain)}</span><strong>${tr(object.title)}</strong><p>${tx(object.line)}</p></div><button data-task="${tasks.find((item) => item.objectId === id)?.id}" data-target="object">${tr("open")}</button></article>`;
 }
 
-function intentChip(text, style = "") {
-  return `<button class="chip ${style}" data-intent="${text}">${text}</button>`;
+function metric(value, label) {
+  return `<article><span>${tr(label)}</span><strong>${value}</strong></article>`;
 }
 
-function metric(style, value, label) {
-  return `<div class="${style}"><span>${label}</span><strong>${value}</strong></div>`;
-}
-
-function factRow(fact) {
-  return `<div><span>${state.lang === "zh-CN" ? fact[0] : fact[2]}</span><strong>${state.lang === "zh-CN" ? fact[1] : fact[3]}</strong></div>`;
-}
-
-function profileRow(label, value) {
-  return `<article class="profile-row"><span>${label}</span><strong>${value}</strong></article>`;
-}
-
-function processSteps(domain) {
-  return domain === "domainAuto"
-    ? (state.lang === "zh-CN" ? ["报修", "到场", "诊断", "维修", "验收"] : ["Заявка", "Прибыло", "Диагностика", "Ремонт", "Приемка"])
-    : (state.lang === "zh-CN" ? ["申请", "选床", "押金", "确认", "入住"] : ["Заявка", "Койка", "Депозит", "Подтв.", "Заселение"]);
-}
-
-function depositFields() {
-  return `
-    <label class="field"><span>${tr("amount")}</span><input value="3000 KGS" /></label>
-    <label class="field"><span>${tr("related")}</span><input value="DEP-009 / SO-20260528-001" /></label>
-  `;
-}
-
-function repairFields() {
-  return `
-    <label class="field"><span>${tr("owner")}</span><input value="Алексей Смирнов" /></label>
-    <label class="field"><span>${tr("location")}</span><input value="${state.lang === "zh-CN" ? "维修场 2 号位 · 16:30" : "Пост 2 · 16:30"}" /></label>
-  `;
-}
-
-function contextHelpCard(task) {
-  return `<section class="guidance-card">
-    <span>${tr("guidanceArea")}</span>
-    <h2>${tr("helpQuestion")}</h2>
-    <p>${tr("currentProblem")}: ${tr(task.problemKey)}</p>
-    <p>${tr("nextStep")}: ${tx(task.next)}</p>
-    <p>${tr("ifDelay")}: ${tx(task.delay)}</p>
-  </section>`;
-}
-
-function emptyState() {
-  return `<article class="empty-state"><strong>${tr("workbench")}</strong><p>${tr("searchHint")}</p></article>`;
-}
-
-function render() {
-  const views = { home: homeView, search: searchView, workbench: workbenchView, object: objectView, task: taskView, confirm: confirmView, result: resultView, me: meView };
+function render(scrollTop = false) {
+  const views = {
+    onboarding: onboardingView,
+    home: homeView,
+    search: searchView,
+    workbench: workbenchView,
+    me: meView,
+    task: taskView,
+    object: objectView,
+    notes: () => simpleView("noteTitle", "noteBody"),
+    reminders: () => simpleView("reminderTitle", "reminderBody"),
+    feedback: () => simpleView("feedbackTitle", "feedbackBody"),
+    confirmPage: confirmPageView,
+    result: resultView
+  };
   document.documentElement.lang = state.lang;
   document.querySelector("#app").innerHTML = views[state.view]();
   bind();
-  if (state.scrollTopNext) {
-    window.scrollTo({ top: 0, left: 0 });
-    state.scrollTopNext = false;
-  }
+  if (scrollTop) window.scrollTo({ top: 0, left: 0 });
 }
 
 function bind() {
-  document.querySelector("#language")?.addEventListener("change", (event) => setLanguage(event.target.value));
+  document.querySelector("#language")?.addEventListener("change", (event) => setLang(event.target.value));
+  document.querySelector("#start")?.addEventListener("click", onboard);
+  document.querySelector("#skip")?.addEventListener("click", onboard);
   document.querySelectorAll("[data-view]").forEach((node) => node.addEventListener("click", () => setView(node.dataset.view)));
-  document.querySelectorAll("[data-object]").forEach((node) => node.addEventListener("click", () => selectObject(node.dataset.object, node.dataset.target || "object")));
-  document.querySelectorAll("[data-filter-kind]").forEach((node) => node.addEventListener("click", () => {
-    state[node.dataset.filterKind] = node.dataset.filterValue;
-    render();
+  document.querySelectorAll("[data-task]").forEach((node) => node.addEventListener("click", () => {
+    state.selectedTask = node.dataset.task || state.selectedTask;
+    setView(node.dataset.target || "task");
   }));
-  document.querySelectorAll("[data-intent]").forEach((node) => node.addEventListener("click", () => {
-    state.query = node.dataset.intent;
-    state.searchOpen = true;
+  document.querySelectorAll("[data-scenario]").forEach((node) => node.addEventListener("click", () => {
+    state.query = node.textContent.trim();
     setView("search");
   }));
-  document.querySelector("#query")?.addEventListener("focus", () => {
-    state.searchOpen = true;
-    document.querySelector(".intent-card")?.classList.add("open");
-    document.querySelector(".search-popover")?.removeAttribute("hidden");
-  });
   document.querySelector("#query")?.addEventListener("input", (event) => {
     state.query = event.target.value;
-    state.searchOpen = true;
   });
   document.querySelector("#searchNow")?.addEventListener("click", () => {
     state.query = document.querySelector("#query")?.value || "";
-    state.searchOpen = true;
-    setView("search");
+    render();
   });
-  document.querySelector("#sortSelect")?.addEventListener("change", (event) => {
+  document.querySelectorAll("[data-filter-field]").forEach((node) => node.addEventListener("click", () => {
+    state[node.dataset.filterField] = node.dataset.filterValue;
+    render();
+  }));
+  document.querySelector("#toggleFilters")?.addEventListener("click", () => {
+    state.filterOpen = !state.filterOpen;
+    render();
+  });
+  document.querySelector("#advanced")?.addEventListener("click", () => {
+    state.advancedOpen = true;
+    render();
+  });
+  document.querySelector("#closeAdvanced")?.addEventListener("click", () => {
+    state.advancedOpen = false;
+    render();
+  });
+  document.querySelector("#sort")?.addEventListener("change", (event) => {
     state.sort = event.target.value;
     render();
   });
-  document.querySelector("#confirmAction")?.addEventListener("click", () => setView("confirm"));
-  document.querySelector("#finishAction")?.addEventListener("click", () => setView("result"));
-  document.addEventListener("click", closeSearchOutside, { once: true });
-  document.addEventListener("keydown", closeSearchByEscape, { once: true });
-}
-
-function closeSearchOutside(event) {
-  if (!state.searchOpen || event.target.closest(".intent-card")) {
-    return;
-  }
-
-  state.searchOpen = false;
-  document.querySelector(".intent-card")?.classList.remove("open");
-  document.querySelector(".search-popover")?.setAttribute("hidden", "");
-}
-
-function closeSearchByEscape(event) {
-  if (event.key !== "Escape" || !state.searchOpen) {
-    return;
-  }
-
-  state.searchOpen = false;
-  document.querySelector(".intent-card")?.classList.remove("open");
-  document.querySelector(".search-popover")?.setAttribute("hidden", "");
+  document.querySelector("#finish")?.addEventListener("click", () => setView("result"));
 }
 
 render();

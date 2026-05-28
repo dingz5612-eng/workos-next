@@ -39,6 +39,12 @@
 
 ## WON-03: Backend Minimal Loop
 
+- Before backend binding, freeze the V1 mode architecture:
+  - Home is the daily command card, not a list page.
+  - Search is active intent and scenario entry, not default object browsing.
+  - Workbench is a passive task queue with compact filters and count badges.
+  - Me owns notes, reminders, feedback, tutorial, profile, and preferences.
+  - Deprecated active UI sections must be removed when replaced.
 - Auth.
 - Workbench projection API.
 - Object projection API.
