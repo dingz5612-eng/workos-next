@@ -1,0 +1,16 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: workosnext-postgres
+    environment:
+      POSTGRES_DB: workosnext
+      POSTGRES_USER: workosnext
+      POSTGRES_PASSWORD: workosnext_dev
+    ports:
+      - "54329:5432"
+    volumes:
+      - workosnext-postgres:/var/lib/postgresql/data
+
+volumes:
+  workosnext-postgres:
+
