@@ -164,6 +164,18 @@ public enum ConfirmStatus
 
 public sealed record ConfirmResult(ConfirmStatus Status, string? Reason, object? Payload);
 
+public sealed record RuntimeObservation(
+    string Service,
+    string Version,
+    string Persistence,
+    int WorkspaceCount,
+    int CardCount,
+    int AuditEventCount,
+    int OutboxCount,
+    int PendingOutboxCount,
+    int BehaviorEventCount,
+    DateTimeOffset? LastAuditEventAtUtc);
+
 internal sealed record CardSeed(
     string Id,
     string Status,

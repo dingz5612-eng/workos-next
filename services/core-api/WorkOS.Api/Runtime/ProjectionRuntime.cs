@@ -226,6 +226,26 @@ public sealed class ProjectionRuntime
 
     public IReadOnlyList<BehaviorEventRecord> GetBehaviorEvents() => store.GetBehaviorEvents();
 
+    public RuntimeObservation Observe()
+    {
+        lock (gate)
+        {
+            var events = store.GetAuditEvents();
+            var outbox = store.GetOutboxMessages();
+            return new RuntimeObservation(
+                "WorkOSNext Core API",
+                "0.13.0-backend-runtime",
+                "postgresql",
+                state.Workspaces.Count,
+                state.Workspaces.Sum(workspace => workspace.Cards.Count),
+                events.Count,
+                outbox.Count,
+                outbox.Count(message => message.ProcessedAtUtc is null),
+                store.GetBehaviorEvents().Count,
+                events.OrderByDescending(item => item.OccurredAtUtc).FirstOrDefault()?.OccurredAtUtc);
+        }
+    }
+
     public BehaviorEventRecord AppendBehaviorEvent(BehaviorEventRecord behaviorEvent)
     {
         store.AppendBehaviorEvent(behaviorEvent);

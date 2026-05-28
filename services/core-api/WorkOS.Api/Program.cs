@@ -90,6 +90,7 @@ app.MapGet("/api/audit-events", () => runtime.GetAuditEvents());
 app.MapGet("/api/outbox", () => runtime.GetOutboxMessages());
 app.MapPost("/api/projections/process-outbox", () => new { processed = runtime.ProcessPendingOutbox() });
 app.MapGet("/api/behavior-events", () => runtime.GetBehaviorEvents());
+app.MapGet("/api/observability/runtime", () => runtime.Observe());
 
 app.MapPost("/api/behavior-events", (BehaviorEventRequest request) =>
 {

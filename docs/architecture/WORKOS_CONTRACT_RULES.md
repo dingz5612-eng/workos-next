@@ -7,6 +7,8 @@ Projection and API shape are executable contracts.
 ```text
 docs/contracts/projection-contract.schema.json
 docs/contracts/workos-runtime.openapi.json
+docs/contracts/slice-manifest.json
+docs/contracts/policy-contract.json
 ```
 
 CI must verify that these files exist and are parseable.
@@ -45,3 +47,18 @@ Before adding more large production slices, add or preserve a path for:
 
 The frontend must not keep inventing local names for backend fields, events,
 policies, or blockers when those names can be part of the contract.
+
+Generated DTOs are mandatory:
+
+```text
+apps/mobile/src/generated/workosContracts.d.ts
+```
+
+Run this after changing projection schema or OpenAPI:
+
+```powershell
+node scripts/generate-contract-dtos.mjs
+node scripts/generate-contract-dtos.mjs --check
+```
+
+CI and `guard-architecture.ps1` must fail when generated DTOs are stale.

@@ -1,0 +1,21 @@
+{
+  "version": "0.13.0",
+  "policy": "CardConfirmationPolicy",
+  "decisionCodes": [
+    "allowed",
+    "ai_confirmation_forbidden",
+    "role_confirmation_forbidden"
+  ],
+  "rules": [
+    {
+      "id": "ai-cannot-confirm",
+      "description": "AI may prepare, explain, summarize, and draft, but must never confirm a card when forbiddenForAi is true.",
+      "denies": "ai_confirmation_forbidden"
+    },
+    {
+      "id": "role-must-match-confirmation-policy",
+      "description": "The actor role must satisfy the card confirmation requiredRole. Manager may confirm operator cards; admin may confirm all cards.",
+      "denies": "role_confirmation_forbidden"
+    }
+  ]
+}

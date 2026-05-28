@@ -6,12 +6,12 @@ public sealed class CardConfirmationPolicy
     {
         if (card.Confirmation.ForbiddenForAi && actor.Role.Equals("ai", StringComparison.OrdinalIgnoreCase))
         {
-            return new ConfirmResult(ConfirmStatus.Forbidden, "AI can prepare and explain, but cannot confirm finance or terminal business actions.", null);
+            return new ConfirmResult(ConfirmStatus.Forbidden, "ai_confirmation_forbidden: AI can prepare and explain, but cannot confirm finance or terminal business actions.", null);
         }
 
         if (!RoleCanConfirm(actor.Role, card.Confirmation.RequiredRole))
         {
-            return new ConfirmResult(ConfirmStatus.Forbidden, $"Role {actor.Role} cannot confirm card {card.Id}; required role is {card.Confirmation.RequiredRole}.", null);
+            return new ConfirmResult(ConfirmStatus.Forbidden, $"role_confirmation_forbidden: Role {actor.Role} cannot confirm card {card.Id}; required role is {card.Confirmation.RequiredRole}.", null);
         }
 
         return null;

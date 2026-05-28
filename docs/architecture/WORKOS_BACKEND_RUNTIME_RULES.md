@@ -47,6 +47,27 @@ services/core-api/WorkOS.Api/Slices/Repair/Close
 
 Do not put new slice policy directly in `ProjectionRuntime`.
 
+`docs/contracts/slice-manifest.json` is the executable slice registry. When a
+slice, card chain, event chain, or aggregate ownership changes, update the
+manifest in the same commit and keep the matching `services/core-api/WorkOS.Api/Slices/*`
+directory present.
+
+## Policy Boundary
+
+Confirmation policy belongs in focused policy classes, starting with
+`CardConfirmationPolicy`.
+
+Policy contracts live in:
+
+```text
+docs/contracts/policy-contract.json
+```
+
+Forbidden confirmation outcomes must use stable decision codes such as
+`ai_confirmation_forbidden` and `role_confirmation_forbidden`. Do not scatter
+role/AI confirmation rules across endpoints, render functions, or projector
+rules.
+
 ## Runtime Guarantees
 
 - Confirm commands require idempotency keys.
@@ -81,3 +102,17 @@ Repair.Close -> close records, fee/material confirmations, customer confirmation
 Aggregate commands produce audit events; audit events produce outbox messages;
 outbox projector rules update read models. Direct projection mutation is only
 allowed inside projector rules.
+
+## Observability Boundary
+
+Runtime observability is part of the backend contract.
+
+The API must expose:
+
+```text
+GET /api/observability/runtime
+```
+
+It must report at least workspace count, card count, audit event count, outbox
+count, pending outbox count, behavior event count, persistence type, and runtime
+version. Observability must not become a write path.

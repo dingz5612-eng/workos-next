@@ -79,6 +79,20 @@
           "404": { "description": "Card not found" }
         }
       }
+    },
+    "/api/observability/runtime": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Runtime observation counters",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/RuntimeObservation" }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -105,6 +119,22 @@
             "type": "array",
             "items": { "type": "string" }
           }
+        }
+      },
+      "RuntimeObservation": {
+        "type": "object",
+        "required": ["service", "version", "persistence", "workspaceCount", "cardCount", "auditEventCount", "outboxCount", "pendingOutboxCount", "behaviorEventCount"],
+        "properties": {
+          "service": { "type": "string" },
+          "version": { "type": "string" },
+          "persistence": { "type": "string" },
+          "workspaceCount": { "type": "integer" },
+          "cardCount": { "type": "integer" },
+          "auditEventCount": { "type": "integer" },
+          "outboxCount": { "type": "integer" },
+          "pendingOutboxCount": { "type": "integer" },
+          "behaviorEventCount": { "type": "integer" },
+          "lastAuditEventAtUtc": { "type": ["string", "null"], "format": "date-time" }
         }
       }
     }

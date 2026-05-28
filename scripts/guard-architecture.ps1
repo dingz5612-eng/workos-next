@@ -32,6 +32,9 @@ function Assert-NoMatches($paths, $pattern, $message, $excludePattern = $null) {
 
 Assert-Exists "docs/contracts/projection-contract.schema.json"
 Assert-Exists "docs/contracts/workos-runtime.openapi.json"
+Assert-Exists "docs/contracts/slice-manifest.json"
+Assert-Exists "docs/contracts/policy-contract.json"
+Assert-Exists "apps/mobile/src/generated/workosContracts.d.ts"
 Assert-Exists "docs/architecture/WORKOS_ENGINEERING_RULES.md"
 Assert-Exists "docs/architecture/WORKOS_BACKEND_RUNTIME_RULES.md"
 Assert-Exists "docs/architecture/WORKOS_FRONTEND_BOUNDARY_RULES.md"
@@ -51,6 +54,21 @@ Assert-NoMatches @("apps/mobile/src/main.js") "fetch\s*\(" "main.js must not con
 Assert-NoMatches @("apps/mobile/src/main.js") "/api/" "main.js must not contain API paths; use apiClient.js."
 Assert-NoMatches @("apps/mobile/src/main.js") "confirmCard" "main.js must not call confirmCard directly; use operationRuntime.js."
 
+Assert-NoMatches @("services/core-api/WorkOS.Api/Runtime/ProjectionRuntime.cs") "ai_confirmation_forbidden|role_confirmation_forbidden" "Role and AI confirmation policy denials must live in CardConfirmationPolicy."
+
+$requiredSliceDirs = @(
+  "services/core-api/WorkOS.Api/Slices/Accommodation/ResourceSetup",
+  "services/core-api/WorkOS.Api/Slices/Accommodation/CheckIn",
+  "services/core-api/WorkOS.Api/Slices/Accommodation/CheckOut",
+  "services/core-api/WorkOS.Api/Slices/Finance/DepositException",
+  "services/core-api/WorkOS.Api/Slices/Repair/Dispatch",
+  "services/core-api/WorkOS.Api/Slices/Repair/Close"
+)
+
+foreach ($sliceDir in $requiredSliceDirs) {
+  Assert-Exists "$sliceDir/README.md"
+}
+
 $mainLines = (Get-Content "apps/mobile/src/main.js").Count
 if ($mainLines -gt 250) {
   Fail "apps/mobile/src/main.js is $mainLines lines; main.js must stay as a 150-250 line composition shell."
@@ -61,7 +79,8 @@ $openApi = Get-Content "docs/contracts/workos-runtime.openapi.json" -Raw | Conve
 $requiredPaths = @(
   "/api/workspaces",
   "/api/workspaces/{workspaceId}/cards/{cardId}/prepare",
-  "/api/workspaces/{workspaceId}/cards/{cardId}/confirm"
+  "/api/workspaces/{workspaceId}/cards/{cardId}/confirm",
+  "/api/observability/runtime"
 )
 
 foreach ($path in $requiredPaths) {
@@ -73,7 +92,8 @@ foreach ($path in $requiredPaths) {
 $requiredEndpointPatterns = @(
   'MapGet\("/api/workspaces"',
   'MapPost\("/api/workspaces/\{workspaceId\}/cards/\{cardId\}/prepare"',
-  'MapPost\("/api/workspaces/\{workspaceId\}/cards/\{cardId\}/confirm"'
+  'MapPost\("/api/workspaces/\{workspaceId\}/cards/\{cardId\}/confirm"',
+  'MapGet\("/api/observability/runtime"'
 )
 
 foreach ($pattern in $requiredEndpointPatterns) {
@@ -81,5 +101,7 @@ foreach ($pattern in $requiredEndpointPatterns) {
     Fail "Minimal API endpoint missing or renamed without contract update: $pattern"
   }
 }
+
+node scripts/generate-contract-dtos.mjs --check
 
 Write-Host "Architecture guard: PASS"

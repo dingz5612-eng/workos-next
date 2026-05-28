@@ -13,6 +13,8 @@ ResetPostgres(connectionString);
     var cards = projection.Workspaces.SelectMany(workspace => workspace.Cards).ToArray();
 
     ValidateProjectionContractFiles();
+    ValidateGeneratedDtos();
+    ValidateSliceManifest(projection);
     ValidateProjectionEnvelopeAgainstContract(projection);
 
     Assert(projection.Workspaces.Count == 8, $"expected 8 workspaces, got {projection.Workspaces.Count}");
@@ -52,9 +54,11 @@ ResetPostgres(connectionString);
 
     var aiFinance = runtime.Confirm("W-STAY-CHECKIN", "finance", Human("ai-finance"), aiToken);
     Assert(aiFinance.Status == ConfirmStatus.Forbidden, "AI finance confirmation must be rejected");
+    Assert(aiFinance.Reason?.StartsWith("ai_confirmation_forbidden:") == true, "AI rejection must use stable policy decision code");
 
     var operatorFinance = runtime.Confirm("W-STAY-CHECKIN", "finance", Human("operator-finance"), operatorToken);
     Assert(operatorFinance.Status == ConfirmStatus.Forbidden, "operator must not confirm finance card");
+    Assert(operatorFinance.Reason?.StartsWith("role_confirmation_forbidden:") == true, "role rejection must use stable policy decision code");
 
     var humanRoom = runtime.Confirm("W-STAY-RESOURCE", "room", Human("resource-room", new Dictionary<string, string> { ["房间号"] = "A302" }), operatorToken);
     Assert(humanRoom.Status == ConfirmStatus.Confirmed, "human room confirmation should pass");
@@ -97,6 +101,13 @@ ResetPostgres(connectionString);
     Assert(outbox.Count == 8, $"expected 8 outbox messages, got {outbox.Count}");
     Assert(outbox.All(item => item.ProcessedAtUtc is not null), "all outbox messages should be processed by projector");
     Assert(reloadedRuntime.ProcessPendingOutbox() == 0, "outbox projector should be idempotent after processing");
+    var observation = reloadedRuntime.Observe();
+    Assert(observation.WorkspaceCount == 8, $"observability workspaceCount expected 8, got {observation.WorkspaceCount}");
+    Assert(observation.CardCount == 32, $"observability cardCount expected 32, got {observation.CardCount}");
+    Assert(observation.AuditEventCount == 8, $"observability auditEventCount expected 8, got {observation.AuditEventCount}");
+    Assert(observation.OutboxCount == 8, $"observability outboxCount expected 8, got {observation.OutboxCount}");
+    Assert(observation.PendingOutboxCount == 0, "observability pending outbox count should be zero after processing");
+    Assert(observation.BehaviorEventCount >= 1, "observability behavior event count should include persisted behavior events");
 
     Console.WriteLine("WorkOS.RuntimeContractTests: PASS");
 }
@@ -147,6 +158,40 @@ static void ValidateProjectionContractFiles()
     foreach (var field in new[] { "language", "idempotencyKey", "fieldValues", "evidenceIds" })
     {
         Assert(confirmRequired.Contains(field), $"OpenAPI ConfirmCardRequest must require {field}");
+    }
+
+    Assert(openApi.RootElement.GetProperty("paths").TryGetProperty("/api/observability/runtime", out _), "OpenAPI must include runtime observability endpoint");
+
+    using var policyContract = JsonDocument.Parse(File.ReadAllText(Path.Combine("docs", "contracts", "policy-contract.json")));
+    var decisionCodes = policyContract.RootElement.GetProperty("decisionCodes").EnumerateArray().Select(item => item.GetString()).ToHashSet();
+    foreach (var code in new[] { "allowed", "ai_confirmation_forbidden", "role_confirmation_forbidden" })
+    {
+        Assert(decisionCodes.Contains(code), $"policy contract must include decision code {code}");
+    }
+}
+
+static void ValidateGeneratedDtos()
+{
+    var generated = File.ReadAllText(Path.Combine("apps", "mobile", "src", "generated", "workosContracts.d.ts"));
+    foreach (var typeName in new[] { "ProjectionEnvelope", "WorkspaceProjection", "CardProjection", "ConfirmCardRequest", "RuntimeObservation" })
+    {
+        Assert(generated.Contains($"export type {typeName}"), $"generated DTOs must include {typeName}");
+    }
+}
+
+static void ValidateSliceManifest(ProjectionEnvelope projection)
+{
+    using var manifest = JsonDocument.Parse(File.ReadAllText(Path.Combine("docs", "contracts", "slice-manifest.json")));
+    var slices = manifest.RootElement.GetProperty("slices").EnumerateArray().ToArray();
+    foreach (var required in new[] { "Accommodation.ResourceSetup", "Accommodation.CheckIn", "Accommodation.CheckOut", "Finance.DepositException", "Repair.Dispatch", "Repair.Close" })
+    {
+        var slice = slices.FirstOrDefault(item => item.GetProperty("id").GetString() == required);
+        Assert(slice.ValueKind != JsonValueKind.Undefined, $"slice manifest missing {required}");
+        var workspaceId = slice.GetProperty("workspaceId").GetString();
+        Assert(projection.Workspaces.Any(workspace => workspace.Id == workspaceId), $"slice {required} references missing workspace {workspaceId}");
+        Assert(slice.GetProperty("cards").GetArrayLength() > 0, $"slice {required} must own cards");
+        Assert(slice.GetProperty("events").GetArrayLength() > 0, $"slice {required} must own events");
+        Assert(slice.GetProperty("ownsAggregates").GetArrayLength() > 0, $"slice {required} must declare aggregate ownership");
     }
 }
 
