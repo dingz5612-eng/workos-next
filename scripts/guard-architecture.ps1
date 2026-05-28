@@ -93,15 +93,73 @@ foreach ($runtimeService in $requiredRuntimeServices) {
   Assert-Exists $runtimeService
 }
 
+$requiredStorageServices = @(
+  "services/core-api/WorkOS.Api/Runtime/PostgresConnectionFactory.cs",
+  "services/core-api/WorkOS.Api/Runtime/PostgresMigrationRunner.cs",
+  "services/core-api/WorkOS.Api/Runtime/RuntimeDocumentStorage.cs",
+  "services/core-api/WorkOS.Api/Runtime/RuntimeSessionStorage.cs",
+  "services/core-api/WorkOS.Api/Runtime/RuntimeEventStorage.cs",
+  "services/core-api/WorkOS.Api/Runtime/RuntimeOutboxStorage.cs",
+  "services/core-api/WorkOS.Api/Runtime/RuntimeBehaviorEventStorage.cs"
+)
+
+foreach ($storageService in $requiredStorageServices) {
+  Assert-Exists $storageService
+}
+
+$requiredContractCatalogs = @(
+  "services/core-api/WorkOS.Api/Runtime/WorkspaceSeedCatalog.cs",
+  "services/core-api/WorkOS.Api/Runtime/CardContractFactory.cs",
+  "services/core-api/WorkOS.Api/Runtime/EvidenceContractCatalog.cs",
+  "services/core-api/WorkOS.Api/Runtime/SystemCheckCatalog.cs",
+  "services/core-api/WorkOS.Api/Runtime/EventContractCatalog.cs",
+  "services/core-api/WorkOS.Api/Runtime/BlockerContractCatalog.cs",
+  "services/core-api/WorkOS.Api/Runtime/ConfirmationPolicyCatalog.cs",
+  "services/core-api/WorkOS.Api/Runtime/FieldContractCatalog.cs",
+  "services/core-api/WorkOS.Api/Runtime/FieldUiContractCatalog.cs",
+  "services/core-api/WorkOS.Api/Runtime/OptionSetRegistry.cs",
+  "services/core-api/WorkOS.Api/Runtime/ContractText.cs"
+)
+
+foreach ($catalog in $requiredContractCatalogs) {
+  Assert-Exists $catalog
+}
+
+$requiredFrontendCopyModules = @(
+  "apps/mobile/src/i18n/shellCopy.js",
+  "apps/mobile/src/i18n/demoCopy.js",
+  "apps/mobile/src/i18n/coachCopy.js",
+  "apps/mobile/src/i18n/operationCopy.js"
+)
+
+foreach ($copyModule in $requiredFrontendCopyModules) {
+  Assert-Exists $copyModule
+}
+
+$requiredStyleModules = @(
+  "apps/mobile/src/styles/base.css",
+  "apps/mobile/src/styles/shell.css",
+  "apps/mobile/src/styles/workspace.css",
+  "apps/mobile/src/styles/coach.css",
+  "apps/mobile/src/styles/operation.css",
+  "apps/mobile/src/styles/responsive.css"
+)
+
+foreach ($styleModule in $requiredStyleModules) {
+  Assert-Exists $styleModule
+}
+
 Assert-NoMatches @("services/core-api/WorkOS.Api/Runtime/ProjectionRuntime.cs") "ApplyEventToReadModel|SearchText|SearchResult|PriorityFor" "ProjectionRuntime must stay a facade; keep projector, search, and lens logic in focused services."
+Assert-NoMatches @("services/core-api/WorkOS.Api/Runtime/PostgresProjectionStore.cs") "insert into runtime_sessions|insert into audit_events|outbox_messages|schema_migrations|NpgsqlConnection" "PostgresProjectionStore must stay a storage facade; keep session, event, outbox, and migration details in focused storage helpers."
+Assert-NoMatches @("services/core-api/WorkOS.Api/Runtime/ProjectionSeed.cs") "EvidenceRequirement|SystemCheck|EventDefinition|FieldUi|OptionSet|TermRu|FieldId" "ProjectionSeed must stay a seed assembler; keep evidence, checks, events, field UI, option sets, and terms in focused catalogs."
 
 Assert-MaxLines "apps/mobile/src/main.js" 250 "main.js must stay as a composition shell."
 Assert-MaxLines "services/core-api/WorkOS.Api/Runtime/ProjectionRuntime.cs" 180 "ProjectionRuntime must stay as a backend facade."
-Assert-MaxLines "services/core-api/WorkOS.Api/Runtime/PostgresProjectionStore.cs" 380 "PostgresProjectionStore is over the temporary store-hub budget; split storage helpers before adding more."
-Assert-MaxLines "services/core-api/WorkOS.Api/Runtime/ProjectionSeed.cs" 520 "ProjectionSeed is over the temporary seed-hub budget; split contract catalogs before adding more."
+Assert-MaxLines "services/core-api/WorkOS.Api/Runtime/PostgresProjectionStore.cs" 140 "PostgresProjectionStore must stay as a storage facade."
+Assert-MaxLines "services/core-api/WorkOS.Api/Runtime/ProjectionSeed.cs" 80 "ProjectionSeed must stay as a seed assembler."
 Assert-MaxLines "apps/mobile/src/controls/fieldControls.js" 80 "fieldControls.js must stay a small contract-metadata renderer."
-Assert-MaxLines "apps/mobile/src/i18n.js" 430 "i18n.js is over the temporary dictionary budget; split copy modules before adding more."
-Assert-MaxLines "apps/mobile/src/styles.css" 1100 "styles.css is over the temporary stylesheet budget; split style modules before adding more."
+Assert-MaxLines "apps/mobile/src/i18n.js" 80 "i18n.js must stay as an i18n composition manifest."
+Assert-MaxLines "apps/mobile/src/styles.css" 40 "styles.css must stay as a style import manifest."
 
 $program = Get-Content "services/core-api/WorkOS.Api/Program.cs" -Raw
 $openApi = Get-Content "docs/contracts/workos-runtime.openapi.json" -Raw | ConvertFrom-Json

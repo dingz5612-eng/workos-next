@@ -1,0 +1,252 @@
+.workspace-page {
+  border-color: #b9ded8;
+  background: linear-gradient(135deg, #ffffff, #effaf7);
+}
+
+.intent-card {
+  display: grid;
+  margin-top: 10px;
+}
+
+.card-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.card-tabs button {
+  min-height: 34px;
+  padding: 0 12px;
+  border: 1px solid rgba(201, 222, 230, .98);
+  border-radius: 999px;
+  color: #52677b;
+  background: rgba(255, 255, 255, .88);
+  font-size: 12px;
+  box-shadow: 0 6px 14px rgba(17, 39, 55, .04);
+}
+
+.card-tabs button.active {
+  color: #092033;
+  background: linear-gradient(135deg, #ffd166, #ffe39b);
+  border-color: #ffd166;
+  box-shadow: 0 10px 20px rgba(255, 177, 66, .22);
+}
+
+.card-tabs button.done {
+  color: #0b6f63;
+  background: #e6f8f2;
+}
+
+.card-tabs button.blocked {
+  color: #8a4d00;
+  background: #fff3d0;
+  border-color: #ffd166;
+}
+
+.card-operation {
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+  border-radius: 22px;
+  color: #fff;
+  background:
+    linear-gradient(135deg, rgba(8, 36, 59, .98), rgba(8, 117, 104, .98)),
+    linear-gradient(180deg, rgba(255, 255, 255, .08), transparent);
+  box-shadow: 0 20px 40px rgba(8, 47, 63, .24);
+}
+
+.card-operation > span {
+  color: rgba(255, 255, 255, .72);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.card-operation h3 {
+  font-size: 21px;
+}
+
+.card-operation section {
+  padding: 11px;
+  border: 1px solid rgba(255, 255, 255, .08);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, .12);
+}
+
+.card-operation b {
+  color: #fff;
+  font-size: 13px;
+}
+
+.card-operation p {
+  margin-top: 5px;
+  color: rgba(255, 255, 255, .82);
+  font-size: 13px;
+}
+
+.operation-inputs {
+  display: grid;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.operation-inputs label {
+  display: grid;
+  gap: 5px;
+}
+
+.operation-inputs select {
+  min-height: 42px;
+  border: 0;
+  border-radius: 14px;
+  padding: 0 12px;
+  color: #102033;
+  background: #fff;
+}
+
+.datetime-range {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.operation-inputs input[readonly] {
+  color: #52677b;
+  background: #edf6f6;
+}
+
+.operation-inputs span {
+  color: rgba(255, 255, 255, .78);
+  font-size: 12px;
+}
+
+.operation-inputs small {
+  color: rgba(255, 255, 255, .68);
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+.evidence-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.evidence-row button {
+  min-height: 34px;
+  color: #092033;
+  background: linear-gradient(135deg, #ffd166, #ffe39b);
+  font-size: 12px;
+}
+
+.operation-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.api-status {
+  display: grid;
+  gap: 2px;
+  margin: 0 16px 10px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: #eef7f6;
+  color: #24525a;
+  font-size: 11px;
+  font-weight: 850;
+}
+
+.api-status small {
+  color: #5d7a82;
+  font-weight: 750;
+}
+
+.api-status.online {
+  background: #e4f8ef;
+  color: #096444;
+}
+
+.api-status.offline {
+  background: #fff1dc;
+  color: #7b4a00;
+}
+
+.operation-message {
+  margin: 8px 0 0;
+  color: #d6fff4;
+  font-weight: 850;
+}
+
+.compact-section label {
+  display: grid;
+  gap: 6px;
+  margin-top: 10px;
+  font-weight: 850;
+}
+
+.help-card {
+  border-color: #b9ded8;
+  background: #f0faf7;
+}
+
+.sticky-action {
+  position: sticky;
+  bottom: 78px;
+  margin-top: 12px;
+}
+
+.sticky-action button {
+  width: 100%;
+  min-height: 52px;
+  background: linear-gradient(135deg, #087568, #0ea37f);
+  box-shadow: 0 16px 28px rgba(8, 117, 104, .28);
+}
+
+.feedback-fab {
+  position: fixed;
+  right: calc(50% - min(50%, 215px) + 12px);
+  top: 92px;
+  z-index: 2;
+  min-height: 34px;
+  border-radius: 999px;
+  padding: 0 11px;
+  color: #0b6f63;
+  background: rgba(255, 255, 255, .92);
+  border: 1px solid #d9e7ee;
+  box-shadow: 0 10px 24px rgba(17, 39, 55, .12);
+  font-size: 12px;
+}
+
+.bottom-nav {
+  position: fixed;
+  left: 50%;
+  bottom: 12px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 5px;
+  width: min(calc(100% - 24px), 406px);
+  padding: 7px;
+  border: 1px solid #d9e7ee;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, .96);
+  box-shadow: 0 14px 34px rgba(17, 39, 55, .16);
+  transform: translateX(-50%);
+}
+
+.bottom-nav button {
+  min-height: 40px;
+  padding: 0 6px;
+  border-radius: 15px;
+  color: #52677b;
+  background: transparent;
+  font-size: 13px;
+}
+
+.bottom-nav .active {
+  color: #fff;
+  background: #102f46;
+}
+
+

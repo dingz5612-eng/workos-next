@@ -144,8 +144,9 @@ Backend boundaries:
   runtime, auth, projector, or policy.
 - Store classes persist and load data only; they must not own business rules,
   projection rules, policy rules, or lens/search ranking.
+- `PostgresProjectionStore` is a facade over focused PostgreSQL storage helpers.
 - `ProjectionSeed` only assembles seed contracts. Evidence, events, checks,
-  option sets, and field UI must move to focused catalogs as they grow.
+  option sets, field UI, and bilingual terms live in focused catalogs.
 - New slice rules must live under slice modules, not shared runtime files.
 
 ## 8. Business Completion Rules

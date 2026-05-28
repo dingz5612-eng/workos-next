@@ -51,10 +51,30 @@ Other guarded frontend hubs:
 
 - `controls/fieldControls.js` must render from `field.ui` metadata and must not
   infer business behavior from labels.
-- `i18n.js` must not become the long-term home for demo tasks, scenario
-  coaching, operation policy copy, or business object dictionaries.
-- `styles.css` must not become a style version of `main.js`; new major surfaces
-  should move toward focused style files or bounded sections.
+- `i18n.js` is only the i18n composition manifest. Copy lives in focused modules
+  under `apps/mobile/src/i18n`.
+- `styles.css` is only the style import manifest. CSS lives in focused modules
+  under `apps/mobile/src/styles`.
+
+Required copy modules:
+
+```text
+i18n/shellCopy.js
+i18n/demoCopy.js
+i18n/coachCopy.js
+i18n/operationCopy.js
+```
+
+Required style modules:
+
+```text
+styles/base.css
+styles/shell.css
+styles/workspace.css
+styles/coach.css
+styles/operation.css
+styles/responsive.css
+```
 
 ## Field Runtime
 

@@ -64,15 +64,42 @@ OutboxProjector.cs
 
 Other guarded backend hubs:
 
-- `PostgresProjectionStore.cs` is a temporary aggregate store implementation.
-  It may implement `IProjectionStore`, but new storage responsibilities should
-  move toward focused helpers such as document, session, audit event, outbox,
-  behavior event, and migration storage.
-- `ProjectionSeed.cs` is a temporary contract seed assembler. As catalogs grow,
-  field UI, option sets, evidence, checks, events, and confirmation policies
-  must move into focused contract catalog classes.
+- `PostgresProjectionStore.cs` is a facade implementing `IProjectionStore`.
+  It delegates connection, migration, runtime document, session, audit event,
+  outbox, and behavior event persistence to focused storage classes.
+- `ProjectionSeed.cs` is a contract seed assembler only. Workspace seeds, card
+  construction, evidence, checks, blockers, events, confirmation policy, field
+  UI, option sets, and bilingual terms live in focused contract catalogs.
 - Store classes must not contain slice policies, projector rules, lens ranking,
   search text construction, or action confirmation policy.
+
+Required storage boundaries:
+
+```text
+PostgresConnectionFactory.cs
+PostgresMigrationRunner.cs
+RuntimeDocumentStorage.cs
+RuntimeSessionStorage.cs
+RuntimeEventStorage.cs
+RuntimeOutboxStorage.cs
+RuntimeBehaviorEventStorage.cs
+```
+
+Required contract seed boundaries:
+
+```text
+WorkspaceSeedCatalog.cs
+CardContractFactory.cs
+EvidenceContractCatalog.cs
+SystemCheckCatalog.cs
+EventContractCatalog.cs
+BlockerContractCatalog.cs
+ConfirmationPolicyCatalog.cs
+FieldContractCatalog.cs
+FieldUiContractCatalog.cs
+OptionSetRegistry.cs
+ContractText.cs
+```
 
 `docs/contracts/slice-manifest.json` is the executable slice registry. When a
 slice, card chain, event chain, or aggregate ownership changes, update the

@@ -1,0 +1,9 @@
+@media (min-width: 760px) {
+  .app-shell {
+    margin-top: 18px;
+    margin-bottom: 18px;
+    min-height: calc(100vh - 36px);
+    border: 1px solid #d9e7ee;
+    border-radius: 32px;
+  }
+}
