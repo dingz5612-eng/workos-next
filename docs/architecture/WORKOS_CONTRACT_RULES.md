@@ -30,3 +30,18 @@ Runtime contract tests must verify:
 Product-facing labels must include Chinese and Russian.
 
 Local hard-coded term dictionaries are temporary bridges only. New terminology should come from projection/i18n contracts.
+
+## Generated Client Direction
+
+Contracts must gradually replace hand-maintained DTOs and wording maps.
+
+Before adding more large production slices, add or preserve a path for:
+
+- OpenAPI-based frontend API client generation.
+- Projection schema validation in runtime contract tests.
+- TypeScript projection DTO generation.
+- C# DTO validation against the projection contract.
+- i18n term generation from projection/field metadata.
+
+The frontend must not keep inventing local names for backend fields, events,
+policies, or blockers when those names can be part of the contract.

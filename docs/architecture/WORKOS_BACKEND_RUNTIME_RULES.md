@@ -62,3 +62,22 @@ Do not put new slice policy directly in `ProjectionRuntime`.
 Projection fields are not a substitute for writable business objects.
 
 Room, bed, deposit, finance confirmation, repair station, technician, and vehicle must move to aggregate roots and tables when they become writable.
+
+## Aggregate Root Gate
+
+A slice is not production-grade when it only changes `runtime_documents`.
+
+Before expanding a slice beyond contract validation, add explicit aggregate
+state and tests for the objects it owns. Examples:
+
+```text
+Accommodation.ResourceSetup -> rooms, beds, resource activation state
+Accommodation.CheckIn -> applications, stay orders, deposits, check-in records
+Finance.DepositException -> deposit exceptions, finance confirmations
+Repair.Dispatch -> repair stations, technicians, vehicles, dispatch assignments
+Repair.Close -> close records, fee/material confirmations, customer confirmation
+```
+
+Aggregate commands produce audit events; audit events produce outbox messages;
+outbox projector rules update read models. Direct projection mutation is only
+allowed inside projector rules.

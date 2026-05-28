@@ -4,6 +4,27 @@ This document is mandatory context for future WorkOSNext backend work. It exists
 to prevent future AI or human changes from drifting back into page-specific
 APIs, duplicate projection models, or mock-only workflow demos.
 
+## Current Maturity
+
+WON-13 is not the final business system yet. The current intended baseline is:
+
+```text
+production slice skeleton
++ Action Runtime
++ AuditEvent journal
++ Outbox-driven projection
++ PWA projection acceptance bench
+```
+
+This is enough to prove the runtime pattern, but not enough to claim full domain
+depth. A slice becomes production-grade only after its writable business objects
+have aggregate roots, persistence tables, slice-owned policies, projector rules,
+and automated tests.
+
+The UI is also not the final mobile product form. It remains a Projection
+Contract Lab until the contract, field behavior, bilingual terminology, and
+business explanations stabilize.
+
 ## Current Goal
 
 WON-13 turns the WON-12 center projection into real production slices.
@@ -140,6 +161,11 @@ Upcoming aggregate persistence surfaces must be introduced per slice. Room, bed,
 deposit, finance confirmation, repair station, technician, and vehicle cannot
 remain projection-only once they become writable business objects.
 
+The projection snapshot is a read model, not the domain model. Do not add
+business invariants only by editing projection JSON. When a slice mutates a real
+object, the mutation belongs in that slice's aggregate command handler and then
+flows to the projection through audit events and outbox projector rules.
+
 SQLite is not the target runtime persistence for WON-13. It may only be used for
 throwaway local experiments, not production slice work.
 
@@ -204,6 +230,16 @@ The PWA is the Projection Contract Lab:
 - It consumes the Core Projection API.
 - It uses Action Runtime API for card actions.
 - It validates whether blockers, evidence, checks, role gates, and bilingual copy are understandable.
+
+The PWA must keep moving away from hand-written business UI:
+
+- `main.js` is a composition shell, not a business rule host.
+- Field controls should be selected by contract metadata.
+- Bilingual terms should come from projection/i18n contracts.
+- Operation explanations should be generated from evidence, policy, blocker,
+  transition, and event contract metadata.
+- Final React, Vue, Flutter, React Native, or native mobile work starts only
+  after the stable projection contract can drive the same screens.
 
 ## Expansion Rule
 

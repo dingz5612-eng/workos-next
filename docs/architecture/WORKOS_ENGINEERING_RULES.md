@@ -273,3 +273,41 @@ Writable fields must not be plain text by default.
   is reopened.
 - Temporary front-end field catalogs are allowed only as a bridge toward a
   projection/i18n field contract.
+
+## 18. Product Maturity Boundary
+
+Do not describe the current system as a complete business system until business
+entities and aggregate roots are persisted outside the projection snapshot.
+
+The current WON-13 baseline is:
+
+```text
+production slice skeleton + action runtime + audit event + outbox projection
+```
+
+It is not yet the final mobile product, and it is not yet the full domain
+model. Future work must close these gaps in this order:
+
+- Entity and aggregate persistence for writable objects.
+- Slice-owned commands, policies, events, projector rules, and tests.
+- Contract-driven field rendering and bilingual terminology.
+- Frontend module shrinkage until `main.js` is only composition.
+- Final mobile product UX after the projection contract stabilizes.
+
+Room, bed, deposit, finance confirmation, repair station, technician, vehicle,
+and other writable business concepts must not remain only projection fields once
+their slice becomes production-grade.
+
+## 19. Contract-Driven UX Rule
+
+The PWA may keep temporary hand-written controls while validating a slice, but
+new large workflows must move toward contract-driven UI:
+
+- Field widgets are selected from field contract metadata.
+- Option labels come from projection/i18n contracts.
+- Business explanations come from card, policy, evidence, and blocker contract
+  metadata.
+- Local hard-coded bilingual maps are temporary bridges and must shrink over
+  time.
+
+Do not keep adding one-off render branches for every new business card.

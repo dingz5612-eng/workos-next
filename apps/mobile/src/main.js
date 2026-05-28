@@ -144,7 +144,7 @@ function shell(content) {
 
 function apiBanner() {
   const label = state.apiStatus === "online" ? tr("apiOnline") : state.apiStatus === "checking" ? tr("apiChecking") : tr("apiOffline");
-  return `<section class="api-status ${state.apiStatus}"><span>${label}</span><small>${apiBaseUrl}</small></section>`;
+  return `<section class="api-status ${state.apiStatus}"><span>${label}</span><small>${apiBaseUrl}</small>${state.apiStatus === "offline" ? `<button id="retryApi">${tr("retryApi")}</button>` : ""}</section>`;
 }
 
 function bottomNav() {
@@ -625,9 +625,11 @@ function workspaceCardPanel(card, item, expanded = false) {
 function cardOperation(card, item) {
   const disabled = isCardActionDisabled(card) ? "disabled" : "";
   const visibleBlockers = card.blockerRules.length ? card.blockerRules : item.blockers;
+  const statusHelp = cardStatusHelp(card);
   return `<div class="card-operation">
     <span>${tr("cardOperation")}</span>
     <h3>${tx(card.title)}</h3>
+    ${statusHelp ? `<section class="operation-state"><b>${tr(card.status)}</b><p>${statusHelp}</p></section>` : ""}
     <section>
       <b>${tr("cardAction")}</b>
       <p>${operationActionText(card, item)}</p>
@@ -640,25 +642,26 @@ function cardOperation(card, item) {
     </section>
     <section>
       <b>${tr("cardEvidence")}</b>
+      <p>${tr("cardEvidenceHelp")}</p>
       <div class="evidence-row">
         ${card.evidence.map((field) => `<button ${disabled}>${localTerm(field)}</button>`).join("")}
       </div>
     </section>
     <section>
       <b>${tr("cardConfirm")}</b>
-      <p>${card.status === "blocked" ? tx(item.next) : tr("confirmationDraft")}</p>
+      <p>${confirmationText(card, item)}</p>
     </section>
     <section>
       <b>${tr("cardNext")}</b>
-      <p>${nextCardTitle(card, item)}</p>
+      <p>${tr("cardNextHelp")} ${nextCardTitle(card, item)}</p>
     </section>
     <section>
       <b>${tr("nextBestAction")}</b>
-      <p>${tx(item.next)}</p>
+      <p>${tr("nextBestActionHelp")} ${tx(item.next)}</p>
     </section>
     <section>
       <b>${tr("blockers")}</b>
-      <p>${visibleBlockers.length ? visibleBlockers.map((entry) => tx(entry.title)).join(" · ") : tr("noCriticalBlocker")}</p>
+      <p>${visibleBlockers.length ? visibleBlockers.map((entry) => tx(entry.title)).join(" · ") : `${tr("noCriticalBlocker")} ${tr("blockerHelp")}`}</p>
     </section>
     <div class="operation-actions">
       <button class="secondary" data-save-draft ${disabled}>${tr("saveDraft")}</button>
@@ -666,6 +669,17 @@ function cardOperation(card, item) {
     </div>
     ${state.operationMessage ? `<p class="operation-message">${state.operationMessage}</p>` : ""}
   </div>`;
+}
+
+function cardStatusHelp(card) {
+  if (card.status === "done") return tr("completedCardHelp");
+  if (card.status === "notStarted") return tr("notReadyCardHelp");
+  return "";
+}
+
+function confirmationText(card, item) {
+  if (card.status === "blocked") return tx(item.next);
+  return `${tr("cardConfirmHelp")} ${tr("confirmationDraft")} ${state.lang === "zh-CN" ? "所需角色" : "Роль"}: ${card.Confirmation?.requiredRole || card.confirmation?.requiredRole || "-"}.`;
 }
 
 function operationActionText(card, item) {
@@ -924,6 +938,10 @@ function render(scrollTop = false) {
 
 function bind() {
   document.querySelector("#language")?.addEventListener("change", (event) => setLang(event.target.value));
+  document.querySelector("#retryApi")?.addEventListener("click", async () => {
+    await hydrateProjectionFromApi();
+    render();
+  });
   document.querySelector("#loginSubmit")?.addEventListener("click", login);
   document.querySelector("#logout")?.addEventListener("click", logout);
   document.querySelector("#start")?.addEventListener("click", onboard);
