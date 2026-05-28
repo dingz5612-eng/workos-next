@@ -83,6 +83,7 @@ Finance:
 
 Before implementing write APIs, define:
 
+- Scenario semantic model.
 - ScenarioFlow.
 - ScenarioStep.
 - ScenarioField.
@@ -115,6 +116,7 @@ Before implementing write APIs, define:
 - Does it preserve bilingual readiness?
 - Does it remove replaced UI instead of keeping duplicate paths?
 - Can backend DTOs, read models, and tests be derived from it?
+- Are objects, fields, states, tasks, actions, evidence, policy, analytics, and exceptions aligned?
 
 Final review verdict for this manual:
 

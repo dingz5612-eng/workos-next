@@ -40,6 +40,14 @@ const i18n = {
     repairCustomerFlow: "维修客户建档闭环",
     vehicleCreationFlow: "车辆资料建档闭环",
     fieldModel: "后端字段模型",
+    semanticModel: "场景语义模型",
+    businessObjects: "业务对象",
+    stateContract: "状态变化",
+    taskContract: "任务生成",
+    actionContract: "动作边界",
+    analyticsContract: "统计指标",
+    exceptionBranches: "异常分支",
+    systemJudgement: "系统判断",
     flowStage: "流程阶段",
     evidence: "证据",
     policy: "人工确认边界",
@@ -168,6 +176,14 @@ const i18n = {
     repairCustomerFlow: "Клиент ремонта",
     vehicleCreationFlow: "Карточка авто",
     fieldModel: "Поля для backend",
+    semanticModel: "Семантическая модель",
+    businessObjects: "Бизнес-объекты",
+    stateContract: "Состояния",
+    taskContract: "Задачи",
+    actionContract: "Действия",
+    analyticsContract: "Метрики",
+    exceptionBranches: "Исключения",
+    systemJudgement: "Системное решение",
     flowStage: "Этап",
     evidence: "Доказательство",
     policy: "Граница ручного подтверждения",
@@ -532,6 +548,83 @@ const objects = {
   "AR-20260527-002": { title: "repairObject", domain: "repair", line: { "zh-CN": "维修完成 · 待验收关闭", "ru-RU": "Ремонт завершен · приемка" } }
 };
 
+const semanticPresets = {
+  stay: {
+    objects: ["Resident", "Application", "Room", "Bed", "StayOrder", "DepositEvidence"],
+    states: ["Application.Approved", "Bed.Reserved", "StayOrder.ReadyForCheckIn"],
+    tasks: ["SelectBed", "SubmitDepositEvidence", "FinanceConfirm", "ConfirmCheckIn"],
+    actions: ["prepare", "submitEvidence", "humanConfirm"],
+    analytics: ["leadTime", "depositReviewDuration", "bedAssignmentDuration", "manualConfirmCount"],
+    exceptions: ["NoAvailableBed", "DepositRejected", "PermissionDenied", "MissingEvidence"]
+  },
+  repair: {
+    objects: ["RepairCustomer", "Vehicle", "RepairOrder", "Technician", "Diagnosis", "Inspection"],
+    states: ["Vehicle.Arrived", "RepairOrder.WaitingDiagnosis", "RepairOrder.InProgress"],
+    tasks: ["AssignTechnician", "SubmitDiagnosis", "InspectRepair", "CloseRepair"],
+    actions: ["prepare", "assign", "submitEvidence", "humanConfirm"],
+    analytics: ["dispatchLeadTime", "diagnosisDuration", "vehicleDowntime", "reworkCount"],
+    exceptions: ["VehicleMissing", "NoTechnician", "DiagnosisIncomplete", "InspectionFailed"]
+  },
+  finance: {
+    objects: ["PaymentEvidence", "StayOrder", "FinanceReview", "AuditEvent"],
+    states: ["Evidence.Submitted", "FinanceReview.Pending", "FinanceReview.AcceptedOrReturned"],
+    tasks: ["ReviewEvidence", "ReturnEvidence", "ConfirmPayment"],
+    actions: ["review", "return", "humanConfirm"],
+    analytics: ["reviewDuration", "returnCount", "amountMismatchCount"],
+    exceptions: ["AmountMismatch", "PayerMismatch", "UnclearEvidence", "DuplicateEvidence"]
+  }
+};
+
+const flowSemanticOverrides = {
+  roomCreation: {
+    objects: ["Building", "Room", "RoomType", "AuditEvent"],
+    states: ["Room.Draft", "Room.Active"],
+    tasks: ["ValidateRoom", "CreateRoom", "CreateBeds"],
+    analytics: ["roomCreationDuration", "duplicateRoomCount"]
+  },
+  bedCreation: {
+    objects: ["Room", "Bed", "BedPrice", "InspectionState"],
+    states: ["Bed.Draft", "Bed.Available", "Bed.PendingInspection"],
+    tasks: ["ValidateCapacity", "CreateBed", "InspectBed"],
+    analytics: ["bedCreationDuration", "capacityConflictCount"]
+  },
+  vehicleCreation: {
+    objects: ["RepairCustomer", "Vehicle", "VehicleDocument", "AuditEvent"],
+    states: ["Vehicle.Draft", "Vehicle.Active"],
+    tasks: ["ValidateVehicle", "CreateVehicle", "BindCustomer"],
+    analytics: ["vehicleCreationDuration", "duplicatePlateCount", "duplicateVinCount"]
+  },
+  stayCheckout: {
+    states: ["StayOrder.InResidence", "StayOrder.CheckoutPending", "StayOrder.Closed", "Bed.Available"],
+    tasks: ["InspectRoom", "SettleFee", "ConfirmRefund", "ReleaseBed"],
+    analytics: ["checkoutDuration", "damageCount", "refundDuration"]
+  },
+  stayDepositException: {
+    states: ["Evidence.Returned", "Evidence.Resubmitted", "FinanceReview.Pending"],
+    tasks: ["FixEvidence", "ReviewDeposit", "ReturnToCheckIn"],
+    analytics: ["depositReturnCount", "exceptionResolutionDuration"]
+  },
+  repairClose: {
+    states: ["RepairOrder.WaitingInspection", "RepairOrder.WaitingFee", "RepairOrder.Closed"],
+    tasks: ["InspectRepair", "ConfirmFeeMaterial", "CloseRepair"],
+    analytics: ["inspectionDuration", "reworkCount", "closeDuration"]
+  }
+};
+
+Object.entries(scenarioFlows).forEach(([flowId, flow]) => {
+  const taskForFlow = tasks.find((item) => item.id === flow.taskId);
+  const preset = semanticPresets[taskForFlow?.domain] || semanticPresets.stay;
+  const override = flowSemanticOverrides[flowId] || {};
+  flow.semantic = {
+    objects: override.objects || preset.objects,
+    states: override.states || preset.states,
+    tasks: override.tasks || preset.tasks,
+    actions: override.actions || preset.actions,
+    analytics: override.analytics || preset.analytics,
+    exceptions: override.exceptions || preset.exceptions
+  };
+});
+
 const state = {
   lang: localStorage.getItem("workosnext.lang") || "zh-CN",
   view: localStorage.getItem("workosnext.onboarded") ? "home" : "onboarding",
@@ -891,8 +984,11 @@ function learningScenarioCard(key, flow) {
     <span>${tr(flow.category)}</span>
     <strong>${tr(flow.label)}</strong>
     <div class="loop-steps">${flow.stages[state.lang].map((stage) => `<span>${stage}</span>`).join("")}</div>
+    <p>${tr("businessObjects")}: ${flow.semantic.objects.join(" · ")}</p>
     <p>${tr("fieldModel")}: ${flow.fields.map((field) => state.lang === "zh-CN" ? field[0] : field[2]).join(" · ")}</p>
+    <p>${tr("stateContract")}: ${flow.semantic.states.join(" · ")}</p>
     <p>${tr("evidence")}: ${tx(flow.evidence)}</p>
+    <p>${tr("analyticsContract")}: ${flow.semantic.analytics.join(" · ")}</p>
     <p>${tr("policy")}: ${tx(flow.policy)}</p>
   </article>`;
 }
@@ -913,6 +1009,17 @@ function taskView() {
     <section class="compact-section">
       <h2>${tr("fieldModel")}</h2>
       <div class="field-grid">${loop.fields.map(fieldRow).join("")}</div>
+    </section>
+    <section class="compact-section">
+      <h2>${tr("semanticModel")}</h2>
+      <div class="semantic-grid">
+        ${semanticBlock("businessObjects", loop.semantic.objects)}
+        ${semanticBlock("stateContract", loop.semantic.states)}
+        ${semanticBlock("taskContract", loop.semantic.tasks)}
+        ${semanticBlock("actionContract", loop.semantic.actions)}
+        ${semanticBlock("analyticsContract", loop.semantic.analytics)}
+        ${semanticBlock("exceptionBranches", loop.semantic.exceptions)}
+      </div>
     </section>
     <section class="compact-section">
       <h2>${tr("whyMe")}</h2>
@@ -977,6 +1084,10 @@ function operationFields(item) {
 
 function fieldRow(field) {
   return `<div><span>${state.lang === "zh-CN" ? field[0] : field[2]}</span><strong>${state.lang === "zh-CN" ? field[1] : field[3]}</strong></div>`;
+}
+
+function semanticBlock(labelKey, values) {
+  return `<article><span>${tr(labelKey)}</span><strong>${values.join(" · ")}</strong></article>`;
 }
 
 function objectView() {

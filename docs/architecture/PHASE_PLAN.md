@@ -93,6 +93,9 @@
 
 ## WON-07: Personalization
 
+- Scenario Semantic Model is the backend runtime target:
+  - Objects, fields, states, tasks, actions, evidence, policy, analytics, and exceptions must be defined together.
+  - `docs/product/SCENARIO_SEMANTIC_MODEL.md` is the current architecture source before seed data.
 - User habit profile.
 - Personalized ranking.
 - Model versioning.

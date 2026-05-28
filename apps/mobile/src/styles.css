@@ -53,7 +53,7 @@ dd {
   width: min(100%, 430px);
   min-height: 100vh;
   margin: 0 auto;
-  padding: 12px 12px 96px;
+  padding: 12px 12px 150px;
   background:
     radial-gradient(circle at 8% 0%, rgba(255, 209, 102, .24), transparent 24%),
     linear-gradient(180deg, #fbfdfe 0%, #eef7f8 100%);
@@ -604,6 +604,11 @@ dd {
   gap: 8px;
 }
 
+.semantic-grid {
+  display: grid;
+  gap: 8px;
+}
+
 .field-grid div {
   display: grid;
   grid-template-columns: 106px 1fr;
@@ -614,13 +619,31 @@ dd {
   background: #f1f7f9;
 }
 
+.semantic-grid article {
+  padding: 10px;
+  border-radius: 14px;
+  background: #f1f7f9;
+}
+
 .field-grid span {
+  color: #66788c;
+  font-size: 12px;
+}
+
+.semantic-grid span {
+  display: block;
   color: #66788c;
   font-size: 12px;
 }
 
 .field-grid strong {
   font-size: 14px;
+}
+
+.semantic-grid strong {
+  display: block;
+  margin-top: 3px;
+  font-size: 13px;
 }
 
 .task-steps {
