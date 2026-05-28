@@ -22,7 +22,7 @@ app.MapGet("/health", () => new
     status = "ok",
     service = "WorkOSNext Core API",
     version = "0.1.0-phase-0-1",
-    runtimeTarget = ".NET 10 LTS planned; local scaffold currently targets net9.0 until SDK is installed",
+    runtimeTarget = ".NET 10 LTS",
     timestampUtc = DateTimeOffset.UtcNow
 });
 

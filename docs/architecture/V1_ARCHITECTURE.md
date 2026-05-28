@@ -50,14 +50,14 @@ Docker Compose locally, low-cost VPS later
 
 ## Local Phase 0-1 Stack
 
-The current machine does not have Flutter SDK or .NET 10 SDK installed. Phase 0-1 therefore ships a mobile-first PWA UI shell and a .NET 9 API scaffold so the UX can be evaluated immediately.
+The current machine does not have Flutter SDK installed. Phase 0-1 therefore ships a mobile-first PWA UI shell so the UX can be evaluated immediately. The backend already targets .NET 10 LTS.
 
 This is not a change in target architecture. It is a bootstrapping choice:
 
 - Keep the product model independent from UI technology.
 - Validate UX before building business code.
 - Move the approved UI model into Flutter once the SDK is available.
-- Retarget `net9.0` to `net10.0` once .NET 10 SDK is installed.
+- Keep the .NET API on the LTS runtime line.
 
 ## Runtime Boundaries
 
@@ -85,4 +85,3 @@ AI cannot:
 - Read UI from projections.
 - Record behavior events from the first version.
 - Keep audit evidence for high-impact actions.
-

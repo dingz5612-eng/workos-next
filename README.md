@@ -38,5 +38,4 @@ http://127.0.0.1:5173
 
 ## Toolchain Note
 
-The target backend architecture is .NET 10 LTS. This local Phase 0-1 scaffold currently targets `net9.0` because the local machine has .NET 9 SDK installed and not .NET 10 SDK. Upgrade the target framework to `net10.0` once the SDK is installed.
-
+The backend scaffold targets `.NET 10 LTS`. Flutter is still the target mobile runtime, while this Phase 0-1 UI remains a mobile-first PWA prototype until Flutter SDK is available locally.
