@@ -15,36 +15,43 @@ internal sealed class ServiceTaskStorage
 
     public bool Apply(WorkspaceEvent workspaceEvent)
     {
+        using var connection = connections.Open();
+        using var db = new RuntimeDbSession(connection);
+        var applied = Apply(workspaceEvent, db);
+        db.Commit();
+        return applied;
+    }
+
+    public bool Apply(WorkspaceEvent workspaceEvent, RuntimeDbSession db)
+    {
         switch (workspaceEvent.EventType)
         {
             case "Accommodation.ServiceTaskCreated":
             case "Accommodation.RoomBlockedForService":
             case "Accommodation.BedBlockedForService":
-                UpsertTask(workspaceEvent, "pending");
+                UpsertTask(workspaceEvent, db, "pending");
                 return true;
             case "Accommodation.ServiceTaskAssigned":
-                UpsertTask(workspaceEvent, "assigned");
+                UpsertTask(workspaceEvent, db, "assigned");
                 return true;
             case "Accommodation.ServiceTaskCompleted":
-                UpsertTask(workspaceEvent, "completed");
+                UpsertTask(workspaceEvent, db, "completed");
                 return true;
             case "Accommodation.ServiceTaskVerified":
-                UpsertTask(workspaceEvent, "verified");
+                UpsertTask(workspaceEvent, db, "verified");
                 return true;
             case "Accommodation.RoomReleaseAfterServiceRequested":
             case "Accommodation.BedReleaseAfterServiceRequested":
-                UpsertTask(workspaceEvent, "release_requested");
+                UpsertTask(workspaceEvent, db, "release_requested");
                 return true;
             default:
                 return false;
         }
     }
 
-    private void UpsertTask(WorkspaceEvent workspaceEvent, string status)
+    private void UpsertTask(WorkspaceEvent workspaceEvent, RuntimeDbSession db, string status)
     {
-        using var connection = connections.Open();
-        using var command = connection.CreateCommand();
-        command.CommandText = """
+        using var command = db.CreateCommand("""
             insert into service_tasks(task_id, workspace_id, task_type, room_id, bed_id, urgency, blocks_availability, status, actual_cost_amount, created_event_id, updated_at_utc)
             values (@taskId, @workspaceId, @taskType, @roomId, @bedId, @urgency, @blocksAvailability, @status, @actualCostAmount, @createdEventId, @updatedAtUtc)
             on conflict(task_id) do update set
@@ -54,7 +61,7 @@ internal sealed class ServiceTaskStorage
                 status = excluded.status,
                 actual_cost_amount = excluded.actual_cost_amount,
                 updated_at_utc = excluded.updated_at_utc
-            """;
+            """);
         command.Parameters.AddWithValue("taskId", Value(workspaceEvent, "任务", StableId("task", workspaceEvent)));
         command.Parameters.AddWithValue("workspaceId", workspaceEvent.WorkspaceId);
         command.Parameters.AddWithValue("taskType", Value(workspaceEvent, "任务类型", "清洁"));

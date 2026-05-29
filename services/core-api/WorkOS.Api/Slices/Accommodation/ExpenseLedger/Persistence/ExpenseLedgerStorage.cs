@@ -15,32 +15,39 @@ internal sealed class ExpenseLedgerStorage
 
     public bool Apply(WorkspaceEvent workspaceEvent)
     {
+        using var connection = connections.Open();
+        using var db = new RuntimeDbSession(connection);
+        var applied = Apply(workspaceEvent, db);
+        db.Commit();
+        return applied;
+    }
+
+    public bool Apply(WorkspaceEvent workspaceEvent, RuntimeDbSession db)
+    {
         switch (workspaceEvent.EventType)
         {
             case "Accommodation.ExpenseRecorded":
             case "Accommodation.ExpenseEvidenceSubmitted":
-                UpsertExpense(workspaceEvent, "recorded");
+                UpsertExpense(workspaceEvent, db, "recorded");
                 return true;
             case "Accommodation.ExpenseApproved":
-                UpsertExpense(workspaceEvent, "approved");
+                UpsertExpense(workspaceEvent, db, "approved");
                 return true;
             case "Accommodation.ExpenseRejected":
-                UpsertExpense(workspaceEvent, "rejected");
+                UpsertExpense(workspaceEvent, db, "rejected");
                 return true;
             case "Accommodation.ExpenseLinkedToRoom":
             case "Accommodation.ExpenseLinkedToServiceTask":
-                UpsertExpenseLink(workspaceEvent);
+                UpsertExpenseLink(workspaceEvent, db);
                 return true;
             default:
                 return false;
         }
     }
 
-    private void UpsertExpense(WorkspaceEvent workspaceEvent, string status)
+    private void UpsertExpense(WorkspaceEvent workspaceEvent, RuntimeDbSession db, string status)
     {
-        using var connection = connections.Open();
-        using var command = connection.CreateCommand();
-        command.CommandText = """
+        using var command = db.CreateCommand("""
             insert into expenses(expense_id, workspace_id, expense_category, amount, currency, payment_method, status, approved_amount, created_event_id, updated_at_utc)
             values (@expenseId, @workspaceId, @expenseCategory, @amount, @currency, @paymentMethod, @status, @approvedAmount, @createdEventId, @updatedAtUtc)
             on conflict(expense_id) do update set
@@ -48,7 +55,7 @@ internal sealed class ExpenseLedgerStorage
                 status = excluded.status,
                 approved_amount = excluded.approved_amount,
                 updated_at_utc = excluded.updated_at_utc
-            """;
+            """);
         command.Parameters.AddWithValue("expenseId", Value(workspaceEvent, "支出记录", StableId("expense", workspaceEvent)));
         command.Parameters.AddWithValue("workspaceId", workspaceEvent.WorkspaceId);
         command.Parameters.AddWithValue("expenseCategory", Value(workspaceEvent, "支出类别", "维修"));
@@ -62,11 +69,9 @@ internal sealed class ExpenseLedgerStorage
         command.ExecuteNonQuery();
     }
 
-    private void UpsertExpenseLink(WorkspaceEvent workspaceEvent)
+    private void UpsertExpenseLink(WorkspaceEvent workspaceEvent, RuntimeDbSession db)
     {
-        using var connection = connections.Open();
-        using var command = connection.CreateCommand();
-        command.CommandText = """
+        using var command = db.CreateCommand("""
             insert into expense_links(link_id, expense_id, workspace_id, room_id, bed_id, service_task_id, created_event_id, updated_at_utc)
             values (@linkId, @expenseId, @workspaceId, @roomId, @bedId, @serviceTaskId, @createdEventId, @updatedAtUtc)
             on conflict(link_id) do update set
@@ -74,7 +79,7 @@ internal sealed class ExpenseLedgerStorage
                 bed_id = excluded.bed_id,
                 service_task_id = excluded.service_task_id,
                 updated_at_utc = excluded.updated_at_utc
-            """;
+            """);
         command.Parameters.AddWithValue("linkId", StableId("expense-link", workspaceEvent));
         command.Parameters.AddWithValue("expenseId", Value(workspaceEvent, "支出记录", StableId("expense", workspaceEvent)));
         command.Parameters.AddWithValue("workspaceId", workspaceEvent.WorkspaceId);

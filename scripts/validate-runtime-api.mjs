@@ -14,12 +14,13 @@ if (!externalApi) {
     "--no-launch-profile",
     "--no-build"
   ], {
-    env: { ...process.env, ASPNETCORE_URLS: baseUrl },
+    env: { ...process.env, ASPNETCORE_ENVIRONMENT: "Development", ASPNETCORE_URLS: baseUrl },
     stdio: ["ignore", "pipe", "pipe"]
   });
 }
 
 try {
+  if (!externalApi) await validateProductionRejectsDevAuthDefaults();
   await waitForApi();
   await validateHealth();
   const projection = await getJson("/api/workspaces");
@@ -68,6 +69,7 @@ async function validatePrepare(projection) {
 }
 
 async function validateConfirmPolicyResponse() {
+  const login = await postJson("/api/auth/login", { username: "operator", password: "dev" });
   const response = await fetch(`${baseUrl}/api/workspaces/W-STAY-RESOURCE/cards/roomSetup/confirm`, {
     method: "POST",
     headers: { "Content-Type": "application/json", "X-Request-Id": `api-contract-${Date.now()}` },
@@ -79,6 +81,46 @@ async function validateConfirmPolicyResponse() {
     })
   });
   assert(response.status === 401, `confirm without actor token must return 401, got ${response.status}`);
+
+  const invalid = await fetch(`${baseUrl}/api/workspaces/W-STAY-RESOURCE/cards/roomSetup/confirm`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "X-WorkOS-Actor-Token": login.token, "X-Request-Id": `api-invalid-${Date.now()}` },
+    body: JSON.stringify({
+      language: "zh-CN",
+      idempotencyKey: "",
+      fieldValues: {},
+      evidenceIds: []
+    })
+  });
+  assert(invalid.status === 400, `invalid confirm must return 400, got ${invalid.status}`);
+}
+
+async function validateProductionRejectsDevAuthDefaults() {
+  const productionUrl = "http://127.0.0.1:5199";
+  const child = spawn("dotnet", [
+    "run",
+    "--project",
+    "services/core-api/WorkOS.Api/WorkOS.Api.csproj",
+    "-c",
+    "Release",
+    "--no-launch-profile",
+    "--no-build"
+  ], {
+    env: { ...process.env, ASPNETCORE_ENVIRONMENT: "Production", ASPNETCORE_URLS: productionUrl },
+    stdio: ["ignore", "pipe", "pipe"]
+  });
+
+  const exitCode = await new Promise((resolve) => {
+    const timer = setTimeout(() => {
+      child.kill();
+      resolve(null);
+    }, 10000);
+    child.on("exit", (code) => {
+      clearTimeout(timer);
+      resolve(code);
+    });
+  });
+  assert(exitCode !== null && exitCode !== 0, "production API must reject missing or development auth hashes at startup");
 }
 
 async function validateAccommodationLens() {

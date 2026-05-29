@@ -15,33 +15,40 @@ internal sealed class StayLifecycleStorage
 
     public bool Apply(WorkspaceEvent workspaceEvent)
     {
+        using var connection = connections.Open();
+        using var db = new RuntimeDbSession(connection);
+        var applied = Apply(workspaceEvent, db);
+        db.Commit();
+        return applied;
+    }
+
+    public bool Apply(WorkspaceEvent workspaceEvent, RuntimeDbSession db)
+    {
         switch (workspaceEvent.EventType)
         {
             case "Accommodation.ResidentProfileCaptured":
-                UpsertResident(workspaceEvent, "profile_captured");
+                UpsertResident(workspaceEvent, db, "profile_captured");
                 return true;
             case "Accommodation.ResidentCheckedIn":
             case "Accommodation.BedAssigned":
-                UpsertStay(workspaceEvent, "active");
+                UpsertStay(workspaceEvent, db, "active");
                 return true;
             case "Accommodation.StayChargeAssessed":
-                UpsertCharge(workspaceEvent);
-                UpsertGuestFolio(workspaceEvent);
+                UpsertCharge(workspaceEvent, db);
+                UpsertGuestFolio(workspaceEvent, db);
                 return true;
             case "Accommodation.StayExtended":
             case "Accommodation.StayRateChanged":
-                UpsertStay(workspaceEvent, "extended");
+                UpsertStay(workspaceEvent, db, "extended");
                 return true;
             default:
                 return false;
         }
     }
 
-    private void UpsertResident(WorkspaceEvent workspaceEvent, string status)
+    private void UpsertResident(WorkspaceEvent workspaceEvent, RuntimeDbSession db, string status)
     {
-        using var connection = connections.Open();
-        using var command = connection.CreateCommand();
-        command.CommandText = """
+        using var command = db.CreateCommand("""
             insert into hostel_residents(resident_id, workspace_id, resident_name, phone, identity_type, identity_no, gender, nationality, status, created_event_id, updated_at_utc)
             values (@residentId, @workspaceId, @residentName, @phone, @identityType, @identityNo, @gender, @nationality, @status, @createdEventId, @updatedAtUtc)
             on conflict(resident_id) do update set
@@ -53,7 +60,7 @@ internal sealed class StayLifecycleStorage
                 nationality = excluded.nationality,
                 status = excluded.status,
                 updated_at_utc = excluded.updated_at_utc
-            """;
+            """);
         command.Parameters.AddWithValue("residentId", ResidentId(workspaceEvent));
         command.Parameters.AddWithValue("workspaceId", workspaceEvent.WorkspaceId);
         command.Parameters.AddWithValue("residentName", Value(workspaceEvent, "residentName", "住客姓名", "张三"));
@@ -68,11 +75,9 @@ internal sealed class StayLifecycleStorage
         command.ExecuteNonQuery();
     }
 
-    private void UpsertStay(WorkspaceEvent workspaceEvent, string status)
+    private void UpsertStay(WorkspaceEvent workspaceEvent, RuntimeDbSession db, string status)
     {
-        using var connection = connections.Open();
-        using var command = connection.CreateCommand();
-        command.CommandText = """
+        using var command = db.CreateCommand("""
             insert into hostel_stays(stay_id, workspace_id, resident_name, phone, room_bed, check_in_date, planned_checkout_date, status, created_event_id, updated_at_utc)
             values (@stayId, @workspaceId, @residentName, @phone, @roomBed, @checkInDate, @plannedCheckoutDate, @status, @createdEventId, @updatedAtUtc)
             on conflict(stay_id) do update set
@@ -83,7 +88,7 @@ internal sealed class StayLifecycleStorage
                 planned_checkout_date = excluded.planned_checkout_date,
                 status = excluded.status,
                 updated_at_utc = excluded.updated_at_utc
-            """;
+            """);
         command.Parameters.AddWithValue("stayId", StayId(workspaceEvent));
         command.Parameters.AddWithValue("workspaceId", workspaceEvent.WorkspaceId);
         command.Parameters.AddWithValue("residentName", Value(workspaceEvent, "residentName", "住客姓名", "张三"));
@@ -97,11 +102,9 @@ internal sealed class StayLifecycleStorage
         command.ExecuteNonQuery();
     }
 
-    private void UpsertCharge(WorkspaceEvent workspaceEvent)
+    private void UpsertCharge(WorkspaceEvent workspaceEvent, RuntimeDbSession db)
     {
-        using var connection = connections.Open();
-        using var command = connection.CreateCommand();
-        command.CommandText = """
+        using var command = db.CreateCommand("""
             insert into hostel_charges(charge_id, workspace_id, stay_id, charge_type, period_start_utc, period_end_utc, amount, currency, reason, status, created_event_id, updated_at_utc)
             values (@chargeId, @workspaceId, @stayId, @chargeType, @periodStartUtc, @periodEndUtc, @amount, @currency, @reason, @status, @createdEventId, @updatedAtUtc)
             on conflict(charge_id) do update set
@@ -109,7 +112,7 @@ internal sealed class StayLifecycleStorage
                 reason = excluded.reason,
                 status = excluded.status,
                 updated_at_utc = excluded.updated_at_utc
-            """;
+            """);
         command.Parameters.AddWithValue("chargeId", ChargeId(workspaceEvent));
         command.Parameters.AddWithValue("workspaceId", workspaceEvent.WorkspaceId);
         command.Parameters.AddWithValue("stayId", StayId(workspaceEvent));
@@ -125,12 +128,10 @@ internal sealed class StayLifecycleStorage
         command.ExecuteNonQuery();
     }
 
-    private void UpsertGuestFolio(WorkspaceEvent workspaceEvent)
+    private void UpsertGuestFolio(WorkspaceEvent workspaceEvent, RuntimeDbSession db)
     {
         var amount = DecimalValue(workspaceEvent, "amount", "应收金额", 0m);
-        using var connection = connections.Open();
-        using var command = connection.CreateCommand();
-        command.CommandText = """
+        using var command = db.CreateCommand("""
             insert into guest_folios(folio_id, workspace_id, stay_id, tariff_type, unit_price, quantity, charge_amount, paid_amount, balance, currency, status, created_event_id, updated_at_utc)
             values (@folioId, @workspaceId, @stayId, @tariffType, @unitPrice, @quantity, @chargeAmount, @paidAmount, @balance, @currency, @status, @createdEventId, @updatedAtUtc)
             on conflict(folio_id) do update set
@@ -138,7 +139,7 @@ internal sealed class StayLifecycleStorage
                 balance = excluded.balance,
                 status = excluded.status,
                 updated_at_utc = excluded.updated_at_utc
-            """;
+            """);
         command.Parameters.AddWithValue("folioId", StableId("folio", workspaceEvent));
         command.Parameters.AddWithValue("workspaceId", workspaceEvent.WorkspaceId);
         command.Parameters.AddWithValue("stayId", StayId(workspaceEvent));
@@ -164,25 +165,11 @@ internal sealed class StayLifecycleStorage
     private static string ChargeId(WorkspaceEvent workspaceEvent) =>
         Value(workspaceEvent, "chargeId", "应收记录", StableId("charge", workspaceEvent));
 
-    private static string Value(WorkspaceEvent workspaceEvent, string canonicalKey, string zhKey, string defaultValue)
-    {
-        if (workspaceEvent.Payload.TryGetValue(canonicalKey, out var canonical) && !string.IsNullOrWhiteSpace(canonical))
-        {
-            return canonical;
-        }
+    private static string Value(WorkspaceEvent workspaceEvent, string canonicalKey, string zhKey, string defaultValue) =>
+        RuntimeFieldAliases.Value(workspaceEvent.Payload, canonicalKey, defaultValue);
 
-        return workspaceEvent.Payload.TryGetValue(zhKey, out var zh) && !string.IsNullOrWhiteSpace(zh)
-            ? zh
-            : defaultValue;
-    }
-
-    private static decimal DecimalValue(WorkspaceEvent workspaceEvent, string canonicalKey, string zhKey, decimal defaultValue)
-    {
-        var value = Value(workspaceEvent, canonicalKey, zhKey, string.Empty);
-        return decimal.TryParse(value, NumberStyles.Number, CultureInfo.InvariantCulture, out var parsed)
-            ? parsed
-            : defaultValue;
-    }
+    private static decimal DecimalValue(WorkspaceEvent workspaceEvent, string canonicalKey, string zhKey, decimal defaultValue) =>
+        RuntimeFieldAliases.DecimalValue(workspaceEvent.Payload, canonicalKey, defaultValue);
 
     private static DateTimeOffset DateValue(WorkspaceEvent workspaceEvent, string canonicalKey, string zhKey, DateTimeOffset defaultValue)
     {

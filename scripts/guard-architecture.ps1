@@ -87,6 +87,9 @@ Assert-NoMatches @("apps/mobile/src/i18n.js") "depositTask|repairTask|stayObject
 
 Assert-NoMatches @("services/core-api/WorkOS.Api/Runtime") "ai_confirmation_forbidden|role_confirmation_forbidden" "Role and AI confirmation policy denials must live outside Runtime in Slices/Policies/CardConfirmationPolicy."
 Assert-NoMatches @("services/core-api/WorkOS.Api/Runtime/PostgresProjectionStore.cs") "CardConfirmationPolicy|ProjectionTargets|ApplyEventToReadModel|PriorityFor|SearchText|SearchResult|RequiredRole" "Store classes must not own policy, projector, lens, or business contract rules."
+Assert-NoMatches @("services", "tests") "Events\.First\s*\(" "Confirm event dispatch must use EventSelectionPolicy and must never take only the first declared event."
+Assert-NoMatches @("services/core-api/WorkOS.Api/Slices", "services/core-api/WorkOS.Api/Runtime") 'Payload\.TryGetValue\("' "Runtime policy and storage must read canonical field ids through RuntimeFieldAliases, not label literals."
+Assert-NoMatches @("services/core-api/WorkOS.Api") "RuntimeAuthOptions\.Development" "Development auth defaults must not be referenced outside Program.cs and RuntimeAuthOptions.cs." "Program\.cs|RuntimeAuthOptions\.cs"
 
 $requiredSliceDirs = @(
   "services/core-api/WorkOS.Api/Slices/Accommodation/ResourceSetup",
@@ -107,7 +110,9 @@ $requiredRuntimeServices = @(
   "services/core-api/WorkOS.Api/Runtime/SearchProjectionService.cs",
   "services/core-api/WorkOS.Api/Runtime/ActionRuntimeService.cs",
   "services/core-api/WorkOS.Api/Runtime/AuthSessionService.cs",
-  "services/core-api/WorkOS.Api/Runtime/OutboxProjector.cs"
+  "services/core-api/WorkOS.Api/Runtime/OutboxProjector.cs",
+  "services/core-api/WorkOS.Api/Runtime/EventSelectionPolicy.cs",
+  "services/core-api/WorkOS.Api/Runtime/RuntimeDbSession.cs"
 )
 
 foreach ($runtimeService in $requiredRuntimeServices) {
@@ -309,5 +314,18 @@ foreach ($path in $openApiPaths) {
 
 node scripts/generate-contract-dtos.mjs --check
 node scripts/validate-runtime-api.mjs
+
+$ci = Get-Content ".github/workflows/ci.yml" -Raw
+if ($ci -notmatch "validate-runtime-api\.mjs") {
+  Fail "CI must run validate-runtime-api.mjs explicitly."
+}
+
+$operationRuntime = Get-Content "apps/mobile/src/operationRuntime.js" -Raw
+if ($operationRuntime -notmatch "randomUUID") {
+  Fail "Frontend submit idempotency keys must include a submit-level UUID."
+}
+if ($operationRuntime -notmatch "evidenceIds") {
+  Fail "Frontend confirm submissions must pass evidenceIds."
+}
 
 Write-Host "Architecture guard: PASS"

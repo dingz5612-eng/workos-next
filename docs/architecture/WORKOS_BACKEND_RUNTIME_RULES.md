@@ -150,8 +150,21 @@ rules.
 ## Runtime Guarantees
 
 - Confirm commands require idempotency keys.
+- Confirm missing/expired actor session returns `401`; malformed input and
+  business policy blockers return `400` with stable reasons.
+- Confirm event selection goes through `EventSelectionPolicy`; `Events.First()`
+  is forbidden for dispatch.
+- Confirm idempotency keys are submit-level UUIDs and are enforced by the
+  database unique key.
+- Confirm persists `evidenceIds` on audit events.
+- Runtime policies and storage use canonical field ids, never localized labels,
+  as fact keys.
+- Option values are stable enum keys; localized labels are display-only.
+- Confirm commits audit, outbox, and aggregate writes in one database
+  transaction.
 - Actor identity comes from server-issued session token.
-- Dev login still verifies configured password hashes.
+- Dev login still verifies configured password hashes; production must not start
+  with development auth defaults.
 - Confirmed events append to audit journal and outbox.
 - Outbox worker updates projections.
 - Audit events and outbox messages include correlationId, causationId, and

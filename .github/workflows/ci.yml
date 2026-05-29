@@ -64,6 +64,9 @@ jobs:
       - name: Validate generated DTOs
         run: node scripts/generate-contract-dtos.mjs --check
 
+      - name: Validate runtime API semantics
+        run: node scripts/validate-runtime-api.mjs
+
       - name: Architecture guard
         shell: pwsh
         run: ./scripts/guard-architecture.ps1

@@ -15,52 +15,59 @@ internal sealed class PaymentLedgerStorage
 
     public bool Apply(WorkspaceEvent workspaceEvent)
     {
+        using var connection = connections.Open();
+        using var db = new RuntimeDbSession(connection);
+        var applied = Apply(workspaceEvent, db);
+        db.Commit();
+        return applied;
+    }
+
+    public bool Apply(WorkspaceEvent workspaceEvent, RuntimeDbSession db)
+    {
         switch (workspaceEvent.EventType)
         {
             case "Accommodation.PaymentReceived":
             case "Accommodation.PaymentEvidenceSubmitted":
-                UpsertPayment(workspaceEvent, "pending_finance");
-                UpsertStayBalance(workspaceEvent, confirmedPayments: 0m, allocatedPayments: 0m, status: "payment_pending");
+                UpsertPayment(workspaceEvent, db, "pending_finance");
+                UpsertStayBalance(workspaceEvent, db, confirmedPayments: 0m, allocatedPayments: 0m, status: "payment_pending");
                 return true;
             case "Accommodation.PaymentConfirmed":
-                UpsertFinanceReconciliation(workspaceEvent, "confirmed");
-                UpsertPayment(workspaceEvent, "confirmed");
-                UpsertStayBalance(workspaceEvent, confirmedPayments: DecimalValue(workspaceEvent, "确认金额", 0m), allocatedPayments: 0m, status: "payment_confirmed");
+                UpsertFinanceReconciliation(workspaceEvent, db, "confirmed");
+                UpsertPayment(workspaceEvent, db, "confirmed");
+                UpsertStayBalance(workspaceEvent, db, confirmedPayments: DecimalValue(workspaceEvent, "确认金额", 0m), allocatedPayments: 0m, status: "payment_confirmed");
                 return true;
             case "Accommodation.PaymentRejected":
-                UpsertFinanceReconciliation(workspaceEvent, "rejected");
-                UpsertPayment(workspaceEvent, "rejected");
+                UpsertFinanceReconciliation(workspaceEvent, db, "rejected");
+                UpsertPayment(workspaceEvent, db, "rejected");
                 return true;
             case "Accommodation.PaymentAllocated":
-                AppendAllocation(workspaceEvent, "allocated");
-                UpsertStayBalance(workspaceEvent, confirmedPayments: DecimalValue(workspaceEvent, "确认金额", DecimalValue(workspaceEvent, "分配金额", 0m)), allocatedPayments: DecimalValue(workspaceEvent, "分配金额", 0m), status: "allocated");
+                AppendAllocation(workspaceEvent, db, "allocated");
+                UpsertStayBalance(workspaceEvent, db, confirmedPayments: DecimalValue(workspaceEvent, "确认金额", DecimalValue(workspaceEvent, "分配金额", 0m)), allocatedPayments: DecimalValue(workspaceEvent, "分配金额", 0m), status: "allocated");
                 return true;
             case "Accommodation.PaymentAdjusted":
-                AppendAllocation(workspaceEvent, "adjusted");
+                AppendAllocation(workspaceEvent, db, "adjusted");
                 return true;
             case "Accommodation.DebtFollowUpRecorded":
-                UpsertStayBalance(workspaceEvent, confirmedPayments: 0m, allocatedPayments: 0m, status: "debt_follow_up");
+                UpsertStayBalance(workspaceEvent, db, confirmedPayments: 0m, allocatedPayments: 0m, status: "debt_follow_up");
                 return true;
             case "Accommodation.BalanceRecalculated":
-                UpsertStayBalance(workspaceEvent, confirmedPayments: DecimalValue(workspaceEvent, "确认金额", 0m), allocatedPayments: DecimalValue(workspaceEvent, "分配金额", 0m), status: "recalculated");
+                UpsertStayBalance(workspaceEvent, db, confirmedPayments: DecimalValue(workspaceEvent, "确认金额", 0m), allocatedPayments: DecimalValue(workspaceEvent, "分配金额", 0m), status: "recalculated");
                 return true;
             default:
                 return false;
         }
     }
 
-    private void UpsertPayment(WorkspaceEvent workspaceEvent, string status)
+    private void UpsertPayment(WorkspaceEvent workspaceEvent, RuntimeDbSession db, string status)
     {
-        using var connection = connections.Open();
-        using var command = connection.CreateCommand();
-        command.CommandText = """
+        using var command = db.CreateCommand("""
             insert into hostel_payments(payment_id, workspace_id, folio_id, deposit_id, payer, amount, currency, method, purpose, receipt_no, status, created_event_id, updated_at_utc)
             values (@paymentId, @workspaceId, @folioId, @depositId, @payer, @amount, @currency, @method, @purpose, @receiptNo, @status, @createdEventId, @updatedAtUtc)
             on conflict(payment_id) do update set
                 amount = excluded.amount,
                 status = excluded.status,
                 updated_at_utc = excluded.updated_at_utc
-            """;
+            """);
         command.Parameters.AddWithValue("paymentId", Value(workspaceEvent, "收款记录", StableId("payment", workspaceEvent)));
         command.Parameters.AddWithValue("workspaceId", workspaceEvent.WorkspaceId);
         command.Parameters.AddWithValue("folioId", Value(workspaceEvent, "入住单", StableId("stay", workspaceEvent)));
@@ -77,12 +84,10 @@ internal sealed class PaymentLedgerStorage
         command.ExecuteNonQuery();
     }
 
-    private void UpsertFinanceReconciliation(WorkspaceEvent workspaceEvent, string status)
+    private void UpsertFinanceReconciliation(WorkspaceEvent workspaceEvent, RuntimeDbSession db, string status)
     {
         var confirmedAmount = DecimalValue(workspaceEvent, "确认金额", 3000m);
-        using var connection = connections.Open();
-        using var command = connection.CreateCommand();
-        command.CommandText = """
+        using var command = db.CreateCommand("""
             insert into finance_reconciliations(reconciliation_id, workspace_id, payment_id, channel, confirmed_amount, currency, match_result, variance_amount, status, confirmed_by, created_event_id, updated_at_utc)
             values (@reconciliationId, @workspaceId, @paymentId, @channel, @confirmedAmount, @currency, @matchResult, @varianceAmount, @status, @confirmedBy, @createdEventId, @updatedAtUtc)
             on conflict(reconciliation_id) do update set
@@ -91,7 +96,7 @@ internal sealed class PaymentLedgerStorage
                 variance_amount = excluded.variance_amount,
                 status = excluded.status,
                 updated_at_utc = excluded.updated_at_utc
-            """;
+            """);
         command.Parameters.AddWithValue("reconciliationId", StableId("payment-reconciliation", workspaceEvent));
         command.Parameters.AddWithValue("workspaceId", workspaceEvent.WorkspaceId);
         command.Parameters.AddWithValue("paymentId", Value(workspaceEvent, "收款记录", StableId("payment", workspaceEvent)));
@@ -107,15 +112,13 @@ internal sealed class PaymentLedgerStorage
         command.ExecuteNonQuery();
     }
 
-    private void AppendAllocation(WorkspaceEvent workspaceEvent, string status)
+    private void AppendAllocation(WorkspaceEvent workspaceEvent, RuntimeDbSession db, string status)
     {
-        using var connection = connections.Open();
-        using var command = connection.CreateCommand();
-        command.CommandText = """
+        using var command = db.CreateCommand("""
             insert into payment_allocations(allocation_id, payment_id, workspace_id, allocation_mode, allocated_amount, status, created_event_id, occurred_at_utc)
             values (@allocationId, @paymentId, @workspaceId, @allocationMode, @allocatedAmount, @status, @createdEventId, @occurredAtUtc)
             on conflict(allocation_id) do nothing
-            """;
+            """);
         command.Parameters.AddWithValue("allocationId", $"payment-allocation-{workspaceEvent.EventId}".ToLowerInvariant());
         command.Parameters.AddWithValue("paymentId", Value(workspaceEvent, "收款记录", StableId("payment", workspaceEvent)));
         command.Parameters.AddWithValue("workspaceId", workspaceEvent.WorkspaceId);
@@ -127,13 +130,11 @@ internal sealed class PaymentLedgerStorage
         command.ExecuteNonQuery();
     }
 
-    private void UpsertStayBalance(WorkspaceEvent workspaceEvent, decimal confirmedPayments, decimal allocatedPayments, string status)
+    private void UpsertStayBalance(WorkspaceEvent workspaceEvent, RuntimeDbSession db, decimal confirmedPayments, decimal allocatedPayments, string status)
     {
         var totalCharges = DecimalValue(workspaceEvent, "总应收", DecimalValue(workspaceEvent, "当前欠款余额", 0m) + confirmedPayments);
         var balance = Math.Max(totalCharges - confirmedPayments, 0m);
-        using var connection = connections.Open();
-        using var command = connection.CreateCommand();
-        command.CommandText = """
+        using var command = db.CreateCommand("""
             insert into stay_balances(stay_id, workspace_id, total_charges, confirmed_payments, allocated_payments, balance, currency, status, created_event_id, updated_at_utc)
             values (@stayId, @workspaceId, @totalCharges, @confirmedPayments, @allocatedPayments, @balance, @currency, @status, @createdEventId, @updatedAtUtc)
             on conflict(stay_id) do update set
@@ -142,7 +143,7 @@ internal sealed class PaymentLedgerStorage
                 balance = excluded.balance,
                 status = excluded.status,
                 updated_at_utc = excluded.updated_at_utc
-            """;
+            """);
         command.Parameters.AddWithValue("stayId", Value(workspaceEvent, "入住单", StableId("stay", workspaceEvent)));
         command.Parameters.AddWithValue("workspaceId", workspaceEvent.WorkspaceId);
         command.Parameters.AddWithValue("totalCharges", NpgsqlDbType.Numeric, totalCharges);
@@ -157,14 +158,10 @@ internal sealed class PaymentLedgerStorage
     }
 
     private static string Value(WorkspaceEvent workspaceEvent, string key, string defaultValue) =>
-        workspaceEvent.Payload.TryGetValue(key, out var value) && !string.IsNullOrWhiteSpace(value)
-            ? value
-            : defaultValue;
+        RuntimeFieldAliases.Value(workspaceEvent.Payload, key, defaultValue);
 
     private static decimal DecimalValue(WorkspaceEvent workspaceEvent, string key, decimal defaultValue) =>
-        workspaceEvent.Payload.TryGetValue(key, out var value) && decimal.TryParse(value, NumberStyles.Number, CultureInfo.InvariantCulture, out var parsed)
-            ? parsed
-            : defaultValue;
+        RuntimeFieldAliases.DecimalValue(workspaceEvent.Payload, key, defaultValue);
 
     private static string StableId(string prefix, WorkspaceEvent workspaceEvent) =>
         $"{prefix}-{workspaceEvent.WorkspaceId}".ToLowerInvariant();

@@ -16,6 +16,15 @@ internal sealed class ResourceSetupStorage
 
     public bool Apply(WorkspaceEvent workspaceEvent)
     {
+        using var connection = connections.Open();
+        using var db = new RuntimeDbSession(connection);
+        var applied = Apply(workspaceEvent, db);
+        db.Commit();
+        return applied;
+    }
+
+    public bool Apply(WorkspaceEvent workspaceEvent, RuntimeDbSession db)
+    {
         if (!workspaceEvent.WorkspaceId.Equals("W-STAY-RESOURCE", StringComparison.Ordinal))
         {
             return false;
@@ -24,22 +33,22 @@ internal sealed class ResourceSetupStorage
         switch (workspaceEvent.EventType)
         {
             case ResourceSetupEvents.RoomConfigured:
-                UpsertRoom(workspaceEvent, RoomStatus(workspaceEvent, "configured"));
+                UpsertRoom(workspaceEvent, db, RoomStatus(workspaceEvent, "configured"));
                 return true;
             case ResourceSetupEvents.BedConfigured:
-                UpsertBed(workspaceEvent, BedStatus(workspaceEvent, "available"));
+                UpsertBed(workspaceEvent, db, BedStatus(workspaceEvent, "available"));
                 return true;
             case ResourceSetupEvents.RateConfigured:
-                UpsertRatePlan(workspaceEvent);
+                UpsertRatePlan(workspaceEvent, db);
                 return true;
             case ResourceSetupEvents.RoomReadinessChanged:
-                UpsertRoom(workspaceEvent, AvailabilityStatus(workspaceEvent, "available"));
+                UpsertRoom(workspaceEvent, db, AvailabilityStatus(workspaceEvent, "available"));
                 return true;
             case ResourceSetupEvents.RoomBlocked:
-                UpdateResourceStatus(workspaceEvent, "blocked");
+                UpdateResourceStatus(workspaceEvent, db, "blocked");
                 return true;
             case ResourceSetupEvents.RoomReleased:
-                UpdateResourceStatus(workspaceEvent, "available");
+                UpdateResourceStatus(workspaceEvent, db, "available");
                 return true;
             case ResourceSetupEvents.BedBlocked:
                 if (!TargetsBed(workspaceEvent))
@@ -47,7 +56,7 @@ internal sealed class ResourceSetupStorage
                     return true;
                 }
 
-                UpdateBedStatus(workspaceEvent, "blocked");
+                UpdateBedStatus(workspaceEvent, db, "blocked");
                 return true;
             case ResourceSetupEvents.BedReleased:
                 if (!TargetsBed(workspaceEvent))
@@ -55,18 +64,16 @@ internal sealed class ResourceSetupStorage
                     return true;
                 }
 
-                UpdateBedStatus(workspaceEvent, "available");
+                UpdateBedStatus(workspaceEvent, db, "available");
                 return true;
             default:
                 return false;
         }
     }
 
-    private void UpsertRoom(WorkspaceEvent workspaceEvent, string status)
+    private void UpsertRoom(WorkspaceEvent workspaceEvent, RuntimeDbSession db, string status)
     {
-        using var connection = connections.Open();
-        using var command = connection.CreateCommand();
-        command.CommandText = """
+        using var command = db.CreateCommand("""
             insert into accommodation_rooms(room_id, workspace_id, room_no, room_type, capacity, status, created_event_id, updated_at_utc)
             values (@roomId, @workspaceId, @roomNo, @roomType, @capacity, @status, @createdEventId, @updatedAtUtc)
             on conflict(room_id) do update set
@@ -75,7 +82,7 @@ internal sealed class ResourceSetupStorage
                 capacity = excluded.capacity,
                 status = excluded.status,
                 updated_at_utc = excluded.updated_at_utc
-            """;
+            """);
         command.Parameters.AddWithValue("roomId", RoomId(workspaceEvent));
         command.Parameters.AddWithValue("workspaceId", workspaceEvent.WorkspaceId);
         command.Parameters.AddWithValue("roomNo", RoomNo(workspaceEvent));
@@ -87,11 +94,9 @@ internal sealed class ResourceSetupStorage
         command.ExecuteNonQuery();
     }
 
-    private void UpsertBed(WorkspaceEvent workspaceEvent, string status)
+    private void UpsertBed(WorkspaceEvent workspaceEvent, RuntimeDbSession db, string status)
     {
-        using var connection = connections.Open();
-        using var command = connection.CreateCommand();
-        command.CommandText = """
+        using var command = db.CreateCommand("""
             insert into accommodation_beds(bed_id, workspace_id, room_id, bed_no, bunk_type, status, created_event_id, updated_at_utc)
             values (@bedId, @workspaceId, @roomId, @bedNo, @bunkType, @status, @createdEventId, @updatedAtUtc)
             on conflict(bed_id) do update set
@@ -100,7 +105,7 @@ internal sealed class ResourceSetupStorage
                 bunk_type = excluded.bunk_type,
                 status = excluded.status,
                 updated_at_utc = excluded.updated_at_utc
-            """;
+            """);
         command.Parameters.AddWithValue("bedId", BedId(workspaceEvent));
         command.Parameters.AddWithValue("workspaceId", workspaceEvent.WorkspaceId);
         command.Parameters.AddWithValue("roomId", RoomId(workspaceEvent));
@@ -112,11 +117,9 @@ internal sealed class ResourceSetupStorage
         command.ExecuteNonQuery();
     }
 
-    private void UpsertRatePlan(WorkspaceEvent workspaceEvent)
+    private void UpsertRatePlan(WorkspaceEvent workspaceEvent, RuntimeDbSession db)
     {
-        using var connection = connections.Open();
-        using var command = connection.CreateCommand();
-        command.CommandText = """
+        using var command = db.CreateCommand("""
             insert into accommodation_rate_plans(rate_plan_id, workspace_id, room_id, daily_rate_per_bed, weekly_rate_per_bed, monthly_rate_per_bed, currency, effective_from_utc, status, created_event_id, updated_at_utc)
             values (@ratePlanId, @workspaceId, @roomId, @dailyRate, @weeklyRate, @monthlyRate, @currency, @effectiveFromUtc, @status, @createdEventId, @updatedAtUtc)
             on conflict(rate_plan_id) do update set
@@ -128,7 +131,7 @@ internal sealed class ResourceSetupStorage
                 effective_from_utc = excluded.effective_from_utc,
                 status = excluded.status,
                 updated_at_utc = excluded.updated_at_utc
-            """;
+            """);
         command.Parameters.AddWithValue("ratePlanId", Value(workspaceEvent, "ratePlanId", "价格规则", $"rate-{RoomNo(workspaceEvent)}".ToLowerInvariant()));
         command.Parameters.AddWithValue("workspaceId", workspaceEvent.WorkspaceId);
         command.Parameters.AddWithValue("roomId", RoomId(workspaceEvent));
@@ -143,20 +146,20 @@ internal sealed class ResourceSetupStorage
         command.ExecuteNonQuery();
     }
 
-    private void UpdateResourceStatus(WorkspaceEvent workspaceEvent, string status)
+    private void UpdateResourceStatus(WorkspaceEvent workspaceEvent, RuntimeDbSession db, string status)
     {
         if (TargetsBed(workspaceEvent))
         {
-            UpdateBedStatus(workspaceEvent, status);
+            UpdateBedStatus(workspaceEvent, db, status);
             return;
         }
 
-        UpsertRoom(workspaceEvent, status);
+        UpsertRoom(workspaceEvent, db, status);
     }
 
-    private void UpdateBedStatus(WorkspaceEvent workspaceEvent, string status)
+    private void UpdateBedStatus(WorkspaceEvent workspaceEvent, RuntimeDbSession db, string status)
     {
-        UpsertBed(workspaceEvent, status);
+        UpsertBed(workspaceEvent, db, status);
     }
 
     private static string RoomId(WorkspaceEvent workspaceEvent)
@@ -204,33 +207,14 @@ internal sealed class ResourceSetupStorage
         return string.IsNullOrWhiteSpace(status) ? defaultValue : status;
     }
 
-    private static string Value(WorkspaceEvent workspaceEvent, string canonicalKey, string zhKey, string defaultValue)
-    {
-        if (workspaceEvent.Payload.TryGetValue(canonicalKey, out var canonical) && !string.IsNullOrWhiteSpace(canonical))
-        {
-            return canonical;
-        }
+    private static string Value(WorkspaceEvent workspaceEvent, string canonicalKey, string zhKey, string defaultValue) =>
+        RuntimeFieldAliases.Value(workspaceEvent.Payload, canonicalKey, defaultValue);
 
-        return workspaceEvent.Payload.TryGetValue(zhKey, out var zh) && !string.IsNullOrWhiteSpace(zh)
-            ? zh
-            : defaultValue;
-    }
+    private static int IntValue(WorkspaceEvent workspaceEvent, string canonicalKey, string zhKey, int defaultValue) =>
+        RuntimeFieldAliases.IntValue(workspaceEvent.Payload, canonicalKey, defaultValue);
 
-    private static int IntValue(WorkspaceEvent workspaceEvent, string canonicalKey, string zhKey, int defaultValue)
-    {
-        var value = Value(workspaceEvent, canonicalKey, zhKey, string.Empty);
-        return int.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out var parsed)
-            ? parsed
-            : defaultValue;
-    }
-
-    private static decimal DecimalValue(WorkspaceEvent workspaceEvent, string canonicalKey, string zhKey, decimal defaultValue)
-    {
-        var value = Value(workspaceEvent, canonicalKey, zhKey, string.Empty);
-        return decimal.TryParse(value, NumberStyles.Number, CultureInfo.InvariantCulture, out var parsed)
-            ? parsed
-            : defaultValue;
-    }
+    private static decimal DecimalValue(WorkspaceEvent workspaceEvent, string canonicalKey, string zhKey, decimal defaultValue) =>
+        RuntimeFieldAliases.DecimalValue(workspaceEvent.Payload, canonicalKey, defaultValue);
 
     private static DateTimeOffset DateValue(WorkspaceEvent workspaceEvent, string canonicalKey, string zhKey, DateTimeOffset defaultValue)
     {

@@ -314,6 +314,27 @@ outbox worker processing, and configuration separation are mandatory.
 - CI must run backend build, frontend build, runtime contract tests, npm audit,
   residual old-model scan, clean baseline gate, real API response contract
   validation, and `git diff --check`.
+- Confirm HTTP status semantics are fixed: missing or expired actor session is
+  `401`; malformed confirm input is `400`; business/policy blockers are `400`
+  with stable policy reasons.
+- Confirm event dispatch must go through `EventSelectionPolicy`; code must not
+  use `Events.First()` or otherwise emit only the first declared card event.
+- Frontend confirm submission idempotency keys must be submit-level UUIDs, not
+  card/workspace-derived stable strings.
+- `evidenceIds` must be accepted by the OpenAPI contract, submitted by the
+  frontend, persisted on audit events, and available to runtime policies.
+- Runtime policy and storage facts must use canonical field ids. Chinese,
+  Russian, or product-facing labels may exist as UI text only and must not be
+  used as fact keys.
+- OptionSet values are stable enum keys. Localized labels are display text and
+  must never be used as stored option values.
+- Confirm writes must commit audit event, outbox message, and slice aggregate in
+  one database transaction.
+- Confirm idempotency must be enforced atomically by the database unique key,
+  with duplicate confirms returning the already persisted event.
+- CI must run `validate-runtime-api.mjs` explicitly in addition to architecture
+  guard coverage.
+- Production runtime must not start with development auth defaults.
 - Confirm commands must use idempotency keys and must not write duplicate audit
   events for repeated submissions.
 - PostgreSQL schema changes must be versioned through migrations recorded in

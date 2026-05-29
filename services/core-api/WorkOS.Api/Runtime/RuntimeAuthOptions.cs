@@ -14,6 +14,15 @@ public sealed class RuntimeAuthOptions
     };
 
     public static RuntimeAuthOptions Development => new();
+
+    public static bool UsesDevelopmentPasswords(RuntimeAuthOptions options)
+    {
+        var development = Development.PasswordSha256ByUsername;
+        return options.PasswordSha256ByUsername.Count > 0 &&
+            options.PasswordSha256ByUsername.All(item =>
+                development.TryGetValue(item.Key, out var hash) &&
+                hash.Equals(item.Value, StringComparison.OrdinalIgnoreCase));
+    }
 }
 
 public static class RuntimePasswordHasher

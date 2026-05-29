@@ -16,6 +16,8 @@ public interface IProjectionStore
 
     void ApplySliceAggregate(WorkspaceEvent workspaceEvent);
 
+    WorkspaceEvent? CommitConfirmEvents(IReadOnlyList<IdempotentWorkspaceEvent> events);
+
     IReadOnlyList<OutboxMessage> GetPendingOutboxMessages(int take = 50);
 
     IReadOnlyList<OutboxMessage> GetOutboxMessages();

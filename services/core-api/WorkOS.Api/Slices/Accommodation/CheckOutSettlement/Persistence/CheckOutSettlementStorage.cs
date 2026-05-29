@@ -15,37 +15,44 @@ internal sealed class CheckOutSettlementStorage
 
     public bool Apply(WorkspaceEvent workspaceEvent)
     {
+        using var connection = connections.Open();
+        using var db = new RuntimeDbSession(connection);
+        var applied = Apply(workspaceEvent, db);
+        db.Commit();
+        return applied;
+    }
+
+    public bool Apply(WorkspaceEvent workspaceEvent, RuntimeDbSession db)
+    {
         switch (workspaceEvent.EventType)
         {
             case "Accommodation.ResidentCheckedOut":
-                UpsertCheckout(workspaceEvent, "started");
+                UpsertCheckout(workspaceEvent, db, "started");
                 return true;
             case "Accommodation.RoomInspected":
             case "Accommodation.CheckoutIssueRaised":
-                UpsertInspection(workspaceEvent);
+                UpsertInspection(workspaceEvent, db);
                 return true;
             case "Accommodation.DepositSettlementRequested":
-                UpsertCheckout(workspaceEvent, "deposit_settlement_requested");
+                UpsertCheckout(workspaceEvent, db, "deposit_settlement_requested");
                 return true;
             case "Accommodation.FinalBalanceClosed":
-                UpsertCheckout(workspaceEvent, "balance_closed");
+                UpsertCheckout(workspaceEvent, db, "balance_closed");
                 return true;
             case "Accommodation.BedReleased":
-                UpsertCheckout(workspaceEvent, "bed_released");
+                UpsertCheckout(workspaceEvent, db, "bed_released");
                 return true;
             case "Accommodation.PostCheckoutCleaningRequested":
-                UpsertCheckout(workspaceEvent, "cleaning_requested");
+                UpsertCheckout(workspaceEvent, db, "cleaning_requested");
                 return true;
             default:
                 return false;
         }
     }
 
-    private void UpsertCheckout(WorkspaceEvent workspaceEvent, string status)
+    private void UpsertCheckout(WorkspaceEvent workspaceEvent, RuntimeDbSession db, string status)
     {
-        using var connection = connections.Open();
-        using var command = connection.CreateCommand();
-        command.CommandText = """
+        using var command = db.CreateCommand("""
             insert into checkout_settlements(checkout_id, workspace_id, stay_id, current_balance, deposit_held_amount, close_result, status, created_event_id, updated_at_utc)
             values (@checkoutId, @workspaceId, @stayId, @currentBalance, @depositHeldAmount, @closeResult, @status, @createdEventId, @updatedAtUtc)
             on conflict(checkout_id) do update set
@@ -54,7 +61,7 @@ internal sealed class CheckOutSettlementStorage
                 close_result = excluded.close_result,
                 status = excluded.status,
                 updated_at_utc = excluded.updated_at_utc
-            """;
+            """);
         command.Parameters.AddWithValue("checkoutId", StableId("checkout", workspaceEvent));
         command.Parameters.AddWithValue("workspaceId", workspaceEvent.WorkspaceId);
         command.Parameters.AddWithValue("stayId", Value(workspaceEvent, "入住单", StableId("stay", workspaceEvent)));
@@ -67,11 +74,9 @@ internal sealed class CheckOutSettlementStorage
         command.ExecuteNonQuery();
     }
 
-    private void UpsertInspection(WorkspaceEvent workspaceEvent)
+    private void UpsertInspection(WorkspaceEvent workspaceEvent, RuntimeDbSession db)
     {
-        using var connection = connections.Open();
-        using var command = connection.CreateCommand();
-        command.CommandText = """
+        using var command = db.CreateCommand("""
             insert into room_inspections(inspection_id, workspace_id, checkout_id, room_condition, bed_condition, damage_charge_amount, cleaning_required, created_event_id, updated_at_utc)
             values (@inspectionId, @workspaceId, @checkoutId, @roomCondition, @bedCondition, @damageChargeAmount, @cleaningRequired, @createdEventId, @updatedAtUtc)
             on conflict(inspection_id) do update set
@@ -80,7 +85,7 @@ internal sealed class CheckOutSettlementStorage
                 damage_charge_amount = excluded.damage_charge_amount,
                 cleaning_required = excluded.cleaning_required,
                 updated_at_utc = excluded.updated_at_utc
-            """;
+            """);
         command.Parameters.AddWithValue("inspectionId", StableId("inspection", workspaceEvent));
         command.Parameters.AddWithValue("workspaceId", workspaceEvent.WorkspaceId);
         command.Parameters.AddWithValue("checkoutId", StableId("checkout", workspaceEvent));

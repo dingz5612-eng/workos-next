@@ -134,28 +134,14 @@ public sealed class ActionRuntimeService
             return periodPolicyFailure;
         }
 
-        var existingEvent = store.FindEventByIdempotencyKey(request.IdempotencyKey);
-        if (existingEvent is not null)
-        {
-            return new ConfirmResult(ConfirmStatus.Duplicate, null, new
-            {
-                confirmed = true,
-                duplicate = true,
-                workspaceId = workspace.Id,
-                cardId = card.Id,
-                @event = existingEvent,
-                workspace,
-                projection = queryService.Envelope(state)
-            });
-        }
-
         var correlationId = request.IdempotencyKey;
         var requestId = request.RequestId ?? correlationId;
         var normalizedFieldValues = request.FieldValues ?? new Dictionary<string, string>();
         var evidenceIds = request.EvidenceIds ?? Array.Empty<string>();
         var events = new List<WorkspaceEvent>();
+        var committedEvents = new List<IdempotentWorkspaceEvent>();
         string? causationId = null;
-        foreach (var eventDefinition in card.Events)
+        foreach (var eventDefinition in EventSelectionPolicy.EventsForConfirm(card))
         {
             var workspaceEvent = new WorkspaceEvent(
                 $"evt-{Guid.NewGuid():N}",
@@ -175,10 +161,25 @@ public sealed class ActionRuntimeService
             var eventIdempotencyKey = events.Count == 0
                 ? request.IdempotencyKey
                 : $"{request.IdempotencyKey}:{eventDefinition.EventType}";
-            store.AppendAuditEventAndOutbox(workspaceEvent, eventIdempotencyKey);
-            store.ApplySliceAggregate(workspaceEvent);
+            committedEvents.Add(new IdempotentWorkspaceEvent(workspaceEvent, eventIdempotencyKey));
             events.Add(workspaceEvent);
             causationId = workspaceEvent.EventId;
+        }
+
+        var existingEvent = store.CommitConfirmEvents(committedEvents);
+        if (existingEvent is not null)
+        {
+            return new ConfirmResult(ConfirmStatus.Duplicate, null, new
+            {
+                confirmed = true,
+                duplicate = true,
+                workspaceId = workspace.Id,
+                cardId = card.Id,
+                @event = existingEvent,
+                events = new[] { existingEvent },
+                workspace,
+                projection = queryService.Envelope(state)
+            });
         }
 
         return new ConfirmResult(ConfirmStatus.Confirmed, null, new
@@ -187,7 +188,7 @@ public sealed class ActionRuntimeService
             duplicate = false,
             workspaceId = workspace.Id,
             cardId = card.Id,
-            @event = events.First(),
+            @event = events[0],
             events,
             workspace,
             projection = queryService.Envelope(state)
@@ -203,7 +204,6 @@ public sealed class ActionRuntimeService
         {
             foreach (var (key, value) in rawValues)
             {
-                normalized[key] = value;
                 var canonicalKey = RuntimeFieldAliases.CanonicalKey(key);
                 normalized[canonicalKey] = RuntimeFieldAliases.NormalizeValue(canonicalKey, value);
             }

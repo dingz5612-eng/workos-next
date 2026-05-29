@@ -93,8 +93,14 @@ ResetPostgres(connectionString);
     Assert(humanRoom.Status == ConfirmStatus.Confirmed, "human room setup confirmation should pass");
     runtime.ProcessPendingOutbox();
 
+    var auditBeforeDuplicate = CountRows(connectionString, "audit_events");
+    var outboxBeforeDuplicate = CountRows(connectionString, "outbox_messages");
+    var roomBeforeDuplicate = CountRows(connectionString, "accommodation_rooms");
     var duplicateRoom = runtime.Confirm("W-STAY-RESOURCE", "roomSetup", Human("resource-room"), operatorToken);
     Assert(duplicateRoom.Status == ConfirmStatus.Duplicate, "same idempotency key should return duplicate instead of writing another event");
+    Assert(CountRows(connectionString, "audit_events") == auditBeforeDuplicate, "duplicate confirm must not append audit events");
+    Assert(CountRows(connectionString, "outbox_messages") == outboxBeforeDuplicate, "duplicate confirm must not append outbox messages");
+    Assert(CountRows(connectionString, "accommodation_rooms") == roomBeforeDuplicate, "duplicate confirm must not rewrite aggregate rows");
 
     foreach (var (cardId, key, values) in new[]
     {
@@ -528,6 +534,7 @@ ResetPostgres(connectionString);
     Assert(reloaded.Events.Any(item => item.EventType == "Accommodation.RoomConfigured"), "RoomConfigured event should be persisted");
     Assert(reloaded.Events.All(item => !string.IsNullOrWhiteSpace(item.CorrelationId)), "audit events must include correlationId");
     Assert(reloaded.Events.All(item => !string.IsNullOrWhiteSpace(item.RequestId)), "audit events must include requestId");
+    Assert(reloaded.Events.SelectMany(item => item.Payload.Keys).All(IsStableFactKey), "audit event payload keys must be canonical field ids, not localized labels");
     AssertEventSequence(reloaded.Events.Where(item => item.WorkspaceId == "W-STAY-RESOURCE").Select(item => item.EventType).ToArray(), "Accommodation.RoomConfigured", "Accommodation.BedConfigured", "Accommodation.RateConfigured", "Accommodation.RoomReadinessChanged", "Accommodation.RoomBlocked", "Accommodation.BedBlocked", "Accommodation.RoomReleased", "Accommodation.BedReleased");
     AssertEventSequence(reloaded.Events.Where(item => item.WorkspaceId == "W-STAY-CHECKIN").Select(item => item.EventType).ToArray(), "LeadCaptured", "BookingConfirmed", "ResidentRegistered", "BedAssigned", "TariffAssigned", "DepositRequired", "PaymentRecordedByFrontDesk", "PaymentConfirmedByFinance", "StayCheckedIn", "OperatingMetricsReviewed");
     AssertEventSequence(reloaded.Events.Where(item => item.WorkspaceId == "W-STAY-LEAD-RESERVATION").Select(item => item.EventType).ToArray(), "Accommodation.LeadCaptured", "Accommodation.LeadStatusChanged", "Accommodation.ReservationCreated", "Accommodation.ReservationCancelled", "Accommodation.ReservationExpired", "Accommodation.ReservationConvertedToStay");
@@ -627,6 +634,9 @@ static void AssertEventSequence(string[] actual, params string[] expected)
 {
     Assert(actual.SequenceEqual(expected), $"event sequence expected {string.Join(" -> ", expected)}, got {string.Join(" -> ", actual)}");
 }
+
+static bool IsStableFactKey(string key) =>
+    key.All(ch => ch <= 127 && (char.IsLetterOrDigit(ch) || ch == '_' || ch == '-'));
 
 static void ValidateFieldContracts(WorkspaceProjection workspace)
 {

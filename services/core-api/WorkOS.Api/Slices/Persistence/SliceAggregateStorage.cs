@@ -44,15 +44,23 @@ internal sealed class SliceAggregateStorage
 
     public void Apply(WorkspaceEvent workspaceEvent)
     {
-        if (leadReservations.Apply(workspaceEvent) ||
-            stayLifecycle.Apply(workspaceEvent) ||
-            resourceSetup.Apply(workspaceEvent) ||
-            depositLedger.Apply(workspaceEvent) ||
-            paymentLedger.Apply(workspaceEvent) ||
-            checkoutSettlement.Apply(workspaceEvent) ||
-            serviceTasks.Apply(workspaceEvent) ||
-            expenses.Apply(workspaceEvent) ||
-            periodAnalytics.Apply(workspaceEvent))
+        using var connection = connections.Open();
+        using var db = new RuntimeDbSession(connection);
+        Apply(workspaceEvent, db);
+        db.Commit();
+    }
+
+    public void Apply(WorkspaceEvent workspaceEvent, RuntimeDbSession db)
+    {
+        if (leadReservations.Apply(workspaceEvent, db) ||
+            stayLifecycle.Apply(workspaceEvent, db) ||
+            resourceSetup.Apply(workspaceEvent, db) ||
+            depositLedger.Apply(workspaceEvent, db) ||
+            paymentLedger.Apply(workspaceEvent, db) ||
+            checkoutSettlement.Apply(workspaceEvent, db) ||
+            serviceTasks.Apply(workspaceEvent, db) ||
+            expenses.Apply(workspaceEvent, db) ||
+            periodAnalytics.Apply(workspaceEvent, db))
         {
             return;
         }
@@ -60,41 +68,39 @@ internal sealed class SliceAggregateStorage
         switch (workspaceEvent.EventType)
         {
             case CheckInEvents.LeadCaptured:
-                UpsertHostelLead(HostelLeadFrom(workspaceEvent));
+                UpsertHostelLead(HostelLeadFrom(workspaceEvent), db);
                 break;
             case CheckInEvents.BookingConfirmed:
-                UpsertHostelBooking(HostelBookingFrom(workspaceEvent));
+                UpsertHostelBooking(HostelBookingFrom(workspaceEvent), db);
                 break;
             case CheckInEvents.ResidentRegistered:
             case CheckInEvents.BedAssigned:
             case CheckInEvents.StayCheckedIn:
-                UpsertHostelStay(HostelStayFrom(workspaceEvent));
+                UpsertHostelStay(HostelStayFrom(workspaceEvent), db);
                 break;
             case CheckInEvents.TariffAssigned:
-                UpsertGuestFolio(GuestFolioFrom(workspaceEvent));
+                UpsertGuestFolio(GuestFolioFrom(workspaceEvent), db);
                 break;
             case CheckInEvents.DepositRequired:
-                UpsertDepositLiability(DepositLiabilityFrom(workspaceEvent));
+                UpsertDepositLiability(DepositLiabilityFrom(workspaceEvent), db);
                 break;
             case CheckInEvents.PaymentRecordedByFrontDesk:
-                UpsertHostelPayment(HostelPaymentFrom(workspaceEvent));
-                UpsertDeposit(DepositFrom(workspaceEvent));
+                UpsertHostelPayment(HostelPaymentFrom(workspaceEvent), db);
+                UpsertDeposit(DepositFrom(workspaceEvent), db);
                 break;
             case CheckInEvents.PaymentConfirmedByFinance:
-                UpsertFinanceReconciliation(FinanceReconciliationFrom(workspaceEvent));
-                UpsertFinanceConfirmation(FinanceConfirmationFrom(workspaceEvent));
+                UpsertFinanceReconciliation(FinanceReconciliationFrom(workspaceEvent), db);
+                UpsertFinanceConfirmation(FinanceConfirmationFrom(workspaceEvent), db);
                 break;
             case CheckInEvents.OperatingMetricsReviewed:
-                UpsertOperatingMetrics(OperatingMetricsFrom(workspaceEvent));
+                UpsertOperatingMetrics(OperatingMetricsFrom(workspaceEvent), db);
                 break;
         }
     }
 
-    private void UpsertDeposit(DepositAggregate deposit)
+    private void UpsertDeposit(DepositAggregate deposit, RuntimeDbSession db)
     {
-        using var connection = connections.Open();
-        using var command = connection.CreateCommand();
-        command.CommandText = """
+        using var command = db.CreateCommand("""
             insert into accommodation_deposits(deposit_id, workspace_id, stay_order_id, amount, currency, payment_method, evidence_id, status, created_event_id, updated_at_utc)
             values (@depositId, @workspaceId, @stayOrderId, @amount, @currency, @paymentMethod, @evidenceId, @status, @createdEventId, @updatedAtUtc)
             on conflict(deposit_id) do update set
@@ -104,7 +110,7 @@ internal sealed class SliceAggregateStorage
                 evidence_id = excluded.evidence_id,
                 status = excluded.status,
                 updated_at_utc = excluded.updated_at_utc
-            """;
+            """);
         command.Parameters.AddWithValue("depositId", deposit.DepositId);
         command.Parameters.AddWithValue("workspaceId", deposit.WorkspaceId);
         command.Parameters.AddWithValue("stayOrderId", deposit.StayOrderId);
@@ -118,11 +124,9 @@ internal sealed class SliceAggregateStorage
         command.ExecuteNonQuery();
     }
 
-    private void UpsertHostelLead(HostelLeadAggregate lead)
+    private void UpsertHostelLead(HostelLeadAggregate lead, RuntimeDbSession db)
     {
-        using var connection = connections.Open();
-        using var command = connection.CreateCommand();
-        command.CommandText = """
+        using var command = db.CreateCommand("""
             insert into hostel_leads(lead_id, workspace_id, guest_name, phone, beds_needed, stay_duration, source_channel, status, created_event_id, updated_at_utc)
             values (@leadId, @workspaceId, @guestName, @phone, @bedsNeeded, @stayDuration, @sourceChannel, @status, @createdEventId, @updatedAtUtc)
             on conflict(lead_id) do update set
@@ -133,7 +137,7 @@ internal sealed class SliceAggregateStorage
                 source_channel = excluded.source_channel,
                 status = excluded.status,
                 updated_at_utc = excluded.updated_at_utc
-            """;
+            """);
         command.Parameters.AddWithValue("leadId", lead.LeadId);
         command.Parameters.AddWithValue("workspaceId", lead.WorkspaceId);
         command.Parameters.AddWithValue("guestName", lead.GuestName);
@@ -147,11 +151,9 @@ internal sealed class SliceAggregateStorage
         command.ExecuteNonQuery();
     }
 
-    private void UpsertHostelBooking(HostelBookingAggregate booking)
+    private void UpsertHostelBooking(HostelBookingAggregate booking, RuntimeDbSession db)
     {
-        using var connection = connections.Open();
-        using var command = connection.CreateCommand();
-        command.CommandText = """
+        using var command = db.CreateCommand("""
             insert into hostel_bookings(booking_id, workspace_id, lead_id, reserved_room_bed, beds_reserved, check_in_date, status, created_event_id, updated_at_utc)
             values (@bookingId, @workspaceId, @leadId, @reservedRoomBed, @bedsReserved, @checkInDate, @status, @createdEventId, @updatedAtUtc)
             on conflict(booking_id) do update set
@@ -160,7 +162,7 @@ internal sealed class SliceAggregateStorage
                 check_in_date = excluded.check_in_date,
                 status = excluded.status,
                 updated_at_utc = excluded.updated_at_utc
-            """;
+            """);
         command.Parameters.AddWithValue("bookingId", booking.BookingId);
         command.Parameters.AddWithValue("workspaceId", booking.WorkspaceId);
         command.Parameters.AddWithValue("leadId", booking.LeadId);
@@ -173,11 +175,9 @@ internal sealed class SliceAggregateStorage
         command.ExecuteNonQuery();
     }
 
-    private void UpsertHostelStay(HostelStayAggregate stay)
+    private void UpsertHostelStay(HostelStayAggregate stay, RuntimeDbSession db)
     {
-        using var connection = connections.Open();
-        using var command = connection.CreateCommand();
-        command.CommandText = """
+        using var command = db.CreateCommand("""
             insert into hostel_stays(stay_id, workspace_id, resident_name, phone, room_bed, check_in_date, planned_checkout_date, status, created_event_id, updated_at_utc)
             values (@stayId, @workspaceId, @residentName, @phone, @roomBed, @checkInDate, @plannedCheckoutDate, @status, @createdEventId, @updatedAtUtc)
             on conflict(stay_id) do update set
@@ -188,7 +188,7 @@ internal sealed class SliceAggregateStorage
                 planned_checkout_date = excluded.planned_checkout_date,
                 status = excluded.status,
                 updated_at_utc = excluded.updated_at_utc
-            """;
+            """);
         command.Parameters.AddWithValue("stayId", stay.StayId);
         command.Parameters.AddWithValue("workspaceId", stay.WorkspaceId);
         command.Parameters.AddWithValue("residentName", stay.ResidentName);
@@ -202,11 +202,9 @@ internal sealed class SliceAggregateStorage
         command.ExecuteNonQuery();
     }
 
-    private void UpsertGuestFolio(GuestFolioAggregate folio)
+    private void UpsertGuestFolio(GuestFolioAggregate folio, RuntimeDbSession db)
     {
-        using var connection = connections.Open();
-        using var command = connection.CreateCommand();
-        command.CommandText = """
+        using var command = db.CreateCommand("""
             insert into guest_folios(folio_id, workspace_id, stay_id, tariff_type, unit_price, quantity, charge_amount, paid_amount, balance, currency, status, created_event_id, updated_at_utc)
             values (@folioId, @workspaceId, @stayId, @tariffType, @unitPrice, @quantity, @chargeAmount, @paidAmount, @balance, @currency, @status, @createdEventId, @updatedAtUtc)
             on conflict(folio_id) do update set
@@ -218,7 +216,7 @@ internal sealed class SliceAggregateStorage
                 balance = excluded.balance,
                 status = excluded.status,
                 updated_at_utc = excluded.updated_at_utc
-            """;
+            """);
         command.Parameters.AddWithValue("folioId", folio.FolioId);
         command.Parameters.AddWithValue("workspaceId", folio.WorkspaceId);
         command.Parameters.AddWithValue("stayId", folio.StayId);
@@ -235,11 +233,9 @@ internal sealed class SliceAggregateStorage
         command.ExecuteNonQuery();
     }
 
-    private void UpsertDepositLiability(DepositLiabilityAggregate deposit)
+    private void UpsertDepositLiability(DepositLiabilityAggregate deposit, RuntimeDbSession db)
     {
-        using var connection = connections.Open();
-        using var command = connection.CreateCommand();
-        command.CommandText = """
+        using var command = db.CreateCommand("""
             insert into deposit_liabilities(deposit_id, workspace_id, folio_id, required_amount, received_amount, liability_balance, currency, rule_name, status, created_event_id, updated_at_utc)
             values (@depositId, @workspaceId, @folioId, @requiredAmount, @receivedAmount, @liabilityBalance, @currency, @ruleName, @status, @createdEventId, @updatedAtUtc)
             on conflict(deposit_id) do update set
@@ -248,7 +244,7 @@ internal sealed class SliceAggregateStorage
                 liability_balance = excluded.liability_balance,
                 status = excluded.status,
                 updated_at_utc = excluded.updated_at_utc
-            """;
+            """);
         command.Parameters.AddWithValue("depositId", deposit.DepositId);
         command.Parameters.AddWithValue("workspaceId", deposit.WorkspaceId);
         command.Parameters.AddWithValue("folioId", deposit.FolioId);
@@ -263,18 +259,16 @@ internal sealed class SliceAggregateStorage
         command.ExecuteNonQuery();
     }
 
-    private void UpsertHostelPayment(HostelPaymentAggregate payment)
+    private void UpsertHostelPayment(HostelPaymentAggregate payment, RuntimeDbSession db)
     {
-        using var connection = connections.Open();
-        using var command = connection.CreateCommand();
-        command.CommandText = """
+        using var command = db.CreateCommand("""
             insert into hostel_payments(payment_id, workspace_id, folio_id, deposit_id, payer, amount, currency, method, purpose, receipt_no, status, created_event_id, updated_at_utc)
             values (@paymentId, @workspaceId, @folioId, @depositId, @payer, @amount, @currency, @method, @purpose, @receiptNo, @status, @createdEventId, @updatedAtUtc)
             on conflict(payment_id) do update set
                 amount = excluded.amount,
                 status = excluded.status,
                 updated_at_utc = excluded.updated_at_utc
-            """;
+            """);
         command.Parameters.AddWithValue("paymentId", payment.PaymentId);
         command.Parameters.AddWithValue("workspaceId", payment.WorkspaceId);
         command.Parameters.AddWithValue("folioId", payment.FolioId);
@@ -291,11 +285,9 @@ internal sealed class SliceAggregateStorage
         command.ExecuteNonQuery();
     }
 
-    private void UpsertFinanceReconciliation(FinanceReconciliationAggregate reconciliation)
+    private void UpsertFinanceReconciliation(FinanceReconciliationAggregate reconciliation, RuntimeDbSession db)
     {
-        using var connection = connections.Open();
-        using var command = connection.CreateCommand();
-        command.CommandText = """
+        using var command = db.CreateCommand("""
             insert into finance_reconciliations(reconciliation_id, workspace_id, payment_id, channel, confirmed_amount, currency, match_result, variance_amount, status, confirmed_by, created_event_id, updated_at_utc)
             values (@reconciliationId, @workspaceId, @paymentId, @channel, @confirmedAmount, @currency, @matchResult, @varianceAmount, @status, @confirmedBy, @createdEventId, @updatedAtUtc)
             on conflict(reconciliation_id) do update set
@@ -304,7 +296,7 @@ internal sealed class SliceAggregateStorage
                 variance_amount = excluded.variance_amount,
                 status = excluded.status,
                 updated_at_utc = excluded.updated_at_utc
-            """;
+            """);
         command.Parameters.AddWithValue("reconciliationId", reconciliation.ReconciliationId);
         command.Parameters.AddWithValue("workspaceId", reconciliation.WorkspaceId);
         command.Parameters.AddWithValue("paymentId", reconciliation.PaymentId);
@@ -320,11 +312,9 @@ internal sealed class SliceAggregateStorage
         command.ExecuteNonQuery();
     }
 
-    private void UpsertOperatingMetrics(HostelOperatingMetricAggregate metrics)
+    private void UpsertOperatingMetrics(HostelOperatingMetricAggregate metrics, RuntimeDbSession db)
     {
-        using var connection = connections.Open();
-        using var command = connection.CreateCommand();
-        command.CommandText = """
+        using var command = db.CreateCommand("""
             insert into hostel_operating_metrics(metrics_id, workspace_id, occupancy_rate, lead_booking_conversion_rate, booking_checkin_conversion_rate, deposit_liability_balance, unconfirmed_payment_amount, finance_variance_amount, folio_balance, decision, created_event_id, updated_at_utc)
             values (@metricsId, @workspaceId, @occupancyRate, @leadBookingConversionRate, @bookingCheckinConversionRate, @depositLiabilityBalance, @unconfirmedPaymentAmount, @financeVarianceAmount, @folioBalance, @decision, @createdEventId, @updatedAtUtc)
             on conflict(metrics_id) do update set
@@ -337,7 +327,7 @@ internal sealed class SliceAggregateStorage
                 folio_balance = excluded.folio_balance,
                 decision = excluded.decision,
                 updated_at_utc = excluded.updated_at_utc
-            """;
+            """);
         command.Parameters.AddWithValue("metricsId", metrics.MetricsId);
         command.Parameters.AddWithValue("workspaceId", metrics.WorkspaceId);
         command.Parameters.AddWithValue("occupancyRate", NpgsqlDbType.Numeric, metrics.OccupancyRate);
@@ -353,11 +343,9 @@ internal sealed class SliceAggregateStorage
         command.ExecuteNonQuery();
     }
 
-    private void UpsertFinanceConfirmation(FinanceConfirmationAggregate confirmation)
+    private void UpsertFinanceConfirmation(FinanceConfirmationAggregate confirmation, RuntimeDbSession db)
     {
-        using var connection = connections.Open();
-        using var command = connection.CreateCommand();
-        command.CommandText = """
+        using var command = db.CreateCommand("""
             insert into finance_confirmations(finance_confirmation_id, workspace_id, deposit_id, confirmed_amount, currency, status, confirmed_by, created_event_id, updated_at_utc)
             values (@financeConfirmationId, @workspaceId, @depositId, @confirmedAmount, @currency, @status, @confirmedBy, @createdEventId, @updatedAtUtc)
             on conflict(finance_confirmation_id) do update set
@@ -366,7 +354,7 @@ internal sealed class SliceAggregateStorage
                 status = excluded.status,
                 confirmed_by = excluded.confirmed_by,
                 updated_at_utc = excluded.updated_at_utc
-            """;
+            """);
         command.Parameters.AddWithValue("financeConfirmationId", confirmation.FinanceConfirmationId);
         command.Parameters.AddWithValue("workspaceId", confirmation.WorkspaceId);
         command.Parameters.AddWithValue("depositId", confirmation.DepositId);
@@ -532,19 +520,13 @@ internal sealed class SliceAggregateStorage
     }
 
     private static string Value(WorkspaceEvent workspaceEvent, string key, string defaultValue) =>
-        workspaceEvent.Payload.TryGetValue(key, out var value) && !string.IsNullOrWhiteSpace(value)
-            ? value
-            : defaultValue;
+        RuntimeFieldAliases.Value(workspaceEvent.Payload, key, defaultValue);
 
     private static decimal DecimalValue(WorkspaceEvent workspaceEvent, string key, decimal defaultValue) =>
-        workspaceEvent.Payload.TryGetValue(key, out var value) && decimal.TryParse(value, NumberStyles.Number, CultureInfo.InvariantCulture, out var parsed)
-            ? parsed
-            : defaultValue;
+        RuntimeFieldAliases.DecimalValue(workspaceEvent.Payload, key, defaultValue);
 
     private static int IntValue(WorkspaceEvent workspaceEvent, string key, int defaultValue) =>
-        workspaceEvent.Payload.TryGetValue(key, out var value) && int.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out var parsed)
-            ? parsed
-            : defaultValue;
+        RuntimeFieldAliases.IntValue(workspaceEvent.Payload, key, defaultValue);
 
     private static DateTimeOffset DateValue(WorkspaceEvent workspaceEvent, string key, DateTimeOffset defaultValue) =>
         workspaceEvent.Payload.TryGetValue(key, out var value) && DateTimeOffset.TryParse(value, CultureInfo.InvariantCulture, DateTimeStyles.AssumeLocal, out var parsed)

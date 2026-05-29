@@ -17,10 +17,11 @@ public sealed class PostgresProjectionStore : IProjectionStore
     private readonly RuntimeBehaviorEventStorage behaviorEvents;
     private readonly RuntimeAggregateLensStorage aggregateLenses;
     private readonly SliceAggregateStorage sliceAggregates;
+    private readonly PostgresConnectionFactory connections;
 
     public PostgresProjectionStore(string connectionString, string? migrationsPath = null)
     {
-        var connections = new PostgresConnectionFactory(connectionString);
+        connections = new PostgresConnectionFactory(connectionString);
         new PostgresMigrationRunner(connections, migrationsPath).Run();
 
         documents = new RuntimeDocumentStorage(connections);
@@ -61,6 +62,37 @@ public sealed class PostgresProjectionStore : IProjectionStore
 
     public void ApplySliceAggregate(WorkspaceEvent workspaceEvent) =>
         sliceAggregates.Apply(workspaceEvent);
+
+    public WorkspaceEvent? CommitConfirmEvents(IReadOnlyList<IdempotentWorkspaceEvent> committedEvents)
+    {
+        if (committedEvents.Count == 0)
+        {
+            return null;
+        }
+
+        string? duplicateKey = null;
+        using (var connection = connections.Open())
+        using (var db = new RuntimeDbSession(connection))
+        {
+            foreach (var committedEvent in committedEvents)
+            {
+                if (!events.InsertAuditEventAndOutbox(db, committedEvent.Event, committedEvent.IdempotencyKey))
+                {
+                    duplicateKey = committedEvent.IdempotencyKey;
+                    break;
+                }
+
+                sliceAggregates.Apply(committedEvent.Event, db);
+            }
+
+            if (duplicateKey is null)
+            {
+                db.Commit();
+            }
+        }
+
+        return duplicateKey is null ? null : events.FindEventByIdempotencyKey(duplicateKey);
+    }
 
     public IReadOnlyList<OutboxMessage> GetPendingOutboxMessages(int take = 50) =>
         outbox.GetPending(take);

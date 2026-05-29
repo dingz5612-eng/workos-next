@@ -28,7 +28,7 @@ public sealed class ProjectionRuntime
         string connectionString,
         RuntimeAuthOptions? authOptions = null,
         string? migrationsPath = null) =>
-        new(new PostgresProjectionStore(connectionString, migrationsPath), authOptions ?? RuntimeAuthOptions.Development);
+        new(new PostgresProjectionStore(connectionString, migrationsPath), authOptions ?? new RuntimeAuthOptions());
 
     public ProjectionEnvelope GetAll()
     {

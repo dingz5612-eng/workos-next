@@ -25,16 +25,19 @@ internal sealed class RuntimeEventStorage
     public void AppendAuditEventAndOutbox(WorkspaceEvent workspaceEvent, string idempotencyKey)
     {
         using var connection = connections.Open();
-        using var transaction = connection.BeginTransaction();
+        using var db = new RuntimeDbSession(connection);
+        InsertAuditEventAndOutbox(db, workspaceEvent, idempotencyKey);
+        db.Commit();
+    }
 
-        using (var command = connection.CreateCommand())
-        {
-            command.Transaction = transaction;
-            command.CommandText = """
+    public bool InsertAuditEventAndOutbox(RuntimeDbSession db, WorkspaceEvent workspaceEvent, string idempotencyKey)
+    {
+        using (var command = db.CreateCommand("""
             insert into audit_events(event_id, idempotency_key, workspace_id, card_id, event_type, correlation_id, causation_id, request_id, actor_type, actor_id, occurred_at_utc, body)
             values (@eventId, @idempotencyKey, @workspaceId, @cardId, @eventType, @correlationId, @causationId, @requestId, @actorType, @actorId, @occurredAtUtc, @body::jsonb)
-            on conflict(event_id) do nothing
-            """;
+            on conflict(idempotency_key) do nothing
+            """))
+        {
             command.Parameters.AddWithValue("eventId", workspaceEvent.EventId);
             command.Parameters.AddWithValue("idempotencyKey", idempotencyKey);
             command.Parameters.AddWithValue("workspaceId", workspaceEvent.WorkspaceId);
@@ -47,7 +50,10 @@ internal sealed class RuntimeEventStorage
             command.Parameters.AddWithValue("actorId", workspaceEvent.ActorId);
             command.Parameters.AddWithValue("occurredAtUtc", workspaceEvent.OccurredAtUtc);
             command.Parameters.AddWithValue("body", NpgsqlDbType.Jsonb, JsonSerializer.Serialize(workspaceEvent, PostgresProjectionStore.JsonOptions));
-            command.ExecuteNonQuery();
+            if (command.ExecuteNonQuery() == 0)
+            {
+                return false;
+            }
         }
 
         var outboxMessage = new OutboxMessage(
@@ -63,14 +69,12 @@ internal sealed class RuntimeEventStorage
             null,
             workspaceEvent);
 
-        using (var command = connection.CreateCommand())
-        {
-            command.Transaction = transaction;
-            command.CommandText = """
+        using (var command = db.CreateCommand("""
             insert into outbox_messages(message_id, event_id, idempotency_key, workspace_id, card_id, event_type, correlation_id, causation_id, request_id, created_at_utc, processed_at_utc, body)
             values (@messageId, @eventId, @idempotencyKey, @workspaceId, @cardId, @eventType, @correlationId, @causationId, @requestId, @createdAtUtc, @processedAtUtc, @body::jsonb)
             on conflict(message_id) do nothing
-            """;
+            """))
+        {
             command.Parameters.AddWithValue("messageId", outboxMessage.MessageId);
             command.Parameters.AddWithValue("eventId", outboxMessage.EventId);
             command.Parameters.AddWithValue("idempotencyKey", idempotencyKey);
@@ -86,7 +90,7 @@ internal sealed class RuntimeEventStorage
             command.ExecuteNonQuery();
         }
 
-        transaction.Commit();
+        return true;
     }
 
     public IReadOnlyList<WorkspaceEvent> GetAuditEvents(string? workspaceId = null)

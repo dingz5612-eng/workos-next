@@ -15,36 +15,43 @@ internal sealed class LeadReservationStorage
 
     public bool Apply(WorkspaceEvent workspaceEvent)
     {
+        using var connection = connections.Open();
+        using var db = new RuntimeDbSession(connection);
+        var applied = Apply(workspaceEvent, db);
+        db.Commit();
+        return applied;
+    }
+
+    public bool Apply(WorkspaceEvent workspaceEvent, RuntimeDbSession db)
+    {
         switch (workspaceEvent.EventType)
         {
             case "Accommodation.LeadCaptured":
-                UpsertLead(workspaceEvent, Value(workspaceEvent, "leadStatus", "线索状态", "new"));
+                UpsertLead(workspaceEvent, db, Value(workspaceEvent, "leadStatus", "线索状态", "new"));
                 return true;
             case "Accommodation.LeadStatusChanged":
-                UpsertLead(workspaceEvent, Value(workspaceEvent, "leadStatus", "线索状态", "callback"));
+                UpsertLead(workspaceEvent, db, Value(workspaceEvent, "leadStatus", "线索状态", "callback"));
                 return true;
             case "Accommodation.ReservationCreated":
-                UpsertReservation(workspaceEvent, "created");
+                UpsertReservation(workspaceEvent, db, "created");
                 return true;
             case "Accommodation.ReservationCancelled":
-                UpsertReservation(workspaceEvent, "cancelled");
+                UpsertReservation(workspaceEvent, db, "cancelled");
                 return true;
             case "Accommodation.ReservationExpired":
-                UpsertReservation(workspaceEvent, "expired");
+                UpsertReservation(workspaceEvent, db, "expired");
                 return true;
             case "Accommodation.ReservationConvertedToStay":
-                UpsertReservation(workspaceEvent, "converted_to_stay");
+                UpsertReservation(workspaceEvent, db, "converted_to_stay");
                 return true;
             default:
                 return false;
         }
     }
 
-    private void UpsertLead(WorkspaceEvent workspaceEvent, string status)
+    private void UpsertLead(WorkspaceEvent workspaceEvent, RuntimeDbSession db, string status)
     {
-        using var connection = connections.Open();
-        using var command = connection.CreateCommand();
-        command.CommandText = """
+        using var command = db.CreateCommand("""
             insert into hostel_leads(lead_id, workspace_id, guest_name, phone, beds_needed, stay_duration, source_channel, status, created_event_id, updated_at_utc)
             values (@leadId, @workspaceId, @guestName, @phone, @bedsNeeded, @stayDuration, @sourceChannel, @status, @createdEventId, @updatedAtUtc)
             on conflict(lead_id) do update set
@@ -55,7 +62,7 @@ internal sealed class LeadReservationStorage
                 source_channel = excluded.source_channel,
                 status = excluded.status,
                 updated_at_utc = excluded.updated_at_utc
-            """;
+            """);
         command.Parameters.AddWithValue("leadId", LeadId(workspaceEvent));
         command.Parameters.AddWithValue("workspaceId", workspaceEvent.WorkspaceId);
         command.Parameters.AddWithValue("guestName", Value(workspaceEvent, "leadName", "线索姓名", "张三"));
@@ -69,11 +76,9 @@ internal sealed class LeadReservationStorage
         command.ExecuteNonQuery();
     }
 
-    private void UpsertReservation(WorkspaceEvent workspaceEvent, string status)
+    private void UpsertReservation(WorkspaceEvent workspaceEvent, RuntimeDbSession db, string status)
     {
-        using var connection = connections.Open();
-        using var command = connection.CreateCommand();
-        command.CommandText = """
+        using var command = db.CreateCommand("""
             insert into hostel_bookings(booking_id, workspace_id, lead_id, reserved_room_bed, beds_reserved, check_in_date, status, created_event_id, updated_at_utc, hold_until_utc)
             values (@bookingId, @workspaceId, @leadId, @reservedRoomBed, @bedsReserved, @checkInDate, @status, @createdEventId, @updatedAtUtc, @holdUntilUtc)
             on conflict(booking_id) do update set
@@ -83,7 +88,7 @@ internal sealed class LeadReservationStorage
                 status = excluded.status,
                 hold_until_utc = excluded.hold_until_utc,
                 updated_at_utc = excluded.updated_at_utc
-            """;
+            """);
         command.Parameters.AddWithValue("bookingId", ReservationId(workspaceEvent));
         command.Parameters.AddWithValue("workspaceId", workspaceEvent.WorkspaceId);
         command.Parameters.AddWithValue("leadId", LeadId(workspaceEvent));
@@ -103,25 +108,11 @@ internal sealed class LeadReservationStorage
     private static string ReservationId(WorkspaceEvent workspaceEvent) =>
         Value(workspaceEvent, "reservationId", "预订单", StableId("reservation", workspaceEvent));
 
-    private static string Value(WorkspaceEvent workspaceEvent, string canonicalKey, string zhKey, string defaultValue)
-    {
-        if (workspaceEvent.Payload.TryGetValue(canonicalKey, out var canonical) && !string.IsNullOrWhiteSpace(canonical))
-        {
-            return canonical;
-        }
+    private static string Value(WorkspaceEvent workspaceEvent, string canonicalKey, string zhKey, string defaultValue) =>
+        RuntimeFieldAliases.Value(workspaceEvent.Payload, canonicalKey, defaultValue);
 
-        return workspaceEvent.Payload.TryGetValue(zhKey, out var zh) && !string.IsNullOrWhiteSpace(zh)
-            ? zh
-            : defaultValue;
-    }
-
-    private static int IntValue(WorkspaceEvent workspaceEvent, string canonicalKey, string zhKey, int defaultValue)
-    {
-        var value = Value(workspaceEvent, canonicalKey, zhKey, string.Empty);
-        return int.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out var parsed)
-            ? parsed
-            : defaultValue;
-    }
+    private static int IntValue(WorkspaceEvent workspaceEvent, string canonicalKey, string zhKey, int defaultValue) =>
+        RuntimeFieldAliases.IntValue(workspaceEvent.Payload, canonicalKey, defaultValue);
 
     private static DateTimeOffset DateValue(WorkspaceEvent workspaceEvent, string canonicalKey, string zhKey, DateTimeOffset defaultValue)
     {

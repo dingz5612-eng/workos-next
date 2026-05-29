@@ -20,10 +20,17 @@ builder.Services.AddCors(options =>
 
 var connectionString = builder.Configuration.GetConnectionString("WorkOSRuntime")
     ?? "Host=localhost;Port=54329;Database=workosnext;Username=workosnext;Password=workosnext_dev";
-var authOptions = builder.Configuration.GetSection("Auth").Get<RuntimeAuthOptions>() ?? RuntimeAuthOptions.Development;
-if (authOptions.PasswordSha256ByUsername.Count == 0)
+var configuredAuthOptions = builder.Configuration.GetSection("Auth").Get<RuntimeAuthOptions>();
+var authOptions = configuredAuthOptions ?? (builder.Environment.IsDevelopment() ? RuntimeAuthOptions.Development : new RuntimeAuthOptions { PasswordSha256ByUsername = new Dictionary<string, string>() });
+if (authOptions.PasswordSha256ByUsername.Count == 0 && builder.Environment.IsDevelopment())
 {
     authOptions = RuntimeAuthOptions.Development;
+}
+
+if (!builder.Environment.IsDevelopment() &&
+    (authOptions.PasswordSha256ByUsername.Count == 0 || RuntimeAuthOptions.UsesDevelopmentPasswords(authOptions)))
+{
+    throw new InvalidOperationException("Production runtime requires configured auth hashes and must not use development auth defaults.");
 }
 var migrationsPath = builder.Configuration["Migrations:Path"];
 var runtime = ProjectionRuntime.OpenPostgres(connectionString, authOptions, migrationsPath);

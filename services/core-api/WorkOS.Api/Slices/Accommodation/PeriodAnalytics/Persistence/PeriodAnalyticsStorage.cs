@@ -16,47 +16,54 @@ internal sealed class PeriodAnalyticsStorage
 
     public bool Apply(WorkspaceEvent workspaceEvent)
     {
+        using var connection = connections.Open();
+        using var db = new RuntimeDbSession(connection);
+        var applied = Apply(workspaceEvent, db);
+        db.Commit();
+        return applied;
+    }
+
+    public bool Apply(WorkspaceEvent workspaceEvent, RuntimeDbSession db)
+    {
         switch (workspaceEvent.EventType)
         {
             case "Accommodation.PeriodScopeConfirmed":
-                UpsertPeriodReview(workspaceEvent, "scoped");
+                UpsertPeriodReview(workspaceEvent, db, "scoped");
                 return true;
             case "Accommodation.PeriodMetricsReviewed":
-                InsertFrozenMetricSnapshot(workspaceEvent);
+                InsertFrozenMetricSnapshot(workspaceEvent, db);
                 return true;
             case "Accommodation.PeriodFinanceReviewed":
-                UpsertFinanceSnapshot(workspaceEvent);
-                AppendLateAdjustment(workspaceEvent);
+                UpsertFinanceSnapshot(workspaceEvent, db);
+                AppendLateAdjustment(workspaceEvent, db);
                 return true;
             case "Accommodation.PeriodOperationsDiagnosed":
-                UpsertOperationDiagnosis(workspaceEvent);
-                AppendLateAdjustment(workspaceEvent);
+                UpsertOperationDiagnosis(workspaceEvent, db);
+                AppendLateAdjustment(workspaceEvent, db);
                 return true;
             case "Accommodation.PeriodActionPlanCommitted":
             case "Accommodation.PeriodActionPlanCompleted":
-                UpsertActionPlan(workspaceEvent);
-                AppendLateAdjustment(workspaceEvent);
+                UpsertActionPlan(workspaceEvent, db);
+                AppendLateAdjustment(workspaceEvent, db);
                 return true;
             case "Accommodation.PeriodReviewClosed":
-                UpsertPeriodReview(workspaceEvent, "closed");
+                UpsertPeriodReview(workspaceEvent, db, "closed");
                 return true;
             default:
                 return false;
         }
     }
 
-    private void UpsertPeriodReview(WorkspaceEvent workspaceEvent, string status)
+    private void UpsertPeriodReview(WorkspaceEvent workspaceEvent, RuntimeDbSession db, string status)
     {
-        using var connection = connections.Open();
-        using var command = connection.CreateCommand();
-        command.CommandText = """
+        using var command = db.CreateCommand("""
             insert into period_reviews(period_id, workspace_id, period_year, period_no, period_start_utc, period_end_utc, status, closed_result, created_event_id, updated_at_utc)
             values (@periodId, @workspaceId, @periodYear, @periodNo, @periodStartUtc, @periodEndUtc, @status, @closedResult, @createdEventId, @updatedAtUtc)
             on conflict(period_id) do update set
                 status = excluded.status,
                 closed_result = excluded.closed_result,
                 updated_at_utc = excluded.updated_at_utc
-            """;
+            """);
         command.Parameters.AddWithValue("periodId", PeriodId(workspaceEvent));
         command.Parameters.AddWithValue("workspaceId", workspaceEvent.WorkspaceId);
         command.Parameters.AddWithValue("periodYear", IntValue(workspaceEvent, "periodYear", "年份", 2026));
@@ -70,7 +77,7 @@ internal sealed class PeriodAnalyticsStorage
         command.ExecuteNonQuery();
     }
 
-    private void InsertFrozenMetricSnapshot(WorkspaceEvent workspaceEvent)
+    private void InsertFrozenMetricSnapshot(WorkspaceEvent workspaceEvent, RuntimeDbSession db)
     {
         var availableBedNight = DecimalValue(workspaceEvent, "availableBedNight", "可售床夜", 0m);
         var bedNightSold = DecimalValue(workspaceEvent, "bedNightSold", "已售床夜", 0m);
@@ -82,9 +89,7 @@ internal sealed class PeriodAnalyticsStorage
         var leadToReservation = Ratio(reservationCount, newLeadCount);
         var reservationToCheckIn = Ratio(checkInCount, reservationCount);
 
-        using var connection = connections.Open();
-        using var command = connection.CreateCommand();
-        command.CommandText = """
+        using var command = db.CreateCommand("""
             insert into period_metric_snapshots(
                 period_id, workspace_id, available_bed_night, bed_night_sold,
                 average_occupancy_rate, average_occupancy_rate_status,
@@ -98,7 +103,7 @@ internal sealed class PeriodAnalyticsStorage
                 @checkInCount, @reservationToCheckInRate, @reservationToCheckInRateStatus,
                 true, @createdEventId, @frozenAtUtc)
             on conflict(period_id) do nothing
-            """;
+            """);
         command.Parameters.AddWithValue("periodId", PeriodId(workspaceEvent));
         command.Parameters.AddWithValue("workspaceId", workspaceEvent.WorkspaceId);
         command.Parameters.AddWithValue("availableBedNight", NpgsqlDbType.Numeric, availableBedNight);
@@ -117,7 +122,7 @@ internal sealed class PeriodAnalyticsStorage
         command.ExecuteNonQuery();
     }
 
-    private void UpsertFinanceSnapshot(WorkspaceEvent workspaceEvent)
+    private void UpsertFinanceSnapshot(WorkspaceEvent workspaceEvent, RuntimeDbSession db)
     {
         var rentRevenue = DecimalValue(workspaceEvent, "rentRevenue", "房租收入", 0m);
         var otherRevenue = DecimalValue(workspaceEvent, "otherRevenue", "其他收入", 0m);
@@ -127,9 +132,7 @@ internal sealed class PeriodAnalyticsStorage
         var depositDeducted = DecimalValue(workspaceEvent, "depositDeductedAmount", "周期押金扣除", 0m);
         var depositApplied = DecimalValue(workspaceEvent, "depositAppliedToBalanceAmount", "押金抵欠金额", 0m);
 
-        using var connection = connections.Open();
-        using var command = connection.CreateCommand();
-        command.CommandText = """
+        using var command = db.CreateCommand("""
             insert into period_finance_snapshots(
                 period_id, workspace_id, rent_revenue, other_revenue, confirmed_payment_amount, pending_payment_amount,
                 deposit_received_amount, deposit_refunded_amount, deposit_deducted_amount, deposit_applied_to_balance_amount,
@@ -147,7 +150,7 @@ internal sealed class PeriodAnalyticsStorage
                 period_net_cash_flow = excluded.period_net_cash_flow,
                 finance_exception_count = excluded.finance_exception_count,
                 updated_at_utc = excluded.updated_at_utc
-            """;
+            """);
         command.Parameters.AddWithValue("periodId", PeriodId(workspaceEvent));
         command.Parameters.AddWithValue("workspaceId", workspaceEvent.WorkspaceId);
         command.Parameters.AddWithValue("rentRevenue", NpgsqlDbType.Numeric, rentRevenue);
@@ -169,11 +172,9 @@ internal sealed class PeriodAnalyticsStorage
         command.ExecuteNonQuery();
     }
 
-    private void UpsertOperationDiagnosis(WorkspaceEvent workspaceEvent)
+    private void UpsertOperationDiagnosis(WorkspaceEvent workspaceEvent, RuntimeDbSession db)
     {
-        using var connection = connections.Open();
-        using var command = connection.CreateCommand();
-        command.CommandText = """
+        using var command = db.CreateCommand("""
             insert into period_operation_diagnoses(
                 diagnosis_id, period_id, workspace_id, issue_category, issue_summary, root_cause,
                 blocked_bed_days, unfinished_task_count, overdue_task_count, debtor_count,
@@ -187,7 +188,7 @@ internal sealed class PeriodAnalyticsStorage
                 issue_summary = excluded.issue_summary,
                 root_cause = excluded.root_cause,
                 updated_at_utc = excluded.updated_at_utc
-            """;
+            """);
         command.Parameters.AddWithValue("diagnosisId", StableId("period-diagnosis", workspaceEvent));
         command.Parameters.AddWithValue("periodId", PeriodId(workspaceEvent));
         command.Parameters.AddWithValue("workspaceId", workspaceEvent.WorkspaceId);
@@ -203,11 +204,9 @@ internal sealed class PeriodAnalyticsStorage
         command.ExecuteNonQuery();
     }
 
-    private void UpsertActionPlan(WorkspaceEvent workspaceEvent)
+    private void UpsertActionPlan(WorkspaceEvent workspaceEvent, RuntimeDbSession db)
     {
-        using var connection = connections.Open();
-        using var command = connection.CreateCommand();
-        command.CommandText = """
+        using var command = db.CreateCommand("""
             insert into period_action_plans(
                 action_plan_id, period_id, workspace_id, action_title, action_type, target_metric,
                 target_value, owner_name, priority, status, created_event_id, updated_at_utc)
@@ -223,7 +222,7 @@ internal sealed class PeriodAnalyticsStorage
                 priority = excluded.priority,
                 status = excluded.status,
                 updated_at_utc = excluded.updated_at_utc
-            """;
+            """);
         command.Parameters.AddWithValue("actionPlanId", Value(workspaceEvent, "actionPlanId", "行动计划", StableId("period-action", workspaceEvent)));
         command.Parameters.AddWithValue("periodId", PeriodId(workspaceEvent));
         command.Parameters.AddWithValue("workspaceId", workspaceEvent.WorkspaceId);
@@ -239,15 +238,13 @@ internal sealed class PeriodAnalyticsStorage
         command.ExecuteNonQuery();
     }
 
-    private void AppendLateAdjustment(WorkspaceEvent workspaceEvent)
+    private void AppendLateAdjustment(WorkspaceEvent workspaceEvent, RuntimeDbSession db)
     {
-        using var connection = connections.Open();
-        using var command = connection.CreateCommand();
-        command.CommandText = """
+        using var command = db.CreateCommand("""
             insert into period_late_adjustments(adjustment_id, period_id, workspace_id, adjustment_event_type, adjustment_payload, created_event_id, occurred_at_utc)
             values (@adjustmentId, @periodId, @workspaceId, @adjustmentEventType, @adjustmentPayload, @createdEventId, @occurredAtUtc)
             on conflict(adjustment_id) do nothing
-            """;
+            """);
         command.Parameters.AddWithValue("adjustmentId", $"period-adjustment-{workspaceEvent.EventId}".ToLowerInvariant());
         command.Parameters.AddWithValue("periodId", PeriodId(workspaceEvent));
         command.Parameters.AddWithValue("workspaceId", workspaceEvent.WorkspaceId);
@@ -266,33 +263,14 @@ internal sealed class PeriodAnalyticsStorage
     private static string PeriodId(WorkspaceEvent workspaceEvent) =>
         Value(workspaceEvent, "periodId", "经营周期", StableId("period", workspaceEvent));
 
-    private static string Value(WorkspaceEvent workspaceEvent, string canonicalKey, string zhKey, string defaultValue)
-    {
-        if (workspaceEvent.Payload.TryGetValue(canonicalKey, out var canonical) && !string.IsNullOrWhiteSpace(canonical))
-        {
-            return canonical;
-        }
+    private static string Value(WorkspaceEvent workspaceEvent, string canonicalKey, string zhKey, string defaultValue) =>
+        RuntimeFieldAliases.Value(workspaceEvent.Payload, canonicalKey, defaultValue);
 
-        return workspaceEvent.Payload.TryGetValue(zhKey, out var zh) && !string.IsNullOrWhiteSpace(zh)
-            ? zh
-            : defaultValue;
-    }
+    private static decimal DecimalValue(WorkspaceEvent workspaceEvent, string canonicalKey, string zhKey, decimal defaultValue) =>
+        RuntimeFieldAliases.DecimalValue(workspaceEvent.Payload, canonicalKey, defaultValue);
 
-    private static decimal DecimalValue(WorkspaceEvent workspaceEvent, string canonicalKey, string zhKey, decimal defaultValue)
-    {
-        var value = Value(workspaceEvent, canonicalKey, zhKey, string.Empty);
-        return decimal.TryParse(value, NumberStyles.Number, CultureInfo.InvariantCulture, out var parsed)
-            ? parsed
-            : defaultValue;
-    }
-
-    private static int IntValue(WorkspaceEvent workspaceEvent, string canonicalKey, string zhKey, int defaultValue)
-    {
-        var value = Value(workspaceEvent, canonicalKey, zhKey, string.Empty);
-        return int.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out var parsed)
-            ? parsed
-            : defaultValue;
-    }
+    private static int IntValue(WorkspaceEvent workspaceEvent, string canonicalKey, string zhKey, int defaultValue) =>
+        RuntimeFieldAliases.IntValue(workspaceEvent.Payload, canonicalKey, defaultValue);
 
     private static DateTimeOffset DateValue(WorkspaceEvent workspaceEvent, string canonicalKey, string zhKey, DateTimeOffset defaultValue)
     {
