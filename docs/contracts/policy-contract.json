@@ -4,7 +4,22 @@
   "decisionCodes": [
     "allowed",
     "ai_confirmation_forbidden",
-    "role_confirmation_forbidden"
+    "role_confirmation_forbidden",
+    "slice_runtime_forbidden",
+    "deposit_evidence_required",
+    "deposit_refund_exceeds_held_amount",
+    "payment_evidence_required",
+    "payment_allocation_exceeds_confirmed_amount",
+    "checkout_deposit_settlement_required",
+    "checkout_start_required_before_bed_release",
+    "service_task_verification_required_before_release",
+    "expense_evidence_required",
+    "period_deposit_revenue_forbidden",
+    "period_deposit_refund_expense_forbidden",
+    "period_close_requires_metrics_review",
+    "period_close_requires_finance_review",
+    "period_close_requires_operations_diagnosis",
+    "period_close_requires_action_plan_for_high_risk"
   ],
   "rules": [
     {
@@ -16,6 +31,26 @@
       "id": "role-must-match-confirmation-policy",
       "description": "The actor role must satisfy the card confirmation requiredRole. Manager may confirm operator cards; admin may confirm all cards.",
       "denies": "role_confirmation_forbidden"
+    },
+    {
+      "id": "slice-status-gate",
+      "description": "Contract-only slices may prepare cards but cannot confirm them until runtime status is upgraded.",
+      "denies": "slice_runtime_forbidden"
+    },
+    {
+      "id": "accommodation-money-ledger-policy",
+      "description": "Accommodation money ledgers reject non-cash writes without evidence and reject over-refund or over-allocation commands.",
+      "denies": "deposit_evidence_required,deposit_refund_exceeds_held_amount,payment_evidence_required,payment_allocation_exceeds_confirmed_amount,expense_evidence_required"
+    },
+    {
+      "id": "accommodation-boundary-policy",
+      "description": "Checkout and service slices may request settlement or release only after the required upstream runtime facts are confirmed.",
+      "denies": "checkout_deposit_settlement_required,checkout_start_required_before_bed_release,service_task_verification_required_before_release"
+    },
+    {
+      "id": "period-analytics-policy",
+      "description": "Period analytics keeps deposit liability separate from revenue and expense, and closes a period only after metrics, finance, operations, and high-risk action plan requirements are met.",
+      "denies": "period_deposit_revenue_forbidden,period_deposit_refund_expense_forbidden,period_close_requires_metrics_review,period_close_requires_finance_review,period_close_requires_operations_diagnosis,period_close_requires_action_plan_for_high_risk"
     }
   ]
 }

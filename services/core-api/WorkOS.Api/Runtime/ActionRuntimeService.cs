@@ -4,6 +4,7 @@ using WorkOS.Api.Slices.Accommodation.PaymentLedger.Policies;
 using WorkOS.Api.Slices.Accommodation.CheckOutSettlement.Policies;
 using WorkOS.Api.Slices.Accommodation.ServiceTask.Policies;
 using WorkOS.Api.Slices.Accommodation.ExpenseLedger.Policies;
+using WorkOS.Api.Slices.Accommodation.PeriodAnalytics.Policies;
 
 namespace WorkOS.Api.Runtime;
 
@@ -123,6 +124,12 @@ public sealed class ActionRuntimeService
         if (expensePolicyFailure is not null)
         {
             return expensePolicyFailure;
+        }
+
+        var periodPolicyFailure = PeriodAnalyticsPolicy.Validate(card.Id, request);
+        if (periodPolicyFailure is not null)
+        {
+            return periodPolicyFailure;
         }
 
         var existingEvent = store.FindEventByIdempotencyKey(request.IdempotencyKey);

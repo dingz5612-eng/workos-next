@@ -79,7 +79,7 @@
       "cards": ["periodScope", "periodMetricsReview", "periodFinanceReview", "periodOperationsDiagnosis", "periodActionPlan", "periodClose"],
       "events": ["Accommodation.PeriodScopeConfirmed", "Accommodation.PeriodMetricsReviewed", "Accommodation.PeriodFinanceReviewed", "Accommodation.PeriodOperationsDiagnosed", "Accommodation.PeriodActionPlanCommitted", "Accommodation.PeriodReviewClosed", "Accommodation.PeriodActionPlanCompleted"],
       "ownsAggregates": ["PeriodReview", "ActionPlan"],
-      "status": "contract-only"
+      "status": "production-slice"
     },
     {
       "id": "Accommodation.CheckOut",

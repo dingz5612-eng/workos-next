@@ -7,6 +7,7 @@ using WorkOS.Api.Slices.Accommodation.CheckOutSettlement.Persistence;
 using WorkOS.Api.Slices.Accommodation.DepositLedger.Persistence;
 using WorkOS.Api.Slices.Accommodation.ExpenseLedger.Persistence;
 using WorkOS.Api.Slices.Accommodation.PaymentLedger.Persistence;
+using WorkOS.Api.Slices.Accommodation.PeriodAnalytics.Persistence;
 using WorkOS.Api.Slices.Accommodation.ResourceSetup.Aggregates;
 using WorkOS.Api.Slices.Accommodation.ResourceSetup.Events;
 using WorkOS.Api.Slices.Accommodation.ServiceTask.Persistence;
@@ -21,6 +22,7 @@ internal sealed class SliceAggregateStorage
     private readonly CheckOutSettlementStorage checkoutSettlement;
     private readonly ServiceTaskStorage serviceTasks;
     private readonly ExpenseLedgerStorage expenses;
+    private readonly PeriodAnalyticsStorage periodAnalytics;
 
     public SliceAggregateStorage(PostgresConnectionFactory connections)
     {
@@ -30,6 +32,7 @@ internal sealed class SliceAggregateStorage
         checkoutSettlement = new CheckOutSettlementStorage(connections);
         serviceTasks = new ServiceTaskStorage(connections);
         expenses = new ExpenseLedgerStorage(connections);
+        periodAnalytics = new PeriodAnalyticsStorage(connections);
     }
 
     public void Apply(WorkspaceEvent workspaceEvent)
@@ -38,7 +41,8 @@ internal sealed class SliceAggregateStorage
             paymentLedger.Apply(workspaceEvent) ||
             checkoutSettlement.Apply(workspaceEvent) ||
             serviceTasks.Apply(workspaceEvent) ||
-            expenses.Apply(workspaceEvent))
+            expenses.Apply(workspaceEvent) ||
+            periodAnalytics.Apply(workspaceEvent))
         {
             return;
         }
