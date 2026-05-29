@@ -157,6 +157,7 @@ Assert-NoMatches @("apps/mobile/src/views/homeView.js") 'W-STAY-[A-Z-]+|W-REPAIR
 Assert-NoMatches @("apps/mobile/src/views/workbenchView.js", "apps/mobile/src/selectors/queueSelectors.js") "demoQueue|taskWorkspaceMap|workspaceIdForTask" "Workbench online queue must not use demoQueue or task-to-workspace inference."
 Assert-NoMatches @("apps/mobile/src/selectors/searchSelectors.js") "W-STAY-CHECKIN|W-STAY-DEPOSIT-EXCEPTION|W-STAY-CHECKOUT|W-REPAIR-REQUEST|W-REPAIR-DISPATCH|W-REPAIR-MASTER-DATA" "Search fallback must not route intents to deprecated workspace IDs."
 Assert-NoMatches @("apps/mobile/src") "taskWorkspaceMap|workspaceIdForTask" "Frontend must not infer workspaceId from taskId."
+Assert-NoMatches @("apps/mobile/src/selectors/workspaceSelectors.js") "W-STAY-CHECKIN|W-STAY-DEPOSIT-LEDGER|W-STAY-PAYMENT-LEDGER|W-STAY-CHECKOUT-SETTLEMENT|W-REPAIR-" "Workspace selector must open runtimeStore workspaces without business workspace fallback IDs."
 $workspaceProjectionFixture = Get-Content "apps/mobile/src/workspaceProjections.js" -Raw
 if ($workspaceProjectionFixture -notmatch "Offline/dev/test fallback fixture only") {
   Fail "workspaceProjections.js must declare its offline fallback reason."

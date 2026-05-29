@@ -31,7 +31,7 @@ export function task(state) {
 }
 
 export function workspace(state) {
-  return selectWorkspaceById(state, state.selectedWorkspace) || selectWorkspaceById(state, "W-STAY-CHECKIN") || selectRuntimeWorkspaces(state)[0];
+  return selectWorkspaceById(state, state.selectedWorkspace) || selectRuntimeWorkspaces(state)[0];
 }
 
 export function activeWorkspaceCard(item, selectedCardIndex, selectedCardId = "") {

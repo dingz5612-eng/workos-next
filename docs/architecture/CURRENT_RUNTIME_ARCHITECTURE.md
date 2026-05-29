@@ -3,16 +3,15 @@
 Last preflight source: local `main` after `git fetch origin main`,
 `git checkout main`, and `git pull --ff-only`.
 
-Current committed baseline before the in-flight Architecture Governance &
-Runtime Hardening commit:
+Current local commit at WON-16 Runtime Surface preflight:
 
 ```text
-60979c3 WON-16: Unify runtime surface entries
+4e646b2 WON-16: Harden runtime governance gates
 ```
 
-The working tree may contain uncommitted hardening changes. This document records
-repository facts during WON-16 validation work; it is not a claim that remote
-GitHub Actions is green.
+At preflight, local `main` is ahead of `origin/main` by one commit. This
+document records repository facts during WON-16 validation work; it is not a
+claim that remote GitHub Actions is green.
 
 ## Runtime Architecture
 
@@ -62,7 +61,7 @@ Current surface status:
 | Workbench | `work-queue` Lens or projection fallback |
 | Search | `search` Lens or projection fallback |
 | Learning | `learning-catalog` Lens or runtime workspaces |
-| Workspace | runtime workspace projection |
+| Workspace | runtime workspace projection, selected by runtime `workspaceId` / `cardId` |
 | Me | runtime queue/search state |
 
 ## Slice Manifest Status

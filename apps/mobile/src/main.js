@@ -37,7 +37,7 @@ async function hydrateProjectionFromApi() {
       optionalSurface(fetchWorkQueue),
       optionalSurface(fetchHomeSurface),
       optionalSurface(fetchLearningCatalog),
-      refreshDefaultAccommodationLenses()
+      optionalSurface(refreshDefaultAccommodationLenses)
     ]);
     applyRuntimeProjection(state, projection);
     applyRuntimeSurfacePayloads(state, { workQueue, homeSurface, learningCatalog, accommodationLenses });

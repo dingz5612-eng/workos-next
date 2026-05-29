@@ -4,8 +4,10 @@ import {
   selectHomeSurface,
   selectLearningCatalog,
   selectSearchSurfaceResults,
+  selectWorkspaceById,
   selectWorkbenchQueue
 } from "../selectors/surfaceSelectors.js";
+import { workspace as currentWorkspace } from "../selectors/workspaceSelectors.js";
 
 const depositWorkspace = workspace("W-STAY-DEPOSIT-LEDGER", "stay", "depositReceipt", "ready", "押金账本");
 const checkinWorkspace = workspace("W-STAY-CHECKIN", "stay", "lead", "ready", "入住押金");
@@ -69,6 +71,14 @@ describe("runtime surface selectors", () => {
     expect(ctx.state.selectedCardId).toBe("paymentReceipt");
     expect(ctx.state.view).toBe("workspace");
   });
+
+  it("resolves workspace view from runtimeStore without a business-id fallback", () => {
+    const state = runtimeState([paymentWorkspace]);
+    state.selectedWorkspace = "missing-workspace";
+
+    expect(selectWorkspaceById(state, "missing-workspace")).toBeUndefined();
+    expect(currentWorkspace(state).id).toBe("W-STAY-PAYMENT-LEDGER");
+  });
 });
 
 function runtimeState(workspaces, overrides = {}) {
@@ -109,4 +119,3 @@ function workspace(id, domain, cardId, status, zhTitle) {
     }]
   };
 }
-
