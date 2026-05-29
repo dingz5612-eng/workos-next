@@ -55,7 +55,7 @@
       "cards": ["checkoutStart", "roomInspection", "depositSettlement", "finalBalanceClose", "bedRelease", "postCheckoutCleaning"],
       "events": ["Accommodation.ResidentCheckedOut", "Accommodation.RoomInspected", "Accommodation.CheckoutIssueRaised", "Accommodation.DepositSettlementRequested", "Accommodation.FinalBalanceClosed", "Accommodation.BedReleased", "Accommodation.PostCheckoutCleaningRequested"],
       "ownsAggregates": ["Checkout", "RoomInspection", "Settlement"],
-      "status": "contract-only"
+      "status": "production-slice"
     },
     {
       "id": "Accommodation.ServiceTask",
@@ -63,7 +63,7 @@
       "cards": ["serviceTaskCreate", "serviceTaskAssign", "serviceTaskComplete", "serviceTaskVerify", "roomReleaseAfterService"],
       "events": ["Accommodation.ServiceTaskCreated", "Accommodation.ServiceTaskAssigned", "Accommodation.ServiceTaskCompleted", "Accommodation.ServiceTaskVerified", "Accommodation.RoomBlockedForService", "Accommodation.BedBlockedForService", "Accommodation.RoomReleaseAfterServiceRequested", "Accommodation.BedReleaseAfterServiceRequested"],
       "ownsAggregates": ["ServiceTask"],
-      "status": "contract-only"
+      "status": "production-slice"
     },
     {
       "id": "Accommodation.ExpenseLedger",
@@ -71,7 +71,7 @@
       "cards": ["expenseRecord", "expenseApproval", "expenseLink"],
       "events": ["Accommodation.ExpenseRecorded", "Accommodation.ExpenseEvidenceSubmitted", "Accommodation.ExpenseApproved", "Accommodation.ExpenseRejected", "Accommodation.ExpenseLinkedToRoom", "Accommodation.ExpenseLinkedToServiceTask"],
       "ownsAggregates": ["Expense"],
-      "status": "contract-only"
+      "status": "production-slice"
     },
     {
       "id": "Accommodation.PeriodAnalytics",

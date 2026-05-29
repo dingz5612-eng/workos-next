@@ -1,0 +1,97 @@
+using System.Globalization;
+using NpgsqlTypes;
+using WorkOS.Api.Runtime;
+
+namespace WorkOS.Api.Slices.Accommodation.ExpenseLedger.Persistence;
+
+internal sealed class ExpenseLedgerStorage
+{
+    private readonly PostgresConnectionFactory connections;
+
+    public ExpenseLedgerStorage(PostgresConnectionFactory connections)
+    {
+        this.connections = connections;
+    }
+
+    public bool Apply(WorkspaceEvent workspaceEvent)
+    {
+        switch (workspaceEvent.EventType)
+        {
+            case "Accommodation.ExpenseRecorded":
+            case "Accommodation.ExpenseEvidenceSubmitted":
+                UpsertExpense(workspaceEvent, "recorded");
+                return true;
+            case "Accommodation.ExpenseApproved":
+                UpsertExpense(workspaceEvent, "approved");
+                return true;
+            case "Accommodation.ExpenseRejected":
+                UpsertExpense(workspaceEvent, "rejected");
+                return true;
+            case "Accommodation.ExpenseLinkedToRoom":
+            case "Accommodation.ExpenseLinkedToServiceTask":
+                UpsertExpenseLink(workspaceEvent);
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    private void UpsertExpense(WorkspaceEvent workspaceEvent, string status)
+    {
+        using var connection = connections.Open();
+        using var command = connection.CreateCommand();
+        command.CommandText = """
+            insert into expenses(expense_id, workspace_id, expense_category, amount, currency, payment_method, status, approved_amount, created_event_id, updated_at_utc)
+            values (@expenseId, @workspaceId, @expenseCategory, @amount, @currency, @paymentMethod, @status, @approvedAmount, @createdEventId, @updatedAtUtc)
+            on conflict(expense_id) do update set
+                amount = excluded.amount,
+                status = excluded.status,
+                approved_amount = excluded.approved_amount,
+                updated_at_utc = excluded.updated_at_utc
+            """;
+        command.Parameters.AddWithValue("expenseId", Value(workspaceEvent, "支出记录", StableId("expense", workspaceEvent)));
+        command.Parameters.AddWithValue("workspaceId", workspaceEvent.WorkspaceId);
+        command.Parameters.AddWithValue("expenseCategory", Value(workspaceEvent, "支出类别", "维修"));
+        command.Parameters.AddWithValue("amount", NpgsqlDbType.Numeric, DecimalValue(workspaceEvent, "支出金额", 0m));
+        command.Parameters.AddWithValue("currency", Value(workspaceEvent, "币种", "KGS"));
+        command.Parameters.AddWithValue("paymentMethod", Value(workspaceEvent, "支付方式", "现金"));
+        command.Parameters.AddWithValue("status", status);
+        command.Parameters.AddWithValue("approvedAmount", NpgsqlDbType.Numeric, DecimalValue(workspaceEvent, "确认金额", DecimalValue(workspaceEvent, "支出金额", 0m)));
+        command.Parameters.AddWithValue("createdEventId", workspaceEvent.EventId);
+        command.Parameters.AddWithValue("updatedAtUtc", workspaceEvent.OccurredAtUtc);
+        command.ExecuteNonQuery();
+    }
+
+    private void UpsertExpenseLink(WorkspaceEvent workspaceEvent)
+    {
+        using var connection = connections.Open();
+        using var command = connection.CreateCommand();
+        command.CommandText = """
+            insert into expense_links(link_id, expense_id, workspace_id, room_id, bed_id, service_task_id, created_event_id, updated_at_utc)
+            values (@linkId, @expenseId, @workspaceId, @roomId, @bedId, @serviceTaskId, @createdEventId, @updatedAtUtc)
+            on conflict(link_id) do update set
+                room_id = excluded.room_id,
+                bed_id = excluded.bed_id,
+                service_task_id = excluded.service_task_id,
+                updated_at_utc = excluded.updated_at_utc
+            """;
+        command.Parameters.AddWithValue("linkId", StableId("expense-link", workspaceEvent));
+        command.Parameters.AddWithValue("expenseId", Value(workspaceEvent, "支出记录", StableId("expense", workspaceEvent)));
+        command.Parameters.AddWithValue("workspaceId", workspaceEvent.WorkspaceId);
+        command.Parameters.AddWithValue("roomId", Value(workspaceEvent, "关联房间", "A301"));
+        command.Parameters.AddWithValue("bedId", Value(workspaceEvent, "关联床位", "A301-02"));
+        command.Parameters.AddWithValue("serviceTaskId", Value(workspaceEvent, "关联任务", StableId("task", workspaceEvent)));
+        command.Parameters.AddWithValue("createdEventId", workspaceEvent.EventId);
+        command.Parameters.AddWithValue("updatedAtUtc", workspaceEvent.OccurredAtUtc);
+        command.ExecuteNonQuery();
+    }
+
+    private static string Value(WorkspaceEvent workspaceEvent, string key, string defaultValue) =>
+        workspaceEvent.Payload.TryGetValue(key, out var value) && !string.IsNullOrWhiteSpace(value) ? value : defaultValue;
+
+    private static decimal DecimalValue(WorkspaceEvent workspaceEvent, string key, decimal defaultValue) =>
+        workspaceEvent.Payload.TryGetValue(key, out var value) && decimal.TryParse(value, NumberStyles.Number, CultureInfo.InvariantCulture, out var parsed) ? parsed : defaultValue;
+
+    private static string StableId(string prefix, WorkspaceEvent workspaceEvent) =>
+        $"{prefix}-{workspaceEvent.WorkspaceId}".ToLowerInvariant();
+}

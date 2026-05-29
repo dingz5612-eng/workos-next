@@ -3,10 +3,13 @@ using NpgsqlTypes;
 using WorkOS.Api.Runtime;
 using WorkOS.Api.Slices.Accommodation.CheckIn.Aggregates;
 using WorkOS.Api.Slices.Accommodation.CheckIn.Events;
+using WorkOS.Api.Slices.Accommodation.CheckOutSettlement.Persistence;
 using WorkOS.Api.Slices.Accommodation.DepositLedger.Persistence;
+using WorkOS.Api.Slices.Accommodation.ExpenseLedger.Persistence;
 using WorkOS.Api.Slices.Accommodation.PaymentLedger.Persistence;
 using WorkOS.Api.Slices.Accommodation.ResourceSetup.Aggregates;
 using WorkOS.Api.Slices.Accommodation.ResourceSetup.Events;
+using WorkOS.Api.Slices.Accommodation.ServiceTask.Persistence;
 
 namespace WorkOS.Api.Slices.Persistence;
 
@@ -15,17 +18,27 @@ internal sealed class SliceAggregateStorage
     private readonly PostgresConnectionFactory connections;
     private readonly DepositLedgerStorage depositLedger;
     private readonly PaymentLedgerStorage paymentLedger;
+    private readonly CheckOutSettlementStorage checkoutSettlement;
+    private readonly ServiceTaskStorage serviceTasks;
+    private readonly ExpenseLedgerStorage expenses;
 
     public SliceAggregateStorage(PostgresConnectionFactory connections)
     {
         this.connections = connections;
         depositLedger = new DepositLedgerStorage(connections);
         paymentLedger = new PaymentLedgerStorage(connections);
+        checkoutSettlement = new CheckOutSettlementStorage(connections);
+        serviceTasks = new ServiceTaskStorage(connections);
+        expenses = new ExpenseLedgerStorage(connections);
     }
 
     public void Apply(WorkspaceEvent workspaceEvent)
     {
-        if (depositLedger.Apply(workspaceEvent) || paymentLedger.Apply(workspaceEvent))
+        if (depositLedger.Apply(workspaceEvent) ||
+            paymentLedger.Apply(workspaceEvent) ||
+            checkoutSettlement.Apply(workspaceEvent) ||
+            serviceTasks.Apply(workspaceEvent) ||
+            expenses.Apply(workspaceEvent))
         {
             return;
         }
