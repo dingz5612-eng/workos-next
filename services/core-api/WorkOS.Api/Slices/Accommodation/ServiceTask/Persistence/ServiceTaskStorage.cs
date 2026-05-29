@@ -59,7 +59,6 @@ internal sealed class ServiceTaskStorage
                 urgency = excluded.urgency,
                 blocks_availability = excluded.blocks_availability,
                 status = excluded.status,
-                actual_cost_amount = excluded.actual_cost_amount,
                 updated_at_utc = excluded.updated_at_utc
             """);
         command.Parameters.AddWithValue("taskId", Value(workspaceEvent, "任务", StableId("task", workspaceEvent)));
@@ -70,28 +69,20 @@ internal sealed class ServiceTaskStorage
         command.Parameters.AddWithValue("urgency", Value(workspaceEvent, "紧急程度", "中"));
         command.Parameters.AddWithValue("blocksAvailability", BoolValue(workspaceEvent, "是否阻断可售", true));
         command.Parameters.AddWithValue("status", status);
-        command.Parameters.AddWithValue("actualCostAmount", NpgsqlDbType.Numeric, DecimalValue(workspaceEvent, "实际成本", 0m));
+        command.Parameters.AddWithValue("actualCostAmount", NpgsqlDbType.Numeric, 0m);
         command.Parameters.AddWithValue("createdEventId", workspaceEvent.EventId);
         command.Parameters.AddWithValue("updatedAtUtc", workspaceEvent.OccurredAtUtc);
         command.ExecuteNonQuery();
     }
 
     private static string Value(WorkspaceEvent workspaceEvent, string key, string defaultValue) =>
-        workspaceEvent.Payload.TryGetValue(key, out var value) && !string.IsNullOrWhiteSpace(value) ? value : defaultValue;
+        RuntimeFieldAliases.Value(workspaceEvent.Payload, RuntimeFieldAliases.CanonicalKey(key), defaultValue);
 
     private static decimal DecimalValue(WorkspaceEvent workspaceEvent, string key, decimal defaultValue) =>
-        workspaceEvent.Payload.TryGetValue(key, out var value) && decimal.TryParse(value, NumberStyles.Number, CultureInfo.InvariantCulture, out var parsed) ? parsed : defaultValue;
+        RuntimeFieldAliases.DecimalValue(workspaceEvent.Payload, RuntimeFieldAliases.CanonicalKey(key), defaultValue);
 
-    private static bool BoolValue(WorkspaceEvent workspaceEvent, string key, bool defaultValue)
-    {
-        if (!workspaceEvent.Payload.TryGetValue(key, out var value))
-        {
-            return defaultValue;
-        }
-
-        return value.Equals("是", StringComparison.OrdinalIgnoreCase) ||
-            value.Equals("true", StringComparison.OrdinalIgnoreCase);
-    }
+    private static bool BoolValue(WorkspaceEvent workspaceEvent, string key, bool defaultValue) =>
+        RuntimeFieldAliases.BoolValue(workspaceEvent.Payload, RuntimeFieldAliases.CanonicalKey(key), defaultValue);
 
     private static string StableId(string prefix, WorkspaceEvent workspaceEvent) =>
         $"{prefix}-{workspaceEvent.WorkspaceId}".ToLowerInvariant();

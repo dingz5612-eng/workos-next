@@ -162,6 +162,12 @@ rules.
 - Option values are stable enum keys; localized labels are display-only.
 - Confirm commits audit, outbox, and aggregate writes in one database
   transaction.
+- Accommodation DepositLedger and PaymentLedger policies must read backend
+  ledger state for refund, deduction, payment, and allocation decisions.
+- CheckOutSettlement must not own deposit transactions.
+- ServiceTask must not directly mutate BedStatus facts.
+- ExpenseLedger is the only accommodation cost fact source.
+- PeriodAnalytics frozen snapshots must use append-only late adjustment policy.
 - Actor identity comes from server-issued session token.
 - Dev login still verifies configured password hashes; production must not start
   with development auth defaults.

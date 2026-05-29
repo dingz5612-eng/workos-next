@@ -90,6 +90,9 @@ Assert-NoMatches @("services/core-api/WorkOS.Api/Runtime/PostgresProjectionStore
 Assert-NoMatches @("services", "tests") "Events\.First\s*\(" "Confirm event dispatch must use EventSelectionPolicy and must never take only the first declared event."
 Assert-NoMatches @("services/core-api/WorkOS.Api/Slices", "services/core-api/WorkOS.Api/Runtime") 'Payload\.TryGetValue\("' "Runtime policy and storage must read canonical field ids through RuntimeFieldAliases, not label literals."
 Assert-NoMatches @("services/core-api/WorkOS.Api") "RuntimeAuthOptions\.Development" "Development auth defaults must not be referenced outside Program.cs and RuntimeAuthOptions.cs." "Program\.cs|RuntimeAuthOptions\.cs"
+Assert-NoMatches @("services/core-api/WorkOS.Api/Slices/Accommodation/CheckOutSettlement") "DepositRefundPaid|DepositDeducted|DepositAppliedToBalance|deposit_transactions" "CheckOutSettlement must not own deposit transaction facts."
+Assert-NoMatches @("services/core-api/WorkOS.Api/Slices/Accommodation/ServiceTask") "accommodation_beds|UpdateBedStatus|actual_cost_amount = excluded|DecimalValue\(workspaceEvent, `"实际成本`"" "ServiceTask must not directly mutate BedStatus or persist cost facts."
+Assert-NoMatches @("services/core-api/WorkOS.Api/Runtime/RuntimeAggregateLensStorage.cs") "actual_cost_amount" "Service task lenses must not expose service task cost as a fact source; use ExpenseLedger."
 
 $requiredSliceDirs = @(
   "services/core-api/WorkOS.Api/Slices/Accommodation/ResourceSetup",
@@ -128,6 +131,7 @@ $requiredStorageServices = @(
   "services/core-api/WorkOS.Api/Runtime/RuntimeDocumentStorage.cs",
   "services/core-api/WorkOS.Api/Runtime/RuntimeSessionStorage.cs",
   "services/core-api/WorkOS.Api/Runtime/RuntimeEventStorage.cs",
+  "services/core-api/WorkOS.Api/Runtime/RuntimeAccommodationLedgerStorage.cs",
   "services/core-api/WorkOS.Api/Runtime/RuntimeOutboxStorage.cs",
   "services/core-api/WorkOS.Api/Runtime/RuntimeBehaviorEventStorage.cs"
 )
@@ -326,6 +330,16 @@ if ($operationRuntime -notmatch "randomUUID") {
 }
 if ($operationRuntime -notmatch "evidenceIds") {
   Fail "Frontend confirm submissions must pass evidenceIds."
+}
+
+$depositPolicy = Get-Content "services/core-api/WorkOS.Api/Slices/Accommodation/DepositLedger/Policies/DepositLedgerPolicy.cs" -Raw
+if ($depositPolicy -notmatch "GetDepositLedgerState") {
+  Fail "DepositLedger policy must read backend deposit ledger state."
+}
+
+$paymentPolicy = Get-Content "services/core-api/WorkOS.Api/Slices/Accommodation/PaymentLedger/Policies/PaymentLedgerPolicy.cs" -Raw
+if ($paymentPolicy -notmatch "GetPaymentLedgerState") {
+  Fail "PaymentLedger policy must read backend payment ledger state."
 }
 
 Write-Host "Architecture guard: PASS"

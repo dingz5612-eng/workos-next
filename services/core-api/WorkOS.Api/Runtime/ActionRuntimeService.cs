@@ -98,13 +98,13 @@ public sealed class ActionRuntimeService
 
         request = request with { FieldValues = NormalizeFieldValues(card, request.FieldValues) };
 
-        var depositPolicyFailure = DepositLedgerPolicy.Validate(card.Id, request);
+        var depositPolicyFailure = DepositLedgerPolicy.Validate(card.Id, request, store);
         if (depositPolicyFailure is not null)
         {
             return depositPolicyFailure;
         }
 
-        var paymentPolicyFailure = PaymentLedgerPolicy.Validate(card.Id, request);
+        var paymentPolicyFailure = PaymentLedgerPolicy.Validate(card.Id, request, store);
         if (paymentPolicyFailure is not null)
         {
             return paymentPolicyFailure;

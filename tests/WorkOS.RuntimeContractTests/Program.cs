@@ -205,14 +205,24 @@ ResetPostgres(connectionString);
     }), financeToken).Status == ConfirmStatus.Confirmed, "finance should confirm deposit receipt");
     runtime.ProcessPendingOutbox();
 
+    var missingDepositLedger = AssertNoSideEffects(connectionString, () => runtime.Confirm("W-STAY-DEPOSIT-LEDGER", "depositRefundApproval", Human("deposit-refund-missing-ledger", new Dictionary<string, string>
+    {
+        ["押金单"] = "deposit-missing-ledger",
+        ["当前持有押金"] = "999999",
+        ["应退金额"] = "1"
+    }), operatorToken));
+    Assert(missingDepositLedger.Status == ConfirmStatus.Forbidden, "deposit settlement policies must require backend ledger state");
+    Assert(missingDepositLedger.Reason == "deposit_ledger_state_required", "deposit missing ledger reason must be stable");
+
     var overRefund = AssertNoSideEffects(connectionString, () => runtime.Confirm("W-STAY-DEPOSIT-LEDGER", "depositRefundApproval", Human("deposit-refund-over-held", new Dictionary<string, string>
     {
         ["押金单"] = "deposit-ledger-001",
-        ["当前持有押金"] = "3000",
-        ["扣除金额"] = "2000",
-        ["抵扣欠款金额"] = "2000"
+        ["当前持有押金"] = "999999",
+        ["扣除金额"] = "0",
+        ["抵扣欠款金额"] = "0",
+        ["应退金额"] = "3001"
     }), operatorToken));
-    Assert(overRefund.Status == ConfirmStatus.Forbidden, "deposit refund approval must reject more than held deposit");
+    Assert(overRefund.Status == ConfirmStatus.Forbidden, "deposit refund approval must reject more than backend-held deposit");
 
     Assert(runtime.Confirm("W-STAY-DEPOSIT-LEDGER", "depositRefundApproval", Human("deposit-refund-approval", new Dictionary<string, string>
     {
@@ -261,13 +271,22 @@ ResetPostgres(connectionString);
     }), financeToken).Status == ConfirmStatus.Confirmed, "finance should confirm ordinary payment");
     runtime.ProcessPendingOutbox();
 
+    var missingPaymentLedger = AssertNoSideEffects(connectionString, () => runtime.Confirm("W-STAY-PAYMENT-LEDGER", "paymentAllocation", Human("payment-allocation-missing-ledger", new Dictionary<string, string>
+    {
+        ["收款记录"] = "payment-missing-ledger",
+        ["确认金额"] = "999999",
+        ["分配金额"] = "1"
+    }), operatorToken));
+    Assert(missingPaymentLedger.Status == ConfirmStatus.Forbidden, "payment allocation policies must require backend ledger state");
+    Assert(missingPaymentLedger.Reason == "payment_ledger_state_required", "payment missing ledger reason must be stable");
+
     var overAllocation = AssertNoSideEffects(connectionString, () => runtime.Confirm("W-STAY-PAYMENT-LEDGER", "paymentAllocation", Human("payment-allocation-over", new Dictionary<string, string>
     {
         ["收款记录"] = "payment-ledger-001",
-        ["确认金额"] = "9300",
+        ["确认金额"] = "999999",
         ["分配金额"] = "10000"
     }), operatorToken));
-    Assert(overAllocation.Status == ConfirmStatus.Forbidden, "payment allocation must reject more than confirmed amount");
+    Assert(overAllocation.Status == ConfirmStatus.Forbidden, "payment allocation must reject more than backend-confirmed amount");
 
     Assert(runtime.Confirm("W-STAY-PAYMENT-LEDGER", "paymentAllocation", Human("payment-allocation", new Dictionary<string, string>
     {
@@ -296,6 +315,7 @@ ResetPostgres(connectionString);
     }, "inspection-photo-001"), operatorToken).Status == ConfirmStatus.Confirmed, "room inspection should pass");
     runtime.ProcessPendingOutbox();
 
+    var depositTransactionCountBeforeCheckoutSettlement = CountRows(connectionString, "deposit_transactions");
     Assert(runtime.Confirm("W-STAY-CHECKOUT-SETTLEMENT", "depositSettlement", Human("deposit-settlement-request", new Dictionary<string, string>
     {
         ["押金单"] = "deposit-ledger-001",
@@ -303,6 +323,7 @@ ResetPostgres(connectionString);
         ["抵扣欠款金额"] = "500"
     }), operatorToken).Status == ConfirmStatus.Confirmed, "checkout should request deposit settlement without owning deposit transaction");
     runtime.ProcessPendingOutbox();
+    Assert(CountRows(connectionString, "deposit_transactions") == depositTransactionCountBeforeCheckoutSettlement, "CheckOutSettlement must not create deposit transactions");
 
     var checkoutWithoutDepositSettlement = AssertNoSideEffects(connectionString, () => runtime.Confirm("W-STAY-CHECKOUT-SETTLEMENT", "finalBalanceClose", Human("checkout-close-without-deposit", new Dictionary<string, string>
     {
@@ -335,6 +356,7 @@ ResetPostgres(connectionString);
     }), operatorToken).Status == ConfirmStatus.Confirmed, "post-checkout cleaning request should pass");
     runtime.ProcessPendingOutbox();
 
+    var bedCountBeforeServiceTask = CountRows(connectionString, "accommodation_beds");
     Assert(runtime.Confirm("W-STAY-SERVICE-TASK", "serviceTaskCreate", HumanWithEvidence("service-task-create", new Dictionary<string, string>
     {
         ["任务"] = "task-phase3-001",
@@ -382,6 +404,7 @@ ResetPostgres(connectionString);
         ["床位"] = "A301-02"
     }), operatorToken).Status == ConfirmStatus.Confirmed, "service release request should pass after verification");
     runtime.ProcessPendingOutbox();
+    Assert(CountRows(connectionString, "accommodation_beds") == bedCountBeforeServiceTask, "ServiceTask must not directly create or mutate BedStatus facts");
 
     var expenseWithoutEvidence = AssertNoSideEffects(connectionString, () => runtime.Confirm("W-STAY-EXPENSE-LEDGER", "expenseRecord", Human("expense-without-evidence", new Dictionary<string, string>
     {
@@ -573,6 +596,8 @@ ResetPostgres(connectionString);
     Assert(CountRows(connectionString, "service_tasks") >= 1, "ServiceTask should persist service_tasks");
     Assert(CountRows(connectionString, "expenses") >= 1, "ExpenseLedger should persist expenses");
     Assert(CountRows(connectionString, "expense_links") >= 1, "ExpenseLedger should persist expense_links");
+    Assert(ScalarDecimal(connectionString, "select coalesce(max(actual_cost_amount), 0) from service_tasks") == 0m, "ServiceTask must not be a cost fact source");
+    Assert(ScalarDecimal(connectionString, "select amount from expenses where expense_id = 'expense-phase3-001'") == 800m, "ExpenseLedger must be the persisted cost fact source");
     Assert(CountRows(connectionString, "period_reviews") >= 1, "PeriodAnalytics should persist period_reviews");
     Assert(CountRows(connectionString, "period_metric_snapshots") >= 1, "PeriodAnalytics should persist frozen metric snapshots");
     Assert(CountRows(connectionString, "period_finance_snapshots") >= 1, "PeriodAnalytics should persist finance snapshots");
@@ -581,6 +606,7 @@ ResetPostgres(connectionString);
     Assert(CountRows(connectionString, "period_late_adjustments") >= 3, "PeriodAnalytics late adjustments should append events");
     Assert(ScalarDecimal(connectionString, "select average_occupancy_rate from period_metric_snapshots where period_id = 'PER-2026-05-01'") == 0m, "zero denominator should produce numeric zero");
     Assert(ScalarText(connectionString, "select average_occupancy_rate_status from period_metric_snapshots where period_id = 'PER-2026-05-01'") == "not_applicable", "zero denominator should mark formula not_applicable");
+    Assert(ScalarText(connectionString, "select snapshot_frozen::text from period_metric_snapshots where period_id = 'PER-2026-05-01'") == "true", "PeriodAnalytics metric snapshot must be marked frozen");
     Assert(ScalarDecimal(connectionString, "select bed_night_sold from period_metric_snapshots where period_id = 'PER-2026-05-01'") == 0m, "frozen period snapshot must not be mutated by a late metric replay");
     Assert(ScalarDecimal(connectionString, "select period_net_cash_flow from period_finance_snapshots where period_id = 'PER-2026-05-01'") == 8700m, "period net cash flow must exclude deposit received and deposit refund");
     Assert(ScalarDecimal(connectionString, "select deposit_liability_end from period_finance_snapshots where period_id = 'PER-2026-05-01'") == 0m, "deposit liability end formula should be persisted");
@@ -977,8 +1003,11 @@ static void ValidateProjectionContractFiles()
     {
         "slice_runtime_forbidden",
         "deposit_evidence_required",
+        "deposit_ledger_state_required",
         "deposit_refund_exceeds_held_amount",
+        "deposit_refund_approval_required",
         "payment_evidence_required",
+        "payment_ledger_state_required",
         "payment_allocation_exceeds_confirmed_amount",
         "checkout_deposit_settlement_required",
         "checkout_start_required_before_bed_release",

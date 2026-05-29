@@ -16,6 +16,7 @@ public sealed class PostgresProjectionStore : IProjectionStore
     private readonly RuntimeOutboxStorage outbox;
     private readonly RuntimeBehaviorEventStorage behaviorEvents;
     private readonly RuntimeAggregateLensStorage aggregateLenses;
+    private readonly RuntimeAccommodationLedgerStorage accommodationLedgers;
     private readonly SliceAggregateStorage sliceAggregates;
     private readonly PostgresConnectionFactory connections;
 
@@ -30,6 +31,7 @@ public sealed class PostgresProjectionStore : IProjectionStore
         outbox = new RuntimeOutboxStorage(connections);
         behaviorEvents = new RuntimeBehaviorEventStorage(connections);
         aggregateLenses = new RuntimeAggregateLensStorage(connections);
+        accommodationLedgers = new RuntimeAccommodationLedgerStorage(connections);
         sliceAggregates = new SliceAggregateStorage(connections);
     }
 
@@ -93,6 +95,12 @@ public sealed class PostgresProjectionStore : IProjectionStore
 
         return duplicateKey is null ? null : events.FindEventByIdempotencyKey(duplicateKey);
     }
+
+    public DepositLedgerState GetDepositLedgerState(string depositId)
+        => accommodationLedgers.GetDepositLedgerState(depositId);
+
+    public PaymentLedgerState GetPaymentLedgerState(string paymentId)
+        => accommodationLedgers.GetPaymentLedgerState(paymentId);
 
     public IReadOnlyList<OutboxMessage> GetPendingOutboxMessages(int take = 50) =>
         outbox.GetPending(take);

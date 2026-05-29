@@ -8,8 +8,11 @@
     "role_confirmation_forbidden",
     "slice_runtime_forbidden",
     "deposit_evidence_required",
+    "deposit_ledger_state_required",
     "deposit_refund_exceeds_held_amount",
+    "deposit_refund_approval_required",
     "payment_evidence_required",
+    "payment_ledger_state_required",
     "payment_allocation_exceeds_confirmed_amount",
     "checkout_deposit_settlement_required",
     "checkout_start_required_before_bed_release",
@@ -45,8 +48,8 @@
     },
     {
       "id": "accommodation-money-ledger-policy",
-      "description": "Accommodation money ledgers reject non-cash writes without evidence and reject over-refund or over-allocation commands.",
-      "denies": "deposit_evidence_required,deposit_refund_exceeds_held_amount,payment_evidence_required,payment_allocation_exceeds_confirmed_amount,expense_evidence_required"
+      "description": "Accommodation money ledgers reject non-cash writes without evidence and validate refund, deduction, payment, and allocation commands against backend ledger state.",
+      "denies": "deposit_evidence_required,deposit_ledger_state_required,deposit_refund_exceeds_held_amount,deposit_refund_approval_required,payment_evidence_required,payment_ledger_state_required,payment_allocation_exceeds_confirmed_amount,expense_evidence_required"
     },
     {
       "id": "accommodation-boundary-policy",

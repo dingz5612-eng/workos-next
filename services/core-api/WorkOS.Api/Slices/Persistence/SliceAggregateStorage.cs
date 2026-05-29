@@ -520,16 +520,16 @@ internal sealed class SliceAggregateStorage
     }
 
     private static string Value(WorkspaceEvent workspaceEvent, string key, string defaultValue) =>
-        RuntimeFieldAliases.Value(workspaceEvent.Payload, key, defaultValue);
+        RuntimeFieldAliases.Value(workspaceEvent.Payload, RuntimeFieldAliases.CanonicalKey(key), defaultValue);
 
     private static decimal DecimalValue(WorkspaceEvent workspaceEvent, string key, decimal defaultValue) =>
-        RuntimeFieldAliases.DecimalValue(workspaceEvent.Payload, key, defaultValue);
+        RuntimeFieldAliases.DecimalValue(workspaceEvent.Payload, RuntimeFieldAliases.CanonicalKey(key), defaultValue);
 
     private static int IntValue(WorkspaceEvent workspaceEvent, string key, int defaultValue) =>
-        RuntimeFieldAliases.IntValue(workspaceEvent.Payload, key, defaultValue);
+        RuntimeFieldAliases.IntValue(workspaceEvent.Payload, RuntimeFieldAliases.CanonicalKey(key), defaultValue);
 
     private static DateTimeOffset DateValue(WorkspaceEvent workspaceEvent, string key, DateTimeOffset defaultValue) =>
-        workspaceEvent.Payload.TryGetValue(key, out var value) && DateTimeOffset.TryParse(value, CultureInfo.InvariantCulture, DateTimeStyles.AssumeLocal, out var parsed)
+        workspaceEvent.Payload.TryGetValue(RuntimeFieldAliases.CanonicalKey(key), out var value) && DateTimeOffset.TryParse(value, CultureInfo.InvariantCulture, DateTimeStyles.AssumeLocal, out var parsed)
             ? parsed.ToUniversalTime()
             : defaultValue.ToUniversalTime();
 

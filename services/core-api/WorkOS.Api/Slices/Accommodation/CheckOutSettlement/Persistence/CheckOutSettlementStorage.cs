@@ -99,21 +99,13 @@ internal sealed class CheckOutSettlementStorage
     }
 
     private static string Value(WorkspaceEvent workspaceEvent, string key, string defaultValue) =>
-        workspaceEvent.Payload.TryGetValue(key, out var value) && !string.IsNullOrWhiteSpace(value) ? value : defaultValue;
+        RuntimeFieldAliases.Value(workspaceEvent.Payload, RuntimeFieldAliases.CanonicalKey(key), defaultValue);
 
     private static decimal DecimalValue(WorkspaceEvent workspaceEvent, string key, decimal defaultValue) =>
-        workspaceEvent.Payload.TryGetValue(key, out var value) && decimal.TryParse(value, NumberStyles.Number, CultureInfo.InvariantCulture, out var parsed) ? parsed : defaultValue;
+        RuntimeFieldAliases.DecimalValue(workspaceEvent.Payload, RuntimeFieldAliases.CanonicalKey(key), defaultValue);
 
-    private static bool BoolValue(WorkspaceEvent workspaceEvent, string key, bool defaultValue)
-    {
-        if (!workspaceEvent.Payload.TryGetValue(key, out var value))
-        {
-            return defaultValue;
-        }
-
-        return value.Equals("是", StringComparison.OrdinalIgnoreCase) ||
-            value.Equals("true", StringComparison.OrdinalIgnoreCase);
-    }
+    private static bool BoolValue(WorkspaceEvent workspaceEvent, string key, bool defaultValue) =>
+        RuntimeFieldAliases.BoolValue(workspaceEvent.Payload, RuntimeFieldAliases.CanonicalKey(key), defaultValue);
 
     private static string StableId(string prefix, WorkspaceEvent workspaceEvent) =>
         $"{prefix}-{workspaceEvent.WorkspaceId}".ToLowerInvariant();

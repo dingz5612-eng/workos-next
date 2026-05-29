@@ -51,7 +51,7 @@ internal sealed class ExpenseLedgerStorage
             insert into expenses(expense_id, workspace_id, expense_category, amount, currency, payment_method, status, approved_amount, created_event_id, updated_at_utc)
             values (@expenseId, @workspaceId, @expenseCategory, @amount, @currency, @paymentMethod, @status, @approvedAmount, @createdEventId, @updatedAtUtc)
             on conflict(expense_id) do update set
-                amount = excluded.amount,
+                amount = case when excluded.amount > 0 then excluded.amount else expenses.amount end,
                 status = excluded.status,
                 approved_amount = excluded.approved_amount,
                 updated_at_utc = excluded.updated_at_utc
@@ -92,10 +92,10 @@ internal sealed class ExpenseLedgerStorage
     }
 
     private static string Value(WorkspaceEvent workspaceEvent, string key, string defaultValue) =>
-        workspaceEvent.Payload.TryGetValue(key, out var value) && !string.IsNullOrWhiteSpace(value) ? value : defaultValue;
+        RuntimeFieldAliases.Value(workspaceEvent.Payload, RuntimeFieldAliases.CanonicalKey(key), defaultValue);
 
     private static decimal DecimalValue(WorkspaceEvent workspaceEvent, string key, decimal defaultValue) =>
-        workspaceEvent.Payload.TryGetValue(key, out var value) && decimal.TryParse(value, NumberStyles.Number, CultureInfo.InvariantCulture, out var parsed) ? parsed : defaultValue;
+        RuntimeFieldAliases.DecimalValue(workspaceEvent.Payload, RuntimeFieldAliases.CanonicalKey(key), defaultValue);
 
     private static string StableId(string prefix, WorkspaceEvent workspaceEvent) =>
         $"{prefix}-{workspaceEvent.WorkspaceId}".ToLowerInvariant();

@@ -335,6 +335,18 @@ outbox worker processing, and configuration separation are mandatory.
 - CI must run `validate-runtime-api.mjs` explicitly in addition to architecture
   guard coverage.
 - Production runtime must not start with development auth defaults.
+- Accommodation DepositLedger and PaymentLedger policies must verify backend
+  ledger state before approving refunds, deductions, payments, or allocations;
+  request payload balances are hints only.
+- CheckOutSettlement may request deposit settlement, but it must not emit or
+  persist deposit transactions. Deposit transactions belong to DepositLedger.
+- ServiceTask may request room or bed release after verification, but it must
+  not directly create or mutate BedStatus facts. BedStatus belongs to
+  ResourceSetup.
+- ExpenseLedger is the only accommodation cost fact source. Service tasks may
+  reference expense links, but cost amounts must be persisted through expenses.
+- PeriodAnalytics snapshots are frozen once written. Late source facts append
+  adjustment events and must not mutate the frozen snapshot.
 - Confirm commands must use idempotency keys and must not write duplicate audit
   events for repeated submissions.
 - PostgreSQL schema changes must be versioned through migrations recorded in

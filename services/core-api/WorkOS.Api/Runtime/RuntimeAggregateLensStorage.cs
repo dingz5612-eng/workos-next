@@ -230,7 +230,7 @@ internal sealed class RuntimeAggregateLensStorage
                     updatedAtUtc = reader.GetDateTime(7)
                 }),
             "service-task-queue" => Query("""
-                select task_id, workspace_id, task_type, room_id, bed_id, urgency, blocks_availability, status, actual_cost_amount, updated_at_utc
+                select task_id, workspace_id, task_type, room_id, bed_id, urgency, blocks_availability, status, updated_at_utc
                 from service_tasks
                 where status not in ('verified', 'cancelled')
                 order by updated_at_utc, task_id
@@ -245,8 +245,7 @@ internal sealed class RuntimeAggregateLensStorage
                     urgency = reader.GetString(5),
                     blocksAvailability = reader.GetBoolean(6),
                     status = reader.GetString(7),
-                    actualCostAmount = reader.GetDecimal(8),
-                    updatedAtUtc = reader.GetDateTime(9)
+                    updatedAtUtc = reader.GetDateTime(8)
                 }),
             "expense-analytics" => Query("""
                 select expense_category, currency, count(*) as expense_count, sum(amount) as total_amount, sum(approved_amount) as approved_amount

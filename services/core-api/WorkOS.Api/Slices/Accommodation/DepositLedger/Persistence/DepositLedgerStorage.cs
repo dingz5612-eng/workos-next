@@ -109,10 +109,10 @@ internal sealed class DepositLedgerStorage
     }
 
     private static string Value(WorkspaceEvent workspaceEvent, string key, string defaultValue) =>
-        RuntimeFieldAliases.Value(workspaceEvent.Payload, key, defaultValue);
+        RuntimeFieldAliases.Value(workspaceEvent.Payload, RuntimeFieldAliases.CanonicalKey(key), defaultValue);
 
     private static decimal DecimalValue(WorkspaceEvent workspaceEvent, string key, decimal defaultValue) =>
-        RuntimeFieldAliases.DecimalValue(workspaceEvent.Payload, key, defaultValue);
+        RuntimeFieldAliases.DecimalValue(workspaceEvent.Payload, RuntimeFieldAliases.CanonicalKey(key), defaultValue);
 
     private static string StableId(string prefix, WorkspaceEvent workspaceEvent) =>
         $"{prefix}-{workspaceEvent.WorkspaceId}".ToLowerInvariant();

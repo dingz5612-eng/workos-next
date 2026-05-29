@@ -18,6 +18,10 @@ public interface IProjectionStore
 
     WorkspaceEvent? CommitConfirmEvents(IReadOnlyList<IdempotentWorkspaceEvent> events);
 
+    DepositLedgerState GetDepositLedgerState(string depositId);
+
+    PaymentLedgerState GetPaymentLedgerState(string paymentId);
+
     IReadOnlyList<OutboxMessage> GetPendingOutboxMessages(int take = 50);
 
     IReadOnlyList<OutboxMessage> GetOutboxMessages();

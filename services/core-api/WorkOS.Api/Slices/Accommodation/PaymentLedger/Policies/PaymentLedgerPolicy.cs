@@ -4,7 +4,7 @@ namespace WorkOS.Api.Slices.Accommodation.PaymentLedger.Policies;
 
 internal static class PaymentLedgerPolicy
 {
-    public static ConfirmResult? Validate(string cardId, ConfirmCardRequest request)
+    public static ConfirmResult? Validate(string cardId, ConfirmCardRequest request, IProjectionStore store)
     {
         if (cardId.Equals("paymentReceipt", StringComparison.OrdinalIgnoreCase) &&
             IsNonCash(request, "paymentMethod") &&
@@ -15,9 +15,15 @@ internal static class PaymentLedgerPolicy
 
         if (cardId.Equals("paymentAllocation", StringComparison.OrdinalIgnoreCase))
         {
-            var confirmed = DecimalValue(request, "confirmedAmount", 0m);
+            var ledger = store.GetPaymentLedgerState(Value(request, "paymentId", string.Empty));
+            var confirmed = ledger.ConfirmedAmount;
             var allocated = DecimalValue(request, "allocatedAmount", 0m);
-            if (confirmed > 0m && allocated > confirmed)
+            if (confirmed <= 0m)
+            {
+                return new ConfirmResult(ConfirmStatus.Forbidden, "payment_ledger_state_required", null);
+            }
+
+            if (allocated > ledger.AvailableForAllocation)
             {
                 return new ConfirmResult(ConfirmStatus.Forbidden, "payment_allocation_exceeds_confirmed_amount", null);
             }
