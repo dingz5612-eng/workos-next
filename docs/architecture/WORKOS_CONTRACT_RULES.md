@@ -1,68 +1,99 @@
 # WorkOS Contract Rules
 
-Projection and API shape are executable contracts.
+Contracts are the source of truth for runtime shape, UI shape, and API shape.
+Runtime and frontend code must consume contracts rather than localized text or
+demo defaults.
 
-## Required Contract Files
+## Canonical Field Id
 
-```text
-docs/contracts/projection-contract.schema.json
-docs/contracts/workos-runtime.openapi.json
-docs/contracts/slice-manifest.json
-docs/contracts/policy-contract.json
-```
+`field.id` is the canonical business fact key. Request payloads, policies,
+storage, projector rules, and tests must use canonical field ids or canonical
+payload keys.
 
-CI must verify that these files exist and are parseable.
-
-Runtime contract tests must verify:
-
-- Projection envelope has `projection`, `version`, `languages`, `sourceOfTruth`, `workspaces`, and `events`.
-- Every workspace card has fields, evidence, checks, events, transitions, and confirmation policy.
-- Real API responses from `GET /api/workspaces`, `POST /prepare`,
-  `POST /confirm`, and `GET /api/observability/runtime` match the projection
-  and runtime contract shape.
-- Confirm OpenAPI requires `X-WorkOS-Actor-Token`.
-- Confirm request requires `language`, `idempotencyKey`, `fieldValues`, and `evidenceIds`.
-
-## Drift Prevention
-
-- Minimal API endpoint changes must update OpenAPI in the same commit.
-- Projection DTO changes must update schema in the same commit.
-- Frontend type generation should be added before expanding large workflows.
-- C# DTO validation should be added before exposing production clients.
-
-## Bilingual Contract
-
-Product-facing labels must include Chinese and Russian.
-
-Local hard-coded term dictionaries are temporary bridges only. New terminology should come from projection/i18n contracts.
-
-## Generated Client Direction
-
-Contracts must gradually replace hand-maintained DTOs and wording maps.
-
-Before adding more large production slices, add or preserve a path for:
-
-- OpenAPI-based frontend API client generation.
-- Projection schema validation in runtime contract tests.
-- TypeScript projection DTO generation.
-- C# DTO validation against the projection contract.
-- i18n term generation from projection/field metadata.
-
-The frontend must not keep inventing local names for backend fields, events,
-policies, or blockers when those names can be part of the contract.
-
-Generated DTOs are mandatory:
+Localized labels are display only:
 
 ```text
-apps/mobile/src/generated/workosContracts.d.ts
-apps/mobile/src/generated/runtimeApiPaths.js
+label.zh-CN
+label.ru-RU
 ```
 
-Run this after changing projection schema or OpenAPI:
+Localized labels must not be used as fact keys in runtime policy or storage.
 
-```powershell
-node scripts/generate-contract-dtos.mjs
-node scripts/generate-contract-dtos.mjs --check
+## Option Values
+
+`option.value` is a stable enum code. Labels localize display only.
+
+Examples:
+
+```text
+cash
+mbank
+bank_transfer
+confirmed
+rejected
+needs_review
+available
+reserved
+occupied
 ```
 
-CI and `guard-architecture.ps1` must fail when generated DTOs are stale.
+Do not use Chinese or Russian text as `option.value`.
+
+## Multi-Event Cards
+
+Cards that declare multiple events must declare dispatch semantics:
+
+- possible events only
+- conditional event selection
+- all events emitted on confirm
+
+Runtime must use `EventSelectionPolicy` to interpret these semantics.
+
+## Policy Decision Codes
+
+Every runtime policy rejection reason must use a stable decision code registered
+in `docs/contracts/policy-contract.json`. Free-form messages may be appended for
+human display, but the leading code must be machine-readable.
+
+Required baseline codes include:
+
+```text
+allowed
+ai_confirmation_forbidden
+role_confirmation_forbidden
+slice_runtime_forbidden
+deposit_evidence_required
+payment_evidence_required
+deposit_refund_exceeds_held_amount
+payment_allocation_exceeds_confirmed_amount
+business_rule_violation
+idempotency_duplicate
+idempotency_conflict
+invalid_actor_token
+```
+
+## OpenAPI Source of Truth
+
+`docs/contracts/workos-runtime.openapi.json` is the HTTP source of truth. The
+generated frontend runtime API paths must come from OpenAPI and include every
+runtime path.
+
+## No Fake Defaults
+
+Production-slice user input fields must not contain fake demo defaults such as:
+
+```text
+张三
+A301
+PAY-2026-009
+DEP-2026-009
++996 555 010101
+```
+
+Demo seed data must be separated from production contracts.
+
+## Contract Version and Hash Alignment
+
+When OpenAPI, projection schema, policy contract, or slice manifest changes,
+generated DTOs and runtime API paths must be regenerated. CI must fail if
+generated files drift from contract sources.

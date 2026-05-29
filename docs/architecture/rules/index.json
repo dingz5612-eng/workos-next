@@ -1,0 +1,186 @@
+{
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "WON16-RUNTIME-001",
+      "title": "Only prepare and confirm write endpoints",
+      "scope": "backend-api",
+      "severity": "P0",
+      "owner": "runtime",
+      "ruleFile": "docs/architecture/WORKOS_BACKEND_RUNTIME_RULES.md",
+      "enforcedBy": ["scripts/guard-architecture.ps1", "scripts/validate-runtime-api.mjs"],
+      "exceptionAllowed": false
+    },
+    {
+      "id": "WON16-RUNTIME-002",
+      "title": "Slice runtime capability gate",
+      "scope": "runtime",
+      "severity": "P0",
+      "owner": "runtime",
+      "ruleFile": "docs/architecture/WORKOS_BACKEND_RUNTIME_RULES.md",
+      "enforcedBy": ["tests/WorkOS.RuntimeContractTests", "scripts/guard-architecture.ps1"],
+      "exceptionAllowed": false
+    },
+    {
+      "id": "WON16-RUNTIME-003",
+      "title": "Confirm HTTP status semantics",
+      "scope": "backend-api frontend",
+      "severity": "P0",
+      "owner": "runtime",
+      "ruleFile": "docs/architecture/WORKOS_BACKEND_RUNTIME_RULES.md",
+      "enforcedBy": ["scripts/validate-runtime-api.mjs", "tests/WorkOS.UnitTests"],
+      "exceptionAllowed": false
+    },
+    {
+      "id": "WON16-RUNTIME-004",
+      "title": "Event selection policy only",
+      "scope": "runtime",
+      "severity": "P0",
+      "owner": "runtime",
+      "ruleFile": "docs/architecture/WORKOS_BACKEND_RUNTIME_RULES.md",
+      "enforcedBy": ["scripts/guard-architecture.ps1", "tests/WorkOS.UnitTests"],
+      "exceptionAllowed": false
+    },
+    {
+      "id": "WON16-RUNTIME-005",
+      "title": "Confirm unit of work",
+      "scope": "runtime persistence",
+      "severity": "P0",
+      "owner": "runtime",
+      "ruleFile": "docs/architecture/WORKOS_BACKEND_RUNTIME_RULES.md",
+      "enforcedBy": ["tests/WorkOS.RuntimeIntegrationTests"],
+      "exceptionAllowed": false
+    },
+    {
+      "id": "WON16-RUNTIME-006",
+      "title": "Idempotency atomic insert and duplicate semantics",
+      "scope": "runtime persistence api",
+      "severity": "P0",
+      "owner": "runtime",
+      "ruleFile": "docs/architecture/WORKOS_BACKEND_RUNTIME_RULES.md",
+      "enforcedBy": ["tests/WorkOS.RuntimeIntegrationTests", "scripts/validate-runtime-api.mjs"],
+      "exceptionAllowed": false
+    },
+    {
+      "id": "WON16-RUNTIME-007",
+      "title": "Outbox claim retry dead letter",
+      "scope": "runtime persistence",
+      "severity": "P0",
+      "owner": "runtime",
+      "ruleFile": "docs/architecture/WORKOS_BACKEND_RUNTIME_RULES.md",
+      "enforcedBy": ["scripts/guard-architecture.ps1", "tests/WorkOS.RuntimeIntegrationTests"],
+      "exceptionAllowed": false
+    },
+    {
+      "id": "WON16-FRONTEND-001",
+      "title": "Contract driven submit protocol",
+      "scope": "frontend",
+      "severity": "P0",
+      "owner": "frontend",
+      "ruleFile": "docs/architecture/WORKOS_FRONTEND_BOUNDARY_RULES.md",
+      "enforcedBy": ["apps/mobile vitest", "scripts/guard-architecture.ps1"],
+      "exceptionAllowed": false
+    },
+    {
+      "id": "WON16-FRONTEND-002",
+      "title": "Status code handling without session loss",
+      "scope": "frontend",
+      "severity": "P0",
+      "owner": "frontend",
+      "ruleFile": "docs/architecture/WORKOS_FRONTEND_BOUNDARY_RULES.md",
+      "enforcedBy": ["apps/mobile vitest"],
+      "exceptionAllowed": false
+    },
+    {
+      "id": "WON16-FRONTEND-003",
+      "title": "Escaped projection and user text",
+      "scope": "frontend",
+      "severity": "P0",
+      "owner": "frontend",
+      "ruleFile": "docs/architecture/WORKOS_FRONTEND_BOUNDARY_RULES.md",
+      "enforcedBy": ["scripts/guard-architecture.ps1", "apps/mobile vitest"],
+      "exceptionAllowed": true
+    },
+    {
+      "id": "WON16-CONTRACT-001",
+      "title": "Canonical field id",
+      "scope": "contracts runtime frontend",
+      "severity": "P0",
+      "owner": "contracts",
+      "ruleFile": "docs/architecture/WORKOS_CONTRACT_RULES.md",
+      "enforcedBy": ["node scripts/validate-contracts.mjs", "scripts/guard-architecture.ps1"],
+      "exceptionAllowed": false
+    },
+    {
+      "id": "WON16-CONTRACT-002",
+      "title": "Stable option value",
+      "scope": "contracts frontend runtime",
+      "severity": "P0",
+      "owner": "contracts",
+      "ruleFile": "docs/architecture/WORKOS_CONTRACT_RULES.md",
+      "enforcedBy": ["node scripts/validate-contracts.mjs", "tests/WorkOS.UnitTests"],
+      "exceptionAllowed": false
+    },
+    {
+      "id": "WON16-CONTRACT-003",
+      "title": "Policy decision code registry",
+      "scope": "contracts runtime",
+      "severity": "P0",
+      "owner": "contracts",
+      "ruleFile": "docs/architecture/WORKOS_CONTRACT_RULES.md",
+      "enforcedBy": ["tests/WorkOS.RuntimeContractTests"],
+      "exceptionAllowed": false
+    },
+    {
+      "id": "WON16-ACCOMMODATION-001",
+      "title": "Accommodation fact ownership",
+      "scope": "accommodation runtime persistence",
+      "severity": "P0",
+      "owner": "accommodation",
+      "ruleFile": "docs/architecture/WORKOS_ACCOMMODATION_RUNTIME_RULES.md",
+      "enforcedBy": ["scripts/guard-architecture.ps1", "tests/WorkOS.UnitTests"],
+      "exceptionAllowed": false
+    },
+    {
+      "id": "WON16-ACCOMMODATION-002",
+      "title": "Ledger state trust",
+      "scope": "accommodation runtime persistence",
+      "severity": "P0",
+      "owner": "accommodation",
+      "ruleFile": "docs/architecture/WORKOS_ACCOMMODATION_RUNTIME_RULES.md",
+      "enforcedBy": ["tests/WorkOS.RuntimeIntegrationTests", "tests/WorkOS.RuntimeContractTests"],
+      "exceptionAllowed": false
+    },
+    {
+      "id": "WON16-TESTING-001",
+      "title": "Safe destructive test database reset",
+      "scope": "tests persistence",
+      "severity": "P0",
+      "owner": "testing",
+      "ruleFile": "docs/architecture/WORKOS_TESTING_RULES.md",
+      "enforcedBy": ["tests/WorkOS.RuntimeIntegrationTests", "scripts/guard-architecture.ps1"],
+      "exceptionAllowed": false
+    },
+    {
+      "id": "WON16-TESTING-002",
+      "title": "No side effects on forbidden invalid confirm",
+      "scope": "tests runtime",
+      "severity": "P0",
+      "owner": "testing",
+      "ruleFile": "docs/architecture/WORKOS_TESTING_RULES.md",
+      "enforcedBy": ["tests/WorkOS.RuntimeContractTests", "tests/WorkOS.RuntimeIntegrationTests"],
+      "exceptionAllowed": false
+    },
+    {
+      "id": "WON16-CI-001",
+      "title": "CI evidence gate",
+      "scope": "ci",
+      "severity": "P1",
+      "owner": "ci",
+      "ruleFile": "docs/architecture/WORKOS_TESTING_RULES.md",
+      "enforcedBy": [".github/workflows/ci.yml", "scripts/guard-architecture.ps1"],
+      "exceptionAllowed": false
+    }
+  ]
+}
+

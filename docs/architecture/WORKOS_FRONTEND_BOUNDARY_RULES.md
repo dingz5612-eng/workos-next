@@ -1,160 +1,77 @@
 # WorkOS Frontend Boundary Rules
 
-The PWA is a Projection Contract Lab and business acceptance bench. It must consume runtime contracts, not invent independent business models.
+The mobile PWA is a contract-driven runtime client. It does not own business
+truth, page-specific write APIs, or localized-label business inference.
 
-## Module Boundaries
+## Composition Shells
 
-`apps/mobile/src/main.js` is the composition shell.
+- `main.js` wires application composition only.
+- `eventBinder.js` binds top-level UI events only.
+- Views render state and call controller callbacks.
+- Controllers coordinate UI state.
+- `operationRuntime.js` owns prepare/confirm submit protocol.
+- `apiClient.js` owns API transport and HTTP parsing.
 
-New work goes into focused modules:
+No view module may call `fetch` or contain `/api/` paths.
 
-```text
-appState.js
-appShell.js
-appRouter.js
-eventBinder.js
-navigationController.js
-authController.js
-operationController.js
-queueController.js
-coachController.js
-apiClient.js
-operationRuntime.js
-operationDrafts.js
-views/*.js
-selectors/*.js
-controls/*.js
-workspaceView.js
-coachView.js
-```
+## Submit Protocol
 
-Forbidden in `main.js`:
+Every confirm submit must include:
 
 ```text
-fetch(
-/api/
-confirmCard
+idempotencyKey = crypto.randomUUID()
+submissionId = crypto.randomUUID()
+cardInstanceId = current card instance key
+aggregateRef = selected aggregate reference when applicable
+evidenceIds = evidence UI state
+fieldValues = canonical field id/value map
 ```
 
-`main.js` must stay under the 800-line transition budget and under the current
-stricter composition-shell guard. Do not raise the stricter guard without a
-documented migration reason.
+Do not build idempotency keys from `workspaceId`, `cardId`, or `actorId`.
+The backend derives trusted actor identity from the actor token only.
 
-`main.js` must stay between 150 and 250 lines when the application grows; tiny
-composition-only versions may be shorter. It should only initialize state, read
-URL params through `appState.js`, hydrate the API, assemble routes, render, and
-bind events.
+## Evidence
 
-`main.js` may only:
-
-- Initialize state.
-- Read URL parameters through `appState.js`.
-- Initialize API hydration.
-- Assemble routes.
-- Call `render`.
-- Call `bindEvents`.
-
-It must never own business judgment, field controls, API calls, confirmation
-actions, or learning-center rules.
-
-`eventBinder.js` is only the top-level DOM binding shell. It may attach event
-listeners and delegate to controllers, but it must not own auth flow, operation
-submit/draft collection, queue filtering, learning filters, navigation state
-rules, or derived-field updates.
-
-Ownership:
-
-- `navigationController.js` owns `setView`, onboarding, language changes,
-  workspace/card selection, and search navigation.
-- `authController.js` owns login and logout.
-- `operationController.js` owns operation drafts, operation value collection,
-  derived fields, and submit orchestration delegation.
-- `queueController.js` owns queue filter and sort state updates.
-- `coachController.js` owns learning-center filters and coach stage selection.
-- `views/workspaceView.js` owns workspace cards, operation panels, confirmation
-  text, operation controls, operation values, and next-card display.
-- `views/coachView.js` owns learning center rendering and scenario coach
-  explanations.
-- `selectors/searchSelectors.js` owns search ranking/search text.
-- `selectors/queueSelectors.js` owns queue counts and queue filtering.
-- `controls/fieldControls.js` owns field widget selection from projection
-  metadata.
-
-Other guarded frontend hubs:
-
-- `controls/fieldControls.js` must render from `field.ui` metadata and must not
-  infer business behavior from Chinese or Russian labels.
-- `i18n.js` is only the i18n composition manifest. Copy lives in focused modules
-  under `apps/mobile/src/i18n`; demo business objects and process/flow copy do
-  not belong in the manifest.
-- `styles.css` is only the style import manifest. CSS lives in focused modules
-  under `apps/mobile/src/styles`; when a stylesheet grows beyond the guard
-  threshold, split it by page or surface.
-- Frontend API paths must come from generated contract artifacts under
-  `apps/mobile/src/generated`, not hand-written endpoint strings in views or
-  operation modules.
-
-Required copy modules:
+Evidence UI must produce durable or locally traceable evidence records before
+confirm. Until a real upload service exists, the minimum contract is:
 
 ```text
-i18n/shellCopy.js
-i18n/demoCopy.js
-i18n/coachCopy.js
-i18n/operationCopy.js
+EvidenceRequirement -> EvidenceDraft -> evidenceIds[]
 ```
 
-Required style modules:
+`evidenceIds` must be submitted to confirm and persisted in audit payloads.
 
-```text
-styles/base.css
-styles/shell.css
-styles/workspace.css
-styles/coach.css
-styles/operation.css
-styles/responsive.css
-```
+## HTTP Handling
 
-## Field Runtime
+Frontend handling must preserve session correctly:
 
-Writable fields must not be plain text by default.
+| HTTP | Frontend behavior |
+| --- | --- |
+| `401` | Clear session and return to login. |
+| `403` | Show permission or slice status blocker; do not clear session. |
+| `409` | Show duplicate or idempotency result; do not clear session. |
+| `422` | Show business blocker/reason; do not clear session. |
+| `400` | Show request format error; do not clear session. |
 
-- Select bounded business options.
-- Use date-time controls for business dates.
-- Use derived read-only fields when another field determines the value.
-- Save draft must persist and restore per workspace card.
-- Temporary front-end field catalogs are allowed only as a bridge toward projection/i18n field contracts.
+## Escaping
 
-## Product UX Boundary
+Projection text, user input, evidence names, Lens values, operation messages,
+and localized labels must be escaped before entering HTML strings. Prefer DOM
+builders where practical; otherwise use shared `escapeHtml` and `escapeAttr`
+helpers. Do not interpolate raw projection or user text into `innerHTML`.
 
-The PWA is not the final mobile client. It is the projection acceptance bench.
+## Lens Consumption
 
-Use it to prove:
+The frontend consumes Lens read models through contract paths generated from
+OpenAPI. Lens output is read-only and must not create a hidden write model.
 
-- Whether fields are understandable.
-- Whether evidence and blockers explain the business process.
-- Whether role confirmation is clear.
-- Whether events and projection updates match the real workflow.
-- Whether Chinese and Russian wording is acceptable.
+## Carried-Forward Scope
 
-Do not polish temporary hand-written card branches as if they were the final
-mobile product. First move field metadata, options, explanations, and bilingual
-terms into contracts so the later mobile client can reuse them.
+Carried-forward values must be scoped by aggregate and card instance. A field
+value from one aggregate instance must not bleed into a different aggregate
+because the field id is the same.
 
-## Contract-Driven Rendering Direction
+## Field Controls
 
-New large workflows should not add bespoke render logic to `main.js`.
-
-Move toward:
-
-```text
-projection/i18n contract -> fieldControls -> operationRuntime -> workspaceView
-```
-
-Field widgets, option labels, required evidence, confirmation notes, and blocker
-copy should be derived from projection contract metadata wherever possible.
-
-## Learning And Search
-
-Search, workbench, operation, and scenario coach must resolve to the same workspace card.
-
-Do not create duplicate page, search, learning, AI, task, or object models.
+`fieldControls.js` consumes `field.ui` contract metadata only. It must not infer
+business behavior from Chinese or Russian labels.

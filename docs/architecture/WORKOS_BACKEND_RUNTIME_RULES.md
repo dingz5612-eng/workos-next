@@ -1,256 +1,133 @@
 # WorkOS Backend Runtime Rules
 
-Backend runtime work must preserve the Work OS architecture, not create page-specific services.
+Backend runtime code must preserve the Slice/Card/Event architecture while
+making confirm behavior reliable, auditable, and contract-driven.
 
-## Runtime API Shape
+## Write Path
 
-Allowed business write path:
+The only business write endpoints are:
 
 ```text
 POST /api/workspaces/{workspaceId}/cards/{cardId}/prepare
 POST /api/workspaces/{workspaceId}/cards/{cardId}/confirm
 ```
 
-Do not add direct page APIs such as:
+Prepare may load projection, card contract, blockers, defaults, and allowed
+actions. Confirm is the only mutation path for business facts.
+
+## SliceRuntimeCapabilityGate
+
+Runtime capability is loaded from `docs/contracts/slice-manifest.json`.
+
+- `contract-only`: prepare allowed, confirm forbidden, no side effects.
+- `runtime-skeleton`: confirm allowed only when an explicit skeleton policy
+  exists for the slice.
+- `production-slice`: confirm requires policy, audit event, outbox message,
+  aggregate write, projector rule, and tests.
+
+Every new slice status behavior must have no-side-effect tests for forbidden
+confirm attempts.
+
+## EventSelectionPolicy
+
+Confirm dispatch must go through `EventSelectionPolicy`.
+
+- Single-event cards emit exactly one event.
+- Conditional cards select the confirmed or rejected event from stable contract
+  data and confirmation result.
+- Multi-event cards must explicitly declare that all selected events are emitted.
+
+Runtime code must not use `card.Events.First()` or equivalent first-event
+selection as the dispatch decision.
+
+## Confirm HTTP Status Semantics
+
+`Program.cs` maps runtime status to HTTP as follows:
+
+| Runtime condition | HTTP |
+| --- | --- |
+| Workspace or card not found | `404` |
+| Malformed input | `400` |
+| Missing or invalid actor token | `401` |
+| AI, role, or slice capability forbidden | `403` |
+| Duplicate or idempotency conflict | `409` |
+| Business policy violation | `422` |
+| Confirmed | `200` |
+
+Do not collapse all forbidden or invalid results into `400`.
+
+## ConfirmUnitOfWork
+
+Confirm must have one transaction boundary:
 
 ```text
-/api/hotel/checkin
-/api/finance/confirm-deposit
-/api/room/activate
+Begin transaction
+  insert audit_events
+  insert outbox_messages
+  apply slice aggregate writes
+Commit
 ```
 
-## Slice Ownership
+Any failure rolls back the entire confirm. `ActionRuntimeService` may delegate to
+storage helpers, but audit, outbox, and aggregate effects must share the same
+transaction or an explicit `ConfirmUnitOfWork`.
 
-Business work must be organized by production slice:
+## Idempotency
+
+Confirm idempotency is a database concern, not a frontend convention.
+
+- `audit_events.idempotency_key` must be unique.
+- Insertion must be atomic.
+- Duplicate submit returns the existing durable result without new audit,
+  outbox, or aggregate effects.
+- Conflicting reuse of a key must return a stable idempotency conflict response.
+
+## Outbox Reliability
+
+Outbox workers must claim before processing. The contract fields are:
 
 ```text
-Accommodation.ResourceSetup
-Accommodation.CheckIn
-Accommodation.CheckOut
-Finance.DepositException
-Repair.Dispatch
-Repair.Close
+claimed_by
+claimed_at_utc
+attempt_count
+last_error
+dead_lettered_at_utc
 ```
 
-Each slice owns Commands, Policies, Events, Projector Rules, Tests, and aggregate persistence tables when it mutates real objects.
+Existing schemas may migrate from `retry_count`, but the runtime contract should
+settle on `attempt_count`. Claiming must use `FOR UPDATE SKIP LOCKED` or an
+equivalent safe mechanism. Failures increment attempts, record `last_error`, and
+dead-letter after the configured threshold.
 
-Target structure:
+## ProjectionStateMigrator
 
-```text
-services/core-api/WorkOS.Api/Slices/Accommodation/ResourceSetup
-services/core-api/WorkOS.Api/Slices/Accommodation/CheckIn
-services/core-api/WorkOS.Api/Slices/Accommodation/CheckOut
-services/core-api/WorkOS.Api/Slices/Finance/DepositException
-services/core-api/WorkOS.Api/Slices/Repair/Dispatch
-services/core-api/WorkOS.Api/Slices/Repair/Close
+When contracts evolve, old `runtime_documents` must be upgraded by a named
+projection state migrator. Do not silently overwrite projection state to hide
+contract drift.
+
+## OpenAPI and Program Alignment
+
+OpenAPI is the HTTP source of truth. `Program.cs`, generated frontend
+`runtimeApiPaths`, runtime DTOs, and validation scripts must align with
+`docs/contracts/workos-runtime.openapi.json`.
+
+CI must run:
+
+```bash
+node scripts/validate-runtime-api.mjs
+node scripts/generate-contract-dtos.mjs --check
 ```
 
-Do not put new slice policy directly in `ProjectionRuntime`.
+## Production Auth
 
-`ProjectionRuntime` is a facade only. It may coordinate services under a lock,
-but it must not own lens ranking, search text construction, prepare/confirm
-policy details, session validation, outbox projection rules, SQL, migrations,
-or UI metadata.
+Development auth fallback belongs only in development configuration and must not
+be reachable in production. Production must reject dev passwords and untrusted
+actor identity from the request body.
 
-`CardConfirmationPolicy` must live outside `Runtime`, currently under:
+## Backend Facade Boundaries
 
-```text
-services/core-api/WorkOS.Api/Slices/Policies/CardConfirmationPolicy.cs
-```
-
-Required runtime service boundaries:
-
-```text
-RuntimeQueryService.cs
-LensQueryService.cs
-SearchProjectionService.cs
-ActionRuntimeService.cs
-AuthSessionService.cs
-OutboxProjector.cs
-```
-
-Other guarded backend hubs:
-
-- `PostgresProjectionStore.cs` is a facade implementing `IProjectionStore`.
-  It delegates connection, migration, runtime document, session, audit event,
-  outbox, and behavior event persistence to focused storage classes.
-- `ProjectionSeed.cs` is a contract seed assembler only. Workspace seeds, card
-  construction, evidence, checks, blockers, events, confirmation policy, field
-  UI, option sets, and bilingual terms live in focused contract catalogs.
-- Store classes must not contain slice policies, projector rules, lens ranking,
-  search text construction, or action confirmation policy.
-- `PostgresProjectionStore.cs` must remain a composed store facade. It must not
-  grow back into a single class containing session, audit, outbox, behavior,
-  migration, and document SQL.
-
-Guarded backend line budgets:
-
-```text
-ProjectionRuntime.cs: warn > 350 lines, fail > 450 lines.
-PostgresProjectionStore.cs: warn > 300 lines, fail > 400 lines.
-ProjectionSeed.cs: warn > 400 lines, fail > 500 lines.
-```
-
-The repository may enforce stricter budgets after a split has already landed.
-
-Required storage boundaries:
-
-```text
-PostgresConnectionFactory.cs
-PostgresMigrationRunner.cs
-RuntimeDocumentStorage.cs
-RuntimeSessionStorage.cs
-RuntimeEventStorage.cs
-RuntimeOutboxStorage.cs
-RuntimeBehaviorEventStorage.cs
-```
-
-Required contract seed boundaries:
-
-```text
-WorkspaceSeedCatalog.cs
-CardContractFactory.cs
-EvidenceContractCatalog.cs
-SystemCheckCatalog.cs
-EventContractCatalog.cs
-BlockerContractCatalog.cs
-ConfirmationPolicyCatalog.cs
-FieldContractCatalog.cs
-FieldUiContractCatalog.cs
-OptionSetRegistry.cs
-ContractText.cs
-```
-
-`docs/contracts/slice-manifest.json` is the executable slice registry. When a
-slice, card chain, event chain, or aggregate ownership changes, update the
-manifest in the same commit and keep the matching `services/core-api/WorkOS.Api/Slices/*`
-directory present.
-
-Only `Accommodation.ResourceSetup` and `Accommodation.CheckIn` have migrated
-slice modules at this stage. Their slice directories must contain Commands,
-Policies, Events, ProjectorRules, and Tests. Other slices may remain
-contract-only until deliberately migrated.
-
-## Policy Boundary
-
-Confirmation policy belongs in focused policy classes, starting with
-`CardConfirmationPolicy`.
-
-Policy contracts live in:
-
-```text
-docs/contracts/policy-contract.json
-```
-
-Forbidden confirmation outcomes must use stable decision codes such as
-`ai_confirmation_forbidden` and `role_confirmation_forbidden`. Do not scatter
-role/AI confirmation rules across endpoints, render functions, or projector
-rules.
-
-## Runtime Guarantees
-
-- Confirm commands require idempotency keys.
-- Confirm missing/expired actor session returns `401`; malformed input and
-  business policy blockers return `400` with stable reasons.
-- Confirm event selection goes through `EventSelectionPolicy`; `Events.First()`
-  is forbidden for dispatch.
-- Confirm idempotency keys are submit-level UUIDs and are enforced by the
-  database unique key.
-- Confirm persists `evidenceIds` on audit events.
-- Runtime policies and storage use canonical field ids, never localized labels,
-  as fact keys.
-- Option values are stable enum keys; localized labels are display-only.
-- Confirm commits audit, outbox, and aggregate writes in one database
-  transaction.
-- Outbox projection workers must claim messages with a lease, record retry
-  counts, and dead-letter repeatedly failing messages.
-- Accommodation DepositLedger and PaymentLedger policies must read backend
-  ledger state for refund, deduction, payment, and allocation decisions.
-- CheckOutSettlement must not own deposit transactions.
-- ServiceTask must not directly mutate BedStatus facts.
-- ExpenseLedger is the only accommodation cost fact source.
-- PeriodAnalytics frozen snapshots must use append-only late adjustment policy.
-- Actor identity comes from server-issued session token.
-- Dev login still verifies configured password hashes; production must not start
-  with development auth defaults.
-- Confirmed events append to audit journal and outbox.
-- Outbox worker updates projections.
-- Audit events and outbox messages include correlationId, causationId, and
-  requestId.
-- PostgreSQL schema changes live in `infra/db/migrations/*.sql`.
-- CORS is restricted by `Cors:AllowedOrigins`; `AllowAnyOrigin` is forbidden.
-
-## Endpoint Allowlist
-
-Every `MapPost` endpoint must be in the architecture allowlist enforced by
-`scripts/guard-architecture.ps1`.
-
-Allowed POST endpoints:
-
-```text
-/api/auth/login
-/api/workspaces/{workspaceId}/cards/{cardId}/prepare
-/api/workspaces/{workspaceId}/cards/{cardId}/confirm
-/api/projections/process-outbox
-/api/behavior-events
-```
-
-Do not add a new POST endpoint without updating OpenAPI, rules, and the guard
-in the same commit.
-
-## Persistence Direction
-
-Projection fields are not a substitute for writable business objects.
-
-Room, bed, deposit, finance confirmation, repair station, technician, and vehicle must move to aggregate roots and tables when they become writable.
-
-## Aggregate Root Gate
-
-A slice is not production-grade when it only changes `runtime_documents`.
-
-Before expanding a slice beyond contract validation, add explicit aggregate
-state and tests for the objects it owns. Examples:
-
-```text
-Accommodation.ResourceSetup -> rooms, beds, resource activation state
-Accommodation.CheckIn -> applications, stay orders, deposits, check-in records
-Finance.DepositException -> deposit exceptions, finance confirmations
-Repair.Dispatch -> repair stations, technicians, vehicles, dispatch assignments
-Repair.Close -> close records, fee/material confirmations, customer confirmation
-```
-
-Aggregate commands produce audit events; audit events produce outbox messages;
-outbox projector rules update read models. Direct projection mutation is only
-allowed inside projector rules.
-
-Current aggregate-root baseline:
-
-```text
-Accommodation.ResourceSetup -> Room, Bed
-Accommodation.CheckIn -> Deposit, FinanceConfirmation
-Repair.Dispatch -> RepairStation, Technician, Vehicle
-```
-
-Aggregate persistence must stay slice-owned:
-
-- Aggregate model files live in `Slices/*/*/Aggregates`.
-- Aggregate SQL lives in `infra/db/migrations/*.sql`.
-- Aggregate event application lives in slice persistence modules.
-- `ProjectionRuntime` coordinates only; it must not contain aggregate SQL or
-  table-specific business rules.
-- `PostgresProjectionStore` composes storage only; it must not become the owner
-  of every aggregate table operation.
-
-## Observability Boundary
-
-Runtime observability is part of the backend contract.
-
-The API must expose:
-
-```text
-GET /api/observability/runtime
-```
-
-It must report at least workspace count, card count, audit event count, outbox
-count, pending outbox count, behavior event count, persistence type, and runtime
-version. Observability must not become a write path.
+- `ProjectionRuntime.cs` stays a facade.
+- `PostgresProjectionStore.cs` stays a composed store.
+- `ProjectionSeed.cs` stays seed assembly.
+- Runtime policies do not depend on localized labels.
+- Slice-owned persistence owns slice facts.
