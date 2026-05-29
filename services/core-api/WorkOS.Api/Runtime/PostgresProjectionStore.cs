@@ -15,6 +15,7 @@ public sealed class PostgresProjectionStore : IProjectionStore
     private readonly RuntimeEventStorage events;
     private readonly RuntimeOutboxStorage outbox;
     private readonly RuntimeBehaviorEventStorage behaviorEvents;
+    private readonly RuntimeAggregateLensStorage aggregateLenses;
     private readonly SliceAggregateStorage sliceAggregates;
 
     public PostgresProjectionStore(string connectionString, string? migrationsPath = null)
@@ -27,6 +28,7 @@ public sealed class PostgresProjectionStore : IProjectionStore
         events = new RuntimeEventStorage(connections);
         outbox = new RuntimeOutboxStorage(connections);
         behaviorEvents = new RuntimeBehaviorEventStorage(connections);
+        aggregateLenses = new RuntimeAggregateLensStorage(connections);
         sliceAggregates = new SliceAggregateStorage(connections);
     }
 
@@ -77,4 +79,7 @@ public sealed class PostgresProjectionStore : IProjectionStore
 
     public IReadOnlyList<BehaviorEventRecord> GetBehaviorEvents() =>
         behaviorEvents.GetAll();
+
+    public IReadOnlyList<object> GetAccommodationLens(string lensId) =>
+        aggregateLenses.GetAccommodationLens(lensId);
 }

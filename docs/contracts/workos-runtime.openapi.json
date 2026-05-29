@@ -98,6 +98,24 @@
         }
       }
     },
+    "/api/lenses/accommodation/{lensId}": {
+      "get": {
+        "parameters": [
+          {
+            "name": "lensId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": ["bed-inventory", "deposit-liability", "stay-balance", "period-performance"]
+            }
+          }
+        ],
+        "responses": {
+          "200": { "description": "Accommodation aggregate lens results" }
+        }
+      }
+    },
     "/api/workspaces/{workspaceId}/cards/{cardId}/prepare": {
       "post": {
         "parameters": [

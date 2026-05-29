@@ -269,6 +269,7 @@ $allowedMapGetPaths = @(
   "/api/search",
   "/api/lenses/work-queue",
   "/api/lenses/search",
+  "/api/lenses/accommodation/{lensId}",
   "/api/workspaces/{workspaceId}/events",
   "/api/audit-events",
   "/api/outbox",

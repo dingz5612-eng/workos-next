@@ -65,6 +65,7 @@ app.MapGet("/api/work-queue", () => runtime.GetWorkQueue());
 app.MapGet("/api/search", (string? q) => runtime.Search(q));
 app.MapGet("/api/lenses/work-queue", () => runtime.GetWorkQueue());
 app.MapGet("/api/lenses/search", (string? q) => runtime.Search(q));
+app.MapGet("/api/lenses/accommodation/{lensId}", (string lensId) => runtime.GetAccommodationLens(lensId));
 
 app.MapPost("/api/workspaces/{workspaceId}/cards/{cardId}/prepare", (string workspaceId, string cardId) =>
 {

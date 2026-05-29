@@ -27,4 +27,6 @@ public interface IProjectionStore
     IReadOnlyList<WorkspaceEvent> GetAuditEvents(string? workspaceId = null);
 
     IReadOnlyList<BehaviorEventRecord> GetBehaviorEvents();
+
+    IReadOnlyList<object> GetAccommodationLens(string lensId);
 }

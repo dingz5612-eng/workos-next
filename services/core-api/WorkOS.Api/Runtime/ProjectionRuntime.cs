@@ -62,6 +62,14 @@ public sealed class ProjectionRuntime
         }
     }
 
+    public IReadOnlyList<object> GetAccommodationLens(string lensId)
+    {
+        lock (gate)
+        {
+            return store.GetAccommodationLens(lensId);
+        }
+    }
+
     public object? Prepare(string workspaceId, string cardId)
     {
         lock (gate)

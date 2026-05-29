@@ -496,6 +496,11 @@ ResetPostgres(connectionString);
     Assert(ScalarDecimal(connectionString, "select bed_night_sold from period_metric_snapshots where period_id = 'PER-2026-05-01'") == 0m, "frozen period snapshot must not be mutated by a late metric replay");
     Assert(ScalarDecimal(connectionString, "select period_net_cash_flow from period_finance_snapshots where period_id = 'PER-2026-05-01'") == 8700m, "period net cash flow must exclude deposit received and deposit refund");
     Assert(ScalarDecimal(connectionString, "select deposit_liability_end from period_finance_snapshots where period_id = 'PER-2026-05-01'") == 0m, "deposit liability end formula should be persisted");
+    Assert(LensContains(reloadedRuntime, "bed-inventory", "BedInventoryLens"), "BedInventoryLens should expose persisted bed inventory");
+    Assert(LensContains(reloadedRuntime, "deposit-liability", "DepositLiabilityLens"), "DepositLiabilityLens should expose deposit liabilities");
+    Assert(LensContains(reloadedRuntime, "stay-balance", "StayBalanceLens"), "StayBalanceLens should expose stay balances");
+    Assert(LensContains(reloadedRuntime, "period-performance", "PeriodPerformanceLens"), "PeriodPerformanceLens should expose period performance");
+    Assert(LensContains(reloadedRuntime, "period-performance", "8700"), "PeriodPerformanceLens should expose net cash flow from the frozen period review");
     Assert(CountRows(connectionString, "repair_stations") >= 2, "RepairStation aggregate roots should persist in repair_stations");
     Assert(CountRows(connectionString, "repair_technicians") >= 2, "Technician aggregate roots should persist in repair_technicians");
     Assert(CountRows(connectionString, "repair_vehicles") >= 2, "Vehicle aggregate roots should persist in repair_vehicles");
@@ -831,6 +836,7 @@ static void ValidateProjectionContractFiles()
     }
 
     Assert(openApi.RootElement.GetProperty("paths").TryGetProperty("/api/observability/runtime", out _), "OpenAPI must include runtime observability endpoint");
+    Assert(openApi.RootElement.GetProperty("paths").TryGetProperty("/api/lenses/accommodation/{lensId}", out _), "OpenAPI must include accommodation aggregate lens endpoint");
 
     using var policyContract = JsonDocument.Parse(File.ReadAllText(Path.Combine("docs", "contracts", "policy-contract.json")));
     var decisionCodes = policyContract.RootElement.GetProperty("decisionCodes").EnumerateArray().Select(item => item.GetString()).ToHashSet();
@@ -972,6 +978,12 @@ static int CountRows(string connectionString, string tableName)
     using var command = connection.CreateCommand();
     command.CommandText = $"select count(*) from {tableName}";
     return Convert.ToInt32(command.ExecuteScalar());
+}
+
+static bool LensContains(ProjectionRuntime runtime, string lensId, string expected)
+{
+    var lens = runtime.GetAccommodationLens(lensId);
+    return JsonSerializer.Serialize(lens).Contains(expected, StringComparison.OrdinalIgnoreCase);
 }
 
 static int TotalAggregateRows(string connectionString)

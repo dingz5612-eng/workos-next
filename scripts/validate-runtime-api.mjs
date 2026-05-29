@@ -25,6 +25,7 @@ try {
   const projection = await getJson("/api/workspaces");
   validateProjectionEnvelope(projection);
   await validatePrepare(projection);
+  await validateAccommodationLens();
   await validateConfirmPolicyResponse();
   await validateObservability();
   console.log("Runtime API contract responses: PASS");
@@ -80,6 +81,11 @@ async function validateConfirmPolicyResponse() {
   assert(response.status === 400, `confirm without actor token must return 400, got ${response.status}`);
   const body = await response.json();
   assert(body.error === "confirmation_forbidden", "confirm without actor token must return confirmation_forbidden");
+}
+
+async function validateAccommodationLens() {
+  const lens = await getJson("/api/lenses/accommodation/period-performance");
+  assert(Array.isArray(lens), "accommodation lens response must be an array");
 }
 
 async function validateObservability() {
