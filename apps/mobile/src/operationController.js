@@ -1,6 +1,6 @@
 import { capacityForRoomType } from "./controls/fieldControls.js";
 import { clearDraft, loadDraft, saveDraft } from "./operationDrafts.js";
-import { submitCardOperation } from "./operationRuntime.js";
+import { createSubmissionProtocol, submitCardOperation } from "./operationRuntime.js";
 import { setView } from "./navigationController.js";
 import { activeWorkspaceCard, isCardActionDisabled } from "./selectors/workspaceSelectors.js";
 import { applyRuntimeProjection } from "./runtime/runtimeStore.js";
@@ -45,14 +45,18 @@ export function toggleEvidenceSelection(event, ctx) {
   if (node.classList.contains("selected") && !node.dataset.evidenceDraftId) {
     node.dataset.evidenceDraftId = `evidence-${node.dataset.evidenceId}-${randomDraftId()}`;
   }
-  saveDraft(item.id, card.id, collectOperationValues(), collectEvidenceDrafts());
+  const fieldValues = collectOperationValues();
+  const evidenceDrafts = collectEvidenceDrafts();
+  saveDraft(item.id, card.id, fieldValues, evidenceDrafts, draftSubmissionProtocol(item, card, fieldValues, evidenceDrafts));
 }
 
 export function saveCurrentDraft(ctx) {
   const item = ctx.workspace();
   const card = activeWorkspaceCard(item, ctx.state.selectedCardIndex, ctx.state.selectedCardId);
   if (!item || !card) return;
-  saveDraft(item.id, card.id, collectOperationValues(), collectEvidenceDrafts());
+  const fieldValues = collectOperationValues();
+  const evidenceDrafts = collectEvidenceDrafts();
+  saveDraft(item.id, card.id, fieldValues, evidenceDrafts, draftSubmissionProtocol(item, card, fieldValues, evidenceDrafts));
   ctx.state.operationMessage = ctx.tr("draftSaved");
   ctx.render();
 }
@@ -74,7 +78,8 @@ export function collectDraftingValuesOnInput(event, ctx) {
   const card = activeWorkspaceCard(item, ctx.state.selectedCardIndex, ctx.state.selectedCardId);
   if (!item || !card) return;
   const evidenceDrafts = loadDraft(item.id, card.id).evidenceDrafts || [];
-  saveDraft(item.id, card.id, collectOperationValues(), evidenceDrafts);
+  const fieldValues = collectOperationValues();
+  saveDraft(item.id, card.id, fieldValues, evidenceDrafts, draftSubmissionProtocol(item, card, fieldValues, evidenceDrafts));
 }
 
 export async function submitCurrentCard(ctx) {
@@ -96,7 +101,9 @@ export async function submitCurrentCard(ctx) {
   }
   const fieldValues = collectOperationValues();
   const evidenceIds = collectEvidenceIds();
-  saveDraft(item.id, card.id, fieldValues, collectEvidenceDrafts());
+  const evidenceDrafts = collectEvidenceDrafts();
+  const submissionProtocol = draftSubmissionProtocol(item, card, fieldValues, evidenceDrafts);
+  saveDraft(item.id, card.id, fieldValues, evidenceDrafts, submissionProtocol);
   ctx.state.operationMessage = ctx.tr("submitting");
   ctx.render();
   try {
@@ -107,6 +114,7 @@ export async function submitCurrentCard(ctx) {
       language: ctx.state.lang,
       fieldValues,
       evidenceIds,
+      submissionProtocol,
       onProjection: (payload) => applyProjectionPayload(payload, ctx),
       onLens: (payload) => applyLensPayload(payload, ctx)
     });
@@ -146,6 +154,21 @@ export function confirmErrorMessage(error, ctx) {
 
 function randomDraftId() {
   return globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+}
+
+function draftSubmissionProtocol(item, card, fieldValues, evidenceDrafts) {
+  const protocol = loadDraft(item.id, card.id).submissionProtocol;
+  if (isCompleteSubmissionProtocol(protocol)) {
+    return protocol;
+  }
+
+  const created = createSubmissionProtocol(item, card);
+  saveDraft(item.id, card.id, fieldValues, evidenceDrafts, created);
+  return created;
+}
+
+function isCompleteSubmissionProtocol(protocol) {
+  return !!protocol?.idempotencyKey && !!protocol?.submissionId && !!protocol?.cardInstanceId;
 }
 
 function applyProjectionPayload(payload, ctx) {

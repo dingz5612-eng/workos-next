@@ -65,11 +65,11 @@ internal sealed class LeadReservationStorage
             """);
         command.Parameters.AddWithValue("leadId", LeadId(workspaceEvent));
         command.Parameters.AddWithValue("workspaceId", workspaceEvent.WorkspaceId);
-        command.Parameters.AddWithValue("guestName", Value(workspaceEvent, "leadName", "unknown-guest"));
-        command.Parameters.AddWithValue("phone", Value(workspaceEvent, "phone", "unknown-phone"));
+        command.Parameters.AddWithValue("guestName", Value(workspaceEvent, "leadName", string.Empty));
+        command.Parameters.AddWithValue("phone", Value(workspaceEvent, "phone", string.Empty));
         command.Parameters.AddWithValue("bedsNeeded", IntValue(workspaceEvent, "requestedBedCount", 1));
         command.Parameters.AddWithValue("stayDuration", Value(workspaceEvent, "stayDurationText", "unspecified"));
-        command.Parameters.AddWithValue("sourceChannel", Value(workspaceEvent, "leadSource", "unknown-source"));
+        command.Parameters.AddWithValue("sourceChannel", Value(workspaceEvent, "leadSource", string.Empty));
         command.Parameters.AddWithValue("status", status);
         command.Parameters.AddWithValue("createdEventId", workspaceEvent.EventId);
         command.Parameters.AddWithValue("updatedAtUtc", workspaceEvent.OccurredAtUtc);
@@ -92,7 +92,7 @@ internal sealed class LeadReservationStorage
         command.Parameters.AddWithValue("bookingId", ReservationId(workspaceEvent));
         command.Parameters.AddWithValue("workspaceId", workspaceEvent.WorkspaceId);
         command.Parameters.AddWithValue("leadId", LeadId(workspaceEvent));
-        command.Parameters.AddWithValue("reservedRoomBed", Value(workspaceEvent, "reservedBedIds", Value(workspaceEvent, "reservedRoomId", "unknown-room-bed")));
+        command.Parameters.AddWithValue("reservedRoomBed", Value(workspaceEvent, "reservedBedIds", Value(workspaceEvent, "reservedRoomId", string.Empty)));
         command.Parameters.AddWithValue("bedsReserved", IntValue(workspaceEvent, "reservedBedCount", 1));
         command.Parameters.AddWithValue("checkInDate", DateValue(workspaceEvent, "plannedCheckInDate", workspaceEvent.OccurredAtUtc));
         command.Parameters.AddWithValue("status", status);

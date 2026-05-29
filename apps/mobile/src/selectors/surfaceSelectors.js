@@ -77,7 +77,29 @@ export function selectSearchSurfaceResults(state, query) {
 }
 
 export function selectLearningCatalog(state) {
-  return selectRuntimeWorkspaces(state);
+  const catalog = state.runtimeStore?.learningCatalog || [];
+  if (!catalog.length) {
+    return selectRuntimeWorkspaces(state);
+  }
+
+  const workspaces = selectRuntimeWorkspaces(state);
+  const byId = new Map(workspaces.map((workspace) => [workspace.id, workspace]));
+  const grouped = new Map();
+  for (const entry of catalog) {
+    if (!entry?.workspaceId || !entry?.cardId) continue;
+    const workspace = byId.get(entry.workspaceId);
+    if (!workspace) continue;
+    if (!grouped.has(entry.workspaceId)) {
+      grouped.set(entry.workspaceId, { workspace, entries: [] });
+    }
+    grouped.get(entry.workspaceId).entries.push(entry);
+  }
+
+  return Array.from(grouped.values()).map(({ workspace, entries }) => ({
+    ...workspace,
+    cards: entries.map((entry) => learningCard(workspace, entry)),
+    _learningSource: state.runtimeStore?.learningSource || "runtime-api"
+  }));
 }
 
 export function selectWorkspaceById(state, workspaceId) {
@@ -147,6 +169,33 @@ function offlineDemoQueue() {
     cardId: "",
     source: "offline-demo-fallback"
   }));
+}
+
+function learningCard(workspace, entry) {
+  const card = selectCardById(workspace, entry.cardId);
+  if (card) {
+    return {
+      ...card,
+      fields: {
+        ...card.fields,
+        business: entry.fields?.length ? entry.fields : card.fields?.business || []
+      },
+      evidence: entry.evidence?.length ? entry.evidence : card.evidence || [],
+      checks: entry.checks?.length ? entry.checks : card.checks || [],
+      blockerRules: entry.blockers?.length ? entry.blockers : card.blockerRules || []
+    };
+  }
+
+  return {
+    id: entry.cardId,
+    status: "notStarted",
+    title: entry.title || workspace.title,
+    fields: { system: [], business: entry.fields || [], analytics: [] },
+    evidence: entry.evidence || [],
+    checks: entry.checks || [],
+    blockerRules: entry.blockers || [],
+    confirmation: { required: false, label: { "zh-CN": "", "ru-RU": "" } }
+  };
 }
 
 function withSurfaceCard(workspace, cardId, score) {

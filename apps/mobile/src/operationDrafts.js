@@ -13,12 +13,14 @@ export function loadDraft(workspaceId, cardId) {
   }
 }
 
-export function saveDraft(workspaceId, cardId, values, evidenceDrafts = []) {
+export function saveDraft(workspaceId, cardId, values, evidenceDrafts = [], submissionProtocol = null) {
+  const existing = loadDraft(workspaceId, cardId);
   const draft = {
     workspaceId,
     cardId,
     values,
     evidenceDrafts,
+    submissionProtocol: submissionProtocol || existing.submissionProtocol || null,
     savedAt: new Date().toISOString()
   };
   localStorage.setItem(draftKey(workspaceId, cardId), JSON.stringify(draft));

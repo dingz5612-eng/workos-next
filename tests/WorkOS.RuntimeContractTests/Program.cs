@@ -194,6 +194,15 @@ ResetPostgres(connectionString);
     Assert(missingDepositEvidence.Status == ConfirmStatus.Forbidden, "non-cash deposit receipt without evidence must be forbidden");
     Assert(missingDepositEvidence.Reason == "deposit_evidence_required:non_cash_deposit", "deposit evidence policy must use stable reason");
 
+    var missingDepositAmount = AssertNoSideEffects(connectionString, () => runtime.Confirm("W-STAY-DEPOSIT-LEDGER", "depositReceipt", Human("deposit-receipt-missing-amount", new Dictionary<string, string>
+    {
+        ["depositId"] = "deposit-ledger-001",
+        ["currency"] = "KGS",
+        ["paymentMethod"] = "cash"
+    }), operatorToken));
+    Assert(missingDepositAmount.Status == ConfirmStatus.Forbidden, "deposit receipt missing canonical amount must be forbidden");
+    Assert(missingDepositAmount.Reason == "missing_required_field:receivedAmount", "missing deposit amount must use stable reason");
+
     var depositReceipt = runtime.Confirm("W-STAY-DEPOSIT-LEDGER", "depositReceipt", HumanWithEvidence("deposit-receipt", new Dictionary<string, string>
     {
         ["depositId"] = "deposit-ledger-001",
@@ -205,6 +214,8 @@ ResetPostgres(connectionString);
     AssertConfirmEvents(depositReceipt, "Accommodation.DepositReceived", "Accommodation.DepositEvidenceSubmitted");
     runtime.ProcessPendingOutbox();
     Assert(runtime.GetAuditEvents("W-STAY-DEPOSIT-LEDGER").Any(item => item.CardId == "depositReceipt" && item.EvidenceIds?.Contains("deposit-proof-001") == true), "confirmed events must persist submitted evidenceIds");
+    Assert(ScalarDecimal(connectionString, "select coalesce(sum(amount), 0) from deposit_transactions where deposit_id = 'deposit-ledger-001' and transaction_type = 'received'") == 3000m, "DepositReceived must persist the received amount once");
+    Assert(ScalarDecimal(connectionString, "select coalesce(sum(amount), 0) from deposit_transactions where deposit_id = 'deposit-ledger-001' and transaction_type = 'evidence_submitted'") == 0m, "DepositEvidenceSubmitted must not change amount facts");
 
     var depositConfirmation = runtime.Confirm("W-STAY-DEPOSIT-LEDGER", "depositConfirmation", Human("deposit-confirmation", new Dictionary<string, string>
     {
@@ -265,10 +276,24 @@ ResetPostgres(connectionString);
     Assert(missingPaymentEvidence.Status == ConfirmStatus.Forbidden, "non-cash payment receipt without evidence must be forbidden");
     Assert(missingPaymentEvidence.Reason == "payment_evidence_required:non_cash_payment", "payment evidence policy must use stable reason");
 
+    var depositPurposeInPaymentLedger = AssertNoSideEffects(connectionString, () => runtime.Confirm("W-STAY-PAYMENT-LEDGER", "paymentReceipt", Human("payment-receipt-deposit-purpose", new Dictionary<string, string>
+    {
+        ["stayId"] = "stay-ledger-001",
+        ["paymentId"] = "payment-ledger-deposit-purpose",
+        ["payerName"] = "Ledger Guest",
+        ["paymentAmount"] = "3000",
+        ["currency"] = "KGS",
+        ["paymentMethod"] = "cash",
+        ["paymentPurpose"] = "deposit"
+    }), operatorToken));
+    Assert(depositPurposeInPaymentLedger.Status == ConfirmStatus.Forbidden, "ordinary PaymentLedger must reject deposit purpose");
+    Assert(depositPurposeInPaymentLedger.Reason == "payment_deposit_purpose_forbidden", "deposit purpose rejection must use stable reason");
+
     var paymentReceipt = runtime.Confirm("W-STAY-PAYMENT-LEDGER", "paymentReceipt", HumanWithEvidence("payment-receipt", new Dictionary<string, string>
     {
         ["stayId"] = "stay-ledger-001",
         ["paymentId"] = "payment-ledger-001",
+        ["payerName"] = "Ledger Guest",
         ["paymentAmount"] = "9300",
         ["currency"] = "KGS",
         ["paymentMethod"] = "bank_transfer",
@@ -311,12 +336,13 @@ ResetPostgres(connectionString);
         ["paymentId"] = "payment-ledger-001",
         ["confirmedAmount"] = "9300",
         ["allocatedAmount"] = "9300",
-        ["totalCharges"] = "9300"
+        ["totalCharges"] = "999999"
     }), operatorToken);
     Assert(paymentAllocation.Status == ConfirmStatus.Confirmed, "payment allocation within confirmed amount should pass");
     AssertConfirmEvents(paymentAllocation, "Accommodation.PaymentAllocated", "Accommodation.BalanceRecalculated");
     runtime.ProcessPendingOutbox();
     Assert(ScalarDecimal(connectionString, "select coalesce(sum(allocated_amount), 0) from payment_allocations where payment_id = 'payment-ledger-001'") == 9300m, "PaymentLedger allocation must persist allocatedAmount");
+    Assert(ScalarDecimal(connectionString, "select coalesce(max(total_charges), 0) from stay_balances where stay_id = 'stay-ledger-001'") == 0m, "StayBalance total charges must be recalculated from backend charge facts, not request payload");
     Assert(ScalarDecimal(connectionString, "select coalesce(max(balance), 0) from stay_balances where stay_id = 'stay-ledger-001'") == 0m, "StayBalance must be recalculated by backend ledger facts");
 
     Assert(runtime.Confirm("W-STAY-CHECKOUT-SETTLEMENT", "checkoutStart", Human("checkout-start", new Dictionary<string, string>
@@ -544,7 +570,7 @@ ResetPostgres(connectionString);
     Assert(periodCloseWithoutActionPlan.Status == ConfirmStatus.Forbidden, "high-risk period close must require an action plan");
     Assert(periodCloseWithoutActionPlan.Reason == "period_close_requires_action_plan_for_high_risk", "period close high-risk rejection must use stable reason");
 
-    Assert(runtime.Confirm("W-STAY-PERIOD-ANALYTICS", "periodActionPlan", Human("period-action-plan", new Dictionary<string, string>
+    var periodActionPlan = runtime.Confirm("W-STAY-PERIOD-ANALYTICS", "periodActionPlan", Human("period-action-plan", new Dictionary<string, string>
     {
         ["periodId"] = "PER-2026-05-01",
         ["actionPlanId"] = "period-plan-001",
@@ -555,7 +581,9 @@ ResetPostgres(connectionString);
         ["ownerName"] = "manager",
         ["priority"] = "high",
         ["actionStatus"] = "in_progress"
-    }), operatorToken).Status == ConfirmStatus.Confirmed, "period action plan should pass");
+    }), operatorToken);
+    Assert(periodActionPlan.Status == ConfirmStatus.Confirmed, "period action plan should pass");
+    AssertConfirmEvents(periodActionPlan, "Accommodation.PeriodActionPlanCommitted");
     runtime.ProcessPendingOutbox();
 
     Assert(runtime.Confirm("W-STAY-PERIOD-ANALYTICS", "periodClose", Human("period-close", new Dictionary<string, string>
@@ -658,7 +686,7 @@ ResetPostgres(connectionString);
     Assert(outbox.All(item => !string.IsNullOrWhiteSpace(item.CorrelationId)), "outbox messages must include correlationId");
     Assert(outbox.All(item => !string.IsNullOrWhiteSpace(item.RequestId)), "outbox messages must include requestId");
     Assert(outbox.All(item => !string.IsNullOrWhiteSpace(item.CausationId)), "outbox messages must include causationId");
-    Assert(outbox.All(item => item.RetryCount >= 1), "outbox messages must be claimed before processing");
+    Assert(outbox.All(item => item.AttemptCount >= 1), "outbox messages must be claimed before processing");
     Assert(outbox.All(item => item.DeadLetteredAtUtc is null), "successful outbox messages must not be dead-lettered");
     Assert(outbox.All(item => item.ProcessedAtUtc is not null), "all outbox messages should be processed by projector");
     Assert(reloadedRuntime.ProcessPendingOutbox() == 0, "outbox projector should be idempotent after processing");
@@ -931,6 +959,35 @@ static void ValidateRuntimeSurfaceLenses(ProjectionRuntime runtime)
     var learningJson = JsonSerializer.Serialize(runtime.GetLearningCatalog());
     Assert(learningJson.Contains("W-STAY-DEPOSIT-LEDGER", StringComparison.Ordinal), "learning catalog must expose DepositLedger");
     Assert(learningJson.Contains("depositReceipt", StringComparison.Ordinal), "learning catalog must expose card ids");
+
+    ValidateManifestDrivenSurfaceCoverage(runtime);
+}
+
+static void ValidateManifestDrivenSurfaceCoverage(ProjectionRuntime runtime)
+{
+    using var manifest = JsonDocument.Parse(File.ReadAllText(Path.Combine("docs", "contracts", "slice-manifest.json")));
+    var slices = manifest.RootElement.GetProperty("slices").EnumerateArray().ToArray();
+    var projection = runtime.GetAll();
+    var homeJson = JsonSerializer.Serialize(runtime.GetHomeSurface());
+    var queueJson = JsonSerializer.Serialize(runtime.GetWorkQueue());
+    var learningJson = JsonSerializer.Serialize(runtime.GetLearningCatalog());
+
+    foreach (var slice in slices)
+    {
+        var workspaceId = slice.GetProperty("workspaceId").GetString()!;
+        var cards = slice.GetProperty("cards").EnumerateArray().Select(item => item.GetString()).Where(item => item is not null).ToArray();
+        var workspace = projection.Workspaces.SingleOrDefault(item => item.Id == workspaceId);
+        Assert(workspace is not null, $"surface coverage slice references missing workspace {workspaceId}");
+        Assert(homeJson.Contains(workspaceId, StringComparison.Ordinal), $"home surface must include {workspaceId}");
+        Assert(queueJson.Contains(workspaceId, StringComparison.Ordinal), $"work queue surface must include {workspaceId}");
+        Assert(learningJson.Contains(workspaceId, StringComparison.Ordinal), $"learning catalog must include {workspaceId}");
+        Assert(JsonSerializer.Serialize(runtime.Search(workspaceId)).Contains(workspaceId, StringComparison.Ordinal), $"search surface must find {workspaceId}");
+
+        foreach (var cardId in cards)
+        {
+            Assert(workspace!.Cards.Any(card => card.Id == cardId), $"workspace surface must open {workspaceId}/{cardId}");
+        }
+    }
 }
 
 static void ValidateAllContractOnlySlicesAreGated(
@@ -1139,6 +1196,7 @@ static void ValidateProjectionContractFiles()
     foreach (var code in new[]
     {
         "business_rule_violation",
+        "missing_required_field",
         "idempotency_duplicate",
         "idempotency_conflict",
         "slice_runtime_forbidden",
@@ -1149,6 +1207,7 @@ static void ValidateProjectionContractFiles()
         "payment_evidence_required",
         "payment_ledger_state_required",
         "payment_allocation_exceeds_confirmed_amount",
+        "payment_deposit_purpose_forbidden",
         "checkout_deposit_settlement_required",
         "checkout_start_required_before_bed_release",
         "service_task_verification_required_before_release",
@@ -1178,7 +1237,7 @@ static void ValidateGeneratedDtos()
     var runtimeApiPathsPath = Path.Combine("apps", "mobile", "src", "generated", "runtimeApiPaths.js");
     Assert(File.Exists(runtimeApiPathsPath), "generated runtime API paths module must exist");
     var runtimeApiPaths = File.ReadAllText(runtimeApiPathsPath);
-    foreach (var apiPathKey in new[] { "health", "login", "workspaces", "workspace", "bootstrap", "workQueue", "search", "lensWorkQueue", "lensSearch", "accommodationLens", "prepareCard", "confirmCard", "workspaceEvents", "auditEvents", "outbox", "processOutbox", "behaviorEvents", "observability" })
+    foreach (var apiPathKey in new[] { "health", "login", "workspaces", "workspace", "bootstrap", "workQueue", "search", "lensWorkQueue", "lensSearch", "homeSurface", "learningCatalog", "accommodationLens", "prepareCard", "confirmCard", "workspaceEvents", "auditEvents", "outbox", "processOutbox", "behaviorEvents", "observability" })
     {
         Assert(runtimeApiPaths.Contains($"{apiPathKey}:"), $"generated runtime API paths must include {apiPathKey}");
     }

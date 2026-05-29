@@ -62,6 +62,29 @@ public sealed class RuntimeHardeningTests
     }
 
     [TestMethod]
+    public void EventSelectionPolicyCoversEveryMultiEventCardAndSplitsPeriodActionPlan()
+    {
+        foreach (var cardId in EventContractCatalog.MultiEventCardIds())
+        {
+            Assert.IsTrue(EventSelectionPolicy.HasExplicitPolicyFor(cardId), $"{cardId} must declare an explicit dispatch policy");
+        }
+
+        var inProgress = EventSelectionPolicy.PlanForConfirm(
+            Card("periodActionPlan", "Accommodation.PeriodActionPlanCommitted", "Accommodation.PeriodActionPlanCompleted"),
+            Request(new Dictionary<string, string> { ["actionStatus"] = "in_progress" }));
+        CollectionAssert.AreEqual(
+            new[] { "Accommodation.PeriodActionPlanCommitted" },
+            inProgress.Events.Select(item => item.EventType).ToArray());
+
+        var completed = EventSelectionPolicy.PlanForConfirm(
+            Card("periodActionPlan", "Accommodation.PeriodActionPlanCommitted", "Accommodation.PeriodActionPlanCompleted"),
+            Request(new Dictionary<string, string> { ["actionStatus"] = "completed" }));
+        CollectionAssert.AreEqual(
+            new[] { "Accommodation.PeriodActionPlanCommitted", "Accommodation.PeriodActionPlanCompleted" },
+            completed.Events.Select(item => item.EventType).ToArray());
+    }
+
+    [TestMethod]
     public void LedgerPoliciesTrustBackendStateInsteadOfRequestAmounts()
     {
         var store = new FakeStore(
@@ -85,6 +108,36 @@ public sealed class RuntimeHardeningTests
         }), store);
         Assert.AreEqual(ConfirmStatus.Forbidden, paymentResult?.Status);
         Assert.AreEqual("payment_allocation_exceeds_confirmed_amount", paymentResult?.Reason);
+    }
+
+    [TestMethod]
+    public void LedgerPoliciesRejectMissingFactsAndDepositPurposeInPaymentLedger()
+    {
+        var store = new FakeStore(
+            new DepositLedgerState("D-1", HeldAmount: 100m, DeductedAmount: 0m, AppliedToBalanceAmount: 0m, RefundApprovedAmount: 0m, RefundPaidAmount: 0m),
+            new PaymentLedgerState("P-1", ConfirmedAmount: 100m, AllocatedAmount: 0m));
+
+        var missingDepositAmount = DepositLedgerPolicy.Validate("depositReceipt", Request(new Dictionary<string, string>
+        {
+            ["depositId"] = "D-1",
+            ["currency"] = "KGS",
+            ["paymentMethod"] = "cash"
+        }), store);
+        Assert.AreEqual(ConfirmStatus.Forbidden, missingDepositAmount?.Status);
+        Assert.AreEqual("missing_required_field:receivedAmount", missingDepositAmount?.Reason);
+
+        var depositPurpose = PaymentLedgerPolicy.Validate("paymentReceipt", Request(new Dictionary<string, string>
+        {
+            ["stayId"] = "S-1",
+            ["paymentId"] = "P-1",
+            ["payerName"] = "Guest",
+            ["paymentAmount"] = "100",
+            ["currency"] = "KGS",
+            ["paymentMethod"] = "cash",
+            ["paymentPurpose"] = "deposit"
+        }), store);
+        Assert.AreEqual(ConfirmStatus.Forbidden, depositPurpose?.Status);
+        Assert.AreEqual("payment_deposit_purpose_forbidden", depositPurpose?.Reason);
     }
 
     [TestMethod]

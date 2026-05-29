@@ -27,16 +27,18 @@ internal sealed class DepositLedgerStorage
         switch (workspaceEvent.EventType)
         {
             case "Accommodation.DepositAssessed":
-                UpsertLiability(workspaceEvent, db, DecimalValue(workspaceEvent, "requiredDepositAmount", 3000m), 0m, "assessed");
+                UpsertLiability(workspaceEvent, db, DecimalValue(workspaceEvent, "requiredDepositAmount", 0m), 0m, "assessed");
                 return true;
             case "Accommodation.DepositReceived":
+                AppendTransaction(workspaceEvent, db, "received", DecimalValue(workspaceEvent, "receivedAmount", 0m), "pending_finance");
+                UpsertLiability(workspaceEvent, db, DecimalValue(workspaceEvent, "receivedAmount", 0m), DecimalValue(workspaceEvent, "receivedAmount", 0m), "received");
+                return true;
             case "Accommodation.DepositEvidenceSubmitted":
-                AppendTransaction(workspaceEvent, db, "received", DecimalValue(workspaceEvent, "receivedAmount", 3000m), "pending_finance");
-                UpsertLiability(workspaceEvent, db, DecimalValue(workspaceEvent, "receivedAmount", 3000m), DecimalValue(workspaceEvent, "receivedAmount", 3000m), "received");
+                AppendTransaction(workspaceEvent, db, "evidence_submitted", 0m, "evidence_submitted");
                 return true;
             case "Accommodation.DepositConfirmed":
-                AppendTransaction(workspaceEvent, db, "confirmed", DecimalValue(workspaceEvent, "confirmedAmount", 3000m), "confirmed");
-                UpsertLiability(workspaceEvent, db, DecimalValue(workspaceEvent, "confirmedAmount", 3000m), DecimalValue(workspaceEvent, "confirmedAmount", 3000m), "confirmed");
+                AppendTransaction(workspaceEvent, db, "confirmed", DecimalValue(workspaceEvent, "confirmedAmount", 0m), "confirmed");
+                UpsertLiability(workspaceEvent, db, DecimalValue(workspaceEvent, "confirmedAmount", 0m), DecimalValue(workspaceEvent, "confirmedAmount", 0m), "confirmed");
                 return true;
             case "Accommodation.DepositRejected":
                 AppendTransaction(workspaceEvent, db, "rejected", 0m, "rejected");

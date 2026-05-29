@@ -137,7 +137,7 @@ internal sealed class ResourceSetupStorage
         command.Parameters.AddWithValue("roomId", RoomId(workspaceEvent));
         command.Parameters.AddWithValue("dailyRate", NpgsqlDbType.Numeric, DecimalValue(workspaceEvent, "dailyRatePerBed", 350m));
         command.Parameters.AddWithValue("weeklyRate", NpgsqlDbType.Numeric, DecimalValue(workspaceEvent, "weeklyRatePerBed", 2100m));
-        command.Parameters.AddWithValue("monthlyRate", NpgsqlDbType.Numeric, DecimalValue(workspaceEvent, "monthlyRatePerBed", 9300m));
+        command.Parameters.AddWithValue("monthlyRate", NpgsqlDbType.Numeric, DecimalValue(workspaceEvent, "monthlyRatePerBed", 0m));
         command.Parameters.AddWithValue("currency", Value(workspaceEvent, "currency", "KGS"));
         command.Parameters.AddWithValue("effectiveFromUtc", NpgsqlDbType.TimestampTz, DateValue(workspaceEvent, "effectiveFrom", workspaceEvent.OccurredAtUtc));
         command.Parameters.AddWithValue("status", "active");
@@ -179,10 +179,10 @@ internal sealed class ResourceSetupStorage
     }
 
     private static string RoomNo(WorkspaceEvent workspaceEvent) =>
-        Value(workspaceEvent, "roomNo", "unknown-room");
+        Value(workspaceEvent, "roomNo", string.Empty);
 
     private static string BedNo(WorkspaceEvent workspaceEvent) =>
-        Value(workspaceEvent, "bedNo", "unknown-bed");
+        Value(workspaceEvent, "bedNo", string.Empty);
 
     private static bool TargetsBed(WorkspaceEvent workspaceEvent) =>
         Value(workspaceEvent, "resourceScope", string.Empty).Equals("bed", StringComparison.OrdinalIgnoreCase) ||

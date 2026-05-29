@@ -5,6 +5,12 @@ function Fail($message) {
   exit 1
 }
 
+function Assert-RipgrepAvailable {
+  if (-not (Get-Command rg -ErrorAction SilentlyContinue)) {
+    Fail "ripgrep (rg) is required for clean baseline checks."
+  }
+}
+
 function Assert-NoMatches($paths, $pattern, $message, $excludePattern = $null) {
   $matches = rg -n $pattern $paths 2>$null
   if ($LASTEXITCODE -eq 1) {
@@ -23,6 +29,8 @@ function Assert-NoMatches($paths, $pattern, $message, $excludePattern = $null) {
     Fail $message
   }
 }
+
+Assert-RipgrepAvailable
 
 Assert-NoMatches @("apps", "services", "tests", "docs/product", "docs/ux") "scenarioFlows|data-task|data-scenario|taskView|objectView" "Old page/task/object model terms must not remain in the active baseline."
 Assert-NoMatches @("docs") "local scaffold currently targets net9\.0" "Stale .NET 9 scaffold documentation is forbidden."

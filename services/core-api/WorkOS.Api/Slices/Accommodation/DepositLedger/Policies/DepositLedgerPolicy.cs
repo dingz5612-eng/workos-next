@@ -13,6 +13,12 @@ internal static class DepositLedgerPolicy
             return new ConfirmResult(ConfirmStatus.Forbidden, "deposit_evidence_required:non_cash_deposit", null);
         }
 
+        var missingRequired = MissingRequired(cardId, request);
+        if (missingRequired is not null)
+        {
+            return missingRequired;
+        }
+
         if (cardId.Equals("depositRefundApproval", StringComparison.OrdinalIgnoreCase))
         {
             var ledger = store.GetDepositLedgerState(Value(request, "depositId", string.Empty));
@@ -53,6 +59,38 @@ internal static class DepositLedgerPolicy
             {
                 return new ConfirmResult(ConfirmStatus.Forbidden, "deposit_refund_approval_required", null);
             }
+        }
+
+        return null;
+    }
+
+    private static ConfirmResult? MissingRequired(string cardId, ConfirmCardRequest request)
+    {
+        var required = cardId switch
+        {
+            "depositAssessment" => new[] { "stayId", "requiredDepositAmount", "currency" },
+            "depositReceipt" => new[] { "depositId", "receivedAmount", "currency", "paymentMethod" },
+            "depositConfirmation" => new[] { "depositReceiptId", "confirmedAmount", "confirmationResult" },
+            "depositDeduction" => new[] { "depositId" },
+            "depositRefundApproval" => new[] { "depositId" },
+            "depositRefundPayment" => new[] { "depositId", "refundAmount", "refundMethod" },
+            _ => Array.Empty<string>()
+        };
+
+        foreach (var key in required)
+        {
+            if (string.IsNullOrWhiteSpace(Value(request, key, string.Empty)))
+            {
+                return new ConfirmResult(ConfirmStatus.Forbidden, $"missing_required_field:{key}", null);
+            }
+        }
+
+        if (cardId.Equals("depositRefundApproval", StringComparison.OrdinalIgnoreCase) &&
+            DecimalValue(request, "deductionAmount", 0m) <= 0m &&
+            DecimalValue(request, "applyToBalanceAmount", 0m) <= 0m &&
+            DecimalValue(request, "refundAmount", 0m) <= 0m)
+        {
+            return new ConfirmResult(ConfirmStatus.Forbidden, "missing_required_field:settlementAmount", null);
         }
 
         return null;

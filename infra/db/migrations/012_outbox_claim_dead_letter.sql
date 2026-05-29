@@ -1,7 +1,7 @@
 alter table outbox_messages add column if not exists claimed_by text null;
 alter table outbox_messages add column if not exists claimed_at_utc timestamptz null;
 alter table outbox_messages add column if not exists claim_expires_at_utc timestamptz null;
-alter table outbox_messages add column if not exists retry_count integer not null default 0;
+alter table outbox_messages add column if not exists attempt_count integer not null default 0;
 alter table outbox_messages add column if not exists dead_lettered_at_utc timestamptz null;
 alter table outbox_messages add column if not exists last_error text null;
 

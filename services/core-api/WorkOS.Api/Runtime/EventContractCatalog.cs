@@ -5,6 +5,70 @@ namespace WorkOS.Api.Runtime;
 
 internal static class EventContractCatalog
 {
+    public static IReadOnlyList<string> KnownCardIds { get; } = new[]
+    {
+        "roomSetup",
+        "bedSetup",
+        "rateSetup",
+        "roomReadiness",
+        "roomBlock",
+        "roomRelease",
+        "lead",
+        "booking",
+        "resident",
+        "bedAssign",
+        "tariff",
+        "depositRequirement",
+        "payment",
+        "finance",
+        "checkin",
+        "operatingDashboard",
+        "leadCapture",
+        "leadFollowUp",
+        "reservationCreate",
+        "reservationCancel",
+        "reservationConvert",
+        "residentProfile",
+        "checkInBedAssign",
+        "chargeAssessment",
+        "stayExtension",
+        "depositAssessment",
+        "depositReceipt",
+        "depositConfirmation",
+        "depositDeduction",
+        "depositRefundApproval",
+        "depositRefundPayment",
+        "depositClose",
+        "paymentReceipt",
+        "paymentConfirmation",
+        "paymentAllocation",
+        "paymentAdjustment",
+        "debtFollowUp",
+        "checkoutStart",
+        "roomInspection",
+        "depositSettlement",
+        "finalBalanceClose",
+        "bedRelease",
+        "postCheckoutCleaning",
+        "serviceTaskCreate",
+        "serviceTaskAssign",
+        "serviceTaskComplete",
+        "serviceTaskVerify",
+        "roomReleaseAfterService",
+        "expenseRecord",
+        "expenseApproval",
+        "expenseLink",
+        "periodScope",
+        "periodMetricsReview",
+        "periodFinanceReview",
+        "periodOperationsDiagnosis",
+        "periodActionPlan",
+        "periodClose"
+    };
+
+    public static IReadOnlyList<string> MultiEventCardIds() =>
+        KnownCardIds.Where(cardId => ForCard(cardId).Count > 1).ToArray();
+
     public static IReadOnlyList<EventDefinition> ForCard(string cardId) =>
         Types(cardId).Select(eventType => new EventDefinition(eventType, true, ProjectionTargets())).ToArray();
 

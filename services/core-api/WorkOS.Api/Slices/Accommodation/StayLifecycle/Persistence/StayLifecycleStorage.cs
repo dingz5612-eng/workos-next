@@ -63,8 +63,8 @@ internal sealed class StayLifecycleStorage
             """);
         command.Parameters.AddWithValue("residentId", ResidentId(workspaceEvent));
         command.Parameters.AddWithValue("workspaceId", workspaceEvent.WorkspaceId);
-        command.Parameters.AddWithValue("residentName", Value(workspaceEvent, "residentName", "unknown-resident"));
-        command.Parameters.AddWithValue("phone", Value(workspaceEvent, "phone", "unknown-phone"));
+        command.Parameters.AddWithValue("residentName", Value(workspaceEvent, "residentName", string.Empty));
+        command.Parameters.AddWithValue("phone", Value(workspaceEvent, "phone", string.Empty));
         command.Parameters.AddWithValue("identityType", Value(workspaceEvent, "identityType", "passport"));
         command.Parameters.AddWithValue("identityNo", Value(workspaceEvent, "identityNo", string.Empty));
         command.Parameters.AddWithValue("gender", Value(workspaceEvent, "gender", "unrestricted"));
@@ -91,9 +91,9 @@ internal sealed class StayLifecycleStorage
             """);
         command.Parameters.AddWithValue("stayId", StayId(workspaceEvent));
         command.Parameters.AddWithValue("workspaceId", workspaceEvent.WorkspaceId);
-        command.Parameters.AddWithValue("residentName", Value(workspaceEvent, "residentName", "unknown-resident"));
-        command.Parameters.AddWithValue("phone", Value(workspaceEvent, "phone", "unknown-phone"));
-        command.Parameters.AddWithValue("roomBed", $"{Value(workspaceEvent, "roomId", "unknown-room")} / {Value(workspaceEvent, "bedId", "unknown-bed")}");
+        command.Parameters.AddWithValue("residentName", Value(workspaceEvent, "residentName", string.Empty));
+        command.Parameters.AddWithValue("phone", Value(workspaceEvent, "phone", string.Empty));
+        command.Parameters.AddWithValue("roomBed", $"{Value(workspaceEvent, "roomId", string.Empty)} / {Value(workspaceEvent, "bedId", string.Empty)}");
         command.Parameters.AddWithValue("checkInDate", DateValue(workspaceEvent, "checkInDate", workspaceEvent.OccurredAtUtc));
         command.Parameters.AddWithValue("plannedCheckoutDate", DateValue(workspaceEvent, "plannedCheckOutDate", workspaceEvent.OccurredAtUtc.AddMonths(1)));
         command.Parameters.AddWithValue("status", status);

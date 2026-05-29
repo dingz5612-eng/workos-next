@@ -64,8 +64,8 @@ internal sealed class ServiceTaskStorage
         command.Parameters.AddWithValue("taskId", Value(workspaceEvent, "taskId", StableId("task", workspaceEvent)));
         command.Parameters.AddWithValue("workspaceId", workspaceEvent.WorkspaceId);
         command.Parameters.AddWithValue("taskType", Value(workspaceEvent, "taskType", "cleaning"));
-        command.Parameters.AddWithValue("roomId", Value(workspaceEvent, "roomId", "unknown-room"));
-        command.Parameters.AddWithValue("bedId", Value(workspaceEvent, "bedId", "unknown-bed"));
+        command.Parameters.AddWithValue("roomId", Value(workspaceEvent, "roomId", string.Empty));
+        command.Parameters.AddWithValue("bedId", Value(workspaceEvent, "bedId", string.Empty));
         command.Parameters.AddWithValue("urgency", Value(workspaceEvent, "urgency", "normal"));
         command.Parameters.AddWithValue("blocksAvailability", BoolValue(workspaceEvent, "blocksAvailability", true));
         command.Parameters.AddWithValue("status", status);

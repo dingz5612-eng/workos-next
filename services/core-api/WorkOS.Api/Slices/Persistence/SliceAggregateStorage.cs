@@ -369,12 +369,12 @@ internal sealed class SliceAggregateStorage
 
     private static DepositAggregate DepositFrom(WorkspaceEvent workspaceEvent)
     {
-        var amount = DecimalValue(workspaceEvent, "depositAmount", 3000m);
+        var amount = DecimalValue(workspaceEvent, "depositAmount", 0m);
         var evidenceId = Value(workspaceEvent, "evidenceNo", $"evidence-{workspaceEvent.EventId}");
         return new DepositAggregate(
             $"deposit-{workspaceEvent.WorkspaceId}".ToLowerInvariant(),
             workspaceEvent.WorkspaceId,
-            Value(workspaceEvent, "stayId", "stay-order-current"),
+            Value(workspaceEvent, "stayId", string.Empty),
             amount,
             Value(workspaceEvent, "currency", "KGS"),
             Value(workspaceEvent, "paymentMethod", "cash"),
@@ -387,11 +387,11 @@ internal sealed class SliceAggregateStorage
     private static HostelLeadAggregate HostelLeadFrom(WorkspaceEvent workspaceEvent) => new(
         StableId("lead", workspaceEvent),
         workspaceEvent.WorkspaceId,
-        Value(workspaceEvent, "guestName", "unknown-guest"),
-        Value(workspaceEvent, "phone", "unknown-phone"),
-        IntValue(workspaceEvent, "requestedBedCount", 1),
-        Value(workspaceEvent, "stayDurationText", "unspecified"),
-        Value(workspaceEvent, "leadSource", "unknown-source"),
+        Value(workspaceEvent, "guestName", string.Empty),
+        Value(workspaceEvent, "phone", string.Empty),
+        IntValue(workspaceEvent, "requestedBedCount", 0),
+        Value(workspaceEvent, "stayDurationText", string.Empty),
+        Value(workspaceEvent, "leadSource", string.Empty),
         Value(workspaceEvent, "leadStatus", "reserved"),
         workspaceEvent.EventId,
         workspaceEvent.OccurredAtUtc);
@@ -400,8 +400,8 @@ internal sealed class SliceAggregateStorage
         StableId("booking", workspaceEvent),
         workspaceEvent.WorkspaceId,
         StableId("lead", workspaceEvent),
-        Value(workspaceEvent, "reservedBedIds", "unknown-room-bed"),
-        IntValue(workspaceEvent, "reservedBedCount", 1),
+        Value(workspaceEvent, "reservedBedIds", string.Empty),
+        IntValue(workspaceEvent, "reservedBedCount", 0),
         DateValue(workspaceEvent, "checkInDate", workspaceEvent.OccurredAtUtc),
         "confirmed",
         workspaceEvent.EventId,
@@ -410,9 +410,9 @@ internal sealed class SliceAggregateStorage
     private static HostelStayAggregate HostelStayFrom(WorkspaceEvent workspaceEvent) => new(
         StableId("stay", workspaceEvent),
         workspaceEvent.WorkspaceId,
-        Value(workspaceEvent, "guestName", Value(workspaceEvent, "residentName", "unknown-guest")),
-        Value(workspaceEvent, "phone", "unknown-phone"),
-        Value(workspaceEvent, "roomBed", Value(workspaceEvent, "reservedBedIds", "unknown-room-bed")),
+        Value(workspaceEvent, "guestName", Value(workspaceEvent, "residentName", string.Empty)),
+        Value(workspaceEvent, "phone", string.Empty),
+        Value(workspaceEvent, "roomBed", Value(workspaceEvent, "reservedBedIds", string.Empty)),
         DateValue(workspaceEvent, "checkInDate", workspaceEvent.OccurredAtUtc),
         DateValue(workspaceEvent, "plannedCheckOutDate", workspaceEvent.OccurredAtUtc.AddMonths(1)),
         workspaceEvent.EventType == CheckInEvents.StayCheckedIn ? "active" : "reserved",
@@ -421,8 +421,8 @@ internal sealed class SliceAggregateStorage
 
     private static GuestFolioAggregate GuestFolioFrom(WorkspaceEvent workspaceEvent)
     {
-        var unitPrice = DecimalValue(workspaceEvent, "unitRate", 9300m);
-        var quantity = DecimalValue(workspaceEvent, "tariffQuantity", 1m);
+        var unitPrice = DecimalValue(workspaceEvent, "unitRate", 0m);
+        var quantity = DecimalValue(workspaceEvent, "tariffQuantity", 0m);
         var charge = DecimalValue(workspaceEvent, "amount", unitPrice * quantity);
         return new GuestFolioAggregate(
             StableId("folio", workspaceEvent),
@@ -442,7 +442,7 @@ internal sealed class SliceAggregateStorage
 
     private static DepositLiabilityAggregate DepositLiabilityFrom(WorkspaceEvent workspaceEvent)
     {
-        var required = DecimalValue(workspaceEvent, "requiredDepositAmount", 3000m);
+        var required = DecimalValue(workspaceEvent, "requiredDepositAmount", 0m);
         return new DepositLiabilityAggregate(
             StableId("deposit", workspaceEvent),
             workspaceEvent.WorkspaceId,
@@ -451,7 +451,7 @@ internal sealed class SliceAggregateStorage
             0m,
             required,
             Value(workspaceEvent, "currency", "KGS"),
-            Value(workspaceEvent, "depositPolicyName", "standard_deposit"),
+            Value(workspaceEvent, "depositPolicyName", string.Empty),
             "required",
             workspaceEvent.EventId,
             workspaceEvent.OccurredAtUtc);
@@ -462,11 +462,11 @@ internal sealed class SliceAggregateStorage
         workspaceEvent.WorkspaceId,
         StableId("folio", workspaceEvent),
         StableId("deposit", workspaceEvent),
-        Value(workspaceEvent, "payerName", "unknown-payer"),
-        DecimalValue(workspaceEvent, "paymentAmount", DecimalValue(workspaceEvent, "depositAmount", 3000m)),
+        Value(workspaceEvent, "payerName", string.Empty),
+        DecimalValue(workspaceEvent, "paymentAmount", DecimalValue(workspaceEvent, "depositAmount", 0m)),
         Value(workspaceEvent, "currency", "KGS"),
         Value(workspaceEvent, "paymentMethod", "cash"),
-        Value(workspaceEvent, "paymentPurpose", "deposit"),
+        Value(workspaceEvent, "paymentPurpose", string.Empty),
         Value(workspaceEvent, "evidenceNo", $"evidence-{workspaceEvent.EventId}"),
         "pending_finance",
         workspaceEvent.EventId,
@@ -474,7 +474,7 @@ internal sealed class SliceAggregateStorage
 
     private static FinanceReconciliationAggregate FinanceReconciliationFrom(WorkspaceEvent workspaceEvent)
     {
-        var paymentAmount = DecimalValue(workspaceEvent, "paymentAmount", 3000m);
+        var paymentAmount = DecimalValue(workspaceEvent, "paymentAmount", 0m);
         var confirmedAmount = DecimalValue(workspaceEvent, "confirmedAmount", DecimalValue(workspaceEvent, "confirmedAmount", paymentAmount));
         return new FinanceReconciliationAggregate(
             StableId("reconciliation", workspaceEvent),
@@ -497,10 +497,10 @@ internal sealed class SliceAggregateStorage
         0.25m,
         1.0m,
         1.0m,
-        DecimalValue(workspaceEvent, "requiredDepositAmount", 3000m),
+        DecimalValue(workspaceEvent, "requiredDepositAmount", 0m),
         0m,
         0m,
-        DecimalValue(workspaceEvent, "amount", 9300m),
+        DecimalValue(workspaceEvent, "amount", 0m),
         Value(workspaceEvent, "reviewDecision", "review_completed"),
         workspaceEvent.EventId,
         workspaceEvent.OccurredAtUtc);
@@ -511,7 +511,7 @@ internal sealed class SliceAggregateStorage
             $"finance-{workspaceEvent.WorkspaceId}".ToLowerInvariant(),
             workspaceEvent.WorkspaceId,
             $"deposit-{workspaceEvent.WorkspaceId}".ToLowerInvariant(),
-            DecimalValue(workspaceEvent, "confirmedAmount", DecimalValue(workspaceEvent, "depositAmount", 3000m)),
+            DecimalValue(workspaceEvent, "confirmedAmount", DecimalValue(workspaceEvent, "depositAmount", 0m)),
             Value(workspaceEvent, "currency", "KGS"),
             "confirmed",
             workspaceEvent.ActorId,

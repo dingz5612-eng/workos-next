@@ -95,6 +95,7 @@ for (const code of [
   "allowed",
   "invalid_actor_token",
   "canonical_field_id_required",
+  "missing_required_field",
   "ai_confirmation_forbidden",
   "role_confirmation_forbidden",
   "slice_runtime_forbidden",
@@ -102,6 +103,7 @@ for (const code of [
   "payment_evidence_required",
   "deposit_refund_exceeds_held_amount",
   "payment_allocation_exceeds_confirmed_amount",
+  "payment_deposit_purpose_forbidden",
   "business_rule_violation",
   "idempotency_duplicate",
   "idempotency_conflict"

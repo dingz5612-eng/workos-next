@@ -20,7 +20,7 @@ public sealed record OutboxMessage(
     string? ClaimedBy = null,
     DateTimeOffset? ClaimedAtUtc = null,
     DateTimeOffset? ClaimExpiresAtUtc = null,
-    int RetryCount = 0,
+    int AttemptCount = 0,
     DateTimeOffset? DeadLetteredAtUtc = null,
     string? LastError = null);
 

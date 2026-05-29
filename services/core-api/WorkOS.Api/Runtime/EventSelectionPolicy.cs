@@ -2,6 +2,32 @@ namespace WorkOS.Api.Runtime;
 
 internal static class EventSelectionPolicy
 {
+    private static readonly HashSet<string> ExplicitMultiEventPolicies = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "roomBlock",
+        "roomRelease",
+        "reservationCancel",
+        "checkInBedAssign",
+        "stayExtension",
+        "depositReceipt",
+        "depositConfirmation",
+        "depositDeduction",
+        "paymentReceipt",
+        "paymentConfirmation",
+        "paymentAllocation",
+        "paymentAdjustment",
+        "roomInspection",
+        "serviceTaskCreate",
+        "roomReleaseAfterService",
+        "expenseRecord",
+        "expenseApproval",
+        "expenseLink",
+        "periodActionPlan"
+    };
+
+    public static bool HasExplicitPolicyFor(string cardId) =>
+        ExplicitMultiEventPolicies.Contains(cardId);
+
     public static EventDispatchPlan PlanForConfirm(CardProjection card, ConfirmCardRequest request)
     {
         if (card.Events.Count == 0)
@@ -25,6 +51,11 @@ internal static class EventSelectionPolicy
     {
         return card.Id switch
         {
+            "roomBlock" => AllEvents(card),
+            "roomRelease" => AllEvents(card),
+            "reservationCancel" => AllEvents(card),
+            "checkInBedAssign" => AllEvents(card),
+            "stayExtension" => AllEvents(card),
             "depositConfirmation" => ConfirmationResult(request) == "confirmed"
                 ? EventsOf(card, "Accommodation.DepositConfirmed")
                 : EventsOf(card, "Accommodation.DepositRejected"),
@@ -36,10 +67,17 @@ internal static class EventSelectionPolicy
                 : EventsOf(card, "Accommodation.ExpenseRejected"),
             "depositReceipt" => WithOptionalEvidence(card, "Accommodation.DepositReceived", "Accommodation.DepositEvidenceSubmitted", request),
             "paymentReceipt" => WithOptionalEvidence(card, "Accommodation.PaymentReceived", "Accommodation.PaymentEvidenceSubmitted", request),
+            "paymentAllocation" => AllEvents(card),
+            "paymentAdjustment" => AllEvents(card),
+            "roomInspection" => AllEvents(card),
             "expenseRecord" => WithOptionalEvidence(card, "Accommodation.ExpenseRecorded", "Accommodation.ExpenseEvidenceSubmitted", request),
+            "expenseLink" => AllEvents(card),
             "serviceTaskCreate" => ServiceTaskCreateEvents(card, request),
+            "roomReleaseAfterService" => AllEvents(card),
             "depositDeduction" => DepositSettlementEvents(card, request),
-            _ => card.Events
+            "periodActionPlan" => PeriodActionPlanEvents(card, request),
+            _ when card.Events.Count == 1 => card.Events,
+            _ => throw new InvalidOperationException($"Multi-event card '{card.Id}' requires an explicit EventSelectionPolicy.")
         };
     }
 
@@ -87,6 +125,19 @@ internal static class EventSelectionPolicy
         return selected.Count > 0 ? selected : card.Events;
     }
 
+    private static IReadOnlyList<EventDefinition> PeriodActionPlanEvents(CardProjection card, ConfirmCardRequest request)
+    {
+        var selected = EventsOf(card, "Accommodation.PeriodActionPlanCommitted").ToList();
+        var status = ResultValue(request, "actionStatus");
+        if (status.Equals("completed", StringComparison.OrdinalIgnoreCase) ||
+            status.Equals("done", StringComparison.OrdinalIgnoreCase))
+        {
+            selected.AddRange(EventsOf(card, "Accommodation.PeriodActionPlanCompleted"));
+        }
+
+        return selected;
+    }
+
     private static string ConfirmationResult(ConfirmCardRequest request) =>
         ResultValue(request, "confirmationResult") == "confirmed" ? "confirmed" : "rejected";
 
@@ -95,6 +146,9 @@ internal static class EventSelectionPolicy
 
     private static IEnumerable<EventDefinition> EventsOf(CardProjection card, string eventType) =>
         card.Events.Where(item => item.EventType.Equals(eventType, StringComparison.OrdinalIgnoreCase));
+
+    private static IReadOnlyList<EventDefinition> AllEvents(CardProjection card) =>
+        card.Events;
 }
 
 internal sealed record EventDispatchPlan(string DispatchMode, IReadOnlyList<EventDefinition> Events);

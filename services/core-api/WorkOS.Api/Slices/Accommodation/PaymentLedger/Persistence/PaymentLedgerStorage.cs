@@ -27,14 +27,15 @@ internal sealed class PaymentLedgerStorage
         switch (workspaceEvent.EventType)
         {
             case "Accommodation.PaymentReceived":
-            case "Accommodation.PaymentEvidenceSubmitted":
                 UpsertPayment(workspaceEvent, db, "pending_finance");
-                UpsertStayBalance(workspaceEvent, db, confirmedPayments: 0m, allocatedPayments: 0m, status: "payment_pending");
+                RecalculateStayBalance(workspaceEvent, db, status: "payment_pending");
+                return true;
+            case "Accommodation.PaymentEvidenceSubmitted":
                 return true;
             case "Accommodation.PaymentConfirmed":
                 UpsertFinanceReconciliation(workspaceEvent, db, "confirmed");
                 UpsertPayment(workspaceEvent, db, "confirmed");
-                UpsertStayBalance(workspaceEvent, db, confirmedPayments: DecimalValue(workspaceEvent, "confirmedAmount", 0m), allocatedPayments: 0m, status: "payment_confirmed");
+                RecalculateStayBalance(workspaceEvent, db, status: "payment_confirmed");
                 return true;
             case "Accommodation.PaymentRejected":
                 UpsertFinanceReconciliation(workspaceEvent, db, "rejected");
@@ -42,16 +43,17 @@ internal sealed class PaymentLedgerStorage
                 return true;
             case "Accommodation.PaymentAllocated":
                 AppendAllocation(workspaceEvent, db, "allocated");
-                UpsertStayBalance(workspaceEvent, db, confirmedPayments: DecimalValue(workspaceEvent, "confirmedAmount", DecimalValue(workspaceEvent, "allocatedAmount", 0m)), allocatedPayments: DecimalValue(workspaceEvent, "allocatedAmount", 0m), status: "allocated");
+                RecalculateStayBalance(workspaceEvent, db, status: "allocated");
                 return true;
             case "Accommodation.PaymentAdjusted":
                 AppendAllocation(workspaceEvent, db, "adjusted");
+                RecalculateStayBalance(workspaceEvent, db, status: "adjusted");
                 return true;
             case "Accommodation.DebtFollowUpRecorded":
-                UpsertStayBalance(workspaceEvent, db, confirmedPayments: 0m, allocatedPayments: 0m, status: "debt_follow_up");
+                RecalculateStayBalance(workspaceEvent, db, status: "debt_follow_up");
                 return true;
             case "Accommodation.BalanceRecalculated":
-                UpsertStayBalance(workspaceEvent, db, confirmedPayments: DecimalValue(workspaceEvent, "confirmedAmount", 0m), allocatedPayments: DecimalValue(workspaceEvent, "allocatedAmount", 0m), status: "recalculated");
+                RecalculateStayBalance(workspaceEvent, db, status: "recalculated");
                 return true;
             default:
                 return false;
@@ -72,11 +74,11 @@ internal sealed class PaymentLedgerStorage
         command.Parameters.AddWithValue("workspaceId", workspaceEvent.WorkspaceId);
         command.Parameters.AddWithValue("folioId", Value(workspaceEvent, "stayId", StableId("stay", workspaceEvent)));
         command.Parameters.AddWithValue("depositId", string.Empty);
-        command.Parameters.AddWithValue("payer", Value(workspaceEvent, "payerName", "unknown-payer"));
+        command.Parameters.AddWithValue("payer", Value(workspaceEvent, "payerName", string.Empty));
         command.Parameters.AddWithValue("amount", NpgsqlDbType.Numeric, DecimalValue(workspaceEvent, "paymentAmount", DecimalValue(workspaceEvent, "confirmedAmount", 0m)));
         command.Parameters.AddWithValue("currency", Value(workspaceEvent, "currency", "KGS"));
         command.Parameters.AddWithValue("method", Value(workspaceEvent, "paymentMethod", "cash"));
-        command.Parameters.AddWithValue("purpose", Value(workspaceEvent, "paymentPurpose", "rent"));
+        command.Parameters.AddWithValue("purpose", Value(workspaceEvent, "paymentPurpose", string.Empty));
         command.Parameters.AddWithValue("receiptNo", Value(workspaceEvent, "paymentEvidenceId", workspaceEvent.EventId));
         command.Parameters.AddWithValue("status", status);
         command.Parameters.AddWithValue("createdEventId", workspaceEvent.EventId);
@@ -130,18 +132,32 @@ internal sealed class PaymentLedgerStorage
         command.ExecuteNonQuery();
     }
 
-    private void UpsertStayBalance(WorkspaceEvent workspaceEvent, RuntimeDbSession db, decimal confirmedPayments, decimal allocatedPayments, string status)
+    private void RecalculateStayBalance(WorkspaceEvent workspaceEvent, RuntimeDbSession db, string status)
     {
-        var stayId = Value(workspaceEvent, "stayId", StableId("stay", workspaceEvent));
+        var stayId = ResolveStayId(workspaceEvent, db);
         var totalCharges = TotalChargesForStay(db, stayId);
+        var confirmedPayments = ConfirmedPaymentsForStay(db, stayId);
+        var allocatedPayments = AllocatedPaymentsForStay(db, stayId);
+        UpsertStayBalance(workspaceEvent, db, stayId, totalCharges, confirmedPayments, allocatedPayments, status);
+    }
+
+    private void UpsertStayBalance(
+        WorkspaceEvent workspaceEvent,
+        RuntimeDbSession db,
+        string stayId,
+        decimal totalCharges,
+        decimal confirmedPayments,
+        decimal allocatedPayments,
+        string status)
+    {
         var balance = Math.Max(totalCharges - allocatedPayments, 0m);
         using var command = db.CreateCommand("""
             insert into stay_balances(stay_id, workspace_id, total_charges, confirmed_payments, allocated_payments, balance, currency, status, created_event_id, updated_at_utc)
             values (@stayId, @workspaceId, @totalCharges, @confirmedPayments, @allocatedPayments, @balance, @currency, @status, @createdEventId, @updatedAtUtc)
             on conflict(stay_id) do update set
-                total_charges = greatest(stay_balances.total_charges, excluded.total_charges),
-                confirmed_payments = greatest(stay_balances.confirmed_payments, excluded.confirmed_payments),
-                allocated_payments = greatest(stay_balances.allocated_payments, excluded.allocated_payments),
+                total_charges = excluded.total_charges,
+                confirmed_payments = excluded.confirmed_payments,
+                allocated_payments = excluded.allocated_payments,
                 balance = excluded.balance,
                 status = excluded.status,
                 updated_at_utc = excluded.updated_at_utc
@@ -164,12 +180,59 @@ internal sealed class PaymentLedgerStorage
         using var command = db.CreateCommand("""
             select greatest(
                 coalesce((select sum(amount) from hostel_charges where stay_id = @stayId), 0),
-                coalesce((select sum(charge_amount) from guest_folios where stay_id = @stayId), 0),
-                coalesce((select max(total_charges) from stay_balances where stay_id = @stayId), 0)
+                coalesce((select sum(charge_amount) from guest_folios where stay_id = @stayId), 0)
             )
             """);
         command.Parameters.AddWithValue("stayId", stayId);
         return Convert.ToDecimal(command.ExecuteScalar() ?? 0m);
+    }
+
+    private static decimal ConfirmedPaymentsForStay(RuntimeDbSession db, string stayId)
+    {
+        using var command = db.CreateCommand("""
+            select coalesce(sum(reconciliation.confirmed_amount), 0)
+            from finance_reconciliations reconciliation
+            join hostel_payments payment on payment.payment_id = reconciliation.payment_id
+            where payment.folio_id = @stayId
+              and reconciliation.status = 'confirmed'
+            """);
+        command.Parameters.AddWithValue("stayId", stayId);
+        return Convert.ToDecimal(command.ExecuteScalar() ?? 0m);
+    }
+
+    private static decimal AllocatedPaymentsForStay(RuntimeDbSession db, string stayId)
+    {
+        using var command = db.CreateCommand("""
+            select coalesce(sum(allocation.allocated_amount), 0)
+            from payment_allocations allocation
+            join hostel_payments payment on payment.payment_id = allocation.payment_id
+            where payment.folio_id = @stayId
+            """);
+        command.Parameters.AddWithValue("stayId", stayId);
+        return Convert.ToDecimal(command.ExecuteScalar() ?? 0m);
+    }
+
+    private static string ResolveStayId(WorkspaceEvent workspaceEvent, RuntimeDbSession db)
+    {
+        var directStayId = Value(workspaceEvent, "stayId", string.Empty);
+        if (!string.IsNullOrWhiteSpace(directStayId))
+        {
+            return directStayId;
+        }
+
+        var paymentId = Value(workspaceEvent, "paymentId", string.Empty);
+        if (!string.IsNullOrWhiteSpace(paymentId))
+        {
+            using var command = db.CreateCommand("select folio_id from hostel_payments where payment_id = @paymentId");
+            command.Parameters.AddWithValue("paymentId", paymentId);
+            var storedStayId = Convert.ToString(command.ExecuteScalar());
+            if (!string.IsNullOrWhiteSpace(storedStayId))
+            {
+                return storedStayId!;
+            }
+        }
+
+        return StableId("stay", workspaceEvent);
     }
 
     private static string Value(WorkspaceEvent workspaceEvent, string key, string defaultValue) =>

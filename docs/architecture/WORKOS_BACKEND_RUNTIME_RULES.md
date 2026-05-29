@@ -96,10 +96,11 @@ last_error
 dead_lettered_at_utc
 ```
 
-Existing schemas may migrate from `retry_count`, but the runtime contract should
-settle on `attempt_count`. Claiming must use `FOR UPDATE SKIP LOCKED` or an
-equivalent safe mechanism. Failures increment attempts, record `last_error`, and
-dead-letter after the configured threshold.
+Runtime storage and active migrations use `attempt_count`. A compatibility
+migration may absorb and drop an old `retry_count` column, but no runtime code or
+claim/dead-letter schema may continue writing both names. Claiming must use
+`FOR UPDATE SKIP LOCKED` or an equivalent safe mechanism. Failures increment
+attempts, record `last_error`, and dead-letter after the configured threshold.
 
 ## ProjectionStateMigrator
 

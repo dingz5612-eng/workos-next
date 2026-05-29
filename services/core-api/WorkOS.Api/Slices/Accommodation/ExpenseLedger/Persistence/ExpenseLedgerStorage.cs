@@ -83,8 +83,8 @@ internal sealed class ExpenseLedgerStorage
         command.Parameters.AddWithValue("linkId", StableId("expense-link", workspaceEvent));
         command.Parameters.AddWithValue("expenseId", Value(workspaceEvent, "expenseId", StableId("expense", workspaceEvent)));
         command.Parameters.AddWithValue("workspaceId", workspaceEvent.WorkspaceId);
-        command.Parameters.AddWithValue("roomId", Value(workspaceEvent, "roomId", "unknown-room"));
-        command.Parameters.AddWithValue("bedId", Value(workspaceEvent, "bedId", "unknown-bed"));
+        command.Parameters.AddWithValue("roomId", Value(workspaceEvent, "roomId", string.Empty));
+        command.Parameters.AddWithValue("bedId", Value(workspaceEvent, "bedId", string.Empty));
         command.Parameters.AddWithValue("serviceTaskId", Value(workspaceEvent, "taskId", StableId("task", workspaceEvent)));
         command.Parameters.AddWithValue("createdEventId", workspaceEvent.EventId);
         command.Parameters.AddWithValue("updatedAtUtc", workspaceEvent.OccurredAtUtc);

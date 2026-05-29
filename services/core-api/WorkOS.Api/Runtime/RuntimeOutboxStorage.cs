@@ -34,7 +34,6 @@ internal sealed class RuntimeOutboxStorage
                 claimed_at_utc = @now,
                 claim_expires_at_utc = @claimExpiresAtUtc,
                 attempt_count = item.attempt_count + 1,
-                retry_count = item.attempt_count + 1,
                 last_error = null
             from claimable
             where item.message_id = claimable.message_id
@@ -117,7 +116,7 @@ internal sealed class RuntimeOutboxStorage
                 var claimedBy = reader.IsDBNull(2) ? null : reader.GetString(2);
                 DateTimeOffset? claimedAtUtc = reader.IsDBNull(3) ? null : reader.GetFieldValue<DateTimeOffset>(3);
                 DateTimeOffset? claimExpiresAtUtc = reader.IsDBNull(4) ? null : reader.GetFieldValue<DateTimeOffset>(4);
-                var retryCount = reader.GetInt32(5);
+                var attemptCount = reader.GetInt32(5);
                 DateTimeOffset? deadLetteredAtUtc = reader.IsDBNull(6) ? null : reader.GetFieldValue<DateTimeOffset>(6);
                 var lastError = reader.IsDBNull(7) ? null : reader.GetString(7);
                 messages.Add(item with
@@ -126,7 +125,7 @@ internal sealed class RuntimeOutboxStorage
                     ClaimedBy = claimedBy,
                     ClaimedAtUtc = claimedAtUtc,
                     ClaimExpiresAtUtc = claimExpiresAtUtc,
-                    RetryCount = retryCount,
+                    AttemptCount = attemptCount,
                     DeadLetteredAtUtc = deadLetteredAtUtc,
                     LastError = lastError
                 });

@@ -6,6 +6,7 @@
     "actor_session_required",
     "invalid_actor_token",
     "canonical_field_id_required",
+    "missing_required_field",
     "ai_confirmation_forbidden",
     "role_confirmation_forbidden",
     "slice_runtime_forbidden",
@@ -19,6 +20,7 @@
     "payment_evidence_required",
     "payment_ledger_state_required",
     "payment_allocation_exceeds_confirmed_amount",
+    "payment_deposit_purpose_forbidden",
     "checkout_deposit_settlement_required",
     "checkout_start_required_before_bed_release",
     "service_task_verification_required_before_release",
@@ -64,7 +66,7 @@
     {
       "id": "business-policy-violation",
       "description": "Business blockers that are not auth, role, AI, slice capability, or idempotency failures use a stable business rule violation class.",
-      "denies": "business_rule_violation"
+      "denies": "business_rule_violation,missing_required_field"
     },
     {
       "id": "idempotency-result",
@@ -74,7 +76,7 @@
     {
       "id": "accommodation-money-ledger-policy",
       "description": "Accommodation money ledgers reject non-cash writes without evidence and validate refund, deduction, payment, and allocation commands against backend ledger state.",
-      "denies": "deposit_evidence_required,deposit_ledger_state_required,deposit_refund_exceeds_held_amount,deposit_refund_approval_required,payment_evidence_required,payment_ledger_state_required,payment_allocation_exceeds_confirmed_amount,expense_evidence_required"
+      "denies": "deposit_evidence_required,deposit_ledger_state_required,deposit_refund_exceeds_held_amount,deposit_refund_approval_required,payment_evidence_required,payment_ledger_state_required,payment_allocation_exceeds_confirmed_amount,payment_deposit_purpose_forbidden,expense_evidence_required"
     },
     {
       "id": "accommodation-boundary-policy",

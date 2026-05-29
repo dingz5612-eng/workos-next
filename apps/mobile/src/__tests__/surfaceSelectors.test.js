@@ -1,3 +1,4 @@
+import fs from "node:fs";
 import { describe, expect, it } from "vitest";
 import { openWorkspace } from "../navigationController.js";
 import {
@@ -22,6 +23,46 @@ describe("runtime surface selectors", () => {
       "W-STAY-DEPOSIT-LEDGER",
       "W-STAY-PAYMENT-LEDGER"
     ]));
+  });
+
+  it("uses backend learningCatalog before projection fallback", () => {
+    const state = runtimeState([depositWorkspace, paymentWorkspace], {
+      learningCatalog: [{
+        workspaceId: "W-STAY-DEPOSIT-LEDGER",
+        cardId: "depositReceipt",
+        title: depositWorkspace.cards[0].title,
+        fields: [{ id: "depositId", label: { "zh-CN": "押金单", "ru-RU": "Депозит" } }],
+        evidence: [],
+        checks: [],
+        blockers: []
+      }],
+      learningSource: "runtime-api"
+    });
+
+    const catalog = selectLearningCatalog(state);
+    expect(catalog).toHaveLength(1);
+    expect(catalog[0].id).toBe("W-STAY-DEPOSIT-LEDGER");
+    expect(catalog[0]._learningSource).toBe("runtime-api");
+    expect(catalog[0].cards.map((card) => card.id)).toEqual(["depositReceipt"]);
+  });
+
+  it("covers manifest workspaces across Home Workbench Search Learning and Workspace selectors", () => {
+    const manifest = JSON.parse(fs.readFileSync(new URL("../../../../docs/contracts/slice-manifest.json", import.meta.url), "utf8"));
+    const manifestWorkspaces = manifest.slices.map((slice) =>
+      workspace(slice.workspaceId, domainFor(slice.workspaceId), slice.cards[0], "ready", slice.id));
+    const state = runtimeState(manifestWorkspaces);
+
+    const homeIds = selectHomeSurface(state).map((item) => item.workspaceId);
+    const queueIds = selectWorkbenchQueue(state).map((item) => item.workspaceId);
+    const learningIds = selectLearningCatalog(state).map((item) => item.id);
+
+    for (const slice of manifest.slices) {
+      expect(homeIds).toContain(slice.workspaceId);
+      expect(queueIds).toContain(slice.workspaceId);
+      expect(selectSearchSurfaceResults(state, slice.workspaceId).map((item) => item.id)).toContain(slice.workspaceId);
+      expect(learningIds).toContain(slice.workspaceId);
+      expect(selectWorkspaceById(state, slice.workspaceId)?.cards.map((card) => card.id)).toContain(slice.cards[0]);
+    }
   });
 
   it("uses runtime queue items with workspaceId/cardId for Workbench", () => {
@@ -118,4 +159,11 @@ function workspace(id, domain, cardId, status, zhTitle) {
       confirmation: { required: false }
     }]
   };
+}
+
+function domainFor(workspaceId) {
+  if (workspaceId.includes("STAY")) return "stay";
+  if (workspaceId.includes("REPAIR")) return "repair";
+  if (workspaceId.includes("FINANCE")) return "finance";
+  return "ops";
 }

@@ -33,7 +33,13 @@ public sealed class RuntimePersistenceContractTests
         var attemptMigration = File.ReadAllText(RepoPath("infra", "db", "migrations", "013_outbox_attempt_count.sql"));
         Assert.IsTrue(claimMigration.Contains("claimed_by"));
         Assert.IsTrue(claimMigration.Contains("dead_lettered_at_utc"));
+        Assert.IsTrue(claimMigration.Contains("attempt_count"));
+        Assert.IsFalse(claimMigration.Contains("retry_count"), "claim/dead-letter migration must declare attempt_count directly");
         Assert.IsTrue(attemptMigration.Contains("attempt_count"));
+
+        var outboxStorage = File.ReadAllText(RepoPath("services", "core-api", "WorkOS.Api", "Runtime", "RuntimeOutboxStorage.cs"));
+        Assert.IsTrue(outboxStorage.Contains("attempt_count"));
+        Assert.IsFalse(outboxStorage.Contains("retry_count"), "runtime outbox code must not update retry_count");
     }
 
     [TestMethod]

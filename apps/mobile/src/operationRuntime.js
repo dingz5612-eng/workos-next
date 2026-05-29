@@ -19,14 +19,22 @@ export function aggregateRefFor(fieldValues) {
   return key ? `${key}:${fieldValues[key]}` : null;
 }
 
-export async function submitCardOperation({ workspace, card, actor, language, fieldValues, evidenceIds, onProjection, onLens }) {
+export function createSubmissionProtocol(workspace, card) {
+  return {
+    idempotencyKey: operationIdempotencyKey(),
+    submissionId: operationSubmissionId(),
+    cardInstanceId: cardInstanceIdFor(workspace, card)
+  };
+}
+
+export async function submitCardOperation({ workspace, card, actor, language, fieldValues, evidenceIds, submissionProtocol, onProjection, onLens }) {
   await prepareCard(workspace.id, card.id);
-  const submissionId = operationSubmissionId();
+  const protocol = submissionProtocol || createSubmissionProtocol(workspace, card);
   const result = await confirmCard(workspace.id, card.id, actor.token, {
     language,
-    idempotencyKey: operationIdempotencyKey(),
-    submissionId,
-    cardInstanceId: cardInstanceIdFor(workspace, card),
+    idempotencyKey: protocol.idempotencyKey,
+    submissionId: protocol.submissionId,
+    cardInstanceId: protocol.cardInstanceId,
     aggregateRef: aggregateRefFor(fieldValues),
     fieldValues,
     evidenceIds

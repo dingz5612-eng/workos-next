@@ -11,6 +11,12 @@ function Assert-Exists($path) {
   }
 }
 
+function Assert-RipgrepAvailable {
+  if (-not (Get-Command rg -ErrorAction SilentlyContinue)) {
+    Fail "ripgrep (rg) is required for architecture guard checks."
+  }
+}
+
 function Assert-NoMatches($paths, $pattern, $message, $excludePattern = $null) {
   $matches = rg -n $pattern $paths 2>$null
   if ($LASTEXITCODE -eq 1) {
@@ -48,6 +54,8 @@ function Assert-LineBudget($path, $warn, $fail, $message) {
   Warn-OverLines $path $warn "$message"
   Assert-MaxLines $path $fail "$message"
 }
+
+Assert-RipgrepAvailable
 
 Assert-Exists "docs/contracts/projection-contract.schema.json"
 Assert-Exists "docs/contracts/workos-runtime.openapi.json"
@@ -178,6 +186,7 @@ Assert-NoMatches @("services", "tests") "Events\.First\s*\(" "Confirm event disp
 Assert-NoMatches @("services/core-api/WorkOS.Api/Slices", "services/core-api/WorkOS.Api/Runtime") 'Payload\.TryGetValue\("' "Runtime policy and storage must read canonical field ids through RuntimeFieldAliases, not label literals."
 Assert-NoMatchesRule "WON16-CONTRACT-001" @("services/core-api/WorkOS.Api/Slices", "services/core-api/WorkOS.Api/Runtime") 'RuntimeFieldAliases\.CanonicalKey\("[^"]*\p{Han}|Value\(workspaceEvent,\s*"[^"]*\p{Han}|DecimalValue\(workspaceEvent,\s*"[^"]*\p{Han}|IntValue\(workspaceEvent,\s*"[^"]*\p{Han}|DateValue\(workspaceEvent,\s*"[^"]*\p{Han}' "Runtime policy and persistence must not use localized labels as business fact keys."
 Assert-NoMatches @("services/core-api/WorkOS.Api/Slices", "services/core-api/WorkOS.Api/Runtime") '"张三"|"A301"|"PAY-2026-009"|"DEP-2026-009"|"\+996 555 010101"' "Production runtime and persistence must not use fake demo defaults." "OptionSetRegistry\.cs"
+Assert-NoMatches @("services/core-api/WorkOS.Api/Slices") '"unknown-|3000m|9300m|stay-order-current' "Production persistence must not use fake unknown ids or demo amount defaults."
 Assert-NoMatches @("services/core-api/WorkOS.Api") "RuntimeAuthOptions\.Development" "Development auth defaults must not be referenced outside Program.cs and RuntimeAuthOptions.cs." "Program\.cs|RuntimeAuthOptions\.cs"
 Assert-NoMatches @("services/core-api/WorkOS.Api/Slices/Accommodation/CheckOutSettlement") "DepositRefundPaid|DepositDeducted|DepositAppliedToBalance|deposit_transactions" "CheckOutSettlement must not own deposit transaction facts."
 Assert-NoMatches @("services/core-api/WorkOS.Api/Slices/Accommodation/ServiceTask") "accommodation_beds|UpdateBedStatus|actual_cost_amount = excluded|DecimalValue\(workspaceEvent, `"实际成本`"" "ServiceTask must not directly mutate BedStatus or persist cost facts."
@@ -521,7 +530,7 @@ if ($optionSetRegistry -notmatch "DefaultValue\(string label\) => string\.Empty"
 }
 
 $outboxStorage = Get-Content "services/core-api/WorkOS.Api/Runtime/RuntimeOutboxStorage.cs" -Raw
-foreach ($requiredOutboxTerm in @("for update skip locked", "dead_lettered_at_utc", "retry_count", "ClaimPending", "MarkFailed")) {
+foreach ($requiredOutboxTerm in @("for update skip locked", "dead_lettered_at_utc", "attempt_count", "ClaimPending", "MarkFailed")) {
   if ($outboxStorage -notmatch [regex]::Escape($requiredOutboxTerm)) {
     Fail "Outbox storage must implement claim/dead-letter behavior: $requiredOutboxTerm"
   }
@@ -531,6 +540,7 @@ foreach ($requiredOutboxTerm in @("attempt_count", "claimed_by", "last_error")) 
     Fail "Outbox storage must expose the WON-16 outbox contract field: $requiredOutboxTerm"
   }
 }
+Assert-NoMatches @("services/core-api/WorkOS.Api/Runtime", "infra/db/migrations/012_outbox_claim_dead_letter.sql") "retry_count" "Outbox runtime and claim migration must use attempt_count, not retry_count."
 
 $openApiRaw = Get-Content "docs/contracts/workos-runtime.openapi.json" -Raw
 if ($openApiRaw -match '"workspaceId".*BehaviorEventRequest' -or $openApiRaw -match '"cardId".*BehaviorEventRequest') {
