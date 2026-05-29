@@ -93,6 +93,7 @@ Assert-NoMatches @("services/core-api/WorkOS.Api") "RuntimeAuthOptions\.Developm
 Assert-NoMatches @("services/core-api/WorkOS.Api/Slices/Accommodation/CheckOutSettlement") "DepositRefundPaid|DepositDeducted|DepositAppliedToBalance|deposit_transactions" "CheckOutSettlement must not own deposit transaction facts."
 Assert-NoMatches @("services/core-api/WorkOS.Api/Slices/Accommodation/ServiceTask") "accommodation_beds|UpdateBedStatus|actual_cost_amount = excluded|DecimalValue\(workspaceEvent, `"实际成本`"" "ServiceTask must not directly mutate BedStatus or persist cost facts."
 Assert-NoMatches @("services/core-api/WorkOS.Api/Runtime/RuntimeAggregateLensStorage.cs") "actual_cost_amount" "Service task lenses must not expose service task cost as a fact source; use ExpenseLedger."
+Assert-NoMatches @("services/core-api/WorkOS.Api") "GetPendingOutboxMessages" "Outbox workers must claim messages before processing; direct pending reads are forbidden."
 
 $requiredSliceDirs = @(
   "services/core-api/WorkOS.Api/Slices/Accommodation/ResourceSetup",
@@ -124,6 +125,7 @@ foreach ($runtimeService in $requiredRuntimeServices) {
 
 Assert-Exists "services/core-api/WorkOS.Api/Slices/Policies/CardConfirmationPolicy.cs"
 Assert-NoMatches @("services/core-api/WorkOS.Api/Runtime") "class CardConfirmationPolicy" "CardConfirmationPolicy must not live under Runtime."
+Assert-Exists "infra/db/migrations/012_outbox_claim_dead_letter.sql"
 
 $requiredStorageServices = @(
   "services/core-api/WorkOS.Api/Runtime/PostgresConnectionFactory.cs",
@@ -340,6 +342,18 @@ if ($depositPolicy -notmatch "GetDepositLedgerState") {
 $paymentPolicy = Get-Content "services/core-api/WorkOS.Api/Slices/Accommodation/PaymentLedger/Policies/PaymentLedgerPolicy.cs" -Raw
 if ($paymentPolicy -notmatch "GetPaymentLedgerState") {
   Fail "PaymentLedger policy must read backend payment ledger state."
+}
+
+$outboxStorage = Get-Content "services/core-api/WorkOS.Api/Runtime/RuntimeOutboxStorage.cs" -Raw
+foreach ($requiredOutboxTerm in @("for update skip locked", "dead_lettered_at_utc", "retry_count", "ClaimPending", "MarkFailed")) {
+  if ($outboxStorage -notmatch [regex]::Escape($requiredOutboxTerm)) {
+    Fail "Outbox storage must implement claim/dead-letter behavior: $requiredOutboxTerm"
+  }
+}
+
+$openApiRaw = Get-Content "docs/contracts/workos-runtime.openapi.json" -Raw
+if ($openApiRaw -match '"workspaceId".*BehaviorEventRequest' -or $openApiRaw -match '"cardId".*BehaviorEventRequest') {
+  Fail "BehaviorEventRequest OpenAPI schema must match Program.cs and must not contain stale workspace/card fields."
 }
 
 Write-Host "Architecture guard: PASS"

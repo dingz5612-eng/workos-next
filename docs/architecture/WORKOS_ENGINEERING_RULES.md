@@ -332,6 +332,8 @@ outbox worker processing, and configuration separation are mandatory.
   one database transaction.
 - Confirm idempotency must be enforced atomically by the database unique key,
   with duplicate confirms returning the already persisted event.
+- Outbox processing must claim messages with a lease before projection, increment
+  retry counts, and dead-letter messages that exceed retry policy.
 - CI must run `validate-runtime-api.mjs` explicitly in addition to architecture
   guard coverage.
 - Production runtime must not start with development auth defaults.

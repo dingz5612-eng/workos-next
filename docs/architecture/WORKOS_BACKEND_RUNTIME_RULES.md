@@ -162,6 +162,8 @@ rules.
 - Option values are stable enum keys; localized labels are display-only.
 - Confirm commits audit, outbox, and aggregate writes in one database
   transaction.
+- Outbox projection workers must claim messages with a lease, record retry
+  counts, and dead-letter repeatedly failing messages.
 - Accommodation DepositLedger and PaymentLedger policies must read backend
   ledger state for refund, deduction, payment, and allocation decisions.
 - CheckOutSettlement must not own deposit transactions.

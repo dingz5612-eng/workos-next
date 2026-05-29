@@ -22,11 +22,13 @@ public interface IProjectionStore
 
     PaymentLedgerState GetPaymentLedgerState(string paymentId);
 
-    IReadOnlyList<OutboxMessage> GetPendingOutboxMessages(int take = 50);
+    IReadOnlyList<OutboxMessage> ClaimPendingOutboxMessages(string workerId, int take = 50, TimeSpan? lease = null);
 
     IReadOnlyList<OutboxMessage> GetOutboxMessages();
 
-    void MarkOutboxProcessed(string messageId);
+    void MarkOutboxProcessed(string messageId, string workerId);
+
+    void MarkOutboxFailed(string messageId, string workerId, string error, int maxRetries = 5);
 
     void AppendBehaviorEvent(BehaviorEventRecord behaviorEvent);
 

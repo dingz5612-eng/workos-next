@@ -8,7 +8,7 @@ var connectionString = Environment.GetEnvironmentVariable("WORKOS_TEST_CONNECTIO
 ResetPostgres(connectionString);
 
 {
-    var runtime = ProjectionRuntime.OpenPostgres(connectionString);
+    var runtime = ProjectionRuntime.OpenPostgres(connectionString, RuntimeAuthOptions.Development);
     var projection = runtime.GetAll();
     var cards = projection.Workspaces.SelectMany(workspace => workspace.Cards).ToArray();
 
@@ -637,6 +637,8 @@ ResetPostgres(connectionString);
     Assert(outbox.All(item => !string.IsNullOrWhiteSpace(item.CorrelationId)), "outbox messages must include correlationId");
     Assert(outbox.All(item => !string.IsNullOrWhiteSpace(item.RequestId)), "outbox messages must include requestId");
     Assert(outbox.All(item => !string.IsNullOrWhiteSpace(item.CausationId)), "outbox messages must include causationId");
+    Assert(outbox.All(item => item.RetryCount >= 1), "outbox messages must be claimed before processing");
+    Assert(outbox.All(item => item.DeadLetteredAtUtc is null), "successful outbox messages must not be dead-lettered");
     Assert(outbox.All(item => item.ProcessedAtUtc is not null), "all outbox messages should be processed by projector");
     Assert(reloadedRuntime.ProcessPendingOutbox() == 0, "outbox projector should be idempotent after processing");
     var observation = reloadedRuntime.Observe();
@@ -645,6 +647,7 @@ ResetPostgres(connectionString);
     Assert(observation.AuditEventCount == reloaded.Events.Count, $"observability auditEventCount should match successful audit events, got {observation.AuditEventCount}");
     Assert(observation.OutboxCount == outbox.Count, $"observability outboxCount should match persisted outbox messages, got {observation.OutboxCount}");
     Assert(observation.PendingOutboxCount == 0, "observability pending outbox count should be zero after processing");
+    Assert(observation.DeadLetterOutboxCount == 0, "observability deadLetterOutboxCount should be zero for successful projection");
     Assert(observation.BehaviorEventCount >= 1, "observability behavior event count should include persisted behavior events");
 
     Console.WriteLine("WorkOS.RuntimeContractTests: PASS");
@@ -987,6 +990,32 @@ static void ValidateProjectionContractFiles()
     foreach (var field in new[] { "language", "idempotencyKey", "fieldValues", "evidenceIds" })
     {
         Assert(confirmRequired.Contains(field), $"OpenAPI ConfirmCardRequest must require {field}");
+    }
+
+    var observationRequired = openApi.RootElement
+        .GetProperty("components")
+        .GetProperty("schemas")
+        .GetProperty("RuntimeObservation")
+        .GetProperty("required")
+        .EnumerateArray()
+        .Select(item => item.GetString())
+        .ToHashSet();
+    Assert(observationRequired.Contains("deadLetterOutboxCount"), "OpenAPI RuntimeObservation must expose deadLetterOutboxCount");
+
+    var behaviorEventRequest = openApi.RootElement
+        .GetProperty("components")
+        .GetProperty("schemas")
+        .GetProperty("BehaviorEventRequest");
+    var behaviorRequired = behaviorEventRequest.GetProperty("required").EnumerateArray().Select(item => item.GetString()).ToHashSet();
+    Assert(behaviorRequired.SetEquals(new[] { "eventType", "language" }), "OpenAPI BehaviorEventRequest required fields must match Program.cs");
+    var behaviorProperties = behaviorEventRequest.GetProperty("properties").EnumerateObject().Select(item => item.Name).ToHashSet();
+    foreach (var field in new[] { "eventType", "objectType", "objectId", "language", "source" })
+    {
+        Assert(behaviorProperties.Contains(field), $"OpenAPI BehaviorEventRequest missing {field}");
+    }
+    foreach (var staleField in new[] { "workspaceId", "cardId", "actorId", "payload" })
+    {
+        Assert(!behaviorProperties.Contains(staleField), $"OpenAPI BehaviorEventRequest contains stale field {staleField}");
     }
 
     Assert(openApi.RootElement.GetProperty("paths").TryGetProperty("/api/observability/runtime", out _), "OpenAPI must include runtime observability endpoint");

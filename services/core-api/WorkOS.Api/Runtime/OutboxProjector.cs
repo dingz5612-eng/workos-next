@@ -12,6 +12,7 @@ public sealed class OutboxProjector
 {
     private readonly IProjectionStore store;
     private readonly IReadOnlyList<IOutboxProjectorRule> rules;
+    private readonly string workerId = $"projection-{Environment.MachineName}-{Guid.NewGuid():N}";
 
     public OutboxProjector(IProjectionStore store)
     {
@@ -32,12 +33,19 @@ public sealed class OutboxProjector
     public int ProcessPending(RuntimeState state)
     {
         var processed = 0;
-        foreach (var message in store.GetPendingOutboxMessages())
+        foreach (var message in store.ClaimPendingOutboxMessages(workerId))
         {
-            ApplyEventToReadModel(state, message.Event);
-            store.SaveState(state);
-            store.MarkOutboxProcessed(message.MessageId);
-            processed++;
+            try
+            {
+                ApplyEventToReadModel(state, message.Event);
+                store.SaveState(state);
+                store.MarkOutboxProcessed(message.MessageId, workerId);
+                processed++;
+            }
+            catch (Exception ex)
+            {
+                store.MarkOutboxFailed(message.MessageId, workerId, ex.Message);
+            }
         }
 
         return processed;

@@ -28,6 +28,7 @@ try {
   await validatePrepare(projection);
   await validateAccommodationLens();
   await validateConfirmPolicyResponse();
+  await validateBehaviorEvent();
   await validateObservability();
   console.log("Runtime API contract responses: PASS");
 } finally {
@@ -134,6 +135,19 @@ async function validateObservability() {
   assert(observation.workspaceCount >= 8, "observability workspaceCount must include seeded workspaces");
   assert(observation.cardCount >= 32, "observability cardCount must include seeded cards");
   assert(typeof observation.outboxCount === "number", "observability outboxCount must be numeric");
+  assert(typeof observation.deadLetterOutboxCount === "number", "observability deadLetterOutboxCount must be numeric");
+}
+
+async function validateBehaviorEvent() {
+  const result = await postJson("/api/behavior-events", {
+    eventType: "RuntimeApiValidated",
+    objectType: "runtime",
+    objectId: "validate-runtime-api",
+    language: "zh-CN",
+    source: "validate-runtime-api"
+  });
+  assert(result.accepted === true, "behavior event response must mark accepted true");
+  assert(result.eventType === "RuntimeApiValidated", "behavior event response eventType mismatch");
 }
 
 async function getJson(path) {

@@ -102,14 +102,17 @@ public sealed class PostgresProjectionStore : IProjectionStore
     public PaymentLedgerState GetPaymentLedgerState(string paymentId)
         => accommodationLedgers.GetPaymentLedgerState(paymentId);
 
-    public IReadOnlyList<OutboxMessage> GetPendingOutboxMessages(int take = 50) =>
-        outbox.GetPending(take);
+    public IReadOnlyList<OutboxMessage> ClaimPendingOutboxMessages(string workerId, int take = 50, TimeSpan? lease = null) =>
+        outbox.ClaimPending(workerId, take, lease ?? TimeSpan.FromMinutes(2));
 
     public IReadOnlyList<OutboxMessage> GetOutboxMessages() =>
         outbox.GetAll();
 
-    public void MarkOutboxProcessed(string messageId) =>
-        outbox.MarkProcessed(messageId);
+    public void MarkOutboxProcessed(string messageId, string workerId) =>
+        outbox.MarkProcessed(messageId, workerId);
+
+    public void MarkOutboxFailed(string messageId, string workerId, string error, int maxRetries = 5) =>
+        outbox.MarkFailed(messageId, workerId, error, maxRetries);
 
     public void AppendBehaviorEvent(BehaviorEventRecord behaviorEvent) =>
         behaviorEvents.Append(behaviorEvent);

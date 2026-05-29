@@ -16,7 +16,13 @@ public sealed record OutboxMessage(
     string RequestId,
     DateTimeOffset CreatedAtUtc,
     DateTimeOffset? ProcessedAtUtc,
-    WorkspaceEvent Event);
+    WorkspaceEvent Event,
+    string? ClaimedBy = null,
+    DateTimeOffset? ClaimedAtUtc = null,
+    DateTimeOffset? ClaimExpiresAtUtc = null,
+    int RetryCount = 0,
+    DateTimeOffset? DeadLetteredAtUtc = null,
+    string? LastError = null);
 
 public sealed record ProjectionEnvelope(
     string Projection,
@@ -181,6 +187,7 @@ public sealed record RuntimeObservation(
     int AuditEventCount,
     int OutboxCount,
     int PendingOutboxCount,
+    int DeadLetterOutboxCount,
     int BehaviorEventCount,
     DateTimeOffset? LastAuditEventAtUtc);
 

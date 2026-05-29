@@ -247,7 +247,7 @@
       },
       "RuntimeObservation": {
         "type": "object",
-        "required": ["service", "version", "persistence", "workspaceCount", "cardCount", "auditEventCount", "outboxCount", "pendingOutboxCount", "behaviorEventCount"],
+        "required": ["service", "version", "persistence", "workspaceCount", "cardCount", "auditEventCount", "outboxCount", "pendingOutboxCount", "deadLetterOutboxCount", "behaviorEventCount"],
         "properties": {
           "service": { "type": "string" },
           "version": { "type": "string" },
@@ -257,22 +257,20 @@
           "auditEventCount": { "type": "integer" },
           "outboxCount": { "type": "integer" },
           "pendingOutboxCount": { "type": "integer" },
+          "deadLetterOutboxCount": { "type": "integer" },
           "behaviorEventCount": { "type": "integer" },
           "lastAuditEventAtUtc": { "type": ["string", "null"], "format": "date-time" }
         }
       },
       "BehaviorEventRequest": {
         "type": "object",
-        "required": ["eventType", "workspaceId", "cardId"],
+        "required": ["eventType", "language"],
         "properties": {
           "eventType": { "type": "string" },
-          "workspaceId": { "type": "string" },
-          "cardId": { "type": "string" },
-          "actorId": { "type": ["string", "null"] },
-          "payload": {
-            "type": "object",
-            "additionalProperties": { "type": "string" }
-          }
+          "objectType": { "type": ["string", "null"] },
+          "objectId": { "type": ["string", "null"] },
+          "language": { "type": "string" },
+          "source": { "type": ["string", "null"] }
         }
       }
     }

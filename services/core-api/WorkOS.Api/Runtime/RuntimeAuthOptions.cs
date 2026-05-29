@@ -5,15 +5,18 @@ namespace WorkOS.Api.Runtime;
 
 public sealed class RuntimeAuthOptions
 {
-    public Dictionary<string, string> PasswordSha256ByUsername { get; init; } = new(StringComparer.OrdinalIgnoreCase)
-    {
-        ["operator"] = RuntimePasswordHasher.Sha256("dev"),
-        ["finance"] = RuntimePasswordHasher.Sha256("dev"),
-        ["manager"] = RuntimePasswordHasher.Sha256("dev"),
-        ["ai"] = RuntimePasswordHasher.Sha256("dev")
-    };
+    public Dictionary<string, string> PasswordSha256ByUsername { get; init; } = new(StringComparer.OrdinalIgnoreCase);
 
-    public static RuntimeAuthOptions Development => new();
+    public static RuntimeAuthOptions Development => new()
+    {
+        PasswordSha256ByUsername = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["operator"] = RuntimePasswordHasher.Sha256("dev"),
+            ["finance"] = RuntimePasswordHasher.Sha256("dev"),
+            ["manager"] = RuntimePasswordHasher.Sha256("dev"),
+            ["ai"] = RuntimePasswordHasher.Sha256("dev")
+        }
+    };
 
     public static bool UsesDevelopmentPasswords(RuntimeAuthOptions options)
     {

@@ -114,7 +114,8 @@ public sealed class ProjectionRuntime
                 state.Workspaces.Sum(workspace => workspace.Cards.Count),
                 events.Count,
                 outbox.Count,
-                outbox.Count(message => message.ProcessedAtUtc is null),
+                outbox.Count(message => message.ProcessedAtUtc is null && message.DeadLetteredAtUtc is null),
+                outbox.Count(message => message.DeadLetteredAtUtc is not null),
                 store.GetBehaviorEvents().Count,
                 events.OrderByDescending(item => item.OccurredAtUtc).FirstOrDefault()?.OccurredAtUtc);
         }
