@@ -68,7 +68,7 @@ async function validatePrepare(projection) {
 }
 
 async function validateConfirmPolicyResponse() {
-  const response = await fetch(`${baseUrl}/api/workspaces/W-STAY-RESOURCE/cards/room/confirm`, {
+  const response = await fetch(`${baseUrl}/api/workspaces/W-STAY-RESOURCE/cards/roomSetup/confirm`, {
     method: "POST",
     headers: { "Content-Type": "application/json", "X-Request-Id": `api-contract-${Date.now()}` },
     body: JSON.stringify({

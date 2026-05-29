@@ -29,6 +29,39 @@ internal sealed class RuntimeAggregateLensStorage
                     status = reader.GetString(5),
                     updatedAtUtc = reader.GetDateTime(6)
                 }),
+            "room-readiness" => Query("""
+                select room_id, workspace_id, room_no, room_type, capacity, status, updated_at_utc
+                from accommodation_rooms
+                order by room_no
+                """, reader => new
+                {
+                    lens = "RoomReadinessLens",
+                    roomId = reader.GetString(0),
+                    workspaceId = reader.GetString(1),
+                    roomNo = reader.GetString(2),
+                    roomType = reader.GetString(3),
+                    capacity = reader.GetInt32(4),
+                    status = reader.GetString(5),
+                    updatedAtUtc = reader.GetDateTime(6)
+                }),
+            "rate-plan" => Query("""
+                select rate_plan_id, workspace_id, room_id, daily_rate_per_bed, weekly_rate_per_bed, monthly_rate_per_bed, currency, effective_from_utc, status, updated_at_utc
+                from accommodation_rate_plans
+                order by room_id, effective_from_utc
+                """, reader => new
+                {
+                    lens = "RatePlanLens",
+                    ratePlanId = reader.GetString(0),
+                    workspaceId = reader.GetString(1),
+                    roomId = reader.GetString(2),
+                    dailyRatePerBed = reader.GetDecimal(3),
+                    weeklyRatePerBed = reader.GetDecimal(4),
+                    monthlyRatePerBed = reader.GetDecimal(5),
+                    currency = reader.GetString(6),
+                    effectiveFromUtc = reader.GetDateTime(7),
+                    status = reader.GetString(8),
+                    updatedAtUtc = reader.GetDateTime(9)
+                }),
             "deposit-liability" => Query("""
                 select deposit_id, workspace_id, folio_id, required_amount, received_amount, liability_balance, currency, status, updated_at_utc
                 from deposit_liabilities

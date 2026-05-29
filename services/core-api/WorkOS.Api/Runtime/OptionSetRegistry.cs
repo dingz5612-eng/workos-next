@@ -11,6 +11,9 @@ internal static class OptionSetRegistry
         if (label.Contains("上/下铺")) return "bunkType";
         if (label.Contains("床位类型")) return "bunkType";
         if (ContractText.ContainsAny(label, "床位状态", "初始床位状态")) return "bedStatus";
+        if (label.Contains("可售状态")) return "availability";
+        if (label.Contains("阻断范围")) return "resourceScope";
+        if (label.Contains("释放范围")) return "resourceScope";
         if (label.Contains("价格规则")) return "bedPriceRule";
         if (label.Contains("启用范围")) return "activationScope";
         if (ContractText.ContainsAny(label, "可用状态", "初始可用状态")) return "availability";
@@ -168,6 +171,7 @@ internal static class OptionSetRegistry
         "bedStatus" => new[] { "可分配", "已预留", "已入住", "待清洁", "维修阻断", "未启用" },
         "bedPriceRule" => new[] { "月租标准", "短住日租", "内部免费", "合同价" },
         "activationScope" => new[] { "当前床位", "当前房间全部床位" },
+        "resourceScope" => new[] { "房间", "床位", "房间全部床位" },
         "availability" => new[] { "可分配", "暂不开放", "仅内部预留" },
         "maintenance" => new[] { "检查通过", "待保洁", "待维修" },
         "messenger" => new[] { "WhatsApp", "电话", "Instagram", "Facebook", "其他" },

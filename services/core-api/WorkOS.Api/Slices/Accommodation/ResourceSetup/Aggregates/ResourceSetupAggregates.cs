@@ -19,3 +19,16 @@ public sealed record BedAggregate(
     string Status,
     string CreatedEventId,
     DateTimeOffset UpdatedAtUtc);
+
+public sealed record RatePlanAggregate(
+    string RatePlanId,
+    string WorkspaceId,
+    string RoomId,
+    decimal DailyRatePerBed,
+    decimal WeeklyRatePerBed,
+    decimal MonthlyRatePerBed,
+    string Currency,
+    DateTimeOffset EffectiveFromUtc,
+    string Status,
+    string CreatedEventId,
+    DateTimeOffset UpdatedAtUtc);

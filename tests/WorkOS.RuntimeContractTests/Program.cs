@@ -18,7 +18,7 @@ ResetPostgres(connectionString);
     ValidateProjectionEnvelopeAgainstContract(projection);
 
     Assert(projection.Workspaces.Count == 16, $"expected 16 workspaces, got {projection.Workspaces.Count}");
-    Assert(cards.Length == 78, $"expected 78 cards, got {cards.Length}");
+    Assert(cards.Length == 81, $"expected 81 cards, got {cards.Length}");
 
     foreach (var card in cards)
     {
@@ -34,7 +34,7 @@ ResetPostgres(connectionString);
     }
 
     var resource = projection.Workspaces.Single(workspace => workspace.Id == "W-STAY-RESOURCE");
-    AssertSequence(resource, "room", "bed", "activate");
+    AssertSequence(resource, "roomSetup", "bedSetup", "rateSetup", "roomReadiness", "roomBlock", "roomRelease");
     ValidateFieldContracts(resource);
 
     var checkin = projection.Workspaces.Single(workspace => workspace.Id == "W-STAY-CHECKIN");
@@ -44,8 +44,8 @@ ResetPostgres(connectionString);
     ValidateAccommodationFactOwnership();
     ValidatePeriodAnalyticsContract();
 
-    var prepared = runtime.Prepare("W-STAY-RESOURCE", "room");
-    Assert(prepared is not null, "prepare should return room card payload");
+    var prepared = runtime.Prepare("W-STAY-RESOURCE", "roomSetup");
+    Assert(prepared is not null, "prepare should return room setup card payload");
     Assert(runtime.Login(new LoginRequest("operator", "wrong-password")) is null, "login must reject invalid password");
 
     var operatorToken = LoginToken(runtime, "operator");
@@ -55,7 +55,7 @@ ResetPostgres(connectionString);
 
     var missingToken = AssertNoSideEffects(connectionString, () => runtime.Confirm("W-STAY-CHECKIN", "finance", Human("missing-token-finance"), ""));
     Assert(missingToken.Status == ConfirmStatus.Forbidden, "confirm must require a trusted backend session token");
-    var missingIdempotencyKey = AssertNoSideEffects(connectionString, () => runtime.Confirm("W-STAY-RESOURCE", "room", new ConfirmCardRequest("zh-CN", "", new Dictionary<string, string>(), Array.Empty<string>()), operatorToken));
+    var missingIdempotencyKey = AssertNoSideEffects(connectionString, () => runtime.Confirm("W-STAY-RESOURCE", "roomSetup", new ConfirmCardRequest("zh-CN", "", new Dictionary<string, string>(), Array.Empty<string>()), operatorToken));
     Assert(missingIdempotencyKey.Status == ConfirmStatus.Invalid, "confirm must require idempotency key");
 
     var aiFinance = AssertNoSideEffects(connectionString, () => runtime.Confirm("W-STAY-CHECKIN", "finance", Human("ai-finance"), aiToken));
@@ -73,17 +73,39 @@ ResetPostgres(connectionString);
     Assert(contractOnlyConfirm.Reason == "slice_runtime_forbidden:Accommodation.CheckOut:contract-only", "contract-only rejection must name the owning slice");
     ValidateAllContractOnlySlicesAreGated(runtime, connectionString, projection, managerToken);
 
-    var humanRoom = runtime.Confirm("W-STAY-RESOURCE", "room", Human("resource-room", new Dictionary<string, string> { ["房间号"] = "A302" }), operatorToken);
-    Assert(humanRoom.Status == ConfirmStatus.Confirmed, "human room confirmation should pass");
+    var financeRoomSetup = AssertNoSideEffects(connectionString, () => runtime.Confirm("W-STAY-RESOURCE", "roomSetup", Human("resource-finance-role"), financeToken));
+    Assert(financeRoomSetup.Status == ConfirmStatus.Forbidden, "finance actor must not confirm ResourceSetup operator-owned cards");
+    var aiRoomSetup = AssertNoSideEffects(connectionString, () => runtime.Confirm("W-STAY-RESOURCE", "roomSetup", Human("resource-ai"), aiToken));
+    Assert(aiRoomSetup.Status == ConfirmStatus.Forbidden, "AI must not confirm ResourceSetup cards");
+
+    var humanRoom = runtime.Confirm("W-STAY-RESOURCE", "roomSetup", Human("resource-room", new Dictionary<string, string>
+    {
+        ["roomId"] = "room-phase7-001",
+        ["roomNo"] = "A302",
+        ["roomType"] = "四人间",
+        ["bedCount"] = "4",
+        ["genderPolicy"] = "unrestricted",
+        ["furnitureStatus"] = "ready",
+        ["technicalState"] = "ready"
+    }), operatorToken);
+    Assert(humanRoom.Status == ConfirmStatus.Confirmed, "human room setup confirmation should pass");
     runtime.ProcessPendingOutbox();
 
-    var duplicateRoom = runtime.Confirm("W-STAY-RESOURCE", "room", Human("resource-room"), operatorToken);
+    var duplicateRoom = runtime.Confirm("W-STAY-RESOURCE", "roomSetup", Human("resource-room"), operatorToken);
     Assert(duplicateRoom.Status == ConfirmStatus.Duplicate, "same idempotency key should return duplicate instead of writing another event");
 
-    Assert(runtime.Confirm("W-STAY-RESOURCE", "bed", Human("resource-bed"), operatorToken).Status == ConfirmStatus.Confirmed, "bed confirmation should pass");
-    runtime.ProcessPendingOutbox();
-    Assert(runtime.Confirm("W-STAY-RESOURCE", "activate", Human("resource-activate"), operatorToken).Status == ConfirmStatus.Confirmed, "resource activation should pass");
-    runtime.ProcessPendingOutbox();
+    foreach (var (cardId, key, values) in new[]
+    {
+        ("bedSetup", "resource-bed", new Dictionary<string, string> { ["roomId"] = "room-phase7-001", ["bedId"] = "bed-phase7-001", ["bedNo"] = "A302-01", ["bedType"] = "下铺", ["bedStatus"] = "available" }),
+        ("rateSetup", "resource-rate", new Dictionary<string, string> { ["roomId"] = "room-phase7-001", ["ratePlanId"] = "rate-phase7-001", ["dailyRatePerBed"] = "350", ["weeklyRatePerBed"] = "2100", ["monthlyRatePerBed"] = "9300", ["currency"] = "KGS", ["effectiveFrom"] = "2026-06-01T00:00:00Z" }),
+        ("roomReadiness", "resource-readiness", new Dictionary<string, string> { ["roomId"] = "room-phase7-001", ["roomNo"] = "A302", ["bedCount"] = "4", ["availabilityStatus"] = "available", ["furnitureStatus"] = "ready", ["technicalState"] = "ready" }),
+        ("roomBlock", "resource-block", new Dictionary<string, string> { ["roomId"] = "room-phase7-001", ["roomNo"] = "A302", ["resourceScope"] = "room", ["blockReason"] = "maintenance", ["blockStartAt"] = "2026-06-02T09:00:00Z", ["expectedReleaseAt"] = "2026-06-02T18:00:00Z" }),
+        ("roomRelease", "resource-release", new Dictionary<string, string> { ["roomId"] = "room-phase7-001", ["roomNo"] = "A302", ["resourceScope"] = "room", ["releaseAvailableAt"] = "2026-06-02T18:30:00Z" })
+    })
+    {
+        Assert(runtime.Confirm("W-STAY-RESOURCE", cardId, Human(key, values), operatorToken).Status == ConfirmStatus.Confirmed, $"{cardId} confirmation should pass");
+        runtime.ProcessPendingOutbox();
+    }
 
     foreach (var cardId in new[] { "lead", "booking", "resident", "bedAssign", "tariff", "depositRequirement", "payment", "finance", "checkin", "operatingDashboard" })
     {
@@ -500,22 +522,23 @@ ResetPostgres(connectionString);
 
     var reloaded = ProjectionRuntime.OpenPostgres(connectionString).GetAll();
     var reloadedResource = reloaded.Workspaces.Single(workspace => workspace.Id == "W-STAY-RESOURCE");
-    Assert(reloaded.Events.Any(item => item.EventType == "RoomCreated"), "RoomCreated event should be persisted");
+    Assert(reloaded.Events.Any(item => item.EventType == "Accommodation.RoomConfigured"), "RoomConfigured event should be persisted");
     Assert(reloaded.Events.All(item => !string.IsNullOrWhiteSpace(item.CorrelationId)), "audit events must include correlationId");
     Assert(reloaded.Events.All(item => !string.IsNullOrWhiteSpace(item.RequestId)), "audit events must include requestId");
-    AssertEventSequence(reloaded.Events.Where(item => item.WorkspaceId == "W-STAY-RESOURCE").Select(item => item.EventType).ToArray(), "RoomCreated", "BedCreated", "BedActivated");
+    AssertEventSequence(reloaded.Events.Where(item => item.WorkspaceId == "W-STAY-RESOURCE").Select(item => item.EventType).ToArray(), "Accommodation.RoomConfigured", "Accommodation.BedConfigured", "Accommodation.RateConfigured", "Accommodation.RoomReadinessChanged", "Accommodation.RoomBlocked", "Accommodation.RoomReleased");
     AssertEventSequence(reloaded.Events.Where(item => item.WorkspaceId == "W-STAY-CHECKIN").Select(item => item.EventType).ToArray(), "LeadCaptured", "BookingConfirmed", "ResidentRegistered", "BedAssigned", "TariffAssigned", "DepositRequired", "PaymentRecordedByFrontDesk", "PaymentConfirmedByFinance", "StayCheckedIn", "OperatingMetricsReviewed");
     AssertEventSequence(reloaded.Events.Where(item => item.WorkspaceId == "W-STAY-LEAD-RESERVATION").Select(item => item.EventType).ToArray(), "Accommodation.LeadCaptured", "Accommodation.LeadStatusChanged", "Accommodation.ReservationCreated", "Accommodation.ReservationCancelled", "Accommodation.ReservationConvertedToStay");
     AssertEventSequence(reloaded.Events.Where(item => item.WorkspaceId == "W-STAY-LIFECYCLE").Select(item => item.EventType).ToArray(), "Accommodation.ResidentProfileCaptured", "Accommodation.ResidentCheckedIn", "Accommodation.StayChargeAssessed", "Accommodation.StayExtended");
-    Assert(reloadedResource.Cards.Single(card => card.Id == "room").Status == "done", "room status should persist as done");
+    Assert(reloadedResource.Cards.Single(card => card.Id == "roomSetup").Status == "done", "room setup status should persist as done");
     Assert(reloadedResource.Cards.All(card => card.Status == "done"), "resource cards should all be done");
 
     var reloadedCheckin = reloaded.Workspaces.Single(workspace => workspace.Id == "W-STAY-CHECKIN");
     Assert(reloadedCheckin.Cards.All(card => card.Status == "done"), "check-in cards should all be done");
     var reloadedRuntime = ProjectionRuntime.OpenPostgres(connectionString);
-    Assert(CountRows(connectionString, "schema_migrations") >= 10, "schema migrations should be recorded in PostgreSQL");
+    Assert(CountRows(connectionString, "schema_migrations") >= 11, "schema migrations should be recorded in PostgreSQL");
     Assert(CountRows(connectionString, "accommodation_rooms") >= 1, "Room aggregate should persist in accommodation_rooms");
     Assert(CountRows(connectionString, "accommodation_beds") >= 1, "Bed aggregate should persist in accommodation_beds");
+    Assert(CountRows(connectionString, "accommodation_rate_plans") >= 1, "RatePlan aggregate should persist in accommodation_rate_plans");
     Assert(CountRows(connectionString, "accommodation_deposits") >= 1, "Deposit aggregate should persist in accommodation_deposits");
     Assert(CountRows(connectionString, "finance_confirmations") >= 1, "FinanceConfirmation aggregate should persist in finance_confirmations");
     Assert(CountRows(connectionString, "hostel_leads") >= 1, "Hostel lead should persist in hostel_leads");
@@ -526,6 +549,8 @@ ResetPostgres(connectionString);
     Assert(CountRows(connectionString, "guest_folios") >= 1, "Guest folio should persist in guest_folios");
     Assert(ScalarText(connectionString, "select status from hostel_bookings where booking_id = 'reservation-phase6-001'") == "converted_to_stay", "LeadReservation should update reservation status through conversion");
     Assert(ScalarDecimal(connectionString, "select amount from hostel_charges where charge_id = 'charge-phase6-001'") == 9300m, "StayLifecycle should persist assessed charge amount");
+    Assert(ScalarText(connectionString, "select status from accommodation_rooms where room_id = 'room-phase7-001'") == "available", "ResourceSetup should own final room availability status");
+    Assert(ScalarDecimal(connectionString, "select monthly_rate_per_bed from accommodation_rate_plans where rate_plan_id = 'rate-phase7-001'") == 9300m, "ResourceSetup should persist monthly rate per bed");
     Assert(CountRows(connectionString, "deposit_liabilities") >= 1, "Deposit liability should persist in deposit_liabilities");
     Assert(CountRows(connectionString, "hostel_payments") >= 1, "Payment should persist in hostel_payments");
     Assert(CountRows(connectionString, "finance_reconciliations") >= 1, "Finance reconciliation should persist in finance_reconciliations");
@@ -550,6 +575,8 @@ ResetPostgres(connectionString);
     Assert(ScalarDecimal(connectionString, "select period_net_cash_flow from period_finance_snapshots where period_id = 'PER-2026-05-01'") == 8700m, "period net cash flow must exclude deposit received and deposit refund");
     Assert(ScalarDecimal(connectionString, "select deposit_liability_end from period_finance_snapshots where period_id = 'PER-2026-05-01'") == 0m, "deposit liability end formula should be persisted");
     Assert(LensContains(reloadedRuntime, "bed-inventory", "BedInventoryLens"), "BedInventoryLens should expose persisted bed inventory");
+    Assert(LensContains(reloadedRuntime, "room-readiness", "RoomReadinessLens"), "RoomReadinessLens should expose persisted room readiness");
+    Assert(LensContains(reloadedRuntime, "rate-plan", "RatePlanLens"), "RatePlanLens should expose persisted rate plans");
     Assert(LensContains(reloadedRuntime, "deposit-liability", "DepositLiabilityLens"), "DepositLiabilityLens should expose deposit liabilities");
     Assert(LensContains(reloadedRuntime, "stay-balance", "StayBalanceLens"), "StayBalanceLens should expose stay balances");
     Assert(LensContains(reloadedRuntime, "period-performance", "PeriodPerformanceLens"), "PeriodPerformanceLens should expose period performance");
@@ -568,7 +595,7 @@ ResetPostgres(connectionString);
     Assert(reloadedRuntime.ProcessPendingOutbox() == 0, "outbox projector should be idempotent after processing");
     var observation = reloadedRuntime.Observe();
     Assert(observation.WorkspaceCount == 16, $"observability workspaceCount expected 16, got {observation.WorkspaceCount}");
-    Assert(observation.CardCount == 78, $"observability cardCount expected 78, got {observation.CardCount}");
+    Assert(observation.CardCount == 81, $"observability cardCount expected 81, got {observation.CardCount}");
     Assert(observation.AuditEventCount == reloaded.Events.Count, $"observability auditEventCount should match successful audit events, got {observation.AuditEventCount}");
     Assert(observation.OutboxCount == outbox.Count, $"observability outboxCount should match persisted outbox messages, got {observation.OutboxCount}");
     Assert(observation.PendingOutboxCount == 0, "observability pending outbox count should be zero after processing");
@@ -622,15 +649,14 @@ static void ValidateFieldContracts(WorkspaceProjection workspace)
         }
     }
 
-    var room = workspace.Cards.FirstOrDefault(card => card.Id == "room");
+    var room = workspace.Cards.FirstOrDefault(card => card.Id == "roomSetup");
     if (room is not null)
     {
         Assert(Field(room, "房间号").Ui.Control == "text", "房间号 must be text on room creation");
-        Assert(Field(room, "容量").Ui.Control == "readonly", "容量 must be readonly derived field");
-        Assert(Field(room, "容量").Ui.DerivedFrom == "房型", "容量 must derive from 房型");
+        Assert(Field(room, "床位数").Ui.Control == "number", "床位数 must be numeric on room setup");
     }
 
-    var bed = workspace.Cards.FirstOrDefault(card => card.Id == "bed");
+    var bed = workspace.Cards.FirstOrDefault(card => card.Id == "bedSetup");
     if (bed is not null)
     {
         Assert(Field(bed, "所属房间").Ui.Control == "searchSelect", "所属房间 must select an existing room");
@@ -642,6 +668,7 @@ static void ValidateAccommodationWorkOS20Contracts(ProjectionEnvelope projection
 {
     var expected = new Dictionary<string, string[]>
     {
+        ["W-STAY-RESOURCE"] = new[] { "roomSetup", "bedSetup", "rateSetup", "roomReadiness", "roomBlock", "roomRelease" },
         ["W-STAY-LEAD-RESERVATION"] = new[] { "leadCapture", "leadFollowUp", "reservationCreate", "reservationCancel", "reservationConvert" },
         ["W-STAY-LIFECYCLE"] = new[] { "residentProfile", "checkInBedAssign", "chargeAssessment", "stayExtension" },
         ["W-STAY-DEPOSIT-LEDGER"] = new[] { "depositAssessment", "depositReceipt", "depositConfirmation", "depositDeduction", "depositRefundApproval", "depositRefundPayment", "depositClose" },
@@ -697,6 +724,15 @@ static void ValidateAccommodationWorkOS20Contracts(ProjectionEnvelope projection
         "Accommodation.PaymentAdjusted",
         "Accommodation.DebtFollowUpRecorded",
         "Accommodation.BalanceRecalculated");
+    AssertEventTypes(projection, "W-STAY-RESOURCE",
+        "Accommodation.RoomConfigured",
+        "Accommodation.BedConfigured",
+        "Accommodation.RateConfigured",
+        "Accommodation.RoomReadinessChanged",
+        "Accommodation.RoomBlocked",
+        "Accommodation.RoomReleased",
+        "Accommodation.BedBlocked",
+        "Accommodation.BedReleased");
 
     var periodFinance = projection.Workspaces.Single(item => item.Id == "W-STAY-PERIOD-ANALYTICS").Cards.Single(card => card.Id == "periodFinanceReview");
     Assert(periodFinance.Checks.Any(check => check.Label["zh-CN"].Contains("押金不计收入")), "period finance contract must guard deposit revenue separation");
@@ -1045,6 +1081,7 @@ static int TotalAggregateRows(string connectionString)
     {
         "accommodation_rooms",
         "accommodation_beds",
+        "accommodation_rate_plans",
         "accommodation_deposits",
         "finance_confirmations",
         "hostel_leads",
@@ -1129,6 +1166,7 @@ static void ResetPostgres(string connectionString)
         drop table if exists hostel_residents;
         drop table if exists hostel_bookings;
         drop table if exists hostel_leads;
+        drop table if exists accommodation_rate_plans;
         drop table if exists accommodation_beds;
         drop table if exists accommodation_rooms;
         drop table if exists repair_vehicles;

@@ -54,9 +54,17 @@ internal static class FieldContractCatalog
     private static bool IsSelect(string label) =>
         ContractText.ContainsAny(label,
             "房型",
+            "性别策略",
+            "家具状态",
+            "技术状态",
             "上/下铺",
+            "床位类型",
+            "初始床位状态",
             "价格规则",
             "维护状态",
+            "可售状态",
+            "阻断范围",
+            "释放范围",
             "启用范围",
             "初始可用状态",
             "线索来源",
@@ -110,7 +118,7 @@ internal static class FieldContractCatalog
         ContractText.ContainsAny(label, "日期", "时间", "入住周期", "周期开始", "周期结束", "覆盖周期开始", "覆盖周期结束", "截止");
 
     private static bool IsMoney(string label) =>
-        ContractText.ContainsAny(label, "金额", "费用", "押金", "应退", "应补", "单价", "成本", "余额", "收入", "支出", "现金流", "欠款") &&
+        ContractText.ContainsAny(label, "金额", "费用", "押金", "应退", "应补", "单价", "日价", "周价", "月价", "成本", "余额", "收入", "支出", "现金流", "欠款") &&
         !ContractText.ContainsAny(label, "押金规则", "押金币种", "押金截止", "押金单", "押金类型", "押金凭证", "押金收款记录");
 
     private static bool IsNumber(string label) =>

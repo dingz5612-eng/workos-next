@@ -10,9 +10,12 @@ internal static class EventContractCatalog
 
     private static string[] Types(string cardId) => cardId switch
     {
-        "room" => new[] { ResourceSetupEvents.RoomCreated },
-        "bed" => new[] { ResourceSetupEvents.BedCreated },
-        "activate" => new[] { ResourceSetupEvents.BedActivated },
+        "roomSetup" => new[] { ResourceSetupEvents.RoomConfigured },
+        "bedSetup" => new[] { ResourceSetupEvents.BedConfigured },
+        "rateSetup" => new[] { ResourceSetupEvents.RateConfigured },
+        "roomReadiness" => new[] { ResourceSetupEvents.RoomReadinessChanged },
+        "roomBlock" => new[] { ResourceSetupEvents.RoomBlocked, ResourceSetupEvents.BedBlocked },
+        "roomRelease" => new[] { ResourceSetupEvents.RoomReleased, ResourceSetupEvents.BedReleased },
         "lead" => new[] { CheckInEvents.LeadCaptured },
         "booking" => new[] { CheckInEvents.BookingConfirmed },
         "resident" => new[] { CheckInEvents.ResidentRegistered },

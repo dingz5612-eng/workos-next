@@ -4,10 +4,10 @@
     {
       "id": "Accommodation.ResourceSetup",
       "workspaceId": "W-STAY-RESOURCE",
-      "cards": ["room", "bed", "activate"],
-      "events": ["RoomCreated", "BedCreated", "BedActivated"],
-      "ownsAggregates": ["Room", "Bed", "ResourceActivation"],
-      "status": "runtime-skeleton"
+      "cards": ["roomSetup", "bedSetup", "rateSetup", "roomReadiness", "roomBlock", "roomRelease"],
+      "events": ["Accommodation.RoomConfigured", "Accommodation.BedConfigured", "Accommodation.RateConfigured", "Accommodation.RoomReadinessChanged", "Accommodation.RoomBlocked", "Accommodation.RoomReleased", "Accommodation.BedBlocked", "Accommodation.BedReleased"],
+      "ownsAggregates": ["Room", "Bed", "RatePlan"],
+      "status": "production-slice"
     },
     {
       "id": "Accommodation.CheckIn",

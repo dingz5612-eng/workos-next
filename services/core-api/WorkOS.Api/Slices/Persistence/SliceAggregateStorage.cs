@@ -9,8 +9,7 @@ using WorkOS.Api.Slices.Accommodation.ExpenseLedger.Persistence;
 using WorkOS.Api.Slices.Accommodation.LeadReservation.Persistence;
 using WorkOS.Api.Slices.Accommodation.PaymentLedger.Persistence;
 using WorkOS.Api.Slices.Accommodation.PeriodAnalytics.Persistence;
-using WorkOS.Api.Slices.Accommodation.ResourceSetup.Aggregates;
-using WorkOS.Api.Slices.Accommodation.ResourceSetup.Events;
+using WorkOS.Api.Slices.Accommodation.ResourceSetup.Persistence;
 using WorkOS.Api.Slices.Accommodation.ServiceTask.Persistence;
 using WorkOS.Api.Slices.Accommodation.StayLifecycle.Persistence;
 
@@ -21,6 +20,7 @@ internal sealed class SliceAggregateStorage
     private readonly PostgresConnectionFactory connections;
     private readonly LeadReservationStorage leadReservations;
     private readonly StayLifecycleStorage stayLifecycle;
+    private readonly ResourceSetupStorage resourceSetup;
     private readonly DepositLedgerStorage depositLedger;
     private readonly PaymentLedgerStorage paymentLedger;
     private readonly CheckOutSettlementStorage checkoutSettlement;
@@ -33,6 +33,7 @@ internal sealed class SliceAggregateStorage
         this.connections = connections;
         leadReservations = new LeadReservationStorage(connections);
         stayLifecycle = new StayLifecycleStorage(connections);
+        resourceSetup = new ResourceSetupStorage(connections);
         depositLedger = new DepositLedgerStorage(connections);
         paymentLedger = new PaymentLedgerStorage(connections);
         checkoutSettlement = new CheckOutSettlementStorage(connections);
@@ -45,6 +46,7 @@ internal sealed class SliceAggregateStorage
     {
         if (leadReservations.Apply(workspaceEvent) ||
             stayLifecycle.Apply(workspaceEvent) ||
+            resourceSetup.Apply(workspaceEvent) ||
             depositLedger.Apply(workspaceEvent) ||
             paymentLedger.Apply(workspaceEvent) ||
             checkoutSettlement.Apply(workspaceEvent) ||
@@ -57,12 +59,6 @@ internal sealed class SliceAggregateStorage
 
         switch (workspaceEvent.EventType)
         {
-            case ResourceSetupEvents.RoomCreated:
-                UpsertRoom(RoomFrom(workspaceEvent));
-                break;
-            case ResourceSetupEvents.BedCreated:
-                UpsertBed(BedFrom(workspaceEvent));
-                break;
             case CheckInEvents.LeadCaptured:
                 UpsertHostelLead(HostelLeadFrom(workspaceEvent));
                 break;
@@ -92,56 +88,6 @@ internal sealed class SliceAggregateStorage
                 UpsertOperatingMetrics(OperatingMetricsFrom(workspaceEvent));
                 break;
         }
-    }
-
-    private void UpsertRoom(RoomAggregate room)
-    {
-        using var connection = connections.Open();
-        using var command = connection.CreateCommand();
-        command.CommandText = """
-            insert into accommodation_rooms(room_id, workspace_id, room_no, room_type, capacity, status, created_event_id, updated_at_utc)
-            values (@roomId, @workspaceId, @roomNo, @roomType, @capacity, @status, @createdEventId, @updatedAtUtc)
-            on conflict(room_id) do update set
-                room_no = excluded.room_no,
-                room_type = excluded.room_type,
-                capacity = excluded.capacity,
-                status = excluded.status,
-                updated_at_utc = excluded.updated_at_utc
-            """;
-        command.Parameters.AddWithValue("roomId", room.RoomId);
-        command.Parameters.AddWithValue("workspaceId", room.WorkspaceId);
-        command.Parameters.AddWithValue("roomNo", room.RoomNo);
-        command.Parameters.AddWithValue("roomType", room.RoomType);
-        command.Parameters.AddWithValue("capacity", room.Capacity);
-        command.Parameters.AddWithValue("status", room.Status);
-        command.Parameters.AddWithValue("createdEventId", room.CreatedEventId);
-        command.Parameters.AddWithValue("updatedAtUtc", room.UpdatedAtUtc);
-        command.ExecuteNonQuery();
-    }
-
-    private void UpsertBed(BedAggregate bed)
-    {
-        using var connection = connections.Open();
-        using var command = connection.CreateCommand();
-        command.CommandText = """
-            insert into accommodation_beds(bed_id, workspace_id, room_id, bed_no, bunk_type, status, created_event_id, updated_at_utc)
-            values (@bedId, @workspaceId, @roomId, @bedNo, @bunkType, @status, @createdEventId, @updatedAtUtc)
-            on conflict(bed_id) do update set
-                room_id = excluded.room_id,
-                bed_no = excluded.bed_no,
-                bunk_type = excluded.bunk_type,
-                status = excluded.status,
-                updated_at_utc = excluded.updated_at_utc
-            """;
-        command.Parameters.AddWithValue("bedId", bed.BedId);
-        command.Parameters.AddWithValue("workspaceId", bed.WorkspaceId);
-        command.Parameters.AddWithValue("roomId", bed.RoomId);
-        command.Parameters.AddWithValue("bedNo", bed.BedNo);
-        command.Parameters.AddWithValue("bunkType", bed.BunkType);
-        command.Parameters.AddWithValue("status", bed.Status);
-        command.Parameters.AddWithValue("createdEventId", bed.CreatedEventId);
-        command.Parameters.AddWithValue("updatedAtUtc", bed.UpdatedAtUtc);
-        command.ExecuteNonQuery();
     }
 
     private void UpsertDeposit(DepositAggregate deposit)
@@ -433,36 +379,6 @@ internal sealed class SliceAggregateStorage
         command.ExecuteNonQuery();
     }
 
-    private static RoomAggregate RoomFrom(WorkspaceEvent workspaceEvent)
-    {
-        var roomNo = Value(workspaceEvent, "房间号", "A302");
-        var roomType = Value(workspaceEvent, "房型", "四人间");
-        return new RoomAggregate(
-            $"room-{roomNo}".ToLowerInvariant(),
-            workspaceEvent.WorkspaceId,
-            roomNo,
-            roomType,
-            CapacityFor(roomType),
-            "created",
-            workspaceEvent.EventId,
-            workspaceEvent.OccurredAtUtc);
-    }
-
-    private static BedAggregate BedFrom(WorkspaceEvent workspaceEvent)
-    {
-        var roomNo = Value(workspaceEvent, "房间号", "A302");
-        var bedNo = Value(workspaceEvent, "床位号", $"{roomNo}-01");
-        return new BedAggregate(
-            $"bed-{bedNo}".ToLowerInvariant(),
-            workspaceEvent.WorkspaceId,
-            $"room-{roomNo}".ToLowerInvariant(),
-            bedNo,
-            Value(workspaceEvent, "上/下铺", "下铺"),
-            "created",
-            workspaceEvent.EventId,
-            workspaceEvent.OccurredAtUtc);
-    }
-
     private static DepositAggregate DepositFrom(WorkspaceEvent workspaceEvent)
     {
         var amount = DecimalValue(workspaceEvent, "押金金额", 3000m);
@@ -638,11 +554,4 @@ internal sealed class SliceAggregateStorage
     private static string StableId(string prefix, WorkspaceEvent workspaceEvent) =>
         $"{prefix}-{workspaceEvent.WorkspaceId}".ToLowerInvariant();
 
-    private static int CapacityFor(string roomType) => roomType switch
-    {
-        "单人间" => 1,
-        "双人间" => 2,
-        "六人间" => 6,
-        _ => 4
-    };
 }

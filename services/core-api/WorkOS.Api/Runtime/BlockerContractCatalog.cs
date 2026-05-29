@@ -17,6 +17,7 @@ internal static class BlockerContractCatalog
             "finalBalanceClose" => new[] { "cannot_close_checkout_with_unsettled_deposit" },
             "periodFinanceReview" => new[] { "cannot_count_deposit_received_as_revenue", "cannot_count_deposit_refund_as_expense" },
             "periodClose" => new[] { "cannot_close_period_without_metrics_review", "cannot_close_period_without_finance_review", "cannot_close_period_with_blocking_finance_exceptions", "cannot_close_period_without_action_plan_when_high_risk" },
+            "roomSetup" or "bedSetup" or "rateSetup" or "roomReadiness" or "roomBlock" or "roomRelease" => new[] { "ResourceSetupBoundaryCheck" },
             "serviceTaskCreate" or "roomReleaseAfterService" => new[] { "ServiceAvailabilityCheck" },
             _ => new[] { "当前卡存在阻断" }
         };

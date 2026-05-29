@@ -1,5 +1,5 @@
 # Accommodation.ResourceSetup
 
-Owns room, bed, and resource activation runtime behavior.
+Owns room, bed, rate plan, readiness, block, and release runtime behavior.
 
-Current status: runtime skeleton. Next step is aggregate persistence for `Room`, `Bed`, and `ResourceActivation`.
+Current status: production slice. ResourceSetup persists `Room`, `Bed`, and `RatePlan` facts and is the owner for bed status.
