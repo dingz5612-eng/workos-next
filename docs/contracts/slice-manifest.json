@@ -39,7 +39,7 @@
       "cards": ["depositAssessment", "depositReceipt", "depositConfirmation", "depositDeduction", "depositRefundApproval", "depositRefundPayment", "depositClose"],
       "events": ["Accommodation.DepositAssessed", "Accommodation.DepositReceived", "Accommodation.DepositEvidenceSubmitted", "Accommodation.DepositConfirmed", "Accommodation.DepositRejected", "Accommodation.DepositDeducted", "Accommodation.DepositAppliedToBalance", "Accommodation.DepositRefundApproved", "Accommodation.DepositRefundPaid", "Accommodation.DepositClosed"],
       "ownsAggregates": ["Deposit", "DepositTransaction"],
-      "status": "contract-only"
+      "status": "production-slice"
     },
     {
       "id": "Accommodation.PaymentLedger",
@@ -47,7 +47,7 @@
       "cards": ["paymentReceipt", "paymentConfirmation", "paymentAllocation", "paymentAdjustment", "debtFollowUp"],
       "events": ["Accommodation.PaymentReceived", "Accommodation.PaymentEvidenceSubmitted", "Accommodation.PaymentConfirmed", "Accommodation.PaymentRejected", "Accommodation.PaymentAllocated", "Accommodation.PaymentAdjusted", "Accommodation.DebtFollowUpRecorded", "Accommodation.BalanceRecalculated"],
       "ownsAggregates": ["Payment", "PaymentAllocation", "StayBalance"],
-      "status": "contract-only"
+      "status": "production-slice"
     },
     {
       "id": "Accommodation.CheckOutSettlement",

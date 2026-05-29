@@ -3,6 +3,8 @@ using NpgsqlTypes;
 using WorkOS.Api.Runtime;
 using WorkOS.Api.Slices.Accommodation.CheckIn.Aggregates;
 using WorkOS.Api.Slices.Accommodation.CheckIn.Events;
+using WorkOS.Api.Slices.Accommodation.DepositLedger.Persistence;
+using WorkOS.Api.Slices.Accommodation.PaymentLedger.Persistence;
 using WorkOS.Api.Slices.Accommodation.ResourceSetup.Aggregates;
 using WorkOS.Api.Slices.Accommodation.ResourceSetup.Events;
 
@@ -11,14 +13,23 @@ namespace WorkOS.Api.Slices.Persistence;
 internal sealed class SliceAggregateStorage
 {
     private readonly PostgresConnectionFactory connections;
+    private readonly DepositLedgerStorage depositLedger;
+    private readonly PaymentLedgerStorage paymentLedger;
 
     public SliceAggregateStorage(PostgresConnectionFactory connections)
     {
         this.connections = connections;
+        depositLedger = new DepositLedgerStorage(connections);
+        paymentLedger = new PaymentLedgerStorage(connections);
     }
 
     public void Apply(WorkspaceEvent workspaceEvent)
     {
+        if (depositLedger.Apply(workspaceEvent) || paymentLedger.Apply(workspaceEvent))
+        {
+            return;
+        }
+
         switch (workspaceEvent.EventType)
         {
             case ResourceSetupEvents.RoomCreated:

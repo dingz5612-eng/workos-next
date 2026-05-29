@@ -1,4 +1,6 @@
 using WorkOS.Api.Slices.Policies;
+using WorkOS.Api.Slices.Accommodation.DepositLedger.Policies;
+using WorkOS.Api.Slices.Accommodation.PaymentLedger.Policies;
 
 namespace WorkOS.Api.Runtime;
 
@@ -88,6 +90,18 @@ public sealed class ActionRuntimeService
         if (policyFailure is not null)
         {
             return policyFailure;
+        }
+
+        var depositPolicyFailure = DepositLedgerPolicy.Validate(card.Id, request);
+        if (depositPolicyFailure is not null)
+        {
+            return depositPolicyFailure;
+        }
+
+        var paymentPolicyFailure = PaymentLedgerPolicy.Validate(card.Id, request);
+        if (paymentPolicyFailure is not null)
+        {
+            return paymentPolicyFailure;
         }
 
         var existingEvent = store.FindEventByIdempotencyKey(request.IdempotencyKey);

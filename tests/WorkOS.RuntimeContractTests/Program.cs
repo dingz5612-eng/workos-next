@@ -65,11 +65,11 @@ ResetPostgres(connectionString);
     Assert(operatorFinance.Status == ConfirmStatus.Forbidden, "operator must not confirm finance card");
     Assert(operatorFinance.Reason?.StartsWith("role_confirmation_forbidden:") == true, "role rejection must use stable policy decision code");
 
-    var contractOnlyPrepare = runtime.Prepare("W-STAY-DEPOSIT-LEDGER", "depositReceipt");
+    var contractOnlyPrepare = runtime.Prepare("W-STAY-SERVICE-TASK", "serviceTaskCreate");
     Assert(contractOnlyPrepare is not null, "contract-only slices should still allow prepare");
-    var contractOnlyConfirm = runtime.Confirm("W-STAY-DEPOSIT-LEDGER", "depositReceipt", Human("contract-only-deposit-receipt"), operatorToken);
+    var contractOnlyConfirm = runtime.Confirm("W-STAY-SERVICE-TASK", "serviceTaskCreate", Human("contract-only-service-task"), operatorToken);
     Assert(contractOnlyConfirm.Status == ConfirmStatus.Forbidden, "contract-only slice confirm must be forbidden until runtime status is upgraded");
-    Assert(contractOnlyConfirm.Reason == "slice_runtime_forbidden:Accommodation.DepositLedger:contract-only", "contract-only rejection must name the owning slice");
+    Assert(contractOnlyConfirm.Reason == "slice_runtime_forbidden:Accommodation.ServiceTask:contract-only", "contract-only rejection must name the owning slice");
 
     var humanRoom = runtime.Confirm("W-STAY-RESOURCE", "room", Human("resource-room", new Dictionary<string, string> { ["房间号"] = "A302" }), operatorToken);
     Assert(humanRoom.Status == ConfirmStatus.Confirmed, "human room confirmation should pass");
@@ -91,6 +91,114 @@ ResetPostgres(connectionString);
         runtime.ProcessPendingOutbox();
     }
 
+    Assert(runtime.Confirm("W-STAY-DEPOSIT-LEDGER", "depositAssessment", Human("deposit-assessment", new Dictionary<string, string>
+    {
+        ["入住单"] = "stay-ledger-001",
+        ["应收押金金额"] = "3000",
+        ["币种"] = "KGS"
+    }), operatorToken).Status == ConfirmStatus.Confirmed, "deposit assessment should pass after DepositLedger runtime upgrade");
+    runtime.ProcessPendingOutbox();
+
+    var missingDepositEvidence = runtime.Confirm("W-STAY-DEPOSIT-LEDGER", "depositReceipt", Human("deposit-receipt-missing-evidence", new Dictionary<string, string>
+    {
+        ["押金单"] = "deposit-ledger-001",
+        ["实收押金金额"] = "3000",
+        ["支付方式"] = "MBank"
+    }), operatorToken);
+    Assert(missingDepositEvidence.Status == ConfirmStatus.Forbidden, "non-cash deposit receipt without evidence must be forbidden");
+    Assert(missingDepositEvidence.Reason == "deposit_evidence_required:non_cash_deposit", "deposit evidence policy must use stable reason");
+
+    Assert(runtime.Confirm("W-STAY-DEPOSIT-LEDGER", "depositReceipt", HumanWithEvidence("deposit-receipt", new Dictionary<string, string>
+    {
+        ["押金单"] = "deposit-ledger-001",
+        ["实收押金金额"] = "3000",
+        ["币种"] = "KGS",
+        ["支付方式"] = "MBank"
+    }, "deposit-proof-001"), operatorToken).Status == ConfirmStatus.Confirmed, "deposit receipt with evidence should pass");
+    runtime.ProcessPendingOutbox();
+
+    Assert(runtime.Confirm("W-STAY-DEPOSIT-LEDGER", "depositConfirmation", Human("deposit-confirmation", new Dictionary<string, string>
+    {
+        ["押金收款记录"] = "deposit-ledger-001",
+        ["确认金额"] = "3000",
+        ["确认结果"] = "确认"
+    }), financeToken).Status == ConfirmStatus.Confirmed, "finance should confirm deposit receipt");
+    runtime.ProcessPendingOutbox();
+
+    var overRefund = runtime.Confirm("W-STAY-DEPOSIT-LEDGER", "depositRefundApproval", Human("deposit-refund-over-held", new Dictionary<string, string>
+    {
+        ["押金单"] = "deposit-ledger-001",
+        ["当前持有押金"] = "3000",
+        ["扣除金额"] = "2000",
+        ["抵扣欠款金额"] = "2000"
+    }), operatorToken);
+    Assert(overRefund.Status == ConfirmStatus.Forbidden, "deposit refund approval must reject more than held deposit");
+
+    Assert(runtime.Confirm("W-STAY-DEPOSIT-LEDGER", "depositRefundApproval", Human("deposit-refund-approval", new Dictionary<string, string>
+    {
+        ["押金单"] = "deposit-ledger-001",
+        ["当前持有押金"] = "3000",
+        ["扣除金额"] = "500",
+        ["抵扣欠款金额"] = "500",
+        ["应退金额"] = "2000"
+    }), operatorToken).Status == ConfirmStatus.Confirmed, "deposit refund approval within held amount should pass");
+    runtime.ProcessPendingOutbox();
+
+    Assert(runtime.Confirm("W-STAY-DEPOSIT-LEDGER", "depositRefundPayment", HumanWithEvidence("deposit-refund-payment", new Dictionary<string, string>
+    {
+        ["押金单"] = "deposit-ledger-001",
+        ["应退金额"] = "2000",
+        ["退款方式"] = "MBank",
+        ["付款时间"] = "2026-05-29T18:00"
+    }, "deposit-refund-proof-001"), operatorToken).Status == ConfirmStatus.Confirmed, "deposit refund payment should pass");
+    runtime.ProcessPendingOutbox();
+
+    var missingPaymentEvidence = runtime.Confirm("W-STAY-PAYMENT-LEDGER", "paymentReceipt", Human("payment-receipt-missing-evidence", new Dictionary<string, string>
+    {
+        ["入住单"] = "stay-ledger-001",
+        ["收款金额"] = "9300",
+        ["支付方式"] = "MBank"
+    }), operatorToken);
+    Assert(missingPaymentEvidence.Status == ConfirmStatus.Forbidden, "non-cash payment receipt without evidence must be forbidden");
+    Assert(missingPaymentEvidence.Reason == "payment_evidence_required:non_cash_payment", "payment evidence policy must use stable reason");
+
+    Assert(runtime.Confirm("W-STAY-PAYMENT-LEDGER", "paymentReceipt", HumanWithEvidence("payment-receipt", new Dictionary<string, string>
+    {
+        ["入住单"] = "stay-ledger-001",
+        ["收款记录"] = "payment-ledger-001",
+        ["收款金额"] = "9300",
+        ["币种"] = "KGS",
+        ["支付方式"] = "MBank",
+        ["收款用途"] = "房租"
+    }, "payment-proof-001"), operatorToken).Status == ConfirmStatus.Confirmed, "payment receipt with evidence should pass");
+    runtime.ProcessPendingOutbox();
+
+    Assert(runtime.Confirm("W-STAY-PAYMENT-LEDGER", "paymentConfirmation", Human("payment-confirmation", new Dictionary<string, string>
+    {
+        ["收款记录"] = "payment-ledger-001",
+        ["确认金额"] = "9300",
+        ["确认结果"] = "确认"
+    }), financeToken).Status == ConfirmStatus.Confirmed, "finance should confirm ordinary payment");
+    runtime.ProcessPendingOutbox();
+
+    var overAllocation = runtime.Confirm("W-STAY-PAYMENT-LEDGER", "paymentAllocation", Human("payment-allocation-over", new Dictionary<string, string>
+    {
+        ["收款记录"] = "payment-ledger-001",
+        ["确认金额"] = "9300",
+        ["分配金额"] = "10000"
+    }), operatorToken);
+    Assert(overAllocation.Status == ConfirmStatus.Forbidden, "payment allocation must reject more than confirmed amount");
+
+    Assert(runtime.Confirm("W-STAY-PAYMENT-LEDGER", "paymentAllocation", Human("payment-allocation", new Dictionary<string, string>
+    {
+        ["入住单"] = "stay-ledger-001",
+        ["收款记录"] = "payment-ledger-001",
+        ["确认金额"] = "9300",
+        ["分配金额"] = "9300",
+        ["总应收"] = "9300"
+    }), operatorToken).Status == ConfirmStatus.Confirmed, "payment allocation within confirmed amount should pass");
+    runtime.ProcessPendingOutbox();
+
     var behavior = runtime.AppendBehaviorEvent(new BehaviorEventRecord("beh-test", "WorkspaceOpened", "workspace", "W-STAY-CHECKIN", "zh-CN", "contract-test", DateTimeOffset.UtcNow));
     Assert(behavior.EventId == "beh-test", "behavior event should append");
 
@@ -107,7 +215,7 @@ ResetPostgres(connectionString);
     var reloadedCheckin = reloaded.Workspaces.Single(workspace => workspace.Id == "W-STAY-CHECKIN");
     Assert(reloadedCheckin.Cards.All(card => card.Status == "done"), "check-in cards should all be done");
     var reloadedRuntime = ProjectionRuntime.OpenPostgres(connectionString);
-    Assert(CountRows(connectionString, "schema_migrations") >= 6, "schema migrations should be recorded in PostgreSQL");
+    Assert(CountRows(connectionString, "schema_migrations") >= 7, "schema migrations should be recorded in PostgreSQL");
     Assert(CountRows(connectionString, "accommodation_rooms") >= 1, "Room aggregate should persist in accommodation_rooms");
     Assert(CountRows(connectionString, "accommodation_beds") >= 1, "Bed aggregate should persist in accommodation_beds");
     Assert(CountRows(connectionString, "accommodation_deposits") >= 1, "Deposit aggregate should persist in accommodation_deposits");
@@ -120,13 +228,16 @@ ResetPostgres(connectionString);
     Assert(CountRows(connectionString, "hostel_payments") >= 1, "Payment should persist in hostel_payments");
     Assert(CountRows(connectionString, "finance_reconciliations") >= 1, "Finance reconciliation should persist in finance_reconciliations");
     Assert(CountRows(connectionString, "hostel_operating_metrics") >= 1, "Operating metrics should persist in hostel_operating_metrics");
+    Assert(CountRows(connectionString, "deposit_transactions") >= 4, "DepositLedger transactions should persist in deposit_transactions");
+    Assert(CountRows(connectionString, "payment_allocations") >= 1, "PaymentLedger allocations should persist in payment_allocations");
+    Assert(CountRows(connectionString, "stay_balances") >= 1, "PaymentLedger balances should persist in stay_balances");
     Assert(CountRows(connectionString, "repair_stations") >= 2, "RepairStation aggregate roots should persist in repair_stations");
     Assert(CountRows(connectionString, "repair_technicians") >= 2, "Technician aggregate roots should persist in repair_technicians");
     Assert(CountRows(connectionString, "repair_vehicles") >= 2, "Vehicle aggregate roots should persist in repair_vehicles");
     Assert(reloadedRuntime.GetAuditEvents("W-STAY-CHECKIN").Count == 10, "check-in audit events should persist in PostgreSQL");
     Assert(reloadedRuntime.GetBehaviorEvents().Any(item => item.EventId == "beh-test"), "behavior event should persist in PostgreSQL");
     var outbox = reloadedRuntime.GetOutboxMessages();
-    Assert(outbox.Count == 13, $"expected 13 outbox messages, got {outbox.Count}");
+    Assert(outbox.Count == 21, $"expected 21 outbox messages, got {outbox.Count}");
     Assert(outbox.All(item => !string.IsNullOrWhiteSpace(item.CorrelationId)), "outbox messages must include correlationId");
     Assert(outbox.All(item => !string.IsNullOrWhiteSpace(item.RequestId)), "outbox messages must include requestId");
     Assert(outbox.All(item => !string.IsNullOrWhiteSpace(item.CausationId)), "outbox messages must include causationId");
@@ -135,8 +246,8 @@ ResetPostgres(connectionString);
     var observation = reloadedRuntime.Observe();
     Assert(observation.WorkspaceCount == 16, $"observability workspaceCount expected 16, got {observation.WorkspaceCount}");
     Assert(observation.CardCount == 78, $"observability cardCount expected 78, got {observation.CardCount}");
-    Assert(observation.AuditEventCount == 13, $"observability auditEventCount expected 13, got {observation.AuditEventCount}");
-    Assert(observation.OutboxCount == 13, $"observability outboxCount expected 13, got {observation.OutboxCount}");
+    Assert(observation.AuditEventCount == 21, $"observability auditEventCount expected 21, got {observation.AuditEventCount}");
+    Assert(observation.OutboxCount == 21, $"observability outboxCount expected 21, got {observation.OutboxCount}");
     Assert(observation.PendingOutboxCount == 0, "observability pending outbox count should be zero after processing");
     Assert(observation.BehaviorEventCount >= 1, "observability behavior event count should include persisted behavior events");
 
@@ -366,6 +477,9 @@ static FieldProjection Field(CardProjection card, string zhLabel) =>
 static ConfirmCardRequest Human(string idempotencyKey, IReadOnlyDictionary<string, string>? fieldValues = null) =>
     new("zh-CN", idempotencyKey, fieldValues ?? new Dictionary<string, string>(), Array.Empty<string>());
 
+static ConfirmCardRequest HumanWithEvidence(string idempotencyKey, IReadOnlyDictionary<string, string> fieldValues, params string[] evidenceIds) =>
+    new("zh-CN", idempotencyKey, fieldValues, evidenceIds);
+
 static void ValidateProjectionContractFiles()
 {
     using var projectionSchema = JsonDocument.Parse(File.ReadAllText(Path.Combine("docs", "contracts", "projection-contract.schema.json")));
@@ -552,6 +666,9 @@ static void ResetPostgres(string connectionString)
     command.CommandText = """
         drop table if exists finance_confirmations;
         drop table if exists accommodation_deposits;
+        drop table if exists stay_balances;
+        drop table if exists payment_allocations;
+        drop table if exists deposit_transactions;
         drop table if exists hostel_operating_metrics;
         drop table if exists finance_reconciliations;
         drop table if exists hostel_payments;
