@@ -62,6 +62,8 @@ export async function submitCurrentCard(ctx) {
       return;
     }
   }
+  const fieldValues = collectOperationValues();
+  saveDraft(item.id, card.id, fieldValues);
   ctx.state.operationMessage = ctx.tr("submitting");
   ctx.render();
   try {
@@ -70,8 +72,8 @@ export async function submitCurrentCard(ctx) {
       card,
       actor: ctx.state.currentActor,
       language: ctx.state.lang,
-      fieldValues: collectOperationValues(),
-      onProjection: (payload) => ctx.replaceIntentWorkspaces(payload.workspaces)
+      fieldValues,
+      onProjection: (payload) => applyProjectionPayload(payload, ctx)
     });
     clearDraft(item.id, card.id);
     ctx.state.selectedCardIndex = -1;
@@ -87,4 +89,9 @@ export async function submitCurrentCard(ctx) {
     ctx.state.operationMessage = ctx.tr("submitFailed");
   }
   ctx.render(true);
+}
+
+function applyProjectionPayload(payload, ctx) {
+  ctx.replaceIntentWorkspaces(payload.workspaces);
+  ctx.state.projectionEvents = payload.events || ctx.state.projectionEvents || [];
 }

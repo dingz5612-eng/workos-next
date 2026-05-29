@@ -596,8 +596,8 @@ internal sealed class SliceAggregateStorage
 
     private static DateTimeOffset DateValue(WorkspaceEvent workspaceEvent, string key, DateTimeOffset defaultValue) =>
         workspaceEvent.Payload.TryGetValue(key, out var value) && DateTimeOffset.TryParse(value, CultureInfo.InvariantCulture, DateTimeStyles.AssumeLocal, out var parsed)
-            ? parsed
-            : defaultValue;
+            ? parsed.ToUniversalTime()
+            : defaultValue.ToUniversalTime();
 
     private static string StableId(string prefix, WorkspaceEvent workspaceEvent) =>
         $"{prefix}-{workspaceEvent.WorkspaceId}".ToLowerInvariant();

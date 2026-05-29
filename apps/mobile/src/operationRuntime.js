@@ -12,6 +12,12 @@ export async function submitCardOperation({ workspace, card, actor, language, fi
     fieldValues,
     evidenceIds: []
   });
-  await waitForProjectionEvent(result.event.eventId, onProjection);
+  if (result.projection) onProjection(result.projection);
+  try {
+    await waitForProjectionEvent(result.event.eventId, onProjection);
+  } catch {
+    // Confirm already succeeded. The outbox projector can lag briefly, so do not
+    // turn a committed event into a user-visible submit failure.
+  }
   return result;
 }

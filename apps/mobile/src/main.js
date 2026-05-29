@@ -30,6 +30,7 @@ async function hydrateProjectionFromApi() {
     state.apiStatus = "online";
     const payload = await fetchWorkspaceProjection();
     replaceIntentWorkspaces(payload.workspaces);
+    state.projectionEvents = payload.events || [];
   } catch {
     state.apiStatus = "offline";
     state.operationMessage = ctx.tr("apiOffline");

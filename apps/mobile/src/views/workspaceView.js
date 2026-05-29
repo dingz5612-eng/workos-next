@@ -124,11 +124,26 @@ export function operationValue(field, item, card, ctx) {
   const draft = loadDraft(item.id, card.id);
   const values = draft.values || {};
   if (values[field.id]) return values[field.id];
+  const carried = carriedForwardValue(field, item, ctx);
+  if (carried) return carried;
   if (label === "容量") {
     const roomType = Object.entries(values).find(([, candidate]) => ["单人间", "双人间", "四人间", "六人间"].includes(candidate))?.[1] || "四人间";
     return capacityForRoomType(roomType);
   }
   return defaultValueForField(field);
+}
+
+function carriedForwardValue(field, item, ctx) {
+  const label = ctx.localTerm(field, "zh-CN");
+  const events = (ctx.state.projectionEvents || [])
+    .filter((event) => event.workspaceId === item.id && event.payload)
+    .slice()
+    .reverse();
+  for (const event of events) {
+    if (event.payload[field.id]) return event.payload[field.id];
+    if (event.payload[label]) return event.payload[label];
+  }
+  return "";
 }
 
 export function nextCardTitle(card, item, ctx) {
