@@ -1,6 +1,4 @@
 import { countBadge, countDomain, queueTasks } from "../selectors/queueSelectors.js";
-import { activeCardForWorkspace } from "../selectors/workspaceSelectors.js";
-import { intentWorkspaces, workspaceIdForTask } from "../workspaceProjections.js";
 
 export function workbenchView(ctx) {
   const list = queueTasks(ctx.state);
@@ -19,17 +17,18 @@ export function workbenchView(ctx) {
       <label>${ctx.tr("sort")}<select id="sort"><option value="smartSort">${ctx.tr("smartSort")}</option><option value="dueSort">${ctx.tr("dueSort")}</option></select></label>
       <button id="advanced">${ctx.tr("filter")}</button>
     </section>
+    ${list.some((item) => item.source === "offline-demo-fallback") ? `<section class="help-card"><p>${ctx.tr("apiOffline")}</p></section>` : ""}
     <section class="task-stack">${list.map((item) => taskCard(item, ctx)).join("")}</section>
     ${ctx.state.advancedOpen ? advancedSheet(ctx) : ""}
   `);
 }
 
 function domainFilters(ctx) {
-  return ["all", "stay", "repair", "finance"].map((key) => filterPill("queueDomain", key, countDomain(key), ctx)).join("");
+  return ["all", "stay", "repair", "finance"].map((key) => filterPill("queueDomain", key, countDomain(ctx.state, key), ctx)).join("");
 }
 
 function badgeFilters(ctx) {
-  return ["mine", "confirm", "blocked", "soon", "waiting"].map((key) => filterPill("queueBadge", key, countBadge(key), ctx)).join("");
+  return ["mine", "confirm", "blocked", "soon", "waiting"].map((key) => filterPill("queueBadge", key, countBadge(ctx.state, key), ctx)).join("");
 }
 
 function filterPill(field, key, count, ctx) {
@@ -52,10 +51,15 @@ function advancedSheet(ctx) {
 }
 
 function taskCard(item, ctx) {
-  const itemWorkspace = intentWorkspaces.find((entry) => entry.id === workspaceIdForTask(item.id)) || intentWorkspaces[0];
-  const activeCard = activeCardForWorkspace(itemWorkspace);
+  if (!item.workspace || !item.card) {
+    return `<article class="task-card">
+      <div><span>${ctx.tr(item.domain)} · ${(item.badges || []).map((badge) => ctx.tr(badge)).join(" · ")} · ${item.due || ""}</span><strong>${ctx.tr(item.title)}</strong><p>${ctx.tr("apiOffline")}</p></div>
+    </article>`;
+  }
+  const itemWorkspace = item.workspace;
+  const activeCard = item.card;
   return `<article class="task-card">
-    <div><span>${ctx.tr(item.domain)} · ${ctx.tr(item.badges[0])} · ${item.due}</span><strong>${ctx.tx(itemWorkspace.title)}</strong><p>${ctx.tx(activeCard.title)} · ${ctx.tr(activeCard.status)}</p><p>${ctx.tr("whyMe")}: ${ctx.tx(item.why)}</p></div>
-    <button data-workspace="${itemWorkspace.id}">${ctx.tr("openWorkspace")}</button>
+    <div><span>${ctx.tr(item.domain)} · ${(item.badges || []).map((badge) => ctx.tr(badge)).join(" · ")}</span><strong>${ctx.tx(itemWorkspace.title)}</strong><p>${ctx.tx(activeCard.title)} · ${ctx.tr(activeCard.status)}</p><p>${ctx.tr("whyMe")}: ${ctx.tx(item.reason || itemWorkspace.next)}</p></div>
+    <button data-workspace="${item.workspaceId}" data-card-id="${item.cardId}">${ctx.tr("openWorkspace")}</button>
   </article>`;
 }

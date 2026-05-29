@@ -86,6 +86,7 @@ Detailed rules live here:
 - Backend runtime: `docs/architecture/WORKOS_BACKEND_RUNTIME_RULES.md`
 - Frontend boundaries: `docs/architecture/WORKOS_FRONTEND_BOUNDARY_RULES.md`
 - Contract rules: `docs/architecture/WORKOS_CONTRACT_RULES.md`
+- Runtime surfaces: `docs/architecture/WORKOS_SURFACE_RULES.md`
 - Accommodation runtime: `docs/architecture/WORKOS_ACCOMMODATION_RUNTIME_RULES.md`
 - Testing rules: `docs/architecture/WORKOS_TESTING_RULES.md`
 - Current runtime facts: `docs/architecture/CURRENT_RUNTIME_ARCHITECTURE.md`

@@ -47,6 +47,7 @@ ResetPostgres(connectionString);
     ValidateAccommodationFactOwnership();
     ValidatePeriodAnalyticsContract();
     ValidateStableOptionValues(projection);
+    ValidateRuntimeSurfaceLenses(runtime);
 
     var prepared = runtime.Prepare("W-STAY-RESOURCE", "roomSetup");
     Assert(prepared is not null, "prepare should return room setup card payload");
@@ -908,6 +909,28 @@ static void ValidateStableOptionValues(ProjectionEnvelope projection)
         .ToArray();
     Assert(derivedFields.Length > 0, "projection should include derived field contracts");
     Assert(derivedFields.All(field => IsStableFactKey(field.Ui.DerivedFrom)), "derived fields must reference canonical field ids, not localized labels");
+}
+
+static void ValidateRuntimeSurfaceLenses(ProjectionRuntime runtime)
+{
+    var queueJson = JsonSerializer.Serialize(runtime.GetWorkQueue());
+    Assert(queueJson.Contains("workspaceId", StringComparison.Ordinal), "work queue items must include workspaceId");
+    Assert(queueJson.Contains("cardId", StringComparison.Ordinal), "work queue items must include cardId");
+    Assert(queueJson.Contains("W-STAY-PAYMENT-LEDGER", StringComparison.Ordinal), "work queue must expose current PaymentLedger workspace");
+
+    var searchJson = JsonSerializer.Serialize(runtime.Search("押金"));
+    var depositIndex = searchJson.IndexOf("W-STAY-DEPOSIT-LEDGER", StringComparison.Ordinal);
+    var checkinIndex = searchJson.IndexOf("W-STAY-CHECKIN", StringComparison.Ordinal);
+    Assert(depositIndex >= 0, "search must expose current DepositLedger workspace for deposit intent");
+    Assert(checkinIndex < 0 || depositIndex < checkinIndex, "search must rank DepositLedger before legacy CheckIn for deposit intent");
+
+    var homeJson = JsonSerializer.Serialize(runtime.GetHomeSurface());
+    Assert(homeJson.Contains("W-STAY-DEPOSIT-LEDGER", StringComparison.Ordinal), "home surface must expose DepositLedger");
+    Assert(homeJson.Contains("W-STAY-PERIOD-ANALYTICS", StringComparison.Ordinal), "home surface must expose PeriodAnalytics");
+
+    var learningJson = JsonSerializer.Serialize(runtime.GetLearningCatalog());
+    Assert(learningJson.Contains("W-STAY-DEPOSIT-LEDGER", StringComparison.Ordinal), "learning catalog must expose DepositLedger");
+    Assert(learningJson.Contains("depositReceipt", StringComparison.Ordinal), "learning catalog must expose card ids");
 }
 
 static void ValidateAllContractOnlySlicesAreGated(

@@ -1,7 +1,7 @@
 import { learningDomainFilters, learningTypeFilters } from "../selectors/coachSelectors.js";
 import { cardSearchText, normalize, workspaceSearchText } from "../selectors/searchSelectors.js";
+import { selectLearningCatalog } from "../selectors/surfaceSelectors.js";
 import { activeCardForWorkspace } from "../selectors/workspaceSelectors.js";
-import { intentWorkspaces } from "../workspaceProjections.js";
 import { modeCard } from "./loginView.js";
 import { nextCardTitle } from "./workspaceView.js";
 
@@ -47,7 +47,7 @@ export function learningView(ctx) {
 
 export function scenarioCoachEntries(ctx) {
   const query = normalize(ctx.state.learningQuery);
-  return intentWorkspaces
+  return selectLearningCatalog(ctx.state)
     .filter((item) => ctx.state.learningDomain === "all" || item.domain === ctx.state.learningDomain)
     .filter((item) => !query || normalize(workspaceSearchText(item, ctx)).includes(query));
 }

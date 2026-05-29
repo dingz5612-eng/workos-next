@@ -1,7 +1,6 @@
-import { tasks } from "../demoQueue.js";
 import { i18n } from "../i18n.js";
+import { selectRuntimeWorkspaces, selectWorkbenchQueue, selectWorkspaceById } from "./surfaceSelectors.js";
 import { translateTerm } from "../termDictionary.js";
-import { intentWorkspaces } from "../workspaceProjections.js";
 
 export function tr(state, key) {
   return i18n[state.lang][key] || key;
@@ -28,14 +27,18 @@ export function localList(state, items) {
 }
 
 export function task(state) {
-  return tasks.find((item) => item.id === state.selectedTask) || tasks[0];
+  return selectWorkbenchQueue(state).find((item) => item.queueItemId === state.selectedTask || item.id === state.selectedTask) || selectWorkbenchQueue(state)[0];
 }
 
 export function workspace(state) {
-  return intentWorkspaces.find((item) => item.id === state.selectedWorkspace) || intentWorkspaces[0];
+  return selectWorkspaceById(state, state.selectedWorkspace) || selectWorkspaceById(state, "W-STAY-CHECKIN") || selectRuntimeWorkspaces(state)[0];
 }
 
-export function activeWorkspaceCard(item, selectedCardIndex) {
+export function activeWorkspaceCard(item, selectedCardIndex, selectedCardId = "") {
+  if (selectedCardId) {
+    const selected = item.cards.find((card) => card.id === selectedCardId);
+    if (selected) return selected;
+  }
   const defaultIndex = item.cards.findIndex((card) => ["ready", "blocked", "inProgress"].includes(card.status));
   const activeIndex = Number.isInteger(selectedCardIndex) && selectedCardIndex >= 0 ? selectedCardIndex : defaultIndex;
   return item.cards[activeIndex >= 0 ? activeIndex : 0] || item.cards[0];
@@ -52,4 +55,3 @@ export function activeCardForWorkspace(item) {
 export function metric(value, label, ctx) {
   return `<article><span>${ctx.tr(label)}</span><strong>${value}</strong></article>`;
 }
-

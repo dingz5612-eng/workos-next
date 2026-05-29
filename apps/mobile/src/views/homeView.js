@@ -1,9 +1,11 @@
-import { intentWorkspaces } from "../workspaceProjections.js";
+import { selectHomeSurface, selectSurfaceStats } from "../selectors/surfaceSelectors.js";
 import { modeCard } from "./loginView.js";
 import { workspaceCard } from "./workspaceView.js";
 
 export function homeView(ctx) {
   const { tr, shell, state } = ctx;
+  const surface = selectHomeSurface(state);
+  const stats = selectSurfaceStats(state);
   return shell(`
     <section class="command-card">
       <span>${tr("globalCommand")}</span>
@@ -22,18 +24,29 @@ export function homeView(ctx) {
       </div>
     </section>
     <section class="metric-grid">
-      ${ctx.metric("7", "mine")}
-      ${ctx.metric("2", "blocked")}
-      ${ctx.metric("3", "confirm")}
+      ${ctx.metric(stats.myQueueCount, "mine")}
+      ${ctx.metric(stats.blockedCount, "blocked")}
+      ${ctx.metric(stats.confirmCount, "confirm")}
     </section>
     <section class="business-focus">
       <h2>${tr("scenarioFocus")}</h2>
-      ${workspaceCard(intentWorkspaces.find((item) => item.id === "W-STAY-CHECKIN"), ctx)}
-      ${workspaceCard(intentWorkspaces.find((item) => item.id === "W-REPAIR-REQUEST"), ctx)}
-      ${workspaceCard(intentWorkspaces.find((item) => item.id === "W-STAY-CHECKOUT"), ctx)}
-      ${workspaceCard(intentWorkspaces.find((item) => item.id === "W-REPAIR-DISPATCH"), ctx)}
+      ${homeSurfaceSections(surface, ctx)}
     </section>
   `);
+}
+
+function homeSurfaceSections(surface, ctx) {
+  const groups = new Map();
+  for (const item of surface) {
+    const group = item.domainGroup || item.workspace?.domain || "Operations";
+    groups.set(group, [...(groups.get(group) || []), item]);
+  }
+  return Array.from(groups.entries()).map(([group, items]) => `
+    <section class="surface-group">
+      <h3>${ctx.escapeHtml(group)}</h3>
+      ${items.map((item) => workspaceCard(item.workspace, ctx, item.cardId)).join("")}
+    </section>
+  `).join("");
 }
 
 export function simpleModeList(ctx) {

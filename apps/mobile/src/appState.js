@@ -1,4 +1,4 @@
-import { workspaceIdForTask } from "./workspaceProjections.js";
+import { createRuntimeStore } from "./runtime/runtimeStore.js";
 
 export function savedActor() {
   try {
@@ -17,7 +17,9 @@ export function createInitialState() {
     selectedTask: "T-STAY-DEPOSIT",
     selectedWorkspace: "W-STAY-CHECKIN",
     selectedCardIndex: -1,
+    selectedCardId: "",
     query: "",
+    recentSearches: [],
     filterOpen: false,
     advancedOpen: false,
     queueDomain: "all",
@@ -33,7 +35,8 @@ export function createInitialState() {
     currentActor: actor,
     loginMessage: "",
     projectionEvents: [],
-    accommodationLenses: {}
+    accommodationLenses: {},
+    runtimeStore: createRuntimeStore()
   };
 
   applyUrlParams(state);
@@ -49,9 +52,9 @@ function applyUrlParams(state) {
   if (params.has("view")) state.view = params.get("view");
   if (params.has("task")) {
     state.selectedTask = params.get("task");
-    state.selectedWorkspace = workspaceIdForTask(state.selectedTask);
   }
   if (params.has("workspace")) state.selectedWorkspace = params.get("workspace");
+  if (params.has("card")) state.selectedCardId = params.get("card");
   if (params.has("q")) {
     state.query = params.get("q");
     state.learningQuery = params.get("q");

@@ -102,6 +102,16 @@
       "exceptionAllowed": true
     },
     {
+      "id": "WON16-SURFACE-001",
+      "title": "Unified runtime surfaces",
+      "scope": "frontend runtime-surface",
+      "severity": "P0",
+      "owner": "frontend",
+      "ruleFile": "docs/architecture/WORKOS_SURFACE_RULES.md",
+      "enforcedBy": ["scripts/guard-architecture.ps1", "apps/mobile vitest", "tests/WorkOS.RuntimeContractTests"],
+      "exceptionAllowed": true
+    },
+    {
       "id": "WON16-CONTRACT-001",
       "title": "Canonical field id",
       "scope": "contracts runtime frontend",

@@ -1,5 +1,5 @@
 import { searchWorkspaceResults } from "../selectors/searchSelectors.js";
-import { intentWorkspaces } from "../workspaceProjections.js";
+import { selectRuntimeWorkspaces } from "../selectors/surfaceSelectors.js";
 import { workspaceCard } from "./workspaceView.js";
 
 export function searchView(ctx) {
@@ -20,23 +20,24 @@ export function searchView(ctx) {
 }
 
 function scenarioBlocks(ctx) {
+  const workspaces = selectRuntimeWorkspaces(ctx.state);
   return `<section class="scenario-list">
     <h2>${ctx.tr("scenarios")}</h2>
-    ${scenario("stay", intentWorkspaces.filter((item) => item.domain === "stay"), ctx)}
-    ${scenario("repair", intentWorkspaces.filter((item) => item.domain === "repair"), ctx)}
-    ${scenario("finance", intentWorkspaces.filter((item) => item.domain === "finance"), ctx)}
+    ${scenario("stay", workspaces.filter((item) => item.domain === "stay"), ctx)}
+    ${scenario("repair", workspaces.filter((item) => item.domain === "repair"), ctx)}
+    ${scenario("finance", workspaces.filter((item) => item.domain === "finance"), ctx)}
   </section>`;
 }
 
 function scenario(domain, workspaces, ctx) {
   return `<article class="scenario-card ${domain}">
     <h3>${ctx.tr(domain)}</h3>
-    <div>${workspaces.length ? workspaces.map((item) => `<button data-workspace="${item.id}">${ctx.tx(item.title)}</button>`).join("") : `<button data-workspace="W-STAY-DEPOSIT-EXCEPTION">${ctx.tr("confirmPayment")}</button>`}</div>
+    <div>${workspaces.length ? workspaces.map((item) => `<button data-workspace="${item.id}">${ctx.tx(item.title)}</button>`).join("") : `<span>${ctx.tr("coachNoMatch")}</span>`}</div>
   </article>`;
 }
 
 function searchResultBlocks(results, ctx) {
-  const first = results[0] || intentWorkspaces[0];
+  const first = results[0] || selectRuntimeWorkspaces(ctx.state)[0];
   return `
     <section class="result-focus">
       <span>${ctx.tr("bestNext")}</span>

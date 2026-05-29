@@ -65,6 +65,29 @@ helpers. Do not interpolate raw projection or user text into `innerHTML`.
 The frontend consumes Lens read models through contract paths generated from
 OpenAPI. Lens output is read-only and must not create a hidden write model.
 
+## Runtime Surfaces
+
+Home, Workbench, Search, Learning, Workspace, and Me are runtime surfaces. They
+must consume the same runtime projection, queue, search, Lens, and learning
+catalog source. A slice visible in Search or Learning must not disappear from
+Home or Workbench because those views use stale local models.
+
+Runtime surface source boundaries:
+
+- Home must not hardcode business workspace IDs.
+- Workbench must not use `demoQueue` as the online default source.
+- `demoQueue` is permitted only as an offline/dev/test fallback with explicit
+  fallback state.
+- Queue items must carry `workspaceId` and `cardId` directly.
+- Frontend code must not infer `workspaceId` from `taskId`.
+- Search fallback must not route current intents to deprecated workspace IDs.
+- Learning may generate coaching copy locally, but the catalog source must be
+  runtime workspaces or a learning Lens.
+- Workspace open from queue/search/home must use runtime `workspaceId` and may
+  preselect `cardId`.
+- Me stats must come from runtime queue, blockers, behavior events, or be shown
+  as unavailable rather than demo numbers.
+
 ## Carried-Forward Scope
 
 Carried-forward values must be scoped by aggregate and card instance. A field

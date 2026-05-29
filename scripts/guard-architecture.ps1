@@ -64,6 +64,7 @@ Assert-Exists "docs/architecture/WORKOS_ENGINEERING_RULES.md"
 Assert-Exists "docs/architecture/WORKOS_BACKEND_RUNTIME_RULES.md"
 Assert-Exists "docs/architecture/WORKOS_FRONTEND_BOUNDARY_RULES.md"
 Assert-Exists "docs/architecture/WORKOS_CONTRACT_RULES.md"
+Assert-Exists "docs/architecture/WORKOS_SURFACE_RULES.md"
 Assert-Exists "docs/architecture/WORKOS_ACCOMMODATION_RUNTIME_RULES.md"
 Assert-Exists "docs/architecture/WORKOS_TESTING_RULES.md"
 Assert-Exists "docs/architecture/CURRENT_RUNTIME_ARCHITECTURE.md"
@@ -74,6 +75,10 @@ Assert-Exists "tests/WorkOS.UnitTests/WorkOS.UnitTests.csproj"
 Assert-Exists "tests/WorkOS.RuntimeIntegrationTests/WorkOS.RuntimeIntegrationTests.csproj"
 Assert-Exists "apps/mobile/src/__tests__/operationRuntime.test.js"
 Assert-Exists "apps/mobile/src/__tests__/htmlEscaping.test.js"
+Assert-Exists "apps/mobile/src/__tests__/surfaceSelectors.test.js"
+Assert-Exists "apps/mobile/src/__tests__/evidenceInteraction.test.js"
+Assert-Exists "apps/mobile/src/runtime/runtimeStore.js"
+Assert-Exists "apps/mobile/src/selectors/surfaceSelectors.js"
 
 $rulesIndex = Get-Content "docs/architecture/rules/index.json" -Raw | ConvertFrom-Json
 $architectureExceptions = Get-Content "docs/architecture/architecture-exceptions.json" -Raw | ConvertFrom-Json
@@ -146,6 +151,15 @@ Assert-NoMatches @("apps/mobile/src/views") "fetch|/api/" "View modules must not
 Assert-NoMatches @("apps/mobile/src/i18n.js") "RoomCreated|BedCreated|DepositEvidenceSubmitted|FinanceDepositConfirmed|CheckInConfirmed" "i18n.js must not own event contracts or business runtime definitions."
 Assert-NoMatches @("apps/mobile/src/i18n.js") "depositTask|repairTask|stayObject|repairObject|Flow|流程|闭环|押金|住宿单|维修" "i18n.js must not own demo business objects or process copy; use focused i18n modules or projection/i18n contracts."
 Assert-NoMatchesRule "WON16-FRONTEND-001" @("apps/mobile/src/operationRuntime.js") "workspaceId.*cardId.*actor\.actorId|actor\.actorId.*workspaceId" "operationRuntime must use a submit-level UUID idempotencyKey, not a workspace/card/actor composite."
+Assert-NoMatches @("apps/mobile/src/views") 'from "../demoQueue\.js"|from "./demoQueue\.js"' "Runtime surface views must not import demoQueue."
+Assert-NoMatches @("apps/mobile/src/views/homeView.js") 'W-STAY-[A-Z-]+|W-REPAIR-[A-Z-]+' "Home must not hardcode business workspace focus IDs."
+Assert-NoMatches @("apps/mobile/src/views/workbenchView.js", "apps/mobile/src/selectors/queueSelectors.js") "demoQueue|taskWorkspaceMap|workspaceIdForTask" "Workbench online queue must not use demoQueue or task-to-workspace inference."
+Assert-NoMatches @("apps/mobile/src/selectors/searchSelectors.js") "W-STAY-CHECKIN|W-STAY-DEPOSIT-EXCEPTION|W-STAY-CHECKOUT|W-REPAIR-REQUEST|W-REPAIR-DISPATCH|W-REPAIR-MASTER-DATA" "Search fallback must not route intents to deprecated workspace IDs."
+Assert-NoMatches @("apps/mobile/src") "taskWorkspaceMap|workspaceIdForTask" "Frontend must not infer workspaceId from taskId."
+$workspaceProjectionFixture = Get-Content "apps/mobile/src/workspaceProjections.js" -Raw
+if ($workspaceProjectionFixture -notmatch "Offline/dev/test fallback fixture only") {
+  Fail "workspaceProjections.js must declare its offline fallback reason."
+}
 $mainRuntime = Get-Content "apps/mobile/src/main.js" -Raw
 if ($mainRuntime -notmatch "escapeHtml\(tr\(state, key\)\)" -or
     $mainRuntime -notmatch "escapeHtml\(tx\(state, value\)\)" -or
@@ -351,8 +365,10 @@ $allowedMapGetPaths = @(
   "/api/workspaces/{workspaceId}",
   "/api/work-queue",
   "/api/search",
+  "/api/lenses/home-surface",
   "/api/lenses/work-queue",
   "/api/lenses/search",
+  "/api/lenses/learning-catalog",
   "/api/lenses/accommodation/{lensId}",
   "/api/workspaces/{workspaceId}/events",
   "/api/audit-events",
@@ -433,6 +449,8 @@ $requiredRuntimeApiPathKeys = @(
   "search",
   "lensWorkQueue",
   "lensSearch",
+  "homeSurface",
+  "learningCatalog",
   "accommodationLens",
   "workspaceEvents",
   "auditEvents",

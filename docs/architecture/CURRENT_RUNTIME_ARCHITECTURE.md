@@ -3,10 +3,10 @@
 Last preflight source: local `main` after `git fetch origin main`,
 `git checkout main`, and `git pull --ff-only`.
 
-Current committed baseline before the in-flight WON-16 hardening commit:
+Current committed baseline before the in-flight Runtime Surface hardening commit:
 
 ```text
-ea89fa9 WON-16 Phase 1: add architecture governance rules
+e517b7f WON-16: Harden runtime governance gates
 ```
 
 The working tree may contain uncommitted hardening changes. This document
@@ -35,6 +35,34 @@ POST /api/workspaces/{workspaceId}/cards/{cardId}/confirm
 ```
 
 No page-specific write API is part of the current architecture.
+
+## Runtime Surface Architecture
+
+Home, Workbench, Search, Learning, Workspace, and Me are runtime surfaces. They
+must consume one runtime surface source built from:
+
+- `GET /api/workspaces`
+- `GET /api/work-queue`
+- `GET /api/search?q=...`
+- `GET /api/lenses/home-surface`
+- `GET /api/lenses/work-queue`
+- `GET /api/lenses/search?q=...`
+- `GET /api/lenses/learning-catalog`
+- `GET /api/lenses/accommodation/{lensId}`
+
+`demoQueue` and static `workspaceProjections` are fallback/dev fixtures only;
+they must not be the online default source for Home or Workbench.
+
+Current surface status:
+
+| Surface | Runtime source |
+| --- | --- |
+| Home | `home-surface` Lens or projection fallback |
+| Workbench | `work-queue` Lens or projection fallback |
+| Search | `search` Lens or projection fallback |
+| Learning | `learning-catalog` Lens or runtime workspaces |
+| Workspace | runtime workspace projection |
+| Me | runtime queue/search state |
 
 ## Slice Manifest Status
 

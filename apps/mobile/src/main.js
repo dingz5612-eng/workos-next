@@ -1,13 +1,13 @@
 import "./styles.css";
-import { checkHealth, fetchWorkspaceProjection } from "./apiClient.js";
+import { checkHealth, fetchHomeSurface, fetchLearningCatalog, fetchWorkQueue, fetchWorkspaceProjection } from "./apiClient.js";
 import { shell } from "./appShell.js";
 import { routeView } from "./appRouter.js";
 import { createInitialState } from "./appState.js";
 import { bindEvents } from "./eventBinder.js";
 import { refreshDefaultAccommodationLenses } from "./operationRuntime.js";
+import { applyRuntimeOfflineFallback, applyRuntimeProjection, applyRuntimeSurfacePayloads } from "./runtime/runtimeStore.js";
 import { escapeAttr, escapeHtml } from "./htmlEscaping.js";
 import { metric, localList, localTerm, task, tr, tx, workspace } from "./selectors/workspaceSelectors.js";
-import { replaceIntentWorkspaces } from "./workspaceProjections.js";
 
 const state = createInitialState();
 
@@ -25,20 +25,34 @@ const ctx = {
   metric: (value, label) => metric(value, label, ctx),
   render,
   hydrateProjectionFromApi,
-  replaceIntentWorkspaces
+  applyRuntimeProjection
 };
 
 async function hydrateProjectionFromApi() {
   try {
     await checkHealth();
     state.apiStatus = "online";
-    const payload = await fetchWorkspaceProjection();
-    replaceIntentWorkspaces(payload.workspaces);
-    state.projectionEvents = payload.events || [];
-    state.accommodationLenses = await refreshDefaultAccommodationLenses();
+    const [projection, workQueue, homeSurface, learningCatalog, accommodationLenses] = await Promise.all([
+      fetchWorkspaceProjection(),
+      optionalSurface(fetchWorkQueue),
+      optionalSurface(fetchHomeSurface),
+      optionalSurface(fetchLearningCatalog),
+      refreshDefaultAccommodationLenses()
+    ]);
+    applyRuntimeProjection(state, projection);
+    applyRuntimeSurfacePayloads(state, { workQueue, homeSurface, learningCatalog, accommodationLenses });
   } catch {
     state.apiStatus = "offline";
+    applyRuntimeOfflineFallback(state);
     state.operationMessage = ctx.tr("apiOffline");
+  }
+}
+
+async function optionalSurface(load) {
+  try {
+    return await load();
+  } catch {
+    return null;
   }
 }
 

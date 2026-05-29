@@ -54,11 +54,27 @@ public sealed class ProjectionRuntime
         }
     }
 
+    public IReadOnlyList<object> GetHomeSurface()
+    {
+        lock (gate)
+        {
+            return lensQueryService.GetHomeSurface(state);
+        }
+    }
+
     public IReadOnlyList<object> Search(string? q)
     {
         lock (gate)
         {
             return lensQueryService.Search(state, q);
+        }
+    }
+
+    public IReadOnlyList<object> GetLearningCatalog()
+    {
+        lock (gate)
+        {
+            return lensQueryService.GetLearningCatalog(state);
         }
     }
 

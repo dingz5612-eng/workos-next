@@ -70,8 +70,10 @@ app.MapGet("/api/workspaces/{workspaceId}", (string workspaceId) =>
 
 app.MapGet("/api/work-queue", () => runtime.GetWorkQueue());
 app.MapGet("/api/search", (string? q) => runtime.Search(q));
+app.MapGet("/api/lenses/home-surface", () => runtime.GetHomeSurface());
 app.MapGet("/api/lenses/work-queue", () => runtime.GetWorkQueue());
 app.MapGet("/api/lenses/search", (string? q) => runtime.Search(q));
+app.MapGet("/api/lenses/learning-catalog", () => runtime.GetLearningCatalog());
 app.MapGet("/api/lenses/accommodation/{lensId}", (string lensId) => runtime.GetAccommodationLens(lensId));
 
 app.MapPost("/api/workspaces/{workspaceId}/cards/{cardId}/prepare", (string workspaceId, string cardId) =>
@@ -161,8 +163,10 @@ internal static class DemoBootstrap
             "POST /api/workspaces/{workspaceId}/cards/{cardId}/confirm",
             "GET /api/work-queue",
             "GET /api/search?q=...",
+            "GET /api/lenses/home-surface",
             "GET /api/lenses/work-queue",
             "GET /api/lenses/search?q=...",
+            "GET /api/lenses/learning-catalog",
             "GET /api/workspaces/{workspaceId}/events",
             "GET /api/audit-events",
             "GET /api/outbox",

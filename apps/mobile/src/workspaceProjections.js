@@ -1,5 +1,7 @@
 import { fieldMetadata, localizedText } from "./projectionMetadata.js";
 
+// Offline/dev/test fallback fixture only. Online runtime surfaces must consume
+// runtimeStore projection, work queue, search, and Lens data.
 export let intentWorkspaces = [
   workspaceModel("W-STAY-RESOURCE", "stay", "T-ROOM-CREATE",
     { "zh-CN": "我要创建住宿资源", "ru-RU": "Создать ресурсы проживания" },
@@ -92,21 +94,6 @@ export function replaceIntentWorkspaces(nextWorkspaces) {
   if (Array.isArray(nextWorkspaces) && nextWorkspaces.length) {
     intentWorkspaces = nextWorkspaces;
   }
-}
-
-export const taskWorkspaceMap = {
-  "T-STAY-DEPOSIT": "W-STAY-CHECKIN",
-  "T-FIN-DEPOSIT": "W-STAY-DEPOSIT-EXCEPTION",
-  "T-STAY-CHECKOUT": "W-STAY-CHECKOUT",
-  "T-ROOM-CREATE": "W-STAY-RESOURCE",
-  "T-BED-CREATE": "W-STAY-RESOURCE",
-  "T-AUTO-DIAGNOSE": "W-REPAIR-DISPATCH",
-  "T-REPAIR-CLOSE": "W-REPAIR-CLOSE",
-  "T-VEHICLE-CREATE": "W-REPAIR-MASTER-DATA"
-};
-
-export function workspaceIdForTask(taskId) {
-  return taskWorkspaceMap[taskId] || intentWorkspaces.find((item) => item.taskId === taskId)?.id || "W-STAY-CHECKIN";
 }
 
 function workspaceModel(id, domain, taskId, title, summary, cards, next) {

@@ -97,3 +97,18 @@ Demo seed data must be separated from production contracts.
 When OpenAPI, projection schema, policy contract, or slice manifest changes,
 generated DTOs and runtime API paths must be regenerated. CI must fail if
 generated files drift from contract sources.
+
+## Runtime Surface Contract
+
+Runtime surfaces use `RuntimeSurfacePolicy` to decide visibility and priority.
+When explicit policy is absent, defaults may be derived from workspace and slice
+metadata, but new production slices must still have surface coverage:
+
+- Home visible or explicit hidden reason.
+- Workbench visible or explicit no-queue reason.
+- Search visible.
+- Learning visible.
+- Workspace openable.
+
+Surface contracts are read-only contracts. They must not introduce a new write
+API or a page-specific business model.

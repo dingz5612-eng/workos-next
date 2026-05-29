@@ -1,11 +1,12 @@
 import { capacityForRoomType, defaultValueForField, fieldControlKind, isDerivedReadonlyField, optionsForField } from "../controls/fieldControls.js";
 import { loadDraft } from "../operationDrafts.js";
 import { lensIdsForWorkspace, lensPreview, lensTitle } from "../runtimeLensCatalog.js";
+import { isUnsafeLedgerCarryForward } from "../selectors/surfaceSelectors.js";
 import { activeCardForWorkspace, activeWorkspaceCard, isCardActionDisabled } from "../selectors/workspaceSelectors.js";
 
 export function workspaceView(ctx) {
   const item = ctx.workspace();
-  const activeCard = activeWorkspaceCard(item, ctx.state.selectedCardIndex);
+  const activeCard = activeWorkspaceCard(item, ctx.state.selectedCardIndex, ctx.state.selectedCardId);
   return ctx.shell(`
     <section class="workspace-page ${item.domain}">
       <span>${ctx.tr("intentWorkspace")} · ${ctx.tr(item.domain)}</span>
@@ -21,13 +22,13 @@ export function workspaceView(ctx) {
   `);
 }
 
-export function workspaceCard(item, ctx) {
+export function workspaceCard(item, ctx, cardId = "") {
   if (!item) return "";
   const activeCard = activeCardForWorkspace(item);
   return `<article class="workspace-card ${item.domain}">
     <div class="loop-head">
       <div><span>${ctx.tr(item.domain)} · ${ctx.tr("intentWorkspace")}</span><strong>${ctx.tx(item.title)}</strong></div>
-      <button data-workspace="${item.id}">${ctx.tr("openWorkspace")}</button>
+      <button data-workspace="${item.id}" data-card-id="${cardId || activeCard.id}">${ctx.tr("openWorkspace")}</button>
     </div>
     <p>${ctx.tx(item.summary)}</p>
     <div class="workspace-card-strip">${item.cards.map((card) => `<span class="${card.status}">${ctx.tx(card.title)}</span>`).join("")}</div>
@@ -48,6 +49,7 @@ export function cardOperation(card, item, ctx) {
   const disabled = isCardActionDisabled(card) ? "disabled" : "";
   const visibleBlockers = card.blockerRules.length ? card.blockerRules : item.blockers;
   const statusHelp = cardStatusHelp(card, ctx);
+  const draft = loadDraft(item.id, card.id);
   return `<div class="card-operation">
     <span>${ctx.tr("cardOperation")}</span>
     <h3>${ctx.tx(card.title)}</h3>
@@ -60,7 +62,7 @@ export function cardOperation(card, item, ctx) {
     <section>
       <b>${ctx.tr("cardEvidence")}</b>
       <p>${ctx.tr("cardEvidenceHelp")}</p>
-      <div class="evidence-row">${card.evidence.map((field) => `<button type="button" data-evidence-id="${field.id}" ${disabled}>${ctx.localTerm(field)}</button>`).join("")}</div>
+      <div class="evidence-row">${card.evidence.map((field) => evidenceButton(field, draft, disabled, ctx)).join("")}</div>
     </section>
     <section><b>${ctx.tr("cardConfirm")}</b><p>${confirmationText(card, item, ctx)}</p></section>
     <section><b>${ctx.tr("cardNext")}</b><p>${ctx.tr("cardNextHelp")} ${nextCardTitle(card, item, ctx)}</p></section>
@@ -125,7 +127,7 @@ export function operationValue(field, item, card, ctx) {
   const draft = loadDraft(item.id, card.id);
   const values = draft.values || {};
   if (values[field.id]) return values[field.id];
-  const carried = carriedForwardValue(field, item, ctx);
+  const carried = carriedForwardValue(field, item, card, values, ctx);
   if (carried) return carried;
   if (field.ui?.derivedFrom === "roomType") {
     const roomType = Object.entries(values).find(([, candidate]) => ["single", "double", "four_bed", "six_bed", "单人间", "双人间", "四人间", "六人间"].includes(candidate))?.[1] || "four_bed";
@@ -134,15 +136,37 @@ export function operationValue(field, item, card, ctx) {
   return defaultValueForField(field);
 }
 
-function carriedForwardValue(field, item, ctx) {
+function carriedForwardValue(field, item, card, values, ctx) {
+  if (isUnsafeLedgerCarryForward(item, field.id)) return "";
+  const aggregateRef = aggregateRefForValues(values);
   const events = (ctx.state.projectionEvents || [])
     .filter((event) => event.workspaceId === item.id && event.payload)
+    .filter((event) => !aggregateRef || event.aggregateRef === aggregateRef || sameAggregatePayload(event.payload, aggregateRef))
     .slice()
     .reverse();
   for (const event of events) {
     if (event.payload[field.id]) return event.payload[field.id];
   }
   return "";
+}
+
+function evidenceButton(field, draft, disabled, ctx) {
+  const saved = (draft.evidenceDrafts || []).find((item) => item.requirementId === field.id);
+  const selected = saved ? "selected" : "";
+  const evidenceDraftId = saved?.evidenceId ? `data-evidence-draft-id="${ctx.escapeAttr(saved.evidenceId)}"` : "";
+  return `<button type="button" class="${selected}" data-evidence-id="${ctx.escapeAttr(field.id)}" ${evidenceDraftId} ${disabled}>${ctx.localTerm(field)}</button>`;
+}
+
+function aggregateRefForValues(values) {
+  for (const key of ["depositId", "paymentId", "stayId", "residentId", "reservationId", "leadId", "roomId", "bedId", "taskId", "expenseId", "periodId"]) {
+    if (values[key]) return `${key}:${values[key]}`;
+  }
+  return "";
+}
+
+function sameAggregatePayload(payload, aggregateRef) {
+  const [key, value] = aggregateRef.split(":");
+  return key && value && payload?.[key] === value;
 }
 
 function workspaceLensPanel(item, ctx) {

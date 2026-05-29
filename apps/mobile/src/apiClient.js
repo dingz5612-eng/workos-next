@@ -34,6 +34,32 @@ export async function fetchWorkspaceProjection() {
   return response.json();
 }
 
+export async function fetchWorkQueue() {
+  const response = await fetch(`${apiBaseUrl()}${runtimeApiPaths.lensWorkQueue}`, { signal: AbortSignal.timeout(2400) });
+  if (!response.ok) throw new Error("work_queue_failed");
+  return response.json();
+}
+
+export async function fetchSearchResults(q = "") {
+  const url = new URL(`${apiBaseUrl()}${runtimeApiPaths.lensSearch}`);
+  if (q) url.searchParams.set("q", q);
+  const response = await fetch(url, { signal: AbortSignal.timeout(2400) });
+  if (!response.ok) throw new Error("search_failed");
+  return response.json();
+}
+
+export async function fetchHomeSurface() {
+  const response = await fetch(`${apiBaseUrl()}${runtimeApiPaths.homeSurface}`, { signal: AbortSignal.timeout(2400) });
+  if (!response.ok) throw new Error("home_surface_failed");
+  return response.json();
+}
+
+export async function fetchLearningCatalog() {
+  const response = await fetch(`${apiBaseUrl()}${runtimeApiPaths.learningCatalog}`, { signal: AbortSignal.timeout(2400) });
+  if (!response.ok) throw new Error("learning_catalog_failed");
+  return response.json();
+}
+
 export async function fetchAccommodationLens(lensId) {
   const response = await fetch(`${apiBaseUrl()}${runtimeApiPaths.accommodationLens(lensId)}`, { signal: AbortSignal.timeout(2400) });
   if (!response.ok) throw new Error("lens_failed");

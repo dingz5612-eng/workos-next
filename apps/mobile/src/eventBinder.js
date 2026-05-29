@@ -1,6 +1,6 @@
 import { login, logout } from "./authController.js";
 import { runLearningSearch, setCoachStage, setLearningDomain, setLearningType, updateLearningQuery } from "./coachController.js";
-import { collectDraftingValuesOnInput, saveCurrentDraft, submitCurrentCard } from "./operationController.js";
+import { collectDraftingValuesOnInput, saveCurrentDraft, submitCurrentCard, toggleEvidenceSelection } from "./operationController.js";
 import { closeAdvancedFilters, openAdvancedFilters, setQueueFilter, setQueueSort, toggleFilters } from "./queueController.js";
 import { onboard, openWorkspace, runSearch, selectCard, setLang, setView, updateSearchQuery } from "./navigationController.js";
 
@@ -12,7 +12,7 @@ export function bindEvents(ctx) {
   document.querySelector("#start")?.addEventListener("click", () => onboard(ctx));
   document.querySelector("#skip")?.addEventListener("click", () => onboard(ctx));
   document.querySelectorAll("[data-view]").forEach((node) => node.addEventListener("click", () => setView(node.dataset.view, ctx)));
-  document.querySelectorAll("[data-workspace]").forEach((node) => node.addEventListener("click", () => openWorkspace(node.dataset.workspace, ctx)));
+  document.querySelectorAll("[data-workspace]").forEach((node) => node.addEventListener("click", () => openWorkspace(node.dataset.workspace, ctx, node.dataset.cardId || "")));
   document.querySelectorAll("[data-card-index]").forEach((node) => node.addEventListener("click", () => selectCard(node.dataset.cardIndex, ctx)));
   document.querySelector("#query")?.addEventListener("input", (event) => updateSearchQuery(event.target.value, ctx));
   document.querySelector("#searchNow")?.addEventListener("click", () => runSearch(ctx));
@@ -21,7 +21,7 @@ export function bindEvents(ctx) {
   document.querySelector(".operation-inputs")?.addEventListener("input", (event) => collectDraftingValuesOnInput(event, ctx));
   document.querySelector(".operation-inputs")?.addEventListener("change", (event) => collectDraftingValuesOnInput(event, ctx));
   document.querySelector(".evidence-row")?.addEventListener("click", (event) => {
-    if (event.target.matches("[data-evidence-id]")) event.target.classList.toggle("selected");
+    if (event.target.matches("[data-evidence-id]")) toggleEvidenceSelection(event, ctx);
   });
   document.querySelector("#finish")?.addEventListener("click", () => setView("result", ctx));
   document.querySelector("[data-save-draft]")?.addEventListener("click", () => saveCurrentDraft(ctx));

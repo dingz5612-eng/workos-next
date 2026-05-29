@@ -1,8 +1,9 @@
 import { capacityForRoomType } from "./controls/fieldControls.js";
-import { clearDraft, saveDraft } from "./operationDrafts.js";
+import { clearDraft, loadDraft, saveDraft } from "./operationDrafts.js";
 import { submitCardOperation } from "./operationRuntime.js";
 import { setView } from "./navigationController.js";
 import { activeWorkspaceCard, isCardActionDisabled } from "./selectors/workspaceSelectors.js";
+import { applyRuntimeProjection } from "./runtime/runtimeStore.js";
 
 export function collectOperationValues() {
   const values = Array.from(document.querySelectorAll("[data-operation-field]")).reduce((current, node) => {
@@ -35,18 +36,30 @@ export function collectEvidenceDrafts() {
     .filter((draft) => draft.requirementId && draft.evidenceId);
 }
 
+export function toggleEvidenceSelection(event, ctx) {
+  const item = ctx.workspace();
+  const card = activeWorkspaceCard(item, ctx.state.selectedCardIndex, ctx.state.selectedCardId);
+  if (!item || !card) return;
+  const node = event.target;
+  node.classList.toggle("selected");
+  if (node.classList.contains("selected") && !node.dataset.evidenceDraftId) {
+    node.dataset.evidenceDraftId = `evidence-${node.dataset.evidenceId}-${randomDraftId()}`;
+  }
+  saveDraft(item.id, card.id, collectOperationValues(), collectEvidenceDrafts());
+}
+
 export function saveCurrentDraft(ctx) {
   const item = ctx.workspace();
-  const card = activeWorkspaceCard(item, ctx.state.selectedCardIndex);
+  const card = activeWorkspaceCard(item, ctx.state.selectedCardIndex, ctx.state.selectedCardId);
   if (!item || !card) return;
-  saveDraft(item.id, card.id, collectOperationValues());
+  saveDraft(item.id, card.id, collectOperationValues(), collectEvidenceDrafts());
   ctx.state.operationMessage = ctx.tr("draftSaved");
   ctx.render();
 }
 
 export function updateDerivedFields(ctx) {
   const item = ctx.workspace();
-  const card = activeWorkspaceCard(item, ctx.state.selectedCardIndex);
+  const card = activeWorkspaceCard(item, ctx.state.selectedCardIndex, ctx.state.selectedCardId);
   const roomTypeField = card?.fields?.business?.find((field) => field.ui?.optionSet === "roomType");
   const capacityField = card?.fields?.business?.find((field) => field.ui?.derivedFrom === "roomType");
   const roomType = roomTypeField ? document.querySelector(`[data-operation-field="${roomTypeField.id}"]`)?.value : "";
@@ -58,14 +71,15 @@ export function collectDraftingValuesOnInput(event, ctx) {
   if (!event.target.matches("[data-operation-field], [data-operation-field-start], [data-operation-field-end]")) return;
   updateDerivedFields(ctx);
   const item = ctx.workspace();
-  const card = activeWorkspaceCard(item, ctx.state.selectedCardIndex);
+  const card = activeWorkspaceCard(item, ctx.state.selectedCardIndex, ctx.state.selectedCardId);
   if (!item || !card) return;
-  saveDraft(item.id, card.id, collectOperationValues());
+  const evidenceDrafts = loadDraft(item.id, card.id).evidenceDrafts || [];
+  saveDraft(item.id, card.id, collectOperationValues(), evidenceDrafts);
 }
 
 export async function submitCurrentCard(ctx) {
   const item = ctx.workspace();
-  const card = activeWorkspaceCard(item, ctx.state.selectedCardIndex);
+  const card = activeWorkspaceCard(item, ctx.state.selectedCardIndex, ctx.state.selectedCardId);
   if (!item || !card || isCardActionDisabled(card)) return;
   if (!ctx.state.currentActor) {
     ctx.state.loginMessage = ctx.tr("loginRequired");
@@ -82,7 +96,7 @@ export async function submitCurrentCard(ctx) {
   }
   const fieldValues = collectOperationValues();
   const evidenceIds = collectEvidenceIds();
-  saveDraft(item.id, card.id, fieldValues);
+  saveDraft(item.id, card.id, fieldValues, collectEvidenceDrafts());
   ctx.state.operationMessage = ctx.tr("submitting");
   ctx.render();
   try {
@@ -129,8 +143,17 @@ function randomDraftId() {
 }
 
 function applyProjectionPayload(payload, ctx) {
-  ctx.replaceIntentWorkspaces(payload.workspaces);
-  ctx.state.projectionEvents = payload.events || ctx.state.projectionEvents || [];
+  if (payload?.workspaces) {
+    applyRuntimeProjection(ctx.state, payload);
+    if (ctx.state.runtimeStore) {
+      ctx.state.runtimeStore.workQueue = [];
+      ctx.state.runtimeStore.homeSurface = [];
+      ctx.state.runtimeStore.learningCatalog = [];
+      ctx.state.runtimeStore.queueSource = "projection-fallback";
+      ctx.state.runtimeStore.homeSource = "projection-fallback";
+      ctx.state.runtimeStore.learningSource = "projection-fallback";
+    }
+  }
 }
 
 function applyLensPayload(payload, ctx) {

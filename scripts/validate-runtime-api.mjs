@@ -30,6 +30,7 @@ try {
   validateBehaviorEventRequestContract();
   await validateDeclaredRuntimePaths(projection);
   await validatePrepare(projection);
+  await validateRuntimeSurfaces(projection);
   await validateAccommodationLens();
   await validateConfirmPolicyResponse();
   await validateConfirmLedgerProjectionLensChain();
@@ -222,6 +223,33 @@ async function validateProductionRejectsDevAuthDefaults() {
 async function validateAccommodationLens() {
   const lens = await getJson("/api/lenses/accommodation/period-performance");
   assert(Array.isArray(lens), "accommodation lens response must be an array");
+}
+
+async function validateRuntimeSurfaces(projection) {
+  const queue = await getJson("/api/lenses/work-queue");
+  assert(Array.isArray(queue), "work queue lens response must be an array");
+  assert(queue.some((item) => item.workspaceId && item.cardId), "work queue items must include workspaceId/cardId");
+  assert(queue.some((item) => item.workspaceId === "W-STAY-PAYMENT-LEDGER"), "work queue must expose PaymentLedger");
+
+  const search = await getJson("/api/lenses/search?q=%E6%8A%BC%E9%87%91");
+  const depositIndex = search.findIndex((item) => item.workspaceId === "W-STAY-DEPOSIT-LEDGER");
+  const checkinIndex = search.findIndex((item) => item.workspaceId === "W-STAY-CHECKIN");
+  assert(depositIndex >= 0, "search lens must expose DepositLedger for deposit intent");
+  assert(checkinIndex < 0 || depositIndex < checkinIndex, "search lens must rank DepositLedger before legacy CheckIn");
+
+  const home = await getJson("/api/lenses/home-surface");
+  assert(Array.isArray(home), "home surface lens response must be an array");
+  assert(home.some((item) => item.workspaceId === "W-STAY-DEPOSIT-LEDGER"), "home surface must expose DepositLedger");
+  assert(home.some((item) => item.workspaceId === "W-STAY-PERIOD-ANALYTICS"), "home surface must expose PeriodAnalytics");
+
+  const learning = await getJson("/api/lenses/learning-catalog");
+  assert(Array.isArray(learning), "learning catalog lens response must be an array");
+  assert(learning.some((item) => item.workspaceId === "W-STAY-DEPOSIT-LEDGER" && item.cardId === "depositReceipt"), "learning catalog must expose DepositLedger cards");
+
+  const workspaceIds = new Set(projection.workspaces.map((item) => item.id));
+  for (const item of home) {
+    assert(workspaceIds.has(item.workspaceId), `home surface references unknown workspace ${item.workspaceId}`);
+  }
 }
 
 async function validateConfirmLedgerProjectionLensChain() {

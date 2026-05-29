@@ -1,4 +1,6 @@
-import { intentWorkspaces } from "./workspaceProjections.js";
+import { fetchSearchResults } from "./apiClient.js";
+import { applyRuntimeSearchResults } from "./runtime/runtimeStore.js";
+import { selectWorkspaceById } from "./selectors/surfaceSelectors.js";
 
 export function setView(view, ctx) {
   if (!ctx.state.currentActor && view !== "login") {
@@ -21,16 +23,18 @@ export function onboard(ctx) {
   setView("home", ctx);
 }
 
-export function openWorkspace(workspaceId, ctx) {
+export function openWorkspace(workspaceId, ctx, cardId = "") {
   ctx.state.selectedWorkspace = workspaceId;
+  ctx.state.selectedCardId = cardId;
   ctx.state.selectedCardIndex = -1;
-  const linked = intentWorkspaces.find((entry) => entry.id === workspaceId);
+  const linked = selectWorkspaceById(ctx.state, workspaceId);
   ctx.state.selectedTask = linked?.taskId || ctx.state.selectedTask;
   setView("workspace", ctx);
 }
 
 export function selectCard(cardIndex, ctx) {
   ctx.state.selectedCardIndex = Number(cardIndex) || 0;
+  ctx.state.selectedCardId = "";
   ctx.render(true);
 }
 
@@ -38,8 +42,18 @@ export function updateSearchQuery(value, ctx) {
   ctx.state.query = value;
 }
 
-export function runSearch(ctx) {
+export async function runSearch(ctx) {
   ctx.state.query = document.querySelector("#query")?.value || "";
+  if (ctx.state.query) {
+    ctx.state.recentSearches = [ctx.state.query, ...(ctx.state.recentSearches || []).filter((item) => item !== ctx.state.query)].slice(0, 5);
+  }
+  if (ctx.state.apiStatus === "online") {
+    try {
+      applyRuntimeSearchResults(ctx.state, ctx.state.query, await fetchSearchResults(ctx.state.query));
+    } catch {
+      // Projection fallback remains available through surface selectors.
+    }
+  }
   ctx.state.view = "search";
   ctx.render(true);
 }

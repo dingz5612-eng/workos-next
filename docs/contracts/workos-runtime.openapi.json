@@ -88,6 +88,13 @@
         }
       }
     },
+    "/api/lenses/home-surface": {
+      "get": {
+        "responses": {
+          "200": { "description": "Runtime home surface lens" }
+        }
+      }
+    },
     "/api/lenses/search": {
       "get": {
         "parameters": [
@@ -95,6 +102,13 @@
         ],
         "responses": {
           "200": { "description": "Search lens results" }
+        }
+      }
+    },
+    "/api/lenses/learning-catalog": {
+      "get": {
+        "responses": {
+          "200": { "description": "Runtime learning catalog lens" }
         }
       }
     },

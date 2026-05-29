@@ -38,6 +38,12 @@ if (!openApi.paths?.["/api/observability/runtime"]?.get) {
   throw new Error("OpenAPI must define runtime observability endpoint.");
 }
 
+for (const surfacePath of ["/api/lenses/home-surface", "/api/lenses/work-queue", "/api/lenses/search", "/api/lenses/learning-catalog"]) {
+  if (!openApi.paths?.[surfacePath]?.get) {
+    throw new Error(`OpenAPI must define runtime surface lens ${surfacePath}.`);
+  }
+}
+
 for (const field of ["service", "version", "persistence", "workspaceCount", "cardCount", "auditEventCount", "outboxCount", "pendingOutboxCount"]) {
   if (!openApi.components?.schemas?.RuntimeObservation?.required?.includes(field)) {
     throw new Error(`RuntimeObservation schema must require ${field}`);
