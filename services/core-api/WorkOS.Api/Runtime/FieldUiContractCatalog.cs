@@ -32,6 +32,7 @@ internal static class FieldUiContractCatalog
         if (type == "searchSelect" || source == "searchableProjection") return "searchSelect";
         if (type == "select" || source == "optionSet") return "select";
         if (type == "money") return "number";
+        if (type == "number") return "number";
         if (type == "evidenceUpload") return "evidence";
         if (type == "confirmation") return "select";
         if (type == "dateTime") return "dateTime";

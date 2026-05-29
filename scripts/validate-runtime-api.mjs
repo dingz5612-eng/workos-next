@@ -112,7 +112,7 @@ function validateProjectionEnvelope(projection) {
     assertNonEmptyString(projection[field], `projection.${field}`);
   }
   assert(Array.isArray(projection.languages) && projection.languages.includes("zh-CN") && projection.languages.includes("ru-RU"), "projection languages missing");
-  assert(Array.isArray(projection.workspaces) && projection.workspaces.length === 8, "projection must return 8 workspaces");
+  assert(Array.isArray(projection.workspaces) && projection.workspaces.length === 16, "projection must return 16 workspaces");
   assert(Array.isArray(projection.events), "projection events must be an array");
 
   for (const workspace of projection.workspaces) {

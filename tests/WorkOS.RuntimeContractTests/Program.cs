@@ -17,8 +17,8 @@ ResetPostgres(connectionString);
     ValidateSliceManifest(projection);
     ValidateProjectionEnvelopeAgainstContract(projection);
 
-    Assert(projection.Workspaces.Count == 8, $"expected 8 workspaces, got {projection.Workspaces.Count}");
-    Assert(cards.Length == 37, $"expected 37 cards, got {cards.Length}");
+    Assert(projection.Workspaces.Count == 16, $"expected 16 workspaces, got {projection.Workspaces.Count}");
+    Assert(cards.Length == 77, $"expected 77 cards, got {cards.Length}");
 
     foreach (var card in cards)
     {
@@ -40,6 +40,7 @@ ResetPostgres(connectionString);
     var checkin = projection.Workspaces.Single(workspace => workspace.Id == "W-STAY-CHECKIN");
     AssertSequence(checkin, "lead", "booking", "resident", "bedAssign", "tariff", "depositRequirement", "payment", "finance", "checkin", "operatingDashboard");
     ValidateFieldContracts(checkin);
+    ValidateAccommodationWorkOS20Contracts(projection);
 
     var prepared = runtime.Prepare("W-STAY-RESOURCE", "room");
     Assert(prepared is not null, "prepare should return room card payload");
@@ -124,8 +125,8 @@ ResetPostgres(connectionString);
     Assert(outbox.All(item => item.ProcessedAtUtc is not null), "all outbox messages should be processed by projector");
     Assert(reloadedRuntime.ProcessPendingOutbox() == 0, "outbox projector should be idempotent after processing");
     var observation = reloadedRuntime.Observe();
-    Assert(observation.WorkspaceCount == 8, $"observability workspaceCount expected 8, got {observation.WorkspaceCount}");
-    Assert(observation.CardCount == 37, $"observability cardCount expected 37, got {observation.CardCount}");
+    Assert(observation.WorkspaceCount == 16, $"observability workspaceCount expected 16, got {observation.WorkspaceCount}");
+    Assert(observation.CardCount == 77, $"observability cardCount expected 77, got {observation.CardCount}");
     Assert(observation.AuditEventCount == 13, $"observability auditEventCount expected 13, got {observation.AuditEventCount}");
     Assert(observation.OutboxCount == 13, $"observability outboxCount expected 13, got {observation.OutboxCount}");
     Assert(observation.PendingOutboxCount == 0, "observability pending outbox count should be zero after processing");
@@ -195,8 +196,101 @@ static void ValidateFieldContracts(WorkspaceProjection workspace)
     }
 }
 
+static void ValidateAccommodationWorkOS20Contracts(ProjectionEnvelope projection)
+{
+    var expected = new Dictionary<string, string[]>
+    {
+        ["W-STAY-LEAD-RESERVATION"] = new[] { "leadCapture", "leadFollowUp", "reservationCreate", "reservationCancel", "reservationConvert" },
+        ["W-STAY-LIFECYCLE"] = new[] { "residentProfile", "checkInBedAssign", "chargeAssessment", "stayExtension" },
+        ["W-STAY-DEPOSIT-LEDGER"] = new[] { "depositAssessment", "depositReceipt", "depositConfirmation", "depositDeduction", "depositRefund", "depositClose" },
+        ["W-STAY-PAYMENT-LEDGER"] = new[] { "paymentReceipt", "paymentConfirmation", "paymentAllocation", "paymentAdjustment", "debtFollowUp" },
+        ["W-STAY-CHECKOUT-SETTLEMENT"] = new[] { "checkoutStart", "roomInspection", "depositSettlement", "finalBalanceClose", "bedRelease", "postCheckoutCleaning" },
+        ["W-STAY-SERVICE-TASK"] = new[] { "serviceTaskCreate", "serviceTaskAssign", "serviceTaskComplete", "serviceTaskVerify", "roomReleaseAfterService" },
+        ["W-STAY-EXPENSE-LEDGER"] = new[] { "expenseRecord", "expenseApproval", "expenseLink" },
+        ["W-STAY-PERIOD-ANALYTICS"] = new[] { "periodScope", "periodMetricsReview", "periodFinanceReview", "periodOperationsDiagnosis", "periodActionPlan", "periodClose" }
+    };
+
+    foreach (var (workspaceId, cardIds) in expected)
+    {
+        var workspace = projection.Workspaces.Single(item => item.Id == workspaceId);
+        AssertSequence(workspace, cardIds);
+        ValidateFieldContracts(workspace);
+        foreach (var card in workspace.Cards)
+        {
+            Assert(card.BlockerRules.Count > 0, $"{workspaceId}.{card.Id} must declare blocker rules");
+            Assert(card.Confirmation.ForbiddenForAi, $"{workspaceId}.{card.Id} must forbid AI confirmation");
+            foreach (var field in card.Fields.Business)
+            {
+                if (field.Ui.Control == "select")
+                {
+                    Assert(!string.IsNullOrWhiteSpace(field.Ui.OptionSet), $"{workspaceId}.{card.Id}.{field.Id} select must bind optionSet");
+                    Assert(field.Ui.Options.Count > 0, $"{workspaceId}.{card.Id}.{field.Id} select must expose options");
+                }
+
+                if (field.Ui.Readonly || field.Type == "readonly")
+                {
+                    Assert(field.Source is "system" or "projection", $"{workspaceId}.{card.Id}.{field.Id} readonly source must be system/projection");
+                }
+            }
+        }
+    }
+
+    AssertEventTypes(projection, "W-STAY-DEPOSIT-LEDGER",
+        "Accommodation.DepositAssessed",
+        "Accommodation.DepositReceived",
+        "Accommodation.DepositEvidenceSubmitted",
+        "Accommodation.DepositConfirmed",
+        "Accommodation.DepositRejected",
+        "Accommodation.DepositDeducted",
+        "Accommodation.DepositAppliedToBalance",
+        "Accommodation.DepositRefundApproved",
+        "Accommodation.DepositRefundPaid",
+        "Accommodation.DepositClosed");
+    AssertEventTypes(projection, "W-STAY-PAYMENT-LEDGER",
+        "Accommodation.PaymentReceived",
+        "Accommodation.PaymentEvidenceSubmitted",
+        "Accommodation.PaymentConfirmed",
+        "Accommodation.PaymentRejected",
+        "Accommodation.PaymentAllocated",
+        "Accommodation.PaymentAdjusted",
+        "Accommodation.DebtFollowUpRecorded",
+        "Accommodation.BalanceRecalculated");
+
+    var periodFinance = projection.Workspaces.Single(item => item.Id == "W-STAY-PERIOD-ANALYTICS").Cards.Single(card => card.Id == "periodFinanceReview");
+    Assert(periodFinance.Checks.Any(check => check.Label["zh-CN"].Contains("押金不计收入")), "period finance contract must guard deposit revenue separation");
+    Assert(periodFinance.Checks.Any(check => check.Label["zh-CN"].Contains("押金退款不计支出")), "period finance contract must guard deposit refund expense separation");
+    Assert(periodFinance.BlockerRules.Any(rule => rule.Id.Contains("cannot_count_deposit_received_as_revenue")), "period finance blockers must prevent deposit as revenue");
+    Assert(periodFinance.BlockerRules.Any(rule => rule.Id.Contains("cannot_count_deposit_refund_as_expense")), "period finance blockers must prevent deposit refund as expense");
+
+    var depositRefund = projection.Workspaces.Single(item => item.Id == "W-STAY-DEPOSIT-LEDGER").Cards.Single(card => card.Id == "depositRefund");
+    Assert(depositRefund.Checks.Any(check => check.Label["zh-CN"].Contains("不超过持有押金")), "deposit refund contract must guard held amount");
+    Assert(depositRefund.BlockerRules.Any(rule => rule.Id.Contains("cannot_refund_more_than_held_deposit")), "deposit refund blocker must prevent over-refund");
+
+    var paymentAllocation = projection.Workspaces.Single(item => item.Id == "W-STAY-PAYMENT-LEDGER").Cards.Single(card => card.Id == "paymentAllocation");
+    Assert(paymentAllocation.Checks.Any(check => check.Label["zh-CN"].Contains("不超过确认金额")), "payment allocation contract must guard confirmed amount");
+    Assert(paymentAllocation.BlockerRules.Any(rule => rule.Id.Contains("cannot_allocate_payment_more_than_confirmed_amount")), "payment allocation blocker must prevent over-allocation");
+
+    var periodClose = projection.Workspaces.Single(item => item.Id == "W-STAY-PERIOD-ANALYTICS").Cards.Single(card => card.Id == "periodClose");
+    foreach (var blocker in new[] { "cannot_close_period_without_metrics_review", "cannot_close_period_without_finance_review", "cannot_close_period_with_blocking_finance_exceptions" })
+    {
+        Assert(periodClose.BlockerRules.Any(rule => rule.Id.Contains(blocker)), $"period close blocker missing {blocker}");
+    }
+}
+
+static void AssertEventTypes(ProjectionEnvelope projection, string workspaceId, params string[] expected)
+{
+    var workspace = projection.Workspaces.Single(item => item.Id == workspaceId);
+    var actual = workspace.Cards.SelectMany(card => card.Events).Select(item => item.EventType).ToHashSet();
+    foreach (var eventType in expected)
+    {
+        Assert(actual.Contains(eventType), $"{workspaceId} missing event contract {eventType}");
+    }
+}
+
 static bool IsDateLabel(string label) =>
-    new[] { "联系日期", "入住日期", "计划退住日期", "预计入住/退房", "入住周期", "可分配时间", "押金截止时间", "付款时间", "到账时间", "实际入住时间" }.Contains(label);
+    label.Contains("日期") ||
+    label.Contains("时间") ||
+    new[] { "预计入住/退房", "入住周期" }.Contains(label);
 
 static FieldProjection Field(CardProjection card, string zhLabel) =>
     card.Fields.Business.Single(field => field.Label["zh-CN"] == zhLabel);
@@ -275,15 +369,36 @@ static void ValidateSliceManifest(ProjectionEnvelope projection)
 {
     using var manifest = JsonDocument.Parse(File.ReadAllText(Path.Combine("docs", "contracts", "slice-manifest.json")));
     var slices = manifest.RootElement.GetProperty("slices").EnumerateArray().ToArray();
-    foreach (var required in new[] { "Accommodation.ResourceSetup", "Accommodation.CheckIn", "Accommodation.CheckOut", "Finance.DepositException", "Repair.Dispatch", "Repair.Close" })
+    foreach (var required in new[]
+    {
+        "Accommodation.ResourceSetup",
+        "Accommodation.CheckIn",
+        "Accommodation.LeadReservation",
+        "Accommodation.StayLifecycle",
+        "Accommodation.DepositLedger",
+        "Accommodation.PaymentLedger",
+        "Accommodation.CheckOutSettlement",
+        "Accommodation.ServiceTask",
+        "Accommodation.ExpenseLedger",
+        "Accommodation.PeriodAnalytics",
+        "Accommodation.CheckOut",
+        "Finance.DepositException",
+        "Repair.Dispatch",
+        "Repair.Close"
+    })
     {
         var slice = slices.FirstOrDefault(item => item.GetProperty("id").GetString() == required);
         Assert(slice.ValueKind != JsonValueKind.Undefined, $"slice manifest missing {required}");
         var workspaceId = slice.GetProperty("workspaceId").GetString();
-        Assert(projection.Workspaces.Any(workspace => workspace.Id == workspaceId), $"slice {required} references missing workspace {workspaceId}");
+        var workspace = projection.Workspaces.FirstOrDefault(item => item.Id == workspaceId);
+        Assert(workspace is not null, $"slice {required} references missing workspace {workspaceId}");
         Assert(slice.GetProperty("cards").GetArrayLength() > 0, $"slice {required} must own cards");
         Assert(slice.GetProperty("events").GetArrayLength() > 0, $"slice {required} must own events");
         Assert(slice.GetProperty("ownsAggregates").GetArrayLength() > 0, $"slice {required} must declare aggregate ownership");
+        foreach (var cardId in slice.GetProperty("cards").EnumerateArray().Select(item => item.GetString()))
+        {
+            Assert(workspace!.Cards.Any(card => card.Id == cardId), $"slice {required} card {cardId} missing from projection workspace {workspaceId}");
+        }
     }
 }
 

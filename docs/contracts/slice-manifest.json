@@ -1,5 +1,5 @@
 {
-  "version": "0.13.0",
+  "version": "0.14.0-accommodation-workos",
   "slices": [
     {
       "id": "Accommodation.ResourceSetup",
@@ -16,6 +16,70 @@
       "events": ["LeadCaptured", "BookingConfirmed", "ResidentRegistered", "BedAssigned", "TariffAssigned", "DepositRequired", "PaymentRecordedByFrontDesk", "PaymentConfirmedByFinance", "StayCheckedIn", "OperatingMetricsReviewed"],
       "ownsAggregates": ["Lead", "Booking", "Resident", "Stay", "GuestFolio", "DepositLiability", "Payment", "FinanceReconciliation", "OperatingMetrics"],
       "status": "production-slice"
+    },
+    {
+      "id": "Accommodation.LeadReservation",
+      "workspaceId": "W-STAY-LEAD-RESERVATION",
+      "cards": ["leadCapture", "leadFollowUp", "reservationCreate", "reservationCancel", "reservationConvert"],
+      "events": ["Accommodation.LeadCaptured", "Accommodation.LeadStatusChanged", "Accommodation.ReservationCreated", "Accommodation.ReservationCancelled", "Accommodation.ReservationExpired", "Accommodation.ReservationConvertedToStay"],
+      "ownsAggregates": ["Lead", "Reservation"],
+      "status": "contract-only"
+    },
+    {
+      "id": "Accommodation.StayLifecycle",
+      "workspaceId": "W-STAY-LIFECYCLE",
+      "cards": ["residentProfile", "checkInBedAssign", "chargeAssessment", "stayExtension"],
+      "events": ["Accommodation.ResidentProfileCaptured", "Accommodation.ResidentCheckedIn", "Accommodation.BedAssigned", "Accommodation.StayChargeAssessed", "Accommodation.StayExtended", "Accommodation.StayRateChanged"],
+      "ownsAggregates": ["Resident", "Stay", "Charge"],
+      "status": "contract-only"
+    },
+    {
+      "id": "Accommodation.DepositLedger",
+      "workspaceId": "W-STAY-DEPOSIT-LEDGER",
+      "cards": ["depositAssessment", "depositReceipt", "depositConfirmation", "depositDeduction", "depositRefund", "depositClose"],
+      "events": ["Accommodation.DepositAssessed", "Accommodation.DepositReceived", "Accommodation.DepositEvidenceSubmitted", "Accommodation.DepositConfirmed", "Accommodation.DepositRejected", "Accommodation.DepositDeducted", "Accommodation.DepositAppliedToBalance", "Accommodation.DepositRefundApproved", "Accommodation.DepositRefundPaid", "Accommodation.DepositClosed"],
+      "ownsAggregates": ["Deposit", "DepositTransaction"],
+      "status": "contract-only"
+    },
+    {
+      "id": "Accommodation.PaymentLedger",
+      "workspaceId": "W-STAY-PAYMENT-LEDGER",
+      "cards": ["paymentReceipt", "paymentConfirmation", "paymentAllocation", "paymentAdjustment", "debtFollowUp"],
+      "events": ["Accommodation.PaymentReceived", "Accommodation.PaymentEvidenceSubmitted", "Accommodation.PaymentConfirmed", "Accommodation.PaymentRejected", "Accommodation.PaymentAllocated", "Accommodation.PaymentAdjusted", "Accommodation.DebtFollowUpRecorded", "Accommodation.BalanceRecalculated"],
+      "ownsAggregates": ["Payment", "PaymentAllocation", "StayBalance"],
+      "status": "contract-only"
+    },
+    {
+      "id": "Accommodation.CheckOutSettlement",
+      "workspaceId": "W-STAY-CHECKOUT-SETTLEMENT",
+      "cards": ["checkoutStart", "roomInspection", "depositSettlement", "finalBalanceClose", "bedRelease", "postCheckoutCleaning"],
+      "events": ["Accommodation.ResidentCheckedOut", "Accommodation.RoomInspected", "Accommodation.CheckoutIssueRaised", "Accommodation.DepositSettledForCheckout", "Accommodation.FinalBalanceClosed", "Accommodation.BedReleased", "Accommodation.PostCheckoutCleaningRequested"],
+      "ownsAggregates": ["Checkout", "RoomInspection", "Settlement"],
+      "status": "contract-only"
+    },
+    {
+      "id": "Accommodation.ServiceTask",
+      "workspaceId": "W-STAY-SERVICE-TASK",
+      "cards": ["serviceTaskCreate", "serviceTaskAssign", "serviceTaskComplete", "serviceTaskVerify", "roomReleaseAfterService"],
+      "events": ["Accommodation.ServiceTaskCreated", "Accommodation.ServiceTaskAssigned", "Accommodation.ServiceTaskCompleted", "Accommodation.ServiceTaskVerified", "Accommodation.RoomBlockedForService", "Accommodation.BedBlockedForService", "Accommodation.RoomReleasedAfterService", "Accommodation.BedReleasedAfterService"],
+      "ownsAggregates": ["ServiceTask"],
+      "status": "contract-only"
+    },
+    {
+      "id": "Accommodation.ExpenseLedger",
+      "workspaceId": "W-STAY-EXPENSE-LEDGER",
+      "cards": ["expenseRecord", "expenseApproval", "expenseLink"],
+      "events": ["Accommodation.ExpenseRecorded", "Accommodation.ExpenseEvidenceSubmitted", "Accommodation.ExpenseApproved", "Accommodation.ExpenseRejected", "Accommodation.ExpenseLinkedToRoom", "Accommodation.ExpenseLinkedToServiceTask"],
+      "ownsAggregates": ["Expense"],
+      "status": "contract-only"
+    },
+    {
+      "id": "Accommodation.PeriodAnalytics",
+      "workspaceId": "W-STAY-PERIOD-ANALYTICS",
+      "cards": ["periodScope", "periodMetricsReview", "periodFinanceReview", "periodOperationsDiagnosis", "periodActionPlan", "periodClose"],
+      "events": ["Accommodation.PeriodScopeConfirmed", "Accommodation.PeriodMetricsReviewed", "Accommodation.PeriodFinanceReviewed", "Accommodation.PeriodOperationsDiagnosed", "Accommodation.PeriodActionPlanCommitted", "Accommodation.PeriodReviewClosed", "Accommodation.PeriodActionPlanCompleted"],
+      "ownsAggregates": ["PeriodReview", "ActionPlan"],
+      "status": "contract-only"
     },
     {
       "id": "Accommodation.CheckOut",
