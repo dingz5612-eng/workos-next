@@ -8,7 +8,8 @@
     "lateAdjustmentEvents": [
       "Accommodation.PeriodFinanceReviewed",
       "Accommodation.PeriodOperationsDiagnosed",
-      "Accommodation.PeriodActionPlanCommitted"
+      "Accommodation.PeriodActionPlanCommitted",
+      "Accommodation.PeriodActionPlanCompleted"
     ],
     "rule": "After a period snapshot is frozen, late source events do not mutate the frozen values. They append adjustment events that are visible in the next review or an explicit reopened review."
   },

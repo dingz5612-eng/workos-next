@@ -3,15 +3,14 @@
 Last preflight source: local `main` after `git fetch origin main`,
 `git checkout main`, and `git pull --ff-only`.
 
-Current local commit at WON-16 Runtime Surface preflight:
+Current local commit at WON-16 second-batch preflight:
 
 ```text
-4e646b2 WON-16: Harden runtime governance gates
+4508e94 WON-16: Harden runtime ledger and surface contracts
 ```
 
-At preflight, local `main` is ahead of `origin/main` by one commit. This
-document records repository facts during WON-16 validation work; it is not a
-claim that remote GitHub Actions is green.
+This document records repository facts during WON-16 validation work; it is not
+a claim that remote GitHub Actions is green.
 
 ## Runtime Architecture
 
@@ -141,6 +140,12 @@ Current Lens status must be kept explicit:
   unit-tested.
 - Confirm payloads with localized label keys are rejected as malformed input;
   runtime tests submit canonical field ids.
+- Evidence is now represented by durable `evidence_objects` plus attachments
+  and requirement scope; fake evidence ids do not confirm non-cash ledger cards.
+- Card instances are persisted in `card_instances`; ledger confirms require
+  aggregate scope and do not derive instance identity from workspace/card/status.
+- Runtime state has a schema version and a named migrator entry for the
+  card-instance/evidence envelope.
 
 ## Accommodation Boundary Status
 
@@ -149,13 +154,15 @@ The current automated coverage verifies:
 - `ResourceSetup` owns BedStatus updates.
 - `DepositLedger` owns deposit transactions and backend held amount.
 - `PaymentLedger` owns payment allocations and stay balances.
-- `CheckOutSettlement` does not write deposit transactions.
-- `ServiceTask` does not mutate BedStatus and does not serve as the cost source.
+- `CheckOutSettlement` emits requests that `DepositLedger` consumes into a
+  request transaction entry; it does not write money-moving deposit facts.
+- `ServiceTask` emits block/release requests that `ResourceSetup` consumes for
+  BedStatus; it does not own BedStatus.
 - `ExpenseLedger` is the persisted cost fact source.
-- `PeriodAnalytics` freezes closed metric snapshots and appends late
-  adjustments.
-- Legacy `CheckIn` remains a production chain but does not write the new ledger
-  fact tables (`deposit_transactions`, `payment_allocations`, `stay_balances`).
+- `PeriodAnalytics` freezes metric and finance snapshots, appends late
+  adjustments, and generates finance snapshots from backend ledger state.
+- Legacy `CheckIn` remains a production intake chain but no longer writes new or
+  legacy authoritative ledger fact tables.
 
 ## Current CI Gates
 

@@ -69,19 +69,21 @@ public sealed class RuntimeHardeningTests
             Assert.IsTrue(EventSelectionPolicy.HasExplicitPolicyFor(cardId), $"{cardId} must declare an explicit dispatch policy");
         }
 
-        var inProgress = EventSelectionPolicy.PlanForConfirm(
-            Card("periodActionPlan", "Accommodation.PeriodActionPlanCommitted", "Accommodation.PeriodActionPlanCompleted"),
+        var committed = EventSelectionPolicy.PlanForConfirm(
+            Card("periodActionPlan", "Accommodation.PeriodActionPlanCommitted"),
             Request(new Dictionary<string, string> { ["actionStatus"] = "in_progress" }));
         CollectionAssert.AreEqual(
             new[] { "Accommodation.PeriodActionPlanCommitted" },
-            inProgress.Events.Select(item => item.EventType).ToArray());
+            committed.Events.Select(item => item.EventType).ToArray());
+        Assert.AreEqual("single", committed.DispatchMode);
 
         var completed = EventSelectionPolicy.PlanForConfirm(
-            Card("periodActionPlan", "Accommodation.PeriodActionPlanCommitted", "Accommodation.PeriodActionPlanCompleted"),
+            Card("periodActionPlanComplete", "Accommodation.PeriodActionPlanCompleted"),
             Request(new Dictionary<string, string> { ["actionStatus"] = "completed" }));
         CollectionAssert.AreEqual(
-            new[] { "Accommodation.PeriodActionPlanCommitted", "Accommodation.PeriodActionPlanCompleted" },
+            new[] { "Accommodation.PeriodActionPlanCompleted" },
             completed.Events.Select(item => item.EventType).ToArray());
+        Assert.AreEqual("single", completed.DispatchMode);
     }
 
     [TestMethod]
@@ -206,6 +208,53 @@ public sealed class RuntimeHardeningTests
         Assert.IsTrue(migrated.Workspaces.Single(item => item.Id == "W-OLD").Cards.Any(item => item.Id == "newCard"));
         Assert.IsTrue(migrated.Events.Any(item => item.EventId == "evt-1"));
         Assert.IsTrue(migrated.Users.Any(item => item.UserId == "custom-user"));
+        Assert.AreEqual(RuntimeStateMigrator.CurrentSchemaVersion, migrated.SchemaVersion);
+    }
+
+    [TestMethod]
+    public void RuntimeStateMigratorUpgradesOldDocumentsWithoutDroppingRuntimeFacts()
+    {
+        var oldState = new RuntimeState(
+            new List<WorkspaceProjection> { Workspace("W-OLD", Card("oldCard", "Old.Event")) },
+            new List<WorkspaceEvent> { Event("evt-old") },
+            new List<RuntimeUser> { new("legacy-user", "legacy", "Legacy", "operator", true) },
+            "won-13-runtime-document");
+
+        var migrated = RuntimeStateMigrator.Migrate(oldState);
+        Assert.AreEqual(RuntimeStateMigrator.CurrentSchemaVersion, migrated.SchemaVersion);
+        Assert.IsTrue(migrated.Workspaces.Any(item => item.Id == "W-OLD"));
+        Assert.IsTrue(migrated.Events.Any(item => item.EventId == "evt-old"));
+        Assert.IsTrue(migrated.Users.Any(item => item.UserId == "legacy-user"));
+        Assert.IsTrue(RuntimeStateMigrator.Entries.Any(item => item.Contains("card-instance-evidence", StringComparison.OrdinalIgnoreCase)));
+    }
+
+    [TestMethod]
+    public void FieldContractValidatorRejectsInvalidStableOptionValues()
+    {
+        var card = Card("roomSetup", "Accommodation.RoomConfigured") with
+        {
+            Fields = new FieldSet(
+                Array.Empty<FieldProjection>(),
+                new[]
+                {
+                    new FieldProjection(
+                        "roomType",
+                        Text("房型"),
+                        "business",
+                        "select",
+                        true,
+                        "optionSet",
+                        true,
+                        string.Empty,
+                        new FieldUi("select", "roomType", new[] { new FieldOption("four_bed", Text("四人间")) }, string.Empty, string.Empty, false),
+                        Text("help"))
+                },
+                Array.Empty<FieldProjection>())
+        };
+
+        var result = FieldContractValidator.Validate(card, Request(new Dictionary<string, string> { ["roomType"] = "四人间" }));
+        Assert.AreEqual(ConfirmStatus.Forbidden, result?.Status);
+        Assert.AreEqual("invalid_option_value:roomType", result?.Reason);
     }
 
     private static ConfirmCardRequest Request(IReadOnlyDictionary<string, string> values, params string[] evidenceIds) =>
@@ -256,6 +305,14 @@ public sealed class RuntimeHardeningTests
         public void AppendAuditEventAndOutbox(WorkspaceEvent workspaceEvent, string idempotencyKey) => throw new NotSupportedException();
         public void ApplySliceAggregate(WorkspaceEvent workspaceEvent) => throw new NotSupportedException();
         public WorkspaceEvent? CommitConfirmEvents(IReadOnlyList<IdempotentWorkspaceEvent> events) => throw new NotSupportedException();
+        public CardInstanceRecord PrepareCardInstance(string workspaceId, string cardId, PrepareCardRequest request) => throw new NotSupportedException();
+        public CardInstanceRecord? FindCardInstance(string cardInstanceId) => throw new NotSupportedException();
+        public EvidenceObject CreateEvidenceDraft(EvidenceDraftRequest request, string actorId) => throw new NotSupportedException();
+        public EvidenceObject AttachEvidence(string evidenceId, EvidenceAttachmentRequest request, string actorId) => throw new NotSupportedException();
+        public EvidenceObject VerifyEvidence(string evidenceId, EvidenceDecisionRequest request) => throw new NotSupportedException();
+        public EvidenceObject RejectEvidence(string evidenceId, EvidenceDecisionRequest request) => throw new NotSupportedException();
+        public IReadOnlyList<EvidenceObject> GetEvidenceObjects(string? evidenceId = null) => throw new NotSupportedException();
+        public ConfirmResult? ValidateEvidenceForConfirm(string workspaceId, string cardId, ConfirmCardRequest request, IReadOnlyList<EvidenceRequirement> requirements) => null;
         public IReadOnlyList<OutboxMessage> ClaimPendingOutboxMessages(string workerId, int take = 50, TimeSpan? lease = null) => throw new NotSupportedException();
         public IReadOnlyList<OutboxMessage> GetOutboxMessages() => throw new NotSupportedException();
         public void MarkOutboxProcessed(string messageId, string workerId) => throw new NotSupportedException();

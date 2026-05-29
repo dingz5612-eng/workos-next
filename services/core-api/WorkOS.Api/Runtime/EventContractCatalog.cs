@@ -63,6 +63,7 @@ internal static class EventContractCatalog
         "periodFinanceReview",
         "periodOperationsDiagnosis",
         "periodActionPlan",
+        "periodActionPlanComplete",
         "periodClose"
     };
 
@@ -129,7 +130,8 @@ internal static class EventContractCatalog
         "periodMetricsReview" => new[] { "Accommodation.PeriodMetricsReviewed" },
         "periodFinanceReview" => new[] { "Accommodation.PeriodFinanceReviewed" },
         "periodOperationsDiagnosis" => new[] { "Accommodation.PeriodOperationsDiagnosed" },
-        "periodActionPlan" => new[] { "Accommodation.PeriodActionPlanCommitted", "Accommodation.PeriodActionPlanCompleted" },
+        "periodActionPlan" => new[] { "Accommodation.PeriodActionPlanCommitted" },
+        "periodActionPlanComplete" => new[] { "Accommodation.PeriodActionPlanCompleted" },
         "periodClose" => new[] { "Accommodation.PeriodReviewClosed" },
         _ => new[] { $"{char.ToUpperInvariant(cardId[0])}{cardId[1..]}Confirmed" }
     };

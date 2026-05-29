@@ -14,7 +14,8 @@
       "workspaceId": "W-STAY-CHECKIN",
       "cards": ["lead", "booking", "resident", "bedAssign", "tariff", "depositRequirement", "payment", "finance", "checkin", "operatingDashboard"],
       "events": ["LeadCaptured", "BookingConfirmed", "ResidentRegistered", "BedAssigned", "TariffAssigned", "DepositRequired", "PaymentRecordedByFrontDesk", "PaymentConfirmedByFinance", "StayCheckedIn", "OperatingMetricsReviewed"],
-      "ownsAggregates": ["Lead", "Booking", "Resident", "Stay", "GuestFolio", "DepositLiability", "Payment", "FinanceReconciliation", "OperatingMetrics"],
+      "ownsAggregates": ["Lead", "Booking", "Resident", "Stay", "OperatingMetrics"],
+      "migrationPhase": "legacy-intake-ledger-read-only",
       "status": "production-slice"
     },
     {
@@ -76,7 +77,7 @@
     {
       "id": "Accommodation.PeriodAnalytics",
       "workspaceId": "W-STAY-PERIOD-ANALYTICS",
-      "cards": ["periodScope", "periodMetricsReview", "periodFinanceReview", "periodOperationsDiagnosis", "periodActionPlan", "periodClose"],
+      "cards": ["periodScope", "periodMetricsReview", "periodFinanceReview", "periodOperationsDiagnosis", "periodActionPlan", "periodActionPlanComplete", "periodClose"],
       "events": ["Accommodation.PeriodScopeConfirmed", "Accommodation.PeriodMetricsReviewed", "Accommodation.PeriodFinanceReviewed", "Accommodation.PeriodOperationsDiagnosed", "Accommodation.PeriodActionPlanCommitted", "Accommodation.PeriodReviewClosed", "Accommodation.PeriodActionPlanCompleted"],
       "ownsAggregates": ["PeriodReview", "ActionPlan"],
       "status": "production-slice"

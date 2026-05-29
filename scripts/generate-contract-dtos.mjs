@@ -161,6 +161,33 @@ export type ConfirmCardRequest = {
   requestId?: string | null;
 };
 
+export type PrepareCardRequest = {
+  submissionId?: string | null;
+  cardInstanceId?: string | null;
+  aggregateRef?: string | null;
+};
+
+export type EvidenceDraftRequest = {
+  workspaceId: string;
+  cardId: string;
+  cardInstanceId: string;
+  submissionId: string;
+  requirementId: string;
+  evidenceId?: string | null;
+};
+
+export type EvidenceAttachmentRequest = {
+  fileName: string;
+  contentType: string;
+  contentSha256: string;
+  sizeBytes: number;
+};
+
+export type EvidenceDecisionRequest = {
+  actorId: string;
+  reason?: string;
+};
+
 export type RuntimeObservation = {
   service: string;
   version: string;
@@ -192,6 +219,11 @@ const apiPathDescriptors = [
   { key: "lensSearch", path: "/api/lenses/search" },
   { key: "learningCatalog", path: "/api/lenses/learning-catalog" },
   { key: "accommodationLens", path: "/api/lenses/accommodation/{lensId}" },
+  { key: "evidence", path: "/api/evidence" },
+  { key: "evidenceDrafts", path: "/api/evidence/drafts" },
+  { key: "evidenceAttachments", path: "/api/evidence/{evidenceId}/attachments" },
+  { key: "evidenceVerify", path: "/api/evidence/{evidenceId}/verify" },
+  { key: "evidenceReject", path: "/api/evidence/{evidenceId}/reject" },
   { key: "prepareCard", path: "/api/workspaces/{workspaceId}/cards/{cardId}/prepare" },
   { key: "confirmCard", path: "/api/workspaces/{workspaceId}/cards/{cardId}/confirm" },
   { key: "workspaceEvents", path: "/api/workspaces/{workspaceId}/events" },

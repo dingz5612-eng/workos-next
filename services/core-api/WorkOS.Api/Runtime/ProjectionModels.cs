@@ -3,7 +3,8 @@ namespace WorkOS.Api.Runtime;
 public sealed record RuntimeState(
     List<WorkspaceProjection> Workspaces,
     List<WorkspaceEvent> Events,
-    List<RuntimeUser> Users);
+    List<RuntimeUser> Users,
+    string SchemaVersion = RuntimeStateMigrator.CurrentSchemaVersion);
 
 public sealed record OutboxMessage(
     string MessageId,
@@ -148,6 +149,65 @@ public sealed record ConfirmCardRequest(
     string? CardInstanceId = null,
     string? AggregateRef = null,
     string? RequestId = null);
+
+public sealed record PrepareCardRequest(
+    string? SubmissionId = null,
+    string? CardInstanceId = null,
+    string? AggregateRef = null);
+
+public sealed record EvidenceDraftRequest(
+    string WorkspaceId,
+    string CardId,
+    string CardInstanceId,
+    string SubmissionId,
+    string RequirementId,
+    string? EvidenceId = null);
+
+public sealed record EvidenceAttachmentRequest(
+    string FileName,
+    string ContentType,
+    string ContentSha256,
+    long SizeBytes);
+
+public sealed record EvidenceDecisionRequest(
+    string ActorId,
+    string Reason = "");
+
+public sealed record EvidenceObject(
+    string EvidenceId,
+    string WorkspaceId,
+    string CardId,
+    string CardInstanceId,
+    string SubmissionId,
+    string RequirementId,
+    string Status,
+    IReadOnlyList<EvidenceAttachment> Attachments,
+    DateTimeOffset CreatedAtUtc,
+    DateTimeOffset? AttachedAtUtc,
+    DateTimeOffset? VerifiedAtUtc,
+    DateTimeOffset? RejectedAtUtc,
+    string? UsedEventId,
+    string? UsedSubmissionId);
+
+public sealed record EvidenceAttachment(
+    string AttachmentId,
+    string EvidenceId,
+    string FileName,
+    string ContentType,
+    string ContentSha256,
+    long SizeBytes,
+    DateTimeOffset AttachedAtUtc);
+
+public sealed record CardInstanceRecord(
+    string CardInstanceId,
+    string WorkspaceId,
+    string CardId,
+    string? AggregateRef,
+    string? SubmissionId,
+    string? IdempotencyKey,
+    string Status,
+    DateTimeOffset CreatedAtUtc,
+    DateTimeOffset UpdatedAtUtc);
 
 public sealed record LoginRequest(string Username, string Password);
 

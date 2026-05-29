@@ -13,6 +13,14 @@
     "business_rule_violation",
     "idempotency_duplicate",
     "idempotency_conflict",
+    "aggregate_ref_required",
+    "invalid_option_value",
+    "evidence_object_required",
+    "evidence_object_not_found",
+    "evidence_object_scope_mismatch",
+    "evidence_requirement_mismatch",
+    "evidence_object_not_attached",
+    "evidence_object_already_used",
     "deposit_evidence_required",
     "deposit_ledger_state_required",
     "deposit_refund_exceeds_held_amount",
@@ -72,6 +80,16 @@
       "id": "idempotency-result",
       "description": "Duplicate idempotency keys return the existing durable result; conflicting reuse of a key is rejected without side effects.",
       "denies": "idempotency_duplicate,idempotency_conflict"
+    },
+    {
+      "id": "evidence-object-runtime",
+      "description": "Evidence ids in confirm payloads must reference existing runtime evidence objects scoped to the workspace, card, card instance, submission, and requirement.",
+      "denies": "evidence_object_required,evidence_object_not_found,evidence_object_scope_mismatch,evidence_requirement_mismatch,evidence_object_not_attached,evidence_object_already_used"
+    },
+    {
+      "id": "field-contract-validator",
+      "description": "Production confirm validates canonical option values and ledger aggregate references before policy and storage writes.",
+      "denies": "invalid_option_value,aggregate_ref_required"
     },
     {
       "id": "accommodation-money-ledger-policy",

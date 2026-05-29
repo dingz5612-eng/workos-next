@@ -106,10 +106,30 @@ for (const code of [
   "payment_deposit_purpose_forbidden",
   "business_rule_violation",
   "idempotency_duplicate",
-  "idempotency_conflict"
+  "idempotency_conflict",
+  "aggregate_ref_required",
+  "invalid_option_value",
+  "evidence_object_required",
+  "evidence_object_not_found",
+  "evidence_object_scope_mismatch",
+  "evidence_requirement_mismatch",
+  "evidence_object_not_attached",
+  "evidence_object_already_used"
 ]) {
   if (!policyContract.decisionCodes?.includes(code)) {
     throw new Error(`Policy contract missing decision code ${code}`);
+  }
+}
+
+for (const evidencePath of ["/api/evidence", "/api/evidence/drafts", "/api/evidence/{evidenceId}/attachments", "/api/evidence/{evidenceId}/verify", "/api/evidence/{evidenceId}/reject"]) {
+  if (!openApi.paths?.[evidencePath]) {
+    throw new Error(`OpenAPI must define evidence runtime path ${evidencePath}`);
+  }
+}
+
+for (const schemaName of ["EvidenceDraftRequest", "EvidenceAttachmentRequest", "EvidenceDecisionRequest"]) {
+  if (!openApi.components?.schemas?.[schemaName]) {
+    throw new Error(`OpenAPI must define ${schemaName}`);
   }
 }
 

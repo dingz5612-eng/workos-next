@@ -8,7 +8,7 @@ internal static class ProjectionStateMigrator
     {
         var workspaces = MergeWorkspaces(persisted.Workspaces, currentContractState.Workspaces);
         var users = MergeUsers(persisted.Users, currentContractState.Users);
-        return new RuntimeState(workspaces, persisted.Events.ToList(), users);
+        return RuntimeStateMigrator.Migrate(new RuntimeState(workspaces, persisted.Events.ToList(), users, persisted.SchemaVersion));
     }
 
     private static List<WorkspaceProjection> MergeWorkspaces(

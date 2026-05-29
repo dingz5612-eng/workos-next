@@ -1,0 +1,49 @@
+{
+  "version": "0.16.2",
+  "sourceSlice": "Accommodation.CheckIn",
+  "phase": "legacy-intake-ledger-read-only",
+  "authoritativeOwners": {
+    "deposit": "Accommodation.DepositLedger",
+    "ordinaryPayment": "Accommodation.PaymentLedger",
+    "stayBalance": "Accommodation.PaymentLedger",
+    "expense": "Accommodation.ExpenseLedger",
+    "periodSnapshot": "Accommodation.PeriodAnalytics"
+  },
+  "legacyTables": [
+    {
+      "table": "accommodation_deposits",
+      "replacement": "deposit_transactions",
+      "mode": "frozen-read-only",
+      "backfillPolicy": "convert legacy deposit receipts to DepositLedger received/confirmed transaction entries during explicit backfill only"
+    },
+    {
+      "table": "deposit_liabilities",
+      "replacement": "deposit_transactions + deposit_liabilities projection",
+      "mode": "frozen-read-only",
+      "backfillPolicy": "derive liability from DepositLedger transaction history; do not double-count legacy liability rows"
+    },
+    {
+      "table": "hostel_payments",
+      "replacement": "PaymentLedger payment receipt + allocation facts",
+      "mode": "frozen-read-only",
+      "backfillPolicy": "convert only non-deposit ordinary payment rows; deposit purpose rows migrate to DepositLedger"
+    },
+    {
+      "table": "finance_reconciliations",
+      "replacement": "PaymentLedger payment confirmation facts",
+      "mode": "frozen-read-only",
+      "backfillPolicy": "attach to converted PaymentLedger payment ids by original payment_id"
+    },
+    {
+      "table": "finance_confirmations",
+      "replacement": "DepositLedger/PaymentLedger confirmation events",
+      "mode": "frozen-read-only",
+      "backfillPolicy": "freeze as audit history unless explicitly mapped to a ledger confirmation event"
+    }
+  ],
+  "guards": [
+    "CheckIn persistence must not write new ledger fact tables",
+    "PeriodAnalytics and risk lenses must not sum legacy and new ledger facts together",
+    "Backfill must be dry-run first and must be idempotent"
+  ]
+}

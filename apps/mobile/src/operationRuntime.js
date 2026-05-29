@@ -1,4 +1,4 @@
-import { confirmCard, fetchAccommodationLens, prepareCard, waitForProjectionEvents } from "./apiClient.js";
+import { attachEvidence, confirmCard, createEvidenceDraft, fetchAccommodationLens, prepareCard, waitForProjectionEvents } from "./apiClient.js";
 import { defaultAccommodationLensIds, lensIdsForWorkspace } from "./runtimeLensCatalog.js";
 
 export function operationIdempotencyKey() {
@@ -9,33 +9,41 @@ export function operationSubmissionId() {
   return randomUuid();
 }
 
-export function cardInstanceIdFor(workspace, card) {
-  return `${workspace.id}:${card.id}:${card.status || "unknown"}`;
+export function cardInstanceIdFor(workspace, card, aggregateRef = null) {
+  const scope = aggregateRef ? stableHash(aggregateRef) : "no-aggregate";
+  return `ci-${workspace.id}-${card.id}-${scope}-${randomUuid()}`;
 }
 
 export function aggregateRefFor(fieldValues) {
-  const keys = ["roomId", "bedId", "stayId", "depositId", "paymentId", "leadId", "reservationId", "serviceTaskId", "expenseId", "periodId"];
+  const keys = ["roomId", "bedId", "stayId", "depositId", "depositReceiptId", "paymentId", "paymentReceiptId", "leadId", "reservationId", "serviceTaskId", "expenseId", "periodId", "settlementId"];
   const key = keys.find((item) => fieldValues?.[item]);
   return key ? `${key}:${fieldValues[key]}` : null;
 }
 
-export function createSubmissionProtocol(workspace, card) {
+export function createSubmissionProtocol(workspace, card, fieldValues = {}) {
+  const aggregateRef = aggregateRefFor(fieldValues);
   return {
     idempotencyKey: operationIdempotencyKey(),
     submissionId: operationSubmissionId(),
-    cardInstanceId: cardInstanceIdFor(workspace, card)
+    cardInstanceId: cardInstanceIdFor(workspace, card, aggregateRef),
+    aggregateRef
   };
 }
 
 export async function submitCardOperation({ workspace, card, actor, language, fieldValues, evidenceIds, submissionProtocol, onProjection, onLens }) {
-  await prepareCard(workspace.id, card.id);
-  const protocol = submissionProtocol || createSubmissionProtocol(workspace, card);
+  const protocol = submissionProtocol || createSubmissionProtocol(workspace, card, fieldValues);
+  const aggregateRef = protocol.aggregateRef || aggregateRefFor(fieldValues);
+  await prepareCard(workspace.id, card.id, {
+    submissionId: protocol.submissionId,
+    cardInstanceId: protocol.cardInstanceId,
+    aggregateRef
+  });
   const result = await confirmCard(workspace.id, card.id, actor.token, {
     language,
     idempotencyKey: protocol.idempotencyKey,
     submissionId: protocol.submissionId,
     cardInstanceId: protocol.cardInstanceId,
-    aggregateRef: aggregateRefFor(fieldValues),
+    aggregateRef,
     fieldValues,
     evidenceIds
   });
@@ -48,6 +56,33 @@ export async function submitCardOperation({ workspace, card, actor, language, fi
   }
   await refreshAccommodationLenses(lensIdsForWorkspace(workspace.id), onLens);
   return result;
+}
+
+export async function materializeEvidenceObjects({ workspace, card, actor, submissionProtocol, evidenceDrafts }) {
+  const drafts = Array.isArray(evidenceDrafts) ? evidenceDrafts.filter((item) => item?.requirementId) : [];
+  if (!drafts.length) return [];
+  const actorId = actor?.actorId || actor?.displayName || "runtime";
+  const evidenceIds = [];
+  for (const draft of drafts) {
+    const evidence = await createEvidenceDraft({
+      workspaceId: workspace.id,
+      cardId: card.id,
+      cardInstanceId: submissionProtocol.cardInstanceId,
+      submissionId: submissionProtocol.submissionId,
+      requirementId: draft.requirementId,
+      evidenceId: draft.evidenceId?.startsWith("evd-") ? draft.evidenceId : null
+    }, actorId);
+    const attached = await attachEvidence(evidence.evidenceId, {
+      fileName: `${draft.requirementId}.runtime-evidence`,
+      contentType: "application/octet-stream",
+      contentSha256: draft.contentSha256 || stableHash(`${workspace.id}:${card.id}:${draft.requirementId}:${submissionProtocol.submissionId}`),
+      sizeBytes: draft.sizeBytes || 1
+    }, actorId);
+    evidenceIds.push(attached.evidenceId);
+    draft.evidenceId = attached.evidenceId;
+  }
+
+  return evidenceIds;
 }
 
 export async function refreshDefaultAccommodationLenses(onLens) {
@@ -70,4 +105,12 @@ function eventIdsFromConfirmResult(result) {
 
 function randomUuid() {
   return globalThis.crypto?.randomUUID?.() || `sub-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+}
+
+function stableHash(value) {
+  let hash = 0;
+  for (const char of String(value)) {
+    hash = (hash * 31 + char.charCodeAt(0)) >>> 0;
+  }
+  return hash.toString(16);
 }

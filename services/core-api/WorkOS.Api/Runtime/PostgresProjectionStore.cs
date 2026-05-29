@@ -17,6 +17,8 @@ public sealed class PostgresProjectionStore : IProjectionStore
     private readonly RuntimeBehaviorEventStorage behaviorEvents;
     private readonly RuntimeAggregateLensStorage aggregateLenses;
     private readonly RuntimeAccommodationLedgerStorage accommodationLedgers;
+    private readonly RuntimeCardInstanceStorage cardInstances;
+    private readonly RuntimeEvidenceStorage evidenceObjects;
     private readonly SliceAggregateStorage sliceAggregates;
     private readonly ConfirmUnitOfWork confirmUnitOfWork;
     private readonly PostgresConnectionFactory connections;
@@ -33,8 +35,10 @@ public sealed class PostgresProjectionStore : IProjectionStore
         behaviorEvents = new RuntimeBehaviorEventStorage(connections);
         aggregateLenses = new RuntimeAggregateLensStorage(connections);
         accommodationLedgers = new RuntimeAccommodationLedgerStorage(connections);
+        cardInstances = new RuntimeCardInstanceStorage(connections);
+        evidenceObjects = new RuntimeEvidenceStorage(connections);
         sliceAggregates = new SliceAggregateStorage(connections);
-        confirmUnitOfWork = new ConfirmUnitOfWork(connections, events, sliceAggregates);
+        confirmUnitOfWork = new ConfirmUnitOfWork(connections, events, sliceAggregates, cardInstances, evidenceObjects);
     }
 
     public RuntimeState LoadOrSeed(Func<RuntimeState> seedFactory) =>
@@ -69,6 +73,34 @@ public sealed class PostgresProjectionStore : IProjectionStore
 
     public WorkspaceEvent? CommitConfirmEvents(IReadOnlyList<IdempotentWorkspaceEvent> committedEvents) =>
         confirmUnitOfWork.Commit(committedEvents);
+
+    public CardInstanceRecord PrepareCardInstance(string workspaceId, string cardId, PrepareCardRequest request) =>
+        cardInstances.Prepare(workspaceId, cardId, request);
+
+    public CardInstanceRecord? FindCardInstance(string cardInstanceId) =>
+        cardInstances.Find(cardInstanceId);
+
+    public EvidenceObject CreateEvidenceDraft(EvidenceDraftRequest request, string actorId) =>
+        evidenceObjects.CreateDraft(request, actorId);
+
+    public EvidenceObject AttachEvidence(string evidenceId, EvidenceAttachmentRequest request, string actorId) =>
+        evidenceObjects.Attach(evidenceId, request, actorId);
+
+    public EvidenceObject VerifyEvidence(string evidenceId, EvidenceDecisionRequest request) =>
+        evidenceObjects.Decide(evidenceId, request, "verified");
+
+    public EvidenceObject RejectEvidence(string evidenceId, EvidenceDecisionRequest request) =>
+        evidenceObjects.Decide(evidenceId, request, "rejected");
+
+    public IReadOnlyList<EvidenceObject> GetEvidenceObjects(string? evidenceId = null) =>
+        evidenceObjects.Get(evidenceId);
+
+    public ConfirmResult? ValidateEvidenceForConfirm(
+        string workspaceId,
+        string cardId,
+        ConfirmCardRequest request,
+        IReadOnlyList<EvidenceRequirement> requirements) =>
+        evidenceObjects.ValidateForConfirm(workspaceId, cardId, request, requirements);
 
     public DepositLedgerState GetDepositLedgerState(string depositId)
         => accommodationLedgers.GetDepositLedgerState(depositId);

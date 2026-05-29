@@ -18,6 +18,22 @@ public interface IProjectionStore
 
     WorkspaceEvent? CommitConfirmEvents(IReadOnlyList<IdempotentWorkspaceEvent> events);
 
+    CardInstanceRecord PrepareCardInstance(string workspaceId, string cardId, PrepareCardRequest request);
+
+    CardInstanceRecord? FindCardInstance(string cardInstanceId);
+
+    EvidenceObject CreateEvidenceDraft(EvidenceDraftRequest request, string actorId);
+
+    EvidenceObject AttachEvidence(string evidenceId, EvidenceAttachmentRequest request, string actorId);
+
+    EvidenceObject VerifyEvidence(string evidenceId, EvidenceDecisionRequest request);
+
+    EvidenceObject RejectEvidence(string evidenceId, EvidenceDecisionRequest request);
+
+    IReadOnlyList<EvidenceObject> GetEvidenceObjects(string? evidenceId = null);
+
+    ConfirmResult? ValidateEvidenceForConfirm(string workspaceId, string cardId, ConfirmCardRequest request, IReadOnlyList<EvidenceRequirement> requirements);
+
     DepositLedgerState GetDepositLedgerState(string depositId);
 
     PaymentLedgerState GetPaymentLedgerState(string paymentId);

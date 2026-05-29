@@ -61,6 +61,7 @@ Assert-Exists "docs/contracts/projection-contract.schema.json"
 Assert-Exists "docs/contracts/workos-runtime.openapi.json"
 Assert-Exists "docs/contracts/slice-manifest.json"
 Assert-Exists "docs/contracts/policy-contract.json"
+Assert-Exists "docs/contracts/legacy-ledger-migration-registry.json"
 Assert-Exists "apps/mobile/src/generated/workosContracts.d.ts"
 Assert-Exists "apps/mobile/src/generated/runtimeApiPaths.js"
 Assert-Exists "apps/mobile/src/authController.js"
@@ -79,6 +80,7 @@ Assert-Exists "docs/architecture/CURRENT_RUNTIME_ARCHITECTURE.md"
 Assert-Exists "docs/architecture/rules/index.json"
 Assert-Exists "docs/architecture/architecture-exceptions.json"
 Assert-Exists "scripts/clean-baseline.ps1"
+Assert-Exists "scripts/backfill-legacy-ledger-to-runtime.mjs"
 Assert-Exists "tests/WorkOS.UnitTests/WorkOS.UnitTests.csproj"
 Assert-Exists "tests/WorkOS.RuntimeIntegrationTests/WorkOS.RuntimeIntegrationTests.csproj"
 Assert-Exists "apps/mobile/src/__tests__/operationRuntime.test.js"
@@ -368,6 +370,10 @@ $allowedMapPostPaths = @(
   "/api/auth/login",
   "/api/workspaces/{workspaceId}/cards/{cardId}/prepare",
   "/api/workspaces/{workspaceId}/cards/{cardId}/confirm",
+  "/api/evidence/drafts",
+  "/api/evidence/{evidenceId}/attachments",
+  "/api/evidence/{evidenceId}/verify",
+  "/api/evidence/{evidenceId}/reject",
   "/api/projections/process-outbox",
   "/api/behavior-events"
 )
@@ -385,6 +391,7 @@ $allowedMapGetPaths = @(
   "/api/lenses/search",
   "/api/lenses/learning-catalog",
   "/api/lenses/accommodation/{lensId}",
+  "/api/evidence",
   "/api/workspaces/{workspaceId}/events",
   "/api/audit-events",
   "/api/outbox",
@@ -458,6 +465,9 @@ if ($operationRuntime -notmatch "randomUUID") {
 if ($operationRuntime -notmatch "evidenceIds") {
   Fail "Frontend confirm submissions must pass evidenceIds."
 }
+if ($operationRuntime -match '\$\{workspace\.id\}:\$\{card\.id\}:\$\{card\.status') {
+  Fail "cardInstanceId must not be derived from workspaceId/cardId/status."
+}
 
 $runtimeApiPaths = Get-Content "apps/mobile/src/generated/runtimeApiPaths.js" -Raw
 $requiredRuntimeApiPathKeys = @(
@@ -475,6 +485,11 @@ $requiredRuntimeApiPathKeys = @(
   "homeSurface",
   "learningCatalog",
   "accommodationLens",
+  "evidence",
+  "evidenceDrafts",
+  "evidenceAttachments",
+  "evidenceVerify",
+  "evidenceReject",
   "workspaceEvents",
   "auditEvents",
   "outbox",
@@ -523,10 +538,48 @@ $periodAnalyticsStorage = Get-Content "services/core-api/WorkOS.Api/Slices/Accom
 if ($periodAnalyticsStorage -notmatch "snapshot_frozen" -or $periodAnalyticsStorage -notmatch "on conflict\(period_id\) do nothing" -or $periodAnalyticsStorage -notmatch "period_late_adjustments") {
   Fail "PeriodAnalytics must freeze snapshots and append late adjustments."
 }
+if ($periodAnalyticsStorage -match 'DecimalValue\(workspaceEvent,\s*"(rentRevenue|otherRevenue|confirmedPaymentAmount|pendingPaymentAmount|depositReceivedAmount|depositRefundedAmount|depositDeductedAmount|depositAppliedToBalanceAmount|approvedExpenseAmount|pendingExpenseAmount|endingDebtAmount|financeExceptionCount)"') {
+  Fail "PeriodAnalytics finance snapshot must query backend ledger state, not final finance totals from confirm payload."
+}
 
 $optionSetRegistry = Get-Content "services/core-api/WorkOS.Api/Runtime/OptionSetRegistry.cs" -Raw
 if ($optionSetRegistry -notmatch "DefaultValue\(string label\) => string\.Empty") {
   Fail "Production-slice field contracts must not ship fake user input default values."
+}
+if ($optionSetRegistry -match 'DEP-2026|PAY-2026|APP-2026|LEAD-2026|RES-2026|STAY-2026|DREC-2026|CHG-2026|TASK-2026|EXP-2026|PER-2026|张三|A301') {
+  Fail "Production OptionSetRegistry must not ship fake candidate ids or demo names."
+}
+
+foreach ($policyPath in @(
+  "services/core-api/WorkOS.Api/Slices/Accommodation/DepositLedger/Policies/DepositLedgerPolicy.cs",
+  "services/core-api/WorkOS.Api/Slices/Accommodation/PaymentLedger/Policies/PaymentLedgerPolicy.cs",
+  "services/core-api/WorkOS.Api/Slices/Accommodation/ExpenseLedger/Policies/ExpenseLedgerPolicy.cs"
+)) {
+  $policySource = Get-Content $policyPath -Raw
+  if ($policySource -match 'EvidenceIds.*Count\s*(==|>|>=)') {
+    Fail "Production ledger policy must validate evidence objects, not only EvidenceIds.Count: $policyPath"
+  }
+}
+
+$runtimeEvidenceStorage = Get-Content "services/core-api/WorkOS.Api/Runtime/RuntimeEvidenceStorage.cs" -Raw
+foreach ($requiredEvidenceTerm in @("evidence_objects", "evidence_attachments", "evidence_requirements", "ValidateForConfirm", "MarkUsed")) {
+  if ($runtimeEvidenceStorage -notmatch [regex]::Escape($requiredEvidenceTerm)) {
+    Fail "Evidence object runtime missing required term: $requiredEvidenceTerm"
+  }
+}
+
+$runtimeCardInstanceStorage = Get-Content "services/core-api/WorkOS.Api/Runtime/RuntimeCardInstanceStorage.cs" -Raw
+foreach ($requiredCardInstanceTerm in @("card_instances", "prepared", "submitted", "confirmed", "aggregate_ref")) {
+  if ($runtimeCardInstanceStorage -notmatch [regex]::Escape($requiredCardInstanceTerm)) {
+    Fail "CardInstance runtime missing required term: $requiredCardInstanceTerm"
+  }
+}
+
+$sliceAggregateStorage = Get-Content "services/core-api/WorkOS.Api/Slices/Persistence/SliceAggregateStorage.cs" -Raw
+foreach ($forbiddenLegacyWrite in @("UpsertDepositLiability(DepositLiabilityFrom", "UpsertHostelPayment(HostelPaymentFrom", "UpsertFinanceReconciliation(FinanceReconciliationFrom", "UpsertFinanceConfirmation(FinanceConfirmationFrom", "UpsertDeposit(DepositFrom")) {
+  if ($sliceAggregateStorage -match [regex]::Escape($forbiddenLegacyWrite)) {
+    Fail "Legacy CheckIn must not write new ledger authoritative facts: $forbiddenLegacyWrite"
+  }
 }
 
 $outboxStorage = Get-Content "services/core-api/WorkOS.Api/Runtime/RuntimeOutboxStorage.cs" -Raw

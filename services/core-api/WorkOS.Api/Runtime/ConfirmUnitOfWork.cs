@@ -7,15 +7,21 @@ internal sealed class ConfirmUnitOfWork
     private readonly PostgresConnectionFactory connections;
     private readonly RuntimeEventStorage events;
     private readonly SliceAggregateStorage sliceAggregates;
+    private readonly RuntimeCardInstanceStorage cardInstances;
+    private readonly RuntimeEvidenceStorage evidenceObjects;
 
     public ConfirmUnitOfWork(
         PostgresConnectionFactory connections,
         RuntimeEventStorage events,
-        SliceAggregateStorage sliceAggregates)
+        SliceAggregateStorage sliceAggregates,
+        RuntimeCardInstanceStorage cardInstances,
+        RuntimeEvidenceStorage evidenceObjects)
     {
         this.connections = connections;
         this.events = events;
         this.sliceAggregates = sliceAggregates;
+        this.cardInstances = cardInstances;
+        this.evidenceObjects = evidenceObjects;
     }
 
     public WorkspaceEvent? Commit(IReadOnlyList<IdempotentWorkspaceEvent> committedEvents)
@@ -29,6 +35,9 @@ internal sealed class ConfirmUnitOfWork
         using (var connection = connections.Open())
         using (var db = new RuntimeDbSession(connection))
         {
+            var firstEvent = committedEvents[0];
+            cardInstances.MarkSubmitted(db, firstEvent.Event, firstEvent.IdempotencyKey);
+
             foreach (var committedEvent in committedEvents)
             {
                 if (!events.InsertAuditEventAndOutbox(db, committedEvent.Event, committedEvent.IdempotencyKey))
@@ -42,6 +51,8 @@ internal sealed class ConfirmUnitOfWork
 
             if (duplicateKey is null)
             {
+                evidenceObjects.MarkUsed(db, firstEvent.Event.EvidenceIds, firstEvent.Event);
+                cardInstances.MarkConfirmed(db, firstEvent.Event, firstEvent.IdempotencyKey);
                 db.Commit();
             }
         }
@@ -49,4 +60,3 @@ internal sealed class ConfirmUnitOfWork
         return duplicateKey is null ? null : events.FindEventByIdempotencyKey(duplicateKey);
     }
 }
-

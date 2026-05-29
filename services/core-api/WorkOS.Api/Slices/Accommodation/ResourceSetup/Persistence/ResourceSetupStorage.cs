@@ -25,6 +25,22 @@ internal sealed class ResourceSetupStorage
 
     public bool Apply(WorkspaceEvent workspaceEvent, RuntimeDbSession db)
     {
+        switch (workspaceEvent.EventType)
+        {
+            case "Accommodation.RoomBlockedForService":
+                UpdateResourceStatus(workspaceEvent, db, "blocked");
+                return true;
+            case "Accommodation.BedBlockedForService":
+                UpdateBedStatus(workspaceEvent, db, "blocked");
+                return true;
+            case "Accommodation.RoomReleaseAfterServiceRequested":
+                UpdateResourceStatus(workspaceEvent, db, "available");
+                return true;
+            case "Accommodation.BedReleaseAfterServiceRequested":
+                UpdateBedStatus(workspaceEvent, db, "available");
+                return true;
+        }
+
         if (!workspaceEvent.WorkspaceId.Equals("W-STAY-RESOURCE", StringComparison.Ordinal))
         {
             return false;
@@ -159,6 +175,20 @@ internal sealed class ResourceSetupStorage
 
     private void UpdateBedStatus(WorkspaceEvent workspaceEvent, RuntimeDbSession db, string status)
     {
+        using var update = db.CreateCommand("""
+            update accommodation_beds
+            set status = @status,
+                updated_at_utc = @updatedAtUtc
+            where bed_id = @bedId
+            """);
+        update.Parameters.AddWithValue("bedId", BedId(workspaceEvent));
+        update.Parameters.AddWithValue("status", status);
+        update.Parameters.AddWithValue("updatedAtUtc", workspaceEvent.OccurredAtUtc);
+        if (update.ExecuteNonQuery() > 0)
+        {
+            return;
+        }
+
         UpsertBed(workspaceEvent, db, status);
     }
 
@@ -181,8 +211,17 @@ internal sealed class ResourceSetupStorage
     private static string RoomNo(WorkspaceEvent workspaceEvent) =>
         Value(workspaceEvent, "roomNo", string.Empty);
 
-    private static string BedNo(WorkspaceEvent workspaceEvent) =>
-        Value(workspaceEvent, "bedNo", string.Empty);
+    private static string BedNo(WorkspaceEvent workspaceEvent)
+    {
+        var explicitNo = Value(workspaceEvent, "bedNo", string.Empty);
+        if (!string.IsNullOrWhiteSpace(explicitNo))
+        {
+            return explicitNo;
+        }
+
+        var explicitId = Value(workspaceEvent, "bedId", string.Empty);
+        return string.IsNullOrWhiteSpace(explicitId) ? $"bed-{workspaceEvent.EventId}" : explicitId;
+    }
 
     private static bool TargetsBed(WorkspaceEvent workspaceEvent) =>
         Value(workspaceEvent, "resourceScope", string.Empty).Equals("bed", StringComparison.OrdinalIgnoreCase) ||

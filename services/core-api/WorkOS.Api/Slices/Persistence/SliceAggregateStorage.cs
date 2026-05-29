@@ -52,15 +52,17 @@ internal sealed class SliceAggregateStorage
 
     public void Apply(WorkspaceEvent workspaceEvent, RuntimeDbSession db)
     {
-        if (leadReservations.Apply(workspaceEvent, db) ||
-            stayLifecycle.Apply(workspaceEvent, db) ||
-            resourceSetup.Apply(workspaceEvent, db) ||
-            depositLedger.Apply(workspaceEvent, db) ||
-            paymentLedger.Apply(workspaceEvent, db) ||
-            checkoutSettlement.Apply(workspaceEvent, db) ||
-            serviceTasks.Apply(workspaceEvent, db) ||
-            expenses.Apply(workspaceEvent, db) ||
-            periodAnalytics.Apply(workspaceEvent, db))
+        var applied =
+            leadReservations.Apply(workspaceEvent, db) |
+            stayLifecycle.Apply(workspaceEvent, db) |
+            resourceSetup.Apply(workspaceEvent, db) |
+            depositLedger.Apply(workspaceEvent, db) |
+            paymentLedger.Apply(workspaceEvent, db) |
+            checkoutSettlement.Apply(workspaceEvent, db) |
+            serviceTasks.Apply(workspaceEvent, db) |
+            expenses.Apply(workspaceEvent, db) |
+            periodAnalytics.Apply(workspaceEvent, db);
+        if (applied)
         {
             return;
         }
@@ -79,18 +81,11 @@ internal sealed class SliceAggregateStorage
                 UpsertHostelStay(HostelStayFrom(workspaceEvent), db);
                 break;
             case CheckInEvents.TariffAssigned:
-                UpsertGuestFolio(GuestFolioFrom(workspaceEvent), db);
-                break;
             case CheckInEvents.DepositRequired:
-                UpsertDepositLiability(DepositLiabilityFrom(workspaceEvent), db);
-                break;
             case CheckInEvents.PaymentRecordedByFrontDesk:
-                UpsertHostelPayment(HostelPaymentFrom(workspaceEvent), db);
-                UpsertDeposit(DepositFrom(workspaceEvent), db);
-                break;
             case CheckInEvents.PaymentConfirmedByFinance:
-                UpsertFinanceReconciliation(FinanceReconciliationFrom(workspaceEvent), db);
-                UpsertFinanceConfirmation(FinanceConfirmationFrom(workspaceEvent), db);
+                // Historical CheckIn remains a production intake flow, but ledger facts now belong
+                // exclusively to StayLifecycle, DepositLedger, PaymentLedger, and ExpenseLedger.
                 break;
             case CheckInEvents.OperatingMetricsReviewed:
                 UpsertOperatingMetrics(OperatingMetricsFrom(workspaceEvent), db);

@@ -21,8 +21,7 @@ internal static class EventSelectionPolicy
         "roomReleaseAfterService",
         "expenseRecord",
         "expenseApproval",
-        "expenseLink",
-        "periodActionPlan"
+        "expenseLink"
     };
 
     public static bool HasExplicitPolicyFor(string cardId) =>
@@ -75,7 +74,6 @@ internal static class EventSelectionPolicy
             "serviceTaskCreate" => ServiceTaskCreateEvents(card, request),
             "roomReleaseAfterService" => AllEvents(card),
             "depositDeduction" => DepositSettlementEvents(card, request),
-            "periodActionPlan" => PeriodActionPlanEvents(card, request),
             _ when card.Events.Count == 1 => card.Events,
             _ => throw new InvalidOperationException($"Multi-event card '{card.Id}' requires an explicit EventSelectionPolicy.")
         };
@@ -123,19 +121,6 @@ internal static class EventSelectionPolicy
         }
 
         return selected.Count > 0 ? selected : card.Events;
-    }
-
-    private static IReadOnlyList<EventDefinition> PeriodActionPlanEvents(CardProjection card, ConfirmCardRequest request)
-    {
-        var selected = EventsOf(card, "Accommodation.PeriodActionPlanCommitted").ToList();
-        var status = ResultValue(request, "actionStatus");
-        if (status.Equals("completed", StringComparison.OrdinalIgnoreCase) ||
-            status.Equals("done", StringComparison.OrdinalIgnoreCase))
-        {
-            selected.AddRange(EventsOf(card, "Accommodation.PeriodActionPlanCompleted"));
-        }
-
-        return selected;
     }
 
     private static string ConfirmationResult(ConfirmCardRequest request) =>

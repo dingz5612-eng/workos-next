@@ -137,6 +137,7 @@ internal static class WorkspaceSeedCatalog
                 Card("periodFinanceReview", "notStarted", "周期财务复核卡", "Финансовый обзор", new[] { "periodId", "financeReviewId" }, new[] { "财务复核结果", "财务复核备注" }, new[] { "房租收入", "其他收入", "已确认普通收款", "待确认普通收款", "周期押金收取", "周期押金退还", "周期押金扣除", "押金抵欠金额", "期末押金负债", "已确认支出", "待确认支出", "周期净现金流", "期末欠款", "财务异常数" }),
                 Card("periodOperationsDiagnosis", "notStarted", "周期运营诊断卡", "Операционная диагностика", new[] { "periodId", "managerId" }, new[] { "主要问题分类", "主要问题", "根因分析", "诊断置信度" }, new[] { "阻断床位天数", "空床损失估算", "阻断损失估算", "期末未完成任务", "超时任务数", "欠款住客数" }),
                 Card("periodActionPlan", "notStarted", "周期行动计划卡", "План действий", new[] { "actionPlanId", "periodId" }, new[] { "经营周期", "行动标题", "行动类型", "目标指标", "目标值", "截止日期", "负责人", "优先级", "行动状态" }, new[] { "当前值", "行动计划数量" }),
+                Card("periodActionPlanComplete", "notStarted", "周期行动完成卡", "Завершение плана", new[] { "actionPlanId", "periodId" }, new[] { "经营周期", "行动计划", "完成日期", "完成结果", "完成备注", "负责人" }, new[] { "完成计划数量", "逾期计划数量" }),
                 Card("periodClose", "notStarted", "周期关闭卡", "Закрытие периода", new[] { "periodId", "managerId" }, new[] { "经营周期", "关闭结果", "管理结论", "下一周期重点" }, new[] { "指标已复核", "财务已复核", "运营已诊断", "行动计划数量", "阻断问题数量" })
             },
             "周期关闭前必须完成指标、财务、运营诊断和行动计划。",

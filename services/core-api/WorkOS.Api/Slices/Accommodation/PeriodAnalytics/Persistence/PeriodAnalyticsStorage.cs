@@ -124,13 +124,21 @@ internal sealed class PeriodAnalyticsStorage
 
     private void UpsertFinanceSnapshot(WorkspaceEvent workspaceEvent, RuntimeDbSession db)
     {
-        var rentRevenue = DecimalValue(workspaceEvent, "rentRevenue", 0m);
-        var otherRevenue = DecimalValue(workspaceEvent, "otherRevenue", 0m);
-        var approvedExpense = DecimalValue(workspaceEvent, "approvedExpenseAmount", 0m);
-        var depositReceived = DecimalValue(workspaceEvent, "depositReceivedAmount", 0m);
-        var depositRefunded = DecimalValue(workspaceEvent, "depositRefundedAmount", 0m);
-        var depositDeducted = DecimalValue(workspaceEvent, "depositDeductedAmount", 0m);
-        var depositApplied = DecimalValue(workspaceEvent, "depositAppliedToBalanceAmount", 0m);
+        var confirmedPayment = LedgerDecimal(db, "select coalesce(sum(confirmed_amount), 0) from finance_reconciliations where workspace_id = 'W-STAY-PAYMENT-LEDGER'");
+        var allocatedPayment = LedgerDecimal(db, "select coalesce(sum(allocated_amount), 0) from payment_allocations where workspace_id = 'W-STAY-PAYMENT-LEDGER'");
+        var receivedPayment = LedgerDecimal(db, "select coalesce(sum(amount), 0) from hostel_payments where workspace_id = 'W-STAY-PAYMENT-LEDGER'");
+        var pendingPayment = Math.Max(receivedPayment - confirmedPayment, 0m);
+        var approvedExpense = LedgerDecimal(db, "select coalesce(sum(approved_amount), 0) from expenses where status = 'approved'");
+        var pendingExpense = LedgerDecimal(db, "select coalesce(sum(amount), 0) from expenses where status not in ('approved', 'rejected')");
+        var depositReceived = DepositTransactionTotal(db, "received");
+        var depositRefunded = DepositTransactionTotal(db, "refund_paid");
+        var depositDeducted = DepositTransactionTotal(db, "deducted");
+        var depositApplied = DepositTransactionTotal(db, "applied_to_balance");
+        var depositLiabilityEnd = Math.Max(depositReceived - depositRefunded - depositDeducted - depositApplied, 0m);
+        var endingDebt = LedgerDecimal(db, "select coalesce(sum(greatest(balance, 0)), 0) from stay_balances");
+        var financeExceptionCount = LedgerInt(db, "select count(*) from finance_reconciliations where match_result <> 'confirmed'");
+        var rentRevenue = allocatedPayment;
+        var otherRevenue = 0m;
 
         using var command = db.CreateCommand("""
             insert into period_finance_snapshots(
@@ -143,33 +151,50 @@ internal sealed class PeriodAnalyticsStorage
                 @depositReceivedAmount, @depositRefundedAmount, @depositDeductedAmount, @depositAppliedToBalanceAmount,
                 @depositLiabilityEnd, @approvedExpenseAmount, @pendingExpenseAmount, @periodNetCashFlow,
                 @endingDebtAmount, @financeExceptionCount, @createdEventId, @updatedAtUtc)
-            on conflict(period_id) do update set
-                rent_revenue = excluded.rent_revenue,
-                other_revenue = excluded.other_revenue,
-                approved_expense_amount = excluded.approved_expense_amount,
-                period_net_cash_flow = excluded.period_net_cash_flow,
-                finance_exception_count = excluded.finance_exception_count,
-                updated_at_utc = excluded.updated_at_utc
+            on conflict(period_id) do nothing
             """);
         command.Parameters.AddWithValue("periodId", PeriodId(workspaceEvent));
         command.Parameters.AddWithValue("workspaceId", workspaceEvent.WorkspaceId);
         command.Parameters.AddWithValue("rentRevenue", NpgsqlDbType.Numeric, rentRevenue);
         command.Parameters.AddWithValue("otherRevenue", NpgsqlDbType.Numeric, otherRevenue);
-        command.Parameters.AddWithValue("confirmedPaymentAmount", NpgsqlDbType.Numeric, DecimalValue(workspaceEvent, "confirmedPaymentAmount", 0m));
-        command.Parameters.AddWithValue("pendingPaymentAmount", NpgsqlDbType.Numeric, DecimalValue(workspaceEvent, "pendingPaymentAmount", 0m));
+        command.Parameters.AddWithValue("confirmedPaymentAmount", NpgsqlDbType.Numeric, confirmedPayment);
+        command.Parameters.AddWithValue("pendingPaymentAmount", NpgsqlDbType.Numeric, pendingPayment);
         command.Parameters.AddWithValue("depositReceivedAmount", NpgsqlDbType.Numeric, depositReceived);
         command.Parameters.AddWithValue("depositRefundedAmount", NpgsqlDbType.Numeric, depositRefunded);
         command.Parameters.AddWithValue("depositDeductedAmount", NpgsqlDbType.Numeric, depositDeducted);
         command.Parameters.AddWithValue("depositAppliedToBalanceAmount", NpgsqlDbType.Numeric, depositApplied);
-        command.Parameters.AddWithValue("depositLiabilityEnd", NpgsqlDbType.Numeric, depositReceived - depositRefunded - depositDeducted - depositApplied);
+        command.Parameters.AddWithValue("depositLiabilityEnd", NpgsqlDbType.Numeric, depositLiabilityEnd);
         command.Parameters.AddWithValue("approvedExpenseAmount", NpgsqlDbType.Numeric, approvedExpense);
-        command.Parameters.AddWithValue("pendingExpenseAmount", NpgsqlDbType.Numeric, DecimalValue(workspaceEvent, "pendingExpenseAmount", 0m));
+        command.Parameters.AddWithValue("pendingExpenseAmount", NpgsqlDbType.Numeric, pendingExpense);
         command.Parameters.AddWithValue("periodNetCashFlow", NpgsqlDbType.Numeric, rentRevenue + otherRevenue - approvedExpense);
-        command.Parameters.AddWithValue("endingDebtAmount", NpgsqlDbType.Numeric, DecimalValue(workspaceEvent, "endingDebtAmount", 0m));
-        command.Parameters.AddWithValue("financeExceptionCount", IntValue(workspaceEvent, "financeExceptionCount", 0));
+        command.Parameters.AddWithValue("endingDebtAmount", NpgsqlDbType.Numeric, endingDebt);
+        command.Parameters.AddWithValue("financeExceptionCount", financeExceptionCount);
         command.Parameters.AddWithValue("createdEventId", workspaceEvent.EventId);
         command.Parameters.AddWithValue("updatedAtUtc", workspaceEvent.OccurredAtUtc);
         command.ExecuteNonQuery();
+    }
+
+    private static decimal DepositTransactionTotal(RuntimeDbSession db, string transactionType)
+    {
+        using var command = db.CreateCommand("""
+            select coalesce(sum(amount), 0)
+            from deposit_transactions
+            where transaction_type = @transactionType
+            """);
+        command.Parameters.AddWithValue("transactionType", transactionType);
+        return Convert.ToDecimal(command.ExecuteScalar() ?? 0m);
+    }
+
+    private static decimal LedgerDecimal(RuntimeDbSession db, string sql)
+    {
+        using var command = db.CreateCommand(sql);
+        return Convert.ToDecimal(command.ExecuteScalar() ?? 0m);
+    }
+
+    private static int LedgerInt(RuntimeDbSession db, string sql)
+    {
+        using var command = db.CreateCommand(sql);
+        return Convert.ToInt32(command.ExecuteScalar() ?? 0);
     }
 
     private void UpsertOperationDiagnosis(WorkspaceEvent workspaceEvent, RuntimeDbSession db)

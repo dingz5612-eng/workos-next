@@ -35,6 +35,11 @@ indexed from `WORKOS_ENGINEERING_RULES.md`.
 - Legacy `Accommodation.CheckIn` and the newer ledger slices may run in
   parallel only when they do not double-count deposit, payment, balance, or
   expense facts.
+- Legacy `Accommodation.CheckIn` owns intake compatibility only:
+  Lead/Booking/Resident/Stay/OperatingMetrics. It must not write
+  `deposit_liabilities`, `accommodation_deposits`, `hostel_payments`,
+  `finance_reconciliations`, `finance_confirmations`, `deposit_transactions`,
+  `payment_allocations`, or `stay_balances`.
 - Deposit receipts are liability facts, not revenue. Deposit refund payments are
   liability releases, not expense.
 - Ledger policies must read backend ledger state. Request payloads express the
@@ -42,10 +47,11 @@ indexed from `WORKOS_ENGINEERING_RULES.md`.
 
 ## Required Accommodation Guards
 
-- `DepositLedger` confirms non-cash receipts only when `evidenceIds` are present.
+- `DepositLedger` confirms non-cash receipts only when real scoped evidence
+  objects exist.
 - `DepositLedger` settlement intents cannot exceed backend-computed held amount.
-- `PaymentLedger` confirms non-cash ordinary payments only when `evidenceIds`
-  are present.
+- `PaymentLedger` confirms non-cash ordinary payments only when real scoped
+  evidence objects exist.
 - `PaymentLedger` allocation cannot exceed backend-computed remaining
   allocatable amount.
 - `CheckOutSettlement` cannot write `deposit_transactions`.
@@ -53,3 +59,6 @@ indexed from `WORKOS_ENGINEERING_RULES.md`.
 - `ExpenseLedger` owns cost persistence and cost-facing Lens facts.
 - `PeriodAnalytics` stores immutable close snapshots and append-only late
   adjustments.
+- `PeriodAnalytics` finance snapshots query `DepositLedger`, `PaymentLedger`,
+  `StayBalance`, and `ExpenseLedger`; confirm payload totals are review intent,
+  not authoritative finance facts.

@@ -32,82 +32,74 @@ public sealed class ProjectionRuntime
 
     public ProjectionEnvelope GetAll()
     {
-        lock (gate)
-        {
-            return queryService.Envelope(state);
-        }
+        lock (gate) return queryService.Envelope(state);
     }
 
     public WorkspaceProjection? FindWorkspace(string workspaceId)
     {
-        lock (gate)
-        {
-            return queryService.FindWorkspace(state, workspaceId);
-        }
+        lock (gate) return queryService.FindWorkspace(state, workspaceId);
     }
 
     public IReadOnlyList<object> GetWorkQueue()
     {
-        lock (gate)
-        {
-            return lensQueryService.GetWorkQueue(state);
-        }
+        lock (gate) return lensQueryService.GetWorkQueue(state);
     }
 
     public IReadOnlyList<object> GetHomeSurface()
     {
-        lock (gate)
-        {
-            return lensQueryService.GetHomeSurface(state);
-        }
+        lock (gate) return lensQueryService.GetHomeSurface(state);
     }
 
     public IReadOnlyList<object> Search(string? q)
     {
-        lock (gate)
-        {
-            return lensQueryService.Search(state, q);
-        }
+        lock (gate) return lensQueryService.Search(state, q);
     }
 
     public IReadOnlyList<object> GetLearningCatalog()
     {
-        lock (gate)
-        {
-            return lensQueryService.GetLearningCatalog(state);
-        }
+        lock (gate) return lensQueryService.GetLearningCatalog(state);
     }
 
     public IReadOnlyList<object> GetAccommodationLens(string lensId)
     {
-        lock (gate)
-        {
-            return store.GetAccommodationLens(lensId);
-        }
+        lock (gate) return store.GetAccommodationLens(lensId);
     }
 
-    public object? Prepare(string workspaceId, string cardId)
+    public object? Prepare(string workspaceId, string cardId, PrepareCardRequest? request = null)
     {
-        lock (gate)
-        {
-            return actionRuntimeService.Prepare(state, workspaceId, cardId);
-        }
+        lock (gate) return actionRuntimeService.Prepare(state, workspaceId, cardId, request);
     }
 
     public ConfirmResult Confirm(string workspaceId, string cardId, ConfirmCardRequest request, string actorToken)
     {
-        lock (gate)
-        {
-            return actionRuntimeService.Confirm(state, workspaceId, cardId, request, actorToken);
-        }
+        lock (gate) return actionRuntimeService.Confirm(state, workspaceId, cardId, request, actorToken);
     }
+
+    public EvidenceObject CreateEvidenceDraft(EvidenceDraftRequest request, string actorId)
+    {
+        lock (gate) return store.CreateEvidenceDraft(request, actorId);
+    }
+
+    public EvidenceObject AttachEvidence(string evidenceId, EvidenceAttachmentRequest request, string actorId)
+    {
+        lock (gate) return store.AttachEvidence(evidenceId, request, actorId);
+    }
+
+    public EvidenceObject VerifyEvidence(string evidenceId, EvidenceDecisionRequest request)
+    {
+        lock (gate) return store.VerifyEvidence(evidenceId, request);
+    }
+
+    public EvidenceObject RejectEvidence(string evidenceId, EvidenceDecisionRequest request)
+    {
+        lock (gate) return store.RejectEvidence(evidenceId, request);
+    }
+
+    public IReadOnlyList<EvidenceObject> GetEvidenceObjects(string? evidenceId = null) => store.GetEvidenceObjects(evidenceId);
 
     public object? Login(LoginRequest request)
     {
-        lock (gate)
-        {
-            return authSessionService.Login(state, request);
-        }
+        lock (gate) return authSessionService.Login(state, request);
     }
 
     public IReadOnlyList<WorkspaceEvent> GetAuditEvents(string? workspaceId = null) => store.GetAuditEvents(workspaceId);

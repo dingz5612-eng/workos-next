@@ -6,13 +6,6 @@ internal static class PaymentLedgerPolicy
 {
     public static ConfirmResult? Validate(string cardId, ConfirmCardRequest request, IProjectionStore store)
     {
-        if (cardId.Equals("paymentReceipt", StringComparison.OrdinalIgnoreCase) &&
-            IsNonCash(request, "paymentMethod") &&
-            (request.EvidenceIds is null || request.EvidenceIds.Count == 0))
-        {
-            return new ConfirmResult(ConfirmStatus.Forbidden, "payment_evidence_required:non_cash_payment", null);
-        }
-
         var missingRequired = MissingRequired(cardId, request);
         if (missingRequired is not null)
         {
@@ -69,12 +62,6 @@ internal static class PaymentLedgerPolicy
         purpose.Equals("deposit", StringComparison.OrdinalIgnoreCase) ||
         purpose.Equals("security_deposit", StringComparison.OrdinalIgnoreCase) ||
         purpose.Equals("deposit_rent", StringComparison.OrdinalIgnoreCase);
-
-    private static bool IsNonCash(ConfirmCardRequest request, string methodKey)
-    {
-        var method = Value(request, methodKey, "cash");
-        return !method.Equals("cash", StringComparison.OrdinalIgnoreCase);
-    }
 
     private static string Value(ConfirmCardRequest request, string key, string defaultValue) =>
         request.FieldValues is not null

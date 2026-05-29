@@ -130,12 +130,99 @@
         }
       }
     },
+    "/api/evidence": {
+      "get": {
+        "parameters": [
+          { "name": "evidenceId", "in": "query", "required": false, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Evidence object runtime records" }
+        }
+      }
+    },
+    "/api/evidence/drafts": {
+      "post": {
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/EvidenceDraftRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Evidence draft created or restored" }
+        }
+      }
+    },
+    "/api/evidence/{evidenceId}/attachments": {
+      "post": {
+        "parameters": [
+          { "name": "evidenceId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/EvidenceAttachmentRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Evidence attachment metadata added" }
+        }
+      }
+    },
+    "/api/evidence/{evidenceId}/verify": {
+      "post": {
+        "parameters": [
+          { "name": "evidenceId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/EvidenceDecisionRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Evidence verified" }
+        }
+      }
+    },
+    "/api/evidence/{evidenceId}/reject": {
+      "post": {
+        "parameters": [
+          { "name": "evidenceId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/EvidenceDecisionRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Evidence rejected" }
+        }
+      }
+    },
     "/api/workspaces/{workspaceId}/cards/{cardId}/prepare": {
       "post": {
         "parameters": [
           { "name": "workspaceId", "in": "path", "required": true, "schema": { "type": "string" } },
           { "name": "cardId", "in": "path", "required": true, "schema": { "type": "string" } }
         ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/PrepareCardRequest" }
+            }
+          }
+        },
         "responses": {
           "200": { "description": "Prepared card" },
           "404": { "description": "Card not found" }
@@ -264,6 +351,44 @@
             "items": { "type": "string" }
           },
           "requestId": { "type": ["string", "null"] }
+        }
+      },
+      "PrepareCardRequest": {
+        "type": "object",
+        "properties": {
+          "submissionId": { "type": ["string", "null"] },
+          "cardInstanceId": { "type": ["string", "null"] },
+          "aggregateRef": { "type": ["string", "null"] }
+        }
+      },
+      "EvidenceDraftRequest": {
+        "type": "object",
+        "required": ["workspaceId", "cardId", "cardInstanceId", "submissionId", "requirementId"],
+        "properties": {
+          "workspaceId": { "type": "string" },
+          "cardId": { "type": "string" },
+          "cardInstanceId": { "type": "string" },
+          "submissionId": { "type": "string" },
+          "requirementId": { "type": "string" },
+          "evidenceId": { "type": ["string", "null"] }
+        }
+      },
+      "EvidenceAttachmentRequest": {
+        "type": "object",
+        "required": ["fileName", "contentType", "contentSha256", "sizeBytes"],
+        "properties": {
+          "fileName": { "type": "string" },
+          "contentType": { "type": "string" },
+          "contentSha256": { "type": "string" },
+          "sizeBytes": { "type": "integer" }
+        }
+      },
+      "EvidenceDecisionRequest": {
+        "type": "object",
+        "required": ["actorId"],
+        "properties": {
+          "actorId": { "type": "string" },
+          "reason": { "type": "string" }
         }
       },
       "RuntimeObservation": {

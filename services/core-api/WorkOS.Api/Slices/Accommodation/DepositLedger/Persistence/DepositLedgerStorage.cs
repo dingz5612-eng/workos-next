@@ -58,6 +58,9 @@ internal sealed class DepositLedgerStorage
             case "Accommodation.DepositClosed":
                 AppendTransaction(workspaceEvent, db, "closed", 0m, "closed");
                 return true;
+            case "Accommodation.DepositSettlementRequested":
+                AppendTransaction(workspaceEvent, db, "settlement_requested", 0m, "requested");
+                return true;
             default:
                 return false;
         }

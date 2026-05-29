@@ -70,6 +70,7 @@ internal static class EvidenceContractCatalog
         "periodFinanceReview" => new[] { "财务快照", "财务复核记录" },
         "periodOperationsDiagnosis" => new[] { "运营诊断记录", "根因分析记录" },
         "periodActionPlan" => new[] { "行动计划记录", "负责人记录" },
+        "periodActionPlanComplete" => new[] { "行动完成记录", "完成负责人记录" },
         "periodClose" => new[] { "周期关闭记录", "管理结论记录" },
         _ => new[] { "操作证据", "人工处理记录" }
     };

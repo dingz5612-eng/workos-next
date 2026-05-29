@@ -6,13 +6,6 @@ internal static class DepositLedgerPolicy
 {
     public static ConfirmResult? Validate(string cardId, ConfirmCardRequest request, IProjectionStore store)
     {
-        if (cardId.Equals("depositReceipt", StringComparison.OrdinalIgnoreCase) &&
-            IsNonCash(request, "paymentMethod") &&
-            (request.EvidenceIds is null || request.EvidenceIds.Count == 0))
-        {
-            return new ConfirmResult(ConfirmStatus.Forbidden, "deposit_evidence_required:non_cash_deposit", null);
-        }
-
         var missingRequired = MissingRequired(cardId, request);
         if (missingRequired is not null)
         {
@@ -94,12 +87,6 @@ internal static class DepositLedgerPolicy
         }
 
         return null;
-    }
-
-    private static bool IsNonCash(ConfirmCardRequest request, string methodKey)
-    {
-        var method = Value(request, methodKey, "cash");
-        return !method.Equals("cash", StringComparison.OrdinalIgnoreCase);
     }
 
     private static string Value(ConfirmCardRequest request, string key, string defaultValue) =>

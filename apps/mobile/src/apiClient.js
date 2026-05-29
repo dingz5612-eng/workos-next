@@ -66,6 +66,34 @@ export async function fetchAccommodationLens(lensId) {
   return response.json();
 }
 
+export async function createEvidenceDraft(body, actorId = "runtime") {
+  const response = await fetch(`${apiBaseUrl()}${runtimeApiPaths.evidenceDrafts}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-WorkOS-Actor-Id": actorId
+    },
+    body: JSON.stringify(body),
+    signal: AbortSignal.timeout(2400)
+  });
+  if (!response.ok) throw await apiError("evidence_draft_failed", response);
+  return response.json();
+}
+
+export async function attachEvidence(evidenceId, body, actorId = "runtime") {
+  const response = await fetch(`${apiBaseUrl()}${runtimeApiPaths.evidenceAttachments(evidenceId)}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-WorkOS-Actor-Id": actorId
+    },
+    body: JSON.stringify(body),
+    signal: AbortSignal.timeout(2400)
+  });
+  if (!response.ok) throw await apiError("evidence_attach_failed", response);
+  return response.json();
+}
+
 export async function loginActor(username, password) {
   const response = await fetch(`${apiBaseUrl()}${runtimeApiPaths.login}`, {
     method: "POST",
@@ -77,11 +105,11 @@ export async function loginActor(username, password) {
   return response.json();
 }
 
-export async function prepareCard(workspaceId, cardId) {
+export async function prepareCard(workspaceId, cardId, body = {}) {
   const response = await fetch(`${apiBaseUrl()}${runtimeApiPaths.prepareCard(workspaceId, cardId)}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: "{}",
+    body: JSON.stringify(body || {}),
     signal: AbortSignal.timeout(3200)
   });
   if (!response.ok) throw await apiError("prepare_failed", response);

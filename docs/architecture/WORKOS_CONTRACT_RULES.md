@@ -41,6 +41,27 @@ occupied
 
 Do not use Chinese or Russian text as `option.value`.
 
+Search/select candidate lists in production contracts may expose stable runtime
+placeholder codes, but concrete candidates must come from runtime Lens or
+aggregate queries. They must not ship demo ids such as `DEP-2026`, `PAY-2026`,
+room numbers, or person names.
+
+## Field Contract Validator
+
+Confirm must validate submitted select values against `option.value`. Localized
+labels may be accepted only in an explicit, expiring legacy compatibility layer;
+production UI submits enum codes.
+
+Missing required ledger fields, invalid option values, and missing ledger
+aggregate references return `422` without audit, outbox, or aggregate effects.
+
+## Evidence Contract
+
+`evidenceIds` are durable runtime references. A confirm payload may not satisfy
+an evidence requirement with a fabricated local id. Evidence must be scoped to
+the same `workspaceId`, `cardId`, `cardInstanceId`, `submissionId`, and
+`requirementId`.
+
 ## Multi-Event Cards
 
 Cards that declare multiple events must declare dispatch semantics:

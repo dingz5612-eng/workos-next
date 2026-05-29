@@ -30,7 +30,7 @@ public sealed class ActionRuntimeService
         this.outboxProjector = outboxProjector;
     }
 
-    public object? Prepare(RuntimeState state, string workspaceId, string cardId)
+    public object? Prepare(RuntimeState state, string workspaceId, string cardId, PrepareCardRequest? request = null)
     {
         var workspace = queryService.FindWorkspace(state, workspaceId);
         var card = workspace?.Cards.FirstOrDefault(item => item.Id.Equals(cardId, StringComparison.OrdinalIgnoreCase));
@@ -39,12 +39,15 @@ public sealed class ActionRuntimeService
             return null;
         }
 
+        var cardInstance = store.PrepareCardInstance(workspace.Id, card.Id, request ?? new PrepareCardRequest());
+
         return new
         {
             prepared = true,
             preparedAtUtc = DateTimeOffset.UtcNow,
             workspaceId = workspace.Id,
             cardId = card.Id,
+            cardInstance,
             card,
             allowedActions = new[]
             {
@@ -114,6 +117,24 @@ public sealed class ActionRuntimeService
         }
 
         request = request with { FieldValues = NormalizeFieldValues(card, request.FieldValues) };
+
+        var aggregateFailure = ValidateLedgerAggregateRef(workspace.Id, card.Id, request);
+        if (aggregateFailure is not null)
+        {
+            return aggregateFailure;
+        }
+
+        var fieldContractFailure = FieldContractValidator.Validate(card, request);
+        if (fieldContractFailure is not null)
+        {
+            return fieldContractFailure;
+        }
+
+        var evidenceFailure = ValidateEvidenceObject(workspace.Id, card, request);
+        if (evidenceFailure is not null)
+        {
+            return evidenceFailure;
+        }
 
         var depositPolicyFailure = DepositLedgerPolicy.Validate(card.Id, request, store);
         if (depositPolicyFailure is not null)
@@ -286,4 +307,45 @@ public sealed class ActionRuntimeService
 
     private static bool IsCjkCharacter(char value) =>
         value is >= '\u3400' and <= '\u9fff';
+
+    private ConfirmResult? ValidateEvidenceObject(string workspaceId, CardProjection card, ConfirmCardRequest request)
+    {
+        var evidenceIds = request.EvidenceIds?.Where(item => !string.IsNullOrWhiteSpace(item)).ToArray() ?? Array.Empty<string>();
+        if (evidenceIds.Length == 0 && !RequiresEvidenceObject(card.Id, request))
+        {
+            return null;
+        }
+
+        return store.ValidateEvidenceForConfirm(workspaceId, card.Id, request, card.Evidence);
+    }
+
+    private static bool RequiresEvidenceObject(string cardId, ConfirmCardRequest request)
+    {
+        return cardId.Equals("depositReceipt", StringComparison.OrdinalIgnoreCase) && IsNonCash(request, "paymentMethod") ||
+            cardId.Equals("paymentReceipt", StringComparison.OrdinalIgnoreCase) && IsNonCash(request, "paymentMethod") ||
+            cardId.Equals("expenseRecord", StringComparison.OrdinalIgnoreCase) && IsNonCash(request, "paymentMethod");
+    }
+
+    private static bool IsNonCash(ConfirmCardRequest request, string methodKey)
+    {
+        var method = request.FieldValues is not null
+            ? RuntimeFieldAliases.Value(request.FieldValues, methodKey, "cash")
+            : "cash";
+        return !method.Equals("cash", StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static ConfirmResult? ValidateLedgerAggregateRef(string workspaceId, string cardId, ConfirmCardRequest request)
+    {
+        if (!workspaceId.Contains("LEDGER", StringComparison.OrdinalIgnoreCase))
+        {
+            return null;
+        }
+
+        if (!string.IsNullOrWhiteSpace(request.AggregateRef))
+        {
+            return null;
+        }
+
+        return new ConfirmResult(ConfirmStatus.Forbidden, "aggregate_ref_required:ledger_card", null);
+    }
 }

@@ -82,7 +82,8 @@ async function validateDeclaredRuntimePaths(projection) {
   const samples = {
     workspaceId: workspace.id,
     cardId: card.id,
-    lensId: "period-performance"
+    lensId: "period-performance",
+    evidenceId: "evd-openapi-path"
   };
 
   for (const [path, pathItem] of Object.entries(openApi.paths)) {
@@ -122,6 +123,45 @@ async function requestDeclaredPath(method, path) {
       method,
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(confirmBody(`openapi-path-${Date.now()}-${Math.random().toString(16).slice(2)}`))
+    });
+  }
+
+  if (method === "POST" && path === "/api/evidence/drafts") {
+    return fetch(`${baseUrl}${path}`, {
+      method,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        workspaceId: "W-STAY-DEPOSIT-LEDGER",
+        cardId: "depositReceipt",
+        cardInstanceId: "ci-openapi-path",
+        submissionId: "sub-openapi-path",
+        requirementId: "openapi-proof",
+        evidenceId: "evd-openapi-path"
+      })
+    });
+  }
+
+  if (method === "POST" && path.endsWith("/attachments")) {
+    return fetch(`${baseUrl}${path}`, {
+      method,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        fileName: "openapi-proof.txt",
+        contentType: "text/plain",
+        contentSha256: "sha256-openapi-proof",
+        sizeBytes: 1
+      })
+    });
+  }
+
+  if (method === "POST" && (path.endsWith("/verify") || path.endsWith("/reject"))) {
+    return fetch(`${baseUrl}${path}`, {
+      method,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        actorId: "validate-runtime-api",
+        reason: "path reachability"
+      })
     });
   }
 

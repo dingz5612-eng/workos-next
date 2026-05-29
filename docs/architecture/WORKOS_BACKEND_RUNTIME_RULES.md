@@ -64,9 +64,11 @@ Confirm must have one transaction boundary:
 
 ```text
 Begin transaction
+  create/advance card instance state
   insert audit_events
   insert outbox_messages
   apply slice aggregate writes
+  mark accepted evidence objects as used
 Commit
 ```
 
@@ -109,6 +111,29 @@ projection state migrator. The baseline migrator merges current seed contracts
 into persisted state, preserving durable events, users, and card statuses while
 absorbing newly declared workspaces/cards. Do not silently overwrite projection
 state to hide contract drift.
+
+## Evidence Object Runtime
+
+`evidenceIds` in a confirm request are references to durable runtime evidence
+objects, not proof by string count.
+
+- `evidence_objects`, `evidence_attachments`, and `evidence_requirements` bind
+  evidence to `workspaceId`, `cardId`, `cardInstanceId`, `submissionId`, and
+  `requirementId`.
+- Non-cash deposit receipts, ordinary payments, and expenses must confirm only
+  with existing evidence objects in the correct scope.
+- Fake evidence ids, wrong-scope evidence, rejected evidence, and evidence used
+  by another submission are business blockers with no side effects.
+- Audit events must persist evidence ids that can join back to
+  `evidence_objects`.
+
+## CardInstance Runtime
+
+Prepare creates or restores a card instance. Confirm advances the same instance
+through submitted and confirmed states inside `ConfirmUnitOfWork`.
+
+Ledger cards must carry an explicit `aggregateRef`; repeatable ledger cards must
+not derive instance identity from `workspaceId:cardId:status`.
 
 ## OpenAPI and Program Alignment
 

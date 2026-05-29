@@ -82,6 +82,26 @@
       "exceptionAllowed": false
     },
     {
+      "id": "WON16-RUNTIME-009",
+      "title": "Evidence object runtime",
+      "scope": "runtime persistence api frontend",
+      "severity": "P0",
+      "owner": "runtime",
+      "ruleFile": "docs/architecture/WORKOS_BACKEND_RUNTIME_RULES.md",
+      "enforcedBy": ["tests/WorkOS.RuntimeContractTests", "tests/WorkOS.RuntimeIntegrationTests", "scripts/guard-architecture.ps1"],
+      "exceptionAllowed": false
+    },
+    {
+      "id": "WON16-RUNTIME-010",
+      "title": "Card instance lifecycle",
+      "scope": "runtime persistence frontend",
+      "severity": "P0",
+      "owner": "runtime",
+      "ruleFile": "docs/architecture/WORKOS_BACKEND_RUNTIME_RULES.md",
+      "enforcedBy": ["tests/WorkOS.RuntimeContractTests", "apps/mobile vitest", "scripts/guard-architecture.ps1"],
+      "exceptionAllowed": false
+    },
+    {
       "id": "WON16-FRONTEND-001",
       "title": "Contract driven submit protocol",
       "scope": "frontend",
@@ -169,6 +189,26 @@
       "owner": "accommodation",
       "ruleFile": "docs/architecture/WORKOS_ACCOMMODATION_RUNTIME_RULES.md",
       "enforcedBy": ["tests/WorkOS.RuntimeIntegrationTests", "tests/WorkOS.RuntimeContractTests"],
+      "exceptionAllowed": false
+    },
+    {
+      "id": "WON16-ACCOMMODATION-003",
+      "title": "Legacy CheckIn ledger read only",
+      "scope": "accommodation runtime persistence migration",
+      "severity": "P0",
+      "owner": "accommodation",
+      "ruleFile": "docs/architecture/WORKOS_ACCOMMODATION_RUNTIME_RULES.md",
+      "enforcedBy": ["tests/WorkOS.RuntimeContractTests", "scripts/guard-architecture.ps1"],
+      "exceptionAllowed": false
+    },
+    {
+      "id": "WON16-ACCOMMODATION-004",
+      "title": "Period analytics ledger snapshot authority",
+      "scope": "accommodation runtime persistence",
+      "severity": "P0",
+      "owner": "accommodation",
+      "ruleFile": "docs/architecture/WORKOS_ACCOMMODATION_RUNTIME_RULES.md",
+      "enforcedBy": ["tests/WorkOS.RuntimeContractTests", "scripts/guard-architecture.ps1"],
       "exceptionAllowed": false
     },
     {

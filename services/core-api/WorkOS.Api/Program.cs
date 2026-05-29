@@ -76,9 +76,23 @@ app.MapGet("/api/lenses/search", (string? q) => runtime.Search(q));
 app.MapGet("/api/lenses/learning-catalog", () => runtime.GetLearningCatalog());
 app.MapGet("/api/lenses/accommodation/{lensId}", (string lensId) => runtime.GetAccommodationLens(lensId));
 
-app.MapPost("/api/workspaces/{workspaceId}/cards/{cardId}/prepare", (string workspaceId, string cardId) =>
+app.MapGet("/api/evidence", (string? evidenceId) => runtime.GetEvidenceObjects(evidenceId));
+app.MapPost("/api/evidence/drafts", (EvidenceDraftRequest request, HttpRequest httpRequest) =>
 {
-    var prepared = runtime.Prepare(workspaceId, cardId);
+    var actorId = httpRequest.Headers["X-WorkOS-Actor-Id"].FirstOrDefault() ?? "runtime";
+    return Results.Ok(runtime.CreateEvidenceDraft(request, actorId));
+});
+app.MapPost("/api/evidence/{evidenceId}/attachments", (string evidenceId, EvidenceAttachmentRequest request, HttpRequest httpRequest) =>
+{
+    var actorId = httpRequest.Headers["X-WorkOS-Actor-Id"].FirstOrDefault() ?? "runtime";
+    return Results.Ok(runtime.AttachEvidence(evidenceId, request, actorId));
+});
+app.MapPost("/api/evidence/{evidenceId}/verify", (string evidenceId, EvidenceDecisionRequest request) => Results.Ok(runtime.VerifyEvidence(evidenceId, request)));
+app.MapPost("/api/evidence/{evidenceId}/reject", (string evidenceId, EvidenceDecisionRequest request) => Results.Ok(runtime.RejectEvidence(evidenceId, request)));
+
+app.MapPost("/api/workspaces/{workspaceId}/cards/{cardId}/prepare", (string workspaceId, string cardId, PrepareCardRequest? request) =>
+{
+    var prepared = runtime.Prepare(workspaceId, cardId, request);
     return prepared is null ? Results.NotFound(new { error = "card_not_found", workspaceId, cardId }) : Results.Ok(prepared);
 });
 
@@ -162,6 +176,11 @@ internal static class DemoBootstrap
             "GET /api/lenses/work-queue",
             "GET /api/lenses/search?q=...",
             "GET /api/lenses/learning-catalog",
+            "GET /api/evidence",
+            "POST /api/evidence/drafts",
+            "POST /api/evidence/{evidenceId}/attachments",
+            "POST /api/evidence/{evidenceId}/verify",
+            "POST /api/evidence/{evidenceId}/reject",
             "GET /api/workspaces/{workspaceId}/events",
             "GET /api/audit-events",
             "GET /api/outbox",

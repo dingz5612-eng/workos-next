@@ -50,4 +50,28 @@ public sealed class RuntimePersistenceContractTests
         Assert.IsTrue(testProgram.Contains("TEST_DATABASE"));
         Assert.IsTrue(testProgram.Contains("_test"));
     }
+
+    [TestMethod]
+    public void EvidenceAndCardInstanceMigrationDeclaresRuntimeOwnershipTables()
+    {
+        var migration = File.ReadAllText(RepoPath("infra", "db", "migrations", "014_runtime_evidence_card_instances.sql"));
+        foreach (var term in new[]
+        {
+            "card_instances",
+            "evidence_objects",
+            "evidence_attachments",
+            "evidence_requirements",
+            "card_instance_id",
+            "submission_id",
+            "requirement_id"
+        })
+        {
+            Assert.IsTrue(migration.Contains(term), $"migration must declare {term}");
+        }
+
+        var unitOfWork = File.ReadAllText(RepoPath("services", "core-api", "WorkOS.Api", "Runtime", "ConfirmUnitOfWork.cs"));
+        Assert.IsTrue(unitOfWork.Contains("MarkSubmitted"));
+        Assert.IsTrue(unitOfWork.Contains("MarkConfirmed"));
+        Assert.IsTrue(unitOfWork.Contains("MarkUsed"));
+    }
 }

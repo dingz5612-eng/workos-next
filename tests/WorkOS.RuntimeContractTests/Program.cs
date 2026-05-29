@@ -91,7 +91,7 @@ ResetPostgres(connectionString);
         ["roomType"] = "four_bed",
         ["bedCount"] = "4",
         ["genderPolicy"] = "unrestricted",
-        ["furnitureStatus"] = "ready",
+        ["furnitureStatus"] = "complete",
         ["technicalState"] = "ready"
     }), operatorToken);
     Assert(humanRoom.Status == ConfirmStatus.Confirmed, "human room setup confirmation should pass");
@@ -113,7 +113,7 @@ ResetPostgres(connectionString);
     {
         ("bedSetup", "resource-bed", new Dictionary<string, string> { ["roomId"] = "room-phase7-001", ["bedId"] = "bed-phase7-001", ["bedNo"] = "A302-01", ["bedType"] = "lower", ["bedStatus"] = "available" }),
         ("rateSetup", "resource-rate", new Dictionary<string, string> { ["roomId"] = "room-phase7-001", ["ratePlanId"] = "rate-phase7-001", ["dailyRatePerBed"] = "350", ["weeklyRatePerBed"] = "2100", ["monthlyRatePerBed"] = "9300", ["currency"] = "KGS", ["effectiveFrom"] = "2026-06-01T00:00:00Z" }),
-        ("roomReadiness", "resource-readiness", new Dictionary<string, string> { ["roomId"] = "room-phase7-001", ["roomNo"] = "A302", ["bedCount"] = "4", ["availabilityStatus"] = "available", ["furnitureStatus"] = "ready", ["technicalState"] = "ready" }),
+        ("roomReadiness", "resource-readiness", new Dictionary<string, string> { ["roomId"] = "room-phase7-001", ["roomNo"] = "A302", ["bedCount"] = "4", ["availabilityStatus"] = "available", ["furnitureStatus"] = "complete", ["technicalState"] = "ready" }),
         ("roomBlock", "resource-block", new Dictionary<string, string> { ["roomId"] = "room-phase7-001", ["roomNo"] = "A302", ["resourceScope"] = "room", ["blockReason"] = "maintenance", ["blockStartAt"] = "2026-06-02T09:00:00Z", ["expectedReleaseAt"] = "2026-06-02T18:00:00Z" }),
         ("roomRelease", "resource-release", new Dictionary<string, string> { ["roomId"] = "room-phase7-001", ["roomNo"] = "A302", ["resourceScope"] = "room", ["releaseAvailableAt"] = "2026-06-02T18:30:00Z" })
     })
@@ -129,6 +129,11 @@ ResetPostgres(connectionString);
         Assert(result.Status == ConfirmStatus.Confirmed, $"{cardId} confirmation should pass");
         runtime.ProcessPendingOutbox();
     }
+    Assert(CountRows(connectionString, "deposit_liabilities") == 0, "legacy CheckIn must not write DepositLedger authoritative liability facts");
+    Assert(CountRows(connectionString, "hostel_payments") == 0, "legacy CheckIn must not write PaymentLedger authoritative payment facts");
+    Assert(CountRows(connectionString, "finance_reconciliations") == 0, "legacy CheckIn must not write PaymentLedger finance reconciliation facts");
+    Assert(CountRows(connectionString, "accommodation_deposits") == 0, "legacy CheckIn must not write legacy deposit facts after ledger ownership migration");
+    Assert(CountRows(connectionString, "finance_confirmations") == 0, "legacy CheckIn finance confirmation is transitional read-only after ledger ownership migration");
 
     var financeLeadCapture = AssertNoSideEffects(connectionString, () => runtime.Confirm("W-STAY-LEAD-RESERVATION", "leadCapture", Human("lead-reservation-finance-role"), financeToken));
     Assert(financeLeadCapture.Status == ConfirmStatus.Forbidden, "finance actor must not confirm operator-owned lead capture");
@@ -167,7 +172,7 @@ ResetPostgres(connectionString);
 
     foreach (var (cardId, key, values) in new[]
     {
-        ("residentProfile", "stay-lifecycle-resident", new Dictionary<string, string> { ["residentId"] = "resident-phase6-001", ["residentName"] = "Phase Six Guest", ["phone"] = "+996 555 660001", ["identityType"] = "passport", ["gender"] = "unrestricted", ["nationality"] = "KG" }),
+        ("residentProfile", "stay-lifecycle-resident", new Dictionary<string, string> { ["residentId"] = "resident-phase6-001", ["residentName"] = "Phase Six Guest", ["phone"] = "+996 555 660001", ["identityType"] = "passport", ["gender"] = "unspecified", ["nationality"] = "KG" }),
         ("checkInBedAssign", "stay-lifecycle-checkin-bed", new Dictionary<string, string> { ["residentId"] = "resident-phase6-001", ["stayId"] = "stay-phase6-001", ["roomId"] = "A301", ["bedId"] = "A301-02", ["checkInDate"] = "2026-06-01T12:00:00Z", ["plannedCheckOutDate"] = "2026-07-01T12:00:00Z" }),
         ("chargeAssessment", "stay-lifecycle-charge", new Dictionary<string, string> { ["stayId"] = "stay-phase6-001", ["chargeId"] = "charge-phase6-001", ["chargeType"] = "rent", ["periodStart"] = "2026-06-01T00:00:00Z", ["periodEnd"] = "2026-07-01T00:00:00Z", ["amount"] = "9300", ["currency"] = "KGS", ["chargeReason"] = "monthly rent" }),
         ("stayExtension", "stay-lifecycle-extension", new Dictionary<string, string> { ["stayId"] = "stay-phase6-001", ["residentName"] = "Phase Six Guest", ["phone"] = "+996 555 660001", ["roomId"] = "A301", ["bedId"] = "A301-02", ["plannedCheckOutDate"] = "2026-08-01T12:00:00Z" })
@@ -192,7 +197,17 @@ ResetPostgres(connectionString);
         ["paymentMethod"] = "bank_transfer"
     }), operatorToken));
     Assert(missingDepositEvidence.Status == ConfirmStatus.Forbidden, "non-cash deposit receipt without evidence must be forbidden");
-    Assert(missingDepositEvidence.Reason == "deposit_evidence_required:non_cash_deposit", "deposit evidence policy must use stable reason");
+    Assert(missingDepositEvidence.Reason == "evidence_object_required", "deposit evidence policy must require a real evidence object");
+
+    var fakeDepositEvidence = AssertNoSideEffects(connectionString, () => runtime.Confirm("W-STAY-DEPOSIT-LEDGER", "depositReceipt", HumanWithEvidence("deposit-receipt-fake-evidence", new Dictionary<string, string>
+    {
+        ["depositId"] = "deposit-ledger-001",
+        ["receivedAmount"] = "3000",
+        ["currency"] = "KGS",
+        ["paymentMethod"] = "bank_transfer"
+    }, "evidence-fake-deposit"), operatorToken));
+    Assert(fakeDepositEvidence.Status == ConfirmStatus.Forbidden, "non-cash deposit receipt with fake evidence must be forbidden");
+    Assert(fakeDepositEvidence.Reason == "evidence_object_not_found", "fake deposit evidence must not satisfy the evidence runtime");
 
     var missingDepositAmount = AssertNoSideEffects(connectionString, () => runtime.Confirm("W-STAY-DEPOSIT-LEDGER", "depositReceipt", Human("deposit-receipt-missing-amount", new Dictionary<string, string>
     {
@@ -203,19 +218,40 @@ ResetPostgres(connectionString);
     Assert(missingDepositAmount.Status == ConfirmStatus.Forbidden, "deposit receipt missing canonical amount must be forbidden");
     Assert(missingDepositAmount.Reason == "missing_required_field:receivedAmount", "missing deposit amount must use stable reason");
 
-    var depositReceipt = runtime.Confirm("W-STAY-DEPOSIT-LEDGER", "depositReceipt", HumanWithEvidence("deposit-receipt", new Dictionary<string, string>
+    var depositReceiptRequest = Human("deposit-receipt", new Dictionary<string, string>
     {
         ["depositId"] = "deposit-ledger-001",
         ["receivedAmount"] = "3000",
         ["currency"] = "KGS",
         ["paymentMethod"] = "bank_transfer"
-    }, "deposit-proof-001"), operatorToken);
+    });
+    var depositEvidenceId = EvidenceFor(runtime, depositReceiptRequest, "W-STAY-DEPOSIT-LEDGER", "depositReceipt");
+    var depositReceipt = runtime.Confirm("W-STAY-DEPOSIT-LEDGER", "depositReceipt", depositReceiptRequest with { EvidenceIds = new[] { depositEvidenceId } }, operatorToken);
     Assert(depositReceipt.Status == ConfirmStatus.Confirmed, "deposit receipt with evidence should pass");
     AssertConfirmEvents(depositReceipt, "Accommodation.DepositReceived", "Accommodation.DepositEvidenceSubmitted");
     runtime.ProcessPendingOutbox();
-    Assert(runtime.GetAuditEvents("W-STAY-DEPOSIT-LEDGER").Any(item => item.CardId == "depositReceipt" && item.EvidenceIds?.Contains("deposit-proof-001") == true), "confirmed events must persist submitted evidenceIds");
+    Assert(runtime.GetAuditEvents("W-STAY-DEPOSIT-LEDGER").Any(item => item.CardId == "depositReceipt" && item.EvidenceIds?.Contains(depositEvidenceId) == true), "confirmed events must persist submitted evidenceIds");
+    Assert(ScalarInt(connectionString, $"select count(*) from audit_events a join evidence_objects e on a.body->'evidenceIds' ? e.evidence_id where e.evidence_id = '{depositEvidenceId}'") > 0, "audit evidenceIds must join to evidence_objects");
     Assert(ScalarDecimal(connectionString, "select coalesce(sum(amount), 0) from deposit_transactions where deposit_id = 'deposit-ledger-001' and transaction_type = 'received'") == 3000m, "DepositReceived must persist the received amount once");
     Assert(ScalarDecimal(connectionString, "select coalesce(sum(amount), 0) from deposit_transactions where deposit_id = 'deposit-ledger-001' and transaction_type = 'evidence_submitted'") == 0m, "DepositEvidenceSubmitted must not change amount facts");
+    Assert(ScalarText(connectionString, $"select status from card_instances where card_instance_id = '{depositReceiptRequest.CardInstanceId}'") == "confirmed", "confirmed deposit receipt must advance card instance status");
+
+    Assert(runtime.Confirm("W-STAY-DEPOSIT-LEDGER", "depositAssessment", Human("deposit-assessment-second", new Dictionary<string, string>
+    {
+        ["stayId"] = "stay-ledger-002",
+        ["depositId"] = "deposit-ledger-002",
+        ["requiredDepositAmount"] = "1000",
+        ["currency"] = "KGS"
+    }), operatorToken).Status == ConfirmStatus.Confirmed, "second deposit assessment should pass");
+    Assert(runtime.Confirm("W-STAY-DEPOSIT-LEDGER", "depositReceipt", Human("deposit-receipt-second", new Dictionary<string, string>
+    {
+        ["depositId"] = "deposit-ledger-002",
+        ["receivedAmount"] = "1000",
+        ["currency"] = "KGS",
+        ["paymentMethod"] = "cash"
+    }), operatorToken).Status == ConfirmStatus.Confirmed, "same depositReceipt card should support a second aggregate instance");
+    runtime.ProcessPendingOutbox();
+    Assert(ScalarInt(connectionString, "select count(distinct aggregate_ref) from card_instances where workspace_id = 'W-STAY-DEPOSIT-LEDGER' and card_id = 'depositReceipt'") >= 2, "same card must create independent card instances for different deposit aggregateRefs");
 
     var depositConfirmation = runtime.Confirm("W-STAY-DEPOSIT-LEDGER", "depositConfirmation", Human("deposit-confirmation", new Dictionary<string, string>
     {
@@ -246,23 +282,32 @@ ResetPostgres(connectionString);
     }), operatorToken));
     Assert(overRefund.Status == ConfirmStatus.Forbidden, "deposit refund approval must reject more than backend-held deposit");
 
+    var depositDeduction = runtime.Confirm("W-STAY-DEPOSIT-LEDGER", "depositDeduction", Human("deposit-deduction", new Dictionary<string, string>
+    {
+        ["depositId"] = "deposit-ledger-001",
+        ["deductionAmount"] = "500",
+        ["applyToBalanceAmount"] = "500"
+    }), operatorToken);
+    Assert(depositDeduction.Status == ConfirmStatus.Confirmed, "deposit deduction/apply-to-balance should be a separate ledger card");
+    AssertConfirmEvents(depositDeduction, "Accommodation.DepositDeducted", "Accommodation.DepositAppliedToBalance");
+    runtime.ProcessPendingOutbox();
+
     Assert(runtime.Confirm("W-STAY-DEPOSIT-LEDGER", "depositRefundApproval", Human("deposit-refund-approval", new Dictionary<string, string>
     {
         ["depositId"] = "deposit-ledger-001",
-        ["heldAmount"] = "3000",
-        ["deductionAmount"] = "500",
-        ["applyToBalanceAmount"] = "500",
         ["refundAmount"] = "2000"
     }), operatorToken).Status == ConfirmStatus.Confirmed, "deposit refund approval within held amount should pass");
     runtime.ProcessPendingOutbox();
 
-    Assert(runtime.Confirm("W-STAY-DEPOSIT-LEDGER", "depositRefundPayment", HumanWithEvidence("deposit-refund-payment", new Dictionary<string, string>
+    var refundPaymentRequest = Human("deposit-refund-payment", new Dictionary<string, string>
     {
         ["depositId"] = "deposit-ledger-001",
         ["refundAmount"] = "2000",
         ["refundMethod"] = "bank_transfer",
         ["paymentTime"] = "2026-05-29T18:00"
-    }, "deposit-refund-proof-001"), operatorToken).Status == ConfirmStatus.Confirmed, "deposit refund payment should pass");
+    });
+    var refundEvidenceId = EvidenceFor(runtime, refundPaymentRequest, "W-STAY-DEPOSIT-LEDGER", "depositRefundPayment");
+    Assert(runtime.Confirm("W-STAY-DEPOSIT-LEDGER", "depositRefundPayment", refundPaymentRequest with { EvidenceIds = new[] { refundEvidenceId } }, operatorToken).Status == ConfirmStatus.Confirmed, "deposit refund payment should pass");
     runtime.ProcessPendingOutbox();
     Assert(ScalarDecimal(connectionString, "select coalesce(sum(amount), 0) from deposit_transactions where deposit_id = 'deposit-ledger-001' and transaction_type = 'confirmed'") == 3000m, "DepositLedger held amount must come from confirmed deposit transactions");
     Assert(ScalarDecimal(connectionString, "select coalesce(sum(amount), 0) from deposit_transactions where deposit_id = 'deposit-ledger-001' and transaction_type = 'refund_paid'") == 2000m, "DepositRefundPaid must persist liability-release transaction amount");
@@ -270,11 +315,26 @@ ResetPostgres(connectionString);
     var missingPaymentEvidence = AssertNoSideEffects(connectionString, () => runtime.Confirm("W-STAY-PAYMENT-LEDGER", "paymentReceipt", Human("payment-receipt-missing-evidence", new Dictionary<string, string>
     {
         ["stayId"] = "stay-ledger-001",
+        ["paymentId"] = "payment-ledger-001",
         ["paymentAmount"] = "9300",
+        ["currency"] = "KGS",
         ["paymentMethod"] = "bank_transfer"
     }), operatorToken));
     Assert(missingPaymentEvidence.Status == ConfirmStatus.Forbidden, "non-cash payment receipt without evidence must be forbidden");
-    Assert(missingPaymentEvidence.Reason == "payment_evidence_required:non_cash_payment", "payment evidence policy must use stable reason");
+    Assert(missingPaymentEvidence.Reason == "evidence_object_required", "payment evidence policy must require a real evidence object");
+
+    var fakePaymentEvidence = AssertNoSideEffects(connectionString, () => runtime.Confirm("W-STAY-PAYMENT-LEDGER", "paymentReceipt", HumanWithEvidence("payment-receipt-fake-evidence", new Dictionary<string, string>
+    {
+        ["stayId"] = "stay-ledger-001",
+        ["paymentId"] = "payment-ledger-001",
+        ["payerName"] = "Ledger Guest",
+        ["paymentAmount"] = "9300",
+        ["currency"] = "KGS",
+        ["paymentMethod"] = "bank_transfer",
+        ["paymentPurpose"] = "rent"
+    }, "evidence-fake-payment"), operatorToken));
+    Assert(fakePaymentEvidence.Status == ConfirmStatus.Forbidden, "non-cash payment receipt with fake evidence must be forbidden");
+    Assert(fakePaymentEvidence.Reason == "evidence_object_not_found", "fake payment evidence must not satisfy the evidence runtime");
 
     var depositPurposeInPaymentLedger = AssertNoSideEffects(connectionString, () => runtime.Confirm("W-STAY-PAYMENT-LEDGER", "paymentReceipt", Human("payment-receipt-deposit-purpose", new Dictionary<string, string>
     {
@@ -289,7 +349,7 @@ ResetPostgres(connectionString);
     Assert(depositPurposeInPaymentLedger.Status == ConfirmStatus.Forbidden, "ordinary PaymentLedger must reject deposit purpose");
     Assert(depositPurposeInPaymentLedger.Reason == "payment_deposit_purpose_forbidden", "deposit purpose rejection must use stable reason");
 
-    var paymentReceipt = runtime.Confirm("W-STAY-PAYMENT-LEDGER", "paymentReceipt", HumanWithEvidence("payment-receipt", new Dictionary<string, string>
+    var paymentReceiptRequest = Human("payment-receipt", new Dictionary<string, string>
     {
         ["stayId"] = "stay-ledger-001",
         ["paymentId"] = "payment-ledger-001",
@@ -298,7 +358,9 @@ ResetPostgres(connectionString);
         ["currency"] = "KGS",
         ["paymentMethod"] = "bank_transfer",
         ["paymentPurpose"] = "rent"
-    }, "payment-proof-001"), operatorToken);
+    });
+    var paymentEvidenceId = EvidenceFor(runtime, paymentReceiptRequest, "W-STAY-PAYMENT-LEDGER", "paymentReceipt");
+    var paymentReceipt = runtime.Confirm("W-STAY-PAYMENT-LEDGER", "paymentReceipt", paymentReceiptRequest with { EvidenceIds = new[] { paymentEvidenceId } }, operatorToken);
     Assert(paymentReceipt.Status == ConfirmStatus.Confirmed, "payment receipt with evidence should pass");
     AssertConfirmEvents(paymentReceipt, "Accommodation.PaymentReceived", "Accommodation.PaymentEvidenceSubmitted");
     runtime.ProcessPendingOutbox();
@@ -345,6 +407,18 @@ ResetPostgres(connectionString);
     Assert(ScalarDecimal(connectionString, "select coalesce(max(total_charges), 0) from stay_balances where stay_id = 'stay-ledger-001'") == 0m, "StayBalance total charges must be recalculated from backend charge facts, not request payload");
     Assert(ScalarDecimal(connectionString, "select coalesce(max(balance), 0) from stay_balances where stay_id = 'stay-ledger-001'") == 0m, "StayBalance must be recalculated by backend ledger facts");
 
+    Assert(runtime.Confirm("W-STAY-PAYMENT-LEDGER", "paymentReceipt", Human("payment-receipt-pending-risk", new Dictionary<string, string>
+    {
+        ["stayId"] = "stay-ledger-001",
+        ["paymentId"] = "payment-ledger-pending-risk",
+        ["payerName"] = "Ledger Guest",
+        ["paymentAmount"] = "100",
+        ["currency"] = "KGS",
+        ["paymentMethod"] = "cash",
+        ["paymentPurpose"] = "rent"
+    }), operatorToken).Status == ConfirmStatus.Confirmed, "pending ordinary payment receipt should remain visible to PaymentRiskLens");
+    runtime.ProcessPendingOutbox();
+
     Assert(runtime.Confirm("W-STAY-CHECKOUT-SETTLEMENT", "checkoutStart", Human("checkout-start", new Dictionary<string, string>
     {
         ["stayId"] = "stay-ledger-001",
@@ -353,13 +427,15 @@ ResetPostgres(connectionString);
     }), operatorToken).Status == ConfirmStatus.Confirmed, "checkout start should pass after runtime upgrade");
     runtime.ProcessPendingOutbox();
 
-    Assert(runtime.Confirm("W-STAY-CHECKOUT-SETTLEMENT", "roomInspection", HumanWithEvidence("room-inspection", new Dictionary<string, string>
+    var roomInspectionRequest = Human("room-inspection", new Dictionary<string, string>
     {
         ["stayId"] = "stay-ledger-001",
         ["roomCondition"] = "cleaning_required",
-        ["bedStatus"] = "normal",
+        ["bedStatus"] = "available",
         ["cleaningRequired"] = "true"
-    }, "inspection-photo-001"), operatorToken).Status == ConfirmStatus.Confirmed, "room inspection should pass");
+    });
+    var roomInspectionEvidenceId = EvidenceFor(runtime, roomInspectionRequest, "W-STAY-CHECKOUT-SETTLEMENT", "roomInspection");
+    Assert(runtime.Confirm("W-STAY-CHECKOUT-SETTLEMENT", "roomInspection", roomInspectionRequest with { EvidenceIds = new[] { roomInspectionEvidenceId } }, operatorToken).Status == ConfirmStatus.Confirmed, "room inspection should pass");
     runtime.ProcessPendingOutbox();
 
     var depositTransactionCountBeforeCheckoutSettlement = CountRows(connectionString, "deposit_transactions");
@@ -370,7 +446,8 @@ ResetPostgres(connectionString);
         ["applyToBalanceAmount"] = "500"
     }), operatorToken).Status == ConfirmStatus.Confirmed, "checkout should request deposit settlement without owning deposit transaction");
     runtime.ProcessPendingOutbox();
-    Assert(CountRows(connectionString, "deposit_transactions") == depositTransactionCountBeforeCheckoutSettlement, "CheckOutSettlement must not create deposit transactions");
+    Assert(CountRows(connectionString, "deposit_transactions") == depositTransactionCountBeforeCheckoutSettlement + 1, "DepositLedger must consume checkout settlement requests as ledger workflow entries");
+    Assert(ScalarDecimal(connectionString, "select coalesce(sum(amount), 0) from deposit_transactions where deposit_id = 'deposit-ledger-001' and transaction_type = 'settlement_requested'") == 0m, "checkout settlement request must not create a money-moving deposit transaction");
 
     var checkoutWithoutDepositSettlement = AssertNoSideEffects(connectionString, () => runtime.Confirm("W-STAY-CHECKOUT-SETTLEMENT", "finalBalanceClose", Human("checkout-close-without-deposit", new Dictionary<string, string>
     {
@@ -397,21 +474,23 @@ ResetPostgres(connectionString);
 
     Assert(runtime.Confirm("W-STAY-CHECKOUT-SETTLEMENT", "postCheckoutCleaning", Human("checkout-cleaning", new Dictionary<string, string>
     {
-        ["roomId"] = "A301",
-        ["bedId"] = "A301-02",
+        ["roomId"] = "room-phase7-001",
+        ["bedId"] = "bed-phase7-001",
         ["taskType"] = "cleaning"
     }), operatorToken).Status == ConfirmStatus.Confirmed, "post-checkout cleaning request should pass");
     runtime.ProcessPendingOutbox();
 
     var bedCountBeforeServiceTask = CountRows(connectionString, "accommodation_beds");
-    Assert(runtime.Confirm("W-STAY-SERVICE-TASK", "serviceTaskCreate", HumanWithEvidence("service-task-create", new Dictionary<string, string>
+    var serviceTaskCreateRequest = Human("service-task-create", new Dictionary<string, string>
     {
         ["taskId"] = "task-phase3-001",
         ["taskType"] = "cleaning",
-        ["roomId"] = "A301",
-        ["bedId"] = "A301-02",
+        ["roomId"] = "room-phase7-001",
+        ["bedId"] = "bed-phase7-001",
         ["blocksAvailability"] = "true"
-    }, "task-photo-001"), operatorToken).Status == ConfirmStatus.Confirmed, "service task create should pass after runtime upgrade");
+    });
+    var serviceTaskEvidenceId = EvidenceFor(runtime, serviceTaskCreateRequest, "W-STAY-SERVICE-TASK", "serviceTaskCreate");
+    Assert(runtime.Confirm("W-STAY-SERVICE-TASK", "serviceTaskCreate", serviceTaskCreateRequest with { EvidenceIds = new[] { serviceTaskEvidenceId } }, operatorToken).Status == ConfirmStatus.Confirmed, "service task create should pass after runtime upgrade");
     runtime.ProcessPendingOutbox();
 
     Assert(runtime.Confirm("W-STAY-SERVICE-TASK", "serviceTaskAssign", Human("service-task-assign", new Dictionary<string, string>
@@ -421,12 +500,14 @@ ResetPostgres(connectionString);
     }), operatorToken).Status == ConfirmStatus.Confirmed, "service task assign should pass");
     runtime.ProcessPendingOutbox();
 
-    Assert(runtime.Confirm("W-STAY-SERVICE-TASK", "serviceTaskComplete", HumanWithEvidence("service-task-complete", new Dictionary<string, string>
+    var serviceTaskCompleteRequest = Human("service-task-complete", new Dictionary<string, string>
     {
         ["taskId"] = "task-phase3-001",
-        ["completionResult"] = "completed",
+        ["completionResult"] = "done",
         ["actualCostAmount"] = "800"
-    }, "completion-photo-001"), operatorToken).Status == ConfirmStatus.Confirmed, "service task complete should pass without releasing room");
+    });
+    var completionEvidenceId = EvidenceFor(runtime, serviceTaskCompleteRequest, "W-STAY-SERVICE-TASK", "serviceTaskComplete");
+    Assert(runtime.Confirm("W-STAY-SERVICE-TASK", "serviceTaskComplete", serviceTaskCompleteRequest with { EvidenceIds = new[] { completionEvidenceId } }, operatorToken).Status == ConfirmStatus.Confirmed, "service task complete should pass without releasing room");
     runtime.ProcessPendingOutbox();
 
     var releaseBeforeVerify = AssertNoSideEffects(connectionString, () => runtime.Confirm("W-STAY-SERVICE-TASK", "roomReleaseAfterService", Human("service-release-before-verify", new Dictionary<string, string>
@@ -447,27 +528,32 @@ ResetPostgres(connectionString);
     {
         ["taskId"] = "task-phase3-001",
         ["serviceTaskVerified"] = "true",
-        ["roomId"] = "A301",
-        ["bedId"] = "A301-02"
+        ["roomId"] = "room-phase7-001",
+        ["bedId"] = "bed-phase7-001"
     }), operatorToken).Status == ConfirmStatus.Confirmed, "service release request should pass after verification");
     runtime.ProcessPendingOutbox();
-    Assert(CountRows(connectionString, "accommodation_beds") == bedCountBeforeServiceTask, "ServiceTask must not directly create or mutate BedStatus facts");
+    Assert(CountRows(connectionString, "accommodation_beds") == bedCountBeforeServiceTask, "ServiceTask request must be consumed without creating duplicate BedStatus facts");
+    Assert(ScalarText(connectionString, "select status from accommodation_beds where bed_id = 'bed-phase7-001'") == "available", "ResourceSetup must consume service release request and restore BedStatus");
 
     var expenseWithoutEvidence = AssertNoSideEffects(connectionString, () => runtime.Confirm("W-STAY-EXPENSE-LEDGER", "expenseRecord", Human("expense-without-evidence", new Dictionary<string, string>
     {
+        ["expenseId"] = "expense-phase3-001",
         ["expenseAmount"] = "800",
+        ["currency"] = "KGS",
         ["paymentMethod"] = "bank_transfer"
     }), operatorToken));
     Assert(expenseWithoutEvidence.Status == ConfirmStatus.Forbidden, "non-cash expense without evidence must be forbidden");
 
-    Assert(runtime.Confirm("W-STAY-EXPENSE-LEDGER", "expenseRecord", HumanWithEvidence("expense-record", new Dictionary<string, string>
+    var expenseRecordRequest = Human("expense-record", new Dictionary<string, string>
     {
         ["expenseId"] = "expense-phase3-001",
         ["expenseCategory"] = "cleaning",
         ["expenseAmount"] = "800",
         ["currency"] = "KGS",
         ["paymentMethod"] = "bank_transfer"
-    }, "expense-proof-001"), operatorToken).Status == ConfirmStatus.Confirmed, "expense record with evidence should pass");
+    });
+    var expenseEvidenceId = EvidenceFor(runtime, expenseRecordRequest, "W-STAY-EXPENSE-LEDGER", "expenseRecord");
+    Assert(runtime.Confirm("W-STAY-EXPENSE-LEDGER", "expenseRecord", expenseRecordRequest with { EvidenceIds = new[] { expenseEvidenceId } }, operatorToken).Status == ConfirmStatus.Confirmed, "expense record with evidence should pass");
     runtime.ProcessPendingOutbox();
 
     Assert(runtime.Confirm("W-STAY-EXPENSE-LEDGER", "expenseApproval", Human("expense-approval", new Dictionary<string, string>
@@ -586,6 +672,19 @@ ResetPostgres(connectionString);
     AssertConfirmEvents(periodActionPlan, "Accommodation.PeriodActionPlanCommitted");
     runtime.ProcessPendingOutbox();
 
+    var periodActionPlanComplete = runtime.Confirm("W-STAY-PERIOD-ANALYTICS", "periodActionPlanComplete", Human("period-action-plan-complete", new Dictionary<string, string>
+    {
+        ["periodId"] = "PER-2026-05-01",
+        ["actionPlanId"] = "period-plan-001",
+        ["completionDate"] = "2026-05-29T20:00:00Z",
+        ["completionResult"] = "done",
+        ["completionNote"] = "reservation conversion actions shipped",
+        ["ownerName"] = "manager"
+    }), operatorToken);
+    Assert(periodActionPlanComplete.Status == ConfirmStatus.Confirmed, $"period action plan completion should pass on its own card: {periodActionPlanComplete.Status} {periodActionPlanComplete.Reason}");
+    AssertConfirmEvents(periodActionPlanComplete, "Accommodation.PeriodActionPlanCompleted");
+    runtime.ProcessPendingOutbox();
+
     Assert(runtime.Confirm("W-STAY-PERIOD-ANALYTICS", "periodClose", Human("period-close", new Dictionary<string, string>
     {
         ["periodId"] = "PER-2026-05-01",
@@ -621,8 +720,8 @@ ResetPostgres(connectionString);
     Assert(CountRows(connectionString, "accommodation_rooms") >= 1, "Room aggregate should persist in accommodation_rooms");
     Assert(CountRows(connectionString, "accommodation_beds") >= 1, "Bed aggregate should persist in accommodation_beds");
     Assert(CountRows(connectionString, "accommodation_rate_plans") >= 1, "RatePlan aggregate should persist in accommodation_rate_plans");
-    Assert(CountRows(connectionString, "accommodation_deposits") >= 1, "Deposit aggregate should persist in accommodation_deposits");
-    Assert(CountRows(connectionString, "finance_confirmations") >= 1, "FinanceConfirmation aggregate should persist in finance_confirmations");
+    Assert(CountRows(connectionString, "accommodation_deposits") == 0, "legacy accommodation_deposits must stay read-only after DepositLedger ownership migration");
+    Assert(CountRows(connectionString, "finance_confirmations") == 0, "legacy finance_confirmations must stay read-only after PaymentLedger ownership migration");
     Assert(CountRows(connectionString, "hostel_leads") >= 1, "Hostel lead should persist in hostel_leads");
     Assert(CountRows(connectionString, "hostel_bookings") >= 1, "Hostel booking should persist in hostel_bookings");
     Assert(CountRows(connectionString, "hostel_residents") >= 1, "StayLifecycle should persist hostel_residents");
@@ -657,8 +756,8 @@ ResetPostgres(connectionString);
     Assert(ScalarText(connectionString, "select average_occupancy_rate_status from period_metric_snapshots where period_id = 'PER-2026-05-01'") == "not_applicable", "zero denominator should mark formula not_applicable");
     Assert(ScalarText(connectionString, "select snapshot_frozen::text from period_metric_snapshots where period_id = 'PER-2026-05-01'") == "true", "PeriodAnalytics metric snapshot must be marked frozen");
     Assert(ScalarDecimal(connectionString, "select bed_night_sold from period_metric_snapshots where period_id = 'PER-2026-05-01'") == 0m, "frozen period snapshot must not be mutated by a late metric replay");
-    Assert(ScalarDecimal(connectionString, "select period_net_cash_flow from period_finance_snapshots where period_id = 'PER-2026-05-01'") == 8700m, "period net cash flow must exclude deposit received and deposit refund");
-    Assert(ScalarDecimal(connectionString, "select deposit_liability_end from period_finance_snapshots where period_id = 'PER-2026-05-01'") == 0m, "deposit liability end formula should be persisted");
+    Assert(ScalarDecimal(connectionString, "select period_net_cash_flow from period_finance_snapshots where period_id = 'PER-2026-05-01'") == 8500m, "period net cash flow must be generated from PaymentLedger minus ExpenseLedger state");
+    Assert(ScalarDecimal(connectionString, "select deposit_liability_end from period_finance_snapshots where period_id = 'PER-2026-05-01'") == 1000m, "deposit liability end formula should be generated from backend DepositLedger state");
     Assert(LensContains(reloadedRuntime, "bed-inventory", "BedInventoryLens"), "BedInventoryLens should expose persisted bed inventory");
     Assert(LensContains(reloadedRuntime, "room-readiness", "RoomReadinessLens"), "RoomReadinessLens should expose persisted room readiness");
     Assert(LensContains(reloadedRuntime, "rate-plan", "RatePlanLens"), "RatePlanLens should expose persisted rate plans");
@@ -674,7 +773,7 @@ ResetPostgres(connectionString);
     Assert(LensContains(reloadedRuntime, "service-task-queue", "ServiceTaskQueueLens"), "ServiceTaskQueueLens should expose open service tasks");
     Assert(LensContains(reloadedRuntime, "expense-analytics", "ExpenseAnalyticsLens"), "ExpenseAnalyticsLens should expose approved expense totals");
     Assert(LensContains(reloadedRuntime, "period-performance", "PeriodPerformanceLens"), "PeriodPerformanceLens should expose period performance");
-    Assert(LensContains(reloadedRuntime, "period-performance", "8700"), "PeriodPerformanceLens should expose net cash flow from the frozen period review");
+    Assert(LensContains(reloadedRuntime, "period-performance", "8500"), "PeriodPerformanceLens should expose net cash flow from the frozen period review");
     Assert(LensContains(reloadedRuntime, "risk-command", "RiskCommandLens"), "RiskCommandLens should expose owner risk counters");
     Assert(CountRows(connectionString, "repair_stations") >= 2, "RepairStation aggregate roots should persist in repair_stations");
     Assert(CountRows(connectionString, "repair_technicians") >= 2, "Technician aggregate roots should persist in repair_technicians");
@@ -777,7 +876,7 @@ static void ValidateAccommodationWorkOS20Contracts(ProjectionEnvelope projection
         ["W-STAY-CHECKOUT-SETTLEMENT"] = new[] { "checkoutStart", "roomInspection", "depositSettlement", "finalBalanceClose", "bedRelease", "postCheckoutCleaning" },
         ["W-STAY-SERVICE-TASK"] = new[] { "serviceTaskCreate", "serviceTaskAssign", "serviceTaskComplete", "serviceTaskVerify", "roomReleaseAfterService" },
         ["W-STAY-EXPENSE-LEDGER"] = new[] { "expenseRecord", "expenseApproval", "expenseLink" },
-        ["W-STAY-PERIOD-ANALYTICS"] = new[] { "periodScope", "periodMetricsReview", "periodFinanceReview", "periodOperationsDiagnosis", "periodActionPlan", "periodClose" }
+        ["W-STAY-PERIOD-ANALYTICS"] = new[] { "periodScope", "periodMetricsReview", "periodFinanceReview", "periodOperationsDiagnosis", "periodActionPlan", "periodActionPlanComplete", "periodClose" }
     };
 
     foreach (var (workspaceId, cardIds) in expected)
@@ -903,6 +1002,7 @@ static void ValidatePeriodAnalyticsContract()
     Assert(root.GetProperty("zeroDenominator").GetProperty("status").GetString() == "not_applicable", "zero denominator behavior must be explicit");
     Assert(root.GetProperty("snapshotPolicy").GetProperty("snapshotType").GetString() == "frozen-period-snapshot", "period snapshot must be frozen");
     Assert(root.GetProperty("snapshotPolicy").GetProperty("lateAdjustmentPolicy").GetString() == "append-adjustment-event", "late adjustments must append events");
+    Assert(root.GetProperty("snapshotPolicy").GetProperty("lateAdjustmentEvents").EnumerateArray().Any(item => item.GetString() == "Accommodation.PeriodActionPlanCompleted"), "period completed adjustments must be append-only events");
 
     var formulas = root.GetProperty("formulas").EnumerateArray().ToArray();
     foreach (var formula in new[] { "averageOccupancyRate", "leadToReservationRate", "reservationToCheckInRate", "periodNetCashFlow", "depositLiabilityEnd" })
@@ -1061,6 +1161,26 @@ static ConfirmCardRequest HumanWithEvidence(string idempotencyKey, IReadOnlyDict
         AggregateRefFrom(fieldValues));
 }
 
+static string EvidenceFor(ProjectionRuntime runtime, ConfirmCardRequest request, string workspaceId, string cardId, string? requirementId = null)
+{
+    requirementId ??= runtime.FindWorkspace(workspaceId)
+        ?.Cards.Single(card => card.Id == cardId)
+        .Evidence.First().Id ?? throw new InvalidOperationException($"missing evidence requirement for {workspaceId}.{cardId}");
+    var draft = runtime.CreateEvidenceDraft(new EvidenceDraftRequest(
+        workspaceId,
+        cardId,
+        request.CardInstanceId ?? throw new InvalidOperationException("test request missing cardInstanceId"),
+        request.SubmissionId ?? throw new InvalidOperationException("test request missing submissionId"),
+        requirementId), "operator");
+    var attached = runtime.AttachEvidence(draft.EvidenceId, new EvidenceAttachmentRequest(
+        $"{requirementId}.txt",
+        "text/plain",
+        "sha256-test-proof",
+        12), "operator");
+    Assert(attached.Attachments.Count > 0, "valid evidence object must have an attachment");
+    return attached.EvidenceId;
+}
+
 static void AssertCanonicalFieldKeys(IReadOnlyDictionary<string, string>? fieldValues)
 {
     if (fieldValues is null)
@@ -1084,7 +1204,7 @@ static string? AggregateRefFrom(IReadOnlyDictionary<string, string>? fieldValues
         return null;
     }
 
-    foreach (var key in new[] { "roomId", "bedId", "stayId", "depositId", "paymentId", "leadId", "reservationId", "serviceTaskId", "expenseId", "periodId" })
+    foreach (var key in new[] { "roomId", "bedId", "stayId", "depositId", "depositReceiptId", "paymentId", "paymentReceiptId", "leadId", "reservationId", "serviceTaskId", "expenseId", "periodId", "settlementId" })
     {
         if (fieldValues.TryGetValue(key, out var value) && !string.IsNullOrWhiteSpace(value))
         {
@@ -1461,6 +1581,15 @@ static decimal ScalarDecimal(string connectionString, string sql)
     return Convert.ToDecimal(command.ExecuteScalar());
 }
 
+static int ScalarInt(string connectionString, string sql)
+{
+    using var connection = new NpgsqlConnection(connectionString);
+    connection.Open();
+    using var command = connection.CreateCommand();
+    command.CommandText = sql;
+    return Convert.ToInt32(command.ExecuteScalar());
+}
+
 static string ScalarText(string connectionString, string sql)
 {
     using var connection = new NpgsqlConnection(connectionString);
@@ -1476,6 +1605,10 @@ static void ResetPostgres(string connectionString)
     connection.Open();
     using var command = connection.CreateCommand();
     command.CommandText = """
+        drop table if exists evidence_attachments;
+        drop table if exists evidence_requirements;
+        drop table if exists evidence_objects;
+        drop table if exists card_instances;
         drop table if exists finance_confirmations;
         drop table if exists accommodation_deposits;
         drop table if exists period_late_adjustments;

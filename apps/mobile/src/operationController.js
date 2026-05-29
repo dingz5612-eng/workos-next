@@ -1,6 +1,6 @@
 import { capacityForRoomType } from "./controls/fieldControls.js";
 import { clearDraft, loadDraft, saveDraft } from "./operationDrafts.js";
-import { createSubmissionProtocol, submitCardOperation } from "./operationRuntime.js";
+import { createSubmissionProtocol, materializeEvidenceObjects, submitCardOperation } from "./operationRuntime.js";
 import { setView } from "./navigationController.js";
 import { activeWorkspaceCard, isCardActionDisabled } from "./selectors/workspaceSelectors.js";
 import { applyRuntimeProjection } from "./runtime/runtimeStore.js";
@@ -100,13 +100,20 @@ export async function submitCurrentCard(ctx) {
     }
   }
   const fieldValues = collectOperationValues();
-  const evidenceIds = collectEvidenceIds();
   const evidenceDrafts = collectEvidenceDrafts();
   const submissionProtocol = draftSubmissionProtocol(item, card, fieldValues, evidenceDrafts);
   saveDraft(item.id, card.id, fieldValues, evidenceDrafts, submissionProtocol);
   ctx.state.operationMessage = ctx.tr("submitting");
   ctx.render();
   try {
+    const evidenceIds = await materializeEvidenceObjects({
+      workspace: item,
+      card,
+      actor: ctx.state.currentActor,
+      submissionProtocol,
+      evidenceDrafts
+    });
+    saveDraft(item.id, card.id, fieldValues, evidenceDrafts, submissionProtocol);
     await submitCardOperation({
       workspace: item,
       card,
@@ -158,17 +165,23 @@ function randomDraftId() {
 
 function draftSubmissionProtocol(item, card, fieldValues, evidenceDrafts) {
   const protocol = loadDraft(item.id, card.id).submissionProtocol;
-  if (isCompleteSubmissionProtocol(protocol)) {
+  if (isCompleteSubmissionProtocol(protocol, fieldValues)) {
     return protocol;
   }
 
-  const created = createSubmissionProtocol(item, card);
+  const created = createSubmissionProtocol(item, card, fieldValues);
   saveDraft(item.id, card.id, fieldValues, evidenceDrafts, created);
   return created;
 }
 
-function isCompleteSubmissionProtocol(protocol) {
-  return !!protocol?.idempotencyKey && !!protocol?.submissionId && !!protocol?.cardInstanceId;
+function isCompleteSubmissionProtocol(protocol, fieldValues = {}) {
+  const aggregateRef = Object.entries(fieldValues || {}).find(([key, value]) =>
+    ["roomId", "bedId", "stayId", "depositId", "depositReceiptId", "paymentId", "paymentReceiptId", "leadId", "reservationId", "serviceTaskId", "expenseId", "periodId", "settlementId"].includes(key) && value);
+  const expectedAggregateRef = aggregateRef ? `${aggregateRef[0]}:${aggregateRef[1]}` : null;
+  return !!protocol?.idempotencyKey &&
+    !!protocol?.submissionId &&
+    !!protocol?.cardInstanceId &&
+    (protocol.aggregateRef || null) === expectedAggregateRef;
 }
 
 function applyProjectionPayload(payload, ctx) {
