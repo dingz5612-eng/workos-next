@@ -66,11 +66,11 @@ ResetPostgres(connectionString);
     Assert(operatorFinance.Status == ConfirmStatus.Forbidden, "operator must not confirm finance card");
     Assert(operatorFinance.Reason?.StartsWith("role_confirmation_forbidden:") == true, "role rejection must use stable policy decision code");
 
-    var contractOnlyPrepare = runtime.Prepare("W-STAY-LEAD-RESERVATION", "leadCapture");
+    var contractOnlyPrepare = runtime.Prepare("W-STAY-CHECKOUT", "checkoutStart");
     Assert(contractOnlyPrepare is not null, "contract-only slices should still allow prepare");
-    var contractOnlyConfirm = AssertNoSideEffects(connectionString, () => runtime.Confirm("W-STAY-LEAD-RESERVATION", "leadCapture", Human("contract-only-lead-capture"), managerToken));
+    var contractOnlyConfirm = AssertNoSideEffects(connectionString, () => runtime.Confirm("W-STAY-CHECKOUT", "checkoutStart", Human("contract-only-checkout-start"), managerToken));
     Assert(contractOnlyConfirm.Status == ConfirmStatus.Forbidden, "contract-only slice confirm must be forbidden until runtime status is upgraded");
-    Assert(contractOnlyConfirm.Reason == "slice_runtime_forbidden:Accommodation.LeadReservation:contract-only", "contract-only rejection must name the owning slice");
+    Assert(contractOnlyConfirm.Reason == "slice_runtime_forbidden:Accommodation.CheckOut:contract-only", "contract-only rejection must name the owning slice");
     ValidateAllContractOnlySlicesAreGated(runtime, connectionString, projection, managerToken);
 
     var humanRoom = runtime.Confirm("W-STAY-RESOURCE", "room", Human("resource-room", new Dictionary<string, string> { ["房间号"] = "A302" }), operatorToken);
@@ -90,6 +90,53 @@ ResetPostgres(connectionString);
         var token = cardId == "finance" ? financeToken : operatorToken;
         var result = runtime.Confirm("W-STAY-CHECKIN", cardId, Human($"checkin-{cardId}"), token);
         Assert(result.Status == ConfirmStatus.Confirmed, $"{cardId} confirmation should pass");
+        runtime.ProcessPendingOutbox();
+    }
+
+    var financeLeadCapture = AssertNoSideEffects(connectionString, () => runtime.Confirm("W-STAY-LEAD-RESERVATION", "leadCapture", Human("lead-reservation-finance-role"), financeToken));
+    Assert(financeLeadCapture.Status == ConfirmStatus.Forbidden, "finance actor must not confirm operator-owned lead capture");
+    var aiLeadCapture = AssertNoSideEffects(connectionString, () => runtime.Confirm("W-STAY-LEAD-RESERVATION", "leadCapture", Human("lead-reservation-ai"), aiToken));
+    Assert(aiLeadCapture.Status == ConfirmStatus.Forbidden, "AI must not confirm LeadReservation cards");
+
+    Assert(runtime.Confirm("W-STAY-LEAD-RESERVATION", "leadCapture", Human("lead-reservation-capture", new Dictionary<string, string>
+    {
+        ["leadId"] = "lead-phase6-001",
+        ["leadName"] = "Phase Six Guest",
+        ["phone"] = "+996 555 660001",
+        ["requestedBedCount"] = "1",
+        ["stayDurationText"] = "1个月",
+        ["leadSource"] = "whatsapp",
+        ["leadStatus"] = "new"
+    }), operatorToken).Status == ConfirmStatus.Confirmed, "LeadReservation lead capture should pass after runtime upgrade");
+    runtime.ProcessPendingOutbox();
+    Assert(runtime.Confirm("W-STAY-LEAD-RESERVATION", "leadCapture", Human("lead-reservation-capture"), operatorToken).Status == ConfirmStatus.Duplicate, "LeadReservation duplicate confirm should be idempotent");
+
+    foreach (var (cardId, key, values) in new[]
+    {
+        ("leadFollowUp", "lead-reservation-follow-up", new Dictionary<string, string> { ["leadId"] = "lead-phase6-001", ["leadStatus"] = "negotiating" }),
+        ("reservationCreate", "lead-reservation-create", new Dictionary<string, string> { ["leadId"] = "lead-phase6-001", ["reservationId"] = "reservation-phase6-001", ["reservedBedCount"] = "1", ["reservedBedIds"] = "A301-02", ["plannedCheckInDate"] = "2026-06-01T12:00:00Z", ["reservationHoldUntil"] = "2026-05-31T12:00:00Z" }),
+        ("reservationCancel", "lead-reservation-cancel", new Dictionary<string, string> { ["leadId"] = "lead-phase6-001", ["reservationId"] = "reservation-phase6-001" }),
+        ("reservationConvert", "lead-reservation-convert", new Dictionary<string, string> { ["leadId"] = "lead-phase6-001", ["reservationId"] = "reservation-phase6-001", ["stayId"] = "stay-phase6-001" })
+    })
+    {
+        Assert(runtime.Confirm("W-STAY-LEAD-RESERVATION", cardId, Human(key, values), operatorToken).Status == ConfirmStatus.Confirmed, $"{cardId} should pass after LeadReservation runtime upgrade");
+        runtime.ProcessPendingOutbox();
+    }
+
+    var financeResidentProfile = AssertNoSideEffects(connectionString, () => runtime.Confirm("W-STAY-LIFECYCLE", "residentProfile", Human("stay-lifecycle-finance-role"), financeToken));
+    Assert(financeResidentProfile.Status == ConfirmStatus.Forbidden, "finance actor must not confirm operator-owned resident profile");
+    var aiResidentProfile = AssertNoSideEffects(connectionString, () => runtime.Confirm("W-STAY-LIFECYCLE", "residentProfile", Human("stay-lifecycle-ai"), aiToken));
+    Assert(aiResidentProfile.Status == ConfirmStatus.Forbidden, "AI must not confirm StayLifecycle cards");
+
+    foreach (var (cardId, key, values) in new[]
+    {
+        ("residentProfile", "stay-lifecycle-resident", new Dictionary<string, string> { ["residentId"] = "resident-phase6-001", ["residentName"] = "Phase Six Guest", ["phone"] = "+996 555 660001", ["identityType"] = "passport", ["gender"] = "unrestricted", ["nationality"] = "KG" }),
+        ("checkInBedAssign", "stay-lifecycle-checkin-bed", new Dictionary<string, string> { ["residentId"] = "resident-phase6-001", ["stayId"] = "stay-phase6-001", ["roomId"] = "A301", ["bedId"] = "A301-02", ["checkInDate"] = "2026-06-01T12:00:00Z", ["plannedCheckOutDate"] = "2026-07-01T12:00:00Z" }),
+        ("chargeAssessment", "stay-lifecycle-charge", new Dictionary<string, string> { ["stayId"] = "stay-phase6-001", ["chargeId"] = "charge-phase6-001", ["chargeType"] = "rent", ["periodStart"] = "2026-06-01T00:00:00Z", ["periodEnd"] = "2026-07-01T00:00:00Z", ["amount"] = "9300", ["currency"] = "KGS", ["chargeReason"] = "monthly rent" }),
+        ("stayExtension", "stay-lifecycle-extension", new Dictionary<string, string> { ["stayId"] = "stay-phase6-001", ["residentName"] = "Phase Six Guest", ["phone"] = "+996 555 660001", ["roomId"] = "A301", ["bedId"] = "A301-02", ["plannedCheckOutDate"] = "2026-08-01T12:00:00Z" })
+    })
+    {
+        Assert(runtime.Confirm("W-STAY-LIFECYCLE", cardId, Human(key, values), operatorToken).Status == ConfirmStatus.Confirmed, $"{cardId} should pass after StayLifecycle runtime upgrade");
         runtime.ProcessPendingOutbox();
     }
 
@@ -458,21 +505,27 @@ ResetPostgres(connectionString);
     Assert(reloaded.Events.All(item => !string.IsNullOrWhiteSpace(item.RequestId)), "audit events must include requestId");
     AssertEventSequence(reloaded.Events.Where(item => item.WorkspaceId == "W-STAY-RESOURCE").Select(item => item.EventType).ToArray(), "RoomCreated", "BedCreated", "BedActivated");
     AssertEventSequence(reloaded.Events.Where(item => item.WorkspaceId == "W-STAY-CHECKIN").Select(item => item.EventType).ToArray(), "LeadCaptured", "BookingConfirmed", "ResidentRegistered", "BedAssigned", "TariffAssigned", "DepositRequired", "PaymentRecordedByFrontDesk", "PaymentConfirmedByFinance", "StayCheckedIn", "OperatingMetricsReviewed");
+    AssertEventSequence(reloaded.Events.Where(item => item.WorkspaceId == "W-STAY-LEAD-RESERVATION").Select(item => item.EventType).ToArray(), "Accommodation.LeadCaptured", "Accommodation.LeadStatusChanged", "Accommodation.ReservationCreated", "Accommodation.ReservationCancelled", "Accommodation.ReservationConvertedToStay");
+    AssertEventSequence(reloaded.Events.Where(item => item.WorkspaceId == "W-STAY-LIFECYCLE").Select(item => item.EventType).ToArray(), "Accommodation.ResidentProfileCaptured", "Accommodation.ResidentCheckedIn", "Accommodation.StayChargeAssessed", "Accommodation.StayExtended");
     Assert(reloadedResource.Cards.Single(card => card.Id == "room").Status == "done", "room status should persist as done");
     Assert(reloadedResource.Cards.All(card => card.Status == "done"), "resource cards should all be done");
 
     var reloadedCheckin = reloaded.Workspaces.Single(workspace => workspace.Id == "W-STAY-CHECKIN");
     Assert(reloadedCheckin.Cards.All(card => card.Status == "done"), "check-in cards should all be done");
     var reloadedRuntime = ProjectionRuntime.OpenPostgres(connectionString);
-    Assert(CountRows(connectionString, "schema_migrations") >= 9, "schema migrations should be recorded in PostgreSQL");
+    Assert(CountRows(connectionString, "schema_migrations") >= 10, "schema migrations should be recorded in PostgreSQL");
     Assert(CountRows(connectionString, "accommodation_rooms") >= 1, "Room aggregate should persist in accommodation_rooms");
     Assert(CountRows(connectionString, "accommodation_beds") >= 1, "Bed aggregate should persist in accommodation_beds");
     Assert(CountRows(connectionString, "accommodation_deposits") >= 1, "Deposit aggregate should persist in accommodation_deposits");
     Assert(CountRows(connectionString, "finance_confirmations") >= 1, "FinanceConfirmation aggregate should persist in finance_confirmations");
     Assert(CountRows(connectionString, "hostel_leads") >= 1, "Hostel lead should persist in hostel_leads");
     Assert(CountRows(connectionString, "hostel_bookings") >= 1, "Hostel booking should persist in hostel_bookings");
+    Assert(CountRows(connectionString, "hostel_residents") >= 1, "StayLifecycle should persist hostel_residents");
     Assert(CountRows(connectionString, "hostel_stays") >= 1, "Hostel stay should persist in hostel_stays");
+    Assert(CountRows(connectionString, "hostel_charges") >= 1, "StayLifecycle should persist hostel_charges");
     Assert(CountRows(connectionString, "guest_folios") >= 1, "Guest folio should persist in guest_folios");
+    Assert(ScalarText(connectionString, "select status from hostel_bookings where booking_id = 'reservation-phase6-001'") == "converted_to_stay", "LeadReservation should update reservation status through conversion");
+    Assert(ScalarDecimal(connectionString, "select amount from hostel_charges where charge_id = 'charge-phase6-001'") == 9300m, "StayLifecycle should persist assessed charge amount");
     Assert(CountRows(connectionString, "deposit_liabilities") >= 1, "Deposit liability should persist in deposit_liabilities");
     Assert(CountRows(connectionString, "hostel_payments") >= 1, "Payment should persist in hostel_payments");
     Assert(CountRows(connectionString, "finance_reconciliations") >= 1, "Finance reconciliation should persist in finance_reconciliations");
@@ -996,7 +1049,9 @@ static int TotalAggregateRows(string connectionString)
         "finance_confirmations",
         "hostel_leads",
         "hostel_bookings",
+        "hostel_residents",
         "hostel_stays",
+        "hostel_charges",
         "guest_folios",
         "deposit_liabilities",
         "hostel_payments",
@@ -1069,7 +1124,9 @@ static void ResetPostgres(string connectionString)
         drop table if exists hostel_payments;
         drop table if exists deposit_liabilities;
         drop table if exists guest_folios;
+        drop table if exists hostel_charges;
         drop table if exists hostel_stays;
+        drop table if exists hostel_residents;
         drop table if exists hostel_bookings;
         drop table if exists hostel_leads;
         drop table if exists accommodation_beds;

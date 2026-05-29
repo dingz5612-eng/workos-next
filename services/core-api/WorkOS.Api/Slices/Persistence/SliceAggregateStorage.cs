@@ -6,17 +6,21 @@ using WorkOS.Api.Slices.Accommodation.CheckIn.Events;
 using WorkOS.Api.Slices.Accommodation.CheckOutSettlement.Persistence;
 using WorkOS.Api.Slices.Accommodation.DepositLedger.Persistence;
 using WorkOS.Api.Slices.Accommodation.ExpenseLedger.Persistence;
+using WorkOS.Api.Slices.Accommodation.LeadReservation.Persistence;
 using WorkOS.Api.Slices.Accommodation.PaymentLedger.Persistence;
 using WorkOS.Api.Slices.Accommodation.PeriodAnalytics.Persistence;
 using WorkOS.Api.Slices.Accommodation.ResourceSetup.Aggregates;
 using WorkOS.Api.Slices.Accommodation.ResourceSetup.Events;
 using WorkOS.Api.Slices.Accommodation.ServiceTask.Persistence;
+using WorkOS.Api.Slices.Accommodation.StayLifecycle.Persistence;
 
 namespace WorkOS.Api.Slices.Persistence;
 
 internal sealed class SliceAggregateStorage
 {
     private readonly PostgresConnectionFactory connections;
+    private readonly LeadReservationStorage leadReservations;
+    private readonly StayLifecycleStorage stayLifecycle;
     private readonly DepositLedgerStorage depositLedger;
     private readonly PaymentLedgerStorage paymentLedger;
     private readonly CheckOutSettlementStorage checkoutSettlement;
@@ -27,6 +31,8 @@ internal sealed class SliceAggregateStorage
     public SliceAggregateStorage(PostgresConnectionFactory connections)
     {
         this.connections = connections;
+        leadReservations = new LeadReservationStorage(connections);
+        stayLifecycle = new StayLifecycleStorage(connections);
         depositLedger = new DepositLedgerStorage(connections);
         paymentLedger = new PaymentLedgerStorage(connections);
         checkoutSettlement = new CheckOutSettlementStorage(connections);
@@ -37,7 +43,9 @@ internal sealed class SliceAggregateStorage
 
     public void Apply(WorkspaceEvent workspaceEvent)
     {
-        if (depositLedger.Apply(workspaceEvent) ||
+        if (leadReservations.Apply(workspaceEvent) ||
+            stayLifecycle.Apply(workspaceEvent) ||
+            depositLedger.Apply(workspaceEvent) ||
             paymentLedger.Apply(workspaceEvent) ||
             checkoutSettlement.Apply(workspaceEvent) ||
             serviceTasks.Apply(workspaceEvent) ||

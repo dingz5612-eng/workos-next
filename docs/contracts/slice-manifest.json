@@ -23,7 +23,7 @@
       "cards": ["leadCapture", "leadFollowUp", "reservationCreate", "reservationCancel", "reservationConvert"],
       "events": ["Accommodation.LeadCaptured", "Accommodation.LeadStatusChanged", "Accommodation.ReservationCreated", "Accommodation.ReservationCancelled", "Accommodation.ReservationExpired", "Accommodation.ReservationConvertedToStay"],
       "ownsAggregates": ["Lead", "Reservation"],
-      "status": "contract-only"
+      "status": "production-slice"
     },
     {
       "id": "Accommodation.StayLifecycle",
@@ -31,7 +31,7 @@
       "cards": ["residentProfile", "checkInBedAssign", "chargeAssessment", "stayExtension"],
       "events": ["Accommodation.ResidentProfileCaptured", "Accommodation.ResidentCheckedIn", "Accommodation.BedAssigned", "Accommodation.StayChargeAssessed", "Accommodation.StayExtended", "Accommodation.StayRateChanged"],
       "ownsAggregates": ["Resident", "Stay", "Charge"],
-      "status": "contract-only"
+      "status": "production-slice"
     },
     {
       "id": "Accommodation.DepositLedger",

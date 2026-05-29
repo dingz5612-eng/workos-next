@@ -1,8 +1,10 @@
 using WorkOS.Api.Slices.Accommodation.CheckOutSettlement.ProjectorRules;
 using WorkOS.Api.Slices.Accommodation.DepositLedger.ProjectorRules;
+using WorkOS.Api.Slices.Accommodation.LeadReservation.ProjectorRules;
 using WorkOS.Api.Slices.Accommodation.PaymentLedger.ProjectorRules;
 using WorkOS.Api.Slices.Accommodation.PeriodAnalytics.ProjectorRules;
 using WorkOS.Api.Slices.Accommodation.ServiceTask.ProjectorRules;
+using WorkOS.Api.Slices.Accommodation.StayLifecycle.ProjectorRules;
 
 namespace WorkOS.Api.Runtime;
 
@@ -16,6 +18,8 @@ public sealed class OutboxProjector
         this.store = store;
         rules = new IOutboxProjectorRule[]
         {
+            new LeadReservationProjectorRules(),
+            new StayLifecycleProjectorRules(),
             new DepositLedgerProjectorRules(),
             new PaymentLedgerProjectorRules(),
             new CheckoutProjectorRules(),
