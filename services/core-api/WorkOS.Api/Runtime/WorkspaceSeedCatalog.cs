@@ -67,7 +67,8 @@ internal static class WorkspaceSeedCatalog
                 Card("depositReceipt", "notStarted", "押金收取卡", "Прием депозита", new[] { "depositReceiptId", "depositId" }, new[] { "押金单", "付款人", "实收押金金额", "收取日期", "支付方式", "收款人", "押金凭证", "押金收款备注" }, new[] { "待确认押金金额", "押金凭证缺失数" }),
                 Card("depositConfirmation", "notStarted", "押金财务确认卡", "Фин. подтверждение депозита", new[] { "financeReviewId", "depositReceiptId" }, new[] { "押金收款记录", "确认金额", "确认结果", "差异原因", "财务备注" }, new[] { "押金确认金额", "押金差异金额" }),
                 Card("depositDeduction", "notStarted", "押金扣除卡", "Удержание депозита", new[] { "depositTransactionId", "depositId" }, new[] { "押金单", "扣除金额", "扣除原因", "处理意见" }, new[] { "已扣押金", "剩余持有押金" }),
-                Card("depositRefund", "notStarted", "押金退款卡", "Возврат депозита", new[] { "depositRefundId", "depositId" }, new[] { "押金单", "扣除金额", "扣除原因", "抵扣欠款金额", "退款方式", "退款接收人", "退款凭证" }, new[] { "当前持有押金", "应退金额" }),
+                Card("depositRefundApproval", "notStarted", "押金退款审批卡", "Утверждение возврата депозита", new[] { "depositRefundApprovalId", "depositId" }, new[] { "押金单", "扣除金额", "扣除原因", "抵扣欠款金额", "应退金额", "处理意见" }, new[] { "当前持有押金", "押金退款待支付金额" }),
+                Card("depositRefundPayment", "notStarted", "押金退款支付卡", "Выплата возврата депозита", new[] { "depositRefundPaymentId", "depositId" }, new[] { "押金单", "退款方式", "退款接收人", "退款凭证", "付款时间", "人工确认摘要" }, new[] { "已退押金", "押金负债余额" }),
                 Card("depositClose", "notStarted", "押金关闭卡", "Закрытие депозита", new[] { "depositId", "auditTraceId" }, new[] { "押金单", "关闭结果", "人工确认摘要" }, new[] { "押金负债余额", "押金关闭耗时" })
             },
             "押金永远是负债账本，不进入普通收入。",
@@ -106,7 +107,7 @@ internal static class WorkspaceSeedCatalog
             {
                 Card("serviceTaskCreate", "ready", "服务任务创建卡", "Создание задачи", new[] { "taskId", "operatorId" }, new[] { "任务日期", "任务类型", "房间", "床位", "区域", "问题描述", "处理措施", "紧急程度", "负责人", "是否阻断可售", "目标完成日期", "任务凭证" }, new[] { "阻断床位天数", "任务创建耗时" }),
                 Card("serviceTaskAssign", "notStarted", "服务任务分派卡", "Назначение задачи", new[] { "taskId", "operatorId" }, new[] { "任务", "负责人", "优先级", "目标完成日期", "分派备注" }, new[] { "待处理任务数", "超时风险" }),
-                Card("serviceTaskComplete", "notStarted", "服务任务完成卡", "Завершение задачи", new[] { "taskId", "operatorId" }, new[] { "任务", "完成日期", "完成结果", "实际成本", "关联支出", "完成后释放房间", "完成凭证" }, new[] { "实际成本", "任务完成耗时" }),
+                Card("serviceTaskComplete", "notStarted", "服务任务完成卡", "Завершение задачи", new[] { "taskId", "operatorId" }, new[] { "任务", "完成日期", "完成结果", "实际成本", "关联支出", "完成凭证" }, new[] { "实际成本", "任务完成耗时" }),
                 Card("serviceTaskVerify", "notStarted", "服务任务验收卡", "Проверка задачи", new[] { "taskId", "managerId" }, new[] { "任务", "验收结果", "验收备注", "处理意见" }, new[] { "验收通过率", "返工次数" }),
                 Card("roomReleaseAfterService", "notStarted", "服务后释放卡", "Освобождение после сервиса", new[] { "roomId", "bedId" }, new[] { "房间", "床位", "释放床位", "释放备注" }, new[] { "恢复可售床位数", "阻断恢复耗时" })
             },

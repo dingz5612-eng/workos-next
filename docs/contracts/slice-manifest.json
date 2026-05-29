@@ -36,7 +36,7 @@
     {
       "id": "Accommodation.DepositLedger",
       "workspaceId": "W-STAY-DEPOSIT-LEDGER",
-      "cards": ["depositAssessment", "depositReceipt", "depositConfirmation", "depositDeduction", "depositRefund", "depositClose"],
+      "cards": ["depositAssessment", "depositReceipt", "depositConfirmation", "depositDeduction", "depositRefundApproval", "depositRefundPayment", "depositClose"],
       "events": ["Accommodation.DepositAssessed", "Accommodation.DepositReceived", "Accommodation.DepositEvidenceSubmitted", "Accommodation.DepositConfirmed", "Accommodation.DepositRejected", "Accommodation.DepositDeducted", "Accommodation.DepositAppliedToBalance", "Accommodation.DepositRefundApproved", "Accommodation.DepositRefundPaid", "Accommodation.DepositClosed"],
       "ownsAggregates": ["Deposit", "DepositTransaction"],
       "status": "contract-only"
@@ -53,7 +53,7 @@
       "id": "Accommodation.CheckOutSettlement",
       "workspaceId": "W-STAY-CHECKOUT-SETTLEMENT",
       "cards": ["checkoutStart", "roomInspection", "depositSettlement", "finalBalanceClose", "bedRelease", "postCheckoutCleaning"],
-      "events": ["Accommodation.ResidentCheckedOut", "Accommodation.RoomInspected", "Accommodation.CheckoutIssueRaised", "Accommodation.DepositSettledForCheckout", "Accommodation.FinalBalanceClosed", "Accommodation.BedReleased", "Accommodation.PostCheckoutCleaningRequested"],
+      "events": ["Accommodation.ResidentCheckedOut", "Accommodation.RoomInspected", "Accommodation.CheckoutIssueRaised", "Accommodation.DepositSettlementRequested", "Accommodation.FinalBalanceClosed", "Accommodation.BedReleased", "Accommodation.PostCheckoutCleaningRequested"],
       "ownsAggregates": ["Checkout", "RoomInspection", "Settlement"],
       "status": "contract-only"
     },
@@ -61,7 +61,7 @@
       "id": "Accommodation.ServiceTask",
       "workspaceId": "W-STAY-SERVICE-TASK",
       "cards": ["serviceTaskCreate", "serviceTaskAssign", "serviceTaskComplete", "serviceTaskVerify", "roomReleaseAfterService"],
-      "events": ["Accommodation.ServiceTaskCreated", "Accommodation.ServiceTaskAssigned", "Accommodation.ServiceTaskCompleted", "Accommodation.ServiceTaskVerified", "Accommodation.RoomBlockedForService", "Accommodation.BedBlockedForService", "Accommodation.RoomReleasedAfterService", "Accommodation.BedReleasedAfterService"],
+      "events": ["Accommodation.ServiceTaskCreated", "Accommodation.ServiceTaskAssigned", "Accommodation.ServiceTaskCompleted", "Accommodation.ServiceTaskVerified", "Accommodation.RoomBlockedForService", "Accommodation.BedBlockedForService", "Accommodation.RoomReleaseAfterServiceRequested", "Accommodation.BedReleaseAfterServiceRequested"],
       "ownsAggregates": ["ServiceTask"],
       "status": "contract-only"
     },

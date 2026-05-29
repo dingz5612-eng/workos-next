@@ -37,7 +37,7 @@ internal static class OptionSetRegistry
         if (ContractText.ContainsAny(label, "匹配结果", "确认结果")) return "confirmationResult";
         if (ContractText.ContainsAny(label, "处理状态", "行动状态")) return "taskStatus";
         if (label.Contains("审批结果")) return "approvalResult";
-        if (ContractText.ContainsAny(label, "是否允许免押", "是否需要预订押金", "释放床位", "是否发现损坏", "是否需要清洁", "是否阻断可售", "完成后释放房间")) return "yesNo";
+        if (ContractText.ContainsAny(label, "是否允许免押", "是否需要预订押金", "释放床位", "是否发现损坏", "是否需要清洁", "是否阻断可售")) return "yesNo";
         if (label.Contains("钥匙/物品交接")) return "handoverStatus";
         if (ContractText.ContainsAny(label, "优先级", "紧急程度")) return "priority";
         if (label.Contains("分配方式")) return "allocationMode";

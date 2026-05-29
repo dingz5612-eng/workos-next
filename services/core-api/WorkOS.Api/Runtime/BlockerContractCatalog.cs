@@ -8,7 +8,7 @@ internal static class BlockerContractCatalog
         {
             "deposit" or "depositReceipt" => new[] { "cannot_confirm_non_cash_deposit_without_evidence" },
             "depositConfirmation" => new[] { "cannot_confirm_payment_without_actor_token", "cannot_confirm_non_cash_deposit_without_evidence" },
-            "depositRefund" or "depositDeduction" or "depositSettlement" => new[] { "cannot_refund_more_than_held_deposit" },
+            "depositRefundApproval" or "depositRefundPayment" or "depositDeduction" or "depositSettlement" => new[] { "cannot_refund_more_than_held_deposit" },
             "payment" or "paymentReceipt" => new[] { "cannot_confirm_non_cash_payment_without_evidence" },
             "finance" or "paymentConfirmation" => new[] { "cannot_confirm_payment_without_actor_token", "cannot_confirm_non_cash_payment_without_evidence" },
             "paymentAllocation" => new[] { "cannot_allocate_payment_more_than_confirmed_amount" },

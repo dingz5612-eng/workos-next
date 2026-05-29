@@ -9,7 +9,7 @@ internal static class ConfirmationPolicyCatalog
             "finance", "checkin", "checkoutFinance", "checkoutClose", "review", "returnBusiness",
             "dispatch", "diagnosis", "inspection", "feeMaterial", "customerConfirm", "close",
             "depositRequirement", "payment", "operatingDashboard", "depositConfirmation",
-            "depositRefund", "depositClose", "paymentConfirmation", "paymentAllocation",
+            "depositRefundApproval", "depositRefundPayment", "depositClose", "paymentConfirmation", "paymentAllocation",
             "paymentAdjustment", "expenseApproval", "periodFinanceReview", "periodClose",
             "finalBalanceClose", "bedRelease"
         };

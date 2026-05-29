@@ -18,7 +18,7 @@ ResetPostgres(connectionString);
     ValidateProjectionEnvelopeAgainstContract(projection);
 
     Assert(projection.Workspaces.Count == 16, $"expected 16 workspaces, got {projection.Workspaces.Count}");
-    Assert(cards.Length == 77, $"expected 77 cards, got {cards.Length}");
+    Assert(cards.Length == 78, $"expected 78 cards, got {cards.Length}");
 
     foreach (var card in cards)
     {
@@ -41,6 +41,8 @@ ResetPostgres(connectionString);
     AssertSequence(checkin, "lead", "booking", "resident", "bedAssign", "tariff", "depositRequirement", "payment", "finance", "checkin", "operatingDashboard");
     ValidateFieldContracts(checkin);
     ValidateAccommodationWorkOS20Contracts(projection);
+    ValidateAccommodationFactOwnership();
+    ValidatePeriodAnalyticsContract();
 
     var prepared = runtime.Prepare("W-STAY-RESOURCE", "room");
     Assert(prepared is not null, "prepare should return room card payload");
@@ -62,6 +64,12 @@ ResetPostgres(connectionString);
     var operatorFinance = runtime.Confirm("W-STAY-CHECKIN", "finance", Human("operator-finance"), operatorToken);
     Assert(operatorFinance.Status == ConfirmStatus.Forbidden, "operator must not confirm finance card");
     Assert(operatorFinance.Reason?.StartsWith("role_confirmation_forbidden:") == true, "role rejection must use stable policy decision code");
+
+    var contractOnlyPrepare = runtime.Prepare("W-STAY-DEPOSIT-LEDGER", "depositReceipt");
+    Assert(contractOnlyPrepare is not null, "contract-only slices should still allow prepare");
+    var contractOnlyConfirm = runtime.Confirm("W-STAY-DEPOSIT-LEDGER", "depositReceipt", Human("contract-only-deposit-receipt"), operatorToken);
+    Assert(contractOnlyConfirm.Status == ConfirmStatus.Forbidden, "contract-only slice confirm must be forbidden until runtime status is upgraded");
+    Assert(contractOnlyConfirm.Reason == "slice_runtime_forbidden:Accommodation.DepositLedger:contract-only", "contract-only rejection must name the owning slice");
 
     var humanRoom = runtime.Confirm("W-STAY-RESOURCE", "room", Human("resource-room", new Dictionary<string, string> { ["房间号"] = "A302" }), operatorToken);
     Assert(humanRoom.Status == ConfirmStatus.Confirmed, "human room confirmation should pass");
@@ -126,7 +134,7 @@ ResetPostgres(connectionString);
     Assert(reloadedRuntime.ProcessPendingOutbox() == 0, "outbox projector should be idempotent after processing");
     var observation = reloadedRuntime.Observe();
     Assert(observation.WorkspaceCount == 16, $"observability workspaceCount expected 16, got {observation.WorkspaceCount}");
-    Assert(observation.CardCount == 77, $"observability cardCount expected 77, got {observation.CardCount}");
+    Assert(observation.CardCount == 78, $"observability cardCount expected 78, got {observation.CardCount}");
     Assert(observation.AuditEventCount == 13, $"observability auditEventCount expected 13, got {observation.AuditEventCount}");
     Assert(observation.OutboxCount == 13, $"observability outboxCount expected 13, got {observation.OutboxCount}");
     Assert(observation.PendingOutboxCount == 0, "observability pending outbox count should be zero after processing");
@@ -202,7 +210,7 @@ static void ValidateAccommodationWorkOS20Contracts(ProjectionEnvelope projection
     {
         ["W-STAY-LEAD-RESERVATION"] = new[] { "leadCapture", "leadFollowUp", "reservationCreate", "reservationCancel", "reservationConvert" },
         ["W-STAY-LIFECYCLE"] = new[] { "residentProfile", "checkInBedAssign", "chargeAssessment", "stayExtension" },
-        ["W-STAY-DEPOSIT-LEDGER"] = new[] { "depositAssessment", "depositReceipt", "depositConfirmation", "depositDeduction", "depositRefund", "depositClose" },
+        ["W-STAY-DEPOSIT-LEDGER"] = new[] { "depositAssessment", "depositReceipt", "depositConfirmation", "depositDeduction", "depositRefundApproval", "depositRefundPayment", "depositClose" },
         ["W-STAY-PAYMENT-LEDGER"] = new[] { "paymentReceipt", "paymentConfirmation", "paymentAllocation", "paymentAdjustment", "debtFollowUp" },
         ["W-STAY-CHECKOUT-SETTLEMENT"] = new[] { "checkoutStart", "roomInspection", "depositSettlement", "finalBalanceClose", "bedRelease", "postCheckoutCleaning" },
         ["W-STAY-SERVICE-TASK"] = new[] { "serviceTaskCreate", "serviceTaskAssign", "serviceTaskComplete", "serviceTaskVerify", "roomReleaseAfterService" },
@@ -262,9 +270,14 @@ static void ValidateAccommodationWorkOS20Contracts(ProjectionEnvelope projection
     Assert(periodFinance.BlockerRules.Any(rule => rule.Id.Contains("cannot_count_deposit_received_as_revenue")), "period finance blockers must prevent deposit as revenue");
     Assert(periodFinance.BlockerRules.Any(rule => rule.Id.Contains("cannot_count_deposit_refund_as_expense")), "period finance blockers must prevent deposit refund as expense");
 
-    var depositRefund = projection.Workspaces.Single(item => item.Id == "W-STAY-DEPOSIT-LEDGER").Cards.Single(card => card.Id == "depositRefund");
-    Assert(depositRefund.Checks.Any(check => check.Label["zh-CN"].Contains("不超过持有押金")), "deposit refund contract must guard held amount");
-    Assert(depositRefund.BlockerRules.Any(rule => rule.Id.Contains("cannot_refund_more_than_held_deposit")), "deposit refund blocker must prevent over-refund");
+    var depositRefundApproval = projection.Workspaces.Single(item => item.Id == "W-STAY-DEPOSIT-LEDGER").Cards.Single(card => card.Id == "depositRefundApproval");
+    var depositRefundPayment = projection.Workspaces.Single(item => item.Id == "W-STAY-DEPOSIT-LEDGER").Cards.Single(card => card.Id == "depositRefundPayment");
+    Assert(depositRefundApproval.Events.Any(item => item.EventType == "Accommodation.DepositRefundApproved"), "deposit refund approval card must emit only approval");
+    Assert(!depositRefundApproval.Events.Any(item => item.EventType == "Accommodation.DepositRefundPaid"), "deposit refund approval card must not emit payment");
+    Assert(depositRefundPayment.Events.Any(item => item.EventType == "Accommodation.DepositRefundPaid"), "deposit refund payment card must emit payment");
+    Assert(!depositRefundPayment.Events.Any(item => item.EventType == "Accommodation.DepositRefundApproved"), "deposit refund payment card must not emit approval");
+    Assert(depositRefundApproval.Checks.Any(check => check.Label["zh-CN"].Contains("不超过持有押金")), "deposit refund contract must guard held amount");
+    Assert(depositRefundApproval.BlockerRules.Any(rule => rule.Id.Contains("cannot_refund_more_than_held_deposit")), "deposit refund blocker must prevent over-refund");
 
     var paymentAllocation = projection.Workspaces.Single(item => item.Id == "W-STAY-PAYMENT-LEDGER").Cards.Single(card => card.Id == "paymentAllocation");
     Assert(paymentAllocation.Checks.Any(check => check.Label["zh-CN"].Contains("不超过确认金额")), "payment allocation contract must guard confirmed amount");
@@ -275,6 +288,61 @@ static void ValidateAccommodationWorkOS20Contracts(ProjectionEnvelope projection
     {
         Assert(periodClose.BlockerRules.Any(rule => rule.Id.Contains(blocker)), $"period close blocker missing {blocker}");
     }
+
+    var checkoutSettlement = projection.Workspaces.Single(item => item.Id == "W-STAY-CHECKOUT-SETTLEMENT");
+    AssertEventTypes(projection, "W-STAY-CHECKOUT-SETTLEMENT", "Accommodation.DepositSettlementRequested");
+    Assert(!checkoutSettlement.Cards.SelectMany(card => card.Events).Any(item => item.EventType == "Accommodation.DepositSettledForCheckout"), "checkout settlement must not emit actual deposit settlement transactions");
+
+    var serviceTask = projection.Workspaces.Single(item => item.Id == "W-STAY-SERVICE-TASK");
+    var serviceTaskComplete = serviceTask.Cards.Single(card => card.Id == "serviceTaskComplete");
+    Assert(!serviceTaskComplete.Fields.Business.Any(field => field.Label["zh-CN"] == "完成后释放房间"), "serviceTaskComplete must not release room directly");
+    var roomReleaseAfterService = serviceTask.Cards.Single(card => card.Id == "roomReleaseAfterService");
+    Assert(roomReleaseAfterService.Checks.Any(check => check.Label["zh-CN"].Contains("服务任务已验收")), "roomReleaseAfterService must require ServiceTaskVerified first");
+    Assert(roomReleaseAfterService.Events.All(item => item.EventType.EndsWith("Requested", StringComparison.Ordinal)), "service task release card must request resource release, not mutate bed status");
+}
+
+static void ValidateAccommodationFactOwnership()
+{
+    var expected = new Dictionary<string, string>
+    {
+        ["Deposit"] = "Accommodation.DepositLedger",
+        ["Payment"] = "Accommodation.PaymentLedger",
+        ["StayBalance"] = "Accommodation.PaymentLedger",
+        ["BedStatus"] = "Accommodation.ResourceSetup",
+        ["Expense"] = "Accommodation.ExpenseLedger",
+        ["PeriodSnapshot"] = "Accommodation.PeriodAnalytics"
+    };
+
+    foreach (var (fact, owner) in expected)
+    {
+        Assert(AccommodationFactOwnershipCatalog.OwnerOf(fact) == owner, $"{fact} owner slice must be {owner}");
+        Assert(AccommodationFactOwnershipCatalog.IsOwner(fact, owner), $"{owner} must own {fact}");
+    }
+
+    Assert(!AccommodationFactOwnershipCatalog.IsOwner("Deposit", "Accommodation.CheckOutSettlement"), "checkout settlement must not own Deposit facts");
+    Assert(!AccommodationFactOwnershipCatalog.IsOwner("Payment", "Accommodation.DepositLedger"), "deposit ledger must not own Payment facts");
+    Assert(!AccommodationFactOwnershipCatalog.IsOwner("BedStatus", "Accommodation.ServiceTask"), "service task must not own BedStatus facts");
+}
+
+static void ValidatePeriodAnalyticsContract()
+{
+    using var contract = JsonDocument.Parse(File.ReadAllText(Path.Combine("docs", "contracts", "period-analytics-contract.json")));
+    var root = contract.RootElement;
+    Assert(root.GetProperty("sliceId").GetString() == "Accommodation.PeriodAnalytics", "period analytics contract must belong to PeriodAnalytics slice");
+    Assert(root.GetProperty("zeroDenominator").GetProperty("status").GetString() == "not_applicable", "zero denominator behavior must be explicit");
+    Assert(root.GetProperty("snapshotPolicy").GetProperty("snapshotType").GetString() == "frozen-period-snapshot", "period snapshot must be frozen");
+    Assert(root.GetProperty("snapshotPolicy").GetProperty("lateAdjustmentPolicy").GetString() == "append-adjustment-event", "late adjustments must append events");
+
+    var formulas = root.GetProperty("formulas").EnumerateArray().ToArray();
+    foreach (var formula in new[] { "averageOccupancyRate", "leadToReservationRate", "reservationToCheckInRate", "periodNetCashFlow", "depositLiabilityEnd" })
+    {
+        Assert(formulas.Any(item => item.GetProperty("id").GetString() == formula), $"period analytics formula missing {formula}");
+    }
+
+    var netCashFlow = formulas.Single(item => item.GetProperty("id").GetString() == "periodNetCashFlow");
+    var excluded = netCashFlow.GetProperty("excludes").EnumerateArray().Select(item => item.GetString()).ToHashSet();
+    Assert(excluded.Contains("depositReceivedAmount"), "period net cash flow must exclude deposit received");
+    Assert(excluded.Contains("depositRefundedAmount"), "period net cash flow must exclude deposit refunds");
 }
 
 static void AssertEventTypes(ProjectionEnvelope projection, string workspaceId, params string[] expected)

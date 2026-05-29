@@ -7,15 +7,18 @@ public sealed class ActionRuntimeService
     private readonly IProjectionStore store;
     private readonly CardConfirmationPolicy confirmationPolicy;
     private readonly RuntimeQueryService queryService;
+    private readonly SliceRuntimeCapabilityGate capabilityGate;
 
     public ActionRuntimeService(
         IProjectionStore store,
         CardConfirmationPolicy confirmationPolicy,
-        RuntimeQueryService queryService)
+        RuntimeQueryService queryService,
+        SliceRuntimeCapabilityGate capabilityGate)
     {
         this.store = store;
         this.confirmationPolicy = confirmationPolicy;
         this.queryService = queryService;
+        this.capabilityGate = capabilityGate;
     }
 
     public object? Prepare(RuntimeState state, string workspaceId, string cardId)
@@ -62,6 +65,12 @@ public sealed class ActionRuntimeService
         if (workspace is null || card is null)
         {
             return new ConfirmResult(ConfirmStatus.NotFound, null, null);
+        }
+
+        var capabilityFailure = capabilityGate.ForbidConfirmIfContractOnly(workspace.Id);
+        if (capabilityFailure is not null)
+        {
+            return capabilityFailure;
         }
 
         if (string.IsNullOrWhiteSpace(request.IdempotencyKey))

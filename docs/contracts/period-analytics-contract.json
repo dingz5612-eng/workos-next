@@ -1,0 +1,59 @@
+{
+  "version": "0.14.0-accommodation-workos",
+  "sliceId": "Accommodation.PeriodAnalytics",
+  "snapshotPolicy": {
+    "snapshotType": "frozen-period-snapshot",
+    "freezeEvent": "Accommodation.PeriodMetricsReviewed",
+    "lateAdjustmentPolicy": "append-adjustment-event",
+    "lateAdjustmentEvents": [
+      "Accommodation.PeriodFinanceReviewed",
+      "Accommodation.PeriodOperationsDiagnosed",
+      "Accommodation.PeriodActionPlanCommitted"
+    ],
+    "rule": "After a period snapshot is frozen, late source events do not mutate the frozen values. They append adjustment events that are visible in the next review or an explicit reopened review."
+  },
+  "zeroDenominator": {
+    "numericResult": "0",
+    "status": "not_applicable",
+    "rule": "If a denominator is zero, the displayed ratio is 0 and the formula status is not_applicable instead of throwing or hiding the metric."
+  },
+  "formulas": [
+    {
+      "id": "averageOccupancyRate",
+      "label": "平均入住率",
+      "expression": "bedNightSold / availableBedNight",
+      "numerator": "bedNightSold",
+      "denominator": "availableBedNight",
+      "zeroDenominator": "not_applicable"
+    },
+    {
+      "id": "leadToReservationRate",
+      "label": "线索转预订率",
+      "expression": "reservationCount / newLeadCount",
+      "numerator": "reservationCount",
+      "denominator": "newLeadCount",
+      "zeroDenominator": "not_applicable"
+    },
+    {
+      "id": "reservationToCheckInRate",
+      "label": "预订转入住率",
+      "expression": "checkInCount / reservationCount",
+      "numerator": "checkInCount",
+      "denominator": "reservationCount",
+      "zeroDenominator": "not_applicable"
+    },
+    {
+      "id": "periodNetCashFlow",
+      "label": "周期净现金流",
+      "expression": "rentRevenue + otherRevenue - approvedExpenseAmount",
+      "excludes": ["depositReceivedAmount", "depositRefundedAmount"],
+      "zeroDenominator": "not_applicable"
+    },
+    {
+      "id": "depositLiabilityEnd",
+      "label": "期末押金负债",
+      "expression": "depositReceivedAmount - depositRefundedAmount - depositDeductedAmount - depositAppliedToBalanceAmount",
+      "zeroDenominator": "not_applicable"
+    }
+  ]
+}
