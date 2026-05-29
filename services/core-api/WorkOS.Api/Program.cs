@@ -91,8 +91,8 @@ app.MapPost("/api/workspaces/{workspaceId}/cards/{cardId}/confirm", (string work
     {
         ConfirmStatus.NotFound => Results.NotFound(new { error = "card_not_found", workspaceId, cardId }),
         ConfirmStatus.Invalid => Results.BadRequest(new { error = "confirmation_invalid", result.Reason }),
-        ConfirmStatus.Forbidden when result.Reason == "actor_session_required" => Results.Unauthorized(),
-        ConfirmStatus.Forbidden when IsAuthorizationForbidden(result.Reason) => Results.Json(new { error = "confirmation_forbidden", result.Reason }, statusCode: StatusCodes.Status403Forbidden),
+        ConfirmStatus.Forbidden when ConfirmHttpStatusMapper.IsAuthenticationFailure(result.Reason) => Results.Unauthorized(),
+        ConfirmStatus.Forbidden when ConfirmHttpStatusMapper.IsAuthorizationForbidden(result.Reason) => Results.Json(new { error = "confirmation_forbidden", result.Reason }, statusCode: StatusCodes.Status403Forbidden),
         ConfirmStatus.Forbidden => Results.UnprocessableEntity(new { error = "business_rule_violation", result.Reason }),
         ConfirmStatus.Duplicate => Results.Conflict(result.Payload),
         ConfirmStatus.ProjectionFailed => Results.Problem(title: "projection_failed", detail: result.Reason, statusCode: StatusCodes.Status500InternalServerError),
@@ -120,11 +120,6 @@ app.MapPost("/api/behavior-events", (BehaviorEventRequest request) =>
     runtime.AppendBehaviorEvent(record);
     return Results.Ok(new { accepted = true, record.EventId, record.EventType, receivedAtUtc = record.OccurredAtUtc });
 });
-
-static bool IsAuthorizationForbidden(string? reason) =>
-    reason?.StartsWith("ai_confirmation_forbidden", StringComparison.OrdinalIgnoreCase) == true ||
-    reason?.StartsWith("role_confirmation_forbidden", StringComparison.OrdinalIgnoreCase) == true ||
-    reason?.StartsWith("slice_runtime_forbidden", StringComparison.OrdinalIgnoreCase) == true;
 
 app.Run();
 

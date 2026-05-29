@@ -18,6 +18,8 @@ label.ru-RU
 ```
 
 Localized labels must not be used as fact keys in runtime policy or storage.
+Confirm payloads that submit localized labels as keys are malformed input and
+must be rejected instead of being silently normalized into facts.
 
 ## Option Values
 

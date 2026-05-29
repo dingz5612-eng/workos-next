@@ -114,19 +114,25 @@ export async function submitCurrentCard(ctx) {
     ctx.state.selectedCardIndex = -1;
     ctx.state.operationMessage = ctx.tr("submitDone");
   } catch (error) {
-    if (error?.status === 401 || error?.reason === "actor_session_required") {
-      ctx.state.currentActor = null;
-      ctx.state.loginMessage = ctx.tr("sessionExpired");
-      localStorage.removeItem("workosnext.actorSession");
-      setView("login", ctx);
-      return;
-    }
-    ctx.state.operationMessage = confirmErrorMessage(error, ctx);
+    if (applyConfirmError(error, ctx)) return;
   }
   ctx.render(true);
 }
 
-function confirmErrorMessage(error, ctx) {
+export function applyConfirmError(error, ctx) {
+  if (error?.status === 401 || error?.reason === "actor_session_required") {
+    ctx.state.currentActor = null;
+    ctx.state.loginMessage = ctx.tr("sessionExpired");
+    localStorage.removeItem("workosnext.actorSession");
+    setView("login", ctx);
+    return true;
+  }
+
+  ctx.state.operationMessage = confirmErrorMessage(error, ctx);
+  return false;
+}
+
+export function confirmErrorMessage(error, ctx) {
   const keyByStatus = {
     400: "confirmBadRequest",
     403: "confirmForbidden",

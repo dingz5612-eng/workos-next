@@ -4,6 +4,7 @@ import fs from "node:fs";
 const baseUrl = process.env.WORKOS_API_VALIDATE_URL || "http://127.0.0.1:5191";
 const externalApi = Boolean(process.env.WORKOS_API_VALIDATE_URL);
 const openApi = JSON.parse(fs.readFileSync("docs/contracts/workos-runtime.openapi.json", "utf8"));
+const sliceManifest = JSON.parse(fs.readFileSync("docs/contracts/slice-manifest.json", "utf8"));
 let apiProcess;
 
 if (!externalApi) {
@@ -167,6 +168,13 @@ async function validateConfirmPolicyResponse() {
   });
   assert(invalid.status === 400, `invalid confirm must return 400, got ${invalid.status}`);
 
+  const localizedKey = await fetch(`${baseUrl}/api/workspaces/W-STAY-RESOURCE/cards/roomSetup/confirm`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "X-WorkOS-Actor-Token": login.token, "X-Request-Id": `api-localized-key-${Date.now()}` },
+    body: JSON.stringify(confirmBody(`api-localized-key-${Date.now()}`, { "房间号": "A999" }))
+  });
+  assert(localizedKey.status === 400, `localized label payload key must return 400, got ${localizedKey.status}`);
+
   const financeLogin = await postJson("/api/auth/login", { username: "finance", password: "dev" });
   const forbidden = await fetch(`${baseUrl}/api/workspaces/W-STAY-RESOURCE/cards/roomSetup/confirm`, {
     method: "POST",
@@ -184,7 +192,7 @@ async function validateConfirmPolicyResponse() {
         depositId: "api-deposit-policy",
         depositAmount: "3000",
         currency: "KGS",
-        paymentMethod: "mbank"
+        paymentMethod: "bank_transfer"
       },
       "business-blocked"
     ))
@@ -303,8 +311,10 @@ async function validateConfirmLedgerProjectionLensChain() {
 async function validateObservability() {
   const observation = await getJson("/api/observability/runtime");
   assert(observation.service === "WorkOSNext Core API", "observability service mismatch");
-  assert(observation.workspaceCount >= 8, "observability workspaceCount must include seeded workspaces");
-  assert(observation.cardCount >= 32, "observability cardCount must include seeded cards");
+  const manifestWorkspaceIds = new Set(sliceManifest.slices.map((slice) => slice.workspaceId));
+  const manifestCardCount = sliceManifest.slices.reduce((sum, slice) => sum + slice.cards.length, 0);
+  assert(observation.workspaceCount >= manifestWorkspaceIds.size, "observability workspaceCount must cover manifest workspaces");
+  assert(observation.cardCount >= manifestCardCount, "observability cardCount must cover manifest cards");
   assert(typeof observation.outboxCount === "number", "observability outboxCount must be numeric");
   assert(typeof observation.deadLetterOutboxCount === "number", "observability deadLetterOutboxCount must be numeric");
 }
@@ -371,7 +381,12 @@ function validateProjectionEnvelope(projection) {
     assertNonEmptyString(projection[field], `projection.${field}`);
   }
   assert(Array.isArray(projection.languages) && projection.languages.includes("zh-CN") && projection.languages.includes("ru-RU"), "projection languages missing");
-  assert(Array.isArray(projection.workspaces) && projection.workspaces.length === 16, "projection must return 16 workspaces");
+  assert(Array.isArray(projection.workspaces), "projection workspaces must be an array");
+  const manifestWorkspaceIds = new Set(sliceManifest.slices.map((slice) => slice.workspaceId));
+  const workspaceIds = new Set(projection.workspaces.map((item) => item.id));
+  for (const workspaceId of manifestWorkspaceIds) {
+    assert(workspaceIds.has(workspaceId), `projection missing manifest workspace ${workspaceId}`);
+  }
   assert(Array.isArray(projection.events), "projection events must be an array");
 
   for (const workspace of projection.workspaces) {

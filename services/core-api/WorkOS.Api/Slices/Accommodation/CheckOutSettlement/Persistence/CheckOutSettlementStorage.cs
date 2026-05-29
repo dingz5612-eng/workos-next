@@ -89,8 +89,8 @@ internal sealed class CheckOutSettlementStorage
         command.Parameters.AddWithValue("inspectionId", StableId("inspection", workspaceEvent));
         command.Parameters.AddWithValue("workspaceId", workspaceEvent.WorkspaceId);
         command.Parameters.AddWithValue("checkoutId", StableId("checkout", workspaceEvent));
-        command.Parameters.AddWithValue("roomCondition", Value(workspaceEvent, "roomCondition", "正常"));
-        command.Parameters.AddWithValue("bedCondition", Value(workspaceEvent, "bedStatus", "正常"));
+        command.Parameters.AddWithValue("roomCondition", Value(workspaceEvent, "roomCondition", "normal"));
+        command.Parameters.AddWithValue("bedCondition", Value(workspaceEvent, "bedStatus", "normal"));
         command.Parameters.AddWithValue("damageChargeAmount", NpgsqlDbType.Numeric, DecimalValue(workspaceEvent, "damageChargeAmount", 0m));
         command.Parameters.AddWithValue("cleaningRequired", BoolValue(workspaceEvent, "cleaningRequired", true));
         command.Parameters.AddWithValue("createdEventId", workspaceEvent.EventId);

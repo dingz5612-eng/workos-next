@@ -3,15 +3,16 @@
 Last preflight source: local `main` after `git fetch origin main`,
 `git checkout main`, and `git pull --ff-only`.
 
-Current committed baseline before the in-flight Runtime Surface hardening commit:
+Current committed baseline before the in-flight Architecture Governance &
+Runtime Hardening commit:
 
 ```text
-e517b7f WON-16: Harden runtime governance gates
+60979c3 WON-16: Unify runtime surface entries
 ```
 
-The working tree may contain uncommitted hardening changes. This document
-records repository facts after local WON-16 validation work; it is not a claim
-that remote GitHub Actions is green.
+The working tree may contain uncommitted hardening changes. This document records
+repository facts during WON-16 validation work; it is not a claim that remote
+GitHub Actions is green.
 
 ## Runtime Architecture
 
@@ -134,7 +135,13 @@ Current Lens status must be kept explicit:
   destructive reset.
 - Outbox claim/dead-letter exposes `attempt_count`, `claimed_by`, `last_error`,
   and `dead_lettered_at_utc`.
-- `ProjectionStateMigrator` is not implemented.
+- `ProjectionStateMigrator` is implemented as a seed-contract merge migrator for
+  persisted `runtime_documents`; it preserves events, users, and card status
+  while absorbing newly declared workspaces/cards/contracts.
+- Confirm HTTP status semantics are centralized in `ConfirmHttpStatusMapper` and
+  unit-tested.
+- Confirm payloads with localized label keys are rejected as malformed input;
+  runtime tests submit canonical field ids.
 
 ## Accommodation Boundary Status
 

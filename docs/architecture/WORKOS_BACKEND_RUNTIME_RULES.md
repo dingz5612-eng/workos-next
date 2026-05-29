@@ -42,7 +42,9 @@ selection as the dispatch decision.
 
 ## Confirm HTTP Status Semantics
 
-`Program.cs` maps runtime status to HTTP as follows:
+`ConfirmHttpStatusMapper` owns the stable mapping from runtime status to HTTP.
+`Program.cs` may format the response body, but it must not invent another
+mapping table.
 
 | Runtime condition | HTTP |
 | --- | --- |
@@ -102,8 +104,10 @@ dead-letter after the configured threshold.
 ## ProjectionStateMigrator
 
 When contracts evolve, old `runtime_documents` must be upgraded by a named
-projection state migrator. Do not silently overwrite projection state to hide
-contract drift.
+projection state migrator. The baseline migrator merges current seed contracts
+into persisted state, preserving durable events, users, and card statuses while
+absorbing newly declared workspaces/cards. Do not silently overwrite projection
+state to hide contract drift.
 
 ## OpenAPI and Program Alignment
 

@@ -51,7 +51,7 @@ internal static class PeriodAnalyticsPolicy
     private static bool BoolValue(ConfirmCardRequest request, string canonicalKey) =>
         Value(request, canonicalKey, "false") switch
         {
-            "true" or "True" or "TRUE" or "yes" or "Yes" or "YES" or "是" or "已复核" or "已诊断" => true,
+            "true" or "True" or "TRUE" or "yes" or "Yes" or "YES" or "1" => true,
             _ => false
         };
 

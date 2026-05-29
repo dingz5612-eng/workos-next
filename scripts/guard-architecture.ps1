@@ -75,6 +75,7 @@ Assert-Exists "tests/WorkOS.UnitTests/WorkOS.UnitTests.csproj"
 Assert-Exists "tests/WorkOS.RuntimeIntegrationTests/WorkOS.RuntimeIntegrationTests.csproj"
 Assert-Exists "apps/mobile/src/__tests__/operationRuntime.test.js"
 Assert-Exists "apps/mobile/src/__tests__/htmlEscaping.test.js"
+Assert-Exists "apps/mobile/src/__tests__/confirmErrorHandling.test.js"
 Assert-Exists "apps/mobile/src/__tests__/surfaceSelectors.test.js"
 Assert-Exists "apps/mobile/src/__tests__/evidenceInteraction.test.js"
 Assert-Exists "apps/mobile/src/runtime/runtimeStore.js"
@@ -168,12 +169,14 @@ if ($mainRuntime -notmatch "escapeHtml\(tr\(state, key\)\)" -or
 }
 Assert-NoMatches @("apps/mobile/src/views") "\$\{[^}]*state\.query|\$\{[^}]*learningQuery|\$\{[^}]*loginMessage|\$\{[^}]*operationMessage|\$\{[^}]*currentActor\?\.displayName|\$\{[^}]*currentActor\?\.role" "View modules must escape user/session text before HTML interpolation." "escapeHtml|escapeAttr|ctx\.state\.query \?"
 
-Assert-NoMatches @("services/core-api/WorkOS.Api/Runtime") "ai_confirmation_forbidden|role_confirmation_forbidden" "Role and AI confirmation policy denials must live outside Runtime in Slices/Policies/CardConfirmationPolicy."
+Assert-NoMatches @("services/core-api/WorkOS.Api/Runtime") "ai_confirmation_forbidden|role_confirmation_forbidden" "Role and AI confirmation policy denials must live outside Runtime in Slices/Policies/CardConfirmationPolicy." "ConfirmHttpStatusMapper\.cs"
 Assert-NoMatches @("services/core-api/WorkOS.Api/Runtime/PostgresProjectionStore.cs") "CardConfirmationPolicy|ProjectionTargets|ApplyEventToReadModel|PriorityFor|SearchText|SearchResult|RequiredRole" "Store classes must not own policy, projector, lens, or business contract rules."
 Assert-NoMatches @("services/core-api/WorkOS.Api/Runtime/ActionRuntimeService.cs") "card\.Events\.First\s*\(" "ActionRuntimeService must use EventSelectionPolicy and must never take only the first declared event."
+Assert-NoMatches @("services/core-api/WorkOS.Api/Runtime/ActionRuntimeService.cs") 'field\.Label|Label\["zh-CN"\]' "ActionRuntimeService must reject localized label payload keys instead of deriving facts from labels."
 Assert-NoMatches @("services", "tests") "Events\.First\s*\(" "Confirm event dispatch must use EventSelectionPolicy and must never take only the first declared event."
 Assert-NoMatches @("services/core-api/WorkOS.Api/Slices", "services/core-api/WorkOS.Api/Runtime") 'Payload\.TryGetValue\("' "Runtime policy and storage must read canonical field ids through RuntimeFieldAliases, not label literals."
 Assert-NoMatchesRule "WON16-CONTRACT-001" @("services/core-api/WorkOS.Api/Slices", "services/core-api/WorkOS.Api/Runtime") 'RuntimeFieldAliases\.CanonicalKey\("[^"]*\p{Han}|Value\(workspaceEvent,\s*"[^"]*\p{Han}|DecimalValue\(workspaceEvent,\s*"[^"]*\p{Han}|IntValue\(workspaceEvent,\s*"[^"]*\p{Han}|DateValue\(workspaceEvent,\s*"[^"]*\p{Han}' "Runtime policy and persistence must not use localized labels as business fact keys."
+Assert-NoMatches @("services/core-api/WorkOS.Api/Slices", "services/core-api/WorkOS.Api/Runtime") '"张三"|"A301"|"PAY-2026-009"|"DEP-2026-009"|"\+996 555 010101"' "Production runtime and persistence must not use fake demo defaults." "OptionSetRegistry\.cs"
 Assert-NoMatches @("services/core-api/WorkOS.Api") "RuntimeAuthOptions\.Development" "Development auth defaults must not be referenced outside Program.cs and RuntimeAuthOptions.cs." "Program\.cs|RuntimeAuthOptions\.cs"
 Assert-NoMatches @("services/core-api/WorkOS.Api/Slices/Accommodation/CheckOutSettlement") "DepositRefundPaid|DepositDeducted|DepositAppliedToBalance|deposit_transactions" "CheckOutSettlement must not own deposit transaction facts."
 Assert-NoMatches @("services/core-api/WorkOS.Api/Slices/Accommodation/ServiceTask") "accommodation_beds|UpdateBedStatus|actual_cost_amount = excluded|DecimalValue\(workspaceEvent, `"实际成本`"" "ServiceTask must not directly mutate BedStatus or persist cost facts."
@@ -202,8 +205,10 @@ $requiredRuntimeServices = @(
   "services/core-api/WorkOS.Api/Runtime/AuthSessionService.cs",
   "services/core-api/WorkOS.Api/Runtime/OutboxProjector.cs",
   "services/core-api/WorkOS.Api/Runtime/EventSelectionPolicy.cs",
+  "services/core-api/WorkOS.Api/Runtime/ConfirmHttpStatusMapper.cs",
   "services/core-api/WorkOS.Api/Runtime/ConfirmUnitOfWork.cs",
-  "services/core-api/WorkOS.Api/Runtime/RuntimeDbSession.cs"
+  "services/core-api/WorkOS.Api/Runtime/RuntimeDbSession.cs",
+  "services/core-api/WorkOS.Api/Runtime/ProjectionStateMigrator.cs"
 )
 
 foreach ($runtimeService in $requiredRuntimeServices) {
@@ -426,6 +431,14 @@ if ($ci -notmatch "workosnext_test" -and $ci -notmatch "TEST_DATABASE") {
 $runtimeContractTests = Get-Content "tests/WorkOS.RuntimeContractTests/Program.cs" -Raw
 if ($runtimeContractTests -notmatch "AssertTestDatabaseAllowed" -or $runtimeContractTests -notmatch "TEST_DATABASE" -or $runtimeContractTests -notmatch "_test") {
   Fail "Runtime contract tests must refuse destructive reset unless database name contains _test or TEST_DATABASE=true."
+}
+if ($runtimeContractTests -notmatch "AssertCanonicalFieldKeys") {
+  Fail "Runtime contract tests must reject localized label payload keys and use canonical field ids."
+}
+
+$currentRuntimeArchitecture = Get-Content "docs/architecture/CURRENT_RUNTIME_ARCHITECTURE.md" -Raw
+if ($currentRuntimeArchitecture -match "ProjectionStateMigrator` is not implemented") {
+  Fail "CURRENT_RUNTIME_ARCHITECTURE.md must not claim ProjectionStateMigrator is unimplemented after WON-16 hardening."
 }
 
 $operationRuntime = Get-Content "apps/mobile/src/operationRuntime.js" -Raw

@@ -86,8 +86,8 @@ internal sealed class ResourceSetupStorage
         command.Parameters.AddWithValue("roomId", RoomId(workspaceEvent));
         command.Parameters.AddWithValue("workspaceId", workspaceEvent.WorkspaceId);
         command.Parameters.AddWithValue("roomNo", RoomNo(workspaceEvent));
-        command.Parameters.AddWithValue("roomType", Value(workspaceEvent, "roomType", "房型", "四人间"));
-        command.Parameters.AddWithValue("capacity", IntValue(workspaceEvent, "bedCount", "床位数", 4));
+        command.Parameters.AddWithValue("roomType", Value(workspaceEvent, "roomType", "four_bed"));
+        command.Parameters.AddWithValue("capacity", IntValue(workspaceEvent, "bedCount", 4));
         command.Parameters.AddWithValue("status", status);
         command.Parameters.AddWithValue("createdEventId", workspaceEvent.EventId);
         command.Parameters.AddWithValue("updatedAtUtc", workspaceEvent.OccurredAtUtc);
@@ -110,7 +110,7 @@ internal sealed class ResourceSetupStorage
         command.Parameters.AddWithValue("workspaceId", workspaceEvent.WorkspaceId);
         command.Parameters.AddWithValue("roomId", RoomId(workspaceEvent));
         command.Parameters.AddWithValue("bedNo", BedNo(workspaceEvent));
-        command.Parameters.AddWithValue("bunkType", Value(workspaceEvent, "bedType", "床位类型", "下铺"));
+        command.Parameters.AddWithValue("bunkType", Value(workspaceEvent, "bedType", "lower"));
         command.Parameters.AddWithValue("status", status);
         command.Parameters.AddWithValue("createdEventId", workspaceEvent.EventId);
         command.Parameters.AddWithValue("updatedAtUtc", workspaceEvent.OccurredAtUtc);
@@ -132,14 +132,14 @@ internal sealed class ResourceSetupStorage
                 status = excluded.status,
                 updated_at_utc = excluded.updated_at_utc
             """);
-        command.Parameters.AddWithValue("ratePlanId", Value(workspaceEvent, "ratePlanId", "价格规则", $"rate-{RoomNo(workspaceEvent)}".ToLowerInvariant()));
+        command.Parameters.AddWithValue("ratePlanId", Value(workspaceEvent, "ratePlanId", $"rate-{RoomNo(workspaceEvent)}".ToLowerInvariant()));
         command.Parameters.AddWithValue("workspaceId", workspaceEvent.WorkspaceId);
         command.Parameters.AddWithValue("roomId", RoomId(workspaceEvent));
-        command.Parameters.AddWithValue("dailyRate", NpgsqlDbType.Numeric, DecimalValue(workspaceEvent, "dailyRatePerBed", "每床日价", 350m));
-        command.Parameters.AddWithValue("weeklyRate", NpgsqlDbType.Numeric, DecimalValue(workspaceEvent, "weeklyRatePerBed", "每床周价", 2100m));
-        command.Parameters.AddWithValue("monthlyRate", NpgsqlDbType.Numeric, DecimalValue(workspaceEvent, "monthlyRatePerBed", "每床月价", 9300m));
-        command.Parameters.AddWithValue("currency", Value(workspaceEvent, "currency", "币种", "KGS"));
-        command.Parameters.AddWithValue("effectiveFromUtc", NpgsqlDbType.TimestampTz, DateValue(workspaceEvent, "effectiveFrom", "生效日期", workspaceEvent.OccurredAtUtc));
+        command.Parameters.AddWithValue("dailyRate", NpgsqlDbType.Numeric, DecimalValue(workspaceEvent, "dailyRatePerBed", 350m));
+        command.Parameters.AddWithValue("weeklyRate", NpgsqlDbType.Numeric, DecimalValue(workspaceEvent, "weeklyRatePerBed", 2100m));
+        command.Parameters.AddWithValue("monthlyRate", NpgsqlDbType.Numeric, DecimalValue(workspaceEvent, "monthlyRatePerBed", 9300m));
+        command.Parameters.AddWithValue("currency", Value(workspaceEvent, "currency", "KGS"));
+        command.Parameters.AddWithValue("effectiveFromUtc", NpgsqlDbType.TimestampTz, DateValue(workspaceEvent, "effectiveFrom", workspaceEvent.OccurredAtUtc));
         command.Parameters.AddWithValue("status", "active");
         command.Parameters.AddWithValue("createdEventId", workspaceEvent.EventId);
         command.Parameters.AddWithValue("updatedAtUtc", workspaceEvent.OccurredAtUtc);
@@ -164,7 +164,7 @@ internal sealed class ResourceSetupStorage
 
     private static string RoomId(WorkspaceEvent workspaceEvent)
     {
-        var explicitId = Value(workspaceEvent, "roomId", "房间", string.Empty);
+        var explicitId = Value(workspaceEvent, "roomId", string.Empty);
         return string.IsNullOrWhiteSpace(explicitId)
             ? $"room-{RoomNo(workspaceEvent)}".ToLowerInvariant()
             : explicitId;
@@ -172,53 +172,52 @@ internal sealed class ResourceSetupStorage
 
     private static string BedId(WorkspaceEvent workspaceEvent)
     {
-        var explicitId = Value(workspaceEvent, "bedId", "床位", string.Empty);
+        var explicitId = Value(workspaceEvent, "bedId", string.Empty);
         return string.IsNullOrWhiteSpace(explicitId)
             ? $"bed-{BedNo(workspaceEvent)}".ToLowerInvariant()
             : explicitId;
     }
 
     private static string RoomNo(WorkspaceEvent workspaceEvent) =>
-        Value(workspaceEvent, "roomNo", "房间号", "A302");
+        Value(workspaceEvent, "roomNo", "unknown-room");
 
     private static string BedNo(WorkspaceEvent workspaceEvent) =>
-        Value(workspaceEvent, "bedNo", "床位号", "A302-01");
+        Value(workspaceEvent, "bedNo", "unknown-bed");
 
     private static bool TargetsBed(WorkspaceEvent workspaceEvent) =>
-        Value(workspaceEvent, "resourceScope", "阻断范围", string.Empty).Equals("bed", StringComparison.OrdinalIgnoreCase) ||
-        Value(workspaceEvent, "resourceScope", "释放范围", string.Empty).Equals("bed", StringComparison.OrdinalIgnoreCase) ||
-        !string.IsNullOrWhiteSpace(Value(workspaceEvent, "bedId", "床位", string.Empty));
+        Value(workspaceEvent, "resourceScope", string.Empty).Equals("bed", StringComparison.OrdinalIgnoreCase) ||
+        !string.IsNullOrWhiteSpace(Value(workspaceEvent, "bedId", string.Empty));
 
     private static string RoomStatus(WorkspaceEvent workspaceEvent, string defaultValue)
     {
-        var readiness = Value(workspaceEvent, "availabilityStatus", "可售状态", string.Empty);
+        var readiness = Value(workspaceEvent, "availabilityStatus", string.Empty);
         return string.IsNullOrWhiteSpace(readiness) ? defaultValue : readiness;
     }
 
     private static string BedStatus(WorkspaceEvent workspaceEvent, string defaultValue)
     {
-        var status = Value(workspaceEvent, "bedStatus", "初始床位状态", string.Empty);
+        var status = Value(workspaceEvent, "bedStatus", string.Empty);
         return string.IsNullOrWhiteSpace(status) ? defaultValue : status;
     }
 
     private static string AvailabilityStatus(WorkspaceEvent workspaceEvent, string defaultValue)
     {
-        var status = Value(workspaceEvent, "availabilityStatus", "可售状态", string.Empty);
+        var status = Value(workspaceEvent, "availabilityStatus", string.Empty);
         return string.IsNullOrWhiteSpace(status) ? defaultValue : status;
     }
 
-    private static string Value(WorkspaceEvent workspaceEvent, string canonicalKey, string zhKey, string defaultValue) =>
+    private static string Value(WorkspaceEvent workspaceEvent, string canonicalKey, string defaultValue) =>
         RuntimeFieldAliases.Value(workspaceEvent.Payload, canonicalKey, defaultValue);
 
-    private static int IntValue(WorkspaceEvent workspaceEvent, string canonicalKey, string zhKey, int defaultValue) =>
+    private static int IntValue(WorkspaceEvent workspaceEvent, string canonicalKey, int defaultValue) =>
         RuntimeFieldAliases.IntValue(workspaceEvent.Payload, canonicalKey, defaultValue);
 
-    private static decimal DecimalValue(WorkspaceEvent workspaceEvent, string canonicalKey, string zhKey, decimal defaultValue) =>
+    private static decimal DecimalValue(WorkspaceEvent workspaceEvent, string canonicalKey, decimal defaultValue) =>
         RuntimeFieldAliases.DecimalValue(workspaceEvent.Payload, canonicalKey, defaultValue);
 
-    private static DateTimeOffset DateValue(WorkspaceEvent workspaceEvent, string canonicalKey, string zhKey, DateTimeOffset defaultValue)
+    private static DateTimeOffset DateValue(WorkspaceEvent workspaceEvent, string canonicalKey, DateTimeOffset defaultValue)
     {
-        var value = Value(workspaceEvent, canonicalKey, zhKey, string.Empty);
+        var value = Value(workspaceEvent, canonicalKey, string.Empty);
         return DateTimeOffset.TryParse(value, CultureInfo.InvariantCulture, DateTimeStyles.AssumeLocal, out var parsed)
             ? parsed.ToUniversalTime()
             : defaultValue.ToUniversalTime();

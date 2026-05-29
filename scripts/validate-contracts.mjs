@@ -94,6 +94,7 @@ for (const slice of sliceManifest.slices || []) {
 for (const code of [
   "allowed",
   "invalid_actor_token",
+  "canonical_field_id_required",
   "ai_confirmation_forbidden",
   "role_confirmation_forbidden",
   "slice_runtime_forbidden",

@@ -14,18 +14,38 @@ internal sealed class RuntimeDocumentStorage
 
     public RuntimeState LoadOrSeed(Func<RuntimeState> seedFactory)
     {
-        using var connection = connections.Open();
-        using var command = connection.CreateCommand();
-        command.CommandText = "select body from runtime_documents where id = 'state'";
-        var raw = command.ExecuteScalar() as string;
+        string? raw;
+        using (var connection = connections.Open())
+        using (var command = connection.CreateCommand())
+        {
+            command.CommandText = "select body from runtime_documents where id = 'state'";
+            raw = command.ExecuteScalar() as string;
+        }
+
         if (!string.IsNullOrWhiteSpace(raw))
         {
-            return JsonSerializer.Deserialize<RuntimeState>(raw, PostgresProjectionStore.JsonOptions) ?? seedFactory();
+            var seed = seedFactory();
+            var persisted = JsonSerializer.Deserialize<RuntimeState>(raw, PostgresProjectionStore.JsonOptions) ?? seed;
+            var migrated = ProjectionStateMigrator.Migrate(persisted, seed);
+            var migratedJson = JsonSerializer.Serialize(migrated, PostgresProjectionStore.JsonOptions);
+            if (!JsonEquivalent(raw, migratedJson))
+            {
+                SaveState(migrated);
+            }
+
+            return migrated;
         }
 
         var seeded = seedFactory();
         SaveState(seeded);
         return seeded;
+    }
+
+    private static bool JsonEquivalent(string left, string right)
+    {
+        using var leftDocument = JsonDocument.Parse(left);
+        using var rightDocument = JsonDocument.Parse(right);
+        return leftDocument.RootElement.ToString().Equals(rightDocument.RootElement.ToString(), StringComparison.Ordinal);
     }
 
     public void SaveState(RuntimeState state)

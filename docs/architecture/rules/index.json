@@ -72,6 +72,16 @@
       "exceptionAllowed": false
     },
     {
+      "id": "WON16-RUNTIME-008",
+      "title": "Projection state migrator absorbs contract evolution",
+      "scope": "runtime persistence migration",
+      "severity": "P1",
+      "owner": "runtime",
+      "ruleFile": "docs/architecture/WORKOS_BACKEND_RUNTIME_RULES.md",
+      "enforcedBy": ["scripts/guard-architecture.ps1", "tests/WorkOS.UnitTests"],
+      "exceptionAllowed": false
+    },
+    {
       "id": "WON16-FRONTEND-001",
       "title": "Contract driven submit protocol",
       "scope": "frontend",

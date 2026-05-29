@@ -63,12 +63,12 @@ internal sealed class StayLifecycleStorage
             """);
         command.Parameters.AddWithValue("residentId", ResidentId(workspaceEvent));
         command.Parameters.AddWithValue("workspaceId", workspaceEvent.WorkspaceId);
-        command.Parameters.AddWithValue("residentName", Value(workspaceEvent, "residentName", "住客姓名", "张三"));
-        command.Parameters.AddWithValue("phone", Value(workspaceEvent, "phone", "电话", "+996 555 010101"));
-        command.Parameters.AddWithValue("identityType", Value(workspaceEvent, "identityType", "证件类型", "passport"));
-        command.Parameters.AddWithValue("identityNo", Value(workspaceEvent, "identityNo", "证件号码", string.Empty));
-        command.Parameters.AddWithValue("gender", Value(workspaceEvent, "gender", "性别", "unrestricted"));
-        command.Parameters.AddWithValue("nationality", Value(workspaceEvent, "nationality", "国籍", string.Empty));
+        command.Parameters.AddWithValue("residentName", Value(workspaceEvent, "residentName", "unknown-resident"));
+        command.Parameters.AddWithValue("phone", Value(workspaceEvent, "phone", "unknown-phone"));
+        command.Parameters.AddWithValue("identityType", Value(workspaceEvent, "identityType", "passport"));
+        command.Parameters.AddWithValue("identityNo", Value(workspaceEvent, "identityNo", string.Empty));
+        command.Parameters.AddWithValue("gender", Value(workspaceEvent, "gender", "unrestricted"));
+        command.Parameters.AddWithValue("nationality", Value(workspaceEvent, "nationality", string.Empty));
         command.Parameters.AddWithValue("status", status);
         command.Parameters.AddWithValue("createdEventId", workspaceEvent.EventId);
         command.Parameters.AddWithValue("updatedAtUtc", workspaceEvent.OccurredAtUtc);
@@ -91,11 +91,11 @@ internal sealed class StayLifecycleStorage
             """);
         command.Parameters.AddWithValue("stayId", StayId(workspaceEvent));
         command.Parameters.AddWithValue("workspaceId", workspaceEvent.WorkspaceId);
-        command.Parameters.AddWithValue("residentName", Value(workspaceEvent, "residentName", "住客姓名", "张三"));
-        command.Parameters.AddWithValue("phone", Value(workspaceEvent, "phone", "电话", "+996 555 010101"));
-        command.Parameters.AddWithValue("roomBed", $"{Value(workspaceEvent, "roomId", "房间", "A301")} / {Value(workspaceEvent, "bedId", "床位", "A301-02")}");
-        command.Parameters.AddWithValue("checkInDate", DateValue(workspaceEvent, "checkInDate", "入住日期", workspaceEvent.OccurredAtUtc));
-        command.Parameters.AddWithValue("plannedCheckoutDate", DateValue(workspaceEvent, "plannedCheckOutDate", "计划退住日期", workspaceEvent.OccurredAtUtc.AddMonths(1)));
+        command.Parameters.AddWithValue("residentName", Value(workspaceEvent, "residentName", "unknown-resident"));
+        command.Parameters.AddWithValue("phone", Value(workspaceEvent, "phone", "unknown-phone"));
+        command.Parameters.AddWithValue("roomBed", $"{Value(workspaceEvent, "roomId", "unknown-room")} / {Value(workspaceEvent, "bedId", "unknown-bed")}");
+        command.Parameters.AddWithValue("checkInDate", DateValue(workspaceEvent, "checkInDate", workspaceEvent.OccurredAtUtc));
+        command.Parameters.AddWithValue("plannedCheckoutDate", DateValue(workspaceEvent, "plannedCheckOutDate", workspaceEvent.OccurredAtUtc.AddMonths(1)));
         command.Parameters.AddWithValue("status", status);
         command.Parameters.AddWithValue("createdEventId", workspaceEvent.EventId);
         command.Parameters.AddWithValue("updatedAtUtc", workspaceEvent.OccurredAtUtc);
@@ -116,12 +116,12 @@ internal sealed class StayLifecycleStorage
         command.Parameters.AddWithValue("chargeId", ChargeId(workspaceEvent));
         command.Parameters.AddWithValue("workspaceId", workspaceEvent.WorkspaceId);
         command.Parameters.AddWithValue("stayId", StayId(workspaceEvent));
-        command.Parameters.AddWithValue("chargeType", Value(workspaceEvent, "chargeType", "应收类型", "rent"));
-        command.Parameters.AddWithValue("periodStartUtc", DateValue(workspaceEvent, "periodStart", "计费开始日期", workspaceEvent.OccurredAtUtc));
-        command.Parameters.AddWithValue("periodEndUtc", DateValue(workspaceEvent, "periodEnd", "计费结束日期", workspaceEvent.OccurredAtUtc.AddMonths(1)));
-        command.Parameters.AddWithValue("amount", NpgsqlDbType.Numeric, DecimalValue(workspaceEvent, "amount", "应收金额", 0m));
-        command.Parameters.AddWithValue("currency", Value(workspaceEvent, "currency", "币种", "KGS"));
-        command.Parameters.AddWithValue("reason", Value(workspaceEvent, "chargeReason", "应收原因", string.Empty));
+        command.Parameters.AddWithValue("chargeType", Value(workspaceEvent, "chargeType", "rent"));
+        command.Parameters.AddWithValue("periodStartUtc", DateValue(workspaceEvent, "periodStart", workspaceEvent.OccurredAtUtc));
+        command.Parameters.AddWithValue("periodEndUtc", DateValue(workspaceEvent, "periodEnd", workspaceEvent.OccurredAtUtc.AddMonths(1)));
+        command.Parameters.AddWithValue("amount", NpgsqlDbType.Numeric, DecimalValue(workspaceEvent, "amount", 0m));
+        command.Parameters.AddWithValue("currency", Value(workspaceEvent, "currency", "KGS"));
+        command.Parameters.AddWithValue("reason", Value(workspaceEvent, "chargeReason", string.Empty));
         command.Parameters.AddWithValue("status", "assessed");
         command.Parameters.AddWithValue("createdEventId", workspaceEvent.EventId);
         command.Parameters.AddWithValue("updatedAtUtc", workspaceEvent.OccurredAtUtc);
@@ -130,7 +130,7 @@ internal sealed class StayLifecycleStorage
 
     private void UpsertGuestFolio(WorkspaceEvent workspaceEvent, RuntimeDbSession db)
     {
-        var amount = DecimalValue(workspaceEvent, "amount", "应收金额", 0m);
+        var amount = DecimalValue(workspaceEvent, "amount", 0m);
         using var command = db.CreateCommand("""
             insert into guest_folios(folio_id, workspace_id, stay_id, tariff_type, unit_price, quantity, charge_amount, paid_amount, balance, currency, status, created_event_id, updated_at_utc)
             values (@folioId, @workspaceId, @stayId, @tariffType, @unitPrice, @quantity, @chargeAmount, @paidAmount, @balance, @currency, @status, @createdEventId, @updatedAtUtc)
@@ -143,13 +143,13 @@ internal sealed class StayLifecycleStorage
         command.Parameters.AddWithValue("folioId", StableId("folio", workspaceEvent));
         command.Parameters.AddWithValue("workspaceId", workspaceEvent.WorkspaceId);
         command.Parameters.AddWithValue("stayId", StayId(workspaceEvent));
-        command.Parameters.AddWithValue("tariffType", Value(workspaceEvent, "chargeType", "应收类型", "rent"));
+        command.Parameters.AddWithValue("tariffType", Value(workspaceEvent, "chargeType", "rent"));
         command.Parameters.AddWithValue("unitPrice", NpgsqlDbType.Numeric, amount);
         command.Parameters.AddWithValue("quantity", NpgsqlDbType.Numeric, 1m);
         command.Parameters.AddWithValue("chargeAmount", NpgsqlDbType.Numeric, amount);
         command.Parameters.AddWithValue("paidAmount", NpgsqlDbType.Numeric, 0m);
         command.Parameters.AddWithValue("balance", NpgsqlDbType.Numeric, amount);
-        command.Parameters.AddWithValue("currency", Value(workspaceEvent, "currency", "币种", "KGS"));
+        command.Parameters.AddWithValue("currency", Value(workspaceEvent, "currency", "KGS"));
         command.Parameters.AddWithValue("status", "open");
         command.Parameters.AddWithValue("createdEventId", workspaceEvent.EventId);
         command.Parameters.AddWithValue("updatedAtUtc", workspaceEvent.OccurredAtUtc);
@@ -157,23 +157,23 @@ internal sealed class StayLifecycleStorage
     }
 
     private static string ResidentId(WorkspaceEvent workspaceEvent) =>
-        Value(workspaceEvent, "residentId", "住客", StableId("resident", workspaceEvent));
+        Value(workspaceEvent, "residentId", StableId("resident", workspaceEvent));
 
     private static string StayId(WorkspaceEvent workspaceEvent) =>
-        Value(workspaceEvent, "stayId", "入住单", StableId("stay", workspaceEvent));
+        Value(workspaceEvent, "stayId", StableId("stay", workspaceEvent));
 
     private static string ChargeId(WorkspaceEvent workspaceEvent) =>
-        Value(workspaceEvent, "chargeId", "应收记录", StableId("charge", workspaceEvent));
+        Value(workspaceEvent, "chargeId", StableId("charge", workspaceEvent));
 
-    private static string Value(WorkspaceEvent workspaceEvent, string canonicalKey, string zhKey, string defaultValue) =>
+    private static string Value(WorkspaceEvent workspaceEvent, string canonicalKey, string defaultValue) =>
         RuntimeFieldAliases.Value(workspaceEvent.Payload, canonicalKey, defaultValue);
 
-    private static decimal DecimalValue(WorkspaceEvent workspaceEvent, string canonicalKey, string zhKey, decimal defaultValue) =>
+    private static decimal DecimalValue(WorkspaceEvent workspaceEvent, string canonicalKey, decimal defaultValue) =>
         RuntimeFieldAliases.DecimalValue(workspaceEvent.Payload, canonicalKey, defaultValue);
 
-    private static DateTimeOffset DateValue(WorkspaceEvent workspaceEvent, string canonicalKey, string zhKey, DateTimeOffset defaultValue)
+    private static DateTimeOffset DateValue(WorkspaceEvent workspaceEvent, string canonicalKey, DateTimeOffset defaultValue)
     {
-        var value = Value(workspaceEvent, canonicalKey, zhKey, string.Empty);
+        var value = Value(workspaceEvent, canonicalKey, string.Empty);
         return DateTimeOffset.TryParse(value, CultureInfo.InvariantCulture, DateTimeStyles.AssumeLocal, out var parsed)
             ? parsed.ToUniversalTime()
             : defaultValue.ToUniversalTime();

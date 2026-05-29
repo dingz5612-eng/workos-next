@@ -27,10 +27,10 @@ internal sealed class LeadReservationStorage
         switch (workspaceEvent.EventType)
         {
             case "Accommodation.LeadCaptured":
-                UpsertLead(workspaceEvent, db, Value(workspaceEvent, "leadStatus", "线索状态", "new"));
+                UpsertLead(workspaceEvent, db, Value(workspaceEvent, "leadStatus", "new"));
                 return true;
             case "Accommodation.LeadStatusChanged":
-                UpsertLead(workspaceEvent, db, Value(workspaceEvent, "leadStatus", "线索状态", "callback"));
+                UpsertLead(workspaceEvent, db, Value(workspaceEvent, "leadStatus", "callback"));
                 return true;
             case "Accommodation.ReservationCreated":
                 UpsertReservation(workspaceEvent, db, "created");
@@ -65,11 +65,11 @@ internal sealed class LeadReservationStorage
             """);
         command.Parameters.AddWithValue("leadId", LeadId(workspaceEvent));
         command.Parameters.AddWithValue("workspaceId", workspaceEvent.WorkspaceId);
-        command.Parameters.AddWithValue("guestName", Value(workspaceEvent, "leadName", "线索姓名", "张三"));
-        command.Parameters.AddWithValue("phone", Value(workspaceEvent, "phone", "电话", "+996 555 010101"));
-        command.Parameters.AddWithValue("bedsNeeded", IntValue(workspaceEvent, "requestedBedCount", "需要床位数", 1));
-        command.Parameters.AddWithValue("stayDuration", Value(workspaceEvent, "stayDurationText", "住宿时长", "1个月"));
-        command.Parameters.AddWithValue("sourceChannel", Value(workspaceEvent, "leadSource", "来源渠道", "whatsapp"));
+        command.Parameters.AddWithValue("guestName", Value(workspaceEvent, "leadName", "unknown-guest"));
+        command.Parameters.AddWithValue("phone", Value(workspaceEvent, "phone", "unknown-phone"));
+        command.Parameters.AddWithValue("bedsNeeded", IntValue(workspaceEvent, "requestedBedCount", 1));
+        command.Parameters.AddWithValue("stayDuration", Value(workspaceEvent, "stayDurationText", "unspecified"));
+        command.Parameters.AddWithValue("sourceChannel", Value(workspaceEvent, "leadSource", "unknown-source"));
         command.Parameters.AddWithValue("status", status);
         command.Parameters.AddWithValue("createdEventId", workspaceEvent.EventId);
         command.Parameters.AddWithValue("updatedAtUtc", workspaceEvent.OccurredAtUtc);
@@ -92,31 +92,31 @@ internal sealed class LeadReservationStorage
         command.Parameters.AddWithValue("bookingId", ReservationId(workspaceEvent));
         command.Parameters.AddWithValue("workspaceId", workspaceEvent.WorkspaceId);
         command.Parameters.AddWithValue("leadId", LeadId(workspaceEvent));
-        command.Parameters.AddWithValue("reservedRoomBed", Value(workspaceEvent, "reservedBedIds", "预留床位", Value(workspaceEvent, "reservedRoomId", "预留房间", "A301 / A301-02")));
-        command.Parameters.AddWithValue("bedsReserved", IntValue(workspaceEvent, "reservedBedCount", "预订床位数", 1));
-        command.Parameters.AddWithValue("checkInDate", DateValue(workspaceEvent, "plannedCheckInDate", "计划入住日期", workspaceEvent.OccurredAtUtc));
+        command.Parameters.AddWithValue("reservedRoomBed", Value(workspaceEvent, "reservedBedIds", Value(workspaceEvent, "reservedRoomId", "unknown-room-bed")));
+        command.Parameters.AddWithValue("bedsReserved", IntValue(workspaceEvent, "reservedBedCount", 1));
+        command.Parameters.AddWithValue("checkInDate", DateValue(workspaceEvent, "plannedCheckInDate", workspaceEvent.OccurredAtUtc));
         command.Parameters.AddWithValue("status", status);
         command.Parameters.AddWithValue("createdEventId", workspaceEvent.EventId);
         command.Parameters.AddWithValue("updatedAtUtc", workspaceEvent.OccurredAtUtc);
-        command.Parameters.AddWithValue("holdUntilUtc", NpgsqlDbType.TimestampTz, DateValue(workspaceEvent, "reservationHoldUntil", "保留截止时间", workspaceEvent.OccurredAtUtc.AddDays(1)));
+        command.Parameters.AddWithValue("holdUntilUtc", NpgsqlDbType.TimestampTz, DateValue(workspaceEvent, "reservationHoldUntil", workspaceEvent.OccurredAtUtc.AddDays(1)));
         command.ExecuteNonQuery();
     }
 
     private static string LeadId(WorkspaceEvent workspaceEvent) =>
-        Value(workspaceEvent, "leadId", "线索", StableId("lead", workspaceEvent));
+        Value(workspaceEvent, "leadId", StableId("lead", workspaceEvent));
 
     private static string ReservationId(WorkspaceEvent workspaceEvent) =>
-        Value(workspaceEvent, "reservationId", "预订单", StableId("reservation", workspaceEvent));
+        Value(workspaceEvent, "reservationId", StableId("reservation", workspaceEvent));
 
-    private static string Value(WorkspaceEvent workspaceEvent, string canonicalKey, string zhKey, string defaultValue) =>
+    private static string Value(WorkspaceEvent workspaceEvent, string canonicalKey, string defaultValue) =>
         RuntimeFieldAliases.Value(workspaceEvent.Payload, canonicalKey, defaultValue);
 
-    private static int IntValue(WorkspaceEvent workspaceEvent, string canonicalKey, string zhKey, int defaultValue) =>
+    private static int IntValue(WorkspaceEvent workspaceEvent, string canonicalKey, int defaultValue) =>
         RuntimeFieldAliases.IntValue(workspaceEvent.Payload, canonicalKey, defaultValue);
 
-    private static DateTimeOffset DateValue(WorkspaceEvent workspaceEvent, string canonicalKey, string zhKey, DateTimeOffset defaultValue)
+    private static DateTimeOffset DateValue(WorkspaceEvent workspaceEvent, string canonicalKey, DateTimeOffset defaultValue)
     {
-        var value = Value(workspaceEvent, canonicalKey, zhKey, string.Empty);
+        var value = Value(workspaceEvent, canonicalKey, string.Empty);
         return DateTimeOffset.TryParse(value, CultureInfo.InvariantCulture, DateTimeStyles.AssumeLocal, out var parsed)
             ? parsed.ToUniversalTime()
             : defaultValue.ToUniversalTime();

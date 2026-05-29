@@ -72,11 +72,11 @@ internal sealed class PaymentLedgerStorage
         command.Parameters.AddWithValue("workspaceId", workspaceEvent.WorkspaceId);
         command.Parameters.AddWithValue("folioId", Value(workspaceEvent, "stayId", StableId("stay", workspaceEvent)));
         command.Parameters.AddWithValue("depositId", string.Empty);
-        command.Parameters.AddWithValue("payer", Value(workspaceEvent, "payerName", "张三"));
-        command.Parameters.AddWithValue("amount", NpgsqlDbType.Numeric, DecimalValue(workspaceEvent, "paymentAmount", DecimalValue(workspaceEvent, "confirmedAmount", 3000m)));
+        command.Parameters.AddWithValue("payer", Value(workspaceEvent, "payerName", "unknown-payer"));
+        command.Parameters.AddWithValue("amount", NpgsqlDbType.Numeric, DecimalValue(workspaceEvent, "paymentAmount", DecimalValue(workspaceEvent, "confirmedAmount", 0m)));
         command.Parameters.AddWithValue("currency", Value(workspaceEvent, "currency", "KGS"));
-        command.Parameters.AddWithValue("method", Value(workspaceEvent, "paymentMethod", "现金"));
-        command.Parameters.AddWithValue("purpose", Value(workspaceEvent, "paymentPurpose", "房租"));
+        command.Parameters.AddWithValue("method", Value(workspaceEvent, "paymentMethod", "cash"));
+        command.Parameters.AddWithValue("purpose", Value(workspaceEvent, "paymentPurpose", "rent"));
         command.Parameters.AddWithValue("receiptNo", Value(workspaceEvent, "paymentEvidenceId", workspaceEvent.EventId));
         command.Parameters.AddWithValue("status", status);
         command.Parameters.AddWithValue("createdEventId", workspaceEvent.EventId);
@@ -86,7 +86,7 @@ internal sealed class PaymentLedgerStorage
 
     private void UpsertFinanceReconciliation(WorkspaceEvent workspaceEvent, RuntimeDbSession db, string status)
     {
-        var confirmedAmount = DecimalValue(workspaceEvent, "confirmedAmount", 3000m);
+        var confirmedAmount = DecimalValue(workspaceEvent, "confirmedAmount", 0m);
         using var command = db.CreateCommand("""
             insert into finance_reconciliations(reconciliation_id, workspace_id, payment_id, channel, confirmed_amount, currency, match_result, variance_amount, status, confirmed_by, created_event_id, updated_at_utc)
             values (@reconciliationId, @workspaceId, @paymentId, @channel, @confirmedAmount, @currency, @matchResult, @varianceAmount, @status, @confirmedBy, @createdEventId, @updatedAtUtc)
@@ -100,10 +100,10 @@ internal sealed class PaymentLedgerStorage
         command.Parameters.AddWithValue("reconciliationId", StableId("payment-reconciliation", workspaceEvent));
         command.Parameters.AddWithValue("workspaceId", workspaceEvent.WorkspaceId);
         command.Parameters.AddWithValue("paymentId", Value(workspaceEvent, "paymentId", StableId("payment", workspaceEvent)));
-        command.Parameters.AddWithValue("channel", Value(workspaceEvent, "paymentChannel", "现金"));
+        command.Parameters.AddWithValue("channel", Value(workspaceEvent, "paymentChannel", "cash"));
         command.Parameters.AddWithValue("confirmedAmount", NpgsqlDbType.Numeric, confirmedAmount);
         command.Parameters.AddWithValue("currency", Value(workspaceEvent, "currency", "KGS"));
-        command.Parameters.AddWithValue("matchResult", Value(workspaceEvent, "confirmationResult", "确认"));
+        command.Parameters.AddWithValue("matchResult", Value(workspaceEvent, "confirmationResult", "confirmed"));
         command.Parameters.AddWithValue("varianceAmount", NpgsqlDbType.Numeric, DecimalValue(workspaceEvent, "differenceAmount", 0m));
         command.Parameters.AddWithValue("status", status);
         command.Parameters.AddWithValue("confirmedBy", workspaceEvent.ActorId);
@@ -122,7 +122,7 @@ internal sealed class PaymentLedgerStorage
         command.Parameters.AddWithValue("allocationId", $"payment-allocation-{workspaceEvent.EventId}".ToLowerInvariant());
         command.Parameters.AddWithValue("paymentId", Value(workspaceEvent, "paymentId", StableId("payment", workspaceEvent)));
         command.Parameters.AddWithValue("workspaceId", workspaceEvent.WorkspaceId);
-        command.Parameters.AddWithValue("allocationMode", Value(workspaceEvent, "allocationMode", "自动抵最早欠款"));
+        command.Parameters.AddWithValue("allocationMode", Value(workspaceEvent, "allocationMode", "oldest_balance"));
         command.Parameters.AddWithValue("allocatedAmount", NpgsqlDbType.Numeric, DecimalValue(workspaceEvent, "allocatedAmount", 0m));
         command.Parameters.AddWithValue("status", status);
         command.Parameters.AddWithValue("createdEventId", workspaceEvent.EventId);

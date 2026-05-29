@@ -14,11 +14,21 @@ docs/architecture/WORKOS_ENGINEERING_RULES.md
 
 The center model is `IntentWorkspaceProjection + WorkspaceCardProjection`. Do not create separate page, search, learning, or AI models for the same business behavior.
 
-WON-13 production runtime work must also follow:
+Current runtime facts and WON-16 governance rules live in:
 
 ```text
-docs/architecture/WON_13_PRODUCTION_RUNTIME_ARCHITECTURE.md
+docs/architecture/CURRENT_RUNTIME_ARCHITECTURE.md
+docs/architecture/WORKOS_BACKEND_RUNTIME_RULES.md
+docs/architecture/WORKOS_FRONTEND_BOUNDARY_RULES.md
+docs/architecture/WORKOS_CONTRACT_RULES.md
+docs/architecture/WORKOS_ACCOMMODATION_RUNTIME_RULES.md
+docs/architecture/WORKOS_TESTING_RULES.md
 ```
+
+`tests/WorkOS.RuntimeContractTests` is the current Runtime Smoke /
+Integration transition suite. Keep focused behavior in unit, runtime
+integration, API contract, and frontend Vitest layers instead of indefinitely
+growing the smoke suite.
 
 ## Phase 0-1 Scope
 
@@ -35,7 +45,7 @@ docs/architecture/WON_13_PRODUCTION_RUNTIME_ARCHITECTURE.md
 API:
 
 ```powershell
-dotnet run --project services/core-api/WorkOS.Api/WorkOS.Api.csproj --urls http://localhost:5180
+dotnet run --project services/core-api/WorkOS.Api/WorkOS.Api.csproj --urls http://127.0.0.1:5191
 ```
 
 Mobile UI prototype:
@@ -43,13 +53,13 @@ Mobile UI prototype:
 ```powershell
 cd apps/mobile
 npm install
-npm run dev -- --host 127.0.0.1 --port 5173
+npm run dev -- --host 127.0.0.1 --port 5175
 ```
 
 Open:
 
 ```text
-http://127.0.0.1:5173
+http://127.0.0.1:5175?workspace=W-STAY-CHECKIN&view=workspace
 ```
 
 ## Toolchain Note

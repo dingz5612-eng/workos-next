@@ -107,6 +107,12 @@ public sealed class ActionRuntimeService
             return policyFailure;
         }
 
+        var fieldKeyFailure = ValidateCanonicalFieldKeys(request.FieldValues);
+        if (fieldKeyFailure is not null)
+        {
+            return fieldKeyFailure;
+        }
+
         request = request with { FieldValues = NormalizeFieldValues(card, request.FieldValues) };
 
         var depositPolicyFailure = DepositLedgerPolicy.Validate(card.Id, request, store);
@@ -256,18 +262,28 @@ public sealed class ActionRuntimeService
             }
         }
 
-        foreach (var field in card.Fields.Business)
+        return normalized;
+    }
+
+    private static ConfirmResult? ValidateCanonicalFieldKeys(IReadOnlyDictionary<string, string>? rawValues)
+    {
+        if (rawValues is null)
         {
-            var zhLabel = field.Label.TryGetValue("zh-CN", out var zh) ? zh : string.Empty;
-            if (!string.IsNullOrWhiteSpace(zhLabel) &&
-                rawValues is not null &&
-                rawValues.TryGetValue(zhLabel, out var labelValue) &&
-                !normalized.ContainsKey(field.Id))
+            return null;
+        }
+
+        foreach (var key in rawValues.Keys)
+        {
+            if (!RuntimeFieldAliases.CanonicalKey(key).Equals(key, StringComparison.Ordinal) ||
+                key.Any(IsCjkCharacter))
             {
-                normalized[field.Id] = RuntimeFieldAliases.NormalizeValue(field.Id, labelValue);
+                return new ConfirmResult(ConfirmStatus.Invalid, "canonical_field_id_required", null);
             }
         }
 
-        return normalized;
+        return null;
     }
+
+    private static bool IsCjkCharacter(char value) =>
+        value is >= '\u3400' and <= '\u9fff';
 }

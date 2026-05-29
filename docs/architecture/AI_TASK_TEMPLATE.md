@@ -36,6 +36,7 @@ docs/architecture/WON_14_HOSTEL_FOLIO_LEDGER_OPERATING_ANALYTICS_RUNTIME.md
 - Do not let AI confirm.
 - Do not trust actor identity from request body.
 - Do not use localized labels as runtime fact keys.
+- Submit and test confirm payloads with canonical `field.id` keys only.
 - Do not let non-owner slices write ledger, cost, BedStatus, or frozen snapshot
   facts.
 - Do not weaken tests or guards to make a failure disappear.
