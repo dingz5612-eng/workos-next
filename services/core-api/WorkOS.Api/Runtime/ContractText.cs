@@ -7,6 +7,12 @@ internal static class ContractText
 
     public static string FieldId(string label)
     {
+        var canonical = RuntimeFieldAliases.CanonicalKey(label);
+        if (!canonical.Equals(label, StringComparison.Ordinal))
+        {
+            return canonical;
+        }
+
         var chars = label.Where(char.IsLetterOrDigit).ToArray();
         return chars.Length == 0 ? "field" : new string(chars);
     }

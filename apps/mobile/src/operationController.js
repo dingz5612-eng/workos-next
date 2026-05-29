@@ -17,6 +17,12 @@ export function collectOperationValues() {
   return values;
 }
 
+export function collectEvidenceIds() {
+  return Array.from(document.querySelectorAll("[data-evidence-id].selected"))
+    .map((node) => node.dataset.evidenceId)
+    .filter(Boolean);
+}
+
 export function saveCurrentDraft(ctx) {
   const item = ctx.workspace();
   const card = activeWorkspaceCard(item, ctx.state.selectedCardIndex);
@@ -63,6 +69,7 @@ export async function submitCurrentCard(ctx) {
     }
   }
   const fieldValues = collectOperationValues();
+  const evidenceIds = collectEvidenceIds();
   saveDraft(item.id, card.id, fieldValues);
   ctx.state.operationMessage = ctx.tr("submitting");
   ctx.render();
@@ -73,20 +80,21 @@ export async function submitCurrentCard(ctx) {
       actor: ctx.state.currentActor,
       language: ctx.state.lang,
       fieldValues,
+      evidenceIds,
       onProjection: (payload) => applyProjectionPayload(payload, ctx)
     });
     clearDraft(item.id, card.id);
     ctx.state.selectedCardIndex = -1;
     ctx.state.operationMessage = ctx.tr("submitDone");
   } catch (error) {
-    if (error?.status === 400 || error?.status === 401 || error?.status === 403) {
+    if (error?.status === 401 || error?.reason === "actor_session_required") {
       ctx.state.currentActor = null;
       ctx.state.loginMessage = ctx.tr("sessionExpired");
       localStorage.removeItem("workosnext.actorSession");
       setView("login", ctx);
       return;
     }
-    ctx.state.operationMessage = ctx.tr("submitFailed");
+    ctx.state.operationMessage = error?.reason || error?.code || ctx.tr("submitFailed");
   }
   ctx.render(true);
 }

@@ -77,10 +77,10 @@ export function fieldMetadata(label, type, source) {
 }
 
 export function capacityForRoomType(roomType) {
-  if (roomType === "单人间") return "1";
-  if (roomType === "双人间") return "2";
-  if (roomType === "四人间") return "4";
-  if (roomType === "六人间") return "6";
+  if (roomType === "single" || roomType === "单人间") return "1";
+  if (roomType === "double" || roomType === "双人间") return "2";
+  if (roomType === "four_bed" || roomType === "四人间") return "4";
+  if (roomType === "six_bed" || roomType === "六人间") return "6";
   return "";
 }
 

@@ -78,9 +78,7 @@ async function validateConfirmPolicyResponse() {
       evidenceIds: []
     })
   });
-  assert(response.status === 400, `confirm without actor token must return 400, got ${response.status}`);
-  const body = await response.json();
-  assert(body.error === "confirmation_forbidden", "confirm without actor token must return confirmation_forbidden");
+  assert(response.status === 401, `confirm without actor token must return 401, got ${response.status}`);
 }
 
 async function validateAccommodationLens() {

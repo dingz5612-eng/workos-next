@@ -18,13 +18,10 @@ internal static class ExpenseLedgerPolicy
 
     private static bool IsNonCash(ConfirmCardRequest request)
     {
-        var method = request.FieldValues is not null &&
-            request.FieldValues.TryGetValue("支付方式", out var value) &&
-            !string.IsNullOrWhiteSpace(value)
-                ? value
-                : "现金";
+        var method = request.FieldValues is not null
+            ? RuntimeFieldAliases.Value(request.FieldValues, "paymentMethod", "cash")
+            : "cash";
 
-        return !method.Equals("现金", StringComparison.OrdinalIgnoreCase) &&
-            !method.Equals("cash", StringComparison.OrdinalIgnoreCase);
+        return !method.Equals("cash", StringComparison.OrdinalIgnoreCase);
     }
 }

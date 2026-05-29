@@ -20,6 +20,9 @@ export function bindEvents(ctx) {
   bindQueue(ctx);
   document.querySelector(".operation-inputs")?.addEventListener("input", (event) => collectDraftingValuesOnInput(event, ctx));
   document.querySelector(".operation-inputs")?.addEventListener("change", (event) => collectDraftingValuesOnInput(event, ctx));
+  document.querySelector(".evidence-row")?.addEventListener("click", (event) => {
+    if (event.target.matches("[data-evidence-id]")) event.target.classList.toggle("selected");
+  });
   document.querySelector("#finish")?.addEventListener("click", () => setView("result", ctx));
   document.querySelector("[data-save-draft]")?.addEventListener("click", () => saveCurrentDraft(ctx));
   document.querySelectorAll("[data-submit-card]").forEach((node) => node.addEventListener("click", () => submitCurrentCard(ctx)));

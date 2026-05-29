@@ -87,7 +87,7 @@ public sealed class ActionRuntimeService
         var actor = store.FindUserBySessionToken(actorToken);
         if (actor is null)
         {
-            return new ConfirmResult(ConfirmStatus.Forbidden, "A valid actor session token is required for confirmation.", null);
+            return new ConfirmResult(ConfirmStatus.Forbidden, "actor_session_required", null);
         }
 
         var policyFailure = confirmationPolicy.Authorize(card, actor);
@@ -95,6 +95,8 @@ public sealed class ActionRuntimeService
         {
             return policyFailure;
         }
+
+        request = request with { FieldValues = NormalizeFieldValues(card, request.FieldValues) };
 
         var depositPolicyFailure = DepositLedgerPolicy.Validate(card.Id, request);
         if (depositPolicyFailure is not null)
@@ -147,24 +149,37 @@ public sealed class ActionRuntimeService
             });
         }
 
-        var eventDefinition = card.Events.First();
         var correlationId = request.IdempotencyKey;
-        var workspaceEvent = new WorkspaceEvent(
-            $"evt-{Guid.NewGuid():N}",
-            workspace.Id,
-            card.Id,
-            eventDefinition.EventType,
-            correlationId,
-            null,
-            request.RequestId ?? correlationId,
-            actor.Role,
-            actor.UserId,
-            DateTimeOffset.UtcNow,
-            request.FieldValues ?? new Dictionary<string, string>(),
-            eventDefinition.ProjectionTargets);
+        var requestId = request.RequestId ?? correlationId;
+        var normalizedFieldValues = request.FieldValues ?? new Dictionary<string, string>();
+        var evidenceIds = request.EvidenceIds ?? Array.Empty<string>();
+        var events = new List<WorkspaceEvent>();
+        string? causationId = null;
+        foreach (var eventDefinition in card.Events)
+        {
+            var workspaceEvent = new WorkspaceEvent(
+                $"evt-{Guid.NewGuid():N}",
+                workspace.Id,
+                card.Id,
+                eventDefinition.EventType,
+                correlationId,
+                causationId,
+                requestId,
+                actor.Role,
+                actor.UserId,
+                DateTimeOffset.UtcNow,
+                normalizedFieldValues,
+                eventDefinition.ProjectionTargets,
+                evidenceIds);
 
-        store.AppendAuditEventAndOutbox(workspaceEvent, request.IdempotencyKey);
-        store.ApplySliceAggregate(workspaceEvent);
+            var eventIdempotencyKey = events.Count == 0
+                ? request.IdempotencyKey
+                : $"{request.IdempotencyKey}:{eventDefinition.EventType}";
+            store.AppendAuditEventAndOutbox(workspaceEvent, eventIdempotencyKey);
+            store.ApplySliceAggregate(workspaceEvent);
+            events.Add(workspaceEvent);
+            causationId = workspaceEvent.EventId;
+        }
 
         return new ConfirmResult(ConfirmStatus.Confirmed, null, new
         {
@@ -172,9 +187,40 @@ public sealed class ActionRuntimeService
             duplicate = false,
             workspaceId = workspace.Id,
             cardId = card.Id,
-            @event = workspaceEvent,
+            @event = events.First(),
+            events,
             workspace,
             projection = queryService.Envelope(state)
         });
+    }
+
+    private static IReadOnlyDictionary<string, string> NormalizeFieldValues(
+        CardProjection card,
+        IReadOnlyDictionary<string, string>? rawValues)
+    {
+        var normalized = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        if (rawValues is not null)
+        {
+            foreach (var (key, value) in rawValues)
+            {
+                normalized[key] = value;
+                var canonicalKey = RuntimeFieldAliases.CanonicalKey(key);
+                normalized[canonicalKey] = RuntimeFieldAliases.NormalizeValue(canonicalKey, value);
+            }
+        }
+
+        foreach (var field in card.Fields.Business)
+        {
+            var zhLabel = field.Label.TryGetValue("zh-CN", out var zh) ? zh : string.Empty;
+            if (!string.IsNullOrWhiteSpace(zhLabel) &&
+                rawValues is not null &&
+                rawValues.TryGetValue(zhLabel, out var labelValue) &&
+                !normalized.ContainsKey(field.Id))
+            {
+                normalized[field.Id] = RuntimeFieldAliases.NormalizeValue(field.Id, labelValue);
+            }
+        }
+
+        return normalized;
     }
 }

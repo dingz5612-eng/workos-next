@@ -58,7 +58,7 @@ export function cardOperation(card, item, ctx) {
     <section>
       <b>${ctx.tr("cardEvidence")}</b>
       <p>${ctx.tr("cardEvidenceHelp")}</p>
-      <div class="evidence-row">${card.evidence.map((field) => `<button ${disabled}>${ctx.localTerm(field)}</button>`).join("")}</div>
+      <div class="evidence-row">${card.evidence.map((field) => `<button type="button" data-evidence-id="${field.id}" ${disabled}>${ctx.localTerm(field)}</button>`).join("")}</div>
     </section>
     <section><b>${ctx.tr("cardConfirm")}</b><p>${confirmationText(card, item, ctx)}</p></section>
     <section><b>${ctx.tr("cardNext")}</b><p>${ctx.tr("cardNextHelp")} ${nextCardTitle(card, item, ctx)}</p></section>
@@ -127,7 +127,7 @@ export function operationValue(field, item, card, ctx) {
   const carried = carriedForwardValue(field, item, ctx);
   if (carried) return carried;
   if (label === "容量") {
-    const roomType = Object.entries(values).find(([, candidate]) => ["单人间", "双人间", "四人间", "六人间"].includes(candidate))?.[1] || "四人间";
+    const roomType = Object.entries(values).find(([, candidate]) => ["single", "double", "four_bed", "six_bed", "单人间", "双人间", "四人间", "六人间"].includes(candidate))?.[1] || "four_bed";
     return capacityForRoomType(roomType);
   }
   return defaultValueForField(field);

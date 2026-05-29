@@ -127,7 +127,8 @@ public sealed record WorkspaceEvent(
     string ActorId,
     DateTimeOffset OccurredAtUtc,
     IReadOnlyDictionary<string, string> Payload,
-    IReadOnlyList<string> ProjectionTargets);
+    IReadOnlyList<string> ProjectionTargets,
+    IReadOnlyList<string>? EvidenceIds = null);
 
 public sealed record ConfirmCardRequest(
     string? Language,

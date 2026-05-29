@@ -42,9 +42,19 @@ internal sealed class ResourceSetupStorage
                 UpdateResourceStatus(workspaceEvent, "available");
                 return true;
             case ResourceSetupEvents.BedBlocked:
+                if (!TargetsBed(workspaceEvent))
+                {
+                    return true;
+                }
+
                 UpdateBedStatus(workspaceEvent, "blocked");
                 return true;
             case ResourceSetupEvents.BedReleased:
+                if (!TargetsBed(workspaceEvent))
+                {
+                    return true;
+                }
+
                 UpdateBedStatus(workspaceEvent, "available");
                 return true;
             default:
@@ -135,8 +145,7 @@ internal sealed class ResourceSetupStorage
 
     private void UpdateResourceStatus(WorkspaceEvent workspaceEvent, string status)
     {
-        if (Value(workspaceEvent, "resourceScope", "阻断范围", string.Empty).Contains("床位", StringComparison.OrdinalIgnoreCase) ||
-            Value(workspaceEvent, "resourceScope", "释放范围", string.Empty).Contains("床位", StringComparison.OrdinalIgnoreCase))
+        if (TargetsBed(workspaceEvent))
         {
             UpdateBedStatus(workspaceEvent, status);
             return;
@@ -171,6 +180,11 @@ internal sealed class ResourceSetupStorage
 
     private static string BedNo(WorkspaceEvent workspaceEvent) =>
         Value(workspaceEvent, "bedNo", "床位号", "A302-01");
+
+    private static bool TargetsBed(WorkspaceEvent workspaceEvent) =>
+        Value(workspaceEvent, "resourceScope", "阻断范围", string.Empty).Equals("bed", StringComparison.OrdinalIgnoreCase) ||
+        Value(workspaceEvent, "resourceScope", "释放范围", string.Empty).Equals("bed", StringComparison.OrdinalIgnoreCase) ||
+        !string.IsNullOrWhiteSpace(Value(workspaceEvent, "bedId", "床位", string.Empty));
 
     private static string RoomStatus(WorkspaceEvent workspaceEvent, string defaultValue)
     {

@@ -43,6 +43,7 @@ ResetPostgres(connectionString);
     ValidateAccommodationWorkOS20Contracts(projection);
     ValidateAccommodationFactOwnership();
     ValidatePeriodAnalyticsContract();
+    ValidateStableOptionValues(projection);
 
     var prepared = runtime.Prepare("W-STAY-RESOURCE", "roomSetup");
     Assert(prepared is not null, "prepare should return room setup card payload");
@@ -55,6 +56,7 @@ ResetPostgres(connectionString);
 
     var missingToken = AssertNoSideEffects(connectionString, () => runtime.Confirm("W-STAY-CHECKIN", "finance", Human("missing-token-finance"), ""));
     Assert(missingToken.Status == ConfirmStatus.Forbidden, "confirm must require a trusted backend session token");
+    Assert(missingToken.Reason == "actor_session_required", "missing actor session must use auth-specific reason");
     var missingIdempotencyKey = AssertNoSideEffects(connectionString, () => runtime.Confirm("W-STAY-RESOURCE", "roomSetup", new ConfirmCardRequest("zh-CN", "", new Dictionary<string, string>(), Array.Empty<string>()), operatorToken));
     Assert(missingIdempotencyKey.Status == ConfirmStatus.Invalid, "confirm must require idempotency key");
 
@@ -187,6 +189,7 @@ ResetPostgres(connectionString);
         ["支付方式"] = "MBank"
     }, "deposit-proof-001"), operatorToken).Status == ConfirmStatus.Confirmed, "deposit receipt with evidence should pass");
     runtime.ProcessPendingOutbox();
+    Assert(runtime.GetAuditEvents("W-STAY-DEPOSIT-LEDGER").Any(item => item.CardId == "depositReceipt" && item.EvidenceIds?.Contains("deposit-proof-001") == true), "confirmed events must persist submitted evidenceIds");
 
     Assert(runtime.Confirm("W-STAY-DEPOSIT-LEDGER", "depositConfirmation", Human("deposit-confirmation", new Dictionary<string, string>
     {
@@ -525,10 +528,10 @@ ResetPostgres(connectionString);
     Assert(reloaded.Events.Any(item => item.EventType == "Accommodation.RoomConfigured"), "RoomConfigured event should be persisted");
     Assert(reloaded.Events.All(item => !string.IsNullOrWhiteSpace(item.CorrelationId)), "audit events must include correlationId");
     Assert(reloaded.Events.All(item => !string.IsNullOrWhiteSpace(item.RequestId)), "audit events must include requestId");
-    AssertEventSequence(reloaded.Events.Where(item => item.WorkspaceId == "W-STAY-RESOURCE").Select(item => item.EventType).ToArray(), "Accommodation.RoomConfigured", "Accommodation.BedConfigured", "Accommodation.RateConfigured", "Accommodation.RoomReadinessChanged", "Accommodation.RoomBlocked", "Accommodation.RoomReleased");
+    AssertEventSequence(reloaded.Events.Where(item => item.WorkspaceId == "W-STAY-RESOURCE").Select(item => item.EventType).ToArray(), "Accommodation.RoomConfigured", "Accommodation.BedConfigured", "Accommodation.RateConfigured", "Accommodation.RoomReadinessChanged", "Accommodation.RoomBlocked", "Accommodation.BedBlocked", "Accommodation.RoomReleased", "Accommodation.BedReleased");
     AssertEventSequence(reloaded.Events.Where(item => item.WorkspaceId == "W-STAY-CHECKIN").Select(item => item.EventType).ToArray(), "LeadCaptured", "BookingConfirmed", "ResidentRegistered", "BedAssigned", "TariffAssigned", "DepositRequired", "PaymentRecordedByFrontDesk", "PaymentConfirmedByFinance", "StayCheckedIn", "OperatingMetricsReviewed");
-    AssertEventSequence(reloaded.Events.Where(item => item.WorkspaceId == "W-STAY-LEAD-RESERVATION").Select(item => item.EventType).ToArray(), "Accommodation.LeadCaptured", "Accommodation.LeadStatusChanged", "Accommodation.ReservationCreated", "Accommodation.ReservationCancelled", "Accommodation.ReservationConvertedToStay");
-    AssertEventSequence(reloaded.Events.Where(item => item.WorkspaceId == "W-STAY-LIFECYCLE").Select(item => item.EventType).ToArray(), "Accommodation.ResidentProfileCaptured", "Accommodation.ResidentCheckedIn", "Accommodation.StayChargeAssessed", "Accommodation.StayExtended");
+    AssertEventSequence(reloaded.Events.Where(item => item.WorkspaceId == "W-STAY-LEAD-RESERVATION").Select(item => item.EventType).ToArray(), "Accommodation.LeadCaptured", "Accommodation.LeadStatusChanged", "Accommodation.ReservationCreated", "Accommodation.ReservationCancelled", "Accommodation.ReservationExpired", "Accommodation.ReservationConvertedToStay");
+    AssertEventSequence(reloaded.Events.Where(item => item.WorkspaceId == "W-STAY-LIFECYCLE").Select(item => item.EventType).ToArray(), "Accommodation.ResidentProfileCaptured", "Accommodation.ResidentCheckedIn", "Accommodation.BedAssigned", "Accommodation.StayChargeAssessed", "Accommodation.StayExtended", "Accommodation.StayRateChanged");
     Assert(reloadedResource.Cards.Single(card => card.Id == "roomSetup").Status == "done", "room setup status should persist as done");
     Assert(reloadedResource.Cards.All(card => card.Status == "done"), "resource cards should all be done");
 
@@ -823,6 +826,22 @@ static void ValidatePeriodAnalyticsContract()
     var excluded = netCashFlow.GetProperty("excludes").EnumerateArray().Select(item => item.GetString()).ToHashSet();
     Assert(excluded.Contains("depositReceivedAmount"), "period net cash flow must exclude deposit received");
     Assert(excluded.Contains("depositRefundedAmount"), "period net cash flow must exclude deposit refunds");
+}
+
+static void ValidateStableOptionValues(ProjectionEnvelope projection)
+{
+    foreach (var field in projection.Workspaces.SelectMany(workspace => workspace.Cards).SelectMany(card => card.Fields.Business))
+    {
+        foreach (var option in field.Ui.Options)
+        {
+            Assert(!string.IsNullOrWhiteSpace(option.Value), $"{field.Id} option value must be stable and non-empty");
+            Assert(!option.Value.Any(ch => ch >= 0x4e00 && ch <= 0x9fff), $"{field.Id} option value must be a stable enum key, got {option.Value}");
+        }
+    }
+
+    var roomSetup = projection.Workspaces.Single(item => item.Id == "W-STAY-RESOURCE").Cards.Single(item => item.Id == "roomSetup");
+    Assert(Field(roomSetup, "房间号").Id == "roomNo", "room setup must expose canonical roomNo field id");
+    Assert(Field(roomSetup, "房型").Ui.Options.Any(item => item.Value == "four_bed" && item.Label["zh-CN"] == "四人间"), "roomType option must use stable enum value and localized label");
 }
 
 static void ValidateAllContractOnlySlicesAreGated(

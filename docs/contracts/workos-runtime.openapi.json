@@ -147,6 +147,7 @@
         "responses": {
           "200": { "description": "Confirmed or duplicate event" },
           "400": { "description": "Forbidden by confirmation policy" },
+          "401": { "description": "Actor session missing or expired" },
           "404": { "description": "Card not found" }
         }
       }

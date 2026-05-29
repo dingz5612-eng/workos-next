@@ -3,6 +3,7 @@
   "policy": "CardConfirmationPolicy",
   "decisionCodes": [
     "allowed",
+    "actor_session_required",
     "ai_confirmation_forbidden",
     "role_confirmation_forbidden",
     "slice_runtime_forbidden",
@@ -22,6 +23,11 @@
     "period_close_requires_action_plan_for_high_risk"
   ],
   "rules": [
+    {
+      "id": "actor-session-required",
+      "description": "Confirm uses a trusted backend actor session token; missing or expired sessions are authentication failures, not business policy blockers.",
+      "denies": "actor_session_required"
+    },
     {
       "id": "ai-cannot-confirm",
       "description": "AI may prepare, explain, summarize, and draft, but must never confirm a card when forbiddenForAi is true.",

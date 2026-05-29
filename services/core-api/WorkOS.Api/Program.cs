@@ -82,6 +82,7 @@ app.MapPost("/api/workspaces/{workspaceId}/cards/{cardId}/confirm", (string work
     {
         ConfirmStatus.NotFound => Results.NotFound(new { error = "card_not_found", workspaceId, cardId }),
         ConfirmStatus.Invalid => Results.BadRequest(new { error = "confirmation_invalid", result.Reason }),
+        ConfirmStatus.Forbidden when result.Reason == "actor_session_required" => Results.Unauthorized(),
         ConfirmStatus.Forbidden => Results.BadRequest(new { error = "confirmation_forbidden", result.Reason }),
         _ => Results.Ok(result.Payload)
     };
