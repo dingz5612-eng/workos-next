@@ -142,6 +142,46 @@
       "exceptionAllowed": true
     },
     {
+      "id": "WON16-SURFACE-002",
+      "title": "Runtime surface policy admission",
+      "scope": "contracts runtime-surface frontend",
+      "severity": "P0",
+      "owner": "frontend",
+      "ruleFile": "docs/architecture/WORKOS_SURFACE_RULES.md",
+      "enforcedBy": ["scripts/validate-slice-admission.mjs", "apps/mobile vitest", "tests/WorkOS.UnitTests"],
+      "exceptionAllowed": false
+    },
+    {
+      "id": "WON16-ADMISSION-001",
+      "title": "Production slice admission gate",
+      "scope": "contracts runtime tests",
+      "severity": "P0",
+      "owner": "runtime",
+      "ruleFile": "docs/architecture/WORKOS_CONTRACT_RULES.md",
+      "enforcedBy": ["scripts/validate-slice-admission.mjs", "tests/WorkOS.RuntimeContractTests"],
+      "exceptionAllowed": false
+    },
+    {
+      "id": "WON16-LENS-001",
+      "title": "Authoritative lens source and freshness",
+      "scope": "runtime lens persistence",
+      "severity": "P1",
+      "owner": "runtime",
+      "ruleFile": "docs/architecture/WORKOS_SURFACE_RULES.md",
+      "enforcedBy": ["scripts/validate-slice-admission.mjs", "scripts/validate-runtime-api.mjs", "tests/WorkOS.RuntimeContractTests"],
+      "exceptionAllowed": false
+    },
+    {
+      "id": "WON16-OBS-001",
+      "title": "Runtime governance observability",
+      "scope": "runtime api ci",
+      "severity": "P1",
+      "owner": "runtime",
+      "ruleFile": "docs/architecture/WORKOS_BACKEND_RUNTIME_RULES.md",
+      "enforcedBy": ["scripts/validate-runtime-api.mjs", "scripts/architecture-drift-report.mjs", "tests/WorkOS.RuntimeContractTests"],
+      "exceptionAllowed": false
+    },
+    {
       "id": "WON16-CONTRACT-001",
       "title": "Canonical field id",
       "scope": "contracts runtime frontend",

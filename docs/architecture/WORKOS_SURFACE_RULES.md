@@ -37,8 +37,13 @@ or declare an explicit hidden/no-queue reason.
 
 ## RuntimeSurfacePolicy
 
-Each production slice must have surface visibility derived from runtime metadata
-or explicit policy. The minimal policy shape is:
+Each manifest slice must have a contract entry in
+`docs/contracts/runtime-surface-policy.json`. Production slices without a
+surface policy fail slice admission. The backend generates Home, Workbench,
+Search, and Learning Lens output from that policy; frontend selectors consume
+the runtime Lens result and must not add business-specific priority rules.
+
+The minimal policy shape is:
 
 ```json
 {
@@ -63,8 +68,8 @@ or explicit policy. The minimal policy shape is:
 }
 ```
 
-If explicit policy is absent, the first implementation may derive defaults from
-workspace domain, title, cards, current card status, and known Lens catalog.
+Contract-only slices may remain visible for prepare/learning, but must declare
+the reason they are blocked from confirm.
 
 ## Slice Admission
 
@@ -79,3 +84,23 @@ New production slices must satisfy surface coverage:
 These checks must be automated through frontend tests and architecture guard
 rules. Manual insertion of a few workspace IDs is not acceptable coverage.
 
+## Authoritative Lens Rules
+
+P2 Accommodation lenses must declare their source tables, workspace scope,
+freshness metric, and cross-check rule in
+`docs/contracts/accommodation-lens-contract.json`.
+
+The minimum authoritative Lens set is:
+
+- `PaymentRiskLens`
+- `CheckoutQueueLens`
+- `ServiceTaskQueueLens`
+- `RiskCommandLens`
+- `PeriodPerformanceLens`
+- `RoomRevenuePotentialLens`
+- `LeadFunnelLens`
+
+Each row emitted by these lenses must expose `sourceOfTruthTables` and
+`projectionLagSeconds` when data exists. `RiskCommandLens` must read new ledger
+facts with explicit workspace scope and must not double-count legacy CheckIn
+finance rows.

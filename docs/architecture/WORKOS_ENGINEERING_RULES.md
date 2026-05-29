@@ -68,6 +68,8 @@ npm --prefix apps/mobile audit --audit-level=low
 dotnet build WorkOSNext.sln -c Release
 dotnet run --project tests/WorkOS.RuntimeContractTests/WorkOS.RuntimeContractTests.csproj -c Release
 node scripts/validate-contracts.mjs
+node scripts/validate-slice-admission.mjs
+node scripts/architecture-drift-report.mjs
 node scripts/validate-runtime-api.mjs
 node scripts/generate-contract-dtos.mjs --check
 pwsh ./scripts/guard-architecture.ps1

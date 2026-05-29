@@ -393,7 +393,7 @@
       },
       "RuntimeObservation": {
         "type": "object",
-        "required": ["service", "version", "persistence", "workspaceCount", "cardCount", "auditEventCount", "outboxCount", "pendingOutboxCount", "deadLetterOutboxCount", "behaviorEventCount"],
+        "required": ["service", "version", "persistence", "workspaceCount", "cardCount", "auditEventCount", "outboxCount", "pendingOutboxCount", "deadLetterOutboxCount", "behaviorEventCount", "projectionLagSeconds", "failedConfirmReasonDistribution", "surfaceCoverageMissingCount", "ledgerInvariantViolationCount", "schemaVersion", "activeArchitectureExceptionCount", "activeArchitectureExceptions"],
         "properties": {
           "service": { "type": "string" },
           "version": { "type": "string" },
@@ -405,7 +405,20 @@
           "pendingOutboxCount": { "type": "integer" },
           "deadLetterOutboxCount": { "type": "integer" },
           "behaviorEventCount": { "type": "integer" },
-          "lastAuditEventAtUtc": { "type": ["string", "null"], "format": "date-time" }
+          "lastAuditEventAtUtc": { "type": ["string", "null"], "format": "date-time" },
+          "projectionLagSeconds": { "type": "integer" },
+          "failedConfirmReasonDistribution": {
+            "type": "object",
+            "additionalProperties": { "type": "integer" }
+          },
+          "surfaceCoverageMissingCount": { "type": "integer" },
+          "ledgerInvariantViolationCount": { "type": "integer" },
+          "schemaVersion": { "type": "string" },
+          "activeArchitectureExceptionCount": { "type": "integer" },
+          "activeArchitectureExceptions": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
         }
       },
       "BehaviorEventRequest": {

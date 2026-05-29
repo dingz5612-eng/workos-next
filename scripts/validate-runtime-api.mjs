@@ -5,6 +5,8 @@ const baseUrl = process.env.WORKOS_API_VALIDATE_URL || "http://127.0.0.1:5191";
 const externalApi = Boolean(process.env.WORKOS_API_VALIDATE_URL);
 const openApi = JSON.parse(fs.readFileSync("docs/contracts/workos-runtime.openapi.json", "utf8"));
 const sliceManifest = JSON.parse(fs.readFileSync("docs/contracts/slice-manifest.json", "utf8"));
+const surfacePolicy = JSON.parse(fs.readFileSync("docs/contracts/runtime-surface-policy.json", "utf8"));
+const lensContract = JSON.parse(fs.readFileSync("docs/contracts/accommodation-lens-contract.json", "utf8"));
 let apiProcess;
 
 if (!externalApi) {
@@ -269,34 +271,43 @@ async function validateProductionRejectsDevAuthDefaults() {
 }
 
 async function validateAccommodationLens() {
-  const lens = await getJson("/api/lenses/accommodation/period-performance");
-  assert(Array.isArray(lens), "accommodation lens response must be an array");
+  for (const lens of lensContract.lenses || []) {
+    const result = await getJson(`/api/lenses/accommodation/${lens.id}`);
+    assert(Array.isArray(result), `${lens.id} response must be an array`);
+    if (result.length > 0) {
+      assert(Array.isArray(result[0].sourceOfTruthTables), `${lens.id} must expose sourceOfTruthTables`);
+      assert(typeof result[0].projectionLagSeconds === "number", `${lens.id} must expose projectionLagSeconds`);
+    }
+  }
 }
 
 async function validateRuntimeSurfaces(projection) {
   const queue = await getJson("/api/lenses/work-queue");
   assert(Array.isArray(queue), "work queue lens response must be an array");
   assert(queue.some((item) => item.workspaceId && item.cardId), "work queue items must include workspaceId/cardId");
-  assert(queue.some((item) => item.workspaceId === "W-STAY-PAYMENT-LEDGER"), "work queue must expose PaymentLedger");
-
-  const search = await getJson("/api/lenses/search?q=%E6%8A%BC%E9%87%91");
-  const depositIndex = search.findIndex((item) => item.workspaceId === "W-STAY-DEPOSIT-LEDGER");
-  const checkinIndex = search.findIndex((item) => item.workspaceId === "W-STAY-CHECKIN");
-  assert(depositIndex >= 0, "search lens must expose DepositLedger for deposit intent");
-  assert(checkinIndex < 0 || depositIndex < checkinIndex, "search lens must rank DepositLedger before legacy CheckIn");
 
   const home = await getJson("/api/lenses/home-surface");
   assert(Array.isArray(home), "home surface lens response must be an array");
-  assert(home.some((item) => item.workspaceId === "W-STAY-DEPOSIT-LEDGER"), "home surface must expose DepositLedger");
-  assert(home.some((item) => item.workspaceId === "W-STAY-PERIOD-ANALYTICS"), "home surface must expose PeriodAnalytics");
 
   const learning = await getJson("/api/lenses/learning-catalog");
   assert(Array.isArray(learning), "learning catalog lens response must be an array");
-  assert(learning.some((item) => item.workspaceId === "W-STAY-DEPOSIT-LEDGER" && item.cardId === "depositReceipt"), "learning catalog must expose DepositLedger cards");
 
   const workspaceIds = new Set(projection.workspaces.map((item) => item.id));
   for (const item of home) {
     assert(workspaceIds.has(item.workspaceId), `home surface references unknown workspace ${item.workspaceId}`);
+  }
+
+  const policies = new Map((surfacePolicy.policies || []).map((item) => [item.sliceId, item]));
+  for (const slice of sliceManifest.slices.filter((item) => item.status === "production-slice")) {
+    const policy = policies.get(slice.id);
+    assert(policy, `production slice ${slice.id} must have surface policy`);
+    assert(home.some((item) => item.workspaceId === slice.workspaceId) || policy.hiddenReason, `home surface must expose ${slice.id}`);
+    assert(queue.some((item) => item.workspaceId === slice.workspaceId) || policy.hiddenReason, `work queue must expose ${slice.id}`);
+    assert(learning.some((item) => item.workspaceId === slice.workspaceId) || policy.hiddenReason, `learning catalog must expose ${slice.id}`);
+
+    const query = encodeURIComponent(policy.search?.keywords?.[0] || slice.workspaceId);
+    const search = await getJson(`/api/lenses/search?q=${query}`);
+    assert(search.some((item) => item.workspaceId === slice.workspaceId) || policy.hiddenReason, `search lens must expose ${slice.id}`);
   }
 }
 
@@ -357,6 +368,13 @@ async function validateObservability() {
   assert(observation.cardCount >= manifestCardCount, "observability cardCount must cover manifest cards");
   assert(typeof observation.outboxCount === "number", "observability outboxCount must be numeric");
   assert(typeof observation.deadLetterOutboxCount === "number", "observability deadLetterOutboxCount must be numeric");
+  assert(typeof observation.projectionLagSeconds === "number", "observability projectionLagSeconds must be numeric");
+  assert(typeof observation.failedConfirmReasonDistribution === "object", "observability failedConfirmReasonDistribution must be an object");
+  assert(typeof observation.surfaceCoverageMissingCount === "number", "observability surfaceCoverageMissingCount must be numeric");
+  assert(typeof observation.ledgerInvariantViolationCount === "number", "observability ledgerInvariantViolationCount must be numeric");
+  assert(typeof observation.schemaVersion === "string", "observability schemaVersion must be a string");
+  assert(typeof observation.activeArchitectureExceptionCount === "number", "observability activeArchitectureExceptionCount must be numeric");
+  assert(Array.isArray(observation.activeArchitectureExceptions), "observability activeArchitectureExceptions must be an array");
 }
 
 async function validateBehaviorEvent() {

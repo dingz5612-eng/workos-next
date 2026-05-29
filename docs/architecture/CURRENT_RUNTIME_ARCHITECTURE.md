@@ -3,10 +3,10 @@
 Last preflight source: local `main` after `git fetch origin main`,
 `git checkout main`, and `git pull --ff-only`.
 
-Current local commit at WON-16 second-batch preflight:
+Current local commit at WON-16 third-batch preflight:
 
 ```text
-4508e94 WON-16: Harden runtime ledger and surface contracts
+f686a3d WON-16: Harden evidence and ledger runtime
 ```
 
 This document records repository facts during WON-16 validation work; it is not
@@ -51,6 +51,14 @@ must consume one runtime surface source built from:
 
 `demoQueue` and static `workspaceProjections` are fallback/dev fixtures only;
 they must not be the online default source for Home or Workbench.
+
+Surface visibility is contract-driven through:
+
+```text
+docs/contracts/runtime-surface-policy.json
+```
+
+Any production slice without a matching surface policy fails admission.
 
 Current surface status:
 
@@ -119,6 +127,17 @@ Current Lens status must be kept explicit:
 | ExpenseAnalyticsLens | implemented |
 | PeriodPerformanceLens | implemented |
 
+The P2 authoritative lens contracts live in:
+
+```text
+docs/contracts/accommodation-lens-contract.json
+```
+
+`PaymentRiskLens`, `CheckoutQueueLens`, `ServiceTaskQueueLens`,
+`RiskCommandLens`, `PeriodPerformanceLens`, `RoomRevenuePotentialLens`, and
+`LeadFunnelLens` declare source-of-truth tables, workspace scope, projection lag
+metadata, and cross-check rules.
+
 ## Current Known P0 Gaps
 
 - Confirm HTTP status semantics are split into `401`, `403`, `409`, and `422`
@@ -146,6 +165,10 @@ Current Lens status must be kept explicit:
   aggregate scope and do not derive instance identity from workspace/card/status.
 - Runtime state has a schema version and a named migrator entry for the
   card-instance/evidence envelope.
+- Runtime observability exposes projection lag, failed confirm reason
+  distribution, surface coverage missing count, ledger invariant violation
+  count, schema version, and active architecture exceptions.
+- Slice admission is automated by `scripts/validate-slice-admission.mjs`.
 
 ## Accommodation Boundary Status
 
@@ -177,6 +200,8 @@ The current automated coverage verifies:
 - `dotnet test tests/WorkOS.RuntimeIntegrationTests/WorkOS.RuntimeIntegrationTests.csproj -c Release --no-build`
 - `dotnet run --project tests/WorkOS.RuntimeContractTests/WorkOS.RuntimeContractTests.csproj -c Release`
 - `node scripts/validate-contracts.mjs`
+- `node scripts/validate-slice-admission.mjs`
+- `node scripts/architecture-drift-report.mjs`
 - `node scripts/generate-contract-dtos.mjs --check`
 - `node scripts/validate-runtime-api.mjs`
 - `pwsh ./scripts/guard-architecture.ps1`

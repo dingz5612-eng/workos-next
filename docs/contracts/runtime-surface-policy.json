@@ -1,0 +1,311 @@
+{
+  "version": "0.16.3-runtime-surface-policy",
+  "policies": [
+    {
+      "sliceId": "Accommodation.ResourceSetup",
+      "workspaceId": "W-STAY-RESOURCE",
+      "domainGroup": "Accommodation",
+      "defaultLens": "bed-inventory",
+      "hiddenReason": "",
+      "home": { "visible": true, "priority": 92, "section": "accommodation-operations" },
+      "workbench": { "visible": true, "queueRule": "ready_or_blocked_cards" },
+      "search": { "visible": true, "keywords": ["resource", "room", "bed", "rate", "房间", "床位", "价格", "ресурс", "комната", "койка"], "intentTags": ["resource_setup", "bed_inventory"] },
+      "learning": { "visible": true, "section": "Accommodation / Resource Setup" },
+      "lenses": ["bed-inventory", "room-readiness", "rate-plan", "room-revenue-potential"],
+      "cards": [
+        { "cardId": "roomSetup", "home": true, "workbench": true, "searchKeywords": ["room", "房间"], "intentTags": ["room"], "learningSection": "Accommodation / Resource Setup", "defaultLens": "room-readiness", "hiddenReason": "" },
+        { "cardId": "bedSetup", "home": true, "workbench": true, "searchKeywords": ["bed", "床位"], "intentTags": ["bed"], "learningSection": "Accommodation / Resource Setup", "defaultLens": "bed-inventory", "hiddenReason": "" },
+        { "cardId": "rateSetup", "home": true, "workbench": true, "searchKeywords": ["rate", "价格"], "intentTags": ["rate"], "learningSection": "Accommodation / Resource Setup", "defaultLens": "rate-plan", "hiddenReason": "" },
+        { "cardId": "roomReadiness", "home": true, "workbench": true, "searchKeywords": ["readiness", "可售"], "intentTags": ["readiness"], "learningSection": "Accommodation / Resource Setup", "defaultLens": "room-readiness", "hiddenReason": "" },
+        { "cardId": "roomBlock", "home": true, "workbench": true, "searchKeywords": ["block", "阻断"], "intentTags": ["bed_status"], "learningSection": "Accommodation / Resource Setup", "defaultLens": "bed-inventory", "hiddenReason": "" },
+        { "cardId": "roomRelease", "home": true, "workbench": true, "searchKeywords": ["release", "释放"], "intentTags": ["bed_status"], "learningSection": "Accommodation / Resource Setup", "defaultLens": "bed-inventory", "hiddenReason": "" }
+      ]
+    },
+    {
+      "sliceId": "Accommodation.CheckIn",
+      "workspaceId": "W-STAY-CHECKIN",
+      "domainGroup": "Accommodation",
+      "defaultLens": "active-stay",
+      "hiddenReason": "",
+      "home": { "visible": true, "priority": 70, "section": "accommodation-legacy-intake" },
+      "workbench": { "visible": true, "queueRule": "ready_or_blocked_cards" },
+      "search": { "visible": true, "keywords": ["checkin", "intake", "入住", "登记", "заселение"], "intentTags": ["legacy_intake", "stay_intake"] },
+      "learning": { "visible": true, "section": "Accommodation / Transitional CheckIn" },
+      "lenses": ["today-operations", "active-stay"],
+      "cards": [
+        { "cardId": "lead", "home": true, "workbench": true, "searchKeywords": ["lead", "线索"], "intentTags": ["lead_intake"], "learningSection": "Accommodation / Transitional CheckIn", "defaultLens": "lead-funnel", "hiddenReason": "" },
+        { "cardId": "booking", "home": true, "workbench": true, "searchKeywords": ["booking", "预订"], "intentTags": ["booking_intake"], "learningSection": "Accommodation / Transitional CheckIn", "defaultLens": "lead-funnel", "hiddenReason": "" },
+        { "cardId": "resident", "home": true, "workbench": true, "searchKeywords": ["resident", "入住人"], "intentTags": ["resident_intake"], "learningSection": "Accommodation / Transitional CheckIn", "defaultLens": "active-stay", "hiddenReason": "" },
+        { "cardId": "bedAssign", "home": true, "workbench": true, "searchKeywords": ["bed assign", "分配床位"], "intentTags": ["stay_intake"], "learningSection": "Accommodation / Transitional CheckIn", "defaultLens": "active-stay", "hiddenReason": "" },
+        { "cardId": "tariff", "home": true, "workbench": true, "searchKeywords": ["tariff", "计费"], "intentTags": ["stay_intake"], "learningSection": "Accommodation / Transitional CheckIn", "defaultLens": "stay-balance", "hiddenReason": "" },
+        { "cardId": "depositRequirement", "home": true, "workbench": true, "searchKeywords": ["deposit requirement", "押金要求"], "intentTags": ["legacy_deposit_read_only"], "learningSection": "Accommodation / Transitional CheckIn", "defaultLens": "deposit-liability", "hiddenReason": "" },
+        { "cardId": "payment", "home": true, "workbench": true, "searchKeywords": ["payment intake", "收款登记"], "intentTags": ["legacy_payment_read_only"], "learningSection": "Accommodation / Transitional CheckIn", "defaultLens": "payment-risk", "hiddenReason": "" },
+        { "cardId": "finance", "home": true, "workbench": true, "searchKeywords": ["finance intake", "财务确认"], "intentTags": ["legacy_payment_read_only"], "learningSection": "Accommodation / Transitional CheckIn", "defaultLens": "payment-risk", "hiddenReason": "" },
+        { "cardId": "checkin", "home": true, "workbench": true, "searchKeywords": ["checkin", "入住确认"], "intentTags": ["stay_intake"], "learningSection": "Accommodation / Transitional CheckIn", "defaultLens": "active-stay", "hiddenReason": "" },
+        { "cardId": "operatingDashboard", "home": true, "workbench": true, "searchKeywords": ["dashboard", "驾驶舱"], "intentTags": ["legacy_operating"], "learningSection": "Accommodation / Transitional CheckIn", "defaultLens": "today-operations", "hiddenReason": "" }
+      ]
+    },
+    {
+      "sliceId": "Accommodation.LeadReservation",
+      "workspaceId": "W-STAY-LEAD-RESERVATION",
+      "domainGroup": "Accommodation",
+      "defaultLens": "lead-funnel",
+      "hiddenReason": "",
+      "home": { "visible": true, "priority": 88, "section": "accommodation-operations" },
+      "workbench": { "visible": true, "queueRule": "ready_or_blocked_cards" },
+      "search": { "visible": true, "keywords": ["lead", "reservation", "线索", "预订", "бронь"], "intentTags": ["lead", "reservation"] },
+      "learning": { "visible": true, "section": "Accommodation / Lead Reservation" },
+      "lenses": ["lead-funnel"],
+      "cards": [
+        { "cardId": "leadCapture", "home": true, "workbench": true, "searchKeywords": ["lead", "线索"], "intentTags": ["lead"], "learningSection": "Accommodation / Lead Reservation", "defaultLens": "lead-funnel", "hiddenReason": "" },
+        { "cardId": "leadFollowUp", "home": true, "workbench": true, "searchKeywords": ["follow up", "跟进"], "intentTags": ["lead"], "learningSection": "Accommodation / Lead Reservation", "defaultLens": "lead-funnel", "hiddenReason": "" },
+        { "cardId": "reservationCreate", "home": true, "workbench": true, "searchKeywords": ["reservation", "预订"], "intentTags": ["reservation"], "learningSection": "Accommodation / Lead Reservation", "defaultLens": "lead-funnel", "hiddenReason": "" },
+        { "cardId": "reservationCancel", "home": true, "workbench": true, "searchKeywords": ["cancel", "取消"], "intentTags": ["reservation"], "learningSection": "Accommodation / Lead Reservation", "defaultLens": "lead-funnel", "hiddenReason": "" },
+        { "cardId": "reservationConvert", "home": true, "workbench": true, "searchKeywords": ["convert", "转入住"], "intentTags": ["reservation"], "learningSection": "Accommodation / Lead Reservation", "defaultLens": "lead-funnel", "hiddenReason": "" }
+      ]
+    },
+    {
+      "sliceId": "Accommodation.StayLifecycle",
+      "workspaceId": "W-STAY-LIFECYCLE",
+      "domainGroup": "Accommodation",
+      "defaultLens": "active-stay",
+      "hiddenReason": "",
+      "home": { "visible": true, "priority": 90, "section": "accommodation-operations" },
+      "workbench": { "visible": true, "queueRule": "ready_or_blocked_cards" },
+      "search": { "visible": true, "keywords": ["stay", "checkin", "charge", "入住", "住宿", "应收"], "intentTags": ["stay_lifecycle", "charge"] },
+      "learning": { "visible": true, "section": "Accommodation / Stay Lifecycle" },
+      "lenses": ["active-stay", "stay-balance"],
+      "cards": [
+        { "cardId": "residentProfile", "home": true, "workbench": true, "searchKeywords": ["resident", "住客"], "intentTags": ["resident"], "learningSection": "Accommodation / Stay Lifecycle", "defaultLens": "active-stay", "hiddenReason": "" },
+        { "cardId": "checkInBedAssign", "home": true, "workbench": true, "searchKeywords": ["bed assign", "床位"], "intentTags": ["stay"], "learningSection": "Accommodation / Stay Lifecycle", "defaultLens": "active-stay", "hiddenReason": "" },
+        { "cardId": "chargeAssessment", "home": true, "workbench": true, "searchKeywords": ["charge", "应收"], "intentTags": ["charge"], "learningSection": "Accommodation / Stay Lifecycle", "defaultLens": "stay-balance", "hiddenReason": "" },
+        { "cardId": "stayExtension", "home": true, "workbench": true, "searchKeywords": ["extension", "续住"], "intentTags": ["stay"], "learningSection": "Accommodation / Stay Lifecycle", "defaultLens": "active-stay", "hiddenReason": "" }
+      ]
+    },
+    {
+      "sliceId": "Accommodation.DepositLedger",
+      "workspaceId": "W-STAY-DEPOSIT-LEDGER",
+      "domainGroup": "Accommodation",
+      "defaultLens": "deposit-liability",
+      "hiddenReason": "",
+      "home": { "visible": true, "priority": 96, "section": "accommodation-ledgers" },
+      "workbench": { "visible": true, "queueRule": "ready_or_blocked_cards" },
+      "search": { "visible": true, "keywords": ["deposit", "deposit ledger", "押金", "депозит"], "intentTags": ["deposit_ledger", "liability"] },
+      "learning": { "visible": true, "section": "Accommodation / Deposit Ledger" },
+      "lenses": ["deposit-liability"],
+      "cards": [
+        { "cardId": "depositAssessment", "home": true, "workbench": true, "searchKeywords": ["deposit assessment", "押金评估"], "intentTags": ["deposit"], "learningSection": "Accommodation / Deposit Ledger", "defaultLens": "deposit-liability", "hiddenReason": "" },
+        { "cardId": "depositReceipt", "home": true, "workbench": true, "searchKeywords": ["deposit receipt", "押金收取"], "intentTags": ["deposit"], "learningSection": "Accommodation / Deposit Ledger", "defaultLens": "deposit-liability", "hiddenReason": "" },
+        { "cardId": "depositConfirmation", "home": true, "workbench": true, "searchKeywords": ["deposit confirmation", "押金到账"], "intentTags": ["deposit"], "learningSection": "Accommodation / Deposit Ledger", "defaultLens": "deposit-liability", "hiddenReason": "" },
+        { "cardId": "depositDeduction", "home": true, "workbench": true, "searchKeywords": ["deposit deduction", "押金扣除"], "intentTags": ["deposit"], "learningSection": "Accommodation / Deposit Ledger", "defaultLens": "deposit-liability", "hiddenReason": "" },
+        { "cardId": "depositRefundApproval", "home": true, "workbench": true, "searchKeywords": ["deposit refund approval", "押金退款审批"], "intentTags": ["deposit"], "learningSection": "Accommodation / Deposit Ledger", "defaultLens": "deposit-liability", "hiddenReason": "" },
+        { "cardId": "depositRefundPayment", "home": true, "workbench": true, "searchKeywords": ["deposit refund payment", "押金退款付款"], "intentTags": ["deposit"], "learningSection": "Accommodation / Deposit Ledger", "defaultLens": "deposit-liability", "hiddenReason": "" },
+        { "cardId": "depositClose", "home": true, "workbench": true, "searchKeywords": ["deposit close", "押金关闭"], "intentTags": ["deposit"], "learningSection": "Accommodation / Deposit Ledger", "defaultLens": "deposit-liability", "hiddenReason": "" }
+      ]
+    },
+    {
+      "sliceId": "Accommodation.PaymentLedger",
+      "workspaceId": "W-STAY-PAYMENT-LEDGER",
+      "domainGroup": "Accommodation",
+      "defaultLens": "payment-risk",
+      "hiddenReason": "",
+      "home": { "visible": true, "priority": 95, "section": "accommodation-ledgers" },
+      "workbench": { "visible": true, "queueRule": "ready_or_blocked_cards" },
+      "search": { "visible": true, "keywords": ["payment", "payment ledger", "收款", "付款", "оплата"], "intentTags": ["payment_ledger", "stay_balance"] },
+      "learning": { "visible": true, "section": "Accommodation / Payment Ledger" },
+      "lenses": ["payment-risk", "stay-balance"],
+      "cards": [
+        { "cardId": "paymentReceipt", "home": true, "workbench": true, "searchKeywords": ["payment receipt", "收款登记"], "intentTags": ["payment"], "learningSection": "Accommodation / Payment Ledger", "defaultLens": "payment-risk", "hiddenReason": "" },
+        { "cardId": "paymentConfirmation", "home": true, "workbench": true, "searchKeywords": ["payment confirmation", "收款确认"], "intentTags": ["payment"], "learningSection": "Accommodation / Payment Ledger", "defaultLens": "payment-risk", "hiddenReason": "" },
+        { "cardId": "paymentAllocation", "home": true, "workbench": true, "searchKeywords": ["allocation", "分配"], "intentTags": ["stay_balance"], "learningSection": "Accommodation / Payment Ledger", "defaultLens": "stay-balance", "hiddenReason": "" },
+        { "cardId": "paymentAdjustment", "home": true, "workbench": true, "searchKeywords": ["adjustment", "调整"], "intentTags": ["stay_balance"], "learningSection": "Accommodation / Payment Ledger", "defaultLens": "stay-balance", "hiddenReason": "" },
+        { "cardId": "debtFollowUp", "home": true, "workbench": true, "searchKeywords": ["debt", "欠款"], "intentTags": ["stay_balance"], "learningSection": "Accommodation / Payment Ledger", "defaultLens": "stay-balance", "hiddenReason": "" }
+      ]
+    },
+    {
+      "sliceId": "Accommodation.CheckOutSettlement",
+      "workspaceId": "W-STAY-CHECKOUT-SETTLEMENT",
+      "domainGroup": "Accommodation",
+      "defaultLens": "checkout-queue",
+      "hiddenReason": "",
+      "home": { "visible": true, "priority": 89, "section": "accommodation-operations" },
+      "workbench": { "visible": true, "queueRule": "ready_or_blocked_cards" },
+      "search": { "visible": true, "keywords": ["checkout", "settlement", "退住", "退房", "结算"], "intentTags": ["checkout", "settlement"] },
+      "learning": { "visible": true, "section": "Accommodation / Checkout Settlement" },
+      "lenses": ["checkout-queue"],
+      "cards": [
+        { "cardId": "checkoutStart", "home": true, "workbench": true, "searchKeywords": ["checkout start", "退住发起"], "intentTags": ["checkout"], "learningSection": "Accommodation / Checkout Settlement", "defaultLens": "checkout-queue", "hiddenReason": "" },
+        { "cardId": "roomInspection", "home": true, "workbench": true, "searchKeywords": ["inspection", "房间检查"], "intentTags": ["checkout"], "learningSection": "Accommodation / Checkout Settlement", "defaultLens": "checkout-queue", "hiddenReason": "" },
+        { "cardId": "depositSettlement", "home": true, "workbench": true, "searchKeywords": ["deposit settlement", "押金结算"], "intentTags": ["checkout"], "learningSection": "Accommodation / Checkout Settlement", "defaultLens": "checkout-queue", "hiddenReason": "" },
+        { "cardId": "finalBalanceClose", "home": true, "workbench": true, "searchKeywords": ["final balance", "最终余额"], "intentTags": ["checkout"], "learningSection": "Accommodation / Checkout Settlement", "defaultLens": "checkout-queue", "hiddenReason": "" },
+        { "cardId": "bedRelease", "home": true, "workbench": true, "searchKeywords": ["bed release", "释放床位"], "intentTags": ["checkout"], "learningSection": "Accommodation / Checkout Settlement", "defaultLens": "checkout-queue", "hiddenReason": "" },
+        { "cardId": "postCheckoutCleaning", "home": true, "workbench": true, "searchKeywords": ["cleaning", "退住清洁"], "intentTags": ["checkout"], "learningSection": "Accommodation / Checkout Settlement", "defaultLens": "checkout-queue", "hiddenReason": "" }
+      ]
+    },
+    {
+      "sliceId": "Accommodation.ServiceTask",
+      "workspaceId": "W-STAY-SERVICE-TASK",
+      "domainGroup": "Accommodation",
+      "defaultLens": "service-task-queue",
+      "hiddenReason": "",
+      "home": { "visible": true, "priority": 87, "section": "accommodation-operations" },
+      "workbench": { "visible": true, "queueRule": "ready_or_blocked_cards" },
+      "search": { "visible": true, "keywords": ["service", "clean", "maintenance", "服务", "清洁", "维修"], "intentTags": ["service_task"] },
+      "learning": { "visible": true, "section": "Accommodation / Service Task" },
+      "lenses": ["service-task-queue"],
+      "cards": [
+        { "cardId": "serviceTaskCreate", "home": true, "workbench": true, "searchKeywords": ["task create", "任务创建"], "intentTags": ["service_task"], "learningSection": "Accommodation / Service Task", "defaultLens": "service-task-queue", "hiddenReason": "" },
+        { "cardId": "serviceTaskAssign", "home": true, "workbench": true, "searchKeywords": ["task assign", "任务分派"], "intentTags": ["service_task"], "learningSection": "Accommodation / Service Task", "defaultLens": "service-task-queue", "hiddenReason": "" },
+        { "cardId": "serviceTaskComplete", "home": true, "workbench": true, "searchKeywords": ["task complete", "任务完成"], "intentTags": ["service_task"], "learningSection": "Accommodation / Service Task", "defaultLens": "service-task-queue", "hiddenReason": "" },
+        { "cardId": "serviceTaskVerify", "home": true, "workbench": true, "searchKeywords": ["task verify", "任务验收"], "intentTags": ["service_task"], "learningSection": "Accommodation / Service Task", "defaultLens": "service-task-queue", "hiddenReason": "" },
+        { "cardId": "roomReleaseAfterService", "home": true, "workbench": true, "searchKeywords": ["release after service", "服务后释放"], "intentTags": ["service_task"], "learningSection": "Accommodation / Service Task", "defaultLens": "service-task-queue", "hiddenReason": "" }
+      ]
+    },
+    {
+      "sliceId": "Accommodation.ExpenseLedger",
+      "workspaceId": "W-STAY-EXPENSE-LEDGER",
+      "domainGroup": "Accommodation",
+      "defaultLens": "expense-analytics",
+      "hiddenReason": "",
+      "home": { "visible": true, "priority": 84, "section": "accommodation-ledgers" },
+      "workbench": { "visible": true, "queueRule": "ready_or_blocked_cards" },
+      "search": { "visible": true, "keywords": ["expense", "cost", "支出", "成本"], "intentTags": ["expense_ledger"] },
+      "learning": { "visible": true, "section": "Accommodation / Expense Ledger" },
+      "lenses": ["expense-analytics"],
+      "cards": [
+        { "cardId": "expenseRecord", "home": true, "workbench": true, "searchKeywords": ["expense record", "支出登记"], "intentTags": ["expense"], "learningSection": "Accommodation / Expense Ledger", "defaultLens": "expense-analytics", "hiddenReason": "" },
+        { "cardId": "expenseApproval", "home": true, "workbench": true, "searchKeywords": ["expense approval", "支出审批"], "intentTags": ["expense"], "learningSection": "Accommodation / Expense Ledger", "defaultLens": "expense-analytics", "hiddenReason": "" },
+        { "cardId": "expenseLink", "home": true, "workbench": true, "searchKeywords": ["expense link", "支出关联"], "intentTags": ["expense"], "learningSection": "Accommodation / Expense Ledger", "defaultLens": "expense-analytics", "hiddenReason": "" }
+      ]
+    },
+    {
+      "sliceId": "Accommodation.PeriodAnalytics",
+      "workspaceId": "W-STAY-PERIOD-ANALYTICS",
+      "domainGroup": "Accommodation",
+      "defaultLens": "period-performance",
+      "hiddenReason": "",
+      "home": { "visible": true, "priority": 83, "section": "accommodation-analytics" },
+      "workbench": { "visible": true, "queueRule": "ready_or_blocked_cards" },
+      "search": { "visible": true, "keywords": ["period", "analytics", "review", "周期", "复盘", "分析"], "intentTags": ["period_analytics"] },
+      "learning": { "visible": true, "section": "Accommodation / Period Analytics" },
+      "lenses": ["period-performance", "risk-command"],
+      "cards": [
+        { "cardId": "periodScope", "home": true, "workbench": true, "searchKeywords": ["period scope", "周期范围"], "intentTags": ["period"], "learningSection": "Accommodation / Period Analytics", "defaultLens": "period-performance", "hiddenReason": "" },
+        { "cardId": "periodMetricsReview", "home": true, "workbench": true, "searchKeywords": ["metrics", "指标"], "intentTags": ["period"], "learningSection": "Accommodation / Period Analytics", "defaultLens": "period-performance", "hiddenReason": "" },
+        { "cardId": "periodFinanceReview", "home": true, "workbench": true, "searchKeywords": ["finance review", "财务复核"], "intentTags": ["period"], "learningSection": "Accommodation / Period Analytics", "defaultLens": "period-performance", "hiddenReason": "" },
+        { "cardId": "periodOperationsDiagnosis", "home": true, "workbench": true, "searchKeywords": ["diagnosis", "运营诊断"], "intentTags": ["period"], "learningSection": "Accommodation / Period Analytics", "defaultLens": "risk-command", "hiddenReason": "" },
+        { "cardId": "periodActionPlan", "home": true, "workbench": true, "searchKeywords": ["action plan", "行动计划"], "intentTags": ["period"], "learningSection": "Accommodation / Period Analytics", "defaultLens": "period-performance", "hiddenReason": "" },
+        { "cardId": "periodActionPlanComplete", "home": true, "workbench": true, "searchKeywords": ["action complete", "行动完成"], "intentTags": ["period"], "learningSection": "Accommodation / Period Analytics", "defaultLens": "period-performance", "hiddenReason": "" },
+        { "cardId": "periodClose", "home": true, "workbench": true, "searchKeywords": ["close", "周期关闭"], "intentTags": ["period"], "learningSection": "Accommodation / Period Analytics", "defaultLens": "period-performance", "hiddenReason": "" }
+      ]
+    },
+    {
+      "sliceId": "Accommodation.CheckOut",
+      "workspaceId": "W-STAY-CHECKOUT",
+      "domainGroup": "Accommodation",
+      "defaultLens": "checkout-queue",
+      "hiddenReason": "contract-only slice is visible for learning and prepare but blocked from confirm",
+      "home": { "visible": true, "priority": 40, "section": "contract-preview" },
+      "workbench": { "visible": true, "queueRule": "prepare_only" },
+      "search": { "visible": true, "keywords": ["checkout", "退房"], "intentTags": ["contract_preview"] },
+      "learning": { "visible": true, "section": "Contract Preview / Checkout" },
+      "lenses": ["checkout-queue"],
+      "cards": [
+        { "cardId": "checkoutStart", "home": true, "workbench": true, "searchKeywords": ["checkout start"], "intentTags": ["contract_preview"], "learningSection": "Contract Preview / Checkout", "defaultLens": "checkout-queue", "hiddenReason": "" },
+        { "cardId": "roomInspection", "home": true, "workbench": true, "searchKeywords": ["inspection"], "intentTags": ["contract_preview"], "learningSection": "Contract Preview / Checkout", "defaultLens": "checkout-queue", "hiddenReason": "" },
+        { "cardId": "feeSettlement", "home": true, "workbench": true, "searchKeywords": ["fee settlement"], "intentTags": ["contract_preview"], "learningSection": "Contract Preview / Checkout", "defaultLens": "checkout-queue", "hiddenReason": "" },
+        { "cardId": "checkoutFinance", "home": true, "workbench": true, "searchKeywords": ["checkout finance"], "intentTags": ["contract_preview"], "learningSection": "Contract Preview / Checkout", "defaultLens": "checkout-queue", "hiddenReason": "" },
+        { "cardId": "checkoutClose", "home": true, "workbench": true, "searchKeywords": ["checkout close"], "intentTags": ["contract_preview"], "learningSection": "Contract Preview / Checkout", "defaultLens": "checkout-queue", "hiddenReason": "" }
+      ]
+    },
+    {
+      "sliceId": "Finance.DepositException",
+      "workspaceId": "W-STAY-DEPOSIT-EXCEPTION",
+      "domainGroup": "Finance",
+      "defaultLens": "deposit-liability",
+      "hiddenReason": "contract-only slice is visible for learning and prepare but blocked from confirm",
+      "home": { "visible": true, "priority": 40, "section": "contract-preview" },
+      "workbench": { "visible": true, "queueRule": "prepare_only" },
+      "search": { "visible": true, "keywords": ["deposit exception", "押金异常"], "intentTags": ["contract_preview"] },
+      "learning": { "visible": true, "section": "Contract Preview / Deposit Exception" },
+      "lenses": ["deposit-liability"],
+      "cards": [
+        { "cardId": "reason", "home": true, "workbench": true, "searchKeywords": ["reason"], "intentTags": ["contract_preview"], "learningSection": "Contract Preview / Deposit Exception", "defaultLens": "deposit-liability", "hiddenReason": "" },
+        { "cardId": "resubmit", "home": true, "workbench": true, "searchKeywords": ["resubmit"], "intentTags": ["contract_preview"], "learningSection": "Contract Preview / Deposit Exception", "defaultLens": "deposit-liability", "hiddenReason": "" },
+        { "cardId": "review", "home": true, "workbench": true, "searchKeywords": ["review"], "intentTags": ["contract_preview"], "learningSection": "Contract Preview / Deposit Exception", "defaultLens": "deposit-liability", "hiddenReason": "" },
+        { "cardId": "returnBusiness", "home": true, "workbench": true, "searchKeywords": ["return"], "intentTags": ["contract_preview"], "learningSection": "Contract Preview / Deposit Exception", "defaultLens": "deposit-liability", "hiddenReason": "" }
+      ]
+    },
+    {
+      "sliceId": "Repair.Request",
+      "workspaceId": "W-REPAIR-REQUEST",
+      "domainGroup": "Repair",
+      "defaultLens": "risk-command",
+      "hiddenReason": "runtime seed workspace with surface policy while repair slice admission remains contract preview",
+      "home": { "visible": true, "priority": 62, "section": "repair-operations" },
+      "workbench": { "visible": true, "queueRule": "ready_or_blocked_cards" },
+      "search": { "visible": true, "keywords": ["repair request", "报修", "到场", "ремонт"], "intentTags": ["repair_request"] },
+      "learning": { "visible": true, "section": "Repair / Request" },
+      "lenses": ["risk-command"],
+      "cards": [
+        { "cardId": "customerVehicle", "home": true, "workbench": true, "searchKeywords": ["customer vehicle", "客户车辆"], "intentTags": ["repair_request"], "learningSection": "Repair / Request", "defaultLens": "risk-command", "hiddenReason": "" },
+        { "cardId": "request", "home": true, "workbench": true, "searchKeywords": ["request", "报修信息"], "intentTags": ["repair_request"], "learningSection": "Repair / Request", "defaultLens": "risk-command", "hiddenReason": "" },
+        { "cardId": "arrival", "home": true, "workbench": true, "searchKeywords": ["arrival", "到场"], "intentTags": ["repair_request"], "learningSection": "Repair / Request", "defaultLens": "risk-command", "hiddenReason": "" },
+        { "cardId": "dispatchEntry", "home": true, "workbench": true, "searchKeywords": ["dispatch entry", "派工入口"], "intentTags": ["repair_request"], "learningSection": "Repair / Request", "defaultLens": "risk-command", "hiddenReason": "" }
+      ]
+    },
+    {
+      "sliceId": "Repair.Dispatch",
+      "workspaceId": "W-REPAIR-DISPATCH",
+      "domainGroup": "Repair",
+      "defaultLens": "risk-command",
+      "hiddenReason": "contract-only slice is visible for learning and prepare but blocked from confirm",
+      "home": { "visible": true, "priority": 40, "section": "contract-preview" },
+      "workbench": { "visible": true, "queueRule": "prepare_only" },
+      "search": { "visible": true, "keywords": ["repair", "dispatch", "维修", "派工"], "intentTags": ["contract_preview"] },
+      "learning": { "visible": true, "section": "Contract Preview / Repair Dispatch" },
+      "lenses": ["risk-command"],
+      "cards": [
+        { "cardId": "dispatch", "home": true, "workbench": true, "searchKeywords": ["dispatch"], "intentTags": ["contract_preview"], "learningSection": "Contract Preview / Repair Dispatch", "defaultLens": "risk-command", "hiddenReason": "" },
+        { "cardId": "diagnosis", "home": true, "workbench": true, "searchKeywords": ["diagnosis"], "intentTags": ["contract_preview"], "learningSection": "Contract Preview / Repair Dispatch", "defaultLens": "risk-command", "hiddenReason": "" },
+        { "cardId": "execution", "home": true, "workbench": true, "searchKeywords": ["execution"], "intentTags": ["contract_preview"], "learningSection": "Contract Preview / Repair Dispatch", "defaultLens": "risk-command", "hiddenReason": "" },
+        { "cardId": "repairBlocker", "home": true, "workbench": true, "searchKeywords": ["blocker"], "intentTags": ["contract_preview"], "learningSection": "Contract Preview / Repair Dispatch", "defaultLens": "risk-command", "hiddenReason": "" }
+      ]
+    },
+    {
+      "sliceId": "Repair.Close",
+      "workspaceId": "W-REPAIR-CLOSE",
+      "domainGroup": "Repair",
+      "defaultLens": "risk-command",
+      "hiddenReason": "contract-only slice is visible for learning and prepare but blocked from confirm",
+      "home": { "visible": true, "priority": 40, "section": "contract-preview" },
+      "workbench": { "visible": true, "queueRule": "prepare_only" },
+      "search": { "visible": true, "keywords": ["repair close", "维修关闭"], "intentTags": ["contract_preview"] },
+      "learning": { "visible": true, "section": "Contract Preview / Repair Close" },
+      "lenses": ["risk-command"],
+      "cards": [
+        { "cardId": "inspection", "home": true, "workbench": true, "searchKeywords": ["inspection"], "intentTags": ["contract_preview"], "learningSection": "Contract Preview / Repair Close", "defaultLens": "risk-command", "hiddenReason": "" },
+        { "cardId": "feeMaterial", "home": true, "workbench": true, "searchKeywords": ["fee material"], "intentTags": ["contract_preview"], "learningSection": "Contract Preview / Repair Close", "defaultLens": "risk-command", "hiddenReason": "" },
+        { "cardId": "customerConfirm", "home": true, "workbench": true, "searchKeywords": ["customer confirm"], "intentTags": ["contract_preview"], "learningSection": "Contract Preview / Repair Close", "defaultLens": "risk-command", "hiddenReason": "" },
+        { "cardId": "close", "home": true, "workbench": true, "searchKeywords": ["close"], "intentTags": ["contract_preview"], "learningSection": "Contract Preview / Repair Close", "defaultLens": "risk-command", "hiddenReason": "" }
+      ]
+    },
+    {
+      "sliceId": "Repair.MasterData",
+      "workspaceId": "W-REPAIR-MASTER-DATA",
+      "domainGroup": "Repair",
+      "defaultLens": "risk-command",
+      "hiddenReason": "runtime seed workspace with surface policy while repair master-data slice admission is not yet production",
+      "home": { "visible": true, "priority": 58, "section": "repair-operations" },
+      "workbench": { "visible": true, "queueRule": "ready_or_blocked_cards" },
+      "search": { "visible": true, "keywords": ["repair master data", "维修资料", "客户", "车辆"], "intentTags": ["repair_master_data"] },
+      "learning": { "visible": true, "section": "Repair / Master Data" },
+      "lenses": ["risk-command"],
+      "cards": [
+        { "cardId": "customer", "home": true, "workbench": true, "searchKeywords": ["customer", "客户"], "intentTags": ["repair_master_data"], "learningSection": "Repair / Master Data", "defaultLens": "risk-command", "hiddenReason": "" },
+        { "cardId": "vehicle", "home": true, "workbench": true, "searchKeywords": ["vehicle", "车辆"], "intentTags": ["repair_master_data"], "learningSection": "Repair / Master Data", "defaultLens": "risk-command", "hiddenReason": "" },
+        { "cardId": "serviceRule", "home": true, "workbench": true, "searchKeywords": ["service rule", "服务规则"], "intentTags": ["repair_master_data"], "learningSection": "Repair / Master Data", "defaultLens": "risk-command", "hiddenReason": "" }
+      ]
+    }
+  ]
+}

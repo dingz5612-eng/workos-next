@@ -10,28 +10,35 @@ import {
 } from "../selectors/surfaceSelectors.js";
 import { workspace as currentWorkspace } from "../selectors/workspaceSelectors.js";
 
-const depositWorkspace = workspace("W-STAY-DEPOSIT-LEDGER", "stay", "depositReceipt", "ready", "押金账本");
-const checkinWorkspace = workspace("W-STAY-CHECKIN", "stay", "lead", "ready", "入住押金");
-const paymentWorkspace = workspace("W-STAY-PAYMENT-LEDGER", "stay", "paymentReceipt", "ready", "收款账本");
+const manifest = JSON.parse(fs.readFileSync(new URL("../../../../docs/contracts/slice-manifest.json", import.meta.url), "utf8"));
+const surfacePolicy = JSON.parse(fs.readFileSync(new URL("../../../../docs/contracts/runtime-surface-policy.json", import.meta.url), "utf8"));
+const productionSlices = manifest.slices.filter((slice) => slice.status === "production-slice");
+const firstProduction = productionSlices[0];
+const secondProduction = productionSlices[1];
+const firstWorkspace = workspace(firstProduction.workspaceId, domainFor(firstProduction.workspaceId), firstProduction.cards[0], "ready", firstProduction.id);
+const secondWorkspace = workspace(secondProduction.workspaceId, domainFor(secondProduction.workspaceId), secondProduction.cards[0], "ready", secondProduction.id);
 
 describe("runtime surface selectors", () => {
   it("keeps Accommodation runtime slices visible on Home and Learning", () => {
-    const state = runtimeState([depositWorkspace, paymentWorkspace]);
+    const state = runtimeState([firstWorkspace, secondWorkspace]);
 
-    expect(selectHomeSurface(state).map((item) => item.workspaceId)).toContain("W-STAY-DEPOSIT-LEDGER");
+    expect(selectHomeSurface(state).map((item) => item.workspaceId)).toEqual(expect.arrayContaining([
+      firstProduction.workspaceId,
+      secondProduction.workspaceId
+    ]));
     expect(selectLearningCatalog(state).map((item) => item.id)).toEqual(expect.arrayContaining([
-      "W-STAY-DEPOSIT-LEDGER",
-      "W-STAY-PAYMENT-LEDGER"
+      firstProduction.workspaceId,
+      secondProduction.workspaceId
     ]));
   });
 
   it("uses backend learningCatalog before projection fallback", () => {
-    const state = runtimeState([depositWorkspace, paymentWorkspace], {
+    const state = runtimeState([firstWorkspace, secondWorkspace], {
       learningCatalog: [{
-        workspaceId: "W-STAY-DEPOSIT-LEDGER",
-        cardId: "depositReceipt",
-        title: depositWorkspace.cards[0].title,
-        fields: [{ id: "depositId", label: { "zh-CN": "押金单", "ru-RU": "Депозит" } }],
+        workspaceId: firstProduction.workspaceId,
+        cardId: firstProduction.cards[0],
+        title: firstWorkspace.cards[0].title,
+        fields: [{ id: "runtimeField", label: { "zh-CN": "运行时字段", "ru-RU": "Поле runtime" } }],
         evidence: [],
         checks: [],
         blockers: []
@@ -41,13 +48,12 @@ describe("runtime surface selectors", () => {
 
     const catalog = selectLearningCatalog(state);
     expect(catalog).toHaveLength(1);
-    expect(catalog[0].id).toBe("W-STAY-DEPOSIT-LEDGER");
+    expect(catalog[0].id).toBe(firstProduction.workspaceId);
     expect(catalog[0]._learningSource).toBe("runtime-api");
-    expect(catalog[0].cards.map((card) => card.id)).toEqual(["depositReceipt"]);
+    expect(catalog[0].cards.map((card) => card.id)).toEqual([firstProduction.cards[0]]);
   });
 
   it("covers manifest workspaces across Home Workbench Search Learning and Workspace selectors", () => {
-    const manifest = JSON.parse(fs.readFileSync(new URL("../../../../docs/contracts/slice-manifest.json", import.meta.url), "utf8"));
     const manifestWorkspaces = manifest.slices.map((slice) =>
       workspace(slice.workspaceId, domainFor(slice.workspaceId), slice.cards[0], "ready", slice.id));
     const state = runtimeState(manifestWorkspaces);
@@ -66,59 +72,80 @@ describe("runtime surface selectors", () => {
   });
 
   it("uses runtime queue items with workspaceId/cardId for Workbench", () => {
-    const state = runtimeState([paymentWorkspace], {
+    const state = runtimeState([secondWorkspace], {
       workQueue: [{
-        queueItemId: "q-W-STAY-PAYMENT-LEDGER-paymentReceipt",
-        workspaceId: "W-STAY-PAYMENT-LEDGER",
-        cardId: "paymentReceipt",
-        domain: "stay",
+        queueItemId: `q-${secondProduction.workspaceId}-${secondProduction.cards[0]}`,
+        workspaceId: secondProduction.workspaceId,
+        cardId: secondProduction.cards[0],
+        domain: secondWorkspace.domain,
         badges: ["mine", "ready"],
         priority: 90,
-        reason: paymentWorkspace.next
+        reason: secondWorkspace.next
       }]
     });
 
     const queue = selectWorkbenchQueue(state);
     expect(queue).toHaveLength(1);
-    expect(queue[0].workspace.id).toBe("W-STAY-PAYMENT-LEDGER");
-    expect(queue[0].card.id).toBe("paymentReceipt");
+    expect(queue[0].workspace.id).toBe(secondProduction.workspaceId);
+    expect(queue[0].card.id).toBe(secondProduction.cards[0]);
     expect(queue[0].source).not.toBe("offline-demo-fallback");
   });
 
-  it("prefers the current DepositLedger surface for deposit search intent", () => {
-    const results = selectSearchSurfaceResults(runtimeState([checkinWorkspace, depositWorkspace]), "押金");
-    expect(results[0].id).toBe("W-STAY-DEPOSIT-LEDGER");
-    expect(results.findIndex((item) => item.id === "W-STAY-DEPOSIT-LEDGER"))
-      .toBeLessThan(results.findIndex((item) => item.id === "W-STAY-CHECKIN"));
+  it("preserves backend runtime lens search results instead of local business boosts", () => {
+    const query = "runtime";
+    const state = runtimeState([firstWorkspace, secondWorkspace], {
+      searchResultsByQuery: {
+        [query]: [
+          { workspaceId: firstProduction.workspaceId, cardId: firstProduction.cards[0], score: 10 },
+          { workspaceId: secondProduction.workspaceId, cardId: secondProduction.cards[0], score: 90 }
+        ]
+      }
+    });
+    const results = selectSearchSurfaceResults(state, query);
+    expect(results.map((item) => item.id)).toEqual([firstProduction.workspaceId, secondProduction.workspaceId]);
+    expect(results.map((item) => item.score)).toEqual([10, 90]);
   });
 
   it("allows demo queue only as explicit offline fallback", () => {
-    const online = selectWorkbenchQueue(runtimeState([depositWorkspace]));
+    const online = selectWorkbenchQueue(runtimeState([firstWorkspace]));
     expect(online.every((item) => item.source !== "offline-demo-fallback")).toBe(true);
 
-    const offline = runtimeState([depositWorkspace]);
+    const offline = runtimeState([firstWorkspace]);
     offline.apiStatus = "offline";
     offline.runtimeStore.apiStatus = "offline";
     expect(selectWorkbenchQueue(offline).some((item) => item.source === "offline-demo-fallback")).toBe(true);
   });
 
   it("opens workspace from queue with card preselection", () => {
-    const state = runtimeState([paymentWorkspace]);
+    const state = runtimeState([secondWorkspace]);
     const ctx = { state: { ...state, currentActor: { role: "operator" } }, render: () => {} };
 
-    openWorkspace("W-STAY-PAYMENT-LEDGER", ctx, "paymentReceipt");
+    openWorkspace(secondProduction.workspaceId, ctx, secondProduction.cards[0]);
 
-    expect(ctx.state.selectedWorkspace).toBe("W-STAY-PAYMENT-LEDGER");
-    expect(ctx.state.selectedCardId).toBe("paymentReceipt");
+    expect(ctx.state.selectedWorkspace).toBe(secondProduction.workspaceId);
+    expect(ctx.state.selectedCardId).toBe(secondProduction.cards[0]);
     expect(ctx.state.view).toBe("workspace");
   });
 
   it("resolves workspace view from runtimeStore without a business-id fallback", () => {
-    const state = runtimeState([paymentWorkspace]);
+    const state = runtimeState([secondWorkspace]);
     state.selectedWorkspace = "missing-workspace";
 
     expect(selectWorkspaceById(state, "missing-workspace")).toBeUndefined();
-    expect(currentWorkspace(state).id).toBe("W-STAY-PAYMENT-LEDGER");
+    expect(currentWorkspace(state).id).toBe(secondProduction.workspaceId);
+  });
+
+  it("keeps every production slice backed by a surface policy", () => {
+    const policies = new Map(surfacePolicy.policies.map((policy) => [policy.sliceId, policy]));
+    for (const slice of productionSlices) {
+      const policy = policies.get(slice.id);
+      expect(policy?.workspaceId).toBe(slice.workspaceId);
+      expect(policy?.cards.map((card) => card.cardId).sort()).toEqual([...slice.cards].sort());
+      expect(policy?.home.visible || policy?.hiddenReason).toBeTruthy();
+      expect(policy?.workbench.visible || policy?.hiddenReason).toBeTruthy();
+      expect(policy?.search.visible || policy?.hiddenReason).toBeTruthy();
+      expect(policy?.learning.visible || policy?.hiddenReason).toBeTruthy();
+    }
   });
 });
 

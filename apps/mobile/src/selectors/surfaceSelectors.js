@@ -135,7 +135,7 @@ function projectionHomeItem(workspace) {
     cardId: card?.id || "",
     domain: workspace.domain,
     domainGroup: domainGroupFor(workspace),
-    priority: priorityFor(card?.status) + (workspace.domain === "stay" ? 20 : 0),
+    priority: priorityFor(card?.status),
     status: card?.status || "",
     title: workspace.title,
     summary: workspace.summary,
@@ -211,7 +211,7 @@ function withSurfaceCard(workspace, cardId, score) {
 function withSurfaceScore(workspace, query) {
   const text = workspaceText(workspace);
   const score = text.includes(query) ? 50 : 0;
-  return withSurfaceCard(workspace, activeCard(workspace)?.id, score + intentBoost(workspace, query));
+  return withSurfaceCard(workspace, activeCard(workspace)?.id, score);
 }
 
 function workspaceText(workspace) {
@@ -226,21 +226,6 @@ function workspaceText(workspace) {
     workspace.next?.["ru-RU"],
     workspace.cards?.map((card) => `${card.id} ${card.title?.["zh-CN"] || ""} ${card.title?.["ru-RU"] || ""}`).join(" ")
   ].join(" ").toLocaleLowerCase();
-}
-
-function intentBoost(workspace, query) {
-  if (containsAny(query, "押金", "deposit", "депозит") && workspace.id === "W-STAY-DEPOSIT-LEDGER") return 200;
-  if (containsAny(query, "收款", "payment", "оплат") && workspace.id === "W-STAY-PAYMENT-LEDGER") return 180;
-  if (containsAny(query, "入住", "checkin", "засел") && workspace.id === "W-STAY-LIFECYCLE") return 160;
-  if (containsAny(query, "预订", "reservation", "брон") && workspace.id === "W-STAY-LEAD-RESERVATION") return 160;
-  if (containsAny(query, "退住", "退房", "checkout", "высел") && workspace.id === "W-STAY-CHECKOUT-SETTLEMENT") return 160;
-  if (containsAny(query, "清洁", "维修", "service", "clean", "ремонт") && workspace.id === "W-STAY-SERVICE-TASK") return 150;
-  if (containsAny(query, "周期", "复盘", "period", "analytics") && workspace.id === "W-STAY-PERIOD-ANALYTICS") return 150;
-  return 0;
-}
-
-function containsAny(value, ...terms) {
-  return terms.some((term) => value.includes(term.toLocaleLowerCase()));
 }
 
 function badgesFor(card) {

@@ -123,9 +123,11 @@ generated files drift from contract sources.
 
 ## Runtime Surface Contract
 
-Runtime surfaces use `RuntimeSurfacePolicy` to decide visibility and priority.
-When explicit policy is absent, defaults may be derived from workspace and slice
-metadata, but new production slices must still have surface coverage:
+Runtime surfaces use `RuntimeSurfacePolicy` from
+`docs/contracts/runtime-surface-policy.json` to decide visibility and priority.
+New production slices without explicit surface policy fail admission. The
+frontend consumes backend surface Lens output and must not add business-specific
+priority exceptions.
 
 - Home visible or explicit hidden reason.
 - Workbench visible or explicit no-queue reason.

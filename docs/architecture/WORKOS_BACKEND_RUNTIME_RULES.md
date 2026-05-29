@@ -148,6 +148,22 @@ node scripts/validate-runtime-api.mjs
 node scripts/generate-contract-dtos.mjs --check
 ```
 
+## Runtime Observability
+
+`GET /api/observability/runtime` must expose governance and runtime health
+metrics, not only basic counts:
+
+- projection lag seconds
+- outbox pending/dead-letter counts
+- failed confirm reason distribution
+- surface coverage missing count
+- ledger invariant violation count
+- runtime schema version
+- active architecture exception ids
+
+CI must also emit an architecture drift summary from
+`scripts/architecture-drift-report.mjs`.
+
 ## Production Auth
 
 Development auth fallback belongs only in development configuration and must not

@@ -4,6 +4,8 @@ const projectionSchema = JSON.parse(fs.readFileSync("docs/contracts/projection-c
 const openApi = JSON.parse(fs.readFileSync("docs/contracts/workos-runtime.openapi.json", "utf8"));
 const sliceManifest = JSON.parse(fs.readFileSync("docs/contracts/slice-manifest.json", "utf8"));
 const policyContract = JSON.parse(fs.readFileSync("docs/contracts/policy-contract.json", "utf8"));
+const surfacePolicy = JSON.parse(fs.readFileSync("docs/contracts/runtime-surface-policy.json", "utf8"));
+const lensContract = JSON.parse(fs.readFileSync("docs/contracts/accommodation-lens-contract.json", "utf8"));
 const rulesIndex = JSON.parse(fs.readFileSync("docs/architecture/rules/index.json", "utf8"));
 const architectureExceptions = JSON.parse(fs.readFileSync("docs/architecture/architecture-exceptions.json", "utf8"));
 
@@ -44,7 +46,7 @@ for (const surfacePath of ["/api/lenses/home-surface", "/api/lenses/work-queue",
   }
 }
 
-for (const field of ["service", "version", "persistence", "workspaceCount", "cardCount", "auditEventCount", "outboxCount", "pendingOutboxCount"]) {
+for (const field of ["service", "version", "persistence", "workspaceCount", "cardCount", "auditEventCount", "outboxCount", "pendingOutboxCount", "deadLetterOutboxCount", "behaviorEventCount", "projectionLagSeconds", "failedConfirmReasonDistribution", "surfaceCoverageMissingCount", "ledgerInvariantViolationCount", "schemaVersion", "activeArchitectureExceptionCount", "activeArchitectureExceptions"]) {
   if (!openApi.components?.schemas?.RuntimeObservation?.required?.includes(field)) {
     throw new Error(`RuntimeObservation schema must require ${field}`);
   }
@@ -87,6 +89,28 @@ for (const slice of sliceManifest.slices || []) {
   for (const field of ["workspaceId", "cards", "events", "ownsAggregates", "status"]) {
     if (!slice[field] || (Array.isArray(slice[field]) && slice[field].length === 0)) {
       throw new Error(`Slice ${slice.id} missing ${field}`);
+    }
+  }
+}
+
+const policiesBySlice = new Map((surfacePolicy.policies || []).map((policy) => [policy.sliceId, policy]));
+const lensIds = new Set((lensContract.lenses || []).map((lens) => lens.id));
+for (const slice of sliceManifest.slices || []) {
+  const policy = policiesBySlice.get(slice.id);
+  if (!policy) {
+    throw new Error(`Slice ${slice.id} must have RuntimeSurfacePolicy.`);
+  }
+  if (policy.workspaceId !== slice.workspaceId) {
+    throw new Error(`Slice ${slice.id} RuntimeSurfacePolicy workspaceId mismatch.`);
+  }
+  if (slice.status === "production-slice") {
+    if (!policy.defaultLens || !(policy.lenses || []).includes(policy.defaultLens)) {
+      throw new Error(`Production slice ${slice.id} must declare a default lens in RuntimeSurfacePolicy.`);
+    }
+    for (const lens of policy.lenses || []) {
+      if (!lensIds.has(lens) && !["bed-inventory", "room-readiness", "rate-plan", "today-operations", "active-stay", "deposit-liability", "stay-balance", "expense-analytics"].includes(lens)) {
+        throw new Error(`Production slice ${slice.id} references unknown lens ${lens}.`);
+      }
     }
   }
 }

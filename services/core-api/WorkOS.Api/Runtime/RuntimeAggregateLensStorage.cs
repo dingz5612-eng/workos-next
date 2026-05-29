@@ -94,6 +94,8 @@ internal sealed class RuntimeAggregateLensStorage
                 """, reader => new
                 {
                     lens = "RoomRevenuePotentialLens",
+                    sourceOfTruthTables = new[] { "accommodation_rooms", "accommodation_rate_plans" },
+                    projectionLagSeconds = LagSeconds(reader.GetDateTime(7)),
                     roomId = reader.GetString(0),
                     workspaceId = reader.GetString(1),
                     roomNo = reader.GetString(2),
@@ -127,7 +129,8 @@ internal sealed class RuntimeAggregateLensStorage
                     count(*) as lead_count,
                     count(b.booking_id) as reservation_count,
                     count(s.stay_id) as stay_count,
-                    case when count(*) = 0 then 0 else count(b.booking_id)::numeric / count(*) end as reservation_rate
+                    case when count(*) = 0 then 0 else count(b.booking_id)::numeric / count(*) end as reservation_rate,
+                    max(greatest(l.updated_at_utc, coalesce(b.updated_at_utc, l.updated_at_utc), coalesce(s.updated_at_utc, l.updated_at_utc))) as updated_at_utc
                 from hostel_leads l
                 left join hostel_bookings b on b.lead_id = l.lead_id
                 left join hostel_stays s on s.stay_id = replace(b.booking_id, 'booking', 'stay')
@@ -136,6 +139,8 @@ internal sealed class RuntimeAggregateLensStorage
                 """, reader => new
                 {
                     lens = "LeadFunnelLens",
+                    sourceOfTruthTables = new[] { "hostel_leads", "hostel_bookings", "hostel_stays" },
+                    projectionLagSeconds = LagSeconds(reader.GetDateTime(5)),
                     sourceChannel = reader.GetString(0),
                     leadCount = reader.GetInt64(1),
                     reservationCount = reader.GetInt64(2),
@@ -180,11 +185,14 @@ internal sealed class RuntimeAggregateLensStorage
             "payment-risk" => Query("""
                 select payment_id, workspace_id, folio_id, amount, currency, method, purpose, status, updated_at_utc
                 from hostel_payments
-                where status <> 'confirmed'
+                where workspace_id = 'W-STAY-PAYMENT-LEDGER'
+                  and status <> 'confirmed'
                 order by updated_at_utc, payment_id
                 """, reader => new
                 {
                     lens = "PaymentRiskLens",
+                    sourceOfTruthTables = new[] { "hostel_payments" },
+                    projectionLagSeconds = LagSeconds(reader.GetDateTime(8)),
                     paymentId = reader.GetString(0),
                     workspaceId = reader.GetString(1),
                     folioId = reader.GetString(2),
@@ -220,6 +228,8 @@ internal sealed class RuntimeAggregateLensStorage
                 """, reader => new
                 {
                     lens = "CheckoutQueueLens",
+                    sourceOfTruthTables = new[] { "checkout_settlements" },
+                    projectionLagSeconds = LagSeconds(reader.GetDateTime(7)),
                     checkoutId = reader.GetString(0),
                     workspaceId = reader.GetString(1),
                     stayId = reader.GetString(2),
@@ -232,11 +242,14 @@ internal sealed class RuntimeAggregateLensStorage
             "service-task-queue" => Query("""
                 select task_id, workspace_id, task_type, room_id, bed_id, urgency, blocks_availability, status, updated_at_utc
                 from service_tasks
-                where status not in ('verified', 'cancelled')
+                where workspace_id = 'W-STAY-SERVICE-TASK'
+                  and status not in ('verified', 'cancelled')
                 order by updated_at_utc, task_id
                 """, reader => new
                 {
                     lens = "ServiceTaskQueueLens",
+                    sourceOfTruthTables = new[] { "service_tasks" },
+                    projectionLagSeconds = LagSeconds(reader.GetDateTime(8)),
                     taskId = reader.GetString(0),
                     workspaceId = reader.GetString(1),
                     taskType = reader.GetString(2),
@@ -285,6 +298,8 @@ internal sealed class RuntimeAggregateLensStorage
                 """, reader => new
                 {
                     lens = "PeriodPerformanceLens",
+                    sourceOfTruthTables = new[] { "period_reviews", "period_metric_snapshots", "period_finance_snapshots", "period_action_plans" },
+                    projectionLagSeconds = LagSeconds(reader.GetDateTime(9)),
                     periodId = reader.GetString(0),
                     workspaceId = reader.GetString(1),
                     status = reader.GetString(2),
@@ -298,15 +313,25 @@ internal sealed class RuntimeAggregateLensStorage
                 }),
             "risk-command" => Query("""
                 select
-                    (select coalesce(sum(balance), 0) from stay_balances where balance > 0) as debt_amount,
-                    (select count(*) from hostel_payments where status <> 'confirmed') as pending_payment_count,
-                    (select count(*) from service_tasks where status not in ('verified', 'cancelled')) as open_task_count,
+                    (select coalesce(sum(balance), 0) from stay_balances where workspace_id = 'W-STAY-PAYMENT-LEDGER' and balance > 0) as debt_amount,
+                    (select count(*) from hostel_payments where workspace_id = 'W-STAY-PAYMENT-LEDGER' and status <> 'confirmed') as pending_payment_count,
+                    (select count(*) from service_tasks where workspace_id = 'W-STAY-SERVICE-TASK' and status not in ('verified', 'cancelled')) as open_task_count,
                     (select count(*) from accommodation_beds where status ilike '%block%' or status ilike '%maintenance%' or status = 'blocked') as blocked_bed_count,
-                    (select coalesce(sum(liability_balance), 0) from deposit_liabilities) as deposit_liability_balance,
-                    (select count(*) from period_reviews where status <> 'closed') as open_period_count
+                    (select coalesce(sum(liability_balance), 0) from deposit_liabilities where workspace_id = 'W-STAY-DEPOSIT-LEDGER') as deposit_liability_balance,
+                    (select count(*) from period_reviews where workspace_id = 'W-STAY-PERIOD-ANALYTICS' and status <> 'closed') as open_period_count,
+                    nullif(greatest(
+                        coalesce((select max(updated_at_utc) from stay_balances where workspace_id = 'W-STAY-PAYMENT-LEDGER'), '-infinity'::timestamptz),
+                        coalesce((select max(updated_at_utc) from hostel_payments where workspace_id = 'W-STAY-PAYMENT-LEDGER'), '-infinity'::timestamptz),
+                        coalesce((select max(updated_at_utc) from service_tasks where workspace_id = 'W-STAY-SERVICE-TASK'), '-infinity'::timestamptz),
+                        coalesce((select max(updated_at_utc) from accommodation_beds), '-infinity'::timestamptz),
+                        coalesce((select max(updated_at_utc) from deposit_liabilities where workspace_id = 'W-STAY-DEPOSIT-LEDGER'), '-infinity'::timestamptz),
+                        coalesce((select max(updated_at_utc) from period_reviews where workspace_id = 'W-STAY-PERIOD-ANALYTICS'), '-infinity'::timestamptz)
+                    ), '-infinity'::timestamptz) as updated_at_utc
                 """, reader => new
                 {
                     lens = "RiskCommandLens",
+                    sourceOfTruthTables = new[] { "stay_balances", "hostel_payments", "service_tasks", "accommodation_beds", "deposit_liabilities", "period_reviews" },
+                    projectionLagSeconds = reader.IsDBNull(6) ? 0 : LagSeconds(reader.GetDateTime(6)),
                     debtAmount = reader.GetDecimal(0),
                     pendingPaymentCount = reader.GetInt64(1),
                     openTaskCount = reader.GetInt64(2),
@@ -331,4 +356,7 @@ internal sealed class RuntimeAggregateLensStorage
 
         return items;
     }
+
+    private static long LagSeconds(DateTime updatedAtUtc) =>
+        Math.Max(0, Convert.ToInt64((DateTime.UtcNow - DateTime.SpecifyKind(updatedAtUtc, DateTimeKind.Utc)).TotalSeconds));
 }

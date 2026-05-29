@@ -256,7 +256,14 @@ public sealed record RuntimeObservation(
     int PendingOutboxCount,
     int DeadLetterOutboxCount,
     int BehaviorEventCount,
-    DateTimeOffset? LastAuditEventAtUtc);
+    DateTimeOffset? LastAuditEventAtUtc,
+    long ProjectionLagSeconds,
+    IReadOnlyDictionary<string, int> FailedConfirmReasonDistribution,
+    int SurfaceCoverageMissingCount,
+    int LedgerInvariantViolationCount,
+    string SchemaVersion,
+    int ActiveArchitectureExceptionCount,
+    IReadOnlyList<string> ActiveArchitectureExceptions);
 
 internal sealed record CardSeed(
     string Id,

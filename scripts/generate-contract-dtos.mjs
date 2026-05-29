@@ -200,6 +200,13 @@ export type RuntimeObservation = {
   deadLetterOutboxCount: number;
   behaviorEventCount: number;
   lastAuditEventAtUtc: string | null;
+  projectionLagSeconds: number;
+  failedConfirmReasonDistribution: Record<string, number>;
+  surfaceCoverageMissingCount: number;
+  ledgerInvariantViolationCount: number;
+  schemaVersion: string;
+  activeArchitectureExceptionCount: number;
+  activeArchitectureExceptions: string[];
 };
 
 `;

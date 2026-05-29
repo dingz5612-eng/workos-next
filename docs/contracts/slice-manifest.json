@@ -14,7 +14,7 @@
       "workspaceId": "W-STAY-CHECKIN",
       "cards": ["lead", "booking", "resident", "bedAssign", "tariff", "depositRequirement", "payment", "finance", "checkin", "operatingDashboard"],
       "events": ["LeadCaptured", "BookingConfirmed", "ResidentRegistered", "BedAssigned", "TariffAssigned", "DepositRequired", "PaymentRecordedByFrontDesk", "PaymentConfirmedByFinance", "StayCheckedIn", "OperatingMetricsReviewed"],
-      "ownsAggregates": ["Lead", "Booking", "Resident", "Stay", "OperatingMetrics"],
+      "ownsAggregates": ["LeadIntake", "BookingIntake", "ResidentIntake", "StayIntake", "OperatingMetrics"],
       "migrationPhase": "legacy-intake-ledger-read-only",
       "status": "production-slice"
     },

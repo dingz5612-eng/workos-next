@@ -1,0 +1,61 @@
+{
+  "version": "0.16.3-authoritative-lenses",
+  "lenses": [
+    {
+      "id": "payment-risk",
+      "name": "PaymentRiskLens",
+      "sourceOfTruthTables": ["hostel_payments"],
+      "workspaceScope": ["W-STAY-PAYMENT-LEDGER"],
+      "freshness": { "timestampField": "updated_at_utc", "lagMetric": "projectionLagSeconds" },
+      "crossCheck": "PaymentRiskLens must not read legacy CheckIn payment rows."
+    },
+    {
+      "id": "checkout-queue",
+      "name": "CheckoutQueueLens",
+      "sourceOfTruthTables": ["checkout_settlements"],
+      "workspaceScope": ["W-STAY-CHECKOUT-SETTLEMENT"],
+      "freshness": { "timestampField": "updated_at_utc", "lagMetric": "projectionLagSeconds" },
+      "crossCheck": "CheckoutQueueLens reads checkout workflow state only and never writes deposit facts."
+    },
+    {
+      "id": "service-task-queue",
+      "name": "ServiceTaskQueueLens",
+      "sourceOfTruthTables": ["service_tasks"],
+      "workspaceScope": ["W-STAY-SERVICE-TASK"],
+      "freshness": { "timestampField": "updated_at_utc", "lagMetric": "projectionLagSeconds" },
+      "crossCheck": "ServiceTaskQueueLens reads ServiceTask state; BedStatus remains ResourceSetup-owned."
+    },
+    {
+      "id": "risk-command",
+      "name": "RiskCommandLens",
+      "sourceOfTruthTables": ["stay_balances", "hostel_payments", "service_tasks", "accommodation_beds", "deposit_liabilities", "period_reviews"],
+      "workspaceScope": ["W-STAY-PAYMENT-LEDGER", "W-STAY-SERVICE-TASK", "W-STAY-RESOURCE", "W-STAY-DEPOSIT-LEDGER", "W-STAY-PERIOD-ANALYTICS"],
+      "freshness": { "timestampField": "updated_at_utc", "lagMetric": "projectionLagSeconds" },
+      "crossCheck": "RiskCommandLens must not double-count legacy CheckIn finance rows with new ledger rows."
+    },
+    {
+      "id": "period-performance",
+      "name": "PeriodPerformanceLens",
+      "sourceOfTruthTables": ["period_reviews", "period_metric_snapshots", "period_finance_snapshots", "period_action_plans"],
+      "workspaceScope": ["W-STAY-PERIOD-ANALYTICS"],
+      "freshness": { "timestampField": "updated_at_utc", "lagMetric": "projectionLagSeconds" },
+      "crossCheck": "PeriodPerformanceLens reads frozen PeriodAnalytics snapshots, not confirm payload totals."
+    },
+    {
+      "id": "room-revenue-potential",
+      "name": "RoomRevenuePotentialLens",
+      "sourceOfTruthTables": ["accommodation_rooms", "accommodation_rate_plans"],
+      "workspaceScope": ["W-STAY-RESOURCE"],
+      "freshness": { "timestampField": "updated_at_utc", "lagMetric": "projectionLagSeconds" },
+      "crossCheck": "RoomRevenuePotentialLens calculates capacity from ResourceSetup room and rate plan facts."
+    },
+    {
+      "id": "lead-funnel",
+      "name": "LeadFunnelLens",
+      "sourceOfTruthTables": ["hostel_leads", "hostel_bookings", "hostel_stays"],
+      "workspaceScope": ["W-STAY-LEAD-RESERVATION", "W-STAY-CHECKIN", "W-STAY-LIFECYCLE"],
+      "freshness": { "timestampField": "updated_at_utc", "lagMetric": "projectionLagSeconds" },
+      "crossCheck": "LeadFunnelLens reads intake and lifecycle tables once; it does not infer ledger facts."
+    }
+  ]
+}

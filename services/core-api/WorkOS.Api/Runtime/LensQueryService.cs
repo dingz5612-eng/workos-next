@@ -3,31 +3,48 @@ namespace WorkOS.Api.Runtime;
 public sealed class LensQueryService
 {
     private readonly SearchProjectionService searchProjection;
+    private readonly RuntimeSurfacePolicyCatalog surfacePolicies;
 
     public LensQueryService(SearchProjectionService searchProjection)
     {
         this.searchProjection = searchProjection;
+        surfacePolicies = RuntimeSurfacePolicyCatalog.LoadDefault();
     }
 
     public IReadOnlyList<object> GetWorkQueue(RuntimeState state) =>
         state.Workspaces
             .Select(workspace =>
             {
+                var policy = surfacePolicies.ForWorkspace(workspace.Id);
+                if (policy?.Workbench.Visible != true)
+                {
+                    return null;
+                }
+
                 var card = searchProjection.CurrentCard(workspace);
+                var cardPolicy = card is null ? null : policy.Card(card.Id);
+                if (card is null || cardPolicy?.Workbench != true)
+                {
+                    return null;
+                }
+
                 return card is null ? null : new
                 {
                     queueItemId = $"q-{workspace.Id}-{card.Id}",
                     workspaceId = workspace.Id,
                     cardId = card.Id,
                     domain = workspace.Domain,
-                    domainGroup = DomainGroupFor(workspace),
+                    domainGroup = policy.DomainGroup,
                     status = card.Status,
                     badges = BadgesFor(card),
                     title = workspace.Title,
                     cardTitle = card.Title,
-                    priority = PriorityFor(card.Status),
+                    priority = policy.Home.Priority + StatusPriorityFor(card.Status),
                     reason = workspace.Next,
-                    nextActionId = $"{card.Id}.prepare"
+                    nextActionId = $"{card.Id}.prepare",
+                    queueRule = policy.Workbench.QueueRule,
+                    defaultLens = cardPolicy.DefaultLens,
+                    lenses = policy.Lenses
                 };
             })
             .Where(item => item is not null)
@@ -38,20 +55,29 @@ public sealed class LensQueryService
         state.Workspaces
             .Select(workspace =>
             {
+                var policy = surfacePolicies.ForWorkspace(workspace.Id);
+                if (policy?.Home.Visible != true)
+                {
+                    return null;
+                }
+
                 var card = searchProjection.CurrentCard(workspace);
-                return card is null ? null : new
+                var cardPolicy = card is null ? null : policy.Card(card.Id);
+                return card is null || cardPolicy?.Home != true ? null : new
                 {
                     workspaceId = workspace.Id,
                     cardId = card.Id,
                     domain = workspace.Domain,
-                    domainGroup = DomainGroupFor(workspace),
-                    priority = PriorityFor(card.Status) + DomainPriorityFor(workspace),
+                    domainGroup = policy.DomainGroup,
+                    priority = policy.Home.Priority + StatusPriorityFor(card.Status),
                     status = card.Status,
                     title = workspace.Title,
                     summary = workspace.Summary,
                     reason = workspace.Next,
-                    section = $"{DomainGroupFor(workspace).ToLowerInvariant()}-operations",
-                    lenses = LensesFor(workspace.Id)
+                    section = policy.Home.Section,
+                    lenses = policy.Lenses,
+                    defaultLens = cardPolicy.DefaultLens,
+                    hiddenReason = policy.HiddenReason
                 };
             })
             .Where(item => item is not null)
@@ -63,7 +89,13 @@ public sealed class LensQueryService
     {
         var query = (q ?? string.Empty).Trim();
         return state.Workspaces
-            .Where(workspace => query.Length == 0 || searchProjection.SearchText(workspace).Contains(query, StringComparison.OrdinalIgnoreCase))
+            .Where(workspace =>
+            {
+                var policy = surfacePolicies.ForWorkspace(workspace.Id);
+                return policy?.Search.Visible == true &&
+                    (query.Length == 0 || SearchText(workspace, policy).Contains(query, StringComparison.OrdinalIgnoreCase) ||
+                        PolicyTerms(policy).Any(term => query.Contains(term, StringComparison.OrdinalIgnoreCase)));
+            })
             .Select(workspace => BuildSearchSurfaceResult(workspace, query))
             .OrderByDescending(item => item.Score)
             .ThenBy(item => item.WorkspaceId)
@@ -86,24 +118,41 @@ public sealed class LensQueryService
 
     public IReadOnlyList<object> GetLearningCatalog(RuntimeState state) =>
         state.Workspaces
-            .SelectMany(workspace => workspace.Cards.Select(card => new
+            .SelectMany(workspace =>
             {
-                workspaceId = workspace.Id,
-                cardId = card.Id,
-                domain = workspace.Domain,
-                domainGroup = DomainGroupFor(workspace),
-                learningType = "card",
-                title = card.Title,
-                workspaceTitle = workspace.Title,
-                fields = card.Fields.Business,
-                evidence = card.Evidence,
-                checks = card.Checks,
-                blockers = card.BlockerRules.Count > 0 ? card.BlockerRules : workspace.Blockers
-            }))
+                var policy = surfacePolicies.ForWorkspace(workspace.Id);
+                if (policy?.Learning.Visible != true)
+                {
+                    return Array.Empty<object>();
+                }
+
+                return workspace.Cards
+                    .Select(card => new { Card = card, Policy = policy.Card(card.Id) })
+                    .Where(item => item.Policy is not null)
+                    .Select(item => new
+                    {
+                        workspaceId = workspace.Id,
+                        cardId = item.Card.Id,
+                        domain = workspace.Domain,
+                        domainGroup = policy.DomainGroup,
+                        learningType = "card",
+                        section = item.Policy!.LearningSection,
+                        defaultLens = item.Policy.DefaultLens,
+                        intentTags = item.Policy.IntentTags,
+                        title = item.Card.Title,
+                        workspaceTitle = workspace.Title,
+                        fields = item.Card.Fields.Business,
+                        evidence = item.Card.Evidence,
+                        checks = item.Card.Checks,
+                        blockers = item.Card.BlockerRules.Count > 0 ? item.Card.BlockerRules : workspace.Blockers
+                    })
+                    .Cast<object>()
+                    .ToArray();
+            })
             .Cast<object>()
             .ToArray();
 
-    private static int PriorityFor(string status) => status switch
+    private static int StatusPriorityFor(string status) => status switch
     {
         "blocked" => 100,
         "ready" => 90,
@@ -113,22 +162,24 @@ public sealed class LensQueryService
 
     private SearchSurfaceResult BuildSearchSurfaceResult(WorkspaceProjection workspace, string query)
     {
+        var policy = surfacePolicies.ForWorkspace(workspace.Id);
         var card = searchProjection.CurrentCard(workspace);
-        var text = searchProjection.SearchText(workspace);
-        var terms = MatchedTerms(query, text, workspace);
-        var score = PriorityFor(card?.Status ?? string.Empty) + DomainPriorityFor(workspace) + terms.Count * 10 + IntentBoost(query, workspace);
+        var cardPolicy = card is null ? null : policy?.Card(card.Id);
+        var text = SearchText(workspace, policy);
+        var terms = MatchedTerms(query, text, policy, cardPolicy);
+        var score = (policy?.Home.Priority ?? 0) + StatusPriorityFor(card?.Status ?? string.Empty) + terms.Count * 25;
         return new SearchSurfaceResult(
             workspace.Id,
             card?.Id ?? string.Empty,
             workspace.Domain,
-            DomainGroupFor(workspace),
+            policy?.DomainGroup ?? "Operations",
             score,
             workspace.Title,
             workspace.Summary,
             terms);
     }
 
-    private static IReadOnlyList<string> MatchedTerms(string query, string searchText, WorkspaceProjection workspace)
+    private static IReadOnlyList<string> MatchedTerms(string query, string searchText, RuntimeSurfacePolicy? policy, SurfaceCardPolicy? cardPolicy)
     {
         if (string.IsNullOrWhiteSpace(query))
         {
@@ -144,31 +195,35 @@ public sealed class LensQueryService
             }
         }
 
-        if (ContainsDepositIntent(query) && workspace.Id.Contains("DEPOSIT", StringComparison.OrdinalIgnoreCase))
+        foreach (var term in PolicyTerms(policy, cardPolicy))
         {
-            terms.Add("deposit");
+            if (query.Contains(term, StringComparison.OrdinalIgnoreCase) || term.Contains(query, StringComparison.OrdinalIgnoreCase))
+            {
+                terms.Add(term);
+            }
         }
 
         return terms.Distinct(StringComparer.OrdinalIgnoreCase).ToArray();
     }
 
-    private static int IntentBoost(string query, WorkspaceProjection workspace)
-    {
-        if (ContainsDepositIntent(query) && workspace.Id.Equals("W-STAY-DEPOSIT-LEDGER", StringComparison.OrdinalIgnoreCase)) return 200;
-        if (ContainsAny(query, "收款", "payment", "оплат") && workspace.Id.Equals("W-STAY-PAYMENT-LEDGER", StringComparison.OrdinalIgnoreCase)) return 180;
-        if (ContainsAny(query, "入住", "checkin", "засел") && workspace.Id.Equals("W-STAY-LIFECYCLE", StringComparison.OrdinalIgnoreCase)) return 160;
-        if (ContainsAny(query, "预订", "reservation", "брон") && workspace.Id.Equals("W-STAY-LEAD-RESERVATION", StringComparison.OrdinalIgnoreCase)) return 160;
-        if (ContainsAny(query, "退住", "退房", "checkout", "высел") && workspace.Id.Equals("W-STAY-CHECKOUT-SETTLEMENT", StringComparison.OrdinalIgnoreCase)) return 160;
-        if (ContainsAny(query, "清洁", "维修", "service", "clean", "ремонт") && workspace.Id.Equals("W-STAY-SERVICE-TASK", StringComparison.OrdinalIgnoreCase)) return 150;
-        if (ContainsAny(query, "周期", "复盘", "period", "analytics") && workspace.Id.Equals("W-STAY-PERIOD-ANALYTICS", StringComparison.OrdinalIgnoreCase)) return 150;
-        return 0;
-    }
+    private string SearchText(WorkspaceProjection workspace, RuntimeSurfacePolicy? policy) =>
+        string.Join(" ", new[]
+        {
+            new[] { searchProjection.SearchText(workspace) },
+            PolicyTerms(policy)
+        }.SelectMany(item => item));
 
-    private static bool ContainsDepositIntent(string query) =>
-        ContainsAny(query, "押金", "deposit", "депозит");
-
-    private static bool ContainsAny(string value, params string[] terms) =>
-        terms.Any(term => value.Contains(term, StringComparison.OrdinalIgnoreCase));
+    private static IReadOnlyList<string> PolicyTerms(RuntimeSurfacePolicy? policy, SurfaceCardPolicy? cardPolicy = null) =>
+        policy is null
+            ? Array.Empty<string>()
+            : policy.Search.Keywords
+                .Concat(policy.Search.IntentTags)
+                .Concat(policy.Cards.SelectMany(card => card.SearchKeywords))
+                .Concat(policy.Cards.SelectMany(card => card.IntentTags))
+                .Concat(cardPolicy?.SearchKeywords ?? Array.Empty<string>())
+                .Concat(cardPolicy?.IntentTags ?? Array.Empty<string>())
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToArray();
 
     private static IReadOnlyList<string> BadgesFor(CardProjection card)
     {
@@ -178,32 +233,6 @@ public sealed class LensQueryService
         if (card.Confirmation.Required) badges.Add("confirm");
         return badges.Distinct(StringComparer.OrdinalIgnoreCase).ToArray();
     }
-
-    private static string DomainGroupFor(WorkspaceProjection workspace) => workspace.Domain switch
-    {
-        "stay" => "Accommodation",
-        "repair" => "Repair",
-        "finance" => "Finance",
-        _ => "Operations"
-    };
-
-    private static int DomainPriorityFor(WorkspaceProjection workspace) =>
-        DomainGroupFor(workspace) == "Accommodation" ? 20 : 0;
-
-    private static IReadOnlyList<string> LensesFor(string workspaceId) => workspaceId switch
-    {
-        "W-STAY-RESOURCE" => new[] { "room-readiness", "bed-inventory", "rate-plan", "room-revenue-potential" },
-        "W-STAY-CHECKIN" => new[] { "today-operations", "active-stay", "deposit-liability", "payment-risk", "stay-balance" },
-        "W-STAY-LEAD-RESERVATION" => new[] { "lead-funnel" },
-        "W-STAY-LIFECYCLE" => new[] { "active-stay", "stay-balance" },
-        "W-STAY-DEPOSIT-LEDGER" => new[] { "deposit-liability" },
-        "W-STAY-PAYMENT-LEDGER" => new[] { "payment-risk", "stay-balance" },
-        "W-STAY-CHECKOUT-SETTLEMENT" => new[] { "checkout-queue" },
-        "W-STAY-SERVICE-TASK" => new[] { "service-task-queue" },
-        "W-STAY-EXPENSE-LEDGER" => new[] { "expense-analytics" },
-        "W-STAY-PERIOD-ANALYTICS" => new[] { "period-performance", "risk-command" },
-        _ => Array.Empty<string>()
-    };
 
     private sealed record SearchSurfaceResult(
         string WorkspaceId,

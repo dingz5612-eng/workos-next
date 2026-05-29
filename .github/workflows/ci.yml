@@ -71,6 +71,12 @@ jobs:
       - name: Validate contract files
         run: node scripts/validate-contracts.mjs
 
+      - name: Validate slice admission
+        run: node scripts/validate-slice-admission.mjs
+
+      - name: Architecture drift report
+        run: node scripts/architecture-drift-report.mjs
+
       - name: Validate generated DTOs
         run: node scripts/generate-contract-dtos.mjs --check
 

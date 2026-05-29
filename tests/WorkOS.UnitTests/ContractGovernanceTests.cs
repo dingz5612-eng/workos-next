@@ -53,4 +53,42 @@ public sealed class ContractGovernanceTests
             Assert.IsTrue(codes.Contains(code), $"Policy contract must include {code}.");
         }
     }
+
+    [TestMethod]
+    public void ProductionSlicesDeclareRuntimeSurfacePolicy()
+    {
+        using var manifest = JsonDocument.Parse(File.ReadAllText(RepoPath("docs", "contracts", "slice-manifest.json")));
+        using var policyDocument = JsonDocument.Parse(File.ReadAllText(RepoPath("docs", "contracts", "runtime-surface-policy.json")));
+        var policies = policyDocument.RootElement.GetProperty("policies").EnumerateArray()
+            .ToDictionary(item => item.GetProperty("sliceId").GetString()!);
+
+        foreach (var slice in manifest.RootElement.GetProperty("slices").EnumerateArray().Where(item => item.GetProperty("status").GetString() == "production-slice"))
+        {
+            var sliceId = slice.GetProperty("id").GetString()!;
+            var workspaceId = slice.GetProperty("workspaceId").GetString()!;
+            Assert.IsTrue(policies.ContainsKey(sliceId), $"Production slice {sliceId} must declare RuntimeSurfacePolicy.");
+            var policy = policies[sliceId];
+            Assert.AreEqual(workspaceId, policy.GetProperty("workspaceId").GetString(), $"RuntimeSurfacePolicy workspace mismatch for {sliceId}.");
+            Assert.IsTrue(policy.GetProperty("home").GetProperty("visible").GetBoolean() || !string.IsNullOrWhiteSpace(policy.GetProperty("hiddenReason").GetString()), $"{sliceId} must be home-visible or explicitly hidden.");
+            Assert.IsTrue(policy.GetProperty("workbench").GetProperty("visible").GetBoolean() || !string.IsNullOrWhiteSpace(policy.GetProperty("hiddenReason").GetString()), $"{sliceId} must be workbench-visible or explicitly hidden.");
+            Assert.IsTrue(policy.GetProperty("search").GetProperty("visible").GetBoolean() || !string.IsNullOrWhiteSpace(policy.GetProperty("hiddenReason").GetString()), $"{sliceId} must be search-visible or explicitly hidden.");
+            Assert.IsTrue(policy.GetProperty("learning").GetProperty("visible").GetBoolean() || !string.IsNullOrWhiteSpace(policy.GetProperty("hiddenReason").GetString()), $"{sliceId} must be learning-visible or explicitly hidden.");
+        }
+    }
+
+    [TestMethod]
+    public void AuthoritativeLensesDeclareFreshnessAndSourceTables()
+    {
+        using var document = JsonDocument.Parse(File.ReadAllText(RepoPath("docs", "contracts", "accommodation-lens-contract.json")));
+        var lenses = document.RootElement.GetProperty("lenses").EnumerateArray().ToDictionary(item => item.GetProperty("id").GetString()!);
+
+        foreach (var lensId in new[] { "payment-risk", "checkout-queue", "service-task-queue", "risk-command", "period-performance", "room-revenue-potential", "lead-funnel" })
+        {
+            Assert.IsTrue(lenses.ContainsKey(lensId), $"Lens contract must include {lensId}.");
+            var lens = lenses[lensId];
+            Assert.IsTrue(lens.GetProperty("sourceOfTruthTables").GetArrayLength() > 0, $"{lensId} must declare source-of-truth tables.");
+            Assert.AreEqual("projectionLagSeconds", lens.GetProperty("freshness").GetProperty("lagMetric").GetString(), $"{lensId} must declare projection lag metric.");
+            Assert.IsFalse(string.IsNullOrWhiteSpace(lens.GetProperty("crossCheck").GetString()), $"{lensId} must declare a cross-check.");
+        }
+    }
 }

@@ -61,6 +61,8 @@ Assert-Exists "docs/contracts/projection-contract.schema.json"
 Assert-Exists "docs/contracts/workos-runtime.openapi.json"
 Assert-Exists "docs/contracts/slice-manifest.json"
 Assert-Exists "docs/contracts/policy-contract.json"
+Assert-Exists "docs/contracts/runtime-surface-policy.json"
+Assert-Exists "docs/contracts/accommodation-lens-contract.json"
 Assert-Exists "docs/contracts/legacy-ledger-migration-registry.json"
 Assert-Exists "apps/mobile/src/generated/workosContracts.d.ts"
 Assert-Exists "apps/mobile/src/generated/runtimeApiPaths.js"
@@ -80,6 +82,8 @@ Assert-Exists "docs/architecture/CURRENT_RUNTIME_ARCHITECTURE.md"
 Assert-Exists "docs/architecture/rules/index.json"
 Assert-Exists "docs/architecture/architecture-exceptions.json"
 Assert-Exists "scripts/clean-baseline.ps1"
+Assert-Exists "scripts/validate-slice-admission.mjs"
+Assert-Exists "scripts/architecture-drift-report.mjs"
 Assert-Exists "scripts/backfill-legacy-ledger-to-runtime.mjs"
 Assert-Exists "tests/WorkOS.UnitTests/WorkOS.UnitTests.csproj"
 Assert-Exists "tests/WorkOS.RuntimeIntegrationTests/WorkOS.RuntimeIntegrationTests.csproj"
@@ -168,6 +172,8 @@ Assert-NoMatches @("apps/mobile/src/views/workbenchView.js", "apps/mobile/src/se
 Assert-NoMatches @("apps/mobile/src/selectors/searchSelectors.js") "W-STAY-CHECKIN|W-STAY-DEPOSIT-EXCEPTION|W-STAY-CHECKOUT|W-REPAIR-REQUEST|W-REPAIR-DISPATCH|W-REPAIR-MASTER-DATA" "Search fallback must not route intents to deprecated workspace IDs."
 Assert-NoMatches @("apps/mobile/src") "taskWorkspaceMap|workspaceIdForTask" "Frontend must not infer workspaceId from taskId."
 Assert-NoMatches @("apps/mobile/src/selectors/workspaceSelectors.js") "W-STAY-CHECKIN|W-STAY-DEPOSIT-LEDGER|W-STAY-PAYMENT-LEDGER|W-STAY-CHECKOUT-SETTLEMENT|W-REPAIR-" "Workspace selector must open runtimeStore workspaces without business workspace fallback IDs."
+Assert-NoMatches @("apps/mobile/src/selectors/surfaceSelectors.js") "intentBoost|W-STAY-DEPOSIT-LEDGER|W-STAY-PAYMENT-LEDGER|priority.*workspace\.domain" "Surface selectors must not contain local Accommodation business priority exceptions."
+Assert-NoMatches @("services/core-api/WorkOS.Api/Runtime/LensQueryService.cs") "W-STAY-DEPOSIT-LEDGER|W-STAY-PAYMENT-LEDGER|W-STAY-CHECKIN" "Runtime surface lenses must derive visibility and ranking from runtime-surface-policy.json."
 $workspaceProjectionFixture = Get-Content "apps/mobile/src/workspaceProjections.js" -Raw
 if ($workspaceProjectionFixture -notmatch "Offline/dev/test fallback fixture only") {
   Fail "workspaceProjections.js must declare its offline fallback reason."
@@ -430,11 +436,18 @@ foreach ($path in $openApiPaths) {
 }
 
 node scripts/generate-contract-dtos.mjs --check
+node scripts/validate-slice-admission.mjs
+node scripts/architecture-drift-report.mjs
 node scripts/validate-runtime-api.mjs
 
 $ci = Get-Content ".github/workflows/ci.yml" -Raw
 if ($ci -notmatch "validate-runtime-api\.mjs") {
   Fail "CI must run validate-runtime-api.mjs explicitly."
+}
+foreach ($requiredCiCommand in @("validate-slice-admission.mjs", "architecture-drift-report.mjs")) {
+  if ($ci -notmatch [regex]::Escape($requiredCiCommand)) {
+    Fail "CI must run governance command: $requiredCiCommand"
+  }
 }
 foreach ($requiredCiCommand in @("npm --prefix apps/mobile run test", "WorkOS.UnitTests", "WorkOS.RuntimeIntegrationTests")) {
   if ($ci -notmatch [regex]::Escape($requiredCiCommand)) {

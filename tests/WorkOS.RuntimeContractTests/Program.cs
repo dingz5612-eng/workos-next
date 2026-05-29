@@ -45,6 +45,7 @@ ResetPostgres(connectionString);
     ValidatePeriodAnalyticsContract();
     ValidateStableOptionValues(projection);
     ValidateRuntimeSurfaceLenses(runtime);
+    ValidateProductionSliceAdmission(runtime);
 
     var prepared = runtime.Prepare("W-STAY-RESOURCE", "roomSetup");
     Assert(prepared is not null, "prepare should return room setup card payload");
@@ -775,6 +776,11 @@ ResetPostgres(connectionString);
     Assert(LensContains(reloadedRuntime, "period-performance", "PeriodPerformanceLens"), "PeriodPerformanceLens should expose period performance");
     Assert(LensContains(reloadedRuntime, "period-performance", "8500"), "PeriodPerformanceLens should expose net cash flow from the frozen period review");
     Assert(LensContains(reloadedRuntime, "risk-command", "RiskCommandLens"), "RiskCommandLens should expose owner risk counters");
+    foreach (var lensId in new[] { "payment-risk", "checkout-queue", "service-task-queue", "risk-command", "period-performance", "room-revenue-potential", "lead-funnel" })
+    {
+        Assert(LensContains(reloadedRuntime, lensId, "sourceOfTruthTables"), $"{lensId} must expose source-of-truth table metadata");
+        Assert(LensContains(reloadedRuntime, lensId, "projectionLagSeconds"), $"{lensId} must expose projection lag metadata");
+    }
     Assert(CountRows(connectionString, "repair_stations") >= 2, "RepairStation aggregate roots should persist in repair_stations");
     Assert(CountRows(connectionString, "repair_technicians") >= 2, "Technician aggregate roots should persist in repair_technicians");
     Assert(CountRows(connectionString, "repair_vehicles") >= 2, "Vehicle aggregate roots should persist in repair_vehicles");
@@ -797,6 +803,12 @@ ResetPostgres(connectionString);
     Assert(observation.PendingOutboxCount == 0, "observability pending outbox count should be zero after processing");
     Assert(observation.DeadLetterOutboxCount == 0, "observability deadLetterOutboxCount should be zero for successful projection");
     Assert(observation.BehaviorEventCount >= 1, "observability behavior event count should include persisted behavior events");
+    Assert(observation.ProjectionLagSeconds >= 0, "observability projection lag must be non-negative");
+    Assert(observation.FailedConfirmReasonDistribution.Count >= 0, "observability must expose failed confirm reason distribution");
+    Assert(observation.SurfaceCoverageMissingCount == 0, "observability surface coverage missing count should be zero");
+    Assert(observation.LedgerInvariantViolationCount == 0, "observability ledger invariant violation count should be zero");
+    Assert(!string.IsNullOrWhiteSpace(observation.SchemaVersion), "observability schemaVersion must be present");
+    Assert(observation.ActiveArchitectureExceptionCount == observation.ActiveArchitectureExceptions.Count, "observability active exception count must match list");
 
     Console.WriteLine("WorkOS.RuntimeContractTests: PASS");
 }
@@ -1090,6 +1102,44 @@ static void ValidateManifestDrivenSurfaceCoverage(ProjectionRuntime runtime)
     }
 }
 
+static void ValidateProductionSliceAdmission(ProjectionRuntime runtime)
+{
+    using var manifest = JsonDocument.Parse(File.ReadAllText(Path.Combine("docs", "contracts", "slice-manifest.json")));
+    using var policyDocument = JsonDocument.Parse(File.ReadAllText(Path.Combine("docs", "contracts", "runtime-surface-policy.json")));
+    using var lensDocument = JsonDocument.Parse(File.ReadAllText(Path.Combine("docs", "contracts", "accommodation-lens-contract.json")));
+    var policies = policyDocument.RootElement.GetProperty("policies").EnumerateArray().ToDictionary(item => item.GetProperty("sliceId").GetString()!);
+    var lensIds = lensDocument.RootElement.GetProperty("lenses").EnumerateArray().Select(item => item.GetProperty("id").GetString()).ToHashSet();
+    var projection = runtime.GetAll();
+
+    foreach (var slice in manifest.RootElement.GetProperty("slices").EnumerateArray().Where(item => item.GetProperty("status").GetString() == "production-slice"))
+    {
+        var sliceId = slice.GetProperty("id").GetString()!;
+        var workspaceId = slice.GetProperty("workspaceId").GetString()!;
+        Assert(policies.ContainsKey(sliceId), $"production slice {sliceId} must have runtime surface policy");
+        var policy = policies[sliceId];
+        Assert(policy.GetProperty("workspaceId").GetString() == workspaceId, $"surface policy workspace mismatch for {sliceId}");
+        Assert(policy.GetProperty("home").GetProperty("visible").GetBoolean() || !string.IsNullOrWhiteSpace(policy.GetProperty("hiddenReason").GetString()), $"production slice {sliceId} must be home-visible or explicitly hidden");
+        Assert(policy.GetProperty("workbench").GetProperty("visible").GetBoolean() || !string.IsNullOrWhiteSpace(policy.GetProperty("hiddenReason").GetString()), $"production slice {sliceId} must be workbench-visible or explicitly hidden");
+        Assert(policy.GetProperty("search").GetProperty("visible").GetBoolean() || !string.IsNullOrWhiteSpace(policy.GetProperty("hiddenReason").GetString()), $"production slice {sliceId} must be search-visible or explicitly hidden");
+        Assert(policy.GetProperty("learning").GetProperty("visible").GetBoolean() || !string.IsNullOrWhiteSpace(policy.GetProperty("hiddenReason").GetString()), $"production slice {sliceId} must be learning-visible or explicitly hidden");
+        Assert(policy.GetProperty("lenses").EnumerateArray().Any(), $"production slice {sliceId} must declare lens/read-model coverage");
+        foreach (var lensId in policy.GetProperty("lenses").EnumerateArray().Select(item => item.GetString() ?? string.Empty))
+        {
+            Assert(lensIds.Contains(lensId) || new[] { "bed-inventory", "room-readiness", "rate-plan", "today-operations", "active-stay", "deposit-liability", "stay-balance", "expense-analytics" }.Contains(lensId), $"production slice {sliceId} references unknown lens {lensId}");
+        }
+
+        var policyCards = policy.GetProperty("cards").EnumerateArray().Select(item => item.GetProperty("cardId").GetString()).ToHashSet();
+        foreach (var cardId in slice.GetProperty("cards").EnumerateArray().Select(item => item.GetString()!))
+        {
+            Assert(policyCards.Contains(cardId), $"production slice {sliceId}/{cardId} must have card-level surface policy");
+        }
+
+        var workspace = projection.Workspaces.Single(item => item.Id == workspaceId);
+        Assert(workspace.Cards.All(card => card.Fields.Business.Count > 0 && card.Evidence.Count > 0 && card.Checks.Count > 0), $"production slice {sliceId} cards must carry fields/evidence/checks");
+        Assert(runtime.Prepare(workspaceId, workspace.Cards.First().Id) is not null, $"production slice {sliceId} must support prepare");
+    }
+}
+
 static void ValidateAllContractOnlySlicesAreGated(
     ProjectionRuntime runtime,
     string connectionString,
@@ -1285,7 +1335,10 @@ static void ValidateProjectionContractFiles()
         .EnumerateArray()
         .Select(item => item.GetString())
         .ToHashSet();
-    Assert(observationRequired.Contains("deadLetterOutboxCount"), "OpenAPI RuntimeObservation must expose deadLetterOutboxCount");
+    foreach (var field in new[] { "deadLetterOutboxCount", "projectionLagSeconds", "failedConfirmReasonDistribution", "surfaceCoverageMissingCount", "ledgerInvariantViolationCount", "schemaVersion", "activeArchitectureExceptionCount", "activeArchitectureExceptions" })
+    {
+        Assert(observationRequired.Contains(field), $"OpenAPI RuntimeObservation must expose {field}");
+    }
 
     var behaviorEventRequest = openApi.RootElement
         .GetProperty("components")

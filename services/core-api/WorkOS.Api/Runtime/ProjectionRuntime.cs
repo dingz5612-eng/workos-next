@@ -11,6 +11,7 @@ public sealed class ProjectionRuntime
     private readonly ActionRuntimeService actionRuntimeService;
     private readonly AuthSessionService authSessionService;
     private readonly OutboxProjector outboxProjector;
+    private readonly Dictionary<string, int> failedConfirmReasons = new(StringComparer.OrdinalIgnoreCase);
     private RuntimeState state;
 
     private ProjectionRuntime(IProjectionStore store, RuntimeAuthOptions authOptions)
@@ -72,7 +73,17 @@ public sealed class ProjectionRuntime
 
     public ConfirmResult Confirm(string workspaceId, string cardId, ConfirmCardRequest request, string actorToken)
     {
-        lock (gate) return actionRuntimeService.Confirm(state, workspaceId, cardId, request, actorToken);
+        lock (gate)
+        {
+            var result = actionRuntimeService.Confirm(state, workspaceId, cardId, request, actorToken);
+            if (result.Status is not ConfirmStatus.Confirmed and not ConfirmStatus.Duplicate)
+            {
+                var key = string.IsNullOrWhiteSpace(result.Reason) ? result.Status.ToString() : result.Reason;
+                failedConfirmReasons[key] = failedConfirmReasons.GetValueOrDefault(key) + 1;
+            }
+
+            return result;
+        }
     }
 
     public EvidenceObject CreateEvidenceDraft(EvidenceDraftRequest request, string actorId)
@@ -114,6 +125,9 @@ public sealed class ProjectionRuntime
         {
             var events = store.GetAuditEvents();
             var outbox = store.GetOutboxMessages();
+            var lastAuditAt = events.OrderByDescending(item => item.OccurredAtUtc).FirstOrDefault()?.OccurredAtUtc;
+            var activeExceptions = ArchitectureExceptionCatalog.LoadDefault().ActiveRuleIds();
+            var surfacePolicies = RuntimeSurfacePolicyCatalog.LoadDefault();
             return new RuntimeObservation(
                 "WorkOSNext Core API",
                 "0.13.0-backend-runtime",
@@ -125,7 +139,14 @@ public sealed class ProjectionRuntime
                 outbox.Count(message => message.ProcessedAtUtc is null && message.DeadLetteredAtUtc is null),
                 outbox.Count(message => message.DeadLetteredAtUtc is not null),
                 store.GetBehaviorEvents().Count,
-                events.OrderByDescending(item => item.OccurredAtUtc).FirstOrDefault()?.OccurredAtUtc);
+                lastAuditAt,
+                lastAuditAt is null ? 0 : Math.Max(0, Convert.ToInt64((DateTimeOffset.UtcNow - lastAuditAt.Value).TotalSeconds)),
+                new Dictionary<string, int>(failedConfirmReasons, StringComparer.OrdinalIgnoreCase),
+                surfacePolicies.MissingSurfaceCoverageCount(state),
+                0,
+                state.SchemaVersion,
+                activeExceptions.Count,
+                activeExceptions);
         }
     }
 
