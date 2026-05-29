@@ -107,7 +107,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "enum": ["bed-inventory", "room-readiness", "rate-plan", "deposit-liability", "stay-balance", "period-performance"]
+              "enum": ["bed-inventory", "room-readiness", "rate-plan", "blocked-bed", "room-revenue-potential", "today-operations", "lead-funnel", "active-stay", "deposit-liability", "payment-risk", "stay-balance", "checkout-queue", "service-task-queue", "expense-analytics", "period-performance", "risk-command"]
             }
           }
         ],
