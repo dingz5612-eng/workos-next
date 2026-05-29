@@ -41,7 +41,7 @@ export async function loginActor(username, password) {
     body: JSON.stringify({ username, password }),
     signal: AbortSignal.timeout(2400)
   });
-  if (!response.ok) throw new Error("login_failed");
+  if (!response.ok) throw await apiError("login_failed", response);
   return response.json();
 }
 
@@ -52,7 +52,7 @@ export async function prepareCard(workspaceId, cardId) {
     body: "{}",
     signal: AbortSignal.timeout(3200)
   });
-  if (!response.ok) throw new Error("prepare_failed");
+  if (!response.ok) throw await apiError("prepare_failed", response);
   return response.json();
 }
 
@@ -66,8 +66,22 @@ export async function confirmCard(workspaceId, cardId, actorToken, body) {
     body: JSON.stringify(body),
     signal: AbortSignal.timeout(4200)
   });
-  if (!response.ok) throw new Error("confirm_failed");
+  if (!response.ok) throw await apiError("confirm_failed", response);
   return response.json();
+}
+
+async function apiError(code, response) {
+  let details = {};
+  try {
+    details = await response.json();
+  } catch {
+    details = {};
+  }
+  const error = new Error(details.error || code);
+  error.code = details.error || code;
+  error.reason = details.reason || "";
+  error.status = response.status;
+  return error;
 }
 
 export async function waitForProjectionEvent(eventId, onProjection) {

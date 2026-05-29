@@ -76,8 +76,14 @@ export async function submitCurrentCard(ctx) {
     clearDraft(item.id, card.id);
     ctx.state.selectedCardIndex = -1;
     ctx.state.operationMessage = ctx.tr("submitDone");
-  } catch {
-    ctx.state.apiStatus = "offline";
+  } catch (error) {
+    if (error?.status === 400 || error?.status === 401 || error?.status === 403) {
+      ctx.state.currentActor = null;
+      ctx.state.loginMessage = ctx.tr("sessionExpired");
+      localStorage.removeItem("workosnext.actorSession");
+      setView("login", ctx);
+      return;
+    }
     ctx.state.operationMessage = ctx.tr("submitFailed");
   }
   ctx.render(true);
