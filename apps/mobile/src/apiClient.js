@@ -8,8 +8,18 @@ export function resolveApiBaseUrl() {
   const envBaseUrl = import.meta.env.VITE_WORKOS_API_BASE_URL;
   if (envBaseUrl) return envBaseUrl.replace(/\/$/, "");
   const configured = localStorage.getItem("workosnext.apiBaseUrl");
-  if (configured) return configured.replace(/\/$/, "");
-  return `${window.location.protocol}//${window.location.hostname}:5180`;
+  if (configured && !isStaleLocalFrontendUrl(configured)) return configured.replace(/\/$/, "");
+  return `${window.location.protocol}//${window.location.hostname}:5191`;
+}
+
+function isStaleLocalFrontendUrl(value) {
+  try {
+    const url = new URL(value, window.location.origin);
+    const localHost = url.hostname === "127.0.0.1" || url.hostname === "localhost";
+    return localHost && (url.port === window.location.port || url.port === "5180");
+  } catch {
+    return true;
+  }
 }
 
 export async function checkHealth() {
