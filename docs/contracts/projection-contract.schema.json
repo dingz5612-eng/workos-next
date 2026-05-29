@@ -209,7 +209,11 @@
         "actorId": { "type": "string" },
         "occurredAtUtc": { "type": "string", "format": "date-time" },
         "payload": { "type": "object", "additionalProperties": { "type": "string" } },
-        "projectionTargets": { "type": "array", "items": { "type": "string" } }
+        "projectionTargets": { "type": "array", "items": { "type": "string" } },
+        "evidenceIds": { "type": ["array", "null"], "items": { "type": "string" } },
+        "submissionId": { "type": ["string", "null"] },
+        "cardInstanceId": { "type": ["string", "null"] },
+        "aggregateRef": { "type": ["string", "null"] }
       }
     }
   }

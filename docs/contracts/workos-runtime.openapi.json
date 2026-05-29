@@ -145,10 +145,14 @@
           }
         },
         "responses": {
-          "200": { "description": "Confirmed or duplicate event" },
-          "400": { "description": "Forbidden by confirmation policy" },
+          "200": { "description": "Confirmed event" },
+          "400": { "description": "Malformed confirm request" },
           "401": { "description": "Actor session missing or expired" },
-          "404": { "description": "Card not found" }
+          "403": { "description": "AI, role, or slice capability forbids confirmation" },
+          "409": { "description": "Duplicate or conflicting idempotency key" },
+          "422": { "description": "Business policy violation" },
+          "404": { "description": "Card not found" },
+          "500": { "description": "Confirmed event could not be projected before response" }
         }
       }
     },
@@ -230,10 +234,13 @@
       },
       "ConfirmCardRequest": {
         "type": "object",
-        "required": ["language", "idempotencyKey", "fieldValues", "evidenceIds"],
+        "required": ["language", "idempotencyKey", "submissionId", "cardInstanceId", "fieldValues", "evidenceIds"],
         "properties": {
           "language": { "type": "string" },
           "idempotencyKey": { "type": "string" },
+          "submissionId": { "type": "string" },
+          "cardInstanceId": { "type": "string" },
+          "aggregateRef": { "type": ["string", "null"] },
           "fieldValues": {
             "type": "object",
             "additionalProperties": { "type": "string" }

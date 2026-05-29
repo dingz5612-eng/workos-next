@@ -3,15 +3,15 @@
 Last preflight source: local `main` after `git fetch origin main`,
 `git checkout main`, and `git pull --ff-only`.
 
-Current commit:
+Current committed baseline before the in-flight WON-16 hardening commit:
 
 ```text
-462535c1ee827ee4fca6bfb04056a9dca305f789
+ea89fa9 WON-16 Phase 1: add architecture governance rules
 ```
 
 The working tree may contain uncommitted hardening changes. This document
-records current repository facts observed during WON-16 preflight; it is not a
-claim that remote CI is green.
+records repository facts after local WON-16 validation work; it is not a claim
+that remote GitHub Actions is green.
 
 ## Runtime Architecture
 
@@ -66,8 +66,7 @@ Contract-only slices:
 
 ## Lens Status
 
-Implemented or partially implemented accommodation Lens endpoints are exposed
-through:
+Accommodation Lens endpoints are exposed through:
 
 ```text
 GET /api/lenses/accommodation/{lensId}
@@ -77,42 +76,64 @@ Current Lens status must be kept explicit:
 
 | Lens | Status |
 | --- | --- |
-| BedInventoryLens | partial |
-| DepositLiabilityLens | partial |
-| StayBalanceLens | partial |
-| PaymentRiskLens | partial |
-| CheckoutQueueLens | partial |
-| ServiceTaskQueueLens | partial |
-| RiskCommandLens | partial |
+| BedInventoryLens | implemented |
+| DepositLiabilityLens | implemented |
+| StayBalanceLens | implemented |
+| PaymentRiskLens | implemented |
+| CheckoutQueueLens | implemented |
+| ServiceTaskQueueLens | implemented |
+| RiskCommandLens | implemented |
+| RoomReadinessLens | implemented |
+| RatePlanLens | implemented |
+| RoomRevenuePotentialLens | implemented |
+| TodayOperationsLens | implemented |
+| LeadFunnelLens | implemented |
+| ActiveStayLens | implemented |
+| ExpenseAnalyticsLens | implemented |
+| PeriodPerformanceLens | implemented |
 
 ## Current Known P0 Gaps
 
-- Confirm HTTP status semantics are not yet split into `403`, `409`, and `422`.
-- `runtimeApiPaths.js` does not expose every OpenAPI runtime path.
-- Submit idempotency still includes workspace/card/actor context instead of a
-  pure submit-level UUID.
-- `submissionId`, `cardInstanceId`, and `aggregateRef` are not fully wired.
-- Frontend views still use unescaped template output in several places.
-- `EventSelectionPolicy` exists but does not yet encode dispatch modes or
-  conditional event selection.
-- `ConfirmUnitOfWork` behavior exists inside the store transaction, but the
-  named runtime boundary is not explicit.
-- Runtime policies and storage still include localized-label compatibility
-  reads and demo fallback values.
-- Test database reset is destructive without requiring `_test` database naming
-  or `TEST_DATABASE=true`.
-- Outbox claim/dead-letter exists with `retry_count`; WON-16 requires the
-  `attempt_count` contract name.
+- Confirm HTTP status semantics are split into `401`, `403`, `409`, and `422`
+  and validated by `validate-runtime-api.mjs`.
+- `runtimeApiPaths.js` is generated from OpenAPI and checked in CI.
+- Frontend confirm uses submit-level UUID `idempotencyKey` and `submissionId`,
+  submits `cardInstanceId`, `aggregateRef`, and `evidenceIds`, and distinguishes
+  `401` from `403`/`409`/`422`.
+- `EventSelectionPolicy` owns conditional and multi-event dispatch.
+- `ConfirmUnitOfWork` owns the audit/outbox/aggregate transaction boundary.
+- Runtime tests require `_test` database naming or `TEST_DATABASE=true` before
+  destructive reset.
+- Outbox claim/dead-letter exposes `attempt_count`, `claimed_by`, `last_error`,
+  and `dead_lettered_at_utc`.
 - `ProjectionStateMigrator` is not implemented.
+
+## Accommodation Boundary Status
+
+The current automated coverage verifies:
+
+- `ResourceSetup` owns BedStatus updates.
+- `DepositLedger` owns deposit transactions and backend held amount.
+- `PaymentLedger` owns payment allocations and stay balances.
+- `CheckOutSettlement` does not write deposit transactions.
+- `ServiceTask` does not mutate BedStatus and does not serve as the cost source.
+- `ExpenseLedger` is the persisted cost fact source.
+- `PeriodAnalytics` freezes closed metric snapshots and appends late
+  adjustments.
+- Legacy `CheckIn` remains a production chain but does not write the new ledger
+  fact tables (`deposit_transactions`, `payment_allocations`, `stay_balances`).
 
 ## Current CI Gates
 
 `.github/workflows/ci.yml` currently runs:
 
-- `npm ci`
-- `npm audit --audit-level=low`
-- `npm run build`
+- `npm --prefix apps/mobile ci`
+- `npm --prefix apps/mobile audit --audit-level=low`
+- `npm --prefix apps/mobile run build`
+- `npm --prefix apps/mobile run test`
 - `dotnet build WorkOSNext.sln -c Release`
+- `dotnet test tests/WorkOS.UnitTests/WorkOS.UnitTests.csproj -c Release --no-build`
+- `dotnet test tests/WorkOS.RuntimeIntegrationTests/WorkOS.RuntimeIntegrationTests.csproj -c Release --no-build`
 - `dotnet run --project tests/WorkOS.RuntimeContractTests/WorkOS.RuntimeContractTests.csproj -c Release`
 - `node scripts/validate-contracts.mjs`
 - `node scripts/generate-contract-dtos.mjs --check`

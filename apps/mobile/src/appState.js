@@ -32,7 +32,8 @@ export function createInitialState() {
     apiStatus: "checking",
     currentActor: actor,
     loginMessage: "",
-    projectionEvents: []
+    projectionEvents: [],
+    accommodationLenses: {}
   };
 
   applyUrlParams(state);

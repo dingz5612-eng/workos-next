@@ -4,6 +4,8 @@ const projectionSchema = JSON.parse(fs.readFileSync("docs/contracts/projection-c
 const openApi = JSON.parse(fs.readFileSync("docs/contracts/workos-runtime.openapi.json", "utf8"));
 const sliceManifest = JSON.parse(fs.readFileSync("docs/contracts/slice-manifest.json", "utf8"));
 const policyContract = JSON.parse(fs.readFileSync("docs/contracts/policy-contract.json", "utf8"));
+const rulesIndex = JSON.parse(fs.readFileSync("docs/architecture/rules/index.json", "utf8"));
+const architectureExceptions = JSON.parse(fs.readFileSync("docs/architecture/architecture-exceptions.json", "utf8"));
 
 const requiredProjectionFields = ["projection", "version", "languages", "sourceOfTruth", "workspaces", "events"];
 for (const field of requiredProjectionFields) {
@@ -20,9 +22,15 @@ const actorHeader = confirmPost.parameters?.find((item) => item.name === "X-Work
 if (!actorHeader) throw new Error("Confirm OpenAPI path must require X-WorkOS-Actor-Token header.");
 
 const confirmSchema = openApi.components?.schemas?.ConfirmCardRequest;
-for (const field of ["language", "idempotencyKey", "fieldValues", "evidenceIds"]) {
+for (const field of ["language", "idempotencyKey", "submissionId", "cardInstanceId", "fieldValues", "evidenceIds"]) {
   if (!confirmSchema?.required?.includes(field)) {
     throw new Error(`ConfirmCardRequest schema must require ${field}`);
+  }
+}
+
+for (const statusCode of ["200", "400", "401", "403", "409", "422", "404", "500"]) {
+  if (!confirmPost.responses?.[statusCode]) {
+    throw new Error(`Confirm OpenAPI path must document HTTP ${statusCode}`);
   }
 }
 
@@ -77,9 +85,52 @@ for (const slice of sliceManifest.slices || []) {
   }
 }
 
-for (const code of ["allowed", "ai_confirmation_forbidden", "role_confirmation_forbidden"]) {
+for (const code of [
+  "allowed",
+  "invalid_actor_token",
+  "ai_confirmation_forbidden",
+  "role_confirmation_forbidden",
+  "slice_runtime_forbidden",
+  "deposit_evidence_required",
+  "payment_evidence_required",
+  "deposit_refund_exceeds_held_amount",
+  "payment_allocation_exceeds_confirmed_amount",
+  "business_rule_violation",
+  "idempotency_duplicate",
+  "idempotency_conflict"
+]) {
   if (!policyContract.decisionCodes?.includes(code)) {
     throw new Error(`Policy contract missing decision code ${code}`);
+  }
+}
+
+for (const rule of rulesIndex.rules || []) {
+  for (const field of ["id", "title", "scope", "severity", "owner", "ruleFile", "enforcedBy", "exceptionAllowed"]) {
+    if (!(field in rule) || (Array.isArray(rule[field]) && rule[field].length === 0)) {
+      throw new Error(`Rule registry entry ${rule.id || "<missing>"} missing ${field}`);
+    }
+  }
+  if (!fs.existsSync(rule.ruleFile)) {
+    throw new Error(`Rule registry file does not exist for ${rule.id}: ${rule.ruleFile}`);
+  }
+}
+
+const rulesById = new Map((rulesIndex.rules || []).map((rule) => [rule.id, rule]));
+for (const exception of architectureExceptions.exceptions || []) {
+  for (const field of ["ruleId", "owner", "reason", "createdAt", "expiresAt", "removalCondition", "linkedTest"]) {
+    if (!exception[field]) {
+      throw new Error(`Architecture exception missing ${field}`);
+    }
+  }
+  const rule = rulesById.get(exception.ruleId);
+  if (!rule) {
+    throw new Error(`Architecture exception references unknown ruleId ${exception.ruleId}`);
+  }
+  if (!rule.exceptionAllowed) {
+    throw new Error(`Rule ${exception.ruleId} does not allow exceptions`);
+  }
+  if (Date.parse(exception.expiresAt) < Date.now()) {
+    throw new Error(`Architecture exception expired for ${exception.ruleId}`);
   }
 }
 

@@ -18,9 +18,21 @@ export function collectOperationValues() {
 }
 
 export function collectEvidenceIds() {
+  return collectEvidenceDrafts().map((draft) => draft.evidenceId);
+}
+
+export function collectEvidenceDrafts() {
   return Array.from(document.querySelectorAll("[data-evidence-id].selected"))
-    .map((node) => node.dataset.evidenceId)
-    .filter(Boolean);
+    .map((node) => {
+      if (!node.dataset.evidenceDraftId) {
+        node.dataset.evidenceDraftId = `evidence-${node.dataset.evidenceId}-${randomDraftId()}`;
+      }
+      return {
+        requirementId: node.dataset.evidenceId,
+        evidenceId: node.dataset.evidenceDraftId
+      };
+    })
+    .filter((draft) => draft.requirementId && draft.evidenceId);
 }
 
 export function saveCurrentDraft(ctx) {
@@ -36,7 +48,7 @@ export function updateDerivedFields(ctx) {
   const item = ctx.workspace();
   const card = activeWorkspaceCard(item, ctx.state.selectedCardIndex);
   const roomTypeField = card?.fields?.business?.find((field) => field.ui?.optionSet === "roomType");
-  const capacityField = card?.fields?.business?.find((field) => field.ui?.derivedFrom === "房型");
+  const capacityField = card?.fields?.business?.find((field) => field.ui?.derivedFrom === "roomType");
   const roomType = roomTypeField ? document.querySelector(`[data-operation-field="${roomTypeField.id}"]`)?.value : "";
   const capacity = capacityField ? document.querySelector(`[data-operation-field="${capacityField.id}"]`) : null;
   if (roomType && capacity) capacity.value = capacityForRoomType(roomType);
@@ -81,7 +93,8 @@ export async function submitCurrentCard(ctx) {
       language: ctx.state.lang,
       fieldValues,
       evidenceIds,
-      onProjection: (payload) => applyProjectionPayload(payload, ctx)
+      onProjection: (payload) => applyProjectionPayload(payload, ctx),
+      onLens: (payload) => applyLensPayload(payload, ctx)
     });
     clearDraft(item.id, card.id);
     ctx.state.selectedCardIndex = -1;
@@ -94,12 +107,35 @@ export async function submitCurrentCard(ctx) {
       setView("login", ctx);
       return;
     }
-    ctx.state.operationMessage = error?.reason || error?.code || ctx.tr("submitFailed");
+    ctx.state.operationMessage = confirmErrorMessage(error, ctx);
   }
   ctx.render(true);
+}
+
+function confirmErrorMessage(error, ctx) {
+  const keyByStatus = {
+    400: "confirmBadRequest",
+    403: "confirmForbidden",
+    409: "confirmDuplicate",
+    422: "confirmBusinessBlocked"
+  };
+  const prefix = ctx.tr(keyByStatus[error?.status] || "submitFailed");
+  const detail = error?.reason || error?.code || "";
+  return [prefix, detail].filter(Boolean).join(" ");
+}
+
+function randomDraftId() {
+  return globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(16).slice(2)}`;
 }
 
 function applyProjectionPayload(payload, ctx) {
   ctx.replaceIntentWorkspaces(payload.workspaces);
   ctx.state.projectionEvents = payload.events || ctx.state.projectionEvents || [];
+}
+
+function applyLensPayload(payload, ctx) {
+  ctx.state.accommodationLenses = {
+    ...(ctx.state.accommodationLenses || {}),
+    ...(payload || {})
+  };
 }

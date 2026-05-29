@@ -1,7 +1,9 @@
 import { spawn } from "node:child_process";
+import fs from "node:fs";
 
 const baseUrl = process.env.WORKOS_API_VALIDATE_URL || "http://127.0.0.1:5191";
 const externalApi = Boolean(process.env.WORKOS_API_VALIDATE_URL);
+const openApi = JSON.parse(fs.readFileSync("docs/contracts/workos-runtime.openapi.json", "utf8"));
 let apiProcess;
 
 if (!externalApi) {
@@ -25,9 +27,12 @@ try {
   await validateHealth();
   const projection = await getJson("/api/workspaces");
   validateProjectionEnvelope(projection);
+  validateBehaviorEventRequestContract();
+  await validateDeclaredRuntimePaths(projection);
   await validatePrepare(projection);
   await validateAccommodationLens();
   await validateConfirmPolicyResponse();
+  await validateConfirmLedgerProjectionLensChain();
   await validateBehaviorEvent();
   await validateObservability();
   console.log("Runtime API contract responses: PASS");
@@ -69,31 +74,121 @@ async function validatePrepare(projection) {
   assert(prepared.card?.fields?.business?.length > 0, "prepare response card must include business fields");
 }
 
+async function validateDeclaredRuntimePaths(projection) {
+  const workspace = projection.workspaces[0];
+  const card = workspace.cards[0];
+  const samples = {
+    workspaceId: workspace.id,
+    cardId: card.id,
+    lensId: "period-performance"
+  };
+
+  for (const [path, pathItem] of Object.entries(openApi.paths)) {
+    if (!(path === "/health" || path.startsWith("/api/"))) continue;
+    for (const method of Object.keys(pathItem).filter((item) => ["get", "post", "put", "patch", "delete"].includes(item))) {
+      const resolvedPath = resolveOpenApiPath(path, samples);
+      const response = await requestDeclaredPath(method.toUpperCase(), resolvedPath);
+      assert(response.status !== 404 && response.status !== 405, `${method.toUpperCase()} ${path} must be reachable, got ${response.status}`);
+      assert(response.status < 500, `${method.toUpperCase()} ${path} must not fail with ${response.status}`);
+    }
+  }
+}
+
+async function requestDeclaredPath(method, path) {
+  if (method === "GET") {
+    return fetch(`${baseUrl}${path}`);
+  }
+
+  if (method === "POST" && path === "/api/auth/login") {
+    return fetch(`${baseUrl}${path}`, {
+      method,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username: "operator", password: "dev" })
+    });
+  }
+
+  if (method === "POST" && path.endsWith("/prepare")) {
+    return fetch(`${baseUrl}${path}`, {
+      method,
+      headers: { "Content-Type": "application/json" },
+      body: "{}"
+    });
+  }
+
+  if (method === "POST" && path.endsWith("/confirm")) {
+    return fetch(`${baseUrl}${path}`, {
+      method,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(confirmBody(`openapi-path-${Date.now()}-${Math.random().toString(16).slice(2)}`))
+    });
+  }
+
+  if (method === "POST" && path === "/api/projections/process-outbox") {
+    return fetch(`${baseUrl}${path}`, { method });
+  }
+
+  if (method === "POST" && path === "/api/behavior-events") {
+    return fetch(`${baseUrl}${path}`, {
+      method,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        eventType: "RuntimeApiPathValidated",
+        language: "zh-CN",
+        source: "validate-runtime-api"
+      })
+    });
+  }
+
+  return fetch(`${baseUrl}${path}`, { method });
+}
+
+function resolveOpenApiPath(path, samples) {
+  return path.replace(/\{([^}]+)\}/g, (_, name) => {
+    const value = samples[name];
+    assert(value, `No sample value configured for OpenAPI path parameter ${name}`);
+    return encodeURIComponent(value);
+  });
+}
+
 async function validateConfirmPolicyResponse() {
   const login = await postJson("/api/auth/login", { username: "operator", password: "dev" });
   const response = await fetch(`${baseUrl}/api/workspaces/W-STAY-RESOURCE/cards/roomSetup/confirm`, {
     method: "POST",
     headers: { "Content-Type": "application/json", "X-Request-Id": `api-contract-${Date.now()}` },
-    body: JSON.stringify({
-      language: "zh-CN",
-      idempotencyKey: `api-contract-${Date.now()}`,
-      fieldValues: {},
-      evidenceIds: []
-    })
+    body: JSON.stringify(confirmBody(`api-contract-${Date.now()}`))
   });
   assert(response.status === 401, `confirm without actor token must return 401, got ${response.status}`);
 
   const invalid = await fetch(`${baseUrl}/api/workspaces/W-STAY-RESOURCE/cards/roomSetup/confirm`, {
     method: "POST",
     headers: { "Content-Type": "application/json", "X-WorkOS-Actor-Token": login.token, "X-Request-Id": `api-invalid-${Date.now()}` },
-    body: JSON.stringify({
-      language: "zh-CN",
-      idempotencyKey: "",
-      fieldValues: {},
-      evidenceIds: []
-    })
+    body: JSON.stringify(confirmBody("", {}, "invalid-idempotency"))
   });
   assert(invalid.status === 400, `invalid confirm must return 400, got ${invalid.status}`);
+
+  const financeLogin = await postJson("/api/auth/login", { username: "finance", password: "dev" });
+  const forbidden = await fetch(`${baseUrl}/api/workspaces/W-STAY-RESOURCE/cards/roomSetup/confirm`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "X-WorkOS-Actor-Token": financeLogin.token, "X-Request-Id": `api-forbidden-${Date.now()}` },
+    body: JSON.stringify(confirmBody(`api-forbidden-${Date.now()}`))
+  });
+  assert(forbidden.status === 403, `role forbidden confirm must return 403, got ${forbidden.status}`);
+
+  const businessBlocked = await fetch(`${baseUrl}/api/workspaces/W-STAY-DEPOSIT-LEDGER/cards/depositReceipt/confirm`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "X-WorkOS-Actor-Token": login.token, "X-Request-Id": `api-business-${Date.now()}` },
+    body: JSON.stringify(confirmBody(
+      `api-business-${Date.now()}`,
+      {
+        depositId: "api-deposit-policy",
+        depositAmount: "3000",
+        currency: "KGS",
+        paymentMethod: "mbank"
+      },
+      "business-blocked"
+    ))
+  });
+  assert(businessBlocked.status === 422, `business policy violation must return 422, got ${businessBlocked.status}`);
 }
 
 async function validateProductionRejectsDevAuthDefaults() {
@@ -129,6 +224,54 @@ async function validateAccommodationLens() {
   assert(Array.isArray(lens), "accommodation lens response must be an array");
 }
 
+async function validateConfirmLedgerProjectionLensChain() {
+  const login = await postJson("/api/auth/login", { username: "operator", password: "dev" });
+  const suffix = `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+  const roomId = `api-chain-room-${suffix}`;
+  const result = await postJsonWithActor(
+    "/api/workspaces/W-STAY-RESOURCE/cards/roomSetup/confirm",
+    {
+      ...confirmBody(`api-chain-${suffix}`, {
+        roomId,
+        roomNo: `API-${suffix.slice(-6)}`,
+        roomType: "four_bed",
+        bedCount: "4",
+        genderPolicy: "unrestricted",
+        furnitureStatus: "complete",
+        technicalState: "ready"
+      }, `room:${roomId}`)
+    },
+    login.token,
+    `api-chain-${suffix}`
+  );
+
+  const eventIds = (result.events || []).map((item) => item.eventId).filter(Boolean);
+  assert(eventIds.length > 0, "confirm response must include committed events");
+  const projectedIds = new Set((result.projection?.events || []).map((item) => item.eventId));
+  assert(eventIds.every((eventId) => projectedIds.has(eventId)), "confirm response projection must include committed events");
+  const workspace = result.projection?.workspaces?.find((item) => item.id === "W-STAY-RESOURCE");
+  const card = workspace?.cards?.find((item) => item.id === "roomSetup");
+  assert(card?.status === "done", "confirm response projection must show confirmed card as done");
+
+  const roomLens = await getJson("/api/lenses/accommodation/room-readiness");
+  assert(roomLens.some((item) => item.roomId === roomId), "room-readiness lens must expose the confirmed room aggregate");
+
+  const refreshed = await getJson("/api/workspaces");
+  const refreshedIds = new Set((refreshed.events || []).map((item) => item.eventId));
+  assert(eventIds.every((eventId) => refreshedIds.has(eventId)), "workspace projection endpoint must expose committed events after confirm");
+
+  const duplicate = await fetch(`${baseUrl}/api/workspaces/W-STAY-RESOURCE/cards/roomSetup/confirm`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-WorkOS-Actor-Token": login.token,
+      "X-Request-Id": `api-chain-duplicate-${suffix}`
+    },
+    body: JSON.stringify(confirmBody(`api-chain-${suffix}`, { roomId }, `room:${roomId}`))
+  });
+  assert(duplicate.status === 409, `duplicate idempotency confirm must return 409, got ${duplicate.status}`);
+}
+
 async function validateObservability() {
   const observation = await getJson("/api/observability/runtime");
   assert(observation.service === "WorkOSNext Core API", "observability service mismatch");
@@ -150,6 +293,20 @@ async function validateBehaviorEvent() {
   assert(result.eventType === "RuntimeApiValidated", "behavior event response eventType mismatch");
 }
 
+function validateBehaviorEventRequestContract() {
+  const schema = openApi.components?.schemas?.BehaviorEventRequest;
+  assert(schema, "OpenAPI must declare BehaviorEventRequest");
+  const required = new Set(schema.required || []);
+  assert(required.size === 2 && required.has("eventType") && required.has("language"), "BehaviorEventRequest required fields must match Program.cs");
+  const properties = new Set(Object.keys(schema.properties || {}));
+  for (const field of ["eventType", "objectType", "objectId", "language", "source"]) {
+    assert(properties.has(field), `BehaviorEventRequest missing ${field}`);
+  }
+  for (const staleField of ["workspaceId", "cardId", "actorId", "payload"]) {
+    assert(!properties.has(staleField), `BehaviorEventRequest contains stale field ${staleField}`);
+  }
+}
+
 async function getJson(path) {
   const response = await fetch(`${baseUrl}${path}`);
   assert(response.ok, `${path} expected 2xx, got ${response.status}`);
@@ -160,6 +317,20 @@ async function postJson(path, body) {
   const response = await fetch(`${baseUrl}${path}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body)
+  });
+  assert(response.ok, `${path} expected 2xx, got ${response.status}`);
+  return response.json();
+}
+
+async function postJsonWithActor(path, body, actorToken, requestId) {
+  const response = await fetch(`${baseUrl}${path}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-WorkOS-Actor-Token": actorToken,
+      "X-Request-Id": requestId
+    },
     body: JSON.stringify(body)
   });
   assert(response.ok, `${path} expected 2xx, got ${response.status}`);
@@ -205,6 +376,19 @@ function assertLocalized(value, label) {
 
 function assertNonEmptyString(value, label) {
   assert(typeof value === "string" && value.trim().length > 0, `${label} must be a non-empty string`);
+}
+
+function confirmBody(idempotencyKey, fieldValues = {}, aggregateRef = null) {
+  const suffix = idempotencyKey || `missing-${Date.now()}`;
+  return {
+    language: "zh-CN",
+    idempotencyKey,
+    submissionId: `submission-${suffix}`,
+    cardInstanceId: `card-instance-${suffix}`,
+    aggregateRef,
+    fieldValues,
+    evidenceIds: []
+  };
 }
 
 function assert(condition, message) {

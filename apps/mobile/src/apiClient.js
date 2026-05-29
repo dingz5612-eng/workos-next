@@ -34,6 +34,12 @@ export async function fetchWorkspaceProjection() {
   return response.json();
 }
 
+export async function fetchAccommodationLens(lensId) {
+  const response = await fetch(`${apiBaseUrl()}${runtimeApiPaths.accommodationLens(lensId)}`, { signal: AbortSignal.timeout(2400) });
+  if (!response.ok) throw new Error("lens_failed");
+  return response.json();
+}
+
 export async function loginActor(username, password) {
   const response = await fetch(`${apiBaseUrl()}${runtimeApiPaths.login}`, {
     method: "POST",
@@ -61,13 +67,18 @@ export async function confirmCard(workspaceId, cardId, actorToken, body) {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "X-WorkOS-Actor-Token": actorToken
+      "X-WorkOS-Actor-Token": actorToken,
+      "X-Request-Id": body?.submissionId || body?.idempotencyKey || cryptoRandomRequestId()
     },
     body: JSON.stringify(body),
     signal: AbortSignal.timeout(4200)
   });
   if (!response.ok) throw await apiError("confirm_failed", response);
   return response.json();
+}
+
+function cryptoRandomRequestId() {
+  return globalThis.crypto?.randomUUID?.() || `req-${Date.now()}-${Math.random().toString(16).slice(2)}`;
 }
 
 async function apiError(code, response) {
@@ -85,10 +96,17 @@ async function apiError(code, response) {
 }
 
 export async function waitForProjectionEvent(eventId, onProjection) {
+  return waitForProjectionEvents(eventId ? [eventId] : [], onProjection);
+}
+
+export async function waitForProjectionEvents(eventIds, onProjection) {
+  const expectedIds = (eventIds || []).filter(Boolean);
+  if (!expectedIds.length) return;
   for (let attempt = 0; attempt < 8; attempt += 1) {
     const payload = await fetchWorkspaceProjection();
     onProjection(payload);
-    if ((payload.events || []).some((item) => item.eventId === eventId)) return;
+    const projectedIds = new Set((payload.events || []).map((item) => item.eventId));
+    if (expectedIds.every((eventId) => projectedIds.has(eventId))) return;
     await new Promise((resolve) => setTimeout(resolve, 250));
   }
 }

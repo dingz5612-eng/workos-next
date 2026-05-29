@@ -134,13 +134,19 @@ public sealed record WorkspaceEvent(
     DateTimeOffset OccurredAtUtc,
     IReadOnlyDictionary<string, string> Payload,
     IReadOnlyList<string> ProjectionTargets,
-    IReadOnlyList<string>? EvidenceIds = null);
+    IReadOnlyList<string>? EvidenceIds = null,
+    string? SubmissionId = null,
+    string? CardInstanceId = null,
+    string? AggregateRef = null);
 
 public sealed record ConfirmCardRequest(
     string? Language,
     string? IdempotencyKey,
     IReadOnlyDictionary<string, string>? FieldValues,
     IReadOnlyList<string>? EvidenceIds,
+    string? SubmissionId = null,
+    string? CardInstanceId = null,
+    string? AggregateRef = null,
     string? RequestId = null);
 
 public sealed record LoginRequest(string Username, string Password);
@@ -173,7 +179,8 @@ public enum ConfirmStatus
     Duplicate,
     Invalid,
     Forbidden,
-    NotFound
+    NotFound,
+    ProjectionFailed
 }
 
 public sealed record ConfirmResult(ConfirmStatus Status, string? Reason, object? Payload);

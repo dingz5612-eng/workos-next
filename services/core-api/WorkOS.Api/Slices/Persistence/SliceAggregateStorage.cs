@@ -369,15 +369,15 @@ internal sealed class SliceAggregateStorage
 
     private static DepositAggregate DepositFrom(WorkspaceEvent workspaceEvent)
     {
-        var amount = DecimalValue(workspaceEvent, "押金金额", 3000m);
-        var evidenceId = Value(workspaceEvent, "凭证编号", $"evidence-{workspaceEvent.EventId}");
+        var amount = DecimalValue(workspaceEvent, "depositAmount", 3000m);
+        var evidenceId = Value(workspaceEvent, "evidenceNo", $"evidence-{workspaceEvent.EventId}");
         return new DepositAggregate(
             $"deposit-{workspaceEvent.WorkspaceId}".ToLowerInvariant(),
             workspaceEvent.WorkspaceId,
-            Value(workspaceEvent, "住宿单号", "stay-order-current"),
+            Value(workspaceEvent, "stayId", "stay-order-current"),
             amount,
-            Value(workspaceEvent, "币种", "KGS"),
-            Value(workspaceEvent, "付款方式", "现金"),
+            Value(workspaceEvent, "currency", "KGS"),
+            Value(workspaceEvent, "paymentMethod", "现金"),
             evidenceId,
             "submitted",
             workspaceEvent.EventId,
@@ -387,12 +387,12 @@ internal sealed class SliceAggregateStorage
     private static HostelLeadAggregate HostelLeadFrom(WorkspaceEvent workspaceEvent) => new(
         StableId("lead", workspaceEvent),
         workspaceEvent.WorkspaceId,
-        Value(workspaceEvent, "姓名", "张三"),
-        Value(workspaceEvent, "电话", "+996 555 010101"),
-        IntValue(workspaceEvent, "需要床位", 1),
-        Value(workspaceEvent, "住宿时长", "1个月"),
-        Value(workspaceEvent, "线索来源", "WhatsApp"),
-        Value(workspaceEvent, "线索状态", "已预订"),
+        Value(workspaceEvent, "guestName", "张三"),
+        Value(workspaceEvent, "phone", "+996 555 010101"),
+        IntValue(workspaceEvent, "requestedBedCount", 1),
+        Value(workspaceEvent, "stayDurationText", "1个月"),
+        Value(workspaceEvent, "leadSource", "WhatsApp"),
+        Value(workspaceEvent, "leadStatus", "已预订"),
         workspaceEvent.EventId,
         workspaceEvent.OccurredAtUtc);
 
@@ -400,9 +400,9 @@ internal sealed class SliceAggregateStorage
         StableId("booking", workspaceEvent),
         workspaceEvent.WorkspaceId,
         StableId("lead", workspaceEvent),
-        Value(workspaceEvent, "预留房间/床位", "A301 / A301-02"),
-        IntValue(workspaceEvent, "预订人数", 1),
-        DateValue(workspaceEvent, "入住日期", workspaceEvent.OccurredAtUtc),
+        Value(workspaceEvent, "reservedBedIds", "A301 / A301-02"),
+        IntValue(workspaceEvent, "reservedBedCount", 1),
+        DateValue(workspaceEvent, "checkInDate", workspaceEvent.OccurredAtUtc),
         "confirmed",
         workspaceEvent.EventId,
         workspaceEvent.OccurredAtUtc);
@@ -410,31 +410,31 @@ internal sealed class SliceAggregateStorage
     private static HostelStayAggregate HostelStayFrom(WorkspaceEvent workspaceEvent) => new(
         StableId("stay", workspaceEvent),
         workspaceEvent.WorkspaceId,
-        Value(workspaceEvent, "姓名", Value(workspaceEvent, "入住人", "张三")),
-        Value(workspaceEvent, "电话", "+996 555 010101"),
-        Value(workspaceEvent, "房间床位", Value(workspaceEvent, "预留房间/床位", "A301 / A301-02")),
-        DateValue(workspaceEvent, "入住日期", workspaceEvent.OccurredAtUtc),
-        DateValue(workspaceEvent, "计划退住日期", workspaceEvent.OccurredAtUtc.AddMonths(1)),
+        Value(workspaceEvent, "guestName", Value(workspaceEvent, "residentName", "张三")),
+        Value(workspaceEvent, "phone", "+996 555 010101"),
+        Value(workspaceEvent, "roomBed", Value(workspaceEvent, "reservedBedIds", "A301 / A301-02")),
+        DateValue(workspaceEvent, "checkInDate", workspaceEvent.OccurredAtUtc),
+        DateValue(workspaceEvent, "plannedCheckOutDate", workspaceEvent.OccurredAtUtc.AddMonths(1)),
         workspaceEvent.EventType == CheckInEvents.StayCheckedIn ? "active" : "reserved",
         workspaceEvent.EventId,
         workspaceEvent.OccurredAtUtc);
 
     private static GuestFolioAggregate GuestFolioFrom(WorkspaceEvent workspaceEvent)
     {
-        var unitPrice = DecimalValue(workspaceEvent, "单价", 9300m);
-        var quantity = DecimalValue(workspaceEvent, "天数/周数/月数", 1m);
-        var charge = DecimalValue(workspaceEvent, "应收金额", unitPrice * quantity);
+        var unitPrice = DecimalValue(workspaceEvent, "unitRate", 9300m);
+        var quantity = DecimalValue(workspaceEvent, "tariffQuantity", 1m);
+        var charge = DecimalValue(workspaceEvent, "amount", unitPrice * quantity);
         return new GuestFolioAggregate(
             StableId("folio", workspaceEvent),
             workspaceEvent.WorkspaceId,
             StableId("stay", workspaceEvent),
-            Value(workspaceEvent, "计费方式", "按月"),
+            Value(workspaceEvent, "tariffType", "按月"),
             unitPrice,
             quantity,
             charge,
             0m,
             charge,
-            Value(workspaceEvent, "币种", "KGS"),
+            Value(workspaceEvent, "currency", "KGS"),
             "open",
             workspaceEvent.EventId,
             workspaceEvent.OccurredAtUtc);
@@ -442,7 +442,7 @@ internal sealed class SliceAggregateStorage
 
     private static DepositLiabilityAggregate DepositLiabilityFrom(WorkspaceEvent workspaceEvent)
     {
-        var required = DecimalValue(workspaceEvent, "应收押金", 3000m);
+        var required = DecimalValue(workspaceEvent, "requiredDepositAmount", 3000m);
         return new DepositLiabilityAggregate(
             StableId("deposit", workspaceEvent),
             workspaceEvent.WorkspaceId,
@@ -450,8 +450,8 @@ internal sealed class SliceAggregateStorage
             required,
             0m,
             required,
-            Value(workspaceEvent, "押金币种", "KGS"),
-            Value(workspaceEvent, "押金规则", "标准押金"),
+            Value(workspaceEvent, "currency", "KGS"),
+            Value(workspaceEvent, "depositPolicyName", "标准押金"),
             "required",
             workspaceEvent.EventId,
             workspaceEvent.OccurredAtUtc);
@@ -462,28 +462,28 @@ internal sealed class SliceAggregateStorage
         workspaceEvent.WorkspaceId,
         StableId("folio", workspaceEvent),
         StableId("deposit", workspaceEvent),
-        Value(workspaceEvent, "付款人", "张三"),
-        DecimalValue(workspaceEvent, "付款金额", DecimalValue(workspaceEvent, "押金金额", 3000m)),
-        Value(workspaceEvent, "币种", "KGS"),
-        Value(workspaceEvent, "付款方式", "现金"),
-        Value(workspaceEvent, "收款用途", "押金"),
-        Value(workspaceEvent, "凭证编号", "DEP-009"),
+        Value(workspaceEvent, "payerName", "张三"),
+        DecimalValue(workspaceEvent, "paymentAmount", DecimalValue(workspaceEvent, "depositAmount", 3000m)),
+        Value(workspaceEvent, "currency", "KGS"),
+        Value(workspaceEvent, "paymentMethod", "现金"),
+        Value(workspaceEvent, "paymentPurpose", "押金"),
+        Value(workspaceEvent, "evidenceNo", "DEP-009"),
         "pending_finance",
         workspaceEvent.EventId,
         workspaceEvent.OccurredAtUtc);
 
     private static FinanceReconciliationAggregate FinanceReconciliationFrom(WorkspaceEvent workspaceEvent)
     {
-        var paymentAmount = DecimalValue(workspaceEvent, "付款金额", 3000m);
-        var confirmedAmount = DecimalValue(workspaceEvent, "到账金额", DecimalValue(workspaceEvent, "确认金额", paymentAmount));
+        var paymentAmount = DecimalValue(workspaceEvent, "paymentAmount", 3000m);
+        var confirmedAmount = DecimalValue(workspaceEvent, "confirmedAmount", DecimalValue(workspaceEvent, "confirmedAmount", paymentAmount));
         return new FinanceReconciliationAggregate(
             StableId("reconciliation", workspaceEvent),
             workspaceEvent.WorkspaceId,
             StableId("payment", workspaceEvent),
-            Value(workspaceEvent, "银行/钱包渠道", "现金"),
+            Value(workspaceEvent, "paymentChannel", "现金"),
             confirmedAmount,
-            Value(workspaceEvent, "币种", "KGS"),
-            Value(workspaceEvent, "匹配结果", "匹配"),
+            Value(workspaceEvent, "currency", "KGS"),
+            Value(workspaceEvent, "matchResult", "匹配"),
             Math.Abs(confirmedAmount - paymentAmount),
             "confirmed",
             workspaceEvent.ActorId,
@@ -497,11 +497,11 @@ internal sealed class SliceAggregateStorage
         0.25m,
         1.0m,
         1.0m,
-        DecimalValue(workspaceEvent, "应收押金", 3000m),
+        DecimalValue(workspaceEvent, "requiredDepositAmount", 3000m),
         0m,
         0m,
-        DecimalValue(workspaceEvent, "应收金额", 9300m),
-        Value(workspaceEvent, "复盘结论", "链路已完成，押金责任与入住率已更新"),
+        DecimalValue(workspaceEvent, "amount", 9300m),
+        Value(workspaceEvent, "reviewDecision", "链路已完成，押金责任与入住率已更新"),
         workspaceEvent.EventId,
         workspaceEvent.OccurredAtUtc);
 
@@ -511,8 +511,8 @@ internal sealed class SliceAggregateStorage
             $"finance-{workspaceEvent.WorkspaceId}".ToLowerInvariant(),
             workspaceEvent.WorkspaceId,
             $"deposit-{workspaceEvent.WorkspaceId}".ToLowerInvariant(),
-            DecimalValue(workspaceEvent, "确认金额", DecimalValue(workspaceEvent, "押金金额", 3000m)),
-            Value(workspaceEvent, "币种", "KGS"),
+            DecimalValue(workspaceEvent, "confirmedAmount", DecimalValue(workspaceEvent, "depositAmount", 3000m)),
+            Value(workspaceEvent, "currency", "KGS"),
             "confirmed",
             workspaceEvent.ActorId,
             workspaceEvent.EventId,

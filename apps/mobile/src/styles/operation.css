@@ -179,6 +179,47 @@
   font-weight: 850;
 }
 
+.runtime-lenses {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.runtime-lenses > b {
+  color: #52677b;
+  font-size: 12px;
+}
+
+.runtime-lenses > div {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(132px, 1fr));
+  gap: 8px;
+}
+
+.runtime-lenses article {
+  display: grid;
+  gap: 4px;
+  min-height: 76px;
+  padding: 10px;
+  border: 1px solid #d9e7ee;
+  border-radius: 8px;
+  background: #f7fbfb;
+}
+
+.runtime-lenses span,
+.runtime-lenses small {
+  overflow: hidden;
+  color: #52677b;
+  font-size: 11px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.runtime-lenses strong {
+  color: #102033;
+  font-size: 20px;
+}
+
 .compact-section label {
   display: grid;
   gap: 6px;
@@ -248,5 +289,4 @@
   color: #fff;
   background: #102f46;
 }
-
 

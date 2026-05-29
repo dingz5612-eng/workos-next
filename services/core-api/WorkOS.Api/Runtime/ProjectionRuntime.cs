@@ -18,9 +18,9 @@ public sealed class ProjectionRuntime
         this.store = store;
         var searchProjectionService = new SearchProjectionService();
         lensQueryService = new LensQueryService(searchProjectionService);
-        actionRuntimeService = new ActionRuntimeService(store, new CardConfirmationPolicy(), queryService, SliceRuntimeCapabilityGate.LoadDefault());
         authSessionService = new AuthSessionService(store, authOptions);
         outboxProjector = new OutboxProjector(store);
+        actionRuntimeService = new ActionRuntimeService(store, new CardConfirmationPolicy(), queryService, SliceRuntimeCapabilityGate.LoadDefault(), outboxProjector);
         state = store.LoadOrSeed(ProjectionSeed.Create);
     }
 

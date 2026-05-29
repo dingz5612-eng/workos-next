@@ -56,14 +56,14 @@ internal sealed class ExpenseLedgerStorage
                 approved_amount = excluded.approved_amount,
                 updated_at_utc = excluded.updated_at_utc
             """);
-        command.Parameters.AddWithValue("expenseId", Value(workspaceEvent, "支出记录", StableId("expense", workspaceEvent)));
+        command.Parameters.AddWithValue("expenseId", Value(workspaceEvent, "expenseId", StableId("expense", workspaceEvent)));
         command.Parameters.AddWithValue("workspaceId", workspaceEvent.WorkspaceId);
-        command.Parameters.AddWithValue("expenseCategory", Value(workspaceEvent, "支出类别", "维修"));
-        command.Parameters.AddWithValue("amount", NpgsqlDbType.Numeric, DecimalValue(workspaceEvent, "支出金额", 0m));
-        command.Parameters.AddWithValue("currency", Value(workspaceEvent, "币种", "KGS"));
-        command.Parameters.AddWithValue("paymentMethod", Value(workspaceEvent, "支付方式", "现金"));
+        command.Parameters.AddWithValue("expenseCategory", Value(workspaceEvent, "expenseCategory", "维修"));
+        command.Parameters.AddWithValue("amount", NpgsqlDbType.Numeric, DecimalValue(workspaceEvent, "expenseAmount", 0m));
+        command.Parameters.AddWithValue("currency", Value(workspaceEvent, "currency", "KGS"));
+        command.Parameters.AddWithValue("paymentMethod", Value(workspaceEvent, "paymentMethod", "现金"));
         command.Parameters.AddWithValue("status", status);
-        command.Parameters.AddWithValue("approvedAmount", NpgsqlDbType.Numeric, DecimalValue(workspaceEvent, "确认金额", DecimalValue(workspaceEvent, "支出金额", 0m)));
+        command.Parameters.AddWithValue("approvedAmount", NpgsqlDbType.Numeric, DecimalValue(workspaceEvent, "confirmedAmount", DecimalValue(workspaceEvent, "expenseAmount", 0m)));
         command.Parameters.AddWithValue("createdEventId", workspaceEvent.EventId);
         command.Parameters.AddWithValue("updatedAtUtc", workspaceEvent.OccurredAtUtc);
         command.ExecuteNonQuery();
@@ -81,11 +81,11 @@ internal sealed class ExpenseLedgerStorage
                 updated_at_utc = excluded.updated_at_utc
             """);
         command.Parameters.AddWithValue("linkId", StableId("expense-link", workspaceEvent));
-        command.Parameters.AddWithValue("expenseId", Value(workspaceEvent, "支出记录", StableId("expense", workspaceEvent)));
+        command.Parameters.AddWithValue("expenseId", Value(workspaceEvent, "expenseId", StableId("expense", workspaceEvent)));
         command.Parameters.AddWithValue("workspaceId", workspaceEvent.WorkspaceId);
-        command.Parameters.AddWithValue("roomId", Value(workspaceEvent, "关联房间", "A301"));
-        command.Parameters.AddWithValue("bedId", Value(workspaceEvent, "关联床位", "A301-02"));
-        command.Parameters.AddWithValue("serviceTaskId", Value(workspaceEvent, "关联任务", StableId("task", workspaceEvent)));
+        command.Parameters.AddWithValue("roomId", Value(workspaceEvent, "roomId", "A301"));
+        command.Parameters.AddWithValue("bedId", Value(workspaceEvent, "bedId", "A301-02"));
+        command.Parameters.AddWithValue("serviceTaskId", Value(workspaceEvent, "taskId", StableId("task", workspaceEvent)));
         command.Parameters.AddWithValue("createdEventId", workspaceEvent.EventId);
         command.Parameters.AddWithValue("updatedAtUtc", workspaceEvent.OccurredAtUtc);
         command.ExecuteNonQuery();

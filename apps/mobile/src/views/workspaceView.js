@@ -1,5 +1,6 @@
 import { capacityForRoomType, defaultValueForField, fieldControlKind, isDerivedReadonlyField, optionsForField } from "../controls/fieldControls.js";
 import { loadDraft } from "../operationDrafts.js";
+import { lensIdsForWorkspace, lensPreview, lensTitle } from "../runtimeLensCatalog.js";
 import { activeCardForWorkspace, activeWorkspaceCard, isCardActionDisabled } from "../selectors/workspaceSelectors.js";
 
 export function workspaceView(ctx) {
@@ -13,6 +14,7 @@ export function workspaceView(ctx) {
     </section>
     <section class="workspace-control">
       <div class="card-tabs">${item.cards.map((card, index) => `<button class="${card.id === activeCard.id ? "active" : ""} ${card.status}" data-card-index="${index}">${ctx.tx(card.title)}</button>`).join("")}</div>
+      ${workspaceLensPanel(item, ctx)}
       ${workspaceCardPanel(activeCard, item, true, ctx)}
     </section>
     <div class="sticky-action"><button data-submit-card>${ctx.tr("confirmAction")}</button></div>
@@ -68,7 +70,7 @@ export function cardOperation(card, item, ctx) {
       <button class="secondary" data-save-draft ${disabled}>${ctx.tr("saveDraft")}</button>
       <button data-submit-card ${disabled}>${ctx.tr("submitForReview")}</button>
     </div>
-    ${ctx.state.operationMessage ? `<p class="operation-message">${ctx.state.operationMessage}</p>` : ""}
+    ${ctx.state.operationMessage ? `<p class="operation-message">${ctx.escapeHtml(ctx.state.operationMessage)}</p>` : ""}
   </div>`;
 }
 
@@ -120,13 +122,12 @@ export function operationControl(field, item, card, disabled, ctx) {
 }
 
 export function operationValue(field, item, card, ctx) {
-  const label = ctx.localTerm(field, "zh-CN");
   const draft = loadDraft(item.id, card.id);
   const values = draft.values || {};
   if (values[field.id]) return values[field.id];
   const carried = carriedForwardValue(field, item, ctx);
   if (carried) return carried;
-  if (label === "容量") {
+  if (field.ui?.derivedFrom === "roomType") {
     const roomType = Object.entries(values).find(([, candidate]) => ["single", "double", "four_bed", "six_bed", "单人间", "双人间", "四人间", "六人间"].includes(candidate))?.[1] || "four_bed";
     return capacityForRoomType(roomType);
   }
@@ -134,16 +135,25 @@ export function operationValue(field, item, card, ctx) {
 }
 
 function carriedForwardValue(field, item, ctx) {
-  const label = ctx.localTerm(field, "zh-CN");
   const events = (ctx.state.projectionEvents || [])
     .filter((event) => event.workspaceId === item.id && event.payload)
     .slice()
     .reverse();
   for (const event of events) {
     if (event.payload[field.id]) return event.payload[field.id];
-    if (event.payload[label]) return event.payload[label];
   }
   return "";
+}
+
+function workspaceLensPanel(item, ctx) {
+  const lenses = lensIdsForWorkspace(item.id)
+    .map((lensId) => ({ lensId, items: ctx.state.accommodationLenses?.[lensId] || [] }))
+    .filter((entry) => entry.items.length);
+  if (!lenses.length) return "";
+  return `<section class="runtime-lenses">
+    <b>${ctx.tr("runtimeLens")}</b>
+    <div>${lenses.map((entry) => `<article><span>${lensTitle(entry.lensId, ctx.state.lang)}</span><strong>${entry.items.length}</strong><small>${lensPreview(entry.lensId, entry.items)}</small></article>`).join("")}</div>
+  </section>`;
 }
 
 export function nextCardTitle(card, item, ctx) {

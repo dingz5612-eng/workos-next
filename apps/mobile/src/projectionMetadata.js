@@ -69,7 +69,7 @@ export function fieldMetadata(label, type, source) {
       optionSet,
       options: optionSet ? localizedOptions(optionSets[optionSet]) : [],
       defaultValue: defaults[label] || "",
-      derivedFrom: label === "容量" ? "房型" : "",
+      derivedFrom: label === "容量" ? "roomType" : "",
       readonly: label === "容量" || type === "readonly"
     },
     help: helpText(label, control, optionSet)

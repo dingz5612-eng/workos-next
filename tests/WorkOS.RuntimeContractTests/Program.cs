@@ -1,10 +1,13 @@
 using WorkOS.Api.Runtime;
 using Npgsql;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 
 var connectionString = Environment.GetEnvironmentVariable("WORKOS_TEST_CONNECTION")
-    ?? "Host=localhost;Port=54329;Database=workosnext;Username=workosnext;Password=workosnext_dev";
+    ?? "Host=localhost;Port=54329;Database=workosnext_test;Username=workosnext;Password=workosnext_dev";
 
+AssertTestDatabaseAllowed(connectionString);
+EnsureTestDatabaseExists(connectionString);
 ResetPostgres(connectionString);
 
 {
@@ -91,6 +94,9 @@ ResetPostgres(connectionString);
         ["technicalState"] = "ready"
     }), operatorToken);
     Assert(humanRoom.Status == ConfirmStatus.Confirmed, "human room setup confirmation should pass");
+    AssertConfirmPayloadProjected(humanRoom, "W-STAY-RESOURCE", "roomSetup");
+    AssertOutboxProcessedForPayload(connectionString, humanRoom);
+    Assert(LensContains(runtime, "room-readiness", "room-phase7-001"), "room setup confirm must update aggregate lens before the frontend refreshes");
     runtime.ProcessPendingOutbox();
 
     var auditBeforeDuplicate = CountRows(connectionString, "audit_events");
@@ -187,22 +193,26 @@ ResetPostgres(connectionString);
     Assert(missingDepositEvidence.Status == ConfirmStatus.Forbidden, "non-cash deposit receipt without evidence must be forbidden");
     Assert(missingDepositEvidence.Reason == "deposit_evidence_required:non_cash_deposit", "deposit evidence policy must use stable reason");
 
-    Assert(runtime.Confirm("W-STAY-DEPOSIT-LEDGER", "depositReceipt", HumanWithEvidence("deposit-receipt", new Dictionary<string, string>
+    var depositReceipt = runtime.Confirm("W-STAY-DEPOSIT-LEDGER", "depositReceipt", HumanWithEvidence("deposit-receipt", new Dictionary<string, string>
     {
         ["押金单"] = "deposit-ledger-001",
         ["实收押金金额"] = "3000",
         ["币种"] = "KGS",
         ["支付方式"] = "MBank"
-    }, "deposit-proof-001"), operatorToken).Status == ConfirmStatus.Confirmed, "deposit receipt with evidence should pass");
+    }, "deposit-proof-001"), operatorToken);
+    Assert(depositReceipt.Status == ConfirmStatus.Confirmed, "deposit receipt with evidence should pass");
+    AssertConfirmEvents(depositReceipt, "Accommodation.DepositReceived", "Accommodation.DepositEvidenceSubmitted");
     runtime.ProcessPendingOutbox();
     Assert(runtime.GetAuditEvents("W-STAY-DEPOSIT-LEDGER").Any(item => item.CardId == "depositReceipt" && item.EvidenceIds?.Contains("deposit-proof-001") == true), "confirmed events must persist submitted evidenceIds");
 
-    Assert(runtime.Confirm("W-STAY-DEPOSIT-LEDGER", "depositConfirmation", Human("deposit-confirmation", new Dictionary<string, string>
+    var depositConfirmation = runtime.Confirm("W-STAY-DEPOSIT-LEDGER", "depositConfirmation", Human("deposit-confirmation", new Dictionary<string, string>
     {
         ["押金收款记录"] = "deposit-ledger-001",
         ["确认金额"] = "3000",
         ["确认结果"] = "确认"
-    }), financeToken).Status == ConfirmStatus.Confirmed, "finance should confirm deposit receipt");
+    }), financeToken);
+    Assert(depositConfirmation.Status == ConfirmStatus.Confirmed, "finance should confirm deposit receipt");
+    AssertConfirmEvents(depositConfirmation, "Accommodation.DepositConfirmed");
     runtime.ProcessPendingOutbox();
 
     var missingDepositLedger = AssertNoSideEffects(connectionString, () => runtime.Confirm("W-STAY-DEPOSIT-LEDGER", "depositRefundApproval", Human("deposit-refund-missing-ledger", new Dictionary<string, string>
@@ -242,6 +252,8 @@ ResetPostgres(connectionString);
         ["付款时间"] = "2026-05-29T18:00"
     }, "deposit-refund-proof-001"), operatorToken).Status == ConfirmStatus.Confirmed, "deposit refund payment should pass");
     runtime.ProcessPendingOutbox();
+    Assert(ScalarDecimal(connectionString, "select coalesce(sum(amount), 0) from deposit_transactions where deposit_id = 'deposit-ledger-001' and transaction_type = 'confirmed'") == 3000m, "DepositLedger held amount must come from confirmed deposit transactions");
+    Assert(ScalarDecimal(connectionString, "select coalesce(sum(amount), 0) from deposit_transactions where deposit_id = 'deposit-ledger-001' and transaction_type = 'refund_paid'") == 2000m, "DepositRefundPaid must persist liability-release transaction amount");
 
     var missingPaymentEvidence = AssertNoSideEffects(connectionString, () => runtime.Confirm("W-STAY-PAYMENT-LEDGER", "paymentReceipt", Human("payment-receipt-missing-evidence", new Dictionary<string, string>
     {
@@ -252,7 +264,7 @@ ResetPostgres(connectionString);
     Assert(missingPaymentEvidence.Status == ConfirmStatus.Forbidden, "non-cash payment receipt without evidence must be forbidden");
     Assert(missingPaymentEvidence.Reason == "payment_evidence_required:non_cash_payment", "payment evidence policy must use stable reason");
 
-    Assert(runtime.Confirm("W-STAY-PAYMENT-LEDGER", "paymentReceipt", HumanWithEvidence("payment-receipt", new Dictionary<string, string>
+    var paymentReceipt = runtime.Confirm("W-STAY-PAYMENT-LEDGER", "paymentReceipt", HumanWithEvidence("payment-receipt", new Dictionary<string, string>
     {
         ["入住单"] = "stay-ledger-001",
         ["收款记录"] = "payment-ledger-001",
@@ -260,15 +272,19 @@ ResetPostgres(connectionString);
         ["币种"] = "KGS",
         ["支付方式"] = "MBank",
         ["收款用途"] = "房租"
-    }, "payment-proof-001"), operatorToken).Status == ConfirmStatus.Confirmed, "payment receipt with evidence should pass");
+    }, "payment-proof-001"), operatorToken);
+    Assert(paymentReceipt.Status == ConfirmStatus.Confirmed, "payment receipt with evidence should pass");
+    AssertConfirmEvents(paymentReceipt, "Accommodation.PaymentReceived", "Accommodation.PaymentEvidenceSubmitted");
     runtime.ProcessPendingOutbox();
 
-    Assert(runtime.Confirm("W-STAY-PAYMENT-LEDGER", "paymentConfirmation", Human("payment-confirmation", new Dictionary<string, string>
+    var paymentConfirmation = runtime.Confirm("W-STAY-PAYMENT-LEDGER", "paymentConfirmation", Human("payment-confirmation", new Dictionary<string, string>
     {
         ["收款记录"] = "payment-ledger-001",
         ["确认金额"] = "9300",
         ["确认结果"] = "确认"
-    }), financeToken).Status == ConfirmStatus.Confirmed, "finance should confirm ordinary payment");
+    }), financeToken);
+    Assert(paymentConfirmation.Status == ConfirmStatus.Confirmed, "finance should confirm ordinary payment");
+    AssertConfirmEvents(paymentConfirmation, "Accommodation.PaymentConfirmed");
     runtime.ProcessPendingOutbox();
 
     var missingPaymentLedger = AssertNoSideEffects(connectionString, () => runtime.Confirm("W-STAY-PAYMENT-LEDGER", "paymentAllocation", Human("payment-allocation-missing-ledger", new Dictionary<string, string>
@@ -288,15 +304,19 @@ ResetPostgres(connectionString);
     }), operatorToken));
     Assert(overAllocation.Status == ConfirmStatus.Forbidden, "payment allocation must reject more than backend-confirmed amount");
 
-    Assert(runtime.Confirm("W-STAY-PAYMENT-LEDGER", "paymentAllocation", Human("payment-allocation", new Dictionary<string, string>
+    var paymentAllocation = runtime.Confirm("W-STAY-PAYMENT-LEDGER", "paymentAllocation", Human("payment-allocation", new Dictionary<string, string>
     {
         ["入住单"] = "stay-ledger-001",
         ["收款记录"] = "payment-ledger-001",
         ["确认金额"] = "9300",
         ["分配金额"] = "9300",
         ["总应收"] = "9300"
-    }), operatorToken).Status == ConfirmStatus.Confirmed, "payment allocation within confirmed amount should pass");
+    }), operatorToken);
+    Assert(paymentAllocation.Status == ConfirmStatus.Confirmed, "payment allocation within confirmed amount should pass");
+    AssertConfirmEvents(paymentAllocation, "Accommodation.PaymentAllocated", "Accommodation.BalanceRecalculated");
     runtime.ProcessPendingOutbox();
+    Assert(ScalarDecimal(connectionString, "select coalesce(sum(allocated_amount), 0) from payment_allocations where payment_id = 'payment-ledger-001'") == 9300m, "PaymentLedger allocation must persist allocatedAmount");
+    Assert(ScalarDecimal(connectionString, "select coalesce(max(balance), 0) from stay_balances where stay_id = 'stay-ledger-001'") == 0m, "StayBalance must be recalculated by backend ledger facts");
 
     Assert(runtime.Confirm("W-STAY-CHECKOUT-SETTLEMENT", "checkoutStart", Human("checkout-start", new Dictionary<string, string>
     {
@@ -881,6 +901,13 @@ static void ValidateStableOptionValues(ProjectionEnvelope projection)
     var roomSetup = projection.Workspaces.Single(item => item.Id == "W-STAY-RESOURCE").Cards.Single(item => item.Id == "roomSetup");
     Assert(Field(roomSetup, "房间号").Id == "roomNo", "room setup must expose canonical roomNo field id");
     Assert(Field(roomSetup, "房型").Ui.Options.Any(item => item.Value == "four_bed" && item.Label["zh-CN"] == "四人间"), "roomType option must use stable enum value and localized label");
+    var derivedFields = projection.Workspaces
+        .SelectMany(workspace => workspace.Cards)
+        .SelectMany(card => card.Fields.Business)
+        .Where(field => !string.IsNullOrWhiteSpace(field.Ui.DerivedFrom))
+        .ToArray();
+    Assert(derivedFields.Length > 0, "projection should include derived field contracts");
+    Assert(derivedFields.All(field => IsStableFactKey(field.Ui.DerivedFrom)), "derived fields must reference canonical field ids, not localized labels");
 }
 
 static void ValidateAllContractOnlySlicesAreGated(
@@ -929,10 +956,42 @@ static FieldProjection Field(CardProjection card, string zhLabel) =>
     card.Fields.Business.Single(field => field.Label["zh-CN"] == zhLabel);
 
 static ConfirmCardRequest Human(string idempotencyKey, IReadOnlyDictionary<string, string>? fieldValues = null) =>
-    new("zh-CN", idempotencyKey, fieldValues ?? new Dictionary<string, string>(), Array.Empty<string>());
+    new(
+        "zh-CN",
+        idempotencyKey,
+        fieldValues ?? new Dictionary<string, string>(),
+        Array.Empty<string>(),
+        $"submission-{idempotencyKey}",
+        $"card-instance-{idempotencyKey}",
+        AggregateRefFrom(fieldValues));
 
 static ConfirmCardRequest HumanWithEvidence(string idempotencyKey, IReadOnlyDictionary<string, string> fieldValues, params string[] evidenceIds) =>
-    new("zh-CN", idempotencyKey, fieldValues, evidenceIds);
+    new(
+        "zh-CN",
+        idempotencyKey,
+        fieldValues,
+        evidenceIds,
+        $"submission-{idempotencyKey}",
+        $"card-instance-{idempotencyKey}",
+        AggregateRefFrom(fieldValues));
+
+static string? AggregateRefFrom(IReadOnlyDictionary<string, string>? fieldValues)
+{
+    if (fieldValues is null)
+    {
+        return null;
+    }
+
+    foreach (var key in new[] { "roomId", "bedId", "stayId", "depositId", "paymentId", "leadId", "reservationId", "serviceTaskId", "expenseId", "periodId" })
+    {
+        if (fieldValues.TryGetValue(key, out var value) && !string.IsNullOrWhiteSpace(value))
+        {
+            return $"{key}:{value}";
+        }
+    }
+
+    return null;
+}
 
 static ConfirmResult AssertNoSideEffects(string connectionString, Func<ConfirmResult> action)
 {
@@ -987,9 +1046,13 @@ static void ValidateProjectionContractFiles()
         .EnumerateArray()
         .Select(item => item.GetString())
         .ToHashSet();
-    foreach (var field in new[] { "language", "idempotencyKey", "fieldValues", "evidenceIds" })
+    foreach (var field in new[] { "language", "idempotencyKey", "submissionId", "cardInstanceId", "fieldValues", "evidenceIds" })
     {
         Assert(confirmRequired.Contains(field), $"OpenAPI ConfirmCardRequest must require {field}");
+    }
+    foreach (var statusCode in new[] { "200", "400", "401", "403", "409", "422", "404", "500" })
+    {
+        Assert(confirm.GetProperty("responses").TryGetProperty(statusCode, out _), $"OpenAPI confirm must document HTTP {statusCode}");
     }
 
     var observationRequired = openApi.RootElement
@@ -1023,13 +1086,16 @@ static void ValidateProjectionContractFiles()
 
     using var policyContract = JsonDocument.Parse(File.ReadAllText(Path.Combine("docs", "contracts", "policy-contract.json")));
     var decisionCodes = policyContract.RootElement.GetProperty("decisionCodes").EnumerateArray().Select(item => item.GetString()).ToHashSet();
-    foreach (var code in new[] { "allowed", "ai_confirmation_forbidden", "role_confirmation_forbidden" })
+    foreach (var code in new[] { "allowed", "ai_confirmation_forbidden", "role_confirmation_forbidden", "invalid_actor_token" })
     {
         Assert(decisionCodes.Contains(code), $"policy contract must include decision code {code}");
     }
 
     foreach (var code in new[]
     {
+        "business_rule_violation",
+        "idempotency_duplicate",
+        "idempotency_conflict",
         "slice_runtime_forbidden",
         "deposit_evidence_required",
         "deposit_ledger_state_required",
@@ -1062,7 +1128,15 @@ static void ValidateGeneratedDtos()
         Assert(generated.Contains($"export type {typeName}"), $"generated DTOs must include {typeName}");
     }
     Assert(generated.Contains("correlationId: string"), "generated DTOs must include WorkspaceEvent correlationId");
-    Assert(File.Exists(Path.Combine("apps", "mobile", "src", "generated", "runtimeApiPaths.js")), "generated runtime API paths module must exist");
+    Assert(generated.Contains("submissionId: string"), "generated DTOs must include ConfirmCardRequest submissionId");
+    Assert(generated.Contains("cardInstanceId: string"), "generated DTOs must include ConfirmCardRequest cardInstanceId");
+    var runtimeApiPathsPath = Path.Combine("apps", "mobile", "src", "generated", "runtimeApiPaths.js");
+    Assert(File.Exists(runtimeApiPathsPath), "generated runtime API paths module must exist");
+    var runtimeApiPaths = File.ReadAllText(runtimeApiPathsPath);
+    foreach (var apiPathKey in new[] { "health", "login", "workspaces", "workspace", "bootstrap", "workQueue", "search", "lensWorkQueue", "lensSearch", "accommodationLens", "prepareCard", "confirmCard", "workspaceEvents", "auditEvents", "outbox", "processOutbox", "behaviorEvents", "observability" })
+    {
+        Assert(runtimeApiPaths.Contains($"{apiPathKey}:"), $"generated runtime API paths must include {apiPathKey}");
+    }
 }
 
 static void ValidateSliceManifest(ProjectionEnvelope projection)
@@ -1155,6 +1229,67 @@ static string LoginToken(ProjectionRuntime runtime, string username)
     var token = login.GetType().GetProperty("token")?.GetValue(login)?.ToString();
     Assert(!string.IsNullOrWhiteSpace(token), $"login token should be issued for {username}");
     return token!;
+}
+
+static void AssertConfirmPayloadProjected(ConfirmResult result, string workspaceId, string cardId)
+{
+    using var payload = ConfirmPayloadJson(result);
+    var root = payload.RootElement;
+    var eventIds = root.GetProperty("events")
+        .EnumerateArray()
+        .Select(item => item.GetProperty("eventId").GetString())
+        .Where(item => !string.IsNullOrWhiteSpace(item))
+        .ToArray();
+    var projectedIds = root.GetProperty("projection")
+        .GetProperty("events")
+        .EnumerateArray()
+        .Select(item => item.GetProperty("eventId").GetString())
+        .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+    Assert(eventIds.Length > 0, "confirm payload must include committed events");
+    Assert(eventIds.All(projectedIds.Contains), "confirm payload projection must already contain every committed event");
+
+    var workspace = root.GetProperty("projection")
+        .GetProperty("workspaces")
+        .EnumerateArray()
+        .Single(item => item.GetProperty("id").GetString() == workspaceId);
+    var card = workspace.GetProperty("cards")
+        .EnumerateArray()
+        .Single(item => item.GetProperty("id").GetString() == cardId);
+    Assert(card.GetProperty("status").GetString() == "done", "confirm payload projection must include the projected card status");
+}
+
+static void AssertOutboxProcessedForPayload(string connectionString, ConfirmResult result)
+{
+    using var payload = ConfirmPayloadJson(result);
+    var eventIds = payload.RootElement.GetProperty("events")
+        .EnumerateArray()
+        .Select(item => item.GetProperty("eventId").GetString())
+        .Where(item => !string.IsNullOrWhiteSpace(item))
+        .ToArray();
+
+    foreach (var eventId in eventIds)
+    {
+        var processed = ScalarText(connectionString, $"select coalesce(bool_or(processed_at_utc is not null), false)::text from outbox_messages where event_id = '{eventId}'");
+        Assert(processed == "True" || processed == "true", $"outbox message for {eventId} must be processed before confirm returns");
+    }
+}
+
+static JsonDocument ConfirmPayloadJson(ConfirmResult result)
+{
+    Assert(result.Payload is not null, "confirm payload must not be null");
+    return JsonDocument.Parse(JsonSerializer.Serialize(result.Payload, new JsonSerializerOptions(JsonSerializerDefaults.Web)));
+}
+
+static void AssertConfirmEvents(ConfirmResult result, params string[] expectedEventTypes)
+{
+    using var payload = ConfirmPayloadJson(result);
+    var actual = payload.RootElement.GetProperty("events")
+        .EnumerateArray()
+        .Select(item => item.GetProperty("eventType").GetString())
+        .Where(item => !string.IsNullOrWhiteSpace(item))
+        .ToArray();
+    Assert(actual.SequenceEqual(expectedEventTypes), $"expected confirm events [{string.Join(", ", expectedEventTypes)}], got [{string.Join(", ", actual)}]");
 }
 
 static int CountRows(string connectionString, string tableName)
@@ -1277,6 +1412,53 @@ static void ResetPostgres(string connectionString)
         drop table if exists schema_migrations;
         """;
     command.ExecuteNonQuery();
+}
+
+static void EnsureTestDatabaseExists(string connectionString)
+{
+    var builder = new NpgsqlConnectionStringBuilder(connectionString);
+    var database = builder.Database ?? string.Empty;
+    if (string.IsNullOrWhiteSpace(database))
+    {
+        throw new InvalidOperationException("Runtime contract tests require an explicit test database name.");
+    }
+
+    if (!Regex.IsMatch(database, "^[A-Za-z0-9_]+$"))
+    {
+        throw new InvalidOperationException("Runtime contract tests require a simple alphanumeric test database name.");
+    }
+
+    var adminBuilder = new NpgsqlConnectionStringBuilder(connectionString) { Database = "postgres" };
+    using var connection = new NpgsqlConnection(adminBuilder.ToString());
+    connection.Open();
+
+    using var exists = connection.CreateCommand();
+    exists.CommandText = "select 1 from pg_database where datname = @database";
+    exists.Parameters.AddWithValue("database", database);
+    if (exists.ExecuteScalar() is not null)
+    {
+        return;
+    }
+
+    using var create = connection.CreateCommand();
+    create.CommandText = $"create database \"{database}\"";
+    create.ExecuteNonQuery();
+}
+
+static void AssertTestDatabaseAllowed(string connectionString)
+{
+    var builder = new NpgsqlConnectionStringBuilder(connectionString);
+    var database = builder.Database ?? string.Empty;
+    var explicitTestDatabase = string.Equals(
+        Environment.GetEnvironmentVariable("TEST_DATABASE"),
+        "true",
+        StringComparison.OrdinalIgnoreCase);
+    if (database.Contains("_test", StringComparison.OrdinalIgnoreCase) || explicitTestDatabase)
+    {
+        return;
+    }
+
+    throw new InvalidOperationException("Runtime contract tests refuse destructive reset unless database name contains '_test' or TEST_DATABASE=true.");
 }
 
 static void Assert(bool condition, string message)

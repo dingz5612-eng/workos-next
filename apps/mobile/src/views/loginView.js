@@ -18,7 +18,7 @@ export function loginView(ctx) {
         <input id="loginPassword" type="password" value="dev" autocomplete="current-password" />
       </label>
       <button id="loginSubmit">${tr("loginSubmit")}</button>
-      ${state.loginMessage ? `<p class="login-message">${state.loginMessage}</p>` : ""}
+      ${state.loginMessage ? `<p class="login-message">${ctx.escapeHtml(state.loginMessage)}</p>` : ""}
     </section>
   `);
 }

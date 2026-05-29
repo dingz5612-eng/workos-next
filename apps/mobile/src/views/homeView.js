@@ -17,7 +17,7 @@ export function homeView(ctx) {
     <section class="home-search">
       <span>${tr("homeSearch")}</span>
       <div class="search-line">
-        <input id="query" value="${state.query}" placeholder="${tr("searchPlaceholder")}" />
+        <input id="query" value="${ctx.escapeAttr(state.query)}" placeholder="${tr("searchPlaceholder")}" />
         <button id="searchNow">${tr("search")}</button>
       </div>
     </section>

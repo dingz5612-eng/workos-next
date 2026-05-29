@@ -9,7 +9,7 @@ public sealed record DepositLedgerState(
     decimal RefundPaidAmount)
 {
     public decimal AvailableForSettlement =>
-        Math.Max(HeldAmount - DeductedAmount - AppliedToBalanceAmount - RefundApprovedAmount - RefundPaidAmount, 0m);
+        Math.Max(HeldAmount - RefundApprovedAmount, 0m);
 }
 
 public sealed record PaymentLedgerState(
@@ -20,4 +20,3 @@ public sealed record PaymentLedgerState(
     public decimal AvailableForAllocation =>
         Math.Max(ConfirmedAmount - AllocatedAmount, 0m);
 }
-

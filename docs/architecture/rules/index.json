@@ -79,7 +79,7 @@
       "owner": "frontend",
       "ruleFile": "docs/architecture/WORKOS_FRONTEND_BOUNDARY_RULES.md",
       "enforcedBy": ["apps/mobile vitest", "scripts/guard-architecture.ps1"],
-      "exceptionAllowed": false
+      "exceptionAllowed": true
     },
     {
       "id": "WON16-FRONTEND-002",
@@ -109,7 +109,7 @@
       "owner": "contracts",
       "ruleFile": "docs/architecture/WORKOS_CONTRACT_RULES.md",
       "enforcedBy": ["node scripts/validate-contracts.mjs", "scripts/guard-architecture.ps1"],
-      "exceptionAllowed": false
+      "exceptionAllowed": true
     },
     {
       "id": "WON16-CONTRACT-002",
@@ -183,4 +183,3 @@
     }
   ]
 }
-

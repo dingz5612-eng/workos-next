@@ -27,31 +27,31 @@ internal sealed class DepositLedgerStorage
         switch (workspaceEvent.EventType)
         {
             case "Accommodation.DepositAssessed":
-                UpsertLiability(workspaceEvent, db, DecimalValue(workspaceEvent, "应收押金金额", 3000m), 0m, "assessed");
+                UpsertLiability(workspaceEvent, db, DecimalValue(workspaceEvent, "requiredDepositAmount", 3000m), 0m, "assessed");
                 return true;
             case "Accommodation.DepositReceived":
             case "Accommodation.DepositEvidenceSubmitted":
-                AppendTransaction(workspaceEvent, db, "received", DecimalValue(workspaceEvent, "实收押金金额", 3000m), "pending_finance");
-                UpsertLiability(workspaceEvent, db, DecimalValue(workspaceEvent, "实收押金金额", 3000m), DecimalValue(workspaceEvent, "实收押金金额", 3000m), "received");
+                AppendTransaction(workspaceEvent, db, "received", DecimalValue(workspaceEvent, "receivedAmount", 3000m), "pending_finance");
+                UpsertLiability(workspaceEvent, db, DecimalValue(workspaceEvent, "receivedAmount", 3000m), DecimalValue(workspaceEvent, "receivedAmount", 3000m), "received");
                 return true;
             case "Accommodation.DepositConfirmed":
-                AppendTransaction(workspaceEvent, db, "confirmed", DecimalValue(workspaceEvent, "确认金额", 3000m), "confirmed");
-                UpsertLiability(workspaceEvent, db, DecimalValue(workspaceEvent, "确认金额", 3000m), DecimalValue(workspaceEvent, "确认金额", 3000m), "confirmed");
+                AppendTransaction(workspaceEvent, db, "confirmed", DecimalValue(workspaceEvent, "confirmedAmount", 3000m), "confirmed");
+                UpsertLiability(workspaceEvent, db, DecimalValue(workspaceEvent, "confirmedAmount", 3000m), DecimalValue(workspaceEvent, "confirmedAmount", 3000m), "confirmed");
                 return true;
             case "Accommodation.DepositRejected":
                 AppendTransaction(workspaceEvent, db, "rejected", 0m, "rejected");
                 return true;
             case "Accommodation.DepositDeducted":
-                AppendTransaction(workspaceEvent, db, "deducted", DecimalValue(workspaceEvent, "扣除金额", 0m), "deducted");
+                AppendTransaction(workspaceEvent, db, "deducted", DecimalValue(workspaceEvent, "deductionAmount", 0m), "deducted");
                 return true;
             case "Accommodation.DepositAppliedToBalance":
-                AppendTransaction(workspaceEvent, db, "applied_to_balance", DecimalValue(workspaceEvent, "抵扣欠款金额", 0m), "applied");
+                AppendTransaction(workspaceEvent, db, "applied_to_balance", DecimalValue(workspaceEvent, "applyToBalanceAmount", 0m), "applied");
                 return true;
             case "Accommodation.DepositRefundApproved":
-                AppendTransaction(workspaceEvent, db, "refund_approved", DecimalValue(workspaceEvent, "应退金额", 0m), "approved");
+                AppendTransaction(workspaceEvent, db, "refund_approved", DecimalValue(workspaceEvent, "refundAmount", 0m), "approved");
                 return true;
             case "Accommodation.DepositRefundPaid":
-                AppendTransaction(workspaceEvent, db, "refund_paid", DecimalValue(workspaceEvent, "应退金额", DecimalValue(workspaceEvent, "退款金额", 0m)), "paid");
+                AppendTransaction(workspaceEvent, db, "refund_paid", DecimalValue(workspaceEvent, "refundAmount", DecimalValue(workspaceEvent, "refundAmount", 0m)), "paid");
                 return true;
             case "Accommodation.DepositClosed":
                 AppendTransaction(workspaceEvent, db, "closed", 0m, "closed");
@@ -63,7 +63,7 @@ internal sealed class DepositLedgerStorage
 
     private void UpsertLiability(WorkspaceEvent workspaceEvent, RuntimeDbSession db, decimal requiredAmount, decimal receivedAmount, string status)
     {
-        var depositId = Value(workspaceEvent, "押金单", StableId("deposit", workspaceEvent));
+        var depositId = DepositId(workspaceEvent);
         using var command = db.CreateCommand("""
             insert into deposit_liabilities(deposit_id, workspace_id, folio_id, required_amount, received_amount, liability_balance, currency, rule_name, status, created_event_id, updated_at_utc)
             values (@depositId, @workspaceId, @folioId, @requiredAmount, @receivedAmount, @liabilityBalance, @currency, @ruleName, @status, @createdEventId, @updatedAtUtc)
@@ -76,12 +76,12 @@ internal sealed class DepositLedgerStorage
             """);
         command.Parameters.AddWithValue("depositId", depositId);
         command.Parameters.AddWithValue("workspaceId", workspaceEvent.WorkspaceId);
-        command.Parameters.AddWithValue("folioId", Value(workspaceEvent, "入住单", StableId("stay", workspaceEvent)));
+        command.Parameters.AddWithValue("folioId", Value(workspaceEvent, "stayId", StableId("stay", workspaceEvent)));
         command.Parameters.AddWithValue("requiredAmount", NpgsqlDbType.Numeric, requiredAmount);
         command.Parameters.AddWithValue("receivedAmount", NpgsqlDbType.Numeric, receivedAmount);
         command.Parameters.AddWithValue("liabilityBalance", NpgsqlDbType.Numeric, Math.Max(requiredAmount - receivedAmount, 0m));
-        command.Parameters.AddWithValue("currency", Value(workspaceEvent, "币种", "KGS"));
-        command.Parameters.AddWithValue("ruleName", Value(workspaceEvent, "押金类型", Value(workspaceEvent, "押金规则说明", "security")));
+        command.Parameters.AddWithValue("currency", Value(workspaceEvent, "currency", "KGS"));
+        command.Parameters.AddWithValue("ruleName", Value(workspaceEvent, "depositType", Value(workspaceEvent, "depositPolicyNote", "security")));
         command.Parameters.AddWithValue("status", status);
         command.Parameters.AddWithValue("createdEventId", workspaceEvent.EventId);
         command.Parameters.AddWithValue("updatedAtUtc", workspaceEvent.OccurredAtUtc);
@@ -96,11 +96,11 @@ internal sealed class DepositLedgerStorage
             on conflict(transaction_id) do nothing
             """);
         command.Parameters.AddWithValue("transactionId", $"deposit-tx-{workspaceEvent.EventId}".ToLowerInvariant());
-        command.Parameters.AddWithValue("depositId", Value(workspaceEvent, "押金单", StableId("deposit", workspaceEvent)));
+        command.Parameters.AddWithValue("depositId", DepositId(workspaceEvent));
         command.Parameters.AddWithValue("workspaceId", workspaceEvent.WorkspaceId);
         command.Parameters.AddWithValue("transactionType", type);
         command.Parameters.AddWithValue("amount", NpgsqlDbType.Numeric, amount);
-        command.Parameters.AddWithValue("currency", Value(workspaceEvent, "币种", "KGS"));
+        command.Parameters.AddWithValue("currency", Value(workspaceEvent, "currency", "KGS"));
         command.Parameters.AddWithValue("status", status);
         command.Parameters.AddWithValue("actorId", workspaceEvent.ActorId);
         command.Parameters.AddWithValue("createdEventId", workspaceEvent.EventId);
@@ -113,6 +113,9 @@ internal sealed class DepositLedgerStorage
 
     private static decimal DecimalValue(WorkspaceEvent workspaceEvent, string key, decimal defaultValue) =>
         RuntimeFieldAliases.DecimalValue(workspaceEvent.Payload, RuntimeFieldAliases.CanonicalKey(key), defaultValue);
+
+    private static string DepositId(WorkspaceEvent workspaceEvent) =>
+        Value(workspaceEvent, "depositId", Value(workspaceEvent, "depositReceiptId", StableId("deposit", workspaceEvent)));
 
     private static string StableId(string prefix, WorkspaceEvent workspaceEvent) =>
         $"{prefix}-{workspaceEvent.WorkspaceId}".ToLowerInvariant();

@@ -12,18 +12,12 @@ internal sealed class RuntimeAccommodationLedgerStorage
     public DepositLedgerState GetDepositLedgerState(string depositId)
     {
         using var connection = connections.Open();
-        decimal heldAmount;
-        using (var command = connection.CreateCommand())
-        {
-            command.CommandText = "select coalesce(max(received_amount), 0) from deposit_liabilities where deposit_id = @depositId";
-            command.Parameters.AddWithValue("depositId", depositId);
-            heldAmount = Convert.ToDecimal(command.ExecuteScalar() ?? 0m);
-        }
-
+        var confirmed = SumDepositTransactions(connection, depositId, "confirmed");
         var deducted = SumDepositTransactions(connection, depositId, "deducted");
         var applied = SumDepositTransactions(connection, depositId, "applied_to_balance");
         var approved = SumDepositTransactions(connection, depositId, "refund_approved");
         var paid = SumDepositTransactions(connection, depositId, "refund_paid");
+        var heldAmount = Math.Max(confirmed - deducted - applied - paid, 0m);
         return new DepositLedgerState(depositId, heldAmount, deducted, applied, approved, paid);
     }
 
@@ -58,4 +52,3 @@ internal sealed class RuntimeAccommodationLedgerStorage
         return Convert.ToDecimal(command.ExecuteScalar() ?? 0m);
     }
 }
-

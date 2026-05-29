@@ -16,7 +16,7 @@ export function learningView(ctx) {
     <section class="knowledge-search">
       <span>${ctx.tr("coachHowToUse")}</span>
       <div class="search-line">
-        <input id="learningQuery" value="${ctx.state.learningQuery}" placeholder="${ctx.tr("coachSearchPlaceholder")}" />
+        <input id="learningQuery" value="${ctx.escapeAttr(ctx.state.learningQuery)}" placeholder="${ctx.tr("coachSearchPlaceholder")}" />
         <button id="learningSearch">${ctx.tr("search")}</button>
       </div>
       <div class="filter-row">${learningDomainFilters({ state: ctx.state, tr: ctx.tr })}</div>

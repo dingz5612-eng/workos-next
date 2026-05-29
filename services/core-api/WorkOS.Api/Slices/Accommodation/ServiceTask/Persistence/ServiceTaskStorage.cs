@@ -61,13 +61,13 @@ internal sealed class ServiceTaskStorage
                 status = excluded.status,
                 updated_at_utc = excluded.updated_at_utc
             """);
-        command.Parameters.AddWithValue("taskId", Value(workspaceEvent, "任务", StableId("task", workspaceEvent)));
+        command.Parameters.AddWithValue("taskId", Value(workspaceEvent, "taskId", StableId("task", workspaceEvent)));
         command.Parameters.AddWithValue("workspaceId", workspaceEvent.WorkspaceId);
-        command.Parameters.AddWithValue("taskType", Value(workspaceEvent, "任务类型", "清洁"));
-        command.Parameters.AddWithValue("roomId", Value(workspaceEvent, "房间", "A301"));
-        command.Parameters.AddWithValue("bedId", Value(workspaceEvent, "床位", "A301-02"));
-        command.Parameters.AddWithValue("urgency", Value(workspaceEvent, "紧急程度", "中"));
-        command.Parameters.AddWithValue("blocksAvailability", BoolValue(workspaceEvent, "是否阻断可售", true));
+        command.Parameters.AddWithValue("taskType", Value(workspaceEvent, "taskType", "清洁"));
+        command.Parameters.AddWithValue("roomId", Value(workspaceEvent, "roomId", "A301"));
+        command.Parameters.AddWithValue("bedId", Value(workspaceEvent, "bedId", "A301-02"));
+        command.Parameters.AddWithValue("urgency", Value(workspaceEvent, "urgency", "中"));
+        command.Parameters.AddWithValue("blocksAvailability", BoolValue(workspaceEvent, "blocksAvailability", true));
         command.Parameters.AddWithValue("status", status);
         command.Parameters.AddWithValue("actualCostAmount", NpgsqlDbType.Numeric, 0m);
         command.Parameters.AddWithValue("createdEventId", workspaceEvent.EventId);

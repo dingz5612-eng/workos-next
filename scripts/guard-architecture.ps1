@@ -64,7 +64,68 @@ Assert-Exists "docs/architecture/WORKOS_ENGINEERING_RULES.md"
 Assert-Exists "docs/architecture/WORKOS_BACKEND_RUNTIME_RULES.md"
 Assert-Exists "docs/architecture/WORKOS_FRONTEND_BOUNDARY_RULES.md"
 Assert-Exists "docs/architecture/WORKOS_CONTRACT_RULES.md"
+Assert-Exists "docs/architecture/WORKOS_ACCOMMODATION_RUNTIME_RULES.md"
+Assert-Exists "docs/architecture/WORKOS_TESTING_RULES.md"
+Assert-Exists "docs/architecture/CURRENT_RUNTIME_ARCHITECTURE.md"
+Assert-Exists "docs/architecture/rules/index.json"
+Assert-Exists "docs/architecture/architecture-exceptions.json"
 Assert-Exists "scripts/clean-baseline.ps1"
+Assert-Exists "tests/WorkOS.UnitTests/WorkOS.UnitTests.csproj"
+Assert-Exists "tests/WorkOS.RuntimeIntegrationTests/WorkOS.RuntimeIntegrationTests.csproj"
+Assert-Exists "apps/mobile/src/__tests__/operationRuntime.test.js"
+Assert-Exists "apps/mobile/src/__tests__/htmlEscaping.test.js"
+
+$rulesIndex = Get-Content "docs/architecture/rules/index.json" -Raw | ConvertFrom-Json
+$architectureExceptions = Get-Content "docs/architecture/architecture-exceptions.json" -Raw | ConvertFrom-Json
+$ruleItems = @($rulesIndex.rules)
+$exceptionItems = @($architectureExceptions.exceptions)
+
+function Find-Rule($ruleId) {
+  $rule = $ruleItems | Where-Object { $_.id -eq $ruleId } | Select-Object -First 1
+  if (-not $rule) {
+    Fail "Architecture exception references unknown ruleId: $ruleId"
+  }
+  return $rule
+}
+
+function Validate-ArchitectureExceptions {
+  foreach ($exception in $exceptionItems) {
+    foreach ($field in @("ruleId", "owner", "reason", "createdAt", "expiresAt", "removalCondition", "linkedTest")) {
+      if (-not $exception.PSObject.Properties.Name.Contains($field) -or [string]::IsNullOrWhiteSpace([string]$exception.$field)) {
+        Fail "Architecture exception is missing required field '$field'."
+      }
+    }
+
+    $rule = Find-Rule $exception.ruleId
+    if (-not [bool]$rule.exceptionAllowed) {
+      Fail "Rule $($exception.ruleId) does not allow exceptions."
+    }
+
+    $expiresAt = [DateTimeOffset]::Parse([string]$exception.expiresAt)
+    if ($expiresAt -lt [DateTimeOffset]::UtcNow) {
+      Fail "Architecture exception expired for rule $($exception.ruleId): $($exception.reason)"
+    }
+  }
+}
+
+function Test-RuleExcepted($ruleId) {
+  $match = $exceptionItems | Where-Object { $_.ruleId -eq $ruleId } | Select-Object -First 1
+  if (-not $match) {
+    return $false
+  }
+  $null = Find-Rule $ruleId
+  Write-Warning "Architecture exception active for ${ruleId}: $($match.reason)"
+  return $true
+}
+
+function Assert-NoMatchesRule($ruleId, $paths, $pattern, $message, $excludePattern = $null) {
+  if (Test-RuleExcepted $ruleId) {
+    return
+  }
+  Assert-NoMatches $paths $pattern $message $excludePattern
+}
+
+Validate-ArchitectureExceptions
 
 $migrationFiles = Get-ChildItem "infra/db/migrations" -Filter "*.sql" -ErrorAction SilentlyContinue
 if (-not $migrationFiles -or $migrationFiles.Count -lt 3) {
@@ -84,15 +145,26 @@ Assert-NoMatches @("apps/mobile/src/controls/fieldControls.js") "房型|上/下�
 Assert-NoMatches @("apps/mobile/src/views") "fetch|/api/" "View modules must not own API transport; use apiClient.js and operationRuntime.js."
 Assert-NoMatches @("apps/mobile/src/i18n.js") "RoomCreated|BedCreated|DepositEvidenceSubmitted|FinanceDepositConfirmed|CheckInConfirmed" "i18n.js must not own event contracts or business runtime definitions."
 Assert-NoMatches @("apps/mobile/src/i18n.js") "depositTask|repairTask|stayObject|repairObject|Flow|流程|闭环|押金|住宿单|维修" "i18n.js must not own demo business objects or process copy; use focused i18n modules or projection/i18n contracts."
+Assert-NoMatchesRule "WON16-FRONTEND-001" @("apps/mobile/src/operationRuntime.js") "workspaceId.*cardId.*actor\.actorId|actor\.actorId.*workspaceId" "operationRuntime must use a submit-level UUID idempotencyKey, not a workspace/card/actor composite."
+$mainRuntime = Get-Content "apps/mobile/src/main.js" -Raw
+if ($mainRuntime -notmatch "escapeHtml\(tr\(state, key\)\)" -or
+    $mainRuntime -notmatch "escapeHtml\(tx\(state, value\)\)" -or
+    $mainRuntime -notmatch "escapeHtml\(localTerm\(state, value, lang\)\)") {
+  Fail "Frontend projection and localized text helpers must escape HTML before view interpolation."
+}
+Assert-NoMatches @("apps/mobile/src/views") "\$\{[^}]*state\.query|\$\{[^}]*learningQuery|\$\{[^}]*loginMessage|\$\{[^}]*operationMessage|\$\{[^}]*currentActor\?\.displayName|\$\{[^}]*currentActor\?\.role" "View modules must escape user/session text before HTML interpolation." "escapeHtml|escapeAttr|ctx\.state\.query \?"
 
 Assert-NoMatches @("services/core-api/WorkOS.Api/Runtime") "ai_confirmation_forbidden|role_confirmation_forbidden" "Role and AI confirmation policy denials must live outside Runtime in Slices/Policies/CardConfirmationPolicy."
 Assert-NoMatches @("services/core-api/WorkOS.Api/Runtime/PostgresProjectionStore.cs") "CardConfirmationPolicy|ProjectionTargets|ApplyEventToReadModel|PriorityFor|SearchText|SearchResult|RequiredRole" "Store classes must not own policy, projector, lens, or business contract rules."
+Assert-NoMatches @("services/core-api/WorkOS.Api/Runtime/ActionRuntimeService.cs") "card\.Events\.First\s*\(" "ActionRuntimeService must use EventSelectionPolicy and must never take only the first declared event."
 Assert-NoMatches @("services", "tests") "Events\.First\s*\(" "Confirm event dispatch must use EventSelectionPolicy and must never take only the first declared event."
 Assert-NoMatches @("services/core-api/WorkOS.Api/Slices", "services/core-api/WorkOS.Api/Runtime") 'Payload\.TryGetValue\("' "Runtime policy and storage must read canonical field ids through RuntimeFieldAliases, not label literals."
+Assert-NoMatchesRule "WON16-CONTRACT-001" @("services/core-api/WorkOS.Api/Slices", "services/core-api/WorkOS.Api/Runtime") 'RuntimeFieldAliases\.CanonicalKey\("[^"]*\p{Han}|Value\(workspaceEvent,\s*"[^"]*\p{Han}|DecimalValue\(workspaceEvent,\s*"[^"]*\p{Han}|IntValue\(workspaceEvent,\s*"[^"]*\p{Han}|DateValue\(workspaceEvent,\s*"[^"]*\p{Han}' "Runtime policy and persistence must not use localized labels as business fact keys."
 Assert-NoMatches @("services/core-api/WorkOS.Api") "RuntimeAuthOptions\.Development" "Development auth defaults must not be referenced outside Program.cs and RuntimeAuthOptions.cs." "Program\.cs|RuntimeAuthOptions\.cs"
 Assert-NoMatches @("services/core-api/WorkOS.Api/Slices/Accommodation/CheckOutSettlement") "DepositRefundPaid|DepositDeducted|DepositAppliedToBalance|deposit_transactions" "CheckOutSettlement must not own deposit transaction facts."
 Assert-NoMatches @("services/core-api/WorkOS.Api/Slices/Accommodation/ServiceTask") "accommodation_beds|UpdateBedStatus|actual_cost_amount = excluded|DecimalValue\(workspaceEvent, `"实际成本`"" "ServiceTask must not directly mutate BedStatus or persist cost facts."
 Assert-NoMatches @("services/core-api/WorkOS.Api/Runtime/RuntimeAggregateLensStorage.cs") "actual_cost_amount" "Service task lenses must not expose service task cost as a fact source; use ExpenseLedger."
+Assert-NoMatches @("services/core-api/WorkOS.Api/Slices/Accommodation/CheckIn", "services/core-api/WorkOS.Api/Slices/Persistence/SliceAggregateStorage.cs") "deposit_transactions|payment_allocations|stay_balances" "Legacy CheckIn must not write new DepositLedger/PaymentLedger fact tables."
 Assert-NoMatches @("services/core-api/WorkOS.Api") "GetPendingOutboxMessages" "Outbox workers must claim messages before processing; direct pending reads are forbidden."
 
 $requiredSliceDirs = @(
@@ -116,6 +188,7 @@ $requiredRuntimeServices = @(
   "services/core-api/WorkOS.Api/Runtime/AuthSessionService.cs",
   "services/core-api/WorkOS.Api/Runtime/OutboxProjector.cs",
   "services/core-api/WorkOS.Api/Runtime/EventSelectionPolicy.cs",
+  "services/core-api/WorkOS.Api/Runtime/ConfirmUnitOfWork.cs",
   "services/core-api/WorkOS.Api/Runtime/RuntimeDbSession.cs"
 )
 
@@ -325,6 +398,19 @@ $ci = Get-Content ".github/workflows/ci.yml" -Raw
 if ($ci -notmatch "validate-runtime-api\.mjs") {
   Fail "CI must run validate-runtime-api.mjs explicitly."
 }
+foreach ($requiredCiCommand in @("npm --prefix apps/mobile run test", "WorkOS.UnitTests", "WorkOS.RuntimeIntegrationTests")) {
+  if ($ci -notmatch [regex]::Escape($requiredCiCommand)) {
+    Fail "CI must run testing-pyramid command: $requiredCiCommand"
+  }
+}
+if ($ci -notmatch "workosnext_test" -and $ci -notmatch "TEST_DATABASE") {
+  Fail "CI runtime tests must use a _test database or TEST_DATABASE=true."
+}
+
+$runtimeContractTests = Get-Content "tests/WorkOS.RuntimeContractTests/Program.cs" -Raw
+if ($runtimeContractTests -notmatch "AssertTestDatabaseAllowed" -or $runtimeContractTests -notmatch "TEST_DATABASE" -or $runtimeContractTests -notmatch "_test") {
+  Fail "Runtime contract tests must refuse destructive reset unless database name contains _test or TEST_DATABASE=true."
+}
 
 $operationRuntime = Get-Content "apps/mobile/src/operationRuntime.js" -Raw
 if ($operationRuntime -notmatch "randomUUID") {
@@ -332,6 +418,33 @@ if ($operationRuntime -notmatch "randomUUID") {
 }
 if ($operationRuntime -notmatch "evidenceIds") {
   Fail "Frontend confirm submissions must pass evidenceIds."
+}
+
+$runtimeApiPaths = Get-Content "apps/mobile/src/generated/runtimeApiPaths.js" -Raw
+$requiredRuntimeApiPathKeys = @(
+  "health",
+  "login",
+  "workspaces",
+  "workspace",
+  "bootstrap",
+  "prepareCard",
+  "confirmCard",
+  "workQueue",
+  "search",
+  "lensWorkQueue",
+  "lensSearch",
+  "accommodationLens",
+  "workspaceEvents",
+  "auditEvents",
+  "outbox",
+  "processOutbox",
+  "behaviorEvents",
+  "observability"
+)
+foreach ($runtimeApiPathKey in $requiredRuntimeApiPathKeys) {
+  if ($runtimeApiPaths -notmatch "${runtimeApiPathKey}\s*:") {
+    Fail "generated runtimeApiPaths.js missing OpenAPI runtime path key: $runtimeApiPathKey"
+  }
 }
 
 $depositPolicy = Get-Content "services/core-api/WorkOS.Api/Slices/Accommodation/DepositLedger/Policies/DepositLedgerPolicy.cs" -Raw
@@ -344,10 +457,46 @@ if ($paymentPolicy -notmatch "GetPaymentLedgerState") {
   Fail "PaymentLedger policy must read backend payment ledger state."
 }
 
+$ownershipCatalog = Get-Content "services/core-api/WorkOS.Api/Runtime/AccommodationFactOwnershipCatalog.cs" -Raw
+foreach ($ownership in @(
+  '"Deposit"] = "Accommodation.DepositLedger"',
+  '"Payment"] = "Accommodation.PaymentLedger"',
+  '"StayBalance"] = "Accommodation.PaymentLedger"',
+  '"BedStatus"] = "Accommodation.ResourceSetup"',
+  '"Expense"] = "Accommodation.ExpenseLedger"',
+  '"PeriodSnapshot"] = "Accommodation.PeriodAnalytics"'
+)) {
+  if ($ownershipCatalog -notmatch [regex]::Escape($ownership)) {
+    Fail "Accommodation fact ownership catalog missing: $ownership"
+  }
+}
+
+$aggregateLenses = Get-Content "services/core-api/WorkOS.Api/Runtime/RuntimeAggregateLensStorage.cs" -Raw
+foreach ($requiredLens in @("BedInventoryLens", "DepositLiabilityLens", "StayBalanceLens", "PaymentRiskLens", "CheckoutQueueLens", "ServiceTaskQueueLens", "RiskCommandLens")) {
+  if ($aggregateLenses -notmatch $requiredLens) {
+    Fail "Accommodation Lens implementation missing: $requiredLens"
+  }
+}
+
+$periodAnalyticsStorage = Get-Content "services/core-api/WorkOS.Api/Slices/Accommodation/PeriodAnalytics/Persistence/PeriodAnalyticsStorage.cs" -Raw
+if ($periodAnalyticsStorage -notmatch "snapshot_frozen" -or $periodAnalyticsStorage -notmatch "on conflict\(period_id\) do nothing" -or $periodAnalyticsStorage -notmatch "period_late_adjustments") {
+  Fail "PeriodAnalytics must freeze snapshots and append late adjustments."
+}
+
+$optionSetRegistry = Get-Content "services/core-api/WorkOS.Api/Runtime/OptionSetRegistry.cs" -Raw
+if ($optionSetRegistry -notmatch "DefaultValue\(string label\) => string\.Empty") {
+  Fail "Production-slice field contracts must not ship fake user input default values."
+}
+
 $outboxStorage = Get-Content "services/core-api/WorkOS.Api/Runtime/RuntimeOutboxStorage.cs" -Raw
 foreach ($requiredOutboxTerm in @("for update skip locked", "dead_lettered_at_utc", "retry_count", "ClaimPending", "MarkFailed")) {
   if ($outboxStorage -notmatch [regex]::Escape($requiredOutboxTerm)) {
     Fail "Outbox storage must implement claim/dead-letter behavior: $requiredOutboxTerm"
+  }
+}
+foreach ($requiredOutboxTerm in @("attempt_count", "claimed_by", "last_error")) {
+  if ($outboxStorage -notmatch [regex]::Escape($requiredOutboxTerm)) {
+    Fail "Outbox storage must expose the WON-16 outbox contract field: $requiredOutboxTerm"
   }
 }
 

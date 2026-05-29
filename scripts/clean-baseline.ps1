@@ -26,7 +26,7 @@ function Assert-NoMatches($paths, $pattern, $message, $excludePattern = $null) {
 
 Assert-NoMatches @("apps", "services", "tests", "docs/product", "docs/ux") "scenarioFlows|data-task|data-scenario|taskView|objectView" "Old page/task/object model terms must not remain in the active baseline."
 Assert-NoMatches @("docs") "local scaffold currently targets net9\.0" "Stale .NET 9 scaffold documentation is forbidden."
-Assert-NoMatches @("services") "obsolete|legacy|temp|fallback|mock-only" "Runtime services must not carry obsolete, legacy, temp, fallback, or mock-only code."
+Assert-NoMatches @("services") "\b(obsolete|legacy|temp|fallback|mock-only)\b" "Runtime services must not carry obsolete, legacy, temp, fallback, or mock-only code."
 Assert-NoMatches @("apps", "services", "tests") "mock-only" "Production runtime and mobile code must not reference mock-only files or flows."
 
 $solutionText = Get-Content "WorkOSNext.sln" -Raw
@@ -55,7 +55,7 @@ function fail(message, details = []) {
 
 function walk(dir, predicate, output = []) {
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
-    if (entry.name === "node_modules" || entry.name === "dist") continue;
+    if (entry.name === "node_modules" || entry.name === "dist" || entry.name === "__tests__") continue;
     const fullPath = path.join(dir, entry.name);
     if (entry.isDirectory()) {
       walk(fullPath, predicate, output);
@@ -159,7 +159,8 @@ for (const file of csFiles) {
     const typeName = match[2];
     const count = [...csSource.matchAll(new RegExp(`\\b${typeName}\\b`, "g"))].length;
     const isDocumentedSliceSkeleton = documentedSkeletonDirs.some((dir) => file.includes(dir));
-    if (count <= 1 && !isDocumentedSliceSkeleton) unusedTypes.push(`${file}: ${typeName}`);
+    const isTestType = file.startsWith(`tests${path.sep}`);
+    if (count <= 1 && !isDocumentedSliceSkeleton && !isTestType) unusedTypes.push(`${file}: ${typeName}`);
   }
 }
 

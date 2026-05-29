@@ -1,12 +1,16 @@
 {
-  "version": "0.13.0",
+  "version": "0.16.0",
   "policy": "CardConfirmationPolicy",
   "decisionCodes": [
     "allowed",
     "actor_session_required",
+    "invalid_actor_token",
     "ai_confirmation_forbidden",
     "role_confirmation_forbidden",
     "slice_runtime_forbidden",
+    "business_rule_violation",
+    "idempotency_duplicate",
+    "idempotency_conflict",
     "deposit_evidence_required",
     "deposit_ledger_state_required",
     "deposit_refund_exceeds_held_amount",
@@ -32,6 +36,11 @@
       "denies": "actor_session_required"
     },
     {
+      "id": "invalid-actor-token",
+      "description": "Malformed, expired, or otherwise invalid actor tokens are authentication failures and must not be reported as business policy blockers.",
+      "denies": "invalid_actor_token"
+    },
+    {
       "id": "ai-cannot-confirm",
       "description": "AI may prepare, explain, summarize, and draft, but must never confirm a card when forbiddenForAi is true.",
       "denies": "ai_confirmation_forbidden"
@@ -45,6 +54,16 @@
       "id": "slice-status-gate",
       "description": "Contract-only slices may prepare cards but cannot confirm them until runtime status is upgraded.",
       "denies": "slice_runtime_forbidden"
+    },
+    {
+      "id": "business-policy-violation",
+      "description": "Business blockers that are not auth, role, AI, slice capability, or idempotency failures use a stable business rule violation class.",
+      "denies": "business_rule_violation"
+    },
+    {
+      "id": "idempotency-result",
+      "description": "Duplicate idempotency keys return the existing durable result; conflicting reuse of a key is rejected without side effects.",
+      "denies": "idempotency_duplicate,idempotency_conflict"
     },
     {
       "id": "accommodation-money-ledger-policy",

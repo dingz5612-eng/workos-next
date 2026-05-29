@@ -41,8 +41,8 @@ internal static class FieldUiContractCatalog
 
     private static string DerivedFrom(string label) => label switch
     {
-        "容量" => "房型",
-        "应收金额" => "计费方式",
+        "容量" => "roomType",
+        "应收金额" => "tariffType",
         _ => string.Empty
     };
 }

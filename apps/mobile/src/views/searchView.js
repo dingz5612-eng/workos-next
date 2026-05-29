@@ -11,7 +11,7 @@ export function searchView(ctx) {
     </section>
     <section class="search-box">
       <div class="search-line">
-        <input id="query" value="${ctx.state.query}" placeholder="${ctx.tr("searchPlaceholder")}" />
+        <input id="query" value="${ctx.escapeAttr(ctx.state.query)}" placeholder="${ctx.tr("searchPlaceholder")}" />
         <button id="searchNow">${ctx.tr("search")}</button>
       </div>
     </section>

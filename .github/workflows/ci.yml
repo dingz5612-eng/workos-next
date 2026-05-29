@@ -14,13 +14,13 @@ jobs:
       postgres:
         image: postgres:16
         env:
-          POSTGRES_DB: workosnext
+          POSTGRES_DB: workosnext_test
           POSTGRES_USER: workosnext
           POSTGRES_PASSWORD: workosnext_dev
         ports:
           - 54329:5432
         options: >-
-          --health-cmd "pg_isready -U workosnext -d workosnext"
+          --health-cmd "pg_isready -U workosnext -d workosnext_test"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
@@ -39,23 +39,30 @@ jobs:
           cache-dependency-path: apps/mobile/package-lock.json
 
       - name: Install mobile dependencies
-        working-directory: apps/mobile
-        run: npm ci
+        run: npm --prefix apps/mobile ci
 
       - name: Audit mobile dependencies
-        working-directory: apps/mobile
-        run: npm audit --audit-level=low
+        run: npm --prefix apps/mobile audit --audit-level=low
 
       - name: Build mobile
-        working-directory: apps/mobile
-        run: npm run build
+        run: npm --prefix apps/mobile run build
+
+      - name: Test mobile
+        run: npm --prefix apps/mobile run test
 
       - name: Build backend
         run: dotnet build WorkOSNext.sln -c Release
 
+      - name: Run unit tests
+        run: dotnet test tests/WorkOS.UnitTests/WorkOS.UnitTests.csproj -c Release --no-build
+
+      - name: Run runtime integration tests
+        run: dotnet test tests/WorkOS.RuntimeIntegrationTests/WorkOS.RuntimeIntegrationTests.csproj -c Release --no-build
+
       - name: Run runtime contract tests
         env:
-          WORKOS_TEST_CONNECTION: Host=localhost;Port=54329;Database=workosnext;Username=workosnext;Password=workosnext_dev
+          WORKOS_TEST_CONNECTION: Host=localhost;Port=54329;Database=workosnext_test;Username=workosnext;Password=workosnext_dev
+          TEST_DATABASE: "true"
         run: dotnet run --project tests/WorkOS.RuntimeContractTests/WorkOS.RuntimeContractTests.csproj -c Release
 
       - name: Validate contract files
@@ -65,6 +72,8 @@ jobs:
         run: node scripts/generate-contract-dtos.mjs --check
 
       - name: Validate runtime API semantics
+        env:
+          ConnectionStrings__WorkOSRuntime: Host=localhost;Port=54329;Database=workosnext_test;Username=workosnext;Password=workosnext_dev
         run: node scripts/validate-runtime-api.mjs
 
       - name: Architecture guard

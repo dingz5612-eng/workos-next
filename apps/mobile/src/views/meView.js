@@ -1,10 +1,12 @@
 export function meView(ctx) {
   const { state, tr, shell } = ctx;
+  const actorDisplayName = state.currentActor?.displayName ? ctx.escapeHtml(state.currentActor.displayName) : tr("personalMode");
+  const actorRole = state.currentActor?.role ? ctx.escapeHtml(state.currentActor.role) : "-";
   return shell(`
     <section class="profile-card">
       <span>${tr("role")}</span>
-      <h1>${state.currentActor?.displayName || tr("personalMode")}</h1>
-      <p>${tr("permission")}: ${state.currentActor?.role || "-"} · ${tr("stay")} · ${tr("repair")} · ${tr("finance")}</p>
+      <h1>${actorDisplayName}</h1>
+      <p>${tr("permission")}: ${actorRole} · ${tr("stay")} · ${tr("repair")} · ${tr("finance")}</p>
       <button id="logout" class="secondary">${tr("logout")}</button>
     </section>
     <section class="metric-grid">${ctx.metric("11", "stats")}${ctx.metric("2", "blocked")}${ctx.metric("18m", "smartSort")}</section>

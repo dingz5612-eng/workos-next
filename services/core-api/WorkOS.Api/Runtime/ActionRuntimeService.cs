@@ -14,17 +14,20 @@ public sealed class ActionRuntimeService
     private readonly CardConfirmationPolicy confirmationPolicy;
     private readonly RuntimeQueryService queryService;
     private readonly SliceRuntimeCapabilityGate capabilityGate;
+    private readonly OutboxProjector outboxProjector;
 
     public ActionRuntimeService(
         IProjectionStore store,
         CardConfirmationPolicy confirmationPolicy,
         RuntimeQueryService queryService,
-        SliceRuntimeCapabilityGate capabilityGate)
+        SliceRuntimeCapabilityGate capabilityGate,
+        OutboxProjector outboxProjector)
     {
         this.store = store;
         this.confirmationPolicy = confirmationPolicy;
         this.queryService = queryService;
         this.capabilityGate = capabilityGate;
+        this.outboxProjector = outboxProjector;
     }
 
     public object? Prepare(RuntimeState state, string workspaceId, string cardId)
@@ -83,6 +86,14 @@ public sealed class ActionRuntimeService
         {
             return new ConfirmResult(ConfirmStatus.Invalid, "Confirm requires an idempotency key.", null);
         }
+        if (string.IsNullOrWhiteSpace(request.SubmissionId))
+        {
+            return new ConfirmResult(ConfirmStatus.Invalid, "Confirm requires a submissionId.", null);
+        }
+        if (string.IsNullOrWhiteSpace(request.CardInstanceId))
+        {
+            return new ConfirmResult(ConfirmStatus.Invalid, "Confirm requires a cardInstanceId.", null);
+        }
 
         var actor = store.FindUserBySessionToken(actorToken);
         if (actor is null)
@@ -134,14 +145,15 @@ public sealed class ActionRuntimeService
             return periodPolicyFailure;
         }
 
-        var correlationId = request.IdempotencyKey;
+        var correlationId = request.SubmissionId ?? request.IdempotencyKey;
         var requestId = request.RequestId ?? correlationId;
         var normalizedFieldValues = request.FieldValues ?? new Dictionary<string, string>();
         var evidenceIds = request.EvidenceIds ?? Array.Empty<string>();
         var events = new List<WorkspaceEvent>();
         var committedEvents = new List<IdempotentWorkspaceEvent>();
         string? causationId = null;
-        foreach (var eventDefinition in EventSelectionPolicy.EventsForConfirm(card))
+        var dispatchPlan = EventSelectionPolicy.PlanForConfirm(card, request);
+        foreach (var eventDefinition in dispatchPlan.Events)
         {
             var workspaceEvent = new WorkspaceEvent(
                 $"evt-{Guid.NewGuid():N}",
@@ -156,7 +168,10 @@ public sealed class ActionRuntimeService
                 DateTimeOffset.UtcNow,
                 normalizedFieldValues,
                 eventDefinition.ProjectionTargets,
-                evidenceIds);
+                evidenceIds,
+                request.SubmissionId,
+                request.CardInstanceId,
+                request.AggregateRef);
 
             var eventIdempotencyKey = events.Count == 0
                 ? request.IdempotencyKey
@@ -169,6 +184,12 @@ public sealed class ActionRuntimeService
         var existingEvent = store.CommitConfirmEvents(committedEvents);
         if (existingEvent is not null)
         {
+            var projection = ProjectCommittedEvents(state, new[] { existingEvent });
+            if (projection is null)
+            {
+                return new ConfirmResult(ConfirmStatus.ProjectionFailed, "projection_not_caught_up", null);
+            }
+
             return new ConfirmResult(ConfirmStatus.Duplicate, null, new
             {
                 confirmed = true,
@@ -178,8 +199,14 @@ public sealed class ActionRuntimeService
                 @event = existingEvent,
                 events = new[] { existingEvent },
                 workspace,
-                projection = queryService.Envelope(state)
+                projection
             });
+        }
+
+        var confirmedProjection = ProjectCommittedEvents(state, events);
+        if (confirmedProjection is null)
+        {
+            return new ConfirmResult(ConfirmStatus.ProjectionFailed, "projection_not_caught_up", null);
         }
 
         return new ConfirmResult(ConfirmStatus.Confirmed, null, new
@@ -191,8 +218,28 @@ public sealed class ActionRuntimeService
             @event = events[0],
             events,
             workspace,
-            projection = queryService.Envelope(state)
+            projection = confirmedProjection
         });
+    }
+
+    private ProjectionEnvelope? ProjectCommittedEvents(RuntimeState state, IReadOnlyList<WorkspaceEvent> events)
+    {
+        for (var round = 0; round < 8; round++)
+        {
+            if (events.All(workspaceEvent => state.Events.Any(item => item.EventId == workspaceEvent.EventId)))
+            {
+                return queryService.Envelope(state);
+            }
+
+            if (outboxProjector.ProcessPending(state) == 0)
+            {
+                break;
+            }
+        }
+
+        return events.All(workspaceEvent => state.Events.Any(item => item.EventId == workspaceEvent.EventId))
+            ? queryService.Envelope(state)
+            : null;
     }
 
     private static IReadOnlyDictionary<string, string> NormalizeFieldValues(

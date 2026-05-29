@@ -33,11 +33,12 @@ internal sealed class RuntimeOutboxStorage
             set claimed_by = @workerId,
                 claimed_at_utc = @now,
                 claim_expires_at_utc = @claimExpiresAtUtc,
-                retry_count = item.retry_count + 1,
+                attempt_count = item.attempt_count + 1,
+                retry_count = item.attempt_count + 1,
                 last_error = null
             from claimable
             where item.message_id = claimable.message_id
-            returning item.body, item.processed_at_utc, item.claimed_by, item.claimed_at_utc, item.claim_expires_at_utc, item.retry_count, item.dead_lettered_at_utc, item.last_error
+            returning item.body, item.processed_at_utc, item.claimed_by, item.claimed_at_utc, item.claim_expires_at_utc, item.attempt_count, item.dead_lettered_at_utc, item.last_error
             """;
         command.Parameters.AddWithValue("take", take);
         command.Parameters.AddWithValue("workerId", workerId);
@@ -53,7 +54,7 @@ internal sealed class RuntimeOutboxStorage
     {
         using var connection = connections.Open();
         using var command = connection.CreateCommand();
-        command.CommandText = "select body, processed_at_utc, claimed_by, claimed_at_utc, claim_expires_at_utc, retry_count, dead_lettered_at_utc, last_error from outbox_messages order by created_at_utc, message_id";
+        command.CommandText = "select body, processed_at_utc, claimed_by, claimed_at_utc, claim_expires_at_utc, attempt_count, dead_lettered_at_utc, last_error from outbox_messages order by created_at_utc, message_id";
         return ReadMessages(command);
     }
 
@@ -89,7 +90,7 @@ internal sealed class RuntimeOutboxStorage
                 claimed_at_utc = null,
                 claim_expires_at_utc = null,
                 last_error = @error,
-                dead_lettered_at_utc = case when retry_count >= @maxRetries then @failedAtUtc else dead_lettered_at_utc end
+                dead_lettered_at_utc = case when attempt_count >= @maxRetries then @failedAtUtc else dead_lettered_at_utc end
             where message_id = @messageId
               and claimed_by = @workerId
               and processed_at_utc is null
