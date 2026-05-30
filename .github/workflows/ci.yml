@@ -97,6 +97,10 @@ jobs:
 
       - name: Architecture guard
         shell: pwsh
+        env:
+          ConnectionStrings__WorkOSRuntime: Host=localhost;Port=54329;Database=workosnext_test;Username=workosnext;Password=workosnext_dev
+          WORKOS_TEST_CONNECTION: Host=localhost;Port=54329;Database=workosnext_test;Username=workosnext;Password=workosnext_dev
+          TEST_DATABASE: "true"
         run: ./scripts/guard-architecture.ps1
 
       - name: Clean baseline gate
