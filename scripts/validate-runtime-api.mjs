@@ -7,7 +7,9 @@ const openApi = JSON.parse(fs.readFileSync("docs/contracts/workos-runtime.openap
 const sliceManifest = JSON.parse(fs.readFileSync("docs/contracts/slice-manifest.json", "utf8"));
 const surfacePolicy = JSON.parse(fs.readFileSync("docs/contracts/runtime-surface-policy.json", "utf8"));
 const lensContract = JSON.parse(fs.readFileSync("docs/contracts/accommodation-lens-contract.json", "utf8"));
+const startupTimeoutMs = Number.parseInt(process.env.WORKOS_API_VALIDATE_TIMEOUT_MS ?? "90000", 10);
 let apiProcess;
+let apiProcessOutput = "";
 
 if (!externalApi) {
   apiProcess = spawn("dotnet", [
@@ -22,6 +24,12 @@ if (!externalApi) {
   ], {
     env: { ...process.env, ASPNETCORE_ENVIRONMENT: "Development", ASPNETCORE_URLS: baseUrl },
     stdio: ["ignore", "pipe", "pipe"]
+  });
+  apiProcess.stdout.on("data", (chunk) => {
+    apiProcessOutput += chunk.toString();
+  });
+  apiProcess.stderr.on("data", (chunk) => {
+    apiProcessOutput += chunk.toString();
   });
 }
 
@@ -50,7 +58,10 @@ try {
 async function waitForApi() {
   const started = Date.now();
   let lastError;
-  while (Date.now() - started < 30000) {
+  while (Date.now() - started < startupTimeoutMs) {
+    if (apiProcess?.exitCode !== null) {
+      throw new Error(`API process exited before becoming healthy at ${baseUrl} with code ${apiProcess.exitCode}.\n${lastApiOutput()}`);
+    }
     try {
       const response = await fetch(`${baseUrl}/health`);
       if (response.ok) return;
@@ -60,7 +71,15 @@ async function waitForApi() {
     await new Promise((resolve) => setTimeout(resolve, 500));
   }
 
-  throw new Error(`API did not become healthy at ${baseUrl}: ${lastError?.message || "timeout"}`);
+  throw new Error(`API did not become healthy at ${baseUrl} within ${startupTimeoutMs}ms: ${lastError?.message || "timeout"}.\n${lastApiOutput()}`);
+}
+
+function lastApiOutput() {
+  const output = apiProcessOutput.trim();
+  if (!output) {
+    return "API process produced no stdout/stderr before the health check failed.";
+  }
+  return output.slice(-6000);
 }
 
 async function validateHealth() {
