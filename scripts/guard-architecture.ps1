@@ -379,6 +379,8 @@ Assert-MaxLines "apps/mobile/src/i18n.js" 80 "i18n.js must stay as an i18n compo
 Assert-MaxLines "apps/mobile/src/styles.css" 40 "styles.css must stay as a style import manifest."
 
 $program = Get-Content "services/core-api/WorkOS.Api/Program.cs" -Raw
+$endpointExtensionFiles = @(Get-ChildItem "services/core-api/WorkOS.Api" -Recurse -File -Filter "*Endpoints.cs")
+$minimalApiSource = (@($program) + @($endpointExtensionFiles | ForEach-Object { Get-Content $_.FullName -Raw })) -join "`n"
 $openApi = Get-Content "docs/contracts/workos-runtime.openapi.json" -Raw | ConvertFrom-Json
 $requiredPaths = @(
   "/health",
@@ -407,7 +409,7 @@ $requiredEndpointPatterns = @(
 )
 
 foreach ($pattern in $requiredEndpointPatterns) {
-  if ($program -notmatch $pattern) {
+  if ($minimalApiSource -notmatch $pattern) {
     Fail "Minimal API endpoint missing or renamed without contract update: $pattern"
   }
 }
@@ -477,7 +479,7 @@ $allowedMapGetPaths = @(
 )
 
 $openApiPaths = @($openApi.paths.PSObject.Properties.Name)
-$mapGetMatches = [regex]::Matches($program, 'MapGet\("([^"]+)"')
+$mapGetMatches = [regex]::Matches($minimalApiSource, 'MapGet\("([^"]+)"')
 foreach ($match in $mapGetMatches) {
   $path = $match.Groups[1].Value
   if (-not $allowedMapGetPaths.Contains($path)) {
@@ -488,7 +490,7 @@ foreach ($match in $mapGetMatches) {
   }
 }
 
-$mapPostMatches = [regex]::Matches($program, 'MapPost\("([^"]+)"')
+$mapPostMatches = [regex]::Matches($minimalApiSource, 'MapPost\("([^"]+)"')
 foreach ($match in $mapPostMatches) {
   $path = $match.Groups[1].Value
   if (-not $allowedMapPostPaths.Contains($path)) {
