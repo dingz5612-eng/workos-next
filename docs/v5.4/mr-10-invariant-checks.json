@@ -1,0 +1,134 @@
+[
+  {
+    "invariant_check_id": "inv-v54-period-finance-snapshot-from-ledgers",
+    "release_id": "release-mr-10",
+    "tenant_id": "test-tenant",
+    "slice_id": "PeriodAnalytics",
+    "invariant_key": "period.finance_snapshot_from_ledgers",
+    "description": "Period finance snapshots must be generated from ledger and ledger projection sources, not user-entered finance totals.",
+    "mode": "blocking",
+    "severity": "P0",
+    "source_type": "skeleton",
+    "check_ref": "docs/v5.4/period-risk-pc-governance-cutover.config.json",
+    "status": "passed",
+    "observed_value": {
+      "skeleton": "period.finance_snapshot_from_ledgers"
+    },
+    "threshold": {},
+    "violation_count": 0,
+    "sample_violations": [],
+    "generated_by": "invariant-runner",
+    "ci_run_id": "local-mr-10",
+    "checked_at_utc": "2026-05-30T02:38:24.6454665+00:00"
+  },
+  {
+    "invariant_check_id": "inv-v54-period-expense-not-integrated-not-zero",
+    "release_id": "release-mr-10",
+    "tenant_id": "test-tenant",
+    "slice_id": "PeriodAnalytics",
+    "invariant_key": "period.expense_not_integrated_not_zero",
+    "description": "When ExpenseLedger is not integrated, expense must be declared as not_integrated and must not be displayed as zero by default.",
+    "mode": "blocking",
+    "severity": "P0",
+    "source_type": "skeleton",
+    "check_ref": "docs/v5.4/period-risk-pc-governance-cutover.config.json",
+    "status": "passed",
+    "observed_value": {
+      "skeleton": "period.expense_not_integrated_not_zero"
+    },
+    "threshold": {},
+    "violation_count": 0,
+    "sample_violations": [],
+    "generated_by": "invariant-runner",
+    "ci_run_id": "local-mr-10",
+    "checked_at_utc": "2026-05-30T02:38:24.6456653+00:00"
+  },
+  {
+    "invariant_check_id": "inv-v54-period-close-freezes-snapshot",
+    "release_id": "release-mr-10",
+    "tenant_id": "test-tenant",
+    "slice_id": "PeriodAnalytics",
+    "invariant_key": "period.close_freezes_snapshot",
+    "description": "Period close must freeze final snapshots and must not allow later in-place snapshot body updates.",
+    "mode": "blocking",
+    "severity": "P0",
+    "source_type": "skeleton",
+    "check_ref": "docs/v5.4/period-risk-pc-governance-cutover.config.json",
+    "status": "passed",
+    "observed_value": {
+      "skeleton": "period.close_freezes_snapshot"
+    },
+    "threshold": {},
+    "violation_count": 0,
+    "sample_violations": [],
+    "generated_by": "invariant-runner",
+    "ci_run_id": "local-mr-10",
+    "checked_at_utc": "2026-05-30T02:38:24.6456683+00:00"
+  },
+  {
+    "invariant_check_id": "inv-v54-period-late-adjustment-append-only",
+    "release_id": "release-mr-10",
+    "tenant_id": "test-tenant",
+    "slice_id": "PeriodAnalytics",
+    "invariant_key": "period.late_adjustment_append_only",
+    "description": "LateAdjustment must append after close and must never update the original closed snapshot.",
+    "mode": "blocking",
+    "severity": "P0",
+    "source_type": "skeleton",
+    "check_ref": "docs/v5.4/period-risk-pc-governance-cutover.config.json",
+    "status": "passed",
+    "observed_value": {
+      "skeleton": "period.late_adjustment_append_only"
+    },
+    "threshold": {},
+    "violation_count": 0,
+    "sample_violations": [],
+    "generated_by": "invariant-runner",
+    "ci_run_id": "local-mr-10",
+    "checked_at_utc": "2026-05-30T02:38:24.64567+00:00"
+  },
+  {
+    "invariant_check_id": "inv-v54-risk-all-items-drill-down",
+    "release_id": "release-mr-10",
+    "tenant_id": "test-tenant",
+    "slice_id": "PeriodAnalytics",
+    "invariant_key": "risk.all_items_drill_down",
+    "description": "Every RiskCommand item must have source refs and a drilldown URL before it can be official.",
+    "mode": "blocking",
+    "severity": "P0",
+    "source_type": "skeleton",
+    "check_ref": "docs/v5.4/period-risk-pc-governance-cutover.config.json",
+    "status": "passed",
+    "observed_value": {
+      "skeleton": "risk.all_items_drill_down"
+    },
+    "threshold": {},
+    "violation_count": 0,
+    "sample_violations": [],
+    "generated_by": "invariant-runner",
+    "ci_run_id": "local-mr-10",
+    "checked_at_utc": "2026-05-30T02:38:24.6456716+00:00"
+  },
+  {
+    "invariant_check_id": "inv-v54-pc-export-has-audit",
+    "release_id": "release-mr-10",
+    "tenant_id": "test-tenant",
+    "slice_id": "PeriodAnalytics",
+    "invariant_key": "pc.export_has_audit",
+    "description": "PC Governance exports must require capability, reason, expiring URL, trusted PC for high-risk exports, and a persisted audit event.",
+    "mode": "blocking",
+    "severity": "P0",
+    "source_type": "skeleton",
+    "check_ref": "docs/v5.4/period-risk-pc-governance-cutover.config.json",
+    "status": "passed",
+    "observed_value": {
+      "skeleton": "pc.export_has_audit"
+    },
+    "threshold": {},
+    "violation_count": 0,
+    "sample_violations": [],
+    "generated_by": "invariant-runner",
+    "ci_run_id": "local-mr-10",
+    "checked_at_utc": "2026-05-30T02:38:24.6456749+00:00"
+  }
+]

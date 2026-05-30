@@ -1,5 +1,5 @@
 import "./styles.css";
-import { checkHealth, fetchHomeSurface, fetchLearningCatalog, fetchWorkQueue, fetchWorkspaceProjection } from "./apiClient.js";
+import { checkHealth, fetchHomeSurface, fetchLearningCatalog, fetchProductionObservability, fetchReleaseControlCenter, fetchWorkQueue, fetchWorkspaceProjection } from "./apiClient.js";
 import { shell } from "./appShell.js";
 import { routeView } from "./appRouter.js";
 import { createInitialState } from "./appState.js";
@@ -32,15 +32,21 @@ async function hydrateProjectionFromApi() {
   try {
     await checkHealth();
     state.apiStatus = "online";
-    const [projection, workQueue, homeSurface, learningCatalog, accommodationLenses] = await Promise.all([
+    const [projection, workQueue, homeSurface, learningCatalog, accommodationLenses, releaseControl, productionObservability] = await Promise.all([
       fetchWorkspaceProjection(),
       optionalSurface(fetchWorkQueue),
       optionalSurface(fetchHomeSurface),
       optionalSurface(fetchLearningCatalog),
-      optionalSurface(refreshDefaultAccommodationLenses)
+      optionalSurface(refreshDefaultAccommodationLenses),
+      optionalSurface(fetchReleaseControlCenter),
+      optionalSurface(fetchProductionObservability)
     ]);
     applyRuntimeProjection(state, projection);
     applyRuntimeSurfacePayloads(state, { workQueue, homeSurface, learningCatalog, accommodationLenses });
+    if (releaseControl) state.releaseControl = releaseControl;
+    if (productionObservability) {
+      state.pcGovernance = { ...state.pcGovernance, productionObservability };
+    }
   } catch {
     state.apiStatus = "offline";
     applyRuntimeOfflineFallback(state);

@@ -1,0 +1,202 @@
+{
+  "invariants": [
+    {
+      "invariant_key": "shadow.no_shadow_event_consumed_by_official_projector",
+      "description": "Official projector paths must not read from shadow_runtime.*.",
+      "mode": "blocking",
+      "severity": "P0",
+      "source_type": "skeleton",
+      "check_sql": null,
+      "check_ref": "scripts/v5_4/shadow-namespace-isolation.mjs"
+    },
+    {
+      "invariant_key": "api.no_page_specific_business_write",
+      "description": "Forbidden page-specific business write routes must not appear in Minimal API route declarations.",
+      "mode": "blocking",
+      "severity": "P0",
+      "source_type": "skeleton",
+      "check_sql": null,
+      "check_ref": "scripts/check-api-boundaries.mjs"
+    },
+    {
+      "invariant_key": "runtime.no_production_demo_fallback",
+      "description": "Production runtime paths must not contain banned demo/fake business fallback literals.",
+      "mode": "blocking",
+      "severity": "P0",
+      "source_type": "skeleton",
+      "check_sql": null,
+      "check_ref": "scripts/check-no-production-fake-fallback.mjs"
+    },
+    {
+      "invariant_key": "runtime.control_plane_tables_exist",
+      "description": "Control Plane and Shadow Runtime schemas and tables must exist after migrations.",
+      "mode": "blocking",
+      "severity": "P0",
+      "source_type": "sql",
+      "check_sql": "select (12 - count(*))::int as violation_count, jsonb_build_object('existing_tables', count(*), 'expected_tables', 12) as observed_value, jsonb_build_object('expected_tables', 12) as threshold, '[]'::jsonb as sample_violations from information_schema.tables where (table_schema = 'control_plane' and table_name in ('release_manifests', 'feature_flags', 'slice_cutover_states', 'shadow_compare_reports', 'runtime_invariant_checks', 'gate_results', 'rollback_instructions')) or (table_schema = 'shadow_runtime' and table_name in ('command_submissions', 'domain_events', 'ledger_entries', 'lens_snapshots', 'compare_inputs'))",
+      "check_ref": "infra/db/migrations/015_control_plane_shadow_runtime.sql"
+    },
+    {
+      "invariant_key": "case.closed_has_no_open_blocker",
+      "description": "Checkout cases must not be closed while an open or resolving blocker exists.",
+      "mode": "blocking",
+      "severity": "P0",
+      "source_type": "skeleton",
+      "check_sql": null,
+      "check_ref": "docs/v5.4/checkout-service-cutover.config.json"
+    },
+    {
+      "invariant_key": "case.close_requires_closure_policy",
+      "description": "Checkout close requires a recorded CaseClosurePolicy evaluation before close.",
+      "mode": "blocking",
+      "severity": "P0",
+      "source_type": "skeleton",
+      "check_sql": null,
+      "check_ref": "services/core-api/WorkOS.Api/Runtime/CheckoutServiceProcessManager.cs"
+    },
+    {
+      "invariant_key": "blocker.no_duplicate_open_resolution",
+      "description": "BlockerEngine must dedupe open/resolving blockers and resolution WorkItem intents.",
+      "mode": "blocking",
+      "severity": "P0",
+      "source_type": "skeleton",
+      "check_sql": null,
+      "check_ref": "infra/db/migrations/016_checkout_service_process_manager.sql"
+    },
+    {
+      "invariant_key": "service.cannot_directly_change_bed_status",
+      "description": "ServiceTask can request release but must not directly write BedStatus or room/bed availability facts.",
+      "mode": "blocking",
+      "severity": "P0",
+      "source_type": "skeleton",
+      "check_sql": null,
+      "check_ref": "services/core-api/WorkOS.Api/Slices/Accommodation/ServiceTask"
+    },
+    {
+      "invariant_key": "checkout.cannot_directly_write_deposit_entry",
+      "description": "CheckoutSettlement can request deposit settlement but must not directly write DepositEntry or deposit ledger tables.",
+      "mode": "blocking",
+      "severity": "P0",
+      "source_type": "skeleton",
+      "check_sql": null,
+      "check_ref": "services/core-api/WorkOS.Api/Slices/Accommodation/CheckOutSettlement"
+    },
+    {
+      "invariant_key": "checkout.cleaning_required_before_release",
+      "description": "Bed or room release after checkout must be gated by cleaning/service verification when cleaning is required.",
+      "mode": "blocking",
+      "severity": "P0",
+      "source_type": "skeleton",
+      "check_sql": null,
+      "check_ref": "services/core-api/WorkOS.Api/Runtime/SystemCheckCatalog.cs"
+    },
+    {
+      "invariant_key": "bank.import_does_not_create_payment_fact",
+      "description": "Bank statement import must create reconciliation records only and must not create PaymentConfirmed or other business money facts.",
+      "mode": "blocking",
+      "severity": "P0",
+      "source_type": "skeleton",
+      "check_sql": null,
+      "check_ref": "docs/v5.4/reconciliation-correction-cutover.config.json"
+    },
+    {
+      "invariant_key": "reconciliation.bank_transaction_single_match_default",
+      "description": "A bank transaction can be matched at most once by default until a split policy is explicitly introduced.",
+      "mode": "blocking",
+      "severity": "P0",
+      "source_type": "skeleton",
+      "check_sql": null,
+      "check_ref": "docs/v5.4/reconciliation-correction-cutover.config.json"
+    },
+    {
+      "invariant_key": "ledger.no_edit_old_entry",
+      "description": "Payment, deposit, charge, cash, and refund ledger corrections must append new entries and never edit old ledger facts.",
+      "mode": "blocking",
+      "severity": "P0",
+      "source_type": "skeleton",
+      "check_sql": null,
+      "check_ref": "docs/v5.4/reconciliation-correction-cutover.config.json"
+    },
+    {
+      "invariant_key": "correction.requires_reason",
+      "description": "Every correction request, reversal, and correction application must carry a reason.",
+      "mode": "blocking",
+      "severity": "P0",
+      "source_type": "skeleton",
+      "check_sql": null,
+      "check_ref": "docs/v5.4/reconciliation-correction-cutover.config.json"
+    },
+    {
+      "invariant_key": "correction.high_risk_requires_approval",
+      "description": "High-risk ledger corrections must be approved before they can be applied.",
+      "mode": "blocking",
+      "severity": "P0",
+      "source_type": "skeleton",
+      "check_sql": null,
+      "check_ref": "docs/v5.4/reconciliation-correction-cutover.config.json"
+    },
+    {
+      "invariant_key": "balance.rebuild_after_correction",
+      "description": "Applying a payment, deposit, or charge correction must trigger a balance rebuild and must not leave projections inconsistent.",
+      "mode": "blocking",
+      "severity": "P0",
+      "source_type": "skeleton",
+      "check_sql": null,
+      "check_ref": "docs/v5.4/reconciliation-correction-cutover.config.json"
+    },
+    {
+      "invariant_key": "period.finance_snapshot_from_ledgers",
+      "description": "Period finance snapshots must be generated from ledger and ledger projection sources, not user-entered finance totals.",
+      "mode": "blocking",
+      "severity": "P0",
+      "source_type": "skeleton",
+      "check_sql": null,
+      "check_ref": "docs/v5.4/period-risk-pc-governance-cutover.config.json"
+    },
+    {
+      "invariant_key": "period.expense_not_integrated_not_zero",
+      "description": "When ExpenseLedger is not integrated, expense must be declared as not_integrated and must not be displayed as zero by default.",
+      "mode": "blocking",
+      "severity": "P0",
+      "source_type": "skeleton",
+      "check_sql": null,
+      "check_ref": "docs/v5.4/period-risk-pc-governance-cutover.config.json"
+    },
+    {
+      "invariant_key": "period.close_freezes_snapshot",
+      "description": "Period close must freeze final snapshots and must not allow later in-place snapshot body updates.",
+      "mode": "blocking",
+      "severity": "P0",
+      "source_type": "skeleton",
+      "check_sql": null,
+      "check_ref": "docs/v5.4/period-risk-pc-governance-cutover.config.json"
+    },
+    {
+      "invariant_key": "period.late_adjustment_append_only",
+      "description": "LateAdjustment must append after close and must never update the original closed snapshot.",
+      "mode": "blocking",
+      "severity": "P0",
+      "source_type": "skeleton",
+      "check_sql": null,
+      "check_ref": "docs/v5.4/period-risk-pc-governance-cutover.config.json"
+    },
+    {
+      "invariant_key": "risk.all_items_drill_down",
+      "description": "Every RiskCommand item must have source refs and a drilldown URL before it can be official.",
+      "mode": "blocking",
+      "severity": "P0",
+      "source_type": "skeleton",
+      "check_sql": null,
+      "check_ref": "docs/v5.4/period-risk-pc-governance-cutover.config.json"
+    },
+    {
+      "invariant_key": "pc.export_has_audit",
+      "description": "PC Governance exports must require capability, reason, expiring URL, trusted PC for high-risk exports, and a persisted audit event.",
+      "mode": "blocking",
+      "severity": "P0",
+      "source_type": "skeleton",
+      "check_sql": null,
+      "check_ref": "docs/v5.4/period-risk-pc-governance-cutover.config.json"
+    }
+  ]
+}

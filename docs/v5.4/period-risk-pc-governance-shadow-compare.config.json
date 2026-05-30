@@ -1,0 +1,31 @@
+{
+  "name": "period-risk-pc-governance",
+  "shadow_table": "shadow_runtime.lens_snapshots",
+  "active_table": "public.audit_events",
+  "count_mismatch_grade": "yellow",
+  "legacy_ref": "previous dashboard, limited risk surface, and legacy governance review workflow",
+  "compare_scopes": [
+    "period_finance_snapshot",
+    "period_operation_snapshot",
+    "risk_command_items",
+    "pc_governance_surface",
+    "export_audit"
+  ],
+  "green_rules": [
+    "snapshots generated from ledgers/lenses",
+    "all risk items drilldown",
+    "no user-filled finance facts"
+  ],
+  "yellow_rules": [
+    "display-only mismatch",
+    "non-critical risk label mismatch"
+  ],
+  "red_rules": [
+    "user-filled finance snapshot",
+    "expense missing displayed as zero",
+    "risk item without drilldown",
+    "period close overwrites snapshot",
+    "late adjustment updates original snapshot",
+    "shadow consumed by official projector"
+  ]
+}

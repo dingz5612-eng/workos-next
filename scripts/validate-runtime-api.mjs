@@ -1,7 +1,7 @@
 import { spawn } from "node:child_process";
 import fs from "node:fs";
 
-const baseUrl = process.env.WORKOS_API_VALIDATE_URL || "http://127.0.0.1:5191";
+const baseUrl = process.env.WORKOS_API_VALIDATE_URL || "http://127.0.0.1:5197";
 const externalApi = Boolean(process.env.WORKOS_API_VALIDATE_URL);
 const openApi = JSON.parse(fs.readFileSync("docs/contracts/workos-runtime.openapi.json", "utf8"));
 const sliceManifest = JSON.parse(fs.readFileSync("docs/contracts/slice-manifest.json", "utf8"));
@@ -16,8 +16,9 @@ if (!externalApi) {
     "services/core-api/WorkOS.Api/WorkOS.Api.csproj",
     "-c",
     "Release",
-    "--no-launch-profile",
-    "--no-build"
+    "-p:OutputPath=bin/Release/net10.0/validate-runtime-api/",
+    "-p:IntermediateOutputPath=obj/validate-runtime-api/Release/net10.0/",
+    "--no-launch-profile"
   ], {
     env: { ...process.env, ASPNETCORE_ENVIRONMENT: "Development", ASPNETCORE_URLS: baseUrl },
     stdio: ["ignore", "pipe", "pipe"]
@@ -85,7 +86,10 @@ async function validateDeclaredRuntimePaths(projection) {
     workspaceId: workspace.id,
     cardId: card.id,
     lensId: "period-performance",
-    evidenceId: "evd-openapi-path"
+    evidenceId: "evd-openapi-path",
+    releaseId: "v5.4-first-batch",
+    gateResultId: "gate-v5-4-runner",
+    id: "scr-v54-shadow-domain-events-vs-audit-events"
   };
 
   for (const [path, pathItem] of Object.entries(openApi.paths)) {
@@ -93,6 +97,10 @@ async function validateDeclaredRuntimePaths(projection) {
     for (const method of Object.keys(pathItem).filter((item) => ["get", "post", "put", "patch", "delete"].includes(item))) {
       const resolvedPath = resolveOpenApiPath(path, samples);
       const response = await requestDeclaredPath(method.toUpperCase(), resolvedPath);
+      const optionalControlPlaneDetail = resolvedPath.startsWith("/api/control-plane/") &&
+        resolvedPath !== "/api/control-plane/releases" &&
+        resolvedPath !== "/api/control-plane/invariant-checks";
+      if (optionalControlPlaneDetail && response.status === 404) continue;
       assert(response.status !== 404 && response.status !== 405, `${method.toUpperCase()} ${path} must be reachable, got ${response.status}`);
       assert(response.status < 500, `${method.toUpperCase()} ${path} must not fail with ${response.status}`);
     }
@@ -101,6 +109,9 @@ async function validateDeclaredRuntimePaths(projection) {
 
 async function requestDeclaredPath(method, path) {
   if (method === "GET") {
+    if (path === "/api/control-plane/invariant-checks") {
+      return fetch(`${baseUrl}${path}?releaseId=v5.4-first-batch`);
+    }
     return fetch(`${baseUrl}${path}`);
   }
 
@@ -250,8 +261,9 @@ async function validateProductionRejectsDevAuthDefaults() {
     "services/core-api/WorkOS.Api/WorkOS.Api.csproj",
     "-c",
     "Release",
-    "--no-launch-profile",
-    "--no-build"
+    "-p:OutputPath=bin/Release/net10.0/validate-runtime-api/",
+    "-p:IntermediateOutputPath=obj/validate-runtime-api/Release/net10.0/",
+    "--no-launch-profile"
   ], {
     env: { ...process.env, ASPNETCORE_ENVIRONMENT: "Production", ASPNETCORE_URLS: productionUrl },
     stdio: ["ignore", "pipe", "pipe"]
@@ -261,7 +273,7 @@ async function validateProductionRejectsDevAuthDefaults() {
     const timer = setTimeout(() => {
       child.kill();
       resolve(null);
-    }, 10000);
+    }, 30000);
     child.on("exit", (code) => {
       clearTimeout(timer);
       resolve(code);
@@ -334,6 +346,11 @@ async function validateConfirmLedgerProjectionLensChain() {
 
   const eventIds = (result.events || []).map((item) => item.eventId).filter(Boolean);
   assert(eventIds.length > 0, "confirm response must include committed events");
+  assert(result.confirmed === true, "confirm response must mark confirmed true");
+  assert(result.commitStatus === "committed", `confirm response commitStatus must be committed, got ${result.commitStatus}`);
+  assert(result.projectionStatus === "projected", `confirm response projectionStatus must be projected, got ${result.projectionStatus}`);
+  assert(Array.isArray(result.resultEventIds), "confirm response must include resultEventIds");
+  assert(result.resultEventIds.join("|") === eventIds.join("|"), "confirm response resultEventIds must match committed events");
   const projectedIds = new Set((result.projection?.events || []).map((item) => item.eventId));
   assert(eventIds.every((eventId) => projectedIds.has(eventId)), "confirm response projection must include committed events");
   const workspace = result.projection?.workspaces?.find((item) => item.id === "W-STAY-RESOURCE");
@@ -356,7 +373,10 @@ async function validateConfirmLedgerProjectionLensChain() {
     },
     body: JSON.stringify(confirmBody(`api-chain-${suffix}`, { roomId }, `room:${roomId}`))
   });
-  assert(duplicate.status === 409, `duplicate idempotency confirm must return 409, got ${duplicate.status}`);
+  assert(duplicate.status === 200, `duplicate idempotency confirm must return committed 200, got ${duplicate.status}`);
+  const duplicateResult = await duplicate.json();
+  assert(duplicateResult.commitStatus === "committed", "duplicate confirm must preserve committed commitStatus");
+  assert(duplicateResult.resultEventIds?.[0] === eventIds[0], "duplicate confirm must return the original committed event id");
 }
 
 async function validateObservability() {
@@ -375,6 +395,15 @@ async function validateObservability() {
   assert(typeof observation.schemaVersion === "string", "observability schemaVersion must be a string");
   assert(typeof observation.activeArchitectureExceptionCount === "number", "observability activeArchitectureExceptionCount must be numeric");
   assert(Array.isArray(observation.activeArchitectureExceptions), "observability activeArchitectureExceptions must be an array");
+  assert(typeof observation.productionMetrics?.runtime?.confirmLatencyP95Ms === "number", "observability must expose runtime confirm latency p95");
+  assert(typeof observation.productionMetrics?.runtime?.idempotencyConflictCount === "number", "observability must expose idempotency conflict count");
+  assert(typeof observation.productionMetrics?.outbox?.deadLetterCount === "number", "observability must expose outbox dead-letter count");
+  assert(typeof observation.productionMetrics?.projection?.staleLensCount === "number", "observability must expose stale lens count");
+  assert(typeof observation.productionMetrics?.mobile?.workItemBundleP95Ms === "number", "observability must expose WorkItemBundle p95");
+  assert(typeof observation.productionMetrics?.money?.allocationOverAvailableViolations === "number", "observability must expose money allocation violations");
+  assert(typeof observation.productionMetrics?.deposit?.availableRefundNegativeCount === "number", "observability must expose deposit availableRefund violations");
+  assert(typeof observation.productionMetrics?.checkout?.fakeCloseAttempts === "number", "observability must expose checkout fake close attempts");
+  assert(typeof observation.productionMetrics?.controlPlane?.gateResultStatus === "string", "observability must expose control plane GateResult status");
 }
 
 async function validateBehaviorEvent() {

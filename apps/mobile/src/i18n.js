@@ -1,5 +1,5 @@
 import { coachCopy } from "./i18n/coachCopy.js";
-import { demoCopy } from "./i18n/demoCopy.js";
+import { domainCopy } from "./i18n/domainCopy.js";
 import { operationCopy } from "./i18n/operationCopy.js";
 import { shellCopy } from "./i18n/shellCopy.js";
 
@@ -10,7 +10,7 @@ export const i18n = Object.fromEntries(
     language,
     {
       ...shellCopy[language],
-      ...demoCopy[language],
+      ...domainCopy[language],
       ...coachCopy[language],
       ...operationCopy[language]
     }

@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { applyConfirmError, confirmErrorMessage } from "../operationController.js";
+import { applyConfirmError, confirmErrorMessage, confirmSuccessMessage } from "../operationController.js";
 
 function ctx() {
   return {
@@ -60,5 +60,15 @@ describe("confirm HTTP error handling", () => {
     expect(confirmErrorMessage({ status: 403 }, context)).toBe("confirmForbidden");
     expect(confirmErrorMessage({ status: 409 }, context)).toBe("confirmDuplicate");
     expect(confirmErrorMessage({ status: 422 }, context)).toBe("confirmBusinessBlocked");
+  });
+
+  it("uses committed projection pending copy instead of submit failed", () => {
+    const context = ctx();
+
+    expect(confirmSuccessMessage({
+      confirmed: true,
+      commitStatus: "committed",
+      projectionStatus: "pending"
+    }, context)).toBe("submitProjectionPending");
   });
 });

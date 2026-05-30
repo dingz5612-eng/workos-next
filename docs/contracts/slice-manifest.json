@@ -78,7 +78,7 @@
       "id": "Accommodation.PeriodAnalytics",
       "workspaceId": "W-STAY-PERIOD-ANALYTICS",
       "cards": ["periodScope", "periodMetricsReview", "periodFinanceReview", "periodOperationsDiagnosis", "periodActionPlan", "periodActionPlanComplete", "periodClose"],
-      "events": ["Accommodation.PeriodScopeConfirmed", "Accommodation.PeriodMetricsReviewed", "Accommodation.PeriodFinanceReviewed", "Accommodation.PeriodOperationsDiagnosed", "Accommodation.PeriodActionPlanCommitted", "Accommodation.PeriodReviewClosed", "Accommodation.PeriodActionPlanCompleted"],
+      "events": ["Accommodation.PeriodScopeConfirmed", "Accommodation.PeriodMetricsReviewed", "Accommodation.PeriodFinanceReviewed", "Accommodation.PeriodOperationsDiagnosed", "Accommodation.PeriodActionPlanCommitted", "Accommodation.PeriodActionPlanWorkItemCreated", "Accommodation.PeriodReviewClosed", "Accommodation.PeriodActionPlanCompleted"],
       "ownsAggregates": ["PeriodReview", "ActionPlan"],
       "status": "production-slice"
     },

@@ -67,6 +67,8 @@ internal sealed class ExpenseLedgerStorage
         command.Parameters.AddWithValue("createdEventId", workspaceEvent.EventId);
         command.Parameters.AddWithValue("updatedAtUtc", workspaceEvent.OccurredAtUtc);
         command.ExecuteNonQuery();
+
+        RefreshExpenseLedgerStatus(workspaceEvent.WorkspaceId, db);
     }
 
     private void UpsertExpenseLink(WorkspaceEvent workspaceEvent, RuntimeDbSession db)
@@ -89,6 +91,48 @@ internal sealed class ExpenseLedgerStorage
         command.Parameters.AddWithValue("createdEventId", workspaceEvent.EventId);
         command.Parameters.AddWithValue("updatedAtUtc", workspaceEvent.OccurredAtUtc);
         command.ExecuteNonQuery();
+    }
+
+    private static void RefreshExpenseLedgerStatus(string workspaceId, RuntimeDbSession db)
+    {
+        if (!TableExists(db, "expense_ledger_status"))
+        {
+            return;
+        }
+
+        using var command = db.CreateCommand("""
+            insert into expense_ledger_status(tenant_id, status, source, updated_at_utc, note)
+            select
+                @workspaceId,
+                case
+                    when count(*) filter (where status not in ('approved', 'rejected')) > 0 then 'manual_imported'
+                    else 'ledger_verified'
+                end,
+                'expenses',
+                max(updated_at_utc),
+                case
+                    when count(*) filter (where status not in ('approved', 'rejected')) > 0
+                        then 'ExpenseLedger has manual or pending expense facts; FinanceSnapshot must mark expense_status manual_imported.'
+                    else 'ExpenseLedger facts are persisted and verified; FinanceSnapshot may subtract approved expenses.'
+                end
+            from expenses
+            where workspace_id = @workspaceId
+            having count(*) > 0
+            on conflict(tenant_id) do update set
+                status = excluded.status,
+                source = excluded.source,
+                updated_at_utc = excluded.updated_at_utc,
+                note = excluded.note
+            """);
+        command.Parameters.AddWithValue("workspaceId", workspaceId);
+        command.ExecuteNonQuery();
+    }
+
+    private static bool TableExists(RuntimeDbSession db, string tableName)
+    {
+        using var command = db.CreateCommand("select to_regclass(@tableName) is not null");
+        command.Parameters.AddWithValue("tableName", tableName);
+        return Convert.ToBoolean(command.ExecuteScalar());
     }
 
     private static string Value(WorkspaceEvent workspaceEvent, string key, string defaultValue) =>

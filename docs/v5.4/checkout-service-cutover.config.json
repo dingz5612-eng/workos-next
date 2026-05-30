@@ -1,0 +1,239 @@
+{
+  "release_slice_group": "checkout-service-blocker",
+  "feature_flags": [
+    {
+      "feature_flag_id": "flag-checkout-start-enabled",
+      "flag_key": "checkout.start.enabled",
+      "status": "shadow",
+      "scope_rules": {
+        "tenantIds": ["test-tenant"],
+        "sliceIds": ["CheckoutSettlement"],
+        "roles": ["manager", "operator"],
+        "actorIds": [],
+        "deviceIds": [],
+        "deviceTrust": ["trusted"],
+        "amount": { "currency": "KGS", "lte": null, "gte": null },
+        "percentage": 0
+      }
+    },
+    {
+      "feature_flag_id": "flag-checkout-room-inspection-enabled",
+      "flag_key": "checkout.room_inspection.enabled",
+      "status": "shadow",
+      "scope_rules": {
+        "tenantIds": ["test-tenant"],
+        "sliceIds": ["CheckoutSettlement"],
+        "roles": ["manager", "operator", "cleaner"],
+        "actorIds": [],
+        "deviceIds": [],
+        "deviceTrust": ["trusted"],
+        "amount": { "currency": "KGS", "lte": null, "gte": null },
+        "percentage": 0
+      }
+    },
+    {
+      "feature_flag_id": "flag-checkout-damage-assessment-enabled",
+      "flag_key": "checkout.damage_assessment.enabled",
+      "status": "shadow",
+      "scope_rules": {
+        "tenantIds": ["test-tenant"],
+        "sliceIds": ["CheckoutSettlement", "DepositLedger"],
+        "roles": ["manager", "operator", "finance"],
+        "actorIds": [],
+        "deviceIds": [],
+        "deviceTrust": ["trusted"],
+        "amount": { "currency": "KGS", "lte": 10000, "gte": 0 },
+        "percentage": 0
+      }
+    },
+    {
+      "feature_flag_id": "flag-service-task-enabled",
+      "flag_key": "service_task.enabled",
+      "status": "shadow",
+      "scope_rules": {
+        "tenantIds": ["test-tenant"],
+        "sliceIds": ["ServiceTask"],
+        "roles": ["manager", "operator", "cleaner"],
+        "actorIds": [],
+        "deviceIds": [],
+        "deviceTrust": ["trusted"],
+        "amount": { "currency": "KGS", "lte": null, "gte": null },
+        "percentage": 0
+      }
+    },
+    {
+      "feature_flag_id": "flag-service-task-verify-enabled",
+      "flag_key": "service_task.verify.enabled",
+      "status": "shadow",
+      "scope_rules": {
+        "tenantIds": ["test-tenant"],
+        "sliceIds": ["ServiceTask", "ResourceInventory"],
+        "roles": ["manager"],
+        "actorIds": [],
+        "deviceIds": [],
+        "deviceTrust": ["trusted"],
+        "amount": { "currency": "KGS", "lte": null, "gte": null },
+        "percentage": 0
+      }
+    },
+    {
+      "feature_flag_id": "flag-blocker-engine-enabled",
+      "flag_key": "blocker_engine.enabled",
+      "status": "shadow",
+      "scope_rules": {
+        "tenantIds": ["test-tenant"],
+        "sliceIds": ["BlockerEngine"],
+        "roles": ["manager", "operator", "cleaner", "finance"],
+        "actorIds": [],
+        "deviceIds": [],
+        "deviceTrust": ["trusted"],
+        "amount": { "currency": "KGS", "lte": null, "gte": null },
+        "percentage": 0
+      }
+    },
+    {
+      "feature_flag_id": "flag-case-closure-policy-enabled",
+      "flag_key": "case_closure_policy.enabled",
+      "status": "shadow",
+      "scope_rules": {
+        "tenantIds": ["test-tenant"],
+        "sliceIds": ["CheckoutSettlement", "BlockerEngine"],
+        "roles": ["manager"],
+        "actorIds": [],
+        "deviceIds": [],
+        "deviceTrust": ["trusted"],
+        "amount": { "currency": "KGS", "lte": null, "gte": null },
+        "percentage": 0
+      }
+    },
+    {
+      "feature_flag_id": "flag-claim-sla-lite-enabled",
+      "flag_key": "claim_sla_lite.enabled",
+      "status": "shadow",
+      "scope_rules": {
+        "tenantIds": ["test-tenant"],
+        "sliceIds": ["CheckoutSettlement", "ServiceTask", "BlockerEngine"],
+        "roles": ["manager", "operator", "cleaner", "finance"],
+        "actorIds": [],
+        "deviceIds": [],
+        "deviceTrust": ["trusted"],
+        "amount": { "currency": "KGS", "lte": null, "gte": null },
+        "percentage": 0
+      }
+    }
+  ],
+  "slice_cutover_states": [
+    {
+      "cutover_state_id": "cutover-checkout-settlement-test-tenant",
+      "slice_id": "CheckoutSettlement",
+      "runtime_mode": "shadow",
+      "previous_runtime_mode": "legacy",
+      "tenant_id": "test-tenant",
+      "dependency_status": {
+        "ResourceInventory": "active",
+        "StayLifecycle": "active",
+        "PaymentLedger": "active_or_pilot_stable",
+        "DepositLedger": "active_or_pilot_stable",
+        "StayBalanceProjection": "active",
+        "EvidenceSecureSubstrate": "active",
+        "ClaimSkeleton": "active"
+      },
+      "pilot_scope": {
+        "roles": ["manager", "operator", "cleaner", "finance"],
+        "selectedRoomIds": [],
+        "selectedStayIds": [],
+        "actorIds": []
+      },
+      "routing": {
+        "shadow": "legacy active path remains source of truth; new checkout events and process intents write shadow_runtime only",
+        "pilot": "selected tenant/role/actor/room/stay routes to Operations Confirm",
+        "active": "Operations Confirm writes official checkout/service events and projectors",
+        "rollback": "route back to legacy; official facts remain append-only"
+      }
+    },
+    {
+      "cutover_state_id": "cutover-service-task-test-tenant",
+      "slice_id": "ServiceTask",
+      "runtime_mode": "shadow",
+      "previous_runtime_mode": "legacy",
+      "tenant_id": "test-tenant",
+      "dependency_status": {
+        "ResourceInventory": "active",
+        "StayLifecycle": "active",
+        "PaymentLedger": "active_or_pilot_stable",
+        "DepositLedger": "active_or_pilot_stable",
+        "StayBalanceProjection": "active",
+        "EvidenceSecureSubstrate": "active",
+        "ClaimSkeleton": "active"
+      },
+      "pilot_scope": {
+        "roles": ["manager", "operator", "cleaner", "finance"],
+        "selectedRoomIds": [],
+        "selectedStayIds": [],
+        "actorIds": []
+      },
+      "routing": {
+        "shadow": "service task commands write shadow_runtime and must not mutate official BedStatus",
+        "pilot": "selected service tasks run through Operations Confirm",
+        "active": "ServiceTask emits requests; ResourceInventory owns BedReleased/RoomReleased",
+        "rollback": "route back to legacy; service history remains append-only"
+      }
+    },
+    {
+      "cutover_state_id": "cutover-blocker-engine-test-tenant",
+      "slice_id": "BlockerEngine",
+      "runtime_mode": "shadow",
+      "previous_runtime_mode": "legacy",
+      "tenant_id": "test-tenant",
+      "dependency_status": {
+        "ResourceInventory": "active",
+        "StayLifecycle": "active",
+        "PaymentLedger": "active_or_pilot_stable",
+        "DepositLedger": "active_or_pilot_stable",
+        "StayBalanceProjection": "active",
+        "EvidenceSecureSubstrate": "active",
+        "ClaimSkeleton": "active"
+      },
+      "pilot_scope": {
+        "roles": ["manager", "operator", "cleaner", "finance"],
+        "selectedRoomIds": [],
+        "selectedStayIds": [],
+        "actorIds": []
+      },
+      "routing": {
+        "shadow": "closure policy failures create shadow blockers and resolution WorkItem intents",
+        "pilot": "selected closure checks produce official blocker WorkItems",
+        "active": "Case close requires recorded ClosurePolicy and no open blocker",
+        "rollback": "disable blocker_engine.enabled and keep blocker audit history"
+      }
+    }
+  ],
+  "shadow_compare_report_grade": {
+    "green": [
+      "expected WorkItems created",
+      "no direct DepositEntry write",
+      "no direct BedStatus write",
+      "closure blockers match expected"
+    ],
+    "yellow": [
+      "timeline display mismatch",
+      "non-critical dueAt mismatch"
+    ],
+    "red": [
+      "Case closed with open blocker",
+      "duplicate blockers",
+      "service directly changed BedStatus",
+      "checkout directly wrote DepositEntry",
+      "bed released before cleaning/service verified",
+      "shadow consumed by official projector"
+    ]
+  },
+  "invariants": [
+    "case.closed_has_no_open_blocker",
+    "case.close_requires_closure_policy",
+    "blocker.no_duplicate_open_resolution",
+    "service.cannot_directly_change_bed_status",
+    "checkout.cannot_directly_write_deposit_entry",
+    "checkout.cleaning_required_before_release"
+  ]
+}

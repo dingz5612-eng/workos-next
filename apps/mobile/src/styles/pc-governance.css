@@ -1,0 +1,122 @@
+.pc-governance-full {
+  display: grid;
+  gap: 16px;
+}
+
+.governance-hero,
+.governance-panel {
+  display: grid;
+  gap: 10px;
+}
+
+.pc-governance-nav {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 8px;
+}
+
+.pc-governance-nav a {
+  min-height: 40px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 8px;
+  color: var(--ink);
+  background: var(--surface);
+  text-decoration: none;
+  font-weight: 800;
+}
+
+.governance-grid {
+  display: grid;
+  gap: 14px;
+}
+
+.governance-panel {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 14px;
+  background: var(--surface);
+}
+
+.governance-panel h2,
+.governance-panel h3 {
+  margin: 0;
+}
+
+.governance-panel h3 {
+  font-size: 0.95rem;
+}
+
+.governance-metrics,
+.export-control-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
+}
+
+.observability-domain-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 12px;
+}
+
+.observability-domain {
+  display: grid;
+  gap: 8px;
+}
+
+.governance-metric,
+.export-control {
+  display: grid;
+  gap: 8px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 10px;
+  background: #f7fbfc;
+}
+
+.governance-metric span,
+.export-control small,
+.governance-kv dt {
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.governance-metric strong {
+  font-size: 1.25rem;
+}
+
+.governance-panel table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.86rem;
+}
+
+.governance-panel th,
+.governance-panel td {
+  border-bottom: 1px solid var(--line);
+  padding: 8px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.governance-panel input,
+.governance-panel textarea {
+  width: 100%;
+}
+
+.governance-panel textarea {
+  min-height: 82px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 8px;
+  resize: vertical;
+}
+
+.governance-kv {
+  display: grid;
+  grid-template-columns: minmax(140px, 0.35fr) 1fr;
+  gap: 8px;
+}

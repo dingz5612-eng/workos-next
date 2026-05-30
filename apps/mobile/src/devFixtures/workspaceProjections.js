@@ -1,7 +1,8 @@
 import { fieldMetadata, localizedText } from "./projectionMetadata.js";
 
-// Offline/dev/test fallback fixture only. Online runtime surfaces must consume
-// runtimeStore projection, work queue, search, and Lens data.
+// Dev/test fixture only. Production runtime surfaces must consume runtimeStore
+// projection, work queue, search, and Lens data; offline production states must
+// show real cache or empty/error states, not this fixture.
 export let intentWorkspaces = [
   workspaceModel("W-STAY-RESOURCE", "stay", "T-ROOM-CREATE",
     { "zh-CN": "我要创建住宿资源", "ru-RU": "Создать ресурсы проживания" },

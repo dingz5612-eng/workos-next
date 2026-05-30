@@ -1,0 +1,54 @@
+{
+  "shadow_compare_report_id": "scr-v54-reconciliation-correction-center",
+  "release_id": "release-mr-09",
+  "tenant_id": "test-tenant",
+  "slice_id": "Reconciliation",
+  "compare_scope": {
+    "name": "reconciliation-correction-center",
+    "type": "count",
+    "compare_scopes": [
+      "bank_import",
+      "match_candidate",
+      "manual_match",
+      "mismatch_case",
+      "correction_request",
+      "correction_apply",
+      "balance_rebuild"
+    ],
+    "grade_rules": {
+      "green": [
+        "import counts match expected",
+        "no PaymentConfirmed created by import",
+        "correction applies append-only"
+      ],
+      "yellow": [
+        "display-only mismatch",
+        "candidate score mismatch only"
+      ],
+      "red": [
+        "bank import created business fact",
+        "correction edited old entry",
+        "high-risk correction without approval",
+        "correction caused balance rebuild mismatch",
+        "shadow consumed by official projector"
+      ]
+    }
+  },
+  "source_legacy_ref": "legacy finance reconciliation and ledger correction workflow",
+  "source_active_ref": "public.audit_events",
+  "source_shadow_ref": "shadow_runtime.domain_events",
+  "compared_at_utc": "2026-05-30T01:13:38.5274609+00:00",
+  "grade": "green",
+  "total_compared": 0,
+  "matched_count": 0,
+  "mismatch_count": 0,
+  "missing_in_shadow_count": 0,
+  "extra_in_shadow_count": 0,
+  "mismatch_examples": [],
+  "summary": {
+    "status": "skeleton_green",
+    "config": "reconciliation-correction-center"
+  },
+  "generated_by": "shadow-compare-runner",
+  "ci_run_id": "local-mr-09"
+}

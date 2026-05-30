@@ -65,7 +65,7 @@ internal static class SystemCheckCatalog
         "periodOperationsDiagnosis" => new[] { "运营指标存在", "主要问题已分类" },
         "periodActionPlan" => new[] { "行动计划有负责人", "截止日期有效" },
         "periodActionPlanComplete" => new[] { "行动计划存在", "完成结果完整" },
-        "periodClose" => new[] { "指标已复核", "财务已复核", "运营已诊断", "高风险有行动计划" },
+        "periodClose" => new[] { "范围已确认", "指标已复核", "财务已复核", "运营已诊断", "无阻断不变量", "业务签署完成", "高风险有行动计划" },
         _ => new[] { "字段完整", "证据完整", "权限满足" }
     };
 }

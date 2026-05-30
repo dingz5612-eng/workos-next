@@ -55,6 +55,13 @@ function Assert-LineBudget($path, $warn, $fail, $message) {
   Assert-MaxLines $path $fail "$message"
 }
 
+function Invoke-Checked($command, $arguments) {
+  & $command @arguments
+  if ($LASTEXITCODE -ne 0) {
+    Fail "$command failed: $($arguments -join ' ')"
+  }
+}
+
 Assert-RipgrepAvailable
 
 Assert-Exists "docs/contracts/projection-contract.schema.json"
@@ -81,6 +88,28 @@ Assert-Exists "docs/architecture/WORKOS_TESTING_RULES.md"
 Assert-Exists "docs/architecture/CURRENT_RUNTIME_ARCHITECTURE.md"
 Assert-Exists "docs/architecture/rules/index.json"
 Assert-Exists "docs/architecture/architecture-exceptions.json"
+Assert-Exists "docs/engineering/03-api-boundary-rules.md"
+Assert-Exists "docs/engineering/13-release-control-plane-rules.md"
+Assert-Exists "docs/engineering/15-no-go-rules.md"
+Assert-Exists "docs/acceptance/12-release-go-no-go.md"
+Assert-Exists "docs/v5.4/operations-api-allowlist.json"
+Assert-Exists "docs/v5.4/release-manifest.schema.json"
+Assert-Exists "docs/v5.4/release-manifest.fixture.json"
+Assert-Exists "docs/v5.4/ci-control-plane.md"
+Assert-Exists "docs/v5.4/control-plane-runners.md"
+Assert-Exists "docs/v5.4/release-control-center.md"
+Assert-Exists "docs/v5.4/invariant-definitions.json"
+Assert-Exists "docs/v5.4/shadow-compare.config.json"
+Assert-Exists "scripts/check-api-boundaries.mjs"
+Assert-Exists "scripts/check-no-production-fake-fallback.mjs"
+Assert-Exists "scripts/v5_4/run-control-plane-checks.ps1"
+Assert-Exists "scripts/v5_4/control-plane-migration.mjs"
+Assert-Exists "scripts/v5_4/shadow-namespace-isolation.mjs"
+Assert-Exists "scripts/v5_4/invariant-runner.mjs"
+Assert-Exists "scripts/v5_4/shadow-compare-runner.mjs"
+Assert-Exists "scripts/v5_4/gate-runner.mjs"
+Assert-Exists "scripts/v5_4/release-manifest-validate.mjs"
+Assert-Exists "tools/control-plane/WorkOS.ControlPlaneRunners/WorkOS.ControlPlaneRunners.csproj"
 Assert-Exists "scripts/clean-baseline.ps1"
 Assert-Exists "scripts/validate-slice-admission.mjs"
 Assert-Exists "scripts/architecture-drift-report.mjs"
@@ -94,6 +123,10 @@ Assert-Exists "apps/mobile/src/__tests__/surfaceSelectors.test.js"
 Assert-Exists "apps/mobile/src/__tests__/evidenceInteraction.test.js"
 Assert-Exists "apps/mobile/src/runtime/runtimeStore.js"
 Assert-Exists "apps/mobile/src/selectors/surfaceSelectors.js"
+Assert-Exists "apps/mobile/src/devFixtures/demoQueue.js"
+Assert-Exists "apps/mobile/src/devFixtures/projectionMetadata.js"
+Assert-Exists "apps/mobile/src/devFixtures/workspaceProjections.js"
+Assert-Exists "apps/mobile/src/devFixtures/i18n/demoCopy.js"
 
 $rulesIndex = Get-Content "docs/architecture/rules/index.json" -Raw | ConvertFrom-Json
 $architectureExceptions = Get-Content "docs/architecture/architecture-exceptions.json" -Raw | ConvertFrom-Json
@@ -154,6 +187,7 @@ if (-not $migrationFiles -or $migrationFiles.Count -lt 3) {
 
 Assert-NoMatches @("apps", "services", "tests", "docs/product", "docs/ux") "scenarioFlows|data-task|data-scenario|taskView|objectView" "Old model terms must not reappear."
 Assert-NoMatches @("apps", "services", "tests") "/api/hotel|/api/finance/confirm|/api/room/activate|ConfirmDeposit|HotelCheckin" "Page-specific write APIs are forbidden."
+Assert-NoMatches @("services/core-api/WorkOS.Api") 'MapPost\("/api/(mobile/[^"]*/(confirm|refund|close)|payment/confirm|deposit/refund|checkout/close|bed/release|period/close)"' "Page-specific or Mobile BFF business write APIs are P0 No-Go; use Operations Confirm."
 Assert-NoMatches @("apps", "services", "tests", "docs/product", "docs/ux") "direct write|page model|task model|object model" "Duplicate page/task/object model language is forbidden outside architecture rules."
 Assert-NoMatches @("services/core-api/WorkOS.Api") "AllowAnyOrigin" "CORS must be restricted by configuration."
 
@@ -174,9 +208,9 @@ Assert-NoMatches @("apps/mobile/src") "taskWorkspaceMap|workspaceIdForTask" "Fro
 Assert-NoMatches @("apps/mobile/src/selectors/workspaceSelectors.js") "W-STAY-CHECKIN|W-STAY-DEPOSIT-LEDGER|W-STAY-PAYMENT-LEDGER|W-STAY-CHECKOUT-SETTLEMENT|W-REPAIR-" "Workspace selector must open runtimeStore workspaces without business workspace fallback IDs."
 Assert-NoMatches @("apps/mobile/src/selectors/surfaceSelectors.js") "intentBoost|W-STAY-DEPOSIT-LEDGER|W-STAY-PAYMENT-LEDGER|priority.*workspace\.domain" "Surface selectors must not contain local Accommodation business priority exceptions."
 Assert-NoMatches @("services/core-api/WorkOS.Api/Runtime/LensQueryService.cs") "W-STAY-DEPOSIT-LEDGER|W-STAY-PAYMENT-LEDGER|W-STAY-CHECKIN" "Runtime surface lenses must derive visibility and ranking from runtime-surface-policy.json."
-$workspaceProjectionFixture = Get-Content "apps/mobile/src/workspaceProjections.js" -Raw
-if ($workspaceProjectionFixture -notmatch "Offline/dev/test fallback fixture only") {
-  Fail "workspaceProjections.js must declare its offline fallback reason."
+$workspaceProjectionFixture = Get-Content "apps/mobile/src/devFixtures/workspaceProjections.js" -Raw
+if ($workspaceProjectionFixture -notmatch "Dev/test fixture only") {
+  Fail "workspaceProjections.js must declare its dev/test fixture boundary."
 }
 $mainRuntime = Get-Content "apps/mobile/src/main.js" -Raw
 if ($mainRuntime -notmatch "escapeHtml\(tr\(state, key\)\)" -or
@@ -240,6 +274,7 @@ Assert-Exists "infra/db/migrations/012_outbox_claim_dead_letter.sql"
 $requiredStorageServices = @(
   "services/core-api/WorkOS.Api/Runtime/PostgresConnectionFactory.cs",
   "services/core-api/WorkOS.Api/Runtime/PostgresMigrationRunner.cs",
+  "services/core-api/WorkOS.Api/Runtime/ControlPlaneReadStore.cs",
   "services/core-api/WorkOS.Api/Runtime/RuntimeDocumentStorage.cs",
   "services/core-api/WorkOS.Api/Runtime/RuntimeSessionStorage.cs",
   "services/core-api/WorkOS.Api/Runtime/RuntimeEventStorage.cs",
@@ -251,6 +286,8 @@ $requiredStorageServices = @(
 foreach ($storageService in $requiredStorageServices) {
   Assert-Exists $storageService
 }
+
+Assert-Exists "apps/mobile/src/views/releaseControlView.js"
 
 $requiredContractCatalogs = @(
   "services/core-api/WorkOS.Api/Runtime/WorkspaceSeedCatalog.cs",
@@ -272,7 +309,7 @@ foreach ($catalog in $requiredContractCatalogs) {
 
 $requiredFrontendCopyModules = @(
   "apps/mobile/src/i18n/shellCopy.js",
-  "apps/mobile/src/i18n/demoCopy.js",
+  "apps/mobile/src/i18n/domainCopy.js",
   "apps/mobile/src/i18n/coachCopy.js",
   "apps/mobile/src/i18n/operationCopy.js"
 )
@@ -374,6 +411,10 @@ foreach ($pattern in $requiredEndpointPatterns) {
 
 $allowedMapPostPaths = @(
   "/api/auth/login",
+  "/api/operations/cases",
+  "/api/operations/work-items",
+  "/api/operations/work-items/{workItemId}/prepare",
+  "/api/operations/work-items/{workItemId}/confirm",
   "/api/workspaces/{workspaceId}/cards/{cardId}/prepare",
   "/api/workspaces/{workspaceId}/cards/{cardId}/confirm",
   "/api/evidence/drafts",
@@ -388,6 +429,9 @@ $allowedMapGetPaths = @(
   "/",
   "/health",
   "/api/bootstrap",
+  "/api/operations/cases/{caseId}",
+  "/api/operations/work-items",
+  "/api/operations/work-items/{workItemId}",
   "/api/workspaces",
   "/api/workspaces/{workspaceId}",
   "/api/work-queue",
@@ -397,6 +441,12 @@ $allowedMapGetPaths = @(
   "/api/lenses/search",
   "/api/lenses/learning-catalog",
   "/api/lenses/accommodation/{lensId}",
+  "/api/control-plane/releases",
+  "/api/control-plane/releases/{releaseId}",
+  "/api/control-plane/gate-results/{gateResultId}",
+  "/api/control-plane/shadow-compare-reports/{id}",
+  "/api/control-plane/invariant-checks",
+  "/api/control-plane/rollback-instructions/{id}",
   "/api/evidence",
   "/api/workspaces/{workspaceId}/events",
   "/api/audit-events",
@@ -435,14 +485,39 @@ foreach ($path in $openApiPaths) {
   }
 }
 
-node scripts/generate-contract-dtos.mjs --check
-node scripts/validate-slice-admission.mjs
-node scripts/architecture-drift-report.mjs
-node scripts/validate-runtime-api.mjs
+Invoke-Checked "node" @("scripts/generate-contract-dtos.mjs", "--check")
+Invoke-Checked "node" @("scripts/validate-slice-admission.mjs")
+Invoke-Checked "node" @("scripts/architecture-drift-report.mjs")
+Invoke-Checked "node" @("scripts/validate-runtime-api.mjs")
+Invoke-Checked "node" @("scripts/check-api-boundaries.mjs", "--self-test")
+Invoke-Checked "node" @("scripts/check-api-boundaries.mjs")
+Invoke-Checked "node" @("scripts/check-no-production-fake-fallback.mjs", "--self-test")
+Invoke-Checked "node" @("scripts/check-no-production-fake-fallback.mjs")
 
 $ci = Get-Content ".github/workflows/ci.yml" -Raw
+$v54Ci = Get-Content ".github/workflows/v5_4_control_plane.yml" -Raw
 if ($ci -notmatch "validate-runtime-api\.mjs") {
   Fail "CI must run validate-runtime-api.mjs explicitly."
+}
+if ($ci -notmatch "check-api-boundaries\.mjs") {
+  Fail "CI must run check-api-boundaries.mjs explicitly."
+}
+if ($ci -notmatch "check-no-production-fake-fallback\.mjs") {
+  Fail "CI must run check-no-production-fake-fallback.mjs explicitly."
+}
+foreach ($requiredV54Guard in @(
+  "architecture-guard",
+  "api-boundary-check",
+  "control-plane-migration",
+  "shadow-namespace-isolation",
+  "invariant-runner",
+  "shadow-compare-runner",
+  "gate-runner",
+  "release-manifest-validate"
+)) {
+  if ($v54Ci -notmatch [regex]::Escape($requiredV54Guard)) {
+    Fail "V5.4 control plane CI must run guard: $requiredV54Guard"
+  }
 }
 foreach ($requiredCiCommand in @("validate-slice-admission.mjs", "architecture-drift-report.mjs")) {
   if ($ci -notmatch [regex]::Escape($requiredCiCommand)) {
@@ -498,6 +573,12 @@ $requiredRuntimeApiPathKeys = @(
   "homeSurface",
   "learningCatalog",
   "accommodationLens",
+  "controlPlaneReleases",
+  "controlPlaneRelease",
+  "controlPlaneGateResult",
+  "controlPlaneShadowCompareReport",
+  "controlPlaneInvariantChecks",
+  "controlPlaneRollbackInstruction",
   "evidence",
   "evidenceDrafts",
   "evidenceAttachments",

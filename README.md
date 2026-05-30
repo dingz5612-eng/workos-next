@@ -25,10 +25,41 @@ docs/architecture/WORKOS_ACCOMMODATION_RUNTIME_RULES.md
 docs/architecture/WORKOS_TESTING_RULES.md
 ```
 
+V5.4 API governance lives in:
+
+```text
+docs/engineering/03-api-boundary-rules.md
+docs/engineering/13-release-control-plane-rules.md
+docs/engineering/15-no-go-rules.md
+docs/acceptance/12-release-go-no-go.md
+docs/v5.4/operations-api-allowlist.json
+```
+
+Operations API is the legal primary business write path. The old
+Workspace/Card API remains compatibility-only, and Mobile BFF routes must not
+write business facts.
+
 `tests/WorkOS.RuntimeContractTests` is the current Runtime Smoke /
 Integration transition suite. Keep focused behavior in unit, runtime
 integration, API contract, and frontend Vitest layers instead of indefinitely
 growing the smoke suite.
+
+## Architecture
+
+Primary business writes must use:
+
+```text
+POST /api/operations/work-items/{workItemId}/confirm
+```
+
+Compatibility writes are limited to:
+
+```text
+POST /api/workspaces/{workspaceId}/cards/{cardId}/prepare
+POST /api/workspaces/{workspaceId}/cards/{cardId}/confirm
+```
+
+New page-specific business write APIs are P0 No-Go.
 
 ## Phase 0-1 Scope
 

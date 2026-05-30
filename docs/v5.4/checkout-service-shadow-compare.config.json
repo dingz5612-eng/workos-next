@@ -1,0 +1,31 @@
+{
+  "name": "checkout-service-blocker-engine",
+  "shadow_table": "shadow_runtime.domain_events",
+  "active_table": "public.audit_events",
+  "count_mismatch_grade": "yellow",
+  "legacy_ref": "legacy checkout/service/blocker work queue",
+  "compare_scopes": [
+    "checkout_timeline",
+    "service_task_queue",
+    "case_blockers",
+    "closure_checks"
+  ],
+  "green_rules": [
+    "expected WorkItems created",
+    "no direct DepositEntry write",
+    "no direct BedStatus write",
+    "closure blockers match expected"
+  ],
+  "yellow_rules": [
+    "timeline display mismatch",
+    "non-critical dueAt mismatch"
+  ],
+  "red_rules": [
+    "Case closed with open blocker",
+    "duplicate blockers",
+    "service directly changed BedStatus",
+    "checkout directly wrote DepositEntry",
+    "bed released before cleaning/service verified",
+    "shadow consumed by official projector"
+  ]
+}

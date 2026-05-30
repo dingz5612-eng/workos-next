@@ -3,9 +3,19 @@ import { loadDraft } from "../operationDrafts.js";
 import { lensIdsForWorkspace, lensPreview, lensTitle } from "../runtimeLensCatalog.js";
 import { isUnsafeLedgerCarryForward } from "../selectors/surfaceSelectors.js";
 import { activeCardForWorkspace, activeWorkspaceCard, isCardActionDisabled } from "../selectors/workspaceSelectors.js";
+import { checkoutServiceMobilePanel, checkoutServiceOperationAddon } from "./checkoutServiceView.js";
 
 export function workspaceView(ctx) {
   const item = ctx.workspace();
+  if (!item) {
+    return ctx.shell(`
+      <section class="workspace-page">
+        <span>${ctx.tr("intentWorkspace")}</span>
+        <h1>${ctx.tr("coachNoMatch")}</h1>
+        <p>${ctx.tr("apiOffline")}</p>
+      </section>
+    `);
+  }
   const activeCard = activeWorkspaceCard(item, ctx.state.selectedCardIndex, ctx.state.selectedCardId);
   return ctx.shell(`
     <section class="workspace-page ${item.domain}">
@@ -16,6 +26,7 @@ export function workspaceView(ctx) {
     <section class="workspace-control">
       <div class="card-tabs">${item.cards.map((card, index) => `<button class="${card.id === activeCard.id ? "active" : ""} ${card.status}" data-card-index="${index}">${ctx.tx(card.title)}</button>`).join("")}</div>
       ${workspaceLensPanel(item, ctx)}
+      ${checkoutServiceMobilePanel(item, activeCard, ctx)}
       ${workspaceCardPanel(activeCard, item, true, ctx)}
     </section>
     <div class="sticky-action"><button data-submit-card>${ctx.tr("confirmAction")}</button></div>
@@ -65,6 +76,7 @@ export function cardOperation(card, item, ctx) {
       <div class="evidence-row">${card.evidence.map((field) => evidenceButton(field, draft, disabled, ctx)).join("")}</div>
     </section>
     <section><b>${ctx.tr("cardConfirm")}</b><p>${confirmationText(card, item, ctx)}</p></section>
+    ${checkoutServiceOperationAddon(card, item, ctx)}
     <section><b>${ctx.tr("cardNext")}</b><p>${ctx.tr("cardNextHelp")} ${nextCardTitle(card, item, ctx)}</p></section>
     <section><b>${ctx.tr("nextBestAction")}</b><p>${ctx.tr("nextBestActionHelp")} ${ctx.tx(item.next)}</p></section>
     <section><b>${ctx.tr("blockers")}</b><p>${visibleBlockers.length ? visibleBlockers.map((entry) => ctx.tx(entry.title)).join(" · ") : `${ctx.tr("noCriticalBlocker")} ${ctx.tr("blockerHelp")}`}</p></section>

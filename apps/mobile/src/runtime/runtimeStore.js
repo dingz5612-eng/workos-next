@@ -1,9 +1,7 @@
-import { intentWorkspaces, replaceIntentWorkspaces } from "../workspaceProjections.js";
-
 export function createRuntimeStore() {
   return {
     projection: null,
-    workspaces: intentWorkspaces,
+    workspaces: [],
     events: [],
     workQueue: [],
     searchResultsByQuery: {},
@@ -12,10 +10,10 @@ export function createRuntimeStore() {
     accommodationLenses: {},
     apiStatus: "checking",
     lastHydratedAt: "",
-    source: "local-fallback",
-    queueSource: "projection-fallback",
-    homeSource: "projection-fallback",
-    learningSource: "projection-fallback"
+    source: "empty-runtime",
+    queueSource: "runtime-api",
+    homeSource: "runtime-api",
+    learningSource: "runtime-api"
   };
 }
 
@@ -26,9 +24,8 @@ export function applyRuntimeProjection(state, payload) {
   store.workspaces = payload.workspaces;
   store.events = payload.events || [];
   store.lastHydratedAt = new Date().toISOString();
-  store.source = state.apiStatus === "online" ? "runtime-api" : "local-fallback";
+  store.source = state.apiStatus === "online" ? "runtime-api" : "offline-cache";
   state.projectionEvents = store.events;
-  replaceIntentWorkspaces(store.workspaces);
 }
 
 export function applyRuntimeSurfacePayloads(state, payloads = {}) {
@@ -58,13 +55,14 @@ export function applyRuntimeSearchResults(state, query, results) {
 
 export function applyRuntimeOfflineFallback(state) {
   const store = ensureRuntimeStore(state);
+  state.apiStatus = "offline";
   store.apiStatus = "offline";
-  store.source = "local-fallback";
-  store.queueSource = "offline-demo-fallback";
-  store.homeSource = "projection-fallback";
-  store.learningSource = "projection-fallback";
-  store.workspaces = store.workspaces?.length ? store.workspaces : intentWorkspaces;
-  store.workQueue = [];
+  store.source = store.workspaces?.length ? "offline-cache" : "offline-empty";
+  store.queueSource = store.workQueue?.length ? store.queueSource || "offline-cache" : "offline-empty";
+  store.homeSource = store.homeSurface?.length ? store.homeSource || "offline-cache" : "offline-empty";
+  store.learningSource = store.learningCatalog?.length ? store.learningSource || "offline-cache" : "offline-empty";
+  store.workspaces = store.workspaces?.length ? store.workspaces : [];
+  store.workQueue = store.workQueue?.length ? store.workQueue : [];
 }
 
 export function ensureRuntimeStore(state) {

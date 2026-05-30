@@ -46,6 +46,7 @@ ResetPostgres(connectionString);
     ValidateStableOptionValues(projection);
     ValidateRuntimeSurfaceLenses(runtime);
     ValidateProductionSliceAdmission(runtime);
+    ValidateControlPlaneShadowSchemas(connectionString);
 
     var prepared = runtime.Prepare("W-STAY-RESOURCE", "roomSetup");
     Assert(prepared is not null, "prepare should return room setup card payload");
@@ -614,21 +615,17 @@ ResetPostgres(connectionString);
     Assert(periodDepositRevenue.Status == ConfirmStatus.Forbidden, "period finance must reject deposit received as revenue");
     Assert(periodDepositRevenue.Reason == "period_deposit_revenue_forbidden", "period finance deposit revenue rejection must use stable reason");
 
-    Assert(runtime.Confirm("W-STAY-PERIOD-ANALYTICS", "periodFinanceReview", Human("period-finance", new Dictionary<string, string>
+    var periodUserInputFinanceAmount = AssertNoSideEffects(connectionString, () => runtime.Confirm("W-STAY-PERIOD-ANALYTICS", "periodFinanceReview", Human("period-finance-user-input", new Dictionary<string, string>
     {
         ["periodId"] = "PER-2026-05-01",
-        ["rentRevenue"] = "9300",
-        ["otherRevenue"] = "200",
-        ["confirmedPaymentAmount"] = "9300",
-        ["pendingPaymentAmount"] = "0",
-        ["depositReceivedAmount"] = "3000",
-        ["depositRefundedAmount"] = "2000",
-        ["depositDeductedAmount"] = "500",
-        ["depositAppliedToBalanceAmount"] = "500",
-        ["approvedExpenseAmount"] = "800",
-        ["pendingExpenseAmount"] = "0",
-        ["endingDebtAmount"] = "0",
-        ["financeExceptionCount"] = "0"
+        ["ordinaryPaymentReceived"] = "999999"
+    }), financeToken));
+    Assert(periodUserInputFinanceAmount.Status == ConfirmStatus.Forbidden, "period finance snapshot must reject user-supplied final finance amounts");
+    Assert(periodUserInputFinanceAmount.Reason == "period_finance_snapshot_user_input_forbidden:ordinaryPaymentReceived", "period finance user input rejection must use stable reason");
+
+    Assert(runtime.Confirm("W-STAY-PERIOD-ANALYTICS", "periodFinanceReview", Human("period-finance", new Dictionary<string, string>
+    {
+        ["periodId"] = "PER-2026-05-01"
     }), financeToken).Status == ConfirmStatus.Confirmed, "period finance review should pass without counting deposit as revenue or expense");
     runtime.ProcessPendingOutbox();
 
@@ -648,14 +645,31 @@ ResetPostgres(connectionString);
     var periodCloseWithoutActionPlan = AssertNoSideEffects(connectionString, () => runtime.Confirm("W-STAY-PERIOD-ANALYTICS", "periodClose", Human("period-close-without-action-plan", new Dictionary<string, string>
     {
         ["periodId"] = "PER-2026-05-01",
+        ["scopeConfirmed"] = "true",
         ["metricsReviewed"] = "true",
         ["financeReviewed"] = "true",
         ["operationsDiagnosed"] = "true",
+        ["noBlockingInvariantViolation"] = "true",
+        ["businessSignoffCompleted"] = "true",
         ["blockingIssueCount"] = "1",
         ["actionPlanCount"] = "0"
     }), managerToken));
     Assert(periodCloseWithoutActionPlan.Status == ConfirmStatus.Forbidden, "high-risk period close must require an action plan");
     Assert(periodCloseWithoutActionPlan.Reason == "period_close_requires_action_plan_for_high_risk", "period close high-risk rejection must use stable reason");
+
+    var periodCloseMissingFinance = AssertNoSideEffects(connectionString, () => runtime.Confirm("W-STAY-PERIOD-ANALYTICS", "periodClose", Human("period-close-missing-finance", new Dictionary<string, string>
+    {
+        ["periodId"] = "PER-2026-05-01",
+        ["scopeConfirmed"] = "true",
+        ["metricsReviewed"] = "true",
+        ["financeReviewed"] = "false",
+        ["operationsDiagnosed"] = "true",
+        ["noBlockingInvariantViolation"] = "true",
+        ["businessSignoffCompleted"] = "true",
+        ["actionPlanSkipped"] = "true"
+    }), managerToken));
+    Assert(periodCloseMissingFinance.Status == ConfirmStatus.Forbidden, "period close must require finance review");
+    Assert(periodCloseMissingFinance.Reason == "period_close_requires_finance_review", "period close missing finance review must use stable reason");
 
     var periodActionPlan = runtime.Confirm("W-STAY-PERIOD-ANALYTICS", "periodActionPlan", Human("period-action-plan", new Dictionary<string, string>
     {
@@ -666,17 +680,29 @@ ResetPostgres(connectionString);
         ["targetMetric"] = "average_occupancy_rate",
         ["targetValue"] = "0.75",
         ["ownerName"] = "manager",
+        ["ownerRole"] = "manager",
+        ["dueAtUtc"] = "2026-06-05T00:00:00Z",
         ["priority"] = "high",
-        ["actionStatus"] = "in_progress"
+        ["actionStatus"] = "committed",
+        ["actionPlanWorkItemId"] = "wi-period-plan-001"
     }), operatorToken);
     Assert(periodActionPlan.Status == ConfirmStatus.Confirmed, "period action plan should pass");
     AssertConfirmEvents(periodActionPlan, "Accommodation.PeriodActionPlanCommitted");
     runtime.ProcessPendingOutbox();
+    Assert(ScalarText(connectionString, "select status from period_action_plans where action_plan_id = 'period-plan-001'") == "committed", "PeriodActionPlanCommitted must not mark the plan completed");
+    Assert(ScalarText(connectionString, "select owner_role from period_action_plans where action_plan_id = 'period-plan-001'") == "manager", "ActionPlan must persist ownerRole");
+    Assert(ScalarText(connectionString, "select due_at_utc::text from period_action_plans where action_plan_id = 'period-plan-001'") != string.Empty, "ActionPlan must persist dueAt");
+    Assert(ScalarText(connectionString, "select priority from period_action_plans where action_plan_id = 'period-plan-001'") == "high", "ActionPlan must persist priority");
+    Assert(ScalarInt(connectionString, "select count(*) from process_work_item_intents where work_item_id = 'wi-period-plan-001' and work_item_type = 'periodActionPlanExecution'") == 1, "PeriodActionPlanCommitted should create an action plan WorkItem intent");
+    Assert(ScalarText(connectionString, "select body #>> '{payload,dueAtUtc}' from process_work_item_intents where work_item_id = 'wi-period-plan-001'") == "2026-06-05T00:00:00Z", "ActionPlan WorkItem must carry dueAt");
+    Assert(ScalarText(connectionString, "select body #>> '{payload,priority}' from process_work_item_intents where work_item_id = 'wi-period-plan-001'") == "high", "ActionPlan WorkItem must carry priority");
+    Assert(ScalarInt(connectionString, "select count(*) from process_request_event_intents where request_event_type = 'Accommodation.PeriodActionPlanWorkItemCreated'") >= 1, "ProcessManager should emit PeriodActionPlanWorkItemCreated intent");
 
     var periodActionPlanComplete = runtime.Confirm("W-STAY-PERIOD-ANALYTICS", "periodActionPlanComplete", Human("period-action-plan-complete", new Dictionary<string, string>
     {
         ["periodId"] = "PER-2026-05-01",
         ["actionPlanId"] = "period-plan-001",
+        ["actionPlanWorkItemId"] = "wi-period-plan-001",
         ["completionDate"] = "2026-05-29T20:00:00Z",
         ["completionResult"] = "done",
         ["completionNote"] = "reservation conversion actions shipped",
@@ -685,18 +711,66 @@ ResetPostgres(connectionString);
     Assert(periodActionPlanComplete.Status == ConfirmStatus.Confirmed, $"period action plan completion should pass on its own card: {periodActionPlanComplete.Status} {periodActionPlanComplete.Reason}");
     AssertConfirmEvents(periodActionPlanComplete, "Accommodation.PeriodActionPlanCompleted");
     runtime.ProcessPendingOutbox();
+    Assert(ScalarText(connectionString, "select status from period_action_plans where action_plan_id = 'period-plan-001'") == "completed", "ActionPlanCompleted must be a later completion event");
+    Assert(ScalarText(connectionString, "select status from process_work_item_intents where work_item_id = 'wi-period-plan-001'") == "completed", "ActionPlan completion must complete the created WorkItem intent");
 
-    Assert(runtime.Confirm("W-STAY-PERIOD-ANALYTICS", "periodClose", Human("period-close", new Dictionary<string, string>
+    var periodCloseMissingSignoff = AssertNoSideEffects(connectionString, () => runtime.Confirm("W-STAY-PERIOD-ANALYTICS", "periodClose", Human("period-close-missing-business-signoff", new Dictionary<string, string>
     {
         ["periodId"] = "PER-2026-05-01",
+        ["scopeConfirmed"] = "true",
         ["metricsReviewed"] = "true",
         ["financeReviewed"] = "true",
         ["operationsDiagnosed"] = "true",
+        ["noBlockingInvariantViolation"] = "true",
+        ["businessSignoffCompleted"] = "false",
+        ["actionPlanCommitted"] = "true",
+        ["actionPlanCount"] = "1"
+    }), managerToken));
+    Assert(periodCloseMissingSignoff.Status == ConfirmStatus.Forbidden, "period close must require business signoff");
+    Assert(periodCloseMissingSignoff.Reason == "period_close_requires_business_signoff", "period close missing business signoff must use stable reason");
+
+    var periodClose = runtime.Confirm("W-STAY-PERIOD-ANALYTICS", "periodClose", Human("period-close", new Dictionary<string, string>
+    {
+        ["periodId"] = "PER-2026-05-01",
+        ["scopeConfirmed"] = "true",
+        ["metricsReviewed"] = "true",
+        ["financeReviewed"] = "true",
+        ["operationsDiagnosed"] = "true",
+        ["noBlockingInvariantViolation"] = "true",
+        ["businessSignoffCompleted"] = "true",
         ["blockingIssueCount"] = "1",
         ["actionPlanCount"] = "1",
+        ["actionPlanCommitted"] = "true",
         ["closeResult"] = "closed"
-    }), managerToken).Status == ConfirmStatus.Confirmed, "period close should pass after required reviews and action plan");
+    }), managerToken);
+    Assert(periodClose.Status == ConfirmStatus.Confirmed, "period close should pass after required reviews, action plan, invariant check, and business signoff");
+    var periodCloseEventId = ConfirmEventId(periodClose, "Accommodation.PeriodReviewClosed");
     runtime.ProcessPendingOutbox();
+    Assert(ScalarText(connectionString, "select status from period_reviews where period_id = 'PER-2026-05-01'") == "closed", "PeriodReviewClosed must close the review");
+    Assert(ScalarText(connectionString, "select closed_event_id from period_reviews where period_id = 'PER-2026-05-01'") == periodCloseEventId, "PeriodReviewClosed must record closed_event_id");
+    Assert(ScalarText(connectionString, "select source_high_watermark from period_reviews where period_id = 'PER-2026-05-01'") == periodCloseEventId, "PeriodReviewClosed must record source_high_watermark");
+    Assert(ScalarText(connectionString, "select source_projection_versions->>'PeriodReviewClosed' from period_metric_snapshots where period_id = 'PER-2026-05-01'") == periodCloseEventId, "period_close_freezes_snapshots metric source_projection_versions");
+    Assert(ScalarText(connectionString, "select source_ledger_versions->>'PeriodReviewClosed' from period_finance_snapshots where period_id = 'PER-2026-05-01'") == periodCloseEventId, "period_close_freezes_snapshots finance source_ledger_versions");
+    Assert(ScalarText(connectionString, "select source_lens_versions->>'PeriodReviewClosed' from period_operation_snapshots where period_review_id = 'PER-2026-05-01'") == periodCloseEventId, "period_close_freezes_snapshots operation source_lens_versions");
+
+    var financeBodyAtClose = ScalarText(connectionString, "select body::text from period_finance_snapshots where period_id = 'PER-2026-05-01'");
+    var lateFinanceReview = runtime.Confirm("W-STAY-PERIOD-ANALYTICS", "periodFinanceReview", Human("period-finance-late-adjustment", new Dictionary<string, string>
+    {
+        ["periodId"] = "PER-2026-05-01",
+        ["adjustmentType"] = "ledger_correction",
+        ["reason"] = "late correction after period close",
+        ["linkedCorrectionId"] = "correction-period-001"
+    }), financeToken);
+    Assert(lateFinanceReview.Status == ConfirmStatus.Confirmed, "late adjustment source event should commit without editing frozen snapshots");
+    runtime.ProcessPendingOutbox();
+    Assert(ScalarText(connectionString, "select body::text from period_finance_snapshots where period_id = 'PER-2026-05-01'") == financeBodyAtClose, "late_adjustment_append_only must not mutate original finance snapshot body");
+    Assert(ScalarInt(connectionString, "select count(*) from period_late_adjustments where period_id = 'PER-2026-05-01'") == 1, "LateAdjustment should append only after PeriodReviewClosed");
+    Assert(ScalarText(connectionString, "select linked_correction_id from period_late_adjustments where period_id = 'PER-2026-05-01'") == "correction-period-001", "LateAdjustment must link correction id");
+    Assert(ScalarText(connectionString, "select reason from period_late_adjustments where period_id = 'PER-2026-05-01'") == "late correction after period close", "LateAdjustment must record reason");
+    Assert(ScalarText(connectionString, "select created_by from period_late_adjustments where period_id = 'PER-2026-05-01'") == "u-finance", "LateAdjustment must record actor");
+    Assert(ScalarText(connectionString, "select (body ? 'before')::text from period_late_adjustments where period_id = 'PER-2026-05-01'") == "true", "LateAdjustment must expose before view");
+    Assert(ScalarText(connectionString, "select (body ? 'after')::text from period_late_adjustments where period_id = 'PER-2026-05-01'") == "true", "LateAdjustment must expose after view");
+    AssertSqlErrorContains(connectionString, "period_snapshot_append_only_after_close", "update period_finance_snapshots set body = jsonb_set(body, '{forbiddenMutation}', 'true'::jsonb, true) where period_id = 'PER-2026-05-01'");
 
     var behavior = runtime.AppendBehaviorEvent(new BehaviorEventRecord("beh-test", "WorkspaceOpened", "workspace", "W-STAY-CHECKIN", "zh-CN", "contract-test", DateTimeOffset.UtcNow));
     Assert(behavior.EventId == "beh-test", "behavior event should append");
@@ -745,20 +819,30 @@ ResetPostgres(connectionString);
     Assert(CountRows(connectionString, "service_tasks") >= 1, "ServiceTask should persist service_tasks");
     Assert(CountRows(connectionString, "expenses") >= 1, "ExpenseLedger should persist expenses");
     Assert(CountRows(connectionString, "expense_links") >= 1, "ExpenseLedger should persist expense_links");
+    Assert(CountRows(connectionString, "expense_ledger_status") >= 1, "ExpenseLedger status must explicitly record integration state");
     Assert(ScalarDecimal(connectionString, "select coalesce(max(actual_cost_amount), 0) from service_tasks") == 0m, "ServiceTask must not be a cost fact source");
     Assert(ScalarDecimal(connectionString, "select amount from expenses where expense_id = 'expense-phase3-001'") == 800m, "ExpenseLedger must be the persisted cost fact source");
+    Assert(ScalarText(connectionString, "select status from expense_ledger_status where tenant_id = 'W-STAY-EXPENSE-LEDGER'") == "ledger_verified", "Approved ExpenseLedger should mark expense status ledger_verified");
     Assert(CountRows(connectionString, "period_reviews") >= 1, "PeriodAnalytics should persist period_reviews");
     Assert(CountRows(connectionString, "period_metric_snapshots") >= 1, "PeriodAnalytics should persist frozen metric snapshots");
     Assert(CountRows(connectionString, "period_finance_snapshots") >= 1, "PeriodAnalytics should persist finance snapshots");
     Assert(CountRows(connectionString, "period_operation_diagnoses") >= 1, "PeriodAnalytics should persist operation diagnoses");
+    Assert(CountRows(connectionString, "period_operation_snapshots") >= 1, "PeriodAnalytics should persist operation snapshots");
     Assert(CountRows(connectionString, "period_action_plans") >= 1, "PeriodAnalytics should persist action plans");
-    Assert(CountRows(connectionString, "period_late_adjustments") >= 3, "PeriodAnalytics late adjustments should append events");
+    Assert(CountRows(connectionString, "period_late_adjustments") >= 1, "PeriodAnalytics late adjustments should append only after close");
     Assert(ScalarDecimal(connectionString, "select average_occupancy_rate from period_metric_snapshots where period_id = 'PER-2026-05-01'") == 0m, "zero denominator should produce numeric zero");
     Assert(ScalarText(connectionString, "select average_occupancy_rate_status from period_metric_snapshots where period_id = 'PER-2026-05-01'") == "not_applicable", "zero denominator should mark formula not_applicable");
     Assert(ScalarText(connectionString, "select snapshot_frozen::text from period_metric_snapshots where period_id = 'PER-2026-05-01'") == "true", "PeriodAnalytics metric snapshot must be marked frozen");
     Assert(ScalarDecimal(connectionString, "select bed_night_sold from period_metric_snapshots where period_id = 'PER-2026-05-01'") == 0m, "frozen period snapshot must not be mutated by a late metric replay");
     Assert(ScalarDecimal(connectionString, "select period_net_cash_flow from period_finance_snapshots where period_id = 'PER-2026-05-01'") == 8500m, "period net cash flow must be generated from PaymentLedger minus ExpenseLedger state");
+    Assert(ScalarText(connectionString, "select expense_status from period_finance_snapshots where period_id = 'PER-2026-05-01'") == "ledger_verified", "FinanceSnapshot must bind explicit ExpenseLedger status");
+    Assert(ScalarText(connectionString, "select body->>'periodProfitMetricStatus' from period_finance_snapshots where period_id = 'PER-2026-05-01'") == "available", "Profit metric can be available only when ExpenseLedger is integrated");
     Assert(ScalarDecimal(connectionString, "select deposit_liability_end from period_finance_snapshots where period_id = 'PER-2026-05-01'") == 1000m, "deposit liability end formula should be generated from backend DepositLedger state");
+    Assert(ScalarText(connectionString, "select generated_by from period_operation_snapshots where snapshot_id = 'PER-2026-05-01'") == "period-operation-snapshot-generator", "OperationSnapshot must be machine-generated");
+    Assert(ScalarText(connectionString, "select (body ? 'blockedBeds')::text from period_operation_snapshots where snapshot_id = 'PER-2026-05-01'") == "true", "OperationSnapshot body must include blockedBeds");
+    Assert(ScalarText(connectionString, "select (body ? 'debtGuests')::text from period_operation_snapshots where snapshot_id = 'PER-2026-05-01'") == "true", "OperationSnapshot body must include debtGuests");
+    Assert(ScalarText(connectionString, "select (source_lens_versions ? 'BedInventoryLens')::text from period_operation_snapshots where snapshot_id = 'PER-2026-05-01'") == "true", "OperationSnapshot must bind BedInventoryLens source version");
+    Assert(ScalarText(connectionString, "select (source_lens_versions ? 'ServiceTaskQueueLens')::text from period_operation_snapshots where snapshot_id = 'PER-2026-05-01'") == "true", "OperationSnapshot must bind ServiceTaskQueueLens source version");
     Assert(LensContains(reloadedRuntime, "bed-inventory", "BedInventoryLens"), "BedInventoryLens should expose persisted bed inventory");
     Assert(LensContains(reloadedRuntime, "room-readiness", "RoomReadinessLens"), "RoomReadinessLens should expose persisted room readiness");
     Assert(LensContains(reloadedRuntime, "rate-plan", "RatePlanLens"), "RatePlanLens should expose persisted rate plans");
@@ -775,7 +859,13 @@ ResetPostgres(connectionString);
     Assert(LensContains(reloadedRuntime, "expense-analytics", "ExpenseAnalyticsLens"), "ExpenseAnalyticsLens should expose approved expense totals");
     Assert(LensContains(reloadedRuntime, "period-performance", "PeriodPerformanceLens"), "PeriodPerformanceLens should expose period performance");
     Assert(LensContains(reloadedRuntime, "period-performance", "8500"), "PeriodPerformanceLens should expose net cash flow from the frozen period review");
+    Assert(LensContains(reloadedRuntime, "period-performance", "lateAdjustmentCount"), "PeriodPerformanceLens should expose late adjustment count for period detail");
     Assert(LensContains(reloadedRuntime, "risk-command", "RiskCommandLens"), "RiskCommandLens should expose owner risk counters");
+    Assert(LensContains(reloadedRuntime, "risk-command", "riskId"), "RiskCommandLens should expose drilldown risk items");
+    Assert(LensContains(reloadedRuntime, "risk-command", "period_late_adjustment"), "RiskCommandLens should include LateAdjustment governance risk");
+    Assert(LensContains(reloadedRuntime, "risk-command", "severityReason"), "RiskCommandLens should explain severity");
+    Assert(LensContains(reloadedRuntime, "risk-command", "relatedLedgerRefs"), "RiskCommandLens should bind source ledger refs");
+    Assert(LensContains(reloadedRuntime, "risk-command", "drilldownUrl"), "RiskCommandLens should expose drilldown URLs");
     foreach (var lensId in new[] { "payment-risk", "checkout-queue", "service-task-queue", "risk-command", "period-performance", "room-revenue-potential", "lead-funnel" })
     {
         Assert(LensContains(reloadedRuntime, lensId, "sourceOfTruthTables"), $"{lensId} must expose source-of-truth table metadata");
@@ -809,6 +899,167 @@ ResetPostgres(connectionString);
     Assert(observation.LedgerInvariantViolationCount == 0, "observability ledger invariant violation count should be zero");
     Assert(!string.IsNullOrWhiteSpace(observation.SchemaVersion), "observability schemaVersion must be present");
     Assert(observation.ActiveArchitectureExceptionCount == observation.ActiveArchitectureExceptions.Count, "observability active exception count must match list");
+
+    var paymentAllocationEventId = ConfirmEventId(paymentAllocation, "Accommodation.PaymentAllocated");
+    var paymentAllocationEntryId = $"payment-allocation-{paymentAllocationEventId}".ToLowerInvariant();
+    var originalPaymentAllocationAmount = ScalarDecimal(connectionString, $"select allocated_amount from payment_allocations where allocation_id = '{paymentAllocationEntryId}'");
+    var paymentCorrectionRequest = runtime.RequestLedgerCorrection(new LedgerCorrectionRequestCommand(
+        "W-STAY-PAYMENT-LEDGER",
+        "wi-payment-correction-request",
+        null,
+        "payment",
+        paymentAllocationEntryId,
+        "payment_allocation",
+        "payment-ledger-001",
+        "allocation_reversal",
+        "duplicate payment allocation correction",
+        "finance",
+        "high"));
+    Assert(paymentCorrectionRequest.Status == "pending_approval", "correction_approval_required_for_high_risk");
+    Assert(paymentCorrectionRequest.WorkItemIntent.WorkItemType == "ledgerCorrectionApproval", "correction_request_creates_work_item");
+    Assert(runtime.GetProcessWorkItemIntents("W-STAY-PAYMENT-LEDGER").Any(item => item.Payload.GetValueOrDefault("correctionRequestId") == paymentCorrectionRequest.CorrectionRequestId), "CorrectionRequest must persist a process WorkItem intent");
+    AssertInvalidOperation("correction_approval_required_for_high_risk", () => runtime.ApplyLedgerCorrection(new LedgerCorrectionApplyCommand(
+        "W-STAY-PAYMENT-LEDGER",
+        paymentCorrectionRequest.CorrectionRequestId,
+        "finance",
+        "wi-payment-correction-apply")));
+    var paymentCorrectionApproval = runtime.ApproveLedgerCorrection(new LedgerCorrectionApproveCommand(
+        "W-STAY-PAYMENT-LEDGER",
+        paymentCorrectionRequest.CorrectionRequestId,
+        "finance",
+        "approved after finance review",
+        ActorRole: "finance",
+        ActorCapabilities: ["correction.approve"],
+        DeviceId: "pc-finance-1",
+        DeviceTrustStatus: "trusted",
+        Surface: "pc"));
+    Assert(paymentCorrectionApproval.Status == "approved", "high-risk ledger correction must be approved before apply");
+    var paymentCorrectionApply = runtime.ApplyLedgerCorrection(new LedgerCorrectionApplyCommand(
+        "W-STAY-PAYMENT-LEDGER",
+        paymentCorrectionRequest.CorrectionRequestId,
+        "finance",
+        "wi-payment-correction-apply",
+        null,
+        "reverse duplicate allocation"));
+    Assert(paymentCorrectionApply.Status == "applied", "correction_apply_appends_reversal");
+    Assert(paymentCorrectionApply.BalanceRebuilds.Contains("StayBalance"), "payment_correction_rebuilds_stay_balance");
+    Assert(ScalarInt(connectionString, $"select count(*) from ledger_reversal_entries where correction_request_id = '{paymentCorrectionRequest.CorrectionRequestId}'") == 1, "correction_apply_appends_reversal entry");
+    Assert(ScalarInt(connectionString, $"select count(*) from ledger_correction_entries where correction_request_id = '{paymentCorrectionRequest.CorrectionRequestId}'") == 1, "correction apply must append correction entry");
+    Assert(ScalarInt(connectionString, $"select count(*) from correction_audit where correction_request_id = '{paymentCorrectionRequest.CorrectionRequestId}'") >= 3, "Correction must write correction_audit");
+    Assert(ScalarDecimal(connectionString, $"select allocated_amount from payment_allocations where allocation_id = '{paymentAllocationEntryId}'") == originalPaymentAllocationAmount, "original_ledger_entry_not_modified");
+    Assert(ScalarDecimal(connectionString, "select coalesce(sum(allocated_amount), 0) from payment_allocations where payment_id = 'payment-ledger-001'") == 0m, "payment_allocation_reversal_from_correction_center");
+    Assert(ScalarDecimal(connectionString, "select coalesce(max(allocated_payments), 0) from stay_balances where stay_id = 'stay-ledger-001'") == 0m, "payment_correction_rebuilds_stay_balance");
+    Assert(ScalarInt(connectionString, $"select count(*) from audit_events where event_id = '{paymentAllocationEventId}'") == 1, "correction_does_not_delete_original_event");
+
+    var originalPaymentAmount = ScalarDecimal(connectionString, "select amount from hostel_payments where payment_id = 'payment-ledger-001'");
+    var paymentAdjustmentRequest = runtime.RequestLedgerCorrection(new LedgerCorrectionRequestCommand(
+        "W-STAY-PAYMENT-LEDGER",
+        "wi-payment-adjustment-lite-request",
+        null,
+        "payment",
+        "payment-ledger-001",
+        "payment",
+        "payment-ledger-001",
+        "amount_adjustment",
+        "formal PaymentAdjustmentLite correction",
+        "finance",
+        "low"));
+    var paymentAdjustmentApply = runtime.ApplyLedgerCorrection(new LedgerCorrectionApplyCommand(
+        "W-STAY-PAYMENT-LEDGER",
+        paymentAdjustmentRequest.CorrectionRequestId,
+        "finance",
+        "wi-payment-adjustment-lite-apply",
+        -100m,
+        "append formal payment adjustment"));
+    Assert(paymentAdjustmentApply.Status == "applied", "PaymentAdjustmentLite correction should apply");
+    Assert(ScalarInt(connectionString, $"select count(*) from audit_events where causation_id = '{paymentAdjustmentRequest.CorrectionRequestId}' and event_type = 'PaymentAdjustmentLite'") == 1, "PaymentAdjustmentLite formal correction path must emit a domain event");
+    Assert(ScalarDecimal(connectionString, "select amount from hostel_payments where payment_id = 'payment-ledger-001'") == originalPaymentAmount, "original payment entry amount must not be modified");
+    Assert(ScalarDecimal(connectionString, "select coalesce(sum(confirmed_amount), 0) from finance_reconciliations where payment_id = 'payment-ledger-001' and status = 'confirmed'") == 9200m, "availablePaymentAmount must be recalculated from appended payment entries");
+    Assert(ScalarDecimal(connectionString, "select coalesce(sum(reconciliation.confirmed_amount), 0) - coalesce((select sum(allocated_amount) from payment_allocations where payment_id = 'payment-ledger-001'), 0) from finance_reconciliations reconciliation where reconciliation.payment_id = 'payment-ledger-001' and reconciliation.status = 'confirmed'") == 9200m, "availablePaymentAmount recalculated");
+    Assert(ScalarDecimal(connectionString, "select coalesce(max(confirmed_payments), 0) from stay_balances where stay_id = 'stay-ledger-001'") == 9200m, "stay_balance_rebuild_after_correction");
+    Assert(LensContains(runtime, "stay-balance", "9200"), "Correction after PaymentAdjustmentLite must be visible in StayBalanceLens");
+
+    Assert(runtime.Confirm("W-STAY-DEPOSIT-LEDGER", "depositAssessment", Human("deposit-correction-assessment", new Dictionary<string, string>
+    {
+        ["stayId"] = "stay-ledger-001",
+        ["depositId"] = "deposit-correction-001",
+        ["requiredDepositAmount"] = "700",
+        ["currency"] = "KGS"
+    }), operatorToken).Status == ConfirmStatus.Confirmed, "deposit correction fixture assessment should pass");
+    Assert(runtime.Confirm("W-STAY-DEPOSIT-LEDGER", "depositReceipt", Human("deposit-correction-receipt", new Dictionary<string, string>
+    {
+        ["depositId"] = "deposit-correction-001",
+        ["receivedAmount"] = "700",
+        ["currency"] = "KGS",
+        ["paymentMethod"] = "cash"
+    }), operatorToken).Status == ConfirmStatus.Confirmed, "deposit correction fixture receipt should pass");
+    var depositCorrectionConfirmation = runtime.Confirm("W-STAY-DEPOSIT-LEDGER", "depositConfirmation", Human("deposit-correction-confirmation", new Dictionary<string, string>
+    {
+        ["depositReceiptId"] = "deposit-correction-001",
+        ["confirmedAmount"] = "700",
+        ["confirmationResult"] = "confirmed"
+    }), financeToken);
+    Assert(depositCorrectionConfirmation.Status == ConfirmStatus.Confirmed, "deposit correction fixture confirmation should pass");
+    runtime.ProcessPendingOutbox();
+    var depositConfirmedEventId = ConfirmEventId(depositCorrectionConfirmation, "Accommodation.DepositConfirmed");
+    var depositEntryId = $"deposit-tx-{depositConfirmedEventId}".ToLowerInvariant();
+    var originalDepositEntryAmount = ScalarDecimal(connectionString, $"select amount from deposit_transactions where transaction_id = '{depositEntryId}'");
+    var depositCorrectionRequest = runtime.RequestLedgerCorrection(new LedgerCorrectionRequestCommand(
+        "W-STAY-DEPOSIT-LEDGER",
+        "wi-deposit-correction-request",
+        null,
+        "deposit",
+        depositEntryId,
+        "deposit_entry",
+        "deposit-correction-001",
+        "reversal",
+        "reverse duplicated deposit confirmation",
+        "finance",
+        "medium"));
+    Assert(depositCorrectionRequest.Status == "requested", "medium-risk deposit correction should not require approval");
+    Assert(depositCorrectionRequest.WorkItemIntent.WorkItemType == "ledgerCorrectionApply", "correction_request_creates_work_item");
+    var depositCorrectionApply = runtime.ApplyLedgerCorrection(new LedgerCorrectionApplyCommand(
+        "W-STAY-DEPOSIT-LEDGER",
+        depositCorrectionRequest.CorrectionRequestId,
+        "finance",
+        "wi-deposit-correction-apply",
+        null,
+        "append deposit reversal"));
+    Assert(depositCorrectionApply.Status == "applied", "deposit correction should apply");
+    Assert(depositCorrectionApply.BalanceRebuilds.Contains("DepositBalance"), "deposit_correction_rebuilds_deposit_balance");
+    Assert(ScalarDecimal(connectionString, $"select amount from deposit_transactions where transaction_id = '{depositEntryId}'") == originalDepositEntryAmount, "original deposit entry amount must not be modified");
+    Assert(ScalarDecimal(connectionString, "select coalesce(sum(amount), 0) from deposit_transactions where deposit_id = 'deposit-correction-001' and transaction_type = 'confirmed'") == 0m, "deposit_entry_reversal_from_correction_center");
+    Assert(ScalarDecimal(connectionString, "select coalesce(sum(amount) filter (where transaction_type = 'confirmed'), 0) - coalesce(sum(amount) filter (where transaction_type in ('deducted', 'applied_to_balance', 'refund_paid', 'refund_approved')), 0) from deposit_transactions where deposit_id = 'deposit-correction-001'") == 0m, "availableRefund recalculated");
+    Assert(ScalarDecimal(connectionString, "select coalesce(max(liability_balance), 0) from deposit_liabilities where deposit_id = 'deposit-correction-001'") == 0m, "deposit_balance_rebuild_after_correction");
+    Assert(LensContains(runtime, "deposit-liability", "correction_rebuilt"), "Correction after DepositEntryReversed must be visible in DepositLiabilityLens");
+
+    var chargeCorrectionRequest = runtime.RequestLedgerCorrection(new LedgerCorrectionRequestCommand(
+        "W-STAY-LIFECYCLE",
+        "wi-charge-correction-request",
+        null,
+        "charge",
+        "charge-phase6-001",
+        "charge",
+        "stay-phase6-001",
+        "charge_adjustment",
+        "late charge correction",
+        "finance",
+        "low"));
+    Assert(chargeCorrectionRequest.Status == "requested", "low-risk charge correction should be requestable");
+    var chargeCorrectionApply = runtime.ApplyLedgerCorrection(new LedgerCorrectionApplyCommand(
+        "W-STAY-LIFECYCLE",
+        chargeCorrectionRequest.CorrectionRequestId,
+        "finance",
+        "wi-charge-correction-apply",
+        -300m,
+        "append charge adjustment"));
+    Assert(chargeCorrectionApply.Status == "applied", "charge adjustment correction should apply");
+    Assert(chargeCorrectionApply.BalanceRebuilds.Contains("StayBalance"), "charge_adjustment_rebuilds_stay_balance");
+    Assert(ScalarDecimal(connectionString, "select amount from hostel_charges where charge_id = 'charge-phase6-001'") == 9300m, "original charge ledger entry amount must not be modified");
+    Assert(ScalarDecimal(connectionString, "select coalesce(sum(amount), 0) from hostel_charges where workspace_id = 'W-STAY-LIFECYCLE' and stay_id = 'stay-phase6-001'") == 9000m, "charge_adjustment_from_correction_center");
+    Assert(ScalarDecimal(connectionString, "select coalesce(max(total_charges), 0) from stay_balances where workspace_id = 'W-STAY-LIFECYCLE' and stay_id = 'stay-phase6-001'") == 9000m, "charge_correction_entry rebuilds charge total");
+    Assert(ScalarDecimal(connectionString, "select coalesce(max(balance), 0) from stay_balances where workspace_id = 'W-STAY-LIFECYCLE' and stay_id = 'stay-phase6-001'") == 9000m, "stay_balance_rebuild_after_correction");
+    Assert(LensContains(runtime, "stay-balance", "9000"), "Correction after ChargeAdjusted must be visible in StayBalanceLens");
 
     Console.WriteLine("WorkOS.RuntimeContractTests: PASS");
 }
@@ -1015,6 +1266,27 @@ static void ValidatePeriodAnalyticsContract()
     Assert(root.GetProperty("snapshotPolicy").GetProperty("snapshotType").GetString() == "frozen-period-snapshot", "period snapshot must be frozen");
     Assert(root.GetProperty("snapshotPolicy").GetProperty("lateAdjustmentPolicy").GetString() == "append-adjustment-event", "late adjustments must append events");
     Assert(root.GetProperty("snapshotPolicy").GetProperty("lateAdjustmentEvents").EnumerateArray().Any(item => item.GetString() == "Accommodation.PeriodActionPlanCompleted"), "period completed adjustments must be append-only events");
+    var actionPlanWorkItems = root.GetProperty("actionPlanWorkItems");
+    Assert(actionPlanWorkItems.GetProperty("commitEvent").GetString() == "Accommodation.PeriodActionPlanCommitted", "period action plan commit event must be explicit");
+    Assert(actionPlanWorkItems.GetProperty("workItemCreatedEvent").GetString() == "Accommodation.PeriodActionPlanWorkItemCreated", "period action plan work item event must be explicit");
+    Assert(actionPlanWorkItems.GetProperty("completeEvent").GetString() == "Accommodation.PeriodActionPlanCompleted", "period action plan completion event must be explicit");
+    Assert(actionPlanWorkItems.GetProperty("workItemType").GetString() == "periodActionPlanExecution", "period action plan WorkItem type must be explicit");
+    var actionPlanRequiredFields = actionPlanWorkItems.GetProperty("requiredFields").EnumerateArray().Select(item => item.GetString()).ToHashSet();
+    Assert(actionPlanRequiredFields.SetEquals(new[] { "ownerRole", "dueAtUtc", "priority" }), "period action plan WorkItems must require ownerRole, dueAtUtc, and priority");
+    var periodClose = root.GetProperty("periodClose");
+    var closeRequiredConditions = periodClose.GetProperty("requiredConditions").EnumerateArray().Select(item => item.GetString()).ToHashSet();
+    foreach (var field in new[] { "scopeConfirmed", "metricsReviewed", "financeReviewed", "operationsDiagnosed", "actionPlanCommittedOrSkipped", "noBlockingInvariantViolation", "businessSignoffCompleted" })
+    {
+        Assert(closeRequiredConditions.Contains(field), $"period close must require {field}");
+    }
+
+    var lateAdjustments = root.GetProperty("lateAdjustments");
+    Assert(lateAdjustments.GetProperty("table").GetString() == "period_late_adjustments", "late adjustments table must be explicit");
+    var lateRequiredFields = lateAdjustments.GetProperty("requiredFields").EnumerateArray().Select(item => item.GetString()).ToHashSet();
+    foreach (var field in new[] { "reason", "createdBy", "body.before", "body.after" })
+    {
+        Assert(lateRequiredFields.Contains(field), $"late adjustments must require {field}");
+    }
 
     var formulas = root.GetProperty("formulas").EnumerateArray().ToArray();
     foreach (var formula in new[] { "averageOccupancyRate", "leadToReservationRate", "reservationToCheckInRate", "periodNetCashFlow", "depositLiabilityEnd" })
@@ -1277,6 +1549,302 @@ static ConfirmResult AssertNoSideEffects(string connectionString, Func<ConfirmRe
     return result;
 }
 
+static void ValidateControlPlaneShadowSchemas(string connectionString)
+{
+    foreach (var schema in new[] { "control_plane", "shadow_runtime" })
+    {
+        Assert(ScalarInt(connectionString, $"select count(*) from information_schema.schemata where schema_name = '{schema}'") == 1, $"{schema} schema must exist after migration up");
+    }
+
+    foreach (var tableName in new[]
+    {
+        "control_plane.release_manifests",
+        "control_plane.feature_flags",
+        "control_plane.slice_cutover_states",
+        "control_plane.shadow_compare_reports",
+        "control_plane.runtime_invariant_checks",
+        "control_plane.gate_results",
+        "control_plane.rollback_instructions",
+        "shadow_runtime.command_submissions",
+        "shadow_runtime.domain_events",
+        "shadow_runtime.ledger_entries",
+        "shadow_runtime.lens_snapshots",
+        "shadow_runtime.compare_inputs"
+    })
+    {
+        Assert(!string.IsNullOrWhiteSpace(ScalarText(connectionString, $"select to_regclass('{tableName}')::text")), $"{tableName} must exist after migration up");
+    }
+
+    var suffix = Guid.NewGuid().ToString("N");
+    var releaseId = $"release-{suffix}";
+    var compareId = $"compare-{suffix}";
+    var invariantId = $"invariant-{suffix}";
+    var gateId = $"gate-{suffix}";
+    var rollbackId = $"rollback-{suffix}";
+    var flagId = $"flag-{suffix}";
+    var cutoverId = $"cutover-{suffix}";
+    var commandId = $"command-{suffix}";
+    var controlPlaneWrites = new ControlPlaneWriteStore(connectionString);
+
+    ExecuteSql(connectionString, """
+        insert into control_plane.release_manifests(
+            release_id, mr_id, release_name, status, owners, commit_sha,
+            migration_version, definition_version, api_schema_hash, ci_run_id,
+            feature_flag_ids, slice_cutover_state_ids, shadow_compare_report_ids,
+            invariant_check_ids, acceptance_scenarios, go_criteria, no_go_criteria,
+            known_risks)
+        values(
+            @releaseId, 'MR-V54', 'V5.4 control plane contract', 'shadow',
+            '["platform"]'::jsonb, 'sha-v54', '015_control_plane_shadow_runtime',
+            'v5.4', 'schema-hash', 'ci-v54', '[]'::jsonb, '[]'::jsonb,
+            '[]'::jsonb, '[]'::jsonb, '["shadow compare green"]'::jsonb,
+            '["all gates passed"]'::jsonb, '["red compare"]'::jsonb,
+            '["pilot scope only"]'::jsonb)
+        """, ("releaseId", releaseId));
+
+    ExecuteSql(connectionString, """
+        insert into control_plane.feature_flags(
+            feature_flag_id, release_id, flag_key, description, status,
+            scope_rules, default_behavior, created_by)
+        values(
+            @flagId, @releaseId, 'v54.shadow.runtime', 'V5.4 shadow runtime gate',
+            'shadow',
+            '{
+                "tenantIds": ["tenant-a"],
+                "sliceIds": ["Accommodation.DepositLedger"],
+                "roles": ["operator", "finance"],
+                "actorIds": ["actor-1"],
+                "deviceIds": ["device-1"],
+                "deviceTrust": ["trusted"],
+                "amount": { "currency": "KGS", "lte": 10000, "gte": 100 },
+                "percentage": 25
+            }'::jsonb,
+            '{"runtimeMode":"legacy"}'::jsonb,
+            'contract-test')
+        """, ("flagId", flagId), ("releaseId", releaseId));
+
+    Assert(ScalarText(connectionString, $"select scope_rules #>> '{{amount,currency}}' from control_plane.feature_flags where feature_flag_id = '{flagId}'") == "KGS", "feature_flags.scope_rules must persist amount.currency");
+    Assert(ScalarText(connectionString, $"select (scope_rules->'tenantIds' ? 'tenant-a')::text from control_plane.feature_flags where feature_flag_id = '{flagId}'").Equals("true", StringComparison.OrdinalIgnoreCase), "feature_flags.scope_rules must persist tenantIds");
+    Assert(ScalarText(connectionString, $"select (scope_rules->'sliceIds' ? 'Accommodation.DepositLedger')::text from control_plane.feature_flags where feature_flag_id = '{flagId}'").Equals("true", StringComparison.OrdinalIgnoreCase), "feature_flags.scope_rules must persist sliceIds");
+    Assert(ScalarText(connectionString, $"select (scope_rules->'roles' ? 'finance')::text from control_plane.feature_flags where feature_flag_id = '{flagId}'").Equals("true", StringComparison.OrdinalIgnoreCase), "feature_flags.scope_rules must persist roles");
+    Assert(ScalarText(connectionString, $"select (scope_rules->'actorIds' ? 'actor-1')::text from control_plane.feature_flags where feature_flag_id = '{flagId}'").Equals("true", StringComparison.OrdinalIgnoreCase), "feature_flags.scope_rules must persist actorIds");
+    Assert(ScalarText(connectionString, $"select (scope_rules->'deviceIds' ? 'device-1')::text from control_plane.feature_flags where feature_flag_id = '{flagId}'").Equals("true", StringComparison.OrdinalIgnoreCase), "feature_flags.scope_rules must persist deviceIds");
+    Assert(ScalarText(connectionString, $"select (scope_rules->'deviceTrust' ? 'trusted')::text from control_plane.feature_flags where feature_flag_id = '{flagId}'").Equals("true", StringComparison.OrdinalIgnoreCase), "feature_flags.scope_rules must persist deviceTrust");
+
+    ExecuteSql(connectionString, """
+        insert into control_plane.slice_cutover_states(
+            cutover_state_id, release_id, tenant_id, slice_id, runtime_mode,
+            previous_runtime_mode, enabled_roles, enabled_actor_ids,
+            enabled_device_ids, amount_threshold, enabled_percentage,
+            dependency_status)
+        values(
+            @cutoverId, @releaseId, 'tenant-a', 'Accommodation.DepositLedger',
+            'shadow', 'legacy', '["operator"]'::jsonb, '["actor-1"]'::jsonb,
+            '["device-1"]'::jsonb, '{"currency":"KGS","lte":10000,"gte":100}'::jsonb,
+            25, '{"finance":"ready"}'::jsonb)
+        """, ("cutoverId", cutoverId), ("releaseId", releaseId));
+
+    controlPlaneWrites.WriteShadowCompareReport(new ShadowCompareReportWrite(
+        compareId,
+        releaseId,
+        "tenant-a",
+        "Accommodation.DepositLedger",
+        new Dictionary<string, object> { ["window"] = "pilot" },
+        "legacy-ref",
+        "active-ref",
+        "shadow-ref",
+        DateTimeOffset.UtcNow,
+        "green",
+        1,
+        1,
+        0,
+        0,
+        0,
+        Array.Empty<IReadOnlyDictionary<string, object>>(),
+        new Dictionary<string, object> { ["result"] = "matched" },
+        "contract-test",
+        "ci-v54"));
+
+    controlPlaneWrites.WriteRuntimeInvariantCheck(new RuntimeInvariantCheckWrite(
+        invariantId,
+        releaseId,
+        "tenant-a",
+        "Accommodation.DepositLedger",
+        "deposit_non_negative",
+        "deposit balance cannot be negative",
+        "blocking",
+        "P0",
+        "sql",
+        "select 0",
+        null,
+        "passed",
+        new Dictionary<string, object> { ["value"] = 0 },
+        new Dictionary<string, object> { ["max"] = 0 },
+        0,
+        Array.Empty<IReadOnlyDictionary<string, object>>(),
+        "contract-test",
+        "ci-v54",
+        DateTimeOffset.UtcNow));
+
+    controlPlaneWrites.WriteGateResult(new GateResultWrite(
+        gateId,
+        releaseId,
+        "MR-V54",
+        "tenant-a",
+        "Accommodation.DepositLedger",
+        "shadow_compare_gate",
+        "automated",
+        "passed",
+        "P0",
+        "ci-v54",
+        new[] { "runtime-contract" },
+        new[] { invariantId },
+        new[] { compareId },
+        Array.Empty<string>(),
+        Array.Empty<string>(),
+        new[] { "compare green" },
+        Array.Empty<string>(),
+        "contract-test",
+        DateTimeOffset.UtcNow,
+        "input-hash",
+        "result-hash"));
+
+    Assert(ScalarText(connectionString, $"select grade from control_plane.shadow_compare_reports where shadow_compare_report_id = '{compareId}'") == "green", "ControlPlaneWriteStore must write shadow compare reports");
+    Assert(ScalarText(connectionString, $"select mode from control_plane.runtime_invariant_checks where invariant_check_id = '{invariantId}'") == "blocking", "ControlPlaneWriteStore must write runtime invariant checks");
+    Assert(ScalarText(connectionString, $"select status from control_plane.gate_results where gate_result_id = '{gateId}'") == "passed", "ControlPlaneWriteStore must write gate results");
+
+    ExecuteSql(connectionString, """
+        insert into control_plane.rollback_instructions(
+            rollback_instruction_id, release_id, instruction_type, rollback_kind,
+            title, scope, allowed_before_status, allowed_after_status, steps,
+            validation_steps, owner, risk_level, requires_business_approval,
+            requires_architecture_approval, requires_finance_approval)
+        values(
+            @rollbackId, @releaseId, 'rollback', 'feature_flag',
+            'Disable V5.4 shadow flag', '{"tenantId":"tenant-a"}'::jsonb,
+            '["shadow","pilot"]'::jsonb, '["paused","rollback"]'::jsonb,
+            '["disable flag"]'::jsonb, '["verify legacy active"]'::jsonb,
+            'platform', 'medium', true, true, false)
+        """, ("rollbackId", rollbackId), ("releaseId", releaseId));
+
+    ExecuteSql(connectionString, """
+        insert into shadow_runtime.command_submissions(
+            command_submission_id, release_id, tenant_id, slice_id, workspace_id,
+            card_id, idempotency_key, actor_ref, command_payload,
+            source_active_ref, source_shadow_ref)
+        values(
+            @commandId, @releaseId, 'tenant-a', 'Accommodation.DepositLedger',
+            'W-STAY-DEPOSIT-LEDGER', 'depositReceipt', @commandId,
+            '{"actorId":"actor-1","role":"operator"}'::jsonb,
+            '{"fieldValues":{"receivedAmount":"3000"}}'::jsonb,
+            'active-command', 'shadow-command')
+        """, ("commandId", commandId), ("releaseId", releaseId));
+
+    ExecuteSql(connectionString, """
+        insert into shadow_runtime.domain_events(
+            shadow_event_id, command_submission_id, event_type, aggregate_ref,
+            event_payload, event_hash)
+        values(
+            @eventId, @commandId, 'Accommodation.DepositReceived',
+            'deposit:contract-test', '{"amount":3000}'::jsonb, 'event-hash')
+        """, ("eventId", $"shadow-event-{suffix}"), ("commandId", commandId));
+
+    ExecuteSql(connectionString, """
+        insert into shadow_runtime.ledger_entries(
+            shadow_ledger_entry_id, command_submission_id, ledger_type, account_ref,
+            amount, currency, direction, entry_payload)
+        values(
+            @entryId, @commandId, 'deposit', 'deposit:contract-test',
+            3000, 'KGS', 'credit', '{"source":"shadow"}'::jsonb)
+        """, ("entryId", $"shadow-ledger-{suffix}"), ("commandId", commandId));
+
+    ExecuteSql(connectionString, """
+        insert into shadow_runtime.lens_snapshots(
+            lens_snapshot_id, release_id, tenant_id, slice_id, lens_id,
+            lens_payload, payload_hash)
+        values(
+            @snapshotId, @releaseId, 'tenant-a', 'Accommodation.DepositLedger',
+            'deposit-ledger', '{"held":3000}'::jsonb, 'lens-hash')
+        """, ("snapshotId", $"shadow-lens-{suffix}"), ("releaseId", releaseId));
+
+    ExecuteSql(connectionString, """
+        insert into shadow_runtime.compare_inputs(
+            compare_input_id, release_id, tenant_id, slice_id, command_submission_id,
+            source_legacy_ref, source_active_ref, source_shadow_ref, input_payload)
+        values(
+            @compareInputId, @releaseId, 'tenant-a', 'Accommodation.DepositLedger',
+            @commandId, 'legacy-ref', 'active-ref', 'shadow-ref',
+            '{"basis":"command"}'::jsonb)
+        """, ("compareInputId", $"shadow-input-{suffix}"), ("releaseId", releaseId), ("commandId", commandId));
+
+    AssertCheckConstraintRejects(connectionString, """
+        insert into control_plane.shadow_compare_reports(
+            shadow_compare_report_id, release_id, tenant_id, slice_id, grade, generated_by)
+        values(@id, @releaseId, 'tenant-a', 'Accommodation.DepositLedger', 'blue', 'contract-test')
+        """, ("id", $"bad-grade-{suffix}"), ("releaseId", releaseId));
+
+    AssertCheckConstraintRejects(connectionString, """
+        insert into control_plane.runtime_invariant_checks(
+            invariant_check_id, release_id, tenant_id, slice_id, invariant_key,
+            description, mode, severity, source_type, status, generated_by)
+        values(
+            @id, @releaseId, 'tenant-a', 'Accommodation.DepositLedger',
+            'bad_mode', 'bad mode must fail', 'passive', 'P1', 'sql',
+            'not_run', 'contract-test')
+        """, ("id", $"bad-mode-{suffix}"), ("releaseId", releaseId));
+
+    AssertCheckConstraintRejects(connectionString, """
+        insert into control_plane.rollback_instructions(
+            rollback_instruction_id, release_id, instruction_type, rollback_kind,
+            title, owner, risk_level)
+        values(
+            @id, @releaseId, 'undo', 'feature_flag', 'bad instruction',
+            'platform', 'medium')
+        """, ("id", $"bad-instruction-{suffix}"), ("releaseId", releaseId));
+}
+
+static void AssertCheckConstraintRejects(string connectionString, string sql, params (string Name, object Value)[] parameters)
+{
+    try
+    {
+        ExecuteSql(connectionString, sql, parameters);
+    }
+    catch (PostgresException ex) when (ex.SqlState == PostgresErrorCodes.CheckViolation)
+    {
+        return;
+    }
+
+    throw new InvalidOperationException("Expected PostgreSQL check constraint violation.");
+}
+
+static void AssertSqlErrorContains(string connectionString, string expectedMessage, string sql, params (string Name, object Value)[] parameters)
+{
+    try
+    {
+        ExecuteSql(connectionString, sql, parameters);
+    }
+    catch (PostgresException ex) when (ex.MessageText.Contains(expectedMessage, StringComparison.OrdinalIgnoreCase))
+    {
+        return;
+    }
+
+    throw new InvalidOperationException($"Expected PostgreSQL error containing {expectedMessage}.");
+}
+
+static void ExecuteSql(string connectionString, string sql, params (string Name, object Value)[] parameters)
+{
+    using var connection = new NpgsqlConnection(connectionString);
+    connection.Open();
+    using var command = connection.CreateCommand();
+    command.CommandText = sql;
+    foreach (var (name, value) in parameters)
+    {
+        command.Parameters.AddWithValue(name, value);
+    }
+
+    command.ExecuteNonQuery();
+}
+
 static void ValidateProjectionContractFiles()
 {
     using var projectionSchema = JsonDocument.Parse(File.ReadAllText(Path.Combine("docs", "contracts", "projection-contract.schema.json")));
@@ -1322,9 +1890,23 @@ static void ValidateProjectionContractFiles()
     {
         Assert(confirmRequired.Contains(field), $"OpenAPI ConfirmCardRequest must require {field}");
     }
-    foreach (var statusCode in new[] { "200", "400", "401", "403", "409", "422", "404", "500" })
+    foreach (var statusCode in new[] { "200", "400", "401", "403", "422", "404" })
     {
         Assert(confirm.GetProperty("responses").TryGetProperty(statusCode, out _), $"OpenAPI confirm must document HTTP {statusCode}");
+    }
+    Assert(!confirm.GetProperty("responses").TryGetProperty("500", out _), "OpenAPI confirm must not describe projection lag as HTTP 500");
+
+    var confirmResponseRequired = openApi.RootElement
+        .GetProperty("components")
+        .GetProperty("schemas")
+        .GetProperty("ConfirmCardResponse")
+        .GetProperty("required")
+        .EnumerateArray()
+        .Select(item => item.GetString())
+        .ToHashSet();
+    foreach (var field in new[] { "confirmed", "commitStatus", "projectionStatus", "caseId", "workItemId", "submissionId", "resultEventIds", "userMessage", "clientInstruction" })
+    {
+        Assert(confirmResponseRequired.Contains(field), $"OpenAPI ConfirmCardResponse must require {field}");
     }
 
     var observationRequired = openApi.RootElement
@@ -1524,6 +2106,14 @@ static void AssertConfirmPayloadProjected(ConfirmResult result, string workspace
         .ToHashSet(StringComparer.OrdinalIgnoreCase);
 
     Assert(eventIds.Length > 0, "confirm payload must include committed events");
+    var resultEventIds = root.GetProperty("resultEventIds")
+        .EnumerateArray()
+        .Select(item => item.GetString())
+        .Where(item => !string.IsNullOrWhiteSpace(item))
+        .ToArray();
+    Assert(resultEventIds.SequenceEqual(eventIds), "confirm payload resultEventIds must match committed events");
+    Assert(root.GetProperty("commitStatus").GetString() == "committed", "confirm payload must expose committed commitStatus");
+    Assert(root.GetProperty("projectionStatus").GetString() == "projected", "confirm payload projected response must expose projected projectionStatus");
     Assert(eventIds.All(projectedIds.Contains), "confirm payload projection must already contain every committed event");
 
     var workspace = root.GetProperty("projection")
@@ -1569,6 +2159,30 @@ static void AssertConfirmEvents(ConfirmResult result, params string[] expectedEv
     Assert(actual.SequenceEqual(expectedEventTypes), $"expected confirm events [{string.Join(", ", expectedEventTypes)}], got [{string.Join(", ", actual)}]");
 }
 
+static string ConfirmEventId(ConfirmResult result, string expectedEventType)
+{
+    using var payload = ConfirmPayloadJson(result);
+    var match = payload.RootElement.GetProperty("events")
+        .EnumerateArray()
+        .FirstOrDefault(item => item.GetProperty("eventType").GetString() == expectedEventType);
+    Assert(match.ValueKind != JsonValueKind.Undefined, $"expected confirm event {expectedEventType} to exist");
+    return match.GetProperty("eventId").GetString() ?? throw new InvalidOperationException($"eventId missing for {expectedEventType}");
+}
+
+static void AssertInvalidOperation(string expectedMessage, Action action)
+{
+    try
+    {
+        action();
+    }
+    catch (InvalidOperationException ex) when (ex.Message.Contains(expectedMessage, StringComparison.Ordinal))
+    {
+        return;
+    }
+
+    throw new InvalidOperationException($"Expected InvalidOperationException containing {expectedMessage}");
+}
+
 static int CountRows(string connectionString, string tableName)
 {
     using var connection = new NpgsqlConnection(connectionString);
@@ -1611,6 +2225,10 @@ static int TotalAggregateRows(string connectionString)
         "service_tasks",
         "expenses",
         "expense_links",
+        "expense_ledger_status",
+        "risk_command_snapshots",
+        "period_operation_snapshots",
+        "period_scopes",
         "period_reviews",
         "period_metric_snapshots",
         "period_finance_snapshots",
@@ -1658,18 +2276,39 @@ static void ResetPostgres(string connectionString)
     connection.Open();
     using var command = connection.CreateCommand();
     command.CommandText = """
+        drop schema if exists shadow_runtime cascade;
+        drop schema if exists control_plane cascade;
+        drop table if exists reconciliation_cases;
+        drop table if exists payment_mismatches;
+        drop table if exists payment_matches;
+        drop table if exists payment_match_candidates;
+        drop table if exists bank_transactions;
+        drop table if exists bank_statement_imports;
+        drop table if exists correction_cases;
+        drop table if exists correction_audit;
+        drop table if exists ledger_correction_entries;
+        drop table if exists ledger_reversal_entries;
+        drop table if exists correction_approvals;
+        drop table if exists ledger_correction_requests;
+        drop table if exists process_request_event_intents;
+        drop table if exists process_work_item_intents;
+        drop table if exists process_runs;
         drop table if exists evidence_attachments;
         drop table if exists evidence_requirements;
         drop table if exists evidence_objects;
         drop table if exists card_instances;
         drop table if exists finance_confirmations;
         drop table if exists accommodation_deposits;
+        drop table if exists risk_command_snapshots;
         drop table if exists period_late_adjustments;
         drop table if exists period_action_plans;
+        drop table if exists period_operation_snapshots;
         drop table if exists period_operation_diagnoses;
         drop table if exists period_finance_snapshots;
         drop table if exists period_metric_snapshots;
+        drop table if exists period_scopes;
         drop table if exists period_reviews;
+        drop table if exists expense_ledger_status;
         drop table if exists expense_links;
         drop table if exists expenses;
         drop table if exists service_tasks;

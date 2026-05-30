@@ -58,6 +58,7 @@ public sealed class OutboxProjector
             if (rule.AppliesTo(workspaceEvent))
             {
                 rule.Apply(state, workspaceEvent);
+                store.ApplyCheckoutServiceProcessRules(workspaceEvent);
                 return;
             }
         }

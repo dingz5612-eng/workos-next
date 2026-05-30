@@ -40,14 +40,22 @@ Card confirmation contract.
 ## Clean Baseline
 
 The repository must not reintroduce old page, task, object, or scenario models.
-The only business write API shape is:
+The legal primary business write API shape is Operations Confirm:
+
+```text
+POST /api/operations/work-items/{workItemId}/confirm
+```
+
+The older Workspace/Card write endpoints are compatibility layer only:
 
 ```text
 POST /api/workspaces/{workspaceId}/cards/{cardId}/prepare
 POST /api/workspaces/{workspaceId}/cards/{cardId}/confirm
 ```
 
-The following page-specific write APIs are forbidden:
+Mobile BFF routes must not write business facts. New page-specific business
+write APIs are P0 No-Go items. The following page-specific write APIs are
+forbidden:
 
 ```text
 /api/hostel/checkin
@@ -56,6 +64,10 @@ The following page-specific write APIs are forbidden:
 /api/finance/confirm-deposit
 /api/room/activate
 ```
+
+The Operations route allowlist lives at
+`docs/v5.4/operations-api-allowlist.json` and is enforced by
+`scripts/check-api-boundaries.mjs`.
 
 ## Required Validation
 
@@ -71,6 +83,8 @@ node scripts/validate-contracts.mjs
 node scripts/validate-slice-admission.mjs
 node scripts/architecture-drift-report.mjs
 node scripts/validate-runtime-api.mjs
+node scripts/check-api-boundaries.mjs --self-test
+node scripts/check-api-boundaries.mjs
 node scripts/generate-contract-dtos.mjs --check
 pwsh ./scripts/guard-architecture.ps1
 pwsh ./scripts/clean-baseline.ps1
@@ -92,6 +106,10 @@ Detailed rules live here:
 - Accommodation runtime: `docs/architecture/WORKOS_ACCOMMODATION_RUNTIME_RULES.md`
 - Testing rules: `docs/architecture/WORKOS_TESTING_RULES.md`
 - Current runtime facts: `docs/architecture/CURRENT_RUNTIME_ARCHITECTURE.md`
+- API boundary rules: `docs/engineering/03-api-boundary-rules.md`
+- Release Control Plane rules: `docs/engineering/13-release-control-plane-rules.md`
+- No-Go rules: `docs/engineering/15-no-go-rules.md`
+- Release Go/No-Go acceptance: `docs/acceptance/12-release-go-no-go.md`
 - Machine-readable registry: `docs/architecture/rules/index.json`
 - Exception registry: `docs/architecture/architecture-exceptions.json`
 

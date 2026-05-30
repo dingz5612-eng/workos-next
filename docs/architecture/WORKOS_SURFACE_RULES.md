@@ -22,9 +22,10 @@ or declare an explicit hidden/no-queue reason.
 ## Source Rules
 
 1. Home must not hardcode business workspace IDs.
-2. Workbench must not use `demoQueue` as the online default source.
-3. `demoQueue` is allowed only as an offline, development, or test fallback and
-   must be visibly marked as such.
+2. Workbench must not use `demoQueue` as a production source.
+3. `demoQueue` is allowed only under explicit dev/test fixtures. Production
+   offline behavior must show a real cached queue or a true empty/error state,
+   never fake business objects.
 4. Queue items must carry `workspaceId` and `cardId` directly. The frontend must
    not infer `workspaceId` from task IDs.
 5. Search fallback must not point to deprecated workspace IDs.

@@ -35,6 +35,38 @@ export function createInitialState() {
     currentActor: actor,
     loginMessage: "",
     projectionEvents: [],
+    releaseControl: { releases: [], selectedRelease: null },
+    pcGovernance: {
+      roleCapabilities: [],
+      featureFlags: [],
+      sliceCutoverStates: [],
+      definitionVersions: [],
+      deviceSessions: [],
+      evidenceAccessAudits: [],
+      domainEvents: [],
+      commandSubmissions: [],
+      releaseControlAudits: [],
+      exportAudits: [],
+      exports: [],
+      capabilities: [],
+      productionObservability: null,
+      currentDevice: { deviceId: "pc-current", deviceTrustStatus: "unknown", surface: "pc" }
+    },
+    bankStatementImport: {
+      preview: null,
+      result: null,
+      request: null,
+      importHistory: [],
+      bankTransactions: [],
+      candidates: null,
+      mismatchCases: null,
+      correctionRequests: [],
+      selectedCorrectionRequestId: "",
+      correctionDecision: null,
+      operationAudit: [],
+      decision: null,
+      error: ""
+    },
     accommodationLenses: {},
     runtimeStore: createRuntimeStore()
   };

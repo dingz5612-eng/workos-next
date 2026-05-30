@@ -1,0 +1,158 @@
+[
+  {
+    "invariant_check_id": "inv-v54-bank-import-does-not-create-payment-fact",
+    "release_id": "release-mr-09",
+    "tenant_id": "test-tenant",
+    "slice_id": "Reconciliation",
+    "invariant_key": "bank.import_does_not_create_payment_fact",
+    "description": "Bank statement import must create reconciliation records only and must not create PaymentConfirmed or other business money facts.",
+    "mode": "blocking",
+    "severity": "P0",
+    "source_type": "skeleton",
+    "check_ref": "docs/v5.4/reconciliation-correction-cutover.config.json",
+    "status": "passed",
+    "observed_value": {
+      "skeleton": "bank.import_does_not_create_payment_fact",
+      "config": "docs/v5.4/reconciliation-correction-cutover.config.json",
+      "exists": true
+    },
+    "threshold": {
+      "required_config_exists": true
+    },
+    "violation_count": 0,
+    "sample_violations": [],
+    "generated_by": "invariant-runner",
+    "ci_run_id": "local-mr-09",
+    "checked_at_utc": "2026-05-30T01:13:29.8090611+00:00"
+  },
+  {
+    "invariant_check_id": "inv-v54-reconciliation-bank-transaction-single-match-default",
+    "release_id": "release-mr-09",
+    "tenant_id": "test-tenant",
+    "slice_id": "Reconciliation",
+    "invariant_key": "reconciliation.bank_transaction_single_match_default",
+    "description": "A bank transaction can be matched at most once by default until a split policy is explicitly introduced.",
+    "mode": "blocking",
+    "severity": "P0",
+    "source_type": "skeleton",
+    "check_ref": "docs/v5.4/reconciliation-correction-cutover.config.json",
+    "status": "passed",
+    "observed_value": {
+      "skeleton": "reconciliation.bank_transaction_single_match_default",
+      "config": "docs/v5.4/reconciliation-correction-cutover.config.json",
+      "exists": true
+    },
+    "threshold": {
+      "required_config_exists": true
+    },
+    "violation_count": 0,
+    "sample_violations": [],
+    "generated_by": "invariant-runner",
+    "ci_run_id": "local-mr-09",
+    "checked_at_utc": "2026-05-30T01:13:29.8095084+00:00"
+  },
+  {
+    "invariant_check_id": "inv-v54-ledger-no-edit-old-entry",
+    "release_id": "release-mr-09",
+    "tenant_id": "test-tenant",
+    "slice_id": "Reconciliation",
+    "invariant_key": "ledger.no_edit_old_entry",
+    "description": "Payment, deposit, charge, cash, and refund ledger corrections must append new entries and never edit old ledger facts.",
+    "mode": "blocking",
+    "severity": "P0",
+    "source_type": "skeleton",
+    "check_ref": "docs/v5.4/reconciliation-correction-cutover.config.json",
+    "status": "passed",
+    "observed_value": {
+      "skeleton": "ledger.no_edit_old_entry",
+      "config": "docs/v5.4/reconciliation-correction-cutover.config.json",
+      "exists": true
+    },
+    "threshold": {
+      "required_config_exists": true
+    },
+    "violation_count": 0,
+    "sample_violations": [],
+    "generated_by": "invariant-runner",
+    "ci_run_id": "local-mr-09",
+    "checked_at_utc": "2026-05-30T01:13:29.8096811+00:00"
+  },
+  {
+    "invariant_check_id": "inv-v54-correction-requires-reason",
+    "release_id": "release-mr-09",
+    "tenant_id": "test-tenant",
+    "slice_id": "Reconciliation",
+    "invariant_key": "correction.requires_reason",
+    "description": "Every correction request, reversal, and correction application must carry a reason.",
+    "mode": "blocking",
+    "severity": "P0",
+    "source_type": "skeleton",
+    "check_ref": "docs/v5.4/reconciliation-correction-cutover.config.json",
+    "status": "passed",
+    "observed_value": {
+      "skeleton": "correction.requires_reason",
+      "config": "docs/v5.4/reconciliation-correction-cutover.config.json",
+      "exists": true
+    },
+    "threshold": {
+      "required_config_exists": true
+    },
+    "violation_count": 0,
+    "sample_violations": [],
+    "generated_by": "invariant-runner",
+    "ci_run_id": "local-mr-09",
+    "checked_at_utc": "2026-05-30T01:13:29.8098394+00:00"
+  },
+  {
+    "invariant_check_id": "inv-v54-correction-high-risk-requires-approval",
+    "release_id": "release-mr-09",
+    "tenant_id": "test-tenant",
+    "slice_id": "Reconciliation",
+    "invariant_key": "correction.high_risk_requires_approval",
+    "description": "High-risk ledger corrections must be approved before they can be applied.",
+    "mode": "blocking",
+    "severity": "P0",
+    "source_type": "skeleton",
+    "check_ref": "docs/v5.4/reconciliation-correction-cutover.config.json",
+    "status": "passed",
+    "observed_value": {
+      "skeleton": "correction.high_risk_requires_approval",
+      "config": "docs/v5.4/reconciliation-correction-cutover.config.json",
+      "exists": true
+    },
+    "threshold": {
+      "required_config_exists": true
+    },
+    "violation_count": 0,
+    "sample_violations": [],
+    "generated_by": "invariant-runner",
+    "ci_run_id": "local-mr-09",
+    "checked_at_utc": "2026-05-30T01:13:29.8100104+00:00"
+  },
+  {
+    "invariant_check_id": "inv-v54-balance-rebuild-after-correction",
+    "release_id": "release-mr-09",
+    "tenant_id": "test-tenant",
+    "slice_id": "Reconciliation",
+    "invariant_key": "balance.rebuild_after_correction",
+    "description": "Applying a payment, deposit, or charge correction must trigger a balance rebuild and must not leave projections inconsistent.",
+    "mode": "blocking",
+    "severity": "P0",
+    "source_type": "skeleton",
+    "check_ref": "docs/v5.4/reconciliation-correction-cutover.config.json",
+    "status": "passed",
+    "observed_value": {
+      "skeleton": "balance.rebuild_after_correction",
+      "config": "docs/v5.4/reconciliation-correction-cutover.config.json",
+      "exists": true
+    },
+    "threshold": {
+      "required_config_exists": true
+    },
+    "violation_count": 0,
+    "sample_violations": [],
+    "generated_by": "invariant-runner",
+    "ci_run_id": "local-mr-09",
+    "checked_at_utc": "2026-05-30T01:13:29.8101658+00:00"
+  }
+]

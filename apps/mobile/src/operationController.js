@@ -83,6 +83,7 @@ export function collectDraftingValuesOnInput(event, ctx) {
 }
 
 export async function submitCurrentCard(ctx) {
+  if (ctx.state.operationSubmitting) return;
   const item = ctx.workspace();
   const card = activeWorkspaceCard(item, ctx.state.selectedCardIndex, ctx.state.selectedCardId);
   if (!item || !card || isCardActionDisabled(card)) return;
@@ -104,6 +105,7 @@ export async function submitCurrentCard(ctx) {
   const submissionProtocol = draftSubmissionProtocol(item, card, fieldValues, evidenceDrafts);
   saveDraft(item.id, card.id, fieldValues, evidenceDrafts, submissionProtocol);
   ctx.state.operationMessage = ctx.tr("submitting");
+  ctx.state.operationSubmitting = true;
   ctx.render();
   try {
     const evidenceIds = await materializeEvidenceObjects({
@@ -114,7 +116,7 @@ export async function submitCurrentCard(ctx) {
       evidenceDrafts
     });
     saveDraft(item.id, card.id, fieldValues, evidenceDrafts, submissionProtocol);
-    await submitCardOperation({
+    const result = await submitCardOperation({
       workspace: item,
       card,
       actor: ctx.state.currentActor,
@@ -125,11 +127,18 @@ export async function submitCurrentCard(ctx) {
       onProjection: (payload) => applyProjectionPayload(payload, ctx),
       onLens: (payload) => applyLensPayload(payload, ctx)
     });
-    clearDraft(item.id, card.id);
+    if (isCommittedConfirmResult(result)) {
+      applyCommittedCardLocalState(item.id, card.id, ctx);
+    }
+    if (result?.projectionStatus === "projected") {
+      clearDraft(item.id, card.id);
+    }
     ctx.state.selectedCardIndex = -1;
-    ctx.state.operationMessage = ctx.tr("submitDone");
+    ctx.state.operationMessage = confirmSuccessMessage(result, ctx);
   } catch (error) {
     if (applyConfirmError(error, ctx)) return;
+  } finally {
+    ctx.state.operationSubmitting = false;
   }
   ctx.render(true);
 }
@@ -157,6 +166,16 @@ export function confirmErrorMessage(error, ctx) {
   const prefix = ctx.tr(keyByStatus[error?.status] || "submitFailed");
   const detail = error?.reason || error?.code || "";
   return [prefix, detail].filter(Boolean).join(" ");
+}
+
+export function confirmSuccessMessage(result, ctx) {
+  if (result?.commitStatus === "committed" && result?.projectionStatus === "pending") {
+    return ctx.tr("submitProjectionPending");
+  }
+  if (result?.commitStatus === "committed" && result?.projectionStatus === "failed") {
+    return ctx.tr("submitProjectionFailed");
+  }
+  return ctx.tr("submitDone");
 }
 
 function randomDraftId() {
@@ -191,9 +210,9 @@ function applyProjectionPayload(payload, ctx) {
       ctx.state.runtimeStore.workQueue = [];
       ctx.state.runtimeStore.homeSurface = [];
       ctx.state.runtimeStore.learningCatalog = [];
-      ctx.state.runtimeStore.queueSource = "projection-fallback";
-      ctx.state.runtimeStore.homeSource = "projection-fallback";
-      ctx.state.runtimeStore.learningSource = "projection-fallback";
+      ctx.state.runtimeStore.queueSource = "runtime-projection";
+      ctx.state.runtimeStore.homeSource = "runtime-projection";
+      ctx.state.runtimeStore.learningSource = "runtime-projection";
     }
   }
 }
@@ -203,4 +222,27 @@ function applyLensPayload(payload, ctx) {
     ...(ctx.state.accommodationLenses || {}),
     ...(payload || {})
   };
+}
+
+function isCommittedConfirmResult(result) {
+  return result?.confirmed === true && result?.commitStatus === "committed";
+}
+
+function applyCommittedCardLocalState(workspaceId, cardId, ctx) {
+  const workspace = ctx.state.runtimeStore?.workspaces?.find((item) => item.id === workspaceId);
+  if (!workspace) return;
+  const cards = workspace.cards || [];
+  const cardIndex = cards.findIndex((item) => item.id === cardId);
+  if (cardIndex < 0) return;
+  cards[cardIndex] = {
+    ...cards[cardIndex],
+    status: "done",
+    blockerRules: []
+  };
+  if (cards[cardIndex + 1]?.status === "notStarted") {
+    cards[cardIndex + 1] = {
+      ...cards[cardIndex + 1],
+      status: "ready"
+    };
+  }
 }

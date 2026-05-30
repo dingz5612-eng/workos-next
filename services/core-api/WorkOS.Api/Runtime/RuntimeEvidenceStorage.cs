@@ -6,10 +6,12 @@ namespace WorkOS.Api.Runtime;
 internal sealed class RuntimeEvidenceStorage
 {
     private readonly PostgresConnectionFactory connections;
+    private readonly RuntimeDeviceSessionStorage? deviceSessions;
 
-    public RuntimeEvidenceStorage(PostgresConnectionFactory connections)
+    public RuntimeEvidenceStorage(PostgresConnectionFactory connections, RuntimeDeviceSessionStorage? deviceSessions = null)
     {
         this.connections = connections;
+        this.deviceSessions = deviceSessions;
     }
 
     public EvidenceObject CreateDraft(EvidenceDraftRequest request, string actorId)
@@ -62,6 +64,7 @@ internal sealed class RuntimeEvidenceStorage
 
     public EvidenceObject Attach(string evidenceId, EvidenceAttachmentRequest request, string actorId)
     {
+        RuntimeFileUploadPolicy.Validate(request);
         var attachmentId = $"att-{Guid.NewGuid():N}";
         var now = DateTimeOffset.UtcNow;
         using var connection = connections.Open();
@@ -86,6 +89,30 @@ internal sealed class RuntimeEvidenceStorage
         UpdateStatus(db, evidenceId, "attached", actorId, now, "attached");
         db.Commit();
         return Get(evidenceId).Single();
+    }
+
+    public EvidenceSignedUrlResponse CreateSignedUrl(string evidenceId, EvidenceSignedUrlRequest request)
+    {
+        var evidence = Get(evidenceId).SingleOrDefault()
+            ?? throw new InvalidOperationException("evidence_object_not_found");
+        var attachment = evidence.Attachments.LastOrDefault()
+            ?? throw new InvalidOperationException("evidence_attachment_not_found");
+
+        var device = string.IsNullOrWhiteSpace(request.DeviceId)
+            ? null
+            : deviceSessions?.Find(request.DeviceId);
+        if (device?.RevokedAtUtc is not null ||
+            device?.DeviceTrustStatus.Equals("revoked", StringComparison.OrdinalIgnoreCase) == true)
+        {
+            WriteFileAccessAudit(evidenceId, attachment.AttachmentId, request, "blocked", "device_revoked", DateTimeOffset.UtcNow, DateTimeOffset.UtcNow);
+            throw new InvalidOperationException("evidence_device_revoked");
+        }
+
+        var now = request.NowUtc ?? DateTimeOffset.UtcNow;
+        var expiresAtUtc = RuntimeSignedUrlPolicy.Expiration(now, request.TtlSeconds);
+        var auditEventId = WriteFileAccessAudit(evidenceId, attachment.AttachmentId, request, "granted", "signed_url_issued", now, expiresAtUtc);
+        var url = $"/api/evidence/{Uri.EscapeDataString(evidenceId)}/attachments/{Uri.EscapeDataString(attachment.AttachmentId)}/download?expiresAtUtc={Uri.EscapeDataString(expiresAtUtc.ToString("O"))}&auditEventId={Uri.EscapeDataString(auditEventId)}";
+        return new EvidenceSignedUrlResponse(evidenceId, attachment.AttachmentId, url, expiresAtUtc, auditEventId);
     }
 
     public EvidenceObject Decide(string evidenceId, EvidenceDecisionRequest request, string status)
@@ -259,6 +286,39 @@ internal sealed class RuntimeEvidenceStorage
         }
 
         return attachments;
+    }
+
+    private string WriteFileAccessAudit(
+        string evidenceId,
+        string attachmentId,
+        EvidenceSignedUrlRequest request,
+        string status,
+        string reason,
+        DateTimeOffset occurredAtUtc,
+        DateTimeOffset expiresAtUtc)
+    {
+        var auditEventId = $"file-access-{Guid.NewGuid():N}";
+        using var connection = connections.Open();
+        using var command = connection.CreateCommand();
+        command.CommandText = """
+            insert into file_access_audits(
+                audit_event_id, evidence_id, attachment_id, actor_id, device_id,
+                action, status, reason, expires_at_utc, occurred_at_utc)
+            values (
+                @auditEventId, @evidenceId, @attachmentId, @actorId, @deviceId,
+                'signed_url', @status, @reason, @expiresAtUtc, @occurredAtUtc)
+            """;
+        command.Parameters.AddWithValue("auditEventId", auditEventId);
+        command.Parameters.AddWithValue("evidenceId", evidenceId);
+        command.Parameters.AddWithValue("attachmentId", attachmentId);
+        command.Parameters.AddWithValue("actorId", request.ActorId);
+        command.Parameters.AddWithValue("deviceId", request.DeviceId);
+        command.Parameters.AddWithValue("status", status);
+        command.Parameters.AddWithValue("reason", reason);
+        command.Parameters.AddWithValue("expiresAtUtc", expiresAtUtc);
+        command.Parameters.AddWithValue("occurredAtUtc", occurredAtUtc);
+        command.ExecuteNonQuery();
+        return auditEventId;
     }
 
     private static void UpdateStatus(RuntimeDbSession db, string evidenceId, string status, string actorId, DateTimeOffset now, string reason)

@@ -1,0 +1,65 @@
+{
+  "rollback_instruction_id": "rollback-mr-10-period-risk-pc-governance",
+  "release_id": "release-mr-10",
+  "instruction_type": "rollback",
+  "rollback_kind": "runtime_mode",
+  "title": "Route PeriodAnalytics / RiskCommand / PCGovernance active or pilot back to disabled or limited mode",
+  "scope": {
+    "slices": [
+      "PeriodAnalytics",
+      "RiskCommand",
+      "PCGovernance"
+    ],
+    "feature_flags": [
+      "period.review.enabled",
+      "period.finance_snapshot.enabled",
+      "period.operation_snapshot.enabled",
+      "period.close.enabled",
+      "period.late_adjustment.enabled",
+      "risk_command.enabled",
+      "pc_governance_full.enabled",
+      "admin.role_capability.enabled",
+      "export.ledger.enabled"
+    ],
+    "target_runtime_mode": "disabled_or_limited",
+    "forbidden_actions": [
+      "delete closed period snapshot",
+      "overwrite frozen snapshot",
+      "delete period late adjustment",
+      "delete export audit",
+      "SQL edit finance snapshot body as source of truth"
+    ]
+  },
+  "allowed_before_status": [
+    "shadow",
+    "pilot",
+    "active",
+    "paused"
+  ],
+  "allowed_after_status": [
+    "rollback",
+    "paused"
+  ],
+  "steps": [
+    "Set SliceCutoverState.runtime_mode to rollback for PeriodAnalytics, RiskCommand, and PCGovernance.",
+    "Disable period.*, risk_command.enabled, pc_governance_full.enabled, admin.role_capability.enabled, and export.ledger.enabled feature flags or narrow them to zero percent.",
+    "Route PeriodAnalytics to disabled mode; keep existing period reviews and snapshots read-only.",
+    "Route RiskCommand to previous dashboard or limited risks until green shadow compare is restored.",
+    "Route PC Governance to limited read-only mode; keep Release Control Center visible for audit evidence.",
+    "Do not delete closed period snapshots, late adjustments, correction notes, risk snapshots, or export audit records."
+  ],
+  "validation_steps": [
+    "Run invariant-runner for MR-10 P0 invariants.",
+    "Run shadow-compare-runner and confirm no red report exists before returning to pilot or active.",
+    "Confirm period.close.enabled is disabled for rolled-back scopes.",
+    "Confirm export.ledger.enabled is disabled or limited to audited admin-only access.",
+    "Confirm frozen snapshots and existing export audit remain visible after rollback."
+  ],
+  "owner": "release",
+  "risk_level": "P0",
+  "requires_business_approval": true,
+  "requires_architecture_approval": true,
+  "requires_finance_approval": true,
+  "created_at_utc": "2026-05-30T02:40:00Z",
+  "updated_at_utc": "2026-05-30T02:40:00Z"
+}

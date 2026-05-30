@@ -17,7 +17,7 @@ export function workbenchView(ctx) {
       <label>${ctx.tr("sort")}<select id="sort"><option value="smartSort">${ctx.tr("smartSort")}</option><option value="dueSort">${ctx.tr("dueSort")}</option></select></label>
       <button id="advanced">${ctx.tr("filter")}</button>
     </section>
-    ${list.some((item) => item.source === "offline-demo-fallback") ? `<section class="help-card"><p>${ctx.tr("apiOffline")}</p></section>` : ""}
+    ${ctx.state.apiStatus === "offline" && !list.length ? `<section class="help-card"><p>${ctx.tr("apiOffline")}</p></section>` : ""}
     <section class="task-stack">${list.map((item) => taskCard(item, ctx)).join("")}</section>
     ${ctx.state.advancedOpen ? advancedSheet(ctx) : ""}
   `);

@@ -1,0 +1,58 @@
+{
+  "invariants": [
+    {
+      "invariant_key": "bank.import_does_not_create_payment_fact",
+      "description": "Bank statement import must create reconciliation records only and must not create PaymentConfirmed or other business money facts.",
+      "mode": "blocking",
+      "severity": "P0",
+      "source_type": "skeleton",
+      "check_sql": null,
+      "check_ref": "docs/v5.4/reconciliation-correction-cutover.config.json"
+    },
+    {
+      "invariant_key": "reconciliation.bank_transaction_single_match_default",
+      "description": "A bank transaction can be matched at most once by default until a split policy is explicitly introduced.",
+      "mode": "blocking",
+      "severity": "P0",
+      "source_type": "skeleton",
+      "check_sql": null,
+      "check_ref": "docs/v5.4/reconciliation-correction-cutover.config.json"
+    },
+    {
+      "invariant_key": "ledger.no_edit_old_entry",
+      "description": "Payment, deposit, charge, cash, and refund ledger corrections must append new entries and never edit old ledger facts.",
+      "mode": "blocking",
+      "severity": "P0",
+      "source_type": "skeleton",
+      "check_sql": null,
+      "check_ref": "docs/v5.4/reconciliation-correction-cutover.config.json"
+    },
+    {
+      "invariant_key": "correction.requires_reason",
+      "description": "Every correction request, reversal, and correction application must carry a reason.",
+      "mode": "blocking",
+      "severity": "P0",
+      "source_type": "skeleton",
+      "check_sql": null,
+      "check_ref": "docs/v5.4/reconciliation-correction-cutover.config.json"
+    },
+    {
+      "invariant_key": "correction.high_risk_requires_approval",
+      "description": "High-risk ledger corrections must be approved before they can be applied.",
+      "mode": "blocking",
+      "severity": "P0",
+      "source_type": "skeleton",
+      "check_sql": null,
+      "check_ref": "docs/v5.4/reconciliation-correction-cutover.config.json"
+    },
+    {
+      "invariant_key": "balance.rebuild_after_correction",
+      "description": "Applying a payment, deposit, or charge correction must trigger a balance rebuild and must not leave projections inconsistent.",
+      "mode": "blocking",
+      "severity": "P0",
+      "source_type": "skeleton",
+      "check_sql": null,
+      "check_ref": "docs/v5.4/reconciliation-correction-cutover.config.json"
+    }
+  ]
+}

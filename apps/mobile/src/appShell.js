@@ -29,6 +29,7 @@ function bottomNav(ctx) {
     ${nav("home", "home", ctx)}
     ${nav("search", "search", ctx)}
     ${nav("workbench", "workbench", ctx)}
+    ${nav("releaseControl", "releaseControl", ctx)}
     ${nav("me", "me", ctx)}
   </nav>`;
 }

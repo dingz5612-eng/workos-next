@@ -1,0 +1,156 @@
+[
+  {
+    "invariant_check_id": "inv-v54-case-closed-has-no-open-blocker",
+    "release_id": "release-mr-08",
+    "tenant_id": "test-tenant",
+    "slice_id": "CheckoutSettlement",
+    "invariant_key": "case.closed_has_no_open_blocker",
+    "description": "Checkout cases must not be closed while an open or resolving blocker exists.",
+    "mode": "blocking",
+    "severity": "P0",
+    "source_type": "skeleton",
+    "check_ref": "docs/v5.4/checkout-service-cutover.config.json",
+    "status": "passed",
+    "observed_value": {
+      "skeleton": "case.closed_has_no_open_blocker",
+      "config": "docs/v5.4/checkout-service-cutover.config.json",
+      "exists": true
+    },
+    "threshold": {
+      "required_config_exists": true
+    },
+    "violation_count": 0,
+    "sample_violations": [],
+    "generated_by": "invariant-runner",
+    "ci_run_id": "local-mr-08",
+    "checked_at_utc": "2026-05-29T23:18:38.3132532+00:00"
+  },
+  {
+    "invariant_check_id": "inv-v54-case-close-requires-closure-policy",
+    "release_id": "release-mr-08",
+    "tenant_id": "test-tenant",
+    "slice_id": "CheckoutSettlement",
+    "invariant_key": "case.close_requires_closure_policy",
+    "description": "Checkout close requires a recorded CaseClosurePolicy evaluation before close.",
+    "mode": "blocking",
+    "severity": "P0",
+    "source_type": "skeleton",
+    "check_ref": "services/core-api/WorkOS.Api/Runtime/CheckoutServiceProcessManager.cs",
+    "status": "passed",
+    "observed_value": {
+      "skeleton": "case.close_requires_closure_policy",
+      "file": "services/core-api/WorkOS.Api/Runtime/CheckoutServiceProcessManager.cs",
+      "required_tokens": 2
+    },
+    "threshold": {
+      "missing_tokens": 0
+    },
+    "violation_count": 0,
+    "sample_violations": [],
+    "generated_by": "invariant-runner",
+    "ci_run_id": "local-mr-08",
+    "checked_at_utc": "2026-05-29T23:18:38.3149287+00:00"
+  },
+  {
+    "invariant_check_id": "inv-v54-blocker-no-duplicate-open-resolution",
+    "release_id": "release-mr-08",
+    "tenant_id": "test-tenant",
+    "slice_id": "CheckoutSettlement",
+    "invariant_key": "blocker.no_duplicate_open_resolution",
+    "description": "BlockerEngine must dedupe open/resolving blockers and resolution WorkItem intents.",
+    "mode": "blocking",
+    "severity": "P0",
+    "source_type": "skeleton",
+    "check_ref": "infra/db/migrations/016_checkout_service_process_manager.sql",
+    "status": "passed",
+    "observed_value": {
+      "skeleton": "blocker.no_duplicate_open_resolution",
+      "file": "infra/db/migrations/016_checkout_service_process_manager.sql",
+      "required_tokens": 2
+    },
+    "threshold": {
+      "missing_tokens": 0
+    },
+    "violation_count": 0,
+    "sample_violations": [],
+    "generated_by": "invariant-runner",
+    "ci_run_id": "local-mr-08",
+    "checked_at_utc": "2026-05-29T23:18:38.3153657+00:00"
+  },
+  {
+    "invariant_check_id": "inv-v54-service-cannot-directly-change-bed-status",
+    "release_id": "release-mr-08",
+    "tenant_id": "test-tenant",
+    "slice_id": "CheckoutSettlement",
+    "invariant_key": "service.cannot_directly_change_bed_status",
+    "description": "ServiceTask can request release but must not directly write BedStatus or room/bed availability facts.",
+    "mode": "blocking",
+    "severity": "P0",
+    "source_type": "skeleton",
+    "check_ref": "services/core-api/WorkOS.Api/Slices/Accommodation/ServiceTask",
+    "status": "passed",
+    "observed_value": {
+      "skeleton": "service.cannot_directly_change_bed_status",
+      "checked_files": 3
+    },
+    "threshold": {
+      "max_forbidden_patterns": 0
+    },
+    "violation_count": 0,
+    "sample_violations": [],
+    "generated_by": "invariant-runner",
+    "ci_run_id": "local-mr-08",
+    "checked_at_utc": "2026-05-29T23:18:38.3214248+00:00"
+  },
+  {
+    "invariant_check_id": "inv-v54-checkout-cannot-directly-write-deposit-entry",
+    "release_id": "release-mr-08",
+    "tenant_id": "test-tenant",
+    "slice_id": "CheckoutSettlement",
+    "invariant_key": "checkout.cannot_directly_write_deposit_entry",
+    "description": "CheckoutSettlement can request deposit settlement but must not directly write DepositEntry or deposit ledger tables.",
+    "mode": "blocking",
+    "severity": "P0",
+    "source_type": "skeleton",
+    "check_ref": "services/core-api/WorkOS.Api/Slices/Accommodation/CheckOutSettlement",
+    "status": "passed",
+    "observed_value": {
+      "skeleton": "checkout.cannot_directly_write_deposit_entry",
+      "checked_files": 3
+    },
+    "threshold": {
+      "max_forbidden_patterns": 0
+    },
+    "violation_count": 0,
+    "sample_violations": [],
+    "generated_by": "invariant-runner",
+    "ci_run_id": "local-mr-08",
+    "checked_at_utc": "2026-05-29T23:18:38.3228493+00:00"
+  },
+  {
+    "invariant_check_id": "inv-v54-checkout-cleaning-required-before-release",
+    "release_id": "release-mr-08",
+    "tenant_id": "test-tenant",
+    "slice_id": "CheckoutSettlement",
+    "invariant_key": "checkout.cleaning_required_before_release",
+    "description": "Bed or room release after checkout must be gated by cleaning/service verification when cleaning is required.",
+    "mode": "blocking",
+    "severity": "P0",
+    "source_type": "skeleton",
+    "check_ref": "services/core-api/WorkOS.Api/Runtime/SystemCheckCatalog.cs",
+    "status": "passed",
+    "observed_value": {
+      "skeleton": "checkout.cleaning_required_before_release",
+      "file": "services/core-api/WorkOS.Api/Runtime/SystemCheckCatalog.cs",
+      "required_tokens": 2
+    },
+    "threshold": {
+      "missing_tokens": 0
+    },
+    "violation_count": 0,
+    "sample_violations": [],
+    "generated_by": "invariant-runner",
+    "ci_run_id": "local-mr-08",
+    "checked_at_utc": "2026-05-29T23:18:38.3233319+00:00"
+  }
+]

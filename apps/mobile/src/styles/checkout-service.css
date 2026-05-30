@@ -1,0 +1,208 @@
+.checkout-service,
+.pc-manager-lite {
+  display: grid;
+  gap: 10px;
+}
+
+.checkout-service {
+  margin-bottom: 12px;
+}
+
+.checkout-service header,
+.pc-manager-lite > header {
+  display: grid;
+  gap: 3px;
+}
+
+.checkout-service header span,
+.pc-manager-lite > header span,
+.checkout-timeline > b,
+.blocker-panel > b,
+.service-task-cards > b,
+.checkout-summary > b {
+  color: #52677b;
+  font-size: 12px;
+  font-weight: 850;
+}
+
+.checkout-service header h2,
+.pc-manager-lite > header h1 {
+  color: #102033;
+  font-size: 20px;
+}
+
+.checkout-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.checkout-actions button,
+.service-task-cards button,
+.blocker-card button {
+  min-height: 38px;
+  border-radius: 8px;
+  color: #102033;
+  background: #eaf2f5;
+  font-size: 12px;
+}
+
+.checkout-timeline,
+.checkout-summary,
+.service-task-cards,
+.blocker-panel,
+.checkout-operation-addon,
+.manager-panel {
+  display: grid;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid #d9e7ee;
+  border-radius: 8px;
+  background: #f8fbfb;
+}
+
+.checkout-timeline ol {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(92px, 1fr));
+  gap: 6px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.checkout-timeline li {
+  display: grid;
+  gap: 3px;
+  min-height: 54px;
+  padding: 8px;
+  border: 1px solid #d9e7ee;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.checkout-timeline li span,
+.service-task-cards strong,
+.blocker-card strong,
+.manager-panel h2 {
+  overflow-wrap: anywhere;
+  color: #102033;
+  font-size: 13px;
+}
+
+.checkout-timeline li small,
+.service-task-cards span,
+.service-task-cards small,
+.manager-panel p,
+.manager-panel article span,
+.checkout-operation-addon p,
+.blocker-panel p {
+  color: #52677b;
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.checkout-timeline .done {
+  border-color: #bcebd6;
+  background: #e4f8ef;
+}
+
+.checkout-timeline .current {
+  border-color: #ffd166;
+  background: #fff4d8;
+}
+
+.checkout-timeline .blocked {
+  border-color: #ffc3b8;
+  background: #ffe5e0;
+}
+
+.checkout-summary dl,
+.blocker-card dl {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+}
+
+.checkout-summary dl div,
+.blocker-card dl div {
+  display: grid;
+  grid-template-columns: minmax(84px, 34%) 1fr;
+  gap: 8px;
+}
+
+.checkout-summary dt,
+.blocker-card dt {
+  color: #52677b;
+  font-size: 11px;
+  font-weight: 850;
+}
+
+.checkout-summary dd,
+.blocker-card dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+  color: #102033;
+  font-size: 12px;
+  font-weight: 850;
+}
+
+.service-task-cards article,
+.blocker-card,
+.manager-panel article {
+  display: grid;
+  gap: 7px;
+  padding: 10px;
+  border: 1px solid #e3edf1;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.damage-fields {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.damage-fields strong {
+  flex-basis: 100%;
+  color: #fff;
+  font-size: 13px;
+}
+
+.damage-fields span {
+  padding: 5px 8px;
+  border-radius: 8px;
+  color: #102033;
+  background: #fff4d8;
+  font-size: 12px;
+  font-weight: 850;
+}
+
+.pc-manager-lite {
+  padding: 0 16px 96px;
+}
+
+.manager-panel table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.manager-panel th,
+.manager-panel td {
+  padding: 8px 6px;
+  border-bottom: 1px solid #e3edf1;
+  overflow-wrap: anywhere;
+  text-align: left;
+  font-size: 12px;
+}
+
+.manager-panel th {
+  color: #52677b;
+  font-weight: 850;
+}
+
+.manager-panel td {
+  color: #102033;
+  font-weight: 750;
+}

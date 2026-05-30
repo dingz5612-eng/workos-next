@@ -47,6 +47,9 @@ export async function submitCardOperation({ workspace, card, actor, language, fi
     fieldValues,
     evidenceIds
   });
+  if (!isCommittedConfirm(result)) {
+    return result;
+  }
   if (result.projection) onProjection(result.projection);
   try {
     await waitForProjectionEvents(eventIdsFromConfirmResult(result), onProjection);
@@ -54,7 +57,12 @@ export async function submitCardOperation({ workspace, card, actor, language, fi
     // Confirm already succeeded. The outbox projector can lag briefly, so do not
     // turn a committed event into a user-visible submit failure.
   }
-  await refreshAccommodationLenses(lensIdsForWorkspace(workspace.id), onLens);
+  try {
+    await refreshAccommodationLenses(lensIdsForWorkspace(workspace.id), onLens);
+  } catch {
+    // Lens refresh is read-side sync. The committed confirm response is still the
+    // source of truth for success semantics.
+  }
   return result;
 }
 
@@ -99,8 +107,13 @@ export async function refreshAccommodationLenses(lensIds, onLens) {
 }
 
 function eventIdsFromConfirmResult(result) {
+  if (Array.isArray(result?.resultEventIds)) return result.resultEventIds.filter(Boolean);
   const events = Array.isArray(result?.events) ? result.events : [result?.event];
   return events.map((item) => item?.eventId).filter(Boolean);
+}
+
+function isCommittedConfirm(result) {
+  return result?.confirmed === true && result?.commitStatus === "committed";
 }
 
 function randomUuid() {

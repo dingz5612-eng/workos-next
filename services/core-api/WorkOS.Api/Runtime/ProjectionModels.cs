@@ -148,7 +148,8 @@ public sealed record ConfirmCardRequest(
     string? SubmissionId = null,
     string? CardInstanceId = null,
     string? AggregateRef = null,
-    string? RequestId = null);
+    string? RequestId = null,
+    string? DeviceId = null);
 
 public sealed record PrepareCardRequest(
     string? SubmissionId = null,
@@ -215,7 +216,60 @@ public sealed record RuntimeSession(
     string Token,
     string UserId,
     DateTimeOffset IssuedAtUtc,
-    DateTimeOffset ExpiresAtUtc);
+    DateTimeOffset ExpiresAtUtc,
+    DateTimeOffset? RevokedAtUtc = null);
+
+public sealed record RuntimeDeviceSession(
+    string DeviceSessionId,
+    string TenantId,
+    string ActorId,
+    string DeviceId,
+    string DeviceTrustStatus,
+    string UserAgentHash,
+    DateTimeOffset CreatedAtUtc,
+    DateTimeOffset LastSeenAtUtc,
+    DateTimeOffset? RevokedAtUtc);
+
+public sealed record RuntimeDeviceSessionRequest(
+    string TenantId,
+    string ActorId,
+    string DeviceId,
+    string DeviceTrustStatus,
+    string UserAgentHash);
+
+public sealed record EvidenceSignedUrlRequest(
+    string ActorId,
+    string DeviceId,
+    int TtlSeconds = 900,
+    DateTimeOffset? NowUtc = null);
+
+public sealed record EvidenceSignedUrlResponse(
+    string EvidenceId,
+    string AttachmentId,
+    string Url,
+    DateTimeOffset ExpiresAtUtc,
+    string AuditEventId);
+
+public sealed record GovernanceExportRequest(
+    string ExportType,
+    string ActorId,
+    string ActorRole,
+    IReadOnlyList<string>? ActorCapabilities,
+    string DeviceId,
+    string DeviceTrustStatus,
+    string Surface,
+    string Reason,
+    DateTimeOffset? NowUtc = null);
+
+public sealed record GovernanceExportResult(
+    bool Allowed,
+    string Status,
+    string ExportType,
+    string Reason,
+    IReadOnlyList<string> Errors,
+    string? DownloadUrl,
+    DateTimeOffset ExpiresAtUtc,
+    string AuditEventId);
 
 public sealed record RuntimeUser(
     string UserId,
@@ -245,6 +299,20 @@ public enum ConfirmStatus
 
 public sealed record ConfirmResult(ConfirmStatus Status, string? Reason, object? Payload);
 
+public sealed record ConfirmCardResponse(
+    bool Confirmed,
+    string CommitStatus,
+    string ProjectionStatus,
+    string CaseId,
+    string WorkItemId,
+    string SubmissionId,
+    IReadOnlyList<string> ResultEventIds,
+    string UserMessage,
+    IReadOnlyDictionary<string, object> ClientInstruction,
+    IReadOnlyList<WorkspaceEvent> Events,
+    WorkspaceProjection Workspace,
+    ProjectionEnvelope? Projection = null);
+
 public sealed record RuntimeObservation(
     string Service,
     string Version,
@@ -263,7 +331,67 @@ public sealed record RuntimeObservation(
     int LedgerInvariantViolationCount,
     string SchemaVersion,
     int ActiveArchitectureExceptionCount,
-    IReadOnlyList<string> ActiveArchitectureExceptions);
+    IReadOnlyList<string> ActiveArchitectureExceptions,
+    ProductionObservabilityMetrics ProductionMetrics);
+
+public sealed record ProductionObservabilityMetrics(
+    RuntimeProductionMetrics Runtime,
+    OutboxProductionMetrics Outbox,
+    ProjectionProductionMetrics Projection,
+    MobileProductionMetrics Mobile,
+    MoneyProductionMetrics Money,
+    DepositProductionMetrics Deposit,
+    CheckoutProductionMetrics Checkout,
+    ControlPlaneProductionMetrics ControlPlane,
+    DateTimeOffset GeneratedAtUtc);
+
+public sealed record RuntimeProductionMetrics(
+    long ConfirmLatencyP95Ms,
+    int ConfirmLatencySampleCount,
+    int ConfirmFailureCount,
+    int IdempotencyConflictCount,
+    int ForbiddenCount403,
+    int ConflictCount409,
+    int ValidationCount422,
+    int HandlerFailureCount);
+
+public sealed record OutboxProductionMetrics(
+    long OutboxLagSeconds,
+    int DeadLetterCount,
+    int ReplayCount);
+
+public sealed record ProjectionProductionMetrics(
+    long ProjectionLagSeconds,
+    int RebuildCount,
+    int StaleLensCount);
+
+public sealed record MobileProductionMetrics(
+    long WorkItemBundleP95Ms,
+    int WorkItemBundleSampleCount,
+    int UploadFailureCount,
+    int SubmitRetryCount,
+    int DraftRecoveryCount);
+
+public sealed record MoneyProductionMetrics(
+    int PaymentConfirmWithoutEvidenceViolations,
+    int AllocationOverAvailableViolations,
+    int StayBalanceMismatchCount);
+
+public sealed record DepositProductionMetrics(
+    int AvailableRefundNegativeCount,
+    int RefundFailedDoubleCount,
+    int HeldAmountNegativeCount);
+
+public sealed record CheckoutProductionMetrics(
+    int OpenBlockers,
+    int DuplicateBlockers,
+    int FakeCloseAttempts);
+
+public sealed record ControlPlaneProductionMetrics(
+    string GateResultStatus,
+    int RedShadowReports,
+    int BlockingInvariantFailures,
+    string ReleaseState);
 
 internal sealed record CardSeed(
     string Id,

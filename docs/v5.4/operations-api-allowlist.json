@@ -1,0 +1,28 @@
+{
+  "businessWriteAllowlist": [
+    "POST /api/operations/work-items/{workItemId}/confirm"
+  ],
+  "operationsApiAllowlist": [
+    "POST /api/operations/cases",
+    "GET /api/operations/cases/{caseId}",
+    "POST /api/operations/work-items",
+    "GET /api/operations/work-items",
+    "GET /api/operations/work-items/{workItemId}",
+    "POST /api/operations/work-items/{workItemId}/prepare",
+    "POST /api/operations/work-items/{workItemId}/confirm"
+  ],
+  "compatibilityApiAllowlist": [
+    "POST /api/workspaces/{workspaceId}/cards/{cardId}/prepare",
+    "POST /api/workspaces/{workspaceId}/cards/{cardId}/confirm"
+  ],
+  "forbiddenBusinessWritePatterns": [
+    "POST /api/mobile/*/confirm",
+    "POST /api/mobile/*/refund",
+    "POST /api/mobile/*/close",
+    "POST /api/payment/confirm",
+    "POST /api/deposit/refund",
+    "POST /api/checkout/close",
+    "POST /api/bed/release",
+    "POST /api/period/close"
+  ]
+}

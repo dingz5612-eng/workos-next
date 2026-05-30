@@ -1,0 +1,60 @@
+{
+  "rollback_instruction_id": "compensate-mr-10-late-adjustment-business-correction",
+  "release_id": "release-mr-10",
+  "instruction_type": "compensating",
+  "rollback_kind": "business_correction",
+  "title": "MR-10 append-only compensation path for Period, Risk, and PC Governance evidence",
+  "scope": {
+    "compensating_actions": [
+      "PeriodLateAdjustmentRecorded",
+      "Correction note",
+      "Risk item re-generation"
+    ],
+    "forbidden_actions": [
+      "edit original closed period snapshot",
+      "delete original period close evidence",
+      "delete export audit",
+      "delete risk source event",
+      "SQL update ledger or snapshot as a correction substitute"
+    ],
+    "affected_slices": [
+      "PeriodAnalytics",
+      "RiskCommand",
+      "PCGovernance",
+      "CorrectionCenter",
+      "PaymentLedger",
+      "DepositLedger"
+    ]
+  },
+  "allowed_before_status": [
+    "active",
+    "locked",
+    "rollback",
+    "compensating"
+  ],
+  "allowed_after_status": [
+    "compensating",
+    "locked"
+  ],
+  "steps": [
+    "If a frozen period snapshot is wrong, append PeriodLateAdjustmentRecorded with reason, actor, and before/after view.",
+    "If finance source facts are wrong, create a Correction Center note or correction request and link it to the affected period.",
+    "If a risk item is wrong, regenerate RiskCommand from corrected source refs and preserve the prior risk snapshot as evidence.",
+    "If export governance was wrong, keep the export audit and append a correction note that references the audit event.",
+    "Re-run invariant-runner and shadow-compare-runner after compensation and attach results to the next GateResult."
+  ],
+  "validation_steps": [
+    "Verify the original closed period snapshot remains unchanged.",
+    "Verify the LateAdjustment is appended and linked to reason, actor, and correction note when applicable.",
+    "Verify RiskCommand can drill down to regenerated source refs.",
+    "Verify export audit remains visible and is linked to any governance correction.",
+    "Verify GateResult evidence maps the compensation to the relevant No-Go item."
+  ],
+  "owner": "finance-operations",
+  "risk_level": "P0",
+  "requires_business_approval": true,
+  "requires_architecture_approval": true,
+  "requires_finance_approval": true,
+  "created_at_utc": "2026-05-30T02:40:00Z",
+  "updated_at_utc": "2026-05-30T02:40:00Z"
+}

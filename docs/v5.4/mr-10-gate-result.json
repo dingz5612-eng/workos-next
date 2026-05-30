@@ -1,0 +1,52 @@
+{
+  "gate_result_id": "gate-mr-10-period-risk-pc-governance",
+  "release_id": "release-mr-10",
+  "mr_id": "MR-10",
+  "tenant_id": "test-tenant",
+  "slice_id": "PeriodAnalytics",
+  "gate_name": "mr-10-period-risk-pc-governance",
+  "gate_type": "automated",
+  "status": "passed",
+  "severity": "P2",
+  "ci_run_id": "local-mr-10",
+  "automated_test_refs": [
+    "WorkOS.UnitTests.FinanceSnapshotGeneratorTests",
+    "WorkOS.UnitTests.OperationSnapshotGeneratorTests",
+    "WorkOS.UnitTests.RiskCommandLensTests",
+    "WorkOS.UnitTests.PeriodActionPlanWorkItemTests",
+    "WorkOS.UnitTests.PeriodClosePolicyTests",
+    "WorkOS.UnitTests.PeriodRiskPcGovernanceCutoverGuardTests",
+    "apps/mobile.pcGovernanceView"
+  ],
+  "invariant_check_refs": [
+    "inv-v54-period-finance-snapshot-from-ledgers",
+    "inv-v54-period-expense-not-integrated-not-zero",
+    "inv-v54-period-close-freezes-snapshot",
+    "inv-v54-period-late-adjustment-append-only",
+    "inv-v54-risk-all-items-drill-down",
+    "inv-v54-pc-export-has-audit"
+  ],
+  "shadow_compare_report_refs": [
+    "scr-v54-period-risk-pc-governance"
+  ],
+  "business_signoff_refs": [
+    "release-reviewed"
+  ],
+  "no_go_items": [],
+  "go_items": [
+    "Invariant passed: period.finance_snapshot_from_ledgers",
+    "Invariant passed: period.expense_not_integrated_not_zero",
+    "Invariant passed: period.close_freezes_snapshot",
+    "Invariant passed: period.late_adjustment_append_only",
+    "Invariant passed: risk.all_items_drill_down",
+    "Invariant passed: pc.export_has_audit",
+    "Shadow compare green: scr-v54-period-risk-pc-governance"
+  ],
+  "known_risks": [
+    "MR-10 uses skeleton shadow compare until production shadow rows exist"
+  ],
+  "generated_by": "gate-runner",
+  "generated_at_utc": "2026-05-30T02:38:58.7110081+00:00",
+  "input_hash": "17803abaa98fb6ee9c6905e56540b98ddd46a7179afd0c664becc143209ee266",
+  "result_hash": "f2b4dc2c88ddcfb1d6e46fa222b00dd68196387948aa9aa5cf24edd55e604edd"
+}

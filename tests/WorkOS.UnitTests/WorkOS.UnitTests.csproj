@@ -11,8 +11,8 @@
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
     <PackageReference Include="MSTest.TestAdapter" Version="4.0.0" />
     <PackageReference Include="MSTest.TestFramework" Version="4.0.0" />
+    <ProjectReference Include="..\..\tools\control-plane\WorkOS.ControlPlaneRunners\WorkOS.ControlPlaneRunners.csproj" />
     <ProjectReference Include="..\..\services\core-api\WorkOS.Api\WorkOS.Api.csproj" />
   </ItemGroup>
 
 </Project>
-

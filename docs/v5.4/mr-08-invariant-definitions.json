@@ -1,0 +1,58 @@
+{
+  "invariants": [
+    {
+      "invariant_key": "case.closed_has_no_open_blocker",
+      "description": "Checkout cases must not be closed while an open or resolving blocker exists.",
+      "mode": "blocking",
+      "severity": "P0",
+      "source_type": "skeleton",
+      "check_sql": null,
+      "check_ref": "docs/v5.4/checkout-service-cutover.config.json"
+    },
+    {
+      "invariant_key": "case.close_requires_closure_policy",
+      "description": "Checkout close requires a recorded CaseClosurePolicy evaluation before close.",
+      "mode": "blocking",
+      "severity": "P0",
+      "source_type": "skeleton",
+      "check_sql": null,
+      "check_ref": "services/core-api/WorkOS.Api/Runtime/CheckoutServiceProcessManager.cs"
+    },
+    {
+      "invariant_key": "blocker.no_duplicate_open_resolution",
+      "description": "BlockerEngine must dedupe open/resolving blockers and resolution WorkItem intents.",
+      "mode": "blocking",
+      "severity": "P0",
+      "source_type": "skeleton",
+      "check_sql": null,
+      "check_ref": "infra/db/migrations/016_checkout_service_process_manager.sql"
+    },
+    {
+      "invariant_key": "service.cannot_directly_change_bed_status",
+      "description": "ServiceTask can request release but must not directly write BedStatus or room/bed availability facts.",
+      "mode": "blocking",
+      "severity": "P0",
+      "source_type": "skeleton",
+      "check_sql": null,
+      "check_ref": "services/core-api/WorkOS.Api/Slices/Accommodation/ServiceTask"
+    },
+    {
+      "invariant_key": "checkout.cannot_directly_write_deposit_entry",
+      "description": "CheckoutSettlement can request deposit settlement but must not directly write DepositEntry or deposit ledger tables.",
+      "mode": "blocking",
+      "severity": "P0",
+      "source_type": "skeleton",
+      "check_sql": null,
+      "check_ref": "services/core-api/WorkOS.Api/Slices/Accommodation/CheckOutSettlement"
+    },
+    {
+      "invariant_key": "checkout.cleaning_required_before_release",
+      "description": "Bed or room release after checkout must be gated by cleaning/service verification when cleaning is required.",
+      "mode": "blocking",
+      "severity": "P0",
+      "source_type": "skeleton",
+      "check_sql": null,
+      "check_ref": "services/core-api/WorkOS.Api/Runtime/SystemCheckCatalog.cs"
+    }
+  ]
+}

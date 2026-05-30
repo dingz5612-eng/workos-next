@@ -1,0 +1,68 @@
+{
+  "gate_result_id": "final_system_gate",
+  "release_id": "release-final-system",
+  "mr_id": "FINAL-SYSTEM",
+  "tenant_id": "all-tenants",
+  "slice_id": "FinalSystem",
+  "gate_name": "final-system-go-no-go",
+  "gate_type": "automated",
+  "status": "blocked",
+  "severity": "P0",
+  "ci_run_id": "local-final-system",
+  "automated_test_refs": [
+    "WorkOS.UnitTests.FinalEndToEndAcceptanceSuiteTests",
+    "WorkOS.UnitTests.ProjectionRebuildToolTests",
+    "WorkOS.UnitTests.OutboxDeadLetterReplayToolTests",
+    "WorkOS.UnitTests.LedgerInspectionJobTests",
+    "WorkOS.UnitTests.BackupRestoreSmokeJobTests",
+    "WorkOS.RuntimeContractTests"
+  ],
+  "invariant_check_refs": [
+    "inv-final-mr-gate-results-complete",
+    "inv-final-p0-blocking-invariant-zero",
+    "inv-final-red-shadow-compare-zero",
+    "inv-final-money-deposit-checkout-period-no-go-zero",
+    "inv-final-projection-rebuild-passed",
+    "inv-final-deadletter-replay-passed",
+    "inv-final-ledger-reconciliation-job-passed",
+    "inv-final-backup-restore-smoke-passed",
+    "inv-final-release-manifest-complete",
+    "inv-final-rollback-instruction-complete",
+    "inv-final-compensation-path-complete",
+    "inv-final-e2e-passed",
+    "inv-final-business-signoff-complete"
+  ],
+  "shadow_compare_report_refs": [
+    "scr-v54-checkout-service-blocker-engine",
+    "scr-v54-reconciliation-correction-center",
+    "scr-v54-period-risk-pc-governance"
+  ],
+  "business_signoff_refs": [],
+  "no_go_items": [
+    "P0 blocking invariant failed: final.mr_gate_results_passed_or_approved_warning",
+    "P0 blocking invariant failed: final.money_deposit_checkout_period_no_go_zero",
+    "P0 blocking invariant failed: final.release_manifest_complete",
+    "P0 blocking invariant failed: final.rollback_instruction_complete",
+    "P1 invariant failed without waiver: final.compensation_path_complete",
+    "P1 invariant failed without waiver: final.business_signoff_complete"
+  ],
+  "go_items": [
+    "Invariant passed: final.p0_blocking_invariant_zero",
+    "Invariant passed: final.red_shadow_compare_zero",
+    "Invariant passed: final.projection_rebuild_passed",
+    "Invariant passed: final.deadletter_replay_passed",
+    "Invariant passed: final.ledger_reconciliation_job_passed",
+    "Invariant passed: final.backup_restore_smoke_passed",
+    "Invariant passed: final.e2e_passed",
+    "Shadow compare green: scr-v54-checkout-service-blocker-engine",
+    "Shadow compare green: scr-v54-reconciliation-correction-center",
+    "Shadow compare green: scr-v54-period-risk-pc-governance"
+  ],
+  "known_risks": [
+    "MR00-MR07-release-package-artifacts-missing"
+  ],
+  "generated_by": "gate-runner",
+  "generated_at_utc": "2026-05-30T04:37:56.657674+00:00",
+  "input_hash": "b08ea2a5536475ff745a974c86e60372f33bf36da294532332c7a40885dd88ed",
+  "result_hash": "4058128b6ad110e6982ea7f48265183b1faa4d2f40f6898baec97ecb9c73de5e"
+}

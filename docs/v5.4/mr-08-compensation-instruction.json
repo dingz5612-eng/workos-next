@@ -1,0 +1,56 @@
+{
+  "rollback_instruction_id": "compensate-mr-08-business-correction",
+  "release_id": "release-mr-08",
+  "instruction_type": "compensating",
+  "rollback_kind": "business_correction",
+  "title": "MR-08 append-only correction path for checkout, service, blockers, and resource release",
+  "scope": {
+    "compensating_actions": [
+      "CaseReopenedLite",
+      "ServiceTaskCorrectionLite",
+      "ResourceReleaseReversalRequest",
+      "Blocker + manual resolution WorkItem when ResourceInventory reversal is unavailable"
+    ],
+    "forbidden_actions": [
+      "delete CheckoutCaseClosed event",
+      "delete BedReleased event",
+      "SQL update bed status"
+    ],
+    "affected_slices": [
+      "CheckoutSettlement",
+      "ServiceTask",
+      "BlockerEngine",
+      "ResourceInventory"
+    ]
+  },
+  "allowed_before_status": [
+    "active",
+    "locked",
+    "rollback",
+    "compensating"
+  ],
+  "allowed_after_status": [
+    "compensating",
+    "locked"
+  ],
+  "steps": [
+    "If a case was closed incorrectly, append CaseReopenedLite and create blocker resolution WorkItems.",
+    "If a service task fact is incorrect, append ServiceTaskCorrectionLite with reason and owner.",
+    "If a resource release was requested incorrectly, create ResourceReleaseReversalRequest when ResourceInventory supports it.",
+    "If ResourceInventory cannot reverse automatically, create a Blocker and manual resolution WorkItem owned by manager/operator.",
+    "Never delete CheckoutCaseClosed or BedReleased events and never update bed status directly with SQL."
+  ],
+  "validation_steps": [
+    "Verify corrected case timeline shows reopened/correction event.",
+    "Verify blockers have ownerRole and resolveAction.",
+    "Verify ResourceInventory remains the owner of bed/room release facts.",
+    "Verify GateResult evidence maps compensation to No-Go item and manual resolution WorkItem."
+  ],
+  "owner": "business-operations",
+  "risk_level": "P0",
+  "requires_business_approval": true,
+  "requires_architecture_approval": true,
+  "requires_finance_approval": true,
+  "created_at_utc": "2026-05-29T23:20:00Z",
+  "updated_at_utc": "2026-05-29T23:20:00Z"
+}

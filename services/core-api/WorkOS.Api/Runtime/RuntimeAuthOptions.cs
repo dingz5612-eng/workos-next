@@ -7,6 +7,8 @@ public sealed class RuntimeAuthOptions
 {
     public Dictionary<string, string> PasswordSha256ByUsername { get; init; } = new(StringComparer.OrdinalIgnoreCase);
 
+    public bool RequireTrustedDeviceForHighRiskActions { get; set; }
+
     public static RuntimeAuthOptions Development => new()
     {
         PasswordSha256ByUsername = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)

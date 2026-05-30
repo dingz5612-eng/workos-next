@@ -1,0 +1,46 @@
+{
+  "release_id": "v5.4-first-batch",
+  "mr_id": "local",
+  "release_name": "V5.4 control plane guard skeleton",
+  "status": "planned",
+  "owners": [
+    "platform"
+  ],
+  "commit_sha": "not-set",
+  "migration_version": "015_control_plane_shadow_runtime",
+  "definition_version": "v5.4",
+  "api_schema_hash": "not-set",
+  "ci_run_id": null,
+  "gate_result_id": "gate-v5-4-skeleton-not-run",
+  "rollback_instruction_id": "rollback-v5-4-skeleton",
+  "feature_flag_ids": [],
+  "slice_cutover_state_ids": [],
+  "shadow_compare_report_ids": [
+    "scr-v5-4-skeleton-not-run"
+  ],
+  "invariant_check_ids": [
+    "inv-v5-4-skeleton-not-run"
+  ],
+  "acceptance_scenarios": [
+    "A4 guard skeleton pipeline runs"
+  ],
+  "go_criteria": [
+    "architecture-guard passes",
+    "api-boundary-check passes",
+    "control-plane-migration dry-run passes",
+    "shadow-namespace-isolation passes",
+    "gate-runner emits not_run GateResult fixture"
+  ],
+  "no_go_criteria": [
+    "P0 forbidden business write API appears",
+    "Control Plane 7 objects disappear",
+    "Shadow Namespace isolation is broken"
+  ],
+  "known_risks": [
+    "Skeleton runners do not execute full business invariants yet"
+  ],
+  "created_at_utc": "2026-05-29T00:00:00Z",
+  "updated_at_utc": "2026-05-29T00:00:00Z",
+  "released_at_utc": null,
+  "locked_at_utc": null
+}

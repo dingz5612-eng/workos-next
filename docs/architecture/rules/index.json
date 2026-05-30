@@ -3,12 +3,42 @@
   "rules": [
     {
       "id": "WON16-RUNTIME-001",
-      "title": "Only prepare and confirm write endpoints",
+      "title": "Operations Confirm is primary business write endpoint",
       "scope": "backend-api",
       "severity": "P0",
       "owner": "runtime",
-      "ruleFile": "docs/architecture/WORKOS_BACKEND_RUNTIME_RULES.md",
-      "enforcedBy": ["scripts/guard-architecture.ps1", "scripts/validate-runtime-api.mjs"],
+      "ruleFile": "docs/engineering/03-api-boundary-rules.md",
+      "enforcedBy": ["scripts/check-api-boundaries.mjs", "scripts/guard-architecture.ps1", "scripts/validate-runtime-api.mjs"],
+      "exceptionAllowed": false
+    },
+    {
+      "id": "WON54-API-001",
+      "title": "Mobile BFF and page-specific business writes are forbidden",
+      "scope": "backend-api frontend",
+      "severity": "P0",
+      "owner": "runtime",
+      "ruleFile": "docs/engineering/03-api-boundary-rules.md",
+      "enforcedBy": ["scripts/check-api-boundaries.mjs", "tests/WorkOS.UnitTests"],
+      "exceptionAllowed": false
+    },
+    {
+      "id": "WON54-CONTROL-001",
+      "title": "Control Plane and Shadow Namespace release evidence",
+      "scope": "release persistence",
+      "severity": "P0",
+      "owner": "release",
+      "ruleFile": "docs/engineering/13-release-control-plane-rules.md",
+      "enforcedBy": ["tests/WorkOS.RuntimeIntegrationTests", "tests/WorkOS.RuntimeContractTests"],
+      "exceptionAllowed": false
+    },
+    {
+      "id": "WON54-NOGO-001",
+      "title": "No-Go evidence uses P0 P1 P2 severity",
+      "scope": "release acceptance",
+      "severity": "P0",
+      "owner": "release",
+      "ruleFile": "docs/engineering/15-no-go-rules.md",
+      "enforcedBy": ["docs/acceptance/12-release-go-no-go.md", ".github/pull_request_template.md"],
       "exceptionAllowed": false
     },
     {

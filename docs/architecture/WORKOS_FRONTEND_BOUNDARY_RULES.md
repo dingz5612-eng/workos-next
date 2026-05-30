@@ -75,9 +75,10 @@ Home or Workbench because those views use stale local models.
 Runtime surface source boundaries:
 
 - Home must not hardcode business workspace IDs.
-- Workbench must not use `demoQueue` as the online default source.
-- `demoQueue` is permitted only as an offline/dev/test fallback with explicit
-  fallback state.
+- Workbench must not use `demoQueue` as a production source.
+- `demoQueue` is permitted only as an explicit dev/test fixture. Production
+  offline behavior must show real cached data or a true empty/error state, not
+  fake business objects.
 - Queue items must carry `workspaceId` and `cardId` directly.
 - Frontend code must not infer `workspaceId` from `taskId`.
 - Search fallback must not route current intents to deprecated workspace IDs.

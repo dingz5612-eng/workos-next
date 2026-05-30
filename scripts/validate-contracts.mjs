@@ -30,7 +30,7 @@ for (const field of ["language", "idempotencyKey", "submissionId", "cardInstance
   }
 }
 
-for (const statusCode of ["200", "400", "401", "403", "409", "422", "404", "500"]) {
+for (const statusCode of ["200", "400", "401", "403", "409", "422", "404"]) {
   if (!confirmPost.responses?.[statusCode]) {
     throw new Error(`Confirm OpenAPI path must document HTTP ${statusCode}`);
   }

@@ -1,0 +1,231 @@
+{
+  "release_slice_group": "reconciliation-correction-center",
+  "feature_flags": [
+    {
+      "feature_flag_id": "flag-reconciliation-bank-import-enabled",
+      "flag_key": "reconciliation.bank_import.enabled",
+      "status": "shadow",
+      "scope_rules": {
+        "tenantIds": ["test-tenant"],
+        "sliceIds": ["Reconciliation"],
+        "roles": ["finance"],
+        "actorIds": [],
+        "deviceIds": [],
+        "deviceTrust": ["trusted"],
+        "amount": { "currency": "KGS", "lte": 1000, "gte": 0 },
+        "percentage": 0
+      }
+    },
+    {
+      "feature_flag_id": "flag-reconciliation-match-candidate-enabled",
+      "flag_key": "reconciliation.match_candidate.enabled",
+      "status": "shadow",
+      "scope_rules": {
+        "tenantIds": ["test-tenant"],
+        "sliceIds": ["Reconciliation"],
+        "roles": ["finance"],
+        "actorIds": [],
+        "deviceIds": [],
+        "deviceTrust": ["trusted"],
+        "amount": { "currency": "KGS", "lte": 1000, "gte": 0 },
+        "percentage": 0
+      }
+    },
+    {
+      "feature_flag_id": "flag-reconciliation-manual-match-enabled",
+      "flag_key": "reconciliation.manual_match.enabled",
+      "status": "shadow",
+      "scope_rules": {
+        "tenantIds": ["test-tenant"],
+        "sliceIds": ["Reconciliation"],
+        "roles": ["finance"],
+        "actorIds": [],
+        "deviceIds": [],
+        "deviceTrust": ["trusted"],
+        "amount": { "currency": "KGS", "lte": 1000, "gte": 0 },
+        "percentage": 0
+      }
+    },
+    {
+      "feature_flag_id": "flag-reconciliation-mismatch-case-enabled",
+      "flag_key": "reconciliation.mismatch_case.enabled",
+      "status": "shadow",
+      "scope_rules": {
+        "tenantIds": ["test-tenant"],
+        "sliceIds": ["Reconciliation"],
+        "roles": ["finance"],
+        "actorIds": [],
+        "deviceIds": [],
+        "deviceTrust": ["trusted"],
+        "amount": { "currency": "KGS", "lte": 1000, "gte": 0 },
+        "percentage": 0
+      }
+    },
+    {
+      "feature_flag_id": "flag-correction-request-enabled",
+      "flag_key": "correction.request.enabled",
+      "status": "shadow",
+      "scope_rules": {
+        "tenantIds": ["test-tenant"],
+        "sliceIds": ["CorrectionCenter"],
+        "roles": ["finance"],
+        "actorIds": [],
+        "deviceIds": [],
+        "deviceTrust": ["trusted"],
+        "amount": { "currency": "KGS", "lte": 1000, "gte": 0 },
+        "percentage": 0
+      }
+    },
+    {
+      "feature_flag_id": "flag-correction-approve-enabled",
+      "flag_key": "correction.approve.enabled",
+      "status": "shadow",
+      "scope_rules": {
+        "tenantIds": ["test-tenant"],
+        "sliceIds": ["CorrectionCenter"],
+        "roles": ["finance"],
+        "actorIds": [],
+        "deviceIds": [],
+        "deviceTrust": ["trusted"],
+        "amount": { "currency": "KGS", "lte": 1000, "gte": 0 },
+        "percentage": 0
+      }
+    },
+    {
+      "feature_flag_id": "flag-correction-apply-enabled",
+      "flag_key": "correction.apply.enabled",
+      "status": "shadow",
+      "scope_rules": {
+        "tenantIds": ["test-tenant"],
+        "sliceIds": ["CorrectionCenter"],
+        "roles": ["finance"],
+        "actorIds": [],
+        "deviceIds": [],
+        "deviceTrust": ["trusted"],
+        "amount": { "currency": "KGS", "lte": 1000, "gte": 0 },
+        "percentage": 0
+      }
+    },
+    {
+      "feature_flag_id": "flag-correction-before-after-view-enabled",
+      "flag_key": "correction.before_after_view.enabled",
+      "status": "shadow",
+      "scope_rules": {
+        "tenantIds": ["test-tenant"],
+        "sliceIds": ["CorrectionCenter"],
+        "roles": ["finance"],
+        "actorIds": [],
+        "deviceIds": [],
+        "deviceTrust": ["trusted"],
+        "amount": { "currency": "KGS", "lte": 1000, "gte": 0 },
+        "percentage": 0
+      }
+    }
+  ],
+  "slice_cutover_states": [
+    {
+      "cutover_state_id": "cutover-reconciliation-test-tenant",
+      "slice_id": "Reconciliation",
+      "runtime_mode": "shadow",
+      "previous_runtime_mode": "legacy",
+      "tenant_id": "test-tenant",
+      "dependency_status": {
+        "PaymentLedger": "active_stable",
+        "DepositLedger": "active_stable",
+        "StayBalanceProjection": "active",
+        "EvidenceSecureSubstrate": "active",
+        "PCFinanceLite": "active",
+        "GateResultRunner": "active",
+        "InvariantRunner": "active"
+      },
+      "pilot_scope": {
+        "tenantIds": ["test-tenant"],
+        "roles": ["finance"],
+        "actorIds": [],
+        "deviceIds": [],
+        "deviceTrust": ["trusted"],
+        "amount": { "currency": "KGS", "lte": 1000, "gte": 0 },
+        "manual_match_only": true,
+        "automation_enabled": false
+      },
+      "routing": {
+        "shadow": "manual import, candidates, matches, and mismatch cases write shadow_runtime compare inputs/events only",
+        "pilot": "test tenant finance role can run manual match only; automation remains disabled",
+        "active": "manual import, candidate generation, manual match, and mismatch case paths are active; full auto matching remains disabled",
+        "rollback": "route Reconciliation to legacy/off and preserve imported statements, matches, mismatches, evidence, and audit history"
+      }
+    },
+    {
+      "cutover_state_id": "cutover-correction-center-test-tenant",
+      "slice_id": "CorrectionCenter",
+      "runtime_mode": "shadow",
+      "previous_runtime_mode": "legacy",
+      "tenant_id": "test-tenant",
+      "dependency_status": {
+        "PaymentLedger": "active_stable",
+        "DepositLedger": "active_stable",
+        "StayBalanceProjection": "active",
+        "EvidenceSecureSubstrate": "active",
+        "PCFinanceLite": "active",
+        "GateResultRunner": "active",
+        "InvariantRunner": "active"
+      },
+      "pilot_scope": {
+        "tenantIds": ["test-tenant"],
+        "roles": ["finance"],
+        "actorIds": [],
+        "deviceIds": [],
+        "deviceTrust": ["trusted"],
+        "amount": { "currency": "KGS", "lte": 1000, "gte": 0 },
+        "manual_match_only": true,
+        "automation_enabled": false
+      },
+      "routing": {
+        "shadow": "correction request, approval, apply, and before/after view write shadow_runtime expected effects only",
+        "pilot": "finance role may apply append-only corrections up to 1000 KGS after approval",
+        "active": "manual correction request, approval, apply, and before/after view paths are active; full auto correction remains disabled",
+        "rollback": "disable correction.apply.enabled; appended corrections are never deleted and must be superseded by compensating correction"
+      }
+    }
+  ],
+  "active_policy": {
+    "manual_import_enabled": true,
+    "candidate_generation_enabled": true,
+    "manual_match_enabled": true,
+    "correction_enabled": true,
+    "full_auto_matching_enabled": false,
+    "automation_enabled": false
+  },
+  "rollback_policy": {
+    "reconciliation_runtime_mode": "legacy_or_off",
+    "correction_apply_feature": "off",
+    "delete_appended_corrections": false,
+    "compensation_strategy": "append compensating correction when an already-applied correction is wrong"
+  },
+  "shadow_compare_report_grade": {
+    "green": [
+      "import counts match expected",
+      "no PaymentConfirmed created by import",
+      "correction applies append-only"
+    ],
+    "yellow": [
+      "display-only mismatch",
+      "candidate score mismatch only"
+    ],
+    "red": [
+      "bank import created business fact",
+      "correction edited old entry",
+      "high-risk correction without approval",
+      "correction caused balance rebuild mismatch",
+      "shadow consumed by official projector"
+    ]
+  },
+  "invariants": [
+    "bank.import_does_not_create_payment_fact",
+    "reconciliation.bank_transaction_single_match_default",
+    "ledger.no_edit_old_entry",
+    "correction.requires_reason",
+    "correction.high_risk_requires_approval",
+    "balance.rebuild_after_correction"
+  ]
+}

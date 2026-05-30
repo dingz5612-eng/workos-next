@@ -12,8 +12,8 @@ internal static class ConfirmHttpStatusMapper
             ConfirmStatus.Forbidden when IsAuthenticationFailure(result.Reason) => StatusCodes.Status401Unauthorized,
             ConfirmStatus.Forbidden when IsAuthorizationForbidden(result.Reason) => StatusCodes.Status403Forbidden,
             ConfirmStatus.Forbidden => StatusCodes.Status422UnprocessableEntity,
-            ConfirmStatus.Duplicate => StatusCodes.Status409Conflict,
-            ConfirmStatus.ProjectionFailed => StatusCodes.Status500InternalServerError,
+            ConfirmStatus.Duplicate => StatusCodes.Status200OK,
+            ConfirmStatus.ProjectionFailed => StatusCodes.Status200OK,
             _ => StatusCodes.Status200OK
         };
 
@@ -23,6 +23,8 @@ internal static class ConfirmHttpStatusMapper
 
     public static bool IsAuthorizationForbidden(string? reason) =>
         reason?.StartsWith("ai_confirmation_forbidden", StringComparison.OrdinalIgnoreCase) == true ||
+        reason?.StartsWith("ai_terminal_action_forbidden", StringComparison.OrdinalIgnoreCase) == true ||
         reason?.StartsWith("role_confirmation_forbidden", StringComparison.OrdinalIgnoreCase) == true ||
-        reason?.StartsWith("slice_runtime_forbidden", StringComparison.OrdinalIgnoreCase) == true;
+        reason?.StartsWith("slice_runtime_forbidden", StringComparison.OrdinalIgnoreCase) == true ||
+        reason?.StartsWith("trusted_device_required", StringComparison.OrdinalIgnoreCase) == true;
 }

@@ -1,0 +1,48 @@
+{
+  "gate_result_id": "gate-mr-08-checkout-service-blocker",
+  "release_id": "release-mr-08",
+  "mr_id": "MR-08",
+  "tenant_id": "test-tenant",
+  "slice_id": "CheckoutSettlement",
+  "gate_name": "mr-08-checkout-service-blocker",
+  "gate_type": "automated",
+  "status": "passed",
+  "severity": "P2",
+  "ci_run_id": "local-mr-08",
+  "automated_test_refs": [
+    "WorkOS.UnitTests.CheckoutServiceProcessManagerTests",
+    "WorkOS.UnitTests.CheckoutServiceCutoverGuardTests",
+    "apps/mobile.checkoutServiceView"
+  ],
+  "invariant_check_refs": [
+    "inv-v54-case-closed-has-no-open-blocker",
+    "inv-v54-case-close-requires-closure-policy",
+    "inv-v54-blocker-no-duplicate-open-resolution",
+    "inv-v54-service-cannot-directly-change-bed-status",
+    "inv-v54-checkout-cannot-directly-write-deposit-entry",
+    "inv-v54-checkout-cleaning-required-before-release"
+  ],
+  "shadow_compare_report_refs": [
+    "scr-v54-checkout-service-blocker-engine"
+  ],
+  "business_signoff_refs": [
+    "release-reviewed"
+  ],
+  "no_go_items": [],
+  "go_items": [
+    "Invariant passed: case.closed_has_no_open_blocker",
+    "Invariant passed: case.close_requires_closure_policy",
+    "Invariant passed: blocker.no_duplicate_open_resolution",
+    "Invariant passed: service.cannot_directly_change_bed_status",
+    "Invariant passed: checkout.cannot_directly_write_deposit_entry",
+    "Invariant passed: checkout.cleaning_required_before_release",
+    "Shadow compare green: scr-v54-checkout-service-blocker-engine"
+  ],
+  "known_risks": [
+    "MR-08 uses skeleton shadow compare until production shadow rows exist"
+  ],
+  "generated_by": "gate-runner",
+  "generated_at_utc": "2026-05-29T23:19:23.1393375+00:00",
+  "input_hash": "4f2285474e129042c218be746c75ce5969a06859bc7932f892f7cca27116a3ec",
+  "result_hash": "0ac54dbdc05432443313a06d1ee64c7b004af4010c9d430af0395a9b58f8d2fe"
+}

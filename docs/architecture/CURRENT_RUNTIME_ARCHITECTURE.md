@@ -26,14 +26,22 @@ Slice + Card + Field Contract + Event
 + Contract tests / Architecture guard / Clean baseline guard
 ```
 
-The only business write endpoints are:
+The target legal primary business write endpoint is Operations Confirm:
+
+```text
+POST /api/operations/work-items/{workItemId}/confirm
+```
+
+The current runtime still exposes the older Workspace/Card endpoints as a
+compatibility layer:
 
 ```text
 POST /api/workspaces/{workspaceId}/cards/{cardId}/prepare
 POST /api/workspaces/{workspaceId}/cards/{cardId}/confirm
 ```
 
-No page-specific write API is part of the current architecture.
+No page-specific write API is part of the current architecture. Mobile BFF
+routes must not write business facts.
 
 ## Runtime Surface Architecture
 
@@ -49,8 +57,11 @@ must consume one runtime surface source built from:
 - `GET /api/lenses/learning-catalog`
 - `GET /api/lenses/accommodation/{lensId}`
 
-`demoQueue` and static `workspaceProjections` are fallback/dev fixtures only;
-they must not be the online default source for Home or Workbench.
+`demoQueue` and static `workspaceProjections` live under
+`apps/mobile/src/devFixtures` and are dev/test fixtures only. Production API
+failure must render a true empty state, an error state, or already-cached real
+runtime data; it must never hydrate Home or Workbench from fake business
+objects.
 
 Surface visibility is contract-driven through:
 
@@ -64,8 +75,8 @@ Current surface status:
 
 | Surface | Runtime source |
 | --- | --- |
-| Home | `home-surface` Lens or projection fallback |
-| Workbench | `work-queue` Lens or projection fallback |
+| Home | `home-surface` Lens or runtime projection from API |
+| Workbench | `work-queue` Lens or runtime projection from API |
 | Search | `search` Lens or projection fallback |
 | Learning | `learning-catalog` Lens or runtime workspaces |
 | Workspace | runtime workspace projection, selected by runtime `workspaceId` / `cardId` |
@@ -169,6 +180,12 @@ metadata, and cross-check rules.
   distribution, surface coverage missing count, ledger invariant violation
   count, schema version, and active architecture exceptions.
 - Slice admission is automated by `scripts/validate-slice-admission.mjs`.
+- V5.4 API boundary checks are automated by
+  `scripts/check-api-boundaries.mjs`, using
+  `docs/v5.4/operations-api-allowlist.json`.
+- Control Plane release gates require durable GateResult, InvariantCheck, and
+  ShadowCompareReport records, with Shadow Namespace facts physically isolated
+  from official runtime facts.
 
 ## Accommodation Boundary Status
 
@@ -204,6 +221,8 @@ The current automated coverage verifies:
 - `node scripts/architecture-drift-report.mjs`
 - `node scripts/generate-contract-dtos.mjs --check`
 - `node scripts/validate-runtime-api.mjs`
+- `node scripts/check-api-boundaries.mjs --self-test`
+- `node scripts/check-api-boundaries.mjs`
 - `pwsh ./scripts/guard-architecture.ps1`
 - `pwsh ./scripts/clean-baseline.ps1`
 - `git diff --check`

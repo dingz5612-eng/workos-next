@@ -27,7 +27,7 @@ internal sealed class RuntimeAccommodationLedgerStorage
         decimal confirmedAmount;
         using (var command = connection.CreateCommand())
         {
-            command.CommandText = "select coalesce(max(confirmed_amount), 0) from finance_reconciliations where payment_id = @paymentId";
+            command.CommandText = "select coalesce(sum(confirmed_amount), 0) from finance_reconciliations where payment_id = @paymentId and status = 'confirmed'";
             command.Parameters.AddWithValue("paymentId", paymentId);
             confirmedAmount = Convert.ToDecimal(command.ExecuteScalar() ?? 0m);
         }

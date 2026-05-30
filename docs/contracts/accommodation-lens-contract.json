@@ -1,5 +1,5 @@
 {
-  "version": "0.16.3-authoritative-lenses",
+  "version": "0.16.5-risk-command-drilldown",
   "lenses": [
     {
       "id": "payment-risk",
@@ -28,18 +28,18 @@
     {
       "id": "risk-command",
       "name": "RiskCommandLens",
-      "sourceOfTruthTables": ["stay_balances", "hostel_payments", "service_tasks", "accommodation_beds", "deposit_liabilities", "period_reviews"],
+      "sourceOfTruthTables": ["stay_balances", "hostel_payments", "service_tasks", "accommodation_beds", "deposit_liabilities", "deposit_transactions", "payment_mismatches", "reconciliation_cases", "ledger_correction_requests", "process_work_item_intents", "process_request_event_intents", "expense_ledger_status", "period_reviews"],
       "workspaceScope": ["W-STAY-PAYMENT-LEDGER", "W-STAY-SERVICE-TASK", "W-STAY-RESOURCE", "W-STAY-DEPOSIT-LEDGER", "W-STAY-PERIOD-ANALYTICS"],
       "freshness": { "timestampField": "updated_at_utc", "lagMetric": "projectionLagSeconds" },
-      "crossCheck": "RiskCommandLens must not double-count legacy CheckIn finance rows with new ledger rows."
+      "crossCheck": "RiskCommandLens is drilldown-first. Every official risk item must carry source refs, owner, resolveAction, severity reason, and drilldownUrl; demo or projection-only counts are forbidden."
     },
     {
       "id": "period-performance",
       "name": "PeriodPerformanceLens",
-      "sourceOfTruthTables": ["period_reviews", "period_metric_snapshots", "period_finance_snapshots", "period_action_plans"],
+      "sourceOfTruthTables": ["period_reviews", "period_metric_snapshots", "period_finance_snapshots", "expense_ledger_status", "period_action_plans"],
       "workspaceScope": ["W-STAY-PERIOD-ANALYTICS"],
       "freshness": { "timestampField": "updated_at_utc", "lagMetric": "projectionLagSeconds" },
-      "crossCheck": "PeriodPerformanceLens reads frozen PeriodAnalytics snapshots, not confirm payload totals."
+      "crossCheck": "PeriodPerformanceLens reads frozen PeriodAnalytics snapshots and explicit ExpenseLedger integration state, not confirm payload totals."
     },
     {
       "id": "room-revenue-potential",

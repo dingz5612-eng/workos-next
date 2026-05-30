@@ -36,8 +36,16 @@ public sealed class ContractGovernanceTests
         {
             if (path == "/health" || path.StartsWith("/api/", StringComparison.Ordinal))
             {
+                var generatedPath = path
+                    .Replace("{workspaceId}", "${workspaceId}", StringComparison.Ordinal)
+                    .Replace("{cardId}", "${cardId}", StringComparison.Ordinal)
+                    .Replace("{lensId}", "${lensId}", StringComparison.Ordinal)
+                    .Replace("{releaseId}", "${releaseId}", StringComparison.Ordinal)
+                    .Replace("{gateResultId}", "${gateResultId}", StringComparison.Ordinal)
+                    .Replace("{evidenceId}", "${evidenceId}", StringComparison.Ordinal)
+                    .Replace("{id}", "${id}", StringComparison.Ordinal);
                 Assert.IsTrue(generated.Contains(path.Split('/').Last().Replace("-", ""), StringComparison.OrdinalIgnoreCase) ||
-                    generated.Contains(path.Replace("{workspaceId}", "${workspaceId}").Replace("{cardId}", "${cardId}").Replace("{lensId}", "${lensId}")),
+                    generated.Contains(generatedPath),
                     $"Generated runtime API paths should cover {path}");
             }
         }

@@ -5,15 +5,30 @@ making confirm behavior reliable, auditable, and contract-driven.
 
 ## Write Path
 
-The only business write endpoints are:
+The legal primary business write endpoint is Operations Confirm:
+
+```text
+POST /api/operations/work-items/{workItemId}/confirm
+```
+
+The Operations API may prepare work items, create cases, and expose work-item
+read models through the allowlist in `docs/v5.4/operations-api-allowlist.json`.
+Confirm is the only primary mutation path for business facts.
+
+The older Workspace/Card endpoints are compatibility layer only:
 
 ```text
 POST /api/workspaces/{workspaceId}/cards/{cardId}/prepare
 POST /api/workspaces/{workspaceId}/cards/{cardId}/confirm
 ```
 
-Prepare may load projection, card contract, blockers, defaults, and allowed
-actions. Confirm is the only mutation path for business facts.
+Compatibility prepare may load projection, card contract, blockers, defaults,
+and allowed actions for existing clients. New product work must use Operations
+Confirm as the business-write design surface.
+
+Mobile BFF routes must not write business facts. Adding page-specific business
+write endpoints such as `POST /api/payment/confirm` or
+`POST /api/deposit/refund` is a P0 No-Go.
 
 ## SliceRuntimeCapabilityGate
 

@@ -8,7 +8,15 @@ public interface IProjectionStore
 
     RuntimeSession CreateSession(RuntimeUser user);
 
+    void RevokeSession(string token, string actorId);
+
     RuntimeUser? FindUserBySessionToken(string token);
+
+    RuntimeDeviceSession RegisterDeviceSession(RuntimeDeviceSessionRequest request);
+
+    RuntimeDeviceSession? FindDeviceSession(string deviceId);
+
+    RuntimeDeviceSession? RevokeDeviceSession(string deviceId, string actorId);
 
     WorkspaceEvent? FindEventByIdempotencyKey(string idempotencyKey);
 
@@ -32,7 +40,39 @@ public interface IProjectionStore
 
     IReadOnlyList<EvidenceObject> GetEvidenceObjects(string? evidenceId = null);
 
+    EvidenceSignedUrlResponse CreateEvidenceSignedUrl(string evidenceId, EvidenceSignedUrlRequest request);
+
+    GovernanceExportResult RequestGovernanceExport(GovernanceExportRequest request);
+
     ConfirmResult? ValidateEvidenceForConfirm(string workspaceId, string cardId, ConfirmCardRequest request, IReadOnlyList<EvidenceRequirement> requirements);
+
+    BankStatementImportPreview PreviewBankStatementImport(BankStatementImportRequest request);
+
+    BankStatementImportResult ConfirmBankStatementImport(BankStatementImportRequest request, string actorId);
+
+    ReconciliationCandidateGenerationResult GenerateReconciliationMatchCandidates(ReconciliationCandidateGenerationRequest request);
+
+    IReadOnlyList<ReconciliationMatchCandidate> GetReconciliationMatchCandidates(string tenantId, string? bankTransactionId = null);
+
+    ReconciliationManualMatchResult AcceptReconciliationMatchCandidate(string candidateId, string actorId);
+
+    ReconciliationCandidateDecisionResult RejectReconciliationMatchCandidate(string candidateId, string actorId, string reason);
+
+    ReconciliationMismatchResult MarkBankTransactionMismatch(string bankTransactionId, ReconciliationMismatchRequest request, string actorId);
+
+    ReconciliationTransactionDecisionResult IgnoreBankTransaction(string bankTransactionId, string tenantId, string actorId, string reason);
+
+    ReconciliationMismatchDetectionResult DetectReconciliationMismatches(ReconciliationMismatchDetectionRequest request);
+
+    ReconciliationCaseRecord CreateReconciliationCaseForMismatch(string tenantId, string mismatchId, string actorId);
+
+    LedgerCorrectionRequestResult RequestLedgerCorrection(LedgerCorrectionRequestCommand command);
+
+    LedgerCorrectionDecisionResult ApproveLedgerCorrection(LedgerCorrectionApproveCommand command);
+
+    LedgerCorrectionDecisionResult RejectLedgerCorrection(LedgerCorrectionRejectCommand command);
+
+    LedgerCorrectionApplyResult ApplyLedgerCorrection(LedgerCorrectionApplyCommand command);
 
     DepositLedgerState GetDepositLedgerState(string depositId);
 
@@ -45,6 +85,14 @@ public interface IProjectionStore
     void MarkOutboxProcessed(string messageId, string workerId);
 
     void MarkOutboxFailed(string messageId, string workerId, string error, int maxRetries = 5);
+
+    CheckoutServiceProcessManagerResult ApplyCheckoutServiceProcessRules(WorkspaceEvent workspaceEvent);
+
+    IReadOnlyList<ProcessRunRecord> GetProcessRuns(string? tenantId = null);
+
+    IReadOnlyList<ProcessWorkItemIntentRecord> GetProcessWorkItemIntents(string? tenantId = null);
+
+    IReadOnlyList<ProcessRequestEventIntentRecord> GetProcessRequestEventIntents(string? tenantId = null);
 
     void AppendBehaviorEvent(BehaviorEventRecord behaviorEvent);
 

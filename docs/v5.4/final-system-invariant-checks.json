@@ -1,0 +1,463 @@
+[
+  {
+    "invariant_check_id": "inv-final-mr-gate-results-complete",
+    "release_id": "release-final-system",
+    "tenant_id": "all-tenants",
+    "slice_id": "FinalSystem",
+    "invariant_key": "final.mr_gate_results_passed_or_approved_warning",
+    "description": "Every MR-00 through MR-10 GateResult must exist and be passed or explicitly approved warning before final go.",
+    "mode": "blocking",
+    "severity": "P0",
+    "source_type": "documentation_scan",
+    "check_ref": "docs/v5.4/final-release-manifest-summary.md",
+    "status": "failed",
+    "observed_value": {
+      "present_gate_results": [
+        "MR-08",
+        "MR-09",
+        "MR-10"
+      ],
+      "missing_gate_results": [
+        "MR-00",
+        "MR-01",
+        "MR-02",
+        "MR-03",
+        "MR-04",
+        "MR-05",
+        "MR-06",
+        "MR-07"
+      ]
+    },
+    "threshold": {
+      "missing_gate_results": 0
+    },
+    "violation_count": 8,
+    "sample_violations": [
+      {
+        "mr_id": "MR-00",
+        "reason": "GateResult artifact not found under docs/v5.4"
+      },
+      {
+        "mr_id": "MR-06",
+        "reason": "Money v1 GateResult artifact not found under docs/v5.4"
+      },
+      {
+        "mr_id": "MR-07",
+        "reason": "Deposit + Refund GateResult artifact not found under docs/v5.4"
+      }
+    ],
+    "generated_by": "final-system-gate-audit",
+    "ci_run_id": "local-final-system",
+    "checked_at_utc": "2026-05-30T12:00:00Z"
+  },
+  {
+    "invariant_check_id": "inv-final-p0-blocking-invariant-zero",
+    "release_id": "release-final-system",
+    "tenant_id": "all-tenants",
+    "slice_id": "FinalSystem",
+    "invariant_key": "final.p0_blocking_invariant_zero",
+    "description": "Available machine invariant evidence must have zero failed P0 blocking checks.",
+    "mode": "blocking",
+    "severity": "P0",
+    "source_type": "documentation_scan",
+    "check_ref": "docs/v5.4/mr-08-invariant-checks.json;docs/v5.4/mr-09-invariant-checks.json;docs/v5.4/mr-10-invariant-checks.json",
+    "status": "passed",
+    "observed_value": {
+      "available_failed_p0_blocking": 0,
+      "available_releases": [
+        "MR-08",
+        "MR-09",
+        "MR-10"
+      ]
+    },
+    "threshold": {
+      "failed_p0_blocking": 0
+    },
+    "violation_count": 0,
+    "sample_violations": [],
+    "generated_by": "final-system-gate-audit",
+    "ci_run_id": "local-final-system",
+    "checked_at_utc": "2026-05-30T12:00:00Z"
+  },
+  {
+    "invariant_check_id": "inv-final-red-shadow-compare-zero",
+    "release_id": "release-final-system",
+    "tenant_id": "all-tenants",
+    "slice_id": "FinalSystem",
+    "invariant_key": "final.red_shadow_compare_zero",
+    "description": "Available ShadowCompareReport evidence must contain no red reports.",
+    "mode": "blocking",
+    "severity": "P0",
+    "source_type": "documentation_scan",
+    "check_ref": "docs/v5.4/final-system-shadow-compare-reports.json",
+    "status": "passed",
+    "observed_value": {
+      "red_shadow_compare_reports": 0,
+      "available_reports": [
+        "scr-v54-checkout-service-blocker-engine",
+        "scr-v54-reconciliation-correction-center",
+        "scr-v54-period-risk-pc-governance"
+      ]
+    },
+    "threshold": {
+      "red_shadow_compare_reports": 0
+    },
+    "violation_count": 0,
+    "sample_violations": [],
+    "generated_by": "final-system-gate-audit",
+    "ci_run_id": "local-final-system",
+    "checked_at_utc": "2026-05-30T12:00:00Z"
+  },
+  {
+    "invariant_check_id": "inv-final-money-deposit-checkout-period-no-go-zero",
+    "release_id": "release-final-system",
+    "tenant_id": "all-tenants",
+    "slice_id": "FinalSystem",
+    "invariant_key": "final.money_deposit_checkout_period_no_go_zero",
+    "description": "Money, Deposit, Checkout, and Period no-go lists must be cleared by machine GateResults.",
+    "mode": "blocking",
+    "severity": "P0",
+    "source_type": "documentation_scan",
+    "check_ref": "docs/v5.4/final-go-no-go-report.md",
+    "status": "failed",
+    "observed_value": {
+      "checkout_no_go": 0,
+      "period_no_go": 0,
+      "money_gate_result": "missing",
+      "deposit_gate_result": "missing"
+    },
+    "threshold": {
+      "money_no_go": 0,
+      "deposit_no_go": 0,
+      "checkout_no_go": 0,
+      "period_no_go": 0
+    },
+    "violation_count": 2,
+    "sample_violations": [
+      {
+        "mr_id": "MR-06",
+        "reason": "Money v1 no-go clearance cannot be proven without MR-06 GateResult"
+      },
+      {
+        "mr_id": "MR-07",
+        "reason": "Deposit + Refund no-go clearance cannot be proven without MR-07 GateResult"
+      }
+    ],
+    "generated_by": "final-system-gate-audit",
+    "ci_run_id": "local-final-system",
+    "checked_at_utc": "2026-05-30T12:00:00Z"
+  },
+  {
+    "invariant_check_id": "inv-final-projection-rebuild-passed",
+    "release_id": "release-final-system",
+    "tenant_id": "all-tenants",
+    "slice_id": "FinalSystem",
+    "invariant_key": "final.projection_rebuild_passed",
+    "description": "Projection rebuild production ops tests must pass.",
+    "mode": "blocking",
+    "severity": "P0",
+    "source_type": "test_result",
+    "check_ref": "WorkOS.UnitTests.ProjectionRebuildToolTests",
+    "status": "passed",
+    "observed_value": {
+      "test_result": "passed"
+    },
+    "threshold": {
+      "failed_tests": 0
+    },
+    "violation_count": 0,
+    "sample_violations": [],
+    "generated_by": "final-system-gate-audit",
+    "ci_run_id": "local-final-system",
+    "checked_at_utc": "2026-05-30T12:00:00Z"
+  },
+  {
+    "invariant_check_id": "inv-final-deadletter-replay-passed",
+    "release_id": "release-final-system",
+    "tenant_id": "all-tenants",
+    "slice_id": "FinalSystem",
+    "invariant_key": "final.deadletter_replay_passed",
+    "description": "Outbox dead-letter replay production ops tests must pass.",
+    "mode": "blocking",
+    "severity": "P0",
+    "source_type": "test_result",
+    "check_ref": "WorkOS.UnitTests.OutboxDeadLetterReplayToolTests",
+    "status": "passed",
+    "observed_value": {
+      "test_result": "passed"
+    },
+    "threshold": {
+      "failed_tests": 0
+    },
+    "violation_count": 0,
+    "sample_violations": [],
+    "generated_by": "final-system-gate-audit",
+    "ci_run_id": "local-final-system",
+    "checked_at_utc": "2026-05-30T12:00:00Z"
+  },
+  {
+    "invariant_check_id": "inv-final-ledger-reconciliation-job-passed",
+    "release_id": "release-final-system",
+    "tenant_id": "all-tenants",
+    "slice_id": "FinalSystem",
+    "invariant_key": "final.ledger_reconciliation_job_passed",
+    "description": "Ledger reconciliation and invariant inspection job tests must pass.",
+    "mode": "blocking",
+    "severity": "P0",
+    "source_type": "test_result",
+    "check_ref": "WorkOS.UnitTests.LedgerInspectionJobTests",
+    "status": "passed",
+    "observed_value": {
+      "test_result": "passed"
+    },
+    "threshold": {
+      "failed_tests": 0
+    },
+    "violation_count": 0,
+    "sample_violations": [],
+    "generated_by": "final-system-gate-audit",
+    "ci_run_id": "local-final-system",
+    "checked_at_utc": "2026-05-30T12:00:00Z"
+  },
+  {
+    "invariant_check_id": "inv-final-backup-restore-smoke-passed",
+    "release_id": "release-final-system",
+    "tenant_id": "all-tenants",
+    "slice_id": "FinalSystem",
+    "invariant_key": "final.backup_restore_smoke_passed",
+    "description": "Backup and restore smoke tests must pass.",
+    "mode": "blocking",
+    "severity": "P0",
+    "source_type": "test_result",
+    "check_ref": "WorkOS.UnitTests.BackupRestoreSmokeJobTests",
+    "status": "passed",
+    "observed_value": {
+      "test_result": "passed"
+    },
+    "threshold": {
+      "failed_tests": 0
+    },
+    "violation_count": 0,
+    "sample_violations": [],
+    "generated_by": "final-system-gate-audit",
+    "ci_run_id": "local-final-system",
+    "checked_at_utc": "2026-05-30T12:00:00Z"
+  },
+  {
+    "invariant_check_id": "inv-final-release-manifest-complete",
+    "release_id": "release-final-system",
+    "tenant_id": "all-tenants",
+    "slice_id": "FinalSystem",
+    "invariant_key": "final.release_manifest_complete",
+    "description": "ReleaseManifest must exist for MR-00 through MR-10.",
+    "mode": "blocking",
+    "severity": "P0",
+    "source_type": "documentation_scan",
+    "check_ref": "docs/v5.4/final-release-manifest-summary.md",
+    "status": "failed",
+    "observed_value": {
+      "present_release_manifests": [
+        "MR-08",
+        "MR-09",
+        "MR-10"
+      ],
+      "missing_release_manifests": [
+        "MR-00",
+        "MR-01",
+        "MR-02",
+        "MR-03",
+        "MR-04",
+        "MR-05",
+        "MR-06",
+        "MR-07"
+      ]
+    },
+    "threshold": {
+      "missing_release_manifests": 0
+    },
+    "violation_count": 8,
+    "sample_violations": [
+      {
+        "mr_id": "MR-00",
+        "reason": "ReleaseManifest artifact not found"
+      },
+      {
+        "mr_id": "MR-06",
+        "reason": "ReleaseManifest artifact not found"
+      },
+      {
+        "mr_id": "MR-07",
+        "reason": "ReleaseManifest artifact not found"
+      }
+    ],
+    "generated_by": "final-system-gate-audit",
+    "ci_run_id": "local-final-system",
+    "checked_at_utc": "2026-05-30T12:00:00Z"
+  },
+  {
+    "invariant_check_id": "inv-final-rollback-instruction-complete",
+    "release_id": "release-final-system",
+    "tenant_id": "all-tenants",
+    "slice_id": "FinalSystem",
+    "invariant_key": "final.rollback_instruction_complete",
+    "description": "RollbackInstruction must exist for every release package before final go.",
+    "mode": "blocking",
+    "severity": "P0",
+    "source_type": "documentation_scan",
+    "check_ref": "docs/v5.4/final-release-manifest-summary.md",
+    "status": "failed",
+    "observed_value": {
+      "present_rollback_instructions": [
+        "MR-08",
+        "MR-09",
+        "MR-10"
+      ],
+      "missing_rollback_instructions": [
+        "MR-00",
+        "MR-01",
+        "MR-02",
+        "MR-03",
+        "MR-04",
+        "MR-05",
+        "MR-06",
+        "MR-07"
+      ]
+    },
+    "threshold": {
+      "missing_rollback_instructions": 0
+    },
+    "violation_count": 8,
+    "sample_violations": [
+      {
+        "mr_id": "MR-00",
+        "reason": "RollbackInstruction artifact not found"
+      },
+      {
+        "mr_id": "MR-06",
+        "reason": "RollbackInstruction artifact not found"
+      },
+      {
+        "mr_id": "MR-07",
+        "reason": "RollbackInstruction artifact not found"
+      }
+    ],
+    "generated_by": "final-system-gate-audit",
+    "ci_run_id": "local-final-system",
+    "checked_at_utc": "2026-05-30T12:00:00Z"
+  },
+  {
+    "invariant_check_id": "inv-final-compensation-path-complete",
+    "release_id": "release-final-system",
+    "tenant_id": "all-tenants",
+    "slice_id": "FinalSystem",
+    "invariant_key": "final.compensation_path_complete",
+    "description": "CompensationInstruction or compensation policy must exist where active facts cannot be deleted.",
+    "mode": "blocking",
+    "severity": "P1",
+    "source_type": "documentation_scan",
+    "check_ref": "docs/v5.4/final-release-manifest-summary.md",
+    "status": "failed",
+    "observed_value": {
+      "present_compensation_instructions": [
+        "MR-08",
+        "MR-09",
+        "MR-10"
+      ],
+      "missing_compensation_evidence": [
+        "MR-00",
+        "MR-01",
+        "MR-02",
+        "MR-03",
+        "MR-04",
+        "MR-05",
+        "MR-06",
+        "MR-07"
+      ]
+    },
+    "threshold": {
+      "missing_compensation_evidence": 0
+    },
+    "violation_count": 8,
+    "sample_violations": [
+      {
+        "mr_id": "MR-06",
+        "reason": "Money compensation instruction artifact not found"
+      },
+      {
+        "mr_id": "MR-07",
+        "reason": "Deposit compensation instruction artifact not found"
+      }
+    ],
+    "generated_by": "final-system-gate-audit",
+    "ci_run_id": "local-final-system",
+    "checked_at_utc": "2026-05-30T12:00:00Z"
+  },
+  {
+    "invariant_check_id": "inv-final-e2e-passed",
+    "release_id": "release-final-system",
+    "tenant_id": "all-tenants",
+    "slice_id": "FinalSystem",
+    "invariant_key": "final.e2e_passed",
+    "description": "Final four-role E2E acceptance suite must pass.",
+    "mode": "blocking",
+    "severity": "P0",
+    "source_type": "test_result",
+    "check_ref": "WorkOS.UnitTests.FinalEndToEndAcceptanceSuiteTests",
+    "status": "passed",
+    "observed_value": {
+      "test_result": "10/10 passed"
+    },
+    "threshold": {
+      "failed_tests": 0
+    },
+    "violation_count": 0,
+    "sample_violations": [],
+    "generated_by": "final-system-gate-audit",
+    "ci_run_id": "local-final-system",
+    "checked_at_utc": "2026-05-30T12:00:00Z"
+  },
+  {
+    "invariant_check_id": "inv-final-business-signoff-complete",
+    "release_id": "release-final-system",
+    "tenant_id": "all-tenants",
+    "slice_id": "FinalSystem",
+    "invariant_key": "final.business_signoff_complete",
+    "description": "BusinessSignoff must exist for every MR and for the final lock decision.",
+    "mode": "blocking",
+    "severity": "P1",
+    "source_type": "documentation_scan",
+    "check_ref": "docs/v5.4/final-release-manifest-summary.md",
+    "status": "failed",
+    "observed_value": {
+      "present_business_signoff_refs": [
+        "MR-08: release-reviewed",
+        "MR-09: release-reviewed",
+        "MR-10: release-reviewed"
+      ],
+      "missing_business_signoff_refs": [
+        "MR-00",
+        "MR-01",
+        "MR-02",
+        "MR-03",
+        "MR-04",
+        "MR-05",
+        "MR-06",
+        "MR-07",
+        "FINAL-SYSTEM"
+      ]
+    },
+    "threshold": {
+      "missing_business_signoff_refs": 0
+    },
+    "violation_count": 9,
+    "sample_violations": [
+      {
+        "mr_id": "FINAL-SYSTEM",
+        "reason": "Final business signoff artifact not found"
+      }
+    ],
+    "generated_by": "final-system-gate-audit",
+    "ci_run_id": "local-final-system",
+    "checked_at_utc": "2026-05-30T12:00:00Z"
+  }
+]

@@ -15,19 +15,22 @@ public sealed class ActionRuntimeService
     private readonly RuntimeQueryService queryService;
     private readonly SliceRuntimeCapabilityGate capabilityGate;
     private readonly OutboxProjector outboxProjector;
+    private readonly bool requireTrustedDeviceForHighRiskActions;
 
     public ActionRuntimeService(
         IProjectionStore store,
         CardConfirmationPolicy confirmationPolicy,
         RuntimeQueryService queryService,
         SliceRuntimeCapabilityGate capabilityGate,
-        OutboxProjector outboxProjector)
+        OutboxProjector outboxProjector,
+        bool requireTrustedDeviceForHighRiskActions = false)
     {
         this.store = store;
         this.confirmationPolicy = confirmationPolicy;
         this.queryService = queryService;
         this.capabilityGate = capabilityGate;
         this.outboxProjector = outboxProjector;
+        this.requireTrustedDeviceForHighRiskActions = requireTrustedDeviceForHighRiskActions;
     }
 
     public object? Prepare(RuntimeState state, string workspaceId, string cardId, PrepareCardRequest? request = null)
@@ -108,6 +111,29 @@ public sealed class ActionRuntimeService
         if (policyFailure is not null)
         {
             return policyFailure;
+        }
+
+        var deviceFailure = RuntimeSecurityPolicy.ValidateConfirm(
+            card,
+            actor,
+            request,
+            ResolveDeviceSession(request),
+            requireTrustedDeviceForHighRiskActions);
+        if (deviceFailure is not null)
+        {
+            return deviceFailure;
+        }
+
+        var idempotentEvent = store.FindEventByIdempotencyKey(request.IdempotencyKey);
+        if (idempotentEvent is not null)
+        {
+            return CommittedResult(
+                ConfirmStatus.Duplicate,
+                state,
+                workspace,
+                card,
+                request,
+                new[] { idempotentEvent });
         }
 
         var fieldKeyFailure = ValidateCanonicalFieldKeys(request.FieldValues);
@@ -211,63 +237,119 @@ public sealed class ActionRuntimeService
         var existingEvent = store.CommitConfirmEvents(committedEvents);
         if (existingEvent is not null)
         {
-            var projection = ProjectCommittedEvents(state, new[] { existingEvent });
-            if (projection is null)
-            {
-                return new ConfirmResult(ConfirmStatus.ProjectionFailed, "projection_not_caught_up", null);
-            }
-
-            return new ConfirmResult(ConfirmStatus.Duplicate, null, new
-            {
-                confirmed = true,
-                duplicate = true,
-                workspaceId = workspace.Id,
-                cardId = card.Id,
-                @event = existingEvent,
-                events = new[] { existingEvent },
+            return CommittedResult(
+                ConfirmStatus.Duplicate,
+                state,
                 workspace,
-                projection
-            });
+                card,
+                request,
+                new[] { existingEvent });
         }
 
-        var confirmedProjection = ProjectCommittedEvents(state, events);
-        if (confirmedProjection is null)
-        {
-            return new ConfirmResult(ConfirmStatus.ProjectionFailed, "projection_not_caught_up", null);
-        }
-
-        return new ConfirmResult(ConfirmStatus.Confirmed, null, new
-        {
-            confirmed = true,
-            duplicate = false,
-            workspaceId = workspace.Id,
-            cardId = card.Id,
-            @event = events[0],
-            events,
+        return CommittedResult(
+            ConfirmStatus.Confirmed,
+            state,
             workspace,
-            projection = confirmedProjection
-        });
+            card,
+            request,
+            events);
     }
 
-    private ProjectionEnvelope? ProjectCommittedEvents(RuntimeState state, IReadOnlyList<WorkspaceEvent> events)
+    private ConfirmResult CommittedResult(
+        ConfirmStatus status,
+        RuntimeState state,
+        WorkspaceProjection workspace,
+        CardProjection card,
+        ConfirmCardRequest request,
+        IReadOnlyList<WorkspaceEvent> events)
+    {
+        var projection = ProjectCommittedEvents(state, events);
+        var projectionStatus = projection.Status;
+        var response = new ConfirmCardResponse(
+            Confirmed: true,
+            CommitStatus: "committed",
+            ProjectionStatus: projectionStatus,
+            CaseId: workspace.Id,
+            WorkItemId: WorkItemIdFor(workspace.Id, card.Id),
+            SubmissionId: request.SubmissionId ?? events[0].SubmissionId ?? events[0].CorrelationId,
+            ResultEventIds: events.Select(item => item.EventId).ToArray(),
+            UserMessage: UserMessageFor(projectionStatus, request.Language),
+            ClientInstruction: ClientInstructionFor(projectionStatus),
+            Events: events,
+            Workspace: workspace,
+            Projection: projection.Envelope);
+
+        return new ConfirmResult(status, null, response);
+    }
+
+    private ProjectionCommitState ProjectCommittedEvents(RuntimeState state, IReadOnlyList<WorkspaceEvent> events)
     {
         for (var round = 0; round < 8; round++)
         {
             if (events.All(workspaceEvent => state.Events.Any(item => item.EventId == workspaceEvent.EventId)))
             {
-                return queryService.Envelope(state);
+                return new ProjectionCommitState("projected", queryService.Envelope(state));
             }
 
-            if (outboxProjector.ProcessPending(state) == 0)
+            var processed = outboxProjector.ProcessPending(state);
+            if (events.All(workspaceEvent => state.Events.Any(item => item.EventId == workspaceEvent.EventId)))
+            {
+                return new ProjectionCommitState("projected", queryService.Envelope(state));
+            }
+
+            var outboxStatus = ProjectionStatusFromOutbox(events);
+            if (outboxStatus == "failed")
+            {
+                return new ProjectionCommitState("failed", null);
+            }
+
+            if (processed == 0)
             {
                 break;
             }
         }
 
         return events.All(workspaceEvent => state.Events.Any(item => item.EventId == workspaceEvent.EventId))
-            ? queryService.Envelope(state)
-            : null;
+            ? new ProjectionCommitState("projected", queryService.Envelope(state))
+            : new ProjectionCommitState(ProjectionStatusFromOutbox(events), null);
     }
+
+    private string ProjectionStatusFromOutbox(IReadOnlyList<WorkspaceEvent> events)
+    {
+        var eventIds = events.Select(item => item.EventId).ToHashSet(StringComparer.OrdinalIgnoreCase);
+        var outboxMessages = store.GetOutboxMessages().Where(item => eventIds.Contains(item.EventId)).ToArray();
+        return outboxMessages.Any(item => item.DeadLetteredAtUtc is not null || !string.IsNullOrWhiteSpace(item.LastError))
+            ? "failed"
+            : "pending";
+    }
+
+    private static IReadOnlyDictionary<string, object> ClientInstructionFor(string projectionStatus) =>
+        new Dictionary<string, object>
+        {
+            ["disableRetry"] = true,
+            ["refreshProjection"] = projectionStatus is "projected" or "pending",
+            ["observeOutbox"] = projectionStatus == "failed"
+        };
+
+    private static string UserMessageFor(string projectionStatus, string? language) =>
+        language?.Equals("ru-RU", StringComparison.OrdinalIgnoreCase) == true
+            ? projectionStatus switch
+            {
+                "projected" => "Отправлено успешно.",
+                "failed" => "Отправлено успешно; синхронизация представления не удалась, система зафиксировала это для обработки.",
+                _ => "Отправлено успешно, представление синхронизируется."
+            }
+            : projectionStatus switch
+            {
+                "projected" => "已提交成功。",
+                "failed" => "已提交成功，视图同步失败，系统已记录并会继续处理。",
+                _ => "已提交成功，视图同步中。"
+            };
+
+    private static string WorkItemIdFor(string workspaceId, string cardId) =>
+        $"{workspaceId}:{cardId}";
+
+    private sealed record ProjectionCommitState(string Status, ProjectionEnvelope? Envelope);
 
     private static IReadOnlyDictionary<string, string> NormalizeFieldValues(
         CardProjection card,
@@ -332,6 +414,19 @@ public sealed class ActionRuntimeService
             ? RuntimeFieldAliases.Value(request.FieldValues, methodKey, "cash")
             : "cash";
         return !method.Equals("cash", StringComparison.OrdinalIgnoreCase);
+    }
+
+    private RuntimeDeviceSession? ResolveDeviceSession(ConfirmCardRequest request)
+    {
+        var deviceId = request.DeviceId;
+        if (string.IsNullOrWhiteSpace(deviceId) && request.FieldValues is not null)
+        {
+            deviceId = RuntimeFieldAliases.Value(request.FieldValues, "deviceId", string.Empty);
+        }
+
+        return string.IsNullOrWhiteSpace(deviceId)
+            ? null
+            : store.FindDeviceSession(deviceId);
     }
 
     private static ConfirmResult? ValidateLedgerAggregateRef(string workspaceId, string cardId, ConfirmCardRequest request)

@@ -1,0 +1,32 @@
+{
+  "name": "reconciliation-correction-center",
+  "shadow_table": "shadow_runtime.domain_events",
+  "active_table": "public.audit_events",
+  "count_mismatch_grade": "yellow",
+  "legacy_ref": "legacy finance reconciliation and ledger correction workflow",
+  "compare_scopes": [
+    "bank_import",
+    "match_candidate",
+    "manual_match",
+    "mismatch_case",
+    "correction_request",
+    "correction_apply",
+    "balance_rebuild"
+  ],
+  "green_rules": [
+    "import counts match expected",
+    "no PaymentConfirmed created by import",
+    "correction applies append-only"
+  ],
+  "yellow_rules": [
+    "display-only mismatch",
+    "candidate score mismatch only"
+  ],
+  "red_rules": [
+    "bank import created business fact",
+    "correction edited old entry",
+    "high-risk correction without approval",
+    "correction caused balance rebuild mismatch",
+    "shadow consumed by official projector"
+  ]
+}

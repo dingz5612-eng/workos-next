@@ -1,0 +1,61 @@
+{
+  "rollback_instruction_id": "rollback-mr-08-runtime-mode",
+  "release_id": "release-mr-08",
+  "instruction_type": "rollback",
+  "rollback_kind": "runtime_mode",
+  "title": "Route CheckoutSettlement / ServiceTask / BlockerEngine active or pilot back to legacy",
+  "scope": {
+    "slices": [
+      "CheckoutSettlement",
+      "ServiceTask",
+      "BlockerEngine"
+    ],
+    "feature_flags": [
+      "checkout.start.enabled",
+      "checkout.room_inspection.enabled",
+      "checkout.damage_assessment.enabled",
+      "service_task.enabled",
+      "service_task.verify.enabled",
+      "blocker_engine.enabled",
+      "case_closure_policy.enabled",
+      "claim_sla_lite.enabled"
+    ],
+    "target_runtime_mode": "legacy",
+    "forbidden_actions": [
+      "delete CheckoutCaseClosed event",
+      "delete BedReleased event",
+      "SQL update bed status"
+    ]
+  },
+  "allowed_before_status": [
+    "shadow",
+    "pilot",
+    "active",
+    "paused"
+  ],
+  "allowed_after_status": [
+    "rollback",
+    "paused"
+  ],
+  "steps": [
+    "Set SliceCutoverState.runtime_mode to rollback for CheckoutSettlement, ServiceTask, and BlockerEngine.",
+    "Disable checkout/service/blocker feature flags or narrow them to zero percent.",
+    "Route new checkout/service/blocker actions through the legacy compatibility path.",
+    "Keep all already-written DomainEvent, WorkItem, blocker, and resource release facts append-only.",
+    "Create manual resolution WorkItems for open blockers that cannot be automatically resolved after rollback."
+  ],
+  "validation_steps": [
+    "Run api-boundary-check and confirm no /api/checkout/close endpoint exists.",
+    "Run invariant-runner for MR-08 P0 invariants.",
+    "Confirm ServiceTask does not directly write BedStatus.",
+    "Confirm CheckoutSettlement does not directly write DepositEntry.",
+    "Confirm Manager Lite still shows timeline, blockers, overdue WorkItems, and closure checks."
+  ],
+  "owner": "release",
+  "risk_level": "P0",
+  "requires_business_approval": true,
+  "requires_architecture_approval": true,
+  "requires_finance_approval": true,
+  "created_at_utc": "2026-05-29T23:20:00Z",
+  "updated_at_utc": "2026-05-29T23:20:00Z"
+}

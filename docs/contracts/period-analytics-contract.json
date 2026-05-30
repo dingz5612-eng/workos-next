@@ -9,9 +9,48 @@
       "Accommodation.PeriodFinanceReviewed",
       "Accommodation.PeriodOperationsDiagnosed",
       "Accommodation.PeriodActionPlanCommitted",
+      "Accommodation.PeriodActionPlanWorkItemCreated",
       "Accommodation.PeriodActionPlanCompleted"
     ],
     "rule": "After a period snapshot is frozen, late source events do not mutate the frozen values. They append adjustment events that are visible in the next review or an explicit reopened review."
+  },
+  "actionPlanWorkItems": {
+    "commitEvent": "Accommodation.PeriodActionPlanCommitted",
+    "workItemCreatedEvent": "Accommodation.PeriodActionPlanWorkItemCreated",
+    "completeEvent": "Accommodation.PeriodActionPlanCompleted",
+    "workItemType": "periodActionPlanExecution",
+    "requiredFields": ["ownerRole", "dueAtUtc", "priority"],
+    "rules": [
+      "PeriodActionPlanCommitted creates executable WorkItem intent and does not mark the action plan completed.",
+      "PeriodActionPlanCompleted is a later event and must reference the action plan WorkItem.",
+      "Action plans are structured governance work and must not be stored as free-text notes only."
+    ]
+  },
+  "periodClose": {
+    "closeEvent": "Accommodation.PeriodReviewClosed",
+    "requiredConditions": [
+      "scopeConfirmed",
+      "metricsReviewed",
+      "financeReviewed",
+      "operationsDiagnosed",
+      "actionPlanCommittedOrSkipped",
+      "noBlockingInvariantViolation",
+      "businessSignoffCompleted"
+    ],
+    "rules": [
+      "PeriodReviewClosed freezes final metric, finance, and operation snapshot source high-watermarks.",
+      "PeriodReviewClosed records source_projection_versions, source_ledger_versions, and source_lens_versions on the frozen snapshots.",
+      "After PeriodReviewClosed, snapshot rows are append-only and must not be edited for late changes."
+    ]
+  },
+  "lateAdjustments": {
+    "table": "period_late_adjustments",
+    "requiredFields": ["reason", "createdBy", "body.before", "body.after"],
+    "rules": [
+      "LateAdjustment can only append after PeriodReviewClosed.",
+      "LateAdjustment must not overwrite the original frozen snapshot.",
+      "LateAdjustment must be visible from Period detail and RiskCommandLens."
+    ]
   },
   "zeroDenominator": {
     "numericResult": "0",

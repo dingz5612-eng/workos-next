@@ -10,6 +10,7 @@ build/
 .flutter-plugins
 .flutter-plugins-dependencies
 coverage/
+.tmp/
 *.user
 *.suo
 *.log

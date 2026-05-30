@@ -270,7 +270,7 @@
   left: 50%;
   bottom: 12px;
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   gap: 5px;
   width: min(calc(100% - 24px), 406px);
   padding: 7px;

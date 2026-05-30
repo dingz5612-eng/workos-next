@@ -50,6 +50,11 @@ jobs:
       - name: Build mobile
         run: npm --prefix apps/mobile run build
 
+      - name: Validate no production fake fallback
+        run: |
+          node scripts/check-no-production-fake-fallback.mjs --self-test
+          node scripts/check-no-production-fake-fallback.mjs --dist
+
       - name: Test mobile
         run: npm --prefix apps/mobile run test
 
@@ -84,6 +89,11 @@ jobs:
         env:
           ConnectionStrings__WorkOSRuntime: Host=localhost;Port=54329;Database=workosnext_test;Username=workosnext;Password=workosnext_dev
         run: node scripts/validate-runtime-api.mjs
+
+      - name: Validate API boundaries
+        run: |
+          node scripts/check-api-boundaries.mjs --self-test
+          node scripts/check-api-boundaries.mjs
 
       - name: Architecture guard
         shell: pwsh

@@ -4,4 +4,8 @@
 @import "./styles/workspace.css";
 @import "./styles/coach.css";
 @import "./styles/operation.css";
+@import "./styles/release-control.css";
+@import "./styles/checkout-service.css";
+@import "./styles/finance-reconciliation.css";
+@import "./styles/pc-governance.css";
 @import "./styles/responsive.css";

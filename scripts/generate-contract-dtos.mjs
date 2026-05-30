@@ -156,9 +156,29 @@ export type ConfirmCardRequest = {
   submissionId: string;
   cardInstanceId: string;
   aggregateRef?: string | null;
+  deviceId?: string | null;
   fieldValues: Record<string, string>;
   evidenceIds: string[];
   requestId?: string | null;
+};
+
+export type ConfirmCardResponse = {
+  confirmed: true;
+  commitStatus: "committed";
+  projectionStatus: "projected" | "pending" | "failed";
+  caseId: string;
+  workItemId: string;
+  submissionId: string;
+  resultEventIds: string[];
+  userMessage: string;
+  clientInstruction: {
+    disableRetry: boolean;
+    refreshProjection: boolean;
+    observeOutbox: boolean;
+    [key: string]: unknown;
+  };
+  events?: WorkspaceEvent[];
+  projection?: ProjectionEnvelope | null;
 };
 
 export type PrepareCardRequest = {
@@ -188,6 +208,102 @@ export type EvidenceDecisionRequest = {
   reason?: string;
 };
 
+export type RuntimeDeviceSessionRequest = {
+  tenantId: string;
+  actorId: string;
+  deviceId: string;
+  deviceTrustStatus: "unknown" | "trusted" | "untrusted" | "revoked";
+  userAgentHash: string;
+};
+
+export type EvidenceSignedUrlResponse = {
+  evidenceId: string;
+  attachmentId: string;
+  url: string;
+  expiresAtUtc: string;
+  auditEventId: string;
+};
+
+export type GovernanceExportRequest = {
+  exportType: string;
+  actorId: string;
+  actorRole: string;
+  actorCapabilities?: string[];
+  deviceId: string;
+  deviceTrustStatus: "unknown" | "trusted" | "untrusted" | "revoked";
+  surface: string;
+  reason: string;
+  nowUtc?: string | null;
+};
+
+export type RuntimeProductionMetrics = {
+  confirmLatencyP95Ms: number;
+  confirmLatencySampleCount: number;
+  confirmFailureCount: number;
+  idempotencyConflictCount: number;
+  forbiddenCount403: number;
+  conflictCount409: number;
+  validationCount422: number;
+  handlerFailureCount: number;
+};
+
+export type OutboxProductionMetrics = {
+  outboxLagSeconds: number;
+  deadLetterCount: number;
+  replayCount: number;
+};
+
+export type ProjectionProductionMetrics = {
+  projectionLagSeconds: number;
+  rebuildCount: number;
+  staleLensCount: number;
+};
+
+export type MobileProductionMetrics = {
+  workItemBundleP95Ms: number;
+  workItemBundleSampleCount: number;
+  uploadFailureCount: number;
+  submitRetryCount: number;
+  draftRecoveryCount: number;
+};
+
+export type MoneyProductionMetrics = {
+  paymentConfirmWithoutEvidenceViolations: number;
+  allocationOverAvailableViolations: number;
+  stayBalanceMismatchCount: number;
+};
+
+export type DepositProductionMetrics = {
+  availableRefundNegativeCount: number;
+  refundFailedDoubleCount: number;
+  heldAmountNegativeCount: number;
+};
+
+export type CheckoutProductionMetrics = {
+  openBlockers: number;
+  duplicateBlockers: number;
+  fakeCloseAttempts: number;
+};
+
+export type ControlPlaneProductionMetrics = {
+  gateResultStatus: string;
+  redShadowReports: number;
+  blockingInvariantFailures: number;
+  releaseState: string;
+};
+
+export type ProductionObservabilityMetrics = {
+  runtime: RuntimeProductionMetrics;
+  outbox: OutboxProductionMetrics;
+  projection: ProjectionProductionMetrics;
+  mobile: MobileProductionMetrics;
+  money: MoneyProductionMetrics;
+  deposit: DepositProductionMetrics;
+  checkout: CheckoutProductionMetrics;
+  controlPlane: ControlPlaneProductionMetrics;
+  generatedAtUtc: string;
+};
+
 export type RuntimeObservation = {
   service: string;
   version: string;
@@ -207,6 +323,7 @@ export type RuntimeObservation = {
   schemaVersion: string;
   activeArchitectureExceptionCount: number;
   activeArchitectureExceptions: string[];
+  productionMetrics: ProductionObservabilityMetrics;
 };
 
 `;
@@ -216,6 +333,9 @@ const dtoContent = `${content.trimEnd()}\n`;
 const apiPathDescriptors = [
   { key: "health", path: "/health" },
   { key: "login", path: "/api/auth/login" },
+  { key: "revokeSession", path: "/api/auth/sessions/{token}/revoke" },
+  { key: "deviceSessions", path: "/api/device-sessions" },
+  { key: "revokeDeviceSession", path: "/api/device-sessions/{deviceId}/revoke" },
   { key: "workspaces", path: "/api/workspaces" },
   { key: "workspace", path: "/api/workspaces/{workspaceId}" },
   { key: "bootstrap", path: "/api/bootstrap" },
@@ -226,11 +346,19 @@ const apiPathDescriptors = [
   { key: "lensSearch", path: "/api/lenses/search" },
   { key: "learningCatalog", path: "/api/lenses/learning-catalog" },
   { key: "accommodationLens", path: "/api/lenses/accommodation/{lensId}" },
+  { key: "controlPlaneReleases", path: "/api/control-plane/releases" },
+  { key: "controlPlaneRelease", path: "/api/control-plane/releases/{releaseId}" },
+  { key: "controlPlaneGateResult", path: "/api/control-plane/gate-results/{gateResultId}" },
+  { key: "controlPlaneShadowCompareReport", path: "/api/control-plane/shadow-compare-reports/{id}" },
+  { key: "controlPlaneInvariantChecks", path: "/api/control-plane/invariant-checks" },
+  { key: "controlPlaneRollbackInstruction", path: "/api/control-plane/rollback-instructions/{id}" },
   { key: "evidence", path: "/api/evidence" },
   { key: "evidenceDrafts", path: "/api/evidence/drafts" },
   { key: "evidenceAttachments", path: "/api/evidence/{evidenceId}/attachments" },
   { key: "evidenceVerify", path: "/api/evidence/{evidenceId}/verify" },
   { key: "evidenceReject", path: "/api/evidence/{evidenceId}/reject" },
+  { key: "evidenceSignedUrl", path: "/api/evidence/{evidenceId}/signed-url" },
+  { key: "pcGovernanceExport", path: "/api/pc-governance/exports/{exportType}" },
   { key: "prepareCard", path: "/api/workspaces/{workspaceId}/cards/{cardId}/prepare" },
   { key: "confirmCard", path: "/api/workspaces/{workspaceId}/cards/{cardId}/confirm" },
   { key: "workspaceEvents", path: "/api/workspaces/{workspaceId}/events" },

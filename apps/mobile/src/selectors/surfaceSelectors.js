@@ -1,6 +1,4 @@
-import { tasks as demoQueue } from "../demoQueue.js";
 import { normalizeQuery } from "../runtime/runtimeStore.js";
-import { intentWorkspaces } from "../workspaceProjections.js";
 
 const activeStatuses = new Set(["ready", "blocked", "inProgress"]);
 const ledgerAmountFields = new Set([
@@ -16,7 +14,7 @@ const ledgerAmountFields = new Set([
 ]);
 
 export function selectRuntimeWorkspaces(state) {
-  return state.runtimeStore?.workspaces?.length ? state.runtimeStore.workspaces : intentWorkspaces;
+  return state.runtimeStore?.workspaces?.length ? state.runtimeStore.workspaces : [];
 }
 
 export function selectHomeSurface(state) {
@@ -36,11 +34,15 @@ export function selectWorkbenchQueue(state) {
   const byId = new Map(workspaces.map((workspace) => [workspace.id, workspace]));
   const runtimeQueue = state.runtimeStore?.workQueue || [];
   if (state.apiStatus === "offline") {
-    return offlineDemoQueue();
+    return runtimeQueue.length ? materializeQueue(runtimeQueue, byId, state) : [];
   }
   const queue = runtimeQueue.length
     ? runtimeQueue
     : workspaces.map((workspace) => projectionQueueItem(workspace));
+  return materializeQueue(queue, byId, state);
+}
+
+function materializeQueue(queue, byId, state) {
   return queue
     .map((item) => {
       const workspace = byId.get(item.workspaceId);
@@ -51,7 +53,7 @@ export function selectWorkbenchQueue(state) {
         card,
         badges: item.badges?.length ? item.badges : badgesFor(card),
         priority: item.priority ?? priorityFor(card?.status),
-        source: item.source || state.runtimeStore?.queueSource || "projection-fallback"
+        source: item.source || state.runtimeStore?.queueSource || "runtime-api"
       };
     })
     .filter((item) => item.workspace && item.card);
@@ -159,16 +161,6 @@ function projectionQueueItem(workspace) {
     nextActionId: `${card?.id || "workspace"}.prepare`,
     source: "projection-fallback"
   };
-}
-
-function offlineDemoQueue() {
-  return demoQueue.map((item) => ({
-    ...item,
-    queueItemId: `offline-${item.id}`,
-    workspaceId: "",
-    cardId: "",
-    source: "offline-demo-fallback"
-  }));
 }
 
 function learningCard(workspace, entry) {

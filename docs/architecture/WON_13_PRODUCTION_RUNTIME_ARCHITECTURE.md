@@ -89,16 +89,32 @@ GET /api/workspaces/{workspaceId}
 
 The Core Projection API returns the center projection.
 
-### Action Runtime API
+### Operations API
+
+```http
+POST /api/operations/cases
+GET /api/operations/cases/{caseId}
+POST /api/operations/work-items
+GET /api/operations/work-items
+GET /api/operations/work-items/{workItemId}
+POST /api/operations/work-items/{workItemId}/prepare
+POST /api/operations/work-items/{workItemId}/confirm
+```
+
+Every primary business write must go through Operations work-item confirm.
+Confirm requires `X-WorkOS-Actor-Token` and an idempotency key. The actor role is
+derived from the session token.
+
+### Compatibility Action Runtime API
 
 ```http
 POST /api/workspaces/{workspaceId}/cards/{cardId}/prepare
 POST /api/workspaces/{workspaceId}/cards/{cardId}/confirm
 ```
 
-Every business write must go through prepare and confirm.
-Confirm requires `X-WorkOS-Actor-Token` and an idempotency key. The actor role is
-derived from the session token.
+The Workspace/Card API is compatibility-only. Existing clients may use it while
+the Operations API is adopted, but new product work must model business writes
+through Operations Confirm.
 
 Do not create direct write APIs such as:
 
@@ -108,7 +124,8 @@ Do not create direct write APIs such as:
 /api/room/activate
 ```
 
-Domain actions are card confirmations, not page-specific endpoints.
+Domain actions are Operations confirmations, not page-specific endpoints.
+Mobile BFF routes must not write business facts.
 
 ### Lens APIs
 

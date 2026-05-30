@@ -1,0 +1,164 @@
+.release-control {
+  display: grid;
+  gap: 12px;
+  padding: 0 16px 96px;
+}
+
+.release-control > header {
+  display: grid;
+  gap: 4px;
+  padding: 18px 0 4px;
+}
+
+.release-control > header span {
+  color: #52677b;
+  font-size: 12px;
+  font-weight: 850;
+}
+
+.release-control > header h1 {
+  color: #102033;
+  font-size: 24px;
+}
+
+.release-grid {
+  display: grid;
+  gap: 10px;
+}
+
+.release-panel {
+  display: grid;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid #d9e7ee;
+  border-radius: 8px;
+  background: #f8fbfb;
+}
+
+.release-panel h2 {
+  color: #102033;
+  font-size: 15px;
+}
+
+.release-wide {
+  min-width: 0;
+}
+
+.release-panel dl {
+  display: grid;
+  grid-template-columns: minmax(120px, 42%) 1fr;
+  gap: 8px;
+  margin: 0;
+  align-items: center;
+}
+
+.release-panel dt {
+  color: #52677b;
+  font-size: 11px;
+  font-weight: 850;
+}
+
+.release-panel dd {
+  min-width: 0;
+  margin: 0;
+  overflow-wrap: anywhere;
+  color: #102033;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.release-panel table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.release-panel th,
+.release-panel td {
+  padding: 7px 6px;
+  border-bottom: 1px solid #e3edf1;
+  overflow-wrap: anywhere;
+  text-align: left;
+  vertical-align: top;
+  color: #102033;
+  font-size: 12px;
+}
+
+.release-panel th {
+  color: #52677b;
+  font-size: 11px;
+  font-weight: 850;
+}
+
+.release-panel tr[data-selected-release="true"] td {
+  background: #edf6f6;
+}
+
+.release-badges,
+.release-counts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.release-badges span,
+.release-counts span {
+  padding: 5px 8px;
+  border-radius: 8px;
+  color: #102033;
+  background: #edf6f6;
+  font-size: 12px;
+  font-weight: 850;
+}
+
+.grade-green dd,
+.release-badges .grade-green {
+  color: #096444;
+  background: #e4f8ef;
+}
+
+.grade-yellow dd,
+.release-badges .grade-yellow {
+  color: #7b4a00;
+  background: #fff1dc;
+}
+
+.grade-red dd,
+.status-blocked dd,
+.status-failed dd,
+.release-badges .grade-red {
+  color: #8a1f1b;
+  background: #ffe5e0;
+}
+
+.status-passed dd {
+  color: #096444;
+  background: #e4f8ef;
+}
+
+.status-warning dd,
+.status-not_run dd {
+  color: #7b4a00;
+  background: #fff1dc;
+}
+
+.release-row {
+  display: grid;
+  gap: 3px;
+  padding: 8px;
+  border: 1px solid #e3edf1;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.release-row strong {
+  overflow-wrap: anywhere;
+  color: #102033;
+  font-size: 12px;
+}
+
+.release-row span {
+  color: #52677b;
+  font-size: 11px;
+  font-weight: 800;
+}

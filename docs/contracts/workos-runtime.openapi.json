@@ -30,6 +30,44 @@
         }
       }
     },
+    "/api/auth/sessions/{token}/revoke": {
+      "post": {
+        "parameters": [
+          { "name": "token", "in": "path", "required": true, "schema": { "type": "string" } },
+          { "name": "X-WorkOS-Actor-Id", "in": "header", "required": false, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Runtime session revoked" }
+        }
+      }
+    },
+    "/api/device-sessions": {
+      "post": {
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/RuntimeDeviceSessionRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Device session registered" }
+        }
+      }
+    },
+    "/api/device-sessions/{deviceId}/revoke": {
+      "post": {
+        "parameters": [
+          { "name": "deviceId", "in": "path", "required": true, "schema": { "type": "string" } },
+          { "name": "X-WorkOS-Actor-Id", "in": "header", "required": false, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Device revoked" },
+          "404": { "description": "Device session not found" }
+        }
+      }
+    },
     "/api/workspaces": {
       "get": {
         "responses": {
@@ -130,6 +168,67 @@
         }
       }
     },
+    "/api/control-plane/releases": {
+      "get": {
+        "responses": {
+          "200": { "description": "Release Control Center release summaries" }
+        }
+      }
+    },
+    "/api/control-plane/releases/{releaseId}": {
+      "get": {
+        "parameters": [
+          { "name": "releaseId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Release Control Center release detail" },
+          "404": { "description": "Release manifest not found" }
+        }
+      }
+    },
+    "/api/control-plane/gate-results/{gateResultId}": {
+      "get": {
+        "parameters": [
+          { "name": "gateResultId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "GateResult detail" },
+          "404": { "description": "GateResult not found" }
+        }
+      }
+    },
+    "/api/control-plane/shadow-compare-reports/{id}": {
+      "get": {
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Shadow compare report detail" },
+          "404": { "description": "Shadow compare report not found" }
+        }
+      }
+    },
+    "/api/control-plane/invariant-checks": {
+      "get": {
+        "parameters": [
+          { "name": "releaseId", "in": "query", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Runtime invariant checks for a release" }
+        }
+      }
+    },
+    "/api/control-plane/rollback-instructions/{id}": {
+      "get": {
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Rollback or compensation instruction detail" },
+          "404": { "description": "Rollback instruction not found" }
+        }
+      }
+    },
     "/api/evidence": {
       "get": {
         "parameters": [
@@ -209,6 +308,27 @@
         }
       }
     },
+    "/api/evidence/{evidenceId}/signed-url": {
+      "get": {
+        "parameters": [
+          { "name": "evidenceId", "in": "path", "required": true, "schema": { "type": "string" } },
+          { "name": "actorId", "in": "query", "required": true, "schema": { "type": "string" } },
+          { "name": "deviceId", "in": "query", "required": true, "schema": { "type": "string" } },
+          { "name": "ttlSeconds", "in": "query", "required": false, "schema": { "type": "integer" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Audited expiring signed URL for evidence attachment",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/EvidenceSignedUrlResponse" }
+              }
+            }
+          },
+          "403": { "description": "Evidence access forbidden" }
+        }
+      }
+    },
     "/api/workspaces/{workspaceId}/cards/{cardId}/prepare": {
       "post": {
         "parameters": [
@@ -229,6 +349,25 @@
         }
       }
     },
+    "/api/pc-governance/exports/{exportType}": {
+      "post": {
+        "parameters": [
+          { "name": "exportType", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/GovernanceExportRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Audited export accepted" },
+          "403": { "description": "Export blocked by capability, reason, or trusted-device policy" }
+        }
+      }
+    },
     "/api/workspaces/{workspaceId}/cards/{cardId}/confirm": {
       "post": {
         "parameters": [
@@ -246,14 +385,20 @@
           }
         },
         "responses": {
-          "200": { "description": "Confirmed event" },
+          "200": {
+            "description": "Business facts committed; projection may be projected, pending, or failed independently",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ConfirmCardResponse" }
+              }
+            }
+          },
           "400": { "description": "Malformed confirm request" },
           "401": { "description": "Actor session missing or expired" },
           "403": { "description": "AI, role, or slice capability forbids confirmation" },
-          "409": { "description": "Duplicate or conflicting idempotency key" },
+          "409": { "description": "Idempotency conflict" },
           "422": { "description": "Business policy violation" },
-          "404": { "description": "Card not found" },
-          "500": { "description": "Confirmed event could not be projected before response" }
+          "404": { "description": "Card not found" }
         }
       }
     },
@@ -333,6 +478,17 @@
           "password": { "type": "string" }
         }
       },
+      "RuntimeDeviceSessionRequest": {
+        "type": "object",
+        "required": ["tenantId", "actorId", "deviceId", "deviceTrustStatus", "userAgentHash"],
+        "properties": {
+          "tenantId": { "type": "string" },
+          "actorId": { "type": "string" },
+          "deviceId": { "type": "string" },
+          "deviceTrustStatus": { "type": "string", "enum": ["unknown", "trusted", "untrusted", "revoked"] },
+          "userAgentHash": { "type": "string" }
+        }
+      },
       "ConfirmCardRequest": {
         "type": "object",
         "required": ["language", "idempotencyKey", "submissionId", "cardInstanceId", "fieldValues", "evidenceIds"],
@@ -350,7 +506,45 @@
             "type": "array",
             "items": { "type": "string" }
           },
-          "requestId": { "type": ["string", "null"] }
+          "requestId": { "type": ["string", "null"] },
+          "deviceId": { "type": ["string", "null"] }
+        }
+      },
+      "ConfirmCardResponse": {
+        "type": "object",
+        "required": ["confirmed", "commitStatus", "projectionStatus", "caseId", "workItemId", "submissionId", "resultEventIds", "userMessage", "clientInstruction"],
+        "properties": {
+          "confirmed": { "type": "boolean", "const": true },
+          "commitStatus": { "type": "string", "enum": ["committed"] },
+          "projectionStatus": { "type": "string", "enum": ["projected", "pending", "failed"] },
+          "caseId": { "type": "string" },
+          "workItemId": { "type": "string" },
+          "submissionId": { "type": "string" },
+          "resultEventIds": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "userMessage": { "type": "string" },
+          "clientInstruction": {
+            "type": "object",
+            "required": ["disableRetry", "refreshProjection", "observeOutbox"],
+            "properties": {
+              "disableRetry": { "type": "boolean" },
+              "refreshProjection": { "type": "boolean" },
+              "observeOutbox": { "type": "boolean" }
+            },
+            "additionalProperties": true
+          },
+          "events": {
+            "type": "array",
+            "items": { "type": "object", "additionalProperties": true }
+          },
+          "projection": {
+            "anyOf": [
+              { "type": "object", "additionalProperties": true },
+              { "type": "null" }
+            ]
+          }
         }
       },
       "PrepareCardRequest": {
@@ -391,9 +585,38 @@
           "reason": { "type": "string" }
         }
       },
+      "EvidenceSignedUrlResponse": {
+        "type": "object",
+        "required": ["evidenceId", "attachmentId", "url", "expiresAtUtc", "auditEventId"],
+        "properties": {
+          "evidenceId": { "type": "string" },
+          "attachmentId": { "type": "string" },
+          "url": { "type": "string" },
+          "expiresAtUtc": { "type": "string", "format": "date-time" },
+          "auditEventId": { "type": "string" }
+        }
+      },
+      "GovernanceExportRequest": {
+        "type": "object",
+        "required": ["exportType", "actorId", "actorRole", "deviceId", "deviceTrustStatus", "surface", "reason"],
+        "properties": {
+          "exportType": { "type": "string" },
+          "actorId": { "type": "string" },
+          "actorRole": { "type": "string" },
+          "actorCapabilities": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "deviceId": { "type": "string" },
+          "deviceTrustStatus": { "type": "string", "enum": ["unknown", "trusted", "untrusted", "revoked"] },
+          "surface": { "type": "string" },
+          "reason": { "type": "string" },
+          "nowUtc": { "type": ["string", "null"], "format": "date-time" }
+        }
+      },
       "RuntimeObservation": {
         "type": "object",
-        "required": ["service", "version", "persistence", "workspaceCount", "cardCount", "auditEventCount", "outboxCount", "pendingOutboxCount", "deadLetterOutboxCount", "behaviorEventCount", "projectionLagSeconds", "failedConfirmReasonDistribution", "surfaceCoverageMissingCount", "ledgerInvariantViolationCount", "schemaVersion", "activeArchitectureExceptionCount", "activeArchitectureExceptions"],
+        "required": ["service", "version", "persistence", "workspaceCount", "cardCount", "auditEventCount", "outboxCount", "pendingOutboxCount", "deadLetterOutboxCount", "behaviorEventCount", "projectionLagSeconds", "failedConfirmReasonDistribution", "surfaceCoverageMissingCount", "ledgerInvariantViolationCount", "schemaVersion", "activeArchitectureExceptionCount", "activeArchitectureExceptions", "productionMetrics"],
         "properties": {
           "service": { "type": "string" },
           "version": { "type": "string" },
@@ -418,7 +641,103 @@
           "activeArchitectureExceptions": {
             "type": "array",
             "items": { "type": "string" }
-          }
+          },
+          "productionMetrics": { "$ref": "#/components/schemas/ProductionObservabilityMetrics" }
+        }
+      },
+      "ProductionObservabilityMetrics": {
+        "type": "object",
+        "required": ["runtime", "outbox", "projection", "mobile", "money", "deposit", "checkout", "controlPlane", "generatedAtUtc"],
+        "properties": {
+          "runtime": { "$ref": "#/components/schemas/RuntimeProductionMetrics" },
+          "outbox": { "$ref": "#/components/schemas/OutboxProductionMetrics" },
+          "projection": { "$ref": "#/components/schemas/ProjectionProductionMetrics" },
+          "mobile": { "$ref": "#/components/schemas/MobileProductionMetrics" },
+          "money": { "$ref": "#/components/schemas/MoneyProductionMetrics" },
+          "deposit": { "$ref": "#/components/schemas/DepositProductionMetrics" },
+          "checkout": { "$ref": "#/components/schemas/CheckoutProductionMetrics" },
+          "controlPlane": { "$ref": "#/components/schemas/ControlPlaneProductionMetrics" },
+          "generatedAtUtc": { "type": "string", "format": "date-time" }
+        }
+      },
+      "RuntimeProductionMetrics": {
+        "type": "object",
+        "required": ["confirmLatencyP95Ms", "confirmLatencySampleCount", "confirmFailureCount", "idempotencyConflictCount", "forbiddenCount403", "conflictCount409", "validationCount422", "handlerFailureCount"],
+        "properties": {
+          "confirmLatencyP95Ms": { "type": "integer" },
+          "confirmLatencySampleCount": { "type": "integer" },
+          "confirmFailureCount": { "type": "integer" },
+          "idempotencyConflictCount": { "type": "integer" },
+          "forbiddenCount403": { "type": "integer" },
+          "conflictCount409": { "type": "integer" },
+          "validationCount422": { "type": "integer" },
+          "handlerFailureCount": { "type": "integer" }
+        }
+      },
+      "OutboxProductionMetrics": {
+        "type": "object",
+        "required": ["outboxLagSeconds", "deadLetterCount", "replayCount"],
+        "properties": {
+          "outboxLagSeconds": { "type": "integer" },
+          "deadLetterCount": { "type": "integer" },
+          "replayCount": { "type": "integer" }
+        }
+      },
+      "ProjectionProductionMetrics": {
+        "type": "object",
+        "required": ["projectionLagSeconds", "rebuildCount", "staleLensCount"],
+        "properties": {
+          "projectionLagSeconds": { "type": "integer" },
+          "rebuildCount": { "type": "integer" },
+          "staleLensCount": { "type": "integer" }
+        }
+      },
+      "MobileProductionMetrics": {
+        "type": "object",
+        "required": ["workItemBundleP95Ms", "workItemBundleSampleCount", "uploadFailureCount", "submitRetryCount", "draftRecoveryCount"],
+        "properties": {
+          "workItemBundleP95Ms": { "type": "integer" },
+          "workItemBundleSampleCount": { "type": "integer" },
+          "uploadFailureCount": { "type": "integer" },
+          "submitRetryCount": { "type": "integer" },
+          "draftRecoveryCount": { "type": "integer" }
+        }
+      },
+      "MoneyProductionMetrics": {
+        "type": "object",
+        "required": ["paymentConfirmWithoutEvidenceViolations", "allocationOverAvailableViolations", "stayBalanceMismatchCount"],
+        "properties": {
+          "paymentConfirmWithoutEvidenceViolations": { "type": "integer" },
+          "allocationOverAvailableViolations": { "type": "integer" },
+          "stayBalanceMismatchCount": { "type": "integer" }
+        }
+      },
+      "DepositProductionMetrics": {
+        "type": "object",
+        "required": ["availableRefundNegativeCount", "refundFailedDoubleCount", "heldAmountNegativeCount"],
+        "properties": {
+          "availableRefundNegativeCount": { "type": "integer" },
+          "refundFailedDoubleCount": { "type": "integer" },
+          "heldAmountNegativeCount": { "type": "integer" }
+        }
+      },
+      "CheckoutProductionMetrics": {
+        "type": "object",
+        "required": ["openBlockers", "duplicateBlockers", "fakeCloseAttempts"],
+        "properties": {
+          "openBlockers": { "type": "integer" },
+          "duplicateBlockers": { "type": "integer" },
+          "fakeCloseAttempts": { "type": "integer" }
+        }
+      },
+      "ControlPlaneProductionMetrics": {
+        "type": "object",
+        "required": ["gateResultStatus", "redShadowReports", "blockingInvariantFailures", "releaseState"],
+        "properties": {
+          "gateResultStatus": { "type": "string" },
+          "redShadowReports": { "type": "integer" },
+          "blockingInvariantFailures": { "type": "integer" },
+          "releaseState": { "type": "string" }
         }
       },
       "BehaviorEventRequest": {

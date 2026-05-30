@@ -1,0 +1,105 @@
+[
+  {
+    "shadow_compare_report_id": "scr-v54-checkout-service-blocker-engine",
+    "release_id": "release-mr-08",
+    "tenant_id": "test-tenant",
+    "slice_id": "CheckoutSettlement",
+    "compare_scope": {
+      "name": "checkout-service-blocker-engine",
+      "type": "count",
+      "compare_scopes": [
+        "checkout_timeline",
+        "service_task_queue",
+        "case_blockers",
+        "closure_checks"
+      ]
+    },
+    "source_legacy_ref": "legacy checkout/service/blocker work queue",
+    "source_active_ref": "public.audit_events",
+    "source_shadow_ref": "shadow_runtime.domain_events",
+    "compared_at_utc": "2026-05-29T23:18:49.151763Z",
+    "grade": "green",
+    "total_compared": 0,
+    "matched_count": 0,
+    "mismatch_count": 0,
+    "missing_in_shadow_count": 0,
+    "extra_in_shadow_count": 0,
+    "mismatch_examples": [],
+    "summary": {
+      "status": "skeleton_green",
+      "source": "docs/v5.4/mr-08-shadow-compare-report.json"
+    },
+    "generated_by": "shadow-compare-runner",
+    "ci_run_id": "local-mr-08"
+  },
+  {
+    "shadow_compare_report_id": "scr-v54-reconciliation-correction-center",
+    "release_id": "release-mr-09",
+    "tenant_id": "test-tenant",
+    "slice_id": "Reconciliation",
+    "compare_scope": {
+      "name": "reconciliation-correction-center",
+      "type": "count",
+      "compare_scopes": [
+        "bank_import",
+        "match_candidate",
+        "manual_match",
+        "mismatch_case",
+        "correction_request",
+        "correction_apply",
+        "balance_rebuild"
+      ]
+    },
+    "source_legacy_ref": "legacy finance reconciliation and ledger correction workflow",
+    "source_active_ref": "public.audit_events",
+    "source_shadow_ref": "shadow_runtime.domain_events",
+    "compared_at_utc": "2026-05-30T01:13:38.5274609Z",
+    "grade": "green",
+    "total_compared": 0,
+    "matched_count": 0,
+    "mismatch_count": 0,
+    "missing_in_shadow_count": 0,
+    "extra_in_shadow_count": 0,
+    "mismatch_examples": [],
+    "summary": {
+      "status": "skeleton_green",
+      "source": "docs/v5.4/mr-09-shadow-compare-report.json"
+    },
+    "generated_by": "shadow-compare-runner",
+    "ci_run_id": "local-mr-09"
+  },
+  {
+    "shadow_compare_report_id": "scr-v54-period-risk-pc-governance",
+    "release_id": "release-mr-10",
+    "tenant_id": "test-tenant",
+    "slice_id": "PeriodAnalytics",
+    "compare_scope": {
+      "name": "period-risk-pc-governance",
+      "type": "count",
+      "compare_scopes": [
+        "period_finance_snapshot",
+        "period_operation_snapshot",
+        "risk_command_items",
+        "pc_governance_surface",
+        "export_audit"
+      ]
+    },
+    "source_legacy_ref": "previous dashboard, limited risk surface, and legacy governance review workflow",
+    "source_active_ref": "public.audit_events",
+    "source_shadow_ref": "shadow_runtime.lens_snapshots",
+    "compared_at_utc": "2026-05-30T02:38:24.6440535Z",
+    "grade": "green",
+    "total_compared": 0,
+    "matched_count": 0,
+    "mismatch_count": 0,
+    "missing_in_shadow_count": 0,
+    "extra_in_shadow_count": 0,
+    "mismatch_examples": [],
+    "summary": {
+      "status": "skeleton_green",
+      "source": "docs/v5.4/mr-10-shadow-compare-report.json"
+    },
+    "generated_by": "shadow-compare-runner",
+    "ci_run_id": "local-mr-10"
+  }
+]

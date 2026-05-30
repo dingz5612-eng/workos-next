@@ -1,0 +1,53 @@
+{
+  "shadow_compare_report_id": "scr-v54-period-risk-pc-governance",
+  "release_id": "release-mr-10",
+  "tenant_id": "test-tenant",
+  "slice_id": "PeriodAnalytics",
+  "compare_scope": {
+    "name": "period-risk-pc-governance",
+    "type": "count",
+    "compare_scopes": [
+      "period_finance_snapshot",
+      "period_operation_snapshot",
+      "risk_command_items",
+      "pc_governance_surface",
+      "export_audit"
+    ],
+    "grade_rules": {
+      "green": [
+        "snapshots generated from ledgers/lenses",
+        "all risk items drilldown",
+        "no user-filled finance facts"
+      ],
+      "yellow": [
+        "display-only mismatch",
+        "non-critical risk label mismatch"
+      ],
+      "red": [
+        "user-filled finance snapshot",
+        "expense missing displayed as zero",
+        "risk item without drilldown",
+        "period close overwrites snapshot",
+        "late adjustment updates original snapshot",
+        "shadow consumed by official projector"
+      ]
+    }
+  },
+  "source_legacy_ref": "previous dashboard, limited risk surface, and legacy governance review workflow",
+  "source_active_ref": "public.audit_events",
+  "source_shadow_ref": "shadow_runtime.lens_snapshots",
+  "compared_at_utc": "2026-05-30T02:38:24.6440535+00:00",
+  "grade": "green",
+  "total_compared": 0,
+  "matched_count": 0,
+  "mismatch_count": 0,
+  "missing_in_shadow_count": 0,
+  "extra_in_shadow_count": 0,
+  "mismatch_examples": [],
+  "summary": {
+    "status": "skeleton_green",
+    "config": "period-risk-pc-governance"
+  },
+  "generated_by": "shadow-compare-runner",
+  "ci_run_id": "local-mr-10"
+}

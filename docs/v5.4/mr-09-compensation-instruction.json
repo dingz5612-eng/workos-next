@@ -1,0 +1,58 @@
+{
+  "rollback_instruction_id": "compensate-mr-09-business-correction",
+  "release_id": "release-mr-09",
+  "instruction_type": "compensating",
+  "rollback_kind": "business_correction",
+  "title": "MR-09 append-only compensation path for reconciliation and ledger correction",
+  "scope": {
+    "compensating_actions": [
+      "correction reversal of correction",
+      "follow-up correction request",
+      "ReconciliationCase reopen"
+    ],
+    "forbidden_actions": [
+      "edit original ledger entry",
+      "delete original correction",
+      "delete reconciliation match decision",
+      "SQL update StayBalance or DepositBalance as a fact source"
+    ],
+    "affected_slices": [
+      "Reconciliation",
+      "CorrectionCenter",
+      "PaymentLedger",
+      "DepositLedger",
+      "StayBalanceProjection"
+    ]
+  },
+  "allowed_before_status": [
+    "active",
+    "locked",
+    "rollback",
+    "compensating"
+  ],
+  "allowed_after_status": [
+    "compensating",
+    "locked"
+  ],
+  "steps": [
+    "If a correction was applied incorrectly, create a follow-up correction request with reason and before/after impact.",
+    "Require finance approval for high-risk compensating correction before apply.",
+    "Append a correction reversal or correction entry that references the prior correction.",
+    "Reopen the ReconciliationCase when the match or mismatch decision needs more review.",
+    "Rebuild StayBalance and DepositBalance projections from append-only entries after compensation."
+  ],
+  "validation_steps": [
+    "Verify the original ledger entry remains unchanged.",
+    "Verify the original correction remains visible in correction audit.",
+    "Verify the follow-up correction has reason, approval when required, and before/after view.",
+    "Verify StayBalance and DepositBalance rebuild after compensation.",
+    "Verify GateResult evidence maps the compensation to the relevant No-Go item."
+  ],
+  "owner": "finance-operations",
+  "risk_level": "P0",
+  "requires_business_approval": true,
+  "requires_architecture_approval": true,
+  "requires_finance_approval": true,
+  "created_at_utc": "2026-05-30T01:20:00Z",
+  "updated_at_utc": "2026-05-30T01:20:00Z"
+}

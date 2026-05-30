@@ -1,0 +1,53 @@
+{
+  "shadow_compare_report_id": "scr-v54-checkout-service-blocker-engine",
+  "release_id": "release-mr-08",
+  "tenant_id": "test-tenant",
+  "slice_id": "CheckoutSettlement",
+  "compare_scope": {
+    "name": "checkout-service-blocker-engine",
+    "type": "count",
+    "compare_scopes": [
+      "checkout_timeline",
+      "service_task_queue",
+      "case_blockers",
+      "closure_checks"
+    ],
+    "grade_rules": {
+      "green": [
+        "expected WorkItems created",
+        "no direct DepositEntry write",
+        "no direct BedStatus write",
+        "closure blockers match expected"
+      ],
+      "yellow": [
+        "timeline display mismatch",
+        "non-critical dueAt mismatch"
+      ],
+      "red": [
+        "Case closed with open blocker",
+        "duplicate blockers",
+        "service directly changed BedStatus",
+        "checkout directly wrote DepositEntry",
+        "bed released before cleaning/service verified",
+        "shadow consumed by official projector"
+      ]
+    }
+  },
+  "source_legacy_ref": "legacy checkout/service/blocker work queue",
+  "source_active_ref": "public.audit_events",
+  "source_shadow_ref": "shadow_runtime.domain_events",
+  "compared_at_utc": "2026-05-29T23:18:49.151763+00:00",
+  "grade": "green",
+  "total_compared": 0,
+  "matched_count": 0,
+  "mismatch_count": 0,
+  "missing_in_shadow_count": 0,
+  "extra_in_shadow_count": 0,
+  "mismatch_examples": [],
+  "summary": {
+    "status": "skeleton_green",
+    "config": "checkout-service-blocker-engine"
+  },
+  "generated_by": "shadow-compare-runner",
+  "ci_run_id": "local-mr-08"
+}

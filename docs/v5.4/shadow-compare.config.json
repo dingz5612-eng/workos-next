@@ -1,0 +1,7 @@
+{
+  "name": "shadow-domain-events-vs-audit-events",
+  "shadow_table": "shadow_runtime.domain_events",
+  "active_table": "public.audit_events",
+  "count_mismatch_grade": "yellow",
+  "legacy_ref": null
+}

@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import { describe, expect, it } from "vitest";
 import { openWorkspace } from "../navigationController.js";
+import { applyRuntimeOfflineFallback, createRuntimeStore } from "../runtime/runtimeStore.js";
 import {
   selectHomeSurface,
   selectLearningCatalog,
@@ -106,14 +107,35 @@ describe("runtime surface selectors", () => {
     expect(results.map((item) => item.score)).toEqual([10, 90]);
   });
 
-  it("allows demo queue only as explicit offline fallback", () => {
+  it("returns a true empty state instead of demo business objects when offline without cache", () => {
     const online = selectWorkbenchQueue(runtimeState([firstWorkspace]));
     expect(online.every((item) => item.source !== "offline-demo-fallback")).toBe(true);
 
-    const offline = runtimeState([firstWorkspace]);
-    offline.apiStatus = "offline";
-    offline.runtimeStore.apiStatus = "offline";
-    expect(selectWorkbenchQueue(offline).some((item) => item.source === "offline-demo-fallback")).toBe(true);
+    const offline = { apiStatus: "checking", runtimeStore: createRuntimeStore() };
+    applyRuntimeOfflineFallback(offline);
+    expect(selectWorkbenchQueue(offline)).toEqual([]);
+    expect(selectHomeSurface(offline)).toEqual([]);
+    expect(JSON.stringify(offline)).not.toMatch(/张三|A301|A301-02|3000|PAY-2026-009|unknown-room|unknown-bed/u);
+  });
+
+  it("keeps real cached runtime queue data during API failure", () => {
+    const offline = runtimeState([firstWorkspace], {
+      workQueue: [{
+        queueItemId: `q-${firstProduction.workspaceId}-${firstProduction.cards[0]}`,
+        workspaceId: firstProduction.workspaceId,
+        cardId: firstProduction.cards[0],
+        domain: firstWorkspace.domain,
+        badges: ["mine"],
+        priority: 70,
+        source: "runtime-api"
+      }]
+    });
+    applyRuntimeOfflineFallback(offline);
+
+    const queue = selectWorkbenchQueue(offline);
+    expect(queue).toHaveLength(1);
+    expect(queue[0].workspace.id).toBe(firstProduction.workspaceId);
+    expect(queue[0].source).toBe("runtime-api");
   });
 
   it("opens workspace from queue with card preselection", () => {

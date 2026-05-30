@@ -1,0 +1,90 @@
+name: V5.4 Control Plane Guards
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+  schedule:
+    - cron: "17 2 * * *"
+
+jobs:
+  v5-4-control-plane:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: workosnext_test
+          POSTGRES_USER: workosnext
+          POSTGRES_PASSWORD: workosnext_dev
+        ports:
+          - 54329:5432
+        options: >-
+          --health-cmd "pg_isready -U workosnext -d workosnext_test"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      ConnectionStrings__WorkOSRuntime: Host=localhost;Port=54329;Database=workosnext_test;Username=workosnext;Password=workosnext_dev
+      WORKOS_TEST_CONNECTION: Host=localhost;Port=54329;Database=workosnext_test;Username=workosnext;Password=workosnext_dev
+      TEST_DATABASE: "true"
+      LEDGER_INSPECTION_JOB_MODE: ${{ github.event_name == 'schedule' && 'daily' || github.event_name == 'workflow_dispatch' && 'manual' || 'release_gate' }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install ripgrep
+        run: sudo apt-get update && sudo apt-get install -y ripgrep
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Build backend
+        run: dotnet build WorkOSNext.sln -c Release
+
+      - name: architecture-guard
+        shell: pwsh
+        run: ./scripts/guard-architecture.ps1
+
+      - name: api-boundary-check
+        run: |
+          node scripts/check-api-boundaries.mjs --self-test
+          node scripts/check-api-boundaries.mjs
+
+      - name: control-plane-migration
+        run: |
+          node scripts/v5_4/control-plane-migration.mjs
+          dotnet test tests/WorkOS.RuntimeIntegrationTests/WorkOS.RuntimeIntegrationTests.csproj -c Release --no-build
+
+      - name: migration-verification-legacy-freeze
+        run: node scripts/v5_4/migration-verification.mjs --dry-run=false --releaseId=v5.4-migration-verification --mrId=ops-migration-verification --out=.tmp/v5_4/migration-verification-invariant-checks.json --report-out=.tmp/v5_4/migration-verification-report.json --backfill-out=.tmp/v5_4/legacy-backfill-report.json
+
+      - name: shadow-namespace-isolation
+        run: node scripts/v5_4/shadow-namespace-isolation.mjs
+
+      - name: invariant-runner
+        run: node scripts/v5_4/invariant-runner.mjs --mode=skeleton --out=.tmp/v5_4/invariant-check.not_run.json
+
+      - name: ledger-inspection-job
+        run: node scripts/v5_4/ledger-inspection.mjs --job-mode=${LEDGER_INSPECTION_JOB_MODE} --releaseId=v5.4-ledger-inspection --mrId=ops-ledger-inspection --out=.tmp/v5_4/ledger-inspection-invariant-checks.json --report-out=.tmp/v5_4/ledger-inspection-report.json --dashboard-out=.tmp/v5_4/ledger-inspection-dashboard-summary.json
+
+      - name: backup-restore-smoke
+        run: node scripts/v5_4/backup-restore-smoke.mjs --dry-run=false --cleanup=true --releaseId=v5.4-backup-restore-smoke --mrId=ops-backup-restore --out=.tmp/v5_4/backup-restore-smoke-invariant-checks.json --report-out=.tmp/v5_4/backup-restore-smoke-report.json --restore-invariant-out=.tmp/v5_4/backup-restore-after-restore-invariants.json
+
+      - name: shadow-compare-runner
+        run: node scripts/v5_4/shadow-compare-runner.mjs --mode=skeleton --out=.tmp/v5_4/shadow-compare-report.not_run.json
+
+      - name: gate-runner
+        run: node scripts/v5_4/gate-runner.mjs --mode=skeleton --id=gate-v5-4-skeleton-not-run --invariant=.tmp/v5_4/invariant-check.not_run.json --shadow=.tmp/v5_4/shadow-compare-report.not_run.json --out=.tmp/v5_4/gate-result.not_run.json
+
+      - name: release-manifest-validate
+        run: node scripts/v5_4/release-manifest-validate.mjs --manifest=docs/v5.4/release-manifest.fixture.json --gate=.tmp/v5_4/gate-result.not_run.json

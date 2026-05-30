@@ -1,0 +1,291 @@
+{
+  "release_slice_group": "period-risk-pc-governance-full",
+  "feature_flags": [
+    {
+      "feature_flag_id": "flag-period-review-enabled",
+      "flag_key": "period.review.enabled",
+      "status": "shadow",
+      "scope_rules": {
+        "tenantIds": ["test-tenant"],
+        "sliceIds": ["PeriodAnalytics"],
+        "roles": ["boss", "manager", "finance", "admin"],
+        "actorIds": [],
+        "deviceIds": [],
+        "deviceTrust": ["trusted"],
+        "amount": { "currency": "KGS", "lte": null, "gte": null },
+        "percentage": 0
+      }
+    },
+    {
+      "feature_flag_id": "flag-period-finance-snapshot-enabled",
+      "flag_key": "period.finance_snapshot.enabled",
+      "status": "shadow",
+      "scope_rules": {
+        "tenantIds": ["test-tenant"],
+        "sliceIds": ["PeriodAnalytics"],
+        "roles": ["boss", "manager", "finance", "admin"],
+        "actorIds": [],
+        "deviceIds": [],
+        "deviceTrust": ["trusted"],
+        "amount": { "currency": "KGS", "lte": null, "gte": null },
+        "percentage": 0
+      }
+    },
+    {
+      "feature_flag_id": "flag-period-operation-snapshot-enabled",
+      "flag_key": "period.operation_snapshot.enabled",
+      "status": "shadow",
+      "scope_rules": {
+        "tenantIds": ["test-tenant"],
+        "sliceIds": ["PeriodAnalytics"],
+        "roles": ["boss", "manager", "finance", "admin"],
+        "actorIds": [],
+        "deviceIds": [],
+        "deviceTrust": ["trusted"],
+        "amount": { "currency": "KGS", "lte": null, "gte": null },
+        "percentage": 0
+      }
+    },
+    {
+      "feature_flag_id": "flag-period-close-enabled",
+      "flag_key": "period.close.enabled",
+      "status": "shadow",
+      "scope_rules": {
+        "tenantIds": ["test-tenant"],
+        "sliceIds": ["PeriodAnalytics"],
+        "roles": ["boss", "manager", "finance", "admin"],
+        "actorIds": [],
+        "deviceIds": [],
+        "deviceTrust": ["trusted"],
+        "amount": { "currency": "KGS", "lte": null, "gte": null },
+        "percentage": 0
+      }
+    },
+    {
+      "feature_flag_id": "flag-period-late-adjustment-enabled",
+      "flag_key": "period.late_adjustment.enabled",
+      "status": "shadow",
+      "scope_rules": {
+        "tenantIds": ["test-tenant"],
+        "sliceIds": ["PeriodAnalytics"],
+        "roles": ["boss", "manager", "finance", "admin"],
+        "actorIds": [],
+        "deviceIds": [],
+        "deviceTrust": ["trusted"],
+        "amount": { "currency": "KGS", "lte": null, "gte": null },
+        "percentage": 0
+      }
+    },
+    {
+      "feature_flag_id": "flag-risk-command-enabled",
+      "flag_key": "risk_command.enabled",
+      "status": "shadow",
+      "scope_rules": {
+        "tenantIds": ["test-tenant"],
+        "sliceIds": ["RiskCommand"],
+        "roles": ["boss", "manager", "finance", "admin"],
+        "actorIds": [],
+        "deviceIds": [],
+        "deviceTrust": ["trusted"],
+        "amount": { "currency": "KGS", "lte": null, "gte": null },
+        "percentage": 0
+      }
+    },
+    {
+      "feature_flag_id": "flag-pc-governance-full-enabled",
+      "flag_key": "pc_governance_full.enabled",
+      "status": "shadow",
+      "scope_rules": {
+        "tenantIds": ["test-tenant"],
+        "sliceIds": ["PCGovernance"],
+        "roles": ["boss", "manager", "finance", "admin"],
+        "actorIds": [],
+        "deviceIds": [],
+        "deviceTrust": ["trusted"],
+        "amount": { "currency": "KGS", "lte": null, "gte": null },
+        "percentage": 0
+      }
+    },
+    {
+      "feature_flag_id": "flag-admin-role-capability-enabled",
+      "flag_key": "admin.role_capability.enabled",
+      "status": "shadow",
+      "scope_rules": {
+        "tenantIds": ["test-tenant"],
+        "sliceIds": ["PCGovernance"],
+        "roles": ["admin"],
+        "actorIds": [],
+        "deviceIds": [],
+        "deviceTrust": ["trusted"],
+        "amount": { "currency": "KGS", "lte": null, "gte": null },
+        "percentage": 0
+      }
+    },
+    {
+      "feature_flag_id": "flag-export-ledger-enabled",
+      "flag_key": "export.ledger.enabled",
+      "status": "shadow",
+      "scope_rules": {
+        "tenantIds": ["test-tenant"],
+        "sliceIds": ["PCGovernance"],
+        "roles": ["admin"],
+        "actorIds": [],
+        "deviceIds": [],
+        "deviceTrust": ["trusted"],
+        "amount": { "currency": "KGS", "lte": null, "gte": null },
+        "percentage": 0
+      }
+    }
+  ],
+  "slice_cutover_states": [
+    {
+      "cutover_state_id": "cutover-period-analytics-test-tenant",
+      "slice_id": "PeriodAnalytics",
+      "runtime_mode": "shadow",
+      "previous_runtime_mode": "legacy",
+      "tenant_id": "test-tenant",
+      "dependency_status": {
+        "PaymentLedger": "active",
+        "DepositLedger": "active",
+        "ResourceInventory": "active",
+        "StayLifecycle": "active",
+        "CheckoutSettlement": "active",
+        "ServiceTask": "active",
+        "BlockerEngine": "active",
+        "Reconciliation": "pilot_or_active",
+        "CorrectionCenter": "pilot_or_active",
+        "ExpenseLedgerStatus": "declared",
+        "PCGovernanceAuth": "ready"
+      },
+      "pilot_scope": {
+        "tenantIds": ["test-tenant"],
+        "roles": ["boss", "manager", "finance", "admin"],
+        "actorIds": [],
+        "deviceIds": [],
+        "deviceTrust": ["trusted"],
+        "period_range": { "from": "2026-05-01", "to": "2026-05-31", "max_days": 31 },
+        "export": { "enabled": false, "allowed_roles": ["admin"], "requires_audit": true }
+      },
+      "routing": {
+        "shadow": "generate finance and operation snapshots from ledger/lens sources into shadow compare inputs only",
+        "pilot": "test tenant governance roles may review a limited period range; period close remains observing until green reports",
+        "active": "PeriodReview is official; close freezes snapshots and LateAdjustment is append-only",
+        "rollback": "disable PeriodAnalytics feature flags; closed period snapshots remain immutable and bad snapshots require LateAdjustment or correction note"
+      }
+    },
+    {
+      "cutover_state_id": "cutover-risk-command-test-tenant",
+      "slice_id": "RiskCommand",
+      "runtime_mode": "shadow",
+      "previous_runtime_mode": "legacy",
+      "tenant_id": "test-tenant",
+      "dependency_status": {
+        "PaymentLedger": "active",
+        "DepositLedger": "active",
+        "ResourceInventory": "active",
+        "StayLifecycle": "active",
+        "CheckoutSettlement": "active",
+        "ServiceTask": "active",
+        "BlockerEngine": "active",
+        "Reconciliation": "pilot_or_active",
+        "CorrectionCenter": "pilot_or_active",
+        "ExpenseLedgerStatus": "declared",
+        "PCGovernanceAuth": "ready"
+      },
+      "pilot_scope": {
+        "tenantIds": ["test-tenant"],
+        "roles": ["boss", "manager", "finance", "admin"],
+        "actorIds": [],
+        "deviceIds": [],
+        "deviceTrust": ["trusted"],
+        "period_range": { "from": "2026-05-01", "to": "2026-05-31", "max_days": 31 },
+        "export": { "enabled": false, "allowed_roles": ["admin"], "requires_audit": true }
+      },
+      "routing": {
+        "shadow": "build source-backed risk items with drilldown refs and compare against previous dashboard/limited risks",
+        "pilot": "test tenant governance roles can view official-like risk drilldown while legacy dashboard remains available",
+        "active": "RiskCommand is official and every risk item must have drilldown refs",
+        "rollback": "route RiskCommand back to previous dashboard or limited risks; risk snapshots remain audit evidence"
+      }
+    },
+    {
+      "cutover_state_id": "cutover-pc-governance-test-tenant",
+      "slice_id": "PCGovernance",
+      "runtime_mode": "shadow",
+      "previous_runtime_mode": "legacy",
+      "tenant_id": "test-tenant",
+      "dependency_status": {
+        "PaymentLedger": "active",
+        "DepositLedger": "active",
+        "ResourceInventory": "active",
+        "StayLifecycle": "active",
+        "CheckoutSettlement": "active",
+        "ServiceTask": "active",
+        "BlockerEngine": "active",
+        "Reconciliation": "pilot_or_active",
+        "CorrectionCenter": "pilot_or_active",
+        "ExpenseLedgerStatus": "declared",
+        "PCGovernanceAuth": "ready"
+      },
+      "pilot_scope": {
+        "tenantIds": ["test-tenant"],
+        "roles": ["boss", "manager", "finance", "admin"],
+        "actorIds": [],
+        "deviceIds": [],
+        "deviceTrust": ["trusted"],
+        "period_range": { "from": "2026-05-01", "to": "2026-05-31", "max_days": 31 },
+        "export": { "enabled": false, "allowed_roles": ["admin"], "requires_audit": true }
+      },
+      "routing": {
+        "shadow": "PC Governance reads official sources and records export audit shadows without mutating business facts",
+        "pilot": "test tenant roles can use PC Governance; export remains disabled first or limited to admin with audit",
+        "active": "PC Governance Full is role-available and export is enabled only with reason, capability, audit, expiry, and trusted PC",
+        "rollback": "turn off PC Governance feature flags; keep admin, audit, and export evidence append-only"
+      }
+    }
+  ],
+  "active_policy": {
+    "risk_command_official": true,
+    "period_review_official": true,
+    "pc_governance_available_by_role": true,
+    "export_enabled_with_audit": true,
+    "export_requires_reason": true,
+    "export_download_url_expires": true,
+    "high_risk_export_requires_trusted_pc": true
+  },
+  "rollback_policy": {
+    "PeriodAnalytics": "disabled",
+    "RiskCommand": "previous_dashboard_or_limited_risks",
+    "PCGovernance": "feature_flags_off",
+    "delete_closed_period_snapshots": false,
+    "bad_snapshot_strategy": "LateAdjustment_or_correction_note",
+    "delete_export_audit": false
+  },
+  "shadow_compare_report_grade": {
+    "green": [
+      "snapshots generated from ledgers/lenses",
+      "all risk items drilldown",
+      "no user-filled finance facts"
+    ],
+    "yellow": [
+      "display-only mismatch",
+      "non-critical risk label mismatch"
+    ],
+    "red": [
+      "user-filled finance snapshot",
+      "expense missing displayed as zero",
+      "risk item without drilldown",
+      "period close overwrites snapshot",
+      "late adjustment updates original snapshot",
+      "shadow consumed by official projector"
+    ]
+  },
+  "invariants": [
+    "period.finance_snapshot_from_ledgers",
+    "period.expense_not_integrated_not_zero",
+    "period.close_freezes_snapshot",
+    "period.late_adjustment_append_only",
+    "risk.all_items_drill_down",
+    "pc.export_has_audit"
+  ]
+}

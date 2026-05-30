@@ -1,0 +1,52 @@
+{
+  "gate_result_id": "gate-mr-09-reconciliation-correction",
+  "release_id": "release-mr-09",
+  "mr_id": "MR-09",
+  "tenant_id": "test-tenant",
+  "slice_id": "Reconciliation",
+  "gate_name": "mr-09-reconciliation-correction",
+  "gate_type": "automated",
+  "status": "passed",
+  "severity": "P2",
+  "ci_run_id": "local-mr-09",
+  "automated_test_refs": [
+    "WorkOS.UnitTests.BankStatementImportTests",
+    "WorkOS.UnitTests.ReconciliationMatchingTests",
+    "WorkOS.UnitTests.ReconciliationMismatchCaseTests",
+    "WorkOS.UnitTests.CorrectionCenterSchemaTests",
+    "WorkOS.UnitTests.CorrectionCenterReversalTests",
+    "WorkOS.UnitTests.ReconciliationCorrectionCutoverGuardTests",
+    "apps/mobile.financeReconciliationView"
+  ],
+  "invariant_check_refs": [
+    "inv-v54-bank-import-does-not-create-payment-fact",
+    "inv-v54-reconciliation-bank-transaction-single-match-default",
+    "inv-v54-ledger-no-edit-old-entry",
+    "inv-v54-correction-requires-reason",
+    "inv-v54-correction-high-risk-requires-approval",
+    "inv-v54-balance-rebuild-after-correction"
+  ],
+  "shadow_compare_report_refs": [
+    "scr-v54-reconciliation-correction-center"
+  ],
+  "business_signoff_refs": [
+    "release-reviewed"
+  ],
+  "no_go_items": [],
+  "go_items": [
+    "Invariant passed: bank.import_does_not_create_payment_fact",
+    "Invariant passed: reconciliation.bank_transaction_single_match_default",
+    "Invariant passed: ledger.no_edit_old_entry",
+    "Invariant passed: correction.requires_reason",
+    "Invariant passed: correction.high_risk_requires_approval",
+    "Invariant passed: balance.rebuild_after_correction",
+    "Shadow compare green: scr-v54-reconciliation-correction-center"
+  ],
+  "known_risks": [
+    "MR-09 uses skeleton shadow compare until production shadow rows exist"
+  ],
+  "generated_by": "gate-runner",
+  "generated_at_utc": "2026-05-30T01:14:05.550687+00:00",
+  "input_hash": "c6169c113904cb14d735800e824f1025b9a2e0db0b8fab0e48c2a365f693d3bd",
+  "result_hash": "87b76dd1e4d495b907524e245fc4d7294bd3bc2871bf2dd768824b93562c08c6"
+}

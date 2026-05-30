@@ -46,7 +46,7 @@ const previewFields = {
   "service-task-queue": ["taskId", "taskType", "status"],
   "expense-analytics": ["expenseCategory", "approvedAmount", "currency"],
   "period-performance": ["periodId", "periodNetCashFlow", "status"],
-  "risk-command": ["debtAmount", "pendingPaymentCount", "openTaskCount"]
+  "risk-command": ["riskType", "severity", "amount", "count", "resolveAction"]
 };
 
 export function lensIdsForWorkspace(workspaceId) {
