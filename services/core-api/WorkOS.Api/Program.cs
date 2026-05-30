@@ -55,6 +55,11 @@ builder.Services.AddSingleton(_ => new SliceCommandHandlerRouter()
     .Register(CanonicalOperationsApiService.ConfirmCommandType, CanonicalOperationsApiService.HandleConfirmCommand));
 builder.Services.AddSingleton<OperationsUnitOfWork>();
 builder.Services.AddSingleton<CanonicalOperationsApiService>();
+builder.Services.AddSingleton<LegacyWorkItemResolver>();
+builder.Services.AddSingleton<LegacyCompatibilityPolicy>();
+builder.Services.AddSingleton<LegacyCardRequestMapper>();
+builder.Services.AddSingleton<LegacyCardResponseMapper>();
+builder.Services.AddSingleton<LegacyWorkspaceCardAdapter>();
 builder.Services.AddHostedService<ProjectionOutboxWorker>();
 
 var app = builder.Build();
@@ -320,7 +325,7 @@ app.MapPost("/api/pc-governance/exports/{exportType}", (string exportType, Gover
 
 app.MapOperationsRuntimeEndpoints();
 
-app.MapPost("/api/workspaces/{workspaceId}/cards/{cardId}/prepare", (string workspaceId, string cardId, PrepareCardRequest? request, OperationsRuntimeService operations) =>
+app.MapPost("/api/workspaces/{workspaceId}/cards/{cardId}/prepare", (string workspaceId, string cardId, PrepareCardRequest? request, LegacyWorkspaceCardAdapter operations) =>
 {
     var prepared = operations.PrepareWorkspaceCard(workspaceId, cardId, request);
     return prepared.StatusCode switch
@@ -330,7 +335,7 @@ app.MapPost("/api/workspaces/{workspaceId}/cards/{cardId}/prepare", (string work
     };
 });
 
-app.MapPost("/api/workspaces/{workspaceId}/cards/{cardId}/confirm", (string workspaceId, string cardId, ConfirmCardRequest request, HttpRequest httpRequest, OperationsRuntimeService operations) =>
+app.MapPost("/api/workspaces/{workspaceId}/cards/{cardId}/confirm", (string workspaceId, string cardId, ConfirmCardRequest request, HttpRequest httpRequest, LegacyWorkspaceCardAdapter operations) =>
 {
     var token = httpRequest.Headers["X-WorkOS-Actor-Token"].FirstOrDefault() ?? string.Empty;
     var requestId = httpRequest.Headers["X-Request-Id"].FirstOrDefault() ?? httpRequest.HttpContext.TraceIdentifier;

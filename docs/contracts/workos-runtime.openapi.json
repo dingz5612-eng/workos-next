@@ -965,7 +965,13 @@
               { "type": "object", "additionalProperties": true },
               { "type": "null" }
             ]
-          }
+          },
+          "source": { "type": "string", "enum": ["operations_adapter", "operations_unit_of_work"] },
+          "compatibilitySource": { "type": "string", "enum": ["legacy_workspace_card_adapter"] },
+          "idempotencyKey": { "type": ["string", "null"] },
+          "payloadHash": { "type": ["string", "null"] },
+          "commandSubmissionId": { "type": ["string", "null"] },
+          "traceUrl": { "type": ["string", "null"] }
         }
       },
       "PrepareCardRequest": {

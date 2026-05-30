@@ -74,7 +74,7 @@ public sealed class CanonicalOperationsApiService
             "CommandEnvelope.v1",
             $"work-item:{workItem.WorkItemType}:v1",
             normalized.IdempotencyKey!,
-            PayloadFor(workItem, normalized, requestId),
+            PayloadFor(workItem, normalized),
             actorToken,
             $"{workItem.TenantId}:{workItem.WorkItemId}:confirm",
             normalized.SubmissionId,
@@ -146,8 +146,7 @@ public sealed class CanonicalOperationsApiService
 
     private static IReadOnlyDictionary<string, object> PayloadFor(
         WorkItem workItem,
-        ConfirmWorkItemRequest request,
-        string requestId) =>
+        ConfirmWorkItemRequest request) =>
         new Dictionary<string, object>
         {
             ["workspaceId"] = request.WorkspaceId ?? workItem.WorkspaceId,
@@ -155,7 +154,6 @@ public sealed class CanonicalOperationsApiService
             ["submissionId"] = request.SubmissionId ?? string.Empty,
             ["cardInstanceId"] = request.CardInstanceId ?? string.Empty,
             ["aggregateRef"] = request.AggregateRef ?? string.Empty,
-            ["requestId"] = request.RequestId ?? requestId,
             ["deviceId"] = request.DeviceId ?? string.Empty,
             ["fieldValues"] = (request.FieldValues ?? new Dictionary<string, string>())
                 .ToDictionary(item => item.Key, item => (object)item.Value),

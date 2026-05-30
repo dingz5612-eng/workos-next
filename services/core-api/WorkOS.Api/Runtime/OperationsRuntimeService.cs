@@ -159,6 +159,13 @@ public sealed class OperationsRuntimeService
         return LegacyConfirmResult(executed, workspaceId, cardId);
     }
 
+    public ConfirmResult ValidateWorkspaceCardConfirmPolicy(
+        string workspaceId,
+        string cardId,
+        ConfirmCardRequest request,
+        string actorToken) =>
+        runtime.ValidateConfirm(workspaceId, cardId, request, actorToken);
+
     private static string? ValidateLegacyConfirmRequiredFields(ConfirmCardRequest request)
     {
         if (string.IsNullOrWhiteSpace(request.IdempotencyKey))
@@ -792,6 +799,8 @@ public interface IOperationsRuntimeAdapter
 
     object? Prepare(string workspaceId, string cardId, PrepareCardRequest? request = null);
 
+    ConfirmResult ValidateConfirm(string workspaceId, string cardId, ConfirmCardRequest request, string actorToken);
+
     ConfirmResult Confirm(string workspaceId, string cardId, ConfirmCardRequest request, string actorToken);
 }
 
@@ -811,6 +820,9 @@ public sealed class ProjectionOperationsRuntimeAdapter : IOperationsRuntimeAdapt
 
     public object? Prepare(string workspaceId, string cardId, PrepareCardRequest? request = null) =>
         runtime.Prepare(workspaceId, cardId, request);
+
+    public ConfirmResult ValidateConfirm(string workspaceId, string cardId, ConfirmCardRequest request, string actorToken) =>
+        runtime.ValidateConfirm(workspaceId, cardId, request, actorToken);
 
     public ConfirmResult Confirm(string workspaceId, string cardId, ConfirmCardRequest request, string actorToken) =>
         runtime.Confirm(workspaceId, cardId, request, actorToken);

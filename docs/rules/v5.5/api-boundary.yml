@@ -41,7 +41,7 @@ categories:
         - operations.confirm_has_submission_evidence
       evidenceType: compatibility_wrapper
       severity: P0
-      notes: Old Workspace/Card confirm compatibility wrapper that delegates to OperationsRuntimeService.
+      notes: Old Workspace/Card confirm compatibility wrapper that preflights legacy policy and commits facts through LegacyWorkspaceCardAdapter -> OperationsUnitOfWork.
   mobileExperienceWrite:
     - route: "POST /api/mobile/drafts"
       class: mobileExperienceWrite
