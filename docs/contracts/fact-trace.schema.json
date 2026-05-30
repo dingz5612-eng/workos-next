@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://workosnext.local/contracts/fact-trace.schema.json",
+  "title": "FactTrace.v1",
+  "type": "object",
+  "required": [
+    "tenantId",
+    "traceId",
+    "caseRef",
+    "workItemRef",
+    "submissionRef",
+    "domainEventRefs",
+    "ledgerTransactionRefs",
+    "ledgerEntryRefs",
+    "projectionCommitRefs"
+  ],
+  "properties": {
+    "tenantId": { "type": "string" },
+    "traceId": { "type": "string" },
+    "caseRef": { "type": "string" },
+    "workItemRef": { "type": "string" },
+    "submissionRef": { "type": "string" },
+    "domainEventRefs": { "type": "array", "items": { "type": "string" } },
+    "ledgerTransactionRefs": { "type": "array", "items": { "type": "string" } },
+    "ledgerEntryRefs": { "type": "array", "items": { "type": "string" } },
+    "projectionCommitRefs": { "type": "array", "items": { "type": "string" } }
+  }
+}
