@@ -131,7 +131,28 @@ public sealed class OperationsUnitOfWork
                 DateTimeOffset.UtcNow))
             .ToArray();
 
-        return new OperationsFactBatch(events, workItemEvents, outbox);
+        var ledgerTransactions = handled.LedgerTransactions
+            .Select(item => item with
+            {
+                TenantId = request.TenantId,
+                CaseId = request.CaseId,
+                WorkItemId = request.WorkItemId,
+                SubmissionId = submission.SubmissionId,
+                Currency = item.Currency.ToUpperInvariant(),
+                BalanceStatus = item.BalanceStatus.ToLowerInvariant()
+            })
+            .ToArray();
+
+        var ledgerEntries = handled.LedgerEntries
+            .Select(item => item with
+            {
+                TenantId = request.TenantId,
+                Currency = item.Currency.ToUpperInvariant(),
+                DebitCredit = item.DebitCredit.ToLowerInvariant()
+            })
+            .ToArray();
+
+        return new OperationsFactBatch(events, workItemEvents, outbox, ledgerTransactions, ledgerEntries);
     }
 
     private static void ValidateRequest(OperationsCommandRequest request)
@@ -156,7 +177,7 @@ public sealed class OperationsUnitOfWork
 
     private static void ValidateLedgerBoundary(SliceCommandHandlerResult handled)
     {
-        if (handled.LedgerEntries.Count == 0)
+        if (handled.LedgerEntries.Count == 0 && handled.LedgerTransactions.Count == 0)
         {
             return;
         }
@@ -168,6 +189,57 @@ public sealed class OperationsUnitOfWork
             handled.LedgerEntries.Any(item => !transactionIds.Contains(item.LedgerTransactionId)))
         {
             throw new InvalidOperationException("operations_uow_rejects_ledger_entry_without_transaction");
+        }
+
+        foreach (var transaction in handled.LedgerTransactions)
+        {
+            if (string.IsNullOrWhiteSpace(transaction.TenantId) ||
+                string.IsNullOrWhiteSpace(transaction.LedgerTransactionId) ||
+                string.IsNullOrWhiteSpace(transaction.Currency))
+            {
+                throw new InvalidOperationException("operations_uow_rejects_incomplete_ledger_transaction");
+            }
+
+            if (!transaction.BalanceStatus.Equals("balanced", StringComparison.OrdinalIgnoreCase))
+            {
+                throw new InvalidOperationException("operations_uow_rejects_unbalanced_ledger_transaction");
+            }
+
+            var entries = handled.LedgerEntries
+                .Where(item => item.LedgerTransactionId.Equals(transaction.LedgerTransactionId, StringComparison.OrdinalIgnoreCase))
+                .ToArray();
+            if (entries.Length == 0)
+            {
+                throw new InvalidOperationException("operations_uow_rejects_ledger_transaction_without_entries");
+            }
+
+            if (entries.Any(item => !item.Currency.Equals(transaction.Currency, StringComparison.OrdinalIgnoreCase)))
+            {
+                throw new InvalidOperationException("operations_uow_rejects_ledger_currency_mismatch");
+            }
+
+            if (entries.Any(item => item.Amount <= 0))
+            {
+                throw new InvalidOperationException("operations_uow_rejects_non_positive_ledger_amount");
+            }
+
+            if (entries.Any(item =>
+                !item.DebitCredit.Equals("debit", StringComparison.OrdinalIgnoreCase) &&
+                !item.DebitCredit.Equals("credit", StringComparison.OrdinalIgnoreCase)))
+            {
+                throw new InvalidOperationException("operations_uow_rejects_unknown_ledger_side");
+            }
+
+            var debit = entries
+                .Where(item => item.DebitCredit.Equals("debit", StringComparison.OrdinalIgnoreCase))
+                .Sum(item => item.Amount);
+            var credit = entries
+                .Where(item => item.DebitCredit.Equals("credit", StringComparison.OrdinalIgnoreCase))
+                .Sum(item => item.Amount);
+            if (debit != credit)
+            {
+                throw new InvalidOperationException("operations_uow_rejects_unbalanced_ledger_transaction");
+            }
         }
     }
 }
@@ -351,6 +423,10 @@ public sealed class InMemoryOperationsStore : OperationsWriteStore, OperationsRe
 
     public List<OperationsOutboxMessage> OutboxMessages { get; } = new();
 
+    public List<LedgerTransactionV1> LedgerTransactions { get; } = new();
+
+    public List<LedgerEntryV1> LedgerEntries { get; } = new();
+
     public List<string> WriteLog { get; } = new();
 
     public bool TryBeginCommandSubmission(OperationsCommandSubmission submission)
@@ -374,8 +450,12 @@ public sealed class InMemoryOperationsStore : OperationsWriteStore, OperationsRe
         DomainEvents.AddRange(facts.DomainEvents);
         WorkItemEvents.AddRange(facts.WorkItemEvents);
         OutboxMessages.AddRange(facts.OutboxMessages);
+        LedgerTransactions.AddRange(facts.LedgerTransactions);
+        LedgerEntries.AddRange(facts.LedgerEntries);
         WriteLog.AddRange(facts.DomainEvents.Select(item => $"DomainEvent:{item.EventId}"));
         WriteLog.AddRange(facts.WorkItemEvents.Select(item => $"WorkItemEvent:{item.WorkItemEventId}"));
+        WriteLog.AddRange(facts.LedgerTransactions.Select(item => $"LedgerTransaction:{item.LedgerTransactionId}"));
+        WriteLog.AddRange(facts.LedgerEntries.Select(item => $"LedgerEntry:{item.EntryId}"));
         WriteLog.AddRange(facts.OutboxMessages.Select(item => $"Outbox:{item.MessageId}"));
 
         submissions[Key(submission.TenantId, submission.IdempotencyScope, submission.IdempotencyKey)] = submission with
@@ -423,8 +503,16 @@ public sealed class InMemoryOperationsStore : OperationsWriteStore, OperationsRe
             submission.WorkItemId,
             submissionId,
             events,
-            Array.Empty<string>(),
-            Array.Empty<string>(),
+            LedgerTransactions
+                .Where(item => item.SubmissionId.Equals(submissionId, StringComparison.OrdinalIgnoreCase))
+                .Select(item => item.LedgerTransactionId)
+                .ToArray(),
+            LedgerEntries
+                .Where(item => LedgerTransactions.Any(transaction =>
+                    transaction.SubmissionId.Equals(submissionId, StringComparison.OrdinalIgnoreCase) &&
+                    transaction.LedgerTransactionId.Equals(item.LedgerTransactionId, StringComparison.OrdinalIgnoreCase)))
+                .Select(item => item.EntryId)
+                .ToArray(),
             Array.Empty<string>());
     }
 
@@ -569,6 +657,53 @@ public sealed class PostgresOperationsStore : OperationsWriteStore, OperationsRe
             command.ExecuteNonQuery();
         }
 
+        foreach (var transaction in facts.LedgerTransactions)
+        {
+            using var command = db.CreateCommand("""
+                insert into ledger_transactions(
+                    ledger_transaction_id, tenant_id, case_id, work_item_id, submission_id,
+                    transaction_type, currency, balance_status, posted_at_utc, payload)
+                values (
+                    @transactionId, @tenantId, @caseId, @workItemId, @submissionId,
+                    @transactionType, @currency, @balanceStatus, @postedAtUtc, @payload::jsonb)
+                """);
+            command.Parameters.AddWithValue("transactionId", transaction.LedgerTransactionId);
+            command.Parameters.AddWithValue("tenantId", transaction.TenantId);
+            command.Parameters.AddWithValue("caseId", transaction.CaseId);
+            command.Parameters.AddWithValue("workItemId", transaction.WorkItemId);
+            command.Parameters.AddWithValue("submissionId", transaction.SubmissionId);
+            command.Parameters.AddWithValue("transactionType", string.IsNullOrWhiteSpace(transaction.TransactionType) ? "operations_money" : transaction.TransactionType);
+            command.Parameters.AddWithValue("currency", transaction.Currency);
+            command.Parameters.AddWithValue("balanceStatus", transaction.BalanceStatus);
+            command.Parameters.AddWithValue("postedAtUtc", DateTimeOffset.UtcNow);
+            command.Parameters.AddWithValue("payload", NpgsqlDbType.Jsonb, JsonSerializer.Serialize(transaction, PostgresProjectionStore.JsonOptions));
+            command.ExecuteNonQuery();
+        }
+
+        foreach (var entry in facts.LedgerEntries)
+        {
+            using var command = db.CreateCommand("""
+                insert into ledger_entries(
+                    entry_id, ledger_transaction_id, tenant_id, account_id, account_type,
+                    debit_credit, amount, currency, entry_role, payload, created_at_utc)
+                values (
+                    @entryId, @transactionId, @tenantId, @accountId, @accountType,
+                    @debitCredit, @amount, @currency, @entryRole, @payload::jsonb, @createdAtUtc)
+                """);
+            command.Parameters.AddWithValue("entryId", entry.EntryId);
+            command.Parameters.AddWithValue("transactionId", entry.LedgerTransactionId);
+            command.Parameters.AddWithValue("tenantId", entry.TenantId);
+            command.Parameters.AddWithValue("accountId", string.IsNullOrWhiteSpace(entry.AccountId) ? $"{entry.AccountType}:{entry.DebitCredit}" : entry.AccountId);
+            command.Parameters.AddWithValue("accountType", string.IsNullOrWhiteSpace(entry.AccountType) ? "unspecified" : entry.AccountType);
+            command.Parameters.AddWithValue("debitCredit", entry.DebitCredit);
+            command.Parameters.AddWithValue("amount", entry.Amount);
+            command.Parameters.AddWithValue("currency", entry.Currency);
+            command.Parameters.AddWithValue("entryRole", string.IsNullOrWhiteSpace(entry.EntryRole) ? "operations_money" : entry.EntryRole);
+            command.Parameters.AddWithValue("payload", NpgsqlDbType.Jsonb, JsonSerializer.Serialize(entry, PostgresProjectionStore.JsonOptions));
+            command.Parameters.AddWithValue("createdAtUtc", DateTimeOffset.UtcNow);
+            command.ExecuteNonQuery();
+        }
+
         using (var responseCommand = db.CreateCommand("""
             insert into operations_fact_responses(
                 response_id, submission_id, tenant_id, status_code, commit_status,
@@ -675,8 +810,8 @@ public sealed class PostgresOperationsStore : OperationsWriteStore, OperationsRe
             workItemId,
             submissionId,
             LoadRefs(connection, "operations_domain_events", "event_id", tenantId, submissionId),
-            Array.Empty<string>(),
-            Array.Empty<string>(),
+            LoadRefs(connection, "ledger_transactions", "ledger_transaction_id", tenantId, submissionId),
+            LoadLedgerEntryRefs(connection, tenantId, submissionId),
             Array.Empty<string>());
     }
 
@@ -736,18 +871,56 @@ public sealed class PostgresOperationsStore : OperationsWriteStore, OperationsRe
         string tenantId,
         string submissionId)
     {
-        using var command = connection.CreateCommand();
-        command.CommandText = $"select {column} from {table} where tenant_id = @tenantId and submission_id = @submissionId order by {column}";
-        command.Parameters.AddWithValue("tenantId", tenantId);
-        command.Parameters.AddWithValue("submissionId", submissionId);
-        using var reader = command.ExecuteReader();
-        var values = new List<string>();
-        while (reader.Read())
+        try
         {
-            values.Add(reader.GetString(0));
-        }
+            using var command = connection.CreateCommand();
+            command.CommandText = $"select {column} from {table} where tenant_id = @tenantId and submission_id = @submissionId order by {column}";
+            command.Parameters.AddWithValue("tenantId", tenantId);
+            command.Parameters.AddWithValue("submissionId", submissionId);
+            using var reader = command.ExecuteReader();
+            var values = new List<string>();
+            while (reader.Read())
+            {
+                values.Add(reader.GetString(0));
+            }
 
-        return values.ToArray();
+            return values.ToArray();
+        }
+        catch (PostgresException ex) when (ex.SqlState == MissingTable)
+        {
+            return Array.Empty<string>();
+        }
+    }
+
+    private static string[] LoadLedgerEntryRefs(NpgsqlConnection connection, string tenantId, string submissionId)
+    {
+        try
+        {
+            using var command = connection.CreateCommand();
+            command.CommandText = """
+                select entry.entry_id
+                from ledger_entries entry
+                join ledger_transactions tx
+                  on tx.ledger_transaction_id = entry.ledger_transaction_id
+                where entry.tenant_id = @tenantId
+                  and tx.submission_id = @submissionId
+                order by entry.entry_id
+                """;
+            command.Parameters.AddWithValue("tenantId", tenantId);
+            command.Parameters.AddWithValue("submissionId", submissionId);
+            using var reader = command.ExecuteReader();
+            var values = new List<string>();
+            while (reader.Read())
+            {
+                values.Add(reader.GetString(0));
+            }
+
+            return values.ToArray();
+        }
+        catch (PostgresException ex) when (ex.SqlState == MissingTable)
+        {
+            return Array.Empty<string>();
+        }
     }
 
     private IReadOnlyList<FactTraceV1> LoadTraces(string column, string value)
@@ -861,7 +1034,9 @@ public sealed record SliceCommandHandlerResult(
         IReadOnlyList<OperationsDomainEventDraft> domainEvents,
         IReadOnlyList<OperationsWorkItemEventDraft>? workItemEvents = null,
         IReadOnlyList<OperationsOutboxMessageDraft>? outboxMessages = null,
-        string projectionStatus = "projected") =>
+        string projectionStatus = "projected",
+        IReadOnlyList<LedgerTransactionV1>? ledgerTransactions = null,
+        IReadOnlyList<LedgerEntryV1>? ledgerEntries = null) =>
         new(
             "committed",
             projectionStatus,
@@ -870,8 +1045,8 @@ public sealed record SliceCommandHandlerResult(
             domainEvents,
             workItemEvents ?? Array.Empty<OperationsWorkItemEventDraft>(),
             outboxMessages ?? Array.Empty<OperationsOutboxMessageDraft>(),
-            Array.Empty<LedgerTransactionV1>(),
-            Array.Empty<LedgerEntryV1>());
+            ledgerTransactions ?? Array.Empty<LedgerTransactionV1>(),
+            ledgerEntries ?? Array.Empty<LedgerEntryV1>());
 
     public static SliceCommandHandlerResult Rejected(
         int statusCode,
@@ -909,7 +1084,9 @@ public sealed record OperationsOutboxMessageDraft(
 public sealed record OperationsFactBatch(
     IReadOnlyList<OperationsDomainEvent> DomainEvents,
     IReadOnlyList<OperationsWorkItemEvent> WorkItemEvents,
-    IReadOnlyList<OperationsOutboxMessage> OutboxMessages);
+    IReadOnlyList<OperationsOutboxMessage> OutboxMessages,
+    IReadOnlyList<LedgerTransactionV1> LedgerTransactions,
+    IReadOnlyList<LedgerEntryV1> LedgerEntries);
 
 public sealed record OperationsDomainEvent(
     string TenantId,
@@ -978,7 +1155,27 @@ public sealed record OperationsStableResponse(
             handled.CommitStatus,
             handled.ProjectionStatus,
             facts.DomainEvents.Select(item => item.EventId).ToArray(),
-            handled.ResponseBody);
+            ResponseBody(handled.ResponseBody, facts));
+
+    private static IReadOnlyDictionary<string, object> ResponseBody(
+        IReadOnlyDictionary<string, object> body,
+        OperationsFactBatch facts)
+    {
+        if (facts.LedgerTransactions.Count == 0 && facts.LedgerEntries.Count == 0)
+        {
+            return body;
+        }
+
+        var copy = new Dictionary<string, object>(body, StringComparer.Ordinal)
+        {
+            ["ledgerTransactionIds"] = facts.LedgerTransactions.Select(item => item.LedgerTransactionId).ToArray(),
+            ["ledgerEntryIds"] = facts.LedgerEntries.Select(item => item.EntryId).ToArray(),
+            ["ledgerBalanceStatus"] = facts.LedgerTransactions.All(item => item.BalanceStatus.Equals("balanced", StringComparison.OrdinalIgnoreCase))
+                ? "balanced"
+                : "unbalanced"
+        };
+        return copy;
+    }
 }
 
 public sealed record OperationsCommitResult(

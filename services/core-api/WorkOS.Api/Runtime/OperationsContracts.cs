@@ -52,7 +52,8 @@ public sealed record LedgerTransactionV1(
     string WorkItemId,
     string SubmissionId,
     string Currency,
-    string BalanceStatus);
+    string BalanceStatus,
+    string TransactionType = "");
 
 public sealed record LedgerEntryV1(
     string TenantId,
@@ -60,7 +61,10 @@ public sealed record LedgerEntryV1(
     string LedgerTransactionId,
     string DebitCredit,
     decimal Amount,
-    string Currency);
+    string Currency,
+    string AccountId = "",
+    string AccountType = "",
+    string EntryRole = "");
 
 public sealed record WorkItemTransitionV1(
     string TenantId,
