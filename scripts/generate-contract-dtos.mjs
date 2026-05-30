@@ -279,10 +279,22 @@ export type ConfirmWorkItemResult = {
     observeOutbox: boolean;
     [key: string]: unknown;
   };
-  source: "operations_adapter";
+  source: "operations_adapter" | "operations_unit_of_work";
   idempotencyKey?: string | null;
   payloadHash?: string | null;
   commandSubmissionId?: string | null;
+};
+
+export type FactTrace = {
+  tenantId: string;
+  traceId: string;
+  caseRef: string;
+  workItemRef: string;
+  submissionRef: string;
+  domainEventRefs: string[];
+  ledgerTransactionRefs: string[];
+  ledgerEntryRefs: string[];
+  projectionCommitRefs: string[];
 };
 
 export type EvidenceDraftRequest = {
@@ -444,6 +456,9 @@ const apiPathDescriptors = [
   { key: "operationsWorkItem", path: "/api/operations/work-items/{workItemId}" },
   { key: "operationsPrepare", path: "/api/operations/work-items/{workItemId}/prepare" },
   { key: "operationsConfirm", path: "/api/operations/work-items/{workItemId}/confirm" },
+  { key: "operationsTraceSubmission", path: "/api/operations/trace/submissions/{submissionId}" },
+  { key: "operationsTraceWorkItem", path: "/api/operations/trace/work-items/{workItemId}" },
+  { key: "operationsTraceCase", path: "/api/operations/trace/cases/{caseId}" },
   { key: "search", path: "/api/search" },
   { key: "homeSurface", path: "/api/lenses/home-surface" },
   { key: "lensWorkQueue", path: "/api/lenses/work-queue" },

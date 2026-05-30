@@ -331,6 +331,12 @@ public interface OperationsReadStore
     OperationsCommandSubmission? FindCommandSubmission(string tenantId, string scope, string idempotencyKey);
 
     FactTraceV1? GetFactTrace(string tenantId, string submissionId);
+
+    FactTraceV1? GetFactTraceBySubmission(string submissionId);
+
+    IReadOnlyList<FactTraceV1> GetFactTracesByWorkItem(string workItemId);
+
+    IReadOnlyList<FactTraceV1> GetFactTracesByCase(string caseId);
 }
 
 public sealed class InMemoryOperationsStore : OperationsWriteStore, OperationsReadStore
@@ -421,6 +427,27 @@ public sealed class InMemoryOperationsStore : OperationsWriteStore, OperationsRe
             Array.Empty<string>(),
             Array.Empty<string>());
     }
+
+    public FactTraceV1? GetFactTraceBySubmission(string submissionId)
+    {
+        var submission = submissions.Values.FirstOrDefault(item =>
+            item.SubmissionId.Equals(submissionId, StringComparison.OrdinalIgnoreCase));
+        return submission is null ? null : GetFactTrace(submission.TenantId, submission.SubmissionId);
+    }
+
+    public IReadOnlyList<FactTraceV1> GetFactTracesByWorkItem(string workItemId) =>
+        submissions.Values
+            .Where(item => item.WorkItemId.Equals(workItemId, StringComparison.OrdinalIgnoreCase))
+            .Select(item => GetFactTrace(item.TenantId, item.SubmissionId))
+            .OfType<FactTraceV1>()
+            .ToArray();
+
+    public IReadOnlyList<FactTraceV1> GetFactTracesByCase(string caseId) =>
+        submissions.Values
+            .Where(item => item.CaseId.Equals(caseId, StringComparison.OrdinalIgnoreCase))
+            .Select(item => GetFactTrace(item.TenantId, item.SubmissionId))
+            .OfType<FactTraceV1>()
+            .ToArray();
 
     private static string Key(string tenantId, string scope, string idempotencyKey) =>
         $"{tenantId}|{scope}|{idempotencyKey}";
@@ -653,6 +680,27 @@ public sealed class PostgresOperationsStore : OperationsWriteStore, OperationsRe
             Array.Empty<string>());
     }
 
+    public FactTraceV1? GetFactTraceBySubmission(string submissionId)
+    {
+        using var connection = connections.Open();
+        using var command = connection.CreateCommand();
+        command.CommandText = """
+            select tenant_id
+            from operations_command_submissions
+            where submission_id = @submissionId
+            limit 1
+            """;
+        command.Parameters.AddWithValue("submissionId", submissionId);
+        var tenantId = command.ExecuteScalar() as string;
+        return string.IsNullOrWhiteSpace(tenantId) ? null : GetFactTrace(tenantId, submissionId);
+    }
+
+    public IReadOnlyList<FactTraceV1> GetFactTracesByWorkItem(string workItemId) =>
+        LoadTraces("work_item_id", workItemId);
+
+    public IReadOnlyList<FactTraceV1> GetFactTracesByCase(string caseId) =>
+        LoadTraces("case_id", caseId);
+
     private static OperationsCommandSubmission ReadSubmission(NpgsqlDataReader reader)
     {
         var envelope = JsonSerializer.Deserialize<CommandEnvelopeV1>(reader.GetString(13), PostgresProjectionStore.JsonOptions)
@@ -700,6 +748,30 @@ public sealed class PostgresOperationsStore : OperationsWriteStore, OperationsRe
         }
 
         return values.ToArray();
+    }
+
+    private IReadOnlyList<FactTraceV1> LoadTraces(string column, string value)
+    {
+        using var connection = connections.Open();
+        using var command = connection.CreateCommand();
+        command.CommandText = $"""
+            select tenant_id, submission_id
+            from operations_command_submissions
+            where {column} = @value
+            order by submitted_at_utc, submission_id
+            """;
+        command.Parameters.AddWithValue("value", value);
+        using var reader = command.ExecuteReader();
+        var refs = new List<(string TenantId, string SubmissionId)>();
+        while (reader.Read())
+        {
+            refs.Add((reader.GetString(0), reader.GetString(1)));
+        }
+
+        return refs
+            .Select(item => GetFactTrace(item.TenantId, item.SubmissionId))
+            .OfType<FactTraceV1>()
+            .ToArray();
     }
 }
 

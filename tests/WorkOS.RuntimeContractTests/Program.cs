@@ -1942,6 +1942,22 @@ static void ValidateProjectionContractFiles()
 
     Assert(openApi.RootElement.GetProperty("paths").TryGetProperty("/api/observability/runtime", out _), "OpenAPI must include runtime observability endpoint");
     Assert(openApi.RootElement.GetProperty("paths").TryGetProperty("/api/lenses/accommodation/{lensId}", out _), "OpenAPI must include accommodation aggregate lens endpoint");
+    foreach (var tracePath in new[] { "/api/operations/trace/submissions/{submissionId}", "/api/operations/trace/work-items/{workItemId}", "/api/operations/trace/cases/{caseId}" })
+    {
+        Assert(openApi.RootElement.GetProperty("paths").TryGetProperty(tracePath, out _), $"OpenAPI must include Operations FactTrace endpoint {tracePath}");
+    }
+    var factTraceRequired = openApi.RootElement
+        .GetProperty("components")
+        .GetProperty("schemas")
+        .GetProperty("FactTrace")
+        .GetProperty("required")
+        .EnumerateArray()
+        .Select(item => item.GetString())
+        .ToHashSet();
+    foreach (var field in new[] { "tenantId", "caseRef", "workItemRef", "submissionRef", "domainEventRefs", "ledgerTransactionRefs", "ledgerEntryRefs", "projectionCommitRefs" })
+    {
+        Assert(factTraceRequired.Contains(field), $"OpenAPI FactTrace must require {field}");
+    }
 
     using var policyContract = JsonDocument.Parse(File.ReadAllText(Path.Combine("docs", "contracts", "policy-contract.json")));
     var decisionCodes = policyContract.RootElement.GetProperty("decisionCodes").EnumerateArray().Select(item => item.GetString()).ToHashSet();
@@ -2158,7 +2174,7 @@ static void ValidateOperationsUnitOfWork(string connectionString)
 static void ValidateGeneratedDtos()
 {
     var generated = File.ReadAllText(Path.Combine("apps", "mobile", "src", "generated", "workosContracts.d.ts"));
-    foreach (var typeName in new[] { "ProjectionEnvelope", "WorkspaceProjection", "CardProjection", "ConfirmCardRequest", "RuntimeObservation" })
+    foreach (var typeName in new[] { "ProjectionEnvelope", "WorkspaceProjection", "CardProjection", "ConfirmCardRequest", "RuntimeObservation", "FactTrace" })
     {
         Assert(generated.Contains($"export type {typeName}"), $"generated DTOs must include {typeName}");
     }
@@ -2168,7 +2184,7 @@ static void ValidateGeneratedDtos()
     var runtimeApiPathsPath = Path.Combine("apps", "mobile", "src", "generated", "runtimeApiPaths.js");
     Assert(File.Exists(runtimeApiPathsPath), "generated runtime API paths module must exist");
     var runtimeApiPaths = File.ReadAllText(runtimeApiPathsPath);
-    foreach (var apiPathKey in new[] { "health", "login", "workspaces", "workspace", "bootstrap", "workQueue", "search", "lensWorkQueue", "lensSearch", "homeSurface", "learningCatalog", "accommodationLens", "prepareCard", "confirmCard", "workspaceEvents", "auditEvents", "outbox", "processOutbox", "behaviorEvents", "observability" })
+    foreach (var apiPathKey in new[] { "health", "login", "workspaces", "workspace", "bootstrap", "workQueue", "operationsCases", "operationsCase", "operationsWorkItems", "operationsWorkItem", "operationsPrepare", "operationsConfirm", "operationsTraceSubmission", "operationsTraceWorkItem", "operationsTraceCase", "search", "lensWorkQueue", "lensSearch", "homeSurface", "learningCatalog", "accommodationLens", "prepareCard", "confirmCard", "workspaceEvents", "auditEvents", "outbox", "processOutbox", "behaviorEvents", "observability" })
     {
         Assert(runtimeApiPaths.Contains($"{apiPathKey}:"), $"generated runtime API paths must include {apiPathKey}");
     }
