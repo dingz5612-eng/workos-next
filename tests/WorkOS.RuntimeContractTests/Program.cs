@@ -17,6 +17,7 @@ ResetPostgres(connectionString);
 
     ValidateProjectionContractFiles();
     ValidateOperationsRuntimeContracts();
+    DormitoryFactTraceContractTests.Run();
     ValidateOperationsUnitOfWork(connectionString);
     ValidateGeneratedDtos();
     ValidateSliceManifest(projection);
