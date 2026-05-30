@@ -17,6 +17,7 @@ ResetPostgres(connectionString);
 
     ValidateProjectionContractFiles();
     ValidateOperationsRuntimeContracts();
+    ValidateOperationsUnitOfWork(connectionString);
     ValidateGeneratedDtos();
     ValidateSliceManifest(projection);
     ValidateProjectionEnvelopeAgainstContract(projection);
@@ -2075,6 +2076,85 @@ static void AssertRecordParameters(Type type, params string[] properties)
     }
 }
 
+static void ValidateOperationsUnitOfWork(string connectionString)
+{
+    var store = new PostgresOperationsStore(connectionString);
+    var handlerCalls = 0;
+    var unitOfWork = new OperationsUnitOfWork(
+        new CommandEnvelopeBuilder(),
+        new CommandSubmissionService(store),
+        new IdempotencyService(store),
+        new PayloadHashService(),
+        new SliceCommandHandlerRouter().Register("runtime.contract.test", envelope =>
+        {
+            handlerCalls++;
+            return SliceCommandHandlerResult.Committed(
+                new Dictionary<string, object> { ["accepted"] = true, ["submission"] = envelope.IdempotencyKey },
+                new[]
+                {
+                    new OperationsDomainEventDraft(
+                        "RuntimeContractCommitted",
+                        new Dictionary<string, object> { ["caseId"] = envelope.CaseId },
+                        "evt-runtime-uow-001")
+                },
+                new[]
+                {
+                    new OperationsWorkItemEventDraft(
+                        "WorkItemConfirmed",
+                        "ready",
+                        "done",
+                        new Dictionary<string, object> { ["workItemId"] = envelope.WorkItemId })
+                },
+                new[]
+                {
+                    new OperationsOutboxMessageDraft(
+                        "project-domain-event",
+                        new Dictionary<string, object> { ["eventId"] = "evt-runtime-uow-001" },
+                        "evt-runtime-uow-001")
+                },
+                "pending");
+        }));
+
+    var request = new OperationsCommandRequest(
+        "tenant-runtime-contract",
+        "case-runtime-contract",
+        "work-runtime-contract",
+        "runtime.contract.test",
+        "CommandEnvelope.v1",
+        "definition-runtime-contract-v1",
+        "idem-runtime-uow",
+        new Dictionary<string, object> { ["field"] = "value-a" },
+        "operator-runtime");
+
+    var committed = unitOfWork.Commit(request);
+    Assert(committed.StatusCode == 200, "OperationsUnitOfWork should commit the first command");
+    Assert(committed.CommitStatus == "committed", "OperationsUnitOfWork should mark committed command response");
+    Assert(committed.ProjectionStatus == "pending", "projection pending must not roll back a committed business fact");
+    Assert(committed.DomainEventIds.Contains("evt-runtime-uow-001"), "OperationsUnitOfWork response must include domain event refs");
+
+    var duplicate = unitOfWork.Commit(request);
+    Assert(duplicate.Duplicate, "same idempotency key and payload must return stored stable response");
+    Assert(duplicate.SubmissionId == committed.SubmissionId, "duplicate must reuse stored submission");
+    Assert(duplicate.DomainEventIds.SequenceEqual(committed.DomainEventIds), "duplicate must reuse stored domain event refs");
+
+    var conflict = unitOfWork.Commit(request with
+    {
+        Payload = new Dictionary<string, object> { ["field"] = "value-b" }
+    });
+    Assert(conflict.StatusCode == 409, "same idempotency key with different payload must return 409");
+    Assert(handlerCalls == 1, "idempotency conflict must not invoke SliceCommandHandler");
+    Assert(ScalarInt(connectionString, $"select count(*) from operations_domain_events where submission_id = '{committed.SubmissionId}'") == 1, "OperationsUnitOfWork must write exactly one DomainEvent");
+    Assert(ScalarInt(connectionString, $"select count(*) from operations_outbox_messages where submission_id = '{committed.SubmissionId}'") == 1, "OperationsUnitOfWork must write Outbox in the fact boundary");
+    Assert(ScalarInt(connectionString, $"select count(*) from operations_fact_responses where submission_id = '{committed.SubmissionId}'") == 1, "OperationsUnitOfWork must write stable response");
+
+    var trace = store.GetFactTrace("tenant-runtime-contract", committed.SubmissionId);
+    Assert(trace is not null, "OperationsReadStore must return a FactTrace");
+    Assert(trace!.CaseRef == "case-runtime-contract", "FactTrace must link case");
+    Assert(trace.WorkItemRef == "work-runtime-contract", "FactTrace must link work item");
+    Assert(trace.SubmissionRef == committed.SubmissionId, "FactTrace must link submission");
+    Assert(trace.DomainEventRefs.Contains("evt-runtime-uow-001"), "FactTrace must link domain event");
+}
+
 static void ValidateGeneratedDtos()
 {
     var generated = File.ReadAllText(Path.Combine("apps", "mobile", "src", "generated", "workosContracts.d.ts"));
@@ -2380,6 +2460,11 @@ static void ResetPostgres(string connectionString)
         drop table if exists payment_match_candidates;
         drop table if exists bank_transactions;
         drop table if exists bank_statement_imports;
+        drop table if exists operations_fact_responses;
+        drop table if exists operations_outbox_messages;
+        drop table if exists operations_work_item_events;
+        drop table if exists operations_domain_events;
+        drop table if exists operations_command_submissions;
         drop table if exists correction_cases;
         drop table if exists correction_audit;
         drop table if exists ledger_correction_entries;
