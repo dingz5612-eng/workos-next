@@ -1,0 +1,13 @@
+{
+  "domainId": "dormitory",
+  "version": "b1",
+  "lenses": [
+    {"lensId":"DormAvailabilityLens","sourceFacts":["Room","Bed","BedStatus","RoomReadiness"],"notFactSource":true},
+    {"lensId":"LeadFunnelLens","sourceFacts":["Lead","Reservation","Stay"],"notFactSource":true},
+    {"lensId":"StayBalanceLens","sourceFacts":["Charge","PaymentAllocation","LedgerTransaction"],"notFactSource":true},
+    {"lensId":"DepositLiabilityLens","sourceFacts":["DepositAccount","LedgerTransaction"],"notFactSource":true},
+    {"lensId":"CheckoutTurnoverLens","sourceFacts":["Inspection","Checkout","ResourceRelease"],"notFactSource":true},
+    {"lensId":"ExceptionRiskLens","sourceFacts":["ExceptionCase","AuditTrail"],"notFactSource":true}
+  ],
+  "productionAllowed": false
+}

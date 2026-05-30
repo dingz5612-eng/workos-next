@@ -1,0 +1,17 @@
+{
+  "domainId": "dormitory",
+  "version": "b1",
+  "scenarios": [
+    {"scenarioId":"dorm-cert-001","name":"lead to reservation to stay to bed assignment","requires":["CommandSubmission","DomainEvent","FactTrace","CutoverState"]},
+    {"scenarioId":"dorm-cert-002","name":"deposit assess receive confirm liability update","requires":["CommandSubmission","DomainEvent","BalancedLedgerTransaction","DepositLiabilityLens"]},
+    {"scenarioId":"dorm-cert-003","name":"ordinary payment finance confirm allocation balance update","requires":["CommandSubmission","DomainEvent","BalancedLedgerTransaction","PaymentAllocation"]},
+    {"scenarioId":"dorm-cert-004","name":"service task blocks bed complete verify release","requires":["CommandSubmission","DomainEvent","EvidenceObject","BedStatus"]},
+    {"scenarioId":"dorm-cert-005","name":"checkout inspection deposit deduction refund cleaning available","requires":["CommandSubmission","DomainEvent","BalancedLedgerTransaction","EvidenceObject"]},
+    {"scenarioId":"dorm-cert-006","name":"bank import match mismatch correction","requires":["CommandSubmission","AppendOnlyCorrection","RedOnMoneyMismatch"]},
+    {"scenarioId":"dorm-cert-007","name":"period review action plan period close","requires":["FactTrace","LensSnapshot","AuditTrail"]},
+    {"scenarioId":"dorm-cert-008","name":"permission denied escalation audit","requires":["403","NoBusinessSideEffect","AuditTrail"]},
+    {"scenarioId":"dorm-cert-009","name":"duplicate submit idempotent response no duplicate side effect","requires":["StableDuplicateResponse","NoDuplicateDomainEvent"]},
+    {"scenarioId":"dorm-cert-010","name":"missing evidence block confirm add evidence confirm","requires":["422","EvidencePolicy","ConfirmAfterEvidence"]}
+  ],
+  "productionAllowed": false
+}

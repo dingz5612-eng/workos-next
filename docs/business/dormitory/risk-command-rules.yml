@@ -1,0 +1,13 @@
+{
+  "domainId": "dormitory",
+  "version": "b1",
+  "riskRules": [
+    {"id":"dorm-risk-001","risk":"missing required evidence","status":"block confirm","httpStatus":422},
+    {"id":"dorm-risk-002","risk":"rejected evidence","status":"block confirm","httpStatus":422},
+    {"id":"dorm-risk-003","risk":"permission denied","status":"block commit","httpStatus":403},
+    {"id":"dorm-risk-004","risk":"idempotency conflict","status":"block side effect","httpStatus":409},
+    {"id":"dorm-risk-005","risk":"untrusted device high risk money command","status":"escalate and block","httpStatus":403},
+    {"id":"dorm-risk-006","risk":"projection pending","status":"business committed, projection pending","httpStatus":202}
+  ],
+  "productionAllowed": false
+}

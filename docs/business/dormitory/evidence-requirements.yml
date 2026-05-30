@@ -1,0 +1,18 @@
+{
+  "domainId": "dormitory",
+  "version": "b1",
+  "evidenceRequirements": [
+    {"requirementId":"room-photo","requiredFields":["tenantId","workItemId","submissionId","evidenceHash"]},
+    {"requirementId":"cleaning-checklist","requiredFields":["tenantId","workItemId","submissionId","evidenceHash","capturedBy"]},
+    {"requirementId":"maintenance-clearance","requiredFields":["tenantId","workItemId","submissionId","approvalActor"]},
+    {"requirementId":"identity-document","requiredFields":["tenantId","workItemId","submissionId","verifiedBy"]},
+    {"requirementId":"reservation-acknowledgement","requiredFields":["tenantId","workItemId","submissionId","customerAck"]},
+    {"requirementId":"payment-receipt","requiredFields":["tenantId","workItemId","submissionId","amount","currency","evidenceHash"]},
+    {"requirementId":"deposit-policy","requiredFields":["tenantId","workItemId","submissionId","policyVersion"]},
+    {"requirementId":"receipt-proof","requiredFields":["tenantId","workItemId","submissionId","amount","currency","evidenceHash"]},
+    {"requirementId":"deduction-basis","requiredFields":["tenantId","workItemId","submissionId","damageRef","amount","currency"]},
+    {"requirementId":"refund-approval","requiredFields":["tenantId","workItemId","submissionId","approver","availableRefundAmount"]},
+    {"requirementId":"settlement-review","requiredFields":["tenantId","workItemId","submissionId","reviewer","projectionVersion"]}
+  ],
+  "productionAllowed": false
+}

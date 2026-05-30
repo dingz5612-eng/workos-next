@@ -1,0 +1,1 @@
+{"templateId":"risk-template","requiredRules":["403 permission denied no side effect","409 idempotency conflict no side effect","422 business blocked no side effect","Red shadow blocks gate","P0 invariant blocks gate"],"requiresEscalationOwner":true}

@@ -1,0 +1,23 @@
+{
+  "domainId": "dormitory",
+  "version": "b1",
+  "stage": "B1",
+  "goCriteria": [
+    "north-star and metrics-tree complete",
+    "five value streams complete",
+    "WorkItem catalog has owner SLA evidence ledgerImpact affectedFacts",
+    "evidence policy binds requirementId workItemId submissionId tenantId evidenceHash",
+    "finance rules keep deposit liability separate from revenue",
+    "risk command rules block 403 409 422 correctly",
+    "certification scenarios declared",
+    "Business Domain Kit templates complete"
+  ],
+  "noGoCriteria": [
+    "Dormitory page-specific write API",
+    "Dormitory runtime behavior in B1",
+    "productionAllowed true",
+    "deposit treated as revenue",
+    "WorkItemBundle as fact source"
+  ],
+  "productionAllowed": false
+}
