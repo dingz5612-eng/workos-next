@@ -2,6 +2,46 @@
   "version": "1.0.0",
   "rules": [
     {
+      "id": "WON55-RULES-001",
+      "title": "Engineering rule authority precedence",
+      "scope": "rules codex ci",
+      "severity": "P0",
+      "owner": "platform",
+      "ruleFile": "docs/engineering/00-rule-authority.md",
+      "enforcedBy": ["scripts/check-rule-authority.mjs", "scripts/guard-architecture.ps1"],
+      "exceptionAllowed": false
+    },
+    {
+      "id": "WON55-RULES-002",
+      "title": "Architecture docs are compatibility references",
+      "scope": "rules documentation",
+      "severity": "P0",
+      "owner": "platform",
+      "ruleFile": "docs/engineering/00-rule-authority.md",
+      "enforcedBy": ["scripts/check-rule-authority.mjs"],
+      "exceptionAllowed": false
+    },
+    {
+      "id": "WON55-RULES-003",
+      "title": "Operations Runtime axis is primary",
+      "scope": "runtime api codex",
+      "severity": "P0",
+      "owner": "runtime",
+      "ruleFile": "docs/engineering/16-v5.5-engineering-rules-os.md",
+      "enforcedBy": ["scripts/check-rule-authority.mjs", ".github/pull_request_template.md"],
+      "exceptionAllowed": false
+    },
+    {
+      "id": "WON55-RULES-004",
+      "title": "V5.5 Rules OS Go No-Go acceptance",
+      "scope": "acceptance release ci",
+      "severity": "P0",
+      "owner": "release",
+      "ruleFile": "docs/acceptance/13-v5.5-rules-os-go-no-go.md",
+      "enforcedBy": ["scripts/check-rule-authority.mjs", "scripts/guard-architecture.ps1"],
+      "exceptionAllowed": false
+    },
+    {
       "id": "WON16-RUNTIME-001",
       "title": "Operations Confirm is primary business write endpoint",
       "scope": "backend-api",

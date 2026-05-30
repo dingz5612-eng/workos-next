@@ -2,6 +2,14 @@
 
 -
 
+## Rule Authority
+
+- [ ] 已阅读 `docs/engineering/00-rule-authority.md`。
+- [ ] 本 PR 符合 V5.5 batch dependency，没有越过未完成的前置批次。
+- [ ] WON-18 当前 CI 与 V5.4 Control Plane Guards 为 green，或本 PR 只修复 gate 阻塞。
+- [ ] 新设计沿 Operations Runtime axis：Definition -> OperationCase -> WorkItem -> CommandSubmission -> SliceCommandHandler -> DomainEvent / LedgerEntry -> Projection / Lens。
+- [ ] 未把 Workspace/Card prepare 或 confirm 作为新业务扩展主路径。
+
 ## API Boundary
 
 - [ ] 是否新增业务写 API？

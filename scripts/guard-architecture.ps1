@@ -88,10 +88,14 @@ Assert-Exists "docs/architecture/WORKOS_TESTING_RULES.md"
 Assert-Exists "docs/architecture/CURRENT_RUNTIME_ARCHITECTURE.md"
 Assert-Exists "docs/architecture/rules/index.json"
 Assert-Exists "docs/architecture/architecture-exceptions.json"
+Assert-Exists "docs/architecture/README.md"
+Assert-Exists "docs/engineering/00-rule-authority.md"
 Assert-Exists "docs/engineering/03-api-boundary-rules.md"
 Assert-Exists "docs/engineering/13-release-control-plane-rules.md"
 Assert-Exists "docs/engineering/15-no-go-rules.md"
+Assert-Exists "docs/engineering/16-v5.5-engineering-rules-os.md"
 Assert-Exists "docs/acceptance/12-release-go-no-go.md"
+Assert-Exists "docs/acceptance/13-v5.5-rules-os-go-no-go.md"
 Assert-Exists "docs/v5.4/operations-api-allowlist.json"
 Assert-Exists "docs/v5.4/release-manifest.schema.json"
 Assert-Exists "docs/v5.4/release-manifest.fixture.json"
@@ -103,6 +107,7 @@ Assert-Exists "docs/v5.4/release-control-center.md"
 Assert-Exists "docs/v5.4/invariant-definitions.json"
 Assert-Exists "docs/v5.4/shadow-compare.config.json"
 Assert-Exists "scripts/check-api-boundaries.mjs"
+Assert-Exists "scripts/check-rule-authority.mjs"
 Assert-Exists "scripts/check-no-production-fake-fallback.mjs"
 Assert-Exists "scripts/v5_4/run-control-plane-checks.ps1"
 Assert-Exists "scripts/v5_4/control-plane-migration.mjs"
@@ -509,6 +514,7 @@ foreach ($path in $openApiPaths) {
 }
 
 Invoke-Checked "node" @("scripts/generate-contract-dtos.mjs", "--check")
+Invoke-Checked "node" @("scripts/check-rule-authority.mjs")
 Invoke-Checked "node" @("scripts/validate-slice-admission.mjs")
 Invoke-Checked "node" @("scripts/architecture-drift-report.mjs")
 Invoke-Checked "node" @("scripts/validate-runtime-api.mjs")
