@@ -71,12 +71,19 @@ writes `control_plane.backup_restore_smoke_reports`.
   restore, and invariants-after-restore.
 - `shadow-compare-runner` reads configured active and shadow tables, then writes
   `control_plane.shadow_compare_reports`.
-- `gate-runner` computes status from invariant, shadow, and signoff inputs,
-  then writes a machine-generated `control_plane.gate_results` row. In CI it
-  writes the current `GITHUB_RUN_ID` into `ci_run_id`.
+- `gate-runner` computes status from invariant, shadow, rollback, and signoff
+  inputs, then writes a machine-generated `control_plane.gate_results` row. In
+  CI it writes the current `GITHUB_RUN_ID` into `ci_run_id`. The formal release
+  gate rejects `.not_run` artifact paths, rejects `source_mode=skeleton`, and
+  exits non-zero for P0 blocking invariants, Red shadow reports, missing
+  rollback instructions, or blocked / failed / not_run formal gate status.
+  Yellow shadow evidence remains `warning` evidence and does not masquerade as
+  `passed`.
 - `generate-release-manifest` builds the MR-00 CI release manifest from the
   generated GateResult, rollback instruction, commit SHA, and CI run id.
 - `release-manifest-validate` validates the generated release manifest against
   `docs/v5.4/release-manifest.schema.json` and checks it references the
   generated GateResult with matching `ci_run_id`, invariant refs, and shadow
-  compare refs. The fixture manifest remains a unit fixture only.
+  compare refs. Formal validation rejects `.not_run` artifacts,
+  `source_mode=skeleton`, and `not_run` GateResult evidence. The fixture
+  manifest remains a unit fixture only.

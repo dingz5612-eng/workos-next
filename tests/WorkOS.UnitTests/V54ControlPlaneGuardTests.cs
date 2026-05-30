@@ -55,6 +55,9 @@ public sealed class V54ControlPlaneGuardTests
         Assert.IsFalse(workflow.Contains("--manifest=docs/v5.4/release-manifest.fixture.json"), "workflow must not validate only the fixture manifest");
         Assert.IsTrue(workflow.Contains("--mode=semantic"), "workflow shadow compare must run semantic mode");
         Assert.IsTrue(localCommand.Contains("--mode=semantic"), "local shadow compare must run semantic mode");
+        Assert.IsTrue(workflow.Contains("--formal-release-gate=true"), "workflow gate-runner must run as a formal release gate");
+        Assert.IsTrue(localCommand.Contains("--formal-release-gate=true"), "local control-plane command must run gate-runner as a formal release gate");
+        Assert.IsTrue(workflow.Contains("--rollback=docs/v5.4/rollback/mr-00-rollback-instruction.json"), "formal gate-runner must receive rollback evidence");
     }
 
     [TestMethod]
@@ -564,6 +567,93 @@ public sealed class V54ControlPlaneGuardTests
         }
     }
 
+    [TestMethod]
+    public void ReleaseManifestValidateRejectsNotRunAndSkeletonFormalGateEvidence()
+    {
+        var temp = Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), $"workos-v54-formal-{Guid.NewGuid():N}"));
+        try
+        {
+            var manifestPath = RepoPath("docs", "v5.4", "releases", "mr-00-control-plane-bootstrap.json");
+            var rollbackPath = RepoPath("docs", "v5.4", "rollback", "mr-00-rollback-instruction.json");
+            using var manifest = JsonDocument.Parse(File.ReadAllText(manifestPath));
+            var gateId = manifest.RootElement.GetProperty("gate_result_id").GetString()!;
+            var ciRunId = manifest.RootElement.GetProperty("ci_run_id").GetString();
+            var invariantRefs = manifest.RootElement.GetProperty("invariant_check_ids").EnumerateArray().Select(item => item.GetString()!).ToArray();
+            var shadowRefs = manifest.RootElement.GetProperty("shadow_compare_report_ids").EnumerateArray().Select(item => item.GetString()!).ToArray();
+            var skeletonGatePath = Path.Combine(temp.FullName, "gate-result.json");
+            var notRunGatePath = Path.Combine(temp.FullName, "gate-result.not_run.json");
+
+            RunnerJson.Write(skeletonGatePath, new GateResultEvidence(
+                gateId,
+                manifest.RootElement.GetProperty("release_id").GetString()!,
+                manifest.RootElement.GetProperty("mr_id").GetString()!,
+                null,
+                null,
+                "v5.4-control-plane",
+                "automated",
+                "passed",
+                "P2",
+                ciRunId,
+                ["test"],
+                invariantRefs,
+                shadowRefs,
+                [],
+                [],
+                ["generated"],
+                [],
+                "gate-runner",
+                DateTimeOffset.UtcNow,
+                "input",
+                "result")
+            {
+                SourceMode = "skeleton"
+            });
+
+            RunnerJson.Write(notRunGatePath, new GateResultEvidence(
+                gateId,
+                manifest.RootElement.GetProperty("release_id").GetString()!,
+                manifest.RootElement.GetProperty("mr_id").GetString()!,
+                null,
+                null,
+                "v5.4-control-plane",
+                "automated",
+                "not_run",
+                "P2",
+                ciRunId,
+                ["test"],
+                invariantRefs,
+                shadowRefs,
+                [],
+                ["Business signoff refs are missing."],
+                [],
+                [],
+                "gate-runner",
+                DateTimeOffset.UtcNow,
+                "input",
+                "result"));
+
+            RunNodeExpectFailure(
+                "sourceMode=skeleton",
+                "scripts/v5_4/release-manifest-validate.mjs",
+                $"--manifest={manifestPath}",
+                $"--gate={skeletonGatePath}",
+                $"--rollback={rollbackPath}",
+                "--require-ci-run-id=true");
+
+            RunNodeExpectFailure(
+                "not_run artifact",
+                "scripts/v5_4/release-manifest-validate.mjs",
+                $"--manifest={manifestPath}",
+                $"--gate={notRunGatePath}",
+                $"--rollback={rollbackPath}",
+                "--require-ci-run-id=true");
+        }
+        finally
+        {
+            temp.Delete(recursive: true);
+        }
+    }
+
     private static InvariantCheckEvidence Invariant(string id, string key, string mode, string severity, string status)
     {
         return new InvariantCheckEvidence(
@@ -626,6 +716,22 @@ public sealed class V54ControlPlaneGuardTests
         var output = process.StandardOutput.ReadToEnd();
         var error = process.StandardError.ReadToEnd();
         Assert.AreEqual(0, process.ExitCode, output + error);
+    }
+
+    private static void RunNodeExpectFailure(string expectedOutput, string scriptPath, params string[] arguments)
+    {
+        using var process = System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo("node", string.Join(" ", new[] { RepoPath(scriptPath) }.Concat(arguments).Select(QuoteArgument)))
+        {
+            WorkingDirectory = RepoRoot(),
+            RedirectStandardOutput = true,
+            RedirectStandardError = true
+        });
+
+        Assert.IsNotNull(process, "Could not start node.");
+        process!.WaitForExit(30000);
+        var output = process.StandardOutput.ReadToEnd() + process.StandardError.ReadToEnd();
+        Assert.AreNotEqual(0, process.ExitCode, output);
+        Assert.IsTrue(output.Contains(expectedOutput, StringComparison.OrdinalIgnoreCase), output);
     }
 
     private static string QuoteArgument(string value) =>

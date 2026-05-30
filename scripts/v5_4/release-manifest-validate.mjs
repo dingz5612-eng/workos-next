@@ -10,6 +10,11 @@ const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
 const gateResult = args.gate ? JSON.parse(fs.readFileSync(path.resolve(args.gate), "utf8")) : null;
 const rollbackInstruction = args.rollback ? JSON.parse(fs.readFileSync(path.resolve(args.rollback), "utf8")) : null;
 const requireCiRunId = parseBool(args["require-ci-run-id"]);
+const allowFixtureEvidence = parseBool(args["allow-fixture-evidence"]);
+
+rejectNotRunArtifact("manifest", manifestPath, allowFixtureEvidence);
+if (args.gate) rejectNotRunArtifact("gate", path.resolve(args.gate), allowFixtureEvidence);
+if (args.rollback) rejectNotRunArtifact("rollback", path.resolve(args.rollback), allowFixtureEvidence);
 
 for (const field of schema.required ?? []) {
   if (!(field in manifest)) {
@@ -47,6 +52,8 @@ if (requireCiRunId && (typeof manifest.ci_run_id !== "string" || !manifest.ci_ru
 }
 
 if (gateResult) {
+  validateGateEvidence(gateResult, allowFixtureEvidence);
+
   if (manifest.ci_run_id !== gateResult.ci_run_id) {
     fail(`release manifest ci_run_id ${manifest.ci_run_id} does not match generated gate ${gateResult.ci_run_id}`);
   }
@@ -60,6 +67,10 @@ if (rollbackInstruction) {
   if (manifest.rollback_instruction_id !== rollbackInstruction.rollback_instruction_id) {
     fail(`release manifest rollback_instruction_id ${manifest.rollback_instruction_id} does not match rollback instruction ${rollbackInstruction.rollback_instruction_id}`);
   }
+}
+
+if ((manifest.status === "active" || manifest.status === "locked") && !rollbackInstruction) {
+  fail(`release manifest status ${manifest.status} requires a validated rollback instruction`);
 }
 
 console.log("release-manifest-validate: PASS");
@@ -120,6 +131,32 @@ function validateRollbackInstruction(rollback) {
     if (!Array.isArray(rollback[field]) || rollback[field].length === 0) {
       fail(`rollback ${field} must be a non-empty array`);
     }
+  }
+}
+
+function validateGateEvidence(gate, allowFixture) {
+  const sourceMode = gate.source_mode ?? "real";
+  if (!["real", "fixture", "skeleton"].includes(sourceMode)) {
+    fail(`gate source_mode must be real, fixture, or skeleton; got ${sourceMode}`);
+  }
+
+  if (!allowFixture && sourceMode === "skeleton") {
+    fail("formal release manifest validation rejects sourceMode=skeleton gate evidence");
+  }
+
+  if (!allowFixture && gate.status === "not_run") {
+    fail("formal release manifest validation rejects not_run gate evidence");
+  }
+
+  if (gate.status === "passed" && (typeof gate.ci_run_id !== "string" || !gate.ci_run_id.trim())) {
+    fail("passed GateResult ci_run_id must be non-empty");
+  }
+}
+
+function rejectNotRunArtifact(kind, filePath, allowFixture) {
+  if (allowFixture) return;
+  if (path.basename(filePath).toLowerCase().includes(".not_run.")) {
+    fail(`formal release manifest validation rejects ${kind} not_run artifact: ${path.relative(process.cwd(), filePath)}`);
   }
 }
 

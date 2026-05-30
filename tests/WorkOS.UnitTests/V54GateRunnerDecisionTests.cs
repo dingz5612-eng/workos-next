@@ -102,6 +102,135 @@ public sealed class V54GateRunnerDecisionTests
         }
     }
 
+    [TestMethod]
+    public async Task FormalGateRunnerBlocksMissingRollbackInstruction()
+    {
+        var temp = Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), $"workos-gate-{Guid.NewGuid():N}"));
+        try
+        {
+            var invariantPath = Path.Combine(temp.FullName, "invariants.json");
+            var shadowPath = Path.Combine(temp.FullName, "shadow.json");
+            var gatePath = Path.Combine(temp.FullName, "gate.json");
+            RunnerJson.Write(invariantPath, new[] { Invariant("inv-pass", "api.no_page_specific_business_write", "blocking", "P0", "passed") });
+            RunnerJson.Write(shadowPath, Report("green"));
+
+            try
+            {
+                await GateRunner.Run(RunnerOptions.Parse(new[]
+                {
+                    "--dry-run=true",
+                    "--formal-release-gate=true",
+                    "--require-business-signoff=false",
+                    "--ciRunId=ci-formal",
+                    $"--invariant={invariantPath}",
+                    $"--shadow={shadowPath}",
+                    $"--out={gatePath}"
+                }));
+                Assert.Fail("Formal gate should fail when rollback instruction is missing.");
+            }
+            catch (InvalidOperationException)
+            {
+            }
+
+            var gate = RunnerJson.Read<GateResultEvidence>(gatePath);
+            Assert.AreEqual("blocked", gate.Status);
+            Assert.IsTrue(gate.NoGoItems.Any(item => item.Contains("rollback instruction", StringComparison.OrdinalIgnoreCase)));
+        }
+        finally
+        {
+            temp.Delete(recursive: true);
+        }
+    }
+
+    [TestMethod]
+    public async Task FormalGateRunnerRejectsSkeletonShadowEvidence()
+    {
+        var temp = Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), $"workos-gate-{Guid.NewGuid():N}"));
+        try
+        {
+            var invariantPath = Path.Combine(temp.FullName, "invariants.json");
+            var shadowPath = Path.Combine(temp.FullName, "shadow.json");
+            var rollbackPath = Path.Combine(temp.FullName, "rollback.json");
+            var gatePath = Path.Combine(temp.FullName, "gate.json");
+            RunnerJson.Write(invariantPath, new[] { Invariant("inv-pass", "api.no_page_specific_business_write", "blocking", "P0", "passed") });
+            RunnerJson.Write(shadowPath, Report("green") with { SourceMode = "skeleton" });
+            File.WriteAllText(rollbackPath, """
+                {
+                  "rollback_instruction_id": "rollback-formal",
+                  "instruction_type": "rollback"
+                }
+                """);
+
+            try
+            {
+                await GateRunner.Run(RunnerOptions.Parse(new[]
+                {
+                    "--dry-run=true",
+                    "--formal-release-gate=true",
+                    "--require-business-signoff=false",
+                    "--ciRunId=ci-formal",
+                    $"--rollback={rollbackPath}",
+                    $"--invariant={invariantPath}",
+                    $"--shadow={shadowPath}",
+                    $"--out={gatePath}"
+                }));
+                Assert.Fail("Formal gate should fail when skeleton shadow evidence is present.");
+            }
+            catch (InvalidOperationException)
+            {
+            }
+
+            var gate = RunnerJson.Read<GateResultEvidence>(gatePath);
+            Assert.AreEqual("blocked", gate.Status);
+            Assert.IsTrue(gate.NoGoItems.Any(item => item.Contains("Skeleton shadow evidence", StringComparison.OrdinalIgnoreCase)));
+        }
+        finally
+        {
+            temp.Delete(recursive: true);
+        }
+    }
+
+    [TestMethod]
+    public async Task FormalGateRunnerAllowsYellowShadowWarningEvidence()
+    {
+        var temp = Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), $"workos-gate-{Guid.NewGuid():N}"));
+        try
+        {
+            var invariantPath = Path.Combine(temp.FullName, "invariants.json");
+            var shadowPath = Path.Combine(temp.FullName, "shadow.json");
+            var rollbackPath = Path.Combine(temp.FullName, "rollback.json");
+            var gatePath = Path.Combine(temp.FullName, "gate.json");
+            RunnerJson.Write(invariantPath, new[] { Invariant("inv-pass", "api.no_page_specific_business_write", "blocking", "P0", "passed") });
+            RunnerJson.Write(shadowPath, Report("yellow"));
+            File.WriteAllText(rollbackPath, """
+                {
+                  "rollback_instruction_id": "rollback-formal",
+                  "instruction_type": "rollback"
+                }
+                """);
+
+            await GateRunner.Run(RunnerOptions.Parse(new[]
+            {
+                "--dry-run=true",
+                "--formal-release-gate=true",
+                "--require-business-signoff=false",
+                "--ciRunId=ci-formal",
+                $"--rollback={rollbackPath}",
+                $"--invariant={invariantPath}",
+                $"--shadow={shadowPath}",
+                $"--out={gatePath}"
+            }));
+
+            var gate = RunnerJson.Read<GateResultEvidence>(gatePath);
+            Assert.AreEqual("warning", gate.Status);
+            Assert.IsTrue(gate.NoGoItems.Any(item => item.Contains("Yellow shadow compare report", StringComparison.OrdinalIgnoreCase)));
+        }
+        finally
+        {
+            temp.Delete(recursive: true);
+        }
+    }
+
 
     private static GateDecision Calculate(
         IReadOnlyList<InvariantCheckEvidence> invariants,

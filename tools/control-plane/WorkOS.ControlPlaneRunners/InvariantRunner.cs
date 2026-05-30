@@ -15,6 +15,7 @@ public static class InvariantRunner
         var tenantId = options.Get("tenantId", "all-tenants");
         var sliceId = options.Get("sliceId", "all-slices");
         var ciRunId = ResolveCiRunId(options);
+        var sourceMode = ResolveSourceMode(options);
         var definitionsPath = options.Get("definitions", Path.Combine("docs", "v5.4", "invariant-definitions.json"));
         var outputPath = options.Get("out", Path.Combine(".tmp", "v5_4", "invariant-checks.json"));
         var dryRun = options.GetBool("dry-run");
@@ -30,7 +31,7 @@ public static class InvariantRunner
         var results = definitions.Select(definition =>
         {
             ValidateDefinition(definition);
-            return ExecuteDefinition(definition, database, releaseId, tenantId, sliceId, ciRunId);
+            return ExecuteDefinition(definition, database, releaseId, tenantId, sliceId, ciRunId, sourceMode);
         }).ToArray();
 
         if (!dryRun)
@@ -72,7 +73,8 @@ public static class InvariantRunner
         string releaseId,
         string tenantId,
         string sliceId,
-        string ciRunId)
+        string ciRunId,
+        string sourceMode)
     {
         var evaluated = definition.SourceType switch
         {
@@ -107,7 +109,10 @@ public static class InvariantRunner
             SampleViolations: evaluated.SampleViolations,
             GeneratedBy: "invariant-runner",
             CiRunId: ciRunId,
-            CheckedAtUtc: DateTimeOffset.UtcNow);
+            CheckedAtUtc: DateTimeOffset.UtcNow)
+        {
+            SourceMode = sourceMode
+        };
     }
 
     private static SqlInvariantResult ExecuteSkeleton(string key)
@@ -446,6 +451,16 @@ public static class InvariantRunner
         ?? Environment.GetEnvironmentVariable("GITHUB_RUN_ID")
         ?? "local";
 
+    private static string ResolveSourceMode(RunnerOptions options)
+    {
+        var value = options.Get("sourceMode") ?? options.Get("source-mode") ?? options.Get("mode") ?? "real";
+        return value switch
+        {
+            "real" or "fixture" or "skeleton" => value,
+            _ => throw new InvalidOperationException($"invariant-runner: sourceMode must be real, fixture, or skeleton; got {value}")
+        };
+    }
+
     private static string Sanitize(string value) =>
         new(value.Select(ch => char.IsLetterOrDigit(ch) ? ch : '-').ToArray());
 }
@@ -480,6 +495,9 @@ public sealed record InvariantCheckEvidence(
     IReadOnlyList<IReadOnlyDictionary<string, object>> SampleViolations,
     string GeneratedBy,
     string? CiRunId,
-    DateTimeOffset CheckedAtUtc);
+    DateTimeOffset CheckedAtUtc)
+{
+    public string SourceMode { get; init; } = "real";
+}
 
 internal sealed record NodeResult(int ExitCode, string Output);
