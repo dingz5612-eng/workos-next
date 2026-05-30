@@ -1,0 +1,39 @@
+{
+  "domainId": "dormitory",
+  "version": "b1",
+  "northStarMetric": {
+    "id": "trusted_available_bed_nights",
+    "name": "Trusted Available Bed Nights",
+    "ownerRole": "Dormitory Operations Owner",
+    "sourceFacts": ["BedStatus", "RoomReadiness", "Stay", "ServiceTask"],
+    "lensOutputs": ["DormAvailabilityLens", "DormTurnoverLens"]
+  },
+  "metricTree": [
+    {
+      "id": "resource_availability",
+      "ownerRole": "Resource Manager",
+      "metrics": ["availableBedNights", "readinessPassRate", "blockedBedAgingHours"]
+    },
+    {
+      "id": "lead_to_stay_conversion",
+      "ownerRole": "Front Desk Lead",
+      "metrics": ["leadResponseSlaRate", "reservationConfirmRate", "checkinCompletionRate"]
+    },
+    {
+      "id": "in_stay_revenue",
+      "ownerRole": "Finance Cashier",
+      "metrics": ["chargeGenerationCoverage", "paymentAllocationAccuracy", "balanceProjectionLagSeconds"]
+    },
+    {
+      "id": "deposit_liability",
+      "ownerRole": "Finance Supervisor",
+      "metrics": ["depositLiabilityAccuracy", "refundSlaRate", "deductionEvidenceCoverage"]
+    },
+    {
+      "id": "checkout_turnover",
+      "ownerRole": "Checkout Coordinator",
+      "metrics": ["inspectionSlaRate", "settlementAccuracy", "cleanToAvailableCycleHours"]
+    }
+  ],
+  "productionAllowed": false
+}
