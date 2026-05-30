@@ -88,19 +88,46 @@ Assert-Exists "docs/architecture/WORKOS_TESTING_RULES.md"
 Assert-Exists "docs/architecture/CURRENT_RUNTIME_ARCHITECTURE.md"
 Assert-Exists "docs/architecture/rules/index.json"
 Assert-Exists "docs/architecture/architecture-exceptions.json"
+Assert-Exists "docs/architecture/README.md"
+Assert-Exists "docs/rules/v5.5/rule-authority.yml"
+Assert-Exists "docs/rules/v5.5/mr-contracts/MR-00.yml"
+Assert-Exists "docs/rules/v5.5/mr-contracts/MR-10.yml"
+Assert-Exists "docs/engineering/00-index.md"
+Assert-Exists "docs/engineering/00-rule-authority.md"
+Assert-Exists "docs/engineering/02-runtime-ownership-rules.md"
 Assert-Exists "docs/engineering/03-api-boundary-rules.md"
 Assert-Exists "docs/engineering/13-release-control-plane-rules.md"
+Assert-Exists "docs/engineering/14-testing-ci-rules.md"
 Assert-Exists "docs/engineering/15-no-go-rules.md"
+Assert-Exists "docs/engineering/16-v5.5-engineering-rules-os.md"
+Assert-Exists "docs/acceptance/00-index.md"
 Assert-Exists "docs/acceptance/12-release-go-no-go.md"
+Assert-Exists "docs/acceptance/13-v5.5-rules-os-go-no-go.md"
 Assert-Exists "docs/v5.4/operations-api-allowlist.json"
+Assert-Exists "docs/rules/v5.5/api-boundary.yml"
+Assert-Exists "docs/rules/v5.5/fact-ownership.yml"
+Assert-Exists "docs/rules/v5.5/invariant-maturity.yml"
+Assert-Exists "docs/rules/v5.5/gate-result-hardening.yml"
+Assert-Exists "docs/rules/v5.5/rule-drift.yml"
+Assert-Exists "docs/v5.5/api-write-classification.md"
+Assert-Exists "docs/v5.5/final-rules-os-go-no-go.md"
 Assert-Exists "docs/v5.4/release-manifest.schema.json"
 Assert-Exists "docs/v5.4/release-manifest.fixture.json"
+Assert-Exists "docs/v5.4/releases/mr-00-control-plane-bootstrap.json"
+Assert-Exists "docs/v5.4/rollback/mr-00-rollback-instruction.json"
 Assert-Exists "docs/v5.4/ci-control-plane.md"
 Assert-Exists "docs/v5.4/control-plane-runners.md"
 Assert-Exists "docs/v5.4/release-control-center.md"
 Assert-Exists "docs/v5.4/invariant-definitions.json"
 Assert-Exists "docs/v5.4/shadow-compare.config.json"
 Assert-Exists "scripts/check-api-boundaries.mjs"
+Assert-Exists "scripts/check-fact-ownership.mjs"
+Assert-Exists "scripts/check-gate-result-hardening.mjs"
+Assert-Exists "scripts/check-invariant-maturity.mjs"
+Assert-Exists "scripts/check-mr-contract.mjs"
+Assert-Exists "scripts/check-rule-authority.mjs"
+Assert-Exists "scripts/check-rule-drift.mjs"
+Assert-Exists "scripts/check-v5-5-rules-os.mjs"
 Assert-Exists "scripts/check-no-production-fake-fallback.mjs"
 Assert-Exists "scripts/v5_4/run-control-plane-checks.ps1"
 Assert-Exists "scripts/v5_4/control-plane-migration.mjs"
@@ -108,6 +135,7 @@ Assert-Exists "scripts/v5_4/shadow-namespace-isolation.mjs"
 Assert-Exists "scripts/v5_4/invariant-runner.mjs"
 Assert-Exists "scripts/v5_4/shadow-compare-runner.mjs"
 Assert-Exists "scripts/v5_4/gate-runner.mjs"
+Assert-Exists "scripts/v5_4/generate-release-manifest.mjs"
 Assert-Exists "scripts/v5_4/release-manifest-validate.mjs"
 Assert-Exists "tools/control-plane/WorkOS.ControlPlaneRunners/WorkOS.ControlPlaneRunners.csproj"
 Assert-Exists "scripts/clean-baseline.ps1"
@@ -376,6 +404,8 @@ Assert-MaxLines "apps/mobile/src/i18n.js" 80 "i18n.js must stay as an i18n compo
 Assert-MaxLines "apps/mobile/src/styles.css" 40 "styles.css must stay as a style import manifest."
 
 $program = Get-Content "services/core-api/WorkOS.Api/Program.cs" -Raw
+$endpointExtensionFiles = @(Get-ChildItem "services/core-api/WorkOS.Api" -Recurse -File -Filter "*Endpoints.cs")
+$minimalApiSource = (@($program) + @($endpointExtensionFiles | ForEach-Object { Get-Content $_.FullName -Raw })) -join "`n"
 $openApi = Get-Content "docs/contracts/workos-runtime.openapi.json" -Raw | ConvertFrom-Json
 $requiredPaths = @(
   "/health",
@@ -404,13 +434,16 @@ $requiredEndpointPatterns = @(
 )
 
 foreach ($pattern in $requiredEndpointPatterns) {
-  if ($program -notmatch $pattern) {
+  if ($minimalApiSource -notmatch $pattern) {
     Fail "Minimal API endpoint missing or renamed without contract update: $pattern"
   }
 }
 
 $allowedMapPostPaths = @(
   "/api/auth/login",
+  "/api/auth/sessions/{token}/revoke",
+  "/api/device-sessions",
+  "/api/device-sessions/{deviceId}/revoke",
   "/api/operations/cases",
   "/api/operations/work-items",
   "/api/operations/work-items/{workItemId}/prepare",
@@ -421,6 +454,19 @@ $allowedMapPostPaths = @(
   "/api/evidence/{evidenceId}/attachments",
   "/api/evidence/{evidenceId}/verify",
   "/api/evidence/{evidenceId}/reject",
+  "/api/reconciliation/bank-statement-imports/preview",
+  "/api/reconciliation/bank-statement-imports",
+  "/api/reconciliation/match-candidates/generate",
+  "/api/reconciliation/mismatches/detect",
+  "/api/reconciliation/match-candidates/{candidateId}/accept",
+  "/api/reconciliation/match-candidates/{candidateId}/reject",
+  "/api/reconciliation/bank-transactions/{bankTransactionId}/mismatch",
+  "/api/reconciliation/bank-transactions/{bankTransactionId}/ignore",
+  "/api/correction-center/ledger-correction-requests",
+  "/api/correction-center/ledger-correction-requests/{correctionRequestId}/approve",
+  "/api/correction-center/ledger-correction-requests/{correctionRequestId}/reject",
+  "/api/correction-center/ledger-correction-requests/{correctionRequestId}/apply",
+  "/api/pc-governance/exports/{exportType}",
   "/api/projections/process-outbox",
   "/api/behavior-events"
 )
@@ -448,6 +494,8 @@ $allowedMapGetPaths = @(
   "/api/control-plane/invariant-checks",
   "/api/control-plane/rollback-instructions/{id}",
   "/api/evidence",
+  "/api/evidence/{evidenceId}/signed-url",
+  "/api/reconciliation/match-candidates",
   "/api/workspaces/{workspaceId}/events",
   "/api/audit-events",
   "/api/outbox",
@@ -456,7 +504,7 @@ $allowedMapGetPaths = @(
 )
 
 $openApiPaths = @($openApi.paths.PSObject.Properties.Name)
-$mapGetMatches = [regex]::Matches($program, 'MapGet\("([^"]+)"')
+$mapGetMatches = [regex]::Matches($minimalApiSource, 'MapGet\("([^"]+)"')
 foreach ($match in $mapGetMatches) {
   $path = $match.Groups[1].Value
   if (-not $allowedMapGetPaths.Contains($path)) {
@@ -467,7 +515,7 @@ foreach ($match in $mapGetMatches) {
   }
 }
 
-$mapPostMatches = [regex]::Matches($program, 'MapPost\("([^"]+)"')
+$mapPostMatches = [regex]::Matches($minimalApiSource, 'MapPost\("([^"]+)"')
 foreach ($match in $mapPostMatches) {
   $path = $match.Groups[1].Value
   if (-not $allowedMapPostPaths.Contains($path)) {
@@ -486,11 +534,18 @@ foreach ($path in $openApiPaths) {
 }
 
 Invoke-Checked "node" @("scripts/generate-contract-dtos.mjs", "--check")
+Invoke-Checked "node" @("scripts/check-rule-authority.mjs")
 Invoke-Checked "node" @("scripts/validate-slice-admission.mjs")
 Invoke-Checked "node" @("scripts/architecture-drift-report.mjs")
 Invoke-Checked "node" @("scripts/validate-runtime-api.mjs")
 Invoke-Checked "node" @("scripts/check-api-boundaries.mjs", "--self-test")
 Invoke-Checked "node" @("scripts/check-api-boundaries.mjs")
+Invoke-Checked "node" @("scripts/check-fact-ownership.mjs")
+Invoke-Checked "node" @("scripts/check-mr-contract.mjs")
+Invoke-Checked "node" @("scripts/check-invariant-maturity.mjs")
+Invoke-Checked "node" @("scripts/check-gate-result-hardening.mjs")
+Invoke-Checked "node" @("scripts/check-rule-drift.mjs")
+Invoke-Checked "node" @("scripts/check-v5-5-rules-os.mjs")
 Invoke-Checked "node" @("scripts/check-no-production-fake-fallback.mjs", "--self-test")
 Invoke-Checked "node" @("scripts/check-no-production-fake-fallback.mjs")
 
@@ -513,6 +568,7 @@ foreach ($requiredV54Guard in @(
   "invariant-runner",
   "shadow-compare-runner",
   "gate-runner",
+  "generate-release-manifest",
   "release-manifest-validate"
 )) {
   if ($v54Ci -notmatch [regex]::Escape($requiredV54Guard)) {
@@ -523,6 +579,9 @@ foreach ($requiredCiCommand in @("validate-slice-admission.mjs", "architecture-d
   if ($ci -notmatch [regex]::Escape($requiredCiCommand)) {
     Fail "CI must run governance command: $requiredCiCommand"
   }
+}
+if ($ci -notmatch "check-v5-5-rules-os\.mjs") {
+  Fail "CI must run V5.5 Rules OS gate."
 }
 foreach ($requiredCiCommand in @("npm --prefix apps/mobile run test", "WorkOS.UnitTests", "WorkOS.RuntimeIntegrationTests")) {
   if ($ci -notmatch [regex]::Escape($requiredCiCommand)) {
@@ -695,3 +754,4 @@ if ($openApiRaw -match '"workspaceId".*BehaviorEventRequest' -or $openApiRaw -ma
 }
 
 Write-Host "Architecture guard: PASS"
+exit 0

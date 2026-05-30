@@ -1,0 +1,46 @@
+{
+  "gate_result_id": "gate-mr-01-stop-bad-facts",
+  "release_id": "release-mr-01-stop-bad-facts",
+  "mr_id": "MR-01",
+  "tenant_id": "all-tenants",
+  "slice_id": "StopBadFacts",
+  "gate_name": "v5.4-control-plane",
+  "gate_type": "automated",
+  "status": "passed",
+  "severity": "P2",
+  "ci_run_id": "local-mr-01-stop-bad-facts",
+  "automated_test_refs": [
+    "node scripts/check-no-production-fake-fallback.mjs --self-test",
+    "node scripts/check-no-production-fake-fallback.mjs",
+    "dotnet test WorkOS.UnitTests MR-01 focused",
+    "dotnet test WorkOS.RuntimeIntegrationTests outbox focused",
+    "dotnet run WorkOS.RuntimeContractTests"
+  ],
+  "invariant_check_refs": [
+    "inv-mr-01-no-production-fake-fallback",
+    "inv-mr-01-confirm-commit-projection-semantics",
+    "inv-mr-01-field-validation",
+    "inv-mr-01-no-side-effects-harness",
+    "inv-mr-01-outbox-minimum-hardening"
+  ],
+  "shadow_compare_report_refs": [
+    "scr-v54-shadow-domain-events-vs-audit-events"
+  ],
+  "business_signoff_refs": [],
+  "no_go_items": [],
+  "go_items": [
+    "Invariant passed: runtime.no_production_fake_fallback",
+    "Invariant passed: runtime.confirm_commit_projection_semantics",
+    "Invariant passed: runtime.field_validation",
+    "Invariant passed: runtime.no_side_effects_for_403_409_422",
+    "Invariant passed: runtime.outbox_minimum_hardening",
+    "Shadow compare green: scr-v54-shadow-domain-events-vs-audit-events"
+  ],
+  "known_risks": [
+    "MR-01 is guard/evidence only and does not promote business runtime behavior."
+  ],
+  "generated_by": "gate-runner",
+  "generated_at_utc": "2026-05-30T08:54:31.0749778+00:00",
+  "input_hash": "af16673675eccb6e15f3a3578a7c7a1f4d67a02657082739ad0d431a5a493a0d",
+  "result_hash": "0ac45a0c80e25ec1f705c9346fbc2c13f4c8e5ea29df9e5eddaff443109df4f8"
+}

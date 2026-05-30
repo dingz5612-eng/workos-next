@@ -1,0 +1,256 @@
+version: 1
+id: v5.5-fact-ownership
+defaultPolicy: Non-owners must not directly write business facts.
+facts:
+  - fact: Room
+    owner: accommodation.resource
+    allowedWriters: [accommodation.resource]
+    forbiddenWriters: [mobile-bff, pc-governance-direct-sql, non-owner-slice]
+    allowedReaders: [operations-runtime, mobile-surface, pc-surface]
+    allowedRequesters: [process-manager, operations-runtime]
+    domainEvents: [RoomCreated, RoomUpdated]
+    ledgerEntries: []
+    invariants: [resource.room_owner_only]
+    appendOnly: false
+    correctionPath: resource-workitem
+    projectionOwners: [resource-lens]
+  - fact: Bed
+    owner: accommodation.resource
+    allowedWriters: [accommodation.resource]
+    forbiddenWriters: [mobile-bff, service-task, pc-governance-direct-sql, non-owner-slice]
+    allowedReaders: [operations-runtime, mobile-surface, pc-surface]
+    allowedRequesters: [process-manager, operations-runtime]
+    domainEvents: [BedCreated, BedUpdated]
+    ledgerEntries: []
+    invariants: [resource.no_overlapping_active_bed_occupancy]
+    appendOnly: false
+    correctionPath: resource-workitem
+    projectionOwners: [bed-inventory-lens]
+  - fact: BedStatus
+    owner: accommodation.resource
+    allowedWriters: [accommodation.resource]
+    forbiddenWriters: [mobile-bff, service-task, checkout-settlement, pc-governance-direct-sql]
+    allowedReaders: [operations-runtime, mobile-surface, pc-surface]
+    allowedRequesters: [process-manager, service-task, checkout-settlement]
+    domainEvents: [BedStatusChanged]
+    ledgerEntries: []
+    invariants: [resource.no_overlapping_active_bed_occupancy]
+    appendOnly: false
+    correctionPath: resource-workitem
+    projectionOwners: [bed-inventory-lens]
+  - fact: RatePlan
+    owner: accommodation.pricing
+    allowedWriters: [accommodation.pricing]
+    forbiddenWriters: [mobile-bff, pc-governance-direct-sql, non-owner-slice]
+    allowedReaders: [operations-runtime, checkout-settlement, period-analytics]
+    allowedRequesters: [operations-runtime]
+    domainEvents: [RatePlanChanged]
+    ledgerEntries: []
+    invariants: [pricing.rate_plan_owner_only]
+    appendOnly: false
+    correctionPath: pricing-workitem
+    projectionOwners: [pricing-lens]
+  - fact: Resident
+    owner: accommodation.stay
+    allowedWriters: [accommodation.stay]
+    forbiddenWriters: [mobile-bff, pc-governance-direct-sql, non-owner-slice]
+    allowedReaders: [operations-runtime, mobile-surface, pc-surface]
+    allowedRequesters: [operations-runtime]
+    domainEvents: [ResidentRegistered, ResidentUpdated]
+    ledgerEntries: []
+    invariants: [resident.owner_only]
+    appendOnly: false
+    correctionPath: stay-workitem
+    projectionOwners: [stay-lens]
+  - fact: Stay
+    owner: accommodation.stay
+    allowedWriters: [accommodation.stay]
+    forbiddenWriters: [mobile-bff, checkout-settlement, pc-governance-direct-sql, non-owner-slice]
+    allowedReaders: [operations-runtime, payment-ledger, deposit-ledger, checkout-settlement]
+    allowedRequesters: [process-manager, operations-runtime]
+    domainEvents: [StayOpened, StayUpdated, StayClosed]
+    ledgerEntries: []
+    invariants: [stay.owner_only]
+    appendOnly: false
+    correctionPath: stay-workitem
+    projectionOwners: [stay-lens]
+  - fact: Charge
+    owner: finance.charge-ledger
+    allowedWriters: [finance.charge-ledger]
+    forbiddenWriters: [mobile-bff, stay, pc-governance-direct-sql, non-owner-slice]
+    allowedReaders: [payment-ledger, checkout-settlement, period-analytics]
+    allowedRequesters: [operations-runtime, process-manager]
+    domainEvents: [ChargePosted]
+    ledgerEntries: [LedgerEntry]
+    invariants: [ledger.no_edit_old_entry]
+    appendOnly: true
+    correctionPath: correction-center
+    projectionOwners: [stay-balance-lens]
+  - fact: Payment
+    owner: finance.payment-ledger
+    allowedWriters: [finance.payment-ledger]
+    forbiddenWriters: [mobile-bff, reconciliation-direct-confirm, pc-governance-direct-sql, non-owner-slice]
+    allowedReaders: [reconciliation, checkout-settlement, period-analytics]
+    allowedRequesters: [operations-runtime, reconciliation]
+    domainEvents: [PaymentConfirmed]
+    ledgerEntries: [LedgerEntry]
+    invariants: [payment.non_cash_confirmed_must_have_evidence]
+    appendOnly: true
+    correctionPath: correction-center
+    projectionOwners: [payment-risk-lens]
+  - fact: PaymentAllocation
+    owner: finance.payment-ledger
+    allowedWriters: [finance.payment-ledger, correction-center-append-only]
+    forbiddenWriters: [mobile-bff, reconciliation-direct-confirm, pc-governance-direct-sql, non-owner-slice]
+    allowedReaders: [checkout-settlement, period-analytics]
+    allowedRequesters: [operations-runtime, reconciliation]
+    domainEvents: [PaymentAllocated]
+    ledgerEntries: [LedgerEntry]
+    invariants: [payment.allocation_not_exceed_confirmed_available]
+    appendOnly: true
+    correctionPath: correction-center
+    projectionOwners: [stay-balance-lens]
+  - fact: DepositAccount
+    owner: finance.deposit-ledger
+    allowedWriters: [finance.deposit-ledger]
+    forbiddenWriters: [mobile-bff, checkout-settlement-direct-write, pc-governance-direct-sql, non-owner-slice]
+    allowedReaders: [checkout-settlement, period-analytics]
+    allowedRequesters: [operations-runtime, checkout-settlement]
+    domainEvents: [DepositAccountOpened, DepositAccountClosed]
+    ledgerEntries: [LedgerEntry]
+    invariants: [deposit.held_amount_not_negative]
+    appendOnly: true
+    correctionPath: correction-center
+    projectionOwners: [deposit-liability-lens]
+  - fact: DepositEntry
+    owner: finance.deposit-ledger
+    allowedWriters: [finance.deposit-ledger, correction-center-append-only]
+    forbiddenWriters: [mobile-bff, checkout-settlement-direct-write, pc-governance-direct-sql, non-owner-slice]
+    allowedReaders: [checkout-settlement, period-analytics]
+    allowedRequesters: [operations-runtime, checkout-settlement]
+    domainEvents: [DepositReceived, DepositRefunded, DepositDeducted]
+    ledgerEntries: [LedgerEntry]
+    invariants: [deposit.refund_not_exceed_available_refund, deposit.held_amount_not_negative]
+    appendOnly: true
+    correctionPath: correction-center
+    projectionOwners: [deposit-liability-lens]
+  - fact: CheckoutCase
+    owner: accommodation.checkout
+    allowedWriters: [accommodation.checkout]
+    forbiddenWriters: [mobile-bff, payment-ledger, deposit-ledger, pc-governance-direct-sql, non-owner-slice]
+    allowedReaders: [operations-runtime, finance.payment-ledger, finance.deposit-ledger]
+    allowedRequesters: [process-manager, operations-runtime]
+    domainEvents: [CheckoutCaseOpened, CheckoutCaseClosed]
+    ledgerEntries: []
+    invariants: [case.closed_has_no_open_blocker]
+    appendOnly: false
+    correctionPath: checkout-workitem
+    projectionOwners: [checkout-queue-lens]
+  - fact: ServiceTask
+    owner: accommodation.service-task
+    allowedWriters: [accommodation.service-task]
+    forbiddenWriters: [mobile-bff, resource-direct-bed-status, pc-governance-direct-sql, non-owner-slice]
+    allowedReaders: [operations-runtime, resource, period-analytics]
+    allowedRequesters: [process-manager, operations-runtime]
+    domainEvents: [ServiceTaskOpened, ServiceTaskClosed]
+    ledgerEntries: []
+    invariants: [service_task.cannot_write_bed_status]
+    appendOnly: false
+    correctionPath: service-task-workitem
+    projectionOwners: [service-task-queue-lens]
+  - fact: PeriodSnapshot
+    owner: accommodation.period-analytics
+    allowedWriters: [accommodation.period-analytics]
+    forbiddenWriters: [mobile-bff, user-entered-finance-result, pc-governance-direct-sql, non-owner-slice]
+    allowedReaders: [pc-governance, release-control, operations-runtime]
+    allowedRequesters: [process-manager]
+    domainEvents: [PeriodSnapshotFrozen]
+    ledgerEntries: []
+    invariants: [period.finance_snapshot_from_ledgers]
+    appendOnly: true
+    correctionPath: late-adjustment
+    projectionOwners: [period-risk-lens]
+  - fact: EvidenceObject
+    owner: evidence
+    allowedWriters: [evidence]
+    forbiddenWriters: [mobile-bff-business-fact, payment-ledger-direct-file-write, pc-governance-direct-sql]
+    allowedReaders: [operations-runtime, payment-ledger, deposit-ledger, pc-governance]
+    allowedRequesters: [operations-runtime, mobile-surface]
+    domainEvents: [EvidenceObjectCreated, EvidenceObjectReviewed]
+    ledgerEntries: []
+    invariants: [evidence.write_does_not_confirm_money]
+    appendOnly: true
+    correctionPath: evidence-review
+    projectionOwners: [evidence-lens]
+  - fact: EvidenceFile
+    owner: evidence
+    allowedWriters: [evidence]
+    forbiddenWriters: [mobile-bff-business-fact, payment-ledger-direct-file-write, pc-governance-direct-sql]
+    allowedReaders: [operations-runtime, payment-ledger, deposit-ledger, pc-governance]
+    allowedRequesters: [operations-runtime, mobile-surface]
+    domainEvents: [EvidenceFileAttached]
+    ledgerEntries: []
+    invariants: [evidence.write_does_not_confirm_money]
+    appendOnly: true
+    correctionPath: evidence-review
+    projectionOwners: [evidence-lens]
+  - fact: LedgerEntry
+    owner: runtime-ledger
+    allowedWriters: [finance.payment-ledger, finance.deposit-ledger, finance.charge-ledger, correction-center-append-only]
+    forbiddenWriters: [mobile-bff, pc-governance-direct-sql, non-owner-slice]
+    allowedReaders: [period-analytics, checkout-settlement, pc-governance]
+    allowedRequesters: [operations-runtime, process-manager]
+    domainEvents: [LedgerEntryRecorded]
+    ledgerEntries: [LedgerEntry]
+    invariants: [ledger.no_edit_old_entry]
+    appendOnly: true
+    correctionPath: correction-center
+    projectionOwners: [ledger-lens]
+  - fact: DomainEvent
+    owner: operations-runtime
+    allowedWriters: [slice-command-handler]
+    forbiddenWriters: [mobile-bff, pc-governance-direct-sql, shadow-runtime-official-projector]
+    allowedReaders: [projector, process-manager, shadow-compare]
+    allowedRequesters: [operations-runtime]
+    domainEvents: [DomainEventAppended]
+    ledgerEntries: []
+    invariants: [shadow.no_shadow_event_consumed_by_official_projector]
+    appendOnly: true
+    correctionPath: compensating-event
+    projectionOwners: [official-projector]
+  - fact: WorkItem
+    owner: operations-runtime
+    allowedWriters: [operations-runtime, process-manager]
+    forbiddenWriters: [mobile-bff-business-fact, pc-governance-direct-sql, non-owner-slice]
+    allowedReaders: [mobile-surface, pc-surface, slice-command-handler]
+    allowedRequesters: [process-manager, operations-runtime]
+    domainEvents: [WorkItemCreated, WorkItemPrepared]
+    ledgerEntries: []
+    invariants: [operations.work_item_write_not_business_fact]
+    appendOnly: true
+    correctionPath: operations-repair
+    projectionOwners: [work-queue-lens]
+  - fact: CommandSubmission
+    owner: operations-runtime
+    allowedWriters: [operations-runtime]
+    forbiddenWriters: [mobile-bff-direct-write, pc-governance-direct-sql, non-owner-slice]
+    allowedReaders: [slice-command-handler, audit, release-control]
+    allowedRequesters: [mobile-surface, pc-surface, compatibility-wrapper]
+    domainEvents: [CommandSubmissionRecorded]
+    ledgerEntries: []
+    invariants: [operations.confirm_has_submission_evidence, operations.idempotency_conflict_blocks]
+    appendOnly: true
+    correctionPath: rejected-submission
+    projectionOwners: [submission-audit-lens]
+  - fact: LensSnapshot
+    owner: projection-runtime
+    allowedWriters: [official-projector]
+    forbiddenWriters: [mobile-bff, shadow-runtime-official-projector, pc-governance-direct-sql]
+    allowedReaders: [mobile-surface, pc-surface, operations-runtime]
+    allowedRequesters: [projector]
+    domainEvents: [LensSnapshotRebuilt]
+    ledgerEntries: []
+    invariants: [shadow.no_shadow_event_consumed_by_official_projector]
+    appendOnly: true
+    correctionPath: projection-rebuild
+    projectionOwners: [projection-runtime]

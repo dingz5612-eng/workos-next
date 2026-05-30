@@ -109,6 +109,165 @@
         }
       }
     },
+    "/api/operations/cases": {
+      "post": {
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateOperationCaseRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Existing operation case projection resolved",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/OperationCase" }
+              }
+            }
+          },
+          "422": { "description": "No persisted operation case or workspace projection could be resolved" }
+        }
+      }
+    },
+    "/api/operations/cases/{caseId}": {
+      "get": {
+        "parameters": [
+          { "name": "caseId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Existing operation case projection",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/OperationCase" }
+              }
+            }
+          },
+          "404": { "description": "Operation case not found" }
+        }
+      }
+    },
+    "/api/operations/work-items": {
+      "post": {
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateWorkItemRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Existing operation work item projection resolved",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/WorkItem" }
+              }
+            }
+          },
+          "422": { "description": "No persisted process intent or workspace card could be resolved" }
+        }
+      },
+      "get": {
+        "parameters": [
+          { "name": "tenantId", "in": "query", "required": false, "schema": { "type": "string" } },
+          { "name": "caseId", "in": "query", "required": false, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operation work items from process-manager intents",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/WorkItem" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/operations/work-items/{workItemId}": {
+      "get": {
+        "parameters": [
+          { "name": "workItemId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Operation work item projection",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/WorkItem" }
+              }
+            }
+          },
+          "404": { "description": "Operation work item not found" }
+        }
+      }
+    },
+    "/api/operations/work-items/{workItemId}/prepare": {
+      "post": {
+        "parameters": [
+          { "name": "workItemId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/PrepareWorkItemRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Operation work item field contract prepared",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/PrepareWorkItemResult" }
+              }
+            }
+          },
+          "404": { "description": "Operation work item or backing card not found" }
+        }
+      }
+    },
+    "/api/operations/work-items/{workItemId}/confirm": {
+      "post": {
+        "parameters": [
+          { "name": "workItemId", "in": "path", "required": true, "schema": { "type": "string" } },
+          { "name": "X-WorkOS-Actor-Token", "in": "header", "required": true, "schema": { "type": "string" } },
+          { "name": "X-Request-Id", "in": "header", "required": false, "schema": { "type": "string" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ConfirmWorkItemRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Operation confirmation committed through the runtime",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ConfirmWorkItemResult" }
+              }
+            }
+          },
+          "400": { "description": "Malformed confirm request" },
+          "401": { "description": "Actor session missing or expired" },
+          "403": { "description": "Actor role or slice capability forbids confirmation" },
+          "422": { "description": "Business policy violation" },
+          "404": { "description": "Operation work item or backing card not found" }
+        }
+      }
+    },
     "/api/search": {
       "get": {
         "parameters": [
@@ -326,6 +485,210 @@
             }
           },
           "403": { "description": "Evidence access forbidden" }
+        }
+      }
+    },
+    "/api/reconciliation/bank-statement-imports/preview": {
+      "post": {
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "type": "object" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Preview parsed bank statement import rows" }
+        }
+      }
+    },
+    "/api/reconciliation/bank-statement-imports": {
+      "post": {
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "type": "object" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Confirm bank statement import without confirming payments" }
+        }
+      }
+    },
+    "/api/reconciliation/match-candidates/generate": {
+      "post": {
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "type": "object" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Generate reconciliation match candidates" }
+        }
+      }
+    },
+    "/api/reconciliation/mismatches/detect": {
+      "post": {
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "type": "object" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Detect reconciliation mismatches" }
+        }
+      }
+    },
+    "/api/reconciliation/match-candidates": {
+      "get": {
+        "parameters": [
+          { "name": "tenantId", "in": "query", "required": true, "schema": { "type": "string" } },
+          { "name": "bankTransactionId", "in": "query", "required": false, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "List reconciliation match candidates" }
+        }
+      }
+    },
+    "/api/reconciliation/match-candidates/{candidateId}/accept": {
+      "post": {
+        "parameters": [
+          { "name": "candidateId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Accept reconciliation candidate without direct payment confirmation" }
+        }
+      }
+    },
+    "/api/reconciliation/match-candidates/{candidateId}/reject": {
+      "post": {
+        "parameters": [
+          { "name": "candidateId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "type": "object" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Reject reconciliation candidate" }
+        }
+      }
+    },
+    "/api/reconciliation/bank-transactions/{bankTransactionId}/mismatch": {
+      "post": {
+        "parameters": [
+          { "name": "bankTransactionId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "type": "object" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Mark bank transaction mismatch" }
+        }
+      }
+    },
+    "/api/reconciliation/bank-transactions/{bankTransactionId}/ignore": {
+      "post": {
+        "parameters": [
+          { "name": "bankTransactionId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "type": "object" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Ignore bank transaction for reconciliation" }
+        }
+      }
+    },
+    "/api/correction-center/ledger-correction-requests": {
+      "post": {
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "type": "object" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Request append-only ledger correction" }
+        }
+      }
+    },
+    "/api/correction-center/ledger-correction-requests/{correctionRequestId}/approve": {
+      "post": {
+        "parameters": [
+          { "name": "correctionRequestId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "type": "object" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Approve ledger correction request" }
+        }
+      }
+    },
+    "/api/correction-center/ledger-correction-requests/{correctionRequestId}/reject": {
+      "post": {
+        "parameters": [
+          { "name": "correctionRequestId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "type": "object" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Reject ledger correction request" }
+        }
+      }
+    },
+    "/api/correction-center/ledger-correction-requests/{correctionRequestId}/apply": {
+      "post": {
+        "parameters": [
+          { "name": "correctionRequestId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "type": "object" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Apply approved ledger correction" }
         }
       }
     },
@@ -553,6 +916,162 @@
           "submissionId": { "type": ["string", "null"] },
           "cardInstanceId": { "type": ["string", "null"] },
           "aggregateRef": { "type": ["string", "null"] }
+        }
+      },
+      "CreateOperationCaseRequest": {
+        "type": "object",
+        "properties": {
+          "caseId": { "type": ["string", "null"] },
+          "tenantId": { "type": ["string", "null"] },
+          "workspaceId": { "type": ["string", "null"] }
+        }
+      },
+      "CreateWorkItemRequest": {
+        "type": "object",
+        "properties": {
+          "workItemId": { "type": ["string", "null"] },
+          "tenantId": { "type": ["string", "null"] },
+          "workItemType": { "type": ["string", "null"] },
+          "targetWorkspaceId": { "type": ["string", "null"] },
+          "workspaceId": { "type": ["string", "null"] },
+          "cardId": { "type": ["string", "null"] },
+          "ownerRole": { "type": ["string", "null"] },
+          "payload": {
+            "type": ["object", "null"],
+            "additionalProperties": { "type": "string" }
+          }
+        }
+      },
+      "PrepareWorkItemRequest": {
+        "type": "object",
+        "properties": {
+          "workspaceId": { "type": ["string", "null"] },
+          "cardId": { "type": ["string", "null"] },
+          "submissionId": { "type": ["string", "null"] },
+          "cardInstanceId": { "type": ["string", "null"] },
+          "aggregateRef": { "type": ["string", "null"] }
+        }
+      },
+      "ConfirmWorkItemRequest": {
+        "type": "object",
+        "properties": {
+          "workspaceId": { "type": ["string", "null"] },
+          "cardId": { "type": ["string", "null"] },
+          "language": { "type": ["string", "null"] },
+          "idempotencyKey": { "type": ["string", "null"] },
+          "submissionId": { "type": ["string", "null"] },
+          "cardInstanceId": { "type": ["string", "null"] },
+          "aggregateRef": { "type": ["string", "null"] },
+          "fieldValues": {
+            "type": ["object", "null"],
+            "additionalProperties": { "type": "string" }
+          },
+          "evidenceIds": {
+            "type": ["array", "null"],
+            "items": { "type": "string" }
+          },
+          "requestId": { "type": ["string", "null"] },
+          "deviceId": { "type": ["string", "null"] }
+        }
+      },
+      "OperationCase": {
+        "type": "object",
+        "required": ["caseId", "status", "workItemIds", "projectionStatus", "source"],
+        "properties": {
+          "caseId": { "type": "string" },
+          "status": { "type": "string" },
+          "tenantId": { "type": ["string", "null"] },
+          "workspaceId": { "type": ["string", "null"] },
+          "workItemIds": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "projectionStatus": { "type": "string" },
+          "source": { "type": "string", "enum": ["process-work-item-intents", "workspace-projection"] }
+        }
+      },
+      "WorkItem": {
+        "type": "object",
+        "required": ["workItemId", "workItemType", "status", "tenantId", "workspaceId", "ownerRole", "source", "createdAtUtc", "payload"],
+        "properties": {
+          "workItemId": { "type": "string" },
+          "workItemType": { "type": "string" },
+          "status": { "type": "string" },
+          "caseId": { "type": ["string", "null"] },
+          "tenantId": { "type": "string" },
+          "workspaceId": { "type": "string" },
+          "ownerRole": { "type": "string" },
+          "source": { "type": "string", "enum": ["process-work-item-intent", "workspace-card"] },
+          "sourceEventId": { "type": ["string", "null"] },
+          "createdAtUtc": { "type": "string", "format": "date-time" },
+          "payload": {
+            "type": "object",
+            "additionalProperties": { "type": "string" }
+          }
+        }
+      },
+      "PrepareWorkItemResult": {
+        "type": "object",
+        "required": ["workItemId", "fieldContract", "evidenceRequirements", "availableActions", "projectionStatus", "caseId", "workspaceId", "cardId"],
+        "properties": {
+          "workItemId": { "type": "string" },
+          "fieldContract": { "type": "object", "additionalProperties": true },
+          "evidenceRequirements": {
+            "type": "array",
+            "items": { "type": "object", "additionalProperties": true }
+          },
+          "availableActions": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/OperationsAvailableAction" }
+          },
+          "projectionStatus": { "type": "string", "enum": ["prepared"] },
+          "caseId": { "type": "string" },
+          "workspaceId": { "type": "string" },
+          "cardId": { "type": "string" }
+        }
+      },
+      "OperationsAvailableAction": {
+        "type": "object",
+        "required": ["actionId", "kind", "label", "confirmationPolicy"],
+        "properties": {
+          "actionId": { "type": "string" },
+          "kind": { "type": "string" },
+          "label": { "type": "object", "additionalProperties": { "type": "string" } },
+          "confirmationPolicy": { "type": "object", "additionalProperties": true }
+        }
+      },
+      "ConfirmWorkItemResult": {
+        "type": "object",
+        "required": ["statusCode", "confirmed", "commitStatus", "projectionStatus", "caseId", "workItemId", "submissionId", "resultEventIds", "userMessage", "clientInstruction", "source"],
+        "properties": {
+          "statusCode": { "type": "integer" },
+          "error": { "type": ["string", "null"] },
+          "reason": { "type": ["string", "null"] },
+          "confirmed": { "type": "boolean" },
+          "commitStatus": { "type": "string", "enum": ["committed", "not_committed"] },
+          "projectionStatus": { "type": "string", "enum": ["projected", "pending", "failed", "not_projected"] },
+          "caseId": { "type": "string" },
+          "workItemId": { "type": "string" },
+          "submissionId": { "type": "string" },
+          "resultEventIds": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "userMessage": { "type": "string" },
+          "clientInstruction": {
+            "type": "object",
+            "required": ["disableRetry", "refreshProjection", "observeOutbox"],
+            "properties": {
+              "disableRetry": { "type": "boolean" },
+              "refreshProjection": { "type": "boolean" },
+              "observeOutbox": { "type": "boolean" }
+            },
+            "additionalProperties": true
+          },
+          "source": { "type": "string", "enum": ["operations_adapter"] },
+          "idempotencyKey": { "type": ["string", "null"] },
+          "payloadHash": { "type": ["string", "null"] },
+          "commandSubmissionId": { "type": ["string", "null"] }
         }
       },
       "EvidenceDraftRequest": {

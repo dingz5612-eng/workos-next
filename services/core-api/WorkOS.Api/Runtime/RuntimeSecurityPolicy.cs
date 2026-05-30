@@ -115,12 +115,12 @@ public static class RuntimeSecurityPolicy
         var requiredCapability = HighRiskCapabilities[actionKey];
         if (!capabilities.Contains(requiredCapability) &&
             !capabilities.Contains("runtime.high_risk.all") &&
-            !actorRole.OrEmpty().Equals("admin", StringComparison.OrdinalIgnoreCase))
+            !(actorRole ?? string.Empty).Equals("admin", StringComparison.OrdinalIgnoreCase))
         {
             throw new InvalidOperationException($"{actionKey}_capability_required");
         }
 
-        if (!TrustedDeviceCanPerformHighRiskAction(deviceTrustStatus.OrEmpty(), surface.OrEmpty()))
+        if (!TrustedDeviceCanPerformHighRiskAction(deviceTrustStatus ?? string.Empty, surface ?? string.Empty))
         {
             throw new InvalidOperationException($"{actionKey}_trusted_device_required");
         }
@@ -172,11 +172,6 @@ public static class RuntimeSecurityPolicy
 
         return 0m;
     }
-}
-
-internal static class RuntimeSecurityStringExtensions
-{
-    public static string OrEmpty(this string? value) => value ?? string.Empty;
 }
 
 public static class RuntimeFileUploadPolicy

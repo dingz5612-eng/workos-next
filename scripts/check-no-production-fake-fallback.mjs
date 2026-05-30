@@ -27,6 +27,7 @@ const banned = [
 
 const productionRoots = [
   "apps/mobile/src",
+  "apps/mobile/dist",
   "services/core-api/WorkOS.Api"
 ];
 
@@ -43,7 +44,7 @@ if (args.has("--self-test")) {
   runSelfTest();
 } else {
   const roots = productionRoots.map((entry) => path.join(repoRoot, entry));
-  if (args.has("--dist")) {
+  if (args.has("--dist") && !productionRoots.includes("apps/mobile/dist")) {
     roots.push(path.join(repoRoot, "apps/mobile/dist"));
   }
 

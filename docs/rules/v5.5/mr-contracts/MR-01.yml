@@ -1,0 +1,18 @@
+mrId: MR-01
+name: Stop Bad Facts
+state: locked
+owners: [runtime, qa, release]
+scope:
+  includes: [no-production-fake-fallback, confirm-semantics, field-validation, no-side-effects]
+  excludes: [new-money-feature, new-deposit-feature, checkout-business-batch]
+dependencies: [MR-00]
+goCriteria: [fake-fallback-scan-passed, confirm-status-projection-status, no-side-effects-403-409-422]
+noGoCriteria: [production-fake-fallback, projection-pending-treated-as-failure, manual-gate-result]
+invariants: [runtime.no_production_demo_fallback, operations.confirm_has_submission_evidence]
+shadowPath: shadow_runtime
+pilotPath: operations-runtime
+activePath: operations-runtime
+rollbackInstruction: docs/v5.4/rollback/mr-01-rollback-instruction.json
+compensationInstruction: docs/v5.4/rollback/mr-01-rollback-instruction.json
+acceptanceScenarios: [confirm-projection-pending-not-business-failure, field-validation-blocks-bad-facts]
+gateResultRequired: true

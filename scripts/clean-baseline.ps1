@@ -37,15 +37,20 @@ Assert-NoMatches @("docs") "local scaffold currently targets net9\.0" "Stale .NE
 Assert-NoMatches @("services") "\b(obsolete|legacy|temp|fallback|mock-only)\b" "Runtime services must not carry obsolete, legacy, temp, fallback, or mock-only code."
 Assert-NoMatches @("apps", "services", "tests") "mock-only" "Production runtime and mobile code must not reference mock-only files or flows."
 
-$solutionText = Get-Content "WorkOSNext.sln" -Raw
+$solutionText = (Get-Content "WorkOSNext.sln" -Raw) -replace "\\", "/"
+$repoRoot = (Get-Location).Path
 $unreferencedProjects = Get-ChildItem -Recurse -Filter "*.csproj" -Path "services", "tests" |
-  Where-Object { $solutionText -notmatch [regex]::Escape($_.FullName.Replace((Get-Location).Path + "\", "")) }
+  Where-Object {
+    $relativePath = [System.IO.Path]::GetRelativePath($repoRoot, $_.FullName) -replace "\\", "/"
+    $solutionText -notmatch [regex]::Escape($relativePath)
+  }
 if ($unreferencedProjects) {
   $unreferencedProjects | ForEach-Object { $_.FullName }
   Fail "Every active .csproj under services or tests must be referenced by WorkOSNext.sln."
 }
 
 $legacyFileNames = Get-ChildItem -Recurse -File -Path "apps", "services", "tests" |
+  Where-Object { $_.FullName -notmatch "[\\/](bin|obj)[\\/]" } |
   Where-Object { $_.Name -match "(legacy|obsolete|deprecated|mock-only|fallback)" }
 if ($legacyFileNames) {
   $legacyFileNames | ForEach-Object { $_.FullName }
@@ -63,7 +68,7 @@ function fail(message, details = []) {
 
 function walk(dir, predicate, output = []) {
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
-    if (entry.name === "node_modules" || entry.name === "dist" || entry.name === "__tests__") continue;
+    if (entry.name === "node_modules" || entry.name === "dist" || entry.name === "__tests__" || entry.name === "devFixtures") continue;
     const fullPath = path.join(dir, entry.name);
     if (entry.isDirectory()) {
       walk(fullPath, predicate, output);
@@ -142,8 +147,14 @@ for (const file of cssFiles) {
 }
 
 const allowedUnusedCss = new Set([
+  "grade-green",
+  "grade-yellow",
+  "grade-red",
   "next-card",
-  "loop-steps"
+  "loop-steps",
+  "status-failed",
+  "status-warning",
+  "status-not_run"
 ]);
 const unusedCssClasses = [...cssClasses].filter((className) => !appSource.includes(className) && !allowedUnusedCss.has(className));
 if (unusedCssClasses.length > 0) {

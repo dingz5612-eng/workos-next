@@ -1,0 +1,18 @@
+mrId: MR-07
+name: Checkout Runtime Rules Skeleton
+state: planned
+owners: [checkout, runtime, qa]
+scope:
+  includes: [checkout-case-contracts, blocker-invariants]
+  excludes: [business-implementation-before-v5.5-go]
+dependencies: [MR-05, MR-06, V5.5-Rules-OS-GO]
+goCriteria: [checkout-owner-declared, blocker-invariants-targeted]
+noGoCriteria: [checkout-business-work-before-rules-go]
+invariants: [case.closed_has_no_open_blocker]
+shadowPath: shadow_runtime
+pilotPath: planned
+activePath: planned
+rollbackInstruction: planned
+compensationInstruction: planned
+acceptanceScenarios: [planned]
+gateResultRequired: true

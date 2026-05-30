@@ -1,0 +1,82 @@
+{
+  "version": 1,
+  "name": "v5.4-first-semantic-shadow-compare",
+  "grade_rules": {
+    "green": [
+      "no official projector consumes shadow_runtime",
+      "operations confirm and old compatibility confirm expose the required core response fields",
+      "no shadow business facts appear in official ledger or domain event tables",
+      "shadow command idempotency keys do not conflict with active fact payload hashes"
+    ],
+    "yellow": [
+      "display-only mismatch",
+      "optional field mismatch",
+      "database-level projector namespace check unavailable while source check is clean"
+    ],
+    "red": [
+      "shadow facts in official tables",
+      "missing submissionId",
+      "missing commitStatus",
+      "money/evidence/ledger contamination",
+      "official projector consumes shadow_runtime",
+      "same idempotency key maps to different command payload hashes"
+    ]
+  },
+  "checks": [
+    {
+      "check_id": "shadow.official_contamination",
+      "description": "Official projector code and projection checkpoints must not consume shadow_runtime.",
+      "red_when": "official projector source references shadow_runtime or projection_checkpoints.source_namespace = shadow_runtime",
+      "yellow_when": "projection checkpoint DB check cannot run but source scan is clean"
+    },
+    {
+      "check_id": "shadow.command_submission_compare",
+      "description": "Shadow command submissions must preserve idempotency and payload-hash consistency with active facts.",
+      "red_when": "same tenant and idempotency key maps to multiple payload hashes, or active fact payload hash conflicts",
+      "yellow_when": "active fact row exists for the idempotency key but lacks a comparable payload hash"
+    },
+    {
+      "check_id": "operations.contract_response_schema",
+      "description": "Operations confirm and old compatibility confirm must expose the same core response fields.",
+      "red_when": "workItemId, submissionId, commitStatus, or projectionStatus is missing",
+      "yellow_when": "optional display-only response fields mismatch"
+    },
+    {
+      "check_id": "shadow.business_fact_safety",
+      "description": "Shadow ledger entries and shadow domain events must not be present in official business fact tables.",
+      "red_when": "shadow ledger entries appear in public ledger tables or shadow domain events appear in public domain_events",
+      "yellow_when": "display-only or optional non-fact evidence differs"
+    }
+  ],
+  "operations_contract_required_fields": [
+    "workItemId",
+    "submissionId",
+    "commitStatus",
+    "projectionStatus"
+  ],
+  "official_projector_files": [
+    "services/core-api/WorkOS.Api/Runtime/OutboxProjector.cs",
+    "services/core-api/WorkOS.Api/Runtime/PostgresProjectionStore.cs",
+    "services/core-api/WorkOS.Api/Runtime/PostgresProjectionStore.Evidence.cs",
+    "services/core-api/WorkOS.Api/Runtime/PostgresProjectionStore.Finance.cs",
+    "services/core-api/WorkOS.Api/Runtime/PostgresProjectionStore.Operations.cs",
+    "services/core-api/WorkOS.Api/Runtime/ProjectionRuntime.cs",
+    "services/core-api/WorkOS.Api/Runtime/ProjectionRuntime.Evidence.cs",
+    "services/core-api/WorkOS.Api/Runtime/ProjectionRuntime.Finance.cs",
+    "services/core-api/WorkOS.Api/Runtime/ProjectionRuntime.Operations.cs",
+    "services/core-api/WorkOS.Api/Runtime/RuntimeAggregateLensStorage.cs",
+    "services/core-api/WorkOS.Api/Runtime/RuntimeQueryService.cs"
+  ],
+  "official_ledger_tables": [
+    "public.hostel_payments",
+    "public.deposit_transactions",
+    "public.payment_allocations",
+    "public.stay_balances",
+    "public.ledger_reversal_entries",
+    "public.ledger_correction_entries",
+    "public.ledger_correction_requests",
+    "public.bank_transactions",
+    "public.reconciliation_match_candidates",
+    "public.reconciliation_mismatches"
+  ]
+}

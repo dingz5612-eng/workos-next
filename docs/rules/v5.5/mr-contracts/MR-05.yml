@@ -1,0 +1,18 @@
+mrId: MR-05
+name: Money Runtime Rules Skeleton
+state: planned
+owners: [finance, runtime, qa]
+scope:
+  includes: [payment-ledger-contracts, allocation-invariants]
+  excludes: [business-implementation-before-v5.5-go]
+dependencies: [MR-02, V5.5-Rules-OS-GO]
+goCriteria: [payment-owner-declared, allocation-invariants-targeted]
+noGoCriteria: [money-business-work-before-rules-go]
+invariants: [payment.non_cash_confirmed_must_have_evidence, payment.allocation_not_exceed_confirmed_available]
+shadowPath: shadow_runtime
+pilotPath: planned
+activePath: planned
+rollbackInstruction: planned
+compensationInstruction: planned
+acceptanceScenarios: [planned]
+gateResultRequired: true

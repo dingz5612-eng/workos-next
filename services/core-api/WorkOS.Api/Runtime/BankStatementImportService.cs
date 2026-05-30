@@ -81,5 +81,5 @@ internal sealed class BankStatementImportService
     }
 
     private static string CounterpartyFrom(IReadOnlyDictionary<string, string> rawPayload) =>
-        rawPayload.TryGetValue("counterparty", out var counterparty) ? counterparty : string.Empty;
+        RuntimeFieldAliases.Value(rawPayload, "counterparty", string.Empty);
 }

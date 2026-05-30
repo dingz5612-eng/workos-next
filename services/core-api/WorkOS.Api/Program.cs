@@ -41,6 +41,9 @@ var runtime = ProjectionRuntime.OpenPostgres(connectionString, authOptions, migr
 var controlPlaneReadStore = new ControlPlaneReadStore(connectionString);
 builder.Services.AddSingleton(runtime);
 builder.Services.AddSingleton(controlPlaneReadStore);
+builder.Services.AddSingleton(new OperationsRuntimeService(
+    runtime,
+    new PostgresOperationsCommandSubmissionStore(connectionString)));
 builder.Services.AddHostedService<ProjectionOutboxWorker>();
 
 var app = builder.Build();
@@ -304,26 +307,32 @@ app.MapPost("/api/pc-governance/exports/{exportType}", (string exportType, Gover
         : Results.Json(result, statusCode: StatusCodes.Status403Forbidden);
 });
 
-app.MapPost("/api/workspaces/{workspaceId}/cards/{cardId}/prepare", (string workspaceId, string cardId, PrepareCardRequest? request) =>
+app.MapOperationsRuntimeEndpoints();
+
+app.MapPost("/api/workspaces/{workspaceId}/cards/{cardId}/prepare", (string workspaceId, string cardId, PrepareCardRequest? request, OperationsRuntimeService operations) =>
 {
-    var prepared = runtime.Prepare(workspaceId, cardId, request);
-    return prepared is null ? Results.NotFound(new { error = "card_not_found", workspaceId, cardId }) : Results.Ok(prepared);
+    var prepared = operations.PrepareWorkspaceCard(workspaceId, cardId, request);
+    return prepared.StatusCode switch
+    {
+        StatusCodes.Status404NotFound => Results.NotFound(prepared.Payload),
+        _ => Results.Ok(prepared.Payload)
+    };
 });
 
-app.MapPost("/api/workspaces/{workspaceId}/cards/{cardId}/confirm", (string workspaceId, string cardId, ConfirmCardRequest request, HttpRequest httpRequest) =>
+app.MapPost("/api/workspaces/{workspaceId}/cards/{cardId}/confirm", (string workspaceId, string cardId, ConfirmCardRequest request, HttpRequest httpRequest, OperationsRuntimeService operations) =>
 {
     var token = httpRequest.Headers["X-WorkOS-Actor-Token"].FirstOrDefault() ?? string.Empty;
     var requestId = httpRequest.Headers["X-Request-Id"].FirstOrDefault() ?? httpRequest.HttpContext.TraceIdentifier;
-    var result = runtime.Confirm(workspaceId, cardId, request with { RequestId = requestId }, token);
-    return result.Status switch
+    var result = operations.ConfirmWorkspaceCard(workspaceId, cardId, request, token, requestId);
+    return result.StatusCode switch
     {
-        ConfirmStatus.NotFound => Results.NotFound(new { error = "card_not_found", workspaceId, cardId }),
-        ConfirmStatus.Invalid => Results.BadRequest(new { error = "confirmation_invalid", result.Reason }),
-        ConfirmStatus.Forbidden when ConfirmHttpStatusMapper.IsAuthenticationFailure(result.Reason) => Results.Unauthorized(),
-        ConfirmStatus.Forbidden when ConfirmHttpStatusMapper.IsAuthorizationForbidden(result.Reason) => Results.Json(new { error = "confirmation_forbidden", result.Reason }, statusCode: StatusCodes.Status403Forbidden),
-        ConfirmStatus.Forbidden => Results.UnprocessableEntity(new { error = "business_rule_violation", result.Reason }),
-        ConfirmStatus.Duplicate => Results.Ok(result.Payload),
-        ConfirmStatus.ProjectionFailed => Results.Ok(result.Payload),
+        StatusCodes.Status404NotFound => Results.NotFound(result.Payload),
+        StatusCodes.Status400BadRequest => Results.BadRequest(result.Payload),
+        StatusCodes.Status401Unauthorized => Results.Unauthorized(),
+        StatusCodes.Status403Forbidden => Results.Json(result.Payload, statusCode: StatusCodes.Status403Forbidden),
+        StatusCodes.Status500InternalServerError => Results.Json(result.Payload, statusCode: StatusCodes.Status500InternalServerError),
+        StatusCodes.Status409Conflict => Results.Json(result.Payload, statusCode: StatusCodes.Status409Conflict),
+        StatusCodes.Status422UnprocessableEntity => Results.UnprocessableEntity(result.Payload),
         _ => Results.Ok(result.Payload)
     };
 });
@@ -436,6 +445,13 @@ internal static class DemoBootstrap
             "POST /api/correction-center/ledger-correction-requests/{correctionRequestId}/approve",
             "POST /api/correction-center/ledger-correction-requests/{correctionRequestId}/reject",
             "POST /api/correction-center/ledger-correction-requests/{correctionRequestId}/apply",
+            "POST /api/operations/cases",
+            "GET /api/operations/cases/{caseId}",
+            "POST /api/operations/work-items",
+            "GET /api/operations/work-items",
+            "GET /api/operations/work-items/{workItemId}",
+            "POST /api/operations/work-items/{workItemId}/prepare",
+            "POST /api/operations/work-items/{workItemId}/confirm",
             "GET /api/workspaces/{workspaceId}/events",
             "GET /api/audit-events",
             "GET /api/outbox",

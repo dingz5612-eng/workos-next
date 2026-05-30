@@ -1,0 +1,27 @@
+version: 1
+id: v5.5-gate-result-hardening
+businessSignoffTable: control_plane.business_signoffs
+gateResultTable: control_plane.gate_results
+rules:
+  - id: gate.generated_by_gate_runner
+    severity: P0
+    enforcement: db_check_constraint
+    migration: infra/db/migrations/029_v5_5_gate_result_hardening.sql
+    rule: passed gate_results.generated_by must equal gate-runner.
+  - id: gate.passed_requires_ci_run
+    severity: P0
+    enforcement: db_check_constraint
+    migration: infra/db/migrations/029_v5_5_gate_result_hardening.sql
+    rule: passed GateResult rows must have ci_run_id.
+  - id: gate.immutable_evidence_columns
+    severity: P0
+    enforcement: db_trigger
+    migration: infra/db/migrations/029_v5_5_gate_result_hardening.sql
+    immutableColumns: [status, severity, generated_by, generated_at_utc, input_hash, result_hash]
+  - id: signoff.locked_requires_business_signoff
+    severity: P0
+    enforcement: release_manifest_validator
+    rule: locked MR release evidence must reference a BusinessSignoff or an unexpired waiver.
+waiverPolicy:
+  requiredFields: [owner, reason, expiresAt]
+  expiredWaiverSeverity: P0

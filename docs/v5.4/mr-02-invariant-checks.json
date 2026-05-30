@@ -1,0 +1,618 @@
+[
+  {
+    "invariant_check_id": "inv-v54-shadow-no-shadow-event-consumed-by-official-projector",
+    "release_id": "release-mr-02",
+    "tenant_id": "test-tenant",
+    "slice_id": "OperationsRuntime",
+    "invariant_key": "shadow.no_shadow_event_consumed_by_official_projector",
+    "description": "Official projector paths must not read from shadow_runtime.*.",
+    "mode": "blocking",
+    "severity": "P0",
+    "source_type": "service-db-file",
+    "check_ref": "services/core-api/WorkOS.Api/Runtime \u002B public.projection_checkpoints.source_namespace",
+    "status": "passed",
+    "observed_value": {
+      "checked_files": 5,
+      "source_scan_violation_count": 0,
+      "projection_checkpoints_exists": true,
+      "source_namespace_column_exists": true,
+      "source_namespace_shadow_runtime_count": 0
+    },
+    "threshold": {
+      "max_shadow_reads": 0,
+      "max_projection_checkpoints_shadow_runtime_rows": 0,
+      "forbidden_source_namespace": "shadow_runtime",
+      "max_shadow_runtime_checkpoint_rows": 0
+    },
+    "violation_count": 0,
+    "sample_violations": [],
+    "generated_by": "invariant-runner",
+    "ci_run_id": "local-mr-02",
+    "checked_at_utc": "2026-05-30T08:22:45.1329223+00:00"
+  },
+  {
+    "invariant_check_id": "inv-v54-api-no-page-specific-business-write",
+    "release_id": "release-mr-02",
+    "tenant_id": "test-tenant",
+    "slice_id": "OperationsRuntime",
+    "invariant_key": "api.no_page_specific_business_write",
+    "description": "Forbidden page-specific business write routes must not appear in Minimal API route declarations.",
+    "mode": "blocking",
+    "severity": "P0",
+    "source_type": "api-boundary-check-v2",
+    "check_ref": "scripts/check-api-boundaries.mjs",
+    "status": "passed",
+    "observed_value": {
+      "version": 2,
+      "status": "passed",
+      "route_count": 58,
+      "api_route_count": 56,
+      "write_route_count": 29,
+      "classified_write_route_count": 29,
+      "unclassified_write_route_count": 0,
+      "multi_classified_write_route_count": 0,
+      "business_write_route_count": 1,
+      "exit_code": 0,
+      "report_path": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\.tmp\\v5_4\\api-boundary-check-v2.json"
+    },
+    "threshold": {
+      "version": 2,
+      "violation_count": 0,
+      "unclassified_write_route_count": 0,
+      "multi_classified_write_route_count": 0
+    },
+    "violation_count": 0,
+    "sample_violations": [],
+    "generated_by": "invariant-runner",
+    "ci_run_id": "local-mr-02",
+    "checked_at_utc": "2026-05-30T08:22:45.2891683+00:00"
+  },
+  {
+    "invariant_check_id": "inv-v54-runtime-no-production-demo-fallback",
+    "release_id": "release-mr-02",
+    "tenant_id": "test-tenant",
+    "slice_id": "OperationsRuntime",
+    "invariant_key": "runtime.no_production_demo_fallback",
+    "description": "Production runtime paths must not contain banned demo/fake business fallback literals.",
+    "mode": "blocking",
+    "severity": "P0",
+    "source_type": "file\u002Bdist-scan",
+    "check_ref": "scripts/check-no-production-fake-fallback.mjs (backend \u002B apps/mobile/src \u002B apps/mobile/dist)",
+    "status": "passed",
+    "observed_value": {
+      "exit_code": 0,
+      "script": "scripts/check-no-production-fake-fallback.mjs"
+    },
+    "threshold": {
+      "expected_exit_code": 0
+    },
+    "violation_count": 0,
+    "sample_violations": [],
+    "generated_by": "invariant-runner",
+    "ci_run_id": "local-mr-02",
+    "checked_at_utc": "2026-05-30T08:22:45.456713+00:00"
+  },
+  {
+    "invariant_check_id": "inv-v54-runtime-control-plane-tables-exist",
+    "release_id": "release-mr-02",
+    "tenant_id": "test-tenant",
+    "slice_id": "OperationsRuntime",
+    "invariant_key": "runtime.control_plane_tables_exist",
+    "description": "Control Plane and Shadow Runtime schemas and tables must exist after migrations.",
+    "mode": "blocking",
+    "severity": "P0",
+    "source_type": "sql",
+    "check_sql": "select (12 - count(*))::int as violation_count, jsonb_build_object(\u0027existing_tables\u0027, count(*), \u0027expected_tables\u0027, 12) as observed_value, jsonb_build_object(\u0027expected_tables\u0027, 12) as threshold, \u0027[]\u0027::jsonb as sample_violations from information_schema.tables where (table_schema = \u0027control_plane\u0027 and table_name in (\u0027release_manifests\u0027, \u0027feature_flags\u0027, \u0027slice_cutover_states\u0027, \u0027shadow_compare_reports\u0027, \u0027runtime_invariant_checks\u0027, \u0027gate_results\u0027, \u0027rollback_instructions\u0027)) or (table_schema = \u0027shadow_runtime\u0027 and table_name in (\u0027command_submissions\u0027, \u0027domain_events\u0027, \u0027ledger_entries\u0027, \u0027lens_snapshots\u0027, \u0027compare_inputs\u0027))",
+    "check_ref": "infra/db/migrations/015_control_plane_shadow_runtime.sql",
+    "status": "passed",
+    "observed_value": {
+      "existing_tables": 12,
+      "expected_tables": 12
+    },
+    "threshold": {
+      "expected_tables": 12
+    },
+    "violation_count": 0,
+    "sample_violations": [],
+    "generated_by": "invariant-runner",
+    "ci_run_id": "local-mr-02",
+    "checked_at_utc": "2026-05-30T08:22:45.4590451+00:00"
+  },
+  {
+    "invariant_check_id": "inv-v54-gate-gate-result-machine-generated",
+    "release_id": "release-mr-02",
+    "tenant_id": "test-tenant",
+    "slice_id": "OperationsRuntime",
+    "invariant_key": "gate.gate_result_machine_generated",
+    "description": "GateResult rows must be generated by gate-runner with non-null input/result hashes and must not be manual status evidence.",
+    "mode": "blocking",
+    "severity": "P0",
+    "source_type": "sql",
+    "check_sql": "select count(*) filter (where generated_by \u003C\u003E \u0027gate-runner\u0027 or gate_type \u003C\u003E \u0027automated\u0027 or coalesce(input_hash, \u0027\u0027) = \u0027\u0027 or coalesce(result_hash, \u0027\u0027) = \u0027\u0027)::int as violation_count, jsonb_build_object(\u0027checked_gate_results\u0027, count(*), \u0027bad_gate_results\u0027, count(*) filter (where generated_by \u003C\u003E \u0027gate-runner\u0027 or gate_type \u003C\u003E \u0027automated\u0027 or coalesce(input_hash, \u0027\u0027) = \u0027\u0027 or coalesce(result_hash, \u0027\u0027) = \u0027\u0027)) as observed_value, jsonb_build_object(\u0027generated_by\u0027, \u0027gate-runner\u0027, \u0027gate_type\u0027, \u0027automated\u0027, \u0027input_hash\u0027, \u0027not null\u0027, \u0027result_hash\u0027, \u0027not null\u0027) as threshold, coalesce(jsonb_agg(jsonb_build_object(\u0027gate_result_id\u0027, gate_result_id, \u0027status\u0027, status, \u0027gate_type\u0027, gate_type, \u0027generated_by\u0027, generated_by, \u0027input_hash_present\u0027, coalesce(input_hash, \u0027\u0027) \u003C\u003E \u0027\u0027, \u0027result_hash_present\u0027, coalesce(result_hash, \u0027\u0027) \u003C\u003E \u0027\u0027)) filter (where generated_by \u003C\u003E \u0027gate-runner\u0027 or gate_type \u003C\u003E \u0027automated\u0027 or coalesce(input_hash, \u0027\u0027) = \u0027\u0027 or coalesce(result_hash, \u0027\u0027) = \u0027\u0027), \u0027[]\u0027::jsonb) as sample_violations from control_plane.gate_results",
+    "check_ref": "control_plane.gate_results",
+    "status": "passed",
+    "observed_value": {
+      "bad_gate_results": 0,
+      "checked_gate_results": 0
+    },
+    "threshold": {
+      "gate_type": "automated",
+      "input_hash": "not null",
+      "result_hash": "not null",
+      "generated_by": "gate-runner"
+    },
+    "violation_count": 0,
+    "sample_violations": [],
+    "generated_by": "invariant-runner",
+    "ci_run_id": "local-mr-02",
+    "checked_at_utc": "2026-05-30T08:22:45.4606517+00:00"
+  },
+  {
+    "invariant_check_id": "inv-v54-release-release-manifest-has-ci-run",
+    "release_id": "release-mr-02",
+    "tenant_id": "test-tenant",
+    "slice_id": "OperationsRuntime",
+    "invariant_key": "release.release_manifest_has_ci_run",
+    "description": "Release manifests used by CI must carry a ci_run_id or be generated with one injected by the manifest generator.",
+    "mode": "blocking",
+    "severity": "P0",
+    "source_type": "sql",
+    "check_sql": "select count(*) filter (where coalesce(ci_run_id, \u0027\u0027) = \u0027\u0027)::int as violation_count, jsonb_build_object(\u0027checked_release_manifests\u0027, count(*), \u0027missing_ci_run_id\u0027, count(*) filter (where coalesce(ci_run_id, \u0027\u0027) = \u0027\u0027)) as observed_value, jsonb_build_object(\u0027ci_run_id\u0027, \u0027not null or empty\u0027) as threshold, coalesce(jsonb_agg(jsonb_build_object(\u0027release_id\u0027, release_id, \u0027mr_id\u0027, mr_id, \u0027status\u0027, status)) filter (where coalesce(ci_run_id, \u0027\u0027) = \u0027\u0027), \u0027[]\u0027::jsonb) as sample_violations from control_plane.release_manifests",
+    "check_ref": "control_plane.release_manifests \u002B scripts/v5_4/generate-release-manifest.mjs",
+    "status": "passed",
+    "observed_value": {
+      "missing_ci_run_id": 0,
+      "checked_release_manifests": 1
+    },
+    "threshold": {
+      "ci_run_id": "not null or empty"
+    },
+    "violation_count": 0,
+    "sample_violations": [],
+    "generated_by": "invariant-runner",
+    "ci_run_id": "local-mr-02",
+    "checked_at_utc": "2026-05-30T08:22:45.4618917+00:00"
+  },
+  {
+    "invariant_check_id": "inv-v54-case-closed-has-no-open-blocker",
+    "release_id": "release-mr-02",
+    "tenant_id": "test-tenant",
+    "slice_id": "OperationsRuntime",
+    "invariant_key": "case.closed_has_no_open_blocker",
+    "description": "Checkout cases must not be closed while an open or resolving blocker exists.",
+    "mode": "blocking",
+    "severity": "P0",
+    "source_type": "skeleton",
+    "check_ref": "docs/v5.4/checkout-service-cutover.config.json",
+    "status": "passed",
+    "observed_value": {
+      "skeleton": "case.closed_has_no_open_blocker",
+      "config": "docs/v5.4/checkout-service-cutover.config.json",
+      "exists": true
+    },
+    "threshold": {
+      "required_config_exists": true
+    },
+    "violation_count": 0,
+    "sample_violations": [],
+    "generated_by": "invariant-runner",
+    "ci_run_id": "local-mr-02",
+    "checked_at_utc": "2026-05-30T08:22:45.4627863+00:00"
+  },
+  {
+    "invariant_check_id": "inv-v54-case-close-requires-closure-policy",
+    "release_id": "release-mr-02",
+    "tenant_id": "test-tenant",
+    "slice_id": "OperationsRuntime",
+    "invariant_key": "case.close_requires_closure_policy",
+    "description": "Checkout close requires a recorded CaseClosurePolicy evaluation before close.",
+    "mode": "blocking",
+    "severity": "P0",
+    "source_type": "skeleton",
+    "check_ref": "services/core-api/WorkOS.Api/Runtime/CheckoutServiceProcessManager.cs",
+    "status": "passed",
+    "observed_value": {
+      "skeleton": "case.close_requires_closure_policy",
+      "file": "services/core-api/WorkOS.Api/Runtime/CheckoutServiceProcessManager.cs",
+      "required_tokens": 2
+    },
+    "threshold": {
+      "missing_tokens": 0
+    },
+    "violation_count": 0,
+    "sample_violations": [],
+    "generated_by": "invariant-runner",
+    "ci_run_id": "local-mr-02",
+    "checked_at_utc": "2026-05-30T08:22:45.4641759+00:00"
+  },
+  {
+    "invariant_check_id": "inv-v54-blocker-no-duplicate-open-resolution",
+    "release_id": "release-mr-02",
+    "tenant_id": "test-tenant",
+    "slice_id": "OperationsRuntime",
+    "invariant_key": "blocker.no_duplicate_open_resolution",
+    "description": "BlockerEngine must dedupe open/resolving blockers and resolution WorkItem intents.",
+    "mode": "blocking",
+    "severity": "P0",
+    "source_type": "skeleton",
+    "check_ref": "infra/db/migrations/016_checkout_service_process_manager.sql",
+    "status": "passed",
+    "observed_value": {
+      "skeleton": "blocker.no_duplicate_open_resolution",
+      "file": "infra/db/migrations/016_checkout_service_process_manager.sql",
+      "required_tokens": 2
+    },
+    "threshold": {
+      "missing_tokens": 0
+    },
+    "violation_count": 0,
+    "sample_violations": [],
+    "generated_by": "invariant-runner",
+    "ci_run_id": "local-mr-02",
+    "checked_at_utc": "2026-05-30T08:22:45.4646965+00:00"
+  },
+  {
+    "invariant_check_id": "inv-v54-service-cannot-directly-change-bed-status",
+    "release_id": "release-mr-02",
+    "tenant_id": "test-tenant",
+    "slice_id": "OperationsRuntime",
+    "invariant_key": "service.cannot_directly_change_bed_status",
+    "description": "ServiceTask can request release but must not directly write BedStatus or room/bed availability facts.",
+    "mode": "blocking",
+    "severity": "P0",
+    "source_type": "skeleton",
+    "check_ref": "services/core-api/WorkOS.Api/Slices/Accommodation/ServiceTask",
+    "status": "passed",
+    "observed_value": {
+      "skeleton": "service.cannot_directly_change_bed_status",
+      "checked_files": 3
+    },
+    "threshold": {
+      "max_forbidden_patterns": 0
+    },
+    "violation_count": 0,
+    "sample_violations": [],
+    "generated_by": "invariant-runner",
+    "ci_run_id": "local-mr-02",
+    "checked_at_utc": "2026-05-30T08:22:45.4671019+00:00"
+  },
+  {
+    "invariant_check_id": "inv-v54-checkout-cannot-directly-write-deposit-entry",
+    "release_id": "release-mr-02",
+    "tenant_id": "test-tenant",
+    "slice_id": "OperationsRuntime",
+    "invariant_key": "checkout.cannot_directly_write_deposit_entry",
+    "description": "CheckoutSettlement can request deposit settlement but must not directly write DepositEntry or deposit ledger tables.",
+    "mode": "blocking",
+    "severity": "P0",
+    "source_type": "skeleton",
+    "check_ref": "services/core-api/WorkOS.Api/Slices/Accommodation/CheckOutSettlement",
+    "status": "passed",
+    "observed_value": {
+      "skeleton": "checkout.cannot_directly_write_deposit_entry",
+      "checked_files": 3
+    },
+    "threshold": {
+      "max_forbidden_patterns": 0
+    },
+    "violation_count": 0,
+    "sample_violations": [],
+    "generated_by": "invariant-runner",
+    "ci_run_id": "local-mr-02",
+    "checked_at_utc": "2026-05-30T08:22:45.4683628+00:00"
+  },
+  {
+    "invariant_check_id": "inv-v54-checkout-cleaning-required-before-release",
+    "release_id": "release-mr-02",
+    "tenant_id": "test-tenant",
+    "slice_id": "OperationsRuntime",
+    "invariant_key": "checkout.cleaning_required_before_release",
+    "description": "Bed or room release after checkout must be gated by cleaning/service verification when cleaning is required.",
+    "mode": "blocking",
+    "severity": "P0",
+    "source_type": "skeleton",
+    "check_ref": "services/core-api/WorkOS.Api/Runtime/SystemCheckCatalog.cs",
+    "status": "passed",
+    "observed_value": {
+      "skeleton": "checkout.cleaning_required_before_release",
+      "file": "services/core-api/WorkOS.Api/Runtime/SystemCheckCatalog.cs",
+      "required_tokens": 2
+    },
+    "threshold": {
+      "missing_tokens": 0
+    },
+    "violation_count": 0,
+    "sample_violations": [],
+    "generated_by": "invariant-runner",
+    "ci_run_id": "local-mr-02",
+    "checked_at_utc": "2026-05-30T08:22:45.4688895+00:00"
+  },
+  {
+    "invariant_check_id": "inv-v54-bank-import-does-not-create-payment-fact",
+    "release_id": "release-mr-02",
+    "tenant_id": "test-tenant",
+    "slice_id": "OperationsRuntime",
+    "invariant_key": "bank.import_does_not_create_payment_fact",
+    "description": "Bank statement import must create reconciliation records only and must not create PaymentConfirmed or other business money facts.",
+    "mode": "blocking",
+    "severity": "P0",
+    "source_type": "skeleton",
+    "check_ref": "docs/v5.4/reconciliation-correction-cutover.config.json",
+    "status": "passed",
+    "observed_value": {
+      "skeleton": "bank.import_does_not_create_payment_fact",
+      "config": "docs/v5.4/reconciliation-correction-cutover.config.json",
+      "exists": true
+    },
+    "threshold": {
+      "required_config_exists": true
+    },
+    "violation_count": 0,
+    "sample_violations": [],
+    "generated_by": "invariant-runner",
+    "ci_run_id": "local-mr-02",
+    "checked_at_utc": "2026-05-30T08:22:45.4691075+00:00"
+  },
+  {
+    "invariant_check_id": "inv-v54-reconciliation-bank-transaction-single-match-default",
+    "release_id": "release-mr-02",
+    "tenant_id": "test-tenant",
+    "slice_id": "OperationsRuntime",
+    "invariant_key": "reconciliation.bank_transaction_single_match_default",
+    "description": "A bank transaction can be matched at most once by default until a split policy is explicitly introduced.",
+    "mode": "blocking",
+    "severity": "P0",
+    "source_type": "skeleton",
+    "check_ref": "docs/v5.4/reconciliation-correction-cutover.config.json",
+    "status": "passed",
+    "observed_value": {
+      "skeleton": "reconciliation.bank_transaction_single_match_default",
+      "config": "docs/v5.4/reconciliation-correction-cutover.config.json",
+      "exists": true
+    },
+    "threshold": {
+      "required_config_exists": true
+    },
+    "violation_count": 0,
+    "sample_violations": [],
+    "generated_by": "invariant-runner",
+    "ci_run_id": "local-mr-02",
+    "checked_at_utc": "2026-05-30T08:22:45.4692734+00:00"
+  },
+  {
+    "invariant_check_id": "inv-v54-ledger-no-edit-old-entry",
+    "release_id": "release-mr-02",
+    "tenant_id": "test-tenant",
+    "slice_id": "OperationsRuntime",
+    "invariant_key": "ledger.no_edit_old_entry",
+    "description": "Payment, deposit, charge, cash, and refund ledger corrections must append new entries and never edit old ledger facts.",
+    "mode": "blocking",
+    "severity": "P0",
+    "source_type": "skeleton",
+    "check_ref": "docs/v5.4/reconciliation-correction-cutover.config.json",
+    "status": "passed",
+    "observed_value": {
+      "skeleton": "ledger.no_edit_old_entry",
+      "config": "docs/v5.4/reconciliation-correction-cutover.config.json",
+      "exists": true
+    },
+    "threshold": {
+      "required_config_exists": true
+    },
+    "violation_count": 0,
+    "sample_violations": [],
+    "generated_by": "invariant-runner",
+    "ci_run_id": "local-mr-02",
+    "checked_at_utc": "2026-05-30T08:22:45.4694346+00:00"
+  },
+  {
+    "invariant_check_id": "inv-v54-correction-requires-reason",
+    "release_id": "release-mr-02",
+    "tenant_id": "test-tenant",
+    "slice_id": "OperationsRuntime",
+    "invariant_key": "correction.requires_reason",
+    "description": "Every correction request, reversal, and correction application must carry a reason.",
+    "mode": "blocking",
+    "severity": "P0",
+    "source_type": "skeleton",
+    "check_ref": "docs/v5.4/reconciliation-correction-cutover.config.json",
+    "status": "passed",
+    "observed_value": {
+      "skeleton": "correction.requires_reason",
+      "config": "docs/v5.4/reconciliation-correction-cutover.config.json",
+      "exists": true
+    },
+    "threshold": {
+      "required_config_exists": true
+    },
+    "violation_count": 0,
+    "sample_violations": [],
+    "generated_by": "invariant-runner",
+    "ci_run_id": "local-mr-02",
+    "checked_at_utc": "2026-05-30T08:22:45.4696169+00:00"
+  },
+  {
+    "invariant_check_id": "inv-v54-correction-high-risk-requires-approval",
+    "release_id": "release-mr-02",
+    "tenant_id": "test-tenant",
+    "slice_id": "OperationsRuntime",
+    "invariant_key": "correction.high_risk_requires_approval",
+    "description": "High-risk ledger corrections must be approved before they can be applied.",
+    "mode": "blocking",
+    "severity": "P0",
+    "source_type": "skeleton",
+    "check_ref": "docs/v5.4/reconciliation-correction-cutover.config.json",
+    "status": "passed",
+    "observed_value": {
+      "skeleton": "correction.high_risk_requires_approval",
+      "config": "docs/v5.4/reconciliation-correction-cutover.config.json",
+      "exists": true
+    },
+    "threshold": {
+      "required_config_exists": true
+    },
+    "violation_count": 0,
+    "sample_violations": [],
+    "generated_by": "invariant-runner",
+    "ci_run_id": "local-mr-02",
+    "checked_at_utc": "2026-05-30T08:22:45.4697929+00:00"
+  },
+  {
+    "invariant_check_id": "inv-v54-balance-rebuild-after-correction",
+    "release_id": "release-mr-02",
+    "tenant_id": "test-tenant",
+    "slice_id": "OperationsRuntime",
+    "invariant_key": "balance.rebuild_after_correction",
+    "description": "Applying a payment, deposit, or charge correction must trigger a balance rebuild and must not leave projections inconsistent.",
+    "mode": "blocking",
+    "severity": "P0",
+    "source_type": "skeleton",
+    "check_ref": "docs/v5.4/reconciliation-correction-cutover.config.json",
+    "status": "passed",
+    "observed_value": {
+      "skeleton": "balance.rebuild_after_correction",
+      "config": "docs/v5.4/reconciliation-correction-cutover.config.json",
+      "exists": true
+    },
+    "threshold": {
+      "required_config_exists": true
+    },
+    "violation_count": 0,
+    "sample_violations": [],
+    "generated_by": "invariant-runner",
+    "ci_run_id": "local-mr-02",
+    "checked_at_utc": "2026-05-30T08:22:45.4699579+00:00"
+  },
+  {
+    "invariant_check_id": "inv-v54-period-finance-snapshot-from-ledgers",
+    "release_id": "release-mr-02",
+    "tenant_id": "test-tenant",
+    "slice_id": "OperationsRuntime",
+    "invariant_key": "period.finance_snapshot_from_ledgers",
+    "description": "Period finance snapshots must be generated from ledger and ledger projection sources, not user-entered finance totals.",
+    "mode": "blocking",
+    "severity": "P0",
+    "source_type": "skeleton",
+    "check_ref": "docs/v5.4/period-risk-pc-governance-cutover.config.json",
+    "status": "passed",
+    "observed_value": {
+      "skeleton": "period.finance_snapshot_from_ledgers"
+    },
+    "threshold": {},
+    "violation_count": 0,
+    "sample_violations": [],
+    "generated_by": "invariant-runner",
+    "ci_run_id": "local-mr-02",
+    "checked_at_utc": "2026-05-30T08:22:45.4699607+00:00"
+  },
+  {
+    "invariant_check_id": "inv-v54-period-expense-not-integrated-not-zero",
+    "release_id": "release-mr-02",
+    "tenant_id": "test-tenant",
+    "slice_id": "OperationsRuntime",
+    "invariant_key": "period.expense_not_integrated_not_zero",
+    "description": "When ExpenseLedger is not integrated, expense must be declared as not_integrated and must not be displayed as zero by default.",
+    "mode": "blocking",
+    "severity": "P0",
+    "source_type": "skeleton",
+    "check_ref": "docs/v5.4/period-risk-pc-governance-cutover.config.json",
+    "status": "passed",
+    "observed_value": {
+      "skeleton": "period.expense_not_integrated_not_zero"
+    },
+    "threshold": {},
+    "violation_count": 0,
+    "sample_violations": [],
+    "generated_by": "invariant-runner",
+    "ci_run_id": "local-mr-02",
+    "checked_at_utc": "2026-05-30T08:22:45.4699625+00:00"
+  },
+  {
+    "invariant_check_id": "inv-v54-period-close-freezes-snapshot",
+    "release_id": "release-mr-02",
+    "tenant_id": "test-tenant",
+    "slice_id": "OperationsRuntime",
+    "invariant_key": "period.close_freezes_snapshot",
+    "description": "Period close must freeze final snapshots and must not allow later in-place snapshot body updates.",
+    "mode": "blocking",
+    "severity": "P0",
+    "source_type": "skeleton",
+    "check_ref": "docs/v5.4/period-risk-pc-governance-cutover.config.json",
+    "status": "passed",
+    "observed_value": {
+      "skeleton": "period.close_freezes_snapshot"
+    },
+    "threshold": {},
+    "violation_count": 0,
+    "sample_violations": [],
+    "generated_by": "invariant-runner",
+    "ci_run_id": "local-mr-02",
+    "checked_at_utc": "2026-05-30T08:22:45.469964+00:00"
+  },
+  {
+    "invariant_check_id": "inv-v54-period-late-adjustment-append-only",
+    "release_id": "release-mr-02",
+    "tenant_id": "test-tenant",
+    "slice_id": "OperationsRuntime",
+    "invariant_key": "period.late_adjustment_append_only",
+    "description": "LateAdjustment must append after close and must never update the original closed snapshot.",
+    "mode": "blocking",
+    "severity": "P0",
+    "source_type": "skeleton",
+    "check_ref": "docs/v5.4/period-risk-pc-governance-cutover.config.json",
+    "status": "passed",
+    "observed_value": {
+      "skeleton": "period.late_adjustment_append_only"
+    },
+    "threshold": {},
+    "violation_count": 0,
+    "sample_violations": [],
+    "generated_by": "invariant-runner",
+    "ci_run_id": "local-mr-02",
+    "checked_at_utc": "2026-05-30T08:22:45.4699656+00:00"
+  },
+  {
+    "invariant_check_id": "inv-v54-risk-all-items-drill-down",
+    "release_id": "release-mr-02",
+    "tenant_id": "test-tenant",
+    "slice_id": "OperationsRuntime",
+    "invariant_key": "risk.all_items_drill_down",
+    "description": "Every RiskCommand item must have source refs and a drilldown URL before it can be official.",
+    "mode": "blocking",
+    "severity": "P0",
+    "source_type": "skeleton",
+    "check_ref": "docs/v5.4/period-risk-pc-governance-cutover.config.json",
+    "status": "passed",
+    "observed_value": {
+      "skeleton": "risk.all_items_drill_down"
+    },
+    "threshold": {},
+    "violation_count": 0,
+    "sample_violations": [],
+    "generated_by": "invariant-runner",
+    "ci_run_id": "local-mr-02",
+    "checked_at_utc": "2026-05-30T08:22:45.469967+00:00"
+  },
+  {
+    "invariant_check_id": "inv-v54-pc-export-has-audit",
+    "release_id": "release-mr-02",
+    "tenant_id": "test-tenant",
+    "slice_id": "OperationsRuntime",
+    "invariant_key": "pc.export_has_audit",
+    "description": "PC Governance exports must require capability, reason, expiring URL, trusted PC for high-risk exports, and a persisted audit event.",
+    "mode": "blocking",
+    "severity": "P0",
+    "source_type": "skeleton",
+    "check_ref": "docs/v5.4/period-risk-pc-governance-cutover.config.json",
+    "status": "passed",
+    "observed_value": {
+      "skeleton": "pc.export_has_audit"
+    },
+    "threshold": {},
+    "violation_count": 0,
+    "sample_violations": [],
+    "generated_by": "invariant-runner",
+    "ci_run_id": "local-mr-02",
+    "checked_at_utc": "2026-05-30T08:22:45.4699683+00:00"
+  }
+]

@@ -1,0 +1,44 @@
+{
+  "rollback_instruction_id": "rollback-mr-00-control-plane-bootstrap",
+  "release_id": "v5.4-control-plane-bootstrap",
+  "instruction_type": "rollback",
+  "rollback_kind": "migration_down",
+  "title": "Rollback V5.4 Control Plane Bootstrap",
+  "scope": {
+    "schemas": [
+      "control_plane",
+      "shadow_runtime"
+    ],
+    "migration": "015_control_plane_shadow_runtime",
+    "technical_rollback_allowed_when": "Control Plane has not yet carried business release evidence.",
+    "evidence_retention_required_when": "Control Plane has carried release evidence."
+  },
+  "allowed_before_status": [
+    "built",
+    "shadow",
+    "paused"
+  ],
+  "allowed_after_status": [
+    "rollback",
+    "paused"
+  ],
+  "steps": [
+    "Confirm whether control_plane.gate_results, control_plane.release_manifests, control_plane.runtime_invariant_checks, and control_plane.shadow_compare_reports contain only bootstrap evidence.",
+    "If Control Plane has not yet carried business release evidence, a reviewed technical rollback may drop shadow_runtime first and then control_plane.",
+    "If Control Plane has carried release evidence, do not directly drop either schema; migrate or archive the evidence first, then apply a reviewed compensating migration.",
+    "Record the rollback decision, operator, affected schemas, and evidence retention decision in the release audit trail."
+  ],
+  "validation_steps": [
+    "Run control-plane-migration and control-plane-schema-verify after rollback or compensation.",
+    "Confirm no business release evidence was lost.",
+    "Confirm official runtime projectors still do not read shadow_runtime.",
+    "Confirm release-manifest-validate fails closed if the generated GateResult or manifest is missing."
+  ],
+  "owner": "platform",
+  "risk_level": "P0",
+  "requires_business_approval": true,
+  "requires_architecture_approval": true,
+  "requires_finance_approval": false,
+  "created_at_utc": "2026-05-30T00:00:00Z",
+  "updated_at_utc": "2026-05-30T00:00:00Z"
+}

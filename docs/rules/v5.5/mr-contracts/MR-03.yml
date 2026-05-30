@@ -1,0 +1,18 @@
+mrId: MR-03
+name: Resource Runtime Rules Skeleton
+state: planned
+owners: [resource, runtime, qa]
+scope:
+  includes: [resource-contracts, bed-status-invariants]
+  excludes: [business-implementation-before-v5.5-go]
+dependencies: [MR-00, MR-01, MR-02, V5.5-Rules-OS-GO]
+goCriteria: [fact-ownership-declared, p0-invariants-targeted]
+noGoCriteria: [resource-business-work-before-rules-go]
+invariants: [resource.no_overlapping_active_bed_occupancy]
+shadowPath: shadow_runtime
+pilotPath: planned
+activePath: planned
+rollbackInstruction: planned
+compensationInstruction: planned
+acceptanceScenarios: [planned]
+gateResultRequired: true

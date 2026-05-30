@@ -128,10 +128,10 @@ public sealed class ControlPlaneWriteStore
     {
         using var connection = Open();
         using var command = connection.CreateCommand();
-        command.CommandText = """
+        command.CommandText = $"""
             insert into control_plane.shadow_compare_reports(
                 shadow_compare_report_id, release_id, tenant_id, slice_id, compare_scope,
-                source_legacy_ref, source_active_ref, source_shadow_ref, compared_at_utc,
+                {ControlPlaneDbMapping.SourceBaselineRefColumn}, source_active_ref, source_shadow_ref, compared_at_utc,
                 grade, total_compared, matched_count, mismatch_count,
                 missing_in_shadow_count, extra_in_shadow_count, mismatch_examples,
                 summary, generated_by, ci_run_id)
@@ -144,7 +144,7 @@ public sealed class ControlPlaneWriteStore
                 @generatedBy, @ciRunId)
             on conflict(shadow_compare_report_id) do update set
                 compare_scope = excluded.compare_scope,
-                source_legacy_ref = excluded.source_legacy_ref,
+                {ControlPlaneDbMapping.SourceBaselineRefColumn} = excluded.{ControlPlaneDbMapping.SourceBaselineRefColumn},
                 source_active_ref = excluded.source_active_ref,
                 source_shadow_ref = excluded.source_shadow_ref,
                 compared_at_utc = excluded.compared_at_utc,

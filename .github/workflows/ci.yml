@@ -95,8 +95,15 @@ jobs:
           node scripts/check-api-boundaries.mjs --self-test
           node scripts/check-api-boundaries.mjs
 
+      - name: Validate V5.5 rules OS
+        run: node scripts/check-v5-5-rules-os.mjs
+
       - name: Architecture guard
         shell: pwsh
+        env:
+          ConnectionStrings__WorkOSRuntime: Host=localhost;Port=54329;Database=workosnext_test;Username=workosnext;Password=workosnext_dev
+          WORKOS_TEST_CONNECTION: Host=localhost;Port=54329;Database=workosnext_test;Username=workosnext;Password=workosnext_dev
+          TEST_DATABASE: "true"
         run: ./scripts/guard-architecture.ps1
 
       - name: Clean baseline gate

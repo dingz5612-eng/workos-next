@@ -102,6 +102,52 @@ public sealed class ControlPlaneDatabase : ILedgerInspectionInvariantEvaluator
         return command.ExecuteScalar() is not null;
     }
 
+    public bool ColumnExists(string schema, string table, string column)
+    {
+        using var connection = Open();
+        using var command = connection.CreateCommand();
+        command.CommandText = """
+            select 1
+            from information_schema.columns
+            where table_schema = @schema and table_name = @table and column_name = @column
+            """;
+        command.Parameters.AddWithValue("schema", schema);
+        command.Parameters.AddWithValue("table", table);
+        command.Parameters.AddWithValue("column", column);
+        return command.ExecuteScalar() is not null;
+    }
+
+    public SqlInvariantResult ProjectionCheckpointShadowNamespaceCheck()
+    {
+        return ExecuteInvariantSql("""
+            select
+                count(*)::int as violation_count,
+                jsonb_build_object(
+                    'projection_checkpoints_exists', true,
+                    'source_namespace_column_exists', true,
+                    'source_namespace_shadow_runtime_count', count(*)
+                ) as observed_value,
+                jsonb_build_object(
+                    'forbidden_source_namespace', 'shadow_runtime',
+                    'max_shadow_runtime_checkpoint_rows', 0
+                ) as threshold,
+                coalesce(
+                    jsonb_agg(
+                        jsonb_build_object(
+                            'checkpoint_id', checkpoint_id,
+                            'tenant_id', tenant_id,
+                            'lens_name', lens_name,
+                            'source_namespace', source_namespace
+                        )
+                        order by created_at_utc desc
+                    ),
+                    '[]'::jsonb
+                ) as sample_violations
+            from projection_checkpoints
+            where source_namespace = 'shadow_runtime'
+            """);
+    }
+
     public long CountRows(string schema, string table)
     {
         if (!TableExists(schema, table))
@@ -131,6 +177,167 @@ public sealed class ControlPlaneDatabase : ILedgerInspectionInvariantEvaluator
         var threshold = GetJsonOrScalar(reader, "threshold");
         var samples = GetJsonArray(reader, "sample_violations");
         return new SqlInvariantResult(violationCount, observed, threshold, samples);
+    }
+
+    public SqlInvariantResult ShadowLedgerOfficialContaminationCheck(IReadOnlyList<string> officialLedgerTables)
+    {
+        if (!TableExists("shadow_runtime", "ledger_entries"))
+        {
+            return new SqlInvariantResult(
+                1,
+                new Dictionary<string, object> { ["shadow_ledger_entries_exists"] = false },
+                new Dictionary<string, object> { ["shadow_ledger_entries_exists"] = true },
+                new[]
+                {
+                    (IReadOnlyDictionary<string, object>)new Dictionary<string, object>
+                    {
+                        ["missing_table"] = "shadow_runtime.ledger_entries"
+                    }
+                });
+        }
+
+        var checkedTables = new List<string>();
+        var skippedTables = new List<string>();
+        var samples = new List<IReadOnlyDictionary<string, object>>();
+        long contaminatedRows = 0;
+
+        foreach (var tableRef in officialLedgerTables.Select(ParseRelation).Distinct())
+        {
+            if (!TableExists(tableRef.Schema, tableRef.Table))
+            {
+                skippedTables.Add(tableRef.ToString());
+                continue;
+            }
+
+            checkedTables.Add(tableRef.ToString());
+            using var connection = Open();
+            using (var count = connection.CreateCommand())
+            {
+                count.CommandText = $"""
+                    select count(*)::bigint
+                    from {Quote(tableRef.Schema)}.{Quote(tableRef.Table)} official
+                    join shadow_runtime.ledger_entries shadow
+                      on to_jsonb(official)::text like '%' || shadow.shadow_ledger_entry_id || '%'
+                    """;
+                contaminatedRows += Convert.ToInt64(count.ExecuteScalar());
+            }
+
+            using var sample = connection.CreateCommand();
+            sample.CommandText = $"""
+                select
+                    shadow.shadow_ledger_entry_id,
+                    shadow.command_submission_id
+                from {Quote(tableRef.Schema)}.{Quote(tableRef.Table)} official
+                join shadow_runtime.ledger_entries shadow
+                  on to_jsonb(official)::text like '%' || shadow.shadow_ledger_entry_id || '%'
+                limit 5
+                """;
+            using var reader = sample.ExecuteReader();
+            while (reader.Read())
+            {
+                samples.Add(new Dictionary<string, object>
+                {
+                    ["official_table"] = tableRef.ToString(),
+                    ["shadow_ledger_entry_id"] = reader.GetString(0),
+                    ["command_submission_id"] = reader.GetString(1)
+                });
+            }
+        }
+
+        return new SqlInvariantResult(
+            ToViolationCount(contaminatedRows),
+            new Dictionary<string, object>
+            {
+                ["checked_tables"] = checkedTables,
+                ["skipped_missing_tables"] = skippedTables,
+                ["contaminated_rows"] = contaminatedRows
+            },
+            new Dictionary<string, object>
+            {
+                ["max_shadow_ledger_entries_in_official_tables"] = 0
+            },
+            samples);
+    }
+
+    public SqlInvariantResult ShadowDomainEventOfficialContaminationCheck()
+    {
+        if (!TableExists("shadow_runtime", "domain_events"))
+        {
+            return new SqlInvariantResult(
+                1,
+                new Dictionary<string, object> { ["shadow_domain_events_exists"] = false },
+                new Dictionary<string, object> { ["shadow_domain_events_exists"] = true },
+                new[]
+                {
+                    (IReadOnlyDictionary<string, object>)new Dictionary<string, object>
+                    {
+                        ["missing_table"] = "shadow_runtime.domain_events"
+                    }
+                });
+        }
+
+        if (!TableExists("public", "domain_events"))
+        {
+            return new SqlInvariantResult(
+                0,
+                new Dictionary<string, object>
+                {
+                    ["official_domain_events_exists"] = false,
+                    ["contaminated_rows"] = 0
+                },
+                new Dictionary<string, object>
+                {
+                    ["max_shadow_domain_events_in_official_tables"] = 0
+                },
+                []);
+        }
+
+        using var connection = Open();
+        using var count = connection.CreateCommand();
+        count.CommandText = """
+            select count(*)::bigint
+            from public.domain_events official
+            join shadow_runtime.domain_events shadow
+              on to_jsonb(official)::text like '%' || shadow.shadow_event_id || '%'
+            """;
+        var contaminatedRows = Convert.ToInt64(count.ExecuteScalar());
+
+        var samples = new List<IReadOnlyDictionary<string, object>>();
+        using var sample = connection.CreateCommand();
+        sample.CommandText = """
+            select
+                shadow.shadow_event_id,
+                shadow.command_submission_id,
+                shadow.event_type
+            from public.domain_events official
+            join shadow_runtime.domain_events shadow
+              on to_jsonb(official)::text like '%' || shadow.shadow_event_id || '%'
+            limit 5
+            """;
+        using var reader = sample.ExecuteReader();
+        while (reader.Read())
+        {
+            samples.Add(new Dictionary<string, object>
+            {
+                ["official_table"] = "public.domain_events",
+                ["shadow_event_id"] = reader.GetString(0),
+                ["command_submission_id"] = reader.GetString(1),
+                ["event_type"] = reader.GetString(2)
+            });
+        }
+
+        return new SqlInvariantResult(
+            ToViolationCount(contaminatedRows),
+            new Dictionary<string, object>
+            {
+                ["official_domain_events_exists"] = true,
+                ["contaminated_rows"] = contaminatedRows
+            },
+            new Dictionary<string, object>
+            {
+                ["max_shadow_domain_events_in_official_tables"] = 0
+            },
+            samples);
     }
 
     public void WriteLedgerInspectionJobReport(
@@ -348,6 +555,17 @@ public sealed class ControlPlaneDatabase : ILedgerInspectionInvariantEvaluator
 
     private static string Quote(string value) => "\"" + value.Replace("\"", "\"\"", StringComparison.Ordinal) + "\"";
 
+    private static DatabaseRelation ParseRelation(string value)
+    {
+        var parts = value.Split('.', 2);
+        return parts.Length == 2
+            ? new DatabaseRelation(parts[0], parts[1])
+            : new DatabaseRelation("public", value);
+    }
+
+    private static int ToViolationCount(long value) =>
+        value > int.MaxValue ? int.MaxValue : Convert.ToInt32(value);
+
     private static int? GetInt(NpgsqlDataReader reader, string name)
     {
         var ordinal = TryOrdinal(reader, name);
@@ -411,6 +629,11 @@ public sealed class ControlPlaneDatabase : ILedgerInspectionInvariantEvaluator
         return null;
     }
 
+}
+
+internal sealed record DatabaseRelation(string Schema, string Table)
+{
+    public override string ToString() => $"{Schema}.{Table}";
 }
 
 public sealed record SqlInvariantResult(

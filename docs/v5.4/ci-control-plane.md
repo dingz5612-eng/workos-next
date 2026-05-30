@@ -1,7 +1,8 @@
 # V5.4 Control Plane CI Guards
 
-V5.4 adds a first-batch CI skeleton for the release control plane. The goal is
-to make the pipeline runnable before the full business invariant suite exists.
+V5.4 adds executable CI guards for the release control plane. The goal is to
+keep the gate backed by runnable SQL, service, file, API-boundary, and database
+evidence instead of relying only on skeleton fixtures.
 
 ## GitHub Actions
 
@@ -12,18 +13,20 @@ It runs these guard steps:
 1. `architecture-guard`
 2. `api-boundary-check`
 3. `control-plane-migration`
-4. `migration-verification-legacy-freeze`
-5. `shadow-namespace-isolation`
-6. `invariant-runner`
-7. `ledger-inspection-job`
-8. `backup-restore-smoke`
-9. `shadow-compare-runner`
-10. `gate-runner`
-11. `release-manifest-validate`
+4. `control-plane-schema-verify`
+5. `migration-verification-legacy-freeze`
+6. `shadow-namespace-isolation`
+7. `invariant-runner`
+8. `ledger-inspection-job`
+9. `backup-restore-smoke`
+10. `shadow-compare-runner`
+11. `gate-runner`
+12. `generate-release-manifest`
+13. `release-manifest-validate`
 
 ## Local Command
 
-Run all local skeleton checks:
+Run the local executable guard chain:
 
 ```powershell
 pwsh -NoProfile -ExecutionPolicy Bypass -File scripts/v5_4/run-control-plane-checks.ps1
@@ -42,6 +45,10 @@ writes `control_plane.backup_restore_smoke_reports`.
 
 - `control-plane-migration` validates the V5.4 migration dry-run contract and
   runs the static migration mapping tests.
+- `control-plane-schema-verify` applies migrations to PostgreSQL, verifies the
+  required `control_plane` and `shadow_runtime` tables through
+  `information_schema.tables`, and probes the required check constraints by
+  confirming invalid values are rejected.
 - `migration-verification-legacy-freeze` runs the migration dry-run evidence
   check, scans old runtime tables, emits the legacy-to-new mapping report,
   validates rollback notes, performs a backfill dry-run, compares old rows with
@@ -51,8 +58,9 @@ writes `control_plane.backup_restore_smoke_reports`.
   Minimal API route declarations.
 - `shadow-namespace-isolation` verifies that `shadow_runtime.*` exists and that
   official projector paths do not read from it.
-- `invariant-runner` reads invariant definitions, executes SQL or skeleton
-  checks, and writes `control_plane.runtime_invariant_checks`.
+- `invariant-runner` reads invariant definitions, executes SQL, API-boundary,
+  service/file, dist-scan, and remaining transition checks, and writes
+  `control_plane.runtime_invariant_checks`.
 - `ledger-inspection-job` runs daily/manual/release-gate ledger reconciliation
   invariants, writes `control_plane.runtime_invariant_checks`, and stores the
   reconciliation report plus PC dashboard summary in
@@ -64,7 +72,11 @@ writes `control_plane.backup_restore_smoke_reports`.
 - `shadow-compare-runner` reads configured active and shadow tables, then writes
   `control_plane.shadow_compare_reports`.
 - `gate-runner` computes status from invariant, shadow, and signoff inputs,
-  then writes a machine-generated `control_plane.gate_results` row.
-- `release-manifest-validate` validates the release manifest fixture against
+  then writes a machine-generated `control_plane.gate_results` row. In CI it
+  writes the current `GITHUB_RUN_ID` into `ci_run_id`.
+- `generate-release-manifest` builds the MR-00 CI release manifest from the
+  generated GateResult, rollback instruction, commit SHA, and CI run id.
+- `release-manifest-validate` validates the generated release manifest against
   `docs/v5.4/release-manifest.schema.json` and checks it references the
-  generated GateResult.
+  generated GateResult with matching `ci_run_id`, invariant refs, and shadow
+  compare refs. The fixture manifest remains a unit fixture only.

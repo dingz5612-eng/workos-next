@@ -1,19 +1,237 @@
 {
+  "version": 2,
+  "defaultPolicy": "All non-GET /api/* routes are write routes and must be explicitly classified in exactly one write allowlist category.",
   "businessWriteAllowlist": [
-    "POST /api/operations/work-items/{workItemId}/confirm"
+    {
+      "route": "POST /api/operations/work-items/{workItemId}/confirm",
+      "writesBusinessFacts": true,
+      "usesOperationsConfirm": true,
+      "notes": "The only primary business write route."
+    }
   ],
-  "operationsApiAllowlist": [
-    "POST /api/operations/cases",
-    "GET /api/operations/cases/{caseId}",
-    "POST /api/operations/work-items",
-    "GET /api/operations/work-items",
-    "GET /api/operations/work-items/{workItemId}",
-    "POST /api/operations/work-items/{workItemId}/prepare",
-    "POST /api/operations/work-items/{workItemId}/confirm"
+  "operationsRuntimeWriteAllowlist": [
+    {
+      "route": "POST /api/operations/cases",
+      "writesBusinessFacts": false,
+      "usesOperationsConfirm": false,
+      "notes": "Creates an Operations case coordination record."
+    },
+    {
+      "route": "POST /api/operations/work-items",
+      "writesBusinessFacts": false,
+      "usesOperationsConfirm": false,
+      "notes": "Creates an Operations work-item coordination record."
+    },
+    {
+      "route": "POST /api/operations/work-items/{workItemId}/prepare",
+      "writesBusinessFacts": false,
+      "usesOperationsConfirm": false,
+      "notes": "Prepares field contract, evidence requirements, available actions, and projection status."
+    }
   ],
-  "compatibilityApiAllowlist": [
-    "POST /api/workspaces/{workspaceId}/cards/{cardId}/prepare",
-    "POST /api/workspaces/{workspaceId}/cards/{cardId}/confirm"
+  "compatibilityWriteAllowlist": [
+    {
+      "route": "POST /api/workspaces/{workspaceId}/cards/{cardId}/prepare",
+      "writesBusinessFacts": false,
+      "usesOperationsConfirm": false,
+      "notes": "Old Workspace/Card prepare compatibility wrapper."
+    },
+    {
+      "route": "POST /api/workspaces/{workspaceId}/cards/{cardId}/confirm",
+      "writesBusinessFacts": true,
+      "usesOperationsConfirm": true,
+      "notes": "Old Workspace/Card confirm compatibility wrapper that delegates to OperationsRuntimeService."
+    }
+  ],
+  "mobileExperienceWriteAllowlist": [
+    {
+      "route": "POST /api/mobile/drafts",
+      "writesBusinessFacts": false,
+      "notes": "Mobile draft state only."
+    },
+    {
+      "route": "POST /api/mobile/client-events",
+      "writesBusinessFacts": false,
+      "notes": "Mobile client telemetry only."
+    },
+    {
+      "route": "POST /api/mobile/recent-objects",
+      "writesBusinessFacts": false,
+      "notes": "Mobile recent-object preference state only."
+    }
+  ],
+  "evidenceFileWriteAllowlist": [
+    {
+      "route": "POST /api/evidence/drafts",
+      "writesBusinessFacts": false,
+      "notes": "Evidence draft creation only."
+    },
+    {
+      "route": "POST /api/evidence/{evidenceId}/attachments",
+      "writesBusinessFacts": false,
+      "notes": "Evidence attachment upload metadata only."
+    },
+    {
+      "route": "POST /api/evidence/{evidenceId}/verify",
+      "writesBusinessFacts": false,
+      "notes": "Evidence review decision only."
+    },
+    {
+      "route": "POST /api/evidence/{evidenceId}/reject",
+      "writesBusinessFacts": false,
+      "notes": "Evidence review decision only."
+    }
+  ],
+  "authDeviceWriteAllowlist": [
+    {
+      "route": "POST /api/auth/login",
+      "writesBusinessFacts": false,
+      "notes": "Authentication session creation."
+    },
+    {
+      "route": "POST /api/auth/sessions/{token}/revoke",
+      "writesBusinessFacts": false,
+      "notes": "Authentication session revoke."
+    },
+    {
+      "route": "POST /api/device-sessions",
+      "writesBusinessFacts": false,
+      "notes": "Device session registration."
+    },
+    {
+      "route": "POST /api/device-sessions/{deviceId}/revoke",
+      "writesBusinessFacts": false,
+      "notes": "Device session revoke."
+    }
+  ],
+  "controlPlaneWriteAllowlist": [],
+  "governanceWriteAllowlist": [
+    {
+      "route": "POST /api/reconciliation/bank-statement-imports/preview",
+      "writesBusinessFacts": false,
+      "usesOperationsConfirm": false,
+      "writesOnlyControlGovernanceOrProvisionalRecords": true,
+      "appendOnly": true,
+      "notes": "Preview-only reconciliation import planning."
+    },
+    {
+      "route": "POST /api/reconciliation/bank-statement-imports",
+      "writesBusinessFacts": false,
+      "usesOperationsConfirm": false,
+      "writesOnlyControlGovernanceOrProvisionalRecords": true,
+      "appendOnly": true,
+      "notes": "Stores imported bank transaction and reconciliation records, not payment facts."
+    },
+    {
+      "route": "POST /api/reconciliation/match-candidates/generate",
+      "writesBusinessFacts": false,
+      "usesOperationsConfirm": false,
+      "writesOnlyControlGovernanceOrProvisionalRecords": true,
+      "appendOnly": true,
+      "notes": "Generates provisional reconciliation match candidates."
+    },
+    {
+      "route": "POST /api/reconciliation/mismatches/detect",
+      "writesBusinessFacts": false,
+      "usesOperationsConfirm": false,
+      "writesOnlyControlGovernanceOrProvisionalRecords": true,
+      "appendOnly": true,
+      "notes": "Creates provisional mismatch records for review."
+    },
+    {
+      "route": "POST /api/reconciliation/match-candidates/{candidateId}/accept",
+      "writesBusinessFacts": false,
+      "usesOperationsConfirm": false,
+      "writesOnlyControlGovernanceOrProvisionalRecords": true,
+      "appendOnly": true,
+      "notes": "Accepts a reconciliation candidate without confirming payment facts."
+    },
+    {
+      "route": "POST /api/reconciliation/match-candidates/{candidateId}/reject",
+      "writesBusinessFacts": false,
+      "usesOperationsConfirm": false,
+      "writesOnlyControlGovernanceOrProvisionalRecords": true,
+      "appendOnly": true,
+      "notes": "Rejects a reconciliation candidate without confirming payment facts."
+    },
+    {
+      "route": "POST /api/reconciliation/bank-transactions/{bankTransactionId}/mismatch",
+      "writesBusinessFacts": false,
+      "usesOperationsConfirm": false,
+      "writesOnlyControlGovernanceOrProvisionalRecords": true,
+      "appendOnly": true,
+      "notes": "Marks a transaction mismatch for governance review."
+    },
+    {
+      "route": "POST /api/reconciliation/bank-transactions/{bankTransactionId}/ignore",
+      "writesBusinessFacts": false,
+      "usesOperationsConfirm": false,
+      "writesOnlyControlGovernanceOrProvisionalRecords": true,
+      "appendOnly": true,
+      "notes": "Records a reconciliation ignore decision."
+    },
+    {
+      "route": "POST /api/correction-center/ledger-correction-requests",
+      "writesBusinessFacts": false,
+      "usesOperationsConfirm": false,
+      "writesOnlyControlGovernanceOrProvisionalRecords": true,
+      "appendOnly": true,
+      "notes": "Creates an append-only correction request."
+    },
+    {
+      "route": "POST /api/correction-center/ledger-correction-requests/{correctionRequestId}/approve",
+      "writesBusinessFacts": false,
+      "usesOperationsConfirm": false,
+      "writesOnlyControlGovernanceOrProvisionalRecords": true,
+      "appendOnly": true,
+      "notes": "Approves an append-only correction request."
+    },
+    {
+      "route": "POST /api/correction-center/ledger-correction-requests/{correctionRequestId}/reject",
+      "writesBusinessFacts": false,
+      "usesOperationsConfirm": false,
+      "writesOnlyControlGovernanceOrProvisionalRecords": true,
+      "appendOnly": true,
+      "notes": "Rejects an append-only correction request."
+    },
+    {
+      "route": "POST /api/correction-center/ledger-correction-requests/{correctionRequestId}/apply",
+      "writesBusinessFacts": true,
+      "usesOperationsConfirm": false,
+      "writesOnlyControlGovernanceOrProvisionalRecords": false,
+      "appendOnly": true,
+      "appendOnlyCorrectionService": true,
+      "invariantEvidence": [
+        "ledger.no_edit_old_entry",
+        "correction.requires_reason",
+        "correction.high_risk_requires_approval",
+        "balance.rebuild_after_correction",
+        "api.no_page_specific_business_write"
+      ],
+      "notes": "Applies a reviewed append-only correction path with reversal/correction entries and rebuild projections; not a page-specific payment/deposit confirm."
+    },
+    {
+      "route": "POST /api/pc-governance/exports/{exportType}",
+      "writesBusinessFacts": false,
+      "usesOperationsConfirm": false,
+      "writesOnlyControlGovernanceOrProvisionalRecords": true,
+      "appendOnly": true,
+      "notes": "Creates governance export audit and access records."
+    }
+  ],
+  "behaviorEventWriteAllowlist": [
+    {
+      "route": "POST /api/behavior-events",
+      "writesBusinessFacts": false,
+      "notes": "Behavior telemetry only."
+    }
+  ],
+  "runtimeMaintenanceWriteAllowlist": [
+    {
+      "route": "POST /api/projections/process-outbox",
+      "writesBusinessFacts": false,
+      "notes": "Runtime maintenance action for projector/outbox processing."
+    }
   ],
   "forbiddenBusinessWritePatterns": [
     "POST /api/mobile/*/confirm",

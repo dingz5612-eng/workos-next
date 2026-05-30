@@ -1,0 +1,57 @@
+{
+  "rollback_instruction_id": "rollback-mr-02-runtime-kernel",
+  "release_id": "release-mr-02",
+  "instruction_type": "rollback",
+  "rollback_kind": "shadow_cleanup",
+  "title": "Rollback MR-02 Runtime Kernel Operations API",
+  "scope": {
+    "runtime_surfaces": [
+      "POST /api/operations/cases",
+      "GET /api/operations/cases/{caseId}",
+      "POST /api/operations/work-items",
+      "GET /api/operations/work-items",
+      "GET /api/operations/work-items/{workItemId}",
+      "POST /api/operations/work-items/{workItemId}/prepare",
+      "POST /api/operations/work-items/{workItemId}/confirm",
+      "POST /api/workspaces/{workspaceId}/cards/{cardId}/prepare",
+      "POST /api/workspaces/{workspaceId}/cards/{cardId}/confirm"
+    ],
+    "submission_evidence": [
+      "shadow_runtime.command_submissions",
+      "operations command submission store or equivalent"
+    ],
+    "technical_rollback_allowed_when": "Operations API has not carried production release evidence or durable business submissions beyond test tenants.",
+    "evidence_retention_required_when": "Operations API or legacy compatibility wrappers have recorded command submissions, GateResult evidence, or release audit evidence."
+  },
+  "allowed_before_status": [
+    "built",
+    "shadow",
+    "pilot",
+    "paused"
+  ],
+  "allowed_after_status": [
+    "rollback",
+    "paused"
+  ],
+  "steps": [
+    "Freeze new Operations API traffic and keep old Workspace/Card endpoints available for compatibility.",
+    "Revert the MR-02 runtime adapter and endpoint registration through a reviewed code rollback; do not add page-specific business write routes.",
+    "If command submissions are test-only and no release evidence depends on them, clean MR-02 shadow submissions by tenant and release scope.",
+    "If command submissions or release evidence exist, do not truncate or drop evidence tables; archive or migrate the evidence first, then apply a reviewed compensating change.",
+    "Confirm old Workspace/Card prepare and confirm routes still return their compatible payloads after rollback."
+  ],
+  "validation_steps": [
+    "Run operations API contract tests and confirm rolled-back Operations routes are either intentionally unavailable or guarded by release mode.",
+    "Run old API compatibility tests.",
+    "Run command submission idempotency tests against the rollback target.",
+    "Run node scripts/check-api-boundaries.mjs.",
+    "Run invariant-runner, shadow-compare-runner, gate-runner, and release-manifest-validate for the rollback evidence."
+  ],
+  "owner": "runtime",
+  "risk_level": "P0",
+  "requires_business_approval": true,
+  "requires_architecture_approval": true,
+  "requires_finance_approval": false,
+  "created_at_utc": "2026-05-30T07:52:32.2232301Z",
+  "updated_at_utc": "2026-05-30T07:52:32.2232301Z"
+}

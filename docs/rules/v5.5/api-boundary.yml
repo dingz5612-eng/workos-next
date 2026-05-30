@@ -1,0 +1,432 @@
+version: 3
+id: v5.5-api-boundary
+defaultPolicy: All non-GET /api/* routes are write routes and must be explicitly classified in exactly one category.
+categories:
+  operationsBusinessWrite:
+    - route: "POST /api/operations/work-items/{workItemId}/confirm"
+      class: operationsBusinessWrite
+      owner: operations-runtime
+      writesBusinessFact: true
+      writesGovernanceFact: false
+      requiresOperationsConfirm: true
+      appendOnly: true
+      requiredInvariant:
+        - api.no_page_specific_business_write
+        - operations.confirm_has_submission_evidence
+      evidenceType: command_submission
+      severity: P0
+      notes: The only primary business write route.
+  compatibilityBusinessWrite:
+    - route: "POST /api/workspaces/{workspaceId}/cards/{cardId}/prepare"
+      class: compatibilityBusinessWrite
+      owner: operations-runtime
+      writesBusinessFact: false
+      writesGovernanceFact: false
+      requiresOperationsConfirm: false
+      appendOnly: true
+      requiredInvariant:
+        - api.no_page_specific_business_write
+      evidenceType: compatibility_wrapper
+      severity: P1
+      notes: Old Workspace/Card prepare compatibility wrapper.
+    - route: "POST /api/workspaces/{workspaceId}/cards/{cardId}/confirm"
+      class: compatibilityBusinessWrite
+      owner: operations-runtime
+      writesBusinessFact: true
+      writesGovernanceFact: false
+      requiresOperationsConfirm: true
+      appendOnly: true
+      requiredInvariant:
+        - api.no_page_specific_business_write
+        - operations.confirm_has_submission_evidence
+      evidenceType: compatibility_wrapper
+      severity: P0
+      notes: Old Workspace/Card confirm compatibility wrapper that delegates to OperationsRuntimeService.
+  mobileExperienceWrite:
+    - route: "POST /api/mobile/drafts"
+      class: mobileExperienceWrite
+      owner: mobile-experience
+      writesBusinessFact: false
+      writesGovernanceFact: false
+      requiresOperationsConfirm: false
+      appendOnly: true
+      requiredInvariant:
+        - mobile.bff_does_not_write_business_facts
+      evidenceType: client_state
+      severity: P0
+      notes: Mobile draft state only.
+    - route: "POST /api/mobile/client-events"
+      class: mobileExperienceWrite
+      owner: mobile-experience
+      writesBusinessFact: false
+      writesGovernanceFact: false
+      requiresOperationsConfirm: false
+      appendOnly: true
+      requiredInvariant:
+        - mobile.bff_does_not_write_business_facts
+      evidenceType: telemetry
+      severity: P0
+      notes: Mobile client telemetry only.
+    - route: "POST /api/mobile/recent-objects"
+      class: mobileExperienceWrite
+      owner: mobile-experience
+      writesBusinessFact: false
+      writesGovernanceFact: false
+      requiresOperationsConfirm: false
+      appendOnly: true
+      requiredInvariant:
+        - mobile.bff_does_not_write_business_facts
+      evidenceType: client_preference
+      severity: P0
+      notes: Mobile recent-object preference state only.
+  evidenceWrite:
+    - route: "POST /api/evidence/drafts"
+      class: evidenceWrite
+      owner: evidence
+      writesBusinessFact: false
+      writesGovernanceFact: false
+      requiresOperationsConfirm: false
+      appendOnly: true
+      requiredInvariant:
+        - evidence.write_does_not_confirm_money
+      evidenceType: evidence_object
+      severity: P0
+      notes: Evidence draft creation only.
+    - route: "POST /api/evidence/{evidenceId}/attachments"
+      class: evidenceWrite
+      owner: evidence
+      writesBusinessFact: false
+      writesGovernanceFact: false
+      requiresOperationsConfirm: false
+      appendOnly: true
+      requiredInvariant:
+        - evidence.write_does_not_confirm_money
+      evidenceType: evidence_file
+      severity: P0
+      notes: Evidence attachment upload metadata only.
+    - route: "POST /api/evidence/{evidenceId}/verify"
+      class: evidenceWrite
+      owner: evidence
+      writesBusinessFact: false
+      writesGovernanceFact: false
+      requiresOperationsConfirm: false
+      appendOnly: true
+      requiredInvariant:
+        - evidence.write_does_not_confirm_money
+      evidenceType: evidence_review
+      severity: P0
+      notes: Evidence review decision only.
+    - route: "POST /api/evidence/{evidenceId}/reject"
+      class: evidenceWrite
+      owner: evidence
+      writesBusinessFact: false
+      writesGovernanceFact: false
+      requiresOperationsConfirm: false
+      appendOnly: true
+      requiredInvariant:
+        - evidence.write_does_not_confirm_money
+      evidenceType: evidence_review
+      severity: P0
+      notes: Evidence review decision only.
+  evidenceRead:
+  governanceWrite:
+  reconciliationGovernanceWrite:
+    - route: "POST /api/reconciliation/bank-statement-imports/preview"
+      class: reconciliationGovernanceWrite
+      owner: reconciliation
+      writesBusinessFact: false
+      writesGovernanceFact: true
+      requiresOperationsConfirm: false
+      appendOnly: true
+      requiredInvariant:
+        - bank.import_does_not_create_payment_fact
+        - api.no_page_specific_business_write
+      evidenceType: import_preview
+      severity: P0
+      notes: Preview-only reconciliation import planning.
+    - route: "POST /api/reconciliation/bank-statement-imports"
+      class: reconciliationGovernanceWrite
+      owner: reconciliation
+      writesBusinessFact: false
+      writesGovernanceFact: true
+      requiresOperationsConfirm: false
+      appendOnly: true
+      requiredInvariant:
+        - bank.import_does_not_create_payment_fact
+        - api.no_page_specific_business_write
+      evidenceType: imported_bank_transaction
+      severity: P0
+      notes: Stores imported bank transaction and reconciliation records, not payment facts.
+    - route: "POST /api/reconciliation/match-candidates/generate"
+      class: reconciliationGovernanceWrite
+      owner: reconciliation
+      writesBusinessFact: false
+      writesGovernanceFact: true
+      requiresOperationsConfirm: false
+      appendOnly: true
+      requiredInvariant:
+        - reconciliation.bank_transaction_single_match_default
+        - api.no_page_specific_business_write
+      evidenceType: provisional_match_candidate
+      severity: P0
+      notes: Generates provisional reconciliation match candidates.
+    - route: "POST /api/reconciliation/mismatches/detect"
+      class: reconciliationGovernanceWrite
+      owner: reconciliation
+      writesBusinessFact: false
+      writesGovernanceFact: true
+      requiresOperationsConfirm: false
+      appendOnly: true
+      requiredInvariant:
+        - reconciliation.bank_transaction_single_match_default
+        - api.no_page_specific_business_write
+      evidenceType: provisional_mismatch_case
+      severity: P0
+      notes: Creates provisional mismatch records for review.
+    - route: "POST /api/reconciliation/match-candidates/{candidateId}/accept"
+      class: reconciliationGovernanceWrite
+      owner: reconciliation
+      writesBusinessFact: false
+      writesGovernanceFact: true
+      requiresOperationsConfirm: false
+      appendOnly: true
+      requiredInvariant:
+        - reconciliation.bank_transaction_single_match_default
+        - api.no_page_specific_business_write
+      evidenceType: match_decision
+      severity: P0
+      notes: Accepts a reconciliation candidate without confirming payment facts.
+    - route: "POST /api/reconciliation/match-candidates/{candidateId}/reject"
+      class: reconciliationGovernanceWrite
+      owner: reconciliation
+      writesBusinessFact: false
+      writesGovernanceFact: true
+      requiresOperationsConfirm: false
+      appendOnly: true
+      requiredInvariant:
+        - reconciliation.bank_transaction_single_match_default
+        - api.no_page_specific_business_write
+      evidenceType: match_decision
+      severity: P0
+      notes: Rejects a reconciliation candidate without confirming payment facts.
+    - route: "POST /api/reconciliation/bank-transactions/{bankTransactionId}/mismatch"
+      class: reconciliationGovernanceWrite
+      owner: reconciliation
+      writesBusinessFact: false
+      writesGovernanceFact: true
+      requiresOperationsConfirm: false
+      appendOnly: true
+      requiredInvariant:
+        - reconciliation.bank_transaction_single_match_default
+        - api.no_page_specific_business_write
+      evidenceType: mismatch_decision
+      severity: P0
+      notes: Marks a transaction mismatch for governance review.
+    - route: "POST /api/reconciliation/bank-transactions/{bankTransactionId}/ignore"
+      class: reconciliationGovernanceWrite
+      owner: reconciliation
+      writesBusinessFact: false
+      writesGovernanceFact: true
+      requiresOperationsConfirm: false
+      appendOnly: true
+      requiredInvariant:
+        - reconciliation.bank_transaction_single_match_default
+        - api.no_page_specific_business_write
+      evidenceType: transaction_decision
+      severity: P0
+      notes: Records a reconciliation ignore decision.
+  correctionCenterWrite:
+    - route: "POST /api/correction-center/ledger-correction-requests"
+      class: correctionCenterWrite
+      owner: correction-center
+      writesBusinessFact: false
+      writesGovernanceFact: true
+      requiresOperationsConfirm: false
+      appendOnly: true
+      requiredInvariant:
+        - correction.requires_reason
+        - api.no_page_specific_business_write
+      evidenceType: correction_request
+      severity: P0
+      notes: Creates an append-only correction request.
+    - route: "POST /api/correction-center/ledger-correction-requests/{correctionRequestId}/approve"
+      class: correctionCenterWrite
+      owner: correction-center
+      writesBusinessFact: false
+      writesGovernanceFact: true
+      requiresOperationsConfirm: false
+      appendOnly: true
+      requiredInvariant:
+        - correction.high_risk_requires_approval
+        - correction.requires_reason
+        - api.no_page_specific_business_write
+      evidenceType: correction_approval
+      severity: P0
+      notes: Approves an append-only correction request.
+    - route: "POST /api/correction-center/ledger-correction-requests/{correctionRequestId}/reject"
+      class: correctionCenterWrite
+      owner: correction-center
+      writesBusinessFact: false
+      writesGovernanceFact: true
+      requiresOperationsConfirm: false
+      appendOnly: true
+      requiredInvariant:
+        - correction.requires_reason
+        - api.no_page_specific_business_write
+      evidenceType: correction_rejection
+      severity: P0
+      notes: Rejects an append-only correction request.
+    - route: "POST /api/correction-center/ledger-correction-requests/{correctionRequestId}/apply"
+      class: correctionCenterWrite
+      owner: correction-center
+      writesBusinessFact: true
+      writesGovernanceFact: true
+      requiresOperationsConfirm: false
+      appendOnly: true
+      appendOnlyCorrectionService: true
+      requiredInvariant:
+        - ledger.no_edit_old_entry
+        - correction.requires_reason
+        - correction.high_risk_requires_approval
+        - balance.rebuild_after_correction
+        - api.no_page_specific_business_write
+      evidenceType: append_only_correction
+      severity: P0
+      notes: Applies reviewed append-only correction entries and rebuild projections; not a page-specific payment or deposit confirm.
+  pcGovernanceWrite:
+    - route: "POST /api/pc-governance/exports/{exportType}"
+      class: pcGovernanceWrite
+      owner: pc-governance
+      writesBusinessFact: false
+      writesGovernanceFact: true
+      requiresOperationsConfirm: false
+      appendOnly: true
+      requiresCapability: true
+      requiresAudit: true
+      requiredInvariant:
+        - pc.export_has_audit
+        - api.no_page_specific_business_write
+      evidenceType: governance_export_audit
+      severity: P0
+      notes: Creates governance export audit and access records.
+  securitySessionWrite:
+    - route: "POST /api/auth/login"
+      class: securitySessionWrite
+      owner: security
+      writesBusinessFact: false
+      writesGovernanceFact: false
+      requiresOperationsConfirm: false
+      appendOnly: true
+      requiredInvariant:
+        - security.session_write_not_business_fact
+      evidenceType: auth_session
+      severity: P1
+      notes: Authentication session creation.
+    - route: "POST /api/auth/sessions/{token}/revoke"
+      class: securitySessionWrite
+      owner: security
+      writesBusinessFact: false
+      writesGovernanceFact: false
+      requiresOperationsConfirm: false
+      appendOnly: true
+      requiredInvariant:
+        - security.session_write_not_business_fact
+      evidenceType: auth_session_revoke
+      severity: P1
+      notes: Authentication session revoke.
+    - route: "POST /api/device-sessions"
+      class: securitySessionWrite
+      owner: security
+      writesBusinessFact: false
+      writesGovernanceFact: false
+      requiresOperationsConfirm: false
+      appendOnly: true
+      requiredInvariant:
+        - security.session_write_not_business_fact
+      evidenceType: device_session
+      severity: P1
+      notes: Device session registration.
+    - route: "POST /api/device-sessions/{deviceId}/revoke"
+      class: securitySessionWrite
+      owner: security
+      writesBusinessFact: false
+      writesGovernanceFact: false
+      requiresOperationsConfirm: false
+      appendOnly: true
+      requiredInvariant:
+        - security.session_write_not_business_fact
+      evidenceType: device_session_revoke
+      severity: P1
+      notes: Device session revoke.
+  systemProjectionWrite:
+    - route: "POST /api/operations/cases"
+      class: systemProjectionWrite
+      owner: operations-runtime
+      writesBusinessFact: false
+      writesGovernanceFact: false
+      requiresOperationsConfirm: false
+      appendOnly: true
+      requiredInvariant:
+        - operations.case_write_not_business_fact
+      evidenceType: operation_case
+      severity: P1
+      notes: Creates an Operations case coordination record.
+    - route: "POST /api/operations/work-items"
+      class: systemProjectionWrite
+      owner: operations-runtime
+      writesBusinessFact: false
+      writesGovernanceFact: false
+      requiresOperationsConfirm: false
+      appendOnly: true
+      requiredInvariant:
+        - operations.work_item_write_not_business_fact
+      evidenceType: work_item
+      severity: P1
+      notes: Creates an Operations work-item coordination record.
+    - route: "POST /api/operations/work-items/{workItemId}/prepare"
+      class: systemProjectionWrite
+      owner: operations-runtime
+      writesBusinessFact: false
+      writesGovernanceFact: false
+      requiresOperationsConfirm: false
+      appendOnly: true
+      requiredInvariant:
+        - operations.prepare_write_not_business_fact
+      evidenceType: field_contract_prepare
+      severity: P1
+      notes: Prepares field contract and evidence requirements.
+    - route: "POST /api/projections/process-outbox"
+      class: systemProjectionWrite
+      owner: runtime-projection
+      writesBusinessFact: false
+      writesGovernanceFact: false
+      requiresOperationsConfirm: false
+      appendOnly: true
+      requiredInvariant:
+        - projection.outbox_processing_not_business_command
+      evidenceType: projector_maintenance
+      severity: P1
+      notes: Runtime maintenance action for projector and outbox processing.
+  behaviorEventWrite:
+    - route: "POST /api/behavior-events"
+      class: behaviorEventWrite
+      owner: behavior-telemetry
+      writesBusinessFact: false
+      writesGovernanceFact: false
+      requiresOperationsConfirm: false
+      appendOnly: true
+      requiredInvariant:
+        - behavior.event_write_not_business_fact
+      evidenceType: behavior_event
+      severity: P1
+      notes: Behavior telemetry only.
+  controlPlaneWrite:
+forbiddenBusinessWritePatterns:
+  - "POST /api/mobile/*/confirm"
+  - "POST /api/mobile/*/refund"
+  - "POST /api/mobile/*/close"
+  - "POST /api/payment/confirm"
+  - "POST /api/deposit/refund"
+  - "POST /api/checkout/close"
+  - "POST /api/bed/release"
+  - "POST /api/period/close"

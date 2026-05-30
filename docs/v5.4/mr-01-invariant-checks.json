@@ -1,0 +1,166 @@
+[
+  {
+    "invariant_check_id": "inv-mr-01-no-production-fake-fallback",
+    "release_id": "release-mr-01-stop-bad-facts",
+    "tenant_id": "all-tenants",
+    "slice_id": "StopBadFacts",
+    "invariant_key": "runtime.no_production_fake_fallback",
+    "description": "Production backend and mobile runtime paths must not contain fake/demo business fallback literals.",
+    "mode": "blocking",
+    "severity": "P0",
+    "source_type": "file+dist-scan",
+    "check_ref": "scripts/check-no-production-fake-fallback.mjs --self-test; scripts/check-no-production-fake-fallback.mjs",
+    "status": "passed",
+    "observed_value": {
+      "self_test": "passed",
+      "production_scan": "passed",
+      "scanned_paths": [
+        "apps/mobile/src",
+        "apps/mobile/dist",
+        "services/core-api/WorkOS.Api"
+      ],
+      "exit_code": 0
+    },
+    "threshold": {
+      "banned_fake_fallback_literal_count": 0,
+      "required_exit_code": 0
+    },
+    "violation_count": 0,
+    "sample_violations": [],
+    "generated_by": "codex-local-evidence",
+    "ci_run_id": "local-mr-01-stop-bad-facts",
+    "checked_at_utc": "2026-05-30T08:47:17.3790198Z"
+  },
+  {
+    "invariant_check_id": "inv-mr-01-confirm-commit-projection-semantics",
+    "release_id": "release-mr-01-stop-bad-facts",
+    "tenant_id": "all-tenants",
+    "slice_id": "StopBadFacts",
+    "invariant_key": "runtime.confirm_commit_projection_semantics",
+    "description": "Confirm responses must include commitStatus/projectionStatus, and projection pending/failed states must not roll back committed business facts.",
+    "mode": "blocking",
+    "severity": "P0",
+    "source_type": "dotnet-test",
+    "check_ref": "WorkOS.UnitTests: operations_confirm_returns_commit_projection_status, ConfirmProjectionPendingReturnsCommittedResponse, ConfirmProjectionFailureDoesNotRollbackCommittedBusinessFact, DuplicateConfirmAfterPendingDoesNotCreateNewBusinessFact",
+    "status": "passed",
+    "observed_value": {
+      "test_command": "dotnet test tests/WorkOS.UnitTests/WorkOS.UnitTests.csproj -c Release --filter MR-01-stop-bad-facts",
+      "passed_tests": [
+        "operations_confirm_returns_commit_projection_status",
+        "ConfirmProjectionPendingReturnsCommittedResponse",
+        "ConfirmProjectionFailureDoesNotRollbackCommittedBusinessFact",
+        "DuplicateConfirmAfterPendingDoesNotCreateNewBusinessFact"
+      ],
+      "exit_code": 0
+    },
+    "threshold": {
+      "required_response_fields": [
+        "commitStatus",
+        "projectionStatus"
+      ],
+      "projection_pending_http_failure": false,
+      "projection_failure_rolls_back_business_fact": false
+    },
+    "violation_count": 0,
+    "sample_violations": [],
+    "generated_by": "codex-local-evidence",
+    "ci_run_id": "local-mr-01-stop-bad-facts",
+    "checked_at_utc": "2026-05-30T08:47:17.3790198Z"
+  },
+  {
+    "invariant_check_id": "inv-mr-01-field-validation",
+    "release_id": "release-mr-01-stop-bad-facts",
+    "tenant_id": "all-tenants",
+    "slice_id": "StopBadFacts",
+    "invariant_key": "runtime.field_validation",
+    "description": "Runtime field validation must reject invalid stable option values and localized/non-canonical field keys before business facts are written.",
+    "mode": "blocking",
+    "severity": "P0",
+    "source_type": "dotnet-test",
+    "check_ref": "WorkOS.UnitTests: FieldContractValidatorRejectsInvalidStableOptionValues; WorkOS.RuntimeContractTests canonical field validation harness",
+    "status": "passed",
+    "observed_value": {
+      "unit_test": "FieldContractValidatorRejectsInvalidStableOptionValues",
+      "runtime_contract_result": "WorkOS.RuntimeContractTests: PASS",
+      "exit_code": 0
+    },
+    "threshold": {
+      "invalid_stable_option_values_allowed": false,
+      "localized_field_keys_allowed": false
+    },
+    "violation_count": 0,
+    "sample_violations": [],
+    "generated_by": "codex-local-evidence",
+    "ci_run_id": "local-mr-01-stop-bad-facts",
+    "checked_at_utc": "2026-05-30T08:47:17.3790198Z"
+  },
+  {
+    "invariant_check_id": "inv-mr-01-no-side-effects-harness",
+    "release_id": "release-mr-01-stop-bad-facts",
+    "tenant_id": "all-tenants",
+    "slice_id": "StopBadFacts",
+    "invariant_key": "runtime.no_side_effects_for_403_409_422",
+    "description": "403, 409, and 422 paths must not write business facts, duplicate submissions, events, or outbox messages.",
+    "mode": "blocking",
+    "severity": "P0",
+    "source_type": "dotnet-test+runtime-contract",
+    "check_ref": "WorkOS.UnitTests OperationsRuntimeService no-side-effects tests; WorkOS.RuntimeContractTests AssertNoSideEffects harness",
+    "status": "passed",
+    "observed_value": {
+      "passed_tests": [
+        "operations_confirm_403_422_no_side_effects",
+        "same_key_same_payload_returns_same_result",
+        "same_key_different_payload_returns_409",
+        "status_409_no_side_effects",
+        "status_422_no_side_effects",
+        "handler_failure_rolls_back_submission_event_outbox",
+        "role_forbidden_no_side_effects"
+      ],
+      "runtime_contract_result": "WorkOS.RuntimeContractTests: PASS",
+      "exit_code": 0
+    },
+    "threshold": {
+      "business_fact_writes_on_403": 0,
+      "business_fact_writes_on_409": 0,
+      "business_fact_writes_on_422": 0,
+      "simultaneous_confirmed_rejected": false
+    },
+    "violation_count": 0,
+    "sample_violations": [],
+    "generated_by": "codex-local-evidence",
+    "ci_run_id": "local-mr-01-stop-bad-facts",
+    "checked_at_utc": "2026-05-30T08:47:17.3790198Z"
+  },
+  {
+    "invariant_check_id": "inv-mr-01-outbox-minimum-hardening",
+    "release_id": "release-mr-01-stop-bad-facts",
+    "tenant_id": "all-tenants",
+    "slice_id": "StopBadFacts",
+    "invariant_key": "runtime.outbox_minimum_hardening",
+    "description": "Confirm unit of work owns audit/outbox boundaries, and outbox claim/dead-letter storage uses attempt_count with no retry_count regression.",
+    "mode": "blocking",
+    "severity": "P0",
+    "source_type": "dotnet-integration-test+runtime-contract",
+    "check_ref": "WorkOS.RuntimeIntegrationTests: ConfirmUnitOfWorkOwnsAuditOutboxAndAggregateBoundary, OutboxMigrationDeclaresClaimAndAttemptFields; WorkOS.RuntimeContractTests outbox projector assertions",
+    "status": "passed",
+    "observed_value": {
+      "integration_tests": [
+        "ConfirmUnitOfWorkOwnsAuditOutboxAndAggregateBoundary",
+        "OutboxMigrationDeclaresClaimAndAttemptFields"
+      ],
+      "runtime_contract_result": "WorkOS.RuntimeContractTests: PASS",
+      "exit_code": 0
+    },
+    "threshold": {
+      "claim_fields_present": true,
+      "dead_letter_fields_present": true,
+      "attempt_count_present": true,
+      "retry_count_present": false
+    },
+    "violation_count": 0,
+    "sample_violations": [],
+    "generated_by": "codex-local-evidence",
+    "ci_run_id": "local-mr-01-stop-bad-facts",
+    "checked_at_utc": "2026-05-30T08:47:17.3790198Z"
+  }
+]
