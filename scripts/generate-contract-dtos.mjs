@@ -498,11 +498,11 @@ ${apiPathDescriptors.map((descriptor) => `  ${descriptor.key}: ${pathExpression(
 
 if (check) {
   const existing = fs.existsSync(outputPath) ? fs.readFileSync(outputPath, "utf8") : "";
-  if (existing !== dtoContent) {
+  if (normalizeLineEndings(existing) !== normalizeLineEndings(dtoContent)) {
     throw new Error(`${outputPath} is out of date. Run node scripts/generate-contract-dtos.mjs.`);
   }
   const existingApiPaths = fs.existsSync(apiPathsOutputPath) ? fs.readFileSync(apiPathsOutputPath, "utf8") : "";
-  if (existingApiPaths !== apiPathsContent) {
+  if (normalizeLineEndings(existingApiPaths) !== normalizeLineEndings(apiPathsContent)) {
     throw new Error(`${apiPathsOutputPath} is out of date. Run node scripts/generate-contract-dtos.mjs.`);
   }
   console.log("Generated DTOs: PASS");
