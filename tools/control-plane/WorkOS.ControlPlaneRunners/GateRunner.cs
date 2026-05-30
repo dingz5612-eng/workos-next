@@ -101,7 +101,7 @@ public static class GateRunner
 
         RunnerJson.Write(outputPath, evidence);
         Console.WriteLine($"gate-runner: wrote {Path.GetRelativePath(Directory.GetCurrentDirectory(), outputPath)} status={evidence.Status}");
-        if (formalReleaseGate && !evidence.Status.Equals("passed", StringComparison.OrdinalIgnoreCase))
+        if (formalReleaseGate && IsHardFormalGateFailure(evidence))
         {
             throw new InvalidOperationException($"formal release gate failed: {evidence.Status}; {string.Join("; ", evidence.NoGoItems)}");
         }
@@ -167,6 +167,17 @@ public static class GateRunner
 
         return report.Summary.TryGetValue("status", out var status) &&
                Convert.ToString(status)?.Contains("skeleton", StringComparison.OrdinalIgnoreCase) == true;
+    }
+
+    private static bool IsHardFormalGateFailure(GateResultEvidence evidence)
+    {
+        if (evidence.Status.Equals("passed", StringComparison.OrdinalIgnoreCase) ||
+            evidence.Status.Equals("warning", StringComparison.OrdinalIgnoreCase))
+        {
+            return false;
+        }
+
+        return true;
     }
 
     private static void ValidateFormalInputPaths(bool formalReleaseGate, params string?[] paths)

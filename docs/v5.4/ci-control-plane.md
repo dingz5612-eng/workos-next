@@ -76,7 +76,9 @@ writes `control_plane.backup_restore_smoke_reports`.
   CI it writes the current `GITHUB_RUN_ID` into `ci_run_id`. The formal release
   gate rejects `.not_run` artifact paths, rejects `source_mode=skeleton`, and
   exits non-zero for P0 blocking invariants, Red shadow reports, missing
-  rollback instructions, or any non-passed formal gate status.
+  rollback instructions, or blocked / failed / not_run formal gate status.
+  Yellow shadow evidence remains `warning` evidence and does not masquerade as
+  `passed`.
 - `generate-release-manifest` builds the MR-00 CI release manifest from the
   generated GateResult, rollback instruction, commit SHA, and CI run id.
 - `release-manifest-validate` validates the generated release manifest against
