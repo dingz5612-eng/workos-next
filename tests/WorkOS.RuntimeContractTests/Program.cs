@@ -16,6 +16,7 @@ ResetPostgres(connectionString);
     var cards = projection.Workspaces.SelectMany(workspace => workspace.Cards).ToArray();
 
     ValidateProjectionContractFiles();
+    ValidateOperationsRuntimeContracts();
     ValidateGeneratedDtos();
     ValidateSliceManifest(projection);
     ValidateProjectionEnvelopeAgainstContract(projection);
@@ -1976,6 +1977,101 @@ static void ValidateProjectionContractFiles()
     })
     {
         Assert(decisionCodes.Contains(code), $"policy contract must include runtime decision code {code}");
+    }
+}
+
+static void ValidateOperationsRuntimeContracts()
+{
+    var contractDoc = File.ReadAllText(Path.Combine("docs", "v5.4", "runtime-contracts.md"));
+    foreach (var token in new[]
+    {
+        "CommandEnvelope.v1",
+        "OperationCase.v1",
+        "WorkItem.v1",
+        "CommandSubmission.v1",
+        "DomainEvent.v1",
+        "LedgerTransaction.v1",
+        "LedgerEntry.v1",
+        "WorkItemTransition.v1",
+        "ProjectionCommit.v1",
+        "FactTrace.v1",
+        "ShadowFactGraph.v1",
+        "S1 contract-only"
+    })
+    {
+        Assert(contractDoc.Contains(token, StringComparison.Ordinal), $"runtime contracts doc must mention {token}");
+    }
+
+    using var operationsSchema = JsonDocument.Parse(File.ReadAllText(Path.Combine("docs", "contracts", "operations-runtime.schema.json")));
+    var defs = operationsSchema.RootElement.GetProperty("$defs");
+    AssertRequired(defs, "CommandEnvelope.v1", "tenantId", "commandType", "schemaVersion", "definitionVersionId", "caseId", "workItemId", "idempotencyKey", "payloadHash");
+    AssertRequired(defs, "OperationCase.v1", "tenantId", "caseId", "caseType", "definitionVersionId", "status");
+    AssertRequired(defs, "WorkItem.v1", "tenantId", "caseId", "workItemId", "workItemType", "lifecycleState", "ownerRole");
+    AssertRequired(defs, "CommandSubmission.v1", "tenantId", "submissionId", "caseId", "workItemId", "idempotencyKey", "payloadHash", "status");
+    AssertRequired(defs, "DomainEvent.v1", "tenantId", "eventId", "caseId", "workItemId", "submissionId", "causationId", "correlationId", "eventType");
+    AssertRequired(defs, "LedgerTransaction.v1", "tenantId", "ledgerTransactionId", "caseId", "workItemId", "submissionId", "currency", "balanceStatus");
+    AssertRequired(defs, "LedgerEntry.v1", "tenantId", "entryId", "ledgerTransactionId", "debitCredit", "amount", "currency");
+    AssertRequired(defs, "WorkItemTransition.v1", "tenantId", "transitionId", "caseId", "workItemId", "fromState", "toState", "submissionId");
+    AssertRequired(defs, "ProjectionCommit.v1", "tenantId", "projectionCommitId", "projectionName", "sourceEventRefs", "commitStatus");
+    AssertRequired(defs, "ShadowFactGraph.v1", "tenantId", "graphId", "submissionRefs", "domainEventRefs", "ledgerTransactionRefs", "projectionRefs");
+
+    using var factTraceSchema = JsonDocument.Parse(File.ReadAllText(Path.Combine("docs", "contracts", "fact-trace.schema.json")));
+    var traceRequired = factTraceSchema.RootElement.GetProperty("required").EnumerateArray().Select(item => item.GetString()).ToHashSet();
+    foreach (var field in new[] { "tenantId", "traceId", "caseRef", "workItemRef", "submissionRef", "domainEventRefs", "ledgerTransactionRefs", "ledgerEntryRefs", "projectionCommitRefs" })
+    {
+        Assert(traceRequired.Contains(field), $"FactTrace.v1 schema must require {field}");
+    }
+
+    AssertRecordParameters(typeof(CommandEnvelopeV1), "TenantId", "CommandType", "SchemaVersion", "DefinitionVersionId", "CaseId", "WorkItemId", "IdempotencyKey", "PayloadHash");
+    AssertRecordParameters(typeof(OperationCaseV1), "TenantId", "CaseId", "CaseType", "DefinitionVersionId", "Status");
+    AssertRecordParameters(typeof(WorkItemV1), "TenantId", "CaseId", "WorkItemId", "WorkItemType", "LifecycleState", "OwnerRole");
+    AssertRecordParameters(typeof(CommandSubmissionV1), "TenantId", "SubmissionId", "CaseId", "WorkItemId", "IdempotencyKey", "PayloadHash", "Status");
+    AssertRecordParameters(typeof(DomainEventV1), "TenantId", "EventId", "CaseId", "WorkItemId", "SubmissionId", "CausationId", "CorrelationId", "EventType");
+    AssertRecordParameters(typeof(LedgerTransactionV1), "TenantId", "LedgerTransactionId", "CaseId", "WorkItemId", "SubmissionId", "Currency", "BalanceStatus");
+    AssertRecordParameters(typeof(LedgerEntryV1), "TenantId", "EntryId", "LedgerTransactionId", "DebitCredit", "Amount", "Currency");
+    AssertRecordParameters(typeof(WorkItemTransitionV1), "TenantId", "TransitionId", "CaseId", "WorkItemId", "FromState", "ToState", "SubmissionId");
+    AssertRecordParameters(typeof(ProjectionCommitV1), "TenantId", "ProjectionCommitId", "ProjectionName", "SourceEventRefs", "CommitStatus");
+    AssertRecordParameters(typeof(FactTraceV1), "TenantId", "TraceId", "CaseRef", "WorkItemRef", "SubmissionRef", "DomainEventRefs", "LedgerTransactionRefs", "LedgerEntryRefs", "ProjectionCommitRefs");
+    AssertRecordParameters(typeof(ShadowFactGraphV1), "TenantId", "GraphId", "SubmissionRefs", "DomainEventRefs", "LedgerTransactionRefs", "ProjectionRefs");
+
+    var trace = new FactTraceV1(
+        "tenant-a",
+        "trace-001",
+        "case-001",
+        "work-item-001",
+        "submission-001",
+        ["event-001"],
+        ["ledger-tx-001"],
+        ["ledger-entry-001"],
+        ["projection-001"]);
+    Assert(trace.CaseRef == "case-001", "FactTrace must preserve case ref");
+    Assert(trace.WorkItemRef == "work-item-001", "FactTrace must preserve work item ref");
+    Assert(trace.SubmissionRef == "submission-001", "FactTrace must preserve submission ref");
+    Assert(trace.DomainEventRefs.Contains("event-001"), "FactTrace must link domain events");
+    Assert(trace.LedgerTransactionRefs.Contains("ledger-tx-001"), "FactTrace must link ledger transactions");
+    Assert(trace.LedgerEntryRefs.Contains("ledger-entry-001"), "FactTrace must link ledger entries");
+    Assert(trace.ProjectionCommitRefs.Contains("projection-001"), "FactTrace must link projection commits");
+}
+
+static void AssertRequired(JsonElement defs, string contractName, params string[] requiredFields)
+{
+    var required = defs.GetProperty(contractName)
+        .GetProperty("required")
+        .EnumerateArray()
+        .Select(item => item.GetString())
+        .ToHashSet();
+    foreach (var field in requiredFields)
+    {
+        Assert(required.Contains(field), $"{contractName} must require {field}");
+    }
+}
+
+static void AssertRecordParameters(Type type, params string[] properties)
+{
+    var names = type.GetProperties().Select(item => item.Name).ToHashSet(StringComparer.Ordinal);
+    foreach (var property in properties)
+    {
+        Assert(names.Contains(property), $"{type.Name} must expose {property}");
     }
 }
 

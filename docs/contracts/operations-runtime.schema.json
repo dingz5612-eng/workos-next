@@ -1,0 +1,81 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://workosnext.local/contracts/operations-runtime.schema.json",
+  "title": "Operations Runtime Contracts",
+  "type": "object",
+  "required": [
+    "commandEnvelope",
+    "operationCase",
+    "workItem",
+    "commandSubmission",
+    "domainEvent",
+    "ledgerTransaction",
+    "ledgerEntry",
+    "workItemTransition",
+    "projectionCommit",
+    "shadowFactGraph"
+  ],
+  "properties": {
+    "commandEnvelope": { "$ref": "#/$defs/CommandEnvelope.v1" },
+    "operationCase": { "$ref": "#/$defs/OperationCase.v1" },
+    "workItem": { "$ref": "#/$defs/WorkItem.v1" },
+    "commandSubmission": { "$ref": "#/$defs/CommandSubmission.v1" },
+    "domainEvent": { "$ref": "#/$defs/DomainEvent.v1" },
+    "ledgerTransaction": { "$ref": "#/$defs/LedgerTransaction.v1" },
+    "ledgerEntry": { "$ref": "#/$defs/LedgerEntry.v1" },
+    "workItemTransition": { "$ref": "#/$defs/WorkItemTransition.v1" },
+    "projectionCommit": { "$ref": "#/$defs/ProjectionCommit.v1" },
+    "shadowFactGraph": { "$ref": "#/$defs/ShadowFactGraph.v1" }
+  },
+  "$defs": {
+    "CommandEnvelope.v1": {
+      "type": "object",
+      "required": [
+        "tenantId",
+        "commandType",
+        "schemaVersion",
+        "definitionVersionId",
+        "caseId",
+        "workItemId",
+        "idempotencyKey",
+        "payloadHash"
+      ]
+    },
+    "OperationCase.v1": {
+      "type": "object",
+      "required": ["tenantId", "caseId", "caseType", "definitionVersionId", "status"]
+    },
+    "WorkItem.v1": {
+      "type": "object",
+      "required": ["tenantId", "caseId", "workItemId", "workItemType", "lifecycleState", "ownerRole"]
+    },
+    "CommandSubmission.v1": {
+      "type": "object",
+      "required": ["tenantId", "submissionId", "caseId", "workItemId", "idempotencyKey", "payloadHash", "status"]
+    },
+    "DomainEvent.v1": {
+      "type": "object",
+      "required": ["tenantId", "eventId", "caseId", "workItemId", "submissionId", "causationId", "correlationId", "eventType"]
+    },
+    "LedgerTransaction.v1": {
+      "type": "object",
+      "required": ["tenantId", "ledgerTransactionId", "caseId", "workItemId", "submissionId", "currency", "balanceStatus"]
+    },
+    "LedgerEntry.v1": {
+      "type": "object",
+      "required": ["tenantId", "entryId", "ledgerTransactionId", "debitCredit", "amount", "currency"]
+    },
+    "WorkItemTransition.v1": {
+      "type": "object",
+      "required": ["tenantId", "transitionId", "caseId", "workItemId", "fromState", "toState", "submissionId"]
+    },
+    "ProjectionCommit.v1": {
+      "type": "object",
+      "required": ["tenantId", "projectionCommitId", "projectionName", "sourceEventRefs", "commitStatus"]
+    },
+    "ShadowFactGraph.v1": {
+      "type": "object",
+      "required": ["tenantId", "graphId", "submissionRefs", "domainEventRefs", "ledgerTransactionRefs", "projectionRefs"]
+    }
+  }
+}
