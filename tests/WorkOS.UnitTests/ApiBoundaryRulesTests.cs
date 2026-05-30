@@ -25,49 +25,55 @@ public sealed class ApiBoundaryRulesTests
     }
 
     [TestMethod]
-    public void OperationsApiAllowlistDeclaresV2ClassifiedWriteRoutes()
+    public void OperationsApiBoundaryDeclaresV3ClassifiedWriteRoutes()
     {
-        using var allowlist = JsonDocument.Parse(File.ReadAllText(RepoPath("docs", "v5.4", "operations-api-allowlist.json")));
-        var root = allowlist.RootElement;
+        var boundary = File.ReadAllText(RepoPath("docs", "rules", "v5.5", "api-boundary.yml"));
 
-        Assert.AreEqual(2, root.GetProperty("version").GetInt32());
-        AssertArrayRouteContains(root, "businessWriteAllowlist", "POST /api/operations/work-items/{workItemId}/confirm");
-        AssertArrayRouteContains(root, "operationsRuntimeWriteAllowlist", "POST /api/operations/cases");
-        AssertArrayRouteContains(root, "operationsRuntimeWriteAllowlist", "POST /api/operations/work-items/{workItemId}/prepare");
-        AssertArrayRouteContains(root, "compatibilityWriteAllowlist", "POST /api/workspaces/{workspaceId}/cards/{cardId}/confirm");
-        AssertArrayRouteContains(root, "evidenceFileWriteAllowlist", "POST /api/evidence/{evidenceId}/attachments");
-        AssertArrayRouteContains(root, "authDeviceWriteAllowlist", "POST /api/auth/login");
-        AssertArrayRouteContains(root, "mobileExperienceWriteAllowlist", "POST /api/mobile/drafts");
-        AssertArrayRouteContains(root, "behaviorEventWriteAllowlist", "POST /api/behavior-events");
-        AssertArrayContains(root, "forbiddenBusinessWritePatterns", "POST /api/payment/confirm");
-        AssertArrayContains(root, "forbiddenBusinessWritePatterns", "POST /api/mobile/*/confirm");
+        Assert.IsTrue(boundary.Contains("version: 3", StringComparison.Ordinal));
+        Assert.IsTrue(boundary.Contains("operationsBusinessWrite:", StringComparison.Ordinal));
+        Assert.IsTrue(boundary.Contains("POST /api/operations/work-items/{workItemId}/confirm", StringComparison.Ordinal));
+        Assert.IsTrue(boundary.Contains("systemProjectionWrite:", StringComparison.Ordinal));
+        Assert.IsTrue(boundary.Contains("POST /api/operations/cases", StringComparison.Ordinal));
+        Assert.IsTrue(boundary.Contains("POST /api/operations/work-items/{workItemId}/prepare", StringComparison.Ordinal));
+        Assert.IsTrue(boundary.Contains("compatibilityBusinessWrite:", StringComparison.Ordinal));
+        Assert.IsTrue(boundary.Contains("POST /api/workspaces/{workspaceId}/cards/{cardId}/confirm", StringComparison.Ordinal));
+        Assert.IsTrue(boundary.Contains("evidenceWrite:", StringComparison.Ordinal));
+        Assert.IsTrue(boundary.Contains("POST /api/evidence/{evidenceId}/attachments", StringComparison.Ordinal));
+        Assert.IsTrue(boundary.Contains("securitySessionWrite:", StringComparison.Ordinal));
+        Assert.IsTrue(boundary.Contains("POST /api/auth/login", StringComparison.Ordinal));
+        Assert.IsTrue(boundary.Contains("mobileExperienceWrite:", StringComparison.Ordinal));
+        Assert.IsTrue(boundary.Contains("POST /api/mobile/drafts", StringComparison.Ordinal));
+        Assert.IsTrue(boundary.Contains("behaviorEventWrite:", StringComparison.Ordinal));
+        Assert.IsTrue(boundary.Contains("POST /api/behavior-events", StringComparison.Ordinal));
+        Assert.IsTrue(boundary.Contains("POST /api/payment/confirm", StringComparison.Ordinal));
+        Assert.IsTrue(boundary.Contains("POST /api/mobile/*/confirm", StringComparison.Ordinal));
     }
 
     [TestMethod]
-    public void GovernanceWriteAllowlistDeclaresRequiredGuards()
+    public void GovernanceWriteCategoriesDeclareRequiredGuards()
     {
-        using var allowlist = JsonDocument.Parse(File.ReadAllText(RepoPath("docs", "v5.4", "operations-api-allowlist.json")));
-        var root = allowlist.RootElement;
+        var boundary = File.ReadAllText(RepoPath("docs", "rules", "v5.5", "api-boundary.yml"));
 
-        var reconciliation = FindRouteEntry(root, "governanceWriteAllowlist", "POST /api/reconciliation/match-candidates/{candidateId}/accept");
-        Assert.IsNotNull(reconciliation, "governanceWriteAllowlist must classify reconciliation accept");
-        Assert.AreEqual(false, reconciliation.Value.GetProperty("writesBusinessFacts").GetBoolean());
-        Assert.AreEqual(false, reconciliation.Value.GetProperty("usesOperationsConfirm").GetBoolean());
-        Assert.AreEqual(true, reconciliation.Value.GetProperty("writesOnlyControlGovernanceOrProvisionalRecords").GetBoolean());
-        Assert.AreEqual(true, reconciliation.Value.GetProperty("appendOnly").GetBoolean());
+        Assert.IsTrue(boundary.Contains("reconciliationGovernanceWrite:", StringComparison.Ordinal));
+        Assert.IsTrue(boundary.Contains("POST /api/reconciliation/match-candidates/{candidateId}/accept", StringComparison.Ordinal));
+        Assert.IsTrue(boundary.Contains("writesBusinessFact: false", StringComparison.Ordinal));
+        Assert.IsTrue(boundary.Contains("writesGovernanceFact: true", StringComparison.Ordinal));
+        Assert.IsTrue(boundary.Contains("requiresOperationsConfirm: false", StringComparison.Ordinal));
+        Assert.IsTrue(boundary.Contains("appendOnly: true", StringComparison.Ordinal));
 
-        var correctionApply = FindRouteEntry(root, "governanceWriteAllowlist", "POST /api/correction-center/ledger-correction-requests/{correctionRequestId}/apply");
-        Assert.IsNotNull(correctionApply, "governanceWriteAllowlist must classify correction apply");
-        Assert.AreEqual(true, correctionApply.Value.GetProperty("writesBusinessFacts").GetBoolean());
-        Assert.AreEqual(false, correctionApply.Value.GetProperty("usesOperationsConfirm").GetBoolean());
-        Assert.AreEqual(false, correctionApply.Value.GetProperty("writesOnlyControlGovernanceOrProvisionalRecords").GetBoolean());
-        Assert.AreEqual(true, correctionApply.Value.GetProperty("appendOnly").GetBoolean());
-        Assert.AreEqual(true, correctionApply.Value.GetProperty("appendOnlyCorrectionService").GetBoolean());
-        Assert.IsTrue(correctionApply.Value.GetProperty("invariantEvidence").EnumerateArray().Any());
+        Assert.IsTrue(boundary.Contains("correctionCenterWrite:", StringComparison.Ordinal));
+        Assert.IsTrue(boundary.Contains("POST /api/correction-center/ledger-correction-requests/{correctionRequestId}/apply", StringComparison.Ordinal));
+        Assert.IsTrue(boundary.Contains("writesBusinessFact: true", StringComparison.Ordinal));
+        Assert.IsTrue(boundary.Contains("appendOnlyCorrectionService: true", StringComparison.Ordinal));
+        Assert.IsTrue(boundary.Contains("ledger.no_edit_old_entry", StringComparison.Ordinal));
+
+        Assert.IsTrue(boundary.Contains("pcGovernanceWrite:", StringComparison.Ordinal));
+        Assert.IsTrue(boundary.Contains("requiresCapability: true", StringComparison.Ordinal));
+        Assert.IsTrue(boundary.Contains("requiresAudit: true", StringComparison.Ordinal));
     }
 
     [TestMethod]
-    public void ApiBoundaryScriptContainsV2ClassifierSelfTests()
+    public void ApiBoundaryScriptContainsV3ClassifierSelfTests()
     {
         var script = File.ReadAllText(RepoPath("scripts", "check-api-boundaries.mjs"));
         Assert.IsTrue(script.Contains("self-test"));
@@ -105,12 +111,12 @@ public sealed class ApiBoundaryRulesTests
     }
 
     [TestMethod]
-    public void ApiBoundaryScanWritesV2JsonReport()
+    public void ApiBoundaryScanWritesV3JsonReport()
     {
         var temp = Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), $"workos-api-boundary-{Guid.NewGuid():N}"));
         try
         {
-            var reportPath = Path.Combine(temp.FullName, "api-boundary-check-v2.json");
+            var reportPath = Path.Combine(temp.FullName, "api-boundary-check-v3.json");
             var startInfo = new ProcessStartInfo("node")
             {
                 WorkingDirectory = RepoRoot(),
@@ -130,11 +136,12 @@ public sealed class ApiBoundaryRulesTests
 
             using var report = JsonDocument.Parse(File.ReadAllText(reportPath));
             var root = report.RootElement;
-            Assert.AreEqual(2, root.GetProperty("version").GetInt32());
+            Assert.AreEqual(3, root.GetProperty("version").GetInt32());
             Assert.AreEqual("passed", root.GetProperty("status").GetString());
             Assert.AreEqual(0, root.GetProperty("violation_count").GetInt32());
             Assert.AreEqual(0, root.GetProperty("unclassified_write_route_count").GetInt32());
             Assert.AreEqual(0, root.GetProperty("multi_classified_write_route_count").GetInt32());
+            Assert.AreEqual(1, root.GetProperty("business_write_route_count").GetInt32());
             Assert.IsTrue(root.GetProperty("write_route_count").GetInt32() > 0);
         }
         finally

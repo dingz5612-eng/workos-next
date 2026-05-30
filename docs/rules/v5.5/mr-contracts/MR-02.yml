@@ -1,0 +1,18 @@
+mrId: MR-02
+name: Operations Runtime Kernel
+state: locked
+owners: [runtime, platform, qa]
+scope:
+  includes: [operations-api, work-item, command-submission, old-api-compatibility]
+  excludes: [mobile-business-batch, resource-batch, stay-batch]
+dependencies: [MR-00, MR-01]
+goCriteria: [operations-routes-exist, old-api-wrapper, command-submission-evidence, idempotency-conflict-409]
+noGoCriteria: [operations-api-missing, old-api-bypasses-operations, missing-submission-evidence]
+invariants: [api.no_page_specific_business_write, operations.idempotency_conflict_blocks]
+shadowPath: shadow_runtime.command_submissions
+pilotPath: operations-runtime
+activePath: operations-runtime
+rollbackInstruction: docs/v5.4/rollback/mr-02-rollback-instruction.json
+compensationInstruction: docs/v5.4/rollback/mr-02-rollback-instruction.json
+acceptanceScenarios: [operations-api-contract-tests, old-api-compatibility-tests, idempotency-tests]
+gateResultRequired: true

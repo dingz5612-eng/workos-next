@@ -2,21 +2,24 @@ import fs from "node:fs";
 import path from "node:path";
 
 const repoRoot = process.cwd();
-const allowlistPath = path.join(repoRoot, "docs", "v5.4", "operations-api-allowlist.json");
+const allowlistPath = path.join(repoRoot, "docs", "rules", "v5.5", "api-boundary.yml");
 const routeRoot = path.join(repoRoot, "services");
 const cli = parseArgs(process.argv.slice(2));
 
 const writeAllowlistCategories = [
-  "businessWriteAllowlist",
-  "operationsRuntimeWriteAllowlist",
-  "compatibilityWriteAllowlist",
-  "mobileExperienceWriteAllowlist",
-  "evidenceFileWriteAllowlist",
-  "authDeviceWriteAllowlist",
-  "controlPlaneWriteAllowlist",
-  "governanceWriteAllowlist",
-  "behaviorEventWriteAllowlist",
-  "runtimeMaintenanceWriteAllowlist"
+  "operationsBusinessWrite",
+  "compatibilityBusinessWrite",
+  "mobileExperienceWrite",
+  "evidenceWrite",
+  "evidenceRead",
+  "governanceWrite",
+  "reconciliationGovernanceWrite",
+  "correctionCenterWrite",
+  "pcGovernanceWrite",
+  "securitySessionWrite",
+  "systemProjectionWrite",
+  "behaviorEventWrite",
+  "controlPlaneWrite"
 ];
 
 const exactBusinessWriteRoutes = new Set([
@@ -50,7 +53,110 @@ const nonBusinessFactTokens = [
 ];
 
 function readAllowlist() {
-  return JSON.parse(fs.readFileSync(allowlistPath, "utf8"));
+  const source = fs.readFileSync(allowlistPath, "utf8");
+  return parseApiBoundaryYaml(source);
+}
+
+function parseApiBoundaryYaml(source) {
+  const result = {
+    version: undefined,
+    categories: {},
+    forbiddenBusinessWritePatterns: []
+  };
+
+  let section = "";
+  let category = "";
+  let currentEntry = null;
+  let currentArrayField = "";
+
+  for (const rawLine of source.split(/\r?\n/)) {
+    if (!rawLine.trim() || rawLine.trim().startsWith("#")) continue;
+
+    const indent = rawLine.match(/^\s*/)[0].length;
+    const line = rawLine.trim();
+
+    if (indent === 0) {
+      currentEntry = null;
+      currentArrayField = "";
+      const match = /^([A-Za-z0-9_]+):\s*(.*)$/.exec(line);
+      if (!match) continue;
+      const [, key, value] = match;
+      if (key === "version") {
+        result.version = Number.parseInt(value, 10);
+      } else if (key === "categories" || key === "forbiddenBusinessWritePatterns") {
+        section = key;
+      }
+      continue;
+    }
+
+    if (section === "forbiddenBusinessWritePatterns" && indent === 2 && line.startsWith("- ")) {
+      result.forbiddenBusinessWritePatterns.push(parseScalar(line.slice(2)));
+      continue;
+    }
+
+    if (section !== "categories") continue;
+
+    if (indent === 2) {
+      const match = /^([A-Za-z0-9_]+):\s*$/.exec(line);
+      if (!match) continue;
+      category = match[1];
+      result.categories[category] ??= [];
+      currentEntry = null;
+      currentArrayField = "";
+      continue;
+    }
+
+    if (!category) continue;
+
+    if (indent === 4 && line.startsWith("- ")) {
+      currentEntry = {};
+      result.categories[category].push(currentEntry);
+      currentArrayField = "";
+      const rest = line.slice(2);
+      const pair = /^([A-Za-z0-9_]+):\s*(.*)$/.exec(rest);
+      if (pair) {
+        currentEntry[pair[1]] = parseScalar(pair[2]);
+      }
+      continue;
+    }
+
+    if (!currentEntry) continue;
+
+    if (indent === 6) {
+      const pair = /^([A-Za-z0-9_]+):\s*(.*)$/.exec(line);
+      if (!pair) continue;
+      const [, key, value] = pair;
+      if (value === "") {
+        currentEntry[key] = [];
+        currentArrayField = key;
+      } else {
+        currentEntry[key] = parseScalar(value);
+        currentArrayField = "";
+      }
+      continue;
+    }
+
+    if (indent === 8 && currentArrayField && line.startsWith("- ")) {
+      currentEntry[currentArrayField].push(parseScalar(line.slice(2)));
+    }
+  }
+
+  for (const categoryName of writeAllowlistCategories) {
+    result[categoryName] = result.categories[categoryName] ?? [];
+  }
+
+  return result;
+}
+
+function parseScalar(value) {
+  const trimmed = value.trim();
+  if ((trimmed.startsWith("\"") && trimmed.endsWith("\"")) || (trimmed.startsWith("'") && trimmed.endsWith("'"))) {
+    return trimmed.slice(1, -1);
+  }
+  if (trimmed === "true") return true;
+  if (trimmed === "false") return false;
+  if (/^-?\d+$/.test(trimmed)) return Number.parseInt(trimmed, 10);
+  return trimmed;
 }
 
 function wildcardPatternToRegex(pattern) {
@@ -142,94 +248,129 @@ function containsBusinessFactToken(text) {
   return nonBusinessFactTokens.find((token) => text.includes(token));
 }
 
-function hasBoolean(entry, field) {
-  return Object.prototype.hasOwnProperty.call(entry, field) && typeof entry[field] === "boolean";
+function boolValue(entry, singular, plural = `${singular}s`) {
+  if (Object.prototype.hasOwnProperty.call(entry, singular)) return entry[singular];
+  if (Object.prototype.hasOwnProperty.call(entry, plural)) return entry[plural];
+  return undefined;
 }
 
 function validateAllowlist(allowlist) {
   const violations = [];
-  if (allowlist.version !== 2) {
-    violations.push("operations-api-allowlist.json must declare version 2");
+  if (allowlist.version !== 3) {
+    violations.push("api-boundary.yml must declare version 3");
   }
 
   for (const category of writeAllowlistCategories) {
     if (!Array.isArray(allowlist[category])) {
-      violations.push(`operations-api-allowlist.json missing ${category} array`);
+      violations.push(`api-boundary.yml missing ${category} array`);
     }
   }
 
-  for (const { route } of routeEntries(allowlist, "businessWriteAllowlist")) {
-    if (!exactBusinessWriteRoutes.has(route)) {
-      violations.push(`businessWriteAllowlist may only contain Operations Confirm: ${route}`);
-    }
-  }
+  for (const category of writeAllowlistCategories) {
+    for (const { route, entry } of routeEntries(allowlist, category)) {
+      if (!route) {
+        violations.push(`${category} contains an entry without route`);
+        continue;
+      }
 
-  for (const { route } of routeEntries(allowlist, "operationsRuntimeWriteAllowlist")) {
-    if (!route.startsWith("POST /api/operations/")) {
-      violations.push(`operationsRuntimeWriteAllowlist route must be under /api/operations: ${route}`);
-    }
-    if (exactBusinessWriteRoutes.has(route)) {
-      violations.push(`Operations Confirm must stay in businessWriteAllowlist, not operationsRuntimeWriteAllowlist: ${route}`);
-    }
-  }
-
-  for (const { route } of routeEntries(allowlist, "compatibilityWriteAllowlist")) {
-    if (!compatibilityRoutes.has(route)) {
-      violations.push(`compatibilityWriteAllowlist may only contain old Workspace/Card prepare/confirm: ${route}`);
-    }
-  }
-
-  for (const { route } of routeEntries(allowlist, "mobileExperienceWriteAllowlist")) {
-    if (!allowedMobileExperienceRoutes.has(route)) {
-      violations.push(`mobileExperienceWriteAllowlist route is not an approved mobile experience route: ${route}`);
-    }
-  }
-
-  for (const { route } of routeEntries(allowlist, "evidenceFileWriteAllowlist")) {
-    if (!route.includes(" /api/evidence/")) {
-      violations.push(`evidenceFileWriteAllowlist route must be under /api/evidence: ${route}`);
-    }
-  }
-
-  for (const { route } of routeEntries(allowlist, "authDeviceWriteAllowlist")) {
-    if (!route.includes(" /api/auth/") && !route.includes(" /api/device-sessions")) {
-      violations.push(`authDeviceWriteAllowlist route must be under /api/auth or /api/device-sessions: ${route}`);
-    }
-  }
-
-  for (const { route, entry } of routeEntries(allowlist, "controlPlaneWriteAllowlist")) {
-    if (!route.includes(" /api/control-plane/")) {
-      violations.push(`controlPlaneWriteAllowlist route must be under /api/control-plane: ${route}`);
-    }
-    if (entry.writesOnlyControlPlane !== true || entry.writesBusinessFacts !== false) {
-      violations.push(`controlPlaneWriteAllowlist route must declare writesOnlyControlPlane=true and writesBusinessFacts=false: ${route}`);
-    }
-  }
-
-  for (const { route, entry } of routeEntries(allowlist, "governanceWriteAllowlist")) {
-    for (const field of [
-      "writesBusinessFacts",
-      "usesOperationsConfirm",
-      "writesOnlyControlGovernanceOrProvisionalRecords",
-      "appendOnly"
-    ]) {
-      if (!hasBoolean(entry, field)) {
-        violations.push(`governanceWriteAllowlist ${route} must declare boolean guard ${field}`);
+      for (const field of ["class", "owner", "evidenceType", "severity"]) {
+        if (!entry[field]) {
+          violations.push(`${category} ${route} must declare ${field}`);
+        }
+      }
+      for (const field of ["writesBusinessFact", "writesGovernanceFact", "requiresOperationsConfirm", "appendOnly"]) {
+        if (typeof entry[field] !== "boolean") {
+          violations.push(`${category} ${route} must declare boolean ${field}`);
+        }
+      }
+      if (!Array.isArray(entry.requiredInvariant) || entry.requiredInvariant.length === 0) {
+        violations.push(`${category} ${route} must declare requiredInvariant`);
+      }
+      if (entry.class && entry.class !== category) {
+        violations.push(`${category} ${route} class must match category`);
       }
     }
+  }
 
-    const appendOnlyCorrectionService = entry.appendOnlyCorrectionService === true;
-    if (entry.writesBusinessFacts === true && entry.usesOperationsConfirm !== true && !appendOnlyCorrectionService) {
-      violations.push(`governanceWriteAllowlist ${route} must not write business facts outside Operations Confirm or an explicit append-only correction service`);
+  for (const { route } of routeEntries(allowlist, "operationsBusinessWrite")) {
+    if (!exactBusinessWriteRoutes.has(route)) {
+      violations.push(`operationsBusinessWrite may only contain Operations Confirm: ${route}`);
     }
-    if (entry.writesOnlyControlGovernanceOrProvisionalRecords !== true && !appendOnlyCorrectionService) {
-      violations.push(`governanceWriteAllowlist ${route} must only write control/governance/provisional records unless it declares appendOnlyCorrectionService=true`);
+  }
+
+  for (const { route } of routeEntries(allowlist, "systemProjectionWrite")) {
+    if (!route.includes(" /api/operations/") && route !== "POST /api/projections/process-outbox") {
+      violations.push(`systemProjectionWrite route must be Operations coordination or projector maintenance: ${route}`);
+    }
+    if (exactBusinessWriteRoutes.has(route)) {
+      violations.push(`Operations Confirm must stay in operationsBusinessWrite, not systemProjectionWrite: ${route}`);
+    }
+  }
+
+  for (const { route } of routeEntries(allowlist, "compatibilityBusinessWrite")) {
+    if (!compatibilityRoutes.has(route)) {
+      violations.push(`compatibilityBusinessWrite may only contain old Workspace/Card prepare/confirm: ${route}`);
+    }
+  }
+
+  for (const { route } of routeEntries(allowlist, "mobileExperienceWrite")) {
+    if (!allowedMobileExperienceRoutes.has(route)) {
+      violations.push(`mobileExperienceWrite route is not an approved mobile experience route: ${route}`);
+    }
+  }
+
+  for (const { route } of routeEntries(allowlist, "evidenceWrite")) {
+    if (!route.includes(" /api/evidence/")) {
+      violations.push(`evidenceWrite route must be under /api/evidence: ${route}`);
+    }
+  }
+
+  for (const { route } of routeEntries(allowlist, "securitySessionWrite")) {
+    if (!route.includes(" /api/auth/") && !route.includes(" /api/device-sessions")) {
+      violations.push(`securitySessionWrite route must be under /api/auth or /api/device-sessions: ${route}`);
+    }
+  }
+
+  for (const { route, entry } of routeEntries(allowlist, "controlPlaneWrite")) {
+    if (!route.includes(" /api/control-plane/")) {
+      violations.push(`controlPlaneWrite route must be under /api/control-plane: ${route}`);
+    }
+    if (boolValue(entry, "writesBusinessFact") !== false) {
+      violations.push(`controlPlaneWrite route must declare writesBusinessFact=false: ${route}`);
+    }
+  }
+
+  for (const { route, entry } of routeEntries(allowlist, "reconciliationGovernanceWrite")) {
+    if (!route.includes(" /api/reconciliation/")) {
+      violations.push(`reconciliationGovernanceWrite route must be under /api/reconciliation: ${route}`);
+    }
+    if (entry.writesBusinessFact !== false || entry.writesGovernanceFact !== true || entry.appendOnly !== true) {
+      violations.push(`reconciliationGovernanceWrite ${route} must be append-only governance/provisional and must not write business facts`);
+    }
+  }
+
+  for (const { route, entry } of routeEntries(allowlist, "correctionCenterWrite")) {
+    if (!route.includes(" /api/correction-center/")) {
+      violations.push(`correctionCenterWrite route must be under /api/correction-center: ${route}`);
+    }
+    const appendOnlyCorrectionService = entry.appendOnlyCorrectionService === true;
+    if (entry.writesBusinessFact === true && !appendOnlyCorrectionService) {
+      violations.push(`correctionCenterWrite ${route} may write business facts only through appendOnlyCorrectionService=true`);
     }
     if (entry.appendOnly !== true) {
-      violations.push(`governanceWriteAllowlist ${route} must be append-only`);
+      violations.push(`correctionCenterWrite ${route} must be append-only`);
     }
-    if (appendOnlyCorrectionService && !Array.isArray(entry.invariantEvidence)) {
-      violations.push(`governanceWriteAllowlist ${route} append-only correction service must declare invariantEvidence`);
+    if (appendOnlyCorrectionService && !entry.requiredInvariant.includes("ledger.no_edit_old_entry")) {
+      violations.push(`correctionCenterWrite ${route} append-only correction service must declare ledger.no_edit_old_entry`);
+    }
+  }
+
+  for (const { route, entry } of routeEntries(allowlist, "pcGovernanceWrite")) {
+    if (!route.includes(" /api/pc-governance/")) {
+      violations.push(`pcGovernanceWrite route must be under /api/pc-governance: ${route}`);
+    }
+    if (entry.requiresCapability !== true || entry.requiresAudit !== true) {
+      violations.push(`pcGovernanceWrite ${route} must require capability and audit`);
     }
   }
 
@@ -250,34 +391,38 @@ function validateAllowlist(allowlist) {
 function validateRouteCategory(route, category, allowlist) {
   const violations = [];
   const entry = findRouteEntry(allowlist, category, route.key) ?? {};
+  const businessToken = containsBusinessFactToken(route.handlerSource);
 
-  if (category === "businessWriteAllowlist" && !exactBusinessWriteRoutes.has(route.key)) {
+  if (category === "operationsBusinessWrite" && !exactBusinessWriteRoutes.has(route.key)) {
     violations.push(`${route.file}: business write route is not the Operations Confirm route: ${route.key}`);
   }
 
-  if (category === "operationsRuntimeWriteAllowlist" && containsBusinessFactToken(route.handlerSource)) {
-    violations.push(`${route.file}: Operations runtime coordination route appears to write business fact token ${containsBusinessFactToken(route.handlerSource)}: ${route.key}`);
+  if (category === "compatibilityBusinessWrite" && route.key.endsWith("/confirm") && entry.requiresOperationsConfirm !== true) {
+    violations.push(`${route.file}: old Workspace/Card confirm compatibility route must require Operations Confirm: ${route.key}`);
   }
 
-  if (category === "mobileExperienceWriteAllowlist" && containsBusinessFactToken(route.handlerSource)) {
-    violations.push(`${route.file}: mobile experience route must not write business fact token ${containsBusinessFactToken(route.handlerSource)}: ${route.key}`);
+  if (category === "systemProjectionWrite" && businessToken) {
+    violations.push(`${route.file}: system projection route must not write business fact token ${businessToken}: ${route.key}`);
   }
 
-  if (category === "evidenceFileWriteAllowlist" && containsBusinessFactToken(route.handlerSource)) {
-    violations.push(`${route.file}: evidence file route must not write business fact token ${containsBusinessFactToken(route.handlerSource)}: ${route.key}`);
+  if (category === "mobileExperienceWrite" && businessToken) {
+    violations.push(`${route.file}: mobile experience route must not write business fact token ${businessToken}: ${route.key}`);
   }
 
-  if (category === "controlPlaneWriteAllowlist") {
-    if (entry.writesOnlyControlPlane !== true) {
-      violations.push(`${route.file}: control plane write route must declare writesOnlyControlPlane=true: ${route.key}`);
-    }
-    if (containsBusinessFactToken(route.handlerSource)) {
-      violations.push(`${route.file}: control plane write route must not write business fact token ${containsBusinessFactToken(route.handlerSource)}: ${route.key}`);
-    }
+  if (category === "evidenceWrite" && businessToken) {
+    violations.push(`${route.file}: evidence file route must not write business fact token ${businessToken}: ${route.key}`);
   }
 
-  if (category === "governanceWriteAllowlist" && containsBusinessFactToken(route.handlerSource)) {
-    violations.push(`${route.file}: governance write route must not directly write business fact token ${containsBusinessFactToken(route.handlerSource)}: ${route.key}`);
+  if (category === "controlPlaneWrite" && businessToken) {
+    violations.push(`${route.file}: control plane write route must not write business fact token ${businessToken}: ${route.key}`);
+  }
+
+  if (category === "reconciliationGovernanceWrite" && businessToken) {
+    violations.push(`${route.file}: reconciliation governance route must not directly write business fact token ${businessToken}: ${route.key}`);
+  }
+
+  if (category === "pcGovernanceWrite" && businessToken) {
+    violations.push(`${route.file}: PC governance route must not directly write business fact token ${businessToken}: ${route.key}`);
   }
 
   return violations;
@@ -343,7 +488,10 @@ function buildReport(routes, allowlist, violations) {
   }
 
   return {
-    version: 2,
+    version: 3,
+    source_type: "api-boundary-check-v3",
+    compatibility_source_type: "api-boundary-check-v2",
+    config_path: path.relative(repoRoot, allowlistPath).replaceAll("\\", "/"),
     status: violations.length === 0 ? "passed" : "failed",
     violation_count: violations.length,
     route_count: routes.length,
@@ -352,7 +500,7 @@ function buildReport(routes, allowlist, violations) {
     classified_write_route_count: writeRoutes.length - unclassifiedWriteRoutes.length - multiClassifiedWriteRoutes.length,
     unclassified_write_route_count: unclassifiedWriteRoutes.length,
     multi_classified_write_route_count: multiClassifiedWriteRoutes.length,
-    business_write_route_count: categoryCounts.businessWriteAllowlist,
+    business_write_route_count: categoryCounts.operationsBusinessWrite,
     category_counts: categoryCounts,
     violations: violations.map((message, index) => ({ index, message })),
     unclassified_write_routes: unclassifiedWriteRoutes,
@@ -411,7 +559,7 @@ function runSelfTest() {
 
   expectViolation(
     extractRoutes('app.MapPost("/api/correction-center/ledger-correction-requests/{correctionRequestId}/apply", () => Results.Ok());', "simulated-correction-unclassified.cs"),
-    withoutRoute(allowlist, "governanceWriteAllowlist", "POST /api/correction-center/ledger-correction-requests/{correctionRequestId}/apply"),
+    withoutRoute(allowlist, "correctionCenterWrite", "POST /api/correction-center/ledger-correction-requests/{correctionRequestId}/apply"),
     "POST /api/correction-center/ledger-correction-requests/{correctionRequestId}/apply",
     "unclassified correction apply was not rejected");
 
@@ -443,7 +591,7 @@ function runScan() {
   }
 
   if (!cli.has("json")) {
-    console.log("API boundary check: PASS");
+    console.log("API boundary check v3: PASS");
   }
 }
 

@@ -1,0 +1,18 @@
+mrId: MR-00
+name: V5.4 Control Plane Bootstrap
+state: locked
+owners: [platform, runtime, qa, release]
+scope:
+  includes: [control-plane-schema, shadow-runtime-schema, gate-runner, release-manifest]
+  excludes: [mobile-business-batch, resource-batch, stay-batch]
+dependencies: [WON-18-green]
+goCriteria: [control-plane-schema-verified, gate-result-machine-generated, release-manifest-generated]
+noGoCriteria: [missing-ci-run-id, missing-gate-result, red-shadow-compare]
+invariants: [runtime.control_plane_tables_exist, gate.gate_result_machine_generated]
+shadowPath: shadow_runtime
+pilotPath: control_plane
+activePath: control_plane
+rollbackInstruction: docs/v5.4/rollback/mr-00-rollback-instruction.json
+compensationInstruction: docs/v5.4/rollback/mr-00-rollback-instruction.json
+acceptanceScenarios: [control-plane-guards-green, won-18-final-go]
+gateResultRequired: true

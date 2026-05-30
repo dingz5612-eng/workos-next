@@ -236,7 +236,7 @@ public sealed class V54ControlPlaneGuardTests
             Assert.AreEqual("passed", results[0].Status);
             Assert.AreEqual("api-boundary-check-v2", results[0].SourceType);
             Assert.AreEqual(0, results[0].ViolationCount);
-            Assert.AreEqual(2, Convert.ToInt32(results[0].ObservedValue["version"]));
+            Assert.AreEqual(3, Convert.ToInt32(results[0].ObservedValue["version"]));
             Assert.AreEqual(0, Convert.ToInt32(results[0].ObservedValue["unclassified_write_route_count"]));
         }
         finally

@@ -1,0 +1,18 @@
+mrId: MR-06
+name: Deposit Runtime Rules Skeleton
+state: planned
+owners: [finance, runtime, qa]
+scope:
+  includes: [deposit-ledger-contracts, refund-invariants]
+  excludes: [business-implementation-before-v5.5-go]
+dependencies: [MR-02, V5.5-Rules-OS-GO]
+goCriteria: [deposit-owner-declared, refund-invariants-targeted]
+noGoCriteria: [deposit-business-work-before-rules-go]
+invariants: [deposit.refund_not_exceed_available_refund, deposit.held_amount_not_negative]
+shadowPath: shadow_runtime
+pilotPath: planned
+activePath: planned
+rollbackInstruction: planned
+compensationInstruction: planned
+acceptanceScenarios: [planned]
+gateResultRequired: true

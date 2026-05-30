@@ -1,0 +1,30 @@
+version: 1
+id: v5.5-rule-drift
+checks:
+  - id: drift.openapi_minimal_api
+    severity: P1
+    compares: [docs/contracts/workos-runtime.openapi.json, services/core-api/WorkOS.Api Minimal API routes]
+  - id: drift.api_boundary_routes
+    severity: P0
+    compares: [docs/rules/v5.5/api-boundary.yml, services/core-api/WorkOS.Api write routes]
+  - id: drift.runtime_api_paths_openapi
+    severity: P1
+    compares: [apps/mobile/src/generated/runtimeApiPaths.js, docs/contracts/workos-runtime.openapi.json]
+  - id: drift.fact_ownership_handlers
+    severity: P0
+    compares: [docs/rules/v5.5/fact-ownership.yml, scripts/check-fact-ownership.mjs]
+  - id: drift.invariant_runner_support
+    severity: P1
+    compares: [docs/rules/v5.5/invariant-maturity.yml, docs/v5.4/invariant-definitions.json]
+  - id: drift.mr_contract_release_evidence
+    severity: P1
+    compares: [docs/rules/v5.5/mr-contracts, docs/v5.4/releases]
+  - id: drift.pr_template_required_fields
+    severity: P2
+    compares: [.github/pull_request_template.md, docs/rules/v5.5/rule-authority.yml]
+severityPolicy:
+  P0: Blocks release and business batch entry.
+  P1: Blocks final V5.5 Go unless waived with owner, reason, and expiresAt.
+  P2: Must be tracked before merge.
+output:
+  defaultArtifact: .tmp/v5_5/rule-drift-report.json

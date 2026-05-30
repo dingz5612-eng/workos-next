@@ -89,14 +89,28 @@ Assert-Exists "docs/architecture/CURRENT_RUNTIME_ARCHITECTURE.md"
 Assert-Exists "docs/architecture/rules/index.json"
 Assert-Exists "docs/architecture/architecture-exceptions.json"
 Assert-Exists "docs/architecture/README.md"
+Assert-Exists "docs/rules/v5.5/rule-authority.yml"
+Assert-Exists "docs/rules/v5.5/mr-contracts/MR-00.yml"
+Assert-Exists "docs/rules/v5.5/mr-contracts/MR-10.yml"
+Assert-Exists "docs/engineering/00-index.md"
 Assert-Exists "docs/engineering/00-rule-authority.md"
+Assert-Exists "docs/engineering/02-runtime-ownership-rules.md"
 Assert-Exists "docs/engineering/03-api-boundary-rules.md"
 Assert-Exists "docs/engineering/13-release-control-plane-rules.md"
+Assert-Exists "docs/engineering/14-testing-ci-rules.md"
 Assert-Exists "docs/engineering/15-no-go-rules.md"
 Assert-Exists "docs/engineering/16-v5.5-engineering-rules-os.md"
+Assert-Exists "docs/acceptance/00-index.md"
 Assert-Exists "docs/acceptance/12-release-go-no-go.md"
 Assert-Exists "docs/acceptance/13-v5.5-rules-os-go-no-go.md"
 Assert-Exists "docs/v5.4/operations-api-allowlist.json"
+Assert-Exists "docs/rules/v5.5/api-boundary.yml"
+Assert-Exists "docs/rules/v5.5/fact-ownership.yml"
+Assert-Exists "docs/rules/v5.5/invariant-maturity.yml"
+Assert-Exists "docs/rules/v5.5/gate-result-hardening.yml"
+Assert-Exists "docs/rules/v5.5/rule-drift.yml"
+Assert-Exists "docs/v5.5/api-write-classification.md"
+Assert-Exists "docs/v5.5/final-rules-os-go-no-go.md"
 Assert-Exists "docs/v5.4/release-manifest.schema.json"
 Assert-Exists "docs/v5.4/release-manifest.fixture.json"
 Assert-Exists "docs/v5.4/releases/mr-00-control-plane-bootstrap.json"
@@ -107,7 +121,13 @@ Assert-Exists "docs/v5.4/release-control-center.md"
 Assert-Exists "docs/v5.4/invariant-definitions.json"
 Assert-Exists "docs/v5.4/shadow-compare.config.json"
 Assert-Exists "scripts/check-api-boundaries.mjs"
+Assert-Exists "scripts/check-fact-ownership.mjs"
+Assert-Exists "scripts/check-gate-result-hardening.mjs"
+Assert-Exists "scripts/check-invariant-maturity.mjs"
+Assert-Exists "scripts/check-mr-contract.mjs"
 Assert-Exists "scripts/check-rule-authority.mjs"
+Assert-Exists "scripts/check-rule-drift.mjs"
+Assert-Exists "scripts/check-v5-5-rules-os.mjs"
 Assert-Exists "scripts/check-no-production-fake-fallback.mjs"
 Assert-Exists "scripts/v5_4/run-control-plane-checks.ps1"
 Assert-Exists "scripts/v5_4/control-plane-migration.mjs"
@@ -520,6 +540,12 @@ Invoke-Checked "node" @("scripts/architecture-drift-report.mjs")
 Invoke-Checked "node" @("scripts/validate-runtime-api.mjs")
 Invoke-Checked "node" @("scripts/check-api-boundaries.mjs", "--self-test")
 Invoke-Checked "node" @("scripts/check-api-boundaries.mjs")
+Invoke-Checked "node" @("scripts/check-fact-ownership.mjs")
+Invoke-Checked "node" @("scripts/check-mr-contract.mjs")
+Invoke-Checked "node" @("scripts/check-invariant-maturity.mjs")
+Invoke-Checked "node" @("scripts/check-gate-result-hardening.mjs")
+Invoke-Checked "node" @("scripts/check-rule-drift.mjs")
+Invoke-Checked "node" @("scripts/check-v5-5-rules-os.mjs")
 Invoke-Checked "node" @("scripts/check-no-production-fake-fallback.mjs", "--self-test")
 Invoke-Checked "node" @("scripts/check-no-production-fake-fallback.mjs")
 
@@ -553,6 +579,9 @@ foreach ($requiredCiCommand in @("validate-slice-admission.mjs", "architecture-d
   if ($ci -notmatch [regex]::Escape($requiredCiCommand)) {
     Fail "CI must run governance command: $requiredCiCommand"
   }
+}
+if ($ci -notmatch "check-v5-5-rules-os\.mjs") {
+  Fail "CI must run V5.5 Rules OS gate."
 }
 foreach ($requiredCiCommand in @("npm --prefix apps/mobile run test", "WorkOS.UnitTests", "WorkOS.RuntimeIntegrationTests")) {
   if ($ci -notmatch [regex]::Escape($requiredCiCommand)) {

@@ -47,13 +47,14 @@ const effectiveInvariants = [
   ...invariants,
   ...missing.map((item) => missingEvidenceInvariant(item))
 ];
+const gateId = args.id ?? `gate-mr-01-stop-bad-facts-${ciRunId}`;
 
 fs.mkdirSync(path.dirname(effectiveInvariantPath), { recursive: true });
 fs.writeFileSync(effectiveInvariantPath, `${JSON.stringify(effectiveInvariants, null, 2)}\n`);
 
 const gateArgs = [
   "scripts/v5_4/gate-runner.mjs",
-  `--id=${args.id ?? "gate-mr-01-stop-bad-facts"}`,
+  `--id=${gateId}`,
   `--releaseId=${releaseId}`,
   `--mrId=${mrId}`,
   `--tenantId=${tenantId}`,

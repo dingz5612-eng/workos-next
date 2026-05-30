@@ -1,0 +1,18 @@
+mrId: MR-10
+name: PC Governance Export Rules Skeleton
+state: planned
+owners: [pc-governance, runtime, qa]
+scope:
+  includes: [export-audit, capability-check, trusted-device-check]
+  excludes: [business-fact-write]
+dependencies: [MR-09, V5.5-Rules-OS-GO]
+goCriteria: [pc-export-has-audit, no-business-fact-write]
+noGoCriteria: [export-without-capability, export-without-audit]
+invariants: [pc.export_has_audit]
+shadowPath: shadow_runtime
+pilotPath: planned
+activePath: planned
+rollbackInstruction: planned
+compensationInstruction: planned
+acceptanceScenarios: [planned]
+gateResultRequired: true

@@ -1,0 +1,18 @@
+mrId: MR-09
+name: Reconciliation and Correction Governance Rules Skeleton
+state: planned
+owners: [governance, runtime, qa]
+scope:
+  includes: [reconciliation-governance, correction-center, append-only-correction]
+  excludes: [payment-confirmation-api, deposit-refund-api]
+dependencies: [MR-02, V5.5-Rules-OS-GO]
+goCriteria: [classified-governance-write, append-only-correction-invariants]
+noGoCriteria: [payment-fact-created-by-bank-import, correction-edits-old-ledger]
+invariants: [bank.import_does_not_create_payment_fact, ledger.no_edit_old_entry]
+shadowPath: shadow_runtime
+pilotPath: planned
+activePath: planned
+rollbackInstruction: planned
+compensationInstruction: planned
+acceptanceScenarios: [planned]
+gateResultRequired: true

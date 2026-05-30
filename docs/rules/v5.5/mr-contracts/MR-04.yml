@@ -1,0 +1,18 @@
+mrId: MR-04
+name: Stay Runtime Rules Skeleton
+state: planned
+owners: [stay, runtime, qa]
+scope:
+  includes: [stay-contracts, resident-facts]
+  excludes: [business-implementation-before-v5.5-go]
+dependencies: [MR-03, V5.5-Rules-OS-GO]
+goCriteria: [fact-ownership-declared, p0-invariants-targeted]
+noGoCriteria: [stay-business-work-before-rules-go]
+invariants: [stay.owner_only]
+shadowPath: shadow_runtime
+pilotPath: planned
+activePath: planned
+rollbackInstruction: planned
+compensationInstruction: planned
+acceptanceScenarios: [planned]
+gateResultRequired: true

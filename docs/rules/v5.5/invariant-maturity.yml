@@ -1,0 +1,114 @@
+version: 1
+id: v5.5-invariant-maturity
+levels: [L0_declared, L1_skeleton, L2_sql_or_service, L3_acceptance_linked, L4_release_blocking]
+invariants:
+  - key: payment.non_cash_confirmed_must_have_evidence
+    owner: finance.payment-ledger
+    severity: P0
+    mode: blocking
+    maturity: L2_sql_or_service
+    targetMaturity: L4_release_blocking
+    deadlineMr: MR-05
+    evidenceType: service_test
+    evidenceRef: tests/WorkOS.RuntimeIntegrationTests
+    blockerPolicy: block_release
+  - key: payment.allocation_not_exceed_confirmed_available
+    owner: finance.payment-ledger
+    severity: P0
+    mode: blocking
+    maturity: L2_sql_or_service
+    targetMaturity: L4_release_blocking
+    deadlineMr: MR-05
+    evidenceType: sql_or_service
+    evidenceRef: docs/v5.4/invariant-definitions.json
+    blockerPolicy: block_release
+  - key: deposit.refund_not_exceed_available_refund
+    owner: finance.deposit-ledger
+    severity: P0
+    mode: blocking
+    maturity: L2_sql_or_service
+    targetMaturity: L4_release_blocking
+    deadlineMr: MR-06
+    evidenceType: sql_or_service
+    evidenceRef: docs/v5.4/invariant-definitions.json
+    blockerPolicy: block_release
+  - key: deposit.held_amount_not_negative
+    owner: finance.deposit-ledger
+    severity: P0
+    mode: blocking
+    maturity: L2_sql_or_service
+    targetMaturity: L4_release_blocking
+    deadlineMr: MR-06
+    evidenceType: sql_or_service
+    evidenceRef: docs/v5.4/invariant-definitions.json
+    blockerPolicy: block_release
+  - key: resource.no_overlapping_active_bed_occupancy
+    owner: accommodation.resource
+    severity: P0
+    mode: blocking
+    maturity: L1_skeleton
+    targetMaturity: L3_acceptance_linked
+    deadlineMr: MR-03
+    evidenceType: planned_sql
+    evidenceRef: docs/rules/v5.5/mr-contracts/MR-03.yml
+    blockerPolicy: block_when_mr_active
+  - key: case.closed_has_no_open_blocker
+    owner: accommodation.checkout
+    severity: P0
+    mode: blocking
+    maturity: L1_skeleton
+    targetMaturity: L3_acceptance_linked
+    deadlineMr: MR-07
+    evidenceType: planned_service_test
+    evidenceRef: docs/rules/v5.5/mr-contracts/MR-07.yml
+    blockerPolicy: block_when_mr_active
+  - key: shadow.no_shadow_event_consumed_by_official_projector
+    owner: projection-runtime
+    severity: P0
+    mode: blocking
+    maturity: L2_sql_or_service
+    targetMaturity: L4_release_blocking
+    deadlineMr: MR-00
+    evidenceType: file_and_db_check
+    evidenceRef: scripts/v5_4/shadow-namespace-isolation.mjs
+    blockerPolicy: block_release
+  - key: bank.import_does_not_create_payment_fact
+    owner: reconciliation
+    severity: P0
+    mode: blocking
+    maturity: L2_sql_or_service
+    targetMaturity: L4_release_blocking
+    deadlineMr: MR-09
+    evidenceType: service_test
+    evidenceRef: docs/v5.4/api-write-classification.md
+    blockerPolicy: block_when_mr_active
+  - key: ledger.no_edit_old_entry
+    owner: runtime-ledger
+    severity: P0
+    mode: blocking
+    maturity: L2_sql_or_service
+    targetMaturity: L4_release_blocking
+    deadlineMr: MR-09
+    evidenceType: service_test
+    evidenceRef: docs/v5.4/api-write-classification.md
+    blockerPolicy: block_release
+  - key: period.finance_snapshot_from_ledgers
+    owner: accommodation.period-analytics
+    severity: P0
+    mode: blocking
+    maturity: L2_sql_or_service
+    targetMaturity: L4_release_blocking
+    deadlineMr: MR-10
+    evidenceType: source_guard
+    evidenceRef: scripts/guard-architecture.ps1
+    blockerPolicy: block_when_mr_active
+  - key: pc.export_has_audit
+    owner: pc-governance
+    severity: P0
+    mode: blocking
+    maturity: L2_sql_or_service
+    targetMaturity: L4_release_blocking
+    deadlineMr: MR-10
+    evidenceType: service_test
+    evidenceRef: docs/v5.4/api-write-classification.md
+    blockerPolicy: block_when_mr_active
