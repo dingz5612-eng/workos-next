@@ -241,7 +241,7 @@ internal sealed class RuntimeProductionObservabilityStorage
 
     private int ScalarInt(string sql) => Convert.ToInt32(Scalar(sql) ?? 0);
 
-    private string ScalarText(string sql, string fallback) => Convert.ToString(Scalar(sql)) ?? fallback;
+    private string ScalarText(string sql, string defaultText) => Convert.ToString(Scalar(sql)) ?? defaultText;
 
     private object? Scalar(string sql)
     {

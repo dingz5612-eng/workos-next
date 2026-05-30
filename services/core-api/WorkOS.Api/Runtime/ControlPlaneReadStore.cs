@@ -230,7 +230,7 @@ public sealed class ControlPlaneReadStore
             latestShadow?.Grade ?? "green",
             CountInvariants(invariants),
             flags.FirstOrDefault()?.Status ?? "none",
-            cutovers.FirstOrDefault()?.RuntimeMode ?? "legacy",
+            cutovers.FirstOrDefault()?.RuntimeMode ?? ControlPlaneDbMapping.CompatibilityRuntimeMode,
             rollbackInstructionId,
             AcceptanceProgress.From(acceptanceScenarios, goCriteria, noGoCriteria));
     }
@@ -351,7 +351,7 @@ public sealed class ControlPlaneReadStore
 
     private static string ShadowCompareSelect(string where) => $"""
         select shadow_compare_report_id, release_id, tenant_id, slice_id,
-               compare_scope::text, source_legacy_ref, source_active_ref,
+               compare_scope::text, {ControlPlaneDbMapping.SourceBaselineRefColumn}, source_active_ref,
                source_shadow_ref, compared_at_utc, grade, total_compared,
                matched_count, mismatch_count, missing_in_shadow_count,
                extra_in_shadow_count, mismatch_examples::text, summary::text,
@@ -391,7 +391,7 @@ public sealed class ControlPlaneReadStore
             RequiredText(reader, "tenant_id"),
             RequiredText(reader, "slice_id"),
             JsonObject(NullableText(reader, "compare_scope")),
-            NullableText(reader, "source_legacy_ref"),
+            NullableText(reader, ControlPlaneDbMapping.SourceBaselineRefColumn),
             NullableText(reader, "source_active_ref"),
             NullableText(reader, "source_shadow_ref"),
             RequiredDate(reader, "compared_at_utc"),

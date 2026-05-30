@@ -5,6 +5,17 @@ import { shellCopy } from "./i18n/shellCopy.js";
 
 const languages = ["zh-CN", "ru-RU"];
 
+export const dynamicProjectionI18nKeys = Object.freeze([
+  "checkin",
+  "createRoom",
+  "createBed",
+  "createVehicle",
+  "repairInspect",
+  "businessFields",
+  "systemFields",
+  "analyticsFields"
+]);
+
 export const i18n = Object.fromEntries(
   languages.map((language) => [
     language,

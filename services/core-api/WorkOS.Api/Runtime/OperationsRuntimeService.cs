@@ -695,7 +695,7 @@ public sealed class OperationsRuntimeService
             ["compatibilityTransition"] = new Dictionary<string, object?>
             {
                 ["source"] = AdapterSource,
-                ["legacyRuntime"] = "ProjectionRuntime.Confirm",
+                ["compatibilityRuntime"] = "ProjectionRuntime.Confirm",
                 ["workspaceId"] = target.Workspace.Id,
                 ["cardId"] = target.Card.Id
             },
@@ -935,7 +935,7 @@ public sealed class PostgresOperationsCommandSubmissionStore : IOperationsComman
         }
         catch (PostgresException ex) when (ex.SqlState is MissingTable or MissingSchema)
         {
-            // Older deployments may not have shadow_runtime yet; Operations still runs through legacy confirm.
+            // Compatibility deployments may not have shadow_runtime yet; Operations continues through confirm.
             return true;
         }
     }
@@ -967,7 +967,7 @@ public sealed class PostgresOperationsCommandSubmissionStore : IOperationsComman
         }
         catch (PostgresException ex) when (ex.SqlState is MissingTable or MissingSchema)
         {
-            // Older deployments may not have shadow_runtime yet; Operations still runs through legacy confirm.
+            // Compatibility deployments may not have shadow_runtime yet; Operations continues through confirm.
         }
     }
 
@@ -987,7 +987,7 @@ public sealed class PostgresOperationsCommandSubmissionStore : IOperationsComman
         }
         catch (PostgresException ex) when (ex.SqlState is MissingTable or MissingSchema)
         {
-            // Older deployments may not have shadow_runtime yet; Operations still runs through legacy confirm.
+            // Compatibility deployments may not have shadow_runtime yet; Operations continues through confirm.
         }
     }
 

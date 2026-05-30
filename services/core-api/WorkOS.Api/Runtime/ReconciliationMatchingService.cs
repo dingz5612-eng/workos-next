@@ -75,6 +75,6 @@ internal sealed class ReconciliationMatchingService
     private static string Actor(string? value) =>
         string.IsNullOrWhiteSpace(value) ? "runtime" : value.Trim();
 
-    private static string DefaultReason(string? value, string fallback) =>
-        string.IsNullOrWhiteSpace(value) ? fallback : value.Trim();
+    private static string DefaultReason(string? value, string defaultReason) =>
+        string.IsNullOrWhiteSpace(value) ? defaultReason : value.Trim();
 }

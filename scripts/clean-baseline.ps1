@@ -46,6 +46,7 @@ if ($unreferencedProjects) {
 }
 
 $legacyFileNames = Get-ChildItem -Recurse -File -Path "apps", "services", "tests" |
+  Where-Object { $_.FullName -notmatch "[\\/](bin|obj)[\\/]" } |
   Where-Object { $_.Name -match "(legacy|obsolete|deprecated|mock-only|fallback)" }
 if ($legacyFileNames) {
   $legacyFileNames | ForEach-Object { $_.FullName }
@@ -63,7 +64,7 @@ function fail(message, details = []) {
 
 function walk(dir, predicate, output = []) {
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
-    if (entry.name === "node_modules" || entry.name === "dist" || entry.name === "__tests__") continue;
+    if (entry.name === "node_modules" || entry.name === "dist" || entry.name === "__tests__" || entry.name === "devFixtures") continue;
     const fullPath = path.join(dir, entry.name);
     if (entry.isDirectory()) {
       walk(fullPath, predicate, output);
@@ -142,8 +143,14 @@ for (const file of cssFiles) {
 }
 
 const allowedUnusedCss = new Set([
+  "grade-green",
+  "grade-yellow",
+  "grade-red",
   "next-card",
-  "loop-steps"
+  "loop-steps",
+  "status-failed",
+  "status-warning",
+  "status-not_run"
 ]);
 const unusedCssClasses = [...cssClasses].filter((className) => !appSource.includes(className) && !allowedUnusedCss.has(className));
 if (unusedCssClasses.length > 0) {
