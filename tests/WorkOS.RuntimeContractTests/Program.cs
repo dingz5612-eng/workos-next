@@ -1662,7 +1662,7 @@ static void ValidateControlPlaneShadowSchemas(string connectionString)
         0,
         Array.Empty<IReadOnlyDictionary<string, object>>(),
         new Dictionary<string, object> { ["result"] = "matched" },
-        "contract-test",
+        "shadow-compare-runner",
         "ci-v54"));
 
     controlPlaneWrites.WriteRuntimeInvariantCheck(new RuntimeInvariantCheckWrite(
@@ -1704,7 +1704,7 @@ static void ValidateControlPlaneShadowSchemas(string connectionString)
         Array.Empty<string>(),
         new[] { "compare green" },
         Array.Empty<string>(),
-        "contract-test",
+        "gate-runner",
         DateTimeOffset.UtcNow,
         "input-hash",
         "result-hash"));
