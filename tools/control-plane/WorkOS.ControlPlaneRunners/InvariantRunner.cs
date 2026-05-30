@@ -1,3 +1,5 @@
+using System.Diagnostics;
+using System.Text.Json;
 using WorkOS.Api.Runtime;
 
 namespace WorkOS.ControlPlaneRunners;
@@ -75,6 +77,9 @@ public static class InvariantRunner
         var evaluated = definition.SourceType switch
         {
             "sql" => database.ExecuteInvariantSql(definition.CheckSql ?? throw new InvalidOperationException($"{definition.InvariantKey} missing check_sql")),
+            "api-boundary-check-v2" => ApiBoundaryCheckV2(),
+            "service-db-file" => ExecuteServiceDbFileCheck(definition.InvariantKey, database),
+            "file+dist-scan" => ProductionDemoFallbackCheck(),
             "skeleton" => ExecuteSkeleton(definition.InvariantKey),
             _ => throw new InvalidOperationException($"Unsupported invariant source_type {definition.SourceType}")
         };
@@ -111,7 +116,7 @@ public static class InvariantRunner
         {
             "shadow.no_shadow_event_consumed_by_official_projector" => OfficialProjectorShadowReadCheck(),
             "api.no_page_specific_business_write" => ApiBoundaryCheck(),
-            "runtime.no_production_demo_fallback" => NodeGuardCheck("scripts/check-no-production-fake-fallback.mjs"),
+            "runtime.no_production_demo_fallback" => ProductionDemoFallbackCheck(),
             "case.closed_has_no_open_blocker" => ConfiguredSkeletonCheck(key, "docs/v5.4/checkout-service-cutover.config.json"),
             "case.close_requires_closure_policy" => FileContainsCheck(
                 key,
@@ -143,6 +148,64 @@ public static class InvariantRunner
         };
     }
 
+    private static SqlInvariantResult ExecuteServiceDbFileCheck(string key, ControlPlaneDatabase database)
+    {
+        return key switch
+        {
+            "shadow.no_shadow_event_consumed_by_official_projector" => OfficialProjectorShadowIsolationCheck(database),
+            _ => throw new InvalidOperationException($"Unsupported service-db-file invariant {key}")
+        };
+    }
+
+    private static SqlInvariantResult OfficialProjectorShadowIsolationCheck(ControlPlaneDatabase database)
+    {
+        var fileResult = OfficialProjectorShadowReadCheck();
+        var samples = fileResult.SampleViolations.ToList();
+        var observed = new Dictionary<string, object>(fileResult.ObservedValue)
+        {
+            ["source_scan_violation_count"] = fileResult.ViolationCount
+        };
+
+        var threshold = new Dictionary<string, object>(fileResult.Threshold)
+        {
+            ["max_projection_checkpoints_shadow_runtime_rows"] = 0
+        };
+
+        if (!database.TableExists("public", "projection_checkpoints"))
+        {
+            observed["projection_checkpoints_exists"] = false;
+            observed["db_check_status"] = "observing_risk_projection_checkpoints_missing";
+            return new SqlInvariantResult(fileResult.ViolationCount, observed, threshold, samples);
+        }
+
+        observed["projection_checkpoints_exists"] = true;
+        if (!database.ColumnExists("public", "projection_checkpoints", "source_namespace"))
+        {
+            observed["source_namespace_column_exists"] = false;
+            samples.Add(new Dictionary<string, object>
+            {
+                ["table"] = "public.projection_checkpoints",
+                ["missing_column"] = "source_namespace"
+            });
+            return new SqlInvariantResult(fileResult.ViolationCount + 1, observed, threshold, samples);
+        }
+
+        var dbResult = database.ProjectionCheckpointShadowNamespaceCheck();
+        observed["source_namespace_column_exists"] = true;
+        foreach (var item in dbResult.ObservedValue)
+        {
+            observed[item.Key] = item.Value;
+        }
+
+        foreach (var item in dbResult.Threshold)
+        {
+            threshold[item.Key] = item.Value;
+        }
+
+        samples.AddRange(dbResult.SampleViolations);
+        return new SqlInvariantResult(fileResult.ViolationCount + dbResult.ViolationCount, observed, threshold, samples);
+    }
+
     private static SqlInvariantResult OfficialProjectorShadowReadCheck()
     {
         var officialProjectorFiles = new[]
@@ -172,32 +235,118 @@ public static class InvariantRunner
         return NodeGuardCheck("scripts/check-api-boundaries.mjs");
     }
 
-    private static SqlInvariantResult NodeGuardCheck(string scriptPath)
+    private static SqlInvariantResult ApiBoundaryCheckV2()
     {
-        using var process = System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo("node", ResolveRepoPath(scriptPath))
+        var reportPath = Path.Combine(RepoRoot(), ".tmp", "v5_4", "api-boundary-check-v2.json");
+        Directory.CreateDirectory(Path.GetDirectoryName(reportPath)!);
+        var nodeResult = RunNode("scripts/check-api-boundaries.mjs", $"--out={reportPath}");
+        if (!File.Exists(reportPath))
+        {
+            return new SqlInvariantResult(
+                1,
+                new Dictionary<string, object>
+                {
+                    ["exit_code"] = nodeResult.ExitCode,
+                    ["script"] = "scripts/check-api-boundaries.mjs",
+                    ["report_path"] = reportPath
+                },
+                new Dictionary<string, object> { ["expected_exit_code"] = 0, ["report_required"] = true },
+                new[] { (IReadOnlyDictionary<string, object>)new Dictionary<string, object> { ["output"] = nodeResult.Output } });
+        }
+
+        using var document = JsonDocument.Parse(File.ReadAllText(reportPath));
+        var root = document.RootElement;
+        var violationCount = root.GetProperty("violation_count").GetInt32();
+        if (nodeResult.ExitCode != 0 && violationCount == 0)
+        {
+            violationCount = 1;
+        }
+
+        var observed = new Dictionary<string, object>
+        {
+            ["version"] = root.GetProperty("version").GetInt32(),
+            ["status"] = root.GetProperty("status").GetString() ?? "unknown",
+            ["route_count"] = root.GetProperty("route_count").GetInt32(),
+            ["api_route_count"] = root.GetProperty("api_route_count").GetInt32(),
+            ["write_route_count"] = root.GetProperty("write_route_count").GetInt32(),
+            ["classified_write_route_count"] = root.GetProperty("classified_write_route_count").GetInt32(),
+            ["unclassified_write_route_count"] = root.GetProperty("unclassified_write_route_count").GetInt32(),
+            ["multi_classified_write_route_count"] = root.GetProperty("multi_classified_write_route_count").GetInt32(),
+            ["business_write_route_count"] = root.GetProperty("business_write_route_count").GetInt32(),
+            ["exit_code"] = nodeResult.ExitCode,
+            ["report_path"] = reportPath
+        };
+
+        var samples = root.GetProperty("violations")
+            .EnumerateArray()
+            .Select(item => (IReadOnlyDictionary<string, object>)new Dictionary<string, object>
+            {
+                ["message"] = item.GetProperty("message").GetString() ?? string.Empty
+            })
+            .ToArray();
+
+        return new SqlInvariantResult(
+            violationCount,
+            observed,
+            new Dictionary<string, object>
+            {
+                ["version"] = 2,
+                ["violation_count"] = 0,
+                ["unclassified_write_route_count"] = 0,
+                ["multi_classified_write_route_count"] = 0
+            },
+            samples);
+    }
+
+    private static SqlInvariantResult ProductionDemoFallbackCheck()
+    {
+        return NodeGuardCheck("scripts/check-no-production-fake-fallback.mjs");
+    }
+
+    private static SqlInvariantResult NodeGuardCheck(string scriptPath, params string[] scriptArgs)
+    {
+        var nodeResult = RunNode(scriptPath, scriptArgs);
+        var violationCount = nodeResult.ExitCode == 0 ? 0 : 1;
+        var samples = violationCount == 0
+            ? Array.Empty<IReadOnlyDictionary<string, object>>()
+            : new[] { (IReadOnlyDictionary<string, object>)new Dictionary<string, object> { ["output"] = nodeResult.Output } };
+
+        return new SqlInvariantResult(
+            violationCount,
+            new Dictionary<string, object> { ["exit_code"] = nodeResult.ExitCode, ["script"] = scriptPath },
+            new Dictionary<string, object> { ["expected_exit_code"] = 0 },
+            samples);
+    }
+
+    private static NodeResult RunNode(string scriptPath, params string[] scriptArgs)
+    {
+        var startInfo = new ProcessStartInfo("node")
         {
             WorkingDirectory = RepoRoot(),
             RedirectStandardOutput = true,
             RedirectStandardError = true
-        });
+        };
+        startInfo.ArgumentList.Add(ResolveRepoPath(scriptPath));
+        foreach (var arg in scriptArgs)
+        {
+            startInfo.ArgumentList.Add(arg);
+        }
+
+        using var process = Process.Start(startInfo);
         if (process is null)
         {
             throw new InvalidOperationException($"Could not start node guard: {scriptPath}");
         }
 
-        process.WaitForExit(30000);
+        if (!process.WaitForExit(30000))
+        {
+            process.Kill(entireProcessTree: true);
+            return new NodeResult(124, $"node guard timed out: {scriptPath}");
+        }
+
         var output = process.StandardOutput.ReadToEnd();
         var error = process.StandardError.ReadToEnd();
-        var violationCount = process.ExitCode == 0 ? 0 : 1;
-        var samples = violationCount == 0
-            ? Array.Empty<IReadOnlyDictionary<string, object>>()
-            : new[] { (IReadOnlyDictionary<string, object>)new Dictionary<string, object> { ["output"] = output + error } };
-
-        return new SqlInvariantResult(
-            violationCount,
-            new Dictionary<string, object> { ["exit_code"] = process.ExitCode, ["script"] = scriptPath },
-            new Dictionary<string, object> { ["expected_exit_code"] = 0 },
-            samples);
+        return new NodeResult(process.ExitCode, output + error);
     }
 
     private static SqlInvariantResult ConfiguredSkeletonCheck(string key, string configPath)
@@ -332,3 +481,5 @@ public sealed record InvariantCheckEvidence(
     string GeneratedBy,
     string? CiRunId,
     DateTimeOffset CheckedAtUtc);
+
+internal sealed record NodeResult(int ExitCode, string Output);

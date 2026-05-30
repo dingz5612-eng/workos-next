@@ -1,0 +1,48 @@
+{
+  "rollback_instruction_id": "rollback-mr-01-stop-bad-facts",
+  "release_id": "release-mr-01-stop-bad-facts",
+  "instruction_type": "rollback",
+  "rollback_kind": "shadow_cleanup",
+  "title": "Rollback MR-01 Stop Bad Facts Evidence",
+  "scope": {
+    "mr_id": "MR-01",
+    "release_name": "V5.4 Stop Bad Facts",
+    "components": [
+      "production fake fallback scan evidence",
+      "confirm commit/projection semantics evidence",
+      "field validation evidence",
+      "403/409/422 no-side-effects evidence",
+      "outbox minimum hardening evidence",
+      "machine-generated gate evidence"
+    ],
+    "technical_rollback_allowed_when": "MR-01 has produced only guard evidence and has not carried production release decisions.",
+    "evidence_retention_required_when": "GateResult, ReleaseManifest, RuntimeInvariantCheck, or test evidence rows have been referenced by later release decisions."
+  },
+  "allowed_before_status": [
+    "planned",
+    "built",
+    "shadow"
+  ],
+  "allowed_after_status": [
+    "paused",
+    "rollback"
+  ],
+  "steps": [
+    "Stop using MR-01 evidence for promotion decisions.",
+    "Keep runtime behavior unchanged; MR-01 rollback is evidence rollback only.",
+    "Regenerate fake fallback, confirm semantics, field validation, no-side-effects, outbox, and gate evidence from the current commit.",
+    "If MR-01 evidence was never referenced downstream, archive or supersede only the MR-01 ReleaseManifest and GateResult evidence.",
+    "If downstream release decisions referenced MR-01 evidence, preserve the original rows and issue a compensating ReleaseManifest that supersedes MR-01."
+  ],
+  "validation_steps": [
+    "Confirm no active release manifest depends on gate-mr-01-stop-bad-facts.",
+    "Confirm replacement evidence includes non-skeleton command/test outputs for every MR-01 Go criterion.",
+    "Run release-manifest-validate against the replacement manifest, generated GateResult, and this rollback instruction.",
+    "Confirm GateResult.generated_by is gate-runner and input_hash/result_hash are non-empty."
+  ],
+  "owner": "release",
+  "risk_level": "medium",
+  "requires_business_approval": false,
+  "requires_architecture_approval": true,
+  "requires_finance_approval": false
+}

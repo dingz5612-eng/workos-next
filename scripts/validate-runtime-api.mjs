@@ -87,6 +87,14 @@ async function validateDeclaredRuntimePaths(projection) {
     cardId: card.id,
     lensId: "period-performance",
     evidenceId: "evd-openapi-path",
+    token: "token-openapi-path",
+    deviceId: "device-openapi-path",
+    candidateId: "candidate-openapi-path",
+    bankTransactionId: "bank-tx-openapi-path",
+    correctionRequestId: "correction-openapi-path",
+    caseId: "W-STAY-RESOURCE",
+    workItemId: "W-STAY-RESOURCE:roomSetup",
+    exportType: "period-risk",
     releaseId: "v5.4-first-batch",
     gateResultId: "gate-v5-4-runner",
     id: "scr-v54-shadow-domain-events-vs-audit-events"
@@ -112,6 +120,9 @@ async function requestDeclaredPath(method, path) {
     if (path === "/api/control-plane/invariant-checks") {
       return fetch(`${baseUrl}${path}?releaseId=v5.4-first-batch`);
     }
+    if (path === "/api/reconciliation/match-candidates") {
+      return fetch(`${baseUrl}${path}?tenantId=tenant-1`);
+    }
     return fetch(`${baseUrl}${path}`);
   }
 
@@ -120,6 +131,29 @@ async function requestDeclaredPath(method, path) {
       method,
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username: "operator", password: "dev" })
+    });
+  }
+
+  if (method === "POST" && path === "/api/operations/cases") {
+    return fetch(`${baseUrl}${path}`, {
+      method,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ workspaceId: "W-STAY-RESOURCE" })
+    });
+  }
+
+  if (method === "POST" && path === "/api/operations/work-items") {
+    return fetch(`${baseUrl}${path}`, {
+      method,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        workItemId: "W-STAY-RESOURCE:roomSetup",
+        workspaceId: "W-STAY-RESOURCE",
+        cardId: "roomSetup",
+        workItemType: "roomSetup",
+        tenantId: "tenant-1",
+        ownerRole: "operator"
+      })
     });
   }
 
@@ -150,6 +184,142 @@ async function requestDeclaredPath(method, path) {
         submissionId: "sub-openapi-path",
         requirementId: "openapi-proof",
         evidenceId: "evd-openapi-path"
+      })
+    });
+  }
+
+  if (method === "POST" && path === "/api/device-sessions") {
+    return fetch(`${baseUrl}${path}`, {
+      method,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        tenantId: "tenant-1",
+        actorId: "validate-runtime-api",
+        deviceId: "device-openapi-path",
+        deviceTrustStatus: "trusted",
+        userAgentHash: "ua-openapi-path"
+      })
+    });
+  }
+
+  if (method === "POST" && path.startsWith("/api/reconciliation/bank-statement-imports")) {
+    return fetch(`${baseUrl}${path}`, {
+      method,
+      headers: { "Content-Type": "application/json", "X-WorkOS-Actor-Id": "validate-runtime-api" },
+      body: JSON.stringify({
+        tenantId: "tenant-1",
+        sourceType: "manual_csv",
+        importId: `openapi-import-${Date.now()}-${Math.random().toString(16).slice(2)}`,
+        csvContent: "occurredAt,amount,currency,direction,externalRef,description,counterparty\n2026-05-30,1,KGS,in,OPENAPI-1,OpenAPI path,Path Counterparty"
+      })
+    });
+  }
+
+  if (method === "POST" && path === "/api/reconciliation/match-candidates/generate") {
+    return fetch(`${baseUrl}${path}`, {
+      method,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ tenantId: "tenant-1", windowDays: 3 })
+    });
+  }
+
+  if (method === "POST" && path === "/api/reconciliation/mismatches/detect") {
+    return fetch(`${baseUrl}${path}`, {
+      method,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ tenantId: "tenant-1", windowDays: 3 })
+    });
+  }
+
+  if (method === "POST" &&
+      (path.startsWith("/api/reconciliation/") || path.startsWith("/api/correction-center/")) &&
+      path.endsWith("/reject")) {
+    return fetch(`${baseUrl}${path}`, {
+      method,
+      headers: { "Content-Type": "application/json", "X-WorkOS-Actor-Id": "validate-runtime-api" },
+      body: JSON.stringify({ tenantId: "tenant-1", approverId: "validate-runtime-api", reason: "path reachability" })
+    });
+  }
+
+  if (method === "POST" && path.endsWith("/mismatch")) {
+    return fetch(`${baseUrl}${path}`, {
+      method,
+      headers: { "Content-Type": "application/json", "X-WorkOS-Actor-Id": "validate-runtime-api" },
+      body: JSON.stringify({ tenantId: "tenant-1", mismatchType: "manual_review", reason: "path reachability" })
+    });
+  }
+
+  if (method === "POST" && path.endsWith("/ignore")) {
+    return fetch(`${baseUrl}${path}`, {
+      method,
+      headers: { "Content-Type": "application/json", "X-WorkOS-Actor-Id": "validate-runtime-api" },
+      body: JSON.stringify({ tenantId: "tenant-1", reason: "path reachability" })
+    });
+  }
+
+  if (method === "POST" && path === "/api/correction-center/ledger-correction-requests") {
+    return fetch(`${baseUrl}${path}`, {
+      method,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        tenantId: "tenant-1",
+        workItemId: "wi-openapi-path",
+        caseId: null,
+        targetLedgerType: "payment",
+        targetEntryId: "entry-openapi-path",
+        targetObjectType: "payment",
+        targetObjectId: "payment-openapi-path",
+        correctionType: "allocation_reversal",
+        reason: "path reachability",
+        requestedBy: "validate-runtime-api",
+        riskLevel: "low"
+      })
+    });
+  }
+
+  if (method === "POST" && path.endsWith("/approve")) {
+    return fetch(`${baseUrl}${path}`, {
+      method,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        tenantId: "tenant-1",
+        approverId: "validate-runtime-api",
+        note: "path reachability",
+        actorRole: "finance",
+        actorCapabilities: ["correction.approve"],
+        deviceId: "device-openapi-path",
+        deviceTrustStatus: "trusted",
+        surface: "pc"
+      })
+    });
+  }
+
+  if (method === "POST" && path.endsWith("/apply")) {
+    return fetch(`${baseUrl}${path}`, {
+      method,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        tenantId: "tenant-1",
+        actorId: "validate-runtime-api",
+        workItemId: "wi-openapi-path",
+        reason: "path reachability"
+      })
+    });
+  }
+
+  if (method === "POST" && path.startsWith("/api/pc-governance/exports/")) {
+    return fetch(`${baseUrl}${path}`, {
+      method,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        exportType: "period-risk",
+        actorId: "validate-runtime-api",
+        actorRole: "manager",
+        actorCapabilities: ["pc.governance.export"],
+        deviceId: "device-openapi-path",
+        deviceTrustStatus: "trusted",
+        surface: "pc",
+        reason: "path reachability"
       })
     });
   }

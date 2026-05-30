@@ -68,6 +68,41 @@ public sealed class V54GateRunnerDecisionTests
         }
     }
 
+    [TestMethod]
+    public async Task GateRunnerUsesGithubRunIdWhenCiRunIdIsNotExplicit()
+    {
+        var temp = Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), $"workos-gate-{Guid.NewGuid():N}"));
+        var previousRunId = Environment.GetEnvironmentVariable("GITHUB_RUN_ID");
+        try
+        {
+            Environment.SetEnvironmentVariable("GITHUB_RUN_ID", "gha-run-123");
+            var invariantPath = Path.Combine(temp.FullName, "invariants.json");
+            var shadowPath = Path.Combine(temp.FullName, "shadow.json");
+            var gatePath = Path.Combine(temp.FullName, "gate.json");
+            RunnerJson.Write(invariantPath, new[] { Invariant("inv-pass", "api.no_page_specific_business_write", "blocking", "P0", "passed") });
+            RunnerJson.Write(shadowPath, Report("green"));
+
+            await GateRunner.Run(RunnerOptions.Parse(new[]
+            {
+                "--dry-run=true",
+                "--require-business-signoff=false",
+                $"--invariant={invariantPath}",
+                $"--shadow={shadowPath}",
+                $"--out={gatePath}"
+            }));
+
+            var gate = RunnerJson.Read<GateResultEvidence>(gatePath);
+            Assert.AreEqual("gha-run-123", gate.CiRunId);
+            Assert.AreEqual("passed", gate.Status);
+        }
+        finally
+        {
+            Environment.SetEnvironmentVariable("GITHUB_RUN_ID", previousRunId);
+            temp.Delete(recursive: true);
+        }
+    }
+
+
     private static GateDecision Calculate(
         IReadOnlyList<InvariantCheckEvidence> invariants,
         IReadOnlyList<ShadowCompareEvidence> reports,

@@ -95,6 +95,8 @@ Assert-Exists "docs/acceptance/12-release-go-no-go.md"
 Assert-Exists "docs/v5.4/operations-api-allowlist.json"
 Assert-Exists "docs/v5.4/release-manifest.schema.json"
 Assert-Exists "docs/v5.4/release-manifest.fixture.json"
+Assert-Exists "docs/v5.4/releases/mr-00-control-plane-bootstrap.json"
+Assert-Exists "docs/v5.4/rollback/mr-00-rollback-instruction.json"
 Assert-Exists "docs/v5.4/ci-control-plane.md"
 Assert-Exists "docs/v5.4/control-plane-runners.md"
 Assert-Exists "docs/v5.4/release-control-center.md"
@@ -108,6 +110,7 @@ Assert-Exists "scripts/v5_4/shadow-namespace-isolation.mjs"
 Assert-Exists "scripts/v5_4/invariant-runner.mjs"
 Assert-Exists "scripts/v5_4/shadow-compare-runner.mjs"
 Assert-Exists "scripts/v5_4/gate-runner.mjs"
+Assert-Exists "scripts/v5_4/generate-release-manifest.mjs"
 Assert-Exists "scripts/v5_4/release-manifest-validate.mjs"
 Assert-Exists "tools/control-plane/WorkOS.ControlPlaneRunners/WorkOS.ControlPlaneRunners.csproj"
 Assert-Exists "scripts/clean-baseline.ps1"
@@ -411,6 +414,9 @@ foreach ($pattern in $requiredEndpointPatterns) {
 
 $allowedMapPostPaths = @(
   "/api/auth/login",
+  "/api/auth/sessions/{token}/revoke",
+  "/api/device-sessions",
+  "/api/device-sessions/{deviceId}/revoke",
   "/api/operations/cases",
   "/api/operations/work-items",
   "/api/operations/work-items/{workItemId}/prepare",
@@ -421,6 +427,19 @@ $allowedMapPostPaths = @(
   "/api/evidence/{evidenceId}/attachments",
   "/api/evidence/{evidenceId}/verify",
   "/api/evidence/{evidenceId}/reject",
+  "/api/reconciliation/bank-statement-imports/preview",
+  "/api/reconciliation/bank-statement-imports",
+  "/api/reconciliation/match-candidates/generate",
+  "/api/reconciliation/mismatches/detect",
+  "/api/reconciliation/match-candidates/{candidateId}/accept",
+  "/api/reconciliation/match-candidates/{candidateId}/reject",
+  "/api/reconciliation/bank-transactions/{bankTransactionId}/mismatch",
+  "/api/reconciliation/bank-transactions/{bankTransactionId}/ignore",
+  "/api/correction-center/ledger-correction-requests",
+  "/api/correction-center/ledger-correction-requests/{correctionRequestId}/approve",
+  "/api/correction-center/ledger-correction-requests/{correctionRequestId}/reject",
+  "/api/correction-center/ledger-correction-requests/{correctionRequestId}/apply",
+  "/api/pc-governance/exports/{exportType}",
   "/api/projections/process-outbox",
   "/api/behavior-events"
 )
@@ -448,6 +467,8 @@ $allowedMapGetPaths = @(
   "/api/control-plane/invariant-checks",
   "/api/control-plane/rollback-instructions/{id}",
   "/api/evidence",
+  "/api/evidence/{evidenceId}/signed-url",
+  "/api/reconciliation/match-candidates",
   "/api/workspaces/{workspaceId}/events",
   "/api/audit-events",
   "/api/outbox",
@@ -513,6 +534,7 @@ foreach ($requiredV54Guard in @(
   "invariant-runner",
   "shadow-compare-runner",
   "gate-runner",
+  "generate-release-manifest",
   "release-manifest-validate"
 )) {
   if ($v54Ci -notmatch [regex]::Escape($requiredV54Guard)) {

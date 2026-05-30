@@ -1,0 +1,25 @@
+{
+  "shadow_compare_report_id": "scr-v54-shadow-domain-events-vs-audit-events",
+  "release_id": "release-mr-02",
+  "tenant_id": "test-tenant",
+  "slice_id": "OperationsRuntime",
+  "compare_scope": {
+    "name": "shadow-domain-events-vs-audit-events",
+    "type": "count"
+  },
+  "source_active_ref": "public.audit_events",
+  "source_shadow_ref": "shadow_runtime.domain_events",
+  "compared_at_utc": "2026-05-30T08:22:50.3236619+00:00",
+  "grade": "green",
+  "total_compared": 0,
+  "matched_count": 0,
+  "mismatch_count": 0,
+  "missing_in_shadow_count": 0,
+  "extra_in_shadow_count": 0,
+  "mismatch_examples": [],
+  "summary": {
+    "status": "empty_green"
+  },
+  "generated_by": "shadow-compare-runner",
+  "ci_run_id": "local-mr-02"
+}

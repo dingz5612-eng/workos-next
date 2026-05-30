@@ -25,8 +25,11 @@ try
         case "backup-restore-smoke":
             await BackupRestoreSmokeJob.Run(options);
             return 0;
+        case "schema-verify":
+            await ControlPlaneSchemaVerifyJob.Run(options);
+            return 0;
         default:
-            Console.Error.WriteLine("Usage: WorkOS.ControlPlaneRunners <invariant|shadow-compare|gate|ledger-inspection|migration-verification|backup-restore-smoke> [--key=value]");
+            Console.Error.WriteLine("Usage: WorkOS.ControlPlaneRunners <invariant|shadow-compare|gate|ledger-inspection|migration-verification|backup-restore-smoke|schema-verify> [--key=value]");
             return 2;
     }
 }

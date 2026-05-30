@@ -187,6 +187,99 @@ export type PrepareCardRequest = {
   aggregateRef?: string | null;
 };
 
+export type CreateOperationCaseRequest = {
+  caseId?: string | null;
+  tenantId?: string | null;
+  workspaceId?: string | null;
+};
+
+export type CreateWorkItemRequest = {
+  workItemId?: string | null;
+  tenantId?: string | null;
+  workItemType?: string | null;
+  targetWorkspaceId?: string | null;
+  workspaceId?: string | null;
+  cardId?: string | null;
+  ownerRole?: string | null;
+  payload?: Record<string, string> | null;
+};
+
+export type PrepareWorkItemRequest = PrepareCardRequest & {
+  workspaceId?: string | null;
+  cardId?: string | null;
+};
+
+export type ConfirmWorkItemRequest = Partial<ConfirmCardRequest> & {
+  workspaceId?: string | null;
+  cardId?: string | null;
+};
+
+export type OperationCase = {
+  caseId: string;
+  status: string;
+  tenantId?: string | null;
+  workspaceId?: string | null;
+  workItemIds: string[];
+  projectionStatus: string;
+  source: "process-work-item-intents" | "workspace-projection";
+};
+
+export type WorkItem = {
+  workItemId: string;
+  workItemType: string;
+  status: string;
+  caseId?: string | null;
+  tenantId: string;
+  workspaceId: string;
+  ownerRole: string;
+  source: "process-work-item-intent" | "workspace-card";
+  sourceEventId?: string | null;
+  createdAtUtc: string;
+  payload: Record<string, string>;
+};
+
+export type OperationsAvailableAction = {
+  actionId: string;
+  kind: string;
+  label: LocalizedText;
+  confirmationPolicy: ConfirmationPolicy;
+};
+
+export type PrepareWorkItemResult = {
+  workItemId: string;
+  fieldContract: FieldSet;
+  evidenceRequirements: EvidenceRequirement[];
+  availableActions: OperationsAvailableAction[];
+  projectionStatus: "prepared";
+  caseId: string;
+  workspaceId: string;
+  cardId: string;
+};
+
+export type ConfirmWorkItemResult = {
+  statusCode: number;
+  error?: string | null;
+  reason?: string | null;
+  confirmed: boolean;
+  commitStatus: "committed" | "not_committed";
+  projectionStatus: "projected" | "pending" | "failed" | "not_projected";
+  caseId: string;
+  workItemId: string;
+  submissionId: string;
+  resultEventIds: string[];
+  userMessage: string;
+  clientInstruction: {
+    disableRetry: boolean;
+    refreshProjection: boolean;
+    observeOutbox: boolean;
+    [key: string]: unknown;
+  };
+  source: "operations_adapter";
+  idempotencyKey?: string | null;
+  payloadHash?: string | null;
+  commandSubmissionId?: string | null;
+};
+
 export type EvidenceDraftRequest = {
   workspaceId: string;
   cardId: string;
@@ -340,6 +433,12 @@ const apiPathDescriptors = [
   { key: "workspace", path: "/api/workspaces/{workspaceId}" },
   { key: "bootstrap", path: "/api/bootstrap" },
   { key: "workQueue", path: "/api/work-queue" },
+  { key: "operationsCases", path: "/api/operations/cases" },
+  { key: "operationsCase", path: "/api/operations/cases/{caseId}" },
+  { key: "operationsWorkItems", path: "/api/operations/work-items" },
+  { key: "operationsWorkItem", path: "/api/operations/work-items/{workItemId}" },
+  { key: "operationsPrepare", path: "/api/operations/work-items/{workItemId}/prepare" },
+  { key: "operationsConfirm", path: "/api/operations/work-items/{workItemId}/confirm" },
   { key: "search", path: "/api/search" },
   { key: "homeSurface", path: "/api/lenses/home-surface" },
   { key: "lensWorkQueue", path: "/api/lenses/work-queue" },
@@ -358,6 +457,19 @@ const apiPathDescriptors = [
   { key: "evidenceVerify", path: "/api/evidence/{evidenceId}/verify" },
   { key: "evidenceReject", path: "/api/evidence/{evidenceId}/reject" },
   { key: "evidenceSignedUrl", path: "/api/evidence/{evidenceId}/signed-url" },
+  { key: "bankStatementImportPreview", path: "/api/reconciliation/bank-statement-imports/preview" },
+  { key: "bankStatementImports", path: "/api/reconciliation/bank-statement-imports" },
+  { key: "reconciliationGenerateCandidates", path: "/api/reconciliation/match-candidates/generate" },
+  { key: "reconciliationDetectMismatches", path: "/api/reconciliation/mismatches/detect" },
+  { key: "reconciliationCandidates", path: "/api/reconciliation/match-candidates" },
+  { key: "reconciliationAcceptCandidate", path: "/api/reconciliation/match-candidates/{candidateId}/accept" },
+  { key: "reconciliationRejectCandidate", path: "/api/reconciliation/match-candidates/{candidateId}/reject" },
+  { key: "reconciliationMismatchTransaction", path: "/api/reconciliation/bank-transactions/{bankTransactionId}/mismatch" },
+  { key: "reconciliationIgnoreTransaction", path: "/api/reconciliation/bank-transactions/{bankTransactionId}/ignore" },
+  { key: "correctionRequests", path: "/api/correction-center/ledger-correction-requests" },
+  { key: "correctionApprove", path: "/api/correction-center/ledger-correction-requests/{correctionRequestId}/approve" },
+  { key: "correctionReject", path: "/api/correction-center/ledger-correction-requests/{correctionRequestId}/reject" },
+  { key: "correctionApply", path: "/api/correction-center/ledger-correction-requests/{correctionRequestId}/apply" },
   { key: "pcGovernanceExport", path: "/api/pc-governance/exports/{exportType}" },
   { key: "prepareCard", path: "/api/workspaces/{workspaceId}/cards/{cardId}/prepare" },
   { key: "confirmCard", path: "/api/workspaces/{workspaceId}/cards/{cardId}/confirm" },

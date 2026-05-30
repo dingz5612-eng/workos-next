@@ -12,25 +12,30 @@ Operations prepare and confirm must own the canonical command boundary. Any new
 business write must be expressed as an Operations work-item confirmation unless
 an explicit architecture rule allows a different non-business transport.
 
-## Operations API Allowlist
+## V2 Write Route Classification
 
-The route allowlist lives in:
+The route classification allowlist lives in:
 
 ```text
 docs/v5.4/operations-api-allowlist.json
 ```
 
-Allowed Operations API routes are:
+Every non-GET `/api/*` route is treated as a write route by default. A write
+route must appear in exactly one classified allowlist category. Unclassified
+write routes are P0 failures.
+
+Primary business writes may only use:
 
 ```text
-POST /api/operations/cases
-GET /api/operations/cases/{caseId}
-POST /api/operations/work-items
-GET /api/operations/work-items
-GET /api/operations/work-items/{workItemId}
-POST /api/operations/work-items/{workItemId}/prepare
 POST /api/operations/work-items/{workItemId}/confirm
 ```
+
+Other non-business writes must be classified as Operations coordination,
+compatibility, mobile experience, evidence file, auth/device, control plane,
+governance, behavior event, or runtime maintenance writes. Governance writes
+must declare whether they write business facts, whether they use Operations
+Confirm, whether they only write control/governance/provisional records, and
+whether they are append-only.
 
 ## Compatibility Layer
 

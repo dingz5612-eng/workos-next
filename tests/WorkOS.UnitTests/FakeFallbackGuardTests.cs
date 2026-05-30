@@ -23,6 +23,7 @@ public sealed class FakeFallbackGuardTests
 
         Assert.AreEqual(0, result.ExitCode, result.Output);
         StringAssert.Contains(result.Output, "PASS");
+        StringAssert.Contains(result.Output.Replace('\\', '/'), "apps/mobile/dist");
     }
 
     [TestMethod]
@@ -39,9 +40,9 @@ public sealed class FakeFallbackGuardTests
               "description": "Production runtime paths must not contain banned demo/fake business fallback literals.",
               "mode": "blocking",
               "severity": "P0",
-              "source_type": "skeleton",
+              "source_type": "file+dist-scan",
               "check_sql": null,
-              "check_ref": "scripts/check-no-production-fake-fallback.mjs"
+              "check_ref": "scripts/check-no-production-fake-fallback.mjs (backend + apps/mobile/src + apps/mobile/dist)"
             }
           ]
         }
@@ -68,6 +69,7 @@ public sealed class FakeFallbackGuardTests
         Assert.IsTrue(results[0].Status is "passed" or "failed");
         Assert.AreEqual("blocking", results[0].Mode);
         Assert.AreEqual("P0", results[0].Severity);
+        Assert.AreEqual("file+dist-scan", results[0].SourceType);
         Assert.AreEqual("invariant-runner", results[0].GeneratedBy);
     }
 

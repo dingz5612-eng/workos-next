@@ -33,6 +33,9 @@ jobs:
       WORKOS_TEST_CONNECTION: Host=localhost;Port=54329;Database=workosnext_test;Username=workosnext;Password=workosnext_dev
       TEST_DATABASE: "true"
       LEDGER_INSPECTION_JOB_MODE: ${{ github.event_name == 'schedule' && 'daily' || github.event_name == 'workflow_dispatch' && 'manual' || 'release_gate' }}
+      V54_RELEASE_ID: v5.4-control-plane-bootstrap
+      V54_RELEASE_NAME: V5.4 Control Plane Bootstrap
+      V54_MR_ID: MR-00
 
     steps:
       - uses: actions/checkout@v4
@@ -51,6 +54,9 @@ jobs:
       - name: Build backend
         run: dotnet build WorkOSNext.sln -c Release
 
+      - name: Prepare V5.4 output directory
+        run: mkdir -p .tmp/v5_4
+
       - name: architecture-guard
         shell: pwsh
         run: ./scripts/guard-architecture.ps1
@@ -63,7 +69,10 @@ jobs:
       - name: control-plane-migration
         run: |
           node scripts/v5_4/control-plane-migration.mjs
-          dotnet test tests/WorkOS.RuntimeIntegrationTests/WorkOS.RuntimeIntegrationTests.csproj -c Release --no-build
+          dotnet test tests/WorkOS.RuntimeIntegrationTests/WorkOS.RuntimeIntegrationTests.csproj -c Release -p:OutputPath=bin/Release/net10.0/v5_4/ -p:IntermediateOutputPath=obj/v5_4/Release/net10.0/
+
+      - name: control-plane-schema-verify
+        run: node scripts/v5_4/control-plane-schema-verify.mjs
 
       - name: migration-verification-legacy-freeze
         run: node scripts/v5_4/migration-verification.mjs --dry-run=false --releaseId=v5.4-migration-verification --mrId=ops-migration-verification --out=.tmp/v5_4/migration-verification-invariant-checks.json --report-out=.tmp/v5_4/migration-verification-report.json --backfill-out=.tmp/v5_4/legacy-backfill-report.json
@@ -72,7 +81,7 @@ jobs:
         run: node scripts/v5_4/shadow-namespace-isolation.mjs
 
       - name: invariant-runner
-        run: node scripts/v5_4/invariant-runner.mjs --mode=skeleton --out=.tmp/v5_4/invariant-check.not_run.json
+        run: node scripts/v5_4/invariant-runner.mjs --releaseId=${V54_RELEASE_ID} --mrId=${V54_MR_ID} --ciRunId=${GITHUB_RUN_ID} --out=.tmp/v5_4/invariant-check.json
 
       - name: ledger-inspection-job
         run: node scripts/v5_4/ledger-inspection.mjs --job-mode=${LEDGER_INSPECTION_JOB_MODE} --releaseId=v5.4-ledger-inspection --mrId=ops-ledger-inspection --out=.tmp/v5_4/ledger-inspection-invariant-checks.json --report-out=.tmp/v5_4/ledger-inspection-report.json --dashboard-out=.tmp/v5_4/ledger-inspection-dashboard-summary.json
@@ -81,10 +90,13 @@ jobs:
         run: node scripts/v5_4/backup-restore-smoke.mjs --dry-run=false --cleanup=true --releaseId=v5.4-backup-restore-smoke --mrId=ops-backup-restore --out=.tmp/v5_4/backup-restore-smoke-invariant-checks.json --report-out=.tmp/v5_4/backup-restore-smoke-report.json --restore-invariant-out=.tmp/v5_4/backup-restore-after-restore-invariants.json
 
       - name: shadow-compare-runner
-        run: node scripts/v5_4/shadow-compare-runner.mjs --mode=skeleton --out=.tmp/v5_4/shadow-compare-report.not_run.json
+        run: node scripts/v5_4/shadow-compare-runner.mjs --mode=semantic --releaseId=${V54_RELEASE_ID} --mrId=${V54_MR_ID} --ciRunId=${GITHUB_RUN_ID} --out=.tmp/v5_4/shadow-compare-report.json
 
       - name: gate-runner
-        run: node scripts/v5_4/gate-runner.mjs --mode=skeleton --id=gate-v5-4-skeleton-not-run --invariant=.tmp/v5_4/invariant-check.not_run.json --shadow=.tmp/v5_4/shadow-compare-report.not_run.json --out=.tmp/v5_4/gate-result.not_run.json
+        run: node scripts/v5_4/gate-runner.mjs --id=gate-v5-4-${GITHUB_RUN_ID} --releaseId=${V54_RELEASE_ID} --mrId=${V54_MR_ID} --ciRunId=${GITHUB_RUN_ID} --require-business-signoff=false --invariant=.tmp/v5_4/invariant-check.json --shadow=.tmp/v5_4/shadow-compare-report.json --out=.tmp/v5_4/gate-result.json
+
+      - name: generate-release-manifest
+        run: node scripts/v5_4/generate-release-manifest.mjs --releaseId=${V54_RELEASE_ID} --mrId=${V54_MR_ID} "--releaseName=${V54_RELEASE_NAME}" --status=built --gateResultFile=.tmp/v5_4/gate-result.json --rollbackInstructionFile=docs/v5.4/rollback/mr-00-rollback-instruction.json --commitSha=${GITHUB_SHA} --ciRunId=${GITHUB_RUN_ID} --out=docs/v5.4/releases/mr-00-control-plane-bootstrap.json
 
       - name: release-manifest-validate
-        run: node scripts/v5_4/release-manifest-validate.mjs --manifest=docs/v5.4/release-manifest.fixture.json --gate=.tmp/v5_4/gate-result.not_run.json
+        run: node scripts/v5_4/release-manifest-validate.mjs --manifest=docs/v5.4/releases/mr-00-control-plane-bootstrap.json --gate=.tmp/v5_4/gate-result.json --rollback=docs/v5.4/rollback/mr-00-rollback-instruction.json --require-ci-run-id=true
