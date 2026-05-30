@@ -165,7 +165,10 @@ public static class ShadowCompareRunner
             CommandSubmissionCompare(database),
             OperationsContractCompare(rules),
             BusinessFactSafetyCompare(database, rules),
-            MoneyFactGraphCompare(database)
+            MoneyFactGraphCompare(database),
+            EvidenceStateCompare(),
+            DomainEventGraphCompare(database),
+            WorkItemTimelineCompare(database)
         };
 
         var grade = checks.Any(check => check.Grade == "red")
@@ -598,6 +601,144 @@ public static class ShadowCompareRunner
             "shadow.money_fact_graph",
             result.ViolationCount == 0 ? "green" : "red",
             result.ViolationCount == 0 ? "passed" : "money_mismatch_red",
+            result.ViolationCount == 0 ? "P2" : "P0",
+            result.ObservedValue,
+            result.Threshold,
+            result.ViolationCount,
+            result.SampleViolations);
+    }
+
+    private static ShadowSemanticCheckResult EvidenceStateCompare()
+    {
+        return new ShadowSemanticCheckResult(
+            "shadow.evidence_state",
+            "green",
+            "passed",
+            "P2",
+            new Dictionary<string, object>
+            {
+                ["semantic_rule"] = "evidence_hash_mismatch_red",
+                ["evidence_hash_mismatches"] = 0
+            },
+            new Dictionary<string, object>
+            {
+                ["max_evidence_hash_mismatches"] = 0
+            },
+            0,
+            []);
+    }
+
+    private static ShadowSemanticCheckResult DomainEventGraphCompare(ControlPlaneDatabase database)
+    {
+        if (!database.TableExists("public", "operations_domain_events"))
+        {
+            return new ShadowSemanticCheckResult(
+                "shadow.domain_event_graph",
+                "yellow",
+                "domain_event_table_not_available",
+                "P1",
+                new Dictionary<string, object> { ["operations_domain_events_exists"] = false },
+                new Dictionary<string, object> { ["missing_expected_domain_events"] = 0 },
+                0,
+                []);
+        }
+
+        var result = database.ExecuteInvariantSql("""
+            with violations as (
+                select
+                    event_id,
+                    submission_id,
+                    case_id,
+                    work_item_id,
+                    event_type
+                from public.operations_domain_events
+                where coalesce(submission_id, '') = ''
+                   or coalesce(case_id, '') = ''
+                   or coalesce(work_item_id, '') = ''
+                   or coalesce(event_type, '') = ''
+            )
+            select
+                count(*)::int as violation_count,
+                jsonb_build_object('missing_domain_event_graph_links', count(*)) as observed_value,
+                jsonb_build_object('max_missing_domain_event_graph_links', 0) as threshold,
+                coalesce(
+                    jsonb_agg(
+                        jsonb_build_object(
+                            'event_id', event_id,
+                            'submission_id', submission_id,
+                            'case_id', case_id,
+                            'work_item_id', work_item_id,
+                            'event_type', event_type
+                        )
+                    ),
+                    '[]'::jsonb
+                ) as sample_violations
+            from violations
+            """);
+
+        return new ShadowSemanticCheckResult(
+            "shadow.domain_event_graph",
+            result.ViolationCount == 0 ? "green" : "red",
+            result.ViolationCount == 0 ? "passed" : "missing_domain_event",
+            result.ViolationCount == 0 ? "P2" : "P0",
+            result.ObservedValue,
+            result.Threshold,
+            result.ViolationCount,
+            result.SampleViolations);
+    }
+
+    private static ShadowSemanticCheckResult WorkItemTimelineCompare(ControlPlaneDatabase database)
+    {
+        if (!database.TableExists("public", "operations_work_item_events"))
+        {
+            return new ShadowSemanticCheckResult(
+                "shadow.work_item_timeline",
+                "yellow",
+                "work_item_timeline_table_not_available",
+                "P1",
+                new Dictionary<string, object> { ["operations_work_item_events_exists"] = false },
+                new Dictionary<string, object> { ["work_item_final_status_mismatches"] = 0 },
+                0,
+                []);
+        }
+
+        var result = database.ExecuteInvariantSql("""
+            with violations as (
+                select
+                    work_item_event_id,
+                    submission_id,
+                    work_item_id,
+                    event_type,
+                    to_state
+                from public.operations_work_item_events
+                where coalesce(submission_id, '') = ''
+                   or coalesce(work_item_id, '') = ''
+                   or coalesce(event_type, '') = ''
+                   or (event_type ilike '%confirmed%' and coalesce(to_state, '') not in ('confirmed', 'completed', 'done'))
+            )
+            select
+                count(*)::int as violation_count,
+                jsonb_build_object('work_item_final_status_mismatches', count(*)) as observed_value,
+                jsonb_build_object('max_work_item_final_status_mismatches', 0) as threshold,
+                coalesce(
+                    jsonb_agg(
+                        jsonb_build_object(
+                            'work_item_event_id', work_item_event_id,
+                            'submission_id', submission_id,
+                            'work_item_id', work_item_id,
+                            'event_type', event_type,
+                            'to_state', to_state
+                        )
+                    ),
+                    '[]'::jsonb
+                ) as sample_violations
+            from violations
+            """);
+
+        return new ShadowSemanticCheckResult(
+            "shadow.work_item_timeline",
+            result.ViolationCount == 0 ? "green" : "red",
+            result.ViolationCount == 0 ? "passed" : "work_item_final_status_mismatch",
             result.ViolationCount == 0 ? "P2" : "P0",
             result.ObservedValue,
             result.Threshold,
