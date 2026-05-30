@@ -1,0 +1,159 @@
+{
+  "version": "v5.4-runtime-certification-pack-1",
+  "scenarios": [
+    {
+      "scenario_id": "cert-001",
+      "name": "create case and work item",
+      "expected_outcome": "committed",
+      "card_id": "OperationsCaseCreate",
+      "cutover_state": "shadow",
+      "gate_impact": "schema_and_contract_pass_required"
+    },
+    {
+      "scenario_id": "cert-002",
+      "name": "prepare work item",
+      "expected_outcome": "projection_pending_committed",
+      "card_id": "OperationsPrepareWorkItem",
+      "cutover_state": "shadow",
+      "gate_impact": "prepare_replay_emits_trace"
+    },
+    {
+      "scenario_id": "cert-003",
+      "name": "confirm deposit cash",
+      "expected_outcome": "committed",
+      "card_id": "DepositReceipt",
+      "money_command": true,
+      "amount": 500,
+      "currency": "KGS",
+      "field_values": {
+        "paymentMethod": "cash"
+      },
+      "cutover_state": "dual_compare",
+      "gate_impact": "deposit_liability_transaction_required"
+    },
+    {
+      "scenario_id": "cert-004",
+      "name": "confirm deposit non-cash with evidence",
+      "expected_outcome": "committed",
+      "card_id": "DepositReceipt",
+      "money_command": true,
+      "amount": 600,
+      "currency": "KGS",
+      "required_evidence": [
+        "ev-bank-receipt-cert-004"
+      ],
+      "field_values": {
+        "paymentMethod": "bank_transfer",
+        "evidenceHash": "sha256:cert004"
+      },
+      "cutover_state": "dual_compare",
+      "gate_impact": "evidence_hash_must_match"
+    },
+    {
+      "scenario_id": "cert-005",
+      "name": "confirm ordinary payment",
+      "expected_outcome": "committed",
+      "card_id": "PaymentReceipt",
+      "money_command": true,
+      "amount": 700,
+      "currency": "KGS",
+      "cutover_state": "dual_compare",
+      "gate_impact": "ordinary_payment_allocation_transaction_required"
+    },
+    {
+      "scenario_id": "cert-006",
+      "name": "refund deposit",
+      "expected_outcome": "committed",
+      "card_id": "RefundDeposit",
+      "money_command": true,
+      "amount": 200,
+      "currency": "KGS",
+      "cutover_state": "dual_compare",
+      "gate_impact": "refund_reversal_transaction_required"
+    },
+    {
+      "scenario_id": "cert-007",
+      "name": "checkout settlement",
+      "expected_outcome": "committed",
+      "card_id": "CheckoutSettlement",
+      "money_command": true,
+      "amount": 350,
+      "currency": "KGS",
+      "cutover_state": "adapter_primary",
+      "gate_impact": "checkout_reads_projection_not_fabricated_ledger"
+    },
+    {
+      "scenario_id": "cert-008",
+      "name": "duplicate idempotency",
+      "expected_outcome": "idempotency_duplicate",
+      "card_id": "PaymentReceipt",
+      "money_command": true,
+      "amount": 110,
+      "currency": "KGS",
+      "cutover_state": "adapter_primary",
+      "gate_impact": "duplicate_idempotency_returns_stable_response"
+    },
+    {
+      "scenario_id": "cert-009",
+      "name": "idempotency conflict",
+      "expected_outcome": "idempotency_conflict_409",
+      "card_id": "PaymentReceipt",
+      "money_command": true,
+      "amount": 120,
+      "currency": "KGS",
+      "cutover_state": "adapter_primary",
+      "gate_impact": "idempotency_conflict_returns_409_without_side_effect"
+    },
+    {
+      "scenario_id": "cert-010",
+      "name": "untrusted device high-risk blocked",
+      "expected_outcome": "permission_denied_403",
+      "card_id": "DepositReceipt",
+      "money_command": true,
+      "amount": 130,
+      "currency": "KGS",
+      "field_values": {
+        "deviceTrust": "untrusted"
+      },
+      "cutover_state": "adapter_primary",
+      "gate_impact": "403"
+    },
+    {
+      "scenario_id": "cert-011",
+      "name": "projection pending still committed",
+      "expected_outcome": "projection_pending_committed",
+      "card_id": "OperationsConfirm",
+      "cutover_state": "operations_primary",
+      "gate_impact": "projection_pending_is_not_business_failure"
+    },
+    {
+      "scenario_id": "cert-012",
+      "name": "shadow money mismatch red",
+      "expected_outcome": "semantic_shadow_red_blocked",
+      "card_id": "PaymentReceipt",
+      "money_command": true,
+      "amount": 140,
+      "currency": "KGS",
+      "semantic_shadow_result": "red",
+      "cutover_state": "operations_primary",
+      "gate_impact": "red"
+    },
+    {
+      "scenario_id": "cert-013",
+      "name": "missing rollback instruction blocked",
+      "expected_outcome": "missing_rollback_blocked",
+      "card_id": "OperationsConfirm",
+      "cutover_state": "operations_primary",
+      "gate_impact": "blocked",
+      "rollback_or_compensation_path": "missing"
+    },
+    {
+      "scenario_id": "cert-014",
+      "name": "release manifest missing signoff blocked",
+      "expected_outcome": "missing_signoff_blocked",
+      "card_id": "OperationsConfirm",
+      "cutover_state": "locked",
+      "gate_impact": "not_run"
+    }
+  ]
+}
