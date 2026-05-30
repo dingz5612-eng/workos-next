@@ -719,3 +719,4 @@ if ($openApiRaw -match '"workspaceId".*BehaviorEventRequest' -or $openApiRaw -ma
 }
 
 Write-Host "Architecture guard: PASS"
+exit 0
