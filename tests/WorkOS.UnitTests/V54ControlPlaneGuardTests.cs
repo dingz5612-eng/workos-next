@@ -126,6 +126,7 @@ public sealed class V54ControlPlaneGuardTests
         CollectionAssert.Contains(checks, "shadow.command_submission_compare");
         CollectionAssert.Contains(checks, "operations.contract_response_schema");
         CollectionAssert.Contains(checks, "shadow.business_fact_safety");
+        CollectionAssert.Contains(checks, "shadow.money_fact_graph");
 
         var requiredFields = root.GetProperty("operations_contract_required_fields")
             .EnumerateArray()
@@ -138,6 +139,10 @@ public sealed class V54ControlPlaneGuardTests
         Assert.IsTrue(redRules.Contains("missing submissionId", StringComparison.Ordinal));
         Assert.IsTrue(redRules.Contains("missing commitStatus", StringComparison.Ordinal));
         Assert.IsTrue(redRules.Contains("money/evidence/ledger contamination", StringComparison.Ordinal));
+        Assert.IsTrue(redRules.Contains("money amount mismatch", StringComparison.Ordinal));
+        Assert.IsTrue(redRules.Contains("currency mismatch", StringComparison.Ordinal));
+        Assert.IsTrue(redRules.Contains("missing ledger transaction", StringComparison.Ordinal));
+        Assert.IsTrue(redRules.Contains("deposit treated as revenue", StringComparison.Ordinal));
     }
 
     [TestMethod]
@@ -152,9 +157,11 @@ public sealed class V54ControlPlaneGuardTests
         Assert.IsTrue(runner.Contains("CommandSubmissionCompare", StringComparison.Ordinal));
         Assert.IsTrue(runner.Contains("OperationsContractCompare", StringComparison.Ordinal));
         Assert.IsTrue(runner.Contains("BusinessFactSafetyCompare", StringComparison.Ordinal));
+        Assert.IsTrue(runner.Contains("MoneyFactGraphCompare", StringComparison.Ordinal));
         Assert.IsTrue(runner.Contains("same_command_payload_hash_must_match", StringComparison.Ordinal));
         Assert.IsTrue(runner.Contains("missing_required_field", StringComparison.Ordinal));
         Assert.IsTrue(runner.Contains("shadow_fact_contamination", StringComparison.Ordinal));
+        Assert.IsTrue(runner.Contains("money_mismatch_red", StringComparison.Ordinal));
         Assert.IsTrue(runner.Contains("shadow-compare-semantic-rules.json", StringComparison.Ordinal));
         Assert.IsTrue(database.Contains("ShadowLedgerOfficialContaminationCheck", StringComparison.Ordinal));
         Assert.IsTrue(database.Contains("ShadowDomainEventOfficialContaminationCheck", StringComparison.Ordinal));

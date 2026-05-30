@@ -94,6 +94,7 @@ public sealed class CanonicalOperationsApiService
 
     public static SliceCommandHandlerResult HandleConfirmCommand(CommandEnvelopeV1 envelope)
     {
+        var moneyFacts = BalancedMoneyKernel.FromEnvelope(envelope);
         var eventId = $"evt-{OperationsHash.Short(envelope.TenantId, envelope.WorkItemId, envelope.IdempotencyKey, "confirmed")}";
         var responseBody = new Dictionary<string, object>
         {
@@ -103,6 +104,11 @@ public sealed class CanonicalOperationsApiService
             ["workItemId"] = envelope.WorkItemId,
             ["caseId"] = envelope.CaseId
         };
+        foreach (var (key, value) in moneyFacts.ResponseFields)
+        {
+            responseBody[key] = value;
+        }
+
         var eventPayload = new Dictionary<string, object>
         {
             ["commandType"] = envelope.CommandType,
@@ -110,6 +116,10 @@ public sealed class CanonicalOperationsApiService
             ["payloadHash"] = envelope.PayloadHash,
             ["input"] = envelope.Payload
         };
+        if (moneyFacts.LedgerTransactions.Count > 0)
+        {
+            eventPayload["ledgerTransactionIds"] = moneyFacts.LedgerTransactions.Select(item => item.LedgerTransactionId).ToArray();
+        }
 
         return SliceCommandHandlerResult.Committed(
             responseBody,
@@ -141,7 +151,9 @@ public sealed class CanonicalOperationsApiService
                     },
                     eventId)
             },
-            projectionStatus: "pending");
+            projectionStatus: "pending",
+            ledgerTransactions: moneyFacts.LedgerTransactions,
+            ledgerEntries: moneyFacts.LedgerEntries);
     }
 
     private static IReadOnlyDictionary<string, object> PayloadFor(

@@ -164,7 +164,8 @@ public static class ShadowCompareRunner
             OfficialContaminationCompare(database, rules),
             CommandSubmissionCompare(database),
             OperationsContractCompare(rules),
-            BusinessFactSafetyCompare(database, rules)
+            BusinessFactSafetyCompare(database, rules),
+            MoneyFactGraphCompare(database)
         };
 
         var grade = checks.Any(check => check.Grade == "red")
@@ -509,6 +510,99 @@ public static class ShadowCompareRunner
             },
             violationCount,
             samples);
+    }
+
+    private static ShadowSemanticCheckResult MoneyFactGraphCompare(ControlPlaneDatabase database)
+    {
+        if (!database.TableExists("public", "ledger_transactions") ||
+            !database.TableExists("public", "ledger_entries"))
+        {
+            return new ShadowSemanticCheckResult(
+                "shadow.money_fact_graph",
+                "red",
+                "schema_missing",
+                "P0",
+                new Dictionary<string, object>
+                {
+                    ["ledger_transactions_exists"] = database.TableExists("public", "ledger_transactions"),
+                    ["ledger_entries_exists"] = database.TableExists("public", "ledger_entries")
+                },
+                new Dictionary<string, object>
+                {
+                    ["ledger_transactions_exists"] = true,
+                    ["ledger_entries_exists"] = true
+                },
+                1,
+                new[]
+                {
+                    (IReadOnlyDictionary<string, object>)new Dictionary<string, object>
+                    {
+                        ["missing_table"] = "public.ledger_transactions or public.ledger_entries"
+                    }
+                });
+        }
+
+        var result = database.ExecuteInvariantSql("""
+            with transaction_balance as (
+                select
+                    tx.ledger_transaction_id,
+                    tx.tenant_id,
+                    tx.currency,
+                    tx.balance_status,
+                    count(entry.entry_id) as entry_count,
+                    coalesce(sum(case when entry.debit_credit = 'debit' then entry.amount else 0 end), 0) as debit_amount,
+                    coalesce(sum(case when entry.debit_credit = 'credit' then entry.amount else 0 end), 0) as credit_amount,
+                    count(*) filter (where entry.currency is not null and entry.currency <> tx.currency) as currency_mismatch_count,
+                    count(*) filter (where entry.account_type = 'revenue' and entry.entry_role like '%deposit%') as deposit_revenue_count
+                from public.ledger_transactions tx
+                left join public.ledger_entries entry
+                  on entry.ledger_transaction_id = tx.ledger_transaction_id
+                group by tx.ledger_transaction_id, tx.tenant_id, tx.currency, tx.balance_status
+            ),
+            violations as (
+                select *
+                from transaction_balance
+                where balance_status <> 'balanced'
+                   or entry_count < 2
+                   or debit_amount <> credit_amount
+                   or currency_mismatch_count > 0
+                   or deposit_revenue_count > 0
+            )
+            select
+                count(*)::int as violation_count,
+                jsonb_build_object('money_fact_graph_violations', count(*)) as observed_value,
+                jsonb_build_object(
+                    'max_unbalanced_transactions', 0,
+                    'max_currency_mismatches', 0,
+                    'max_deposit_revenue_entries', 0
+                ) as threshold,
+                coalesce(
+                    jsonb_agg(
+                        jsonb_build_object(
+                            'ledger_transaction_id', ledger_transaction_id,
+                            'tenant_id', tenant_id,
+                            'currency', currency,
+                            'balance_status', balance_status,
+                            'entry_count', entry_count,
+                            'debit_amount', debit_amount,
+                            'credit_amount', credit_amount,
+                            'currency_mismatch_count', currency_mismatch_count,
+                            'deposit_revenue_count', deposit_revenue_count
+                        )
+                    ),
+                    '[]'::jsonb
+                ) as sample_violations
+            from violations
+            """);
+        return new ShadowSemanticCheckResult(
+            "shadow.money_fact_graph",
+            result.ViolationCount == 0 ? "green" : "red",
+            result.ViolationCount == 0 ? "passed" : "money_mismatch_red",
+            result.ViolationCount == 0 ? "P2" : "P0",
+            result.ObservedValue,
+            result.Threshold,
+            result.ViolationCount,
+            result.SampleViolations);
     }
 
     private static IReadOnlyList<IReadOnlyDictionary<string, object>> OfficialProjectorShadowReadSamples(ShadowSemanticRules rules)

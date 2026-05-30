@@ -19,7 +19,11 @@
       "missing commitStatus",
       "money/evidence/ledger contamination",
       "official projector consumes shadow_runtime",
-      "same idempotency key maps to different command payload hashes"
+      "same idempotency key maps to different command payload hashes",
+      "money amount mismatch",
+      "currency mismatch",
+      "missing ledger transaction",
+      "deposit treated as revenue"
     ]
   },
   "checks": [
@@ -46,6 +50,12 @@
       "description": "Shadow ledger entries and shadow domain events must not be present in official business fact tables.",
       "red_when": "shadow ledger entries appear in public ledger tables or shadow domain events appear in public domain_events",
       "yellow_when": "display-only or optional non-fact evidence differs"
+    },
+    {
+      "check_id": "shadow.money_fact_graph",
+      "description": "Official money facts must be represented by balanced ledger transactions and ledger entries.",
+      "red_when": "money amount mismatch, currency mismatch, missing ledger transaction, or deposit treated as revenue",
+      "yellow_when": "projection-only drift"
     }
   ],
   "operations_contract_required_fields": [
@@ -71,6 +81,8 @@
     "public.hostel_payments",
     "public.deposit_transactions",
     "public.payment_allocations",
+    "public.ledger_transactions",
+    "public.ledger_entries",
     "public.stay_balances",
     "public.ledger_reversal_entries",
     "public.ledger_correction_entries",
