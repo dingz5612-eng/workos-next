@@ -37,9 +37,13 @@ Assert-NoMatches @("docs") "local scaffold currently targets net9\.0" "Stale .NE
 Assert-NoMatches @("services") "\b(obsolete|legacy|temp|fallback|mock-only)\b" "Runtime services must not carry obsolete, legacy, temp, fallback, or mock-only code."
 Assert-NoMatches @("apps", "services", "tests") "mock-only" "Production runtime and mobile code must not reference mock-only files or flows."
 
-$solutionText = Get-Content "WorkOSNext.sln" -Raw
+$solutionText = (Get-Content "WorkOSNext.sln" -Raw) -replace "\\", "/"
+$repoRoot = (Get-Location).Path
 $unreferencedProjects = Get-ChildItem -Recurse -Filter "*.csproj" -Path "services", "tests" |
-  Where-Object { $solutionText -notmatch [regex]::Escape($_.FullName.Replace((Get-Location).Path + "\", "")) }
+  Where-Object {
+    $relativePath = [System.IO.Path]::GetRelativePath($repoRoot, $_.FullName) -replace "\\", "/"
+    $solutionText -notmatch [regex]::Escape($relativePath)
+  }
 if ($unreferencedProjects) {
   $unreferencedProjects | ForEach-Object { $_.FullName }
   Fail "Every active .csproj under services or tests must be referenced by WorkOSNext.sln."
