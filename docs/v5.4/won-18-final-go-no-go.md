@@ -1,7 +1,7 @@
 # WON-18 Final Go/No-Go Report
 
 Generated: 2026-05-30
-Evaluated fix commit: `5137e72`
+Evaluated fix commit: `552ae1277d6a7ee8afd78f8923ee49f948bf6a62`
 Status: `GO`
 Second batch Mobile/Resource/Stay: `ALLOWED`
 
@@ -22,8 +22,8 @@ The original blockers are resolved:
 
 | Workflow | Run id | Status | Failing step | URL |
 | --- | ---: | --- | --- | --- |
-| CI | `26683645253` | `success` | none | https://github.com/dingz5612-eng/workos-next/actions/runs/26683645253 |
-| V5.4 Control Plane Guards | `26683645250` | `success` | none | https://github.com/dingz5612-eng/workos-next/actions/runs/26683645250 |
+| CI | `26685133709` | `success` | none | https://github.com/dingz5612-eng/workos-next/actions/runs/26685133709 |
+| V5.4 Control Plane Guards | `26685133695` | `success` | none | https://github.com/dingz5612-eng/workos-next/actions/runs/26685133695 |
 
 ## Evidence Summary
 
@@ -43,8 +43,8 @@ The original blockers are resolved:
 
 | # | Condition | Result | Evidence |
 | ---: | --- | --- | --- |
-| 1 | CI green | `PASS` | GitHub Actions CI run `26683645253` concluded `success`. |
-| 2 | V5.4 Control Plane Guards green | `PASS` | GitHub Actions V5.4 run `26683645250` concluded `success`. |
+| 1 | CI green | `PASS` | GitHub Actions CI run `26685133709` concluded `success`. |
+| 2 | V5.4 Control Plane Guards green | `PASS` | GitHub Actions V5.4 run `26685133695` concluded `success`. |
 | 3 | Control Plane 7 objects exist in DB | `PASS` | Control Plane schema verify passed in V5.4 guard. |
 | 4 | `shadow_runtime` exists and official projector does not consume it | `PASS` | Schema verify and shadow namespace isolation passed in V5.4 guard. |
 | 5 | Operations API endpoints exist | `PASS` | Runtime API validation and unit tests passed. |
