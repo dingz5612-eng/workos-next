@@ -17,6 +17,7 @@ public static class ShadowCompareRunner
         var configPath = options.Get("config", Path.Combine("docs", "v5.4", "shadow-compare.config.json"));
         var semanticRulesPath = options.Get("semantic-rules", Path.Combine("docs", "v5.4", "shadow-compare-semantic-rules.json"));
         var mode = options.Get("mode");
+        var sourceMode = ResolveSourceMode(options, mode);
         var dryRun = options.GetBool("dry-run");
         var config = RunnerJson.Read<ShadowCompareConfig>(ResolveRepoPath(configPath));
         if (mode == "skeleton")
@@ -35,7 +36,8 @@ public static class ShadowCompareRunner
                 [],
                 new Dictionary<string, object> { ["status"] = "skeleton_green", ["config"] = config.Name },
                 config,
-                ciRunId);
+                ciRunId,
+                sourceMode: sourceMode);
             RunnerJson.Write(outputPath, skeleton);
             Console.WriteLine($"shadow-compare-runner: wrote {Path.GetRelativePath(Directory.GetCurrentDirectory(), outputPath)} grade={skeleton.Grade}");
             return Task.FromResult(skeleton);
@@ -50,8 +52,8 @@ public static class ShadowCompareRunner
         }
 
         var report = string.Equals(mode, SemanticMode, StringComparison.OrdinalIgnoreCase)
-            ? CompareSemantic(database, config, releaseId, tenantId, sliceId, ciRunId, semanticRulesPath)
-            : Compare(database, config, releaseId, tenantId, sliceId, ciRunId);
+            ? CompareSemantic(database, config, releaseId, tenantId, sliceId, ciRunId, semanticRulesPath, sourceMode)
+            : Compare(database, config, releaseId, tenantId, sliceId, ciRunId, sourceMode);
         if (!dryRun)
         {
             new ControlPlaneWriteStore(database.ConnectionString).WriteShadowCompareReport(new ShadowCompareReportWrite(
@@ -87,7 +89,8 @@ public static class ShadowCompareRunner
         string releaseId,
         string tenantId,
         string sliceId,
-        string ciRunId)
+        string ciRunId,
+        string sourceMode)
     {
         var comparedAt = DateTimeOffset.UtcNow;
         var shadow = TableRef.Parse(config.ShadowTable);
@@ -110,14 +113,15 @@ public static class ShadowCompareRunner
                 missing.Select(table => (IReadOnlyDictionary<string, object>)new Dictionary<string, object> { ["missing_table"] = table.ToString() }).ToArray(),
                 new Dictionary<string, object> { ["status"] = "schema_missing" },
                 config,
-                ciRunId);
+                ciRunId,
+                sourceMode: sourceMode);
         }
 
         var shadowCount = database.CountRows(shadow.Schema, shadow.Table);
         var activeCount = database.CountRows(active.Schema, active.Table);
         if (shadowCount == 0 && activeCount == 0)
         {
-            return Build(releaseId, tenantId, sliceId, comparedAt, "green", 0, 0, 0, 0, 0, [], new Dictionary<string, object> { ["status"] = "empty_green" }, config, ciRunId);
+            return Build(releaseId, tenantId, sliceId, comparedAt, "green", 0, 0, 0, 0, 0, [], new Dictionary<string, object> { ["status"] = "empty_green" }, config, ciRunId, sourceMode: sourceMode);
         }
 
         var mismatch = Math.Abs(shadowCount - activeCount);
@@ -136,7 +140,8 @@ public static class ShadowCompareRunner
             mismatch == 0 ? [] : new[] { (IReadOnlyDictionary<string, object>)new Dictionary<string, object> { ["active_count"] = activeCount, ["shadow_count"] = shadowCount } },
             new Dictionary<string, object> { ["status"] = mismatch == 0 ? "matched" : "count_mismatch" },
             config,
-            ciRunId);
+            ciRunId,
+            sourceMode: sourceMode);
     }
 
     private static ShadowCompareEvidence CompareSemantic(
@@ -146,12 +151,13 @@ public static class ShadowCompareRunner
         string tenantId,
         string sliceId,
         string ciRunId,
-        string semanticRulesPath)
+        string semanticRulesPath,
+        string sourceMode)
     {
         var comparedAt = DateTimeOffset.UtcNow;
         var resolvedRulesPath = ResolveRepoPath(semanticRulesPath);
         var rules = RunnerJson.Read<ShadowSemanticRules>(resolvedRulesPath);
-        var countCompare = Compare(database, config, releaseId, tenantId, sliceId, ciRunId);
+        var countCompare = Compare(database, config, releaseId, tenantId, sliceId, ciRunId, sourceMode);
         var checks = new List<ShadowSemanticCheckResult>
         {
             CountCompareResult(countCompare, config),
@@ -209,7 +215,8 @@ public static class ShadowCompareRunner
             summary,
             config,
             ciRunId,
-            CompareScope(config, SemanticMode, resolvedRulesPath, rules));
+            CompareScope(config, SemanticMode, resolvedRulesPath, rules),
+            sourceMode);
     }
 
     private static ShadowSemanticCheckResult CountCompareResult(ShadowCompareEvidence countCompare, ShadowCompareConfig config)
@@ -546,7 +553,8 @@ public static class ShadowCompareRunner
         IReadOnlyDictionary<string, object> summary,
         ShadowCompareConfig config,
         string ciRunId,
-        IReadOnlyDictionary<string, object>? compareScope = null)
+        IReadOnlyDictionary<string, object>? compareScope = null,
+        string sourceMode = "real")
     {
         return new ShadowCompareEvidence(
             ShadowCompareReportId: $"scr-v54-{Sanitize(config.Name)}",
@@ -567,7 +575,20 @@ public static class ShadowCompareRunner
             MismatchExamples: examples,
             Summary: summary,
             GeneratedBy: "shadow-compare-runner",
-            CiRunId: ciRunId);
+            CiRunId: ciRunId)
+        {
+            SourceMode = sourceMode
+        };
+    }
+
+    private static string ResolveSourceMode(RunnerOptions options, string? mode)
+    {
+        var value = options.Get("sourceMode") ?? options.Get("source-mode") ?? (mode == "skeleton" ? "skeleton" : "real");
+        return value switch
+        {
+            "real" or "fixture" or "skeleton" => value,
+            _ => throw new InvalidOperationException($"shadow-compare-runner: sourceMode must be real, fixture, or skeleton; got {value}")
+        };
     }
 
     private static string Sanitize(string value) =>
@@ -707,7 +728,10 @@ public sealed record ShadowCompareEvidence(
     IReadOnlyList<IReadOnlyDictionary<string, object>> MismatchExamples,
     IReadOnlyDictionary<string, object> Summary,
     string GeneratedBy,
-    string? CiRunId);
+    string? CiRunId)
+{
+    public string SourceMode { get; init; } = "real";
+}
 
 public static class ShadowSemanticChecks
 {

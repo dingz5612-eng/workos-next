@@ -45,7 +45,7 @@ Write-Host "shadow-compare-runner"
 node scripts/v5_4/shadow-compare-runner.mjs --mode=semantic --releaseId=$releaseId --mrId=$mrId --ciRunId=$ciRunId --out=.tmp/v5_4/shadow-compare-report.json
 
 Write-Host "gate-runner"
-node scripts/v5_4/gate-runner.mjs --id=gate-v5-4-$ciRunId --releaseId=$releaseId --mrId=$mrId --ciRunId=$ciRunId --require-business-signoff=false --invariant=.tmp/v5_4/invariant-check.json --shadow=.tmp/v5_4/shadow-compare-report.json --out=.tmp/v5_4/gate-result.json
+node scripts/v5_4/gate-runner.mjs --formal-release-gate=true --rollback=docs/v5.4/rollback/mr-00-rollback-instruction.json --id=gate-v5-4-$ciRunId --releaseId=$releaseId --mrId=$mrId --ciRunId=$ciRunId --require-business-signoff=false --invariant=.tmp/v5_4/invariant-check.json --shadow=.tmp/v5_4/shadow-compare-report.json --out=.tmp/v5_4/gate-result.json
 
 Write-Host "generate-release-manifest"
 node scripts/v5_4/generate-release-manifest.mjs --releaseId=$releaseId --mrId=$mrId "--releaseName=$releaseName" --status=built --gateResultFile=.tmp/v5_4/gate-result.json --rollbackInstructionFile=docs/v5.4/rollback/mr-00-rollback-instruction.json --commitSha=$commitSha --ciRunId=$ciRunId --out=docs/v5.4/releases/mr-00-control-plane-bootstrap.json
