@@ -180,7 +180,10 @@ public sealed class ApiBoundaryRulesTests
             "GET /api/operations/work-items",
             "GET /api/operations/work-items/{workItemId}",
             "POST /api/operations/work-items/{workItemId}/prepare",
-            "POST /api/operations/work-items/{workItemId}/confirm"
+            "POST /api/operations/work-items/{workItemId}/confirm",
+            "GET /api/operations/trace/submissions/{submissionId}",
+            "GET /api/operations/trace/work-items/{workItemId}",
+            "GET /api/operations/trace/cases/{caseId}"
         })
         {
             var path = route.Split(' ', 2)[1];
@@ -189,7 +192,7 @@ public sealed class ApiBoundaryRulesTests
             Assert.IsTrue(openApi.Contains($"\"{path}\"", StringComparison.Ordinal), $"OpenAPI must document {route}");
         }
 
-        foreach (var apiPathKey in new[] { "operationsCases", "operationsCase", "operationsWorkItems", "operationsWorkItem", "operationsPrepare", "operationsConfirm" })
+        foreach (var apiPathKey in new[] { "operationsCases", "operationsCase", "operationsWorkItems", "operationsWorkItem", "operationsPrepare", "operationsConfirm", "operationsTraceSubmission", "operationsTraceWorkItem", "operationsTraceCase" })
         {
             Assert.IsTrue(generatedPaths.Contains($"{apiPathKey}:", StringComparison.Ordinal), $"generated runtime API paths must include {apiPathKey}");
         }
