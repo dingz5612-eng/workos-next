@@ -1,0 +1,82 @@
+{
+  "version": "v5.4-cutover-state-machine-1",
+  "states": [
+    "off",
+    "shadow",
+    "dual_compare",
+    "adapter_primary",
+    "operations_primary",
+    "legacy_readonly",
+    "locked",
+    "rollback"
+  ],
+  "write_paths": {
+    "off": "legacy_workspace_card",
+    "shadow": "legacy_workspace_card_with_shadow_capture",
+    "dual_compare": "legacy_workspace_card_with_semantic_compare",
+    "adapter_primary": "legacy_adapter_to_operations_uow",
+    "operations_primary": "operations_runtime",
+    "legacy_readonly": "operations_runtime_with_legacy_readonly",
+    "locked": "operations_runtime_locked",
+    "rollback": "rollback_to_legacy_or_hold"
+  },
+  "transitions": [
+    {
+      "from": "off",
+      "to": "shadow",
+      "requires": ["schema_pass", "contract_pass"]
+    },
+    {
+      "from": "shadow",
+      "to": "dual_compare",
+      "requires": ["certification_pass"]
+    },
+    {
+      "from": "dual_compare",
+      "to": "adapter_primary",
+      "requires": ["semantic_shadow_green"]
+    },
+    {
+      "from": "adapter_primary",
+      "to": "operations_primary",
+      "requires": ["business_signoff", "rollback_instruction"]
+    },
+    {
+      "from": "operations_primary",
+      "to": "legacy_readonly",
+      "requires": ["observation_window_complete", "no_p0_invariant_failure"]
+    },
+    {
+      "from": "operations_primary",
+      "to": "locked",
+      "requires": ["observation_window_complete", "no_p0_invariant_failure", "business_signoff"]
+    },
+    {
+      "from": "legacy_readonly",
+      "to": "locked",
+      "requires": ["observation_window_complete", "no_p0_invariant_failure", "business_signoff"]
+    }
+  ],
+  "red_rules": [
+    "red_shadow_requires_hold_or_rollback",
+    "missing_rollback_instruction_blocks_operations_primary",
+    "missing_business_signoff_blocks_locked",
+    "p0_invariant_failure_blocks_locked",
+    "rollback_must_not_delete_formal_facts",
+    "stale_or_skeleton_gate_cannot_show_production_ready"
+  ],
+  "feature_flag_targeting": [
+    "tenant",
+    "slice",
+    "role",
+    "actor",
+    "device",
+    "amount"
+  ],
+  "production_activation": {
+    "all_tenant_switch_allowed": false,
+    "dormitory_production_ready": false,
+    "repair_production_ready": false,
+    "parts_production_ready": false
+  }
+}
