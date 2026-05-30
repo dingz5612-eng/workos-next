@@ -11,17 +11,21 @@ const startupTimeoutMs = Number.parseInt(process.env.WORKOS_API_VALIDATE_TIMEOUT
 let apiProcess;
 let apiProcessOutput = "";
 
-if (!externalApi) {
-  apiProcess = spawn("dotnet", [
+function apiRunArgs(outputName) {
+  return [
     "run",
     "--project",
     "services/core-api/WorkOS.Api/WorkOS.Api.csproj",
     "-c",
     "Release",
-    "-p:OutputPath=bin/Release/net10.0/validate-runtime-api/",
-    "-p:IntermediateOutputPath=obj/validate-runtime-api/Release/net10.0/",
+    `-p:OutputPath=bin/Release/net10.0/${outputName}/`,
+    `-p:IntermediateOutputPath=obj/${outputName}/Release/net10.0/`,
     "--no-launch-profile"
-  ], {
+  ];
+}
+
+function startDevelopmentApi() {
+  apiProcess = spawn("dotnet", apiRunArgs("validate-runtime-api"), {
     env: { ...process.env, ASPNETCORE_ENVIRONMENT: "Development", ASPNETCORE_URLS: baseUrl },
     stdio: ["ignore", "pipe", "pipe"]
   });
@@ -34,7 +38,10 @@ if (!externalApi) {
 }
 
 try {
-  if (!externalApi) await validateProductionRejectsDevAuthDefaults();
+  if (!externalApi) {
+    await validateProductionRejectsDevAuthDefaults();
+    startDevelopmentApi();
+  }
   await waitForApi();
   await validateHealth();
   const projection = await getJson("/api/workspaces");
@@ -444,16 +451,7 @@ async function validateConfirmPolicyResponse() {
 
 async function validateProductionRejectsDevAuthDefaults() {
   const productionUrl = "http://127.0.0.1:5199";
-  const child = spawn("dotnet", [
-    "run",
-    "--project",
-    "services/core-api/WorkOS.Api/WorkOS.Api.csproj",
-    "-c",
-    "Release",
-    "-p:OutputPath=bin/Release/net10.0/validate-runtime-api/",
-    "-p:IntermediateOutputPath=obj/validate-runtime-api/Release/net10.0/",
-    "--no-launch-profile"
-  ], {
+  const child = spawn("dotnet", apiRunArgs("validate-runtime-api-production"), {
     env: { ...process.env, ASPNETCORE_ENVIRONMENT: "Production", ASPNETCORE_URLS: productionUrl },
     stdio: ["ignore", "pipe", "pipe"]
   });
