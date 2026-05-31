@@ -122,6 +122,7 @@ Assert-Exists "docs/v5.4/invariant-definitions.json"
 Assert-Exists "docs/v5.4/shadow-compare.config.json"
 Assert-Exists "scripts/check-api-boundaries.mjs"
 Assert-Exists "scripts/check-fact-ownership.mjs"
+Assert-Exists "scripts/check-runtime-write-paths.mjs"
 Assert-Exists "scripts/check-gate-result-hardening.mjs"
 Assert-Exists "scripts/check-invariant-maturity.mjs"
 Assert-Exists "scripts/check-mr-contract.mjs"
@@ -544,6 +545,8 @@ Invoke-Checked "node" @("scripts/validate-runtime-api.mjs")
 Invoke-Checked "node" @("scripts/check-api-boundaries.mjs", "--self-test")
 Invoke-Checked "node" @("scripts/check-api-boundaries.mjs")
 Invoke-Checked "node" @("scripts/check-fact-ownership.mjs")
+Invoke-Checked "node" @("scripts/check-runtime-write-paths.mjs", "--self-test")
+Invoke-Checked "node" @("scripts/check-runtime-write-paths.mjs")
 Invoke-Checked "node" @("scripts/check-mr-contract.mjs")
 Invoke-Checked "node" @("scripts/check-invariant-maturity.mjs")
 Invoke-Checked "node" @("scripts/check-gate-result-hardening.mjs")
