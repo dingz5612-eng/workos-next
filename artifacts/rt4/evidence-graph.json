@@ -1,9 +1,9 @@
 {
   "version": "rt4.evidence-graph.v1",
   "mode": "STACKED_PRECONSTRUCTION",
-  "branch": "codex/rtx-problem-ledger-closure-matrix",
-  "headSha": "994ce81b5d04bde24d12ae1eb25e52af4bee500e",
-  "generatedAtUtc": "2026-05-31T07:28:03.853Z",
+  "branch": "codex/rt0-final-gate-evidence-closure",
+  "headSha": "c0982ef4a052818dd0da5dbaba437d429941464f",
+  "generatedAtUtc": "2026-05-31T08:01:49.788Z",
   "nodes": [
     {
       "id": "RT4-P0-001",
@@ -194,10 +194,30 @@
     {
       "id": "RT-X",
       "type": "branch",
-      "status": "RUNNING",
+      "status": "LOCAL_PASSED",
       "branch": "codex/rtx-problem-ledger-closure-matrix",
-      "headSha": "CURRENT_BRANCH",
-      "refs": []
+      "headSha": "52e67eb6d98c2e1545a4e98f02ba4fe4d6a4c53c",
+      "refs": [
+        "PR #26",
+        "local clean Docker CI-equivalent",
+        "artifacts/rt4/evidence-graph.json",
+        "artifacts/rt4/completion-dashboard.json"
+      ]
+    },
+    {
+      "id": "RT-0",
+      "type": "branch",
+      "status": "LOCAL_PASSED",
+      "branch": "codex/rt0-final-gate-evidence-closure",
+      "headSha": "c0982ef4a052818dd0da5dbaba437d429941464f",
+      "refs": [
+        "PR #27",
+        "clean Docker PostgreSQL workosnext-rt0-ci",
+        "dotnet test tests/WorkOS.ReleaseEvidenceTests/WorkOS.ReleaseEvidenceTests.csproj -c Release",
+        "node scripts/v5_4/verify-release-evidence-freshness.mjs --strict",
+        "node scripts/v5_4/replay-final-gate.mjs",
+        "pwsh -NoProfile -File scripts/v5_4/run-control-plane-checks.ps1"
+      ]
     }
   ],
   "edges": [

@@ -20,8 +20,12 @@ Parts Production: `BLOCKED`
 
 ## Current Gate
 
-RT-X: `LOCAL_PASSED_PENDING_COMMIT`
+RT-0: `LOCAL_PASSED`
 
-Next allowed stage after RT-X local pass: `RT-0 stacked preconstruction`.
+Current branch: `codex/rt0-final-gate-evidence-closure`
+
+Head sha: `c0982ef4a052818dd0da5dbaba437d429941464f`
+
+Next allowed stage after RT-0 local pass: `RT-1 stacked preconstruction`.
 
 Formal Central Merge Train: `LOCKED_UNTIL_RT_FINAL_LOCAL_PASSED`.

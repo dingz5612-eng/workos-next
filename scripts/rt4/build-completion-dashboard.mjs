@@ -4,12 +4,15 @@ import path from "node:path";
 const root = process.cwd();
 const matrixPath = path.join(root, "docs", "program", "rt4", "six-file-requirement-matrix.yml");
 const graphPath = path.join(root, "artifacts", "rt4", "evidence-graph.json");
+const branchMatrixPath = path.join(root, "docs", "program", "rt4", "stacked-branch-matrix.yml");
 const dashboardJsonPath = path.join(root, "artifacts", "rt4", "completion-dashboard.json");
 const dashboardMdPath = path.join(root, "docs", "program", "rt4", "completion-dashboard.md");
 
 const matrix = JSON.parse(fs.readFileSync(matrixPath, "utf8"));
 const graph = JSON.parse(fs.readFileSync(graphPath, "utf8"));
+const branchMatrix = JSON.parse(fs.readFileSync(branchMatrixPath, "utf8"));
 const reqs = matrix.requirements ?? [];
+const branches = branchMatrix.branches ?? [];
 
 function coverage(priority) {
   const items = reqs.filter((req) => req.priority === priority);
@@ -17,6 +20,14 @@ function coverage(priority) {
   const covered = items.filter((req) => req.status !== "not_started" || req.blockers?.length > 0).length;
   return Math.round((covered / items.length) * 100);
 }
+
+const currentBranch = [...branches].reverse().find((item) => item.localCiStatus === "LOCAL_PASSED") ?? branches.at(-1);
+const currentGate = currentBranch?.taskId ?? "UNKNOWN";
+const nextAllowed = currentGate === "RT-0"
+  ? "RT-1 stacked preconstruction"
+  : currentGate === "RT-X"
+    ? "RT-0 stacked preconstruction"
+    : "next stacked preconstruction";
 
 const dashboard = {
   version: "rt4.completion-dashboard.v1",
@@ -30,8 +41,11 @@ const dashboard = {
     p1: coverage("P1"),
     p2: "tracked"
   },
-  currentGate: "RT-X",
-  currentGateStatus: "LOCAL_PASSED_PENDING_COMMIT",
+  currentGate,
+  currentGateStatus: currentBranch?.localCiStatus ?? "UNKNOWN",
+  currentGateBranch: currentBranch?.branch ?? "",
+  currentGateHeadSha: currentBranch?.headSha ?? "",
+  nextAllowedStackedStage: nextAllowed,
   centralMergeTrain: "LOCKED_UNTIL_RT_FINAL_LOCAL_PASSED",
   evidenceGraphNodes: graph.nodes?.length ?? 0
 };
@@ -61,9 +75,13 @@ Parts Production: \`${dashboard.partsProduction}\`
 
 ## Current Gate
 
-RT-X: \`${dashboard.currentGateStatus}\`
+${dashboard.currentGate}: \`${dashboard.currentGateStatus}\`
 
-Next allowed stage after RT-X local pass: \`RT-0 stacked preconstruction\`.
+Current branch: \`${dashboard.currentGateBranch}\`
+
+Head sha: \`${dashboard.currentGateHeadSha}\`
+
+Next allowed stage after ${dashboard.currentGate} local pass: \`${dashboard.nextAllowedStackedStage}\`.
 
 Formal Central Merge Train: \`${dashboard.centralMergeTrain}\`.
 `;
