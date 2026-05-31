@@ -23,8 +23,32 @@ checks:
     severity: P2
     compares: [.github/pull_request_template.md, docs/rules/v5.5/rule-authority.yml]
 severityPolicy:
-  P0: Blocks release and business batch entry.
-  P1: Blocks final V5.5 Go unless waived with owner, reason, and expiresAt.
-  P2: Must be tracked before merge.
+  dev:
+    P0: Blocks development and release checks.
+    P1: Warning for active development.
+    P2: Tracked before merge.
+  final:
+    P0: Blocks final V5.5 Go and cannot be waived.
+    P1: Blocks final V5.5 Go unless waived with owner, reason, expiresAt, approval, and linked issue or PR.
+    P2: Tracked in the final report.
+waivers:
+  file: docs/rules/v5.5/rule-drift-waivers.json
+  requiredFields:
+    - id
+    - driftId
+    - severity
+    - owner
+    - reason
+    - expiresAt
+    - approvedBy
+    - createdAt
+    - linkedIssue or linkedPR
+  rules:
+    - expired waiver is P0
+    - missing owner is fail
+    - missing reason is fail
+    - missing expiresAt is fail
+    - P0 waiver is not allowed
+    - final mode outputs waiver usage list
 output:
   defaultArtifact: .tmp/v5_5/rule-drift-report.json
