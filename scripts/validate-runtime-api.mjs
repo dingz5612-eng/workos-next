@@ -120,6 +120,7 @@ async function validateDeclaredRuntimePaths(projection) {
     correctionRequestId: "correction-openapi-path",
     caseId: "W-STAY-RESOURCE",
     workItemId: "W-STAY-RESOURCE:roomSetup",
+    submissionId: "cmd-openapi-path",
     exportType: "period-risk",
     releaseId: "v5.4-first-batch",
     gateResultId: "gate-v5-4-runner",
@@ -134,7 +135,8 @@ async function validateDeclaredRuntimePaths(projection) {
       const optionalControlPlaneDetail = resolvedPath.startsWith("/api/control-plane/") &&
         resolvedPath !== "/api/control-plane/releases" &&
         resolvedPath !== "/api/control-plane/invariant-checks";
-      if (optionalControlPlaneDetail && response.status === 404) continue;
+      const optionalOperationsTraceDetail = resolvedPath.startsWith("/api/operations/trace/submissions/");
+      if ((optionalControlPlaneDetail || optionalOperationsTraceDetail) && response.status === 404) continue;
       assert(response.status !== 404 && response.status !== 405, `${method.toUpperCase()} ${path} must be reachable, got ${response.status}`);
       assert(response.status < 500, `${method.toUpperCase()} ${path} must not fail with ${response.status}`);
     }

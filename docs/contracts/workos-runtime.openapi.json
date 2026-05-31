@@ -268,6 +268,64 @@
         }
       }
     },
+    "/api/operations/trace/submissions/{submissionId}": {
+      "get": {
+        "parameters": [
+          { "name": "submissionId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Fact trace for a command submission",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/FactTrace" }
+              }
+            }
+          },
+          "404": { "description": "Submission trace not found" }
+        }
+      }
+    },
+    "/api/operations/trace/work-items/{workItemId}": {
+      "get": {
+        "parameters": [
+          { "name": "workItemId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Fact traces for a work item",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/FactTrace" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/operations/trace/cases/{caseId}": {
+      "get": {
+        "parameters": [
+          { "name": "caseId", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Fact traces for an operation case",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/FactTrace" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/search": {
       "get": {
         "parameters": [
@@ -1068,10 +1126,37 @@
             },
             "additionalProperties": true
           },
-          "source": { "type": "string", "enum": ["operations_adapter"] },
+          "source": { "type": "string", "enum": ["operations_adapter", "operations_unit_of_work"] },
           "idempotencyKey": { "type": ["string", "null"] },
           "payloadHash": { "type": ["string", "null"] },
           "commandSubmissionId": { "type": ["string", "null"] }
+        }
+      },
+      "FactTrace": {
+        "type": "object",
+        "required": ["tenantId", "traceId", "caseRef", "workItemRef", "submissionRef", "domainEventRefs", "ledgerTransactionRefs", "ledgerEntryRefs", "projectionCommitRefs"],
+        "properties": {
+          "tenantId": { "type": "string" },
+          "traceId": { "type": "string" },
+          "caseRef": { "type": "string" },
+          "workItemRef": { "type": "string" },
+          "submissionRef": { "type": "string" },
+          "domainEventRefs": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "ledgerTransactionRefs": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "ledgerEntryRefs": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "projectionCommitRefs": {
+            "type": "array",
+            "items": { "type": "string" }
+          }
         }
       },
       "EvidenceDraftRequest": {

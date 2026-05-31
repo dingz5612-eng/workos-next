@@ -39,11 +39,22 @@ if (!builder.Environment.IsDevelopment())
 var migrationsPath = builder.Configuration["Migrations:Path"];
 var runtime = ProjectionRuntime.OpenPostgres(connectionString, authOptions, migrationsPath);
 var controlPlaneReadStore = new ControlPlaneReadStore(connectionString);
+var operationsFactStore = new PostgresOperationsStore(connectionString);
 builder.Services.AddSingleton(runtime);
 builder.Services.AddSingleton(controlPlaneReadStore);
 builder.Services.AddSingleton(new OperationsRuntimeService(
     runtime,
     new PostgresOperationsCommandSubmissionStore(connectionString)));
+builder.Services.AddSingleton<OperationsWriteStore>(operationsFactStore);
+builder.Services.AddSingleton<OperationsReadStore>(operationsFactStore);
+builder.Services.AddSingleton<CommandEnvelopeBuilder>();
+builder.Services.AddSingleton<CommandSubmissionService>();
+builder.Services.AddSingleton<IdempotencyService>();
+builder.Services.AddSingleton<PayloadHashService>();
+builder.Services.AddSingleton(_ => new SliceCommandHandlerRouter()
+    .Register(CanonicalOperationsApiService.ConfirmCommandType, CanonicalOperationsApiService.HandleConfirmCommand));
+builder.Services.AddSingleton<OperationsUnitOfWork>();
+builder.Services.AddSingleton<CanonicalOperationsApiService>();
 builder.Services.AddHostedService<ProjectionOutboxWorker>();
 
 var app = builder.Build();
@@ -452,6 +463,9 @@ internal static class DemoBootstrap
             "GET /api/operations/work-items/{workItemId}",
             "POST /api/operations/work-items/{workItemId}/prepare",
             "POST /api/operations/work-items/{workItemId}/confirm",
+            "GET /api/operations/trace/submissions/{submissionId}",
+            "GET /api/operations/trace/work-items/{workItemId}",
+            "GET /api/operations/trace/cases/{caseId}",
             "GET /api/workspaces/{workspaceId}/events",
             "GET /api/audit-events",
             "GET /api/outbox",
