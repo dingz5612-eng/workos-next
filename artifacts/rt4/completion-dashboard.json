@@ -1,0 +1,17 @@
+{
+  "version": "rt4.completion-dashboard.v1",
+  "mode": "STACKED_PRECONSTRUCTION",
+  "generatedAtUtc": "2026-06-01T07:02:04.587Z",
+  "businessProduction": "BLOCKED",
+  "dormitoryL2Production": "BLOCKED",
+  "repairPartsHrStatus": "L0_OR_BLOCKED",
+  "coverage": {
+    "p0": 100,
+    "p1": 100,
+    "p2": "tracked"
+  },
+  "currentGate": "RT-X",
+  "currentGateStatus": "LOCAL_PASSED_PENDING_COMMIT",
+  "centralMergeTrain": "LOCKED_UNTIL_RT_FINAL_LOCAL_PASSED",
+  "evidenceGraphNodes": 17
+}
