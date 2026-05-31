@@ -23,7 +23,10 @@
       "money amount mismatch",
       "currency mismatch",
       "missing ledger transaction",
-      "deposit treated as revenue"
+      "deposit treated as revenue",
+      "evidence hash mismatch",
+      "missing domain event",
+      "work item final status mismatch"
     ]
   },
   "checks": [
@@ -56,6 +59,24 @@
       "description": "Official money facts must be represented by balanced ledger transactions and ledger entries.",
       "red_when": "money amount mismatch, currency mismatch, missing ledger transaction, or deposit treated as revenue",
       "yellow_when": "projection-only drift"
+    },
+    {
+      "check_id": "shadow.evidence_state",
+      "description": "Evidence state must compare hashes and trust metadata instead of display-only labels.",
+      "red_when": "evidence hash mismatch",
+      "yellow_when": "stale evidence projection or non-critical formatting drift"
+    },
+    {
+      "check_id": "shadow.domain_event_graph",
+      "description": "Domain events must be present and linked to submission, case, and work item references.",
+      "red_when": "missing domain event or missing command submission link",
+      "yellow_when": "projection-only event ordering drift"
+    },
+    {
+      "check_id": "shadow.work_item_timeline",
+      "description": "Work item timeline final status must match the semantic event graph.",
+      "red_when": "work item final status mismatch",
+      "yellow_when": "non-critical formatting drift"
     }
   ],
   "operations_contract_required_fields": [

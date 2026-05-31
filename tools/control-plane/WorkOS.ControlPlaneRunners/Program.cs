@@ -13,6 +13,9 @@ try
         case "shadow-compare":
             await ShadowCompareRunner.Run(options);
             return 0;
+        case "certify-runtime":
+            await RuntimeCertificationRunner.Run(options);
+            return 0;
         case "gate":
             await GateRunner.Run(options);
             return 0;
@@ -29,7 +32,7 @@ try
             await ControlPlaneSchemaVerifyJob.Run(options);
             return 0;
         default:
-            Console.Error.WriteLine("Usage: WorkOS.ControlPlaneRunners <invariant|shadow-compare|gate|ledger-inspection|migration-verification|backup-restore-smoke|schema-verify> [--key=value]");
+            Console.Error.WriteLine("Usage: WorkOS.ControlPlaneRunners <invariant|shadow-compare|certify-runtime|gate|ledger-inspection|migration-verification|backup-restore-smoke|schema-verify> [--key=value]");
             return 2;
     }
 }
