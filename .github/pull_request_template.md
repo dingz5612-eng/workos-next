@@ -2,6 +2,8 @@
 
 -
 
+<!-- Machine gate: this template is validated by scripts/check-pr-contract.mjs. Empty placeholders, unchecked required statements, or N/A without a reason will fail PR CI. -->
+
 ## Rule Authority
 
 - [ ] I read `docs/engineering/00-rule-authority.md`.
