@@ -16,6 +16,9 @@ try
         case "certify-runtime":
             await RuntimeCertificationRunner.Run(options);
             return 0;
+        case "certify-dormitory":
+            await DormitoryCertificationRunner.Run(options);
+            return 0;
         case "cutover-state":
             await CutoverStateRunner.Run(options);
             return 0;
@@ -35,7 +38,7 @@ try
             await ControlPlaneSchemaVerifyJob.Run(options);
             return 0;
         default:
-            Console.Error.WriteLine("Usage: WorkOS.ControlPlaneRunners <invariant|shadow-compare|certify-runtime|cutover-state|gate|ledger-inspection|migration-verification|backup-restore-smoke|schema-verify> [--key=value]");
+            Console.Error.WriteLine("Usage: WorkOS.ControlPlaneRunners <invariant|shadow-compare|certify-runtime|certify-dormitory|cutover-state|gate|ledger-inspection|migration-verification|backup-restore-smoke|schema-verify> [--key=value]");
             return 2;
     }
 }

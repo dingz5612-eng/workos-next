@@ -1,0 +1,114 @@
+{
+  "version": "v5.4-dormitory-golden-pilot",
+  "scenarios": [
+    {
+      "scenario_id": "dorm-cert-001",
+      "name": "lead -> reservation -> stay -> bed assignment",
+      "expected_outcome": "committed_projected",
+      "card_id": "BedAssignmentConfirm",
+      "required_evidence": ["identity-document", "reservation-acknowledgement", "bed-availability-proof"],
+      "cutover_state": "dual_compare",
+      "rollback_or_compensation_path": "hold-bed-assignment-and-release-capacity"
+    },
+    {
+      "scenario_id": "dorm-cert-002",
+      "name": "deposit assess -> receive -> confirm -> liability update",
+      "expected_outcome": "committed_projected",
+      "card_id": "DepositReceipt",
+      "money_command": true,
+      "amount": 1000,
+      "currency": "KGS",
+      "required_evidence": ["deposit-policy", "receipt-proof"],
+      "cutover_state": "adapter_primary",
+      "rollback_or_compensation_path": "deposit-liability-reversal-dry-run"
+    },
+    {
+      "scenario_id": "dorm-cert-003",
+      "name": "ordinary payment -> finance confirm -> allocation -> balance update",
+      "expected_outcome": "committed_projected",
+      "card_id": "PaymentReceipt",
+      "money_command": true,
+      "amount": 650,
+      "currency": "KGS",
+      "required_evidence": ["payment-receipt", "cashier-review"],
+      "cutover_state": "adapter_primary",
+      "rollback_or_compensation_path": "payment-allocation-reversal-dry-run"
+    },
+    {
+      "scenario_id": "dorm-cert-004",
+      "name": "service task blocks bed -> complete -> verify -> release",
+      "expected_outcome": "committed_projected",
+      "card_id": "ServiceTaskComplete",
+      "required_evidence": ["completion-photo", "verification-check"],
+      "cutover_state": "dual_compare",
+      "rollback_or_compensation_path": "hold-bed-release-and-reopen-task"
+    },
+    {
+      "scenario_id": "dorm-cert-005",
+      "name": "checkout -> inspection -> deposit deduction/refund -> cleaning -> available",
+      "expected_outcome": "committed_projected",
+      "card_id": "RefundDeposit",
+      "money_command": true,
+      "amount": 400,
+      "currency": "KGS",
+      "required_evidence": ["room-inspection", "settlement-review", "refund-approval"],
+      "cutover_state": "adapter_primary",
+      "rollback_or_compensation_path": "refund-reversal-dry-run"
+    },
+    {
+      "scenario_id": "dorm-cert-006",
+      "name": "bank import -> match -> mismatch -> correction",
+      "expected_outcome": "committed_projected",
+      "card_id": "LedgerCorrectionApply",
+      "money_command": true,
+      "amount": 25,
+      "currency": "KGS",
+      "required_evidence": ["bank-import-row", "correction-approval"],
+      "semantic_shadow_result": "green",
+      "cutover_state": "dual_compare",
+      "rollback_or_compensation_path": "append-only-correction-compensation"
+    },
+    {
+      "scenario_id": "dorm-cert-007",
+      "name": "period review -> action plan -> period close",
+      "expected_outcome": "projection_pending_committed",
+      "card_id": "PeriodReview",
+      "required_evidence": ["period-review-pack"],
+      "cutover_state": "operations_primary",
+      "rollback_or_compensation_path": "period-review-hold-and-reopen"
+    },
+    {
+      "scenario_id": "dorm-cert-008",
+      "name": "permission denied -> escalation -> audit",
+      "expected_outcome": "permission_denied_403",
+      "card_id": "ExceptionResolve",
+      "required_evidence": ["exception-audit"],
+      "cutover_state": "dual_compare",
+      "rollback_or_compensation_path": "permission-denied-audit-only"
+    },
+    {
+      "scenario_id": "dorm-cert-009",
+      "name": "duplicate submit -> idempotent response -> no duplicate side effect",
+      "expected_outcome": "idempotency_duplicate",
+      "card_id": "PaymentReceipt",
+      "money_command": true,
+      "amount": 300,
+      "currency": "KGS",
+      "required_evidence": ["payment-receipt"],
+      "cutover_state": "adapter_primary",
+      "rollback_or_compensation_path": "no-op-duplicate"
+    },
+    {
+      "scenario_id": "dorm-cert-010",
+      "name": "missing evidence -> block confirm -> add evidence -> confirm",
+      "expected_outcome": "business_blocked_422",
+      "card_id": "DepositReceipt",
+      "money_command": true,
+      "amount": 1000,
+      "currency": "KGS",
+      "required_evidence": ["receipt-proof", "deposit-policy"],
+      "cutover_state": "dual_compare",
+      "rollback_or_compensation_path": "evidence-required-before-confirm"
+    }
+  ]
+}
