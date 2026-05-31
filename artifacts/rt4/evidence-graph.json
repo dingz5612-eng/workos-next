@@ -1,0 +1,251 @@
+{
+  "version": "rt4.evidence-graph.v1",
+  "mode": "STACKED_PRECONSTRUCTION",
+  "branch": "codex/rtx-problem-ledger-closure-matrix",
+  "headSha": "994ce81b5d04bde24d12ae1eb25e52af4bee500e",
+  "generatedAtUtc": "2026-05-31T07:28:03.853Z",
+  "nodes": [
+    {
+      "id": "RT4-P0-001",
+      "type": "requirement",
+      "priority": "P0",
+      "status": "local_passed",
+      "gate": "RT-1",
+      "refs": [
+        "services/core-api/WorkOS.Api/Runtime/OperationsUnitOfWork.cs",
+        "services/core-api/WorkOS.Api/Runtime/OperationsWorkItemStore.cs",
+        "tests/WorkOS.RuntimeIntegrationTests/OperationCaseWorkItemPersistenceTests.cs",
+        "tests/WorkOS.UnitTests/WorkItemLifecycleTests.cs",
+        "PR #24",
+        "scripts/rt4/verify-evidence-graph.mjs"
+      ]
+    },
+    {
+      "id": "RT4-P0-002",
+      "type": "requirement",
+      "priority": "P0",
+      "status": "local_passed",
+      "gate": "RT-0",
+      "refs": [
+        "scripts/check-governance-closure.mjs",
+        "scripts/rt4/build-evidence-graph.mjs",
+        "scripts/rt4/verify-evidence-graph.mjs",
+        "scripts/rt4/check-completion-dashboard.mjs",
+        "artifacts/rt4/evidence-graph.json",
+        "artifacts/rt4/completion-dashboard.json"
+      ]
+    },
+    {
+      "id": "RT4-P0-003",
+      "type": "requirement",
+      "priority": "P0",
+      "status": "local_passed",
+      "gate": "RT-5",
+      "refs": [
+        "docs/program/rt4/completion-dashboard.md",
+        "scripts/rt4/check-six-file-coverage.mjs",
+        "docs/program/rt4/six-file-requirement-matrix.yml"
+      ]
+    },
+    {
+      "id": "RT4-P0-004",
+      "type": "requirement",
+      "priority": "P0",
+      "status": "local_passed",
+      "gate": "RT-6",
+      "refs": [
+        "docs/program/rt4/completion-dashboard.md",
+        "scripts/rt4/check-completion-dashboard.mjs",
+        "artifacts/rt4/completion-dashboard.json"
+      ]
+    },
+    {
+      "id": "RT4-P0-005",
+      "type": "requirement",
+      "priority": "P0",
+      "status": "local_passed",
+      "gate": "RT-2",
+      "refs": [
+        "docs/program/rt4/six-file-requirement-matrix.yml",
+        "scripts/rt4/check-six-file-coverage.mjs",
+        "artifacts/rt4/evidence-graph.json"
+      ]
+    },
+    {
+      "id": "RT4-P0-006",
+      "type": "requirement",
+      "priority": "P0",
+      "status": "local_passed",
+      "gate": "RT-FINAL",
+      "refs": [
+        "docs/program/rt4/stacked-branch-matrix.yml",
+        "docs/program/rt4/central-merge-plan.md",
+        "scripts/rt4/check-completion-dashboard.mjs",
+        "artifacts/rt4/completion-dashboard.json"
+      ]
+    },
+    {
+      "id": "RT4-P1-001",
+      "type": "requirement",
+      "priority": "P1",
+      "status": "local_passed",
+      "gate": "RT-QA",
+      "refs": [
+        "docs/program/rt4/completion-dashboard.md",
+        "scripts/rt4/check-completion-dashboard.mjs",
+        "artifacts/rt4/completion-dashboard.json"
+      ]
+    },
+    {
+      "id": "RT4-P1-002",
+      "type": "requirement",
+      "priority": "P1",
+      "status": "local_passed",
+      "gate": "RT-F",
+      "refs": [
+        "docs/closure/problem-ledger.yml",
+        "scripts/rt4/check-six-file-coverage.mjs",
+        "docs/program/rt4/six-file-requirement-matrix.yml"
+      ]
+    },
+    {
+      "id": "RT4-P2-001",
+      "type": "requirement",
+      "priority": "P2",
+      "status": "not_started",
+      "gate": "RT-5",
+      "refs": []
+    },
+    {
+      "id": "PL-RF-001",
+      "type": "problem",
+      "severity": "P1",
+      "status": "local_passed",
+      "gate": "Central Merge Train",
+      "refs": [
+        "RF4-RF8 PR/main CI and V5.4 Guards in merge order",
+        "scripts/rt4/verify-evidence-graph.mjs"
+      ]
+    },
+    {
+      "id": "PL-BIZ-001",
+      "type": "problem",
+      "severity": "P0",
+      "status": "blocked",
+      "gate": "Business Production",
+      "refs": [
+        "Final System Gate passed and Business Line Admission Gate evidence",
+        "scripts/rt4/check-completion-dashboard.mjs"
+      ]
+    },
+    {
+      "id": "RF4",
+      "type": "branch",
+      "status": "LOCAL_PASSED",
+      "branch": "codex/rf4-fact-ownership-deep-scanner",
+      "headSha": "cbfe44c69b874f8d216bb5311635bd00fda5f42d",
+      "refs": [
+        "local clean Docker CI-equivalent"
+      ]
+    },
+    {
+      "id": "RF5",
+      "type": "branch",
+      "status": "LOCAL_PASSED",
+      "branch": "codex/rf5-gate-result-full-append-only",
+      "headSha": "9cd7b1acd4b092f44c219c9de6aa6129c8f488b1",
+      "refs": [
+        "local clean Docker CI-equivalent"
+      ]
+    },
+    {
+      "id": "RF6",
+      "type": "branch",
+      "status": "LOCAL_PASSED",
+      "branch": "codex/rf6-uow-failed-submission-audit",
+      "headSha": "8390b3ccc1e9aa9c2d4af9766a97ebe79bb86772",
+      "refs": [
+        "PR #22",
+        "local clean Docker CI-equivalent"
+      ]
+    },
+    {
+      "id": "RF7",
+      "type": "branch",
+      "status": "LOCAL_PASSED",
+      "branch": "codex/rf7-operationcase-workitem-persistence",
+      "headSha": "a1d51d4232f805494dc1e6a4600384e4bfc89eb6",
+      "refs": [
+        "PR #24",
+        "local clean Docker CI-equivalent"
+      ]
+    },
+    {
+      "id": "RF8",
+      "type": "branch",
+      "status": "LOCAL_PASSED",
+      "branch": "codex/rf8-governance-closure-report",
+      "headSha": "994ce81b5d04bde24d12ae1eb25e52af4bee500e",
+      "refs": [
+        "PR #25",
+        "local clean Docker CI-equivalent"
+      ]
+    },
+    {
+      "id": "RT-X",
+      "type": "branch",
+      "status": "RUNNING",
+      "branch": "codex/rtx-problem-ledger-closure-matrix",
+      "headSha": "CURRENT_BRANCH",
+      "refs": []
+    }
+  ],
+  "edges": [
+    {
+      "from": "RT4-P0-001",
+      "to": "RT-1",
+      "relation": "validated_by_gate"
+    },
+    {
+      "from": "RT4-P0-002",
+      "to": "RT-0",
+      "relation": "validated_by_gate"
+    },
+    {
+      "from": "RT4-P0-003",
+      "to": "RT-5",
+      "relation": "validated_by_gate"
+    },
+    {
+      "from": "RT4-P0-004",
+      "to": "RT-6",
+      "relation": "validated_by_gate"
+    },
+    {
+      "from": "RT4-P0-005",
+      "to": "RT-2",
+      "relation": "validated_by_gate"
+    },
+    {
+      "from": "RT4-P0-006",
+      "to": "RT-FINAL",
+      "relation": "validated_by_gate"
+    },
+    {
+      "from": "RT4-P1-001",
+      "to": "RT-QA",
+      "relation": "validated_by_gate"
+    },
+    {
+      "from": "RT4-P1-002",
+      "to": "RT-F",
+      "relation": "validated_by_gate"
+    },
+    {
+      "from": "RT4-P2-001",
+      "to": "RT-5",
+      "relation": "validated_by_gate"
+    }
+  ],
+  "generatedBy": "scripts/rt4/build-evidence-graph.mjs"
+}
