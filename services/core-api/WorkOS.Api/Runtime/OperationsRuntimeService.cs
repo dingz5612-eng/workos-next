@@ -9,14 +9,7 @@ namespace WorkOS.Api.Runtime;
 
 public sealed class OperationsRuntimeService
 {
-    private const string AdapterSource = "operations_adapter";
-    private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web)
-    {
-        WriteIndented = false
-    };
-
     private readonly IOperationsRuntimeAdapter runtime;
-    private readonly IOperationsCommandSubmissionStore submissions;
     private readonly IOperationsCaseStore cases;
     private readonly IOperationsWorkItemStore workItems;
 
@@ -50,7 +43,6 @@ public sealed class OperationsRuntimeService
         IOperationsWorkItemStore workItems)
     {
         this.runtime = runtime;
-        this.submissions = submissions;
         this.cases = cases;
         this.workItems = workItems;
     }
@@ -180,43 +172,6 @@ public sealed class OperationsRuntimeService
             LegacyPreparePayload(prepared));
     }
 
-    public CompatibilityApiResult ConfirmWorkspaceCard(
-        string workspaceId,
-        string cardId,
-        ConfirmCardRequest request,
-        string actorToken,
-        string requestId)
-    {
-        var legacyRequestFailure = ValidateLegacyConfirmRequiredFields(request);
-        if (legacyRequestFailure is not null)
-        {
-            return new CompatibilityApiResult(
-                StatusCodes.Status400BadRequest,
-                new { error = "confirmation_invalid", Reason = legacyRequestFailure });
-        }
-
-        var workItem = ResolveOrCreateWorkspaceCardWorkItem(workspaceId, cardId);
-        if (workItem is null)
-        {
-            return new CompatibilityApiResult(StatusCodes.Status404NotFound, new { error = "card_not_found", workspaceId, cardId });
-        }
-
-        var operationsRequest = new ConfirmWorkItemRequest(
-            workspaceId,
-            cardId,
-            request.Language,
-            request.IdempotencyKey,
-            request.FieldValues,
-            request.EvidenceIds,
-            request.SubmissionId,
-            request.CardInstanceId,
-            request.AggregateRef,
-            request.RequestId ?? requestId,
-            request.DeviceId);
-        var executed = ExecuteConfirmWorkItem(workItem.WorkItemId, operationsRequest, actorToken, requestId, allowLegacyDuplicatePayload: true);
-        return LegacyConfirmResult(executed, workspaceId, cardId);
-    }
-
     public ConfirmResult ValidateWorkspaceCardConfirmPolicy(
         string workspaceId,
         string cardId,
@@ -224,32 +179,8 @@ public sealed class OperationsRuntimeService
         string actorToken) =>
         runtime.ValidateConfirm(workspaceId, cardId, request, actorToken);
 
-    private static string? ValidateLegacyConfirmRequiredFields(ConfirmCardRequest request)
-    {
-        if (string.IsNullOrWhiteSpace(request.IdempotencyKey))
-        {
-            return "Confirm requires an idempotency key.";
-        }
-
-        if (string.IsNullOrWhiteSpace(request.SubmissionId))
-        {
-            return "Confirm requires a submissionId.";
-        }
-
-        return string.IsNullOrWhiteSpace(request.CardInstanceId)
-            ? "Confirm requires a cardInstanceId."
-            : null;
-    }
-
     public PrepareWorkItemResult? PrepareWorkItem(string workItemId, PrepareWorkItemRequest request) =>
         ExecutePrepareWorkItem(workItemId, request)?.Result;
-
-    public ConfirmWorkItemResult ConfirmWorkItem(
-        string workItemId,
-        ConfirmWorkItemRequest request,
-        string actorToken,
-        string requestId) =>
-        ExecuteConfirmWorkItem(workItemId, request, actorToken, requestId).Result;
 
     public void RecordWorkItemTransition(
         string tenantId,
@@ -305,174 +236,6 @@ public sealed class OperationsRuntimeService
         return new PrepareWorkItemExecution(result, prepared, target);
     }
 
-    private ConfirmWorkItemExecution ExecuteConfirmWorkItem(
-        string workItemId,
-        ConfirmWorkItemRequest request,
-        string actorToken,
-        string requestId,
-        bool allowLegacyDuplicatePayload = false)
-    {
-        var target = ResolveOperationTarget(workItemId, request.WorkspaceId, request.CardId);
-        if (target is null)
-        {
-            return new ConfirmWorkItemExecution(
-                ConfirmWorkItemResult.NotFound(workItemId, request.SubmissionId, request.IdempotencyKey, "operation_work_item_not_found"),
-                null);
-        }
-
-        var normalized = request.Normalize(workItemId, target.Workspace.Id, target.Card.Id);
-        var payloadHash = ComputePayloadHash(workItemId, target, normalized);
-        var tenantId = TenantIdFor(target);
-        var sliceId = target.Workspace.Id;
-        var commandSubmissionId = $"cmd-{ShortHash(tenantId, normalized.IdempotencyKey!)}";
-        var previous = submissions.Find(tenantId, sliceId, normalized.IdempotencyKey!);
-        if (previous is not null)
-        {
-            return ExistingSubmissionResult(previous, target, workItemId, normalized, payloadHash, allowLegacyDuplicatePayload);
-        }
-
-        var pendingRecord = new OperationsCommandSubmissionRecord(
-            commandSubmissionId,
-            null,
-            tenantId,
-            sliceId,
-            target.Workspace.Id,
-            target.Card.Id,
-            normalized.IdempotencyKey!,
-            payloadHash,
-            DateTimeOffset.UtcNow,
-            AdapterSource,
-            "pending",
-            null,
-            CommandPayloadFor(workItemId, target, normalized, payloadHash));
-        if (!submissions.TryBegin(pendingRecord))
-        {
-            previous = submissions.Find(tenantId, sliceId, normalized.IdempotencyKey!);
-            return previous is not null
-                ? ExistingSubmissionResult(previous, target, workItemId, normalized, payloadHash, allowLegacyDuplicatePayload)
-                : new ConfirmWorkItemExecution(
-                    ConfirmWorkItemResult.Conflict(
-                        workItemId,
-                        CaseIdFor(target.Intent, target.Workspace.Id),
-                        normalized.SubmissionId,
-                        normalized.IdempotencyKey,
-                        payloadHash,
-                        "command_submission_pending"),
-                    null);
-        }
-
-        ConfirmResult confirm;
-        try
-        {
-            confirm = runtime.Confirm(
-                target.Workspace.Id,
-                target.Card.Id,
-                normalized.ToConfirmCardRequest(requestId),
-                actorToken);
-        }
-        catch (Exception ex)
-        {
-            var failedResult = ConfirmWorkItemResult.Rejected(
-                StatusCodes.Status500InternalServerError,
-                "handler_failure",
-                ex.Message,
-                CaseIdFor(target.Intent, target.Workspace.Id),
-                workItemId,
-                normalized.SubmissionId,
-                normalized.IdempotencyKey,
-                payloadHash) with
-            {
-                CommandSubmissionId = commandSubmissionId
-            };
-            submissions.Fail(pendingRecord with
-            {
-                ProcessingStatus = "failed",
-                Result = failedResult
-            });
-            return new ConfirmWorkItemExecution(
-                failedResult,
-                null);
-        }
-
-        var result = ToConfirmWorkItemResult(confirm, target, workItemId, normalized, payloadHash);
-        result = result with { CommandSubmissionId = commandSubmissionId };
-        var processingStatus = result.StatusCode is StatusCodes.Status200OK
-            ? ProcessingStatusFor(confirm.Status)
-            : "rejected";
-        submissions.Complete(pendingRecord with
-        {
-            ProcessingStatus = processingStatus,
-            Result = result
-        });
-
-        return new ConfirmWorkItemExecution(result, confirm.Payload);
-    }
-
-    private static ConfirmWorkItemExecution ExistingSubmissionResult(
-        OperationsCommandSubmissionRecord previous,
-        OperationTarget target,
-        string workItemId,
-        ConfirmWorkItemRequest request,
-        string payloadHash,
-        bool allowLegacyDuplicatePayload)
-    {
-        if (!previous.PayloadHash.Equals(payloadHash, StringComparison.Ordinal))
-        {
-            if (allowLegacyDuplicatePayload && previous.Result is not null)
-            {
-                return new ConfirmWorkItemExecution(
-                    previous.Result with
-                    {
-                        Source = AdapterSource,
-                        PayloadHash = previous.PayloadHash,
-                        CommandSubmissionId = previous.CommandSubmissionId
-                    },
-                    null);
-            }
-
-            return new ConfirmWorkItemExecution(
-                ConfirmWorkItemResult.Conflict(
-                    workItemId,
-                    CaseIdFor(target.Intent, target.Workspace.Id),
-                    request.SubmissionId,
-                    request.IdempotencyKey,
-                    payloadHash,
-                    "same_idempotency_different_payload"),
-                null);
-        }
-
-        if (previous.Result is not null)
-        {
-            return new ConfirmWorkItemExecution(
-                previous.Result with
-                {
-                    Source = AdapterSource,
-                    PayloadHash = payloadHash,
-                    CommandSubmissionId = previous.CommandSubmissionId
-                },
-                null);
-        }
-
-        return new ConfirmWorkItemExecution(
-            ConfirmWorkItemResult.Conflict(
-                workItemId,
-                CaseIdFor(target.Intent, target.Workspace.Id),
-                request.SubmissionId,
-                request.IdempotencyKey,
-                payloadHash,
-                "command_submission_pending"),
-            null);
-    }
-
-    private static string ProcessingStatusFor(ConfirmStatus status) =>
-        status switch
-        {
-            ConfirmStatus.Duplicate => "duplicate",
-            ConfirmStatus.Confirmed or ConfirmStatus.ProjectionFailed => "committed",
-            ConfirmStatus.Invalid or ConfirmStatus.Forbidden or ConfirmStatus.NotFound => "rejected",
-            _ => "rejected"
-        };
-
     private WorkItem? ResolveOrCreateWorkspaceCardWorkItem(string workspaceId, string cardId) =>
         CreateWorkItem(new CreateWorkItemRequest(
             WorkItemIdFor(workspaceId, cardId),
@@ -488,6 +251,7 @@ public sealed class OperationsRuntimeService
                 ["cardId"] = cardId,
                 ["compatibilityRoute"] = "workspace-card"
             }));
+
 
     private static object LegacyPreparePayload(PrepareWorkItemExecution prepared)
     {
@@ -513,76 +277,6 @@ public sealed class OperationsRuntimeService
             ["checks"] = target.Card.Checks,
             ["blockers"] = target.Card.BlockerRules,
             ["fieldDefaults"] = target.Card.Fields.Business.ToDictionary(field => field.Id, _ => string.Empty)
-        };
-    }
-
-    private static CompatibilityApiResult LegacyConfirmResult(ConfirmWorkItemExecution executed, string workspaceId, string cardId)
-    {
-        var result = executed.Result;
-        return result.StatusCode switch
-        {
-            StatusCodes.Status404NotFound => new CompatibilityApiResult(result.StatusCode, new { error = "card_not_found", workspaceId, cardId }),
-            StatusCodes.Status400BadRequest => new CompatibilityApiResult(result.StatusCode, new { error = "confirmation_invalid", result.Reason }),
-            StatusCodes.Status401Unauthorized => new CompatibilityApiResult(result.StatusCode, null),
-            StatusCodes.Status403Forbidden => new CompatibilityApiResult(result.StatusCode, new { error = "confirmation_forbidden", result.Reason }),
-            StatusCodes.Status500InternalServerError => new CompatibilityApiResult(result.StatusCode, new { error = result.Error ?? "handler_failure", result.Reason }),
-            StatusCodes.Status409Conflict => new CompatibilityApiResult(result.StatusCode, new
-            {
-                error = result.Error ?? "idempotency_conflict",
-                result.Reason,
-                result.CaseId,
-                result.WorkItemId,
-                result.SubmissionId
-            }),
-            StatusCodes.Status422UnprocessableEntity => new CompatibilityApiResult(result.StatusCode, new { error = "business_rule_violation", result.Reason }),
-            _ => new CompatibilityApiResult(StatusCodes.Status200OK, LegacyConfirmPayload(executed, workspaceId, cardId))
-        };
-    }
-
-    private static object LegacyConfirmPayload(ConfirmWorkItemExecution executed, string workspaceId, string cardId)
-    {
-        var result = executed.Result;
-        if (executed.CompatibilityPayload is ConfirmCardResponse response)
-        {
-            return new Dictionary<string, object?>
-            {
-                ["confirmed"] = response.Confirmed,
-                ["commitStatus"] = response.CommitStatus,
-                ["projectionStatus"] = response.ProjectionStatus,
-                ["caseId"] = FirstNonEmpty(result.CaseId, response.CaseId, workspaceId),
-                ["workItemId"] = FirstNonEmpty(result.WorkItemId, response.WorkItemId, WorkItemIdFor(workspaceId, cardId)),
-                ["submissionId"] = FirstNonEmpty(result.SubmissionId, response.SubmissionId),
-                ["resultEventIds"] = response.ResultEventIds,
-                ["userMessage"] = response.UserMessage,
-                ["clientInstruction"] = response.ClientInstruction,
-                ["events"] = response.Events,
-                ["workspace"] = response.Workspace,
-                ["projection"] = response.Projection,
-                ["source"] = result.Source,
-                ["idempotencyKey"] = result.IdempotencyKey,
-                ["payloadHash"] = result.PayloadHash,
-                ["commandSubmissionId"] = result.CommandSubmissionId
-            };
-        }
-
-        return new Dictionary<string, object?>
-        {
-            ["confirmed"] = result.Confirmed,
-            ["commitStatus"] = result.CommitStatus,
-            ["projectionStatus"] = result.ProjectionStatus,
-            ["caseId"] = FirstNonEmpty(result.CaseId, workspaceId),
-            ["workItemId"] = FirstNonEmpty(result.WorkItemId, WorkItemIdFor(workspaceId, cardId)),
-            ["submissionId"] = result.SubmissionId,
-            ["resultEventIds"] = result.ResultEventIds,
-            ["userMessage"] = result.UserMessage,
-            ["clientInstruction"] = result.ClientInstruction,
-            ["events"] = Array.Empty<WorkspaceEvent>(),
-            ["workspace"] = null,
-            ["projection"] = null,
-            ["source"] = result.Source,
-            ["idempotencyKey"] = result.IdempotencyKey,
-            ["payloadHash"] = result.PayloadHash,
-            ["commandSubmissionId"] = result.CommandSubmissionId
         };
     }
 
@@ -812,105 +506,6 @@ public sealed class OperationsRuntimeService
                 card.Confirmation.Label,
                 card.Confirmation)
         };
-
-    private static ConfirmWorkItemResult ToConfirmWorkItemResult(
-        ConfirmResult confirm,
-        OperationTarget target,
-        string workItemId,
-        ConfirmWorkItemRequest request,
-        string payloadHash)
-    {
-        var caseId = CaseIdFor(target.Intent, target.Workspace.Id);
-        if (confirm.Payload is ConfirmCardResponse response)
-        {
-            return new ConfirmWorkItemResult(
-                StatusCodes.Status200OK,
-                null,
-                null,
-                response.Confirmed,
-                response.CommitStatus,
-                response.ProjectionStatus,
-                caseId,
-                workItemId,
-                response.SubmissionId,
-                response.ResultEventIds,
-                response.UserMessage,
-                response.ClientInstruction,
-                AdapterSource,
-                request.IdempotencyKey!,
-                payloadHash,
-                null);
-        }
-
-        return confirm.Status switch
-        {
-            ConfirmStatus.NotFound => ConfirmWorkItemResult.NotFound(workItemId, request.SubmissionId, request.IdempotencyKey, "card_not_found"),
-            ConfirmStatus.Invalid => ConfirmWorkItemResult.Rejected(StatusCodes.Status400BadRequest, "confirmation_invalid", confirm.Reason, caseId, workItemId, request.SubmissionId, request.IdempotencyKey, payloadHash),
-            ConfirmStatus.Forbidden when ConfirmHttpStatusMapper.IsAuthenticationFailure(confirm.Reason) => ConfirmWorkItemResult.Rejected(StatusCodes.Status401Unauthorized, "actor_session_required", confirm.Reason, caseId, workItemId, request.SubmissionId, request.IdempotencyKey, payloadHash),
-            ConfirmStatus.Forbidden when ConfirmHttpStatusMapper.IsAuthorizationForbidden(confirm.Reason) => ConfirmWorkItemResult.Rejected(StatusCodes.Status403Forbidden, "confirmation_forbidden", confirm.Reason, caseId, workItemId, request.SubmissionId, request.IdempotencyKey, payloadHash),
-            ConfirmStatus.Forbidden => ConfirmWorkItemResult.Rejected(StatusCodes.Status422UnprocessableEntity, "business_rule_violation", confirm.Reason, caseId, workItemId, request.SubmissionId, request.IdempotencyKey, payloadHash),
-            _ => ConfirmWorkItemResult.Rejected(StatusCodes.Status422UnprocessableEntity, "confirmation_not_committed", confirm.Reason, caseId, workItemId, request.SubmissionId, request.IdempotencyKey, payloadHash)
-        };
-    }
-
-    private static IReadOnlyDictionary<string, object?> CommandPayloadFor(
-        string workItemId,
-        OperationTarget target,
-        ConfirmWorkItemRequest request,
-        string payloadHash) =>
-        new Dictionary<string, object?>
-        {
-            ["source"] = AdapterSource,
-            ["payloadHash"] = payloadHash,
-            ["workItemId"] = workItemId,
-            ["caseId"] = CaseIdFor(target.Intent, target.Workspace.Id),
-            ["compatibilityTransition"] = new Dictionary<string, object?>
-            {
-                ["source"] = AdapterSource,
-                ["compatibilityRuntime"] = "ProjectionRuntime.Confirm",
-                ["workspaceId"] = target.Workspace.Id,
-                ["cardId"] = target.Card.Id
-            },
-            ["request"] = new Dictionary<string, object?>
-            {
-                ["language"] = request.Language,
-                ["submissionId"] = request.SubmissionId,
-                ["cardInstanceId"] = request.CardInstanceId,
-                ["aggregateRef"] = request.AggregateRef,
-                ["fieldValues"] = Sorted(request.FieldValues),
-                ["evidenceIds"] = request.EvidenceIds?.OrderBy(item => item, StringComparer.Ordinal).ToArray() ?? Array.Empty<string>(),
-                ["deviceId"] = request.DeviceId
-            }
-        };
-
-    private static string ComputePayloadHash(string workItemId, OperationTarget target, ConfirmWorkItemRequest request)
-    {
-        var payload = new SortedDictionary<string, object?>(StringComparer.Ordinal)
-        {
-            ["aggregateRef"] = request.AggregateRef,
-            ["cardId"] = target.Card.Id,
-            ["cardInstanceId"] = request.CardInstanceId,
-            ["deviceId"] = request.DeviceId,
-            ["evidenceIds"] = request.EvidenceIds?.OrderBy(item => item, StringComparer.Ordinal).ToArray() ?? Array.Empty<string>(),
-            ["fieldValues"] = Sorted(request.FieldValues),
-            ["language"] = request.Language,
-            ["submissionId"] = request.SubmissionId,
-            ["workItemId"] = workItemId,
-            ["workspaceId"] = target.Workspace.Id
-        };
-        return $"sha256:{ShortHash(JsonSerializer.Serialize(payload, JsonOptions))}";
-    }
-
-    private static SortedDictionary<string, string> Sorted(IReadOnlyDictionary<string, string>? values) =>
-        values is null
-            ? new SortedDictionary<string, string>(StringComparer.Ordinal)
-            : values.Aggregate(
-                new SortedDictionary<string, string>(StringComparer.Ordinal),
-                (items, item) =>
-                {
-                    items[item.Key] = item.Value;
-                    return items;
-                });
 
     private static string CaseIdFor(ProcessWorkItemIntentRecord? intent, string workspaceId) =>
         FirstNonEmpty(intent is null ? null : PayloadValue(intent.Payload, "caseId"), workspaceId) ?? workspaceId;
