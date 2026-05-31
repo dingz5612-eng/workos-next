@@ -186,6 +186,49 @@ public sealed class RuntimePersistenceContractTests
     }
 
     [TestMethod]
+    public void OperationsUnitOfWorkMigrationDeclaresSubmissionFactResponseAndTraceTables()
+    {
+        var migration = File.ReadAllText(RepoPath("infra", "db", "migrations", "030_operations_unit_of_work.sql"));
+        foreach (var term in new[]
+        {
+            "operations_command_submissions",
+            "operations_domain_events",
+            "operations_work_item_events",
+            "operations_outbox_messages",
+            "operations_fact_responses",
+            "uq_operations_command_submission_idempotency",
+            "unique(tenant_id, idempotency_scope, idempotency_key)",
+            "references operations_command_submissions(submission_id) on delete restrict",
+            "payload_hash",
+            "stable_response",
+            "correlation_id",
+            "causation_id"
+        })
+        {
+            Assert.IsTrue(migration.Contains(term), $"operations unit of work migration must declare {term}");
+        }
+
+        var unitOfWork = File.ReadAllText(RepoPath("services", "core-api", "WorkOS.Api", "Runtime", "OperationsUnitOfWork.cs"));
+        foreach (var term in new[]
+        {
+            "OperationsUnitOfWork",
+            "CommandSubmissionService",
+            "IdempotencyService",
+            "PayloadHashService",
+            "CommandEnvelopeBuilder",
+            "SliceCommandHandlerRouter",
+            "FactResponseStore",
+            "OperationsWriteStore",
+            "OperationsReadStore"
+        })
+        {
+            Assert.IsTrue(unitOfWork.Contains(term), $"S2 runtime must expose {term}");
+        }
+
+        Assert.IsFalse(unitOfWork.Contains("MapPost(\"/api/", StringComparison.OrdinalIgnoreCase), "S2 must not add Operations API endpoints.");
+    }
+
+    [TestMethod]
     public void bank_schema_migration()
     {
         var migration = File.ReadAllText(RepoPath("infra", "db", "migrations", "017_reconciliation_runtime.sql"));
