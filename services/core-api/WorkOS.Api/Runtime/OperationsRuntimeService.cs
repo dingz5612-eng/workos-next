@@ -286,17 +286,25 @@ public sealed class OperationsRuntimeService
         }
         catch (Exception ex)
         {
-            submissions.Rollback(commandSubmissionId);
+            var failedResult = ConfirmWorkItemResult.Rejected(
+                StatusCodes.Status500InternalServerError,
+                "handler_failure",
+                ex.Message,
+                CaseIdFor(target.Intent, target.Workspace.Id),
+                workItemId,
+                normalized.SubmissionId,
+                normalized.IdempotencyKey,
+                payloadHash) with
+            {
+                CommandSubmissionId = commandSubmissionId
+            };
+            submissions.Fail(pendingRecord with
+            {
+                ProcessingStatus = "failed",
+                Result = failedResult
+            });
             return new ConfirmWorkItemExecution(
-                ConfirmWorkItemResult.Rejected(
-                    StatusCodes.Status500InternalServerError,
-                    "handler_failure",
-                    ex.Message,
-                    CaseIdFor(target.Intent, target.Workspace.Id),
-                    workItemId,
-                    normalized.SubmissionId,
-                    normalized.IdempotencyKey,
-                    payloadHash),
+                failedResult,
                 null);
         }
 
@@ -836,7 +844,7 @@ public interface IOperationsCommandSubmissionStore
 
     void Complete(OperationsCommandSubmissionRecord record);
 
-    void Rollback(string commandSubmissionId);
+    void Fail(OperationsCommandSubmissionRecord record);
 }
 
 public sealed class InMemoryOperationsCommandSubmissionStore : IOperationsCommandSubmissionStore
@@ -858,13 +866,9 @@ public sealed class InMemoryOperationsCommandSubmissionStore : IOperationsComman
         records[Key(record.TenantId, record.IdempotencyKey)] = record;
     }
 
-    public void Rollback(string commandSubmissionId)
+    public void Fail(OperationsCommandSubmissionRecord record)
     {
-        var key = records.FirstOrDefault(item => item.Value.CommandSubmissionId.Equals(commandSubmissionId, StringComparison.OrdinalIgnoreCase)).Key;
-        if (!string.IsNullOrWhiteSpace(key))
-        {
-            records.Remove(key);
-        }
+        records[Key(record.TenantId, record.IdempotencyKey)] = record;
     }
 
     private static string Key(string tenantId, string idempotencyKey) =>
@@ -983,18 +987,29 @@ public sealed class PostgresOperationsCommandSubmissionStore : IOperationsComman
         }
     }
 
-    public void Rollback(string commandSubmissionId)
+    public void Fail(OperationsCommandSubmissionRecord record)
     {
         try
         {
             using var connection = connections.Open();
             using var command = connection.CreateCommand();
             command.CommandText = """
-                delete from shadow_runtime.command_submissions
+                update shadow_runtime.command_submissions
+                set command_payload = @commandPayload::jsonb,
+                    processing_status = 'failed',
+                    source_shadow_ref = @sourceShadowRef
                 where command_submission_id = @commandSubmissionId
                   and processing_status = 'pending'
                 """;
-            command.Parameters.AddWithValue("commandSubmissionId", commandSubmissionId);
+            command.Parameters.AddWithValue("commandSubmissionId", record.CommandSubmissionId);
+            command.Parameters.AddWithValue("commandPayload", NpgsqlDbType.Jsonb, JsonSerializer.Serialize(new
+            {
+                source = record.Source,
+                payloadHash = record.PayloadHash,
+                command = record.CommandPayload,
+                result = record.Result
+            }, PostgresProjectionStore.JsonOptions));
+            command.Parameters.AddWithValue("sourceShadowRef", (object?)record.CommandSubmissionId ?? DBNull.Value);
             command.ExecuteNonQuery();
         }
         catch (PostgresException ex) when (ex.SqlState is MissingTable or MissingSchema)

@@ -189,6 +189,7 @@ public sealed class RuntimePersistenceContractTests
     public void OperationsUnitOfWorkMigrationDeclaresSubmissionFactResponseAndTraceTables()
     {
         var migration = File.ReadAllText(RepoPath("infra", "db", "migrations", "030_operations_unit_of_work.sql"));
+        var failedAuditMigration = File.ReadAllText(RepoPath("infra", "db", "migrations", "032_operations_failed_submission_audit.sql"));
         foreach (var term in new[]
         {
             "operations_command_submissions",
@@ -208,6 +209,20 @@ public sealed class RuntimePersistenceContractTests
             Assert.Contains(term, migration, $"operations unit of work migration must declare {term}");
         }
 
+        foreach (var term in new[]
+        {
+            "failure_code",
+            "failure_reason",
+            "rejected_at_utc",
+            "failed_at_utc",
+            "response_status_code",
+            "'failed'",
+            "ck_operations_command_submissions_failure_audit"
+        })
+        {
+            Assert.Contains(term, failedAuditMigration, $"failed submission audit migration must declare {term}");
+        }
+
         var unitOfWork = File.ReadAllText(RepoPath("services", "core-api", "WorkOS.Api", "Runtime", "OperationsUnitOfWork.cs"));
         foreach (var term in new[]
         {
@@ -219,13 +234,23 @@ public sealed class RuntimePersistenceContractTests
             "SliceCommandHandlerRouter",
             "FactResponseStore",
             "OperationsWriteStore",
-            "OperationsReadStore"
+            "OperationsReadStore",
+            "FailCommandSubmission",
+            "OperationsStableResponse.Failed"
         })
         {
             Assert.Contains(term, unitOfWork, $"S2 runtime must expose {term}");
         }
 
         Assert.DoesNotContain("MapPost(\"/api/", unitOfWork, StringComparison.OrdinalIgnoreCase, "S2 must not add Operations API endpoints.");
+
+        var operationsRuntimeService = File.ReadAllText(RepoPath("services", "core-api", "WorkOS.Api", "Runtime", "OperationsRuntimeService.cs"));
+        Assert.Contains("processing_status = 'failed'", operationsRuntimeService);
+        Assert.DoesNotContain(
+            "delete from shadow_runtime.command_submissions",
+            operationsRuntimeService,
+            StringComparison.OrdinalIgnoreCase,
+            "compatibility command submissions must be marked failed instead of deleted");
     }
 
     [TestMethod]

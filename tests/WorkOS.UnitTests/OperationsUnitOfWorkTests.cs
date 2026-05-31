@@ -64,6 +64,7 @@ public sealed class OperationsUnitOfWorkTests
         Assert.AreEqual(StatusCodes.Status200OK, first.StatusCode);
         Assert.AreEqual(StatusCodes.Status409Conflict, conflict.StatusCode);
         Assert.AreEqual("same_idempotency_different_payload", conflict.Reason);
+        Assert.AreEqual(first.SubmissionId, conflict.SubmissionId);
         Assert.AreEqual(1, handlerCalls);
         Assert.AreEqual(1, store.DomainEvents.Count);
     }
@@ -118,8 +119,30 @@ public sealed class OperationsUnitOfWorkTests
 
         Assert.AreEqual(StatusCodes.Status500InternalServerError, result.StatusCode);
         Assert.AreEqual("handler_failure", result.ResponseBody["error"]);
-        Assert.AreEqual(0, store.Submissions.Count);
+        Assert.AreEqual(1, store.Submissions.Count);
+        Assert.AreEqual("failed", store.Submissions[0].Status);
+        Assert.AreEqual("handler_failure", store.Submissions[0].FailureCode);
+        Assert.IsNotNull(store.Submissions[0].FailedAtUtc);
+        Assert.AreEqual(result.SubmissionId, store.GetFactTraceBySubmission(result.SubmissionId)!.SubmissionRef);
         Assert.AreEqual(0, store.DomainEvents.Count);
+    }
+
+    [TestMethod]
+    public void rejected_handler_result_keeps_auditable_submission_without_business_facts()
+    {
+        var store = new InMemoryOperationsStore();
+        var unitOfWork = UnitOfWork(store, _ => SliceCommandHandlerResult.Rejected(StatusCodes.Status403Forbidden, "permission_denied"));
+
+        var result = unitOfWork.Commit(Request("idem-rejected"));
+
+        Assert.AreEqual(StatusCodes.Status403Forbidden, result.StatusCode);
+        Assert.AreEqual("not_committed", result.CommitStatus);
+        Assert.AreEqual(1, store.Submissions.Count);
+        Assert.AreEqual("rejected", store.Submissions[0].Status);
+        Assert.AreEqual("permission_denied", store.Submissions[0].FailureCode);
+        Assert.IsNotNull(store.Submissions[0].RejectedAtUtc);
+        Assert.AreEqual(0, store.DomainEvents.Count);
+        Assert.AreEqual(result.SubmissionId, store.GetFactTraceBySubmission(result.SubmissionId)!.SubmissionRef);
     }
 
     [TestMethod]
@@ -182,7 +205,8 @@ public sealed class OperationsUnitOfWorkTests
         var result = unitOfWork.Commit(Request("idem-unbalanced"));
 
         Assert.AreEqual(StatusCodes.Status500InternalServerError, result.StatusCode);
-        Assert.AreEqual(0, store.Submissions.Count);
+        Assert.AreEqual(1, store.Submissions.Count);
+        Assert.AreEqual("failed", store.Submissions[0].Status);
         Assert.AreEqual(0, store.DomainEvents.Count);
         Assert.AreEqual(0, store.LedgerEntries.Count);
     }
@@ -209,6 +233,8 @@ public sealed class OperationsUnitOfWorkTests
         var result = unitOfWork.Commit(Request("idem-currency"));
 
         Assert.AreEqual(StatusCodes.Status500InternalServerError, result.StatusCode);
+        Assert.AreEqual(1, store.Submissions.Count);
+        Assert.AreEqual("failed", store.Submissions[0].Status);
         Assert.AreEqual(0, store.DomainEvents.Count);
         Assert.AreEqual(0, store.LedgerTransactions.Count);
     }
