@@ -22,9 +22,9 @@ public sealed class RuntimePersistenceContractTests
     public void ConfirmUnitOfWorkOwnsAuditOutboxAndAggregateBoundary()
     {
         var unitOfWork = File.ReadAllText(RepoPath("services", "core-api", "WorkOS.Api", "Runtime", "ConfirmUnitOfWork.cs"));
-        Assert.IsTrue(unitOfWork.Contains("InsertAuditEventAndOutbox"));
-        Assert.IsTrue(unitOfWork.Contains("sliceAggregates.Apply"));
-        Assert.IsTrue(unitOfWork.Contains("db.Commit()"));
+        Assert.Contains("InsertAuditEventAndOutbox", unitOfWork);
+        Assert.Contains("sliceAggregates.Apply", unitOfWork);
+        Assert.Contains("db.Commit()", unitOfWork);
     }
 
     [TestMethod]
@@ -32,24 +32,24 @@ public sealed class RuntimePersistenceContractTests
     {
         var claimMigration = File.ReadAllText(RepoPath("infra", "db", "migrations", "012_outbox_claim_dead_letter.sql"));
         var attemptMigration = File.ReadAllText(RepoPath("infra", "db", "migrations", "013_outbox_attempt_count.sql"));
-        Assert.IsTrue(claimMigration.Contains("claimed_by"));
-        Assert.IsTrue(claimMigration.Contains("dead_lettered_at_utc"));
-        Assert.IsTrue(claimMigration.Contains("attempt_count"));
-        Assert.IsFalse(claimMigration.Contains("retry_count"), "claim/dead-letter migration must declare attempt_count directly");
-        Assert.IsTrue(attemptMigration.Contains("attempt_count"));
+        Assert.Contains("claimed_by", claimMigration);
+        Assert.Contains("dead_lettered_at_utc", claimMigration);
+        Assert.Contains("attempt_count", claimMigration);
+        Assert.DoesNotContain("retry_count", claimMigration, "claim/dead-letter migration must declare attempt_count directly");
+        Assert.Contains("attempt_count", attemptMigration);
 
         var outboxStorage = File.ReadAllText(RepoPath("services", "core-api", "WorkOS.Api", "Runtime", "RuntimeOutboxStorage.cs"));
-        Assert.IsTrue(outboxStorage.Contains("attempt_count"));
-        Assert.IsFalse(outboxStorage.Contains("retry_count"), "runtime outbox code must not update retry_count");
+        Assert.Contains("attempt_count", outboxStorage);
+        Assert.DoesNotContain("retry_count", outboxStorage, "runtime outbox code must not update retry_count");
     }
 
     [TestMethod]
     public void RuntimeContractTestsProtectDestructiveReset()
     {
         var testProgram = File.ReadAllText(RepoPath("tests", "WorkOS.RuntimeContractTests", "Program.cs"));
-        Assert.IsTrue(testProgram.Contains("AssertTestDatabaseAllowed"));
-        Assert.IsTrue(testProgram.Contains("TEST_DATABASE"));
-        Assert.IsTrue(testProgram.Contains("_test"));
+        Assert.Contains("AssertTestDatabaseAllowed", testProgram);
+        Assert.Contains("TEST_DATABASE", testProgram);
+        Assert.Contains("_test", testProgram);
     }
 
     [TestMethod]
@@ -67,13 +67,13 @@ public sealed class RuntimePersistenceContractTests
             "requirement_id"
         })
         {
-            Assert.IsTrue(migration.Contains(term), $"migration must declare {term}");
+            Assert.Contains(term, migration, $"migration must declare {term}");
         }
 
         var unitOfWork = File.ReadAllText(RepoPath("services", "core-api", "WorkOS.Api", "Runtime", "ConfirmUnitOfWork.cs"));
-        Assert.IsTrue(unitOfWork.Contains("MarkSubmitted"));
-        Assert.IsTrue(unitOfWork.Contains("MarkConfirmed"));
-        Assert.IsTrue(unitOfWork.Contains("MarkUsed"));
+        Assert.Contains("MarkSubmitted", unitOfWork);
+        Assert.Contains("MarkConfirmed", unitOfWork);
+        Assert.Contains("MarkUsed", unitOfWork);
     }
 
     [TestMethod]
@@ -103,7 +103,7 @@ public sealed class RuntimePersistenceContractTests
             "drop schema if exists control_plane cascade"
         })
         {
-            Assert.IsTrue(migration.Contains(term), $"migration must declare {term}");
+            Assert.Contains(term, migration, $"migration must declare {term}");
         }
 
         foreach (var value in ControlPlaneDbMapping.ReleaseStatuses
@@ -116,7 +116,7 @@ public sealed class RuntimePersistenceContractTests
             .Concat(ControlPlaneDbMapping.RollbackInstructionTypes)
             .Concat(ControlPlaneDbMapping.RollbackKinds))
         {
-            Assert.IsTrue(migration.Contains($"'{value}'"), $"migration must constrain value {value}");
+            Assert.Contains($"'{value}'", migration, $"migration must constrain value {value}");
         }
 
         foreach (var scopeField in new[]
@@ -134,7 +134,7 @@ public sealed class RuntimePersistenceContractTests
             "gte"
         })
         {
-            Assert.IsTrue(migration.Contains(scopeField), $"feature flag scope_rules must support {scopeField}");
+            Assert.Contains(scopeField, migration, $"feature flag scope_rules must support {scopeField}");
         }
     }
 
@@ -144,21 +144,21 @@ public sealed class RuntimePersistenceContractTests
         var migration = File.ReadAllText(RepoPath("infra", "db", "migrations", "015_control_plane_shadow_runtime.sql"));
         var writeStore = File.ReadAllText(RepoPath("services", "core-api", "WorkOS.Api", "Runtime", "ControlPlaneWriteStore.cs"));
         var allTables = ControlPlaneDbMapping.ControlPlaneTables.Concat(ControlPlaneDbMapping.ShadowRuntimeTables).ToArray();
-        Assert.AreEqual(7, ControlPlaneDbMapping.ControlPlaneTables.Count);
-        Assert.AreEqual(5, ControlPlaneDbMapping.ShadowRuntimeTables.Count);
+        Assert.HasCount(7, ControlPlaneDbMapping.ControlPlaneTables);
+        Assert.HasCount(5, ControlPlaneDbMapping.ShadowRuntimeTables);
 
         foreach (var table in allTables)
         {
-            Assert.IsTrue(migration.Contains($"{table.Schema}.{table.Table}"), $"migration missing table {table.Schema}.{table.Table}");
+            Assert.Contains($"{table.Schema}.{table.Table}", migration, $"migration missing table {table.Schema}.{table.Table}");
             foreach (var column in table.Columns)
             {
-                Assert.IsTrue(migration.Contains(column), $"migration missing mapped column {table.Table}.{column}");
+                Assert.Contains(column, migration, $"migration missing mapped column {table.Table}.{column}");
             }
         }
 
         foreach (var method in new[] { "WriteGateResult", "WriteRuntimeInvariantCheck", "WriteShadowCompareReport" })
         {
-            Assert.IsTrue(writeStore.Contains(method), $"Control Plane write store must expose {method}");
+            Assert.Contains(method, writeStore, $"Control Plane write store must expose {method}");
         }
     }
 
@@ -181,7 +181,7 @@ public sealed class RuntimePersistenceContractTests
             "target_slice_id"
         })
         {
-            Assert.IsTrue(migration.Contains(term), $"process manager migration must declare {term}");
+            Assert.Contains(term, migration, $"process manager migration must declare {term}");
         }
     }
 
@@ -205,7 +205,7 @@ public sealed class RuntimePersistenceContractTests
             "causation_id"
         })
         {
-            Assert.IsTrue(migration.Contains(term), $"operations unit of work migration must declare {term}");
+            Assert.Contains(term, migration, $"operations unit of work migration must declare {term}");
         }
 
         var unitOfWork = File.ReadAllText(RepoPath("services", "core-api", "WorkOS.Api", "Runtime", "OperationsUnitOfWork.cs"));
@@ -222,10 +222,10 @@ public sealed class RuntimePersistenceContractTests
             "OperationsReadStore"
         })
         {
-            Assert.IsTrue(unitOfWork.Contains(term), $"S2 runtime must expose {term}");
+            Assert.Contains(term, unitOfWork, $"S2 runtime must expose {term}");
         }
 
-        Assert.IsFalse(unitOfWork.Contains("MapPost(\"/api/", StringComparison.OrdinalIgnoreCase), "S2 must not add Operations API endpoints.");
+        Assert.DoesNotContain("MapPost(\"/api/", unitOfWork, StringComparison.OrdinalIgnoreCase, "S2 must not add Operations API endpoints.");
     }
 
     [TestMethod]
@@ -257,7 +257,7 @@ public sealed class RuntimePersistenceContractTests
             "metadata"
         })
         {
-            Assert.IsTrue(migration.Contains(term), $"bank reconciliation migration must declare {term}");
+            Assert.Contains(term, migration, $"bank reconciliation migration must declare {term}");
         }
 
         foreach (var value in new[]
@@ -281,7 +281,7 @@ public sealed class RuntimePersistenceContractTests
             "unknown"
         })
         {
-            Assert.IsTrue(migration.Contains($"'{value}'"), $"bank reconciliation migration must constrain value {value}");
+            Assert.Contains($"'{value}'", migration, $"bank reconciliation migration must constrain value {value}");
         }
     }
 
@@ -291,11 +291,11 @@ public sealed class RuntimePersistenceContractTests
         var migration = File.ReadAllText(RepoPath("infra", "db", "migrations", "017_reconciliation_runtime.sql"));
         var bankTransactionTable = CreateTableSection(migration, "bank_transactions");
 
-        Assert.IsFalse(bankTransactionTable.Contains("event_id"), "bank_transactions must not carry domain event ids as business facts.");
-        Assert.IsFalse(bankTransactionTable.Contains("domain_event", StringComparison.OrdinalIgnoreCase));
-        Assert.IsFalse(bankTransactionTable.Contains("PaymentConfirmed", StringComparison.OrdinalIgnoreCase));
-        Assert.IsTrue(bankTransactionTable.Contains("raw_payload"), "bank_transactions should preserve imported bank payload separately from domain facts.");
-        Assert.IsTrue(bankTransactionTable.Contains("status"), "bank_transactions should track import/match state without becoming PaymentConfirmed.");
+        Assert.DoesNotContain("event_id", bankTransactionTable, "bank_transactions must not carry domain event ids as business facts.");
+        Assert.DoesNotContain("domain_event", bankTransactionTable, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("PaymentConfirmed", bankTransactionTable, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("raw_payload", bankTransactionTable, "bank_transactions should preserve imported bank payload separately from domain facts.");
+        Assert.Contains("status", bankTransactionTable, "bank_transactions should track import/match state without becoming PaymentConfirmed.");
     }
 
     [TestMethod]
@@ -303,13 +303,9 @@ public sealed class RuntimePersistenceContractTests
     {
         var migration = File.ReadAllText(RepoPath("infra", "db", "migrations", "017_reconciliation_runtime.sql"));
 
-        Assert.IsTrue(
-            migration.Contains("uq_bank_transactions_tenant_import_external_ref") &&
-            migration.Contains("unique(tenant_id, import_id, external_ref)"),
-            "duplicate bank transaction external_ref must be constrained per tenant/import by default policy.");
-        Assert.IsTrue(
-            migration.Contains("duplicate_bank_transaction"),
-            "mismatch policy must be able to represent duplicate imported bank transactions.");
+        Assert.Contains("uq_bank_transactions_tenant_import_external_ref", migration, "duplicate bank transaction external_ref must be constrained per tenant/import by default policy.");
+        Assert.Contains("unique(tenant_id, import_id, external_ref)", migration, "duplicate bank transaction external_ref must be constrained per tenant/import by default policy.");
+        Assert.Contains("duplicate_bank_transaction", migration, "mismatch policy must be able to represent duplicate imported bank transactions.");
     }
 
     [TestMethod]
@@ -318,7 +314,7 @@ public sealed class RuntimePersistenceContractTests
         var migration = File.ReadAllText(RepoPath("infra", "db", "migrations", "017_reconciliation_runtime.sql"));
         var paymentMatches = CreateTableSection(migration, "payment_matches");
 
-        Assert.IsTrue(paymentMatches.Contains("num_nonnulls(payment_id, deposit_id, refund_payment_id) = 1"),
+        Assert.Contains("num_nonnulls(payment_id, deposit_id, refund_payment_id) = 1", paymentMatches,
             "payment_matches must connect one existing payment/deposit/refund target by default.");
         foreach (var term in new[]
         {
@@ -336,7 +332,7 @@ public sealed class RuntimePersistenceContractTests
             "references deposit_transactions(transaction_id)"
         })
         {
-            Assert.IsTrue(migration.Contains(term), $"payment match unique default must declare {term}");
+            Assert.Contains(term, migration, $"payment match unique default must declare {term}");
         }
     }
 
@@ -358,7 +354,7 @@ public sealed class RuntimePersistenceContractTests
             "ix_reconciliation_cases_owner_due"
         })
         {
-            Assert.IsTrue(migration.Contains(term), $"reconciliation case migration must declare {term}");
+            Assert.Contains(term, migration, $"reconciliation case migration must declare {term}");
         }
     }
 
@@ -399,7 +395,7 @@ public sealed class RuntimePersistenceContractTests
             "trg_payment_allocations_forbid_update"
         })
         {
-            Assert.IsTrue(migration.Contains(term), $"Correction Center migration must declare {term}");
+            Assert.Contains(term, migration, $"Correction Center migration must declare {term}");
         }
 
         foreach (var value in new[]
@@ -418,22 +414,22 @@ public sealed class RuntimePersistenceContractTests
             "charge_adjustment"
         })
         {
-            Assert.IsTrue(migration.Contains($"'{value}'"), $"Correction Center migration must constrain value {value}");
+            Assert.Contains($"'{value}'", migration, $"Correction Center migration must constrain value {value}");
         }
 
         var requestTable = CreateTableSection(migration, "ledger_correction_requests");
-        Assert.IsTrue(requestTable.Contains("length(trim(reason)) > 0"), "correction requests must require a reason.");
-        Assert.IsTrue(requestTable.Contains("risk_level in ('low', 'medium', 'high', 'critical')"), "correction requests must classify risk.");
+        Assert.Contains("length(trim(reason)) > 0", requestTable, "correction requests must require a reason.");
+        Assert.Contains("risk_level in ('low', 'medium', 'high', 'critical')", requestTable, "correction requests must classify risk.");
 
         var correctionEntries = CreateTableSection(migration, "ledger_correction_entries");
-        Assert.IsTrue(correctionEntries.Contains("jsonb_typeof(before_snapshot) = 'object'"));
-        Assert.IsTrue(correctionEntries.Contains("jsonb_typeof(after_snapshot) = 'object'"));
+        Assert.Contains("jsonb_typeof(before_snapshot) = 'object'", correctionEntries);
+        Assert.Contains("jsonb_typeof(after_snapshot) = 'object'", correctionEntries);
     }
 
     private static string CreateTableSection(string migration, string tableName)
     {
         var start = migration.IndexOf($"create table if not exists {tableName}", StringComparison.OrdinalIgnoreCase);
-        Assert.IsTrue(start >= 0, $"Could not find create table section for {tableName}.");
+        Assert.IsGreaterThanOrEqualTo(0, start, $"Could not find create table section for {tableName}.");
 
         var next = migration.IndexOf("create table if not exists", start + 1, StringComparison.OrdinalIgnoreCase);
         return next < 0
