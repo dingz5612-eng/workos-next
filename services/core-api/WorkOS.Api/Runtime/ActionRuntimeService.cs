@@ -255,6 +255,137 @@ public sealed class ActionRuntimeService
             events);
     }
 
+    public ConfirmResult ValidateConfirm(
+        RuntimeState state,
+        string workspaceId,
+        string cardId,
+        ConfirmCardRequest request,
+        string actorToken)
+    {
+        var workspace = queryService.FindWorkspace(state, workspaceId);
+        var card = workspace?.Cards.FirstOrDefault(item => item.Id.Equals(cardId, StringComparison.OrdinalIgnoreCase));
+        if (workspace is null || card is null)
+        {
+            return new ConfirmResult(ConfirmStatus.NotFound, null, null);
+        }
+
+        var requiredFieldFailure = ValidateRequiredConfirmFields(request);
+        if (requiredFieldFailure is not null)
+        {
+            return requiredFieldFailure;
+        }
+
+        var capabilityFailure = capabilityGate.ForbidConfirmIfContractOnly(workspace.Id);
+        if (capabilityFailure is not null)
+        {
+            return capabilityFailure;
+        }
+
+        var actor = store.FindUserBySessionToken(actorToken);
+        if (actor is null)
+        {
+            return new ConfirmResult(ConfirmStatus.Forbidden, "actor_session_required", null);
+        }
+
+        var policyFailure = confirmationPolicy.Authorize(card, actor);
+        if (policyFailure is not null)
+        {
+            return policyFailure;
+        }
+
+        var deviceFailure = RuntimeSecurityPolicy.ValidateConfirm(
+            card,
+            actor,
+            request,
+            ResolveDeviceSession(request),
+            requireTrustedDeviceForHighRiskActions);
+        if (deviceFailure is not null)
+        {
+            return deviceFailure;
+        }
+
+        var fieldKeyFailure = ValidateCanonicalFieldKeys(request.FieldValues);
+        if (fieldKeyFailure is not null)
+        {
+            return fieldKeyFailure;
+        }
+
+        request = request with { FieldValues = NormalizeFieldValues(card, request.FieldValues) };
+
+        var aggregateFailure = ValidateLedgerAggregateRef(workspace.Id, card.Id, request);
+        if (aggregateFailure is not null)
+        {
+            return aggregateFailure;
+        }
+
+        var fieldContractFailure = FieldContractValidator.Validate(card, request);
+        if (fieldContractFailure is not null)
+        {
+            return fieldContractFailure;
+        }
+
+        var evidenceFailure = ValidateEvidenceObject(workspace.Id, card, request);
+        if (evidenceFailure is not null)
+        {
+            return evidenceFailure;
+        }
+
+        var depositPolicyFailure = DepositLedgerPolicy.Validate(card.Id, request, store);
+        if (depositPolicyFailure is not null)
+        {
+            return depositPolicyFailure;
+        }
+
+        var paymentPolicyFailure = PaymentLedgerPolicy.Validate(card.Id, request, store);
+        if (paymentPolicyFailure is not null)
+        {
+            return paymentPolicyFailure;
+        }
+
+        var checkoutPolicyFailure = CheckOutSettlementPolicy.Validate(card.Id, request);
+        if (checkoutPolicyFailure is not null)
+        {
+            return checkoutPolicyFailure;
+        }
+
+        var servicePolicyFailure = ServiceTaskPolicy.Validate(card.Id, request);
+        if (servicePolicyFailure is not null)
+        {
+            return servicePolicyFailure;
+        }
+
+        var expensePolicyFailure = ExpenseLedgerPolicy.Validate(card.Id, request);
+        if (expensePolicyFailure is not null)
+        {
+            return expensePolicyFailure;
+        }
+
+        var periodPolicyFailure = PeriodAnalyticsPolicy.Validate(card.Id, request);
+        if (periodPolicyFailure is not null)
+        {
+            return periodPolicyFailure;
+        }
+
+        return new ConfirmResult(ConfirmStatus.Confirmed, null, null);
+    }
+
+    private static ConfirmResult? ValidateRequiredConfirmFields(ConfirmCardRequest request)
+    {
+        if (string.IsNullOrWhiteSpace(request.IdempotencyKey))
+        {
+            return new ConfirmResult(ConfirmStatus.Invalid, "Confirm requires an idempotency key.", null);
+        }
+
+        if (string.IsNullOrWhiteSpace(request.SubmissionId))
+        {
+            return new ConfirmResult(ConfirmStatus.Invalid, "Confirm requires a submissionId.", null);
+        }
+
+        return string.IsNullOrWhiteSpace(request.CardInstanceId)
+            ? new ConfirmResult(ConfirmStatus.Invalid, "Confirm requires a cardInstanceId.", null)
+            : null;
+    }
+
     private ConfirmResult CommittedResult(
         ConfirmStatus status,
         RuntimeState state,

@@ -184,6 +184,12 @@ export type ConfirmCardResponse = {
   };
   events?: WorkspaceEvent[];
   projection?: ProjectionEnvelope | null;
+  source?: "operations_adapter" | "operations_unit_of_work";
+  compatibilitySource?: "workspace_card_compatibility_adapter";
+  idempotencyKey?: string | null;
+  payloadHash?: string | null;
+  commandSubmissionId?: string | null;
+  traceUrl?: string | null;
 };
 
 export type PrepareCardRequest = {

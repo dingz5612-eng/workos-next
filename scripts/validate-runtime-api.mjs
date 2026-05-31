@@ -516,30 +516,71 @@ async function validateConfirmLedgerProjectionLensChain() {
   const login = await postJson("/api/auth/login", { username: "operator", password: "dev" });
   const suffix = `${Date.now()}-${Math.random().toString(16).slice(2)}`;
   const roomId = `api-chain-room-${suffix}`;
+  const confirmRequest = {
+    ...confirmBody(`api-chain-${suffix}`, {
+      roomId,
+      roomNo: `API-${suffix.slice(-6)}`,
+      roomType: "four_bed",
+      bedCount: "4",
+      genderPolicy: "unrestricted",
+      furnitureStatus: "complete",
+      technicalState: "ready"
+    }, `room:${roomId}`)
+  };
   const result = await postJsonWithActor(
     "/api/workspaces/W-STAY-RESOURCE/cards/roomSetup/confirm",
-    {
-      ...confirmBody(`api-chain-${suffix}`, {
-        roomId,
-        roomNo: `API-${suffix.slice(-6)}`,
-        roomType: "four_bed",
-        bedCount: "4",
-        genderPolicy: "unrestricted",
-        furnitureStatus: "complete",
-        technicalState: "ready"
-      }, `room:${roomId}`)
-    },
+    confirmRequest,
     login.token,
     `api-chain-${suffix}`
   );
 
-  const eventIds = (result.events || []).map((item) => item.eventId).filter(Boolean);
-  assert(eventIds.length > 0, "confirm response must include committed events");
+  const eventIds = result.source === "operations_unit_of_work"
+    ? (result.resultEventIds || []).filter(Boolean)
+    : (result.events || []).map((item) => item.eventId).filter(Boolean);
+  assert(eventIds.length > 0, "confirm response must include committed event refs");
   assert(result.confirmed === true, "confirm response must mark confirmed true");
   assert(result.commitStatus === "committed", `confirm response commitStatus must be committed, got ${result.commitStatus}`);
-  assert(result.projectionStatus === "projected", `confirm response projectionStatus must be projected, got ${result.projectionStatus}`);
   assert(Array.isArray(result.resultEventIds), "confirm response must include resultEventIds");
-  assert(result.resultEventIds.join("|") === eventIds.join("|"), "confirm response resultEventIds must match committed events");
+  assert(result.resultEventIds.join("|") === eventIds.join("|"), "confirm response resultEventIds must match committed event refs");
+
+  if (result.source === "operations_unit_of_work") {
+    assert(result.commandSubmissionId, "S4 compatibility confirm must expose commandSubmissionId");
+    assert(result.traceUrl === `/api/operations/trace/submissions/${result.commandSubmissionId}`, "S4 compatibility confirm must expose canonical traceUrl");
+    assert(result.projectionStatus === "pending", `S4 UoW compatibility confirm projectionStatus must be pending, got ${result.projectionStatus}`);
+    const trace = await getJson(result.traceUrl);
+    assert(trace.submissionRef === result.commandSubmissionId, "S4 trace must bind to the commandSubmissionId");
+    assert(trace.workItemRef === result.workItemId, "S4 trace must bind to the legacy-resolved workItemId");
+    assert((trace.domainEventRefs || []).join("|") === eventIds.join("|"), "S4 trace domainEventRefs must match resultEventIds");
+
+    const duplicate = await fetch(`${baseUrl}/api/workspaces/W-STAY-RESOURCE/cards/roomSetup/confirm`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-WorkOS-Actor-Token": login.token,
+        "X-Request-Id": `api-chain-duplicate-${suffix}`
+      },
+      body: JSON.stringify(confirmRequest)
+    });
+    assert(duplicate.status === 200, `duplicate idempotency confirm must return committed 200, got ${duplicate.status}`);
+    const duplicateResult = await duplicate.json();
+    assert(duplicateResult.commitStatus === "committed", "duplicate confirm must preserve committed commitStatus");
+    assert(duplicateResult.commandSubmissionId === result.commandSubmissionId, "duplicate confirm must return the original commandSubmissionId");
+    assert(duplicateResult.resultEventIds?.[0] === eventIds[0], "duplicate confirm must return the original domain event id");
+
+    const conflict = await fetch(`${baseUrl}/api/workspaces/W-STAY-RESOURCE/cards/roomSetup/confirm`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-WorkOS-Actor-Token": login.token,
+        "X-Request-Id": `api-chain-conflict-${suffix}`
+      },
+      body: JSON.stringify(confirmBody(`api-chain-${suffix}`, { roomId: `${roomId}-changed` }, `room:${roomId}`))
+    });
+    assert(conflict.status === 409, `different payload with same idempotency key must return 409, got ${conflict.status}`);
+    return;
+  }
+
+  assert(result.projectionStatus === "projected", `confirm response projectionStatus must be projected, got ${result.projectionStatus}`);
   const projectedIds = new Set((result.projection?.events || []).map((item) => item.eventId));
   assert(eventIds.every((eventId) => projectedIds.has(eventId)), "confirm response projection must include committed events");
   const workspace = result.projection?.workspaces?.find((item) => item.id === "W-STAY-RESOURCE");
@@ -560,7 +601,7 @@ async function validateConfirmLedgerProjectionLensChain() {
       "X-WorkOS-Actor-Token": login.token,
       "X-Request-Id": `api-chain-duplicate-${suffix}`
     },
-    body: JSON.stringify(confirmBody(`api-chain-${suffix}`, { roomId }, `room:${roomId}`))
+    body: JSON.stringify(confirmRequest)
   });
   assert(duplicate.status === 200, `duplicate idempotency confirm must return committed 200, got ${duplicate.status}`);
   const duplicateResult = await duplicate.json();

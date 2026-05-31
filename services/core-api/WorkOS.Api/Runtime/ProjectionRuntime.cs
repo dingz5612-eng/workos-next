@@ -102,4 +102,9 @@ public sealed partial class ProjectionRuntime
         }
     }
 
+    public ConfirmResult ValidateConfirm(string workspaceId, string cardId, ConfirmCardRequest request, string actorToken)
+    {
+        lock (gate) return actionRuntimeService.ValidateConfirm(state, workspaceId, cardId, request, actorToken);
+    }
+
 }

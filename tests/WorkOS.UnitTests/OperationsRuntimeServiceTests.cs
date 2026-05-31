@@ -388,6 +388,11 @@ public sealed class OperationsRuntimeServiceTests
         public object? Prepare(string workspaceId, string cardId, PrepareCardRequest? request = null) =>
             new { prepared = true };
 
+        public ConfirmResult ValidateConfirm(string workspaceId, string cardId, ConfirmCardRequest request, string actorToken) =>
+            status is ConfirmStatus.Confirmed or ConfirmStatus.ProjectionFailed
+                ? new ConfirmResult(ConfirmStatus.Confirmed, null, null)
+                : new ConfirmResult(status, reason, null);
+
         public ConfirmResult Confirm(string workspaceId, string cardId, ConfirmCardRequest request, string actorToken)
         {
             ConfirmCount++;

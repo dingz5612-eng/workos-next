@@ -113,6 +113,9 @@ public sealed class CanonicalOperationsApiServiceTests
         public object? Prepare(string workspaceId, string cardId, PrepareCardRequest? request = null) =>
             new { prepared = true };
 
+        public ConfirmResult ValidateConfirm(string workspaceId, string cardId, ConfirmCardRequest request, string actorToken) =>
+            new(ConfirmStatus.Confirmed, null, null);
+
         public ConfirmResult Confirm(string workspaceId, string cardId, ConfirmCardRequest request, string actorToken)
         {
             ConfirmCount++;
