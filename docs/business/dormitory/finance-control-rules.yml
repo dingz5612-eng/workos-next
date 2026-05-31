@@ -1,0 +1,21 @@
+{
+  "domainId": "dormitory",
+  "version": "b1",
+  "moneyFactSource": "Balanced Money Kernel only",
+  "rules": [
+    {"id":"dorm-fin-001","statement":"deposit is liability, not revenue","blocksProductionIfMissing":true},
+    {"id":"dorm-fin-002","statement":"ordinary payment must not mix with deposit movement","blocksProductionIfMissing":true},
+    {"id":"dorm-fin-003","statement":"every money confirmation must produce balanced LedgerTransaction","blocksProductionIfMissing":true},
+    {"id":"dorm-fin-004","statement":"ledger_entry is immutable and corrections are append-only reversal or compensating transactions","blocksProductionIfMissing":true},
+    {"id":"dorm-fin-005","statement":"checkout settlement reads ledger/projection and must not fabricate deposit facts","blocksProductionIfMissing":true},
+    {"id":"dorm-fin-006","statement":"frontend balance and total fields are not finance facts","blocksProductionIfMissing":true}
+  ],
+  "commands": [
+    {"commandType":"DepositReceipt","ledgerImpact":"debit cash, credit deposit liability"},
+    {"commandType":"PaymentReceipt","ledgerImpact":"debit cash, credit receivable/revenue allocation"},
+    {"commandType":"RefundDeposit","ledgerImpact":"debit deposit liability, credit cash"},
+    {"commandType":"CheckoutSettlement","ledgerImpact":"balanced settlement only from ledger projection"},
+    {"commandType":"LedgerCorrectionApply","ledgerImpact":"append-only reversal or compensating transaction"}
+  ],
+  "productionAllowed": false
+}

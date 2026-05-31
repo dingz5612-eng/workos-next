@@ -1,0 +1,1 @@
+{"templateId":"lens-template","requiredFields":["lensId","sourceFacts","freshness","crossCheck","notFactSource"],"projectionNotFactSource":true}

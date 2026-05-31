@@ -1,0 +1,1 @@
+{"templateId":"workitem-template","requiredFields":["workItemType","中文名称","ownerRole","backupOwner","escalationOwner","SLA","requiredEvidence","affectedFacts","ledgerImpact","confirmationPolicy","riskLevel","idempotencyScope","factTraceRequired","lensOutputs","certificationScenario"],"notFactSource":"WorkItemBundle"}

@@ -1,0 +1,18 @@
+{
+  "domainId": "dormitory",
+  "version": "b1",
+  "policy": "High-risk Dormitory confirmations require EvidenceObject refs bound to tenantId, caseId, workItemId, submissionId, evidenceHash, capturedAt, capturedBy, and trustLevel.",
+  "bindingRules": ["requirementId", "workItemId", "submissionId", "tenantId", "evidenceHash"],
+  "rejectedEvidenceBlocksConfirm": true,
+  "missingEvidenceBlocksConfirm": true,
+  "requirements": [
+    {"requirementId":"identity-document","workItemTypes":["Dorm.CheckinPrepare","Dorm.CheckinConfirm"],"trustLevel":"verified","retention":"regulated"},
+    {"requirementId":"payment-receipt","workItemTypes":["Dorm.PaymentRegister","Dorm.PaymentConfirm"],"trustLevel":"verified","retention":"finance"},
+    {"requirementId":"receipt-proof","workItemTypes":["Dorm.DepositReceive","Dorm.DepositConfirm"],"trustLevel":"verified","retention":"finance"},
+    {"requirementId":"deduction-basis","workItemTypes":["Dorm.DepositDeduct"],"trustLevel":"verified","retention":"finance"},
+    {"requirementId":"room-inspection","workItemTypes":["Dorm.RoomInspection","Dorm.DepositDeduct"],"trustLevel":"verified","retention":"operations"},
+    {"requirementId":"cleaning-checklist","workItemTypes":["Dorm.RoomReadinessCheck","Dorm.ResourceRelease"],"trustLevel":"operator-attested","retention":"operations"},
+    {"requirementId":"refund-approval","workItemTypes":["Dorm.RefundApprove"],"trustLevel":"controller-approved","retention":"finance"}
+  ],
+  "productionAllowed": false
+}

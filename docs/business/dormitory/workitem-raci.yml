@@ -1,0 +1,20 @@
+{
+  "domainId": "dormitory",
+  "version": "b1",
+  "roles": [
+    {"role":"Dormitory Operations Owner","responsibilities":["domain go/no-go","business signoff request"],"cannotWriteFactsDirectly":true},
+    {"role":"Resource Manager","responsibilities":["Room","Bed","BedStatus"],"cannotWriteFactsDirectly":true},
+    {"role":"Front Desk Lead","responsibilities":["Lead","Reservation","Stay onboarding"],"cannotWriteFactsDirectly":true},
+    {"role":"Finance Cashier","responsibilities":["payment receipt draft"],"cannotWriteFactsDirectly":true},
+    {"role":"Finance Supervisor","responsibilities":["PaymentConfirmed","DepositConfirmed","Settlement"],"cannotWriteFactsDirectly":true},
+    {"role":"Finance Controller","responsibilities":["refund approval","correction approval"],"cannotWriteFactsDirectly":true},
+    {"role":"Operations Director","responsibilities":["risk escalation","resource release exceptions"],"cannotWriteFactsDirectly":true}
+  ],
+  "raciRules": [
+    {"fact":"DepositAccount","responsible":"Finance Supervisor","accountable":"Finance Controller","consulted":["Front Desk Lead"],"informed":["Dormitory Operations Owner"]},
+    {"fact":"Stay","responsible":"Front Desk Lead","accountable":"Dormitory Operations Owner","consulted":["Resource Manager"],"informed":["Finance Supervisor"]},
+    {"fact":"BedStatus","responsible":"Resource Manager","accountable":"Operations Director","consulted":["Housekeeping Lead"],"informed":["Front Desk Lead"]},
+    {"fact":"LedgerTransaction","responsible":"Finance Supervisor","accountable":"Finance Controller","consulted":["Dormitory Operations Owner"],"informed":["Operations Director"]}
+  ],
+  "productionAllowed": false
+}
