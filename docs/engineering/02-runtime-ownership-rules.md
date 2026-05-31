@@ -16,6 +16,9 @@ another owner's facts.
 - Facts, allowed writers, forbidden writers, readers, requesters, invariants,
   correction paths, and projection owners are declared in
   `docs/rules/v5.5/fact-ownership.yml`.
+- Concrete write surfaces, table names, storage classes, SQL write patterns,
+  and append-only correction services are mapped in
+  `docs/rules/v5.5/fact-write-map.yml`.
 
 ## Enforcement
 
@@ -26,5 +29,8 @@ node scripts/check-fact-ownership.mjs
 ```
 
 The check is blocking for missing facts, missing owners, missing writer
-contracts, and missing P0 invariants. Later source scanners must use this
-registry as the rule source rather than embedding one-off ownership lists.
+contracts, missing P0 invariants, and non-owner writes discovered in runtime
+source, migrations, control-plane tools, or write-simulation tests. The scanner
+reports fact, writer, file, line, severity, owner, and the allowed write path so
+governance fixes can target the owning runtime boundary instead of broad
+allowlists.
