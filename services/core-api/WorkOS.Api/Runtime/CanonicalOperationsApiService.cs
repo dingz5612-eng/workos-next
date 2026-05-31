@@ -80,7 +80,21 @@ public sealed class CanonicalOperationsApiService
             normalized.SubmissionId,
             requestId);
 
-        return ToConfirmResult(unitOfWork.Commit(command), normalized);
+        var commit = unitOfWork.Commit(command);
+        if (commit is { StatusCode: StatusCodes.Status200OK, CommitStatus: "committed", Duplicate: false })
+        {
+            catalog.RecordWorkItemTransition(
+                workItem.TenantId,
+                caseId,
+                workItem.WorkItemId,
+                workItem.Status,
+                "confirmed",
+                commit.SubmissionId,
+                "operations_confirm_committed",
+                actorToken);
+        }
+
+        return ToConfirmResult(commit, normalized);
     }
 
     public FactTraceV1? GetSubmissionTrace(string submissionId) =>

@@ -225,7 +225,7 @@ public sealed class OperationsRuntimeServiceTests
         Assert.AreEqual(true, payload["prepared"]);
         Assert.AreEqual("W-OPS", payload["workspaceId"]);
         Assert.AreEqual("roomSetup", payload["cardId"]);
-        Assert.AreEqual("W-OPS:roomSetup", payload["workItemId"]);
+        StringAssert.StartsWith(payload["workItemId"]!.ToString(), "wi-");
         Assert.AreEqual("W-OPS", payload["caseId"]);
         Assert.IsTrue(payload.ContainsKey("card"));
         Assert.IsTrue(payload.ContainsKey("allowedActions"));
@@ -243,7 +243,7 @@ public sealed class OperationsRuntimeServiceTests
         Assert.AreEqual(StatusCodes.Status200OK, result.StatusCode);
         Assert.AreEqual(1, runtime.ConfirmCount);
         Assert.AreEqual("operations_adapter", payload["source"]);
-        Assert.AreEqual("W-OPS:roomSetup", payload["workItemId"]);
+        StringAssert.StartsWith(payload["workItemId"]!.ToString(), "wi-");
     }
 
     [TestMethod]

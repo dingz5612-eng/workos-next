@@ -22,7 +22,7 @@ public sealed class WorkspaceCardCompatibilityAdapterTests
         Assert.AreEqual(0, runtime.ConfirmCount);
         Assert.AreEqual("operations_unit_of_work", payload["source"]);
         Assert.AreEqual("workspace_card_compatibility_adapter", payload["compatibilitySource"]);
-        Assert.AreEqual("W-S4:roomSetup", payload["workItemId"]);
+        StringAssert.StartsWith(payload["workItemId"]!.ToString(), "wi-");
         Assert.AreEqual($"/api/operations/trace/submissions/{commandSubmissionId}", payload["traceUrl"]);
         Assert.HasCount(1, store.Submissions);
         Assert.HasCount(1, store.DomainEvents);
@@ -92,7 +92,7 @@ public sealed class WorkspaceCardCompatibilityAdapterTests
         Assert.IsTrue((bool)payload["prepared"]!);
         Assert.AreEqual("W-S4", payload["workspaceId"]);
         Assert.AreEqual("roomSetup", payload["cardId"]);
-        Assert.AreEqual("W-S4:roomSetup", payload["workItemId"]);
+        StringAssert.StartsWith(payload["workItemId"]!.ToString(), "wi-");
         Assert.AreEqual("W-S4", payload["caseId"]);
         Assert.Contains("card", payload.Keys);
         Assert.Contains("allowedActions", payload.Keys);

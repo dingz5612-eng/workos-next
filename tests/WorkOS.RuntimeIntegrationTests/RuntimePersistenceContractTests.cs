@@ -254,6 +254,48 @@ public sealed class RuntimePersistenceContractTests
     }
 
     [TestMethod]
+    public void OperationCaseWorkItemPersistenceMigrationDeclaresFirstClassRuntimeObjects()
+    {
+        var migration = File.ReadAllText(RepoPath("infra", "db", "migrations", "033_operations_case_work_item_persistence.sql"));
+        foreach (var term in new[]
+        {
+            "operations_cases",
+            "operations_work_items",
+            "operations_work_item_state_history",
+            "operations_work_item_assignments",
+            "operations_work_item_escalations",
+            "definition_version_id",
+            "lifecycle_state",
+            "owner_role",
+            "due_at_utc",
+            "idempotency_scope",
+            "required_evidence_refs",
+            "affected_fact_refs",
+            "references operations_cases(case_id) on delete restrict",
+            "references operations_work_items(work_item_id) on delete restrict"
+        })
+        {
+            Assert.Contains(term, migration, $"operation case/work item persistence migration must declare {term}");
+        }
+
+        var caseStore = File.ReadAllText(RepoPath("services", "core-api", "WorkOS.Api", "Runtime", "OperationsCaseStore.cs"));
+        var workItemStore = File.ReadAllText(RepoPath("services", "core-api", "WorkOS.Api", "Runtime", "OperationsWorkItemStore.cs"));
+        var runtimeService = File.ReadAllText(RepoPath("services", "core-api", "WorkOS.Api", "Runtime", "OperationsRuntimeService.cs"));
+        foreach (var term in new[] { "PostgresOperationsCaseStore", "InMemoryOperationsCaseStore", "IOperationsCaseStore" })
+        {
+            Assert.Contains(term, caseStore, $"case store must expose {term}");
+        }
+
+        foreach (var term in new[] { "PostgresOperationsWorkItemStore", "InMemoryOperationsWorkItemStore", "RecordTransition", "GetTransitions" })
+        {
+            Assert.Contains(term, workItemStore, $"work item store must expose {term}");
+        }
+
+        Assert.Contains("RecordWorkItemTransition", runtimeService);
+        Assert.DoesNotContain("=> $\"{workspaceId}:{cardId}\"", runtimeService, "RF7 must not generate workspaceId:cardId as the compatibility WorkItem identity.");
+    }
+
+    [TestMethod]
     public void bank_schema_migration()
     {
         var migration = File.ReadAllText(RepoPath("infra", "db", "migrations", "017_reconciliation_runtime.sql"));
