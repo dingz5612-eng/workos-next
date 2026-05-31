@@ -2476,6 +2476,14 @@ static void ResetPostgres(string connectionString)
         drop table if exists payment_match_candidates;
         drop table if exists bank_transactions;
         drop table if exists bank_statement_imports;
+        drop table if exists stay_balance_projection;
+        drop table if exists payments;
+        drop table if exists charges;
+        drop table if exists deposit_balance_projection;
+        drop table if exists deposit_accounts;
+        drop table if exists ledger_entries;
+        drop table if exists ledger_transactions;
+        drop table if exists ledger_accounts;
         drop table if exists operations_fact_responses;
         drop table if exists operations_outbox_messages;
         drop table if exists operations_work_item_events;
