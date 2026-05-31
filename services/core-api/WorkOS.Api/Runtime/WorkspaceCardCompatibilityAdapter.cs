@@ -2,20 +2,20 @@ using Microsoft.AspNetCore.Http;
 
 namespace WorkOS.Api.Runtime;
 
-public sealed class LegacyWorkspaceCardAdapter
+public sealed class WorkspaceCardCompatibilityAdapter
 {
     private readonly CanonicalOperationsApiService operations;
-    private readonly LegacyWorkItemResolver workItems;
-    private readonly LegacyCompatibilityPolicy policy;
-    private readonly LegacyCardRequestMapper requests;
-    private readonly LegacyCardResponseMapper responses;
+    private readonly WorkspaceCardCompatibilityWorkItemResolver workItems;
+    private readonly WorkspaceCardCompatibilityPolicy policy;
+    private readonly WorkspaceCardCompatibilityRequestMapper requests;
+    private readonly WorkspaceCardCompatibilityResponseMapper responses;
 
-    public LegacyWorkspaceCardAdapter(
+    public WorkspaceCardCompatibilityAdapter(
         CanonicalOperationsApiService operations,
-        LegacyWorkItemResolver workItems,
-        LegacyCompatibilityPolicy policy,
-        LegacyCardRequestMapper requests,
-        LegacyCardResponseMapper responses)
+        WorkspaceCardCompatibilityWorkItemResolver workItems,
+        WorkspaceCardCompatibilityPolicy policy,
+        WorkspaceCardCompatibilityRequestMapper requests,
+        WorkspaceCardCompatibilityResponseMapper responses)
     {
         this.operations = operations;
         this.workItems = workItems;
@@ -66,7 +66,7 @@ public sealed class LegacyWorkspaceCardAdapter
     }
 }
 
-public sealed class LegacyCardRequestMapper
+public sealed class WorkspaceCardCompatibilityRequestMapper
 {
     public PrepareWorkItemRequest ToPrepareRequest(string workspaceId, string cardId, PrepareCardRequest? request) =>
         new(
@@ -95,7 +95,7 @@ public sealed class LegacyCardRequestMapper
             request.DeviceId);
 }
 
-public sealed class LegacyCardResponseMapper
+public sealed class WorkspaceCardCompatibilityResponseMapper
 {
     public CompatibilityApiResult CardNotFound(string workspaceId, string cardId) =>
         new(StatusCodes.Status404NotFound, new { error = "card_not_found", workspaceId, cardId });
@@ -150,11 +150,11 @@ public sealed class LegacyCardResponseMapper
                 error = "idempotency_conflict",
                 policyResult.Reason,
                 caseId = workspaceId,
-                workItemId = LegacyWorkItemResolver.WorkItemIdFor(workspaceId, cardId),
+                workItemId = WorkspaceCardCompatibilityWorkItemResolver.WorkItemIdFor(workspaceId, cardId),
                 request.SubmissionId
             }),
             StatusCodes.Status422UnprocessableEntity => new CompatibilityApiResult(statusCode, new { error = "business_rule_violation", policyResult.Reason }),
-            _ => new CompatibilityApiResult(StatusCodes.Status500InternalServerError, new { error = "legacy_compatibility_policy_failed", policyResult.Reason })
+            _ => new CompatibilityApiResult(StatusCodes.Status500InternalServerError, new { error = "workspace_card_compatibility_policy_failed", policyResult.Reason })
         };
     }
 
@@ -186,7 +186,7 @@ public sealed class LegacyCardResponseMapper
             ["commitStatus"] = result.CommitStatus,
             ["projectionStatus"] = result.ProjectionStatus,
             ["caseId"] = FirstNonEmpty(result.CaseId, workspaceId),
-            ["workItemId"] = FirstNonEmpty(result.WorkItemId, LegacyWorkItemResolver.WorkItemIdFor(workspaceId, cardId)),
+            ["workItemId"] = FirstNonEmpty(result.WorkItemId, WorkspaceCardCompatibilityWorkItemResolver.WorkItemIdFor(workspaceId, cardId)),
             ["submissionId"] = result.SubmissionId,
             ["resultEventIds"] = result.ResultEventIds,
             ["userMessage"] = result.UserMessage,
@@ -195,7 +195,7 @@ public sealed class LegacyCardResponseMapper
             ["workspace"] = null,
             ["projection"] = null,
             ["source"] = result.Source,
-            ["compatibilitySource"] = "legacy_workspace_card_adapter",
+            ["compatibilitySource"] = "workspace_card_compatibility_adapter",
             ["idempotencyKey"] = result.IdempotencyKey,
             ["payloadHash"] = result.PayloadHash,
             ["commandSubmissionId"] = result.CommandSubmissionId,
@@ -208,7 +208,7 @@ public sealed class LegacyCardResponseMapper
         values.FirstOrDefault(value => !string.IsNullOrWhiteSpace(value)) ?? string.Empty;
 }
 
-public sealed class LegacyWorkItemResolver
+public sealed class WorkspaceCardCompatibilityWorkItemResolver
 {
     public WorkItem? ResolveOrCreate(CanonicalOperationsApiService operations, string workspaceId, string cardId) =>
         operations.CreateWorkItem(new CreateWorkItemRequest(
@@ -229,11 +229,11 @@ public sealed class LegacyWorkItemResolver
     public static string WorkItemIdFor(string workspaceId, string cardId) => $"{workspaceId}:{cardId}";
 }
 
-public sealed class LegacyCompatibilityPolicy
+public sealed class WorkspaceCardCompatibilityPolicy
 {
     private readonly OperationsRuntimeService catalog;
 
-    public LegacyCompatibilityPolicy(OperationsRuntimeService catalog)
+    public WorkspaceCardCompatibilityPolicy(OperationsRuntimeService catalog)
     {
         this.catalog = catalog;
     }

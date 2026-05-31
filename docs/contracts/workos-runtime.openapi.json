@@ -967,7 +967,7 @@
             ]
           },
           "source": { "type": "string", "enum": ["operations_adapter", "operations_unit_of_work"] },
-          "compatibilitySource": { "type": "string", "enum": ["legacy_workspace_card_adapter"] },
+          "compatibilitySource": { "type": "string", "enum": ["workspace_card_compatibility_adapter"] },
           "idempotencyKey": { "type": ["string", "null"] },
           "payloadHash": { "type": ["string", "null"] },
           "commandSubmissionId": { "type": ["string", "null"] },

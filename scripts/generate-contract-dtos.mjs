@@ -185,7 +185,7 @@ export type ConfirmCardResponse = {
   events?: WorkspaceEvent[];
   projection?: ProjectionEnvelope | null;
   source?: "operations_adapter" | "operations_unit_of_work";
-  compatibilitySource?: "legacy_workspace_card_adapter";
+  compatibilitySource?: "workspace_card_compatibility_adapter";
   idempotencyKey?: string | null;
   payloadHash?: string | null;
   commandSubmissionId?: string | null;
