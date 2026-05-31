@@ -31,21 +31,6 @@ public sealed class ControlPlaneWriteStore
                 @businessSignoffRefs::jsonb, @noGoItems::jsonb, @goItems::jsonb,
                 @knownRisks::jsonb, @generatedBy, @generatedAtUtc, @inputHash,
                 @resultHash)
-            on conflict(gate_result_id) do update set
-                status = excluded.status,
-                severity = excluded.severity,
-                ci_run_id = excluded.ci_run_id,
-                automated_test_refs = excluded.automated_test_refs,
-                invariant_check_refs = excluded.invariant_check_refs,
-                shadow_compare_report_refs = excluded.shadow_compare_report_refs,
-                business_signoff_refs = excluded.business_signoff_refs,
-                no_go_items = excluded.no_go_items,
-                go_items = excluded.go_items,
-                known_risks = excluded.known_risks,
-                generated_by = excluded.generated_by,
-                generated_at_utc = excluded.generated_at_utc,
-                input_hash = excluded.input_hash,
-                result_hash = excluded.result_hash
             """;
         command.Parameters.AddWithValue("gateResultId", result.GateResultId);
         command.Parameters.AddWithValue("releaseId", result.ReleaseId);

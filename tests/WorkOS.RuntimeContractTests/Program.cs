@@ -1715,6 +1715,36 @@ static void ValidateControlPlaneShadowSchemas(string connectionString)
     Assert(ScalarText(connectionString, $"select grade from control_plane.shadow_compare_reports where shadow_compare_report_id = '{compareId}'") == "green", "ControlPlaneWriteStore must write shadow compare reports");
     Assert(ScalarText(connectionString, $"select mode from control_plane.runtime_invariant_checks where invariant_check_id = '{invariantId}'") == "blocking", "ControlPlaneWriteStore must write runtime invariant checks");
     Assert(ScalarText(connectionString, $"select status from control_plane.gate_results where gate_result_id = '{gateId}'") == "passed", "ControlPlaneWriteStore must write gate results");
+    AssertSqlErrorContains(connectionString, "append-only", $"update control_plane.gate_results set status = 'blocked' where gate_result_id = '{gateId}'");
+    AssertSqlErrorContains(connectionString, "append-only", $"update control_plane.gate_results set severity = 'P2' where gate_result_id = '{gateId}'");
+    AssertSqlErrorContains(connectionString, "append-only", $"update control_plane.gate_results set input_hash = 'tampered-input' where gate_result_id = '{gateId}'");
+    AssertSqlErrorContains(connectionString, "append-only", $"update control_plane.gate_results set result_hash = 'tampered-result' where gate_result_id = '{gateId}'");
+    AssertSqlErrorContains(connectionString, "append-only", $"update control_plane.gate_results set no_go_items = '[\"hidden-blocker\"]'::jsonb where gate_result_id = '{gateId}'");
+    AssertSqlErrorContains(connectionString, "append-only", $"update control_plane.gate_results set ci_run_id = 'ci-tampered' where gate_result_id = '{gateId}'");
+    AssertSqlErrorContains(connectionString, "append-only", $"update control_plane.gate_results set generated_by = 'manual-editor' where gate_result_id = '{gateId}'");
+    AssertSqlErrorContains(connectionString, "cannot be deleted", $"delete from control_plane.gate_results where gate_result_id = '{gateId}'");
+    AssertPostgresSqlStateRejects(PostgresErrorCodes.UniqueViolation, () => controlPlaneWrites.WriteGateResult(new GateResultWrite(
+        gateId,
+        releaseId,
+        "MR-V54",
+        "tenant-a",
+        "Accommodation.DepositLedger",
+        "shadow_compare_gate",
+        "automated",
+        "blocked",
+        "P0",
+        "ci-v54-rerun",
+        new[] { "runtime-contract-rerun" },
+        new[] { invariantId },
+        new[] { compareId },
+        Array.Empty<string>(),
+        new[] { "blocked rerun" },
+        Array.Empty<string>(),
+        Array.Empty<string>(),
+        "gate-runner",
+        DateTimeOffset.UtcNow,
+        "input-hash-rerun",
+        "result-hash-rerun")));
 
     ExecuteSql(connectionString, """
         insert into control_plane.rollback_instructions(
@@ -1832,6 +1862,20 @@ static void AssertSqlErrorContains(string connectionString, string expectedMessa
     }
 
     throw new InvalidOperationException($"Expected PostgreSQL error containing {expectedMessage}.");
+}
+
+static void AssertPostgresSqlStateRejects(string expectedSqlState, Action action)
+{
+    try
+    {
+        action();
+    }
+    catch (PostgresException ex) when (ex.SqlState == expectedSqlState)
+    {
+        return;
+    }
+
+    throw new InvalidOperationException($"Expected PostgreSQL SQLSTATE {expectedSqlState}.");
 }
 
 static void ExecuteSql(string connectionString, string sql, params (string Name, object Value)[] parameters)
