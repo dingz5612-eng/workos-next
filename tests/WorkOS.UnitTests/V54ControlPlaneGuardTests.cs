@@ -197,9 +197,12 @@ public sealed class V54ControlPlaneGuardTests
     public void ShadowCompareSemanticContractCheckPassesCurrentOperationsCompatibilityFields()
     {
         var rules = RunnerJson.Read<ShadowSemanticRules>(RepoPath("docs", "v5.4", "shadow-compare-semantic-rules.json"));
-        var source = File.ReadAllText(RepoPath("services", "core-api", "WorkOS.Api", "Runtime", "OperationsRuntimeService.cs"));
+        var source = string.Join(
+            Environment.NewLine,
+            File.ReadAllText(RepoPath("services", "core-api", "WorkOS.Api", "Runtime", "CanonicalOperationsApiService.cs")),
+            File.ReadAllText(RepoPath("services", "core-api", "WorkOS.Api", "Runtime", "WorkspaceCardCompatibilityAdapter.cs")));
 
-        var result = ShadowSemanticChecks.CompareOperationsContract(rules, source, "OperationsRuntimeService.cs");
+        var result = ShadowSemanticChecks.CompareOperationsContract(rules, source, "Operations compatibility confirm sources");
 
         Assert.AreEqual("green", result.Grade);
         Assert.AreEqual(0, result.ViolationCount);
