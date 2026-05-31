@@ -28,7 +28,7 @@ const checks = [
   ["MR contract", "node", ["scripts/check-mr-contract.mjs"]],
   ["Invariant maturity", "node", ["scripts/check-invariant-maturity.mjs"]],
   ["GateResult hardening", "node", ["scripts/check-gate-result-hardening.mjs"]],
-  ["Rule drift", "node", ["scripts/check-rule-drift.mjs", "--out=.tmp/v5_5/rule-drift-report.json"]]
+  ["Rule drift", "node", ["scripts/check-rule-drift.mjs", "--mode=final", "--out=.tmp/v5_5/rule-drift-report.json"]]
 ];
 
 const results = checks.map(([name, command, args]) => runCheck(name, command, args));
