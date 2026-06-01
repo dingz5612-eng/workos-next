@@ -20,12 +20,12 @@ Repair / Parts / HR: `L0_OR_BLOCKED`
 
 ## Current Gate
 
-RT-5: `LOCAL_PASSED`
+RT-6: `LOCAL_PASSED`
 
-Current branch: `codex/rt5-workitem-native-experience`
+Current branch: `codex/rt6-operating-control-tower`
 
-Head sha: `0ea33a400e225f1dbe8972c0205790f4a099cefe`
+Head sha: `b1d4d9e6b41dbeaf45c0fc7836842b1b1dab1b48`
 
-Next allowed stage after RT-5 local pass: `RT-6 stacked preconstruction`.
+Next allowed stage after RT-6 local pass: `RT-F stacked preconstruction`.
 
 Formal Central Merge Train: `LOCKED_UNTIL_RT_FINAL_LOCAL_PASSED`.
