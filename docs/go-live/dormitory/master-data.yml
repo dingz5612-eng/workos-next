@@ -1,0 +1,264 @@
+{
+  "version": "dorm-int-01.master-data.v1",
+  "sourceMode": "real",
+  "sourceWorkbook": {
+    "fileName": "hostel_management_bilingual_ru_zh_2026_improved.xlsx",
+    "providedPath": "C:\\Users\\lenovo\\Desktop\\FunRide正式项目\\新会话文件\\九薄项目当前生效文件包\\hostel_management_bilingual_ru_zh_2026_improved.xlsx",
+    "businessUse": "宿舍内测真实业务主数据原始表",
+    "normalizedAtUtc": "2026-06-01T00:00:00Z"
+  },
+  "tenantRuntimeConfigs": [
+    {
+      "tenantId": "tenant-dorm-int-001",
+      "siteId": "site-dorm-alpha",
+      "runtimeMode": "internal_pilot",
+      "sourceMode": "real",
+      "timezone": "Asia/Shanghai",
+      "currency": "CNY",
+      "pilotId": "dorm-int-l1-2026-06"
+    }
+  ],
+  "rooms": [
+    {
+      "roomId": "room-a-101",
+      "siteId": "site-dorm-alpha",
+      "buildingId": "building-a",
+      "sourceSheet": "Статус комнат",
+      "sourceRow": 9,
+      "sourceRoomNumber": "3",
+      "capacity": 4,
+      "status": "available",
+      "technicalState": "ready",
+      "furnitureState": "ready"
+    },
+    {
+      "roomId": "room-a-102",
+      "siteId": "site-dorm-alpha",
+      "buildingId": "building-a",
+      "sourceSheet": "Статус комнат",
+      "sourceRow": 11,
+      "sourceRoomNumber": "16",
+      "capacity": 4,
+      "status": "available",
+      "technicalState": "ready",
+      "furnitureState": "ready"
+    },
+    {
+      "roomId": "room-a-103",
+      "siteId": "site-dorm-alpha",
+      "buildingId": "building-a",
+      "sourceSheet": "Статус комнат",
+      "sourceRow": 18,
+      "sourceRoomNumber": "27",
+      "capacity": 4,
+      "status": "available",
+      "technicalState": "ready",
+      "furnitureState": "ready"
+    }
+  ],
+  "beds": [
+    { "bedId": "bed-a-101-1", "roomId": "room-a-101", "sourceBedNumber": "1", "status": "available" },
+    { "bedId": "bed-a-101-2", "roomId": "room-a-101", "sourceBedNumber": "2", "status": "available" },
+    { "bedId": "bed-a-102-1", "roomId": "room-a-102", "sourceBedNumber": "1", "status": "available" },
+    { "bedId": "bed-a-102-2", "roomId": "room-a-102", "sourceBedNumber": "2", "status": "available" },
+    { "bedId": "bed-a-103-1", "roomId": "room-a-103", "sourceBedNumber": "1", "status": "available" }
+  ],
+  "ratePlans": [
+    {
+      "ratePlanId": "rate-daily-350",
+      "sourceSheet": "Статус комнат",
+      "sourceColumn": "Цена/сутки за место / 每床日价",
+      "billingType": "daily",
+      "currency": "CNY",
+      "unitAmount": 350
+    },
+    {
+      "ratePlanId": "rate-monthly-9300",
+      "sourceSheet": "Статус комнат",
+      "sourceColumn": "Цена/месяц за место / 每床月价",
+      "billingType": "monthly",
+      "currency": "CNY",
+      "unitAmount": 9300
+    }
+  ],
+  "subjects": [
+    { "subjectId": "subject-maksatbek", "displayName": "максатбек", "sourceSheet": "Проживающие и оплаты", "sourceRow": 9 },
+    { "subjectId": "subject-emil", "displayName": "эмиль", "sourceSheet": "Проживающие и оплаты", "sourceRow": 10 },
+    { "subjectId": "subject-rasuljon", "displayName": "расулжон", "sourceSheet": "Проживающие и оплаты", "sourceRow": 11 },
+    { "subjectId": "subject-asanbek", "displayName": "асанбек", "sourceSheet": "Проживающие и оплаты", "sourceRow": 13 },
+    { "subjectId": "subject-tilek", "displayName": "тилек", "sourceSheet": "Проживающие и оплаты", "sourceRow": 12 }
+  ],
+  "residents": [
+    { "residentId": "resident-maksatbek", "subjectId": "subject-maksatbek", "status": "active" },
+    { "residentId": "resident-emil", "subjectId": "subject-emil", "status": "active" },
+    { "residentId": "resident-rasuljon", "subjectId": "subject-rasuljon", "status": "active" },
+    { "residentId": "resident-asanbek", "subjectId": "subject-asanbek", "status": "active" },
+    { "residentId": "resident-tilek", "subjectId": "subject-tilek", "status": "active" }
+  ],
+  "stays": [
+    {
+      "stayId": "stay-maksatbek-001",
+      "residentId": "resident-maksatbek",
+      "roomId": "room-a-101",
+      "bedId": "bed-a-101-1",
+      "ratePlanId": "rate-daily-350",
+      "sourceRoomNumber": "3",
+      "sourceBedNumber": "1",
+      "status": "active"
+    },
+    {
+      "stayId": "stay-rasuljon-001",
+      "residentId": "resident-rasuljon",
+      "roomId": "room-a-101",
+      "bedId": "bed-a-101-2",
+      "ratePlanId": "rate-daily-350",
+      "sourceRoomNumber": "3",
+      "sourceBedNumber": "3",
+      "status": "active"
+    },
+    {
+      "stayId": "stay-asanbek-001",
+      "residentId": "resident-asanbek",
+      "roomId": "room-a-102",
+      "bedId": "bed-a-102-1",
+      "ratePlanId": "rate-daily-350",
+      "sourceRoomNumber": "16",
+      "sourceBedNumber": "1",
+      "status": "active"
+    },
+    {
+      "stayId": "stay-emil-001",
+      "residentId": "resident-emil",
+      "roomId": "room-a-103",
+      "bedId": "bed-a-103-1",
+      "ratePlanId": "rate-daily-350",
+      "sourceRoomNumber": "27",
+      "sourceBedNumber": "2",
+      "status": "active"
+    }
+  ],
+  "bedOccupancies": [
+    { "occupancyId": "occ-maksatbek-001", "bedId": "bed-a-101-1", "stayId": "stay-maksatbek-001", "status": "active" },
+    { "occupancyId": "occ-rasuljon-001", "bedId": "bed-a-101-2", "stayId": "stay-rasuljon-001", "status": "active" },
+    { "occupancyId": "occ-asanbek-001", "bedId": "bed-a-102-1", "stayId": "stay-asanbek-001", "status": "active" },
+    { "occupancyId": "occ-emil-001", "bedId": "bed-a-103-1", "stayId": "stay-emil-001", "status": "active" }
+  ],
+  "depositAccounts": [
+    { "depositAccountId": "deposit-account-maksatbek", "residentId": "resident-maksatbek", "currency": "CNY", "openingLiabilityBalance": 0, "status": "open" },
+    { "depositAccountId": "deposit-account-emil", "residentId": "resident-emil", "currency": "CNY", "openingLiabilityBalance": 0, "status": "open" },
+    { "depositAccountId": "deposit-account-rasuljon", "residentId": "resident-rasuljon", "currency": "CNY", "openingLiabilityBalance": 0, "status": "open" }
+  ],
+  "paymentMethods": [
+    { "paymentMethodId": "cash", "label": "Наличные / 现金", "sourceSheet": "Справочники" },
+    { "paymentMethodId": "mbank", "label": "MBank", "sourceSheet": "Справочники" },
+    { "paymentMethodId": "elsom", "label": "ЭЛСОМ", "sourceSheet": "Справочники" },
+    { "paymentMethodId": "bank-transfer", "label": "Банковский перевод / 银行转账", "sourceSheet": "Справочники" },
+    { "paymentMethodId": "obank", "label": "обанк", "sourceSheet": "Поступления" },
+    { "paymentMethodId": "bakai-bank", "label": "бакай банк", "sourceSheet": "Поступления" }
+  ],
+  "workItemTypes": [
+    { "workItemType": "Dorm.LeadReservation", "canCreateRealWorkItem": true },
+    { "workItemType": "Dorm.CheckinConfirm", "canCreateRealWorkItem": true },
+    { "workItemType": "Dorm.BedAssignment", "canCreateRealWorkItem": true },
+    { "workItemType": "Dorm.DepositAssess", "canCreateRealWorkItem": true },
+    { "workItemType": "Dorm.DepositReceive", "canCreateRealWorkItem": true },
+    { "workItemType": "Dorm.PaymentRegister", "canCreateRealWorkItem": true },
+    { "workItemType": "Dorm.PaymentFinanceConfirm", "canCreateRealWorkItem": true },
+    { "workItemType": "Dorm.ServiceTaskComplete", "canCreateRealWorkItem": true },
+    { "workItemType": "Dorm.ServiceTaskVerify", "canCreateRealWorkItem": true },
+    { "workItemType": "Dorm.CheckoutInspection", "canCreateRealWorkItem": true },
+    { "workItemType": "Dorm.DepositRefundRequest", "canCreateRealWorkItem": true },
+    { "workItemType": "Dorm.CleaningComplete", "canCreateRealWorkItem": true },
+    { "workItemType": "Dorm.ExceptionEscalate", "canCreateRealWorkItem": true }
+  ],
+  "evidenceRequirements": [
+    { "workItemType": "Dorm.LeadReservation", "requiredEvidence": ["lead-source-record"] },
+    { "workItemType": "Dorm.CheckinConfirm", "requiredEvidence": ["identity-check", "room-bed-confirmation"] },
+    { "workItemType": "Dorm.BedAssignment", "requiredEvidence": ["bed-assignment-photo"] },
+    { "workItemType": "Dorm.DepositAssess", "requiredEvidence": ["deposit-assessment-record"] },
+    { "workItemType": "Dorm.DepositReceive", "requiredEvidence": ["payment-proof", "finance-receipt"] },
+    { "workItemType": "Dorm.PaymentRegister", "requiredEvidence": ["payment-intake-record"] },
+    { "workItemType": "Dorm.PaymentFinanceConfirm", "requiredEvidence": ["bank-or-cash-proof", "finance-approval"] },
+    { "workItemType": "Dorm.ServiceTaskComplete", "requiredEvidence": ["task-completion-photo"] },
+    { "workItemType": "Dorm.ServiceTaskVerify", "requiredEvidence": ["verification-photo"] },
+    { "workItemType": "Dorm.CheckoutInspection", "requiredEvidence": ["checkout-inspection-photo"] },
+    { "workItemType": "Dorm.DepositRefundRequest", "requiredEvidence": ["refund-request", "manager-approval"] },
+    { "workItemType": "Dorm.CleaningComplete", "requiredEvidence": ["cleaning-complete-photo"] },
+    { "workItemType": "Dorm.ExceptionEscalate", "requiredEvidence": ["exception-note", "owner-assignment"] }
+  ],
+  "roles": [
+    { "role": "frontdesk", "description": "内测前台" },
+    { "role": "finance", "description": "内测财务" },
+    { "role": "housekeeping", "description": "内测保洁" },
+    { "role": "manager", "description": "内测经理" },
+    { "role": "admin", "description": "内测管理员" },
+    { "role": "releaseOwner", "description": "内测发布负责人" }
+  ],
+  "users": [
+    { "userId": "user-frontdesk-001", "role": "frontdesk", "realTestUser": true, "capabilities": ["dorm.checkin.confirm", "dorm.bed.assign", "evidence.attach"] },
+    { "userId": "user-finance-001", "role": "finance", "realTestUser": true, "capabilities": ["finance.deposit.confirm", "finance.payment.confirm", "finance.bank_mismatch.resolve"] },
+    { "userId": "user-housekeeping-001", "role": "housekeeping", "realTestUser": true, "capabilities": ["dorm.service_task.complete", "dorm.cleaning.complete"] },
+    { "userId": "user-manager-001", "role": "manager", "realTestUser": true, "capabilities": ["dorm.risk.assign", "finance.refund.approve", "sla.escalate"] },
+    { "userId": "user-admin-001", "role": "admin", "realTestUser": true, "capabilities": ["admin.capability.change", "admin.device_trust.manage", "evidence.audit"] },
+    { "userId": "user-release-001", "role": "releaseOwner", "realTestUser": true, "capabilities": ["release.pilot.pause", "release.rollback.execute", "gate.review"] }
+  ],
+  "capabilities": [
+    { "role": "frontdesk", "capability": "dorm.checkin.confirm" },
+    { "role": "frontdesk", "capability": "dorm.bed.assign" },
+    { "role": "finance", "capability": "finance.deposit.confirm" },
+    { "role": "finance", "capability": "finance.payment.confirm" },
+    { "role": "housekeeping", "capability": "dorm.service_task.complete" },
+    { "role": "manager", "capability": "finance.refund.approve" },
+    { "role": "admin", "capability": "admin.device_trust.manage" },
+    { "role": "releaseOwner", "capability": "release.rollback.execute" }
+  ],
+  "deviceTrust": [
+    { "deviceId": "device-frontdesk-pos-001", "assignedUserId": "user-frontdesk-001", "trustState": "trusted", "surface": "mobile", "highRiskAllowed": false },
+    { "deviceId": "device-finance-ledger-001", "assignedUserId": "user-finance-001", "trustState": "trusted", "surface": "pc", "highRiskAllowed": true },
+    { "deviceId": "device-manager-001", "assignedUserId": "user-manager-001", "trustState": "trusted", "surface": "pc", "highRiskAllowed": true },
+    { "deviceId": "device-housekeeping-001", "assignedUserId": "user-housekeeping-001", "trustState": "trusted", "surface": "mobile", "highRiskAllowed": false },
+    { "deviceId": "device-release-001", "assignedUserId": "user-release-001", "trustState": "trusted", "surface": "release", "highRiskAllowed": true }
+  ],
+  "featureFlags": [
+    { "flagKey": "dormitoryInternalPilot", "enabled": true, "scope": "tenant-dorm-int-001" },
+    { "flagKey": "dormitoryL2Production", "enabled": false, "scope": "tenant-dorm-int-001" },
+    { "flagKey": "repairProduction", "enabled": false, "scope": "tenant-dorm-int-001" },
+    { "flagKey": "partsProduction", "enabled": false, "scope": "tenant-dorm-int-001" },
+    { "flagKey": "hrProduction", "enabled": false, "scope": "tenant-dorm-int-001" },
+    { "flagKey": "productionBulkImport", "enabled": false, "scope": "tenant-dorm-int-001" },
+    { "flagKey": "unrestrictedRefund", "enabled": false, "scope": "tenant-dorm-int-001" },
+    { "flagKey": "periodClose", "enabled": false, "scope": "tenant-dorm-int-001" }
+  ],
+  "sliceCutoverStates": [
+    {
+      "slice": "Dormitory",
+      "state": "internal_pilot_scope_frozen",
+      "sourceMode": "real",
+      "productionAllowed": false,
+      "l2ProductionAllowed": false
+    }
+  ],
+  "financeTruthPaths": [
+    {
+      "moneyCommand": "depositReceive",
+      "financeTruthPack": "FinanceTruthPack",
+      "moneyKernelPack": "MoneyKernelPack",
+      "ledgerPath": "DepositLiabilityLedger",
+      "requiredEvidence": ["payment-proof", "finance-receipt"]
+    },
+    {
+      "moneyCommand": "ordinaryPaymentConfirm",
+      "financeTruthPack": "FinanceTruthPack",
+      "moneyKernelPack": "MoneyKernelPack",
+      "ledgerPath": "StayReceivableSettlementLedger",
+      "requiredEvidence": ["bank-or-cash-proof", "finance-approval"]
+    },
+    {
+      "moneyCommand": "depositRefundRequest",
+      "financeTruthPack": "FinanceTruthPack",
+      "moneyKernelPack": "MoneyKernelPack",
+      "ledgerPath": "DepositRefundLiabilityLedger",
+      "requiredEvidence": ["refund-request", "manager-approval"]
+    }
+  ]
+}
