@@ -1,0 +1,277 @@
+{
+  "version": "dorm-runtime-replay-scenarios.v1",
+  "taskId": "D1",
+  "sourceMode": "real_api_db",
+  "tenantId": "tenant-dorm-int-001",
+  "actorToken": "operator-token",
+  "scenarios": [
+    {
+      "scenarioId": "dorm-live-001",
+      "title": "入住 / 分床成功",
+      "scenarioType": "committed_scenario",
+      "workspaceId": "W-STAY-RESOURCE",
+      "cardId": "roomSetup",
+      "workItemType": "roomSetup",
+      "ownerRole": "frontdesk",
+      "money": false,
+      "fieldValues": {
+        "roomId": "room-d1-001",
+        "buildingId": "building-d1-a",
+        "roomNo": "D1-101",
+        "roomType": "four_bed",
+        "bedCount": "4"
+      },
+      "requiredEvidence": ["room-duplicate-check", "operator-record"],
+      "expected": {
+        "domainEvent": true,
+        "ledgerTransaction": false
+      }
+    },
+    {
+      "scenarioId": "dorm-live-002",
+      "title": "押金收取进入 liability，不进入 revenue",
+      "scenarioType": "committed_scenario",
+      "workspaceId": "W-STAY-DEPOSIT-LEDGER",
+      "cardId": "depositReceipt",
+      "workItemType": "depositReceipt",
+      "ownerRole": "finance",
+      "money": true,
+      "basisType": "deposit_receipt",
+      "fieldValues": {
+        "depositReceiptId": "deposit-receipt-d1-002",
+        "depositId": "deposit-account-d1",
+        "depositAmount": "1200",
+        "currency": "KGS",
+        "paymentMethod": "bank",
+        "payer": "resident-d1"
+      },
+      "requiredEvidence": ["payment-proof", "finance-receipt"],
+      "expected": {
+        "domainEvent": true,
+        "ledgerTransaction": true,
+        "ledgerMustInclude": ["liability.deposit"],
+        "ledgerMustNotInclude": ["revenue"]
+      }
+    },
+    {
+      "scenarioId": "dorm-live-003",
+      "title": "普通收款不混押金",
+      "scenarioType": "committed_scenario",
+      "workspaceId": "W-STAY-PAYMENT-LEDGER",
+      "cardId": "paymentReceipt",
+      "workItemType": "paymentReceipt",
+      "ownerRole": "finance",
+      "money": true,
+      "basisType": "payment_receipt",
+      "fieldValues": {
+        "paymentId": "payment-d1-003",
+        "stayId": "stay-d1-001",
+        "paymentAmount": "650",
+        "currency": "KGS",
+        "paymentMethod": "bank",
+        "payer": "resident-d1"
+      },
+      "requiredEvidence": ["bank-or-cash-proof"],
+      "expected": {
+        "domainEvent": true,
+        "ledgerTransaction": true,
+        "ledgerMustInclude": ["receivable.stay"],
+        "ledgerMustNotInclude": ["liability.deposit"]
+      }
+    },
+    {
+      "scenarioId": "dorm-live-004",
+      "title": "服务任务完成",
+      "scenarioType": "committed_scenario",
+      "workspaceId": "W-STAY-SERVICE-TASK",
+      "cardId": "serviceTaskComplete",
+      "workItemType": "serviceTaskComplete",
+      "ownerRole": "housekeeping",
+      "money": false,
+      "fieldValues": {
+        "taskId": "service-task-d1-004",
+        "operatorId": "housekeeping-d1",
+        "completionResult": "done"
+      },
+      "requiredEvidence": ["task-completion-photo"],
+      "expected": {
+        "domainEvent": true,
+        "ledgerTransaction": false
+      }
+    },
+    {
+      "scenarioId": "dorm-live-005",
+      "title": "退住退款不超过 liability",
+      "scenarioType": "committed_scenario",
+      "workspaceId": "W-STAY-DEPOSIT-LEDGER",
+      "cardId": "depositRefundPayment",
+      "workItemType": "depositRefundPayment",
+      "ownerRole": "manager",
+      "money": true,
+      "basisType": "refund_deposit",
+      "fieldValues": {
+        "depositRefundPaymentId": "refund-d1-005",
+        "depositId": "deposit-account-d1",
+        "depositAccountId": "deposit-account-d1",
+        "refundAmount": "300",
+        "currency": "KGS",
+        "refundMethod": "bank"
+      },
+      "requiredEvidence": ["refund-request", "manager-approval"],
+      "expected": {
+        "domainEvent": true,
+        "ledgerTransaction": true,
+        "ledgerMustInclude": ["deposit-account-d1"],
+        "refundWithinLiability": true
+      }
+    },
+    {
+      "scenarioId": "dorm-live-006",
+      "title": "银行流水异常进入 FinanceCase / UnclearMoneyCase",
+      "scenarioType": "committed_scenario",
+      "workspaceId": "W-STAY-PAYMENT-LEDGER",
+      "cardId": "paymentAdjustment",
+      "workItemType": "paymentAdjustment",
+      "ownerRole": "finance",
+      "money": true,
+      "basisType": "ledger_correction_apply",
+      "fieldValues": {
+        "correctionRequestId": "correction-d1-006",
+        "amount": "25",
+        "currency": "KGS",
+        "correctionMode": "compensation",
+        "sourcePack": "FinanceTruthPack"
+      },
+      "requiredEvidence": ["exception-note", "owner-assignment"],
+      "expected": {
+        "domainEvent": true,
+        "ledgerTransaction": true,
+        "financeCase": true,
+        "unclearMoneyCase": true,
+        "ledgerMustInclude": ["correction"]
+      }
+    },
+    {
+      "scenarioId": "dorm-live-007",
+      "title": "周期复盘 / 行动计划 / 受控关闭",
+      "scenarioType": "committed_scenario",
+      "workspaceId": "W-STAY-PERIOD-ANALYTICS",
+      "cardId": "periodClose",
+      "workItemType": "periodClose",
+      "ownerRole": "manager",
+      "money": false,
+      "fieldValues": {
+        "periodId": "period-d1-007",
+        "managerId": "manager-d1",
+        "closeResult": "controlled_review_closed"
+      },
+      "requiredEvidence": ["period-review-pack"],
+      "expected": {
+        "domainEvent": true,
+        "ledgerTransaction": false
+      }
+    },
+    {
+      "scenarioId": "dorm-live-008",
+      "title": "权限不足 403，无 DomainEvent / LedgerTransaction",
+      "scenarioType": "rejected_command_scenario",
+      "workspaceId": "W-STAY-RESOURCE",
+      "cardId": "roomSetup",
+      "workItemType": "roomSetup",
+      "ownerRole": "frontdesk",
+      "money": false,
+      "fieldValues": {
+        "runtimeReplayPolicy": "permission_denied_403",
+        "roomId": "room-d1-denied"
+      },
+      "requiredEvidence": [],
+      "expected": {
+        "statusCode": 403,
+        "domainEvent": false,
+        "ledgerTransaction": false,
+        "rejectionTrace": true
+      }
+    },
+    {
+      "scenarioId": "dorm-live-009",
+      "title": "重复提交 409，无重复副作用",
+      "scenarioType": "idempotency_conflict_scenario",
+      "workspaceId": "W-STAY-PAYMENT-LEDGER",
+      "cardId": "paymentReceipt",
+      "workItemType": "paymentReceipt",
+      "ownerRole": "finance",
+      "money": true,
+      "basisType": "payment_receipt",
+      "fieldValues": {
+        "paymentId": "payment-d1-009",
+        "stayId": "stay-d1-009",
+        "paymentAmount": "650",
+        "currency": "KGS",
+        "paymentMethod": "bank"
+      },
+      "duplicateFieldValues": {
+        "paymentId": "payment-d1-009",
+        "stayId": "stay-d1-009",
+        "paymentAmount": "651",
+        "currency": "KGS",
+        "paymentMethod": "bank"
+      },
+      "requiredEvidence": ["bank-or-cash-proof"],
+      "expected": {
+        "statusCode": 409,
+        "domainEvent": true,
+        "ledgerTransaction": true,
+        "duplicateNewSideEffects": 0
+      }
+    },
+    {
+      "scenarioId": "dorm-live-010",
+      "title": "缺证据 422，补证后可 confirm",
+      "scenarioType": "rejected_then_committed_scenario",
+      "workspaceId": "W-STAY-DEPOSIT-LEDGER",
+      "cardId": "depositReceipt",
+      "workItemType": "depositReceipt",
+      "ownerRole": "finance",
+      "money": true,
+      "basisType": "deposit_receipt",
+      "fieldValues": {
+        "runtimeReplayPolicy": "missing_evidence_422",
+        "depositReceiptId": "deposit-receipt-d1-010",
+        "depositId": "deposit-account-d1-010",
+        "depositAmount": "1200",
+        "currency": "KGS"
+      },
+      "requiredEvidence": ["payment-proof", "finance-receipt"],
+      "expected": {
+        "statusCode": 422,
+        "thenStatusCode": 200,
+        "rejectionTrace": true,
+        "domainEvent": true,
+        "ledgerTransaction": true
+      }
+    },
+    {
+      "scenarioId": "dorm-live-rollback",
+      "title": "rollback drill 不删除事实，只追加 compensation",
+      "scenarioType": "rollback_compensation_scenario",
+      "workspaceId": "W-STAY-PAYMENT-LEDGER",
+      "cardId": "paymentAdjustment",
+      "workItemType": "paymentAdjustment",
+      "ownerRole": "releaseOwner",
+      "money": true,
+      "basisType": "ledger_correction_apply",
+      "fieldValues": {
+        "correctionRequestId": "rollback-comp-d1",
+        "amount": "10",
+        "currency": "KGS",
+        "correctionMode": "compensation"
+      },
+      "requiredEvidence": ["rollback-drill"],
+      "expected": {
+        "appendOnlyCompensation": true,
+        "domainEvent": true,
+        "ledgerTransaction": true
+      }
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://workosnext.local/schemas/go-live/dormitory/runtime-replay-result.schema.json",
+  "type": "object",
+  "required": [
+    "status",
+    "sourceMode",
+    "scenarioCount",
+    "passedCount",
+    "apiCallsExecuted",
+    "dbAssertions",
+    "scenarios",
+    "financeRuntimeClose",
+    "admissionGuard",
+    "noGoItems"
+  ],
+  "properties": {
+    "status": { "enum": ["passed", "blocked"] },
+    "sourceMode": { "const": "real_api_db" },
+    "syntheticDomainEventsAllowed": { "const": false },
+    "syntheticLedgerTransactionsAllowed": { "const": false },
+    "scenarioCount": { "type": "integer", "minimum": 10 },
+    "passedCount": { "type": "integer", "minimum": 10 },
+    "apiCallsExecuted": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["method", "path", "statusCode"]
+      }
+    },
+    "dbAssertions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "status", "query"]
+      }
+    },
+    "scenarios": {
+      "type": "array",
+      "minItems": 10
+    },
+    "noGoItems": {
+      "type": "array"
+    }
+  }
+}

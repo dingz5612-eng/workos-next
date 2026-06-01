@@ -81,6 +81,7 @@ public static class BalancedMoneyKernel
         }
 
         if (value.Contains("ledgerCorrectionApply", StringComparison.OrdinalIgnoreCase) ||
+            value.Contains("paymentAdjustment", StringComparison.OrdinalIgnoreCase) ||
             value.Contains("LedgerCorrectionApply", StringComparison.OrdinalIgnoreCase))
         {
             return "ledger_correction_apply";
