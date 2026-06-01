@@ -144,7 +144,7 @@
       "allowedFiles": ["docs/business/truth-owner-registry.yml", "docs/business/truth-maturity-levels.yml", "docs/business/receipt-types.yml", "docs/business/conflict-policies.yml", "docs/business/domains/_template/domain-pack.yml", "schemas/*", "scripts/check-truth-owners.mjs", "scripts/check-domain-packs.mjs", "scripts/check-provisional-ref-usage.mjs", "scripts/check-receipt-projection.mjs", "scripts/check-management-cockpit-boundary.mjs", "tests/fixtures/rt2-btos-compiler/**", ".github/workflows/ci.yml", "scripts/guard-architecture.ps1", "docs/program/rt4/*", "artifacts/rt4/*"],
       "forbiddenFiles": ["runtime behavior", "business write APIs", "apps/mobile/**", "RT-2A shared governance runtime", "RT-P policy runtime", "RT-3 finance runtime"],
       "localCiStatus": "LOCAL_PASSED",
-      "headSha": "13def4e95e561aa6d96ce80ab18f1b57287e88ce",
+      "headSha": "ab82b98debde9bb5219779b40ea6a23d22b766d6",
       "stackedReady": true,
       "prUrl": "",
       "mergeStatus": "not_merged",

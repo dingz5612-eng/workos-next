@@ -1,9 +1,9 @@
 {
   "version": "rt4.evidence-graph.v1",
   "mode": "STACKED_PRECONSTRUCTION",
-  "branch": "",
-  "headSha": "13def4e95e561aa6d96ce80ab18f1b57287e88ce",
-  "generatedAtUtc": "2026-06-01T07:41:40.962Z",
+  "branch": "codex/rt2-btos-compiler-mvp",
+  "headSha": "ab82b98debde9bb5219779b40ea6a23d22b766d6",
+  "generatedAtUtc": "2026-06-01T07:49:17.949Z",
   "nodes": [
     {
       "id": "RT4-P0-001",
@@ -265,7 +265,7 @@
       "type": "branch",
       "status": "LOCAL_PASSED",
       "branch": "codex/rt2-btos-compiler-mvp",
-      "headSha": "13def4e95e561aa6d96ce80ab18f1b57287e88ce",
+      "headSha": "ab82b98debde9bb5219779b40ea6a23d22b766d6",
       "refs": [
         "clean Docker PostgreSQL workosnext-rt2-test",
         "node scripts/check-truth-owners.mjs --self-test",
