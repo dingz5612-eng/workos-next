@@ -279,12 +279,27 @@
       "allowedFiles": ["docs/operations/operating-feedback-loop.md", "docs/operations/metric-deviation-policy.yml", "docs/operations/risk-signal-policy.yml", "scripts/check-operating-feedback-loop.mjs", "tests/WorkOS.UnitTests/OperatingFeedbackLoopContractTests.cs", ".github/workflows/ci.yml", "scripts/guard-architecture.ps1", "docs/program/rt4/*", "artifacts/rt4/*", "scripts/rt4/build-completion-dashboard.mjs"],
       "forbiddenFiles": ["RT-FINAL Completion Assurance Final Report", "Central Merge Train", "DORM-INT pilot activation", "Dormitory L2 Production declaration", "Repair/Parts/HR production activation"],
       "localCiStatus": "LOCAL_PASSED",
-      "headSha": "03a0ac8af8ee165224ffbb7a07ca762ddac9bdc1",
+      "headSha": "a9f0cad883375d90524dd07405186eef4457f8b0",
       "stackedReady": true,
       "prUrl": "",
       "mergeStatus": "not_merged",
       "evidenceRefs": ["clean Docker PostgreSQL workosnext-rtf-test", "docs/operations/operating-feedback-loop.md", "docs/operations/metric-deviation-policy.yml", "docs/operations/risk-signal-policy.yml", "node scripts/check-operating-feedback-loop.mjs --self-test", "node scripts/check-operating-feedback-loop.mjs", "dotnet test tests/WorkOS.UnitTests/WorkOS.UnitTests.csproj -c Release --filter FullyQualifiedName~OperatingFeedbackLoopContractTests", "npm --prefix apps/mobile run build", "npm --prefix apps/mobile run test", "dotnet test tests/WorkOS.UnitTests/WorkOS.UnitTests.csproj -c Release --no-build", "dotnet test tests/WorkOS.RuntimeIntegrationTests/WorkOS.RuntimeIntegrationTests.csproj -c Release --no-build", "dotnet run --project tests/WorkOS.RuntimeContractTests/WorkOS.RuntimeContractTests.csproj -c Release", "node scripts/v5_4/certify-dormitory.mjs --sourceMode=real", "node scripts/v5_4/b-gate-runner.mjs", "pwsh -NoProfile -File scripts/guard-architecture.ps1", "pwsh -NoProfile -File scripts/v5_4/run-control-plane-checks.ps1"],
       "nextBranchAllowed": true
+    },
+    {
+      "taskId": "RT-FINAL",
+      "branch": "codex/rtfinal-completion-assurance-report",
+      "baseBranch": "codex/rtf-operating-feedback-loop",
+      "dependsOn": "RT-F",
+      "allowedFiles": ["docs/program/rt4/final-completion-assurance-report.md", "artifacts/rt4/final-completion-assurance-result.json", "scripts/rt4/check-final-completion-assurance.mjs", "docs/program/rt4/completion-dashboard.md", "artifacts/rt4/completion-dashboard.json", "artifacts/rt4/evidence-graph.json", "docs/program/rt4/central-merge-plan.md", "docs/program/rt4/stacked-branch-matrix.yml", "scripts/rt4/build-completion-dashboard.mjs", ".github/workflows/ci.yml", "scripts/guard-architecture.ps1"],
+      "forbiddenFiles": ["Central Merge Train execution", "DORM-INT pilot activation", "Dormitory L2 Production declaration", "Repair/Parts/HR production activation"],
+      "localCiStatus": "LOCAL_PASSED",
+      "headSha": "044a38ce9cbd7df0282f04c20ee07e35802deb30",
+      "stackedReady": true,
+      "prUrl": "",
+      "mergeStatus": "not_merged",
+      "evidenceRefs": ["clean Docker PostgreSQL workosnext-rtfinal-test", "docs/program/rt4/final-completion-assurance-report.md", "artifacts/rt4/final-completion-assurance-result.json", "scripts/rt4/check-final-completion-assurance.mjs", "node scripts/rt4/check-final-completion-assurance.mjs", "node scripts/rt4/verify-evidence-graph.mjs", "node scripts/rt4/check-completion-dashboard.mjs", "node scripts/rt4/check-six-file-coverage.mjs", "pwsh -NoProfile -File scripts/guard-architecture.ps1", "pwsh -NoProfile -File scripts/v5_4/run-control-plane-checks.ps1"],
+      "nextBranchAllowed": false
     }
   ]
 }

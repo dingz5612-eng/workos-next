@@ -27,7 +27,7 @@
 
 ## Per PR Guard
 
-每个 PR 必须完成：rebase 到 latest main，确认 diff 只包含当前任务，PR CI green，PR V5.4 Control Plane Guards green，merge 后 main green，再处理下一个 PR。
+每个 PR 必须完成：rebase 到 latest main，确认 diff 只包含当前任务，PR CI green，PR V5.4 Control Plane Guards green，merge 后 main green。main green 后再处理下一个 PR。
 
 ## Evidence Updates
 

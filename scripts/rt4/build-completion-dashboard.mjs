@@ -49,6 +49,8 @@ const nextAllowed = currentGate === "RT-0"
     ? "RT-F stacked preconstruction"
     : currentGate === "RT-F"
     ? "RT-FINAL stacked preconstruction"
+    : currentGate === "RT-FINAL"
+    ? "Central Merge Train preflight"
     : currentGate === "RT-X"
     ? "RT-0 stacked preconstruction"
     : "next stacked preconstruction";

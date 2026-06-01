@@ -117,8 +117,8 @@ function validateBranchMatrix(branchMatrix, result) {
       violations.push(violation("rtfinal.branch_missing", `Stacked branch matrix missing ${taskId}.`, { taskId }));
       continue;
     }
-    if (item.localCiStatus !== "LOCAL_PASSED" || item.stackedReady !== true || item.mergeStatus === "merged") {
-      violations.push(violation("rtfinal.branch_status_wrong", `${taskId} must be LOCAL_PASSED / STACKED_READY and not merged.`, { taskId }));
+    if (!["LOCAL_PASSED", "MAIN_GREEN"].includes(item.localCiStatus) || item.stackedReady !== true || item.mergeStatus === "merged") {
+      violations.push(violation("rtfinal.branch_status_wrong", `${taskId} must be LOCAL_PASSED or MAIN_GREEN, stackedReady=true, and not mergeStatus=merged.`, { taskId }));
     }
     if (!item.headSha || !Array.isArray(item.evidenceRefs) || item.evidenceRefs.length === 0) {
       violations.push(violation("rtfinal.branch_evidence_missing", `${taskId} must have headSha and evidenceRefs.`, { taskId }));
@@ -167,9 +167,10 @@ function validateReport(reportText) {
 }
 
 function validateCentralPlan(planText) {
+  const planLines = planText.split(/\r?\n/);
   let lastIndex = -1;
   for (const taskId of requiredTasks) {
-    const index = planText.indexOf(taskId);
+    const index = planLines.findIndex((line) => new RegExp(`^\\d+\\.\\s+${escapeRegExp(taskId)}$`).test(line.trim()));
     if (index <= lastIndex) {
       violations.push(violation("rtfinal.central_merge_order_wrong", `Central merge plan missing or misorders ${taskId}.`, { taskId }));
     }
@@ -188,4 +189,8 @@ function readJson(relativePath) {
 
 function violation(id, message, extra = {}) {
   return { severity: "P0", id, message, ...extra };
+}
+
+function escapeRegExp(value) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }

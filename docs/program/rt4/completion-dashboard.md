@@ -20,12 +20,12 @@ Repair / Parts / HR: `L0_OR_BLOCKED`
 
 ## Current Gate
 
-RT-F: `LOCAL_PASSED`
+RT-FINAL: `LOCAL_PASSED`
 
-Current branch: `codex/rtf-operating-feedback-loop`
+Current branch: `codex/rtfinal-completion-assurance-report`
 
-Head sha: `03a0ac8af8ee165224ffbb7a07ca762ddac9bdc1`
+Head sha: `044a38ce9cbd7df0282f04c20ee07e35802deb30`
 
-Next allowed stage after RT-F local pass: `RT-FINAL stacked preconstruction`.
+Next allowed stage after RT-FINAL local pass: `Central Merge Train preflight`.
 
 Formal Central Merge Train: `LOCKED_UNTIL_RT_FINAL_LOCAL_PASSED`.
