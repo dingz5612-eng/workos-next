@@ -176,6 +176,9 @@ jobs:
       - name: Validate RT-5 Experience Contract
         run: node scripts/check-experience-contract.mjs
 
+      - name: Validate RT-6 Operating Control Tower
+        run: node scripts/check-operating-control-tower.mjs
+
       - name: Architecture guard
         shell: pwsh
         env:
