@@ -1,9 +1,9 @@
 {
   "version": "rt4.evidence-graph.v1",
   "mode": "STACKED_PRECONSTRUCTION",
-  "branch": "",
-  "headSha": "3b4c45c415e7e7a2c18f1304d8a90de06556527f",
-  "generatedAtUtc": "2026-06-01T07:32:28.556Z",
+  "branch": "codex/rtdb-db-role-isolation-shadow-defense",
+  "headSha": "a6573c028f819bfabf443199cd72125568c7e2c2",
+  "generatedAtUtc": "2026-06-01T07:39:33.925Z",
   "nodes": [
     {
       "id": "RT4-P0-001",
@@ -217,7 +217,7 @@
       "type": "branch",
       "status": "LOCAL_PASSED",
       "branch": "codex/rt0-final-gate-evidence-closure",
-      "headSha": "f93a126ca1de4998ef0b5ec7e061f0e13513c9ec",
+      "headSha": "c52c3faa4e9ecec9ae2e3a5435a43365b0bdefaa",
       "refs": [
         "PR #27",
         "clean Docker PostgreSQL workosnext-rt0-ci",
@@ -232,7 +232,7 @@
       "type": "branch",
       "status": "LOCAL_PASSED",
       "branch": "codex/rt1-runtime-spine-non-bypass",
-      "headSha": "bc0a833b3c025caeb099e2fd33963fa61a6d0097",
+      "headSha": "88cfa99c1aa7ab96512f84487eb7434caa116470",
       "refs": [
         "clean Docker PostgreSQL workosnext-rt1-ci",
         "node scripts/check-runtime-write-paths.mjs --self-test",
@@ -249,7 +249,7 @@
       "type": "branch",
       "status": "LOCAL_PASSED",
       "branch": "codex/rtdb-db-role-isolation-shadow-defense",
-      "headSha": "75b22c9622deff37ade71f8bb0afd6e92230abfd",
+      "headSha": "a6573c028f819bfabf443199cd72125568c7e2c2",
       "refs": [
         "clean Docker PostgreSQL workosnext-rt-db-test",
         "infra/db/migrations/034_next_control_plane_runtime_roles.sql",

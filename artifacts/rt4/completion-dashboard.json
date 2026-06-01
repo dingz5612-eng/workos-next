@@ -1,7 +1,7 @@
 {
   "version": "rt4.completion-dashboard.v1",
   "mode": "STACKED_PRECONSTRUCTION",
-  "generatedAtUtc": "2026-06-01T07:32:28.714Z",
+  "generatedAtUtc": "2026-06-01T07:39:34.070Z",
   "businessProduction": "BLOCKED",
   "dormitoryL2Production": "BLOCKED",
   "repairPartsHrStatus": "L0_OR_BLOCKED",
@@ -13,7 +13,7 @@
   "currentGate": "RT-DB",
   "currentGateStatus": "LOCAL_PASSED",
   "currentGateBranch": "codex/rtdb-db-role-isolation-shadow-defense",
-  "currentGateHeadSha": "75b22c9622deff37ade71f8bb0afd6e92230abfd",
+  "currentGateHeadSha": "a6573c028f819bfabf443199cd72125568c7e2c2",
   "nextAllowedStackedStage": "RT-2 stacked preconstruction",
   "centralMergeTrain": "LOCKED_UNTIL_RT_FINAL_LOCAL_PASSED",
   "evidenceGraphNodes": 20
