@@ -38,8 +38,8 @@ export function operationPanelView(ctx) {
     </section>
     ${WorkItemCard({ ...item, workspace, card: activeCard, workspaceId: workspace.id, cardId: activeCard.id }, ctx)}
     <section class="operation-panel-runtime" data-component="OperationPanelRuntime">
-      <article><span>prepare</span><strong>operationsPrepare</strong><p>/api/operations/work-items/{workItemId}/prepare</p></article>
-      <article><span>confirm</span><strong>operationsConfirm</strong><p>/api/operations/work-items/{workItemId}/confirm</p></article>
+      <article><span>prepare</span><strong>operationsPrepare</strong><p>Transport path is owned by apiClient.js.</p></article>
+      <article><span>confirm</span><strong>operationsConfirm</strong><p>Transport path is owned by operationRuntime.js.</p></article>
       <article><span>trace</span><strong>${ctx.escapeHtml(traceRefs.join(" · ") || "-")}</strong><p>submission / workItem / case trace APIs</p></article>
       <article><span>projection</span><strong>${ctx.escapeHtml(state.lastActionResult?.status || "not_submitted")}</strong><p>Projection pending is not failed.</p></article>
       <article><span>commandSubmissionId</span><strong>${ctx.escapeHtml(commandSubmissionId || "-")}</strong><p>Stable audit ref after prepare / confirm.</p></article>

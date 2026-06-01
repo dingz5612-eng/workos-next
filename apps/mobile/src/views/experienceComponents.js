@@ -87,6 +87,7 @@ export function LifecycleWorkspace(item, activeCard, ctx) {
 
 export function OperationPanelView(innerHtml, item, activeCard, ctx) {
   const model = workItemModel({ workspace: item, card: activeCard, workspaceId: item.id, cardId: activeCard.id }, ctx);
+  const actionResult = ctx.state.lastActionResult || fallbackActionResult(ctx);
   return `<section class="operation-panel-view" data-component="OperationPanelView">
     <div class="operation-panel-head">
       <span>OperationPanelView</span>
@@ -95,7 +96,7 @@ export function OperationPanelView(innerHtml, item, activeCard, ctx) {
     </div>
     ${innerHtml}
     ${TrustedConfirmSheet(item, activeCard, ctx)}
-    ${ActionResult(ctx.state.lastActionResult || { status: statusFromMessage(ctx.state.operationMessage), message: ctx.state.operationMessage }, ctx)}
+    ${ActionResult(actionResult, ctx)}
   </section>`;
 }
 
@@ -242,6 +243,11 @@ function statusFromMessage(message = "") {
   if (String(message).includes("pending")) return "committed_projection_pending";
   if (String(message).includes("failed")) return "committed_projection_failed";
   return "committed_projected";
+}
+
+function fallbackActionResult(ctx) {
+  const message = ctx.state.operationMessage || "";
+  return { status: statusFromMessage(message), message };
 }
 
 function array(value) {
