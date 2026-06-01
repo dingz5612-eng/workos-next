@@ -67,8 +67,9 @@ public sealed class OperationsUnitOfWork
         }
         catch (Exception ex)
         {
-            submissions.Rollback(submission.SubmissionId);
-            return OperationsCommitResult.Failed(request, hash, "handler_failure", ex.Message);
+            var failedResponse = OperationsStableResponse.Failed(request, submission, hash, "handler_failure", ex.Message);
+            submissions.Fail(submission, failedResponse, "handler_failure", ex.Message);
+            return OperationsCommitResult.Failed(request, submission.SubmissionId, hash, "handler_failure", ex.Message);
         }
     }
 
@@ -277,8 +278,12 @@ public sealed class CommandSubmissionService
         OperationsStableResponse response) =>
         writes.CompleteCommandSubmission(submission, facts, response);
 
-    public void Rollback(string submissionId) =>
-        writes.RollbackCommandSubmission(submissionId);
+    public void Fail(
+        OperationsCommandSubmission submission,
+        OperationsStableResponse response,
+        string failureCode,
+        string failureReason) =>
+        writes.FailCommandSubmission(submission, response, failureCode, failureReason);
 }
 
 public sealed class IdempotencyService
@@ -395,7 +400,11 @@ public interface OperationsWriteStore
         OperationsFactBatch facts,
         OperationsStableResponse response);
 
-    void RollbackCommandSubmission(string submissionId);
+    void FailCommandSubmission(
+        OperationsCommandSubmission submission,
+        OperationsStableResponse response,
+        string failureCode,
+        string failureReason);
 }
 
 public interface OperationsReadStore
@@ -462,19 +471,32 @@ public sealed class InMemoryOperationsStore : OperationsWriteStore, OperationsRe
         {
             Status = response.CommitStatus == "committed" ? "committed" : "rejected",
             StableResponse = response,
-            CompletedAtUtc = DateTimeOffset.UtcNow
+            CompletedAtUtc = DateTimeOffset.UtcNow,
+            RejectedAtUtc = response.CommitStatus == "committed" ? null : DateTimeOffset.UtcNow,
+            FailureCode = response.CommitStatus == "committed" ? null : ReasonFrom(response),
+            FailureReason = response.CommitStatus == "committed" ? null : ReasonFrom(response),
+            ResponseStatusCode = response.StatusCode
         };
         WriteLog.Add($"CommandSubmission:{submission.SubmissionId}:complete");
     }
 
-    public void RollbackCommandSubmission(string submissionId)
+    public void FailCommandSubmission(
+        OperationsCommandSubmission submission,
+        OperationsStableResponse response,
+        string failureCode,
+        string failureReason)
     {
-        var match = submissions.FirstOrDefault(item => item.Value.SubmissionId.Equals(submissionId, StringComparison.OrdinalIgnoreCase));
-        if (!string.IsNullOrWhiteSpace(match.Key) && match.Value.Status == "pending")
+        submissions[Key(submission.TenantId, submission.IdempotencyScope, submission.IdempotencyKey)] = submission with
         {
-            submissions.Remove(match.Key);
-            WriteLog.Add($"CommandSubmission:{submissionId}:rollback");
-        }
+            Status = "failed",
+            StableResponse = response,
+            CompletedAtUtc = DateTimeOffset.UtcNow,
+            FailedAtUtc = DateTimeOffset.UtcNow,
+            FailureCode = failureCode,
+            FailureReason = failureReason,
+            ResponseStatusCode = response.StatusCode
+        };
+        WriteLog.Add($"CommandSubmission:{submission.SubmissionId}:failed");
     }
 
     public OperationsCommandSubmission? FindCommandSubmission(string tenantId, string scope, string idempotencyKey) =>
@@ -539,6 +561,9 @@ public sealed class InMemoryOperationsStore : OperationsWriteStore, OperationsRe
 
     private static string Key(string tenantId, string scope, string idempotencyKey) =>
         $"{tenantId}|{scope}|{idempotencyKey}";
+
+    private static string? ReasonFrom(OperationsStableResponse response) =>
+        response.Body.TryGetValue("reason", out var reason) ? reason?.ToString() : null;
 }
 
 public sealed class PostgresOperationsStore : OperationsWriteStore, OperationsReadStore
@@ -727,30 +752,80 @@ public sealed class PostgresOperationsStore : OperationsWriteStore, OperationsRe
             update operations_command_submissions
             set status = @status,
                 completed_at_utc = @completedAtUtc,
-                stable_response = @stableResponse::jsonb
+                stable_response = @stableResponse::jsonb,
+                failure_code = @failureCode,
+                failure_reason = @failureReason,
+                rejected_at_utc = @rejectedAtUtc,
+                response_status_code = @responseStatusCode
             where submission_id = @submissionId
             """))
         {
+            var status = response.CommitStatus == "committed" ? "committed" : "rejected";
+            var completedAtUtc = DateTimeOffset.UtcNow;
             complete.Parameters.AddWithValue("submissionId", submission.SubmissionId);
-            complete.Parameters.AddWithValue("status", response.CommitStatus == "committed" ? "committed" : "rejected");
-            complete.Parameters.AddWithValue("completedAtUtc", DateTimeOffset.UtcNow);
+            complete.Parameters.AddWithValue("status", status);
+            complete.Parameters.AddWithValue("completedAtUtc", completedAtUtc);
             complete.Parameters.AddWithValue("stableResponse", NpgsqlDbType.Jsonb, JsonSerializer.Serialize(response, PostgresProjectionStore.JsonOptions));
+            complete.Parameters.AddWithValue("failureCode", (object?)RejectedReasonFrom(response, status) ?? DBNull.Value);
+            complete.Parameters.AddWithValue("failureReason", (object?)RejectedReasonFrom(response, status) ?? DBNull.Value);
+            complete.Parameters.AddWithValue("rejectedAtUtc", status == "rejected" ? completedAtUtc : DBNull.Value);
+            complete.Parameters.AddWithValue("responseStatusCode", response.StatusCode);
             complete.ExecuteNonQuery();
         }
 
         db.Commit();
     }
 
-    public void RollbackCommandSubmission(string submissionId)
+    public void FailCommandSubmission(
+        OperationsCommandSubmission submission,
+        OperationsStableResponse response,
+        string failureCode,
+        string failureReason)
     {
         using var connection = connections.Open();
-        using var command = connection.CreateCommand();
-        command.CommandText = """
-            delete from operations_command_submissions
+        using var db = new RuntimeDbSession(connection);
+        using (var responseCommand = db.CreateCommand("""
+            insert into operations_fact_responses(
+                response_id, submission_id, tenant_id, status_code, commit_status,
+                projection_status, stable_response)
+            values (
+                @responseId, @submissionId, @tenantId, @statusCode, @commitStatus,
+                @projectionStatus, @stableResponse::jsonb)
+            on conflict(submission_id) do nothing
+            """))
+        {
+            responseCommand.Parameters.AddWithValue("responseId", response.ResponseId);
+            responseCommand.Parameters.AddWithValue("submissionId", response.SubmissionId);
+            responseCommand.Parameters.AddWithValue("tenantId", response.TenantId);
+            responseCommand.Parameters.AddWithValue("statusCode", response.StatusCode);
+            responseCommand.Parameters.AddWithValue("commitStatus", response.CommitStatus);
+            responseCommand.Parameters.AddWithValue("projectionStatus", response.ProjectionStatus);
+            responseCommand.Parameters.AddWithValue("stableResponse", NpgsqlDbType.Jsonb, JsonSerializer.Serialize(response, PostgresProjectionStore.JsonOptions));
+            responseCommand.ExecuteNonQuery();
+        }
+
+        using (var command = db.CreateCommand("""
+            update operations_command_submissions
+            set status = 'failed',
+                completed_at_utc = @failedAtUtc,
+                failed_at_utc = @failedAtUtc,
+                failure_code = @failureCode,
+                failure_reason = @failureReason,
+                response_status_code = @responseStatusCode,
+                stable_response = @stableResponse::jsonb
             where submission_id = @submissionId and status = 'pending'
-            """;
-        command.Parameters.AddWithValue("submissionId", submissionId);
-        command.ExecuteNonQuery();
+            """))
+        {
+            command.Parameters.AddWithValue("submissionId", submission.SubmissionId);
+            command.Parameters.AddWithValue("failedAtUtc", DateTimeOffset.UtcNow);
+            command.Parameters.AddWithValue("failureCode", failureCode);
+            command.Parameters.AddWithValue("failureReason", failureReason);
+            command.Parameters.AddWithValue("responseStatusCode", response.StatusCode);
+            command.Parameters.AddWithValue("stableResponse", NpgsqlDbType.Jsonb, JsonSerializer.Serialize(response, PostgresProjectionStore.JsonOptions));
+            command.ExecuteNonQuery();
+        }
+
+        db.Commit();
     }
 
     public OperationsCommandSubmission? FindCommandSubmission(string tenantId, string scope, string idempotencyKey)
@@ -763,7 +838,8 @@ public sealed class PostgresOperationsStore : OperationsWriteStore, OperationsRe
                 select submission_id, tenant_id, case_id, work_item_id, idempotency_scope,
                        idempotency_key, payload_hash, command_type, schema_version,
                        definition_version_id, status, submitted_at_utc, completed_at_utc,
-                       envelope, stable_response
+                       envelope, stable_response, failure_code, failure_reason,
+                       rejected_at_utc, failed_at_utc, response_status_code
                 from operations_command_submissions
                 where tenant_id = @tenantId
                   and idempotency_scope = @scope
@@ -781,6 +857,11 @@ public sealed class PostgresOperationsStore : OperationsWriteStore, OperationsRe
             return null;
         }
     }
+
+    private static string? RejectedReasonFrom(OperationsStableResponse response, string status) =>
+        status == "rejected" && response.Body.TryGetValue("reason", out var reason)
+            ? reason?.ToString()
+            : null;
 
     public FactTraceV1? GetFactTrace(string tenantId, string submissionId)
     {
@@ -861,7 +942,12 @@ public sealed class PostgresOperationsStore : OperationsWriteStore, OperationsRe
             reader.GetFieldValue<DateTimeOffset>(11),
             reader.IsDBNull(12) ? null : reader.GetFieldValue<DateTimeOffset>(12),
             envelope,
-            stableResponse);
+            stableResponse,
+            reader.IsDBNull(15) ? null : reader.GetString(15),
+            reader.IsDBNull(16) ? null : reader.GetString(16),
+            reader.IsDBNull(17) ? null : reader.GetFieldValue<DateTimeOffset>(17),
+            reader.IsDBNull(18) ? null : reader.GetFieldValue<DateTimeOffset>(18),
+            reader.IsDBNull(19) ? null : reader.GetInt32(19));
     }
 
     private static string[] LoadRefs(
@@ -977,7 +1063,12 @@ public sealed record OperationsCommandSubmission(
     DateTimeOffset SubmittedAtUtc,
     DateTimeOffset? CompletedAtUtc,
     CommandEnvelopeV1 Envelope,
-    OperationsStableResponse? StableResponse)
+    OperationsStableResponse? StableResponse,
+    string? FailureCode,
+    string? FailureReason,
+    DateTimeOffset? RejectedAtUtc,
+    DateTimeOffset? FailedAtUtc,
+    int? ResponseStatusCode)
 {
     public static OperationsCommandSubmission Pending(
         string submissionId,
@@ -998,6 +1089,11 @@ public sealed record OperationsCommandSubmission(
             DateTimeOffset.UtcNow,
             null,
             envelope,
+            null,
+            null,
+            null,
+            null,
+            null,
             null);
 }
 
@@ -1013,6 +1109,7 @@ public sealed record IdempotencyDecision(OperationsCommitResult? Result)
             submission.TenantId,
             submission.CaseId,
             submission.WorkItemId,
+            submission.SubmissionId,
             submission.IdempotencyKey,
             submission.PayloadHash,
             reason));
@@ -1157,6 +1254,26 @@ public sealed record OperationsStableResponse(
             facts.DomainEvents.Select(item => item.EventId).ToArray(),
             ResponseBody(handled.ResponseBody, facts));
 
+    public static OperationsStableResponse Failed(
+        OperationsCommandRequest request,
+        OperationsCommandSubmission submission,
+        string payloadHash,
+        string error,
+        string reason) =>
+        new(
+            $"rsp-{OperationsUnitOfWorkHash.Short(submission.SubmissionId)}",
+            request.TenantId,
+            request.CaseId,
+            request.WorkItemId,
+            submission.SubmissionId,
+            request.IdempotencyKey,
+            payloadHash,
+            StatusCodes.Status500InternalServerError,
+            "not_committed",
+            "not_projected",
+            Array.Empty<string>(),
+            new Dictionary<string, object> { ["error"] = error, ["reason"] = reason });
+
     private static IReadOnlyDictionary<string, object> ResponseBody(
         IReadOnlyDictionary<string, object> body,
         OperationsFactBatch facts)
@@ -1212,12 +1329,13 @@ public sealed record OperationsCommitResult(
             response.Body);
 
     public static OperationsCommitResult Conflict(OperationsCommandRequest request, string payloadHash, string reason) =>
-        Conflict(request.TenantId, request.CaseId, request.WorkItemId, request.IdempotencyKey, payloadHash, reason);
+        Conflict(request.TenantId, request.CaseId, request.WorkItemId, string.Empty, request.IdempotencyKey, payloadHash, reason);
 
     public static OperationsCommitResult Conflict(
         string tenantId,
         string caseId,
         string workItemId,
+        string submissionId,
         string idempotencyKey,
         string payloadHash,
         string reason) =>
@@ -1229,7 +1347,7 @@ public sealed record OperationsCommitResult(
             tenantId,
             caseId,
             workItemId,
-            string.Empty,
+            submissionId,
             idempotencyKey,
             payloadHash,
             "not_committed",
@@ -1239,6 +1357,7 @@ public sealed record OperationsCommitResult(
 
     public static OperationsCommitResult Failed(
         OperationsCommandRequest request,
+        string submissionId,
         string payloadHash,
         string error,
         string reason) =>
@@ -1250,7 +1369,7 @@ public sealed record OperationsCommitResult(
             request.TenantId,
             request.CaseId,
             request.WorkItemId,
-            string.Empty,
+            submissionId,
             request.IdempotencyKey,
             payloadHash,
             "not_committed",

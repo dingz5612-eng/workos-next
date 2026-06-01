@@ -44,7 +44,9 @@ builder.Services.AddSingleton(runtime);
 builder.Services.AddSingleton(controlPlaneReadStore);
 builder.Services.AddSingleton(new OperationsRuntimeService(
     runtime,
-    new PostgresOperationsCommandSubmissionStore(connectionString)));
+    new PostgresOperationsCommandSubmissionStore(connectionString),
+    new PostgresOperationsCaseStore(connectionString),
+    new PostgresOperationsWorkItemStore(connectionString)));
 builder.Services.AddSingleton<OperationsWriteStore>(operationsFactStore);
 builder.Services.AddSingleton<OperationsReadStore>(operationsFactStore);
 builder.Services.AddSingleton<CommandEnvelopeBuilder>();

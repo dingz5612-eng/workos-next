@@ -170,7 +170,7 @@ public sealed class OperationsRuntimeServiceTests
     }
 
     [TestMethod]
-    public void handler_failure_rolls_back_submission_event_outbox()
+    public void handler_failure_keeps_failed_submission_audit_without_business_facts()
     {
         var runtime = new FakeOperationsRuntime(ConfirmStatus.Confirmed, null, throwOnConfirm: true);
         var service = Service(runtime, out var submissions);
@@ -179,9 +179,14 @@ public sealed class OperationsRuntimeServiceTests
 
         Assert.AreEqual(StatusCodes.Status500InternalServerError, result.StatusCode);
         Assert.AreEqual("handler_failure", result.Error);
+        Assert.IsFalse(result.Confirmed);
+        Assert.AreEqual("not_committed", result.CommitStatus);
+        Assert.IsFalse(string.IsNullOrWhiteSpace(result.CommandSubmissionId));
         Assert.AreEqual(1, runtime.ConfirmCount);
         Assert.AreEqual(0, runtime.BusinessResultCount);
-        Assert.AreEqual(0, submissions.Records.Count);
+        Assert.AreEqual(1, submissions.Records.Count);
+        Assert.AreEqual("failed", submissions.Records[0].ProcessingStatus);
+        Assert.AreEqual(result.CommandSubmissionId, submissions.Records[0].CommandSubmissionId);
     }
 
     [TestMethod]
@@ -220,7 +225,7 @@ public sealed class OperationsRuntimeServiceTests
         Assert.AreEqual(true, payload["prepared"]);
         Assert.AreEqual("W-OPS", payload["workspaceId"]);
         Assert.AreEqual("roomSetup", payload["cardId"]);
-        Assert.AreEqual("W-OPS:roomSetup", payload["workItemId"]);
+        StringAssert.StartsWith(payload["workItemId"]!.ToString(), "wi-");
         Assert.AreEqual("W-OPS", payload["caseId"]);
         Assert.IsTrue(payload.ContainsKey("card"));
         Assert.IsTrue(payload.ContainsKey("allowedActions"));
@@ -238,7 +243,7 @@ public sealed class OperationsRuntimeServiceTests
         Assert.AreEqual(StatusCodes.Status200OK, result.StatusCode);
         Assert.AreEqual(1, runtime.ConfirmCount);
         Assert.AreEqual("operations_adapter", payload["source"]);
-        Assert.AreEqual("W-OPS:roomSetup", payload["workItemId"]);
+        StringAssert.StartsWith(payload["workItemId"]!.ToString(), "wi-");
     }
 
     [TestMethod]

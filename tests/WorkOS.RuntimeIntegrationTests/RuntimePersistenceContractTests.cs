@@ -189,6 +189,7 @@ public sealed class RuntimePersistenceContractTests
     public void OperationsUnitOfWorkMigrationDeclaresSubmissionFactResponseAndTraceTables()
     {
         var migration = File.ReadAllText(RepoPath("infra", "db", "migrations", "030_operations_unit_of_work.sql"));
+        var failedAuditMigration = File.ReadAllText(RepoPath("infra", "db", "migrations", "032_operations_failed_submission_audit.sql"));
         foreach (var term in new[]
         {
             "operations_command_submissions",
@@ -208,6 +209,20 @@ public sealed class RuntimePersistenceContractTests
             Assert.Contains(term, migration, $"operations unit of work migration must declare {term}");
         }
 
+        foreach (var term in new[]
+        {
+            "failure_code",
+            "failure_reason",
+            "rejected_at_utc",
+            "failed_at_utc",
+            "response_status_code",
+            "'failed'",
+            "ck_operations_command_submissions_failure_audit"
+        })
+        {
+            Assert.Contains(term, failedAuditMigration, $"failed submission audit migration must declare {term}");
+        }
+
         var unitOfWork = File.ReadAllText(RepoPath("services", "core-api", "WorkOS.Api", "Runtime", "OperationsUnitOfWork.cs"));
         foreach (var term in new[]
         {
@@ -219,13 +234,65 @@ public sealed class RuntimePersistenceContractTests
             "SliceCommandHandlerRouter",
             "FactResponseStore",
             "OperationsWriteStore",
-            "OperationsReadStore"
+            "OperationsReadStore",
+            "FailCommandSubmission",
+            "OperationsStableResponse.Failed"
         })
         {
             Assert.Contains(term, unitOfWork, $"S2 runtime must expose {term}");
         }
 
         Assert.DoesNotContain("MapPost(\"/api/", unitOfWork, StringComparison.OrdinalIgnoreCase, "S2 must not add Operations API endpoints.");
+
+        var operationsRuntimeService = File.ReadAllText(RepoPath("services", "core-api", "WorkOS.Api", "Runtime", "OperationsRuntimeService.cs"));
+        Assert.Contains("processing_status = 'failed'", operationsRuntimeService);
+        Assert.DoesNotContain(
+            "delete from shadow_runtime.command_submissions",
+            operationsRuntimeService,
+            StringComparison.OrdinalIgnoreCase,
+            "compatibility command submissions must be marked failed instead of deleted");
+    }
+
+    [TestMethod]
+    public void OperationCaseWorkItemPersistenceMigrationDeclaresFirstClassRuntimeObjects()
+    {
+        var migration = File.ReadAllText(RepoPath("infra", "db", "migrations", "033_operations_case_work_item_persistence.sql"));
+        foreach (var term in new[]
+        {
+            "operations_cases",
+            "operations_work_items",
+            "operations_work_item_state_history",
+            "operations_work_item_assignments",
+            "operations_work_item_escalations",
+            "definition_version_id",
+            "lifecycle_state",
+            "owner_role",
+            "due_at_utc",
+            "idempotency_scope",
+            "required_evidence_refs",
+            "affected_fact_refs",
+            "references operations_cases(case_id) on delete restrict",
+            "references operations_work_items(work_item_id) on delete restrict"
+        })
+        {
+            Assert.Contains(term, migration, $"operation case/work item persistence migration must declare {term}");
+        }
+
+        var caseStore = File.ReadAllText(RepoPath("services", "core-api", "WorkOS.Api", "Runtime", "OperationsCaseStore.cs"));
+        var workItemStore = File.ReadAllText(RepoPath("services", "core-api", "WorkOS.Api", "Runtime", "OperationsWorkItemStore.cs"));
+        var runtimeService = File.ReadAllText(RepoPath("services", "core-api", "WorkOS.Api", "Runtime", "OperationsRuntimeService.cs"));
+        foreach (var term in new[] { "PostgresOperationsCaseStore", "InMemoryOperationsCaseStore", "IOperationsCaseStore" })
+        {
+            Assert.Contains(term, caseStore, $"case store must expose {term}");
+        }
+
+        foreach (var term in new[] { "PostgresOperationsWorkItemStore", "InMemoryOperationsWorkItemStore", "RecordTransition", "GetTransitions" })
+        {
+            Assert.Contains(term, workItemStore, $"work item store must expose {term}");
+        }
+
+        Assert.Contains("RecordWorkItemTransition", runtimeService);
+        Assert.DoesNotContain("=> $\"{workspaceId}:{cardId}\"", runtimeService, "RF7 must not generate workspaceId:cardId as the compatibility WorkItem identity.");
     }
 
     [TestMethod]

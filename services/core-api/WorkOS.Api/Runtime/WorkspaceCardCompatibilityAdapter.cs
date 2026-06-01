@@ -226,7 +226,7 @@ public sealed class WorkspaceCardCompatibilityWorkItemResolver
                 ["compatibilityRoute"] = "workspace-card"
             })) ?? operations.GetWorkItem(WorkItemIdFor(workspaceId, cardId));
 
-    public static string WorkItemIdFor(string workspaceId, string cardId) => $"{workspaceId}:{cardId}";
+    public static string WorkItemIdFor(string workspaceId, string cardId) => $"wi-{OperationsHash.Short(workspaceId, cardId)}";
 }
 
 public sealed class WorkspaceCardCompatibilityPolicy

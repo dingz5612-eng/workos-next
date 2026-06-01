@@ -17,6 +17,8 @@ public sealed class OperationsRuntimeService
 
     private readonly IOperationsRuntimeAdapter runtime;
     private readonly IOperationsCommandSubmissionStore submissions;
+    private readonly IOperationsCaseStore cases;
+    private readonly IOperationsWorkItemStore workItems;
 
     public OperationsRuntimeService(
         ProjectionRuntime runtime,
@@ -26,27 +28,47 @@ public sealed class OperationsRuntimeService
     }
 
     public OperationsRuntimeService(
+        ProjectionRuntime runtime,
+        IOperationsCommandSubmissionStore submissions,
+        IOperationsCaseStore cases,
+        IOperationsWorkItemStore workItems)
+        : this(new ProjectionOperationsRuntimeAdapter(runtime), submissions, cases, workItems)
+    {
+    }
+
+    public OperationsRuntimeService(
         IOperationsRuntimeAdapter runtime,
         IOperationsCommandSubmissionStore submissions)
+        : this(runtime, submissions, new InMemoryOperationsCaseStore(), new InMemoryOperationsWorkItemStore())
+    {
+    }
+
+    public OperationsRuntimeService(
+        IOperationsRuntimeAdapter runtime,
+        IOperationsCommandSubmissionStore submissions,
+        IOperationsCaseStore cases,
+        IOperationsWorkItemStore workItems)
     {
         this.runtime = runtime;
         this.submissions = submissions;
+        this.cases = cases;
+        this.workItems = workItems;
     }
 
     public OperationCase? CreateCase(CreateOperationCaseRequest request) =>
-        ResolveCase(request.CaseId, request.WorkspaceId, request.TenantId);
+        PersistCase(request);
 
     public OperationCase? GetCase(string caseId) =>
-        ResolveCase(caseId, null, null);
+        cases.Get(caseId) ?? ResolveCase(caseId, null, null);
 
     public WorkItem? CreateWorkItem(CreateWorkItemRequest request)
     {
         var existing = string.IsNullOrWhiteSpace(request.WorkItemId)
             ? null
-            : FindWorkItem(request.WorkItemId);
+            : workItems.Get(request.WorkItemId) ?? ToWorkItemOrNull(FindProcessWorkItem(request.WorkItemId));
         if (existing is not null)
         {
-            return ToWorkItem(existing);
+            return existing;
         }
 
         var workspaceId = FirstNonEmpty(request.TargetWorkspaceId, request.WorkspaceId);
@@ -55,29 +77,65 @@ public sealed class OperationsRuntimeService
             var target = ResolveWorkspaceCard(workspaceId, request.CardId);
             if (target is not null)
             {
-                return ToCompatibilityWorkItem(
+                var caseId = FirstNonEmpty(PayloadValue(request.Payload ?? EmptyPayload, "caseId"), CaseIdFor(target.Intent, target.Workspace.Id)) ?? target.Workspace.Id;
+                PersistCase(new CreateOperationCaseRequest(caseId, request.TenantId ?? target.Workspace.Id, target.Workspace.Id));
+                return workItems.Upsert(ToCompatibilityWorkItem(
                     request.WorkItemId ?? WorkItemIdFor(target.Workspace.Id, target.Card.Id),
                     request.WorkItemType ?? target.Card.Id,
                     request.TenantId ?? target.Workspace.Id,
                     target,
                     request.OwnerRole ?? target.Card.Confirmation.RequiredRole,
                     request.Payload ?? EmptyPayload,
-                    "workspace-card");
+                    "workspace-card"));
             }
+        }
+
+        if (!string.IsNullOrWhiteSpace(request.WorkItemId) &&
+            !string.IsNullOrWhiteSpace(request.TenantId) &&
+            !string.IsNullOrWhiteSpace(request.WorkItemType))
+        {
+            var caseId = FirstNonEmpty(PayloadValue(request.Payload ?? EmptyPayload, "caseId"), request.WorkspaceId, $"case-{request.TenantId}");
+            PersistCase(new CreateOperationCaseRequest(caseId, request.TenantId, request.WorkspaceId));
+            return workItems.Upsert(new WorkItem(
+                request.WorkItemId,
+                request.WorkItemType,
+                "available",
+                caseId,
+                request.TenantId,
+                request.WorkspaceId ?? string.Empty,
+                request.OwnerRole ?? "operations",
+                "operations-work-item-store",
+                null,
+                DateTimeOffset.UtcNow,
+                request.Payload ?? EmptyPayload,
+                $"work-item:{request.WorkItemType}:v1",
+                null,
+                "normal",
+                "medium",
+                $"{request.TenantId}:{request.WorkItemId}:confirm"));
         }
 
         return null;
     }
 
     public IReadOnlyList<WorkItem> ListWorkItems(string? tenantId = null, string? caseId = null) =>
-        runtime.GetProcessWorkItemIntents(tenantId)
+        workItems.List(tenantId, caseId)
+            .Concat(runtime.GetProcessWorkItemIntents(tenantId)
             .Where(item => string.IsNullOrWhiteSpace(caseId) || PayloadValue(item.Payload, "caseId").Equals(caseId, StringComparison.OrdinalIgnoreCase))
-            .Select(ToWorkItem)
+            .Select(ToWorkItem))
+            .GroupBy(item => item.WorkItemId, StringComparer.OrdinalIgnoreCase)
+            .Select(group => group.First())
             .ToArray();
 
     public WorkItem? GetWorkItem(string workItemId)
     {
-        var existing = FindWorkItem(workItemId);
+        var persisted = workItems.Get(workItemId);
+        if (persisted is not null)
+        {
+            return persisted;
+        }
+
+        var existing = FindProcessWorkItem(workItemId);
         if (existing is not null)
         {
             return ToWorkItem(existing);
@@ -193,6 +251,34 @@ public sealed class OperationsRuntimeService
         string requestId) =>
         ExecuteConfirmWorkItem(workItemId, request, actorToken, requestId).Result;
 
+    public void RecordWorkItemTransition(
+        string tenantId,
+        string caseId,
+        string workItemId,
+        string? fromState,
+        string toState,
+        string? submissionId,
+        string reason,
+        string? actorId)
+    {
+        if (workItems.Get(workItemId) is null)
+        {
+            return;
+        }
+
+        workItems.RecordTransition(new WorkItemTransitionRecord(
+            $"wit-{OperationsHash.Short(tenantId, caseId, workItemId, submissionId ?? string.Empty, toState)}",
+            tenantId,
+            caseId,
+            workItemId,
+            fromState,
+            toState,
+            submissionId,
+            reason,
+            actorId,
+            DateTimeOffset.UtcNow));
+    }
+
     private PrepareWorkItemExecution? ExecutePrepareWorkItem(string workItemId, PrepareWorkItemRequest request)
     {
         var target = ResolveOperationTarget(workItemId, request.WorkspaceId, request.CardId);
@@ -286,17 +372,25 @@ public sealed class OperationsRuntimeService
         }
         catch (Exception ex)
         {
-            submissions.Rollback(commandSubmissionId);
+            var failedResult = ConfirmWorkItemResult.Rejected(
+                StatusCodes.Status500InternalServerError,
+                "handler_failure",
+                ex.Message,
+                CaseIdFor(target.Intent, target.Workspace.Id),
+                workItemId,
+                normalized.SubmissionId,
+                normalized.IdempotencyKey,
+                payloadHash) with
+            {
+                CommandSubmissionId = commandSubmissionId
+            };
+            submissions.Fail(pendingRecord with
+            {
+                ProcessingStatus = "failed",
+                Result = failedResult
+            });
             return new ConfirmWorkItemExecution(
-                ConfirmWorkItemResult.Rejected(
-                    StatusCodes.Status500InternalServerError,
-                    "handler_failure",
-                    ex.Message,
-                    CaseIdFor(target.Intent, target.Workspace.Id),
-                    workItemId,
-                    normalized.SubmissionId,
-                    normalized.IdempotencyKey,
-                    payloadHash),
+                failedResult,
                 null);
         }
 
@@ -508,6 +602,49 @@ public sealed class OperationsRuntimeService
         return property?.GetValue(source);
     }
 
+    private OperationCase? PersistCase(CreateOperationCaseRequest request)
+    {
+        var existing = string.IsNullOrWhiteSpace(request.CaseId) ? null : cases.Get(request.CaseId);
+        if (existing is not null)
+        {
+            return existing;
+        }
+
+        var resolved = ResolveCase(request.CaseId, request.WorkspaceId, request.TenantId);
+        if (resolved is not null)
+        {
+            return cases.Upsert(resolved with
+            {
+                CaseId = FirstNonEmpty(request.CaseId, resolved.CaseId) ?? resolved.CaseId,
+                TenantId = FirstNonEmpty(request.TenantId, resolved.TenantId),
+                WorkspaceId = FirstNonEmpty(request.WorkspaceId, resolved.WorkspaceId),
+                CaseType = resolved.CaseType,
+                DefinitionVersionId = resolved.DefinitionVersionId,
+                OwnerRole = resolved.OwnerRole
+            });
+        }
+
+        var tenantId = FirstNonEmpty(request.TenantId, request.WorkspaceId);
+        var requestedCaseId = FirstNonEmpty(request.CaseId, request.WorkspaceId, tenantId is null ? null : $"case-{OperationsHash.Short(tenantId, "operations")}");
+        if (string.IsNullOrWhiteSpace(requestedCaseId) || string.IsNullOrWhiteSpace(tenantId))
+        {
+            return null;
+        }
+
+        return cases.Upsert(new OperationCase(
+            requestedCaseId,
+            "open",
+            tenantId,
+            request.WorkspaceId,
+            Array.Empty<string>(),
+            "persisted",
+            "operations-case-store",
+            "operations.case",
+            "OperationCase.v1",
+            "operations",
+            null));
+    }
+
     private OperationCase? ResolveCase(string? caseId, string? workspaceId, string? tenantId)
     {
         var requestedCaseId = FirstNonEmpty(caseId, workspaceId);
@@ -567,7 +704,21 @@ public sealed class OperationsRuntimeService
             }
         }
 
-        var intent = FindWorkItem(workItemId);
+        var persisted = workItems.Get(workItemId);
+        if (persisted is not null)
+        {
+            var persistedCardId = FirstNonEmpty(
+                cardId,
+                PayloadValue(persisted.Payload, "cardId"),
+                persisted.WorkItemType);
+            var persistedTarget = ResolveWorkspaceCard(FirstNonEmpty(workspaceId, persisted.WorkspaceId) ?? string.Empty, persistedCardId ?? string.Empty);
+            if (persistedTarget is not null)
+            {
+                return persistedTarget;
+            }
+        }
+
+        var intent = FindProcessWorkItem(workItemId);
         if (intent is not null)
         {
             var workspace = runtime.FindWorkspace(FirstNonEmpty(workspaceId, intent.TargetWorkspaceId) ?? string.Empty);
@@ -599,9 +750,12 @@ public sealed class OperationsRuntimeService
         return workspace is null || card is null ? null : new OperationTarget(workspace, card, null);
     }
 
-    private ProcessWorkItemIntentRecord? FindWorkItem(string workItemId) =>
+    private ProcessWorkItemIntentRecord? FindProcessWorkItem(string workItemId) =>
         runtime.GetProcessWorkItemIntents()
             .FirstOrDefault(item => item.WorkItemId.Equals(workItemId, StringComparison.OrdinalIgnoreCase));
+
+    private static WorkItem? ToWorkItemOrNull(ProcessWorkItemIntentRecord? item) =>
+        item is null ? null : ToWorkItem(item);
 
     private static WorkItem ToWorkItem(ProcessWorkItemIntentRecord item) =>
         new(
@@ -624,19 +778,30 @@ public sealed class OperationsRuntimeService
         OperationTarget target,
         string ownerRole,
         IReadOnlyDictionary<string, string> payload,
-        string source) =>
-        new(
+        string source)
+    {
+        var caseId = FirstNonEmpty(PayloadValue(payload, "caseId"), CaseIdFor(target.Intent, target.Workspace.Id));
+        return new(
             workItemId,
             workItemType,
             "available",
-            CaseIdFor(target.Intent, target.Workspace.Id),
+            caseId,
             tenantId,
             target.Workspace.Id,
             ownerRole,
             source,
             target.Intent?.SourceEventId,
             target.Intent?.CreatedAtUtc ?? DateTimeOffset.UtcNow,
-            payload);
+            payload,
+            $"work-item:{workItemType}:v1",
+            null,
+            "normal",
+            "medium",
+            $"{tenantId}:{workItemId}:confirm",
+            null,
+            null,
+            ownerRole);
+    }
 
     private static OperationsAvailableAction[] AvailableActionsFor(CardProjection card) =>
         new[]
@@ -779,7 +944,7 @@ public sealed class OperationsRuntimeService
             : null;
     }
 
-    private static string WorkItemIdFor(string workspaceId, string cardId) => $"{workspaceId}:{cardId}";
+    private static string WorkItemIdFor(string workspaceId, string cardId) => $"wi-{OperationsHash.Short(workspaceId, cardId)}";
 
     private static string ShortHash(params string[] parts)
     {
@@ -836,7 +1001,7 @@ public interface IOperationsCommandSubmissionStore
 
     void Complete(OperationsCommandSubmissionRecord record);
 
-    void Rollback(string commandSubmissionId);
+    void Fail(OperationsCommandSubmissionRecord record);
 }
 
 public sealed class InMemoryOperationsCommandSubmissionStore : IOperationsCommandSubmissionStore
@@ -858,13 +1023,9 @@ public sealed class InMemoryOperationsCommandSubmissionStore : IOperationsComman
         records[Key(record.TenantId, record.IdempotencyKey)] = record;
     }
 
-    public void Rollback(string commandSubmissionId)
+    public void Fail(OperationsCommandSubmissionRecord record)
     {
-        var key = records.FirstOrDefault(item => item.Value.CommandSubmissionId.Equals(commandSubmissionId, StringComparison.OrdinalIgnoreCase)).Key;
-        if (!string.IsNullOrWhiteSpace(key))
-        {
-            records.Remove(key);
-        }
+        records[Key(record.TenantId, record.IdempotencyKey)] = record;
     }
 
     private static string Key(string tenantId, string idempotencyKey) =>
@@ -983,18 +1144,29 @@ public sealed class PostgresOperationsCommandSubmissionStore : IOperationsComman
         }
     }
 
-    public void Rollback(string commandSubmissionId)
+    public void Fail(OperationsCommandSubmissionRecord record)
     {
         try
         {
             using var connection = connections.Open();
             using var command = connection.CreateCommand();
             command.CommandText = """
-                delete from shadow_runtime.command_submissions
+                update shadow_runtime.command_submissions
+                set command_payload = @commandPayload::jsonb,
+                    processing_status = 'failed',
+                    source_shadow_ref = @sourceShadowRef
                 where command_submission_id = @commandSubmissionId
                   and processing_status = 'pending'
                 """;
-            command.Parameters.AddWithValue("commandSubmissionId", commandSubmissionId);
+            command.Parameters.AddWithValue("commandSubmissionId", record.CommandSubmissionId);
+            command.Parameters.AddWithValue("commandPayload", NpgsqlDbType.Jsonb, JsonSerializer.Serialize(new
+            {
+                source = record.Source,
+                payloadHash = record.PayloadHash,
+                command = record.CommandPayload,
+                result = record.Result
+            }, PostgresProjectionStore.JsonOptions));
+            command.Parameters.AddWithValue("sourceShadowRef", (object?)record.CommandSubmissionId ?? DBNull.Value);
             command.ExecuteNonQuery();
         }
         catch (PostgresException ex) when (ex.SqlState is MissingTable or MissingSchema)
@@ -1059,7 +1231,11 @@ public sealed record OperationCase(
     string? WorkspaceId,
     IReadOnlyList<string> WorkItemIds,
     string ProjectionStatus,
-    string Source);
+    string Source,
+    string CaseType = "operations.case",
+    string DefinitionVersionId = "OperationCase.v1",
+    string OwnerRole = "operations",
+    string? OwnerActorId = null);
 
 public sealed record WorkItem(
     string WorkItemId,
@@ -1072,7 +1248,17 @@ public sealed record WorkItem(
     string Source,
     string? SourceEventId,
     DateTimeOffset CreatedAtUtc,
-    IReadOnlyDictionary<string, string> Payload);
+    IReadOnlyDictionary<string, string> Payload,
+    string DefinitionVersionId = "WorkItem.v1",
+    DateTimeOffset? DueAtUtc = null,
+    string? Priority = "normal",
+    string? RiskLevel = "medium",
+    string IdempotencyScope = "",
+    string? OwnerActorId = null,
+    string? BackupOwnerId = null,
+    string? EscalationOwnerRole = null,
+    IReadOnlyList<string>? RequiredEvidenceRefs = null,
+    IReadOnlyList<string>? AffectedFactRefs = null);
 
 public sealed record PrepareWorkItemRequest(
     string? WorkspaceId = null,
