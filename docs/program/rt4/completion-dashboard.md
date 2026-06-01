@@ -20,12 +20,12 @@ Repair / Parts / HR: `L0_OR_BLOCKED`
 
 ## Current Gate
 
-RT-1: `LOCAL_PASSED`
+RT-DB: `LOCAL_PASSED`
 
-Current branch: `codex/rt1-runtime-spine-non-bypass`
+Current branch: `codex/rtdb-db-role-isolation-shadow-defense`
 
-Head sha: `bc0a833b3c025caeb099e2fd33963fa61a6d0097`
+Head sha: `a6573c028f819bfabf443199cd72125568c7e2c2`
 
-Next allowed stage after RT-1 local pass: `RT-DB stacked preconstruction`.
+Next allowed stage after RT-DB local pass: `RT-2 stacked preconstruction`.
 
 Formal Central Merge Train: `LOCKED_UNTIL_RT_FINAL_LOCAL_PASSED`.

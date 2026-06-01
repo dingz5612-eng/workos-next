@@ -99,7 +99,7 @@
       "allowedFiles": ["scripts/v5_4/*release-evidence*", "scripts/v5_4/replay-final-gate.mjs", "scripts/v5_4/check-final-report-consistency.mjs", "tests/WorkOS.ReleaseEvidenceTests/**", "docs/program/rt4/*", "artifacts/rt4/*", ".github/workflows/ci.yml", "WorkOSNext.sln"],
       "forbiddenFiles": ["runtime behavior", "business write APIs", "apps/mobile/** production surface changes"],
       "localCiStatus": "LOCAL_PASSED",
-      "headSha": "f93a126ca1de4998ef0b5ec7e061f0e13513c9ec",
+      "headSha": "c52c3faa4e9ecec9ae2e3a5435a43365b0bdefaa",
       "stackedReady": true,
       "prUrl": "https://github.com/dingz5612-eng/workos-next/pull/27",
       "mergeStatus": "not_merged",
@@ -114,11 +114,26 @@
       "allowedFiles": ["services/core-api/WorkOS.Api/Runtime/**", "scripts/check-runtime-write-paths.mjs", "scripts/check-v5-5-rules-os.mjs", "scripts/guard-architecture.ps1", "tests/WorkOS.UnitTests/**", ".github/workflows/ci.yml", "docs/program/rt4/*", "artifacts/rt4/*"],
       "forbiddenFiles": ["page-specific business write APIs", "Mobile BFF business fact writes", "direct DomainEvent writes outside CommandSubmission", "Dormitory/Repair/Parts production declarations"],
       "localCiStatus": "LOCAL_PASSED",
-      "headSha": "bc0a833b3c025caeb099e2fd33963fa61a6d0097",
+      "headSha": "88cfa99c1aa7ab96512f84487eb7434caa116470",
       "stackedReady": true,
       "prUrl": "",
       "mergeStatus": "not_merged",
       "evidenceRefs": ["clean Docker PostgreSQL workosnext-rt1-ci", "node scripts/check-runtime-write-paths.mjs --self-test", "node scripts/check-runtime-write-paths.mjs", "dotnet test tests/WorkOS.UnitTests/WorkOS.UnitTests.csproj -c Release --no-build", "dotnet test tests/WorkOS.RuntimeIntegrationTests/WorkOS.RuntimeIntegrationTests.csproj -c Release --no-build", "dotnet run --project tests/WorkOS.RuntimeContractTests/WorkOS.RuntimeContractTests.csproj -c Release", "pwsh -NoProfile -File scripts/guard-architecture.ps1", "pwsh -NoProfile -File scripts/v5_4/run-control-plane-checks.ps1"],
+      "nextBranchAllowed": true
+    },
+    {
+      "taskId": "RT-DB",
+      "branch": "codex/rtdb-db-role-isolation-shadow-defense",
+      "baseBranch": "codex/rt1-runtime-spine-non-bypass",
+      "dependsOn": "RT-1",
+      "allowedFiles": ["infra/db/migrations/034_next_control_plane_runtime_roles.sql", "tests/WorkOS.DatabaseSecurityTests/**", "scripts/v5_4/shadow-namespace-isolation.mjs", "docs/v5.4/db-permission-contract.md", ".github/workflows/ci.yml", ".github/workflows/v5_4_control_plane.yml", "scripts/v5_4/run-control-plane-checks.ps1", "WorkOSNext.sln", "docs/program/rt4/*", "artifacts/rt4/*"],
+      "forbiddenFiles": ["page-specific business write APIs", "Mobile BFF business fact writes", "direct DomainEvent writes outside CommandSubmission", "Dormitory/Repair/Parts production declarations"],
+      "localCiStatus": "LOCAL_PASSED",
+      "headSha": "a6573c028f819bfabf443199cd72125568c7e2c2",
+      "stackedReady": true,
+      "prUrl": "",
+      "mergeStatus": "not_merged",
+      "evidenceRefs": ["clean Docker PostgreSQL workosnext-rt-db-test", "infra/db/migrations/034_next_control_plane_runtime_roles.sql", "dotnet test tests/WorkOS.DatabaseSecurityTests/WorkOS.DatabaseSecurityTests.csproj -c Release --no-build", "node scripts/v5_4/shadow-namespace-isolation.mjs", "pwsh -NoProfile -File scripts/guard-architecture.ps1", "pwsh -NoProfile -File scripts/v5_4/run-control-plane-checks.ps1"],
       "nextBranchAllowed": true
     }
   ]
