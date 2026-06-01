@@ -1,0 +1,34 @@
+{
+  "gateId": "dorm-l1-to-l2-upgrade-gate",
+  "status": "not_eligible",
+  "defaultEligible": false,
+  "internalPilotAllowed": true,
+  "productionAllowed": false,
+  "l2ProductionAllowed": false,
+  "businessProductionAllowed": false,
+  "requiresSeparateStage": true,
+  "requiresSeparatePr": true,
+  "finalSystemGateBlockedMeansNoProductionGo": true,
+  "requiredCriteria": [
+    "7 days no P0",
+    "no unresolved P1 hold",
+    "finance daily close 100%",
+    "no Red ShadowCompareReport",
+    "no unresolved P0 invariant",
+    "evidence missing rate below threshold",
+    "projection lag below threshold",
+    "rollback readiness green",
+    "latest main CI green",
+    "latest main V5.4 Guards green",
+    "Final System Gate not blocked for production"
+  ],
+  "decisionRules": {
+    "lessThanSevenDays": "not_eligible",
+    "anyP0": "not_eligible",
+    "anyUnresolvedP1": "not_eligible",
+    "finalSystemGateBlocked": "not_eligible",
+    "allCriteriaMet": "requires_next_stage_gate"
+  },
+  "allowedDecisionForD2": "continue_l1_observation",
+  "nextAllowedStage": "L1 Internal Pilot Observation Window"
+}
