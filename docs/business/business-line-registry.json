@@ -1,0 +1,122 @@
+{
+  "version": "rtb.business-line-registry.v1",
+  "businessLines": [
+    {
+      "businessLineId": "dormitory",
+      "displayName": "Dormitory",
+      "level": "L1 Pilot Candidate",
+      "productionAllowed": false,
+      "internalPilotAllowed": false,
+      "productionConfirmAllowed": false,
+      "surfaceMode": "certification_only",
+      "allowedScopes": ["b1_definition", "b2_certification", "b3_admission_check"],
+      "blockedActions": ["production_confirm", "unrestricted_refund", "period_close", "bulk_import"],
+      "owner": "dormitory-business-owner",
+      "nextGate": "RT-4 Dormitory Golden Domain L1 Pilot"
+    },
+    {
+      "businessLineId": "repair",
+      "displayName": "Repair",
+      "level": "L0 Contract Preview",
+      "productionAllowed": false,
+      "internalPilotAllowed": false,
+      "productionConfirmAllowed": false,
+      "surfaceMode": "contract-preview",
+      "allowedScopes": ["learning", "prepare_only"],
+      "blockedActions": ["production_confirm", "production_work_item"],
+      "owner": "repair-domain-owner",
+      "nextGate": "future L0 to L1 admission"
+    },
+    {
+      "businessLineId": "parts",
+      "displayName": "Parts",
+      "level": "L0 Contract Preview",
+      "productionAllowed": false,
+      "internalPilotAllowed": false,
+      "productionConfirmAllowed": false,
+      "surfaceMode": "contract-preview",
+      "allowedScopes": ["learning", "prepare_only"],
+      "blockedActions": ["production_confirm", "production_work_item"],
+      "owner": "parts-domain-owner",
+      "nextGate": "future L0 to L1 admission"
+    },
+    {
+      "businessLineId": "hr",
+      "displayName": "HR",
+      "level": "L0 Contract Preview",
+      "productionAllowed": false,
+      "internalPilotAllowed": false,
+      "productionConfirmAllowed": false,
+      "surfaceMode": "contract-preview",
+      "allowedScopes": ["learning", "prepare_only"],
+      "blockedActions": ["production_confirm", "production_work_item"],
+      "owner": "hr-domain-owner",
+      "nextGate": "future L0 to L1 admission"
+    },
+    {
+      "businessLineId": "business-3",
+      "displayName": "Business 3",
+      "level": "L0 Contract Preview",
+      "productionAllowed": false,
+      "internalPilotAllowed": false,
+      "productionConfirmAllowed": false,
+      "surfaceMode": "contract-preview",
+      "allowedScopes": ["learning", "prepare_only"],
+      "blockedActions": ["production_confirm", "production_work_item"],
+      "owner": "business-3-owner",
+      "nextGate": "future L0 to L1 admission"
+    },
+    {
+      "businessLineId": "business-4",
+      "displayName": "Business 4",
+      "level": "L0 Contract Preview",
+      "productionAllowed": false,
+      "internalPilotAllowed": false,
+      "productionConfirmAllowed": false,
+      "surfaceMode": "contract-preview",
+      "allowedScopes": ["learning", "prepare_only"],
+      "blockedActions": ["production_confirm", "production_work_item"],
+      "owner": "business-4-owner",
+      "nextGate": "future L0 to L1 admission"
+    },
+    {
+      "businessLineId": "business-5",
+      "displayName": "Business 5",
+      "level": "L0 Contract Preview",
+      "productionAllowed": false,
+      "internalPilotAllowed": false,
+      "productionConfirmAllowed": false,
+      "surfaceMode": "contract-preview",
+      "allowedScopes": ["learning", "prepare_only"],
+      "blockedActions": ["production_confirm", "production_work_item"],
+      "owner": "business-5-owner",
+      "nextGate": "future L0 to L1 admission"
+    },
+    {
+      "businessLineId": "business-6",
+      "displayName": "Business 6",
+      "level": "L0 Contract Preview",
+      "productionAllowed": false,
+      "internalPilotAllowed": false,
+      "productionConfirmAllowed": false,
+      "surfaceMode": "contract-preview",
+      "allowedScopes": ["learning", "prepare_only"],
+      "blockedActions": ["production_confirm", "production_work_item"],
+      "owner": "business-6-owner",
+      "nextGate": "future L0 to L1 admission"
+    },
+    {
+      "businessLineId": "business-7",
+      "displayName": "Business 7",
+      "level": "L0 Contract Preview",
+      "productionAllowed": false,
+      "internalPilotAllowed": false,
+      "productionConfirmAllowed": false,
+      "surfaceMode": "contract-preview",
+      "allowedScopes": ["learning", "prepare_only"],
+      "blockedActions": ["production_confirm", "production_work_item"],
+      "owner": "business-7-owner",
+      "nextGate": "future L0 to L1 admission"
+    }
+  ]
+}

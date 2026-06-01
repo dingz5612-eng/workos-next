@@ -154,6 +154,22 @@ jobs:
           node scripts/check-executable-scenarios.mjs --self-test
           node scripts/check-executable-scenarios.mjs
 
+      - name: Validate B1 Dormitory Domain Kit
+        run: |
+          node scripts/check-dormitory-domain-kit.mjs
+          node scripts/check-business-domain-kit.mjs
+
+      - name: Validate B3 Business Line Admission
+        run: |
+          node scripts/check-business-line-admission.mjs
+          node scripts/check-domain-kit-usage.mjs
+
+      - name: Certify B2 Dormitory Pilot
+        run: node scripts/v5_4/certify-dormitory.mjs --sourceMode=real
+
+      - name: Validate RT-B B-stage gate
+        run: node scripts/v5_4/b-gate-runner.mjs
+
       - name: Architecture guard
         shell: pwsh
         env:
