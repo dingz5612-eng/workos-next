@@ -25,6 +25,8 @@ const checks = [
   ["API boundary self-test", "node", ["scripts/check-api-boundaries.mjs", "--self-test"]],
   ["API boundary v3", "node", ["scripts/check-api-boundaries.mjs", "--out=.tmp/v5_5/api-boundary-check-v3.json"]],
   ["Fact ownership", "node", ["scripts/check-fact-ownership.mjs"]],
+  ["Runtime write path self-test", "node", ["scripts/check-runtime-write-paths.mjs", "--self-test"]],
+  ["Runtime write path", "node", ["scripts/check-runtime-write-paths.mjs"]],
   ["MR contract", "node", ["scripts/check-mr-contract.mjs"]],
   ["Invariant maturity", "node", ["scripts/check-invariant-maturity.mjs"]],
   ["GateResult hardening", "node", ["scripts/check-gate-result-hardening.mjs"]],

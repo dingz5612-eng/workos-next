@@ -105,6 +105,21 @@
       "mergeStatus": "not_merged",
       "evidenceRefs": ["PR #27", "clean Docker PostgreSQL workosnext-rt0-ci", "dotnet test tests/WorkOS.ReleaseEvidenceTests/WorkOS.ReleaseEvidenceTests.csproj -c Release", "node scripts/v5_4/verify-release-evidence-freshness.mjs --strict", "node scripts/v5_4/replay-final-gate.mjs", "pwsh -NoProfile -File scripts/v5_4/run-control-plane-checks.ps1"],
       "nextBranchAllowed": true
+    },
+    {
+      "taskId": "RT-1",
+      "branch": "codex/rt1-runtime-spine-non-bypass",
+      "baseBranch": "codex/rt0-final-gate-evidence-closure",
+      "dependsOn": "RT-0",
+      "allowedFiles": ["services/core-api/WorkOS.Api/Runtime/**", "scripts/check-runtime-write-paths.mjs", "scripts/check-v5-5-rules-os.mjs", "scripts/guard-architecture.ps1", "tests/WorkOS.UnitTests/**", ".github/workflows/ci.yml", "docs/program/rt4/*", "artifacts/rt4/*"],
+      "forbiddenFiles": ["page-specific business write APIs", "Mobile BFF business fact writes", "direct DomainEvent writes outside CommandSubmission", "Dormitory/Repair/Parts production declarations"],
+      "localCiStatus": "LOCAL_PASSED",
+      "headSha": "bc0a833b3c025caeb099e2fd33963fa61a6d0097",
+      "stackedReady": true,
+      "prUrl": "",
+      "mergeStatus": "not_merged",
+      "evidenceRefs": ["clean Docker PostgreSQL workosnext-rt1-ci", "node scripts/check-runtime-write-paths.mjs --self-test", "node scripts/check-runtime-write-paths.mjs", "dotnet test tests/WorkOS.UnitTests/WorkOS.UnitTests.csproj -c Release --no-build", "dotnet test tests/WorkOS.RuntimeIntegrationTests/WorkOS.RuntimeIntegrationTests.csproj -c Release --no-build", "dotnet run --project tests/WorkOS.RuntimeContractTests/WorkOS.RuntimeContractTests.csproj -c Release", "pwsh -NoProfile -File scripts/guard-architecture.ps1", "pwsh -NoProfile -File scripts/v5_4/run-control-plane-checks.ps1"],
+      "nextBranchAllowed": true
     }
   ]
 }

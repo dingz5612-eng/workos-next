@@ -163,6 +163,8 @@ public sealed class V54ControlPlaneGuardTests
         Assert.IsTrue(runner.Contains("shadow_fact_contamination", StringComparison.Ordinal));
         Assert.IsTrue(runner.Contains("money_mismatch_red", StringComparison.Ordinal));
         Assert.IsTrue(runner.Contains("shadow-compare-semantic-rules.json", StringComparison.Ordinal));
+        Assert.IsTrue(runner.Contains("CanonicalOperationsApiService.cs", StringComparison.Ordinal));
+        Assert.IsTrue(runner.Contains("WorkspaceCardCompatibilityAdapter.cs", StringComparison.Ordinal));
         Assert.IsTrue(database.Contains("ShadowLedgerOfficialContaminationCheck", StringComparison.Ordinal));
         Assert.IsTrue(database.Contains("ShadowDomainEventOfficialContaminationCheck", StringComparison.Ordinal));
         Assert.IsTrue(database.Contains("shadow.shadow_ledger_entry_id", StringComparison.Ordinal));
@@ -197,9 +199,12 @@ public sealed class V54ControlPlaneGuardTests
     public void ShadowCompareSemanticContractCheckPassesCurrentOperationsCompatibilityFields()
     {
         var rules = RunnerJson.Read<ShadowSemanticRules>(RepoPath("docs", "v5.4", "shadow-compare-semantic-rules.json"));
-        var source = File.ReadAllText(RepoPath("services", "core-api", "WorkOS.Api", "Runtime", "OperationsRuntimeService.cs"));
+        var source = string.Join(
+            Environment.NewLine,
+            File.ReadAllText(RepoPath("services", "core-api", "WorkOS.Api", "Runtime", "CanonicalOperationsApiService.cs")),
+            File.ReadAllText(RepoPath("services", "core-api", "WorkOS.Api", "Runtime", "WorkspaceCardCompatibilityAdapter.cs")));
 
-        var result = ShadowSemanticChecks.CompareOperationsContract(rules, source, "OperationsRuntimeService.cs");
+        var result = ShadowSemanticChecks.CompareOperationsContract(rules, source, "Operations compatibility confirm sources");
 
         Assert.AreEqual("green", result.Grade);
         Assert.AreEqual(0, result.ViolationCount);

@@ -52,6 +52,38 @@ public sealed class CanonicalOperationsApiServiceTests
         Assert.AreEqual(result.CommandSubmissionId, byCase.Single().SubmissionRef);
     }
 
+    [TestMethod]
+    public void fact_trace_contains_case_work_item_event_and_ledger_refs_for_money_confirm()
+    {
+        var service = Service(out _, out _);
+        service.CreateWorkItem(new CreateWorkItemRequest(
+            WorkItemId: "wi-money-trace",
+            TenantId: "tenant-s3",
+            WorkItemType: "depositReceipt",
+            WorkspaceId: "W-S3",
+            CardId: "depositReceipt",
+            OwnerRole: "finance",
+            Payload: new Dictionary<string, string> { ["caseId"] = "case-money-trace" }));
+
+        var result = service.ConfirmWorkItem(
+            "wi-money-trace",
+            Request("idem-money-trace", "A101", "depositReceipt", new Dictionary<string, string>
+            {
+                ["amount"] = "3000",
+                ["currency"] = "KGS"
+            }),
+            "actor-token",
+            "req-money-trace");
+        var trace = service.GetSubmissionTrace(result.CommandSubmissionId!);
+
+        Assert.AreEqual(StatusCodes.Status200OK, result.StatusCode);
+        Assert.AreEqual("case-money-trace", trace?.CaseRef);
+        Assert.AreEqual("wi-money-trace", trace?.WorkItemRef);
+        Assert.HasCount(1, trace!.DomainEventRefs);
+        Assert.HasCount(1, trace.LedgerTransactionRefs);
+        Assert.HasCount(2, trace.LedgerEntryRefs);
+    }
+
     private static CanonicalOperationsApiService Service(out FakeCatalogRuntime runtime, out InMemoryOperationsStore store)
     {
         runtime = new FakeCatalogRuntime();
@@ -68,11 +100,16 @@ public sealed class CanonicalOperationsApiServiceTests
         return new CanonicalOperationsApiService(catalog, unitOfWork, store);
     }
 
-    private static ConfirmWorkItemRequest Request(string idempotencyKey, string roomNo = "A101") =>
+    private static ConfirmWorkItemRequest Request(
+        string idempotencyKey,
+        string roomNo = "A101",
+        string cardId = "roomSetup",
+        IReadOnlyDictionary<string, string>? fieldValues = null) =>
         new(
             Language: "zh-CN",
+            CardId: cardId,
             IdempotencyKey: idempotencyKey,
-            FieldValues: new Dictionary<string, string> { ["roomNo"] = roomNo },
+            FieldValues: fieldValues ?? new Dictionary<string, string> { ["roomNo"] = roomNo },
             EvidenceIds: Array.Empty<string>(),
             SubmissionId: $"sub-{idempotencyKey}",
             CardInstanceId: $"ci-{idempotencyKey}");

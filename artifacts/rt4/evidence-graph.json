@@ -1,9 +1,9 @@
 {
   "version": "rt4.evidence-graph.v1",
   "mode": "STACKED_PRECONSTRUCTION",
-  "branch": "codex/rt0-final-gate-evidence-closure",
-  "headSha": "f93a126ca1de4998ef0b5ec7e061f0e13513c9ec",
-  "generatedAtUtc": "2026-06-01T07:21:42.914Z",
+  "branch": "codex/rt1-runtime-spine-non-bypass",
+  "headSha": "bc0a833b3c025caeb099e2fd33963fa61a6d0097",
+  "generatedAtUtc": "2026-06-01T07:30:16.005Z",
   "nodes": [
     {
       "id": "RT4-P0-001",
@@ -224,6 +224,23 @@
         "dotnet test tests/WorkOS.ReleaseEvidenceTests/WorkOS.ReleaseEvidenceTests.csproj -c Release",
         "node scripts/v5_4/verify-release-evidence-freshness.mjs --strict",
         "node scripts/v5_4/replay-final-gate.mjs",
+        "pwsh -NoProfile -File scripts/v5_4/run-control-plane-checks.ps1"
+      ]
+    },
+    {
+      "id": "RT-1",
+      "type": "branch",
+      "status": "LOCAL_PASSED",
+      "branch": "codex/rt1-runtime-spine-non-bypass",
+      "headSha": "bc0a833b3c025caeb099e2fd33963fa61a6d0097",
+      "refs": [
+        "clean Docker PostgreSQL workosnext-rt1-ci",
+        "node scripts/check-runtime-write-paths.mjs --self-test",
+        "node scripts/check-runtime-write-paths.mjs",
+        "dotnet test tests/WorkOS.UnitTests/WorkOS.UnitTests.csproj -c Release --no-build",
+        "dotnet test tests/WorkOS.RuntimeIntegrationTests/WorkOS.RuntimeIntegrationTests.csproj -c Release --no-build",
+        "dotnet run --project tests/WorkOS.RuntimeContractTests/WorkOS.RuntimeContractTests.csproj -c Release",
+        "pwsh -NoProfile -File scripts/guard-architecture.ps1",
         "pwsh -NoProfile -File scripts/v5_4/run-control-plane-checks.ps1"
       ]
     }
