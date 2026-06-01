@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://workosnext.local/schemas/surface/pc-governance-plane-contract.schema.json",
+  "title": "PC Governance Plane Contract",
+  "type": "object",
+  "required": ["contractId", "plane", "allowedSurfaces", "routeTree", "apiModule", "eventBinder", "dataHydrator", "writeBoundary"],
+  "properties": {
+    "contractId": { "type": "string" },
+    "plane": { "const": "pc" },
+    "allowedSurfaces": { "type": "array", "items": { "type": "string" }, "minItems": 4 },
+    "writeBoundary": { "type": "object" }
+  }
+}

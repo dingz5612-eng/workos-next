@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://workosnext.local/schemas/surface/evidence-trust-experience-contract.schema.json",
+  "title": "Evidence Trust Experience Contract",
+  "type": "object",
+  "required": ["contractId", "states", "missingBlocksConfirm", "rejectedBlocksConfirm", "wrongScopeBlocksConfirm", "trustedObjectRequired"],
+  "properties": {
+    "contractId": { "type": "string" },
+    "states": { "type": "array", "items": { "type": "string" }, "minItems": 5 }
+  }
+}

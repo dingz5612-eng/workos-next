@@ -1,0 +1,15 @@
+{
+  "contractId": "pc-governance-plane-contract.v1",
+  "plane": "pc",
+  "allowedSurfaces": ["releaseControl", "releaseFlightDeck", "pcGovernance", "governanceCenter", "financeControl", "financeReconciliation", "managerControlTower", "pcManager"],
+  "routeTree": "apps/mobile/src/pcRouteTree.js",
+  "apiModule": "apps/mobile/src/pcApiClient.js",
+  "eventBinder": "apps/mobile/src/pcEventBinder.js",
+  "dataHydrator": "apps/mobile/src/pcSurfaceData.js",
+  "writeBoundary": {
+    "directBusinessFactWriteAllowed": false,
+    "manualGateResultPassedUpdateAllowed": false,
+    "correctionPath": "CorrectionWorkItem -> CommandSubmission -> append-only compensation",
+    "financeActionRequiredFields": ["reason", "owner", "audit", "trace"]
+  }
+}

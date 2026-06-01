@@ -1,0 +1,9 @@
+{
+  "contractId": "queue-state-contract.v1",
+  "queues": {
+    "uploadQueue": { "label": "证据上传", "empty": "没有待上传证据", "recovery": "保留本地草稿并重试上传" },
+    "submitQueue": { "label": "提交队列", "empty": "没有待提交办理", "recovery": "保留提交草稿并等待网络恢复" },
+    "projectionPending": { "label": "视图同步中", "isFailure": false, "recovery": "继续追踪投影状态" }
+  },
+  "rawComponentNamesVisible": false
+}

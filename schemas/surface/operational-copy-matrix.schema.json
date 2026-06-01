@@ -1,0 +1,13 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://workosnext.local/schemas/surface/operational-copy-matrix.schema.json",
+  "title": "Operational Copy Matrix",
+  "type": "object",
+  "required": ["contractId", "defaultLocale", "supportedLocales", "bottomNav", "componentCopy", "forbiddenFallbackLanguage"],
+  "properties": {
+    "contractId": { "type": "string" },
+    "supportedLocales": { "type": "array", "items": { "type": "string" }, "minItems": 3 },
+    "bottomNav": { "type": "object" },
+    "componentCopy": { "type": "object" }
+  }
+}

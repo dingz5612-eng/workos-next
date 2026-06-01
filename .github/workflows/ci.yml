@@ -180,6 +180,20 @@ jobs:
           node scripts/check-no-mobile-pc-cross-import.mjs
           node scripts/check-mobile-visible-copy.mjs
           node scripts/check-no-raw-surface-labels.mjs
+          node scripts/surface/check-surface-experience-contract.mjs
+          node scripts/surface/check-mobile-pc-surface-boundary.mjs
+          node scripts/surface/check-operational-copy-matrix.mjs
+          node scripts/surface/check-mobile-visible-copy.mjs
+          node scripts/surface/check-no-raw-surface-labels.mjs
+          node scripts/surface/check-mobile-search-contract.mjs
+          node scripts/surface/check-learning-center-contract.mjs
+          node scripts/surface/check-queue-state-contract.mjs
+          node scripts/surface/check-device-trust-contract.mjs
+          node scripts/surface/check-evidence-trust-contract.mjs
+          node scripts/surface/check-permission-explainability-contract.mjs
+          node scripts/surface/check-operation-panel-runtime-contract.mjs
+          node scripts/surface/check-surface-api-boundary.mjs
+          node scripts/surface/check-surface-runtime-guard-contract.mjs
 
       - name: Validate RT-6 Operating Control Tower
         run: node scripts/check-operating-control-tower.mjs

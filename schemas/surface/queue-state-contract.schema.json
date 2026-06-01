@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://workosnext.local/schemas/surface/queue-state-contract.schema.json",
+  "title": "Queue State Contract",
+  "type": "object",
+  "required": ["contractId", "queues", "rawComponentNamesVisible"],
+  "properties": {
+    "contractId": { "type": "string" },
+    "queues": { "type": "object" }
+  }
+}

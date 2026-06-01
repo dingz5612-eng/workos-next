@@ -1,0 +1,8 @@
+{
+  "contractId": "permission-explainability-contract.v1",
+  "surface": "PermissionDiagnostic",
+  "visibleTitle": "权限诊断",
+  "requiredFields": ["为什么不能访问", "谁能处理", "需要的权限", "下一步动作"],
+  "rawReasonCodeVisible": false,
+  "silentRedirectAllowed": false
+}

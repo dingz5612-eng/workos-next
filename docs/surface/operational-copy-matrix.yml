@@ -1,0 +1,19 @@
+{
+  "contractId": "operational-copy-matrix.v1",
+  "defaultLocale": "zh-CN",
+  "supportedLocales": ["zh-CN", "ru-RU", "ky-KG"],
+  "bottomNav": {
+    "today": { "zh-CN": "今天", "ru-RU": "Сегодня", "ky-KG": "Сегодня" },
+    "work": { "zh-CN": "工作", "ru-RU": "Работа", "ky-KG": "Работа" },
+    "search": { "zh-CN": "搜索", "ru-RU": "Поиск", "ky-KG": "Поиск" },
+    "me": { "zh-CN": "我的", "ru-RU": "Мой", "ky-KG": "Мой" }
+  },
+  "componentCopy": {
+    "UploadQueue": "证据上传",
+    "SubmitQueue": "提交队列",
+    "DeviceTrustPanel": "当前设备",
+    "WorkItemMissionControl": "今日任务中心",
+    "PersonalOpsCenter": "个人运营中心"
+  },
+  "forbiddenFallbackLanguage": ["Today", "Work", "Search", "Me", "No pending evidence upload", "No pending submission"]
+}

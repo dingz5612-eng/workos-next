@@ -1,0 +1,8 @@
+{
+  "generated_at_utc": "2026-06-01T17:41:06.330Z",
+  "generated_by": "scripts/surface/check-no-raw-surface-labels.mjs",
+  "status": "passed",
+  "check": "no-raw-surface-labels",
+  "violation_count": 0,
+  "violations": []
+}

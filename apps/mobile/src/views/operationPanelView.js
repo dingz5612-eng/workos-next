@@ -34,7 +34,7 @@ export function operationPanelView(ctx) {
   const commandSubmissionId = state.lastActionResult?.commandSubmissionId || draft.submissionProtocol?.submissionId || model.traceRefs[0] || "";
   const operationBody = workspaceCardPanel(activeCard, workspace, true, ctx);
   const traceRefs = [
-    commandSubmissionId ? `commandSubmissionId:${commandSubmissionId}` : "",
+    commandSubmissionId ? `${ctx.tr("submissionRecord")}:${commandSubmissionId}` : "",
     model.caseId ? `caseId:${model.caseId}` : "",
     model.workItemId ? `workItemId:${model.workItemId}` : "",
     ...(model.traceRefs || [])
@@ -52,8 +52,8 @@ export function operationPanelView(ctx) {
       <article><span>confirm</span><strong>operationsConfirm</strong><p>Transport path is owned by operationRuntime.js.</p></article>
       <article><span>trace</span><strong>${ctx.escapeHtml(traceRefs.join(" · ") || "-")}</strong><p>submission / workItem / case trace APIs</p></article>
       <article><span>projection</span><strong>${ctx.escapeHtml(state.lastActionResult?.status || "not_submitted")}</strong><p>Projection pending is not failed.</p></article>
-      <article><span>commandSubmissionId</span><strong>${ctx.escapeHtml(commandSubmissionId || "-")}</strong><p>Stable audit ref after prepare / confirm.</p></article>
-      <article><span>payloadHash</span><strong>${ctx.escapeHtml(payloadHash)}</strong><p>Draft values + evidence fingerprint.</p></article>
+      <article><span>${ctx.tr("submissionRecord")}</span><strong>${ctx.escapeHtml(commandSubmissionId || "-")}</strong><p>${ctx.tr("submissionRecordHelp")}</p></article>
+      <article><span>${ctx.tr("payloadFingerprint")}</span><strong>${ctx.escapeHtml(payloadHash)}</strong><p>${ctx.tr("payloadFingerprintHelp")}</p></article>
     </section>
     ${OperationPanelView(operationBody, operationContext, activeCard, ctx)}
     ${EvidenceSheet(activeCard, draft, ctx)}

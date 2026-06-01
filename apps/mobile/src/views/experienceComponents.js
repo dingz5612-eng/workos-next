@@ -126,7 +126,7 @@ export function ActionResult(result = {}, ctx) {
   return `<section class="action-result ${attr(status, ctx)}" data-component="ActionResult">
     <b>ActionResult</b>
     <p>${text(result.message || status, ctx)}</p>
-    ${result.commandSubmissionId ? `<small>commandSubmissionId: ${text(result.commandSubmissionId, ctx)}</small>` : ""}
+    ${result.commandSubmissionId ? `<small>${ctx.tr("submissionRecord")}: ${text(result.commandSubmissionId, ctx)}</small>` : ""}
   </section>`;
 }
 

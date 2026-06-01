@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://workosnext.local/schemas/surface/permission-explainability-contract.schema.json",
+  "title": "Permission Explainability Contract",
+  "type": "object",
+  "required": ["contractId", "surface", "visibleTitle", "requiredFields", "rawReasonCodeVisible", "silentRedirectAllowed"],
+  "properties": {
+    "contractId": { "type": "string" },
+    "requiredFields": { "type": "array", "items": { "type": "string" }, "minItems": 4 }
+  }
+}

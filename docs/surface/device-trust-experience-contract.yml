@@ -1,0 +1,8 @@
+{
+  "contractId": "device-trust-experience-contract.v1",
+  "label": "当前设备",
+  "mobileDefaultDevice": "mobile-current",
+  "pcContextLeakBehavior": "show_device_context_diagnostic",
+  "visibleRawFieldsForbidden": ["deviceId", "trustState", "surface"],
+  "backendGuardRequired": ["wrongDeviceRejected", "wrongTenantRejected"]
+}

@@ -1,0 +1,8 @@
+{
+  "generated_at_utc": "2026-06-01T17:41:06.975Z",
+  "generated_by": "scripts/surface/check-queue-state-contract.mjs",
+  "status": "passed",
+  "check": "queue-state-contract",
+  "violation_count": 0,
+  "violations": []
+}

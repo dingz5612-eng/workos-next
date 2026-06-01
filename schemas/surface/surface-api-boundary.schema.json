@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://workosnext.local/schemas/surface/surface-api-boundary.schema.json",
+  "title": "Surface API Boundary",
+  "type": "object",
+  "required": ["contractId", "mobileAllowedApiModule", "pcAllowedApiModule", "mobileForbiddenApiTokens", "pcRequiredHeaders", "pageSpecificBusinessWriteApiAllowed"],
+  "properties": {
+    "contractId": { "type": "string" },
+    "mobileForbiddenApiTokens": { "type": "array", "items": { "type": "string" }, "minItems": 4 },
+    "pcRequiredHeaders": { "type": "array", "items": { "type": "string" }, "minItems": 2 }
+  }
+}

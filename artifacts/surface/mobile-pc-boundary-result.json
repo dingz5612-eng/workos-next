@@ -1,0 +1,8 @@
+{
+  "generated_at_utc": "2026-06-01T17:41:05.722Z",
+  "generated_by": "scripts/surface/check-mobile-pc-surface-boundary.mjs",
+  "status": "passed",
+  "check": "mobile-pc-surface-boundary",
+  "violation_count": 0,
+  "violations": []
+}

@@ -1,0 +1,8 @@
+{
+  "generated_at_utc": "2026-06-01T17:41:07.970Z",
+  "generated_by": "scripts/surface/check-surface-api-boundary.mjs",
+  "status": "passed",
+  "check": "surface-api-boundary",
+  "violation_count": 0,
+  "violations": []
+}

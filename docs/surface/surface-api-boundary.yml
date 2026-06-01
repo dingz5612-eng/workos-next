@@ -1,0 +1,8 @@
+{
+  "contractId": "surface-api-boundary.v1",
+  "mobileAllowedApiModule": "apps/mobile/src/apiClient.js",
+  "pcAllowedApiModule": "apps/mobile/src/pcApiClient.js",
+  "mobileForbiddenApiTokens": ["confirmBankStatementImport", "recordGovernanceAuditEvent", "requestLedgerCorrection", "applyLedgerCorrection", "fetchReleaseControlCenter", "fetchProductionObservability"],
+  "pcRequiredHeaders": ["X-WorkOS-Operation-Confirm", "X-WorkOS-Gate-Result-Ref"],
+  "pageSpecificBusinessWriteApiAllowed": false
+}
