@@ -179,6 +179,9 @@ jobs:
       - name: Validate RT-6 Operating Control Tower
         run: node scripts/check-operating-control-tower.mjs
 
+      - name: Validate RT-F Operating Feedback Loop
+        run: node scripts/check-operating-feedback-loop.mjs
+
       - name: Architecture guard
         shell: pwsh
         env:
