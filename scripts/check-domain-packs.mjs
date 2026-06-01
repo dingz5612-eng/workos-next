@@ -24,6 +24,7 @@ function main() {
 
   const files = [
     "docs/business/domains/_template/domain-pack.yml",
+    ...listDocuments("docs/business/domains/dormitory"),
     ...listDocuments(`${positiveFixtureRoot}/domain-packs`)
   ];
   const violations = validateDomainPackFiles(files);

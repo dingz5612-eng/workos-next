@@ -170,6 +170,9 @@ jobs:
       - name: Validate RT-B B-stage gate
         run: node scripts/v5_4/b-gate-runner.mjs
 
+      - name: Validate RT-4 Dormitory Golden Domain
+        run: node scripts/check-dormitory-golden-domain.mjs
+
       - name: Architecture guard
         shell: pwsh
         env:
