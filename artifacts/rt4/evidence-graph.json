@@ -1,9 +1,9 @@
 {
   "version": "rt4.evidence-graph.v1",
   "mode": "STACKED_PRECONSTRUCTION",
-  "branch": "codex/rt6-operating-control-tower",
-  "headSha": "b1d4d9e6b41dbeaf45c0fc7836842b1b1dab1b48",
-  "generatedAtUtc": "2026-06-01T10:24:21.755Z",
+  "branch": "codex/rtf-operating-feedback-loop",
+  "headSha": "03a0ac8af8ee165224ffbb7a07ca762ddac9bdc1",
+  "generatedAtUtc": "2026-06-01T10:38:11.974Z",
   "nodes": [
     {
       "id": "RT4-P0-001",
@@ -421,12 +421,37 @@
       "type": "branch",
       "status": "LOCAL_PASSED",
       "branch": "codex/rt6-operating-control-tower",
-      "headSha": "b1d4d9e6b41dbeaf45c0fc7836842b1b1dab1b48",
+      "headSha": "f2a24dc98de97c50da737b0de720f98d06d4fd17",
       "refs": [
         "clean Docker PostgreSQL workosnext-rt6-test",
         "docs/business/operating-control-tower.yml",
         "node scripts/check-operating-control-tower.mjs --self-test",
         "node scripts/check-operating-control-tower.mjs",
+        "npm --prefix apps/mobile run build",
+        "npm --prefix apps/mobile run test",
+        "dotnet test tests/WorkOS.UnitTests/WorkOS.UnitTests.csproj -c Release --no-build",
+        "dotnet test tests/WorkOS.RuntimeIntegrationTests/WorkOS.RuntimeIntegrationTests.csproj -c Release --no-build",
+        "dotnet run --project tests/WorkOS.RuntimeContractTests/WorkOS.RuntimeContractTests.csproj -c Release",
+        "node scripts/v5_4/certify-dormitory.mjs --sourceMode=real",
+        "node scripts/v5_4/b-gate-runner.mjs",
+        "pwsh -NoProfile -File scripts/guard-architecture.ps1",
+        "pwsh -NoProfile -File scripts/v5_4/run-control-plane-checks.ps1"
+      ]
+    },
+    {
+      "id": "RT-F",
+      "type": "branch",
+      "status": "LOCAL_PASSED",
+      "branch": "codex/rtf-operating-feedback-loop",
+      "headSha": "03a0ac8af8ee165224ffbb7a07ca762ddac9bdc1",
+      "refs": [
+        "clean Docker PostgreSQL workosnext-rtf-test",
+        "docs/operations/operating-feedback-loop.md",
+        "docs/operations/metric-deviation-policy.yml",
+        "docs/operations/risk-signal-policy.yml",
+        "node scripts/check-operating-feedback-loop.mjs --self-test",
+        "node scripts/check-operating-feedback-loop.mjs",
+        "dotnet test tests/WorkOS.UnitTests/WorkOS.UnitTests.csproj -c Release --filter FullyQualifiedName~OperatingFeedbackLoopContractTests",
         "npm --prefix apps/mobile run build",
         "npm --prefix apps/mobile run test",
         "dotnet test tests/WorkOS.UnitTests/WorkOS.UnitTests.csproj -c Release --no-build",
