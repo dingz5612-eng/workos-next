@@ -20,12 +20,12 @@ Repair / Parts / HR: `L0_OR_BLOCKED`
 
 ## Current Gate
 
-RT-3: `LOCAL_PASSED`
+RT-S: `LOCAL_PASSED`
 
-Current branch: `codex/rt3-finance-truth-production-kernel`
+Current branch: `codex/rts-executable-scenario-factory`
 
-Head sha: `1d29c3f5080ae94723418e116c22c1b17e962980`
+Head sha: `8828aeb9e8459a71da959bf6be1bb69b31f81342`
 
-Next allowed stage after RT-3 local pass: `RT-S stacked preconstruction`.
+Next allowed stage after RT-S local pass: `RT-B stacked preconstruction`.
 
 Formal Central Merge Train: `LOCKED_UNTIL_RT_FINAL_LOCAL_PASSED`.
