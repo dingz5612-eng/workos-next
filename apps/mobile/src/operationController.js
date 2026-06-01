@@ -1,6 +1,6 @@
 import { capacityForRoomType } from "./controls/fieldControls.js";
 import { clearDraft, loadDraft, saveDraft } from "./operationDrafts.js";
-import { createSubmissionProtocol, materializeEvidenceObjects, submitCardOperation } from "./operationRuntime.js";
+import { createSubmissionProtocol, materializeEvidenceObjects, submitWorkItemOperation } from "./operationRuntime.js";
 import { setView } from "./navigationController.js";
 import { activeWorkspaceCard, isCardActionDisabled } from "./selectors/workspaceSelectors.js";
 import { applyRuntimeProjection } from "./runtime/runtimeStore.js";
@@ -116,7 +116,7 @@ export async function submitCurrentCard(ctx) {
       evidenceDrafts
     });
     saveDraft(item.id, card.id, fieldValues, evidenceDrafts, submissionProtocol);
-    const result = await submitCardOperation({
+    const result = await submitWorkItemOperation({
       workspace: item,
       card,
       actor: ctx.state.currentActor,

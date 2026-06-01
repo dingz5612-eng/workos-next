@@ -146,6 +146,7 @@ Assert-Exists "scripts/check-business-line-admission.mjs"
 Assert-Exists "scripts/check-domain-kit-usage.mjs"
 Assert-Exists "scripts/v5_4/b-gate-runner.mjs"
 Assert-Exists "scripts/check-dormitory-golden-domain.mjs"
+Assert-Exists "scripts/check-experience-contract.mjs"
 Assert-Exists "docs/scenarios/_schema/scenario.schema.json"
 Assert-Exists "docs/scenarios/dormitory/golden-pilot.yml"
 Assert-Exists "docs/scenarios/finance/money-kernel.yml"
@@ -158,6 +159,7 @@ Assert-Exists "docs/business/receipt-types.yml"
 Assert-Exists "docs/business/conflict-policies.yml"
 Assert-Exists "docs/business/domains/_template/domain-pack.yml"
 Assert-Exists "docs/business/domains/dormitory/domain-pack.yml"
+Assert-Exists "docs/business/experience-contract.yml"
 Assert-Exists "docs/business/shared-governance/subject-vehicle-truth.yml"
 Assert-Exists "docs/business/finance/finance-truth-pipeline.yml"
 Assert-Exists "docs/business/finance/money-kernel-rules.yml"
@@ -638,6 +640,8 @@ Invoke-Checked "node" @("scripts/v5_4/certify-dormitory.mjs", "--sourceMode=real
 Invoke-Checked "node" @("scripts/v5_4/b-gate-runner.mjs")
 Invoke-Checked "node" @("scripts/check-dormitory-golden-domain.mjs", "--self-test")
 Invoke-Checked "node" @("scripts/check-dormitory-golden-domain.mjs")
+Invoke-Checked "node" @("scripts/check-experience-contract.mjs", "--self-test")
+Invoke-Checked "node" @("scripts/check-experience-contract.mjs")
 
 $ci = Get-Content ".github/workflows/ci.yml" -Raw
 $v54Ci = Get-Content ".github/workflows/v5_4_control_plane.yml" -Raw
@@ -690,7 +694,8 @@ foreach ($requiredCiCommand in @(
   "check-domain-kit-usage.mjs",
   "certify-dormitory.mjs",
   "b-gate-runner.mjs",
-  "check-dormitory-golden-domain.mjs"
+  "check-dormitory-golden-domain.mjs",
+  "check-experience-contract.mjs"
 )) {
   if ($ci -notmatch [regex]::Escape($requiredCiCommand)) {
     Fail "CI must run RT-2 BTOS compiler command: $requiredCiCommand"

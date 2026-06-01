@@ -40,6 +40,88 @@ export async function fetchWorkQueue() {
   return response.json();
 }
 
+export async function fetchOperationWorkItems(query = {}) {
+  const url = new URL(`${apiBaseUrl()}${runtimeApiPaths.operationsWorkItems}`);
+  for (const [key, value] of Object.entries(query || {})) {
+    if (value) url.searchParams.set(key, value);
+  }
+  const response = await fetch(url, { signal: AbortSignal.timeout(2400) });
+  if (!response.ok) throw await apiError("operation_work_items_failed", response);
+  return response.json();
+}
+
+export async function fetchOperationWorkItem(workItemId) {
+  const response = await fetch(`${apiBaseUrl()}${runtimeApiPaths.operationsWorkItem(workItemId)}`, { signal: AbortSignal.timeout(2400) });
+  if (!response.ok) throw await apiError("operation_work_item_failed", response);
+  return response.json();
+}
+
+export async function createOperationCase(body) {
+  const response = await fetch(`${apiBaseUrl()}${runtimeApiPaths.operationsCases}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body || {}),
+    signal: AbortSignal.timeout(3200)
+  });
+  if (!response.ok) throw await apiError("operation_case_create_failed", response);
+  return response.json();
+}
+
+export async function createOperationWorkItem(body) {
+  const response = await fetch(`${apiBaseUrl()}${runtimeApiPaths.operationsWorkItems}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body || {}),
+    signal: AbortSignal.timeout(3200)
+  });
+  if (!response.ok) throw await apiError("operation_work_item_create_failed", response);
+  return response.json();
+}
+
+export async function prepareOperationWorkItem(workItemId, body = {}) {
+  const response = await fetch(`${apiBaseUrl()}${runtimeApiPaths.operationsPrepare(workItemId)}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body || {}),
+    signal: AbortSignal.timeout(3200)
+  });
+  if (!response.ok) throw await apiError("operations_prepare_failed", response);
+  return response.json();
+}
+
+export async function confirmOperationWorkItem(workItemId, actorToken, body = {}) {
+  const response = await fetch(`${apiBaseUrl()}${runtimeApiPaths.operationsConfirm(workItemId)}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-WorkOS-Actor-Token": actorToken,
+      "X-Request-Id": body?.submissionId || body?.idempotencyKey || cryptoRandomRequestId()
+    },
+    body: JSON.stringify(body || {}),
+    signal: AbortSignal.timeout(4200)
+  });
+  if (!response.ok) throw await apiError("operations_confirm_failed", response);
+  return response.json();
+}
+
+export async function fetchSubmissionTrace(submissionId) {
+  const response = await fetch(`${apiBaseUrl()}${runtimeApiPaths.operationsTraceSubmission(submissionId)}`, { signal: AbortSignal.timeout(2400) });
+  if (!response.ok) throw await apiError("submission_trace_failed", response);
+  return response.json();
+}
+
+export async function fetchWorkItemTrace(workItemId) {
+  const response = await fetch(`${apiBaseUrl()}${runtimeApiPaths.operationsTraceWorkItem(workItemId)}`, { signal: AbortSignal.timeout(2400) });
+  if (!response.ok) throw await apiError("work_item_trace_failed", response);
+  return response.json();
+}
+
+export async function fetchCaseTrace(caseId) {
+  const response = await fetch(`${apiBaseUrl()}${runtimeApiPaths.operationsTraceCase(caseId)}`, { signal: AbortSignal.timeout(2400) });
+  if (!response.ok) throw await apiError("case_trace_failed", response);
+  return response.json();
+}
+
 export async function fetchSearchResults(q = "") {
   const url = new URL(`${apiBaseUrl()}${runtimeApiPaths.lensSearch}`);
   if (q) url.searchParams.set("q", q);

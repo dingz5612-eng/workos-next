@@ -1,4 +1,5 @@
 import { createRuntimeStore } from "./runtime/runtimeStore.js";
+import { defaultHomeForRole } from "./experienceContract.js";
 
 export function savedActor() {
   try {
@@ -13,7 +14,7 @@ export function createInitialState() {
   const actor = savedActor();
   const state = {
     lang: localStorage.getItem("workosnext.lang") || "zh-CN",
-    view: actor ? (localStorage.getItem("workosnext.onboarded") ? "home" : "onboarding") : "login",
+    view: actor ? (localStorage.getItem("workosnext.onboarded") ? defaultHomeForRole(actor.role) : "onboarding") : "login",
     selectedTask: "T-STAY-DEPOSIT",
     selectedWorkspace: "W-STAY-CHECKIN",
     selectedCardIndex: -1,

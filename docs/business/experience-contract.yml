@@ -1,0 +1,79 @@
+{
+  "version": "rt5.experience-contract.v1",
+  "roleDefaultHome": {
+    "frontdesk": "Today",
+    "operator": "Today",
+    "finance": "Finance Control",
+    "housekeeping": "Work",
+    "manager": "Manager Control Tower",
+    "admin": "Governance Center",
+    "releaseOwner": "Release Flight Deck"
+  },
+  "roleNavigation": {
+    "ordinaryMobile": ["Today", "Work", "Search", "Me"],
+    "finance": ["Finance Control", "Work", "Search", "Me"],
+    "manager": ["Manager Control Tower", "Work", "Search", "Me"],
+    "releaseOwner": ["Release Flight Deck", "Governance Center", "Work", "Me"]
+  },
+  "deviceSurfaceMatrix": {
+    "mobile": ["Today", "Work", "Search", "Me"],
+    "pc": ["Finance Control", "Manager Control Tower", "Governance Center"],
+    "release": ["Release Flight Deck"]
+  },
+  "WorkItemCard": {
+    "required": ["workItemId", "caseId", "workItemType", "lifecycleState", "ownerRole", "SLA", "requiredEvidence", "nextAction", "traceRefs"]
+  },
+  "TodayMissionControlIA": ["role-default-priority", "blocked-work", "projection-pending", "risk-signal"],
+  "WorkPageIA": ["assigned-work-items", "SLA", "evidence-state", "trusted-confirm"],
+  "ObjectWorkspaceIA": ["case-summary", "fact-trace", "lens", "audit"],
+  "TrustedConfirmSheet": {
+    "content": ["workItemId", "caseId", "requiredEvidence", "policyRef", "idempotencyKey", "risk", "nextAction"]
+  },
+  "ActionResultStateMatrix": {
+    "committed_projected": "show success and trace refs",
+    "committed_projection_pending": "show pending, not failed",
+    "committed_projection_failed": "show support action, not duplicate submit",
+    "permission_blocked_403": "show PermissionDiagnostic",
+    "idempotency_conflict_409": "show duplicate submission result",
+    "business_blocked_422": "show business blocker plus next action",
+    "network_unknown": "show requires support"
+  },
+  "EvidenceTileStateMatrix": {
+    "missing": "blocks confirm",
+    "draft": "can save draft",
+    "attached": "can submit",
+    "rejected": "blocks confirm",
+    "wrong_scope": "blocks confirm"
+  },
+  "EvidenceSheetStateMatrix": {
+    "empty": "show required evidence checklist",
+    "uploading": "show upload queue",
+    "verified": "bind to submissionId and eventId",
+    "rejected": "show rejection reason"
+  },
+  "PermissionDiagnosticCopyMatrix": {
+    "403": {"zh-CN": "权限不足，请升级给负责人处理。", "ru-RU": "Недостаточно прав, передайте ответственному."},
+    "409": {"zh-CN": "重复提交已被拦截，请查看原提交结果。", "ru-RU": "Дубликат остановлен, проверьте исходный результат."},
+    "422": {"zh-CN": "业务条件未满足，请按下一步补齐。", "ru-RU": "Бизнес-условие не выполнено, выполните следующий шаг."}
+  },
+  "OfflineEmptyErrorProjectionPendingStates": {
+    "offline": "can save draft but cannot confirm",
+    "empty": "show no assigned WorkItem",
+    "error": "show support action",
+    "projectionPending": "committed is not failed"
+  },
+  "bilingualOperationalCopyMatrix": {
+    "Today": {"zh-CN": "今日", "ru-RU": "Сегодня"},
+    "Work": {"zh-CN": "工作", "ru-RU": "Работа"},
+    "Search": {"zh-CN": "搜索", "ru-RU": "Поиск"},
+    "Me": {"zh-CN": "我的", "ru-RU": "Мой"},
+    "Finance Control": {"zh-CN": "财务控制", "ru-RU": "Финансовый контроль"},
+    "Manager Control Tower": {"zh-CN": "经理控制塔", "ru-RU": "Башня управления"},
+    "Governance Center": {"zh-CN": "治理中心", "ru-RU": "Центр управления"},
+    "Release Flight Deck": {"zh-CN": "发布飞行甲板", "ru-RU": "Пульт релиза"}
+  },
+  "compatibilityFallback": {
+    "prepareCard": "allowed only when no persisted WorkItem ref is available",
+    "confirmCard": "allowed only when no persisted WorkItem ref is available"
+  }
+}

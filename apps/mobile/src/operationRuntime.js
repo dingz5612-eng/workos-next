@@ -1,4 +1,13 @@
-import { attachEvidence, confirmCard, createEvidenceDraft, fetchAccommodationLens, prepareCard, waitForProjectionEvents } from "./apiClient.js";
+import {
+  attachEvidence,
+  confirmCard,
+  confirmOperationWorkItem,
+  createEvidenceDraft,
+  fetchAccommodationLens,
+  prepareCard,
+  prepareOperationWorkItem,
+  waitForProjectionEvents
+} from "./apiClient.js";
 import { defaultAccommodationLensIds, lensIdsForWorkspace } from "./runtimeLensCatalog.js";
 
 export function operationIdempotencyKey() {
@@ -31,6 +40,50 @@ export function createSubmissionProtocol(workspace, card, fieldValues = {}) {
 }
 
 export async function submitCardOperation({ workspace, card, actor, language, fieldValues, evidenceIds, submissionProtocol, onProjection, onLens }) {
+  return submitCardOperationCompatibilityFallback({ workspace, card, actor, language, fieldValues, evidenceIds, submissionProtocol, onProjection, onLens });
+}
+
+export async function submitWorkItemOperation({ workspace, card, actor, language, fieldValues, evidenceIds, submissionProtocol, onProjection, onLens }) {
+  const workItemId = workItemIdFor(workspace, card);
+  if (!workItemId) {
+    return submitCardOperationCompatibilityFallback({ workspace, card, actor, language, fieldValues, evidenceIds, submissionProtocol, onProjection, onLens });
+  }
+
+  const protocol = submissionProtocol || createSubmissionProtocol(workspace, card, fieldValues);
+  const aggregateRef = protocol.aggregateRef || aggregateRefFor(fieldValues);
+  await prepareOperationWorkItem(workItemId, {
+    language,
+    submissionId: protocol.submissionId,
+    aggregateRef,
+    fieldValues,
+    evidenceIds
+  });
+  const result = await confirmOperationWorkItem(workItemId, actor.token, {
+    language,
+    idempotencyKey: protocol.idempotencyKey,
+    submissionId: protocol.submissionId,
+    aggregateRef,
+    fieldValues,
+    evidenceIds
+  });
+  if (!isCommittedConfirm(result)) {
+    return result;
+  }
+  if (result.projection) onProjection(result.projection);
+  try {
+    await waitForProjectionEvents(eventIdsFromConfirmResult(result), onProjection);
+  } catch {
+    // The command is already committed. Projection pending is an ActionResult state, not submit failure.
+  }
+  try {
+    await refreshAccommodationLenses(lensIdsForWorkspace(workspace.id), onLens);
+  } catch {
+    // Lens refresh is read-side sync and must not change committed result semantics.
+  }
+  return result;
+}
+
+export async function submitCardOperationCompatibilityFallback({ workspace, card, actor, language, fieldValues, evidenceIds, submissionProtocol, onProjection, onLens }) {
   const protocol = submissionProtocol || createSubmissionProtocol(workspace, card, fieldValues);
   const aggregateRef = protocol.aggregateRef || aggregateRefFor(fieldValues);
   await prepareCard(workspace.id, card.id, {
@@ -64,6 +117,10 @@ export async function submitCardOperation({ workspace, card, actor, language, fi
     // source of truth for success semantics.
   }
   return result;
+}
+
+function workItemIdFor(workspace, card) {
+  return card?.workItemId || workspace?.workItemId || workspace?.taskId || "";
 }
 
 export async function materializeEvidenceObjects({ workspace, card, actor, submissionProtocol, evidenceDrafts }) {

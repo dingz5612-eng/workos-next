@@ -20,12 +20,12 @@ Repair / Parts / HR: `L0_OR_BLOCKED`
 
 ## Current Gate
 
-RT-4: `LOCAL_PASSED`
+RT-5: `LOCAL_PASSED`
 
-Current branch: `codex/rt4-dormitory-golden-domain-l1`
+Current branch: `codex/rt5-workitem-native-experience`
 
-Head sha: `0a8220c2e8e656ac1b585e03d751051d3e7e9526`
+Head sha: `0ea33a400e225f1dbe8972c0205790f4a099cefe`
 
-Next allowed stage after RT-4 local pass: `RT-5 stacked preconstruction`.
+Next allowed stage after RT-5 local pass: `RT-6 stacked preconstruction`.
 
 Formal Central Merge Train: `LOCKED_UNTIL_RT_FINAL_LOCAL_PASSED`.

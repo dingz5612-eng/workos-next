@@ -56,7 +56,7 @@ function materializeQueue(queue, byId, state) {
         source: item.source || state.runtimeStore?.queueSource || "runtime-api"
       };
     })
-    .filter((item) => item.workspace && item.card);
+    .filter((item) => (item.workspace && item.card) || item.workItemId);
 }
 
 export function selectSearchSurfaceResults(state, query) {

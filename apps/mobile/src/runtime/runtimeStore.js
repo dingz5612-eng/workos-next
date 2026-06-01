@@ -4,6 +4,7 @@ export function createRuntimeStore() {
     workspaces: [],
     events: [],
     workQueue: [],
+    operationWorkItems: [],
     searchResultsByQuery: {},
     homeSurface: [],
     learningCatalog: [],
@@ -34,6 +35,11 @@ export function applyRuntimeSurfacePayloads(state, payloads = {}) {
     store.workQueue = payloads.workQueue;
     store.queueSource = "runtime-api";
   }
+  if (payloads.operationWorkItems) {
+    store.operationWorkItems = payloads.operationWorkItems;
+    store.workQueue = operationWorkItemsToQueue(payloads.operationWorkItems);
+    store.queueSource = "operations-work-items";
+  }
   if (payloads.homeSurface) {
     store.homeSurface = payloads.homeSurface;
     store.homeSource = "runtime-api";
@@ -46,6 +52,24 @@ export function applyRuntimeSurfacePayloads(state, payloads = {}) {
     store.accommodationLenses = payloads.accommodationLenses;
     state.accommodationLenses = payloads.accommodationLenses;
   }
+}
+
+function operationWorkItemsToQueue(workItems) {
+  return (Array.isArray(workItems) ? workItems : []).map((item) => ({
+    queueItemId: `q-${item.workItemId || item.work_item_id}`,
+    workItemId: item.workItemId || item.work_item_id,
+    caseId: item.caseId || item.case_id,
+    workItemType: item.workItemType || item.work_item_type,
+    lifecycleState: item.lifecycleState || item.lifecycle_state || item.status,
+    ownerRole: item.ownerRole || item.owner_role,
+    workspaceId: item.workspaceId,
+    cardId: item.cardId,
+    domain: item.domain || "operations",
+    badges: ["mine", item.lifecycleState || item.lifecycle_state || item.status || "ready"].filter(Boolean),
+    priority: item.priority ?? 80,
+    reason: item.nextAction || item.next_action || item.failureReason || item.failure_reason || "",
+    source: "operations-work-items"
+  }));
 }
 
 export function applyRuntimeSearchResults(state, query, results) {
