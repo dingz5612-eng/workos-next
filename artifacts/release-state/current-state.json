@@ -1,0 +1,168 @@
+{
+  "version": "release-state.authority.v1",
+  "generatedAtUtc": "2026-06-01T19:56:21.824Z",
+  "generatedBy": "build-current-release-state",
+  "currentMain": {
+    "repository": "dingz5612-eng/workos-next",
+    "branch": "main",
+    "headSha": "e68ffc2bda8e55b3cac40c728712d2ab487f7b14",
+    "ci": {
+      "id": 26777989925,
+      "name": "CI",
+      "event": "push",
+      "status": "completed",
+      "conclusion": "success",
+      "headSha": "e68ffc2bda8e55b3cac40c728712d2ab487f7b14",
+      "htmlUrl": "https://github.com/dingz5612-eng/workos-next/actions/runs/26777989925",
+      "createdAt": "2026-06-01T19:47:53Z",
+      "updatedAt": "2026-06-01T19:50:30Z"
+    },
+    "v54ControlPlaneGuards": {
+      "id": 26777990195,
+      "name": "V5.4 Control Plane Guards",
+      "event": "push",
+      "status": "completed",
+      "conclusion": "success",
+      "headSha": "e68ffc2bda8e55b3cac40c728712d2ab487f7b14",
+      "htmlUrl": "https://github.com/dingz5612-eng/workos-next/actions/runs/26777990195",
+      "createdAt": "2026-06-01T19:47:53Z",
+      "updatedAt": "2026-06-01T19:50:06Z"
+    }
+  },
+  "sources": {
+    "dormInt": {
+      "ref": "artifacts/go-live/dormitory/internal-pilot-go-no-go.json",
+      "status": "GO_FOR_INTERNAL_PILOT",
+      "internalPilotAllowed": true,
+      "productionAllowed": false,
+      "dormitoryL2ProductionAllowed": false,
+      "latestMainCommitSha": "e68ffc2bda8e55b3cac40c728712d2ab487f7b14",
+      "latestMainCiHeadSha": "e68ffc2bda8e55b3cac40c728712d2ab487f7b14",
+      "latestMainV54HeadSha": "e68ffc2bda8e55b3cac40c728712d2ab487f7b14"
+    },
+    "rtFinal": {
+      "ref": "artifacts/rt4/final-completion-assurance-result.json",
+      "stage": "RT-FINAL",
+      "reconciledStatus": "POST_DORM_INT_RECONCILED",
+      "currentMainHead": "e68ffc2bda8e55b3cac40c728712d2ab487f7b14",
+      "businessProductionAllowed": false,
+      "dormitoryL2ProductionAllowed": false,
+      "repairPartsHrStatus": "L0 Contract Preview"
+    },
+    "evidenceGraph": {
+      "ref": "artifacts/rt4/evidence-graph.json",
+      "mode": "L1_INTERNAL_PILOT_OBSERVATION",
+      "releaseStates": {
+        "centralMerge": "CENTRAL_MERGE_COMPLETED",
+        "dormInt": "DORM_INT_PASSED",
+        "observation": "L1_INTERNAL_PILOT_OBSERVATION",
+        "businessProduction": "BLOCKED",
+        "dormitoryL2Production": "BLOCKED",
+        "repairPartsHr": "L0 Contract Preview"
+      }
+    },
+    "completionDashboard": {
+      "ref": "artifacts/rt4/completion-dashboard.json",
+      "mode": "L1_INTERNAL_PILOT_OBSERVATION",
+      "currentGate": "DORM-INT",
+      "currentGateStatus": "GO_FOR_INTERNAL_PILOT",
+      "currentMainHead": "e68ffc2bda8e55b3cac40c728712d2ab487f7b14",
+      "businessProduction": "BLOCKED",
+      "dormitoryL2Production": "BLOCKED",
+      "repairPartsHrStatus": "L0_OR_BLOCKED"
+    },
+    "businessLineRegistry": {
+      "ref": "docs/business/business-line-registry.json",
+      "dormitory": {
+        "level": "L1 Internal Pilot",
+        "productionAllowed": false,
+        "internalPilotAllowed": true,
+        "productionConfirmAllowed": false,
+        "surfaceMode": "internal-pilot-scope"
+      },
+      "repair": {
+        "level": "L0 Contract Preview",
+        "productionAllowed": false,
+        "internalPilotAllowed": false,
+        "productionConfirmAllowed": false,
+        "surfaceMode": "contract-preview"
+      },
+      "parts": {
+        "level": "L0 Contract Preview",
+        "productionAllowed": false,
+        "internalPilotAllowed": false,
+        "productionConfirmAllowed": false,
+        "surfaceMode": "contract-preview"
+      },
+      "hr": {
+        "level": "L0 Contract Preview",
+        "productionAllowed": false,
+        "internalPilotAllowed": false,
+        "productionConfirmAllowed": false,
+        "surfaceMode": "contract-preview"
+      }
+    },
+    "finalSystemGate": {
+      "ref": "artifacts/rt4/final-completion-assurance-result.json",
+      "status": "blocked",
+      "reason": "Final System Gate 仍由现有 release evidence 判定为 blocked，Business Production 必须保持 blocked。"
+    },
+    "bStageGate": {
+      "ref": "artifacts/go-live/dormitory/b-stage-gate-result.json",
+      "status": "passed",
+      "sourceMode": "real",
+      "noGoItems": []
+    },
+    "observation": {
+      "ref": "artifacts/go-live/dormitory/observation-window-result.json",
+      "status": "passed",
+      "observationWindowStatus": "active_l1_observation",
+      "decision": "continue_l1_observation",
+      "l1ToL2Decision": "not_eligible",
+      "l1ToL2Eligibility": false
+    }
+  },
+  "authoritativeState": {
+    "dormInt": "DORM_INT_PASSED",
+    "rtFinal": "POST_DORM_INT_RECONCILED",
+    "evidenceGraph": "L1_INTERNAL_PILOT_OBSERVATION",
+    "completionDashboard": "L1_INTERNAL_PILOT_OBSERVATION",
+    "businessLineRegistry": "ALIGNED",
+    "finalSystemGate": "blocked",
+    "bStageGate": "passed",
+    "observation": "L1_INTERNAL_PILOT_OBSERVATION",
+    "dormitory": "L1_INTERNAL_PILOT_OBSERVATION",
+    "dormitoryL2": "BLOCKED",
+    "businessProduction": "BLOCKED",
+    "repair": "L0 Contract Preview",
+    "parts": "L0 Contract Preview",
+    "hr": "L0 Contract Preview"
+  },
+  "prohibitedStates": {
+    "dormitoryL2ProductionAllowed": false,
+    "businessProductionAllowed": false,
+    "repairPartsHrProductionAllowed": false
+  },
+  "evidenceRefs": [
+    "docs/release-state/release-state-machine.yml",
+    "docs/release-state/pilot-state-authority.md",
+    "schemas/release-state/release-state.schema.json",
+    "artifacts/go-live/dormitory/internal-pilot-go-no-go.json",
+    "artifacts/rt4/final-completion-assurance-result.json",
+    "artifacts/rt4/evidence-graph.json",
+    "artifacts/rt4/completion-dashboard.json",
+    "docs/business/business-line-registry.json",
+    "artifacts/go-live/dormitory/b-stage-gate-result.json",
+    "artifacts/go-live/dormitory/observation-window-result.json",
+    "artifacts/go-live/dormitory/l1-to-l2-upgrade-result.json",
+    "artifacts/release-state/current-state.json",
+    "artifacts/release-state/state-transition-log.json"
+  ],
+  "noGoItems": [],
+  "decisions": [
+    "DORM-INT GO 只裁决为 L1 Internal Pilot Observation。",
+    "Final System Gate blocked 时 Business Production 保持 blocked。",
+    "Dormitory L2 保持 blocked，L1 -> L2 需要单独 stage / PR / gate。",
+    "Repair / Parts / HR 保持 L0 Contract Preview。"
+  ]
+}

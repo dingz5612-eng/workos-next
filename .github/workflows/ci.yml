@@ -214,6 +214,13 @@ jobs:
           node scripts/release-state/check-evidence-reconciliation.mjs
           node scripts/rt4/check-final-evidence-freshness.mjs
 
+      - name: Validate OAM-01 Release State Authority
+        if: github.event_name == 'pull_request'
+        run: |
+          node scripts/release-state/build-current-release-state.mjs
+          node scripts/release-state/check-current-release-state.mjs
+          node scripts/release-state/check-current-state-authority.mjs
+
       - name: Architecture guard
         shell: pwsh
         env:
