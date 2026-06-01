@@ -65,6 +65,10 @@ public static class BStageGateRunner
         ValidateBusinessLineRegistry(noGo, go);
         ValidateCiWiring(noGo, go);
         ValidateEvidencePolicyRuntimeBinding(noGo, go);
+        ValidateGoLiveReadiness(options.Get("dormIntScope"), "DORM-INT scope readiness", inputs, noGo, go, requireSourceMode: false);
+        ValidateGoLiveReadiness(options.Get("dormIntMasterData"), "DORM-INT master data readiness", inputs, noGo, go);
+        ValidateGoLiveReadiness(options.Get("dormIntFinanceDailyClose"), "DORM-INT finance daily close result", inputs, noGo, go);
+        ValidateGoLiveReadiness(options.Get("dormIntEvidencePolicy"), "DORM-INT evidence policy result", inputs, noGo, go);
 
         var status = noGo.Count == 0 ? "passed" : "blocked";
         var result = new BStageGateResult(
@@ -248,6 +252,44 @@ public static class BStageGateRunner
         {
             go.Add("Evidence Policy file declares runtime evaluator binding.");
         }
+    }
+
+    private static void ValidateGoLiveReadiness(
+        string? path,
+        string label,
+        IDictionary<string, string> inputs,
+        ICollection<string> noGo,
+        ICollection<string> go,
+        bool requireSourceMode = true)
+    {
+        if (string.IsNullOrWhiteSpace(path) || !File.Exists(path))
+        {
+            noGo.Add($"{label} is missing.");
+            return;
+        }
+        if (Path.GetFileName(path).Contains(".not_run.", StringComparison.OrdinalIgnoreCase))
+        {
+            noGo.Add($"{label} cannot be .not_run artifact.");
+            return;
+        }
+
+        inputs[label] = path;
+        using var doc = System.Text.Json.JsonDocument.Parse(File.ReadAllText(path));
+        if (!doc.RootElement.TryGetProperty("status", out var status) ||
+            !string.Equals(status.GetString(), "passed", StringComparison.OrdinalIgnoreCase))
+        {
+            noGo.Add($"{label} must be passed.");
+            return;
+        }
+        if (requireSourceMode &&
+            (!doc.RootElement.TryGetProperty("sourceMode", out var sourceMode) ||
+             !string.Equals(sourceMode.GetString(), "real", StringComparison.OrdinalIgnoreCase)))
+        {
+            noGo.Add($"{label} must use sourceMode=real.");
+            return;
+        }
+
+        go.Add($"{label} passed.");
     }
 
     private static string RepoRoot()

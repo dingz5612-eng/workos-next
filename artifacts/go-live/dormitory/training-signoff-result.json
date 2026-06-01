@@ -1,0 +1,55 @@
+{
+  "generated_at_utc": "2026-06-01T15:06:18.347Z",
+  "generated_by": "check-dormitory-training-signoff",
+  "stage": "DORM-INT-10",
+  "status": "passed",
+  "sourceMode": "real",
+  "signoffPath": "docs/go-live/dormitory/training-signoff.yml",
+  "roleCount": 6,
+  "roles": [
+    {
+      "role": "frontdesk",
+      "signer": "user-frontdesk-001",
+      "signedAt": "2026-06-01T10:00:00Z",
+      "taskCount": 3,
+      "approvalDecision": "approved_for_l1_internal_pilot"
+    },
+    {
+      "role": "finance",
+      "signer": "user-finance-001",
+      "signedAt": "2026-06-01T10:10:00Z",
+      "taskCount": 3,
+      "approvalDecision": "approved_for_l1_internal_pilot"
+    },
+    {
+      "role": "housekeeping",
+      "signer": "user-housekeeping-001",
+      "signedAt": "2026-06-01T10:20:00Z",
+      "taskCount": 3,
+      "approvalDecision": "approved_for_l1_internal_pilot"
+    },
+    {
+      "role": "manager",
+      "signer": "user-manager-001",
+      "signedAt": "2026-06-01T10:30:00Z",
+      "taskCount": 3,
+      "approvalDecision": "approved_for_l1_internal_pilot"
+    },
+    {
+      "role": "admin",
+      "signer": "user-admin-001",
+      "signedAt": "2026-06-01T10:40:00Z",
+      "taskCount": 3,
+      "approvalDecision": "approved_for_l1_internal_pilot"
+    },
+    {
+      "role": "releaseOwner",
+      "signer": "user-release-001",
+      "signedAt": "2026-06-01T10:50:00Z",
+      "taskCount": 3,
+      "approvalDecision": "approved_for_l1_internal_pilot"
+    }
+  ],
+  "noGoItems": [],
+  "nextAction": "DORM-INT-10 passed; DORM-INT-FINAL may evaluate final go/no-go."
+}

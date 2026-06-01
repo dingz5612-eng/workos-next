@@ -1,0 +1,79 @@
+{
+  "version": "dorm-int-10.training-signoff.v1",
+  "pilotId": "dorm-int-l1-2026-06",
+  "sourceMode": "real",
+  "roles": [
+    {
+      "role": "frontdesk",
+      "signer": "user-frontdesk-001",
+      "signedAt": "2026-06-01T10:00:00Z",
+      "tasks": [
+        {"task": "checkin", "scenarioResult": "passed", "trainingEvidence": "ev-training-frontdesk-checkin"},
+        {"task": "bed assignment", "scenarioResult": "passed", "trainingEvidence": "ev-training-frontdesk-bed"},
+        {"task": "payment register", "scenarioResult": "passed", "trainingEvidence": "ev-training-frontdesk-payment"}
+      ],
+      "blockingIssue": "closed",
+      "approvalDecision": "approved_for_l1_internal_pilot"
+    },
+    {
+      "role": "finance",
+      "signer": "user-finance-001",
+      "signedAt": "2026-06-01T10:10:00Z",
+      "tasks": [
+        {"task": "deposit confirm", "scenarioResult": "passed", "trainingEvidence": "ev-training-finance-deposit"},
+        {"task": "ordinary payment confirm", "scenarioResult": "passed", "trainingEvidence": "ev-training-finance-payment"},
+        {"task": "bank mismatch", "scenarioResult": "passed", "trainingEvidence": "ev-training-finance-mismatch"}
+      ],
+      "blockingIssue": "closed",
+      "approvalDecision": "approved_for_l1_internal_pilot"
+    },
+    {
+      "role": "housekeeping",
+      "signer": "user-housekeeping-001",
+      "signedAt": "2026-06-01T10:20:00Z",
+      "tasks": [
+        {"task": "service task", "scenarioResult": "passed", "trainingEvidence": "ev-training-housekeeping-service"},
+        {"task": "cleaning complete", "scenarioResult": "passed", "trainingEvidence": "ev-training-housekeeping-cleaning"},
+        {"task": "bed release", "scenarioResult": "passed", "trainingEvidence": "ev-training-housekeeping-release"}
+      ],
+      "blockingIssue": "closed",
+      "approvalDecision": "approved_for_l1_internal_pilot"
+    },
+    {
+      "role": "manager",
+      "signer": "user-manager-001",
+      "signedAt": "2026-06-01T10:30:00Z",
+      "tasks": [
+        {"task": "risk assign", "scenarioResult": "passed", "trainingEvidence": "ev-training-manager-risk"},
+        {"task": "refund approve", "scenarioResult": "passed", "trainingEvidence": "ev-training-manager-refund"},
+        {"task": "SLA escalation", "scenarioResult": "passed", "trainingEvidence": "ev-training-manager-sla"}
+      ],
+      "blockingIssue": "closed",
+      "approvalDecision": "approved_for_l1_internal_pilot"
+    },
+    {
+      "role": "admin",
+      "signer": "user-admin-001",
+      "signedAt": "2026-06-01T10:40:00Z",
+      "tasks": [
+        {"task": "capability change", "scenarioResult": "passed", "trainingEvidence": "ev-training-admin-capability"},
+        {"task": "device trust", "scenarioResult": "passed", "trainingEvidence": "ev-training-admin-device"},
+        {"task": "evidence audit", "scenarioResult": "passed", "trainingEvidence": "ev-training-admin-evidence"}
+      ],
+      "blockingIssue": "closed",
+      "approvalDecision": "approved_for_l1_internal_pilot"
+    },
+    {
+      "role": "releaseOwner",
+      "signer": "user-release-001",
+      "signedAt": "2026-06-01T10:50:00Z",
+      "tasks": [
+        {"task": "pause pilot", "scenarioResult": "passed", "trainingEvidence": "ev-training-release-pause"},
+        {"task": "rollback pilot", "scenarioResult": "passed", "trainingEvidence": "ev-training-release-rollback"},
+        {"task": "review BStageGate", "scenarioResult": "passed", "trainingEvidence": "ev-training-release-gate"}
+      ],
+      "blockingIssue": "closed",
+      "approvalDecision": "approved_for_l1_internal_pilot"
+    }
+  ]
+}

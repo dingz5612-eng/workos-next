@@ -1,0 +1,39 @@
+{
+  "b_stage_gate_result_id": "b-stage-gate-rtb",
+  "status": "passed",
+  "source_mode": "real",
+  "generated_at_utc": "2026-06-01T15:06:17.20442+00:00",
+  "generated_by": "b-stage-gate-runner",
+  "inputs": {
+    "B1 checker output": ".tmp\\v5_4\\b1-domain-kit-result.json",
+    "B2 dormitory certification report": ".tmp/v5_4/dormitory-certification-report.json",
+    "B2 invariant checks": ".tmp/v5_4/dormitory-certification-invariants.json",
+    "B2 semantic shadow report": ".tmp/v5_4/dormitory-certification-shadow.json",
+    "B3 admission checker output": ".tmp\\v5_4\\b3-admission-result.json",
+    "runtime-surface alignment checker output": ".tmp\\v5_4\\runtime-surface-alignment-result.json",
+    "rollback instruction": ".tmp\\v5_4\\b-stage-rollback-instruction.json",
+    "business signoff": ".tmp\\v5_4\\b-stage-business-signoff.json",
+    "DORM-INT scope readiness": ".tmp\\go-live\\dormitory\\pilot-scope-result.json",
+    "DORM-INT master data readiness": "artifacts\\go-live\\dormitory\\master-data-readiness.json",
+    "DORM-INT finance daily close result": "artifacts\\go-live\\dormitory\\finance-daily-close-result.json",
+    "DORM-INT evidence policy result": ".tmp\\v5_4\\dormitory-evidence-policy-result.json"
+  },
+  "no_go_items": [],
+  "go_items": [
+    "B1 domain kit",
+    "B2 certification report passed with rejected command trace semantics.",
+    "B2 invariant checks are green.",
+    "B2 semantic shadow report is green.",
+    "B3 admission",
+    "runtime surface alignment",
+    "Rollback instruction present.",
+    "Business signoff approved for B-stage gate only.",
+    "Business line admission guard blocks L0 production confirm.",
+    "B1/B2/B3 and BStage gate commands are wired into CI.",
+    "Evidence Policy file declares runtime evaluator binding.",
+    "DORM-INT scope readiness passed.",
+    "DORM-INT master data readiness passed.",
+    "DORM-INT finance daily close result passed.",
+    "DORM-INT evidence policy result passed."
+  ]
+}

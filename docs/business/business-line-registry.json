@@ -4,15 +4,15 @@
     {
       "businessLineId": "dormitory",
       "displayName": "Dormitory",
-      "level": "L1 Pilot Candidate",
+      "level": "L1 Internal Pilot",
       "productionAllowed": false,
-      "internalPilotAllowed": false,
+      "internalPilotAllowed": true,
       "productionConfirmAllowed": false,
-      "surfaceMode": "certification_only",
-      "allowedScopes": ["b1_definition", "b2_certification", "b3_admission_check"],
+      "surfaceMode": "internal-pilot-scope",
+      "allowedScopes": ["internal_pilot_scope", "b_stage_gate", "workitem_native_mobile"],
       "blockedActions": ["production_confirm", "unrestricted_refund", "period_close", "bulk_import"],
       "owner": "dormitory-business-owner",
-      "nextGate": "RT-4 Dormitory Golden Domain L1 Pilot"
+      "nextGate": "L1 Internal Pilot Observation Window"
     },
     {
       "businessLineId": "repair",
