@@ -38,6 +38,62 @@ describe("DORM-INT-02 WorkItem-native pilot", () => {
     vi.unstubAllGlobals();
   });
 
+  it("normalizes legacy task ids to persisted Operations WorkItem ids", () => {
+    vi.stubGlobal("localStorage", { getItem: () => null });
+    const testCtx = ctx({
+      selectedWorkspace: "W-STAY-RESOURCE",
+      selectedCardId: "roomSetup",
+      runtimeStore: {
+        workQueue: [],
+        operationWorkItems: [{
+          workItemId: "W-STAY-RESOURCE:roomSetup",
+          caseId: "W-STAY-RESOURCE",
+          workItemType: "roomSetup",
+          lifecycleState: "ready",
+          ownerRole: "operator",
+          workspaceId: "W-STAY-RESOURCE"
+        }],
+        workspaces: [resourceWorkspaceFixture()]
+      }
+    });
+
+    openWorkItem("T-ROOM-CREATE", testCtx, { workspaceId: "W-STAY-RESOURCE", cardId: "roomSetup" });
+    const html = routeView(testCtx);
+
+    expect(testCtx.state.selectedWorkItemId).toBe("W-STAY-RESOURCE:roomSetup");
+    expect(html).toContain("W-STAY-RESOURCE:roomSetup");
+    expect(html).not.toContain("T-ROOM-CREATE");
+    vi.unstubAllGlobals();
+  });
+
+  it("renders persisted WorkItem ids when Operation Panel reopens with a legacy task id", () => {
+    vi.stubGlobal("localStorage", { getItem: () => null });
+    const testCtx = ctx({
+      selectedWorkItemId: "T-ROOM-CREATE",
+      selectedWorkspace: "W-STAY-RESOURCE",
+      selectedCardId: "roomSetup",
+      runtimeStore: {
+        workQueue: [],
+        operationWorkItems: [{
+          workItemId: "W-STAY-RESOURCE:roomSetup",
+          caseId: "W-STAY-RESOURCE",
+          workItemType: "roomSetup",
+          lifecycleState: "ready",
+          ownerRole: "operator",
+          workspaceId: "W-STAY-RESOURCE"
+        }],
+        workspaces: [resourceWorkspaceFixture()]
+      },
+    });
+    testCtx.workspace = () => resourceWorkspaceFixture();
+
+    const html = routeView(testCtx);
+
+    expect(html).toContain("W-STAY-RESOURCE:roomSetup");
+    expect(html).not.toContain("T-ROOM-CREATE");
+    vi.unstubAllGlobals();
+  });
+
   it("renders Today as WorkItem Mission Control and Me as Personal Ops Center", () => {
     vi.stubGlobal("localStorage", { getItem: () => null });
     const todayCtx = ctx({ view: "home" });
@@ -142,6 +198,28 @@ function workspaceFixture() {
       evidence: [{ id: "identityEvidence", label: { "zh-CN": "身份证据" } }],
       blockerRules: [],
       confirmation: { required: true, requiredRole: "frontdesk", policyRef: "dormitory-evidence-policy" }
+    }],
+    blockers: []
+  };
+}
+
+function resourceWorkspaceFixture() {
+  return {
+    id: "W-STAY-RESOURCE",
+    domain: "stay",
+    taskId: "T-ROOM-CREATE",
+    title: { "zh-CN": "我要创建住宿资源" },
+    summary: { "zh-CN": "房间床位配置" },
+    next: { "zh-CN": "先配置房间和床位，再配置价格、准备度、阻断和释放。" },
+    cards: [{
+      id: "roomSetup",
+      status: "ready",
+      workItemId: "T-ROOM-CREATE",
+      title: { "zh-CN": "房间配置卡" },
+      fields: { business: [], system: [], analytics: [] },
+      evidence: [{ id: "room-duplicate-check", label: { "zh-CN": "房间重复校验" } }],
+      blockerRules: [],
+      confirmation: { required: true, requiredRole: "operator", policyRef: "operations-runtime-policy" }
     }],
     blockers: []
   };

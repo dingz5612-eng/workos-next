@@ -18,7 +18,8 @@ export function operationPanelView(ctx) {
   }
 
   const activeCard = item?.card || activeWorkspaceCard(workspace, state.selectedCardIndex, state.selectedCardId);
-  const model = workItemModel({ ...item, workspace, card: activeCard, workspaceId: workspace.id, cardId: activeCard?.id }, ctx);
+  const operationContext = { ...item, workspace, card: activeCard, workspaceId: item?.workspaceId || workspace.id, cardId: item?.cardId || activeCard?.id };
+  const model = workItemModel(operationContext, ctx);
   const draft = loadDraft(workspace.id, activeCard.id);
   const payloadHash = state.lastActionResult?.payloadHash || payloadHashFor(draft.values || {}, draft.evidenceDrafts || []);
   const commandSubmissionId = state.lastActionResult?.commandSubmissionId || draft.submissionProtocol?.submissionId || model.traceRefs[0] || "";
@@ -36,7 +37,7 @@ export function operationPanelView(ctx) {
       <h1>${ctx.escapeHtml(model.workItemType)}</h1>
       <p>${ctx.escapeHtml(model.workItemId)} · ${ctx.escapeHtml(model.caseId)}</p>
     </section>
-    ${WorkItemCard({ ...item, workspace, card: activeCard, workspaceId: workspace.id, cardId: activeCard.id }, ctx)}
+    ${WorkItemCard(operationContext, ctx)}
     <section class="operation-panel-runtime" data-component="OperationPanelRuntime">
       <article><span>prepare</span><strong>operationsPrepare</strong><p>Transport path is owned by apiClient.js.</p></article>
       <article><span>confirm</span><strong>operationsConfirm</strong><p>Transport path is owned by operationRuntime.js.</p></article>
@@ -45,9 +46,9 @@ export function operationPanelView(ctx) {
       <article><span>commandSubmissionId</span><strong>${ctx.escapeHtml(commandSubmissionId || "-")}</strong><p>Stable audit ref after prepare / confirm.</p></article>
       <article><span>payloadHash</span><strong>${ctx.escapeHtml(payloadHash)}</strong><p>Draft values + evidence fingerprint.</p></article>
     </section>
-    ${OperationPanelView(operationBody, workspace, activeCard, ctx)}
+    ${OperationPanelView(operationBody, operationContext, activeCard, ctx)}
     ${EvidenceSheet(activeCard, draft, ctx)}
-    ${TrustedConfirmSheet(workspace, activeCard, ctx)}
+    ${TrustedConfirmSheet(operationContext, activeCard, ctx)}
     ${ActionResult(state.lastActionResult || { status: "not_submitted", message: "Ready to prepare / confirm" }, ctx)}
   `);
 }

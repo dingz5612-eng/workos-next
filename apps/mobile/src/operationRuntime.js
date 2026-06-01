@@ -43,8 +43,8 @@ export async function submitCardOperation({ workspace, card, actor, language, fi
   return submitCardOperationCompatibilityFallback({ workspace, card, actor, language, fieldValues, evidenceIds, submissionProtocol, onProjection, onLens });
 }
 
-export async function submitWorkItemOperation({ workspace, card, actor, language, fieldValues, evidenceIds, submissionProtocol, onProjection, onLens }) {
-  const workItemId = workItemIdFor(workspace, card);
+export async function submitWorkItemOperation({ workspace, card, workItemId: explicitWorkItemId, actor, language, fieldValues, evidenceIds, submissionProtocol, onProjection, onLens }) {
+  const workItemId = explicitWorkItemId || workItemIdFor(workspace, card);
   if (!workItemId) {
     return submitCardOperationCompatibilityFallback({ workspace, card, actor, language, fieldValues, evidenceIds, submissionProtocol, onProjection, onLens });
   }
@@ -120,7 +120,16 @@ export async function submitCardOperationCompatibilityFallback({ workspace, card
 }
 
 function workItemIdFor(workspace, card) {
-  return card?.workItemId || workspace?.workItemId || workspace?.taskId || "";
+  if (workspace?.runtimeWorkItemId) return workspace.runtimeWorkItemId;
+  if (card?.runtimeWorkItemId) return card.runtimeWorkItemId;
+  if (workspace?.workItemId && isPersistedWorkItemId(workspace.workItemId)) return workspace.workItemId;
+  if (card?.workItemId && isPersistedWorkItemId(card.workItemId)) return card.workItemId;
+  if (workspace?.id && card?.id) return `${workspace.id}:${card.id}`;
+  return "";
+}
+
+function isPersistedWorkItemId(value) {
+  return String(value || "").includes(":") || String(value || "").startsWith("wi-");
 }
 
 export async function materializeEvidenceObjects({ workspace, card, actor, submissionProtocol, evidenceDrafts }) {

@@ -120,6 +120,7 @@ export async function submitCurrentCard(ctx) {
     const result = await submitWorkItemOperation({
       workspace: item,
       card,
+      workItemId: persistedWorkItemIdFor(ctx.state, item, card),
       actor: ctx.state.currentActor,
       language: ctx.state.lang,
       fieldValues,
@@ -289,4 +290,28 @@ function applyCommittedCardLocalState(workspaceId, cardId, ctx) {
       status: "ready"
     };
   }
+}
+
+function persistedWorkItemIdFor(state, workspace, card) {
+  const selectedWorkItemId = state.selectedWorkItemId || "";
+  const runtimeItems = [
+    ...(state.runtimeStore?.operationWorkItems || []),
+    ...(state.runtimeStore?.workQueue || [])
+  ];
+  const selected = runtimeItems.find((item) =>
+    [item.workItemId, item.work_item_id].includes(selectedWorkItemId));
+  if (selected?.workItemId || selected?.work_item_id) {
+    return selected.workItemId || selected.work_item_id;
+  }
+
+  const byWorkspaceCard = runtimeItems.find((item) =>
+    (item.workspaceId || item.workspace_id) === workspace?.id &&
+    (!(item.cardId || item.card_id) || (item.cardId || item.card_id) === card?.id) &&
+    (item.workItemId || item.work_item_id));
+  if (byWorkspaceCard?.workItemId || byWorkspaceCard?.work_item_id) {
+    return byWorkspaceCard.workItemId || byWorkspaceCard.work_item_id;
+  }
+
+  if (workspace?.id && card?.id) return `${workspace.id}:${card.id}`;
+  return "";
 }
