@@ -1,0 +1,110 @@
+{
+  "version": 1,
+  "packId": "DormitoryDomainPack",
+  "domainId": "dormitory",
+  "owner": "DormitoryDomainPack",
+  "domainOwner": "dormitory.operations",
+  "ownedFacts": [
+    "Room",
+    "Bed",
+    "Stay",
+    "BedOccupancyInterval",
+    "StayChargeBasis",
+    "DepositRequest",
+    "PaymentBasis",
+    "EvidenceRequirement",
+    "CheckoutCase",
+    "CleaningTask",
+    "DamageAssessment",
+    "StayBalanceLens",
+    "DepositLiabilityLens",
+    "DormitoryRiskSummary"
+  ],
+  "requestedFacts": [
+    "Subject",
+    "MoneyBasis",
+    "PaymentFact",
+    "DepositFact",
+    "LedgerTransaction",
+    "EvidenceObject",
+    "DepositReceipt",
+    "PaymentReceipt",
+    "RefundDeposit",
+    "FinanceReceipt"
+  ],
+  "events": [
+    "DormitoryStayPrepared",
+    "DormitoryBedAssigned",
+    "DormitoryDepositBasisCaptured",
+    "DormitoryPaymentBasisCaptured",
+    "DormitoryServiceTaskCompleted",
+    "DormitoryCheckoutInspected",
+    "DormitoryCorrectionRequested",
+    "DormitoryPeriodReviewed",
+    "DormitoryCommandRejected"
+  ],
+  "workitems": [
+    "Dorm.CheckinConfirm",
+    "Dorm.BedAssignmentConfirm",
+    "Dorm.DepositConfirm",
+    "Dorm.PaymentConfirm",
+    "Dorm.RoomReadinessCheck",
+    "Dorm.RefundApprove",
+    "Finance.CorrectionApply",
+    "Dorm.PeriodReview",
+    "Dorm.ExceptionResolve"
+  ],
+  "evidence": {
+    "required": [
+      "identity-document",
+      "reservation-acknowledgement",
+      "bed-availability-proof",
+      "deposit-policy",
+      "receipt-proof",
+      "payment-receipt",
+      "cashier-review",
+      "completion-photo",
+      "verification-check",
+      "room-inspection",
+      "settlement-review",
+      "refund-approval",
+      "bank-import-row",
+      "correction-approval",
+      "period-review-pack",
+      "exception-audit"
+    ],
+    "policy": "referenceOnly"
+  },
+  "finance": {
+    "moneyBasisPolicy": "routeToFinanceTruthPack",
+    "ledgerPolicy": "noDirectLedgerCommit"
+  },
+  "invariants": [
+    "dormitory.no_center_truth_ownership",
+    "dormitory.confirm_uses_operations_uow",
+    "dormitory.money_basis_routes_to_finance_truth",
+    "dormitory.evidence_required_before_confirm",
+    "dormitory.l1_pilot_not_production"
+  ],
+  "certification": {
+    "requiredScenarios": [
+      "dorm-cert-001",
+      "dorm-cert-002",
+      "dorm-cert-003",
+      "dorm-cert-004",
+      "dorm-cert-005",
+      "dorm-cert-006",
+      "dorm-cert-007",
+      "dorm-cert-008",
+      "dorm-cert-009",
+      "dorm-cert-010"
+    ]
+  },
+  "goNoGo": {
+    "productionAllowedDefault": false
+  },
+  "allowedCapabilities": ["propose", "validate", "project", "routeToFinanceTruth", "routeToEvidenceTrust"],
+  "forbiddenCapabilities": ["ownCenterTruth", "commitLedgerWithProvisionalRef", "processDomainExceptionFromManagementCockpit", "declareL2Production"],
+  "receiptPolicy": "referenceOnly",
+  "managementCockpitBoundary": "observeAndRouteOnly"
+}

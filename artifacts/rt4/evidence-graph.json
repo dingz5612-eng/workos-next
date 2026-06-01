@@ -1,9 +1,9 @@
 {
   "version": "rt4.evidence-graph.v1",
   "mode": "STACKED_PRECONSTRUCTION",
-  "branch": "codex/rtb-b-stage-gate-closure",
-  "headSha": "cdcdc95cc82a59fa68bb144c8d29301b9b40e108",
-  "generatedAtUtc": "2026-06-01T09:39:09.853Z",
+  "branch": "codex/rt4-dormitory-golden-domain-l1",
+  "headSha": "0a8220c5788cdc89fe17dd8b02ec53264f7e448d",
+  "generatedAtUtc": "2026-06-01T09:52:36.227Z",
   "nodes": [
     {
       "id": "RT4-P0-001",
@@ -357,7 +357,7 @@
       "type": "branch",
       "status": "LOCAL_PASSED",
       "branch": "codex/rtb-b-stage-gate-closure",
-      "headSha": "cdcdc95cc82a59fa68bb144c8d29301b9b40e108",
+      "headSha": "6d67f74b49d0a652e42cf69f175fceca3eb004b9",
       "refs": [
         "clean Docker PostgreSQL workosnext-rtb-test",
         "node scripts/check-dormitory-domain-kit.mjs",
@@ -368,6 +368,26 @@
         "node scripts/v5_4/certify-dormitory.mjs --sourceMode=real",
         "node scripts/v5_4/b-gate-runner.mjs",
         "dotnet test tests/WorkOS.UnitTests/WorkOS.UnitTests.csproj -c Release --no-build",
+        "dotnet test tests/WorkOS.RuntimeIntegrationTests/WorkOS.RuntimeIntegrationTests.csproj -c Release --no-build",
+        "dotnet run --project tests/WorkOS.RuntimeContractTests/WorkOS.RuntimeContractTests.csproj -c Release",
+        "pwsh -NoProfile -File scripts/guard-architecture.ps1",
+        "pwsh -NoProfile -File scripts/v5_4/run-control-plane-checks.ps1"
+      ]
+    },
+    {
+      "id": "RT-4",
+      "type": "branch",
+      "status": "LOCAL_PASSED",
+      "branch": "codex/rt4-dormitory-golden-domain-l1",
+      "headSha": "0a8220c2e8e656ac1b585e03d751051d3e7e9526",
+      "refs": [
+        "clean Docker PostgreSQL workosnext-rt4-test",
+        "docs/business/domains/dormitory/domain-pack.yml",
+        "node scripts/check-dormitory-golden-domain.mjs --self-test",
+        "node scripts/check-dormitory-golden-domain.mjs",
+        "node scripts/check-domain-packs.mjs",
+        "node scripts/v5_4/certify-dormitory.mjs --sourceMode=real",
+        "node scripts/v5_4/b-gate-runner.mjs",
         "dotnet test tests/WorkOS.RuntimeIntegrationTests/WorkOS.RuntimeIntegrationTests.csproj -c Release --no-build",
         "dotnet run --project tests/WorkOS.RuntimeContractTests/WorkOS.RuntimeContractTests.csproj -c Release",
         "pwsh -NoProfile -File scripts/guard-architecture.ps1",
