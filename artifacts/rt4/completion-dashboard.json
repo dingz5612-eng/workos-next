@@ -1,7 +1,7 @@
 {
   "version": "rt4.completion-dashboard.v1",
   "mode": "STACKED_PRECONSTRUCTION",
-  "generatedAtUtc": "2026-06-01T09:39:10.036Z",
+  "generatedAtUtc": "2026-06-01T09:52:36.439Z",
   "businessProduction": "BLOCKED",
   "dormitoryL2Production": "BLOCKED",
   "repairPartsHrStatus": "L0_OR_BLOCKED",
@@ -10,11 +10,11 @@
     "p1": 100,
     "p2": "tracked"
   },
-  "currentGate": "RT-B",
+  "currentGate": "RT-4",
   "currentGateStatus": "LOCAL_PASSED",
-  "currentGateBranch": "codex/rtb-b-stage-gate-closure",
-  "currentGateHeadSha": "cdcdc95cc82a59fa68bb144c8d29301b9b40e108",
-  "nextAllowedStackedStage": "RT-4 stacked preconstruction",
+  "currentGateBranch": "codex/rt4-dormitory-golden-domain-l1",
+  "currentGateHeadSha": "0a8220c2e8e656ac1b585e03d751051d3e7e9526",
+  "nextAllowedStackedStage": "RT-5 stacked preconstruction",
   "centralMergeTrain": "LOCKED_UNTIL_RT_FINAL_LOCAL_PASSED",
-  "evidenceGraphNodes": 26
+  "evidenceGraphNodes": 27
 }

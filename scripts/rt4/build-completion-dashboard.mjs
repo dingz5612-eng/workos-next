@@ -41,6 +41,8 @@ const nextAllowed = currentGate === "RT-0"
     ? "RT-B stacked preconstruction"
     : currentGate === "RT-B"
     ? "RT-4 stacked preconstruction"
+    : currentGate === "RT-4"
+    ? "RT-5 stacked preconstruction"
     : currentGate === "RT-X"
     ? "RT-0 stacked preconstruction"
     : "next stacked preconstruction";
