@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "receiptId": "bad-payment-receipt-copy",
+  "receiptType": "payment-receipt",
+  "sourceTruthFacts": ["PaymentFact"],
+  "projectionPolicy": "referenceOnly",
+  "truthRefs": ["payment-fact:PAY-1"],
+  "truthCopies": ["PaymentFact.amount", "PaymentFact.confirmedAtUtc"]
+}

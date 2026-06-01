@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://workosnext.local/schemas/truth-owner-registry.schema.json",
+  "type": "object",
+  "required": ["version", "registryId", "defaultPolicy", "truthOwners"],
+  "properties": {
+    "version": { "type": "integer", "const": 1 },
+    "registryId": { "type": "string", "minLength": 1 },
+    "defaultPolicy": { "type": "string", "minLength": 1 },
+    "truthOwners": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["factId", "owner", "truthLevel", "allowedCommitters", "forbiddenOwners", "receiptProjection", "provisionalRefPolicy"],
+        "properties": {
+          "factId": { "type": "string", "minLength": 1 },
+          "owner": { "type": "string", "minLength": 1 },
+          "truthLevel": { "enum": ["centerTruth", "workflowTruth"] },
+          "allowedCommitters": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+          "forbiddenOwners": { "type": "array", "items": { "type": "string" } },
+          "receiptProjection": { "enum": ["referenceOnly"] },
+          "provisionalRefPolicy": { "enum": ["notAllowedForLedgerCommit", "allowedForDraftOnly"] }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

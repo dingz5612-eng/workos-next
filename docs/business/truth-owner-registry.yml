@@ -1,0 +1,88 @@
+{
+  "version": 1,
+  "registryId": "rt2-truth-owner-registry",
+  "defaultPolicy": "Only the declared truth owner may commit a center truth fact.",
+  "truthOwners": [
+    {
+      "factId": "Subject",
+      "owner": "SharedGovernancePack",
+      "truthLevel": "centerTruth",
+      "allowedCommitters": ["SharedGovernancePack"],
+      "forbiddenOwners": ["domain-pack", "management-cockpit", "receipt-projection", "DormitoryDomainPack", "RepairDomainPack", "PartsDomainPack"],
+      "receiptProjection": "referenceOnly",
+      "provisionalRefPolicy": "allowedForDraftOnly"
+    },
+    {
+      "factId": "Vehicle",
+      "owner": "SharedGovernancePack",
+      "truthLevel": "centerTruth",
+      "allowedCommitters": ["SharedGovernancePack"],
+      "forbiddenOwners": ["domain-pack", "management-cockpit", "receipt-projection", "DormitoryDomainPack", "RepairDomainPack", "PartsDomainPack"],
+      "receiptProjection": "referenceOnly",
+      "provisionalRefPolicy": "allowedForDraftOnly"
+    },
+    {
+      "factId": "PaymentFact",
+      "owner": "FinanceTruthPack",
+      "truthLevel": "centerTruth",
+      "allowedCommitters": ["FinanceTruthPack", "finance.payment-ledger"],
+      "forbiddenOwners": ["domain-pack", "management-cockpit", "receipt-projection"],
+      "receiptProjection": "referenceOnly",
+      "provisionalRefPolicy": "notAllowedForLedgerCommit"
+    },
+    {
+      "factId": "DepositFact",
+      "owner": "FinanceTruthPack",
+      "truthLevel": "centerTruth",
+      "allowedCommitters": ["FinanceTruthPack", "finance.deposit-ledger"],
+      "forbiddenOwners": ["domain-pack", "management-cockpit", "receipt-projection"],
+      "receiptProjection": "referenceOnly",
+      "provisionalRefPolicy": "notAllowedForLedgerCommit"
+    },
+    {
+      "factId": "LedgerTransaction",
+      "owner": "MoneyKernelPack",
+      "truthLevel": "centerTruth",
+      "allowedCommitters": ["MoneyKernelPack"],
+      "forbiddenOwners": ["domain-pack", "management-cockpit", "receipt-projection", "DormitoryDomainPack", "RepairDomainPack", "PartsDomainPack"],
+      "receiptProjection": "referenceOnly",
+      "provisionalRefPolicy": "notAllowedForLedgerCommit"
+    },
+    {
+      "factId": "EvidenceObject",
+      "owner": "EvidenceTrustPack",
+      "truthLevel": "centerTruth",
+      "allowedCommitters": ["EvidenceTrustPack"],
+      "forbiddenOwners": ["domain-pack", "management-cockpit", "receipt-projection", "DormitoryDomainPack", "RepairDomainPack", "PartsDomainPack"],
+      "receiptProjection": "referenceOnly",
+      "provisionalRefPolicy": "allowedForDraftOnly"
+    },
+    {
+      "factId": "MoneyBasis",
+      "owner": "FinanceTruthPack",
+      "truthLevel": "workflowTruth",
+      "allowedCommitters": ["FinanceTruthPack", "MoneyKernelPack"],
+      "forbiddenOwners": ["domain-pack", "management-cockpit", "receipt-projection"],
+      "receiptProjection": "referenceOnly",
+      "provisionalRefPolicy": "allowedForDraftOnly"
+    },
+    {
+      "factId": "StayFact",
+      "owner": "accommodation.stay",
+      "truthLevel": "centerTruth",
+      "allowedCommitters": ["accommodation.stay"],
+      "forbiddenOwners": ["domain-pack", "management-cockpit", "receipt-projection"],
+      "receiptProjection": "referenceOnly",
+      "provisionalRefPolicy": "notAllowedForLedgerCommit"
+    },
+    {
+      "factId": "WorkItemFact",
+      "owner": "operations-runtime",
+      "truthLevel": "workflowTruth",
+      "allowedCommitters": ["operations-runtime"],
+      "forbiddenOwners": ["domain-pack"],
+      "receiptProjection": "referenceOnly",
+      "provisionalRefPolicy": "allowedForDraftOnly"
+    }
+  ]
+}

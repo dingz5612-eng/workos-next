@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "packId": "accommodation-stay-positive",
+  "domainId": "accommodation.stay",
+  "owner": "accommodation.stay",
+  "domainOwner": "accommodation.stay",
+  "ownedFacts": ["StayDraft"],
+  "requestedFacts": ["StayFact", "PaymentFact"],
+  "events": ["StayDrafted"],
+  "workitems": ["StayReviewWorkItem"],
+  "evidence": {
+    "required": ["residentIdentityEvidence"],
+    "policy": "referenceOnly"
+  },
+  "finance": {
+    "moneyBasisPolicy": "routeToFinanceTruthPack",
+    "ledgerPolicy": "noDirectLedgerCommit"
+  },
+  "invariants": ["stay.domain_pack_does_not_own_finance_truth"],
+  "certification": {
+    "requiredScenarios": ["dorm-cert-stay-review"]
+  },
+  "goNoGo": {
+    "productionAllowedDefault": false
+  },
+  "allowedCapabilities": ["propose", "validate", "project"],
+  "forbiddenCapabilities": ["ownCenterTruth", "commitLedgerWithProvisionalRef", "processDomainExceptionFromManagementCockpit"],
+  "receiptPolicy": "referenceOnly",
+  "managementCockpitBoundary": "observeAndRouteOnly"
+}
