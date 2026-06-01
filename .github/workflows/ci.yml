@@ -262,6 +262,11 @@ jobs:
       - name: Validate OAM-08 Golden Domain Replication Factory
         run: node scripts/golden-domain/check-domain-replication-pack.mjs
 
+      - name: Validate OAM-09 Portfolio Production Governance
+        run: |
+          node scripts/portfolio/check-business-line-maturity.mjs
+          node scripts/portfolio/check-production-governance.mjs
+
       - name: Architecture guard
         shell: pwsh
         env:

@@ -1,0 +1,32 @@
+{
+  "generatedAtUtc": "2026-06-01T23:55:46.350Z",
+  "generatedBy": "check-business-line-maturity",
+  "status": "passed",
+  "currentMainHead": "f375074307dad658117131291c0ce9e8ab296099",
+  "dormitory": {
+    "maturityState": "L1 Internal Pilot Observation",
+    "l2ProductionAllowed": false,
+    "productionAllowed": false,
+    "autoUpgradeBlocked": true
+  },
+  "businessProduction": {
+    "status": "blocked",
+    "finalSystemGateStatus": "blocked"
+  },
+  "l0BusinessLines": [
+    "repair",
+    "parts",
+    "hr"
+  ],
+  "transitionEvidenceRequired": true,
+  "independentMaturityStates": true,
+  "evidenceRefs": [
+    "docs/portfolio/business-line-maturity-model.yml",
+    "docs/portfolio/l0-l1-l2-production-gates.yml",
+    "artifacts/release-state/current-state.json",
+    "docs/business/business-line-registry.json",
+    "artifacts/operations/dormitory/l1-to-l2-readiness.json"
+  ],
+  "noGoItems": [],
+  "nextAction": "继续 L1 Internal Pilot Observation；L1 -> L2 必须单独 stage / PR / gate。"
+}

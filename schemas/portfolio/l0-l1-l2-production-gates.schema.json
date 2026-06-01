@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://workosnext.local/schemas/portfolio/l0-l1-l2-production-gates.schema.json",
+  "type": "object",
+  "required": ["version", "gates", "globalBlockingRules"],
+  "properties": {
+    "version": { "const": "portfolio.l0-l1-l2-production-gates.v1" },
+    "gates": { "type": "array", "minItems": 5 },
+    "globalBlockingRules": { "type": "array", "minItems": 3 }
+  }
+}

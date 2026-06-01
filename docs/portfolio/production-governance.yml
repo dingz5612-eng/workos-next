@@ -1,0 +1,53 @@
+{
+  "version": "portfolio.production-governance.v1",
+  "owner": "releaseOwner",
+  "language": "zh-CN",
+  "businessProductionAllowed": false,
+  "finalSystemGateRequired": true,
+  "finalSystemGateStatus": "blocked",
+  "portfolioDecision": "blocked",
+  "decisionReason": "Final System Gate blocked 时，组合式生产治理必须保持阻断；Dormitory L1 内测观察不等于业务生产。",
+  "businessLineRules": [
+    {
+      "businessLineId": "dormitory",
+      "allowedMaturityState": "L1 Internal Pilot Observation",
+      "productionAllowed": false,
+      "l2ProductionAllowed": false,
+      "requiresSeparateL1ToL2Stage": true
+    },
+    {
+      "businessLineId": "repair",
+      "allowedMaturityState": "L0 Contract Preview",
+      "productionAllowed": false,
+      "l2ProductionAllowed": false,
+      "requiresIndependentGate": true
+    },
+    {
+      "businessLineId": "parts",
+      "allowedMaturityState": "L0 Contract Preview",
+      "productionAllowed": false,
+      "l2ProductionAllowed": false,
+      "requiresIndependentGate": true
+    },
+    {
+      "businessLineId": "hr",
+      "allowedMaturityState": "L0 Contract Preview",
+      "productionAllowed": false,
+      "l2ProductionAllowed": false,
+      "requiresIndependentGate": true
+    }
+  ],
+  "forbiddenStates": [
+    "DORMITORY_L2_PRODUCTION_ALLOWED",
+    "BUSINESS_PRODUCTION_GO",
+    "REPAIR_PARTS_HR_PRODUCTION_ALLOWED"
+  ],
+  "evidenceRefs": [
+    "docs/portfolio/business-line-maturity-model.yml",
+    "docs/portfolio/l0-l1-l2-production-gates.yml",
+    "artifacts/release-state/current-state.json",
+    "docs/business/business-line-registry.json",
+    "artifacts/operations/dormitory/l1-to-l2-readiness.json"
+  ],
+  "nextAction": "继续 L1 Internal Pilot Observation；L1 -> L2 必须另开 stage / PR / gate。"
+}
