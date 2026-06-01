@@ -1018,10 +1018,6 @@ internal sealed record PrepareWorkItemExecution(
     object? CompatibilityPayload,
     OperationTarget Target);
 
-internal sealed record ConfirmWorkItemExecution(
-    ConfirmWorkItemResult Result,
-    object? CompatibilityPayload);
-
 internal static class OperationsHash
 {
     public static string Short(params string[] parts)
