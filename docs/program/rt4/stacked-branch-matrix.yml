@@ -234,11 +234,26 @@
       "allowedFiles": ["docs/business/domains/dormitory/domain-pack.yml", "docs/business/dormitory/finance-control-rules.yml", "scripts/check-dormitory-golden-domain.mjs", "scripts/check-domain-packs.mjs", ".github/workflows/ci.yml", "scripts/guard-architecture.ps1", "docs/program/rt4/*", "artifacts/rt4/*", "scripts/rt4/build-completion-dashboard.mjs"],
       "forbiddenFiles": ["RT-5 WorkItem-native Experience", "apps/mobile/**", "DORM-INT pilot activation", "Dormitory L2 Production declaration", "Repair/Parts/HR production activation"],
       "localCiStatus": "LOCAL_PASSED",
-      "headSha": "0a8220c2e8e656ac1b585e03d751051d3e7e9526",
+      "headSha": "f8ce10d79d9f02d2e5cf5b3578207e67379eb3a0",
       "stackedReady": true,
       "prUrl": "",
       "mergeStatus": "not_merged",
       "evidenceRefs": ["clean Docker PostgreSQL workosnext-rt4-test", "docs/business/domains/dormitory/domain-pack.yml", "node scripts/check-dormitory-golden-domain.mjs --self-test", "node scripts/check-dormitory-golden-domain.mjs", "node scripts/check-domain-packs.mjs", "node scripts/v5_4/certify-dormitory.mjs --sourceMode=real", "node scripts/v5_4/b-gate-runner.mjs", "dotnet test tests/WorkOS.RuntimeIntegrationTests/WorkOS.RuntimeIntegrationTests.csproj -c Release --no-build", "dotnet run --project tests/WorkOS.RuntimeContractTests/WorkOS.RuntimeContractTests.csproj -c Release", "pwsh -NoProfile -File scripts/guard-architecture.ps1", "pwsh -NoProfile -File scripts/v5_4/run-control-plane-checks.ps1"],
+      "nextBranchAllowed": true
+    },
+    {
+      "taskId": "RT-5",
+      "branch": "codex/rt5-workitem-native-experience",
+      "baseBranch": "codex/rt4-dormitory-golden-domain-l1",
+      "dependsOn": "RT-4",
+      "allowedFiles": ["apps/mobile/src/**", "docs/business/experience-contract.yml", "scripts/check-experience-contract.mjs", ".github/workflows/ci.yml", "scripts/guard-architecture.ps1", "docs/program/rt4/*", "artifacts/rt4/*", "scripts/rt4/build-completion-dashboard.mjs"],
+      "forbiddenFiles": ["RT-6 Operating Control Tower", "RT-F Operating Feedback Loop", "DORM-INT pilot activation", "Dormitory L2 Production declaration", "Repair/Parts/HR production activation"],
+      "localCiStatus": "LOCAL_PASSED",
+      "headSha": "0ea33a400e225f1dbe8972c0205790f4a099cefe",
+      "stackedReady": true,
+      "prUrl": "",
+      "mergeStatus": "not_merged",
+      "evidenceRefs": ["clean Docker PostgreSQL workosnext-rt5-test", "docs/business/experience-contract.yml", "node scripts/check-experience-contract.mjs --self-test", "node scripts/check-experience-contract.mjs", "npm --prefix apps/mobile run build", "npm --prefix apps/mobile run test", "dotnet test tests/WorkOS.UnitTests/WorkOS.UnitTests.csproj -c Release --no-build", "dotnet test tests/WorkOS.RuntimeIntegrationTests/WorkOS.RuntimeIntegrationTests.csproj -c Release --no-build", "dotnet run --project tests/WorkOS.RuntimeContractTests/WorkOS.RuntimeContractTests.csproj -c Release", "node scripts/v5_4/certify-dormitory.mjs --sourceMode=real", "node scripts/v5_4/b-gate-runner.mjs", "pwsh -NoProfile -File scripts/guard-architecture.ps1", "pwsh -NoProfile -File scripts/v5_4/run-control-plane-checks.ps1"],
       "nextBranchAllowed": true
     }
   ]
