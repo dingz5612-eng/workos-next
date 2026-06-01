@@ -22,6 +22,7 @@ node scripts/check-api-boundaries.mjs
 Write-Host "control-plane-migration"
 node scripts/v5_4/control-plane-migration.mjs
 dotnet test tests/WorkOS.RuntimeIntegrationTests/WorkOS.RuntimeIntegrationTests.csproj -c Release -p:OutputPath=bin/Release/net10.0/v5_4/ -p:IntermediateOutputPath=obj/v5_4/Release/net10.0/
+dotnet test tests/WorkOS.DatabaseSecurityTests/WorkOS.DatabaseSecurityTests.csproj -c Release -p:OutputPath=bin/Release/net10.0/v5_4_db/ -p:IntermediateOutputPath=obj/v5_4_db/Release/net10.0/
 
 Write-Host "control-plane-schema-verify"
 node scripts/v5_4/control-plane-schema-verify.mjs
