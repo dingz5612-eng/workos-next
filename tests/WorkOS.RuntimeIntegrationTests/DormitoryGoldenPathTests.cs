@@ -99,6 +99,10 @@ internal sealed class DormitoryScenarioHarness
         {
             fields["amount"] = scenario.Amount.Value;
         }
+        if (scenario.CardId.Equals("RefundDeposit", StringComparison.OrdinalIgnoreCase))
+        {
+            fields["depositAccountId"] = $"deposit-account-{scenario.CaseId}";
+        }
 
         if (extraFields is not null)
         {

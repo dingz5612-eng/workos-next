@@ -52,7 +52,8 @@ public sealed class BalancedMoneyKernelTests
         var debit = facts.LedgerEntries.Single(item => item.DebitCredit == "debit");
         var credit = facts.LedgerEntries.Single(item => item.DebitCredit == "credit");
 
-        Assert.AreEqual("liability.deposit", debit.AccountId);
+        Assert.AreEqual("deposit-account-001", debit.AccountId);
+        Assert.AreEqual("liability", debit.AccountType);
         Assert.AreEqual("asset.cash_or_bank", credit.AccountId);
         Assert.AreEqual(debit.Amount, credit.Amount);
     }
@@ -83,7 +84,10 @@ public sealed class BalancedMoneyKernelTests
                 ["fieldValues"] = new Dictionary<string, object>
                 {
                     ["amount"] = amount,
-                    ["currency"] = "KGS"
+                    ["currency"] = "KGS",
+                    ["depositAccountId"] = cardId.Contains("refund", StringComparison.OrdinalIgnoreCase)
+                        ? "deposit-account-001"
+                        : string.Empty
                 }
             });
 

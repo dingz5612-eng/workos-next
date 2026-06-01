@@ -2,23 +2,9 @@ namespace WorkOS.Api.Runtime;
 
 public static class BalancedMoneyKernel
 {
-    private static readonly string[] AmountFields =
-    [
-        "amount",
-        "receivedAmount",
-        "confirmedAmount",
-        "paymentAmount",
-        "depositAmount",
-        "refundAmount",
-        "deductionAmount",
-        "expenseAmount",
-        "settlementAmount"
-    ];
-
     public static BalancedMoneyFacts FromEnvelope(CommandEnvelopeV1 envelope)
     {
         var cardId = ReadString(envelope.Payload, "cardId");
-        var fieldValues = ReadDictionary(envelope.Payload, "fieldValues");
         var commandKind = ResolveCommandKind(envelope.CommandType, cardId);
         if (commandKind is null)
         {
@@ -37,77 +23,23 @@ public static class BalancedMoneyKernel
                 });
         }
 
-        var amount = ReadAmount(fieldValues);
-        if (amount <= 0)
-        {
-            throw new InvalidOperationException("balanced_money_requires_positive_amount");
-        }
-
-        var currency = FirstNonEmpty(ReadString(fieldValues, "currency"), "KGS").ToUpperInvariant();
         var transactionId = $"ltx-{OperationsHash.Short(envelope.TenantId, envelope.WorkItemId, envelope.IdempotencyKey, commandKind)}";
-        var debit = Entry(envelope.TenantId, transactionId, commandKind, "debit", amount, currency);
-        var credit = Entry(envelope.TenantId, transactionId, commandKind, "credit", amount, currency);
-        var transaction = new LedgerTransactionV1(
-            envelope.TenantId,
-            transactionId,
-            envelope.CaseId,
-            envelope.WorkItemId,
-            string.Empty,
-            currency,
-            "balanced",
-            commandKind);
+        var commit = FinanceTruthPipeline.Commit(MoneyBasis.FromEnvelope(envelope, commandKind), transactionId);
 
         return new BalancedMoneyFacts(
-            new[] { transaction },
-            new[] { debit, credit },
+            new[] { commit.LedgerTransaction },
+            commit.LedgerEntries,
             new Dictionary<string, object>
             {
-                ["moneyKernel"] = "balanced_money_kernel",
+                ["moneyKernel"] = "finance_truth_pipeline",
                 ["moneyCommand"] = commandKind,
                 ["ledgerTransactionIds"] = new[] { transactionId },
-                ["ledgerEntryIds"] = new[] { debit.EntryId, credit.EntryId },
-                ["ledgerBalanceStatus"] = "balanced"
+                ["ledgerEntryIds"] = commit.LedgerEntries.Select(item => item.EntryId).ToArray(),
+                ["ledgerBalanceStatus"] = "balanced",
+                ["financeCommitId"] = commit.FinanceCommitId,
+                ["financeReceiptId"] = commit.Receipt.ReceiptId
             });
     }
-
-    private static LedgerEntryV1 Entry(
-        string tenantId,
-        string transactionId,
-        string commandKind,
-        string side,
-        decimal amount,
-        string currency)
-    {
-        var (accountId, accountType, role) = AccountFor(commandKind, side);
-        return new LedgerEntryV1(
-            tenantId,
-            $"le-{OperationsHash.Short(transactionId, side, accountId)}",
-            transactionId,
-            side,
-            amount,
-            currency,
-            accountId,
-            accountType,
-            role);
-    }
-
-    private static (string AccountId, string AccountType, string Role) AccountFor(string commandKind, string side) =>
-        (commandKind, side) switch
-        {
-            ("deposit_receipt", "debit") => ("asset.cash_or_bank", "asset", "cash_or_bank_increase"),
-            ("deposit_receipt", "credit") => ("liability.deposit", "liability", "deposit_liability_increase"),
-            ("payment_receipt", "debit") => ("asset.cash_or_bank", "asset", "cash_or_bank_increase"),
-            ("payment_receipt", "credit") => ("receivable.stay", "receivable", "ordinary_payment_allocation"),
-            ("refund_deposit", "debit") => ("liability.deposit", "liability", "deposit_liability_decrease"),
-            ("refund_deposit", "credit") => ("asset.cash_or_bank", "asset", "cash_or_bank_decrease"),
-            ("deposit_deduction", "debit") => ("liability.deposit", "liability", "deposit_liability_decrease"),
-            ("deposit_deduction", "credit") => ("receivable.stay", "receivable", "deposit_applied_to_stay_balance"),
-            ("expense_record", "debit") => ("expense.operations", "expense", "expense_recognized"),
-            ("expense_record", "credit") => ("asset.cash_or_bank", "asset", "cash_or_bank_decrease"),
-            ("ledger_correction_apply", "debit") => ("correction.reversal", "correction", "correction_reversal_debit"),
-            ("ledger_correction_apply", "credit") => ("correction.offset", "correction", "correction_offset_credit"),
-            _ => throw new InvalidOperationException($"balanced_money_unknown_account:{commandKind}:{side}")
-        };
 
     private static string? ResolveCommandKind(string commandType, string cardId)
     {
@@ -155,44 +87,6 @@ public static class BalancedMoneyKernel
         }
 
         return null;
-    }
-
-    private static IReadOnlyDictionary<string, object> ReadDictionary(IReadOnlyDictionary<string, object> payload, string key)
-    {
-        if (!payload.TryGetValue(key, out var value))
-        {
-            return new Dictionary<string, object>();
-        }
-
-        if (value is IReadOnlyDictionary<string, object> dictionary)
-        {
-            return dictionary;
-        }
-
-        return new Dictionary<string, object>();
-    }
-
-    private static decimal ReadAmount(IReadOnlyDictionary<string, object> values)
-    {
-        foreach (var field in AmountFields)
-        {
-            if (!values.TryGetValue(field, out var value))
-            {
-                continue;
-            }
-
-            if (value is decimal amount)
-            {
-                return amount;
-            }
-
-            if (decimal.TryParse(Convert.ToString(value), out var parsed))
-            {
-                return parsed;
-            }
-        }
-
-        return 0m;
     }
 
     private static string ReadString(IReadOnlyDictionary<string, object> values, string key) =>

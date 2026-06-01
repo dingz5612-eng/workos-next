@@ -1,0 +1,16 @@
+{
+  "scenarioId": "rt3-positive-correction-reversal",
+  "sourcePack": "FinanceTruthPack",
+  "inputFact": "MoneyBasis",
+  "basisType": "ledger_correction_apply",
+  "targetFact": "MoneyBasis",
+  "amount": 25,
+  "currency": "KGS",
+  "correctionMode": "reversal",
+  "expectedLedger": {
+    "balanced": true,
+    "debitAccount": "correction.reversal",
+    "creditAccount": "correction.offset"
+  },
+  "expectedReceipt": "FinanceReceipt"
+}

@@ -423,6 +423,10 @@ public static class RuntimeCertificationRunner
             ["currency"] = scenario.Currency ?? "KGS",
             ["scenarioId"] = scenario.ScenarioId
         };
+        if (scenario.CardId?.Equals("RefundDeposit", StringComparison.OrdinalIgnoreCase) is true)
+        {
+            fieldValues["depositAccountId"] = $"deposit-account-{caseId}";
+        }
         if (scenario.FieldValues is not null)
         {
             foreach (var (key, value) in scenario.FieldValues)

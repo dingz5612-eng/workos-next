@@ -1,0 +1,16 @@
+{
+  "scenarioId": "rt3-positive-ordinary-payment",
+  "sourcePack": "DormitoryDomainPack",
+  "inputFact": "MoneyBasis",
+  "basisType": "payment_receipt",
+  "targetFact": "MoneyBasis",
+  "amount": 650,
+  "currency": "KGS",
+  "expectedLedger": {
+    "balanced": true,
+    "debitAccount": "asset.cash_or_bank",
+    "creditAccount": "receivable.stay",
+    "forbiddenAccountIds": ["liability.deposit"]
+  },
+  "expectedReceipt": "PaymentReceipt"
+}
