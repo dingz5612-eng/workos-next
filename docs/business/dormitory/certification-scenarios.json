@@ -10,7 +10,7 @@
     {"scenarioId":"dorm-cert-006","name":"bank import match mismatch correction","requires":["CommandSubmission","AppendOnlyCorrection","RedOnMoneyMismatch"]},
     {"scenarioId":"dorm-cert-007","name":"period review action plan period close","requires":["FactTrace","LensSnapshot","AuditTrail"]},
     {"scenarioId":"dorm-cert-008","name":"permission denied escalation audit","requires":["403","NoBusinessSideEffect","AuditTrail"]},
-    {"scenarioId":"dorm-cert-009","name":"duplicate submit idempotent response no duplicate side effect","requires":["StableDuplicateResponse","NoDuplicateDomainEvent"]},
+    {"scenarioId":"dorm-cert-009","name":"duplicate submit idempotency conflict no duplicate side effect","requires":["RejectedCommandSubmission","RejectionTrace","409","NoDuplicateDomainEvent"]},
     {"scenarioId":"dorm-cert-010","name":"missing evidence block confirm add evidence confirm","requires":["422","EvidencePolicy","ConfirmAfterEvidence"]}
   ],
   "productionAllowed": false

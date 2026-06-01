@@ -149,6 +149,11 @@ jobs:
           node scripts/check-finance-truth.mjs --self-test
           node scripts/check-finance-truth.mjs
 
+      - name: Validate RT-S executable scenario factory
+        run: |
+          node scripts/check-executable-scenarios.mjs --self-test
+          node scripts/check-executable-scenarios.mjs
+
       - name: Architecture guard
         shell: pwsh
         env:

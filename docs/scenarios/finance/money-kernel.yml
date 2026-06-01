@@ -1,0 +1,45 @@
+{
+  "version": "rt-s.finance.scenarios.v1",
+  "domain": "finance",
+  "scenarios": [
+    {
+      "scenarioId": "finance-cert-001",
+      "name": "money basis -> finance commit -> balanced ledger",
+      "scenarioType": "committed_scenario",
+      "expectedOutcome": "committed_projected",
+      "workItemType": "Finance.Commit",
+      "moneyCommand": true,
+      "requiredEvidence": ["finance-review", "money-basis"],
+      "outputs": {
+        "workItem": { "required": true },
+        "commandSubmission": { "required": true },
+        "domainEvents": { "min": 1 },
+        "ledgerTransactions": { "min": 1 },
+        "ledgerEntries": { "min": 2 },
+        "factTrace": { "required": true },
+        "evidenceTrace": { "required": true },
+        "lensOutputs": { "min": 1 },
+        "operatingControlVisibility": ["finance_control"]
+      }
+    },
+    {
+      "scenarioId": "finance-cert-002",
+      "name": "provisional money basis cannot post ledger",
+      "scenarioType": "rejected_command_scenario",
+      "expectedOutcome": "business_blocked_422",
+      "workItemType": "Finance.Review",
+      "moneyCommand": true,
+      "requiredEvidence": ["finance-review"],
+      "outputs": {
+        "workItem": { "required": true },
+        "rejectedCommandSubmission": { "required": true },
+        "rejectionTrace": { "required": true },
+        "auditEvidence": { "min": 1 },
+        "domainEvents": { "allowed": false, "max": 0 },
+        "ledgerTransactions": { "allowed": false, "max": 0 },
+        "factTrace": { "required": true },
+        "operatingControlVisibility": ["finance_control"]
+      }
+    }
+  ]
+}

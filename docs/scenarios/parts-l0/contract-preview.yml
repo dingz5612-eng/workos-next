@@ -1,0 +1,25 @@
+{
+  "version": "rt-s.parts-l0.scenarios.v1",
+  "domain": "parts-l0",
+  "scenarios": [
+    {
+      "scenarioId": "parts-l0-cert-001",
+      "name": "parts production confirm blocked while L0",
+      "scenarioType": "rejected_command_scenario",
+      "expectedOutcome": "permission_denied_403",
+      "workItemType": "Parts.Issue",
+      "moneyCommand": false,
+      "requiredEvidence": ["admission-policy"],
+      "outputs": {
+        "workItem": { "required": true },
+        "rejectedCommandSubmission": { "required": true },
+        "rejectionTrace": { "required": true },
+        "auditEvidence": { "min": 1 },
+        "domainEvents": { "allowed": false, "max": 0 },
+        "ledgerTransactions": { "allowed": false, "max": 0 },
+        "factTrace": { "required": true },
+        "operatingControlVisibility": ["contract_preview"]
+      }
+    }
+  ]
+}

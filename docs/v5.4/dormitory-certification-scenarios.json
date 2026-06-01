@@ -88,8 +88,8 @@
     },
     {
       "scenario_id": "dorm-cert-009",
-      "name": "duplicate submit -> idempotent response -> no duplicate side effect",
-      "expected_outcome": "idempotency_duplicate",
+      "name": "duplicate submit -> idempotency conflict -> no duplicate side effect",
+      "expected_outcome": "idempotency_conflict_409",
       "card_id": "PaymentReceipt",
       "money_command": true,
       "amount": 300,

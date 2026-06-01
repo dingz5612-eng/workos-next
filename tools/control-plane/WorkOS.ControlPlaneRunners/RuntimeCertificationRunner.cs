@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Microsoft.AspNetCore.Http;
 using WorkOS.Api.Runtime;
 
 namespace WorkOS.ControlPlaneRunners;
@@ -81,22 +82,26 @@ public static class RuntimeCertificationRunner
 
         return scenario.ExpectedOutcome switch
         {
-            "permission_denied_403" => SimulatedBlock(
+            "permission_denied_403" => ReplayRejected(
+                context,
                 scenario,
                 caseId,
                 workItemId,
                 commandId,
-                "permission_blocked_403",
+                idempotencyKey,
+                StatusCodes.Status403Forbidden,
+                "permission_denied",
                 "403",
                 cutoverState,
                 rollbackPath,
-                beforeEvents == context.Store.DomainEvents.Count),
+                beforeEvents),
             "business_blocked_422" => ReplayPolicyBlocked(
                 context,
                 scenario,
                 caseId,
                 workItemId,
                 commandId,
+                idempotencyKey,
                 cutoverState,
                 rollbackPath,
                 beforeEvents),
@@ -241,7 +246,17 @@ public static class RuntimeCertificationRunner
             Amount = (scenario.Amount ?? 100m) + 1m
         };
         var second = context.UnitOfWork.Commit(BuildRequest(context.TenantId, conflicting, caseId, workItemId, idempotencyKey));
-        var trace = context.Store.GetFactTraceBySubmission(first.SubmissionId);
+        var submission = context.Store.Submissions.Single(item => item.SubmissionId == first.SubmissionId);
+        var rejected = new RejectedCommandSubmissionV1(
+            submission.TenantId,
+            submission.SubmissionId,
+            submission.CaseId,
+            submission.WorkItemId,
+            "blocked",
+            StatusCodes.Status409Conflict,
+            second.Reason ?? "same_idempotency_different_payload",
+            second.Reason ?? "same_idempotency_different_payload");
+        var rejectionTrace = RejectionTrace(scenario, submission, StatusCodes.Status409Conflict, rejected.FailureReason);
         var passed = first.CommitStatus == "committed" &&
                      second.StatusCode == 409 &&
                      second.CommitStatus == "not_committed" &&
@@ -258,15 +273,17 @@ public static class RuntimeCertificationRunner
             second.Status,
             second.CommitStatus,
             second.ProjectionStatus,
-            trace,
-            first.DomainEventIds,
-            context.Store.LedgerTransactions.Where(item => item.SubmissionId == first.SubmissionId).Select(item => item.LedgerTransactionId).ToArray(),
-            context.Store.LedgerEntries.Where(entry => context.Store.LedgerTransactions.Any(tx => tx.SubmissionId == first.SubmissionId && tx.LedgerTransactionId == entry.LedgerTransactionId)).Select(item => item.EntryId).ToArray(),
+            null,
+            [],
+            [],
+            [],
             "green",
             "idempotency_conflict_returns_409_without_side_effect",
             cutoverState,
             rollbackPath,
-            passed ? null : "idempotency_conflict_created_side_effect");
+            passed ? null : "idempotency_conflict_created_side_effect",
+            rejected,
+            rejectionTrace);
     }
 
     private static RuntimeCertificationScenarioResult SimulatedBlock(
@@ -307,6 +324,7 @@ public static class RuntimeCertificationRunner
         string caseId,
         string workItemId,
         string commandId,
+        string idempotencyKey,
         string cutoverState,
         string rollbackPath,
         int beforeEvents)
@@ -319,22 +337,30 @@ public static class RuntimeCertificationRunner
                 workItemId,
                 $"blocked-{scenario.ScenarioId}",
                 Array.Empty<EvidencePolicyRef>()));
+        var rejectedRunner = RejectedUnitOfWork(context.Store, StatusCodes.Status422UnprocessableEntity, decision.Code);
+        var result = rejectedRunner.Commit(BuildRequest(context.TenantId, scenario, caseId, workItemId, idempotencyKey));
+        var submission = context.Store.Submissions.Single(item => item.SubmissionId == result.SubmissionId);
+        var trace = context.Store.GetFactTraceBySubmission(result.SubmissionId);
+        var rejected = RejectedSubmission(submission);
+        var rejectionTrace = RejectionTrace(scenario, submission, StatusCodes.Status422UnprocessableEntity, decision.Code);
         var noSideEffect = beforeEvents == context.Store.DomainEvents.Count;
         var passed = !decision.Allowed &&
                      decision.Code == "missing_required_evidence" &&
-                     noSideEffect;
+                     noSideEffect &&
+                     submission.Status == "rejected" &&
+                     trace is not null;
 
         return Result(
             scenario,
             commandId,
             caseId,
             workItemId,
-            $"blocked-{scenario.ScenarioId}",
+            result.SubmissionId,
             passed,
             "business_blocked_422",
             "not_committed",
             "not_projected",
-            null,
+            trace,
             [],
             [],
             [],
@@ -342,7 +368,59 @@ public static class RuntimeCertificationRunner
             "422",
             cutoverState,
             rollbackPath,
-            passed ? null : $"evidence_policy_not_applied:{decision.Code}");
+            passed ? null : $"evidence_policy_not_applied:{decision.Code}",
+            rejected,
+            rejectionTrace);
+    }
+
+    private static RuntimeCertificationScenarioResult ReplayRejected(
+        RuntimeCertificationContext context,
+        RuntimeCertificationScenario scenario,
+        string caseId,
+        string workItemId,
+        string commandId,
+        string idempotencyKey,
+        int statusCode,
+        string reason,
+        string gateImpact,
+        string cutoverState,
+        string rollbackPath,
+        int beforeEvents)
+    {
+        var rejectedRunner = RejectedUnitOfWork(context.Store, statusCode, reason);
+        var result = rejectedRunner.Commit(BuildRequest(context.TenantId, scenario, caseId, workItemId, idempotencyKey));
+        var submission = context.Store.Submissions.Single(item => item.SubmissionId == result.SubmissionId);
+        var trace = context.Store.GetFactTraceBySubmission(result.SubmissionId);
+        var rejected = RejectedSubmission(submission);
+        var rejectionTrace = RejectionTrace(scenario, submission, statusCode, reason);
+        var passed = result.StatusCode == statusCode &&
+                     result.CommitStatus == "not_committed" &&
+                     submission.Status == "rejected" &&
+                     beforeEvents == context.Store.DomainEvents.Count &&
+                     context.Store.LedgerTransactions.All(item => item.SubmissionId != result.SubmissionId) &&
+                     trace is not null;
+
+        return Result(
+            scenario,
+            commandId,
+            caseId,
+            workItemId,
+            result.SubmissionId,
+            passed,
+            statusCode == StatusCodes.Status403Forbidden ? "permission_blocked_403" : $"business_blocked_{statusCode}",
+            "not_committed",
+            "not_projected",
+            trace,
+            [],
+            [],
+            [],
+            "green",
+            gateImpact,
+            cutoverState,
+            rollbackPath,
+            passed ? null : "rejected_submission_trace_missing",
+            rejected,
+            rejectionTrace);
     }
 
     private static string EvidenceWorkItemType(RuntimeCertificationScenario scenario) =>
@@ -355,6 +433,47 @@ public static class RuntimeCertificationRunner
             "ServiceTaskComplete" => "Dorm.RoomReadinessCheck",
             _ => $"Dorm.{scenario.CardId ?? "OperationsConfirm"}"
         };
+
+    private static OperationsUnitOfWork RejectedUnitOfWork(InMemoryOperationsStore store, int statusCode, string reason)
+    {
+        var router = new SliceCommandHandlerRouter()
+            .Register(CanonicalOperationsApiService.ConfirmCommandType, _ => SliceCommandHandlerResult.Rejected(statusCode, reason));
+        return new OperationsUnitOfWork(
+            new CommandEnvelopeBuilder(),
+            new CommandSubmissionService(store),
+            new IdempotencyService(store),
+            new PayloadHashService(),
+            router);
+    }
+
+    private static RejectedCommandSubmissionV1 RejectedSubmission(OperationsCommandSubmission submission) =>
+        new(
+            submission.TenantId,
+            submission.SubmissionId,
+            submission.CaseId,
+            submission.WorkItemId,
+            submission.Status,
+            submission.ResponseStatusCode ?? StatusCodes.Status422UnprocessableEntity,
+            submission.FailureCode ?? "scenario_rejected",
+            submission.FailureReason ?? submission.FailureCode ?? "scenario_rejected");
+
+    private static RejectionTraceV1 RejectionTrace(
+        RuntimeCertificationScenario scenario,
+        OperationsCommandSubmission submission,
+        int statusCode,
+        string reason) =>
+        new(
+            submission.TenantId,
+            $"rej-trace-{submission.SubmissionId}",
+            submission.CaseId,
+            submission.WorkItemId,
+            submission.SubmissionId,
+            scenario.GateImpact ?? $"runtime-certification:{scenario.ScenarioId}",
+            statusCode,
+            reason,
+            scenario.RequiredEvidence ?? [],
+            Array.Empty<string>(),
+            Array.Empty<string>());
 
     private static RuntimeCertificationScenarioResult Result(
         RuntimeCertificationScenario scenario,
@@ -374,7 +493,9 @@ public static class RuntimeCertificationRunner
         string gateImpact,
         string cutoverState,
         string rollbackPath,
-        string? failureReason)
+        string? failureReason,
+        RejectedCommandSubmissionV1? rejectedCommandSubmission = null,
+        RejectionTraceV1? rejectionTrace = null)
     {
         var invariantChecks = new[]
         {
@@ -402,6 +523,8 @@ public static class RuntimeCertificationRunner
             LedgerEntryRefs: ledgerEntryRefs,
             EvidenceRefs: scenario.RequiredEvidence ?? [],
             FactTrace: trace,
+            RejectedCommandSubmission: rejectedCommandSubmission,
+            RejectionTrace: rejectionTrace,
             SemanticShadowResult: semanticShadowResult,
             InvariantChecks: invariantChecks,
             GateImpact: gateImpact,
@@ -744,6 +867,8 @@ public sealed record RuntimeCertificationScenarioResult(
     IReadOnlyList<string> LedgerEntryRefs,
     IReadOnlyList<string> EvidenceRefs,
     FactTraceV1? FactTrace,
+    RejectedCommandSubmissionV1? RejectedCommandSubmission,
+    RejectionTraceV1? RejectionTrace,
     string SemanticShadowResult,
     IReadOnlyList<string> InvariantChecks,
     string GateImpact,
