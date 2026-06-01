@@ -1,7 +1,5 @@
 export const coachCopy = {
   "zh-CN": {
-    "helpExplain": "帮助解释",
-    "scenarios": "业务场景",
     "learningCenter": "学习中心",
     "learningCenterBody": "你卡在哪一步？搜索业务词或点击闭环阶段，系统只展开这一阶段的字段、判断、证据、确认和下一步。",
     "scenarioCoach": "场景教练",
@@ -31,8 +29,6 @@ export const coachCopy = {
     "aiCannotDo": "AI 不能自动确认、扣费、退款、核销或关闭终态。"
   },
   "ru-RU": {
-    "helpExplain": "Объяснение",
-    "scenarios": "Сценарии",
     "learningCenter": "Учебный центр",
     "learningCenterBody": "Где вы застряли? Ищите бизнес-термин или выберите этап, система покажет поля, проверки, доказательства, подтверждение и следующий шаг.",
     "scenarioCoach": "Тренер сценариев",

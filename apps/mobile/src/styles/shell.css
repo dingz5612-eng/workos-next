@@ -197,8 +197,6 @@
 .search-box,
 .knowledge-search,
 .home-search,
-.scenario-list,
-.result-focus,
 .compact-section,
 .help-card,
 .queue-head,
@@ -268,35 +266,10 @@
   gap: 8px;
 }
 
-.scenario-list h2,
 .compact-section h2 {
   margin-bottom: 10px;
 }
 
-.scenario-card {
-  margin-top: 10px;
-  padding: 12px;
-  border: 1px solid #d9e7ee;
-  border-radius: 18px;
-  background: #fbfdfe;
-}
-
-.scenario-card.stay {
-  border-color: #cfe3ff;
-  background: #f5f9ff;
-}
-
-.scenario-card.repair {
-  border-color: #b9ded8;
-  background: #f0faf7;
-}
-
-.scenario-card.finance {
-  border-color: #ffdfa8;
-  background: #fff8e8;
-}
-
-.scenario-card div,
 .filter-row,
 .sheet-grid {
   display: flex;
@@ -305,7 +278,6 @@
   margin-top: 8px;
 }
 
-.scenario-card button,
 .pill,
 .sheet-grid button {
   min-height: 34px;
@@ -315,4 +287,3 @@
   background: #fff;
   font-size: 13px;
 }
-
