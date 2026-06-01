@@ -20,12 +20,12 @@ Repair / Parts / HR: `L0_OR_BLOCKED`
 
 ## Current Gate
 
-RT-2A: `LOCAL_PASSED`
+RT-P: `LOCAL_PASSED`
 
-Current branch: `codex/rt2a-shared-governance-identity-kernel`
+Current branch: `codex/rtp-policy-as-code-control-plane`
 
-Head sha: `c664705c0a87abf42102ef866a4fe6f0eb017b21`
+Head sha: `a3aab0865be4ef4745e31c907c95f8c767f957a6`
 
-Next allowed stage after RT-2A local pass: `RT-P stacked preconstruction`.
+Next allowed stage after RT-P local pass: `RT-3 stacked preconstruction`.
 
 Formal Central Merge Train: `LOCKED_UNTIL_RT_FINAL_LOCAL_PASSED`.

@@ -159,11 +159,26 @@
       "allowedFiles": ["docs/business/shared-governance/subject-vehicle-truth.yml", "schemas/shared-governance.schema.json", "scripts/check-shared-governance-boundary.mjs", "tests/fixtures/rt2a-shared-governance/**", ".github/workflows/ci.yml", "scripts/guard-architecture.ps1", "docs/program/rt4/*", "artifacts/rt4/*", "scripts/rt4/build-completion-dashboard.mjs"],
       "forbiddenFiles": ["runtime behavior", "business write APIs", "apps/mobile/**", "RT-P policy runtime", "RT-3 finance runtime", "DORM-INT pilot activation"],
       "localCiStatus": "LOCAL_PASSED",
-      "headSha": "c664705c0a87abf42102ef866a4fe6f0eb017b21",
+      "headSha": "e560ff91266d243ef81daea7c07e933f1bc79adf",
       "stackedReady": true,
       "prUrl": "",
       "mergeStatus": "not_merged",
       "evidenceRefs": ["clean Docker PostgreSQL workosnext-rt2a-test", "node scripts/check-shared-governance-boundary.mjs --self-test", "node scripts/check-shared-governance-boundary.mjs", "pwsh -NoProfile -File scripts/guard-architecture.ps1", "pwsh -NoProfile -File scripts/v5_4/run-control-plane-checks.ps1"],
+      "nextBranchAllowed": true
+    },
+    {
+      "taskId": "RT-P",
+      "branch": "codex/rtp-policy-as-code-control-plane",
+      "baseBranch": "codex/rt2a-shared-governance-identity-kernel",
+      "dependsOn": "RT-2A",
+      "allowedFiles": ["docs/business/policies/**", "docs/business/dormitory/evidence-policy.yml", "docs/contracts/runtime-surface-policy.json", "schemas/policy.schema.json", "scripts/check-policy-as-code.mjs", "scripts/check-admission-surface-alignment.mjs", "services/core-api/WorkOS.Api/Runtime/BusinessPolicy/**", "services/core-api/WorkOS.Api/Properties/AssemblyInfo.cs", "tests/WorkOS.PolicyAsCodeTests/**", "tests/WorkOS.RuntimeIntegrationTests/DormitoryEvidenceScenarioTests.cs", "tools/control-plane/WorkOS.ControlPlaneRunners/RuntimeCertificationRunner.cs", ".github/workflows/ci.yml", "scripts/guard-architecture.ps1", "WorkOSNext.sln", "docs/program/rt4/*", "artifacts/rt4/*", "scripts/rt4/build-completion-dashboard.mjs"],
+      "forbiddenFiles": ["RT-3 finance truth runtime", "RT-S executable scenario factory", "RT-B BStageGateRunner", "apps/mobile/**", "DORM-INT pilot activation", "production business activation"],
+      "localCiStatus": "LOCAL_PASSED",
+      "headSha": "a3aab0865be4ef4745e31c907c95f8c767f957a6",
+      "stackedReady": true,
+      "prUrl": "",
+      "mergeStatus": "not_merged",
+      "evidenceRefs": ["clean Docker PostgreSQL workosnext-rtp-test", "dotnet test tests/WorkOS.PolicyAsCodeTests/WorkOS.PolicyAsCodeTests.csproj -c Release --no-build", "dotnet test tests/WorkOS.RuntimeIntegrationTests/WorkOS.RuntimeIntegrationTests.csproj -c Release --no-build", "node scripts/check-admission-surface-alignment.mjs --self-test", "node scripts/check-admission-surface-alignment.mjs", "node scripts/check-policy-as-code.mjs --self-test", "node scripts/check-policy-as-code.mjs", "node scripts/v5_4/certify-dormitory.mjs --sourceMode=real", "pwsh -NoProfile -File scripts/guard-architecture.ps1", "pwsh -NoProfile -File scripts/v5_4/run-control-plane-checks.ps1"],
       "nextBranchAllowed": true
     }
   ]
