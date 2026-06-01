@@ -264,11 +264,26 @@
       "allowedFiles": ["docs/business/operating-control-tower.yml", "scripts/check-operating-control-tower.mjs", ".github/workflows/ci.yml", "scripts/guard-architecture.ps1", "docs/program/rt4/*", "artifacts/rt4/*", "scripts/rt4/build-completion-dashboard.mjs"],
       "forbiddenFiles": ["RT-F Operating Feedback Loop", "DORM-INT pilot activation", "Dormitory L2 Production declaration", "Repair/Parts/HR production activation"],
       "localCiStatus": "LOCAL_PASSED",
-      "headSha": "b1d4d9e6b41dbeaf45c0fc7836842b1b1dab1b48",
+      "headSha": "f2a24dc98de97c50da737b0de720f98d06d4fd17",
       "stackedReady": true,
       "prUrl": "",
       "mergeStatus": "not_merged",
       "evidenceRefs": ["clean Docker PostgreSQL workosnext-rt6-test", "docs/business/operating-control-tower.yml", "node scripts/check-operating-control-tower.mjs --self-test", "node scripts/check-operating-control-tower.mjs", "npm --prefix apps/mobile run build", "npm --prefix apps/mobile run test", "dotnet test tests/WorkOS.UnitTests/WorkOS.UnitTests.csproj -c Release --no-build", "dotnet test tests/WorkOS.RuntimeIntegrationTests/WorkOS.RuntimeIntegrationTests.csproj -c Release --no-build", "dotnet run --project tests/WorkOS.RuntimeContractTests/WorkOS.RuntimeContractTests.csproj -c Release", "node scripts/v5_4/certify-dormitory.mjs --sourceMode=real", "node scripts/v5_4/b-gate-runner.mjs", "pwsh -NoProfile -File scripts/guard-architecture.ps1", "pwsh -NoProfile -File scripts/v5_4/run-control-plane-checks.ps1"],
+      "nextBranchAllowed": true
+    },
+    {
+      "taskId": "RT-F",
+      "branch": "codex/rtf-operating-feedback-loop",
+      "baseBranch": "codex/rt6-operating-control-tower",
+      "dependsOn": "RT-6",
+      "allowedFiles": ["docs/operations/operating-feedback-loop.md", "docs/operations/metric-deviation-policy.yml", "docs/operations/risk-signal-policy.yml", "scripts/check-operating-feedback-loop.mjs", "tests/WorkOS.UnitTests/OperatingFeedbackLoopContractTests.cs", ".github/workflows/ci.yml", "scripts/guard-architecture.ps1", "docs/program/rt4/*", "artifacts/rt4/*", "scripts/rt4/build-completion-dashboard.mjs"],
+      "forbiddenFiles": ["RT-FINAL Completion Assurance Final Report", "Central Merge Train", "DORM-INT pilot activation", "Dormitory L2 Production declaration", "Repair/Parts/HR production activation"],
+      "localCiStatus": "LOCAL_PASSED",
+      "headSha": "03a0ac8af8ee165224ffbb7a07ca762ddac9bdc1",
+      "stackedReady": true,
+      "prUrl": "",
+      "mergeStatus": "not_merged",
+      "evidenceRefs": ["clean Docker PostgreSQL workosnext-rtf-test", "docs/operations/operating-feedback-loop.md", "docs/operations/metric-deviation-policy.yml", "docs/operations/risk-signal-policy.yml", "node scripts/check-operating-feedback-loop.mjs --self-test", "node scripts/check-operating-feedback-loop.mjs", "dotnet test tests/WorkOS.UnitTests/WorkOS.UnitTests.csproj -c Release --filter FullyQualifiedName~OperatingFeedbackLoopContractTests", "npm --prefix apps/mobile run build", "npm --prefix apps/mobile run test", "dotnet test tests/WorkOS.UnitTests/WorkOS.UnitTests.csproj -c Release --no-build", "dotnet test tests/WorkOS.RuntimeIntegrationTests/WorkOS.RuntimeIntegrationTests.csproj -c Release --no-build", "dotnet run --project tests/WorkOS.RuntimeContractTests/WorkOS.RuntimeContractTests.csproj -c Release", "node scripts/v5_4/certify-dormitory.mjs --sourceMode=real", "node scripts/v5_4/b-gate-runner.mjs", "pwsh -NoProfile -File scripts/guard-architecture.ps1", "pwsh -NoProfile -File scripts/v5_4/run-control-plane-checks.ps1"],
       "nextBranchAllowed": true
     }
   ]
