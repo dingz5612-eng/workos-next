@@ -140,6 +140,11 @@ Assert-Exists "scripts/check-admission-surface-alignment.mjs"
 Assert-Exists "scripts/check-policy-as-code.mjs"
 Assert-Exists "scripts/check-finance-truth.mjs"
 Assert-Exists "scripts/check-executable-scenarios.mjs"
+Assert-Exists "scripts/check-dormitory-domain-kit.mjs"
+Assert-Exists "scripts/check-business-domain-kit.mjs"
+Assert-Exists "scripts/check-business-line-admission.mjs"
+Assert-Exists "scripts/check-domain-kit-usage.mjs"
+Assert-Exists "scripts/v5_4/b-gate-runner.mjs"
 Assert-Exists "docs/scenarios/_schema/scenario.schema.json"
 Assert-Exists "docs/scenarios/dormitory/golden-pilot.yml"
 Assert-Exists "docs/scenarios/finance/money-kernel.yml"
@@ -166,6 +171,10 @@ Assert-Exists "docs/business/policies/truth-owner-policy.yml"
 Assert-Exists "docs/business/policies/permission-policy.yml"
 Assert-Exists "docs/business/policies/cutover-policy.yml"
 Assert-Exists "docs/business/policies/invariant-policy.yml"
+Assert-Exists "docs/business/business-line-registry.json"
+Assert-Exists "docs/business/acceptance/b2-scenario-result-semantics.md"
+Assert-Exists "docs/business/acceptance/b2-scenario-result-semantics.json"
+Assert-Exists "docs/business/acceptance/b-stage-runtime-boundary.md"
 Assert-Exists "schemas/domain-pack.schema.json"
 Assert-Exists "schemas/truth-owner-registry.schema.json"
 Assert-Exists "schemas/truth-promotion.schema.json"
@@ -173,6 +182,8 @@ Assert-Exists "schemas/shared-governance.schema.json"
 Assert-Exists "schemas/receipt.schema.json"
 Assert-Exists "schemas/policy.schema.json"
 Assert-Exists "schemas/finance-truth-pipeline.schema.json"
+Assert-Exists "docs/business/schemas/business-line-registry.schema.json"
+Assert-Exists "docs/business/schemas/b-stage-gate-result.schema.json"
 Assert-Exists "scripts/v5_4/run-control-plane-checks.ps1"
 Assert-Exists "scripts/v5_4/control-plane-migration.mjs"
 Assert-Exists "scripts/v5_4/shadow-namespace-isolation.mjs"
@@ -617,6 +628,12 @@ Invoke-Checked "node" @("scripts/check-finance-truth.mjs", "--self-test")
 Invoke-Checked "node" @("scripts/check-finance-truth.mjs")
 Invoke-Checked "node" @("scripts/check-executable-scenarios.mjs", "--self-test")
 Invoke-Checked "node" @("scripts/check-executable-scenarios.mjs")
+Invoke-Checked "node" @("scripts/check-dormitory-domain-kit.mjs")
+Invoke-Checked "node" @("scripts/check-business-domain-kit.mjs")
+Invoke-Checked "node" @("scripts/check-business-line-admission.mjs")
+Invoke-Checked "node" @("scripts/check-domain-kit-usage.mjs")
+Invoke-Checked "node" @("scripts/v5_4/certify-dormitory.mjs", "--sourceMode=real")
+Invoke-Checked "node" @("scripts/v5_4/b-gate-runner.mjs")
 
 $ci = Get-Content ".github/workflows/ci.yml" -Raw
 $v54Ci = Get-Content ".github/workflows/v5_4_control_plane.yml" -Raw
@@ -662,7 +679,13 @@ foreach ($requiredCiCommand in @(
   "check-admission-surface-alignment.mjs",
   "check-policy-as-code.mjs",
   "check-finance-truth.mjs",
-  "check-executable-scenarios.mjs"
+  "check-executable-scenarios.mjs",
+  "check-dormitory-domain-kit.mjs",
+  "check-business-domain-kit.mjs",
+  "check-business-line-admission.mjs",
+  "check-domain-kit-usage.mjs",
+  "certify-dormitory.mjs",
+  "b-gate-runner.mjs"
 )) {
   if ($ci -notmatch [regex]::Escape($requiredCiCommand)) {
     Fail "CI must run RT-2 BTOS compiler command: $requiredCiCommand"

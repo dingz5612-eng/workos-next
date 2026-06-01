@@ -3,6 +3,7 @@ import path from "node:path";
 
 const root = process.cwd();
 const admissionRoot = path.join(root, "docs/business/admission");
+const registryPath = path.join(root, "docs/business/business-line-registry.json");
 const admissionFiles = [
   "repair-l0-admission.yml",
   "parts-l0-admission.yml",
@@ -70,6 +71,21 @@ for (const scope of ["Parts.MasterData", "Parts.Inventory", "Parts.Sale", "Parts
 }
 for (const boundary of ["stock movement", "payment", "refund", "cost", "revenue"]) {
   assert(parts.boundaries.includes(boundary), `Parts L0 missing boundary ${boundary}`);
+}
+
+const registry = JSON.parse(fs.readFileSync(registryPath, "utf8"));
+const lines = registry.businessLines ?? [];
+for (const id of ["dormitory", "repair", "parts", "hr"]) {
+  assert(lines.some(line => line.businessLineId === id), `Business line registry missing ${id}`);
+}
+for (const line of lines) {
+  assert(line.productionAllowed === false, `${line.businessLineId} must keep productionAllowed=false before Central Merge Train and DORM-INT`);
+  assert(line.productionConfirmAllowed === false, `${line.businessLineId} must keep productionConfirmAllowed=false`);
+  assert(Array.isArray(line.blockedActions) && line.blockedActions.includes("production_confirm"), `${line.businessLineId} must block production_confirm`);
+  if (line.businessLineId !== "dormitory") {
+    assert(line.level === "L0 Contract Preview", `${line.businessLineId} must remain L0 Contract Preview`);
+    assert(line.surfaceMode === "contract-preview", `${line.businessLineId} must stay contract-preview`);
+  }
 }
 
 console.log("Business line admission check: PASS");
