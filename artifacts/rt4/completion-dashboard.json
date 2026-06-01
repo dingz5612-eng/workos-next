@@ -1,7 +1,7 @@
 {
   "version": "rt4.completion-dashboard.v1",
   "mode": "L1_INTERNAL_PILOT_OBSERVATION",
-  "generatedAtUtc": "2026-06-01T20:55:44.090Z",
+  "generatedAtUtc": "2026-06-01T21:52:21.579Z",
   "businessProduction": "BLOCKED",
   "dormitoryL2Production": "BLOCKED",
   "repairPartsHrStatus": "L0_OR_BLOCKED",
@@ -13,10 +13,10 @@
   "currentGate": "DORM-INT",
   "currentGateStatus": "GO_FOR_INTERNAL_PILOT",
   "currentGateBranch": "main",
-  "currentGateHeadSha": "523e430b0366096cf2dd5525920fde59d46d2df1",
+  "currentGateHeadSha": "4134ce9853075531433706183050b13cc4bdd5fd",
   "nextAllowedStackedStage": "OAM-00 Evidence Rebinding",
   "centralMergeTrain": "CENTRAL_MERGE_COMPLETED",
   "evidenceGraphNodes": 31,
-  "currentMainHead": "523e430b0366096cf2dd5525920fde59d46d2df1",
+  "currentMainHead": "4134ce9853075531433706183050b13cc4bdd5fd",
   "dormitoryL1Observation": "L1_INTERNAL_PILOT_OBSERVATION"
 }
