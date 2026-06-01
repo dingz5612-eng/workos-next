@@ -230,6 +230,16 @@ jobs:
           node scripts/business/check-ledger-posting-contract.mjs
           node scripts/business/check-metric-formula-contract.mjs
 
+      - name: Validate OAM-03 Runtime Proof Harness
+        if: github.event_name == 'pull_request'
+        env:
+          ConnectionStrings__WorkOSRuntime: Host=localhost;Port=54329;Database=workosnext_test;Username=workosnext;Password=workosnext_dev
+          WORKOS_TEST_CONNECTION: Host=localhost;Port=54329;Database=workosnext_test;Username=workosnext;Password=workosnext_dev
+          TEST_DATABASE: "true"
+        run: |
+          node scripts/proof/run-runtime-proof.mjs
+          node scripts/proof/check-runtime-proof-result.mjs
+
       - name: Architecture guard
         shell: pwsh
         env:
