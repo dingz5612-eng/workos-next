@@ -173,6 +173,9 @@ jobs:
       - name: Validate RT-4 Dormitory Golden Domain
         run: node scripts/check-dormitory-golden-domain.mjs
 
+      - name: Validate RT-5 Experience Contract
+        run: node scripts/check-experience-contract.mjs
+
       - name: Architecture guard
         shell: pwsh
         env:

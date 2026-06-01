@@ -53,7 +53,8 @@ function advancedSheet(ctx) {
 function taskCard(item, ctx) {
   if (!item.workspace || !item.card) {
     return `<article class="task-card">
-      <div><span>${ctx.tr(item.domain)} · ${(item.badges || []).map((badge) => ctx.tr(badge)).join(" · ")} · ${item.due || ""}</span><strong>${ctx.tr(item.title)}</strong><p>${ctx.tr("apiOffline")}</p></div>
+      <div><span>${ctx.escapeHtml(item.workItemType || item.domain)} · ${(item.badges || []).map((badge) => ctx.tr(badge)).join(" · ")} · ${item.due || ""}</span><strong>${ctx.escapeHtml(item.workItemId || item.title || "")}</strong><p>${ctx.escapeHtml(item.reason || item.lifecycleState || ctx.tr("apiOffline"))}</p></div>
+      ${item.workItemId ? `<button data-work-item-id="${ctx.escapeAttr(item.workItemId)}">${ctx.tr("openWorkspace")}</button>` : ""}
     </article>`;
   }
   const itemWorkspace = item.workspace;
