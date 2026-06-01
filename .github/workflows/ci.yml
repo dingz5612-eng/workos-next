@@ -73,6 +73,9 @@ jobs:
       - name: Run runtime integration tests
         run: dotnet test tests/WorkOS.RuntimeIntegrationTests/WorkOS.RuntimeIntegrationTests.csproj -c Release --no-build
 
+      - name: Run release evidence tests
+        run: dotnet test tests/WorkOS.ReleaseEvidenceTests/WorkOS.ReleaseEvidenceTests.csproj -c Release --no-build
+
       - name: Run runtime contract tests
         env:
           WORKOS_TEST_CONNECTION: Host=localhost;Port=54329;Database=workosnext_test;Username=workosnext;Password=workosnext_dev

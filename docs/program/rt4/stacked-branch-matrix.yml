@@ -83,13 +83,28 @@
       "dependsOn": "RF8",
       "allowedFiles": ["docs/closure/*", "docs/program/rt4/*", "scripts/rt4/*", "artifacts/rt4/*"],
       "forbiddenFiles": ["runtime behavior", "business write APIs", "apps/mobile/**"],
-      "localCiStatus": "RUNNING",
-      "headSha": "CURRENT_BRANCH",
-      "stackedReady": false,
-      "prUrl": "",
+      "localCiStatus": "LOCAL_PASSED",
+      "headSha": "ec21800e0cb775fbd3db1b3335e17b351a0f18f1",
+      "stackedReady": true,
+      "prUrl": "https://github.com/dingz5612-eng/workos-next/pull/26",
       "mergeStatus": "not_merged",
-      "evidenceRefs": [],
-      "nextBranchAllowed": false
+      "evidenceRefs": ["PR #26", "local clean Docker CI-equivalent", "artifacts/rt4/evidence-graph.json", "artifacts/rt4/completion-dashboard.json"],
+      "nextBranchAllowed": true
+    },
+    {
+      "taskId": "RT-0",
+      "branch": "codex/rt0-final-gate-evidence-closure",
+      "baseBranch": "codex/rtx-problem-ledger-closure-matrix",
+      "dependsOn": "RT-X",
+      "allowedFiles": ["scripts/v5_4/*release-evidence*", "scripts/v5_4/replay-final-gate.mjs", "scripts/v5_4/check-final-report-consistency.mjs", "tests/WorkOS.ReleaseEvidenceTests/**", "docs/program/rt4/*", "artifacts/rt4/*", ".github/workflows/ci.yml", "WorkOSNext.sln"],
+      "forbiddenFiles": ["runtime behavior", "business write APIs", "apps/mobile/** production surface changes"],
+      "localCiStatus": "LOCAL_PASSED",
+      "headSha": "f93a126ca1de4998ef0b5ec7e061f0e13513c9ec",
+      "stackedReady": true,
+      "prUrl": "https://github.com/dingz5612-eng/workos-next/pull/27",
+      "mergeStatus": "not_merged",
+      "evidenceRefs": ["PR #27", "clean Docker PostgreSQL workosnext-rt0-ci", "dotnet test tests/WorkOS.ReleaseEvidenceTests/WorkOS.ReleaseEvidenceTests.csproj -c Release", "node scripts/v5_4/verify-release-evidence-freshness.mjs --strict", "node scripts/v5_4/replay-final-gate.mjs", "pwsh -NoProfile -File scripts/v5_4/run-control-plane-checks.ps1"],
+      "nextBranchAllowed": true
     }
   ]
 }
