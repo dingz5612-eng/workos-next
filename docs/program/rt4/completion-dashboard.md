@@ -20,12 +20,12 @@ Repair / Parts / HR: `L0_OR_BLOCKED`
 
 ## Current Gate
 
-RT-S: `LOCAL_PASSED`
+RT-B: `LOCAL_PASSED`
 
-Current branch: `codex/rts-executable-scenario-factory`
+Current branch: `codex/rtb-b-stage-gate-closure`
 
-Head sha: `8828aeb9e8459a71da959bf6be1bb69b31f81342`
+Head sha: `cdcdc95cc82a59fa68bb144c8d29301b9b40e108`
 
-Next allowed stage after RT-S local pass: `RT-B stacked preconstruction`.
+Next allowed stage after RT-B local pass: `RT-4 stacked preconstruction`.
 
 Formal Central Merge Train: `LOCKED_UNTIL_RT_FINAL_LOCAL_PASSED`.
