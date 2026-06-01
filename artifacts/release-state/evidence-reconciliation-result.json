@@ -1,0 +1,16 @@
+{
+  "generated_at_utc": "2026-06-01T19:41:20.629Z",
+  "generated_by": "check-evidence-reconciliation",
+  "status": "passed",
+  "mainHead": "7055814c0b1638badb45bf3b1add5cb2d24ebd87",
+  "checks": {
+    "goNoGoLatestMain": "7055814c0b1638badb45bf3b1add5cb2d24ebd87",
+    "graphMode": "L1_INTERNAL_PILOT_OBSERVATION",
+    "dashboardMode": "L1_INTERNAL_PILOT_OBSERVATION",
+    "finalAssuranceStatus": "POST_DORM_INT_RECONCILED"
+  },
+  "noGoItems": [],
+  "productionAllowed": false,
+  "dormitoryL2ProductionAllowed": false,
+  "repairPartsHrStatus": "L0 Contract Preview"
+}

@@ -1,0 +1,11 @@
+{
+  "name": "runtime surface alignment",
+  "status": "passed",
+  "source_mode": "real",
+  "commands": [
+    "node scripts/check-admission-surface-alignment.mjs"
+  ],
+  "evidence_refs": [
+    "node scripts/check-admission-surface-alignment.mjs"
+  ]
+}

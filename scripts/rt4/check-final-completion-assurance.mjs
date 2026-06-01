@@ -73,12 +73,30 @@ function validateResult(result) {
   if (result.stage !== "RT-FINAL") {
     violations.push(violation("rtfinal.stage_mismatch", "Final result stage must be RT-FINAL."));
   }
-  if (result.localStatus !== "LOCAL_PASSED" || result.stackedStatus !== "STACKED_READY" || result.officialStatus !== "LOCKED_UNTIL_CENTRAL_MERGE") {
+  const reconciled = result.reconciledStatus === "POST_DORM_INT_RECONCILED";
+  if (!reconciled && (result.localStatus !== "LOCAL_PASSED" || result.stackedStatus !== "STACKED_READY" || result.officialStatus !== "LOCKED_UNTIL_CENTRAL_MERGE")) {
     violations.push(violation("rtfinal.status_boundary_wrong", "RT-FINAL result must stay LOCAL_PASSED / STACKED_READY / LOCKED_UNTIL_CENTRAL_MERGE."));
   }
-  for (const flag of ["businessProductionAllowed", "dormitoryL2ProductionAllowed", "dormIntAllowed", "l1InternalPilotAllowed"]) {
+  for (const flag of ["businessProductionAllowed", "dormitoryL2ProductionAllowed"]) {
     if (result[flag] !== false) {
-      violations.push(violation("rtfinal.production_or_dormint_enabled", `${flag} must be false before Central Merge Train and DORM-INT.`, { flag }));
+      violations.push(violation("rtfinal.production_enabled", `${flag} must be false.`, { flag }));
+    }
+  }
+  if (reconciled) {
+    if (result.centralMergeTrainStatus !== "CENTRAL_MERGE_COMPLETED" || result.dormIntStatus !== "DORM_INT_PASSED") {
+      violations.push(violation("rtfinal.reconciled_state_wrong", "Reconciled RT-FINAL result must record central merge completed and DORM_INT_PASSED."));
+    }
+    if (result.l1InternalPilotAllowed !== true || result.dormIntAllowed !== true) {
+      violations.push(violation("rtfinal.l1_observation_not_allowed", "Reconciled RT-FINAL result must allow only L1 internal pilot observation."));
+    }
+    if (`${result.dormitoryStatus ?? ""}`.includes("not started")) {
+      violations.push(violation("rtfinal.dorm_int_not_started_stale", "Reconciled RT-FINAL result must not say DORM-INT not started."));
+    }
+  } else {
+    for (const flag of ["dormIntAllowed", "l1InternalPilotAllowed"]) {
+      if (result[flag] !== false) {
+        violations.push(violation("rtfinal_dormint_enabled_too_early", `${flag} must be false before Central Merge Train and DORM-INT.`, { flag }));
+      }
     }
   }
   if (result.repairPartsHrStatus !== "L0 Contract Preview") {
@@ -143,8 +161,12 @@ function validateGraph(graph, branchMatrix) {
 }
 
 function validateDashboard(dashboard) {
-  if (dashboard.currentGate !== "RT-FINAL" || dashboard.currentGateStatus !== "LOCAL_PASSED") {
+  const l1Observation = dashboard.mode === "L1_INTERNAL_PILOT_OBSERVATION";
+  if (!l1Observation && (dashboard.currentGate !== "RT-FINAL" || dashboard.currentGateStatus !== "LOCAL_PASSED")) {
     violations.push(violation("rtfinal.dashboard_not_current", "Completion Dashboard must show RT-FINAL LOCAL_PASSED."));
+  }
+  if (l1Observation && (dashboard.currentGate !== "DORM-INT" || dashboard.currentGateStatus !== "GO_FOR_INTERNAL_PILOT" || dashboard.centralMergeTrain !== "CENTRAL_MERGE_COMPLETED")) {
+    violations.push(violation("rtfinal.dashboard_reconciled_wrong", "Completion Dashboard must show DORM-INT GO and Central Merge completed in L1 observation mode."));
   }
   if (dashboard.businessProduction !== "BLOCKED" || dashboard.dormitoryL2Production !== "BLOCKED" || dashboard.repairPartsHrStatus !== "L0_OR_BLOCKED") {
     violations.push(violation("rtfinal.dashboard_boundary_wrong", "Completion Dashboard must keep production and downstream lines blocked."));
@@ -152,17 +174,19 @@ function validateDashboard(dashboard) {
 }
 
 function validateReport(reportText) {
-  for (const phrase of [
+  const requiredBoundaryPhrases = [
     "Business Production: `BLOCKED`",
     "Dormitory L2 Production: `BLOCKED`",
-    "Repair / Parts / HR: `L0 Contract Preview`",
-    "LOCAL_PASSED / STACKED_READY / LOCKED_UNTIL_CENTRAL_MERGE",
-    "未 FULLY_PASSED",
-    "DORM-INT: `LOCKED_UNTIL_CENTRAL_MERGE_MAIN_GREEN`"
-  ]) {
+    "Repair / Parts / HR: `L0 Contract Preview`"
+  ];
+  for (const phrase of requiredBoundaryPhrases) {
     if (!reportText.includes(phrase)) {
       violations.push(violation("rtfinal.report_phrase_missing", `Final report missing phrase: ${phrase}.`, { phrase }));
     }
+  }
+  if (!reportText.includes("DORM-INT: `LOCKED_UNTIL_CENTRAL_MERGE_MAIN_GREEN`") &&
+      !reportText.includes("DORM-INT: `DORM_INT_PASSED_L1_OBSERVATION`")) {
+    violations.push(violation("rtfinal.report_dormint_state_missing", "Final report must state either locked DORM-INT or DORM_INT_PASSED_L1_OBSERVATION."));
   }
 }
 
