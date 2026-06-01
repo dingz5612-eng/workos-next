@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://workos-next.local/schemas/business-line-registry.schema.json",
+  "type": "object",
+  "required": ["version", "businessLines"],
+  "additionalProperties": false,
+  "properties": {
+    "version": { "type": "string" },
+    "businessLines": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["businessLineId", "displayName", "level", "productionAllowed", "internalPilotAllowed", "productionConfirmAllowed", "surfaceMode", "allowedScopes", "blockedActions", "owner", "nextGate"],
+        "additionalProperties": false,
+        "properties": {
+          "businessLineId": { "type": "string" },
+          "displayName": { "type": "string" },
+          "level": { "type": "string" },
+          "productionAllowed": { "type": "boolean" },
+          "internalPilotAllowed": { "type": "boolean" },
+          "productionConfirmAllowed": { "type": "boolean" },
+          "surfaceMode": { "type": "string" },
+          "allowedScopes": { "type": "array", "items": { "type": "string" } },
+          "blockedActions": { "type": "array", "items": { "type": "string" } },
+          "owner": { "type": "string" },
+          "nextGate": { "type": "string" }
+        }
+      }
+    }
+  }
+}
