@@ -182,6 +182,9 @@ jobs:
       - name: Validate RT-F Operating Feedback Loop
         run: node scripts/check-operating-feedback-loop.mjs
 
+      - name: Validate RT-FINAL Completion Assurance
+        run: node scripts/rt4/check-final-completion-assurance.mjs
+
       - name: Architecture guard
         shell: pwsh
         env:
