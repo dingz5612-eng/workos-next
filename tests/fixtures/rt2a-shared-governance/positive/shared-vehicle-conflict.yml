@@ -1,0 +1,11 @@
+{
+  "scenarioId": "positive-shared-vehicle-conflict",
+  "actorPack": "SharedGovernancePack",
+  "intent": "vehicleConflict",
+  "createsFacts": [],
+  "consumesFacts": ["VehicleIntake"],
+  "commitMode": "sharedGovernanceReview",
+  "usesRefs": ["ProvisionalVehicle"],
+  "outputs": ["ReviewWorkItem", "VehicleStewardshipWorkItem"],
+  "workItem": "VehicleStewardshipWorkItem"
+}

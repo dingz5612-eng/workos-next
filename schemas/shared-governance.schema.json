@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://workosnext.local/schemas/shared-governance.schema.json",
+  "title": "Shared Governance Subject Vehicle Truth Contract",
+  "type": "object",
+  "required": [
+    "version",
+    "packId",
+    "ownsCenterTruth",
+    "intakeFacts",
+    "provisionalFacts",
+    "stewardshipWorkItems",
+    "receipts",
+    "duplicatePolicy",
+    "mergePolicy",
+    "supersedePolicy",
+    "appealPolicy",
+    "businessPackRules",
+    "conflictRouting",
+    "crosswalkPolicy",
+    "certification"
+  ],
+  "properties": {
+    "version": { "type": "integer" },
+    "packId": { "const": "SharedGovernancePack" },
+    "ownsCenterTruth": { "type": "array", "items": { "type": "string" } },
+    "intakeFacts": { "type": "array", "items": { "type": "string" } },
+    "provisionalFacts": { "type": "array", "items": { "type": "string" } },
+    "stewardshipWorkItems": { "type": "array", "items": { "type": "string" } },
+    "receipts": { "type": "array", "items": { "type": "string" } },
+    "businessPackRules": { "type": "object" },
+    "conflictRouting": { "type": "object" },
+    "crosswalkPolicy": { "type": "object" },
+    "certification": { "type": "object" }
+  }
+}

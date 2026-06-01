@@ -144,11 +144,26 @@
       "allowedFiles": ["docs/business/truth-owner-registry.yml", "docs/business/truth-maturity-levels.yml", "docs/business/receipt-types.yml", "docs/business/conflict-policies.yml", "docs/business/domains/_template/domain-pack.yml", "schemas/*", "scripts/check-truth-owners.mjs", "scripts/check-domain-packs.mjs", "scripts/check-provisional-ref-usage.mjs", "scripts/check-receipt-projection.mjs", "scripts/check-management-cockpit-boundary.mjs", "tests/fixtures/rt2-btos-compiler/**", ".github/workflows/ci.yml", "scripts/guard-architecture.ps1", "docs/program/rt4/*", "artifacts/rt4/*"],
       "forbiddenFiles": ["runtime behavior", "business write APIs", "apps/mobile/**", "RT-2A shared governance runtime", "RT-P policy runtime", "RT-3 finance runtime"],
       "localCiStatus": "LOCAL_PASSED",
-      "headSha": "ab82b98debde9bb5219779b40ea6a23d22b766d6",
+      "headSha": "749313245b988297752b37ea422c5584ccabb1bd",
       "stackedReady": true,
       "prUrl": "",
       "mergeStatus": "not_merged",
       "evidenceRefs": ["clean Docker PostgreSQL workosnext-rt2-test", "node scripts/check-truth-owners.mjs --self-test", "node scripts/check-truth-owners.mjs", "node scripts/check-domain-packs.mjs --self-test", "node scripts/check-domain-packs.mjs", "node scripts/check-provisional-ref-usage.mjs --self-test", "node scripts/check-provisional-ref-usage.mjs", "node scripts/check-receipt-projection.mjs --self-test", "node scripts/check-receipt-projection.mjs", "node scripts/check-management-cockpit-boundary.mjs --self-test", "node scripts/check-management-cockpit-boundary.mjs", "pwsh -NoProfile -File scripts/clean-baseline.ps1", "pwsh -NoProfile -File scripts/guard-architecture.ps1", "pwsh -NoProfile -File scripts/v5_4/run-control-plane-checks.ps1"],
+      "nextBranchAllowed": true
+    },
+    {
+      "taskId": "RT-2A",
+      "branch": "codex/rt2a-shared-governance-identity-kernel",
+      "baseBranch": "codex/rt2-btos-compiler-mvp",
+      "dependsOn": "RT-2",
+      "allowedFiles": ["docs/business/shared-governance/subject-vehicle-truth.yml", "schemas/shared-governance.schema.json", "scripts/check-shared-governance-boundary.mjs", "tests/fixtures/rt2a-shared-governance/**", ".github/workflows/ci.yml", "scripts/guard-architecture.ps1", "docs/program/rt4/*", "artifacts/rt4/*", "scripts/rt4/build-completion-dashboard.mjs"],
+      "forbiddenFiles": ["runtime behavior", "business write APIs", "apps/mobile/**", "RT-P policy runtime", "RT-3 finance runtime", "DORM-INT pilot activation"],
+      "localCiStatus": "LOCAL_PASSED",
+      "headSha": "c664705c0a87abf42102ef866a4fe6f0eb017b21",
+      "stackedReady": true,
+      "prUrl": "",
+      "mergeStatus": "not_merged",
+      "evidenceRefs": ["clean Docker PostgreSQL workosnext-rt2a-test", "node scripts/check-shared-governance-boundary.mjs --self-test", "node scripts/check-shared-governance-boundary.mjs", "pwsh -NoProfile -File scripts/guard-architecture.ps1", "pwsh -NoProfile -File scripts/v5_4/run-control-plane-checks.ps1"],
       "nextBranchAllowed": true
     }
   ]

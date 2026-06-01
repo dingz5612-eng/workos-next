@@ -1,0 +1,11 @@
+{
+  "scenarioId": "positive-dormitory-subject-intake",
+  "actorPack": "DormitoryDomainPack",
+  "intent": "subjectIntake",
+  "createsFacts": ["SubjectIntake"],
+  "consumesFacts": ["SubjectReceipt"],
+  "commitMode": "workflowDraft",
+  "usesRefs": [],
+  "outputs": ["SubjectIntake"],
+  "workItem": "DormitoryReviewWorkItem"
+}

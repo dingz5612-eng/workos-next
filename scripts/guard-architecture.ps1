@@ -135,14 +135,17 @@ Assert-Exists "scripts/check-domain-packs.mjs"
 Assert-Exists "scripts/check-provisional-ref-usage.mjs"
 Assert-Exists "scripts/check-receipt-projection.mjs"
 Assert-Exists "scripts/check-management-cockpit-boundary.mjs"
+Assert-Exists "scripts/check-shared-governance-boundary.mjs"
 Assert-Exists "docs/business/truth-owner-registry.yml"
 Assert-Exists "docs/business/truth-maturity-levels.yml"
 Assert-Exists "docs/business/receipt-types.yml"
 Assert-Exists "docs/business/conflict-policies.yml"
 Assert-Exists "docs/business/domains/_template/domain-pack.yml"
+Assert-Exists "docs/business/shared-governance/subject-vehicle-truth.yml"
 Assert-Exists "schemas/domain-pack.schema.json"
 Assert-Exists "schemas/truth-owner-registry.schema.json"
 Assert-Exists "schemas/truth-promotion.schema.json"
+Assert-Exists "schemas/shared-governance.schema.json"
 Assert-Exists "schemas/receipt.schema.json"
 Assert-Exists "scripts/v5_4/run-control-plane-checks.ps1"
 Assert-Exists "scripts/v5_4/control-plane-migration.mjs"
@@ -578,6 +581,8 @@ Invoke-Checked "node" @("scripts/check-receipt-projection.mjs", "--self-test")
 Invoke-Checked "node" @("scripts/check-receipt-projection.mjs")
 Invoke-Checked "node" @("scripts/check-management-cockpit-boundary.mjs", "--self-test")
 Invoke-Checked "node" @("scripts/check-management-cockpit-boundary.mjs")
+Invoke-Checked "node" @("scripts/check-shared-governance-boundary.mjs", "--self-test")
+Invoke-Checked "node" @("scripts/check-shared-governance-boundary.mjs")
 
 $ci = Get-Content ".github/workflows/ci.yml" -Raw
 $v54Ci = Get-Content ".github/workflows/v5_4_control_plane.yml" -Raw
@@ -618,7 +623,8 @@ foreach ($requiredCiCommand in @(
   "check-domain-packs.mjs",
   "check-provisional-ref-usage.mjs",
   "check-receipt-projection.mjs",
-  "check-management-cockpit-boundary.mjs"
+  "check-management-cockpit-boundary.mjs",
+  "check-shared-governance-boundary.mjs"
 )) {
   if ($ci -notmatch [regex]::Escape($requiredCiCommand)) {
     Fail "CI must run RT-2 BTOS compiler command: $requiredCiCommand"

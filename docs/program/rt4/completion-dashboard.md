@@ -20,12 +20,12 @@ Repair / Parts / HR: `L0_OR_BLOCKED`
 
 ## Current Gate
 
-RT-2: `LOCAL_PASSED`
+RT-2A: `LOCAL_PASSED`
 
-Current branch: `codex/rt2-btos-compiler-mvp`
+Current branch: `codex/rt2a-shared-governance-identity-kernel`
 
-Head sha: `ab82b98debde9bb5219779b40ea6a23d22b766d6`
+Head sha: `c664705c0a87abf42102ef866a4fe6f0eb017b21`
 
-Next allowed stage after RT-2 local pass: `RT-2A stacked preconstruction`.
+Next allowed stage after RT-2A local pass: `RT-P stacked preconstruction`.
 
 Formal Central Merge Train: `LOCKED_UNTIL_RT_FINAL_LOCAL_PASSED`.

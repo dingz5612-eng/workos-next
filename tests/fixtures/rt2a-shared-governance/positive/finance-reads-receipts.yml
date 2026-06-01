@@ -1,0 +1,11 @@
+{
+  "scenarioId": "positive-finance-reads-receipts",
+  "actorPack": "FinanceTruthPack",
+  "intent": "financeContextRead",
+  "createsFacts": ["FinanceIntake"],
+  "consumesFacts": ["SubjectReceipt", "VehicleReceipt"],
+  "commitMode": "financeReview",
+  "usesRefs": [],
+  "outputs": ["FinanceReviewWorkItem"],
+  "workItem": "FinanceReviewWorkItem"
+}

@@ -1,0 +1,11 @@
+{
+  "scenarioId": "negative-dormitory-formal-subject",
+  "actorPack": "DormitoryDomainPack",
+  "intent": "subjectCreate",
+  "createsFacts": ["Subject"],
+  "consumesFacts": ["SubjectIntake"],
+  "commitMode": "domainCommit",
+  "usesRefs": [],
+  "outputs": ["Subject"],
+  "workItem": "DormitoryReviewWorkItem"
+}

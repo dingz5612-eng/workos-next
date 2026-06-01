@@ -1,0 +1,11 @@
+{
+  "scenarioId": "negative-repair-formal-vehicle",
+  "actorPack": "RepairDomainPack",
+  "intent": "vehicleCreate",
+  "createsFacts": ["Vehicle"],
+  "consumesFacts": ["VehicleIntake"],
+  "commitMode": "domainCommit",
+  "usesRefs": [],
+  "outputs": ["Vehicle"],
+  "workItem": "RepairReviewWorkItem"
+}
