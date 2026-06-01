@@ -120,6 +120,21 @@
       "mergeStatus": "not_merged",
       "evidenceRefs": ["clean Docker PostgreSQL workosnext-rt1-ci", "node scripts/check-runtime-write-paths.mjs --self-test", "node scripts/check-runtime-write-paths.mjs", "dotnet test tests/WorkOS.UnitTests/WorkOS.UnitTests.csproj -c Release --no-build", "dotnet test tests/WorkOS.RuntimeIntegrationTests/WorkOS.RuntimeIntegrationTests.csproj -c Release --no-build", "dotnet run --project tests/WorkOS.RuntimeContractTests/WorkOS.RuntimeContractTests.csproj -c Release", "pwsh -NoProfile -File scripts/guard-architecture.ps1", "pwsh -NoProfile -File scripts/v5_4/run-control-plane-checks.ps1"],
       "nextBranchAllowed": true
+    },
+    {
+      "taskId": "RT-DB",
+      "branch": "codex/rtdb-db-role-isolation-shadow-defense",
+      "baseBranch": "codex/rt1-runtime-spine-non-bypass",
+      "dependsOn": "RT-1",
+      "allowedFiles": ["infra/db/migrations/034_next_control_plane_runtime_roles.sql", "tests/WorkOS.DatabaseSecurityTests/**", "scripts/v5_4/shadow-namespace-isolation.mjs", "docs/v5.4/db-permission-contract.md", ".github/workflows/ci.yml", ".github/workflows/v5_4_control_plane.yml", "scripts/v5_4/run-control-plane-checks.ps1", "WorkOSNext.sln", "docs/program/rt4/*", "artifacts/rt4/*"],
+      "forbiddenFiles": ["page-specific business write APIs", "Mobile BFF business fact writes", "direct DomainEvent writes outside CommandSubmission", "Dormitory/Repair/Parts production declarations"],
+      "localCiStatus": "LOCAL_PASSED",
+      "headSha": "75b22c9622deff37ade71f8bb0afd6e92230abfd",
+      "stackedReady": true,
+      "prUrl": "",
+      "mergeStatus": "not_merged",
+      "evidenceRefs": ["clean Docker PostgreSQL workosnext-rt-db-test", "infra/db/migrations/034_next_control_plane_runtime_roles.sql", "dotnet test tests/WorkOS.DatabaseSecurityTests/WorkOS.DatabaseSecurityTests.csproj -c Release --no-build", "node scripts/v5_4/shadow-namespace-isolation.mjs", "pwsh -NoProfile -File scripts/guard-architecture.ps1", "pwsh -NoProfile -File scripts/v5_4/run-control-plane-checks.ps1"],
+      "nextBranchAllowed": true
     }
   ]
 }

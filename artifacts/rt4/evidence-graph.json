@@ -1,9 +1,9 @@
 {
   "version": "rt4.evidence-graph.v1",
   "mode": "STACKED_PRECONSTRUCTION",
-  "branch": "codex/rt1-runtime-spine-non-bypass",
-  "headSha": "bc0a833b3c025caeb099e2fd33963fa61a6d0097",
-  "generatedAtUtc": "2026-06-01T07:30:16.005Z",
+  "branch": "",
+  "headSha": "3b4c45c415e7e7a2c18f1304d8a90de06556527f",
+  "generatedAtUtc": "2026-06-01T07:32:28.556Z",
   "nodes": [
     {
       "id": "RT4-P0-001",
@@ -240,6 +240,21 @@
         "dotnet test tests/WorkOS.UnitTests/WorkOS.UnitTests.csproj -c Release --no-build",
         "dotnet test tests/WorkOS.RuntimeIntegrationTests/WorkOS.RuntimeIntegrationTests.csproj -c Release --no-build",
         "dotnet run --project tests/WorkOS.RuntimeContractTests/WorkOS.RuntimeContractTests.csproj -c Release",
+        "pwsh -NoProfile -File scripts/guard-architecture.ps1",
+        "pwsh -NoProfile -File scripts/v5_4/run-control-plane-checks.ps1"
+      ]
+    },
+    {
+      "id": "RT-DB",
+      "type": "branch",
+      "status": "LOCAL_PASSED",
+      "branch": "codex/rtdb-db-role-isolation-shadow-defense",
+      "headSha": "75b22c9622deff37ade71f8bb0afd6e92230abfd",
+      "refs": [
+        "clean Docker PostgreSQL workosnext-rt-db-test",
+        "infra/db/migrations/034_next_control_plane_runtime_roles.sql",
+        "dotnet test tests/WorkOS.DatabaseSecurityTests/WorkOS.DatabaseSecurityTests.csproj -c Release --no-build",
+        "node scripts/v5_4/shadow-namespace-isolation.mjs",
         "pwsh -NoProfile -File scripts/guard-architecture.ps1",
         "pwsh -NoProfile -File scripts/v5_4/run-control-plane-checks.ps1"
       ]
