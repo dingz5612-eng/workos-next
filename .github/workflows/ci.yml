@@ -240,6 +240,9 @@ jobs:
           node scripts/proof/run-runtime-proof.mjs
           node scripts/proof/check-runtime-proof-result.mjs
 
+      - name: Validate OAM-04 Surface Twin-Plane Contract
+        run: node scripts/surface/check-oam-04-surface-twin-plane-contract.mjs
+
       - name: Architecture guard
         shell: pwsh
         env:
