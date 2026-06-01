@@ -1,0 +1,54 @@
+{
+  "controlLoopId": "oam-07-observation-control-loop",
+  "stage": "OAM-07",
+  "businessLine": "Dormitory",
+  "productionAllowed": false,
+  "l2ProductionAllowed": false,
+  "loop": [
+    "MetricDeviation",
+    "RiskSignal",
+    "WorkItem",
+    "Owner / SLA",
+    "ResolutionEvent",
+    "Lens update",
+    "PeriodReview",
+    "Training / Policy update"
+  ],
+  "riskSignalToWorkItem": {
+    "required": true,
+    "workItemType": "observation_risk_resolution",
+    "ownerField": "ownerRole",
+    "slaField": "dueAt",
+    "escalationRequired": true
+  },
+  "resolutionToLens": {
+    "required": true,
+    "lensNames": [
+      "DormitoryObservationSloLens",
+      "DormitoryRiskSummary",
+      "FinanceControlTowerLens"
+    ]
+  },
+  "periodReview": {
+    "cadence": "daily",
+    "freezeResult": true,
+    "artifactPattern": "artifacts/operations/dormitory/observation-day-{day}.json"
+  },
+  "learningLoop": {
+    "rootCauseRequired": true,
+    "trainingUpdateRequiredForHumanError": true,
+    "policyUpdateRequiredForPolicyGap": true,
+    "repeatIncidentCreatesWorkItem": true
+  },
+  "rollbackReadiness": {
+    "sourceRef": "artifacts/go-live/dormitory/rollback-drill-result.json",
+    "mustBeGreenForContinue": true,
+    "appendOnlyCompensationRequired": true
+  },
+  "decisionRules": {
+    "p0": "pause_or_rollback",
+    "p1": "hold_and_fix",
+    "green": "continue_l1_observation",
+    "neverAutoUpgradeToL2": true
+  }
+}

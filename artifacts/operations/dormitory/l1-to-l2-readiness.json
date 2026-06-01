@@ -1,0 +1,107 @@
+{
+  "generated_at_utc": "2026-06-01T23:12:38.682Z",
+  "generated_by": "check-l1-to-l2-readiness",
+  "stage": "OAM-07",
+  "status": "NOT_ELIGIBLE",
+  "eligible": false,
+  "decision": "continue_l1_observation",
+  "productionAllowed": false,
+  "l2ProductionAllowed": false,
+  "businessProductionAllowed": false,
+  "latestMain": {
+    "repository": "dingz5612-eng/workos-next",
+    "branch": "main",
+    "checkedAtUtc": "2026-06-01T23:11:20.740Z",
+    "commitSha": "9e949b119250c4e2ebf3a49692be9db23877b1ab",
+    "ci": {
+      "id": 26787323124,
+      "name": "CI",
+      "status": "completed",
+      "conclusion": "success",
+      "headSha": "9e949b119250c4e2ebf3a49692be9db23877b1ab",
+      "htmlUrl": "https://github.com/dingz5612-eng/workos-next/actions/runs/26787323124",
+      "createdAt": "2026-06-01T23:02:52Z",
+      "updatedAt": "2026-06-01T23:05:43Z"
+    },
+    "v54ControlPlaneGuards": {
+      "id": 26787323157,
+      "name": "V5.4 Control Plane Guards",
+      "status": "completed",
+      "conclusion": "success",
+      "headSha": "9e949b119250c4e2ebf3a49692be9db23877b1ab",
+      "htmlUrl": "https://github.com/dingz5612-eng/workos-next/actions/runs/26787323157",
+      "createdAt": "2026-06-01T23:02:52Z",
+      "updatedAt": "2026-06-01T23:04:52Z"
+    }
+  },
+  "latestMainCiGreen": true,
+  "latestMainV54Green": true,
+  "cleanDaysObserved": 1,
+  "requiredCleanDays": 7,
+  "finalSystemGateStatus": "blocked",
+  "d2UpgradeDecision": "continue_l1_observation",
+  "criteria": [
+    {
+      "id": "default_not_eligible",
+      "status": "met"
+    },
+    {
+      "id": "seven_days_no_p0",
+      "status": "not_met",
+      "message": "已观察 1 个 clean day，需要 7 天。"
+    },
+    {
+      "id": "no_unresolved_p1_hold",
+      "status": "met"
+    },
+    {
+      "id": "finance_daily_close_100",
+      "status": "met"
+    },
+    {
+      "id": "no_red_shadow",
+      "status": "met"
+    },
+    {
+      "id": "no_unresolved_p0_invariant",
+      "status": "met"
+    },
+    {
+      "id": "evidence_missing_rate_below_threshold",
+      "status": "met"
+    },
+    {
+      "id": "projection_lag_below_threshold",
+      "status": "met"
+    },
+    {
+      "id": "rollback_readiness_green",
+      "status": "met"
+    },
+    {
+      "id": "latest_main_ci_green",
+      "status": "met"
+    },
+    {
+      "id": "latest_main_v54_guards_green",
+      "status": "met"
+    },
+    {
+      "id": "final_system_gate_blocks_production",
+      "status": "met"
+    }
+  ],
+  "blockers": [
+    "L1 observation window 未满 7 天。",
+    "L1 -> L2 必须单独 stage / PR / gate。",
+    "Final System Gate blocked 时不得 production GO。"
+  ],
+  "evidenceRefs": [
+    "docs/operations/l1-to-l2-upgrade-gate.yml",
+    "artifacts/operations/dormitory/observation-day-01.json",
+    "artifacts/go-live/dormitory/internal-pilot-go-no-go.json",
+    "artifacts/go-live/dormitory/l1-to-l2-upgrade-result.json"
+  ],
+  "noGoItems": [],
+  "nextAction": "继续 L1 Internal Pilot Observation Window；不得进入 L2。"
+}

@@ -1,0 +1,29 @@
+{
+  "taxonomyId": "oam-07-incident-root-cause-taxonomy",
+  "stage": "OAM-07",
+  "businessLine": "Dormitory",
+  "productionAllowed": false,
+  "categories": [
+    { "id": "human_training_gap", "title": "人员训练缺口", "requiresTrainingUpdate": true, "requiresPolicyUpdate": false, "owner": "releaseOwner" },
+    { "id": "policy_gap", "title": "策略缺口", "requiresTrainingUpdate": false, "requiresPolicyUpdate": true, "owner": "operations" },
+    { "id": "runtime_guard_gap", "title": "运行时保护缺口", "requiresTrainingUpdate": false, "requiresPolicyUpdate": true, "owner": "runtime" },
+    { "id": "finance_semantic_gap", "title": "财务语义缺口", "requiresTrainingUpdate": true, "requiresPolicyUpdate": true, "owner": "finance" },
+    { "id": "trust_boundary_gap", "title": "信任边界缺口", "requiresTrainingUpdate": true, "requiresPolicyUpdate": true, "owner": "admin" },
+    { "id": "surface_copy_gap", "title": "移动端解释缺口", "requiresTrainingUpdate": true, "requiresPolicyUpdate": false, "owner": "operations" }
+  ],
+  "incidentSamples": [
+    {
+      "id": "incident-learning-drill-001",
+      "severity": "P2",
+      "rootCause": "human_training_gap",
+      "owner": "releaseOwner",
+      "status": "closed",
+      "trainingUpdateRef": "docs/go-live/dormitory/training-signoff.yml",
+      "policyUpdateRef": null,
+      "riskSignalId": "risk-signal-learning-drill-001",
+      "workItemId": "WI-OBS-LEARNING-001",
+      "resolutionEventId": "resolution-learning-drill-001",
+      "lensUpdateRef": "DormitoryObservationSloLens"
+    }
+  ]
+}
