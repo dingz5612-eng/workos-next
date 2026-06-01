@@ -112,6 +112,8 @@ public static class FinanceTruthPipeline
         {
             throw new InvalidOperationException("finance_truth_rejects_unbalanced_transaction");
         }
+
+        LedgerSemanticRules.Validate(transaction, entries);
     }
 
     private static void RequireDepositAccountReference(MoneyBasis basis)
@@ -386,7 +388,14 @@ public sealed record FinanceReceipt(
 
 public sealed record FinanceIntake(string IntakeId, MoneyBasis Basis, string Status);
 
-public sealed record FinanceCase(string FinanceCaseId, string TenantId, string CaseId, string WorkItemId, string Reason);
+public sealed record FinanceCase(string FinanceCaseId, string TenantId, string CaseId, string WorkItemId, string Reason)
+{
+    public string OwnerRole { get; init; } = "finance";
+
+    public IReadOnlyList<string> EvidenceRefs { get; init; } = Array.Empty<string>();
+
+    public string TraceRef { get; init; } = string.Empty;
+}
 
 public sealed record FinanceReviewWorkItem(string WorkItemId, string FinanceCaseId, string OwnerRole, string Status);
 

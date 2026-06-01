@@ -1,0 +1,46 @@
+{
+  "version": "oam-05.finance-semantic-truth-kernel.v1",
+  "kernelId": "FinanceSemanticTruthKernel",
+  "owner": "FinanceTruthPack",
+  "moneyKernelPack": "MoneyKernelPack",
+  "productionAllowed": false,
+  "dormitoryL2ProductionAllowed": false,
+  "businessProduction": "BLOCKED",
+  "repairPartsHrStatus": "L0 Contract Preview",
+  "purpose": "用 basisType 到 account semantics 的机器合同证明财务事实不仅账平，而且业务语义正确。",
+  "sourceContracts": [
+    "docs/finance/ledger-basis-type-contract.yml",
+    "docs/finance/deposit-liability-semantic-contract.yml",
+    "docs/business/finance/ledger-semantic-rules.yml"
+  ],
+  "runtimeGuards": [
+    "LedgerSemanticRules.Validate",
+    "FinanceTruthPipeline.ValidateBalanced",
+    "OperationsUnitOfWork.ValidateLedgerBoundary"
+  ],
+  "semanticRules": [
+    "deposit_receipt credits deposit liability and never revenue",
+    "ordinary_payment credits stay receivable and never deposit liability",
+    "refund_deposit debits original deposit liability and never expense",
+    "correction uses reversal or compensation only",
+    "unclear money routes to UnclearMoneyCase before ledger commit",
+    "currency mismatch fails before commit",
+    "balanced but wrong accountType fails before commit"
+  ],
+  "artifacts": [
+    "artifacts/finance/finance-semantic-truth-result.json",
+    "artifacts/go-live/dormitory/ledger-semantic-result.json"
+  ],
+  "tests": [
+    "LedgerSemanticRulesTests",
+    "DormitoryFinanceRuntimeSemanticTests",
+    "DormitoryFinanceRuntimeCloseTests"
+  ],
+  "noGo": {
+    "depositAsRevenueAllowed": false,
+    "refundOverLiabilityAllowed": false,
+    "directLedgerEntryMutationAllowed": false,
+    "balancedWrongAccountTypeAllowed": false,
+    "businessProductionAllowed": false
+  }
+}

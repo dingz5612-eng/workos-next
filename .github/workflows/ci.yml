@@ -243,6 +243,12 @@ jobs:
       - name: Validate OAM-04 Surface Twin-Plane Contract
         run: node scripts/surface/check-oam-04-surface-twin-plane-contract.mjs
 
+      - name: Validate OAM-05 Finance Semantic Truth Kernel
+        run: |
+          node scripts/finance/check-finance-semantic-truth.mjs
+          node scripts/finance/check-ledger-basis-semantics.mjs
+          node scripts/check-ledger-semantic-rules.mjs
+
       - name: Architecture guard
         shell: pwsh
         env:

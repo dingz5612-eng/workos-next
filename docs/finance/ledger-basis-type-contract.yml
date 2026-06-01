@@ -1,0 +1,97 @@
+{
+  "version": "oam-05.ledger-basis-type-contract.v1",
+  "owner": "MoneyKernelPack",
+  "productionAllowed": false,
+  "basisTypes": [
+    {
+      "basisType": "deposit_receipt",
+      "debit": {
+        "accountId": "asset.cash_or_bank",
+        "accountType": "asset",
+        "entryRole": "cash_or_bank_increase"
+      },
+      "credit": {
+        "accountId": "liability.deposit",
+        "accountType": "liability",
+        "entryRole": "deposit_liability_increase"
+      },
+      "forbiddenAccountTypes": ["revenue", "expense"],
+      "requiredRefs": ["depositAccountId", "ledgerTransactionId", "commandSubmissionId"],
+      "semantic": "押金收取只增加押金负债，不形成收入。"
+    },
+    {
+      "basisType": "payment_receipt",
+      "debit": {
+        "accountId": "asset.cash_or_bank",
+        "accountType": "asset",
+        "entryRole": "cash_or_bank_increase"
+      },
+      "credit": {
+        "accountId": "receivable.stay",
+        "accountType": "receivable",
+        "entryRole": "ordinary_payment_allocation"
+      },
+      "forbiddenAccountTypes": ["liability.deposit"],
+      "requiredRefs": ["stayId", "ledgerTransactionId", "commandSubmissionId"],
+      "semantic": "普通收款冲减住宿应收，不混入押金负债。"
+    },
+    {
+      "basisType": "refund_deposit",
+      "debit": {
+        "accountId": "originalDepositAccountId",
+        "accountType": "liability",
+        "entryRole": "deposit_liability_decrease"
+      },
+      "credit": {
+        "accountId": "asset.cash_or_bank",
+        "accountType": "asset",
+        "entryRole": "cash_or_bank_decrease"
+      },
+      "forbiddenAccountTypes": ["expense", "revenue"],
+      "requiredRefs": ["originalDepositAccountId", "availableLiability", "ledgerTransactionId", "commandSubmissionId"],
+      "amountRules": ["refundAmount <= availableLiability"],
+      "semantic": "押金退款冲减原押金负债，不是费用。"
+    },
+    {
+      "basisType": "deposit_deduction",
+      "debit": {
+        "accountId": "originalDepositAccountId",
+        "accountType": "liability",
+        "entryRole": "deposit_liability_decrease"
+      },
+      "credit": {
+        "accountId": "receivable.stay",
+        "accountType": "receivable",
+        "entryRole": "deposit_applied_to_stay_balance"
+      },
+      "forbiddenAccountTypes": ["revenue"],
+      "requiredRefs": ["originalDepositAccountId", "availableLiability", "ledgerTransactionId", "commandSubmissionId"],
+      "amountRules": ["deductionAmount <= availableLiability"],
+      "semantic": "押金扣款冲减押金负债并抵扣住宿应收。"
+    },
+    {
+      "basisType": "ledger_correction_apply",
+      "debit": {
+        "accountId": "correction.reversal",
+        "accountType": "correction",
+        "entryRole": "correction_reversal_debit"
+      },
+      "credit": {
+        "accountId": "correction.offset",
+        "accountType": "correction",
+        "entryRole": "correction_offset_credit"
+      },
+      "forbiddenMutations": ["update LedgerEntry", "delete LedgerEntry"],
+      "requiredRefs": ["financeCaseId", "correctionRequestId", "ledgerTransactionId", "commandSubmissionId"],
+      "semantic": "财务纠错只能追加 reversal 或 compensation，不改旧账。"
+    }
+  ],
+  "mustFailCases": [
+    "balanced_wrong_account_type",
+    "deposit_as_revenue",
+    "refund_without_original_deposit_account",
+    "refund_over_available_liability",
+    "currency_mismatch",
+    "unclear_money_posted_before_resolution"
+  ]
+}
