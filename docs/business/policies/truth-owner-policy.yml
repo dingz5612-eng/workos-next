@@ -1,0 +1,27 @@
+{
+  "policyId": "business.truth-owner-policy",
+  "policyType": "truth-owner",
+  "version": "rtp.v1",
+  "owner": "BusinessTruthOS",
+  "sourceFile": "docs/business/truth-owner-registry.yml",
+  "runtimeBinding": {
+    "loader": "TruthOwnerPolicyLoader",
+    "evaluator": "TruthOwnerPolicyEvaluator"
+  },
+  "rules": {
+    "domainPackCentralTruthOwnershipAllowed": false,
+    "centralTruthFacts": ["Subject", "Vehicle", "PaymentFact", "DepositFact", "LedgerTransaction", "EvidenceObject"],
+    "requiredOwners": {
+      "Subject": "SharedGovernancePack",
+      "Vehicle": "SharedGovernancePack",
+      "PaymentFact": "FinanceTruthPack",
+      "DepositFact": "FinanceTruthPack",
+      "LedgerTransaction": "MoneyKernelPack",
+      "EvidenceObject": "EvidenceTrustPack"
+    }
+  },
+  "gateBinding": {
+    "gateInput": "truthOwnerPolicyResult",
+    "failureSeverity": "P0"
+  }
+}

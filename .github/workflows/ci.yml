@@ -83,6 +83,9 @@ jobs:
       - name: Run release evidence tests
         run: dotnet test tests/WorkOS.ReleaseEvidenceTests/WorkOS.ReleaseEvidenceTests.csproj -c Release --no-build
 
+      - name: Run policy as code tests
+        run: dotnet test tests/WorkOS.PolicyAsCodeTests/WorkOS.PolicyAsCodeTests.csproj -c Release --no-build
+
       - name: Run runtime contract tests
         env:
           WORKOS_TEST_CONNECTION: Host=localhost;Port=54329;Database=workosnext_test;Username=workosnext;Password=workosnext_dev
@@ -133,6 +136,13 @@ jobs:
         run: |
           node scripts/check-shared-governance-boundary.mjs --self-test
           node scripts/check-shared-governance-boundary.mjs
+
+      - name: Validate RT-P policy as code
+        run: |
+          node scripts/check-admission-surface-alignment.mjs --self-test
+          node scripts/check-admission-surface-alignment.mjs
+          node scripts/check-policy-as-code.mjs --self-test
+          node scripts/check-policy-as-code.mjs
 
       - name: Architecture guard
         shell: pwsh

@@ -1,0 +1,33 @@
+{
+  "version": "rtp.policy-as-code.v1",
+  "stage": "RT-P",
+  "status": "LOCAL_POLICY_CONTRACT",
+  "productionAllowed": false,
+  "policies": [
+    "evidence-policy.yml",
+    "admission-policy.yml",
+    "surface-policy.yml",
+    "finance-policy.yml",
+    "truth-owner-policy.yml",
+    "permission-policy.yml",
+    "cutover-policy.yml",
+    "invariant-policy.yml"
+  ],
+  "runtimeBindings": [
+    "PolicyLoader",
+    "PolicyEvaluator",
+    "EvidencePolicyEvaluator",
+    "AdmissionPolicyEvaluator",
+    "SurfacePolicyEvaluator",
+    "FinancePolicyEvaluator",
+    "TruthOwnerPolicyEvaluator",
+    "PermissionPolicyEvaluator",
+    "CutoverPolicyEvaluator"
+  ],
+  "gateContract": {
+    "sourceMode": "real",
+    "noSkeleton": true,
+    "noNotRun": true,
+    "manualPassForbidden": true
+  }
+}

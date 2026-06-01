@@ -21,7 +21,7 @@ public static class RuntimeCertificationRunner
         var shadowOut = options.Get("shadowOut", Path.Combine(".tmp", "v5_4", "runtime-certification-shadow.json"));
 
         var file = RunnerJson.Read<RuntimeCertificationScenarioFile>(scenariosPath);
-        var context = new RuntimeCertificationContext(tenantId, sliceId);
+        var context = new RuntimeCertificationContext(tenantId, sliceId, DormitoryEvidencePolicyLoader.LoadDefault());
         var results = file.Scenarios.Select(scenario => ReplayScenario(context, scenario)).ToArray();
         var failed = results.Where(result => result.Status != "passed").ToArray();
         var status = failed.Length == 0 ? "passed" : "red";
@@ -91,16 +91,15 @@ public static class RuntimeCertificationRunner
                 cutoverState,
                 rollbackPath,
                 beforeEvents == context.Store.DomainEvents.Count),
-            "business_blocked_422" => SimulatedBlock(
+            "business_blocked_422" => ReplayPolicyBlocked(
+                context,
                 scenario,
                 caseId,
                 workItemId,
                 commandId,
-                "business_blocked_422",
-                "422",
                 cutoverState,
                 rollbackPath,
-                beforeEvents == context.Store.DomainEvents.Count),
+                beforeEvents),
             "semantic_shadow_red_blocked" => SimulatedBlock(
                 scenario,
                 caseId,
@@ -301,6 +300,61 @@ public static class RuntimeCertificationRunner
             rollbackPath,
             noSideEffect ? null : "blocked_scenario_created_side_effect");
     }
+
+    private static RuntimeCertificationScenarioResult ReplayPolicyBlocked(
+        RuntimeCertificationContext context,
+        RuntimeCertificationScenario scenario,
+        string caseId,
+        string workItemId,
+        string commandId,
+        string cutoverState,
+        string rollbackPath,
+        int beforeEvents)
+    {
+        var decision = EvidencePolicyEvaluator.Evaluate(
+            context.EvidencePolicy,
+            new EvidencePolicyRequest(
+                EvidenceWorkItemType(scenario),
+                context.TenantId,
+                workItemId,
+                $"blocked-{scenario.ScenarioId}",
+                Array.Empty<EvidencePolicyRef>()));
+        var noSideEffect = beforeEvents == context.Store.DomainEvents.Count;
+        var passed = !decision.Allowed &&
+                     decision.Code == "missing_required_evidence" &&
+                     noSideEffect;
+
+        return Result(
+            scenario,
+            commandId,
+            caseId,
+            workItemId,
+            $"blocked-{scenario.ScenarioId}",
+            passed,
+            "business_blocked_422",
+            "not_committed",
+            "not_projected",
+            null,
+            [],
+            [],
+            [],
+            "green",
+            "422",
+            cutoverState,
+            rollbackPath,
+            passed ? null : $"evidence_policy_not_applied:{decision.Code}");
+    }
+
+    private static string EvidenceWorkItemType(RuntimeCertificationScenario scenario) =>
+        scenario.CardId switch
+        {
+            "BedAssignmentConfirm" => "Dorm.CheckinConfirm",
+            "DepositReceipt" => "Dorm.DepositConfirm",
+            "PaymentReceipt" => "Dorm.PaymentConfirm",
+            "RefundDeposit" => "Dorm.RefundApprove",
+            "ServiceTaskComplete" => "Dorm.RoomReadinessCheck",
+            _ => $"Dorm.{scenario.CardId ?? "OperationsConfirm"}"
+        };
 
     private static RuntimeCertificationScenarioResult Result(
         RuntimeCertificationScenario scenario,
@@ -601,10 +655,11 @@ public static class RuntimeCertificationRunner
 
     private sealed class RuntimeCertificationContext
     {
-        public RuntimeCertificationContext(string tenantId, string sliceId)
+        public RuntimeCertificationContext(string tenantId, string sliceId, EvidencePolicyDocument evidencePolicy)
         {
             TenantId = tenantId;
             SliceId = sliceId;
+            EvidencePolicy = evidencePolicy;
             Store = new InMemoryOperationsStore();
             var router = new SliceCommandHandlerRouter()
                 .Register(CanonicalOperationsApiService.ConfirmCommandType, CanonicalOperationsApiService.HandleConfirmCommand);
@@ -619,6 +674,8 @@ public static class RuntimeCertificationRunner
         public string TenantId { get; }
 
         public string SliceId { get; }
+
+        public EvidencePolicyDocument EvidencePolicy { get; }
 
         public InMemoryOperationsStore Store { get; }
 

@@ -136,17 +136,29 @@ Assert-Exists "scripts/check-provisional-ref-usage.mjs"
 Assert-Exists "scripts/check-receipt-projection.mjs"
 Assert-Exists "scripts/check-management-cockpit-boundary.mjs"
 Assert-Exists "scripts/check-shared-governance-boundary.mjs"
+Assert-Exists "scripts/check-admission-surface-alignment.mjs"
+Assert-Exists "scripts/check-policy-as-code.mjs"
 Assert-Exists "docs/business/truth-owner-registry.yml"
 Assert-Exists "docs/business/truth-maturity-levels.yml"
 Assert-Exists "docs/business/receipt-types.yml"
 Assert-Exists "docs/business/conflict-policies.yml"
 Assert-Exists "docs/business/domains/_template/domain-pack.yml"
 Assert-Exists "docs/business/shared-governance/subject-vehicle-truth.yml"
+Assert-Exists "docs/business/policies/policy-index.yml"
+Assert-Exists "docs/business/policies/evidence-policy.yml"
+Assert-Exists "docs/business/policies/admission-policy.yml"
+Assert-Exists "docs/business/policies/surface-policy.yml"
+Assert-Exists "docs/business/policies/finance-policy.yml"
+Assert-Exists "docs/business/policies/truth-owner-policy.yml"
+Assert-Exists "docs/business/policies/permission-policy.yml"
+Assert-Exists "docs/business/policies/cutover-policy.yml"
+Assert-Exists "docs/business/policies/invariant-policy.yml"
 Assert-Exists "schemas/domain-pack.schema.json"
 Assert-Exists "schemas/truth-owner-registry.schema.json"
 Assert-Exists "schemas/truth-promotion.schema.json"
 Assert-Exists "schemas/shared-governance.schema.json"
 Assert-Exists "schemas/receipt.schema.json"
+Assert-Exists "schemas/policy.schema.json"
 Assert-Exists "scripts/v5_4/run-control-plane-checks.ps1"
 Assert-Exists "scripts/v5_4/control-plane-migration.mjs"
 Assert-Exists "scripts/v5_4/shadow-namespace-isolation.mjs"
@@ -583,6 +595,10 @@ Invoke-Checked "node" @("scripts/check-management-cockpit-boundary.mjs", "--self
 Invoke-Checked "node" @("scripts/check-management-cockpit-boundary.mjs")
 Invoke-Checked "node" @("scripts/check-shared-governance-boundary.mjs", "--self-test")
 Invoke-Checked "node" @("scripts/check-shared-governance-boundary.mjs")
+Invoke-Checked "node" @("scripts/check-admission-surface-alignment.mjs", "--self-test")
+Invoke-Checked "node" @("scripts/check-admission-surface-alignment.mjs")
+Invoke-Checked "node" @("scripts/check-policy-as-code.mjs", "--self-test")
+Invoke-Checked "node" @("scripts/check-policy-as-code.mjs")
 
 $ci = Get-Content ".github/workflows/ci.yml" -Raw
 $v54Ci = Get-Content ".github/workflows/v5_4_control_plane.yml" -Raw
@@ -624,11 +640,16 @@ foreach ($requiredCiCommand in @(
   "check-provisional-ref-usage.mjs",
   "check-receipt-projection.mjs",
   "check-management-cockpit-boundary.mjs",
-  "check-shared-governance-boundary.mjs"
+  "check-shared-governance-boundary.mjs",
+  "check-admission-surface-alignment.mjs",
+  "check-policy-as-code.mjs"
 )) {
   if ($ci -notmatch [regex]::Escape($requiredCiCommand)) {
     Fail "CI must run RT-2 BTOS compiler command: $requiredCiCommand"
   }
+}
+if ($ci -notmatch "WorkOS\.PolicyAsCodeTests") {
+  Fail "CI must run WorkOS.PolicyAsCodeTests."
 }
 foreach ($requiredCiCommand in @("npm --prefix apps/mobile run test", "WorkOS.UnitTests", "WorkOS.RuntimeIntegrationTests")) {
   if ($ci -notmatch [regex]::Escape($requiredCiCommand)) {

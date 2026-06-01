@@ -1,9 +1,9 @@
 {
   "version": "rt4.evidence-graph.v1",
   "mode": "STACKED_PRECONSTRUCTION",
-  "branch": "codex/rt2a-shared-governance-identity-kernel",
-  "headSha": "c664705c0a87abf42102ef866a4fe6f0eb017b21",
-  "generatedAtUtc": "2026-06-01T08:00:32.801Z",
+  "branch": "codex/rtp-policy-as-code-control-plane",
+  "headSha": "a3aab0865be4ef4745e31c907c95f8c767f957a6",
+  "generatedAtUtc": "2026-06-01T08:30:52.610Z",
   "nodes": [
     {
       "id": "RT4-P0-001",
@@ -288,11 +288,30 @@
       "type": "branch",
       "status": "LOCAL_PASSED",
       "branch": "codex/rt2a-shared-governance-identity-kernel",
-      "headSha": "c664705c0a87abf42102ef866a4fe6f0eb017b21",
+      "headSha": "e560ff91266d243ef81daea7c07e933f1bc79adf",
       "refs": [
         "clean Docker PostgreSQL workosnext-rt2a-test",
         "node scripts/check-shared-governance-boundary.mjs --self-test",
         "node scripts/check-shared-governance-boundary.mjs",
+        "pwsh -NoProfile -File scripts/guard-architecture.ps1",
+        "pwsh -NoProfile -File scripts/v5_4/run-control-plane-checks.ps1"
+      ]
+    },
+    {
+      "id": "RT-P",
+      "type": "branch",
+      "status": "LOCAL_PASSED",
+      "branch": "codex/rtp-policy-as-code-control-plane",
+      "headSha": "a3aab0865be4ef4745e31c907c95f8c767f957a6",
+      "refs": [
+        "clean Docker PostgreSQL workosnext-rtp-test",
+        "dotnet test tests/WorkOS.PolicyAsCodeTests/WorkOS.PolicyAsCodeTests.csproj -c Release --no-build",
+        "dotnet test tests/WorkOS.RuntimeIntegrationTests/WorkOS.RuntimeIntegrationTests.csproj -c Release --no-build",
+        "node scripts/check-admission-surface-alignment.mjs --self-test",
+        "node scripts/check-admission-surface-alignment.mjs",
+        "node scripts/check-policy-as-code.mjs --self-test",
+        "node scripts/check-policy-as-code.mjs",
+        "node scripts/v5_4/certify-dormitory.mjs --sourceMode=real",
         "pwsh -NoProfile -File scripts/guard-architecture.ps1",
         "pwsh -NoProfile -File scripts/v5_4/run-control-plane-checks.ps1"
       ]
