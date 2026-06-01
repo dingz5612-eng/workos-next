@@ -1,0 +1,25 @@
+{
+  "version": "rt-s.mobile-reliability.scenarios.v1",
+  "domain": "mobile-reliability",
+  "scenarios": [
+    {
+      "scenarioId": "mobile-rel-001",
+      "name": "offline draft saved but confirm blocked until online",
+      "scenarioType": "rejected_command_scenario",
+      "expectedOutcome": "network_unknown",
+      "workItemType": "Mobile.SubmitAttempt",
+      "moneyCommand": false,
+      "requiredEvidence": ["device-trust"],
+      "outputs": {
+        "workItem": { "required": true },
+        "rejectedCommandSubmission": { "required": true },
+        "rejectionTrace": { "required": true },
+        "auditEvidence": { "min": 1 },
+        "domainEvents": { "allowed": false, "max": 0 },
+        "ledgerTransactions": { "allowed": false, "max": 0 },
+        "factTrace": { "required": true },
+        "operatingControlVisibility": ["personal_ops_center"]
+      }
+    }
+  ]
+}

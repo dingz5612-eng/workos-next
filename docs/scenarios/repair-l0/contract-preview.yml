@@ -1,0 +1,25 @@
+{
+  "version": "rt-s.repair-l0.scenarios.v1",
+  "domain": "repair-l0",
+  "scenarios": [
+    {
+      "scenarioId": "repair-l0-cert-001",
+      "name": "repair production confirm blocked while L0",
+      "scenarioType": "rejected_command_scenario",
+      "expectedOutcome": "permission_denied_403",
+      "workItemType": "Repair.Request",
+      "moneyCommand": false,
+      "requiredEvidence": ["admission-policy"],
+      "outputs": {
+        "workItem": { "required": true },
+        "rejectedCommandSubmission": { "required": true },
+        "rejectionTrace": { "required": true },
+        "auditEvidence": { "min": 1 },
+        "domainEvents": { "allowed": false, "max": 0 },
+        "ledgerTransactions": { "allowed": false, "max": 0 },
+        "factTrace": { "required": true },
+        "operatingControlVisibility": ["contract_preview"]
+      }
+    }
+  ]
+}

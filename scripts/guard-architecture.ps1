@@ -139,6 +139,13 @@ Assert-Exists "scripts/check-shared-governance-boundary.mjs"
 Assert-Exists "scripts/check-admission-surface-alignment.mjs"
 Assert-Exists "scripts/check-policy-as-code.mjs"
 Assert-Exists "scripts/check-finance-truth.mjs"
+Assert-Exists "scripts/check-executable-scenarios.mjs"
+Assert-Exists "docs/scenarios/_schema/scenario.schema.json"
+Assert-Exists "docs/scenarios/dormitory/golden-pilot.yml"
+Assert-Exists "docs/scenarios/finance/money-kernel.yml"
+Assert-Exists "docs/scenarios/repair-l0/contract-preview.yml"
+Assert-Exists "docs/scenarios/parts-l0/contract-preview.yml"
+Assert-Exists "docs/scenarios/mobile-reliability/submit-state.yml"
 Assert-Exists "docs/business/truth-owner-registry.yml"
 Assert-Exists "docs/business/truth-maturity-levels.yml"
 Assert-Exists "docs/business/receipt-types.yml"
@@ -608,6 +615,8 @@ Invoke-Checked "node" @("scripts/check-policy-as-code.mjs", "--self-test")
 Invoke-Checked "node" @("scripts/check-policy-as-code.mjs")
 Invoke-Checked "node" @("scripts/check-finance-truth.mjs", "--self-test")
 Invoke-Checked "node" @("scripts/check-finance-truth.mjs")
+Invoke-Checked "node" @("scripts/check-executable-scenarios.mjs", "--self-test")
+Invoke-Checked "node" @("scripts/check-executable-scenarios.mjs")
 
 $ci = Get-Content ".github/workflows/ci.yml" -Raw
 $v54Ci = Get-Content ".github/workflows/v5_4_control_plane.yml" -Raw
@@ -652,7 +661,8 @@ foreach ($requiredCiCommand in @(
   "check-shared-governance-boundary.mjs",
   "check-admission-surface-alignment.mjs",
   "check-policy-as-code.mjs",
-  "check-finance-truth.mjs"
+  "check-finance-truth.mjs",
+  "check-executable-scenarios.mjs"
 )) {
   if ($ci -notmatch [regex]::Escape($requiredCiCommand)) {
     Fail "CI must run RT-2 BTOS compiler command: $requiredCiCommand"
