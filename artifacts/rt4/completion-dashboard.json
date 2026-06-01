@@ -1,7 +1,7 @@
 {
   "version": "rt4.completion-dashboard.v1",
   "mode": "STACKED_PRECONSTRUCTION",
-  "generatedAtUtc": "2026-06-01T08:30:52.892Z",
+  "generatedAtUtc": "2026-06-01T08:55:45.429Z",
   "businessProduction": "BLOCKED",
   "dormitoryL2Production": "BLOCKED",
   "repairPartsHrStatus": "L0_OR_BLOCKED",
@@ -10,11 +10,11 @@
     "p1": 100,
     "p2": "tracked"
   },
-  "currentGate": "RT-P",
+  "currentGate": "RT-3",
   "currentGateStatus": "LOCAL_PASSED",
-  "currentGateBranch": "codex/rtp-policy-as-code-control-plane",
-  "currentGateHeadSha": "a3aab0865be4ef4745e31c907c95f8c767f957a6",
-  "nextAllowedStackedStage": "RT-3 stacked preconstruction",
+  "currentGateBranch": "codex/rt3-finance-truth-production-kernel",
+  "currentGateHeadSha": "1d29c3f5080ae94723418e116c22c1b17e962980",
+  "nextAllowedStackedStage": "RT-S stacked preconstruction",
   "centralMergeTrain": "LOCKED_UNTIL_RT_FINAL_LOCAL_PASSED",
   "evidenceGraphNodes": 23
 }

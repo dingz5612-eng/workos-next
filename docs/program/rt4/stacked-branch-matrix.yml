@@ -174,11 +174,26 @@
       "allowedFiles": ["docs/business/policies/**", "docs/business/dormitory/evidence-policy.yml", "docs/contracts/runtime-surface-policy.json", "schemas/policy.schema.json", "scripts/check-policy-as-code.mjs", "scripts/check-admission-surface-alignment.mjs", "services/core-api/WorkOS.Api/Runtime/BusinessPolicy/**", "services/core-api/WorkOS.Api/Properties/AssemblyInfo.cs", "tests/WorkOS.PolicyAsCodeTests/**", "tests/WorkOS.RuntimeIntegrationTests/DormitoryEvidenceScenarioTests.cs", "tools/control-plane/WorkOS.ControlPlaneRunners/RuntimeCertificationRunner.cs", ".github/workflows/ci.yml", "scripts/guard-architecture.ps1", "WorkOSNext.sln", "docs/program/rt4/*", "artifacts/rt4/*", "scripts/rt4/build-completion-dashboard.mjs"],
       "forbiddenFiles": ["RT-3 finance truth runtime", "RT-S executable scenario factory", "RT-B BStageGateRunner", "apps/mobile/**", "DORM-INT pilot activation", "production business activation"],
       "localCiStatus": "LOCAL_PASSED",
-      "headSha": "a3aab0865be4ef4745e31c907c95f8c767f957a6",
+      "headSha": "efa833cef03b181dda75eba8352eb479cda6d921",
       "stackedReady": true,
       "prUrl": "",
       "mergeStatus": "not_merged",
       "evidenceRefs": ["clean Docker PostgreSQL workosnext-rtp-test", "dotnet test tests/WorkOS.PolicyAsCodeTests/WorkOS.PolicyAsCodeTests.csproj -c Release --no-build", "dotnet test tests/WorkOS.RuntimeIntegrationTests/WorkOS.RuntimeIntegrationTests.csproj -c Release --no-build", "node scripts/check-admission-surface-alignment.mjs --self-test", "node scripts/check-admission-surface-alignment.mjs", "node scripts/check-policy-as-code.mjs --self-test", "node scripts/check-policy-as-code.mjs", "node scripts/v5_4/certify-dormitory.mjs --sourceMode=real", "pwsh -NoProfile -File scripts/guard-architecture.ps1", "pwsh -NoProfile -File scripts/v5_4/run-control-plane-checks.ps1"],
+      "nextBranchAllowed": true
+    },
+    {
+      "taskId": "RT-3",
+      "branch": "codex/rt3-finance-truth-production-kernel",
+      "baseBranch": "codex/rtp-policy-as-code-control-plane",
+      "dependsOn": "RT-P",
+      "allowedFiles": ["docs/business/finance/**", "schemas/finance-truth-pipeline.schema.json", "scripts/check-finance-truth.mjs", "tests/fixtures/rt3-finance-truth/**", "services/core-api/WorkOS.Api/Runtime/FinanceTruthKernel.cs", "services/core-api/WorkOS.Api/Runtime/BalancedMoneyKernel.cs", "tests/WorkOS.UnitTests/MoneyAllocationPropertyTests.cs", "tests/WorkOS.UnitTests/DepositRefundBoundaryTests.cs", "tests/WorkOS.UnitTests/LedgerMutationKillTests.cs", "tests/WorkOS.UnitTests/BalancedMoneyKernelTests.cs", "tests/WorkOS.RuntimeIntegrationTests/DormitoryGoldenPathTests.cs", "tools/control-plane/WorkOS.ControlPlaneRunners/RuntimeCertificationRunner.cs", ".github/workflows/ci.yml", "scripts/guard-architecture.ps1", "docs/program/rt4/*", "artifacts/rt4/*", "scripts/rt4/build-completion-dashboard.mjs"],
+      "forbiddenFiles": ["RT-S executable scenario factory", "RT-B BStageGateRunner", "RT-4 Dormitory L1 pilot activation", "apps/mobile/**", "DORM-INT pilot activation", "production business activation"],
+      "localCiStatus": "LOCAL_PASSED",
+      "headSha": "1d29c3f5080ae94723418e116c22c1b17e962980",
+      "stackedReady": true,
+      "prUrl": "",
+      "mergeStatus": "not_merged",
+      "evidenceRefs": ["clean Docker PostgreSQL workosnext-rt3-test", "node scripts/check-finance-truth.mjs --self-test", "node scripts/check-finance-truth.mjs", "dotnet test tests/WorkOS.UnitTests/WorkOS.UnitTests.csproj -c Release --no-build", "dotnet test tests/WorkOS.RuntimeIntegrationTests/WorkOS.RuntimeIntegrationTests.csproj -c Release --no-build", "dotnet run --project tests/WorkOS.RuntimeContractTests/WorkOS.RuntimeContractTests.csproj -c Release", "node scripts/v5_4/certify-dormitory.mjs --sourceMode=real", "pwsh -NoProfile -File scripts/guard-architecture.ps1", "pwsh -NoProfile -File scripts/v5_4/run-control-plane-checks.ps1"],
       "nextBranchAllowed": true
     }
   ]
