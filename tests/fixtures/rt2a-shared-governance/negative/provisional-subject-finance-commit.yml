@@ -1,0 +1,11 @@
+{
+  "scenarioId": "negative-provisional-subject-finance-commit",
+  "actorPack": "FinanceTruthPack",
+  "intent": "financeFinalCommit",
+  "createsFacts": ["LedgerTransaction"],
+  "consumesFacts": ["SubjectReceipt"],
+  "commitMode": "finalFinanceCommit",
+  "usesRefs": ["ProvisionalSubject"],
+  "outputs": ["LedgerTransaction"],
+  "workItem": "FinanceReviewWorkItem"
+}

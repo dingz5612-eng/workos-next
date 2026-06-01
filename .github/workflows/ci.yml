@@ -129,6 +129,11 @@ jobs:
           node scripts/check-management-cockpit-boundary.mjs --self-test
           node scripts/check-management-cockpit-boundary.mjs
 
+      - name: Validate RT-2A shared governance boundary
+        run: |
+          node scripts/check-shared-governance-boundary.mjs --self-test
+          node scripts/check-shared-governance-boundary.mjs
+
       - name: Architecture guard
         shell: pwsh
         env:

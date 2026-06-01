@@ -1,0 +1,77 @@
+{
+  "version": 1,
+  "packId": "SharedGovernancePack",
+  "truthKernel": "subject-vehicle-formal-relationship",
+  "ownsCenterTruth": ["Subject", "Vehicle", "FormalRelationship"],
+  "intakeFacts": ["SubjectIntake", "VehicleIntake"],
+  "provisionalFacts": ["ProvisionalSubject", "ProvisionalVehicle"],
+  "stewardshipWorkItems": ["SubjectStewardshipWorkItem", "VehicleStewardshipWorkItem"],
+  "receipts": ["SubjectReceipt", "VehicleReceipt", "MergedReceipt", "SupersededReceipt"],
+  "readModels": ["SubjectSummary", "VehicleSummary"],
+  "duplicatePolicy": {
+    "policyId": "shared-governance.duplicate-review",
+    "routeTo": "SubjectStewardshipWorkItem",
+    "decisionOwner": "SharedGovernancePack"
+  },
+  "mergePolicy": {
+    "policyId": "shared-governance.merge-subject",
+    "requiredOutputs": ["MergedReceipt", "SubjectReceipt"],
+    "decisionOwner": "SharedGovernancePack"
+  },
+  "supersedePolicy": {
+    "policyId": "shared-governance.supersede-vehicle",
+    "requiredOutputs": ["SupersededReceipt", "VehicleReceipt"],
+    "decisionOwner": "SharedGovernancePack"
+  },
+  "appealPolicy": {
+    "policyId": "shared-governance.appeal-review",
+    "routeTo": "SubjectStewardshipWorkItem",
+    "decisionOwner": "SharedGovernancePack"
+  },
+  "businessPackRules": {
+    "mayProduce": ["SubjectIntake", "VehicleIntake"],
+    "mustNotCreateFormalTruth": ["Subject", "Vehicle", "FormalRelationship"],
+    "financeCommitForbiddenRefs": ["ProvisionalSubject", "ProvisionalVehicle"],
+    "readOnly": ["SubjectReceipt", "VehicleReceipt", "SubjectSummary", "VehicleSummary"]
+  },
+  "consumerPacks": [
+    {
+      "packId": "DormitoryDomainPack",
+      "allowedOutputs": ["SubjectIntake"],
+      "allowedReads": ["SubjectReceipt", "SubjectSummary"]
+    },
+    {
+      "packId": "RepairDomainPack",
+      "allowedOutputs": ["VehicleIntake"],
+      "allowedReads": ["VehicleReceipt", "VehicleSummary"]
+    },
+    {
+      "packId": "HRDomainPack",
+      "allowedOutputs": ["SubjectIntake"],
+      "allowedReads": ["SubjectReceipt", "SubjectSummary"]
+    },
+    {
+      "packId": "FinanceTruthPack",
+      "allowedOutputs": [],
+      "allowedReads": ["SubjectReceipt", "VehicleReceipt", "SubjectSummary", "VehicleSummary"]
+    }
+  ],
+  "conflictRouting": {
+    "subjectConflictWorkItem": "SubjectStewardshipWorkItem",
+    "vehicleConflictWorkItem": "VehicleStewardshipWorkItem",
+    "requiresReviewWorkItem": true
+  },
+  "crosswalkPolicy": {
+    "policyId": "shared-governance.crosswalk-reference-only",
+    "businessPackCanStoreCrosswalk": true,
+    "crosswalkCannotBecomeFormalTruth": true
+  },
+  "certification": {
+    "requiredScenarios": [
+      "shared-gov-subject-intake",
+      "shared-gov-subject-merge",
+      "shared-gov-vehicle-conflict",
+      "shared-gov-provisional-finance-block"
+    ]
+  }
+}

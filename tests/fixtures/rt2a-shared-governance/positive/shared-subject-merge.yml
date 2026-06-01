@@ -1,0 +1,11 @@
+{
+  "scenarioId": "positive-shared-subject-merge",
+  "actorPack": "SharedGovernancePack",
+  "intent": "subjectMerge",
+  "createsFacts": ["Subject", "FormalRelationship"],
+  "consumesFacts": ["SubjectIntake"],
+  "commitMode": "sharedGovernanceCommit",
+  "usesRefs": ["ProvisionalSubject"],
+  "outputs": ["MergedReceipt", "SubjectReceipt"],
+  "workItem": "SubjectStewardshipWorkItem"
+}
