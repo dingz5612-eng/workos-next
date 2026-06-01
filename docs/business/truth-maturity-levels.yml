@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "levels": [
+    {
+      "id": "provisionalRef",
+      "description": "A temporary reference used before authoritative commit.",
+      "mayCommitLedger": false,
+      "mayServeAsCenterTruth": false
+    },
+    {
+      "id": "domainProposal",
+      "description": "A domain pack proposal awaiting owner confirmation.",
+      "mayCommitLedger": false,
+      "mayServeAsCenterTruth": false
+    },
+    {
+      "id": "ownerCommitted",
+      "description": "A fact committed by its registered truth owner.",
+      "mayCommitLedger": true,
+      "mayServeAsCenterTruth": true
+    },
+    {
+      "id": "projectedReceipt",
+      "description": "A receipt view over committed truth, never a copied truth source.",
+      "mayCommitLedger": false,
+      "mayServeAsCenterTruth": false
+    }
+  ]
+}

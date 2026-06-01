@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "cockpitId": "management-cockpit-positive",
+  "allowedActions": ["observe", "route", "escalate"],
+  "actions": [
+    {
+      "id": "route-payment-exception",
+      "kind": "route",
+      "targetDomain": "finance.payment-ledger",
+      "domainExceptionProcessing": false
+    }
+  ]
+}

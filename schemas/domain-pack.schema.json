@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://workosnext.local/schemas/domain-pack.schema.json",
+  "type": "object",
+  "required": ["version", "packId", "domainId", "owner", "domainOwner", "ownedFacts", "requestedFacts", "events", "workitems", "evidence", "finance", "invariants", "certification", "goNoGo", "allowedCapabilities", "forbiddenCapabilities", "receiptPolicy", "managementCockpitBoundary"],
+  "properties": {
+    "version": { "type": "integer", "const": 1 },
+    "packId": { "type": "string", "minLength": 1 },
+    "domainId": { "type": "string", "minLength": 1 },
+    "owner": { "type": "string", "minLength": 1 },
+    "domainOwner": { "type": "string", "minLength": 1 },
+    "ownedFacts": { "type": "array", "items": { "type": "string" } },
+    "requestedFacts": { "type": "array", "items": { "type": "string" } },
+    "events": { "type": "array", "items": { "type": "string" } },
+    "workitems": { "type": "array", "items": { "type": "string" } },
+    "evidence": {
+      "type": "object",
+      "required": ["required", "policy"],
+      "properties": {
+        "required": { "type": "array", "items": { "type": "string" } },
+        "policy": { "enum": ["referenceOnly"] }
+      },
+      "additionalProperties": false
+    },
+    "finance": {
+      "type": "object",
+      "required": ["moneyBasisPolicy", "ledgerPolicy"],
+      "properties": {
+        "moneyBasisPolicy": { "enum": ["routeToFinanceTruthPack"] },
+        "ledgerPolicy": { "enum": ["noDirectLedgerCommit"] }
+      },
+      "additionalProperties": false
+    },
+    "invariants": { "type": "array", "items": { "type": "string" } },
+    "certification": {
+      "type": "object",
+      "required": ["requiredScenarios"],
+      "properties": {
+        "requiredScenarios": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": false
+    },
+    "goNoGo": {
+      "type": "object",
+      "required": ["productionAllowedDefault"],
+      "properties": {
+        "productionAllowedDefault": { "type": "boolean", "const": false }
+      },
+      "additionalProperties": false
+    },
+    "allowedCapabilities": { "type": "array", "items": { "type": "string" } },
+    "forbiddenCapabilities": { "type": "array", "items": { "type": "string" } },
+    "receiptPolicy": { "enum": ["referenceOnly"] },
+    "managementCockpitBoundary": { "enum": ["observeAndRouteOnly"] }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,8 @@
+{
+  "version": 1,
+  "receiptId": "payment-receipt-positive",
+  "receiptType": "payment-receipt",
+  "sourceTruthFacts": ["PaymentFact"],
+  "projectionPolicy": "referenceOnly",
+  "truthRefs": ["payment-fact:PAY-1"]
+}

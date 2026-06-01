@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "packId": "bad-subject-vehicle-owner",
+  "domainId": "repair.local-identity",
+  "owner": "RepairDomainPack",
+  "domainOwner": "RepairDomainPack",
+  "ownedFacts": ["Subject", "Vehicle"],
+  "requestedFacts": [],
+  "events": ["SubjectCreated", "VehicleCreated"],
+  "workitems": ["RepairIdentityWorkItem"],
+  "evidence": {
+    "required": [],
+    "policy": "referenceOnly"
+  },
+  "finance": {
+    "moneyBasisPolicy": "routeToFinanceTruthPack",
+    "ledgerPolicy": "noDirectLedgerCommit"
+  },
+  "invariants": [],
+  "certification": {
+    "requiredScenarios": []
+  },
+  "goNoGo": {
+    "productionAllowedDefault": false
+  },
+  "allowedCapabilities": ["ownCenterTruth"],
+  "forbiddenCapabilities": [],
+  "receiptPolicy": "referenceOnly",
+  "managementCockpitBoundary": "observeAndRouteOnly"
+}

@@ -116,6 +116,19 @@ jobs:
       - name: Validate V5.5 rules OS
         run: node scripts/check-v5-5-rules-os.mjs --mode=ci --commitSha=${GITHUB_SHA} --ciRunId=${GITHUB_RUN_ID} --ciRunSha=${GITHUB_SHA} --v54RunId=ci-pending-${GITHUB_RUN_ID} --v54RunSha=${GITHUB_SHA}
 
+      - name: Validate RT-2 BTOS compiler contracts
+        run: |
+          node scripts/check-truth-owners.mjs --self-test
+          node scripts/check-truth-owners.mjs
+          node scripts/check-domain-packs.mjs --self-test
+          node scripts/check-domain-packs.mjs
+          node scripts/check-provisional-ref-usage.mjs --self-test
+          node scripts/check-provisional-ref-usage.mjs
+          node scripts/check-receipt-projection.mjs --self-test
+          node scripts/check-receipt-projection.mjs
+          node scripts/check-management-cockpit-boundary.mjs --self-test
+          node scripts/check-management-cockpit-boundary.mjs
+
       - name: Architecture guard
         shell: pwsh
         env:

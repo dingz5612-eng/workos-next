@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "promotionId": "draft-payment-positive",
+  "fromLevel": "provisionalRef",
+  "toLevel": "domainProposal",
+  "committer": "accommodation.stay",
+  "sourceRefType": "ProvisionalRef",
+  "targetFact": "PaymentFact",
+  "operation": "draftProjection"
+}

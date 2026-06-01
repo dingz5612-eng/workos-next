@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://workosnext.local/schemas/receipt.schema.json",
+  "type": "object",
+  "required": ["version", "receiptId", "receiptType", "sourceTruthFacts", "projectionPolicy"],
+  "properties": {
+    "version": { "type": "integer", "const": 1 },
+    "receiptId": { "type": "string", "minLength": 1 },
+    "receiptType": { "type": "string", "minLength": 1 },
+    "sourceTruthFacts": { "type": "array", "items": { "type": "string" } },
+    "projectionPolicy": { "enum": ["referenceOnly"] },
+    "truthRefs": { "type": "array", "items": { "type": "string" } },
+    "truthCopies": { "type": "array", "items": { "type": "string" }, "maxItems": 0 },
+    "centerTruthSnapshot": false,
+    "ownerCommittedCopy": false
+  },
+  "additionalProperties": false
+}

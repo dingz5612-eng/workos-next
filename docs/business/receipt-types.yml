@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "receiptTypes": [
+    {
+      "id": "payment-receipt",
+      "sourceTruthFacts": ["PaymentFact"],
+      "projectionPolicy": "referenceOnly",
+      "forbiddenFields": ["truthCopies", "centerTruthSnapshot", "ownerCommittedCopy"]
+    },
+    {
+      "id": "deposit-receipt",
+      "sourceTruthFacts": ["DepositFact"],
+      "projectionPolicy": "referenceOnly",
+      "forbiddenFields": ["truthCopies", "centerTruthSnapshot", "ownerCommittedCopy"]
+    }
+  ]
+}

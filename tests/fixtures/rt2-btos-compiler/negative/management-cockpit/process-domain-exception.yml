@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "cockpitId": "bad-management-cockpit-processing",
+  "allowedActions": ["observe", "route", "process"],
+  "actions": [
+    {
+      "id": "process-payment-exception",
+      "kind": "process",
+      "targetDomain": "finance.payment-ledger",
+      "domainExceptionProcessing": true
+    }
+  ]
+}
