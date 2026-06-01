@@ -1,0 +1,37 @@
+{
+  "generated_at_utc": "2026-06-01T23:33:57.244Z",
+  "generated_by": "check-domain-replication-pack",
+  "stage": "OAM-08",
+  "status": "passed",
+  "businessLine": "Dormitory",
+  "productionAllowed": false,
+  "l2ProductionAllowed": false,
+  "businessProductionAllowed": false,
+  "goldenDomainReplication": "READY_FOR_NEXT_DOMAIN_CANDIDATE",
+  "referenceSectionCount": 13,
+  "negativeScenarioCount": 14,
+  "consumerStates": [
+    {
+      "businessLine": "Repair",
+      "allowedUse": "template_read_only",
+      "maturity": "L0 Contract Preview"
+    },
+    {
+      "businessLine": "Parts",
+      "allowedUse": "template_read_only",
+      "maturity": "L0 Contract Preview"
+    },
+    {
+      "businessLine": "HR",
+      "allowedUse": "template_read_only",
+      "maturity": "L0 Contract Preview"
+    }
+  ],
+  "noGoItems": [],
+  "evidenceRefs": [
+    "docs/golden-domain/factory/domain-replication-template.yml",
+    "docs/golden-domain/dormitory/reference-pack.yml",
+    "docs/golden-domain/dormitory/negative-scenarios.yml",
+    "docs/golden-domain/dormitory/copy-to-next-domain-checklist.yml"
+  ]
+}

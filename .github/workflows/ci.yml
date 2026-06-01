@@ -259,6 +259,9 @@ jobs:
           node scripts/operations/check-l1-to-l2-readiness.mjs
           node scripts/operations/check-incident-learning-loop.mjs
 
+      - name: Validate OAM-08 Golden Domain Replication Factory
+        run: node scripts/golden-domain/check-domain-replication-pack.mjs
+
       - name: Architecture guard
         shell: pwsh
         env:
