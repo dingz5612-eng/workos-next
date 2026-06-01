@@ -1,9 +1,9 @@
 {
   "version": "rt4.evidence-graph.v1",
   "mode": "STACKED_PRECONSTRUCTION",
-  "branch": "codex/rt2-btos-compiler-mvp",
-  "headSha": "ab82b98debde9bb5219779b40ea6a23d22b766d6",
-  "generatedAtUtc": "2026-06-01T07:49:17.949Z",
+  "branch": "codex/rt2a-shared-governance-identity-kernel",
+  "headSha": "c664705c0a87abf42102ef866a4fe6f0eb017b21",
+  "generatedAtUtc": "2026-06-01T08:00:32.801Z",
   "nodes": [
     {
       "id": "RT4-P0-001",
@@ -265,7 +265,7 @@
       "type": "branch",
       "status": "LOCAL_PASSED",
       "branch": "codex/rt2-btos-compiler-mvp",
-      "headSha": "ab82b98debde9bb5219779b40ea6a23d22b766d6",
+      "headSha": "749313245b988297752b37ea422c5584ccabb1bd",
       "refs": [
         "clean Docker PostgreSQL workosnext-rt2-test",
         "node scripts/check-truth-owners.mjs --self-test",
@@ -279,6 +279,20 @@
         "node scripts/check-management-cockpit-boundary.mjs --self-test",
         "node scripts/check-management-cockpit-boundary.mjs",
         "pwsh -NoProfile -File scripts/clean-baseline.ps1",
+        "pwsh -NoProfile -File scripts/guard-architecture.ps1",
+        "pwsh -NoProfile -File scripts/v5_4/run-control-plane-checks.ps1"
+      ]
+    },
+    {
+      "id": "RT-2A",
+      "type": "branch",
+      "status": "LOCAL_PASSED",
+      "branch": "codex/rt2a-shared-governance-identity-kernel",
+      "headSha": "c664705c0a87abf42102ef866a4fe6f0eb017b21",
+      "refs": [
+        "clean Docker PostgreSQL workosnext-rt2a-test",
+        "node scripts/check-shared-governance-boundary.mjs --self-test",
+        "node scripts/check-shared-governance-boundary.mjs",
         "pwsh -NoProfile -File scripts/guard-architecture.ps1",
         "pwsh -NoProfile -File scripts/v5_4/run-control-plane-checks.ps1"
       ]
