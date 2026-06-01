@@ -46,12 +46,29 @@ export function openWorkItem(workItemId, ctx, fallback = {}) {
   const queueItem = (ctx.state.runtimeStore?.workQueue || []).find((item) => item.workItemId === workItemId || item.work_item_id === workItemId);
   const operationItem = (ctx.state.runtimeStore?.operationWorkItems || []).find((item) =>
     item.workItemId === workItemId || item.work_item_id === workItemId);
-  const selected = queueItem || operationItem || null;
-  ctx.state.selectedWorkItemId = workItemId;
+  const fallbackItem = findRuntimeWorkItemForFallback(ctx.state, fallback);
+  const selected = queueItem || operationItem || fallbackItem || null;
+  const resolvedWorkItemId = selected?.workItemId || selected?.work_item_id || persistedWorkItemIdFor(fallback.workspaceId, fallback.cardId) || workItemId;
+  ctx.state.selectedWorkItemId = resolvedWorkItemId;
   ctx.state.selectedWorkspace = selected?.workspaceId || selected?.workspace_id || fallback.workspaceId || ctx.state.selectedWorkspace;
   ctx.state.selectedCardId = selected?.cardId || selected?.card_id || fallback.cardId || ctx.state.selectedCardId || "";
   ctx.state.selectedCardIndex = -1;
   setView("operationPanel", ctx);
+}
+
+function findRuntimeWorkItemForFallback(state, fallback = {}) {
+  if (!fallback.workspaceId) return null;
+  return [
+    ...(state.runtimeStore?.operationWorkItems || []),
+    ...(state.runtimeStore?.workQueue || [])
+  ].find((item) =>
+    (item.workspaceId || item.workspace_id) === fallback.workspaceId &&
+    (!(item.cardId || item.card_id) || (item.cardId || item.card_id) === fallback.cardId) &&
+    (item.workItemId || item.work_item_id));
+}
+
+function persistedWorkItemIdFor(workspaceId, cardId) {
+  return workspaceId && cardId ? `${workspaceId}:${cardId}` : "";
 }
 
 export function selectCard(cardIndex, ctx) {

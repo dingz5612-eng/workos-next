@@ -86,7 +86,8 @@ export function LifecycleWorkspace(item, activeCard, ctx) {
 }
 
 export function OperationPanelView(innerHtml, item, activeCard, ctx) {
-  const model = workItemModel({ workspace: item, card: activeCard, workspaceId: item.id, cardId: activeCard.id }, ctx);
+  const workspace = item.workspace || item;
+  const model = workItemModel({ ...item, workspace, card: activeCard, workspaceId: item.workspaceId || workspace.id, cardId: item.cardId || activeCard.id }, ctx);
   const actionResult = ctx.state.lastActionResult || fallbackActionResult(ctx);
   return `<section class="operation-panel-view" data-component="OperationPanelView">
     <div class="operation-panel-head">
@@ -95,13 +96,14 @@ export function OperationPanelView(innerHtml, item, activeCard, ctx) {
       <small>${text(model.caseId, ctx)} · ${text(model.workItemType, ctx)}</small>
     </div>
     ${innerHtml}
-    ${TrustedConfirmSheet(item, activeCard, ctx)}
+    ${TrustedConfirmSheet({ ...item, workspace }, activeCard, ctx)}
     ${ActionResult(actionResult, ctx)}
   </section>`;
 }
 
 export function TrustedConfirmSheet(item, card, ctx) {
-  const model = workItemModel({ workspace: item, card, workspaceId: item.id, cardId: card.id }, ctx);
+  const workspace = item.workspace || item;
+  const model = workItemModel({ ...item, workspace, card, workspaceId: item.workspaceId || workspace.id, cardId: item.cardId || card.id }, ctx);
   return `<section class="trusted-confirm-sheet" data-component="TrustedConfirmSheet">
     <b>TrustedConfirmSheet</b>
     <dl>
@@ -200,17 +202,18 @@ export function DeviceTrustPanel(state = {}, ctx) {
 export function workItemModel(item = {}, ctx) {
   const workspace = item.workspace || item;
   const card = item.card || workspace.card || activeCard(workspace);
+  const runtimeItem = runtimeWorkItemFor(item, workspace, card, ctx);
   const evidence = card?.evidence || item.requiredEvidence || [];
   const drafts = workspace?.id && card?.id ? loadDraft(workspace.id, card.id) : { evidenceDrafts: [] };
   const title = item.title || workspace?.title || card?.title || item.workItemId || "";
   return {
     workspaceId: item.workspaceId || workspace?.id || "",
     cardId: item.cardId || card?.id || "",
-    workItemId: item.workItemId || card?.workItemId || workspace?.workItemId || workspace?.taskId || item.queueItemId || "",
-    caseId: item.caseId || workspace?.caseId || (workspace?.id ? `case:${workspace.id}` : ""),
-    workItemType: item.workItemType || card?.id || workspace?.domain || "operations",
-    lifecycleState: item.lifecycleState || item.status || card?.status || "ready",
-    ownerRole: item.ownerRole || card?.confirmation?.requiredRole || card?.Confirmation?.requiredRole || "operator",
+    workItemId: item.workItemId || item.work_item_id || runtimeItem?.workItemId || runtimeItem?.work_item_id || persistedWorkItemIdFor(workspace, card) || item.queueItemId || "",
+    caseId: item.caseId || item.case_id || runtimeItem?.caseId || runtimeItem?.case_id || workspace?.caseId || workspace?.id || "",
+    workItemType: item.workItemType || item.work_item_type || runtimeItem?.workItemType || runtimeItem?.work_item_type || card?.id || workspace?.domain || "operations",
+    lifecycleState: item.lifecycleState || item.lifecycle_state || item.status || runtimeItem?.lifecycleState || runtimeItem?.lifecycle_state || runtimeItem?.status || card?.status || "ready",
+    ownerRole: item.ownerRole || item.owner_role || runtimeItem?.ownerRole || runtimeItem?.owner_role || card?.confirmation?.requiredRole || card?.Confirmation?.requiredRole || "operator",
     SLA: item.SLA || item.sla || item.due || item.dueAt || "same-day",
     requiredEvidence: evidence.map((field) => typeof field === "string" ? field : (ctx.localTerm ? ctx.localTerm(field) : field.id)).filter(Boolean),
     nextAction: item.nextAction || item.reason || tx(workspace?.next, ctx) || tx(card?.title, ctx) || "-",
@@ -220,6 +223,33 @@ export function workItemModel(item = {}, ctx) {
     dueAt: item.dueAt || item.due || "today",
     businessObject: tx(title, ctx) || item.businessObject || "-"
   };
+}
+
+function runtimeWorkItemFor(item, workspace, card, ctx) {
+  const selectedWorkItemId = ctx?.state?.selectedWorkItemId || item.workItemId || item.work_item_id || "";
+  const runtimeItems = [
+    ...(ctx?.state?.runtimeStore?.operationWorkItems || []),
+    ...(ctx?.state?.runtimeStore?.workQueue || [])
+  ];
+  return runtimeItems.find((entry) =>
+    [entry.workItemId, entry.work_item_id].includes(selectedWorkItemId)) ||
+    runtimeItems.find((entry) =>
+      (entry.workspaceId || entry.workspace_id) === workspace?.id &&
+      (!(entry.cardId || entry.card_id) || (entry.cardId || entry.card_id) === card?.id) &&
+      (entry.workItemId || entry.work_item_id));
+}
+
+function persistedWorkItemIdFor(workspace, card) {
+  if (workspace?.runtimeWorkItemId) return workspace.runtimeWorkItemId;
+  if (card?.runtimeWorkItemId) return card.runtimeWorkItemId;
+  if (workspace?.workItemId && isPersistedWorkItemId(workspace.workItemId)) return workspace.workItemId;
+  if (card?.workItemId && isPersistedWorkItemId(card.workItemId)) return card.workItemId;
+  if (workspace?.id && card?.id) return `${workspace.id}:${card.id}`;
+  return "";
+}
+
+function isPersistedWorkItemId(value) {
+  return String(value || "").includes(":") || String(value || "").startsWith("wi-");
 }
 
 function queuePanel(component, count, message, ctx) {
