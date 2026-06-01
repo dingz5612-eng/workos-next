@@ -1,0 +1,37 @@
+{
+  "generated_at_utc": "2026-06-01T19:12:34.089Z",
+  "generated_by": "build-dormitory-observation-dashboard",
+  "stage": "D2",
+  "status": "passed",
+  "observationWindowStatus": "active_l1_observation",
+  "decision": "continue_l1_observation",
+  "productionAllowed": false,
+  "l2ProductionAllowed": false,
+  "businessProductionAllowed": false,
+  "dormitoryStatus": "L1 Internal Pilot",
+  "repairPartsHrStatus": "L0 Contract Preview",
+  "daysObserved": 1,
+  "requiredCleanDaysForL2": 7,
+  "p0StopCount": 0,
+  "p1HoldCount": 0,
+  "financeDailyCloseContinuity": "green",
+  "evidenceMetrics": {
+    "missingRate": 0.005,
+    "rejectedRate": 0.01,
+    "uploadFailureRate": 0,
+    "wrongScopeEvidenceCount": 0
+  },
+  "projectionLagP95Minutes": 2,
+  "slaOverdueCount": 0,
+  "rollbackReadiness": "green",
+  "l1ToL2Decision": "not_eligible",
+  "nextAction": "继续 7 天 L1 Internal Pilot Observation Window；L1 -> L2 必须走单独 stage / PR / gate。",
+  "evidenceRefs": [
+    "docs/go-live/dormitory/observation-window.yml",
+    "docs/go-live/dormitory/observation-metric-contract.yml",
+    "docs/go-live/dormitory/observation-incident-policy.yml",
+    "docs/go-live/dormitory/l1-to-l2-upgrade-gate.yml",
+    "artifacts/go-live/dormitory/daily-observation-day-01.json",
+    "artifacts/go-live/dormitory/l1-to-l2-upgrade-result.json"
+  ]
+}

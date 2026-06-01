@@ -1,0 +1,77 @@
+{
+  "generated_at_utc": "2026-06-01T19:12:34.179Z",
+  "generated_by": "check-dormitory-l1-to-l2-upgrade",
+  "stage": "D2",
+  "status": "NOT_ELIGIBLE",
+  "eligible": false,
+  "decision": "continue_l1_observation",
+  "internalPilotAllowed": true,
+  "productionAllowed": false,
+  "l2ProductionAllowed": false,
+  "businessProductionAllowed": false,
+  "mainHead": "6bfed299796fb326ad780e5230e2dcfd9871761c",
+  "daysObserved": 1,
+  "requiredCleanDays": 7,
+  "p0StopCount": 0,
+  "p1HoldCount": 0,
+  "financeDailyCloseContinuity": "1/1",
+  "finalSystemGateStatus": "blocked",
+  "requiresSeparateStage": true,
+  "requiresSeparatePr": true,
+  "criteria": [
+    {
+      "id": "seven_days_no_p0",
+      "status": "not_met",
+      "message": "已观察 1 天，需要 7 天无 P0。"
+    },
+    {
+      "id": "no_unresolved_p1_hold",
+      "status": "met"
+    },
+    {
+      "id": "finance_daily_close_100",
+      "status": "met"
+    },
+    {
+      "id": "no_red_shadow",
+      "status": "met"
+    },
+    {
+      "id": "no_unresolved_p0_invariant",
+      "status": "met"
+    },
+    {
+      "id": "evidence_missing_rate_below_threshold",
+      "status": "met"
+    },
+    {
+      "id": "projection_lag_below_threshold",
+      "status": "met"
+    },
+    {
+      "id": "rollback_readiness_green",
+      "status": "met"
+    },
+    {
+      "id": "latest_main_ci_green",
+      "status": "not_evaluated_until_upgrade_stage",
+      "message": "D2 不在本阶段授予 L2；latest main CI 需在单独 L1->L2 stage 重新验证。"
+    },
+    {
+      "id": "latest_main_v54_guards_green",
+      "status": "not_evaluated_until_upgrade_stage",
+      "message": "D2 不在本阶段授予 L2；latest main V5.4 Guards 需在单独 L1->L2 stage 重新验证。"
+    },
+    {
+      "id": "final_system_gate_not_blocked_for_production",
+      "status": "not_met",
+      "message": "Final System Gate blocked 时不得 production GO。"
+    }
+  ],
+  "blockers": [
+    "L1 observation window 未满 7 天。",
+    "L1 -> L2 必须单独 stage / PR / gate。",
+    "Final System Gate blocked 时不得 production GO。"
+  ],
+  "nextAction": "继续 L1 Internal Pilot Observation Window；不得自动升级 L2 Production。"
+}

@@ -1,0 +1,75 @@
+{
+  "observationId": "dorm-l1-observation-2026-06",
+  "businessLine": "Dormitory",
+  "status": "L1 Internal Pilot Observation Window",
+  "internalPilotAllowed": true,
+  "productionAllowed": false,
+  "l2ProductionAllowed": false,
+  "businessProductionAllowed": false,
+  "durationDays": 7,
+  "minimumCleanDaysForUpgrade": 7,
+  "timezone": "Asia/Shanghai",
+  "dailyReviewTime": "18:00",
+  "dayResultPattern": "artifacts/go-live/dormitory/daily-observation-day-{day}.json",
+  "metricContractRef": "docs/go-live/dormitory/observation-metric-contract.yml",
+  "incidentPolicyRef": "docs/go-live/dormitory/observation-incident-policy.yml",
+  "l1ToL2GateRef": "docs/go-live/dormitory/l1-to-l2-upgrade-gate.yml",
+  "dashboardRef": "docs/go-live/dormitory/observation-window-dashboard.md",
+  "owners": {
+    "businessOwner": "Dormitory Operations Owner",
+    "technicalOwner": "Runtime Owner",
+    "financeOwner": "finance",
+    "operationsOwner": "Dormitory Operations Owner",
+    "onCallOwner": "Support Owner",
+    "releaseOwner": "releaseOwner"
+  },
+  "scopeBoundaries": {
+    "dormitoryStatus": "L1 Internal Pilot",
+    "repairStatus": "L0 Contract Preview",
+    "partsStatus": "L0 Contract Preview",
+    "hrStatus": "L0 Contract Preview",
+    "l1ToL2RequiresSeparateStage": true,
+    "finalSystemGateBlockedMeansNoProductionGo": true
+  },
+  "stopConditions": [
+    "money mismatch red",
+    "duplicate ledger entry",
+    "unbalanced ledger transaction",
+    "deposit as revenue",
+    "refund over liability",
+    "bed double occupancy",
+    "evidence leak",
+    "wrong tenant evidence",
+    "device trust bypass",
+    "unable to rollback",
+    "finance daily close failed",
+    "BStageGate red",
+    "Red ShadowCompareReport",
+    "unresolved P0 invariant"
+  ],
+  "holdConditions": [
+    "projection lag above threshold",
+    "evidence upload failure above threshold",
+    "evidence missing rate above threshold",
+    "rejected 422 abnormal",
+    "finance case backlog above threshold",
+    "unclear money backlog above threshold",
+    "SLA overdue above threshold",
+    "training blocking issue open",
+    "support ticket spike"
+  ],
+  "dailyDecisionRules": {
+    "p0Stop": "pause_or_rollback",
+    "p1Hold": "hold_and_fix",
+    "noP0NoP1": "continue_l1_observation",
+    "neverAutoUpgradeToL2": true
+  },
+  "evidenceRefs": [
+    "artifacts/go-live/dormitory/internal-pilot-go-no-go.json",
+    "artifacts/go-live/dormitory/finance-daily-close-result.json",
+    "artifacts/go-live/dormitory/b-stage-gate-result.json",
+    "artifacts/go-live/dormitory/rollback-drill-result.json",
+    "artifacts/go-live/dormitory/training-signoff-result.json",
+    "artifacts/go-live/dormitory/live-api-db-replay-result.json"
+  ]
+}
