@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "promotionId": "bad-provisional-ledger-commit",
+  "fromLevel": "provisionalRef",
+  "toLevel": "ownerCommitted",
+  "committer": "finance.payment-ledger",
+  "sourceRefType": "ProvisionalRef",
+  "targetFact": "PaymentFact",
+  "operation": "ledgerCommit"
+}

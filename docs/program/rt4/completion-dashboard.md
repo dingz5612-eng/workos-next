@@ -20,12 +20,12 @@ Repair / Parts / HR: `L0_OR_BLOCKED`
 
 ## Current Gate
 
-RT-DB: `LOCAL_PASSED`
+RT-2: `LOCAL_PASSED`
 
-Current branch: `codex/rtdb-db-role-isolation-shadow-defense`
+Current branch: `codex/rt2-btos-compiler-mvp`
 
-Head sha: `a6573c028f819bfabf443199cd72125568c7e2c2`
+Head sha: `ab82b98debde9bb5219779b40ea6a23d22b766d6`
 
-Next allowed stage after RT-DB local pass: `RT-2 stacked preconstruction`.
+Next allowed stage after RT-2 local pass: `RT-2A stacked preconstruction`.
 
 Formal Central Merge Train: `LOCKED_UNTIL_RT_FINAL_LOCAL_PASSED`.

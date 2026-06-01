@@ -130,6 +130,20 @@ Assert-Exists "scripts/check-rule-authority.mjs"
 Assert-Exists "scripts/check-rule-drift.mjs"
 Assert-Exists "scripts/check-v5-5-rules-os.mjs"
 Assert-Exists "scripts/check-no-production-fake-fallback.mjs"
+Assert-Exists "scripts/check-truth-owners.mjs"
+Assert-Exists "scripts/check-domain-packs.mjs"
+Assert-Exists "scripts/check-provisional-ref-usage.mjs"
+Assert-Exists "scripts/check-receipt-projection.mjs"
+Assert-Exists "scripts/check-management-cockpit-boundary.mjs"
+Assert-Exists "docs/business/truth-owner-registry.yml"
+Assert-Exists "docs/business/truth-maturity-levels.yml"
+Assert-Exists "docs/business/receipt-types.yml"
+Assert-Exists "docs/business/conflict-policies.yml"
+Assert-Exists "docs/business/domains/_template/domain-pack.yml"
+Assert-Exists "schemas/domain-pack.schema.json"
+Assert-Exists "schemas/truth-owner-registry.schema.json"
+Assert-Exists "schemas/truth-promotion.schema.json"
+Assert-Exists "schemas/receipt.schema.json"
 Assert-Exists "scripts/v5_4/run-control-plane-checks.ps1"
 Assert-Exists "scripts/v5_4/control-plane-migration.mjs"
 Assert-Exists "scripts/v5_4/shadow-namespace-isolation.mjs"
@@ -554,6 +568,16 @@ Invoke-Checked "node" @("scripts/check-rule-drift.mjs")
 Invoke-Checked "node" @("scripts/check-v5-5-rules-os.mjs")
 Invoke-Checked "node" @("scripts/check-no-production-fake-fallback.mjs", "--self-test")
 Invoke-Checked "node" @("scripts/check-no-production-fake-fallback.mjs")
+Invoke-Checked "node" @("scripts/check-truth-owners.mjs", "--self-test")
+Invoke-Checked "node" @("scripts/check-truth-owners.mjs")
+Invoke-Checked "node" @("scripts/check-domain-packs.mjs", "--self-test")
+Invoke-Checked "node" @("scripts/check-domain-packs.mjs")
+Invoke-Checked "node" @("scripts/check-provisional-ref-usage.mjs", "--self-test")
+Invoke-Checked "node" @("scripts/check-provisional-ref-usage.mjs")
+Invoke-Checked "node" @("scripts/check-receipt-projection.mjs", "--self-test")
+Invoke-Checked "node" @("scripts/check-receipt-projection.mjs")
+Invoke-Checked "node" @("scripts/check-management-cockpit-boundary.mjs", "--self-test")
+Invoke-Checked "node" @("scripts/check-management-cockpit-boundary.mjs")
 
 $ci = Get-Content ".github/workflows/ci.yml" -Raw
 $v54Ci = Get-Content ".github/workflows/v5_4_control_plane.yml" -Raw
@@ -588,6 +612,17 @@ foreach ($requiredCiCommand in @("validate-slice-admission.mjs", "architecture-d
 }
 if ($ci -notmatch "check-v5-5-rules-os\.mjs") {
   Fail "CI must run V5.5 Rules OS gate."
+}
+foreach ($requiredCiCommand in @(
+  "check-truth-owners.mjs",
+  "check-domain-packs.mjs",
+  "check-provisional-ref-usage.mjs",
+  "check-receipt-projection.mjs",
+  "check-management-cockpit-boundary.mjs"
+)) {
+  if ($ci -notmatch [regex]::Escape($requiredCiCommand)) {
+    Fail "CI must run RT-2 BTOS compiler command: $requiredCiCommand"
+  }
 }
 foreach ($requiredCiCommand in @("npm --prefix apps/mobile run test", "WorkOS.UnitTests", "WorkOS.RuntimeIntegrationTests")) {
   if ($ci -notmatch [regex]::Escape($requiredCiCommand)) {

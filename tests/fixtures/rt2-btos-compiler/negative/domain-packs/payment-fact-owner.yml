@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "packId": "bad-payment-fact-owner",
+  "domainId": "business.payments",
+  "owner": "business.payments",
+  "domainOwner": "business.payments",
+  "ownedFacts": ["PaymentFact"],
+  "requestedFacts": [],
+  "events": ["PaymentFactCommitted"],
+  "workitems": ["PaymentCommitWorkItem"],
+  "evidence": {
+    "required": [],
+    "policy": "referenceOnly"
+  },
+  "finance": {
+    "moneyBasisPolicy": "routeToFinanceTruthPack",
+    "ledgerPolicy": "noDirectLedgerCommit"
+  },
+  "invariants": [],
+  "certification": {
+    "requiredScenarios": []
+  },
+  "goNoGo": {
+    "productionAllowedDefault": false
+  },
+  "allowedCapabilities": ["ownCenterTruth"],
+  "forbiddenCapabilities": [],
+  "receiptPolicy": "referenceOnly",
+  "managementCockpitBoundary": "observeAndRouteOnly"
+}

@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "policies": [
+    {
+      "id": "truth-owner-wins",
+      "appliesTo": ["centerTruth"],
+      "resolution": "rejectNonOwnerCommit",
+      "severity": "P0"
+    },
+    {
+      "id": "receipt-reference-only",
+      "appliesTo": ["projectedReceipt"],
+      "resolution": "rejectCopiedTruth",
+      "severity": "P0"
+    },
+    {
+      "id": "management-cockpit-boundary",
+      "appliesTo": ["domainException"],
+      "resolution": "routeToOwningDomain",
+      "severity": "P0"
+    }
+  ]
+}

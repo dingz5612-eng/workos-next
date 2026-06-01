@@ -1,9 +1,9 @@
 {
   "version": "rt4.evidence-graph.v1",
   "mode": "STACKED_PRECONSTRUCTION",
-  "branch": "codex/rtdb-db-role-isolation-shadow-defense",
-  "headSha": "a6573c028f819bfabf443199cd72125568c7e2c2",
-  "generatedAtUtc": "2026-06-01T07:39:33.925Z",
+  "branch": "codex/rt2-btos-compiler-mvp",
+  "headSha": "ab82b98debde9bb5219779b40ea6a23d22b766d6",
+  "generatedAtUtc": "2026-06-01T07:49:17.949Z",
   "nodes": [
     {
       "id": "RT4-P0-001",
@@ -241,7 +241,8 @@
         "dotnet test tests/WorkOS.RuntimeIntegrationTests/WorkOS.RuntimeIntegrationTests.csproj -c Release --no-build",
         "dotnet run --project tests/WorkOS.RuntimeContractTests/WorkOS.RuntimeContractTests.csproj -c Release",
         "pwsh -NoProfile -File scripts/guard-architecture.ps1",
-        "pwsh -NoProfile -File scripts/v5_4/run-control-plane-checks.ps1"
+        "pwsh -NoProfile -File scripts/v5_4/run-control-plane-checks.ps1",
+        "pwsh -NoProfile -File scripts/clean-baseline.ps1"
       ]
     },
     {
@@ -249,12 +250,35 @@
       "type": "branch",
       "status": "LOCAL_PASSED",
       "branch": "codex/rtdb-db-role-isolation-shadow-defense",
-      "headSha": "a6573c028f819bfabf443199cd72125568c7e2c2",
+      "headSha": "9207a880e97e82c2c35ed10997b3b037d5a51e86",
       "refs": [
         "clean Docker PostgreSQL workosnext-rt-db-test",
         "infra/db/migrations/034_next_control_plane_runtime_roles.sql",
         "dotnet test tests/WorkOS.DatabaseSecurityTests/WorkOS.DatabaseSecurityTests.csproj -c Release --no-build",
         "node scripts/v5_4/shadow-namespace-isolation.mjs",
+        "pwsh -NoProfile -File scripts/guard-architecture.ps1",
+        "pwsh -NoProfile -File scripts/v5_4/run-control-plane-checks.ps1"
+      ]
+    },
+    {
+      "id": "RT-2",
+      "type": "branch",
+      "status": "LOCAL_PASSED",
+      "branch": "codex/rt2-btos-compiler-mvp",
+      "headSha": "ab82b98debde9bb5219779b40ea6a23d22b766d6",
+      "refs": [
+        "clean Docker PostgreSQL workosnext-rt2-test",
+        "node scripts/check-truth-owners.mjs --self-test",
+        "node scripts/check-truth-owners.mjs",
+        "node scripts/check-domain-packs.mjs --self-test",
+        "node scripts/check-domain-packs.mjs",
+        "node scripts/check-provisional-ref-usage.mjs --self-test",
+        "node scripts/check-provisional-ref-usage.mjs",
+        "node scripts/check-receipt-projection.mjs --self-test",
+        "node scripts/check-receipt-projection.mjs",
+        "node scripts/check-management-cockpit-boundary.mjs --self-test",
+        "node scripts/check-management-cockpit-boundary.mjs",
+        "pwsh -NoProfile -File scripts/clean-baseline.ps1",
         "pwsh -NoProfile -File scripts/guard-architecture.ps1",
         "pwsh -NoProfile -File scripts/v5_4/run-control-plane-checks.ps1"
       ]

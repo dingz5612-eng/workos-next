@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://workosnext.local/schemas/truth-promotion.schema.json",
+  "type": "object",
+  "required": ["version", "promotionId", "fromLevel", "toLevel", "committer", "sourceRefType", "targetFact", "operation"],
+  "properties": {
+    "version": { "type": "integer", "const": 1 },
+    "promotionId": { "type": "string", "minLength": 1 },
+    "fromLevel": { "type": "string", "minLength": 1 },
+    "toLevel": { "type": "string", "minLength": 1 },
+    "committer": { "type": "string", "minLength": 1 },
+    "sourceRefType": { "type": "string", "minLength": 1 },
+    "targetFact": { "type": "string", "minLength": 1 },
+    "operation": { "type": "string", "minLength": 1 }
+  },
+  "additionalProperties": false
+}
