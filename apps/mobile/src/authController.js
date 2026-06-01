@@ -1,4 +1,5 @@
 import { loginActor } from "./apiClient.js";
+import { defaultHomeForRole } from "./experienceContract.js";
 import { setView } from "./navigationController.js";
 
 export async function login(ctx) {
@@ -15,7 +16,7 @@ export async function login(ctx) {
     ctx.state.currentActor = session;
     ctx.state.loginMessage = "";
     localStorage.setItem("workosnext.actorSession", JSON.stringify(session));
-    setView(localStorage.getItem("workosnext.onboarded") ? "home" : "onboarding", ctx);
+    setView(localStorage.getItem("workosnext.onboarded") ? defaultHomeForRole(session.role) : "onboarding", ctx);
   } catch {
     ctx.state.loginMessage = ctx.tr("loginFailed");
     ctx.render();

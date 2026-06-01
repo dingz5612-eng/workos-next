@@ -28,6 +28,7 @@ export function bindEvents(ctx) {
   document.querySelector("#skip")?.addEventListener("click", () => onboard(ctx));
   document.querySelectorAll("[data-view]").forEach((node) => node.addEventListener("click", () => setView(node.dataset.view, ctx)));
   document.querySelectorAll("[data-workspace]").forEach((node) => node.addEventListener("click", () => openWorkspace(node.dataset.workspace, ctx, node.dataset.cardId || "")));
+  document.querySelectorAll("[data-work-item-id]").forEach((node) => node.addEventListener("click", () => openWorkItem(node.dataset.workItemId, ctx)));
   document.querySelectorAll("[data-card-index]").forEach((node) => node.addEventListener("click", () => selectCard(node.dataset.cardIndex, ctx)));
   document.querySelector("#query")?.addEventListener("input", (event) => updateSearchQuery(event.target.value, ctx));
   document.querySelector("#searchNow")?.addEventListener("click", () => runSearch(ctx));
@@ -36,7 +37,8 @@ export function bindEvents(ctx) {
   document.querySelector(".operation-inputs")?.addEventListener("input", (event) => collectDraftingValuesOnInput(event, ctx));
   document.querySelector(".operation-inputs")?.addEventListener("change", (event) => collectDraftingValuesOnInput(event, ctx));
   document.querySelector(".evidence-row")?.addEventListener("click", (event) => {
-    if (event.target.matches("[data-evidence-id]")) toggleEvidenceSelection(event, ctx);
+    const target = event.target.closest("[data-evidence-id]");
+    if (target) toggleEvidenceSelection({ ...event, target }, ctx);
   });
   document.querySelector("#finish")?.addEventListener("click", () => setView("result", ctx));
   document.querySelector("[data-save-draft]")?.addEventListener("click", () => saveCurrentDraft(ctx));
@@ -61,6 +63,11 @@ export function bindEvents(ctx) {
     node.addEventListener("click", () => requestGovernanceExport(node.dataset.governanceExport, ctx)));
   document.querySelectorAll("[data-device-revoke]").forEach((node) =>
     node.addEventListener("click", () => revokeGovernanceDevice(node.dataset.deviceRevoke, ctx)));
+}
+
+function openWorkItem(workItemId, ctx) {
+  const queueItem = (ctx.state.runtimeStore?.workQueue || []).find((item) => item.workItemId === workItemId || item.work_item_id === workItemId);
+  if (queueItem?.workspaceId) openWorkspace(queueItem.workspaceId, ctx, queueItem.cardId || "");
 }
 
 async function retryApi(ctx) {

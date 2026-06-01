@@ -1,4 +1,5 @@
 import { selectSurfaceStats } from "../selectors/surfaceSelectors.js";
+import { DeviceTrustPanel, SubmitQueue, UploadQueue } from "./experienceComponents.js";
 
 export function meView(ctx) {
   const { state, tr, shell } = ctx;
@@ -24,6 +25,11 @@ export function meView(ctx) {
       <h2>${tr("stats")}</h2>
       <p>${tr("commonSearch")}: ${searches || (state.apiStatus === "online" ? tr("coachNoMatch") : tr("apiOffline"))}</p>
       <p>${tr("savedFilter")}: ${tr(state.queueDomain)} + ${tr(state.queueBadge)}</p>
+    </section>
+    <section class="personal-ops-grid">
+      ${UploadQueue(state, ctx)}
+      ${SubmitQueue(state, ctx)}
+      ${DeviceTrustPanel(state, ctx)}
     </section>
   `);
 }

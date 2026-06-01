@@ -105,6 +105,7 @@ export async function submitCurrentCard(ctx) {
   const submissionProtocol = draftSubmissionProtocol(item, card, fieldValues, evidenceDrafts);
   saveDraft(item.id, card.id, fieldValues, evidenceDrafts, submissionProtocol);
   ctx.state.operationMessage = ctx.tr("submitting");
+  ctx.state.lastActionResult = { status: "submitting", message: ctx.state.operationMessage };
   ctx.state.operationSubmitting = true;
   ctx.render();
   try {
@@ -135,6 +136,7 @@ export async function submitCurrentCard(ctx) {
     }
     ctx.state.selectedCardIndex = -1;
     ctx.state.operationMessage = confirmSuccessMessage(result, ctx);
+    ctx.state.lastActionResult = actionResultFromConfirm(result, ctx.state.operationMessage);
   } catch (error) {
     if (applyConfirmError(error, ctx)) return;
   } finally {
@@ -153,6 +155,16 @@ export function applyConfirmError(error, ctx) {
   }
 
   ctx.state.operationMessage = confirmErrorMessage(error, ctx);
+  ctx.state.lastActionResult = actionResultFromError(error, ctx.state.operationMessage);
+  if (error?.status === 403) {
+    ctx.state.permissionDiagnostic = {
+      reason: error.reason || error.code || "permission_blocked_403",
+      owner: "manager",
+      requiredPermission: error.requiredPermission || "operation.confirm",
+      nextAction: error.nextAction || ctx.tr("confirmForbidden"),
+      status: "permission_blocked_403"
+    };
+  }
   return false;
 }
 
@@ -226,6 +238,38 @@ function applyLensPayload(payload, ctx) {
 
 function isCommittedConfirmResult(result) {
   return result?.confirmed === true && result?.commitStatus === "committed";
+}
+
+function actionResultFromConfirm(result, message) {
+  const status = result?.commitStatus === "committed" && result?.projectionStatus === "pending"
+    ? "committed_projection_pending"
+    : result?.commitStatus === "committed" && result?.projectionStatus === "failed"
+      ? "committed_projection_failed"
+      : "committed_projected";
+  return {
+    status,
+    message,
+    commandSubmissionId: result?.commandSubmissionId || result?.submissionId || "",
+    traceRefs: result?.traceRefs || result?.resultEventIds || []
+  };
+}
+
+function actionResultFromError(error, message) {
+  const byStatus = {
+    403: "permission_blocked_403",
+    409: "idempotency_conflict_409",
+    422: "business_blocked_422"
+  };
+  return {
+    status: byStatus[error?.status] || "network_unknown",
+    message,
+    permissionDiagnostic: error?.status === 403 ? {
+      reason: error.reason || error.code || "permission_blocked_403",
+      owner: "manager",
+      requiredPermission: error.requiredPermission || "operation.confirm",
+      nextAction: error.nextAction || message
+    } : null
+  };
 }
 
 function applyCommittedCardLocalState(workspaceId, cardId, ctx) {

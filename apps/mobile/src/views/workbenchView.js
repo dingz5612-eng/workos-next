@@ -1,4 +1,5 @@
 import { countBadge, countDomain, queueTasks } from "../selectors/queueSelectors.js";
+import { WorkItemCard } from "./experienceComponents.js";
 
 export function workbenchView(ctx) {
   const list = queueTasks(ctx.state);
@@ -18,7 +19,7 @@ export function workbenchView(ctx) {
       <button id="advanced">${ctx.tr("filter")}</button>
     </section>
     ${ctx.state.apiStatus === "offline" && !list.length ? `<section class="help-card"><p>${ctx.tr("apiOffline")}</p></section>` : ""}
-    <section class="task-stack">${list.map((item) => taskCard(item, ctx)).join("")}</section>
+    <section class="task-stack">${list.map((item) => WorkItemCard(item, ctx)).join("")}</section>
     ${ctx.state.advancedOpen ? advancedSheet(ctx) : ""}
   `);
 }
@@ -48,19 +49,4 @@ function advancedSheet(ctx) {
       <button>${ctx.tr("soon")}</button>
     </div>
   </section>`;
-}
-
-function taskCard(item, ctx) {
-  if (!item.workspace || !item.card) {
-    return `<article class="task-card">
-      <div><span>${ctx.escapeHtml(item.workItemType || item.domain)} · ${(item.badges || []).map((badge) => ctx.tr(badge)).join(" · ")} · ${item.due || ""}</span><strong>${ctx.escapeHtml(item.workItemId || item.title || "")}</strong><p>${ctx.escapeHtml(item.reason || item.lifecycleState || ctx.tr("apiOffline"))}</p></div>
-      ${item.workItemId ? `<button data-work-item-id="${ctx.escapeAttr(item.workItemId)}">${ctx.tr("openWorkspace")}</button>` : ""}
-    </article>`;
-  }
-  const itemWorkspace = item.workspace;
-  const activeCard = item.card;
-  return `<article class="task-card">
-    <div><span>${ctx.tr(item.domain)} · ${(item.badges || []).map((badge) => ctx.tr(badge)).join(" · ")}</span><strong>${ctx.tx(itemWorkspace.title)}</strong><p>${ctx.tx(activeCard.title)} · ${ctx.tr(activeCard.status)}</p><p>${ctx.tr("whyMe")}: ${ctx.tx(item.reason || itemWorkspace.next)}</p></div>
-    <button data-workspace="${item.workspaceId}" data-card-id="${item.cardId}">${ctx.tr("openWorkspace")}</button>
-  </article>`;
 }

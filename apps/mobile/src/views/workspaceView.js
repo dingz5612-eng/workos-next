@@ -4,6 +4,7 @@ import { lensIdsForWorkspace, lensPreview, lensTitle } from "../runtimeLensCatal
 import { isUnsafeLedgerCarryForward } from "../selectors/surfaceSelectors.js";
 import { activeCardForWorkspace, activeWorkspaceCard, isCardActionDisabled } from "../selectors/workspaceSelectors.js";
 import { checkoutServiceMobilePanel, checkoutServiceOperationAddon } from "./checkoutServiceView.js";
+import { EvidenceSheet, EvidenceTile, LifecycleWorkspace, OperationPanelView } from "./experienceComponents.js";
 
 export function workspaceView(ctx) {
   const item = ctx.workspace();
@@ -24,10 +25,14 @@ export function workspaceView(ctx) {
       <p>${ctx.tx(item.summary)}</p>
     </section>
     <section class="workspace-control">
-      <div class="card-tabs">${item.cards.map((card, index) => `<button class="${card.id === activeCard.id ? "active" : ""} ${card.status}" data-card-index="${index}">${ctx.tx(card.title)}</button>`).join("")}</div>
+      ${LifecycleWorkspace(item, activeCard, ctx)}
+      <section class="compat-card-tabs" data-component="CompatibilityCardTabs">
+        <span>Debug / compatibility</span>
+        <div class="card-tabs">${item.cards.map((card, index) => `<button class="${card.id === activeCard.id ? "active" : ""} ${card.status}" data-card-index="${index}">${ctx.tx(card.title)}</button>`).join("")}</div>
+      </section>
       ${workspaceLensPanel(item, ctx)}
       ${checkoutServiceMobilePanel(item, activeCard, ctx)}
-      ${workspaceCardPanel(activeCard, item, true, ctx)}
+      ${OperationPanelView(workspaceCardPanel(activeCard, item, true, ctx), item, activeCard, ctx)}
     </section>
     <div class="sticky-action"><button data-submit-card>${ctx.tr("confirmAction")}</button></div>
   `);
@@ -74,6 +79,7 @@ export function cardOperation(card, item, ctx) {
       <b>${ctx.tr("cardEvidence")}</b>
       <p>${ctx.tr("cardEvidenceHelp")}</p>
       <div class="evidence-row">${card.evidence.map((field) => evidenceButton(field, draft, disabled, ctx)).join("")}</div>
+      ${EvidenceSheet(card, draft, ctx)}
     </section>
     <section><b>${ctx.tr("cardConfirm")}</b><p>${confirmationText(card, item, ctx)}</p></section>
     ${checkoutServiceOperationAddon(card, item, ctx)}
@@ -163,10 +169,7 @@ function carriedForwardValue(field, item, card, values, ctx) {
 }
 
 function evidenceButton(field, draft, disabled, ctx) {
-  const saved = (draft.evidenceDrafts || []).find((item) => item.requirementId === field.id);
-  const selected = saved ? "selected" : "";
-  const evidenceDraftId = saved?.evidenceId ? `data-evidence-draft-id="${ctx.escapeAttr(saved.evidenceId)}"` : "";
-  return `<button type="button" class="${selected}" data-evidence-id="${ctx.escapeAttr(field.id)}" ${evidenceDraftId} ${disabled}>${ctx.localTerm(field)}</button>`;
+  return EvidenceTile(field, draft, disabled, ctx);
 }
 
 function aggregateRefForValues(values) {

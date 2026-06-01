@@ -1,8 +1,26 @@
 import fs from "node:fs";
 import { describe, expect, it, vi } from "vitest";
 import { shell } from "../appShell.js";
-import { actionResultStateMatrix, defaultHomeForRole, evidenceStateMatrix, mobileBottomNavigation } from "../experienceContract.js";
+import {
+  actionResultStateMatrix,
+  defaultHomeForRole,
+  evidenceStateMatrix,
+  mobileBottomNavigation,
+  workItemCardSchema
+} from "../experienceContract.js";
 import { confirmSuccessMessage } from "../operationController.js";
+import { evaluateSurfaceAccess } from "../surfaceGuard.js";
+import {
+  ActionResult,
+  DeviceTrustPanel,
+  EvidenceSheet,
+  EvidenceTile,
+  LifecycleWorkspace,
+  PermissionDiagnostic,
+  SubmitQueue,
+  UploadQueue,
+  WorkItemCard
+} from "../views/experienceComponents.js";
 
 describe("RT-5 Experience Contract", () => {
   it("keeps ordinary operator mobile bottom nav to Today Work Search Me", () => {
@@ -63,6 +81,67 @@ describe("RT-5 Experience Contract", () => {
     expect(evidenceStateMatrix.rejected).toBe("blocks confirm");
     expect(evidenceStateMatrix.draft).toBe("can save draft");
   });
+
+  it("renders WorkItemCard with every contract field", () => {
+    const html = WorkItemCard({
+      workItemId: "WI-1",
+      caseId: "CASE-1",
+      workItemType: "Dormitory.CheckIn",
+      lifecycleState: "ready",
+      ownerRole: "frontdesk",
+      SLA: "PT4H",
+      requiredEvidence: ["id-card", "deposit-receipt"],
+      nextAction: "confirm check-in",
+      traceRefs: ["cmd-1"],
+      riskLevel: "P1",
+      evidenceState: "missing",
+      dueAt: "2026-06-02T09:00:00Z",
+      businessObject: "Stay ST-1"
+    }, ctx());
+
+    expect(html).toContain('data-component="WorkItemCard"');
+    for (const field of workItemCardSchema) {
+      expect(html).toContain(field);
+    }
+  });
+
+  it("renders lifecycle workspace as the main object workspace", () => {
+    const workspace = workspaceFixture();
+    const html = LifecycleWorkspace(workspace, workspace.cards[0], ctx());
+
+    expect(html).toContain('data-component="LifecycleWorkspace"');
+    expect(html).toContain("Object summary");
+    expect(html).toContain("Lifecycle timeline");
+    expect(html).toContain("Current WorkItem");
+    expect(html).toContain("Required evidence");
+    expect(html).toContain("Audit summary");
+  });
+
+  it("renders trusted result, evidence, queue, device trust, and permission states", () => {
+    const workspace = workspaceFixture();
+    const activeCard = workspace.cards[0];
+    const testCtx = ctx();
+
+    expect(ActionResult({ status: "committed_projection_pending" }, testCtx)).toContain('data-component="ProjectionPendingState"');
+    expect(ActionResult({ status: "committed_projection_failed" }, testCtx)).toContain('data-component="FailedSyncState"');
+    expect(EvidenceTile(activeCard.evidence[0], {}, "", testCtx)).toContain('data-component="EvidenceTile"');
+    expect(EvidenceSheet(activeCard, {}, testCtx)).toContain('data-component="EvidenceSheet"');
+    expect(UploadQueue({}, testCtx)).toContain('data-component="UploadQueue"');
+    expect(SubmitQueue({}, testCtx)).toContain('data-component="SubmitQueue"');
+    expect(DeviceTrustPanel({ pcGovernance: { currentDevice: { deviceId: "D-1", deviceTrustStatus: "trusted", surface: "mobile" } } }, testCtx)).toContain('data-component="DeviceTrustPanel"');
+    expect(PermissionDiagnostic({ reason: "role_surface_not_allowed", owner: "releaseOwner", requiredPermission: "release.flight_deck.view" }, testCtx)).toContain("release.flight_deck.view");
+  });
+
+  it("blocks unauthorized release surfaces with PermissionDiagnostic data", () => {
+    const decision = evaluateSurfaceAccess("releaseFlightDeck", {
+      currentActor: { role: "operator", displayName: "Operator" },
+      pcGovernance: { currentDevice: { deviceTrustStatus: "trusted", surface: "mobile" } }
+    });
+
+    expect(decision.allowed).toBe(false);
+    expect(decision.component).toBe("PermissionDiagnostic");
+    expect(decision.owner).toBe("releaseOwner");
+  });
 });
 
 function ctx(actor = { role: "operator" }) {
@@ -89,7 +168,32 @@ function ctx(actor = { role: "operator" }) {
       retryApi: "retry",
       feedback: "feedback",
       submitProjectionPending: "submitProjectionPending"
-    })[key] || key
+    })[key] || key,
+    tx: (value) => typeof value === "string" ? value : value["zh-CN"],
+    localTerm: (value) => value?.label?.["zh-CN"] || value?.id || value,
+    escapeHtml: (value) => String(value),
+    escapeAttr: (value) => String(value)
+  };
+}
+
+function workspaceFixture() {
+  return {
+    id: "W-DORM-STAY",
+    domain: "stay",
+    taskId: "WI-STAY-1",
+    caseId: "CASE-STAY-1",
+    title: { "zh-CN": "入住办理", "ru-RU": "Заселение" },
+    summary: { "zh-CN": "对象生命周期摘要", "ru-RU": "Сводка" },
+    next: { "zh-CN": "确认入住", "ru-RU": "Подтвердить" },
+    cards: [{
+      id: "checkIn",
+      status: "ready",
+      title: { "zh-CN": "确认入住", "ru-RU": "Подтвердить" },
+      fields: { business: [{ id: "stayId", label: { "zh-CN": "住宿单" } }] },
+      evidence: [{ id: "identityEvidence", label: { "zh-CN": "身份证据" } }],
+      blockerRules: [],
+      confirmation: { requiredRole: "frontdesk" }
+    }]
   };
 }
 
