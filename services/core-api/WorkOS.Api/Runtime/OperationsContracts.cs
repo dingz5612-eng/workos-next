@@ -93,6 +93,45 @@ public sealed record FactTraceV1(
     IReadOnlyList<string> LedgerEntryRefs,
     IReadOnlyList<string> ProjectionCommitRefs);
 
+public sealed record RejectedCommandSubmissionV1(
+    string TenantId,
+    string SubmissionId,
+    string CaseId,
+    string WorkItemId,
+    string Status,
+    int StatusCode,
+    string FailureCode,
+    string FailureReason);
+
+public sealed record RejectionTraceV1(
+    string TenantId,
+    string TraceId,
+    string CaseRef,
+    string WorkItemRef,
+    string SubmissionRef,
+    string PolicyRef,
+    int StatusCode,
+    string Reason,
+    IReadOnlyList<string> EvidenceRefs,
+    IReadOnlyList<string> DomainEventRefs,
+    IReadOnlyList<string> LedgerTransactionRefs);
+
+public sealed record ScenarioFactGraphV1(
+    string TenantId,
+    string ScenarioId,
+    string ScenarioType,
+    IReadOnlyList<string> CommandSubmissions,
+    IReadOnlyList<string> RejectedCommandSubmissions,
+    IReadOnlyList<string> WorkItems,
+    IReadOnlyList<string> EvidenceRefs,
+    IReadOnlyList<string> DomainEvents,
+    IReadOnlyList<string> LedgerTransactions,
+    IReadOnlyList<string> LedgerEntries,
+    IReadOnlyList<string> ProjectionCommits,
+    IReadOnlyList<string> LensOutputs,
+    IReadOnlyList<string> SemanticShadowRefs,
+    IReadOnlyList<string> GateImpactRefs);
+
 public sealed record ShadowFactGraphV1(
     string TenantId,
     string GraphId,

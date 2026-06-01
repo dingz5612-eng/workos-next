@@ -34,7 +34,9 @@ public sealed class DormitoryCertificationGateTests
             Assert.AreEqual(10, report.PassedScenarioCount);
             Assert.AreEqual("green", shadow.Grade);
             Assert.IsTrue(report.Scenarios.Any(item => item.ScenarioId == "dorm-cert-002" && item.LedgerTransactionRefs.Count > 0));
-            Assert.IsTrue(report.Scenarios.Any(item => item.ScenarioId == "dorm-cert-010" && item.OutcomeStatus == "business_blocked_422"));
+            Assert.IsTrue(report.Scenarios.Any(item => item.ScenarioId == "dorm-cert-008" && item.RejectedCommandSubmission is not null && item.RejectionTrace is not null && item.DomainEventRefs.Count == 0));
+            Assert.IsTrue(report.Scenarios.Any(item => item.ScenarioId == "dorm-cert-009" && item.OutcomeStatus == "conflict" && item.RejectionTrace is not null && item.DomainEventRefs.Count == 0));
+            Assert.IsTrue(report.Scenarios.Any(item => item.ScenarioId == "dorm-cert-010" && item.OutcomeStatus == "business_blocked_422" && item.RejectedCommandSubmission is not null && item.LedgerTransactionRefs.Count == 0));
             Assert.IsTrue(invariants.Any(item => item.InvariantKey == "runtime.certification.pack_green" && item.Status == "passed"));
         }
         finally

@@ -40,7 +40,7 @@ public sealed class DormitoryGoldenPathTests
         Assert.IsTrue(document.Scenarios.All(item => !string.IsNullOrWhiteSpace(item.RollbackOrCompensationPath)));
         Assert.IsTrue(document.Scenarios.Any(item => item.ExpectedOutcome == "permission_denied_403"));
         Assert.IsTrue(document.Scenarios.Any(item => item.ExpectedOutcome == "business_blocked_422"));
-        Assert.IsTrue(document.Scenarios.Any(item => item.ExpectedOutcome == "idempotency_duplicate"));
+        Assert.IsTrue(document.Scenarios.Any(item => item.ExpectedOutcome == "idempotency_conflict_409"));
     }
 }
 
