@@ -149,6 +149,7 @@ Assert-Exists "scripts/check-dormitory-golden-domain.mjs"
 Assert-Exists "scripts/check-experience-contract.mjs"
 Assert-Exists "scripts/check-operating-control-tower.mjs"
 Assert-Exists "scripts/check-operating-feedback-loop.mjs"
+Assert-Exists "scripts/rt4/check-final-completion-assurance.mjs"
 Assert-Exists "docs/scenarios/_schema/scenario.schema.json"
 Assert-Exists "docs/scenarios/dormitory/golden-pilot.yml"
 Assert-Exists "docs/scenarios/finance/money-kernel.yml"
@@ -166,6 +167,9 @@ Assert-Exists "docs/business/operating-control-tower.yml"
 Assert-Exists "docs/operations/operating-feedback-loop.md"
 Assert-Exists "docs/operations/metric-deviation-policy.yml"
 Assert-Exists "docs/operations/risk-signal-policy.yml"
+Assert-Exists "docs/program/rt4/final-completion-assurance-report.md"
+Assert-Exists "docs/program/rt4/central-merge-plan.md"
+Assert-Exists "artifacts/rt4/final-completion-assurance-result.json"
 Assert-Exists "docs/business/shared-governance/subject-vehicle-truth.yml"
 Assert-Exists "docs/business/finance/finance-truth-pipeline.yml"
 Assert-Exists "docs/business/finance/money-kernel-rules.yml"
@@ -652,6 +656,7 @@ Invoke-Checked "node" @("scripts/check-operating-control-tower.mjs", "--self-tes
 Invoke-Checked "node" @("scripts/check-operating-control-tower.mjs")
 Invoke-Checked "node" @("scripts/check-operating-feedback-loop.mjs", "--self-test")
 Invoke-Checked "node" @("scripts/check-operating-feedback-loop.mjs")
+Invoke-Checked "node" @("scripts/rt4/check-final-completion-assurance.mjs")
 
 $ci = Get-Content ".github/workflows/ci.yml" -Raw
 $v54Ci = Get-Content ".github/workflows/v5_4_control_plane.yml" -Raw
@@ -707,7 +712,8 @@ foreach ($requiredCiCommand in @(
   "check-dormitory-golden-domain.mjs",
   "check-experience-contract.mjs",
   "check-operating-control-tower.mjs",
-  "check-operating-feedback-loop.mjs"
+  "check-operating-feedback-loop.mjs",
+  "check-final-completion-assurance.mjs"
 )) {
   if ($ci -notmatch [regex]::Escape($requiredCiCommand)) {
     Fail "CI must run RT-2 BTOS compiler command: $requiredCiCommand"

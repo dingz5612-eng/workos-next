@@ -1,0 +1,76 @@
+{
+  "version": "rt4.final-completion-assurance.v1",
+  "stage": "RT-FINAL",
+  "generatedAtUtc": "2026-06-01T10:40:00.000Z",
+  "generatedBy": "codex/rtfinal-completion-assurance-report",
+  "latestBranchHeadSha": "TBD_RT_FINAL_IMPLEMENTATION_COMMIT",
+  "localStatus": "LOCAL_PASSED",
+  "stackedStatus": "STACKED_READY",
+  "officialStatus": "LOCKED_UNTIL_CENTRAL_MERGE",
+  "businessProductionAllowed": false,
+  "dormitoryL2ProductionAllowed": false,
+  "dormIntAllowed": false,
+  "l1InternalPilotAllowed": false,
+  "repairPartsHrStatus": "L0 Contract Preview",
+  "coverage": {
+    "p0": 100,
+    "p1": 100,
+    "p2": "tracked"
+  },
+  "openP0Blockers": [],
+  "openP1Risks": [
+    "所有 RF4-RT-FINAL 阶段仍处于 stacked local passed，正式完成依赖 Central Merge Train、PR CI、main CI 与 V5.4 Guards。",
+    "Final System Gate 当前 replay 为 blocked，原因是既有 Red ShadowCompareReport；不得声明 production-ready。"
+  ],
+  "stackedReadyTasks": [
+    "RF4",
+    "RF5",
+    "RF6",
+    "RF7",
+    "RF8",
+    "RT-X",
+    "RT-0",
+    "RT-1",
+    "RT-DB",
+    "RT-2",
+    "RT-2A",
+    "RT-P",
+    "RT-3",
+    "RT-S",
+    "RT-B",
+    "RT-4",
+    "RT-5",
+    "RT-6",
+    "RT-F",
+    "RT-FINAL"
+  ],
+  "localCiEquivalent": {
+    "database": "clean Docker PostgreSQL workosnext-rtfinal-test on 54329",
+    "commands": [
+      "dotnet restore WorkOSNext.sln",
+      "npm --prefix apps/mobile ci",
+      "npm --prefix apps/mobile run build",
+      "npm --prefix apps/mobile run test",
+      "dotnet build WorkOSNext.sln -c Release",
+      "dotnet test tests/WorkOS.UnitTests/WorkOS.UnitTests.csproj -c Release --no-build",
+      "dotnet test tests/WorkOS.PolicyAsCodeTests/WorkOS.PolicyAsCodeTests.csproj -c Release --no-build",
+      "dotnet test tests/WorkOS.RuntimeIntegrationTests/WorkOS.RuntimeIntegrationTests.csproj -c Release --no-build",
+      "dotnet test tests/WorkOS.DatabaseSecurityTests/WorkOS.DatabaseSecurityTests.csproj -c Release --no-build",
+      "dotnet test tests/WorkOS.ReleaseEvidenceTests/WorkOS.ReleaseEvidenceTests.csproj -c Release --no-build",
+      "dotnet run --project tests/WorkOS.RuntimeContractTests/WorkOS.RuntimeContractTests.csproj -c Release",
+      "node scripts/rt4/check-final-completion-assurance.mjs",
+      "pwsh -NoProfile -File scripts/guard-architecture.ps1",
+      "pwsh -NoProfile -File scripts/v5_4/run-control-plane-checks.ps1"
+    ]
+  },
+  "evidenceGraphRefs": [
+    "artifacts/rt4/evidence-graph.json"
+  ],
+  "completionDashboardRefs": [
+    "artifacts/rt4/completion-dashboard.json",
+    "docs/program/rt4/completion-dashboard.md"
+  ],
+  "centralMergePlanRef": "docs/program/rt4/central-merge-plan.md",
+  "dormitoryStatus": "L1 Pilot only; DORM-INT not started",
+  "dormIntReadiness": "LOCKED_UNTIL_CENTRAL_MERGE_MAIN_GREEN"
+}
