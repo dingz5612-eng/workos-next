@@ -118,7 +118,7 @@
       "stackedReady": true,
       "prUrl": "",
       "mergeStatus": "not_merged",
-      "evidenceRefs": ["clean Docker PostgreSQL workosnext-rt1-ci", "node scripts/check-runtime-write-paths.mjs --self-test", "node scripts/check-runtime-write-paths.mjs", "dotnet test tests/WorkOS.UnitTests/WorkOS.UnitTests.csproj -c Release --no-build", "dotnet test tests/WorkOS.RuntimeIntegrationTests/WorkOS.RuntimeIntegrationTests.csproj -c Release --no-build", "dotnet run --project tests/WorkOS.RuntimeContractTests/WorkOS.RuntimeContractTests.csproj -c Release", "pwsh -NoProfile -File scripts/guard-architecture.ps1", "pwsh -NoProfile -File scripts/v5_4/run-control-plane-checks.ps1"],
+      "evidenceRefs": ["clean Docker PostgreSQL workosnext-rt1-ci", "node scripts/check-runtime-write-paths.mjs --self-test", "node scripts/check-runtime-write-paths.mjs", "dotnet test tests/WorkOS.UnitTests/WorkOS.UnitTests.csproj -c Release --no-build", "dotnet test tests/WorkOS.RuntimeIntegrationTests/WorkOS.RuntimeIntegrationTests.csproj -c Release --no-build", "dotnet run --project tests/WorkOS.RuntimeContractTests/WorkOS.RuntimeContractTests.csproj -c Release", "pwsh -NoProfile -File scripts/guard-architecture.ps1", "pwsh -NoProfile -File scripts/v5_4/run-control-plane-checks.ps1", "pwsh -NoProfile -File scripts/clean-baseline.ps1"],
       "nextBranchAllowed": true
     },
     {
@@ -129,11 +129,26 @@
       "allowedFiles": ["infra/db/migrations/034_next_control_plane_runtime_roles.sql", "tests/WorkOS.DatabaseSecurityTests/**", "scripts/v5_4/shadow-namespace-isolation.mjs", "docs/v5.4/db-permission-contract.md", ".github/workflows/ci.yml", ".github/workflows/v5_4_control_plane.yml", "scripts/v5_4/run-control-plane-checks.ps1", "WorkOSNext.sln", "docs/program/rt4/*", "artifacts/rt4/*"],
       "forbiddenFiles": ["page-specific business write APIs", "Mobile BFF business fact writes", "direct DomainEvent writes outside CommandSubmission", "Dormitory/Repair/Parts production declarations"],
       "localCiStatus": "LOCAL_PASSED",
-      "headSha": "a6573c028f819bfabf443199cd72125568c7e2c2",
+      "headSha": "9207a880e97e82c2c35ed10997b3b037d5a51e86",
       "stackedReady": true,
       "prUrl": "",
       "mergeStatus": "not_merged",
       "evidenceRefs": ["clean Docker PostgreSQL workosnext-rt-db-test", "infra/db/migrations/034_next_control_plane_runtime_roles.sql", "dotnet test tests/WorkOS.DatabaseSecurityTests/WorkOS.DatabaseSecurityTests.csproj -c Release --no-build", "node scripts/v5_4/shadow-namespace-isolation.mjs", "pwsh -NoProfile -File scripts/guard-architecture.ps1", "pwsh -NoProfile -File scripts/v5_4/run-control-plane-checks.ps1"],
+      "nextBranchAllowed": true
+    },
+    {
+      "taskId": "RT-2",
+      "branch": "codex/rt2-btos-compiler-mvp",
+      "baseBranch": "codex/rtdb-db-role-isolation-shadow-defense",
+      "dependsOn": "RT-DB",
+      "allowedFiles": ["docs/business/truth-owner-registry.yml", "docs/business/truth-maturity-levels.yml", "docs/business/receipt-types.yml", "docs/business/conflict-policies.yml", "docs/business/domains/_template/domain-pack.yml", "schemas/*", "scripts/check-truth-owners.mjs", "scripts/check-domain-packs.mjs", "scripts/check-provisional-ref-usage.mjs", "scripts/check-receipt-projection.mjs", "scripts/check-management-cockpit-boundary.mjs", "tests/fixtures/rt2-btos-compiler/**", ".github/workflows/ci.yml", "scripts/guard-architecture.ps1", "docs/program/rt4/*", "artifacts/rt4/*"],
+      "forbiddenFiles": ["runtime behavior", "business write APIs", "apps/mobile/**", "RT-2A shared governance runtime", "RT-P policy runtime", "RT-3 finance runtime"],
+      "localCiStatus": "LOCAL_PASSED",
+      "headSha": "13def4e95e561aa6d96ce80ab18f1b57287e88ce",
+      "stackedReady": true,
+      "prUrl": "",
+      "mergeStatus": "not_merged",
+      "evidenceRefs": ["clean Docker PostgreSQL workosnext-rt2-test", "node scripts/check-truth-owners.mjs --self-test", "node scripts/check-truth-owners.mjs", "node scripts/check-domain-packs.mjs --self-test", "node scripts/check-domain-packs.mjs", "node scripts/check-provisional-ref-usage.mjs --self-test", "node scripts/check-provisional-ref-usage.mjs", "node scripts/check-receipt-projection.mjs --self-test", "node scripts/check-receipt-projection.mjs", "node scripts/check-management-cockpit-boundary.mjs --self-test", "node scripts/check-management-cockpit-boundary.mjs", "pwsh -NoProfile -File scripts/clean-baseline.ps1", "pwsh -NoProfile -File scripts/guard-architecture.ps1", "pwsh -NoProfile -File scripts/v5_4/run-control-plane-checks.ps1"],
       "nextBranchAllowed": true
     }
   ]
