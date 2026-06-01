@@ -114,9 +114,9 @@ async function evaluate() {
     "docs/go-live/dormitory/master-data.yml",
     "artifacts/go-live/dormitory/master-data-readiness.json",
     "artifacts/go-live/dormitory/b-stage-gate-result.json",
-    ".tmp/v5_4/dormitory-evidence-policy-result.json",
+    "artifacts/go-live/dormitory/evidence-policy-result.json",
     "artifacts/go-live/dormitory/finance-daily-close-result.json",
-    ".tmp/v5_4/runtime-surface-alignment-result.json",
+    "artifacts/go-live/dormitory/runtime-surface-alignment-result.json",
     "artifacts/go-live/dormitory/internal-pilot-run-result.json",
     "artifacts/go-live/dormitory/rollback-drill-result.json",
     "artifacts/go-live/dormitory/training-signoff-result.json",
@@ -124,7 +124,7 @@ async function evaluate() {
     "docs/business/business-line-registry.json",
     "docs/business/experience-contract.yml",
     "apps/mobile/src/__tests__/DormitoryWorkItemNativePilot.test.js",
-    ".tmp/rt5/dorm-int-experience-contract-report.json"
+    "artifacts/go-live/dormitory/dorm-int-experience-contract-report.json"
   ];
   evidence.gateResults = {};
   evidence.readiness = {};
@@ -137,6 +137,9 @@ async function evaluate() {
   runRequiredCommand("B2 executable scenario semantics", ["node", "scripts/check-executable-scenarios.mjs"], blockers);
   runRequiredCommand("Evidence Policy-as-Code", ["node", "scripts/check-policy-as-code.mjs"], blockers);
   runRequiredCommand("Admission surface alignment", ["node", "scripts/check-admission-surface-alignment.mjs"], blockers);
+  persistArtifact(".tmp/v5_4/dormitory-evidence-policy-result.json", "artifacts/go-live/dormitory/evidence-policy-result.json", blockers);
+  persistArtifact(".tmp/v5_4/runtime-surface-alignment-result.json", "artifacts/go-live/dormitory/runtime-surface-alignment-result.json", blockers);
+  persistArtifact(".tmp/rt5/dorm-int-experience-contract-report.json", "artifacts/go-live/dormitory/dorm-int-experience-contract-report.json", blockers);
 
   const scopeDocument = readRequiredJson("docs/go-live/dormitory/internal-pilot-scope.yml", blockers);
   evidence.pilotOwners = summarizePilotOwners(scopeDocument, blockers);
@@ -151,14 +154,14 @@ async function evaluate() {
   evidence.gateResults.bStageGate = summarizeArtifact("DORM-INT-06", bStageGate, "artifacts/go-live/dormitory/b-stage-gate-result.json", blockers, { requireReal: true });
   validateEmptyNoGo("BStageGateResult", bStageGate, blockers);
 
-  const evidencePolicy = readRequiredJson(".tmp/v5_4/dormitory-evidence-policy-result.json", blockers);
-  evidence.readiness.evidencePolicy = summarizeArtifact("DORM-INT-04", evidencePolicy, ".tmp/v5_4/dormitory-evidence-policy-result.json", blockers, { requireReal: true });
+  const evidencePolicy = readRequiredJson("artifacts/go-live/dormitory/evidence-policy-result.json", blockers);
+  evidence.readiness.evidencePolicy = summarizeArtifact("DORM-INT-04", evidencePolicy, "artifacts/go-live/dormitory/evidence-policy-result.json", blockers, { requireReal: true });
 
   const finance = readRequiredJson("artifacts/go-live/dormitory/finance-daily-close-result.json", blockers);
   evidence.readiness.financeDailyClose = summarizeArtifact("DORM-INT-05", finance, "artifacts/go-live/dormitory/finance-daily-close-result.json", blockers, { requireReal: true });
 
-  const surface = readRequiredJson(".tmp/v5_4/runtime-surface-alignment-result.json", blockers);
-  evidence.readiness.admissionSurfaceRuntime = summarizeArtifact("DORM-INT-07", surface, ".tmp/v5_4/runtime-surface-alignment-result.json", blockers, { requireReal: true });
+  const surface = readRequiredJson("artifacts/go-live/dormitory/runtime-surface-alignment-result.json", blockers);
+  evidence.readiness.admissionSurfaceRuntime = summarizeArtifact("DORM-INT-07", surface, "artifacts/go-live/dormitory/runtime-surface-alignment-result.json", blockers, { requireReal: true });
 
   const scenarios = readRequiredJson("artifacts/go-live/dormitory/internal-pilot-run-result.json", blockers);
   evidence.readiness.internalPilotScenarios = summarizeArtifact("DORM-INT-08", scenarios, "artifacts/go-live/dormitory/internal-pilot-run-result.json", blockers, { requireReal: true });
@@ -271,6 +274,17 @@ function runRequiredCommand(label, commandWithArgs, blockers, timeout = 90000) {
       stderr: trimOutput(result.stderr)
     }));
   }
+}
+
+function persistArtifact(sourceRef, targetRef, blockers) {
+  const sourcePath = path.join(root, sourceRef);
+  const targetPath = path.join(root, targetRef);
+  if (!fs.existsSync(sourcePath)) {
+    blockers.push(blocker("dorm_int_final.persistent_evidence_source_missing", `无法持久化证据，缺少源文件：${sourceRef}`, { sourceRef, targetRef }));
+    return;
+  }
+  fs.mkdirSync(path.dirname(targetPath), { recursive: true });
+  fs.copyFileSync(sourcePath, targetPath);
 }
 
 function summarizeArtifact(stage, payload, ref, blockers, options = {}) {

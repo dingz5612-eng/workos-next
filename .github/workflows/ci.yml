@@ -208,6 +208,12 @@ jobs:
       - name: Validate RT-FINAL Completion Assurance
         run: node scripts/rt4/check-final-completion-assurance.mjs
 
+      - name: Validate OAM-00 Evidence Reconciliation
+        if: github.event_name == 'pull_request'
+        run: |
+          node scripts/release-state/check-evidence-reconciliation.mjs
+          node scripts/rt4/check-final-evidence-freshness.mjs
+
       - name: Architecture guard
         shell: pwsh
         env:

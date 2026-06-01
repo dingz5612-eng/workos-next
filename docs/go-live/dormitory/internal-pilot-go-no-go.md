@@ -24,9 +24,9 @@
 - docs/go-live/dormitory/master-data.yml
 - artifacts/go-live/dormitory/master-data-readiness.json
 - artifacts/go-live/dormitory/b-stage-gate-result.json
-- .tmp/v5_4/dormitory-evidence-policy-result.json
+- artifacts/go-live/dormitory/evidence-policy-result.json
 - artifacts/go-live/dormitory/finance-daily-close-result.json
-- .tmp/v5_4/runtime-surface-alignment-result.json
+- artifacts/go-live/dormitory/runtime-surface-alignment-result.json
 - artifacts/go-live/dormitory/internal-pilot-run-result.json
 - artifacts/go-live/dormitory/rollback-drill-result.json
 - artifacts/go-live/dormitory/training-signoff-result.json
@@ -34,7 +34,7 @@
 - docs/business/business-line-registry.json
 - docs/business/experience-contract.yml
 - apps/mobile/src/__tests__/DormitoryWorkItemNativePilot.test.js
-- .tmp/rt5/dorm-int-experience-contract-report.json
+- artifacts/go-live/dormitory/dorm-int-experience-contract-report.json
 
 ## No-Go Items
 - none

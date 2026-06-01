@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-06-01T15:07:42.411Z",
+  "generated_at_utc": "2026-06-01T19:41:37.614Z",
   "generated_by": "check-dormitory-internal-pilot-go-no-go",
   "stage": "DORM-INT-FINAL",
   "status": "GO_FOR_INTERNAL_PILOT",
@@ -20,27 +20,27 @@
   "latestMain": {
     "repository": "dingz5612-eng/workos-next",
     "branch": "main",
-    "checkedAtUtc": "2026-06-01T15:07:33.780Z",
-    "commitSha": "5bd722332f23bc19b68d42624f5c26b772e94670",
+    "checkedAtUtc": "2026-06-01T19:41:31.012Z",
+    "commitSha": "7055814c0b1638badb45bf3b1add5cb2d24ebd87",
     "ci": {
-      "id": 26760020322,
+      "id": 26776685331,
       "name": "CI",
       "status": "completed",
       "conclusion": "success",
-      "headSha": "5bd722332f23bc19b68d42624f5c26b772e94670",
-      "htmlUrl": "https://github.com/dingz5612-eng/workos-next/actions/runs/26760020322",
-      "createdAt": "2026-06-01T14:06:54Z",
-      "updatedAt": "2026-06-01T14:09:26Z"
+      "headSha": "7055814c0b1638badb45bf3b1add5cb2d24ebd87",
+      "htmlUrl": "https://github.com/dingz5612-eng/workos-next/actions/runs/26776685331",
+      "createdAt": "2026-06-01T19:21:57Z",
+      "updatedAt": "2026-06-01T19:24:42Z"
     },
     "v54ControlPlaneGuards": {
-      "id": 26760020286,
+      "id": 26776685325,
       "name": "V5.4 Control Plane Guards",
       "status": "completed",
       "conclusion": "success",
-      "headSha": "5bd722332f23bc19b68d42624f5c26b772e94670",
-      "htmlUrl": "https://github.com/dingz5612-eng/workos-next/actions/runs/26760020286",
-      "createdAt": "2026-06-01T14:06:54Z",
-      "updatedAt": "2026-06-01T14:09:33Z"
+      "headSha": "7055814c0b1638badb45bf3b1add5cb2d24ebd87",
+      "htmlUrl": "https://github.com/dingz5612-eng/workos-next/actions/runs/26776685325",
+      "createdAt": "2026-06-01T19:21:57Z",
+      "updatedAt": "2026-06-01T19:24:12Z"
     }
   },
   "gateResults": {
@@ -68,7 +68,7 @@
       "stage": "DORM-INT-04",
       "status": "passed",
       "sourceMode": "real",
-      "ref": ".tmp/v5_4/dormitory-evidence-policy-result.json"
+      "ref": "artifacts/go-live/dormitory/evidence-policy-result.json"
     },
     "financeDailyClose": {
       "stage": "DORM-INT-05",
@@ -80,7 +80,7 @@
       "stage": "DORM-INT-07",
       "status": "passed",
       "sourceMode": "real",
-      "ref": ".tmp/v5_4/runtime-surface-alignment-result.json"
+      "ref": "artifacts/go-live/dormitory/runtime-surface-alignment-result.json"
     },
     "internalPilotScenarios": {
       "stage": "DORM-INT-08",
@@ -144,9 +144,9 @@
     "docs/go-live/dormitory/master-data.yml",
     "artifacts/go-live/dormitory/master-data-readiness.json",
     "artifacts/go-live/dormitory/b-stage-gate-result.json",
-    ".tmp/v5_4/dormitory-evidence-policy-result.json",
+    "artifacts/go-live/dormitory/evidence-policy-result.json",
     "artifacts/go-live/dormitory/finance-daily-close-result.json",
-    ".tmp/v5_4/runtime-surface-alignment-result.json",
+    "artifacts/go-live/dormitory/runtime-surface-alignment-result.json",
     "artifacts/go-live/dormitory/internal-pilot-run-result.json",
     "artifacts/go-live/dormitory/rollback-drill-result.json",
     "artifacts/go-live/dormitory/training-signoff-result.json",
@@ -154,7 +154,7 @@
     "docs/business/business-line-registry.json",
     "docs/business/experience-contract.yml",
     "apps/mobile/src/__tests__/DormitoryWorkItemNativePilot.test.js",
-    ".tmp/rt5/dorm-int-experience-contract-report.json"
+    "artifacts/go-live/dormitory/dorm-int-experience-contract-report.json"
   ],
   "noGoItems": [],
   "nextAction": "只允许进入 L1 Internal Pilot 内测观察窗口；不得进入 L2 Production，不得放开 Repair / Parts / HR production。"

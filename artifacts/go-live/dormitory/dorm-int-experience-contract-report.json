@@ -1,0 +1,18 @@
+{
+  "generated_at_utc": "2026-06-01T19:41:34.111Z",
+  "generated_by": "check-experience-contract",
+  "status": "passed",
+  "scanned_files": [
+    "docs/business/experience-contract.yml",
+    "apps/mobile/src/appShell.js",
+    "apps/mobile/src/main.js",
+    "apps/mobile/src/operationRuntime.js",
+    "apps/mobile/src/operationController.js",
+    "apps/mobile/src/authController.js",
+    "apps/mobile/src/navigationController.js",
+    "apps/mobile/src/views/operationPanelView.js",
+    "apps/mobile/src/views/experienceComponents.js"
+  ],
+  "violation_count": 0,
+  "violations": []
+}

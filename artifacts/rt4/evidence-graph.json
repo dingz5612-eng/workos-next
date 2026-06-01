@@ -1,9 +1,9 @@
 {
   "version": "rt4.evidence-graph.v1",
-  "mode": "STACKED_PRECONSTRUCTION",
-  "branch": "codex/rtfinal-completion-assurance-report",
-  "headSha": "044a38ce9cbd7df0282f04c20ee07e35802deb30",
-  "generatedAtUtc": "2026-06-01T10:42:54.032Z",
+  "mode": "L1_INTERNAL_PILOT_OBSERVATION",
+  "branch": "main",
+  "headSha": "7055814c0b1638badb45bf3b1add5cb2d24ebd87",
+  "generatedAtUtc": "2026-06-01T19:32:58.594Z",
   "nodes": [
     {
       "id": "RT4-P0-001",
@@ -191,7 +191,7 @@
     {
       "id": "RF8",
       "type": "branch",
-      "status": "LOCAL_PASSED",
+      "status": "MAIN_GREEN",
       "branch": "codex/rf8-governance-closure-report",
       "headSha": "64e7902e8188c814830ce244104fd56facdf855d",
       "refs": [
@@ -202,7 +202,7 @@
     {
       "id": "RT-X",
       "type": "branch",
-      "status": "LOCAL_PASSED",
+      "status": "MAIN_GREEN",
       "branch": "codex/rtx-problem-ledger-closure-matrix",
       "headSha": "ec21800e0cb775fbd3db1b3335e17b351a0f18f1",
       "refs": [
@@ -215,7 +215,7 @@
     {
       "id": "RT-0",
       "type": "branch",
-      "status": "LOCAL_PASSED",
+      "status": "MAIN_GREEN",
       "branch": "codex/rt0-final-gate-evidence-closure",
       "headSha": "c52c3faa4e9ecec9ae2e3a5435a43365b0bdefaa",
       "refs": [
@@ -230,7 +230,7 @@
     {
       "id": "RT-1",
       "type": "branch",
-      "status": "LOCAL_PASSED",
+      "status": "MAIN_GREEN",
       "branch": "codex/rt1-runtime-spine-non-bypass",
       "headSha": "88cfa99c1aa7ab96512f84487eb7434caa116470",
       "refs": [
@@ -248,7 +248,7 @@
     {
       "id": "RT-DB",
       "type": "branch",
-      "status": "LOCAL_PASSED",
+      "status": "MAIN_GREEN",
       "branch": "codex/rtdb-db-role-isolation-shadow-defense",
       "headSha": "9207a880e97e82c2c35ed10997b3b037d5a51e86",
       "refs": [
@@ -263,7 +263,7 @@
     {
       "id": "RT-2",
       "type": "branch",
-      "status": "LOCAL_PASSED",
+      "status": "MAIN_GREEN",
       "branch": "codex/rt2-btos-compiler-mvp",
       "headSha": "749313245b988297752b37ea422c5584ccabb1bd",
       "refs": [
@@ -286,7 +286,7 @@
     {
       "id": "RT-2A",
       "type": "branch",
-      "status": "LOCAL_PASSED",
+      "status": "MAIN_GREEN",
       "branch": "codex/rt2a-shared-governance-identity-kernel",
       "headSha": "e560ff91266d243ef81daea7c07e933f1bc79adf",
       "refs": [
@@ -300,7 +300,7 @@
     {
       "id": "RT-P",
       "type": "branch",
-      "status": "LOCAL_PASSED",
+      "status": "MAIN_GREEN",
       "branch": "codex/rtp-policy-as-code-control-plane",
       "headSha": "efa833cef03b181dda75eba8352eb479cda6d921",
       "refs": [
@@ -319,7 +319,7 @@
     {
       "id": "RT-3",
       "type": "branch",
-      "status": "LOCAL_PASSED",
+      "status": "MAIN_GREEN",
       "branch": "codex/rt3-finance-truth-production-kernel",
       "headSha": "700addd17e97fa1bdbb825c195bf7272e9b85096",
       "refs": [
@@ -337,7 +337,7 @@
     {
       "id": "RT-S",
       "type": "branch",
-      "status": "LOCAL_PASSED",
+      "status": "MAIN_GREEN",
       "branch": "codex/rts-executable-scenario-factory",
       "headSha": "3db0ec74dcf397e409c358e70ae5adb8f7ab1a18",
       "refs": [
@@ -355,7 +355,7 @@
     {
       "id": "RT-B",
       "type": "branch",
-      "status": "LOCAL_PASSED",
+      "status": "MAIN_GREEN",
       "branch": "codex/rtb-b-stage-gate-closure",
       "headSha": "6d67f74b49d0a652e42cf69f175fceca3eb004b9",
       "refs": [
@@ -377,7 +377,7 @@
     {
       "id": "RT-4",
       "type": "branch",
-      "status": "LOCAL_PASSED",
+      "status": "MAIN_GREEN",
       "branch": "codex/rt4-dormitory-golden-domain-l1",
       "headSha": "f8ce10d79d9f02d2e5cf5b3578207e67379eb3a0",
       "refs": [
@@ -397,7 +397,7 @@
     {
       "id": "RT-5",
       "type": "branch",
-      "status": "LOCAL_PASSED",
+      "status": "MAIN_GREEN",
       "branch": "codex/rt5-workitem-native-experience",
       "headSha": "2dfadd7133c265ba06a492fc322e30c061e5026e",
       "refs": [
@@ -419,7 +419,7 @@
     {
       "id": "RT-6",
       "type": "branch",
-      "status": "LOCAL_PASSED",
+      "status": "MAIN_GREEN",
       "branch": "codex/rt6-operating-control-tower",
       "headSha": "f2a24dc98de97c50da737b0de720f98d06d4fd17",
       "refs": [
@@ -441,7 +441,7 @@
     {
       "id": "RT-F",
       "type": "branch",
-      "status": "LOCAL_PASSED",
+      "status": "MAIN_GREEN",
       "branch": "codex/rtf-operating-feedback-loop",
       "headSha": "a9f0cad883375d90524dd07405186eef4457f8b0",
       "refs": [
@@ -466,7 +466,7 @@
     {
       "id": "RT-FINAL",
       "type": "branch",
-      "status": "LOCAL_PASSED",
+      "status": "MAIN_GREEN",
       "branch": "codex/rtfinal-completion-assurance-report",
       "headSha": "044a38ce9cbd7df0282f04c20ee07e35802deb30",
       "refs": [
@@ -480,6 +480,36 @@
         "node scripts/rt4/check-six-file-coverage.mjs",
         "pwsh -NoProfile -File scripts/guard-architecture.ps1",
         "pwsh -NoProfile -File scripts/v5_4/run-control-plane-checks.ps1"
+      ]
+    },
+    {
+      "id": "CENTRAL_MERGE_COMPLETED",
+      "type": "release_state",
+      "status": "MAIN_GREEN",
+      "headSha": "7055814c0b1638badb45bf3b1add5cb2d24ebd87",
+      "refs": [
+        "artifacts/go-live/dormitory/internal-pilot-go-no-go.json",
+        "artifacts/go-live/dormitory/observation-window-result.json"
+      ]
+    },
+    {
+      "id": "DORM_INT_PASSED",
+      "type": "release_state",
+      "status": "GO_FOR_INTERNAL_PILOT",
+      "headSha": "7055814c0b1638badb45bf3b1add5cb2d24ebd87",
+      "refs": [
+        "artifacts/go-live/dormitory/internal-pilot-go-no-go.json",
+        "artifacts/go-live/dormitory/observation-window-result.json"
+      ]
+    },
+    {
+      "id": "L1_INTERNAL_PILOT_OBSERVATION",
+      "type": "release_state",
+      "status": "ACTIVE",
+      "headSha": "7055814c0b1638badb45bf3b1add5cb2d24ebd87",
+      "refs": [
+        "artifacts/go-live/dormitory/internal-pilot-go-no-go.json",
+        "artifacts/go-live/dormitory/observation-window-result.json"
       ]
     }
   ],
@@ -530,5 +560,13 @@
       "relation": "validated_by_gate"
     }
   ],
-  "generatedBy": "scripts/rt4/build-evidence-graph.mjs"
+  "generatedBy": "scripts/rt4/build-evidence-graph.mjs",
+  "releaseStates": {
+    "centralMerge": "CENTRAL_MERGE_COMPLETED",
+    "dormInt": "DORM_INT_PASSED",
+    "observation": "L1_INTERNAL_PILOT_OBSERVATION",
+    "businessProduction": "BLOCKED",
+    "dormitoryL2Production": "BLOCKED",
+    "repairPartsHr": "L0 Contract Preview"
+  }
 }

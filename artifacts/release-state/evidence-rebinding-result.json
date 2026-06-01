@@ -1,0 +1,31 @@
+{
+  "generated_at_utc": "2026-06-01T19:32:58.594Z",
+  "generated_by": "rebind-dorm-int-latest-main",
+  "status": "passed",
+  "mainHead": "7055814c0b1638badb45bf3b1add5cb2d24ebd87",
+  "before": {
+    "latestMainCommitSha": "7055814c0b1638badb45bf3b1add5cb2d24ebd87",
+    "evidenceRefsWithTmp": 0
+  },
+  "after": {
+    "latestMainCommitSha": "7055814c0b1638badb45bf3b1add5cb2d24ebd87",
+    "evidenceRefsWithTmp": 0,
+    "evidenceGraphMode": "L1_INTERNAL_PILOT_OBSERVATION",
+    "completionDashboardMode": "L1_INTERNAL_PILOT_OBSERVATION",
+    "finalAssuranceDormIntStatus": "DORM_INT_PASSED"
+  },
+  "productionAllowed": false,
+  "dormitoryL2ProductionAllowed": false,
+  "businessProduction": "BLOCKED",
+  "repairPartsHrStatus": "L0 Contract Preview",
+  "updatedRefs": [
+    "artifacts/go-live/dormitory/internal-pilot-go-no-go.json",
+    "docs/go-live/dormitory/internal-pilot-go-no-go.md",
+    "artifacts/rt4/evidence-graph.json",
+    "artifacts/rt4/completion-dashboard.json",
+    "docs/program/rt4/completion-dashboard.md",
+    "artifacts/rt4/final-completion-assurance-result.json",
+    "docs/program/rt4/final-completion-assurance-report.md",
+    "artifacts/release-state/evidence-rebinding-result.json"
+  ]
+}

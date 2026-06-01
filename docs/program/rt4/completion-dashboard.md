@@ -2,7 +2,9 @@
 
 Generated source: `artifacts/rt4/completion-dashboard.json`
 
-Current mode: `STACKED_PRECONSTRUCTION`
+Current mode: `L1_INTERNAL_PILOT_OBSERVATION`
+
+Current main: `7055814c0b1638badb45bf3b1add5cb2d24ebd87`
 
 Business Production: `BLOCKED`
 
@@ -20,12 +22,8 @@ Repair / Parts / HR: `L0_OR_BLOCKED`
 
 ## Current Gate
 
-RT-FINAL: `LOCAL_PASSED`
+DORM-INT: `GO_FOR_INTERNAL_PILOT`
 
-Current branch: `codex/rtfinal-completion-assurance-report`
+Central Merge Train: `CENTRAL_MERGE_COMPLETED`
 
-Head sha: `044a38ce9cbd7df0282f04c20ee07e35802deb30`
-
-Next allowed stage after RT-FINAL local pass: `Central Merge Train preflight`.
-
-Formal Central Merge Train: `LOCKED_UNTIL_RT_FINAL_LOCAL_PASSED`.
+Observation: `L1_INTERNAL_PILOT_OBSERVATION`
