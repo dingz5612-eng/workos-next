@@ -1,0 +1,56 @@
+{
+  "version": "oam-02.ledger-posting-contract.v1",
+  "domain": "dormitory",
+  "productionAllowed": false,
+  "sourceRules": "docs/business/finance/money-kernel-rules.yml",
+  "postings": [
+    {
+      "basisType": "deposit_receipt",
+      "workItemTypes": ["Dorm.DepositConfirm"],
+      "debit": {"accountType":"asset.cash_or_bank","semantic":"收到押金对应现金或银行资产增加"},
+      "credit": {"accountType":"liability.deposit","semantic":"押金负债增加，不得计入 revenue"},
+      "requiredRefs": ["depositAccountId", "depositReceiptId", "ledgerTransactionId", "commandSubmissionId"],
+      "forbiddenAccountTypes": ["revenue.deposit", "revenue.room", "expense.refund"]
+    },
+    {
+      "basisType": "payment_receipt",
+      "workItemTypes": ["Dorm.PaymentConfirm"],
+      "debit": {"accountType":"asset.cash_or_bank","semantic":"普通收款到账"},
+      "credit": {"accountType":"receivable.stay","semantic":"冲减住客应收，不得使用 deposit liability"},
+      "requiredRefs": ["stayId", "paymentId", "ledgerTransactionId", "commandSubmissionId"],
+      "forbiddenAccountTypes": ["liability.deposit"]
+    },
+    {
+      "basisType": "refund_deposit",
+      "workItemTypes": ["Dorm.RefundApprove"],
+      "debit": {"accountType":"liability.deposit","semantic":"冲减原 deposit account 的可退负债"},
+      "credit": {"accountType":"asset.cash_or_bank","semantic":"现金或银行资产减少"},
+      "requiredRefs": ["originalDepositAccountId", "refundId", "availableLiability", "ledgerTransactionId", "commandSubmissionId"],
+      "amountRules": ["refundAmount <= availableLiability"],
+      "forbiddenAccountTypes": ["expense.refund", "revenue.deposit"]
+    },
+    {
+      "basisType": "deposit_deduction",
+      "workItemTypes": ["Dorm.DepositDeduct", "Dorm.CheckoutSettlement"],
+      "debit": {"accountType":"liability.deposit","semantic":"扣减押金负债"},
+      "credit": {"accountType":"receivable.stay","semantic":"抵扣退住结算应收"},
+      "requiredRefs": ["depositAccountId", "deductionBasisId", "ledgerTransactionId", "commandSubmissionId"],
+      "amountRules": ["deductionAmount <= availableLiability"],
+      "forbiddenAccountTypes": ["revenue.deposit"]
+    },
+    {
+      "basisType": "ledger_correction_apply",
+      "workItemTypes": ["Finance.CorrectionApply"],
+      "debit": {"accountType":"correction.reversal","semantic":"追加 reversal，不修改旧分录"},
+      "credit": {"accountType":"correction.offset","semantic":"追加 compensation，不删除旧分录"},
+      "requiredRefs": ["financeCaseId", "correctionRequestId", "ledgerTransactionId", "commandSubmissionId"],
+      "appendOnly": true,
+      "forbiddenMutations": ["update LedgerEntry", "delete LedgerEntry"]
+    }
+  ],
+  "semanticFailureCases": [
+    {"id":"balanced_wrong_account_type","severity":"P0","mustFailWhen":"LedgerTransaction balance=true 但 accountType 不符合 basisType 语义。"},
+    {"id":"refund_wrong_deposit_account","severity":"P0","mustFailWhen":"refund_deposit 未引用原 depositAccountId。"},
+    {"id":"unclear_money_posted_early","severity":"P0","mustFailWhen":"UnclearMoneyCase 未澄清前直接入账。"}
+  ]
+}

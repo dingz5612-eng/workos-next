@@ -1,0 +1,20 @@
+{
+  "version": "oam-02.metric-formula-contract.v1",
+  "domain": "dormitory",
+  "productionAllowed": false,
+  "sourceMetricContract": "docs/go-live/dormitory/observation-metric-contract.yml",
+  "metrics": [
+    {"metricId":"sellable_bed_night_conversion","中文名称":"可售床夜转化效率","formula":"confirmedStayBedNights / availableBedNights","unit":"ratio","window":"daily","dimension":["tenantId","siteId","buildingId"],"target":0.85,"yellowThreshold":0.7,"redThreshold":0.55,"minSampleSize":10,"owner":"Dormitory Operations Owner","drillDown":["roomId","bedId","workItemId","caseId"]},
+    {"metricId":"checkin_duration_p95","中文名称":"入住办理时长 P95","formula":"p95(checkinConfirmedAt - checkinPreparedAt)","unit":"minutes","window":"daily","dimension":["tenantId","siteId","role"],"target":30,"yellowThreshold":45,"redThreshold":60,"minSampleSize":5,"owner":"Front Desk Lead","drillDown":["workItemId","caseId","residentSubjectRef"]},
+    {"metricId":"checkout_turnover_duration_p95","中文名称":"退住周转时长 P95","formula":"p95(bedReleasedAt - checkoutRequestedAt)","unit":"hours","window":"daily","dimension":["tenantId","siteId","roomType"],"target":8,"yellowThreshold":12,"redThreshold":24,"minSampleSize":3,"owner":"Housekeeping Lead","drillDown":["bedId","checkoutCaseId","workItemId"]},
+    {"metricId":"deposit_liability_accuracy","中文名称":"押金负债准确率","formula":"1 - abs(depositLiabilityLedger - depositLiabilityProjection) / max(1, depositLiabilityLedger)","unit":"ratio","window":"daily_close","dimension":["tenantId","siteId","currency"],"target":1,"yellowThreshold":0.995,"redThreshold":0.99,"minSampleSize":1,"owner":"Finance Controller","drillDown":["depositAccountId","ledgerTransactionId","workItemId"]},
+    {"metricId":"evidence_missing_rate","中文名称":"证据缺失率","formula":"missingEvidenceBlockedConfirmCount / max(1, confirmAttemptCount)","unit":"ratio","window":"daily","dimension":["tenantId","siteId","workItemType"],"target":0.0,"yellowThreshold":0.02,"redThreshold":0.05,"minSampleSize":10,"owner":"Operations Director","drillDown":["workItemId","requirementId","caseId"]},
+    {"metricId":"projection_lag_p95","中文名称":"投影延迟 P95","formula":"p95(projectionUpdatedAt - domainEventCommittedAt)","unit":"minutes","window":"hourly","dimension":["tenantId","projectionName"],"target":3,"yellowThreshold":5,"redThreshold":10,"minSampleSize":10,"owner":"Runtime Owner","drillDown":["eventId","projectionCheckpointId","workItemId"]},
+    {"metricId":"duplicate_confirm_rate","中文名称":"重复确认率","formula":"idempotencyConflictCount / max(1, confirmAttemptCount)","unit":"ratio","window":"daily","dimension":["tenantId","siteId","workItemType"],"target":0.0,"yellowThreshold":0.05,"redThreshold":0.1,"minSampleSize":10,"owner":"Runtime Owner","drillDown":["idempotencyKey","commandSubmissionId","workItemId"]},
+    {"metricId":"sla_overdue_count","中文名称":"超时任务数","formula":"count(workItem where dueAt < now and lifecycleState not in closedStates)","unit":"count","window":"daily","dimension":["tenantId","siteId","ownerRole"],"target":0,"yellowThreshold":1,"redThreshold":3,"minSampleSize":1,"owner":"Manager","drillDown":["workItemId","ownerRole","dueAt"]}
+  ],
+  "semanticFailureCases": [
+    {"id":"metric_without_drilldown","severity":"P0","mustFailWhen":"指标无法钻取到 WorkItem / Event / Ledger / Lens 证据。"},
+    {"id":"metric_without_owner","severity":"P0","mustFailWhen":"指标无 owner 或无 stale/correction policy。"}
+  ]
+}

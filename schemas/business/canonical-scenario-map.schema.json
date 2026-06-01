@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://workosnext.local/schemas/business/canonical-scenario-map.schema.json",
+  "type": "object",
+  "required": ["version", "domain", "productionAllowed", "mappings", "uniqueness"],
+  "properties": {
+    "version": { "type": "string" },
+    "domain": { "const": "dormitory" },
+    "productionAllowed": { "const": false },
+    "mappings": {
+      "type": "array",
+      "minItems": 10,
+      "items": {
+        "type": "object",
+        "required": ["scenarioId", "workItemType", "cardId", "ownerDomain", "surfaceCardId", "sourceScenario"],
+        "properties": {
+          "scenarioId": { "type": "string" },
+          "workItemType": { "type": "string" },
+          "cardId": { "type": "string" },
+          "ownerDomain": { "type": "string" },
+          "surfaceCardId": { "type": "string" },
+          "sourceScenario": { "type": "string" }
+        }
+      }
+    },
+    "uniqueness": { "type": "object" }
+  }
+}

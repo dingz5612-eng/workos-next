@@ -1,0 +1,24 @@
+{
+  "version": "oam-02.evidence-coverage-contract.v1",
+  "domain": "dormitory",
+  "productionAllowed": false,
+  "sourceFiles": {
+    "scenarioFields": "docs/business/dormitory/scenario-field-contract.yml",
+    "scenarioPack": "docs/scenarios/dormitory/golden-pilot.yml",
+    "workItemCatalog": "docs/business/dormitory/workitem-catalog.yml",
+    "evidencePolicy": "docs/business/dormitory/evidence-policy.yml",
+    "evidenceRequirements": "docs/business/dormitory/evidence-requirements.yml"
+  },
+  "coverageRules": [
+    {"id":"scenario_required_evidence_in_policy","severity":"P0","statement":"每个 scenario.requiredEvidence 必须出现在 evidence-policy requirements。"},
+    {"id":"scenario_required_evidence_in_workitem_catalog","severity":"P0","statement":"每个 scenario.requiredEvidence 必须被对应 WorkItem catalog requiredEvidence 覆盖。"},
+    {"id":"policy_requirement_has_required_fields","severity":"P0","statement":"每个 evidence-policy requirement 必须在 evidence-requirements 中声明 requiredFields。"},
+    {"id":"policy_workitem_has_catalog_or_gate_scope","severity":"P0","statement":"每个 Dorm/Finance workItemTypes 必须有 catalog 项；Gate.* 可作为 release gate scope。"},
+    {"id":"wrong_scope_blocks_confirm","severity":"P0","statement":"wrong-scope evidence 必须 403 或 422，不得进入 committed fact。"}
+  ],
+  "runtimeFlags": {
+    "missingEvidenceBlocksConfirm": true,
+    "rejectedEvidenceBlocksConfirm": true,
+    "wrongScopeEvidenceBlocksConfirm": true
+  }
+}

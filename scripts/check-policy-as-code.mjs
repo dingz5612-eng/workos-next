@@ -49,7 +49,8 @@ const depositRejected = evaluateEvidence(evidencePolicy, {
   workItemId: "wi-001",
   submissionId: "sub-001",
   evidenceRefs: [
-    evidence("receipt-proof", "tenant-dormitory", "wi-001", "sub-001", "rejected")
+    evidence("receipt-proof", "tenant-dormitory", "wi-001", "sub-001", "rejected"),
+    evidence("deposit-policy", "tenant-dormitory", "wi-001", "sub-001", "verified")
   ]
 });
 assert(depositRejected.code === "rejected_evidence_blocks_confirm", "Policy file must block rejected evidence");
@@ -60,7 +61,8 @@ const depositWrongScope = evaluateEvidence(evidencePolicy, {
   workItemId: "wi-001",
   submissionId: "sub-001",
   evidenceRefs: [
-    evidence("receipt-proof", "tenant-dormitory", "wi-other", "sub-001", "verified")
+    evidence("receipt-proof", "tenant-dormitory", "wi-other", "sub-001", "verified"),
+    evidence("deposit-policy", "tenant-dormitory", "wi-001", "sub-001", "verified")
   ]
 });
 assert(depositWrongScope.code === "wrong_scope_evidence_blocks_confirm", "Policy file must block wrong-scope evidence");
@@ -121,7 +123,10 @@ if (selfTest) {
     tenantId: "tenant-dormitory",
     workItemId: "wi-001",
     submissionId: "sub-001",
-    evidenceRefs: [evidence("receipt-proof", "tenant-dormitory", "wi-001", "sub-001", "rejected")]
+    evidenceRefs: [
+      evidence("receipt-proof", "tenant-dormitory", "wi-001", "sub-001", "rejected"),
+      evidence("deposit-policy", "tenant-dormitory", "wi-001", "sub-001", "verified")
+    ]
   });
   assert(decision.allowed === true, "self-test must prove policy flag changes behavior");
   console.log("Policy-as-code self-test: PASS");

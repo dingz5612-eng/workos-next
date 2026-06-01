@@ -9,12 +9,26 @@
   "wrongScopeEvidenceBlocksConfirm": true,
   "requirements": [
     {"requirementId":"identity-document","workItemTypes":["Dorm.CheckinPrepare","Dorm.CheckinConfirm"],"trustLevel":"verified","retention":"regulated"},
+    {"requirementId":"checkin-confirmation","workItemTypes":["Dorm.CheckinConfirm"],"trustLevel":"operator-attested","retention":"operations"},
+    {"requirementId":"reservation-acknowledgement","workItemTypes":["Dorm.ReservationConfirm","Dorm.CheckinConfirm"],"trustLevel":"operator-attested","retention":"operations"},
+    {"requirementId":"bed-availability-proof","workItemTypes":["Dorm.BedAvailabilityConfirm","Dorm.BedAssignmentConfirm","Dorm.CheckinConfirm"],"trustLevel":"operator-attested","retention":"operations"},
     {"requirementId":"payment-receipt","workItemTypes":["Dorm.PaymentRegister","Dorm.PaymentConfirm"],"trustLevel":"verified","retention":"finance"},
+    {"requirementId":"cashier-review","workItemTypes":["Dorm.PaymentConfirm"],"trustLevel":"controller-approved","retention":"finance"},
+    {"requirementId":"deposit-policy","workItemTypes":["Dorm.DepositAssess","Dorm.DepositConfirm"],"trustLevel":"verified","retention":"finance"},
     {"requirementId":"receipt-proof","workItemTypes":["Dorm.DepositReceive","Dorm.DepositConfirm"],"trustLevel":"verified","retention":"finance"},
     {"requirementId":"deduction-basis","workItemTypes":["Dorm.DepositDeduct"],"trustLevel":"verified","retention":"finance"},
     {"requirementId":"room-inspection","workItemTypes":["Dorm.RoomInspection","Dorm.DepositDeduct"],"trustLevel":"verified","retention":"operations"},
     {"requirementId":"cleaning-checklist","workItemTypes":["Dorm.RoomReadinessCheck","Dorm.ResourceRelease"],"trustLevel":"operator-attested","retention":"operations"},
-    {"requirementId":"refund-approval","workItemTypes":["Dorm.RefundApprove"],"trustLevel":"controller-approved","retention":"finance"}
+    {"requirementId":"completion-photo","workItemTypes":["Dorm.ServiceTaskComplete","Dorm.RoomReadinessCheck"],"trustLevel":"operator-attested","retention":"operations"},
+    {"requirementId":"verification-check","workItemTypes":["Dorm.ServiceTaskComplete","Dorm.RoomReadinessCheck"],"trustLevel":"operator-attested","retention":"operations"},
+    {"requirementId":"settlement-review","workItemTypes":["Dorm.CheckoutSettlement","Dorm.RefundApprove"],"trustLevel":"controller-approved","retention":"finance"},
+    {"requirementId":"refund-approval","workItemTypes":["Dorm.RefundApprove"],"trustLevel":"controller-approved","retention":"finance"},
+    {"requirementId":"bank-import-row","workItemTypes":["Finance.CorrectionApply"],"trustLevel":"verified","retention":"finance"},
+    {"requirementId":"correction-approval","workItemTypes":["Finance.CorrectionApply"],"trustLevel":"controller-approved","retention":"finance"},
+    {"requirementId":"period-review-pack","workItemTypes":["Dorm.PeriodReview"],"trustLevel":"manager-approved","retention":"operations"},
+    {"requirementId":"exception-audit","workItemTypes":["Dorm.ExceptionResolve"],"trustLevel":"manager-approved","retention":"audit"},
+    {"requirementId":"shadow-compare-report","workItemTypes":["Gate.SemanticShadowReview"],"trustLevel":"machine-generated","retention":"release"},
+    {"requirementId":"rollback-instruction","workItemTypes":["Gate.RollbackReview"],"trustLevel":"release-approved","retention":"release"}
   ],
   "productionAllowed": false
 }

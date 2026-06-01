@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://workosnext.local/schemas/business/ledger-posting-contract.schema.json",
+  "type": "object",
+  "required": ["version", "domain", "productionAllowed", "postings", "semanticFailureCases"],
+  "properties": {
+    "version": { "type": "string" },
+    "domain": { "const": "dormitory" },
+    "productionAllowed": { "const": false },
+    "postings": {
+      "type": "array",
+      "minItems": 5,
+      "items": {
+        "type": "object",
+        "required": ["basisType", "workItemTypes", "debit", "credit", "requiredRefs"],
+        "properties": {
+          "basisType": { "type": "string" },
+          "workItemTypes": { "type": "array", "minItems": 1 },
+          "debit": { "type": "object", "required": ["accountType", "semantic"] },
+          "credit": { "type": "object", "required": ["accountType", "semantic"] },
+          "requiredRefs": { "type": "array", "minItems": 1 }
+        }
+      }
+    },
+    "semanticFailureCases": { "type": "array", "minItems": 3 }
+  }
+}

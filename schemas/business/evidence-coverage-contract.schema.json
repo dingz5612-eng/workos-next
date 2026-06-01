@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://workosnext.local/schemas/business/evidence-coverage-contract.schema.json",
+  "type": "object",
+  "required": ["version", "domain", "productionAllowed", "sourceFiles", "coverageRules", "runtimeFlags"],
+  "properties": {
+    "version": { "type": "string" },
+    "domain": { "const": "dormitory" },
+    "productionAllowed": { "const": false },
+    "sourceFiles": { "type": "object" },
+    "coverageRules": { "type": "array", "minItems": 5 },
+    "runtimeFlags": {
+      "type": "object",
+      "required": ["missingEvidenceBlocksConfirm", "rejectedEvidenceBlocksConfirm", "wrongScopeEvidenceBlocksConfirm"],
+      "properties": {
+        "missingEvidenceBlocksConfirm": { "const": true },
+        "rejectedEvidenceBlocksConfirm": { "const": true },
+        "wrongScopeEvidenceBlocksConfirm": { "const": true }
+      }
+    }
+  }
+}

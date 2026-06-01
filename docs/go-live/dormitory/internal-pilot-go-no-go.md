@@ -1,7 +1,7 @@
 # Dormitory Internal Pilot Go/No-Go
 
 - status: GO_FOR_INTERNAL_PILOT
-- latest main: e68ffc2bda8e55b3cac40c728712d2ab487f7b14
+- latest main: c746ca7390195388fcb21300f27d8a99107b2c48
 - internalPilotAllowed: true
 - productionAllowed: false
 - dormitoryStatus: L1 Internal Pilot

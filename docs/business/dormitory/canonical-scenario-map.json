@@ -1,0 +1,22 @@
+{
+  "version": "oam-02.canonical-scenario-map.v1",
+  "domain": "dormitory",
+  "productionAllowed": false,
+  "mappings": [
+    {"scenarioId":"dorm-cert-001","workItemType":"Dorm.CheckinConfirm","cardId":"checkin","ownerDomain":"DormitoryDomainPack","surfaceCardId":"mobile.work.checkin-confirm","sourceScenario":"docs/scenarios/dormitory/golden-pilot.yml"},
+    {"scenarioId":"dorm-cert-002","workItemType":"Dorm.DepositConfirm","cardId":"deposit","ownerDomain":"FinanceTruthPack","surfaceCardId":"mobile.work.deposit-confirm","sourceScenario":"docs/scenarios/dormitory/golden-pilot.yml"},
+    {"scenarioId":"dorm-cert-003","workItemType":"Dorm.PaymentConfirm","cardId":"payment","ownerDomain":"FinanceTruthPack","surfaceCardId":"mobile.work.payment-confirm","sourceScenario":"docs/scenarios/dormitory/golden-pilot.yml"},
+    {"scenarioId":"dorm-cert-004","workItemType":"Dorm.RoomReadinessCheck","cardId":"roomReadiness","ownerDomain":"DormitoryDomainPack","surfaceCardId":"mobile.work.room-readiness","sourceScenario":"docs/scenarios/dormitory/golden-pilot.yml"},
+    {"scenarioId":"dorm-cert-005","workItemType":"Dorm.RefundApprove","cardId":"refundApprove","ownerDomain":"FinanceTruthPack","surfaceCardId":"mobile.work.refund-approve","sourceScenario":"docs/scenarios/dormitory/golden-pilot.yml"},
+    {"scenarioId":"dorm-cert-006","workItemType":"Finance.CorrectionApply","cardId":"financeCorrection","ownerDomain":"FinanceTruthPack","surfaceCardId":"pc.finance.correction-workitem","sourceScenario":"docs/scenarios/dormitory/golden-pilot.yml"},
+    {"scenarioId":"dorm-cert-007","workItemType":"Dorm.PeriodReview","cardId":"periodReview","ownerDomain":"OperatingControlPack","surfaceCardId":"pc.manager.period-review","sourceScenario":"docs/scenarios/dormitory/golden-pilot.yml"},
+    {"scenarioId":"dorm-cert-008","workItemType":"Dorm.ExceptionResolve","cardId":"exceptionResolve","ownerDomain":"DormitoryDomainPack","surfaceCardId":"mobile.work.permission-diagnostic","sourceScenario":"docs/scenarios/dormitory/golden-pilot.yml"},
+    {"scenarioId":"dorm-cert-009","workItemType":"Dorm.PaymentConfirm","cardId":"paymentDuplicate","ownerDomain":"FinanceTruthPack","surfaceCardId":"mobile.work.payment-confirm-duplicate","sourceScenario":"docs/scenarios/dormitory/golden-pilot.yml"},
+    {"scenarioId":"dorm-cert-010","workItemType":"Dorm.DepositConfirm","cardId":"depositMissingEvidence","ownerDomain":"FinanceTruthPack","surfaceCardId":"mobile.work.deposit-confirm-evidence-blocker","sourceScenario":"docs/scenarios/dormitory/golden-pilot.yml"}
+  ],
+  "uniqueness": {
+    "scenarioId": true,
+    "scenarioWorkItemCardOwnerSurfaceTuple": true,
+    "ordinaryMobileConfirmCannotUseWorkspaceCardFallback": true
+  }
+}

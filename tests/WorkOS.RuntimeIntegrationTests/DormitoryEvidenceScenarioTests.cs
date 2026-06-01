@@ -38,7 +38,8 @@ public sealed class DormitoryEvidenceScenarioTests
         Assert.AreEqual(0, harness.Store.DomainEvents.Count);
 
         var accepted = EvidencePolicyEvaluator.Evaluate(policy, EvidenceRequest("Dorm.DepositConfirm", scenario, [
-            EvidenceRef("receipt-proof", scenario, "verified")
+            EvidenceRef("receipt-proof", scenario, "verified"),
+            EvidenceRef("deposit-policy", scenario, "verified")
         ]));
         Assert.AreEqual(StatusCodes.Status200OK, accepted.StatusCode);
 

@@ -6,13 +6,25 @@
     {"requirementId":"cleaning-checklist","requiredFields":["tenantId","workItemId","submissionId","evidenceHash","capturedBy"]},
     {"requirementId":"maintenance-clearance","requiredFields":["tenantId","workItemId","submissionId","approvalActor"]},
     {"requirementId":"identity-document","requiredFields":["tenantId","workItemId","submissionId","verifiedBy"]},
+    {"requirementId":"checkin-confirmation","requiredFields":["tenantId","workItemId","submissionId","operatorId","confirmedAt"]},
     {"requirementId":"reservation-acknowledgement","requiredFields":["tenantId","workItemId","submissionId","customerAck"]},
+    {"requirementId":"bed-availability-proof","requiredFields":["tenantId","workItemId","submissionId","bedId","availabilityVersion"]},
     {"requirementId":"payment-receipt","requiredFields":["tenantId","workItemId","submissionId","amount","currency","evidenceHash"]},
     {"requirementId":"deposit-policy","requiredFields":["tenantId","workItemId","submissionId","policyVersion"]},
     {"requirementId":"receipt-proof","requiredFields":["tenantId","workItemId","submissionId","amount","currency","evidenceHash"]},
     {"requirementId":"deduction-basis","requiredFields":["tenantId","workItemId","submissionId","damageRef","amount","currency"]},
+    {"requirementId":"room-inspection","requiredFields":["tenantId","workItemId","submissionId","inspectionId","inspector","result"]},
+    {"requirementId":"completion-photo","requiredFields":["tenantId","workItemId","submissionId","evidenceHash","capturedBy"]},
+    {"requirementId":"verification-check","requiredFields":["tenantId","workItemId","submissionId","verifiedBy","result"]},
     {"requirementId":"refund-approval","requiredFields":["tenantId","workItemId","submissionId","approver","availableRefundAmount"]},
-    {"requirementId":"settlement-review","requiredFields":["tenantId","workItemId","submissionId","reviewer","projectionVersion"]}
+    {"requirementId":"settlement-review","requiredFields":["tenantId","workItemId","submissionId","reviewer","projectionVersion"]},
+    {"requirementId":"cashier-review","requiredFields":["tenantId","workItemId","submissionId","reviewer","paymentId"]},
+    {"requirementId":"bank-import-row","requiredFields":["tenantId","workItemId","submissionId","bankRowHash","amount","currency"]},
+    {"requirementId":"correction-approval","requiredFields":["tenantId","workItemId","submissionId","approver","correctionReason"]},
+    {"requirementId":"period-review-pack","requiredFields":["tenantId","workItemId","submissionId","periodId","reviewer"]},
+    {"requirementId":"exception-audit","requiredFields":["tenantId","workItemId","submissionId","reasonCode","auditor"]},
+    {"requirementId":"shadow-compare-report","requiredFields":["tenantId","workItemId","submissionId","reportHash","status"]},
+    {"requirementId":"rollback-instruction","requiredFields":["tenantId","workItemId","submissionId","rollbackOwner","instructionHash"]}
   ],
   "productionAllowed": false
 }

@@ -18,17 +18,24 @@ public sealed class PolicyAsCodeTests
         Assert.AreEqual("missing_required_evidence", missing.Code);
         Assert.AreEqual(422, missing.StatusCode);
 
-        var rejected = EvidencePolicyEvaluator.Evaluate(policy, EvidenceRequest([Evidence("receipt-proof", "rejected")]));
+        var rejected = EvidencePolicyEvaluator.Evaluate(policy, EvidenceRequest([
+            Evidence("receipt-proof", "rejected"),
+            Evidence("deposit-policy", "verified")
+        ]));
         Assert.IsFalse(rejected.Allowed);
         Assert.AreEqual("rejected_evidence_blocks_confirm", rejected.Code);
 
         var wrongScope = EvidencePolicyEvaluator.Evaluate(policy, EvidenceRequest([
-            new EvidencePolicyRef("receipt-proof", "tenant-dormitory", "wi-other", "sub-001", "verified")
+            new EvidencePolicyRef("receipt-proof", "tenant-dormitory", "wi-other", "sub-001", "verified"),
+            Evidence("deposit-policy", "verified")
         ]));
         Assert.IsFalse(wrongScope.Allowed);
         Assert.AreEqual("wrong_scope_evidence_blocks_confirm", wrongScope.Code);
 
-        var accepted = EvidencePolicyEvaluator.Evaluate(policy, EvidenceRequest([Evidence("receipt-proof", "verified")]));
+        var accepted = EvidencePolicyEvaluator.Evaluate(policy, EvidenceRequest([
+            Evidence("receipt-proof", "verified"),
+            Evidence("deposit-policy", "verified")
+        ]));
         Assert.IsTrue(accepted.Allowed);
         Assert.AreEqual("evidence_accepted", accepted.Code);
 
