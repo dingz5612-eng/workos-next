@@ -1,0 +1,125 @@
+{
+  "version": "oam-02.scenario-field-contract.v1",
+  "domain": "dormitory",
+  "productionAllowed": false,
+  "sourceScenarioFile": "docs/scenarios/dormitory/golden-pilot.yml",
+  "fieldSets": [
+    {
+      "scenarioId": "dorm-cert-001",
+      "workItemType": "Dorm.CheckinConfirm",
+      "businessFields": ["leadId", "reservationId", "residentSubjectRef", "stayId", "roomId", "bedId"],
+      "systemFields": ["tenantId", "caseId", "workItemId", "definitionVersionId", "commandSubmissionId", "idempotencyKey"],
+      "evidenceFields": ["identity-document", "reservation-acknowledgement", "bed-availability-proof"],
+      "ledgerFields": [],
+      "lensFields": ["StayOnboardingLens", "DormAvailabilityLens"],
+      "semanticAssertions": ["床位必须可用", "入住确认必须绑定正式 SubjectReceipt", "入住不得绕过 WorkItem"]
+    },
+    {
+      "scenarioId": "dorm-cert-002",
+      "workItemType": "Dorm.DepositConfirm",
+      "businessFields": ["stayId", "residentSubjectRef", "depositAccountId", "depositReceiptId", "amount", "currency"],
+      "systemFields": ["tenantId", "caseId", "workItemId", "commandSubmissionId", "payloadHash", "idempotencyKey"],
+      "evidenceFields": ["deposit-policy", "receipt-proof"],
+      "ledgerFields": ["basisType", "ledgerTransactionId", "debitAccountType", "creditAccountType", "depositAccountId"],
+      "lensFields": ["DepositLiabilityLens"],
+      "semanticAssertions": ["押金只增加 liability", "押金不得入 revenue", "LedgerTransaction 必须 balance"]
+    },
+    {
+      "scenarioId": "dorm-cert-003",
+      "workItemType": "Dorm.PaymentConfirm",
+      "businessFields": ["stayId", "paymentId", "payerSubjectRef", "amount", "currency", "paymentMethod"],
+      "systemFields": ["tenantId", "caseId", "workItemId", "commandSubmissionId", "payloadHash", "idempotencyKey"],
+      "evidenceFields": ["payment-receipt", "cashier-review"],
+      "ledgerFields": ["basisType", "ledgerTransactionId", "debitAccountType", "creditAccountType", "allocationTarget"],
+      "lensFields": ["StayBalanceLens", "RevenueCollectionLens"],
+      "semanticAssertions": ["普通收款不得混入押金 liability", "收款必须分配到 stay balance", "重复提交不得产生新账务副作用"]
+    },
+    {
+      "scenarioId": "dorm-cert-004",
+      "workItemType": "Dorm.RoomReadinessCheck",
+      "businessFields": ["roomId", "bedId", "serviceTaskId", "readinessState", "blockReason"],
+      "systemFields": ["tenantId", "caseId", "workItemId", "commandSubmissionId", "idempotencyKey"],
+      "evidenceFields": ["completion-photo", "verification-check"],
+      "ledgerFields": [],
+      "lensFields": ["RoomReadinessLens", "ServiceTaskLens", "DormAvailabilityLens"],
+      "semanticAssertions": ["服务任务完成前床位不得释放", "释放必须有验收证据", "床位状态只能经 Operations Runtime 推进"]
+    },
+    {
+      "scenarioId": "dorm-cert-005",
+      "workItemType": "Dorm.RefundApprove",
+      "businessFields": ["stayId", "checkoutCaseId", "inspectionId", "depositAccountId", "refundAmount", "currency"],
+      "systemFields": ["tenantId", "caseId", "workItemId", "commandSubmissionId", "payloadHash", "idempotencyKey"],
+      "evidenceFields": ["room-inspection", "settlement-review", "refund-approval"],
+      "ledgerFields": ["basisType", "ledgerTransactionId", "debitAccountType", "creditAccountType", "availableLiability"],
+      "lensFields": ["DepositSettlementLens", "RefundRiskLens", "DormAvailabilityLens"],
+      "semanticAssertions": ["退款必须引用原 deposit account", "退款不得超过 available liability", "退住后清洁完成才可售"]
+    },
+    {
+      "scenarioId": "dorm-cert-006",
+      "workItemType": "Finance.CorrectionApply",
+      "businessFields": ["bankImportRowId", "financeCaseId", "unclearMoneyCaseId", "correctionReason", "amount", "currency"],
+      "systemFields": ["tenantId", "caseId", "workItemId", "commandSubmissionId", "payloadHash", "idempotencyKey"],
+      "evidenceFields": ["bank-import-row", "correction-approval"],
+      "ledgerFields": ["basisType", "ledgerTransactionId", "reversalEntryRef", "compensationEntryRef"],
+      "lensFields": ["FinanceExceptionLens", "StayBalanceLens"],
+      "semanticAssertions": ["异常流水先进入 FinanceCase 或 UnclearMoneyCase", "纠错只能 reversal 或 compensation", "旧 LedgerEntry 不得 update/delete"]
+    },
+    {
+      "scenarioId": "dorm-cert-007",
+      "workItemType": "Dorm.PeriodReview",
+      "businessFields": ["periodId", "reviewId", "actionPlanId", "ownerRole", "reviewDecision"],
+      "systemFields": ["tenantId", "caseId", "workItemId", "commandSubmissionId", "projectionVersion"],
+      "evidenceFields": ["period-review-pack"],
+      "ledgerFields": [],
+      "lensFields": ["ManagementDashboardLens"],
+      "semanticAssertions": ["周期复盘只读账务投影", "行动计划必须可追踪 owner/SLA", "周期关闭不得替代 production gate"]
+    },
+    {
+      "scenarioId": "dorm-cert-008",
+      "workItemType": "Dorm.ExceptionResolve",
+      "businessFields": ["exceptionCaseId", "blockedAction", "requestedRole", "ownerRole", "escalationTarget"],
+      "systemFields": ["tenantId", "caseId", "workItemId", "rejectedSubmissionId", "responseStatusCode"],
+      "evidenceFields": ["exception-audit"],
+      "ledgerFields": [],
+      "lensFields": ["ExceptionRiskLens"],
+      "semanticAssertions": ["403 必须有 RejectionTrace", "403 不得写 DomainEvent", "403 不得写 LedgerTransaction"]
+    },
+    {
+      "scenarioId": "dorm-cert-009",
+      "workItemType": "Dorm.PaymentConfirm",
+      "businessFields": ["paymentId", "stayId", "amount", "currency", "idempotencyKey"],
+      "systemFields": ["tenantId", "caseId", "workItemId", "rejectedSubmissionId", "stableResponseHash", "responseStatusCode"],
+      "evidenceFields": ["payment-receipt"],
+      "ledgerFields": [],
+      "lensFields": ["StayBalanceLens"],
+      "semanticAssertions": ["409 必须稳定返回", "同一 submission 不得同时 committed 和 rejected", "409 不得新增 DomainEvent 或 LedgerTransaction"]
+    },
+    {
+      "scenarioId": "dorm-cert-010",
+      "workItemType": "Dorm.DepositConfirm",
+      "businessFields": ["depositAccountId", "depositReceiptId", "amount", "currency", "missingEvidenceIds"],
+      "systemFields": ["tenantId", "caseId", "workItemId", "rejectedSubmissionId", "responseStatusCode"],
+      "evidenceFields": ["receipt-proof", "deposit-policy"],
+      "ledgerFields": [],
+      "lensFields": ["DepositLiabilityLens"],
+      "semanticAssertions": ["422 缺证据不得写账", "补证后 WorkItem 必须离开 blocked", "补证后 committed 必须有 FactTrace"]
+    }
+  ],
+  "semanticFailureCases": [
+    {
+      "id": "same_submission_dual_state_409",
+      "severity": "P0",
+      "mustFailWhen": "同一个 commandSubmissionId 同时出现 committed 与 rejected 状态"
+    },
+    {
+      "id": "evidence_resolved_but_workitem_blocked_422",
+      "severity": "P0",
+      "mustFailWhen": "422 补证后已经 committed 但 WorkItem lifecycleState 仍为 blocked"
+    },
+    {
+      "id": "refund_balanced_wrong_deposit_account",
+      "severity": "P0",
+      "mustFailWhen": "refund_deposit 分录金额平衡但未引用原 depositAccountId 或 accountType 错误"
+    }
+  ]
+}

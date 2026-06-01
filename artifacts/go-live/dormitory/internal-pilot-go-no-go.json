@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-06-01T19:52:54.575Z",
+  "generated_at_utc": "2026-06-01T20:22:26.451Z",
   "generated_by": "check-dormitory-internal-pilot-go-no-go",
   "stage": "DORM-INT-FINAL",
   "status": "GO_FOR_INTERNAL_PILOT",
@@ -20,27 +20,27 @@
   "latestMain": {
     "repository": "dingz5612-eng/workos-next",
     "branch": "main",
-    "checkedAtUtc": "2026-06-01T19:52:54.575Z",
-    "commitSha": "e68ffc2bda8e55b3cac40c728712d2ab487f7b14",
+    "checkedAtUtc": "2026-06-01T20:22:26.451Z",
+    "commitSha": "c746ca7390195388fcb21300f27d8a99107b2c48",
     "ci": {
-      "id": 26777989925,
+      "id": 26779582543,
       "name": "CI",
       "status": "completed",
       "conclusion": "success",
-      "headSha": "e68ffc2bda8e55b3cac40c728712d2ab487f7b14",
-      "htmlUrl": "https://github.com/dingz5612-eng/workos-next/actions/runs/26777989925",
-      "createdAt": "2026-06-01T19:47:53Z",
-      "updatedAt": "2026-06-01T19:50:30Z"
+      "headSha": "c746ca7390195388fcb21300f27d8a99107b2c48",
+      "htmlUrl": "https://github.com/dingz5612-eng/workos-next/actions/runs/26779582543",
+      "createdAt": "2026-06-01T20:18:48Z",
+      "updatedAt": "2026-06-01T20:21:24Z"
     },
     "v54ControlPlaneGuards": {
-      "id": 26777990195,
+      "id": 26779582614,
       "name": "V5.4 Control Plane Guards",
       "status": "completed",
       "conclusion": "success",
-      "headSha": "e68ffc2bda8e55b3cac40c728712d2ab487f7b14",
-      "htmlUrl": "https://github.com/dingz5612-eng/workos-next/actions/runs/26777990195",
-      "createdAt": "2026-06-01T19:47:53Z",
-      "updatedAt": "2026-06-01T19:50:06Z"
+      "headSha": "c746ca7390195388fcb21300f27d8a99107b2c48",
+      "htmlUrl": "https://github.com/dingz5612-eng/workos-next/actions/runs/26779582614",
+      "createdAt": "2026-06-01T20:18:48Z",
+      "updatedAt": "2026-06-01T20:21:14Z"
     }
   },
   "gateResults": {
@@ -160,7 +160,7 @@
   "nextAction": "只允许进入 L1 Internal Pilot 内测观察窗口；不得进入 L2 Production，不得放开 Repair / Parts / HR production。",
   "reconciliation": {
     "status": "rebound_to_latest_main",
-    "reboundAtUtc": "2026-06-01T19:52:54.575Z",
+    "reboundAtUtc": "2026-06-01T20:22:26.451Z",
     "centralMergeStatus": "CENTRAL_MERGE_COMPLETED",
     "dormIntStatus": "DORM_INT_PASSED",
     "observationStatus": "L1_INTERNAL_PILOT_OBSERVATION"

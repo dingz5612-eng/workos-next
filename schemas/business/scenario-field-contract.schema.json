@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://workosnext.local/schemas/business/scenario-field-contract.schema.json",
+  "type": "object",
+  "required": ["version", "domain", "productionAllowed", "fieldSets", "semanticFailureCases"],
+  "properties": {
+    "version": { "type": "string" },
+    "domain": { "const": "dormitory" },
+    "productionAllowed": { "const": false },
+    "fieldSets": {
+      "type": "array",
+      "minItems": 10,
+      "items": {
+        "type": "object",
+        "required": ["scenarioId", "workItemType", "businessFields", "systemFields", "evidenceFields", "ledgerFields", "lensFields", "semanticAssertions"],
+        "properties": {
+          "scenarioId": { "type": "string" },
+          "workItemType": { "type": "string" },
+          "businessFields": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+          "systemFields": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+          "evidenceFields": { "type": "array", "items": { "type": "string" } },
+          "ledgerFields": { "type": "array", "items": { "type": "string" } },
+          "lensFields": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+          "semanticAssertions": { "type": "array", "minItems": 1, "items": { "type": "string" } }
+        }
+      }
+    },
+    "semanticFailureCases": { "type": "array", "minItems": 3 }
+  }
+}

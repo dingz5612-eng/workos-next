@@ -221,6 +221,15 @@ jobs:
           node scripts/release-state/check-current-release-state.mjs
           node scripts/release-state/check-current-state-authority.mjs
 
+      - name: Validate OAM-02 Business Semantic Contract Kernel
+        if: github.event_name == 'pull_request'
+        run: |
+          node scripts/business/check-scenario-field-contract.mjs
+          node scripts/business/check-canonical-scenario-map.mjs
+          node scripts/business/check-evidence-coverage-contract.mjs
+          node scripts/business/check-ledger-posting-contract.mjs
+          node scripts/business/check-metric-formula-contract.mjs
+
       - name: Architecture guard
         shell: pwsh
         env:
