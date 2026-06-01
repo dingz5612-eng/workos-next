@@ -1,4 +1,5 @@
 import { apiBaseUrl } from "./apiClient.js";
+import { mobileBottomNavigation } from "./experienceContract.js";
 
 export function shell(content, ctx) {
   const { state, tr } = ctx;
@@ -26,11 +27,7 @@ function apiBanner({ state, tr }) {
 
 function bottomNav(ctx) {
   return `<nav class="bottom-nav">
-    ${nav("home", "home", ctx)}
-    ${nav("search", "search", ctx)}
-    ${nav("workbench", "workbench", ctx)}
-    ${nav("releaseControl", "releaseControl", ctx)}
-    ${nav("me", "me", ctx)}
+    ${mobileBottomNavigation.map((view) => nav(view, view === "home" ? "today" : view === "workbench" ? "work" : view, ctx)).join("")}
   </nav>`;
 }
 
