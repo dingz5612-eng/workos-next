@@ -6,18 +6,27 @@ import { workspaceCardPanel } from "./workspaceView.js";
 export function operationPanelView(ctx) {
   const { state, shell } = ctx;
   const item = resolveOperationItem(state);
-  const workspace = item?.workspace || ctx.workspace();
-  if (!workspace) {
+  if (!item?.workItemId && !item?.work_item_id) {
     return shell(`
       <section class="operation-panel-empty" data-component="OperationPanelView">
         <span>Operation Panel</span>
-        <h1>No WorkItem selected</h1>
-        <p>${ctx.tr("apiOffline")}</p>
+        <h1>Persisted WorkItem required</h1>
+        <p>operation_work_item_required</p>
       </section>
     `);
   }
 
+  const workspace = item.workspace;
   const activeCard = item?.card || activeWorkspaceCard(workspace, state.selectedCardIndex, state.selectedCardId);
+  if (!workspace || !activeCard) {
+    return shell(`
+      <section class="operation-panel-empty" data-component="OperationPanelView">
+        <span>Operation Panel</span>
+        <h1>Runtime WorkItem selected</h1>
+        <p>${ctx.escapeHtml(item.workItemId || item.work_item_id)} · workspace_or_card_projection_missing</p>
+      </section>
+    `);
+  }
   const operationContext = { ...item, workspace, card: activeCard, workspaceId: item?.workspaceId || workspace.id, cardId: item?.cardId || activeCard?.id };
   const model = workItemModel(operationContext, ctx);
   const draft = loadDraft(workspace.id, activeCard.id);
@@ -55,11 +64,21 @@ export function operationPanelView(ctx) {
 
 export function resolveOperationItem(state) {
   const workItemId = state.selectedWorkItemId;
-  const queueItem = (state.runtimeStore?.workQueue || []).find((item) => item.workItemId === workItemId || item.work_item_id === workItemId);
-  const operationItem = (state.runtimeStore?.operationWorkItems || []).find((item) =>
-    item.workItemId === workItemId || item.work_item_id === workItemId);
-  const selected = operationItem || queueItem || null;
+  const runtimeItems = [
+    ...(state.runtimeStore?.operationWorkItems || []),
+    ...(state.runtimeStore?.workQueue || [])
+  ];
+  const selected = runtimeItems.find((item) => item.workItemId === workItemId || item.work_item_id === workItemId) ||
+    runtimeItems.find((item) =>
+      (item.workspaceId || item.workspace_id) === state.selectedWorkspace &&
+      (!(item.cardId || item.card_id) || (item.cardId || item.card_id) === state.selectedCardId) &&
+      (item.workItemId || item.work_item_id)) ||
+    null;
   if (!selected) return null;
+  const persistedWorkItemId = selected.workItemId || selected.work_item_id;
+  if (persistedWorkItemId && state.selectedWorkItemId !== persistedWorkItemId) {
+    state.selectedWorkItemId = persistedWorkItemId;
+  }
   const workspaceId = selected.workspaceId || selected.workspace_id || state.selectedWorkspace;
   const cardId = selected.cardId || selected.card_id || state.selectedCardId;
   const workspace = (state.runtimeStore?.workspaces || []).find((item) => item.id === workspaceId);

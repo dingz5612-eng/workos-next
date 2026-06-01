@@ -29,10 +29,10 @@ describe("RT-5 Experience Contract", () => {
     const html = shell("<section></section>", ctx({ role: "operator" }));
 
     expect(mobileBottomNavigation).toEqual(["home", "workbench", "search", "me"]);
-    expect(html).toContain("Today");
-    expect(html).toContain("Work");
-    expect(html).toContain("Search");
-    expect(html).toContain("Me");
+    expect(html).toContain("今天");
+    expect(html).toContain("工作");
+    expect(html).toContain("搜索");
+    expect(html).toContain("我的");
     expect(html).not.toContain("releaseControl");
     expect(html).not.toContain("Release Control");
     vi.unstubAllGlobals();
@@ -126,9 +126,9 @@ describe("RT-5 Experience Contract", () => {
     expect(ActionResult({ status: "committed_projection_failed" }, testCtx)).toContain('data-component="FailedSyncState"');
     expect(EvidenceTile(activeCard.evidence[0], {}, "", testCtx)).toContain('data-component="EvidenceTile"');
     expect(EvidenceSheet(activeCard, {}, testCtx)).toContain('data-component="EvidenceSheet"');
-    expect(UploadQueue({}, testCtx)).toContain('data-component="UploadQueue"');
-    expect(SubmitQueue({}, testCtx)).toContain('data-component="SubmitQueue"');
-    expect(DeviceTrustPanel({ pcGovernance: { currentDevice: { deviceId: "D-1", deviceTrustStatus: "trusted", surface: "mobile" } } }, testCtx)).toContain('data-component="DeviceTrustPanel"');
+    expect(UploadQueue({}, testCtx)).toContain("证据上传");
+    expect(SubmitQueue({}, testCtx)).toContain("提交队列");
+    expect(DeviceTrustPanel({ currentDevice: { deviceId: "D-1", deviceTrustStatus: "trusted", surface: "mobile" } }, testCtx)).toContain("当前设备");
     expect(PermissionDiagnostic({ reason: "role_surface_not_allowed", owner: "releaseOwner", requiredPermission: "release.flight_deck.view" }, testCtx)).toContain("release.flight_deck.view");
   });
 
@@ -158,16 +158,27 @@ function ctx(actor = { role: "operator" }) {
       language: "language",
       zh: "zh",
       ru: "ru",
-      today: "Today",
-      work: "Work",
-      search: "Search",
-      me: "Me",
+      today: "今天",
+      work: "工作",
+      search: "搜索",
+      me: "我的",
       apiOnline: "online",
       apiChecking: "checking",
       apiOffline: "offline",
       retryApi: "retry",
       feedback: "feedback",
-      submitProjectionPending: "submitProjectionPending"
+      submitProjectionPending: "submitProjectionPending",
+      evidenceUpload: "证据上传",
+      submissionQueue: "提交队列",
+      currentDevice: "当前设备",
+      noPendingEvidenceUpload: "没有待上传证据",
+      noPendingSubmission: "没有待提交办理",
+      evidenceUploadWaiting: "证据等待上传",
+      submissionWaiting: "办理等待提交",
+      deviceTrusted: "设备已验证",
+      deviceUnknown: "设备状态待确认",
+      deviceContextIssue: "设备上下文异常",
+      deviceContextIssueBody: "当前移动端读到了 PC 设备上下文，请刷新或重新登录以绑定当前移动设备。"
     })[key] || key,
     tx: (value) => typeof value === "string" ? value : value["zh-CN"],
     localTerm: (value) => value?.label?.["zh-CN"] || value?.id || value,

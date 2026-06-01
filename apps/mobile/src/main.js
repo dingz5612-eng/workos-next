@@ -1,5 +1,5 @@
 import "./styles.css";
-import { checkHealth, fetchHomeSurface, fetchLearningCatalog, fetchOperationWorkItems, fetchProductionObservability, fetchReleaseControlCenter, fetchWorkspaceProjection } from "./apiClient.js";
+import { checkHealth, fetchHomeSurface, fetchLearningCatalog, fetchOperationWorkItems, fetchWorkspaceProjection } from "./apiClient.js";
 import { shell } from "./appShell.js";
 import { routeView } from "./appRouter.js";
 import { createInitialState } from "./appState.js";
@@ -8,6 +8,7 @@ import { refreshDefaultAccommodationLenses } from "./operationRuntime.js";
 import { applyRuntimeOfflineFallback, applyRuntimeProjection, applyRuntimeSurfacePayloads } from "./runtime/runtimeStore.js";
 import { escapeAttr, escapeHtml } from "./htmlEscaping.js";
 import { metric, localList, localTerm, task, tr, tx, workspace } from "./selectors/workspaceSelectors.js";
+import { isPcSurfaceView } from "./surfaceRegistry.js";
 
 const state = createInitialState();
 
@@ -32,26 +33,26 @@ async function hydrateProjectionFromApi() {
   try {
     await checkHealth();
     state.apiStatus = "online";
-    const [projection, operationWorkItems, homeSurface, learningCatalog, accommodationLenses, releaseControl, productionObservability] = await Promise.all([
+    const [projection, operationWorkItems, homeSurface, learningCatalog, accommodationLenses] = await Promise.all([
       fetchWorkspaceProjection(),
       optionalSurface(fetchOperationWorkItems),
       optionalSurface(fetchHomeSurface),
       optionalSurface(fetchLearningCatalog),
-      optionalSurface(refreshDefaultAccommodationLenses),
-      optionalSurface(fetchReleaseControlCenter),
-      optionalSurface(fetchProductionObservability)
+      optionalSurface(refreshDefaultAccommodationLenses)
     ]);
     applyRuntimeProjection(state, projection);
     applyRuntimeSurfacePayloads(state, { operationWorkItems, homeSurface, learningCatalog, accommodationLenses });
-    if (releaseControl) state.releaseControl = releaseControl;
-    if (productionObservability) {
-      state.pcGovernance = { ...state.pcGovernance, productionObservability };
-    }
+    if (isPcSurfaceView(state.view)) await hydratePcSurfaceData();
   } catch {
     state.apiStatus = "offline";
     applyRuntimeOfflineFallback(state);
     state.operationMessage = ctx.tr("apiOffline");
   }
+}
+
+async function hydratePcSurfaceData() {
+  const { hydratePcSurfaceData: hydratePcData } = await import("./pcSurfaceData.js");
+  await hydratePcData(state);
 }
 
 async function optionalSurface(load) {

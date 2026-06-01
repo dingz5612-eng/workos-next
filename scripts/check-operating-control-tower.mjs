@@ -7,6 +7,7 @@ const specPath = "docs/business/operating-control-tower.yml";
 const registryPath = "docs/business/business-line-registry.json";
 const pcGovernanceViewPath = "apps/mobile/src/views/pcGovernanceView.js";
 const appRouterPath = "apps/mobile/src/appRouter.js";
+const pcRouteTreePath = "apps/mobile/src/pcRouteTree.js";
 const requiredSections = [
   "businessLineAdmissionGate",
   "operatingGoalTree",
@@ -91,7 +92,7 @@ const violations = [
   ...validateSurfaceFiles()
 ];
 
-writeReport(violations, [specPath, registryPath, pcGovernanceViewPath, appRouterPath]);
+writeReport(violations, [specPath, registryPath, pcGovernanceViewPath, appRouterPath, pcRouteTreePath]);
 if (violations.length > 0) {
   for (const item of violations) {
     console.error(`${item.severity} ${item.id}: ${item.message}`);
@@ -277,10 +278,15 @@ function validateLaunchAndTraining(spec, violations) {
 function validateSurfaceFiles() {
   const violations = [];
   const router = fs.readFileSync(path.join(root, appRouterPath), "utf8");
+  const pcRouteTree = fs.readFileSync(path.join(root, pcRouteTreePath), "utf8");
+  const routeSources = `${router}\n${pcRouteTree}`;
   for (const route of ["managerControlTower", "financeControl", "releaseFlightDeck", "governanceCenter"]) {
-    if (!router.includes(route)) {
-      violations.push(violation("rt6.role_home_route_missing", `App router missing role default route ${route}.`, { route }));
+    if (!routeSources.includes(route)) {
+      violations.push(violation("rt6.role_home_route_missing", `Mobile/PC route tree missing role default route ${route}.`, { route }));
     }
+  }
+  if (!router.includes("routePcSurface") || !router.includes("isPcSurfaceView")) {
+    violations.push(violation("rt6.pc_surface_route_boundary_missing", "App router must delegate PC surfaces to the PC route tree instead of mixing them into ordinary mobile routes."));
   }
 
   const view = fs.readFileSync(path.join(root, pcGovernanceViewPath), "utf8");

@@ -1,18 +1,16 @@
 import { homeView } from "./views/homeView.js";
 import { learningView } from "./views/coachView.js";
-import { pcManagerLiteView } from "./views/checkoutServiceView.js";
-import { financeReconciliationView } from "./views/financeReconciliationView.js";
 import { loginView, onboardingView } from "./views/loginView.js";
 import { meView } from "./views/meView.js";
-import { pcGovernanceView } from "./views/pcGovernanceView.js";
-import { releaseControlView } from "./views/releaseControlView.js";
 import { searchView } from "./views/searchView.js";
 import { confirmPageView, resultView, simpleView } from "./views/simpleView.js";
 import { workbenchView } from "./views/workbenchView.js";
 import { workspaceView } from "./views/workspaceView.js";
 import { operationPanelView } from "./views/operationPanelView.js";
 import { PermissionDiagnostic } from "./views/experienceComponents.js";
+import { routePcSurface } from "./pcRouteTree.js";
 import { evaluateSurfaceAccess } from "./surfaceGuard.js";
+import { isPcSurfaceView } from "./surfaceRegistry.js";
 
 export function routeView(ctx) {
   const access = evaluateSurfaceAccess(ctx.state.view, ctx.state);
@@ -20,26 +18,25 @@ export function routeView(ctx) {
     ctx.state.permissionDiagnostic = access;
     return ctx.shell(PermissionDiagnostic(access, ctx));
   }
+  if (isPcSurfaceView(ctx.state.view)) {
+    return routePcSurface(ctx);
+  }
   const views = {
     login: loginView,
     onboarding: onboardingView,
     home: homeView,
     search: searchView,
     workbench: workbenchView,
-    releaseControl: releaseControlView,
-    releaseFlightDeck: releaseControlView,
-    pcGovernance: pcGovernanceView,
-    governanceCenter: pcGovernanceView,
-    managerControlTower: pcGovernanceView,
-    pcManager: pcManagerLiteView,
-    financeReconciliation: financeReconciliationView,
-    financeControl: financeReconciliationView,
     me: meView,
     workspace: workspaceView,
     operationPanel: operationPanelView,
     notes: () => simpleView("noteTitle", "noteBody", ctx),
     reminders: () => simpleView("reminderTitle", "reminderBody", ctx),
     learning: learningView,
+    permissions: () => simpleView("myPermissions", "myPermissionsBody", ctx),
+    recentSubmissions: () => simpleView("recentSubmissions", "recentSubmissionsBody", ctx),
+    recentTraces: () => simpleView("recentTraces", "recentTracesBody", ctx),
+    deviceTrust: () => simpleView("deviceTrustStatus", "deviceTrustStatusBody", ctx),
     feedback: () => simpleView("feedbackTitle", "feedbackBody", ctx),
     confirmPage: confirmPageView,
     result: resultView,

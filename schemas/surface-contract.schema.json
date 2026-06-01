@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://workosnext.local/schemas/surface-contract.schema.json",
+  "title": "WorkOSNext Surface Contract",
+  "type": "object",
+  "required": [
+    "version",
+    "operationRuntimePure",
+    "mobile",
+    "pc",
+    "compatibilityAdapter"
+  ],
+  "properties": {
+    "version": { "type": "string" },
+    "status": { "type": "string" },
+    "operationRuntimePure": {
+      "type": "object",
+      "required": ["persistedWorkItemResolutionOrder", "forbiddenFallbackPaths", "legacyTaskIdExample", "resolvedPersistedExample"],
+      "properties": {
+        "persistedWorkItemResolutionOrder": { "type": "array", "items": { "type": "string" }, "minItems": 4 },
+        "forbiddenFallbackPaths": { "type": "array", "items": { "type": "string" }, "minItems": 4 },
+        "legacyTaskIdExample": { "type": "string" },
+        "resolvedPersistedExample": { "type": "string" }
+      }
+    },
+    "mobile": {
+      "type": "object",
+      "required": ["allowedSurfaces", "allowedApiModules", "forbiddenPcSurfaces", "forbiddenPcApiTokens"],
+      "properties": {
+        "allowedSurfaces": { "type": "array", "items": { "type": "string" }, "minItems": 4 },
+        "allowedApiModules": { "type": "array", "items": { "type": "string" }, "minItems": 2 },
+        "forbiddenPcSurfaces": { "type": "array", "items": { "type": "string" }, "minItems": 4 },
+        "forbiddenPcApiTokens": { "type": "array", "items": { "type": "string" }, "minItems": 4 }
+      }
+    },
+    "pc": {
+      "type": "object",
+      "required": ["allowedSurfaces", "routeTree", "eventBinder", "apiModule", "dataHydrator"],
+      "properties": {
+        "allowedSurfaces": { "type": "array", "items": { "type": "string" }, "minItems": 4 },
+        "routeTree": { "type": "string" },
+        "eventBinder": { "type": "string" },
+        "apiModule": { "type": "string" },
+        "dataHydrator": { "type": "string" }
+      }
+    },
+    "compatibilityAdapter": {
+      "type": "object",
+      "required": ["allowedOnlyAs", "normalDormIntPath", "diagnosticFunction"],
+      "properties": {
+        "allowedOnlyAs": { "type": "string" },
+        "normalDormIntPath": { "type": "string" },
+        "diagnosticFunction": { "type": "string" }
+      }
+    }
+  }
+}

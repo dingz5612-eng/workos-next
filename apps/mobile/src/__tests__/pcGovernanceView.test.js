@@ -97,7 +97,7 @@ describe("PC Governance Full", () => {
     expect(html).toContain("monthly finance review");
 
     const root = repoRoot();
-    const apiClient = readFileSync(resolve(root, "apps/mobile/src/apiClient.js"), "utf8");
+    const apiClient = readFileSync(resolve(root, "apps/mobile/src/pcApiClient.js"), "utf8");
     const controller = readFileSync(resolve(root, "apps/mobile/src/pcGovernanceController.js"), "utf8");
     expect(apiClient).toContain("recordGovernanceAuditEvent");
     expect(apiClient).toContain("runtimeApiPaths.behaviorEvents");

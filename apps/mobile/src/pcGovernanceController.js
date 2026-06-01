@@ -4,7 +4,7 @@ import {
   markDeviceRevoked,
   validateGovernanceExportRequest
 } from "./pcGovernancePolicies.js";
-import { recordGovernanceAuditEvent } from "./apiClient.js";
+import { recordGovernanceAuditEvent } from "./pcApiClient.js";
 
 export async function requestGovernanceExport(exportType, ctx) {
   const reason = document.querySelector(`[data-export-reason="${exportType}"]`)?.value || "";

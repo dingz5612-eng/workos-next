@@ -1,4 +1,5 @@
 import { roleNavigation } from "./experienceContract.js";
+import { isPcSurfaceView } from "./surfaceRegistry.js";
 
 const publicViews = new Set(["login", "onboarding", "permissionDiagnostic"]);
 const commonViews = new Set(["home", "workbench", "search", "me", "workspace", "operationPanel", "learning", "notes", "reminders", "feedback", "result", "confirmPage", "permissionDiagnostic"]);
@@ -37,6 +38,9 @@ export function evaluateSurfaceAccess(view, state = {}) {
   if (["revoked", "blocked", "untrusted"].includes(device.deviceTrustStatus)) {
     return denied(view, "device_not_trusted", "admin", "trusted_device", "Ask admin to restore device trust before continuing.");
   }
+  if (isPcSurfaceView(view) && device.surface === "mobile") {
+    return denied(view, "pc_surface_requires_pc_device", ownerFor(view), "pc_or_release_surface", `Switch to an allowed PC/release surface before opening ${view}.`);
+  }
 
   if (isReleaseSurface(view) && role !== "releaseOwner") {
     return denied(view, "release_surface_restricted", "releaseOwner", "release.flight_deck.view", "Only releaseOwner can operate Release Flight Deck.");
@@ -57,11 +61,11 @@ export function evaluateSurfaceAccess(view, state = {}) {
 
 export function permissionDiagnosticCopy(decision = {}) {
   return {
-    title: "PermissionDiagnostic",
-    reason: decision.reason || "surface_not_allowed",
+    title: "权限诊断",
+    reason: reasonCopy(decision.reason),
     owner: decision.owner || "manager",
     requiredPermission: decision.requiredPermission || "surface_access",
-    nextAction: decision.nextAction || "Ask the responsible owner to grant access or move the work item to an allowed surface."
+    nextAction: decision.nextAction || "请联系对应负责人授权，或切换到当前角色允许访问的工作面。"
   };
 }
 
@@ -94,7 +98,7 @@ function ownerFor(view) {
 }
 
 function nextActionFor(view) {
-  return `Request ${requiredCapabilityFor(view)} or switch to an allowed role home before opening ${view}.`;
+  return `申请 ${requiredCapabilityFor(view)}，或切换到当前角色允许访问的工作面后再打开 ${view}。`;
 }
 
 function isReleaseSurface(view) {
@@ -125,4 +129,19 @@ function violatesAdmission(view, state, admission) {
   if (!line) return false;
   const status = admission[line]?.level || admission[line]?.status || "";
   return /L0|Contract Preview/i.test(status) && admission[line]?.productionAllowed === true;
+}
+
+function reasonCopy(reason = "surface_not_allowed") {
+  const copy = {
+    actor_session_required: "请先登录后再访问这个工作面。",
+    role_surface_not_allowed: "当前角色不能访问这个工作面。",
+    capability_missing: "当前账号缺少访问这个工作面的权限。",
+    device_not_trusted: "当前设备未通过可信校验。",
+    pc_surface_requires_pc_device: "这个工作面只能在 PC 或发布设备打开。",
+    release_surface_restricted: "发布工作面只允许 releaseOwner 访问。",
+    business_line_admission_blocked: "当前业务线尚未通过准入门禁。",
+    pilot_scope_blocked: "当前内测范围处于阻断状态。",
+    surface_not_allowed: "当前工作面不可访问。"
+  };
+  return copy[reason] || copy.surface_not_allowed;
 }

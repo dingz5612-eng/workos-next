@@ -43,9 +43,21 @@ export async function submitCardOperation({ workspace, card, actor, language, fi
   return submitCardOperationCompatibilityFallback({ workspace, card, actor, language, fieldValues, evidenceIds, submissionProtocol, onProjection, onLens });
 }
 
-export async function submitWorkItemOperation({ workspace, card, workItemId: explicitWorkItemId, actor, language, fieldValues, evidenceIds, submissionProtocol, onProjection, onLens }) {
+export async function submitWorkItemOperation({ workspace, card, workItemId: explicitWorkItemId, actor, language, fieldValues, evidenceIds, submissionProtocol, onProjection, onLens, allowCompatibilityFallback = false }) {
   const workItemId = explicitWorkItemId || workItemIdFor(workspace, card);
   if (!workItemId) {
+    if (!allowCompatibilityFallback) {
+      return {
+        confirmed: false,
+        status: "business_blocked_422",
+        commitStatus: "blocked",
+        projectionStatus: "not_started",
+        error: "persisted_work_item_required",
+        reason: "persisted_work_item_required",
+        message: "需要持久化 WorkItem 后才能确认。",
+        source: "operations_runtime_pure"
+      };
+    }
     return submitCardOperationCompatibilityFallback({ workspace, card, actor, language, fieldValues, evidenceIds, submissionProtocol, onProjection, onLens });
   }
 
@@ -129,7 +141,7 @@ function workItemIdFor(workspace, card) {
 }
 
 function isPersistedWorkItemId(value) {
-  return String(value || "").includes(":") || String(value || "").startsWith("wi-");
+  return String(value || "").includes(":") || /^wi-/i.test(String(value || ""));
 }
 
 export async function materializeEvidenceObjects({ workspace, card, actor, submissionProtocol, evidenceDrafts }) {

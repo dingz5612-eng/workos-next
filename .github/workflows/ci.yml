@@ -174,7 +174,12 @@ jobs:
         run: node scripts/check-dormitory-golden-domain.mjs
 
       - name: Validate RT-5 Experience Contract
-        run: node scripts/check-experience-contract.mjs
+        run: |
+          node scripts/check-experience-contract.mjs
+          node scripts/check-surface-contract.mjs
+          node scripts/check-no-mobile-pc-cross-import.mjs
+          node scripts/check-mobile-visible-copy.mjs
+          node scripts/check-no-raw-surface-labels.mjs
 
       - name: Validate RT-6 Operating Control Tower
         run: node scripts/check-operating-control-tower.mjs

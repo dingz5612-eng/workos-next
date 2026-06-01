@@ -3,7 +3,7 @@ import { domainCopy } from "./i18n/domainCopy.js";
 import { operationCopy } from "./i18n/operationCopy.js";
 import { shellCopy } from "./i18n/shellCopy.js";
 
-const languages = ["zh-CN", "ru-RU"];
+const languages = ["zh-CN", "ru-RU", "ky-KG"];
 
 export const dynamicProjectionI18nKeys = Object.freeze([
   "checkin",
@@ -20,10 +20,10 @@ export const i18n = Object.fromEntries(
   languages.map((language) => [
     language,
     {
-      ...shellCopy[language],
-      ...domainCopy[language],
-      ...coachCopy[language],
-      ...operationCopy[language]
+      ...(shellCopy[language] || shellCopy["ru-RU"]),
+      ...(domainCopy[language] || domainCopy["ru-RU"]),
+      ...(coachCopy[language] || coachCopy["ru-RU"]),
+      ...(operationCopy[language] || operationCopy["ru-RU"])
     }
   ])
 );

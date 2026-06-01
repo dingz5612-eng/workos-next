@@ -2,6 +2,7 @@ import fs from "node:fs";
 import { describe, expect, it, vi } from "vitest";
 import { mobileBottomNavigation } from "../experienceContract.js";
 import { openWorkItem } from "../navigationController.js";
+import { submitWorkItemOperation } from "../operationRuntime.js";
 import { routeView } from "../appRouter.js";
 import { evaluateSurfaceAccess } from "../surfaceGuard.js";
 
@@ -62,6 +63,7 @@ describe("DORM-INT-02 WorkItem-native pilot", () => {
 
     expect(testCtx.state.selectedWorkItemId).toBe("W-STAY-RESOURCE:roomSetup");
     expect(html).toContain("W-STAY-RESOURCE:roomSetup");
+    expect(html).toContain('data-component="TrustedConfirmSheet"');
     expect(html).not.toContain("T-ROOM-CREATE");
     vi.unstubAllGlobals();
   });
@@ -90,19 +92,70 @@ describe("DORM-INT-02 WorkItem-native pilot", () => {
     const html = routeView(testCtx);
 
     expect(html).toContain("W-STAY-RESOURCE:roomSetup");
+    expect(html).toContain('data-component="TrustedConfirmSheet"');
     expect(html).not.toContain("T-ROOM-CREATE");
     vi.unstubAllGlobals();
   });
 
-  it("renders Today as WorkItem Mission Control and Me as Personal Ops Center", () => {
+  it("posts prepare and confirm with the selected persisted WorkItem id", async () => {
+    const calls = [];
+    vi.stubGlobal("window", { location: { protocol: "http:", hostname: "localhost", port: "5175", origin: "http://localhost:5175" } });
+    vi.stubGlobal("localStorage", { getItem: () => null });
+    vi.stubGlobal("fetch", vi.fn(async (url, options = {}) => {
+      calls.push({ url: String(url), options });
+      return {
+        ok: true,
+        json: async () => String(url).endsWith("/prepare")
+          ? { prepared: true, commandSubmissionId: "sub-room-setup" }
+          : { confirmed: false, commitStatus: "blocked", projectionStatus: "not_started", commandSubmissionId: "sub-room-setup" }
+      };
+    }));
+
+    await submitWorkItemOperation({
+      workspace: resourceWorkspaceFixture(),
+      card: resourceWorkspaceFixture().cards[0],
+      workItemId: "W-STAY-RESOURCE:roomSetup",
+      actor: { token: "operator-token" },
+      language: "zh-CN",
+      fieldValues: { roomId: "R-101" },
+      evidenceIds: ["evd-room-check"],
+      submissionProtocol: {
+        idempotencyKey: "idem-room-setup",
+        submissionId: "sub-room-setup",
+        cardInstanceId: "ci-room-setup",
+        aggregateRef: "roomId:R-101"
+      }
+    });
+
+    expect(calls).toHaveLength(2);
+    expect(calls[0].url).toContain("/api/operations/work-items/W-STAY-RESOURCE:roomSetup/prepare");
+    expect(calls[1].url).toContain("/api/operations/work-items/W-STAY-RESOURCE:roomSetup/confirm");
+    expect(calls.map((call) => call.url).join(" ")).not.toContain("T-ROOM-CREATE");
+    expect(calls[1].options.body).toContain("sub-room-setup");
+    vi.unstubAllGlobals();
+  });
+
+  it("renders localized Today Mission Control and Personal Ops Center without component names", () => {
     vi.stubGlobal("localStorage", { getItem: () => null });
     const todayCtx = ctx({ view: "home" });
     const meCtx = ctx({ view: "me" });
 
-    expect(routeView(todayCtx)).toContain("WorkItem Mission Control");
-    expect(routeView(todayCtx)).toContain('data-component="WorkItemMissionControl"');
-    expect(routeView(meCtx)).toContain("Personal Ops Center");
-    expect(routeView(meCtx)).toContain('data-component="PersonalOpsCenter"');
+    const todayHtml = routeView(todayCtx);
+    const meHtml = routeView(meCtx);
+    expect(todayHtml).toContain("今日任务中心");
+    expect(todayHtml).not.toContain("WorkItemMissionControl");
+    expect(todayHtml).not.toContain("WorkItem Mission Control");
+    expect(meHtml).toContain("个人运营中心");
+    expect(meHtml).toContain("证据上传");
+    expect(meHtml).toContain("提交队列");
+    expect(meHtml).toContain("当前设备");
+    expect(meHtml).toContain("学习中心");
+    expect(meHtml).not.toContain("PersonalOpsCenter");
+    expect(meHtml).not.toContain("UploadQueue");
+    expect(meHtml).not.toContain("SubmitQueue");
+    expect(meHtml).not.toContain("DeviceTrustPanel");
+    expect(meHtml).not.toContain("pc-current");
+    expect(meHtml).not.toContain("surface pc");
     vi.unstubAllGlobals();
   });
 
@@ -115,17 +168,24 @@ describe("DORM-INT-02 WorkItem-native pilot", () => {
 
     expect(main).toContain("fetchOperationWorkItems");
     expect(main).not.toContain("fetchWorkQueue");
+    expect(main).not.toContain("fetchReleaseControlCenter");
+    expect(main).not.toContain("fetchProductionObservability");
     expect(apiClient).toContain("fetchOperationWorkItem");
     expect(apiClient).toContain("fetchSubmissionTrace");
     expect(apiClient).toContain("fetchWorkItemTrace");
     expect(apiClient).toContain("fetchCaseTrace");
+    expect(apiClient).not.toContain("confirmBankStatementImport");
+    expect(apiClient).not.toContain("recordGovernanceAuditEvent");
     expect(runtime).toContain("prepareOperationWorkItem");
     expect(runtime).toContain("confirmOperationWorkItem");
     expect(runtime).toContain("submitCardOperationCompatibilityFallback");
     expect(eventBinder).toContain("[data-work-item-id]");
     expect(eventBinder).toContain("openWorkItem");
+    expect(eventBinder).not.toContain("financeReconciliationController");
+    expect(eventBinder).not.toContain("pcGovernanceController");
     expect(operationPanel).toContain("payloadHash");
     expect(operationPanel).toContain("commandSubmissionId");
+    expect(operationPanel).not.toContain("ctx.workspace()");
   });
 });
 
@@ -169,7 +229,50 @@ function ctx(overrides = {}) {
   return {
     state,
     shell: (content) => content,
-    tr: (key) => key,
+    tr: (key) => ({
+      todayMissionControlEyebrow: "今天",
+      todayMissionControl: "今日任务中心",
+      assignedWorkItems: "今日待办",
+      todayLearning: "今日必学",
+      personalOpsCenter: "个人运营中心",
+      evidenceUpload: "证据上传",
+      submissionQueue: "提交队列",
+      currentDevice: "当前设备",
+      noPendingEvidenceUpload: "没有待上传证据",
+      noPendingSubmission: "没有待提交办理",
+      evidenceUploadWaiting: "证据等待上传",
+      submissionWaiting: "办理等待提交",
+      deviceTrusted: "设备已验证",
+      deviceUnknown: "设备状态待确认",
+      deviceContextIssue: "设备上下文异常",
+      deviceContextIssueBody: "当前移动端读到了 PC 设备上下文，请刷新或重新登录以绑定当前移动设备。",
+      learningCenter: "学习中心",
+      learningCenterBody: "查看当前角色的办理说明和阻断处理。",
+      myPermissions: "我的权限",
+      myPermissionsBody: "查看我能办理的动作和需要升级的权限。",
+      recentSubmissions: "最近提交",
+      recentSubmissionsBody: "查看最近提交状态和重复提交结果。",
+      recentTraces: "最近轨迹",
+      recentTracesBody: "从 WorkItem 追踪提交、事件、证据和投影。",
+      deviceTrustStatus: "设备可信状态",
+      deviceTrustStatusBody: "查看当前设备是否可执行高风险动作。",
+      nextAction: "下一步",
+      searchWorkItems: "WorkItem",
+      searchOperationCases: "OperationCase",
+      searchRooms: "房间",
+      searchBeds: "床位",
+      searchStays: "入住",
+      searchEvidence: "证据",
+      searchSubmissionTrace: "提交轨迹",
+      searchLearning: "学习内容",
+      learnEvidenceFix: "证据怎么补",
+      learnEvidenceFixBody: "先确认必需证据，再补传并等待证据可信状态通过。",
+      learnRejectedReason: "为什么被拒绝",
+      learnRejectedReasonBody: "查看拒绝原因、责任人和下一步动作，不要重复提交。",
+      openWorkspace: "进入办理面",
+      coachNoMatch: "没有匹配结果",
+      workbench: "工作台"
+    })[key] || key,
     tx: (value) => typeof value === "string" ? value : value?.["zh-CN"] || "",
     localTerm: (value) => value?.label?.["zh-CN"] || value?.id || value,
     escapeHtml: escape,

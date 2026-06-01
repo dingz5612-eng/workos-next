@@ -8,9 +8,9 @@ export function meView(ctx) {
   const stats = selectSurfaceStats(state);
   const searches = (state.recentSearches || []).map((item) => ctx.escapeHtml(item)).join(" · ");
   return shell(`
-    <section class="profile-card" data-component="PersonalOpsCenter">
+    <section class="profile-card" data-surface="personal-ops-center">
       <span>${tr("role")}</span>
-      <h1>Personal Ops Center</h1>
+      <h1>${tr("personalOpsCenter")}</h1>
       <strong>${actorDisplayName}</strong>
       <p>${tr("permission")}: ${actorRole} · ${tr("stay")} · ${tr("repair")} · ${tr("finance")}</p>
       <button id="logout" class="secondary">${tr("logout")}</button>
@@ -20,6 +20,10 @@ export function meView(ctx) {
       ${personal("notes", "noteTitle", "noteBody", tr)}
       ${personal("reminders", "reminderTitle", "reminderBody", tr)}
       ${personal("learning", "learningCenter", "learningCenterBody", tr)}
+      ${personal("permissions", "myPermissions", "myPermissionsBody", tr)}
+      ${personal("recentSubmissions", "recentSubmissions", "recentSubmissionsBody", tr)}
+      ${personal("recentTraces", "recentTraces", "recentTracesBody", tr)}
+      ${personal("deviceTrust", "deviceTrustStatus", "deviceTrustStatusBody", tr)}
       ${personal("feedback", "feedbackTitle", "feedbackBody", tr)}
     </section>
     <section class="compact-section">
