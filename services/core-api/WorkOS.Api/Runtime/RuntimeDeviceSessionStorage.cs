@@ -22,8 +22,7 @@ internal sealed class RuntimeDeviceSessionStorage
             values (
                 @deviceSessionId, @tenantId, @actorId, @deviceId, @deviceTrustStatus,
                 @userAgentHash, @now, @now, null)
-            on conflict(device_id) do update set
-                tenant_id = excluded.tenant_id,
+            on conflict(tenant_id, device_id) do update set
                 actor_id = excluded.actor_id,
                 device_trust_status = excluded.device_trust_status,
                 user_agent_hash = excluded.user_agent_hash,
@@ -57,6 +56,22 @@ internal sealed class RuntimeDeviceSessionStorage
             from device_sessions
             where device_id = @deviceId
             """;
+        command.Parameters.AddWithValue("deviceId", deviceId);
+        using var reader = command.ExecuteReader();
+        return reader.Read() ? Read(reader) : null;
+    }
+
+    public RuntimeDeviceSession? Find(string tenantId, string deviceId)
+    {
+        using var connection = connections.Open();
+        using var command = connection.CreateCommand();
+        command.CommandText = """
+            select device_session_id, tenant_id, actor_id, device_id, device_trust_status,
+                   user_agent_hash, created_at_utc, last_seen_at_utc, revoked_at_utc
+            from device_sessions
+            where tenant_id = @tenantId and device_id = @deviceId
+            """;
+        command.Parameters.AddWithValue("tenantId", tenantId);
         command.Parameters.AddWithValue("deviceId", deviceId);
         using var reader = command.ExecuteReader();
         return reader.Read() ? Read(reader) : null;

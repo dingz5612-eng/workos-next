@@ -16,6 +16,9 @@ public interface IProjectionStore
 
     RuntimeDeviceSession? FindDeviceSession(string deviceId);
 
+    RuntimeDeviceSession? FindDeviceSession(string tenantId, string deviceId) =>
+        FindDeviceSession(deviceId);
+
     RuntimeDeviceSession? RevokeDeviceSession(string deviceId, string actorId);
 
     WorkspaceEvent? FindEventByIdempotencyKey(string idempotencyKey);

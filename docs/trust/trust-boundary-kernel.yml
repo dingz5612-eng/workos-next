@@ -1,0 +1,69 @@
+kernelId: OAM-06
+name: 信任边界内核
+status: active
+scope:
+  - EvidenceObject
+  - Tenant
+  - DeviceSession
+  - SignedUrl
+  - RoleCapability
+  - PIIExport
+  - SourceWorkbookManifest
+principles:
+  - 证据必须是租户内可信对象，不是普通上传附件。
+  - 设备可信状态必须进入高风险 confirm 和证据访问判断。
+  - Signed URL 必须绑定 tenant / evidence / attachment / device / audit。
+  - PII export 必须有 reason / owner / audit / ttl。
+  - 源工作簿必须有 manifest 和导入审计链路。
+  - wrong-scope evidence 必须阻断 confirm 并留下 rejection trace。
+controls:
+  evidenceTenantScope:
+    migration: infra/db/migrations/036_evidence_tenant_scope.sql
+    tables:
+      - card_instances
+      - evidence_objects
+      - evidence_attachments
+      - evidence_requirements
+    requiredColumns:
+      - tenant_id
+    runtime:
+      storage: RuntimeEvidenceStorage
+      requestField: EvidenceDraftRequest.TenantId
+      objectField: EvidenceObject.TenantId
+    rejectionCodes:
+      - evidence_tenant_scope_mismatch
+      - evidence_object_scope_mismatch
+      - evidence_device_tenant_scope_mismatch
+  deviceTenantScope:
+    migration: infra/db/migrations/037_device_session_tenant_scope.sql
+    uniqueKey: tenant_id + device_id
+    forbiddenKey: device_id only
+    runtime:
+      storage: RuntimeDeviceSessionStorage
+      confirmResolver: ActionRuntimeService.ResolveDeviceSession(workspace.Id, request)
+    rejectionCodes:
+      - trusted_device_required
+      - evidence_device_revoked
+      - evidence_device_untrusted
+  signedUrlTenantScope:
+    requestField: EvidenceSignedUrlRequest.TenantId
+    route: /api/evidence/{evidenceId}/signed-url
+    auditTable: file_access_audits
+    ttlPolicy: RuntimeSignedUrlPolicy.MaxTtlSeconds
+  piiRetention:
+    exportAuditTable: governance_export_audits
+    requiredFields:
+      - tenant_id
+      - actor_id
+      - device_id
+      - reason
+      - expires_at_utc
+  sourceWorkbookManifest:
+    manifestRequired: true
+    auditRefRequired: true
+    reason: 主数据源工作簿必须能追踪来源、导入人、导入时间和证据摘要。
+outcomes:
+  Dormitory: L1 Internal Pilot Observation
+  DormitoryL2: blocked
+  BusinessProduction: blocked
+  RepairPartsHR: L0 Contract Preview

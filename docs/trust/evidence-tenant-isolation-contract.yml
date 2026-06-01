@@ -1,0 +1,24 @@
+contractId: evidence-tenant-isolation
+name: 证据租户隔离合同
+status: active
+tables:
+  card_instances:
+    tenantScoped: true
+    scopeKey: tenant_id
+  evidence_objects:
+    tenantScoped: true
+    scopeKey: tenant_id
+    uniqueKey: tenant_id + evidence_id
+  evidence_attachments:
+    tenantScoped: true
+    scopeKey: tenant_id
+    parentKey: tenant_id + evidence_id
+  evidence_requirements:
+    tenantScoped: true
+    scopeKey: tenant_id
+    parentKey: tenant_id + evidence_id
+runtimeRules:
+  - tenant A evidence cannot be confirmed by tenant B.
+  - wrong-scope evidence returns 403 or 422 with rejection trace.
+  - evidence attach does not confirm money facts.
+  - evidence used by one submission cannot be reused by another submission.

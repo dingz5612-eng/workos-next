@@ -19,20 +19,24 @@ internal sealed class RuntimeEvidenceStorage
         var evidenceId = string.IsNullOrWhiteSpace(request.EvidenceId)
             ? $"evd-{Guid.NewGuid():N}"
             : request.EvidenceId!;
+        var tenantId = string.IsNullOrWhiteSpace(request.TenantId)
+            ? request.WorkspaceId
+            : request.TenantId!;
         var now = DateTimeOffset.UtcNow;
         using var connection = connections.Open();
         using var db = new RuntimeDbSession(connection);
         using (var command = db.CreateCommand("""
             insert into evidence_objects(
-                evidence_id, workspace_id, card_id, card_instance_id, submission_id, requirement_id,
+                evidence_id, tenant_id, workspace_id, card_id, card_instance_id, submission_id, requirement_id,
                 status, created_by, created_at_utc, audit_trail)
             values (
-                @evidenceId, @workspaceId, @cardId, @cardInstanceId, @submissionId, @requirementId,
+                @evidenceId, @tenantId, @workspaceId, @cardId, @cardInstanceId, @submissionId, @requirementId,
                 'draft', @actorId, @now, @auditTrail::jsonb)
             on conflict(evidence_id) do nothing
             """))
         {
             command.Parameters.AddWithValue("evidenceId", evidenceId);
+            command.Parameters.AddWithValue("tenantId", tenantId);
             command.Parameters.AddWithValue("workspaceId", request.WorkspaceId);
             command.Parameters.AddWithValue("cardId", request.CardId);
             command.Parameters.AddWithValue("cardInstanceId", request.CardInstanceId);
@@ -45,12 +49,13 @@ internal sealed class RuntimeEvidenceStorage
         }
 
         using (var command = db.CreateCommand("""
-            insert into evidence_requirements(evidence_id, workspace_id, card_id, requirement_id, required, created_at_utc)
-            values (@evidenceId, @workspaceId, @cardId, @requirementId, true, @now)
+            insert into evidence_requirements(evidence_id, tenant_id, workspace_id, card_id, requirement_id, required, created_at_utc)
+            values (@evidenceId, @tenantId, @workspaceId, @cardId, @requirementId, true, @now)
             on conflict(evidence_id, requirement_id) do nothing
             """))
         {
             command.Parameters.AddWithValue("evidenceId", evidenceId);
+            command.Parameters.AddWithValue("tenantId", tenantId);
             command.Parameters.AddWithValue("workspaceId", request.WorkspaceId);
             command.Parameters.AddWithValue("cardId", request.CardId);
             command.Parameters.AddWithValue("requirementId", request.RequirementId);
@@ -69,13 +74,16 @@ internal sealed class RuntimeEvidenceStorage
         var now = DateTimeOffset.UtcNow;
         using var connection = connections.Open();
         using var db = new RuntimeDbSession(connection);
+        var evidence = Get(evidenceId).SingleOrDefault()
+            ?? throw new InvalidOperationException("evidence_object_not_found");
         using (var command = db.CreateCommand("""
             insert into evidence_attachments(
-                attachment_id, evidence_id, file_name, content_type, content_sha256, size_bytes, attached_by, attached_at_utc)
-            values (@attachmentId, @evidenceId, @fileName, @contentType, @contentSha256, @sizeBytes, @actorId, @now)
+                attachment_id, tenant_id, evidence_id, file_name, content_type, content_sha256, size_bytes, attached_by, attached_at_utc)
+            values (@attachmentId, @tenantId, @evidenceId, @fileName, @contentType, @contentSha256, @sizeBytes, @actorId, @now)
             """))
         {
             command.Parameters.AddWithValue("attachmentId", attachmentId);
+            command.Parameters.AddWithValue("tenantId", evidence.TenantId);
             command.Parameters.AddWithValue("evidenceId", evidenceId);
             command.Parameters.AddWithValue("fileName", request.FileName);
             command.Parameters.AddWithValue("contentType", request.ContentType);
@@ -95,22 +103,41 @@ internal sealed class RuntimeEvidenceStorage
     {
         var evidence = Get(evidenceId).SingleOrDefault()
             ?? throw new InvalidOperationException("evidence_object_not_found");
+        if (!string.IsNullOrWhiteSpace(request.TenantId) &&
+            !evidence.TenantId.Equals(request.TenantId, StringComparison.OrdinalIgnoreCase))
+        {
+            WriteFileAccessAudit(evidence.TenantId, evidenceId, string.Empty, request, "blocked", "tenant_scope_mismatch", DateTimeOffset.UtcNow, DateTimeOffset.UtcNow);
+            throw new InvalidOperationException("evidence_tenant_scope_mismatch");
+        }
         var attachment = evidence.Attachments.LastOrDefault()
             ?? throw new InvalidOperationException("evidence_attachment_not_found");
 
         var device = string.IsNullOrWhiteSpace(request.DeviceId)
             ? null
-            : deviceSessions?.Find(request.DeviceId);
+            : deviceSessions?.Find(evidence.TenantId, request.DeviceId);
+        if (device is null && !string.IsNullOrWhiteSpace(request.DeviceId))
+        {
+            WriteFileAccessAudit(evidence.TenantId, evidenceId, attachment.AttachmentId, request, "blocked", "device_tenant_scope_mismatch", DateTimeOffset.UtcNow, DateTimeOffset.UtcNow);
+            throw new InvalidOperationException("evidence_device_tenant_scope_mismatch");
+        }
+
         if (device?.RevokedAtUtc is not null ||
             device?.DeviceTrustStatus.Equals("revoked", StringComparison.OrdinalIgnoreCase) == true)
         {
-            WriteFileAccessAudit(evidenceId, attachment.AttachmentId, request, "blocked", "device_revoked", DateTimeOffset.UtcNow, DateTimeOffset.UtcNow);
+            WriteFileAccessAudit(evidence.TenantId, evidenceId, attachment.AttachmentId, request, "blocked", "device_revoked", DateTimeOffset.UtcNow, DateTimeOffset.UtcNow);
             throw new InvalidOperationException("evidence_device_revoked");
+        }
+
+        if (device is not null &&
+            !device.DeviceTrustStatus.Equals("trusted", StringComparison.OrdinalIgnoreCase))
+        {
+            WriteFileAccessAudit(evidence.TenantId, evidenceId, attachment.AttachmentId, request, "blocked", "device_untrusted", DateTimeOffset.UtcNow, DateTimeOffset.UtcNow);
+            throw new InvalidOperationException("evidence_device_untrusted");
         }
 
         var now = request.NowUtc ?? DateTimeOffset.UtcNow;
         var expiresAtUtc = RuntimeSignedUrlPolicy.Expiration(now, request.TtlSeconds);
-        var auditEventId = WriteFileAccessAudit(evidenceId, attachment.AttachmentId, request, "granted", "signed_url_issued", now, expiresAtUtc);
+        var auditEventId = WriteFileAccessAudit(evidence.TenantId, evidenceId, attachment.AttachmentId, request, "granted", "signed_url_issued", now, expiresAtUtc);
         var url = $"/api/evidence/{Uri.EscapeDataString(evidenceId)}/attachments/{Uri.EscapeDataString(attachment.AttachmentId)}/download?expiresAtUtc={Uri.EscapeDataString(expiresAtUtc.ToString("O"))}&auditEventId={Uri.EscapeDataString(auditEventId)}";
         return new EvidenceSignedUrlResponse(evidenceId, attachment.AttachmentId, url, expiresAtUtc, auditEventId);
     }
@@ -131,13 +158,13 @@ internal sealed class RuntimeEvidenceStorage
         using var command = connection.CreateCommand();
         command.CommandText = evidenceId is null
             ? """
-              select evidence_id, workspace_id, card_id, card_instance_id, submission_id, requirement_id, status,
+              select evidence_id, tenant_id, workspace_id, card_id, card_instance_id, submission_id, requirement_id, status,
                      created_at_utc, attached_at_utc, verified_at_utc, rejected_at_utc, used_event_id, used_submission_id
               from evidence_objects
               order by created_at_utc, evidence_id
               """
             : """
-              select evidence_id, workspace_id, card_id, card_instance_id, submission_id, requirement_id, status,
+              select evidence_id, tenant_id, workspace_id, card_id, card_instance_id, submission_id, requirement_id, status,
                      created_at_utc, attached_at_utc, verified_at_utc, rejected_at_utc, used_event_id, used_submission_id
               from evidence_objects
               where evidence_id = @evidenceId
@@ -147,7 +174,7 @@ internal sealed class RuntimeEvidenceStorage
             command.Parameters.AddWithValue("evidenceId", evidenceId);
         }
 
-        var rows = new List<(string EvidenceId, string WorkspaceId, string CardId, string CardInstanceId, string SubmissionId, string RequirementId, string Status, DateTimeOffset CreatedAtUtc, DateTimeOffset? AttachedAtUtc, DateTimeOffset? VerifiedAtUtc, DateTimeOffset? RejectedAtUtc, string? UsedEventId, string? UsedSubmissionId)>();
+        var rows = new List<(string EvidenceId, string TenantId, string WorkspaceId, string CardId, string CardInstanceId, string SubmissionId, string RequirementId, string Status, DateTimeOffset CreatedAtUtc, DateTimeOffset? AttachedAtUtc, DateTimeOffset? VerifiedAtUtc, DateTimeOffset? RejectedAtUtc, string? UsedEventId, string? UsedSubmissionId)>();
         using (var reader = command.ExecuteReader())
         {
             while (reader.Read())
@@ -160,12 +187,13 @@ internal sealed class RuntimeEvidenceStorage
                     reader.GetString(4),
                     reader.GetString(5),
                     reader.GetString(6),
-                    reader.GetFieldValue<DateTimeOffset>(7),
-                    reader.IsDBNull(8) ? null : reader.GetFieldValue<DateTimeOffset>(8),
+                    reader.GetString(7),
+                    reader.GetFieldValue<DateTimeOffset>(8),
                     reader.IsDBNull(9) ? null : reader.GetFieldValue<DateTimeOffset>(9),
                     reader.IsDBNull(10) ? null : reader.GetFieldValue<DateTimeOffset>(10),
-                    reader.IsDBNull(11) ? null : reader.GetString(11),
-                    reader.IsDBNull(12) ? null : reader.GetString(12)));
+                    reader.IsDBNull(11) ? null : reader.GetFieldValue<DateTimeOffset>(11),
+                    reader.IsDBNull(12) ? null : reader.GetString(12),
+                    reader.IsDBNull(13) ? null : reader.GetString(13)));
             }
         }
 
@@ -174,6 +202,7 @@ internal sealed class RuntimeEvidenceStorage
         {
             items.Add(new EvidenceObject(
                 row.EvidenceId,
+                row.TenantId,
                 row.WorkspaceId,
                 row.CardId,
                 row.CardInstanceId,
@@ -210,6 +239,7 @@ internal sealed class RuntimeEvidenceStorage
             }
 
             if (!evidence.WorkspaceId.Equals(workspaceId, StringComparison.OrdinalIgnoreCase) ||
+                !evidence.TenantId.Equals(workspaceId, StringComparison.OrdinalIgnoreCase) ||
                 !evidence.CardId.Equals(cardId, StringComparison.OrdinalIgnoreCase) ||
                 !evidence.CardInstanceId.Equals(request.CardInstanceId, StringComparison.OrdinalIgnoreCase) ||
                 !evidence.SubmissionId.Equals(request.SubmissionId, StringComparison.OrdinalIgnoreCase))
@@ -289,6 +319,7 @@ internal sealed class RuntimeEvidenceStorage
     }
 
     private string WriteFileAccessAudit(
+        string tenantId,
         string evidenceId,
         string attachmentId,
         EvidenceSignedUrlRequest request,
@@ -302,13 +333,14 @@ internal sealed class RuntimeEvidenceStorage
         using var command = connection.CreateCommand();
         command.CommandText = """
             insert into file_access_audits(
-                audit_event_id, evidence_id, attachment_id, actor_id, device_id,
+                audit_event_id, tenant_id, evidence_id, attachment_id, actor_id, device_id,
                 action, status, reason, expires_at_utc, occurred_at_utc)
             values (
-                @auditEventId, @evidenceId, @attachmentId, @actorId, @deviceId,
+                @auditEventId, @tenantId, @evidenceId, @attachmentId, @actorId, @deviceId,
                 'signed_url', @status, @reason, @expiresAtUtc, @occurredAtUtc)
             """;
         command.Parameters.AddWithValue("auditEventId", auditEventId);
+        command.Parameters.AddWithValue("tenantId", tenantId);
         command.Parameters.AddWithValue("evidenceId", evidenceId);
         command.Parameters.AddWithValue("attachmentId", attachmentId);
         command.Parameters.AddWithValue("actorId", request.ActorId);

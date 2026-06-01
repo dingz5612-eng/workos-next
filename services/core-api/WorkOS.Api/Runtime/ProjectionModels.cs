@@ -162,7 +162,8 @@ public sealed record EvidenceDraftRequest(
     string CardInstanceId,
     string SubmissionId,
     string RequirementId,
-    string? EvidenceId = null);
+    string? EvidenceId = null,
+    string? TenantId = null);
 
 public sealed record EvidenceAttachmentRequest(
     string FileName,
@@ -176,6 +177,7 @@ public sealed record EvidenceDecisionRequest(
 
 public sealed record EvidenceObject(
     string EvidenceId,
+    string TenantId,
     string WorkspaceId,
     string CardId,
     string CardInstanceId,
@@ -241,7 +243,8 @@ public sealed record EvidenceSignedUrlRequest(
     string ActorId,
     string DeviceId,
     int TtlSeconds = 900,
-    DateTimeOffset? NowUtc = null);
+    DateTimeOffset? NowUtc = null,
+    string? TenantId = null);
 
 public sealed record EvidenceSignedUrlResponse(
     string EvidenceId,
@@ -259,7 +262,8 @@ public sealed record GovernanceExportRequest(
     string DeviceTrustStatus,
     string Surface,
     string Reason,
-    DateTimeOffset? NowUtc = null);
+    DateTimeOffset? NowUtc = null,
+    string? TenantId = null);
 
 public sealed record GovernanceExportResult(
     bool Allowed,

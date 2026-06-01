@@ -1,0 +1,19 @@
+contractId: signed-url-tenant-scope
+name: Signed URL 租户范围合同
+status: active
+route: /api/evidence/{evidenceId}/signed-url
+requiredBindings:
+  - tenant_id
+  - evidence_id
+  - attachment_id
+  - actor_id
+  - device_id
+  - expires_at_utc
+audit:
+  table: file_access_audits
+  ttlSecondsMax: 900
+blockReasons:
+  - evidence_tenant_scope_mismatch
+  - evidence_device_tenant_scope_mismatch
+  - evidence_device_revoked
+  - evidence_device_untrusted

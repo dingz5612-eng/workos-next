@@ -1,0 +1,15 @@
+contractId: device-session-tenant-scope
+name: 设备会话租户范围合同
+status: active
+uniqueKey: tenant_id + device_id
+forbiddenUniqueKey: device_id only
+trustStates:
+  - unknown
+  - trusted
+  - untrusted
+  - revoked
+runtimeRules:
+  - high-risk confirm requires trusted device in the same tenant.
+  - revoked device cannot high-risk confirm.
+  - untrusted device cannot high-risk confirm.
+  - wrong tenant device cannot access trusted evidence.
