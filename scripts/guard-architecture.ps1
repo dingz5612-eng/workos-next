@@ -138,12 +138,18 @@ Assert-Exists "scripts/check-management-cockpit-boundary.mjs"
 Assert-Exists "scripts/check-shared-governance-boundary.mjs"
 Assert-Exists "scripts/check-admission-surface-alignment.mjs"
 Assert-Exists "scripts/check-policy-as-code.mjs"
+Assert-Exists "scripts/check-finance-truth.mjs"
 Assert-Exists "docs/business/truth-owner-registry.yml"
 Assert-Exists "docs/business/truth-maturity-levels.yml"
 Assert-Exists "docs/business/receipt-types.yml"
 Assert-Exists "docs/business/conflict-policies.yml"
 Assert-Exists "docs/business/domains/_template/domain-pack.yml"
 Assert-Exists "docs/business/shared-governance/subject-vehicle-truth.yml"
+Assert-Exists "docs/business/finance/finance-truth-pipeline.yml"
+Assert-Exists "docs/business/finance/money-kernel-rules.yml"
+Assert-Exists "docs/business/finance/ledger-transaction-contract.yml"
+Assert-Exists "docs/business/finance/unclear-money-policy.yml"
+Assert-Exists "docs/business/finance/correction-policy.yml"
 Assert-Exists "docs/business/policies/policy-index.yml"
 Assert-Exists "docs/business/policies/evidence-policy.yml"
 Assert-Exists "docs/business/policies/admission-policy.yml"
@@ -159,6 +165,7 @@ Assert-Exists "schemas/truth-promotion.schema.json"
 Assert-Exists "schemas/shared-governance.schema.json"
 Assert-Exists "schemas/receipt.schema.json"
 Assert-Exists "schemas/policy.schema.json"
+Assert-Exists "schemas/finance-truth-pipeline.schema.json"
 Assert-Exists "scripts/v5_4/run-control-plane-checks.ps1"
 Assert-Exists "scripts/v5_4/control-plane-migration.mjs"
 Assert-Exists "scripts/v5_4/shadow-namespace-isolation.mjs"
@@ -599,6 +606,8 @@ Invoke-Checked "node" @("scripts/check-admission-surface-alignment.mjs", "--self
 Invoke-Checked "node" @("scripts/check-admission-surface-alignment.mjs")
 Invoke-Checked "node" @("scripts/check-policy-as-code.mjs", "--self-test")
 Invoke-Checked "node" @("scripts/check-policy-as-code.mjs")
+Invoke-Checked "node" @("scripts/check-finance-truth.mjs", "--self-test")
+Invoke-Checked "node" @("scripts/check-finance-truth.mjs")
 
 $ci = Get-Content ".github/workflows/ci.yml" -Raw
 $v54Ci = Get-Content ".github/workflows/v5_4_control_plane.yml" -Raw
@@ -642,7 +651,8 @@ foreach ($requiredCiCommand in @(
   "check-management-cockpit-boundary.mjs",
   "check-shared-governance-boundary.mjs",
   "check-admission-surface-alignment.mjs",
-  "check-policy-as-code.mjs"
+  "check-policy-as-code.mjs",
+  "check-finance-truth.mjs"
 )) {
   if ($ci -notmatch [regex]::Escape($requiredCiCommand)) {
     Fail "CI must run RT-2 BTOS compiler command: $requiredCiCommand"

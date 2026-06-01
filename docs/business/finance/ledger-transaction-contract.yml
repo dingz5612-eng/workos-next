@@ -1,0 +1,37 @@
+{
+  "version": "rt3.ledger-transaction-contract.v1",
+  "owner": "MoneyKernelPack",
+  "transactionRequiredFields": [
+    "tenantId",
+    "ledgerTransactionId",
+    "caseId",
+    "workItemId",
+    "submissionId",
+    "currency",
+    "balanceStatus",
+    "transactionType"
+  ],
+  "entryRequiredFields": [
+    "tenantId",
+    "entryId",
+    "ledgerTransactionId",
+    "debitCredit",
+    "amount",
+    "currency",
+    "accountId",
+    "accountType",
+    "entryRole"
+  ],
+  "invariants": [
+    "debits equal credits",
+    "all entries reference a LedgerTransaction",
+    "all entries use the same currency as the transaction",
+    "amount is positive",
+    "balanceStatus must be balanced"
+  ],
+  "mutationPolicy": {
+    "updateLedgerEntryAllowed": false,
+    "deleteLedgerEntryAllowed": false,
+    "correctionMode": "append_only_reversal_or_compensation"
+  }
+}

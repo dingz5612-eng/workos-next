@@ -1,0 +1,47 @@
+{
+  "version": "rt3.finance-truth-pipeline.v1",
+  "packId": "FinanceTruthPack",
+  "moneyKernelPack": "MoneyKernelPack",
+  "goal": "route every MoneyBasis through FinanceTruthPack before canonical financial facts are committed",
+  "acceptedInputs": ["MoneyBasis", "FinanceIntake", "FinanceReviewWorkItem"],
+  "forbiddenDirectFacts": ["PaymentFact", "DepositFact", "LedgerEntry"],
+  "pipeline": [
+    "MoneyBasis",
+    "FinanceIntake",
+    "FinanceCase",
+    "FinanceReviewWorkItem",
+    "FinanceCommit",
+    "LedgerTransaction",
+    "LedgerEntry",
+    "FinanceReceipt",
+    "LedgerProjectionRebuilder"
+  ],
+  "runtimeServices": [
+    "FinanceTruthPipeline",
+    "DepositAccountService",
+    "PaymentAllocationService",
+    "LedgerProjectionRebuilder",
+    "DepositRefundService"
+  ],
+  "truthRules": {
+    "businessDomainDirectPaymentFactAllowed": false,
+    "businessDomainDirectDepositFactAllowed": false,
+    "businessDomainDirectLedgerEntryAllowed": false,
+    "bankImportDirectPaymentConfirmedAllowed": false,
+    "moneyBasisOwner": "FinanceTruthPack",
+    "ledgerTransactionOwner": "MoneyKernelPack"
+  },
+  "unclearMoneyPolicy": "routeToUnclearMoneyCase",
+  "certification": {
+    "checker": "scripts/check-finance-truth.mjs",
+    "tests": [
+      "MoneyAllocationPropertyTests",
+      "DepositRefundBoundaryTests",
+      "LedgerMutationKillTests"
+    ]
+  },
+  "goNoGo": {
+    "productionAllowed": false,
+    "localPassedOnlyAllowsNextStackedBranch": true
+  }
+}

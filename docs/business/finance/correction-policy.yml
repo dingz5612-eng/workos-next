@@ -1,0 +1,13 @@
+{
+  "version": "rt3.correction-policy.v1",
+  "owner": "FinanceTruthPack",
+  "allowedModes": ["reversal", "compensation"],
+  "forbiddenModes": ["update_old_entry", "delete_old_entry", "overwrite_snapshot"],
+  "rules": [
+    {"id":"finance-correction-001","statement":"correction never updates old ledger_entries","severity":"P0"},
+    {"id":"finance-correction-002","statement":"correction never deletes old ledger_entries","severity":"P0"},
+    {"id":"finance-correction-003","statement":"correction appends reversal or compensation LedgerTransaction","severity":"P0"},
+    {"id":"finance-correction-004","statement":"correction rebuilds affected ledger projections","severity":"P0"}
+  ],
+  "runtimeService": "LedgerProjectionRebuilder"
+}

@@ -1,0 +1,17 @@
+{
+  "scenarioId": "rt3-positive-deposit-receipt",
+  "sourcePack": "DormitoryDomainPack",
+  "inputFact": "MoneyBasis",
+  "basisType": "deposit_receipt",
+  "targetFact": "MoneyBasis",
+  "amount": 1000,
+  "currency": "KGS",
+  "depositAccountId": "deposit-account-001",
+  "expectedLedger": {
+    "balanced": true,
+    "debitAccount": "asset.cash_or_bank",
+    "creditAccount": "liability.deposit",
+    "forbiddenAccountTypes": ["revenue"]
+  },
+  "expectedReceipt": "DepositReceipt"
+}

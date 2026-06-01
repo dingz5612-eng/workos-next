@@ -144,6 +144,11 @@ jobs:
           node scripts/check-policy-as-code.mjs --self-test
           node scripts/check-policy-as-code.mjs
 
+      - name: Validate RT-3 finance truth production kernel
+        run: |
+          node scripts/check-finance-truth.mjs --self-test
+          node scripts/check-finance-truth.mjs
+
       - name: Architecture guard
         shell: pwsh
         env:

@@ -1,0 +1,20 @@
+{
+  "version": "rt3.money-kernel-rules.v1",
+  "packId": "MoneyKernelPack",
+  "rules": [
+    {"id":"money-kernel-001","statement":"LedgerTransaction must balance before commit","severity":"P0"},
+    {"id":"money-kernel-002","statement":"LedgerEntry is append-only; update/delete is forbidden","severity":"P0"},
+    {"id":"money-kernel-003","statement":"deposit is liability, not revenue","severity":"P0"},
+    {"id":"money-kernel-004","statement":"refund is liability decrease, not expense","severity":"P0"},
+    {"id":"money-kernel-005","statement":"ordinary payment must not use deposit liability account","severity":"P0"},
+    {"id":"money-kernel-006","statement":"correction must be reversal or compensation","severity":"P0"},
+    {"id":"money-kernel-007","statement":"checkout settlement reads projection and never fabricates ledger facts","severity":"P0"}
+  ],
+  "accountMappings": {
+    "deposit_receipt": {"debit":"asset.cash_or_bank","credit":"liability.deposit"},
+    "payment_receipt": {"debit":"asset.cash_or_bank","credit":"receivable.stay"},
+    "refund_deposit": {"debit":"liability.deposit","credit":"asset.cash_or_bank"},
+    "deposit_deduction": {"debit":"liability.deposit","credit":"receivable.stay"},
+    "ledger_correction_apply": {"debit":"correction.reversal","credit":"correction.offset"}
+  }
+}
