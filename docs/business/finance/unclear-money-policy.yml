@@ -1,0 +1,19 @@
+{
+  "version": "rt3.unclear-money-policy.v1",
+  "owner": "FinanceTruthPack",
+  "triggers": [
+    "unknown payer",
+    "unknown purpose",
+    "bank amount mismatch",
+    "currency mismatch",
+    "missing evidence",
+    "ambiguous deposit versus ordinary payment"
+  ],
+  "routing": {
+    "caseType": "UnclearMoneyCase",
+    "workItem": "FinanceReviewWorkItem",
+    "domainEventAllowedBeforeResolution": false,
+    "ledgerTransactionAllowedBeforeResolution": false
+  },
+  "resolutionOutputs": ["MoneyBasis", "FinanceCommit", "FinanceReceipt"]
+}

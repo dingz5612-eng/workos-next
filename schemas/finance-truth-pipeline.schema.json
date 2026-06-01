@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://workosnext.local/schemas/finance-truth-pipeline.schema.json",
+  "title": "Finance Truth Pipeline",
+  "type": "object",
+  "required": ["version", "packId", "pipeline", "truthRules", "certification", "goNoGo"],
+  "properties": {
+    "version": { "type": "string" },
+    "packId": { "const": "FinanceTruthPack" },
+    "moneyKernelPack": { "const": "MoneyKernelPack" },
+    "acceptedInputs": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+    "forbiddenDirectFacts": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+    "pipeline": { "type": "array", "items": { "type": "string" }, "minItems": 5 },
+    "runtimeServices": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+    "truthRules": {
+      "type": "object",
+      "required": [
+        "businessDomainDirectPaymentFactAllowed",
+        "businessDomainDirectDepositFactAllowed",
+        "businessDomainDirectLedgerEntryAllowed",
+        "bankImportDirectPaymentConfirmedAllowed",
+        "moneyBasisOwner",
+        "ledgerTransactionOwner"
+      ]
+    },
+    "certification": {
+      "type": "object",
+      "required": ["checker", "tests"]
+    },
+    "goNoGo": {
+      "type": "object",
+      "required": ["productionAllowed", "localPassedOnlyAllowsNextStackedBranch"]
+    }
+  }
+}

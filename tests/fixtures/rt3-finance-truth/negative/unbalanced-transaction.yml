@@ -1,0 +1,15 @@
+{
+  "scenarioId": "rt3-negative-unbalanced-transaction",
+  "sourcePack": "FinanceTruthPack",
+  "inputFact": "MoneyBasis",
+  "basisType": "payment_receipt",
+  "targetFact": "MoneyBasis",
+  "amount": 650,
+  "currency": "KGS",
+  "expectedLedger": {
+    "balanced": false,
+    "debitAmount": 650,
+    "creditAmount": 600
+  },
+  "expectedViolation": "finance_truth.unbalanced_transaction"
+}
