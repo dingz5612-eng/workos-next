@@ -223,7 +223,9 @@ function dbPassed(assertions, name) {
 }
 
 function run(command, args) {
-  const result = spawnSync(command, args, { cwd: root, stdio: "inherit", shell: false });
+  const result = spawnSync(command, args, { cwd: root, encoding: "utf8", shell: false });
+  if (result.stdout) process.stdout.write(result.stdout);
+  if (result.stderr) process.stderr.write(result.stderr);
   if (result.status !== 0) {
     throw new Error(`${command} ${args.join(" ")} failed with exit code ${result.status}`);
   }
