@@ -163,6 +163,8 @@ public sealed class V54ControlPlaneGuardTests
         Assert.IsTrue(runner.Contains("shadow_fact_contamination", StringComparison.Ordinal));
         Assert.IsTrue(runner.Contains("money_mismatch_red", StringComparison.Ordinal));
         Assert.IsTrue(runner.Contains("shadow-compare-semantic-rules.json", StringComparison.Ordinal));
+        Assert.IsTrue(runner.Contains("CanonicalOperationsApiService.cs", StringComparison.Ordinal));
+        Assert.IsTrue(runner.Contains("WorkspaceCardCompatibilityAdapter.cs", StringComparison.Ordinal));
         Assert.IsTrue(database.Contains("ShadowLedgerOfficialContaminationCheck", StringComparison.Ordinal));
         Assert.IsTrue(database.Contains("ShadowDomainEventOfficialContaminationCheck", StringComparison.Ordinal));
         Assert.IsTrue(database.Contains("shadow.shadow_ledger_entry_id", StringComparison.Ordinal));

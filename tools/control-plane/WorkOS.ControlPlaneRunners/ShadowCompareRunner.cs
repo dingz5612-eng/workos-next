@@ -483,9 +483,20 @@ public static class ShadowCompareRunner
 
     private static ShadowSemanticCheckResult OperationsContractCompare(ShadowSemanticRules rules)
     {
-        var servicePath = ResolveRepoPath(Path.Combine("services", "core-api", "WorkOS.Api", "Runtime", "OperationsRuntimeService.cs"));
-        var source = File.Exists(servicePath) ? File.ReadAllText(servicePath) : string.Empty;
-        return ShadowSemanticChecks.CompareOperationsContract(rules, source, RelativeRepoPath(servicePath));
+        var relativePaths = new[]
+        {
+            Path.Combine("services", "core-api", "WorkOS.Api", "Runtime", "OperationsRuntimeService.cs"),
+            Path.Combine("services", "core-api", "WorkOS.Api", "Runtime", "CanonicalOperationsApiService.cs"),
+            Path.Combine("services", "core-api", "WorkOS.Api", "Runtime", "WorkspaceCardCompatibilityAdapter.cs")
+        };
+        var sources = relativePaths
+            .Select(path => ResolveRepoPath(path))
+            .Where(File.Exists)
+            .Select(path => (Source: File.ReadAllText(path), Path: RelativeRepoPath(path)))
+            .ToArray();
+        var source = string.Join(Environment.NewLine, sources.Select(item => item.Source));
+        var sourceLabel = string.Join(", ", sources.Select(item => item.Path));
+        return ShadowSemanticChecks.CompareOperationsContract(rules, source, sourceLabel);
     }
 
     private static ShadowSemanticCheckResult BusinessFactSafetyCompare(ControlPlaneDatabase database, ShadowSemanticRules rules)
