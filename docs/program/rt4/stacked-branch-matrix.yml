@@ -204,11 +204,26 @@
       "allowedFiles": ["docs/scenarios/**", "scripts/check-executable-scenarios.mjs", "services/core-api/WorkOS.Api/Runtime/RuntimeScenarioRunner.cs", "services/core-api/WorkOS.Api/Runtime/OperationsContracts.cs", "tools/control-plane/WorkOS.ControlPlaneRunners/RuntimeCertificationRunner.cs", "docs/v5.4/dormitory-certification-scenarios.json", "docs/business/dormitory/certification-scenarios.json", "tests/WorkOS.UnitTests/RuntimeScenarioFactoryTests.cs", "tests/WorkOS.UnitTests/DormitoryCertificationGateTests.cs", "tests/WorkOS.RuntimeIntegrationTests/DormitoryGoldenPathTests.cs", ".github/workflows/ci.yml", "scripts/guard-architecture.ps1", "docs/program/rt4/*", "artifacts/rt4/*", "scripts/rt4/build-completion-dashboard.mjs"],
       "forbiddenFiles": ["RT-B BStageGateRunner", "RT-4 Dormitory L1 pilot activation", "apps/mobile/**", "DORM-INT pilot activation", "production business activation"],
       "localCiStatus": "LOCAL_PASSED",
-      "headSha": "8828aeb9e8459a71da959bf6be1bb69b31f81342",
+      "headSha": "3db0ec74dcf397e409c358e70ae5adb8f7ab1a18",
       "stackedReady": true,
       "prUrl": "",
       "mergeStatus": "not_merged",
       "evidenceRefs": ["clean Docker PostgreSQL workosnext-rts-test", "node scripts/check-executable-scenarios.mjs --self-test", "node scripts/check-executable-scenarios.mjs", "dotnet test tests/WorkOS.UnitTests/WorkOS.UnitTests.csproj -c Release --no-build", "dotnet test tests/WorkOS.RuntimeIntegrationTests/WorkOS.RuntimeIntegrationTests.csproj -c Release --no-build", "dotnet run --project tests/WorkOS.RuntimeContractTests/WorkOS.RuntimeContractTests.csproj -c Release", "node scripts/v5_4/certify-dormitory.mjs --sourceMode=real", "pwsh -NoProfile -File scripts/guard-architecture.ps1", "pwsh -NoProfile -File scripts/v5_4/run-control-plane-checks.ps1"],
+      "nextBranchAllowed": true
+    },
+    {
+      "taskId": "RT-B",
+      "branch": "codex/rtb-b-stage-gate-closure",
+      "baseBranch": "codex/rts-executable-scenario-factory",
+      "dependsOn": "RT-S",
+      "allowedFiles": ["docs/business/acceptance/b2-scenario-result-semantics.*", "docs/business/acceptance/b-stage-runtime-boundary.md", "docs/business/business-line-registry.json", "docs/business/schemas/**", "scripts/v5_4/b-gate-runner.mjs", "scripts/check-business-line-admission.mjs", "services/core-api/WorkOS.Api/Runtime/BusinessLineAdmission.cs", "tools/control-plane/WorkOS.ControlPlaneRunners/BStageGateRunner.cs", "tools/control-plane/WorkOS.ControlPlaneRunners/Program.cs", "tests/WorkOS.UnitTests/BStageGateRunnerTests.cs", ".github/workflows/ci.yml", "scripts/guard-architecture.ps1", "docs/program/rt4/*", "artifacts/rt4/*", "scripts/rt4/build-completion-dashboard.mjs"],
+      "forbiddenFiles": ["RT-4 Dormitory L1 pilot activation", "RT-5 WorkItem-native Experience", "apps/mobile/**", "DORM-INT pilot activation", "production business activation"],
+      "localCiStatus": "LOCAL_PASSED",
+      "headSha": "cdcdc95cc82a59fa68bb144c8d29301b9b40e108",
+      "stackedReady": true,
+      "prUrl": "",
+      "mergeStatus": "not_merged",
+      "evidenceRefs": ["clean Docker PostgreSQL workosnext-rtb-test", "node scripts/check-dormitory-domain-kit.mjs", "node scripts/check-business-domain-kit.mjs", "node scripts/check-business-line-admission.mjs", "node scripts/check-domain-kit-usage.mjs", "node scripts/check-admission-surface-alignment.mjs", "node scripts/v5_4/certify-dormitory.mjs --sourceMode=real", "node scripts/v5_4/b-gate-runner.mjs", "dotnet test tests/WorkOS.UnitTests/WorkOS.UnitTests.csproj -c Release --no-build", "dotnet test tests/WorkOS.RuntimeIntegrationTests/WorkOS.RuntimeIntegrationTests.csproj -c Release --no-build", "dotnet run --project tests/WorkOS.RuntimeContractTests/WorkOS.RuntimeContractTests.csproj -c Release", "pwsh -NoProfile -File scripts/guard-architecture.ps1", "pwsh -NoProfile -File scripts/v5_4/run-control-plane-checks.ps1"],
       "nextBranchAllowed": true
     }
   ]
