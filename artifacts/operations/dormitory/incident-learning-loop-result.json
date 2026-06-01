@@ -1,0 +1,20 @@
+{
+  "generated_at_utc": "2026-06-01T23:12:38.811Z",
+  "generated_by": "check-incident-learning-loop",
+  "stage": "OAM-07",
+  "status": "passed",
+  "incidentCount": 1,
+  "riskSignalCount": 1,
+  "workItemCount": 1,
+  "resolutionEventCount": 1,
+  "productionAllowed": false,
+  "l2ProductionAllowed": false,
+  "businessProductionAllowed": false,
+  "noGoItems": [],
+  "evidenceRefs": [
+    "docs/operations/incident-root-cause-taxonomy.yml",
+    "docs/operations/observation-control-loop.yml",
+    "artifacts/operations/dormitory/observation-day-01.json",
+    "artifacts/operations/dormitory/l1-to-l2-readiness.json"
+  ]
+}

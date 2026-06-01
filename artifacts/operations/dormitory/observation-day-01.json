@@ -1,0 +1,135 @@
+{
+  "generated_at_utc": "2026-06-01T23:12:38.554Z",
+  "generated_by": "generate-observation-day",
+  "stage": "OAM-07",
+  "day": 1,
+  "status": "passed",
+  "decision": "continue_l1_observation",
+  "productionAllowed": false,
+  "l2ProductionAllowed": false,
+  "businessProductionAllowed": false,
+  "p0StopCount": 0,
+  "p1HoldCount": 0,
+  "sloSummary": {
+    "sloCount": 19,
+    "green": true,
+    "financeDailyClose": "passed",
+    "projectionLagP95Minutes": 2,
+    "slaOverdue": 0,
+    "rollbackReadiness": "green"
+  },
+  "metricSnapshot": {
+    "financeDailyClose": {
+      "status": "passed",
+      "continuity": "green",
+      "depositLiabilityMismatch": 0,
+      "duplicateLedgerEntry": 0,
+      "unbalancedLedgerTransaction": 0,
+      "depositAsRevenue": 0,
+      "refundOverLiability": 0,
+      "financeCaseBacklog": 1,
+      "unclearMoneyBacklog": 1
+    },
+    "evidenceMetrics": {
+      "missingRate": 0.005,
+      "rejectedRate": 0.01,
+      "uploadFailureRate": 0,
+      "wrongScopeEvidenceCount": 0,
+      "evidenceLeakCount": 0,
+      "wrongTenantEvidenceCount": 0
+    },
+    "projectionLag": {
+      "p95Minutes": 2,
+      "thresholdMinutes": 5,
+      "status": "green"
+    },
+    "slaMetrics": {
+      "overdueCount": 0,
+      "status": "green"
+    },
+    "rates": {
+      "forbidden403Rate": 0.03,
+      "idempotency409Rate": 0.01,
+      "businessBlocked422Rate": 0.08,
+      "idempotencyConflictNoSideEffect": true
+    },
+    "gateStatus": {
+      "BStageGate": "passed",
+      "ShadowCompare": "green",
+      "Invariant": "passed",
+      "redShadowCompareReportCount": 0,
+      "unresolvedP0InvariantCount": 0
+    },
+    "rollbackReadiness": {
+      "status": "green",
+      "unableToRollback": false,
+      "appendOnlyCompensationReady": true
+    },
+    "training": {
+      "blockingIssuesOpen": 0,
+      "status": "green"
+    },
+    "support": {
+      "tickets": 2,
+      "ticketSpike": false,
+      "status": "green"
+    }
+  },
+  "incidents": [
+    {
+      "id": "incident-learning-drill-001",
+      "severity": "P2",
+      "rootCause": "human_training_gap",
+      "owner": "releaseOwner",
+      "status": "closed",
+      "trainingUpdateRef": "docs/go-live/dormitory/training-signoff.yml",
+      "policyUpdateRef": null,
+      "riskSignalId": "risk-signal-learning-drill-001",
+      "workItemId": "WI-OBS-LEARNING-001",
+      "resolutionEventId": "resolution-learning-drill-001",
+      "lensUpdateRef": "DormitoryObservationSloLens"
+    }
+  ],
+  "riskSignals": [
+    {
+      "riskSignalId": "risk-signal-learning-drill-001",
+      "sourceIncidentId": "incident-learning-drill-001",
+      "owner": "releaseOwner",
+      "severity": "P2",
+      "generatedWorkItemId": "WI-OBS-LEARNING-001",
+      "sla": "next_daily_review"
+    }
+  ],
+  "workItems": [
+    {
+      "workItemId": "WI-OBS-LEARNING-001",
+      "workItemType": "observation_risk_resolution",
+      "ownerRole": "releaseOwner",
+      "sla": "next_daily_review",
+      "escalationRequired": true
+    }
+  ],
+  "resolutionEvents": [
+    {
+      "resolutionEventId": "resolution-learning-drill-001",
+      "workItemId": "WI-OBS-LEARNING-001",
+      "lensUpdateRef": "DormitoryObservationSloLens",
+      "trainingUpdateRef": "docs/go-live/dormitory/training-signoff.yml",
+      "policyUpdateRef": null,
+      "status": "closed"
+    }
+  ],
+  "periodReview": {
+    "cadence": "daily",
+    "frozen": true,
+    "reviewArtifact": "artifacts/operations/dormitory/observation-day-01.json"
+  },
+  "noGoItems": [],
+  "evidenceRefs": [
+    "artifacts/go-live/dormitory/daily-observation-day-01.json",
+    "docs/operations/observation-control-loop.yml",
+    "docs/operations/incident-root-cause-taxonomy.yml",
+    "docs/operations/dormitory-slo.yml"
+  ],
+  "nextAction": "继续 L1 Internal Pilot Observation Window；不得自动升级 L2。"
+}

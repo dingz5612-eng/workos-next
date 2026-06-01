@@ -252,6 +252,13 @@ jobs:
       - name: Validate OAM-06 Trust Boundary Kernel
         run: node scripts/trust/check-trust-boundary-kernel.mjs
 
+      - name: Validate OAM-07 Observation SLO Control Loop
+        run: |
+          node scripts/operations/check-dormitory-slo.mjs
+          node scripts/operations/generate-observation-day.mjs
+          node scripts/operations/check-l1-to-l2-readiness.mjs
+          node scripts/operations/check-incident-learning-loop.mjs
+
       - name: Architecture guard
         shell: pwsh
         env:

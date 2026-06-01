@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://workosnext.local/schemas/operations/dormitory-slo-control-loop.schema.json",
+  "type": "object",
+  "required": ["contractId", "stage", "businessLine", "productionAllowed", "l2ProductionAllowed", "slos"],
+  "properties": {
+    "contractId": { "type": "string" },
+    "stage": { "const": "OAM-07" },
+    "businessLine": { "const": "Dormitory" },
+    "productionAllowed": { "const": false },
+    "l2ProductionAllowed": { "const": false },
+    "slos": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "label", "source", "unit", "window", "dimension", "target", "holdThreshold", "stopThreshold", "owner"]
+      }
+    }
+  }
+}
