@@ -24,7 +24,7 @@ RT-DB: `LOCAL_PASSED`
 
 Current branch: `codex/rtdb-db-role-isolation-shadow-defense`
 
-Head sha: `75b22c9622deff37ade71f8bb0afd6e92230abfd`
+Head sha: `a6573c028f819bfabf443199cd72125568c7e2c2`
 
 Next allowed stage after RT-DB local pass: `RT-2 stacked preconstruction`.
 
