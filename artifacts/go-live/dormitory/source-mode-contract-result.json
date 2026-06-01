@@ -1,0 +1,10 @@
+{
+  "generated_at_utc": "2026-06-01T18:02:52.654Z",
+  "generated_by": "check-source-mode-contract",
+  "taskId": "D1",
+  "status": "passed",
+  "sourceMode": "real_api_db",
+  "contractRef": "docs/go-live/dormitory/runtime-replay-contract.yml",
+  "scenariosRef": "docs/go-live/dormitory/runtime-replay-scenarios.yml",
+  "noGoItems": []
+}

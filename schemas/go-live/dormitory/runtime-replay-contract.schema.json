@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://workosnext.local/schemas/go-live/dormitory/runtime-replay-contract.schema.json",
+  "type": "object",
+  "required": [
+    "version",
+    "taskId",
+    "stage",
+    "sourceMode",
+    "sourceModePolicy",
+    "apiCallsRequired",
+    "dbAssertionsRequired",
+    "runtimeBoundary",
+    "finalEvidenceRefs"
+  ],
+  "properties": {
+    "version": { "type": "string" },
+    "taskId": { "const": "D1" },
+    "stage": { "const": "DORM-INT-RUNTIME-REPLAY" },
+    "sourceMode": { "const": "real_api_db" },
+    "sourceModePolicy": {
+      "type": "object",
+      "required": [
+        "allowSyntheticDomainEvent",
+        "allowSyntheticLedgerTransaction",
+        "allowWorkspaceCardOrdinaryConfirmFallback",
+        "allowTmpFinalEvidenceRefs",
+        "allowOldCiRunEvidence"
+      ],
+      "properties": {
+        "allowSyntheticDomainEvent": { "const": false },
+        "allowSyntheticLedgerTransaction": { "const": false },
+        "allowWorkspaceCardOrdinaryConfirmFallback": { "const": false },
+        "allowTmpFinalEvidenceRefs": { "const": false },
+        "allowOldCiRunEvidence": { "const": false }
+      }
+    },
+    "apiCallsRequired": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 10,
+      "uniqueItems": true
+    },
+    "dbAssertionsRequired": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 12,
+      "uniqueItems": true
+    },
+    "runtimeBoundary": {
+      "type": "object",
+      "required": [
+        "dormitoryStatus",
+        "dormitoryProductionAllowed",
+        "repairStatus",
+        "partsStatus",
+        "hrStatus",
+        "businessProductionGo"
+      ]
+    },
+    "finalEvidenceRefs": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^artifacts/go-live/dormitory/" },
+      "minItems": 2
+    }
+  }
+}

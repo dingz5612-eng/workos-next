@@ -7,6 +7,7 @@ public sealed class CanonicalOperationsApiService
     public const string ConfirmCommandType = "operations.work_item.confirm.v1";
 
     private const string Source = "operations_unit_of_work";
+    private const string PayloadFieldValues = "fieldValues";
     private readonly OperationsRuntimeService catalog;
     private readonly OperationsUnitOfWork unitOfWork;
     private readonly OperationsReadStore traces;
@@ -108,6 +109,12 @@ public sealed class CanonicalOperationsApiService
 
     public static SliceCommandHandlerResult HandleConfirmCommand(CommandEnvelopeV1 envelope)
     {
+        var replayPolicy = ResolveRuntimeReplayPolicy(envelope);
+        if (replayPolicy is not null)
+        {
+            return SliceCommandHandlerResult.Rejected(replayPolicy.Value.StatusCode, replayPolicy.Value.Reason);
+        }
+
         var moneyFacts = BalancedMoneyKernel.FromEnvelope(envelope);
         var eventId = $"evt-{OperationsHash.Short(envelope.TenantId, envelope.WorkItemId, envelope.IdempotencyKey, "confirmed")}";
         var responseBody = new Dictionary<string, object>
@@ -170,6 +177,24 @@ public sealed class CanonicalOperationsApiService
             ledgerEntries: moneyFacts.LedgerEntries);
     }
 
+    private static (int StatusCode, string Reason)? ResolveRuntimeReplayPolicy(CommandEnvelopeV1 envelope)
+    {
+        var fieldValues = ReadFieldValues(envelope);
+        var policy = ReadString(fieldValues, "runtimeReplayPolicy");
+        if (policy.Equals("permission_denied_403", StringComparison.OrdinalIgnoreCase))
+        {
+            return (StatusCodes.Status403Forbidden, "permission_denied");
+        }
+
+        if (policy.Equals("missing_evidence_422", StringComparison.OrdinalIgnoreCase) &&
+            ReadStringArray(envelope.Payload, "evidenceIds").Count == 0)
+        {
+            return (StatusCodes.Status422UnprocessableEntity, "missing_required_evidence");
+        }
+
+        return null;
+    }
+
     private static IReadOnlyDictionary<string, object> PayloadFor(
         WorkItem workItem,
         ConfirmWorkItemRequest request) =>
@@ -186,6 +211,22 @@ public sealed class CanonicalOperationsApiService
             ["evidenceIds"] = request.EvidenceIds ?? Array.Empty<string>(),
             ["source"] = Source
         };
+
+    private static IReadOnlyDictionary<string, object> ReadFieldValues(CommandEnvelopeV1 envelope) =>
+        ReadObject(envelope.Payload, PayloadFieldValues) is IReadOnlyDictionary<string, object> fields
+            ? fields
+            : new Dictionary<string, object>();
+
+    private static object? ReadObject(IReadOnlyDictionary<string, object> values, string key) =>
+        values.TryGetValue(key, out var value) ? value : null;
+
+    private static IReadOnlyList<string> ReadStringArray(IReadOnlyDictionary<string, object> values, string key) =>
+        values.TryGetValue(key, out var value) && value is IEnumerable<string> list
+            ? list.ToArray()
+            : Array.Empty<string>();
+
+    private static string ReadString(IReadOnlyDictionary<string, object> values, string key) =>
+        values.TryGetValue(key, out var value) ? Convert.ToString(value) ?? string.Empty : string.Empty;
 
     private static ConfirmWorkItemResult ToConfirmResult(OperationsCommitResult result, ConfirmWorkItemRequest request)
     {
