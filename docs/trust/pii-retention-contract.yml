@@ -1,0 +1,17 @@
+contractId: pii-retention
+name: PII 导出与保留合同
+status: active
+exports:
+  auditTable: governance_export_audits
+  requiredFields:
+    - tenant_id
+    - export_type
+    - actor_id
+    - device_id
+    - reason
+    - expires_at_utc
+  retentionPolicy: 导出链接必须短 TTL，并保留审计记录。
+  allowedWhen:
+    - actor has capability
+    - trusted PC device
+    - reason is present

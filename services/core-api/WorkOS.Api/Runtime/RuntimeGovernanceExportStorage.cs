@@ -32,14 +32,15 @@ internal sealed class RuntimeGovernanceExportStorage
         using var command = connection.CreateCommand();
         command.CommandText = """
             insert into governance_export_audits(
-                audit_event_id, export_type, actor_id, device_id, status, reason,
+                audit_event_id, tenant_id, export_type, actor_id, device_id, status, reason,
                 expires_at_utc, occurred_at_utc)
             values (
-                @auditEventId, @exportType, @actorId, @deviceId, @status, @reason,
+                @auditEventId, @tenantId, @exportType, @actorId, @deviceId, @status, @reason,
                 @expiresAtUtc, @occurredAtUtc)
             on conflict(audit_event_id) do nothing
             """;
         command.Parameters.AddWithValue("auditEventId", result.AuditEventId);
+        command.Parameters.AddWithValue("tenantId", string.IsNullOrWhiteSpace(request.TenantId) ? "governance-tenant" : request.TenantId);
         command.Parameters.AddWithValue("exportType", result.ExportType);
         command.Parameters.AddWithValue("actorId", request.ActorId);
         command.Parameters.AddWithValue("deviceId", request.DeviceId);

@@ -89,6 +89,9 @@ public sealed partial class PostgresProjectionStore : IProjectionStore
     public RuntimeDeviceSession? FindDeviceSession(string deviceId) =>
         deviceSessions.Find(deviceId);
 
+    public RuntimeDeviceSession? FindDeviceSession(string tenantId, string deviceId) =>
+        deviceSessions.Find(tenantId, deviceId);
+
     public RuntimeDeviceSession? RevokeDeviceSession(string deviceId, string actorId) =>
         deviceSessions.Revoke(deviceId, actorId);
 

@@ -117,7 +117,7 @@ public sealed class ActionRuntimeService
             card,
             actor,
             request,
-            ResolveDeviceSession(request),
+            ResolveDeviceSession(workspace.Id, request),
             requireTrustedDeviceForHighRiskActions);
         if (deviceFailure is not null)
         {
@@ -297,7 +297,7 @@ public sealed class ActionRuntimeService
             card,
             actor,
             request,
-            ResolveDeviceSession(request),
+            ResolveDeviceSession(workspace.Id, request),
             requireTrustedDeviceForHighRiskActions);
         if (deviceFailure is not null)
         {
@@ -547,7 +547,7 @@ public sealed class ActionRuntimeService
         return !method.Equals("cash", StringComparison.OrdinalIgnoreCase);
     }
 
-    private RuntimeDeviceSession? ResolveDeviceSession(ConfirmCardRequest request)
+    private RuntimeDeviceSession? ResolveDeviceSession(string tenantId, ConfirmCardRequest request)
     {
         var deviceId = request.DeviceId;
         if (string.IsNullOrWhiteSpace(deviceId) && request.FieldValues is not null)
@@ -557,7 +557,7 @@ public sealed class ActionRuntimeService
 
         return string.IsNullOrWhiteSpace(deviceId)
             ? null
-            : store.FindDeviceSession(deviceId);
+            : store.FindDeviceSession(tenantId, deviceId);
     }
 
     private static ConfirmResult? ValidateLedgerAggregateRef(string workspaceId, string cardId, ConfirmCardRequest request)

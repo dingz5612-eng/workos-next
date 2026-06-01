@@ -249,6 +249,9 @@ jobs:
           node scripts/finance/check-ledger-basis-semantics.mjs
           node scripts/check-ledger-semantic-rules.mjs
 
+      - name: Validate OAM-06 Trust Boundary Kernel
+        run: node scripts/trust/check-trust-boundary-kernel.mjs
+
       - name: Architecture guard
         shell: pwsh
         env:

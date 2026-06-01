@@ -159,14 +159,15 @@ app.MapPost("/api/evidence/{evidenceId}/attachments", (string evidenceId, Eviden
 });
 app.MapPost("/api/evidence/{evidenceId}/verify", (string evidenceId, EvidenceDecisionRequest request) => Results.Ok(runtime.VerifyEvidence(evidenceId, request)));
 app.MapPost("/api/evidence/{evidenceId}/reject", (string evidenceId, EvidenceDecisionRequest request) => Results.Ok(runtime.RejectEvidence(evidenceId, request)));
-app.MapGet("/api/evidence/{evidenceId}/signed-url", (string evidenceId, string? actorId, string? deviceId, int? ttlSeconds) =>
+app.MapGet("/api/evidence/{evidenceId}/signed-url", (string evidenceId, string? actorId, string? deviceId, string? tenantId, int? ttlSeconds) =>
 {
     try
     {
         return Results.Ok(runtime.CreateEvidenceSignedUrl(evidenceId, new EvidenceSignedUrlRequest(
             actorId ?? "runtime",
             deviceId ?? string.Empty,
-            ttlSeconds ?? RuntimeSignedUrlPolicy.MaxTtlSeconds)));
+            ttlSeconds ?? RuntimeSignedUrlPolicy.MaxTtlSeconds,
+            TenantId: tenantId)));
     }
     catch (InvalidOperationException ex) when (ex.Message.StartsWith("evidence_", StringComparison.OrdinalIgnoreCase))
     {

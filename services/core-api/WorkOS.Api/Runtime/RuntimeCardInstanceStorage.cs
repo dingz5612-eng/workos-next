@@ -58,16 +58,17 @@ internal sealed class RuntimeCardInstanceStorage
         var now = DateTimeOffset.UtcNow;
         using var command = db.CreateCommand("""
             insert into card_instances(
-                card_instance_id, workspace_id, card_id, aggregate_ref, submission_id, idempotency_key,
+                card_instance_id, tenant_id, workspace_id, card_id, aggregate_ref, submission_id, idempotency_key,
                 status, created_at_utc, prepared_at_utc, submitted_at_utc, confirmed_at_utc, updated_at_utc)
             values (
-                @cardInstanceId, @workspaceId, @cardId, @aggregateRef, @submissionId, @idempotencyKey,
+                @cardInstanceId, @tenantId, @workspaceId, @cardId, @aggregateRef, @submissionId, @idempotencyKey,
                 @status, @now,
                 case when @status = 'prepared' then @now else null end,
                 case when @status = 'submitted' then @now else null end,
                 case when @status = 'confirmed' then @now else null end,
                 @now)
             on conflict(card_instance_id) do update set
+                tenant_id = excluded.tenant_id,
                 workspace_id = excluded.workspace_id,
                 card_id = excluded.card_id,
                 aggregate_ref = coalesce(excluded.aggregate_ref, card_instances.aggregate_ref),
@@ -80,6 +81,7 @@ internal sealed class RuntimeCardInstanceStorage
                 updated_at_utc = excluded.updated_at_utc
             """);
         command.Parameters.AddWithValue("cardInstanceId", cardInstanceId);
+        command.Parameters.AddWithValue("tenantId", workspaceId);
         command.Parameters.AddWithValue("workspaceId", workspaceId);
         command.Parameters.AddWithValue("cardId", cardId);
         command.Parameters.AddWithValue("aggregateRef", (object?)aggregateRef ?? DBNull.Value);
