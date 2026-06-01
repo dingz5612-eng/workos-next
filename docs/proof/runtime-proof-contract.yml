@@ -1,0 +1,66 @@
+{
+  "version": "runtime-proof-contract.v1",
+  "taskId": "OAM-03",
+  "中文名称": "真实运行时证明框架",
+  "目标": "证明宿舍 L1 内测场景经由真实 API、PostgreSQL、OperationsUnitOfWork、DomainEvent、Ledger、Projection、Trace 与 Gate 证据链路完成，而不是 JSON-only 或 synthetic runner。",
+  "sourceMode": "live_api_db",
+  "requiredProofPack": "docs/go-live/dormitory/runtime-proof-pack.yml",
+  "requiredReplayResult": "artifacts/go-live/dormitory/live-api-db-replay-result.json",
+  "requiredAssertions": [
+    "persisted_work_item_runtime_model",
+    "prepare_command_submission_trace",
+    "confirm_through_operations_unit_of_work",
+    "committed_domain_event",
+    "money_ledger_transaction",
+    "rejected_command_submission",
+    "rejected_has_no_domain_event_or_ledger",
+    "projection_lens_replay",
+    "ui_state_matches_api_result",
+    "trace_api_chain",
+    "compatibility_fallback_not_used",
+    "source_mode_live_api_db"
+  ],
+  "requiredApiCalls": [
+    "POST /api/operations/cases",
+    "POST /api/operations/work-items",
+    "POST /api/operations/work-items/{workItemId}/prepare",
+    "POST /api/operations/work-items/{workItemId}/confirm",
+    "GET /api/operations/trace/submissions/{submissionId}",
+    "GET /api/operations/trace/work-items/{workItemId}",
+    "GET /api/operations/trace/cases/{caseId}"
+  ],
+  "requiredDbAssertions": [
+    "OperationCase",
+    "WorkItem",
+    "CommandSubmission",
+    "RejectedCommandSubmission",
+    "RejectionTrace",
+    "DomainEvent",
+    "LedgerTransaction",
+    "LedgerEntry",
+    "ProjectionCheckpoint",
+    "Lens",
+    "EvidenceObject",
+    "FactTrace"
+  ],
+  "forbiddenEvidence": {
+    "syntheticDomainEvent": true,
+    "syntheticLedgerTransaction": true,
+    "jsonOnlyScenarioPass": true,
+    "fixtureOnlyScenarioPass": true,
+    "workspaceCardOrdinaryConfirmFallback": true,
+    "tmpFinalEvidenceRef": true,
+    "oldCiRunEvidence": true
+  },
+  "statusBoundaries": {
+    "dormitory": "仅 L1 Internal Pilot Observation",
+    "dormitoryL2Allowed": false,
+    "businessProductionAllowed": false,
+    "repairPartsHrProductionAllowed": false
+  },
+  "artifactRefs": [
+    "artifacts/proof/runtime-proof-result.json",
+    "artifacts/go-live/dormitory/runtime-proof-result.json",
+    "artifacts/go-live/dormitory/live-api-db-replay-result.json"
+  ]
+}
