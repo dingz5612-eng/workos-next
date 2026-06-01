@@ -1,0 +1,27 @@
+{
+  "generated_at_utc": "2026-06-01T15:06:11.909Z",
+  "generated_by": "check-dormitory-master-data-readiness",
+  "stage": "DORM-INT-01",
+  "status": "passed",
+  "sourceMode": "real",
+  "scopePath": "docs/go-live/dormitory/internal-pilot-scope.yml",
+  "masterDataPath": "docs/go-live/dormitory/master-data.yml",
+  "validation": {
+    "room": "passed",
+    "bed": "passed",
+    "ratePlan": "passed",
+    "subjectResident": "passed",
+    "stay": "passed",
+    "bedOccupancy": "passed",
+    "depositAccount": "passed",
+    "paymentMethod": "passed",
+    "evidenceRequirement": "passed",
+    "userRoleCapability": "passed",
+    "deviceTrust": "passed",
+    "tenantRuntimeConfig": "passed",
+    "featureFlag": "passed",
+    "sliceCutoverState": "passed"
+  },
+  "noGoItems": [],
+  "nextAction": "DORM-INT-01 passed; DORM-INT-02 may be evaluated next."
+}

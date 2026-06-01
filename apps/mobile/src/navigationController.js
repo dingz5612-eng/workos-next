@@ -1,6 +1,8 @@
 import { fetchSearchResults } from "./apiClient.js";
+import { defaultHomeForRole } from "./experienceContract.js";
 import { applyRuntimeSearchResults } from "./runtime/runtimeStore.js";
 import { selectWorkspaceById } from "./selectors/surfaceSelectors.js";
+import { evaluateSurfaceAccess } from "./surfaceGuard.js";
 
 export function setView(view, ctx) {
   if (!ctx.state.currentActor && view !== "login") {
@@ -8,6 +10,14 @@ export function setView(view, ctx) {
     ctx.render(true);
     return;
   }
+  const access = evaluateSurfaceAccess(view, ctx.state);
+  if (!access.allowed) {
+    ctx.state.permissionDiagnostic = access;
+    ctx.state.view = "permissionDiagnostic";
+    ctx.render(true);
+    return;
+  }
+  ctx.state.permissionDiagnostic = null;
   ctx.state.view = view;
   ctx.render(true);
 }
@@ -20,7 +30,7 @@ export function setLang(lang, ctx) {
 
 export function onboard(ctx) {
   localStorage.setItem("workosnext.onboarded", "1");
-  setView("home", ctx);
+  setView(defaultHomeForRole(ctx.state.currentActor?.role), ctx);
 }
 
 export function openWorkspace(workspaceId, ctx, cardId = "") {
@@ -30,6 +40,18 @@ export function openWorkspace(workspaceId, ctx, cardId = "") {
   const linked = selectWorkspaceById(ctx.state, workspaceId);
   ctx.state.selectedTask = linked?.taskId || ctx.state.selectedTask;
   setView("workspace", ctx);
+}
+
+export function openWorkItem(workItemId, ctx, fallback = {}) {
+  const queueItem = (ctx.state.runtimeStore?.workQueue || []).find((item) => item.workItemId === workItemId || item.work_item_id === workItemId);
+  const operationItem = (ctx.state.runtimeStore?.operationWorkItems || []).find((item) =>
+    item.workItemId === workItemId || item.work_item_id === workItemId);
+  const selected = queueItem || operationItem || null;
+  ctx.state.selectedWorkItemId = workItemId;
+  ctx.state.selectedWorkspace = selected?.workspaceId || selected?.workspace_id || fallback.workspaceId || ctx.state.selectedWorkspace;
+  ctx.state.selectedCardId = selected?.cardId || selected?.card_id || fallback.cardId || ctx.state.selectedCardId || "";
+  ctx.state.selectedCardIndex = -1;
+  setView("operationPanel", ctx);
 }
 
 export function selectCard(cardIndex, ctx) {

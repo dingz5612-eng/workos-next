@@ -246,6 +246,248 @@
   margin-top: 12px;
 }
 
+.workitem-card,
+.lifecycle-workspace article,
+.trusted-confirm-sheet,
+.action-result,
+.projection-pending-state,
+.failed-sync-state,
+.permission-diagnostic,
+.personal-ops-panel,
+.device-trust-panel,
+.compat-card-tabs {
+  border: 1px solid #d9e7ee;
+  border-radius: 8px;
+  background: #fbfdfe;
+}
+
+.workitem-card {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+}
+
+.workitem-card-head {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+  align-items: center;
+}
+
+.workitem-card-head span,
+.lifecycle-workspace span,
+.operation-panel-head span,
+.trusted-confirm-sheet b,
+.action-result b,
+.projection-pending-state b,
+.failed-sync-state b,
+.personal-ops-panel b,
+.device-trust-panel b,
+.compat-card-tabs > span {
+  color: #66788c;
+  font-size: 12px;
+  font-weight: 850;
+}
+
+.workitem-card-head strong,
+.operation-panel-head strong {
+  display: block;
+  margin-top: 3px;
+  font-size: 18px;
+}
+
+.workitem-card-grid,
+.trusted-confirm-sheet dl,
+.permission-diagnostic dl,
+.device-trust-panel dl {
+  display: grid;
+  grid-template-columns: minmax(94px, auto) 1fr;
+  gap: 5px 10px;
+  margin: 0;
+}
+
+.workitem-card-grid dt,
+.trusted-confirm-sheet dt,
+.permission-diagnostic dt,
+.device-trust-panel dt {
+  color: #66788c;
+  font-size: 11px;
+  font-weight: 850;
+}
+
+.workitem-card-grid dd,
+.trusted-confirm-sheet dd,
+.permission-diagnostic dd,
+.device-trust-panel dd {
+  min-width: 0;
+  margin: 0;
+  overflow-wrap: anywhere;
+  color: #102033;
+  font-size: 12px;
+}
+
+.lifecycle-workspace {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(152px, 1fr));
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.lifecycle-workspace article {
+  display: grid;
+  gap: 5px;
+  min-height: 92px;
+  padding: 10px;
+}
+
+.lifecycle-workspace .lifecycle-wide {
+  grid-column: 1 / -1;
+}
+
+.lifecycle-timeline {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+}
+
+.lifecycle-timeline span {
+  flex: 0 0 auto;
+  padding: 7px 10px;
+  border: 1px solid #d4e3eb;
+  border-radius: 999px;
+  color: #52677b;
+  background: #fff;
+  font-size: 12px;
+}
+
+.lifecycle-timeline .current {
+  color: #102033;
+  background: #ffd166;
+  border-color: #ffd166;
+  font-weight: 850;
+}
+
+.operation-panel-view {
+  display: grid;
+  gap: 10px;
+}
+
+.operation-panel-head,
+.trusted-confirm-sheet,
+.action-result,
+.projection-pending-state,
+.failed-sync-state,
+.permission-diagnostic,
+.personal-ops-panel,
+.device-trust-panel,
+.compat-card-tabs {
+  padding: 12px;
+}
+
+.trusted-confirm-sheet {
+  display: grid;
+  gap: 8px;
+}
+
+.permission-diagnostic {
+  display: grid;
+  gap: 10px;
+  margin: 16px;
+}
+
+.permission-diagnostic h1 {
+  font-size: 24px;
+}
+
+.evidence-sheet {
+  display: grid;
+  gap: 4px;
+  margin-top: 8px;
+  padding: 10px;
+  border: 1px solid rgba(255, 255, 255, .18);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, .10);
+}
+
+.evidence-tile {
+  display: grid;
+  gap: 2px;
+  min-width: 108px;
+}
+
+.evidence-tile small {
+  color: rgba(9, 32, 51, .72);
+  font-size: 10px;
+}
+
+.personal-ops-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.personal-ops-panel {
+  display: grid;
+  gap: 6px;
+  min-height: 104px;
+}
+
+.personal-ops-panel strong {
+  font-size: 24px;
+}
+
+.mission-stack,
+.operation-panel-page,
+.operation-panel-runtime {
+  display: grid;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.mission-stack h2 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.operation-panel-page {
+  padding: 16px;
+  border: 1px solid #d9e7ee;
+  border-radius: 8px;
+  background: #f7fbfb;
+}
+
+.operation-panel-page span,
+.operation-panel-runtime span {
+  color: #66788c;
+  font-size: 12px;
+  font-weight: 850;
+}
+
+.operation-panel-page h1 {
+  font-size: 24px;
+}
+
+.operation-panel-runtime {
+  grid-template-columns: repeat(auto-fit, minmax(132px, 1fr));
+}
+
+.operation-panel-runtime article {
+  display: grid;
+  gap: 5px;
+  min-height: 100px;
+  padding: 10px;
+  border: 1px solid #d9e7ee;
+  border-radius: 8px;
+  background: #fbfdfe;
+}
+
+.operation-panel-runtime strong {
+  overflow-wrap: anywhere;
+  color: #102033;
+  font-size: 14px;
+}
+
 .sheet {
   position: fixed;
   left: 50%;
@@ -288,5 +530,3 @@
   background: #fbfdfe;
   text-align: left;
 }
-
-

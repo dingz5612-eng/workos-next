@@ -35,7 +35,17 @@ const violations = [
   ...validateMobileSources()
 ];
 
-writeReport(violations, [contractPath, "apps/mobile/src/appShell.js", "apps/mobile/src/main.js", "apps/mobile/src/operationRuntime.js", "apps/mobile/src/operationController.js"]);
+writeReport(violations, [
+  contractPath,
+  "apps/mobile/src/appShell.js",
+  "apps/mobile/src/main.js",
+  "apps/mobile/src/operationRuntime.js",
+  "apps/mobile/src/operationController.js",
+  "apps/mobile/src/authController.js",
+  "apps/mobile/src/navigationController.js",
+  "apps/mobile/src/views/operationPanelView.js",
+  "apps/mobile/src/views/experienceComponents.js"
+]);
 if (violations.length > 0) {
   for (const item of violations) {
     console.error(`${item.severity} ${item.id}: ${item.message}`);
@@ -99,6 +109,14 @@ function validateMobileSources() {
   const main = readSource("apps/mobile/src/main.js");
   const runtime = readSource("apps/mobile/src/operationRuntime.js");
   const controller = readSource("apps/mobile/src/operationController.js");
+  const auth = readSource("apps/mobile/src/authController.js");
+  const navigation = readSource("apps/mobile/src/navigationController.js");
+  const components = readSource("apps/mobile/src/views/experienceComponents.js");
+  const workbench = readSource("apps/mobile/src/views/workbenchView.js");
+  const workspace = readSource("apps/mobile/src/views/workspaceView.js");
+  const operationPanel = readSource("apps/mobile/src/views/operationPanelView.js");
+  const home = readSource("apps/mobile/src/views/homeView.js");
+  const me = readSource("apps/mobile/src/views/meView.js");
 
   if (shell.includes('nav("releaseControl"') || shell.includes('"releaseControl", "releaseControl"')) {
     violations.push(violation("experience_contract.mobile_release_nav", "Ordinary mobile bottom nav must not expose Release Control."));
@@ -114,6 +132,46 @@ function validateMobileSources() {
   }
   if (!controller.includes("submitWorkItemOperation") || controller.includes("submitCardOperation({")) {
     violations.push(violation("experience_contract.operation_controller_legacy_submit", "Operation controller must use submitWorkItemOperation as the main path."));
+  }
+  if (!auth.includes("defaultHomeForRole(session.role)")) {
+    violations.push(violation("experience_contract.role_login_home", "Login must route to defaultHomeForRole(session.role) after onboarding."));
+  }
+  if (!navigation.includes("evaluateSurfaceAccess")) {
+    violations.push(violation("experience_contract.surface_guard_missing", "setView must evaluate SurfaceGuard before navigation."));
+  }
+  if (!workbench.includes("WorkItemCard")) {
+    violations.push(violation("experience_contract.workitem_card_not_rendered", "Work page must render WorkItemCard."));
+  }
+  if (!operationPanel.includes("operationPanelView") || !operationPanel.includes("payloadHash") || !operationPanel.includes("commandSubmissionId")) {
+    violations.push(violation("experience_contract.operation_panel_route_missing", "Operation Panel route must show prepare/confirm/trace/evidence/projection/commandSubmissionId/payloadHash."));
+  }
+  if (!home.includes("WorkItem Mission Control")) {
+    violations.push(violation("experience_contract.today_mission_control_missing", "Today must render WorkItem Mission Control."));
+  }
+  if (!me.includes("Personal Ops Center")) {
+    violations.push(violation("experience_contract.personal_ops_center_missing", "Me must render Personal Ops Center."));
+  }
+  if (!workspace.includes("LifecycleWorkspace") || !workspace.includes("OperationPanelView")) {
+    violations.push(violation("experience_contract.lifecycle_workspace_not_rendered", "Workspace must render LifecycleWorkspace and OperationPanelView as the primary experience."));
+  }
+  for (const component of [
+    "WorkItemCard",
+    "OperationPanelView",
+    "LifecycleWorkspace",
+    "TrustedConfirmSheet",
+    "ActionResult",
+    "EvidenceTile",
+    "EvidenceSheet",
+    "PermissionDiagnostic",
+    "ProjectionPendingState",
+    "FailedSyncState",
+    "UploadQueue",
+    "SubmitQueue",
+    "DeviceTrustPanel"
+  ]) {
+    if (!components.includes(`function ${component}`) && !components.includes(`const ${component}`)) {
+      violations.push(violation("experience_contract.component_missing", `Experience component ${component} must be rendered as a named UI component.`, { component }));
+    }
   }
 
   return violations;

@@ -36,6 +36,10 @@ public sealed class BStageGateRunnerTests
             var surface = Path.Combine(temp.FullName, "surface.json");
             var rollback = Path.Combine(temp.FullName, "rollback.json");
             var signoff = Path.Combine(temp.FullName, "signoff.json");
+            var scope = Path.Combine(temp.FullName, "scope.json");
+            var masterData = Path.Combine(temp.FullName, "master-data.json");
+            var financeDailyClose = Path.Combine(temp.FullName, "finance-daily-close.json");
+            var evidencePolicy = Path.Combine(temp.FullName, "evidence-policy.json");
             var output = Path.Combine(temp.FullName, "b-stage-gate.json");
 
             RunnerJson.Write(b1, Check("B1"));
@@ -56,6 +60,30 @@ public sealed class BStageGateRunnerTests
                   "signoff_id": "business-signoff-test"
                 }
                 """);
+            File.WriteAllText(scope, """
+                {
+                  "status": "passed",
+                  "pilotId": "dorm-int-l1-test"
+                }
+                """);
+            File.WriteAllText(masterData, """
+                {
+                  "status": "passed",
+                  "sourceMode": "real"
+                }
+                """);
+            File.WriteAllText(financeDailyClose, """
+                {
+                  "status": "passed",
+                  "sourceMode": "real"
+                }
+                """);
+            File.WriteAllText(evidencePolicy, """
+                {
+                  "status": "passed",
+                  "sourceMode": "real"
+                }
+                """);
 
             var result = await BStageGateRunner.Run(RunnerOptions.Parse([
                 "--sourceMode=real",
@@ -67,6 +95,10 @@ public sealed class BStageGateRunnerTests
                 $"--surface={surface}",
                 $"--rollback={rollback}",
                 $"--businessSignoff={signoff}",
+                $"--dormIntScope={scope}",
+                $"--dormIntMasterData={masterData}",
+                $"--dormIntFinanceDailyClose={financeDailyClose}",
+                $"--dormIntEvidencePolicy={evidencePolicy}",
                 $"--out={output}"
             ]));
 

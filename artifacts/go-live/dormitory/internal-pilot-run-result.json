@@ -1,0 +1,966 @@
+{
+  "generated_at_utc": "2026-06-01T15:06:17.809Z",
+  "generated_by": "run-dormitory-internal-pilot-scenarios",
+  "stage": "DORM-INT-08",
+  "status": "passed",
+  "sourceMode": "real",
+  "inputRefs": {
+    "scenariosPath": "docs/go-live/dormitory/internal-pilot-scenarios.yml",
+    "masterDataPath": "docs/go-live/dormitory/master-data.yml",
+    "bStageGatePath": "artifacts/go-live/dormitory/b-stage-gate-result.json",
+    "financeDailyClosePath": "artifacts/go-live/dormitory/finance-daily-close-result.json"
+  },
+  "scenarioCount": 10,
+  "passedCount": 10,
+  "scenarios": [
+    {
+      "scenarioId": "dorm-live-001",
+      "status": "passed",
+      "workItem": {
+        "tenantId": "tenant-dorm-int-001",
+        "caseId": "case-dorm-live-001",
+        "workItemId": "wi-dorm-live-001",
+        "workItemType": "Dorm.CheckinConfirm",
+        "lifecycleState": "completed",
+        "ownerRole": "frontdesk",
+        "businessObject": "Stay"
+      },
+      "evidenceTrace": [
+        {
+          "evidenceId": "ev-dorm-live-001-1",
+          "requirementId": "identity-check",
+          "workItemId": "wi-dorm-live-001",
+          "status": "accepted",
+          "trustedEvidenceObject": true
+        },
+        {
+          "evidenceId": "ev-dorm-live-001-2",
+          "requirementId": "room-bed-confirmation",
+          "workItemId": "wi-dorm-live-001",
+          "status": "accepted",
+          "trustedEvidenceObject": true
+        }
+      ],
+      "factTrace": {
+        "traceId": "trace-dorm-live-001",
+        "caseId": "case-dorm-live-001",
+        "workItemId": "wi-dorm-live-001",
+        "submissionRefs": [
+          "sub-dorm-live-001"
+        ]
+      },
+      "lensUpdate": {
+        "lensId": "lens-dorm-live-001",
+        "status": "updated",
+        "sourceWorkItemId": "wi-dorm-live-001"
+      },
+      "operatingControlVisibility": [
+        "operation_control",
+        "manager_control"
+      ],
+      "audit": {
+        "auditId": "audit-dorm-live-001",
+        "actorRole": "frontdesk",
+        "policyRefs": [
+          "internal-pilot-scope",
+          "business-line-admission",
+          "evidence-policy"
+        ]
+      },
+      "uxStateResult": "committed_projected",
+      "noDuplicateSideEffect": true,
+      "commandSubmission": {
+        "submissionId": "sub-dorm-live-001",
+        "caseId": "case-dorm-live-001",
+        "workItemId": "wi-dorm-live-001",
+        "commandType": "Operations.Confirm",
+        "payloadHash": "hash-dorm-live-001",
+        "status": "committed",
+        "responseStatusCode": 200
+      },
+      "rejectedCommandSubmission": null,
+      "rejectionTrace": null,
+      "domainEvents": [
+        {
+          "eventId": "evt-dorm-live-001",
+          "eventType": "Dorm.CheckinConfirm.Committed",
+          "workItemId": "wi-dorm-live-001"
+        }
+      ],
+      "ledgerTransactions": [],
+      "ledgerEntries": []
+    },
+    {
+      "scenarioId": "dorm-live-002",
+      "status": "passed",
+      "workItem": {
+        "tenantId": "tenant-dorm-int-001",
+        "caseId": "case-dorm-live-002",
+        "workItemId": "wi-dorm-live-002",
+        "workItemType": "Dorm.DepositReceive",
+        "lifecycleState": "completed",
+        "ownerRole": "finance",
+        "businessObject": "DepositAccount"
+      },
+      "evidenceTrace": [
+        {
+          "evidenceId": "ev-dorm-live-002-1",
+          "requirementId": "payment-proof",
+          "workItemId": "wi-dorm-live-002",
+          "status": "accepted",
+          "trustedEvidenceObject": true
+        },
+        {
+          "evidenceId": "ev-dorm-live-002-2",
+          "requirementId": "finance-receipt",
+          "workItemId": "wi-dorm-live-002",
+          "status": "accepted",
+          "trustedEvidenceObject": true
+        }
+      ],
+      "factTrace": {
+        "traceId": "trace-dorm-live-002",
+        "caseId": "case-dorm-live-002",
+        "workItemId": "wi-dorm-live-002",
+        "submissionRefs": [
+          "sub-dorm-live-002"
+        ]
+      },
+      "lensUpdate": {
+        "lensId": "lens-dorm-live-002",
+        "status": "updated",
+        "sourceWorkItemId": "wi-dorm-live-002"
+      },
+      "operatingControlVisibility": [
+        "finance_control",
+        "manager_control"
+      ],
+      "audit": {
+        "auditId": "audit-dorm-live-002",
+        "actorRole": "finance",
+        "policyRefs": [
+          "internal-pilot-scope",
+          "business-line-admission",
+          "evidence-policy"
+        ]
+      },
+      "uxStateResult": "committed_projected",
+      "noDuplicateSideEffect": true,
+      "commandSubmission": {
+        "submissionId": "sub-dorm-live-002",
+        "caseId": "case-dorm-live-002",
+        "workItemId": "wi-dorm-live-002",
+        "commandType": "Operations.Confirm",
+        "payloadHash": "hash-dorm-live-002",
+        "status": "committed",
+        "responseStatusCode": 200
+      },
+      "rejectedCommandSubmission": null,
+      "rejectionTrace": null,
+      "domainEvents": [
+        {
+          "eventId": "evt-dorm-live-002",
+          "eventType": "Dorm.DepositReceive.Committed",
+          "workItemId": "wi-dorm-live-002"
+        }
+      ],
+      "ledgerTransactions": [
+        {
+          "ledgerTransactionId": "ltx-dorm-live-002",
+          "submissionId": "sub-dorm-live-002",
+          "basisType": "deposit_receipt",
+          "balanceStatus": "balanced"
+        }
+      ],
+      "ledgerEntries": [
+        {
+          "ledgerEntryId": "le-dorm-live-002-debit",
+          "ledgerTransactionId": "ltx-dorm-live-002",
+          "debitCredit": "debit",
+          "amount": 1200,
+          "accountId": "asset.cash_or_bank",
+          "accountType": "asset"
+        },
+        {
+          "ledgerEntryId": "le-dorm-live-002-credit",
+          "ledgerTransactionId": "ltx-dorm-live-002",
+          "debitCredit": "credit",
+          "amount": 1200,
+          "accountId": "deposit-account-maksatbek",
+          "accountType": "liability"
+        }
+      ]
+    },
+    {
+      "scenarioId": "dorm-live-003",
+      "status": "passed",
+      "workItem": {
+        "tenantId": "tenant-dorm-int-001",
+        "caseId": "case-dorm-live-003",
+        "workItemId": "wi-dorm-live-003",
+        "workItemType": "Dorm.PaymentFinanceConfirm",
+        "lifecycleState": "completed",
+        "ownerRole": "finance",
+        "businessObject": "StayBalance"
+      },
+      "evidenceTrace": [
+        {
+          "evidenceId": "ev-dorm-live-003-1",
+          "requirementId": "bank-or-cash-proof",
+          "workItemId": "wi-dorm-live-003",
+          "status": "accepted",
+          "trustedEvidenceObject": true
+        },
+        {
+          "evidenceId": "ev-dorm-live-003-2",
+          "requirementId": "finance-approval",
+          "workItemId": "wi-dorm-live-003",
+          "status": "accepted",
+          "trustedEvidenceObject": true
+        }
+      ],
+      "factTrace": {
+        "traceId": "trace-dorm-live-003",
+        "caseId": "case-dorm-live-003",
+        "workItemId": "wi-dorm-live-003",
+        "submissionRefs": [
+          "sub-dorm-live-003"
+        ]
+      },
+      "lensUpdate": {
+        "lensId": "lens-dorm-live-003",
+        "status": "updated",
+        "sourceWorkItemId": "wi-dorm-live-003"
+      },
+      "operatingControlVisibility": [
+        "finance_control",
+        "manager_control"
+      ],
+      "audit": {
+        "auditId": "audit-dorm-live-003",
+        "actorRole": "finance",
+        "policyRefs": [
+          "internal-pilot-scope",
+          "business-line-admission",
+          "evidence-policy"
+        ]
+      },
+      "uxStateResult": "committed_projected",
+      "noDuplicateSideEffect": true,
+      "commandSubmission": {
+        "submissionId": "sub-dorm-live-003",
+        "caseId": "case-dorm-live-003",
+        "workItemId": "wi-dorm-live-003",
+        "commandType": "Operations.Confirm",
+        "payloadHash": "hash-dorm-live-003",
+        "status": "committed",
+        "responseStatusCode": 200
+      },
+      "rejectedCommandSubmission": null,
+      "rejectionTrace": null,
+      "domainEvents": [
+        {
+          "eventId": "evt-dorm-live-003",
+          "eventType": "Dorm.PaymentFinanceConfirm.Committed",
+          "workItemId": "wi-dorm-live-003"
+        }
+      ],
+      "ledgerTransactions": [
+        {
+          "ledgerTransactionId": "ltx-dorm-live-003",
+          "submissionId": "sub-dorm-live-003",
+          "basisType": "payment_receipt",
+          "balanceStatus": "balanced"
+        }
+      ],
+      "ledgerEntries": [
+        {
+          "ledgerEntryId": "le-dorm-live-003-debit",
+          "ledgerTransactionId": "ltx-dorm-live-003",
+          "debitCredit": "debit",
+          "amount": 650,
+          "accountId": "asset.cash_or_bank",
+          "accountType": "asset"
+        },
+        {
+          "ledgerEntryId": "le-dorm-live-003-credit",
+          "ledgerTransactionId": "ltx-dorm-live-003",
+          "debitCredit": "credit",
+          "amount": 650,
+          "accountId": "receivable.stay",
+          "accountType": "receivable"
+        }
+      ]
+    },
+    {
+      "scenarioId": "dorm-live-004",
+      "status": "passed",
+      "workItem": {
+        "tenantId": "tenant-dorm-int-001",
+        "caseId": "case-dorm-live-004",
+        "workItemId": "wi-dorm-live-004",
+        "workItemType": "Dorm.ServiceTaskComplete",
+        "lifecycleState": "completed",
+        "ownerRole": "housekeeping",
+        "businessObject": "BedOccupancy"
+      },
+      "evidenceTrace": [
+        {
+          "evidenceId": "ev-dorm-live-004-1",
+          "requirementId": "task-completion-photo",
+          "workItemId": "wi-dorm-live-004",
+          "status": "accepted",
+          "trustedEvidenceObject": true
+        },
+        {
+          "evidenceId": "ev-dorm-live-004-2",
+          "requirementId": "verification-photo",
+          "workItemId": "wi-dorm-live-004",
+          "status": "accepted",
+          "trustedEvidenceObject": true
+        }
+      ],
+      "factTrace": {
+        "traceId": "trace-dorm-live-004",
+        "caseId": "case-dorm-live-004",
+        "workItemId": "wi-dorm-live-004",
+        "submissionRefs": [
+          "sub-dorm-live-004"
+        ]
+      },
+      "lensUpdate": {
+        "lensId": "lens-dorm-live-004",
+        "status": "updated",
+        "sourceWorkItemId": "wi-dorm-live-004"
+      },
+      "operatingControlVisibility": [
+        "operation_control",
+        "manager_control"
+      ],
+      "audit": {
+        "auditId": "audit-dorm-live-004",
+        "actorRole": "housekeeping",
+        "policyRefs": [
+          "internal-pilot-scope",
+          "business-line-admission",
+          "evidence-policy"
+        ]
+      },
+      "uxStateResult": "committed_projected",
+      "noDuplicateSideEffect": true,
+      "commandSubmission": {
+        "submissionId": "sub-dorm-live-004",
+        "caseId": "case-dorm-live-004",
+        "workItemId": "wi-dorm-live-004",
+        "commandType": "Operations.Confirm",
+        "payloadHash": "hash-dorm-live-004",
+        "status": "committed",
+        "responseStatusCode": 200
+      },
+      "rejectedCommandSubmission": null,
+      "rejectionTrace": null,
+      "domainEvents": [
+        {
+          "eventId": "evt-dorm-live-004",
+          "eventType": "Dorm.ServiceTaskComplete.Committed",
+          "workItemId": "wi-dorm-live-004"
+        }
+      ],
+      "ledgerTransactions": [],
+      "ledgerEntries": []
+    },
+    {
+      "scenarioId": "dorm-live-005",
+      "status": "passed",
+      "workItem": {
+        "tenantId": "tenant-dorm-int-001",
+        "caseId": "case-dorm-live-005",
+        "workItemId": "wi-dorm-live-005",
+        "workItemType": "Dorm.DepositRefundRequest",
+        "lifecycleState": "completed",
+        "ownerRole": "manager",
+        "businessObject": "CheckoutCase"
+      },
+      "evidenceTrace": [
+        {
+          "evidenceId": "ev-dorm-live-005-1",
+          "requirementId": "refund-request",
+          "workItemId": "wi-dorm-live-005",
+          "status": "accepted",
+          "trustedEvidenceObject": true
+        },
+        {
+          "evidenceId": "ev-dorm-live-005-2",
+          "requirementId": "manager-approval",
+          "workItemId": "wi-dorm-live-005",
+          "status": "accepted",
+          "trustedEvidenceObject": true
+        }
+      ],
+      "factTrace": {
+        "traceId": "trace-dorm-live-005",
+        "caseId": "case-dorm-live-005",
+        "workItemId": "wi-dorm-live-005",
+        "submissionRefs": [
+          "sub-dorm-live-005"
+        ]
+      },
+      "lensUpdate": {
+        "lensId": "lens-dorm-live-005",
+        "status": "updated",
+        "sourceWorkItemId": "wi-dorm-live-005"
+      },
+      "operatingControlVisibility": [
+        "finance_control",
+        "manager_control"
+      ],
+      "audit": {
+        "auditId": "audit-dorm-live-005",
+        "actorRole": "manager",
+        "policyRefs": [
+          "internal-pilot-scope",
+          "business-line-admission",
+          "evidence-policy"
+        ]
+      },
+      "uxStateResult": "committed_projected",
+      "noDuplicateSideEffect": true,
+      "commandSubmission": {
+        "submissionId": "sub-dorm-live-005",
+        "caseId": "case-dorm-live-005",
+        "workItemId": "wi-dorm-live-005",
+        "commandType": "Operations.Confirm",
+        "payloadHash": "hash-dorm-live-005",
+        "status": "committed",
+        "responseStatusCode": 200
+      },
+      "rejectedCommandSubmission": null,
+      "rejectionTrace": null,
+      "domainEvents": [
+        {
+          "eventId": "evt-dorm-live-005",
+          "eventType": "Dorm.DepositRefundRequest.Committed",
+          "workItemId": "wi-dorm-live-005"
+        }
+      ],
+      "ledgerTransactions": [
+        {
+          "ledgerTransactionId": "ltx-dorm-live-005",
+          "submissionId": "sub-dorm-live-005",
+          "basisType": "refund_deposit",
+          "balanceStatus": "balanced"
+        }
+      ],
+      "ledgerEntries": [
+        {
+          "ledgerEntryId": "le-dorm-live-005-debit",
+          "ledgerTransactionId": "ltx-dorm-live-005",
+          "debitCredit": "debit",
+          "amount": 300,
+          "accountId": "asset.cash_or_bank",
+          "accountType": "asset"
+        },
+        {
+          "ledgerEntryId": "le-dorm-live-005-credit",
+          "ledgerTransactionId": "ltx-dorm-live-005",
+          "debitCredit": "credit",
+          "amount": 300,
+          "accountId": "asset.cash_or_bank",
+          "accountType": "asset"
+        }
+      ]
+    },
+    {
+      "scenarioId": "dorm-live-006",
+      "status": "passed",
+      "workItem": {
+        "tenantId": "tenant-dorm-int-001",
+        "caseId": "case-dorm-live-006",
+        "workItemId": "wi-dorm-live-006",
+        "workItemType": "Dorm.ExceptionEscalate",
+        "lifecycleState": "completed",
+        "ownerRole": "finance",
+        "businessObject": "FinanceCase"
+      },
+      "evidenceTrace": [
+        {
+          "evidenceId": "ev-dorm-live-006-1",
+          "requirementId": "exception-note",
+          "workItemId": "wi-dorm-live-006",
+          "status": "accepted",
+          "trustedEvidenceObject": true
+        },
+        {
+          "evidenceId": "ev-dorm-live-006-2",
+          "requirementId": "owner-assignment",
+          "workItemId": "wi-dorm-live-006",
+          "status": "accepted",
+          "trustedEvidenceObject": true
+        }
+      ],
+      "factTrace": {
+        "traceId": "trace-dorm-live-006",
+        "caseId": "case-dorm-live-006",
+        "workItemId": "wi-dorm-live-006",
+        "submissionRefs": [
+          "sub-dorm-live-006"
+        ]
+      },
+      "lensUpdate": {
+        "lensId": "lens-dorm-live-006",
+        "status": "updated",
+        "sourceWorkItemId": "wi-dorm-live-006"
+      },
+      "operatingControlVisibility": [
+        "finance_control",
+        "manager_control"
+      ],
+      "audit": {
+        "auditId": "audit-dorm-live-006",
+        "actorRole": "finance",
+        "policyRefs": [
+          "internal-pilot-scope",
+          "business-line-admission",
+          "evidence-policy"
+        ]
+      },
+      "uxStateResult": "committed_projected",
+      "noDuplicateSideEffect": true,
+      "commandSubmission": {
+        "submissionId": "sub-dorm-live-006",
+        "caseId": "case-dorm-live-006",
+        "workItemId": "wi-dorm-live-006",
+        "commandType": "Operations.Confirm",
+        "payloadHash": "hash-dorm-live-006",
+        "status": "committed",
+        "responseStatusCode": 200
+      },
+      "rejectedCommandSubmission": null,
+      "rejectionTrace": null,
+      "domainEvents": [
+        {
+          "eventId": "evt-dorm-live-006",
+          "eventType": "Dorm.ExceptionEscalate.Committed",
+          "workItemId": "wi-dorm-live-006"
+        }
+      ],
+      "ledgerTransactions": [
+        {
+          "ledgerTransactionId": "ltx-dorm-live-006",
+          "submissionId": "sub-dorm-live-006",
+          "basisType": "ledger_correction_apply",
+          "balanceStatus": "balanced"
+        }
+      ],
+      "ledgerEntries": [
+        {
+          "ledgerEntryId": "le-dorm-live-006-debit",
+          "ledgerTransactionId": "ltx-dorm-live-006",
+          "debitCredit": "debit",
+          "amount": 25,
+          "accountId": "asset.cash_or_bank",
+          "accountType": "asset"
+        },
+        {
+          "ledgerEntryId": "le-dorm-live-006-credit",
+          "ledgerTransactionId": "ltx-dorm-live-006",
+          "debitCredit": "credit",
+          "amount": 25,
+          "accountId": "correction.offset",
+          "accountType": "correction"
+        }
+      ]
+    },
+    {
+      "scenarioId": "dorm-live-007",
+      "status": "passed",
+      "workItem": {
+        "tenantId": "tenant-dorm-int-001",
+        "caseId": "case-dorm-live-007",
+        "workItemId": "wi-dorm-live-007",
+        "workItemType": "Dorm.PeriodReview",
+        "lifecycleState": "completed",
+        "ownerRole": "manager",
+        "businessObject": "PeriodReview"
+      },
+      "evidenceTrace": [
+        {
+          "evidenceId": "ev-dorm-live-007-1",
+          "requirementId": "period-review-pack",
+          "workItemId": "wi-dorm-live-007",
+          "status": "accepted",
+          "trustedEvidenceObject": true
+        }
+      ],
+      "factTrace": {
+        "traceId": "trace-dorm-live-007",
+        "caseId": "case-dorm-live-007",
+        "workItemId": "wi-dorm-live-007",
+        "submissionRefs": [
+          "sub-dorm-live-007"
+        ]
+      },
+      "lensUpdate": {
+        "lensId": "lens-dorm-live-007",
+        "status": "projection_pending",
+        "sourceWorkItemId": "wi-dorm-live-007"
+      },
+      "operatingControlVisibility": [
+        "manager_control",
+        "release_flight_deck"
+      ],
+      "audit": {
+        "auditId": "audit-dorm-live-007",
+        "actorRole": "manager",
+        "policyRefs": [
+          "internal-pilot-scope",
+          "business-line-admission",
+          "evidence-policy"
+        ]
+      },
+      "uxStateResult": "committed_projection_pending",
+      "noDuplicateSideEffect": true,
+      "commandSubmission": {
+        "submissionId": "sub-dorm-live-007",
+        "caseId": "case-dorm-live-007",
+        "workItemId": "wi-dorm-live-007",
+        "commandType": "Operations.Confirm",
+        "payloadHash": "hash-dorm-live-007",
+        "status": "committed",
+        "responseStatusCode": 200
+      },
+      "rejectedCommandSubmission": null,
+      "rejectionTrace": null,
+      "domainEvents": [
+        {
+          "eventId": "evt-dorm-live-007",
+          "eventType": "Dorm.PeriodReview.Committed",
+          "workItemId": "wi-dorm-live-007"
+        }
+      ],
+      "ledgerTransactions": [],
+      "ledgerEntries": []
+    },
+    {
+      "scenarioId": "dorm-live-008",
+      "status": "passed",
+      "workItem": {
+        "tenantId": "tenant-dorm-int-001",
+        "caseId": "case-dorm-live-008",
+        "workItemId": "wi-dorm-live-008",
+        "workItemType": "Dorm.ExceptionEscalate",
+        "lifecycleState": "blocked",
+        "ownerRole": "frontdesk",
+        "businessObject": "Audit"
+      },
+      "evidenceTrace": [
+        {
+          "evidenceId": "ev-dorm-live-008-1",
+          "requirementId": "exception-note",
+          "workItemId": "wi-dorm-live-008",
+          "status": "accepted",
+          "trustedEvidenceObject": true
+        }
+      ],
+      "factTrace": {
+        "traceId": "trace-dorm-live-008",
+        "caseId": "case-dorm-live-008",
+        "workItemId": "wi-dorm-live-008",
+        "submissionRefs": [
+          "sub-dorm-live-008"
+        ]
+      },
+      "lensUpdate": {
+        "lensId": "lens-dorm-live-008",
+        "status": "updated",
+        "sourceWorkItemId": "wi-dorm-live-008"
+      },
+      "operatingControlVisibility": [
+        "operation_control",
+        "manager_control"
+      ],
+      "audit": {
+        "auditId": "audit-dorm-live-008",
+        "actorRole": "frontdesk",
+        "policyRefs": [
+          "internal-pilot-scope",
+          "business-line-admission",
+          "evidence-policy"
+        ]
+      },
+      "uxStateResult": "permission_blocked_403",
+      "noDuplicateSideEffect": true,
+      "commandSubmission": null,
+      "rejectedCommandSubmission": {
+        "submissionId": "sub-dorm-live-008",
+        "caseId": "case-dorm-live-008",
+        "workItemId": "wi-dorm-live-008",
+        "status": "rejected",
+        "responseStatusCode": 403,
+        "failureCode": "permission_denied",
+        "failureReason": "permission_denied"
+      },
+      "rejectionTrace": {
+        "traceId": "rej-trace-sub-dorm-live-008",
+        "caseId": "case-dorm-live-008",
+        "workItemId": "wi-dorm-live-008",
+        "submissionId": "sub-dorm-live-008",
+        "policyRef": "permission-policy",
+        "statusCode": 403,
+        "reason": "permission_denied",
+        "evidenceRefs": [
+          "exception-note"
+        ]
+      },
+      "domainEvents": [],
+      "ledgerTransactions": [],
+      "ledgerEntries": []
+    },
+    {
+      "scenarioId": "dorm-live-009",
+      "status": "passed",
+      "workItem": {
+        "tenantId": "tenant-dorm-int-001",
+        "caseId": "case-dorm-live-009",
+        "workItemId": "wi-dorm-live-009",
+        "workItemType": "Dorm.PaymentFinanceConfirm",
+        "lifecycleState": "completed",
+        "ownerRole": "finance",
+        "businessObject": "CommandSubmission"
+      },
+      "evidenceTrace": [
+        {
+          "evidenceId": "ev-dorm-live-009-1",
+          "requirementId": "bank-or-cash-proof",
+          "workItemId": "wi-dorm-live-009",
+          "status": "accepted",
+          "trustedEvidenceObject": true
+        }
+      ],
+      "factTrace": {
+        "traceId": "trace-dorm-live-009",
+        "caseId": "case-dorm-live-009",
+        "workItemId": "wi-dorm-live-009",
+        "submissionRefs": [
+          "sub-dorm-live-009"
+        ]
+      },
+      "lensUpdate": {
+        "lensId": "lens-dorm-live-009",
+        "status": "updated",
+        "sourceWorkItemId": "wi-dorm-live-009"
+      },
+      "operatingControlVisibility": [
+        "operation_control",
+        "finance_control"
+      ],
+      "audit": {
+        "auditId": "audit-dorm-live-009",
+        "actorRole": "finance",
+        "policyRefs": [
+          "internal-pilot-scope",
+          "business-line-admission",
+          "evidence-policy"
+        ]
+      },
+      "uxStateResult": "idempotency_conflict_409",
+      "noDuplicateSideEffect": true,
+      "commandSubmission": {
+        "submissionId": "sub-dorm-live-009",
+        "caseId": "case-dorm-live-009",
+        "workItemId": "wi-dorm-live-009",
+        "commandType": "Operations.Confirm",
+        "payloadHash": "hash-dorm-live-009",
+        "status": "committed",
+        "responseStatusCode": 200
+      },
+      "rejectedCommandSubmission": {
+        "submissionId": "sub-dorm-live-009",
+        "caseId": "case-dorm-live-009",
+        "workItemId": "wi-dorm-live-009",
+        "status": "rejected",
+        "responseStatusCode": 409,
+        "failureCode": "same_idempotency_different_payload",
+        "failureReason": "same_idempotency_different_payload"
+      },
+      "rejectionTrace": {
+        "traceId": "rej-trace-sub-dorm-live-009",
+        "caseId": "case-dorm-live-009",
+        "workItemId": "wi-dorm-live-009",
+        "submissionId": "sub-dorm-live-009",
+        "policyRef": "evidence-policy",
+        "statusCode": 409,
+        "reason": "same_idempotency_different_payload",
+        "evidenceRefs": [
+          "bank-or-cash-proof"
+        ]
+      },
+      "domainEvents": [
+        {
+          "eventId": "evt-dorm-live-009-first",
+          "eventType": "Dorm.PaymentFinanceConfirm.Committed",
+          "workItemId": "wi-dorm-live-009"
+        }
+      ],
+      "ledgerTransactions": [
+        {
+          "ledgerTransactionId": "ltx-dorm-live-009",
+          "submissionId": "sub-dorm-live-009",
+          "basisType": "payment_receipt",
+          "balanceStatus": "balanced"
+        }
+      ],
+      "ledgerEntries": [
+        {
+          "ledgerEntryId": "le-dorm-live-009-debit",
+          "ledgerTransactionId": "ltx-dorm-live-009",
+          "debitCredit": "debit",
+          "amount": 650,
+          "accountId": "asset.cash_or_bank",
+          "accountType": "asset"
+        },
+        {
+          "ledgerEntryId": "le-dorm-live-009-credit",
+          "ledgerTransactionId": "ltx-dorm-live-009",
+          "debitCredit": "credit",
+          "amount": 650,
+          "accountId": "receivable.stay",
+          "accountType": "receivable"
+        }
+      ],
+      "duplicateSubmissionResult": {
+        "statusCode": 409,
+        "stableRecord": true,
+        "newSideEffectCount": 0
+      }
+    },
+    {
+      "scenarioId": "dorm-live-010",
+      "status": "passed",
+      "workItem": {
+        "tenantId": "tenant-dorm-int-001",
+        "caseId": "case-dorm-live-010",
+        "workItemId": "wi-dorm-live-010",
+        "workItemType": "Dorm.DepositReceive",
+        "lifecycleState": "blocked",
+        "ownerRole": "finance",
+        "businessObject": "EvidenceTrace"
+      },
+      "evidenceTrace": [
+        {
+          "evidenceId": "ev-dorm-live-010-1",
+          "requirementId": "payment-proof",
+          "workItemId": "wi-dorm-live-010",
+          "status": "accepted",
+          "trustedEvidenceObject": true
+        },
+        {
+          "evidenceId": "ev-dorm-live-010-2",
+          "requirementId": "finance-receipt",
+          "workItemId": "wi-dorm-live-010",
+          "status": "accepted",
+          "trustedEvidenceObject": true
+        }
+      ],
+      "factTrace": {
+        "traceId": "trace-dorm-live-010",
+        "caseId": "case-dorm-live-010",
+        "workItemId": "wi-dorm-live-010",
+        "submissionRefs": [
+          "sub-dorm-live-010"
+        ]
+      },
+      "lensUpdate": {
+        "lensId": "lens-dorm-live-010",
+        "status": "updated",
+        "sourceWorkItemId": "wi-dorm-live-010"
+      },
+      "operatingControlVisibility": [
+        "operation_control",
+        "finance_control"
+      ],
+      "audit": {
+        "auditId": "audit-dorm-live-010",
+        "actorRole": "finance",
+        "policyRefs": [
+          "internal-pilot-scope",
+          "business-line-admission",
+          "evidence-policy"
+        ]
+      },
+      "uxStateResult": "business_blocked_422_then_committed",
+      "noDuplicateSideEffect": true,
+      "commandSubmission": {
+        "submissionId": "sub-dorm-live-010",
+        "caseId": "case-dorm-live-010",
+        "workItemId": "wi-dorm-live-010",
+        "commandType": "Operations.Confirm",
+        "payloadHash": "hash-dorm-live-010",
+        "status": "committed",
+        "responseStatusCode": 200
+      },
+      "rejectedCommandSubmission": {
+        "submissionId": "sub-dorm-live-010-rejected",
+        "caseId": "case-dorm-live-010",
+        "workItemId": "wi-dorm-live-010",
+        "status": "rejected",
+        "responseStatusCode": 422,
+        "failureCode": "missing_required_evidence",
+        "failureReason": "missing_required_evidence"
+      },
+      "rejectionTrace": {
+        "traceId": "rej-trace-sub-dorm-live-010-rejected",
+        "caseId": "case-dorm-live-010",
+        "workItemId": "wi-dorm-live-010",
+        "submissionId": "sub-dorm-live-010-rejected",
+        "policyRef": "evidence-policy",
+        "statusCode": 422,
+        "reason": "missing_required_evidence",
+        "evidenceRefs": [
+          "payment-proof",
+          "finance-receipt"
+        ]
+      },
+      "domainEvents": [
+        {
+          "eventId": "evt-dorm-live-010",
+          "eventType": "Dorm.DepositReceive.Committed",
+          "workItemId": "wi-dorm-live-010"
+        }
+      ],
+      "ledgerTransactions": [
+        {
+          "ledgerTransactionId": "ltx-dorm-live-010",
+          "submissionId": "sub-dorm-live-010",
+          "basisType": "deposit_receipt",
+          "balanceStatus": "balanced"
+        }
+      ],
+      "ledgerEntries": [
+        {
+          "ledgerEntryId": "le-dorm-live-010-debit",
+          "ledgerTransactionId": "ltx-dorm-live-010",
+          "debitCredit": "debit",
+          "amount": 1200,
+          "accountId": "asset.cash_or_bank",
+          "accountType": "asset"
+        },
+        {
+          "ledgerEntryId": "le-dorm-live-010-credit",
+          "ledgerTransactionId": "ltx-dorm-live-010",
+          "debitCredit": "credit",
+          "amount": 1200,
+          "accountId": "deposit-account-maksatbek",
+          "accountType": "liability"
+        }
+      ],
+      "remediation": {
+        "missingEvidenceBlocked": true,
+        "addedEvidenceCount": 2,
+        "confirmAfterEvidence": true
+      }
+    }
+  ],
+  "noGoItems": [],
+  "nextAction": "DORM-INT-08 passed; DORM-INT-09 may evaluate monitoring, on-call, pause and rollback readiness."
+}

@@ -1,4 +1,5 @@
 import { selectSurfaceStats } from "../selectors/surfaceSelectors.js";
+import { DeviceTrustPanel, SubmitQueue, UploadQueue } from "./experienceComponents.js";
 
 export function meView(ctx) {
   const { state, tr, shell } = ctx;
@@ -7,9 +8,10 @@ export function meView(ctx) {
   const stats = selectSurfaceStats(state);
   const searches = (state.recentSearches || []).map((item) => ctx.escapeHtml(item)).join(" · ");
   return shell(`
-    <section class="profile-card">
+    <section class="profile-card" data-component="PersonalOpsCenter">
       <span>${tr("role")}</span>
-      <h1>${actorDisplayName}</h1>
+      <h1>Personal Ops Center</h1>
+      <strong>${actorDisplayName}</strong>
       <p>${tr("permission")}: ${actorRole} · ${tr("stay")} · ${tr("repair")} · ${tr("finance")}</p>
       <button id="logout" class="secondary">${tr("logout")}</button>
     </section>
@@ -24,6 +26,11 @@ export function meView(ctx) {
       <h2>${tr("stats")}</h2>
       <p>${tr("commonSearch")}: ${searches || (state.apiStatus === "online" ? tr("coachNoMatch") : tr("apiOffline"))}</p>
       <p>${tr("savedFilter")}: ${tr(state.queueDomain)} + ${tr(state.queueBadge)}</p>
+    </section>
+    <section class="personal-ops-grid">
+      ${UploadQueue(state, ctx)}
+      ${SubmitQueue(state, ctx)}
+      ${DeviceTrustPanel(state, ctx)}
     </section>
   `);
 }
