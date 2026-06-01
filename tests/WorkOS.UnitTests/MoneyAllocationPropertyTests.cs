@@ -45,6 +45,40 @@ public sealed class MoneyAllocationPropertyTests
         Assert.AreEqual("unclear", outcome.Status);
         Assert.IsNotNull(outcome.UnclearCase);
         Assert.IsNull(outcome.Commit);
+
+        var intake = new FinanceIntake("intake-001", Basis("unclear_money", 88m), "needs_review");
+        var financeCase = new FinanceCase(
+            "finance-case-001",
+            intake.Basis.TenantId,
+            intake.Basis.CaseId,
+            intake.Basis.WorkItemId,
+            outcome.UnclearCase.Reason);
+        var review = new FinanceReviewWorkItem("wi-finance-review-001", financeCase.FinanceCaseId, "finance", "open");
+
+        Assert.AreEqual("needs_review", intake.Status);
+        Assert.AreEqual("finance-case-001", review.FinanceCaseId);
+        Assert.AreEqual("finance", review.OwnerRole);
+    }
+
+    [TestMethod]
+    public void LedgerProjectionRebuildsFromBalancedFinanceCommits()
+    {
+        var depositCommit = FinanceTruthPipeline.Commit(Basis("deposit_receipt", 300m) with
+        {
+            DepositAccountId = "deposit-account-001",
+            SourcePack = "FinanceTruthPack"
+        });
+        var paymentCommit = FinanceTruthPipeline.Commit(Basis("payment_receipt", 125m) with
+        {
+            SourcePack = "FinanceTruthPack"
+        });
+
+        var result = new LedgerProjectionRebuilder().Rebuild(new[] { depositCommit, paymentCommit });
+
+        Assert.AreEqual(2, result.CommitCount);
+        Assert.AreEqual(300m, result.DepositLiabilityBalance);
+        Assert.AreEqual(125m, result.OrdinaryPaymentTotal);
+        Assert.AreEqual("consistent", result.ConsistencyStatus);
     }
 
     private static MoneyBasis Basis(string type, decimal amount) => new(
