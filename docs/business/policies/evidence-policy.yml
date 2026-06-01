@@ -1,0 +1,28 @@
+{
+  "policyId": "business.evidence-policy",
+  "policyType": "evidence",
+  "version": "rtp.v1",
+  "owner": "EvidenceTrustPack",
+  "sourceFile": "docs/business/dormitory/evidence-policy.yml",
+  "runtimeBinding": {
+    "loader": "DormitoryEvidencePolicyLoader",
+    "evaluator": "EvidencePolicyEvaluator",
+    "blocksConfirm": true
+  },
+  "rules": {
+    "missingEvidenceBlocksConfirm": true,
+    "rejectedEvidenceBlocksConfirm": true,
+    "wrongScopeEvidenceBlocksConfirm": true,
+    "requiresTenantBinding": true,
+    "requiresWorkItemBinding": true,
+    "requiresSubmissionBinding": true
+  },
+  "certificationBinding": {
+    "runner": "DormitoryCertificationRunner",
+    "requiredScenario": "dorm-cert-010"
+  },
+  "gateBinding": {
+    "gateInput": "evidencePolicyResult",
+    "failureSeverity": "P0"
+  }
+}

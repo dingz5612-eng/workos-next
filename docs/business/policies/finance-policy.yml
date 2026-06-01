@@ -1,0 +1,23 @@
+{
+  "policyId": "business.finance-policy",
+  "policyType": "finance",
+  "version": "rtp.v1",
+  "owner": "FinanceTruthPack",
+  "runtimeBinding": {
+    "loader": "FinancePolicyLoader",
+    "evaluator": "FinancePolicyEvaluator"
+  },
+  "rules": {
+    "businessDomainDirectPaymentFactAllowed": false,
+    "businessDomainDirectDepositFactAllowed": false,
+    "businessDomainDirectLedgerEntryAllowed": false,
+    "depositAsRevenueAllowed": false,
+    "refundAsExpenseAllowed": false,
+    "ledgerTransactionMustBalance": true,
+    "correctionMode": "append_only_reversal_or_compensation"
+  },
+  "gateBinding": {
+    "gateInput": "financePolicyResult",
+    "failureSeverity": "P0"
+  }
+}

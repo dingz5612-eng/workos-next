@@ -1,0 +1,23 @@
+{
+  "policyId": "business.surface-policy",
+  "policyType": "surface",
+  "version": "rtp.v1",
+  "owner": "SurfaceGovernance",
+  "sourceFile": "docs/contracts/runtime-surface-policy.json",
+  "runtimeBinding": {
+    "loader": "RuntimeSurfacePolicyCatalog",
+    "evaluator": "SurfacePolicyEvaluator"
+  },
+  "rules": {
+    "l0HomeSection": "contract-preview",
+    "l0WorkbenchQueueRule": "prepare_only",
+    "l0SearchIntentTag": "contract_preview",
+    "l0LearningSectionPrefix": "Contract Preview",
+    "forbiddenL0QueueRules": ["ready_or_blocked_cards"],
+    "forbiddenL0HomeSections": ["repair-operations", "parts-operations", "production", "production-like"]
+  },
+  "gateBinding": {
+    "gateInput": "runtimeSurfaceAlignmentResult",
+    "failureSeverity": "P0"
+  }
+}

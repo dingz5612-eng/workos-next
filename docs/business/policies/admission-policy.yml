@@ -1,0 +1,24 @@
+{
+  "policyId": "business.admission-policy",
+  "policyType": "admission",
+  "version": "rtp.v1",
+  "owner": "ReleaseControl",
+  "sourceDirectory": "docs/business/admission",
+  "runtimeBinding": {
+    "loader": "BusinessAdmissionPolicyLoader",
+    "evaluator": "AdmissionPolicyEvaluator",
+    "guard": "BusinessLineAdmissionGuard"
+  },
+  "rules": {
+    "l0ProductionConfirmAllowed": false,
+    "l1ProductionConfirmAllowed": false,
+    "requiresAdmissionRecord": true,
+    "requiresProductionAllowedTrueForProductionConfirm": true,
+    "pageSpecificWriteApisAllowed": false,
+    "productionWriteRoutesAllowedWhenL0": false
+  },
+  "gateBinding": {
+    "gateInput": "businessLineAdmissionResult",
+    "failureSeverity": "P0"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "policyId": "business.cutover-policy",
+  "policyType": "cutover",
+  "version": "rtp.v1",
+  "owner": "ReleaseControl",
+  "runtimeBinding": {
+    "loader": "CutoverPolicyLoader",
+    "evaluator": "CutoverPolicyEvaluator"
+  },
+  "rules": {
+    "redShadowBlocksActiveLocked": true,
+    "missingRollbackBlocksActiveLocked": true,
+    "missingCompensationBlocksHighRiskCutover": true,
+    "skeletonEvidenceAllowed": false,
+    "notRunEvidenceAllowed": false
+  },
+  "gateBinding": {
+    "gateInput": "cutoverPolicyResult",
+    "failureSeverity": "P0"
+  }
+}

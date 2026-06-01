@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using WorkOS.Api.Runtime;
 
 namespace WorkOS.RuntimeIntegrationTests;
 
@@ -19,15 +20,26 @@ public sealed class DormitoryEvidenceScenarioTests
             ["receipt-proof", "deposit-policy"],
             1000m);
 
-        var blocked = DormitoryEvidencePolicy.Evaluate(scenario, providedEvidence: []);
+        var policy = DormitoryEvidencePolicyLoader.LoadDefault();
+        var blocked = EvidencePolicyEvaluator.Evaluate(policy, EvidenceRequest("Dorm.DepositConfirm", scenario, []));
         Assert.AreEqual(StatusCodes.Status422UnprocessableEntity, blocked.StatusCode);
         Assert.AreEqual(0, harness.Store.DomainEvents.Count);
 
-        var rejected = DormitoryEvidencePolicy.Evaluate(scenario, scenario.EvidenceIds, rejectedEvidence: ["receipt-proof"]);
+        var rejected = EvidencePolicyEvaluator.Evaluate(policy, EvidenceRequest("Dorm.DepositConfirm", scenario, [
+            EvidenceRef("receipt-proof", scenario, "rejected")
+        ]));
         Assert.AreEqual(StatusCodes.Status422UnprocessableEntity, rejected.StatusCode);
         Assert.AreEqual(0, harness.Store.DomainEvents.Count);
 
-        var accepted = DormitoryEvidencePolicy.Evaluate(scenario, scenario.EvidenceIds);
+        var wrongScope = EvidencePolicyEvaluator.Evaluate(policy, EvidenceRequest("Dorm.DepositConfirm", scenario, [
+            new EvidencePolicyRef("receipt-proof", "tenant-dormitory", "wi-other", $"submission-{scenario.ScenarioId}", "verified")
+        ]));
+        Assert.AreEqual(StatusCodes.Status422UnprocessableEntity, wrongScope.StatusCode);
+        Assert.AreEqual(0, harness.Store.DomainEvents.Count);
+
+        var accepted = EvidencePolicyEvaluator.Evaluate(policy, EvidenceRequest("Dorm.DepositConfirm", scenario, [
+            EvidenceRef("receipt-proof", scenario, "verified")
+        ]));
         Assert.AreEqual(StatusCodes.Status200OK, accepted.StatusCode);
 
         var committed = harness.Commit(scenario);
@@ -35,28 +47,17 @@ public sealed class DormitoryEvidenceScenarioTests
         Assert.AreEqual(1, harness.Store.DomainEvents.Count);
         Assert.IsTrue(harness.Store.LedgerTransactions.Count > 0);
     }
-}
-
-internal static class DormitoryEvidencePolicy
-{
-    public static DormitoryEvidenceDecision Evaluate(
+    private static EvidencePolicyRequest EvidenceRequest(
+        string workItemType,
         DormitoryScenario scenario,
-        IReadOnlyList<string> providedEvidence,
-        IReadOnlyList<string>? rejectedEvidence = null)
-    {
-        var rejected = rejectedEvidence ?? Array.Empty<string>();
-        if (scenario.EvidenceIds.Any(required => !providedEvidence.Contains(required, StringComparer.OrdinalIgnoreCase)))
-        {
-            return new DormitoryEvidenceDecision(StatusCodes.Status422UnprocessableEntity, "missing_required_evidence");
-        }
+        IReadOnlyList<EvidencePolicyRef> refs) =>
+        new(
+            workItemType,
+            "tenant-dormitory",
+            scenario.WorkItemId,
+            $"submission-{scenario.ScenarioId}",
+            refs);
 
-        if (rejected.Any())
-        {
-            return new DormitoryEvidenceDecision(StatusCodes.Status422UnprocessableEntity, "rejected_evidence_blocks_confirm");
-        }
-
-        return new DormitoryEvidenceDecision(StatusCodes.Status200OK, "evidence_accepted");
-    }
+    private static EvidencePolicyRef EvidenceRef(string requirementId, DormitoryScenario scenario, string status) =>
+        new(requirementId, "tenant-dormitory", scenario.WorkItemId, $"submission-{scenario.ScenarioId}", status);
 }
-
-internal sealed record DormitoryEvidenceDecision(int StatusCode, string Reason);

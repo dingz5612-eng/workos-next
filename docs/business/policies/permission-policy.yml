@@ -1,0 +1,21 @@
+{
+  "policyId": "business.permission-policy",
+  "policyType": "permission",
+  "version": "rtp.v1",
+  "owner": "RuntimeSecurity",
+  "runtimeBinding": {
+    "loader": "PermissionPolicyLoader",
+    "evaluator": "PermissionPolicyEvaluator"
+  },
+  "rules": {
+    "highRiskRequiresCapability": true,
+    "highRiskRequiresTrustedDevice": true,
+    "highRiskRequiresReason": true,
+    "adminMayBypassCapability": true,
+    "aiTerminalActionAllowed": false
+  },
+  "gateBinding": {
+    "gateInput": "permissionPolicyResult",
+    "failureSeverity": "P0"
+  }
+}
