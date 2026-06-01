@@ -1,7 +1,7 @@
 import { roleNavigation } from "./experienceContract.js";
 
 const publicViews = new Set(["login", "onboarding", "permissionDiagnostic"]);
-const commonViews = new Set(["home", "workbench", "search", "me", "workspace", "learning", "notes", "reminders", "feedback", "result", "confirmPage", "permissionDiagnostic"]);
+const commonViews = new Set(["home", "workbench", "search", "me", "workspace", "operationPanel", "learning", "notes", "reminders", "feedback", "result", "confirmPage", "permissionDiagnostic"]);
 const viewCapabilities = {
   financeControl: "finance.control.view",
   financeReconciliation: "finance.control.view",

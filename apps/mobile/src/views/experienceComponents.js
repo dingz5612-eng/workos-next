@@ -5,9 +5,7 @@ export function WorkItemCard(item, ctx) {
   const model = workItemModel(item, ctx);
   const traceRefs = model.traceRefs.length ? model.traceRefs.join(" · ") : "-";
   const evidence = model.requiredEvidence.length ? model.requiredEvidence.join(" · ") : "-";
-  const workspaceButton = model.workspaceId
-    ? `<button data-workspace="${attr(model.workspaceId, ctx)}" data-card-id="${attr(model.cardId, ctx)}">${text(ctx.tr("openWorkspace"), ctx)}</button>`
-    : `<button data-work-item-id="${attr(model.workItemId, ctx)}">${text(ctx.tr("openWorkspace"), ctx)}</button>`;
+  const workspaceButton = `<button data-work-item-id="${attr(model.workItemId, ctx)}" data-workspace-id="${attr(model.workspaceId, ctx)}" data-card-id="${attr(model.cardId, ctx)}">${text(ctx.tr("openWorkspace"), ctx)}</button>`;
 
   return `<article class="workitem-card risk-${attr(model.riskLevel, ctx)}" data-component="WorkItemCard">
     <div class="workitem-card-head">

@@ -10,6 +10,7 @@ import { searchView } from "./views/searchView.js";
 import { confirmPageView, resultView, simpleView } from "./views/simpleView.js";
 import { workbenchView } from "./views/workbenchView.js";
 import { workspaceView } from "./views/workspaceView.js";
+import { operationPanelView } from "./views/operationPanelView.js";
 import { PermissionDiagnostic } from "./views/experienceComponents.js";
 import { evaluateSurfaceAccess } from "./surfaceGuard.js";
 
@@ -35,6 +36,7 @@ export function routeView(ctx) {
     financeControl: financeReconciliationView,
     me: meView,
     workspace: workspaceView,
+    operationPanel: operationPanelView,
     notes: () => simpleView("noteTitle", "noteBody", ctx),
     reminders: () => simpleView("reminderTitle", "reminderBody", ctx),
     learning: learningView,

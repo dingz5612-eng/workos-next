@@ -17,7 +17,7 @@ import {
 import { collectDraftingValuesOnInput, saveCurrentDraft, submitCurrentCard, toggleEvidenceSelection } from "./operationController.js";
 import { requestGovernanceExport, revokeGovernanceDevice } from "./pcGovernanceController.js";
 import { closeAdvancedFilters, openAdvancedFilters, setQueueFilter, setQueueSort, toggleFilters } from "./queueController.js";
-import { onboard, openWorkspace, runSearch, selectCard, setLang, setView, updateSearchQuery } from "./navigationController.js";
+import { onboard, openWorkspace, openWorkItem, runSearch, selectCard, setLang, setView, updateSearchQuery } from "./navigationController.js";
 
 export function bindEvents(ctx) {
   document.querySelector("#language")?.addEventListener("change", (event) => setLang(event.target.value, ctx));
@@ -28,7 +28,10 @@ export function bindEvents(ctx) {
   document.querySelector("#skip")?.addEventListener("click", () => onboard(ctx));
   document.querySelectorAll("[data-view]").forEach((node) => node.addEventListener("click", () => setView(node.dataset.view, ctx)));
   document.querySelectorAll("[data-workspace]").forEach((node) => node.addEventListener("click", () => openWorkspace(node.dataset.workspace, ctx, node.dataset.cardId || "")));
-  document.querySelectorAll("[data-work-item-id]").forEach((node) => node.addEventListener("click", () => openWorkItem(node.dataset.workItemId, ctx)));
+  document.querySelectorAll("[data-work-item-id]").forEach((node) => node.addEventListener("click", () => openWorkItem(node.dataset.workItemId, ctx, {
+    workspaceId: node.dataset.workspaceId,
+    cardId: node.dataset.cardId
+  })));
   document.querySelectorAll("[data-card-index]").forEach((node) => node.addEventListener("click", () => selectCard(node.dataset.cardIndex, ctx)));
   document.querySelector("#query")?.addEventListener("input", (event) => updateSearchQuery(event.target.value, ctx));
   document.querySelector("#searchNow")?.addEventListener("click", () => runSearch(ctx));
@@ -63,11 +66,6 @@ export function bindEvents(ctx) {
     node.addEventListener("click", () => requestGovernanceExport(node.dataset.governanceExport, ctx)));
   document.querySelectorAll("[data-device-revoke]").forEach((node) =>
     node.addEventListener("click", () => revokeGovernanceDevice(node.dataset.deviceRevoke, ctx)));
-}
-
-function openWorkItem(workItemId, ctx) {
-  const queueItem = (ctx.state.runtimeStore?.workQueue || []).find((item) => item.workItemId === workItemId || item.work_item_id === workItemId);
-  if (queueItem?.workspaceId) openWorkspace(queueItem.workspaceId, ctx, queueItem.cardId || "");
 }
 
 async function retryApi(ctx) {

@@ -11,18 +11,18 @@ export const roleDefaultHome = {
 export const mobileBottomNavigation = ["home", "workbench", "search", "me"];
 
 export const roleNavigation = {
-  frontdesk: ["home", "workbench", "search", "me", "workspace"],
-  operator: ["home", "workbench", "search", "me", "workspace"],
-  finance: ["financeControl", "financeReconciliation", "workbench", "search", "me", "workspace"],
-  housekeeping: ["workbench", "home", "search", "me", "workspace"],
-  manager: ["managerControlTower", "pcManager", "workbench", "search", "me", "workspace"],
-  admin: ["governanceCenter", "pcGovernance", "managerControlTower", "pcManager", "workbench", "search", "me", "workspace"],
-  releaseOwner: ["releaseFlightDeck", "releaseControl", "governanceCenter", "pcGovernance", "workbench", "me", "workspace"]
+  frontdesk: ["home", "workbench", "search", "me", "workspace", "operationPanel"],
+  operator: ["home", "workbench", "search", "me", "workspace", "operationPanel"],
+  finance: ["financeControl", "financeReconciliation", "workbench", "search", "me", "workspace", "operationPanel"],
+  housekeeping: ["workbench", "home", "search", "me", "workspace", "operationPanel"],
+  manager: ["managerControlTower", "pcManager", "workbench", "search", "me", "workspace", "operationPanel"],
+  admin: ["governanceCenter", "pcGovernance", "managerControlTower", "pcManager", "workbench", "search", "me", "workspace", "operationPanel"],
+  releaseOwner: ["releaseFlightDeck", "releaseControl", "governanceCenter", "pcGovernance", "workbench", "me", "workspace", "operationPanel"]
 };
 
 export const deviceSurfaceMatrix = {
-  mobile: ["home", "workbench", "search", "me", "workspace"],
-  pc: ["financeControl", "managerControlTower", "governanceCenter", "workbench", "workspace"],
+  mobile: ["home", "workbench", "search", "me", "workspace", "operationPanel"],
+  pc: ["financeControl", "managerControlTower", "governanceCenter", "workbench", "workspace", "operationPanel"],
   release: ["releaseFlightDeck", "governanceCenter", "releaseControl"]
 };
 

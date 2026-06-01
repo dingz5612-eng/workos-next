@@ -1,15 +1,17 @@
-import { selectHomeSurface, selectSurfaceStats } from "../selectors/surfaceSelectors.js";
+import { selectHomeSurface, selectSurfaceStats, selectWorkbenchQueue } from "../selectors/surfaceSelectors.js";
 import { modeCard } from "./loginView.js";
+import { WorkItemCard } from "./experienceComponents.js";
 import { workspaceCard } from "./workspaceView.js";
 
 export function homeView(ctx) {
   const { tr, shell, state } = ctx;
   const surface = selectHomeSurface(state);
   const stats = selectSurfaceStats(state);
+  const missions = selectWorkbenchQueue(state).slice(0, 3);
   return shell(`
-    <section class="command-card">
-      <span>${tr("globalCommand")}</span>
-      <h1>${tr("globalCommandTitle")}</h1>
+    <section class="command-card" data-component="WorkItemMissionControl">
+      <span>Today</span>
+      <h1>WorkItem Mission Control</h1>
       <dl>
         <dt>${tr("reason")}</dt><dd>${tr("globalReason")}</dd>
         <dt>${tr("impact")}</dt><dd>${tr("globalImpact")}</dd>
@@ -27,6 +29,10 @@ export function homeView(ctx) {
       ${ctx.metric(stats.myQueueCount, "mine")}
       ${ctx.metric(stats.blockedCount, "blocked")}
       ${ctx.metric(stats.confirmCount, "confirm")}
+    </section>
+    <section class="mission-stack">
+      <h2>Assigned WorkItems</h2>
+      ${missions.length ? missions.map((item) => WorkItemCard(item, ctx)).join("") : `<article class="help-card"><p>${tr("coachNoMatch")}</p></article>`}
     </section>
     <section class="business-focus">
       <h2>${tr("scenarioFocus")}</h2>

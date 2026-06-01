@@ -42,6 +42,18 @@ export function openWorkspace(workspaceId, ctx, cardId = "") {
   setView("workspace", ctx);
 }
 
+export function openWorkItem(workItemId, ctx, fallback = {}) {
+  const queueItem = (ctx.state.runtimeStore?.workQueue || []).find((item) => item.workItemId === workItemId || item.work_item_id === workItemId);
+  const operationItem = (ctx.state.runtimeStore?.operationWorkItems || []).find((item) =>
+    item.workItemId === workItemId || item.work_item_id === workItemId);
+  const selected = queueItem || operationItem || null;
+  ctx.state.selectedWorkItemId = workItemId;
+  ctx.state.selectedWorkspace = selected?.workspaceId || selected?.workspace_id || fallback.workspaceId || ctx.state.selectedWorkspace;
+  ctx.state.selectedCardId = selected?.cardId || selected?.card_id || fallback.cardId || ctx.state.selectedCardId || "";
+  ctx.state.selectedCardIndex = -1;
+  setView("operationPanel", ctx);
+}
+
 export function selectCard(cardIndex, ctx) {
   ctx.state.selectedCardIndex = Number(cardIndex) || 0;
   ctx.state.selectedCardId = "";

@@ -43,6 +43,7 @@ writeReport(violations, [
   "apps/mobile/src/operationController.js",
   "apps/mobile/src/authController.js",
   "apps/mobile/src/navigationController.js",
+  "apps/mobile/src/views/operationPanelView.js",
   "apps/mobile/src/views/experienceComponents.js"
 ]);
 if (violations.length > 0) {
@@ -113,6 +114,9 @@ function validateMobileSources() {
   const components = readSource("apps/mobile/src/views/experienceComponents.js");
   const workbench = readSource("apps/mobile/src/views/workbenchView.js");
   const workspace = readSource("apps/mobile/src/views/workspaceView.js");
+  const operationPanel = readSource("apps/mobile/src/views/operationPanelView.js");
+  const home = readSource("apps/mobile/src/views/homeView.js");
+  const me = readSource("apps/mobile/src/views/meView.js");
 
   if (shell.includes('nav("releaseControl"') || shell.includes('"releaseControl", "releaseControl"')) {
     violations.push(violation("experience_contract.mobile_release_nav", "Ordinary mobile bottom nav must not expose Release Control."));
@@ -137,6 +141,15 @@ function validateMobileSources() {
   }
   if (!workbench.includes("WorkItemCard")) {
     violations.push(violation("experience_contract.workitem_card_not_rendered", "Work page must render WorkItemCard."));
+  }
+  if (!operationPanel.includes("operationPanelView") || !operationPanel.includes("payloadHash") || !operationPanel.includes("commandSubmissionId")) {
+    violations.push(violation("experience_contract.operation_panel_route_missing", "Operation Panel route must show prepare/confirm/trace/evidence/projection/commandSubmissionId/payloadHash."));
+  }
+  if (!home.includes("WorkItem Mission Control")) {
+    violations.push(violation("experience_contract.today_mission_control_missing", "Today must render WorkItem Mission Control."));
+  }
+  if (!me.includes("Personal Ops Center")) {
+    violations.push(violation("experience_contract.personal_ops_center_missing", "Me must render Personal Ops Center."));
   }
   if (!workspace.includes("LifecycleWorkspace") || !workspace.includes("OperationPanelView")) {
     violations.push(violation("experience_contract.lifecycle_workspace_not_rendered", "Workspace must render LifecycleWorkspace and OperationPanelView as the primary experience."));
