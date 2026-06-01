@@ -1,0 +1,13 @@
+{
+  "generated_at_utc": "2026-06-01T22:13:27.110Z",
+  "generated_by": "check-ledger-semantic-rules",
+  "status": "passed",
+  "scanned_files": [
+    "docs/business/finance/ledger-semantic-rules.yml",
+    "schemas/finance/ledger-semantic-rules.schema.json",
+    "tests/WorkOS.UnitTests/LedgerSemanticRulesTests.cs",
+    "tests/WorkOS.RuntimeIntegrationTests/DormitoryFinanceRuntimeSemanticTests.cs"
+  ],
+  "violation_count": 0,
+  "violations": []
+}

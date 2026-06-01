@@ -1,0 +1,65 @@
+{
+  "version": "oam-05.ledger-semantic-rules.v1",
+  "owner": "MoneyKernelPack",
+  "productionAllowed": false,
+  "businessProduction": "BLOCKED",
+  "basisSemanticRules": [
+    {
+      "basisType": "deposit_receipt",
+      "debitAccountType": "asset",
+      "creditAccountType": "liability",
+      "forbiddenAccountTypes": ["revenue"],
+      "failureCode": "finance_semantic_deposit_receipt_requires_liability_credit"
+    },
+    {
+      "basisType": "payment_receipt",
+      "debitAccountType": "asset",
+      "creditAccountType": "receivable",
+      "forbiddenAccountIds": ["liability.deposit"],
+      "failureCode": "finance_semantic_payment_receipt_must_not_use_deposit"
+    },
+    {
+      "basisType": "refund_deposit",
+      "debitAccountType": "liability",
+      "creditAccountType": "asset",
+      "requiredOriginalRef": "originalDepositAccountId",
+      "forbiddenAccountTypes": ["expense", "revenue"],
+      "failureCode": "finance_semantic_refund_requires_original_liability"
+    },
+    {
+      "basisType": "deposit_deduction",
+      "debitAccountType": "liability",
+      "creditAccountType": "receivable",
+      "requiredOriginalRef": "originalDepositAccountId",
+      "forbiddenAccountTypes": ["revenue"],
+      "failureCode": "finance_semantic_deduction_requires_original_liability"
+    },
+    {
+      "basisType": "ledger_correction_apply",
+      "debitAccountType": "correction",
+      "creditAccountType": "correction",
+      "allowedCorrectionModes": ["reversal", "compensation"],
+      "failureCode": "finance_semantic_correction_requires_append_only_mode"
+    }
+  ],
+  "globalFailures": [
+    "balanced but wrong accountType must fail",
+    "currency mismatch must fail",
+    "UnclearMoneyCase cannot commit ledger before resolution",
+    "old LedgerEntry update/delete must fail",
+    "FinanceCase must carry owner, evidence, and trace"
+  ],
+  "runtimeBindings": [
+    "LedgerSemanticRules.Validate",
+    "FinanceTruthPipeline.ValidateBalanced",
+    "OperationsUnitOfWork.ValidateLedgerBoundary"
+  ],
+  "testRefs": [
+    "tests/WorkOS.UnitTests/LedgerSemanticRulesTests.cs",
+    "tests/WorkOS.RuntimeIntegrationTests/DormitoryFinanceRuntimeSemanticTests.cs"
+  ],
+  "artifactRefs": [
+    "artifacts/finance/finance-semantic-truth-result.json",
+    "artifacts/go-live/dormitory/ledger-semantic-result.json"
+  ]
+}

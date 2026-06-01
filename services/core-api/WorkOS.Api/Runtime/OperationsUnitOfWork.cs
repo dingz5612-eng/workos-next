@@ -241,6 +241,8 @@ public sealed class OperationsUnitOfWork
             {
                 throw new InvalidOperationException("operations_uow_rejects_unbalanced_ledger_transaction");
             }
+
+            LedgerSemanticRules.Validate(transaction, entries);
         }
     }
 }

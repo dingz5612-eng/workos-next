@@ -1,0 +1,41 @@
+{
+  "version": "oam-05.deposit-liability-semantic-contract.v1",
+  "owner": "FinanceTruthPack",
+  "productionAllowed": false,
+  "liabilityFact": "DepositFact",
+  "rules": [
+    {
+      "id": "deposit-liability-001",
+      "statement": "deposit_receipt creates liability, not revenue",
+      "severity": "P0",
+      "requiredDebit": "asset.cash_or_bank",
+      "requiredCredit": "liability.deposit"
+    },
+    {
+      "id": "deposit-liability-002",
+      "statement": "refund_deposit must debit original deposit liability",
+      "severity": "P0",
+      "requiredOriginalRef": "originalDepositAccountId"
+    },
+    {
+      "id": "deposit-liability-003",
+      "statement": "refundAmount <= availableLiability",
+      "severity": "P0"
+    },
+    {
+      "id": "deposit-liability-004",
+      "statement": "deposit_deduction must decrease liability and never revenue",
+      "severity": "P0"
+    }
+  ],
+  "lens": {
+    "name": "DepositLiabilityLens",
+    "sourceFacts": ["LedgerTransaction", "LedgerEntry", "DepositFact"],
+    "rebuildRequired": true
+  },
+  "failureImpact": {
+    "gate": "NO-GO",
+    "businessProduction": "BLOCKED",
+    "dormitoryL2ProductionAllowed": false
+  }
+}

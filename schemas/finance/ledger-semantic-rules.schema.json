@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://workosnext.local/schemas/finance/ledger-semantic-rules.schema.json",
+  "title": "OAM-05 Ledger Semantic Rules",
+  "type": "object",
+  "required": [
+    "version",
+    "owner",
+    "productionAllowed",
+    "businessProduction",
+    "basisSemanticRules",
+    "globalFailures",
+    "runtimeBindings",
+    "testRefs",
+    "artifactRefs"
+  ],
+  "properties": {
+    "version": { "type": "string" },
+    "owner": { "type": "string" },
+    "productionAllowed": { "const": false },
+    "businessProduction": { "const": "BLOCKED" },
+    "basisSemanticRules": {
+      "type": "array",
+      "minItems": 5,
+      "items": {
+        "type": "object",
+        "required": ["basisType", "debitAccountType", "creditAccountType", "failureCode"],
+        "properties": {
+          "basisType": { "type": "string" },
+          "debitAccountType": { "type": "string" },
+          "creditAccountType": { "type": "string" },
+          "forbiddenAccountTypes": { "type": "array", "items": { "type": "string" } },
+          "forbiddenAccountIds": { "type": "array", "items": { "type": "string" } },
+          "requiredOriginalRef": { "type": "string" },
+          "allowedCorrectionModes": { "type": "array", "items": { "type": "string" } },
+          "failureCode": { "type": "string" }
+        }
+      }
+    },
+    "globalFailures": { "type": "array", "minItems": 5, "items": { "type": "string" } },
+    "runtimeBindings": { "type": "array", "minItems": 3, "items": { "type": "string" } },
+    "testRefs": { "type": "array", "minItems": 2, "items": { "type": "string" } },
+    "artifactRefs": { "type": "array", "minItems": 2, "items": { "type": "string" } }
+  }
+}
