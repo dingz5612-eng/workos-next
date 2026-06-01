@@ -241,17 +241,17 @@
       "workspaceId": "W-REPAIR-REQUEST",
       "domainGroup": "Repair",
       "defaultLens": "risk-command",
-      "hiddenReason": "runtime seed workspace with surface policy while repair slice admission remains contract preview",
-      "home": { "visible": true, "priority": 62, "section": "repair-operations" },
-      "workbench": { "visible": true, "queueRule": "ready_or_blocked_cards" },
-      "search": { "visible": true, "keywords": ["repair request", "报修", "到场", "ремонт"], "intentTags": ["repair_request"] },
-      "learning": { "visible": true, "section": "Repair / Request" },
+      "hiddenReason": "contract-only slice is visible for learning and prepare while repair admission remains L0",
+      "home": { "visible": true, "priority": 40, "section": "contract-preview" },
+      "workbench": { "visible": true, "queueRule": "prepare_only" },
+      "search": { "visible": true, "keywords": ["repair request", "报修", "到场", "ремонт"], "intentTags": ["contract_preview"] },
+      "learning": { "visible": true, "section": "Contract Preview / Repair Request" },
       "lenses": ["risk-command"],
       "cards": [
-        { "cardId": "customerVehicle", "home": true, "workbench": true, "searchKeywords": ["customer vehicle", "客户车辆"], "intentTags": ["repair_request"], "learningSection": "Repair / Request", "defaultLens": "risk-command", "hiddenReason": "" },
-        { "cardId": "request", "home": true, "workbench": true, "searchKeywords": ["request", "报修信息"], "intentTags": ["repair_request"], "learningSection": "Repair / Request", "defaultLens": "risk-command", "hiddenReason": "" },
-        { "cardId": "arrival", "home": true, "workbench": true, "searchKeywords": ["arrival", "到场"], "intentTags": ["repair_request"], "learningSection": "Repair / Request", "defaultLens": "risk-command", "hiddenReason": "" },
-        { "cardId": "dispatchEntry", "home": true, "workbench": true, "searchKeywords": ["dispatch entry", "派工入口"], "intentTags": ["repair_request"], "learningSection": "Repair / Request", "defaultLens": "risk-command", "hiddenReason": "" }
+        { "cardId": "customerVehicle", "home": true, "workbench": true, "searchKeywords": ["customer vehicle", "客户车辆"], "intentTags": ["contract_preview"], "learningSection": "Contract Preview / Repair Request", "defaultLens": "risk-command", "hiddenReason": "" },
+        { "cardId": "request", "home": true, "workbench": true, "searchKeywords": ["request", "报修信息"], "intentTags": ["contract_preview"], "learningSection": "Contract Preview / Repair Request", "defaultLens": "risk-command", "hiddenReason": "" },
+        { "cardId": "arrival", "home": true, "workbench": true, "searchKeywords": ["arrival", "到场"], "intentTags": ["contract_preview"], "learningSection": "Contract Preview / Repair Request", "defaultLens": "risk-command", "hiddenReason": "" },
+        { "cardId": "dispatchEntry", "home": true, "workbench": true, "searchKeywords": ["dispatch entry", "派工入口"], "intentTags": ["contract_preview"], "learningSection": "Contract Preview / Repair Request", "defaultLens": "risk-command", "hiddenReason": "" }
       ]
     },
     {
@@ -295,16 +295,16 @@
       "workspaceId": "W-REPAIR-MASTER-DATA",
       "domainGroup": "Repair",
       "defaultLens": "risk-command",
-      "hiddenReason": "runtime seed workspace with surface policy while repair master-data slice admission is not yet production",
-      "home": { "visible": true, "priority": 58, "section": "repair-operations" },
-      "workbench": { "visible": true, "queueRule": "ready_or_blocked_cards" },
-      "search": { "visible": true, "keywords": ["repair master data", "维修资料", "客户", "车辆"], "intentTags": ["repair_master_data"] },
-      "learning": { "visible": true, "section": "Repair / Master Data" },
+      "hiddenReason": "contract-only slice is visible for learning and prepare while repair admission remains L0",
+      "home": { "visible": true, "priority": 40, "section": "contract-preview" },
+      "workbench": { "visible": true, "queueRule": "prepare_only" },
+      "search": { "visible": true, "keywords": ["repair master data", "维修资料", "客户", "车辆"], "intentTags": ["contract_preview"] },
+      "learning": { "visible": true, "section": "Contract Preview / Repair Master Data" },
       "lenses": ["risk-command"],
       "cards": [
-        { "cardId": "customer", "home": true, "workbench": true, "searchKeywords": ["customer", "客户"], "intentTags": ["repair_master_data"], "learningSection": "Repair / Master Data", "defaultLens": "risk-command", "hiddenReason": "" },
-        { "cardId": "vehicle", "home": true, "workbench": true, "searchKeywords": ["vehicle", "车辆"], "intentTags": ["repair_master_data"], "learningSection": "Repair / Master Data", "defaultLens": "risk-command", "hiddenReason": "" },
-        { "cardId": "serviceRule", "home": true, "workbench": true, "searchKeywords": ["service rule", "服务规则"], "intentTags": ["repair_master_data"], "learningSection": "Repair / Master Data", "defaultLens": "risk-command", "hiddenReason": "" }
+        { "cardId": "customer", "home": true, "workbench": true, "searchKeywords": ["customer", "客户"], "intentTags": ["contract_preview"], "learningSection": "Contract Preview / Repair Master Data", "defaultLens": "risk-command", "hiddenReason": "" },
+        { "cardId": "vehicle", "home": true, "workbench": true, "searchKeywords": ["vehicle", "车辆"], "intentTags": ["contract_preview"], "learningSection": "Contract Preview / Repair Master Data", "defaultLens": "risk-command", "hiddenReason": "" },
+        { "cardId": "serviceRule", "home": true, "workbench": true, "searchKeywords": ["service rule", "服务规则"], "intentTags": ["contract_preview"], "learningSection": "Contract Preview / Repair Master Data", "defaultLens": "risk-command", "hiddenReason": "" }
       ]
     }
   ]

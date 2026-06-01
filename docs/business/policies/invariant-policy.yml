@@ -1,0 +1,20 @@
+{
+  "policyId": "business.invariant-policy",
+  "policyType": "invariant",
+  "version": "rtp.v1",
+  "owner": "ControlPlane",
+  "sourceFile": "docs/v5.4/invariant-definitions.json",
+  "runtimeBinding": {
+    "loader": "InvariantPolicyLoader",
+    "evaluator": "PolicyEvaluator"
+  },
+  "rules": {
+    "p0InvariantFailureBlocksGate": true,
+    "unknownInvariantSeverityBlocksGate": true,
+    "manualInvariantPassForbidden": true
+  },
+  "gateBinding": {
+    "gateInput": "runtimeInvariantResult",
+    "failureSeverity": "P0"
+  }
+}

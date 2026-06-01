@@ -31,6 +31,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "control-plane", "control-pl
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkOS.ControlPlaneRunners", "tools\control-plane\WorkOS.ControlPlaneRunners\WorkOS.ControlPlaneRunners.csproj", "{0DFBB0D6-8442-4919-B8DC-28EA825814EC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkOS.PolicyAsCodeTests", "tests\WorkOS.PolicyAsCodeTests\WorkOS.PolicyAsCodeTests.csproj", "{5AEFC784-62A8-488F-A0C7-27B00BAF148C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -137,6 +139,18 @@ Global
 		{0DFBB0D6-8442-4919-B8DC-28EA825814EC}.Release|x64.Build.0 = Release|Any CPU
 		{0DFBB0D6-8442-4919-B8DC-28EA825814EC}.Release|x86.ActiveCfg = Release|Any CPU
 		{0DFBB0D6-8442-4919-B8DC-28EA825814EC}.Release|x86.Build.0 = Release|Any CPU
+		{5AEFC784-62A8-488F-A0C7-27B00BAF148C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5AEFC784-62A8-488F-A0C7-27B00BAF148C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5AEFC784-62A8-488F-A0C7-27B00BAF148C}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{5AEFC784-62A8-488F-A0C7-27B00BAF148C}.Debug|x64.Build.0 = Debug|Any CPU
+		{5AEFC784-62A8-488F-A0C7-27B00BAF148C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{5AEFC784-62A8-488F-A0C7-27B00BAF148C}.Debug|x86.Build.0 = Debug|Any CPU
+		{5AEFC784-62A8-488F-A0C7-27B00BAF148C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5AEFC784-62A8-488F-A0C7-27B00BAF148C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5AEFC784-62A8-488F-A0C7-27B00BAF148C}.Release|x64.ActiveCfg = Release|Any CPU
+		{5AEFC784-62A8-488F-A0C7-27B00BAF148C}.Release|x64.Build.0 = Release|Any CPU
+		{5AEFC784-62A8-488F-A0C7-27B00BAF148C}.Release|x86.ActiveCfg = Release|Any CPU
+		{5AEFC784-62A8-488F-A0C7-27B00BAF148C}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -153,5 +167,6 @@ Global
 		{8C9F0DCB-2918-4EB6-9398-9CDF48529EE5} = {0AB3BF05-4346-4AA6-1389-037BE0695223}
 		{5CBE4E3E-733C-AE6B-52D5-3F6F15883C92} = {07C2787E-EAC7-C090-1BA3-A61EC2A24D84}
 		{0DFBB0D6-8442-4919-B8DC-28EA825814EC} = {5CBE4E3E-733C-AE6B-52D5-3F6F15883C92}
+		{5AEFC784-62A8-488F-A0C7-27B00BAF148C} = {0AB3BF05-4346-4AA6-1389-037BE0695223}
 	EndGlobalSection
 EndGlobal

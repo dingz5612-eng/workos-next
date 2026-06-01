@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://workosnext.local/schemas/policy.schema.json",
+  "title": "WorkOSNext Policy-as-Code Contract",
+  "type": "object",
+  "required": ["policyId", "policyType", "version", "owner", "runtimeBinding", "rules", "gateBinding"],
+  "properties": {
+    "policyId": { "type": "string", "minLength": 3 },
+    "policyType": {
+      "type": "string",
+      "enum": ["evidence", "admission", "surface", "finance", "truth-owner", "permission", "cutover", "invariant"]
+    },
+    "version": { "type": "string", "minLength": 1 },
+    "owner": { "type": "string", "minLength": 1 },
+    "sourceFile": { "type": "string" },
+    "sourceDirectory": { "type": "string" },
+    "runtimeBinding": {
+      "type": "object",
+      "required": ["loader", "evaluator"],
+      "properties": {
+        "loader": { "type": "string", "minLength": 1 },
+        "evaluator": { "type": "string", "minLength": 1 },
+        "guard": { "type": "string" },
+        "blocksConfirm": { "type": "boolean" }
+      },
+      "additionalProperties": true
+    },
+    "rules": { "type": "object", "minProperties": 1 },
+    "certificationBinding": { "type": "object" },
+    "gateBinding": {
+      "type": "object",
+      "required": ["gateInput", "failureSeverity"],
+      "properties": {
+        "gateInput": { "type": "string", "minLength": 1 },
+        "failureSeverity": { "type": "string", "enum": ["P0", "P1", "P2"] }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}
