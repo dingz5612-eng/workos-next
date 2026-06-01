@@ -77,7 +77,7 @@ async function main() {
     generated_by: "run-dormitory-live-api-db-scenarios",
     taskId: "D1",
     branch: await git(["rev-parse", "--abbrev-ref", "HEAD"]),
-    currentMainHead: await git(["rev-parse", "origin/main"]),
+    currentMainHead: await gitMainHead(),
     sourceMode: "real_api_db",
     syntheticDomainEventsAllowed: false,
     syntheticLedgerTransactionsAllowed: false,
@@ -550,6 +550,16 @@ function refsFor(scenario) {
 
 async function git(args) {
   return execFileSync("git", args, { cwd: root, encoding: "utf8" }).trim();
+}
+
+async function gitMainHead() {
+  try {
+    return await git(["rev-parse", "origin/main"]);
+  } catch {
+    const output = await git(["ls-remote", "origin", "refs/heads/main"]);
+    const [sha] = output.split(/\s+/);
+    return sha;
+  }
 }
 
 function sql(value) {

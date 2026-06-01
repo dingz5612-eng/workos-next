@@ -61,7 +61,7 @@ async function main() {
     generated_by: "run-runtime-proof",
     taskId: "OAM-03",
     branch: git(["rev-parse", "--abbrev-ref", "HEAD"]),
-    currentMainHead: git(["rev-parse", "origin/main"]),
+    currentMainHead: gitMainHead(),
     sourceMode: "live_api_db",
     runtimeProofContractRef: contractPath,
     proofPackRef: proofPackPath,
@@ -233,6 +233,16 @@ function run(command, args) {
 
 function git(args) {
   return execFileSync("git", args, { cwd: root, encoding: "utf8" }).trim();
+}
+
+function gitMainHead() {
+  try {
+    return git(["rev-parse", "origin/main"]);
+  } catch {
+    const output = git(["ls-remote", "origin", "refs/heads/main"]);
+    const [sha] = output.split(/\s+/);
+    return sha;
+  }
 }
 
 function readJson(relativePath) {
