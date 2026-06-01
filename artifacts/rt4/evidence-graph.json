@@ -2,8 +2,8 @@
   "version": "rt4.evidence-graph.v1",
   "mode": "L1_INTERNAL_PILOT_OBSERVATION",
   "branch": "main",
-  "headSha": "7055814c0b1638badb45bf3b1add5cb2d24ebd87",
-  "generatedAtUtc": "2026-06-01T19:32:58.594Z",
+  "headSha": "e68ffc2bda8e55b3cac40c728712d2ab487f7b14",
+  "generatedAtUtc": "2026-06-01T19:52:54.575Z",
   "nodes": [
     {
       "id": "RT4-P0-001",
