@@ -1,0 +1,191 @@
+{
+  "generated_at_utc": "2026-06-01T21:33:43.383Z",
+  "generated_by": "scripts/surface/check-oam-04-surface-twin-plane-contract.mjs",
+  "taskId": "OAM-04",
+  "status": "passed",
+  "branch": "codex/oam-04-surface-twin-plane-contract",
+  "contracts": [
+    "docs/surface/surface-experience-contract.yml",
+    "docs/surface/mobile-work-plane-contract.yml",
+    "docs/surface/pc-governance-plane-contract.yml",
+    "docs/surface/operational-copy-matrix.yml",
+    "docs/surface/mobile-search-contract.yml",
+    "docs/surface/learning-center-contract.yml",
+    "docs/surface/queue-state-contract.yml",
+    "docs/surface/device-trust-experience-contract.yml",
+    "docs/surface/evidence-trust-experience-contract.yml",
+    "docs/surface/permission-explainability-contract.yml",
+    "docs/surface/operation-panel-runtime-contract.yml",
+    "docs/surface/surface-api-boundary.yml",
+    "docs/surface/surface-runtime-guard-contract.yml"
+  ],
+  "schemas": [
+    "schemas/surface/surface-experience-contract.schema.json",
+    "schemas/surface/mobile-work-plane-contract.schema.json",
+    "schemas/surface/pc-governance-plane-contract.schema.json",
+    "schemas/surface/operational-copy-matrix.schema.json",
+    "schemas/surface/mobile-search-contract.schema.json",
+    "schemas/surface/learning-center-contract.schema.json",
+    "schemas/surface/queue-state-contract.schema.json",
+    "schemas/surface/device-trust-experience-contract.schema.json",
+    "schemas/surface/evidence-trust-experience-contract.schema.json",
+    "schemas/surface/permission-explainability-contract.schema.json",
+    "schemas/surface/operation-panel-runtime-contract.schema.json",
+    "schemas/surface/surface-api-boundary.schema.json",
+    "schemas/surface/surface-runtime-guard-contract.schema.json",
+    "schemas/surface/oam-04-surface-twin-plane-result.schema.json"
+  ],
+  "checkers": [
+    "scripts/surface/check-surface-experience-contract.mjs",
+    "scripts/surface/check-mobile-pc-surface-boundary.mjs",
+    "scripts/surface/check-operational-copy-matrix.mjs",
+    "scripts/surface/check-mobile-visible-copy.mjs",
+    "scripts/surface/check-no-raw-surface-labels.mjs",
+    "scripts/surface/check-mobile-search-contract.mjs",
+    "scripts/surface/check-learning-center-contract.mjs",
+    "scripts/surface/check-queue-state-contract.mjs",
+    "scripts/surface/check-device-trust-contract.mjs",
+    "scripts/surface/check-evidence-trust-contract.mjs",
+    "scripts/surface/check-permission-explainability-contract.mjs",
+    "scripts/surface/check-operation-panel-runtime-contract.mjs",
+    "scripts/surface/check-surface-api-boundary.mjs",
+    "scripts/surface/check-surface-runtime-guard-contract.mjs"
+  ],
+  "artifacts": [
+    "artifacts/surface/surface-experience-contract-result.json",
+    "artifacts/surface/mobile-pc-boundary-result.json",
+    "artifacts/surface/mobile-visible-copy-result.json",
+    "artifacts/surface/search-learning-contract-result.json",
+    "artifacts/surface/queue-state-contract-result.json",
+    "artifacts/surface/device-trust-contract-result.json",
+    "artifacts/surface/evidence-trust-contract-result.json",
+    "artifacts/surface/permission-explainability-contract-result.json",
+    "artifacts/surface/operation-panel-runtime-contract-result.json",
+    "artifacts/surface/surface-api-boundary-result.json",
+    "artifacts/surface/backend-runtime-guard-result.json",
+    "artifacts/surface/oam-04-surface-twin-plane-result.json"
+  ],
+  "tests": [
+    "apps/mobile/src/__tests__/MobileSurfaceCopyContract.test.js",
+    "apps/mobile/src/__tests__/MobilePcSurfaceBoundary.test.js",
+    "apps/mobile/src/__tests__/SearchLearningSync.test.js",
+    "apps/mobile/src/__tests__/QueueStateContract.test.js",
+    "apps/mobile/src/__tests__/DeviceTrustExperience.test.js",
+    "apps/mobile/src/__tests__/EvidenceTrustExperience.test.js",
+    "apps/mobile/src/__tests__/PermissionExplainability.test.js",
+    "apps/mobile/src/__tests__/OperationPanelRuntimeContract.test.js",
+    "apps/mobile/src/__tests__/TodayMissionControlContract.test.js",
+    "apps/mobile/src/__tests__/PersonalOpsCenterContract.test.js",
+    "apps/mobile/src/__tests__/UploadQueueRecovery.test.js",
+    "apps/mobile/src/__tests__/SubmitQueueRecovery.test.js",
+    "apps/mobile/src/__tests__/ProjectionPendingRecovery.test.js",
+    "apps/mobile/src/__tests__/DormitoryWeakNetworkSubmit.test.js",
+    "apps/pc/src/__tests__/PcGovernancePlaneContract.test.js",
+    "apps/pc/src/__tests__/PcFinanceCaseConsoleContract.test.js",
+    "apps/pc/src/__tests__/PcReleaseFlightDeckContract.test.js",
+    "apps/pc/src/__tests__/PcSearchScopeContract.test.js",
+    "tests/WorkOS.RuntimeIntegrationTests/MobileSurfaceRuntimeGuardTests.cs",
+    "tests/WorkOS.RuntimeIntegrationTests/PcGovernanceSurfaceRuntimeGuardTests.cs",
+    "tests/WorkOS.RuntimeIntegrationTests/SearchScopeRuntimeTests.cs",
+    "tests/WorkOS.RuntimeIntegrationTests/LearningScopeRuntimeTests.cs",
+    "tests/WorkOS.RuntimeIntegrationTests/OperationsConfirmPilotScopeTests.cs",
+    "tests/WorkOS.RuntimeIntegrationTests/WorkspaceCardCompatibilityPilotScopeTests.cs",
+    "tests/WorkOS.RuntimeIntegrationTests/EvidenceAttachPilotScopeTests.cs",
+    "tests/WorkOS.RuntimeIntegrationTests/FinanceMoneyCommandPilotScopeTests.cs"
+  ],
+  "checks": [
+    {
+      "name": "surface-experience-contract",
+      "script": "scripts/surface/check-surface-experience-contract.mjs",
+      "artifact": "artifacts/surface/surface-experience-contract-result.json",
+      "status": "passed"
+    },
+    {
+      "name": "mobile-pc-surface-boundary",
+      "script": "scripts/surface/check-mobile-pc-surface-boundary.mjs",
+      "artifact": "artifacts/surface/mobile-pc-boundary-result.json",
+      "status": "passed"
+    },
+    {
+      "name": "operational-copy-matrix",
+      "script": "scripts/surface/check-operational-copy-matrix.mjs",
+      "artifact": "artifacts/surface/mobile-visible-copy-result.json",
+      "status": "passed"
+    },
+    {
+      "name": "mobile-visible-copy",
+      "script": "scripts/surface/check-mobile-visible-copy.mjs",
+      "artifact": "artifacts/surface/mobile-visible-copy-result.json",
+      "status": "passed"
+    },
+    {
+      "name": "no-raw-surface-labels",
+      "script": "scripts/surface/check-no-raw-surface-labels.mjs",
+      "artifact": "artifacts/surface/mobile-visible-copy-result.json",
+      "status": "passed"
+    },
+    {
+      "name": "mobile-search-contract",
+      "script": "scripts/surface/check-mobile-search-contract.mjs",
+      "artifact": "artifacts/surface/search-learning-contract-result.json",
+      "status": "passed"
+    },
+    {
+      "name": "learning-center-contract",
+      "script": "scripts/surface/check-learning-center-contract.mjs",
+      "artifact": "artifacts/surface/search-learning-contract-result.json",
+      "status": "passed"
+    },
+    {
+      "name": "queue-state-contract",
+      "script": "scripts/surface/check-queue-state-contract.mjs",
+      "artifact": "artifacts/surface/queue-state-contract-result.json",
+      "status": "passed"
+    },
+    {
+      "name": "device-trust-contract",
+      "script": "scripts/surface/check-device-trust-contract.mjs",
+      "artifact": "artifacts/surface/device-trust-contract-result.json",
+      "status": "passed"
+    },
+    {
+      "name": "evidence-trust-contract",
+      "script": "scripts/surface/check-evidence-trust-contract.mjs",
+      "artifact": "artifacts/surface/evidence-trust-contract-result.json",
+      "status": "passed"
+    },
+    {
+      "name": "permission-explainability-contract",
+      "script": "scripts/surface/check-permission-explainability-contract.mjs",
+      "artifact": "artifacts/surface/permission-explainability-contract-result.json",
+      "status": "passed"
+    },
+    {
+      "name": "operation-panel-runtime-contract",
+      "script": "scripts/surface/check-operation-panel-runtime-contract.mjs",
+      "artifact": "artifacts/surface/operation-panel-runtime-contract-result.json",
+      "status": "passed"
+    },
+    {
+      "name": "surface-api-boundary",
+      "script": "scripts/surface/check-surface-api-boundary.mjs",
+      "artifact": "artifacts/surface/surface-api-boundary-result.json",
+      "status": "passed"
+    },
+    {
+      "name": "surface-runtime-guard-contract",
+      "script": "scripts/surface/check-surface-runtime-guard-contract.mjs",
+      "artifact": "artifacts/surface/backend-runtime-guard-result.json",
+      "status": "passed"
+    }
+  ],
+  "statusBoundary": {
+    "dormitoryL2ProductionAllowed": false,
+    "businessProductionGo": false,
+    "repairPartsHrProductionAllowed": false
+  },
+  "mobilePlane": "Work Execution Plane",
+  "pcPlane": "Governance Control Plane",
+  "operationPanelRuntimeModel": "persisted WorkItem runtime model only",
+  "violations": []
+}
