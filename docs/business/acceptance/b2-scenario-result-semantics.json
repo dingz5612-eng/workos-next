@@ -1,0 +1,92 @@
+{
+  "version": "opx-b-gate-p0-b2-semantics-v1",
+  "status": "hardening_contract",
+  "owner": "Business Line Acceptance / OPX B-Gate",
+  "purpose": "Define traceable B2 scenario result semantics for committed, rejected command, and gate-only blocked outcomes.",
+  "correction": {
+    "previousInvalidRule": "every scenario has a DomainEvent",
+    "correctRule": "committed scenarios require business DomainEvent; blocked scenarios must not write business DomainEvent and must provide rejected trace, audit, invariant, or gate evidence."
+  },
+  "resultClasses": {
+    "committed": {
+      "description": "A business command accepted by the Operations runtime and materialized as facts.",
+      "requiredEvidence": [
+        "CommandSubmission",
+        "DomainEvent",
+        "FactTrace",
+        "StableResponse"
+      ],
+      "moneyRequiredEvidence": [
+        "LedgerTransaction",
+        "LedgerEntry"
+      ],
+      "forbiddenEvidence": []
+    },
+    "rejected_command": {
+      "description": "A business command rejected by policy, permission, evidence, or idempotency conflict with traceable rejection evidence.",
+      "requiredEvidence": [
+        "RejectedCommandSubmission",
+        "RejectionTrace",
+        "AuditEvidence",
+        "InvariantCheck"
+      ],
+      "forbiddenEvidence": [
+        "DomainEvent",
+        "LedgerTransaction",
+        "LedgerEntry",
+        "ProjectionCommit"
+      ]
+    },
+    "gate_only_blocked": {
+      "description": "A release/admission/cutover gate block that is not a business command submission.",
+      "requiredEvidence": [
+        "GateResult",
+        "InvariantCheck|ShadowCompareReport"
+      ],
+      "conditionalRequiredEvidence": {
+        "missing_rollback_blocked": ["RollbackBlocker"],
+        "missing_signoff_blocked": ["BusinessSignoffBlocker"],
+        "semantic_shadow_red_blocked": ["ShadowCompareReport"]
+      },
+      "forbiddenEvidence": [
+        "CommandSubmission",
+        "RejectedCommandSubmission",
+        "DomainEvent",
+        "LedgerTransaction",
+        "LedgerEntry",
+        "ProjectionCommit"
+      ]
+    }
+  },
+  "outcomeClassification": {
+    "committed_projected": "committed",
+    "projection_pending_committed": "committed",
+    "idempotency_duplicate": "committed",
+    "permission_denied_403": "rejected_command",
+    "business_blocked_422": "rejected_command",
+    "idempotency_conflict_409": "rejected_command",
+    "semantic_shadow_red_blocked": "gate_only_blocked",
+    "missing_rollback_blocked": "gate_only_blocked",
+    "missing_signoff_blocked": "gate_only_blocked"
+  },
+  "dormitoryScenarioMapping": [
+    { "scenarioId": "dorm-cert-001", "expectedOutcome": "committed_projected", "resultClass": "committed" },
+    { "scenarioId": "dorm-cert-002", "expectedOutcome": "committed_projected", "resultClass": "committed", "moneyCommand": true },
+    { "scenarioId": "dorm-cert-003", "expectedOutcome": "committed_projected", "resultClass": "committed", "moneyCommand": true },
+    { "scenarioId": "dorm-cert-004", "expectedOutcome": "committed_projected", "resultClass": "committed" },
+    { "scenarioId": "dorm-cert-005", "expectedOutcome": "committed_projected", "resultClass": "committed", "moneyCommand": true },
+    { "scenarioId": "dorm-cert-006", "expectedOutcome": "committed_projected", "resultClass": "committed", "moneyCommand": true },
+    { "scenarioId": "dorm-cert-007", "expectedOutcome": "projection_pending_committed", "resultClass": "committed" },
+    { "scenarioId": "dorm-cert-008", "expectedOutcome": "permission_denied_403", "resultClass": "rejected_command" },
+    { "scenarioId": "dorm-cert-009", "expectedOutcome": "idempotency_duplicate", "resultClass": "committed", "moneyCommand": true, "duplicateSideEffectAllowed": false },
+    { "scenarioId": "dorm-cert-010", "expectedOutcome": "business_blocked_422", "resultClass": "rejected_command", "moneyCommand": true }
+  ],
+  "acceptanceRules": [
+    "committed results require CommandSubmission, DomainEvent, FactTrace, and StableResponse",
+    "committed money results require LedgerTransaction and LedgerEntry",
+    "rejected command results require RejectedCommandSubmission and RejectionTrace and must not write business facts",
+    "gate-only blocked results require GateResult plus invariant/shadow evidence and must not create business submissions",
+    "idempotency duplicate requires a stable duplicate response and no duplicate business side effect",
+    "B2 FULL_PASS requires certification output to label and validate each scenario result class"
+  ]
+}
