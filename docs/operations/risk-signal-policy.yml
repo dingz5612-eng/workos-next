@@ -1,0 +1,70 @@
+{
+  "version": "rtf.risk-signal-policy.v1",
+  "stage": "RT-F",
+  "summaryZh": "RiskSignal 必须生成 WorkItem，并在解决后产生 ResolutionEvent、刷新 Lens、进入 PeriodReview，再反馈到训练或策略更新。",
+  "riskSignals": [
+    {
+      "riskSignalType": "finance-control-risk",
+      "owner": "Finance Controller",
+      "sla": "same day",
+      "escalation": "General Manager",
+      "generatedWorkItemType": "Dorm.ExceptionResolve",
+      "resolutionEvent": "Operations.FinanceRiskResolved",
+      "lensUpdate": "StayBalanceLens",
+      "periodReview": "FinanceDailyCloseReview",
+      "trainingUpdate": "finance reconciliation drill",
+      "policyUpdate": "finance-policy.yml",
+      "correctionWorkItemRequired": true
+    },
+    {
+      "riskSignalType": "sla-control-risk",
+      "owner": "Dormitory Operations Owner",
+      "sla": "same day",
+      "escalation": "Operations Director",
+      "generatedWorkItemType": "Dorm.PeriodReview",
+      "resolutionEvent": "Operations.SlaRiskResolved",
+      "lensUpdate": "WorkQueueLens",
+      "periodReview": "WeeklySlaReview",
+      "trainingUpdate": "frontdesk and housekeeping SLA drill",
+      "policyUpdate": "metric-deviation-policy.yml",
+      "correctionWorkItemRequired": true
+    },
+    {
+      "riskSignalType": "evidence-audit-risk",
+      "owner": "Admin",
+      "sla": "same day",
+      "escalation": "Dormitory Operations Owner",
+      "generatedWorkItemType": "Dorm.ExceptionResolve",
+      "resolutionEvent": "Operations.EvidenceRiskResolved",
+      "lensUpdate": "ExceptionRiskLens",
+      "periodReview": "EvidenceTrustReview",
+      "trainingUpdate": "evidence trust checklist retraining",
+      "policyUpdate": "docs/business/dormitory/evidence-policy.yml",
+      "correctionWorkItemRequired": true
+    },
+    {
+      "riskSignalType": "period-improvement-risk",
+      "owner": "Dormitory Operations Owner",
+      "sla": "weekly",
+      "escalation": "General Manager",
+      "generatedWorkItemType": "Dorm.PeriodReview",
+      "resolutionEvent": "Operations.PeriodImprovementResolved",
+      "lensUpdate": "ManagementDashboardLens",
+      "periodReview": "WeeklyOperatingReview",
+      "trainingUpdate": "manager action-plan coaching",
+      "policyUpdate": "risk-signal-policy.yml",
+      "correctionWorkItemRequired": true
+    }
+  ],
+  "closedLoopAssertions": {
+    "metricDeviationCreatesRiskSignal": true,
+    "riskSignalCreatesWorkItem": true,
+    "workItemHasOwnerSlaEscalation": true,
+    "resolutionEventUpdatesLens": true,
+    "periodReviewFreezesResult": true,
+    "repeatedRiskLinksTrainingOrPolicy": true,
+    "wrongMetricCreatesCorrectionWorkItem": true,
+    "managementCockpitWritesBusinessFacts": false,
+    "repairPartsHrProductionAllowed": false
+  }
+}
