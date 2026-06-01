@@ -114,7 +114,7 @@
       "allowedFiles": ["services/core-api/WorkOS.Api/Runtime/**", "scripts/check-runtime-write-paths.mjs", "scripts/check-v5-5-rules-os.mjs", "scripts/guard-architecture.ps1", "tests/WorkOS.UnitTests/**", ".github/workflows/ci.yml", "docs/program/rt4/*", "artifacts/rt4/*"],
       "forbiddenFiles": ["page-specific business write APIs", "Mobile BFF business fact writes", "direct DomainEvent writes outside CommandSubmission", "Dormitory/Repair/Parts production declarations"],
       "localCiStatus": "LOCAL_PASSED",
-      "headSha": "241abcef5524c58000df19519e2a894aca0b4f61",
+      "headSha": "bc0a833b3c025caeb099e2fd33963fa61a6d0097",
       "stackedReady": true,
       "prUrl": "",
       "mergeStatus": "not_merged",

@@ -24,7 +24,7 @@ RT-1: `LOCAL_PASSED`
 
 Current branch: `codex/rt1-runtime-spine-non-bypass`
 
-Head sha: `241abcef5524c58000df19519e2a894aca0b4f61`
+Head sha: `bc0a833b3c025caeb099e2fd33963fa61a6d0097`
 
 Next allowed stage after RT-1 local pass: `RT-DB stacked preconstruction`.
 
