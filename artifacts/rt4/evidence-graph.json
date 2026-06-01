@@ -1,9 +1,9 @@
 {
   "version": "rt4.evidence-graph.v1",
   "mode": "STACKED_PRECONSTRUCTION",
-  "branch": "codex/rt3-finance-truth-production-kernel",
-  "headSha": "1d29c3f5080ae94723418e116c22c1b17e962980",
-  "generatedAtUtc": "2026-06-01T08:55:45.627Z",
+  "branch": "codex/rts-executable-scenario-factory",
+  "headSha": "8828aeb9e8459a71da959bf6be1bb69b31f81342",
+  "generatedAtUtc": "2026-06-01T09:20:11.217Z",
   "nodes": [
     {
       "id": "RT4-P0-001",
@@ -321,11 +321,29 @@
       "type": "branch",
       "status": "LOCAL_PASSED",
       "branch": "codex/rt3-finance-truth-production-kernel",
-      "headSha": "1d29c3f5080ae94723418e116c22c1b17e962980",
+      "headSha": "700addd17e97fa1bdbb825c195bf7272e9b85096",
       "refs": [
         "clean Docker PostgreSQL workosnext-rt3-test",
         "node scripts/check-finance-truth.mjs --self-test",
         "node scripts/check-finance-truth.mjs",
+        "dotnet test tests/WorkOS.UnitTests/WorkOS.UnitTests.csproj -c Release --no-build",
+        "dotnet test tests/WorkOS.RuntimeIntegrationTests/WorkOS.RuntimeIntegrationTests.csproj -c Release --no-build",
+        "dotnet run --project tests/WorkOS.RuntimeContractTests/WorkOS.RuntimeContractTests.csproj -c Release",
+        "node scripts/v5_4/certify-dormitory.mjs --sourceMode=real",
+        "pwsh -NoProfile -File scripts/guard-architecture.ps1",
+        "pwsh -NoProfile -File scripts/v5_4/run-control-plane-checks.ps1"
+      ]
+    },
+    {
+      "id": "RT-S",
+      "type": "branch",
+      "status": "LOCAL_PASSED",
+      "branch": "codex/rts-executable-scenario-factory",
+      "headSha": "8828aeb9e8459a71da959bf6be1bb69b31f81342",
+      "refs": [
+        "clean Docker PostgreSQL workosnext-rts-test",
+        "node scripts/check-executable-scenarios.mjs --self-test",
+        "node scripts/check-executable-scenarios.mjs",
         "dotnet test tests/WorkOS.UnitTests/WorkOS.UnitTests.csproj -c Release --no-build",
         "dotnet test tests/WorkOS.RuntimeIntegrationTests/WorkOS.RuntimeIntegrationTests.csproj -c Release --no-build",
         "dotnet run --project tests/WorkOS.RuntimeContractTests/WorkOS.RuntimeContractTests.csproj -c Release",
