@@ -1,0 +1,17 @@
+{
+  "contractId": "mobile-work-plane-contract.v1",
+  "plane": "mobile",
+  "defaultLocale": "zh-CN",
+  "bottomNavigation": ["今天", "工作", "搜索", "我的"],
+  "allowedViews": ["home", "workbench", "search", "me", "workspace", "operationPanel", "learning", "notes", "reminders", "feedback", "result", "confirmPage"],
+  "forbiddenViews": ["releaseControl", "releaseFlightDeck", "pcGovernance", "governanceCenter", "financeControl", "financeReconciliation", "managerControlTower", "pcManager"],
+  "visibleDomForbiddenTokens": ["UploadQueue", "SubmitQueue", "DeviceTrustPanel", "WorkItemMissionControl", "PersonalOpsCenter", "pc-current", "surface pc"],
+  "visibleDomForbiddenRawKeys": ["deviceId", "trustState", "surface", "payloadHash", "commandSubmissionId"],
+  "ordinaryPath": {
+    "apiModule": "apps/mobile/src/apiClient.js",
+    "runtimeModule": "apps/mobile/src/operationRuntime.js",
+    "pcApiModule": "apps/mobile/src/pcApiClient.js",
+    "pcRouteTree": "apps/mobile/src/pcRouteTree.js",
+    "pcEventBinder": "apps/mobile/src/pcEventBinder.js"
+  }
+}

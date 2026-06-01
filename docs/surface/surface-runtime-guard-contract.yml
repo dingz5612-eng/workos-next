@@ -1,0 +1,14 @@
+{
+  "contractId": "surface-runtime-guard-contract.v1",
+  "backendGuards": [
+    "mobile token cannot call PC release/governance/finance admin API",
+    "mobile search does not return PC governance raw records",
+    "pc governance cannot direct write business facts",
+    "workspace/card compatibility adapter cannot bypass pilot scope",
+    "wrong device rejected",
+    "wrong tenant rejected",
+    "learning content scoped by role/surface/tenant"
+  ],
+  "frontendGuardIsNotAuthorization": true,
+  "operationsRuntimeRequired": true
+}

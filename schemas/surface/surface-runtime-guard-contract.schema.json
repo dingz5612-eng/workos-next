@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://workosnext.local/schemas/surface/surface-runtime-guard-contract.schema.json",
+  "title": "Surface Runtime Guard Contract",
+  "type": "object",
+  "required": ["contractId", "backendGuards", "frontendGuardIsNotAuthorization", "operationsRuntimeRequired"],
+  "properties": {
+    "contractId": { "type": "string" },
+    "backendGuards": { "type": "array", "items": { "type": "string" }, "minItems": 7 }
+  }
+}

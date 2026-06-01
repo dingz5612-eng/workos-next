@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://workosnext.local/schemas/surface/device-trust-experience-contract.schema.json",
+  "title": "Device Trust Experience Contract",
+  "type": "object",
+  "required": ["contractId", "label", "mobileDefaultDevice", "pcContextLeakBehavior", "visibleRawFieldsForbidden", "backendGuardRequired"],
+  "properties": {
+    "contractId": { "type": "string" },
+    "visibleRawFieldsForbidden": { "type": "array", "items": { "type": "string" } },
+    "backendGuardRequired": { "type": "array", "items": { "type": "string" } }
+  }
+}

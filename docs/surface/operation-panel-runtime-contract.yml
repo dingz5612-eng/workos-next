@@ -1,0 +1,9 @@
+{
+  "contractId": "operation-panel-runtime-contract.v1",
+  "runtimeModelOnly": true,
+  "persistedWorkItemResolutionOrder": ["operationWorkItems", "workQueue", "workspaceId/cardId persisted mapping", "block"],
+  "trustedConfirmSheetSource": "persisted WorkItem runtime model",
+  "legacyTaskIdsForbiddenInPost": ["T-ROOM-CREATE"],
+  "ordinaryConfirmPath": ["prepareOperationWorkItem", "confirmOperationWorkItem"],
+  "forbiddenFallback": ["workspace.taskId", "card.workItemId non-persisted", "prepareCard", "confirmCard"]
+}

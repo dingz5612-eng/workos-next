@@ -1,0 +1,9 @@
+{
+  "contractId": "evidence-trust-experience-contract.v1",
+  "states": ["missing", "attached", "rejected", "wrong_scope", "upload_pending"],
+  "missingBlocksConfirm": true,
+  "rejectedBlocksConfirm": true,
+  "wrongScopeBlocksConfirm": true,
+  "trustedObjectRequired": true,
+  "evidenceAttachScopeGuardRequired": true
+}

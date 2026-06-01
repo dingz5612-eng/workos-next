@@ -147,6 +147,24 @@ Assert-Exists "scripts/check-domain-kit-usage.mjs"
 Assert-Exists "scripts/v5_4/b-gate-runner.mjs"
 Assert-Exists "scripts/check-dormitory-golden-domain.mjs"
 Assert-Exists "scripts/check-experience-contract.mjs"
+foreach ($surfaceChecker in @(
+  "scripts/surface/check-surface-experience-contract.mjs",
+  "scripts/surface/check-mobile-pc-surface-boundary.mjs",
+  "scripts/surface/check-operational-copy-matrix.mjs",
+  "scripts/surface/check-mobile-visible-copy.mjs",
+  "scripts/surface/check-no-raw-surface-labels.mjs",
+  "scripts/surface/check-mobile-search-contract.mjs",
+  "scripts/surface/check-learning-center-contract.mjs",
+  "scripts/surface/check-queue-state-contract.mjs",
+  "scripts/surface/check-device-trust-contract.mjs",
+  "scripts/surface/check-evidence-trust-contract.mjs",
+  "scripts/surface/check-permission-explainability-contract.mjs",
+  "scripts/surface/check-operation-panel-runtime-contract.mjs",
+  "scripts/surface/check-surface-api-boundary.mjs",
+  "scripts/surface/check-surface-runtime-guard-contract.mjs"
+)) {
+  Assert-Exists $surfaceChecker
+}
 Assert-Exists "scripts/check-operating-control-tower.mjs"
 Assert-Exists "scripts/check-operating-feedback-loop.mjs"
 Assert-Exists "scripts/rt4/check-final-completion-assurance.mjs"
@@ -652,6 +670,24 @@ Invoke-Checked "node" @("scripts/check-dormitory-golden-domain.mjs", "--self-tes
 Invoke-Checked "node" @("scripts/check-dormitory-golden-domain.mjs")
 Invoke-Checked "node" @("scripts/check-experience-contract.mjs", "--self-test")
 Invoke-Checked "node" @("scripts/check-experience-contract.mjs")
+foreach ($surfaceChecker in @(
+  "scripts/surface/check-surface-experience-contract.mjs",
+  "scripts/surface/check-mobile-pc-surface-boundary.mjs",
+  "scripts/surface/check-operational-copy-matrix.mjs",
+  "scripts/surface/check-mobile-visible-copy.mjs",
+  "scripts/surface/check-no-raw-surface-labels.mjs",
+  "scripts/surface/check-mobile-search-contract.mjs",
+  "scripts/surface/check-learning-center-contract.mjs",
+  "scripts/surface/check-queue-state-contract.mjs",
+  "scripts/surface/check-device-trust-contract.mjs",
+  "scripts/surface/check-evidence-trust-contract.mjs",
+  "scripts/surface/check-permission-explainability-contract.mjs",
+  "scripts/surface/check-operation-panel-runtime-contract.mjs",
+  "scripts/surface/check-surface-api-boundary.mjs",
+  "scripts/surface/check-surface-runtime-guard-contract.mjs"
+)) {
+  Invoke-Checked "node" @($surfaceChecker)
+}
 Invoke-Checked "node" @("scripts/check-operating-control-tower.mjs", "--self-test")
 Invoke-Checked "node" @("scripts/check-operating-control-tower.mjs")
 Invoke-Checked "node" @("scripts/check-operating-feedback-loop.mjs", "--self-test")
@@ -711,6 +747,20 @@ foreach ($requiredCiCommand in @(
   "b-gate-runner.mjs",
   "check-dormitory-golden-domain.mjs",
   "check-experience-contract.mjs",
+  "scripts/surface/check-surface-experience-contract.mjs",
+  "scripts/surface/check-mobile-pc-surface-boundary.mjs",
+  "scripts/surface/check-operational-copy-matrix.mjs",
+  "scripts/surface/check-mobile-visible-copy.mjs",
+  "scripts/surface/check-no-raw-surface-labels.mjs",
+  "scripts/surface/check-mobile-search-contract.mjs",
+  "scripts/surface/check-learning-center-contract.mjs",
+  "scripts/surface/check-queue-state-contract.mjs",
+  "scripts/surface/check-device-trust-contract.mjs",
+  "scripts/surface/check-evidence-trust-contract.mjs",
+  "scripts/surface/check-permission-explainability-contract.mjs",
+  "scripts/surface/check-operation-panel-runtime-contract.mjs",
+  "scripts/surface/check-surface-api-boundary.mjs",
+  "scripts/surface/check-surface-runtime-guard-contract.mjs",
   "check-operating-control-tower.mjs",
   "check-operating-feedback-loop.mjs",
   "check-final-completion-assurance.mjs"

@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://workosnext.local/schemas/surface/mobile-search-contract.schema.json",
+  "title": "Mobile Search Contract",
+  "type": "object",
+  "required": ["contractId", "surface", "sections", "resultContract", "pcRawRecordsVisible"],
+  "properties": {
+    "contractId": { "type": "string" },
+    "sections": { "type": "array", "items": { "type": "string" }, "minItems": 8 },
+    "resultContract": { "type": "array", "items": { "type": "string" }, "minItems": 4 }
+  }
+}

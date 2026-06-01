@@ -1,0 +1,8 @@
+{
+  "generated_at_utc": "2026-06-01T17:41:07.569Z",
+  "generated_by": "scripts/surface/check-permission-explainability-contract.mjs",
+  "status": "passed",
+  "check": "permission-explainability-contract",
+  "violation_count": 0,
+  "violations": []
+}

@@ -1,0 +1,8 @@
+{
+  "generated_at_utc": "2026-06-01T17:41:06.763Z",
+  "generated_by": "scripts/surface/check-learning-center-contract.mjs",
+  "status": "passed",
+  "check": "learning-center-contract",
+  "violation_count": 0,
+  "violations": []
+}

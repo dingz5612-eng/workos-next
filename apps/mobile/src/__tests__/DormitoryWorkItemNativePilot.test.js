@@ -34,8 +34,9 @@ describe("DORM-INT-02 WorkItem-native pilot", () => {
     expect(html).toContain('data-component="operationPanelRoute"');
     expect(html).toContain("operationsPrepare");
     expect(html).toContain("operationsConfirm");
-    expect(html).toContain("commandSubmissionId");
-    expect(html).toContain("payloadHash");
+    expect(html).toContain("提交记录");
+    expect(html).toContain("载荷指纹");
+    expect(visibleText(html)).not.toMatch(/\b(commandSubmissionId|payloadHash)\b/);
     vi.unstubAllGlobals();
   });
 
@@ -183,8 +184,8 @@ describe("DORM-INT-02 WorkItem-native pilot", () => {
     expect(eventBinder).toContain("openWorkItem");
     expect(eventBinder).not.toContain("financeReconciliationController");
     expect(eventBinder).not.toContain("pcGovernanceController");
-    expect(operationPanel).toContain("payloadHash");
-    expect(operationPanel).toContain("commandSubmissionId");
+    expect(operationPanel).toContain("payloadFingerprint");
+    expect(operationPanel).toContain("submissionRecord");
     expect(operationPanel).not.toContain("ctx.workspace()");
   });
 });
@@ -256,6 +257,10 @@ function ctx(overrides = {}) {
       recentTracesBody: "从 WorkItem 追踪提交、事件、证据和投影。",
       deviceTrustStatus: "设备可信状态",
       deviceTrustStatusBody: "查看当前设备是否可执行高风险动作。",
+      submissionRecord: "提交记录",
+      submissionRecordHelp: "确认后的稳定审计引用。",
+      payloadFingerprint: "载荷指纹",
+      payloadFingerprintHelp: "草稿字段和证据的提交指纹。",
       nextAction: "下一步",
       searchWorkItems: "WorkItem",
       searchOperationCases: "OperationCase",
@@ -330,6 +335,10 @@ function resourceWorkspaceFixture() {
 
 function source(relativePath) {
   return fs.readFileSync(new URL(relativePath, import.meta.url), "utf8");
+}
+
+function visibleText(html) {
+  return String(html).replace(/<[^>]*>/g, " ").replace(/\s+/g, " ");
 }
 
 function escape(value) {

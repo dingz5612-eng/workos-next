@@ -1,0 +1,8 @@
+{
+  "generated_at_utc": "2026-06-01T17:41:05.515Z",
+  "generated_by": "scripts/surface/check-surface-experience-contract.mjs",
+  "status": "passed",
+  "check": "surface-experience-contract",
+  "violation_count": 0,
+  "violations": []
+}

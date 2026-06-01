@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://workosnext.local/schemas/surface/learning-center-contract.schema.json",
+  "title": "Learning Center Contract",
+  "type": "object",
+  "required": ["contractId", "bottomNavSlot", "meEntryRequired", "todayCanShowDailyLearning", "searchCanFindLearning", "topics", "scopeRules"],
+  "properties": {
+    "contractId": { "type": "string" },
+    "topics": { "type": "array", "items": { "type": "string" }, "minItems": 6 },
+    "scopeRules": { "type": "array", "items": { "type": "string" }, "minItems": 3 }
+  }
+}

@@ -1,0 +1,65 @@
+{
+  "contractId": "surface-experience-contract.v1",
+  "stage": "SURFACE-C",
+  "status": "contract_guard",
+  "statusBoundary": {
+    "dormitoryL2ProductionAllowed": false,
+    "businessProductionGo": false,
+    "repairPartsHrProductionAllowed": false
+  },
+  "planes": {
+    "mobileWorkPlane": "docs/surface/mobile-work-plane-contract.yml",
+    "pcGovernancePlane": "docs/surface/pc-governance-plane-contract.yml"
+  },
+  "requiredContracts": [
+    "docs/surface/mobile-work-plane-contract.yml",
+    "docs/surface/pc-governance-plane-contract.yml",
+    "docs/surface/operational-copy-matrix.yml",
+    "docs/surface/mobile-search-contract.yml",
+    "docs/surface/learning-center-contract.yml",
+    "docs/surface/queue-state-contract.yml",
+    "docs/surface/device-trust-experience-contract.yml",
+    "docs/surface/evidence-trust-experience-contract.yml",
+    "docs/surface/permission-explainability-contract.yml",
+    "docs/surface/operation-panel-runtime-contract.yml",
+    "docs/surface/surface-api-boundary.yml",
+    "docs/surface/surface-runtime-guard-contract.yml"
+  ],
+  "runtimeAxis": [
+    "Definition",
+    "OperationCase",
+    "WorkItem",
+    "CommandSubmission",
+    "SliceCommandHandler",
+    "DomainEvent",
+    "LedgerTransaction",
+    "Projection",
+    "Surface"
+  ],
+  "machineChecks": [
+    "scripts/surface/check-surface-experience-contract.mjs",
+    "scripts/surface/check-mobile-pc-surface-boundary.mjs",
+    "scripts/surface/check-operational-copy-matrix.mjs",
+    "scripts/surface/check-mobile-visible-copy.mjs",
+    "scripts/surface/check-no-raw-surface-labels.mjs",
+    "scripts/surface/check-mobile-search-contract.mjs",
+    "scripts/surface/check-learning-center-contract.mjs",
+    "scripts/surface/check-queue-state-contract.mjs",
+    "scripts/surface/check-device-trust-contract.mjs",
+    "scripts/surface/check-evidence-trust-contract.mjs",
+    "scripts/surface/check-permission-explainability-contract.mjs",
+    "scripts/surface/check-operation-panel-runtime-contract.mjs",
+    "scripts/surface/check-surface-api-boundary.mjs",
+    "scripts/surface/check-surface-runtime-guard-contract.mjs"
+  ],
+  "forbidden": [
+    "Dormitory L2 Production allowed",
+    "Repair / Parts / HR production allowed",
+    "Business Production GO",
+    "page-specific business write API",
+    "Mobile BFF business fact write",
+    "PC Governance / Finance / Release bypassing Operations Runtime",
+    "SurfaceGuard as backend authorization replacement",
+    "workspace/card/task fallback in DORM-INT ordinary mobile confirm path"
+  ]
+}

@@ -1,0 +1,27 @@
+import { describe, expect, it } from "vitest";
+import { routeView } from "../appRouter.js";
+import { createSurfaceCtx, source, visibleText } from "./surfaceContractTestHelpers.js";
+
+describe("SURFACE-C Operation Panel runtime contract", () => {
+  it("normalizes legacy task ids and renders only persisted WorkItem runtime identity", () => {
+    const ctx = createSurfaceCtx({ view: "operationPanel", selectedWorkItemId: "T-ROOM-CREATE" });
+    const html = routeView(ctx);
+
+    expect(ctx.state.selectedWorkItemId).toBe("W-STAY-RESOURCE:roomSetup");
+    expect(html).toContain("W-STAY-RESOURCE:roomSetup");
+    expect(html).not.toContain("T-ROOM-CREATE");
+    expect(visibleText(html)).not.toMatch(/\b(commandSubmissionId|payloadHash)\b/);
+    expect(html).toContain("提交记录");
+    expect(html).toContain("载荷指纹");
+  });
+
+  it("keeps compatibility fallback diagnostic-only for the ordinary path", () => {
+    const runtime = source("../operationRuntime.js");
+    const panel = source("../views/operationPanelView.js");
+
+    expect(runtime).toContain("allowCompatibilityFallback = false");
+    expect(runtime).toContain("persisted_work_item_required");
+    expect(panel).toContain("state.selectedWorkItemId = persistedWorkItemId");
+    expect(panel).not.toContain("ctx.workspace()");
+  });
+});

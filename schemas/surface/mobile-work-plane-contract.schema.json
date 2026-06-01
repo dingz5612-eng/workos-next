@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://workosnext.local/schemas/surface/mobile-work-plane-contract.schema.json",
+  "title": "Mobile Work Plane Contract",
+  "type": "object",
+  "required": ["contractId", "plane", "bottomNavigation", "allowedViews", "forbiddenViews", "visibleDomForbiddenTokens", "visibleDomForbiddenRawKeys"],
+  "properties": {
+    "contractId": { "type": "string" },
+    "plane": { "const": "mobile" },
+    "bottomNavigation": { "type": "array", "items": { "type": "string" }, "minItems": 4 },
+    "allowedViews": { "type": "array", "items": { "type": "string" }, "minItems": 4 },
+    "forbiddenViews": { "type": "array", "items": { "type": "string" }, "minItems": 4 },
+    "visibleDomForbiddenTokens": { "type": "array", "items": { "type": "string" } },
+    "visibleDomForbiddenRawKeys": { "type": "array", "items": { "type": "string" } }
+  }
+}
