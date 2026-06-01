@@ -1,9 +1,9 @@
 {
   "version": "rt4.evidence-graph.v1",
   "mode": "STACKED_PRECONSTRUCTION",
-  "branch": "codex/rt5-workitem-native-experience",
-  "headSha": "0ea33a400e225f1dbe8972c0205790f4a099cefe",
-  "generatedAtUtc": "2026-06-01T10:10:23.557Z",
+  "branch": "codex/rt6-operating-control-tower",
+  "headSha": "b1d4d9e6b41dbeaf45c0fc7836842b1b1dab1b48",
+  "generatedAtUtc": "2026-06-01T10:24:21.755Z",
   "nodes": [
     {
       "id": "RT4-P0-001",
@@ -399,12 +399,34 @@
       "type": "branch",
       "status": "LOCAL_PASSED",
       "branch": "codex/rt5-workitem-native-experience",
-      "headSha": "0ea33a400e225f1dbe8972c0205790f4a099cefe",
+      "headSha": "2dfadd7133c265ba06a492fc322e30c061e5026e",
       "refs": [
         "clean Docker PostgreSQL workosnext-rt5-test",
         "docs/business/experience-contract.yml",
         "node scripts/check-experience-contract.mjs --self-test",
         "node scripts/check-experience-contract.mjs",
+        "npm --prefix apps/mobile run build",
+        "npm --prefix apps/mobile run test",
+        "dotnet test tests/WorkOS.UnitTests/WorkOS.UnitTests.csproj -c Release --no-build",
+        "dotnet test tests/WorkOS.RuntimeIntegrationTests/WorkOS.RuntimeIntegrationTests.csproj -c Release --no-build",
+        "dotnet run --project tests/WorkOS.RuntimeContractTests/WorkOS.RuntimeContractTests.csproj -c Release",
+        "node scripts/v5_4/certify-dormitory.mjs --sourceMode=real",
+        "node scripts/v5_4/b-gate-runner.mjs",
+        "pwsh -NoProfile -File scripts/guard-architecture.ps1",
+        "pwsh -NoProfile -File scripts/v5_4/run-control-plane-checks.ps1"
+      ]
+    },
+    {
+      "id": "RT-6",
+      "type": "branch",
+      "status": "LOCAL_PASSED",
+      "branch": "codex/rt6-operating-control-tower",
+      "headSha": "b1d4d9e6b41dbeaf45c0fc7836842b1b1dab1b48",
+      "refs": [
+        "clean Docker PostgreSQL workosnext-rt6-test",
+        "docs/business/operating-control-tower.yml",
+        "node scripts/check-operating-control-tower.mjs --self-test",
+        "node scripts/check-operating-control-tower.mjs",
         "npm --prefix apps/mobile run build",
         "npm --prefix apps/mobile run test",
         "dotnet test tests/WorkOS.UnitTests/WorkOS.UnitTests.csproj -c Release --no-build",
