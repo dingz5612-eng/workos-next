@@ -1,9 +1,9 @@
 {
   "version": "rt4.evidence-graph.v1",
   "mode": "STACKED_PRECONSTRUCTION",
-  "branch": "",
-  "headSha": "a4198d9002b7ef3ac643ea8fbf5f500fa7a3f91d",
-  "generatedAtUtc": "2026-06-01T07:23:42.144Z",
+  "branch": "codex/rt1-runtime-spine-non-bypass",
+  "headSha": "bc0a833b3c025caeb099e2fd33963fa61a6d0097",
+  "generatedAtUtc": "2026-06-01T07:30:16.005Z",
   "nodes": [
     {
       "id": "RT4-P0-001",
@@ -232,7 +232,7 @@
       "type": "branch",
       "status": "LOCAL_PASSED",
       "branch": "codex/rt1-runtime-spine-non-bypass",
-      "headSha": "241abcef5524c58000df19519e2a894aca0b4f61",
+      "headSha": "bc0a833b3c025caeb099e2fd33963fa61a6d0097",
       "refs": [
         "clean Docker PostgreSQL workosnext-rt1-ci",
         "node scripts/check-runtime-write-paths.mjs --self-test",
