@@ -1,9 +1,9 @@
 {
   "version": "rt4.evidence-graph.v1",
   "mode": "STACKED_PRECONSTRUCTION",
-  "branch": "codex/rtf-operating-feedback-loop",
-  "headSha": "03a0ac8af8ee165224ffbb7a07ca762ddac9bdc1",
-  "generatedAtUtc": "2026-06-01T10:38:11.974Z",
+  "branch": "codex/rtfinal-completion-assurance-report",
+  "headSha": "044a38ce9cbd7df0282f04c20ee07e35802deb30",
+  "generatedAtUtc": "2026-06-01T10:42:54.032Z",
   "nodes": [
     {
       "id": "RT4-P0-001",
@@ -443,7 +443,7 @@
       "type": "branch",
       "status": "LOCAL_PASSED",
       "branch": "codex/rtf-operating-feedback-loop",
-      "headSha": "03a0ac8af8ee165224ffbb7a07ca762ddac9bdc1",
+      "headSha": "a9f0cad883375d90524dd07405186eef4457f8b0",
       "refs": [
         "clean Docker PostgreSQL workosnext-rtf-test",
         "docs/operations/operating-feedback-loop.md",
@@ -459,6 +459,25 @@
         "dotnet run --project tests/WorkOS.RuntimeContractTests/WorkOS.RuntimeContractTests.csproj -c Release",
         "node scripts/v5_4/certify-dormitory.mjs --sourceMode=real",
         "node scripts/v5_4/b-gate-runner.mjs",
+        "pwsh -NoProfile -File scripts/guard-architecture.ps1",
+        "pwsh -NoProfile -File scripts/v5_4/run-control-plane-checks.ps1"
+      ]
+    },
+    {
+      "id": "RT-FINAL",
+      "type": "branch",
+      "status": "LOCAL_PASSED",
+      "branch": "codex/rtfinal-completion-assurance-report",
+      "headSha": "044a38ce9cbd7df0282f04c20ee07e35802deb30",
+      "refs": [
+        "clean Docker PostgreSQL workosnext-rtfinal-test",
+        "docs/program/rt4/final-completion-assurance-report.md",
+        "artifacts/rt4/final-completion-assurance-result.json",
+        "scripts/rt4/check-final-completion-assurance.mjs",
+        "node scripts/rt4/check-final-completion-assurance.mjs",
+        "node scripts/rt4/verify-evidence-graph.mjs",
+        "node scripts/rt4/check-completion-dashboard.mjs",
+        "node scripts/rt4/check-six-file-coverage.mjs",
         "pwsh -NoProfile -File scripts/guard-architecture.ps1",
         "pwsh -NoProfile -File scripts/v5_4/run-control-plane-checks.ps1"
       ]
