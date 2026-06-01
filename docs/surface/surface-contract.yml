@@ -1,0 +1,80 @@
+{
+  "version": "surface-contract.v1",
+  "status": "pilot_guard",
+  "operationRuntimePure": {
+    "persistedWorkItemResolutionOrder": [
+      "selected persisted WorkItem from operationWorkItems",
+      "selected persisted WorkItem from workQueue",
+      "workspaceId/cardId mapped persisted WorkItem",
+      "block with operation_work_item_required"
+    ],
+    "forbiddenFallbackPaths": [
+      "workspace.taskId",
+      "card.workItemId when it is not persisted",
+      "prepareCard in ordinary DORM-INT confirm path",
+      "confirmCard in ordinary DORM-INT confirm path",
+      "submitCardOperationCompatibilityFallback unless explicitly diagnostic"
+    ],
+    "legacyTaskIdExample": "T-ROOM-CREATE",
+    "resolvedPersistedExample": "W-STAY-RESOURCE:roomSetup"
+  },
+  "mobile": {
+    "allowedSurfaces": [
+      "home",
+      "workbench",
+      "search",
+      "me",
+      "workspace",
+      "operationPanel",
+      "learning",
+      "notes",
+      "reminders",
+      "feedback",
+      "result",
+      "confirmPage"
+    ],
+    "allowedApiModules": [
+      "apps/mobile/src/apiClient.js",
+      "apps/mobile/src/operationRuntime.js"
+    ],
+    "forbiddenPcSurfaces": [
+      "releaseControl",
+      "releaseFlightDeck",
+      "pcGovernance",
+      "governanceCenter",
+      "financeControl",
+      "financeReconciliation",
+      "managerControlTower",
+      "pcManager"
+    ],
+    "forbiddenPcApiTokens": [
+      "controlPlaneReleases",
+      "observability",
+      "bankStatementImport",
+      "reconciliation",
+      "correction",
+      "behaviorEvents"
+    ]
+  },
+  "pc": {
+    "allowedSurfaces": [
+      "releaseControl",
+      "releaseFlightDeck",
+      "pcGovernance",
+      "governanceCenter",
+      "financeControl",
+      "financeReconciliation",
+      "managerControlTower",
+      "pcManager"
+    ],
+    "routeTree": "apps/mobile/src/pcRouteTree.js",
+    "eventBinder": "apps/mobile/src/pcEventBinder.js",
+    "apiModule": "apps/mobile/src/pcApiClient.js",
+    "dataHydrator": "apps/mobile/src/pcSurfaceData.js"
+  },
+  "compatibilityAdapter": {
+    "allowedOnlyAs": "legacy fallback diagnostic",
+    "normalDormIntPath": "forbidden",
+    "diagnosticFunction": "submitCardOperationCompatibilityFallback"
+  }
+}

@@ -145,11 +145,11 @@ function validateMobileSources() {
   if (!operationPanel.includes("operationPanelView") || !operationPanel.includes("payloadHash") || !operationPanel.includes("commandSubmissionId")) {
     violations.push(violation("experience_contract.operation_panel_route_missing", "Operation Panel route must show prepare/confirm/trace/evidence/projection/commandSubmissionId/payloadHash."));
   }
-  if (!home.includes("WorkItem Mission Control")) {
-    violations.push(violation("experience_contract.today_mission_control_missing", "Today must render WorkItem Mission Control."));
+  if (!home.includes('tr("todayMissionControl")') || !home.includes('data-surface="today-mission-control"')) {
+    violations.push(violation("experience_contract.today_mission_control_missing", "Today must render localized WorkItem Mission Control."));
   }
-  if (!me.includes("Personal Ops Center")) {
-    violations.push(violation("experience_contract.personal_ops_center_missing", "Me must render Personal Ops Center."));
+  if (!me.includes('tr("personalOpsCenter")') || !me.includes('data-surface="personal-ops-center"')) {
+    violations.push(violation("experience_contract.personal_ops_center_missing", "Me must render localized Personal Ops Center."));
   }
   if (!workspace.includes("LifecycleWorkspace") || !workspace.includes("OperationPanelView")) {
     violations.push(violation("experience_contract.lifecycle_workspace_not_rendered", "Workspace must render LifecycleWorkspace and OperationPanelView as the primary experience."));

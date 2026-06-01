@@ -85,7 +85,7 @@ describe("PC finance reconciliation bank import", () => {
 
   it("api client exposes preview and confirm import paths without payment confirm", () => {
     const root = repoRoot();
-    const apiClient = readFileSync(resolve(root, "apps/mobile/src/apiClient.js"), "utf8");
+    const apiClient = readFileSync(resolve(root, "apps/mobile/src/pcApiClient.js"), "utf8");
     const generatedPaths = readFileSync(resolve(root, "apps/mobile/src/generated/runtimeApiPaths.js"), "utf8");
 
     expect(apiClient).toContain("previewBankStatementImport");
@@ -190,7 +190,7 @@ describe("PC finance reconciliation bank import", () => {
 
   it("pc_apply_correction_appends_reversal", () => {
     const root = repoRoot();
-    const apiClient = readFileSync(resolve(root, "apps/mobile/src/apiClient.js"), "utf8");
+    const apiClient = readFileSync(resolve(root, "apps/mobile/src/pcApiClient.js"), "utf8");
     const storage = readFileSync(resolve(root, "services/core-api/WorkOS.Api/Runtime/RuntimeCorrectionCenterStorage.cs"), "utf8");
 
     expect(apiClient).toContain("applyLedgerCorrection");
@@ -219,7 +219,7 @@ describe("PC finance reconciliation bank import", () => {
     const root = repoRoot();
     const view = readFileSync(resolve(root, "apps/mobile/src/views/financeReconciliationView.js"), "utf8");
     const controller = readFileSync(resolve(root, "apps/mobile/src/financeReconciliationController.js"), "utf8");
-    const apiClient = readFileSync(resolve(root, "apps/mobile/src/apiClient.js"), "utf8");
+    const apiClient = readFileSync(resolve(root, "apps/mobile/src/pcApiClient.js"), "utf8");
 
     expect(view).not.toContain("data-direct-ledger-update");
     expect(controller).not.toContain("update ledger");

@@ -89,8 +89,11 @@ const importGraph = new Map();
 for (const file of jsFiles) {
   const source = fs.readFileSync(file, "utf8");
   const imports = [];
-  for (const match of source.matchAll(/import\s+(?:[^"']+?\s+from\s+)?["'](.+?)["']/g)) {
-    const specifier = match[1];
+  const importSpecifiers = [
+    ...[...source.matchAll(/import\s+(?:[^"']+?\s+from\s+)?["'](.+?)["']/g)].map((match) => match[1]),
+    ...[...source.matchAll(/import\(\s*["'](.+?)["']\s*\)/g)].map((match) => match[1])
+  ];
+  for (const specifier of importSpecifiers) {
     if (!specifier.startsWith(".")) continue;
     let target = path.normalize(path.join(path.dirname(file), specifier));
     if (!path.extname(target)) target += ".js";

@@ -10,6 +10,7 @@ export function shell(content, ctx) {
         <select id="language" aria-label="${tr("language")}">
           <option value="zh-CN" ${state.lang === "zh-CN" ? "selected" : ""}>${tr("zh")}</option>
           <option value="ru-RU" ${state.lang === "ru-RU" ? "selected" : ""}>${tr("ru")}</option>
+          <option value="ky-KG" ${state.lang === "ky-KG" ? "selected" : ""}>${tr("ky")}</option>
         </select>
       </header>
       ${apiBanner(ctx)}

@@ -11,7 +11,7 @@ import {
   rejectLedgerCorrection,
   requestLedgerCorrection,
   rejectReconciliationCandidate
-} from "./apiClient.js";
+} from "./pcApiClient.js";
 
 export async function previewBankImport(ctx) {
   const body = await requestFromForm(ctx);

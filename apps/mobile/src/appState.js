@@ -34,6 +34,7 @@ export function createInitialState() {
     operationMessage: "",
     apiStatus: "checking",
     currentActor: actor,
+    currentDevice: { deviceId: "mobile-current", deviceTrustStatus: "trusted", surface: "mobile" },
     loginMessage: "",
     projectionEvents: [],
     releaseControl: { releases: [], selectedRelease: null },

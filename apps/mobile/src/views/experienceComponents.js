@@ -165,37 +165,44 @@ export function EvidenceSheet(card, draft, ctx) {
 
 export function PermissionDiagnostic(decision = {}, ctx) {
   const copy = permissionDiagnosticCopy(decision);
-  return `<section class="permission-diagnostic" data-component="PermissionDiagnostic">
-    <span>PermissionDiagnostic</span>
+  return `<section class="permission-diagnostic" data-surface="permission-diagnostic">
+    <span>${ctx.tr("permissionDiagnostic")}</span>
     <h1>${text(copy.reason, ctx)}</h1>
     <dl>
-      ${field("why", copy.reason, ctx)}
-      ${field("owner", copy.owner, ctx)}
-      ${field("requiredPermission", copy.requiredPermission, ctx)}
-      ${field("nextAction", copy.nextAction, ctx)}
+      ${field(ctx.tr("permissionWhy"), copy.reason, ctx)}
+      ${field(ctx.tr("permissionOwner"), copy.owner, ctx)}
+      ${field(ctx.tr("requiredPermission"), copy.requiredPermission, ctx)}
+      ${field(ctx.tr("permissionNextAction"), copy.nextAction, ctx)}
     </dl>
   </section>`;
 }
 
 export function UploadQueue(state = {}, ctx) {
   const count = state.uploadQueue?.length || 0;
-  return queuePanel("UploadQueue", count, count ? "Evidence upload waiting" : "No pending evidence upload", ctx);
+  return queuePanel("upload-queue", ctx.tr("evidenceUpload"), count, count ? ctx.tr("evidenceUploadWaiting") : ctx.tr("noPendingEvidenceUpload"), ctx);
 }
 
 export function SubmitQueue(state = {}, ctx) {
   const count = state.submitQueue?.length || 0;
-  return queuePanel("SubmitQueue", count, count ? "Submissions waiting" : "No pending submission", ctx);
+  return queuePanel("submit-queue", ctx.tr("submissionQueue"), count, count ? ctx.tr("submissionWaiting") : ctx.tr("noPendingSubmission"), ctx);
 }
 
 export function DeviceTrustPanel(state = {}, ctx) {
-  const device = state.pcGovernance?.currentDevice || state.currentDevice || {};
-  return `<section class="device-trust-panel" data-component="DeviceTrustPanel">
-    <b>DeviceTrustPanel</b>
-    <dl>
-      ${field("deviceId", device.deviceId || "mobile-current", ctx)}
-      ${field("trustState", device.deviceTrustStatus || "unknown", ctx)}
-      ${field("surface", device.surface || "mobile", ctx)}
-    </dl>
+  const device = state.currentDevice || state.pcGovernance?.currentDevice || {};
+  const surface = device.surface || "mobile";
+  const deviceId = device.deviceId || "mobile-current";
+  const trustState = device.deviceTrustStatus || device.trustState || "unknown";
+  if (surface !== "mobile" || String(deviceId).startsWith("pc-")) {
+    return `<section class="device-trust-panel context-mismatch" data-surface="device-trust">
+      <b>${ctx.tr("deviceContextIssue")}</b>
+      <p>${ctx.tr("deviceContextIssueBody")}</p>
+    </section>`;
+  }
+
+  const statusLabel = trustState === "trusted" ? ctx.tr("deviceTrusted") : ctx.tr("deviceUnknown");
+  return `<section class="device-trust-panel" data-surface="device-trust">
+    <b>${ctx.tr("currentDevice")}</b>
+    <p>${statusLabel}</p>
   </section>`;
 }
 
@@ -209,7 +216,7 @@ export function workItemModel(item = {}, ctx) {
   return {
     workspaceId: item.workspaceId || workspace?.id || "",
     cardId: item.cardId || card?.id || "",
-    workItemId: item.workItemId || item.work_item_id || runtimeItem?.workItemId || runtimeItem?.work_item_id || persistedWorkItemIdFor(workspace, card) || item.queueItemId || "",
+    workItemId: runtimeItem?.workItemId || runtimeItem?.work_item_id || persistedWorkItemIdFor(workspace, card) || persistedCandidate(item.workItemId || item.work_item_id) || item.queueItemId || "",
     caseId: item.caseId || item.case_id || runtimeItem?.caseId || runtimeItem?.case_id || workspace?.caseId || workspace?.id || "",
     workItemType: item.workItemType || item.work_item_type || runtimeItem?.workItemType || runtimeItem?.work_item_type || card?.id || workspace?.domain || "operations",
     lifecycleState: item.lifecycleState || item.lifecycle_state || item.status || runtimeItem?.lifecycleState || runtimeItem?.lifecycle_state || runtimeItem?.status || card?.status || "ready",
@@ -223,6 +230,10 @@ export function workItemModel(item = {}, ctx) {
     dueAt: item.dueAt || item.due || "today",
     businessObject: tx(title, ctx) || item.businessObject || "-"
   };
+}
+
+function persistedCandidate(value) {
+  return isPersistedWorkItemId(value) ? value : "";
 }
 
 function runtimeWorkItemFor(item, workspace, card, ctx) {
@@ -249,12 +260,12 @@ function persistedWorkItemIdFor(workspace, card) {
 }
 
 function isPersistedWorkItemId(value) {
-  return String(value || "").includes(":") || String(value || "").startsWith("wi-");
+  return String(value || "").includes(":") || /^wi-/i.test(String(value || ""));
 }
 
-function queuePanel(component, count, message, ctx) {
-  return `<section class="personal-ops-panel" data-component="${component}">
-    <b>${component}</b>
+function queuePanel(component, label, count, message, ctx) {
+  return `<section class="personal-ops-panel" data-surface="${attr(component, ctx)}">
+    <b>${label}</b>
     <strong>${count}</strong>
     <p>${text(message, ctx)}</p>
   </section>`;
