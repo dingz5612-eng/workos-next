@@ -1,5 +1,5 @@
 {
-  "generatedAtUtc": "2026-06-02T14:04:58.637Z",
+  "generatedAtUtc": "2026-06-02T14:38:34.028Z",
   "generatedBy": "check-artifact-baseline",
   "stage": "OAM-CLEAN-BASELINE-D2",
   "status": "passed",
@@ -8,7 +8,7 @@
   "finalArtifactCount": 19,
   "staleArtifactCount": 22,
   "inputHash": "d67c32f9ddf7ae955d94170b280b136600739de8f274565045373019be690b4d",
-  "resultHash": "10c4d636cb0ae04c97d72b4331c7d8e51891bf682aa1b65355f546707ca4c87a",
+  "resultHash": "4be320fb2a1545d06ade383e6fc4205e4edfb327c1d721cc96259ae6982d419e",
   "noGoItems": [],
   "productionAllowed": false,
   "dormitoryL2ProductionAllowed": false,
