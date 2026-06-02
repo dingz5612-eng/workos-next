@@ -18,7 +18,7 @@ const attestation = readJson("artifacts/release-state/post-merge-attestation.jso
 const requiredOutputs = [
   "artifacts/release-state/post-merge-attestation.json",
   "artifacts/release-state/artifact-git-binding-result.json",
-  "artifacts/operations/dormitory/observation-gate-day-01.json",
+  "artifacts/operations/dormitory/day2-entry-gate-result.json",
   "artifacts/business/dormitory/scenario-attempt-semantics-result.json",
   "artifacts/go-live/dormitory/internal-pilot-run-semantics-result.json",
   "artifacts/go-live/dormitory/internal-pilot-ledger-semantics-result.json",
@@ -34,6 +34,7 @@ const ledgerEntries = appendHashChain([
     mergeCommit: repoHead,
     ciRunId: attestation.ci?.id ?? null,
     v54RunId: attestation.v54ControlPlaneGuards?.id ?? null,
+    prNumber: attestation.prNumber ?? 72,
     generatedBy: "check-evidence-ledger-append-only",
     inputRefs: ["artifacts/operations/dormitory/observation-day-01.json"],
     outputRefs: ["artifacts/release-state/post-merge-attestation.json"]
@@ -47,6 +48,7 @@ const ledgerEntries = appendHashChain([
     mergeCommit: repoHead,
     ciRunId: attestation.ci?.id ?? null,
     v54RunId: attestation.v54ControlPlaneGuards?.id ?? null,
+    prNumber: attestation.prNumber ?? 72,
     generatedBy: "check-evidence-ledger-append-only",
     inputRefs: ["artifacts/release-state/current-state.json", "artifacts/go-live/dormitory/internal-pilot-go-no-go.json"],
     outputRefs: ["artifacts/release-state/artifact-git-binding-result.json"]
@@ -60,9 +62,10 @@ const ledgerEntries = appendHashChain([
     mergeCommit: repoHead,
     ciRunId: attestation.ci?.id ?? null,
     v54RunId: attestation.v54ControlPlaneGuards?.id ?? null,
+    prNumber: attestation.prNumber ?? 72,
     generatedBy: "check-evidence-ledger-append-only",
     inputRefs: ["artifacts/operations/dormitory/observation-day-01.json"],
-    outputRefs: ["artifacts/operations/dormitory/observation-gate-day-01.json", "artifacts/operations/dormitory/observation-ledger.jsonl"]
+    outputRefs: ["artifacts/operations/dormitory/day2-entry-gate-result.json", "artifacts/operations/dormitory/observation-ledger.jsonl", "artifacts/operations/dormitory/observation-index.json"]
   }),
   evidenceEntry({
     evidenceId: "oam-a4-semantic-acceptance",
@@ -73,6 +76,7 @@ const ledgerEntries = appendHashChain([
     mergeCommit: repoHead,
     ciRunId: attestation.ci?.id ?? null,
     v54RunId: attestation.v54ControlPlaneGuards?.id ?? null,
+    prNumber: attestation.prNumber ?? 72,
     generatedBy: "check-evidence-ledger-append-only",
     inputRefs: ["artifacts/go-live/dormitory/live-api-db-replay-result.json", "artifacts/go-live/dormitory/finance-daily-close-result.json"],
     outputRefs: requiredOutputs

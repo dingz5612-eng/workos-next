@@ -1,13 +1,13 @@
 # OAM-00 证据重绑定与状态调和报告
 
+## 中文摘要
+
+已将 DORM-INT final artifact 重新绑定到当前 `origin/main`，并移除 final go-live evidence refs 中的 `.tmp` 引用。Evidence Graph 与 Completion Dashboard 已从 stacked preconstruction 调和为 `L1_INTERNAL_PILOT_OBSERVATION`。
+
+## 结果
+
 - status: `passed`
-- current main: `fad090ad45fb44efbcd22d3f13fd7b130dfc6ab0`
-- DORM-INT latestMain: `fad090ad45fb44efbcd22d3f13fd7b130dfc6ab0`
-- Evidence Graph mode: `L1_INTERNAL_PILOT_OBSERVATION`
-- Completion Dashboard mode: `L1_INTERNAL_PILOT_OBSERVATION`
-
-## 中文结论
-证据与状态已调和到当前 main；宿舍只保持 L1 内测观察，不允许 L2 Production，不允许 Business Production GO。
-
-## No-Go Items
-- none
+- mainHead: `b86aa1b60d90e2f18e780781b4077a63a7068c0f`
+- Business Production: `BLOCKED`
+- Dormitory L2 Production: `false`
+- Repair / Parts / HR: `L0 Contract Preview`

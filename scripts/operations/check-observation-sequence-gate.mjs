@@ -23,7 +23,7 @@ const binding = readJson("artifacts/release-state/artifact-git-binding-result.js
 const day1 = readJson("artifacts/operations/dormitory/observation-day-01.json");
 const failures = [];
 
-if (day !== 1) failures.push("阶段 A observation sequence gate 只能验收 Day-1 和 Day-2 前置条件。");
+if (![1, 2].includes(day)) failures.push("observation sequence gate 只能验收 Day-1 或 Day-2 前置条件。");
 if (fs.existsSync(path.join(root, "artifacts/operations/dormitory/observation-day-02.json"))) {
   failures.push("Day-2 artifact 已存在；必须先暂停 Day-2，完成阶段 A。");
 }
@@ -75,6 +75,7 @@ const index = {
   })),
   nextDay: failures.length === 0 ? 2 : null,
   day2Allowed: failures.length === 0,
+  day2EntryGateRef: "artifacts/operations/dormitory/day2-entry-gate-result.json",
   productionAllowed: false,
   dormitoryL2ProductionAllowed: false,
   businessProduction: "blocked",
@@ -85,10 +86,10 @@ writeJson("artifacts/operations/dormitory/observation-index.json", index);
 const gate = {
   generatedAtUtc,
   generatedBy: "check-observation-sequence-gate",
-  stage: "OAM-ACCEPTANCE-CLOSURE-A3",
-  day: 1,
+  stage: day === 2 ? "DORM-L1-DAY2-ENTRY-GATE" : "OAM-ACCEPTANCE-CLOSURE-A3",
+  day,
   status: failures.length === 0 ? "passed" : "failed",
-  decision: failures.length === 0 ? "allow_day_2_after_clean_baseline" : "block_day_2",
+  decision: failures.length === 0 ? "allow_day_2_after_post_clean_baseline_remote_attestation" : "block_day_2",
   repositoryHead: repoHead,
   verifiedMainHead: attestation.verifiedMainHead,
   postMergeAttestationStatus: attestation.status,
@@ -106,13 +107,15 @@ const gate = {
     "artifacts/operations/dormitory/observation-ledger.jsonl",
     "artifacts/operations/dormitory/observation-index.json"
   ],
+  day2CanStart: failures.length === 0,
+  day2StartCondition: "Day-2 can start only after this PR is merged and b86aa1b or later main has post-merge attestation.",
   productionAllowed: false,
   dormitoryL2ProductionAllowed: false,
   businessProduction: "blocked",
   repairPartsHrStatus: "L0 Contract Preview"
 };
 if (gate.observationLedgerStatus !== "passed") failures.push("observation-ledger hash-chain 校验失败。");
-writeJson("artifacts/operations/dormitory/observation-gate-day-01.json", gate);
+writeJson(day === 2 ? "artifacts/operations/dormitory/day2-entry-gate-result.json" : "artifacts/operations/dormitory/observation-gate-day-01.json", gate);
 
 failIfNeeded(failures, "observation sequence gate");
 console.log("observation sequence gate: PASS");
