@@ -2,6 +2,8 @@ import { readJson, repositoryHead, workflowRunsForHead, pickWorkflowRun, normali
 
 const generatedAtUtc = new Date().toISOString();
 const repoHead = repositoryHead();
+const postMergePrNumber = Number(process.env.OAM_POST_MERGE_PR_NUMBER || 72);
+const pullRequest = await readPullRequest(postMergePrNumber);
 const runs = await workflowRunsForHead(repoHead);
 const ci = normalizeRun(pickWorkflowRun(runs, "CI"));
 const v54 = normalizeRun(pickWorkflowRun(runs, "V5.4 Control Plane Guards"));
@@ -21,9 +23,9 @@ const result = {
   verifiedMainHead: verified ? repoHead : null,
   status: verified ? "passed" : "WAITING_FOR_POST_MERGE_ATTESTATION",
   localHead: localHead(),
-  prNumber: 71,
-  prHead: day1?.headSha ?? null,
-  prBase: day1?.originMainHead ?? null,
+  prNumber: postMergePrNumber,
+  prHead: pullRequest?.head?.sha ?? null,
+  prBase: pullRequest?.base?.sha ?? null,
   mergeCommit: repoHead,
   ci,
   v54ControlPlaneGuards: v54,
@@ -70,6 +72,21 @@ console.log(`post-merge attestation: ${result.status}`);
 function safeRead(relativePath) {
   try {
     return readJson(relativePath);
+  } catch {
+    return null;
+  }
+}
+
+async function readPullRequest(prNumber) {
+  try {
+    const response = await fetch(`https://api.github.com/repos/${repository}/pulls/${prNumber}`, {
+      headers: {
+        Accept: "application/vnd.github+json",
+        "User-Agent": "workosnext-oam-post-clean-attestation"
+      }
+    });
+    if (!response.ok) return null;
+    return response.json();
   } catch {
     return null;
   }

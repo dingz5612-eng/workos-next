@@ -16,6 +16,7 @@ const verifiedMainHead = attestation.verifiedMainHead ?? null;
 const failures = [];
 const artifactPaths = [
   "artifacts/release-state/current-state.json",
+  "artifacts/release-state/post-merge-attestation.json",
   "artifacts/oam/oam-final-acceptance-result.json",
   "artifacts/go-live/dormitory/internal-pilot-go-no-go.json",
   "artifacts/go-live/dormitory/day0-readiness-result.json",
@@ -26,6 +27,17 @@ const artifactPaths = [
   "artifacts/portfolio/business-line-maturity-result.json",
   "artifacts/portfolio/production-governance-result.json"
 ];
+const staleFinalEvidencePaths = new Set([
+  "artifacts/release-state/current-state.json",
+  "artifacts/release-state/post-merge-attestation.json",
+  "artifacts/go-live/dormitory/internal-pilot-go-no-go.json",
+  "artifacts/operations/dormitory/day2-entry-gate-result.json",
+  "artifacts/rt4/evidence-graph.json",
+  "artifacts/rt4/completion-dashboard.json"
+]);
+if (fileExists("artifacts/operations/dormitory/day2-entry-gate-result.json")) {
+  artifactPaths.push("artifacts/operations/dormitory/day2-entry-gate-result.json");
+}
 
 const artifacts = artifactPaths.map((artifactPath) => inspectArtifact(artifactPath));
 
@@ -37,6 +49,15 @@ for (const item of artifacts) {
   if (item.noTmpFinalRefs === false) failures.push(`${item.artifactPath} 包含 .tmp final evidence refs。`);
   if (item.productionBoundaryOk === false) failures.push(`${item.artifactPath} 出现 production / L2 / Repair Parts HR 放开状态。`);
   if (item.noGoItemsNonEmpty && item.status === "passed") failures.push(`${item.artifactPath} status=passed 但 noGoItems 非空。`);
+  if (item.stale && item.staleFinalEvidenceAllowed === false) {
+    failures.push(`${item.artifactPath} 是 stale final evidence，必须重新绑定当前 repositoryHead。`);
+  }
+  if (item.artifactPath === "artifacts/release-state/current-state.json" && item.stale) {
+    failures.push("current-state refs stale，必须 fail。");
+  }
+  if (item.artifactPath === "artifacts/operations/dormitory/day2-entry-gate-result.json" && item.stale) {
+    failures.push("Day-2 gate refs stale，必须 fail。");
+  }
   if (item.artifactPath.includes("observation-day-01") && item.artifactBase !== "1a2fb45a89f3d1ef18eaf4ca216ecdc57660df30") {
     failures.push("observation-day-01.originMainHead 必须绑定 Day-1 PR base。");
   }
@@ -105,12 +126,23 @@ function inspectArtifact(artifactPath) {
     validatedAgainstMainSha: verifiedMainHead,
     repositoryHead: repoHead,
     verifiedMainHead,
-    stale: Boolean(artifactHeadSha && artifactHeadSha !== repoHead && artifactPath !== "artifacts/operations/dormitory/observation-day-01.json"),
+    stale: Boolean(artifactHeadSha && artifactHeadSha !== repoHead),
+    staleHistoricalAllowed: !staleFinalEvidencePaths.has(artifactPath),
+    staleFinalEvidenceAllowed: !staleFinalEvidencePaths.has(artifactPath),
     noTmpFinalRefs: tmpFailures.length === 0,
     productionBoundaryOk: prodFailures.length === 0,
     noGoItemsNonEmpty: Array.isArray(noGoItems) && noGoItems.length > 0,
     hash: exists ? fileHash(artifactPath) : null
   };
+}
+
+function fileExists(artifactPath) {
+  try {
+    readJson(artifactPath);
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 function headFor(artifactPath, value) {
