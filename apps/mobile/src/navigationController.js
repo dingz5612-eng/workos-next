@@ -1,9 +1,8 @@
 import { fetchSearchResults } from "./apiClient.js";
-import { defaultHomeForRole } from "./experienceContract.js";
 import { applyRuntimeSearchResults } from "./runtime/runtimeStore.js";
 import { selectWorkspaceById } from "./selectors/surfaceSelectors.js";
 import { evaluateSurfaceAccess } from "./surfaceGuard.js";
-import { isPcSurfaceView } from "./surfaceRegistry.js";
+import { defaultHomeForCurrentSurface as resolveDefaultHomeForCurrentSurface } from "./surfaceResolver.js";
 
 export function setView(view, ctx) {
   if (!ctx.state.currentActor && view !== "login") {
@@ -35,12 +34,7 @@ export function onboard(ctx) {
 }
 
 export function defaultHomeForCurrentSurface(ctx) {
-  const roleHome = defaultHomeForRole(ctx.state.currentActor?.role);
-  const deviceSurface = ctx.state.currentDevice?.surface || ctx.state.pcGovernance?.currentDevice?.surface || "";
-  if (deviceSurface === "mobile" && isPcSurfaceView(roleHome)) {
-    return ctx.state.currentActor?.role === "housekeeping" ? "workbench" : "home";
-  }
-  return roleHome;
+  return resolveDefaultHomeForCurrentSurface(ctx.state);
 }
 
 export function openWorkspace(workspaceId, ctx, cardId = "") {

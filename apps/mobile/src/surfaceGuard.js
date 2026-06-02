@@ -1,5 +1,6 @@
 import { roleNavigation } from "./experienceContract.js";
 import { isPcSurfaceView } from "./surfaceRegistry.js";
+import { resolveActiveDevice } from "./surfaceResolver.js";
 
 const publicViews = new Set(["login", "onboarding", "permissionDiagnostic"]);
 const commonViews = new Set(["home", "workbench", "search", "me", "workspace", "operationPanel", "learning", "notes", "reminders", "permissions", "recentSubmissions", "recentTraces", "deviceTrust", "feedback", "result", "confirmPage", "permissionDiagnostic"]);
@@ -34,11 +35,11 @@ export function evaluateSurfaceAccess(view, state = {}) {
     return denied(view, "capability_missing", ownerFor(view), requiredCapability, nextActionFor(view));
   }
 
-  const device = state.pcGovernance?.currentDevice || state.currentDevice || {};
+  const device = resolveActiveDevice(state, view);
   if (["revoked", "blocked", "untrusted"].includes(device.deviceTrustStatus)) {
     return denied(view, "device_not_trusted", "admin", "trusted_device", "Ask admin to restore device trust before continuing.");
   }
-  if (isPcSurfaceView(view) && device.surface === "mobile") {
+  if (isPcSurfaceView(view) && (device.deviceTrustStatus !== "trusted" || !["pc", "release"].includes(device.surface))) {
     return denied(view, "pc_surface_requires_pc_device", ownerFor(view), "pc_or_release_surface", `Switch to an allowed PC/release surface before opening ${view}.`);
   }
 

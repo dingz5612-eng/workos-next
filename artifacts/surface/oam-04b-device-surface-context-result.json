@@ -1,0 +1,40 @@
+{
+  "generatedAtUtc": "2026-06-02T13:22:20Z",
+  "generatedBy": "oam-04b-interaction-stage-1",
+  "stage": "OAM-04B-DEVICE-SURFACE-CONTEXT",
+  "status": "passed",
+  "branch": "codex/oam-04b-surface-interaction-closure",
+  "repositoryHead": "0463ac42f28e5b041b66ee1c4c427562a5e77ff5",
+  "scope": {
+    "resolveActiveDevice": "implemented",
+    "resolveCurrentSurface": "implemented",
+    "defaultHomeForSession": "implemented",
+    "defaultHomeForCurrentSurface": "implemented",
+    "canAccessSurface": "implemented"
+  },
+  "validation": {
+    "mobileRoleLoginHome": "passed",
+    "savedMobileSessionPcOnlyRoles": "passed",
+    "mobileOnboardingDefaultHome": "passed",
+    "mobileDirectPcViewDiagnostic": "passed",
+    "trustedPcSurfaceAccess": "passed",
+    "surfaceGuardPcGovernancePriority": "passed",
+    "unknownOrUntrustedPcSurfaceBlocked": "passed",
+    "npmTest": "passed",
+    "npmBuild": "passed",
+    "mobilePcSurfaceBoundary": "passed",
+    "pcDesktopShell": "passed",
+    "architectureGuard": "passed"
+  },
+  "businessState": {
+    "dormitory": "L1 Internal Pilot Observation only",
+    "dormitoryL2Production": false,
+    "businessProduction": "blocked",
+    "repairPartsHr": "L0 Contract Preview",
+    "day2": "requires separate Day-2 Entry Gate"
+  },
+  "outputs": [
+    "OAM_04B_DEVICE_SURFACE_CONTEXT_UNIFIED"
+  ],
+  "noGoItems": []
+}

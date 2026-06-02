@@ -1,8 +1,7 @@
 import { loginActor } from "./apiClient.js";
 import { persistActorSession } from "./appState.js";
-import { defaultHomeForRole } from "./experienceContract.js";
 import { setView } from "./navigationController.js";
-import { isPcSurfaceView } from "./surfaceRegistry.js";
+import { defaultHomeForSession } from "./surfaceResolver.js";
 
 export async function login(ctx) {
   await ctx.hydrateProjectionFromApi();
@@ -33,12 +32,4 @@ export function logout(ctx) {
   setView("login", ctx);
 }
 
-export function defaultHomeForSession(session = {}, state = {}) {
-  const roleHome = defaultHomeForRole(session.role);
-  const deviceSurface = state.currentDevice?.surface || state.pcGovernance?.currentDevice?.surface || "";
-  if (deviceSurface === "mobile" && isPcSurfaceView(roleHome)) {
-    if (session.role === "housekeeping") return "workbench";
-    return "home";
-  }
-  return roleHome;
-}
+export { defaultHomeForSession } from "./surfaceResolver.js";
