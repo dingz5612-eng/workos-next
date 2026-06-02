@@ -20,8 +20,17 @@ const scenarioScreenshots = fs.existsSync(scenarioScreenshotRoot)
   ? fs.readdirSync(scenarioScreenshotRoot, { recursive: true }).filter((file) => /\.png$/i.test(String(file))).map((file) => String(file).replace(/\\/g, "/"))
   : [];
 const scenarioIds = new Set(scenarioScreenshots.map((file) => file.match(/dorm-live-\d{3}/)?.[0]).filter(Boolean));
+const journeyScreenshotRoot = path.join(root, "artifacts", "screenshots", "dormitory-journeys");
+const journeyRefs = fs.existsSync(journeyScreenshotRoot)
+  ? fs.readdirSync(journeyScreenshotRoot, { recursive: true }).filter((file) => /\.(svg|html)$/i.test(String(file))).map((file) => String(file).replace(/\\/g, "/"))
+  : [];
+const journeyScenarioIds = new Set(journeyRefs.map((file) => file.match(/dorm-live-\d{3}/)?.[0]).filter(Boolean));
 const missingScenarioCoverage = Array.from({ length: 10 }, (_, index) => `dorm-live-${String(index + 1).padStart(3, "0")}`)
   .filter((scenarioId) => !scenarioIds.has(scenarioId));
+const missingJourneyCoverage = Array.from({ length: 10 }, (_, index) => `dorm-live-${String(index + 1).padStart(3, "0")}`)
+  .filter((scenarioId) => !journeyScenarioIds.has(scenarioId));
+if (missingJourneyCoverage.length) noGoItems.push(`OAM-04C 场景旅程截图缺失：${missingJourneyCoverage.join(", ")}`);
+if (journeyRefs.some((file) => file.includes(".tmp"))) noGoItems.push("OAM-04C 场景旅程截图不得引用 .tmp。");
 
 const index = {
   generatedAtUtc,
@@ -39,6 +48,13 @@ const index = {
     scenarioIds: Array.from(scenarioIds).sort(),
     missingScenarioCoverage
   },
+  dormitoryScenarioJourneyCoverage: {
+    screenshotRoot: "artifacts/screenshots/dormitory-journeys",
+    screenshotCount: journeyRefs.length,
+    scenarioIds: Array.from(journeyScenarioIds).sort(),
+    missingJourneyCoverage,
+    acceptedFormats: ["svg", "html"]
+  },
   productionAllowed: false,
   dormitoryL2ProductionAllowed: false,
   businessProduction: "blocked",
@@ -54,7 +70,9 @@ const result = {
   baselineIndexRef: "artifacts/screenshots/oam-ux-baseline/index.json",
   routeCoverageCount: index.routeCoverage.length,
   diagnosticScenarioScreenshotCount: scenarioScreenshots.length,
+  dormitoryJourneySnapshotCount: journeyRefs.length,
   missingScenarioCoverage,
+  missingJourneyCoverage,
   noGoItems,
   productionAllowed: false,
   dormitoryL2ProductionAllowed: false,
