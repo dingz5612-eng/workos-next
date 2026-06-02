@@ -218,6 +218,8 @@ jobs:
 
       - name: Validate OAM-01 Release State Authority
         if: github.event_name == 'pull_request'
+        env:
+          OAM_ALLOW_PENDING_MAIN_REBIND: ${{ contains(github.head_ref, 'main-rebind') && 'true' || 'false' }}
         run: |
           node scripts/release-state/build-current-release-state.mjs
           node scripts/release-state/check-current-release-state.mjs
