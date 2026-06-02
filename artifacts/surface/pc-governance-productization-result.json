@@ -1,0 +1,15 @@
+{
+  "generatedAtUtc": "2026-06-02T07:43:38.434Z",
+  "generatedBy": "scripts/surface/check-pc-desktop-shell.mjs",
+  "status": "passed",
+  "checkedSurfaces": [
+    "finance",
+    "manager",
+    "governance",
+    "release",
+    "mobile"
+  ],
+  "productionAllowed": false,
+  "dormitoryL2ProductionAllowed": false,
+  "violations": []
+}

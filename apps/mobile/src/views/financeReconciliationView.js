@@ -7,24 +7,25 @@ export function financeReconciliationView(ctx) {
   return ctx.shell(`
     <section class="finance-reconciliation" data-finance-reconciliation>
       <header>
-        <span>PC Finance</span>
-        <h1>Reconciliation + Correction Center</h1>
+        <span>PC 财务工作区</span>
+        <h1>财务对账与修正工作区</h1>
+        <p>只读取银行流水、FinanceCase、CorrectionWorkItem 和审计轨迹；所有修正仍必须通过 Operations Runtime。</p>
       </header>
       <section class="finance-import-panel">
-        <h2>Bank Statement Import</h2>
+        <h2>银行流水导入</h2>
         <div class="finance-import-grid">
-          ${input("bankImportTenant", "tenant_id", "tenant-1", ctx)}
+          ${input("bankImportTenant", "租户", "tenant-1", ctx)}
           ${selectSource(ctx)}
-          ${input("bankImportEvidenceId", "original_file_id", "", ctx)}
+          ${input("bankImportEvidenceId", "原始文件证据", "", ctx)}
         </div>
-        <label for="bankCsvFile">CSV / file</label>
+        <label for="bankCsvFile">CSV 文件</label>
         <input id="bankCsvFile" type="file" accept=".csv,text/csv" data-bank-csv-file>
-        <label for="bankCsvContent">CSV content</label>
+        <label for="bankCsvContent">CSV 内容</label>
         <textarea id="bankCsvContent" data-bank-csv-content>${ctx.escapeHtml(sampleCsv())}</textarea>
         ${mappingControls(ctx)}
         <div class="finance-import-actions">
-          <button type="button" id="bankPreviewImport" data-bank-preview>Preview rows</button>
-          <button type="button" id="bankConfirmImport" data-operations-confirm="true" data-bank-confirm>Confirm import</button>
+          <button type="button" id="bankPreviewImport" data-bank-preview>预览流水</button>
+          <button type="button" id="bankConfirmImport" data-operations-confirm="true" data-bank-confirm>通过运行时确认导入</button>
         </div>
       </section>
       ${previewPanel(preview, ctx)}
@@ -45,7 +46,7 @@ export function financeReconciliationView(ctx) {
 function selectSource(ctx) {
   const values = ["manual_csv", "mbank_export", "bank_statement", "admin_upload", "other"];
   return `
-    <label for="bankImportSourceType">source_type</label>
+    <label for="bankImportSourceType">来源类型</label>
     <select id="bankImportSourceType">
       ${values.map((value) => `<option value="${ctx.escapeAttr(value)}">${ctx.escapeHtml(value)}</option>`).join("")}
     </select>
@@ -63,7 +64,7 @@ function mappingControls(ctx) {
   ];
   return `
     <section class="column-mapping" data-column-mapping>
-      <h3>Column mapping config</h3>
+      <h3>字段映射配置</h3>
       ${mappings.map(([id, value]) => input(id, value, value, ctx)).join("")}
     </section>
   `;
@@ -71,12 +72,12 @@ function mappingControls(ctx) {
 
 function previewPanel(preview, ctx) {
   if (!preview) {
-    return `<section class="finance-import-panel" data-preview-empty><h2>Preview rows</h2><p>No preview yet.</p></section>`;
+    return `<section class="finance-import-panel" data-preview-empty><h2>预览结果</h2><p>尚未预览导入内容。</p></section>`;
   }
 
   return `
     <section class="finance-import-panel" data-bank-preview-result>
-      <h2>Preview rows</h2>
+      <h2>预览结果</h2>
       <p>row_count ${Number(preview.rowCount || 0)} · parsed_count ${Number(preview.parsedCount || 0)} · rejected_count ${Number(preview.rejectedCount || 0)}</p>
       <table>
         <thead><tr><th>row</th><th>externalRef</th><th>amount</th><th>direction</th><th>description</th><th>errors</th></tr></thead>
@@ -101,11 +102,11 @@ function resultPanel(result, ctx) {
   if (!result) return "";
   return `
     <section class="finance-import-panel" data-bank-import-result>
-      <h2>Import Result</h2>
+      <h2>导入结果</h2>
       <dl><dt>import_id</dt><dd>${ctx.escapeHtml(result.importId || "")}</dd></dl>
       <dl><dt>status</dt><dd>${ctx.escapeHtml(result.status || "")}</dd></dl>
       <dl><dt>bank_transactions</dt><dd>${Number(result.transactions?.length || 0)}</dd></dl>
-      <p>Import creates bank_statement_imports and bank_transactions only.</p>
+      <p>导入只创建银行流水导入记录和银行交易记录，不直接改变收款、押金或账务事实。</p>
       ${transactionActions(result.transactions || [], ctx)}
     </section>
   `;
@@ -114,7 +115,7 @@ function resultPanel(result, ctx) {
 function importHistoryPanel(importHistory, ctx) {
   return `
     <section class="finance-import-panel" data-import-history>
-      <h2>Import history</h2>
+      <h2>导入历史</h2>
       ${importHistory.length ? `
         <table>
           <thead><tr><th>import</th><th>source</th><th>status</th><th>parsed</th><th>rejected</th></tr></thead>
@@ -130,7 +131,7 @@ function importHistoryPanel(importHistory, ctx) {
             `).join("")}
           </tbody>
         </table>
-      ` : `<p>No import history.</p>`}
+      ` : `<p>暂无导入历史。</p>`}
     </section>
   `;
 }
@@ -138,7 +139,7 @@ function importHistoryPanel(importHistory, ctx) {
 function bankTransactionListPanel(transactions, ctx) {
   return `
     <section class="finance-import-panel" data-bank-transaction-list>
-      <h2>Bank Transaction List</h2>
+      <h2>银行交易列表</h2>
       ${transactions.length ? `
         <table>
           <thead><tr><th>bank transaction</th><th>externalRef</th><th>occurred</th><th>amount</th><th>direction</th><th>status</th><th>description</th></tr></thead>
@@ -156,7 +157,7 @@ function bankTransactionListPanel(transactions, ctx) {
             `).join("")}
           </tbody>
         </table>
-      ` : `<p>No bank transactions imported.</p>`}
+      ` : `<p>暂无已导入银行交易。</p>`}
     </section>
   `;
 }
@@ -173,8 +174,8 @@ function transactionActions(transactions, ctx) {
             <td>${ctx.escapeHtml(transaction.externalRef || "")}</td>
             <td>${ctx.escapeHtml(transaction.amount ?? "")} ${ctx.escapeHtml(transaction.currency || "")}</td>
             <td>
-              <button type="button" data-operations-confirm="true" data-bank-mismatch="${ctx.escapeAttr(transaction.bankTransactionId || "")}">Mark mismatch</button>
-              <button type="button" data-operations-confirm="true" data-bank-ignore="${ctx.escapeAttr(transaction.bankTransactionId || "")}">Ignore transaction</button>
+              <button type="button" data-operations-confirm="true" data-bank-mismatch="${ctx.escapeAttr(transaction.bankTransactionId || "")}">标记异常</button>
+              <button type="button" data-operations-confirm="true" data-bank-ignore="${ctx.escapeAttr(transaction.bankTransactionId || "")}">忽略交易</button>
             </td>
           </tr>
         `).join("")}
@@ -187,18 +188,18 @@ function candidatePanel(candidates, decision, result, ctx) {
   const items = candidates?.candidates || candidates || [];
   return `
     <section class="finance-import-panel" data-match-candidates>
-      <h2>Payment match candidates</h2>
-      <label for="bankCandidateWindowDays">time window days</label>
+      <h2>收款匹配候选</h2>
+      <label for="bankCandidateWindowDays">匹配时间窗口</label>
       <input id="bankCandidateWindowDays" type="number" min="1" max="30" value="3">
-      <label for="bankPaymentThresholdDays">confirmed payment threshold days</label>
+      <label for="bankPaymentThresholdDays">已确认收款阈值</label>
       <input id="bankPaymentThresholdDays" type="number" min="1" max="60" value="3">
-      <label for="bankRefundThresholdDays">refund threshold days</label>
+      <label for="bankRefundThresholdDays">退款阈值</label>
       <input id="bankRefundThresholdDays" type="number" min="1" max="60" value="3">
-      <button type="button" data-operations-confirm="true" data-bank-generate-candidates ${result ? "" : "disabled"}>Generate candidates</button>
-      <button type="button" data-operations-confirm="true" data-bank-detect-mismatches ${result ? "" : "disabled"}>Detect mismatch cases</button>
-      <p data-operations-confirm-note>Manual match marks bank evidence against an existing fact only; it does not change confirmed amount, held amount, or StayBalance.</p>
-      ${decision ? `<p class="match-decision">Last decision: ${ctx.escapeHtml(decision.status || decision.reason || "")}</p>` : ""}
-      ${items.length ? candidateTable(items, ctx) : `<p>No open candidates.</p>`}
+      <button type="button" data-operations-confirm="true" data-bank-generate-candidates ${result ? "" : "disabled"}>生成候选</button>
+      <button type="button" data-operations-confirm="true" data-bank-detect-mismatches ${result ? "" : "disabled"}>检测异常</button>
+      <p data-operations-confirm-note>人工匹配只把银行证据绑定到既有事实，不改变已确认金额、押金留存或 StayBalance。</p>
+      ${decision ? `<p class="match-decision">最近判断：${ctx.escapeHtml(decision.status || decision.reason || "")}</p>` : ""}
+      ${items.length ? candidateTable(items, ctx) : `<p>暂无待处理候选。</p>`}
     </section>
   `;
 }
@@ -207,8 +208,8 @@ function mismatchQueuePanel(mismatchCases, ctx) {
   const cases = mismatchCases?.cases || [];
   return `
     <section class="finance-import-panel" data-mismatch-queue>
-      <h2>Mismatch Queue</h2>
-      <p>Mismatch cases create finance-owned WorkItems and do not mutate payment, deposit, refund, or StayBalance facts.</p>
+      <h2>异常队列</h2>
+      <p>异常会创建财务负责的 WorkItem，不直接修改收款、押金、退款或 StayBalance 事实。</p>
       ${cases.length ? `
         <table>
           <thead><tr><th>case</th><th>type</th><th>related</th><th>owner</th><th>severity</th><th>due</th><th>resolveActions</th></tr></thead>
@@ -226,7 +227,7 @@ function mismatchQueuePanel(mismatchCases, ctx) {
             `).join("")}
           </tbody>
         </table>
-      ` : `<p>No open mismatch cases from the latest detection.</p>`}
+      ` : `<p>最近检测没有打开的异常案例。</p>`}
     </section>
   `;
 }
@@ -235,7 +236,7 @@ function reconciliationCaseTimelinePanel(mismatchCases, ctx) {
   const cases = mismatchCases?.cases || [];
   return `
     <section class="finance-import-panel" data-reconciliation-cases data-reconciliation-case-timeline>
-      <h2>Reconciliation Cases Timeline</h2>
+      <h2>对账案例时间线</h2>
       ${cases.length ? cases.map((item) => `
         <article class="timeline-row">
           <h3>${ctx.escapeHtml(item.caseId || item.reconciliationCaseId || "")}</h3>
@@ -245,7 +246,7 @@ function reconciliationCaseTimelinePanel(mismatchCases, ctx) {
             <li>Resolve ${ctx.escapeHtml((item.resolveActions || []).join(", "))}</li>
           </ol>
         </article>
-      `).join("") : `<p>No Reconciliation Cases in the current queue.</p>`}
+      `).join("") : `<p>当前队列没有对账案例。</p>`}
     </section>
   `;
 }
@@ -254,7 +255,7 @@ function correctionRequestPanel(state, ctx) {
   const requests = state.correctionRequests || [];
   return `
     <section class="finance-import-panel" data-correction-center data-correction-request-list>
-      <h2>Correction Request List</h2>
+      <h2>修正请求列表</h2>
       <div class="finance-import-grid">
         ${input("correctionTenant", "tenant_id", state.request?.tenantId || "tenant-1", ctx)}
         ${input("correctionWorkItemId", "work_item_id", "pc-correction-request", ctx)}
@@ -266,9 +267,9 @@ function correctionRequestPanel(state, ctx) {
         ${correctionSelect("correctionType", "correction_type", ["reversal", "amount_adjustment", "classification_adjustment", "evidence_correction", "allocation_reversal", "refund_correction", "charge_adjustment"], "allocation_reversal", ctx)}
         ${correctionSelect("correctionRiskLevel", "risk_level", ["low", "medium", "high", "critical"], "high", ctx)}
       </div>
-      <label for="correctionReason">reason</label>
+      <label for="correctionReason">修正原因</label>
       <textarea id="correctionReason">manual reconciliation correction</textarea>
-      <button type="button" data-operations-confirm="true" data-correction-request>Create correction request</button>
+      <button type="button" data-operations-confirm="true" data-correction-request>创建修正 WorkItem</button>
       ${requests.length ? `
         <table>
           <thead><tr><th>request</th><th>ledger</th><th>target</th><th>type</th><th>risk</th><th>status</th><th>work item</th></tr></thead>
@@ -286,7 +287,7 @@ function correctionRequestPanel(state, ctx) {
             `).join("")}
           </tbody>
         </table>
-      ` : `<p>No correction requests.</p>`}
+      ` : `<p>暂无修正请求。</p>`}
     </section>
   `;
 }
@@ -298,7 +299,7 @@ function correctionApprovalPanel(state, ctx) {
   const disabled = highRisk && !canApproveHighRisk ? "disabled" : "";
   return `
     <section class="finance-import-panel" data-correction-approval>
-      <h2>Correction Approval</h2>
+      <h2>修正审批</h2>
       <div class="finance-import-grid">
         ${input("correctionRequestId", "correction_request_id", state.selectedCorrectionRequestId || selected?.correctionRequestId || "", ctx)}
         ${input("correctionDecisionTenant", "tenant_id", state.request?.tenantId || selected?.tenantId || "tenant-1", ctx)}
@@ -307,17 +308,17 @@ function correctionApprovalPanel(state, ctx) {
         ${input("correctionApplyWorkItemId", "apply_work_item_id", "pc-correction-apply", ctx)}
         ${input("correctionAdjustmentAmount", "adjustment_amount", "", ctx)}
       </div>
-      <label for="correctionApprovalNote">approval note</label>
+      <label for="correctionApprovalNote">审批说明</label>
       <textarea id="correctionApprovalNote">approved from PC Correction Center</textarea>
-      <label for="correctionApplyReason">apply reason</label>
+      <label for="correctionApplyReason">应用原因</label>
       <textarea id="correctionApplyReason">append-only correction applied</textarea>
-      ${highRisk ? `<p data-capability-required="finance.correction.approve.highRisk">high-risk correction requires finance/admin capability.</p>` : ""}
+      ${highRisk ? `<p data-capability-required="finance.correction.approve.highRisk">高风险修正需要财务或管理员权限。</p>` : ""}
       <div class="finance-import-actions">
-        <button type="button" data-operations-confirm="true" data-correction-approve ${disabled}>Approve correction</button>
-        <button type="button" data-operations-confirm="true" data-correction-reject>Reject correction</button>
-        <button type="button" data-operations-confirm="true" data-correction-apply ${disabled}>Apply correction</button>
+        <button type="button" data-operations-confirm="true" data-correction-approve ${disabled}>批准修正</button>
+        <button type="button" data-operations-confirm="true" data-correction-reject>驳回修正</button>
+        <button type="button" data-operations-confirm="true" data-correction-apply ${disabled}>追加补偿</button>
       </div>
-      ${state.correctionDecision ? `<p class="match-decision">Last correction decision: ${ctx.escapeHtml(state.correctionDecision.status || "")}</p>` : ""}
+      ${state.correctionDecision ? `<p class="match-decision">最近修正判断：${ctx.escapeHtml(state.correctionDecision.status || "")}</p>` : ""}
     </section>
   `;
 }
@@ -326,7 +327,7 @@ function ledgerBeforeAfterPanel(state, ctx) {
   const entries = state.ledgerCorrectionEntries || state.correctionEntries || [];
   return `
     <section class="finance-import-panel" data-ledger-before-after>
-      <h2>Ledger Before / After View</h2>
+      <h2>账务前后视图</h2>
       ${entries.length ? entries.map((entry) => `
         <article class="ledger-snapshot-row">
           <h3>${ctx.escapeHtml(entry.correctionEntryId || entry.correctionRequestId || "")}</h3>
@@ -335,7 +336,7 @@ function ledgerBeforeAfterPanel(state, ctx) {
             <pre>${ctx.escapeHtml(formatJson(entry.afterSnapshot))}</pre>
           </div>
         </article>
-      `).join("") : `<p>No before / after snapshots yet.</p>`}
+      `).join("") : `<p>暂无修正前后快照。</p>`}
     </section>
   `;
 }
@@ -344,7 +345,7 @@ function correctionAuditPanel(state, ctx) {
   const audit = state.correctionAudit?.length ? state.correctionAudit : (state.operationAudit || []);
   return `
     <section class="finance-import-panel" data-correction-audit data-gate-result-audit>
-      <h2>Correction Audit</h2>
+      <h2>修正审计</h2>
       ${audit.length ? `
         <table>
           <thead><tr><th>operation</th><th>status</th><th>GateResult / Audit</th><th>recorded</th></tr></thead>
@@ -359,7 +360,7 @@ function correctionAuditPanel(state, ctx) {
             `).join("")}
           </tbody>
         </table>
-      ` : `<p>No correction audit records.</p>`}
+      ` : `<p>暂无修正审计记录。</p>`}
     </section>
   `;
 }
@@ -379,10 +380,10 @@ function candidateTable(items, ctx) {
             <td>${ctx.escapeHtml(candidate.score ?? "")}</td>
             <td>${ctx.escapeHtml(candidate.reason || "")}</td>
             <td>
-              <button type="button" data-operations-confirm="true" data-candidate-accept="${ctx.escapeAttr(candidate.candidateId || "")}">Accept candidate</button>
-              <button type="button" data-operations-confirm="true" data-candidate-reject="${ctx.escapeAttr(candidate.candidateId || "")}">Reject candidate</button>
-              <button type="button" data-operations-confirm="true" data-bank-mismatch="${ctx.escapeAttr(candidate.bankTransactionId || "")}">Mismatch</button>
-              <button type="button" data-operations-confirm="true" data-bank-ignore="${ctx.escapeAttr(candidate.bankTransactionId || "")}">Ignore</button>
+              <button type="button" data-operations-confirm="true" data-candidate-accept="${ctx.escapeAttr(candidate.candidateId || "")}">接受候选</button>
+              <button type="button" data-operations-confirm="true" data-candidate-reject="${ctx.escapeAttr(candidate.candidateId || "")}">驳回候选</button>
+              <button type="button" data-operations-confirm="true" data-bank-mismatch="${ctx.escapeAttr(candidate.bankTransactionId || "")}">异常</button>
+              <button type="button" data-operations-confirm="true" data-bank-ignore="${ctx.escapeAttr(candidate.bankTransactionId || "")}">忽略</button>
             </td>
           </tr>
         `).join("")}

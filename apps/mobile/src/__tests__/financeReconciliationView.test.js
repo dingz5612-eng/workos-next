@@ -48,32 +48,32 @@ describe("PC finance reconciliation bank import", () => {
       }
     }));
 
-    expect(html).toContain("Bank Statement Import");
+    expect(html).toContain("银行流水导入");
     expect(html).toContain("type=\"file\"");
     expect(html).toContain("data-column-mapping");
-    expect(html).toContain("Preview rows");
-    expect(html).toContain("Confirm import");
+    expect(html).toContain("预览结果");
+    expect(html).toContain("通过运行时确认导入");
     expect(html).toContain("invalid_amount");
     expect(html).toContain("bank-import-1");
-    expect(html).toContain("Generate candidates");
-    expect(html).toContain("Detect mismatch cases");
-    expect(html).toContain("Accept candidate");
-    expect(html).toContain("Reject candidate");
-    expect(html).toContain("Mismatch");
-    expect(html).toContain("Ignore");
-    expect(html).toContain("Mark mismatch");
-    expect(html).toContain("Ignore transaction");
-    expect(html).toContain("Bank Transaction List");
-    expect(html).toContain("Import history");
-    expect(html).toContain("Mismatch Queue");
-    expect(html).toContain("Reconciliation Cases");
+    expect(html).toContain("生成候选");
+    expect(html).toContain("检测异常");
+    expect(html).toContain("接受候选");
+    expect(html).toContain("驳回候选");
+    expect(html).toContain("异常");
+    expect(html).toContain("忽略");
+    expect(html).toContain("标记异常");
+    expect(html).toContain("忽略交易");
+    expect(html).toContain("银行交易列表");
+    expect(html).toContain("导入历史");
+    expect(html).toContain("异常队列");
+    expect(html).toContain("对账案例时间线");
     expect(html).toContain("amount_mismatch");
     expect(html).toContain("createCorrectionRequest");
     expect(html).toContain("PAY-001");
-    expect(html).toContain("Correction Request List");
-    expect(html).toContain("Correction Approval");
-    expect(html).toContain("Ledger Before / After View");
-    expect(html).toContain("Correction Audit");
+    expect(html).toContain("修正请求列表");
+    expect(html).toContain("修正审批");
+    expect(html).toContain("账务前后视图");
+    expect(html).toContain("修正审计");
   });
 
   it("does not expose PaymentConfirmed or payment fact write affordances", () => {
@@ -120,9 +120,9 @@ describe("PC finance reconciliation bank import", () => {
     }));
 
     expect(html).toContain("data-bank-csv-file");
-    expect(html).toContain("Preview rows");
+    expect(html).toContain("预览结果");
     expect(html).toContain("parsed_count 1");
-    expect(html).toContain("Confirm import");
+    expect(html).toContain("通过运行时确认导入");
     expect(html).toContain("data-import-history");
     expect(html).toContain("bank-import-1");
   });
@@ -145,9 +145,9 @@ describe("PC finance reconciliation bank import", () => {
       }
     }));
 
-    expect(html).toContain("Accept candidate");
+    expect(html).toContain("接受候选");
     expect(html).toContain("data-operations-confirm=\"true\"");
-    expect(html).toContain("does not change confirmed amount");
+    expect(html).toContain("不改变已确认金额");
     expect(html).not.toContain("PaymentConfirmed");
   });
 
@@ -165,7 +165,7 @@ describe("PC finance reconciliation bank import", () => {
       }]
     }));
 
-    expect(html).toContain("Correction Request List");
+    expect(html).toContain("修正请求列表");
     expect(html).toContain("data-correction-request");
     expect(html).toContain("allocation_reversal");
     expect(html).toContain("wi-correction-1");
@@ -182,7 +182,7 @@ describe("PC finance reconciliation bank import", () => {
       }]
     }));
 
-    expect(html).toContain("Correction Approval");
+    expect(html).toContain("修正审批");
     expect(html).toContain("data-correction-approve");
     expect(html).toContain("finance.correction.approve.highRisk");
     expect(html).not.toContain("data-correction-approve disabled");
@@ -209,7 +209,7 @@ describe("PC finance reconciliation bank import", () => {
       }]
     }));
 
-    expect(html).toContain("Ledger Before / After View");
+    expect(html).toContain("账务前后视图");
     expect(html).toContain("centry-1");
     expect(html).toContain("&quot;amount&quot;: 1200");
     expect(html).toContain("&quot;status&quot;: &quot;corrected&quot;");

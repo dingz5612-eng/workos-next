@@ -4,8 +4,9 @@ import { isPcSurfaceView } from "./surfaceRegistry.js";
 
 export function shell(content, ctx) {
   const { state, tr } = ctx;
+  const pcSurface = isPcSurfaceView(state.view);
   return `
-    <main class="app-shell view-${state.view}">
+    <main class="app-shell view-${state.view} ${pcSurface ? "surface-pc" : "surface-mobile"}">
       <header class="topbar">
         <div><strong>${tr("app")}</strong><span>${state.currentActor ? `${state.currentActor.displayName} · ${roleLabel(state.currentActor.role, tr)}` : tr("subtitle")}</span></div>
         <select id="language" aria-label="${tr("language")}">
@@ -17,7 +18,7 @@ export function shell(content, ctx) {
       ${apiBanner(ctx)}
       ${content}
       ${feedbackButton(ctx)}
-      ${state.view !== "onboarding" && state.view !== "login" && !isPcSurfaceView(state.view) ? bottomNav(ctx) : ""}
+      ${state.view !== "onboarding" && state.view !== "login" && !pcSurface ? bottomNav(ctx) : ""}
     </main>
   `;
 }

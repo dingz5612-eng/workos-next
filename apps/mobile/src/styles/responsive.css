@@ -6,4 +6,8 @@
     border: 1px solid #d9e7ee;
     border-radius: 32px;
   }
+
+  .app-shell.surface-pc {
+    border-radius: 18px;
+  }
 }

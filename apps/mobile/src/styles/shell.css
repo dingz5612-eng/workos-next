@@ -270,6 +270,21 @@
   margin-bottom: 10px;
 }
 
+.app-shell.surface-pc {
+  width: min(100%, 1240px);
+  padding: 18px 22px 42px;
+  background: linear-gradient(180deg, #f8fbfc 0%, #eef6f7 100%);
+}
+
+.app-shell.surface-pc .topbar {
+  grid-template-columns: 1fr 160px;
+  border-radius: 14px;
+}
+
+.app-shell.surface-pc .api-status {
+  max-width: 520px;
+}
+
 .ia-chip-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
