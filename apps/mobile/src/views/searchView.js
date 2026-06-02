@@ -1,5 +1,5 @@
 import { selectRuntimeWorkspaces, selectSearchSurfaceResults, selectWorkbenchQueue } from "../selectors/surfaceSelectors.js";
-import { LearningRecommendationVM, SearchResultVM } from "../viewModels/index.js";
+import { buildSearchResultVM, rankSearchResults } from "../searchIntentHub.js";
 
 export function searchView(ctx) {
   const results = workosSearchSections(ctx);
@@ -52,10 +52,11 @@ function workosSearchSections(ctx) {
 
 function searchSection(section, ctx) {
   const items = section.items.length ? section.items : [{
+    resultType: "noAction",
     title: ctx.tr("searchNoResult"),
-    subtitle: ctx.tr("workosSearchSubtitle"),
+    subtitle: ctx.tr("searchNoActionReason"),
     status: "-",
-    nextAction: ctx.tr("search")
+    nextAction: ctx.tr("searchNoActionSuggestion")
   }];
   return `<section class="search-section" data-search-section="${ctx.escapeAttr(section.id)}">
     <h2>${ctx.tr(section.titleKey)}</h2>
@@ -64,29 +65,39 @@ function searchSection(section, ctx) {
 }
 
 function searchCard(item, ctx) {
-  const normalized = SearchResultVM(normalizeSearchCard(item, ctx), ctx);
-  const action = searchAction(item, normalized, ctx);
+  const normalized = buildSearchResultVM(normalizeSearchCard(item, ctx), ctx);
+  const action = searchAction(normalized, ctx);
   return `<article class="search-result-card">
-    <strong>${ctx.escapeHtml(normalized.localizedTitle)}</strong>
-    <span>${ctx.escapeHtml(normalized.localizedSubtitle)}</span>
-    <small>${ctx.tr("status")}: ${ctx.escapeHtml(normalized.localizedStatus)} · ${ctx.tr("nextAction")}: ${ctx.escapeHtml(normalized.localizedNextAction)}</small>
+    <strong>${ctx.escapeHtml(normalized.title)}</strong>
+    <span>${ctx.escapeHtml(normalized.subtitle)}</span>
+    <small>${ctx.tr("status")}: ${ctx.escapeHtml(normalized.statusLabel)} · ${ctx.tr("nextAction")}: ${ctx.escapeHtml(normalized.nextActionLabel)}</small>
     ${action}
   </article>`;
 }
 
-function searchAction(item, normalized, ctx) {
-  if (item.workItemId || item.work_item_id) {
-    return `<button data-work-item-id="${ctx.escapeAttr(item.workItemId || item.work_item_id)}" data-workspace-id="${ctx.escapeAttr(item.workspaceId || item.workspace_id || "")}" data-card-id="${ctx.escapeAttr(item.cardId || item.card_id || "")}">${ctx.tr("openWorkspace")}</button>`;
+function searchAction(result, ctx) {
+  if (result.actionType === "openWorkItem") {
+    return `<button data-work-item-id="${ctx.escapeAttr(result.workItemId)}" data-workspace-id="${ctx.escapeAttr(result.workspaceId)}" data-card-id="${ctx.escapeAttr(result.cardId)}">${ctx.escapeHtml(result.actionLabel)}</button>`;
   }
-  if (item.workspaceId || item.id) {
-    return `<button data-workspace="${ctx.escapeAttr(item.workspaceId || item.id)}" data-card-id="${ctx.escapeAttr(item.cardId || item._surfaceCardId || "")}">${ctx.escapeHtml(normalized.localizedNextAction || ctx.tr("openWorkspace"))}</button>`;
+  if (result.actionType === "openEvidence") {
+    return `<button data-workspace="${ctx.escapeAttr(result.workspaceId)}" data-card-id="${ctx.escapeAttr(result.cardId)}" data-evidence-id="${ctx.escapeAttr(result.evidenceId)}">${ctx.escapeHtml(result.actionLabel)}</button>`;
   }
-  return "";
+  if (result.actionType === "openTrace") {
+    return `<button data-view="${ctx.escapeAttr(result.view)}" data-trace-id="${ctx.escapeAttr(result.traceId)}">${ctx.escapeHtml(result.actionLabel)}</button>`;
+  }
+  if (result.actionType === "openLearning") {
+    return `<button data-view="${ctx.escapeAttr(result.view)}" data-learning-id="${ctx.escapeAttr(result.learningId)}">${ctx.escapeHtml(result.actionLabel)}</button>`;
+  }
+  if (["openObject", "openWorkspace"].includes(result.actionType)) {
+    return `<button data-workspace="${ctx.escapeAttr(result.workspaceId)}" data-card-id="${ctx.escapeAttr(result.cardId)}" data-case-id="${ctx.escapeAttr(result.caseId)}">${ctx.escapeHtml(result.actionLabel)}</button>`;
+  }
+  return `<p class="surface-guidance">${ctx.escapeHtml(result.reasonIfNoAction)}</p>`;
 }
 
 function normalizeSearchCard(item, ctx) {
   return {
     ...item,
+    resultType: item.resultType || item.type || "object",
     title: localized(item.localizedTitle ?? item.title, ctx) || ctx.tr("searchNoResult"),
     subtitle: localized(item.localizedSubtitle ?? item.subtitle, ctx) || ctx.tr("workosSearchSubtitle"),
     status: localized(item.localizedStatus ?? item.status, ctx) || "-",
@@ -95,14 +106,14 @@ function normalizeSearchCard(item, ctx) {
 }
 
 function workItems(queue, ctx) {
-  return queue.map((item) => ({
+  return rankSearchResults(queue.map((item) => ({
     ...item,
-    type: "workItem",
-    title: item.businessObject || item.workspace?.title || item.card?.title || ctx.tr("searchWorkItems"),
+    resultType: "workItem",
+    title: item.businessObject || item.card?.title || item.workspace?.title || ctx.tr("searchWorkItems"),
     subtitle: item.workItemType || item.domain || ctx.tr("workbench"),
     status: item.lifecycleState || item.status || item.card?.status || "ready",
-    nextAction: item.reason || tx(item.workspace?.next, ctx) || ctx.tr("openWorkspace")
-  }));
+    nextAction: item.reason || tx(item.workspace?.next, ctx) || ctx.tr("searchActionProcess")
+  })), ctx.state.query).slice(0, 8);
 }
 
 function operationCases(queue, workspaces, ctx) {
@@ -112,7 +123,7 @@ function operationCases(queue, workspaces, ctx) {
     if (!caseId) continue;
     cases.set(caseId, {
       ...item,
-      type: "operationCase",
+      resultType: "operationCase",
       title: item.workspace?.title || ctx.tr("searchOperationCases"),
       subtitle: item.workItemType || item.domain || ctx.tr("operation"),
       status: item.lifecycleState || item.status || "ready",
@@ -125,14 +136,17 @@ function operationCases(queue, workspaces, ctx) {
     if (!cases.has(caseId)) {
       cases.set(caseId, {
         title: caseId,
-        type: "operationCase",
+        resultType: "operationCase",
+        workspaceId: workspace.id,
+        cardId: workspace.cards?.[0]?.id || "",
+        caseId,
         subtitle: tx(workspace.title, ctx),
         status: workspace.cards?.[0]?.status || "ready",
         nextAction: tx(workspace.next, ctx) || ctx.tr("openWorkspace")
       });
     }
   }
-  return Array.from(cases.values()).slice(0, 6);
+  return rankSearchResults(Array.from(cases.values()), ctx.state.query).slice(0, 6);
 }
 
 function objectResults(workspaces, kind, ctx) {
@@ -146,7 +160,9 @@ function objectResults(workspaces, kind, ctx) {
     .slice(0, 5)
     .map((workspace) => ({
       title: localized(workspace.localizedTitle, ctx) || `${labelByKind[kind]} · ${tx(workspace.title, ctx) || workspace.id}`,
-      type: kind,
+      resultType: kind,
+      workspaceId: workspace.id,
+      cardId: workspace._surfaceCardId || workspace.cards?.[0]?.id || "",
       subtitle: localized(workspace.localizedSubtitle, ctx) || workspace.id,
       status: localized(workspace.localizedStatus, ctx) || workspace.cards?.[0]?.status || "ready",
       nextAction: localized(workspace.localizedNextAction, ctx) || tx(workspace.next, ctx) || ctx.tr("openWorkspace")
@@ -157,11 +173,14 @@ function evidenceResults(workspaces, ctx) {
   return workspaces.flatMap((workspace) => (workspace.cards || []).flatMap((card) =>
     (card.evidence || []).map((evidence) => ({
       title: ctx.localTerm(evidence),
-      type: "evidence",
+      resultType: "evidence",
+      workspaceId: workspace.id,
+      cardId: card.id,
+      evidenceId: evidence.id,
       subtitle: `${workspace.id} · ${tx(card.title, ctx)}`,
       status: card.status || "ready",
-      nextAction: ctx.tr("evidence")
-    })))).slice(0, 6);
+      nextAction: ctx.tr("searchActionEvidence")
+    })))).filter((item) => rankSearchResults([item], ctx.state.query).length || !ctx.state.query).slice(0, 6);
 }
 
 function traceResults(queue, ctx) {
@@ -169,7 +188,8 @@ function traceResults(queue, ctx) {
     .filter((item) => item.traceRefs?.length || item.commandSubmissionId || item.command_submission_id)
     .map((item) => ({
       ...item,
-      type: "trace",
+      resultType: "trace",
+      traceId: item.traceRefs?.[0] || item.commandSubmissionId || item.command_submission_id,
       title: ctx.tr("searchSubmissionTrace"),
       subtitle: item.workItemType || ctx.tr("recentTraces"),
       status: item.lifecycleState || item.status || "ready",
@@ -182,13 +202,14 @@ function section(titleKey, items) {
 }
 
 function learning(titleKey, bodyKey, status, ctx) {
-  return LearningRecommendationVM({
-    type: "learning",
+  return {
+    resultType: "learning",
+    learningId: titleKey,
     title: ctx.tr(titleKey),
     subtitle: ctx.tr(bodyKey),
     status,
-    nextAction: ctx.tr("learningCenter")
-  }, ctx);
+    nextAction: ctx.tr("searchActionLearning")
+  };
 }
 
 function tx(value, ctx) {

@@ -81,6 +81,6 @@ describe("OAM-04B WorkItem route identity", () => {
     const html = searchView(ctx);
 
     expect(html).toContain('data-work-item-id="W-STAY-RESOURCE:roomSetup"');
-    expect(html).toContain("进入办理面");
+    expect(html).toContain(">处理</button>");
   });
 });

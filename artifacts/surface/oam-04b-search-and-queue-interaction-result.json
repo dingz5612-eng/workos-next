@@ -1,0 +1,34 @@
+{
+  "phase": "OAM-04B-04",
+  "name": "Search Intent Hub 与 Queue Filter State 真闭环",
+  "status": "passed",
+  "generatedAt": "2026-06-02T21:41:59.3702117+08:00",
+  "scope": {
+    "dormitory": "L1 Internal Pilot Observation",
+    "dormitoryL2Production": false,
+    "businessProduction": "blocked",
+    "repairPartsHr": "L0 Contract Preview",
+    "day2Entered": false
+  },
+  "closures": [
+    "SearchResultVM 输出 resultType/title/subtitle/statusLabel/nextActionLabel/actionType/actionLabel/workItemId/workspaceId/cardId/caseId/evidenceId/traceId/learningId/view/reasonIfNoAction/sourceRefs",
+    "WorkItem、OperationCase、对象、Evidence、Trace、Learning 搜索结果渲染明确 CTA 或中文无动作原因",
+    "WorkItem 搜索 CTA 进入 persisted WorkItem operationPanel",
+    "Learning/Evidence/Trace/Object 搜索结果复用 data-view、data-workspace、data-card-id、data-evidence-id、data-trace-id、data-learning-id",
+    "queueFilters 统一 domain/badge/status/ownerRole/evidenceState/transferable/riskLevel",
+    "IA chip、普通筛选、高级筛选写入同一 queueFilters 状态",
+    "queueTasks 明确消费 queueFilters，旧 queueDomain/queueBadge 仅作为兼容适配",
+    "清除筛选恢复默认可见队列"
+  ],
+  "validation": [
+    { "command": "npm --prefix apps/mobile run test", "result": "passed", "details": "49 files / 161 tests" },
+    { "command": "npm --prefix apps/mobile run build", "result": "passed" },
+    { "command": "node scripts/surface/check-mobile-work-shell.mjs", "result": "passed" },
+    { "command": "node scripts/surface/check-user-facing-surface-copy.mjs", "result": "passed" },
+    { "command": "node scripts/surface/check-mobile-visible-copy.mjs", "result": "passed" },
+    { "command": "node scripts/surface/check-no-raw-surface-labels.mjs", "result": "passed" },
+    { "command": "node scripts/surface/check-view-model-contract.mjs", "result": "passed" },
+    { "command": "pwsh -NoProfile -File scripts/guard-architecture.ps1", "result": "passed" }
+  ],
+  "completionToken": "OAM_04B_SEARCH_AND_QUEUE_INTERACTION_CLOSED"
+}
