@@ -5,6 +5,7 @@ import { isPcSurfaceView } from "./surfaceRegistry.js";
 export function shell(content, ctx) {
   const { state, tr } = ctx;
   const pcSurface = isPcSurfaceView(state.view);
+  const showMobileBottomNav = state.view !== "onboarding" && state.view !== "login" && !isPcSurfaceView(state.view);
   return `
     <main class="app-shell view-${state.view} ${pcSurface ? "surface-pc" : "surface-mobile"}">
       <header class="topbar">
@@ -18,7 +19,7 @@ export function shell(content, ctx) {
       ${apiBanner(ctx)}
       ${content}
       ${feedbackButton(ctx)}
-      ${state.view !== "onboarding" && state.view !== "login" && !pcSurface ? bottomNav(ctx) : ""}
+      ${showMobileBottomNav ? bottomNav(ctx) : ""}
     </main>
   `;
 }

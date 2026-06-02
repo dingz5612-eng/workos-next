@@ -1,11 +1,53 @@
 {
-  "generatedAtUtc": "2026-06-02T05:42:09.207Z",
+  "generatedAtUtc": "2026-06-02T11:59:44.794Z",
   "generatedBy": "check-stale-evidence-refs",
   "stage": "PROJECT-HYGIENE-CLEANUP",
   "status": "passed",
   "finalEvidenceRefCount": 85,
-  "staleArtifactCount": 22,
+  "staleArtifactCount": 45,
   "staleArtifacts": [
+    {
+      "artifactPath": "artifacts/baseline/artifact-inventory.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/baseline/oam-clean-baseline-result.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/baseline/portfolio-boundary-baseline.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/baseline/release-evidence-baseline.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/baseline/runtime-semantic-baseline.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/baseline/seed-data-baseline.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/baseline/surface-ux-baseline.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
     {
       "artifactPath": "artifacts/evidence/evidence-ledger-check-result.json",
       "retainedAs": "historical_artifact",
@@ -26,6 +68,12 @@
     },
     {
       "artifactPath": "artifacts/go-live/dormitory/source-mode-contract-result.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/operations/dormitory/day2-entry-gate-result.json",
       "retainedAs": "historical_artifact",
       "referencedByCurrentState": false,
       "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
@@ -55,6 +103,36 @@
       "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
     },
     {
+      "artifactPath": "artifacts/project/artifact-inventory.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/project/project-hygiene-result.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/project/route-surface-inventory.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/project/seed-data-inventory.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/project/stale-artifacts.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
       "artifactPath": "artifacts/release-state/evidence-rebinding-result.json",
       "retainedAs": "historical_artifact",
       "referencedByCurrentState": false,
@@ -63,6 +141,18 @@
     {
       "artifactPath": "artifacts/release-state/evidence-reconciliation-result.json",
       "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/screenshots/dormitory-journeys/index.json",
+      "retainedAs": "diagnostic_screenshot",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/screenshots/oam-ux-baseline/index.json",
+      "retainedAs": "diagnostic_screenshot",
       "referencedByCurrentState": false,
       "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
     },
@@ -85,7 +175,19 @@
       "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
     },
     {
+      "artifactPath": "artifacts/surface/dormitory-scenario-journey-result.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
       "artifactPath": "artifacts/surface/evidence-trust-contract-result.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/surface/experience-module-productization-result.json",
       "retainedAs": "historical_artifact",
       "referencedByCurrentState": false,
       "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
@@ -103,7 +205,25 @@
       "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
     },
     {
+      "artifactPath": "artifacts/surface/mobile-work-productization-result.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/surface/oam-04b-surface-productization-final-result.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
       "artifactPath": "artifacts/surface/operation-panel-runtime-contract-result.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/surface/pc-governance-productization-result.json",
       "retainedAs": "historical_artifact",
       "referencedByCurrentState": false,
       "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
@@ -134,6 +254,24 @@
     },
     {
       "artifactPath": "artifacts/surface/surface-experience-contract-result.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/surface/surface-productization-result.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/surface/user-facing-surface-copy-result.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/surface/view-model-contract-result.json",
       "retainedAs": "historical_artifact",
       "referencedByCurrentState": false,
       "action": "保留为历史或诊断材料，不作为 final go-live evidence。"

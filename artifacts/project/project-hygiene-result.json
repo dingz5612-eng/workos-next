@@ -1,17 +1,59 @@
 {
-  "generatedAtUtc": "2026-06-02T10:34:58.051Z",
+  "generatedAtUtc": "2026-06-02T11:59:47.439Z",
   "generatedBy": "project-hygiene-checkers",
   "stage": "PROJECT-HYGIENE-CLEANUP",
   "status": "PROJECT_HYGIENE_CLEANUP_LOCAL_PASSED",
   "checks": {
     "stale_evidence_refs": {
-      "generatedAtUtc": "2026-06-02T05:42:09.207Z",
+      "generatedAtUtc": "2026-06-02T11:59:44.794Z",
       "generatedBy": "check-stale-evidence-refs",
       "stage": "PROJECT-HYGIENE-CLEANUP",
       "status": "passed",
       "finalEvidenceRefCount": 85,
-      "staleArtifactCount": 22,
+      "staleArtifactCount": 45,
       "staleArtifacts": [
+        {
+          "artifactPath": "artifacts/baseline/artifact-inventory.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/baseline/oam-clean-baseline-result.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/baseline/portfolio-boundary-baseline.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/baseline/release-evidence-baseline.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/baseline/runtime-semantic-baseline.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/baseline/seed-data-baseline.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/baseline/surface-ux-baseline.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
         {
           "artifactPath": "artifacts/evidence/evidence-ledger-check-result.json",
           "retainedAs": "historical_artifact",
@@ -32,6 +74,12 @@
         },
         {
           "artifactPath": "artifacts/go-live/dormitory/source-mode-contract-result.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/operations/dormitory/day2-entry-gate-result.json",
           "retainedAs": "historical_artifact",
           "referencedByCurrentState": false,
           "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
@@ -61,6 +109,36 @@
           "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
         },
         {
+          "artifactPath": "artifacts/project/artifact-inventory.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/project/project-hygiene-result.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/project/route-surface-inventory.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/project/seed-data-inventory.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/project/stale-artifacts.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
           "artifactPath": "artifacts/release-state/evidence-rebinding-result.json",
           "retainedAs": "historical_artifact",
           "referencedByCurrentState": false,
@@ -69,6 +147,18 @@
         {
           "artifactPath": "artifacts/release-state/evidence-reconciliation-result.json",
           "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/screenshots/dormitory-journeys/index.json",
+          "retainedAs": "diagnostic_screenshot",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/screenshots/oam-ux-baseline/index.json",
+          "retainedAs": "diagnostic_screenshot",
           "referencedByCurrentState": false,
           "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
         },
@@ -91,7 +181,19 @@
           "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
         },
         {
+          "artifactPath": "artifacts/surface/dormitory-scenario-journey-result.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
           "artifactPath": "artifacts/surface/evidence-trust-contract-result.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/surface/experience-module-productization-result.json",
           "retainedAs": "historical_artifact",
           "referencedByCurrentState": false,
           "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
@@ -109,7 +211,25 @@
           "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
         },
         {
+          "artifactPath": "artifacts/surface/mobile-work-productization-result.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/surface/oam-04b-surface-productization-final-result.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
           "artifactPath": "artifacts/surface/operation-panel-runtime-contract-result.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/surface/pc-governance-productization-result.json",
           "retainedAs": "historical_artifact",
           "referencedByCurrentState": false,
           "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
@@ -143,6 +263,24 @@
           "retainedAs": "historical_artifact",
           "referencedByCurrentState": false,
           "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/surface/surface-productization-result.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/surface/user-facing-surface-copy-result.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/surface/view-model-contract-result.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
         }
       ],
       "noGoItems": [],
@@ -152,7 +290,7 @@
       "repairPartsHrStatus": "L0 Contract Preview"
     },
     "route_surface_hygiene": {
-      "generatedAtUtc": "2026-06-02T07:15:05.697Z",
+      "generatedAtUtc": "2026-06-02T11:59:47.082Z",
       "generatedBy": "check-route-surface-hygiene",
       "stage": "PROJECT-HYGIENE-CLEANUP",
       "status": "passed",
@@ -166,7 +304,7 @@
       "repairPartsHrStatus": "L0 Contract Preview"
     },
     "screenshot_baseline": {
-      "generatedAtUtc": "2026-06-02T10:34:58.036Z",
+      "generatedAtUtc": "2026-06-02T11:59:47.418Z",
       "generatedBy": "check-screenshot-baseline",
       "stage": "PROJECT-HYGIENE-CLEANUP",
       "status": "passed",
@@ -194,13 +332,13 @@
       "repairPartsHrStatus": "L0 Contract Preview"
     },
     "artifact_hygiene": {
-      "generatedAtUtc": "2026-06-02T05:41:55.600Z",
+      "generatedAtUtc": "2026-06-02T11:59:33.751Z",
       "generatedBy": "check-artifact-hygiene",
       "stage": "PROJECT-HYGIENE-CLEANUP",
       "status": "passed",
-      "headSha": "acab1d397ff5f20bb0eda8f007b97f546396232d",
-      "originMain": "fad090ad45fb44efbcd22d3f13fd7b130dfc6ab0",
-      "trackedArtifactCount": 63,
+      "headSha": "547bcc95eea3dcbe3a89217bce27a58a706f1331",
+      "originMain": "fe50578178886b958b9f394d2b51b2749aed54cd",
+      "trackedArtifactCount": 86,
       "finalArtifactCount": 19,
       "finalArtifacts": [
         {
@@ -210,7 +348,7 @@
           "finalEvidence": true,
           "stage": "release-state",
           "generatedBy": "build-current-release-state",
-          "generatedAtUtc": "2026-06-02T04:50:02.010Z",
+          "generatedAtUtc": "2026-06-02T11:41:12.671Z",
           "sourceMode": "machine_checked",
           "status": "unknown",
           "evidenceRefs": [
@@ -230,9 +368,9 @@
           "forbiddenRefs": [],
           "missingRefs": [],
           "productionBoundaryOk": true,
-          "resultHash": "66cf22a4c95bf3c93f8f7abdaf635a09e5e390406ba72ce3fb3bfa72775e9e34",
-          "fileHash": "9b3ef873535e91b41cda043f79140a0a18b0de5e4f43adc702edb5494d04cc50",
-          "headSha": "fad090ad45fb44efbcd22d3f13fd7b130dfc6ab0"
+          "resultHash": "a2c02725eb3cf45c27e9af52d5aa1e9996ac89aecfa296c0ddfaa07094bcc7e5",
+          "fileHash": "810f4030bf5d5dc416d9cc70f68d87bcd91605585e7a3cb32bfa0788a9cdb8c8",
+          "headSha": "fe50578178886b958b9f394d2b51b2749aed54cd"
         },
         {
           "artifactPath": "artifacts/oam/oam-final-acceptance-result.json",
@@ -266,7 +404,7 @@
           "finalEvidence": true,
           "stage": "OAM-ACCEPTANCE-CLOSURE-A4",
           "generatedBy": "check-operating-assurance-mesh",
-          "generatedAtUtc": "2026-06-02T04:58:40.734Z",
+          "generatedAtUtc": "2026-06-02T07:15:04.368Z",
           "sourceMode": "machine_checked",
           "status": "passed",
           "evidenceRefs": [
@@ -280,9 +418,9 @@
           "forbiddenRefs": [],
           "missingRefs": [],
           "productionBoundaryOk": true,
-          "resultHash": "94ef43c800f507ca106606a70a2b6ea26a372e489637a4a23f9a5614108ab3f6",
-          "fileHash": "689edae8785d65ac10c671cef32971e890b992cc91b5f8a4631bc6b1e443639d",
-          "headSha": "fad090ad45fb44efbcd22d3f13fd7b130dfc6ab0"
+          "resultHash": "8fd7e85a280f830c61e367ca187d42ceb298c5a85836631eb3401699f056a3b9",
+          "fileHash": "465650d47e11d39e6db1ff3bed37ba91db0a25dc2a769f8fb301f9617d1b02c3",
+          "headSha": "b86aa1b60d90e2f18e780781b4077a63a7068c0f"
         },
         {
           "artifactPath": "artifacts/go-live/dormitory/internal-pilot-go-no-go.json",
@@ -291,7 +429,7 @@
           "finalEvidence": true,
           "stage": "DORM-INT-FINAL",
           "generatedBy": "check-dormitory-internal-pilot-go-no-go",
-          "generatedAtUtc": "2026-06-02T04:52:18.807Z",
+          "generatedAtUtc": "2026-06-02T11:41:09.762Z",
           "sourceMode": "machine_checked",
           "status": "GO_FOR_INTERNAL_PILOT",
           "evidenceRefs": [
@@ -315,9 +453,9 @@
           "forbiddenRefs": [],
           "missingRefs": [],
           "productionBoundaryOk": true,
-          "resultHash": "0dad3f8f4376b810be014cfd1d0a5aee2b2521ef2e5226e837aa3ed65df1b1fe",
-          "fileHash": "935f457f8694c796781c665616c40167ced092ea7ecdd0b7384760e96a7d3c9f",
-          "headSha": "fad090ad45fb44efbcd22d3f13fd7b130dfc6ab0"
+          "resultHash": "35216bc398f18f019f87b7fb4a1b1704dcc5643fb186191a35c917c7a45ddd18",
+          "fileHash": "130f4cfd9bbdae71e4141591b38ba958fd5fc0522512694e0b267e883e18e355",
+          "headSha": "fe50578178886b958b9f394d2b51b2749aed54cd"
         },
         {
           "artifactPath": "artifacts/go-live/dormitory/day0-readiness-result.json",
@@ -376,7 +514,7 @@
           "missingRefs": [],
           "productionBoundaryOk": true,
           "resultHash": "63655025b74fd38e8f114bb41ed8c20f31ced4420f914568d69719b641711795",
-          "fileHash": "244df9b5c1651b9fa094518c0bccfc850544e4786f99cf906ebe4b9980b2d25f",
+          "fileHash": "c6bef3495419aa93b6573a150c3529ba07aa25b9880a57e775832cacffd8856f",
           "headSha": "52d55e17d6f0f37df69ba3bab7ddc240bc01887d"
         },
         {
@@ -409,7 +547,7 @@
           "finalEvidence": true,
           "stage": "RT4",
           "generatedBy": "scripts/rt4/build-evidence-graph.mjs",
-          "generatedAtUtc": "2026-06-02T04:49:58.962Z",
+          "generatedAtUtc": "2026-06-02T11:41:09.762Z",
           "sourceMode": "machine_checked",
           "status": "unknown",
           "evidenceRefs": [
@@ -445,9 +583,9 @@
           "forbiddenRefs": [],
           "missingRefs": [],
           "productionBoundaryOk": true,
-          "resultHash": "f1be6316ab579b4ae5ca9e0b461f470200ee3241b72aec1354bdf81729e273f3",
-          "fileHash": "59d77ddb25257fde4fd7547edb8a53834e13dba0c134f342518262ff2e1d6e5b",
-          "headSha": "fad090ad45fb44efbcd22d3f13fd7b130dfc6ab0"
+          "resultHash": "c612189782e2a77996a3dd8192c3288881d4bef9d6c30ffb79e54df3afafef12",
+          "fileHash": "f679b4e85d7c08c59446ad26927512d10871863db1f5f937e741d9491a219977",
+          "headSha": "fe50578178886b958b9f394d2b51b2749aed54cd"
         },
         {
           "artifactPath": "artifacts/rt4/completion-dashboard.json",
@@ -456,16 +594,16 @@
           "finalEvidence": true,
           "stage": "RT4",
           "generatedBy": "build-completion-dashboard",
-          "generatedAtUtc": "2026-06-02T04:49:58.962Z",
+          "generatedAtUtc": "2026-06-02T11:41:09.762Z",
           "sourceMode": "machine_checked",
           "status": "unknown",
           "evidenceRefs": [],
           "forbiddenRefs": [],
           "missingRefs": [],
           "productionBoundaryOk": true,
-          "resultHash": "bc6893dd906b566f9806f5fa5c3076533b7233f69b0b7b8a6b775726fecf4cbd",
-          "fileHash": "639cec8943f437037ec174e64f121e370a6c16868a23fe0656271800d403ef7a",
-          "headSha": "fad090ad45fb44efbcd22d3f13fd7b130dfc6ab0"
+          "resultHash": "ee025c4ad346aa1ad2657507b8e9af9401c1248b2c3dcb0203636d8ccef6d8aa",
+          "fileHash": "b0f9e2b298a4ab803f63fe30daed490b3462dde5ea9146955d2f32dea6e7db88",
+          "headSha": "fe50578178886b958b9f394d2b51b2749aed54cd"
         },
         {
           "artifactPath": "artifacts/portfolio/business-line-maturity-result.json",
@@ -541,7 +679,7 @@
           "finalEvidence": true,
           "stage": "RUNTIME-PROOF",
           "generatedBy": "run-runtime-proof",
-          "generatedAtUtc": "2026-06-01T21:01:59.369Z",
+          "generatedAtUtc": "2026-06-02T11:12:51.147Z",
           "sourceMode": "live_api_db",
           "status": "passed",
           "evidenceRefs": [
@@ -554,9 +692,9 @@
           "forbiddenRefs": [],
           "missingRefs": [],
           "productionBoundaryOk": true,
-          "resultHash": "e837dc5314ff7035df055c624fae8b467fd4881b8f59840691a575fe4493852c",
-          "fileHash": "b7375306579d524289b3d0abc9da4594eddc98514a814f2131ea846bd98fb623",
-          "headSha": "523e430b0366096cf2dd5525920fde59d46d2df1"
+          "resultHash": "9f0a1edd444e676e97186869431912b9e3d8e0cb6da8ce6a27a2ec1820d9718e",
+          "fileHash": "3e4150d5309a2049da71125d94c87187a5c285eda2100a438d16e592e2921f4c",
+          "headSha": "c9ef041d228e91ecb12f31382786d8eb9cd7d825"
         },
         {
           "artifactPath": "artifacts/go-live/dormitory/runtime-proof-result.json",
@@ -565,7 +703,7 @@
           "finalEvidence": true,
           "stage": "DORM-INT",
           "generatedBy": "run-runtime-proof:dormitory-pack",
-          "generatedAtUtc": "2026-06-01T21:01:59.369Z",
+          "generatedAtUtc": "2026-06-02T11:12:51.147Z",
           "sourceMode": "live_api_db",
           "status": "passed",
           "evidenceRefs": [
@@ -578,9 +716,9 @@
           "forbiddenRefs": [],
           "missingRefs": [],
           "productionBoundaryOk": true,
-          "resultHash": "de8092e24b448e001fa2bc7a21450636831650d7b400c76d0d357bd786b36cee",
-          "fileHash": "634486a9ca815dfa60c801cadbee2b7852cf8bd91a564bbcf0ffde0ef3a03c0e",
-          "headSha": "523e430b0366096cf2dd5525920fde59d46d2df1"
+          "resultHash": "80a659ee3cc9443ca75b1a7bc4d3bc0600722c330b9a9d42d72a2f22f58b633f",
+          "fileHash": "579f3c71c70396e79c9ec66692606a11043197f641d65d5e76172f25a14f148b",
+          "headSha": "c9ef041d228e91ecb12f31382786d8eb9cd7d825"
         },
         {
           "artifactPath": "artifacts/surface/oam-04-surface-twin-plane-result.json",
@@ -689,7 +827,7 @@
       "repairPartsHrStatus": "L0 Contract Preview"
     },
     "seed_data_isolation": {
-      "generatedAtUtc": "2026-06-02T07:15:05.862Z",
+      "generatedAtUtc": "2026-06-02T11:59:47.212Z",
       "generatedBy": "check-seed-data-isolation",
       "stage": "PROJECT-HYGIENE-CLEANUP",
       "status": "passed",
