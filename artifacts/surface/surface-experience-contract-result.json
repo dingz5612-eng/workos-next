@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-06-02T01:20:25.453Z",
+  "generated_at_utc": "2026-06-02T05:01:55.045Z",
   "generated_by": "scripts/surface/check-surface-experience-contract.mjs",
   "status": "passed",
   "check": "surface-experience-contract",

@@ -1,7 +1,7 @@
 {
   "version": "release-state.transition-log.v1",
-  "generatedAtUtc": "2026-06-02T01:02:43.820Z",
-  "currentMainHead": "d03d8d39c91135eb3f63d1a56b59e19b7dd35196",
+  "generatedAtUtc": "2026-06-02T04:50:02.010Z",
+  "currentMainHead": "fad090ad45fb44efbcd22d3f13fd7b130dfc6ab0",
   "transitions": [
     {
       "id": "central-merge-to-dorm-int",

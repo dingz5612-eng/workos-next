@@ -1,0 +1,69 @@
+{
+  "generatedAtUtc": "2026-06-02T04:58:38.808Z",
+  "generatedBy": "build-post-merge-attestation",
+  "repository": "dingz5612-eng/workos-next",
+  "repositoryHead": "fad090ad45fb44efbcd22d3f13fd7b130dfc6ab0",
+  "verifiedMainHead": "fad090ad45fb44efbcd22d3f13fd7b130dfc6ab0",
+  "status": "passed",
+  "localHead": "fad090ad45fb44efbcd22d3f13fd7b130dfc6ab0",
+  "prNumber": 71,
+  "prHead": "52d55e17d6f0f37df69ba3bab7ddc240bc01887d",
+  "prBase": "1a2fb45a89f3d1ef18eaf4ca216ecdc57660df30",
+  "mergeCommit": "fad090ad45fb44efbcd22d3f13fd7b130dfc6ab0",
+  "ci": {
+    "id": 26796158189,
+    "name": "CI",
+    "event": "push",
+    "status": "completed",
+    "conclusion": "success",
+    "headSha": "fad090ad45fb44efbcd22d3f13fd7b130dfc6ab0",
+    "htmlUrl": "https://github.com/dingz5612-eng/workos-next/actions/runs/26796158189",
+    "createdAt": "2026-06-02T03:17:46Z",
+    "updatedAt": "2026-06-02T03:20:05Z"
+  },
+  "v54ControlPlaneGuards": {
+    "id": 26796158193,
+    "name": "V5.4 Control Plane Guards",
+    "event": "push",
+    "status": "completed",
+    "conclusion": "success",
+    "headSha": "fad090ad45fb44efbcd22d3f13fd7b130dfc6ab0",
+    "htmlUrl": "https://github.com/dingz5612-eng/workos-next/actions/runs/26796158193",
+    "createdAt": "2026-06-02T03:17:46Z",
+    "updatedAt": "2026-06-02T03:19:54Z"
+  },
+  "artifacts": {
+    "currentState": {
+      "artifactPath": "artifacts/release-state/current-state.json",
+      "artifactHead": "fad090ad45fb44efbcd22d3f13fd7b130dfc6ab0",
+      "artifactCiHead": "fad090ad45fb44efbcd22d3f13fd7b130dfc6ab0",
+      "artifactV54Head": "fad090ad45fb44efbcd22d3f13fd7b130dfc6ab0"
+    },
+    "internalPilotGoNoGo": {
+      "artifactPath": "artifacts/go-live/dormitory/internal-pilot-go-no-go.json",
+      "artifactHead": "fad090ad45fb44efbcd22d3f13fd7b130dfc6ab0",
+      "artifactCiHead": "fad090ad45fb44efbcd22d3f13fd7b130dfc6ab0",
+      "artifactV54Head": "fad090ad45fb44efbcd22d3f13fd7b130dfc6ab0"
+    },
+    "observationDay01": {
+      "artifactPath": "artifacts/operations/dormitory/observation-day-01.json",
+      "artifactHead": "52d55e17d6f0f37df69ba3bab7ddc240bc01887d",
+      "artifactBase": "1a2fb45a89f3d1ef18eaf4ca216ecdc57660df30",
+      "mergeCommit": "fad090ad45fb44efbcd22d3f13fd7b130dfc6ab0"
+    }
+  },
+  "controls": {
+    "productionAllowed": false,
+    "dormitoryL2ProductionAllowed": false,
+    "businessProduction": "blocked",
+    "repairPartsHr": "L0 Contract Preview",
+    "day2AllowedByAttestation": true
+  },
+  "evidenceRefs": [
+    "artifacts/release-state/post-merge-attestation.json",
+    "artifacts/operations/dormitory/observation-day-01.json",
+    "artifacts/go-live/dormitory/internal-pilot-go-no-go.json",
+    "artifacts/release-state/current-state.json"
+  ],
+  "noGoItems": []
+}
