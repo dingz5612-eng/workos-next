@@ -1,0 +1,46 @@
+{
+  "generatedAtUtc": "2026-06-02T05:49:18.869Z",
+  "generatedBy": "check-release-evidence-baseline",
+  "stage": "OAM-CLEAN-BASELINE-D1",
+  "status": "passed",
+  "repositoryHead": "fad090ad45fb44efbcd22d3f13fd7b130dfc6ab0",
+  "prHead": "c3cc7ecf842ef3cc22e56955de6ca166be12fa61",
+  "verifiedMainHead": "fad090ad45fb44efbcd22d3f13fd7b130dfc6ab0",
+  "ci": {
+    "id": 26796158189,
+    "name": "CI",
+    "event": "push",
+    "status": "completed",
+    "conclusion": "success",
+    "headSha": "fad090ad45fb44efbcd22d3f13fd7b130dfc6ab0",
+    "htmlUrl": "https://github.com/dingz5612-eng/workos-next/actions/runs/26796158189",
+    "createdAt": "2026-06-02T03:17:46Z",
+    "updatedAt": "2026-06-02T03:20:05Z"
+  },
+  "v54ControlPlaneGuards": {
+    "id": 26796158193,
+    "name": "V5.4 Control Plane Guards",
+    "event": "push",
+    "status": "completed",
+    "conclusion": "success",
+    "headSha": "fad090ad45fb44efbcd22d3f13fd7b130dfc6ab0",
+    "htmlUrl": "https://github.com/dingz5612-eng/workos-next/actions/runs/26796158193",
+    "createdAt": "2026-06-02T03:17:46Z",
+    "updatedAt": "2026-06-02T03:19:54Z"
+  },
+  "refs": {
+    "postMergeAttestation": "artifacts/release-state/post-merge-attestation.json",
+    "currentState": "artifacts/release-state/current-state.json",
+    "internalPilotGoNoGo": "artifacts/go-live/dormitory/internal-pilot-go-no-go.json",
+    "evidenceGraph": "artifacts/rt4/evidence-graph.json",
+    "completionDashboard": "artifacts/rt4/completion-dashboard.json",
+    "artifactGitBinding": "artifacts/release-state/artifact-git-binding-result.json"
+  },
+  "inputHash": "10bd55814e314fbae6bfcd95951c2af9bbab545badfacd232cc310b0a6eeeeab",
+  "resultHash": "5ae880a7ea1590bb60dbbf91a542dddb6a0edc4132aa858422d66ed5d9016776",
+  "noGoItems": [],
+  "productionAllowed": false,
+  "dormitoryL2ProductionAllowed": false,
+  "businessProduction": "blocked",
+  "repairPartsHrStatus": "L0 Contract Preview"
+}
