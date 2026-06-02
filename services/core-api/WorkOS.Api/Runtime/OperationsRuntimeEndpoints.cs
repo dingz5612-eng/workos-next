@@ -49,7 +49,7 @@ public static class OperationsRuntimeEndpoints
 
         app.MapPost("/api/operations/work-items/{workItemId}/confirm", (string workItemId, ConfirmWorkItemRequest request, CanonicalOperationsApiService operations, HttpRequest httpRequest) =>
         {
-            var token = httpRequest.Headers["X-WorkOS-Actor-Token"].FirstOrDefault() ?? string.Empty;
+            var token = httpRequest.SessionTokenForOperations();
             var requestId = httpRequest.Headers["X-Request-Id"].FirstOrDefault() ?? httpRequest.HttpContext.TraceIdentifier;
             var result = operations.ConfirmWorkItem(workItemId, request, token, requestId);
             return Results.Json(result, statusCode: result.StatusCode);

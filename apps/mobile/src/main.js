@@ -2,7 +2,7 @@ import "./styles.css";
 import { checkHealth, fetchHomeSurface, fetchLearningCatalog, fetchOperationWorkItems, fetchWorkspaceProjection } from "./apiClient.js";
 import { shell } from "./appShell.js";
 import { routeView } from "./appRouter.js";
-import { createInitialState } from "./appState.js";
+import { createInitialState, shouldHydrateProtectedSurfaces } from "./appState.js";
 import { bindEvents } from "./eventBinder.js";
 import { refreshDefaultAccommodationLenses } from "./operationRuntime.js";
 import { applyRuntimeOfflineFallback, applyRuntimeProjection, applyRuntimeSurfacePayloads } from "./runtime/runtimeStore.js";
@@ -33,6 +33,9 @@ async function hydrateProjectionFromApi() {
   try {
     await checkHealth();
     state.apiStatus = "online";
+    if (!shouldHydrateProtectedSurfaces(state)) {
+      return;
+    }
     const [projection, operationWorkItems, homeSurface, learningCatalog, accommodationLenses] = await Promise.all([
       fetchWorkspaceProjection(),
       optionalSurface(fetchOperationWorkItems),

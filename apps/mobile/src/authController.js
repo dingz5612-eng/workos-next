@@ -1,4 +1,5 @@
 import { loginActor } from "./apiClient.js";
+import { persistActorSession } from "./appState.js";
 import { defaultHomeForRole } from "./experienceContract.js";
 import { setView } from "./navigationController.js";
 import { isPcSurfaceView } from "./surfaceRegistry.js";
@@ -16,7 +17,8 @@ export async function login(ctx) {
     const session = await loginActor(username, password);
     ctx.state.currentActor = session;
     ctx.state.loginMessage = "";
-    localStorage.setItem("workosnext.actorSession", JSON.stringify(session));
+    persistActorSession(session);
+    await ctx.hydrateProjectionFromApi();
     setView(localStorage.getItem("workosnext.onboarded") ? defaultHomeForSession(session, ctx.state) : "onboarding", ctx);
   } catch {
     ctx.state.loginMessage = ctx.tr("loginFailed");

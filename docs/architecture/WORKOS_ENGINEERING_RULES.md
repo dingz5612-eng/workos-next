@@ -37,6 +37,22 @@ AI may prepare, explain, recommend, and draft. AI must never confirm a Card.
 Confirm requires a trusted backend actor session and a human role allowed by the
 Card confirmation contract.
 
+## Authenticated Actor And Policy Gate
+
+所有 business / governance / runtime maintenance write 都必须由后端认证得到
+trusted actor context，不能信任 request body、`X-WorkOS-Actor-Id` 或前端
+ViewModel。非 `GET /api/*` 默认需要 `WorkOSWrite`，`POST
+/api/operations/work-items/{workItemId}/confirm` 必须需要
+`OperationsConfirmPolicy`。高风险 correction、governance export、session /
+device revoke、projector maintenance 必须声明并通过对应 policy：
+`HighRiskActionPolicy`、`GovernanceExportPolicy` 或
+`RuntimeMaintenancePolicy`。
+
+生产登录必须使用 HttpOnly cookie 承载 `workosnext_session`，cookie-authenticated
+non-GET 请求必须校验 `X-CSRF-Token`。Development 可以保留
+`X-WorkOS-Actor-Token` compatibility flow，但它仍必须通过 runtime session
+storage 校验。
+
 ## Clean Baseline
 
 The repository must not reintroduce old page, task, object, or scenario models.

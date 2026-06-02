@@ -4,7 +4,8 @@ import { setView } from "../navigationController.js";
 import { login } from "../authController.js";
 
 vi.mock("../apiClient.js", () => ({
-  loginActor: vi.fn()
+  loginActor: vi.fn(),
+  actorSessionForStorage: (session) => session
 }));
 
 vi.mock("../navigationController.js", () => ({

@@ -54,6 +54,9 @@ jobs:
       - name: Install mobile dependencies
         run: npm --prefix apps/mobile ci
 
+      - name: Install Playwright browser
+        run: npm --prefix apps/mobile exec playwright install --with-deps chromium
+
       - name: Audit mobile dependencies
         run: npm --prefix apps/mobile audit --audit-level=low
 
@@ -68,27 +71,36 @@ jobs:
       - name: Test mobile
         run: npm --prefix apps/mobile run test
 
+      - name: Test mobile report
+        run: npm --prefix apps/mobile run test:report
+
+      - name: Test mobile coverage
+        run: npm --prefix apps/mobile run test:coverage
+
+      - name: Playwright mobile and PC surface smoke
+        run: npm --prefix apps/mobile run test:e2e
+
       - name: Build backend
         run: dotnet build WorkOSNext.sln -c Release
 
       - name: Run unit tests
-        run: dotnet test tests/WorkOS.UnitTests/WorkOS.UnitTests.csproj -c Release --no-build
+        run: dotnet test tests/WorkOS.UnitTests/WorkOS.UnitTests.csproj -c Release --no-build --logger "trx;LogFileName=unit.trx" --results-directory artifacts/test-results/dotnet/unit --collect:"XPlat Code Coverage"
 
       - name: Run runtime integration tests
-        run: dotnet test tests/WorkOS.RuntimeIntegrationTests/WorkOS.RuntimeIntegrationTests.csproj -c Release --no-build
+        run: dotnet test tests/WorkOS.RuntimeIntegrationTests/WorkOS.RuntimeIntegrationTests.csproj -c Release --no-build --logger "trx;LogFileName=runtime-integration.trx" --results-directory artifacts/test-results/dotnet/runtime-integration --collect:"XPlat Code Coverage"
 
       - name: Run database security tests
         env:
           WORKOS_TEST_CONNECTION: Host=localhost;Port=54329;Database=workosnext_test;Username=workosnext;Password=workosnext_dev
           ConnectionStrings__WorkOSRuntime: Host=localhost;Port=54329;Database=workosnext_test;Username=workosnext;Password=workosnext_dev
           TEST_DATABASE: "true"
-        run: dotnet test tests/WorkOS.DatabaseSecurityTests/WorkOS.DatabaseSecurityTests.csproj -c Release --no-build
+        run: dotnet test tests/WorkOS.DatabaseSecurityTests/WorkOS.DatabaseSecurityTests.csproj -c Release --no-build --logger "trx;LogFileName=database-security.trx" --results-directory artifacts/test-results/dotnet/database-security --collect:"XPlat Code Coverage"
 
       - name: Run release evidence tests
-        run: dotnet test tests/WorkOS.ReleaseEvidenceTests/WorkOS.ReleaseEvidenceTests.csproj -c Release --no-build
+        run: dotnet test tests/WorkOS.ReleaseEvidenceTests/WorkOS.ReleaseEvidenceTests.csproj -c Release --no-build --logger "trx;LogFileName=release-evidence.trx" --results-directory artifacts/test-results/dotnet/release-evidence --collect:"XPlat Code Coverage"
 
       - name: Run policy as code tests
-        run: dotnet test tests/WorkOS.PolicyAsCodeTests/WorkOS.PolicyAsCodeTests.csproj -c Release --no-build
+        run: dotnet test tests/WorkOS.PolicyAsCodeTests/WorkOS.PolicyAsCodeTests.csproj -c Release --no-build --logger "trx;LogFileName=policy-as-code.trx" --results-directory artifacts/test-results/dotnet/policy-as-code --collect:"XPlat Code Coverage"
 
       - name: Run runtime contract tests
         env:
@@ -285,3 +297,15 @@ jobs:
 
       - name: Diff whitespace check
         run: git diff --check
+
+      - name: Upload evidence-grade test artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: workosnext-test-evidence-${{ github.run_id }}
+          if-no-files-found: warn
+          path: |
+            artifacts/test-results/**
+            **/TestResults/**/*.trx
+            **/coverage.cobertura.xml
+            apps/mobile/playwright-report/**

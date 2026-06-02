@@ -16,19 +16,41 @@ internal sealed class PostgresMigrationRunner
     public void Run()
     {
         using var connection = connections.Open();
-        using var bootstrap = connection.CreateCommand();
-        bootstrap.CommandText = """
-            create table if not exists schema_migrations (
-                migration_id text primary key,
-                applied_at_utc timestamptz not null
-            );
-            """;
-        bootstrap.ExecuteNonQuery();
-
-        foreach (var migration in MigrationScriptLoader.Load(migrationsPath))
+        AcquireAdvisoryLock(connection);
+        try
         {
-            ApplyMigration(connection, migration.MigrationId, migration.Sql);
+            using var bootstrap = connection.CreateCommand();
+            bootstrap.CommandText = """
+                create table if not exists schema_migrations (
+                    migration_id text primary key,
+                    applied_at_utc timestamptz not null
+                );
+                """;
+            bootstrap.ExecuteNonQuery();
+
+            foreach (var migration in MigrationScriptLoader.Load(migrationsPath))
+            {
+                ApplyMigration(connection, migration.MigrationId, migration.Sql);
+            }
         }
+        finally
+        {
+            ReleaseAdvisoryLock(connection);
+        }
+    }
+
+    private static void AcquireAdvisoryLock(NpgsqlConnection connection)
+    {
+        using var command = connection.CreateCommand();
+        command.CommandText = "select pg_advisory_lock(hashtext('workosnext_runtime_migrations'))";
+        command.ExecuteNonQuery();
+    }
+
+    private static void ReleaseAdvisoryLock(NpgsqlConnection connection)
+    {
+        using var command = connection.CreateCommand();
+        command.CommandText = "select pg_advisory_unlock(hashtext('workosnext_runtime_migrations'))";
+        command.ExecuteNonQuery();
     }
 
     private static void ApplyMigration(NpgsqlConnection connection, string migrationId, string sql)

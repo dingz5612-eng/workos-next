@@ -9,6 +9,7 @@ categories:
       writesBusinessFact: true
       writesGovernanceFact: false
       requiresOperationsConfirm: true
+      authPolicy: OperationsConfirmPolicy
       appendOnly: true
       requiredInvariant:
         - api.no_page_specific_business_write
@@ -23,6 +24,7 @@ categories:
       writesBusinessFact: false
       writesGovernanceFact: false
       requiresOperationsConfirm: false
+      authPolicy: WorkOSWrite
       appendOnly: true
       requiredInvariant:
         - api.no_page_specific_business_write
@@ -35,6 +37,7 @@ categories:
       writesBusinessFact: true
       writesGovernanceFact: false
       requiresOperationsConfirm: true
+      authPolicy: OperationsConfirmPolicy
       appendOnly: true
       requiredInvariant:
         - api.no_page_specific_business_write
@@ -49,6 +52,7 @@ categories:
       writesBusinessFact: false
       writesGovernanceFact: false
       requiresOperationsConfirm: false
+      authPolicy: WorkOSWrite
       appendOnly: true
       requiredInvariant:
         - mobile.bff_does_not_write_business_facts
@@ -61,6 +65,7 @@ categories:
       writesBusinessFact: false
       writesGovernanceFact: false
       requiresOperationsConfirm: false
+      authPolicy: WorkOSWrite
       appendOnly: true
       requiredInvariant:
         - mobile.bff_does_not_write_business_facts
@@ -73,6 +78,7 @@ categories:
       writesBusinessFact: false
       writesGovernanceFact: false
       requiresOperationsConfirm: false
+      authPolicy: WorkOSWrite
       appendOnly: true
       requiredInvariant:
         - mobile.bff_does_not_write_business_facts
@@ -86,6 +92,7 @@ categories:
       writesBusinessFact: false
       writesGovernanceFact: false
       requiresOperationsConfirm: false
+      authPolicy: WorkOSWrite
       appendOnly: true
       requiredInvariant:
         - evidence.write_does_not_confirm_money
@@ -98,6 +105,7 @@ categories:
       writesBusinessFact: false
       writesGovernanceFact: false
       requiresOperationsConfirm: false
+      authPolicy: WorkOSWrite
       appendOnly: true
       requiredInvariant:
         - evidence.write_does_not_confirm_money
@@ -110,6 +118,7 @@ categories:
       writesBusinessFact: false
       writesGovernanceFact: false
       requiresOperationsConfirm: false
+      authPolicy: WorkOSWrite
       appendOnly: true
       requiredInvariant:
         - evidence.write_does_not_confirm_money
@@ -122,6 +131,7 @@ categories:
       writesBusinessFact: false
       writesGovernanceFact: false
       requiresOperationsConfirm: false
+      authPolicy: WorkOSWrite
       appendOnly: true
       requiredInvariant:
         - evidence.write_does_not_confirm_money
@@ -137,6 +147,7 @@ categories:
       writesBusinessFact: false
       writesGovernanceFact: true
       requiresOperationsConfirm: false
+      authPolicy: WorkOSWrite
       appendOnly: true
       requiredInvariant:
         - bank.import_does_not_create_payment_fact
@@ -150,6 +161,7 @@ categories:
       writesBusinessFact: false
       writesGovernanceFact: true
       requiresOperationsConfirm: false
+      authPolicy: WorkOSWrite
       appendOnly: true
       requiredInvariant:
         - bank.import_does_not_create_payment_fact
@@ -163,6 +175,7 @@ categories:
       writesBusinessFact: false
       writesGovernanceFact: true
       requiresOperationsConfirm: false
+      authPolicy: WorkOSWrite
       appendOnly: true
       requiredInvariant:
         - reconciliation.bank_transaction_single_match_default
@@ -176,6 +189,7 @@ categories:
       writesBusinessFact: false
       writesGovernanceFact: true
       requiresOperationsConfirm: false
+      authPolicy: WorkOSWrite
       appendOnly: true
       requiredInvariant:
         - reconciliation.bank_transaction_single_match_default
@@ -189,6 +203,7 @@ categories:
       writesBusinessFact: false
       writesGovernanceFact: true
       requiresOperationsConfirm: false
+      authPolicy: WorkOSWrite
       appendOnly: true
       requiredInvariant:
         - reconciliation.bank_transaction_single_match_default
@@ -202,6 +217,7 @@ categories:
       writesBusinessFact: false
       writesGovernanceFact: true
       requiresOperationsConfirm: false
+      authPolicy: WorkOSWrite
       appendOnly: true
       requiredInvariant:
         - reconciliation.bank_transaction_single_match_default
@@ -215,6 +231,7 @@ categories:
       writesBusinessFact: false
       writesGovernanceFact: true
       requiresOperationsConfirm: false
+      authPolicy: WorkOSWrite
       appendOnly: true
       requiredInvariant:
         - reconciliation.bank_transaction_single_match_default
@@ -228,6 +245,7 @@ categories:
       writesBusinessFact: false
       writesGovernanceFact: true
       requiresOperationsConfirm: false
+      authPolicy: WorkOSWrite
       appendOnly: true
       requiredInvariant:
         - reconciliation.bank_transaction_single_match_default
@@ -242,6 +260,7 @@ categories:
       writesBusinessFact: false
       writesGovernanceFact: true
       requiresOperationsConfirm: false
+      authPolicy: WorkOSWrite
       appendOnly: true
       requiredInvariant:
         - correction.requires_reason
@@ -255,6 +274,7 @@ categories:
       writesBusinessFact: false
       writesGovernanceFact: true
       requiresOperationsConfirm: false
+      authPolicy: HighRiskActionPolicy
       appendOnly: true
       requiredInvariant:
         - correction.high_risk_requires_approval
@@ -269,6 +289,7 @@ categories:
       writesBusinessFact: false
       writesGovernanceFact: true
       requiresOperationsConfirm: false
+      authPolicy: WorkOSWrite
       appendOnly: true
       requiredInvariant:
         - correction.requires_reason
@@ -282,6 +303,7 @@ categories:
       writesBusinessFact: true
       writesGovernanceFact: true
       requiresOperationsConfirm: false
+      authPolicy: HighRiskActionPolicy
       appendOnly: true
       appendOnlyCorrectionService: true
       requiredInvariant:
@@ -300,6 +322,7 @@ categories:
       writesBusinessFact: false
       writesGovernanceFact: true
       requiresOperationsConfirm: false
+      authPolicy: GovernanceExportPolicy
       appendOnly: true
       requiresCapability: true
       requiresAudit: true
@@ -316,6 +339,7 @@ categories:
       writesBusinessFact: false
       writesGovernanceFact: false
       requiresOperationsConfirm: false
+      authPolicy: AnonymousLogin
       appendOnly: true
       requiredInvariant:
         - security.session_write_not_business_fact
@@ -328,6 +352,7 @@ categories:
       writesBusinessFact: false
       writesGovernanceFact: false
       requiresOperationsConfirm: false
+      authPolicy: RuntimeMaintenancePolicy
       appendOnly: true
       requiredInvariant:
         - security.session_write_not_business_fact
@@ -340,6 +365,7 @@ categories:
       writesBusinessFact: false
       writesGovernanceFact: false
       requiresOperationsConfirm: false
+      authPolicy: WorkOSWrite
       appendOnly: true
       requiredInvariant:
         - security.session_write_not_business_fact
@@ -352,6 +378,7 @@ categories:
       writesBusinessFact: false
       writesGovernanceFact: false
       requiresOperationsConfirm: false
+      authPolicy: RuntimeMaintenancePolicy
       appendOnly: true
       requiredInvariant:
         - security.session_write_not_business_fact
@@ -365,6 +392,7 @@ categories:
       writesBusinessFact: false
       writesGovernanceFact: false
       requiresOperationsConfirm: false
+      authPolicy: WorkOSWrite
       appendOnly: true
       requiredInvariant:
         - operations.case_write_not_business_fact
@@ -377,6 +405,7 @@ categories:
       writesBusinessFact: false
       writesGovernanceFact: false
       requiresOperationsConfirm: false
+      authPolicy: WorkOSWrite
       appendOnly: true
       requiredInvariant:
         - operations.work_item_write_not_business_fact
@@ -389,6 +418,7 @@ categories:
       writesBusinessFact: false
       writesGovernanceFact: false
       requiresOperationsConfirm: false
+      authPolicy: WorkOSWrite
       appendOnly: true
       requiredInvariant:
         - operations.prepare_write_not_business_fact
@@ -401,6 +431,7 @@ categories:
       writesBusinessFact: false
       writesGovernanceFact: false
       requiresOperationsConfirm: false
+      authPolicy: RuntimeMaintenancePolicy
       appendOnly: true
       requiredInvariant:
         - projection.outbox_processing_not_business_command
@@ -414,6 +445,7 @@ categories:
       writesBusinessFact: false
       writesGovernanceFact: false
       requiresOperationsConfirm: false
+      authPolicy: WorkOSWrite
       appendOnly: true
       requiredInvariant:
         - behavior.event_write_not_business_fact

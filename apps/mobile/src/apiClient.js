@@ -1,15 +1,64 @@
 import { runtimeApiPaths } from "./generated/runtimeApiPaths.js";
 
+const ACTOR_SESSION_KEY = "workosnext.actorSession";
+const API_BASE_URL_KEY = "workosnext.apiBaseUrl";
+const CSRF_COOKIE_NAME = "workosnext_csrf";
+
 export function apiBaseUrl() {
   return resolveApiBaseUrl();
 }
 
 export function resolveApiBaseUrl() {
   const envBaseUrl = import.meta.env.VITE_WORKOS_API_BASE_URL;
-  if (envBaseUrl) return envBaseUrl.replace(/\/$/, "");
-  const configured = localStorage.getItem("workosnext.apiBaseUrl");
-  if (configured && !isStaleLocalFrontendUrl(configured)) return configured.replace(/\/$/, "");
+  if (envBaseUrl) return normalizeBaseUrl(envBaseUrl);
+  const configured = localStorage.getItem(API_BASE_URL_KEY);
+  if (isProductionRuntime()) {
+    if (configured && isAllowedProductionApiBase(configured)) return normalizeBaseUrl(configured);
+    if (configured) localStorage.removeItem(API_BASE_URL_KEY);
+    return window.location.origin;
+  }
+  if (configured && !isStaleLocalFrontendUrl(configured)) return normalizeBaseUrl(configured);
   return `${window.location.protocol}//${window.location.hostname}:5191`;
+}
+
+export function isProductionRuntime() {
+  return import.meta.env.PROD === true ||
+    import.meta.env.MODE === "production" ||
+    import.meta.env.VITE_WORKOS_RUNTIME_ENV === "production";
+}
+
+export function shouldPersistApiOverride(value) {
+  if (!value) return false;
+  if (!isProductionRuntime()) return !isStaleLocalFrontendUrl(value);
+  return isAllowedProductionApiBase(value);
+}
+
+export function actorSessionForStorage(session = {}) {
+  if (!isProductionRuntime()) return session;
+  const { token, ...safeSession } = session || {};
+  return safeSession;
+}
+
+export function clearStoredActorSession() {
+  localStorage.removeItem(ACTOR_SESSION_KEY);
+}
+
+function normalizeBaseUrl(value) {
+  return String(value || "").replace(/\/$/, "");
+}
+
+function isAllowedProductionApiBase(value) {
+  try {
+    const url = new URL(value, window.location.origin);
+    if (url.origin === window.location.origin) return true;
+    const allowed = String(import.meta.env.VITE_WORKOS_ALLOWED_API_BASE_URLS || "")
+      .split(",")
+      .map((item) => item.trim().replace(/\/$/, ""))
+      .filter(Boolean);
+    return allowed.includes(url.origin) || allowed.includes(normalizeBaseUrl(url.href));
+  } catch {
+    return false;
+  }
 }
 
 function isStaleLocalFrontendUrl(value) {
@@ -23,20 +72,23 @@ function isStaleLocalFrontendUrl(value) {
 }
 
 export async function checkHealth() {
-  const response = await fetch(`${apiBaseUrl()}${runtimeApiPaths.health}`, { signal: AbortSignal.timeout(1600) });
+  const response = await fetch(`${apiBaseUrl()}${runtimeApiPaths.health}`, {
+    credentials: "include",
+    signal: AbortSignal.timeout(1600)
+  });
   if (!response.ok) throw new Error("health_failed");
   return response.json();
 }
 
 export async function fetchWorkspaceProjection() {
-  const response = await fetch(`${apiBaseUrl()}${runtimeApiPaths.workspaces}`, { signal: AbortSignal.timeout(2400) });
-  if (!response.ok) throw new Error("projection_failed");
+  const response = await runtimeFetch(runtimeApiPaths.workspaces, { timeoutMs: 2400 });
+  if (!response.ok) throw await apiError("projection_failed", response);
   return response.json();
 }
 
 export async function fetchWorkQueue() {
-  const response = await fetch(`${apiBaseUrl()}${runtimeApiPaths.lensWorkQueue}`, { signal: AbortSignal.timeout(2400) });
-  if (!response.ok) throw new Error("work_queue_failed");
+  const response = await runtimeFetch(runtimeApiPaths.lensWorkQueue, { timeoutMs: 2400 });
+  if (!response.ok) throw await apiError("work_queue_failed", response);
   return response.json();
 }
 
@@ -45,79 +97,76 @@ export async function fetchOperationWorkItems(query = {}) {
   for (const [key, value] of Object.entries(query || {})) {
     if (value) url.searchParams.set(key, value);
   }
-  const response = await fetch(url, { signal: AbortSignal.timeout(2400) });
+  const response = await runtimeFetch(url, { timeoutMs: 2400 });
   if (!response.ok) throw await apiError("operation_work_items_failed", response);
   return response.json();
 }
 
 export async function fetchOperationWorkItem(workItemId) {
-  const response = await fetch(`${apiBaseUrl()}${runtimeApiPaths.operationsWorkItem(workItemId)}`, { signal: AbortSignal.timeout(2400) });
+  const response = await runtimeFetch(runtimeApiPaths.operationsWorkItem(workItemId), { timeoutMs: 2400 });
   if (!response.ok) throw await apiError("operation_work_item_failed", response);
   return response.json();
 }
 
 export async function createOperationCase(body) {
-  const response = await fetch(`${apiBaseUrl()}${runtimeApiPaths.operationsCases}`, {
+  const response = await runtimeFetch(runtimeApiPaths.operationsCases, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body || {}),
-    signal: AbortSignal.timeout(3200)
+    timeoutMs: 3200
   });
   if (!response.ok) throw await apiError("operation_case_create_failed", response);
   return response.json();
 }
 
 export async function createOperationWorkItem(body) {
-  const response = await fetch(`${apiBaseUrl()}${runtimeApiPaths.operationsWorkItems}`, {
+  const response = await runtimeFetch(runtimeApiPaths.operationsWorkItems, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body || {}),
-    signal: AbortSignal.timeout(3200)
+    timeoutMs: 3200
   });
   if (!response.ok) throw await apiError("operation_work_item_create_failed", response);
   return response.json();
 }
 
-export async function prepareOperationWorkItem(workItemId, body = {}) {
-  const response = await fetch(`${apiBaseUrl()}${runtimeApiPaths.operationsPrepare(workItemId)}`, {
+export async function prepareOperationWorkItem(workItemId, body = {}, actorToken = "") {
+  const response = await runtimeFetch(runtimeApiPaths.operationsPrepare(workItemId), {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    actorToken,
     body: JSON.stringify(body || {}),
-    signal: AbortSignal.timeout(3200)
+    timeoutMs: 3200
   });
   if (!response.ok) throw await apiError("operations_prepare_failed", response);
   return response.json();
 }
 
 export async function confirmOperationWorkItem(workItemId, actorToken, body = {}) {
-  const response = await fetch(`${apiBaseUrl()}${runtimeApiPaths.operationsConfirm(workItemId)}`, {
+  const response = await runtimeFetch(runtimeApiPaths.operationsConfirm(workItemId), {
     method: "POST",
     headers: {
-      "Content-Type": "application/json",
-      "X-WorkOS-Actor-Token": actorToken,
       "X-Request-Id": body?.submissionId || body?.idempotencyKey || cryptoRandomRequestId()
     },
+    actorToken,
     body: JSON.stringify(body || {}),
-    signal: AbortSignal.timeout(4200)
+    timeoutMs: 4200
   });
   if (!response.ok) throw await apiError("operations_confirm_failed", response);
   return response.json();
 }
 
 export async function fetchSubmissionTrace(submissionId) {
-  const response = await fetch(`${apiBaseUrl()}${runtimeApiPaths.operationsTraceSubmission(submissionId)}`, { signal: AbortSignal.timeout(2400) });
+  const response = await runtimeFetch(runtimeApiPaths.operationsTraceSubmission(submissionId), { timeoutMs: 2400 });
   if (!response.ok) throw await apiError("submission_trace_failed", response);
   return response.json();
 }
 
 export async function fetchWorkItemTrace(workItemId) {
-  const response = await fetch(`${apiBaseUrl()}${runtimeApiPaths.operationsTraceWorkItem(workItemId)}`, { signal: AbortSignal.timeout(2400) });
+  const response = await runtimeFetch(runtimeApiPaths.operationsTraceWorkItem(workItemId), { timeoutMs: 2400 });
   if (!response.ok) throw await apiError("work_item_trace_failed", response);
   return response.json();
 }
 
 export async function fetchCaseTrace(caseId) {
-  const response = await fetch(`${apiBaseUrl()}${runtimeApiPaths.operationsTraceCase(caseId)}`, { signal: AbortSignal.timeout(2400) });
+  const response = await runtimeFetch(runtimeApiPaths.operationsTraceCase(caseId), { timeoutMs: 2400 });
   if (!response.ok) throw await apiError("case_trace_failed", response);
   return response.json();
 }
@@ -125,52 +174,46 @@ export async function fetchCaseTrace(caseId) {
 export async function fetchSearchResults(q = "") {
   const url = new URL(`${apiBaseUrl()}${runtimeApiPaths.lensSearch}`);
   if (q) url.searchParams.set("q", q);
-  const response = await fetch(url, { signal: AbortSignal.timeout(2400) });
-  if (!response.ok) throw new Error("search_failed");
+  const response = await runtimeFetch(url, { timeoutMs: 2400 });
+  if (!response.ok) throw await apiError("search_failed", response);
   return response.json();
 }
 
 export async function fetchHomeSurface() {
-  const response = await fetch(`${apiBaseUrl()}${runtimeApiPaths.homeSurface}`, { signal: AbortSignal.timeout(2400) });
-  if (!response.ok) throw new Error("home_surface_failed");
+  const response = await runtimeFetch(runtimeApiPaths.homeSurface, { timeoutMs: 2400 });
+  if (!response.ok) throw await apiError("home_surface_failed", response);
   return response.json();
 }
 
 export async function fetchLearningCatalog() {
-  const response = await fetch(`${apiBaseUrl()}${runtimeApiPaths.learningCatalog}`, { signal: AbortSignal.timeout(2400) });
-  if (!response.ok) throw new Error("learning_catalog_failed");
+  const response = await runtimeFetch(runtimeApiPaths.learningCatalog, { timeoutMs: 2400 });
+  if (!response.ok) throw await apiError("learning_catalog_failed", response);
   return response.json();
 }
 
 export async function fetchAccommodationLens(lensId) {
-  const response = await fetch(`${apiBaseUrl()}${runtimeApiPaths.accommodationLens(lensId)}`, { signal: AbortSignal.timeout(2400) });
-  if (!response.ok) throw new Error("lens_failed");
+  const response = await runtimeFetch(runtimeApiPaths.accommodationLens(lensId), { timeoutMs: 2400 });
+  if (!response.ok) throw await apiError("lens_failed", response);
   return response.json();
 }
 
-export async function createEvidenceDraft(body, actorId = "runtime") {
-  const response = await fetch(`${apiBaseUrl()}${runtimeApiPaths.evidenceDrafts}`, {
+export async function createEvidenceDraft(body, actorToken = "") {
+  const response = await runtimeFetch(runtimeApiPaths.evidenceDrafts, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "X-WorkOS-Actor-Id": actorId
-    },
+    actorToken,
     body: JSON.stringify(body),
-    signal: AbortSignal.timeout(2400)
+    timeoutMs: 2400
   });
   if (!response.ok) throw await apiError("evidence_draft_failed", response);
   return response.json();
 }
 
-export async function attachEvidence(evidenceId, body, actorId = "runtime") {
-  const response = await fetch(`${apiBaseUrl()}${runtimeApiPaths.evidenceAttachments(evidenceId)}`, {
+export async function attachEvidence(evidenceId, body, actorToken = "") {
+  const response = await runtimeFetch(runtimeApiPaths.evidenceAttachments(evidenceId), {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "X-WorkOS-Actor-Id": actorId
-    },
+    actorToken,
     body: JSON.stringify(body),
-    signal: AbortSignal.timeout(2400)
+    timeoutMs: 2400
   });
   if (!response.ok) throw await apiError("evidence_attach_failed", response);
   return response.json();
@@ -180,6 +223,7 @@ export async function loginActor(username, password) {
   const response = await fetch(`${apiBaseUrl()}${runtimeApiPaths.login}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
+    credentials: "include",
     body: JSON.stringify({ username, password }),
     signal: AbortSignal.timeout(2400)
   });
@@ -188,29 +232,63 @@ export async function loginActor(username, password) {
 }
 
 export async function prepareCard(workspaceId, cardId, body = {}) {
-  const response = await fetch(`${apiBaseUrl()}${runtimeApiPaths.prepareCard(workspaceId, cardId)}`, {
+  const response = await runtimeFetch(runtimeApiPaths.prepareCard(workspaceId, cardId), {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body || {}),
-    signal: AbortSignal.timeout(3200)
+    timeoutMs: 3200
   });
   if (!response.ok) throw await apiError("prepare_failed", response);
   return response.json();
 }
 
 export async function confirmCard(workspaceId, cardId, actorToken, body) {
-  const response = await fetch(`${apiBaseUrl()}${runtimeApiPaths.confirmCard(workspaceId, cardId)}`, {
+  const response = await runtimeFetch(runtimeApiPaths.confirmCard(workspaceId, cardId), {
     method: "POST",
     headers: {
-      "Content-Type": "application/json",
-      "X-WorkOS-Actor-Token": actorToken,
       "X-Request-Id": body?.submissionId || body?.idempotencyKey || cryptoRandomRequestId()
     },
+    actorToken,
     body: JSON.stringify(body),
-    signal: AbortSignal.timeout(4200)
+    timeoutMs: 4200
   });
   if (!response.ok) throw await apiError("confirm_failed", response);
   return response.json();
+}
+
+async function runtimeFetch(pathOrUrl, options = {}) {
+  const method = options.method || "GET";
+  const headers = {
+    ...(method === "GET" ? {} : { "Content-Type": "application/json" }),
+    ...(options.headers || {})
+  };
+  const csrf = csrfToken();
+  if (method !== "GET" && csrf) headers["X-CSRF-Token"] = csrf;
+  if (options.actorToken && !isProductionRuntime()) {
+    headers["X-WorkOS-Actor-Token"] = options.actorToken;
+  }
+  return fetch(runtimeUrl(pathOrUrl), {
+    method,
+    headers,
+    credentials: "include",
+    body: options.body,
+    signal: AbortSignal.timeout(options.timeoutMs || 2400)
+  });
+}
+
+function runtimeUrl(pathOrUrl) {
+  if (pathOrUrl instanceof URL) return pathOrUrl;
+  if (String(pathOrUrl).startsWith("http://") || String(pathOrUrl).startsWith("https://")) return pathOrUrl;
+  return `${apiBaseUrl()}${pathOrUrl}`;
+}
+
+function csrfToken() {
+  const cookie = globalThis.document?.cookie || "";
+  const prefix = `${CSRF_COOKIE_NAME}=`;
+  return cookie
+    .split(";")
+    .map((item) => item.trim())
+    .find((item) => item.startsWith(prefix))
+    ?.slice(prefix.length) || "";
 }
 
 function cryptoRandomRequestId() {
@@ -228,6 +306,9 @@ async function apiError(code, response) {
   error.code = details.error || code;
   error.reason = details.reason || "";
   error.status = response.status;
+  if (response.status === 401 || response.status === 403) {
+    clearStoredActorSession();
+  }
   return error;
 }
 

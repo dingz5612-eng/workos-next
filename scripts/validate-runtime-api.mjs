@@ -8,8 +8,11 @@ const sliceManifest = JSON.parse(fs.readFileSync("docs/contracts/slice-manifest.
 const surfacePolicy = JSON.parse(fs.readFileSync("docs/contracts/runtime-surface-policy.json", "utf8"));
 const lensContract = JSON.parse(fs.readFileSync("docs/contracts/accommodation-lens-contract.json", "utf8"));
 const startupTimeoutMs = Number.parseInt(process.env.WORKOS_API_VALIDATE_TIMEOUT_MS ?? "90000", 10);
+const defaultTestConnectionString =
+  "Host=localhost;Port=54329;Database=workosnext_test;Username=workosnext;Password=workosnext_dev";
 let apiProcess;
 let apiProcessOutput = "";
+let runtimeActorToken = "";
 
 function apiRunArgs(outputName) {
   return [
@@ -26,7 +29,14 @@ function apiRunArgs(outputName) {
 
 function startDevelopmentApi() {
   apiProcess = spawn("dotnet", apiRunArgs("validate-runtime-api"), {
-    env: { ...process.env, ASPNETCORE_ENVIRONMENT: "Development", ASPNETCORE_URLS: baseUrl },
+    env: {
+      ...process.env,
+      ASPNETCORE_ENVIRONMENT: "Development",
+      ASPNETCORE_URLS: baseUrl,
+      ConnectionStrings__WorkOSRuntime: process.env.ConnectionStrings__WorkOSRuntime || defaultTestConnectionString,
+      WORKOS_TEST_CONNECTION: process.env.WORKOS_TEST_CONNECTION || defaultTestConnectionString,
+      TEST_DATABASE: process.env.TEST_DATABASE || "true"
+    },
     stdio: ["ignore", "pipe", "pipe"]
   });
   apiProcess.stdout.on("data", (chunk) => {
@@ -44,6 +54,7 @@ try {
   }
   await waitForApi();
   await validateHealth();
+  await ensureRuntimeActorToken();
   const projection = await getJson("/api/workspaces");
   validateProjectionEnvelope(projection);
   validateBehaviorEventRequestContract();
@@ -146,12 +157,12 @@ async function validateDeclaredRuntimePaths(projection) {
 async function requestDeclaredPath(method, path) {
   if (method === "GET") {
     if (path === "/api/control-plane/invariant-checks") {
-      return fetch(`${baseUrl}${path}?releaseId=v5.4-first-batch`);
+      return fetch(`${baseUrl}${path}?releaseId=v5.4-first-batch`, { headers: authHeaders() });
     }
     if (path === "/api/reconciliation/match-candidates") {
-      return fetch(`${baseUrl}${path}?tenantId=tenant-1`);
+      return fetch(`${baseUrl}${path}?tenantId=tenant-1`, { headers: authHeaders() });
     }
-    return fetch(`${baseUrl}${path}`);
+    return fetch(`${baseUrl}${path}`, { headers: authHeaders() });
   }
 
   if (method === "POST" && path === "/api/auth/login") {
@@ -165,7 +176,7 @@ async function requestDeclaredPath(method, path) {
   if (method === "POST" && path === "/api/operations/cases") {
     return fetch(`${baseUrl}${path}`, {
       method,
-      headers: { "Content-Type": "application/json" },
+      headers: authHeaders({ "Content-Type": "application/json" }),
       body: JSON.stringify({ workspaceId: "W-STAY-RESOURCE" })
     });
   }
@@ -173,7 +184,7 @@ async function requestDeclaredPath(method, path) {
   if (method === "POST" && path === "/api/operations/work-items") {
     return fetch(`${baseUrl}${path}`, {
       method,
-      headers: { "Content-Type": "application/json" },
+      headers: authHeaders({ "Content-Type": "application/json" }),
       body: JSON.stringify({
         workItemId: "W-STAY-RESOURCE:roomSetup",
         workspaceId: "W-STAY-RESOURCE",
@@ -188,7 +199,7 @@ async function requestDeclaredPath(method, path) {
   if (method === "POST" && path.endsWith("/prepare")) {
     return fetch(`${baseUrl}${path}`, {
       method,
-      headers: { "Content-Type": "application/json" },
+      headers: authHeaders({ "Content-Type": "application/json" }),
       body: "{}"
     });
   }
@@ -196,7 +207,7 @@ async function requestDeclaredPath(method, path) {
   if (method === "POST" && path.endsWith("/confirm")) {
     return fetch(`${baseUrl}${path}`, {
       method,
-      headers: { "Content-Type": "application/json" },
+      headers: authHeaders({ "Content-Type": "application/json" }),
       body: JSON.stringify(confirmBody(`openapi-path-${Date.now()}-${Math.random().toString(16).slice(2)}`))
     });
   }
@@ -204,7 +215,7 @@ async function requestDeclaredPath(method, path) {
   if (method === "POST" && path === "/api/evidence/drafts") {
     return fetch(`${baseUrl}${path}`, {
       method,
-      headers: { "Content-Type": "application/json" },
+      headers: authHeaders({ "Content-Type": "application/json" }),
       body: JSON.stringify({
         workspaceId: "W-STAY-DEPOSIT-LEDGER",
         cardId: "depositReceipt",
@@ -219,10 +230,10 @@ async function requestDeclaredPath(method, path) {
   if (method === "POST" && path === "/api/device-sessions") {
     return fetch(`${baseUrl}${path}`, {
       method,
-      headers: { "Content-Type": "application/json" },
+      headers: authHeaders({ "Content-Type": "application/json" }),
       body: JSON.stringify({
         tenantId: "tenant-1",
-        actorId: "validate-runtime-api",
+        actorId: "u-operator",
         deviceId: "device-openapi-path",
         deviceTrustStatus: "trusted",
         userAgentHash: "ua-openapi-path"
@@ -233,7 +244,7 @@ async function requestDeclaredPath(method, path) {
   if (method === "POST" && path.startsWith("/api/reconciliation/bank-statement-imports")) {
     return fetch(`${baseUrl}${path}`, {
       method,
-      headers: { "Content-Type": "application/json", "X-WorkOS-Actor-Id": "validate-runtime-api" },
+      headers: authHeaders({ "Content-Type": "application/json" }),
       body: JSON.stringify({
         tenantId: "tenant-1",
         sourceType: "manual_csv",
@@ -246,7 +257,7 @@ async function requestDeclaredPath(method, path) {
   if (method === "POST" && path === "/api/reconciliation/match-candidates/generate") {
     return fetch(`${baseUrl}${path}`, {
       method,
-      headers: { "Content-Type": "application/json" },
+      headers: authHeaders({ "Content-Type": "application/json" }),
       body: JSON.stringify({ tenantId: "tenant-1", windowDays: 3 })
     });
   }
@@ -254,7 +265,7 @@ async function requestDeclaredPath(method, path) {
   if (method === "POST" && path === "/api/reconciliation/mismatches/detect") {
     return fetch(`${baseUrl}${path}`, {
       method,
-      headers: { "Content-Type": "application/json" },
+      headers: authHeaders({ "Content-Type": "application/json" }),
       body: JSON.stringify({ tenantId: "tenant-1", windowDays: 3 })
     });
   }
@@ -264,7 +275,7 @@ async function requestDeclaredPath(method, path) {
       path.endsWith("/reject")) {
     return fetch(`${baseUrl}${path}`, {
       method,
-      headers: { "Content-Type": "application/json", "X-WorkOS-Actor-Id": "validate-runtime-api" },
+      headers: authHeaders({ "Content-Type": "application/json" }),
       body: JSON.stringify({ tenantId: "tenant-1", approverId: "validate-runtime-api", reason: "path reachability" })
     });
   }
@@ -272,7 +283,7 @@ async function requestDeclaredPath(method, path) {
   if (method === "POST" && path.endsWith("/mismatch")) {
     return fetch(`${baseUrl}${path}`, {
       method,
-      headers: { "Content-Type": "application/json", "X-WorkOS-Actor-Id": "validate-runtime-api" },
+      headers: authHeaders({ "Content-Type": "application/json" }),
       body: JSON.stringify({ tenantId: "tenant-1", mismatchType: "manual_review", reason: "path reachability" })
     });
   }
@@ -280,7 +291,7 @@ async function requestDeclaredPath(method, path) {
   if (method === "POST" && path.endsWith("/ignore")) {
     return fetch(`${baseUrl}${path}`, {
       method,
-      headers: { "Content-Type": "application/json", "X-WorkOS-Actor-Id": "validate-runtime-api" },
+      headers: authHeaders({ "Content-Type": "application/json" }),
       body: JSON.stringify({ tenantId: "tenant-1", reason: "path reachability" })
     });
   }
@@ -288,7 +299,7 @@ async function requestDeclaredPath(method, path) {
   if (method === "POST" && path === "/api/correction-center/ledger-correction-requests") {
     return fetch(`${baseUrl}${path}`, {
       method,
-      headers: { "Content-Type": "application/json" },
+      headers: authHeaders({ "Content-Type": "application/json" }),
       body: JSON.stringify({
         tenantId: "tenant-1",
         workItemId: "wi-openapi-path",
@@ -308,7 +319,7 @@ async function requestDeclaredPath(method, path) {
   if (method === "POST" && path.endsWith("/approve")) {
     return fetch(`${baseUrl}${path}`, {
       method,
-      headers: { "Content-Type": "application/json" },
+      headers: authHeaders({ "Content-Type": "application/json" }),
       body: JSON.stringify({
         tenantId: "tenant-1",
         approverId: "validate-runtime-api",
@@ -325,7 +336,7 @@ async function requestDeclaredPath(method, path) {
   if (method === "POST" && path.endsWith("/apply")) {
     return fetch(`${baseUrl}${path}`, {
       method,
-      headers: { "Content-Type": "application/json" },
+      headers: authHeaders({ "Content-Type": "application/json" }),
       body: JSON.stringify({
         tenantId: "tenant-1",
         actorId: "validate-runtime-api",
@@ -338,7 +349,7 @@ async function requestDeclaredPath(method, path) {
   if (method === "POST" && path.startsWith("/api/pc-governance/exports/")) {
     return fetch(`${baseUrl}${path}`, {
       method,
-      headers: { "Content-Type": "application/json" },
+      headers: authHeaders({ "Content-Type": "application/json" }),
       body: JSON.stringify({
         exportType: "period-risk",
         actorId: "validate-runtime-api",
@@ -355,7 +366,7 @@ async function requestDeclaredPath(method, path) {
   if (method === "POST" && path.endsWith("/attachments")) {
     return fetch(`${baseUrl}${path}`, {
       method,
-      headers: { "Content-Type": "application/json" },
+      headers: authHeaders({ "Content-Type": "application/json" }),
       body: JSON.stringify({
         fileName: "openapi-proof.txt",
         contentType: "text/plain",
@@ -368,7 +379,7 @@ async function requestDeclaredPath(method, path) {
   if (method === "POST" && (path.endsWith("/verify") || path.endsWith("/reject"))) {
     return fetch(`${baseUrl}${path}`, {
       method,
-      headers: { "Content-Type": "application/json" },
+      headers: authHeaders({ "Content-Type": "application/json" }),
       body: JSON.stringify({
         actorId: "validate-runtime-api",
         reason: "path reachability"
@@ -377,13 +388,13 @@ async function requestDeclaredPath(method, path) {
   }
 
   if (method === "POST" && path === "/api/projections/process-outbox") {
-    return fetch(`${baseUrl}${path}`, { method });
+    return fetch(`${baseUrl}${path}`, { method, headers: authHeaders() });
   }
 
   if (method === "POST" && path === "/api/behavior-events") {
     return fetch(`${baseUrl}${path}`, {
       method,
-      headers: { "Content-Type": "application/json" },
+      headers: authHeaders({ "Content-Type": "application/json" }),
       body: JSON.stringify({
         eventType: "RuntimeApiPathValidated",
         language: "zh-CN",
@@ -392,7 +403,7 @@ async function requestDeclaredPath(method, path) {
     });
   }
 
-  return fetch(`${baseUrl}${path}`, { method });
+  return fetch(`${baseUrl}${path}`, { method, headers: authHeaders() });
 }
 
 function resolveOpenApiPath(path, samples) {
@@ -663,7 +674,7 @@ function validateBehaviorEventRequestContract() {
 }
 
 async function getJson(path) {
-  const response = await fetch(`${baseUrl}${path}`);
+  const response = await fetch(`${baseUrl}${path}`, { headers: authHeaders() });
   assert(response.ok, `${path} expected 2xx, got ${response.status}`);
   return response.json();
 }
@@ -671,11 +682,33 @@ async function getJson(path) {
 async function postJson(path, body) {
   const response = await fetch(`${baseUrl}${path}`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: path === "/api/auth/login"
+      ? { "Content-Type": "application/json" }
+      : authHeaders({ "Content-Type": "application/json" }),
     body: JSON.stringify(body)
   });
   assert(response.ok, `${path} expected 2xx, got ${response.status}`);
   return response.json();
+}
+
+async function ensureRuntimeActorToken() {
+  if (runtimeActorToken) return runtimeActorToken;
+  const response = await fetch(`${baseUrl}/api/auth/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username: "operator", password: "dev" })
+  });
+  assert(response.ok, `/api/auth/login expected 2xx, got ${response.status}`);
+  const login = await response.json();
+  runtimeActorToken = login.token;
+  assert(runtimeActorToken, "Development login must return compatibility token for validator");
+  return runtimeActorToken;
+}
+
+function authHeaders(headers = {}) {
+  return runtimeActorToken
+    ? { ...headers, "X-WorkOS-Actor-Token": runtimeActorToken }
+    : headers;
 }
 
 async function postJsonWithActor(path, body, actorToken, requestId) {

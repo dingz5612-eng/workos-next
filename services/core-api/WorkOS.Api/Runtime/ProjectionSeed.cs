@@ -9,6 +9,8 @@ public static class ProjectionSeed
         new RuntimeUser("u-operator", "operator", "住宿经办人", "operator", true),
         new RuntimeUser("u-finance", "finance", "财务确认人", "finance", true),
         new RuntimeUser("u-manager", "manager", "业务主管", "manager", true),
+        new RuntimeUser("u-admin", "admin", "治理管理员", "admin", true),
+        new RuntimeUser("u-release-owner", "releaseOwner", "发布负责人", "releaseOwner", true),
         new RuntimeUser("ai-agent", "ai", "AI 助手", "ai", true)
     };
 

@@ -403,6 +403,64 @@ public sealed class RuntimeHardeningTests
     }
 
     [TestMethod]
+    public void runtime_password_hasher_supports_versioned_slow_hash_and_marks_legacy_sha256()
+    {
+        var slowHash = RuntimePasswordHasher.Pbkdf2Sha256("secret", iterations: 100_000);
+
+        Assert.IsTrue(RuntimePasswordHasher.IsVersionedSlowHash(slowHash));
+        Assert.IsTrue(RuntimePasswordHasher.Verify("secret", slowHash));
+        Assert.IsFalse(RuntimePasswordHasher.Verify("wrong", slowHash));
+
+        var legacy = RuntimePasswordHasher.Sha256("dev");
+        Assert.IsTrue(RuntimePasswordHasher.IsLegacySha256(legacy));
+        Assert.IsFalse(RuntimePasswordHasher.IsVersionedSlowHash(legacy));
+        Assert.IsTrue(RuntimePasswordHasher.Verify("dev", legacy));
+    }
+
+    [TestMethod]
+    public void production_startup_validator_rejects_dev_passwords_localhost_cors_and_wildcard_hosts()
+    {
+        var result = RuntimeStartupValidator.Validate(
+            "Production",
+            RuntimeAuthOptions.Development,
+            "Host=localhost;Port=54329;Database=workosnext;Username=workosnext;Password=workosnext_dev",
+            new RuntimeCorsOptions { AllowedOrigins = Array.Empty<string>() },
+            "*",
+            new RuntimeMigrationOptions());
+
+        Assert.AreEqual("failed", result.Status);
+        Assert.IsTrue(result.Errors.Any(item => item.Contains("development password", StringComparison.OrdinalIgnoreCase)));
+        Assert.IsTrue(result.Errors.Any(item => item.Contains("localhost", StringComparison.OrdinalIgnoreCase)));
+        Assert.IsTrue(result.Errors.Any(item => item.Contains("Cors.AllowedOrigins", StringComparison.OrdinalIgnoreCase)));
+        Assert.IsTrue(result.Errors.Any(item => item.Contains("AllowedHosts", StringComparison.OrdinalIgnoreCase)));
+        Assert.IsTrue(result.Errors.Any(item => item.Contains("旧式 SHA-256", StringComparison.OrdinalIgnoreCase)));
+    }
+
+    [TestMethod]
+    public void production_startup_validator_accepts_pinned_hosts_and_slow_hashes()
+    {
+        var auth = new RuntimeAuthOptions
+        {
+            PasswordSha256ByUsername = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                ["operator"] = RuntimePasswordHasher.Pbkdf2Sha256("secret", iterations: 100_000)
+            }
+        };
+        var result = RuntimeStartupValidator.Validate(
+            "Production",
+            auth,
+            "Host=db.internal;Port=5432;Database=workosnext;Username=workosnext;Password=${WORKOS_DB_PASSWORD}",
+            new RuntimeCorsOptions { AllowedOrigins = new[] { "https://workosnext.example" } },
+            "workosnext.example",
+            new RuntimeMigrationOptions { RunOnStartup = false });
+
+        Assert.AreEqual("passed", result.Status);
+        Assert.AreEqual(0, result.Errors.Count);
+        Assert.IsFalse(RuntimeStartupValidator.ShouldRunMigrations("Production", new RuntimeMigrationOptions()));
+        Assert.IsTrue(RuntimeStartupValidator.ShouldRunMigrations("Development", new RuntimeMigrationOptions()));
+    }
+
+    [TestMethod]
     public void ConfirmProjectionPendingReturnsCommittedResponse()
     {
         var store = new ConfirmSemanticsStore(ProjectionMode.Pending);

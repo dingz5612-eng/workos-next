@@ -2,9 +2,14 @@ namespace WorkOS.Api.Runtime;
 
 public sealed partial class ProjectionRuntime
 {
-    public object? Login(LoginRequest request)
+    public RuntimeLoginResult? Login(LoginRequest request)
     {
         lock (gate) return authSessionService.Login(state, request);
+    }
+
+    public RuntimeUser? FindUserBySessionToken(string token)
+    {
+        lock (gate) return store.FindUserBySessionToken(token);
     }
 
     public void RevokeSession(string token, string actorId)
@@ -20,6 +25,11 @@ public sealed partial class ProjectionRuntime
     public RuntimeDeviceSession? RevokeDeviceSession(string deviceId, string actorId)
     {
         lock (gate) return store.RevokeDeviceSession(deviceId, actorId);
+    }
+
+    public RuntimeDeviceSession? FindDeviceSession(string tenantId, string deviceId)
+    {
+        lock (gate) return store.FindDeviceSession(tenantId, deviceId);
     }
 
     public GovernanceExportResult RequestGovernanceExport(GovernanceExportRequest request)

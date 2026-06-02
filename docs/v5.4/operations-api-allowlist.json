@@ -6,7 +6,8 @@
       "route": "POST /api/operations/work-items/{workItemId}/confirm",
       "writesBusinessFacts": true,
       "usesOperationsConfirm": true,
-      "notes": "The only primary business write route."
+      "notes": "The only primary business write route.",
+      "authPolicy": "OperationsConfirmPolicy"
     }
   ],
   "operationsRuntimeWriteAllowlist": [
@@ -14,19 +15,22 @@
       "route": "POST /api/operations/cases",
       "writesBusinessFacts": false,
       "usesOperationsConfirm": false,
-      "notes": "Creates an Operations case coordination record."
+      "notes": "Creates an Operations case coordination record.",
+      "authPolicy": "WorkOSWrite"
     },
     {
       "route": "POST /api/operations/work-items",
       "writesBusinessFacts": false,
       "usesOperationsConfirm": false,
-      "notes": "Creates an Operations work-item coordination record."
+      "notes": "Creates an Operations work-item coordination record.",
+      "authPolicy": "WorkOSWrite"
     },
     {
       "route": "POST /api/operations/work-items/{workItemId}/prepare",
       "writesBusinessFacts": false,
       "usesOperationsConfirm": false,
-      "notes": "Prepares field contract, evidence requirements, available actions, and projection status."
+      "notes": "Prepares field contract, evidence requirements, available actions, and projection status.",
+      "authPolicy": "WorkOSWrite"
     }
   ],
   "compatibilityWriteAllowlist": [
@@ -34,74 +38,87 @@
       "route": "POST /api/workspaces/{workspaceId}/cards/{cardId}/prepare",
       "writesBusinessFacts": false,
       "usesOperationsConfirm": false,
-      "notes": "Old Workspace/Card prepare compatibility wrapper."
+      "notes": "Old Workspace/Card prepare compatibility wrapper.",
+      "authPolicy": "WorkOSWrite"
     },
     {
       "route": "POST /api/workspaces/{workspaceId}/cards/{cardId}/confirm",
       "writesBusinessFacts": true,
       "usesOperationsConfirm": true,
-      "notes": "Old Workspace/Card confirm compatibility wrapper that delegates to OperationsRuntimeService."
+      "notes": "Old Workspace/Card confirm compatibility wrapper that delegates to OperationsRuntimeService.",
+      "authPolicy": "OperationsConfirmPolicy"
     }
   ],
   "mobileExperienceWriteAllowlist": [
     {
       "route": "POST /api/mobile/drafts",
       "writesBusinessFacts": false,
-      "notes": "Mobile draft state only."
+      "notes": "Mobile draft state only.",
+      "authPolicy": "WorkOSWrite"
     },
     {
       "route": "POST /api/mobile/client-events",
       "writesBusinessFacts": false,
-      "notes": "Mobile client telemetry only."
+      "notes": "Mobile client telemetry only.",
+      "authPolicy": "WorkOSWrite"
     },
     {
       "route": "POST /api/mobile/recent-objects",
       "writesBusinessFacts": false,
-      "notes": "Mobile recent-object preference state only."
+      "notes": "Mobile recent-object preference state only.",
+      "authPolicy": "WorkOSWrite"
     }
   ],
   "evidenceFileWriteAllowlist": [
     {
       "route": "POST /api/evidence/drafts",
       "writesBusinessFacts": false,
-      "notes": "Evidence draft creation only."
+      "notes": "Evidence draft creation only.",
+      "authPolicy": "WorkOSWrite"
     },
     {
       "route": "POST /api/evidence/{evidenceId}/attachments",
       "writesBusinessFacts": false,
-      "notes": "Evidence attachment upload metadata only."
+      "notes": "Evidence attachment upload metadata only.",
+      "authPolicy": "WorkOSWrite"
     },
     {
       "route": "POST /api/evidence/{evidenceId}/verify",
       "writesBusinessFacts": false,
-      "notes": "Evidence review decision only."
+      "notes": "Evidence review decision only.",
+      "authPolicy": "WorkOSWrite"
     },
     {
       "route": "POST /api/evidence/{evidenceId}/reject",
       "writesBusinessFacts": false,
-      "notes": "Evidence review decision only."
+      "notes": "Evidence review decision only.",
+      "authPolicy": "WorkOSWrite"
     }
   ],
   "authDeviceWriteAllowlist": [
     {
       "route": "POST /api/auth/login",
       "writesBusinessFacts": false,
-      "notes": "Authentication session creation."
+      "notes": "Authentication session creation.",
+      "authPolicy": "AnonymousLogin"
     },
     {
       "route": "POST /api/auth/sessions/{token}/revoke",
       "writesBusinessFacts": false,
-      "notes": "Authentication session revoke."
+      "notes": "Authentication session revoke.",
+      "authPolicy": "RuntimeMaintenancePolicy"
     },
     {
       "route": "POST /api/device-sessions",
       "writesBusinessFacts": false,
-      "notes": "Device session registration."
+      "notes": "Device session registration.",
+      "authPolicy": "WorkOSWrite"
     },
     {
       "route": "POST /api/device-sessions/{deviceId}/revoke",
       "writesBusinessFacts": false,
-      "notes": "Device session revoke."
+      "notes": "Device session revoke.",
+      "authPolicy": "RuntimeMaintenancePolicy"
     }
   ],
   "controlPlaneWriteAllowlist": [],
@@ -112,7 +129,8 @@
       "usesOperationsConfirm": false,
       "writesOnlyControlGovernanceOrProvisionalRecords": true,
       "appendOnly": true,
-      "notes": "Preview-only reconciliation import planning."
+      "notes": "Preview-only reconciliation import planning.",
+      "authPolicy": "WorkOSWrite"
     },
     {
       "route": "POST /api/reconciliation/bank-statement-imports",
@@ -120,7 +138,8 @@
       "usesOperationsConfirm": false,
       "writesOnlyControlGovernanceOrProvisionalRecords": true,
       "appendOnly": true,
-      "notes": "Stores imported bank transaction and reconciliation records, not payment facts."
+      "notes": "Stores imported bank transaction and reconciliation records, not payment facts.",
+      "authPolicy": "WorkOSWrite"
     },
     {
       "route": "POST /api/reconciliation/match-candidates/generate",
@@ -128,7 +147,8 @@
       "usesOperationsConfirm": false,
       "writesOnlyControlGovernanceOrProvisionalRecords": true,
       "appendOnly": true,
-      "notes": "Generates provisional reconciliation match candidates."
+      "notes": "Generates provisional reconciliation match candidates.",
+      "authPolicy": "WorkOSWrite"
     },
     {
       "route": "POST /api/reconciliation/mismatches/detect",
@@ -136,7 +156,8 @@
       "usesOperationsConfirm": false,
       "writesOnlyControlGovernanceOrProvisionalRecords": true,
       "appendOnly": true,
-      "notes": "Creates provisional mismatch records for review."
+      "notes": "Creates provisional mismatch records for review.",
+      "authPolicy": "WorkOSWrite"
     },
     {
       "route": "POST /api/reconciliation/match-candidates/{candidateId}/accept",
@@ -144,7 +165,8 @@
       "usesOperationsConfirm": false,
       "writesOnlyControlGovernanceOrProvisionalRecords": true,
       "appendOnly": true,
-      "notes": "Accepts a reconciliation candidate without confirming payment facts."
+      "notes": "Accepts a reconciliation candidate without confirming payment facts.",
+      "authPolicy": "WorkOSWrite"
     },
     {
       "route": "POST /api/reconciliation/match-candidates/{candidateId}/reject",
@@ -152,7 +174,8 @@
       "usesOperationsConfirm": false,
       "writesOnlyControlGovernanceOrProvisionalRecords": true,
       "appendOnly": true,
-      "notes": "Rejects a reconciliation candidate without confirming payment facts."
+      "notes": "Rejects a reconciliation candidate without confirming payment facts.",
+      "authPolicy": "WorkOSWrite"
     },
     {
       "route": "POST /api/reconciliation/bank-transactions/{bankTransactionId}/mismatch",
@@ -160,7 +183,8 @@
       "usesOperationsConfirm": false,
       "writesOnlyControlGovernanceOrProvisionalRecords": true,
       "appendOnly": true,
-      "notes": "Marks a transaction mismatch for governance review."
+      "notes": "Marks a transaction mismatch for governance review.",
+      "authPolicy": "WorkOSWrite"
     },
     {
       "route": "POST /api/reconciliation/bank-transactions/{bankTransactionId}/ignore",
@@ -168,7 +192,8 @@
       "usesOperationsConfirm": false,
       "writesOnlyControlGovernanceOrProvisionalRecords": true,
       "appendOnly": true,
-      "notes": "Records a reconciliation ignore decision."
+      "notes": "Records a reconciliation ignore decision.",
+      "authPolicy": "WorkOSWrite"
     },
     {
       "route": "POST /api/correction-center/ledger-correction-requests",
@@ -176,7 +201,8 @@
       "usesOperationsConfirm": false,
       "writesOnlyControlGovernanceOrProvisionalRecords": true,
       "appendOnly": true,
-      "notes": "Creates an append-only correction request."
+      "notes": "Creates an append-only correction request.",
+      "authPolicy": "WorkOSWrite"
     },
     {
       "route": "POST /api/correction-center/ledger-correction-requests/{correctionRequestId}/approve",
@@ -184,7 +210,8 @@
       "usesOperationsConfirm": false,
       "writesOnlyControlGovernanceOrProvisionalRecords": true,
       "appendOnly": true,
-      "notes": "Approves an append-only correction request."
+      "notes": "Approves an append-only correction request.",
+      "authPolicy": "HighRiskActionPolicy"
     },
     {
       "route": "POST /api/correction-center/ledger-correction-requests/{correctionRequestId}/reject",
@@ -192,7 +219,8 @@
       "usesOperationsConfirm": false,
       "writesOnlyControlGovernanceOrProvisionalRecords": true,
       "appendOnly": true,
-      "notes": "Rejects an append-only correction request."
+      "notes": "Rejects an append-only correction request.",
+      "authPolicy": "WorkOSWrite"
     },
     {
       "route": "POST /api/correction-center/ledger-correction-requests/{correctionRequestId}/apply",
@@ -208,7 +236,8 @@
         "balance.rebuild_after_correction",
         "api.no_page_specific_business_write"
       ],
-      "notes": "Applies a reviewed append-only correction path with reversal/correction entries and rebuild projections; not a page-specific payment/deposit confirm."
+      "notes": "Applies a reviewed append-only correction path with reversal/correction entries and rebuild projections; not a page-specific payment/deposit confirm.",
+      "authPolicy": "HighRiskActionPolicy"
     },
     {
       "route": "POST /api/pc-governance/exports/{exportType}",
@@ -216,21 +245,24 @@
       "usesOperationsConfirm": false,
       "writesOnlyControlGovernanceOrProvisionalRecords": true,
       "appendOnly": true,
-      "notes": "Creates governance export audit and access records."
+      "notes": "Creates governance export audit and access records.",
+      "authPolicy": "GovernanceExportPolicy"
     }
   ],
   "behaviorEventWriteAllowlist": [
     {
       "route": "POST /api/behavior-events",
       "writesBusinessFacts": false,
-      "notes": "Behavior telemetry only."
+      "notes": "Behavior telemetry only.",
+      "authPolicy": "WorkOSWrite"
     }
   ],
   "runtimeMaintenanceWriteAllowlist": [
     {
       "route": "POST /api/projections/process-outbox",
       "writesBusinessFacts": false,
-      "notes": "Runtime maintenance action for projector/outbox processing."
+      "notes": "Runtime maintenance action for projector/outbox processing.",
+      "authPolicy": "RuntimeMaintenancePolicy"
     }
   ],
   "forbiddenBusinessWritePatterns": [

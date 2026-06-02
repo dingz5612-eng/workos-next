@@ -32,15 +32,18 @@ public sealed class ApiBoundaryRulesTests
         Assert.IsTrue(boundary.Contains("version: 3", StringComparison.Ordinal));
         Assert.IsTrue(boundary.Contains("operationsBusinessWrite:", StringComparison.Ordinal));
         Assert.IsTrue(boundary.Contains("POST /api/operations/work-items/{workItemId}/confirm", StringComparison.Ordinal));
+        Assert.IsTrue(boundary.Contains("authPolicy: OperationsConfirmPolicy", StringComparison.Ordinal));
         Assert.IsTrue(boundary.Contains("systemProjectionWrite:", StringComparison.Ordinal));
         Assert.IsTrue(boundary.Contains("POST /api/operations/cases", StringComparison.Ordinal));
         Assert.IsTrue(boundary.Contains("POST /api/operations/work-items/{workItemId}/prepare", StringComparison.Ordinal));
+        Assert.IsTrue(boundary.Contains("authPolicy: WorkOSWrite", StringComparison.Ordinal));
         Assert.IsTrue(boundary.Contains("compatibilityBusinessWrite:", StringComparison.Ordinal));
         Assert.IsTrue(boundary.Contains("POST /api/workspaces/{workspaceId}/cards/{cardId}/confirm", StringComparison.Ordinal));
         Assert.IsTrue(boundary.Contains("evidenceWrite:", StringComparison.Ordinal));
         Assert.IsTrue(boundary.Contains("POST /api/evidence/{evidenceId}/attachments", StringComparison.Ordinal));
         Assert.IsTrue(boundary.Contains("securitySessionWrite:", StringComparison.Ordinal));
         Assert.IsTrue(boundary.Contains("POST /api/auth/login", StringComparison.Ordinal));
+        Assert.IsTrue(boundary.Contains("authPolicy: AnonymousLogin", StringComparison.Ordinal));
         Assert.IsTrue(boundary.Contains("mobileExperienceWrite:", StringComparison.Ordinal));
         Assert.IsTrue(boundary.Contains("POST /api/mobile/drafts", StringComparison.Ordinal));
         Assert.IsTrue(boundary.Contains("behaviorEventWrite:", StringComparison.Ordinal));
@@ -70,6 +73,9 @@ public sealed class ApiBoundaryRulesTests
         Assert.IsTrue(boundary.Contains("pcGovernanceWrite:", StringComparison.Ordinal));
         Assert.IsTrue(boundary.Contains("requiresCapability: true", StringComparison.Ordinal));
         Assert.IsTrue(boundary.Contains("requiresAudit: true", StringComparison.Ordinal));
+        Assert.IsTrue(boundary.Contains("authPolicy: GovernanceExportPolicy", StringComparison.Ordinal));
+        Assert.IsTrue(boundary.Contains("authPolicy: RuntimeMaintenancePolicy", StringComparison.Ordinal));
+        Assert.IsTrue(boundary.Contains("authPolicy: HighRiskActionPolicy", StringComparison.Ordinal));
     }
 
     [TestMethod]

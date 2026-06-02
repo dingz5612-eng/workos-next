@@ -158,6 +158,7 @@ export function applyConfirmError(error, ctx) {
   ctx.state.operationMessage = confirmErrorMessage(error, ctx);
   ctx.state.lastActionResult = actionResultFromError(error, ctx.state.operationMessage);
   if (error?.status === 403) {
+    localStorage.removeItem("workosnext.actorSession");
     ctx.state.permissionDiagnostic = {
       reason: error.reason || error.code || "permission_blocked_403",
       owner: "manager",
