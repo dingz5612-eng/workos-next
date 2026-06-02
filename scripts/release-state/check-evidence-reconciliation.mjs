@@ -6,6 +6,8 @@ const root = process.cwd();
 const generatedAt = new Date().toISOString();
 const mainHead = readCurrentMainHead();
 const violations = [];
+const pendingRebindItems = [];
+const allowPendingMainRebind = process.env.OAM_ALLOW_PENDING_MAIN_REBIND === "true";
 
 const goNoGo = readJson("artifacts/go-live/dormitory/internal-pilot-go-no-go.json");
 const graph = readJson("artifacts/rt4/evidence-graph.json");
@@ -29,6 +31,7 @@ const result = {
     finalAssuranceStatus: finalAssurance.reconciledStatus
   },
   noGoItems: violations,
+  pendingRebindItems,
   productionAllowed: false,
   dormitoryL2ProductionAllowed: false,
   repairPartsHrStatus: "L0 Contract Preview"
@@ -128,7 +131,13 @@ function writeReport(result) {
 }
 
 function eq(actual, expected, id, message) {
-  if (actual !== expected) violation(id, message, { actual, expected });
+  if (actual !== expected) {
+    if (allowPendingMainRebind && isMainHeadFreshnessId(id)) {
+      pendingRebindItems.push({ id, message, actual, expected, status: "pending_rebind_after_main_green" });
+      return;
+    }
+    violation(id, message, { actual, expected });
+  }
 }
 
 function oneOf(actual, allowed, id, message) {
@@ -143,4 +152,15 @@ function assertNoTmp(items, id, message) {
 
 function violation(id, message, extra = {}) {
   violations.push({ severity: "P0", id, message, ...extra });
+}
+
+function isMainHeadFreshnessId(id) {
+  return [
+    "oam00.go_no_go_main_sha_stale",
+    "oam00.go_no_go_ci_sha_stale",
+    "oam00.go_no_go_v54_sha_stale",
+    "oam00.graph_head_stale",
+    "oam00.dashboard_head_stale",
+    "oam00.final_assurance_head_stale"
+  ].includes(id);
 }

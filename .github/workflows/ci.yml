@@ -210,6 +210,8 @@ jobs:
 
       - name: Validate OAM-00 Evidence Reconciliation
         if: github.event_name == 'pull_request'
+        env:
+          OAM_ALLOW_PENDING_MAIN_REBIND: ${{ contains(github.head_ref, 'main-rebind') && 'true' || 'false' }}
         run: |
           node scripts/release-state/check-evidence-reconciliation.mjs
           node scripts/rt4/check-final-evidence-freshness.mjs

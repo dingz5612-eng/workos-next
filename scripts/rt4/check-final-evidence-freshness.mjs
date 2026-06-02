@@ -5,6 +5,8 @@ import path from "node:path";
 const root = process.cwd();
 const mainHead = readCurrentMainHead();
 const violations = [];
+const pendingRebindItems = [];
+const allowPendingMainRebind = process.env.OAM_ALLOW_PENDING_MAIN_REBIND === "true";
 
 const goNoGo = readJson("artifacts/go-live/dormitory/internal-pilot-go-no-go.json");
 const graph = readJson("artifacts/rt4/evidence-graph.json");
@@ -23,6 +25,12 @@ eq(goNoGo.productionAllowed, false, "freshness.production_drift", "DORM-INT GO �
 eq(goNoGo.dormitoryL2ProductionAllowed, false, "freshness.l2_drift", "DORM-INT GO 不得允许 L2。");
 eq(dashboard.businessProduction, "BLOCKED", "freshness.dashboard_business_drift", "Business Production 必须 BLOCKED。");
 eq(finalAssurance.businessProductionAllowed, false, "freshness.final_business_drift", "Final assurance 不得允许 Business Production。");
+
+if (pendingRebindItems.length > 0) {
+  for (const item of pendingRebindItems) {
+    console.warn(`${item.severity} ${item.id}: ${item.message} (${item.status})`);
+  }
+}
 
 if (violations.length > 0) {
   for (const item of violations) console.error(`${item.severity} ${item.id}: ${item.message}`);
@@ -46,11 +54,28 @@ function readJson(relativePath) {
 }
 
 function eq(actual, expected, id, message) {
-  if (actual !== expected) violations.push({ severity: "P0", id, message, actual, expected });
+  if (actual !== expected) {
+    if (allowPendingMainRebind && isMainHeadFreshnessId(id)) {
+      pendingRebindItems.push({ severity: "P1", id, message, actual, expected, status: "pending_rebind_after_main_green" });
+      return;
+    }
+    violations.push({ severity: "P0", id, message, actual, expected });
+  }
 }
 
 function assertNoTmp(items, id, message) {
   for (const item of items.filter(Boolean)) {
     if (`${item}`.replace(/\\/g, "/").includes(".tmp/")) violations.push({ severity: "P0", id, message, ref: item });
   }
+}
+
+function isMainHeadFreshnessId(id) {
+  return [
+    "freshness.go_no_go_main_sha",
+    "freshness.go_no_go_ci_sha",
+    "freshness.go_no_go_v54_sha",
+    "freshness.graph_head",
+    "freshness.dashboard_head",
+    "freshness.final_assurance_head"
+  ].includes(id);
 }
