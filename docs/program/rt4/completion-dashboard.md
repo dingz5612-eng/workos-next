@@ -4,7 +4,7 @@ Generated source: `artifacts/rt4/completion-dashboard.json`
 
 Current mode: `L1_INTERNAL_PILOT_OBSERVATION`
 
-Current main: `b86aa1b60d90e2f18e780781b4077a63a7068c0f`
+Current main: `125e18716c7153e721a1b6b3f7f721c9220938df`
 
 Business Production: `BLOCKED`
 

@@ -1,5 +1,5 @@
 {
-  "generatedAtUtc": "2026-06-02T07:15:05.348Z",
+  "generatedAtUtc": "2026-06-02T09:08:03.069Z",
   "generatedBy": "check-artifact-baseline",
   "stage": "OAM-CLEAN-BASELINE-D2",
   "status": "passed",
@@ -7,8 +7,8 @@
   "staleArtifactsRef": "artifacts/project/stale-artifacts.json",
   "finalArtifactCount": 19,
   "staleArtifactCount": 22,
-  "inputHash": "26e10068bf89f97dcb162a2b08243e9013a65a5cf5bbed956d60e1f5dc9b36ab",
-  "resultHash": "718c21614bf0e301b0ae1c984efbf5414be70e0517cce60ae066e2a1e3a354de",
+  "inputHash": "a38eab38b22473dc39b8e2b5805fa8a99cde083e03ca2b32a93ec059fb497784",
+  "resultHash": "24c2553da743607c757d80254da5d7ac7404cbead5a5f12d4b4138120e5613c9",
   "noGoItems": [],
   "productionAllowed": false,
   "dormitoryL2ProductionAllowed": false,

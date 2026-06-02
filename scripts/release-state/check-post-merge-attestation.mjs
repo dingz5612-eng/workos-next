@@ -3,6 +3,9 @@ import { readJson, repositoryHead, failIfNeeded, assertNoProduction, assertNoTmp
 const attestation = readJson("artifacts/release-state/post-merge-attestation.json");
 const failures = [];
 const repoHead = repositoryHead();
+const expectedPrNumber = process.env.OAM_POST_MERGE_PR_NUMBER
+  ? Number(process.env.OAM_POST_MERGE_PR_NUMBER)
+  : Number(attestation.prNumber);
 
 if (attestation.repositoryHead !== repoHead) failures.push(`repositoryHead 必须等于 origin/main。 actual=${attestation.repositoryHead} expected=${repoHead}`);
 if (attestation.status !== "passed" && attestation.status !== "WAITING_FOR_POST_MERGE_ATTESTATION") {
@@ -21,7 +24,11 @@ if (attestation.status === "passed") {
   failures.push("等待 post-merge attestation 时 Day-2 必须被阻断。");
 }
 
-if (attestation.prNumber !== 72) failures.push("post-clean-baseline post-merge attestation 必须绑定 PR #72。");
+if (!Number.isFinite(expectedPrNumber)) {
+  failures.push("post-merge attestation 必须包含 prNumber，或设置 OAM_POST_MERGE_PR_NUMBER。");
+} else if (attestation.prNumber !== expectedPrNumber) {
+  failures.push(`post-merge attestation 必须绑定 PR #${expectedPrNumber}。`);
+}
 if (attestation.mergeCommit !== repoHead) failures.push("mergeCommit 必须等于当前 repositoryHead。");
 assertNoTmp(attestation, failures, "post-merge attestation");
 assertNoProduction(attestation, failures, "post-merge attestation");
