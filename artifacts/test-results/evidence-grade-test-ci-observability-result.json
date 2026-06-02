@@ -1,0 +1,69 @@
+{
+  "checkName": "evidence-grade-test-ci-observability",
+  "status": "passed",
+  "generatedAtUtc": "2026-06-02T12:41:57.0626599Z",
+  "branch": "codex/oam-doc-i18n-ux-production-baseline-train",
+  "validatedHead": "ef99f50086189056499ca3bfd0f4f1916d4332d1",
+  "stage": "OAM-07",
+  "mobile": {
+    "vitestFiles": 46,
+    "vitestTests": 128,
+    "playwrightTests": 3,
+    "report": "artifacts/test-results/mobile/vitest-report.json",
+    "coverage": "artifacts/test-results/mobile/coverage",
+    "playwrightReport": "artifacts/test-results/mobile/playwright-report.json"
+  },
+  "dotnet": {
+    "unitTests": 272,
+    "runtimeIntegrationTests": 53,
+    "databaseSecurityTests": 9,
+    "releaseEvidenceTests": 7,
+    "policyAsCodeTests": 4,
+    "trxDirectory": "artifacts/test-results/dotnet",
+    "coveragePattern": "artifacts/test-results/dotnet/**/coverage.cobertura.xml"
+  },
+  "runtimeContract": {
+    "scenarioCount": 42,
+    "passedCount": 42,
+    "failedCount": 0,
+    "report": "artifacts/test-results/runtime-contract-report.json"
+  },
+  "ciObservability": {
+    "workflow": ".github/workflows/ci.yml",
+    "uploads": [
+      "artifacts/test-results/**",
+      "**/TestResults/**/*.trx",
+      "**/coverage.cobertura.xml",
+      "apps/mobile/playwright-report/**"
+    ]
+  },
+  "validation": [
+    "npm --prefix apps/mobile run test",
+    "npm --prefix apps/mobile run build",
+    "npm --prefix apps/mobile run test:report",
+    "npm --prefix apps/mobile run test:coverage",
+    "npm --prefix apps/mobile run test:e2e",
+    "dotnet build WorkOSNext.sln -c Release",
+    "dotnet test tests/WorkOS.UnitTests/WorkOS.UnitTests.csproj -c Release --no-build --logger trx --collect XPlat Code Coverage",
+    "dotnet test tests/WorkOS.RuntimeIntegrationTests/WorkOS.RuntimeIntegrationTests.csproj -c Release --no-build --logger trx --collect XPlat Code Coverage",
+    "dotnet test tests/WorkOS.DatabaseSecurityTests/WorkOS.DatabaseSecurityTests.csproj -c Release --no-build --logger trx --collect XPlat Code Coverage",
+    "dotnet test tests/WorkOS.ReleaseEvidenceTests/WorkOS.ReleaseEvidenceTests.csproj -c Release --no-build --logger trx --collect XPlat Code Coverage",
+    "dotnet test tests/WorkOS.PolicyAsCodeTests/WorkOS.PolicyAsCodeTests.csproj -c Release --no-build --logger trx --collect XPlat Code Coverage",
+    "dotnet run --project tests/WorkOS.RuntimeContractTests/WorkOS.RuntimeContractTests.csproj -c Release",
+    "node scripts/baseline/check-oam-clean-baseline.mjs",
+    "pwsh -NoProfile -File scripts/v5_4/run-control-plane-checks.ps1",
+    "pwsh -NoProfile -File scripts/guard-architecture.ps1"
+  ],
+  "fixes": [
+    "Playwright PC smoke now uses backend login session device context instead of localStorage trust elevation.",
+    "authController applies backend session currentDevice and pcGovernance.currentDevice before default home routing."
+  ],
+  "businessState": {
+    "dormitory": "L1 Internal Pilot Observation only",
+    "dormitoryL2Production": false,
+    "businessProduction": "blocked",
+    "repairPartsHr": "L0 Contract Preview",
+    "day2": "requires separate Day-2 Entry Gate"
+  },
+  "noGoItems": []
+}

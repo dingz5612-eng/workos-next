@@ -56,6 +56,20 @@
 - 修复 architecture guard 在缺少环境变量时回落到默认 `workosnext` DB 的问题，改为 `validate-runtime-api.mjs` 自带 clean test DB 默认连接。
 - 修复 OpenAPI / generated DTO 因新增 `/live`、`/ready` 后的架构 allowlist 漂移。
 - 修复 control-plane guard 对 `Migration` 命名的误触发，保留生产迁移开关但避免架构扫描误判。
+- OAM-07 当前分支修复 Playwright PC trusted device smoke：测试不再通过 localStorage 伪造设备可信，而是由 `/api/auth/login` mock 返回 backend session 中的 `pcGovernance.currentDevice`，再由 `authController` 应用到 state 后进入 PC surface。
+
+## OAM-07 当前分支验证
+
+- branch: `codex/oam-doc-i18n-ux-production-baseline-train`
+- validatedHead: `ef99f50086189056499ca3bfd0f4f1916d4332d1`
+- generatedAtUtc: `2026-06-02T12:41:57.0626599Z`
+- artifact: `artifacts/test-results/evidence-grade-test-ci-observability-result.json`
+- Mobile unit: 46 files / 128 tests passed。
+- Mobile Playwright: 3 smoke tests passed。
+- .NET tests: Unit 272、RuntimeIntegration 53、DatabaseSecurity 9、ReleaseEvidence 7、PolicyAsCode 4，全部 passed。
+- RuntimeContract: 42 scenarios passed，0 failed。
+- OAM clean baseline、V5.4 control plane checks、architecture guard 均 passed。
+- 状态边界：Dormitory remains L1 Internal Pilot Observation only；Dormitory L2 Production = false；Business Production = blocked；Repair / Parts / HR = L0 Contract Preview；Day-2 still requires separate Day-2 Entry Gate。
 
 ## 命令结果
 

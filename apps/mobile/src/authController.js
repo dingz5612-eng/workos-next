@@ -15,6 +15,7 @@ export async function login(ctx) {
     const password = document.querySelector("#loginPassword")?.value || "dev";
     const session = await loginActor(username, password);
     ctx.state.currentActor = session;
+    applyAuthenticatedSessionContext(ctx.state, session);
     ctx.state.loginMessage = "";
     persistActorSession(session);
     await ctx.hydrateProjectionFromApi();
@@ -34,4 +35,15 @@ export function logout(ctx) {
 
 export function defaultHomeForSession(session = {}, state = {}) {
   return resolveHomeForSession(session, state);
+}
+
+function applyAuthenticatedSessionContext(state, session = {}) {
+  if (session.currentDevice) state.currentDevice = session.currentDevice;
+  if (session.pcGovernance?.currentDevice) {
+    state.pcGovernance = {
+      ...(state.pcGovernance || {}),
+      ...session.pcGovernance,
+      currentDevice: session.pcGovernance.currentDevice
+    };
+  }
 }

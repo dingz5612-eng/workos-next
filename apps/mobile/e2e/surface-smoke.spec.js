@@ -112,18 +112,27 @@ test.beforeEach(async ({ page }) => {
 function actorFor(role) {
   const actors = {
     operator: { role: "operator", displayName: "内测经办人", token: "dev-e2e-token", capabilities: ["operations.confirm"] },
-    manager: { role: "manager", displayName: "经理", token: "manager-e2e-token", capabilities: ["manager.control.view"] },
-    releaseOwner: { role: "releaseOwner", displayName: "发布负责人", token: "release-e2e-token", capabilities: ["release.flight_deck.view"] }
+    manager: pcActor("manager", "经理", "manager-e2e-token", ["manager.control.view"]),
+    releaseOwner: pcActor("releaseOwner", "发布负责人", "release-e2e-token", ["release.flight_deck.view"])
   };
   return actors[role] || actors.operator;
 }
 
-async function seedActor(page, role) {
-  await page.addInitScript((actor) => {
-    localStorage.setItem("workosnext.actorSession", JSON.stringify(actor));
-    localStorage.setItem("workosnext.onboarded", "1");
-    localStorage.setItem("workosnext.lang", "zh-CN");
-  }, actorFor(role));
+function pcActor(role, displayName, token, capabilities) {
+  return {
+    role,
+    displayName,
+    token,
+    capabilities,
+    currentDevice: { deviceId: "pc-e2e-current", deviceTrustStatus: "trusted", surface: "pc" },
+    pcGovernance: { currentDevice: { deviceId: "pc-e2e-current", deviceTrustStatus: "trusted", surface: "pc" } }
+  };
+}
+
+async function loginAs(page, role) {
+  await page.goto("/");
+  await page.selectOption("#loginRole", role);
+  await page.getByRole("button", { name: "登录" }).click();
 }
 
 test("mobile work plane smoke covers login, WorkItem, search, me, and PC boundary", async ({ page }) => {
@@ -158,9 +167,7 @@ test("mobile work plane smoke covers login, WorkItem, search, me, and PC boundar
 });
 
 test("manager on PC surface opens Manager Control Tower without mobile nav", async ({ page }) => {
-  await seedActor(page, "manager");
-
-  await page.goto("/?view=managerControlTower");
+  await loginAs(page, "manager");
 
   await expect(page.locator(".surface-pc")).toBeVisible();
   await expect(page.locator("[data-pc-manager-control-tower]")).toBeVisible();
@@ -169,9 +176,7 @@ test("manager on PC surface opens Manager Control Tower without mobile nav", asy
 });
 
 test("releaseOwner on PC surface opens Release Flight Deck without mobile nav", async ({ page }) => {
-  await seedActor(page, "releaseOwner");
-
-  await page.goto("/?view=releaseFlightDeck");
+  await loginAs(page, "releaseOwner");
 
   await expect(page.locator(".surface-pc")).toBeVisible();
   await expect(page.locator(".release-control")).toBeVisible();

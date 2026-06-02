@@ -9,7 +9,7 @@
     "qa",
     "release"
   ],
-  "commit_sha": "fe50578178886b958b9f394d2b51b2749aed54cd",
+  "commit_sha": "ef99f50086189056499ca3bfd0f4f1916d4332d1",
   "migration_version": "015_control_plane_shadow_runtime",
   "definition_version": "v5.4",
   "api_schema_hash": "not-set",
@@ -85,8 +85,8 @@
   "known_risks": [
     "minimal runner"
   ],
-  "created_at_utc": "2026-06-02T11:45:01.742Z",
-  "updated_at_utc": "2026-06-02T11:45:01.742Z",
+  "created_at_utc": "2026-06-02T12:40:19.243Z",
+  "updated_at_utc": "2026-06-02T12:40:19.243Z",
   "released_at_utc": null,
   "locked_at_utc": null
 }
