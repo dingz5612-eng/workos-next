@@ -97,7 +97,7 @@ export const shellCopy = {
     "submitQueue": "提交队列",
     "drafts": "草稿",
     "failedSyncItems": "失败同步",
-    "uploadQueueBody": "查看待上传、上传失败和等待校验的证据。",
+    "uploadQueueBody": "上传队列用于查看待上传、上传失败和等待校验的证据。",
     "submitQueueBody": "查看待提交、弱网重试和重复提交结果。",
     "draftsBody": "继续处理已保存但尚未确认的办理草稿。",
     "failedSyncItemsBody": "查看已提交但读侧同步需要支持的事项。",

@@ -21,13 +21,13 @@ export function meView(ctx) {
       ${personal("reminders", "reminderTitle", "reminderBody", tr)}
       ${personal("learning", "learningCenter", "learningCenterBody", tr)}
       ${personal("permissions", "myPermissions", "myPermissionsBody", tr)}
-      ${personal("uploadQueue", "uploadQueue", "uploadQueueBody", tr)}
-      ${personal("submitQueue", "submitQueue", "submitQueueBody", tr)}
+      ${personalCopy("uploadQueue", ctx.tr("evidenceUpload"), tr("uploadQueueBody"))}
+      ${personalCopy("submitQueue", ctx.tr("submissionQueue"), tr("submitQueueBody"))}
       ${personal("drafts", "drafts", "draftsBody", tr)}
       ${personal("failedSync", "failedSyncItems", "failedSyncItemsBody", tr)}
       ${personal("recentSubmissions", "recentSubmissions", "recentSubmissionsBody", tr)}
       ${personal("recentTraces", "recentTraces", "recentTracesBody", tr)}
-      ${personal("deviceTrust", "deviceTrustStatus", "deviceTrustStatusBody", tr)}
+      ${personalCopy("deviceTrust", `${ctx.tr("currentDevice")} · ${tr("deviceTrustStatus")}`, tr("deviceTrustStatusBody"))}
       ${personal("feedback", "feedbackTitle", "feedbackBody", tr)}
     </section>
     <section class="compact-section">
@@ -45,6 +45,10 @@ export function meView(ctx) {
 
 function personal(view, title, body, tr) {
   return `<button class="personal-card" data-view="${view}"><strong>${tr(title)}</strong><span>${tr(body)}</span></button>`;
+}
+
+function personalCopy(view, title, body) {
+  return `<button class="personal-card" data-view="${view}"><strong>${title}</strong><span>${body}</span></button>`;
 }
 
 function roleLabel(role, tr) {
