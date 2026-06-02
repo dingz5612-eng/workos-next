@@ -1,6 +1,7 @@
 # Dormitory Internal Pilot Go/No-Go
 
 - status: GO_FOR_INTERNAL_PILOT
+- latest main: d03d8d39c91135eb3f63d1a56b59e19b7dd35196
 - internalPilotAllowed: true
 - productionAllowed: false
 - dormitoryStatus: L1 Internal Pilot
@@ -16,7 +17,7 @@
 - Release owner: releaseOwner
 
 ## 中文结论
-宿舍可以进入 L1 Internal Pilot 内测观察窗口；宿舍不允许 L2 Production；Repair / Parts / HR 不允许 production。
+宿舍只允许进入 L1 Internal Pilot 内测观察窗口；不得进入 L2 Production；Repair / Parts / HR 不允许 production。
 
 ## Evidence Refs
 - docs/go-live/dormitory/internal-pilot-scope.yml
