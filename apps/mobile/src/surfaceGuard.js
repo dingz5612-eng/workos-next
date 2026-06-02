@@ -64,8 +64,8 @@ export function permissionDiagnosticCopy(decision = {}) {
   return {
     title: "权限诊断",
     reason: reasonCopy(decision.reason),
-    owner: decision.owner || "manager",
-    requiredPermission: decision.requiredPermission || "surface_access",
+    owner: ownerCopy(decision.owner || "manager"),
+    requiredPermission: permissionCopy(decision.requiredPermission || "surface_access"),
     nextAction: decision.nextAction || "请联系对应负责人授权，或切换到当前角色允许访问的工作面。"
   };
 }
@@ -96,6 +96,26 @@ function ownerFor(view) {
   if (["financeControl", "financeReconciliation"].includes(view)) return "finance";
   if (["managerControlTower", "pcManager"].includes(view)) return "manager";
   return "operator";
+}
+
+function ownerCopy(owner) {
+  const map = {
+    releaseOwner: "发布负责人",
+    admin: "治理管理员",
+    finance: "财务确认人",
+    manager: "主管",
+    operator: "运营经办人",
+    supportOwner: "支持负责人"
+  };
+  return map[owner] || "对应负责人";
+}
+
+function permissionCopy(permission) {
+  if (String(permission || "").includes("finance")) return "财务工作台访问权限";
+  if (String(permission || "").includes("manager")) return "主管工作台访问权限";
+  if (String(permission || "").includes("governance")) return "治理中心访问权限";
+  if (String(permission || "").includes("release")) return "发布观察面访问权限";
+  return "当前工作面访问权限";
 }
 
 function nextActionFor(view) {

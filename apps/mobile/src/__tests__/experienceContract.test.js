@@ -131,7 +131,9 @@ describe("RT-5 Experience Contract", () => {
     expect(UploadQueue({}, testCtx)).toContain("证据上传");
     expect(SubmitQueue({}, testCtx)).toContain("提交队列");
     expect(DeviceTrustPanel({ currentDevice: { deviceId: "D-1", deviceTrustStatus: "trusted", surface: "mobile" } }, testCtx)).toContain("当前设备");
-    expect(PermissionDiagnostic({ reason: "role_surface_not_allowed", owner: "releaseOwner", requiredPermission: "release.flight_deck.view" }, testCtx)).toContain("release.flight_deck.view");
+    const permission = PermissionDiagnostic({ reason: "role_surface_not_allowed", owner: "releaseOwner", requiredPermission: "release.flight_deck.view" }, testCtx);
+    expect(permission).toContain("发布观察面访问权限");
+    expect(permission).not.toContain("release.flight_deck.view");
   });
 
   it("blocks unauthorized release surfaces with PermissionDiagnostic data", () => {

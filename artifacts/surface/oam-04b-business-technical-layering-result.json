@@ -1,0 +1,35 @@
+{
+  "phase": "OAM-04B-05",
+  "name": "业务主视觉与技术审计分层闭环",
+  "status": "passed",
+  "generatedAt": "2026-06-02T21:52:08.5312098+08:00",
+  "scope": {
+    "dormitory": "L1 Internal Pilot Observation",
+    "dormitoryL2Production": false,
+    "businessProduction": "blocked",
+    "repairPartsHr": "L0 Contract Preview",
+    "day2Entered": false
+  },
+  "closures": [
+    "OperationPanel 默认展示业务状态、能否处理、阻断原因、缺失证据、所需权限、风险、责任角色和截止时间",
+    "prepare/confirm/trace/projection/submission/payload 等技术证明默认折叠到 technical details",
+    "debugSurface/admin/support/audit 可展开审计详情",
+    "technical container 保留 data-work-item-id/data-case-id/data-submission-id/data-payload-fingerprint",
+    "Workspace Debug / compatibility 普通用户隐藏，仅 debug/support/audit/admin 可见",
+    "EvidenceStateVM 区分 missing/draft/pending_review/verified/rejected/scope_mismatch/already_used/upload_failed/expired/locked 等状态",
+    "runtime-evidence 占位附件不再显示为已可信完成",
+    "403/409/422/projection pending 均给出中文恢复路径与学习或轨迹入口",
+    "Home 今日必学提供学习中心入口"
+  ],
+  "validation": [
+    { "command": "npm --prefix apps/mobile run test", "result": "passed", "details": "50 files / 168 tests" },
+    { "command": "npm --prefix apps/mobile run build", "result": "passed" },
+    { "command": "node scripts/surface/check-user-facing-surface-copy.mjs", "result": "passed" },
+    { "command": "node scripts/surface/check-no-raw-surface-labels.mjs", "result": "passed" },
+    { "command": "node scripts/surface/check-experience-module-productization.mjs", "result": "passed" },
+    { "command": "node scripts/surface/check-mobile-work-shell.mjs", "result": "passed" },
+    { "command": "node scripts/surface/check-surface-runtime-guard-contract.mjs", "result": "passed" },
+    { "command": "pwsh -NoProfile -File scripts/guard-architecture.ps1", "result": "passed" }
+  ],
+  "completionToken": "OAM_04B_BUSINESS_TECHNICAL_LAYERING_CLOSED"
+}

@@ -2,7 +2,7 @@ import { loadDraft } from "../operationDrafts.js";
 import { buildOperationActionState } from "../operationActionState.js";
 import { resolveOperationPanelTarget } from "../operationRouteResolver.js";
 import { activeWorkspaceCard } from "../selectors/workspaceSelectors.js";
-import { ActionResult, EvidenceSheet, OperationPanelView, TrustedConfirmSheet, WorkItemCard, workItemModel } from "./experienceComponents.js";
+import { ActionResult, EvidenceSheet, OperationPanelView, TechnicalAuditDetails, TrustedConfirmSheet, WorkItemCard, workItemModel } from "./experienceComponents.js";
 import { primaryActionButton, workspaceCardPanel } from "./workspaceView.js";
 
 export function operationPanelView(ctx) {
@@ -45,7 +45,9 @@ export function operationPanelView(ctx) {
   const model = workItemModel(operationContext, ctx);
   const draft = loadDraft(workspace.id, activeCard.id);
   const payloadHash = state.lastActionResult?.payloadHash || payloadHashFor(draft.values || {}, draft.evidenceDrafts || []);
+  const payloadFingerprint = payloadHash;
   const commandSubmissionId = state.lastActionResult?.commandSubmissionId || draft.submissionProtocol?.submissionId || model.traceRefs[0] || "";
+  const submissionRecord = commandSubmissionId;
   const operationBody = workspaceCardPanel(activeCard, workspace, true, ctx);
   const traceCount = [commandSubmissionId, model.caseId, model.workItemId, ...(model.traceRefs || [])].filter(Boolean).length;
   const actionState = buildOperationActionState(operationContext, activeCard, state.lastActionResult, state);
@@ -55,16 +57,26 @@ export function operationPanelView(ctx) {
       <span>${ctx.tr("operationPanel")}</span>
       <h1>${ctx.escapeHtml(model.workItemType)}</h1>
       <p>${ctx.escapeHtml(model.businessObject)} · ${ctx.escapeHtml(model.nextAction)}</p>
+      <dl class="operation-business-summary">
+        <dt>${ctx.tr("currentState")}</dt><dd>${ctx.tr(model.lifecycleState)}</dd>
+        <dt>${ctx.tr("decisionCanHandle")}</dt><dd>${ctx.escapeHtml(model.canHandleLabel)}</dd>
+        <dt>${ctx.tr("decisionBlocker")}</dt><dd>${ctx.escapeHtml(model.blocker)}</dd>
+        <dt>${ctx.tr("decisionMissingEvidence")}</dt><dd>${ctx.escapeHtml(model.requiredEvidence.join(" · ") || ctx.tr("noRequiredEvidence"))}</dd>
+        <dt>${ctx.tr("requiredPermission")}</dt><dd>${ctx.tr(model.ownerRole)}</dd>
+        <dt>${ctx.tr("decisionRisk")}</dt><dd>${ctx.escapeHtml(model.riskLevel)}</dd>
+        <dt>${ctx.tr("decisionDueAt")}</dt><dd>${ctx.escapeHtml(model.dueAt)}</dd>
+        <dt>${ctx.tr("decisionOwner")}</dt><dd>${ctx.escapeHtml(model.ownerRoleLabel)}</dd>
+      </dl>
     </section>
     ${WorkItemCard(operationContext, ctx)}
-    <section class="operation-panel-runtime" data-surface="operation-runtime-proof">
-      <article><span>${ctx.tr("prepareContract")}</span><strong>${ctx.tr("prepareContractReady")}</strong><p>${ctx.tr("prepareContractHelp")}</p></article>
-      <article><span>${ctx.tr("confirmCommit")}</span><strong>${ctx.tr("confirmCommitReady")}</strong><p>${ctx.tr("confirmCommitHelp")}</p></article>
-      <article><span>${ctx.tr("trace")}</span><strong>${traceCount ? ctx.tr("traceAvailable") : ctx.tr("traceWillBind")}</strong><p>${ctx.tr("traceHelp")}</p></article>
-      <article><span>${ctx.tr("projection")}</span><strong>${ctx.escapeHtml(state.lastActionResult?.status ? ctx.tr(state.lastActionResult.status) : ctx.tr("notSubmitted"))}</strong><p>${ctx.tr("projectionPendingBody")}</p></article>
-      <article><span>${ctx.tr("submissionRecord")}</span><strong>${commandSubmissionId ? ctx.tr("traceAvailable") : ctx.tr("traceWillBind")}</strong><p>${ctx.tr("submissionRecordHelp")}</p></article>
-      <article><span>${ctx.tr("payloadFingerprint")}</span><strong>${ctx.tr("localDraftFingerprint")}</strong><p>${ctx.tr("payloadFingerprintHelp")}</p></article>
-    </section>
+    ${TechnicalAuditDetails({
+      model,
+      payloadHash: payloadFingerprint,
+      commandSubmissionId: submissionRecord,
+      traceCount,
+      projectionStatus: state.lastActionResult?.status || "notSubmitted",
+      policyRef: activeCard.policyRef || activeCard.confirmation?.policyRef || "operations-runtime-policy"
+    }, ctx)}
     ${OperationPanelView(operationBody, operationContext, activeCard, ctx)}
     ${EvidenceSheet(activeCard, draft, ctx)}
     ${TrustedConfirmSheet(operationContext, activeCard, ctx)}

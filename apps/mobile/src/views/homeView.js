@@ -49,6 +49,7 @@ export function homeView(ctx) {
     <section class="compact-section" data-surface="today-learning">
       <h2>${tr("todayLearning")}</h2>
       ${learningContentItems(ctx).slice(0, 2).map((item) => `<article class="search-result-card learning"><strong>${item.title}</strong><span>${item.subtitle}</span><small>${tr("nextAction")}: ${item.nextAction}</small></article>`).join("")}
+      <button data-view="learning">${tr("learningCenter")}</button>
     </section>
     <section class="business-focus">
       <h2>${tr("scenarioFocus")}</h2>

@@ -28,16 +28,26 @@ export function workspaceView(ctx) {
     </section>
     <section class="workspace-control">
       ${LifecycleWorkspace(item, activeCard, ctx)}
-      <section class="compat-card-tabs" data-component="CompatibilityCardTabs">
-        <span>Debug / compatibility</span>
-        <div class="card-tabs">${item.cards.map((card, index) => `<button class="${card.id === activeCard.id ? "active" : ""} ${card.status}" data-card-index="${index}">${ctx.tx(card.title)}</button>`).join("")}</div>
-      </section>
+      ${compatCardTabs(item, activeCard, ctx)}
       ${workspaceLensPanel(item, ctx)}
       ${checkoutServiceMobilePanel(item, activeCard, ctx)}
       ${OperationPanelView(workspaceCardPanel(activeCard, item, true, ctx), item, activeCard, ctx)}
     </section>
     <div class="sticky-action">${primaryActionButton(actionState, ctx)}</div>
   `);
+}
+
+function compatCardTabs(item, activeCard, ctx) {
+  if (!debugToolsVisible(ctx)) return "";
+  return `<section class="compat-card-tabs" data-component="CompatibilityCardTabs">
+    <span>Debug / compatibility</span>
+    <div class="card-tabs">${item.cards.map((card, index) => `<button class="${card.id === activeCard.id ? "active" : ""} ${card.status}" data-card-index="${index}">${ctx.tx(card.title)}</button>`).join("")}</div>
+  </section>`;
+}
+
+function debugToolsVisible(ctx) {
+  const role = ctx.state?.currentActor?.role || "";
+  return Boolean(ctx.state?.debugSurface || ["admin", "support", "audit"].includes(role));
 }
 
 export function workspaceCard(item, ctx, cardId = "") {

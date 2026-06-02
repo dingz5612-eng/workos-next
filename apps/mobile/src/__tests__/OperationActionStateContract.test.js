@@ -27,7 +27,7 @@ describe("OAM-04B primary action state machine", () => {
   });
 
   it.each([
-    ["blocked", "查看阻断原因"],
+    ["blocked", "查看阻断处理说明"],
     ["notStarted", "请先完成上一张卡"],
     ["done", "已完成"]
   ])("maps %s card state to the primary CTA", (status, label) => {
