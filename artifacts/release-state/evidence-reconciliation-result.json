@@ -1,15 +1,16 @@
 {
-  "generated_at_utc": "2026-06-01T23:50:12.111Z",
+  "generated_at_utc": "2026-06-02T00:44:59.927Z",
   "generated_by": "check-evidence-reconciliation",
   "status": "passed",
-  "mainHead": "f375074307dad658117131291c0ce9e8ab296099",
+  "mainHead": "2cb0ae7da4c02a3bd4b12b181b657c003cd572f2",
   "checks": {
-    "goNoGoLatestMain": "f375074307dad658117131291c0ce9e8ab296099",
+    "goNoGoLatestMain": "2cb0ae7da4c02a3bd4b12b181b657c003cd572f2",
     "graphMode": "L1_INTERNAL_PILOT_OBSERVATION",
     "dashboardMode": "L1_INTERNAL_PILOT_OBSERVATION",
     "finalAssuranceStatus": "POST_DORM_INT_RECONCILED"
   },
   "noGoItems": [],
+  "pendingRebindItems": [],
   "productionAllowed": false,
   "dormitoryL2ProductionAllowed": false,
   "repairPartsHrStatus": "L0 Contract Preview"
