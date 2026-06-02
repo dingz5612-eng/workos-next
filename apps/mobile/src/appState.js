@@ -95,6 +95,13 @@ function applyUrlParams(state) {
   }
   if (params.has("lang")) state.lang = params.get("lang");
   if (params.has("view")) state.view = params.get("view");
+  if (params.get("device") === "pc") {
+    state.currentDevice = { deviceId: "pc-current", deviceTrustStatus: "trusted", surface: "pc" };
+    state.pcGovernance.currentDevice = { deviceId: "pc-current", deviceTrustStatus: "trusted", surface: "pc" };
+  }
+  if (params.get("device") === "mobile") {
+    state.currentDevice = { deviceId: "mobile-current", deviceTrustStatus: "trusted", surface: "mobile" };
+  }
   if (params.has("task")) {
     state.selectedTask = params.get("task");
   }

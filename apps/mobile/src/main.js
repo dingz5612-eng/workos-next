@@ -29,6 +29,10 @@ const ctx = {
   applyRuntimeProjection
 };
 
+if (typeof window !== "undefined") {
+  window.__appCtx = ctx;
+}
+
 async function hydrateProjectionFromApi() {
   try {
     await checkHealth();

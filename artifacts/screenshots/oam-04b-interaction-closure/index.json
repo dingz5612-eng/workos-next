@@ -1,0 +1,34 @@
+{
+  "phase": "OAM-04B-07",
+  "status": "passed",
+  "generatedAt": "2026-06-02T22:01:27.1268729+08:00",
+  "scope": {
+    "dormitory": "L1 Internal Pilot Observation",
+    "dormitoryL2Production": false,
+    "businessProduction": "blocked",
+    "day2Entered": false
+  },
+  "playwright": {
+    "command": "npm --prefix apps/mobile run test:e2e",
+    "result": "passed",
+    "tests": 5,
+    "jsonReport": "artifacts/test-results/mobile/playwright-report.json",
+    "htmlReport": "artifacts/test-results/mobile/playwright-report/index.html",
+    "failureTracePolicy": "retain-on-failure",
+    "failureScreenshotPolicy": "only-on-failure"
+  },
+  "coveredJourneys": [
+    "mobile operator login routes to home/work/search/me",
+    "mobile finance saved session stays on home and direct financeControl shows diagnostic",
+    "mobile workbench opens persisted WorkItem OperationPanel",
+    "missing persisted WorkItem does not render fake operation CTA",
+    "search 创建房间 renders 处理 and opens OperationPanel",
+    "search 21 does not dump unrelated WorkItems",
+    "workspace ordinary user hides Debug / compatibility and keeps single primary CTA",
+    "operationPanel hides raw technical ids by default and exposes technical details",
+    "403/409/422 recovery copy is visible",
+    "trusted PC manager opens Manager Control Tower",
+    "trusted PC releaseOwner opens Release Flight Deck",
+    "PC pages do not show mobile bottom nav"
+  ]
+}
