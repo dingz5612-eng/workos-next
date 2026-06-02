@@ -136,7 +136,6 @@ function workItemIdFor(workspace, card) {
   if (card?.runtimeWorkItemId) return card.runtimeWorkItemId;
   if (workspace?.workItemId && isPersistedWorkItemId(workspace.workItemId)) return workspace.workItemId;
   if (card?.workItemId && isPersistedWorkItemId(card.workItemId)) return card.workItemId;
-  if (workspace?.id && card?.id) return `${workspace.id}:${card.id}`;
   return "";
 }
 

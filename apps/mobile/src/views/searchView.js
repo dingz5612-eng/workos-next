@@ -63,11 +63,21 @@ function searchSection(section, ctx) {
 }
 
 function searchCard(item, ctx) {
+  const normalized = normalizeSearchCard(item, ctx);
   return `<article class="search-result-card">
-    <strong>${ctx.escapeHtml(item.title)}</strong>
-    <span>${ctx.escapeHtml(item.subtitle)}</span>
-    <small>${ctx.tr("status")}: ${ctx.escapeHtml(item.status)} · ${ctx.tr("nextAction")}: ${ctx.escapeHtml(item.nextAction)}</small>
+    <strong>${ctx.escapeHtml(normalized.title)}</strong>
+    <span>${ctx.escapeHtml(normalized.subtitle)}</span>
+    <small>${ctx.tr("status")}: ${ctx.escapeHtml(normalized.status)} · ${ctx.tr("nextAction")}: ${ctx.escapeHtml(normalized.nextAction)}</small>
   </article>`;
+}
+
+function normalizeSearchCard(item, ctx) {
+  return {
+    title: localized(item.localizedTitle ?? item.title, ctx) || ctx.tr("searchNoResult"),
+    subtitle: localized(item.localizedSubtitle ?? item.subtitle, ctx) || ctx.tr("workosSearchSubtitle"),
+    status: localized(item.localizedStatus ?? item.status, ctx) || "-",
+    nextAction: localized(item.localizedNextAction ?? item.nextAction, ctx) || ctx.tr("search")
+  };
 }
 
 function workItems(queue, ctx) {
@@ -116,10 +126,10 @@ function objectResults(workspaces, kind, ctx) {
     .filter((workspace) => workspace.domain === "stay" || String(workspace.id).toLowerCase().includes(kind))
     .slice(0, 5)
     .map((workspace) => ({
-      title: `${labelByKind[kind]} · ${tx(workspace.title, ctx) || workspace.id}`,
-      subtitle: workspace.id,
-      status: workspace.cards?.[0]?.status || "ready",
-      nextAction: tx(workspace.next, ctx) || ctx.tr("openWorkspace")
+      title: localized(workspace.localizedTitle, ctx) || `${labelByKind[kind]} · ${tx(workspace.title, ctx) || workspace.id}`,
+      subtitle: localized(workspace.localizedSubtitle, ctx) || workspace.id,
+      status: localized(workspace.localizedStatus, ctx) || workspace.cards?.[0]?.status || "ready",
+      nextAction: localized(workspace.localizedNextAction, ctx) || tx(workspace.next, ctx) || ctx.tr("openWorkspace")
     }));
 }
 
@@ -161,4 +171,12 @@ function tx(value, ctx) {
   if (!value) return "";
   if (typeof value === "string") return value;
   return ctx.tx ? ctx.tx(value) : value["zh-CN"] || value["ru-RU"] || "";
+}
+
+function localized(value, ctx) {
+  if (!value) return "";
+  if (typeof value === "string" || typeof value === "number") return String(value);
+  if (Array.isArray(value)) return value.map((entry) => localized(entry, ctx)).filter(Boolean).join(" · ");
+  if (ctx.tx) return ctx.tx(value);
+  return value["zh-CN"] || value["ru-RU"] || value.title || value.label || "";
 }

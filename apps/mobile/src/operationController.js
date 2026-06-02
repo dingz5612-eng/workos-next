@@ -312,6 +312,5 @@ function persistedWorkItemIdFor(state, workspace, card) {
     return byWorkspaceCard.workItemId || byWorkspaceCard.work_item_id;
   }
 
-  if (workspace?.id && card?.id) return `${workspace.id}:${card.id}`;
   return "";
 }

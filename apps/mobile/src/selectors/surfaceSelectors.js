@@ -44,6 +44,7 @@ export function selectWorkbenchQueue(state) {
 
 function materializeQueue(queue, byId, state) {
   return queue
+    .filter((item) => state.debugSurface || isOrdinaryPilotQueueItem(item))
     .map((item) => {
       const workspace = byId.get(item.workspaceId);
       const card = workspace ? selectCardById(workspace, item.cardId) || activeCard(workspace) : null;
@@ -59,6 +60,21 @@ function materializeQueue(queue, byId, state) {
     .filter((item) => (item.workspace && item.card) || item.workItemId);
 }
 
+function isOrdinaryPilotQueueItem(item = {}) {
+  const tokens = [
+    item.workItemId,
+    item.work_item_id,
+    item.queueItemId,
+    item.workspaceId,
+    item.domain,
+    item.workItemType,
+    item.work_item_type,
+    item.source,
+    item.compatibilitySource
+  ].join(" ");
+  return !/(runtimeAudit|\brf[-_:]|engineering|diagnostic|fixture_replay|legacy_compatibility)/i.test(tokens);
+}
+
 export function selectSearchSurfaceResults(state, query) {
   const normalized = normalizeQuery(query);
   if (!normalized) return [];
@@ -67,7 +83,7 @@ export function selectSearchSurfaceResults(state, query) {
   const backendResults = state.runtimeStore?.searchResultsByQuery?.[normalized] || [];
   if (backendResults.length) {
     return backendResults
-      .map((result) => withSurfaceCard(byId.get(result.workspaceId), result.cardId, result.score || 0))
+      .map((result) => withSurfaceCard(byId.get(result.workspaceId), result.cardId, result.score || 0, result))
       .filter(Boolean);
   }
 
@@ -190,13 +206,17 @@ function learningCard(workspace, entry) {
   };
 }
 
-function withSurfaceCard(workspace, cardId, score) {
+function withSurfaceCard(workspace, cardId, score, result = {}) {
   if (!workspace) return null;
   return {
     ...workspace,
     _surfaceCardId: cardId,
     _score: score,
-    score
+    score,
+    localizedTitle: result.localizedTitle,
+    localizedSubtitle: result.localizedSubtitle,
+    localizedStatus: result.localizedStatus,
+    localizedNextAction: result.localizedNextAction
   };
 }
 

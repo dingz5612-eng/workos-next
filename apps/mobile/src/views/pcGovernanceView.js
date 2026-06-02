@@ -39,6 +39,28 @@ export function pcGovernanceView(ctx) {
   `);
 }
 
+export function managerControlTowerView(ctx) {
+  const risks = riskItems(ctx);
+  const blockers = blockersFromState(ctx);
+  const workQueue = workItems(ctx);
+  const financeCases = asArray(ctx.state.bankStatementImport?.mismatchCases?.cases || ctx.state.bankStatementImport?.mismatchCases);
+  return ctx.shell(`
+    <section class="pc-governance-full manager-control-tower" data-pc-manager-control-tower>
+      <header class="governance-hero">
+        <span>Manager Control Tower</span>
+        <h1>Manager Control Tower</h1>
+        <p>经理首屏只聚焦风险、超时、证据、财务和同步异常；治理导出与发布控制留在 PC Governance / Release plane。</p>
+      </header>
+      <section class="governance-grid">
+        ${panel("Risk overview", "manager-risk-overview", tableOrEmpty(risks, ["riskId", "riskType", "severity", "ownerRole", "resolveAction"], ctx, "No source-backed risk items loaded."))}
+        ${panel("SLA and blockers", "manager-sla-blockers", tableOrEmpty(blockers, ["caseId", "status", "ownerRole", "resolveAction"], ctx, "No blockers loaded."))}
+        ${panel("WorkItem follow-up", "manager-workitems", tableOrEmpty(workQueue, ["workItemId", "title", "status", "assignedRole", "dueAtUtc"], ctx, "No WorkItems visible."))}
+        ${panel("Finance exception focus", "manager-finance", tableOrEmpty(financeCases, ["caseId", "mismatchType", "ownerRole", "blockerSeverity"], ctx, "No finance exception cases loaded."))}
+      </section>
+    </section>
+  `);
+}
+
 function navigation(ctx) {
   return `
     <nav class="pc-governance-nav" data-pc-governance-nav aria-label="PC Governance navigation">

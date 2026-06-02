@@ -60,7 +60,9 @@ export const operationCopy = {
     "logout": "退出登录",
     "operatorRole": "运营经办人",
     "financeRole": "财务确认人",
-    "managerRole": "主管"
+    "managerRole": "主管",
+    "adminRole": "治理管理员",
+    "releaseOwnerRole": "发布负责人"
   },
   "ru-RU": {
     "businessFields": "Бизнес-поля",
@@ -123,6 +125,8 @@ export const operationCopy = {
     "logout": "Выйти",
     "operatorRole": "Оператор",
     "financeRole": "Финансист",
-    "managerRole": "Руководитель"
+    "managerRole": "Руководитель",
+    "adminRole": "Администратор управления",
+    "releaseOwnerRole": "Владелец релиза"
   }
 };

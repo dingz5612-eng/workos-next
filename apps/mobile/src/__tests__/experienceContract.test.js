@@ -99,22 +99,24 @@ describe("RT-5 Experience Contract", () => {
       businessObject: "Stay ST-1"
     }, ctx());
 
-    expect(html).toContain('data-component="WorkItemCard"');
-    for (const field of workItemCardSchema) {
-      expect(html).toContain(field);
+    expect(html).toContain('data-surface="action-decision-card"');
+    expect(workItemCardSchema).toContain("workItemId");
+    for (const label of ["当前能否处理", "为什么不能处理", "还缺什么证据", "下一步怎么做", "风险等级", "责任角色", "截止时间", "业务对象"]) {
+      expect(html).toContain(label);
     }
+    expect(visibleText(html)).not.toMatch(/\b(workItemId|caseId|traceRefs|lifecycleState|ownerRole)\b/);
   });
 
   it("renders lifecycle workspace as the main object workspace", () => {
     const workspace = workspaceFixture();
     const html = LifecycleWorkspace(workspace, workspace.cards[0], ctx());
 
-    expect(html).toContain('data-component="LifecycleWorkspace"');
-    expect(html).toContain("Object summary");
-    expect(html).toContain("Lifecycle timeline");
-    expect(html).toContain("Current WorkItem");
-    expect(html).toContain("Required evidence");
-    expect(html).toContain("Audit summary");
+    expect(html).toContain('data-surface="lifecycle-workspace"');
+    expect(html).toContain("对象摘要");
+    expect(html).toContain("生命周期时间线");
+    expect(html).toContain("当前办理项");
+    expect(html).toContain("必需证据");
+    expect(html).toContain("审计摘要");
   });
 
   it("renders trusted result, evidence, queue, device trust, and permission states", () => {
@@ -122,10 +124,10 @@ describe("RT-5 Experience Contract", () => {
     const activeCard = workspace.cards[0];
     const testCtx = ctx();
 
-    expect(ActionResult({ status: "committed_projection_pending" }, testCtx)).toContain('data-component="ProjectionPendingState"');
-    expect(ActionResult({ status: "committed_projection_failed" }, testCtx)).toContain('data-component="FailedSyncState"');
-    expect(EvidenceTile(activeCard.evidence[0], {}, "", testCtx)).toContain('data-component="EvidenceTile"');
-    expect(EvidenceSheet(activeCard, {}, testCtx)).toContain('data-component="EvidenceSheet"');
+    expect(ActionResult({ status: "committed_projection_pending" }, testCtx)).toContain('data-surface="projection-pending"');
+    expect(ActionResult({ status: "committed_projection_failed" }, testCtx)).toContain('data-surface="failed-sync"');
+    expect(EvidenceTile(activeCard.evidence[0], {}, "", testCtx)).toContain('data-surface="evidence-tile"');
+    expect(EvidenceSheet(activeCard, {}, testCtx)).toContain('data-surface="evidence-sheet"');
     expect(UploadQueue({}, testCtx)).toContain("证据上传");
     expect(SubmitQueue({}, testCtx)).toContain("提交队列");
     expect(DeviceTrustPanel({ currentDevice: { deviceId: "D-1", deviceTrustStatus: "trusted", surface: "mobile" } }, testCtx)).toContain("当前设备");
@@ -178,13 +180,52 @@ function ctx(actor = { role: "operator" }) {
       deviceTrusted: "设备已验证",
       deviceUnknown: "设备状态待确认",
       deviceContextIssue: "设备上下文异常",
-      deviceContextIssueBody: "当前移动端读到了 PC 设备上下文，请刷新或重新登录以绑定当前移动设备。"
+      deviceContextIssueBody: "当前移动端读到了 PC 设备上下文，请刷新或重新登录以绑定当前移动设备。",
+      canHandleNow: "当前可处理",
+      cannotHandleNow: "暂不能处理",
+      missingEvidenceBlocks: "缺少可信证据，确认会被阻断",
+      noCriticalBlocker: "当前没有新的系统阻断，但关键动作仍需要人工确认。",
+      decisionCanHandle: "当前能否处理",
+      decisionBlocker: "为什么不能处理",
+      decisionMissingEvidence: "还缺什么证据",
+      decisionNextAction: "下一步怎么做",
+      decisionRisk: "风险等级",
+      decisionOwner: "责任角色",
+      decisionDueAt: "截止时间",
+      decisionBusinessObject: "业务对象",
+      objectSummary: "对象摘要",
+      currentState: "当前状态",
+      lifecycleTimeline: "生命周期时间线",
+      currentWorkItem: "当前办理项",
+      requiredFields: "必填字段",
+      requiredEvidenceCopy: "必需证据",
+      businessImpact: "业务影响",
+      riskAndBlockers: "风险与阻断",
+      auditSummary: "审计摘要",
+      traceWillBind: "提交后绑定审计轨迹",
+      traceBound: "已绑定审计轨迹",
+      nextAction: "下一步",
+      projectionPending: "视图同步中",
+      projectionPendingBody: "提交已经完成，投影同步中；这不是失败。",
+      failedSync: "同步需要支持",
+      failedSyncBody: "提交已经记录，但读侧同步需要支持人员跟进。",
+      trustedEvidence: "可信证据",
+      evidenceMissing: "缺少证据",
+      evidenceTrustedDraft: "已选择，待可信校验",
+      noRequiredEvidence: "当前动作无必需证据",
+      evidenceReady: "证据已就绪",
+      evidenceNeedReview: "证据待补齐或复核",
+      operatorRole: "运营经办人"
     })[key] || key,
     tx: (value) => typeof value === "string" ? value : value["zh-CN"],
     localTerm: (value) => value?.label?.["zh-CN"] || value?.id || value,
     escapeHtml: (value) => String(value),
     escapeAttr: (value) => String(value)
   };
+}
+
+function visibleText(html) {
+  return String(html).replace(/<[^>]*>/g, " ").replace(/\s+/g, " ");
 }
 
 function workspaceFixture() {

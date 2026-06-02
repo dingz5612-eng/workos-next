@@ -1,6 +1,6 @@
 import { pcManagerLiteView } from "./views/checkoutServiceView.js";
 import { financeReconciliationView } from "./views/financeReconciliationView.js";
-import { pcGovernanceView } from "./views/pcGovernanceView.js";
+import { managerControlTowerView, pcGovernanceView } from "./views/pcGovernanceView.js";
 import { releaseControlView } from "./views/releaseControlView.js";
 
 const pcViews = {
@@ -8,7 +8,7 @@ const pcViews = {
   releaseFlightDeck: releaseControlView,
   pcGovernance: pcGovernanceView,
   governanceCenter: pcGovernanceView,
-  managerControlTower: pcGovernanceView,
+  managerControlTower: managerControlTowerView,
   pcManager: pcManagerLiteView,
   financeReconciliation: financeReconciliationView,
   financeControl: financeReconciliationView

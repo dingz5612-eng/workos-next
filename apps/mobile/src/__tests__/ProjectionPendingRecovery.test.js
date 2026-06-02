@@ -10,7 +10,7 @@ describe("SURFACE-C projection pending recovery", () => {
       message: "已提交成功，视图同步中。"
     }, ctx);
 
-    expect(html).toContain('data-component="ProjectionPendingState"');
+    expect(html).toContain('data-surface="projection-pending"');
     expect(html).toContain("已提交成功，视图同步中。");
     expect(visibleText(html)).not.toContain("提交失败");
   });

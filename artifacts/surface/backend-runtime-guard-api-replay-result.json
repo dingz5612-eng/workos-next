@@ -1,0 +1,182 @@
+{
+  "generated_at_utc": "2026-06-02T05:18:31.366Z",
+  "generated_by": "scripts/surface/run-backend-runtime-guard-api-replay.mjs",
+  "sourceMode": "runtime_guard_contract_replay",
+  "status": "passed",
+  "case_count": 13,
+  "passed_count": 13,
+  "cases": [
+    {
+      "id": "mobile_release_api_forbidden",
+      "description": "mobile token -> PC release API = 403",
+      "evidenceFile": "tests/WorkOS.RuntimeIntegrationTests/MobileSurfaceRuntimeGuardTests.cs",
+      "requiredMarkers": [
+        "mobile token cannot call PC release/governance/finance admin API",
+        "pc_surface_requires_pc_device"
+      ],
+      "expectedStatus": 403,
+      "status": "passed",
+      "missingMarkers": [],
+      "reason": "后端 runtime guard 证据已覆盖。"
+    },
+    {
+      "id": "mobile_finance_correction_forbidden",
+      "description": "mobile token -> finance correction approve = 403",
+      "evidenceFile": "tests/WorkOS.RuntimeIntegrationTests/FinanceMoneyCommandPilotScopeTests.cs",
+      "requiredMarkers": [
+        "requestLedgerCorrection",
+        "must stay out of ordinary mobile apiClient.js"
+      ],
+      "expectedStatus": 403,
+      "status": "passed",
+      "missingMarkers": [],
+      "reason": "后端 runtime guard 证据已覆盖。"
+    },
+    {
+      "id": "mobile_governance_export_forbidden",
+      "description": "mobile token -> governance raw export = 403",
+      "evidenceFile": "tests/WorkOS.RuntimeIntegrationTests/FinanceMoneyCommandPilotScopeTests.cs",
+      "requiredMarkers": [
+        "recordGovernanceAuditEvent",
+        "must stay out of ordinary mobile apiClient.js"
+      ],
+      "expectedStatus": 403,
+      "status": "passed",
+      "missingMarkers": [],
+      "reason": "后端 runtime guard 证据已覆盖。"
+    },
+    {
+      "id": "wrong_tenant_evidence_attach_blocked",
+      "description": "wrong tenant evidence attach = 403/422",
+      "evidenceFile": "tests/WorkOS.RuntimeIntegrationTests/WrongTenantEvidenceConfirmBlockedTests.cs",
+      "requiredMarkers": [
+        "wrong-scope evidence",
+        "evidence_object_scope_mismatch"
+      ],
+      "expectedStatus": "403_or_422",
+      "status": "passed",
+      "missingMarkers": [],
+      "reason": "后端 runtime guard 证据已覆盖。"
+    },
+    {
+      "id": "wrong_device_high_risk_confirm_blocked",
+      "description": "wrong device high-risk confirm = 403/422",
+      "evidenceFile": "tests/WorkOS.RuntimeIntegrationTests/DeviceSessionTenantScopeTests.cs",
+      "requiredMarkers": [
+        "tenant_id",
+        "device_id"
+      ],
+      "expectedStatus": "403_or_422",
+      "status": "passed",
+      "missingMarkers": [],
+      "reason": "后端 runtime guard 证据已覆盖。"
+    },
+    {
+      "id": "revoked_device_high_risk_confirm_blocked",
+      "description": "revoked device high-risk confirm = 403/422",
+      "evidenceFile": "tests/WorkOS.RuntimeIntegrationTests/RevokedDeviceHighRiskConfirmTests.cs",
+      "requiredMarkers": [
+        "device_trust_status = 'revoked'",
+        "device_revoked"
+      ],
+      "expectedStatus": "403_or_422",
+      "status": "passed",
+      "missingMarkers": [],
+      "reason": "后端 runtime guard 证据已覆盖。"
+    },
+    {
+      "id": "untrusted_device_high_risk_confirm_blocked",
+      "description": "untrusted device high-risk confirm = 403/422",
+      "evidenceFile": "tests/WorkOS.RuntimeIntegrationTests/UntrustedDeviceEvidenceAccessTests.cs",
+      "requiredMarkers": [
+        "untrusted",
+        "high-risk"
+      ],
+      "expectedStatus": "403_or_422",
+      "status": "passed",
+      "missingMarkers": [],
+      "reason": "后端 runtime guard 证据已覆盖。"
+    },
+    {
+      "id": "workspace_card_compatibility_bypass_blocked",
+      "description": "workspace/card compatibility bypass = 403/422",
+      "evidenceFile": "tests/WorkOS.RuntimeIntegrationTests/WorkspaceCardCompatibilityPilotScopeTests.cs",
+      "requiredMarkers": [
+        "CompatibilityAdapter",
+        "persisted_work_item_required"
+      ],
+      "expectedStatus": "403_or_422",
+      "status": "passed",
+      "missingMarkers": [],
+      "reason": "后端 runtime guard 证据已覆盖。"
+    },
+    {
+      "id": "repair_l0_production_confirm_blocked",
+      "description": "Repair L0 production confirm = 403/422",
+      "evidenceFile": "docs/business/business-line-registry.json",
+      "requiredMarkers": [
+        "repair",
+        "L0 Contract Preview",
+        "\"productionConfirmAllowed\": false"
+      ],
+      "expectedStatus": "403_or_422",
+      "status": "passed",
+      "missingMarkers": [],
+      "reason": "后端 runtime guard 证据已覆盖。"
+    },
+    {
+      "id": "parts_l0_production_confirm_blocked",
+      "description": "Parts L0 production confirm = 403/422",
+      "evidenceFile": "docs/business/business-line-registry.json",
+      "requiredMarkers": [
+        "parts",
+        "L0 Contract Preview",
+        "\"productionConfirmAllowed\": false"
+      ],
+      "expectedStatus": "403_or_422",
+      "status": "passed",
+      "missingMarkers": [],
+      "reason": "后端 runtime guard 证据已覆盖。"
+    },
+    {
+      "id": "hr_l0_production_confirm_blocked",
+      "description": "HR L0 production confirm = 403/422",
+      "evidenceFile": "docs/business/business-line-registry.json",
+      "requiredMarkers": [
+        "hr",
+        "L0 Contract Preview"
+      ],
+      "expectedStatus": "403_or_422",
+      "status": "passed",
+      "missingMarkers": [],
+      "reason": "后端 runtime guard 证据已覆盖。"
+    },
+    {
+      "id": "pc_governance_direct_fact_write_blocked",
+      "description": "PC governance direct write business fact = blocked",
+      "evidenceFile": "tests/WorkOS.RuntimeIntegrationTests/PcGovernanceSurfaceRuntimeGuardTests.cs",
+      "requiredMarkers": [
+        "directBusinessFactWriteAllowed",
+        "false"
+      ],
+      "expectedStatus": "blocked",
+      "status": "passed",
+      "missingMarkers": [],
+      "reason": "后端 runtime guard 证据已覆盖。"
+    },
+    {
+      "id": "pc_manual_gate_passed_blocked",
+      "description": "PC manual GateResult passed = blocked",
+      "evidenceFile": "tests/WorkOS.RuntimeIntegrationTests/PcGovernanceSurfaceRuntimeGuardTests.cs",
+      "requiredMarkers": [
+        "manualGateResultPassedUpdateAllowed",
+        "false"
+      ],
+      "expectedStatus": "blocked",
+      "status": "passed",
+      "missingMarkers": [],
+      "reason": "后端 runtime guard 证据已覆盖。"
+    }
+  ],
+  "violations": []
+}

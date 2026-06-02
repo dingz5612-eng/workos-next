@@ -1,5 +1,6 @@
 import { apiBaseUrl } from "./apiClient.js";
 import { mobileBottomNavigation } from "./experienceContract.js";
+import { isPcSurfaceView } from "./surfaceRegistry.js";
 
 export function shell(content, ctx) {
   const { state, tr } = ctx;
@@ -16,7 +17,7 @@ export function shell(content, ctx) {
       ${apiBanner(ctx)}
       ${content}
       ${feedbackButton(ctx)}
-      ${state.view !== "onboarding" && state.view !== "login" ? bottomNav(ctx) : ""}
+      ${state.view !== "onboarding" && state.view !== "login" && !isPcSurfaceView(state.view) ? bottomNav(ctx) : ""}
     </main>
   `;
 }
