@@ -1,4 +1,5 @@
 import { selectRuntimeWorkspaces, selectSearchSurfaceResults, selectWorkbenchQueue } from "../selectors/surfaceSelectors.js";
+import { LearningRecommendationVM, SearchResultVM } from "../viewModels/index.js";
 
 export function searchView(ctx) {
   const results = workosSearchSections(ctx);
@@ -63,16 +64,17 @@ function searchSection(section, ctx) {
 }
 
 function searchCard(item, ctx) {
-  const normalized = normalizeSearchCard(item, ctx);
+  const normalized = SearchResultVM(normalizeSearchCard(item, ctx), ctx);
   return `<article class="search-result-card">
-    <strong>${ctx.escapeHtml(normalized.title)}</strong>
-    <span>${ctx.escapeHtml(normalized.subtitle)}</span>
-    <small>${ctx.tr("status")}: ${ctx.escapeHtml(normalized.status)} · ${ctx.tr("nextAction")}: ${ctx.escapeHtml(normalized.nextAction)}</small>
+    <strong>${ctx.escapeHtml(normalized.localizedTitle)}</strong>
+    <span>${ctx.escapeHtml(normalized.localizedSubtitle)}</span>
+    <small>${ctx.tr("status")}: ${ctx.escapeHtml(normalized.localizedStatus)} · ${ctx.tr("nextAction")}: ${ctx.escapeHtml(normalized.localizedNextAction)}</small>
   </article>`;
 }
 
 function normalizeSearchCard(item, ctx) {
   return {
+    ...item,
     title: localized(item.localizedTitle ?? item.title, ctx) || ctx.tr("searchNoResult"),
     subtitle: localized(item.localizedSubtitle ?? item.subtitle, ctx) || ctx.tr("workosSearchSubtitle"),
     status: localized(item.localizedStatus ?? item.status, ctx) || "-",
@@ -82,7 +84,9 @@ function normalizeSearchCard(item, ctx) {
 
 function workItems(queue, ctx) {
   return queue.map((item) => ({
-    title: item.workItemId || item.queueItemId || ctx.tr("searchWorkItems"),
+    ...item,
+    type: "workItem",
+    title: item.businessObject || item.workspace?.title || item.card?.title || ctx.tr("searchWorkItems"),
     subtitle: item.workItemType || item.domain || ctx.tr("workbench"),
     status: item.lifecycleState || item.status || item.card?.status || "ready",
     nextAction: item.reason || tx(item.workspace?.next, ctx) || ctx.tr("openWorkspace")
@@ -95,7 +99,9 @@ function operationCases(queue, workspaces, ctx) {
     const caseId = item.caseId || item.workspace?.caseId || item.workspaceId;
     if (!caseId) continue;
     cases.set(caseId, {
-      title: caseId,
+      ...item,
+      type: "operationCase",
+      title: item.workspace?.title || ctx.tr("searchOperationCases"),
       subtitle: item.workItemType || item.domain || ctx.tr("operation"),
       status: item.lifecycleState || item.status || "ready",
       nextAction: item.reason || ctx.tr("openWorkspace")
@@ -107,6 +113,7 @@ function operationCases(queue, workspaces, ctx) {
     if (!cases.has(caseId)) {
       cases.set(caseId, {
         title: caseId,
+        type: "operationCase",
         subtitle: tx(workspace.title, ctx),
         status: workspace.cards?.[0]?.status || "ready",
         nextAction: tx(workspace.next, ctx) || ctx.tr("openWorkspace")
@@ -127,6 +134,7 @@ function objectResults(workspaces, kind, ctx) {
     .slice(0, 5)
     .map((workspace) => ({
       title: localized(workspace.localizedTitle, ctx) || `${labelByKind[kind]} · ${tx(workspace.title, ctx) || workspace.id}`,
+      type: kind,
       subtitle: localized(workspace.localizedSubtitle, ctx) || workspace.id,
       status: localized(workspace.localizedStatus, ctx) || workspace.cards?.[0]?.status || "ready",
       nextAction: localized(workspace.localizedNextAction, ctx) || tx(workspace.next, ctx) || ctx.tr("openWorkspace")
@@ -137,6 +145,7 @@ function evidenceResults(workspaces, ctx) {
   return workspaces.flatMap((workspace) => (workspace.cards || []).flatMap((card) =>
     (card.evidence || []).map((evidence) => ({
       title: ctx.localTerm(evidence),
+      type: "evidence",
       subtitle: `${workspace.id} · ${tx(card.title, ctx)}`,
       status: card.status || "ready",
       nextAction: ctx.tr("evidence")
@@ -147,8 +156,10 @@ function traceResults(queue, ctx) {
   return queue
     .filter((item) => item.traceRefs?.length || item.commandSubmissionId || item.command_submission_id)
     .map((item) => ({
-      title: item.commandSubmissionId || item.command_submission_id || item.traceRefs[0],
-      subtitle: item.workItemId || item.queueItemId,
+      ...item,
+      type: "trace",
+      title: ctx.tr("searchSubmissionTrace"),
+      subtitle: item.workItemType || ctx.tr("recentTraces"),
       status: item.lifecycleState || item.status || "ready",
       nextAction: ctx.tr("recentTraces")
     }));
@@ -159,12 +170,13 @@ function section(titleKey, items) {
 }
 
 function learning(titleKey, bodyKey, status, ctx) {
-  return {
+  return LearningRecommendationVM({
+    type: "learning",
     title: ctx.tr(titleKey),
     subtitle: ctx.tr(bodyKey),
     status,
     nextAction: ctx.tr("learningCenter")
-  };
+  }, ctx);
 }
 
 function tx(value, ctx) {

@@ -1,0 +1,58 @@
+{
+  "contractId": "oam-04b-view-model-contract.v1",
+  "stage": "OAM-04B",
+  "status": "contract_guard",
+  "architecture": "Runtime data -> ViewModel adapter -> User-facing surface",
+  "centerModel": {
+    "primaryProjection": "IntentWorkspaceProjection",
+    "cardProjection": "WorkspaceCardProjection",
+    "submissionEntry": "Operations Confirm",
+    "viewModelFactSourceAllowed": false
+  },
+  "sourceRefsRequired": ["workspaceId", "cardId", "workItemId", "aggregateRef"],
+  "viewModels": [
+    "WorkItemDecisionVM",
+    "OperationPanelVM",
+    "EvidenceTrustVM",
+    "TrustedConfirmVM",
+    "SearchResultVM",
+    "QueueStateVM",
+    "DeviceTrustVM",
+    "LearningRecommendationVM",
+    "PcFinanceCaseVM",
+    "PcManagerTowerVM",
+    "GovernanceTraceVM",
+    "ReleaseControlVM",
+    "AuditTraceVM"
+  ],
+  "rules": {
+    "derivedOnly": true,
+    "apiWritesAllowed": false,
+    "businessFactWritesAllowed": false,
+    "persistAsFactSourceAllowed": false,
+    "rawIdsVisibleOnlyIn": ["technicalDiagnostic", "traceDrawer", "auditDrawer"],
+    "copySource": "docs/surface/operational-copy-matrix.yml",
+    "ordinaryConfirmRequiresPersistedWorkItem": true,
+    "compatibilityWorkItemKeyName": "compatibilityWorkItemKey"
+  },
+  "forbiddenVisibleRawKeys": [
+    "workItemId",
+    "caseId",
+    "lifecycleState",
+    "ownerRole",
+    "payloadHash",
+    "commandSubmissionId",
+    "deviceId",
+    "trustState",
+    "surface"
+  ],
+  "statusBoundary": {
+    "dormitoryL2ProductionAllowed": false,
+    "businessProductionGo": false,
+    "repairPartsHrProductionAllowed": false
+  },
+  "machineChecks": [
+    "scripts/surface/check-view-model-contract.mjs",
+    "scripts/surface/check-experience-envelope-not-fact-source.mjs"
+  ]
+}

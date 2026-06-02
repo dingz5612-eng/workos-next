@@ -1,0 +1,26 @@
+{
+  "generatedAtUtc": "2026-06-02T07:23:27.080Z",
+  "generatedBy": "scripts/surface/check-view-model-contract.mjs",
+  "status": "passed",
+  "contractPath": "docs/surface/view-model-contract.yml",
+  "packagePath": "packages/surface-view-models/src/index.js",
+  "viewModels": [
+    "WorkItemDecisionVM",
+    "OperationPanelVM",
+    "EvidenceTrustVM",
+    "TrustedConfirmVM",
+    "SearchResultVM",
+    "QueueStateVM",
+    "DeviceTrustVM",
+    "LearningRecommendationVM",
+    "PcFinanceCaseVM",
+    "PcManagerTowerVM",
+    "GovernanceTraceVM",
+    "ReleaseControlVM",
+    "AuditTraceVM"
+  ],
+  "productionAllowed": false,
+  "dormitoryL2ProductionAllowed": false,
+  "repairPartsHrProductionAllowed": false,
+  "violations": []
+}

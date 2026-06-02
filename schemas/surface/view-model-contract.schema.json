@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://workosnext.local/schemas/surface/view-model-contract.schema.json",
+  "title": "OAM-04B ViewModel Contract",
+  "type": "object",
+  "required": ["contractId", "stage", "architecture", "centerModel", "sourceRefsRequired", "viewModels", "rules", "statusBoundary", "machineChecks"],
+  "properties": {
+    "contractId": { "type": "string" },
+    "stage": { "type": "string" },
+    "architecture": { "type": "string" },
+    "centerModel": {
+      "type": "object",
+      "required": ["primaryProjection", "cardProjection", "submissionEntry", "viewModelFactSourceAllowed"]
+    },
+    "sourceRefsRequired": { "type": "array", "items": { "type": "string" }, "minItems": 4 },
+    "viewModels": { "type": "array", "items": { "type": "string" }, "minItems": 10 },
+    "rules": { "type": "object" },
+    "statusBoundary": { "type": "object" },
+    "machineChecks": { "type": "array", "items": { "type": "string" }, "minItems": 2 }
+  }
+}
