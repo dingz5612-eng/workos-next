@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-06-02T08:16:07.708Z",
+  "generated_at_utc": "2026-06-02T09:06:45.731Z",
   "generated_by": "scripts/surface/check-queue-state-contract.mjs",
   "status": "passed",
   "check": "queue-state-contract",
