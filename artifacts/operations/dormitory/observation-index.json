@@ -1,22 +1,22 @@
 {
-  "generatedAtUtc": "2026-06-02T13:17:34.507Z",
+  "generatedAtUtc": "2026-06-02T14:32:27.430Z",
   "generatedBy": "check-observation-sequence-gate",
-  "repositoryHead": "fe50578178886b958b9f394d2b51b2749aed54cd",
-  "verifiedMainHead": "fe50578178886b958b9f394d2b51b2749aed54cd",
+  "repositoryHead": "90b1b6d43a3cac52cce3d392d4d951a7f1c45133",
+  "verifiedMainHead": "90b1b6d43a3cac52cce3d392d4d951a7f1c45133",
   "days": [
     {
       "day": 0,
       "status": "ready",
       "decision": "day0_ready",
       "sourceRef": "artifacts/go-live/dormitory/day0-readiness-result.json",
-      "entryHash": "fe8dc75c25f7ec97dfe66f5cc8b1111d5063fcfe2efaee055032e110bad9f607"
+      "entryHash": "94b7d1b0c2db2590fad4835685422298b132226ab6faf1937c2d4082943403a2"
     },
     {
       "day": 1,
       "status": "passed",
       "decision": "continue_l1_observation",
       "sourceRef": "artifacts/operations/dormitory/observation-day-01.json",
-      "entryHash": "451029ba60790e9a823b9ce51c78b4816b562d83c5c7dfefc9cfe2b0f2c0ab40"
+      "entryHash": "1df946ad0694c246d980035151a23140cdc7a016ee743ba391b2fc79ea8a11b1"
     }
   ],
   "nextDay": 2,
