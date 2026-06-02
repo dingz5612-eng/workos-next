@@ -13,6 +13,27 @@
 - 证据绑定：`artifacts/release-state/current-state.json`、`artifacts/release-state/post-merge-attestation.json`、`artifacts/baseline/release-evidence-baseline.json`
 - Day-2 状态：只更新 entry gate 证据；未启动 Day-2。
 
+## OAM-05 当前分支验证
+
+- branch: `codex/oam-doc-i18n-ux-production-baseline-train`
+- repositoryHead: `39e18d35c7d13b9bec9cac281d4eb2843cc38c30`
+- generatedAtUtc: `2026-06-02T12:27:12.6479606Z`
+- artifact: `artifacts/security/runtime-production-boundary-hardening-result.json`
+- 结论：Runtime Auth、CSRF、生产配置阻断、DB readiness、API allowlist 与写路径 guard 均保持通过。
+- 业务状态：Dormitory remains L1 Internal Pilot Observation only；Dormitory L2 Production = false；Business Production = blocked；Repair / Parts / HR = L0 Contract Preview；Day-2 still requires separate Day-2 Entry Gate。
+
+### OAM-05 验证命令
+
+- `dotnet build WorkOSNext.sln -c Release`: passed
+- `dotnet test tests/WorkOS.UnitTests/WorkOS.UnitTests.csproj -c Release --no-build`: passed
+- `dotnet test tests/WorkOS.RuntimeIntegrationTests/WorkOS.RuntimeIntegrationTests.csproj -c Release --no-build`: passed
+- `dotnet test tests/WorkOS.DatabaseSecurityTests/WorkOS.DatabaseSecurityTests.csproj -c Release --no-build`: passed
+- `dotnet test tests/WorkOS.PolicyAsCodeTests/WorkOS.PolicyAsCodeTests.csproj -c Release --no-build`: passed
+- `node scripts/check-api-boundaries.mjs --self-test`: passed
+- `node scripts/check-api-boundaries.mjs`: passed
+- `node scripts/check-runtime-write-paths.mjs --self-test`: passed
+- `node scripts/check-runtime-write-paths.mjs`: passed
+
 ## 生产风险关闭
 
 - 后端新增 `WorkOSRuntimeActor` 认证，写操作、confirm、高风险动作、控制平面、导出接口均由后端 session / role / device / tenant / capability 裁决。

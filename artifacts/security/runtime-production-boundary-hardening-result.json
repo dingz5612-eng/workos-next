@@ -1,0 +1,65 @@
+{
+  "checkName": "runtime-production-boundary-hardening",
+  "status": "passed",
+  "generatedAtUtc": "2026-06-02T12:27:12.6479606Z",
+  "branch": "codex/oam-doc-i18n-ux-production-baseline-train",
+  "repositoryHead": "39e18d35c7d13b9bec9cac281d4eb2843cc38c30",
+  "stage": "OAM-05",
+  "scope": {
+    "runtimeAuthContract": "passed",
+    "csrfAndCookieAuth": "passed",
+    "productionConfigGuards": "passed",
+    "dbMigrationAndReadiness": "passed",
+    "apiAllowlistAndArchitectureDocs": "passed"
+  },
+  "validation": [
+    {
+      "command": "dotnet build WorkOSNext.sln -c Release",
+      "result": "passed"
+    },
+    {
+      "command": "dotnet test tests/WorkOS.UnitTests/WorkOS.UnitTests.csproj -c Release --no-build",
+      "result": "passed",
+      "passedTests": 272
+    },
+    {
+      "command": "dotnet test tests/WorkOS.RuntimeIntegrationTests/WorkOS.RuntimeIntegrationTests.csproj -c Release --no-build",
+      "result": "passed",
+      "passedTests": 53
+    },
+    {
+      "command": "dotnet test tests/WorkOS.DatabaseSecurityTests/WorkOS.DatabaseSecurityTests.csproj -c Release --no-build",
+      "result": "passed",
+      "passedTests": 9
+    },
+    {
+      "command": "dotnet test tests/WorkOS.PolicyAsCodeTests/WorkOS.PolicyAsCodeTests.csproj -c Release --no-build",
+      "result": "passed",
+      "passedTests": 4
+    },
+    {
+      "command": "node scripts/check-api-boundaries.mjs --self-test",
+      "result": "passed"
+    },
+    {
+      "command": "node scripts/check-api-boundaries.mjs",
+      "result": "passed"
+    },
+    {
+      "command": "node scripts/check-runtime-write-paths.mjs --self-test",
+      "result": "passed"
+    },
+    {
+      "command": "node scripts/check-runtime-write-paths.mjs",
+      "result": "passed"
+    }
+  ],
+  "businessState": {
+    "dormitory": "L1 Internal Pilot Observation only",
+    "dormitoryL2Production": false,
+    "businessProduction": "blocked",
+    "repairPartsHr": "L0 Contract Preview",
+    "day2": "requires separate Day-2 Entry Gate"
+  },
+  "noGoItems": []
+}
