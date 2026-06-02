@@ -1,0 +1,26 @@
+{
+  "generatedAtUtc": "2026-06-02T12:22:59.212Z",
+  "generatedBy": "check-no-hardcoded-user-copy",
+  "stage": "OAM-LOCALIZATION-AUTHORITY",
+  "status": "passed",
+  "repositoryHead": "58323398de1c75bd3f3ddebcc16d1ac9c9634c04",
+  "languages": {
+    "canonical": "zh-CN",
+    "supported": [
+      "ru-RU"
+    ],
+    "pilot": [
+      "ky-KG"
+    ]
+  },
+  "noGoItems": [],
+  "productionAllowed": false,
+  "dormitoryL2ProductionAllowed": false,
+  "businessProduction": "blocked",
+  "repairPartsHrStatus": "L0 Contract Preview",
+  "scanFiles": [
+    "apps/mobile/src/i18n.js",
+    "apps/mobile/src/appState.js",
+    "apps/mobile/src/selectors/workspaceSelectors.js"
+  ]
+}
