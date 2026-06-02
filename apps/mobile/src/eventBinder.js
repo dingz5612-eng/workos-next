@@ -1,7 +1,7 @@
 import { login, logout } from "./authController.js";
 import { runLearningSearch, setCoachStage, setLearningDomain, setLearningType, updateLearningQuery } from "./coachController.js";
 import { collectDraftingValuesOnInput, saveCurrentDraft, submitCurrentCard, toggleEvidenceSelection } from "./operationController.js";
-import { closeAdvancedFilters, openAdvancedFilters, setQueueFilter, setQueueSort, toggleFilters } from "./queueController.js";
+import { clearQueueFilterState, closeAdvancedFilters, openAdvancedFilters, setQueueFilter, setQueueSort, setWorkFilter, toggleFilters } from "./queueController.js";
 import { onboard, openWorkspace, openWorkItem, runSearch, selectCard, setLang, setView, updateSearchQuery } from "./navigationController.js";
 import { isPcSurfaceView } from "./surfaceRegistry.js";
 
@@ -52,6 +52,8 @@ function bindLearning(ctx) {
 
 function bindQueue(ctx) {
   document.querySelectorAll("[data-filter-field]").forEach((node) => node.addEventListener("click", () => setQueueFilter(node.dataset.filterField, node.dataset.filterValue, ctx)));
+  document.querySelectorAll("[data-work-filter]").forEach((node) => node.addEventListener("click", () => setWorkFilter(node.dataset.workFilter, ctx)));
+  document.querySelector("#clearQueueFilters")?.addEventListener("click", () => clearQueueFilterState(ctx));
   document.querySelector("#toggleFilters")?.addEventListener("click", () => toggleFilters(ctx));
   document.querySelector("#advanced")?.addEventListener("click", () => openAdvancedFilters(ctx));
   document.querySelector("#closeAdvanced")?.addEventListener("click", () => closeAdvancedFilters(ctx));

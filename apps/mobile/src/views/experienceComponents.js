@@ -1,4 +1,5 @@
 import { loadDraft } from "../operationDrafts.js";
+import { resolveOperationPanelTarget, resolvePersistedWorkItem } from "../operationRouteResolver.js";
 import { permissionDiagnosticCopy } from "../surfaceGuard.js";
 import {
   DeviceTrustVM,
@@ -13,7 +14,14 @@ export function WorkItemCard(item, ctx) {
   const evidence = model.requiredEvidence.length ? model.requiredEvidence.join(" · ") : "-";
   const canHandle = model.canHandleLabel;
   const blocker = model.blocker;
-  const workspaceButton = `<button data-work-item-id="${attr(model.workItemId, ctx)}" data-workspace-id="${attr(model.workspaceId, ctx)}" data-card-id="${attr(model.cardId, ctx)}">${text(ctx.tr("openWorkspace"), ctx)}</button>`;
+  const route = resolveOperationPanelTarget({
+    workItemId: model.workItemId,
+    workspaceId: model.workspaceId,
+    cardId: model.cardId
+  }, ctx.state);
+  const workspaceButton = route.canOpen
+    ? `<button data-work-item-id="${attr(route.workItem.workItemId, ctx)}" data-workspace-id="${attr(route.workItem.workspaceId, ctx)}" data-card-id="${attr(route.workItem.cardId, ctx)}">${text(ctx.tr("openWorkspace"), ctx)}</button>`
+    : `<div class="workitem-route-blocked"><b>${text(ctx.tr("operationUnavailableCta"), ctx)}</b><small>${text(ctx.tr("operationUnavailableBody"), ctx)}</small><button data-view="workbench">${text(ctx.tr("returnWorkbench"), ctx)}</button></div>`;
   const debug = ctx.state?.debugSurface ? `<details class="debug-only"><summary>${text(ctx.tr("debugTrace"), ctx)}</summary><dl>
       ${field("workItemId", model.workItemId, ctx)}
       ${field("caseId", model.caseId, ctx)}
@@ -122,7 +130,7 @@ export function TrustedConfirmSheet(item, card, ctx) {
     <article>
       <h3>${text(vm.evidenceAndPermission.title, ctx)}</h3>
       <p>${text(vm.evidenceAndPermission.body, ctx)}</p>
-      <p>${text(ctx.tr("policyRef"), ctx)} ${text(vm.evidenceAndPermission.policyRef, ctx)} · ${text(ctx.tr("decisionRisk"), ctx)} ${text(vm.evidenceAndPermission.risk, ctx)}</p>
+      <p>${text(ctx.tr("permissionPolicyMatched"), ctx)} · ${text(ctx.tr("decisionRisk"), ctx)} ${text(vm.evidenceAndPermission.risk, ctx)}</p>
     </article>
     <article>
       <h3>${text(vm.auditAndRollback.title, ctx)}</h3>
@@ -139,16 +147,48 @@ export function TrustedConfirmSheet(item, card, ctx) {
   </section>`;
 }
 
+export function TechnicalAuditDetails(details = {}, ctx) {
+  const canOpen = technicalDetailsVisible(ctx);
+  return `<details class="operation-technical-details" data-surface="operation-runtime-proof" data-work-item-id="${attr(details.model?.workItemId, ctx)}" data-case-id="${attr(details.model?.caseId, ctx)}" data-submission-id="${attr(details.commandSubmissionId, ctx)}" data-payload-fingerprint="${attr(details.payloadHash, ctx)}" ${canOpen ? "open" : ""}>
+    <summary>${text(ctx.tr(canOpen ? "auditDetails" : "technicalDetails"), ctx)}</summary>
+    <section class="operation-panel-runtime">
+      <article><span>${text(ctx.tr("prepareContract"), ctx)}</span><strong>${text(ctx.tr("prepareContractReady"), ctx)}</strong><p>${text(ctx.tr("prepareContractHelp"), ctx)}</p></article>
+      <article><span>${text(ctx.tr("confirmCommit"), ctx)}</span><strong>${text(ctx.tr("confirmCommitReady"), ctx)}</strong><p>${text(ctx.tr("confirmCommitHelp"), ctx)}</p></article>
+      <article><span>${text(ctx.tr("trace"), ctx)}</span><strong>${text(details.traceCount ? ctx.tr("traceAvailable") : ctx.tr("traceWillBind"), ctx)}</strong><p>${text(ctx.tr("traceHelp"), ctx)}</p></article>
+      <article><span>${text(ctx.tr("projection"), ctx)}</span><strong>${text(ctx.tr(details.projectionStatus), ctx)}</strong><p>${text(ctx.tr("projectionPendingBody"), ctx)}</p></article>
+      <article><span>${text(ctx.tr("submissionRecord"), ctx)}</span><strong>${text(details.commandSubmissionId ? ctx.tr("traceAvailable") : ctx.tr("traceWillBind"), ctx)}</strong><p>${text(ctx.tr("submissionRecordHelp"), ctx)}</p></article>
+      <article><span>${text(ctx.tr("payloadFingerprint"), ctx)}</span><strong>${text(ctx.tr("localDraftFingerprint"), ctx)}</strong><p>${text(ctx.tr("payloadFingerprintHelp"), ctx)}</p></article>
+      ${canOpen ? `<dl>
+        ${field("workItemId", details.model?.workItemId, ctx)}
+        ${field("caseId", details.model?.caseId, ctx)}
+        ${field("commandSubmissionId", details.commandSubmissionId, ctx)}
+        ${field("payloadHash", details.payloadHash, ctx)}
+        ${field("policyRef", details.policyRef, ctx)}
+      </dl>` : ""}
+    </section>
+  </details>`;
+}
+
 export function ActionResult(result = {}, ctx) {
   if (!result.status && !result.message) return "";
   if (result.status === "committed_projection_pending") return ProjectionPendingState(result, ctx);
   if (result.status === "committed_projection_failed") return FailedSyncState(result, ctx);
   if (result.status === "permission_blocked_403") return PermissionDiagnostic(result.permissionDiagnostic || result, ctx);
+  if (result.status === "idempotency_conflict_409") return RecoveryState("duplicateSubmitRecovery", "duplicateSubmitRecoveryBody", "recentTraces", ctx);
+  if (result.status === "business_blocked_422") return RecoveryState("validationRecovery", "validationRecoveryBody", "learning", ctx);
   const status = result.status || "network_unknown";
   return `<section class="action-result ${attr(status, ctx)}" data-surface="action-result">
     <b>${text(ctx.tr("actionResult"), ctx)}</b>
     <p>${text(result.message || status, ctx)}</p>
     ${result.commandSubmissionId ? `<small>${ctx.tr("submissionRecord")}: ${ctx.tr("traceAvailable")}</small>` : ""}
+  </section>`;
+}
+
+function RecoveryState(titleKey, bodyKey, view, ctx) {
+  return `<section class="action-result recovery" data-surface="action-recovery">
+    <b>${text(ctx.tr(titleKey), ctx)}</b>
+    <p>${text(ctx.tr(bodyKey), ctx)}</p>
+    <button data-view="${attr(view, ctx)}">${text(ctx.tr(view === "learning" ? "learningCenter" : "recentTraces"), ctx)}</button>
   </section>`;
 }
 
@@ -168,22 +208,41 @@ export function FailedSyncState(result = {}, ctx) {
 
 export function EvidenceTile(field, draft, disabled, ctx) {
   const saved = (draft.evidenceDrafts || []).find((item) => item.requirementId === field.id);
-  const selected = saved ? "selected attached" : "missing";
+  const state = EvidenceStateVM(field, saved, ctx);
+  const selected = saved ? `selected ${state.status}` : "missing";
   const evidenceDraftId = saved?.evidenceId ? `data-evidence-draft-id="${attr(saved.evidenceId, ctx)}"` : "";
   return `<button type="button" class="evidence-tile ${selected}" data-surface="evidence-tile" data-evidence-id="${attr(field.id, ctx)}" ${evidenceDraftId} ${disabled}>
     <span>${text(ctx.localTerm(field), ctx)}</span>
-    <small>${saved ? ctx.tr("evidenceTrustedDraft") : ctx.tr("evidenceMissing")}</small>
+    <small>${text(state.label, ctx)}</small>
   </button>`;
 }
 
 export function EvidenceSheet(card, draft, ctx) {
   const evidence = card.evidence || [];
-  const attached = (draft.evidenceDrafts || []).length;
+  const states = evidence.map((field) => EvidenceStateVM(field, (draft.evidenceDrafts || []).find((item) => item.requirementId === field.id), ctx));
+  const verified = states.filter((state) => state.status === "verified").length;
+  const hasMissing = states.some((state) => state.status === "missing");
   return `<section class="evidence-sheet" data-surface="evidence-sheet">
     <b>${text(ctx.tr("trustedEvidence"), ctx)}</b>
-    <p>${evidence.length ? evidence.map((field) => text(ctx.localTerm(field), ctx)).join(" · ") : text(ctx.tr("noRequiredEvidence"), ctx)}</p>
-    <small>${attached}/${evidence.length} ${text(attached >= evidence.length && evidence.length ? ctx.tr("evidenceReady") : ctx.tr("evidenceNeedReview"), ctx)}</small>
+    <p>${evidence.length ? states.map((state) => text(`${state.name}: ${state.label}`, ctx)).join(" · ") : text(ctx.tr("noRequiredEvidence"), ctx)}</p>
+    <small>${verified}/${evidence.length} ${text(verified >= evidence.length && evidence.length ? ctx.tr("evidenceReady") : ctx.tr("evidenceNeedReview"), ctx)}</small>
+    ${hasMissing ? `<p>${text(ctx.tr("evidenceMissingBlocksSubmit"), ctx)}</p>` : ""}
   </section>`;
+}
+
+export function EvidenceStateVM(field, draft = null, ctx = {}) {
+  const name = ctx.localTerm ? ctx.localTerm(field) : field?.id || "";
+  if (!draft) return { status: "missing", name, label: `${ctx.tr?.("evidenceMissing") || "缺少证据"}，${ctx.tr?.("evidenceNextUpload") || "请补充后再提交"}` };
+  const status = draft.status || draft.verificationStatus || (isRuntimePlaceholder(draft) ? "pending_review" : "draft");
+  if (status === "verified") return { status, name, label: ctx.tr?.("evidenceReady") || "证据已就绪" };
+  if (status === "rejected") return { status, name, label: `${ctx.tr?.("evidenceRejected") || "证据被拒绝"}：${draft.reason || ctx.tr?.("evidenceRejectedNext") || "请重新补充并提交复核"}` };
+  if (status === "scope_mismatch") return { status, name, label: ctx.tr?.("evidenceScopeMismatch") || "证据不属于当前办理，请重新选择" };
+  if (status === "already_used" || status === "used") return { status, name, label: ctx.tr?.("evidenceAlreadyUsed") || "证据已被其他办理使用，请更换证据" };
+  if (status === "upload_failed") return { status, name, label: ctx.tr?.("evidenceUploadFailed") || "上传失败，请重试" };
+  if (status === "expired") return { status, name, label: ctx.tr?.("evidenceExpired") || "证据已过期，请重新补充" };
+  if (status === "locked") return { status, name, label: ctx.tr?.("evidenceLocked") || "证据已锁定，需负责人复核" };
+  if (status === "attached" || status === "hash_verified" || status === "pending_review") return { status: "pending_review", name, label: ctx.tr?.("evidencePendingReview") || "已上传，等待可信校验" };
+  return { status: "draft", name, label: ctx.tr?.("evidenceTrustedDraft") || "已选择，待可信校验" };
 }
 
 export function PermissionDiagnostic(decision = {}, ctx) {
@@ -197,6 +256,7 @@ export function PermissionDiagnostic(decision = {}, ctx) {
       ${field(ctx.tr("requiredPermission"), copy.requiredPermission, ctx)}
       ${field(ctx.tr("permissionNextAction"), copy.nextAction, ctx)}
     </dl>
+    <button data-view="learning">${text(ctx.tr("learningCenter"), ctx)}</button>
   </section>`;
 }
 
@@ -238,7 +298,7 @@ export function workItemModel(item = {}, ctx) {
     ...vm,
     workspaceId: item.workspaceId || workspace?.id || "",
     cardId: item.cardId || card?.id || "",
-    workItemId: vm.sourceRefs.workItemId || runtimeItem?.workItemId || runtimeItem?.work_item_id || persistedWorkItemIdFor(workspace, card) || persistedCandidate(item.workItemId || item.work_item_id) || item.queueItemId || "",
+    workItemId: vm.sourceRefs.workItemId || runtimeItem?.workItemId || runtimeItem?.work_item_id || persistedWorkItemIdFor(workspace, card) || persistedCandidate(item.workItemId || item.work_item_id) || "",
     caseId: vm.sourceRefs.caseId || item.caseId || item.case_id || runtimeItem?.caseId || runtimeItem?.case_id || workspace?.caseId || workspace?.id || "",
     workItemType: vm.typeLabel,
     lifecycleState: item.lifecycleState || item.lifecycle_state || item.status || runtimeItem?.lifecycleState || runtimeItem?.lifecycle_state || runtimeItem?.status || card?.status || "ready",
@@ -260,16 +320,11 @@ function persistedCandidate(value) {
 
 function runtimeWorkItemFor(item, workspace, card, ctx) {
   const selectedWorkItemId = ctx?.state?.selectedWorkItemId || item.workItemId || item.work_item_id || "";
-  const runtimeItems = [
-    ...(ctx?.state?.runtimeStore?.operationWorkItems || []),
-    ...(ctx?.state?.runtimeStore?.workQueue || [])
-  ];
-  return runtimeItems.find((entry) =>
-    [entry.workItemId, entry.work_item_id].includes(selectedWorkItemId)) ||
-    runtimeItems.find((entry) =>
-      (entry.workspaceId || entry.workspace_id) === workspace?.id &&
-      (!(entry.cardId || entry.card_id) || (entry.cardId || entry.card_id) === card?.id) &&
-      (entry.workItemId || entry.work_item_id));
+  return resolvePersistedWorkItem({
+    workItemId: selectedWorkItemId,
+    workspaceId: workspace?.id,
+    cardId: card?.id
+  }, ctx?.state || {});
 }
 
 function persistedWorkItemIdFor(workspace, card) {
@@ -277,7 +332,6 @@ function persistedWorkItemIdFor(workspace, card) {
   if (card?.runtimeWorkItemId) return card.runtimeWorkItemId;
   if (workspace?.workItemId && isPersistedWorkItemId(workspace.workItemId)) return workspace.workItemId;
   if (card?.workItemId && isPersistedWorkItemId(card.workItemId)) return card.workItemId;
-  if (workspace?.id && card?.id) return `${workspace.id}:${card.id}`;
   return "";
 }
 
@@ -308,6 +362,15 @@ function roleLabel(role, ctx) {
     releaseOwner: "releaseOwner"
   };
   return labels[role] || role;
+}
+
+function technicalDetailsVisible(ctx) {
+  const role = ctx.state?.currentActor?.role || "";
+  return Boolean(ctx.state?.debugSurface || ["admin", "support", "audit"].includes(role));
+}
+
+function isRuntimePlaceholder(draft = {}) {
+  return String(draft.fileName || draft.name || draft.evidenceId || "").includes("runtime-evidence");
 }
 
 function field(label, value, ctx) {

@@ -1,5 +1,5 @@
 {
-  "generatedAtUtc": "2026-06-02T10:36:38.074Z",
+  "generatedAtUtc": "2026-06-02T14:04:58.643Z",
   "generatedBy": "check-runtime-semantic-baseline",
   "stage": "OAM-CLEAN-BASELINE-D3",
   "status": "passed",
@@ -14,8 +14,8 @@
     "runtimeProof": "live_api_db",
     "oam": "passed"
   },
-  "inputHash": "285095f178fc5a3bd830056c5d05d3f878785d005ce0d402ad9f998b0a2ff529",
-  "resultHash": "675130fd4a223759806e1e4d9b2da9d5895ed7014378f45260595afe9899f8b0",
+  "inputHash": "450ba5e0faf32cba6d5d8fb4eed0fa1935de0753e642eb809a28c6c65c433278",
+  "resultHash": "8f196a85a671f57b7689fab881149c1ff7c2e22f168350f0f7a4896022fd92c7",
   "noGoItems": [],
   "productionAllowed": false,
   "dormitoryL2ProductionAllowed": false,

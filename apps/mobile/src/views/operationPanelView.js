@@ -1,7 +1,9 @@
 import { loadDraft } from "../operationDrafts.js";
+import { buildOperationActionState } from "../operationActionState.js";
+import { resolveOperationPanelTarget } from "../operationRouteResolver.js";
 import { activeWorkspaceCard } from "../selectors/workspaceSelectors.js";
-import { ActionResult, EvidenceSheet, OperationPanelView, TrustedConfirmSheet, WorkItemCard, workItemModel } from "./experienceComponents.js";
-import { workspaceCardPanel } from "./workspaceView.js";
+import { ActionResult, EvidenceSheet, OperationPanelView, TechnicalAuditDetails, TrustedConfirmSheet, WorkItemCard, workItemModel } from "./experienceComponents.js";
+import { primaryActionButton, workspaceCardPanel } from "./workspaceView.js";
 
 export function operationPanelView(ctx) {
   const { state, shell } = ctx;
@@ -18,8 +20,12 @@ export function operationPanelView(ctx) {
     return shell(`
       <section class="operation-panel-empty" data-surface="operation-panel-runtime" data-blocker-code="operation_work_item_required">
         <span>${ctx.tr("operationPanel")}</span>
-        <h1>${ctx.tr("persistedWorkItemRequired")}</h1>
-        <p>${ctx.tr("persistedWorkItemRequiredBody")}</p>
+        <h1>${ctx.tr(state.operationRouteIssue?.titleKey || "operationUnavailableTitle")}</h1>
+        <p>${ctx.tr(state.operationRouteIssue?.bodyKey || "operationUnavailableBody")}</p>
+        <div class="empty-actions">
+          <button data-view="workbench">${ctx.tr(state.operationRouteIssue?.returnActionKey || "returnWorkbench")}</button>
+          <button data-view="workbench">${ctx.tr(state.operationRouteIssue?.refreshActionKey || "refreshWorkItems")}</button>
+        </div>
       </section>
     `);
   }
@@ -39,54 +45,62 @@ export function operationPanelView(ctx) {
   const model = workItemModel(operationContext, ctx);
   const draft = loadDraft(workspace.id, activeCard.id);
   const payloadHash = state.lastActionResult?.payloadHash || payloadHashFor(draft.values || {}, draft.evidenceDrafts || []);
+  const payloadFingerprint = payloadHash;
   const commandSubmissionId = state.lastActionResult?.commandSubmissionId || draft.submissionProtocol?.submissionId || model.traceRefs[0] || "";
+  const submissionRecord = commandSubmissionId;
   const operationBody = workspaceCardPanel(activeCard, workspace, true, ctx);
   const traceCount = [commandSubmissionId, model.caseId, model.workItemId, ...(model.traceRefs || [])].filter(Boolean).length;
+  const actionState = buildOperationActionState(operationContext, activeCard, state.lastActionResult, state);
 
   return shell(`
     <section class="operation-panel-page" data-surface="operation-panel-route">
       <span>${ctx.tr("operationPanel")}</span>
       <h1>${ctx.escapeHtml(model.workItemType)}</h1>
       <p>${ctx.escapeHtml(model.businessObject)} · ${ctx.escapeHtml(model.nextAction)}</p>
+      <dl class="operation-business-summary">
+        <dt>${ctx.tr("currentState")}</dt><dd>${ctx.tr(model.lifecycleState)}</dd>
+        <dt>${ctx.tr("decisionCanHandle")}</dt><dd>${ctx.escapeHtml(model.canHandleLabel)}</dd>
+        <dt>${ctx.tr("decisionBlocker")}</dt><dd>${ctx.escapeHtml(model.blocker)}</dd>
+        <dt>${ctx.tr("decisionMissingEvidence")}</dt><dd>${ctx.escapeHtml(model.requiredEvidence.join(" · ") || ctx.tr("noRequiredEvidence"))}</dd>
+        <dt>${ctx.tr("requiredPermission")}</dt><dd>${ctx.tr(model.ownerRole)}</dd>
+        <dt>${ctx.tr("decisionRisk")}</dt><dd>${ctx.escapeHtml(model.riskLevel)}</dd>
+        <dt>${ctx.tr("decisionDueAt")}</dt><dd>${ctx.escapeHtml(model.dueAt)}</dd>
+        <dt>${ctx.tr("decisionOwner")}</dt><dd>${ctx.escapeHtml(model.ownerRoleLabel)}</dd>
+      </dl>
     </section>
     ${WorkItemCard(operationContext, ctx)}
-    <section class="operation-panel-runtime" data-surface="operation-runtime-proof">
-      <article><span>${ctx.tr("prepareContract")}</span><strong>${ctx.tr("prepareContractReady")}</strong><p>${ctx.tr("prepareContractHelp")}</p></article>
-      <article><span>${ctx.tr("confirmCommit")}</span><strong>${ctx.tr("confirmCommitReady")}</strong><p>${ctx.tr("confirmCommitHelp")}</p></article>
-      <article><span>${ctx.tr("trace")}</span><strong>${traceCount ? ctx.tr("traceAvailable") : ctx.tr("traceWillBind")}</strong><p>${ctx.tr("traceHelp")}</p></article>
-      <article><span>${ctx.tr("projection")}</span><strong>${ctx.escapeHtml(state.lastActionResult?.status ? ctx.tr(state.lastActionResult.status) : ctx.tr("notSubmitted"))}</strong><p>${ctx.tr("projectionPendingBody")}</p></article>
-      <article><span>${ctx.tr("submissionRecord")}</span><strong>${commandSubmissionId ? ctx.tr("traceAvailable") : ctx.tr("traceWillBind")}</strong><p>${ctx.tr("submissionRecordHelp")}</p></article>
-      <article><span>${ctx.tr("payloadFingerprint")}</span><strong>${ctx.tr("localDraftFingerprint")}</strong><p>${ctx.tr("payloadFingerprintHelp")}</p></article>
-    </section>
+    ${TechnicalAuditDetails({
+      model,
+      payloadHash: payloadFingerprint,
+      commandSubmissionId: submissionRecord,
+      traceCount,
+      projectionStatus: state.lastActionResult?.status || "notSubmitted",
+      policyRef: activeCard.policyRef || activeCard.confirmation?.policyRef || "operations-runtime-policy"
+    }, ctx)}
     ${OperationPanelView(operationBody, operationContext, activeCard, ctx)}
     ${EvidenceSheet(activeCard, draft, ctx)}
     ${TrustedConfirmSheet(operationContext, activeCard, ctx)}
     ${ActionResult(state.lastActionResult || { status: "not_submitted", message: "Ready to prepare / confirm" }, ctx)}
+    <div class="sticky-action">${primaryActionButton(actionState, ctx)}</div>
   `);
 }
 
 export function resolveOperationItem(state) {
-  const workItemId = state.selectedWorkItemId;
-  const runtimeItems = [
-    ...(state.runtimeStore?.operationWorkItems || []),
-    ...(state.runtimeStore?.workQueue || [])
-  ];
-  const selected = runtimeItems.find((item) => item.workItemId === workItemId || item.work_item_id === workItemId) ||
-    runtimeItems.find((item) =>
-      (item.workspaceId || item.workspace_id) === state.selectedWorkspace &&
-      (!(item.cardId || item.card_id) || (item.cardId || item.card_id) === state.selectedCardId) &&
-      (item.workItemId || item.work_item_id)) ||
-    null;
-  if (!selected) return null;
-  const persistedWorkItemId = selected.workItemId || selected.work_item_id;
+  const target = resolveOperationPanelTarget({
+    workItemId: state.selectedWorkItemId,
+    workspaceId: state.selectedWorkspace,
+    cardId: state.selectedCardId
+  }, state);
+  if (!target.canOpen) {
+    state.operationRouteIssue = state.operationRouteIssue || target;
+    return null;
+  }
+  const selected = target.workItem;
+  const persistedWorkItemId = selected.workItemId;
   if (persistedWorkItemId && state.selectedWorkItemId !== persistedWorkItemId) {
     state.selectedWorkItemId = persistedWorkItemId;
   }
-  const workspaceId = selected.workspaceId || selected.workspace_id || state.selectedWorkspace;
-  const cardId = selected.cardId || selected.card_id || state.selectedCardId;
-  const workspace = (state.runtimeStore?.workspaces || []).find((item) => item.id === workspaceId);
-  const card = workspace?.cards?.find((item) => item.id === cardId);
-  return { ...selected, workspace, card };
+  return selected;
 }
 
 function payloadHashFor(values, evidenceDrafts) {

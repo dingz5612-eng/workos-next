@@ -52,6 +52,7 @@ function materializeQueue(queue, byId, state) {
         ...item,
         workspace,
         card,
+        domain: item.domain || workspace?.domain || "",
         badges: item.badges?.length ? item.badges : badgesFor(card),
         priority: item.priority ?? priorityFor(card?.status),
         source: item.source || state.runtimeStore?.queueSource || "runtime-api"

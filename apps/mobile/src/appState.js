@@ -1,6 +1,6 @@
 import { createRuntimeStore } from "./runtime/runtimeStore.js";
-import { defaultHomeForRole } from "./experienceContract.js";
 import { actorSessionForStorage, shouldPersistApiOverride } from "./apiClient.js";
+import { defaultHomeForSession } from "./surfaceResolver.js";
 
 export function savedActor() {
   try {
@@ -15,7 +15,7 @@ export function createInitialState() {
   const actor = savedActor();
   const state = {
     lang: localStorage.getItem("workosnext.lang") || "zh-CN",
-    view: actor ? (localStorage.getItem("workosnext.onboarded") ? defaultHomeForRole(actor.role) : "onboarding") : "login",
+    view: actor ? "onboarding" : "login",
     selectedTask: "T-STAY-DEPOSIT",
     selectedWorkspace: "W-STAY-CHECKIN",
     selectedCardIndex: -1,
@@ -74,6 +74,9 @@ export function createInitialState() {
     runtimeStore: createRuntimeStore()
   };
 
+  if (actor && localStorage.getItem("workosnext.onboarded")) {
+    state.view = defaultHomeForSession(actor, state);
+  }
   applyUrlParams(state);
   if (state.view === "task" || state.view === "object") state.view = "workspace";
   if (!state.currentActor && state.view !== "login") state.view = "login";
@@ -92,6 +95,13 @@ function applyUrlParams(state) {
   }
   if (params.has("lang")) state.lang = params.get("lang");
   if (params.has("view")) state.view = params.get("view");
+  if (params.get("device") === "pc") {
+    state.currentDevice = { deviceId: "pc-current", deviceTrustStatus: "trusted", surface: "pc" };
+    state.pcGovernance.currentDevice = { deviceId: "pc-current", deviceTrustStatus: "trusted", surface: "pc" };
+  }
+  if (params.get("device") === "mobile") {
+    state.currentDevice = { deviceId: "mobile-current", deviceTrustStatus: "trusted", surface: "mobile" };
+  }
   if (params.has("task")) {
     state.selectedTask = params.get("task");
   }

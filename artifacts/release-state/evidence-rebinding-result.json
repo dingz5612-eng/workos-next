@@ -1,14 +1,14 @@
 {
-  "generated_at_utc": "2026-06-02T10:35:31.472Z",
+  "generated_at_utc": "2026-06-02T13:08:40.163Z",
   "generated_by": "rebind-dorm-int-latest-main",
   "status": "passed",
-  "mainHead": "c9ef041d228e91ecb12f31382786d8eb9cd7d825",
+  "mainHead": "fe50578178886b958b9f394d2b51b2749aed54cd",
   "before": {
-    "latestMainCommitSha": "125e18716c7153e721a1b6b3f7f721c9220938df",
+    "latestMainCommitSha": "c9ef041d228e91ecb12f31382786d8eb9cd7d825",
     "evidenceRefsWithTmp": 0
   },
   "after": {
-    "latestMainCommitSha": "c9ef041d228e91ecb12f31382786d8eb9cd7d825",
+    "latestMainCommitSha": "fe50578178886b958b9f394d2b51b2749aed54cd",
     "evidenceRefsWithTmp": 0,
     "evidenceGraphMode": "L1_INTERNAL_PILOT_OBSERVATION",
     "completionDashboardMode": "L1_INTERNAL_PILOT_OBSERVATION",

@@ -1,12 +1,23 @@
 .app-shell {
+  --bottom-nav-height: 64px;
+  --sticky-action-height: 64px;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.app-shell {
   width: min(100%, 430px);
   min-height: 100vh;
   margin: 0 auto;
-  padding: 12px 12px 150px;
+  padding: 12px 12px calc(var(--bottom-nav-height) + var(--sticky-action-height) + var(--safe-bottom) + 32px);
   background:
     radial-gradient(circle at 0% 0%, rgba(255, 209, 102, .26), transparent 23%),
     radial-gradient(circle at 100% 20%, rgba(47, 125, 246, .12), transparent 27%),
     linear-gradient(180deg, #fbfdfe 0%, #edf8f6 100%);
+}
+
+.app-shell.surface-pc {
+  width: min(100%, 1200px);
+  padding: 20px 24px 40px;
 }
 
 .topbar {

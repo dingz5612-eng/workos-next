@@ -17,8 +17,14 @@ for (const token of ["OperationPanelView", "TrustedConfirmSheet", "EvidenceSheet
   if (text.includes(token)) violations.push(v("experience_module.component_name_visible", `普通用户可见文本不得出现组件名 ${token}`, { token }));
 }
 
+const technicalContainers = operationPanel.match(/<details class="operation-technical-details"[\s\S]*?<\/details>/g) || [];
+const operationPanelWithoutTechnical = technicalContainers.reduce((html, container) => html.replace(container, ""), operationPanel);
 for (const rawAttr of ["data-case-id", "data-submission-id", "data-payload-fingerprint"]) {
-  if (operationPanel.includes(rawAttr)) violations.push(v("experience_module.raw_attr_visible", `普通展示容器不得出现 ${rawAttr}`, { rawAttr }));
+  if (operationPanelWithoutTechnical.includes(rawAttr)) violations.push(v("experience_module.raw_attr_visible", `普通展示容器不得出现 ${rawAttr}`, { rawAttr }));
+}
+
+if (!technicalContainers.some((container) => ["data-case-id", "data-submission-id", "data-payload-fingerprint"].every((rawAttr) => container.includes(rawAttr)))) {
+  violations.push(v("experience_module.technical_audit_attrs_missing", "技术详情容器必须保留 case、submission 和 payload 审计属性。"));
 }
 
 if (!operationPanel.includes('data-work-item-id="W-STAY-RESOURCE:roomSetup"')) {

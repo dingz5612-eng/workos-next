@@ -1,0 +1,148 @@
+{
+  "generatedAtUtc": "2026-06-02T14:22:10.518Z",
+  "generatedBy": "scripts/surface/check-oam-04b-surface-interaction-closure.mjs",
+  "status": "passed",
+  "repositoryHead": "ca0e2076f938fb9ea74e4e71b437931c8adbec2f",
+  "verifiedMainHead": "fe50578178886b958b9f394d2b51b2749aed54cd",
+  "acceptedPhaseTokens": [
+    "OAM_04B_INTERACTION_BASELINE_CONFIRMED",
+    "OAM_04B_DEVICE_SURFACE_CONTEXT_UNIFIED",
+    "OAM_04B_WORKITEM_ROUTE_IDENTITY_CLOSED",
+    "OAM_04B_PRIMARY_ACTION_STATE_MACHINE_CLOSED",
+    "OAM_04B_SEARCH_AND_QUEUE_INTERACTION_CLOSED",
+    "OAM_04B_BUSINESS_TECHNICAL_LAYERING_CLOSED",
+    "OAM_04B_LAYOUT_MISSION_CONTROL_PC_SHELL_CLOSED",
+    "OAM_04B_REAL_USER_JOURNEY_E2E_PASSED"
+  ],
+  "checks": [
+    "device / surface resolver passed",
+    "saved session mobile default passed",
+    "mobile direct PC view diagnostic passed",
+    "WorkItem route identity passed",
+    "no persisted WorkItem no fake operation CTA passed",
+    "single primary CTA passed",
+    "post-submit state transition passed",
+    "Search result action passed",
+    "Queue filter state passed",
+    "Debug / compatibility hidden passed",
+    "OperationPanel technical details folded passed",
+    "Evidence honest state passed",
+    "Permission recovery passed",
+    "Learning recovery passed",
+    "Mission Control runtime-derived passed",
+    "Mobile fixed layer passed",
+    "PC desktop shell passed",
+    "no raw visible tokens passed",
+    "no [object Object] passed",
+    "no mobile PC governance leakage passed",
+    "no PC mobile bottom nav passed",
+    "Playwright E2E passed",
+    "OAM-04B final artifact passed",
+    "OAM-04C journey artifact passed",
+    "OAM-CLEAN aligned",
+    "post-merge attestation valid",
+    "Day-2 not started",
+    "Business Production blocked",
+    "Dormitory L2 blocked",
+    "Repair / Parts / HR L0 Contract Preview"
+  ],
+  "artifacts": [
+    {
+      "name": "device / surface resolver",
+      "ref": "artifacts/surface/oam-04b-device-surface-context-result.json",
+      "status": "passed"
+    },
+    {
+      "name": "WorkItem route identity",
+      "ref": "artifacts/surface/oam-04b-workitem-route-identity-result.json",
+      "status": "passed"
+    },
+    {
+      "name": "single primary CTA",
+      "ref": "artifacts/surface/oam-04b-primary-action-state-machine-result.json",
+      "status": "passed"
+    },
+    {
+      "name": "search and queue",
+      "ref": "artifacts/surface/oam-04b-search-and-queue-interaction-result.json",
+      "status": "passed"
+    },
+    {
+      "name": "business technical layering",
+      "ref": "artifacts/surface/oam-04b-business-technical-layering-result.json",
+      "status": "passed"
+    },
+    {
+      "name": "layout mission PC shell",
+      "ref": "artifacts/surface/oam-04b-layout-mission-pc-shell-result.json",
+      "status": "passed"
+    },
+    {
+      "name": "Playwright E2E",
+      "ref": "artifacts/screenshots/oam-04b-interaction-closure/index.json",
+      "status": "passed"
+    },
+    {
+      "name": "OAM-04B final",
+      "ref": "artifacts/surface/oam-04b-surface-productization-final-result.json",
+      "status": "passed"
+    },
+    {
+      "name": "OAM-04C journey",
+      "ref": "artifacts/surface/dormitory-scenario-journey-result.json",
+      "status": "passed"
+    },
+    {
+      "name": "OAM clean baseline",
+      "ref": "artifacts/baseline/oam-clean-baseline-result.json",
+      "status": "OAM_CLEAN_BASELINE_ALIGNED"
+    },
+    {
+      "name": "post merge attestation",
+      "ref": "artifacts/release-state/post-merge-attestation.json",
+      "status": "passed"
+    },
+    {
+      "name": "artifact git binding",
+      "ref": "artifacts/release-state/artifact-git-binding-result.json",
+      "status": "passed"
+    },
+    {
+      "name": "evidence ledger",
+      "ref": "artifacts/evidence/evidence-ledger-check-result.json",
+      "status": "passed"
+    },
+    {
+      "name": "mobile visible copy",
+      "ref": "artifacts/surface/mobile-visible-copy-result.json",
+      "status": "passed"
+    },
+    {
+      "name": "no raw labels",
+      "ref": "artifacts/surface/user-facing-surface-copy-result.json",
+      "status": "passed"
+    },
+    {
+      "name": "mobile work shell",
+      "ref": "artifacts/surface/mobile-work-productization-result.json",
+      "status": "passed"
+    },
+    {
+      "name": "PC shell",
+      "ref": "artifacts/surface/pc-governance-productization-result.json",
+      "status": "passed"
+    },
+    {
+      "name": "surface runtime guard",
+      "ref": "artifacts/surface/backend-runtime-guard-result.json",
+      "status": "passed"
+    }
+  ],
+  "dormitoryStatus": "L1 Internal Pilot Observation",
+  "dormitoryL2Production": false,
+  "businessProduction": "blocked",
+  "repairPartsHrStatus": "L0 Contract Preview",
+  "day2Started": false,
+  "completionToken": "OAM_04B_SURFACE_INTERACTION_CLOSURE_PASSED",
+  "violations": []
+}

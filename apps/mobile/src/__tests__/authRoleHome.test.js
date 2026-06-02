@@ -26,11 +26,11 @@ describe("Role Operating System login route", () => {
   });
 
   it.each([
-    ["finance", "financeControl"],
-    ["manager", "managerControlTower"],
-    ["admin", "governanceCenter"],
-    ["releaseOwner", "releaseFlightDeck"]
-  ])("%s login routes to %s", async (role, expectedView) => {
+    ["finance", "home"],
+    ["manager", "home"],
+    ["admin", "home"],
+    ["releaseOwner", "home"]
+  ])("%s mobile login routes to %s", async (role, expectedView) => {
     vi.stubGlobal("document", {
       querySelector: (selector) => ({
         value: selector === "#loginRole" ? role : "dev"
@@ -38,7 +38,44 @@ describe("Role Operating System login route", () => {
     });
     loginActor.mockResolvedValue({ role, displayName: role, token: `${role}-token` });
     const ctx = {
-      state: { apiStatus: "online", currentActor: null, view: "login" },
+      state: {
+        apiStatus: "online",
+        currentActor: null,
+        view: "login",
+        currentDevice: { deviceId: "mobile-current", deviceTrustStatus: "trusted", surface: "mobile" },
+        pcGovernance: { currentDevice: { deviceId: "pc-current", deviceTrustStatus: "trusted", surface: "pc" } }
+      },
+      hydrateProjectionFromApi: vi.fn(async () => {}),
+      tr: (key) => key,
+      render: vi.fn()
+    };
+
+    await login(ctx);
+
+    expect(setView).toHaveBeenCalledWith(expectedView, ctx);
+    expect(ctx.state.view).toBe(expectedView);
+  });
+
+  it.each([
+    ["finance", "financeControl"],
+    ["manager", "managerControlTower"],
+    ["admin", "governanceCenter"],
+    ["releaseOwner", "releaseFlightDeck"]
+  ])("%s trusted PC login routes to %s", async (role, expectedView) => {
+    vi.stubGlobal("document", {
+      querySelector: (selector) => ({
+        value: selector === "#loginRole" ? role : "dev"
+      })
+    });
+    loginActor.mockResolvedValue({ role, displayName: role, token: `${role}-token` });
+    const ctx = {
+      state: {
+        apiStatus: "online",
+        currentActor: null,
+        view: "login",
+        currentDevice: { deviceId: "pc-current", deviceTrustStatus: "trusted", surface: "pc" },
+        pcGovernance: { currentDevice: { deviceId: "pc-current", deviceTrustStatus: "trusted", surface: "pc" } }
+      },
       hydrateProjectionFromApi: vi.fn(async () => {}),
       tr: (key) => key,
       render: vi.fn()

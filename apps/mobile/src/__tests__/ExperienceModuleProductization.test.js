@@ -9,11 +9,13 @@ describe("OAM-04B experience module productization", () => {
     const text = visibleText(html);
 
     expect(html).toContain('data-work-item-id="W-STAY-RESOURCE:roomSetup"');
-    expect(html).not.toContain("data-case-id");
-    expect(html).not.toContain("data-submission-id");
-    expect(html).not.toContain("data-payload-fingerprint");
+    expect(html).toContain("operation-technical-details");
+    expect(html).toContain("data-case-id");
+    expect(html).toContain("data-submission-id");
+    expect(html).toContain("data-payload-fingerprint");
     expect(html).not.toContain("T-ROOM-CREATE");
     expect(text).not.toMatch(/\b(OperationPanelView|TrustedConfirmSheet|EvidenceSheet|ActionResult)\b/);
+    expect(text).not.toMatch(/\b(workItemId|caseId|payloadHash|commandSubmissionId)\b/);
   });
 });
 

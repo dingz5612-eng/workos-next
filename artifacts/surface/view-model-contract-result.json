@@ -1,5 +1,5 @@
 {
-  "generatedAtUtc": "2026-06-02T07:51:33.441Z",
+  "generatedAtUtc": "2026-06-02T14:04:56.349Z",
   "generatedBy": "scripts/surface/check-view-model-contract.mjs",
   "status": "passed",
   "contractPath": "docs/surface/view-model-contract.yml",

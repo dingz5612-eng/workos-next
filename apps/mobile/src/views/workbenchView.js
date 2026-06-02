@@ -1,8 +1,10 @@
-import { countBadge, countDomain, queueTasks } from "../selectors/queueSelectors.js";
+import { queueFiltersFromState } from "../queueFilterState.js";
+import { countBadge, countDomain, countEvidenceState, countTransferable, queueTasks } from "../selectors/queueSelectors.js";
 import { WorkItemCard } from "./experienceComponents.js";
 
 export function workbenchView(ctx) {
   const list = queueTasks(ctx.state);
+  const filters = queueFiltersFromState(ctx.state);
   return ctx.shell(`
     <section class="queue-head">
       <span>${ctx.tr("queueTitle")}</span>
@@ -12,12 +14,18 @@ export function workbenchView(ctx) {
     <section class="compact-section mobile-work-ia" data-mobile-work-ia>
       <h2>${ctx.tr("work")}</h2>
       <div class="ia-chip-grid">
-        ${workChip("can-do", "workCanDo", list.filter((item) => item.card?.status === "ready" || item.status === "ready").length, ctx)}
-        ${workChip("blocked", "workBlocked", list.filter((item) => item.card?.status === "blocked" || item.status === "blocked").length, ctx)}
-        ${workChip("waiting-others", "workWaitingOthers", list.filter((item) => item.badges?.includes("waiting")).length, ctx)}
-        ${workChip("need-evidence", "workNeedEvidence", list.filter((item) => (item.card?.evidence || []).length).length, ctx)}
-        ${workChip("transferable", "workTransferable", list.filter((item) => item.transferable).length, ctx)}
+        ${workChip("accommodation", "stay", countDomain(ctx.state, "stay"), ctx)}
+        ${workChip("can-do", "workCanDo", countStatus(ctx.state, "ready"), ctx)}
+        ${workChip("blocked", "workBlocked", countStatus(ctx.state, "blocked"), ctx)}
+        ${workChip("waiting-others", "workWaitingOthers", countBadge(ctx.state, "waiting"), ctx)}
+        ${workChip("need-evidence", "workNeedEvidence", countEvidenceState(ctx.state, "missing"), ctx)}
+        ${workChip("transferable", "workTransferable", countTransferable(ctx.state), ctx)}
       </div>
+    </section>
+    <section class="queue-filter-state" data-queue-filter-state>
+      <span>${ctx.tr("activeFilter")}</span>
+      <strong>${filterSummary(filters, ctx)}</strong>
+      <button id="clearQueueFilters">${ctx.tr("clearFilters")}</button>
     </section>
     <section class="queue-filter">
       <div class="filter-row">${domainFilters(ctx)}</div>
@@ -35,15 +43,16 @@ export function workbenchView(ctx) {
 }
 
 function domainFilters(ctx) {
-  return ["all", "stay", "repair", "finance"].map((key) => filterPill("queueDomain", key, countDomain(ctx.state, key), ctx)).join("");
+  return ["all", "stay", "repair", "finance"].map((key) => filterPill("domain", key, countDomain(ctx.state, key), ctx)).join("");
 }
 
 function badgeFilters(ctx) {
-  return ["mine", "confirm", "blocked", "soon", "waiting"].map((key) => filterPill("queueBadge", key, countBadge(ctx.state, key), ctx)).join("");
+  return ["mine", "confirm", "blocked", "soon", "waiting"].map((key) => filterPill("badge", key, countBadge(ctx.state, key), ctx)).join("");
 }
 
 function filterPill(field, key, count, ctx) {
-  const active = ctx.state[field] === key;
+  const filters = queueFiltersFromState(ctx.state);
+  const active = filters[field] === key;
   return `<button class="pill ${active ? "active" : ""}" data-filter-field="${field}" data-filter-value="${key}">${ctx.tr(key)}<b>${count}</b></button>`;
 }
 
@@ -57,10 +66,27 @@ function advancedSheet(ctx) {
       <button data-filter-field="status" data-filter-value="blocked">${ctx.tr("blocked")}</button>
       <button data-filter-field="badge" data-filter-value="confirm">${ctx.tr("confirm")}</button>
       <button data-filter-field="badge" data-filter-value="soon">${ctx.tr("soon")}</button>
+      <button data-filter-field="evidenceState" data-filter-value="missing">${ctx.tr("workNeedEvidence")}</button>
+      <button data-filter-field="transferable" data-filter-value="true">${ctx.tr("workTransferable")}</button>
     </div>
   </section>`;
 }
 
 function workChip(id, labelKey, count, ctx) {
-  return `<article class="ia-chip" data-work-filter="${ctx.escapeAttr(id)}"><span>${ctx.tr(labelKey)}</span><strong>${count}</strong></article>`;
+  return `<button class="ia-chip" data-work-filter="${ctx.escapeAttr(id)}" data-mobile-ia="filter"><span>${ctx.tr(labelKey)}</span><strong>${count}</strong></button>`;
+}
+
+function countStatus(state, status) {
+  return queueTasks({ ...state, queueFilters: { ...queueFiltersFromState(state), status, domain: "all", badge: "all" } }).length;
+}
+
+function filterSummary(filters, ctx) {
+  return [
+    filters.domain !== "all" ? ctx.tr(filters.domain) : "",
+    filters.badge !== "all" ? ctx.tr(filters.badge) : "",
+    filters.status !== "all" ? ctx.tr(filters.status) : "",
+    filters.ownerRole !== "all" ? ctx.tr("role") : "",
+    filters.evidenceState !== "all" ? ctx.tr("workNeedEvidence") : "",
+    filters.transferable !== "all" ? ctx.tr("workTransferable") : ""
+  ].filter(Boolean).join(" · ") || ctx.tr("all");
 }

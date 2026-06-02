@@ -1,32 +1,32 @@
 {
-  "generatedAtUtc": "2026-06-02T10:36:38.059Z",
+  "generatedAtUtc": "2026-06-02T14:04:58.632Z",
   "generatedBy": "check-release-evidence-baseline",
   "stage": "OAM-CLEAN-BASELINE-D1",
   "status": "passed",
-  "repositoryHead": "c9ef041d228e91ecb12f31382786d8eb9cd7d825",
-  "prHead": "c9ef041d228e91ecb12f31382786d8eb9cd7d825",
-  "verifiedMainHead": "c9ef041d228e91ecb12f31382786d8eb9cd7d825",
+  "repositoryHead": "fe50578178886b958b9f394d2b51b2749aed54cd",
+  "prHead": "c689290f79fcb25cc521623ce67fe5b495b71c0e",
+  "verifiedMainHead": "fe50578178886b958b9f394d2b51b2749aed54cd",
   "ci": {
-    "id": 26810590668,
+    "id": 26816339393,
     "name": "CI",
     "event": "push",
     "status": "completed",
     "conclusion": "success",
-    "headSha": "c9ef041d228e91ecb12f31382786d8eb9cd7d825",
-    "htmlUrl": "https://github.com/dingz5612-eng/workos-next/actions/runs/26810590668",
-    "createdAt": "2026-06-02T09:20:47Z",
-    "updatedAt": "2026-06-02T09:23:31Z"
+    "headSha": "fe50578178886b958b9f394d2b51b2749aed54cd",
+    "htmlUrl": "https://github.com/dingz5612-eng/workos-next/actions/runs/26816339393",
+    "createdAt": "2026-06-02T11:20:08Z",
+    "updatedAt": "2026-06-02T11:26:06Z"
   },
   "v54ControlPlaneGuards": {
-    "id": 26810591326,
+    "id": 26816339396,
     "name": "V5.4 Control Plane Guards",
     "event": "push",
     "status": "completed",
     "conclusion": "success",
-    "headSha": "c9ef041d228e91ecb12f31382786d8eb9cd7d825",
-    "htmlUrl": "https://github.com/dingz5612-eng/workos-next/actions/runs/26810591326",
-    "createdAt": "2026-06-02T09:20:48Z",
-    "updatedAt": "2026-06-02T09:23:05Z"
+    "headSha": "fe50578178886b958b9f394d2b51b2749aed54cd",
+    "htmlUrl": "https://github.com/dingz5612-eng/workos-next/actions/runs/26816339396",
+    "createdAt": "2026-06-02T11:20:08Z",
+    "updatedAt": "2026-06-02T11:22:41Z"
   },
   "refs": {
     "postMergeAttestation": "artifacts/release-state/post-merge-attestation.json",
@@ -36,8 +36,8 @@
     "completionDashboard": "artifacts/rt4/completion-dashboard.json",
     "artifactGitBinding": "artifacts/release-state/artifact-git-binding-result.json"
   },
-  "inputHash": "cbca714e54de31cb171d426ea49b02d443f27923ef6fc16f70d6d21b01241530",
-  "resultHash": "6f60cb31977170740b5331694a31200f3d575a247d93fad861f0f5eb3b71c293",
+  "inputHash": "d663d81de70f56ef49d4589e5e9e618aee7d2522bfc5dcaec322a16ead557f49",
+  "resultHash": "8de693a5237304508044ba2b5c02c504e8825337e245e70448c2398c7620d0a9",
   "noGoItems": [],
   "productionAllowed": false,
   "dormitoryL2ProductionAllowed": false,
