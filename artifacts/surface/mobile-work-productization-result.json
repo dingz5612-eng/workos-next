@@ -1,0 +1,8 @@
+{
+  "generatedAtUtc": "2026-06-02T07:37:43.838Z",
+  "generatedBy": "scripts/surface/check-mobile-work-shell.mjs",
+  "status": "passed",
+  "productionAllowed": false,
+  "dormitoryL2ProductionAllowed": false,
+  "violations": []
+}

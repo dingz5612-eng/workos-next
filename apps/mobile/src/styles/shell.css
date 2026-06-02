@@ -270,6 +270,33 @@
   margin-bottom: 10px;
 }
 
+.ia-chip-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.ia-chip {
+  min-height: 68px;
+  padding: 10px;
+  border: 1px solid #d9e7ee;
+  border-radius: 14px;
+  background: #f7fbfc;
+}
+
+.ia-chip span {
+  display: block;
+  color: #52677b;
+  font-size: 12px;
+}
+
+.ia-chip strong {
+  display: block;
+  margin-top: 4px;
+  color: #102033;
+  font-size: 22px;
+}
+
 .filter-row,
 .sheet-grid {
   display: flex;
