@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-06-02T09:06:46.112Z",
+  "generated_at_utc": "2026-06-02T10:54:04.055Z",
   "generated_by": "scripts/surface/check-evidence-trust-contract.mjs",
   "status": "passed",
   "check": "evidence-trust-contract",

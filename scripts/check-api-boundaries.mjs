@@ -273,7 +273,7 @@ function validateAllowlist(allowlist) {
         continue;
       }
 
-      for (const field of ["class", "owner", "evidenceType", "severity"]) {
+      for (const field of ["class", "owner", "authPolicy", "evidenceType", "severity"]) {
         if (!entry[field]) {
           violations.push(`${category} ${route} must declare ${field}`);
         }

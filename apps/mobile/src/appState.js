@@ -1,5 +1,6 @@
 import { createRuntimeStore } from "./runtime/runtimeStore.js";
 import { defaultHomeForRole } from "./experienceContract.js";
+import { actorSessionForStorage, shouldPersistApiOverride } from "./apiClient.js";
 
 export function savedActor() {
   try {
@@ -34,7 +35,7 @@ export function createInitialState() {
     operationMessage: "",
     apiStatus: "checking",
     currentActor: actor,
-    currentDevice: { deviceId: "mobile-current", deviceTrustStatus: "trusted", surface: "mobile" },
+    currentDevice: { deviceId: "mobile-current", deviceTrustStatus: "unknown", surface: "mobile" },
     loginMessage: "",
     projectionEvents: [],
     releaseControl: { releases: [], selectedRelease: null },
@@ -81,7 +82,14 @@ export function createInitialState() {
 
 function applyUrlParams(state) {
   const params = new URLSearchParams(window.location.search);
-  if (params.has("api")) localStorage.setItem("workosnext.apiBaseUrl", params.get("api"));
+  if (params.has("api")) {
+    const apiOverride = params.get("api");
+    if (shouldPersistApiOverride(apiOverride)) {
+      localStorage.setItem("workosnext.apiBaseUrl", apiOverride);
+    } else {
+      localStorage.removeItem("workosnext.apiBaseUrl");
+    }
+  }
   if (params.has("lang")) state.lang = params.get("lang");
   if (params.has("view")) state.view = params.get("view");
   if (params.has("task")) {
@@ -93,4 +101,12 @@ function applyUrlParams(state) {
     state.query = params.get("q");
     state.learningQuery = params.get("q");
   }
+}
+
+export function persistActorSession(session) {
+  localStorage.setItem("workosnext.actorSession", JSON.stringify(actorSessionForStorage(session)));
+}
+
+export function shouldHydrateProtectedSurfaces(state) {
+  return !!state.currentActor;
 }

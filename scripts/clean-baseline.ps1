@@ -50,7 +50,7 @@ if ($unreferencedProjects) {
 }
 
 $legacyFileNames = Get-ChildItem -Recurse -File -Path "apps", "services", "tests" |
-  Where-Object { $_.FullName -notmatch "[\\/](bin|obj)[\\/]" } |
+  Where-Object { $_.FullName -notmatch "[\\/](bin|obj|node_modules|dist)[\\/]" } |
   Where-Object { $_.Name -match "(legacy|obsolete|deprecated|mock-only|fallback)" }
 if ($legacyFileNames) {
   $legacyFileNames | ForEach-Object { $_.FullName }

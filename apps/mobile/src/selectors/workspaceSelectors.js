@@ -7,6 +7,7 @@ export function tr(state, key) {
 }
 
 export function tx(state, value) {
+  if (value == null) return "";
   return typeof value === "string" ? value : value[state.lang] || value["zh-CN"];
 }
 

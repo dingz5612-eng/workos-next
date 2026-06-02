@@ -561,6 +561,8 @@ $allowedMapPostPaths = @(
 $allowedMapGetPaths = @(
   "/",
   "/health",
+  "/live",
+  "/ready",
   "/api/bootstrap",
   "/api/operations/cases/{caseId}",
   "/api/operations/work-items",

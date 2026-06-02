@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-06-02T09:06:46.302Z",
+  "generated_at_utc": "2026-06-02T10:54:04.249Z",
   "generated_by": "scripts/surface/check-permission-explainability-contract.mjs",
   "status": "passed",
   "check": "permission-explainability-contract",

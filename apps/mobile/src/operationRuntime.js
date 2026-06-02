@@ -69,7 +69,7 @@ export async function submitWorkItemOperation({ workspace, card, workItemId: exp
     aggregateRef,
     fieldValues,
     evidenceIds
-  });
+  }, actor.token);
   const result = await confirmOperationWorkItem(workItemId, actor.token, {
     language,
     idempotencyKey: protocol.idempotencyKey,
@@ -146,7 +146,7 @@ function isPersistedWorkItemId(value) {
 export async function materializeEvidenceObjects({ workspace, card, actor, submissionProtocol, evidenceDrafts }) {
   const drafts = Array.isArray(evidenceDrafts) ? evidenceDrafts.filter((item) => item?.requirementId) : [];
   if (!drafts.length) return [];
-  const actorId = actor?.actorId || actor?.displayName || "runtime";
+  const actorToken = actor?.token || "";
   const evidenceIds = [];
   for (const draft of drafts) {
     const evidence = await createEvidenceDraft({
@@ -156,13 +156,13 @@ export async function materializeEvidenceObjects({ workspace, card, actor, submi
       submissionId: submissionProtocol.submissionId,
       requirementId: draft.requirementId,
       evidenceId: draft.evidenceId?.startsWith("evd-") ? draft.evidenceId : null
-    }, actorId);
+    }, actorToken);
     const attached = await attachEvidence(evidence.evidenceId, {
       fileName: `${draft.requirementId}.runtime-evidence`,
       contentType: "application/octet-stream",
       contentSha256: draft.contentSha256 || stableHash(`${workspace.id}:${card.id}:${draft.requirementId}:${submissionProtocol.submissionId}`),
       sizeBytes: draft.sizeBytes || 1
-    }, actorId);
+    }, actorToken);
     evidenceIds.push(attached.evidenceId);
     draft.evidenceId = attached.evidenceId;
   }

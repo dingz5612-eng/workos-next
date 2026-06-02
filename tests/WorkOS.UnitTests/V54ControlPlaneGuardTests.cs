@@ -513,6 +513,7 @@ public sealed class V54ControlPlaneGuardTests
         var temp = Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), $"workos-mr01-gate-{Guid.NewGuid():N}"));
         try
         {
+            var ciRunId = $"test-missing-evidence-{Guid.NewGuid():N}";
             var invariantPath = Path.Combine(temp.FullName, "missing-invariants.json");
             var effectivePath = Path.Combine(temp.FullName, "effective-invariants.json");
             var gatePath = Path.Combine(temp.FullName, "gate.json");
@@ -522,7 +523,7 @@ public sealed class V54ControlPlaneGuardTests
                 "scripts/v5_4/mr-01-stop-bad-facts-gate.mjs",
                 "--releaseId=release-mr-01-test",
                 "--mrId=MR-01",
-                "--ciRunId=test-missing-evidence",
+                $"--ciRunId={ciRunId}",
                 $"--invariant={invariantPath}",
                 $"--effectiveInvariantOut={effectivePath}",
                 $"--out={gatePath}");

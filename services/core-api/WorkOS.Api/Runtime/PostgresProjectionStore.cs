@@ -32,10 +32,13 @@ public sealed partial class PostgresProjectionStore : IProjectionStore
     private readonly CheckoutServiceProcessManager checkoutServiceProcessManager;
     private readonly PostgresConnectionFactory connections;
 
-    public PostgresProjectionStore(string connectionString, string? migrationsPath = null)
+    public PostgresProjectionStore(string connectionString, string? migrationsPath = null, bool runMigrations = true)
     {
         connections = new PostgresConnectionFactory(connectionString);
-        new PostgresMigrationRunner(connections, migrationsPath).Run();
+        if (runMigrations)
+        {
+            new PostgresMigrationRunner(connections, migrationsPath).Run();
+        }
 
         documents = new RuntimeDocumentStorage(connections);
         sessions = new RuntimeSessionStorage(connections);

@@ -35,7 +35,6 @@ describe("confirm HTTP error handling", () => {
 
   it.each([
     [400, "confirmBadRequest"],
-    [403, "confirmForbidden"],
     [409, "confirmDuplicate"],
     [422, "confirmBusinessBlocked"]
   ])("keeps session for %s confirm blockers", (status, messageKey) => {
@@ -51,6 +50,25 @@ describe("confirm HTTP error handling", () => {
     expect(context.state.currentActor).not.toBeNull();
     expect(context.state.view).toBe("workspace");
     expect(context.state.operationMessage).toBe(`${messageKey} stable_reason`);
+    vi.unstubAllGlobals();
+  });
+
+  it("clears persisted session for 403 while keeping permission diagnostic context", () => {
+    const context = ctx();
+    const storage = new Map();
+    vi.stubGlobal("localStorage", {
+      getItem: (key) => storage.get(key) || null,
+      setItem: (key, value) => storage.set(key, value),
+      removeItem: (key) => storage.delete(key)
+    });
+    localStorage.setItem("workosnext.actorSession", JSON.stringify(context.state.currentActor));
+
+    const handled = applyConfirmError({ status: 403, reason: "capability_missing" }, context);
+
+    expect(handled).toBe(false);
+    expect(context.state.currentActor).not.toBeNull();
+    expect(context.state.permissionDiagnostic.reason).toBe("capability_missing");
+    expect(localStorage.getItem("workosnext.actorSession")).toBeNull();
     vi.unstubAllGlobals();
   });
 

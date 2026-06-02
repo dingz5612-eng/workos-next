@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-06-02T09:03:07.566Z",
+  "generated_at_utc": "2026-06-02T10:35:55.551Z",
   "generated_by": "check-dormitory-internal-pilot-go-no-go",
   "stage": "DORM-INT-FINAL",
   "status": "GO_FOR_INTERNAL_PILOT",
@@ -20,27 +20,27 @@
   "latestMain": {
     "repository": "dingz5612-eng/workos-next",
     "branch": "main",
-    "checkedAtUtc": "2026-06-02T09:03:07.566Z",
-    "commitSha": "125e18716c7153e721a1b6b3f7f721c9220938df",
+    "checkedAtUtc": "2026-06-02T10:35:44.517Z",
+    "commitSha": "c9ef041d228e91ecb12f31382786d8eb9cd7d825",
     "ci": {
-      "id": 26809528031,
+      "id": 26810590668,
       "name": "CI",
       "status": "completed",
       "conclusion": "success",
-      "headSha": "125e18716c7153e721a1b6b3f7f721c9220938df",
-      "htmlUrl": "https://github.com/dingz5612-eng/workos-next/actions/runs/26809528031",
-      "createdAt": "2026-06-02T08:59:17Z",
-      "updatedAt": "2026-06-02T09:02:00Z"
+      "headSha": "c9ef041d228e91ecb12f31382786d8eb9cd7d825",
+      "htmlUrl": "https://github.com/dingz5612-eng/workos-next/actions/runs/26810590668",
+      "createdAt": "2026-06-02T09:20:47Z",
+      "updatedAt": "2026-06-02T09:23:31Z"
     },
     "v54ControlPlaneGuards": {
-      "id": 26809528043,
+      "id": 26810591326,
       "name": "V5.4 Control Plane Guards",
       "status": "completed",
       "conclusion": "success",
-      "headSha": "125e18716c7153e721a1b6b3f7f721c9220938df",
-      "htmlUrl": "https://github.com/dingz5612-eng/workos-next/actions/runs/26809528043",
-      "createdAt": "2026-06-02T08:59:17Z",
-      "updatedAt": "2026-06-02T09:01:29Z"
+      "headSha": "c9ef041d228e91ecb12f31382786d8eb9cd7d825",
+      "htmlUrl": "https://github.com/dingz5612-eng/workos-next/actions/runs/26810591326",
+      "createdAt": "2026-06-02T09:20:48Z",
+      "updatedAt": "2026-06-02T09:23:05Z"
     }
   },
   "gateResults": {
@@ -157,12 +157,5 @@
     "artifacts/go-live/dormitory/dorm-int-experience-contract-report.json"
   ],
   "noGoItems": [],
-  "nextAction": "只允许进入 L1 Internal Pilot 内测观察窗口；不得进入 L2 Production，不得放开 Repair / Parts / HR production。",
-  "reconciliation": {
-    "status": "rebound_to_latest_main",
-    "reboundAtUtc": "2026-06-02T09:03:07.566Z",
-    "centralMergeStatus": "CENTRAL_MERGE_COMPLETED",
-    "dormIntStatus": "DORM_INT_PASSED",
-    "observationStatus": "L1_INTERNAL_PILOT_OBSERVATION"
-  }
+  "nextAction": "只允许进入 L1 Internal Pilot 内测观察窗口；不得进入 L2 Production，不得放开 Repair / Parts / HR production。"
 }

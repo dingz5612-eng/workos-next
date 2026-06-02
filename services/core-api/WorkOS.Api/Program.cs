@@ -1,8 +1,9 @@
+using Microsoft.AspNetCore.Authentication;
 using WorkOS.Api.Runtime;
 
 var builder = WebApplication.CreateBuilder(args);
 var corsOptions = builder.Configuration.GetSection("Cors").Get<RuntimeCorsOptions>() ?? new RuntimeCorsOptions();
-if (corsOptions.AllowedOrigins.Length == 0)
+if (corsOptions.AllowedOrigins.Length == 0 && builder.Environment.IsDevelopment())
 {
     corsOptions = new RuntimeCorsOptions();
 }
@@ -14,12 +15,17 @@ builder.Services.AddCors(options =>
         policy
             .WithOrigins(corsOptions.AllowedOrigins)
             .AllowAnyHeader()
-            .AllowAnyMethod();
+            .AllowAnyMethod()
+            .AllowCredentials();
     });
 });
 
-var connectionString = builder.Configuration.GetConnectionString("WorkOSRuntime")
-    ?? "Host=localhost;Port=54329;Database=workosnext;Username=workosnext;Password=workosnext_dev";
+var configuredConnectionString = builder.Configuration.GetConnectionString("WorkOSRuntime");
+var connectionString = !string.IsNullOrWhiteSpace(configuredConnectionString)
+    ? configuredConnectionString
+    : builder.Environment.IsDevelopment()
+        ? "Host=localhost;Port=54329;Database=workosnext;Username=workosnext;Password=workosnext_dev"
+        : string.Empty;
 var configuredAuthOptions = builder.Configuration.GetSection("Auth").Get<RuntimeAuthOptions>();
 var authOptions = configuredAuthOptions ?? (builder.Environment.IsDevelopment() ? RuntimeAuthOptions.Development : new RuntimeAuthOptions { PasswordSha256ByUsername = new Dictionary<string, string>() });
 if (authOptions.PasswordSha256ByUsername.Count == 0 && builder.Environment.IsDevelopment())
@@ -27,17 +33,21 @@ if (authOptions.PasswordSha256ByUsername.Count == 0 && builder.Environment.IsDev
     authOptions = RuntimeAuthOptions.Development;
 }
 
-if (!builder.Environment.IsDevelopment() &&
-    (authOptions.PasswordSha256ByUsername.Count == 0 || RuntimeAuthOptions.UsesDevelopmentPasswords(authOptions)))
-{
-    throw new InvalidOperationException("Production runtime requires configured auth hashes and must not use development auth defaults.");
-}
 if (!builder.Environment.IsDevelopment())
 {
     authOptions.RequireTrustedDeviceForHighRiskActions = true;
 }
-var migrationsPath = builder.Configuration["Migrations:Path"];
-var runtime = ProjectionRuntime.OpenPostgres(connectionString, authOptions, migrationsPath);
+var migrationOptions = builder.Configuration.GetSection("Migrations").Get<RuntimeMigrationOptions>() ?? new RuntimeMigrationOptions();
+var allowedHosts = builder.Configuration["AllowedHosts"];
+RuntimeStartupValidator.ThrowIfInvalid(
+    builder.Environment.EnvironmentName,
+    authOptions,
+    connectionString,
+    corsOptions,
+    allowedHosts,
+    migrationOptions);
+var runMigrations = RuntimeStartupValidator.ShouldRunMigrations(builder.Environment.EnvironmentName, migrationOptions);
+var runtime = ProjectionRuntime.OpenPostgres(connectionString, authOptions, migrationOptions.Path, runMigrations);
 var controlPlaneReadStore = new ControlPlaneReadStore(connectionString);
 var operationsFactStore = new PostgresOperationsStore(connectionString);
 builder.Services.AddSingleton(runtime);
@@ -63,39 +73,105 @@ builder.Services.AddSingleton<WorkspaceCardCompatibilityRequestMapper>();
 builder.Services.AddSingleton<WorkspaceCardCompatibilityResponseMapper>();
 builder.Services.AddSingleton<WorkspaceCardCompatibilityAdapter>();
 builder.Services.AddHostedService<ProjectionOutboxWorker>();
+builder.Services
+    .AddAuthentication(RuntimeActorAuthenticationDefaults.Scheme)
+    .AddScheme<AuthenticationSchemeOptions, RuntimeActorAuthenticationHandler>(
+        RuntimeActorAuthenticationDefaults.Scheme,
+        _ => { });
+builder.Services.AddAuthorization(RuntimeActorAuthorization.Configure);
 
 var app = builder.Build();
 
 app.UseCors();
+app.UseAuthentication();
+app.UseWorkOSRuntimeAccessPolicies();
+app.UseAuthorization();
 
 app.MapGet("/", () => Results.Redirect("/health"));
 
+app.MapGet("/live", () => new
+{
+    status = "alive",
+    service = "WorkOSNext Core API",
+    timestampUtc = DateTimeOffset.UtcNow
+});
+
+app.MapGet("/ready", () =>
+{
+    var readiness = RuntimeReadiness.Check(connectionString);
+    return readiness.Status == "ready"
+        ? Results.Ok(readiness)
+        : Results.Json(readiness, statusCode: StatusCodes.Status503ServiceUnavailable);
+});
+
 app.MapGet("/health", () => new
 {
-    status = "ok",
+    status = RuntimeReadiness.Check(connectionString).Status == "ready" ? "ok" : "degraded",
     service = "WorkOSNext Core API",
     version = "0.13.0-backend-runtime",
     runtimeTarget = ".NET 10 LTS",
     persistence = "postgresql",
+    readiness = RuntimeReadiness.Check(connectionString),
     timestampUtc = DateTimeOffset.UtcNow
 });
 
 app.MapGet("/api/bootstrap", () => DemoBootstrap.Create());
-app.MapPost("/api/auth/login", (LoginRequest request) =>
+app.MapPost("/api/auth/login", (LoginRequest request, HttpContext httpContext) =>
 {
     var result = runtime.Login(request);
-    return result is null ? Results.Unauthorized() : Results.Ok(result);
+    if (result is null)
+    {
+        return Results.Unauthorized();
+    }
+
+    var csrf = $"csrf-{Guid.NewGuid():N}";
+    var cookieOptions = new CookieOptions
+    {
+        HttpOnly = true,
+        Secure = !app.Environment.IsDevelopment(),
+        SameSite = SameSiteMode.Lax,
+        Expires = result.ExpiresAtUtc
+    };
+    httpContext.Response.Cookies.Append(RuntimeActorAuthenticationDefaults.SessionCookieName, result.Token, cookieOptions);
+    httpContext.Response.Cookies.Append(RuntimeActorAuthenticationDefaults.CsrfCookieName, csrf, new CookieOptions
+    {
+        HttpOnly = false,
+        Secure = !app.Environment.IsDevelopment(),
+        SameSite = SameSiteMode.Lax,
+        Expires = result.ExpiresAtUtc
+    });
+
+    return app.Environment.IsDevelopment()
+        ? Results.Ok(result)
+        : Results.Ok(new
+        {
+            result.Authenticated,
+            result.ActorId,
+            result.ActorType,
+            result.DisplayName,
+            result.Role,
+            result.ExpiresAtUtc
+        });
 });
 app.MapPost("/api/auth/sessions/{token}/revoke", (string token, HttpRequest httpRequest) =>
 {
-    var actorId = httpRequest.Headers["X-WorkOS-Actor-Id"].FirstOrDefault() ?? "runtime";
+    var actorId = httpRequest.HttpContext.RequireActor().ActorId;
     runtime.RevokeSession(token, actorId);
     return Results.Ok(new { revoked = true, token });
 });
-app.MapPost("/api/device-sessions", (RuntimeDeviceSessionRequest request) => Results.Ok(runtime.RegisterDeviceSession(request)));
+app.MapPost("/api/device-sessions", (RuntimeDeviceSessionRequest request, HttpRequest httpRequest) =>
+{
+    var actor = httpRequest.HttpContext.RequireActor();
+    if (!string.Equals(request.ActorId, actor.ActorId, StringComparison.OrdinalIgnoreCase))
+    {
+        return Results.Json(new { error = "device_actor_mismatch" }, statusCode: StatusCodes.Status403Forbidden);
+    }
+
+    return Results.Ok(runtime.RegisterDeviceSession(request));
+});
 app.MapPost("/api/device-sessions/{deviceId}/revoke", (string deviceId, HttpRequest httpRequest) =>
 {
-    var actorId = httpRequest.Headers["X-WorkOS-Actor-Id"].FirstOrDefault() ?? "runtime";
+    var actorId = httpRequest.HttpContext.RequireActor().ActorId;
     var revoked = runtime.RevokeDeviceSession(deviceId, actorId);
     return revoked is null ? Results.NotFound(new { error = "device_session_not_found", deviceId }) : Results.Ok(revoked);
 });
@@ -142,12 +218,12 @@ app.MapGet("/api/control-plane/rollback-instructions/{id}", (string id) =>
 app.MapGet("/api/evidence", (string? evidenceId) => runtime.GetEvidenceObjects(evidenceId));
 app.MapPost("/api/evidence/drafts", (EvidenceDraftRequest request, HttpRequest httpRequest) =>
 {
-    var actorId = httpRequest.Headers["X-WorkOS-Actor-Id"].FirstOrDefault() ?? "runtime";
+    var actorId = httpRequest.HttpContext.RequireActor().ActorId;
     return Results.Ok(runtime.CreateEvidenceDraft(request, actorId));
 });
 app.MapPost("/api/evidence/{evidenceId}/attachments", (string evidenceId, EvidenceAttachmentRequest request, HttpRequest httpRequest) =>
 {
-    var actorId = httpRequest.Headers["X-WorkOS-Actor-Id"].FirstOrDefault() ?? "runtime";
+    var actorId = httpRequest.HttpContext.RequireActor().ActorId;
     try
     {
         return Results.Ok(runtime.AttachEvidence(evidenceId, request, actorId));
@@ -157,14 +233,24 @@ app.MapPost("/api/evidence/{evidenceId}/attachments", (string evidenceId, Eviden
         return Results.UnprocessableEntity(new { error = "evidence_file_invalid", reason = ex.Message });
     }
 });
-app.MapPost("/api/evidence/{evidenceId}/verify", (string evidenceId, EvidenceDecisionRequest request) => Results.Ok(runtime.VerifyEvidence(evidenceId, request)));
-app.MapPost("/api/evidence/{evidenceId}/reject", (string evidenceId, EvidenceDecisionRequest request) => Results.Ok(runtime.RejectEvidence(evidenceId, request)));
-app.MapGet("/api/evidence/{evidenceId}/signed-url", (string evidenceId, string? actorId, string? deviceId, string? tenantId, int? ttlSeconds) =>
+app.MapPost("/api/evidence/{evidenceId}/verify", (string evidenceId, EvidenceDecisionRequest request, HttpRequest httpRequest) =>
+    Results.Ok(runtime.VerifyEvidence(evidenceId, request with { ActorId = httpRequest.HttpContext.RequireActor().ActorId })));
+app.MapPost("/api/evidence/{evidenceId}/reject", (string evidenceId, EvidenceDecisionRequest request, HttpRequest httpRequest) =>
+    Results.Ok(runtime.RejectEvidence(evidenceId, request with { ActorId = httpRequest.HttpContext.RequireActor().ActorId })));
+app.MapGet("/api/evidence/{evidenceId}/signed-url", (string evidenceId, string? tenantId, string? deviceId, int? ttlSeconds, HttpRequest httpRequest) =>
 {
+    var actor = httpRequest.HttpContext.RequireActor();
+    if (!string.IsNullOrWhiteSpace(tenantId) &&
+        !string.Equals(tenantId, actor.TenantId, StringComparison.OrdinalIgnoreCase))
+    {
+        return Results.Json(new { error = "evidence_access_forbidden", reason = "evidence_tenant_scope_mismatch" }, statusCode: StatusCodes.Status403Forbidden);
+    }
+
+    tenantId ??= actor.TenantId;
     try
     {
         return Results.Ok(runtime.CreateEvidenceSignedUrl(evidenceId, new EvidenceSignedUrlRequest(
-            actorId ?? "runtime",
+            actor.ActorId,
             deviceId ?? string.Empty,
             ttlSeconds ?? RuntimeSignedUrlPolicy.MaxTtlSeconds,
             TenantId: tenantId)));
@@ -179,7 +265,7 @@ app.MapPost("/api/reconciliation/bank-statement-imports/preview", (BankStatement
     Results.Ok(runtime.PreviewBankStatementImport(request)));
 app.MapPost("/api/reconciliation/bank-statement-imports", (BankStatementImportRequest request, HttpRequest httpRequest) =>
 {
-    var actorId = httpRequest.Headers["X-WorkOS-Actor-Id"].FirstOrDefault() ?? request.ImportedBy ?? "runtime";
+    var actorId = httpRequest.HttpContext.RequireActor().ActorId;
     try
     {
         return Results.Ok(runtime.ConfirmBankStatementImport(request, actorId));
@@ -207,7 +293,7 @@ app.MapGet("/api/reconciliation/match-candidates", (string tenantId, string? ban
     Results.Ok(runtime.GetReconciliationMatchCandidates(tenantId, bankTransactionId)));
 app.MapPost("/api/reconciliation/match-candidates/{candidateId}/accept", (string candidateId, HttpRequest httpRequest) =>
 {
-    var actorId = httpRequest.Headers["X-WorkOS-Actor-Id"].FirstOrDefault() ?? "runtime";
+    var actorId = httpRequest.HttpContext.RequireActor().ActorId;
     try
     {
         return Results.Ok(runtime.AcceptReconciliationMatchCandidate(candidateId, actorId));
@@ -219,7 +305,7 @@ app.MapPost("/api/reconciliation/match-candidates/{candidateId}/accept", (string
 });
 app.MapPost("/api/reconciliation/match-candidates/{candidateId}/reject", (string candidateId, ReconciliationMatchDecisionRequest request, HttpRequest httpRequest) =>
 {
-    var actorId = httpRequest.Headers["X-WorkOS-Actor-Id"].FirstOrDefault() ?? "runtime";
+    var actorId = httpRequest.HttpContext.RequireActor().ActorId;
     try
     {
         return Results.Ok(runtime.RejectReconciliationMatchCandidate(candidateId, actorId, request.Reason ?? "manual_rejected"));
@@ -231,7 +317,7 @@ app.MapPost("/api/reconciliation/match-candidates/{candidateId}/reject", (string
 });
 app.MapPost("/api/reconciliation/bank-transactions/{bankTransactionId}/mismatch", (string bankTransactionId, ReconciliationMismatchRequest request, HttpRequest httpRequest) =>
 {
-    var actorId = httpRequest.Headers["X-WorkOS-Actor-Id"].FirstOrDefault() ?? "runtime";
+    var actorId = httpRequest.HttpContext.RequireActor().ActorId;
     try
     {
         return Results.Ok(runtime.MarkBankTransactionMismatch(bankTransactionId, request, actorId));
@@ -243,7 +329,7 @@ app.MapPost("/api/reconciliation/bank-transactions/{bankTransactionId}/mismatch"
 });
 app.MapPost("/api/reconciliation/bank-transactions/{bankTransactionId}/ignore", (string bankTransactionId, ReconciliationTransactionDecisionRequest request, HttpRequest httpRequest) =>
 {
-    var actorId = httpRequest.Headers["X-WorkOS-Actor-Id"].FirstOrDefault() ?? "runtime";
+    var actorId = httpRequest.HttpContext.RequireActor().ActorId;
     try
     {
         return Results.Ok(runtime.IgnoreBankTransaction(bankTransactionId, request.TenantId, actorId, request.Reason ?? "manual_ignored"));
@@ -265,34 +351,37 @@ app.MapPost("/api/correction-center/ledger-correction-requests", (LedgerCorrecti
         return Results.UnprocessableEntity(new { error = "ledger_correction_invalid", reason = ex.Message });
     }
 });
-app.MapPost("/api/correction-center/ledger-correction-requests/{correctionRequestId}/approve", (string correctionRequestId, LedgerCorrectionApproveRequest request) =>
+app.MapPost("/api/correction-center/ledger-correction-requests/{correctionRequestId}/approve", (string correctionRequestId, LedgerCorrectionApproveRequest request, HttpRequest httpRequest) =>
 {
+    var actor = httpRequest.HttpContext.RequireActor();
+    var device = RuntimeActorAuthorization.TrustedDeviceFromRequest(runtime, actor, request.DeviceId);
     try
     {
         return Results.Ok(runtime.ApproveLedgerCorrection(new LedgerCorrectionApproveCommand(
             request.TenantId,
             correctionRequestId,
-            request.ApproverId,
+            actor.ActorId,
             request.Note,
-            request.ActorRole,
-            request.ActorCapabilities,
+            actor.Role,
+            actor.Capabilities,
             request.DeviceId,
-            request.DeviceTrustStatus,
-            request.Surface ?? "pc")));
+            device?.DeviceTrustStatus ?? "unknown",
+            "pc")));
     }
     catch (InvalidOperationException ex) when (ex.Message.StartsWith("correction_", StringComparison.OrdinalIgnoreCase))
     {
         return Results.UnprocessableEntity(new { error = "ledger_correction_approval_invalid", reason = ex.Message });
     }
 });
-app.MapPost("/api/correction-center/ledger-correction-requests/{correctionRequestId}/reject", (string correctionRequestId, LedgerCorrectionRejectRequest request) =>
+app.MapPost("/api/correction-center/ledger-correction-requests/{correctionRequestId}/reject", (string correctionRequestId, LedgerCorrectionRejectRequest request, HttpRequest httpRequest) =>
 {
+    var actor = httpRequest.HttpContext.RequireActor();
     try
     {
         return Results.Ok(runtime.RejectLedgerCorrection(new LedgerCorrectionRejectCommand(
             request.TenantId,
             correctionRequestId,
-            request.ApproverId,
+            actor.ActorId,
             request.Reason)));
     }
     catch (InvalidOperationException ex) when (ex.Message.StartsWith("correction_", StringComparison.OrdinalIgnoreCase))
@@ -300,14 +389,15 @@ app.MapPost("/api/correction-center/ledger-correction-requests/{correctionReques
         return Results.UnprocessableEntity(new { error = "ledger_correction_rejection_invalid", reason = ex.Message });
     }
 });
-app.MapPost("/api/correction-center/ledger-correction-requests/{correctionRequestId}/apply", (string correctionRequestId, LedgerCorrectionApplyRequest request) =>
+app.MapPost("/api/correction-center/ledger-correction-requests/{correctionRequestId}/apply", (string correctionRequestId, LedgerCorrectionApplyRequest request, HttpRequest httpRequest) =>
 {
+    var actor = httpRequest.HttpContext.RequireActor();
     try
     {
         return Results.Ok(runtime.ApplyLedgerCorrection(new LedgerCorrectionApplyCommand(
             request.TenantId,
             correctionRequestId,
-            request.ActorId,
+            actor.ActorId,
             request.WorkItemId,
             request.AdjustmentAmount,
             request.Reason)));
@@ -318,9 +408,20 @@ app.MapPost("/api/correction-center/ledger-correction-requests/{correctionReques
     }
 });
 
-app.MapPost("/api/pc-governance/exports/{exportType}", (string exportType, GovernanceExportRequest request) =>
+app.MapPost("/api/pc-governance/exports/{exportType}", (string exportType, GovernanceExportRequest request, HttpRequest httpRequest) =>
 {
-    var result = runtime.RequestGovernanceExport(request with { ExportType = exportType });
+    var actor = httpRequest.HttpContext.RequireActor();
+    var device = RuntimeActorAuthorization.TrustedDeviceFromRequest(runtime, actor, request.DeviceId);
+    var result = runtime.RequestGovernanceExport(request with
+    {
+        ExportType = exportType,
+        ActorId = actor.ActorId,
+        ActorRole = actor.Role,
+        ActorCapabilities = actor.Capabilities,
+        DeviceTrustStatus = device?.DeviceTrustStatus ?? "unknown",
+        Surface = "pc",
+        TenantId = actor.TenantId
+    });
     return result.Allowed
         ? Results.Ok(result)
         : Results.Json(result, statusCode: StatusCodes.Status403Forbidden);
@@ -340,7 +441,7 @@ app.MapPost("/api/workspaces/{workspaceId}/cards/{cardId}/prepare", (string work
 
 app.MapPost("/api/workspaces/{workspaceId}/cards/{cardId}/confirm", (string workspaceId, string cardId, ConfirmCardRequest request, HttpRequest httpRequest, WorkspaceCardCompatibilityAdapter operations) =>
 {
-    var token = httpRequest.Headers["X-WorkOS-Actor-Token"].FirstOrDefault() ?? string.Empty;
+    var token = httpRequest.SessionTokenForOperations();
     var requestId = httpRequest.Headers["X-Request-Id"].FirstOrDefault() ?? httpRequest.HttpContext.TraceIdentifier;
     var result = operations.ConfirmWorkspaceCard(workspaceId, cardId, request, token, requestId);
     return result.StatusCode switch

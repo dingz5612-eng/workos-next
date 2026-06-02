@@ -214,6 +214,15 @@ public sealed record CardInstanceRecord(
 
 public sealed record LoginRequest(string Username, string Password);
 
+public sealed record RuntimeLoginResult(
+    bool Authenticated,
+    string ActorId,
+    string ActorType,
+    string DisplayName,
+    string Role,
+    string Token,
+    DateTimeOffset ExpiresAtUtc);
+
 public sealed record RuntimeSession(
     string Token,
     string UserId,

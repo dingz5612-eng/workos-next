@@ -7,9 +7,14 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "test": "vitest run"
+    "test": "vitest run src",
+    "test:report": "vitest run src --reporter=default --reporter=json --outputFile=../../artifacts/test-results/mobile/vitest-report.json",
+    "test:coverage": "vitest run src --coverage --coverage.reportsDirectory=../../artifacts/test-results/mobile/coverage",
+    "test:e2e": "playwright test --config=playwright.config.js"
   },
   "devDependencies": {
+    "@playwright/test": "^1.60.0",
+    "@vitest/coverage-v8": "^4.1.7",
     "vite": "^8.0.14",
     "vitest": "^4.1.7"
   }

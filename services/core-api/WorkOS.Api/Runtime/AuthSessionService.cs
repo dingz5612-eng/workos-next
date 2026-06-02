@@ -11,7 +11,7 @@ public sealed class AuthSessionService
         this.authOptions = authOptions;
     }
 
-    public object? Login(RuntimeState state, LoginRequest request)
+    public RuntimeLoginResult? Login(RuntimeState state, LoginRequest request)
     {
         var user = state.Users.FirstOrDefault(item =>
             item.Enabled &&
@@ -25,15 +25,13 @@ public sealed class AuthSessionService
         }
 
         var session = store.CreateSession(user);
-        return new
-        {
-            authenticated = true,
-            actorId = user.UserId,
-            actorType = user.Role,
-            displayName = user.DisplayName,
-            role = user.Role,
-            token = session.Token,
-            expiresAtUtc = session.ExpiresAtUtc
-        };
+        return new RuntimeLoginResult(
+            true,
+            user.UserId,
+            user.Role,
+            user.DisplayName,
+            user.Role,
+            session.Token,
+            session.ExpiresAtUtc);
     }
 }

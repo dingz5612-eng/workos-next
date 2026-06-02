@@ -36,8 +36,9 @@ public sealed partial class ProjectionRuntime
     public static ProjectionRuntime OpenPostgres(
         string connectionString,
         RuntimeAuthOptions? authOptions = null,
-        string? migrationsPath = null) =>
-        new(new PostgresProjectionStore(connectionString, migrationsPath), authOptions ?? new RuntimeAuthOptions());
+        string? migrationsPath = null,
+        bool runDbSetup = true) =>
+        new(new PostgresProjectionStore(connectionString, migrationsPath, runDbSetup), authOptions ?? new RuntimeAuthOptions());
 
     public ProjectionEnvelope GetAll()
     {

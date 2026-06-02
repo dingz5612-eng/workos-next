@@ -10,6 +10,9 @@ build/
 .flutter-plugins
 .flutter-plugins-dependencies
 coverage/
+artifacts/test-results/
+apps/mobile/test-results/
+apps/mobile/playwright-report/
 .tmp/
 *.user
 *.suo
