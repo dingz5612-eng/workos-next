@@ -7,8 +7,16 @@ export function operationPanelView(ctx) {
   const { state, shell } = ctx;
   const item = resolveOperationItem(state);
   if (!item?.workItemId && !item?.work_item_id) {
+    state.lastActionResult = {
+      confirmed: false,
+      status: "business_blocked_422",
+      commitStatus: "blocked",
+      projectionStatus: "not_started",
+      error: "operation_work_item_required",
+      reason: "operation_work_item_required"
+    };
     return shell(`
-      <section class="operation-panel-empty" data-surface="operation-panel-runtime">
+      <section class="operation-panel-empty" data-surface="operation-panel-runtime" data-blocker-code="operation_work_item_required">
         <span>${ctx.tr("operationPanel")}</span>
         <h1>${ctx.tr("persistedWorkItemRequired")}</h1>
         <p>${ctx.tr("persistedWorkItemRequiredBody")}</p>
