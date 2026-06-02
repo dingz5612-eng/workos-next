@@ -1,14 +1,14 @@
 {
-  "generated_at_utc": "2026-06-01T21:01:35.326Z",
+  "generated_at_utc": "2026-06-02T11:12:50.515Z",
   "generated_by": "run-dormitory-live-api-db-scenarios",
   "taskId": "D1",
-  "branch": "codex/oam-03-runtime-proof-harness",
-  "currentMainHead": "523e430b0366096cf2dd5525920fde59d46d2df1",
+  "branch": "codex/production-boundary-hardening",
+  "currentMainHead": "c9ef041d228e91ecb12f31382786d8eb9cd7d825",
   "sourceMode": "real_api_db",
   "syntheticDomainEventsAllowed": false,
   "syntheticLedgerTransactionsAllowed": false,
   "workspaceCardCompatibilityFallbackUsed": false,
-  "runId": "oam03-mpvp12ry",
+  "runId": "oam03-mpwjfnm1",
   "connectionString": "Host=localhost;Port=54329;Database=workosnext_test;Username=workosnext;Password=***",
   "contractRef": "docs/go-live/dormitory/runtime-replay-contract.yml",
   "scenariosRef": "docs/go-live/dormitory/runtime-replay-scenarios.yml",
@@ -21,8 +21,8 @@
     "status": "passed",
     "workItem": {
       "tenantId": "tenant-dorm-int-001",
-      "caseId": "case-d1-oam03-mpvp12ry-dorm-live-rollback",
-      "workItemId": "wi-d1-oam03-mpvp12ry-dorm-live-rollback",
+      "caseId": "case-d1-oam03-mpwjfnm1-dorm-live-rollback",
+      "workItemId": "wi-d1-oam03-mpwjfnm1-dorm-live-rollback",
       "workItemType": "paymentAdjustment",
       "ownerRole": "releaseOwner",
       "source": "persisted_work_item_runtime_model"
@@ -34,11 +34,11 @@
       "confirmed": true,
       "commitStatus": "committed",
       "projectionStatus": "pending",
-      "caseId": "case-d1-oam03-mpvp12ry-dorm-live-rollback",
-      "workItemId": "wi-d1-oam03-mpvp12ry-dorm-live-rollback",
-      "submissionId": "sub-d1-oam03-mpvp12ry-dorm-live-rollback",
+      "caseId": "case-d1-oam03-mpwjfnm1-dorm-live-rollback",
+      "workItemId": "wi-d1-oam03-mpwjfnm1-dorm-live-rollback",
+      "submissionId": "sub-d1-oam03-mpwjfnm1-dorm-live-rollback",
       "resultEventIds": [
-        "evt-da68d886efb757f79b8f4eac29509485c7637ea5b7aa000d8a43dd3a562f898c"
+        "evt-e396865891985d9f112cebe05596883a7faf7e3c3bf0e883e7ccaf4cdd1d5379"
       ],
       "userMessage": "Committed through OperationsUnitOfWork.",
       "clientInstruction": {
@@ -47,45 +47,45 @@
         "observeOutbox": true
       },
       "source": "operations_unit_of_work",
-      "idempotencyKey": "idem-d1-oam03-mpvp12ry-dorm-live-rollback",
-      "payloadHash": "sha256:0a33f43284d01cd5166db140033ff6e7b4b583861cdea373003e20c0268e7f68",
-      "commandSubmissionId": "cmd-2d54966b13d07e4e17da7adb47f7c8ade7f97cebaae5d021baa28797d16343ab"
+      "idempotencyKey": "idem-d1-oam03-mpwjfnm1-dorm-live-rollback",
+      "payloadHash": "sha256:697f21ab44532495ef92adfd31b8c51ab6b0dfd0516c3eb580a62e1ae957653a",
+      "commandSubmissionId": "cmd-0d57b7a00693c20e04cf98540fb71992e635fe21fc92b140e67fbfeb8304680e"
     },
     "commandSubmission": {
-      "submissionId": "cmd-2d54966b13d07e4e17da7adb47f7c8ade7f97cebaae5d021baa28797d16343ab",
+      "submissionId": "cmd-0d57b7a00693c20e04cf98540fb71992e635fe21fc92b140e67fbfeb8304680e",
       "status": "committed"
     },
     "rejectedCommandSubmission": null,
     "rejectionTrace": null,
     "domainEvents": [
       {
-        "event_id": "evt-da68d886efb757f79b8f4eac29509485c7637ea5b7aa000d8a43dd3a562f898c",
+        "event_id": "evt-e396865891985d9f112cebe05596883a7faf7e3c3bf0e883e7ccaf4cdd1d5379",
         "event_type": "OperationsWorkItemConfirmed",
-        "work_item_id": "wi-d1-oam03-mpvp12ry-dorm-live-rollback",
-        "submission_id": "cmd-2d54966b13d07e4e17da7adb47f7c8ade7f97cebaae5d021baa28797d16343ab"
+        "work_item_id": "wi-d1-oam03-mpwjfnm1-dorm-live-rollback",
+        "submission_id": "cmd-0d57b7a00693c20e04cf98540fb71992e635fe21fc92b140e67fbfeb8304680e"
       }
     ],
     "ledgerTransactions": [
       {
-        "ledger_transaction_id": "ltx-5ba6dd5d8d3916311e2dce34c73687905e1e92954a92895378b1ae9dca44d0be",
+        "ledger_transaction_id": "ltx-06d509c3446672e77af80d8ccf26e2d00e60c200802760d054c65151dfba2872",
         "transaction_type": "ledger_correction_apply",
         "balance_status": "balanced",
-        "work_item_id": "wi-d1-oam03-mpvp12ry-dorm-live-rollback",
-        "submission_id": "cmd-2d54966b13d07e4e17da7adb47f7c8ade7f97cebaae5d021baa28797d16343ab"
+        "work_item_id": "wi-d1-oam03-mpwjfnm1-dorm-live-rollback",
+        "submission_id": "cmd-0d57b7a00693c20e04cf98540fb71992e635fe21fc92b140e67fbfeb8304680e"
       }
     ],
     "ledgerEntries": [
       {
-        "entry_id": "le-7c714a7ec388f5ec8006f9c696a7f1274d35acc7e6ceacc41c54f3debb723b94",
-        "ledger_transaction_id": "ltx-5ba6dd5d8d3916311e2dce34c73687905e1e92954a92895378b1ae9dca44d0be",
+        "entry_id": "le-3e9762c4c381b8e688778e26128d38fe77fb43120ea835f14fe0ace44c067269",
+        "ledger_transaction_id": "ltx-06d509c3446672e77af80d8ccf26e2d00e60c200802760d054c65151dfba2872",
         "account_id": "correction.reversal",
         "account_type": "correction",
         "debit_credit": "debit",
         "amount": 10
       },
       {
-        "entry_id": "le-c1180cf5024c7a91240f17bf68a12f77def89fa9f010a978316d7ed530a19102",
-        "ledger_transaction_id": "ltx-5ba6dd5d8d3916311e2dce34c73687905e1e92954a92895378b1ae9dca44d0be",
+        "entry_id": "le-5eab518f9f101481829c591ded57e0f3b89ed2096da65524367fbc4ae1c6ef31",
+        "ledger_transaction_id": "ltx-06d509c3446672e77af80d8ccf26e2d00e60c200802760d054c65151dfba2872",
         "account_id": "correction.offset",
         "account_type": "correction",
         "debit_credit": "credit",
@@ -94,33 +94,33 @@
     ],
     "evidenceTrace": [
       {
-        "evidenceId": "ev-d1-oam03-mpvp12ry-dorm-live-rollback-rollback-drill",
+        "evidenceId": "ev-d1-oam03-mpwjfnm1-dorm-live-rollback-rollback-drill",
         "status": "verified",
         "trustedEvidenceObject": true
       }
     ],
     "factTrace": {
-      "traceId": "trace-cmd-2d54966b13d07e4e17da7adb47f7c8ade7f97cebaae5d021baa28797d16343ab",
-      "submissionRef": "cmd-2d54966b13d07e4e17da7adb47f7c8ade7f97cebaae5d021baa28797d16343ab",
+      "traceId": "trace-cmd-0d57b7a00693c20e04cf98540fb71992e635fe21fc92b140e67fbfeb8304680e",
+      "submissionRef": "cmd-0d57b7a00693c20e04cf98540fb71992e635fe21fc92b140e67fbfeb8304680e",
       "domainEventRefs": [
-        "evt-da68d886efb757f79b8f4eac29509485c7637ea5b7aa000d8a43dd3a562f898c"
+        "evt-e396865891985d9f112cebe05596883a7faf7e3c3bf0e883e7ccaf4cdd1d5379"
       ],
       "ledgerTransactionRefs": [
-        "ltx-5ba6dd5d8d3916311e2dce34c73687905e1e92954a92895378b1ae9dca44d0be"
+        "ltx-06d509c3446672e77af80d8ccf26e2d00e60c200802760d054c65151dfba2872"
       ],
       "ledgerEntryRefs": [
-        "le-7c714a7ec388f5ec8006f9c696a7f1274d35acc7e6ceacc41c54f3debb723b94",
-        "le-c1180cf5024c7a91240f17bf68a12f77def89fa9f010a978316d7ed530a19102"
+        "le-3e9762c4c381b8e688778e26128d38fe77fb43120ea835f14fe0ace44c067269",
+        "le-5eab518f9f101481829c591ded57e0f3b89ed2096da65524367fbc4ae1c6ef31"
       ]
     },
     "lensOutputs": [
       {
         "lensId": "deposit-liability",
-        "rowCount": 0
+        "rowCount": 4
       },
       {
         "lensId": "stay-balance",
-        "rowCount": 0
+        "rowCount": 2
       }
     ],
     "noDuplicateSideEffect": true,
@@ -132,6 +132,12 @@
   "apiCallsExecuted": [
     {
       "method": "POST",
+      "path": "/api/auth/login",
+      "contractPath": "/api/auth/login",
+      "statusCode": 200
+    },
+    {
+      "method": "POST",
       "path": "/api/operations/cases",
       "contractPath": "/api/operations/cases",
       "statusCode": 200
@@ -144,7 +150,7 @@
     },
     {
       "method": "POST",
-      "path": "/api/operations/work-items/wi-d1-oam03-mpvp12ry-dorm-live-001/prepare",
+      "path": "/api/operations/work-items/wi-d1-oam03-mpwjfnm1-dorm-live-001/prepare",
       "contractPath": "/api/operations/work-items/{workItemId}/prepare",
       "statusCode": 200
     },
@@ -156,13 +162,13 @@
     },
     {
       "method": "POST",
-      "path": "/api/evidence/ev-d1-oam03-mpvp12ry-dorm-live-001-room-duplicate-check/attachments",
+      "path": "/api/evidence/ev-d1-oam03-mpwjfnm1-dorm-live-001-room-duplicate-check/attachments",
       "contractPath": "/api/evidence/{evidenceId}/attachments",
       "statusCode": 200
     },
     {
       "method": "POST",
-      "path": "/api/evidence/ev-d1-oam03-mpvp12ry-dorm-live-001-room-duplicate-check/verify",
+      "path": "/api/evidence/ev-d1-oam03-mpwjfnm1-dorm-live-001-room-duplicate-check/verify",
       "contractPath": "/api/evidence/{evidenceId}/verify",
       "statusCode": 200
     },
@@ -174,37 +180,37 @@
     },
     {
       "method": "POST",
-      "path": "/api/evidence/ev-d1-oam03-mpvp12ry-dorm-live-001-operator-record/attachments",
+      "path": "/api/evidence/ev-d1-oam03-mpwjfnm1-dorm-live-001-operator-record/attachments",
       "contractPath": "/api/evidence/{evidenceId}/attachments",
       "statusCode": 200
     },
     {
       "method": "POST",
-      "path": "/api/evidence/ev-d1-oam03-mpvp12ry-dorm-live-001-operator-record/verify",
+      "path": "/api/evidence/ev-d1-oam03-mpwjfnm1-dorm-live-001-operator-record/verify",
       "contractPath": "/api/evidence/{evidenceId}/verify",
       "statusCode": 200
     },
     {
       "method": "POST",
-      "path": "/api/operations/work-items/wi-d1-oam03-mpvp12ry-dorm-live-001/confirm",
+      "path": "/api/operations/work-items/wi-d1-oam03-mpwjfnm1-dorm-live-001/confirm",
       "contractPath": "/api/operations/work-items/{workItemId}/confirm",
       "statusCode": 200
     },
     {
       "method": "GET",
-      "path": "/api/operations/trace/submissions/cmd-9a0a0d431bf9eb85353ed254b103b90a71034311a017718cffb6157b854501cf",
+      "path": "/api/operations/trace/submissions/cmd-6662316ef908adaaa0ca4e3145be867e6058061d6742b8c1d1212834a155e1b8",
       "contractPath": "/api/operations/trace/submissions/{submissionId}",
       "statusCode": 200
     },
     {
       "method": "GET",
-      "path": "/api/operations/trace/work-items/wi-d1-oam03-mpvp12ry-dorm-live-001",
+      "path": "/api/operations/trace/work-items/wi-d1-oam03-mpwjfnm1-dorm-live-001",
       "contractPath": "/api/operations/trace/work-items/{workItemId}",
       "statusCode": 200
     },
     {
       "method": "GET",
-      "path": "/api/operations/trace/cases/case-d1-oam03-mpvp12ry-dorm-live-001",
+      "path": "/api/operations/trace/cases/case-d1-oam03-mpwjfnm1-dorm-live-001",
       "contractPath": "/api/operations/trace/cases/{caseId}",
       "statusCode": 200
     },
@@ -234,7 +240,7 @@
     },
     {
       "method": "POST",
-      "path": "/api/operations/work-items/wi-d1-oam03-mpvp12ry-dorm-live-002/prepare",
+      "path": "/api/operations/work-items/wi-d1-oam03-mpwjfnm1-dorm-live-002/prepare",
       "contractPath": "/api/operations/work-items/{workItemId}/prepare",
       "statusCode": 200
     },
@@ -246,13 +252,13 @@
     },
     {
       "method": "POST",
-      "path": "/api/evidence/ev-d1-oam03-mpvp12ry-dorm-live-002-payment-proof/attachments",
+      "path": "/api/evidence/ev-d1-oam03-mpwjfnm1-dorm-live-002-payment-proof/attachments",
       "contractPath": "/api/evidence/{evidenceId}/attachments",
       "statusCode": 200
     },
     {
       "method": "POST",
-      "path": "/api/evidence/ev-d1-oam03-mpvp12ry-dorm-live-002-payment-proof/verify",
+      "path": "/api/evidence/ev-d1-oam03-mpwjfnm1-dorm-live-002-payment-proof/verify",
       "contractPath": "/api/evidence/{evidenceId}/verify",
       "statusCode": 200
     },
@@ -264,37 +270,37 @@
     },
     {
       "method": "POST",
-      "path": "/api/evidence/ev-d1-oam03-mpvp12ry-dorm-live-002-finance-receipt/attachments",
+      "path": "/api/evidence/ev-d1-oam03-mpwjfnm1-dorm-live-002-finance-receipt/attachments",
       "contractPath": "/api/evidence/{evidenceId}/attachments",
       "statusCode": 200
     },
     {
       "method": "POST",
-      "path": "/api/evidence/ev-d1-oam03-mpvp12ry-dorm-live-002-finance-receipt/verify",
+      "path": "/api/evidence/ev-d1-oam03-mpwjfnm1-dorm-live-002-finance-receipt/verify",
       "contractPath": "/api/evidence/{evidenceId}/verify",
       "statusCode": 200
     },
     {
       "method": "POST",
-      "path": "/api/operations/work-items/wi-d1-oam03-mpvp12ry-dorm-live-002/confirm",
+      "path": "/api/operations/work-items/wi-d1-oam03-mpwjfnm1-dorm-live-002/confirm",
       "contractPath": "/api/operations/work-items/{workItemId}/confirm",
       "statusCode": 200
     },
     {
       "method": "GET",
-      "path": "/api/operations/trace/submissions/cmd-dc8aa9134cf30afa1b0ac39a2db78bdf4e1133bc4c5370ed8fdb7d70b95b2e4f",
+      "path": "/api/operations/trace/submissions/cmd-385958ddcd4eb2a1ad6b44aa98cefc4171f544bb5615b648d176f0c4aa14567f",
       "contractPath": "/api/operations/trace/submissions/{submissionId}",
       "statusCode": 200
     },
     {
       "method": "GET",
-      "path": "/api/operations/trace/work-items/wi-d1-oam03-mpvp12ry-dorm-live-002",
+      "path": "/api/operations/trace/work-items/wi-d1-oam03-mpwjfnm1-dorm-live-002",
       "contractPath": "/api/operations/trace/work-items/{workItemId}",
       "statusCode": 200
     },
     {
       "method": "GET",
-      "path": "/api/operations/trace/cases/case-d1-oam03-mpvp12ry-dorm-live-002",
+      "path": "/api/operations/trace/cases/case-d1-oam03-mpwjfnm1-dorm-live-002",
       "contractPath": "/api/operations/trace/cases/{caseId}",
       "statusCode": 200
     },
@@ -324,7 +330,7 @@
     },
     {
       "method": "POST",
-      "path": "/api/operations/work-items/wi-d1-oam03-mpvp12ry-dorm-live-003/prepare",
+      "path": "/api/operations/work-items/wi-d1-oam03-mpwjfnm1-dorm-live-003/prepare",
       "contractPath": "/api/operations/work-items/{workItemId}/prepare",
       "statusCode": 200
     },
@@ -336,37 +342,37 @@
     },
     {
       "method": "POST",
-      "path": "/api/evidence/ev-d1-oam03-mpvp12ry-dorm-live-003-bank-or-cash-proof/attachments",
+      "path": "/api/evidence/ev-d1-oam03-mpwjfnm1-dorm-live-003-bank-or-cash-proof/attachments",
       "contractPath": "/api/evidence/{evidenceId}/attachments",
       "statusCode": 200
     },
     {
       "method": "POST",
-      "path": "/api/evidence/ev-d1-oam03-mpvp12ry-dorm-live-003-bank-or-cash-proof/verify",
+      "path": "/api/evidence/ev-d1-oam03-mpwjfnm1-dorm-live-003-bank-or-cash-proof/verify",
       "contractPath": "/api/evidence/{evidenceId}/verify",
       "statusCode": 200
     },
     {
       "method": "POST",
-      "path": "/api/operations/work-items/wi-d1-oam03-mpvp12ry-dorm-live-003/confirm",
+      "path": "/api/operations/work-items/wi-d1-oam03-mpwjfnm1-dorm-live-003/confirm",
       "contractPath": "/api/operations/work-items/{workItemId}/confirm",
       "statusCode": 200
     },
     {
       "method": "GET",
-      "path": "/api/operations/trace/submissions/cmd-49dc9d8b703aa2af1b2cf1487df939d628f9320b2a058ab5242776df1eea00a2",
+      "path": "/api/operations/trace/submissions/cmd-b678b1c4e8a73508e443512a531418a3b8c9d8e92d65a8e360a749c374bee1f8",
       "contractPath": "/api/operations/trace/submissions/{submissionId}",
       "statusCode": 200
     },
     {
       "method": "GET",
-      "path": "/api/operations/trace/work-items/wi-d1-oam03-mpvp12ry-dorm-live-003",
+      "path": "/api/operations/trace/work-items/wi-d1-oam03-mpwjfnm1-dorm-live-003",
       "contractPath": "/api/operations/trace/work-items/{workItemId}",
       "statusCode": 200
     },
     {
       "method": "GET",
-      "path": "/api/operations/trace/cases/case-d1-oam03-mpvp12ry-dorm-live-003",
+      "path": "/api/operations/trace/cases/case-d1-oam03-mpwjfnm1-dorm-live-003",
       "contractPath": "/api/operations/trace/cases/{caseId}",
       "statusCode": 200
     },
@@ -396,7 +402,7 @@
     },
     {
       "method": "POST",
-      "path": "/api/operations/work-items/wi-d1-oam03-mpvp12ry-dorm-live-004/prepare",
+      "path": "/api/operations/work-items/wi-d1-oam03-mpwjfnm1-dorm-live-004/prepare",
       "contractPath": "/api/operations/work-items/{workItemId}/prepare",
       "statusCode": 200
     },
@@ -408,37 +414,37 @@
     },
     {
       "method": "POST",
-      "path": "/api/evidence/ev-d1-oam03-mpvp12ry-dorm-live-004-task-completion-photo/attachments",
+      "path": "/api/evidence/ev-d1-oam03-mpwjfnm1-dorm-live-004-task-completion-photo/attachments",
       "contractPath": "/api/evidence/{evidenceId}/attachments",
       "statusCode": 200
     },
     {
       "method": "POST",
-      "path": "/api/evidence/ev-d1-oam03-mpvp12ry-dorm-live-004-task-completion-photo/verify",
+      "path": "/api/evidence/ev-d1-oam03-mpwjfnm1-dorm-live-004-task-completion-photo/verify",
       "contractPath": "/api/evidence/{evidenceId}/verify",
       "statusCode": 200
     },
     {
       "method": "POST",
-      "path": "/api/operations/work-items/wi-d1-oam03-mpvp12ry-dorm-live-004/confirm",
+      "path": "/api/operations/work-items/wi-d1-oam03-mpwjfnm1-dorm-live-004/confirm",
       "contractPath": "/api/operations/work-items/{workItemId}/confirm",
       "statusCode": 200
     },
     {
       "method": "GET",
-      "path": "/api/operations/trace/submissions/cmd-b5586322c5d797c46827dfc9b110afbf735d239ee6b2a0279b9e4b4d51834fda",
+      "path": "/api/operations/trace/submissions/cmd-bfd54d52bd1c545b7b47a7914356b6bb7743a7e8c18fbd336c58f182f4ace2a7",
       "contractPath": "/api/operations/trace/submissions/{submissionId}",
       "statusCode": 200
     },
     {
       "method": "GET",
-      "path": "/api/operations/trace/work-items/wi-d1-oam03-mpvp12ry-dorm-live-004",
+      "path": "/api/operations/trace/work-items/wi-d1-oam03-mpwjfnm1-dorm-live-004",
       "contractPath": "/api/operations/trace/work-items/{workItemId}",
       "statusCode": 200
     },
     {
       "method": "GET",
-      "path": "/api/operations/trace/cases/case-d1-oam03-mpvp12ry-dorm-live-004",
+      "path": "/api/operations/trace/cases/case-d1-oam03-mpwjfnm1-dorm-live-004",
       "contractPath": "/api/operations/trace/cases/{caseId}",
       "statusCode": 200
     },
@@ -468,7 +474,7 @@
     },
     {
       "method": "POST",
-      "path": "/api/operations/work-items/wi-d1-oam03-mpvp12ry-dorm-live-005/prepare",
+      "path": "/api/operations/work-items/wi-d1-oam03-mpwjfnm1-dorm-live-005/prepare",
       "contractPath": "/api/operations/work-items/{workItemId}/prepare",
       "statusCode": 200
     },
@@ -480,13 +486,13 @@
     },
     {
       "method": "POST",
-      "path": "/api/evidence/ev-d1-oam03-mpvp12ry-dorm-live-005-refund-request/attachments",
+      "path": "/api/evidence/ev-d1-oam03-mpwjfnm1-dorm-live-005-refund-request/attachments",
       "contractPath": "/api/evidence/{evidenceId}/attachments",
       "statusCode": 200
     },
     {
       "method": "POST",
-      "path": "/api/evidence/ev-d1-oam03-mpvp12ry-dorm-live-005-refund-request/verify",
+      "path": "/api/evidence/ev-d1-oam03-mpwjfnm1-dorm-live-005-refund-request/verify",
       "contractPath": "/api/evidence/{evidenceId}/verify",
       "statusCode": 200
     },
@@ -498,37 +504,37 @@
     },
     {
       "method": "POST",
-      "path": "/api/evidence/ev-d1-oam03-mpvp12ry-dorm-live-005-manager-approval/attachments",
+      "path": "/api/evidence/ev-d1-oam03-mpwjfnm1-dorm-live-005-manager-approval/attachments",
       "contractPath": "/api/evidence/{evidenceId}/attachments",
       "statusCode": 200
     },
     {
       "method": "POST",
-      "path": "/api/evidence/ev-d1-oam03-mpvp12ry-dorm-live-005-manager-approval/verify",
+      "path": "/api/evidence/ev-d1-oam03-mpwjfnm1-dorm-live-005-manager-approval/verify",
       "contractPath": "/api/evidence/{evidenceId}/verify",
       "statusCode": 200
     },
     {
       "method": "POST",
-      "path": "/api/operations/work-items/wi-d1-oam03-mpvp12ry-dorm-live-005/confirm",
+      "path": "/api/operations/work-items/wi-d1-oam03-mpwjfnm1-dorm-live-005/confirm",
       "contractPath": "/api/operations/work-items/{workItemId}/confirm",
       "statusCode": 200
     },
     {
       "method": "GET",
-      "path": "/api/operations/trace/submissions/cmd-943067851ced3f016e016056e9664b4d0ffae2178bbe0b40848b1e08eb879bc4",
+      "path": "/api/operations/trace/submissions/cmd-f31cb489489acd14b19437efbf4f89085d25039086e1445031991e1c77697c9d",
       "contractPath": "/api/operations/trace/submissions/{submissionId}",
       "statusCode": 200
     },
     {
       "method": "GET",
-      "path": "/api/operations/trace/work-items/wi-d1-oam03-mpvp12ry-dorm-live-005",
+      "path": "/api/operations/trace/work-items/wi-d1-oam03-mpwjfnm1-dorm-live-005",
       "contractPath": "/api/operations/trace/work-items/{workItemId}",
       "statusCode": 200
     },
     {
       "method": "GET",
-      "path": "/api/operations/trace/cases/case-d1-oam03-mpvp12ry-dorm-live-005",
+      "path": "/api/operations/trace/cases/case-d1-oam03-mpwjfnm1-dorm-live-005",
       "contractPath": "/api/operations/trace/cases/{caseId}",
       "statusCode": 200
     },
@@ -558,7 +564,7 @@
     },
     {
       "method": "POST",
-      "path": "/api/operations/work-items/wi-d1-oam03-mpvp12ry-dorm-live-006/prepare",
+      "path": "/api/operations/work-items/wi-d1-oam03-mpwjfnm1-dorm-live-006/prepare",
       "contractPath": "/api/operations/work-items/{workItemId}/prepare",
       "statusCode": 200
     },
@@ -570,13 +576,13 @@
     },
     {
       "method": "POST",
-      "path": "/api/evidence/ev-d1-oam03-mpvp12ry-dorm-live-006-exception-note/attachments",
+      "path": "/api/evidence/ev-d1-oam03-mpwjfnm1-dorm-live-006-exception-note/attachments",
       "contractPath": "/api/evidence/{evidenceId}/attachments",
       "statusCode": 200
     },
     {
       "method": "POST",
-      "path": "/api/evidence/ev-d1-oam03-mpvp12ry-dorm-live-006-exception-note/verify",
+      "path": "/api/evidence/ev-d1-oam03-mpwjfnm1-dorm-live-006-exception-note/verify",
       "contractPath": "/api/evidence/{evidenceId}/verify",
       "statusCode": 200
     },
@@ -588,37 +594,37 @@
     },
     {
       "method": "POST",
-      "path": "/api/evidence/ev-d1-oam03-mpvp12ry-dorm-live-006-owner-assignment/attachments",
+      "path": "/api/evidence/ev-d1-oam03-mpwjfnm1-dorm-live-006-owner-assignment/attachments",
       "contractPath": "/api/evidence/{evidenceId}/attachments",
       "statusCode": 200
     },
     {
       "method": "POST",
-      "path": "/api/evidence/ev-d1-oam03-mpvp12ry-dorm-live-006-owner-assignment/verify",
+      "path": "/api/evidence/ev-d1-oam03-mpwjfnm1-dorm-live-006-owner-assignment/verify",
       "contractPath": "/api/evidence/{evidenceId}/verify",
       "statusCode": 200
     },
     {
       "method": "POST",
-      "path": "/api/operations/work-items/wi-d1-oam03-mpvp12ry-dorm-live-006/confirm",
+      "path": "/api/operations/work-items/wi-d1-oam03-mpwjfnm1-dorm-live-006/confirm",
       "contractPath": "/api/operations/work-items/{workItemId}/confirm",
       "statusCode": 200
     },
     {
       "method": "GET",
-      "path": "/api/operations/trace/submissions/cmd-1a0086678491ce0b93dcbb38a4f682cddf005a3fcda57d26c889f3ad02c6d969",
+      "path": "/api/operations/trace/submissions/cmd-7812aab7776f4d50f0e2e469546eb787a4b7be2bcbe0e7ece4338dbf6b47abe3",
       "contractPath": "/api/operations/trace/submissions/{submissionId}",
       "statusCode": 200
     },
     {
       "method": "GET",
-      "path": "/api/operations/trace/work-items/wi-d1-oam03-mpvp12ry-dorm-live-006",
+      "path": "/api/operations/trace/work-items/wi-d1-oam03-mpwjfnm1-dorm-live-006",
       "contractPath": "/api/operations/trace/work-items/{workItemId}",
       "statusCode": 200
     },
     {
       "method": "GET",
-      "path": "/api/operations/trace/cases/case-d1-oam03-mpvp12ry-dorm-live-006",
+      "path": "/api/operations/trace/cases/case-d1-oam03-mpwjfnm1-dorm-live-006",
       "contractPath": "/api/operations/trace/cases/{caseId}",
       "statusCode": 200
     },
@@ -648,7 +654,7 @@
     },
     {
       "method": "POST",
-      "path": "/api/operations/work-items/wi-d1-oam03-mpvp12ry-dorm-live-007/prepare",
+      "path": "/api/operations/work-items/wi-d1-oam03-mpwjfnm1-dorm-live-007/prepare",
       "contractPath": "/api/operations/work-items/{workItemId}/prepare",
       "statusCode": 200
     },
@@ -660,37 +666,37 @@
     },
     {
       "method": "POST",
-      "path": "/api/evidence/ev-d1-oam03-mpvp12ry-dorm-live-007-period-review-pack/attachments",
+      "path": "/api/evidence/ev-d1-oam03-mpwjfnm1-dorm-live-007-period-review-pack/attachments",
       "contractPath": "/api/evidence/{evidenceId}/attachments",
       "statusCode": 200
     },
     {
       "method": "POST",
-      "path": "/api/evidence/ev-d1-oam03-mpvp12ry-dorm-live-007-period-review-pack/verify",
+      "path": "/api/evidence/ev-d1-oam03-mpwjfnm1-dorm-live-007-period-review-pack/verify",
       "contractPath": "/api/evidence/{evidenceId}/verify",
       "statusCode": 200
     },
     {
       "method": "POST",
-      "path": "/api/operations/work-items/wi-d1-oam03-mpvp12ry-dorm-live-007/confirm",
+      "path": "/api/operations/work-items/wi-d1-oam03-mpwjfnm1-dorm-live-007/confirm",
       "contractPath": "/api/operations/work-items/{workItemId}/confirm",
       "statusCode": 200
     },
     {
       "method": "GET",
-      "path": "/api/operations/trace/submissions/cmd-d120a9487dae67f0f9af2b064014d0ee32b03adaf43da8dcfab16e98d9452b3f",
+      "path": "/api/operations/trace/submissions/cmd-ecdcd423d626d1d6fa0af470889a1a01dcb1d12dba21ed835fe355df5d6f1e2c",
       "contractPath": "/api/operations/trace/submissions/{submissionId}",
       "statusCode": 200
     },
     {
       "method": "GET",
-      "path": "/api/operations/trace/work-items/wi-d1-oam03-mpvp12ry-dorm-live-007",
+      "path": "/api/operations/trace/work-items/wi-d1-oam03-mpwjfnm1-dorm-live-007",
       "contractPath": "/api/operations/trace/work-items/{workItemId}",
       "statusCode": 200
     },
     {
       "method": "GET",
-      "path": "/api/operations/trace/cases/case-d1-oam03-mpvp12ry-dorm-live-007",
+      "path": "/api/operations/trace/cases/case-d1-oam03-mpwjfnm1-dorm-live-007",
       "contractPath": "/api/operations/trace/cases/{caseId}",
       "statusCode": 200
     },
@@ -720,31 +726,31 @@
     },
     {
       "method": "POST",
-      "path": "/api/operations/work-items/wi-d1-oam03-mpvp12ry-dorm-live-008/prepare",
+      "path": "/api/operations/work-items/wi-d1-oam03-mpwjfnm1-dorm-live-008/prepare",
       "contractPath": "/api/operations/work-items/{workItemId}/prepare",
       "statusCode": 200
     },
     {
       "method": "POST",
-      "path": "/api/operations/work-items/wi-d1-oam03-mpvp12ry-dorm-live-008/confirm",
+      "path": "/api/operations/work-items/wi-d1-oam03-mpwjfnm1-dorm-live-008/confirm",
       "contractPath": "/api/operations/work-items/{workItemId}/confirm",
       "statusCode": 403
     },
     {
       "method": "GET",
-      "path": "/api/operations/trace/submissions/cmd-1bcf6628529e2f09c30710130c93b660cb1a759ba554e6765b2950582a3d763e",
+      "path": "/api/operations/trace/submissions/cmd-4af5a4b9318f8d1d640b7066f4a46c2728157bc0d5fe2dca1ea8f4b474ba8e70",
       "contractPath": "/api/operations/trace/submissions/{submissionId}",
       "statusCode": 200
     },
     {
       "method": "GET",
-      "path": "/api/operations/trace/work-items/wi-d1-oam03-mpvp12ry-dorm-live-008",
+      "path": "/api/operations/trace/work-items/wi-d1-oam03-mpwjfnm1-dorm-live-008",
       "contractPath": "/api/operations/trace/work-items/{workItemId}",
       "statusCode": 200
     },
     {
       "method": "GET",
-      "path": "/api/operations/trace/cases/case-d1-oam03-mpvp12ry-dorm-live-008",
+      "path": "/api/operations/trace/cases/case-d1-oam03-mpwjfnm1-dorm-live-008",
       "contractPath": "/api/operations/trace/cases/{caseId}",
       "statusCode": 200
     },
@@ -774,7 +780,7 @@
     },
     {
       "method": "POST",
-      "path": "/api/operations/work-items/wi-d1-oam03-mpvp12ry-dorm-live-009/prepare",
+      "path": "/api/operations/work-items/wi-d1-oam03-mpwjfnm1-dorm-live-009/prepare",
       "contractPath": "/api/operations/work-items/{workItemId}/prepare",
       "statusCode": 200
     },
@@ -786,43 +792,43 @@
     },
     {
       "method": "POST",
-      "path": "/api/evidence/ev-d1-oam03-mpvp12ry-dorm-live-009-bank-or-cash-proof/attachments",
+      "path": "/api/evidence/ev-d1-oam03-mpwjfnm1-dorm-live-009-bank-or-cash-proof/attachments",
       "contractPath": "/api/evidence/{evidenceId}/attachments",
       "statusCode": 200
     },
     {
       "method": "POST",
-      "path": "/api/evidence/ev-d1-oam03-mpvp12ry-dorm-live-009-bank-or-cash-proof/verify",
+      "path": "/api/evidence/ev-d1-oam03-mpwjfnm1-dorm-live-009-bank-or-cash-proof/verify",
       "contractPath": "/api/evidence/{evidenceId}/verify",
       "statusCode": 200
     },
     {
       "method": "POST",
-      "path": "/api/operations/work-items/wi-d1-oam03-mpvp12ry-dorm-live-009/confirm",
+      "path": "/api/operations/work-items/wi-d1-oam03-mpwjfnm1-dorm-live-009/confirm",
       "contractPath": "/api/operations/work-items/{workItemId}/confirm",
       "statusCode": 200
     },
     {
       "method": "POST",
-      "path": "/api/operations/work-items/wi-d1-oam03-mpvp12ry-dorm-live-009/confirm",
+      "path": "/api/operations/work-items/wi-d1-oam03-mpwjfnm1-dorm-live-009/confirm",
       "contractPath": "/api/operations/work-items/{workItemId}/confirm",
       "statusCode": 409
     },
     {
       "method": "GET",
-      "path": "/api/operations/trace/submissions/cmd-a9c237460840f850555cf4b46b32280872bbb55f16d01f12b55d2489db1cb623",
+      "path": "/api/operations/trace/submissions/cmd-b632a1368a79d60b30b070669e52a15cc2e2cfa12826cfce4253237b206e9d57",
       "contractPath": "/api/operations/trace/submissions/{submissionId}",
       "statusCode": 200
     },
     {
       "method": "GET",
-      "path": "/api/operations/trace/work-items/wi-d1-oam03-mpvp12ry-dorm-live-009",
+      "path": "/api/operations/trace/work-items/wi-d1-oam03-mpwjfnm1-dorm-live-009",
       "contractPath": "/api/operations/trace/work-items/{workItemId}",
       "statusCode": 200
     },
     {
       "method": "GET",
-      "path": "/api/operations/trace/cases/case-d1-oam03-mpvp12ry-dorm-live-009",
+      "path": "/api/operations/trace/cases/case-d1-oam03-mpwjfnm1-dorm-live-009",
       "contractPath": "/api/operations/trace/cases/{caseId}",
       "statusCode": 200
     },
@@ -852,31 +858,31 @@
     },
     {
       "method": "POST",
-      "path": "/api/operations/work-items/wi-d1-oam03-mpvp12ry-dorm-live-010/prepare",
+      "path": "/api/operations/work-items/wi-d1-oam03-mpwjfnm1-dorm-live-010/prepare",
       "contractPath": "/api/operations/work-items/{workItemId}/prepare",
       "statusCode": 200
     },
     {
       "method": "POST",
-      "path": "/api/operations/work-items/wi-d1-oam03-mpvp12ry-dorm-live-010/confirm",
+      "path": "/api/operations/work-items/wi-d1-oam03-mpwjfnm1-dorm-live-010/confirm",
       "contractPath": "/api/operations/work-items/{workItemId}/confirm",
       "statusCode": 422
     },
     {
       "method": "GET",
-      "path": "/api/operations/trace/submissions/cmd-6d96d7623f2b04fb82ad31a583653b096855159414801facbf6bd3897069c9a5",
+      "path": "/api/operations/trace/submissions/cmd-a4e950c3e5df37b65b8236a5816fa82ebfc9e9b80e982c78df43484f7894da99",
       "contractPath": "/api/operations/trace/submissions/{submissionId}",
       "statusCode": 200
     },
     {
       "method": "GET",
-      "path": "/api/operations/trace/work-items/wi-d1-oam03-mpvp12ry-dorm-live-010",
+      "path": "/api/operations/trace/work-items/wi-d1-oam03-mpwjfnm1-dorm-live-010",
       "contractPath": "/api/operations/trace/work-items/{workItemId}",
       "statusCode": 200
     },
     {
       "method": "GET",
-      "path": "/api/operations/trace/cases/case-d1-oam03-mpvp12ry-dorm-live-010",
+      "path": "/api/operations/trace/cases/case-d1-oam03-mpwjfnm1-dorm-live-010",
       "contractPath": "/api/operations/trace/cases/{caseId}",
       "statusCode": 200
     },
@@ -888,13 +894,13 @@
     },
     {
       "method": "POST",
-      "path": "/api/evidence/ev-d1-oam03-mpvp12ry-dorm-live-010-payment-proof/attachments",
+      "path": "/api/evidence/ev-d1-oam03-mpwjfnm1-dorm-live-010-payment-proof/attachments",
       "contractPath": "/api/evidence/{evidenceId}/attachments",
       "statusCode": 200
     },
     {
       "method": "POST",
-      "path": "/api/evidence/ev-d1-oam03-mpvp12ry-dorm-live-010-payment-proof/verify",
+      "path": "/api/evidence/ev-d1-oam03-mpwjfnm1-dorm-live-010-payment-proof/verify",
       "contractPath": "/api/evidence/{evidenceId}/verify",
       "statusCode": 200
     },
@@ -906,37 +912,37 @@
     },
     {
       "method": "POST",
-      "path": "/api/evidence/ev-d1-oam03-mpvp12ry-dorm-live-010-finance-receipt/attachments",
+      "path": "/api/evidence/ev-d1-oam03-mpwjfnm1-dorm-live-010-finance-receipt/attachments",
       "contractPath": "/api/evidence/{evidenceId}/attachments",
       "statusCode": 200
     },
     {
       "method": "POST",
-      "path": "/api/evidence/ev-d1-oam03-mpvp12ry-dorm-live-010-finance-receipt/verify",
+      "path": "/api/evidence/ev-d1-oam03-mpwjfnm1-dorm-live-010-finance-receipt/verify",
       "contractPath": "/api/evidence/{evidenceId}/verify",
       "statusCode": 200
     },
     {
       "method": "POST",
-      "path": "/api/operations/work-items/wi-d1-oam03-mpvp12ry-dorm-live-010/confirm",
+      "path": "/api/operations/work-items/wi-d1-oam03-mpwjfnm1-dorm-live-010/confirm",
       "contractPath": "/api/operations/work-items/{workItemId}/confirm",
       "statusCode": 200
     },
     {
       "method": "GET",
-      "path": "/api/operations/trace/submissions/cmd-6a57b41540d4ae0e4ecbabf539ac72d944e48148bf25c06600d9df177ddc8102",
+      "path": "/api/operations/trace/submissions/cmd-afee99a517c0e6552b1e13a220cc4223f04b1897d27ca4168f109d87944322a7",
       "contractPath": "/api/operations/trace/submissions/{submissionId}",
       "statusCode": 200
     },
     {
       "method": "GET",
-      "path": "/api/operations/trace/work-items/wi-d1-oam03-mpvp12ry-dorm-live-010",
+      "path": "/api/operations/trace/work-items/wi-d1-oam03-mpwjfnm1-dorm-live-010",
       "contractPath": "/api/operations/trace/work-items/{workItemId}",
       "statusCode": 200
     },
     {
       "method": "GET",
-      "path": "/api/operations/trace/cases/case-d1-oam03-mpvp12ry-dorm-live-010",
+      "path": "/api/operations/trace/cases/case-d1-oam03-mpwjfnm1-dorm-live-010",
       "contractPath": "/api/operations/trace/cases/{caseId}",
       "statusCode": 200
     },
@@ -966,7 +972,7 @@
     },
     {
       "method": "POST",
-      "path": "/api/operations/work-items/wi-d1-oam03-mpvp12ry-dorm-live-rollback/prepare",
+      "path": "/api/operations/work-items/wi-d1-oam03-mpwjfnm1-dorm-live-rollback/prepare",
       "contractPath": "/api/operations/work-items/{workItemId}/prepare",
       "statusCode": 200
     },
@@ -978,37 +984,37 @@
     },
     {
       "method": "POST",
-      "path": "/api/evidence/ev-d1-oam03-mpvp12ry-dorm-live-rollback-rollback-drill/attachments",
+      "path": "/api/evidence/ev-d1-oam03-mpwjfnm1-dorm-live-rollback-rollback-drill/attachments",
       "contractPath": "/api/evidence/{evidenceId}/attachments",
       "statusCode": 200
     },
     {
       "method": "POST",
-      "path": "/api/evidence/ev-d1-oam03-mpvp12ry-dorm-live-rollback-rollback-drill/verify",
+      "path": "/api/evidence/ev-d1-oam03-mpwjfnm1-dorm-live-rollback-rollback-drill/verify",
       "contractPath": "/api/evidence/{evidenceId}/verify",
       "statusCode": 200
     },
     {
       "method": "POST",
-      "path": "/api/operations/work-items/wi-d1-oam03-mpvp12ry-dorm-live-rollback/confirm",
+      "path": "/api/operations/work-items/wi-d1-oam03-mpwjfnm1-dorm-live-rollback/confirm",
       "contractPath": "/api/operations/work-items/{workItemId}/confirm",
       "statusCode": 200
     },
     {
       "method": "GET",
-      "path": "/api/operations/trace/submissions/cmd-2d54966b13d07e4e17da7adb47f7c8ade7f97cebaae5d021baa28797d16343ab",
+      "path": "/api/operations/trace/submissions/cmd-0d57b7a00693c20e04cf98540fb71992e635fe21fc92b140e67fbfeb8304680e",
       "contractPath": "/api/operations/trace/submissions/{submissionId}",
       "statusCode": 200
     },
     {
       "method": "GET",
-      "path": "/api/operations/trace/work-items/wi-d1-oam03-mpvp12ry-dorm-live-rollback",
+      "path": "/api/operations/trace/work-items/wi-d1-oam03-mpwjfnm1-dorm-live-rollback",
       "contractPath": "/api/operations/trace/work-items/{workItemId}",
       "statusCode": 200
     },
     {
       "method": "GET",
-      "path": "/api/operations/trace/cases/case-d1-oam03-mpvp12ry-dorm-live-rollback",
+      "path": "/api/operations/trace/cases/case-d1-oam03-mpwjfnm1-dorm-live-rollback",
       "contractPath": "/api/operations/trace/cases/{caseId}",
       "statusCode": 200
     },
@@ -1030,54 +1036,54 @@
       "name": "OperationCase",
       "status": "passed",
       "count": 11,
-      "query": "select count(*) from operations_cases where case_id like '%-oam03-mpvp12ry-%'"
+      "query": "select count(*) from operations_cases where case_id like '%-oam03-mpwjfnm1-%'"
     },
     {
       "name": "WorkItem",
       "status": "passed",
       "count": 11,
-      "query": "select count(*) from operations_work_items where work_item_id like '%-oam03-mpvp12ry-%'"
+      "query": "select count(*) from operations_work_items where work_item_id like '%-oam03-mpwjfnm1-%'"
     },
     {
       "name": "CommandSubmission",
       "status": "passed",
       "count": 12,
-      "query": "select count(*) from operations_command_submissions where case_id like '%-oam03-mpvp12ry-%'"
+      "query": "select count(*) from operations_command_submissions where case_id like '%-oam03-mpwjfnm1-%'"
     },
     {
       "name": "RejectedCommandSubmission",
       "status": "passed",
       "count": 2,
-      "query": "select count(*) from operations_command_submissions where case_id like '%-oam03-mpvp12ry-%' and status = 'rejected'"
+      "query": "select count(*) from operations_command_submissions where case_id like '%-oam03-mpwjfnm1-%' and status = 'rejected'"
     },
     {
       "name": "RejectionTrace",
       "status": "passed",
       "count": 2,
-      "query": "select count(*) from operations_command_submissions where case_id like '%-oam03-mpvp12ry-%' and status = 'rejected' and failure_reason is not null and response_status_code in (403,422)"
+      "query": "select count(*) from operations_command_submissions where case_id like '%-oam03-mpwjfnm1-%' and status = 'rejected' and failure_reason is not null and response_status_code in (403,422)"
     },
     {
       "name": "DomainEvent",
       "status": "passed",
       "count": 10,
-      "query": "select count(*) from operations_domain_events where work_item_id like '%-oam03-mpvp12ry-%'"
+      "query": "select count(*) from operations_domain_events where work_item_id like '%-oam03-mpwjfnm1-%'"
     },
     {
       "name": "LedgerTransaction",
       "status": "passed",
       "count": 7,
-      "query": "select count(*) from ledger_transactions where work_item_id like '%-oam03-mpvp12ry-%'"
+      "query": "select count(*) from ledger_transactions where work_item_id like '%-oam03-mpwjfnm1-%'"
     },
     {
       "name": "LedgerEntry",
       "status": "passed",
       "count": 14,
-      "query": "select count(*) from ledger_entries entry join ledger_transactions tx on tx.ledger_transaction_id = entry.ledger_transaction_id where tx.work_item_id like '%-oam03-mpvp12ry-%'"
+      "query": "select count(*) from ledger_entries entry join ledger_transactions tx on tx.ledger_transaction_id = entry.ledger_transaction_id where tx.work_item_id like '%-oam03-mpwjfnm1-%'"
     },
     {
       "name": "ProjectionCheckpoint",
       "status": "passed",
-      "count": 0,
+      "count": 8,
       "query": "select count(*) from projection_checkpoints"
     },
     {
@@ -1090,13 +1096,13 @@
       "name": "EvidenceObject",
       "status": "passed",
       "count": 15,
-      "query": "select count(*) from evidence_objects where evidence_id like 'ev-d1-oam03-mpvp12ry-%'"
+      "query": "select count(*) from evidence_objects where evidence_id like 'ev-d1-oam03-mpwjfnm1-%'"
     },
     {
       "name": "FactTrace",
       "status": "passed",
       "count": 12,
-      "query": "select count(*) from operations_fact_responses response join operations_command_submissions submission on submission.submission_id = response.submission_id where submission.case_id like '%-oam03-mpvp12ry-%'"
+      "query": "select count(*) from operations_fact_responses response join operations_command_submissions submission on submission.submission_id = response.submission_id where submission.case_id like '%-oam03-mpwjfnm1-%'"
     }
   ],
   "scenarios": [
@@ -1107,8 +1113,8 @@
       "status": "passed",
       "workItem": {
         "tenantId": "tenant-dorm-int-001",
-        "caseId": "case-d1-oam03-mpvp12ry-dorm-live-001",
-        "workItemId": "wi-d1-oam03-mpvp12ry-dorm-live-001",
+        "caseId": "case-d1-oam03-mpwjfnm1-dorm-live-001",
+        "workItemId": "wi-d1-oam03-mpwjfnm1-dorm-live-001",
         "workItemType": "roomSetup",
         "ownerRole": "frontdesk",
         "source": "persisted_work_item_runtime_model"
@@ -1120,11 +1126,11 @@
         "confirmed": true,
         "commitStatus": "committed",
         "projectionStatus": "pending",
-        "caseId": "case-d1-oam03-mpvp12ry-dorm-live-001",
-        "workItemId": "wi-d1-oam03-mpvp12ry-dorm-live-001",
-        "submissionId": "sub-d1-oam03-mpvp12ry-dorm-live-001",
+        "caseId": "case-d1-oam03-mpwjfnm1-dorm-live-001",
+        "workItemId": "wi-d1-oam03-mpwjfnm1-dorm-live-001",
+        "submissionId": "sub-d1-oam03-mpwjfnm1-dorm-live-001",
         "resultEventIds": [
-          "evt-d7981a090cd6a5404b407287f916154dfd8c9b99f81c51125dab42ee9a9def21"
+          "evt-ff64ba7a0f8b47013fd537a8d757f0b66954799168d9dce1c9a1e8849a7a3bfb"
         ],
         "userMessage": "Committed through OperationsUnitOfWork.",
         "clientInstruction": {
@@ -1133,43 +1139,43 @@
           "observeOutbox": true
         },
         "source": "operations_unit_of_work",
-        "idempotencyKey": "idem-d1-oam03-mpvp12ry-dorm-live-001",
-        "payloadHash": "sha256:353d9dd8482a52d4b15e9dc35359b5469708f57eb9c981f38d5268df49df0ab3",
-        "commandSubmissionId": "cmd-9a0a0d431bf9eb85353ed254b103b90a71034311a017718cffb6157b854501cf"
+        "idempotencyKey": "idem-d1-oam03-mpwjfnm1-dorm-live-001",
+        "payloadHash": "sha256:5293069e7f54b736bc09ec2ea6828d46e5a068939a94768c7577e5f32616660a",
+        "commandSubmissionId": "cmd-6662316ef908adaaa0ca4e3145be867e6058061d6742b8c1d1212834a155e1b8"
       },
       "commandSubmission": {
-        "submissionId": "cmd-9a0a0d431bf9eb85353ed254b103b90a71034311a017718cffb6157b854501cf",
+        "submissionId": "cmd-6662316ef908adaaa0ca4e3145be867e6058061d6742b8c1d1212834a155e1b8",
         "status": "committed"
       },
       "rejectedCommandSubmission": null,
       "rejectionTrace": null,
       "domainEvents": [
         {
-          "event_id": "evt-d7981a090cd6a5404b407287f916154dfd8c9b99f81c51125dab42ee9a9def21",
+          "event_id": "evt-ff64ba7a0f8b47013fd537a8d757f0b66954799168d9dce1c9a1e8849a7a3bfb",
           "event_type": "OperationsWorkItemConfirmed",
-          "work_item_id": "wi-d1-oam03-mpvp12ry-dorm-live-001",
-          "submission_id": "cmd-9a0a0d431bf9eb85353ed254b103b90a71034311a017718cffb6157b854501cf"
+          "work_item_id": "wi-d1-oam03-mpwjfnm1-dorm-live-001",
+          "submission_id": "cmd-6662316ef908adaaa0ca4e3145be867e6058061d6742b8c1d1212834a155e1b8"
         }
       ],
       "ledgerTransactions": [],
       "ledgerEntries": [],
       "evidenceTrace": [
         {
-          "evidenceId": "ev-d1-oam03-mpvp12ry-dorm-live-001-room-duplicate-check",
+          "evidenceId": "ev-d1-oam03-mpwjfnm1-dorm-live-001-room-duplicate-check",
           "status": "verified",
           "trustedEvidenceObject": true
         },
         {
-          "evidenceId": "ev-d1-oam03-mpvp12ry-dorm-live-001-operator-record",
+          "evidenceId": "ev-d1-oam03-mpwjfnm1-dorm-live-001-operator-record",
           "status": "verified",
           "trustedEvidenceObject": true
         }
       ],
       "factTrace": {
-        "traceId": "trace-cmd-9a0a0d431bf9eb85353ed254b103b90a71034311a017718cffb6157b854501cf",
-        "submissionRef": "cmd-9a0a0d431bf9eb85353ed254b103b90a71034311a017718cffb6157b854501cf",
+        "traceId": "trace-cmd-6662316ef908adaaa0ca4e3145be867e6058061d6742b8c1d1212834a155e1b8",
+        "submissionRef": "cmd-6662316ef908adaaa0ca4e3145be867e6058061d6742b8c1d1212834a155e1b8",
         "domainEventRefs": [
-          "evt-d7981a090cd6a5404b407287f916154dfd8c9b99f81c51125dab42ee9a9def21"
+          "evt-ff64ba7a0f8b47013fd537a8d757f0b66954799168d9dce1c9a1e8849a7a3bfb"
         ],
         "ledgerTransactionRefs": [],
         "ledgerEntryRefs": []
@@ -1177,11 +1183,11 @@
       "lensOutputs": [
         {
           "lensId": "deposit-liability",
-          "rowCount": 0
+          "rowCount": 4
         },
         {
           "lensId": "stay-balance",
-          "rowCount": 0
+          "rowCount": 2
         }
       ],
       "noDuplicateSideEffect": true
@@ -1193,8 +1199,8 @@
       "status": "passed",
       "workItem": {
         "tenantId": "tenant-dorm-int-001",
-        "caseId": "case-d1-oam03-mpvp12ry-dorm-live-002",
-        "workItemId": "wi-d1-oam03-mpvp12ry-dorm-live-002",
+        "caseId": "case-d1-oam03-mpwjfnm1-dorm-live-002",
+        "workItemId": "wi-d1-oam03-mpwjfnm1-dorm-live-002",
         "workItemType": "depositReceipt",
         "ownerRole": "finance",
         "source": "persisted_work_item_runtime_model"
@@ -1206,11 +1212,11 @@
         "confirmed": true,
         "commitStatus": "committed",
         "projectionStatus": "pending",
-        "caseId": "case-d1-oam03-mpvp12ry-dorm-live-002",
-        "workItemId": "wi-d1-oam03-mpvp12ry-dorm-live-002",
-        "submissionId": "sub-d1-oam03-mpvp12ry-dorm-live-002",
+        "caseId": "case-d1-oam03-mpwjfnm1-dorm-live-002",
+        "workItemId": "wi-d1-oam03-mpwjfnm1-dorm-live-002",
+        "submissionId": "sub-d1-oam03-mpwjfnm1-dorm-live-002",
         "resultEventIds": [
-          "evt-83f03d5fdad0685879ae5883a83c4bdc243ea660cc55a438ed396bb99c1717cd"
+          "evt-b4e180976aa08781ae141ceff9e86978a479bdb027c245f8f5632e54c05afa90"
         ],
         "userMessage": "Committed through OperationsUnitOfWork.",
         "clientInstruction": {
@@ -1219,45 +1225,45 @@
           "observeOutbox": true
         },
         "source": "operations_unit_of_work",
-        "idempotencyKey": "idem-d1-oam03-mpvp12ry-dorm-live-002",
-        "payloadHash": "sha256:9a04e509f5817312eac72e313669f9f5856a7bd9083868a8929d10da977f6b53",
-        "commandSubmissionId": "cmd-dc8aa9134cf30afa1b0ac39a2db78bdf4e1133bc4c5370ed8fdb7d70b95b2e4f"
+        "idempotencyKey": "idem-d1-oam03-mpwjfnm1-dorm-live-002",
+        "payloadHash": "sha256:60360c492e42f077699052e8ec119c6a740cc095462a0d8fac8a743e237550b8",
+        "commandSubmissionId": "cmd-385958ddcd4eb2a1ad6b44aa98cefc4171f544bb5615b648d176f0c4aa14567f"
       },
       "commandSubmission": {
-        "submissionId": "cmd-dc8aa9134cf30afa1b0ac39a2db78bdf4e1133bc4c5370ed8fdb7d70b95b2e4f",
+        "submissionId": "cmd-385958ddcd4eb2a1ad6b44aa98cefc4171f544bb5615b648d176f0c4aa14567f",
         "status": "committed"
       },
       "rejectedCommandSubmission": null,
       "rejectionTrace": null,
       "domainEvents": [
         {
-          "event_id": "evt-83f03d5fdad0685879ae5883a83c4bdc243ea660cc55a438ed396bb99c1717cd",
+          "event_id": "evt-b4e180976aa08781ae141ceff9e86978a479bdb027c245f8f5632e54c05afa90",
           "event_type": "OperationsWorkItemConfirmed",
-          "work_item_id": "wi-d1-oam03-mpvp12ry-dorm-live-002",
-          "submission_id": "cmd-dc8aa9134cf30afa1b0ac39a2db78bdf4e1133bc4c5370ed8fdb7d70b95b2e4f"
+          "work_item_id": "wi-d1-oam03-mpwjfnm1-dorm-live-002",
+          "submission_id": "cmd-385958ddcd4eb2a1ad6b44aa98cefc4171f544bb5615b648d176f0c4aa14567f"
         }
       ],
       "ledgerTransactions": [
         {
-          "ledger_transaction_id": "ltx-b0373aae17e5e547a046217ba8886d3cd185eaa21eaad0e67427960e879b2742",
+          "ledger_transaction_id": "ltx-2ed75c5377ddd3f0636b3b9952f5e55fbcb29d8ed8ff84ee0fb3a66266b720fb",
           "transaction_type": "deposit_receipt",
           "balance_status": "balanced",
-          "work_item_id": "wi-d1-oam03-mpvp12ry-dorm-live-002",
-          "submission_id": "cmd-dc8aa9134cf30afa1b0ac39a2db78bdf4e1133bc4c5370ed8fdb7d70b95b2e4f"
+          "work_item_id": "wi-d1-oam03-mpwjfnm1-dorm-live-002",
+          "submission_id": "cmd-385958ddcd4eb2a1ad6b44aa98cefc4171f544bb5615b648d176f0c4aa14567f"
         }
       ],
       "ledgerEntries": [
         {
-          "entry_id": "le-1dd2c915aad96d7d8abade7dab02163ae29c01750c3743943b9ccdb14872c8cf",
-          "ledger_transaction_id": "ltx-b0373aae17e5e547a046217ba8886d3cd185eaa21eaad0e67427960e879b2742",
+          "entry_id": "le-a1e67cd005bf6db072032fa3af767c1821a6a0e3af036e8b17dd421b1deae97b",
+          "ledger_transaction_id": "ltx-2ed75c5377ddd3f0636b3b9952f5e55fbcb29d8ed8ff84ee0fb3a66266b720fb",
           "account_id": "asset.cash_or_bank",
           "account_type": "asset",
           "debit_credit": "debit",
           "amount": 1200
         },
         {
-          "entry_id": "le-c774479edca2e0a86eb60f2fe43b1cda43109737b6c4c96ec522e759bf738860",
-          "ledger_transaction_id": "ltx-b0373aae17e5e547a046217ba8886d3cd185eaa21eaad0e67427960e879b2742",
+          "entry_id": "le-dbaa237ed061b140c202ca0e5153784996007ba464745b99c35195ecd63f74e4",
+          "ledger_transaction_id": "ltx-2ed75c5377ddd3f0636b3b9952f5e55fbcb29d8ed8ff84ee0fb3a66266b720fb",
           "account_id": "liability.deposit",
           "account_type": "liability",
           "debit_credit": "credit",
@@ -1266,38 +1272,38 @@
       ],
       "evidenceTrace": [
         {
-          "evidenceId": "ev-d1-oam03-mpvp12ry-dorm-live-002-payment-proof",
+          "evidenceId": "ev-d1-oam03-mpwjfnm1-dorm-live-002-payment-proof",
           "status": "verified",
           "trustedEvidenceObject": true
         },
         {
-          "evidenceId": "ev-d1-oam03-mpvp12ry-dorm-live-002-finance-receipt",
+          "evidenceId": "ev-d1-oam03-mpwjfnm1-dorm-live-002-finance-receipt",
           "status": "verified",
           "trustedEvidenceObject": true
         }
       ],
       "factTrace": {
-        "traceId": "trace-cmd-dc8aa9134cf30afa1b0ac39a2db78bdf4e1133bc4c5370ed8fdb7d70b95b2e4f",
-        "submissionRef": "cmd-dc8aa9134cf30afa1b0ac39a2db78bdf4e1133bc4c5370ed8fdb7d70b95b2e4f",
+        "traceId": "trace-cmd-385958ddcd4eb2a1ad6b44aa98cefc4171f544bb5615b648d176f0c4aa14567f",
+        "submissionRef": "cmd-385958ddcd4eb2a1ad6b44aa98cefc4171f544bb5615b648d176f0c4aa14567f",
         "domainEventRefs": [
-          "evt-83f03d5fdad0685879ae5883a83c4bdc243ea660cc55a438ed396bb99c1717cd"
+          "evt-b4e180976aa08781ae141ceff9e86978a479bdb027c245f8f5632e54c05afa90"
         ],
         "ledgerTransactionRefs": [
-          "ltx-b0373aae17e5e547a046217ba8886d3cd185eaa21eaad0e67427960e879b2742"
+          "ltx-2ed75c5377ddd3f0636b3b9952f5e55fbcb29d8ed8ff84ee0fb3a66266b720fb"
         ],
         "ledgerEntryRefs": [
-          "le-1dd2c915aad96d7d8abade7dab02163ae29c01750c3743943b9ccdb14872c8cf",
-          "le-c774479edca2e0a86eb60f2fe43b1cda43109737b6c4c96ec522e759bf738860"
+          "le-a1e67cd005bf6db072032fa3af767c1821a6a0e3af036e8b17dd421b1deae97b",
+          "le-dbaa237ed061b140c202ca0e5153784996007ba464745b99c35195ecd63f74e4"
         ]
       },
       "lensOutputs": [
         {
           "lensId": "deposit-liability",
-          "rowCount": 0
+          "rowCount": 4
         },
         {
           "lensId": "stay-balance",
-          "rowCount": 0
+          "rowCount": 2
         }
       ],
       "noDuplicateSideEffect": true
@@ -1309,8 +1315,8 @@
       "status": "passed",
       "workItem": {
         "tenantId": "tenant-dorm-int-001",
-        "caseId": "case-d1-oam03-mpvp12ry-dorm-live-003",
-        "workItemId": "wi-d1-oam03-mpvp12ry-dorm-live-003",
+        "caseId": "case-d1-oam03-mpwjfnm1-dorm-live-003",
+        "workItemId": "wi-d1-oam03-mpwjfnm1-dorm-live-003",
         "workItemType": "paymentReceipt",
         "ownerRole": "finance",
         "source": "persisted_work_item_runtime_model"
@@ -1322,11 +1328,11 @@
         "confirmed": true,
         "commitStatus": "committed",
         "projectionStatus": "pending",
-        "caseId": "case-d1-oam03-mpvp12ry-dorm-live-003",
-        "workItemId": "wi-d1-oam03-mpvp12ry-dorm-live-003",
-        "submissionId": "sub-d1-oam03-mpvp12ry-dorm-live-003",
+        "caseId": "case-d1-oam03-mpwjfnm1-dorm-live-003",
+        "workItemId": "wi-d1-oam03-mpwjfnm1-dorm-live-003",
+        "submissionId": "sub-d1-oam03-mpwjfnm1-dorm-live-003",
         "resultEventIds": [
-          "evt-5881b3bf57c50dcf504e2decf8159f148a41313570db50ea739e18575c3b7ba0"
+          "evt-227200f955dd7e0d37c596cfd458ac93a4ac31dd2cf975152261576081d78572"
         ],
         "userMessage": "Committed through OperationsUnitOfWork.",
         "clientInstruction": {
@@ -1335,45 +1341,45 @@
           "observeOutbox": true
         },
         "source": "operations_unit_of_work",
-        "idempotencyKey": "idem-d1-oam03-mpvp12ry-dorm-live-003",
-        "payloadHash": "sha256:8bd0bfbc07273b29b227cad8ca59011c8d5bc196e5afc72e5fa795edeb49c575",
-        "commandSubmissionId": "cmd-49dc9d8b703aa2af1b2cf1487df939d628f9320b2a058ab5242776df1eea00a2"
+        "idempotencyKey": "idem-d1-oam03-mpwjfnm1-dorm-live-003",
+        "payloadHash": "sha256:74b1281515b2d3f65fb23ba26f969ab7b4d9e4ac768e2e7c32b37da310adf9e9",
+        "commandSubmissionId": "cmd-b678b1c4e8a73508e443512a531418a3b8c9d8e92d65a8e360a749c374bee1f8"
       },
       "commandSubmission": {
-        "submissionId": "cmd-49dc9d8b703aa2af1b2cf1487df939d628f9320b2a058ab5242776df1eea00a2",
+        "submissionId": "cmd-b678b1c4e8a73508e443512a531418a3b8c9d8e92d65a8e360a749c374bee1f8",
         "status": "committed"
       },
       "rejectedCommandSubmission": null,
       "rejectionTrace": null,
       "domainEvents": [
         {
-          "event_id": "evt-5881b3bf57c50dcf504e2decf8159f148a41313570db50ea739e18575c3b7ba0",
+          "event_id": "evt-227200f955dd7e0d37c596cfd458ac93a4ac31dd2cf975152261576081d78572",
           "event_type": "OperationsWorkItemConfirmed",
-          "work_item_id": "wi-d1-oam03-mpvp12ry-dorm-live-003",
-          "submission_id": "cmd-49dc9d8b703aa2af1b2cf1487df939d628f9320b2a058ab5242776df1eea00a2"
+          "work_item_id": "wi-d1-oam03-mpwjfnm1-dorm-live-003",
+          "submission_id": "cmd-b678b1c4e8a73508e443512a531418a3b8c9d8e92d65a8e360a749c374bee1f8"
         }
       ],
       "ledgerTransactions": [
         {
-          "ledger_transaction_id": "ltx-41eb7409b7fdbb94e2454921c6a81c7f408d7794fd3c277956f28fe1609694dd",
+          "ledger_transaction_id": "ltx-73b1fc9dbc282f3b40eb42c0c4e32a2dcecccf00b62e3c759523a3b2403e0670",
           "transaction_type": "payment_receipt",
           "balance_status": "balanced",
-          "work_item_id": "wi-d1-oam03-mpvp12ry-dorm-live-003",
-          "submission_id": "cmd-49dc9d8b703aa2af1b2cf1487df939d628f9320b2a058ab5242776df1eea00a2"
+          "work_item_id": "wi-d1-oam03-mpwjfnm1-dorm-live-003",
+          "submission_id": "cmd-b678b1c4e8a73508e443512a531418a3b8c9d8e92d65a8e360a749c374bee1f8"
         }
       ],
       "ledgerEntries": [
         {
-          "entry_id": "le-3502d740e4f094d5325a8a642b031ada4980b7f3cb81064016df1e03f860bd67",
-          "ledger_transaction_id": "ltx-41eb7409b7fdbb94e2454921c6a81c7f408d7794fd3c277956f28fe1609694dd",
+          "entry_id": "le-6e8fe3d29410efd04417393d614bdbb537b8c6354732a0964eeba9ee6902433c",
+          "ledger_transaction_id": "ltx-73b1fc9dbc282f3b40eb42c0c4e32a2dcecccf00b62e3c759523a3b2403e0670",
           "account_id": "receivable.stay",
           "account_type": "receivable",
           "debit_credit": "credit",
           "amount": 650
         },
         {
-          "entry_id": "le-468f729445f5b87d82fa8b13c30e4e526121818981cca2e6211623e3354a11fe",
-          "ledger_transaction_id": "ltx-41eb7409b7fdbb94e2454921c6a81c7f408d7794fd3c277956f28fe1609694dd",
+          "entry_id": "le-e91a6d2433afaea23237187fe7532afa38408e8cdcba6ed9dd54cd3408ef15df",
+          "ledger_transaction_id": "ltx-73b1fc9dbc282f3b40eb42c0c4e32a2dcecccf00b62e3c759523a3b2403e0670",
           "account_id": "asset.cash_or_bank",
           "account_type": "asset",
           "debit_credit": "debit",
@@ -1382,33 +1388,33 @@
       ],
       "evidenceTrace": [
         {
-          "evidenceId": "ev-d1-oam03-mpvp12ry-dorm-live-003-bank-or-cash-proof",
+          "evidenceId": "ev-d1-oam03-mpwjfnm1-dorm-live-003-bank-or-cash-proof",
           "status": "verified",
           "trustedEvidenceObject": true
         }
       ],
       "factTrace": {
-        "traceId": "trace-cmd-49dc9d8b703aa2af1b2cf1487df939d628f9320b2a058ab5242776df1eea00a2",
-        "submissionRef": "cmd-49dc9d8b703aa2af1b2cf1487df939d628f9320b2a058ab5242776df1eea00a2",
+        "traceId": "trace-cmd-b678b1c4e8a73508e443512a531418a3b8c9d8e92d65a8e360a749c374bee1f8",
+        "submissionRef": "cmd-b678b1c4e8a73508e443512a531418a3b8c9d8e92d65a8e360a749c374bee1f8",
         "domainEventRefs": [
-          "evt-5881b3bf57c50dcf504e2decf8159f148a41313570db50ea739e18575c3b7ba0"
+          "evt-227200f955dd7e0d37c596cfd458ac93a4ac31dd2cf975152261576081d78572"
         ],
         "ledgerTransactionRefs": [
-          "ltx-41eb7409b7fdbb94e2454921c6a81c7f408d7794fd3c277956f28fe1609694dd"
+          "ltx-73b1fc9dbc282f3b40eb42c0c4e32a2dcecccf00b62e3c759523a3b2403e0670"
         ],
         "ledgerEntryRefs": [
-          "le-3502d740e4f094d5325a8a642b031ada4980b7f3cb81064016df1e03f860bd67",
-          "le-468f729445f5b87d82fa8b13c30e4e526121818981cca2e6211623e3354a11fe"
+          "le-6e8fe3d29410efd04417393d614bdbb537b8c6354732a0964eeba9ee6902433c",
+          "le-e91a6d2433afaea23237187fe7532afa38408e8cdcba6ed9dd54cd3408ef15df"
         ]
       },
       "lensOutputs": [
         {
           "lensId": "deposit-liability",
-          "rowCount": 0
+          "rowCount": 4
         },
         {
           "lensId": "stay-balance",
-          "rowCount": 0
+          "rowCount": 2
         }
       ],
       "noDuplicateSideEffect": true
@@ -1420,8 +1426,8 @@
       "status": "passed",
       "workItem": {
         "tenantId": "tenant-dorm-int-001",
-        "caseId": "case-d1-oam03-mpvp12ry-dorm-live-004",
-        "workItemId": "wi-d1-oam03-mpvp12ry-dorm-live-004",
+        "caseId": "case-d1-oam03-mpwjfnm1-dorm-live-004",
+        "workItemId": "wi-d1-oam03-mpwjfnm1-dorm-live-004",
         "workItemType": "serviceTaskComplete",
         "ownerRole": "housekeeping",
         "source": "persisted_work_item_runtime_model"
@@ -1433,11 +1439,11 @@
         "confirmed": true,
         "commitStatus": "committed",
         "projectionStatus": "pending",
-        "caseId": "case-d1-oam03-mpvp12ry-dorm-live-004",
-        "workItemId": "wi-d1-oam03-mpvp12ry-dorm-live-004",
-        "submissionId": "sub-d1-oam03-mpvp12ry-dorm-live-004",
+        "caseId": "case-d1-oam03-mpwjfnm1-dorm-live-004",
+        "workItemId": "wi-d1-oam03-mpwjfnm1-dorm-live-004",
+        "submissionId": "sub-d1-oam03-mpwjfnm1-dorm-live-004",
         "resultEventIds": [
-          "evt-b27b57bb35f7aee56a35a9d15f923733d02323b6c5185a8740fd4299e48723a4"
+          "evt-7cc45a095b3429f7e0788740ea50fbe0c7c23868e663dd4d84e61b9a59dbdd08"
         ],
         "userMessage": "Committed through OperationsUnitOfWork.",
         "clientInstruction": {
@@ -1446,38 +1452,38 @@
           "observeOutbox": true
         },
         "source": "operations_unit_of_work",
-        "idempotencyKey": "idem-d1-oam03-mpvp12ry-dorm-live-004",
-        "payloadHash": "sha256:9dad9155c40f441fa29e1f85bacdeae6dc88caece52bd42e984adfaac0dd3776",
-        "commandSubmissionId": "cmd-b5586322c5d797c46827dfc9b110afbf735d239ee6b2a0279b9e4b4d51834fda"
+        "idempotencyKey": "idem-d1-oam03-mpwjfnm1-dorm-live-004",
+        "payloadHash": "sha256:3149ad49a9b0c9c454e1de798c7efe6ef4311f4e74c674b7dbd3394eb3db9519",
+        "commandSubmissionId": "cmd-bfd54d52bd1c545b7b47a7914356b6bb7743a7e8c18fbd336c58f182f4ace2a7"
       },
       "commandSubmission": {
-        "submissionId": "cmd-b5586322c5d797c46827dfc9b110afbf735d239ee6b2a0279b9e4b4d51834fda",
+        "submissionId": "cmd-bfd54d52bd1c545b7b47a7914356b6bb7743a7e8c18fbd336c58f182f4ace2a7",
         "status": "committed"
       },
       "rejectedCommandSubmission": null,
       "rejectionTrace": null,
       "domainEvents": [
         {
-          "event_id": "evt-b27b57bb35f7aee56a35a9d15f923733d02323b6c5185a8740fd4299e48723a4",
+          "event_id": "evt-7cc45a095b3429f7e0788740ea50fbe0c7c23868e663dd4d84e61b9a59dbdd08",
           "event_type": "OperationsWorkItemConfirmed",
-          "work_item_id": "wi-d1-oam03-mpvp12ry-dorm-live-004",
-          "submission_id": "cmd-b5586322c5d797c46827dfc9b110afbf735d239ee6b2a0279b9e4b4d51834fda"
+          "work_item_id": "wi-d1-oam03-mpwjfnm1-dorm-live-004",
+          "submission_id": "cmd-bfd54d52bd1c545b7b47a7914356b6bb7743a7e8c18fbd336c58f182f4ace2a7"
         }
       ],
       "ledgerTransactions": [],
       "ledgerEntries": [],
       "evidenceTrace": [
         {
-          "evidenceId": "ev-d1-oam03-mpvp12ry-dorm-live-004-task-completion-photo",
+          "evidenceId": "ev-d1-oam03-mpwjfnm1-dorm-live-004-task-completion-photo",
           "status": "verified",
           "trustedEvidenceObject": true
         }
       ],
       "factTrace": {
-        "traceId": "trace-cmd-b5586322c5d797c46827dfc9b110afbf735d239ee6b2a0279b9e4b4d51834fda",
-        "submissionRef": "cmd-b5586322c5d797c46827dfc9b110afbf735d239ee6b2a0279b9e4b4d51834fda",
+        "traceId": "trace-cmd-bfd54d52bd1c545b7b47a7914356b6bb7743a7e8c18fbd336c58f182f4ace2a7",
+        "submissionRef": "cmd-bfd54d52bd1c545b7b47a7914356b6bb7743a7e8c18fbd336c58f182f4ace2a7",
         "domainEventRefs": [
-          "evt-b27b57bb35f7aee56a35a9d15f923733d02323b6c5185a8740fd4299e48723a4"
+          "evt-7cc45a095b3429f7e0788740ea50fbe0c7c23868e663dd4d84e61b9a59dbdd08"
         ],
         "ledgerTransactionRefs": [],
         "ledgerEntryRefs": []
@@ -1485,11 +1491,11 @@
       "lensOutputs": [
         {
           "lensId": "deposit-liability",
-          "rowCount": 0
+          "rowCount": 4
         },
         {
           "lensId": "stay-balance",
-          "rowCount": 0
+          "rowCount": 2
         }
       ],
       "noDuplicateSideEffect": true
@@ -1501,8 +1507,8 @@
       "status": "passed",
       "workItem": {
         "tenantId": "tenant-dorm-int-001",
-        "caseId": "case-d1-oam03-mpvp12ry-dorm-live-005",
-        "workItemId": "wi-d1-oam03-mpvp12ry-dorm-live-005",
+        "caseId": "case-d1-oam03-mpwjfnm1-dorm-live-005",
+        "workItemId": "wi-d1-oam03-mpwjfnm1-dorm-live-005",
         "workItemType": "depositRefundPayment",
         "ownerRole": "manager",
         "source": "persisted_work_item_runtime_model"
@@ -1514,11 +1520,11 @@
         "confirmed": true,
         "commitStatus": "committed",
         "projectionStatus": "pending",
-        "caseId": "case-d1-oam03-mpvp12ry-dorm-live-005",
-        "workItemId": "wi-d1-oam03-mpvp12ry-dorm-live-005",
-        "submissionId": "sub-d1-oam03-mpvp12ry-dorm-live-005",
+        "caseId": "case-d1-oam03-mpwjfnm1-dorm-live-005",
+        "workItemId": "wi-d1-oam03-mpwjfnm1-dorm-live-005",
+        "submissionId": "sub-d1-oam03-mpwjfnm1-dorm-live-005",
         "resultEventIds": [
-          "evt-0531cc4bf9f27ef118493725e69e7c6101275465368f1e9ef22859337ec3e99b"
+          "evt-8198ea3d53c12e8b8e687ea83a1a46c3a9e62425ac003629c4877eb13a382342"
         ],
         "userMessage": "Committed through OperationsUnitOfWork.",
         "clientInstruction": {
@@ -1527,85 +1533,85 @@
           "observeOutbox": true
         },
         "source": "operations_unit_of_work",
-        "idempotencyKey": "idem-d1-oam03-mpvp12ry-dorm-live-005",
-        "payloadHash": "sha256:ebbac0e80b30536e2268ed37b43fddfeea962e4a214bf5a6214cc64683b6f7e9",
-        "commandSubmissionId": "cmd-943067851ced3f016e016056e9664b4d0ffae2178bbe0b40848b1e08eb879bc4"
+        "idempotencyKey": "idem-d1-oam03-mpwjfnm1-dorm-live-005",
+        "payloadHash": "sha256:f3ed2c9f43c0591a5d7908f5a4ce4b283ade5bb2a76b813bfa1d28b8efe4df5d",
+        "commandSubmissionId": "cmd-f31cb489489acd14b19437efbf4f89085d25039086e1445031991e1c77697c9d"
       },
       "commandSubmission": {
-        "submissionId": "cmd-943067851ced3f016e016056e9664b4d0ffae2178bbe0b40848b1e08eb879bc4",
+        "submissionId": "cmd-f31cb489489acd14b19437efbf4f89085d25039086e1445031991e1c77697c9d",
         "status": "committed"
       },
       "rejectedCommandSubmission": null,
       "rejectionTrace": null,
       "domainEvents": [
         {
-          "event_id": "evt-0531cc4bf9f27ef118493725e69e7c6101275465368f1e9ef22859337ec3e99b",
+          "event_id": "evt-8198ea3d53c12e8b8e687ea83a1a46c3a9e62425ac003629c4877eb13a382342",
           "event_type": "OperationsWorkItemConfirmed",
-          "work_item_id": "wi-d1-oam03-mpvp12ry-dorm-live-005",
-          "submission_id": "cmd-943067851ced3f016e016056e9664b4d0ffae2178bbe0b40848b1e08eb879bc4"
+          "work_item_id": "wi-d1-oam03-mpwjfnm1-dorm-live-005",
+          "submission_id": "cmd-f31cb489489acd14b19437efbf4f89085d25039086e1445031991e1c77697c9d"
         }
       ],
       "ledgerTransactions": [
         {
-          "ledger_transaction_id": "ltx-cbae03e66d429031b37e5912c8589a711a088f5ec1742030ab7843a2aa8a03d4",
+          "ledger_transaction_id": "ltx-89f6f459d94d2d823c857568d25ebeee497250a9ec9fd42419ce6f1c4b8a0f22",
           "transaction_type": "refund_deposit",
           "balance_status": "balanced",
-          "work_item_id": "wi-d1-oam03-mpvp12ry-dorm-live-005",
-          "submission_id": "cmd-943067851ced3f016e016056e9664b4d0ffae2178bbe0b40848b1e08eb879bc4"
+          "work_item_id": "wi-d1-oam03-mpwjfnm1-dorm-live-005",
+          "submission_id": "cmd-f31cb489489acd14b19437efbf4f89085d25039086e1445031991e1c77697c9d"
         }
       ],
       "ledgerEntries": [
         {
-          "entry_id": "le-00618feb78d783e43764e48959e53d215f24ccf1e5fc06abffeed75371b774d9",
-          "ledger_transaction_id": "ltx-cbae03e66d429031b37e5912c8589a711a088f5ec1742030ab7843a2aa8a03d4",
-          "account_id": "deposit-account-d1",
-          "account_type": "liability",
-          "debit_credit": "debit",
-          "amount": 300
-        },
-        {
-          "entry_id": "le-701452f9685f4ccbaf753ae6ac4989b0008679f7a3ab36db6c5452c9a60ebca5",
-          "ledger_transaction_id": "ltx-cbae03e66d429031b37e5912c8589a711a088f5ec1742030ab7843a2aa8a03d4",
+          "entry_id": "le-64ce7cd11b4ad1c6c6dbfaf427f2eea2131869fda6a47820919b5b11dc01f5c4",
+          "ledger_transaction_id": "ltx-89f6f459d94d2d823c857568d25ebeee497250a9ec9fd42419ce6f1c4b8a0f22",
           "account_id": "asset.cash_or_bank",
           "account_type": "asset",
           "debit_credit": "credit",
+          "amount": 300
+        },
+        {
+          "entry_id": "le-d77162b112f7b9188e4708538a62615e4dc81b59fe82f3d9c699902bc5aa13a3",
+          "ledger_transaction_id": "ltx-89f6f459d94d2d823c857568d25ebeee497250a9ec9fd42419ce6f1c4b8a0f22",
+          "account_id": "deposit-account-d1",
+          "account_type": "liability",
+          "debit_credit": "debit",
           "amount": 300
         }
       ],
       "evidenceTrace": [
         {
-          "evidenceId": "ev-d1-oam03-mpvp12ry-dorm-live-005-refund-request",
+          "evidenceId": "ev-d1-oam03-mpwjfnm1-dorm-live-005-refund-request",
           "status": "verified",
           "trustedEvidenceObject": true
         },
         {
-          "evidenceId": "ev-d1-oam03-mpvp12ry-dorm-live-005-manager-approval",
+          "evidenceId": "ev-d1-oam03-mpwjfnm1-dorm-live-005-manager-approval",
           "status": "verified",
           "trustedEvidenceObject": true
         }
       ],
       "factTrace": {
-        "traceId": "trace-cmd-943067851ced3f016e016056e9664b4d0ffae2178bbe0b40848b1e08eb879bc4",
-        "submissionRef": "cmd-943067851ced3f016e016056e9664b4d0ffae2178bbe0b40848b1e08eb879bc4",
+        "traceId": "trace-cmd-f31cb489489acd14b19437efbf4f89085d25039086e1445031991e1c77697c9d",
+        "submissionRef": "cmd-f31cb489489acd14b19437efbf4f89085d25039086e1445031991e1c77697c9d",
         "domainEventRefs": [
-          "evt-0531cc4bf9f27ef118493725e69e7c6101275465368f1e9ef22859337ec3e99b"
+          "evt-8198ea3d53c12e8b8e687ea83a1a46c3a9e62425ac003629c4877eb13a382342"
         ],
         "ledgerTransactionRefs": [
-          "ltx-cbae03e66d429031b37e5912c8589a711a088f5ec1742030ab7843a2aa8a03d4"
+          "ltx-89f6f459d94d2d823c857568d25ebeee497250a9ec9fd42419ce6f1c4b8a0f22"
         ],
         "ledgerEntryRefs": [
-          "le-00618feb78d783e43764e48959e53d215f24ccf1e5fc06abffeed75371b774d9",
-          "le-701452f9685f4ccbaf753ae6ac4989b0008679f7a3ab36db6c5452c9a60ebca5"
+          "le-64ce7cd11b4ad1c6c6dbfaf427f2eea2131869fda6a47820919b5b11dc01f5c4",
+          "le-d77162b112f7b9188e4708538a62615e4dc81b59fe82f3d9c699902bc5aa13a3"
         ]
       },
       "lensOutputs": [
         {
           "lensId": "deposit-liability",
-          "rowCount": 0
+          "rowCount": 4
         },
         {
           "lensId": "stay-balance",
-          "rowCount": 0
+          "rowCount": 2
         }
       ],
       "noDuplicateSideEffect": true
@@ -1617,8 +1623,8 @@
       "status": "passed",
       "workItem": {
         "tenantId": "tenant-dorm-int-001",
-        "caseId": "case-d1-oam03-mpvp12ry-dorm-live-006",
-        "workItemId": "wi-d1-oam03-mpvp12ry-dorm-live-006",
+        "caseId": "case-d1-oam03-mpwjfnm1-dorm-live-006",
+        "workItemId": "wi-d1-oam03-mpwjfnm1-dorm-live-006",
         "workItemType": "paymentAdjustment",
         "ownerRole": "finance",
         "source": "persisted_work_item_runtime_model"
@@ -1630,11 +1636,11 @@
         "confirmed": true,
         "commitStatus": "committed",
         "projectionStatus": "pending",
-        "caseId": "case-d1-oam03-mpvp12ry-dorm-live-006",
-        "workItemId": "wi-d1-oam03-mpvp12ry-dorm-live-006",
-        "submissionId": "sub-d1-oam03-mpvp12ry-dorm-live-006",
+        "caseId": "case-d1-oam03-mpwjfnm1-dorm-live-006",
+        "workItemId": "wi-d1-oam03-mpwjfnm1-dorm-live-006",
+        "submissionId": "sub-d1-oam03-mpwjfnm1-dorm-live-006",
         "resultEventIds": [
-          "evt-eac2f721299a43572f62f3cdeccff3133b9f3bdfe328d8d00381b91767b58a6a"
+          "evt-70b325a9880504d1fc5ca983bb314af64d826e7b91523f2a6c286f94cb2e202f"
         ],
         "userMessage": "Committed through OperationsUnitOfWork.",
         "clientInstruction": {
@@ -1643,85 +1649,85 @@
           "observeOutbox": true
         },
         "source": "operations_unit_of_work",
-        "idempotencyKey": "idem-d1-oam03-mpvp12ry-dorm-live-006",
-        "payloadHash": "sha256:dafe68f45807941412fe2892bd0001de2d39fc9487852eea30fee304bc80c0fe",
-        "commandSubmissionId": "cmd-1a0086678491ce0b93dcbb38a4f682cddf005a3fcda57d26c889f3ad02c6d969"
+        "idempotencyKey": "idem-d1-oam03-mpwjfnm1-dorm-live-006",
+        "payloadHash": "sha256:7a2f887bbca61cf8c7a7f5f599fe3c5401a0fc7645f53b867331eb608ae42a85",
+        "commandSubmissionId": "cmd-7812aab7776f4d50f0e2e469546eb787a4b7be2bcbe0e7ece4338dbf6b47abe3"
       },
       "commandSubmission": {
-        "submissionId": "cmd-1a0086678491ce0b93dcbb38a4f682cddf005a3fcda57d26c889f3ad02c6d969",
+        "submissionId": "cmd-7812aab7776f4d50f0e2e469546eb787a4b7be2bcbe0e7ece4338dbf6b47abe3",
         "status": "committed"
       },
       "rejectedCommandSubmission": null,
       "rejectionTrace": null,
       "domainEvents": [
         {
-          "event_id": "evt-eac2f721299a43572f62f3cdeccff3133b9f3bdfe328d8d00381b91767b58a6a",
+          "event_id": "evt-70b325a9880504d1fc5ca983bb314af64d826e7b91523f2a6c286f94cb2e202f",
           "event_type": "OperationsWorkItemConfirmed",
-          "work_item_id": "wi-d1-oam03-mpvp12ry-dorm-live-006",
-          "submission_id": "cmd-1a0086678491ce0b93dcbb38a4f682cddf005a3fcda57d26c889f3ad02c6d969"
+          "work_item_id": "wi-d1-oam03-mpwjfnm1-dorm-live-006",
+          "submission_id": "cmd-7812aab7776f4d50f0e2e469546eb787a4b7be2bcbe0e7ece4338dbf6b47abe3"
         }
       ],
       "ledgerTransactions": [
         {
-          "ledger_transaction_id": "ltx-7c9494cc2e2457e2bf184274b30bb06590a79587847bbca4b8a576258ea06a76",
+          "ledger_transaction_id": "ltx-9b1298bfeb16f34a422970a757ce0d6fa267f6cb70978e7a418c2a9ae94bdb84",
           "transaction_type": "ledger_correction_apply",
           "balance_status": "balanced",
-          "work_item_id": "wi-d1-oam03-mpvp12ry-dorm-live-006",
-          "submission_id": "cmd-1a0086678491ce0b93dcbb38a4f682cddf005a3fcda57d26c889f3ad02c6d969"
+          "work_item_id": "wi-d1-oam03-mpwjfnm1-dorm-live-006",
+          "submission_id": "cmd-7812aab7776f4d50f0e2e469546eb787a4b7be2bcbe0e7ece4338dbf6b47abe3"
         }
       ],
       "ledgerEntries": [
         {
-          "entry_id": "le-343e6afba7477f14b7c0fb9bcd4e8b91103675fd1a9229c71bc7b96dae56f342",
-          "ledger_transaction_id": "ltx-7c9494cc2e2457e2bf184274b30bb06590a79587847bbca4b8a576258ea06a76",
-          "account_id": "correction.offset",
-          "account_type": "correction",
-          "debit_credit": "credit",
-          "amount": 25
-        },
-        {
-          "entry_id": "le-8936c4de9153b0805a68347be17d84c4f9e4675cc08ed89672b7fcee062fc20f",
-          "ledger_transaction_id": "ltx-7c9494cc2e2457e2bf184274b30bb06590a79587847bbca4b8a576258ea06a76",
+          "entry_id": "le-1fe022df0e9f98cad9edb168736cee79ae150f868d3b071ac4e38ad0f622b020",
+          "ledger_transaction_id": "ltx-9b1298bfeb16f34a422970a757ce0d6fa267f6cb70978e7a418c2a9ae94bdb84",
           "account_id": "correction.reversal",
           "account_type": "correction",
           "debit_credit": "debit",
+          "amount": 25
+        },
+        {
+          "entry_id": "le-f3f44e86bb2cacd83c6fc8beec118fcc92eee0f5aeb302c82e3f7fc0d0ec9e7b",
+          "ledger_transaction_id": "ltx-9b1298bfeb16f34a422970a757ce0d6fa267f6cb70978e7a418c2a9ae94bdb84",
+          "account_id": "correction.offset",
+          "account_type": "correction",
+          "debit_credit": "credit",
           "amount": 25
         }
       ],
       "evidenceTrace": [
         {
-          "evidenceId": "ev-d1-oam03-mpvp12ry-dorm-live-006-exception-note",
+          "evidenceId": "ev-d1-oam03-mpwjfnm1-dorm-live-006-exception-note",
           "status": "verified",
           "trustedEvidenceObject": true
         },
         {
-          "evidenceId": "ev-d1-oam03-mpvp12ry-dorm-live-006-owner-assignment",
+          "evidenceId": "ev-d1-oam03-mpwjfnm1-dorm-live-006-owner-assignment",
           "status": "verified",
           "trustedEvidenceObject": true
         }
       ],
       "factTrace": {
-        "traceId": "trace-cmd-1a0086678491ce0b93dcbb38a4f682cddf005a3fcda57d26c889f3ad02c6d969",
-        "submissionRef": "cmd-1a0086678491ce0b93dcbb38a4f682cddf005a3fcda57d26c889f3ad02c6d969",
+        "traceId": "trace-cmd-7812aab7776f4d50f0e2e469546eb787a4b7be2bcbe0e7ece4338dbf6b47abe3",
+        "submissionRef": "cmd-7812aab7776f4d50f0e2e469546eb787a4b7be2bcbe0e7ece4338dbf6b47abe3",
         "domainEventRefs": [
-          "evt-eac2f721299a43572f62f3cdeccff3133b9f3bdfe328d8d00381b91767b58a6a"
+          "evt-70b325a9880504d1fc5ca983bb314af64d826e7b91523f2a6c286f94cb2e202f"
         ],
         "ledgerTransactionRefs": [
-          "ltx-7c9494cc2e2457e2bf184274b30bb06590a79587847bbca4b8a576258ea06a76"
+          "ltx-9b1298bfeb16f34a422970a757ce0d6fa267f6cb70978e7a418c2a9ae94bdb84"
         ],
         "ledgerEntryRefs": [
-          "le-343e6afba7477f14b7c0fb9bcd4e8b91103675fd1a9229c71bc7b96dae56f342",
-          "le-8936c4de9153b0805a68347be17d84c4f9e4675cc08ed89672b7fcee062fc20f"
+          "le-1fe022df0e9f98cad9edb168736cee79ae150f868d3b071ac4e38ad0f622b020",
+          "le-f3f44e86bb2cacd83c6fc8beec118fcc92eee0f5aeb302c82e3f7fc0d0ec9e7b"
         ]
       },
       "lensOutputs": [
         {
           "lensId": "deposit-liability",
-          "rowCount": 0
+          "rowCount": 4
         },
         {
           "lensId": "stay-balance",
-          "rowCount": 0
+          "rowCount": 2
         }
       ],
       "noDuplicateSideEffect": true
@@ -1733,8 +1739,8 @@
       "status": "passed",
       "workItem": {
         "tenantId": "tenant-dorm-int-001",
-        "caseId": "case-d1-oam03-mpvp12ry-dorm-live-007",
-        "workItemId": "wi-d1-oam03-mpvp12ry-dorm-live-007",
+        "caseId": "case-d1-oam03-mpwjfnm1-dorm-live-007",
+        "workItemId": "wi-d1-oam03-mpwjfnm1-dorm-live-007",
         "workItemType": "periodClose",
         "ownerRole": "manager",
         "source": "persisted_work_item_runtime_model"
@@ -1746,11 +1752,11 @@
         "confirmed": true,
         "commitStatus": "committed",
         "projectionStatus": "pending",
-        "caseId": "case-d1-oam03-mpvp12ry-dorm-live-007",
-        "workItemId": "wi-d1-oam03-mpvp12ry-dorm-live-007",
-        "submissionId": "sub-d1-oam03-mpvp12ry-dorm-live-007",
+        "caseId": "case-d1-oam03-mpwjfnm1-dorm-live-007",
+        "workItemId": "wi-d1-oam03-mpwjfnm1-dorm-live-007",
+        "submissionId": "sub-d1-oam03-mpwjfnm1-dorm-live-007",
         "resultEventIds": [
-          "evt-2c1c3e5661e8dc2f83ed619d0c51353a958bae699626db9c2596bb3f79c739d5"
+          "evt-622a720238ed86319ae5eaaa9fddbb818a9ff18a49388548324c27ba898a98bb"
         ],
         "userMessage": "Committed through OperationsUnitOfWork.",
         "clientInstruction": {
@@ -1759,38 +1765,38 @@
           "observeOutbox": true
         },
         "source": "operations_unit_of_work",
-        "idempotencyKey": "idem-d1-oam03-mpvp12ry-dorm-live-007",
-        "payloadHash": "sha256:80dbc96689bd5b02eb67bbb413f474e51725c7600c42ebcfcc525f81710d4b6e",
-        "commandSubmissionId": "cmd-d120a9487dae67f0f9af2b064014d0ee32b03adaf43da8dcfab16e98d9452b3f"
+        "idempotencyKey": "idem-d1-oam03-mpwjfnm1-dorm-live-007",
+        "payloadHash": "sha256:99048e2ba2bd22dc5d61259bf33b1ef9f86cbb87533e07ab1dffb6c6f70deec3",
+        "commandSubmissionId": "cmd-ecdcd423d626d1d6fa0af470889a1a01dcb1d12dba21ed835fe355df5d6f1e2c"
       },
       "commandSubmission": {
-        "submissionId": "cmd-d120a9487dae67f0f9af2b064014d0ee32b03adaf43da8dcfab16e98d9452b3f",
+        "submissionId": "cmd-ecdcd423d626d1d6fa0af470889a1a01dcb1d12dba21ed835fe355df5d6f1e2c",
         "status": "committed"
       },
       "rejectedCommandSubmission": null,
       "rejectionTrace": null,
       "domainEvents": [
         {
-          "event_id": "evt-2c1c3e5661e8dc2f83ed619d0c51353a958bae699626db9c2596bb3f79c739d5",
+          "event_id": "evt-622a720238ed86319ae5eaaa9fddbb818a9ff18a49388548324c27ba898a98bb",
           "event_type": "OperationsWorkItemConfirmed",
-          "work_item_id": "wi-d1-oam03-mpvp12ry-dorm-live-007",
-          "submission_id": "cmd-d120a9487dae67f0f9af2b064014d0ee32b03adaf43da8dcfab16e98d9452b3f"
+          "work_item_id": "wi-d1-oam03-mpwjfnm1-dorm-live-007",
+          "submission_id": "cmd-ecdcd423d626d1d6fa0af470889a1a01dcb1d12dba21ed835fe355df5d6f1e2c"
         }
       ],
       "ledgerTransactions": [],
       "ledgerEntries": [],
       "evidenceTrace": [
         {
-          "evidenceId": "ev-d1-oam03-mpvp12ry-dorm-live-007-period-review-pack",
+          "evidenceId": "ev-d1-oam03-mpwjfnm1-dorm-live-007-period-review-pack",
           "status": "verified",
           "trustedEvidenceObject": true
         }
       ],
       "factTrace": {
-        "traceId": "trace-cmd-d120a9487dae67f0f9af2b064014d0ee32b03adaf43da8dcfab16e98d9452b3f",
-        "submissionRef": "cmd-d120a9487dae67f0f9af2b064014d0ee32b03adaf43da8dcfab16e98d9452b3f",
+        "traceId": "trace-cmd-ecdcd423d626d1d6fa0af470889a1a01dcb1d12dba21ed835fe355df5d6f1e2c",
+        "submissionRef": "cmd-ecdcd423d626d1d6fa0af470889a1a01dcb1d12dba21ed835fe355df5d6f1e2c",
         "domainEventRefs": [
-          "evt-2c1c3e5661e8dc2f83ed619d0c51353a958bae699626db9c2596bb3f79c739d5"
+          "evt-622a720238ed86319ae5eaaa9fddbb818a9ff18a49388548324c27ba898a98bb"
         ],
         "ledgerTransactionRefs": [],
         "ledgerEntryRefs": []
@@ -1798,11 +1804,11 @@
       "lensOutputs": [
         {
           "lensId": "deposit-liability",
-          "rowCount": 0
+          "rowCount": 4
         },
         {
           "lensId": "stay-balance",
-          "rowCount": 0
+          "rowCount": 2
         }
       ],
       "noDuplicateSideEffect": true
@@ -1814,8 +1820,8 @@
       "status": "passed",
       "workItem": {
         "tenantId": "tenant-dorm-int-001",
-        "caseId": "case-d1-oam03-mpvp12ry-dorm-live-008",
-        "workItemId": "wi-d1-oam03-mpvp12ry-dorm-live-008",
+        "caseId": "case-d1-oam03-mpwjfnm1-dorm-live-008",
+        "workItemId": "wi-d1-oam03-mpwjfnm1-dorm-live-008",
         "workItemType": "roomSetup",
         "ownerRole": "frontdesk",
         "source": "persisted_work_item_runtime_model"
@@ -1827,9 +1833,9 @@
         "confirmed": false,
         "commitStatus": "not_committed",
         "projectionStatus": "not_projected",
-        "caseId": "case-d1-oam03-mpvp12ry-dorm-live-008",
-        "workItemId": "wi-d1-oam03-mpvp12ry-dorm-live-008",
-        "submissionId": "sub-d1-oam03-mpvp12ry-dorm-live-008",
+        "caseId": "case-d1-oam03-mpwjfnm1-dorm-live-008",
+        "workItemId": "wi-d1-oam03-mpwjfnm1-dorm-live-008",
+        "submissionId": "sub-d1-oam03-mpwjfnm1-dorm-live-008",
         "resultEventIds": [],
         "userMessage": "not_committed",
         "clientInstruction": {
@@ -1838,23 +1844,23 @@
           "observeOutbox": false
         },
         "source": "operations_unit_of_work",
-        "idempotencyKey": "idem-d1-oam03-mpvp12ry-dorm-live-008",
-        "payloadHash": "sha256:307b88d3033fdacf565174f0e43b7617154a11da1f79652edf6e2b718cab54ce",
-        "commandSubmissionId": "cmd-1bcf6628529e2f09c30710130c93b660cb1a759ba554e6765b2950582a3d763e"
+        "idempotencyKey": "idem-d1-oam03-mpwjfnm1-dorm-live-008",
+        "payloadHash": "sha256:a2fadbdaf74fcb7571a6b150160876d643c964efd19400b28af85d65e836fb8f",
+        "commandSubmissionId": "cmd-4af5a4b9318f8d1d640b7066f4a46c2728157bc0d5fe2dca1ea8f4b474ba8e70"
       },
       "commandSubmission": null,
       "rejectedCommandSubmission": {
-        "submission_id": "cmd-1bcf6628529e2f09c30710130c93b660cb1a759ba554e6765b2950582a3d763e",
+        "submission_id": "cmd-4af5a4b9318f8d1d640b7066f4a46c2728157bc0d5fe2dca1ea8f4b474ba8e70",
         "status": "rejected",
         "response_status_code": 403,
         "failure_code": "permission_denied",
         "failure_reason": "permission_denied"
       },
       "rejectionTrace": {
-        "traceId": "rej-trace-cmd-1bcf6628529e2f09c30710130c93b660cb1a759ba554e6765b2950582a3d763e",
-        "caseRef": "case-d1-oam03-mpvp12ry-dorm-live-008",
-        "workItemRef": "wi-d1-oam03-mpvp12ry-dorm-live-008",
-        "submissionRef": "cmd-1bcf6628529e2f09c30710130c93b660cb1a759ba554e6765b2950582a3d763e",
+        "traceId": "rej-trace-cmd-4af5a4b9318f8d1d640b7066f4a46c2728157bc0d5fe2dca1ea8f4b474ba8e70",
+        "caseRef": "case-d1-oam03-mpwjfnm1-dorm-live-008",
+        "workItemRef": "wi-d1-oam03-mpwjfnm1-dorm-live-008",
+        "submissionRef": "cmd-4af5a4b9318f8d1d640b7066f4a46c2728157bc0d5fe2dca1ea8f4b474ba8e70",
         "policyRef": "permission-policy",
         "statusCode": 403,
         "reason": null,
@@ -1867,8 +1873,8 @@
       "ledgerEntries": [],
       "evidenceTrace": [],
       "factTrace": {
-        "traceId": "trace-cmd-1bcf6628529e2f09c30710130c93b660cb1a759ba554e6765b2950582a3d763e",
-        "submissionRef": "cmd-1bcf6628529e2f09c30710130c93b660cb1a759ba554e6765b2950582a3d763e",
+        "traceId": "trace-cmd-4af5a4b9318f8d1d640b7066f4a46c2728157bc0d5fe2dca1ea8f4b474ba8e70",
+        "submissionRef": "cmd-4af5a4b9318f8d1d640b7066f4a46c2728157bc0d5fe2dca1ea8f4b474ba8e70",
         "domainEventRefs": [],
         "ledgerTransactionRefs": [],
         "ledgerEntryRefs": []
@@ -1876,11 +1882,11 @@
       "lensOutputs": [
         {
           "lensId": "deposit-liability",
-          "rowCount": 0
+          "rowCount": 4
         },
         {
           "lensId": "stay-balance",
-          "rowCount": 0
+          "rowCount": 2
         }
       ],
       "noDuplicateSideEffect": true
@@ -1892,8 +1898,8 @@
       "status": "passed",
       "workItem": {
         "tenantId": "tenant-dorm-int-001",
-        "caseId": "case-d1-oam03-mpvp12ry-dorm-live-009",
-        "workItemId": "wi-d1-oam03-mpvp12ry-dorm-live-009",
+        "caseId": "case-d1-oam03-mpwjfnm1-dorm-live-009",
+        "workItemId": "wi-d1-oam03-mpwjfnm1-dorm-live-009",
         "workItemType": "paymentReceipt",
         "ownerRole": "finance",
         "source": "persisted_work_item_runtime_model"
@@ -1905,11 +1911,11 @@
         "confirmed": true,
         "commitStatus": "committed",
         "projectionStatus": "pending",
-        "caseId": "case-d1-oam03-mpvp12ry-dorm-live-009",
-        "workItemId": "wi-d1-oam03-mpvp12ry-dorm-live-009",
-        "submissionId": "sub-d1-oam03-mpvp12ry-dorm-live-009",
+        "caseId": "case-d1-oam03-mpwjfnm1-dorm-live-009",
+        "workItemId": "wi-d1-oam03-mpwjfnm1-dorm-live-009",
+        "submissionId": "sub-d1-oam03-mpwjfnm1-dorm-live-009",
         "resultEventIds": [
-          "evt-aafff6bbec3ac94fa973b136c060d44b655427e4fa253133d0f72cef2fd52d66"
+          "evt-fddda3f95bd444f8a9b951ccffe23c226314fcc14617527f9f56901cf7004798"
         ],
         "userMessage": "Committed through OperationsUnitOfWork.",
         "clientInstruction": {
@@ -1918,80 +1924,80 @@
           "observeOutbox": true
         },
         "source": "operations_unit_of_work",
-        "idempotencyKey": "idem-d1-oam03-mpvp12ry-dorm-live-009",
-        "payloadHash": "sha256:699fa70e12753c18e59c4a3e046a91dd88c4247777c5c2ba57711a5b9cee500f",
-        "commandSubmissionId": "cmd-a9c237460840f850555cf4b46b32280872bbb55f16d01f12b55d2489db1cb623"
+        "idempotencyKey": "idem-d1-oam03-mpwjfnm1-dorm-live-009",
+        "payloadHash": "sha256:dcabc30c90775306595e448379f1149427ac9795869e181fb0615a815db49b6b",
+        "commandSubmissionId": "cmd-b632a1368a79d60b30b070669e52a15cc2e2cfa12826cfce4253237b206e9d57"
       },
       "commandSubmission": {
-        "submissionId": "cmd-a9c237460840f850555cf4b46b32280872bbb55f16d01f12b55d2489db1cb623",
+        "submissionId": "cmd-b632a1368a79d60b30b070669e52a15cc2e2cfa12826cfce4253237b206e9d57",
         "status": "committed"
       },
       "rejectedCommandSubmission": null,
       "rejectionTrace": null,
       "domainEvents": [
         {
-          "event_id": "evt-aafff6bbec3ac94fa973b136c060d44b655427e4fa253133d0f72cef2fd52d66",
+          "event_id": "evt-fddda3f95bd444f8a9b951ccffe23c226314fcc14617527f9f56901cf7004798",
           "event_type": "OperationsWorkItemConfirmed",
-          "work_item_id": "wi-d1-oam03-mpvp12ry-dorm-live-009",
-          "submission_id": "cmd-a9c237460840f850555cf4b46b32280872bbb55f16d01f12b55d2489db1cb623"
+          "work_item_id": "wi-d1-oam03-mpwjfnm1-dorm-live-009",
+          "submission_id": "cmd-b632a1368a79d60b30b070669e52a15cc2e2cfa12826cfce4253237b206e9d57"
         }
       ],
       "ledgerTransactions": [
         {
-          "ledger_transaction_id": "ltx-6ac80578331cc62913360a81784980a21ab004237d3c0d2e005d31cecbc17e19",
+          "ledger_transaction_id": "ltx-2ed70bdc599f2999729cce3769ae6963bac9e53b4e794a6781018072dbcfdc6b",
           "transaction_type": "payment_receipt",
           "balance_status": "balanced",
-          "work_item_id": "wi-d1-oam03-mpvp12ry-dorm-live-009",
-          "submission_id": "cmd-a9c237460840f850555cf4b46b32280872bbb55f16d01f12b55d2489db1cb623"
+          "work_item_id": "wi-d1-oam03-mpwjfnm1-dorm-live-009",
+          "submission_id": "cmd-b632a1368a79d60b30b070669e52a15cc2e2cfa12826cfce4253237b206e9d57"
         }
       ],
       "ledgerEntries": [
         {
-          "entry_id": "le-262c10a1a7e515e58cdff9916c0be18aee10c806ca60678ffee576377f82e6b1",
-          "ledger_transaction_id": "ltx-6ac80578331cc62913360a81784980a21ab004237d3c0d2e005d31cecbc17e19",
-          "account_id": "asset.cash_or_bank",
-          "account_type": "asset",
-          "debit_credit": "debit",
-          "amount": 650
-        },
-        {
-          "entry_id": "le-3c45f92c6d7bed4fab95a11bd56711cf154c96fcdfcb9d77c1ca7ee2df528719",
-          "ledger_transaction_id": "ltx-6ac80578331cc62913360a81784980a21ab004237d3c0d2e005d31cecbc17e19",
+          "entry_id": "le-c81382cca06ac3e56b552217701155c02c842a2d7dabf2e53134c4a147ce7fc5",
+          "ledger_transaction_id": "ltx-2ed70bdc599f2999729cce3769ae6963bac9e53b4e794a6781018072dbcfdc6b",
           "account_id": "receivable.stay",
           "account_type": "receivable",
           "debit_credit": "credit",
+          "amount": 650
+        },
+        {
+          "entry_id": "le-ddb93a2132c1361ecb278e9807f325155d08c55dc2714a0382362bb1fe7d86e3",
+          "ledger_transaction_id": "ltx-2ed70bdc599f2999729cce3769ae6963bac9e53b4e794a6781018072dbcfdc6b",
+          "account_id": "asset.cash_or_bank",
+          "account_type": "asset",
+          "debit_credit": "debit",
           "amount": 650
         }
       ],
       "evidenceTrace": [
         {
-          "evidenceId": "ev-d1-oam03-mpvp12ry-dorm-live-009-bank-or-cash-proof",
+          "evidenceId": "ev-d1-oam03-mpwjfnm1-dorm-live-009-bank-or-cash-proof",
           "status": "verified",
           "trustedEvidenceObject": true
         }
       ],
       "factTrace": {
-        "traceId": "trace-cmd-a9c237460840f850555cf4b46b32280872bbb55f16d01f12b55d2489db1cb623",
-        "submissionRef": "cmd-a9c237460840f850555cf4b46b32280872bbb55f16d01f12b55d2489db1cb623",
+        "traceId": "trace-cmd-b632a1368a79d60b30b070669e52a15cc2e2cfa12826cfce4253237b206e9d57",
+        "submissionRef": "cmd-b632a1368a79d60b30b070669e52a15cc2e2cfa12826cfce4253237b206e9d57",
         "domainEventRefs": [
-          "evt-aafff6bbec3ac94fa973b136c060d44b655427e4fa253133d0f72cef2fd52d66"
+          "evt-fddda3f95bd444f8a9b951ccffe23c226314fcc14617527f9f56901cf7004798"
         ],
         "ledgerTransactionRefs": [
-          "ltx-6ac80578331cc62913360a81784980a21ab004237d3c0d2e005d31cecbc17e19"
+          "ltx-2ed70bdc599f2999729cce3769ae6963bac9e53b4e794a6781018072dbcfdc6b"
         ],
         "ledgerEntryRefs": [
-          "le-262c10a1a7e515e58cdff9916c0be18aee10c806ca60678ffee576377f82e6b1",
-          "le-3c45f92c6d7bed4fab95a11bd56711cf154c96fcdfcb9d77c1ca7ee2df528719"
+          "le-c81382cca06ac3e56b552217701155c02c842a2d7dabf2e53134c4a147ce7fc5",
+          "le-ddb93a2132c1361ecb278e9807f325155d08c55dc2714a0382362bb1fe7d86e3"
         ]
       },
       "lensOutputs": [
         {
           "lensId": "deposit-liability",
-          "rowCount": 0
+          "rowCount": 4
         },
         {
           "lensId": "stay-balance",
-          "rowCount": 0
+          "rowCount": 2
         }
       ],
       "noDuplicateSideEffect": true,
@@ -2002,9 +2008,9 @@
         "confirmed": false,
         "commitStatus": "not_committed",
         "projectionStatus": "not_projected",
-        "caseId": "case-d1-oam03-mpvp12ry-dorm-live-009",
-        "workItemId": "wi-d1-oam03-mpvp12ry-dorm-live-009",
-        "submissionId": "sub-d1-oam03-mpvp12ry-dorm-live-009-duplicate",
+        "caseId": "case-d1-oam03-mpwjfnm1-dorm-live-009",
+        "workItemId": "wi-d1-oam03-mpwjfnm1-dorm-live-009",
+        "submissionId": "sub-d1-oam03-mpwjfnm1-dorm-live-009-duplicate",
         "resultEventIds": [],
         "userMessage": "same_idempotency_different_payload",
         "clientInstruction": {
@@ -2013,13 +2019,13 @@
           "observeOutbox": false
         },
         "source": "operations_unit_of_work",
-        "idempotencyKey": "idem-d1-oam03-mpvp12ry-dorm-live-009",
-        "payloadHash": "sha256:699fa70e12753c18e59c4a3e046a91dd88c4247777c5c2ba57711a5b9cee500f",
-        "commandSubmissionId": "cmd-a9c237460840f850555cf4b46b32280872bbb55f16d01f12b55d2489db1cb623"
+        "idempotencyKey": "idem-d1-oam03-mpwjfnm1-dorm-live-009",
+        "payloadHash": "sha256:dcabc30c90775306595e448379f1149427ac9795869e181fb0615a815db49b6b",
+        "commandSubmissionId": "cmd-b632a1368a79d60b30b070669e52a15cc2e2cfa12826cfce4253237b206e9d57"
       },
       "duplicateSubmissionResult": {
         "statusCode": 409,
-        "commandSubmissionId": "cmd-a9c237460840f850555cf4b46b32280872bbb55f16d01f12b55d2489db1cb623",
+        "commandSubmissionId": "cmd-b632a1368a79d60b30b070669e52a15cc2e2cfa12826cfce4253237b206e9d57",
         "newSideEffectCount": 0
       }
     },
@@ -2030,8 +2036,8 @@
       "status": "passed",
       "workItem": {
         "tenantId": "tenant-dorm-int-001",
-        "caseId": "case-d1-oam03-mpvp12ry-dorm-live-010",
-        "workItemId": "wi-d1-oam03-mpvp12ry-dorm-live-010",
+        "caseId": "case-d1-oam03-mpwjfnm1-dorm-live-010",
+        "workItemId": "wi-d1-oam03-mpwjfnm1-dorm-live-010",
         "workItemType": "depositReceipt",
         "ownerRole": "finance",
         "source": "persisted_work_item_runtime_model"
@@ -2043,11 +2049,11 @@
         "confirmed": true,
         "commitStatus": "committed",
         "projectionStatus": "pending",
-        "caseId": "case-d1-oam03-mpvp12ry-dorm-live-010",
-        "workItemId": "wi-d1-oam03-mpvp12ry-dorm-live-010",
-        "submissionId": "sub-d1-oam03-mpvp12ry-dorm-live-010-accepted",
+        "caseId": "case-d1-oam03-mpwjfnm1-dorm-live-010",
+        "workItemId": "wi-d1-oam03-mpwjfnm1-dorm-live-010",
+        "submissionId": "sub-d1-oam03-mpwjfnm1-dorm-live-010-accepted",
         "resultEventIds": [
-          "evt-875520757d4a4dddb8afdab0982b10c2875e135cea00639c6c64fd703d2d672c"
+          "evt-0f85040ce3fdc425c501967cf19c76ca36b5849b9057eaf06704510499fc07e8"
         ],
         "userMessage": "Committed through OperationsUnitOfWork.",
         "clientInstruction": {
@@ -2056,20 +2062,20 @@
           "observeOutbox": true
         },
         "source": "operations_unit_of_work",
-        "idempotencyKey": "idem-d1-oam03-mpvp12ry-dorm-live-010-accepted",
-        "payloadHash": "sha256:136070105a73d5da58325618e900f3af3e86b80c4c254fb5f346b7b28dd5f7ba",
-        "commandSubmissionId": "cmd-6a57b41540d4ae0e4ecbabf539ac72d944e48148bf25c06600d9df177ddc8102"
+        "idempotencyKey": "idem-d1-oam03-mpwjfnm1-dorm-live-010-accepted",
+        "payloadHash": "sha256:5e3aeeaf83bf45048f96f431bdb44ebbbe7c6113b4a0cc011f16f154becbe998",
+        "commandSubmissionId": "cmd-afee99a517c0e6552b1e13a220cc4223f04b1897d27ca4168f109d87944322a7"
       },
       "commandSubmission": {
-        "submissionId": "cmd-6a57b41540d4ae0e4ecbabf539ac72d944e48148bf25c06600d9df177ddc8102",
+        "submissionId": "cmd-afee99a517c0e6552b1e13a220cc4223f04b1897d27ca4168f109d87944322a7",
         "status": "committed"
       },
       "rejectedCommandSubmission": null,
       "rejectionTrace": {
-        "traceId": "rej-trace-cmd-6d96d7623f2b04fb82ad31a583653b096855159414801facbf6bd3897069c9a5",
-        "caseRef": "case-d1-oam03-mpvp12ry-dorm-live-010",
-        "workItemRef": "wi-d1-oam03-mpvp12ry-dorm-live-010",
-        "submissionRef": "cmd-6d96d7623f2b04fb82ad31a583653b096855159414801facbf6bd3897069c9a5",
+        "traceId": "rej-trace-cmd-a4e950c3e5df37b65b8236a5816fa82ebfc9e9b80e982c78df43484f7894da99",
+        "caseRef": "case-d1-oam03-mpwjfnm1-dorm-live-010",
+        "workItemRef": "wi-d1-oam03-mpwjfnm1-dorm-live-010",
+        "submissionRef": "cmd-a4e950c3e5df37b65b8236a5816fa82ebfc9e9b80e982c78df43484f7894da99",
         "policyRef": "evidence-policy",
         "statusCode": 422,
         "reason": null,
@@ -2079,33 +2085,33 @@
       },
       "domainEvents": [
         {
-          "event_id": "evt-875520757d4a4dddb8afdab0982b10c2875e135cea00639c6c64fd703d2d672c",
+          "event_id": "evt-0f85040ce3fdc425c501967cf19c76ca36b5849b9057eaf06704510499fc07e8",
           "event_type": "OperationsWorkItemConfirmed",
-          "work_item_id": "wi-d1-oam03-mpvp12ry-dorm-live-010",
-          "submission_id": "cmd-6a57b41540d4ae0e4ecbabf539ac72d944e48148bf25c06600d9df177ddc8102"
+          "work_item_id": "wi-d1-oam03-mpwjfnm1-dorm-live-010",
+          "submission_id": "cmd-afee99a517c0e6552b1e13a220cc4223f04b1897d27ca4168f109d87944322a7"
         }
       ],
       "ledgerTransactions": [
         {
-          "ledger_transaction_id": "ltx-df630de0fdc5899060a7b4abc5b84dcc71e035b23a32f57f4a81bd4c6b9da4bc",
+          "ledger_transaction_id": "ltx-f1bb7e8004304110b2716af2522cae3bc7152bd99f464a8a9ac21b9de8ce6750",
           "transaction_type": "deposit_receipt",
           "balance_status": "balanced",
-          "work_item_id": "wi-d1-oam03-mpvp12ry-dorm-live-010",
-          "submission_id": "cmd-6a57b41540d4ae0e4ecbabf539ac72d944e48148bf25c06600d9df177ddc8102"
+          "work_item_id": "wi-d1-oam03-mpwjfnm1-dorm-live-010",
+          "submission_id": "cmd-afee99a517c0e6552b1e13a220cc4223f04b1897d27ca4168f109d87944322a7"
         }
       ],
       "ledgerEntries": [
         {
-          "entry_id": "le-c2853550cce034de64c13ebb954123f698e16afbef66a59366d0c222f906048e",
-          "ledger_transaction_id": "ltx-df630de0fdc5899060a7b4abc5b84dcc71e035b23a32f57f4a81bd4c6b9da4bc",
+          "entry_id": "le-a082ef9f70001ca30af3e7f70ef006cb041a6d8ed22980f43ddc00058a473ed7",
+          "ledger_transaction_id": "ltx-f1bb7e8004304110b2716af2522cae3bc7152bd99f464a8a9ac21b9de8ce6750",
           "account_id": "liability.deposit",
           "account_type": "liability",
           "debit_credit": "credit",
           "amount": 1200
         },
         {
-          "entry_id": "le-f0c2c416c43598e62ff0b19fe0e917e267217486eb58ff5d2bb1f7bce156fcc6",
-          "ledger_transaction_id": "ltx-df630de0fdc5899060a7b4abc5b84dcc71e035b23a32f57f4a81bd4c6b9da4bc",
+          "entry_id": "le-b58447d0594f320b1e4b8995b28b33e7ac86962872c172d06eb578412d7b8a9f",
+          "ledger_transaction_id": "ltx-f1bb7e8004304110b2716af2522cae3bc7152bd99f464a8a9ac21b9de8ce6750",
           "account_id": "asset.cash_or_bank",
           "account_type": "asset",
           "debit_credit": "debit",
@@ -2114,38 +2120,38 @@
       ],
       "evidenceTrace": [
         {
-          "evidenceId": "ev-d1-oam03-mpvp12ry-dorm-live-010-payment-proof",
+          "evidenceId": "ev-d1-oam03-mpwjfnm1-dorm-live-010-payment-proof",
           "status": "verified",
           "trustedEvidenceObject": true
         },
         {
-          "evidenceId": "ev-d1-oam03-mpvp12ry-dorm-live-010-finance-receipt",
+          "evidenceId": "ev-d1-oam03-mpwjfnm1-dorm-live-010-finance-receipt",
           "status": "verified",
           "trustedEvidenceObject": true
         }
       ],
       "factTrace": {
-        "traceId": "trace-cmd-6a57b41540d4ae0e4ecbabf539ac72d944e48148bf25c06600d9df177ddc8102",
-        "submissionRef": "cmd-6a57b41540d4ae0e4ecbabf539ac72d944e48148bf25c06600d9df177ddc8102",
+        "traceId": "trace-cmd-afee99a517c0e6552b1e13a220cc4223f04b1897d27ca4168f109d87944322a7",
+        "submissionRef": "cmd-afee99a517c0e6552b1e13a220cc4223f04b1897d27ca4168f109d87944322a7",
         "domainEventRefs": [
-          "evt-875520757d4a4dddb8afdab0982b10c2875e135cea00639c6c64fd703d2d672c"
+          "evt-0f85040ce3fdc425c501967cf19c76ca36b5849b9057eaf06704510499fc07e8"
         ],
         "ledgerTransactionRefs": [
-          "ltx-df630de0fdc5899060a7b4abc5b84dcc71e035b23a32f57f4a81bd4c6b9da4bc"
+          "ltx-f1bb7e8004304110b2716af2522cae3bc7152bd99f464a8a9ac21b9de8ce6750"
         ],
         "ledgerEntryRefs": [
-          "le-c2853550cce034de64c13ebb954123f698e16afbef66a59366d0c222f906048e",
-          "le-f0c2c416c43598e62ff0b19fe0e917e267217486eb58ff5d2bb1f7bce156fcc6"
+          "le-a082ef9f70001ca30af3e7f70ef006cb041a6d8ed22980f43ddc00058a473ed7",
+          "le-b58447d0594f320b1e4b8995b28b33e7ac86962872c172d06eb578412d7b8a9f"
         ]
       },
       "lensOutputs": [
         {
           "lensId": "deposit-liability",
-          "rowCount": 0
+          "rowCount": 4
         },
         {
           "lensId": "stay-balance",
-          "rowCount": 0
+          "rowCount": 2
         }
       ],
       "noDuplicateSideEffect": true,
@@ -2156,9 +2162,9 @@
         "confirmed": false,
         "commitStatus": "not_committed",
         "projectionStatus": "not_projected",
-        "caseId": "case-d1-oam03-mpvp12ry-dorm-live-010",
-        "workItemId": "wi-d1-oam03-mpvp12ry-dorm-live-010",
-        "submissionId": "sub-d1-oam03-mpvp12ry-dorm-live-010",
+        "caseId": "case-d1-oam03-mpwjfnm1-dorm-live-010",
+        "workItemId": "wi-d1-oam03-mpwjfnm1-dorm-live-010",
+        "submissionId": "sub-d1-oam03-mpwjfnm1-dorm-live-010",
         "resultEventIds": [],
         "userMessage": "not_committed",
         "clientInstruction": {
@@ -2167,9 +2173,9 @@
           "observeOutbox": false
         },
         "source": "operations_unit_of_work",
-        "idempotencyKey": "idem-d1-oam03-mpvp12ry-dorm-live-010",
-        "payloadHash": "sha256:603fd083fdaeeb9d66b5abb3aa21fbc0de29f0d0afeba519189a71be8d037d6e",
-        "commandSubmissionId": "cmd-6d96d7623f2b04fb82ad31a583653b096855159414801facbf6bd3897069c9a5"
+        "idempotencyKey": "idem-d1-oam03-mpwjfnm1-dorm-live-010",
+        "payloadHash": "sha256:66b91a55b2568b4c188797dbf236a440d995f9a9f59d80f0e5902fff6275b503",
+        "commandSubmissionId": "cmd-a4e950c3e5df37b65b8236a5816fa82ebfc9e9b80e982c78df43484f7894da99"
       },
       "remediation": {
         "missingEvidenceBlocked": true,
@@ -2183,8 +2189,8 @@
       "status": "passed",
       "workItem": {
         "tenantId": "tenant-dorm-int-001",
-        "caseId": "case-d1-oam03-mpvp12ry-dorm-live-rollback",
-        "workItemId": "wi-d1-oam03-mpvp12ry-dorm-live-rollback",
+        "caseId": "case-d1-oam03-mpwjfnm1-dorm-live-rollback",
+        "workItemId": "wi-d1-oam03-mpwjfnm1-dorm-live-rollback",
         "workItemType": "paymentAdjustment",
         "ownerRole": "releaseOwner",
         "source": "persisted_work_item_runtime_model"
@@ -2196,11 +2202,11 @@
         "confirmed": true,
         "commitStatus": "committed",
         "projectionStatus": "pending",
-        "caseId": "case-d1-oam03-mpvp12ry-dorm-live-rollback",
-        "workItemId": "wi-d1-oam03-mpvp12ry-dorm-live-rollback",
-        "submissionId": "sub-d1-oam03-mpvp12ry-dorm-live-rollback",
+        "caseId": "case-d1-oam03-mpwjfnm1-dorm-live-rollback",
+        "workItemId": "wi-d1-oam03-mpwjfnm1-dorm-live-rollback",
+        "submissionId": "sub-d1-oam03-mpwjfnm1-dorm-live-rollback",
         "resultEventIds": [
-          "evt-da68d886efb757f79b8f4eac29509485c7637ea5b7aa000d8a43dd3a562f898c"
+          "evt-e396865891985d9f112cebe05596883a7faf7e3c3bf0e883e7ccaf4cdd1d5379"
         ],
         "userMessage": "Committed through OperationsUnitOfWork.",
         "clientInstruction": {
@@ -2209,45 +2215,45 @@
           "observeOutbox": true
         },
         "source": "operations_unit_of_work",
-        "idempotencyKey": "idem-d1-oam03-mpvp12ry-dorm-live-rollback",
-        "payloadHash": "sha256:0a33f43284d01cd5166db140033ff6e7b4b583861cdea373003e20c0268e7f68",
-        "commandSubmissionId": "cmd-2d54966b13d07e4e17da7adb47f7c8ade7f97cebaae5d021baa28797d16343ab"
+        "idempotencyKey": "idem-d1-oam03-mpwjfnm1-dorm-live-rollback",
+        "payloadHash": "sha256:697f21ab44532495ef92adfd31b8c51ab6b0dfd0516c3eb580a62e1ae957653a",
+        "commandSubmissionId": "cmd-0d57b7a00693c20e04cf98540fb71992e635fe21fc92b140e67fbfeb8304680e"
       },
       "commandSubmission": {
-        "submissionId": "cmd-2d54966b13d07e4e17da7adb47f7c8ade7f97cebaae5d021baa28797d16343ab",
+        "submissionId": "cmd-0d57b7a00693c20e04cf98540fb71992e635fe21fc92b140e67fbfeb8304680e",
         "status": "committed"
       },
       "rejectedCommandSubmission": null,
       "rejectionTrace": null,
       "domainEvents": [
         {
-          "event_id": "evt-da68d886efb757f79b8f4eac29509485c7637ea5b7aa000d8a43dd3a562f898c",
+          "event_id": "evt-e396865891985d9f112cebe05596883a7faf7e3c3bf0e883e7ccaf4cdd1d5379",
           "event_type": "OperationsWorkItemConfirmed",
-          "work_item_id": "wi-d1-oam03-mpvp12ry-dorm-live-rollback",
-          "submission_id": "cmd-2d54966b13d07e4e17da7adb47f7c8ade7f97cebaae5d021baa28797d16343ab"
+          "work_item_id": "wi-d1-oam03-mpwjfnm1-dorm-live-rollback",
+          "submission_id": "cmd-0d57b7a00693c20e04cf98540fb71992e635fe21fc92b140e67fbfeb8304680e"
         }
       ],
       "ledgerTransactions": [
         {
-          "ledger_transaction_id": "ltx-5ba6dd5d8d3916311e2dce34c73687905e1e92954a92895378b1ae9dca44d0be",
+          "ledger_transaction_id": "ltx-06d509c3446672e77af80d8ccf26e2d00e60c200802760d054c65151dfba2872",
           "transaction_type": "ledger_correction_apply",
           "balance_status": "balanced",
-          "work_item_id": "wi-d1-oam03-mpvp12ry-dorm-live-rollback",
-          "submission_id": "cmd-2d54966b13d07e4e17da7adb47f7c8ade7f97cebaae5d021baa28797d16343ab"
+          "work_item_id": "wi-d1-oam03-mpwjfnm1-dorm-live-rollback",
+          "submission_id": "cmd-0d57b7a00693c20e04cf98540fb71992e635fe21fc92b140e67fbfeb8304680e"
         }
       ],
       "ledgerEntries": [
         {
-          "entry_id": "le-7c714a7ec388f5ec8006f9c696a7f1274d35acc7e6ceacc41c54f3debb723b94",
-          "ledger_transaction_id": "ltx-5ba6dd5d8d3916311e2dce34c73687905e1e92954a92895378b1ae9dca44d0be",
+          "entry_id": "le-3e9762c4c381b8e688778e26128d38fe77fb43120ea835f14fe0ace44c067269",
+          "ledger_transaction_id": "ltx-06d509c3446672e77af80d8ccf26e2d00e60c200802760d054c65151dfba2872",
           "account_id": "correction.reversal",
           "account_type": "correction",
           "debit_credit": "debit",
           "amount": 10
         },
         {
-          "entry_id": "le-c1180cf5024c7a91240f17bf68a12f77def89fa9f010a978316d7ed530a19102",
-          "ledger_transaction_id": "ltx-5ba6dd5d8d3916311e2dce34c73687905e1e92954a92895378b1ae9dca44d0be",
+          "entry_id": "le-5eab518f9f101481829c591ded57e0f3b89ed2096da65524367fbc4ae1c6ef31",
+          "ledger_transaction_id": "ltx-06d509c3446672e77af80d8ccf26e2d00e60c200802760d054c65151dfba2872",
           "account_id": "correction.offset",
           "account_type": "correction",
           "debit_credit": "credit",
@@ -2256,33 +2262,33 @@
       ],
       "evidenceTrace": [
         {
-          "evidenceId": "ev-d1-oam03-mpvp12ry-dorm-live-rollback-rollback-drill",
+          "evidenceId": "ev-d1-oam03-mpwjfnm1-dorm-live-rollback-rollback-drill",
           "status": "verified",
           "trustedEvidenceObject": true
         }
       ],
       "factTrace": {
-        "traceId": "trace-cmd-2d54966b13d07e4e17da7adb47f7c8ade7f97cebaae5d021baa28797d16343ab",
-        "submissionRef": "cmd-2d54966b13d07e4e17da7adb47f7c8ade7f97cebaae5d021baa28797d16343ab",
+        "traceId": "trace-cmd-0d57b7a00693c20e04cf98540fb71992e635fe21fc92b140e67fbfeb8304680e",
+        "submissionRef": "cmd-0d57b7a00693c20e04cf98540fb71992e635fe21fc92b140e67fbfeb8304680e",
         "domainEventRefs": [
-          "evt-da68d886efb757f79b8f4eac29509485c7637ea5b7aa000d8a43dd3a562f898c"
+          "evt-e396865891985d9f112cebe05596883a7faf7e3c3bf0e883e7ccaf4cdd1d5379"
         ],
         "ledgerTransactionRefs": [
-          "ltx-5ba6dd5d8d3916311e2dce34c73687905e1e92954a92895378b1ae9dca44d0be"
+          "ltx-06d509c3446672e77af80d8ccf26e2d00e60c200802760d054c65151dfba2872"
         ],
         "ledgerEntryRefs": [
-          "le-7c714a7ec388f5ec8006f9c696a7f1274d35acc7e6ceacc41c54f3debb723b94",
-          "le-c1180cf5024c7a91240f17bf68a12f77def89fa9f010a978316d7ed530a19102"
+          "le-3e9762c4c381b8e688778e26128d38fe77fb43120ea835f14fe0ace44c067269",
+          "le-5eab518f9f101481829c591ded57e0f3b89ed2096da65524367fbc4ae1c6ef31"
         ]
       },
       "lensOutputs": [
         {
           "lensId": "deposit-liability",
-          "rowCount": 0
+          "rowCount": 4
         },
         {
           "lensId": "stay-balance",
-          "rowCount": 0
+          "rowCount": 2
         }
       ],
       "noDuplicateSideEffect": true,

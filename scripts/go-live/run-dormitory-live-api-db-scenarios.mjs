@@ -20,7 +20,7 @@ let apiCalls = [];
 let noGoItems = [];
 let scenarioResults = [];
 let tenantId = "tenant-dorm-int-001";
-let actorToken = "operator-token";
+let actorToken = "";
 let server = null;
 
 if (isMain && process.argv.includes("--self-test")) {
@@ -62,8 +62,9 @@ async function main() {
   noGoItems = [];
   scenarioResults = [];
   tenantId = scenariosDoc.tenantId ?? "tenant-dorm-int-001";
-  actorToken = scenariosDoc.actorToken ?? "operator-token";
+  actorToken = "";
   server = await startApi();
+  await ensureRuntimeActorSession();
   try {
   for (const scenario of scenariosDoc.scenarios ?? []) {
     scenarioResults.push(await runScenario(scenario));
@@ -462,15 +463,39 @@ function hasApiCall(calls, required) {
 }
 
 async function api(method, route, contractPath, body, headers = {}, failOnNonOk = true) {
+  const actorHeaders = actorToken && route !== "/api/auth/login"
+    ? { "X-WorkOS-Actor-Token": actorToken }
+    : {};
   const response = await fetch(`${server.baseUrl}${route}`, {
     method,
-    headers: { "Content-Type": "application/json", ...headers },
+    headers: { "Content-Type": "application/json", ...actorHeaders, ...headers },
     body: body === undefined ? undefined : JSON.stringify(body)
   });
   const payload = await response.json().catch(() => ({}));
   apiCalls.push({ method, path: route, contractPath, statusCode: response.status });
   if (failOnNonOk && !response.ok) throw new Error(`${method} ${route} failed: ${response.status} ${JSON.stringify(payload)}`);
   return payload;
+}
+
+async function ensureRuntimeActorSession() {
+  const username = scenariosDoc.actorUsername ?? "operator";
+  const password = scenariosDoc.actorPassword ?? "dev";
+  const response = await fetch(`${server.baseUrl}/api/auth/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username, password })
+  });
+  const payload = await response.json().catch(() => ({}));
+  apiCalls.push({
+    method: "POST",
+    path: "/api/auth/login",
+    contractPath: "/api/auth/login",
+    statusCode: response.status
+  });
+  if (!response.ok || !payload.token) {
+    throw new Error(`POST /api/auth/login failed: ${response.status} ${JSON.stringify(payload)}`);
+  }
+  actorToken = payload.token;
 }
 
 async function startApi() {
