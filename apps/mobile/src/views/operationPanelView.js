@@ -7,11 +7,19 @@ export function operationPanelView(ctx) {
   const { state, shell } = ctx;
   const item = resolveOperationItem(state);
   if (!item?.workItemId && !item?.work_item_id) {
+    state.lastActionResult = {
+      confirmed: false,
+      status: "business_blocked_422",
+      commitStatus: "blocked",
+      projectionStatus: "not_started",
+      error: "operation_work_item_required",
+      reason: "operation_work_item_required"
+    };
     return shell(`
-      <section class="operation-panel-empty" data-component="OperationPanelView">
-        <span>Operation Panel</span>
-        <h1>Persisted WorkItem required</h1>
-        <p>operation_work_item_required</p>
+      <section class="operation-panel-empty" data-surface="operation-panel-runtime" data-blocker-code="operation_work_item_required">
+        <span>${ctx.tr("operationPanel")}</span>
+        <h1>${ctx.tr("persistedWorkItemRequired")}</h1>
+        <p>${ctx.tr("persistedWorkItemRequiredBody")}</p>
       </section>
     `);
   }
@@ -20,10 +28,10 @@ export function operationPanelView(ctx) {
   const activeCard = item?.card || activeWorkspaceCard(workspace, state.selectedCardIndex, state.selectedCardId);
   if (!workspace || !activeCard) {
     return shell(`
-      <section class="operation-panel-empty" data-component="OperationPanelView">
-        <span>Operation Panel</span>
-        <h1>Runtime WorkItem selected</h1>
-        <p>${ctx.escapeHtml(item.workItemId || item.work_item_id)} · workspace_or_card_projection_missing</p>
+      <section class="operation-panel-empty" data-surface="operation-panel-runtime" data-work-item-id="${ctx.escapeAttr(item.workItemId || item.work_item_id)}">
+        <span>${ctx.tr("operationPanel")}</span>
+        <h1>${ctx.tr("runtimeWorkItemSelected")}</h1>
+        <p>${ctx.tr("workspaceProjectionMissing")}</p>
       </section>
     `);
   }
@@ -33,27 +41,22 @@ export function operationPanelView(ctx) {
   const payloadHash = state.lastActionResult?.payloadHash || payloadHashFor(draft.values || {}, draft.evidenceDrafts || []);
   const commandSubmissionId = state.lastActionResult?.commandSubmissionId || draft.submissionProtocol?.submissionId || model.traceRefs[0] || "";
   const operationBody = workspaceCardPanel(activeCard, workspace, true, ctx);
-  const traceRefs = [
-    commandSubmissionId ? `${ctx.tr("submissionRecord")}:${commandSubmissionId}` : "",
-    model.caseId ? `caseId:${model.caseId}` : "",
-    model.workItemId ? `workItemId:${model.workItemId}` : "",
-    ...(model.traceRefs || [])
-  ].filter(Boolean);
+  const traceCount = [commandSubmissionId, model.caseId, model.workItemId, ...(model.traceRefs || [])].filter(Boolean).length;
 
   return shell(`
-    <section class="operation-panel-page" data-component="operationPanelRoute">
-      <span>Operation Panel</span>
+    <section class="operation-panel-page" data-surface="operation-panel-route" data-work-item-id="${ctx.escapeAttr(model.workItemId)}" data-case-id="${ctx.escapeAttr(model.caseId)}" data-submission-id="${ctx.escapeAttr(commandSubmissionId)}" data-payload-fingerprint="${ctx.escapeAttr(payloadHash)}">
+      <span>${ctx.tr("operationPanel")}</span>
       <h1>${ctx.escapeHtml(model.workItemType)}</h1>
-      <p>${ctx.escapeHtml(model.workItemId)} · ${ctx.escapeHtml(model.caseId)}</p>
+      <p>${ctx.escapeHtml(model.businessObject)} · ${ctx.escapeHtml(model.nextAction)}</p>
     </section>
     ${WorkItemCard(operationContext, ctx)}
-    <section class="operation-panel-runtime" data-component="OperationPanelRuntime">
-      <article><span>prepare</span><strong>operationsPrepare</strong><p>Transport path is owned by apiClient.js.</p></article>
-      <article><span>confirm</span><strong>operationsConfirm</strong><p>Transport path is owned by operationRuntime.js.</p></article>
-      <article><span>trace</span><strong>${ctx.escapeHtml(traceRefs.join(" · ") || "-")}</strong><p>submission / workItem / case trace APIs</p></article>
-      <article><span>projection</span><strong>${ctx.escapeHtml(state.lastActionResult?.status || "not_submitted")}</strong><p>Projection pending is not failed.</p></article>
-      <article><span>${ctx.tr("submissionRecord")}</span><strong>${ctx.escapeHtml(commandSubmissionId || "-")}</strong><p>${ctx.tr("submissionRecordHelp")}</p></article>
-      <article><span>${ctx.tr("payloadFingerprint")}</span><strong>${ctx.escapeHtml(payloadHash)}</strong><p>${ctx.tr("payloadFingerprintHelp")}</p></article>
+    <section class="operation-panel-runtime" data-surface="operation-runtime-proof">
+      <article><span>${ctx.tr("prepareContract")}</span><strong>${ctx.tr("prepareContractReady")}</strong><p>${ctx.tr("prepareContractHelp")}</p></article>
+      <article><span>${ctx.tr("confirmCommit")}</span><strong>${ctx.tr("confirmCommitReady")}</strong><p>${ctx.tr("confirmCommitHelp")}</p></article>
+      <article><span>${ctx.tr("trace")}</span><strong>${traceCount ? ctx.tr("traceAvailable") : ctx.tr("traceWillBind")}</strong><p>${ctx.tr("traceHelp")}</p></article>
+      <article><span>${ctx.tr("projection")}</span><strong>${ctx.escapeHtml(state.lastActionResult?.status ? ctx.tr(state.lastActionResult.status) : ctx.tr("notSubmitted"))}</strong><p>${ctx.tr("projectionPendingBody")}</p></article>
+      <article><span>${ctx.tr("submissionRecord")}</span><strong>${commandSubmissionId ? ctx.tr("traceAvailable") : ctx.tr("traceWillBind")}</strong><p>${ctx.tr("submissionRecordHelp")}</p></article>
+      <article><span>${ctx.tr("payloadFingerprint")}</span><strong>${ctx.tr("localDraftFingerprint")}</strong><p>${ctx.tr("payloadFingerprintHelp")}</p></article>
     </section>
     ${OperationPanelView(operationBody, operationContext, activeCard, ctx)}
     ${EvidenceSheet(activeCard, draft, ctx)}

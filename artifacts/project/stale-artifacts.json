@@ -1,0 +1,147 @@
+{
+  "generatedAtUtc": "2026-06-02T05:42:09.207Z",
+  "generatedBy": "check-stale-evidence-refs",
+  "stage": "PROJECT-HYGIENE-CLEANUP",
+  "status": "passed",
+  "finalEvidenceRefCount": 85,
+  "staleArtifactCount": 22,
+  "staleArtifacts": [
+    {
+      "artifactPath": "artifacts/evidence/evidence-ledger-check-result.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/evidence/evidence-ledger.jsonl",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/go-live/dormitory/ledger-semantic-result.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/go-live/dormitory/source-mode-contract-result.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/operations/dormitory/incident-learning-loop-result.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/operations/dormitory/observation-index.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/operations/dormitory/observation-ledger-check-result.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/operations/dormitory/observation-ledger.jsonl",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/release-state/evidence-rebinding-result.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/release-state/evidence-reconciliation-result.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/surface/backend-runtime-guard-api-replay-result.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/surface/backend-runtime-guard-result.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/surface/device-trust-contract-result.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/surface/evidence-trust-contract-result.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/surface/mobile-pc-boundary-result.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/surface/mobile-visible-copy-result.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/surface/operation-panel-runtime-contract-result.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/surface/permission-explainability-contract-result.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/surface/queue-state-contract-result.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/surface/search-learning-contract-result.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/surface/surface-api-boundary-result.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/surface/surface-experience-contract-result.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    }
+  ],
+  "noGoItems": [],
+  "productionAllowed": false,
+  "dormitoryL2ProductionAllowed": false,
+  "businessProduction": "blocked",
+  "repairPartsHrStatus": "L0 Contract Preview"
+}

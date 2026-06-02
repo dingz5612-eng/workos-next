@@ -31,12 +31,12 @@ describe("DORM-INT-02 WorkItem-native pilot", () => {
 
     expect(testCtx.state.view).toBe("operationPanel");
     expect(testCtx.state.selectedWorkItemId).toBe("WI-DORM-001");
-    expect(html).toContain('data-component="operationPanelRoute"');
-    expect(html).toContain("operationsPrepare");
-    expect(html).toContain("operationsConfirm");
+    expect(html).toContain('data-surface="operation-panel-route"');
+    expect(visibleText(html)).not.toContain("operationsPrepare");
+    expect(visibleText(html)).not.toContain("operationsConfirm");
     expect(html).toContain("提交记录");
     expect(html).toContain("载荷指纹");
-    expect(visibleText(html)).not.toMatch(/\b(commandSubmissionId|payloadHash)\b/);
+    expect(visibleText(html)).not.toMatch(/\b(commandSubmissionId|payloadHash|workItemId|caseId|OperationPanelView|TrustedConfirmSheet|ActionResult)\b/);
     vi.unstubAllGlobals();
   });
 
@@ -64,7 +64,7 @@ describe("DORM-INT-02 WorkItem-native pilot", () => {
 
     expect(testCtx.state.selectedWorkItemId).toBe("W-STAY-RESOURCE:roomSetup");
     expect(html).toContain("W-STAY-RESOURCE:roomSetup");
-    expect(html).toContain('data-component="TrustedConfirmSheet"');
+    expect(html).toContain('data-surface="trusted-confirm"');
     expect(html).not.toContain("T-ROOM-CREATE");
     vi.unstubAllGlobals();
   });
@@ -93,7 +93,7 @@ describe("DORM-INT-02 WorkItem-native pilot", () => {
     const html = routeView(testCtx);
 
     expect(html).toContain("W-STAY-RESOURCE:roomSetup");
-    expect(html).toContain('data-component="TrustedConfirmSheet"');
+    expect(html).toContain('data-surface="trusted-confirm"');
     expect(html).not.toContain("T-ROOM-CREATE");
     vi.unstubAllGlobals();
   });

@@ -202,10 +202,15 @@ function validateNoRawSurfaceLabels(contracts, rendered, source, violations) {
       violations.push(violation("surface.visible.raw_key", `普通移动端可见文本不得出现 raw key ${token}。`, { token }));
     }
   }
-  for (const token of ["UploadQueue", "SubmitQueue", "DeviceTrustPanel", "WorkItemMissionControl", "PersonalOpsCenter"]) {
+  for (const token of ["UploadQueue", "SubmitQueue", "DeviceTrustPanel", "WorkItemMissionControl", "PersonalOpsCenter", "OperationPanelView", "TrustedConfirmSheet", "EvidenceSheet", "ProjectionPendingState", "ActionResult"]) {
     const visibleLiteralPattern = new RegExp(`>${escapeRegExp(token)}<|<h1>${escapeRegExp(token)}|<b>${escapeRegExp(token)}|<span>${escapeRegExp(token)}`);
-    if (visibleLiteralPattern.test(`${source.homeView}\n${source.meView}\n${source.searchView}\n${source.experienceComponents}`)) {
+    if (visibleLiteralPattern.test(`${source.homeView}\n${source.meView}\n${source.searchView}\n${source.operationPanel}\n${source.experienceComponents}`)) {
       violations.push(violation("surface.visible.raw_component_name", `模板不得可见输出组件名 ${token}。`, { token }));
+    }
+  }
+  for (const token of ["operationsPrepare", "operationsConfirm"]) {
+    if (visibleText(rendered.operationPanel).includes(token)) {
+      violations.push(violation("surface.visible.raw_runtime_action", `Operation Panel 可见文本不得出现 ${token}。`, { token }));
     }
   }
 }

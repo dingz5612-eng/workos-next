@@ -2,8 +2,8 @@
   "generated_at_utc": "2026-06-02T01:34:14.117Z",
   "generated_by": "generate-dorm-l1-observation-day1",
   "branch": "codex/dorm-l1-observation-day-01",
-  "headSha": "afb34d69cc572fbecb3129f09da9ffd66e2d088a",
-  "originMainHead": "d03d8d39c91135eb3f63d1a56b59e19b7dd35196",
+  "headSha": "52d55e17d6f0f37df69ba3bab7ddc240bc01887d",
+  "originMainHead": "1a2fb45a89f3d1ef18eaf4ca216ecdc57660df30",
   "stage": "DORM-L1-OBS-DAY1",
   "day": 1,
   "status": "passed",
@@ -475,5 +475,25 @@
     "artifacts/portfolio/business-line-maturity-result.json"
   ],
   "noGoItems": [],
-  "nextAction": "Day-1 green，允许继续 Day-2；宿舍仍仅为 L1 Internal Pilot Observation。"
+  "nextAction": "Day-1 green，允许继续 Day-2；宿舍仍仅为 L1 Internal Pilot Observation。",
+  "prNumber": 71,
+  "prHead": "52d55e17d6f0f37df69ba3bab7ddc240bc01887d",
+  "prBase": "1a2fb45a89f3d1ef18eaf4ca216ecdc57660df30",
+  "mergeCommit": "fad090ad45fb44efbcd22d3f13fd7b130dfc6ab0",
+  "postMergeAttestationRef": "artifacts/release-state/post-merge-attestation.json",
+  "postMergeAttestationStatus": "passed",
+  "artifactGitBindingRef": "artifacts/release-state/artifact-git-binding-result.json",
+  "gitBinding": {
+    "status": "post_merge_attested",
+    "repositoryHead": "fad090ad45fb44efbcd22d3f13fd7b130dfc6ab0",
+    "verifiedMainHead": "fad090ad45fb44efbcd22d3f13fd7b130dfc6ab0",
+    "prNumber": 71,
+    "prHead": "52d55e17d6f0f37df69ba3bab7ddc240bc01887d",
+    "prBase": "1a2fb45a89f3d1ef18eaf4ca216ecdc57660df30",
+    "mergeCommit": "fad090ad45fb44efbcd22d3f13fd7b130dfc6ab0",
+    "evidenceRefs": [
+      "artifacts/release-state/post-merge-attestation.json",
+      "artifacts/release-state/artifact-git-binding-result.json"
+    ]
+  }
 }

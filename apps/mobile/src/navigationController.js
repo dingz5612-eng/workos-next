@@ -48,7 +48,7 @@ export function openWorkItem(workItemId, ctx, fallback = {}) {
     item.workItemId === workItemId || item.work_item_id === workItemId);
   const fallbackItem = findRuntimeWorkItemForFallback(ctx.state, fallback);
   const selected = queueItem || operationItem || fallbackItem || null;
-  const resolvedWorkItemId = selected?.workItemId || selected?.work_item_id || persistedWorkItemIdFor(fallback.workspaceId, fallback.cardId) || workItemId;
+  const resolvedWorkItemId = selected?.workItemId || selected?.work_item_id || workItemId;
   ctx.state.selectedWorkItemId = resolvedWorkItemId;
   ctx.state.selectedWorkspace = selected?.workspaceId || selected?.workspace_id || fallback.workspaceId || ctx.state.selectedWorkspace;
   ctx.state.selectedCardId = selected?.cardId || selected?.card_id || fallback.cardId || ctx.state.selectedCardId || "";
@@ -65,10 +65,6 @@ function findRuntimeWorkItemForFallback(state, fallback = {}) {
     (item.workspaceId || item.workspace_id) === fallback.workspaceId &&
     (!(item.cardId || item.card_id) || (item.cardId || item.card_id) === fallback.cardId) &&
     (item.workItemId || item.work_item_id));
-}
-
-function persistedWorkItemIdFor(workspaceId, cardId) {
-  return workspaceId && cardId ? `${workspaceId}:${cardId}` : "";
 }
 
 export function selectCard(cardIndex, ctx) {

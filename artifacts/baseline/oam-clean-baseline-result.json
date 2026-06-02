@@ -1,0 +1,46 @@
+{
+  "generatedAtUtc": "2026-06-02T05:49:18.557Z",
+  "generatedBy": "check-oam-clean-baseline",
+  "stage": "OAM-CLEAN-BASELINE-FINAL-GATE",
+  "status": "OAM_CLEAN_BASELINE_ALIGNED",
+  "baselines": {
+    "releaseEvidence": {
+      "status": "passed",
+      "resultHash": "825deacb46dd0847ab8debece44d17116f6a7bbc0414ce1b8ceb3ddb6ee674cd",
+      "noGoCount": 0
+    },
+    "artifact": {
+      "status": "passed",
+      "resultHash": "2ec8cd67c9af52d2f82e9c8874b9d573e7d91eed070223f94ea96e29eaabbb7d",
+      "noGoCount": 0
+    },
+    "runtimeSemantic": {
+      "status": "passed",
+      "resultHash": "071dede2d80d469d1eb9b3d51afdf6d802bf599b4c3f5f291fa7fbc2ea15aafd",
+      "noGoCount": 0
+    },
+    "surfaceUx": {
+      "status": "passed",
+      "resultHash": "c481192b0816d2eec1618917bd855f560ad65a5b234518c8558baf35a455d975",
+      "noGoCount": 0
+    },
+    "seedData": {
+      "status": "passed",
+      "resultHash": "ab271c57964ed3ebe3da73ca91724e5633615383265dce3ac7f1824992b849f1",
+      "noGoCount": 0
+    },
+    "portfolioBoundary": {
+      "status": "passed",
+      "resultHash": "87c78fa2ddee7429fd3bfd7b3c09cb9ae3f7ab12d878b9550bad3f2d187a338b",
+      "noGoCount": 0
+    }
+  },
+  "inputHash": "d4824dde6a0e90573424d11f32b3f0ebea37177755cea325cde80421b55a2012",
+  "resultHash": "d04f46b1cdc080bb7e015d037fd12934e5e918e39c30d5e6f44fca3199866805",
+  "noGoItems": [],
+  "day2AllowedAfterPostMergeAttestation": true,
+  "productionAllowed": false,
+  "dormitoryL2ProductionAllowed": false,
+  "businessProduction": "blocked",
+  "repairPartsHrStatus": "L0 Contract Preview"
+}

@@ -1,0 +1,158 @@
+{
+  "generatedAtUtc": "2026-06-02T05:42:22.679Z",
+  "generatedBy": "check-seed-data-isolation",
+  "stage": "PROJECT-HYGIENE-CLEANUP",
+  "taskSeeds": [
+    {
+      "seedId": "T-STAY-DEPOSIT",
+      "domain": "stay",
+      "classification": "DORM-L1 candidate seed",
+      "ordinaryMobileAllowed": true,
+      "diagnosticOnly": false,
+      "productionAllowed": false
+    },
+    {
+      "seedId": "T-AUTO-DIAGNOSE",
+      "domain": "repair",
+      "classification": "L0 learning/diagnostic seed",
+      "ordinaryMobileAllowed": false,
+      "diagnosticOnly": true,
+      "productionAllowed": false
+    },
+    {
+      "seedId": "T-FIN-DEPOSIT",
+      "domain": "finance",
+      "classification": "finance diagnostic seed",
+      "ordinaryMobileAllowed": false,
+      "diagnosticOnly": true,
+      "productionAllowed": false
+    },
+    {
+      "seedId": "T-STAY-CHECKOUT",
+      "domain": "stay",
+      "classification": "DORM-L1 candidate seed",
+      "ordinaryMobileAllowed": true,
+      "diagnosticOnly": false,
+      "productionAllowed": false
+    },
+    {
+      "seedId": "T-ROOM-CREATE",
+      "domain": "stay",
+      "classification": "DORM-L1 candidate seed",
+      "ordinaryMobileAllowed": true,
+      "diagnosticOnly": false,
+      "productionAllowed": false
+    },
+    {
+      "seedId": "T-BED-CREATE",
+      "domain": "stay",
+      "classification": "DORM-L1 candidate seed",
+      "ordinaryMobileAllowed": true,
+      "diagnosticOnly": false,
+      "productionAllowed": false
+    },
+    {
+      "seedId": "T-VEHICLE-CREATE",
+      "domain": "repair",
+      "classification": "L0 learning/diagnostic seed",
+      "ordinaryMobileAllowed": false,
+      "diagnosticOnly": true,
+      "productionAllowed": false
+    },
+    {
+      "seedId": "T-REPAIR-CLOSE",
+      "domain": "repair",
+      "classification": "L0 learning/diagnostic seed",
+      "ordinaryMobileAllowed": false,
+      "diagnosticOnly": true,
+      "productionAllowed": false
+    }
+  ],
+  "workspaceSeeds": [
+    {
+      "workspaceId": "W-STAY-RESOURCE",
+      "taskId": "T-ROOM-CREATE",
+      "domain": "stay",
+      "classification": "DORM-L1 lifecycle workspace seed",
+      "cardCount": 3,
+      "ordinaryMobileAllowed": true,
+      "diagnosticOnly": false,
+      "productionAllowed": false
+    },
+    {
+      "workspaceId": "W-STAY-CHECKIN",
+      "taskId": "T-STAY-DEPOSIT",
+      "domain": "stay",
+      "classification": "DORM-L1 lifecycle workspace seed",
+      "cardCount": 10,
+      "ordinaryMobileAllowed": true,
+      "diagnosticOnly": false,
+      "productionAllowed": false
+    },
+    {
+      "workspaceId": "W-STAY-CHECKOUT",
+      "taskId": "T-STAY-CHECKOUT",
+      "domain": "stay",
+      "classification": "DORM-L1 lifecycle workspace seed",
+      "cardCount": 5,
+      "ordinaryMobileAllowed": true,
+      "diagnosticOnly": false,
+      "productionAllowed": false
+    },
+    {
+      "workspaceId": "W-STAY-DEPOSIT-EXCEPTION",
+      "taskId": "T-FIN-DEPOSIT",
+      "domain": "finance",
+      "classification": "finance diagnostic workspace seed",
+      "cardCount": 4,
+      "ordinaryMobileAllowed": false,
+      "diagnosticOnly": true,
+      "productionAllowed": false
+    },
+    {
+      "workspaceId": "W-REPAIR-REQUEST",
+      "taskId": "T-AUTO-DIAGNOSE",
+      "domain": "repair",
+      "classification": "L0 learning/diagnostic workspace seed",
+      "cardCount": 4,
+      "ordinaryMobileAllowed": false,
+      "diagnosticOnly": true,
+      "productionAllowed": false
+    },
+    {
+      "workspaceId": "W-REPAIR-DISPATCH",
+      "taskId": "T-AUTO-DIAGNOSE",
+      "domain": "repair",
+      "classification": "L0 learning/diagnostic workspace seed",
+      "cardCount": 4,
+      "ordinaryMobileAllowed": false,
+      "diagnosticOnly": true,
+      "productionAllowed": false
+    },
+    {
+      "workspaceId": "W-REPAIR-CLOSE",
+      "taskId": "T-REPAIR-CLOSE",
+      "domain": "repair",
+      "classification": "L0 learning/diagnostic workspace seed",
+      "cardCount": 4,
+      "ordinaryMobileAllowed": false,
+      "diagnosticOnly": true,
+      "productionAllowed": false
+    },
+    {
+      "workspaceId": "W-REPAIR-MASTER-DATA",
+      "taskId": "T-VEHICLE-CREATE",
+      "domain": "repair",
+      "classification": "L0 learning/diagnostic workspace seed",
+      "cardCount": 3,
+      "ordinaryMobileAllowed": false,
+      "diagnosticOnly": true,
+      "productionAllowed": false
+    }
+  ],
+  "isolationPolicy": {
+    "ordinaryMobileQueue": "DORM-L1/stay scoped runtime work items only; diagnostic, engineering, fixture, runtimeAudit and legacy compatibility seeds are excluded unless debugSurface=true.",
+    "diagnosticSurface": "engineering diagnostic, runtime audit, rf and legacy compatibility seeds may only appear in diagnostic or migration tests.",
+    "productionAllowed": false
+  }
+}

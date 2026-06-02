@@ -11,6 +11,7 @@ export function loginView(ctx) {
           <option value="operator">${tr("operatorRole")}</option>
           <option value="finance">${tr("financeRole")}</option>
           <option value="manager">${tr("managerRole")}</option>
+          ${isDevLoginEnabled() ? `<option value="admin">${tr("adminRole")}</option><option value="releaseOwner">${tr("releaseOwnerRole")}</option>` : ""}
         </select>
       </label>
       <label>
@@ -21,6 +22,11 @@ export function loginView(ctx) {
       ${state.loginMessage ? `<p class="login-message">${ctx.escapeHtml(state.loginMessage)}</p>` : ""}
     </section>
   `);
+}
+
+function isDevLoginEnabled() {
+  const host = globalThis.window?.location?.hostname || "";
+  return ["localhost", "127.0.0.1", "::1", ""].includes(host);
 }
 
 export function onboardingView(ctx) {

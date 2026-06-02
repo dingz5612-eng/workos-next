@@ -1,0 +1,20 @@
+{
+  "generatedAtUtc": "2026-06-02T04:58:40.959Z",
+  "generatedBy": "check-scenario-attempt-semantics",
+  "stage": "OAM-ACCEPTANCE-CLOSURE-A4",
+  "status": "passed",
+  "checkedScenarios": [
+    "dorm-live-008",
+    "dorm-live-009",
+    "dorm-live-010"
+  ],
+  "noGoItems": [],
+  "productionAllowed": false,
+  "dormitoryL2ProductionAllowed": false,
+  "businessProduction": "blocked",
+  "repairPartsHrStatus": "L0 Contract Preview",
+  "evidenceRefs": [
+    "artifacts/go-live/dormitory/live-api-db-replay-result.json",
+    "artifacts/operations/dormitory/observation-day-01.json"
+  ]
+}

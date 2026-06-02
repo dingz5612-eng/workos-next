@@ -1,0 +1,423 @@
+{
+  "generatedAtUtc": "2026-06-02T05:42:16.595Z",
+  "generatedBy": "check-route-surface-hygiene",
+  "stage": "PROJECT-HYGIENE-CLEANUP",
+  "routes": [
+    {
+      "route": "confirmPage",
+      "surface": "mobile_work_plane",
+      "allowedRoles": [
+        "frontdesk",
+        "operator",
+        "housekeeping",
+        "finance",
+        "manager",
+        "admin",
+        "releaseOwner"
+      ],
+      "allowedDevices": [
+        "trusted_mobile"
+      ],
+      "ordinaryUserVisible": true,
+      "requiresRuntimeGuard": true,
+      "backendGuardRequired": true,
+      "canWriteBusinessFact": false,
+      "businessWritePath": "Operations Runtime via CommandSubmission only",
+      "productionAllowed": false
+    },
+    {
+      "route": "feedback",
+      "surface": "mobile_work_plane",
+      "allowedRoles": [
+        "frontdesk",
+        "operator",
+        "housekeeping",
+        "finance",
+        "manager",
+        "admin",
+        "releaseOwner"
+      ],
+      "allowedDevices": [
+        "trusted_mobile"
+      ],
+      "ordinaryUserVisible": true,
+      "requiresRuntimeGuard": false,
+      "backendGuardRequired": false,
+      "canWriteBusinessFact": false,
+      "businessWritePath": "none",
+      "productionAllowed": false
+    },
+    {
+      "route": "home",
+      "surface": "mobile_work_plane",
+      "allowedRoles": [
+        "frontdesk",
+        "operator",
+        "housekeeping",
+        "finance",
+        "manager",
+        "admin",
+        "releaseOwner"
+      ],
+      "allowedDevices": [
+        "trusted_mobile"
+      ],
+      "ordinaryUserVisible": true,
+      "requiresRuntimeGuard": false,
+      "backendGuardRequired": false,
+      "canWriteBusinessFact": false,
+      "businessWritePath": "none",
+      "productionAllowed": false
+    },
+    {
+      "route": "learning",
+      "surface": "mobile_work_plane",
+      "allowedRoles": [
+        "frontdesk",
+        "operator",
+        "housekeeping",
+        "finance",
+        "manager",
+        "admin",
+        "releaseOwner"
+      ],
+      "allowedDevices": [
+        "trusted_mobile"
+      ],
+      "ordinaryUserVisible": true,
+      "requiresRuntimeGuard": false,
+      "backendGuardRequired": false,
+      "canWriteBusinessFact": false,
+      "businessWritePath": "none",
+      "productionAllowed": false
+    },
+    {
+      "route": "me",
+      "surface": "mobile_work_plane",
+      "allowedRoles": [
+        "frontdesk",
+        "operator",
+        "housekeeping",
+        "finance",
+        "manager",
+        "admin",
+        "releaseOwner"
+      ],
+      "allowedDevices": [
+        "trusted_mobile"
+      ],
+      "ordinaryUserVisible": true,
+      "requiresRuntimeGuard": false,
+      "backendGuardRequired": false,
+      "canWriteBusinessFact": false,
+      "businessWritePath": "none",
+      "productionAllowed": false
+    },
+    {
+      "route": "notes",
+      "surface": "mobile_work_plane",
+      "allowedRoles": [
+        "frontdesk",
+        "operator",
+        "housekeeping",
+        "finance",
+        "manager",
+        "admin",
+        "releaseOwner"
+      ],
+      "allowedDevices": [
+        "trusted_mobile"
+      ],
+      "ordinaryUserVisible": true,
+      "requiresRuntimeGuard": false,
+      "backendGuardRequired": false,
+      "canWriteBusinessFact": false,
+      "businessWritePath": "none",
+      "productionAllowed": false
+    },
+    {
+      "route": "operationPanel",
+      "surface": "mobile_work_plane",
+      "allowedRoles": [
+        "frontdesk",
+        "operator",
+        "housekeeping",
+        "finance",
+        "manager",
+        "admin",
+        "releaseOwner"
+      ],
+      "allowedDevices": [
+        "trusted_mobile"
+      ],
+      "ordinaryUserVisible": true,
+      "requiresRuntimeGuard": true,
+      "backendGuardRequired": true,
+      "canWriteBusinessFact": false,
+      "businessWritePath": "Operations Runtime via CommandSubmission only",
+      "productionAllowed": false
+    },
+    {
+      "route": "permissionDiagnostic",
+      "surface": "mobile_work_plane",
+      "allowedRoles": [
+        "frontdesk",
+        "operator",
+        "housekeeping",
+        "finance",
+        "manager",
+        "admin",
+        "releaseOwner"
+      ],
+      "allowedDevices": [
+        "trusted_mobile"
+      ],
+      "ordinaryUserVisible": true,
+      "requiresRuntimeGuard": false,
+      "backendGuardRequired": false,
+      "canWriteBusinessFact": false,
+      "businessWritePath": "none",
+      "productionAllowed": false
+    },
+    {
+      "route": "reminders",
+      "surface": "mobile_work_plane",
+      "allowedRoles": [
+        "frontdesk",
+        "operator",
+        "housekeeping",
+        "finance",
+        "manager",
+        "admin",
+        "releaseOwner"
+      ],
+      "allowedDevices": [
+        "trusted_mobile"
+      ],
+      "ordinaryUserVisible": true,
+      "requiresRuntimeGuard": false,
+      "backendGuardRequired": false,
+      "canWriteBusinessFact": false,
+      "businessWritePath": "none",
+      "productionAllowed": false
+    },
+    {
+      "route": "result",
+      "surface": "mobile_work_plane",
+      "allowedRoles": [
+        "frontdesk",
+        "operator",
+        "housekeeping",
+        "finance",
+        "manager",
+        "admin",
+        "releaseOwner"
+      ],
+      "allowedDevices": [
+        "trusted_mobile"
+      ],
+      "ordinaryUserVisible": true,
+      "requiresRuntimeGuard": false,
+      "backendGuardRequired": false,
+      "canWriteBusinessFact": false,
+      "businessWritePath": "none",
+      "productionAllowed": false
+    },
+    {
+      "route": "search",
+      "surface": "mobile_work_plane",
+      "allowedRoles": [
+        "frontdesk",
+        "operator",
+        "housekeeping",
+        "finance",
+        "manager",
+        "admin",
+        "releaseOwner"
+      ],
+      "allowedDevices": [
+        "trusted_mobile"
+      ],
+      "ordinaryUserVisible": true,
+      "requiresRuntimeGuard": false,
+      "backendGuardRequired": false,
+      "canWriteBusinessFact": false,
+      "businessWritePath": "none",
+      "productionAllowed": false
+    },
+    {
+      "route": "workbench",
+      "surface": "mobile_work_plane",
+      "allowedRoles": [
+        "frontdesk",
+        "operator",
+        "housekeeping",
+        "finance",
+        "manager",
+        "admin",
+        "releaseOwner"
+      ],
+      "allowedDevices": [
+        "trusted_mobile"
+      ],
+      "ordinaryUserVisible": true,
+      "requiresRuntimeGuard": false,
+      "backendGuardRequired": false,
+      "canWriteBusinessFact": false,
+      "businessWritePath": "none",
+      "productionAllowed": false
+    },
+    {
+      "route": "workspace",
+      "surface": "mobile_work_plane",
+      "allowedRoles": [
+        "frontdesk",
+        "operator",
+        "housekeeping",
+        "finance",
+        "manager",
+        "admin",
+        "releaseOwner"
+      ],
+      "allowedDevices": [
+        "trusted_mobile"
+      ],
+      "ordinaryUserVisible": true,
+      "requiresRuntimeGuard": false,
+      "backendGuardRequired": false,
+      "canWriteBusinessFact": false,
+      "businessWritePath": "none",
+      "productionAllowed": false
+    },
+    {
+      "route": "financeControl",
+      "surface": "pc_governance_plane",
+      "allowedRoles": [
+        "finance"
+      ],
+      "allowedDevices": [
+        "trusted_pc"
+      ],
+      "ordinaryUserVisible": false,
+      "requiresRuntimeGuard": true,
+      "backendGuardRequired": true,
+      "canWriteBusinessFact": false,
+      "businessWritePath": "none",
+      "productionAllowed": false
+    },
+    {
+      "route": "financeReconciliation",
+      "surface": "pc_governance_plane",
+      "allowedRoles": [
+        "finance"
+      ],
+      "allowedDevices": [
+        "trusted_pc"
+      ],
+      "ordinaryUserVisible": false,
+      "requiresRuntimeGuard": true,
+      "backendGuardRequired": true,
+      "canWriteBusinessFact": false,
+      "businessWritePath": "none",
+      "productionAllowed": false
+    },
+    {
+      "route": "governanceCenter",
+      "surface": "pc_governance_plane",
+      "allowedRoles": [
+        "admin",
+        "manager"
+      ],
+      "allowedDevices": [
+        "trusted_pc"
+      ],
+      "ordinaryUserVisible": false,
+      "requiresRuntimeGuard": true,
+      "backendGuardRequired": true,
+      "canWriteBusinessFact": false,
+      "businessWritePath": "none",
+      "productionAllowed": false
+    },
+    {
+      "route": "managerControlTower",
+      "surface": "pc_governance_plane",
+      "allowedRoles": [
+        "manager"
+      ],
+      "allowedDevices": [
+        "trusted_pc"
+      ],
+      "ordinaryUserVisible": false,
+      "requiresRuntimeGuard": true,
+      "backendGuardRequired": true,
+      "canWriteBusinessFact": false,
+      "businessWritePath": "none",
+      "productionAllowed": false
+    },
+    {
+      "route": "pcGovernance",
+      "surface": "pc_governance_plane",
+      "allowedRoles": [
+        "admin",
+        "manager"
+      ],
+      "allowedDevices": [
+        "trusted_pc"
+      ],
+      "ordinaryUserVisible": false,
+      "requiresRuntimeGuard": true,
+      "backendGuardRequired": true,
+      "canWriteBusinessFact": false,
+      "businessWritePath": "none",
+      "productionAllowed": false
+    },
+    {
+      "route": "pcManager",
+      "surface": "pc_governance_plane",
+      "allowedRoles": [
+        "manager"
+      ],
+      "allowedDevices": [
+        "trusted_pc"
+      ],
+      "ordinaryUserVisible": false,
+      "requiresRuntimeGuard": true,
+      "backendGuardRequired": true,
+      "canWriteBusinessFact": false,
+      "businessWritePath": "none",
+      "productionAllowed": false
+    },
+    {
+      "route": "releaseControl",
+      "surface": "pc_governance_plane",
+      "allowedRoles": [
+        "releaseOwner"
+      ],
+      "allowedDevices": [
+        "trusted_pc"
+      ],
+      "ordinaryUserVisible": false,
+      "requiresRuntimeGuard": true,
+      "backendGuardRequired": true,
+      "canWriteBusinessFact": false,
+      "businessWritePath": "none",
+      "productionAllowed": false
+    },
+    {
+      "route": "releaseFlightDeck",
+      "surface": "pc_governance_plane",
+      "allowedRoles": [
+        "releaseOwner"
+      ],
+      "allowedDevices": [
+        "trusted_pc"
+      ],
+      "ordinaryUserVisible": false,
+      "requiresRuntimeGuard": true,
+      "backendGuardRequired": true,
+      "canWriteBusinessFact": false,
+      "businessWritePath": "none",
+      "productionAllowed": false
+    }
+  ]
+}

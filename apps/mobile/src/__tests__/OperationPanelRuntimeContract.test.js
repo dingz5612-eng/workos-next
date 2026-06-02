@@ -10,9 +10,11 @@ describe("SURFACE-C Operation Panel runtime contract", () => {
     expect(ctx.state.selectedWorkItemId).toBe("W-STAY-RESOURCE:roomSetup");
     expect(html).toContain("W-STAY-RESOURCE:roomSetup");
     expect(html).not.toContain("T-ROOM-CREATE");
-    expect(visibleText(html)).not.toMatch(/\b(commandSubmissionId|payloadHash)\b/);
+    expect(visibleText(html)).not.toMatch(/\b(commandSubmissionId|payloadHash|workItemId|caseId|OperationPanelView|TrustedConfirmSheet|ActionResult)\b/);
     expect(html).toContain("提交记录");
     expect(html).toContain("载荷指纹");
+    expect(visibleText(html)).not.toContain("operationsPrepare");
+    expect(visibleText(html)).not.toContain("operationsConfirm");
   });
 
   it("keeps compatibility fallback diagnostic-only for the ordinary path", () => {

@@ -10,10 +10,10 @@ describe("SURFACE-C evidence trust experience", () => {
     const tile = EvidenceTile(card.evidence[0], draft, "", ctx);
     const sheet = EvidenceSheet(card, draft, ctx);
 
-    expect(tile).toContain('data-component="EvidenceTile"');
+    expect(tile).toContain('data-surface="evidence-tile"');
     expect(tile).toContain("房间重复校验");
-    expect(tile).toContain("missing");
-    expect(sheet).toContain('data-component="EvidenceSheet"');
-    expect(sheet).toContain("0/1 attached");
+    expect(tile).toContain("缺少证据");
+    expect(sheet).toContain('data-surface="evidence-sheet"');
+    expect(sheet).toContain("0/1 证据待补齐或复核");
   });
 });

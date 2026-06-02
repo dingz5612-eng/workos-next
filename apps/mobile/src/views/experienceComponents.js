@@ -3,33 +3,35 @@ import { permissionDiagnosticCopy } from "../surfaceGuard.js";
 
 export function WorkItemCard(item, ctx) {
   const model = workItemModel(item, ctx);
-  const traceRefs = model.traceRefs.length ? model.traceRefs.join(" · ") : "-";
   const evidence = model.requiredEvidence.length ? model.requiredEvidence.join(" · ") : "-";
+  const canHandle = model.lifecycleState === "blocked" || model.evidenceState === "missing" ? ctx.tr("cannotHandleNow") : ctx.tr("canHandleNow");
+  const blocker = model.lifecycleState === "blocked" ? model.nextAction : model.evidenceState === "missing" ? ctx.tr("missingEvidenceBlocks") : ctx.tr("noCriticalBlocker");
   const workspaceButton = `<button data-work-item-id="${attr(model.workItemId, ctx)}" data-workspace-id="${attr(model.workspaceId, ctx)}" data-card-id="${attr(model.cardId, ctx)}">${text(ctx.tr("openWorkspace"), ctx)}</button>`;
+  const debug = ctx.state?.debugSurface ? `<details class="debug-only"><summary>${text(ctx.tr("debugTrace"), ctx)}</summary><dl>
+      ${field("workItemId", model.workItemId, ctx)}
+      ${field("caseId", model.caseId, ctx)}
+      ${field("traceRefs", model.traceRefs.join(" · ") || "-", ctx)}
+    </dl></details>` : "";
 
-  return `<article class="workitem-card risk-${attr(model.riskLevel, ctx)}" data-component="WorkItemCard">
+  return `<article class="workitem-card action-decision-card risk-${attr(model.riskLevel, ctx)}" data-surface="action-decision-card" data-work-item-id="${attr(model.workItemId, ctx)}" data-case-id="${attr(model.caseId, ctx)}">
     <div class="workitem-card-head">
       <div>
-        <span>${text(model.workItemType, ctx)} · ${text(model.lifecycleState, ctx)} · ${text(model.ownerRole, ctx)}</span>
+        <span>${text(canHandle, ctx)} · ${text(model.workItemType, ctx)}</span>
         <strong>${text(model.businessObject, ctx)}</strong>
       </div>
       ${workspaceButton}
     </div>
     <dl class="workitem-card-grid">
-      ${field("workItemId", model.workItemId, ctx)}
-      ${field("caseId", model.caseId, ctx)}
-      ${field("workItemType", model.workItemType, ctx)}
-      ${field("lifecycleState", model.lifecycleState, ctx)}
-      ${field("ownerRole", model.ownerRole, ctx)}
-      ${field("SLA", model.SLA, ctx)}
-      ${field("requiredEvidence", evidence, ctx)}
-      ${field("nextAction", model.nextAction, ctx)}
-      ${field("traceRefs", traceRefs, ctx)}
-      ${field("riskLevel", model.riskLevel, ctx)}
-      ${field("evidenceState", model.evidenceState, ctx)}
-      ${field("dueAt", model.dueAt, ctx)}
-      ${field("businessObject", model.businessObject, ctx)}
+      ${field(ctx.tr("decisionCanHandle"), canHandle, ctx)}
+      ${field(ctx.tr("decisionBlocker"), blocker, ctx)}
+      ${field(ctx.tr("decisionMissingEvidence"), evidence, ctx)}
+      ${field(ctx.tr("decisionNextAction"), model.nextAction, ctx)}
+      ${field(ctx.tr("decisionRisk"), model.riskLevel, ctx)}
+      ${field(ctx.tr("decisionOwner"), roleLabel(model.ownerRole, ctx), ctx)}
+      ${field(ctx.tr("decisionDueAt"), model.dueAt, ctx)}
+      ${field(ctx.tr("decisionBusinessObject"), model.businessObject, ctx)}
     </dl>
+    ${debug}
   </article>`;
 }
 
@@ -38,48 +40,48 @@ export function LifecycleWorkspace(item, activeCard, ctx) {
   const fields = activeCard.fields?.business || [];
   const evidence = activeCard.evidence || [];
   const blockers = activeCard.blockerRules?.length ? activeCard.blockerRules : item.blockers || [];
-  return `<section class="lifecycle-workspace" data-component="LifecycleWorkspace">
+  return `<section class="lifecycle-workspace" data-surface="lifecycle-workspace">
     <article>
-      <span>Object summary</span>
+      <span>${text(ctx.tr("objectSummary"), ctx)}</span>
       <strong>${text(model.businessObject, ctx)}</strong>
       <p>${text(tx(item.summary, ctx), ctx)}</p>
     </article>
     <article>
-      <span>Current state</span>
-      <strong>${text(model.lifecycleState, ctx)}</strong>
-      <p>${text(model.workItemId, ctx)} · ${text(model.caseId, ctx)}</p>
+      <span>${text(ctx.tr("currentState"), ctx)}</span>
+      <strong>${text(ctx.tr(model.lifecycleState) || model.lifecycleState, ctx)}</strong>
+      <p>${text(model.nextAction, ctx)}</p>
     </article>
     <article class="lifecycle-wide">
-      <span>Lifecycle timeline</span>
+      <span>${text(ctx.tr("lifecycleTimeline"), ctx)}</span>
       <div class="lifecycle-timeline">${(item.cards || []).map((card) => `<span class="${attr(card.id === activeCard.id ? "current" : card.status, ctx)}">${text(tx(card.title, ctx), ctx)} · ${text(card.status, ctx)}</span>`).join("")}</div>
     </article>
     <article>
-      <span>Current WorkItem</span>
+      <span>${text(ctx.tr("currentWorkItem"), ctx)}</span>
       <strong>${text(model.workItemType, ctx)}</strong>
       <p>${text(model.nextAction, ctx)}</p>
     </article>
     <article>
-      <span>Required fields</span>
+      <span>${text(ctx.tr("requiredFields"), ctx)}</span>
       <p>${fields.length ? fields.map((field) => text(ctx.localTerm(field), ctx)).join(" · ") : "-"}</p>
     </article>
     <article>
-      <span>Required evidence</span>
+      <span>${text(ctx.tr("requiredEvidenceCopy"), ctx)}</span>
       <p>${evidence.length ? evidence.map((field) => text(ctx.localTerm(field), ctx)).join(" · ") : "-"}</p>
     </article>
     <article>
-      <span>Business impact</span>
+      <span>${text(ctx.tr("businessImpact"), ctx)}</span>
       <p>${text(item.domain, ctx)} · ${text(model.SLA, ctx)}</p>
     </article>
     <article>
-      <span>Risk and blockers</span>
-      <p>${blockers.length ? blockers.map((entry) => text(tx(entry.title || entry, ctx), ctx)).join(" · ") : "No active blocker"}</p>
+      <span>${text(ctx.tr("riskAndBlockers"), ctx)}</span>
+      <p>${blockers.length ? blockers.map((entry) => text(tx(entry.title || entry, ctx), ctx)).join(" · ") : text(ctx.tr("noCriticalBlocker"), ctx)}</p>
     </article>
     <article>
-      <span>Audit summary</span>
-      <p>${model.traceRefs.length ? model.traceRefs.map((entry) => text(entry, ctx)).join(" · ") : "Trace will bind after submission"}</p>
+      <span>${text(ctx.tr("auditSummary"), ctx)}</span>
+      <p>${model.traceRefs.length ? text(ctx.tr("traceBound"), ctx) : text(ctx.tr("traceWillBind"), ctx)}</p>
     </article>
     <article>
-      <span>Next step</span>
+      <span>${text(ctx.tr("nextAction"), ctx)}</span>
       <p>${text(model.nextAction, ctx)}</p>
     </article>
   </section>`;
@@ -88,32 +90,43 @@ export function LifecycleWorkspace(item, activeCard, ctx) {
 export function OperationPanelView(innerHtml, item, activeCard, ctx) {
   const workspace = item.workspace || item;
   const model = workItemModel({ ...item, workspace, card: activeCard, workspaceId: item.workspaceId || workspace.id, cardId: item.cardId || activeCard.id }, ctx);
-  const actionResult = ctx.state.lastActionResult || fallbackActionResult(ctx);
-  return `<section class="operation-panel-view" data-component="OperationPanelView">
+  return `<section class="operation-panel-view" data-surface="operation-panel-runtime" data-work-item-id="${attr(model.workItemId, ctx)}" data-case-id="${attr(model.caseId, ctx)}">
     <div class="operation-panel-head">
-      <span>OperationPanelView</span>
-      <strong>${text(model.workItemId, ctx)}</strong>
-      <small>${text(model.caseId, ctx)} · ${text(model.workItemType, ctx)}</small>
+      <span>${text(ctx.tr("operationPanel"), ctx)}</span>
+      <strong>${text(model.businessObject, ctx)}</strong>
+      <small>${text(model.workItemType, ctx)} · ${text(ctx.tr("traceAvailable"), ctx)}</small>
     </div>
     ${innerHtml}
-    ${TrustedConfirmSheet({ ...item, workspace }, activeCard, ctx)}
-    ${ActionResult(actionResult, ctx)}
   </section>`;
 }
 
 export function TrustedConfirmSheet(item, card, ctx) {
   const workspace = item.workspace || item;
   const model = workItemModel({ ...item, workspace, card, workspaceId: item.workspaceId || workspace.id, cardId: item.cardId || card.id }, ctx);
-  return `<section class="trusted-confirm-sheet" data-component="TrustedConfirmSheet">
-    <b>TrustedConfirmSheet</b>
-    <dl>
+  return `<section class="trusted-confirm-sheet" data-surface="trusted-confirm" data-work-item-id="${attr(model.workItemId, ctx)}">
+    <h2>${text(ctx.tr("trustedConfirm"), ctx)}</h2>
+    <article>
+      <h3>${text(ctx.tr("businessCommitment"), ctx)}</h3>
+      <p>${text(model.nextAction, ctx)}</p>
+      <p>${text(ctx.tr("trustedConfirmImpact"), ctx)} ${text(model.businessObject, ctx)}</p>
+    </article>
+    <article>
+      <h3>${text(ctx.tr("evidenceAndPermission"), ctx)}</h3>
+      <p>${text(model.requiredEvidence.join(" · ") || ctx.tr("noRequiredEvidence"), ctx)}</p>
+      <p>${text(ctx.tr("policyRef"), ctx)} ${text(card.policyRef || card.confirmation?.policyRef || "operations-runtime-policy", ctx)} · ${text(ctx.tr("decisionRisk"), ctx)} ${text(model.riskLevel, ctx)}</p>
+    </article>
+    <article>
+      <h3>${text(ctx.tr("auditAndRollback"), ctx)}</h3>
+      <p>${text(model.traceRefs.length ? ctx.tr("traceBound") : ctx.tr("traceWillBind"), ctx)} ${text(ctx.tr("rollbackCompensationReady"), ctx)}</p>
+    </article>
+    ${ctx.state?.debugSurface ? `<dl>
       ${field("workItemId", model.workItemId, ctx)}
       ${field("caseId", model.caseId, ctx)}
       ${field("requiredEvidence", model.requiredEvidence.join(" · ") || "-", ctx)}
       ${field("policyRef", card.policyRef || card.confirmation?.policyRef || "operations-runtime-policy", ctx)}
       ${field("risk", model.riskLevel, ctx)}
       ${field("nextAction", model.nextAction, ctx)}
-    </dl>
+    </dl>` : ""}
   </section>`;
 }
 
@@ -123,24 +136,24 @@ export function ActionResult(result = {}, ctx) {
   if (result.status === "committed_projection_failed") return FailedSyncState(result, ctx);
   if (result.status === "permission_blocked_403") return PermissionDiagnostic(result.permissionDiagnostic || result, ctx);
   const status = result.status || "network_unknown";
-  return `<section class="action-result ${attr(status, ctx)}" data-component="ActionResult">
-    <b>ActionResult</b>
+  return `<section class="action-result ${attr(status, ctx)}" data-surface="action-result" data-submission-id="${attr(result.commandSubmissionId || result.submissionId || "", ctx)}">
+    <b>${text(ctx.tr("actionResult"), ctx)}</b>
     <p>${text(result.message || status, ctx)}</p>
-    ${result.commandSubmissionId ? `<small>${ctx.tr("submissionRecord")}: ${text(result.commandSubmissionId, ctx)}</small>` : ""}
+    ${result.commandSubmissionId ? `<small>${ctx.tr("submissionRecord")}: ${ctx.tr("traceAvailable")}</small>` : ""}
   </section>`;
 }
 
 export function ProjectionPendingState(result = {}, ctx) {
-  return `<section class="projection-pending-state" data-component="ProjectionPendingState">
-    <b>ProjectionPendingState</b>
-    <p>${text(result.message || "Committed. Projection is pending and must not be shown as failed.", ctx)}</p>
+  return `<section class="projection-pending-state" data-surface="projection-pending">
+    <b>${text(ctx.tr("projectionPending"), ctx)}</b>
+    <p>${text(result.message || ctx.tr("projectionPendingBody"), ctx)}</p>
   </section>`;
 }
 
 export function FailedSyncState(result = {}, ctx) {
-  return `<section class="failed-sync-state" data-component="FailedSyncState">
-    <b>FailedSyncState</b>
-    <p>${text(result.message || "Committed, but read-side sync requires support follow-up.", ctx)}</p>
+  return `<section class="failed-sync-state" data-surface="failed-sync">
+    <b>${text(ctx.tr("failedSync"), ctx)}</b>
+    <p>${text(result.message || ctx.tr("failedSyncBody"), ctx)}</p>
   </section>`;
 }
 
@@ -148,18 +161,19 @@ export function EvidenceTile(field, draft, disabled, ctx) {
   const saved = (draft.evidenceDrafts || []).find((item) => item.requirementId === field.id);
   const selected = saved ? "selected attached" : "missing";
   const evidenceDraftId = saved?.evidenceId ? `data-evidence-draft-id="${attr(saved.evidenceId, ctx)}"` : "";
-  return `<button type="button" class="evidence-tile ${selected}" data-component="EvidenceTile" data-evidence-id="${attr(field.id, ctx)}" ${evidenceDraftId} ${disabled}>
+  return `<button type="button" class="evidence-tile ${selected}" data-surface="evidence-tile" data-evidence-id="${attr(field.id, ctx)}" ${evidenceDraftId} ${disabled}>
     <span>${text(ctx.localTerm(field), ctx)}</span>
-    <small>${saved ? "attached" : "missing"}</small>
+    <small>${saved ? ctx.tr("evidenceTrustedDraft") : ctx.tr("evidenceMissing")}</small>
   </button>`;
 }
 
 export function EvidenceSheet(card, draft, ctx) {
   const evidence = card.evidence || [];
-  return `<section class="evidence-sheet" data-component="EvidenceSheet">
-    <b>EvidenceSheet</b>
-    <p>${evidence.length ? evidence.map((field) => text(ctx.localTerm(field), ctx)).join(" · ") : "No required evidence"}</p>
-    <small>${(draft.evidenceDrafts || []).length}/${evidence.length} attached</small>
+  const attached = (draft.evidenceDrafts || []).length;
+  return `<section class="evidence-sheet" data-surface="evidence-sheet">
+    <b>${text(ctx.tr("trustedEvidence"), ctx)}</b>
+    <p>${evidence.length ? evidence.map((field) => text(ctx.localTerm(field), ctx)).join(" · ") : text(ctx.tr("noRequiredEvidence"), ctx)}</p>
+    <small>${attached}/${evidence.length} ${text(attached >= evidence.length && evidence.length ? ctx.tr("evidenceReady") : ctx.tr("evidenceNeedReview"), ctx)}</small>
   </section>`;
 }
 
@@ -273,6 +287,19 @@ function queuePanel(component, label, count, message, ctx) {
 
 function activeCard(workspace) {
   return workspace?.cards?.find((card) => ["ready", "blocked", "inProgress"].includes(card.status)) || workspace?.cards?.[0] || {};
+}
+
+function roleLabel(role, ctx) {
+  const labels = {
+    frontdesk: ctx.tr("operatorRole"),
+    operator: ctx.tr("operatorRole"),
+    housekeeping: ctx.tr("operatorRole"),
+    finance: ctx.tr("financeRole"),
+    manager: ctx.tr("managerRole"),
+    admin: "admin",
+    releaseOwner: "releaseOwner"
+  };
+  return labels[role] || role;
 }
 
 function field(label, value, ctx) {

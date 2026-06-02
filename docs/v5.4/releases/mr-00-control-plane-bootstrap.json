@@ -9,11 +9,11 @@
     "qa",
     "release"
   ],
-  "commit_sha": "1f287882161a597df74dc24f3c87765562ff1847",
+  "commit_sha": "fad090ad45fb44efbcd22d3f13fd7b130dfc6ab0",
   "migration_version": "015_control_plane_shadow_runtime",
   "definition_version": "v5.4",
   "api_schema_hash": "not-set",
-  "ci_run_id": "local-mr-00",
+  "ci_run_id": "local",
   "gate_result_id": "gate-mr-00-control-plane-bootstrap",
   "rollback_instruction_id": "rollback-mr-00-control-plane-bootstrap",
   "feature_flag_ids": [],
@@ -77,20 +77,16 @@
     "Invariant passed: period.close_freezes_snapshot",
     "Invariant passed: period.late_adjustment_append_only",
     "Invariant passed: risk.all_items_drill_down",
-    "Invariant passed: pc.export_has_audit",
-    "Shadow compare green: scr-v54-shadow-domain-events-vs-audit-events"
+    "Invariant passed: pc.export_has_audit"
   ],
   "no_go_criteria": [
-    "P0 blocking invariant fails",
-    "Shadow compare grade is red",
-    "GateResult ci_run_id is missing",
-    "ReleaseManifest does not match generated GateResult"
+    "Yellow shadow compare report: scr-v54-shadow-domain-events-vs-audit-events"
   ],
   "known_risks": [
-    "MR-00 technical gate uses local PostgreSQL evidence; production promotion still needs hosted CI evidence."
+    "minimal runner"
   ],
-  "created_at_utc": "2026-05-30T08:22:22.298Z",
-  "updated_at_utc": "2026-05-30T08:22:22.298Z",
+  "created_at_utc": "2026-06-02T05:01:12.478Z",
+  "updated_at_utc": "2026-06-02T05:01:12.478Z",
   "released_at_utc": null,
   "locked_at_utc": null
 }

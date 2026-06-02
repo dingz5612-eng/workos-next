@@ -1,0 +1,15 @@
+{
+  "generatedAtUtc": "2026-06-02T04:58:41.316Z",
+  "generatedBy": "check-evidence-ledger-append-only",
+  "status": "passed",
+  "ledgerPath": "artifacts/evidence/evidence-ledger.jsonl",
+  "entryCount": 4,
+  "repositoryHead": "fad090ad45fb44efbcd22d3f13fd7b130dfc6ab0",
+  "verifiedMainHead": "fad090ad45fb44efbcd22d3f13fd7b130dfc6ab0",
+  "appendOnly": true,
+  "noGoItems": [],
+  "productionAllowed": false,
+  "dormitoryL2ProductionAllowed": false,
+  "businessProduction": "blocked",
+  "repairPartsHrStatus": "L0 Contract Preview"
+}

@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-06-02T03:09:39.523Z",
+  "generated_at_utc": "2026-06-02T04:52:18.807Z",
   "generated_by": "check-dormitory-internal-pilot-go-no-go",
   "stage": "DORM-INT-FINAL",
   "status": "GO_FOR_INTERNAL_PILOT",
@@ -20,27 +20,27 @@
   "latestMain": {
     "repository": "dingz5612-eng/workos-next",
     "branch": "main",
-    "checkedAtUtc": "2026-06-02T03:09:32.424Z",
-    "commitSha": "1a2fb45a89f3d1ef18eaf4ca216ecdc57660df30",
+    "checkedAtUtc": "2026-06-02T04:52:11.402Z",
+    "commitSha": "fad090ad45fb44efbcd22d3f13fd7b130dfc6ab0",
     "ci": {
-      "id": 26795646360,
+      "id": 26796158189,
       "name": "CI",
       "status": "completed",
       "conclusion": "success",
-      "headSha": "1a2fb45a89f3d1ef18eaf4ca216ecdc57660df30",
-      "htmlUrl": "https://github.com/dingz5612-eng/workos-next/actions/runs/26795646360",
-      "createdAt": "2026-06-02T03:01:18Z",
-      "updatedAt": "2026-06-02T03:04:04Z"
+      "headSha": "fad090ad45fb44efbcd22d3f13fd7b130dfc6ab0",
+      "htmlUrl": "https://github.com/dingz5612-eng/workos-next/actions/runs/26796158189",
+      "createdAt": "2026-06-02T03:17:46Z",
+      "updatedAt": "2026-06-02T03:20:05Z"
     },
     "v54ControlPlaneGuards": {
-      "id": 26795646374,
+      "id": 26796158193,
       "name": "V5.4 Control Plane Guards",
       "status": "completed",
       "conclusion": "success",
-      "headSha": "1a2fb45a89f3d1ef18eaf4ca216ecdc57660df30",
-      "htmlUrl": "https://github.com/dingz5612-eng/workos-next/actions/runs/26795646374",
-      "createdAt": "2026-06-02T03:01:18Z",
-      "updatedAt": "2026-06-02T03:03:46Z"
+      "headSha": "fad090ad45fb44efbcd22d3f13fd7b130dfc6ab0",
+      "htmlUrl": "https://github.com/dingz5612-eng/workos-next/actions/runs/26796158193",
+      "createdAt": "2026-06-02T03:17:46Z",
+      "updatedAt": "2026-06-02T03:19:54Z"
     }
   },
   "gateResults": {
