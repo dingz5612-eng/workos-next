@@ -1,7 +1,7 @@
 {
   "version": "rt4.final-completion-assurance.v1",
   "stage": "RT-FINAL",
-  "generatedAtUtc": "2026-06-02T10:35:31.472Z",
+  "generatedAtUtc": "2026-06-02T11:41:09.762Z",
   "generatedBy": "codex/rtfinal-completion-assurance-report",
   "latestBranchHeadSha": "044a38ce9cbd7df0282f04c20ee07e35802deb30",
   "localStatus": "LOCAL_PASSED",
@@ -74,7 +74,7 @@
   "dormitoryStatus": "L1 Internal Pilot Observation",
   "dormIntReadiness": "DORM_INT_PASSED_L1_OBSERVATION",
   "reconciledStatus": "POST_DORM_INT_RECONCILED",
-  "currentMainHead": "c9ef041d228e91ecb12f31382786d8eb9cd7d825",
+  "currentMainHead": "fe50578178886b958b9f394d2b51b2749aed54cd",
   "centralMergeTrainStatus": "CENTRAL_MERGE_COMPLETED",
   "dormIntStatus": "DORM_INT_PASSED"
 }
