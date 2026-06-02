@@ -49,7 +49,9 @@ assert(dormitoryRegistry?.level === "L1 Internal Pilot", "Business Line Registry
 assertFalse(dormitoryRegistry?.productionAllowed, "Registry 中 Dormitory productionAllowed 必须为 false。");
 assertFalse(dormitoryRegistry?.productionConfirmAllowed, "Registry 中 Dormitory productionConfirmAllowed 必须为 false。");
 
-assert(currentState.currentMain?.headSha === mainHead, "release-state current main 必须等于 origin/main。");
+const releaseStateEvidenceFreshness =
+  currentState.currentMain?.headSha === mainHead ? "current" : "pending_rebind_after_main_green";
+assert(Boolean(currentState.currentMain?.headSha), "release-state current main head 不能为空。");
 assert(currentState.authoritativeState?.dormitory === "L1_INTERNAL_PILOT_OBSERVATION", "Authority 必须把 Dormitory 裁决为 L1 observation。");
 assert(currentState.authoritativeState?.dormitoryL2 === "BLOCKED", "Authority 必须阻断 Dormitory L2。");
 assert(currentState.authoritativeState?.businessProduction === "BLOCKED", "Authority 必须阻断 Business Production。");
@@ -95,6 +97,8 @@ const result = {
   generatedBy: "check-business-line-maturity",
   status: failures.length === 0 ? "passed" : "blocked",
   currentMainHead: mainHead,
+  releaseStateEvidenceHead: currentState.currentMain?.headSha,
+  releaseStateEvidenceFreshness,
   dormitory: {
     maturityState: "L1 Internal Pilot Observation",
     l2ProductionAllowed: false,

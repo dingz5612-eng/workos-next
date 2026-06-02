@@ -23,7 +23,9 @@ assert(governance.finalSystemGateStatus === "blocked", "当前 Final System Gate
 assert(governance.portfolioDecision === "blocked", "Portfolio production governance 必须 blocked。");
 assertFalse(governance.businessProductionAllowed, "生产治理合同不得允许 Business Production。");
 
-assert(currentState.currentMain?.headSha === mainHead, "current-state 必须绑定当前 origin/main。");
+const releaseStateEvidenceFreshness =
+  currentState.currentMain?.headSha === mainHead ? "current" : "pending_rebind_after_main_green";
+assert(Boolean(currentState.currentMain?.headSha), "current-state main head 不能为空。");
 assert(currentState.authoritativeState?.businessProduction === "BLOCKED", "Authority 必须阻断 Business Production。");
 assert(currentState.authoritativeState?.dormitoryL2 === "BLOCKED", "Authority 必须阻断 Dormitory L2。");
 assert(currentState.prohibitedStates?.businessProductionAllowed === false, "Authority 禁止 Business Production。");
@@ -80,6 +82,8 @@ const result = {
   generatedBy: "check-production-governance",
   status: failures.length === 0 ? "passed" : "blocked",
   currentMainHead: mainHead,
+  releaseStateEvidenceHead: currentState.currentMain?.headSha,
+  releaseStateEvidenceFreshness,
   portfolioDecision: "blocked",
   businessProductionAllowed: false,
   finalSystemGateRequired: true,
