@@ -1,0 +1,47 @@
+{
+  "checkName": "oam-clean-baseline-vnext",
+  "status": "passed",
+  "generatedAtUtc": "2026-06-02T12:51:20.9901628Z",
+  "branch": "codex/oam-doc-i18n-ux-production-baseline-train",
+  "validatedHead": "300deab4cfc0a048f734490821760d750bbb33e5",
+  "stage": "OAM-08",
+  "validation": {
+    "npmCi": "passed",
+    "npmAuditLow": "passed",
+    "mobileBuild": "passed",
+    "mobileTests": "passed",
+    "playwrightE2e": "passed",
+    "dotnetBuildRelease": "passed",
+    "dotnetUnitTests": "passed",
+    "dotnetRuntimeIntegrationTests": "passed",
+    "dotnetDatabaseSecurityTests": "passed",
+    "dotnetPolicyAsCodeTests": "passed",
+    "dotnetReleaseEvidenceTests": "passed",
+    "runtimeContractTests": "passed",
+    "contractValidation": "passed",
+    "runtimeApiValidation": "passed",
+    "apiBoundary": "passed",
+    "runtimeWritePath": "passed",
+    "docsChecks": "passed",
+    "i18nChecks": "passed",
+    "surfaceChecks": "passed",
+    "projectHygieneChecks": "passed",
+    "baselineChecks": "passed",
+    "v54ControlPlaneChecks": "passed",
+    "architectureGuard": "passed",
+    "cleanBaseline": "passed",
+    "gitDiffCheck": "passed"
+  },
+  "businessState": {
+    "dormitory": "L1 Internal Pilot Observation only",
+    "dormitoryL2Production": false,
+    "businessProduction": "blocked",
+    "repairPartsHr": "L0 Contract Preview",
+    "day2": "requires separate Day-2 Entry Gate"
+  },
+  "outputs": [
+    "OAM_CLEAN_BASELINE_VNEXT_ALIGNED",
+    "DAY2_PRE_ENTRY_BASELINE_READY_BUT_NOT_STARTED"
+  ],
+  "noGoItems": []
+}

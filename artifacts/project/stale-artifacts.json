@@ -1,10 +1,10 @@
 {
-  "generatedAtUtc": "2026-06-02T11:59:44.794Z",
+  "generatedAtUtc": "2026-06-02T12:46:47.226Z",
   "generatedBy": "check-stale-evidence-refs",
   "stage": "PROJECT-HYGIENE-CLEANUP",
   "status": "passed",
   "finalEvidenceRefCount": 85,
-  "staleArtifactCount": 45,
+  "staleArtifactCount": 57,
   "staleArtifacts": [
     {
       "artifactPath": "artifacts/baseline/artifact-inventory.json",
@@ -49,6 +49,30 @@
       "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
     },
     {
+      "artifactPath": "artifacts/docs/doc-inventory-result.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/docs/manual-cross-links-result.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/docs/manual-state-consistency-result.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/docs/no-production-ready-copy-result.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
       "artifactPath": "artifacts/evidence/evidence-ledger-check-result.json",
       "retainedAs": "historical_artifact",
       "referencedByCurrentState": false,
@@ -68,6 +92,36 @@
     },
     {
       "artifactPath": "artifacts/go-live/dormitory/source-mode-contract-result.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/i18n/business-glossary-consistency-result.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/i18n/copy-key-coverage-result.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/i18n/language-scope-result.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/i18n/no-hardcoded-user-copy-result.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/i18n/runtime-fallback-result.json",
       "retainedAs": "historical_artifact",
       "referencedByCurrentState": false,
       "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
@@ -153,6 +207,12 @@
     {
       "artifactPath": "artifacts/screenshots/oam-ux-baseline/index.json",
       "retainedAs": "diagnostic_screenshot",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/security/runtime-production-boundary-hardening-result.json",
+      "retainedAs": "historical_artifact",
       "referencedByCurrentState": false,
       "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
     },
@@ -272,6 +332,18 @@
     },
     {
       "artifactPath": "artifacts/surface/view-model-contract-result.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/test-results/evidence-grade-test-ci-observability-result.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/trust/frontend-trust-boundary-xss-result.json",
       "retainedAs": "historical_artifact",
       "referencedByCurrentState": false,
       "action": "保留为历史或诊断材料，不作为 final go-live evidence。"

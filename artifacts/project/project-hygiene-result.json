@@ -1,16 +1,16 @@
 {
-  "generatedAtUtc": "2026-06-02T11:59:47.439Z",
+  "generatedAtUtc": "2026-06-02T12:46:49.642Z",
   "generatedBy": "project-hygiene-checkers",
   "stage": "PROJECT-HYGIENE-CLEANUP",
   "status": "PROJECT_HYGIENE_CLEANUP_LOCAL_PASSED",
   "checks": {
     "stale_evidence_refs": {
-      "generatedAtUtc": "2026-06-02T11:59:44.794Z",
+      "generatedAtUtc": "2026-06-02T12:46:47.226Z",
       "generatedBy": "check-stale-evidence-refs",
       "stage": "PROJECT-HYGIENE-CLEANUP",
       "status": "passed",
       "finalEvidenceRefCount": 85,
-      "staleArtifactCount": 45,
+      "staleArtifactCount": 57,
       "staleArtifacts": [
         {
           "artifactPath": "artifacts/baseline/artifact-inventory.json",
@@ -55,6 +55,30 @@
           "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
         },
         {
+          "artifactPath": "artifacts/docs/doc-inventory-result.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/docs/manual-cross-links-result.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/docs/manual-state-consistency-result.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/docs/no-production-ready-copy-result.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
           "artifactPath": "artifacts/evidence/evidence-ledger-check-result.json",
           "retainedAs": "historical_artifact",
           "referencedByCurrentState": false,
@@ -74,6 +98,36 @@
         },
         {
           "artifactPath": "artifacts/go-live/dormitory/source-mode-contract-result.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/i18n/business-glossary-consistency-result.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/i18n/copy-key-coverage-result.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/i18n/language-scope-result.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/i18n/no-hardcoded-user-copy-result.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/i18n/runtime-fallback-result.json",
           "retainedAs": "historical_artifact",
           "referencedByCurrentState": false,
           "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
@@ -159,6 +213,12 @@
         {
           "artifactPath": "artifacts/screenshots/oam-ux-baseline/index.json",
           "retainedAs": "diagnostic_screenshot",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/security/runtime-production-boundary-hardening-result.json",
+          "retainedAs": "historical_artifact",
           "referencedByCurrentState": false,
           "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
         },
@@ -281,6 +341,18 @@
           "retainedAs": "historical_artifact",
           "referencedByCurrentState": false,
           "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/test-results/evidence-grade-test-ci-observability-result.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/trust/frontend-trust-boundary-xss-result.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
         }
       ],
       "noGoItems": [],
@@ -290,7 +362,7 @@
       "repairPartsHrStatus": "L0 Contract Preview"
     },
     "route_surface_hygiene": {
-      "generatedAtUtc": "2026-06-02T11:59:47.082Z",
+      "generatedAtUtc": "2026-06-02T12:46:49.317Z",
       "generatedBy": "check-route-surface-hygiene",
       "stage": "PROJECT-HYGIENE-CLEANUP",
       "status": "passed",
@@ -304,7 +376,7 @@
       "repairPartsHrStatus": "L0 Contract Preview"
     },
     "screenshot_baseline": {
-      "generatedAtUtc": "2026-06-02T11:59:47.418Z",
+      "generatedAtUtc": "2026-06-02T12:46:49.631Z",
       "generatedBy": "check-screenshot-baseline",
       "stage": "PROJECT-HYGIENE-CLEANUP",
       "status": "passed",
@@ -332,13 +404,13 @@
       "repairPartsHrStatus": "L0 Contract Preview"
     },
     "artifact_hygiene": {
-      "generatedAtUtc": "2026-06-02T11:59:33.751Z",
+      "generatedAtUtc": "2026-06-02T12:46:36.594Z",
       "generatedBy": "check-artifact-hygiene",
       "stage": "PROJECT-HYGIENE-CLEANUP",
       "status": "passed",
-      "headSha": "547bcc95eea3dcbe3a89217bce27a58a706f1331",
+      "headSha": "300deab4cfc0a048f734490821760d750bbb33e5",
       "originMain": "fe50578178886b958b9f394d2b51b2749aed54cd",
-      "trackedArtifactCount": 86,
+      "trackedArtifactCount": 98,
       "finalArtifactCount": 19,
       "finalArtifacts": [
         {
@@ -827,7 +899,7 @@
       "repairPartsHrStatus": "L0 Contract Preview"
     },
     "seed_data_isolation": {
-      "generatedAtUtc": "2026-06-02T11:59:47.212Z",
+      "generatedAtUtc": "2026-06-02T12:46:49.511Z",
       "generatedBy": "check-seed-data-isolation",
       "stage": "PROJECT-HYGIENE-CLEANUP",
       "status": "passed",

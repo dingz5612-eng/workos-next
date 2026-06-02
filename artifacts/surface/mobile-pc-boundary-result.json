@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-06-02T12:41:30.162Z",
+  "generated_at_utc": "2026-06-02T12:49:49.108Z",
   "generated_by": "scripts/surface/check-mobile-pc-surface-boundary.mjs",
   "status": "passed",
   "check": "mobile-pc-surface-boundary",

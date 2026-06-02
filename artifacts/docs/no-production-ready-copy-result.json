@@ -1,9 +1,9 @@
 {
-  "generatedAtUtc": "2026-06-02T12:42:44.890Z",
+  "generatedAtUtc": "2026-06-02T12:52:13.498Z",
   "generatedBy": "check-no-production-ready-copy",
   "stage": "OAM-MANUAL-CONTROL-PLANE",
   "status": "passed",
-  "repositoryHead": "ef99f50086189056499ca3bfd0f4f1916d4332d1",
+  "repositoryHead": "300deab4cfc0a048f734490821760d750bbb33e5",
   "manualCount": 10,
   "noGoItems": [],
   "productionAllowed": false,

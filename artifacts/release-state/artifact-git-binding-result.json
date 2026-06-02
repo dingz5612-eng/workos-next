@@ -1,5 +1,5 @@
 {
-  "generatedAtUtc": "2026-06-02T11:42:18.994Z",
+  "generatedAtUtc": "2026-06-02T12:51:04.284Z",
   "generatedBy": "check-artifact-git-binding",
   "stage": "OAM-ACCEPTANCE-CLOSURE-A2",
   "status": "passed",
@@ -242,7 +242,7 @@
       "artifactPath": "artifacts/operations/dormitory/day2-entry-gate-result.json",
       "exists": true,
       "generatedBy": "check-observation-sequence-gate",
-      "generatedAtUtc": "2026-06-02T11:42:07.120Z",
+      "generatedAtUtc": "2026-06-02T11:42:20.597Z",
       "stage": "DORM-L1-DAY2-ENTRY-GATE",
       "sourceMode": null,
       "status": "passed",
@@ -257,7 +257,7 @@
       "noTmpFinalRefs": true,
       "productionBoundaryOk": true,
       "noGoItemsNonEmpty": false,
-      "hash": "b507c154950ee08db347ccafc09cdedc52e0756395807cd35bb18a5aecaea78b"
+      "hash": "f7d2217c12f619fb8feda4f1d8cf807c3bc885a7383f7b56010746b7da1dc66b"
     }
   ],
   "noGoItems": [],

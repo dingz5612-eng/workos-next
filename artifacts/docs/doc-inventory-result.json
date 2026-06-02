@@ -1,9 +1,9 @@
 {
-  "generatedAtUtc": "2026-06-02T12:23:10.086Z",
+  "generatedAtUtc": "2026-06-02T12:46:34.336Z",
   "generatedBy": "check-doc-inventory",
   "stage": "OAM-MANUAL-CONTROL-PLANE",
   "status": "passed",
-  "repositoryHead": "58323398de1c75bd3f3ddebcc16d1ac9c9634c04",
+  "repositoryHead": "300deab4cfc0a048f734490821760d750bbb33e5",
   "manualCount": 10,
   "noGoItems": [],
   "productionAllowed": false,
@@ -14,7 +14,7 @@
     {
       "file": "docs/manuals/system/system-manual.md",
       "present": true,
-      "hash": "3aca151edab2137bb864827ed4185baee64e82beb16a7bf85aad89e28201b9d7",
+      "hash": "dcc2f393aebc7e529b578168be7727d0d38c6d1014bff6785cc78198dd27a53e",
       "containsCurrentState": true
     },
     {
@@ -26,7 +26,7 @@
     {
       "file": "docs/manuals/runtime/runtime-operations-manual.md",
       "present": true,
-      "hash": "782ebc3218a44021ad87c559c0bc35d978c591ec3823664bcdd2c3f023f7f6cc",
+      "hash": "3db990469ccc0093caf06546a252d110afb7c95bec5082f3047cc9218232e9fb",
       "containsCurrentState": false
     },
     {

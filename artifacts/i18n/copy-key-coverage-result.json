@@ -1,9 +1,9 @@
 {
-  "generatedAtUtc": "2026-06-02T12:22:59.294Z",
+  "generatedAtUtc": "2026-06-02T12:50:37.430Z",
   "generatedBy": "check-copy-key-coverage",
   "stage": "OAM-LOCALIZATION-AUTHORITY",
   "status": "passed",
-  "repositoryHead": "58323398de1c75bd3f3ddebcc16d1ac9c9634c04",
+  "repositoryHead": "300deab4cfc0a048f734490821760d750bbb33e5",
   "languages": {
     "canonical": "zh-CN",
     "supported": [
@@ -21,8 +21,8 @@
   "modules": [
     {
       "file": "apps/mobile/src/i18n/shellCopy.js",
-      "zhKeyCount": 197,
-      "ruKeyCount": 197,
+      "zhKeyCount": 192,
+      "ruKeyCount": 192,
       "missingRu": [],
       "extraRu": [],
       "kyKgMode": "pilot_canonical_fallback"
@@ -45,8 +45,8 @@
     },
     {
       "file": "apps/mobile/src/i18n/operationCopy.js",
-      "zhKeyCount": 63,
-      "ruKeyCount": 63,
+      "zhKeyCount": 62,
+      "ruKeyCount": 62,
       "missingRu": [],
       "extraRu": [],
       "kyKgMode": "pilot_canonical_fallback"
