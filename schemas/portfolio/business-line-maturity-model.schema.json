@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://workosnext.local/schemas/portfolio/business-line-maturity-model.schema.json",
+  "type": "object",
+  "required": ["version", "states", "businessLines", "transitionEvidenceRequired"],
+  "properties": {
+    "version": { "const": "portfolio.business-line-maturity-model.v1" },
+    "states": { "type": "array", "minItems": 8 },
+    "businessLines": { "type": "array", "minItems": 4 },
+    "transitionEvidenceRequired": { "const": true }
+  }
+}

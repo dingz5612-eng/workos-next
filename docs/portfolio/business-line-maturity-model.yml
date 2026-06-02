@@ -1,0 +1,105 @@
+{
+  "version": "portfolio.business-line-maturity-model.v1",
+  "owner": "releaseOwner",
+  "language": "zh-CN",
+  "purpose": "定义组合式业务线成熟度状态，防止单业务线 L1 内测被误解释为 L2 或整体业务生产放行。",
+  "states": [
+    {
+      "id": "L0 Contract Preview",
+      "description": "仅允许合同预览、学习、prepare_only，不允许 production confirm。",
+      "productionAllowed": false,
+      "requiresMachineEvidence": true
+    },
+    {
+      "id": "L1 Internal Pilot Candidate",
+      "description": "允许进入内测候选准备，但尚未进入真实观察窗口。",
+      "productionAllowed": false,
+      "requiresMachineEvidence": true
+    },
+    {
+      "id": "L1 Internal Pilot Observation",
+      "description": "允许限定范围 L1 内测观察；不得自动升级 L2。",
+      "productionAllowed": false,
+      "requiresMachineEvidence": true
+    },
+    {
+      "id": "L1 Held",
+      "description": "观察窗口被 P1 hold 或人工 hold 暂停推进。",
+      "productionAllowed": false,
+      "requiresMachineEvidence": true
+    },
+    {
+      "id": "L1 Rollback",
+      "description": "触发 P0 stop 或 rollback 条件，必须回滚或追加补偿。",
+      "productionAllowed": false,
+      "requiresMachineEvidence": true
+    },
+    {
+      "id": "L2 Candidate",
+      "description": "仅表示满足候选前置条件，仍需单独 stage / PR / gate。",
+      "productionAllowed": false,
+      "requiresMachineEvidence": true
+    },
+    {
+      "id": "L2 Production Ready",
+      "description": "仅表示业务线层面可准备申请生产，仍不等于整体 Business Production 放行。",
+      "productionAllowed": false,
+      "requiresMachineEvidence": true
+    },
+    {
+      "id": "Production Blocked",
+      "description": "Final System Gate 或组合式治理阻断生产。",
+      "productionAllowed": false,
+      "requiresMachineEvidence": true
+    }
+  ],
+  "businessLines": [
+    {
+      "businessLineId": "dormitory",
+      "displayName": "Dormitory",
+      "currentMaturityState": "L1 Internal Pilot Observation",
+      "independentMaturity": true,
+      "productionAllowed": false,
+      "l2ProductionAllowed": false,
+      "evidenceRefs": [
+        "artifacts/go-live/dormitory/internal-pilot-go-no-go.json",
+        "artifacts/operations/dormitory/l1-to-l2-readiness.json",
+        "artifacts/release-state/current-state.json"
+      ]
+    },
+    {
+      "businessLineId": "repair",
+      "displayName": "Repair",
+      "currentMaturityState": "L0 Contract Preview",
+      "independentMaturity": true,
+      "productionAllowed": false,
+      "l2ProductionAllowed": false,
+      "evidenceRefs": ["docs/business/business-line-registry.json"]
+    },
+    {
+      "businessLineId": "parts",
+      "displayName": "Parts",
+      "currentMaturityState": "L0 Contract Preview",
+      "independentMaturity": true,
+      "productionAllowed": false,
+      "l2ProductionAllowed": false,
+      "evidenceRefs": ["docs/business/business-line-registry.json"]
+    },
+    {
+      "businessLineId": "hr",
+      "displayName": "HR",
+      "currentMaturityState": "L0 Contract Preview",
+      "independentMaturity": true,
+      "productionAllowed": false,
+      "l2ProductionAllowed": false,
+      "evidenceRefs": ["docs/business/business-line-registry.json"]
+    }
+  ],
+  "transitionEvidenceRequired": true,
+  "forbiddenCoupling": [
+    "Dormitory L1 通过不得自动升级 Dormitory L2。",
+    "Dormitory GO 不得放开 Repair / Parts / HR。",
+    "L2 Candidate 不等于 L2 Production Ready。",
+    "L2 Production Ready 不等于 Business Production 放行。"
+  ]
+}

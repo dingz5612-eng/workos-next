@@ -1,0 +1,31 @@
+{
+  "generatedAtUtc": "2026-06-01T23:55:46.551Z",
+  "generatedBy": "check-production-governance",
+  "status": "passed",
+  "currentMainHead": "f375074307dad658117131291c0ce9e8ab296099",
+  "portfolioDecision": "blocked",
+  "businessProductionAllowed": false,
+  "finalSystemGateRequired": true,
+  "finalSystemGateStatus": "blocked",
+  "dormitory": {
+    "maturityState": "L1 Internal Pilot Observation",
+    "l2ProductionAllowed": false,
+    "productionAllowed": false,
+    "autoUpgradeBlocked": true
+  },
+  "repairPartsHr": {
+    "maturityState": "L0 Contract Preview",
+    "productionAllowed": false,
+    "requiresIndependentGate": true
+  },
+  "evidenceRefs": [
+    "docs/portfolio/production-governance.yml",
+    "artifacts/portfolio/business-line-maturity-result.json",
+    "artifacts/release-state/current-state.json",
+    "artifacts/rt4/evidence-graph.json",
+    "artifacts/rt4/completion-dashboard.json",
+    "artifacts/rt4/final-completion-assurance-result.json"
+  ],
+  "noGoItems": [],
+  "nextAction": "组合式生产治理保持 blocked；继续 L1 observation，不自动升级。"
+}

@@ -1,32 +1,32 @@
 {
   "version": "release-state.authority.v1",
-  "generatedAtUtc": "2026-06-01T23:27:31.963Z",
+  "generatedAtUtc": "2026-06-01T23:50:14.121Z",
   "generatedBy": "build-current-release-state",
   "currentMain": {
     "repository": "dingz5612-eng/workos-next",
     "branch": "main",
-    "headSha": "96f2c63afc30975a3da53cc06b7a0dab439dc96c",
+    "headSha": "f375074307dad658117131291c0ce9e8ab296099",
     "ci": {
-      "id": 26788107674,
+      "id": 26788963140,
       "name": "CI",
       "event": "push",
       "status": "completed",
       "conclusion": "success",
-      "headSha": "96f2c63afc30975a3da53cc06b7a0dab439dc96c",
-      "htmlUrl": "https://github.com/dingz5612-eng/workos-next/actions/runs/26788107674",
-      "createdAt": "2026-06-01T23:21:41Z",
-      "updatedAt": "2026-06-01T23:24:29Z"
+      "headSha": "f375074307dad658117131291c0ce9e8ab296099",
+      "htmlUrl": "https://github.com/dingz5612-eng/workos-next/actions/runs/26788963140",
+      "createdAt": "2026-06-01T23:43:05Z",
+      "updatedAt": "2026-06-01T23:45:46Z"
     },
     "v54ControlPlaneGuards": {
-      "id": 26788107691,
+      "id": 26788963139,
       "name": "V5.4 Control Plane Guards",
       "event": "push",
       "status": "completed",
       "conclusion": "success",
-      "headSha": "96f2c63afc30975a3da53cc06b7a0dab439dc96c",
-      "htmlUrl": "https://github.com/dingz5612-eng/workos-next/actions/runs/26788107691",
-      "createdAt": "2026-06-01T23:21:41Z",
-      "updatedAt": "2026-06-01T23:23:53Z"
+      "headSha": "f375074307dad658117131291c0ce9e8ab296099",
+      "htmlUrl": "https://github.com/dingz5612-eng/workos-next/actions/runs/26788963139",
+      "createdAt": "2026-06-01T23:43:05Z",
+      "updatedAt": "2026-06-01T23:45:20Z"
     }
   },
   "sources": {
@@ -36,15 +36,15 @@
       "internalPilotAllowed": true,
       "productionAllowed": false,
       "dormitoryL2ProductionAllowed": false,
-      "latestMainCommitSha": "96f2c63afc30975a3da53cc06b7a0dab439dc96c",
-      "latestMainCiHeadSha": "96f2c63afc30975a3da53cc06b7a0dab439dc96c",
-      "latestMainV54HeadSha": "96f2c63afc30975a3da53cc06b7a0dab439dc96c"
+      "latestMainCommitSha": "f375074307dad658117131291c0ce9e8ab296099",
+      "latestMainCiHeadSha": "f375074307dad658117131291c0ce9e8ab296099",
+      "latestMainV54HeadSha": "f375074307dad658117131291c0ce9e8ab296099"
     },
     "rtFinal": {
       "ref": "artifacts/rt4/final-completion-assurance-result.json",
       "stage": "RT-FINAL",
       "reconciledStatus": "POST_DORM_INT_RECONCILED",
-      "currentMainHead": "96f2c63afc30975a3da53cc06b7a0dab439dc96c",
+      "currentMainHead": "f375074307dad658117131291c0ce9e8ab296099",
       "businessProductionAllowed": false,
       "dormitoryL2ProductionAllowed": false,
       "repairPartsHrStatus": "L0 Contract Preview"
@@ -66,7 +66,7 @@
       "mode": "L1_INTERNAL_PILOT_OBSERVATION",
       "currentGate": "DORM-INT",
       "currentGateStatus": "GO_FOR_INTERNAL_PILOT",
-      "currentMainHead": "96f2c63afc30975a3da53cc06b7a0dab439dc96c",
+      "currentMainHead": "f375074307dad658117131291c0ce9e8ab296099",
       "businessProduction": "BLOCKED",
       "dormitoryL2Production": "BLOCKED",
       "repairPartsHrStatus": "L0_OR_BLOCKED"

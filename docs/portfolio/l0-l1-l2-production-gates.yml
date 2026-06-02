@@ -1,0 +1,80 @@
+{
+  "version": "portfolio.l0-l1-l2-production-gates.v1",
+  "owner": "releaseOwner",
+  "language": "zh-CN",
+  "gates": [
+    {
+      "from": "L0 Contract Preview",
+      "to": "L1 Internal Pilot Candidate",
+      "requiresSeparateStage": true,
+      "requiresSeparatePr": true,
+      "requiredEvidence": [
+        "business-line-admission",
+        "runtime guard",
+        "surface guard",
+        "training owner"
+      ],
+      "productionAllowed": false
+    },
+    {
+      "from": "L1 Internal Pilot Candidate",
+      "to": "L1 Internal Pilot Observation",
+      "requiresSeparateStage": true,
+      "requiresSeparatePr": true,
+      "requiredEvidence": [
+        "internal pilot go/no-go",
+        "BStageGate",
+        "evidence graph",
+        "scope readiness"
+      ],
+      "productionAllowed": false
+    },
+    {
+      "from": "L1 Internal Pilot Observation",
+      "to": "L2 Candidate",
+      "requiresSeparateStage": true,
+      "requiresSeparatePr": true,
+      "requiredEvidence": [
+        "7 days no P0",
+        "no unresolved P1 hold",
+        "finance daily close 100%",
+        "no Red ShadowCompareReport",
+        "rollback readiness green",
+        "latest main CI green",
+        "latest main V5.4 Guards green"
+      ],
+      "productionAllowed": false
+    },
+    {
+      "from": "L2 Candidate",
+      "to": "L2 Production Ready",
+      "requiresSeparateStage": true,
+      "requiresSeparatePr": true,
+      "requiredEvidence": [
+        "business owner signoff",
+        "finance owner signoff",
+        "technical owner signoff",
+        "support owner signoff",
+        "runtime proof replay",
+        "semantic proof replay"
+      ],
+      "productionAllowed": false
+    },
+    {
+      "from": "L2 Production Ready",
+      "to": "Production Blocked",
+      "requiresSeparateStage": false,
+      "requiresSeparatePr": false,
+      "requiredEvidence": [
+        "Final System Gate blocked",
+        "portfolio production governance blocked"
+      ],
+      "productionAllowed": false
+    }
+  ],
+  "globalBlockingRules": [
+    "Final System Gate blocked 时，portfolio production governance 必须 blocked。",
+    "任何业务线 production transition 必须有机器 evidence。",
+    "Repair / Parts / HR 必须独立通过 L0 -> L1 gate，不得继承 Dormitory 状态。"
+  ]
+}
