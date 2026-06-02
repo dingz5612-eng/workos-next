@@ -17,6 +17,16 @@ WorkOSNext 当前不是正式生产系统，也不是 Day-2 项目入口。当�
 docs/history/phase-0-1-archive.md
 ```
 
+统一手册控制平面位于：
+
+```text
+docs/manuals/system/system-manual.md
+docs/manuals/project/project-manual.md
+docs/manuals/runtime/runtime-operations-manual.md
+docs/manuals/user/
+docs/manuals/operations/dormitory-l1-sop.md
+```
+
 ## 工程规则
 
 所有后续任务必须遵守：

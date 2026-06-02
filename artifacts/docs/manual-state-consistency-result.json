@@ -1,0 +1,25 @@
+{
+  "generatedAtUtc": "2026-06-02T12:17:01.260Z",
+  "generatedBy": "check-manual-state-consistency",
+  "stage": "OAM-MANUAL-CONTROL-PLANE",
+  "status": "passed",
+  "repositoryHead": "b1834aec130aa46079b7ccce15550cc5869ef8b1",
+  "manualCount": 10,
+  "noGoItems": [],
+  "productionAllowed": false,
+  "dormitoryL2ProductionAllowed": false,
+  "businessProduction": "blocked",
+  "repairPartsHrStatus": "L0 Contract Preview",
+  "stateBearingManuals": [
+    "docs/manuals/system/system-manual.md",
+    "docs/manuals/project/project-manual.md",
+    "docs/manuals/operations/dormitory-l1-sop.md",
+    "docs/manuals/project/post-oam-04b-04c-pure-baseline-report.md"
+  ],
+  "requiredStateLines": [
+    "Dormitory remains L1 Internal Pilot Observation only",
+    "Dormitory L2 Production = false",
+    "Business Production = blocked",
+    "Repair / Parts / HR = L0 Contract Preview"
+  ]
+}

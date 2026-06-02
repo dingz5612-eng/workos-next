@@ -1,0 +1,35 @@
+{
+  "generatedAtUtc": "2026-06-02T12:17:01.021Z",
+  "generatedBy": "check-no-production-ready-copy",
+  "stage": "OAM-MANUAL-CONTROL-PLANE",
+  "status": "passed",
+  "repositoryHead": "b1834aec130aa46079b7ccce15550cc5869ef8b1",
+  "manualCount": 10,
+  "noGoItems": [],
+  "productionAllowed": false,
+  "dormitoryL2ProductionAllowed": false,
+  "businessProduction": "blocked",
+  "repairPartsHrStatus": "L0 Contract Preview",
+  "scanFiles": [
+    "README.md",
+    "docs/manuals/system/system-manual.md",
+    "docs/manuals/project/project-manual.md",
+    "docs/manuals/runtime/runtime-operations-manual.md",
+    "docs/manuals/user/frontdesk-user-manual-zh-CN.md",
+    "docs/manuals/user/finance-user-manual-zh-CN.md",
+    "docs/manuals/user/manager-user-manual-zh-CN.md",
+    "docs/manuals/user/governance-user-manual-zh-CN.md",
+    "docs/manuals/user/release-owner-user-manual-zh-CN.md",
+    "docs/manuals/operations/dormitory-l1-sop.md",
+    "docs/manuals/project/post-oam-04b-04c-pure-baseline-report.md"
+  ],
+  "forbidden": [
+    "FULLY_PASSED",
+    "PRODUCTION_READY",
+    "BUSINESS_PRODUCTION_GO",
+    "DORMITORY_L2_PRODUCTION_ALLOWED",
+    "REPAIR_PARTS_HR_PRODUCTION_ALLOWED",
+    "DAY2_STARTED",
+    "production-ready"
+  ]
+}

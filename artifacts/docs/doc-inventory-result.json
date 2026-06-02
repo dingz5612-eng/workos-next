@@ -1,0 +1,75 @@
+{
+  "generatedAtUtc": "2026-06-02T12:17:00.573Z",
+  "generatedBy": "check-doc-inventory",
+  "stage": "OAM-MANUAL-CONTROL-PLANE",
+  "status": "passed",
+  "repositoryHead": "b1834aec130aa46079b7ccce15550cc5869ef8b1",
+  "manualCount": 10,
+  "noGoItems": [],
+  "productionAllowed": false,
+  "dormitoryL2ProductionAllowed": false,
+  "businessProduction": "blocked",
+  "repairPartsHrStatus": "L0 Contract Preview",
+  "manuals": [
+    {
+      "file": "docs/manuals/system/system-manual.md",
+      "present": true,
+      "hash": "3aca151edab2137bb864827ed4185baee64e82beb16a7bf85aad89e28201b9d7",
+      "containsCurrentState": true
+    },
+    {
+      "file": "docs/manuals/project/project-manual.md",
+      "present": true,
+      "hash": "fd643a98743ba990308fe4952fee1cf933601bfac34d8f31413c6511c9eb0d2c",
+      "containsCurrentState": true
+    },
+    {
+      "file": "docs/manuals/runtime/runtime-operations-manual.md",
+      "present": true,
+      "hash": "782ebc3218a44021ad87c559c0bc35d978c591ec3823664bcdd2c3f023f7f6cc",
+      "containsCurrentState": false
+    },
+    {
+      "file": "docs/manuals/user/frontdesk-user-manual-zh-CN.md",
+      "present": true,
+      "hash": "fabaaf9567a318c69240c941aa35add780bae803754d3d1007096a79c6f1dca6",
+      "containsCurrentState": false
+    },
+    {
+      "file": "docs/manuals/user/finance-user-manual-zh-CN.md",
+      "present": true,
+      "hash": "5679d2cfd949f1892e05a2557de4f3a94d17ad1c02ac454b625ab034812d2822",
+      "containsCurrentState": false
+    },
+    {
+      "file": "docs/manuals/user/manager-user-manual-zh-CN.md",
+      "present": true,
+      "hash": "6aaa8ddc124ff9ed06e65a1c5972146b7b0bea74d28ebc781695d5ad8071ca66",
+      "containsCurrentState": false
+    },
+    {
+      "file": "docs/manuals/user/governance-user-manual-zh-CN.md",
+      "present": true,
+      "hash": "36191bf00ce3f639c0f576c115419370d759017be01c00b0fccb1393543195c4",
+      "containsCurrentState": false
+    },
+    {
+      "file": "docs/manuals/user/release-owner-user-manual-zh-CN.md",
+      "present": true,
+      "hash": "9b5e0a1bfc7e3c822a6dfdc7a127ba573505989a39ea5f39de07ca36d9664c78",
+      "containsCurrentState": true
+    },
+    {
+      "file": "docs/manuals/operations/dormitory-l1-sop.md",
+      "present": true,
+      "hash": "1d15706040f304f5ef848054743b0b75a97eed96bf940a2abe58ce6984292e5e",
+      "containsCurrentState": true
+    },
+    {
+      "file": "docs/manuals/project/post-oam-04b-04c-pure-baseline-report.md",
+      "present": true,
+      "hash": "5b9a0f386d2fa62a6c3811266f17b9aa27e8d0c0d3b7b199302cfecb354740ce",
+      "containsCurrentState": true
+    }
+  ]
+}
