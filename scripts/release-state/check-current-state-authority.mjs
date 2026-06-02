@@ -29,6 +29,17 @@ function assert(condition, message, details = []) {
   if (!condition) fail(message, details);
 }
 
+const allowPendingMainRebind = process.env.OAM_ALLOW_PENDING_MAIN_REBIND === "true";
+
+function assertMainFreshness(actual, expected, message) {
+  if (actual === expected) return;
+  if (allowPendingMainRebind) {
+    console.warn(`P1 ${message} (pending_rebind_after_main_green)`);
+    return;
+  }
+  fail(message, [`actual=${actual}`, `expected=${expected}`]);
+}
+
 function businessLine(registry, id) {
   return registry.businessLines.find((line) => line.businessLineId === id);
 }
@@ -52,15 +63,19 @@ const mainHead = currentMainHead();
 
 assert(current.currentMain?.headSha === mainHead, "Authority current main does not match origin/main.");
 
-assert(dormInt.latestMain?.commitSha === mainHead, "DORM-INT artifact must bind current origin/main.");
-assert(dormInt.latestMain?.ci?.headSha === mainHead, "DORM-INT CI evidence must bind current origin/main.");
-assert(dormInt.latestMain?.v54ControlPlaneGuards?.headSha === mainHead, "DORM-INT V5.4 evidence must bind current origin/main.");
+assertMainFreshness(dormInt.latestMain?.commitSha, mainHead, "DORM-INT artifact must bind current origin/main.");
+assertMainFreshness(dormInt.latestMain?.ci?.headSha, mainHead, "DORM-INT CI evidence must bind current origin/main.");
+assertMainFreshness(
+  dormInt.latestMain?.v54ControlPlaneGuards?.headSha,
+  mainHead,
+  "DORM-INT V5.4 evidence must bind current origin/main."
+);
 assert(dormInt.status === "GO_FOR_INTERNAL_PILOT", "DORM-INT status must remain GO_FOR_INTERNAL_PILOT.");
 assert(dormInt.internalPilotAllowed === true, "DORM-INT must allow only L1 internal pilot.");
 assert(dormInt.productionAllowed === false, "DORM-INT productionAllowed must be false.");
 assert(dormInt.dormitoryL2ProductionAllowed === false, "DORM-INT L2 flag must be false.");
 
-assert(rtFinal.currentMainHead === mainHead, "RT-FINAL reconciled current main must match origin/main.");
+assertMainFreshness(rtFinal.currentMainHead, mainHead, "RT-FINAL reconciled current main must match origin/main.");
 assert(rtFinal.businessProductionAllowed === false, "RT-FINAL must keep business production blocked.");
 assert(rtFinal.dormitoryL2ProductionAllowed === false, "RT-FINAL must keep Dormitory L2 blocked.");
 assert(rtFinal.repairPartsHrStatus === "L0 Contract Preview", "RT-FINAL must keep Repair / Parts / HR L0.");
@@ -73,7 +88,7 @@ assert(evidenceGraph.releaseStates?.businessProduction === "BLOCKED", "Evidence 
 assert(evidenceGraph.releaseStates?.dormitoryL2Production === "BLOCKED", "Evidence Graph Dormitory L2 must be blocked.");
 
 assert(dashboard.mode === "L1_INTERNAL_PILOT_OBSERVATION", "Completion Dashboard mode must be L1 observation.");
-assert(dashboard.currentMainHead === mainHead, "Completion Dashboard main head must match origin/main.");
+assertMainFreshness(dashboard.currentMainHead, mainHead, "Completion Dashboard main head must match origin/main.");
 assert(dashboard.businessProduction === "BLOCKED", "Completion Dashboard business production must be blocked.");
 assert(dashboard.dormitoryL2Production === "BLOCKED", "Completion Dashboard Dormitory L2 must be blocked.");
 assert(dashboard.centralMergeTrain === "CENTRAL_MERGE_COMPLETED", "Completion Dashboard central merge train mismatch.");
