@@ -1,6 +1,7 @@
 import { capacityForRoomType, defaultValueForField, fieldControlKind, isDerivedReadonlyField, optionsForField } from "../controls/fieldControls.js";
 import { loadDraft } from "../operationDrafts.js";
 import { lensIdsForWorkspace, lensPreview, lensTitle } from "../runtimeLensCatalog.js";
+import { buildOperationActionState } from "../operationActionState.js";
 import { isUnsafeLedgerCarryForward } from "../selectors/surfaceSelectors.js";
 import { activeCardForWorkspace, activeWorkspaceCard, isCardActionDisabled } from "../selectors/workspaceSelectors.js";
 import { checkoutServiceMobilePanel, checkoutServiceOperationAddon } from "./checkoutServiceView.js";
@@ -18,6 +19,7 @@ export function workspaceView(ctx) {
     `);
   }
   const activeCard = activeWorkspaceCard(item, ctx.state.selectedCardIndex, ctx.state.selectedCardId);
+  const actionState = buildOperationActionState({ workspace: item, workspaceId: item.id, cardId: activeCard.id }, activeCard, ctx.state.lastActionResult, ctx.state);
   return ctx.shell(`
     <section class="workspace-page ${item.domain}">
       <span>${ctx.tr("intentWorkspace")} · ${ctx.tr(item.domain)}</span>
@@ -34,7 +36,7 @@ export function workspaceView(ctx) {
       ${checkoutServiceMobilePanel(item, activeCard, ctx)}
       ${OperationPanelView(workspaceCardPanel(activeCard, item, true, ctx), item, activeCard, ctx)}
     </section>
-    <div class="sticky-action"><button data-submit-card>${ctx.tr("confirmAction")}</button></div>
+    <div class="sticky-action">${primaryActionButton(actionState, ctx)}</div>
   `);
 }
 
@@ -88,10 +90,18 @@ export function cardOperation(card, item, ctx) {
     <section><b>${ctx.tr("blockers")}</b><p>${visibleBlockers.length ? visibleBlockers.map((entry) => ctx.tx(entry.title)).join(" · ") : `${ctx.tr("noCriticalBlocker")} ${ctx.tr("blockerHelp")}`}</p></section>
     <div class="operation-actions">
       <button class="secondary" data-save-draft ${disabled}>${ctx.tr("saveDraft")}</button>
-      <button data-submit-card ${disabled}>${ctx.tr("submitForReview")}</button>
+      <button class="secondary" type="button" data-view="operationPanel" ${disabled}>${ctx.tr("trustedConfirm")}</button>
     </div>
     ${ctx.state.operationMessage ? `<p class="operation-message">${ctx.escapeHtml(ctx.state.operationMessage)}</p>` : ""}
   </div>`;
+}
+
+export function primaryActionButton(actionState, ctx) {
+  const action = actionState.primaryAction;
+  const disabled = action.disabled ? "disabled" : "";
+  const reason = action.reasonKey ? `<small>${ctx.tr(action.reasonKey)}</small>` : "";
+  const submit = ["ready"].includes(actionState.status) ? "data-submit-card" : `data-action-state="${ctx.escapeAttr(actionState.status)}"`;
+  return `<button class="primary-action ${ctx.escapeAttr(actionState.status)}" ${submit} ${disabled}>${ctx.tr(action.labelKey)}</button>${reason}`;
 }
 
 export function cardStatusHelp(card, ctx) {

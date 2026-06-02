@@ -1,8 +1,9 @@
 import { loadDraft } from "../operationDrafts.js";
+import { buildOperationActionState } from "../operationActionState.js";
 import { resolveOperationPanelTarget } from "../operationRouteResolver.js";
 import { activeWorkspaceCard } from "../selectors/workspaceSelectors.js";
 import { ActionResult, EvidenceSheet, OperationPanelView, TrustedConfirmSheet, WorkItemCard, workItemModel } from "./experienceComponents.js";
-import { workspaceCardPanel } from "./workspaceView.js";
+import { primaryActionButton, workspaceCardPanel } from "./workspaceView.js";
 
 export function operationPanelView(ctx) {
   const { state, shell } = ctx;
@@ -47,6 +48,7 @@ export function operationPanelView(ctx) {
   const commandSubmissionId = state.lastActionResult?.commandSubmissionId || draft.submissionProtocol?.submissionId || model.traceRefs[0] || "";
   const operationBody = workspaceCardPanel(activeCard, workspace, true, ctx);
   const traceCount = [commandSubmissionId, model.caseId, model.workItemId, ...(model.traceRefs || [])].filter(Boolean).length;
+  const actionState = buildOperationActionState(operationContext, activeCard, state.lastActionResult, state);
 
   return shell(`
     <section class="operation-panel-page" data-surface="operation-panel-route">
@@ -67,6 +69,7 @@ export function operationPanelView(ctx) {
     ${EvidenceSheet(activeCard, draft, ctx)}
     ${TrustedConfirmSheet(operationContext, activeCard, ctx)}
     ${ActionResult(state.lastActionResult || { status: "not_submitted", message: "Ready to prepare / confirm" }, ctx)}
+    <div class="sticky-action">${primaryActionButton(actionState, ctx)}</div>
   `);
 }
 
