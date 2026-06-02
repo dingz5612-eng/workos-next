@@ -1,8 +1,10 @@
 {
-  "generatedAtUtc": "2026-06-01T23:55:46.551Z",
+  "generatedAtUtc": "2026-06-02T01:20:29.352Z",
   "generatedBy": "check-production-governance",
   "status": "passed",
-  "currentMainHead": "f375074307dad658117131291c0ce9e8ab296099",
+  "currentMainHead": "d03d8d39c91135eb3f63d1a56b59e19b7dd35196",
+  "releaseStateEvidenceHead": "d03d8d39c91135eb3f63d1a56b59e19b7dd35196",
+  "releaseStateEvidenceFreshness": "current",
   "portfolioDecision": "blocked",
   "businessProductionAllowed": false,
   "finalSystemGateRequired": true,

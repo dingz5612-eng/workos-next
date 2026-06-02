@@ -62,7 +62,7 @@
       "violations": []
     }
   },
-  "generated_at_utc": "2026-06-01T20:39:14.724Z",
+  "generated_at_utc": "2026-06-02T01:20:25.075Z",
   "generated_by": "OAM-02 business semantic contract checkers",
   "requiredChecks": [
     "scenario-field-contract",

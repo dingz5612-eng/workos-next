@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-06-01T17:41:07.170Z",
+  "generated_at_utc": "2026-06-02T01:20:26.828Z",
   "generated_by": "scripts/surface/check-device-trust-contract.mjs",
   "status": "passed",
   "check": "device-trust-contract",
