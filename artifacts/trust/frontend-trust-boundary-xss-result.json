@@ -1,0 +1,59 @@
+{
+  "checkName": "frontend-trust-boundary-xss",
+  "status": "passed",
+  "generatedAtUtc": "2026-06-02T12:30:46.5184310Z",
+  "branch": "codex/oam-doc-i18n-ux-production-baseline-train",
+  "validatedHead": "4c1e8a90c6950dd8347f1168a400a9dbfe77ba2c",
+  "stage": "OAM-06",
+  "scope": {
+    "apiBaseAndAuth": "passed",
+    "deviceTrust": "passed",
+    "offlineFallback": "passed",
+    "xssRendering": "passed"
+  },
+  "validation": [
+    {
+      "command": "npm --prefix apps/mobile ci",
+      "result": "passed"
+    },
+    {
+      "command": "npm --prefix apps/mobile audit --audit-level=low",
+      "result": "passed",
+      "vulnerabilities": 0
+    },
+    {
+      "command": "npm --prefix apps/mobile run build",
+      "result": "passed"
+    },
+    {
+      "command": "npm --prefix apps/mobile run test",
+      "result": "passed",
+      "passedTestFiles": 46,
+      "passedTests": 128
+    },
+    {
+      "command": "node scripts/check-no-production-fake-fallback.mjs --self-test",
+      "result": "passed"
+    },
+    {
+      "command": "node scripts/check-no-production-fake-fallback.mjs",
+      "result": "passed"
+    },
+    {
+      "command": "node scripts/i18n/check-i18n-runtime-fallback.mjs",
+      "result": "passed"
+    },
+    {
+      "command": "pwsh -NoProfile -File scripts/guard-architecture.ps1",
+      "result": "passed"
+    }
+  ],
+  "businessState": {
+    "dormitory": "L1 Internal Pilot Observation only",
+    "dormitoryL2Production": false,
+    "businessProduction": "blocked",
+    "repairPartsHr": "L0 Contract Preview",
+    "day2": "requires separate Day-2 Entry Gate"
+  },
+  "noGoItems": []
+}

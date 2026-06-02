@@ -34,6 +34,10 @@ Development 可按本地测试需要运行 migration。Production 默认 `Migrat
 
 登录后由 actor session 代表当前用户。移动端默认 currentDevice；只有 PC surface 且存在可信 PC session 时，才使用 `pcGovernance.currentDevice`。
 
+受保护 API 默认使用 cookie auth 与 `credentials: "include"`；cookie-authenticated non-GET 请求必须携带 `X-CSRF-Token`。Development 可继续使用 `X-WorkOS-Actor-Token` compatibility flow，但仍必须通过 runtime session storage 校验。Production 不得把 actor token 返回给前端或写入 `localStorage`。
+
+Production 不允许通过 `?api=` 持久化任意 API base URL。前端只能使用同源、`VITE_WORKOS_API_BASE_URL` 或明确 allowlist；发现不安全的 `workosnext.apiBaseUrl` 必须清理并回退。
+
 ## Evidence Signed URL
 
 Evidence signed URL 只能服务证据上传和读取，不得把占位 evidence 表示为已可信完成。证据需要经过真实附件上传和可信校验。
@@ -45,6 +49,8 @@ Outbox 和 projection replay 用于恢复 read model。Projection pending 是同
 ## Runtime Guard
 
 Runtime guard 负责确认 API boundary、runtime write path、policy、device trust、ledger、evidence、projection 和 no fake fallback。
+
+前端 offline fallback 只能展示已缓存的真实只读数据；没有缓存时显示中文空态，不得提供 confirm、approve、apply、export 或 process-outbox。
 
 ## Live API DB Replay
 

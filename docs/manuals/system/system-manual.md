@@ -57,6 +57,10 @@ Evidence 区分证据需求、证据草稿、待上传真实附件、待可信�
 
 Development 可使用本地账号。Production 必须使用 versioned slow password hash、明确 CORS、AllowedHosts 和真实数据库连接。高风险 PC surface 需要可信 PC session；SurfaceGuard 只是前端体验边界，不是后端授权替代。
 
+前端信任边界要求：受保护 API 默认使用 HttpOnly cookie、`credentials: "include"` 和 `X-CSRF-Token`；Production 不得持久化 actor token 或任意 `?api=` override。未登录启动不得批量拉取受保护 runtime 数据；401 / 403 必须清理本地 actor session 并回到登录或权限解释。
+
+用户可见 HTML 必须对 runtime payload、搜索词、备注、错误 reason 和 API 返回文案做 escape。Offline fallback 只能只读展示已缓存真实数据，不能提供业务写入或治理维护动作。
+
 ## 禁止项
 
 - 不进入 Day-2。
