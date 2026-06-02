@@ -9,13 +9,15 @@ export function homeView(ctx) {
   const surface = selectHomeSurface(state);
   const stats = selectSurfaceStats(state);
   const missions = selectWorkbenchQueue(state).slice(0, 3);
+  const mission = missionControlVM(selectWorkbenchQueue(state), state, tr);
   return shell(`
     <section class="command-card" data-surface="today-mission-control">
       <span>${tr("todayMissionControlEyebrow")}</span>
       <h1>${tr("todayMissionControl")}</h1>
       <dl>
-        <dt>${tr("reason")}</dt><dd>${tr("globalReason")}</dd>
-        <dt>${tr("impact")}</dt><dd>${tr("globalImpact")}</dd>
+        <dt>${tr("reason")}</dt><dd>${mission.reason}</dd>
+        <dt>${tr("impact")}</dt><dd>${mission.impact}</dd>
+        <dt>${tr("nextAction")}</dt><dd>${mission.action}</dd>
       </dl>
       <button data-view="workbench">${tr("workbench")}</button>
     </section>
@@ -39,10 +41,10 @@ export function homeView(ctx) {
       <h2>${tr("mustDoToday")}</h2>
       <div class="ia-chip-grid">
         ${iaChip("must-do", "mustDoToday", stats.myQueueCount, ctx)}
-        ${iaChip("due-soon", "dueSoon", stats.myQueueCount ? 1 : 0, ctx)}
-        ${iaChip("missing-evidence", "missingEvidenceGroup", stats.confirmCount, ctx)}
-        ${iaChip("waiting-finance", "waitingFinance", stats.confirmCount ? 1 : 0, ctx)}
-        ${iaChip("just-submitted", "justSubmitted", 0, ctx)}
+        ${iaChip("due-soon", "dueSoon", mission.dueSoonCount, ctx)}
+        ${iaChip("missing-evidence", "missingEvidenceGroup", mission.missingEvidenceCount, ctx)}
+        ${iaChip("waiting-finance", "waitingFinance", mission.waitingFinanceCount, ctx)}
+        ${iaChip("just-submitted", "justSubmitted", mission.syncingCount, ctx)}
         ${iaChip("risk-reminder", "riskReminder", stats.blockedCount, ctx)}
       </div>
     </section>
@@ -56,6 +58,34 @@ export function homeView(ctx) {
       ${homeSurfaceSections(surface, ctx)}
     </section>
   `);
+}
+
+function missionControlVM(queue, state, tr) {
+  if (!queue.length) {
+    return {
+      reason: tr("missionEmptyReason"),
+      impact: tr("missionEmptyImpact"),
+      action: tr("missionEmptyAction"),
+      dueSoonCount: 0,
+      missingEvidenceCount: 0,
+      waitingFinanceCount: 0,
+      syncingCount: 0
+    };
+  }
+  const blocked = queue.find((item) => item.badges?.includes("blocked") || item.card?.status === "blocked");
+  const missingEvidence = queue.filter((item) => (item.card?.evidence || item.evidenceRequirements || []).length && !item.evidenceState?.includes("verified"));
+  const waitingFinance = queue.filter((item) => item.ownerRole === "finance" || item.badges?.includes("finance"));
+  const syncing = (state.submitQueue || []).filter((item) => item.status === "committed_projection_pending").length;
+  const focus = blocked || missingEvidence[0] || queue[0];
+  return {
+    reason: blocked ? tr("missionBlockedReason") : missingEvidence.length ? tr("missionEvidenceReason") : tr("missionReadyReason"),
+    impact: focus?.workspace?.title?.["zh-CN"] || focus?.businessObject || focus?.workspaceId || tr("missionRuntimeImpact"),
+    action: blocked ? tr("primaryViewBlocker") : missingEvidence.length ? tr("primaryCompleteEvidence") : tr("primarySubmit"),
+    dueSoonCount: queue.filter((item) => item.badges?.includes("soon")).length,
+    missingEvidenceCount: missingEvidence.length,
+    waitingFinanceCount: waitingFinance.length,
+    syncingCount: syncing
+  };
 }
 
 function iaChip(id, labelKey, count, ctx) {

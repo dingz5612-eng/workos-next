@@ -239,8 +239,10 @@
 
 .sticky-action {
   position: sticky;
-  bottom: 78px;
+  bottom: calc(var(--bottom-nav-height) + var(--safe-bottom) + 16px);
   margin-top: 12px;
+  min-height: var(--sticky-action-height);
+  z-index: 4;
 }
 
 .sticky-action button {
@@ -265,14 +267,19 @@
   font-size: 12px;
 }
 
+.surface-pc .feedback-fab {
+  right: 24px;
+}
+
 .bottom-nav {
   position: fixed;
   left: 50%;
-  bottom: 12px;
+  bottom: calc(var(--safe-bottom) + 12px);
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 5px;
   width: min(calc(100% - 24px), 406px);
+  min-height: var(--bottom-nav-height);
   padding: 7px;
   border: 1px solid #d9e7ee;
   border-radius: 22px;
@@ -293,4 +300,12 @@
 .bottom-nav .active {
   color: #fff;
   background: #102f46;
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+summary:focus-visible {
+  outline: 3px solid #ffd166;
+  outline-offset: 2px;
 }

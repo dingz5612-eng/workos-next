@@ -36,7 +36,7 @@ function bottomNav(ctx) {
 }
 
 function nav(view, key, { state, tr }) {
-  const active = state.view === view;
+  const active = state.view === view || (view === "workbench" && ["workspace", "operationPanel"].includes(state.view));
   return `<button data-view="${view}" class="${active ? "active" : ""}" aria-label="${tr(key)}" ${active ? 'aria-current="page"' : ""}>${tr(key)}</button>`;
 }
 

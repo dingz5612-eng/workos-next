@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-06-02T13:51:59.384Z",
+  "generated_at_utc": "2026-06-02T13:56:40.404Z",
   "generated_by": "scripts/surface/check-learning-center-contract.mjs",
   "status": "passed",
   "check": "learning-center-contract",
