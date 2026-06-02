@@ -20,7 +20,7 @@ export function WorkItemCard(item, ctx) {
       ${field("traceRefs", model.traceRefs.join(" · ") || "-", ctx)}
     </dl></details>` : "";
 
-  return `<article class="workitem-card action-decision-card risk-${attr(model.riskLevel, ctx)}" data-surface="action-decision-card" data-work-item-id="${attr(model.workItemId, ctx)}" data-case-id="${attr(model.caseId, ctx)}">
+  return `<article class="workitem-card action-decision-card risk-${attr(model.riskLevel, ctx)}" data-surface="action-decision-card">
     <div class="workitem-card-head">
       <div>
         <span>${text(canHandle, ctx)} · ${text(model.workItemType, ctx)}</span>
@@ -98,7 +98,7 @@ export function OperationPanelView(innerHtml, item, activeCard, ctx) {
   const workspace = item.workspace || item;
   const model = workItemModel({ ...item, workspace, card: activeCard, workspaceId: item.workspaceId || workspace.id, cardId: item.cardId || activeCard.id }, ctx);
   const vm = OperationPanelVM({ ...item, workspace, card: activeCard }, ctx);
-  return `<section class="operation-panel-view" data-surface="operation-panel-runtime" data-work-item-id="${attr(model.workItemId, ctx)}" data-case-id="${attr(model.caseId, ctx)}">
+  return `<section class="operation-panel-view" data-surface="operation-panel-runtime">
     <div class="operation-panel-head">
       <span>${text(ctx.tr("operationPanel"), ctx)}</span>
       <strong>${text(vm.subtitle, ctx)}</strong>
@@ -112,7 +112,7 @@ export function TrustedConfirmSheet(item, card, ctx) {
   const workspace = item.workspace || item;
   const model = workItemModel({ ...item, workspace, card, workspaceId: item.workspaceId || workspace.id, cardId: item.cardId || card.id }, ctx);
   const vm = TrustedConfirmVM({ ...item, workspace, card }, ctx);
-  return `<section class="trusted-confirm-sheet" data-surface="trusted-confirm" data-work-item-id="${attr(model.workItemId, ctx)}">
+  return `<section class="trusted-confirm-sheet" data-surface="trusted-confirm">
     <h2>${text(ctx.tr("trustedConfirm"), ctx)}</h2>
     <article>
       <h3>${text(vm.businessCommitment.title, ctx)}</h3>
@@ -145,7 +145,7 @@ export function ActionResult(result = {}, ctx) {
   if (result.status === "committed_projection_failed") return FailedSyncState(result, ctx);
   if (result.status === "permission_blocked_403") return PermissionDiagnostic(result.permissionDiagnostic || result, ctx);
   const status = result.status || "network_unknown";
-  return `<section class="action-result ${attr(status, ctx)}" data-surface="action-result" data-submission-id="${attr(result.commandSubmissionId || result.submissionId || "", ctx)}">
+  return `<section class="action-result ${attr(status, ctx)}" data-surface="action-result">
     <b>${text(ctx.tr("actionResult"), ctx)}</b>
     <p>${text(result.message || status, ctx)}</p>
     ${result.commandSubmissionId ? `<small>${ctx.tr("submissionRecord")}: ${ctx.tr("traceAvailable")}</small>` : ""}
