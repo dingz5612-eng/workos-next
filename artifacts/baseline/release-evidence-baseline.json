@@ -1,10 +1,10 @@
 {
-  "generatedAtUtc": "2026-06-02T06:55:23.429Z",
+  "generatedAtUtc": "2026-06-02T07:15:05.343Z",
   "generatedBy": "check-release-evidence-baseline",
   "stage": "OAM-CLEAN-BASELINE-D1",
   "status": "passed",
   "repositoryHead": "b86aa1b60d90e2f18e780781b4077a63a7068c0f",
-  "prHead": "b86aa1b60d90e2f18e780781b4077a63a7068c0f",
+  "prHead": "9a539b5087ba1c2b0d37d7cdf627174a739cb956",
   "verifiedMainHead": "b86aa1b60d90e2f18e780781b4077a63a7068c0f",
   "ci": {
     "id": 26802215435,
@@ -36,8 +36,8 @@
     "completionDashboard": "artifacts/rt4/completion-dashboard.json",
     "artifactGitBinding": "artifacts/release-state/artifact-git-binding-result.json"
   },
-  "inputHash": "562359ebbce952a8af2c0247c1dd2e76bfd931320fa0999ef12ebbaa7a7acf31",
-  "resultHash": "b8bb1ffd3ff0fb24977cbf28d053c8eac6420119e187c1c7e540cc47df74b8ad",
+  "inputHash": "d783402cf4e518f47b00e1802a10bbffe0866217c3f70cf534dc7594258c4790",
+  "resultHash": "264e73a3ee79685469111a72a0735858925bfb12fca8eb05fcbf7578f472efcb",
   "noGoItems": [],
   "productionAllowed": false,
   "dormitoryL2ProductionAllowed": false,

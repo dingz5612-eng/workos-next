@@ -1,5 +1,5 @@
 {
-  "generatedAtUtc": "2026-06-02T06:54:40.799Z",
+  "generatedAtUtc": "2026-06-02T07:15:03.372Z",
   "generatedBy": "check-artifact-git-binding",
   "stage": "OAM-ACCEPTANCE-CLOSURE-A2",
   "status": "passed",
@@ -26,7 +26,7 @@
       "noTmpFinalRefs": true,
       "productionBoundaryOk": true,
       "noGoItemsNonEmpty": false,
-      "hash": "cd26570485f3abbec967e424e9dd83b0957d0402620cbd3936f22b14943939b7"
+      "hash": "ac69625c2cd73eebd5c7bded8ba4128fafdd3da3d891595c938a07aa6c126807"
     },
     {
       "artifactPath": "artifacts/release-state/post-merge-attestation.json",
@@ -47,7 +47,7 @@
       "noTmpFinalRefs": true,
       "productionBoundaryOk": true,
       "noGoItemsNonEmpty": false,
-      "hash": "942a8cd418f72e5ddd1a8e4494a3071b2951265a11b85b49386a025bdd80bb98"
+      "hash": "1a3d63f5cdcf3ec39d0f25c2d6a337a6fbeb2e52be171262de9f610ed29c6129"
     },
     {
       "artifactPath": "artifacts/oam/oam-final-acceptance-result.json",
@@ -89,7 +89,7 @@
       "noTmpFinalRefs": true,
       "productionBoundaryOk": true,
       "noGoItemsNonEmpty": false,
-      "hash": "6e4c91e1bf97d8629f2276dbfe4dcbddee741675b980418969f28529437d30a4"
+      "hash": "a8e47c82f5027401a3d63669600c6e2708efbd9cb46d3055703d0a469a923e1c"
     },
     {
       "artifactPath": "artifacts/go-live/dormitory/day0-readiness-result.json",
@@ -173,7 +173,7 @@
       "noTmpFinalRefs": true,
       "productionBoundaryOk": true,
       "noGoItemsNonEmpty": false,
-      "hash": "a8df50a0aa4d6d8a094b4fca1fc47860355a7c4e31733e601614d93db2bba3aa"
+      "hash": "69ee085b624d39d1f6f06726df896d9a8c32988c4ab8887acb482545e4a6c68a"
     },
     {
       "artifactPath": "artifacts/rt4/completion-dashboard.json",
@@ -194,7 +194,7 @@
       "noTmpFinalRefs": true,
       "productionBoundaryOk": true,
       "noGoItemsNonEmpty": false,
-      "hash": "40279063df90512f0388a53299f0b82b04d53c1b665f675960c231672f862716"
+      "hash": "61237e134a61584378ef6703fe5adaf509959899787cbc1471902fa9f9c042c0"
     },
     {
       "artifactPath": "artifacts/portfolio/business-line-maturity-result.json",
@@ -242,7 +242,7 @@
       "artifactPath": "artifacts/operations/dormitory/day2-entry-gate-result.json",
       "exists": true,
       "generatedBy": "check-observation-sequence-gate",
-      "generatedAtUtc": "2026-06-02T06:50:09.880Z",
+      "generatedAtUtc": "2026-06-02T06:54:41.373Z",
       "stage": "DORM-L1-DAY2-ENTRY-GATE",
       "sourceMode": null,
       "status": "passed",
@@ -257,7 +257,7 @@
       "noTmpFinalRefs": true,
       "productionBoundaryOk": true,
       "noGoItemsNonEmpty": false,
-      "hash": "0e374a70a1f1dbdcb4af6ac3c022debed82e752a339bf15683eedeabeb2ad541"
+      "hash": "2d14fadd9611acd32038ffe8249649311e999f667ab797a1e23f3a79526238bf"
     }
   ],
   "noGoItems": [],

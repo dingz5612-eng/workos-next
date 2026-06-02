@@ -1,5 +1,5 @@
 {
-  "generatedAtUtc": "2026-06-02T05:42:31.895Z",
+  "generatedAtUtc": "2026-06-02T07:15:05.874Z",
   "generatedBy": "project-hygiene-checkers",
   "stage": "PROJECT-HYGIENE-CLEANUP",
   "status": "PROJECT_HYGIENE_CLEANUP_LOCAL_PASSED",
@@ -152,7 +152,7 @@
       "repairPartsHrStatus": "L0 Contract Preview"
     },
     "route_surface_hygiene": {
-      "generatedAtUtc": "2026-06-02T05:42:16.595Z",
+      "generatedAtUtc": "2026-06-02T07:15:05.697Z",
       "generatedBy": "check-route-surface-hygiene",
       "stage": "PROJECT-HYGIENE-CLEANUP",
       "status": "passed",
@@ -676,7 +676,7 @@
       "repairPartsHrStatus": "L0 Contract Preview"
     },
     "seed_data_isolation": {
-      "generatedAtUtc": "2026-06-02T05:42:22.679Z",
+      "generatedAtUtc": "2026-06-02T07:15:05.862Z",
       "generatedBy": "check-seed-data-isolation",
       "stage": "PROJECT-HYGIENE-CLEANUP",
       "status": "passed",
