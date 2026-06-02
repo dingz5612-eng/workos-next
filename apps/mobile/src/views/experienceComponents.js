@@ -1,4 +1,5 @@
 import { loadDraft } from "../operationDrafts.js";
+import { resolveOperationPanelTarget, resolvePersistedWorkItem } from "../operationRouteResolver.js";
 import { permissionDiagnosticCopy } from "../surfaceGuard.js";
 import {
   DeviceTrustVM,
@@ -13,7 +14,14 @@ export function WorkItemCard(item, ctx) {
   const evidence = model.requiredEvidence.length ? model.requiredEvidence.join(" · ") : "-";
   const canHandle = model.canHandleLabel;
   const blocker = model.blocker;
-  const workspaceButton = `<button data-work-item-id="${attr(model.workItemId, ctx)}" data-workspace-id="${attr(model.workspaceId, ctx)}" data-card-id="${attr(model.cardId, ctx)}">${text(ctx.tr("openWorkspace"), ctx)}</button>`;
+  const route = resolveOperationPanelTarget({
+    workItemId: model.workItemId,
+    workspaceId: model.workspaceId,
+    cardId: model.cardId
+  }, ctx.state);
+  const workspaceButton = route.canOpen
+    ? `<button data-work-item-id="${attr(route.workItem.workItemId, ctx)}" data-workspace-id="${attr(route.workItem.workspaceId, ctx)}" data-card-id="${attr(route.workItem.cardId, ctx)}">${text(ctx.tr("openWorkspace"), ctx)}</button>`
+    : `<div class="workitem-route-blocked"><b>${text(ctx.tr("operationUnavailableCta"), ctx)}</b><small>${text(ctx.tr("operationUnavailableBody"), ctx)}</small><button data-view="workbench">${text(ctx.tr("returnWorkbench"), ctx)}</button></div>`;
   const debug = ctx.state?.debugSurface ? `<details class="debug-only"><summary>${text(ctx.tr("debugTrace"), ctx)}</summary><dl>
       ${field("workItemId", model.workItemId, ctx)}
       ${field("caseId", model.caseId, ctx)}
@@ -238,7 +246,7 @@ export function workItemModel(item = {}, ctx) {
     ...vm,
     workspaceId: item.workspaceId || workspace?.id || "",
     cardId: item.cardId || card?.id || "",
-    workItemId: vm.sourceRefs.workItemId || runtimeItem?.workItemId || runtimeItem?.work_item_id || persistedWorkItemIdFor(workspace, card) || persistedCandidate(item.workItemId || item.work_item_id) || item.queueItemId || "",
+    workItemId: vm.sourceRefs.workItemId || runtimeItem?.workItemId || runtimeItem?.work_item_id || persistedWorkItemIdFor(workspace, card) || persistedCandidate(item.workItemId || item.work_item_id) || "",
     caseId: vm.sourceRefs.caseId || item.caseId || item.case_id || runtimeItem?.caseId || runtimeItem?.case_id || workspace?.caseId || workspace?.id || "",
     workItemType: vm.typeLabel,
     lifecycleState: item.lifecycleState || item.lifecycle_state || item.status || runtimeItem?.lifecycleState || runtimeItem?.lifecycle_state || runtimeItem?.status || card?.status || "ready",
@@ -260,16 +268,11 @@ function persistedCandidate(value) {
 
 function runtimeWorkItemFor(item, workspace, card, ctx) {
   const selectedWorkItemId = ctx?.state?.selectedWorkItemId || item.workItemId || item.work_item_id || "";
-  const runtimeItems = [
-    ...(ctx?.state?.runtimeStore?.operationWorkItems || []),
-    ...(ctx?.state?.runtimeStore?.workQueue || [])
-  ];
-  return runtimeItems.find((entry) =>
-    [entry.workItemId, entry.work_item_id].includes(selectedWorkItemId)) ||
-    runtimeItems.find((entry) =>
-      (entry.workspaceId || entry.workspace_id) === workspace?.id &&
-      (!(entry.cardId || entry.card_id) || (entry.cardId || entry.card_id) === card?.id) &&
-      (entry.workItemId || entry.work_item_id));
+  return resolvePersistedWorkItem({
+    workItemId: selectedWorkItemId,
+    workspaceId: workspace?.id,
+    cardId: card?.id
+  }, ctx?.state || {});
 }
 
 function persistedWorkItemIdFor(workspace, card) {
@@ -277,7 +280,6 @@ function persistedWorkItemIdFor(workspace, card) {
   if (card?.runtimeWorkItemId) return card.runtimeWorkItemId;
   if (workspace?.workItemId && isPersistedWorkItemId(workspace.workItemId)) return workspace.workItemId;
   if (card?.workItemId && isPersistedWorkItemId(card.workItemId)) return card.workItemId;
-  if (workspace?.id && card?.id) return `${workspace.id}:${card.id}`;
   return "";
 }
 

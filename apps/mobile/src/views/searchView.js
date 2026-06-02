@@ -65,11 +65,23 @@ function searchSection(section, ctx) {
 
 function searchCard(item, ctx) {
   const normalized = SearchResultVM(normalizeSearchCard(item, ctx), ctx);
+  const action = searchAction(item, normalized, ctx);
   return `<article class="search-result-card">
     <strong>${ctx.escapeHtml(normalized.localizedTitle)}</strong>
     <span>${ctx.escapeHtml(normalized.localizedSubtitle)}</span>
     <small>${ctx.tr("status")}: ${ctx.escapeHtml(normalized.localizedStatus)} · ${ctx.tr("nextAction")}: ${ctx.escapeHtml(normalized.localizedNextAction)}</small>
+    ${action}
   </article>`;
+}
+
+function searchAction(item, normalized, ctx) {
+  if (item.workItemId || item.work_item_id) {
+    return `<button data-work-item-id="${ctx.escapeAttr(item.workItemId || item.work_item_id)}" data-workspace-id="${ctx.escapeAttr(item.workspaceId || item.workspace_id || "")}" data-card-id="${ctx.escapeAttr(item.cardId || item.card_id || "")}">${ctx.tr("openWorkspace")}</button>`;
+  }
+  if (item.workspaceId || item.id) {
+    return `<button data-workspace="${ctx.escapeAttr(item.workspaceId || item.id)}" data-card-id="${ctx.escapeAttr(item.cardId || item._surfaceCardId || "")}">${ctx.escapeHtml(normalized.localizedNextAction || ctx.tr("openWorkspace"))}</button>`;
+  }
+  return "";
 }
 
 function normalizeSearchCard(item, ctx) {

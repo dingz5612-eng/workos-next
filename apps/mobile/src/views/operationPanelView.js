@@ -1,4 +1,5 @@
 import { loadDraft } from "../operationDrafts.js";
+import { resolveOperationPanelTarget } from "../operationRouteResolver.js";
 import { activeWorkspaceCard } from "../selectors/workspaceSelectors.js";
 import { ActionResult, EvidenceSheet, OperationPanelView, TrustedConfirmSheet, WorkItemCard, workItemModel } from "./experienceComponents.js";
 import { workspaceCardPanel } from "./workspaceView.js";
@@ -18,8 +19,12 @@ export function operationPanelView(ctx) {
     return shell(`
       <section class="operation-panel-empty" data-surface="operation-panel-runtime" data-blocker-code="operation_work_item_required">
         <span>${ctx.tr("operationPanel")}</span>
-        <h1>${ctx.tr("persistedWorkItemRequired")}</h1>
-        <p>${ctx.tr("persistedWorkItemRequiredBody")}</p>
+        <h1>${ctx.tr(state.operationRouteIssue?.titleKey || "operationUnavailableTitle")}</h1>
+        <p>${ctx.tr(state.operationRouteIssue?.bodyKey || "operationUnavailableBody")}</p>
+        <div class="empty-actions">
+          <button data-view="workbench">${ctx.tr(state.operationRouteIssue?.returnActionKey || "returnWorkbench")}</button>
+          <button data-view="workbench">${ctx.tr(state.operationRouteIssue?.refreshActionKey || "refreshWorkItems")}</button>
+        </div>
       </section>
     `);
   }
@@ -66,27 +71,21 @@ export function operationPanelView(ctx) {
 }
 
 export function resolveOperationItem(state) {
-  const workItemId = state.selectedWorkItemId;
-  const runtimeItems = [
-    ...(state.runtimeStore?.operationWorkItems || []),
-    ...(state.runtimeStore?.workQueue || [])
-  ];
-  const selected = runtimeItems.find((item) => item.workItemId === workItemId || item.work_item_id === workItemId) ||
-    runtimeItems.find((item) =>
-      (item.workspaceId || item.workspace_id) === state.selectedWorkspace &&
-      (!(item.cardId || item.card_id) || (item.cardId || item.card_id) === state.selectedCardId) &&
-      (item.workItemId || item.work_item_id)) ||
-    null;
-  if (!selected) return null;
-  const persistedWorkItemId = selected.workItemId || selected.work_item_id;
+  const target = resolveOperationPanelTarget({
+    workItemId: state.selectedWorkItemId,
+    workspaceId: state.selectedWorkspace,
+    cardId: state.selectedCardId
+  }, state);
+  if (!target.canOpen) {
+    state.operationRouteIssue = state.operationRouteIssue || target;
+    return null;
+  }
+  const selected = target.workItem;
+  const persistedWorkItemId = selected.workItemId;
   if (persistedWorkItemId && state.selectedWorkItemId !== persistedWorkItemId) {
     state.selectedWorkItemId = persistedWorkItemId;
   }
-  const workspaceId = selected.workspaceId || selected.workspace_id || state.selectedWorkspace;
-  const cardId = selected.cardId || selected.card_id || state.selectedCardId;
-  const workspace = (state.runtimeStore?.workspaces || []).find((item) => item.id === workspaceId);
-  const card = workspace?.cards?.find((item) => item.id === cardId);
-  return { ...selected, workspace, card };
+  return selected;
 }
 
 function payloadHashFor(values, evidenceDrafts) {
