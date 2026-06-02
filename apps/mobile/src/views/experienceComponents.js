@@ -1,11 +1,18 @@
 import { loadDraft } from "../operationDrafts.js";
 import { permissionDiagnosticCopy } from "../surfaceGuard.js";
+import {
+  DeviceTrustVM,
+  OperationPanelVM,
+  QueueStateVM,
+  TrustedConfirmVM,
+  WorkItemDecisionVM
+} from "../viewModels/index.js";
 
 export function WorkItemCard(item, ctx) {
   const model = workItemModel(item, ctx);
   const evidence = model.requiredEvidence.length ? model.requiredEvidence.join(" · ") : "-";
-  const canHandle = model.lifecycleState === "blocked" || model.evidenceState === "missing" ? ctx.tr("cannotHandleNow") : ctx.tr("canHandleNow");
-  const blocker = model.lifecycleState === "blocked" ? model.nextAction : model.evidenceState === "missing" ? ctx.tr("missingEvidenceBlocks") : ctx.tr("noCriticalBlocker");
+  const canHandle = model.canHandleLabel;
+  const blocker = model.blocker;
   const workspaceButton = `<button data-work-item-id="${attr(model.workItemId, ctx)}" data-workspace-id="${attr(model.workspaceId, ctx)}" data-card-id="${attr(model.cardId, ctx)}">${text(ctx.tr("openWorkspace"), ctx)}</button>`;
   const debug = ctx.state?.debugSurface ? `<details class="debug-only"><summary>${text(ctx.tr("debugTrace"), ctx)}</summary><dl>
       ${field("workItemId", model.workItemId, ctx)}
@@ -13,11 +20,11 @@ export function WorkItemCard(item, ctx) {
       ${field("traceRefs", model.traceRefs.join(" · ") || "-", ctx)}
     </dl></details>` : "";
 
-  return `<article class="workitem-card action-decision-card risk-${attr(model.riskLevel, ctx)}" data-surface="action-decision-card" data-work-item-id="${attr(model.workItemId, ctx)}" data-case-id="${attr(model.caseId, ctx)}">
+  return `<article class="workitem-card action-decision-card risk-${attr(model.riskLevel, ctx)}" data-surface="action-decision-card">
     <div class="workitem-card-head">
       <div>
         <span>${text(canHandle, ctx)} · ${text(model.workItemType, ctx)}</span>
-        <strong>${text(model.businessObject, ctx)}</strong>
+        <strong>${text(model.displayTitle, ctx)}</strong>
       </div>
       ${workspaceButton}
     </div>
@@ -27,7 +34,7 @@ export function WorkItemCard(item, ctx) {
       ${field(ctx.tr("decisionMissingEvidence"), evidence, ctx)}
       ${field(ctx.tr("decisionNextAction"), model.nextAction, ctx)}
       ${field(ctx.tr("decisionRisk"), model.riskLevel, ctx)}
-      ${field(ctx.tr("decisionOwner"), roleLabel(model.ownerRole, ctx), ctx)}
+      ${field(ctx.tr("decisionOwner"), model.ownerRoleLabel, ctx)}
       ${field(ctx.tr("decisionDueAt"), model.dueAt, ctx)}
       ${field(ctx.tr("decisionBusinessObject"), model.businessObject, ctx)}
     </dl>
@@ -90,11 +97,12 @@ export function LifecycleWorkspace(item, activeCard, ctx) {
 export function OperationPanelView(innerHtml, item, activeCard, ctx) {
   const workspace = item.workspace || item;
   const model = workItemModel({ ...item, workspace, card: activeCard, workspaceId: item.workspaceId || workspace.id, cardId: item.cardId || activeCard.id }, ctx);
-  return `<section class="operation-panel-view" data-surface="operation-panel-runtime" data-work-item-id="${attr(model.workItemId, ctx)}" data-case-id="${attr(model.caseId, ctx)}">
+  const vm = OperationPanelVM({ ...item, workspace, card: activeCard }, ctx);
+  return `<section class="operation-panel-view" data-surface="operation-panel-runtime">
     <div class="operation-panel-head">
       <span>${text(ctx.tr("operationPanel"), ctx)}</span>
-      <strong>${text(model.businessObject, ctx)}</strong>
-      <small>${text(model.workItemType, ctx)} · ${text(ctx.tr("traceAvailable"), ctx)}</small>
+      <strong>${text(vm.subtitle, ctx)}</strong>
+      <small>${text(vm.title, ctx)} · ${text(vm.trace.status, ctx)}</small>
     </div>
     ${innerHtml}
   </section>`;
@@ -103,21 +111,22 @@ export function OperationPanelView(innerHtml, item, activeCard, ctx) {
 export function TrustedConfirmSheet(item, card, ctx) {
   const workspace = item.workspace || item;
   const model = workItemModel({ ...item, workspace, card, workspaceId: item.workspaceId || workspace.id, cardId: item.cardId || card.id }, ctx);
-  return `<section class="trusted-confirm-sheet" data-surface="trusted-confirm" data-work-item-id="${attr(model.workItemId, ctx)}">
+  const vm = TrustedConfirmVM({ ...item, workspace, card }, ctx);
+  return `<section class="trusted-confirm-sheet" data-surface="trusted-confirm">
     <h2>${text(ctx.tr("trustedConfirm"), ctx)}</h2>
     <article>
-      <h3>${text(ctx.tr("businessCommitment"), ctx)}</h3>
-      <p>${text(model.nextAction, ctx)}</p>
-      <p>${text(ctx.tr("trustedConfirmImpact"), ctx)} ${text(model.businessObject, ctx)}</p>
+      <h3>${text(vm.businessCommitment.title, ctx)}</h3>
+      <p>${text(vm.businessCommitment.body, ctx)}</p>
+      <p>${text(vm.businessCommitment.ledgerImpact, ctx)}</p>
     </article>
     <article>
-      <h3>${text(ctx.tr("evidenceAndPermission"), ctx)}</h3>
-      <p>${text(model.requiredEvidence.join(" · ") || ctx.tr("noRequiredEvidence"), ctx)}</p>
-      <p>${text(ctx.tr("policyRef"), ctx)} ${text(card.policyRef || card.confirmation?.policyRef || "operations-runtime-policy", ctx)} · ${text(ctx.tr("decisionRisk"), ctx)} ${text(model.riskLevel, ctx)}</p>
+      <h3>${text(vm.evidenceAndPermission.title, ctx)}</h3>
+      <p>${text(vm.evidenceAndPermission.body, ctx)}</p>
+      <p>${text(ctx.tr("policyRef"), ctx)} ${text(vm.evidenceAndPermission.policyRef, ctx)} · ${text(ctx.tr("decisionRisk"), ctx)} ${text(vm.evidenceAndPermission.risk, ctx)}</p>
     </article>
     <article>
-      <h3>${text(ctx.tr("auditAndRollback"), ctx)}</h3>
-      <p>${text(model.traceRefs.length ? ctx.tr("traceBound") : ctx.tr("traceWillBind"), ctx)} ${text(ctx.tr("rollbackCompensationReady"), ctx)}</p>
+      <h3>${text(vm.auditAndRollback.title, ctx)}</h3>
+      <p>${text(vm.auditAndRollback.body, ctx)}</p>
     </article>
     ${ctx.state?.debugSurface ? `<dl>
       ${field("workItemId", model.workItemId, ctx)}
@@ -136,7 +145,7 @@ export function ActionResult(result = {}, ctx) {
   if (result.status === "committed_projection_failed") return FailedSyncState(result, ctx);
   if (result.status === "permission_blocked_403") return PermissionDiagnostic(result.permissionDiagnostic || result, ctx);
   const status = result.status || "network_unknown";
-  return `<section class="action-result ${attr(status, ctx)}" data-surface="action-result" data-submission-id="${attr(result.commandSubmissionId || result.submissionId || "", ctx)}">
+  return `<section class="action-result ${attr(status, ctx)}" data-surface="action-result">
     <b>${text(ctx.tr("actionResult"), ctx)}</b>
     <p>${text(result.message || status, ctx)}</p>
     ${result.commandSubmissionId ? `<small>${ctx.tr("submissionRecord")}: ${ctx.tr("traceAvailable")}</small>` : ""}
@@ -192,31 +201,28 @@ export function PermissionDiagnostic(decision = {}, ctx) {
 }
 
 export function UploadQueue(state = {}, ctx) {
-  const count = state.uploadQueue?.length || 0;
-  return queuePanel("upload-queue", ctx.tr("evidenceUpload"), count, count ? ctx.tr("evidenceUploadWaiting") : ctx.tr("noPendingEvidenceUpload"), ctx);
+  const vm = QueueStateVM(state, ctx);
+  return queuePanel("upload-queue", vm.upload.title, vm.upload.count, vm.upload.message, ctx);
 }
 
 export function SubmitQueue(state = {}, ctx) {
-  const count = state.submitQueue?.length || 0;
-  return queuePanel("submit-queue", ctx.tr("submissionQueue"), count, count ? ctx.tr("submissionWaiting") : ctx.tr("noPendingSubmission"), ctx);
+  const vm = QueueStateVM(state, ctx);
+  return queuePanel("submit-queue", vm.submit.title, vm.submit.count, vm.submit.message, ctx);
 }
 
 export function DeviceTrustPanel(state = {}, ctx) {
-  const device = state.currentDevice || state.pcGovernance?.currentDevice || {};
-  const surface = device.surface || "mobile";
-  const deviceId = device.deviceId || "mobile-current";
-  const trustState = device.deviceTrustStatus || device.trustState || "unknown";
-  if (surface !== "mobile" || String(deviceId).startsWith("pc-")) {
+  // DeviceTrustVM maps deviceContextIssue when "pc-" device ids leak into mobile.
+  const vm = DeviceTrustVM({ currentDevice: state.currentDevice || state.pcGovernance?.currentDevice || {} }, ctx);
+  if (vm.contextMismatch) {
     return `<section class="device-trust-panel context-mismatch" data-surface="device-trust">
-      <b>${ctx.tr("deviceContextIssue")}</b>
-      <p>${ctx.tr("deviceContextIssueBody")}</p>
+      <b>${text(vm.statusLabel, ctx)}</b>
+      <p>${text(vm.body, ctx)}</p>
     </section>`;
   }
 
-  const statusLabel = trustState === "trusted" ? ctx.tr("deviceTrusted") : ctx.tr("deviceUnknown");
   return `<section class="device-trust-panel" data-surface="device-trust">
-    <b>${ctx.tr("currentDevice")}</b>
-    <p>${statusLabel}</p>
+    <b>${text(vm.title, ctx)}</b>
+    <p>${text(vm.statusLabel, ctx)}</p>
   </section>`;
 }
 
@@ -227,22 +233,24 @@ export function workItemModel(item = {}, ctx) {
   const evidence = card?.evidence || item.requiredEvidence || [];
   const drafts = workspace?.id && card?.id ? loadDraft(workspace.id, card.id) : { evidenceDrafts: [] };
   const title = item.title || workspace?.title || card?.title || item.workItemId || "";
+  const vm = WorkItemDecisionVM({ ...item, workspace, card }, ctx);
   return {
+    ...vm,
     workspaceId: item.workspaceId || workspace?.id || "",
     cardId: item.cardId || card?.id || "",
-    workItemId: runtimeItem?.workItemId || runtimeItem?.work_item_id || persistedWorkItemIdFor(workspace, card) || persistedCandidate(item.workItemId || item.work_item_id) || item.queueItemId || "",
-    caseId: item.caseId || item.case_id || runtimeItem?.caseId || runtimeItem?.case_id || workspace?.caseId || workspace?.id || "",
-    workItemType: item.workItemType || item.work_item_type || runtimeItem?.workItemType || runtimeItem?.work_item_type || card?.id || workspace?.domain || "operations",
+    workItemId: vm.sourceRefs.workItemId || runtimeItem?.workItemId || runtimeItem?.work_item_id || persistedWorkItemIdFor(workspace, card) || persistedCandidate(item.workItemId || item.work_item_id) || item.queueItemId || "",
+    caseId: vm.sourceRefs.caseId || item.caseId || item.case_id || runtimeItem?.caseId || runtimeItem?.case_id || workspace?.caseId || workspace?.id || "",
+    workItemType: vm.typeLabel,
     lifecycleState: item.lifecycleState || item.lifecycle_state || item.status || runtimeItem?.lifecycleState || runtimeItem?.lifecycle_state || runtimeItem?.status || card?.status || "ready",
     ownerRole: item.ownerRole || item.owner_role || runtimeItem?.ownerRole || runtimeItem?.owner_role || card?.confirmation?.requiredRole || card?.Confirmation?.requiredRole || "operator",
-    SLA: item.SLA || item.sla || item.due || item.dueAt || "same-day",
-    requiredEvidence: evidence.map((field) => typeof field === "string" ? field : (ctx.localTerm ? ctx.localTerm(field) : field.id)).filter(Boolean),
-    nextAction: item.nextAction || item.reason || tx(workspace?.next, ctx) || tx(card?.title, ctx) || "-",
+    SLA: vm.slaLabel,
+    requiredEvidence: vm.requiredEvidenceLabels,
+    nextAction: vm.nextAction,
     traceRefs: array(item.traceRefs || item.trace_refs || item.commandSubmissionId || item.command_submission_id || workspace?.traceRefs),
-    riskLevel: item.riskLevel || (card?.status === "blocked" ? "P0" : evidence.length ? "P1" : "P2"),
+    riskLevel: vm.riskLabel,
     evidenceState: item.evidenceState || ((drafts.evidenceDrafts || []).length >= evidence.length && evidence.length ? "attached" : evidence.length ? "missing" : "not_required"),
-    dueAt: item.dueAt || item.due || "today",
-    businessObject: tx(title, ctx) || item.businessObject || "-"
+    dueAt: vm.dueAtLabel,
+    businessObject: vm.businessObject
   };
 }
 

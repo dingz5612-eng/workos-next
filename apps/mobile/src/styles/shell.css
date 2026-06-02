@@ -270,6 +270,48 @@
   margin-bottom: 10px;
 }
 
+.app-shell.surface-pc {
+  width: min(100%, 1240px);
+  padding: 18px 22px 42px;
+  background: linear-gradient(180deg, #f8fbfc 0%, #eef6f7 100%);
+}
+
+.app-shell.surface-pc .topbar {
+  grid-template-columns: 1fr 160px;
+  border-radius: 14px;
+}
+
+.app-shell.surface-pc .api-status {
+  max-width: 520px;
+}
+
+.ia-chip-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.ia-chip {
+  min-height: 68px;
+  padding: 10px;
+  border: 1px solid #d9e7ee;
+  border-radius: 14px;
+  background: #f7fbfc;
+}
+
+.ia-chip span {
+  display: block;
+  color: #52677b;
+  font-size: 12px;
+}
+
+.ia-chip strong {
+  display: block;
+  margin-top: 4px;
+  color: #102033;
+  font-size: 22px;
+}
+
 .filter-row,
 .sheet-grid {
   display: flex;

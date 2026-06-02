@@ -1,5 +1,5 @@
 {
-  "generatedAtUtc": "2026-06-02T05:42:31.872Z",
+  "generatedAtUtc": "2026-06-02T07:52:02.172Z",
   "generatedBy": "check-screenshot-baseline",
   "stage": "PROJECT-HYGIENE-CLEANUP",
   "sourceMode": "baseline_index",
@@ -84,7 +84,24 @@
   ],
   "dormitoryScenarioScreenshotCoverage": {
     "screenshotRoot": "artifacts/screenshots/dormitory-business-scenarios",
-    "screenshotCount": 59,
+    "screenshotCount": 0,
+    "scenarioIds": [],
+    "missingScenarioCoverage": [
+      "dorm-live-001",
+      "dorm-live-002",
+      "dorm-live-003",
+      "dorm-live-004",
+      "dorm-live-005",
+      "dorm-live-006",
+      "dorm-live-007",
+      "dorm-live-008",
+      "dorm-live-009",
+      "dorm-live-010"
+    ]
+  },
+  "dormitoryScenarioJourneyCoverage": {
+    "screenshotRoot": "artifacts/screenshots/dormitory-journeys",
+    "screenshotCount": 20,
     "scenarioIds": [
       "dorm-live-001",
       "dorm-live-002",
@@ -97,7 +114,11 @@
       "dorm-live-009",
       "dorm-live-010"
     ],
-    "missingScenarioCoverage": []
+    "missingJourneyCoverage": [],
+    "acceptedFormats": [
+      "svg",
+      "html"
+    ]
   },
   "productionAllowed": false,
   "dormitoryL2ProductionAllowed": false,

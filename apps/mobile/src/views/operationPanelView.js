@@ -28,7 +28,7 @@ export function operationPanelView(ctx) {
   const activeCard = item?.card || activeWorkspaceCard(workspace, state.selectedCardIndex, state.selectedCardId);
   if (!workspace || !activeCard) {
     return shell(`
-      <section class="operation-panel-empty" data-surface="operation-panel-runtime" data-work-item-id="${ctx.escapeAttr(item.workItemId || item.work_item_id)}">
+      <section class="operation-panel-empty" data-surface="operation-panel-runtime">
         <span>${ctx.tr("operationPanel")}</span>
         <h1>${ctx.tr("runtimeWorkItemSelected")}</h1>
         <p>${ctx.tr("workspaceProjectionMissing")}</p>
@@ -44,7 +44,7 @@ export function operationPanelView(ctx) {
   const traceCount = [commandSubmissionId, model.caseId, model.workItemId, ...(model.traceRefs || [])].filter(Boolean).length;
 
   return shell(`
-    <section class="operation-panel-page" data-surface="operation-panel-route" data-work-item-id="${ctx.escapeAttr(model.workItemId)}" data-case-id="${ctx.escapeAttr(model.caseId)}" data-submission-id="${ctx.escapeAttr(commandSubmissionId)}" data-payload-fingerprint="${ctx.escapeAttr(payloadHash)}">
+    <section class="operation-panel-page" data-surface="operation-panel-route">
       <span>${ctx.tr("operationPanel")}</span>
       <h1>${ctx.escapeHtml(model.workItemType)}</h1>
       <p>${ctx.escapeHtml(model.businessObject)} · ${ctx.escapeHtml(model.nextAction)}</p>

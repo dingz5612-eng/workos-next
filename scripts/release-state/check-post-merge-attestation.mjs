@@ -21,7 +21,7 @@ if (attestation.status === "passed") {
   failures.push("等待 post-merge attestation 时 Day-2 必须被阻断。");
 }
 
-if (attestation.prNumber !== 71) failures.push("Day-1 post-merge attestation 必须绑定 PR #71。");
+if (attestation.prNumber !== 72) failures.push("post-clean-baseline post-merge attestation 必须绑定 PR #72。");
 if (attestation.mergeCommit !== repoHead) failures.push("mergeCommit 必须等于当前 repositoryHead。");
 assertNoTmp(attestation, failures, "post-merge attestation");
 assertNoProduction(attestation, failures, "post-merge attestation");

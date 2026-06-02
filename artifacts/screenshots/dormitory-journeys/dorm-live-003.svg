@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720">
+  <rect width="1280" height="720" fill="#f8fbfc"/>
+  <rect x="48" y="42" width="1184" height="636" rx="24" fill="#ffffff" stroke="#d6e6ea"/>
+  <text x="88" y="112" font-family="Segoe UI, Arial, sans-serif" font-size="26" font-weight="800" fill="#102033">WorkOSNext 宿舍 L1 场景旅程</text>
+  <text x="88" y="180" font-family="Segoe UI, Arial, sans-serif" font-size="34" font-weight="800" fill="#102033">dorm-live-003 · 普通收款分配</text>
+  <text x="88" y="248" font-family="Segoe UI, Arial, sans-serif" font-size="26" font-weight="600" fill="#102033">步骤：普通收款 -&gt; 财务确认 -&gt; 分配 -&gt; 欠款更新</text>
+  <text x="88" y="316" font-family="Segoe UI, Arial, sans-serif" font-size="26" font-weight="600" fill="#102033">WorkItem：Dorm.PaymentReceipt</text>
+  <text x="88" y="384" font-family="Segoe UI, Arial, sans-serif" font-size="26" font-weight="600" fill="#102033">证明：LedgerTransaction ordinary payment</text>
+  <text x="88" y="452" font-family="Segoe UI, Arial, sans-serif" font-size="26" font-weight="600" fill="#102033">状态：L1 Internal Pilot Observation only</text>
+  <text x="88" y="520" font-family="Segoe UI, Arial, sans-serif" font-size="26" font-weight="600" fill="#102033">L2 Production=false · Business Production=blocked</text>
+</svg>

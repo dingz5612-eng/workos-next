@@ -33,7 +33,18 @@ export function homeView(ctx) {
     </section>
     <section class="mission-stack">
       <h2>${tr("assignedWorkItems")}</h2>
-      ${missions.length ? missions.map((item) => WorkItemCard(item, ctx)).join("") : `<article class="help-card"><p>${tr("coachNoMatch")}</p></article>`}
+      ${missions.length ? missions.map((item) => WorkItemCard(item, ctx)).join("") : `<article class="help-card"><p>${tr("mobileEmptyToday")}</p><button data-view="search">${tr("search")}</button></article>`}
+    </section>
+    <section class="compact-section mobile-work-ia" data-mobile-today-ia>
+      <h2>${tr("mustDoToday")}</h2>
+      <div class="ia-chip-grid">
+        ${iaChip("must-do", "mustDoToday", stats.myQueueCount, ctx)}
+        ${iaChip("due-soon", "dueSoon", stats.myQueueCount ? 1 : 0, ctx)}
+        ${iaChip("missing-evidence", "missingEvidenceGroup", stats.confirmCount, ctx)}
+        ${iaChip("waiting-finance", "waitingFinance", stats.confirmCount ? 1 : 0, ctx)}
+        ${iaChip("just-submitted", "justSubmitted", 0, ctx)}
+        ${iaChip("risk-reminder", "riskReminder", stats.blockedCount, ctx)}
+      </div>
     </section>
     <section class="compact-section" data-surface="today-learning">
       <h2>${tr("todayLearning")}</h2>
@@ -44,6 +55,10 @@ export function homeView(ctx) {
       ${homeSurfaceSections(surface, ctx)}
     </section>
   `);
+}
+
+function iaChip(id, labelKey, count, ctx) {
+  return `<article class="ia-chip" data-mobile-ia="${ctx.escapeAttr(id)}"><span>${ctx.tr(labelKey)}</span><strong>${count}</strong></article>`;
 }
 
 function homeSurfaceSections(surface, ctx) {

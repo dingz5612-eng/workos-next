@@ -9,7 +9,7 @@ describe("Release Control Center", () => {
       { ...selectedRelease.overview, releaseId: "release-43", mrId: "MR-43", releaseStatus: "pilot" }
     ]));
 
-    expect(html).toContain("All MRs");
+    expect(html).toContain("全部 MR");
     expect(html).toContain("MR-42");
     expect(html).toContain("MR-43");
   });
@@ -24,10 +24,10 @@ describe("Release Control Center", () => {
     })));
 
     expect(html).toContain("data-launch-control-console=\"true\"");
-    expect(html).toContain("Launch Control");
+    expect(html).toContain("发布准入控制");
     expect(html).toContain("active readiness");
     expect(html).toContain("locked readiness");
-    expect(html).toContain("Business Signoff");
+    expect(html).toContain("业务签收");
     expect(html).toContain("go");
   });
 
@@ -149,7 +149,7 @@ describe("Release Control Center", () => {
       invariantChecks: [invariant("runtime.ok", "blocking", "P0", "passed", 0)]
     })));
 
-    expect(html).toContain("Business Signoff");
+    expect(html).toContain("业务签收");
     expect(html).toContain("business_signoff_missing");
     expect(html).toContain("locked admission");
     expect(html).toContain("blocked");

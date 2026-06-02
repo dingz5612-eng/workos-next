@@ -33,13 +33,21 @@ datalist {
 }
 
 button {
-  min-height: 40px;
+  min-height: 44px;
   border: 0;
   border-radius: 14px;
   padding: 0 14px;
   color: #fff;
   background: #0b6f63;
   font-weight: 850;
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid rgba(47, 125, 246, .55);
+  outline-offset: 2px;
 }
 
 button.secondary {
@@ -71,5 +79,4 @@ dl,
 dd {
   margin: 0;
 }
-
 

@@ -1,0 +1,15 @@
+{
+  "generatedAtUtc": "2026-06-02T08:06:58.350Z",
+  "generatedBy": "scripts/surface/check-user-facing-surface-copy.mjs",
+  "status": "passed",
+  "checkedViews": [
+    "home",
+    "workbench",
+    "search",
+    "me",
+    "operationPanel"
+  ],
+  "productionAllowed": false,
+  "dormitoryL2ProductionAllowed": false,
+  "violations": []
+}

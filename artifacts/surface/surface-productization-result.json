@@ -1,0 +1,18 @@
+{
+  "generatedAtUtc": "2026-06-02T07:23:27.214Z",
+  "generatedBy": "scripts/surface/check-experience-envelope-not-fact-source.mjs",
+  "status": "passed",
+  "checkedFiles": [
+    "packages/surface-view-models/src/index.js",
+    "apps/mobile/src/viewModels/index.js",
+    "apps/pc/src/viewModels/index.js",
+    "docs/surface/view-model-contract.yml",
+    "docs/surface/surface-product-experience-architecture.md"
+  ],
+  "viewModelFactSourceAllowed": false,
+  "productionAllowed": false,
+  "dormitoryL2ProductionAllowed": false,
+  "businessProduction": "blocked",
+  "repairPartsHrStatus": "L0 Contract Preview",
+  "violations": []
+}

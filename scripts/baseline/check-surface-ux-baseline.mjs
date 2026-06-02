@@ -25,7 +25,11 @@ export function buildSurfaceUxBaseline() {
     failures.push("截图基线必须包含 routeCoverage。");
   }
   const missingCoverage = screenshotIndex.dormitoryScenarioScreenshotCoverage?.missingScenarioCoverage ?? [];
-  if (missingCoverage.length) failures.push(`截图基线缺少场景覆盖：${missingCoverage.join(", ")}`);
+  const missingJourneyCoverage = screenshotIndex.dormitoryScenarioJourneyCoverage?.missingJourneyCoverage ?? [];
+  const journeyCount = screenshotIndex.dormitoryScenarioJourneyCoverage?.scenarioIds?.length ?? 0;
+  if (missingJourneyCoverage.length || journeyCount < 10) {
+    failures.push(`OAM-04C 场景旅程截图缺少覆盖：${missingJourneyCoverage.join(", ") || "scenario_count_less_than_10"}`);
+  }
   const backendReplay = values[3];
   if (backendReplay.passed_count !== backendReplay.case_count) failures.push("backend runtime guard replay 必须全部通过。");
   const result = {

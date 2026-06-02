@@ -14,7 +14,8 @@ describe("Stage B surface shell boundary contract", () => {
       pcGovernance: { currentDevice: { deviceId: "pc-current", deviceTrustStatus: "trusted", surface: "pc" } }
     });
     const pc = routeView(pcCtx);
-    expect(pc).toContain("Governance Command Center");
+    expect(pc).toContain("治理中心");
+    expect(pc).toContain("surface-pc");
     expect(pc).not.toContain("bottom-nav");
   });
 });

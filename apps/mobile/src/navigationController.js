@@ -3,6 +3,7 @@ import { defaultHomeForRole } from "./experienceContract.js";
 import { applyRuntimeSearchResults } from "./runtime/runtimeStore.js";
 import { selectWorkspaceById } from "./selectors/surfaceSelectors.js";
 import { evaluateSurfaceAccess } from "./surfaceGuard.js";
+import { isPcSurfaceView } from "./surfaceRegistry.js";
 
 export function setView(view, ctx) {
   if (!ctx.state.currentActor && view !== "login") {
@@ -30,7 +31,16 @@ export function setLang(lang, ctx) {
 
 export function onboard(ctx) {
   localStorage.setItem("workosnext.onboarded", "1");
-  setView(defaultHomeForRole(ctx.state.currentActor?.role), ctx);
+  setView(defaultHomeForCurrentSurface(ctx), ctx);
+}
+
+export function defaultHomeForCurrentSurface(ctx) {
+  const roleHome = defaultHomeForRole(ctx.state.currentActor?.role);
+  const deviceSurface = ctx.state.currentDevice?.surface || ctx.state.pcGovernance?.currentDevice?.surface || "";
+  if (deviceSurface === "mobile" && isPcSurfaceView(roleHome)) {
+    return ctx.state.currentActor?.role === "housekeeping" ? "workbench" : "home";
+  }
+  return roleHome;
 }
 
 export function openWorkspace(workspaceId, ctx, cardId = "") {

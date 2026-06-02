@@ -1,0 +1,54 @@
+{
+  "generatedAtUtc": "2026-06-02T08:07:18.751Z",
+  "generatedBy": "scripts/surface/check-oam-04b-surface-productization-final.mjs",
+  "status": "passed",
+  "gitHead": "8250ddad280b8c461cf3a9d68c6bb607924a982f",
+  "acceptedStatuses": [
+    "OAM_04B_SURFACE_EXPERIENCE_PRODUCTIZATION_PASSED",
+    "OAM_04C_DORMITORY_SCENARIO_JOURNEY_ACCEPTED"
+  ],
+  "artifacts": [
+    {
+      "ref": "artifacts/surface/view-model-contract-result.json",
+      "status": "passed"
+    },
+    {
+      "ref": "artifacts/surface/mobile-work-productization-result.json",
+      "status": "passed"
+    },
+    {
+      "ref": "artifacts/surface/user-facing-surface-copy-result.json",
+      "status": "passed"
+    },
+    {
+      "ref": "artifacts/surface/mobile-visible-copy-result.json",
+      "status": "passed"
+    },
+    {
+      "ref": "artifacts/surface/pc-governance-productization-result.json",
+      "status": "passed"
+    },
+    {
+      "ref": "artifacts/surface/experience-module-productization-result.json",
+      "status": "passed"
+    },
+    {
+      "ref": "artifacts/surface/dormitory-scenario-journey-result.json",
+      "status": "passed"
+    },
+    {
+      "ref": "artifacts/screenshots/oam-ux-baseline/index.json",
+      "status": "present"
+    },
+    {
+      "ref": "artifacts/screenshots/dormitory-journeys/index.json",
+      "status": "passed"
+    }
+  ],
+  "dormitoryStatus": "L1 Internal Pilot Observation only",
+  "dormitoryL2Production": false,
+  "businessProduction": "blocked",
+  "repairPartsHrStatus": "L0 Contract Preview",
+  "day2Started": false,
+  "violations": []
+}

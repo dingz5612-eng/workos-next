@@ -13,9 +13,9 @@ export function pcGovernanceView(ctx) {
   return ctx.shell(`
     <section class="pc-governance-full" data-pc-governance-full>
       <header class="governance-hero">
-        <span>PC Governance Full</span>
-        <h1>Governance Command Center</h1>
-        <p>Read-first governance for work, facts, evidence, release gates, risk, audit, and controlled export.</p>
+        <span>PC 治理控制平面</span>
+        <h1>治理中心</h1>
+        <p>只读汇总 WorkItem、事实、证据、发布门禁、风险、审计和受控导出；业务事实仍必须由 Operations Runtime 写入。</p>
       </header>
       ${navigation(ctx)}
       <section class="governance-grid">
@@ -47,8 +47,8 @@ export function managerControlTowerView(ctx) {
   return ctx.shell(`
     <section class="pc-governance-full manager-control-tower" data-pc-manager-control-tower>
       <header class="governance-hero">
-        <span>Manager Control Tower</span>
-        <h1>Manager Control Tower</h1>
+        <span>经理控制塔</span>
+        <h1>经理控制塔</h1>
         <p>经理首屏只聚焦风险、超时、证据、财务和同步异常；治理导出与发布控制留在 PC Governance / Release plane。</p>
       </header>
       <section class="governance-grid">
@@ -317,10 +317,35 @@ function deviceSessionTable(governance, revokeAllowed, ctx) {
 function panel(title, id, body) {
   return `
     <section id="${id}" class="governance-panel" data-pc-section="${id}">
-      <h2>${title}</h2>
+      <h2>${panelTitle(title)}</h2>
       ${body}
     </section>
   `;
+}
+
+function panelTitle(title) {
+  const titles = {
+    Dashboard: "总览",
+    "Production Observability": "生产观测",
+    "Work Management": "办理管理",
+    Objects: "对象视图",
+    Cases: "案例与阻断",
+    Ledgers: "账务摘要",
+    "Evidence Review": "证据复核",
+    Reconciliation: "对账",
+    "Correction Center": "修正中心",
+    "Period Review": "周期复盘",
+    RiskCommand: "风险作战室",
+    Admin: "治理配置",
+    Audit: "审计",
+    Export: "受控导出",
+    "Release Control Center": "发布工作区",
+    "Risk overview": "风险总览",
+    "SLA and blockers": "SLA 与阻断",
+    "WorkItem follow-up": "办理项跟进",
+    "Finance exception focus": "财务异常焦点"
+  };
+  return titles[title] || title;
 }
 
 function tableOrEmpty(rows, columns, ctx, emptyText) {

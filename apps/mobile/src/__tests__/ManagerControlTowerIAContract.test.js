@@ -12,8 +12,8 @@ describe("Stage B Manager Control Tower IA contract", () => {
     });
     const html = routeView(ctx);
 
-    expect(html).toContain("Manager Control Tower");
-    expect(html).not.toContain("Governance Command Center");
+    expect(html).toContain("经理控制塔");
+    expect(html).not.toContain("治理中心");
     expect(visibleText(html)).not.toMatch(/今天\s+工作\s+搜索\s+我的/);
   });
 });
