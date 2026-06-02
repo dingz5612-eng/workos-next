@@ -297,6 +297,9 @@
   border: 1px solid #d9e7ee;
   border-radius: 14px;
   background: #f7fbfc;
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
 }
 
 .ia-chip span {

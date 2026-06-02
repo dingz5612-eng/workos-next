@@ -9,13 +9,15 @@ export function homeView(ctx) {
   const surface = selectHomeSurface(state);
   const stats = selectSurfaceStats(state);
   const missions = selectWorkbenchQueue(state).slice(0, 3);
+  const mission = missionControlSummary(missions, stats, ctx);
   return shell(`
     <section class="command-card" data-surface="today-mission-control">
       <span>${tr("todayMissionControlEyebrow")}</span>
       <h1>${tr("todayMissionControl")}</h1>
       <dl>
-        <dt>${tr("reason")}</dt><dd>${tr("globalReason")}</dd>
-        <dt>${tr("impact")}</dt><dd>${tr("globalImpact")}</dd>
+        <dt>${tr("reason")}</dt><dd>${ctx.escapeHtml(mission.reason)}</dd>
+        <dt>${tr("impact")}</dt><dd>${ctx.escapeHtml(mission.impact)}</dd>
+        <dt>${tr("nextAction")}</dt><dd>${ctx.escapeHtml(mission.nextAction)}</dd>
       </dl>
       <button data-view="workbench">${tr("workbench")}</button>
     </section>
@@ -49,12 +51,44 @@ export function homeView(ctx) {
     <section class="compact-section" data-surface="today-learning">
       <h2>${tr("todayLearning")}</h2>
       ${learningContentItems(ctx).slice(0, 2).map((item) => `<article class="search-result-card learning"><strong>${item.title}</strong><span>${item.subtitle}</span><small>${tr("nextAction")}: ${item.nextAction}</small></article>`).join("")}
+      <button data-view="learning">${tr("learningCenter")}</button>
     </section>
     <section class="business-focus">
       <h2>${tr("scenarioFocus")}</h2>
       ${homeSurfaceSections(surface, ctx)}
     </section>
   `);
+}
+
+function missionControlSummary(queue, stats, ctx) {
+  const blocked = queue.find((item) => item.status === "blocked" || item.card?.status === "blocked");
+  const evidenceGap = queue.find((item) => (item.card?.evidence || []).length || item.evidenceState === "missing");
+  if (blocked) {
+    return {
+      reason: blocked.reason || blocked.nextAction || "今日存在被阻断的办理项。",
+      impact: `${blocked.businessObject || blocked.workspace?.title?.["zh-CN"] || "当前办理"} 会影响今日队列推进。`,
+      nextAction: "先查看阻断原因，按权限或证据要求处理。"
+    };
+  }
+  if (evidenceGap) {
+    return {
+      reason: "今日最关键缺口是证据未补齐。",
+      impact: `${evidenceGap.businessObject || evidenceGap.workspace?.title?.["zh-CN"] || "当前办理"} 提交前会被证据门禁拦截。`,
+      nextAction: "进入工作台补齐证据，再提交处理。"
+    };
+  }
+  if (queue.length) {
+    return {
+      reason: "今日队列已有可办理项。",
+      impact: `${stats.myQueueCount || queue.length} 个办理项等待处理。`,
+      nextAction: "优先处理可办理项，再查看等待他人的事项。"
+    };
+  }
+  return {
+    reason: "当前没有从 runtime queue 读取到待办。",
+    impact: "没有新的阻断影响；如果刚登录，请刷新 runtime projection。",
+    nextAction: "可以进入搜索或工作台查看最新数据。"
+  };
 }
 
 function iaChip(id, labelKey, count, ctx) {

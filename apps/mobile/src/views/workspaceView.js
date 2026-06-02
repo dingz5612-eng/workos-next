@@ -18,6 +18,8 @@ export function workspaceView(ctx) {
     `);
   }
   const activeCard = activeWorkspaceCard(item, ctx.state.selectedCardIndex, ctx.state.selectedCardId);
+  const primaryCta = workspacePrimaryCta(activeCard, ctx);
+  const showCompatibility = ctx.state.debugSurface || import.meta.env.DEV;
   return ctx.shell(`
     <section class="workspace-page ${item.domain}">
       <span>${ctx.tr("intentWorkspace")} · ${ctx.tr(item.domain)}</span>
@@ -26,15 +28,15 @@ export function workspaceView(ctx) {
     </section>
     <section class="workspace-control">
       ${LifecycleWorkspace(item, activeCard, ctx)}
-      <section class="compat-card-tabs" data-component="CompatibilityCardTabs">
+      ${showCompatibility ? `<section class="compat-card-tabs" data-component="CompatibilityCardTabs">
         <span>Debug / compatibility</span>
         <div class="card-tabs">${item.cards.map((card, index) => `<button class="${card.id === activeCard.id ? "active" : ""} ${card.status}" data-card-index="${index}">${ctx.tx(card.title)}</button>`).join("")}</div>
-      </section>
+      </section>` : ""}
       ${workspaceLensPanel(item, ctx)}
       ${checkoutServiceMobilePanel(item, activeCard, ctx)}
       ${OperationPanelView(workspaceCardPanel(activeCard, item, true, ctx), item, activeCard, ctx)}
     </section>
-    <div class="sticky-action"><button data-submit-card>${ctx.tr("confirmAction")}</button></div>
+    <div class="sticky-action"><button data-submit-card ${primaryCta.disabled ? "disabled" : ""}>${primaryCta.label}</button>${primaryCta.help ? `<small>${primaryCta.help}</small>` : ""}</div>
   `);
 }
 
@@ -88,10 +90,17 @@ export function cardOperation(card, item, ctx) {
     <section><b>${ctx.tr("blockers")}</b><p>${visibleBlockers.length ? visibleBlockers.map((entry) => ctx.tx(entry.title)).join(" · ") : `${ctx.tr("noCriticalBlocker")} ${ctx.tr("blockerHelp")}`}</p></section>
     <div class="operation-actions">
       <button class="secondary" data-save-draft ${disabled}>${ctx.tr("saveDraft")}</button>
-      <button data-submit-card ${disabled}>${ctx.tr("submitForReview")}</button>
     </div>
     ${ctx.state.operationMessage ? `<p class="operation-message">${ctx.escapeHtml(ctx.state.operationMessage)}</p>` : ""}
   </div>`;
+}
+
+function workspacePrimaryCta(card, ctx) {
+  if (ctx.state.operationSubmitting) return { label: "正在提交…", disabled: true, help: "" };
+  if (card.status === "done") return { label: "已完成", disabled: true, help: "这张卡已完成，无需重复提交。" };
+  if (card.status === "notStarted") return { label: "请先完成上一张卡", disabled: true, help: "当前卡还未开始，请先完成上一张卡。" };
+  if (card.status === "blocked") return { label: "查看阻断原因", disabled: false, help: "当前办理存在阻断，提交前请先查看原因。" };
+  return { label: "提交处理", disabled: false, help: "" };
 }
 
 export function cardStatusHelp(card, ctx) {

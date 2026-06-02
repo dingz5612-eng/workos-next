@@ -1,4 +1,5 @@
 import { roleNavigation } from "./experienceContract.js";
+import { resolveActiveDevice } from "./surfaceResolver.js";
 import { isPcSurfaceView } from "./surfaceRegistry.js";
 
 const publicViews = new Set(["login", "onboarding", "permissionDiagnostic"]);
@@ -34,7 +35,7 @@ export function evaluateSurfaceAccess(view, state = {}) {
     return denied(view, "capability_missing", ownerFor(view), requiredCapability, nextActionFor(view));
   }
 
-  const device = state.pcGovernance?.currentDevice || state.currentDevice || {};
+  const device = resolveActiveDevice(state, view);
   if (["revoked", "blocked", "untrusted"].includes(device.deviceTrustStatus)) {
     return denied(view, "device_not_trusted", "admin", "trusted_device", "Ask admin to restore device trust before continuing.");
   }

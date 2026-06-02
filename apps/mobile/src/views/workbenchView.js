@@ -1,22 +1,24 @@
-import { countBadge, countDomain, queueTasks } from "../selectors/queueSelectors.js";
+import { countBadge, countDomain, queueFilters, queueTasks } from "../selectors/queueSelectors.js";
 import { WorkItemCard } from "./experienceComponents.js";
 
 export function workbenchView(ctx) {
   const list = queueTasks(ctx.state);
+  const filters = queueFilters(ctx.state);
   return ctx.shell(`
     <section class="queue-head">
       <span>${ctx.tr("queueTitle")}</span>
       <h1>${ctx.tr("workbench")}</h1>
       <strong>${list.length}</strong>
+      <small>${ctx.tr("filter")}: ${ctx.escapeHtml(filters.domain)} / ${ctx.escapeHtml(filters.badge)} / ${ctx.escapeHtml(filters.status)}</small>
     </section>
     <section class="compact-section mobile-work-ia" data-mobile-work-ia>
       <h2>${ctx.tr("work")}</h2>
       <div class="ia-chip-grid">
-        ${workChip("can-do", "workCanDo", list.filter((item) => item.card?.status === "ready" || item.status === "ready").length, ctx)}
-        ${workChip("blocked", "workBlocked", list.filter((item) => item.card?.status === "blocked" || item.status === "blocked").length, ctx)}
-        ${workChip("waiting-others", "workWaitingOthers", list.filter((item) => item.badges?.includes("waiting")).length, ctx)}
-        ${workChip("need-evidence", "workNeedEvidence", list.filter((item) => (item.card?.evidence || []).length).length, ctx)}
-        ${workChip("transferable", "workTransferable", list.filter((item) => item.transferable).length, ctx)}
+        ${workChip("status", "ready", "workCanDo", list.filter((item) => item.card?.status === "ready" || item.status === "ready").length, ctx)}
+        ${workChip("status", "blocked", "workBlocked", list.filter((item) => item.card?.status === "blocked" || item.status === "blocked").length, ctx)}
+        ${workChip("badge", "waiting", "workWaitingOthers", list.filter((item) => item.badges?.includes("waiting")).length, ctx)}
+        ${workChip("evidenceState", "missing", "workNeedEvidence", list.filter((item) => (item.card?.evidence || []).length).length, ctx)}
+        ${workChip("transferable", "true", "workTransferable", list.filter((item) => item.transferable).length, ctx)}
       </div>
     </section>
     <section class="queue-filter">
@@ -61,6 +63,6 @@ function advancedSheet(ctx) {
   </section>`;
 }
 
-function workChip(id, labelKey, count, ctx) {
-  return `<article class="ia-chip" data-work-filter="${ctx.escapeAttr(id)}"><span>${ctx.tr(labelKey)}</span><strong>${count}</strong></article>`;
+function workChip(field, value, labelKey, count, ctx) {
+  return `<button class="ia-chip" data-work-filter="${ctx.escapeAttr(value)}" data-filter-field="${ctx.escapeAttr(field)}" data-filter-value="${ctx.escapeAttr(value)}"><span>${ctx.tr(labelKey)}</span><strong>${count}</strong></button>`;
 }

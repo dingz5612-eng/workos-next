@@ -117,10 +117,18 @@ export function TrustedConfirmVM(source = {}, ctx = {}) {
 export function SearchResultVM(source = {}, ctx = {}) {
   const type = source.type || source.kind || inferSearchType(source);
   const title = friendlySearchTitle(source, type, ctx);
+  const sourceRefs = sourceRefsFrom(source);
+  const action = actionForSearchResult(type, source, sourceRefs, ctx);
   return {
     kind: "SearchResultVM",
     type,
-    sourceRefs: sourceRefsFrom(source),
+    sourceRefs,
+    actionType: action.actionType,
+    workspaceId: action.workspaceId,
+    workItemId: action.workItemId,
+    cardId: action.cardId,
+    view: action.view,
+    label: action.label,
     localizedTitle: title,
     localizedSubtitle: localized(source.localizedSubtitle ?? source.subtitle, ctx) || subtitleForType(type),
     localizedStatus: stateLabel(source.localizedStatus ?? source.status ?? source.lifecycleState ?? "ready", ctx),
@@ -292,6 +300,34 @@ function ctaForType(type) {
     trace: "recentTraces",
     learning: "learning"
   }[type] || "search";
+}
+
+function actionForSearchResult(type, source, refs, ctx) {
+  const label = localized(source.label, ctx) || nextActionForType(type);
+  if (type === "workItem" && refs.workItemId) {
+    return { actionType: "openWorkItem", view: "operationPanel", workspaceId: refs.workspaceId, workItemId: refs.workItemId, cardId: refs.cardId, label };
+  }
+  if (type === "operationCase") {
+    const workItemId = refs.workItemId || source.firstWorkItemId || source.first_work_item_id || "";
+    return {
+      actionType: workItemId ? "openWorkItem" : "openWorkspace",
+      view: workItemId ? "operationPanel" : "workspace",
+      workspaceId: refs.workspaceId,
+      workItemId,
+      cardId: refs.cardId,
+      label
+    };
+  }
+  if (["room", "bed", "stay", "evidence"].includes(type)) {
+    return { actionType: "openWorkspace", view: "workspace", workspaceId: refs.workspaceId, workItemId: refs.workItemId, cardId: refs.cardId, label };
+  }
+  if (type === "trace") {
+    return { actionType: "openView", view: "recentTraces", workspaceId: refs.workspaceId, workItemId: refs.workItemId, cardId: refs.cardId, label };
+  }
+  if (type === "learning") {
+    return { actionType: "openView", view: "learning", workspaceId: refs.workspaceId, workItemId: refs.workItemId, cardId: refs.cardId, label };
+  }
+  return { actionType: "explainMissingTarget", view: "search", workspaceId: refs.workspaceId, workItemId: refs.workItemId, cardId: refs.cardId, label: tr(ctx, "searchNoTarget", "暂无可打开目标") };
 }
 
 function workItemTypeLabel(value, ctx) {

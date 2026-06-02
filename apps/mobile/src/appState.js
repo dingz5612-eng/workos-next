@@ -1,6 +1,8 @@
 import { createRuntimeStore } from "./runtime/runtimeStore.js";
-import { defaultHomeForRole } from "./experienceContract.js";
 import { actorSessionForStorage, shouldPersistApiOverride } from "./apiClient.js";
+import { resolveDefaultHome } from "./surfaceResolver.js";
+
+const allowedLanguages = new Set(["zh-CN", "ru-RU", "ky-KG"]);
 
 export function savedActor() {
   try {
@@ -14,8 +16,8 @@ export function savedActor() {
 export function createInitialState() {
   const actor = savedActor();
   const state = {
-    lang: localStorage.getItem("workosnext.lang") || "zh-CN",
-    view: actor ? (localStorage.getItem("workosnext.onboarded") ? defaultHomeForRole(actor.role) : "onboarding") : "login",
+    lang: allowedLanguages.has(localStorage.getItem("workosnext.lang")) ? localStorage.getItem("workosnext.lang") : "zh-CN",
+    view: actor ? "home" : "login",
     selectedTask: "T-STAY-DEPOSIT",
     selectedWorkspace: "W-STAY-CHECKIN",
     selectedCardIndex: -1,
@@ -26,6 +28,14 @@ export function createInitialState() {
     advancedOpen: false,
     queueDomain: "all",
     queueBadge: "mine",
+    queueFilters: {
+      domain: "all",
+      badge: "mine",
+      status: "all",
+      ownerRole: "mine",
+      evidenceState: "all",
+      transferable: "all"
+    },
     learningQuery: "",
     learningDomain: "all",
     learningType: "coachAll",
@@ -75,6 +85,9 @@ export function createInitialState() {
   };
 
   applyUrlParams(state);
+  if (actor && !new URLSearchParams(window.location.search).has("view")) {
+    state.view = localStorage.getItem("workosnext.onboarded") ? resolveDefaultHome(state) : "onboarding";
+  }
   if (state.view === "task" || state.view === "object") state.view = "workspace";
   if (!state.currentActor && state.view !== "login") state.view = "login";
   return state;
@@ -90,7 +103,10 @@ function applyUrlParams(state) {
       localStorage.removeItem("workosnext.apiBaseUrl");
     }
   }
-  if (params.has("lang")) state.lang = params.get("lang");
+  if (params.has("lang")) {
+    const requestedLang = params.get("lang");
+    state.lang = allowedLanguages.has(requestedLang) ? requestedLang : "zh-CN";
+  }
   if (params.has("view")) state.view = params.get("view");
   if (params.has("task")) {
     state.selectedTask = params.get("task");

@@ -1,8 +1,7 @@
 import { loginActor } from "./apiClient.js";
 import { persistActorSession } from "./appState.js";
-import { defaultHomeForRole } from "./experienceContract.js";
 import { setView } from "./navigationController.js";
-import { isPcSurfaceView } from "./surfaceRegistry.js";
+import { defaultHomeForSession as resolveHomeForSession } from "./surfaceResolver.js";
 
 export async function login(ctx) {
   await ctx.hydrateProjectionFromApi();
@@ -19,7 +18,7 @@ export async function login(ctx) {
     ctx.state.loginMessage = "";
     persistActorSession(session);
     await ctx.hydrateProjectionFromApi();
-    setView(localStorage.getItem("workosnext.onboarded") ? defaultHomeForSession(session, ctx.state) : "onboarding", ctx);
+    setView(localStorage.getItem("workosnext.onboarded") ? resolveHomeForSession(session, ctx.state) : "onboarding", ctx);
   } catch {
     ctx.state.loginMessage = ctx.tr("loginFailed");
     ctx.render();
@@ -34,11 +33,5 @@ export function logout(ctx) {
 }
 
 export function defaultHomeForSession(session = {}, state = {}) {
-  const roleHome = defaultHomeForRole(session.role);
-  const deviceSurface = state.currentDevice?.surface || state.pcGovernance?.currentDevice?.surface || "";
-  if (deviceSurface === "mobile" && isPcSurfaceView(roleHome)) {
-    if (session.role === "housekeeping") return "workbench";
-    return "home";
-  }
-  return roleHome;
+  return resolveHomeForSession(session, state);
 }

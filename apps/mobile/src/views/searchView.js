@@ -55,7 +55,9 @@ function searchSection(section, ctx) {
     title: ctx.tr("searchNoResult"),
     subtitle: ctx.tr("workosSearchSubtitle"),
     status: "-",
-    nextAction: ctx.tr("search")
+    nextAction: ctx.tr("search"),
+    type: "empty",
+    noTargetReason: ctx.tr("searchNoResult")
   }];
   return `<section class="search-section" data-search-section="${ctx.escapeAttr(section.id)}">
     <h2>${ctx.tr(section.titleKey)}</h2>
@@ -69,7 +71,22 @@ function searchCard(item, ctx) {
     <strong>${ctx.escapeHtml(normalized.localizedTitle)}</strong>
     <span>${ctx.escapeHtml(normalized.localizedSubtitle)}</span>
     <small>${ctx.tr("status")}: ${ctx.escapeHtml(normalized.localizedStatus)} · ${ctx.tr("nextAction")}: ${ctx.escapeHtml(normalized.localizedNextAction)}</small>
+    ${searchAction(normalized, item, ctx)}
   </article>`;
+}
+
+function searchAction(normalized, item, ctx) {
+  if (item.noTargetReason || normalized.actionType === "explainMissingTarget") {
+    return `<p class="search-action-reason">${ctx.escapeHtml(item.noTargetReason || normalized.label)}</p>`;
+  }
+  const label = ctx.escapeHtml(normalized.label || normalized.localizedNextAction);
+  if (normalized.actionType === "openWorkItem" && normalized.workItemId) {
+    return `<button data-work-item-id="${ctx.escapeAttr(normalized.workItemId)}" data-workspace-id="${ctx.escapeAttr(normalized.workspaceId)}" data-card-id="${ctx.escapeAttr(normalized.cardId)}">${label}</button>`;
+  }
+  if (normalized.actionType === "openWorkspace" && normalized.workspaceId) {
+    return `<button data-workspace="${ctx.escapeAttr(normalized.workspaceId)}" data-card-id="${ctx.escapeAttr(normalized.cardId)}">${label}</button>`;
+  }
+  return `<button data-view="${ctx.escapeAttr(normalized.view || "search")}">${label}</button>`;
 }
 
 function normalizeSearchCard(item, ctx) {
@@ -101,6 +118,9 @@ function operationCases(queue, workspaces, ctx) {
     cases.set(caseId, {
       ...item,
       type: "operationCase",
+      workspaceId: item.workspaceId || item.workspace?.id,
+      cardId: item.cardId || item.card?.id,
+      firstWorkItemId: item.workItemId || item.work_item_id,
       title: item.workspace?.title || ctx.tr("searchOperationCases"),
       subtitle: item.workItemType || item.domain || ctx.tr("operation"),
       status: item.lifecycleState || item.status || "ready",
@@ -114,6 +134,8 @@ function operationCases(queue, workspaces, ctx) {
       cases.set(caseId, {
         title: caseId,
         type: "operationCase",
+        workspaceId: workspace.id,
+        cardId: workspace.cards?.[0]?.id || "",
         subtitle: tx(workspace.title, ctx),
         status: workspace.cards?.[0]?.status || "ready",
         nextAction: tx(workspace.next, ctx) || ctx.tr("openWorkspace")
@@ -135,6 +157,8 @@ function objectResults(workspaces, kind, ctx) {
     .map((workspace) => ({
       title: localized(workspace.localizedTitle, ctx) || `${labelByKind[kind]} · ${tx(workspace.title, ctx) || workspace.id}`,
       type: kind,
+      workspaceId: workspace.id,
+      cardId: workspace.cards?.[0]?.id || "",
       subtitle: localized(workspace.localizedSubtitle, ctx) || workspace.id,
       status: localized(workspace.localizedStatus, ctx) || workspace.cards?.[0]?.status || "ready",
       nextAction: localized(workspace.localizedNextAction, ctx) || tx(workspace.next, ctx) || ctx.tr("openWorkspace")
@@ -144,9 +168,11 @@ function objectResults(workspaces, kind, ctx) {
 function evidenceResults(workspaces, ctx) {
   return workspaces.flatMap((workspace) => (workspace.cards || []).flatMap((card) =>
     (card.evidence || []).map((evidence) => ({
-      title: ctx.localTerm(evidence),
-      type: "evidence",
-      subtitle: `${workspace.id} · ${tx(card.title, ctx)}`,
+        title: ctx.localTerm(evidence),
+        type: "evidence",
+        workspaceId: workspace.id,
+        cardId: card.id,
+        subtitle: `${workspace.id} · ${tx(card.title, ctx)}`,
       status: card.status || "ready",
       nextAction: ctx.tr("evidence")
     })))).slice(0, 6);

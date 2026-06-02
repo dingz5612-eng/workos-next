@@ -172,7 +172,7 @@ export function EvidenceTile(field, draft, disabled, ctx) {
   const evidenceDraftId = saved?.evidenceId ? `data-evidence-draft-id="${attr(saved.evidenceId, ctx)}"` : "";
   return `<button type="button" class="evidence-tile ${selected}" data-surface="evidence-tile" data-evidence-id="${attr(field.id, ctx)}" ${evidenceDraftId} ${disabled}>
     <span>${text(ctx.localTerm(field), ctx)}</span>
-    <small>${saved ? ctx.tr("evidenceTrustedDraft") : ctx.tr("evidenceMissing")}</small>
+    <small>${saved ? "已生成证据草稿，待上传真实附件并完成可信校验" : "证据需求未满足，缺少证据时提交会被阻断"}</small>
   </button>`;
 }
 

@@ -1,5 +1,17 @@
 export function setQueueFilter(field, value, ctx) {
-  ctx.state[field] = value;
+  const mappedField = field === "queueDomain" ? "domain" : field === "queueBadge" ? "badge" : field;
+  ctx.state.queueFilters = {
+    domain: ctx.state.queueDomain || "all",
+    badge: ctx.state.queueBadge || "mine",
+    status: "all",
+    ownerRole: "mine",
+    evidenceState: "all",
+    transferable: "all",
+    ...(ctx.state.queueFilters || {}),
+    [mappedField]: value
+  };
+  ctx.state.queueDomain = ctx.state.queueFilters.domain;
+  ctx.state.queueBadge = ctx.state.queueFilters.badge;
   ctx.render();
 }
 

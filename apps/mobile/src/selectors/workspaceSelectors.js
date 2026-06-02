@@ -3,12 +3,12 @@ import { selectRuntimeWorkspaces, selectWorkbenchQueue, selectWorkspaceById } fr
 import { translateTerm } from "../termDictionary.js";
 
 export function tr(state, key) {
-  return i18n[state.lang][key] || key;
+  return (i18n[state.lang] || i18n["zh-CN"])[key] || i18n["zh-CN"][key] || key;
 }
 
 export function tx(state, value) {
   if (value == null) return "";
-  return typeof value === "string" ? value : value[state.lang] || value["zh-CN"];
+  return typeof value === "string" ? value : value[state.lang] || value["zh-CN"] || "";
 }
 
 export function txFor(value, lang) {

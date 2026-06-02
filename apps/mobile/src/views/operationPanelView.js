@@ -42,6 +42,10 @@ export function operationPanelView(ctx) {
   const commandSubmissionId = state.lastActionResult?.commandSubmissionId || draft.submissionProtocol?.submissionId || model.traceRefs[0] || "";
   const operationBody = workspaceCardPanel(activeCard, workspace, true, ctx);
   const traceCount = [commandSubmissionId, model.caseId, model.workItemId, ...(model.traceRefs || [])].filter(Boolean).length;
+  const canHandle = model.canHandleLabel;
+  const missing = model.requiredEvidence.length ? model.requiredEvidence.join(" · ") : ctx.tr("noRequiredEvidence");
+  const resultStatus = state.lastActionResult?.status ? ctx.tr(state.lastActionResult.status) : ctx.tr("notSubmitted");
+  const detailsOpen = state.debugSurface || ["manager", "admin", "releaseOwner"].includes(state.currentActor?.role);
 
   return shell(`
     <section class="operation-panel-page" data-surface="operation-panel-route">
@@ -50,17 +54,26 @@ export function operationPanelView(ctx) {
       <p>${ctx.escapeHtml(model.businessObject)} · ${ctx.escapeHtml(model.nextAction)}</p>
     </section>
     ${WorkItemCard(operationContext, ctx)}
-    <section class="operation-panel-runtime" data-surface="operation-runtime-proof">
+    <section class="operation-business-summary" data-surface="operation-business-summary">
+      <article><span>${ctx.tr("currentState")}</span><strong>${ctx.escapeHtml(model.statusLabel)}</strong><p>${ctx.escapeHtml(canHandle)}</p></article>
+      <article><span>${ctx.tr("decisionBlocker")}</span><strong>${ctx.escapeHtml(model.blocker)}</strong><p>${ctx.escapeHtml(model.nextAction)}</p></article>
+      <article><span>${ctx.tr("decisionMissingEvidence")}</span><strong>${ctx.escapeHtml(missing)}</strong><p>${model.requiredEvidence.length ? "缺少证据，提交会被阻断。" : ctx.tr("noRequiredEvidence")}</p></article>
+      <article><span>${ctx.tr("requiredPermission")}</span><strong>${ctx.escapeHtml(model.ownerRoleLabel)}</strong><p>${ctx.tr("trustedConfirmImpact")}</p></article>
+      <article><span>${ctx.tr("actionResult")}</span><strong>${ctx.escapeHtml(resultStatus)}</strong><p>${ctx.escapeHtml(model.traceSummary)}</p></article>
+      <article><span>${ctx.tr("nextAction")}</span><strong>${ctx.escapeHtml(model.nextAction)}</strong><p>${ctx.tr("learningCenter")}</p></article>
+    </section>
+    ${OperationPanelView(operationBody, operationContext, activeCard, ctx)}
+    ${TrustedConfirmSheet(operationContext, activeCard, ctx)}
+    ${EvidenceSheet(activeCard, draft, ctx)}
+    <details class="operation-panel-runtime" data-surface="operation-runtime-proof" ${detailsOpen ? "open" : ""}>
+      <summary>${ctx.tr("auditSummary")}</summary>
       <article><span>${ctx.tr("prepareContract")}</span><strong>${ctx.tr("prepareContractReady")}</strong><p>${ctx.tr("prepareContractHelp")}</p></article>
       <article><span>${ctx.tr("confirmCommit")}</span><strong>${ctx.tr("confirmCommitReady")}</strong><p>${ctx.tr("confirmCommitHelp")}</p></article>
       <article><span>${ctx.tr("trace")}</span><strong>${traceCount ? ctx.tr("traceAvailable") : ctx.tr("traceWillBind")}</strong><p>${ctx.tr("traceHelp")}</p></article>
-      <article><span>${ctx.tr("projection")}</span><strong>${ctx.escapeHtml(state.lastActionResult?.status ? ctx.tr(state.lastActionResult.status) : ctx.tr("notSubmitted"))}</strong><p>${ctx.tr("projectionPendingBody")}</p></article>
+      <article><span>${ctx.tr("projection")}</span><strong>${ctx.escapeHtml(resultStatus)}</strong><p>${ctx.tr("projectionPendingBody")}</p></article>
       <article><span>${ctx.tr("submissionRecord")}</span><strong>${commandSubmissionId ? ctx.tr("traceAvailable") : ctx.tr("traceWillBind")}</strong><p>${ctx.tr("submissionRecordHelp")}</p></article>
-      <article><span>${ctx.tr("payloadFingerprint")}</span><strong>${ctx.tr("localDraftFingerprint")}</strong><p>${ctx.tr("payloadFingerprintHelp")}</p></article>
-    </section>
-    ${OperationPanelView(operationBody, operationContext, activeCard, ctx)}
-    ${EvidenceSheet(activeCard, draft, ctx)}
-    ${TrustedConfirmSheet(operationContext, activeCard, ctx)}
+      <article><span>${ctx.tr("payloadFingerprint")}</span><strong>${ctx.escapeHtml(payloadHash)}</strong><p>${ctx.tr("payloadFingerprintHelp")}</p></article>
+    </details>
     ${ActionResult(state.lastActionResult || { status: "not_submitted", message: "Ready to prepare / confirm" }, ctx)}
   `);
 }

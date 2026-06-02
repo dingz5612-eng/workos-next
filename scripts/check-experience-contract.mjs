@@ -43,6 +43,7 @@ writeReport(violations, [
   "apps/mobile/src/operationController.js",
   "apps/mobile/src/authController.js",
   "apps/mobile/src/navigationController.js",
+  "apps/mobile/src/surfaceResolver.js",
   "apps/mobile/src/views/operationPanelView.js",
   "apps/mobile/src/views/experienceComponents.js"
 ]);
@@ -111,6 +112,7 @@ function validateMobileSources() {
   const controller = readSource("apps/mobile/src/operationController.js");
   const auth = readSource("apps/mobile/src/authController.js");
   const navigation = readSource("apps/mobile/src/navigationController.js");
+  const resolver = readSource("apps/mobile/src/surfaceResolver.js");
   const components = readSource("apps/mobile/src/views/experienceComponents.js");
   const workbench = readSource("apps/mobile/src/views/workbenchView.js");
   const workspace = readSource("apps/mobile/src/views/workspaceView.js");
@@ -133,8 +135,8 @@ function validateMobileSources() {
   if (!controller.includes("submitWorkItemOperation") || controller.includes("submitCardOperation({")) {
     violations.push(violation("experience_contract.operation_controller_legacy_submit", "Operation controller must use submitWorkItemOperation as the main path."));
   }
-  if (!auth.includes("defaultHomeForRole(session.role)")) {
-    violations.push(violation("experience_contract.role_login_home", "Login must route to defaultHomeForRole(session.role) after onboarding."));
+  if (!auth.includes("defaultHomeForSession") || !navigation.includes("resolveDefaultHome") || !resolver.includes("defaultHomeForSession")) {
+    violations.push(violation("experience_contract.role_login_home", "Login and onboarding must route through defaultHomeForSession / resolveDefaultHome after onboarding."));
   }
   if (!navigation.includes("evaluateSurfaceAccess")) {
     violations.push(violation("experience_contract.surface_guard_missing", "setView must evaluate SurfaceGuard before navigation."));
