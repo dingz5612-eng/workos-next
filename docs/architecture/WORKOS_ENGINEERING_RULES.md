@@ -1,26 +1,38 @@
-# WorkOS Engineering Rules
+# WorkOS Architecture Compatibility Rules
 
-This is the top-level governance file for WorkOSNext. It is intentionally an
-index and policy spine, not a dumping ground for Accommodation details, testing
-rules, database details, or frontend protocol rules.
-
-## One Center Model
-
-WorkOSNext has one operating center:
+This file is a compatibility and historical architecture reference. The highest
+engineering rule authority lives in:
 
 ```text
-Slice + Card + Field Contract + Event
-+ Action Runtime
-+ AuditEvent Journal
-+ Outbox Projection
-+ Lens Read Model
-+ PostgreSQL
-+ Contract Test
+docs/engineering/00-rule-authority.md
+docs/rules/v5.5/rule-authority.yml
+docs/acceptance/13-v5.5-rules-os-go-no-go.md
 ```
 
-Business work moves through Cards inside Slices. Cards define field contracts,
-evidence requirements, system checks, confirmation policy, and emitted events.
-Events become the durable journal and projection source.
+If this file conflicts with V5.5 Rule Authority, current-state, API-boundary
+classification, fact ownership, MR contracts, or release gates, the V5.5
+authority chain wins.
+
+## OAM-ACF v8 Target
+
+OAM-ACF v8 is the target top-level architecture. Its execution axis is
+Operations Runtime:
+
+```text
+Definition
+  -> OperationCase
+  -> WorkItem
+  -> CommandSubmission
+  -> SliceCommandHandler
+  -> DomainEvent / LedgerEntry
+  -> ProcessManager
+  -> Projection / Lens
+  -> Mobile / PC Surface
+```
+
+The older Slice/Card wording in architecture references describes compatibility
+shape and implementation history. It is not the primary extension model for new
+business behavior.
 
 ## Projection Ownership
 
@@ -30,6 +42,8 @@ Events become the durable journal and projection source.
   second source of truth.
 - Legacy compatibility code must be isolated, documented, and removed when the
   owning slice has a production runtime.
+- `ProjectionRuntime` is the current implementation facade for projection and
+  Lens materialization; it is not the top-level architecture.
 
 ## AI Cannot Confirm
 
@@ -113,7 +127,14 @@ exact commit.
 
 ## Rule Index
 
-Detailed rules live here:
+Highest authority:
+
+- Rule authority: `docs/engineering/00-rule-authority.md`
+- V5.5 machine authority: `docs/rules/v5.5/rule-authority.yml`
+- V5.5 Go/No-Go: `docs/acceptance/13-v5.5-rules-os-go-no-go.md`
+- Current-state authority: `artifacts/release-state/current-state.json`
+
+Compatibility and historical references:
 
 - Backend runtime: `docs/architecture/WORKOS_BACKEND_RUNTIME_RULES.md`
 - Frontend boundaries: `docs/architecture/WORKOS_FRONTEND_BOUNDARY_RULES.md`

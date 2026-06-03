@@ -1,5 +1,18 @@
 # Current Runtime Architecture
 
+This document is a compatibility and historical architecture reference. It does
+not override `docs/engineering/00-rule-authority.md`,
+`docs/rules/v5.5/rule-authority.yml`,
+`docs/acceptance/13-v5.5-rules-os-go-no-go.md`, or
+`artifacts/release-state/current-state.json`.
+
+OAM-ACF v8 is the target top-level architecture. V5.5 Rule Authority is the
+highest engineering rules authority. The Operations Runtime axis is the
+execution main axis. `ProjectionRuntime` is the current implementation facade
+for projection and Lens materialization, not the top-level architecture.
+Workspace/Card remains a compatibility wrapper and is not the new business
+extension point.
+
 Last preflight source: local `main` after `git fetch origin main`,
 `git checkout main`, and `git pull --ff-only`.
 
@@ -14,7 +27,7 @@ a claim that remote GitHub Actions is green.
 
 ## Runtime Architecture
 
-WorkOSNext currently uses:
+WorkOSNext currently exposes a compatibility implementation shape:
 
 ```text
 Slice + Card + Field Contract + Event

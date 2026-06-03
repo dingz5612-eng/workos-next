@@ -1,55 +1,55 @@
 {
-  "generatedAtUtc": "2026-06-02T14:32:24.967Z",
+  "generatedAtUtc": "2026-06-03T05:38:58.875Z",
   "generatedBy": "build-post-merge-attestation",
   "repository": "dingz5612-eng/workos-next",
-  "repositoryHead": "90b1b6d43a3cac52cce3d392d4d951a7f1c45133",
-  "verifiedMainHead": "90b1b6d43a3cac52cce3d392d4d951a7f1c45133",
+  "repositoryHead": "ed4b0b4643a2808883197efa55326148b3456a48",
+  "verifiedMainHead": "ed4b0b4643a2808883197efa55326148b3456a48",
   "status": "passed",
-  "localHead": "90b1b6d43a3cac52cce3d392d4d951a7f1c45133",
-  "prNumber": 78,
-  "prHead": "553a4d27177551b00716f05ca2a88f93dfd23348",
-  "prBase": "fe50578178886b958b9f394d2b51b2749aed54cd",
-  "mergeCommit": "90b1b6d43a3cac52cce3d392d4d951a7f1c45133",
+  "localHead": "ed4b0b4643a2808883197efa55326148b3456a48",
+  "prNumber": 79,
+  "prHead": "e15011fcce6303822c25491876f7d5c4425e4b33",
+  "prBase": "90b1b6d43a3cac52cce3d392d4d951a7f1c45133",
+  "mergeCommit": "ed4b0b4643a2808883197efa55326148b3456a48",
   "ci": {
-    "id": 26826409001,
+    "id": 26865165806,
     "name": "CI",
     "event": "push",
     "status": "completed",
     "conclusion": "success",
-    "headSha": "90b1b6d43a3cac52cce3d392d4d951a7f1c45133",
-    "htmlUrl": "https://github.com/dingz5612-eng/workos-next/actions/runs/26826409001",
-    "createdAt": "2026-06-02T14:27:53Z",
-    "updatedAt": "2026-06-02T14:31:46Z"
+    "headSha": "ed4b0b4643a2808883197efa55326148b3456a48",
+    "htmlUrl": "https://github.com/dingz5612-eng/workos-next/actions/runs/26865165806",
+    "createdAt": "2026-06-03T05:14:10Z",
+    "updatedAt": "2026-06-03T05:17:55Z"
   },
   "v54ControlPlaneGuards": {
-    "id": 26826409149,
+    "id": 26865165832,
     "name": "V5.4 Control Plane Guards",
     "event": "push",
     "status": "completed",
     "conclusion": "success",
-    "headSha": "90b1b6d43a3cac52cce3d392d4d951a7f1c45133",
-    "htmlUrl": "https://github.com/dingz5612-eng/workos-next/actions/runs/26826409149",
-    "createdAt": "2026-06-02T14:27:53Z",
-    "updatedAt": "2026-06-02T14:30:28Z"
+    "headSha": "ed4b0b4643a2808883197efa55326148b3456a48",
+    "htmlUrl": "https://github.com/dingz5612-eng/workos-next/actions/runs/26865165832",
+    "createdAt": "2026-06-03T05:14:10Z",
+    "updatedAt": "2026-06-03T05:16:43Z"
   },
   "artifacts": {
     "currentState": {
       "artifactPath": "artifacts/release-state/current-state.json",
-      "artifactHead": "90b1b6d43a3cac52cce3d392d4d951a7f1c45133",
-      "artifactCiHead": "90b1b6d43a3cac52cce3d392d4d951a7f1c45133",
-      "artifactV54Head": "90b1b6d43a3cac52cce3d392d4d951a7f1c45133"
+      "artifactHead": "ed4b0b4643a2808883197efa55326148b3456a48",
+      "artifactCiHead": "ed4b0b4643a2808883197efa55326148b3456a48",
+      "artifactV54Head": "ed4b0b4643a2808883197efa55326148b3456a48"
     },
     "internalPilotGoNoGo": {
       "artifactPath": "artifacts/go-live/dormitory/internal-pilot-go-no-go.json",
-      "artifactHead": "90b1b6d43a3cac52cce3d392d4d951a7f1c45133",
-      "artifactCiHead": "90b1b6d43a3cac52cce3d392d4d951a7f1c45133",
-      "artifactV54Head": "90b1b6d43a3cac52cce3d392d4d951a7f1c45133"
+      "artifactHead": "ed4b0b4643a2808883197efa55326148b3456a48",
+      "artifactCiHead": "ed4b0b4643a2808883197efa55326148b3456a48",
+      "artifactV54Head": "ed4b0b4643a2808883197efa55326148b3456a48"
     },
     "observationDay01": {
       "artifactPath": "artifacts/operations/dormitory/observation-day-01.json",
       "artifactHead": "52d55e17d6f0f37df69ba3bab7ddc240bc01887d",
       "artifactBase": "1a2fb45a89f3d1ef18eaf4ca216ecdc57660df30",
-      "mergeCommit": "90b1b6d43a3cac52cce3d392d4d951a7f1c45133"
+      "mergeCommit": "ed4b0b4643a2808883197efa55326148b3456a48"
     }
   },
   "controls": {

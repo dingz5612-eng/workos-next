@@ -9,15 +9,30 @@ V1.0 is not a hotel-only product. It is a platform shell for multiple business d
 All future tasks must follow:
 
 ```text
-docs/architecture/WORKOS_ENGINEERING_RULES.md
+docs/engineering/00-rule-authority.md
+docs/rules/v5.5/rule-authority.yml
+docs/acceptance/13-v5.5-rules-os-go-no-go.md
 ```
 
-The center model is `IntentWorkspaceProjection + WorkspaceCardProjection`. Do not create separate page, search, learning, or AI models for the same business behavior.
+These files are the highest engineering rule authority. `docs/architecture/*`
+is now compatibility and historical architecture reference only; it cannot
+override V5.5 Rule Authority, current-state, Operations Runtime ownership,
+API-boundary classification, fact ownership, MR contracts, or release gates.
 
-Current runtime facts and WON-16 governance rules live in:
+The target top-level architecture is OAM-ACF v8. The execution axis is
+Operations Runtime:
+
+```text
+Definition -> OperationCase -> WorkItem -> CommandSubmission
+-> SliceCommandHandler -> DomainEvent / LedgerEntry
+-> ProcessManager -> Projection / Lens -> Mobile / PC Surface
+```
+
+Current compatibility/runtime reference material lives in:
 
 ```text
 docs/architecture/CURRENT_RUNTIME_ARCHITECTURE.md
+docs/architecture/WORKOS_ENGINEERING_RULES.md
 docs/architecture/WORKOS_BACKEND_RUNTIME_RULES.md
 docs/architecture/WORKOS_FRONTEND_BOUNDARY_RULES.md
 docs/architecture/WORKOS_CONTRACT_RULES.md
@@ -38,6 +53,11 @@ docs/v5.4/operations-api-allowlist.json
 Operations API is the legal primary business write path. The old
 Workspace/Card API remains compatibility-only, and Mobile BFF routes must not
 write business facts.
+
+`ProjectionRuntime` is the current implementation facade for projection and
+Lens materialization. It is not the top-level architecture. Workspace/Card is a
+compatibility wrapper, not the new business extension point. Release posture is
+decided by `artifacts/release-state/current-state.json`.
 
 `tests/WorkOS.RuntimeContractTests` is the current Runtime Smoke /
 Integration transition suite. Keep focused behavior in unit, runtime

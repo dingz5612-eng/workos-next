@@ -4,7 +4,7 @@
 
 RF4 到 RT-FINAL 已完成 Central Merge Train 并进入 DORM-INT 后续状态调和。本报告当前只说明工程证据与宿舍 L1 内测观察窗口自洽；不声明 Business Production GO，不声明 Dormitory L2 Production。
 
-Current main: `90b1b6d43a3cac52cce3d392d4d951a7f1c45133`
+Current main: `ed4b0b4643a2808883197efa55326148b3456a48`
 
 Business Production: `BLOCKED`
 
