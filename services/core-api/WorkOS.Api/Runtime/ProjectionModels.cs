@@ -289,7 +289,8 @@ public sealed record RuntimeUser(
     string Username,
     string DisplayName,
     string Role,
-    bool Enabled);
+    bool Enabled,
+    string TenantId = RuntimeActorAuthorization.DefaultTenantId);
 
 public sealed record BehaviorEventRecord(
     string EventId,

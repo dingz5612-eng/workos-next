@@ -21,6 +21,7 @@ let noGoItems = [];
 let scenarioResults = [];
 let tenantId = "tenant-dorm-int-001";
 let actorToken = "";
+let actorTokensByUsername = new Map();
 let server = null;
 
 if (isMain && process.argv.includes("--self-test")) {
@@ -63,8 +64,8 @@ async function main() {
   scenarioResults = [];
   tenantId = scenariosDoc.tenantId ?? "tenant-dorm-int-001";
   actorToken = "";
+  actorTokensByUsername = new Map();
   server = await startApi();
-  await ensureRuntimeActorSession();
   try {
   for (const scenario of scenariosDoc.scenarios ?? []) {
     scenarioResults.push(await runScenario(scenario));
@@ -118,6 +119,7 @@ async function main() {
 
 async function runScenario(scenario) {
   const refs = refsFor(scenario);
+  actorToken = await ensureRuntimeActorSession(scenario.ownerRole ?? "operator");
   await api("POST", "/api/operations/cases", "/api/operations/cases", {
     caseId: refs.caseId,
     tenantId,
@@ -477,9 +479,13 @@ async function api(method, route, contractPath, body, headers = {}, failOnNonOk 
   return payload;
 }
 
-async function ensureRuntimeActorSession() {
-  const username = scenariosDoc.actorUsername ?? "operator";
-  const password = scenariosDoc.actorPassword ?? "dev";
+async function ensureRuntimeActorSession(role = "operator") {
+  const username = actorUsernameForRole(role);
+  if (actorTokensByUsername.has(username)) {
+    return actorTokensByUsername.get(username);
+  }
+
+  const password = actorPasswordForUsername(username);
   const response = await fetch(`${server.baseUrl}/api/auth/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -495,7 +501,18 @@ async function ensureRuntimeActorSession() {
   if (!response.ok || !payload.token) {
     throw new Error(`POST /api/auth/login failed: ${response.status} ${JSON.stringify(payload)}`);
   }
-  actorToken = payload.token;
+  actorTokensByUsername.set(username, payload.token);
+  return payload.token;
+}
+
+function actorUsernameForRole(role) {
+  const accounts = scenariosDoc.actorAccountsByRole ?? {};
+  return accounts[role] ?? scenariosDoc.actorUsername ?? "operator";
+}
+
+function actorPasswordForUsername(username) {
+  const passwords = scenariosDoc.actorPasswordsByUsername ?? {};
+  return passwords[username] ?? scenariosDoc.actorPassword ?? "dev";
 }
 
 async function startApi() {

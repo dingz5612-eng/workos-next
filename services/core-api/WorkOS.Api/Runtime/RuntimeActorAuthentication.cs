@@ -76,7 +76,7 @@ public sealed class RuntimeActorAuthenticationHandler : AuthenticationHandler<Au
             new(ClaimTypes.Role, user.Role),
             new(RuntimeActorClaims.ActorId, user.UserId),
             new(RuntimeActorClaims.Role, user.Role),
-            new(RuntimeActorClaims.TenantId, RuntimeActorAuthorization.DefaultTenantId),
+            new(RuntimeActorClaims.TenantId, user.TenantId),
             new(RuntimeActorClaims.AuthSource, source),
             new(RuntimeActorClaims.SessionToken, token)
         };
@@ -141,7 +141,7 @@ public static class RuntimeActorAuthorization
     public static IReadOnlyList<string> CapabilitiesForRole(string role) =>
         role.ToLowerInvariant() switch
         {
-            "operator" => new[]
+            "operator" or "frontdesk" or "housekeeping" => new[]
             {
                 "workos.write",
                 "operations.confirm",
@@ -154,6 +154,10 @@ public static class RuntimeActorAuthorization
                 "operations.confirm",
                 "finance.work",
                 "payment.confirm",
+                "finance.payment.confirm",
+                "finance.deposit.confirm",
+                "finance.deposit.refund",
+                "finance.correction.apply",
                 "correction.request",
                 "pc.finance"
             },
