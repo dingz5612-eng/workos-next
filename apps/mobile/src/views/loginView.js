@@ -6,22 +6,42 @@ export function loginView(ctx) {
       <h1>${tr("app")}</h1>
       <p>${tr("loginBody")}</p>
       <label>
-        <span>${tr("loginRole")}</span>
-        <select id="loginRole">
-          <option value="operator">${tr("operatorRole")}</option>
-          <option value="finance">${tr("financeRole")}</option>
-          <option value="manager">${tr("managerRole")}</option>
-          ${isDevLoginEnabled() ? `<option value="admin">${tr("adminRole")}</option><option value="releaseOwner">${tr("releaseOwnerRole")}</option>` : ""}
+        <span>${tr("loginAccount")}</span>
+        <select id="loginAccount" autocomplete="username">
+          ${accountOption("operator", "operatorAccount", state, tr)}
+          ${accountOption("finance", "financeAccount", state, tr)}
+          ${accountOption("manager", "managerAccount", state, tr)}
+          ${isDevLoginEnabled() ? `${accountOption("admin", "adminAccount", state, tr)}${accountOption("releaseOwner", "releaseOwnerAccount", state, tr)}` : ""}
+        </select>
+      </label>
+      <label>
+        <span>${tr("loginDepartment")}</span>
+        <select id="loginDepartment">
+          ${departmentOption("stay", "stayDepartment", state, tr)}
+          ${departmentOption("finance", "financeDepartment", state, tr)}
+          ${departmentOption("operations", "operationsDepartment", state, tr)}
         </select>
       </label>
       <label>
         <span>${tr("loginPassword")}</span>
         <input id="loginPassword" type="password" value="dev" autocomplete="current-password" />
       </label>
+      <p class="login-hint">${tr("loginAuthorityHint")}</p>
+      <p class="login-hint subtle">${tr("loginDepartmentHelp")}</p>
       <button id="loginSubmit">${tr("loginSubmit")}</button>
       ${state.loginMessage ? `<p class="login-message">${ctx.escapeHtml(state.loginMessage)}</p>` : ""}
     </section>
   `);
+}
+
+function accountOption(value, labelKey, state, tr) {
+  const selected = (state.loginAccount || "operator") === value ? " selected" : "";
+  return `<option value="${value}"${selected}>${tr(labelKey)}</option>`;
+}
+
+function departmentOption(value, labelKey, state, tr) {
+  const selected = (state.selectedDepartment || "stay") === value ? " selected" : "";
+  return `<option value="${value}"${selected}>${tr(labelKey)}</option>`;
 }
 
 function isDevLoginEnabled() {
@@ -33,21 +53,49 @@ export function onboardingView(ctx) {
   const { tr, shell } = ctx;
   return shell(`
     <section class="onboarding">
-      <span>${tr("guideTitle")}</span>
-      <h1>${tr("app")}</h1>
-      <p>${tr("guideBody")}</p>
-      <div class="mode-list">
-        ${modeCard("home", "todayMode", tr)}
-        ${modeCard("search", "intentMode", tr)}
-        ${modeCard("workbench", "queueMode", tr)}
-        ${modeCard("me", "personalMode", tr)}
+      <div class="onboarding-copy">
+        <span>${tr("guideTitle")}</span>
+        <h1>${tr("guideHeadline")}</h1>
+        <p>${tr("guideBody")}</p>
       </div>
-      <button id="start">${tr("start")}</button>
-      <button class="ghost" id="skip">${tr("skip")}</button>
+      <div class="mode-list">
+        ${guideCard("01", "todayModeTitle", "todayModeBody", tr)}
+        ${guideCard("02", "intentModeTitle", "intentModeBody", tr)}
+        ${guideCard("03", "queueModeTitle", "queueModeBody", tr)}
+        ${guideCard("04", "personalModeTitle", "personalModeBody", tr)}
+      </div>
+      <div class="onboarding-actions">
+        <button id="start">${tr("start")}</button>
+        <button class="ghost" id="skip">${tr("skip")}</button>
+      </div>
     </section>
   `);
 }
 
-export function modeCard(view, key, tr) {
-  return `<button class="mode-card" data-view="${view}"><b>${tr(key)}</b></button>`;
+function guideCard(index, titleKey, bodyKey, tr) {
+  return `
+    <article class="mode-card">
+      <span class="mode-card-index">${index}</span>
+      <div>
+        <b>${tr(titleKey)}</b>
+        <small>${tr(bodyKey)}</small>
+      </div>
+    </article>
+  `;
+}
+
+export function modeCard(view, titleKey, bodyKey, tr) {
+  return `
+    <button class="mode-card mode-card-link" data-view="${view}">
+      <span class="mode-card-index">${viewIndex(view)}</span>
+      <div>
+        <b>${tr(titleKey)}</b>
+        <small>${tr(bodyKey)}</small>
+      </div>
+    </button>
+  `;
+}
+
+function viewIndex(view) {
+  return { home: "01", search: "02", workbench: "03", me: "04" }[view] || "•";
 }

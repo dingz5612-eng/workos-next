@@ -1,5 +1,6 @@
 import { loadDraft } from "../operationDrafts.js";
 import { resolveOperationPanelTarget, resolvePersistedWorkItem } from "../operationRouteResolver.js";
+import { isTerminalCardStatus } from "../selectors/workspaceSelectors.js";
 import { permissionDiagnosticCopy } from "../surfaceGuard.js";
 import {
   DeviceTrustVM,
@@ -52,54 +53,39 @@ export function WorkItemCard(item, ctx) {
 
 export function LifecycleWorkspace(item, activeCard, ctx) {
   const model = workItemModel({ workspace: item, card: activeCard, workspaceId: item.id, cardId: activeCard.id }, ctx);
-  const fields = activeCard.fields?.business || [];
-  const evidence = activeCard.evidence || [];
   const blockers = activeBlockers(item, activeCard);
-  return `<section class="lifecycle-workspace" data-surface="lifecycle-workspace">
+  const workspaceCompleted = (item.cards || []).every((card) => isTerminalCardStatus(card.status));
+  const viewingCompletedStep = isTerminalCardStatus(activeCard.status) && !workspaceCompleted;
+  const blockerText = blockers.length
+    ? blockers.map((entry) => tx(entry.title || entry, ctx)).join(" · ")
+    : ctx.tr("noSubmitBlocker");
+  const workItemLabel = viewingCompletedStep ? ctx.tr("viewingCompletedStep") : ctx.tr("currentWorkItem");
+  const workItemHelp = viewingCompletedStep ? ctx.tr("completedStepReadonlyHelp") : model.nextAction || tx(item.next, ctx);
+  const stateHelp = viewingCompletedStep ? ctx.tr("completedRecordBody") : blockerText;
+  return `<section class="lifecycle-workspace compact" data-surface="lifecycle-workspace">
     <article>
-      <span>${text(ctx.tr("objectSummary"), ctx)}</span>
-      <strong>${text(model.businessObject, ctx)}</strong>
-      <p>${text(tx(item.summary, ctx), ctx)}</p>
+      <span>${text(workItemLabel, ctx)}</span>
+      <strong>${text(tx(activeCard.title, ctx), ctx)}</strong>
+      <p>${text(workItemHelp, ctx)}</p>
     </article>
     <article>
       <span>${text(ctx.tr("currentState"), ctx)}</span>
-      <strong>${text(ctx.tr(activeCard.status) || activeCard.status, ctx)}</strong>
-      <p>${text(model.nextAction, ctx)}</p>
+      <strong class="status-chip status-${attr(activeCard.status, ctx)}">${text(ctx.tr(activeCard.status) || activeCard.status, ctx)}</strong>
+      <p>${text(stateHelp, ctx)}</p>
     </article>
     <article class="lifecycle-wide">
       <span>${text(ctx.tr("lifecycleTimeline"), ctx)}</span>
-      <div class="lifecycle-timeline">${(item.cards || []).map((card) => `<span class="${attr(card.id === activeCard.id ? "current" : card.status, ctx)}">${text(tx(card.title, ctx), ctx)} · ${text(card.status, ctx)}</span>`).join("")}</div>
-    </article>
-    <article>
-      <span>${text(ctx.tr("currentWorkItem"), ctx)}</span>
-      <strong>${text(model.workItemType, ctx)}</strong>
-      <p>${text(model.nextAction, ctx)}</p>
-    </article>
-    <article>
-      <span>${text(ctx.tr("requiredFields"), ctx)}</span>
-      <p>${fields.length ? fields.map((field) => text(ctx.localTerm(field), ctx)).join(" · ") : "-"}</p>
-    </article>
-    <article>
-      <span>${text(ctx.tr("requiredEvidenceCopy"), ctx)}</span>
-      <p>${evidence.length ? evidence.map((field) => text(ctx.localTerm(field), ctx)).join(" · ") : "-"}</p>
-    </article>
-    <article>
-      <span>${text(ctx.tr("businessImpact"), ctx)}</span>
-      <p>${text(item.domain, ctx)} · ${text(model.SLA, ctx)}</p>
-    </article>
-    <article>
-      <span>${text(ctx.tr("riskAndBlockers"), ctx)}</span>
-      <p>${blockers.length ? blockers.map((entry) => text(tx(entry.title || entry, ctx), ctx)).join(" · ") : text(ctx.tr("noCriticalBlocker"), ctx)}</p>
-    </article>
-    <article>
-      <span>${text(ctx.tr("auditSummary"), ctx)}</span>
-      <p>${model.traceRefs.length ? text(ctx.tr("traceBound"), ctx) : text(ctx.tr("traceWillBind"), ctx)}</p>
-    </article>
-    <article>
-      <span>${text(ctx.tr("nextAction"), ctx)}</span>
-      <p>${text(model.nextAction, ctx)}</p>
+      <div class="lifecycle-timeline">${(item.cards || []).map((card) => timelineStep(item, card, activeCard, ctx)).join("")}</div>
     </article>
   </section>`;
+}
+
+function timelineStep(item, card, activeCard, ctx) {
+  const current = card.id === activeCard.id;
+  return `<button type="button" class="timeline-step status-${attr(card.status, ctx)}${current ? " current" : ""}" data-workspace="${attr(item.id, ctx)}" data-card-id="${attr(card.id, ctx)}" ${current ? `aria-current="step"` : ""}>
+    <strong>${text(tx(card.title, ctx), ctx)}</strong>
+    <small>${text(ctx.tr(card.status) || card.status, ctx)}</small>
+  </button>`;
 }
 
 export function OperationPanelView(innerHtml, item, activeCard, ctx) {

@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-06-02T03:09:52.080Z",
+  "generated_at_utc": "2026-06-03T11:45:37.156Z",
   "generated_by": "check-l1-to-l2-readiness",
   "stage": "OAM-07",
   "status": "NOT_ELIGIBLE",
@@ -11,31 +11,37 @@
   "latestMain": {
     "repository": "dingz5612-eng/workos-next",
     "branch": "main",
-    "checkedAtUtc": "2026-06-02T03:09:32.424Z",
-    "commitSha": "1a2fb45a89f3d1ef18eaf4ca216ecdc57660df30",
+    "checkedAtUtc": "2026-06-03T10:02:23.782Z",
+    "commitSha": "7bbf636041d79b19f2e3121f78f263e391b4931d",
     "ci": {
-      "id": 26795646360,
+      "id": 26866430737,
       "name": "CI",
       "status": "completed",
       "conclusion": "success",
-      "headSha": "1a2fb45a89f3d1ef18eaf4ca216ecdc57660df30",
-      "htmlUrl": "https://github.com/dingz5612-eng/workos-next/actions/runs/26795646360",
-      "createdAt": "2026-06-02T03:01:18Z",
-      "updatedAt": "2026-06-02T03:04:04Z"
+      "headSha": "7bbf636041d79b19f2e3121f78f263e391b4931d",
+      "htmlUrl": "https://github.com/dingz5612-eng/workos-next/actions/runs/26866430737",
+      "createdAt": "2026-06-03T05:52:23Z",
+      "updatedAt": "2026-06-03T05:56:23Z"
     },
     "v54ControlPlaneGuards": {
-      "id": 26795646374,
+      "id": 26866430742,
       "name": "V5.4 Control Plane Guards",
       "status": "completed",
       "conclusion": "success",
-      "headSha": "1a2fb45a89f3d1ef18eaf4ca216ecdc57660df30",
-      "htmlUrl": "https://github.com/dingz5612-eng/workos-next/actions/runs/26795646374",
-      "createdAt": "2026-06-02T03:01:18Z",
-      "updatedAt": "2026-06-02T03:03:46Z"
+      "headSha": "7bbf636041d79b19f2e3121f78f263e391b4931d",
+      "htmlUrl": "https://github.com/dingz5612-eng/workos-next/actions/runs/26866430742",
+      "createdAt": "2026-06-03T05:52:23Z",
+      "updatedAt": "2026-06-03T05:54:55Z"
     }
   },
   "latestMainCiGreen": true,
   "latestMainV54Green": true,
+  "architectureGuards": {
+    "noDynamicDirectConfirm": true,
+    "noShadowOfficialReference": true,
+    "noUnauthenticatedBusinessRead": true,
+    "noSilentDegradedSurface": true
+  },
   "cleanDaysObserved": 1,
   "requiredCleanDays": 7,
   "finalSystemGateStatus": "blocked",
@@ -43,6 +49,22 @@
   "criteria": [
     {
       "id": "default_not_eligible",
+      "status": "met"
+    },
+    {
+      "id": "no_dynamic_direct_confirm",
+      "status": "met"
+    },
+    {
+      "id": "no_shadow_official_reference",
+      "status": "met"
+    },
+    {
+      "id": "no_unauthenticated_business_read",
+      "status": "met"
+    },
+    {
+      "id": "no_silent_degraded_surface",
       "status": "met"
     },
     {

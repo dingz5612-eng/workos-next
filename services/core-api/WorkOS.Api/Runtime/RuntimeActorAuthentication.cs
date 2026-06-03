@@ -76,7 +76,7 @@ public sealed class RuntimeActorAuthenticationHandler : AuthenticationHandler<Au
             new(ClaimTypes.Role, user.Role),
             new(RuntimeActorClaims.ActorId, user.UserId),
             new(RuntimeActorClaims.Role, user.Role),
-            new(RuntimeActorClaims.TenantId, RuntimeActorAuthorization.DefaultTenantId),
+            new(RuntimeActorClaims.TenantId, user.TenantId),
             new(RuntimeActorClaims.AuthSource, source),
             new(RuntimeActorClaims.SessionToken, token)
         };
@@ -141,7 +141,7 @@ public static class RuntimeActorAuthorization
     public static IReadOnlyList<string> CapabilitiesForRole(string role) =>
         role.ToLowerInvariant() switch
         {
-            "operator" => new[]
+            "operator" or "frontdesk" or "housekeeping" => new[]
             {
                 "workos.write",
                 "operations.confirm",
@@ -154,6 +154,10 @@ public static class RuntimeActorAuthorization
                 "operations.confirm",
                 "finance.work",
                 "payment.confirm",
+                "finance.payment.confirm",
+                "finance.deposit.confirm",
+                "finance.deposit.refund",
+                "finance.correction.apply",
                 "correction.request",
                 "pc.finance"
             },
@@ -293,6 +297,14 @@ public static class RuntimeActorAuthorization
             request.Path.StartsWithSegments("/api/audit-events", StringComparison.OrdinalIgnoreCase) ||
             request.Path.StartsWithSegments("/api/outbox", StringComparison.OrdinalIgnoreCase) ||
             request.Path.StartsWithSegments("/api/observability/runtime", StringComparison.OrdinalIgnoreCase) ||
+            request.Path.StartsWithSegments("/api/workspaces", StringComparison.OrdinalIgnoreCase) ||
+            request.Path.StartsWithSegments("/api/work-queue", StringComparison.OrdinalIgnoreCase) ||
+            request.Path.StartsWithSegments("/api/search", StringComparison.OrdinalIgnoreCase) ||
+            request.Path.StartsWithSegments("/api/lenses", StringComparison.OrdinalIgnoreCase) ||
+            request.Path.StartsWithSegments("/api/reconciliation", StringComparison.OrdinalIgnoreCase) ||
+            request.Path.StartsWithSegments("/api/behavior-events", StringComparison.OrdinalIgnoreCase) ||
+            request.Path.StartsWithSegments("/api/mobile", StringComparison.OrdinalIgnoreCase) ||
+            request.Path.StartsWithSegments("/api/operations/cases", StringComparison.OrdinalIgnoreCase) ||
             request.Path.StartsWithSegments("/api/operations/trace", StringComparison.OrdinalIgnoreCase) ||
             request.Path.StartsWithSegments("/api/operations/work-items", StringComparison.OrdinalIgnoreCase);
     }

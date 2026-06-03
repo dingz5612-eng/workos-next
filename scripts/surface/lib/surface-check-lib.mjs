@@ -216,7 +216,7 @@ function validateNoRawSurfaceLabels(contracts, rendered, source, violations) {
 }
 
 function validateSearch(contracts, rendered, source, violations) {
-  for (const label of ["WorkOS 搜索", "WorkItem", "OperationCase", "房间", "床位", "入住", "证据", "提交轨迹", "学习内容"]) {
+  for (const label of ["WorkOS 搜索", "待办任务", "业务记录", "房间", "床位", "入住", "证据", "提交轨迹", "学习内容"]) {
     if (!rendered.search.includes(label)) {
       violations.push(violation("surface.search.section_missing", `Search 缺少 ${label}。`, { label }));
     }
@@ -453,7 +453,18 @@ function runtimeStore() {
         confirmation: { required: true, requiredRole: "operator", policyRef: "operations-runtime-policy" }
       }]
     }],
-    workQueue: [],
+    workQueue: [{
+      workItemId: "W-STAY-RESOURCE:roomSetup",
+      workspaceId: "W-STAY-RESOURCE",
+      cardId: "roomSetup",
+      caseId: "case:W-STAY-RESOURCE",
+      workItemType: "Dorm.RoomSetup",
+      lifecycleState: "ready",
+      ownerRole: "operator",
+      traceRefs: ["trace-room"],
+      commandSubmissionId: "cmd-room",
+      reason: "先配置房间和床位"
+    }],
     operationWorkItems: [{
       workItemId: "W-STAY-RESOURCE:roomSetup",
       workspaceId: "W-STAY-RESOURCE",

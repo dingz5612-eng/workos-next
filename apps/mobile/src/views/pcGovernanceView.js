@@ -21,6 +21,7 @@ export function pcGovernanceView(ctx) {
       <section class="governance-grid">
         ${dashboardPanel(governance, release, ctx)}
         ${productionObservabilityPanel(governance.productionObservability, ctx)}
+        ${lensHealthPanel(ctx)}
         ${workManagementPanel(ctx)}
         ${objectsPanel(ctx)}
         ${casesPanel(ctx)}
@@ -49,7 +50,7 @@ export function managerControlTowerView(ctx) {
       <header class="governance-hero">
         <span>经理控制塔</span>
         <h1>经理控制塔</h1>
-        <p>经理首屏只聚焦风险、超时、证据、财务和同步异常；治理导出与发布控制留在 PC Governance / Release plane。</p>
+        <p data-boundary-rule="does not write business facts">经理首屏只读取并路由风险、超时、证据、财务和同步异常，不写入业务事实；治理导出与发布控制留在 PC Governance / Release plane。</p>
       </header>
       <section class="governance-grid">
         ${panel("Risk overview", "manager-risk-overview", tableOrEmpty(risks, ["riskId", "riskType", "severity", "ownerRole", "resolveAction"], ctx, "No source-backed risk items loaded."))}
@@ -65,7 +66,7 @@ function navigation(ctx) {
   return `
     <nav class="pc-governance-nav" data-pc-governance-nav aria-label="PC Governance navigation">
       ${pcGovernanceNavItems.map((label) => `
-        <a href="#${slug(label)}" data-governance-nav="${escapeAttr(ctx, label)}">${escapeHtml(ctx, label)}</a>
+        <a href="#${slug(label)}" data-governance-nav="${escapeAttr(ctx, label)}">${escapeHtml(ctx, panelTitle(label))}</a>
       `).join("")}
     </nav>
   `;
@@ -83,7 +84,7 @@ function dashboardPanel(governance, release, ctx) {
       ${metric("Open blockers", blockers.length, ctx)}
       ${metric("GateResult", production.controlPlane?.gateResultStatus || release.gateResult?.status || release.overview?.gateResultStatus || "not_run", ctx)}
     </div>
-    <p data-governance-source-note>Dashboard reads lenses, events, release control data, and WorkItems; it does not write business facts.</p>
+    <p data-governance-source-note data-boundary-rule="does not write business facts">本页只读取 Lens、事件、发布控制数据和 WorkItem，不写入业务事实。</p>
   `);
 }
 
@@ -112,6 +113,14 @@ function productionObservabilityPanel(observability, ctx) {
     </div>
     <p data-observability-generated>generatedAtUtc ${escapeHtml(ctx, observability?.productionMetrics?.generatedAtUtc || metrics.generatedAtUtc || "not_loaded")}</p>
   `);
+}
+
+function lensHealthPanel(ctx) {
+  return panel("Lens Health", "lens-health", tableOrEmpty(
+    lensHealthRows(ctx),
+    ["lens", "sourceNamespace", "projectionLagSeconds", "lastEventId", "degradedReason"],
+    ctx,
+    "No Lens metadata loaded."));
 }
 
 function workManagementPanel(ctx) {
@@ -161,7 +170,7 @@ function evidenceReviewPanel(governance, ctx) {
   const audits = asArray(governance.evidenceAccessAudits);
   return panel("Evidence Review", "evidence-review", `
     ${tableOrEmpty(evidence, ["evidenceId", "status", "contentSha256", "tenantId"], ctx, "No evidence review items loaded.")}
-    <h3>Evidence access audit view</h3>
+    <h3>证据访问审计</h3>
     ${tableOrEmpty(audits, ["auditEventId", "eventType", "actorId", "deviceId", "occurredAtUtc"], ctx, "No evidence access audit records loaded.")}
   `);
 }
@@ -172,7 +181,7 @@ function reconciliationPanel(ctx) {
   const mismatches = asArray(state.mismatchCases?.cases || state.mismatchCases);
   return panel("Reconciliation", "reconciliation", `
     ${tableOrEmpty(candidates, ["candidateId", "candidateType", "paymentId", "score", "reason"], ctx, "No match candidates loaded.")}
-    <h3>Mismatch Queue</h3>
+    <h3>差异队列</h3>
     ${tableOrEmpty(mismatches, ["caseId", "mismatchType", "ownerRole", "blockerSeverity"], ctx, "No reconciliation mismatches loaded.")}
   `);
 }
@@ -181,7 +190,7 @@ function correctionCenterPanel(ctx) {
   const state = ctx.state.bankStatementImport || {};
   return panel("Correction Center", "correction-center", `
     ${tableOrEmpty(asArray(state.correctionRequests), ["correctionRequestId", "targetLedgerType", "correctionType", "riskLevel", "status"], ctx, "No correction requests loaded.")}
-    <h3>Correction audit</h3>
+    <h3>修正审计</h3>
     ${tableOrEmpty(asArray(state.correctionAudit || state.operationAudit), ["auditEventId", "operationName", "status", "recordedAtUtc"], ctx, "No correction audit records loaded.")}
   `);
 }
@@ -201,29 +210,29 @@ function adminPanel(governance, ctx) {
   const deviceRevokeAllowed = canRevokeDevice(ctx.state);
   return panel("Admin", "admin", `
     <section data-role-capability-admin>
-      <h3>RoleCapability view/edit</h3>
-      <p data-capability-required="admin.role_capability.edit">Edit requires admin.role_capability.edit.</p>
+      <h3>RoleCapability 查看 / 编辑</h3>
+      <p data-capability-required="admin.role_capability.edit">编辑需要 admin.role_capability.edit 权限。</p>
       ${tableOrEmpty(asArray(governance.roleCapabilities), ["role", "capability", "effect", "source"], ctx, "No RoleCapability rules loaded.")}
-      <button type="button" data-role-capability-edit ${roleEditAllowed ? "" : "disabled"}>Edit RoleCapability</button>
+      <button type="button" data-role-capability-edit ${roleEditAllowed ? "" : "disabled"}>编辑 RoleCapability</button>
     </section>
     <section>
-      <h3>FeatureFlag view</h3>
+      <h3>FeatureFlag 查看</h3>
       ${tableOrEmpty(asArray(governance.featureFlags || featureFlagsFromRelease(ctx)), ["flagKey", "status", "scope"], ctx, "No FeatureFlags loaded.")}
     </section>
     <section>
-      <h3>SliceCutoverState view</h3>
+      <h3>SliceCutoverState 查看</h3>
       ${tableOrEmpty(asArray(governance.sliceCutoverStates || sliceCutoversFromRelease(ctx)), ["sliceId", "runtimeMode", "tenantId", "dependencyStatus"], ctx, "No SliceCutoverState loaded.")}
     </section>
     <section>
-      <h3>DefinitionVersion view</h3>
+      <h3>DefinitionVersion 查看</h3>
       ${tableOrEmpty(asArray(governance.definitionVersions), ["definitionVersion", "contractHash", "status", "activatedAtUtc"], ctx, "No DefinitionVersion records loaded.")}
     </section>
     <section>
-      <h3>DeviceSession view/revoke</h3>
+      <h3>DeviceSession 查看 / 撤销</h3>
       ${deviceSessionTable(governance, deviceRevokeAllowed, ctx)}
     </section>
     <section>
-      <h3>Evidence access audit view</h3>
+      <h3>证据访问审计</h3>
       ${tableOrEmpty(asArray(governance.evidenceAccessAudits), ["auditEventId", "eventType", "actorId", "deviceId", "occurredAtUtc"], ctx, "No evidence access audit records loaded.")}
     </section>
   `);
@@ -235,15 +244,15 @@ function auditPanel(governance, ctx) {
   const releaseAudit = asArray(governance.releaseControlAudits || releaseAuditFromState(ctx));
   const correctionAudit = asArray(governance.correctionAudit || ctx.state.bankStatementImport?.correctionAudit || ctx.state.bankStatementImport?.operationAudit);
   return panel("Audit", "audit", `
-    <label for="domainEventSearch">DomainEvent search</label>
-    <input id="domainEventSearch" data-domain-event-search placeholder="eventType / aggregate / actor">
+    <label for="domainEventSearch">DomainEvent 搜索</label>
+    <input id="domainEventSearch" data-domain-event-search placeholder="事件类型 / 聚合对象 / 操作人">
     ${tableOrEmpty(domainEvents, ["eventId", "eventType", "actorId", "occurredAtUtc"], ctx, "No DomainEvents loaded.")}
-    <label for="commandSubmissionSearch">CommandSubmission search</label>
-    <input id="commandSubmissionSearch" data-command-submission-search placeholder="submissionId / idempotencyKey">
+    <label for="commandSubmissionSearch">CommandSubmission 搜索</label>
+    <input id="commandSubmissionSearch" data-command-submission-search placeholder="提交编号 / 幂等键">
     ${tableOrEmpty(commandSubmissions, ["submissionId", "workItemId", "status", "idempotencyKey"], ctx, "No CommandSubmissions loaded.")}
-    <h3>Release control audit</h3>
+    <h3>发布控制审计</h3>
     ${tableOrEmpty(releaseAudit, ["auditEventId", "eventType", "releaseId", "occurredAtUtc"], ctx, "No release control audit loaded.")}
-    <h3>Correction audit</h3>
+    <h3>修正审计</h3>
     ${tableOrEmpty(correctionAudit, ["auditEventId", "operationName", "status", "recordedAtUtc"], ctx, "No correction audit loaded.")}
   `);
 }
@@ -253,20 +262,23 @@ function exportPanel(governance, ctx) {
   const exports = governanceExportDefinitions.map((definition) => exportControl(definition, device, ctx)).join("");
   const audits = asArray(governance.exportAudits || governance.exports);
   return panel("Export", "export", `
-    <p data-export-rules>Exports require capability, reason, audit, expiring download URL, and trusted PC device for high-risk export.</p>
+    <p data-export-rules>导出必须具备权限、填写原因、生成审计记录；高风险导出还要求可信 PC 设备，下载链接会自动过期。</p>
     <div class="export-control-grid">${exports}</div>
-    <h3>Export audit</h3>
+    <h3>导出审计</h3>
     ${tableOrEmpty(audits, ["auditEventId", "eventType", "exportType", "status", "reason", "expiresAtUtc"], ctx, "No export audit records loaded.")}
   `);
 }
 
 function releaseControlPanel(release, ctx) {
   const overview = release.overview || release.manifest || {};
+  const chain = releaseChainRows(release, overview);
   return panel("Release Control Center", "release-control-center", `
     <dl class="governance-kv"><dt>MR ID</dt><dd>${escapeHtml(ctx, overview.mrId || overview.mr_id || "MR")}</dd></dl>
-    <dl class="governance-kv"><dt>GateResult status</dt><dd>${escapeHtml(ctx, release.gateResult?.status || overview.gateResultStatus || "not_run")}</dd></dl>
-    <dl class="governance-kv"><dt>Shadow grade</dt><dd>${escapeHtml(ctx, overview.shadowGrade || release.shadowReports?.[0]?.grade || "unknown")}</dd></dl>
-    <button type="button" data-view="releaseControl">Open Release Control Center</button>
+    <dl class="governance-kv"><dt>GateResult 状态</dt><dd>${escapeHtml(ctx, release.gateResult?.status || overview.gateResultStatus || "not_run")}</dd></dl>
+    <dl class="governance-kv"><dt>Shadow 等级</dt><dd>${escapeHtml(ctx, overview.shadowGrade || release.shadowReports?.[0]?.grade || "unknown")}</dd></dl>
+    <h3>发布证据链</h3>
+    ${tableOrEmpty(chain, ["chainStep", "recordId", "status", "severity", "refs"], ctx, "No release evidence chain loaded.")}
+    <button type="button" data-view="releaseControl">打开发布工作区</button>
   `);
 }
 
@@ -283,21 +295,21 @@ function exportControl(definition, device, ctx) {
   return `
     <article class="export-control" data-export-control="${escapeAttr(ctx, definition.key)}">
       <h3>${escapeHtml(ctx, definition.label)}</h3>
-      <p>capability ${escapeHtml(ctx, definition.capability)}${definition.highRisk ? " · high-risk trusted PC only" : ""}</p>
-      <label for="exportReason-${escapeAttr(ctx, definition.key)}">reason</label>
+      <p>所需权限 ${escapeHtml(ctx, definition.capability)}${definition.highRisk ? " · 高风险导出仅允许可信 PC 设备" : ""}</p>
+      <label for="exportReason-${escapeAttr(ctx, definition.key)}">导出原因</label>
       <textarea id="exportReason-${escapeAttr(ctx, definition.key)}" data-export-reason="${escapeAttr(ctx, definition.key)}" required></textarea>
-      <button type="button" data-governance-export="${escapeAttr(ctx, definition.key)}" ${blocked ? "disabled" : ""}>Request audited export</button>
-      <small>download URL expires in 15 minutes · errors if no reason: ${escapeHtml(ctx, validation.errors.join(", ") || "none after reason")}</small>
+      <button type="button" data-governance-export="${escapeAttr(ctx, definition.key)}" ${blocked ? "disabled" : ""}>申请审计导出</button>
+      <small>下载链接 15 分钟后过期；未填写原因会被阻断：${escapeHtml(ctx, validation.errors.join(", ") || "填写后可继续")}</small>
     </article>
   `;
 }
 
 function deviceSessionTable(governance, revokeAllowed, ctx) {
   const sessions = asArray(governance.deviceSessions);
-  if (!sessions.length) return `<p>No DeviceSession records loaded.</p>`;
+  if (!sessions.length) return `<p>${escapeHtml(ctx, governanceText("No DeviceSession records loaded."))}</p>`;
   return `
     <table>
-      <thead><tr><th>deviceId</th><th>actorId</th><th>trust</th><th>surface</th><th>highRisk</th><th>action</th></tr></thead>
+      <thead><tr><th>设备</th><th>账号</th><th>可信状态</th><th>端</th><th>高风险动作</th><th>操作</th></tr></thead>
       <tbody>
         ${sessions.map((session) => `
           <tr>
@@ -305,8 +317,8 @@ function deviceSessionTable(governance, revokeAllowed, ctx) {
             <td>${escapeHtml(ctx, session.actorId)}</td>
             <td>${escapeHtml(ctx, session.deviceTrustStatus || session.trustStatus)}</td>
             <td>${escapeHtml(ctx, session.surface || session.deviceType || "pc")}</td>
-            <td>${deviceCanPerformHighRiskAction(session) ? "allowed" : "blocked"}</td>
-            <td><button type="button" data-device-revoke="${escapeAttr(ctx, session.deviceId)}" ${revokeAllowed ? "" : "disabled"}>Revoke</button></td>
+            <td>${deviceCanPerformHighRiskAction(session) ? "允许" : "阻断"}</td>
+            <td><button type="button" data-device-revoke="${escapeAttr(ctx, session.deviceId)}" ${revokeAllowed ? "" : "disabled"}>撤销</button></td>
           </tr>
         `).join("")}
       </tbody>
@@ -327,6 +339,7 @@ function panelTitle(title) {
   const titles = {
     Dashboard: "总览",
     "Production Observability": "生产观测",
+    "Lens Health": "Lens 健康",
     "Work Management": "办理管理",
     Objects: "对象视图",
     Cases: "案例与阻断",
@@ -350,10 +363,10 @@ function panelTitle(title) {
 
 function tableOrEmpty(rows, columns, ctx, emptyText) {
   const items = asArray(rows);
-  if (!items.length) return `<p>${escapeHtml(ctx, emptyText)}</p>`;
+  if (!items.length) return `<p>${escapeHtml(ctx, governanceText(emptyText))}</p>`;
   return `
     <table>
-      <thead><tr>${columns.map((column) => `<th>${escapeHtml(ctx, column)}</th>`).join("")}</tr></thead>
+      <thead><tr>${columns.map((column) => `<th>${escapeHtml(ctx, governanceText(column))}</th>`).join("")}</tr></thead>
       <tbody>
         ${items.map((row) => `
           <tr>${columns.map((column) => `<td>${escapeHtml(ctx, displayValue(row, column))}</td>`).join("")}</tr>
@@ -364,7 +377,7 @@ function tableOrEmpty(rows, columns, ctx, emptyText) {
 }
 
 function metric(label, value, ctx) {
-  return `<div class="governance-metric"><span>${escapeHtml(ctx, label)}</span><strong>${escapeHtml(ctx, value)}</strong></div>`;
+  return `<div class="governance-metric"><span>${escapeHtml(ctx, governanceText(label))}</span><strong>${escapeHtml(ctx, value)}</strong></div>`;
 }
 
 function metricTable(title, values, ctx) {
@@ -389,6 +402,164 @@ function riskItems(ctx) {
   return asArray(ctx.state.pcGovernance?.riskItems || lenses["risk-command"] || ctx.state.runtimeStore?.riskCommand);
 }
 
+function governanceText(value) {
+  const text = String(value || "");
+  const labels = {
+    "Open WorkItems": "打开的办理项",
+    "RiskCommand items": "风险项",
+    "Open blockers": "打开的阻断",
+    "GateResult": "GateResult",
+    "confirm latency p95": "确认延迟 p95",
+    "confirm failure count": "确认失败数",
+    "403 / 409 / 422 count": "403 / 409 / 422 次数",
+    "outbox lag": "Outbox 延迟",
+    "dead-letter count": "死信数量",
+    "projection lag": "Projection 延迟",
+    "WorkItemBundle p95": "WorkItemBundle p95",
+    "GateResult status": "GateResult 状态",
+    "No Lens metadata loaded.": "没有 Lens 元数据。",
+    "No WorkItems visible.": "没有可见办理项。",
+    "No object lenses loaded.": "没有对象 Lens。",
+    "No cases or blockers loaded.": "没有案例或阻断。",
+    "No ledger summaries loaded.": "没有账务摘要。",
+    "No evidence review items loaded.": "没有证据复核项。",
+    "No evidence access audit records loaded.": "没有证据访问审计记录。",
+    "No match candidates loaded.": "没有对账候选项。",
+    "No reconciliation mismatches loaded.": "没有对账差异。",
+    "No correction requests loaded.": "没有修正请求。",
+    "No correction audit records loaded.": "没有修正审计记录。",
+    "No period reviews loaded.": "没有周期复盘记录。",
+    "No source-backed risk items loaded.": "没有来源支撑的风险项。",
+    "No RoleCapability rules loaded.": "没有 RoleCapability 规则。",
+    "No FeatureFlags loaded.": "没有 FeatureFlag。",
+    "No SliceCutoverState loaded.": "没有 SliceCutoverState。",
+    "No DefinitionVersion records loaded.": "没有 DefinitionVersion 记录。",
+    "No DeviceSession records loaded.": "没有 DeviceSession 记录。",
+    "No DomainEvents loaded.": "没有 DomainEvent。",
+    "No CommandSubmissions loaded.": "没有 CommandSubmission。",
+    "No release control audit loaded.": "没有发布控制审计。",
+    "No correction audit loaded.": "没有修正审计。",
+    "No export audit records loaded.": "没有导出审计记录。",
+    "No release evidence chain loaded.": "没有发布证据链。",
+    metric: "指标",
+    value: "值",
+    lens: "Lens",
+    sourceNamespace: "来源命名空间",
+    projectionLagSeconds: "投影延迟秒数",
+    lastEventId: "最后事件",
+    degradedReason: "降级原因",
+    workItemId: "办理项",
+    title: "标题",
+    status: "状态",
+    assignedRole: "负责人角色",
+    dueAtUtc: "到期时间",
+    objectType: "对象类型",
+    objectId: "对象编号",
+    summary: "摘要",
+    caseId: "案件编号",
+    ownerRole: "责任角色",
+    resolveAction: "处理动作",
+    ledger: "账本",
+    refs: "引用",
+    amount: "金额",
+    evidenceId: "证据编号",
+    contentSha256: "内容哈希",
+    tenantId: "租户",
+    auditEventId: "审计事件",
+    eventType: "事件类型",
+    actorId: "操作人",
+    deviceId: "设备",
+    occurredAtUtc: "发生时间",
+    candidateId: "候选项",
+    candidateType: "候选类型",
+    paymentId: "付款编号",
+    score: "分数",
+    reason: "原因",
+    mismatchType: "差异类型",
+    blockerSeverity: "阻断等级",
+    correctionRequestId: "修正请求",
+    targetLedgerType: "目标账本",
+    correctionType: "修正类型",
+    riskLevel: "风险等级",
+    operationName: "操作名称",
+    recordedAtUtc: "记录时间",
+    periodReviewId: "周期复盘",
+    periodKey: "周期",
+    sourceHighWatermark: "来源水位",
+    riskId: "风险编号",
+    riskType: "风险类型",
+    severity: "等级",
+    drilldownUrl: "详情入口",
+    role: "角色",
+    capability: "权限",
+    effect: "结果",
+    source: "来源",
+    flagKey: "特性开关",
+    scope: "范围",
+    sliceId: "Slice",
+    runtimeMode: "运行模式",
+    dependencyStatus: "依赖状态",
+    definitionVersion: "Definition 版本",
+    contractHash: "合约哈希",
+    activatedAtUtc: "启用时间",
+    eventId: "事件编号",
+    submissionId: "提交编号",
+    idempotencyKey: "幂等键",
+    releaseId: "发布编号",
+    exportType: "导出类型",
+    expiresAtUtc: "过期时间",
+    chainStep: "链路步骤",
+    recordId: "记录编号",
+    confirmLatencyP95Ms: "确认延迟 p95",
+    confirmLatencySampleCount: "确认延迟样本数",
+    confirmFailureCount: "确认失败数",
+    idempotencyConflictCount: "幂等冲突数",
+    forbiddenCount403: "403 次数",
+    conflictCount409: "409 次数",
+    validationCount422: "422 次数",
+    handlerFailureCount: "处理器失败数",
+    outboxLagSeconds: "Outbox 延迟秒数",
+    deadLetterCount: "死信数量",
+    replayCount: "重放次数",
+    rebuildCount: "重建次数",
+    staleLensCount: "陈旧 Lens 数",
+    workItemBundleP95Ms: "WorkItemBundle p95",
+    workItemBundleSampleCount: "WorkItemBundle 样本数",
+    uploadFailureCount: "上传失败数",
+    submitRetryCount: "提交重试数",
+    draftRecoveryCount: "草稿找回数",
+    paymentConfirmWithoutEvidenceViolations: "缺证据确认付款违规",
+    allocationOverAvailableViolations: "超可用金额分配违规",
+    stayBalanceMismatchCount: "住宿余额不一致数",
+    availableRefundNegativeCount: "可退金额为负次数",
+    refundFailedDoubleCount: "退款重复失败数",
+    heldAmountNegativeCount: "冻结金额为负次数",
+    openBlockers: "打开的阻断",
+    duplicateBlockers: "重复阻断",
+    fakeCloseAttempts: "虚假关闭尝试",
+    gateResultStatus: "GateResult 状态",
+    redShadowReports: "红色 Shadow 报告数",
+    blockingInvariantFailures: "阻断不变量失败数",
+    releaseState: "发布状态"
+  };
+  if (labels[text]) return labels[text];
+  const metrics = /^No (.+) metrics loaded\.$/.exec(text);
+  if (metrics) return `没有 ${metrics[1]} 指标。`;
+  return text;
+}
+
+function lensHealthRows(ctx) {
+  const lenses = ctx.state.accommodationLenses || ctx.state.runtimeStore?.accommodationLenses || {};
+  return Object.entries(lenses).flatMap(([lensId, value]) =>
+    asArray(value).map((item) => ({
+      lens: item.lens || lensId,
+      sourceNamespace: item.sourceNamespace || "unknown",
+      projectionLagSeconds: item.projectionLagSeconds ?? "",
+      lastEventId: item.lastEventId || "",
+      degradedReason: item.degradedReason || "none"
+    })));
+}
+
 function blockersFromState(ctx) {
   return asArray(ctx.state.pcManager?.blockers || ctx.state.checkoutManager?.blockers || ctx.state.pcGovernance?.blockers);
 }
@@ -410,6 +581,43 @@ function releaseAuditFromState(ctx) {
   ].filter(Boolean);
 }
 
+function releaseChainRows(release, overview) {
+  const gate = release.gateResult;
+  const invariants = asArray(release.invariantChecks);
+  const shadowReports = asArray(release.shadowReports);
+  const rollback = release.rollbackInstruction;
+  return [
+    gate && {
+      chainStep: "GateResult",
+      recordId: gate.gateResultId || overview.gateResultId,
+      status: gate.status || overview.gateResultStatus,
+      severity: gate.severity || "",
+      refs: [...asArray(gate.invariantCheckRefs), ...asArray(gate.shadowCompareReportRefs), ...asArray(gate.businessSignoffRefs)].join(", ")
+    },
+    ...invariants.map((item) => ({
+      chainStep: "Invariant",
+      recordId: item.invariantCheckId || item.invariantKey,
+      status: item.status,
+      severity: item.severity || item.mode,
+      refs: item.checkRef || item.ciRunId || ""
+    })),
+    ...shadowReports.map((item) => ({
+      chainStep: "ShadowCompare",
+      recordId: item.shadowCompareReportId,
+      status: item.grade,
+      severity: item.mismatchCount ?? "",
+      refs: item.ciRunId || ""
+    })),
+    rollback && {
+      chainStep: "RollbackInstruction",
+      recordId: rollback.rollbackInstructionId,
+      status: rollback.instructionType || rollback.rollbackKind || "available",
+      severity: rollback.riskLevel || "",
+      refs: [...asArray(rollback.steps), ...asArray(rollback.validationSteps)].join(", ")
+    }
+  ].filter(Boolean);
+}
+
 function productionMetrics(observability) {
   return observability?.productionMetrics || observability || {};
 }
@@ -417,6 +625,7 @@ function productionMetrics(observability) {
 function displayValue(row, key) {
   if (!row) return "";
   const value = row[key] ?? row[toCamel(key)] ?? row[toSnake(key)];
+  if (key === "metric") return governanceText(value);
   if (Array.isArray(value)) return value.join(", ");
   if (value && typeof value === "object") return JSON.stringify(value);
   return value ?? "";

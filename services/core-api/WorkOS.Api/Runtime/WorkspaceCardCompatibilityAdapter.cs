@@ -24,9 +24,9 @@ public sealed class WorkspaceCardCompatibilityAdapter
         this.responses = responses;
     }
 
-    public CompatibilityApiResult PrepareWorkspaceCard(string workspaceId, string cardId, PrepareCardRequest? request)
+    public CompatibilityApiResult PrepareWorkspaceCard(string workspaceId, string cardId, PrepareCardRequest? request, string? tenantId = null)
     {
-        var workItem = workItems.ResolveOrCreate(operations, workspaceId, cardId);
+        var workItem = workItems.ResolveOrCreate(operations, workspaceId, cardId, tenantId);
         if (workItem is null)
         {
             return responses.CardNotFound(workspaceId, cardId);
@@ -43,15 +43,21 @@ public sealed class WorkspaceCardCompatibilityAdapter
         string cardId,
         ConfirmCardRequest request,
         string actorToken,
-        string requestId)
+        string requestId,
+        string? tenantId = null)
     {
+        if (string.IsNullOrWhiteSpace(request.IdempotencyKey))
+        {
+            return responses.IdempotencyKeyRequired(workspaceId, cardId, request);
+        }
+
         var policyResult = policy.Validate(workspaceId, cardId, request, actorToken);
         if (policyResult.Status is not ConfirmStatus.Confirmed)
         {
             return responses.PolicyRejected(policyResult, workspaceId, cardId, request);
         }
 
-        var workItem = workItems.ResolveOrCreate(operations, workspaceId, cardId);
+        var workItem = workItems.ResolveOrCreate(operations, workspaceId, cardId, tenantId);
         if (workItem is null)
         {
             return responses.CardNotFound(workspaceId, cardId);
@@ -99,6 +105,19 @@ public sealed class WorkspaceCardCompatibilityResponseMapper
 {
     public CompatibilityApiResult CardNotFound(string workspaceId, string cardId) =>
         new(StatusCodes.Status404NotFound, new { error = "card_not_found", workspaceId, cardId });
+
+    public CompatibilityApiResult IdempotencyKeyRequired(
+        string workspaceId,
+        string cardId,
+        ConfirmCardRequest request) =>
+        new(StatusCodes.Status422UnprocessableEntity, new Dictionary<string, object?>
+        {
+            ["error"] = "idempotency_key_required",
+            ["reason"] = "operations_confirm_requires_idempotency_key",
+            ["caseId"] = workspaceId,
+            ["workItemId"] = WorkspaceCardCompatibilityWorkItemResolver.WorkItemIdFor(workspaceId, cardId),
+            ["submissionId"] = request.SubmissionId
+        });
 
     public CompatibilityApiResult Prepared(PrepareWorkItemResult prepared, PrepareCardRequest? request) =>
         new(
@@ -210,10 +229,10 @@ public sealed class WorkspaceCardCompatibilityResponseMapper
 
 public sealed class WorkspaceCardCompatibilityWorkItemResolver
 {
-    public WorkItem? ResolveOrCreate(CanonicalOperationsApiService operations, string workspaceId, string cardId) =>
+    public WorkItem? ResolveOrCreate(CanonicalOperationsApiService operations, string workspaceId, string cardId, string? tenantId = null) =>
         operations.CreateWorkItem(new CreateWorkItemRequest(
             WorkItemIdFor(workspaceId, cardId),
-            workspaceId,
+            string.IsNullOrWhiteSpace(tenantId) ? RuntimeActorAuthorization.DefaultTenantId : tenantId,
             cardId,
             workspaceId,
             workspaceId,

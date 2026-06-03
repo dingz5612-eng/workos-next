@@ -1,3 +1,5 @@
+import { isTerminalCardStatus } from "./selectors/workspaceSelectors.js";
+
 export function buildOperationActionState(workItem = {}, card = {}, runtimeResult = null, state = {}) {
   const candidateResult = runtimeResult || state.lastActionResult || null;
   const result = resultAppliesToCurrentCard(candidateResult, workItem, card) ? candidateResult : null;
@@ -6,11 +8,12 @@ export function buildOperationActionState(workItem = {}, card = {}, runtimeResul
   if (state.operationSubmitting || resultStatus === "submitting") return OperationActionStateVM("submitting", { disabled: true });
   if (resultStatus === "permission_blocked_403") return OperationActionStateVM("waitingPermission", { result });
   if (resultStatus === "idempotency_conflict_409") return OperationActionStateVM("submitted", { result });
+  if (resultStatus === "business_blocked_422" && result?.reason === "required_field_missing") return OperationActionStateVM("missingRequiredFields", { result });
   if (resultStatus === "business_blocked_422") return OperationActionStateVM("missingEvidence", { result });
   if (resultStatus === "committed_projection_pending") return OperationActionStateVM("projectionPending", { result });
   if (resultStatus === "committed_projection_failed" || resultStatus === "network_unknown") return OperationActionStateVM("failed", { result });
   if (resultStatus === "committed_projected") return OperationActionStateVM("submitted", { result });
-  if (card.status === "done") return OperationActionStateVM("done", { disabled: true });
+  if (isTerminalCardStatus(card.status)) return OperationActionStateVM("done", { disabled: true });
   if (card.status === "notStarted") return OperationActionStateVM("notStarted", { disabled: true });
   if (card.status === "blocked" || workItem.lifecycleState === "blocked") return OperationActionStateVM("blocked");
   return OperationActionStateVM("ready");
@@ -39,6 +42,7 @@ export function PrimaryActionVM(status, extra = {}) {
   const table = {
     ready: { labelKey: "primarySubmit", disabled: false },
     blocked: { labelKey: "primaryViewBlocker", disabled: false },
+    missingRequiredFields: { labelKey: "primaryCompleteRequiredFields", disabled: false },
     missingEvidence: { labelKey: "primaryCompleteEvidence", disabled: false },
     waitingPermission: { labelKey: "primaryViewPermission", disabled: false },
     notStarted: { labelKey: "primaryPreviousRequired", disabled: true, reasonKey: "notReadyCardHelp" },

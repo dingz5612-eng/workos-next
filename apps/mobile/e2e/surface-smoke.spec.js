@@ -148,11 +148,13 @@ test("mobile work plane smoke covers login, WorkItem, search, me, and PC boundar
   await bottomNav.getByRole("button", { name: "工作", exact: true }).click();
   await page.locator('[data-work-item-id="wi-e2e-room-setup"]').click();
   await expect(page.locator('[data-surface="operation-panel-route"]')).toBeVisible();
-  await expect(page.locator('[data-surface="trusted-confirm"]')).toBeVisible();
-  await expect(page.locator("body")).toContainText("系统将在提交时自动绑定");
+  await expect(page.locator('[data-surface="trusted-confirm"]')).toHaveCount(0);
+  await expect(page.locator("body")).toContainText("提交前系统校验");
+  await expect(page.locator("body")).toContainText("系统会在提交时自动校验字段、证据、权限和阻断");
   await expect(page.getByRole("button", { name: /提交处理/u })).toBeVisible();
   await expect(page.locator("body")).not.toContainText("payloadHash");
   await expect(page.locator("body")).not.toContainText("commandSubmissionId");
+  await expect(page.locator("body")).not.toContainText("traceAvailable");
   await expect(page.locator("summary", { hasText: "技术详情" })).toBeVisible();
 
   await bottomNav.getByRole("button", { name: "搜索", exact: true }).click();
@@ -195,7 +197,7 @@ test("missing persisted WorkItem, numeric search, workspace debug, and recovery 
 
   await page.goto("/?device=mobile&view=workbench");
   await expect(page.locator('[data-work-item-id]')).toHaveCount(0);
-  await expect(page.locator("body")).toContainText("当前没有分配给你的真实办理项");
+  await expect(page.locator("body")).toContainText("当前没有分配给你的真实办理任务");
 
   runtimeWorkItems = [workItem];
   runtimeProjection = projection;

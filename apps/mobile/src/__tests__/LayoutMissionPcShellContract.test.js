@@ -3,7 +3,7 @@ import { routeView } from "../appRouter.js";
 import { createSurfaceCtx, renderSurface, source, visibleText } from "./surfaceContractTestHelpers.js";
 
 describe("OAM-04B layout, mission control, and PC shell contract", () => {
-  it("uses fixed-layer tokens and keeps sticky action above bottom nav", () => {
+  it("uses fixed-layer tokens and keeps the primary action in flow above bottom nav", () => {
     const shellCss = source("../styles/shell.css");
     const operationCss = source("../styles/operation.css");
     const html = renderSurface("operationPanel");
@@ -12,7 +12,7 @@ describe("OAM-04B layout, mission control, and PC shell contract", () => {
     expect(shellCss).toContain("--sticky-action-height: 64px");
     expect(shellCss).toContain("--safe-bottom: env(safe-area-inset-bottom, 0px)");
     expect(shellCss).toContain("calc(var(--bottom-nav-height) + var(--sticky-action-height) + var(--safe-bottom)");
-    expect(operationCss).toContain("bottom: calc(var(--bottom-nav-height) + var(--safe-bottom) + 28px)");
+    expect(operationCss).toContain("position: static");
     expect(operationCss).toContain("min-height: var(--bottom-nav-height)");
     expect(operationCss).toContain("focus-visible");
     expect(html).toContain('aria-current="page"');

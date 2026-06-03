@@ -13,7 +13,8 @@ describe("Checkout / Service mobile and PC manager surfaces", () => {
     expect(html).toContain("发起退住 action");
     expect(html).toContain("退住开始");
     expect(html).toContain("data-submit-card");
-    expect(html).toContain("cardConfirm");
+    expect(html).toContain('data-surface="system-validation-summary"');
+    expect(html).not.toContain("cardConfirm");
   });
 
   it("mobile_case_timeline_shows_blocker", () => {

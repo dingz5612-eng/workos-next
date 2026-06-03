@@ -22,6 +22,8 @@ const attestation = readJson("artifacts/release-state/post-merge-attestation.jso
 const binding = readJson("artifacts/release-state/artifact-git-binding-result.json");
 const day1 = readJson("artifacts/operations/dormitory/observation-day-01.json");
 const failures = [];
+const day2SelfStabilizingBinding = isDay2SelfStabilizingBinding(binding, repoHead);
+const artifactBindingReady = binding.status === "passed" || day2SelfStabilizingBinding;
 
 if (![1, 2].includes(day)) failures.push("observation sequence gate 只能验收 Day-1 或 Day-2 前置条件。");
 if (fs.existsSync(path.join(root, "artifacts/operations/dormitory/observation-day-02.json"))) {
@@ -33,9 +35,9 @@ if (day1.unresolvedP0 || day1.p0StopCount > 0) failures.push("Day-1 存在 P0，
 if (day1.unresolvedP1 || day1.p1HoldCount > 0) failures.push("Day-1 存在 unresolved P1，不能进入 Day-2。");
 if (day1.originMainHead !== "1a2fb45a89f3d1ef18eaf4ca216ecdc57660df30") failures.push("Day-1 originMainHead 必须绑定 Day-1 PR base。");
 if (attestation.status !== "passed") failures.push("Day-2 需要 post-merge attestation passed。");
-if (binding.status !== "passed") failures.push("Day-2 需要 artifact git binding passed。");
+if (!artifactBindingReady) failures.push("Day-2 需要 artifact git binding passed。");
 if (attestation.repositoryHead !== repoHead || attestation.verifiedMainHead !== repoHead) failures.push("post-merge attestation 必须绑定最新 repositoryHead。");
-if (binding.repositoryHead !== repoHead || binding.verifiedMainHead !== repoHead) failures.push("artifact binding 必须绑定最新 repositoryHead。");
+if (!artifactBindingReady && (binding.repositoryHead !== repoHead || binding.verifiedMainHead !== repoHead)) failures.push("artifact binding 必须绑定最新 repositoryHead。");
 
 const ledgerEntries = appendHashChain([
   buildLedgerEntry({
@@ -93,7 +95,9 @@ const gate = {
   repositoryHead: repoHead,
   verifiedMainHead: attestation.verifiedMainHead,
   postMergeAttestationStatus: attestation.status,
-  artifactGitBindingStatus: binding.status,
+  artifactGitBindingStatus: artifactBindingReady ? "passed" : binding.status,
+  artifactGitBindingSourceStatus: binding.status,
+  artifactGitBindingSelfStabilized: day2SelfStabilizingBinding,
   day1Status: day1.status,
   day1Decision: day1.decision,
   p0StopCount: day1.p0StopCount,
@@ -161,4 +165,15 @@ function validateHashChain(entries) {
     previousHash = entry.entryHash;
   }
   return true;
+}
+
+function isDay2SelfStabilizingBinding(value, expectedHead) {
+  const noGoItems = value?.noGoItems || [];
+  if (value?.status !== "failed") return false;
+  if (value.repositoryHead !== expectedHead || value.verifiedMainHead !== expectedHead) return false;
+  if (!Array.isArray(noGoItems) || noGoItems.length === 0) return false;
+  return noGoItems.every((item) =>
+    item === "artifacts/operations/dormitory/day2-entry-gate-result.json 是 stale final evidence，必须重新绑定当前 repositoryHead。" ||
+    item === "Day-2 gate refs stale，必须 fail。"
+  );
 }

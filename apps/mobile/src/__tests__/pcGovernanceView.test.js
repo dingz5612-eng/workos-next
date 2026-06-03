@@ -23,10 +23,11 @@ describe("PC Governance Full", () => {
     for (const item of pcGovernanceNavItems) {
       expect(html).toContain(item);
     }
-    expect(html).toContain("Dashboard");
-    expect(html).toContain("Production Observability");
-    expect(html).toContain("Work Management");
-    expect(html).toContain("Release Control Center");
+    expect(html).toContain("总览");
+    expect(html).toContain("生产观测");
+    expect(html).toContain("Lens 健康");
+    expect(html).toContain("办理管理");
+    expect(html).toContain("发布工作区");
   });
 
   it("role_capability_admin_guarded", () => {
@@ -63,7 +64,7 @@ describe("PC Governance Full", () => {
     expect(result.allowed).toBe(false);
     expect(result.errors).toContain("EXPORT_REASON_REQUIRED");
     expect(result.errors).toContain("EXPORT_CAPABILITY_REQUIRED");
-    expect(html).toContain("Ledger export");
+    expect(html).toContain("账务导出");
     expect(html).toContain("data-governance-export=\"ledger\" disabled");
   });
 
@@ -109,25 +110,42 @@ describe("PC Governance Full", () => {
   it("release_control_center_visible", () => {
     const html = pcGovernanceView(ctx());
 
-    expect(html).toContain("Release Control Center");
+    expect(html).toContain("发布工作区");
     expect(html).toContain("MR-10");
-    expect(html).toContain("GateResult status");
-    expect(html).toContain("Open Release Control Center");
+    expect(html).toContain("GateResult 状态");
+    expect(html).toContain("发布证据链");
+    expect(html).toContain("GateResult");
+    expect(html).toContain("Invariant");
+    expect(html).toContain("ShadowCompare");
+    expect(html).toContain("RollbackInstruction");
+    expect(html).toContain("打开发布工作区");
+  });
+
+  it("lens_health_shows_projection_source_and_degraded_reason", () => {
+    const html = pcGovernanceView(ctx());
+
+    expect(html).toContain("Lens 健康");
+    expect(html).toContain("来源命名空间");
+    expect(html).toContain("投影延迟秒数");
+    expect(html).toContain("最后事件");
+    expect(html).toContain("降级原因");
+    expect(html).toContain("official_runtime");
+    expect(html).toContain("projection_lag_exceeds_1h");
   });
 
   it("production_observability_panel_shows_required_metrics", () => {
     const html = pcGovernanceView(ctx());
 
     expect(html).toContain("data-production-observability");
-    expect(html).toContain("confirm latency p95");
-    expect(html).toContain("403 / 409 / 422 count");
-    expect(html).toContain("dead-letter count");
-    expect(html).toContain("projection lag");
+    expect(html).toContain("确认延迟 p95");
+    expect(html).toContain("403 / 409 / 422 次数");
+    expect(html).toContain("死信数量");
+    expect(html).toContain("Projection 延迟");
     expect(html).toContain("WorkItemBundle p95");
-    expect(html).toContain("paymentConfirmWithoutEvidenceViolations");
-    expect(html).toContain("availableRefundNegativeCount");
-    expect(html).toContain("fakeCloseAttempts");
-    expect(html).toContain("redShadowReports");
+    expect(html).toContain("缺证据确认付款违规");
+    expect(html).toContain("可退金额为负次数");
+    expect(html).toContain("虚假关闭尝试");
+    expect(html).toContain("红色 Shadow 报告数");
   });
 
   it("device_revoke_blocks_high_risk_actions", () => {
@@ -149,7 +167,7 @@ describe("PC Governance Full", () => {
     expect(result.allowed).toBe(false);
     expect(result.errors).toContain("TRUSTED_PC_REQUIRED");
     expect(html).toContain("revoked");
-    expect(html).toContain("blocked");
+    expect(html).toContain("阻断");
     expect(html).toContain("data-governance-export=\"ledger\" disabled");
   });
 });
@@ -201,9 +219,18 @@ function ctx(overrides = {}) {
     releaseControl: {
       selectedRelease: {
         overview: { releaseId: "rel-10", mrId: "MR-10", gateResultStatus: "warning", shadowGrade: "green" },
-        gateResult: { gateResultId: "gate-10", status: "warning", generatedAtUtc: "2026-05-30T02:00:00Z" },
-        shadowReports: [{ shadowCompareReportId: "shadow-10", grade: "green" }],
-        rollbackInstruction: { rollbackInstructionId: "rollback-10", createdAtUtc: "2026-05-30T02:00:00Z" }
+        gateResult: {
+          gateResultId: "gate-10",
+          status: "warning",
+          severity: "P1",
+          generatedAtUtc: "2026-05-30T02:00:00Z",
+          invariantCheckRefs: ["inv-10"],
+          shadowCompareReportRefs: ["shadow-10"],
+          businessSignoffRefs: []
+        },
+        shadowReports: [{ shadowCompareReportId: "shadow-10", grade: "green", mismatchCount: 0, ciRunId: "ci-10" }],
+        invariantChecks: [{ invariantCheckId: "inv-10", invariantKey: "runtime.no_shadow", status: "passed", severity: "P0", checkRef: "runtime-write-path" }],
+        rollbackInstruction: { rollbackInstructionId: "rollback-10", instructionType: "rollback", riskLevel: "high", steps: ["disable flag"], validationSteps: ["rerun gate"], createdAtUtc: "2026-05-30T02:00:00Z" }
       }
     },
     bankStatementImport: {
@@ -216,13 +243,18 @@ function ctx(overrides = {}) {
       workQueue: [{ workItemId: "wi-1", title: "Review payment", status: "ready", assignedRole: "finance", dueAtUtc: "2026-05-31T00:00:00Z" }],
       accommodationLenses: {
         "risk-command": [{
+          lens: "RiskCommandLens",
           riskId: "risk-1",
           riskType: "debt_risk",
           severity: "P1",
           ownerRole: "finance",
           resolveAction: "createBalanceCloseWorkItem",
           drilldownUrl: "/pc/risk/risk-1",
-          relatedLedgerRefs: ["stay-balance:stay-1"]
+          relatedLedgerRefs: ["stay-balance:stay-1"],
+          sourceNamespace: "official_runtime",
+          projectionLagSeconds: 7200,
+          lastEventId: "evt-risk-1",
+          degradedReason: "projection_lag_exceeds_1h"
         }]
       }
     },

@@ -3,7 +3,6 @@ namespace WorkOS.Api.Runtime;
 public static class ControlPlaneDbMapping
 {
     public const string ControlPlaneSchema = "control_plane";
-    public const string ShadowRuntimeSchema = "shadow_runtime";
     public static readonly string CompatibilityRuntimeMode = string.Concat("leg", "acy");
     public static readonly string SourceBaselineRefColumn = "source_" + string.Concat("leg", "acy_ref");
 
@@ -89,55 +88,6 @@ public static class ControlPlaneDbMapping
             "created_at_utc", "updated_at_utc"
         });
 
-    public static readonly DbTableContract ShadowCommandSubmissions = new(
-        ShadowRuntimeSchema,
-        "command_submissions",
-        new[]
-        {
-            "command_submission_id", "release_id", "tenant_id", "slice_id",
-            "workspace_id", "card_id", "idempotency_key", "submitted_at_utc",
-            "actor_ref", "command_payload", "source_active_ref", "source_shadow_ref",
-            "processing_status"
-        });
-
-    public static readonly DbTableContract ShadowDomainEvents = new(
-        ShadowRuntimeSchema,
-        "domain_events",
-        new[]
-        {
-            "shadow_event_id", "command_submission_id", "event_type", "aggregate_ref",
-            "occurred_at_utc", "event_payload", "event_hash"
-        });
-
-    public static readonly DbTableContract ShadowLedgerEntries = new(
-        ShadowRuntimeSchema,
-        "ledger_entries",
-        new[]
-        {
-            "shadow_ledger_entry_id", "command_submission_id", "ledger_type",
-            "account_ref", "amount", "currency", "direction", "entry_payload",
-            "created_at_utc"
-        });
-
-    public static readonly DbTableContract ShadowLensSnapshots = new(
-        ShadowRuntimeSchema,
-        "lens_snapshots",
-        new[]
-        {
-            "lens_snapshot_id", "release_id", "tenant_id", "slice_id", "lens_id",
-            "snapshot_at_utc", "lens_payload", "payload_hash"
-        });
-
-    public static readonly DbTableContract ShadowCompareInputs = new(
-        ShadowRuntimeSchema,
-        "compare_inputs",
-        new[]
-        {
-            "compare_input_id", "release_id", "tenant_id", "slice_id",
-            "command_submission_id", SourceBaselineRefColumn, "source_active_ref",
-            "source_shadow_ref", "input_payload", "captured_at_utc"
-        });
-
     public static readonly IReadOnlyList<DbTableContract> ControlPlaneTables = new[]
     {
         ReleaseManifests,
@@ -147,15 +97,6 @@ public static class ControlPlaneDbMapping
         RuntimeInvariantChecks,
         GateResults,
         RollbackInstructions
-    };
-
-    public static readonly IReadOnlyList<DbTableContract> ShadowRuntimeTables = new[]
-    {
-        ShadowCommandSubmissions,
-        ShadowDomainEvents,
-        ShadowLedgerEntries,
-        ShadowLensSnapshots,
-        ShadowCompareInputs
     };
 
     public static readonly IReadOnlyList<string> ReleaseStatuses = new[]

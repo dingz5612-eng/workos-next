@@ -146,6 +146,50 @@ public sealed class OperationsUnitOfWorkTests
     }
 
     [TestMethod]
+    public void slice_handler_registry_rejects_output_fact_not_declared_by_definition()
+    {
+        var store = new InMemoryOperationsStore();
+        var definition = new SliceCommandHandlerDefinition(
+            "resource.room.prepare",
+            "accommodation.resource",
+            "resource.room.prepare.v1",
+            new[] { "DomainEvent" },
+            "none",
+            new[] { "room-photo" },
+            "BedInventoryLens");
+        var router = new SliceCommandHandlerRouter()
+            .Register(definition, _ => HandlerResult("RoomPrepared"));
+        var unitOfWork = new OperationsUnitOfWork(
+            new CommandEnvelopeBuilder(),
+            new CommandSubmissionService(store),
+            new IdempotencyService(store),
+            new PayloadHashService(),
+            router);
+
+        var result = unitOfWork.Commit(Request("idem-undeclared-fact"));
+
+        Assert.AreEqual(StatusCodes.Status500InternalServerError, result.StatusCode);
+        Assert.AreEqual("handler_failure", result.ResponseBody["error"]);
+        StringAssert.Contains(result.ResponseBody["reason"]!.ToString(), "operations_handler_fact_not_allowed");
+        Assert.AreEqual(0, store.DomainEvents.Count);
+        Assert.AreEqual(0, store.WorkItemEvents.Count);
+    }
+
+    [TestMethod]
+    public void official_confirm_handler_definition_declares_runtime_fact_boundary()
+    {
+        var definition = CanonicalOperationsApiService.ConfirmCommandDefinition;
+
+        Assert.AreEqual(CanonicalOperationsApiService.ConfirmCommandType, definition.CommandType);
+        CollectionAssert.Contains(definition.AllowedFacts.ToArray(), "DomainEvent");
+        CollectionAssert.Contains(definition.AllowedFacts.ToArray(), "WorkItem");
+        CollectionAssert.Contains(definition.AllowedFacts.ToArray(), "LedgerEntry");
+        CollectionAssert.Contains(definition.RequiredEvidence.ToArray(), "confirm-request.evidenceIds");
+        Assert.AreEqual("balanced-ledger-or-none", definition.LedgerPolicy);
+        Assert.AreEqual("OperationsRuntimeProjection", definition.ProjectionOwner);
+    }
+
+    [TestMethod]
     public void deposit_receipt_generates_balanced_deposit_liability_transaction()
     {
         var store = new InMemoryOperationsStore();

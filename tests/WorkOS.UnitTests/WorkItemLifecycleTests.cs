@@ -59,7 +59,7 @@ public sealed class WorkItemLifecycleTests
         var runtime = new FakeRuntime();
         var cases = new InMemoryOperationsCaseStore();
         workItems = new InMemoryOperationsWorkItemStore();
-        var catalog = new OperationsRuntimeService(runtime, new InMemoryOperationsCommandSubmissionStore(), cases, workItems);
+        var catalog = new OperationsRuntimeService(runtime, cases, workItems);
         var store = new InMemoryOperationsStore();
         var router = new SliceCommandHandlerRouter()
             .Register(CanonicalOperationsApiService.ConfirmCommandType, CanonicalOperationsApiService.HandleConfirmCommand);

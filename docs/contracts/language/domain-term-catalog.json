@@ -1,0 +1,20 @@
+{
+  "version": "oam.domain-term-catalog.v1",
+  "generatedBy": "oam-cab-v1-phase-4",
+  "terms": [
+    { "termId": "operationsRuntime", "copy": { "zh-CN": "运营运行时", "ru-RU": "Операционный runtime", "ky-KG": "Операция runtime" } },
+    { "termId": "definitionRegistry", "copy": { "zh-CN": "定义登记表", "ru-RU": "Реестр определений", "ky-KG": "Аныктама реестри" } },
+    { "termId": "admissionKernel", "copy": { "zh-CN": "准入裁决", "ru-RU": "Ядро допуска", "ky-KG": "Кирүү чечими" } },
+    { "termId": "languageKernel", "copy": { "zh-CN": "语言内核", "ru-RU": "Языковое ядро", "ky-KG": "Тил ядросу" } },
+    { "termId": "searchKernel", "copy": { "zh-CN": "搜索内核", "ru-RU": "Поисковое ядро", "ky-KG": "Издөө ядросу" } },
+    { "termId": "workItem", "copy": { "zh-CN": "办理项", "ru-RU": "Рабочая задача", "ky-KG": "Иш тапшырмасы" } },
+    { "termId": "operationCase", "copy": { "zh-CN": "业务记录", "ru-RU": "Операционное дело", "ky-KG": "Иш жазуусу" } },
+    { "termId": "commandSubmission", "copy": { "zh-CN": "提交记录", "ru-RU": "Отправка команды", "ky-KG": "Команда тапшыруусу" } },
+    { "termId": "depositLedger", "copy": { "zh-CN": "押金账本", "ru-RU": "Реестр депозита", "ky-KG": "Депозит реестри" } },
+    { "termId": "paymentLedger", "copy": { "zh-CN": "收款账本", "ru-RU": "Реестр платежей", "ky-KG": "Төлөм реестри" } },
+    { "termId": "checkoutSettlement", "copy": { "zh-CN": "退住结算", "ru-RU": "Расчет выезда", "ky-KG": "Чыгуу эсептешүүсү" } },
+    { "termId": "periodClose", "copy": { "zh-CN": "周期关闭", "ru-RU": "Закрытие периода", "ky-KG": "Мезгилди жабуу" } },
+    { "termId": "productionBlocked", "copy": { "zh-CN": "生产仍被阻断", "ru-RU": "Production заблокирован", "ky-KG": "Production тосулган" } },
+    { "termId": "contractPreview", "copy": { "zh-CN": "合同预览", "ru-RU": "Предпросмотр контракта", "ky-KG": "Келишим алдын ала көрүү" } }
+  ]
+}

@@ -1,3 +1,4 @@
+using System.Reflection;
 using Npgsql;
 
 namespace WorkOS.Api.Runtime;
@@ -817,24 +818,127 @@ internal sealed class RuntimeAggregateLensStorage
             reader.IsDBNull(16) ? null : reader.GetDateTime(16),
             reader.GetString(17),
             TextArray(reader, 18),
-            reader.IsDBNull(19) ? 0 : LagSeconds(reader.GetDateTime(19))));
+            reader.IsDBNull(19) ? 0 : LagSeconds(reader.GetDateTime(19))),
+            attachMetadata: false);
 
-        return RiskCommandLensBuilder.Build(inputs.Cast<RiskCommandLensInput>()).Cast<object>().ToArray();
+        var metadataCache = new Dictionary<string, LensCheckpointMetadata?>(StringComparer.OrdinalIgnoreCase);
+        return RiskCommandLensBuilder.Build(inputs.Cast<RiskCommandLensInput>())
+            .Cast<object>()
+            .Select(item => WithLensMetadata(item, metadataCache))
+            .ToArray();
     }
 
-    private IReadOnlyList<object> Query(string sql, Func<NpgsqlDataReader, object> map)
+    private IReadOnlyList<object> Query(string sql, Func<NpgsqlDataReader, object> map, bool attachMetadata = true)
     {
         using var connection = connections.Open();
         using var command = connection.CreateCommand();
         command.CommandText = sql;
         using var reader = command.ExecuteReader();
         var items = new List<object>();
+        var metadataCache = new Dictionary<string, LensCheckpointMetadata?>(StringComparer.OrdinalIgnoreCase);
         while (reader.Read())
         {
-            items.Add(map(reader));
+            var item = map(reader);
+            items.Add(attachMetadata ? WithLensMetadata(item, metadataCache) : item);
         }
 
         return items;
+    }
+
+    private object WithLensMetadata(object item, IDictionary<string, LensCheckpointMetadata?> metadataCache)
+    {
+        var values = ObjectProperties(item);
+        var lensName = StringValue(values, "lens");
+        if (string.IsNullOrWhiteSpace(lensName))
+        {
+            return values;
+        }
+
+        if (!metadataCache.TryGetValue(lensName, out var checkpoint))
+        {
+            checkpoint = LatestCheckpoint(lensName);
+            metadataCache[lensName] = checkpoint;
+        }
+
+        var updatedAtUtc = DateValue(values, "updatedAtUtc");
+        var projectionLagSeconds = LongValue(values, "projectionLagSeconds")
+            ?? (updatedAtUtc.HasValue ? LagSeconds(updatedAtUtc.Value) : checkpoint?.ProjectionLagSeconds)
+            ?? 0;
+        values["projectionLagSeconds"] = projectionLagSeconds;
+        values["lastEventId"] = checkpoint?.LastEventId ?? string.Empty;
+        values["sourceNamespace"] = checkpoint?.SourceNamespace ?? "official_runtime";
+        values["degradedReason"] = DegradedReason(checkpoint, projectionLagSeconds);
+        return values;
+    }
+
+    private LensCheckpointMetadata? LatestCheckpoint(string lensName)
+    {
+        try
+        {
+            using var connection = connections.Open();
+            using var command = connection.CreateCommand();
+            command.CommandText = """
+                select coalesce(to_event_id, source_event_high_watermark, from_event_id, '') as last_event_id,
+                       source_namespace,
+                       created_at_utc
+                from projection_checkpoints
+                where lens_name = @lensName
+                  and source_namespace = 'official_runtime'
+                order by created_at_utc desc, checkpoint_id
+                limit 1
+                """;
+            command.Parameters.AddWithValue("lensName", lensName);
+            using var reader = command.ExecuteReader();
+            if (!reader.Read())
+            {
+                return null;
+            }
+
+            var createdAtUtc = reader.GetDateTime(2);
+            return new LensCheckpointMetadata(
+                reader.GetString(0),
+                reader.GetString(1),
+                LagSeconds(createdAtUtc));
+        }
+        catch (PostgresException ex) when (ex.SqlState is "42P01" or "42703" or "3F000")
+        {
+            return null;
+        }
+    }
+
+    private static Dictionary<string, object?> ObjectProperties(object item)
+    {
+        if (item is IReadOnlyDictionary<string, object?> dictionary)
+        {
+            return new Dictionary<string, object?>(dictionary, StringComparer.Ordinal);
+        }
+
+        return item.GetType()
+            .GetProperties(BindingFlags.Instance | BindingFlags.Public)
+            .ToDictionary(property => property.Name, property => property.GetValue(item), StringComparer.Ordinal);
+    }
+
+    private static string StringValue(IReadOnlyDictionary<string, object?> values, string key) =>
+        values.TryGetValue(key, out var value) ? Convert.ToString(value) ?? string.Empty : string.Empty;
+
+    private static long? LongValue(IReadOnlyDictionary<string, object?> values, string key) =>
+        values.TryGetValue(key, out var value) && value is not null
+            ? Convert.ToInt64(value)
+            : null;
+
+    private static DateTime? DateValue(IReadOnlyDictionary<string, object?> values, string key) =>
+        values.TryGetValue(key, out var value) && value is DateTime dateTime
+            ? dateTime
+            : null;
+
+    private static string DegradedReason(LensCheckpointMetadata? checkpoint, long projectionLagSeconds)
+    {
+        if (checkpoint is null)
+        {
+            return "projection_checkpoint_missing";
+        }
+
+        return projectionLagSeconds > 3600 ? "projection_lag_exceeds_1h" : string.Empty;
     }
 
     private static string[] TextArray(NpgsqlDataReader reader, int ordinal) =>
@@ -843,3 +947,8 @@ internal sealed class RuntimeAggregateLensStorage
     private static long LagSeconds(DateTime updatedAtUtc) =>
         Math.Max(0, Convert.ToInt64((DateTime.UtcNow - DateTime.SpecifyKind(updatedAtUtc, DateTimeKind.Utc)).TotalSeconds));
 }
+
+internal sealed record LensCheckpointMetadata(
+    string LastEventId,
+    string SourceNamespace,
+    long ProjectionLagSeconds);

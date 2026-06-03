@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
+import { spawnSync } from "node:child_process";
 
 const root = process.cwd();
 const generatedAt = new Date().toISOString();
@@ -25,9 +26,20 @@ const noUnresolvedP0Invariant = Number(day.metricSnapshot?.gateStatus?.unresolve
 const evidenceMissingBelowThreshold = Number(day.metricSnapshot?.evidenceMetrics?.missingRate ?? 1) <= gate.candidateOnlyAfter.evidenceMissingRateMax;
 const projectionLagBelowThreshold = Number(day.metricSnapshot?.projectionLag?.p95Minutes ?? 999) <= gate.candidateOnlyAfter.projectionLagP95MaxMinutes;
 const rollbackGreen = day.metricSnapshot?.rollbackReadiness?.status === "green";
+const runtimeWritePathGuard = runNodeCheck("scripts/check-runtime-write-paths.mjs");
+const businessReadAuth = businessReadAuthenticationGuard();
+const degradedSurface = degradedSurfaceGuard();
+
+assertTrue(runtimeWritePathGuard.passed, "L1->L2 gate 要求无动态 direct confirm 且无 official shadow_runtime reference。");
+assertTrue(businessReadAuth.passed, "L1->L2 gate 要求无 unauthenticated business read。");
+assertTrue(degradedSurface.passed, "L1->L2 gate 要求无 silent degraded surface。");
 
 const criteria = [
   criterion("default_not_eligible", gate.defaultEligible === false, "默认必须 not eligible。"),
+  criterion("no_dynamic_direct_confirm", runtimeWritePathGuard.passed, runtimeWritePathGuard.message),
+  criterion("no_shadow_official_reference", runtimeWritePathGuard.passed, runtimeWritePathGuard.message),
+  criterion("no_unauthenticated_business_read", businessReadAuth.passed, businessReadAuth.message),
+  criterion("no_silent_degraded_surface", degradedSurface.passed, degradedSurface.message),
   criterion("seven_days_no_p0", cleanDays >= gate.candidateOnlyAfter.cleanObservationDays, `已观察 ${cleanDays} 个 clean day，需要 ${gate.candidateOnlyAfter.cleanObservationDays} 天。`),
   criterion("no_unresolved_p1_hold", Number(day.p1HoldCount ?? 0) === 0, "存在未解决 P1 hold。"),
   criterion("finance_daily_close_100", financeDailyClose100, "finance daily close 未达到 100%。"),
@@ -54,6 +66,12 @@ const result = {
   latestMain: goNoGo.latestMain,
   latestMainCiGreen,
   latestMainV54Green,
+  architectureGuards: {
+    noDynamicDirectConfirm: runtimeWritePathGuard.passed,
+    noShadowOfficialReference: runtimeWritePathGuard.passed,
+    noUnauthenticatedBusinessRead: businessReadAuth.passed,
+    noSilentDegradedSurface: degradedSurface.passed
+  },
   cleanDaysObserved: cleanDays,
   requiredCleanDays: gate.candidateOnlyAfter.cleanObservationDays,
   finalSystemGateStatus: "blocked",
@@ -95,6 +113,66 @@ function readJson(relativePath) {
   const fullPath = path.join(root, relativePath);
   if (!fs.existsSync(fullPath)) throw new Error(`Missing required file: ${relativePath}`);
   return JSON.parse(fs.readFileSync(fullPath, "utf8"));
+}
+
+function readText(relativePath) {
+  return fs.readFileSync(path.join(root, relativePath), "utf8");
+}
+
+function runNodeCheck(script) {
+  const result = spawnSync("node", [script], {
+    cwd: root,
+    encoding: "utf8"
+  });
+  return {
+    passed: result.status === 0,
+    message: (result.stderr || result.stdout || `${script} failed`).trim()
+  };
+}
+
+function businessReadAuthenticationGuard() {
+  const auth = readText("services/core-api/WorkOS.Api/Runtime/RuntimeActorAuthentication.cs");
+  const program = readText("services/core-api/WorkOS.Api/Program.cs");
+  const requiredPrefixes = [
+    "/api/workspaces",
+    "/api/work-queue",
+    "/api/search",
+    "/api/lenses",
+    "/api/reconciliation",
+    "/api/mobile",
+    "/api/operations/cases"
+  ];
+  const missingPrefixes = requiredPrefixes.filter((prefix) => !auth.includes(prefix));
+  const requiredActorTerms = [
+    "RequireActor()",
+    "actor.TenantId",
+    "business_read_tenant_scope_mismatch"
+  ];
+  const missingActorTerms = requiredActorTerms.filter((term) => !program.includes(term));
+  const missing = [...missingPrefixes.map((prefix) => `auth:${prefix}`), ...missingActorTerms.map((term) => `program:${term}`)];
+  return {
+    passed: missing.length === 0,
+    message: missing.length === 0
+      ? "business read APIs require actor authentication and tenant scope."
+      : `missing business read auth/tenant guard terms: ${missing.join(", ")}`
+  };
+}
+
+function degradedSurfaceGuard() {
+  const lens = readText("services/core-api/WorkOS.Api/Runtime/RuntimeAggregateLensStorage.cs");
+  const pc = readText("apps/mobile/src/views/pcGovernanceView.js");
+  const requiredLensTerms = ["projectionLagSeconds", "lastEventId", "sourceNamespace", "degradedReason"];
+  const requiredSurfaceTerms = ["Lens Health", "degradedReason", "sourceNamespace", "lastEventId"];
+  const missing = [
+    ...requiredLensTerms.filter((term) => !lens.includes(term)).map((term) => `lens:${term}`),
+    ...requiredSurfaceTerms.filter((term) => !pc.includes(term)).map((term) => `surface:${term}`)
+  ];
+  return {
+    passed: missing.length === 0,
+    message: missing.length === 0
+      ? "Lens degraded metadata is exposed on PC Governance surface."
+      : `missing degraded surface metadata terms: ${missing.join(", ")}`
+  };
 }
 
 function writeJson(relativePath, value) {

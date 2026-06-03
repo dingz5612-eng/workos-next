@@ -129,6 +129,11 @@ Assert-Exists "scripts/check-mr-contract.mjs"
 Assert-Exists "scripts/check-rule-authority.mjs"
 Assert-Exists "scripts/check-rule-drift.mjs"
 Assert-Exists "scripts/check-v5-5-rules-os.mjs"
+Assert-Exists "scripts/check-oam-clean-baseline.mjs"
+Assert-Exists "scripts/check-compatibility-quarantine.mjs"
+Assert-Exists "scripts/check-definition-registry.mjs"
+Assert-Exists "scripts/check-language-kernel.mjs"
+Assert-Exists "scripts/check-search-kernel.mjs"
 Assert-Exists "scripts/check-no-production-fake-fallback.mjs"
 Assert-Exists "scripts/check-truth-owners.mjs"
 Assert-Exists "scripts/check-domain-packs.mjs"
@@ -137,6 +142,7 @@ Assert-Exists "scripts/check-receipt-projection.mjs"
 Assert-Exists "scripts/check-management-cockpit-boundary.mjs"
 Assert-Exists "scripts/check-shared-governance-boundary.mjs"
 Assert-Exists "scripts/check-admission-surface-alignment.mjs"
+Assert-Exists "scripts/check-admission-kernel.mjs"
 Assert-Exists "scripts/check-policy-as-code.mjs"
 Assert-Exists "scripts/check-finance-truth.mjs"
 Assert-Exists "scripts/check-executable-scenarios.mjs"
@@ -557,6 +563,9 @@ $allowedMapPostPaths = @(
   "/api/correction-center/ledger-correction-requests/{correctionRequestId}/apply",
   "/api/pc-governance/exports/{exportType}",
   "/api/projections/process-outbox",
+  "/api/mobile/drafts",
+  "/api/mobile/client-events",
+  "/api/mobile/recent-objects",
   "/api/behavior-events"
 )
 
@@ -637,11 +646,17 @@ Invoke-Checked "node" @("scripts/check-api-boundaries.mjs")
 Invoke-Checked "node" @("scripts/check-fact-ownership.mjs")
 Invoke-Checked "node" @("scripts/check-runtime-write-paths.mjs", "--self-test")
 Invoke-Checked "node" @("scripts/check-runtime-write-paths.mjs")
+Invoke-Checked "node" @("scripts/operations/check-l1-to-l2-readiness.mjs")
 Invoke-Checked "node" @("scripts/check-mr-contract.mjs")
 Invoke-Checked "node" @("scripts/check-invariant-maturity.mjs")
 Invoke-Checked "node" @("scripts/check-gate-result-hardening.mjs")
 Invoke-Checked "node" @("scripts/check-rule-drift.mjs")
 Invoke-Checked "node" @("scripts/check-v5-5-rules-os.mjs")
+Invoke-Checked "node" @("scripts/check-oam-clean-baseline.mjs")
+Invoke-Checked "node" @("scripts/check-compatibility-quarantine.mjs")
+Invoke-Checked "node" @("scripts/check-definition-registry.mjs")
+Invoke-Checked "node" @("scripts/check-language-kernel.mjs")
+Invoke-Checked "node" @("scripts/check-search-kernel.mjs")
 Invoke-Checked "node" @("scripts/check-no-production-fake-fallback.mjs", "--self-test")
 Invoke-Checked "node" @("scripts/check-no-production-fake-fallback.mjs")
 Invoke-Checked "node" @("scripts/check-truth-owners.mjs", "--self-test")
@@ -658,6 +673,7 @@ Invoke-Checked "node" @("scripts/check-shared-governance-boundary.mjs", "--self-
 Invoke-Checked "node" @("scripts/check-shared-governance-boundary.mjs")
 Invoke-Checked "node" @("scripts/check-admission-surface-alignment.mjs", "--self-test")
 Invoke-Checked "node" @("scripts/check-admission-surface-alignment.mjs")
+Invoke-Checked "node" @("scripts/check-admission-kernel.mjs")
 Invoke-Checked "node" @("scripts/check-policy-as-code.mjs", "--self-test")
 Invoke-Checked "node" @("scripts/check-policy-as-code.mjs")
 Invoke-Checked "node" @("scripts/check-finance-truth.mjs", "--self-test")
@@ -732,6 +748,21 @@ foreach ($requiredCiCommand in @("validate-slice-admission.mjs", "architecture-d
 if ($ci -notmatch "check-v5-5-rules-os\.mjs") {
   Fail "CI must run V5.5 Rules OS gate."
 }
+if ($ci -notmatch "check-oam-clean-baseline\.mjs") {
+  Fail "CI must run OAM clean baseline gate."
+}
+if ($ci -notmatch "check-compatibility-quarantine\.mjs") {
+  Fail "CI must run compatibility quarantine gate."
+}
+foreach ($requiredCiCommand in @(
+  "check-definition-registry.mjs",
+  "check-language-kernel.mjs",
+  "check-search-kernel.mjs"
+)) {
+  if ($ci -notmatch [regex]::Escape($requiredCiCommand)) {
+    Fail "CI must run OAM-CAB phase 4 command: $requiredCiCommand"
+  }
+}
 foreach ($requiredCiCommand in @(
   "check-truth-owners.mjs",
   "check-domain-packs.mjs",
@@ -740,6 +771,7 @@ foreach ($requiredCiCommand in @(
   "check-management-cockpit-boundary.mjs",
   "check-shared-governance-boundary.mjs",
   "check-admission-surface-alignment.mjs",
+  "check-admission-kernel.mjs",
   "check-policy-as-code.mjs",
   "check-finance-truth.mjs",
   "check-executable-scenarios.mjs",

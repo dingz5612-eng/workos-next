@@ -14,6 +14,12 @@ public sealed class RuntimeAuthOptions
         PasswordSha256ByUsername = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
             ["operator"] = RuntimePasswordHasher.Sha256("dev"),
+            ["dormOperator"] = RuntimePasswordHasher.Sha256("dev"),
+            ["dormFrontdesk"] = RuntimePasswordHasher.Sha256("dev"),
+            ["dormFinance"] = RuntimePasswordHasher.Sha256("dev"),
+            ["dormHousekeeping"] = RuntimePasswordHasher.Sha256("dev"),
+            ["dormManager"] = RuntimePasswordHasher.Sha256("dev"),
+            ["dormReleaseOwner"] = RuntimePasswordHasher.Sha256("dev"),
             ["finance"] = RuntimePasswordHasher.Sha256("dev"),
             ["manager"] = RuntimePasswordHasher.Sha256("dev"),
             ["admin"] = RuntimePasswordHasher.Sha256("dev"),

@@ -1,0 +1,14 @@
+{
+  "version": "oam.search-index-sources.v1",
+  "generatedBy": "oam-cab-v1-phase-4",
+  "sources": [
+    { "sourceId": "operationsWorkItems", "ref": "Operations Runtime WorkItem store", "objectTypes": ["workItem"], "admissionRequired": true },
+    { "sourceId": "operationCases", "ref": "Operations Runtime OperationCase store", "objectTypes": ["operationCase"], "admissionRequired": true },
+    { "sourceId": "workspaceCardCompatibility", "ref": "ProjectionRuntime workspace/card compatibility facade", "objectTypes": ["workspaceCardCompatibility", "learningItem"], "admissionRequired": true },
+    { "sourceId": "businessObjects", "ref": "official projections and lens snapshots", "objectTypes": ["businessObject", "payment", "deposit", "ledger"], "admissionRequired": true },
+    { "sourceId": "evidence", "ref": "RuntimeEvidenceStorage", "objectTypes": ["evidence"], "admissionRequired": true },
+    { "sourceId": "controlPlane", "ref": "Control Plane release and governance artifacts", "objectTypes": ["gateResult", "release", "auditEvent"], "admissionRequired": true },
+    { "sourceId": "reconciliation", "ref": "Finance reconciliation read model", "objectTypes": ["reconciliation", "correction"], "admissionRequired": true },
+    { "sourceId": "lens", "ref": "Projection / Lens contract", "objectTypes": ["lensItem"], "admissionRequired": true }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "version": "oam-cab.actor-device-admission-contract.v1",
+  "status": "baseline-contract",
+  "actorContextFields": [
+    "actorId",
+    "actorRole",
+    "actorTenantId",
+    "authSource",
+    "sessionToken",
+    "capabilities"
+  ],
+  "deviceContextFields": [
+    "deviceId",
+    "deviceTrustStatus",
+    "surface"
+  ],
+  "invariants": [
+    "High-risk action requires actor capability and trusted device.",
+    "Actor and device context are captured with CommandSubmission payload context.",
+    "Missing actor/session blocks confirm and does not produce business facts."
+  ],
+  "evidence": [
+    "services/core-api/WorkOS.Api/Runtime/RuntimeActorAuthentication.cs",
+    "services/core-api/WorkOS.Api/Runtime/CanonicalOperationsApiService.cs",
+    "docs/contracts/operations-command-submission-context.json"
+  ]
+}

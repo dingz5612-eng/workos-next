@@ -2,7 +2,7 @@
   "b_stage_gate_result_id": "b-stage-gate-rtb",
   "status": "passed",
   "source_mode": "real",
-  "generated_at_utc": "2026-06-03T05:48:24.4563034+00:00",
+  "generated_at_utc": "2026-06-03T11:46:06.0150299+00:00",
   "generated_by": "b-stage-gate-runner",
   "inputs": {
     "B1 checker output": ".tmp\\v5_4\\b1-domain-kit-result.json",

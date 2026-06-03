@@ -3,11 +3,9 @@ import { loadDraft } from "../operationDrafts.js";
 import { lensIdsForWorkspace, lensPreview, lensTitle } from "../runtimeLensCatalog.js";
 import { buildOperationActionState } from "../operationActionState.js";
 import { isUnsafeLedgerCarryForward } from "../selectors/surfaceSelectors.js";
-import { activeCardForWorkspace, activeWorkspaceCard, isCardActionDisabled } from "../selectors/workspaceSelectors.js";
+import { activeCardForWorkspace, activeWorkspaceCard, isCardActionDisabled, isTerminalCardStatus } from "../selectors/workspaceSelectors.js";
 import { checkoutServiceMobilePanel, checkoutServiceOperationAddon } from "./checkoutServiceView.js";
-import { EvidenceSheet, EvidenceTile, LifecycleWorkspace, OperationPanelView } from "./experienceComponents.js";
-
-const terminalStatuses = new Set(["done", "confirmed", "completed", "committed", "closed", "cancelled", "skipped"]);
+import { EvidenceStateVM, LifecycleWorkspace, OperationPanelView } from "./experienceComponents.js";
 
 export function workspaceView(ctx) {
   const item = ctx.workspace();
@@ -20,13 +18,11 @@ export function workspaceView(ctx) {
       </section>
     `);
   }
-  const requestedCard = activeWorkspaceCard(item, ctx.state.selectedCardIndex, ctx.state.selectedCardId);
-  const workspaceCompleted = (item.cards || []).every((card) => terminalStatuses.has(String(card.status || "")));
-  const activeCard = terminalStatuses.has(String(requestedCard.status || "")) && !workspaceCompleted
-    ? activeWorkspaceCard(item, -1, "")
-    : requestedCard;
+  const activeCard = activeWorkspaceCard(item, ctx.state.selectedCardIndex, ctx.state.selectedCardId);
+  const workspaceCompleted = (item.cards || []).every((card) => isTerminalCardStatus(card.status));
+  const viewingCompletedStep = isTerminalCardStatus(activeCard.status) && !workspaceCompleted;
   const actionState = buildOperationActionState({ workspace: item, workspaceId: item.id, cardId: activeCard.id }, activeCard, ctx.state.lastActionResult, ctx.state);
-  const isCompleted = workspaceCompleted && terminalStatuses.has(String(activeCard.status || ""));
+  const isCompleted = workspaceCompleted && isTerminalCardStatus(activeCard.status);
   if (isCompleted) {
     return ctx.shell(`
       <section class="workspace-page ${item.domain}">
@@ -48,16 +44,16 @@ export function workspaceView(ctx) {
       ${compatCardTabs(item, activeCard, ctx)}
       ${workspaceLensPanel(item, ctx)}
       ${checkoutServiceMobilePanel(item, activeCard, ctx)}
-      ${OperationPanelView(workspaceCardPanel(activeCard, item, true, ctx), item, activeCard, ctx)}
+      ${viewingCompletedStep ? workspaceCardPanel(activeCard, item, true, ctx) : OperationPanelView(workspaceCardPanel(activeCard, item, true, ctx), item, activeCard, ctx)}
     </section>
-    ${isCompleted ? "" : `<div class="sticky-action">${primaryActionButton(actionState, ctx)}</div>`}
+    ${viewingCompletedStep || isCompleted ? "" : `<div class="sticky-action">${primaryActionButton(actionState, ctx)}</div>`}
   `);
 }
 
 function completedWorkspaceRecord(item, card, ctx) {
-  const completedSteps = (item.cards || []).filter((candidate) => terminalStatuses.has(String(candidate.status || "")));
+  const completedSteps = (item.cards || []).filter((candidate) => isTerminalCardStatus(candidate.status));
   const next = nextIncompleteCardTitle(card, item, ctx);
-  const selectedStep = terminalStatuses.has(String(card.status || "")) ? card : completedSteps[0] || card;
+  const selectedStep = isTerminalCardStatus(card.status) ? card : completedSteps[0] || card;
   return `<section class="completed-record-detail" data-surface="completed-workspace-record">
     <div class="completed-record-hero">
       <span>${ctx.tr("completedRecordTitle")}</span>
@@ -118,7 +114,7 @@ function blockersForRecord(item, card, ctx) {
 
 function nextIncompleteCardTitle(card, item, ctx) {
   const index = (item.cards || []).findIndex((candidate) => candidate.id === card.id);
-  const next = (item.cards || []).slice(index + 1).find((candidate) => !terminalStatuses.has(String(candidate.status || "")));
+  const next = (item.cards || []).slice(index + 1).find((candidate) => !isTerminalCardStatus(candidate.status));
   return next ? ctx.tx(next.title) : "";
 }
 
@@ -196,38 +192,35 @@ export function cardOperation(card, item, ctx) {
   const visibleBlockers = activeBlockers(item, card);
   const statusHelp = cardStatusHelp(card, ctx);
   const draft = loadDraft(item.id, card.id);
-  if (card.status === "done") {
+  const fields = operationInputFields(card, ctx);
+  if (isTerminalCardStatus(card.status)) {
+    const currentCard = activeWorkspaceCard(item, -1, "");
+    const returnCurrent = currentCard?.id && currentCard.id !== card.id
+      ? `<div class="operation-actions"><button class="secondary" data-workspace="${ctx.escapeAttr(item.id)}" data-card-id="${ctx.escapeAttr(currentCard.id)}">${ctx.tr("returnCurrentWorkItem")}</button></div>`
+      : "";
     return `<div class="card-operation completed-operation">
       <span>${ctx.tr("completedRecordTitle")}</span>
       <h3>${ctx.tx(card.title)}</h3>
       <section class="operation-state"><b>${ctx.tr(card.status)}</b><p>${statusHelp}</p></section>
       <section><b>${ctx.tr("cardNext")}</b><p>${ctx.tr("cardNextHelp")} ${nextCardTitle(card, item, ctx)}</p></section>
       <section><b>${ctx.tr("nextBestAction")}</b><p>${ctx.tr("nextBestActionHelp")} ${ctx.tx(item.next)}</p></section>
+      ${returnCurrent}
     </div>`;
   }
   return `<div class="card-operation">
     <span>${ctx.tr("cardOperation")}</span>
     <h3>${ctx.tx(card.title)}</h3>
     ${statusHelp ? `<section class="operation-state"><b>${ctx.tr(card.status)}</b><p>${statusHelp}</p></section>` : ""}
-    <section><b>${ctx.tr("cardAction")}</b><p>${operationActionText(card, item, ctx)}</p></section>
-    <section>
+    <section class="operation-guidance"><b>${ctx.tr("cardAction")}</b><p>${operationActionText(card, item, ctx)}</p></section>
+    ${fields.length ? `<section class="operation-input-section" data-surface="operation-form">
       <b>${ctx.tr("cardInput")}</b>
-      <div class="operation-inputs">${operationInputFields(card, ctx).map((field) => operationControl(field, item, card, disabled, ctx)).join("")}</div>
-    </section>
-    <section>
-      <b>${ctx.tr("cardEvidence")}</b>
-      <p>${ctx.tr("cardEvidenceHelp")}</p>
-      <div class="evidence-row">${card.evidence.map((field) => evidenceButton(field, draft, disabled, ctx)).join("")}</div>
-      ${EvidenceSheet(card, draft, ctx)}
-    </section>
-    <section><b>${ctx.tr("cardConfirm")}</b><p>${confirmationText(card, item, ctx)}</p></section>
+      <div class="operation-inputs">${fields.map((field) => operationControl(field, item, card, disabled, ctx)).join("")}</div>
+    </section>` : ""}
+    ${systemValidationPanel(card, draft, visibleBlockers, ctx)}
     ${checkoutServiceOperationAddon(card, item, ctx)}
-    <section><b>${ctx.tr("cardNext")}</b><p>${ctx.tr("cardNextHelp")} ${nextCardTitle(card, item, ctx)}</p></section>
-    <section><b>${ctx.tr("nextBestAction")}</b><p>${ctx.tr("nextBestActionHelp")} ${ctx.tx(item.next)}</p></section>
-    <section><b>${ctx.tr("blockers")}</b><p>${visibleBlockers.length ? visibleBlockers.map((entry) => ctx.tx(entry.title)).join(" · ") : `${ctx.tr("noCriticalBlocker")} ${ctx.tr("blockerHelp")}`}</p></section>
+    ${visibleBlockers.length ? `<section class="operation-blockers"><b>${ctx.tr("blockers")}</b><p>${visibleBlockers.map((entry) => ctx.tx(entry.title)).join(" · ")}</p></section>` : ""}
     <div class="operation-actions">
       <button class="secondary" data-save-draft ${disabled}>${ctx.tr("saveDraft")}</button>
-      <button class="secondary" type="button" data-view="operationPanel" ${disabled}>${ctx.tr("trustedConfirm")}</button>
     </div>
     ${ctx.state.operationMessage ? `<p class="operation-message">${ctx.escapeHtml(ctx.state.operationMessage)}</p>` : ""}
   </div>`;
@@ -247,7 +240,7 @@ export function primaryActionButton(actionState, ctx) {
 }
 
 export function cardStatusHelp(card, ctx) {
-  if (card.status === "done") return ctx.tr("completedCardHelp");
+  if (isTerminalCardStatus(card.status)) return ctx.tr("completedCardHelp");
   if (card.status === "notStarted") return ctx.tr("notReadyCardHelp");
   return "";
 }
@@ -265,56 +258,83 @@ export function operationActionText(card, item, ctx) {
   }
   if (card.status === "blocked") return ctx.tx(item.next);
   return ctx.state.lang === "zh-CN"
-    ? `处理“${ctx.tx(card.title)}”，提交前系统会校验字段、证据和人工确认边界。`
-    : `Обработайте "${ctx.tx(card.title)}"; перед отправкой система проверит поля, доказательства и подтверждение.`;
+    ? `填写这张卡需要的业务信息。提交时系统会校验字段、证据、权限和阻断；未通过会停在当前卡并提示原因。`
+    : `Заполните бизнес-данные этой карточки. При отправке система проверит поля, доказательства, права и блокировки; при ошибке карточка останется здесь.`;
 }
 
 export function operationInputFields(card, ctx) {
-  return card.fields.business.filter((field) => field.required || !["备注", "补充说明", "异议说明"].includes(ctx.localTerm(field, "zh-CN")));
+  return (card.fields?.business || []).filter((field) => field.required || !["备注", "补充说明", "异议说明"].includes(ctx.localTerm(field, "zh-CN")));
 }
 
 export function operationControl(field, item, card, disabled, ctx) {
   const fieldId = operationFieldId(field);
-  const value = operationValue(field, item, card, ctx);
+  const fieldState = operationFieldState(field, item, card, ctx);
+  const value = fieldState.value;
   const kind = fieldControlKind(field);
   const options = optionsForField(field, ctx.state.lang);
   const help = ctx.tx(field.help);
-  if (kind === "searchSelect") return `<label class="search-select"><span>${ctx.localTerm(field)} · ${ctx.tr("searchableSelect")}</span><input data-operation-field="${ctx.escapeAttr(fieldId)}" list="${ctx.escapeAttr(fieldId)}Options" value="${value}" ${disabled} /><datalist id="${ctx.escapeAttr(fieldId)}Options">${options.map((entry) => `<option value="${entry.value}" label="${entry.label}">`).join("")}</datalist>${help ? `<small>${help}</small>` : ""}</label>`;
-  if (kind === "select") return `<label><span>${ctx.localTerm(field)}</span><select data-operation-field="${ctx.escapeAttr(fieldId)}" data-field-id="${ctx.escapeAttr(fieldId)}" ${disabled}>${options.map((entry) => `<option value="${entry.value}" ${entry.value === value ? "selected" : ""}>${entry.label}</option>`).join("")}</select>${help ? `<small>${help}</small>` : ""}</label>`;
+  const missing = missingFieldIdsFor(card, item, ctx).includes(fieldId);
+  const required = field.required ? `required aria-required="true" data-required-field="true"` : "";
+  const invalid = missing ? `aria-invalid="true" data-validation-state="missing"` : "";
+  const labelClass = ["operation-field", field.required ? "required" : "", missing ? "field-error" : "", fieldState.source === "caseContext" ? "context-carried" : ""].filter(Boolean).join(" ");
+  const label = fieldLabel(field, ctx);
+  if (fieldState.source === "caseContext" && isCaseContextIdentityField(fieldId)) {
+    return contextCarriedControl(field, fieldId, fieldState, labelClass, label, required, invalid, ctx);
+  }
+  if (kind === "searchSelect") return `<label class="${labelClass} search-select"><span>${label} · ${ctx.tr("searchableSelect")}</span><input data-operation-field="${ctx.escapeAttr(fieldId)}" list="${ctx.escapeAttr(fieldId)}Options" value="${ctx.escapeAttr(value)}" ${required} ${invalid} ${disabled} /><datalist id="${ctx.escapeAttr(fieldId)}Options">${options.map((entry) => `<option value="${ctx.escapeAttr(entry.value)}" label="${ctx.escapeAttr(entry.label)}">`).join("")}</datalist>${help ? `<small>${help}</small>` : ""}</label>`;
+  if (kind === "select") return `<label class="${labelClass}"><span>${label}</span><select data-operation-field="${ctx.escapeAttr(fieldId)}" data-field-id="${ctx.escapeAttr(fieldId)}" ${required} ${invalid} ${disabled}>${options.map((entry) => `<option value="${ctx.escapeAttr(entry.value)}" ${entry.value === value ? "selected" : ""}>${ctx.escapeHtml(entry.label)}</option>`).join("")}</select>${help ? `<small>${help}</small>` : ""}</label>`;
   if (kind === "dateTimeRange") {
     const [start = "", end = ""] = String(value || "").split(" 至 ");
-    return `<label><span>${ctx.localTerm(field)}</span><div class="datetime-range"><input data-operation-field-start="${ctx.escapeAttr(fieldId)}" type="datetime-local" value="${start}" ${disabled} /><input data-operation-field-end="${ctx.escapeAttr(fieldId)}" type="datetime-local" value="${end}" ${disabled} /></div>${help ? `<small>${help}</small>` : ""}</label>`;
+    return `<label class="${labelClass}"><span>${label}</span><div class="datetime-range"><input data-operation-field-start="${ctx.escapeAttr(fieldId)}" type="datetime-local" value="${ctx.escapeAttr(start)}" ${required} ${invalid} ${disabled} /><input data-operation-field-end="${ctx.escapeAttr(fieldId)}" type="datetime-local" value="${ctx.escapeAttr(end)}" ${required} ${invalid} ${disabled} /></div>${help ? `<small>${help}</small>` : ""}</label>`;
   }
-  if (kind === "dateTime") return `<label><span>${ctx.localTerm(field)}</span><input data-operation-field="${ctx.escapeAttr(fieldId)}" type="datetime-local" value="${value}" ${disabled} />${help ? `<small>${help}</small>` : ""}</label>`;
-  if (kind === "readonly") return `<label><span>${ctx.localTerm(field)}</span><input data-operation-field="${ctx.escapeAttr(fieldId)}" value="${value}" readonly ${disabled} />${help ? `<small>${help}</small>` : ""}</label>`;
+  if (kind === "dateTime") return `<label class="${labelClass}"><span>${label}</span><input data-operation-field="${ctx.escapeAttr(fieldId)}" type="datetime-local" value="${ctx.escapeAttr(value)}" ${required} ${invalid} ${disabled} />${help ? `<small>${help}</small>` : ""}</label>`;
+  if (kind === "readonly") return `<label class="${labelClass}"><span>${label}</span><input data-operation-field="${ctx.escapeAttr(fieldId)}" value="${ctx.escapeAttr(value)}" readonly ${disabled} />${help ? `<small>${help}</small>` : ""}</label>`;
   if (kind === "number") {
     const readonly = isDerivedReadonlyField(field) ? `readonly data-derived-from="${field.ui?.derivedFrom || ""}"` : "";
-    return `<label><span>${ctx.localTerm(field)}</span><input data-operation-field="${ctx.escapeAttr(fieldId)}" data-field-id="${ctx.escapeAttr(fieldId)}" type="number" inputmode="decimal" value="${value}" ${readonly} ${disabled} />${help ? `<small>${help}</small>` : ""}</label>`;
+    return `<label class="${labelClass}"><span>${label}</span><input data-operation-field="${ctx.escapeAttr(fieldId)}" data-field-id="${ctx.escapeAttr(fieldId)}" type="number" inputmode="decimal" value="${ctx.escapeAttr(value)}" ${readonly} ${required} ${invalid} ${disabled} />${help ? `<small>${help}</small>` : ""}</label>`;
   }
-  return `<label><span>${ctx.localTerm(field)}</span><input data-operation-field="${ctx.escapeAttr(fieldId)}" value="${value}" ${disabled} />${help ? `<small>${help}</small>` : ""}</label>`;
+  return `<label class="${labelClass}"><span>${label}</span><input data-operation-field="${ctx.escapeAttr(fieldId)}" value="${ctx.escapeAttr(value)}" ${required} ${invalid} ${disabled} />${help ? `<small>${help}</small>` : ""}</label>`;
+}
+
+function contextCarriedControl(field, fieldId, fieldState, labelClass, label, required, invalid, ctx) {
+  const displayValue = fieldState.displayValue || displayFieldValue(field, fieldState.value, ctx);
+  return `<label class="${labelClass}">
+    <span>${label}<em class="context-mark">${ctx.tr("caseContextAutoFilled")}</em></span>
+    <input value="${ctx.escapeAttr(displayValue)}" readonly aria-readonly="true" ${invalid} />
+    <input type="hidden" data-operation-field="${ctx.escapeAttr(fieldId)}" value="${ctx.escapeAttr(fieldState.value)}" ${required} />
+    <small>${ctx.tr("caseContextAutoFilledHelp")}</small>
+  </label>`;
+}
+
+function isCaseContextIdentityField(fieldId) {
+  return ["roomId", "bedId", "stayId", "residentId", "reservationId", "leadId", "depositId", "depositReceiptId", "paymentId", "chargeId", "taskId", "expenseId", "periodId"].includes(fieldId);
 }
 
 export function operationValue(field, item, card, ctx) {
+  return operationFieldState(field, item, card, ctx).value;
+}
+
+function operationFieldState(field, item, card, ctx) {
   const draft = loadDraft(item.id, card.id);
   const values = draft.values || {};
   const fieldId = operationFieldId(field);
-  if (values[fieldId]) return values[fieldId];
-  if (values[field.id]) return values[field.id];
+  if (values[fieldId]) return { value: values[fieldId], source: "draft" };
+  if (values[field.id]) return { value: values[field.id], source: "draft" };
   if (fieldId === "amount") {
     const derivedAmount = derivedChargeAmount(item, ctx, values);
-    if (derivedAmount) return derivedAmount;
+    if (derivedAmount) return { value: derivedAmount, source: "derived" };
   }
   if (fieldId === "refundAmount") {
     const derivedRefundAmount = derivedDepositRefundAmount(item, ctx, values);
-    if (derivedRefundAmount) return derivedRefundAmount;
+    if (derivedRefundAmount) return { value: derivedRefundAmount, source: "derived" };
   }
   const carried = carriedForwardValue(field, item, card, values, ctx);
-  if (carried) return carried;
+  if (carried) return { value: carried.value, displayValue: carried.displayValue, source: "caseContext" };
   if (field.ui?.derivedFrom === "roomType") {
     const roomType = Object.entries(values).find(([, candidate]) => ["single", "double", "four_bed", "six_bed", "单人间", "双人间", "四人间", "六人间"].includes(candidate))?.[1] || "four_bed";
-    return capacityForRoomType(roomType);
+    return { value: capacityForRoomType(roomType), source: "derived" };
   }
-  return defaultValueForField(field);
+  return { value: defaultValueForField(field), source: "default" };
 }
 
 function derivedChargeAmount(item, ctx, values = {}) {
@@ -358,8 +378,44 @@ function derivedDepositRefundAmount(item, ctx, values = {}) {
   return available > 0 ? String(available) : "";
 }
 
-function operationFieldId(field) {
+export function operationFieldId(field) {
   const aliases = {
+    "楼栋": "buildingName",
+    "楼栋/地点": "buildingName",
+    "房间号": "roomNo",
+    "房型": "roomType",
+    "房间类型": "roomType",
+    "容量": "capacity",
+    "床位数": "bedCount",
+    "性别策略": "genderPolicy",
+    "家具状态": "furnitureStatus",
+    "技术状态": "technicalState",
+    "房间备注": "roomNote",
+    "所属房间": "roomId",
+    "房间": "roomId",
+    "关联房间": "roomId",
+    "床位": "bedId",
+    "关联床位": "bedId",
+    "床位号": "bedNo",
+    "床位标签": "bedLabel",
+    "上/下铺": "bedType",
+    "床位类型": "bedType",
+    "初始床位状态": "bedStatus",
+    "床位状态": "bedStatus",
+    "阻断原因": "blockedReason",
+    "价格规则": "ratePlanId",
+    "每床日价": "dailyRatePerBed",
+    "每床周价": "weeklyRatePerBed",
+    "每床月价": "monthlyRatePerBed",
+    "币种": "currency",
+    "生效日期": "effectiveFrom",
+    "价格备注": "rateNote",
+    "可售状态": "availabilityStatus",
+    "阻断范围": "resourceScope",
+    "释放范围": "resourceScope",
+    "阻断开始时间": "blockStartAt",
+    "预计恢复时间": "expectedReleaseAt",
+    "恢复可售时间": "releaseAvailableAt",
     "准备备注": "readinessNote",
     "阻断备注": "blockNote",
     "释放备注": "releaseNote",
@@ -498,21 +554,101 @@ function operationFieldId(field) {
 }
 
 function carriedForwardValue(field, item, card, values, ctx) {
-  if (isUnsafeLedgerCarryForward(item, field.id)) return "";
+  const fieldId = operationFieldId(field);
+  if (isUnsafeLedgerCarryForward(item, fieldId)) return null;
   const aggregateRef = aggregateRefForValues(values);
-  const events = (ctx.state.projectionEvents || [])
-    .filter((event) => event.workspaceId === item.id && event.payload)
+  const events = sameWorkspaceEvents(item, ctx)
     .filter((event) => !aggregateRef || event.aggregateRef === aggregateRef || sameAggregatePayload(event.payload, aggregateRef))
     .slice()
     .reverse();
   for (const event of events) {
-    if (event.payload[field.id]) return event.payload[field.id];
+    const carried = carriedFieldFromPayload(fieldId, event.payload, ctx);
+    if (carried) return carried;
   }
-  return "";
+  return carriedFieldFromCompletedDraft(fieldId, item, card, ctx);
 }
 
-function evidenceButton(field, draft, disabled, ctx) {
-  return EvidenceTile(field, draft, disabled, ctx);
+function sameWorkspaceEvents(item, ctx) {
+  const events = [
+    ...(ctx.state.projectionEvents || []),
+    ...(ctx.state.runtimeStore?.events || [])
+  ];
+  const seen = new Set();
+  return events
+    .map((event) => ({
+      ...event,
+      workspaceId: event.workspaceId || event.WorkspaceId,
+      cardId: event.cardId || event.CardId,
+      aggregateRef: event.aggregateRef || event.AggregateRef,
+      payload: event.payload || event.Payload || {}
+    }))
+    .filter((event) => event.workspaceId === item.id && event.payload)
+    .filter((event) => {
+      const key = event.eventId || event.EventId || `${event.cardId}:${JSON.stringify(event.payload)}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+}
+
+function carriedFieldFromCompletedDraft(fieldId, item, card, ctx) {
+  const currentIndex = (item.cards || []).findIndex((candidate) => candidate.id === card.id);
+  const previousCards = (item.cards || [])
+    .slice(0, currentIndex < 0 ? 0 : currentIndex)
+    .filter((candidate) => isTerminalCardStatus(candidate.status))
+    .reverse();
+  for (const previous of previousCards) {
+    const draft = loadDraft(item.id, previous.id);
+    const carried = carriedFieldFromPayload(fieldId, draft.values || {}, ctx);
+    if (carried) return carried;
+  }
+  return null;
+}
+
+function carriedFieldFromPayload(fieldId, payload = {}, ctx) {
+  const direct = payload[fieldId];
+  if (hasCarryValue(direct)) {
+    return { value: String(direct), displayValue: contextDisplayValue(fieldId, String(direct), payload, ctx) };
+  }
+  if (fieldId === "roomId") {
+    const roomNo = payload.roomNo || payload["房间号"];
+    if (hasCarryValue(roomNo)) {
+      const value = `room-${String(roomNo).trim()}`.toLowerCase();
+      return { value, displayValue: roomDisplayValue(value, payload, ctx) };
+    }
+  }
+  if (fieldId === "bedId") {
+    const bedNo = payload.bedNo || payload["床位号"];
+    if (hasCarryValue(bedNo)) {
+      const value = `bed-${String(bedNo).trim()}`.toLowerCase();
+      return { value, displayValue: bedDisplayValue(value, payload, ctx) };
+    }
+  }
+  return null;
+}
+
+function hasCarryValue(value) {
+  return value !== undefined && value !== null && String(value).trim() !== "";
+}
+
+function contextDisplayValue(fieldId, value, payload, ctx) {
+  if (fieldId === "roomId") return roomDisplayValue(value, payload, ctx);
+  if (fieldId === "bedId") return bedDisplayValue(value, payload, ctx);
+  return value;
+}
+
+function roomDisplayValue(value, payload = {}, ctx) {
+  const building = payload.buildingName || payload.buildingId || payload["楼栋"] || "";
+  const roomNo = payload.roomNo || payload["房间号"] || "";
+  const label = [building, roomNo].filter(Boolean).join(" / ");
+  return label || value;
+}
+
+function bedDisplayValue(value, payload = {}, ctx) {
+  const room = roomDisplayValue(payload.roomId || "", payload, ctx);
+  const bedNo = payload.bedNo || payload["床位号"] || "";
+  const label = [room, bedNo].filter(Boolean).join(" / ");
+  return label || value;
 }
 
 function aggregateRefForValues(values) {
@@ -520,6 +656,36 @@ function aggregateRefForValues(values) {
     if (values[key]) return `${key}:${values[key]}`;
   }
   return "";
+}
+
+function fieldLabel(field, ctx) {
+  const required = field.required ? `<em class="required-mark">${ctx.tr("requiredMark")}</em>` : "";
+  return `${ctx.localTerm(field)}${required}`;
+}
+
+function missingFieldIdsFor(card, item, ctx) {
+  const validation = ctx.state.fieldValidation || {};
+  if (validation.workspaceId !== item.id || validation.cardId !== card.id) return [];
+  return validation.missingFieldIds || [];
+}
+
+function systemValidationPanel(card, draft, visibleBlockers, ctx) {
+  const evidenceStates = (card.evidence || []).map((field) =>
+    EvidenceStateVM(field, (draft.evidenceDrafts || []).find((item) => item.requirementId === field.id), ctx));
+  const evidenceNames = evidenceStates.map((state) => state.name).filter(Boolean);
+  const checkNames = (card.checks || []).map((entry) => ctx.localTerm(entry)).filter(Boolean);
+  const missingLabels = ctx.state.fieldValidation?.cardId === card.id ? ctx.state.fieldValidation.missingLabels || [] : [];
+  const chips = [
+    `${ctx.tr("requiredFields")}: ${missingLabels.length ? missingLabels.join(" · ") : ctx.tr("systemCheckReady")}`,
+    `${ctx.tr("systemEvidenceCheck")}: ${evidenceNames.length ? evidenceNames.join(" · ") : ctx.tr("noRequiredEvidence")}`,
+    `${ctx.tr("blockers")}: ${visibleBlockers.length ? visibleBlockers.map((entry) => ctx.tx(entry.title)).join(" · ") : ctx.tr("noSubmitBlocker")}`,
+    checkNames.length ? `${ctx.tr("systemRules")}: ${checkNames.slice(0, 3).join(" · ")}` : ""
+  ].filter(Boolean);
+  return `<section class="system-check-panel${missingLabels.length ? " has-error" : ""}" data-surface="system-validation-summary">
+    <b>${ctx.tr("systemValidation")}</b>
+    <p>${ctx.tr("systemValidationHelp")}</p>
+    <div>${chips.map((chip) => `<span>${ctx.escapeHtml(chip)}</span>`).join("")}</div>
+  </section>`;
 }
 
 function sameAggregatePayload(payload, aggregateRef) {

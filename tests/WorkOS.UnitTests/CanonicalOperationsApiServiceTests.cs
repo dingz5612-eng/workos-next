@@ -23,6 +23,12 @@ public sealed class CanonicalOperationsApiServiceTests
         Assert.AreEqual(1, store.DomainEvents.Count);
         Assert.AreEqual(result.CommandSubmissionId, trace?.SubmissionRef);
         Assert.AreEqual(result.ResultEventIds[0], trace?.DomainEventRefs[0]);
+        Assert.IsTrue(result.ClientInstruction.ContainsKey("admission"));
+        Assert.IsTrue(result.ClientInstruction.ContainsKey("definition"));
+        Assert.AreEqual("workspace-card-compatibility-wrapper", result.ClientInstruction["compatibilityMode"]);
+        var admission = (IReadOnlyDictionary<string, object>)result.ClientInstruction["admission"];
+        Assert.AreEqual(false, admission["productionAllowed"]);
+        Assert.AreEqual(true, admission["confirmAllowed"]);
     }
 
     [TestMethod]
@@ -37,6 +43,55 @@ public sealed class CanonicalOperationsApiServiceTests
         Assert.AreEqual(StatusCodes.Status409Conflict, conflict.StatusCode);
         Assert.AreEqual("idempotency_conflict", conflict.Error);
         Assert.AreEqual(1, store.DomainEvents.Count);
+    }
+
+    [TestMethod]
+    public void operations_confirm_without_idempotency_key_returns_422_without_writing_domain_event()
+    {
+        var service = Service(out _, out var store);
+
+        var result = service.ConfirmWorkItem(
+            "W-S3:roomSetup",
+            new ConfirmWorkItemRequest(
+                Language: "zh-CN",
+                FieldValues: new Dictionary<string, string> { ["roomNo"] = "A101" },
+                EvidenceIds: Array.Empty<string>(),
+                SubmissionId: "sub-missing-idempotency",
+                CardInstanceId: "ci-missing-idempotency"),
+            "actor-token",
+            "req-missing-idempotency");
+
+        Assert.AreEqual(StatusCodes.Status422UnprocessableEntity, result.StatusCode);
+        Assert.AreEqual("idempotency_key_required", result.Error);
+        Assert.IsEmpty(store.DomainEvents);
+        Assert.IsEmpty(store.Submissions);
+    }
+
+    [TestMethod]
+    public void operations_confirm_blocks_production_mode_before_unit_of_work()
+    {
+        var service = Service(out _, out var store);
+
+        var result = service.ConfirmWorkItem(
+            "W-S3:roomSetup",
+            Request(
+                "idem-production-blocked",
+                fieldValues: new Dictionary<string, string>
+                {
+                    ["roomNo"] = "A101",
+                    ["runtimeMode"] = "production"
+                }),
+            "actor-token",
+            "req-production-blocked");
+
+        Assert.AreEqual(StatusCodes.Status403Forbidden, result.StatusCode);
+        Assert.AreEqual("admission_rejected", result.Error);
+        Assert.IsFalse(result.Confirmed);
+        Assert.IsEmpty(store.Submissions);
+        Assert.IsTrue(result.ClientInstruction.ContainsKey("admission"));
+        var admission = (IReadOnlyDictionary<string, object>)result.ClientInstruction["admission"];
+        Assert.AreEqual(false, admission["confirmAllowed"]);
+        Assert.AreEqual(false, admission["productionAllowed"]);
     }
 
     [TestMethod]
@@ -87,7 +142,7 @@ public sealed class CanonicalOperationsApiServiceTests
     private static CanonicalOperationsApiService Service(out FakeCatalogRuntime runtime, out InMemoryOperationsStore store)
     {
         runtime = new FakeCatalogRuntime();
-        var catalog = new OperationsRuntimeService(runtime, new InMemoryOperationsCommandSubmissionStore());
+        var catalog = new OperationsRuntimeService(runtime);
         store = new InMemoryOperationsStore();
         var router = new SliceCommandHandlerRouter()
             .Register(CanonicalOperationsApiService.ConfirmCommandType, CanonicalOperationsApiService.HandleConfirmCommand);

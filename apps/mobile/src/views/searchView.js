@@ -106,22 +106,61 @@ function activeCommands(workspaces, completedQueue, ctx) {
 }
 
 function dormitoryCommandCatalog(ctx) {
-  const zh = ctx.state.lang === "zh-CN";
   return [
-    command("W-STAY-RESOURCE", "roomSetup", zh ? "新建房间" : "Create room", zh ? "发起住宿资源建档，配置房间、床位、价格、准备度、阻断和释放。" : "Start resource setup.", zh ? "从房间配置开始" : "Start from room setup", ["创建房间", "新增房间", "配置房间", "住宿资源", "资源建档"]),
-    command("W-STAY-LEAD-RESERVATION", "leadCapture", zh ? "管理线索预订" : "Manage lead reservation", zh ? "从线索捕获到预订、取消或转入住。" : "Lead to reservation flow.", zh ? "先登记线索" : "Capture lead first", ["线索", "预订", "咨询", "预约"]),
-    command("W-STAY-CHECKIN", "lead", zh ? "安排入住收款" : "Arrange check-in payment", zh ? "从线索、预订、分床、计费、押金、收款到财务确认。" : "Check-in and payment loop.", zh ? "先处理入住线索" : "Start intake", ["入住收款", "入住", "收款", "押金入住", "安排入住"]),
-    command("W-STAY-LIFECYCLE", "residentProfile", zh ? "管理在住生命周期" : "Manage stay lifecycle", zh ? "住客资料、正式入住、分床、应收和续住。" : "Resident lifecycle.", zh ? "先建立住客资料" : "Start resident profile", ["在住", "住客", "续住", "生命周期"]),
-    command("W-STAY-DEPOSIT-LEDGER", "depositAssessment", zh ? "管理押金账本" : "Manage deposit ledger", zh ? "押金评估、收取、财务确认、扣除、退款和关闭。" : "Deposit ledger flow.", zh ? "先评估押金" : "Assess deposit first", ["押金", "押金账本", "退款", "扣除"]),
-    command("W-STAY-PAYMENT-LEDGER", "paymentReceipt", zh ? "管理普通收款账本" : "Manage payment ledger", zh ? "普通收款、财务确认、分配、调整和欠款跟进。" : "Payment ledger flow.", zh ? "先登记收款" : "Record payment first", ["普通收款", "收款账本", "欠款", "付款"]),
-    command("W-STAY-SERVICE-TASK", "serviceTaskCreate", zh ? "管理清洁维修任务" : "Manage service task", zh ? "清洁、维修和配置任务影响房间床位可售状态。" : "Service task flow.", zh ? "先创建服务任务" : "Create task first", ["清洁", "维修", "服务任务", "保洁"]),
-    command("W-STAY-CHECKOUT", "checkoutStart", zh ? "办理退房" : "Handle checkout", zh ? "退房开始、查房、费用结算、财务确认和关闭。" : "Checkout flow.", zh ? "先发起退房" : "Start checkout", ["退房", "离店", "checkout"]),
-    command("W-STAY-CHECKOUT-SETTLEMENT", "checkoutStart", zh ? "办理退住结算" : "Handle checkout settlement", zh ? "退住、查房、押金处理、最终结算、床位释放和清洁任务。" : "Checkout settlement flow.", zh ? "先开始退住" : "Start settlement", ["退住", "结算", "退住结算", "查房"]),
-    command("W-STAY-PERIOD-ANALYTICS", "periodScope", zh ? "做周期经营复盘" : "Run period review", zh ? "周期范围、指标、财务、运营诊断、行动计划和关闭。" : "Period analytics flow.", zh ? "先确认周期范围" : "Confirm period scope", ["复盘", "周期", "经营", "指标"])
+    command("W-STAY-RESOURCE", "roomSetup", {
+      title: { "zh-CN": "新增住宿房源", "ru-RU": "Добавить комнату", "ky-KG": "Бөлмө кошуу" },
+      subtitle: { "zh-CN": "先录房号和床位数，价格和可租状态后面再补。", "ru-RU": "Сначала внесите номер комнаты и число коек. Тарифы и готовность заполните дальше.", "ky-KG": "Алгач бөлмө номерин жана койка санын жазыңыз. Баа жана даярдык кийин толтурулат." },
+      nextAction: { "zh-CN": "先填房号", "ru-RU": "Начать с номера комнаты", "ky-KG": "Бөлмө номеринен баштоо" }
+    }, ["创建房间", "新增房间", "新建房间", "配置房间", "住宿资源", "资源建档", "create room", "add room", "room setup", "добавить комнату", "создать комнату", "комната", "койки", "бөлмө", "койка"]),
+    command("W-STAY-LEAD-RESERVATION", "leadCapture", {
+      title: { "zh-CN": "登记咨询和预订", "ru-RU": "Записать заявку и бронь", "ky-KG": "Суроо жана бронь каттоо" },
+      subtitle: { "zh-CN": "先把来访咨询记清楚，再决定预订、取消或转入住。", "ru-RU": "Сначала зафиксируйте обращение, затем бронь, отмена или заселение.", "ky-KG": "Адегенде кайрылууну так жазыңыз, анан бронь, жокко чыгаруу же кирүү." },
+      nextAction: { "zh-CN": "先登记咨询人", "ru-RU": "Начните с заявки", "ky-KG": "Суроо ээсинен баштаңыз" }
+    }, ["线索", "预订", "咨询", "预约", "lead", "reservation", "бронь", "заявка", "суроо", "бронь"]),
+    command("W-STAY-CHECKIN", "lead", {
+      title: { "zh-CN": "安排入住和收款", "ru-RU": "Оформить заезд и оплату", "ky-KG": "Кирүү жана төлөм уюштуруу" },
+      subtitle: { "zh-CN": "从入住人开始，完成分床、计费、押金和收款确认。", "ru-RU": "От жильца к койке, начислению, депозиту и подтверждению оплаты.", "ky-KG": "Жашоочудан баштап койка, эсеп, депозит жана төлөмдү тастыктоо." },
+      nextAction: { "zh-CN": "先确认入住人", "ru-RU": "Начните с жильца", "ky-KG": "Жашоочудан баштаңыз" }
+    }, ["入住收款", "入住", "收款", "押金入住", "安排入住", "checkin", "payment", "заезд", "оплата", "кирүү", "төлөм"]),
+    command("W-STAY-LIFECYCLE", "residentProfile", {
+      title: { "zh-CN": "维护在住信息", "ru-RU": "Обновить данные проживания", "ky-KG": "Жашоо маалыматтарын жаңыртуу" },
+      subtitle: { "zh-CN": "处理住客资料、分床、应收、续住和在住变更。", "ru-RU": "Данные жильца, койка, начисления, продление и изменения проживания.", "ky-KG": "Жашоочу, койка, эсеп, узартуу жана жашоо өзгөрүүлөрү." },
+      nextAction: { "zh-CN": "先打开住客资料", "ru-RU": "Откройте профиль жильца", "ky-KG": "Жашоочу профилин ачыңыз" }
+    }, ["在住", "住客", "续住", "生命周期", "resident", "stay", "жилец", "проживание", "жашоочу", "жашоо"]),
+    command("W-STAY-DEPOSIT-LEDGER", "depositAssessment", {
+      title: { "zh-CN": "处理押金", "ru-RU": "Обработать депозит", "ky-KG": "Депозитти иштетүү" },
+      subtitle: { "zh-CN": "押金评估、收取、财务确认、扣除、退款和关闭。", "ru-RU": "Оценка, прием, фин. подтверждение, удержание, возврат и закрытие.", "ky-KG": "Баалоо, алуу, финансы тастыктоо, кармоо, кайтаруу жана жабуу." },
+      nextAction: { "zh-CN": "先评估押金", "ru-RU": "Начните с оценки", "ky-KG": "Баалоодон баштаңыз" }
+    }, ["押金", "押金账本", "退款", "扣除", "deposit", "refund", "депозит", "возврат"]),
+    command("W-STAY-PAYMENT-LEDGER", "paymentReceipt", {
+      title: { "zh-CN": "登记普通收款", "ru-RU": "Записать обычный платеж", "ky-KG": "Кадимки төлөмдү каттоо" },
+      subtitle: { "zh-CN": "登记收款、财务确认、分配到应收，后续处理欠款。", "ru-RU": "Запись платежа, фин. подтверждение, распределение и долги.", "ky-KG": "Төлөмдү каттоо, финансы тастыктоо, бөлүштүрүү жана карыз." },
+      nextAction: { "zh-CN": "先登记收款", "ru-RU": "Начните с платежа", "ky-KG": "Төлөмдөн баштаңыз" }
+    }, ["普通收款", "收款账本", "欠款", "付款", "payment", "receipt", "платеж", "оплата", "төлөм"]),
+    command("W-STAY-SERVICE-TASK", "serviceTaskCreate", {
+      title: { "zh-CN": "安排清洁或维修", "ru-RU": "Назначить уборку или ремонт", "ky-KG": "Тазалоо же оңдоону дайындоо" },
+      subtitle: { "zh-CN": "创建影响房间、床位可售状态的清洁、维修或配置任务。", "ru-RU": "Создайте задачу, которая влияет на доступность комнаты или койки.", "ky-KG": "Бөлмө же койканын сатылуу абалына таасир берген тапшырма түзүңүз." },
+      nextAction: { "zh-CN": "先创建服务任务", "ru-RU": "Создайте задачу", "ky-KG": "Тапшырма түзүңүз" }
+    }, ["清洁", "维修", "服务任务", "保洁", "cleaning", "repair", "уборка", "ремонт", "тазалоо", "оңдоо"]),
+    command("W-STAY-CHECKOUT", "checkoutStart", {
+      title: { "zh-CN": "办理退房", "ru-RU": "Оформить выезд", "ky-KG": "Чыгып кетүүнү жүргүзүү" },
+      subtitle: { "zh-CN": "发起退房、查房、结算费用、财务确认并关闭。", "ru-RU": "Начало выезда, проверка комнаты, расчет, фин. подтверждение и закрытие.", "ky-KG": "Чыгуу, бөлмө текшерүү, эсептешүү, финансы тастыктоо жана жабуу." },
+      nextAction: { "zh-CN": "先发起退房", "ru-RU": "Начните выезд", "ky-KG": "Чыгууну баштаңыз" }
+    }, ["退房", "离店", "checkout", "выезд", "чыгуу"]),
+    command("W-STAY-CHECKOUT-SETTLEMENT", "checkoutStart", {
+      title: { "zh-CN": "办理退住结算", "ru-RU": "Рассчитать выезд", "ky-KG": "Чыгуу эсептешүүсү" },
+      subtitle: { "zh-CN": "处理退住、查房、押金、最终结算、床位释放和清洁任务。", "ru-RU": "Выезд, проверка, депозит, финальный расчет, освобождение койки и уборка.", "ky-KG": "Чыгуу, текшерүү, депозит, акыркы эсеп, койка бошотуу жана тазалоо." },
+      nextAction: { "zh-CN": "先开始退住", "ru-RU": "Начните расчет", "ky-KG": "Эсептешүүнү баштаңыз" }
+    }, ["退住", "结算", "退住结算", "查房", "settlement", "расчет", "эсептешүү"]),
+    command("W-STAY-PERIOD-ANALYTICS", "periodScope", {
+      title: { "zh-CN": "做周期复盘", "ru-RU": "Провести обзор периода", "ky-KG": "Мезгилдик талдоо жүргүзүү" },
+      subtitle: { "zh-CN": "确认周期范围，查看指标、财务、运营诊断和行动计划。", "ru-RU": "Период, метрики, финансы, операционная диагностика и план действий.", "ky-KG": "Мезгил, көрсөткүч, финансы, операциялык диагноз жана аракет планы." },
+      nextAction: { "zh-CN": "先确认周期范围", "ru-RU": "Уточните период", "ky-KG": "Мезгилди тактаңыз" }
+    }, ["复盘", "周期", "经营", "指标", "period", "review", "обзор", "период", "талдоо", "мезгил"])
   ];
 }
 
-function command(templateWorkspaceId, firstCardId, title, subtitle, nextAction, keywords) {
+function command(templateWorkspaceId, firstCardId, { title, subtitle, nextAction }, keywords) {
   return { templateWorkspaceId, firstCardId, title, subtitle, nextAction, keywords };
 }
 
@@ -155,7 +194,7 @@ function completedRoomCommand(workspaces, completedQueue, ctx) {
 }
 
 function sectionTitleOverride(id, ctx) {
-  if (id === "activeCommands") return ctx.state.lang === "zh-CN" ? "主动命令" : "Commands";
+  if (id === "activeCommands") return ctx.tr("activeCommands");
   return ctx.tr(id);
 }
 
@@ -200,7 +239,7 @@ function workItems(queue, ctx) {
     ...item,
     resultType: "workItem",
     title: item.businessObject || item.card?.title || item.workspace?.title || ctx.tr("searchWorkItems"),
-    subtitle: item.workItemType || item.domain || ctx.tr("workbench"),
+    subtitle: businessContextLabel(item, ctx, ctx.tr("workbench")),
     status: item.lifecycleState || item.status || item.card?.status || "ready",
     nextAction: item.reason || tx(item.workspace?.next, ctx) || ctx.tr("searchActionProcess")
   })), ctx.state.query).slice(0, 8);
@@ -272,7 +311,7 @@ function operationCases(queue, workspaces, ctx) {
       ...item,
       resultType: "operationCase",
       title: [tx(item.workspace?.title, ctx), tx(item.card?.title, ctx)].filter(Boolean).join(" · ") || ctx.tr("searchOperationCases"),
-      subtitle: item.workItemType || item.domain || ctx.tr("operation"),
+      subtitle: businessContextLabel(item, ctx, ctx.tr("operation")),
       status: item.lifecycleState || item.status || "ready",
       nextAction: item.reason || ctx.tr("openWorkspace")
     });
@@ -283,7 +322,7 @@ function operationCases(queue, workspaces, ctx) {
     const caseId = workspace.caseId || `case:${workspace.id}`;
     if (!cases.has(caseId)) {
       cases.set(caseId, {
-        title: caseId,
+        title: operationCaseTitle(workspace, ctx),
         resultType: "operationCase",
         workspaceId: workspace.id,
         cardId: workspace.cards?.[0]?.id || "",
@@ -297,6 +336,10 @@ function operationCases(queue, workspaces, ctx) {
   return rankSearchResults(Array.from(cases.values()), ctx.state.query).slice(0, 6);
 }
 
+function operationCaseTitle(workspace = {}, ctx = {}) {
+  return tx(workspace.title, ctx) || localized(workspace.localizedTitle, ctx) || ctx.tr?.("searchOperationCases") || "";
+}
+
 function completedCases(completedQueue, workspaceResults, ctx) {
   const records = new Map();
   for (const item of completedQueue) {
@@ -306,7 +349,7 @@ function completedCases(completedQueue, workspaceResults, ctx) {
       ...item,
       resultType: "operationCase",
       title: [item.businessObject, tx(item.workspace?.title, ctx), tx(item.card?.title, ctx)].filter(Boolean).join(" · ") || ctx.tr("completedWorkItems"),
-      subtitle: item.workItemType || item.workspaceId || ctx.tr("completedWorkItems"),
+      subtitle: businessContextLabel(item, ctx, ctx.tr("completedWorkItems")),
       status: item.lifecycleState || item.status || item.card?.status || "done",
       nextAction: ctx.tr("viewOnly")
     });
@@ -372,7 +415,7 @@ function traceResults(queue, ctx) {
       resultType: "trace",
       traceId: item.traceRefs?.[0] || item.commandSubmissionId || item.command_submission_id,
       title: ctx.tr("searchSubmissionTrace"),
-      subtitle: item.workItemType || ctx.tr("recentTraces"),
+      subtitle: businessContextLabel(item, ctx, ctx.tr("recentTraces")),
       status: item.lifecycleState || item.status || "ready",
       nextAction: ctx.tr("recentTraces")
     }));
@@ -445,6 +488,39 @@ function learning(titleKey, bodyKey, status, ctx) {
     status,
     nextAction: ctx.tr("searchActionLearning")
   };
+}
+
+function businessContextLabel(item = {}, ctx = {}, fallback = "") {
+  const raw = localized(item.localizedSubtitle ?? item.subtitle ?? item.workItemType ?? item.work_item_type, ctx);
+  if (raw && !isRawRuntimeLabel(raw)) return raw;
+  const text = [
+    item.domain,
+    item.workspaceId,
+    item.workspace_id,
+    item.workItemType,
+    item.work_item_type,
+    item.cardId,
+    item.card_id,
+    item.workspace?.id,
+    item.card?.id
+  ].filter(Boolean).join(" ");
+  if (/stay|dorm|W-STAY/i.test(text)) return accommodationBusinessLabel(ctx);
+  return fallback || ctx.tr?.("workbench") || "";
+}
+
+function accommodationBusinessLabel(ctx = {}) {
+  const labels = {
+    "zh-CN": "住宿业务",
+    "ru-RU": "Проживание",
+    "ky-KG": "Жатакана иши"
+  };
+  return labels[ctx.state?.lang] || labels["zh-CN"];
+}
+
+function isRawRuntimeLabel(value = "") {
+  return /^(stay|dorm|finance|lead|repair|parts|hr)$/i.test(String(value).trim())
+    || /^[A-Z][A-Za-z0-9]*\.[A-Za-z0-9.]+$/.test(String(value).trim())
+    || /^W-[A-Z0-9-]+(?::[A-Za-z0-9-]+)?$/.test(String(value).trim());
 }
 
 function tx(value, ctx) {

@@ -1,0 +1,22 @@
+{
+  "version": "oam-cab.evidence-graph-refs-contract.v1",
+  "status": "baseline-contract",
+  "requiredRefs": [
+    "artifacts/release-state/current-state.json",
+    "artifacts/rt4/evidence-graph.json",
+    "artifacts/oam-cab/oam-cab-v1-inventory.json",
+    "artifacts/oam-cab/oam-cab-v1-final-report.json",
+    "artifacts/oam-cab/execution-log.jsonl"
+  ],
+  "appendOnlyEvidenceRequired": true,
+  "businessFactWriteAllowed": false,
+  "invariants": [
+    "EvidenceGraph refs are traceable.",
+    "EvidenceGraph does not directly write business facts.",
+    "Evidence cannot replace executable gates."
+  ],
+  "evidence": [
+    "scripts/rt4/verify-evidence-graph.mjs",
+    "scripts/check-oam-cab-final-report.mjs"
+  ]
+}

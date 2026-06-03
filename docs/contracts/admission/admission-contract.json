@@ -1,0 +1,66 @@
+{
+  "version": "oam.admission-contract.v1",
+  "generatedBy": "oam-cab-v1-phase-3",
+  "outputFields": {
+    "visibleAllowed": {
+      "type": "boolean",
+      "description": "Whether the surface may show the item."
+    },
+    "prepareAllowed": {
+      "type": "boolean",
+      "description": "Whether the runtime may prepare field/evidence requirements."
+    },
+    "confirmAllowed": {
+      "type": "boolean",
+      "description": "Whether a non-production internal or compatibility confirm may proceed under current admission."
+    },
+    "productionAllowed": {
+      "type": "boolean",
+      "description": "Whether the action is admitted for production."
+    },
+    "mode": {
+      "type": "string",
+      "allowedValues": ["internal_pilot_observation", "production_blocked", "contract_preview", "prepare_only", "blocked"]
+    },
+    "reason": {
+      "type": "string",
+      "description": "Human-readable admission explanation."
+    },
+    "blockingSources": {
+      "type": "string[]",
+      "description": "Authorities that block the decision."
+    },
+    "requiredCapabilities": {
+      "type": "string[]",
+      "description": "Actor capabilities required before confirm or production can be admitted."
+    },
+    "requiredDeviceTrust": {
+      "type": "string[]",
+      "description": "Device trust requirements for high-risk action."
+    },
+    "businessLineState": {
+      "type": "string",
+      "description": "Business line maturity from business-line-registry."
+    },
+    "releaseState": {
+      "type": "string",
+      "description": "Release posture from current-state."
+    },
+    "surfaceState": {
+      "type": "string",
+      "description": "Surface mode from runtime-surface-policy."
+    },
+    "noGoItems": {
+      "type": "string[]",
+      "description": "Blocking No-Go items."
+    }
+  },
+  "invariants": [
+    "visibleAllowed does not imply confirmAllowed.",
+    "prepareAllowed does not imply productionAllowed.",
+    "Business Production BLOCKED forces productionAllowed=false.",
+    "L0 Contract Preview cannot confirm.",
+    "High-risk actions require capability and trusted device evidence.",
+    "Surface policy cannot grant production action."
+  ]
+}

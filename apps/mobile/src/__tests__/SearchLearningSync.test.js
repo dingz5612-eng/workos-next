@@ -8,7 +8,7 @@ describe("HOTFIX-SURFACE-UX-01 Search and Learning sync", () => {
     const html = searchView(ctx({ view: "search", query: "住宿" }));
 
     expect(html).toContain("WorkOS 搜索");
-    for (const label of ["OperationCase", "提交轨迹"]) {
+    for (const label of ["业务记录", "提交轨迹"]) {
       expect(html).toContain(label);
     }
     expect(html).not.toContain('data-search-section="searchLearning"');

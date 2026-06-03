@@ -5,21 +5,35 @@ namespace WorkOS.Api.Runtime;
 public sealed class CanonicalOperationsApiService
 {
     public const string ConfirmCommandType = "operations.work_item.confirm.v1";
+    public static readonly SliceCommandHandlerDefinition ConfirmCommandDefinition = new(
+        ConfirmCommandType,
+        "operations.work-item-confirm",
+        "work-item.confirm.v1",
+        new[] { "DomainEvent", "WorkItem", "LedgerEntry" },
+        "balanced-ledger-or-none",
+        new[] { "confirm-request.evidenceIds" },
+        "OperationsRuntimeProjection");
 
     private const string Source = "operations_unit_of_work";
     private const string PayloadFieldValues = "fieldValues";
     private readonly OperationsRuntimeService catalog;
     private readonly OperationsUnitOfWork unitOfWork;
     private readonly OperationsReadStore traces;
+    private readonly WorkItemDefinitionRegistryService definitions;
+    private readonly AdmissionKernelService admission;
 
     public CanonicalOperationsApiService(
         OperationsRuntimeService catalog,
         OperationsUnitOfWork unitOfWork,
-        OperationsReadStore traces)
+        OperationsReadStore traces,
+        WorkItemDefinitionRegistryService? definitions = null,
+        AdmissionKernelService? admission = null)
     {
         this.catalog = catalog;
         this.unitOfWork = unitOfWork;
         this.traces = traces;
+        this.definitions = definitions ?? WorkItemDefinitionRegistryService.LoadDefault();
+        this.admission = admission ?? new AdmissionKernelService();
     }
 
     public OperationCase? CreateCase(CreateOperationCaseRequest request) =>
@@ -44,6 +58,21 @@ public sealed class CanonicalOperationsApiService
         string workItemId,
         ConfirmWorkItemRequest request,
         string actorToken,
+        string requestId) =>
+        ConfirmWorkItem(workItemId, request, null, actorToken, requestId);
+
+    public ConfirmWorkItemResult ConfirmWorkItem(
+        string workItemId,
+        ConfirmWorkItemRequest request,
+        RuntimeActorContext actor,
+        string requestId) =>
+        ConfirmWorkItem(workItemId, request, actor, actor.SessionToken, requestId);
+
+    private ConfirmWorkItemResult ConfirmWorkItem(
+        string workItemId,
+        ConfirmWorkItemRequest request,
+        RuntimeActorContext? actorContext,
+        string actorToken,
         string requestId)
     {
         if (string.IsNullOrWhiteSpace(actorToken))
@@ -59,6 +88,19 @@ public sealed class CanonicalOperationsApiService
                 null);
         }
 
+        if (string.IsNullOrWhiteSpace(request.IdempotencyKey))
+        {
+            return ConfirmWorkItemResult.Rejected(
+                StatusCodes.Status422UnprocessableEntity,
+                "idempotency_key_required",
+                "operations_confirm_requires_idempotency_key",
+                string.Empty,
+                workItemId,
+                request.SubmissionId,
+                request.IdempotencyKey,
+                null);
+        }
+
         var workItem = catalog.GetWorkItem(workItemId);
         if (workItem is null)
         {
@@ -67,16 +109,40 @@ public sealed class CanonicalOperationsApiService
 
         var normalized = request.Normalize(workItemId, workItem.WorkspaceId, request.CardId ?? workItem.WorkItemType);
         var caseId = FirstNonEmpty(workItem.CaseId, $"case-{workItem.TenantId}");
+        var definition = definitions.Resolve(workItem, normalized.CardId);
+        var actor = actorContext ?? new RuntimeActorContext(
+            actorToken,
+            "compatibility",
+            workItem.TenantId,
+            Array.Empty<string>(),
+            "compatibility-token",
+            actorToken);
+        var admissionDecision = admission.EvaluateConfirm(
+            definition,
+            actor,
+            normalized.DeviceId,
+            ProductionRequested(normalized));
+        if (!admissionDecision.ConfirmAllowed)
+        {
+            return ConfirmWorkItemResult.AdmissionRejected(
+                caseId,
+                workItem.WorkItemId,
+                normalized.SubmissionId,
+                normalized.IdempotencyKey,
+                admissionDecision,
+                definition);
+        }
+
         var command = new OperationsCommandRequest(
             workItem.TenantId,
             caseId,
             workItem.WorkItemId,
             ConfirmCommandType,
             "CommandEnvelope.v1",
-            $"work-item:{workItem.WorkItemType}:v1",
+            FirstNonEmpty(definition.DefinitionId, $"work-item:{workItem.WorkItemType}:v1"),
             normalized.IdempotencyKey!,
-            PayloadFor(workItem, normalized),
-            actorToken,
+            PayloadFor(workItem, normalized, actor, definition, admissionDecision),
+            actor.ActorId,
             $"{workItem.TenantId}:{workItem.WorkItemId}:confirm",
             normalized.SubmissionId,
             requestId);
@@ -92,7 +158,7 @@ public sealed class CanonicalOperationsApiService
                 "confirmed",
                 commit.SubmissionId,
                 "operations_confirm_committed",
-                actorToken);
+                actor.ActorId);
         }
 
         return ToConfirmResult(commit, normalized);
@@ -137,6 +203,34 @@ public sealed class CanonicalOperationsApiService
             ["payloadHash"] = envelope.PayloadHash,
             ["input"] = envelope.Payload
         };
+        var definition = ReadObject(envelope.Payload, "definition");
+        if (definition is not null)
+        {
+            responseBody["definition"] = definition;
+            eventPayload["definition"] = definition;
+        }
+
+        var admission = ReadObject(envelope.Payload, "admission");
+        if (admission is not null)
+        {
+            responseBody["admission"] = admission;
+            eventPayload["admission"] = admission;
+        }
+
+        var compatibilityMode = ReadString(envelope.Payload, "compatibilityMode");
+        if (!string.IsNullOrWhiteSpace(compatibilityMode))
+        {
+            responseBody["compatibilityMode"] = compatibilityMode;
+            eventPayload["compatibilityMode"] = compatibilityMode;
+        }
+
+        var admissionDecisionRef = ReadString(envelope.Payload, "admissionDecisionRef");
+        if (!string.IsNullOrWhiteSpace(admissionDecisionRef))
+        {
+            responseBody["admissionDecisionRef"] = admissionDecisionRef;
+            eventPayload["admissionDecisionRef"] = admissionDecisionRef;
+        }
+
         if (moneyFacts.LedgerTransactions.Count > 0)
         {
             eventPayload["ledgerTransactionIds"] = moneyFacts.LedgerTransactions.Select(item => item.LedgerTransactionId).ToArray();
@@ -197,7 +291,10 @@ public sealed class CanonicalOperationsApiService
 
     private static IReadOnlyDictionary<string, object> PayloadFor(
         WorkItem workItem,
-        ConfirmWorkItemRequest request) =>
+        ConfirmWorkItemRequest request,
+        RuntimeActorContext actor,
+        WorkItemDefinitionResolution definition,
+        AdmissionKernelDecision admission) =>
         new Dictionary<string, object>
         {
             ["workspaceId"] = request.WorkspaceId ?? workItem.WorkspaceId,
@@ -206,6 +303,19 @@ public sealed class CanonicalOperationsApiService
             ["cardInstanceId"] = request.CardInstanceId ?? string.Empty,
             ["aggregateRef"] = request.AggregateRef ?? string.Empty,
             ["deviceId"] = request.DeviceId ?? string.Empty,
+            ["deviceTrustStatus"] = string.IsNullOrWhiteSpace(request.DeviceId) ? "not_provided" : "provided_unverified",
+            ["surface"] = "operations-api",
+            ["reason"] = admission.Reason,
+            ["definition"] = definition.ToTrace(),
+            ["definitionId"] = definition.DefinitionId,
+            ["legacyCardId"] = definition.LegacyCardId,
+            ["compatibilityMode"] = definition.CompatibilityMode,
+            ["admission"] = admission.ToContract(),
+            ["admissionDecisionRef"] = admission.AdmissionDecisionRef,
+            ["actorId"] = actor.ActorId,
+            ["actorRole"] = actor.Role,
+            ["actorTenantId"] = actor.TenantId,
+            ["authSource"] = actor.AuthSource,
             ["fieldValues"] = (request.FieldValues ?? new Dictionary<string, string>())
                 .ToDictionary(item => item.Key, item => (object)item.Value),
             ["evidenceIds"] = request.EvidenceIds ?? Array.Empty<string>(),
@@ -228,6 +338,13 @@ public sealed class CanonicalOperationsApiService
     private static string ReadString(IReadOnlyDictionary<string, object> values, string key) =>
         values.TryGetValue(key, out var value) ? Convert.ToString(value) ?? string.Empty : string.Empty;
 
+    private static bool ProductionRequested(ConfirmWorkItemRequest request) =>
+        request.FieldValues is not null &&
+        ((request.FieldValues.TryGetValue("runtimeMode", out var runtimeMode) &&
+            runtimeMode.Equals("production", StringComparison.OrdinalIgnoreCase)) ||
+         (request.FieldValues.TryGetValue("productionConfirm", out var productionConfirm) &&
+            productionConfirm.Equals("true", StringComparison.OrdinalIgnoreCase)));
+
     private static ConfirmWorkItemResult ToConfirmResult(OperationsCommitResult result, ConfirmWorkItemRequest request)
     {
         var userMessage = result.ResponseBody.TryGetValue("userMessage", out var message)
@@ -239,6 +356,26 @@ public sealed class CanonicalOperationsApiService
             StatusCodes.Status409Conflict => "idempotency_conflict",
             _ => "operations_confirm_failed"
         };
+        var clientInstruction = new Dictionary<string, object>
+        {
+            ["disableRetry"] = result.StatusCode is StatusCodes.Status409Conflict,
+            ["refreshProjection"] = result.ProjectionStatus is not "projected",
+            ["observeOutbox"] = result.CommitStatus == "committed"
+        };
+        if (result.ResponseBody.TryGetValue("admission", out var admission))
+        {
+            clientInstruction["admission"] = admission!;
+        }
+
+        if (result.ResponseBody.TryGetValue("definition", out var definition))
+        {
+            clientInstruction["definition"] = definition!;
+        }
+
+        if (result.ResponseBody.TryGetValue("compatibilityMode", out var compatibilityMode))
+        {
+            clientInstruction["compatibilityMode"] = compatibilityMode!;
+        }
 
         return new ConfirmWorkItemResult(
             result.StatusCode,
@@ -252,12 +389,7 @@ public sealed class CanonicalOperationsApiService
             request.SubmissionId ?? result.SubmissionId,
             result.DomainEventIds,
             userMessage,
-            new Dictionary<string, object>
-            {
-                ["disableRetry"] = result.StatusCode is StatusCodes.Status409Conflict,
-                ["refreshProjection"] = result.ProjectionStatus is not "projected",
-                ["observeOutbox"] = result.CommitStatus == "committed"
-            },
+            clientInstruction,
             Source,
             result.IdempotencyKey,
             result.PayloadHash,

@@ -1,0 +1,28 @@
+{
+  "version": "oam.field-contract-refs.v1",
+  "generatedBy": "oam-cab-v1-phase-4",
+  "refs": [
+    { "ref": "field.roomSetup.v1", "requiredFieldIds": ["buildingId", "roomNo", "roomType"], "optionalFieldIds": ["floor", "roomNote"] },
+    { "ref": "field.bedSetup.v1", "requiredFieldIds": ["roomId", "bedCount", "bedLabels"], "optionalFieldIds": ["bedType", "note"] },
+    { "ref": "field.rateSetup.v1", "requiredFieldIds": ["roomId", "ratePlan", "currency", "price"], "optionalFieldIds": ["effectiveFrom", "note"] },
+    { "ref": "field.roomReadiness.v1", "requiredFieldIds": ["roomId", "readinessState"], "optionalFieldIds": ["readinessNote"] },
+    { "ref": "field.roomBlock.v1", "requiredFieldIds": ["roomId", "blockReason"], "optionalFieldIds": ["blockedUntil", "note"] },
+    { "ref": "field.roomRelease.v1", "requiredFieldIds": ["roomId", "releaseReason"], "optionalFieldIds": ["releaseAt", "note"] },
+    { "ref": "field.depositAssessment.v1", "requiredFieldIds": ["stayId", "depositRule", "requiredDepositAmount"], "optionalFieldIds": ["currency", "depositDueAt", "note"] },
+    { "ref": "field.depositReceipt.v1", "requiredFieldIds": ["depositId", "receivedAmount", "paymentMethod", "receiptNo"], "optionalFieldIds": ["payer", "paidAt", "note"] },
+    { "ref": "field.depositConfirmation.v1", "requiredFieldIds": ["depositId", "confirmedAmount", "confirmationResult", "financeReviewer"], "optionalFieldIds": ["varianceReason", "confirmedAt", "note"] },
+    { "ref": "field.depositDeduction.v1", "requiredFieldIds": ["depositId", "deductionAmount", "deductionReason"], "optionalFieldIds": ["applyToBalanceAmount", "note"] },
+    { "ref": "field.depositRefundApproval.v1", "requiredFieldIds": ["depositId", "refundAmount", "approverId", "approvalOpinion"], "optionalFieldIds": ["refundMethod", "note"] },
+    { "ref": "field.depositRefundPayment.v1", "requiredFieldIds": ["depositId", "refundAmount", "refundReceiver", "paymentTime"], "optionalFieldIds": ["refundMethod", "receiptNo", "note"] },
+    { "ref": "field.depositClose.v1", "requiredFieldIds": ["depositId", "closeResult", "financeReviewer"], "optionalFieldIds": ["note"] },
+    { "ref": "field.paymentReceipt.v1", "requiredFieldIds": ["paymentId", "receivedAmount", "paymentMethod", "payer"], "optionalFieldIds": ["receiptNo", "paidAt", "note"] },
+    { "ref": "field.paymentConfirmation.v1", "requiredFieldIds": ["paymentId", "confirmedAmount", "confirmationResult", "financeReviewer"], "optionalFieldIds": ["varianceReason", "confirmedAt", "note"] },
+    { "ref": "field.paymentAllocation.v1", "requiredFieldIds": ["paymentId", "allocationMode", "allocatedAmount"], "optionalFieldIds": ["coveredChargeIds", "note"] },
+    { "ref": "field.paymentAdjustment.v1", "requiredFieldIds": ["paymentId", "adjustmentAmount", "adjustmentReason"], "optionalFieldIds": ["note"] },
+    { "ref": "field.finalBalanceClose.v1", "requiredFieldIds": ["checkoutId", "finalBalanceAmount", "closeResult"], "optionalFieldIds": ["note"] },
+    { "ref": "field.bedRelease.v1", "requiredFieldIds": ["checkoutId", "releaseScope", "releaseAvailableAt"], "optionalFieldIds": ["note"] },
+    { "ref": "field.periodClose.v1", "requiredFieldIds": ["periodId", "managementConclusion", "closeResult"], "optionalFieldIds": ["nextPeriodFocus", "note"] },
+    { "ref": "field.expenseRecord.v1", "requiredFieldIds": ["expenseCategory", "expenseAmount", "currency"], "optionalFieldIds": ["expenseId", "note"] },
+    { "ref": "field.ledgerCorrectionApply.v1", "requiredFieldIds": ["correctionRequestId", "adjustmentAmount", "correctionReason"], "optionalFieldIds": ["approverId", "note"] }
+  ]
+}

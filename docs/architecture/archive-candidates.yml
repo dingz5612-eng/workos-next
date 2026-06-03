@@ -1,0 +1,59 @@
+version: 2
+generatedBy: oam-cab-v1-final
+archiveCandidates:
+  - id: V1_ARCHITECTURE
+    name: V1 architecture note
+    path: docs/architecture/V1_ARCHITECTURE.md
+    status: archive-candidate
+    owner: architecture
+    owner_domain: architecture
+    reason: Historical V1 architecture reference; no longer current authority.
+    allowed_usage: Historical reference only after current OAM-CAB baseline is checked.
+    forbidden_usage: Use as active architecture authority or production readiness source.
+    evidence:
+      - docs/architecture/CURRENT_ARCHITECTURE_BASELINE.md
+      - scripts/check-oam-clean-baseline.mjs
+    archiveStage: phase-7
+    requiredGate: scripts/check-archive-cleanliness.mjs
+  - id: PHASE_PLAN
+    name: Historical phase plan
+    path: docs/architecture/PHASE_PLAN.md
+    status: archive-candidate
+    owner: architecture
+    owner_domain: architecture
+    reason: Historical phase planning note; current work must follow OAM-CAB playbook and release-state.
+    allowed_usage: Historical reference only.
+    forbidden_usage: Override OAM-CAB execution plan, current-state, or gate results.
+    evidence:
+      - artifacts/oam-cab/oam-cab-v1-execution-plan.md
+      - artifacts/release-state/current-state.json
+    archiveStage: phase-7
+    requiredGate: scripts/check-archive-cleanliness.mjs
+  - id: WON_13_PRODUCTION_RUNTIME_ARCHITECTURE
+    name: WON 13 production runtime architecture note
+    path: docs/architecture/WON_13_PRODUCTION_RUNTIME_ARCHITECTURE.md
+    status: archive-candidate
+    owner: architecture
+    owner_domain: architecture
+    reason: Historical WON architecture note; current baseline is OAM-ACF v8 plus Operations Runtime.
+    allowed_usage: Historical reference when explicitly marked non-authoritative.
+    forbidden_usage: Claim Business Production GO or replace Operations Runtime main write path.
+    evidence:
+      - docs/architecture/CURRENT_ARCHITECTURE_BASELINE.md
+      - artifacts/release-state/current-state.json
+    archiveStage: phase-7
+    requiredGate: scripts/check-archive-cleanliness.mjs
+  - id: WON_14_HOSTEL_FOLIO_LEDGER_OPERATING_ANALYTICS_RUNTIME
+    name: WON 14 hostel ledger analytics runtime note
+    path: docs/architecture/WON_14_HOSTEL_FOLIO_LEDGER_OPERATING_ANALYTICS_RUNTIME.md
+    status: archive-candidate
+    owner: architecture
+    owner_domain: architecture
+    reason: Historical WON architecture note; current ledger and analytics rules are governed by Rules OS and contracts.
+    allowed_usage: Historical comparison only.
+    forbidden_usage: Override fact ownership, ledger ownership, Admission Kernel, or current-state.
+    evidence:
+      - docs/rules/v5.5/fact-ownership.yml
+      - docs/contracts/definition/workitem-definition-registry.json
+    archiveStage: phase-7
+    requiredGate: scripts/check-archive-cleanliness.mjs

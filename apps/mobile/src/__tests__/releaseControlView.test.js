@@ -25,8 +25,8 @@ describe("Release Control Center", () => {
 
     expect(html).toContain("data-launch-control-console=\"true\"");
     expect(html).toContain("发布准入控制");
-    expect(html).toContain("active readiness");
-    expect(html).toContain("locked readiness");
+    expect(html).toContain("当前准入");
+    expect(html).toContain("锁定准入");
     expect(html).toContain("业务签收");
     expect(html).toContain("go");
   });
@@ -35,10 +35,10 @@ describe("Release Control Center", () => {
     const html = releaseControlView(ctx(releaseDetail()));
 
     expect(html).toContain("MR-42");
-    expect(html).toContain("release status");
+    expect(html).toContain("发布状态");
     expect(html).toContain("shadow");
-    expect(html).toContain("GateResult status");
-    expect(html).toContain("blocked");
+    expect(html).toContain("GateResult 状态");
+    expect(html).toContain("阻断");
     expect(html).not.toContain("data-submit-card");
     expect(html).not.toContain("<input");
     expect(html).not.toContain("active</button>");
@@ -58,7 +58,7 @@ describe("Release Control Center", () => {
     })));
 
     expect(html).toContain("data-gate-result-readonly=\"true\"");
-    expect(html).toContain("GateResult status");
+    expect(html).toContain("GateResult 状态");
     expect(html).toContain("passed");
     expect(html).not.toContain("<input");
     expect(html).not.toContain("<select");
@@ -99,7 +99,7 @@ describe("Release Control Center", () => {
       rollbackInstruction: rollback("compensating")
     })));
 
-    expect(rollbackHtml).toContain("instruction_type");
+    expect(rollbackHtml).toContain("指令类型");
     expect(rollbackHtml).toContain("rollback");
     expect(compensatingHtml).toContain("compensating");
   });
@@ -120,7 +120,7 @@ describe("Release Control Center", () => {
       invariantChecks: [invariant("runtime.ok", "blocking", "P0", "passed", 0)]
     })));
 
-    expect(html).toContain("active transition");
+    expect(html).toContain("当前阶段切换");
     expect(html).toContain("blocked");
     expect(html).toContain("red_shadow_report");
   });
@@ -136,8 +136,8 @@ describe("Release Control Center", () => {
     })));
 
     expect(html).toContain("rollback_instruction_missing");
-    expect(html).toContain("active transition");
-    expect(html).toContain("blocked");
+    expect(html).toContain("当前阶段切换");
+    expect(html).toContain("阻断");
   });
 
   it("business_signoff_required_for_locked", () => {
@@ -151,8 +151,8 @@ describe("Release Control Center", () => {
 
     expect(html).toContain("业务签收");
     expect(html).toContain("business_signoff_missing");
-    expect(html).toContain("locked admission");
-    expect(html).toContain("blocked");
+    expect(html).toContain("锁定准入");
+    expect(html).toContain("阻断");
   });
 });
 

@@ -48,16 +48,15 @@
   display: grid;
   gap: 10px;
   padding: 14px;
-  border-radius: 22px;
-  color: #fff;
-  background:
-    linear-gradient(135deg, rgba(8, 36, 59, .98), rgba(8, 117, 104, .98)),
-    linear-gradient(180deg, rgba(255, 255, 255, .08), transparent);
-  box-shadow: 0 20px 40px rgba(8, 47, 63, .24);
+  border: 1px solid #d9e7ee;
+  border-radius: 8px;
+  color: #102033;
+  background: #fbfdfe;
+  box-shadow: 0 12px 26px rgba(17, 39, 55, .08);
 }
 
 .card-operation > span {
-  color: rgba(255, 255, 255, .72);
+  color: #66788c;
   font-size: 12px;
   font-weight: 800;
 }
@@ -68,19 +67,19 @@
 
 .card-operation section {
   padding: 11px;
-  border: 1px solid rgba(255, 255, 255, .08);
-  border-radius: 16px;
-  background: rgba(255, 255, 255, .12);
+  border: 1px solid #d9e7ee;
+  border-radius: 8px;
+  background: #f7fbfb;
 }
 
 .card-operation b {
-  color: #fff;
+  color: #102033;
   font-size: 13px;
 }
 
 .card-operation p {
   margin-top: 5px;
-  color: rgba(255, 255, 255, .82);
+  color: #52677b;
   font-size: 13px;
 }
 
@@ -95,10 +94,11 @@
   gap: 5px;
 }
 
+.operation-inputs input,
 .operation-inputs select {
   min-height: 42px;
-  border: 0;
-  border-radius: 14px;
+  border: 1px solid #c9dee6;
+  border-radius: 8px;
   padding: 0 12px;
   color: #102033;
   background: #fff;
@@ -115,39 +115,95 @@
   background: #edf6f6;
 }
 
+.operation-inputs .context-carried input[readonly] {
+  border-color: #b9ded8;
+  color: #0b6f63;
+  background: #eefaf6;
+  font-weight: 850;
+}
+
 .operation-inputs span {
-  color: rgba(255, 255, 255, .78);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  color: #52677b;
   font-size: 12px;
+  font-weight: 850;
 }
 
 .operation-inputs small {
-  color: rgba(255, 255, 255, .68);
+  color: #66788c;
   font-size: 11px;
   line-height: 1.35;
 }
 
-.evidence-row {
+.required-mark {
+  display: inline-grid;
+  place-items: center;
+  min-height: 18px;
+  padding: 0 6px;
+  border-radius: 999px;
+  color: #8a4d00;
+  background: #fff3d0;
+  font-size: 10px;
+  font-style: normal;
+  font-weight: 850;
+}
+
+.context-mark {
+  display: inline-grid;
+  place-items: center;
+  min-height: 18px;
+  padding: 0 6px;
+  border-radius: 999px;
+  color: #0b6f63;
+  background: #e6f8f2;
+  font-size: 10px;
+  font-style: normal;
+  font-weight: 850;
+}
+
+.operation-inputs .field-error input,
+.operation-inputs .field-error select {
+  border-color: #d64242;
+  background: #fff8f7;
+  box-shadow: 0 0 0 3px rgba(214, 66, 66, .12);
+}
+
+.system-check-panel {
+  display: grid;
+  gap: 8px;
+}
+
+.system-check-panel div {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 8px;
+  gap: 6px;
 }
 
-.evidence-row button {
-  min-height: 34px;
-  color: #092033;
-  background: linear-gradient(135deg, #ffd166, #ffe39b);
-  font-size: 12px;
+.system-check-panel span {
+  display: inline-flex;
+  max-width: 100%;
+  min-height: 28px;
+  align-items: center;
+  border-radius: 999px;
+  padding: 5px 9px;
+  color: #24525a;
+  background: #eaf5f4;
+  font-size: 11px;
+  font-weight: 850;
+  overflow-wrap: anywhere;
 }
 
-.evidence-row button.selected {
-  background: linear-gradient(135deg, #4dd599, #9ff3c8);
-  box-shadow: inset 0 0 0 2px rgba(8, 67, 49, .42);
+.system-check-panel.has-error {
+  border-color: #ffd166;
+  background: #fffaf0;
 }
 
 .operation-actions {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 1fr);
   gap: 8px;
 }
 
@@ -180,8 +236,45 @@
 
 .operation-message {
   margin: 8px 0 0;
-  color: #d6fff4;
+  color: #0b6f63;
   font-weight: 850;
+}
+
+.operation-panel-empty {
+  display: grid;
+  gap: 10px;
+  margin-top: 12px;
+  padding: 16px;
+  border: 1px solid #d9e7ee;
+  border-radius: 8px;
+  background: #fbfdfe;
+}
+
+.operation-panel-empty h1,
+.operation-panel-empty p {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.operation-panel-empty p {
+  color: #52677b;
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+.empty-actions {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+.empty-actions button {
+  width: 100%;
+}
+
+.empty-actions .secondary {
+  color: #102033;
+  background: #eaf2f5;
 }
 
 .runtime-lenses {
@@ -238,12 +331,11 @@
 }
 
 .sticky-action {
-  position: sticky;
-  bottom: calc(var(--bottom-nav-height) + var(--safe-bottom) + 28px);
+  position: static;
   margin-top: 12px;
   min-height: var(--sticky-action-height);
-  z-index: 12;
-  pointer-events: none;
+  z-index: auto;
+  pointer-events: auto;
 }
 
 .sticky-action button {

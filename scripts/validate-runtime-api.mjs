@@ -428,7 +428,7 @@ async function validateConfirmPolicyResponse() {
     headers: { "Content-Type": "application/json", "X-WorkOS-Actor-Token": login.token, "X-Request-Id": `api-invalid-${Date.now()}` },
     body: JSON.stringify(confirmBody("", {}, "invalid-idempotency"))
   });
-  assert(invalid.status === 400, `invalid confirm must return 400, got ${invalid.status}`);
+  assert(invalid.status === 422, `confirm without idempotencyKey must return 422, got ${invalid.status}`);
 
   const localizedKey = await fetch(`${baseUrl}/api/workspaces/W-STAY-RESOURCE/cards/roomSetup/confirm`, {
     method: "POST",

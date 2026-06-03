@@ -1,0 +1,65 @@
+{
+  "version": "oam.search-contract.v1",
+  "generatedBy": "oam-cab-v1-phase-4",
+  "status": "implementation-with-legacy-adapter",
+  "languageSynonymRef": "docs/contracts/language/search-synonyms.json",
+  "admissionContractRef": "docs/contracts/admission/admission-contract.json",
+  "resultSchemaRef": "docs/contracts/search/search-result-schema.json",
+  "rankingPolicyRef": "docs/contracts/search/search-ranking-policy.json",
+  "permissionPolicyRef": "docs/contracts/search/search-permission-policy.json",
+  "objectTypes": [
+    "workItem",
+    "operationCase",
+    "workspaceCardCompatibility",
+    "businessObject",
+    "evidence",
+    "ledger",
+    "payment",
+    "deposit",
+    "correction",
+    "reconciliation",
+    "gateResult",
+    "release",
+    "lensItem",
+    "auditEvent",
+    "learningItem"
+  ],
+  "requiredResultFields": [
+    "resultId",
+    "resultType",
+    "title",
+    "summary",
+    "matchedTerms",
+    "score",
+    "target",
+    "admission",
+    "traceRefs",
+    "sourceRefs",
+    "language",
+    "explain"
+  ],
+  "legacyAdapters": [
+    {
+      "name": "LensQueryService.Search",
+      "path": "services/core-api/WorkOS.Api/Runtime/LensQueryService.cs",
+      "status": "legacy-adapter",
+      "allowed": "May provide current workspace-card compatibility results only as input to LegacyWorkspaceSearchAdapter.",
+      "forbidden": "Must not be treated as final Search Kernel and must not bypass Language Kernel synonyms, permission policy, or Admission Kernel.",
+      "removalCondition": "SearchKernelService owns indexing, ranking, admission, trace refs, and language explain output."
+    },
+    {
+      "name": "searchIntentHub",
+      "path": "apps/mobile/src/searchIntentHub.js",
+      "status": "surface-adapter",
+      "allowed": "May adapt backend or fallback results to mobile navigation view models.",
+      "forbidden": "Must not decide business production permission or business-line maturity."
+    }
+  ],
+  "invariants": [
+    "Every SearchResult includes an admission object.",
+    "Blocked business lines cannot be made executable by search ranking.",
+    "Search uses Language Kernel synonyms and domain terms.",
+    "Contains-only matching is allowed only inside registered legacy adapters.",
+    "Search visibility is not confirm permission."
+  ]
+}

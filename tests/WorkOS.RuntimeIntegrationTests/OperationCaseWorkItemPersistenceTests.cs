@@ -13,8 +13,7 @@ public sealed class OperationCaseWorkItemPersistenceTests
         ProjectionRuntime.OpenPostgres(connectionString, RuntimeAuthOptions.Development);
         var caseStore = new PostgresOperationsCaseStore(connectionString);
         var workItemStore = new PostgresOperationsWorkItemStore(connectionString);
-        var commandSubmissions = new PostgresOperationsCommandSubmissionStore(connectionString);
-        var service = new OperationsRuntimeService(new FakeRuntime(), commandSubmissions, caseStore, workItemStore);
+        var service = new OperationsRuntimeService(new FakeRuntime(), caseStore, workItemStore);
         var suffix = Guid.NewGuid().ToString("N");
         var caseId = $"case-rf7-{suffix}";
         var workItemId = $"wi-rf7-{suffix}";

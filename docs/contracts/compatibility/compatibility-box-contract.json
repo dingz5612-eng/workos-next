@@ -1,0 +1,35 @@
+{
+  "version": "oam-cab.compatibility-box-contract.v1",
+  "status": "quarantined",
+  "components": [
+    "ProjectionRuntime",
+    "Workspace/Card prepare-confirm",
+    "WorkspaceCardCompatibilityAdapter",
+    "LensQueryService legacy search",
+    "RuntimeDocumentStorage / runtime_documents snapshot"
+  ],
+  "allowedUsage": [
+    "read",
+    "display",
+    "map",
+    "adapt through controlled interfaces"
+  ],
+  "forbiddenUsage": [
+    "new business fact write semantics",
+    "confirmAllowed decision",
+    "ProductionAdmission decision",
+    "Business Production release",
+    "new business extension point"
+  ],
+  "legacyWritePathClassification": [
+    "remove",
+    "forbidden",
+    "compatibility shim to Operations Confirm",
+    "non-business write"
+  ],
+  "evidence": [
+    "docs/architecture/compatibility-components.yml",
+    "docs/architecture/compatibility-quarantine-rules.md",
+    "scripts/check-compatibility-quarantine.mjs"
+  ]
+}

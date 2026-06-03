@@ -1,0 +1,98 @@
+[
+  {
+    "name": "pc-governance",
+    "url": "http://127.0.0.1:5175/?view=pcGovernance&lang=zh-CN&device=mobile",
+    "required": [
+      "Lens 健康",
+      "Release evidence chain",
+      "GateResult",
+      "Invariant",
+      "ShadowCompare",
+      "RollbackInstruction"
+    ],
+    "screenshotPath": "C:/Users/lenovo/Documents/WorkOSNext/artifacts/browser-verification/architecture-runtime-20260603/pc-governance.png",
+    "check": {
+      "badOverflow": [],
+      "hasEnglishCommands": false,
+      "missing": [
+        "Lens 健康",
+        "Release evidence chain",
+        "GateResult",
+        "Invariant",
+        "ShadowCompare",
+        "RollbackInstruction"
+      ],
+      "scrollHeight": 912,
+      "title": "WorkOSNext",
+      "url": "http://127.0.0.1:5175/?view=pcGovernance&lang=zh-CN&device=mobile",
+      "viewportHeight": 912,
+      "viewportWidth": 599
+    }
+  },
+  {
+    "name": "release-control",
+    "url": "http://127.0.0.1:5175/?view=releaseControl&lang=zh-CN&device=mobile",
+    "required": [
+      "GateResult",
+      "ShadowCompareReport",
+      "RollbackInstruction"
+    ],
+    "screenshotPath": "C:/Users/lenovo/Documents/WorkOSNext/artifacts/browser-verification/architecture-runtime-20260603/release-control.png",
+    "check": {
+      "badOverflow": [],
+      "hasEnglishCommands": false,
+      "missing": [
+        "GateResult",
+        "ShadowCompareReport",
+        "RollbackInstruction"
+      ],
+      "scrollHeight": 912,
+      "title": "WorkOSNext",
+      "url": "http://127.0.0.1:5175/?view=releaseControl&lang=zh-CN&device=mobile",
+      "viewportHeight": 912,
+      "viewportWidth": 599
+    }
+  },
+  {
+    "name": "operation-panel-empty",
+    "url": "http://127.0.0.1:5175/?view=operationPanel&lang=zh-CN&workItem=fake-work-item&device=mobile",
+    "required": [
+      "暂不能直接办理",
+      "这条记录还没有生成可办理任务",
+      "请从工作队列打开真实任务"
+    ],
+    "screenshotPath": "C:/Users/lenovo/Documents/WorkOSNext/artifacts/browser-verification/architecture-runtime-20260603/operation-panel-empty.png",
+    "check": {
+      "badOverflow": [],
+      "hasEnglishCommands": false,
+      "missing": [],
+      "scrollHeight": 912,
+      "title": "WorkOSNext",
+      "url": "http://127.0.0.1:5175/?view=operationPanel&lang=zh-CN&workItem=fake-work-item&device=mobile",
+      "viewportHeight": 912,
+      "viewportWidth": 599
+    }
+  },
+  {
+    "name": "search",
+    "url": "http://127.0.0.1:5175/?view=search&lang=zh-CN&q=%E6%88%BF%E9%97%B4&device=mobile",
+    "required": [
+      "搜索",
+      "处理"
+    ],
+    "screenshotPath": "C:/Users/lenovo/Documents/WorkOSNext/artifacts/browser-verification/architecture-runtime-20260603/search.png",
+    "check": {
+      "badOverflow": [],
+      "hasEnglishCommands": false,
+      "missing": [
+        "搜索",
+        "处理"
+      ],
+      "scrollHeight": 912,
+      "title": "WorkOSNext",
+      "url": "http://127.0.0.1:5175/?view=search&lang=zh-CN&q=%E6%88%BF%E9%97%B4&device=mobile",
+      "viewportHeight": 912,
+      "viewportWidth": 599
+    }
+  }
+]

@@ -428,7 +428,7 @@ function validateRouteCategory(route, category, allowlist) {
   return violations;
 }
 
-function findViolations(routes, allowlist) {
+function findViolations(routes, allowlist, options = {}) {
   const violations = [...validateAllowlist(allowlist)];
   const forbiddenPatterns = (allowlist.forbiddenBusinessWritePatterns || []).map((item) => ({
     label: item,
@@ -464,6 +464,17 @@ function findViolations(routes, allowlist) {
     violations.push(...validateRouteCategory(route, categories[0], allowlist));
   }
 
+  if (options.enforceBidirectional === true) {
+    const sourceWriteRoutes = new Set(routes.filter(isWriteRoute).map((route) => route.key));
+    for (const category of writeAllowlistCategories) {
+      for (const { route } of routeEntries(allowlist, category)) {
+        if (!sourceWriteRoutes.has(route)) {
+          violations.push(`api-boundary.yml: P0 classified write route missing from route source: ${route}`);
+        }
+      }
+    }
+  }
+
   return violations;
 }
 
@@ -473,6 +484,10 @@ function buildReport(routes, allowlist, violations) {
   const categoryCounts = Object.fromEntries(writeAllowlistCategories.map((category) => [category, 0]));
   const unclassifiedWriteRoutes = [];
   const multiClassifiedWriteRoutes = [];
+  const sourceWriteRouteSet = new Set(writeRoutes.map((route) => route.key));
+  const boundaryOnlyWriteRoutes = writeAllowlistCategories
+    .flatMap((category) => routeEntries(allowlist, category).map(({ route }) => route))
+    .filter((route) => !sourceWriteRouteSet.has(route));
 
   for (const route of writeRoutes) {
     const categories = classifiedCategories(route, allowlist);
@@ -497,14 +512,17 @@ function buildReport(routes, allowlist, violations) {
     route_count: routes.length,
     api_route_count: apiRoutes.length,
     write_route_count: writeRoutes.length,
+    route_source_diff_status: boundaryOnlyWriteRoutes.length === 0 && unclassifiedWriteRoutes.length === 0 && multiClassifiedWriteRoutes.length === 0 ? "matched" : "drifted",
     classified_write_route_count: writeRoutes.length - unclassifiedWriteRoutes.length - multiClassifiedWriteRoutes.length,
     unclassified_write_route_count: unclassifiedWriteRoutes.length,
     multi_classified_write_route_count: multiClassifiedWriteRoutes.length,
+    boundary_only_write_route_count: boundaryOnlyWriteRoutes.length,
     business_write_route_count: categoryCounts.operationsBusinessWrite,
     category_counts: categoryCounts,
     violations: violations.map((message, index) => ({ index, message })),
     unclassified_write_routes: unclassifiedWriteRoutes,
-    multi_classified_write_routes: multiClassifiedWriteRoutes
+    multi_classified_write_routes: multiClassifiedWriteRoutes,
+    boundary_only_write_routes: boundaryOnlyWriteRoutes
   };
 }
 
@@ -573,13 +591,21 @@ function runSelfTest() {
     allowlist,
     "evidence attachment route was rejected");
 
+  const boundaryOnlyViolations = findViolations(
+    extractRoutes('app.MapPost("/api/operations/work-items/{workItemId}/confirm", () => Results.Ok());', "simulated-one-route-source.cs"),
+    allowlist,
+    { enforceBidirectional: true });
+  if (!boundaryOnlyViolations.some((item) => item.includes("classified write route missing from route source"))) {
+    throw new Error("Self-test failed: bidirectional route-source/api-boundary drift was not rejected");
+  }
+
   console.log("API boundary self-test: PASS");
 }
 
 function runScan() {
   const allowlist = readAllowlist();
   const routes = listRouteFiles(routeRoot).flatMap((file) => extractRoutes(fs.readFileSync(file, "utf8"), path.relative(repoRoot, file)));
-  const violations = findViolations(routes, allowlist);
+  const violations = findViolations(routes, allowlist, { enforceBidirectional: true });
   const report = buildReport(routes, allowlist, violations);
   writeReport(report);
 

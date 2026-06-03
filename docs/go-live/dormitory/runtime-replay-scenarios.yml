@@ -3,6 +3,16 @@
   "taskId": "D1",
   "sourceMode": "real_api_db",
   "tenantId": "tenant-dorm-int-001",
+  "actorUsername": "dormOperator",
+  "actorPassword": "dev",
+  "actorAccountsByRole": {
+    "frontdesk": "dormFrontdesk",
+    "operator": "dormOperator",
+    "finance": "dormFinance",
+    "housekeeping": "dormHousekeeping",
+    "manager": "dormManager",
+    "releaseOwner": "dormReleaseOwner"
+  },
   "actorToken": "operator-token",
   "scenarios": [
     {

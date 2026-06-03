@@ -1,21 +1,29 @@
 .pc-governance-full {
   display: grid;
   gap: 16px;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .governance-hero,
 .governance-panel {
   display: grid;
   gap: 10px;
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
 }
 
 .pc-governance-nav {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(150px, 100%), 1fr));
   gap: 8px;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .pc-governance-nav a {
+  min-width: 0;
   min-height: 40px;
   display: grid;
   place-items: center;
@@ -26,11 +34,14 @@
   background: var(--surface);
   text-decoration: none;
   font-weight: 800;
+  overflow-wrap: anywhere;
+  text-align: center;
 }
 
 .governance-grid {
   display: grid;
   gap: 14px;
+  min-width: 0;
 }
 
 .governance-panel {
@@ -92,6 +103,7 @@
   width: 100%;
   border-collapse: collapse;
   font-size: 0.86rem;
+  table-layout: fixed;
 }
 
 .governance-panel th,
@@ -100,6 +112,7 @@
   padding: 8px;
   text-align: left;
   vertical-align: top;
+  overflow-wrap: anywhere;
 }
 
 .governance-panel input,
@@ -119,4 +132,24 @@
   display: grid;
   grid-template-columns: minmax(140px, 0.35fr) 1fr;
   gap: 8px;
+  min-width: 0;
+}
+
+.governance-kv dd {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 640px) {
+  .app-shell.surface-pc {
+    padding: 14px 12px 36px;
+  }
+
+  .app-shell.surface-pc .topbar {
+    grid-template-columns: minmax(0, 1fr) 128px;
+  }
+
+  .governance-kv {
+    grid-template-columns: 1fr;
+  }
 }

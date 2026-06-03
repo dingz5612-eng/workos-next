@@ -48,7 +48,7 @@ for (const label of ["证据上传", "提交队列", "当前设备", "没有待�
   }
 }
 
-for (const label of ["WorkOS 搜索", "WorkItem", "OperationCase", "房间", "床位", "入住", "证据", "提交轨迹", "学习内容"]) {
+for (const label of ["WorkOS 搜索", "待办任务", "业务记录", "房间", "床位", "入住", "证据", "提交轨迹", "学习内容"]) {
   if (!rendered.search.includes(label)) {
     violations.push(violation("mobile.visible_copy.search_copy_missing", `Search 页面缺少 WorkOS Search copy：${label}。`, { label }));
   }

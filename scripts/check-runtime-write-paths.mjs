@@ -9,14 +9,17 @@ if (cli.has("self-test")) {
   process.exit(0);
 }
 
-const sources = readSources({
+const sources = {
+  ...readSources({
   "Program.cs": "services/core-api/WorkOS.Api/Program.cs",
   "OperationsRuntimeService.cs": "services/core-api/WorkOS.Api/Runtime/OperationsRuntimeService.cs",
   "CanonicalOperationsApiService.cs": "services/core-api/WorkOS.Api/Runtime/CanonicalOperationsApiService.cs",
   "WorkspaceCardCompatibilityAdapter.cs": "services/core-api/WorkOS.Api/Runtime/WorkspaceCardCompatibilityAdapter.cs",
   "OperationsRuntimeEndpoints.cs": "services/core-api/WorkOS.Api/Runtime/OperationsRuntimeEndpoints.cs",
   "OperationsUnitOfWork.cs": "services/core-api/WorkOS.Api/Runtime/OperationsUnitOfWork.cs"
-});
+  }),
+  ...readOfficialRuntimeSources()
+};
 
 const violations = analyzeSources(sources);
 if (violations.length > 0) {
@@ -44,6 +47,17 @@ function analyzeSources(files) {
   const unitOfWork = files["OperationsUnitOfWork.cs"] ?? "";
   const operationsRuntimeCore = operationsRuntime.split("public sealed class ProjectionOperationsRuntimeAdapter")[0] ?? operationsRuntime;
 
+  for (const [file, source] of Object.entries(files)) {
+    if (!isOfficialRuntimeSource(file)) continue;
+    forbidPattern(
+      source,
+      /\bshadow_runtime\b/i,
+      "RT1-NO-SHADOW-RUNTIME-OFFICIAL",
+      "Official API runtime source must not reference shadow_runtime; keep shadow reads/writes in shadow runner/tooling.",
+      file,
+      add);
+  }
+
   forbidPattern(
     operationsRuntimeCore,
     /\bpublic\s+ConfirmWorkItemResult\s+ConfirmWorkItem\s*\(/,
@@ -56,6 +70,13 @@ function analyzeSources(files) {
     /\bpublic\s+CompatibilityApiResult\s+ConfirmWorkspaceCard\s*\(/,
     "RT1-RUNTIME-SERVICE-COMPAT-CONFIRM",
     "OperationsRuntimeService must not own the legacy Workspace/Card confirm path; use WorkspaceCardCompatibilityAdapter.",
+    "OperationsRuntimeService.cs",
+    add);
+  forbidPattern(
+    operationsRuntimeCore,
+    /\bruntime\.Prepare\s*\(/,
+    "RT1-RUNTIME-DIRECT-PREPARE",
+    "OperationsRuntimeService must not call runtime.Prepare; compatibility prepare must derive its payload from the resolved Operation target.",
     "OperationsRuntimeService.cs",
     add);
   forbidPattern(
@@ -183,6 +204,33 @@ function readSources(entries) {
   return result;
 }
 
+function readOfficialRuntimeSources() {
+  const apiRoot = path.join(repoRoot, "services", "core-api", "WorkOS.Api");
+  return Object.fromEntries(listCsFiles(apiRoot).map((file) => [
+    path.relative(repoRoot, file).replaceAll("\\", "/"),
+    fs.readFileSync(file, "utf8")
+  ]));
+}
+
+function listCsFiles(dir) {
+  if (!fs.existsSync(dir)) return [];
+  const files = [];
+  for (const item of fs.readdirSync(dir, { withFileTypes: true })) {
+    if (item.name === "bin" || item.name === "obj") continue;
+    const fullPath = path.join(dir, item.name);
+    if (item.isDirectory()) {
+      files.push(...listCsFiles(fullPath));
+    } else if (item.isFile() && item.name.endsWith(".cs")) {
+      files.push(fullPath);
+    }
+  }
+  return files;
+}
+
+function isOfficialRuntimeSource(file) {
+  return file.startsWith("services/core-api/WorkOS.Api/") && file.endsWith(".cs");
+}
+
 function lineFor(source, index) {
   return source.slice(0, index).split(/\r?\n/).length;
 }
@@ -194,7 +242,8 @@ function runSelfTest() {
     "WorkspaceCardCompatibilityAdapter.cs": "void Confirm(){ operations.ConfirmWorkItem(); }",
     "OperationsRuntimeEndpoints.cs": "app.MapPost(\"/api/operations/work-items/{workItemId}/confirm\", (string workItemId, ConfirmWorkItemRequest request, CanonicalOperationsApiService operations) => { operations.ConfirmWorkItem(workItemId, request, token, requestId); });",
     "Program.cs": "app.MapPost(\"/api/workspaces/{workspaceId}/cards/{cardId}/confirm\", (string workspaceId, string cardId, ConfirmCardRequest request, WorkspaceCardCompatibilityAdapter operations) => { operations.ConfirmWorkspaceCard(workspaceId, cardId, request, token, requestId); });",
-    "OperationsUnitOfWork.cs": "void Commit(){ var submission = OperationsCommandSubmission.Pending(\"cmd\", scope, envelope); var e = new OperationsDomainEvent(request.WorkItemId); } FactTrace GetFactTraceBySubmission(){} IReadOnlyList<FactTrace> GetFactTracesByWorkItem(){} IReadOnlyList<FactTrace> GetFactTracesByCase(){}"
+    "OperationsUnitOfWork.cs": "void Commit(){ var submission = OperationsCommandSubmission.Pending(\"cmd\", scope, envelope); var e = new OperationsDomainEvent(request.WorkItemId); } FactTrace GetFactTraceBySubmission(){} IReadOnlyList<FactTrace> GetFactTracesByWorkItem(){} IReadOnlyList<FactTrace> GetFactTracesByCase(){}",
+    "services/core-api/WorkOS.Api/Runtime/OfficialSource.cs": "public sealed class OfficialSource {}"
   };
   assertNoViolations("valid runtime write path", analyzeSources(valid));
 
@@ -202,6 +251,16 @@ function runSelfTest() {
     ...valid,
     "OperationsRuntimeService.cs": "public ConfirmWorkItemResult ConfirmWorkItem(){ runtime.Confirm(); }"
   }, "RT1-RUNTIME-DIRECT-CONFIRM");
+
+  assertViolation("direct runtime prepare rejected", {
+    ...valid,
+    "OperationsRuntimeService.cs": "public PrepareWorkItemResult PrepareWorkItem(){ runtime.Prepare(); }"
+  }, "RT1-RUNTIME-DIRECT-PREPARE");
+
+  assertViolation("official shadow runtime reference rejected", {
+    ...valid,
+    "services/core-api/WorkOS.Api/Runtime/OfficialSource.cs": "const string Schema = \"shadow_runtime\";"
+  }, "RT1-NO-SHADOW-RUNTIME-OFFICIAL");
 
   assertViolation("compat adapter bypass rejected", {
     ...valid,

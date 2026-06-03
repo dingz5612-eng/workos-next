@@ -64,6 +64,32 @@ public sealed class WorkspaceCardCompatibilityAdapterTests
     }
 
     [TestMethod]
+    public void old_confirm_without_idempotency_key_returns_422_before_legacy_policy()
+    {
+        var adapter = Adapter(out var runtime, out var store);
+
+        var result = adapter.ConfirmWorkspaceCard(
+            "W-S4",
+            "roomSetup",
+            new ConfirmCardRequest(
+                "zh-CN",
+                "",
+                new Dictionary<string, string> { ["roomNo"] = "A101" },
+                Array.Empty<string>(),
+                "sub-missing-idem",
+                "ci-missing-idem"),
+            "actor-token",
+            "req-missing-idem");
+        var payload = Payload(result);
+
+        Assert.AreEqual(StatusCodes.Status422UnprocessableEntity, result.StatusCode);
+        Assert.AreEqual("idempotency_key_required", payload["error"]);
+        Assert.AreEqual(0, runtime.ValidateCount);
+        Assert.IsEmpty(store.DomainEvents);
+        Assert.IsEmpty(store.Submissions);
+    }
+
+    [TestMethod]
     public void old_confirm_policy_rejection_does_not_write_domain_event()
     {
         var adapter = Adapter(
@@ -105,7 +131,7 @@ public sealed class WorkspaceCardCompatibilityAdapterTests
         ConfirmResult? policyResult = null)
     {
         runtime = new FakeCompatibilityRuntime(policyResult);
-        var catalog = new OperationsRuntimeService(runtime, new InMemoryOperationsCommandSubmissionStore());
+        var catalog = new OperationsRuntimeService(runtime);
         store = new InMemoryOperationsStore();
         var router = new SliceCommandHandlerRouter()
             .Register(CanonicalOperationsApiService.ConfirmCommandType, CanonicalOperationsApiService.HandleConfirmCommand);
