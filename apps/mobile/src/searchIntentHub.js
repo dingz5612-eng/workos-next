@@ -65,7 +65,7 @@ function searchActionFor(item, ctx) {
     return { type: "startWorkspace", label: ctx.tr?.("startHandling") || "开始办理", view: "workspace", reason: "" };
   }
   if (item.resultType === "workItem" && item.workItemId && resolveOperationPanelTarget(item, ctx.state || {}).canOpen) {
-    return { type: "openWorkItem", label: ctx.tr?.("searchActionProcess") || "处理", view: "operationPanel", reason: "" };
+    return { type: "openWorkItem", label: safeLocalized(item.actionLabel, ctx) || ctx.tr?.("searchActionProcess") || "处理", view: "operationPanel", reason: "" };
   }
   if (["room", "bed", "stay", "object"].includes(item.resultType) && item.workspaceId) {
     return { type: "openObject", label: ctx.tr?.("searchActionOpenObject") || "打开对象", view: "workspace", reason: "" };
@@ -106,11 +106,44 @@ function rankFor(item, query) {
     item.localizedTitle,
     item.subtitle,
     item.localizedSubtitle,
+    item.businessObject,
+    item.business_object,
+    item.objectLabel,
+    item.object_label,
+    item.objectName,
+    item.object_name,
+    item.objectId,
+    item.object_id,
+    item.roomNo,
+    item.room_no,
+    item.roomId,
+    item.room_id,
+    item.bedNo,
+    item.bed_no,
+    item.stayId,
+    item.stay_id,
+    item.aggregateRef,
+    item.aggregate_ref,
+    item.reason,
+    item.nextAction,
+    item.actionLabel,
     item.workspaceId,
     item.cardId,
     item.caseId,
     item.evidenceId,
-    item.traceId
+    item.traceId,
+    item.card?.id,
+    item.card?.title,
+    item.card?.status,
+    item.workspace?.id,
+    item.workspace?.title,
+    item.workspace?.summary,
+    item.workspace?.next,
+    item.fieldValues,
+    item.field_values,
+    item.values,
+    item.payload,
+    item.draft
   ].map((value) => safeText(value).toLocaleLowerCase()).join(" ");
   const matched = text.includes(query)
     || query.split(/\s+/).filter(Boolean).some((part) => text.includes(part))

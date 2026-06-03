@@ -101,6 +101,88 @@ describe("OAM-04B search intent hub contract", () => {
     expect(visibleText(html)).toContain("这条结果暂时没有可跳转目标");
   });
 
+  it("recovers an unfinished room workflow by object number and continues on the paused card", () => {
+    const ctx = createSurfaceCtx({ view: "search", query: "21" });
+    ctx.state.runtimeStore.workspaces[0].cards = [
+      {
+        id: "roomSetup",
+        status: "done",
+        title: { "zh-CN": "房间配置卡" },
+        fields: { business: [], system: [], analytics: [] },
+        evidence: [],
+        checks: [],
+        blockerRules: [],
+        confirmation: { required: false }
+      },
+      {
+        id: "bedSetup",
+        status: "done",
+        title: { "zh-CN": "床位配置卡" },
+        fields: { business: [], system: [], analytics: [] },
+        evidence: [],
+        checks: [],
+        blockerRules: [],
+        confirmation: { required: false }
+      },
+      {
+        id: "rateSetup",
+        status: "ready",
+        title: { "zh-CN": "价格配置卡" },
+        fields: { business: [], system: [], analytics: [] },
+        evidence: [],
+        checks: [],
+        blockerRules: [],
+        confirmation: { required: true, requiredRole: "operator" }
+      }
+    ];
+    ctx.state.runtimeStore.workQueue = [
+      {
+        queueItemId: "q-room-21-rate",
+        workItemId: "W-STAY-RESOURCE:rateSetup",
+        workspaceId: "W-STAY-RESOURCE",
+        cardId: "rateSetup",
+        caseId: "case:W-STAY-RESOURCE",
+        workItemType: "Dorm.RateSetup",
+        lifecycleState: "ready",
+        ownerRole: "operator",
+        badges: ["mine", "ready"],
+        businessObject: "21 号房间",
+        objectId: "ROOM-21",
+        reason: "流程停在价格配置卡"
+      },
+      {
+        queueItemId: "q-unrelated",
+        workItemId: "W-STAY-RESOURCE:unrelated",
+        workspaceId: "W-STAY-RESOURCE",
+        cardId: "roomSetup",
+        workItemType: "Dorm.Other",
+        lifecycleState: "ready",
+        ownerRole: "operator",
+        badges: ["mine"],
+        reason: "无关任务"
+      }
+    ];
+    ctx.state.runtimeStore.operationWorkItems = [ctx.state.runtimeStore.workQueue[0]];
+
+    const html = searchView(ctx);
+    const text = visibleText(html);
+
+    expect(html).toContain('data-search-section="unfinishedRecovery"');
+    expect(html).toContain('data-work-item-id="W-STAY-RESOURCE:rateSetup"');
+    expect(html).toContain('data-card-id="rateSetup"');
+    expect(html).not.toContain("W-STAY-RESOURCE:unrelated");
+    expect(text).toContain("未办完业务");
+    expect(text).toContain("21 号房间");
+    expect(text).toContain("价格配置卡");
+    expect(html).toContain(">继续办理</button>");
+
+    openWorkItem("W-STAY-RESOURCE:rateSetup", ctx);
+
+    expect(ctx.state.view).toBe("operationPanel");
+    expect(ctx.state.selectedWorkItemId).toBe("W-STAY-RESOURCE:rateSetup");
+    expect(ctx.state.selectedCardId).toBe("rateSetup");
+  });
+
   it("does not render completed WorkItems as processable search results", () => {
     const ctx = createSurfaceCtx({ view: "search", query: "房间" });
     ctx.state.runtimeStore.workQueue = [{

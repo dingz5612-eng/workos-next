@@ -43,10 +43,14 @@ function workosSearchSections(ctx) {
   const activeWorkspaceResults = workspaceResults.filter((workspace) => !workspaceCompletedByQueue(workspace, completedKeys));
   const commands = activeCommands(workspaces, completedQueue, ctx);
   const commandKeys = new Set(commands.map((item) => `${item.workspaceId}:${item.cardId || ""}`));
+  const recoveryItems = unfinishedRecoveryItems(queue, ctx);
+  const recoveryKeys = new Set(recoveryItems.map(queueEntryKey));
+  const queueWithoutRecovery = queue.filter((item) => !recoveryKeys.has(queueEntryKey(item)));
   const sections = [
     section("activeCommands", commands),
-    section("searchWorkItems", workItems(queue, ctx)),
-    section("searchOperationCases", operationCases(queue, activeWorkspaceResults, ctx)),
+    section("unfinishedRecovery", recoveryItems),
+    section("searchWorkItems", workItems(queueWithoutRecovery, ctx)),
+    section("searchOperationCases", operationCases(queueWithoutRecovery, activeWorkspaceResults, ctx)),
     section("completedWorkItems", completedCases(completedQueue, workspaceResults, ctx).filter((item) => !commandKeys.has(`${item.workspaceId}:${item.cardId || ""}`))),
     section("searchRooms", objectResults(activeWorkspaceResults, "room", ctx)),
     section("searchBeds", objectResults(activeWorkspaceResults, "bed", ctx)),
@@ -200,6 +204,63 @@ function workItems(queue, ctx) {
     status: item.lifecycleState || item.status || item.card?.status || "ready",
     nextAction: item.reason || tx(item.workspace?.next, ctx) || ctx.tr("searchActionProcess")
   })), ctx.state.query).slice(0, 8);
+}
+
+function unfinishedRecoveryItems(queue, ctx) {
+  const query = String(ctx.state.query || "").trim();
+  if (!shouldShowUnfinishedRecovery(query)) return [];
+  return rankSearchResults(queue.map((item) => unfinishedRecoveryItem(item, ctx)), query).slice(0, 4);
+}
+
+function unfinishedRecoveryItem(item, ctx) {
+  const objectLabel = queueObjectLabel(item, ctx);
+  const workspaceTitle = tx(item.workspace?.title, ctx);
+  const cardTitle = tx(item.card?.title, ctx);
+  return {
+    ...item,
+    resultType: "workItem",
+    title: objectLabel ? `${ctx.tr("unfinishedRecovery")} · ${objectLabel}` : ctx.tr("unfinishedRecovery"),
+    subtitle: [workspaceTitle, cardTitle].filter(Boolean).join(" · ") || item.workItemType || ctx.tr("workbench"),
+    status: item.lifecycleState || item.status || item.card?.status || "ready",
+    nextAction: cardTitle ? `${ctx.tr("continueHandling")}：${cardTitle}` : (item.reason || ctx.tr("continueHandling")),
+    actionLabel: ctx.tr("continueHandling")
+  };
+}
+
+function queueObjectLabel(item, ctx) {
+  const candidates = [
+    item.businessObject,
+    item.business_object,
+    item.objectLabel,
+    item.object_label,
+    item.objectName,
+    item.object_name,
+    roomLabel(item.roomNo || item.room_no, ctx),
+    item.objectId,
+    item.object_id,
+    item.roomId,
+    item.room_id,
+    item.aggregateRef,
+    item.aggregate_ref
+  ];
+  return candidates.map((value) => localized(value, ctx)).find(Boolean) || "";
+}
+
+function roomLabel(roomNo, ctx) {
+  const value = localized(roomNo, ctx);
+  if (!value) return "";
+  return ctx.state.lang === "zh-CN" && /^\d+$/.test(value) ? `${value} 号房间` : value;
+}
+
+function queueEntryKey(item = {}) {
+  return item.workItemId || `${item.workspaceId || ""}:${item.cardId || ""}:${item.queueItemId || ""}`;
+}
+
+function shouldShowUnfinishedRecovery(query = "") {
+  const normalized = String(query || "").trim().toLocaleLowerCase();
+  if (!normalized) return false;
+  if (/创建房间|新增房间|配置房间/.test(normalized) && !/\d/.test(normalized)) return false;
+  return /\d/.test(normalized) || /未办完|继续|找回|房号|号房间|room[-_\s]?\w+|bed[-_\s]?\w+|stay[-_\s]?\w+/i.test(normalized);
 }
 
 function operationCases(queue, workspaces, ctx) {
