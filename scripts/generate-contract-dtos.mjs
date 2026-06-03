@@ -220,7 +220,8 @@ export type PrepareWorkItemRequest = PrepareCardRequest & {
   cardId?: string | null;
 };
 
-export type ConfirmWorkItemRequest = Partial<ConfirmCardRequest> & {
+export type ConfirmWorkItemRequest = Omit<Partial<ConfirmCardRequest>, "idempotencyKey"> & {
+  idempotencyKey: string;
   workspaceId?: string | null;
   cardId?: string | null;
 };
@@ -505,6 +506,9 @@ const apiPathDescriptors = [
   { key: "auditEvents", path: "/api/audit-events" },
   { key: "outbox", path: "/api/outbox" },
   { key: "processOutbox", path: "/api/projections/process-outbox" },
+  { key: "mobileDrafts", path: "/api/mobile/drafts" },
+  { key: "mobileClientEvents", path: "/api/mobile/client-events" },
+  { key: "mobileRecentObjects", path: "/api/mobile/recent-objects" },
   { key: "behaviorEvents", path: "/api/behavior-events" },
   { key: "observability", path: "/api/observability/runtime" }
 ];

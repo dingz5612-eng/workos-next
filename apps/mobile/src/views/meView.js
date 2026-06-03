@@ -3,7 +3,7 @@ import { DeviceTrustPanel, SubmitQueue, UploadQueue } from "./experienceComponen
 
 export function meView(ctx) {
   const { state, tr, shell } = ctx;
-  const actorDisplayName = state.currentActor?.displayName ? ctx.escapeHtml(state.currentActor.displayName) : tr("personalMode");
+  const actorDisplayName = state.currentActor?.displayName ? ctx.escapeHtml(state.currentActor.displayName) : tr("personalModeTitle");
   const actorRole = state.currentActor?.role ? roleLabel(state.currentActor.role, tr) : "-";
   const stats = selectSurfaceStats(state);
   const hasStats = stats.queueCount || stats.blockedCount || stats.confirmCount;

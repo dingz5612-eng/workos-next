@@ -2,10 +2,12 @@ import { capacityForRoomType } from "./controls/fieldControls.js";
 import { clearDraft, loadDraft, saveDraft } from "./operationDrafts.js";
 import { createSubmissionProtocol, materializeEvidenceObjects, submitCardOperation, submitWorkItemOperation } from "./operationRuntime.js";
 import { setView } from "./navigationController.js";
-import { activeWorkspaceCard, isCardActionDisabled } from "./selectors/workspaceSelectors.js";
+import { activeWorkspaceCard, isCardActionDisabled, isTerminalCardStatus } from "./selectors/workspaceSelectors.js";
 import { applyRuntimeProjection } from "./runtime/runtimeStore.js";
+import { operationFieldId } from "./views/workspaceView.js";
 
 export function collectOperationValues() {
+  if (typeof document === "undefined") return {};
   const values = Array.from(document.querySelectorAll("[data-operation-field]")).reduce((current, node) => {
     current[node.dataset.operationField] = node.value || "";
     return current;
@@ -23,6 +25,7 @@ export function collectEvidenceIds() {
 }
 
 export function collectEvidenceDrafts() {
+  if (typeof document === "undefined") return [];
   return Array.from(document.querySelectorAll("[data-evidence-id].selected"))
     .map((node) => {
       if (!node.dataset.evidenceDraftId) {
@@ -76,6 +79,7 @@ export function saveCurrentDraft(ctx) {
   const fieldValues = collectOperationValues();
   const evidenceDrafts = collectEvidenceDrafts();
   saveDraft(item.id, card.id, fieldValues, evidenceDrafts, draftSubmissionProtocol(item, card, fieldValues, evidenceDrafts));
+  ctx.state.fieldValidation = null;
   ctx.state.operationMessage = ctx.tr("draftSaved");
   ctx.render();
 }
@@ -118,6 +122,12 @@ export function collectDraftingValuesOnInput(event, ctx) {
   const evidenceDrafts = loadDraft(item.id, card.id).evidenceDrafts || [];
   const fieldValues = collectOperationValues();
   saveDraft(item.id, card.id, fieldValues, evidenceDrafts, draftSubmissionProtocol(item, card, fieldValues, evidenceDrafts));
+  if (ctx.state.fieldValidation?.workspaceId === item.id && ctx.state.fieldValidation?.cardId === card.id) {
+    ctx.state.fieldValidation = {
+      ...ctx.state.fieldValidation,
+      missingFieldIds: ctx.state.fieldValidation.missingFieldIds.filter((fieldId) => !hasBusinessValue(fieldValues, fieldId))
+    };
+  }
 }
 
 export async function submitCurrentCard(ctx) {
@@ -130,6 +140,30 @@ export async function submitCurrentCard(ctx) {
     setView("login", ctx);
     return;
   }
+  const fieldValues = collectOperationValues();
+  const requiredValidation = validateRequiredFields(card, fieldValues, ctx);
+  if (requiredValidation.missingFields.length) {
+    const evidenceDrafts = collectEvidenceDrafts();
+    saveDraft(item.id, card.id, fieldValues, evidenceDrafts, draftSubmissionProtocol(item, card, fieldValues, evidenceDrafts));
+    ctx.state.fieldValidation = {
+      workspaceId: item.id,
+      cardId: card.id,
+      missingFieldIds: requiredValidation.missingFields.map((field) => operationFieldId(field)),
+      missingLabels: requiredValidation.missingLabels
+    };
+    ctx.state.operationMessage = `${ctx.tr("requiredFieldMissing")} ${requiredValidation.missingLabels.join("、")}`;
+    ctx.state.lastActionResult = {
+      confirmed: false,
+      status: "business_blocked_422",
+      commitStatus: "blocked",
+      projectionStatus: "not_started",
+      reason: "required_field_missing",
+      message: ctx.state.operationMessage
+    };
+    ctx.render();
+    return;
+  }
+  ctx.state.fieldValidation = null;
   if (ctx.state.apiStatus !== "online") {
     await ctx.hydrateProjectionFromApi();
     if (ctx.state.apiStatus !== "online") {
@@ -138,7 +172,6 @@ export async function submitCurrentCard(ctx) {
       return;
     }
   }
-  const fieldValues = collectOperationValues();
   const evidenceDrafts = systemEvidenceDraftsFor(card, collectEvidenceDrafts());
   const submissionProtocol = draftSubmissionProtocol(item, card, fieldValues, evidenceDrafts);
   saveDraft(item.id, card.id, fieldValues, evidenceDrafts, submissionProtocol);
@@ -193,6 +226,26 @@ export async function submitCurrentCard(ctx) {
   ctx.render(true);
 }
 
+function validateRequiredFields(card, values, ctx) {
+  const missingFields = (card.fields?.business || [])
+    .filter((field) => field.required)
+    .filter((field) => !hasBusinessValue(values, operationFieldId(field)));
+  return {
+    missingFields,
+    missingLabels: missingFields.map((field) => labelForField(field, ctx))
+  };
+}
+
+function hasBusinessValue(values = {}, fieldId = "") {
+  const value = values[fieldId];
+  return !(value === undefined || value === null || String(value).trim() === "");
+}
+
+function labelForField(field, ctx) {
+  if (ctx.localTerm) return ctx.localTerm(field);
+  return field?.label?.[ctx.state?.lang] || field?.label?.["zh-CN"] || field?.id || "";
+}
+
 function operationActiveCard(item, selectedCardIndex, selectedCardId) {
   if (!item) return null;
   const requested = activeWorkspaceCard(item, selectedCardIndex, selectedCardId);
@@ -201,10 +254,6 @@ function operationActiveCard(item, selectedCardIndex, selectedCardId) {
     return activeWorkspaceCard(item, -1, "");
   }
   return requested;
-}
-
-function isTerminalCardStatus(status) {
-  return ["done", "confirmed", "completed", "committed", "closed", "cancelled"].includes(String(status || ""));
 }
 
 function allowsWorkspaceConfirmFallback(workspace = {}) {

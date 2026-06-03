@@ -1,0 +1,56 @@
+{
+  "version": "oam.admission-sources.v1",
+  "generatedBy": "oam-cab-v1-phase-3",
+  "sources": [
+    {
+      "id": "businessLineRegistry",
+      "ref": "docs/business/business-line-registry.json",
+      "role": "business line maturity, blocked actions, and surface mode"
+    },
+    {
+      "id": "releaseState",
+      "ref": "artifacts/release-state/current-state.json",
+      "role": "current state authority and production block"
+    },
+    {
+      "id": "sliceManifest",
+      "ref": "docs/contracts/slice-manifest.json",
+      "role": "slice, workspace, card, event, and aggregate manifest"
+    },
+    {
+      "id": "surfacePolicy",
+      "ref": "docs/contracts/runtime-surface-policy.json",
+      "role": "surface visibility, queue mode, learning, and high-risk admission reason"
+    },
+    {
+      "id": "apiBoundary",
+      "ref": "docs/rules/v5.5/api-boundary.yml",
+      "role": "write route classification and forbidden write patterns"
+    },
+    {
+      "id": "factOwnership",
+      "ref": "docs/rules/v5.5/fact-ownership.yml",
+      "role": "fact owners, allowed writers, forbidden writers, and projection owners"
+    },
+    {
+      "id": "actorSession",
+      "ref": "runtime actor session",
+      "role": "actor identity, tenant, role, and capability context"
+    },
+    {
+      "id": "deviceTrust",
+      "ref": "runtime device trust",
+      "role": "device id, trust state, and high-risk device requirement"
+    },
+    {
+      "id": "surface",
+      "ref": "mobile or pc surface request context",
+      "role": "surface channel, view, and interaction mode"
+    },
+    {
+      "id": "workItemDefinition",
+      "ref": "future Definition Registry",
+      "role": "work item type, command type, required evidence, risk, ledger, and admission refs"
+    }
+  ]
+}

@@ -11,9 +11,11 @@ export async function login(ctx) {
     return;
   }
   try {
-    const username = document.querySelector("#loginRole")?.value || "operator";
+    const username = document.querySelector("#loginAccount")?.value || document.querySelector("#loginRole")?.value || "operator";
+    const department = document.querySelector("#loginDepartment")?.value || "stay";
     const password = document.querySelector("#loginPassword")?.value || "dev";
     const session = await loginActor(username, password);
+    session.department = department;
     ctx.state.currentActor = session;
     ctx.state.loginMessage = "";
     persistActorSession(session);

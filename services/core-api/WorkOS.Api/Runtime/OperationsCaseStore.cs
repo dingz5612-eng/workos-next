@@ -109,7 +109,10 @@ public sealed class PostgresOperationsCaseStore : IOperationsCaseStore
                 @openedAtUtc, null, @ownerRole, @ownerActorId,
                 @sourceRefs::jsonb, @metadata::jsonb)
             on conflict(case_id) do update
-            set status = excluded.status,
+            set tenant_id = excluded.tenant_id,
+                case_type = excluded.case_type,
+                definition_version_id = excluded.definition_version_id,
+                status = excluded.status,
                 owner_role = excluded.owner_role,
                 owner_actor_id = excluded.owner_actor_id,
                 source_refs = excluded.source_refs,

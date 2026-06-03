@@ -1,0 +1,31 @@
+{
+  "version": "oam.search-permission-policy.v1",
+  "generatedBy": "oam-cab-v1-phase-4",
+  "rules": [
+    {
+      "ruleId": "business-line-blocked-cannot-execute",
+      "description": "Blocked business-line state must surface as non-production or prepare-only admission.",
+      "effect": "result.admission.productionAllowed=false and result.admission.reason must explain the blocker"
+    },
+    {
+      "ruleId": "surface-visibility-not-confirm-permission",
+      "description": "Search result visibility cannot imply confirm permission.",
+      "effect": "result.admission.visibleAllowed may be true while confirmAllowed remains false"
+    },
+    {
+      "ruleId": "high-risk-requires-capability-device",
+      "description": "High-risk payment, deposit, period, and correction results must show required capability and device trust.",
+      "effect": "result.admission.requiredCapabilities and requiredDeviceTrust must be present"
+    },
+    {
+      "ruleId": "tenant-filter-required",
+      "description": "Business read search must respect actor tenant context.",
+      "effect": "source query and sourceRefs must be tenant scoped"
+    },
+    {
+      "ruleId": "legacy-adapter-label-required",
+      "description": "Legacy workspace-card search results must be marked as workspaceCardCompatibility until Search Kernel is native.",
+      "effect": "result.resultType=workspaceCardCompatibility or sourceRefs.compatibilityAdapter present"
+    }
+  ]
+}

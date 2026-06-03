@@ -1,0 +1,23 @@
+{
+  "version": "oam-cab.control-plane-command-append-only-contract.v1",
+  "status": "baseline-contract",
+  "commandTypes": [
+    "GateResultWrite",
+    "RollbackInstruction",
+    "BusinessSignoff",
+    "GovernanceExportAudit"
+  ],
+  "appendOnly": true,
+  "businessFactWriteAllowed": false,
+  "manualGateResultAllowed": false,
+  "manualPassedEvidenceAllowed": false,
+  "invariants": [
+    "GateResult must be machine-generated.",
+    "Control Plane commands do not directly write business facts.",
+    "Passed evidence cannot be manually asserted."
+  ],
+  "evidence": [
+    "services/core-api/WorkOS.Api/Runtime/ControlPlaneWriteStore.cs",
+    "scripts/check-oam-cab-final-report.mjs"
+  ]
+}

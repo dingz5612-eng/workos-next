@@ -1,0 +1,149 @@
+version: 2
+generatedBy: oam-cab-v1-final
+components:
+  - id: ArchitectureAuthority
+    name: Architecture Authority
+    path: docs/engineering/00-rule-authority.md
+    status: active
+    owner: architecture
+    owner_domain: architecture
+    responsibility: Highest engineering rule authority and OAM-CAB execution boundary.
+    reason: OAM-CAB must follow Rule Authority, acceptance rules, current-state, API boundary, fact ownership, and MR contract before implementation.
+    allowed_usage: Decide rule precedence, document architecture boundaries, and stop execution when evidence or authority conflicts.
+    forbidden_usage: Override V5.5 Rule Authority, current-state, API boundary, fact ownership, MR contract, or release evidence.
+    evidence:
+      - docs/engineering/00-rule-authority.md
+      - docs/rules/v5.5/rule-authority.yml
+      - docs/acceptance/13-v5.5-rules-os-go-no-go.md
+      - scripts/check-rule-authority.mjs
+  - id: AdmissionKernel
+    name: Admission Kernel
+    path: docs/contracts/admission/admission-contract.json
+    status: active
+    owner: operations-runtime
+    owner_domain: operations-runtime
+    responsibility: Unified visible, prepare, confirm, and production decision contract.
+    reason: surface visibility is not confirmAllowed; production remains blocked unless Admission and release-state allow it.
+    allowed_usage: Evaluate visibleAllowed, prepareAllowed, confirmAllowed, productionAllowed, blocking sources, capabilities, device trust, and business-line state.
+    forbidden_usage: Let Mobile surface, PC Governance, Workspace/Card, or Search decide confirmAllowed directly.
+    evidence:
+      - docs/contracts/admission/admission-contract.json
+      - docs/contracts/admission/admission-matrix.json
+      - services/core-api/WorkOS.Api/Runtime/AdmissionKernelService.cs
+      - scripts/check-admission-kernel.mjs
+  - id: OperationsRuntime
+    name: Operations Runtime
+    path: services/core-api/WorkOS.Api/Runtime
+    status: active
+    owner: operations-runtime
+    owner_domain: operations-runtime
+    responsibility: Primary execution axis and legal business write path.
+    reason: Business facts must flow through WorkItem confirm, CommandSubmission, UoW, DomainEvent / LedgerEntry, ProcessManager, Projection / Lens, and Surface.
+    allowed_usage: Own POST /api/operations/work-items/{workItemId}/confirm and commit through OperationsUnitOfWork.
+    forbidden_usage: Accept page-specific business writes, shadow_runtime official reads, direct ProjectionRuntime confirm, or Mobile BFF fact writes.
+    evidence:
+      - services/core-api/WorkOS.Api/Runtime/CanonicalOperationsApiService.cs
+      - services/core-api/WorkOS.Api/Runtime/OperationsUnitOfWork.cs
+      - scripts/check-runtime-write-paths.mjs
+      - scripts/check-api-boundaries.mjs
+  - id: CompatibilityBox
+    name: Compatibility Box
+    path: docs/architecture/compatibility-components.yml
+    status: active
+    owner: architecture
+    owner_domain: architecture
+    responsibility: Register and quarantine compatibility facades and wrappers without promoting them to architecture center.
+    reason: ProjectionRuntime and Workspace/Card remain compatibility components while Operations Runtime migration continues.
+    allowed_usage: Read, display, map, and adapt legacy material through controlled boundaries.
+    forbidden_usage: Add business write semantics, decide confirmAllowed, bypass Admission Kernel, or grant production.
+    evidence:
+      - docs/architecture/compatibility-components.yml
+      - docs/architecture/compatibility-quarantine-rules.md
+      - scripts/check-compatibility-quarantine.mjs
+  - id: ExperienceKernel
+    name: Experience Kernel
+    path: apps/mobile/src/views
+    status: active
+    owner: surface
+    owner_domain: surface
+    responsibility: Present runtime decisions, blockers, required fields, evidence state, and recovery guidance without owning business facts.
+    reason: UI/UX must express Operations Runtime decisions clearly while avoiding technical fields and hidden business writes.
+    allowed_usage: Render Mobile / PC surfaces from Projection / Lens, Language Kernel copy, and Admission decisions.
+    forbidden_usage: Display internal command fields to users, decide confirmAllowed, write business facts, or create page-specific write flows.
+    evidence:
+      - apps/mobile/src/views/operationPanelView.js
+      - apps/mobile/src/views/workspaceView.js
+      - apps/mobile/e2e/surface-smoke.spec.js
+      - scripts/check-surface-contract.mjs
+  - id: LanguageKernel
+    name: Language Kernel
+    path: docs/contracts/language/language-contract.json
+    status: active
+    owner: language
+    owner_domain: language
+    responsibility: Authoritative status, explanation, risk, field label, error, and search synonym language for zh-CN, ru-RU, and ky-KG.
+    reason: Language must not be scattered as page-specific patches and must cover business states and admission explanations.
+    allowed_usage: Provide catalogs and legacy adapters for domain terms, field labels, surface copy, error copy, and search synonyms.
+    forbidden_usage: Let pages, cards, BFF, or Projection facade invent business state semantics independently.
+    evidence:
+      - docs/contracts/language/language-contract.json
+      - docs/contracts/language/domain-term-catalog.json
+      - docs/contracts/language/field-label-catalog.json
+      - scripts/check-language-kernel.mjs
+  - id: SearchKernel
+    name: Search Kernel
+    path: docs/contracts/search/search-contract.json
+    status: active
+    owner: search
+    owner_domain: search
+    responsibility: Read-only search with Admission, permission, ranking, language, and source evidence.
+    reason: Search must not become contains-only routing or bypass permissions / language / admission.
+    allowed_usage: Return authorized, language-aware, admission-labeled results and source references.
+    forbidden_usage: Write business facts, bypass tenant/auth filters, bypass Admission, bypass Language Kernel, or expose hidden production actions.
+    evidence:
+      - docs/contracts/search/search-contract.json
+      - services/core-api/WorkOS.Api/Runtime/SearchKernelService.cs
+      - scripts/check-search-kernel.mjs
+  - id: ControlPlane
+    name: Control Plane
+    path: tools/control-plane
+    status: active
+    owner: governance
+    owner_domain: governance
+    responsibility: GateResult, Invariant, ShadowCompare, RollbackInstruction, release evidence, and controlled governance actions.
+    reason: Governance and release decisions need auditable evidence and must not directly write business facts.
+    allowed_usage: Read and generate governance evidence, gate artifacts, rollback instructions, and shadow comparison outputs.
+    forbidden_usage: Directly mutate business facts, bypass Operations Runtime, or claim Business Production GO.
+    evidence:
+      - artifacts/release-state/current-state.json
+      - artifacts/rt4/evidence-graph.json
+      - tools/control-plane/WorkOS.ControlPlaneRunners
+      - scripts/operations/check-l1-to-l2-readiness.mjs
+  - id: EvidenceGraph
+    name: Evidence Graph
+    path: artifacts/rt4/evidence-graph.json
+    status: active
+    owner: governance
+    owner_domain: governance
+    responsibility: Bind release evidence, operation evidence, surface evidence, gates, traces, and final reports.
+    reason: OAM-CAB completion must be evidence-backed and machine-readable, not asserted by prose.
+    allowed_usage: Record artifacts, screenshots, gate results, no-go risks, and traceability.
+    forbidden_usage: Fabricate pass evidence, hide missing commands, or override current-state.
+    evidence:
+      - artifacts/rt4/evidence-graph.json
+      - artifacts/oam-cab/oam-cab-v1-current-state.md
+      - artifacts/oam-cab/execution-log.jsonl
+  - id: DefinitionRegistry
+    name: Definition Registry
+    path: docs/contracts/definition/workitem-definition-registry.json
+    status: active
+    owner: operations-runtime
+    owner_domain: operations-runtime
+    responsibility: Authoritative WorkItem, command, field, evidence, risk, ledger, surface, and projection owner semantics.
+    reason: New business semantics must enter Definition Registry rather than Workspace/Card extension points.
+    allowed_usage: Resolve work item definitions before admission, search, field rendering, and runtime confirm.
+    forbidden_usage: Keep business semantics only in page code, Workspace/Card compatibility, or ad hoc surface copy.
+    evidence:
+      - docs/contracts/definition/workitem-definition-registry.json
+      - services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs
+      - scripts/check-definition-registry.mjs

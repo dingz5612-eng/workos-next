@@ -2,6 +2,12 @@ import { i18n } from "../i18n.js";
 import { selectRuntimeWorkspaces, selectWorkbenchQueue, selectWorkspaceById } from "./surfaceSelectors.js";
 import { translateTerm } from "../termDictionary.js";
 
+export const terminalCardStatuses = new Set(["done", "confirmed", "completed", "committed", "closed", "cancelled", "skipped"]);
+
+export function isTerminalCardStatus(status) {
+  return terminalCardStatuses.has(String(status || ""));
+}
+
 export function tr(state, key) {
   return i18n[state.lang][key] || key;
 }
@@ -50,7 +56,7 @@ export function activeWorkspaceCard(item, selectedCardIndex, selectedCardId = ""
 }
 
 export function isCardActionDisabled(card) {
-  return ["notStarted", "done"].includes(card.status);
+  return card.status === "notStarted" || isTerminalCardStatus(card.status);
 }
 
 export function activeCardForWorkspace(item) {

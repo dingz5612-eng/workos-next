@@ -211,65 +211,9 @@
   border-color: #ffd166;
 }
 
-.loop-steps {
-  display: flex;
-  gap: 6px;
-  overflow-x: auto;
-  margin-top: 12px;
-  padding-bottom: 2px;
-}
-
-.loop-steps span {
-  flex: 0 0 auto;
-  padding: 7px 10px;
-  border: 1px solid #d4e3eb;
-  border-radius: 999px;
-  color: #52677b;
-  background: #fff;
-  font-size: 12px;
-}
-
-.loop-steps .done {
-  color: #0b6f63;
-  background: #e6f8f2;
-}
-
-.loop-steps .current {
-  color: #102033;
-  background: #ffd166;
-  border-color: #ffd166;
-  font-weight: 850;
-}
-
 .loop-meta {
   display: grid;
   gap: 5px;
-  margin-top: 10px;
-}
-
-.task-card {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 10px;
-  align-items: center;
-}
-
-.task-card strong {
-  display: block;
-  margin: 2px 0;
-}
-
-.task-card button {
-  width: 88px;
-  color: #102033;
-  background: #eaf2f5;
-}
-
-.task-stack .task-card {
-  margin-top: 0;
-}
-
-.compact-section .task-card {
   margin-top: 10px;
 }
 
@@ -408,9 +352,13 @@
 
 .workitem-card-head {
   display: grid;
-  grid-template-columns: 1fr auto;
+  grid-template-columns: minmax(0, 1fr);
   gap: 10px;
-  align-items: center;
+  align-items: start;
+}
+
+.workitem-card-head > div {
+  min-width: 0;
 }
 
 .workitem-card-head span,
@@ -432,7 +380,30 @@
 .operation-panel-head strong {
   display: block;
   margin-top: 3px;
+  overflow-wrap: anywhere;
   font-size: 18px;
+}
+
+.workitem-route-blocked {
+  display: grid;
+  min-width: 0;
+  gap: 6px;
+  justify-items: start;
+  padding: 10px;
+  border: 1px solid #d9e7ee;
+  border-radius: 8px;
+  background: #f7fbfc;
+}
+
+.workitem-route-blocked b,
+.workitem-route-blocked small {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.workitem-route-blocked button {
+  width: auto;
+  min-width: 108px;
 }
 
 .workitem-card-grid,
@@ -440,7 +411,7 @@
 .permission-diagnostic dl,
 .device-trust-panel dl {
   display: grid;
-  grid-template-columns: minmax(94px, auto) 1fr;
+  grid-template-columns: minmax(0, 1fr);
   gap: 5px 10px;
   margin: 0;
 }
@@ -472,6 +443,10 @@
   margin-bottom: 12px;
 }
 
+.lifecycle-workspace.compact {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
 .lifecycle-workspace article {
   display: grid;
   gap: 5px;
@@ -484,19 +459,61 @@
 }
 
 .lifecycle-timeline {
-  display: flex;
-  gap: 6px;
-  overflow-x: auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(132px, 1fr));
+  gap: 8px;
+  overflow: visible;
 }
 
-.lifecycle-timeline span {
-  flex: 0 0 auto;
-  padding: 7px 10px;
+.lifecycle-timeline .timeline-step {
+  display: grid;
+  gap: 4px;
+  min-height: 54px;
+  align-content: center;
+  padding: 8px 10px;
   border: 1px solid #d4e3eb;
-  border-radius: 999px;
+  border-radius: 8px;
   color: #52677b;
   background: #fff;
   font-size: 12px;
+  box-shadow: none;
+  text-align: left;
+  cursor: pointer;
+}
+
+.lifecycle-timeline .timeline-step:hover,
+.lifecycle-timeline .timeline-step:focus-visible {
+  border-color: #0b6f63;
+  outline: none;
+}
+
+.lifecycle-timeline strong,
+.lifecycle-timeline small {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.lifecycle-timeline strong {
+  color: #102033;
+  font-size: 12px;
+}
+
+.lifecycle-timeline small {
+  color: #66788c;
+  font-size: 11px;
+  font-weight: 850;
+}
+
+.app-shell.surface-pc .workitem-card-head {
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+}
+
+.app-shell.surface-pc .workitem-card-grid,
+.app-shell.surface-pc .trusted-confirm-sheet dl,
+.app-shell.surface-pc .permission-diagnostic dl,
+.app-shell.surface-pc .device-trust-panel dl {
+  grid-template-columns: minmax(94px, auto) 1fr;
 }
 
 .lifecycle-timeline .current {
@@ -504,6 +521,26 @@
   background: #ffd166;
   border-color: #ffd166;
   font-weight: 850;
+}
+
+.status-chip {
+  display: inline-flex;
+  width: fit-content;
+  max-width: 100%;
+  min-height: 28px;
+  align-items: center;
+  border-radius: 999px;
+  padding: 3px 9px;
+  color: #24525a;
+  background: #eaf5f4;
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+
+.status-blocked {
+  color: #8a4d00;
+  background: #fff3d0;
+  border-color: #ffd166;
 }
 
 .operation-panel-view {
@@ -790,6 +827,26 @@
   border: 1px solid #d9e7ee;
   border-radius: 8px;
   background: #f7fbfb;
+}
+
+.operation-route-status {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.operation-route-status span:not(.status-chip) {
+  display: inline-flex;
+  min-height: 28px;
+  align-items: center;
+  border-radius: 999px;
+  padding: 3px 9px;
+  color: #52677b;
+  background: #fff;
+  border: 1px solid #d9e7ee;
+  font-size: 12px;
+  font-weight: 850;
 }
 
 .operation-panel-page span,

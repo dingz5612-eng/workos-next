@@ -2,25 +2,25 @@ import { apiBaseUrl } from "./apiClient.js";
 import { runtimeApiPaths } from "./generated/runtimeApiPaths.js";
 
 export async function fetchReleaseControlCenter() {
-  const releasesResponse = await fetch(`${apiBaseUrl()}${runtimeApiPaths.controlPlaneReleases}`, { signal: AbortSignal.timeout(2400) });
+  const releasesResponse = await pcFetch(runtimeApiPaths.controlPlaneReleases, { signal: AbortSignal.timeout(2400) });
   if (!releasesResponse.ok) throw new Error("release_control_failed");
   const releases = await releasesResponse.json();
   const firstReleaseId = releases?.[0]?.releaseId;
   if (!firstReleaseId) return { releases: releases || [], selectedRelease: null };
 
-  const detailResponse = await fetch(`${apiBaseUrl()}${runtimeApiPaths.controlPlaneRelease(firstReleaseId)}`, { signal: AbortSignal.timeout(2400) });
+  const detailResponse = await pcFetch(runtimeApiPaths.controlPlaneRelease(firstReleaseId), { signal: AbortSignal.timeout(2400) });
   const selectedRelease = detailResponse.ok ? await detailResponse.json() : null;
   return { releases, selectedRelease };
 }
 
 export async function fetchProductionObservability() {
-  const response = await fetch(`${apiBaseUrl()}${runtimeApiPaths.observability}`, { signal: AbortSignal.timeout(2400) });
+  const response = await pcFetch(runtimeApiPaths.observability, { signal: AbortSignal.timeout(2400) });
   if (!response.ok) throw new Error("production_observability_failed");
   return response.json();
 }
 
 export async function previewBankStatementImport(body) {
-  const response = await fetch(`${apiBaseUrl()}${runtimeApiPaths.bankStatementImportPreview}`, {
+  const response = await pcFetch(runtimeApiPaths.bankStatementImportPreview, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
@@ -61,7 +61,7 @@ export async function fetchReconciliationCandidates(tenantId, bankTransactionId 
   const url = new URL(`${apiBaseUrl()}${runtimeApiPaths.reconciliationCandidates}`);
   url.searchParams.set("tenantId", tenantId);
   if (bankTransactionId) url.searchParams.set("bankTransactionId", bankTransactionId);
-  const response = await fetch(url, { signal: AbortSignal.timeout(4200) });
+  const response = await pcFetch(url, { signal: AbortSignal.timeout(4200) });
   if (!response.ok) throw await apiError("reconciliation_candidates_load_failed", response);
   return response.json();
 }
@@ -138,7 +138,7 @@ export async function applyLedgerCorrection(correctionRequestId, body, actorId =
 }
 
 export async function recordGovernanceAuditEvent(auditEvent, language = "zh-CN") {
-  const response = await fetch(`${apiBaseUrl()}${runtimeApiPaths.behaviorEvents}`, {
+  const response = await pcFetch(runtimeApiPaths.behaviorEvents, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
@@ -174,7 +174,7 @@ export async function postPcOperationsConfirm(path, { body = null, actorId = "ru
     headers["Content-Type"] = "application/json";
   }
 
-  const response = await fetch(`${apiBaseUrl()}${path}`, {
+  const response = await pcFetch(path, {
     method: "POST",
     headers,
     body: body === null ? undefined : JSON.stringify(body),
@@ -182,6 +182,29 @@ export async function postPcOperationsConfirm(path, { body = null, actorId = "ru
   });
   if (!response.ok) throw await apiError(errorCode, response);
   return response.json();
+}
+
+function pcFetch(pathOrUrl, options = {}) {
+  const url = pathOrUrl instanceof URL ? pathOrUrl : `${apiBaseUrl()}${pathOrUrl}`;
+  const method = options.method || "GET";
+  const csrf = csrfToken();
+  const headers = {
+    ...(options.headers || {})
+  };
+  if (method !== "GET" && csrf) headers["X-CSRF-Token"] = csrf;
+  return fetch(url, {
+    ...options,
+    headers,
+    credentials: "include"
+  });
+}
+
+function csrfToken() {
+  return document.cookie
+    .split(";")
+    .map((item) => item.trim())
+    .find((item) => item.startsWith("workosnext_csrf="))
+    ?.split("=")[1] || "";
 }
 
 function cryptoRandomRequestId() {

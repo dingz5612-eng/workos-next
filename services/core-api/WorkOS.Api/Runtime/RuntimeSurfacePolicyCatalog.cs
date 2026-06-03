@@ -78,7 +78,8 @@ internal sealed class RuntimeSurfacePolicyCatalog
             ReadStringArray(item.GetProperty("intentTags")),
             RequiredString(item, "learningSection"),
             RequiredString(item, "defaultLens"),
-            OptionalString(item, "hiddenReason"));
+            OptionalString(item, "hiddenReason"),
+            OptionalString(item, "admissionReason"));
 
     private static string LocateContract(string fileName)
     {
@@ -149,4 +150,5 @@ internal sealed record SurfaceCardPolicy(
     IReadOnlyList<string> IntentTags,
     string LearningSection,
     string DefaultLens,
-    string HiddenReason);
+    string HiddenReason,
+    string AdmissionReason);

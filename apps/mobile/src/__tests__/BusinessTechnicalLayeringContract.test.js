@@ -1,10 +1,12 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
+import { optionsForField } from "../controls/fieldControls.js";
 import { clearDraft } from "../operationDrafts.js";
+import { submitCurrentCard } from "../operationController.js";
 import { ActionResult, EvidenceSheet, EvidenceStateVM, PermissionDiagnostic } from "../views/experienceComponents.js";
 import { homeView } from "../views/homeView.js";
 import { operationPanelView } from "../views/operationPanelView.js";
 import { searchView } from "../views/searchView.js";
-import { workspaceView } from "../views/workspaceView.js";
+import { operationFieldId, workspaceView } from "../views/workspaceView.js";
 import { createSurfaceCtx, visibleText } from "./surfaceContractTestHelpers.js";
 
 describe("OAM-04B business and technical layering contract", () => {
@@ -70,7 +72,103 @@ describe("OAM-04B business and technical layering contract", () => {
     const html = operationPanelView(ctx);
 
     expect(visibleText(html)).toContain("提交处理");
-    expect(visibleText(html)).toContain("系统将在提交时自动绑定");
+    expect(visibleText(html)).toContain("提交前系统校验");
+    expect(visibleText(html)).toContain("系统证据校验");
+    expect(visibleText(html)).not.toContain("提交证据");
+    expect(visibleText(html)).not.toContain("可信确认");
+  });
+
+  it("marks required business fields and blocks submit locally before prepare/confirm", async () => {
+    const ctx = createSurfaceCtx({ view: "workspace" });
+    ctx.state.runtimeStore.workspaces[0].cards[0].fields.business = [{
+      id: "buildingId",
+      label: { "zh-CN": "楼栋", "ru-RU": "Корпус" },
+      required: true,
+      ui: { control: "text", options: [] },
+      help: { "zh-CN": "填写楼栋" }
+    }];
+    ctx.render = vi.fn();
+    vi.stubGlobal("document", {
+      querySelectorAll: () => [],
+      querySelector: () => null
+    });
+    vi.stubGlobal("crypto", { randomUUID: () => "55555555-5555-4555-8555-555555555555" });
+
+    const html = workspaceView(ctx);
+    expect(html).toContain('data-required-field="true"');
+    expect(visibleText(html)).toContain("必填");
+
+    await submitCurrentCard(ctx);
+
+    expect(ctx.state.lastActionResult?.status).toBe("business_blocked_422");
+    expect(ctx.state.operationMessage).toContain("楼栋");
+    expect(ctx.state.fieldValidation?.missingFieldIds).toContain("buildingName");
+    expect(ctx.render).toHaveBeenCalled();
+    vi.unstubAllGlobals();
+  });
+
+  it("normalizes runtime option labels before translating dropdown choices", () => {
+    const gender = optionsForField({
+      label: { "zh-CN": "性别策略" },
+      ui: { optionSet: "genderPolicy", options: [{ value: "female", label: "女生房" }] }
+    }, "ru-RU");
+    const technical = optionsForField({
+      label: { "zh-CN": "技术状态" },
+      ui: { optionSet: "technicalState", options: [{ value: "ready" }] }
+    }, "ru-RU");
+
+    expect(gender[0].label).toBe("Женская комната");
+    expect(technical[0].label).toBe("Готова к заселению");
+  });
+
+  it("prefills same-case context fields instead of asking operators to re-enter them", () => {
+    const ctx = createSurfaceCtx({ view: "workspace", selectedCardId: "bedSetup" });
+    clearDraft("W-STAY-RESOURCE", "roomSetup");
+    clearDraft("W-STAY-RESOURCE", "bedSetup");
+    const workspace = ctx.state.runtimeStore.workspaces[0];
+    workspace.cards = [{
+      ...workspace.cards[0],
+      id: "roomSetup",
+      status: "done",
+      title: { "zh-CN": "房间配置卡" }
+    }, {
+      id: "bedSetup",
+      status: "ready",
+      workItemId: "W-STAY-RESOURCE:bedSetup",
+      title: { "zh-CN": "床位配置卡" },
+      fields: { business: [{
+        id: "所属房间",
+        label: { "zh-CN": "所属房间" },
+        required: true,
+        ui: { control: "searchSelect", options: [] },
+        help: { "zh-CN": "选择已存在的业务对象，不能在这里新建对象编号。" }
+      }, {
+        id: "床位号",
+        label: { "zh-CN": "床位号" },
+        required: true,
+        ui: { control: "text", options: [] }
+      }], system: [], analytics: [] },
+      evidence: [],
+      checks: [],
+      blockerRules: [],
+      confirmation: { required: true, requiredRole: "operator", policyRef: "operations-runtime-policy" }
+    }];
+    ctx.state.projectionEvents = [{
+      eventId: "evt-room-setup",
+      workspaceId: "W-STAY-RESOURCE",
+      cardId: "roomSetup",
+      payload: { buildingName: "D03", roomNo: "31", roomType: "single" }
+    }];
+
+    const html = workspaceView(ctx);
+    const text = visibleText(html);
+
+    expect(operationFieldId(workspace.cards[1].fields.business[0])).toBe("roomId");
+    expect(html).toContain('type="hidden" data-operation-field="roomId" value="room-31"');
+    expect(html).toContain('value="D03 / 31"');
+    expect(text).toContain("已从本案带入");
+    expect(text).toContain("系统已从同一案件的前置步骤带入");
+    expect(text).not.toContain("所属房间 · 可搜索选择");
   });
 
   it("does not render active submit surfaces for completed cards", () => {
@@ -107,6 +205,50 @@ describe("OAM-04B business and technical layering contract", () => {
     expect(text).not.toContain("当前办理项");
     expect(text).not.toContain("必填字段");
     expect(html).not.toContain("sticky-action");
+  });
+
+  it("allows a completed previous step to be reviewed without making it submittable", () => {
+    const ctx = createSurfaceCtx({ view: "workspace", selectedCardId: "roomSetup" });
+    const workspace = ctx.state.runtimeStore.workspaces[0];
+    workspace.cards[0].status = "confirmed";
+    workspace.cards.push({
+      id: "bedSetup",
+      status: "ready",
+      workItemId: "W-STAY-RESOURCE:bedSetup",
+      title: { "zh-CN": "床位配置卡" },
+      fields: { business: [], system: [], analytics: [] },
+      evidence: [],
+      checks: [],
+      blockerRules: [],
+      confirmation: { required: true, requiredRole: "operator", policyRef: "operations-runtime-policy" }
+    });
+
+    const html = workspaceView(ctx);
+    const text = visibleText(html);
+
+    expect(text).toContain("正在查看已完成步骤");
+    expect(text).toContain("房间床位配置");
+    expect(text).toContain("已完成");
+    expect(text).toContain("返回当前办理");
+    expect(text).not.toContain("可提交");
+    expect(html).toContain('data-card-id="roomSetup"');
+    expect(html).toContain('data-card-id="bedSetup"');
+    expect(text).not.toContain("操作输入");
+    expect(html).not.toContain("sticky-action");
+    expect(html).not.toContain('data-submit-card');
+  });
+
+  it("treats every terminal operation status as a readonly completed record", () => {
+    const ctx = createSurfaceCtx({ view: "operationPanel" });
+    ctx.state.runtimeStore.workspaces[0].cards[0].status = "confirmed";
+    const html = operationPanelView(ctx);
+    const text = visibleText(html);
+
+    expect(html).toContain('data-surface="completed-operation-record"');
+    expect(text).toContain("已完成记录");
+    expect(text).not.toContain("操作输入");
+    expect(html).not.toContain("sticky-action");
+    expect(html).not.toContain('data-submit-card');
   });
 
   it("renders 403, 409, 422, and projection pending recovery with learning or trace entry", () => {

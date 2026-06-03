@@ -359,13 +359,98 @@ public sealed class PayloadHashService
         };
 }
 
-public sealed class SliceCommandHandlerRouter
+public sealed record SliceCommandHandlerDefinition(
+    string CommandType,
+    string SliceId,
+    string DefinitionVersionId,
+    IReadOnlyList<string> AllowedFacts,
+    string LedgerPolicy,
+    IReadOnlyList<string> RequiredEvidence,
+    string ProjectionOwner)
 {
+    public static SliceCommandHandlerDefinition Default(string commandType) =>
+        new(
+            commandType,
+            "operations.generic",
+            "CommandEnvelope.v1",
+            new[] { "DomainEvent", "WorkItem", "LedgerEntry" },
+            "balanced-ledger-or-none",
+            new[] { "declared-by-test-or-compatibility-handler" },
+            "OperationsRuntimeProjection");
+}
+
+public sealed class DefinitionRegistry
+{
+    private readonly Dictionary<string, SliceCommandHandlerDefinition> definitions = new(StringComparer.OrdinalIgnoreCase);
+
+    public IReadOnlyList<SliceCommandHandlerDefinition> All =>
+        definitions.Values
+            .OrderBy(item => item.CommandType, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+
+    public DefinitionRegistry Register(SliceCommandHandlerDefinition definition)
+    {
+        Validate(definition);
+        definitions[definition.CommandType] = definition;
+        return this;
+    }
+
+    public SliceCommandHandlerDefinition? Find(string commandType) =>
+        definitions.TryGetValue(commandType, out var definition) ? definition : null;
+
+    private static void Validate(SliceCommandHandlerDefinition definition)
+    {
+        foreach (var (name, value) in new[]
+        {
+            ("commandType", definition.CommandType),
+            ("sliceId", definition.SliceId),
+            ("definitionVersionId", definition.DefinitionVersionId),
+            ("ledgerPolicy", definition.LedgerPolicy),
+            ("projectionOwner", definition.ProjectionOwner)
+        })
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                throw new InvalidOperationException($"slice_definition_requires_{name}");
+            }
+        }
+
+        if (definition.AllowedFacts.Count == 0)
+        {
+            throw new InvalidOperationException("slice_definition_requires_allowed_facts");
+        }
+
+        if (definition.RequiredEvidence.Count == 0)
+        {
+            throw new InvalidOperationException("slice_definition_requires_required_evidence");
+        }
+    }
+}
+
+public sealed class SliceCommandHandlerRegistry
+{
+    private readonly DefinitionRegistry definitions;
     private readonly Dictionary<string, Func<CommandEnvelopeV1, SliceCommandHandlerResult>> handlers = new(StringComparer.OrdinalIgnoreCase);
 
-    public SliceCommandHandlerRouter Register(string commandType, Func<CommandEnvelopeV1, SliceCommandHandlerResult> handler)
+    public SliceCommandHandlerRegistry()
+        : this(new DefinitionRegistry())
     {
-        handlers[commandType] = handler;
+    }
+
+    public SliceCommandHandlerRegistry(DefinitionRegistry definitions)
+    {
+        this.definitions = definitions;
+    }
+
+    public IReadOnlyList<SliceCommandHandlerDefinition> Definitions => definitions.All;
+
+    public SliceCommandHandlerRegistry Register(string commandType, Func<CommandEnvelopeV1, SliceCommandHandlerResult> handler) =>
+        Register(SliceCommandHandlerDefinition.Default(commandType), handler);
+
+    public SliceCommandHandlerRegistry Register(SliceCommandHandlerDefinition definition, Func<CommandEnvelopeV1, SliceCommandHandlerResult> handler)
+    {
+        definitions.Register(definition);
+        handlers[definition.CommandType] = handler;
         return this;
     }
 
@@ -376,8 +461,78 @@ public sealed class SliceCommandHandlerRouter
             throw new InvalidOperationException($"operations_handler_not_registered:{envelope.CommandType}");
         }
 
-        return handler(envelope);
+        var definition = definitions.Find(envelope.CommandType)
+            ?? throw new InvalidOperationException($"operations_handler_definition_not_registered:{envelope.CommandType}");
+        var handled = handler(envelope);
+        ValidateDeclaredOutputFacts(definition, handled);
+        ValidateLedgerPolicy(definition, handled);
+        return handled;
     }
+
+    private static void ValidateDeclaredOutputFacts(SliceCommandHandlerDefinition definition, SliceCommandHandlerResult handled)
+    {
+        var allowed = definition.AllowedFacts.ToHashSet(StringComparer.OrdinalIgnoreCase);
+        var undeclared = OutputFactsFor(handled)
+            .Where(fact => !allowed.Contains(fact))
+            .ToArray();
+        if (undeclared.Length > 0)
+        {
+            throw new InvalidOperationException($"operations_handler_fact_not_allowed:{definition.CommandType}:{string.Join(",", undeclared)}");
+        }
+    }
+
+    private static IReadOnlyList<string> OutputFactsFor(SliceCommandHandlerResult handled)
+    {
+        var facts = new List<string>();
+        if (handled.DomainEvents.Count > 0)
+        {
+            facts.Add("DomainEvent");
+        }
+
+        if (handled.WorkItemEvents.Count > 0)
+        {
+            facts.Add("WorkItem");
+        }
+
+        if (handled.LedgerTransactions.Count > 0 || handled.LedgerEntries.Count > 0)
+        {
+            facts.Add("LedgerEntry");
+        }
+
+        return facts;
+    }
+
+    private static void ValidateLedgerPolicy(SliceCommandHandlerDefinition definition, SliceCommandHandlerResult handled)
+    {
+        var hasLedgerOutput = handled.LedgerTransactions.Count > 0 || handled.LedgerEntries.Count > 0;
+        if (hasLedgerOutput &&
+            definition.LedgerPolicy.Equals("none", StringComparison.OrdinalIgnoreCase))
+        {
+            throw new InvalidOperationException($"operations_handler_ledger_not_allowed:{definition.CommandType}");
+        }
+    }
+}
+
+public sealed class SliceCommandHandlerRouter
+{
+    private readonly SliceCommandHandlerRegistry registry = new();
+
+    public IReadOnlyList<SliceCommandHandlerDefinition> Definitions => registry.Definitions;
+
+    public SliceCommandHandlerRouter Register(string commandType, Func<CommandEnvelopeV1, SliceCommandHandlerResult> handler)
+    {
+        registry.Register(commandType, handler);
+        return this;
+    }
+
+    public SliceCommandHandlerRouter Register(SliceCommandHandlerDefinition definition, Func<CommandEnvelopeV1, SliceCommandHandlerResult> handler)
+    {
+        registry.Register(definition, handler);
+        return this;
+    }
+
+    public SliceCommandHandlerResult Handle(CommandEnvelopeV1 envelope) =>
+        registry.Handle(envelope);
 }
 
 public sealed class FactResponseStore

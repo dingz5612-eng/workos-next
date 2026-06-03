@@ -135,7 +135,7 @@ describe("OAM-04B queue filter interaction contract", () => {
     expect(html).not.toContain("data-mobile-work-ia");
     expect(html).not.toContain("data-queue-filter-state");
     expect(html).not.toContain('id="sort"');
-    expect(html).toContain("只显示运行时派发的 WorkItem");
+    expect(html).toContain("当前没有分配给你的真实办理任务");
   });
 });
 

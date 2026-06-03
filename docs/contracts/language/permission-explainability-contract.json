@@ -1,0 +1,31 @@
+{
+  "version": "oam-cab.permission-explainability-contract.v1",
+  "status": "baseline-contract",
+  "supportedLanguages": [
+    "zh-CN",
+    "ru-RU",
+    "ky-KG"
+  ],
+  "minimumChineseMessages": [
+    "当前账号或 slice 状态不允许确认。",
+    "提交校验未通过",
+    "重复提交已识别",
+    "请先补齐必填字段"
+  ],
+  "requiredFields": [
+    "reason",
+    "owner",
+    "requiredPermission",
+    "nextAction"
+  ],
+  "invariants": [
+    "403 / 409 / 422 must have user-understandable explanation and next action.",
+    "PermissionExplainability at least covers Chinese messages.",
+    "Permission explanation does not grant confirmAllowed."
+  ],
+  "evidence": [
+    "apps/mobile/src/i18n/operationCopy.js",
+    "apps/mobile/src/i18n/shellCopy.js",
+    "scripts/surface/check-permission-explainability-contract.mjs"
+  ]
+}

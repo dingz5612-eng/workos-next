@@ -1,0 +1,28 @@
+{
+  "version": "oam-cab.admission-decision-contract.v1",
+  "source": "docs/contracts/admission/admission-contract.json",
+  "decisionFields": [
+    "visibleAllowed",
+    "prepareAllowed",
+    "confirmAllowed",
+    "productionAllowed",
+    "mode",
+    "reason",
+    "blockingSources",
+    "requiredCapabilities",
+    "requiredDeviceTrust",
+    "businessLineState",
+    "releaseState",
+    "surfaceState",
+    "noGoItems"
+  ],
+  "invariants": [
+    "surfaceVisibility !== confirmAllowed",
+    "productionAllowed must be false while Business Production is blocked",
+    "confirmAllowed can only be derived from Admission / Operations Runtime decision sources"
+  ],
+  "evidence": [
+    "scripts/check-admission-kernel.mjs",
+    "services/core-api/WorkOS.Api/Runtime/AdmissionKernelService.cs"
+  ]
+}

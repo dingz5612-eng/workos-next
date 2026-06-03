@@ -30,10 +30,10 @@ export function learningView(ctx) {
     <section class="compact-section">
       <h2>${ctx.tr("quickStart")}</h2>
       <div class="mode-list light">
-        ${modeCard("home", "todayMode", ctx.tr)}
-        ${modeCard("search", "intentMode", ctx.tr)}
-        ${modeCard("workbench", "queueMode", ctx.tr)}
-        ${modeCard("me", "personalMode", ctx.tr)}
+        ${modeCard("home", "todayModeTitle", "todayModeBody", ctx.tr)}
+        ${modeCard("search", "intentModeTitle", "intentModeBody", ctx.tr)}
+        ${modeCard("workbench", "queueModeTitle", "queueModeBody", ctx.tr)}
+        ${modeCard("me", "personalModeTitle", "personalModeBody", ctx.tr)}
       </div>
     </section>
     <section class="help-card">

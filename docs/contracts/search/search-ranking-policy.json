@@ -1,0 +1,22 @@
+{
+  "version": "oam.search-ranking-policy.v1",
+  "generatedBy": "oam-cab-v1-phase-4",
+  "signals": [
+    { "signalId": "languageSynonymMatch", "weight": 40, "source": "docs/contracts/language/search-synonyms.json" },
+    { "signalId": "definitionMatch", "weight": 35, "source": "docs/contracts/definition/workitem-definition-registry.json" },
+    { "signalId": "currentWorkItemStatus", "weight": 30, "source": "Operations Runtime WorkItem" },
+    { "signalId": "admissionExecutability", "weight": 25, "source": "docs/contracts/admission/admission-contract.json" },
+    { "signalId": "recentTrace", "weight": 15, "source": "CommandSubmission trace" },
+    { "signalId": "learningFallback", "weight": 5, "source": "learning catalog" }
+  ],
+  "forbiddenFinalSignals": [
+    "raw contains-only match without Language Kernel synonym expansion",
+    "business-line hardcoded priority in a surface component",
+    "rank boost that changes confirmAllowed or productionAllowed"
+  ],
+  "legacyAllowance": {
+    "adapter": "LensQueryService.Search",
+    "reason": "Existing compatibility search may continue only as SearchKernelService input.",
+    "mustBeWrappedBy": "LegacyWorkspaceSearchAdapter"
+  }
+}

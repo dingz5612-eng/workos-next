@@ -93,4 +93,14 @@ describe("OAM-04B primary action state machine", () => {
 
     expect(buildOperationActionState(workItem, card, { status }).primaryAction.labelKey).toBe(labelKey);
   });
+
+  it("maps local required-field validation to a field completion action", () => {
+    const card = { id: "roomSetup", status: "ready", evidence: [] };
+    const workItem = { workspaceId: "W-STAY-RESOURCE", cardId: "roomSetup" };
+
+    expect(buildOperationActionState(workItem, card, {
+      status: "business_blocked_422",
+      reason: "required_field_missing"
+    }).primaryAction.labelKey).toBe("primaryCompleteRequiredFields");
+  });
 });

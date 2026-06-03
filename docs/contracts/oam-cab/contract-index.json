@@ -1,0 +1,30 @@
+{
+  "version": "oam-cab.contract-index.v1",
+  "generatedBy": "oam-cab-v1-baseline-repair",
+  "contracts": {
+    "apiBoundaryContract": "docs/contracts/oam-cab/api-boundary-contract.json",
+    "definitionRegistryContract": "docs/contracts/definition/workitem-definition-registry.json",
+    "commandSubmissionContract": "docs/contracts/command-submission/command-submission-contract.json",
+    "factOwnershipContract": "docs/contracts/oam-cab/fact-ownership-contract.json",
+    "compatibilityBoxContract": "docs/contracts/compatibility/compatibility-box-contract.json",
+    "admissionDecisionContract": "docs/contracts/admission/admission-decision-contract.json",
+    "businessLineAdmissionMatrix": "docs/contracts/admission/business-line-admission-matrix.json",
+    "releaseStateAdmissionMatrix": "docs/contracts/admission/release-state-admission-matrix.json",
+    "surfaceAdmissionMatrix": "docs/contracts/admission/surface-admission-matrix.json",
+    "actorDeviceAdmissionContract": "docs/contracts/admission/actor-device-admission-contract.json",
+    "productionAdmissionContract": "docs/contracts/admission/production-admission-contract.json",
+    "controlPlaneCommandAppendOnlyContract": "docs/contracts/control-plane/control-plane-command-append-only-contract.json",
+    "evidenceGraphRefsContract": "docs/contracts/evidence/evidence-graph-refs-contract.json",
+    "businessSignoffContract": "docs/contracts/governance/business-signoff-contract.json",
+    "rollbackCompensationContract": "docs/contracts/governance/rollback-compensation-contract.json",
+    "searchContract": "docs/contracts/search/search-contract.json",
+    "biKpiContract": "docs/contracts/bi-kpi/bi-kpi-contract.json",
+    "languageKernelContract": "docs/contracts/language/language-contract.json",
+    "permissionExplainabilityContract": "docs/contracts/language/permission-explainability-contract.json"
+  },
+  "invariants": [
+    "No contract grants Business Production.",
+    "Contracts are evidence and guard boundaries, not new business features.",
+    "Any missing contract is a P0 final-report failure."
+  ]
+}

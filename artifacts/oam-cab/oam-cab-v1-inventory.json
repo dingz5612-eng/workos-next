@@ -1,0 +1,2308 @@
+{
+  "version": "oam-cab.inventory.v1",
+  "generatedAt": "2026-06-03T11:46:15.082Z",
+  "route_inventory": [
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "GET",
+      "route": "/",
+      "key": "GET /"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "GET",
+      "route": "/live",
+      "key": "GET /live"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "GET",
+      "route": "/ready",
+      "key": "GET /ready"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "GET",
+      "route": "/health",
+      "key": "GET /health"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "GET",
+      "route": "/api/bootstrap",
+      "key": "GET /api/bootstrap"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "POST",
+      "route": "/api/auth/login",
+      "key": "POST /api/auth/login"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "POST",
+      "route": "/api/auth/sessions/{token}/revoke",
+      "key": "POST /api/auth/sessions/{token}/revoke"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "POST",
+      "route": "/api/device-sessions",
+      "key": "POST /api/device-sessions"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "POST",
+      "route": "/api/device-sessions/{deviceId}/revoke",
+      "key": "POST /api/device-sessions/{deviceId}/revoke"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "GET",
+      "route": "/api/workspaces",
+      "key": "GET /api/workspaces"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "GET",
+      "route": "/api/workspaces/{workspaceId}",
+      "key": "GET /api/workspaces/{workspaceId}"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "GET",
+      "route": "/api/work-queue",
+      "key": "GET /api/work-queue"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "GET",
+      "route": "/api/search",
+      "key": "GET /api/search"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "GET",
+      "route": "/api/lenses/home-surface",
+      "key": "GET /api/lenses/home-surface"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "GET",
+      "route": "/api/lenses/work-queue",
+      "key": "GET /api/lenses/work-queue"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "GET",
+      "route": "/api/lenses/search",
+      "key": "GET /api/lenses/search"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "GET",
+      "route": "/api/lenses/learning-catalog",
+      "key": "GET /api/lenses/learning-catalog"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "GET",
+      "route": "/api/lenses/accommodation/{lensId}",
+      "key": "GET /api/lenses/accommodation/{lensId}"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "GET",
+      "route": "/api/control-plane/releases",
+      "key": "GET /api/control-plane/releases"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "GET",
+      "route": "/api/control-plane/releases/{releaseId}",
+      "key": "GET /api/control-plane/releases/{releaseId}"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "GET",
+      "route": "/api/control-plane/gate-results/{gateResultId}",
+      "key": "GET /api/control-plane/gate-results/{gateResultId}"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "GET",
+      "route": "/api/control-plane/shadow-compare-reports/{id}",
+      "key": "GET /api/control-plane/shadow-compare-reports/{id}"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "GET",
+      "route": "/api/control-plane/invariant-checks",
+      "key": "GET /api/control-plane/invariant-checks"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "GET",
+      "route": "/api/control-plane/rollback-instructions/{id}",
+      "key": "GET /api/control-plane/rollback-instructions/{id}"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "GET",
+      "route": "/api/evidence",
+      "key": "GET /api/evidence"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "POST",
+      "route": "/api/evidence/drafts",
+      "key": "POST /api/evidence/drafts"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "POST",
+      "route": "/api/evidence/{evidenceId}/attachments",
+      "key": "POST /api/evidence/{evidenceId}/attachments"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "POST",
+      "route": "/api/evidence/{evidenceId}/verify",
+      "key": "POST /api/evidence/{evidenceId}/verify"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "POST",
+      "route": "/api/evidence/{evidenceId}/reject",
+      "key": "POST /api/evidence/{evidenceId}/reject"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "GET",
+      "route": "/api/evidence/{evidenceId}/signed-url",
+      "key": "GET /api/evidence/{evidenceId}/signed-url"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "POST",
+      "route": "/api/reconciliation/bank-statement-imports/preview",
+      "key": "POST /api/reconciliation/bank-statement-imports/preview"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "POST",
+      "route": "/api/reconciliation/bank-statement-imports",
+      "key": "POST /api/reconciliation/bank-statement-imports"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "POST",
+      "route": "/api/reconciliation/match-candidates/generate",
+      "key": "POST /api/reconciliation/match-candidates/generate"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "POST",
+      "route": "/api/reconciliation/mismatches/detect",
+      "key": "POST /api/reconciliation/mismatches/detect"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "GET",
+      "route": "/api/reconciliation/match-candidates",
+      "key": "GET /api/reconciliation/match-candidates"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "POST",
+      "route": "/api/reconciliation/match-candidates/{candidateId}/accept",
+      "key": "POST /api/reconciliation/match-candidates/{candidateId}/accept"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "POST",
+      "route": "/api/reconciliation/match-candidates/{candidateId}/reject",
+      "key": "POST /api/reconciliation/match-candidates/{candidateId}/reject"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "POST",
+      "route": "/api/reconciliation/bank-transactions/{bankTransactionId}/mismatch",
+      "key": "POST /api/reconciliation/bank-transactions/{bankTransactionId}/mismatch"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "POST",
+      "route": "/api/reconciliation/bank-transactions/{bankTransactionId}/ignore",
+      "key": "POST /api/reconciliation/bank-transactions/{bankTransactionId}/ignore"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "POST",
+      "route": "/api/correction-center/ledger-correction-requests",
+      "key": "POST /api/correction-center/ledger-correction-requests"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "POST",
+      "route": "/api/correction-center/ledger-correction-requests/{correctionRequestId}/approve",
+      "key": "POST /api/correction-center/ledger-correction-requests/{correctionRequestId}/approve"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "POST",
+      "route": "/api/correction-center/ledger-correction-requests/{correctionRequestId}/reject",
+      "key": "POST /api/correction-center/ledger-correction-requests/{correctionRequestId}/reject"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "POST",
+      "route": "/api/correction-center/ledger-correction-requests/{correctionRequestId}/apply",
+      "key": "POST /api/correction-center/ledger-correction-requests/{correctionRequestId}/apply"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "POST",
+      "route": "/api/pc-governance/exports/{exportType}",
+      "key": "POST /api/pc-governance/exports/{exportType}"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "POST",
+      "route": "/api/workspaces/{workspaceId}/cards/{cardId}/prepare",
+      "key": "POST /api/workspaces/{workspaceId}/cards/{cardId}/prepare"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "POST",
+      "route": "/api/workspaces/resource-setup/start",
+      "key": "POST /api/workspaces/resource-setup/start"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "POST",
+      "route": "/api/workspaces/start",
+      "key": "POST /api/workspaces/start"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "POST",
+      "route": "/api/workspaces/{workspaceId}/cards/{cardId}/confirm",
+      "key": "POST /api/workspaces/{workspaceId}/cards/{cardId}/confirm"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "GET",
+      "route": "/api/workspaces/{workspaceId}/events",
+      "key": "GET /api/workspaces/{workspaceId}/events"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "GET",
+      "route": "/api/audit-events",
+      "key": "GET /api/audit-events"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "GET",
+      "route": "/api/outbox",
+      "key": "GET /api/outbox"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "POST",
+      "route": "/api/projections/process-outbox",
+      "key": "POST /api/projections/process-outbox"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "GET",
+      "route": "/api/behavior-events",
+      "key": "GET /api/behavior-events"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "GET",
+      "route": "/api/observability/runtime",
+      "key": "GET /api/observability/runtime"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "POST",
+      "route": "/api/mobile/drafts",
+      "key": "POST /api/mobile/drafts"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "POST",
+      "route": "/api/mobile/client-events",
+      "key": "POST /api/mobile/client-events"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "POST",
+      "route": "/api/mobile/recent-objects",
+      "key": "POST /api/mobile/recent-objects"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "POST",
+      "route": "/api/behavior-events",
+      "key": "POST /api/behavior-events"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Runtime/OperationsRuntimeEndpoints.cs",
+      "method": "POST",
+      "route": "/api/operations/cases",
+      "key": "POST /api/operations/cases"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Runtime/OperationsRuntimeEndpoints.cs",
+      "method": "GET",
+      "route": "/api/operations/cases/{caseId}",
+      "key": "GET /api/operations/cases/{caseId}"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Runtime/OperationsRuntimeEndpoints.cs",
+      "method": "POST",
+      "route": "/api/operations/work-items",
+      "key": "POST /api/operations/work-items"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Runtime/OperationsRuntimeEndpoints.cs",
+      "method": "GET",
+      "route": "/api/operations/work-items",
+      "key": "GET /api/operations/work-items"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Runtime/OperationsRuntimeEndpoints.cs",
+      "method": "GET",
+      "route": "/api/operations/work-items/{workItemId}",
+      "key": "GET /api/operations/work-items/{workItemId}"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Runtime/OperationsRuntimeEndpoints.cs",
+      "method": "POST",
+      "route": "/api/operations/work-items/{workItemId}/prepare",
+      "key": "POST /api/operations/work-items/{workItemId}/prepare"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Runtime/OperationsRuntimeEndpoints.cs",
+      "method": "POST",
+      "route": "/api/operations/work-items/{workItemId}/confirm",
+      "key": "POST /api/operations/work-items/{workItemId}/confirm"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Runtime/OperationsRuntimeEndpoints.cs",
+      "method": "GET",
+      "route": "/api/operations/trace/submissions/{submissionId}",
+      "key": "GET /api/operations/trace/submissions/{submissionId}"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Runtime/OperationsRuntimeEndpoints.cs",
+      "method": "GET",
+      "route": "/api/operations/trace/work-items/{workItemId}",
+      "key": "GET /api/operations/trace/work-items/{workItemId}"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Runtime/OperationsRuntimeEndpoints.cs",
+      "method": "GET",
+      "route": "/api/operations/trace/cases/{caseId}",
+      "key": "GET /api/operations/trace/cases/{caseId}"
+    }
+  ],
+  "non_get_route_classification": [
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "POST",
+      "route": "/api/auth/login",
+      "key": "POST /api/auth/login",
+      "classification": "securitySessionWrite",
+      "legacyWritePathClass": "non-business write"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "POST",
+      "route": "/api/auth/sessions/{token}/revoke",
+      "key": "POST /api/auth/sessions/{token}/revoke",
+      "classification": "securitySessionWrite",
+      "legacyWritePathClass": "non-business write"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "POST",
+      "route": "/api/device-sessions",
+      "key": "POST /api/device-sessions",
+      "classification": "securitySessionWrite",
+      "legacyWritePathClass": "non-business write"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "POST",
+      "route": "/api/device-sessions/{deviceId}/revoke",
+      "key": "POST /api/device-sessions/{deviceId}/revoke",
+      "classification": "securitySessionWrite",
+      "legacyWritePathClass": "non-business write"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "POST",
+      "route": "/api/evidence/drafts",
+      "key": "POST /api/evidence/drafts",
+      "classification": "evidenceWrite",
+      "legacyWritePathClass": "non-business write"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "POST",
+      "route": "/api/evidence/{evidenceId}/attachments",
+      "key": "POST /api/evidence/{evidenceId}/attachments",
+      "classification": "evidenceWrite",
+      "legacyWritePathClass": "non-business write"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "POST",
+      "route": "/api/evidence/{evidenceId}/verify",
+      "key": "POST /api/evidence/{evidenceId}/verify",
+      "classification": "evidenceWrite",
+      "legacyWritePathClass": "non-business write"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "POST",
+      "route": "/api/evidence/{evidenceId}/reject",
+      "key": "POST /api/evidence/{evidenceId}/reject",
+      "classification": "evidenceWrite",
+      "legacyWritePathClass": "non-business write"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "POST",
+      "route": "/api/reconciliation/bank-statement-imports/preview",
+      "key": "POST /api/reconciliation/bank-statement-imports/preview",
+      "classification": "reconciliationGovernanceWrite",
+      "legacyWritePathClass": "non-business write"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "POST",
+      "route": "/api/reconciliation/bank-statement-imports",
+      "key": "POST /api/reconciliation/bank-statement-imports",
+      "classification": "reconciliationGovernanceWrite",
+      "legacyWritePathClass": "non-business write"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "POST",
+      "route": "/api/reconciliation/match-candidates/generate",
+      "key": "POST /api/reconciliation/match-candidates/generate",
+      "classification": "reconciliationGovernanceWrite",
+      "legacyWritePathClass": "non-business write"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "POST",
+      "route": "/api/reconciliation/mismatches/detect",
+      "key": "POST /api/reconciliation/mismatches/detect",
+      "classification": "reconciliationGovernanceWrite",
+      "legacyWritePathClass": "non-business write"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "POST",
+      "route": "/api/reconciliation/match-candidates/{candidateId}/accept",
+      "key": "POST /api/reconciliation/match-candidates/{candidateId}/accept",
+      "classification": "reconciliationGovernanceWrite",
+      "legacyWritePathClass": "non-business write"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "POST",
+      "route": "/api/reconciliation/match-candidates/{candidateId}/reject",
+      "key": "POST /api/reconciliation/match-candidates/{candidateId}/reject",
+      "classification": "reconciliationGovernanceWrite",
+      "legacyWritePathClass": "non-business write"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "POST",
+      "route": "/api/reconciliation/bank-transactions/{bankTransactionId}/mismatch",
+      "key": "POST /api/reconciliation/bank-transactions/{bankTransactionId}/mismatch",
+      "classification": "reconciliationGovernanceWrite",
+      "legacyWritePathClass": "non-business write"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "POST",
+      "route": "/api/reconciliation/bank-transactions/{bankTransactionId}/ignore",
+      "key": "POST /api/reconciliation/bank-transactions/{bankTransactionId}/ignore",
+      "classification": "reconciliationGovernanceWrite",
+      "legacyWritePathClass": "non-business write"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "POST",
+      "route": "/api/correction-center/ledger-correction-requests",
+      "key": "POST /api/correction-center/ledger-correction-requests",
+      "classification": "correctionCenterWrite",
+      "legacyWritePathClass": "non-business write"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "POST",
+      "route": "/api/correction-center/ledger-correction-requests/{correctionRequestId}/approve",
+      "key": "POST /api/correction-center/ledger-correction-requests/{correctionRequestId}/approve",
+      "classification": "correctionCenterWrite",
+      "legacyWritePathClass": "non-business write"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "POST",
+      "route": "/api/correction-center/ledger-correction-requests/{correctionRequestId}/reject",
+      "key": "POST /api/correction-center/ledger-correction-requests/{correctionRequestId}/reject",
+      "classification": "correctionCenterWrite",
+      "legacyWritePathClass": "non-business write"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "POST",
+      "route": "/api/correction-center/ledger-correction-requests/{correctionRequestId}/apply",
+      "key": "POST /api/correction-center/ledger-correction-requests/{correctionRequestId}/apply",
+      "classification": "correctionCenterWrite",
+      "legacyWritePathClass": "non-business write"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "POST",
+      "route": "/api/pc-governance/exports/{exportType}",
+      "key": "POST /api/pc-governance/exports/{exportType}",
+      "classification": "pcGovernanceWrite",
+      "legacyWritePathClass": "non-business write"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "POST",
+      "route": "/api/workspaces/{workspaceId}/cards/{cardId}/prepare",
+      "key": "POST /api/workspaces/{workspaceId}/cards/{cardId}/prepare",
+      "classification": "compatibilityBusinessWrite",
+      "legacyWritePathClass": "compatibility shim to Operations Confirm"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "POST",
+      "route": "/api/workspaces/resource-setup/start",
+      "key": "POST /api/workspaces/resource-setup/start",
+      "classification": "governanceWrite",
+      "legacyWritePathClass": "non-business write"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "POST",
+      "route": "/api/workspaces/start",
+      "key": "POST /api/workspaces/start",
+      "classification": "governanceWrite",
+      "legacyWritePathClass": "non-business write"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "POST",
+      "route": "/api/workspaces/{workspaceId}/cards/{cardId}/confirm",
+      "key": "POST /api/workspaces/{workspaceId}/cards/{cardId}/confirm",
+      "classification": "compatibilityBusinessWrite",
+      "legacyWritePathClass": "compatibility shim to Operations Confirm"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "POST",
+      "route": "/api/projections/process-outbox",
+      "key": "POST /api/projections/process-outbox",
+      "classification": "systemProjectionWrite",
+      "legacyWritePathClass": "non-business write"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "POST",
+      "route": "/api/mobile/drafts",
+      "key": "POST /api/mobile/drafts",
+      "classification": "mobileExperienceWrite",
+      "legacyWritePathClass": "non-business write"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "POST",
+      "route": "/api/mobile/client-events",
+      "key": "POST /api/mobile/client-events",
+      "classification": "mobileExperienceWrite",
+      "legacyWritePathClass": "non-business write"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "POST",
+      "route": "/api/mobile/recent-objects",
+      "key": "POST /api/mobile/recent-objects",
+      "classification": "mobileExperienceWrite",
+      "legacyWritePathClass": "non-business write"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "POST",
+      "route": "/api/behavior-events",
+      "key": "POST /api/behavior-events",
+      "classification": "behaviorEventWrite",
+      "legacyWritePathClass": "non-business write"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Runtime/OperationsRuntimeEndpoints.cs",
+      "method": "POST",
+      "route": "/api/operations/cases",
+      "key": "POST /api/operations/cases",
+      "classification": "systemProjectionWrite",
+      "legacyWritePathClass": "non-business write"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Runtime/OperationsRuntimeEndpoints.cs",
+      "method": "POST",
+      "route": "/api/operations/work-items",
+      "key": "POST /api/operations/work-items",
+      "classification": "systemProjectionWrite",
+      "legacyWritePathClass": "non-business write"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Runtime/OperationsRuntimeEndpoints.cs",
+      "method": "POST",
+      "route": "/api/operations/work-items/{workItemId}/prepare",
+      "key": "POST /api/operations/work-items/{workItemId}/prepare",
+      "classification": "systemProjectionWrite",
+      "legacyWritePathClass": "non-business write"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Runtime/OperationsRuntimeEndpoints.cs",
+      "method": "POST",
+      "route": "/api/operations/work-items/{workItemId}/confirm",
+      "key": "POST /api/operations/work-items/{workItemId}/confirm",
+      "classification": "operationsBusinessWrite",
+      "legacyWritePathClass": "primary operations confirm"
+    }
+  ],
+  "business_write_path_inventory": [
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "POST",
+      "route": "/api/correction-center/ledger-correction-requests",
+      "key": "POST /api/correction-center/ledger-correction-requests",
+      "classification": "correctionCenterWrite",
+      "legacyWritePathClass": "non-business write"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "POST",
+      "route": "/api/correction-center/ledger-correction-requests/{correctionRequestId}/approve",
+      "key": "POST /api/correction-center/ledger-correction-requests/{correctionRequestId}/approve",
+      "classification": "correctionCenterWrite",
+      "legacyWritePathClass": "non-business write"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "POST",
+      "route": "/api/correction-center/ledger-correction-requests/{correctionRequestId}/reject",
+      "key": "POST /api/correction-center/ledger-correction-requests/{correctionRequestId}/reject",
+      "classification": "correctionCenterWrite",
+      "legacyWritePathClass": "non-business write"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "POST",
+      "route": "/api/correction-center/ledger-correction-requests/{correctionRequestId}/apply",
+      "key": "POST /api/correction-center/ledger-correction-requests/{correctionRequestId}/apply",
+      "classification": "correctionCenterWrite",
+      "legacyWritePathClass": "non-business write"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "POST",
+      "route": "/api/workspaces/{workspaceId}/cards/{cardId}/prepare",
+      "key": "POST /api/workspaces/{workspaceId}/cards/{cardId}/prepare",
+      "classification": "compatibilityBusinessWrite",
+      "legacyWritePathClass": "compatibility shim to Operations Confirm"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "POST",
+      "route": "/api/workspaces/{workspaceId}/cards/{cardId}/confirm",
+      "key": "POST /api/workspaces/{workspaceId}/cards/{cardId}/confirm",
+      "classification": "compatibilityBusinessWrite",
+      "legacyWritePathClass": "compatibility shim to Operations Confirm"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Runtime/OperationsRuntimeEndpoints.cs",
+      "method": "POST",
+      "route": "/api/operations/work-items/{workItemId}/confirm",
+      "key": "POST /api/operations/work-items/{workItemId}/confirm",
+      "classification": "operationsBusinessWrite",
+      "legacyWritePathClass": "primary operations confirm"
+    }
+  ],
+  "legacy_write_path_classification": [
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "POST",
+      "route": "/api/workspaces/{workspaceId}/cards/{cardId}/prepare",
+      "key": "POST /api/workspaces/{workspaceId}/cards/{cardId}/prepare",
+      "classification": "compatibilityBusinessWrite",
+      "legacyWritePathClass": "compatibility shim to Operations Confirm"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Program.cs",
+      "method": "POST",
+      "route": "/api/workspaces/{workspaceId}/cards/{cardId}/confirm",
+      "key": "POST /api/workspaces/{workspaceId}/cards/{cardId}/confirm",
+      "classification": "compatibilityBusinessWrite",
+      "legacyWritePathClass": "compatibility shim to Operations Confirm"
+    },
+    {
+      "file": "services/core-api/WorkOS.Api/Runtime/OperationsRuntimeEndpoints.cs",
+      "method": "POST",
+      "route": "/api/operations/work-items/{workItemId}/confirm",
+      "key": "POST /api/operations/work-items/{workItemId}/confirm",
+      "classification": "operationsBusinessWrite",
+      "legacyWritePathClass": "primary operations confirm"
+    }
+  ],
+  "definition_registry_coverage": {
+    "version": "oam.definition-registry.v1",
+    "definitionCount": 22,
+    "definitionIds": [
+      "definition.roomSetup.v1",
+      "definition.bedSetup.v1",
+      "definition.rateSetup.v1",
+      "definition.roomReadiness.v1",
+      "definition.roomBlock.v1",
+      "definition.roomRelease.v1",
+      "definition.depositAssessment.v1",
+      "definition.depositReceipt.v1",
+      "definition.depositConfirmation.v1",
+      "definition.depositDeduction.v1",
+      "definition.depositRefundApproval.v1",
+      "definition.depositRefundPayment.v1",
+      "definition.depositClose.v1",
+      "definition.paymentReceipt.v1",
+      "definition.paymentConfirmation.v1",
+      "definition.paymentAllocation.v1",
+      "definition.paymentAdjustment.v1",
+      "definition.finalBalanceClose.v1",
+      "definition.bedRelease.v1",
+      "definition.periodClose.v1",
+      "definition.expenseRecord.v1",
+      "definition.ledgerCorrectionApply.v1"
+    ],
+    "requiredFieldsCovered": 46
+  },
+  "work_item_definition_coverage": {
+    "cards": [
+      {
+        "definitionId": "definition.roomSetup.v1",
+        "sliceId": "Accommodation.ResourceSetup",
+        "legacyCardId": "roomSetup",
+        "commandType": "Resource.RoomSetup",
+        "allowedFacts": [
+          "Room",
+          "EvidenceObject",
+          "DomainEvent"
+        ]
+      },
+      {
+        "definitionId": "definition.bedSetup.v1",
+        "sliceId": "Accommodation.ResourceSetup",
+        "legacyCardId": "bedSetup",
+        "commandType": "Resource.BedSetup",
+        "allowedFacts": [
+          "Bed",
+          "EvidenceObject",
+          "DomainEvent"
+        ]
+      },
+      {
+        "definitionId": "definition.rateSetup.v1",
+        "sliceId": "Accommodation.ResourceSetup",
+        "legacyCardId": "rateSetup",
+        "commandType": "Resource.RateSetup",
+        "allowedFacts": [
+          "RatePlan",
+          "EvidenceObject",
+          "DomainEvent"
+        ]
+      },
+      {
+        "definitionId": "definition.roomReadiness.v1",
+        "sliceId": "Accommodation.ResourceSetup",
+        "legacyCardId": "roomReadiness",
+        "commandType": "Resource.RoomReadiness",
+        "allowedFacts": [
+          "Room",
+          "BedStatus",
+          "EvidenceObject",
+          "DomainEvent"
+        ]
+      },
+      {
+        "definitionId": "definition.roomBlock.v1",
+        "sliceId": "Accommodation.ResourceSetup",
+        "legacyCardId": "roomBlock",
+        "commandType": "Resource.RoomBlock",
+        "allowedFacts": [
+          "BedStatus",
+          "EvidenceObject",
+          "DomainEvent"
+        ]
+      },
+      {
+        "definitionId": "definition.roomRelease.v1",
+        "sliceId": "Accommodation.ResourceSetup",
+        "legacyCardId": "roomRelease",
+        "commandType": "Resource.RoomRelease",
+        "allowedFacts": [
+          "BedStatus",
+          "EvidenceObject",
+          "DomainEvent"
+        ]
+      },
+      {
+        "definitionId": "definition.depositAssessment.v1",
+        "sliceId": "Accommodation.DepositLedger",
+        "legacyCardId": "depositAssessment",
+        "commandType": "Deposit.Assess",
+        "allowedFacts": [
+          "DepositAccount",
+          "DepositEntry",
+          "EvidenceObject",
+          "LedgerEntry",
+          "DomainEvent"
+        ]
+      },
+      {
+        "definitionId": "definition.depositReceipt.v1",
+        "sliceId": "Accommodation.DepositLedger",
+        "legacyCardId": "depositReceipt",
+        "commandType": "Deposit.Receive",
+        "allowedFacts": [
+          "DepositAccount",
+          "DepositEntry",
+          "EvidenceObject",
+          "LedgerEntry",
+          "DomainEvent"
+        ]
+      },
+      {
+        "definitionId": "definition.depositConfirmation.v1",
+        "sliceId": "Accommodation.DepositLedger",
+        "legacyCardId": "depositConfirmation",
+        "commandType": "Deposit.Confirm",
+        "allowedFacts": [
+          "DepositAccount",
+          "DepositEntry",
+          "EvidenceObject",
+          "LedgerEntry",
+          "DomainEvent"
+        ]
+      },
+      {
+        "definitionId": "definition.depositDeduction.v1",
+        "sliceId": "Accommodation.DepositLedger",
+        "legacyCardId": "depositDeduction",
+        "commandType": "Deposit.Deduct",
+        "allowedFacts": [
+          "DepositAccount",
+          "DepositEntry",
+          "EvidenceObject",
+          "LedgerEntry",
+          "DomainEvent"
+        ]
+      },
+      {
+        "definitionId": "definition.depositRefundApproval.v1",
+        "sliceId": "Accommodation.DepositLedger",
+        "legacyCardId": "depositRefundApproval",
+        "commandType": "Deposit.RefundApprove",
+        "allowedFacts": [
+          "DepositAccount",
+          "DepositEntry",
+          "EvidenceObject",
+          "LedgerEntry",
+          "DomainEvent"
+        ]
+      },
+      {
+        "definitionId": "definition.depositRefundPayment.v1",
+        "sliceId": "Accommodation.DepositLedger",
+        "legacyCardId": "depositRefundPayment",
+        "commandType": "Deposit.RefundPay",
+        "allowedFacts": [
+          "DepositAccount",
+          "DepositEntry",
+          "EvidenceObject",
+          "LedgerEntry",
+          "DomainEvent"
+        ]
+      },
+      {
+        "definitionId": "definition.depositClose.v1",
+        "sliceId": "Accommodation.DepositLedger",
+        "legacyCardId": "depositClose",
+        "commandType": "Deposit.Close",
+        "allowedFacts": [
+          "DepositAccount",
+          "DepositEntry",
+          "EvidenceObject",
+          "LedgerEntry",
+          "DomainEvent"
+        ]
+      },
+      {
+        "definitionId": "definition.paymentReceipt.v1",
+        "sliceId": "Accommodation.PaymentLedger",
+        "legacyCardId": "paymentReceipt",
+        "commandType": "Payment.Receive",
+        "allowedFacts": [
+          "Payment",
+          "PaymentAllocation",
+          "EvidenceObject",
+          "LedgerEntry",
+          "DomainEvent"
+        ]
+      },
+      {
+        "definitionId": "definition.paymentConfirmation.v1",
+        "sliceId": "Accommodation.PaymentLedger",
+        "legacyCardId": "paymentConfirmation",
+        "commandType": "Payment.Confirm",
+        "allowedFacts": [
+          "Payment",
+          "PaymentAllocation",
+          "EvidenceObject",
+          "LedgerEntry",
+          "DomainEvent"
+        ]
+      },
+      {
+        "definitionId": "definition.paymentAllocation.v1",
+        "sliceId": "Accommodation.PaymentLedger",
+        "legacyCardId": "paymentAllocation",
+        "commandType": "Payment.Allocate",
+        "allowedFacts": [
+          "Payment",
+          "PaymentAllocation",
+          "EvidenceObject",
+          "LedgerEntry",
+          "DomainEvent"
+        ]
+      },
+      {
+        "definitionId": "definition.paymentAdjustment.v1",
+        "sliceId": "Accommodation.PaymentLedger",
+        "legacyCardId": "paymentAdjustment",
+        "commandType": "Payment.Adjust",
+        "allowedFacts": [
+          "Payment",
+          "PaymentAllocation",
+          "EvidenceObject",
+          "LedgerEntry",
+          "DomainEvent"
+        ]
+      },
+      {
+        "definitionId": "definition.finalBalanceClose.v1",
+        "sliceId": "Accommodation.CheckOutSettlement",
+        "legacyCardId": "finalBalanceClose",
+        "commandType": "Checkout.FinalBalanceClose",
+        "allowedFacts": [
+          "CheckoutCase",
+          "EvidenceObject",
+          "LedgerEntry",
+          "DomainEvent"
+        ]
+      },
+      {
+        "definitionId": "definition.bedRelease.v1",
+        "sliceId": "Accommodation.CheckOutSettlement",
+        "legacyCardId": "bedRelease",
+        "commandType": "Checkout.RequestBedRelease",
+        "allowedFacts": [
+          "CheckoutCase",
+          "EvidenceObject",
+          "DomainEvent"
+        ]
+      },
+      {
+        "definitionId": "definition.periodClose.v1",
+        "sliceId": "Accommodation.PeriodAnalytics",
+        "legacyCardId": "periodClose",
+        "commandType": "Period.Close",
+        "allowedFacts": [
+          "PeriodSnapshot",
+          "EvidenceObject",
+          "DomainEvent"
+        ]
+      },
+      {
+        "definitionId": "definition.expenseRecord.v1",
+        "sliceId": "Accommodation.ExpenseLedger",
+        "legacyCardId": "expenseRecord",
+        "commandType": "Expense.Record",
+        "allowedFacts": [
+          "EvidenceObject",
+          "LedgerEntry",
+          "DomainEvent"
+        ]
+      },
+      {
+        "definitionId": "definition.ledgerCorrectionApply.v1",
+        "sliceId": "Governance.CorrectionCenter",
+        "legacyCardId": "ledgerCorrectionApply",
+        "commandType": "LedgerCorrection.Apply",
+        "allowedFacts": [
+          "EvidenceObject",
+          "LedgerEntry",
+          "DomainEvent",
+          "CommandSubmission"
+        ]
+      }
+    ]
+  },
+  "handler_allowedFacts_coverage": [
+    {
+      "path": "services/core-api/WorkOS.Api/Runtime/CanonicalOperationsApiService.cs",
+      "mentions": {
+        "AllowedFacts": 0,
+        "allowedFacts": 0,
+        "SliceCommandHandlerDefinition": 1,
+        "ValidateFactOwnership": 0
+      }
+    },
+    {
+      "path": "services/core-api/WorkOS.Api/Runtime/OperationsUnitOfWork.cs",
+      "mentions": {
+        "AllowedFacts": 3,
+        "allowedFacts": 0,
+        "SliceCommandHandlerDefinition": 14,
+        "ValidateFactOwnership": 0
+      }
+    },
+    {
+      "path": "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs",
+      "mentions": {
+        "AllowedFacts": 1,
+        "allowedFacts": 0,
+        "SliceCommandHandlerDefinition": 0,
+        "ValidateFactOwnership": 0
+      }
+    }
+  ],
+  "fact_ownership_matrix": {
+    "source": "docs/rules/v5.5/fact-ownership.yml",
+    "factCount": 21,
+    "facts": [
+      "Room",
+      "Bed",
+      "BedStatus",
+      "RatePlan",
+      "Resident",
+      "Stay",
+      "Charge",
+      "Payment",
+      "PaymentAllocation",
+      "DepositAccount",
+      "DepositEntry",
+      "CheckoutCase",
+      "ServiceTask",
+      "PeriodSnapshot",
+      "EvidenceObject",
+      "EvidenceFile",
+      "LedgerEntry",
+      "DomainEvent",
+      "WorkItem",
+      "CommandSubmission",
+      "LensSnapshot"
+    ],
+    "owners": [
+      "accommodation.resource",
+      "accommodation.pricing",
+      "accommodation.stay",
+      "finance.charge-ledger",
+      "finance.payment-ledger",
+      "finance.deposit-ledger",
+      "accommodation.checkout",
+      "accommodation.service-task",
+      "accommodation.period-analytics",
+      "evidence",
+      "runtime-ledger",
+      "operations-runtime",
+      "projection-runtime"
+    ]
+  },
+  "compatibility_scan": {
+    "projectionRuntime": [
+      {
+        "path": "services/core-api/WorkOS.Api/Runtime/OperationsRuntimeService.cs",
+        "mentions": {
+          "ProjectionRuntime": 4,
+          "RuntimeAggregateLensStorage": 0,
+          "shadow_runtime": 0
+        }
+      },
+      {
+        "path": "services/core-api/WorkOS.Api/Runtime/PostgresProjectionStore.cs",
+        "mentions": {
+          "ProjectionRuntime": 0,
+          "RuntimeAggregateLensStorage": 2,
+          "shadow_runtime": 0
+        }
+      },
+      {
+        "path": "services/core-api/WorkOS.Api/Runtime/ProjectionOutboxWorker.cs",
+        "mentions": {
+          "ProjectionRuntime": 2,
+          "RuntimeAggregateLensStorage": 0,
+          "shadow_runtime": 0
+        }
+      },
+      {
+        "path": "services/core-api/WorkOS.Api/Runtime/ProjectionRuntime.cs",
+        "mentions": {
+          "ProjectionRuntime": 3,
+          "RuntimeAggregateLensStorage": 0,
+          "shadow_runtime": 0
+        }
+      },
+      {
+        "path": "services/core-api/WorkOS.Api/Runtime/ProjectionRuntime.Evidence.cs",
+        "mentions": {
+          "ProjectionRuntime": 1,
+          "RuntimeAggregateLensStorage": 0,
+          "shadow_runtime": 0
+        }
+      },
+      {
+        "path": "services/core-api/WorkOS.Api/Runtime/ProjectionRuntime.Finance.cs",
+        "mentions": {
+          "ProjectionRuntime": 1,
+          "RuntimeAggregateLensStorage": 0,
+          "shadow_runtime": 0
+        }
+      },
+      {
+        "path": "services/core-api/WorkOS.Api/Runtime/ProjectionRuntime.Operations.cs",
+        "mentions": {
+          "ProjectionRuntime": 1,
+          "RuntimeAggregateLensStorage": 0,
+          "shadow_runtime": 0
+        }
+      },
+      {
+        "path": "services/core-api/WorkOS.Api/Runtime/RuntimeActorAuthentication.cs",
+        "mentions": {
+          "ProjectionRuntime": 3,
+          "RuntimeAggregateLensStorage": 0,
+          "shadow_runtime": 0
+        }
+      },
+      {
+        "path": "services/core-api/WorkOS.Api/Runtime/RuntimeAggregateLensStorage.cs",
+        "mentions": {
+          "ProjectionRuntime": 0,
+          "RuntimeAggregateLensStorage": 2,
+          "shadow_runtime": 0
+        }
+      },
+      {
+        "path": "services/core-api/WorkOS.Api/Runtime/SearchKernelService.cs",
+        "mentions": {
+          "ProjectionRuntime": 2,
+          "RuntimeAggregateLensStorage": 0,
+          "shadow_runtime": 0
+        }
+      }
+    ],
+    "workspaceCard": [
+      {
+        "path": "services/core-api/WorkOS.Api/Runtime/WorkspaceCardCompatibilityAdapter.cs",
+        "mentions": {
+          "WorkspaceCardCompatibilityAdapter": 2,
+          "ConfirmWorkspaceCard": 1,
+          "/api/workspaces/{workspaceId}/cards/{cardId}/confirm": 0
+        }
+      }
+    ],
+    "runtimeDocuments": [
+      {
+        "path": "services/core-api/WorkOS.Api/Runtime/PostgresProjectionStore.cs",
+        "mentions": {
+          "runtime_documents": 0,
+          "RuntimeDocumentStorage": 2
+        }
+      },
+      {
+        "path": "services/core-api/WorkOS.Api/Runtime/RuntimeDocumentStorage.cs",
+        "mentions": {
+          "runtime_documents": 2,
+          "RuntimeDocumentStorage": 2
+        }
+      },
+      {
+        "path": "services/core-api/WorkOS.Api/Runtime/RuntimeStartupValidator.cs",
+        "mentions": {
+          "runtime_documents": 1,
+          "RuntimeDocumentStorage": 0
+        }
+      }
+    ],
+    "lensQueryService": [
+      {
+        "path": "services/core-api/WorkOS.Api/Runtime/AdmissionKernelService.cs",
+        "mentions": {
+          "LensQueryService": 0,
+          "Search(": 1
+        }
+      },
+      {
+        "path": "services/core-api/WorkOS.Api/Runtime/LensQueryService.cs",
+        "mentions": {
+          "LensQueryService": 2,
+          "Search(": 1
+        }
+      },
+      {
+        "path": "services/core-api/WorkOS.Api/Runtime/ProjectionRuntime.cs",
+        "mentions": {
+          "LensQueryService": 2,
+          "Search(": 2
+        }
+      },
+      {
+        "path": "services/core-api/WorkOS.Api/Runtime/RuntimeSurfacePolicyCatalog.cs",
+        "mentions": {
+          "LensQueryService": 0,
+          "Search(": 2
+        }
+      },
+      {
+        "path": "services/core-api/WorkOS.Api/Runtime/SearchKernelService.cs",
+        "mentions": {
+          "LensQueryService": 1,
+          "Search(": 5
+        }
+      }
+    ]
+  },
+  "projection_runtime_write_usage_scan": [
+    {
+      "path": "services/core-api/WorkOS.Api/Runtime/OperationsRuntimeService.cs",
+      "mentions": {
+        "ProjectionRuntime": 4,
+        "RecordProjection": 0,
+        "ProcessOutbox": 0,
+        "runtime_documents": 0
+      }
+    },
+    {
+      "path": "services/core-api/WorkOS.Api/Runtime/ProjectionOutboxWorker.cs",
+      "mentions": {
+        "ProjectionRuntime": 2,
+        "RecordProjection": 0,
+        "ProcessOutbox": 0,
+        "runtime_documents": 0
+      }
+    },
+    {
+      "path": "services/core-api/WorkOS.Api/Runtime/ProjectionRuntime.cs",
+      "mentions": {
+        "ProjectionRuntime": 3,
+        "RecordProjection": 0,
+        "ProcessOutbox": 0,
+        "runtime_documents": 0
+      }
+    },
+    {
+      "path": "services/core-api/WorkOS.Api/Runtime/ProjectionRuntime.Evidence.cs",
+      "mentions": {
+        "ProjectionRuntime": 1,
+        "RecordProjection": 0,
+        "ProcessOutbox": 0,
+        "runtime_documents": 0
+      }
+    },
+    {
+      "path": "services/core-api/WorkOS.Api/Runtime/ProjectionRuntime.Finance.cs",
+      "mentions": {
+        "ProjectionRuntime": 1,
+        "RecordProjection": 0,
+        "ProcessOutbox": 0,
+        "runtime_documents": 0
+      }
+    },
+    {
+      "path": "services/core-api/WorkOS.Api/Runtime/ProjectionRuntime.Operations.cs",
+      "mentions": {
+        "ProjectionRuntime": 1,
+        "RecordProjection": 0,
+        "ProcessOutbox": 0,
+        "runtime_documents": 0
+      }
+    },
+    {
+      "path": "services/core-api/WorkOS.Api/Runtime/RuntimeActorAuthentication.cs",
+      "mentions": {
+        "ProjectionRuntime": 3,
+        "RecordProjection": 0,
+        "ProcessOutbox": 0,
+        "runtime_documents": 0
+      }
+    },
+    {
+      "path": "services/core-api/WorkOS.Api/Runtime/RuntimeDocumentStorage.cs",
+      "mentions": {
+        "ProjectionRuntime": 0,
+        "RecordProjection": 0,
+        "ProcessOutbox": 0,
+        "runtime_documents": 2
+      }
+    },
+    {
+      "path": "services/core-api/WorkOS.Api/Runtime/RuntimeStartupValidator.cs",
+      "mentions": {
+        "ProjectionRuntime": 0,
+        "RecordProjection": 0,
+        "ProcessOutbox": 0,
+        "runtime_documents": 1
+      }
+    },
+    {
+      "path": "services/core-api/WorkOS.Api/Runtime/SearchKernelService.cs",
+      "mentions": {
+        "ProjectionRuntime": 2,
+        "RecordProjection": 0,
+        "ProcessOutbox": 0,
+        "runtime_documents": 0
+      }
+    }
+  ],
+  "workspace_card_write_usage_scan": [
+    {
+      "path": "services/core-api/WorkOS.Api/Runtime/OperationsRuntimeService.cs",
+      "mentions": {
+        "ConfirmWorkspaceCard": 0,
+        "PrepareWorkspaceCard": 1,
+        "WorkspaceCardCompatibilityAdapter": 0
+      }
+    },
+    {
+      "path": "services/core-api/WorkOS.Api/Runtime/WorkspaceCardCompatibilityAdapter.cs",
+      "mentions": {
+        "ConfirmWorkspaceCard": 1,
+        "PrepareWorkspaceCard": 1,
+        "WorkspaceCardCompatibilityAdapter": 2
+      }
+    }
+  ],
+  "runtime_documents_source_of_truth_usage_scan": [
+    {
+      "path": "services/core-api/WorkOS.Api/Runtime/RuntimeDocumentStorage.cs",
+      "mentions": {
+        "runtime_documents": 2,
+        "authoritative": 0,
+        "source of truth": 0
+      }
+    },
+    {
+      "path": "services/core-api/WorkOS.Api/Runtime/RuntimeStartupValidator.cs",
+      "mentions": {
+        "runtime_documents": 1,
+        "authoritative": 0,
+        "source of truth": 0
+      }
+    }
+  ],
+  "runtime_documents_snapshot_only_audit": {
+    "status": "snapshot-only-contract",
+    "evidence": [
+      "docs/architecture/compatibility-components.yml",
+      "docs/architecture/compatibility-quarantine-rules.md",
+      "scripts/check-fact-ownership.mjs"
+    ]
+  },
+  "search_usage_inventory": {
+    "objectTypes": [
+      "workItem",
+      "operationCase",
+      "workspaceCardCompatibility",
+      "businessObject",
+      "evidence",
+      "ledger",
+      "payment",
+      "deposit",
+      "correction",
+      "reconciliation",
+      "gateResult",
+      "release",
+      "lensItem",
+      "auditEvent",
+      "learningItem"
+    ],
+    "requiredResultFields": [
+      "resultId",
+      "resultType",
+      "title",
+      "summary",
+      "matchedTerms",
+      "score",
+      "target",
+      "admission",
+      "traceRefs",
+      "sourceRefs",
+      "language",
+      "explain"
+    ],
+    "legacyAdapters": [
+      {
+        "name": "LensQueryService.Search",
+        "path": "services/core-api/WorkOS.Api/Runtime/LensQueryService.cs",
+        "status": "legacy-adapter",
+        "allowed": "May provide current workspace-card compatibility results only as input to LegacyWorkspaceSearchAdapter.",
+        "forbidden": "Must not be treated as final Search Kernel and must not bypass Language Kernel synonyms, permission policy, or Admission Kernel.",
+        "removalCondition": "SearchKernelService owns indexing, ranking, admission, trace refs, and language explain output."
+      },
+      {
+        "name": "searchIntentHub",
+        "path": "apps/mobile/src/searchIntentHub.js",
+        "status": "surface-adapter",
+        "allowed": "May adapt backend or fallback results to mobile navigation view models.",
+        "forbidden": "Must not decide business production permission or business-line maturity."
+      }
+    ],
+    "runtimeBindings": [
+      {
+        "path": "services/core-api/WorkOS.Api/Runtime/LensQueryService.cs",
+        "mentions": {
+          "SearchKernelService": 0,
+          "LegacyWorkspaceSearchAdapter": 0,
+          "LensQueryService": 2
+        }
+      },
+      {
+        "path": "services/core-api/WorkOS.Api/Runtime/ProjectionRuntime.cs",
+        "mentions": {
+          "SearchKernelService": 0,
+          "LegacyWorkspaceSearchAdapter": 0,
+          "LensQueryService": 2
+        }
+      },
+      {
+        "path": "services/core-api/WorkOS.Api/Runtime/SearchKernelService.cs",
+        "mentions": {
+          "SearchKernelService": 3,
+          "LegacyWorkspaceSearchAdapter": 4,
+          "LensQueryService": 1
+        }
+      }
+    ]
+  },
+  "language_key_status_explanation_inventory": {
+    "supportedLanguages": [
+      "zh-CN",
+      "ru-RU",
+      "ky-KG"
+    ],
+    "catalogs": {
+      "domainTerms": "docs/contracts/language/domain-term-catalog.json",
+      "errorCodeCopy": "docs/contracts/language/error-code-copy.json",
+      "fieldLabels": "docs/contracts/language/field-label-catalog.json",
+      "surfaceCopy": "docs/contracts/language/surface-copy-catalog.json",
+      "searchSynonyms": "docs/contracts/language/search-synonyms.json"
+    },
+    "runtimeBindings": {
+      "frontendSupportedLanguages": "apps/mobile/src/i18n.js",
+      "frontendShellCopy": "apps/mobile/src/i18n/shellCopy.js",
+      "frontendOperationCopy": "apps/mobile/src/i18n/operationCopy.js",
+      "backendEnvelope": "services/core-api/WorkOS.Api/Runtime/RuntimeQueryService.cs",
+      "backendBootstrap": "services/core-api/WorkOS.Api/Program.cs"
+    },
+    "mobileStatusKeys": [
+      {
+        "path": "apps/mobile/src/devFixtures/demoQueue.js",
+        "mentions": {
+          "blocked": 1,
+          "confirmAllowed": 0,
+          "productionAllowed": 0,
+          "idempotency_conflict_409": 0,
+          "business_blocked_422": 0
+        }
+      },
+      {
+        "path": "apps/mobile/src/devFixtures/workspaceProjections.js",
+        "mentions": {
+          "blocked": 2,
+          "confirmAllowed": 0,
+          "productionAllowed": 0,
+          "idempotency_conflict_409": 0,
+          "business_blocked_422": 0
+        }
+      },
+      {
+        "path": "apps/mobile/src/experienceContract.js",
+        "mentions": {
+          "blocked": 2,
+          "confirmAllowed": 0,
+          "productionAllowed": 0,
+          "idempotency_conflict_409": 1,
+          "business_blocked_422": 1
+        }
+      },
+      {
+        "path": "apps/mobile/src/generated/workosContracts.d.ts",
+        "mentions": {
+          "blocked": 1,
+          "confirmAllowed": 0,
+          "productionAllowed": 0,
+          "idempotency_conflict_409": 0,
+          "business_blocked_422": 0
+        }
+      },
+      {
+        "path": "apps/mobile/src/i18n/shellCopy.js",
+        "mentions": {
+          "blocked": 5,
+          "confirmAllowed": 0,
+          "productionAllowed": 0,
+          "idempotency_conflict_409": 3,
+          "business_blocked_422": 3
+        }
+      },
+      {
+        "path": "apps/mobile/src/operationActionState.js",
+        "mentions": {
+          "blocked": 9,
+          "confirmAllowed": 0,
+          "productionAllowed": 0,
+          "idempotency_conflict_409": 2,
+          "business_blocked_422": 3
+        }
+      },
+      {
+        "path": "apps/mobile/src/operationController.js",
+        "mentions": {
+          "blocked": 7,
+          "confirmAllowed": 0,
+          "productionAllowed": 0,
+          "idempotency_conflict_409": 1,
+          "business_blocked_422": 2
+        }
+      },
+      {
+        "path": "apps/mobile/src/operationRuntime.js",
+        "mentions": {
+          "blocked": 2,
+          "confirmAllowed": 0,
+          "productionAllowed": 0,
+          "idempotency_conflict_409": 0,
+          "business_blocked_422": 1
+        }
+      },
+      {
+        "path": "apps/mobile/src/pcGovernanceController.js",
+        "mentions": {
+          "blocked": 2,
+          "confirmAllowed": 0,
+          "productionAllowed": 0,
+          "idempotency_conflict_409": 0,
+          "business_blocked_422": 0
+        }
+      },
+      {
+        "path": "apps/mobile/src/pcGovernancePolicies.js",
+        "mentions": {
+          "blocked": 1,
+          "confirmAllowed": 0,
+          "productionAllowed": 0,
+          "idempotency_conflict_409": 0,
+          "business_blocked_422": 0
+        }
+      },
+      {
+        "path": "apps/mobile/src/queueFilterState.js",
+        "mentions": {
+          "blocked": 2,
+          "confirmAllowed": 0,
+          "productionAllowed": 0,
+          "idempotency_conflict_409": 0,
+          "business_blocked_422": 0
+        }
+      },
+      {
+        "path": "apps/mobile/src/searchIntentHub.js",
+        "mentions": {
+          "blocked": 0,
+          "confirmAllowed": 4,
+          "productionAllowed": 4,
+          "idempotency_conflict_409": 0,
+          "business_blocked_422": 0
+        }
+      },
+      {
+        "path": "apps/mobile/src/selectors/surfaceSelectors.js",
+        "mentions": {
+          "blocked": 7,
+          "confirmAllowed": 0,
+          "productionAllowed": 0,
+          "idempotency_conflict_409": 0,
+          "business_blocked_422": 0
+        }
+      },
+      {
+        "path": "apps/mobile/src/selectors/workspaceSelectors.js",
+        "mentions": {
+          "blocked": 2,
+          "confirmAllowed": 0,
+          "productionAllowed": 0,
+          "idempotency_conflict_409": 0,
+          "business_blocked_422": 0
+        }
+      },
+      {
+        "path": "apps/mobile/src/surfaceGuard.js",
+        "mentions": {
+          "blocked": 6,
+          "confirmAllowed": 0,
+          "productionAllowed": 1,
+          "idempotency_conflict_409": 0,
+          "business_blocked_422": 0
+        }
+      },
+      {
+        "path": "apps/mobile/src/views/checkoutServiceView.js",
+        "mentions": {
+          "blocked": 4,
+          "confirmAllowed": 0,
+          "productionAllowed": 0,
+          "idempotency_conflict_409": 0,
+          "business_blocked_422": 0
+        }
+      },
+      {
+        "path": "apps/mobile/src/views/experienceComponents.js",
+        "mentions": {
+          "blocked": 5,
+          "confirmAllowed": 0,
+          "productionAllowed": 0,
+          "idempotency_conflict_409": 1,
+          "business_blocked_422": 1
+        }
+      },
+      {
+        "path": "apps/mobile/src/views/homeView.js",
+        "mentions": {
+          "blocked": 9,
+          "confirmAllowed": 0,
+          "productionAllowed": 0,
+          "idempotency_conflict_409": 0,
+          "business_blocked_422": 0
+        }
+      },
+      {
+        "path": "apps/mobile/src/views/meView.js",
+        "mentions": {
+          "blocked": 2,
+          "confirmAllowed": 0,
+          "productionAllowed": 0,
+          "idempotency_conflict_409": 0,
+          "business_blocked_422": 0
+        }
+      },
+      {
+        "path": "apps/mobile/src/views/operationPanelView.js",
+        "mentions": {
+          "blocked": 2,
+          "confirmAllowed": 0,
+          "productionAllowed": 0,
+          "idempotency_conflict_409": 0,
+          "business_blocked_422": 1
+        }
+      },
+      {
+        "path": "apps/mobile/src/views/pcGovernanceView.js",
+        "mentions": {
+          "blocked": 3,
+          "confirmAllowed": 0,
+          "productionAllowed": 0,
+          "idempotency_conflict_409": 0,
+          "business_blocked_422": 0
+        }
+      },
+      {
+        "path": "apps/mobile/src/views/releaseControlView.js",
+        "mentions": {
+          "blocked": 14,
+          "confirmAllowed": 0,
+          "productionAllowed": 0,
+          "idempotency_conflict_409": 0,
+          "business_blocked_422": 0
+        }
+      },
+      {
+        "path": "apps/mobile/src/views/searchView.js",
+        "mentions": {
+          "blocked": 2,
+          "confirmAllowed": 0,
+          "productionAllowed": 0,
+          "idempotency_conflict_409": 0,
+          "business_blocked_422": 0
+        }
+      },
+      {
+        "path": "apps/mobile/src/views/workbenchView.js",
+        "mentions": {
+          "blocked": 2,
+          "confirmAllowed": 0,
+          "productionAllowed": 0,
+          "idempotency_conflict_409": 0,
+          "business_blocked_422": 0
+        }
+      },
+      {
+        "path": "apps/mobile/src/views/workspaceView.js",
+        "mentions": {
+          "blocked": 5,
+          "confirmAllowed": 0,
+          "productionAllowed": 0,
+          "idempotency_conflict_409": 0,
+          "business_blocked_422": 0
+        }
+      },
+      {
+        "path": "apps/mobile/src/__tests__/BusinessTechnicalLayeringContract.test.js",
+        "mentions": {
+          "blocked": 8,
+          "confirmAllowed": 0,
+          "productionAllowed": 0,
+          "idempotency_conflict_409": 1,
+          "business_blocked_422": 3
+        }
+      },
+      {
+        "path": "apps/mobile/src/__tests__/checkoutServiceView.test.js",
+        "mentions": {
+          "blocked": 2,
+          "confirmAllowed": 0,
+          "productionAllowed": 0,
+          "idempotency_conflict_409": 0,
+          "business_blocked_422": 0
+        }
+      },
+      {
+        "path": "apps/mobile/src/__tests__/DormitoryScenarioJourneyAcceptance.test.js",
+        "mentions": {
+          "blocked": 0,
+          "confirmAllowed": 0,
+          "productionAllowed": 1,
+          "idempotency_conflict_409": 0,
+          "business_blocked_422": 0
+        }
+      },
+      {
+        "path": "apps/mobile/src/__tests__/DormitoryWorkItemNativePilot.test.js",
+        "mentions": {
+          "blocked": 1,
+          "confirmAllowed": 0,
+          "productionAllowed": 0,
+          "idempotency_conflict_409": 0,
+          "business_blocked_422": 0
+        }
+      },
+      {
+        "path": "apps/mobile/src/__tests__/experienceContract.test.js",
+        "mentions": {
+          "blocked": 3,
+          "confirmAllowed": 0,
+          "productionAllowed": 0,
+          "idempotency_conflict_409": 1,
+          "business_blocked_422": 1
+        }
+      },
+      {
+        "path": "apps/mobile/src/__tests__/OperationActionStateContract.test.js",
+        "mentions": {
+          "blocked": 4,
+          "confirmAllowed": 0,
+          "productionAllowed": 0,
+          "idempotency_conflict_409": 1,
+          "business_blocked_422": 2
+        }
+      },
+      {
+        "path": "apps/mobile/src/__tests__/QueueFilterInteractionContract.test.js",
+        "mentions": {
+          "blocked": 5,
+          "confirmAllowed": 0,
+          "productionAllowed": 0,
+          "idempotency_conflict_409": 0,
+          "business_blocked_422": 0
+        }
+      },
+      {
+        "path": "apps/mobile/src/__tests__/releaseControlView.test.js",
+        "mentions": {
+          "blocked": 3,
+          "confirmAllowed": 0,
+          "productionAllowed": 0,
+          "idempotency_conflict_409": 0,
+          "business_blocked_422": 0
+        }
+      },
+      {
+        "path": "apps/mobile/src/__tests__/SearchIntentHubContract.test.js",
+        "mentions": {
+          "blocked": 0,
+          "confirmAllowed": 2,
+          "productionAllowed": 2,
+          "idempotency_conflict_409": 0,
+          "business_blocked_422": 0
+        }
+      },
+      {
+        "path": "apps/mobile/src/__tests__/TodayMissionControlContract.test.js",
+        "mentions": {
+          "blocked": 2,
+          "confirmAllowed": 0,
+          "productionAllowed": 0,
+          "idempotency_conflict_409": 0,
+          "business_blocked_422": 0
+        }
+      }
+    ]
+  },
+  "control_plane_write_capability_inventory": {
+    "routes": [
+      {
+        "file": "services/core-api/WorkOS.Api/Program.cs",
+        "method": "POST",
+        "route": "/api/pc-governance/exports/{exportType}",
+        "key": "POST /api/pc-governance/exports/{exportType}",
+        "classification": "pcGovernanceWrite",
+        "legacyWritePathClass": "non-business write"
+      },
+      {
+        "file": "services/core-api/WorkOS.Api/Program.cs",
+        "method": "POST",
+        "route": "/api/workspaces/resource-setup/start",
+        "key": "POST /api/workspaces/resource-setup/start",
+        "classification": "governanceWrite",
+        "legacyWritePathClass": "non-business write"
+      },
+      {
+        "file": "services/core-api/WorkOS.Api/Program.cs",
+        "method": "POST",
+        "route": "/api/workspaces/start",
+        "key": "POST /api/workspaces/start",
+        "classification": "governanceWrite",
+        "legacyWritePathClass": "non-business write"
+      }
+    ],
+    "runtimeBindings": [
+      {
+        "path": "services/core-api/WorkOS.Api/Runtime/BusinessPolicy/PolicyAsCode.cs",
+        "mentions": {
+          "ControlPlaneWriteStore": 0,
+          "GateResultWrite": 0,
+          "RollbackInstruction": 2,
+          "BusinessSignoff": 0
+        }
+      },
+      {
+        "path": "services/core-api/WorkOS.Api/Runtime/ControlPlaneDbMapping.cs",
+        "mentions": {
+          "ControlPlaneWriteStore": 0,
+          "GateResultWrite": 0,
+          "RollbackInstruction": 3,
+          "BusinessSignoff": 0
+        }
+      },
+      {
+        "path": "services/core-api/WorkOS.Api/Runtime/ControlPlaneReadStore.cs",
+        "mentions": {
+          "ControlPlaneWriteStore": 0,
+          "GateResultWrite": 0,
+          "RollbackInstruction": 14,
+          "BusinessSignoff": 1
+        }
+      },
+      {
+        "path": "services/core-api/WorkOS.Api/Runtime/ControlPlaneWriteStore.cs",
+        "mentions": {
+          "ControlPlaneWriteStore": 2,
+          "GateResultWrite": 2,
+          "RollbackInstruction": 0,
+          "BusinessSignoff": 2
+        }
+      },
+      {
+        "path": "services/core-api/WorkOS.Api/Runtime/CutoverStateMachine.cs",
+        "mentions": {
+          "ControlPlaneWriteStore": 0,
+          "GateResultWrite": 0,
+          "RollbackInstruction": 2,
+          "BusinessSignoff": 4
+        }
+      },
+      {
+        "path": "services/core-api/WorkOS.Api/Runtime/ReleaseAdmissionPolicy.cs",
+        "mentions": {
+          "ControlPlaneWriteStore": 0,
+          "GateResultWrite": 0,
+          "RollbackInstruction": 1,
+          "BusinessSignoff": 1
+        }
+      }
+    ]
+  },
+  "evidence_graph_write_reference_inventory": {
+    "refs": [
+      {
+        "path": "artifacts/rt4/evidence-graph.json",
+        "exists": true
+      },
+      {
+        "path": "artifacts/oam-cab/oam-cab-v1-current-state.md",
+        "exists": true
+      },
+      {
+        "path": "artifacts/oam-cab/oam-cab-v1-final-report.json",
+        "exists": true
+      },
+      {
+        "path": "artifacts/oam-cab/execution-log.jsonl",
+        "exists": true
+      },
+      {
+        "path": "artifacts/oam-cab/browser-checks/phase-5/check-result.json",
+        "exists": true
+      }
+    ],
+    "runtimeBindings": [
+      {
+        "path": "services/core-api/WorkOS.Api/Runtime/ActionRuntimeService.cs",
+        "mentions": {
+          "Evidence": 9,
+          "FactTrace": 0,
+          "RuntimeProof": 0,
+          "GateResult": 0
+        }
+      },
+      {
+        "path": "services/core-api/WorkOS.Api/Runtime/BusinessPolicy/PolicyAsCode.cs",
+        "mentions": {
+          "Evidence": 33,
+          "FactTrace": 0,
+          "RuntimeProof": 0,
+          "GateResult": 0
+        }
+      },
+      {
+        "path": "services/core-api/WorkOS.Api/Runtime/CanonicalOperationsApiService.cs",
+        "mentions": {
+          "Evidence": 1,
+          "FactTrace": 6,
+          "RuntimeProof": 0,
+          "GateResult": 0
+        }
+      },
+      {
+        "path": "services/core-api/WorkOS.Api/Runtime/CardContractFactory.cs",
+        "mentions": {
+          "Evidence": 1,
+          "FactTrace": 0,
+          "RuntimeProof": 0,
+          "GateResult": 0
+        }
+      },
+      {
+        "path": "services/core-api/WorkOS.Api/Runtime/ConfirmUnitOfWork.cs",
+        "mentions": {
+          "Evidence": 3,
+          "FactTrace": 0,
+          "RuntimeProof": 0,
+          "GateResult": 0
+        }
+      },
+      {
+        "path": "services/core-api/WorkOS.Api/Runtime/ControlPlaneDbMapping.cs",
+        "mentions": {
+          "Evidence": 0,
+          "FactTrace": 0,
+          "RuntimeProof": 0,
+          "GateResult": 2
+        }
+      },
+      {
+        "path": "services/core-api/WorkOS.Api/Runtime/ControlPlaneReadStore.cs",
+        "mentions": {
+          "Evidence": 0,
+          "FactTrace": 0,
+          "RuntimeProof": 0,
+          "GateResult": 22
+        }
+      },
+      {
+        "path": "services/core-api/WorkOS.Api/Runtime/ControlPlaneWriteStore.cs",
+        "mentions": {
+          "Evidence": 0,
+          "FactTrace": 0,
+          "RuntimeProof": 0,
+          "GateResult": 5
+        }
+      },
+      {
+        "path": "services/core-api/WorkOS.Api/Runtime/EventContractCatalog.cs",
+        "mentions": {
+          "Evidence": 4,
+          "FactTrace": 0,
+          "RuntimeProof": 0,
+          "GateResult": 0
+        }
+      },
+      {
+        "path": "services/core-api/WorkOS.Api/Runtime/EventSelectionPolicy.cs",
+        "mentions": {
+          "Evidence": 8,
+          "FactTrace": 0,
+          "RuntimeProof": 0,
+          "GateResult": 0
+        }
+      },
+      {
+        "path": "services/core-api/WorkOS.Api/Runtime/EvidenceContractCatalog.cs",
+        "mentions": {
+          "Evidence": 3,
+          "FactTrace": 0,
+          "RuntimeProof": 0,
+          "GateResult": 0
+        }
+      },
+      {
+        "path": "services/core-api/WorkOS.Api/Runtime/FinanceTruthKernel.cs",
+        "mentions": {
+          "Evidence": 2,
+          "FactTrace": 0,
+          "RuntimeProof": 0,
+          "GateResult": 0
+        }
+      },
+      {
+        "path": "services/core-api/WorkOS.Api/Runtime/IProjectionStore.cs",
+        "mentions": {
+          "Evidence": 19,
+          "FactTrace": 0,
+          "RuntimeProof": 0,
+          "GateResult": 0
+        }
+      },
+      {
+        "path": "services/core-api/WorkOS.Api/Runtime/LensQueryService.cs",
+        "mentions": {
+          "Evidence": 1,
+          "FactTrace": 0,
+          "RuntimeProof": 0,
+          "GateResult": 0
+        }
+      },
+      {
+        "path": "services/core-api/WorkOS.Api/Runtime/OperationsContracts.cs",
+        "mentions": {
+          "Evidence": 2,
+          "FactTrace": 1,
+          "RuntimeProof": 0,
+          "GateResult": 0
+        }
+      },
+      {
+        "path": "services/core-api/WorkOS.Api/Runtime/OperationsRuntimeService.cs",
+        "mentions": {
+          "Evidence": 8,
+          "FactTrace": 0,
+          "RuntimeProof": 0,
+          "GateResult": 0
+        }
+      },
+      {
+        "path": "services/core-api/WorkOS.Api/Runtime/OperationsUnitOfWork.cs",
+        "mentions": {
+          "Evidence": 2,
+          "FactTrace": 35,
+          "RuntimeProof": 0,
+          "GateResult": 0
+        }
+      },
+      {
+        "path": "services/core-api/WorkOS.Api/Runtime/OperationsWorkItemStore.cs",
+        "mentions": {
+          "Evidence": 3,
+          "FactTrace": 0,
+          "RuntimeProof": 0,
+          "GateResult": 0
+        }
+      },
+      {
+        "path": "services/core-api/WorkOS.Api/Runtime/PostgresProjectionStore.cs",
+        "mentions": {
+          "Evidence": 2,
+          "FactTrace": 0,
+          "RuntimeProof": 0,
+          "GateResult": 0
+        }
+      },
+      {
+        "path": "services/core-api/WorkOS.Api/Runtime/PostgresProjectionStore.Evidence.cs",
+        "mentions": {
+          "Evidence": 19,
+          "FactTrace": 0,
+          "RuntimeProof": 0,
+          "GateResult": 0
+        }
+      },
+      {
+        "path": "services/core-api/WorkOS.Api/Runtime/ProductionObservabilityMetricsBuilder.cs",
+        "mentions": {
+          "Evidence": 3,
+          "FactTrace": 0,
+          "RuntimeProof": 0,
+          "GateResult": 3
+        }
+      },
+      {
+        "path": "services/core-api/WorkOS.Api/Runtime/ProjectionModels.cs",
+        "mentions": {
+          "Evidence": 18,
+          "FactTrace": 0,
+          "RuntimeProof": 0,
+          "GateResult": 1
+        }
+      },
+      {
+        "path": "services/core-api/WorkOS.Api/Runtime/ProjectionRuntime.Evidence.cs",
+        "mentions": {
+          "Evidence": 23,
+          "FactTrace": 0,
+          "RuntimeProof": 0,
+          "GateResult": 0
+        }
+      },
+      {
+        "path": "services/core-api/WorkOS.Api/Runtime/ReleaseAdmissionPolicy.cs",
+        "mentions": {
+          "Evidence": 0,
+          "FactTrace": 0,
+          "RuntimeProof": 0,
+          "GateResult": 1
+        }
+      },
+      {
+        "path": "services/core-api/WorkOS.Api/Runtime/RiskCommandLensBuilder.cs",
+        "mentions": {
+          "Evidence": 4,
+          "FactTrace": 0,
+          "RuntimeProof": 0,
+          "GateResult": 0
+        }
+      },
+      {
+        "path": "services/core-api/WorkOS.Api/Runtime/RuntimeEvidenceStorage.cs",
+        "mentions": {
+          "Evidence": 25,
+          "FactTrace": 0,
+          "RuntimeProof": 0,
+          "GateResult": 0
+        }
+      },
+      {
+        "path": "services/core-api/WorkOS.Api/Runtime/RuntimeFieldAliases.cs",
+        "mentions": {
+          "Evidence": 8,
+          "FactTrace": 0,
+          "RuntimeProof": 0,
+          "GateResult": 0
+        }
+      },
+      {
+        "path": "services/core-api/WorkOS.Api/Runtime/RuntimeProductionObservabilityStorage.cs",
+        "mentions": {
+          "Evidence": 1,
+          "FactTrace": 0,
+          "RuntimeProof": 0,
+          "GateResult": 1
+        }
+      },
+      {
+        "path": "services/core-api/WorkOS.Api/Runtime/RuntimeReconciliationMismatchCaseStorage.cs",
+        "mentions": {
+          "Evidence": 5,
+          "FactTrace": 0,
+          "RuntimeProof": 0,
+          "GateResult": 0
+        }
+      },
+      {
+        "path": "services/core-api/WorkOS.Api/Runtime/RuntimeScenarioRunner.cs",
+        "mentions": {
+          "Evidence": 7,
+          "FactTrace": 6,
+          "RuntimeProof": 0,
+          "GateResult": 2
+        }
+      },
+      {
+        "path": "services/core-api/WorkOS.Api/Runtime/RuntimeSecurityPolicy.cs",
+        "mentions": {
+          "Evidence": 3,
+          "FactTrace": 0,
+          "RuntimeProof": 0,
+          "GateResult": 0
+        }
+      },
+      {
+        "path": "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs",
+        "mentions": {
+          "Evidence": 1,
+          "FactTrace": 0,
+          "RuntimeProof": 0,
+          "GateResult": 0
+        }
+      },
+      {
+        "path": "services/core-api/WorkOS.Api/Runtime/WorkspaceCardCompatibilityAdapter.cs",
+        "mentions": {
+          "Evidence": 2,
+          "FactTrace": 0,
+          "RuntimeProof": 0,
+          "GateResult": 0
+        }
+      },
+      {
+        "path": "services/core-api/WorkOS.Api/Runtime/WorkspaceSeedCatalog.cs",
+        "mentions": {
+          "Evidence": 2,
+          "FactTrace": 0,
+          "RuntimeProof": 0,
+          "GateResult": 0
+        }
+      }
+    ]
+  },
+  "forbidden_findings": [],
+  "summary": {
+    "routeCount": 68,
+    "nonGetRouteCount": 34,
+    "businessWriteRouteCount": 7,
+    "forbiddenFindingCount": 0,
+    "definitionCount": 22,
+    "searchResultTypeCount": 15,
+    "languageCount": 3
+  }
+}

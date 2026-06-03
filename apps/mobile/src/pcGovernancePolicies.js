@@ -1,6 +1,7 @@
 export const pcGovernanceNavItems = [
   "Dashboard",
   "Production Observability",
+  "Lens Health",
   "Work Management",
   "Objects",
   "Cases",
@@ -17,10 +18,10 @@ export const pcGovernanceNavItems = [
 ];
 
 export const governanceExportDefinitions = [
-  { key: "ledger", label: "Ledger export", capability: "pc.export.ledger", highRisk: true },
-  { key: "caseTimeline", label: "Case timeline export", capability: "pc.export.case_timeline", highRisk: false },
-  { key: "evidenceAudit", label: "Evidence audit export", capability: "pc.export.evidence_audit", highRisk: true },
-  { key: "periodSnapshot", label: "Period snapshot export", capability: "pc.export.period_snapshot", highRisk: true }
+  { key: "ledger", label: "账务导出", capability: "pc.export.ledger", highRisk: true },
+  { key: "caseTimeline", label: "案件时间线导出", capability: "pc.export.case_timeline", highRisk: false },
+  { key: "evidenceAudit", label: "证据审计导出", capability: "pc.export.evidence_audit", highRisk: true },
+  { key: "periodSnapshot", label: "周期快照导出", capability: "pc.export.period_snapshot", highRisk: true }
 ];
 
 export function canEditRoleCapability(state) {

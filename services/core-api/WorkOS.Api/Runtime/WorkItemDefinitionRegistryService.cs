@@ -1,0 +1,202 @@
+using System.Text.Json;
+
+namespace WorkOS.Api.Runtime;
+
+public sealed class WorkItemDefinitionRegistryService
+{
+    private static readonly Lazy<WorkItemDefinitionRegistryService> Default = new(LoadDefaultRegistry);
+    private readonly IReadOnlyList<WorkItemDefinition> definitions;
+    private readonly IReadOnlyDictionary<string, WorkItemDefinition> byDefinitionId;
+    private readonly IReadOnlyDictionary<string, WorkItemDefinition> byLegacyCardId;
+    private readonly IReadOnlyDictionary<string, WorkItemDefinition> byWorkItemType;
+
+    public WorkItemDefinitionRegistryService(IReadOnlyList<WorkItemDefinition> definitions)
+    {
+        this.definitions = definitions;
+        byDefinitionId = definitions
+            .GroupBy(item => item.DefinitionId, StringComparer.OrdinalIgnoreCase)
+            .ToDictionary(group => group.Key, group => group.First(), StringComparer.OrdinalIgnoreCase);
+        byLegacyCardId = definitions
+            .Where(item => !string.IsNullOrWhiteSpace(item.LegacyCardId))
+            .GroupBy(item => item.LegacyCardId, StringComparer.OrdinalIgnoreCase)
+            .ToDictionary(group => group.Key, group => group.First(), StringComparer.OrdinalIgnoreCase);
+        byWorkItemType = definitions
+            .Where(item => !string.IsNullOrWhiteSpace(item.WorkItemType))
+            .GroupBy(item => item.WorkItemType, StringComparer.OrdinalIgnoreCase)
+            .ToDictionary(group => group.Key, group => group.First(), StringComparer.OrdinalIgnoreCase);
+    }
+
+    public static WorkItemDefinitionRegistryService LoadDefault() => Default.Value;
+
+    public IReadOnlyList<WorkItemDefinition> Definitions => definitions;
+
+    public WorkItemDefinitionResolution Resolve(WorkItem workItem, string? requestedCardId = null)
+    {
+        var payloadDefinitionId = PayloadValue(workItem.Payload, "definitionId");
+        var definition = FindByDefinitionId(payloadDefinitionId)
+            ?? FindByDefinitionId(workItem.DefinitionVersionId)
+            ?? FindByLegacyCardId(PayloadValue(workItem.Payload, "cardId"))
+            ?? FindByLegacyCardId(requestedCardId)
+            ?? FindByLegacyCardId(workItem.WorkItemType)
+            ?? FindByWorkItemType(workItem.WorkItemType);
+
+        return definition is null
+            ? WorkItemDefinitionResolution.Unresolved(
+                FirstNonEmpty(payloadDefinitionId, workItem.DefinitionVersionId),
+                FirstNonEmpty(PayloadValue(workItem.Payload, "cardId"), requestedCardId, workItem.WorkItemType),
+                GuessBusinessLine(workItem.WorkspaceId),
+                "definition_registry_not_resolved")
+            : WorkItemDefinitionResolution.FromDefinition(definition);
+    }
+
+    public WorkItemDefinitionResolution ResolveByWorkspaceCard(string? workspaceId, string? cardId)
+    {
+        var definition = definitions.FirstOrDefault(item =>
+            item.WorkspaceId.Equals(workspaceId ?? string.Empty, StringComparison.OrdinalIgnoreCase) &&
+            item.LegacyCardId.Equals(cardId ?? string.Empty, StringComparison.OrdinalIgnoreCase));
+        return definition is null
+            ? WorkItemDefinitionResolution.Unresolved(
+                string.Empty,
+                cardId ?? string.Empty,
+                GuessBusinessLine(workspaceId),
+                "definition_registry_not_resolved")
+            : WorkItemDefinitionResolution.FromDefinition(definition);
+    }
+
+    public WorkItemDefinition? FindByDefinitionId(string? definitionId) =>
+        !string.IsNullOrWhiteSpace(definitionId) &&
+        byDefinitionId.TryGetValue(definitionId, out var definition)
+            ? definition
+            : null;
+
+    public WorkItemDefinition? FindByLegacyCardId(string? legacyCardId) =>
+        !string.IsNullOrWhiteSpace(legacyCardId) &&
+        byLegacyCardId.TryGetValue(legacyCardId, out var definition)
+            ? definition
+            : null;
+
+    public WorkItemDefinition? FindByWorkItemType(string? workItemType) =>
+        !string.IsNullOrWhiteSpace(workItemType) &&
+        byWorkItemType.TryGetValue(workItemType, out var definition)
+            ? definition
+            : null;
+
+    private static WorkItemDefinitionRegistryService LoadDefaultRegistry()
+    {
+        var path = LocateContract("definition", "workitem-definition-registry.json");
+        var registry = JsonSerializer.Deserialize<WorkItemDefinitionRegistryDocument>(
+            File.ReadAllText(path),
+            new JsonSerializerOptions(JsonSerializerDefaults.Web))
+            ?? throw new InvalidOperationException("workitem_definition_registry_invalid");
+        return new WorkItemDefinitionRegistryService(registry.Definitions ?? Array.Empty<WorkItemDefinition>());
+    }
+
+    private static string LocateContract(params string[] segments)
+    {
+        var current = new DirectoryInfo(AppContext.BaseDirectory);
+        while (current is not null)
+        {
+            var candidate = Path.Combine(new[] { current.FullName, "docs", "contracts" }.Concat(segments).ToArray());
+            if (File.Exists(candidate))
+            {
+                return candidate;
+            }
+
+            current = current.Parent;
+        }
+
+        throw new FileNotFoundException($"Could not locate docs/contracts/{string.Join("/", segments)}.");
+    }
+
+    private static string PayloadValue(IReadOnlyDictionary<string, string> payload, string key) =>
+        payload.TryGetValue(key, out var value) ? value : string.Empty;
+
+    private static string FirstNonEmpty(params string?[] values) =>
+        values.FirstOrDefault(value => !string.IsNullOrWhiteSpace(value)) ?? string.Empty;
+
+    private static string GuessBusinessLine(string? workspaceId) =>
+        string.IsNullOrWhiteSpace(workspaceId)
+            ? "unknown"
+            : workspaceId.StartsWith("W-STAY", StringComparison.OrdinalIgnoreCase) ||
+              workspaceId.StartsWith("PC-GOVERNANCE", StringComparison.OrdinalIgnoreCase)
+                ? "dormitory"
+                : "unknown";
+}
+
+public sealed record WorkItemDefinitionRegistryDocument(
+    string Version,
+    IReadOnlyList<WorkItemDefinition>? Definitions);
+
+public sealed record WorkItemDefinition(
+    string DefinitionId,
+    string BusinessLineId,
+    string SliceId,
+    string WorkspaceId,
+    string LegacyCardId,
+    string WorkItemType,
+    string CommandType,
+    string OwnerSlice,
+    IReadOnlyList<string> AllowedFacts,
+    IReadOnlyList<string> ForbiddenFacts,
+    string FieldContractRef,
+    string EvidencePolicyRef,
+    string RiskPolicyRef,
+    string LedgerPolicyRef,
+    string AdmissionPolicyRef,
+    string SurfacePolicyRef,
+    bool ProductionConfirmAllowed,
+    string CompatibilityMode,
+    string RemovalImpact);
+
+public sealed record WorkItemDefinitionResolution(
+    bool Resolved,
+    WorkItemDefinition? Definition,
+    string DefinitionId,
+    string LegacyCardId,
+    string BusinessLineId,
+    string SliceId,
+    string CompatibilityMode,
+    bool ProductionConfirmAllowed,
+    string Reason)
+{
+    public static WorkItemDefinitionResolution FromDefinition(WorkItemDefinition definition) =>
+        new(
+            true,
+            definition,
+            definition.DefinitionId,
+            definition.LegacyCardId,
+            definition.BusinessLineId,
+            definition.SliceId,
+            definition.CompatibilityMode,
+            definition.ProductionConfirmAllowed,
+            "definition_resolved");
+
+    public static WorkItemDefinitionResolution Unresolved(
+        string definitionId,
+        string legacyCardId,
+        string businessLineId,
+        string reason) =>
+        new(
+            false,
+            null,
+            definitionId,
+            legacyCardId,
+            businessLineId,
+            string.Empty,
+            "unregistered-compatibility",
+            false,
+            reason);
+
+    public IReadOnlyDictionary<string, object> ToTrace() =>
+        new Dictionary<string, object>
+        {
+            ["resolved"] = Resolved,
+            ["definitionId"] = DefinitionId,
+            ["legacyCardId"] = LegacyCardId,
+            ["businessLineId"] = BusinessLineId,
+            ["sliceId"] = SliceId,
+            ["compatibilityMode"] = CompatibilityMode,
+            ["productionConfirmAllowed"] = ProductionConfirmAllowed,
+            ["reason"] = Reason
+        };
+}

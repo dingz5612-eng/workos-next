@@ -10,6 +10,9 @@ describe("Stage B Operation Panel deep link contract", () => {
     expect(html).toContain("W-STAY-RESOURCE:roomSetup");
     expect(html).not.toContain("T-ROOM-CREATE");
     expect(text).not.toMatch(/\b(OperationPanelView|TrustedConfirmSheet|ActionResult|workItemId|caseId|payloadHash|commandSubmissionId|operationsPrepare|operationsConfirm)\b/);
-    expect(text).toContain("可信确认");
+    expect(html).toContain('data-surface="system-validation-summary"');
+    expect(text).toContain("提交前系统校验");
+    expect(text).not.toContain("可信确认");
+    expect(text).not.toContain("提交证据");
   });
 });

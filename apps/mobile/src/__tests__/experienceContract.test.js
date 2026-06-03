@@ -112,11 +112,14 @@ describe("RT-5 Experience Contract", () => {
     const html = LifecycleWorkspace(workspace, workspace.cards[0], ctx());
 
     expect(html).toContain('data-surface="lifecycle-workspace"');
-    expect(html).toContain("对象摘要");
-    expect(html).toContain("生命周期时间线");
     expect(html).toContain("当前办理项");
-    expect(html).toContain("必需证据");
-    expect(html).toContain("审计摘要");
+    expect(html).toContain("当前状态");
+    expect(html).toContain("生命周期时间线");
+    expect(html).toContain("timeline-step");
+    expect(html).toContain('data-workspace="W-DORM-STAY"');
+    expect(html).toContain('data-card-id="checkIn"');
+    expect(html).not.toContain("必需证据");
+    expect(html).not.toContain("审计摘要");
   });
 
   it("renders trusted result, evidence, queue, device trust, and permission states", () => {

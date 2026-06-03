@@ -1,9 +1,6 @@
 using System.Security.Cryptography;
 using System.Reflection;
 using System.Text;
-using System.Text.Json;
-using Npgsql;
-using NpgsqlTypes;
 
 namespace WorkOS.Api.Runtime;
 
@@ -14,31 +11,27 @@ public sealed class OperationsRuntimeService
     private readonly IOperationsWorkItemStore workItems;
 
     public OperationsRuntimeService(
-        ProjectionRuntime runtime,
-        IOperationsCommandSubmissionStore submissions)
-        : this(new ProjectionOperationsRuntimeAdapter(runtime), submissions)
+        ProjectionRuntime runtime)
+        : this(new ProjectionOperationsRuntimeAdapter(runtime))
     {
     }
 
     public OperationsRuntimeService(
         ProjectionRuntime runtime,
-        IOperationsCommandSubmissionStore submissions,
         IOperationsCaseStore cases,
         IOperationsWorkItemStore workItems)
-        : this(new ProjectionOperationsRuntimeAdapter(runtime), submissions, cases, workItems)
+        : this(new ProjectionOperationsRuntimeAdapter(runtime), cases, workItems)
+    {
+    }
+
+    public OperationsRuntimeService(
+        IOperationsRuntimeAdapter runtime)
+        : this(runtime, new InMemoryOperationsCaseStore(), new InMemoryOperationsWorkItemStore())
     {
     }
 
     public OperationsRuntimeService(
         IOperationsRuntimeAdapter runtime,
-        IOperationsCommandSubmissionStore submissions)
-        : this(runtime, submissions, new InMemoryOperationsCaseStore(), new InMemoryOperationsWorkItemStore())
-    {
-    }
-
-    public OperationsRuntimeService(
-        IOperationsRuntimeAdapter runtime,
-        IOperationsCommandSubmissionStore submissions,
         IOperationsCaseStore cases,
         IOperationsWorkItemStore workItems)
     {
@@ -55,12 +48,20 @@ public sealed class OperationsRuntimeService
 
     public WorkItem? CreateWorkItem(CreateWorkItemRequest request)
     {
-        var existing = string.IsNullOrWhiteSpace(request.WorkItemId)
+        var persisted = string.IsNullOrWhiteSpace(request.WorkItemId)
             ? null
-            : workItems.Get(request.WorkItemId) ?? ToWorkItemOrNull(FindProcessWorkItem(request.WorkItemId));
-        if (existing is not null)
+            : workItems.Get(request.WorkItemId);
+        if (persisted is not null)
         {
-            return existing;
+            return StabilizePersistedWorkItem(persisted, request);
+        }
+
+        var projected = string.IsNullOrWhiteSpace(request.WorkItemId)
+            ? null
+            : ToWorkItemOrNull(FindProcessWorkItem(request.WorkItemId));
+        if (projected is not null)
+        {
+            return projected;
         }
 
         var workspaceId = FirstNonEmpty(request.TargetWorkspaceId, request.WorkspaceId);
@@ -70,11 +71,12 @@ public sealed class OperationsRuntimeService
             if (target is not null)
             {
                 var caseId = FirstNonEmpty(PayloadValue(request.Payload ?? EmptyPayload, "caseId"), CaseIdFor(target.Intent, target.Workspace.Id)) ?? target.Workspace.Id;
-                PersistCase(new CreateOperationCaseRequest(caseId, request.TenantId ?? target.Workspace.Id, target.Workspace.Id));
+                var tenantId = FirstNonEmpty(request.TenantId, target.Intent?.TenantId, RuntimeActorAuthorization.DefaultTenantId)!;
+                PersistCase(new CreateOperationCaseRequest(caseId, tenantId, target.Workspace.Id));
                 return workItems.Upsert(ToCompatibilityWorkItem(
                     request.WorkItemId ?? WorkItemIdFor(target.Workspace.Id, target.Card.Id),
                     request.WorkItemType ?? target.Card.Id,
-                    request.TenantId ?? target.Workspace.Id,
+                    tenantId,
                     target,
                     request.OwnerRole ?? target.Card.Confirmation.RequiredRole,
                     request.Payload ?? EmptyPayload,
@@ -139,16 +141,16 @@ public sealed class OperationsRuntimeService
             : ToCompatibilityWorkItem(
                 workItemId,
                 target.Card.Id,
-                target.Workspace.Id,
+                TenantIdFor(target),
                 target,
                 target.Card.Confirmation.RequiredRole,
                 EmptyPayload,
                 "workspace-card");
     }
 
-    public CompatibilityApiResult PrepareWorkspaceCard(string workspaceId, string cardId, PrepareCardRequest? request)
+    public CompatibilityApiResult PrepareWorkspaceCard(string workspaceId, string cardId, PrepareCardRequest? request, string? tenantId = null)
     {
-        var workItem = ResolveOrCreateWorkspaceCardWorkItem(workspaceId, cardId);
+        var workItem = ResolveOrCreateWorkspaceCardWorkItem(workspaceId, cardId, tenantId);
         if (workItem is null)
         {
             return new CompatibilityApiResult(StatusCodes.Status404NotFound, new { error = "card_not_found", workspaceId, cardId });
@@ -218,12 +220,6 @@ public sealed class OperationsRuntimeService
             return null;
         }
 
-        var prepared = runtime.Prepare(target.Workspace.Id, target.Card.Id, request.ToPrepareCardRequest());
-        if (prepared is null)
-        {
-            return null;
-        }
-
         var result = new PrepareWorkItemResult(
             workItemId,
             target.Card.Fields,
@@ -233,13 +229,13 @@ public sealed class OperationsRuntimeService
             CaseIdFor(target.Intent, target.Workspace.Id),
             target.Workspace.Id,
             target.Card.Id);
-        return new PrepareWorkItemExecution(result, prepared, target);
+        return new PrepareWorkItemExecution(result, CompatibilityPreparePayload(target, request), target);
     }
 
-    private WorkItem? ResolveOrCreateWorkspaceCardWorkItem(string workspaceId, string cardId) =>
+    private WorkItem? ResolveOrCreateWorkspaceCardWorkItem(string workspaceId, string cardId, string? tenantId = null) =>
         CreateWorkItem(new CreateWorkItemRequest(
             WorkItemIdFor(workspaceId, cardId),
-            workspaceId,
+            FirstNonEmpty(tenantId, RuntimeActorAuthorization.DefaultTenantId),
             cardId,
             workspaceId,
             workspaceId,
@@ -280,6 +276,32 @@ public sealed class OperationsRuntimeService
         };
     }
 
+    private static object CompatibilityPreparePayload(OperationTarget target, PrepareWorkItemRequest request)
+    {
+        var now = DateTimeOffset.UtcNow;
+        var cardInstanceId = string.IsNullOrWhiteSpace(request.CardInstanceId)
+            ? $"ci-{OperationsHash.Short(target.Workspace.Id, target.Card.Id, request.SubmissionId ?? string.Empty, request.AggregateRef ?? string.Empty)}"
+            : request.CardInstanceId;
+        var cardInstance = new CardInstanceRecord(
+            cardInstanceId,
+            target.Workspace.Id,
+            target.Card.Id,
+            request.AggregateRef,
+            request.SubmissionId,
+            null,
+            "prepared",
+            now,
+            now);
+        return new Dictionary<string, object?>
+        {
+            ["prepared"] = true,
+            ["preparedAtUtc"] = now,
+            ["workspaceId"] = target.Workspace.Id,
+            ["cardId"] = target.Card.Id,
+            ["cardInstance"] = cardInstance
+        };
+    }
+
     private static object? PropertyValue(object? source, string name)
     {
         if (source is null)
@@ -301,6 +323,19 @@ public sealed class OperationsRuntimeService
         var existing = string.IsNullOrWhiteSpace(request.CaseId) ? null : cases.Get(request.CaseId);
         if (existing is not null)
         {
+            var existingTenantId = FirstNonEmpty(request.TenantId, existing.TenantId);
+            var existingWorkspaceId = FirstNonEmpty(request.WorkspaceId, existing.WorkspaceId);
+            if (!SameText(existingTenantId, existing.TenantId) || !SameText(existingWorkspaceId, existing.WorkspaceId))
+            {
+                return cases.Upsert(existing with
+                {
+                    TenantId = existingTenantId,
+                    WorkspaceId = existingWorkspaceId,
+                    ProjectionStatus = "persisted",
+                    Source = "operations-case-store"
+                });
+            }
+
             return existing;
         }
 
@@ -337,6 +372,46 @@ public sealed class OperationsRuntimeService
             "OperationCase.v1",
             "operations",
             null));
+    }
+
+    private WorkItem StabilizePersistedWorkItem(WorkItem existing, CreateWorkItemRequest request)
+    {
+        var payload = request.Payload ?? existing.Payload;
+        if (!IsWorkspaceCardCompatibility(existing, request, payload))
+        {
+            return existing;
+        }
+
+        var tenantId = FirstNonEmpty(request.TenantId, existing.TenantId) ?? existing.TenantId;
+        var workspaceId = FirstNonEmpty(request.TargetWorkspaceId, request.WorkspaceId, existing.WorkspaceId) ?? existing.WorkspaceId;
+        var caseId = FirstNonEmpty(PayloadValue(payload, "caseId"), existing.CaseId, workspaceId);
+        var workItemType = FirstNonEmpty(request.WorkItemType, existing.WorkItemType) ?? existing.WorkItemType;
+        var ownerRole = FirstNonEmpty(request.OwnerRole, existing.OwnerRole) ?? existing.OwnerRole;
+        var idempotencyScope = $"{tenantId}:{existing.WorkItemId}:confirm";
+
+        PersistCase(new CreateOperationCaseRequest(caseId, tenantId, workspaceId));
+        if (SameText(existing.TenantId, tenantId) &&
+            SameText(existing.WorkspaceId, workspaceId) &&
+            SameText(existing.CaseId, caseId) &&
+            SameText(existing.WorkItemType, workItemType) &&
+            SameText(existing.OwnerRole, ownerRole) &&
+            SameText(existing.IdempotencyScope, idempotencyScope) &&
+            SamePayload(existing.Payload, payload))
+        {
+            return existing;
+        }
+
+        return workItems.Upsert(existing with
+        {
+            TenantId = tenantId,
+            WorkspaceId = workspaceId,
+            CaseId = caseId,
+            WorkItemType = workItemType,
+            OwnerRole = ownerRole,
+            Payload = payload,
+            IdempotencyScope = idempotencyScope,
+            Source = "workspace-card"
+        });
     }
 
     private OperationCase? ResolveCase(string? caseId, string? workspaceId, string? tenantId)
@@ -511,7 +586,15 @@ public sealed class OperationsRuntimeService
         FirstNonEmpty(intent is null ? null : PayloadValue(intent.Payload, "caseId"), workspaceId) ?? workspaceId;
 
     private static string TenantIdFor(OperationTarget target) =>
-        FirstNonEmpty(target.Intent?.TenantId, target.Workspace.Id) ?? target.Workspace.Id;
+        FirstNonEmpty(target.Intent?.TenantId, RuntimeActorAuthorization.DefaultTenantId) ?? RuntimeActorAuthorization.DefaultTenantId;
+
+    private static bool IsWorkspaceCardCompatibility(
+        WorkItem existing,
+        CreateWorkItemRequest request,
+        IReadOnlyDictionary<string, string> payload) =>
+        existing.Source.Equals("workspace-card", StringComparison.OrdinalIgnoreCase) ||
+        PayloadValue(payload, "compatibilityRoute").Equals("workspace-card", StringComparison.OrdinalIgnoreCase) ||
+        (!string.IsNullOrWhiteSpace(request.TargetWorkspaceId) && !string.IsNullOrWhiteSpace(request.CardId));
 
     private static string PayloadValue(IReadOnlyDictionary<string, string> payload, string key) =>
         payload.TryGetValue(key, out var value) ? value : string.Empty;
@@ -529,6 +612,14 @@ public sealed class OperationsRuntimeService
 
     private static string? FirstNonEmpty(params string?[] values) =>
         values.FirstOrDefault(value => !string.IsNullOrWhiteSpace(value));
+
+    private static bool SameText(string? left, string? right) =>
+        (left ?? string.Empty).Equals(right ?? string.Empty, StringComparison.OrdinalIgnoreCase);
+
+    private static bool SamePayload(IReadOnlyDictionary<string, string> left, IReadOnlyDictionary<string, string> right) =>
+        left.Count == right.Count &&
+        left.All(item => right.TryGetValue(item.Key, out var value) &&
+            value.Equals(item.Value, StringComparison.Ordinal));
 
     private static (string WorkspaceId, string CardId)? SplitWorkItemId(string workItemId)
     {
@@ -557,11 +648,7 @@ public interface IOperationsRuntimeAdapter
 
     IReadOnlyList<ProcessWorkItemIntentRecord> GetProcessWorkItemIntents(string? tenantId = null);
 
-    object? Prepare(string workspaceId, string cardId, PrepareCardRequest? request = null);
-
     ConfirmResult ValidateConfirm(string workspaceId, string cardId, ConfirmCardRequest request, string actorToken);
-
-    ConfirmResult Confirm(string workspaceId, string cardId, ConfirmCardRequest request, string actorToken);
 }
 
 public sealed class ProjectionOperationsRuntimeAdapter : IOperationsRuntimeAdapter
@@ -578,228 +665,8 @@ public sealed class ProjectionOperationsRuntimeAdapter : IOperationsRuntimeAdapt
     public IReadOnlyList<ProcessWorkItemIntentRecord> GetProcessWorkItemIntents(string? tenantId = null) =>
         runtime.GetProcessWorkItemIntents(tenantId);
 
-    public object? Prepare(string workspaceId, string cardId, PrepareCardRequest? request = null) =>
-        runtime.Prepare(workspaceId, cardId, request);
-
     public ConfirmResult ValidateConfirm(string workspaceId, string cardId, ConfirmCardRequest request, string actorToken) =>
         runtime.ValidateConfirm(workspaceId, cardId, request, actorToken);
-
-    public ConfirmResult Confirm(string workspaceId, string cardId, ConfirmCardRequest request, string actorToken) =>
-        runtime.Confirm(workspaceId, cardId, request, actorToken);
-}
-
-public interface IOperationsCommandSubmissionStore
-{
-    OperationsCommandSubmissionRecord? Find(string tenantId, string sliceId, string idempotencyKey);
-
-    bool TryBegin(OperationsCommandSubmissionRecord record);
-
-    void Complete(OperationsCommandSubmissionRecord record);
-
-    void Fail(OperationsCommandSubmissionRecord record);
-}
-
-public sealed class InMemoryOperationsCommandSubmissionStore : IOperationsCommandSubmissionStore
-{
-    private readonly Dictionary<string, OperationsCommandSubmissionRecord> records = new(StringComparer.OrdinalIgnoreCase);
-
-    public IReadOnlyList<OperationsCommandSubmissionRecord> Records => records.Values.ToArray();
-
-    public OperationsCommandSubmissionRecord? Find(string tenantId, string sliceId, string idempotencyKey) =>
-        records.TryGetValue(Key(tenantId, idempotencyKey), out var record) ? record : null;
-
-    public bool TryBegin(OperationsCommandSubmissionRecord record)
-    {
-        return records.TryAdd(Key(record.TenantId, record.IdempotencyKey), record);
-    }
-
-    public void Complete(OperationsCommandSubmissionRecord record)
-    {
-        records[Key(record.TenantId, record.IdempotencyKey)] = record;
-    }
-
-    public void Fail(OperationsCommandSubmissionRecord record)
-    {
-        records[Key(record.TenantId, record.IdempotencyKey)] = record;
-    }
-
-    private static string Key(string tenantId, string idempotencyKey) =>
-        $"{tenantId}|{idempotencyKey}";
-}
-
-public sealed class PostgresOperationsCommandSubmissionStore : IOperationsCommandSubmissionStore
-{
-    private const string MissingTable = "42P01";
-    private const string MissingSchema = "3F000";
-    private readonly PostgresConnectionFactory connections;
-
-    public PostgresOperationsCommandSubmissionStore(string connectionString)
-    {
-        connections = new PostgresConnectionFactory(connectionString);
-    }
-
-    public OperationsCommandSubmissionRecord? Find(string tenantId, string sliceId, string idempotencyKey)
-    {
-        try
-        {
-            using var connection = connections.Open();
-            using var command = connection.CreateCommand();
-            command.CommandText = """
-                select command_submission_id, release_id, tenant_id, slice_id, workspace_id,
-                       card_id, idempotency_key, submitted_at_utc, command_payload, processing_status
-                from shadow_runtime.command_submissions
-                where tenant_id = @tenantId and idempotency_key = @idempotencyKey
-                order by submitted_at_utc desc
-                limit 1
-                """;
-            command.Parameters.AddWithValue("tenantId", tenantId);
-            command.Parameters.AddWithValue("idempotencyKey", idempotencyKey);
-            using var reader = command.ExecuteReader();
-            return reader.Read() ? ReadSubmission(reader) : null;
-        }
-        catch (PostgresException ex) when (ex.SqlState is MissingTable or MissingSchema)
-        {
-            return null;
-        }
-    }
-
-    public bool TryBegin(OperationsCommandSubmissionRecord record)
-    {
-        try
-        {
-            using var connection = connections.Open();
-            using var command = connection.CreateCommand();
-            command.CommandText = """
-                insert into shadow_runtime.command_submissions(
-                    command_submission_id, release_id, tenant_id, slice_id, workspace_id,
-                    card_id, idempotency_key, submitted_at_utc, actor_ref, command_payload,
-                    source_active_ref, source_shadow_ref, processing_status)
-                values (
-                    @commandSubmissionId, @releaseId, @tenantId, @sliceId, @workspaceId,
-                    @cardId, @idempotencyKey, @submittedAtUtc, @actorRef::jsonb, @commandPayload::jsonb,
-                    @sourceActiveRef, @sourceShadowRef, @processingStatus)
-                on conflict do nothing
-                """;
-            command.Parameters.AddWithValue("commandSubmissionId", record.CommandSubmissionId);
-            command.Parameters.AddWithValue("releaseId", (object?)record.ReleaseId ?? DBNull.Value);
-            command.Parameters.AddWithValue("tenantId", record.TenantId);
-            command.Parameters.AddWithValue("sliceId", record.SliceId);
-            command.Parameters.AddWithValue("workspaceId", (object?)record.WorkspaceId ?? DBNull.Value);
-            command.Parameters.AddWithValue("cardId", (object?)record.CardId ?? DBNull.Value);
-            command.Parameters.AddWithValue("idempotencyKey", record.IdempotencyKey);
-            command.Parameters.AddWithValue("submittedAtUtc", record.SubmittedAtUtc);
-            command.Parameters.AddWithValue("actorRef", NpgsqlDbType.Jsonb, JsonSerializer.Serialize(new { source = record.Source }, PostgresProjectionStore.JsonOptions));
-            command.Parameters.AddWithValue("commandPayload", NpgsqlDbType.Jsonb, JsonSerializer.Serialize(new
-            {
-                source = record.Source,
-                payloadHash = record.PayloadHash,
-                command = record.CommandPayload,
-                result = record.Result
-            }, PostgresProjectionStore.JsonOptions));
-            command.Parameters.AddWithValue("sourceActiveRef", (object?)$"{record.WorkspaceId}:{record.CardId}" ?? DBNull.Value);
-            command.Parameters.AddWithValue("sourceShadowRef", (object?)record.CommandSubmissionId ?? DBNull.Value);
-            command.Parameters.AddWithValue("processingStatus", record.ProcessingStatus);
-            return command.ExecuteNonQuery() > 0;
-        }
-        catch (PostgresException ex) when (ex.SqlState is MissingTable or MissingSchema)
-        {
-            // Compatibility deployments may not have shadow_runtime yet; Operations continues through confirm.
-            return true;
-        }
-    }
-
-    public void Complete(OperationsCommandSubmissionRecord record)
-    {
-        try
-        {
-            using var connection = connections.Open();
-            using var command = connection.CreateCommand();
-            command.CommandText = """
-                update shadow_runtime.command_submissions
-                set command_payload = @commandPayload::jsonb,
-                    processing_status = @processingStatus,
-                    source_shadow_ref = @sourceShadowRef
-                where command_submission_id = @commandSubmissionId
-                """;
-            command.Parameters.AddWithValue("commandSubmissionId", record.CommandSubmissionId);
-            command.Parameters.AddWithValue("commandPayload", NpgsqlDbType.Jsonb, JsonSerializer.Serialize(new
-            {
-                source = record.Source,
-                payloadHash = record.PayloadHash,
-                command = record.CommandPayload,
-                result = record.Result
-            }, PostgresProjectionStore.JsonOptions));
-            command.Parameters.AddWithValue("processingStatus", record.ProcessingStatus);
-            command.Parameters.AddWithValue("sourceShadowRef", (object?)record.CommandSubmissionId ?? DBNull.Value);
-            command.ExecuteNonQuery();
-        }
-        catch (PostgresException ex) when (ex.SqlState is MissingTable or MissingSchema)
-        {
-            // Compatibility deployments may not have shadow_runtime yet; Operations continues through confirm.
-        }
-    }
-
-    public void Fail(OperationsCommandSubmissionRecord record)
-    {
-        try
-        {
-            using var connection = connections.Open();
-            using var command = connection.CreateCommand();
-            command.CommandText = """
-                update shadow_runtime.command_submissions
-                set command_payload = @commandPayload::jsonb,
-                    processing_status = 'failed',
-                    source_shadow_ref = @sourceShadowRef
-                where command_submission_id = @commandSubmissionId
-                  and processing_status = 'pending'
-                """;
-            command.Parameters.AddWithValue("commandSubmissionId", record.CommandSubmissionId);
-            command.Parameters.AddWithValue("commandPayload", NpgsqlDbType.Jsonb, JsonSerializer.Serialize(new
-            {
-                source = record.Source,
-                payloadHash = record.PayloadHash,
-                command = record.CommandPayload,
-                result = record.Result
-            }, PostgresProjectionStore.JsonOptions));
-            command.Parameters.AddWithValue("sourceShadowRef", (object?)record.CommandSubmissionId ?? DBNull.Value);
-            command.ExecuteNonQuery();
-        }
-        catch (PostgresException ex) when (ex.SqlState is MissingTable or MissingSchema)
-        {
-            // Compatibility deployments may not have shadow_runtime yet; Operations continues through confirm.
-        }
-    }
-
-    private static OperationsCommandSubmissionRecord ReadSubmission(NpgsqlDataReader reader)
-    {
-        var commandPayload = JsonDocument.Parse(reader.GetString(8)).RootElement;
-        var payloadHash = commandPayload.TryGetProperty("payloadHash", out var hashElement)
-            ? hashElement.GetString() ?? string.Empty
-            : string.Empty;
-        var source = commandPayload.TryGetProperty("source", out var sourceElement)
-            ? sourceElement.GetString() ?? "unknown"
-            : "unknown";
-        ConfirmWorkItemResult? result = null;
-        if (commandPayload.TryGetProperty("result", out var resultElement) && resultElement.ValueKind == JsonValueKind.Object)
-        {
-            result = JsonSerializer.Deserialize<ConfirmWorkItemResult>(resultElement.GetRawText(), PostgresProjectionStore.JsonOptions);
-        }
-
-        return new OperationsCommandSubmissionRecord(
-            reader.GetString(0),
-            reader.IsDBNull(1) ? null : reader.GetString(1),
-            reader.GetString(2),
-            reader.GetString(3),
-            reader.IsDBNull(4) ? null : reader.GetString(4),
-            reader.IsDBNull(5) ? null : reader.GetString(5),
-            reader.GetString(6),
-            payloadHash,
-            reader.GetFieldValue<DateTimeOffset>(7),
-            source,
-            reader.GetString(9),
-            result,
-            new Dictionary<string, object?>());
-    }
 }
 
 public sealed record CreateOperationCaseRequest(
@@ -880,9 +747,7 @@ public sealed record ConfirmWorkItemRequest(
 {
     public ConfirmWorkItemRequest Normalize(string workItemId, string workspaceId, string cardId)
     {
-        var idempotencyKey = string.IsNullOrWhiteSpace(IdempotencyKey)
-            ? $"op-{OperationsHash.Short(workItemId, workspaceId, cardId, Guid.NewGuid().ToString("N"))}"
-            : IdempotencyKey;
+        var idempotencyKey = IdempotencyKey!.Trim();
         var submissionId = string.IsNullOrWhiteSpace(SubmissionId)
             ? $"op-sub-{OperationsHash.Short(workItemId, idempotencyKey)}"
             : SubmissionId;
@@ -985,6 +850,39 @@ public sealed record ConfirmWorkItemResult(
             idempotencyKey,
             payloadHash,
             null);
+
+    public static ConfirmWorkItemResult AdmissionRejected(
+        string caseId,
+        string workItemId,
+        string? submissionId,
+        string? idempotencyKey,
+        AdmissionKernelDecision admission,
+        WorkItemDefinitionResolution definition) =>
+        new(
+            StatusCodes.Status403Forbidden,
+            "admission_rejected",
+            admission.Reason,
+            false,
+            "not_committed",
+            "not_projected",
+            caseId,
+            workItemId,
+            submissionId ?? string.Empty,
+            Array.Empty<string>(),
+            admission.Reason,
+            new Dictionary<string, object>
+            {
+                ["disableRetry"] = true,
+                ["refreshProjection"] = false,
+                ["observeOutbox"] = false,
+                ["admission"] = admission.ToContract(),
+                ["definition"] = definition.ToTrace(),
+                ["compatibilityMode"] = definition.CompatibilityMode
+            },
+            "operations_admission_kernel",
+            idempotencyKey,
+            null,
+            null);
 }
 
 public sealed record OperationsAvailableAction(
@@ -992,21 +890,6 @@ public sealed record OperationsAvailableAction(
     string Kind,
     IReadOnlyDictionary<string, string> Label,
     ConfirmationPolicy ConfirmationPolicy);
-
-public sealed record OperationsCommandSubmissionRecord(
-    string CommandSubmissionId,
-    string? ReleaseId,
-    string TenantId,
-    string SliceId,
-    string? WorkspaceId,
-    string? CardId,
-    string IdempotencyKey,
-    string PayloadHash,
-    DateTimeOffset SubmittedAtUtc,
-    string Source,
-    string ProcessingStatus,
-    ConfirmWorkItemResult? Result,
-    IReadOnlyDictionary<string, object?> CommandPayload);
 
 internal sealed record OperationTarget(
     WorkspaceProjection Workspace,

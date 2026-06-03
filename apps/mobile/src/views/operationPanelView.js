@@ -1,14 +1,17 @@
 import { loadDraft } from "../operationDrafts.js";
 import { buildOperationActionState } from "../operationActionState.js";
 import { resolveOperationPanelTarget } from "../operationRouteResolver.js";
-import { activeWorkspaceCard } from "../selectors/workspaceSelectors.js";
-import { ActionResult, EvidenceSheet, OperationPanelView, TechnicalAuditDetails, TrustedConfirmSheet, WorkItemCard, workItemModel } from "./experienceComponents.js";
+import { activeWorkspaceCard, isTerminalCardStatus } from "../selectors/workspaceSelectors.js";
+import { ActionResult, TechnicalAuditDetails, workItemModel } from "./experienceComponents.js";
 import { primaryActionButton, workspaceCardPanel } from "./workspaceView.js";
 
 export function operationPanelView(ctx) {
   const { state, shell } = ctx;
   const item = resolveOperationItem(state);
   if (!item?.workItemId && !item?.work_item_id) {
+    const startResourceAction = shouldOfferResourceSetup(state)
+      ? `<button data-start-resource-setup="true">${ctx.tr("operationUnavailableStartResource")}</button>`
+      : `<button data-view="search">${ctx.tr("operationUnavailableSearchAction")}</button>`;
     state.lastActionResult = {
       confirmed: false,
       status: "business_blocked_422",
@@ -23,8 +26,9 @@ export function operationPanelView(ctx) {
         <h1>${ctx.tr(state.operationRouteIssue?.titleKey || "operationUnavailableTitle")}</h1>
         <p>${ctx.tr(state.operationRouteIssue?.bodyKey || "operationUnavailableBody")}</p>
         <div class="empty-actions">
+          ${startResourceAction}
           <button data-view="workbench">${ctx.tr(state.operationRouteIssue?.returnActionKey || "returnWorkbench")}</button>
-          <button data-view="workbench">${ctx.tr(state.operationRouteIssue?.refreshActionKey || "refreshWorkItems")}</button>
+          <button class="secondary" data-view="workbench">${ctx.tr(state.operationRouteIssue?.refreshActionKey || "refreshWorkItems")}</button>
         </div>
       </section>
     `);
@@ -51,25 +55,19 @@ export function operationPanelView(ctx) {
   const operationBody = workspaceCardPanel(activeCard, workspace, true, ctx);
   const traceCount = [commandSubmissionId, model.caseId, model.workItemId, ...(model.traceRefs || [])].filter(Boolean).length;
   const actionState = buildOperationActionState(operationContext, activeCard, state.lastActionResult, state);
-  const isCompleted = activeCard.status === "done";
+  const isCompleted = isTerminalCardStatus(activeCard.status);
 
   return shell(`
     <section class="operation-panel-page" data-surface="operation-panel-route">
       <span>${ctx.tr("operationPanel")}</span>
-      <h1>${ctx.escapeHtml(model.workItemType)}</h1>
+      <h1>${ctx.escapeHtml(model.displayTitle || model.businessObject || model.workItemType)}</h1>
       <p>${ctx.escapeHtml(model.businessObject)} · ${ctx.escapeHtml(model.nextAction)}</p>
-      <dl class="operation-business-summary">
-        <dt>${ctx.tr("currentState")}</dt><dd>${ctx.tr(model.lifecycleState)}</dd>
-        <dt>${ctx.tr("decisionCanHandle")}</dt><dd>${ctx.escapeHtml(model.canHandleLabel)}</dd>
-        <dt>${ctx.tr("decisionBlocker")}</dt><dd>${ctx.escapeHtml(model.blocker)}</dd>
-        <dt>${ctx.tr("decisionMissingEvidence")}</dt><dd>${ctx.escapeHtml(model.requiredEvidence.join(" · ") || ctx.tr("noRequiredEvidence"))}</dd>
-        <dt>${ctx.tr("requiredPermission")}</dt><dd>${ctx.tr(model.ownerRole)}</dd>
-        <dt>${ctx.tr("decisionRisk")}</dt><dd>${ctx.escapeHtml(model.riskLevel)}</dd>
-        <dt>${ctx.tr("decisionDueAt")}</dt><dd>${ctx.escapeHtml(model.dueAt)}</dd>
-        <dt>${ctx.tr("decisionOwner")}</dt><dd>${ctx.escapeHtml(model.ownerRoleLabel)}</dd>
-      </dl>
+      <div class="operation-route-status">
+        <span class="status-chip status-${ctx.escapeAttr(model.lifecycleState)}">${ctx.tr(model.lifecycleState)}</span>
+        <span>${ctx.escapeHtml(model.canHandleLabel)}</span>
+      </div>
     </section>
-    ${isCompleted ? completedRecordPanel(model, activeCard, ctx) : WorkItemCard(operationContext, ctx)}
+    ${isCompleted ? completedRecordPanel(model, activeCard, ctx) : ""}
     ${TechnicalAuditDetails({
       model,
       payloadHash: payloadFingerprint,
@@ -78,12 +76,15 @@ export function operationPanelView(ctx) {
       projectionStatus: state.lastActionResult?.status || "notSubmitted",
       policyRef: activeCard.policyRef || activeCard.confirmation?.policyRef || "operations-runtime-policy"
     }, ctx)}
-    ${isCompleted ? "" : OperationPanelView(operationBody, operationContext, activeCard, ctx)}
-    ${isCompleted ? "" : EvidenceSheet(activeCard, draft, ctx)}
-    ${isCompleted ? "" : TrustedConfirmSheet(operationContext, activeCard, ctx)}
-    ${isCompleted ? "" : ActionResult(state.lastActionResult || { status: "not_submitted", message: "Ready to prepare / confirm" }, ctx)}
+    ${isCompleted ? "" : operationBody}
+    ${isCompleted ? "" : ActionResult(state.lastActionResult || {}, ctx)}
     ${isCompleted ? "" : `<div class="sticky-action">${primaryActionButton(actionState, ctx)}</div>`}
   `);
+}
+
+function shouldOfferResourceSetup(state = {}) {
+  return state.selectedWorkspace === "W-STAY-RESOURCE" &&
+    (!state.selectedCardId || state.selectedCardId === "roomSetup");
 }
 
 function completedRecordPanel(model, card, ctx) {

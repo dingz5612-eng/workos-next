@@ -80,7 +80,8 @@ function main() {
   const violations = [
     ...validateRegistry(registry),
     ...validateOwnershipDoc(),
-    ...validateWriteMap(writeMap)
+    ...validateWriteMap(writeMap),
+    ...validateHandlerOutputGuard()
   ];
 
   const files = collectScanFiles(scanRoots);
@@ -99,6 +100,13 @@ function main() {
 
 function readText(file) {
   return fs.readFileSync(path.join(repoRoot, file), "utf8");
+}
+
+function sourceFile(file) {
+  return {
+    path: file,
+    text: readText(file)
+  };
 }
 
 function parseFactBlocks(source) {
@@ -199,6 +207,63 @@ function validateWriteMap(writeMap) {
       }
     }
   }
+  return violations;
+}
+
+function validateHandlerOutputGuard() {
+  return validateHandlerOutputGuardSources({
+    unitOfWork: sourceFile("services/core-api/WorkOS.Api/Runtime/OperationsUnitOfWork.cs"),
+    canonical: sourceFile("services/core-api/WorkOS.Api/Runtime/CanonicalOperationsApiService.cs"),
+    program: sourceFile("services/core-api/WorkOS.Api/Program.cs")
+  });
+}
+
+function validateHandlerOutputGuardSources(sources) {
+  const violations = [];
+  const requiredRuntimeTerms = [
+    "DefinitionRegistry",
+    "SliceCommandHandlerRegistry",
+    "SliceCommandHandlerDefinition",
+    "AllowedFacts",
+    "LedgerPolicy",
+    "RequiredEvidence",
+    "ProjectionOwner",
+    "ValidateDeclaredOutputFacts",
+    "OutputFactsFor",
+    "operations_handler_fact_not_allowed"
+  ];
+  for (const term of requiredRuntimeTerms) {
+    if (!sources.unitOfWork.text.includes(term)) {
+      violations.push(handlerGuardViolation(
+        sources.unitOfWork.path,
+        `Operations runtime handler output fact guard missing term: ${term}`));
+    }
+  }
+
+  const confirmDefinitionTerms = [
+    "ConfirmCommandDefinition",
+    "SliceCommandHandlerDefinition",
+    "DomainEvent",
+    "WorkItem",
+    "LedgerEntry",
+    "confirm-request.evidenceIds",
+    "balanced-ledger-or-none",
+    "OperationsRuntimeProjection"
+  ];
+  for (const term of confirmDefinitionTerms) {
+    if (!sources.canonical.text.includes(term)) {
+      violations.push(handlerGuardViolation(
+        sources.canonical.path,
+        `Official confirm handler definition missing term: ${term}`));
+    }
+  }
+
+  if (!sources.program.text.includes("Register(CanonicalOperationsApiService.ConfirmCommandDefinition")) {
+    violations.push(handlerGuardViolation(
+      sources.program.path,
+      "Official runtime must register confirm handler through ConfirmCommandDefinition, not commandType-only registration."));
+  }
+
   return violations;
 }
 
@@ -439,6 +504,20 @@ function registryViolation(severity, fact, message) {
   };
 }
 
+function handlerGuardViolation(file, message) {
+  return {
+    severity: "P0",
+    id: "fact.handler_output_guard_missing",
+    fact: "handler-output-fact-ownership",
+    writer: "operations-runtime",
+    file,
+    line: 1,
+    owner: "operations-runtime",
+    allowedPath: "DefinitionRegistry -> SliceCommandHandlerRegistry -> handler output fact validation",
+    message
+  };
+}
+
 function writeViolation(input) {
   return {
     severity: "P0",
@@ -561,6 +640,34 @@ function runSelfTest() {
   ];
   const good = scanFactWrites(goodFiles, writeMap);
   assertSelfTest(good.length === 0, `legal UoW/correction paths must pass: ${good.map(formatViolation).join("; ")}`);
+
+  const goodHandlerGuard = validateHandlerOutputGuardSources({
+    unitOfWork: virtualFile(
+      "services/core-api/WorkOS.Api/Runtime/OperationsUnitOfWork.cs",
+      "DefinitionRegistry SliceCommandHandlerRegistry SliceCommandHandlerDefinition AllowedFacts LedgerPolicy RequiredEvidence ProjectionOwner ValidateDeclaredOutputFacts OutputFactsFor operations_handler_fact_not_allowed"),
+    canonical: virtualFile(
+      "services/core-api/WorkOS.Api/Runtime/CanonicalOperationsApiService.cs",
+      "ConfirmCommandDefinition SliceCommandHandlerDefinition DomainEvent WorkItem LedgerEntry confirm-request.evidenceIds balanced-ledger-or-none OperationsRuntimeProjection"),
+    program: virtualFile(
+      "services/core-api/WorkOS.Api/Program.cs",
+      "Register(CanonicalOperationsApiService.ConfirmCommandDefinition")
+  });
+  assertSelfTest(goodHandlerGuard.length === 0, `valid handler output guard terms must pass: ${goodHandlerGuard.map(formatViolation).join("; ")}`);
+
+  const badHandlerGuard = validateHandlerOutputGuardSources({
+    unitOfWork: virtualFile(
+      "services/core-api/WorkOS.Api/Runtime/OperationsUnitOfWork.cs",
+      "SliceCommandHandlerDefinition AllowedFacts"),
+    canonical: virtualFile(
+      "services/core-api/WorkOS.Api/Runtime/CanonicalOperationsApiService.cs",
+      "ConfirmCommandDefinition DomainEvent"),
+    program: virtualFile(
+      "services/core-api/WorkOS.Api/Program.cs",
+      "Register(CanonicalOperationsApiService.ConfirmCommandType")
+  });
+  assertSelfTest(
+    badHandlerGuard.some((item) => item.id === "fact.handler_output_guard_missing"),
+    "missing handler output guard must fail self-test");
 
   console.log("Fact ownership deep scanner self-test: PASS");
 }

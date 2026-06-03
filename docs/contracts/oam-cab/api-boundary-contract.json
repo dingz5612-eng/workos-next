@@ -1,0 +1,21 @@
+{
+  "version": "oam-cab.api-boundary-contract.v1",
+  "source": "docs/rules/v5.5/api-boundary.yml",
+  "primaryBusinessWritePath": "POST /api/operations/work-items/{workItemId}/confirm",
+  "nonGetRoutePolicy": "Every non-GET /api/* route must be classified in exactly one api-boundary category.",
+  "forbiddenBusinessWritePatterns": [
+    "POST /api/mobile/*/confirm",
+    "POST /api/mobile/*/refund",
+    "POST /api/mobile/*/close",
+    "POST /api/payment/confirm",
+    "POST /api/deposit/refund",
+    "POST /api/checkout/close",
+    "POST /api/bed/release",
+    "POST /api/period/close"
+  ],
+  "businessProduction": "blocked",
+  "evidence": [
+    "scripts/check-api-boundaries.mjs",
+    "artifacts/oam-cab/oam-cab-v1-inventory.json"
+  ]
+}

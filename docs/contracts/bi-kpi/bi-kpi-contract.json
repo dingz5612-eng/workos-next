@@ -1,0 +1,27 @@
+{
+  "version": "oam-cab.bi-kpi-contract.v1",
+  "status": "baseline-contract",
+  "requiredFields": [
+    "metricId",
+    "numerator",
+    "denominator",
+    "sourceFacts",
+    "exclusions",
+    "dimensions",
+    "definitionVersion",
+    "lineage",
+    "lastComputedAt",
+    "maturityScope"
+  ],
+  "readOnly": true,
+  "businessFactWriteAllowed": false,
+  "invariants": [
+    "Dashboard, report, management cockpit, and KPI pages are read-only.",
+    "KPI definitions must state lineage and maturityScope.",
+    "KPI display cannot confirm or mutate business facts."
+  ],
+  "evidence": [
+    "docs/v5.4/production-observability.md",
+    "scripts/check-oam-cab-final-report.mjs"
+  ]
+}

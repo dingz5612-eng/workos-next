@@ -9,7 +9,7 @@ export function financeReconciliationView(ctx) {
       <header>
         <span>PC 财务工作区</span>
         <h1>财务对账与修正工作区</h1>
-        <p>只读取银行流水、FinanceCase、CorrectionWorkItem 和审计轨迹；所有修正仍必须通过 Operations Runtime。</p>
+        <p>只读取银行流水、财务案例、修正办理项和审计轨迹；所有修正仍必须通过 Operations Runtime 主轴。</p>
       </header>
       <section class="finance-import-panel">
         <h2>银行流水导入</h2>
@@ -19,7 +19,11 @@ export function financeReconciliationView(ctx) {
           ${input("bankImportEvidenceId", "原始文件证据", "", ctx)}
         </div>
         <label for="bankCsvFile">CSV 文件</label>
-        <input id="bankCsvFile" type="file" accept=".csv,text/csv" data-bank-csv-file>
+        <div class="finance-file-picker">
+          <label class="finance-file-button" for="bankCsvFile">选择 CSV 文件</label>
+          <span>尚未选择文件</span>
+        </div>
+        <input id="bankCsvFile" class="finance-file-input" type="file" accept=".csv,text/csv" data-bank-csv-file>
         <label for="bankCsvContent">CSV 内容</label>
         <textarea id="bankCsvContent" data-bank-csv-content>${ctx.escapeHtml(sampleCsv())}</textarea>
         ${mappingControls(ctx)}
@@ -48,24 +52,24 @@ function selectSource(ctx) {
   return `
     <label for="bankImportSourceType">来源类型</label>
     <select id="bankImportSourceType">
-      ${values.map((value) => `<option value="${ctx.escapeAttr(value)}">${ctx.escapeHtml(value)}</option>`).join("")}
+      ${values.map((value) => `<option value="${ctx.escapeAttr(value)}">${ctx.escapeHtml(financeText(value))}</option>`).join("")}
     </select>
   `;
 }
 
 function mappingControls(ctx) {
   const mappings = [
-    ["bankMapOccurredAt", "occurredAt"],
-    ["bankMapAmount", "amount"],
-    ["bankMapCurrency", "currency"],
-    ["bankMapDirection", "direction"],
-    ["bankMapExternalRef", "externalRef"],
-    ["bankMapDescription", "description"]
+    ["bankMapOccurredAt", "发生时间列", "发生时间"],
+    ["bankMapAmount", "金额列", "金额"],
+    ["bankMapCurrency", "币种列", "币种"],
+    ["bankMapDirection", "方向列", "方向"],
+    ["bankMapExternalRef", "流水号列", "流水号"],
+    ["bankMapDescription", "备注列", "备注"]
   ];
   return `
     <section class="column-mapping" data-column-mapping>
       <h3>字段映射配置</h3>
-      ${mappings.map(([id, value]) => input(id, value, value, ctx)).join("")}
+      ${mappings.map(([id, label, value]) => input(id, label, value, ctx)).join("")}
     </section>
   `;
 }
@@ -78,9 +82,9 @@ function previewPanel(preview, ctx) {
   return `
     <section class="finance-import-panel" data-bank-preview-result>
       <h2>预览结果</h2>
-      <p>row_count ${Number(preview.rowCount || 0)} · parsed_count ${Number(preview.parsedCount || 0)} · rejected_count ${Number(preview.rejectedCount || 0)}</p>
+      <p>总行数 ${Number(preview.rowCount || 0)} · 已解析 ${Number(preview.parsedCount || 0)} · 已拦截 ${Number(preview.rejectedCount || 0)}</p>
       <table>
-        <thead><tr><th>row</th><th>externalRef</th><th>amount</th><th>direction</th><th>description</th><th>errors</th></tr></thead>
+        <thead><tr><th>行号</th><th>流水号</th><th>金额</th><th>方向</th><th>备注</th><th>拦截原因</th></tr></thead>
         <tbody>
           ${(preview.rows || []).map((row) => `
             <tr class="${row.valid ? "valid" : "invalid"}">
@@ -103,9 +107,9 @@ function resultPanel(result, ctx) {
   return `
     <section class="finance-import-panel" data-bank-import-result>
       <h2>导入结果</h2>
-      <dl><dt>import_id</dt><dd>${ctx.escapeHtml(result.importId || "")}</dd></dl>
-      <dl><dt>status</dt><dd>${ctx.escapeHtml(result.status || "")}</dd></dl>
-      <dl><dt>bank_transactions</dt><dd>${Number(result.transactions?.length || 0)}</dd></dl>
+      <dl><dt>导入编号</dt><dd>${ctx.escapeHtml(result.importId || "")}</dd></dl>
+      <dl><dt>处理状态</dt><dd>${ctx.escapeHtml(result.status || "")}</dd></dl>
+      <dl><dt>银行交易数</dt><dd>${Number(result.transactions?.length || 0)}</dd></dl>
       <p>导入只创建银行流水导入记录和银行交易记录，不直接改变收款、押金或账务事实。</p>
       ${transactionActions(result.transactions || [], ctx)}
     </section>
@@ -118,7 +122,7 @@ function importHistoryPanel(importHistory, ctx) {
       <h2>导入历史</h2>
       ${importHistory.length ? `
         <table>
-          <thead><tr><th>import</th><th>source</th><th>status</th><th>parsed</th><th>rejected</th></tr></thead>
+          <thead><tr><th>导入编号</th><th>来源</th><th>状态</th><th>已解析</th><th>已拦截</th></tr></thead>
           <tbody>
             ${importHistory.map((item) => `
               <tr>
@@ -142,7 +146,7 @@ function bankTransactionListPanel(transactions, ctx) {
       <h2>银行交易列表</h2>
       ${transactions.length ? `
         <table>
-          <thead><tr><th>bank transaction</th><th>externalRef</th><th>occurred</th><th>amount</th><th>direction</th><th>status</th><th>description</th></tr></thead>
+          <thead><tr><th>银行交易</th><th>流水号</th><th>发生时间</th><th>金额</th><th>方向</th><th>状态</th><th>备注</th></tr></thead>
           <tbody>
             ${transactions.map((transaction) => `
               <tr>
@@ -166,7 +170,7 @@ function transactionActions(transactions, ctx) {
   if (!transactions.length) return "";
   return `
     <table class="bank-transaction-actions">
-      <thead><tr><th>bank_transaction</th><th>externalRef</th><th>amount</th><th>actions</th></tr></thead>
+      <thead><tr><th>银行交易</th><th>流水号</th><th>金额</th><th>操作</th></tr></thead>
       <tbody>
         ${transactions.map((transaction) => `
           <tr>
@@ -212,7 +216,7 @@ function mismatchQueuePanel(mismatchCases, ctx) {
       <p>异常会创建财务负责的 WorkItem，不直接修改收款、押金、退款或 StayBalance 事实。</p>
       ${cases.length ? `
         <table>
-          <thead><tr><th>case</th><th>type</th><th>related</th><th>owner</th><th>severity</th><th>due</th><th>resolveActions</th></tr></thead>
+          <thead><tr><th>案件</th><th>异常类型</th><th>关联对象</th><th>责任人</th><th>等级</th><th>截止时间</th><th>处理动作</th></tr></thead>
           <tbody>
             ${cases.map((item) => `
               <tr>
@@ -272,7 +276,7 @@ function correctionRequestPanel(state, ctx) {
       <button type="button" data-operations-confirm="true" data-correction-request>创建修正 WorkItem</button>
       ${requests.length ? `
         <table>
-          <thead><tr><th>request</th><th>ledger</th><th>target</th><th>type</th><th>risk</th><th>status</th><th>work item</th></tr></thead>
+          <thead><tr><th>修正请求</th><th>目标账本</th><th>目标记录</th><th>修正类型</th><th>风险</th><th>状态</th><th>办理项</th></tr></thead>
           <tbody>
             ${requests.map((request) => `
               <tr>
@@ -348,7 +352,7 @@ function correctionAuditPanel(state, ctx) {
       <h2>修正审计</h2>
       ${audit.length ? `
         <table>
-          <thead><tr><th>operation</th><th>status</th><th>GateResult / Audit</th><th>recorded</th></tr></thead>
+          <thead><tr><th>操作</th><th>状态</th><th>门禁 / 审计</th><th>记录时间</th></tr></thead>
           <tbody>
             ${audit.map((entry) => `
               <tr>
@@ -368,7 +372,7 @@ function correctionAuditPanel(state, ctx) {
 function candidateTable(items, ctx) {
   return `
     <table>
-      <thead><tr><th>candidate</th><th>type</th><th>target</th><th>bank transaction</th><th>amount</th><th>score</th><th>reason</th><th>actions</th></tr></thead>
+      <thead><tr><th>候选项</th><th>类型</th><th>目标</th><th>银行交易</th><th>金额</th><th>匹配分</th><th>原因</th><th>操作</th></tr></thead>
       <tbody>
         ${items.map((candidate) => `
           <tr>
@@ -394,16 +398,16 @@ function candidateTable(items, ctx) {
 
 function input(id, label, value, ctx) {
   return `
-    <label for="${ctx.escapeAttr(id)}">${ctx.escapeHtml(label)}</label>
+    <label for="${ctx.escapeAttr(id)}">${ctx.escapeHtml(financeText(label))}</label>
     <input id="${ctx.escapeAttr(id)}" value="${ctx.escapeAttr(value)}">
   `;
 }
 
 function correctionSelect(id, label, values, selected, ctx) {
   return `
-    <label for="${ctx.escapeAttr(id)}">${ctx.escapeHtml(label)}</label>
+    <label for="${ctx.escapeAttr(id)}">${ctx.escapeHtml(financeText(label))}</label>
     <select id="${ctx.escapeAttr(id)}">
-      ${values.map((value) => `<option value="${ctx.escapeAttr(value)}" ${value === selected ? "selected" : ""}>${ctx.escapeHtml(value)}</option>`).join("")}
+      ${values.map((value) => `<option value="${ctx.escapeAttr(value)}" ${value === selected ? "selected" : ""}>${ctx.escapeHtml(financeText(value))}</option>`).join("")}
     </select>
   `;
 }
@@ -428,6 +432,47 @@ function formatJson(value) {
 }
 
 function sampleCsv() {
-  return `occurredAt,amount,currency,direction,externalRef,description
-2026-05-01T10:00:00Z,1200,KGS,credit,MB-001,Rent payment`;
+  return `发生时间,金额,币种,方向,流水号,备注
+2026-05-01T10:00:00Z,1200,KGS,credit,MB-001,房租收款`;
+}
+
+function financeText(value) {
+  const labels = {
+    manual_csv: "手工 CSV",
+    mbank_export: "Mbank 导出",
+    bank_statement: "银行流水",
+    admin_upload: "管理员上传",
+    other: "其他来源",
+    tenant_id: "租户",
+    work_item_id: "办理项",
+    case_id: "案件",
+    target_ledger_type: "目标账本",
+    target_entry_id: "目标账本记录",
+    target_object_type: "目标对象类型",
+    target_object_id: "目标对象",
+    correction_type: "修正类型",
+    risk_level: "风险等级",
+    correction_request_id: "修正请求",
+    approver_id: "审批人",
+    apply_actor_id: "执行人",
+    apply_work_item_id: "执行办理项",
+    adjustment_amount: "调整金额",
+    payment: "收款",
+    deposit: "押金",
+    charge: "费用",
+    cash: "现金",
+    refund: "退款",
+    reversal: "冲销",
+    amount_adjustment: "金额调整",
+    classification_adjustment: "分类调整",
+    evidence_correction: "证据修正",
+    allocation_reversal: "分配冲销",
+    refund_correction: "退款修正",
+    charge_adjustment: "费用调整",
+    low: "低",
+    medium: "中",
+    high: "高",
+    critical: "严重"
+  };
+  return labels[value] || value;
 }

@@ -1,0 +1,23 @@
+{
+  "version": "oam-cab.rollback-compensation-contract.v1",
+  "status": "baseline-contract",
+  "rollbackModes": [
+    "runtime_mode",
+    "feature_flag",
+    "route_to_legacy_off"
+  ],
+  "compensationModes": [
+    "append_only_correction",
+    "ledger_reversal",
+    "projection_rebuild"
+  ],
+  "invariants": [
+    "Rollback does not delete already-written business facts.",
+    "Compensation is append-only.",
+    "RollbackInstruction and CompensationInstruction require evidence refs."
+  ],
+  "evidence": [
+    "services/core-api/WorkOS.Api/Runtime/ControlPlaneDbMapping.cs",
+    "docs/v5.4/rollback"
+  ]
+}

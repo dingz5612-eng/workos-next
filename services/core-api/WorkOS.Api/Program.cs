@@ -54,7 +54,6 @@ builder.Services.AddSingleton(runtime);
 builder.Services.AddSingleton(controlPlaneReadStore);
 builder.Services.AddSingleton(new OperationsRuntimeService(
     runtime,
-    new PostgresOperationsCommandSubmissionStore(connectionString),
     new PostgresOperationsCaseStore(connectionString),
     new PostgresOperationsWorkItemStore(connectionString)));
 builder.Services.AddSingleton<OperationsWriteStore>(operationsFactStore);
@@ -63,8 +62,12 @@ builder.Services.AddSingleton<CommandEnvelopeBuilder>();
 builder.Services.AddSingleton<CommandSubmissionService>();
 builder.Services.AddSingleton<IdempotencyService>();
 builder.Services.AddSingleton<PayloadHashService>();
+builder.Services.AddSingleton(WorkItemDefinitionRegistryService.LoadDefault());
+builder.Services.AddSingleton<AdmissionKernelService>();
+builder.Services.AddSingleton<LegacyWorkspaceSearchAdapter>();
+builder.Services.AddSingleton<SearchKernelService>();
 builder.Services.AddSingleton(_ => new SliceCommandHandlerRouter()
-    .Register(CanonicalOperationsApiService.ConfirmCommandType, CanonicalOperationsApiService.HandleConfirmCommand));
+    .Register(CanonicalOperationsApiService.ConfirmCommandDefinition, CanonicalOperationsApiService.HandleConfirmCommand));
 builder.Services.AddSingleton<OperationsUnitOfWork>();
 builder.Services.AddSingleton<CanonicalOperationsApiService>();
 builder.Services.AddSingleton<WorkspaceCardCompatibilityWorkItemResolver>();
@@ -176,46 +179,95 @@ app.MapPost("/api/device-sessions/{deviceId}/revoke", (string deviceId, HttpRequ
     return revoked is null ? Results.NotFound(new { error = "device_session_not_found", deviceId }) : Results.Ok(revoked);
 });
 
-app.MapGet("/api/workspaces", () => runtime.GetAll());
-
-app.MapGet("/api/workspaces/{workspaceId}", (string workspaceId) =>
+app.MapGet("/api/workspaces", (HttpRequest httpRequest) =>
 {
+    httpRequest.HttpContext.RequireActor();
+    return runtime.GetAll();
+});
+
+app.MapGet("/api/workspaces/{workspaceId}", (string workspaceId, HttpRequest httpRequest) =>
+{
+    httpRequest.HttpContext.RequireActor();
     var workspace = runtime.FindWorkspace(workspaceId);
     return workspace is null ? Results.NotFound(new { error = "workspace_not_found", workspaceId }) : Results.Ok(workspace);
 });
 
-app.MapGet("/api/work-queue", () => runtime.GetWorkQueue());
-app.MapGet("/api/search", (string? q) => runtime.Search(q));
-app.MapGet("/api/lenses/home-surface", () => runtime.GetHomeSurface());
-app.MapGet("/api/lenses/work-queue", () => runtime.GetWorkQueue());
-app.MapGet("/api/lenses/search", (string? q) => runtime.Search(q));
-app.MapGet("/api/lenses/learning-catalog", () => runtime.GetLearningCatalog());
-app.MapGet("/api/lenses/accommodation/{lensId}", (string lensId) => runtime.GetAccommodationLens(lensId));
-
-app.MapGet("/api/control-plane/releases", () => controlPlaneReadStore.GetReleases());
-app.MapGet("/api/control-plane/releases/{releaseId}", (string releaseId) =>
+app.MapGet("/api/work-queue", (HttpRequest httpRequest) =>
 {
+    httpRequest.HttpContext.RequireActor();
+    return runtime.GetWorkQueue();
+});
+app.MapGet("/api/search", (string? q, string? language, HttpRequest httpRequest, SearchKernelService searchKernel) =>
+{
+    var actor = httpRequest.HttpContext.RequireActor();
+    return searchKernel.Search(runtime, q, actor, language);
+});
+app.MapGet("/api/lenses/home-surface", (HttpRequest httpRequest) =>
+{
+    httpRequest.HttpContext.RequireActor();
+    return runtime.GetHomeSurface();
+});
+app.MapGet("/api/lenses/work-queue", (HttpRequest httpRequest) =>
+{
+    httpRequest.HttpContext.RequireActor();
+    return runtime.GetWorkQueue();
+});
+app.MapGet("/api/lenses/search", (string? q, string? language, HttpRequest httpRequest, SearchKernelService searchKernel) =>
+{
+    var actor = httpRequest.HttpContext.RequireActor();
+    return searchKernel.Search(runtime, q, actor, language);
+});
+app.MapGet("/api/lenses/learning-catalog", (HttpRequest httpRequest) =>
+{
+    httpRequest.HttpContext.RequireActor();
+    return runtime.GetLearningCatalog();
+});
+app.MapGet("/api/lenses/accommodation/{lensId}", (string lensId, HttpRequest httpRequest) =>
+{
+    httpRequest.HttpContext.RequireActor();
+    return runtime.GetAccommodationLens(lensId);
+});
+
+app.MapGet("/api/control-plane/releases", (HttpRequest httpRequest) =>
+{
+    httpRequest.HttpContext.RequireActor();
+    return controlPlaneReadStore.GetReleases();
+});
+app.MapGet("/api/control-plane/releases/{releaseId}", (string releaseId, HttpRequest httpRequest) =>
+{
+    httpRequest.HttpContext.RequireActor();
     var release = controlPlaneReadStore.GetRelease(releaseId);
     return release is null ? Results.NotFound(new { error = "release_not_found", releaseId }) : Results.Ok(release);
 });
-app.MapGet("/api/control-plane/gate-results/{gateResultId}", (string gateResultId) =>
+app.MapGet("/api/control-plane/gate-results/{gateResultId}", (string gateResultId, HttpRequest httpRequest) =>
 {
+    httpRequest.HttpContext.RequireActor();
     var gateResult = controlPlaneReadStore.GetGateResult(gateResultId);
     return gateResult is null ? Results.NotFound(new { error = "gate_result_not_found", gateResultId }) : Results.Ok(gateResult);
 });
-app.MapGet("/api/control-plane/shadow-compare-reports/{id}", (string id) =>
+app.MapGet("/api/control-plane/shadow-compare-reports/{id}", (string id, HttpRequest httpRequest) =>
 {
+    httpRequest.HttpContext.RequireActor();
     var report = controlPlaneReadStore.GetShadowCompareReport(id);
     return report is null ? Results.NotFound(new { error = "shadow_compare_report_not_found", id }) : Results.Ok(report);
 });
-app.MapGet("/api/control-plane/invariant-checks", (string releaseId) => controlPlaneReadStore.GetInvariantChecks(releaseId));
-app.MapGet("/api/control-plane/rollback-instructions/{id}", (string id) =>
+app.MapGet("/api/control-plane/invariant-checks", (string releaseId, HttpRequest httpRequest) =>
 {
+    httpRequest.HttpContext.RequireActor();
+    return controlPlaneReadStore.GetInvariantChecks(releaseId);
+});
+app.MapGet("/api/control-plane/rollback-instructions/{id}", (string id, HttpRequest httpRequest) =>
+{
+    httpRequest.HttpContext.RequireActor();
     var instruction = controlPlaneReadStore.GetRollbackInstruction(id);
     return instruction is null ? Results.NotFound(new { error = "rollback_instruction_not_found", id }) : Results.Ok(instruction);
 });
 
-app.MapGet("/api/evidence", (string? evidenceId) => runtime.GetEvidenceObjects(evidenceId));
+app.MapGet("/api/evidence", (string? evidenceId, HttpRequest httpRequest) =>
+{
+    httpRequest.HttpContext.RequireActor();
+    return runtime.GetEvidenceObjects(evidenceId);
+});
 app.MapPost("/api/evidence/drafts", (EvidenceDraftRequest request, HttpRequest httpRequest) =>
 {
     var actorId = httpRequest.HttpContext.RequireActor().ActorId;
@@ -289,8 +341,17 @@ app.MapPost("/api/reconciliation/mismatches/detect", (ReconciliationMismatchDete
         return Results.UnprocessableEntity(new { error = "reconciliation_detection_invalid", reason = ex.Message });
     }
 });
-app.MapGet("/api/reconciliation/match-candidates", (string tenantId, string? bankTransactionId) =>
-    Results.Ok(runtime.GetReconciliationMatchCandidates(tenantId, bankTransactionId)));
+app.MapGet("/api/reconciliation/match-candidates", (string? tenantId, string? bankTransactionId, HttpRequest httpRequest) =>
+{
+    var actor = httpRequest.HttpContext.RequireActor();
+    if (!string.IsNullOrWhiteSpace(tenantId) &&
+        !string.Equals(tenantId, actor.TenantId, StringComparison.OrdinalIgnoreCase))
+    {
+        return Results.Json(new { error = "business_read_tenant_scope_mismatch", reason = "reconciliation_match_candidates_tenant_mismatch" }, statusCode: StatusCodes.Status403Forbidden);
+    }
+
+    return Results.Ok(runtime.GetReconciliationMatchCandidates(actor.TenantId, bankTransactionId));
+});
 app.MapPost("/api/reconciliation/match-candidates/{candidateId}/accept", (string candidateId, HttpRequest httpRequest) =>
 {
     var actorId = httpRequest.HttpContext.RequireActor().ActorId;
@@ -429,17 +490,10 @@ app.MapPost("/api/pc-governance/exports/{exportType}", (string exportType, Gover
 
 app.MapOperationsRuntimeEndpoints();
 
-app.MapPost("/api/workspaces/{workspaceId}/cards/{cardId}/prepare", (string workspaceId, string cardId, PrepareCardRequest? request, ProjectionRuntime runtime, WorkspaceCardCompatibilityAdapter operations) =>
+app.MapPost("/api/workspaces/{workspaceId}/cards/{cardId}/prepare", (string workspaceId, string cardId, PrepareCardRequest? request, HttpRequest httpRequest, WorkspaceCardCompatibilityAdapter operations) =>
 {
-    if (IsDynamicDormitoryWorkspace(workspaceId))
-    {
-        var preparedCard = runtime.Prepare(workspaceId, cardId, request);
-        return preparedCard is null
-            ? Results.NotFound(new { error = "card_not_found", workspaceId, cardId })
-            : Results.Ok(preparedCard);
-    }
-
-    var prepared = operations.PrepareWorkspaceCard(workspaceId, cardId, request);
+    var actor = httpRequest.HttpContext.RequireActor();
+    var prepared = operations.PrepareWorkspaceCard(workspaceId, cardId, request, actor.TenantId);
     return prepared.StatusCode switch
     {
         StatusCodes.Status404NotFound => Results.NotFound(prepared.Payload),
@@ -486,26 +540,12 @@ app.MapPost("/api/workspaces/start", (StartWorkspaceRequest request, HttpRequest
     return Results.Ok(new { workspace, projection = runtime.GetAll() });
 });
 
-app.MapPost("/api/workspaces/{workspaceId}/cards/{cardId}/confirm", (string workspaceId, string cardId, ConfirmCardRequest request, HttpRequest httpRequest, ProjectionRuntime runtime, WorkspaceCardCompatibilityAdapter operations) =>
+app.MapPost("/api/workspaces/{workspaceId}/cards/{cardId}/confirm", (string workspaceId, string cardId, ConfirmCardRequest request, HttpRequest httpRequest, WorkspaceCardCompatibilityAdapter operations) =>
 {
+    var actor = httpRequest.HttpContext.RequireActor();
     var token = httpRequest.SessionTokenForOperations();
     var requestId = httpRequest.Headers["X-Request-Id"].FirstOrDefault() ?? httpRequest.HttpContext.TraceIdentifier;
-    if (IsDynamicDormitoryWorkspace(workspaceId))
-    {
-        var directResult = runtime.Confirm(workspaceId, cardId, request with { RequestId = request.RequestId ?? requestId }, token);
-        return ConfirmHttpStatusMapper.StatusCodeFor(directResult) switch
-        {
-            StatusCodes.Status404NotFound => Results.NotFound(new { error = "card_not_found", workspaceId, cardId }),
-            StatusCodes.Status400BadRequest => Results.BadRequest(new { error = "confirmation_invalid", directResult.Reason }),
-            StatusCodes.Status401Unauthorized => Results.Unauthorized(),
-            StatusCodes.Status403Forbidden => Results.Json(new { error = "confirmation_forbidden", directResult.Reason }, statusCode: StatusCodes.Status403Forbidden),
-            StatusCodes.Status409Conflict => Results.Json(new { error = "idempotency_conflict", directResult.Reason }, statusCode: StatusCodes.Status409Conflict),
-            StatusCodes.Status422UnprocessableEntity => Results.UnprocessableEntity(new { error = "business_rule_violation", directResult.Reason }),
-            _ => Results.Ok(directResult.Payload)
-        };
-    }
-
-    var result = operations.ConfirmWorkspaceCard(workspaceId, cardId, request, token, requestId);
+    var result = operations.ConfirmWorkspaceCard(workspaceId, cardId, request, token, requestId, actor.TenantId);
     return result.StatusCode switch
     {
         StatusCodes.Status404NotFound => Results.NotFound(result.Payload),
@@ -519,15 +559,70 @@ app.MapPost("/api/workspaces/{workspaceId}/cards/{cardId}/confirm", (string work
     };
 });
 
-app.MapGet("/api/workspaces/{workspaceId}/events", (string workspaceId) => runtime.GetAuditEvents(workspaceId));
-app.MapGet("/api/audit-events", () => runtime.GetAuditEvents());
-app.MapGet("/api/outbox", () => runtime.GetOutboxMessages());
-app.MapPost("/api/projections/process-outbox", () => new { processed = runtime.ProcessPendingOutbox() });
-app.MapGet("/api/behavior-events", () => runtime.GetBehaviorEvents());
-app.MapGet("/api/observability/runtime", () => runtime.Observe());
-
-app.MapPost("/api/behavior-events", (BehaviorEventRequest request) =>
+app.MapGet("/api/workspaces/{workspaceId}/events", (string workspaceId, HttpRequest httpRequest) =>
 {
+    httpRequest.HttpContext.RequireActor();
+    return runtime.GetAuditEvents(workspaceId);
+});
+app.MapGet("/api/audit-events", (HttpRequest httpRequest) =>
+{
+    httpRequest.HttpContext.RequireActor();
+    return runtime.GetAuditEvents();
+});
+app.MapGet("/api/outbox", (HttpRequest httpRequest) =>
+{
+    httpRequest.HttpContext.RequireActor();
+    return runtime.GetOutboxMessages();
+});
+app.MapPost("/api/projections/process-outbox", (HttpRequest httpRequest) =>
+{
+    httpRequest.HttpContext.RequireActor();
+    return new { processed = runtime.ProcessPendingOutbox() };
+});
+app.MapGet("/api/behavior-events", (HttpRequest httpRequest) =>
+{
+    httpRequest.HttpContext.RequireActor();
+    return runtime.GetBehaviorEvents();
+});
+app.MapGet("/api/observability/runtime", (HttpRequest httpRequest) =>
+{
+    httpRequest.HttpContext.RequireActor();
+    return runtime.Observe();
+});
+
+app.MapPost("/api/mobile/drafts", (MobileDraftRequest request, HttpRequest httpRequest) =>
+    AppendExperienceEvent(
+        runtime,
+        httpRequest,
+        "mobile.draft.saved",
+        "draft",
+        FirstNonEmpty(request.DraftId, request.WorkspaceId, request.CardId),
+        request.Language,
+        "mobile_experience_write"));
+
+app.MapPost("/api/mobile/client-events", (MobileClientEventRequest request, HttpRequest httpRequest) =>
+    AppendExperienceEvent(
+        runtime,
+        httpRequest,
+        request.EventType,
+        request.ObjectType,
+        request.ObjectId,
+        request.Language,
+        FirstNonEmpty(request.Source, "mobile_experience_write")));
+
+app.MapPost("/api/mobile/recent-objects", (MobileRecentObjectRequest request, HttpRequest httpRequest) =>
+    AppendExperienceEvent(
+        runtime,
+        httpRequest,
+        "mobile.recent_object.recorded",
+        request.ObjectType,
+        FirstNonEmpty(request.ObjectId, request.WorkspaceId, request.CardId),
+        request.Language,
+        "mobile_experience_write"));
+
+app.MapPost("/api/behavior-events", (BehaviorEventRequest request, HttpRequest httpRequest) =>
+{
+    httpRequest.HttpContext.RequireActor();
     var record = new BehaviorEventRecord(
         $"beh-{Guid.NewGuid():N}",
         request.EventType,
@@ -541,10 +636,6 @@ app.MapPost("/api/behavior-events", (BehaviorEventRequest request) =>
 });
 
 app.Run();
-
-static bool IsDynamicDormitoryWorkspace(string workspaceId) =>
-    DormitoryTemplateWorkspaceIds().Any(templateId =>
-        workspaceId.StartsWith($"{templateId}-", StringComparison.Ordinal));
 
 static string[] DormitoryTemplateWorkspaceIds() =>
     new[]
@@ -561,12 +652,66 @@ static string[] DormitoryTemplateWorkspaceIds() =>
         "W-STAY-PERIOD-ANALYTICS"
     };
 
+static IResult AppendExperienceEvent(
+    ProjectionRuntime runtime,
+    HttpRequest httpRequest,
+    string eventType,
+    string? objectType,
+    string? objectId,
+    string? language,
+    string? source)
+{
+    var actor = httpRequest.HttpContext.RequireActor();
+    var record = new BehaviorEventRecord(
+        $"beh-{Guid.NewGuid():N}",
+        eventType,
+        objectType,
+        objectId,
+        string.IsNullOrWhiteSpace(language) ? "zh-CN" : language,
+        source,
+        DateTimeOffset.UtcNow);
+    runtime.AppendBehaviorEvent(record);
+    return Results.Ok(new
+    {
+        accepted = true,
+        actor.TenantId,
+        actor.ActorId,
+        record.EventId,
+        record.EventType,
+        receivedAtUtc = record.OccurredAtUtc
+    });
+}
+
+static string? FirstNonEmpty(params string?[] values) =>
+    values.FirstOrDefault(value => !string.IsNullOrWhiteSpace(value));
+
 internal sealed record BehaviorEventRequest(
     string EventType,
     string? ObjectType,
     string? ObjectId,
     string Language,
     string? Source);
+
+internal sealed record MobileDraftRequest(
+    string? DraftId,
+    string? WorkspaceId,
+    string? CardId,
+    string? Language,
+    string? PayloadHash);
+
+internal sealed record MobileClientEventRequest(
+    string EventType,
+    string? ObjectType,
+    string? ObjectId,
+    string? Language,
+    string? Source);
+
+internal sealed record MobileRecentObjectRequest(
+    string? ObjectType,
+    string? ObjectId,
+    string? WorkspaceId,
+    string? CardId,
+    string? Language);
 
 internal sealed record StartWorkspaceRequest(string TemplateWorkspaceId);
 
@@ -596,7 +741,7 @@ internal static class DemoBootstrap
 {
     public static object Create() => new
     {
-        supportedLanguages = new[] { "zh-CN", "ru-RU" },
+        supportedLanguages = new[] { "zh-CN", "ru-RU", "ky-KG" },
         product = new
         {
             name = "WorkOSNext",
@@ -604,7 +749,7 @@ internal static class DemoBootstrap
             principles = new[]
             {
                 "Mobile-first",
-                "Bilingual-first",
+                "Trilingual-first",
                 "Intent-first",
             "Projection-centered",
             "PostgreSQL-backed",

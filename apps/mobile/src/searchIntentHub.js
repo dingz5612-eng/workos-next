@@ -13,6 +13,7 @@ export function buildSearchResultVM(item = {}, ctx = {}) {
   const templateWorkspaceId = item.templateWorkspaceId || item.template_workspace_id || "";
   const firstCardId = item.firstCardId || item.first_card_id || "";
   const action = searchActionFor({ ...item, resultType, workspaceId, cardId, workItemId, evidenceId, traceId, learningId, caseId, commandId }, ctx);
+  const admission = normalizeAdmission(item.admission);
   return {
     kind: "SearchResultVM",
     resultType,
@@ -31,6 +32,12 @@ export function buildSearchResultVM(item = {}, ctx = {}) {
     learningId,
     templateWorkspaceId,
     firstCardId,
+    admission,
+    visibleAllowed: admission.visibleAllowed,
+    prepareAllowed: admission.prepareAllowed,
+    confirmAllowed: admission.confirmAllowed,
+    productionAllowed: admission.productionAllowed,
+    admissionReason: admission.reason,
     view: action.view,
     reasonIfNoAction: action.reason,
     sourceRefs: sourceRefs(item, { workspaceId, cardId, workItemId, caseId, evidenceId, traceId, learningId })
@@ -62,7 +69,7 @@ function searchActionFor(item, ctx) {
     return { type: "openWorkspace", label: ctx.tr?.("searchActionViewCase") || "查看案件", view: "workspace", reason: "" };
   }
   if (item.resultType === "command" && (item.commandId === "startResourceSetup" || item.templateWorkspaceId)) {
-    return { type: "startWorkspace", label: ctx.tr?.("startHandling") || "开始办理", view: "workspace", reason: "" };
+    return { type: item.commandId === "startResourceSetup" ? "startResourceSetup" : "startWorkspace", label: ctx.tr?.("startHandling") || "开始办理", view: "workspace", reason: "" };
   }
   if (item.resultType === "workItem" && item.workItemId && resolveOperationPanelTarget(item, ctx.state || {}).canOpen) {
     return { type: "openWorkItem", label: safeLocalized(item.actionLabel, ctx) || ctx.tr?.("searchActionProcess") || "处理", view: "operationPanel", reason: "" };
@@ -165,7 +172,26 @@ function sourceRefs(item, ids) {
     caseId: ids.caseId,
     evidenceId: ids.evidenceId,
     traceId: ids.traceId,
-    learningId: ids.learningId
+    learningId: ids.learningId,
+    admissionDecisionRef: item.admission?.admissionDecisionRef || item.sourceRefs?.admissionDecisionRef || "",
+    source: item.sourceRefs?.source || item.source || "",
+    compatibilityAdapter: item.sourceRefs?.compatibilityAdapter || ""
+  };
+}
+
+function normalizeAdmission(value = {}) {
+  return {
+    visibleAllowed: value.visibleAllowed !== false,
+    prepareAllowed: value.prepareAllowed !== false,
+    confirmAllowed: value.confirmAllowed === true,
+    productionAllowed: value.productionAllowed === true,
+    mode: value.mode || "prepare_only",
+    reason: value.reason || "",
+    blockingSources: Array.isArray(value.blockingSources) ? value.blockingSources : [],
+    requiredCapabilities: Array.isArray(value.requiredCapabilities) ? value.requiredCapabilities : [],
+    requiredDeviceTrust: Array.isArray(value.requiredDeviceTrust) ? value.requiredDeviceTrust : [],
+    noGoItems: Array.isArray(value.noGoItems) ? value.noGoItems : [],
+    admissionDecisionRef: value.admissionDecisionRef || ""
   };
 }
 

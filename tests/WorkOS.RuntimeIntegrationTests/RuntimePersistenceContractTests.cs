@@ -110,7 +110,7 @@ public sealed class RuntimePersistenceContractTests
             .Concat(ControlPlaneDbMapping.FeatureFlagStatuses)
             .Concat(ControlPlaneDbMapping.RuntimeModes)
             .Concat(ControlPlaneDbMapping.GateStatuses)
-            .Concat(ControlPlaneDbMapping.ShadowGrades)
+            .Concat(new[] { "green", "yellow", "red" })
             .Concat(ControlPlaneDbMapping.InvariantModes)
             .Concat(ControlPlaneDbMapping.InvariantSeverities)
             .Concat(ControlPlaneDbMapping.RollbackInstructionTypes)
@@ -143,11 +143,9 @@ public sealed class RuntimePersistenceContractTests
     {
         var migration = File.ReadAllText(RepoPath("infra", "db", "migrations", "015_control_plane_shadow_runtime.sql"));
         var writeStore = File.ReadAllText(RepoPath("services", "core-api", "WorkOS.Api", "Runtime", "ControlPlaneWriteStore.cs"));
-        var allTables = ControlPlaneDbMapping.ControlPlaneTables.Concat(ControlPlaneDbMapping.ShadowRuntimeTables).ToArray();
         Assert.HasCount(7, ControlPlaneDbMapping.ControlPlaneTables);
-        Assert.HasCount(5, ControlPlaneDbMapping.ShadowRuntimeTables);
 
-        foreach (var table in allTables)
+        foreach (var table in ControlPlaneDbMapping.ControlPlaneTables)
         {
             Assert.Contains($"{table.Schema}.{table.Table}", migration, $"migration missing table {table.Schema}.{table.Table}");
             foreach (var column in table.Columns)
@@ -245,7 +243,7 @@ public sealed class RuntimePersistenceContractTests
         Assert.DoesNotContain("MapPost(\"/api/", unitOfWork, StringComparison.OrdinalIgnoreCase, "S2 must not add Operations API endpoints.");
 
         var operationsRuntimeService = File.ReadAllText(RepoPath("services", "core-api", "WorkOS.Api", "Runtime", "OperationsRuntimeService.cs"));
-        Assert.Contains("processing_status = 'failed'", operationsRuntimeService);
+        Assert.DoesNotContain("shadow_runtime", operationsRuntimeService, StringComparison.OrdinalIgnoreCase);
         Assert.DoesNotContain(
             "delete from shadow_runtime.command_submissions",
             operationsRuntimeService,

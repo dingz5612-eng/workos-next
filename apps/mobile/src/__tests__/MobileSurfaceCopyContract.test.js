@@ -56,6 +56,51 @@ describe("HOTFIX-SURFACE-UX-01 mobile visible copy contract", () => {
     expect(html).not.toContain("surface pc");
     vi.unstubAllGlobals();
   });
+
+  it("renders personal support pages as runtime read surfaces instead of placeholder forms", () => {
+    stubBrowser();
+    const supportViews = [
+      "notes",
+      "reminders",
+      "permissions",
+      "uploadQueue",
+      "submitQueue",
+      "drafts",
+      "failedSync",
+      "recentSubmissions",
+      "recentTraces",
+      "deviceTrust",
+      "feedback"
+    ];
+    const rendered = supportViews.map((view) => render(view));
+    const html = [...rendered, render("result")].join("\n");
+    const text = visibleText(html);
+
+    for (const page of rendered) {
+      expect(page).toContain('data-surface="personal-runtime-support"');
+      expect(page).not.toContain("权限诊断");
+    }
+    expect(text).toContain("本页只读取草稿、提交、轨迹、证据和设备状态");
+    expect(text).toContain("系统判断");
+    expect(text).toContain("设备已验证");
+    expect(text).toContain("提交记录");
+    expect(text).not.toContain("2026-05-28 18:00");
+    expect(text).not.toMatch(/\bAudit\b/);
+    expect(text).not.toMatch(/\b(workItemId|cardId|workspaceId|payloadHash|commandSubmissionId)\b/);
+    vi.unstubAllGlobals();
+  });
+
+  it("renders confirmation page from a direct route without a blank fallback", () => {
+    stubBrowser();
+    const html = render("confirmPage");
+    const text = visibleText(html);
+
+    expect(html).toContain('data-surface="runtime-confirmation"');
+    expect(text).toContain("确认当前办理");
+    expect(text).toContain("写入事件并刷新视图");
+    expect(text).toContain("返回工作台");
+    vi.unstubAllGlobals();
+  });
 });
 
 function render(view, overrides = {}) {

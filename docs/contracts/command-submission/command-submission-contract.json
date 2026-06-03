@@ -1,0 +1,39 @@
+{
+  "version": "oam-cab.command-submission-contract.v1",
+  "status": "baseline-contract",
+  "primaryRoute": "POST /api/operations/work-items/{workItemId}/confirm",
+  "requiredFields": [
+    "tenantId",
+    "workItemId",
+    "operationCaseId",
+    "commandType",
+    "idempotencyKey",
+    "payloadHash",
+    "actorId",
+    "actorRole",
+    "actorTenantId",
+    "authSource",
+    "deviceId",
+    "deviceTrustStatus",
+    "surface",
+    "admissionDecisionRef"
+  ],
+  "idempotency": {
+    "samePayloadSameKey": "stable result",
+    "differentPayloadSameKey": "409 conflict",
+    "missingKey": "422 validation error"
+  },
+  "sideEffectPolicy": {
+    "403": "no business side effect",
+    "409": "no new business side effect",
+    "422": "no business side effect"
+  },
+  "appendOnly": true,
+  "businessProduction": "blocked",
+  "evidence": [
+    "services/core-api/WorkOS.Api/Runtime/OperationsUnitOfWork.cs",
+    "services/core-api/WorkOS.Api/Runtime/CanonicalOperationsApiService.cs",
+    "tests/WorkOS.UnitTests/OperationsUnitOfWorkTests.cs",
+    "tests/WorkOS.UnitTests/CanonicalOperationsApiServiceTests.cs"
+  ]
+}

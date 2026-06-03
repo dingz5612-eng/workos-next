@@ -1,0 +1,13 @@
+{
+  "version": "oam.ledger-policy-refs.v1",
+  "generatedBy": "oam-cab-v1-phase-4",
+  "refs": [
+    { "ref": "ledger.deposit.liability.v1", "basis": "deposit-liability", "appendOnly": true, "correctionPath": "correction-center" },
+    { "ref": "ledger.payment.receivable.v1", "basis": "payment-and-stay-balance", "appendOnly": true, "correctionPath": "correction-center" },
+    { "ref": "ledger.checkout.settlement.v1", "basis": "checkout-settlement-from-ledgers", "appendOnly": true, "correctionPath": "checkout-workitem" },
+    { "ref": "ledger.period.snapshot_readonly.v1", "basis": "frozen-period-snapshot-from-ledgers", "appendOnly": true, "correctionPath": "late-adjustment" },
+    { "ref": "ledger.expense.append_only.v1", "basis": "expense-ledger", "appendOnly": true, "correctionPath": "correction-center" },
+    { "ref": "ledger.correction.append_only.v1", "basis": "compensating-ledger-entry", "appendOnly": true, "correctionPath": "correction-center" },
+    { "ref": "ledger.none.v1", "basis": "no-ledger-write", "appendOnly": false, "correctionPath": "not-applicable" }
+  ]
+}

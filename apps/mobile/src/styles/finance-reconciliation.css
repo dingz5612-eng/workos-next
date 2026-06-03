@@ -46,6 +46,37 @@
   font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
 }
 
+.finance-file-picker {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+}
+
+.finance-file-picker span {
+  color: var(--muted);
+}
+
+.finance-file-button {
+  display: inline-grid;
+  min-height: 34px;
+  place-items: center;
+  padding: 0 14px;
+  border-radius: 8px;
+  background: var(--teal, #087568);
+  color: #fff !important;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.finance-import-panel input.finance-file-input {
+  display: none;
+}
+
 .finance-import-actions,
 .bank-transaction-actions td:last-child,
 .finance-import-panel td:last-child {

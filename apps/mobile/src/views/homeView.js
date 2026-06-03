@@ -1,5 +1,4 @@
 import { selectHomeSurface, selectSurfaceStats, selectWorkbenchQueue } from "../selectors/surfaceSelectors.js";
-import { modeCard } from "./loginView.js";
 import { WorkItemCard } from "./experienceComponents.js";
 import { learningContentItems } from "./searchView.js";
 
@@ -87,7 +86,6 @@ function missionControlVM(queue, state, tr) {
 function iaChip(id, labelKey, count, ctx) {
   return `<article class="ia-chip" data-mobile-ia="${ctx.escapeAttr(id)}"><span>${ctx.tr(labelKey)}</span><strong>${count}</strong></article>`;
 }
-
 function learningMiniCard(item, ctx) {
   return `<article class="home-learning-card">
     <strong>${ctx.escapeHtml(item.title)}</strong>
@@ -122,8 +120,4 @@ function todayScenarioCard(item, ctx) {
     </div>
     <button data-workspace="${ctx.escapeAttr(workspace.id)}" data-card-id="${ctx.escapeAttr(card?.id || item.cardId || "")}">${ctx.tr("openWorkspace")}</button>
   </article>`;
-}
-
-export function simpleModeList(ctx) {
-  return `${modeCard("home", "todayMode", ctx.tr)}${modeCard("search", "intentMode", ctx.tr)}${modeCard("workbench", "queueMode", ctx.tr)}${modeCard("me", "personalMode", ctx.tr)}`;
 }

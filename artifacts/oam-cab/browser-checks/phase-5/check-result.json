@@ -1,0 +1,68 @@
+[
+  {
+    "name": "home-zh",
+    "file": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\browser-checks\\phase-5\\home-zh.png",
+    "hasTraceKey": false,
+    "hasPayloadHash": false,
+    "hasCommandSubmissionId": false,
+    "hasTrustedConfirm": false,
+    "hasMixedChinesePilotName": false,
+    "hasSystemValidationZh": false,
+    "textSample": "WorkOSNext\n内测经办人 · 运营经办人\n中文\nРусский\nКыргызча\n后端 API 已连接\n已连接内测运行服务\n今天\n今日任务中心\n原因\n当前没有运行时派发的待办。\n影响\n暂无影响范围，等待运行时队列或 Lens 同步。\n下一步\n可以搜索对象，或进入学习中心熟悉办理步骤。\n工作台\n熟悉系统？直接搜索\n搜索\n今日待办\n\n今天没有新的待办。请"
+  },
+  {
+    "name": "workbench-zh",
+    "file": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\browser-checks\\phase-5\\workbench-zh.png",
+    "hasTraceKey": false,
+    "hasPayloadHash": false,
+    "hasCommandSubmissionId": false,
+    "hasTrustedConfirm": false,
+    "hasMixedChinesePilotName": false,
+    "hasSystemValidationZh": false,
+    "textSample": "WorkOSNext\n内测经办人 · 运营经办人\n中文\nРусский\nКыргызча\n后端 API 已连接\n已连接内测运行服务\n被动任务队列\n工作台\n0\n\n当前没有分配给你的真实办理任务。请先从搜索找业务对象，或等待系统派单。\n\n搜索\n反馈\n今天\n工作\n搜索\n我的"
+  },
+  {
+    "name": "operation-room-zh",
+    "file": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\browser-checks\\phase-5\\operation-room-zh.png",
+    "hasTraceKey": false,
+    "hasPayloadHash": false,
+    "hasCommandSubmissionId": false,
+    "hasTrustedConfirm": false,
+    "hasMixedChinesePilotName": false,
+    "hasSystemValidationZh": false,
+    "textSample": "WorkOSNext\n内测经办人 · 运营经办人\n中文\nРусский\nКыргызча\n后端 API 已连接\n已连接内测运行服务\n办理任务\n暂不能直接办理\n\n这不是换账号能解决的问题；这条记录还没有生成可办理任务。请从工作队列打开真实任务；主动新增请先创建真实任务。\n\n新增住宿房源\n返回工作台\n刷新任务\n反馈\n今天\n工作\n搜索\n我的"
+  },
+  {
+    "name": "operation-room-ru",
+    "file": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\browser-checks\\phase-5\\operation-room-ru.png",
+    "hasTraceKey": false,
+    "hasPayloadHash": false,
+    "hasCommandSubmissionId": false,
+    "hasTrustedConfirm": false,
+    "hasMixedChinesePilotName": false,
+    "hasSystemValidationZh": false,
+    "textSample": "WorkOSNext\nОператор пилота · Оператор\n中文\nРусский\nКыргызча\nAPI подключен\nСервис пилота подключен\nЗадача обработки\nПока нельзя обработать напрямую\n\nСмена аккаунта это не решит: для з"
+  },
+  {
+    "name": "operation-room-ky",
+    "file": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\browser-checks\\phase-5\\operation-room-ky.png",
+    "hasTraceKey": false,
+    "hasPayloadHash": false,
+    "hasCommandSubmissionId": false,
+    "hasTrustedConfirm": false,
+    "hasMixedChinesePilotName": false,
+    "hasSystemValidationZh": false,
+    "textSample": "WorkOSNext\nПилот оператору · Жатакана оператору\n中文\nРусский\nКыргызча\nAPI туташты\nИчки пилот runtime кызматы туташты\nАткаруу тапшырмасы\nАзыр түз иштетүүгө болбойт\n\nБул аккаунт алмашт"
+  },
+  {
+    "name": "search-zh",
+    "file": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\browser-checks\\phase-5\\search-zh.png",
+    "hasTraceKey": false,
+    "hasPayloadHash": false,
+    "hasCommandSubmissionId": false,
+    "hasTrustedConfirm": false,
+    "hasMixedChinesePilotName": false,
+    "hasSystemValidationZh": false,
+    "textSample": "WorkOSNext\n内测经办人 · 运营经办人\n中文\nРусский\nКыргызча\n后端 API 已连接\n已连接内测运行服务\n主动办理\nWorkOS 搜索\n\n搜索房间、床位、入住人、证据、提交记录、学习内容，也可以直接开始业务\n\n搜索\n主动办理\n新增住宿房源\n先录房号和床位数，价格和可租状态后面再补。\n状态: 可办理\n\n下一步: 先填房号\n\n开始办理\n"
+  }
+]

@@ -1,0 +1,40 @@
+{
+  "version": "oam-cab.business-line-admission-matrix.v1",
+  "source": "docs/business/business-line-registry.json",
+  "businessLines": [
+    {
+      "businessLineId": "dormitory",
+      "state": "L1_INTERNAL_PILOT_OBSERVATION",
+      "productionAllowed": false,
+      "productionConfirmAllowed": false
+    },
+    {
+      "businessLineId": "repair",
+      "state": "L0 Contract Preview",
+      "productionAllowed": false,
+      "productionConfirmAllowed": false
+    },
+    {
+      "businessLineId": "parts",
+      "state": "L0 Contract Preview",
+      "productionAllowed": false,
+      "productionConfirmAllowed": false
+    },
+    {
+      "businessLineId": "hr",
+      "state": "L0 Contract Preview",
+      "productionAllowed": false,
+      "productionConfirmAllowed": false
+    },
+    {
+      "businessLineId": "business-3..7",
+      "state": "L0 Contract Preview",
+      "productionAllowed": false,
+      "productionConfirmAllowed": false
+    }
+  ],
+  "evidence": [
+    "scripts/check-business-line-admission.mjs",
+    "scripts/check-admission-kernel.mjs"
+  ]
+}

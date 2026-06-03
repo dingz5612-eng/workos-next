@@ -1,0 +1,24 @@
+{
+  "version": "oam-cab.business-signoff-contract.v1",
+  "status": "baseline-contract",
+  "requiredFields": [
+    "signoffId",
+    "businessLineId",
+    "scope",
+    "signerRole",
+    "decision",
+    "evidenceRefs",
+    "createdAt",
+    "generatedBy"
+  ],
+  "productionGoAllowed": false,
+  "invariants": [
+    "BusinessSignoff alone cannot grant Business Production.",
+    "BusinessSignoff must reference machine evidence and current-state.",
+    "Manual passed evidence is forbidden."
+  ],
+  "evidence": [
+    "services/core-api/WorkOS.Api/Runtime/ControlPlaneWriteStore.cs",
+    "docs/surface/pc-governance-plane-contract.yml"
+  ]
+}

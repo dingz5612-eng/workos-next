@@ -153,8 +153,6 @@ const allowedUnusedCss = new Set([
   "grade-green",
   "grade-yellow",
   "grade-red",
-  "next-card",
-  "loop-steps",
   "status-failed",
   "status-warning",
   "status-not_run"

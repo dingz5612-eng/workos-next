@@ -2,7 +2,7 @@
   "contractId": "mobile-search-contract.v1",
   "surface": "search",
   "titleKey": "workosSearch",
-  "sections": ["WorkItem", "OperationCase", "Room", "Bed", "Stay", "Evidence", "Trace", "Learning"],
+  "sections": ["待办任务", "业务记录", "Room", "Bed", "Stay", "Evidence", "Trace", "Learning"],
   "resultContract": ["localizedTitle", "localizedSubtitle", "status", "nextAction"],
   "pcRawRecordsVisible": false,
   "adminRecordsVisibleToOrdinaryMobile": false

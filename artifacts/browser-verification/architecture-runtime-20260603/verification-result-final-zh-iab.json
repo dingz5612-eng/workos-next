@@ -1,0 +1,50 @@
+{
+  "generatedAt": "2026-06-03T08:31:32.082Z",
+  "results": [
+    {
+      "key": "pcGovernance",
+      "screenshotPath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\browser-verification\\architecture-runtime-20260603\\pc-governance-final-zh-iab-full.png",
+      "screenshotBytes": 437703,
+      "missingAfterWait": [],
+      "forbiddenVisible": [],
+      "innerHeight": 912,
+      "innerWidth": 874,
+      "missing": [],
+      "overflowX": false,
+      "scrollHeight": 5803,
+      "scrollWidth": 874,
+      "textSample": "WorkOSNext\n发布负责人\n中文\nРусский\nКыргызча\n后端 API 已连接\n已连接内测运行服务\nPC 治理控制平面\n治理中心\n\n只读汇总 WorkItem、事实、证据、发布门禁、风险、审计和受控导出；业务事实仍必须由 Operations Runtime 写入。\n\n总览\n生产观测\nLens 健康\n办理管理\n对象视图\n案例与阻断\n账务摘要\n证据复核\n对账\n修正中心\n周期复盘\n风险作战室\n治理配置\n审计\n受控导出\n发布工作区\n总览\n打开的办理项\n0\n风险项\n0\n打开的阻断\n0\nGateResult\npassed\n\n本页只读取 Lens、事件、发布控制数据和 WorkItem，不写入业务事实。\n\n生产观测\n确认延迟 p95\n0 ms\n确认失败数\n0\n403 / 409 / 422 次数\n0 / 0 / 0\nOutbox 延迟\n0 s\n死信数量\n0\nProjection 延迟\n0 s\nWorkItemBundle p95\n0 ms\nGateResult 状态\npassed\nRuntime\n指标\t值\n确认延迟 p95\t0\n确认延迟样本数\t0\n确认失败数\t0\n幂等冲突数\t0\n403 次数\t0\n409 次数\t0\n422 次数\t0\n处理器失败数\t0\nOutbox\n指标\t值\nOutbox 延迟秒数\t0\n死信数量\t0\n重放次数\t0\nProjection\n指标\t值\n投影延迟秒数\t0\n重建次数\t0\n陈旧 Lens 数\t0\nMobile\n指标\t值\nWorkItemBundle p95\t0\nWorkItemBundle 样本数\t0\n上传失败数\t0\n提交重试数\t0\n草稿找回数\t0\nMoney\n指标\t值\n缺证据确认付款违规\t0\n超可用金额分配违规\t0\n住宿余额不一致数\t0\nDeposit\n指标\t值\n可退金额为负次数\t0\n退款重复失败数\t0\n冻结金额为负次数\t0\nCheckout\n指标\t值\n打开的阻断\t0\n重复阻断\t0\n虚假关闭尝试\t0\nControl Plane\n指标\t值\nGateResult 状态\tpassed\n红色 Shadow 报告数\t0\n阻断不变量失败数\t0\n发布状态\tpilot\n\ngeneratedAtUtc 2026-06-03T08:31:25.3425821+00:00\n\nLens 健康\nLens\t来源命名空间\t投影延迟秒数\t最后事件\t降级原因\nTodayOperationsLens\tofficial_runtime\t0\t\tprojection_checkpoint_missing\n办理管理\n\n没有可见办理项。\n\n对象视图\n\n没有对象 Lens。\n\n案例与阻断\n\n没有案例或阻断。\n\n账务摘要\n\n没有账务摘要。\n\n证据复核\n\n没有证据复核项。\n\n证据访问审计\n\n没有证据访问审计记录。\n\n对账\n\n没有对账候选项。\n\n差异队列\n\n没有对账差异。\n\n修正中心\n\n",
+      "url": "http://127.0.0.1:5175/?view=pcGovernance&lang=zh-CN&device=pc"
+    },
+    {
+      "key": "releaseControl",
+      "screenshotPath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\browser-verification\\architecture-runtime-20260603\\release-control-final-zh-iab-full.png",
+      "screenshotBytes": 192951,
+      "missingAfterWait": [],
+      "forbiddenVisible": [],
+      "innerHeight": 912,
+      "innerWidth": 874,
+      "missing": [],
+      "overflowX": false,
+      "scrollHeight": 3130,
+      "scrollWidth": 874,
+      "textSample": "WorkOSNext\n发布负责人\n中文\nРусский\nКыргызча\n后端 API 已连接\n已连接内测运行服务\n发布工作区\nMR-OAM-ACF\n全部 MR\nMR ID\t发布状态\tGateResult 状态\tShadow 等级\nMR-OAM-ACF\tpilot\tpassed\tgreen\n发布准入控制\n当前准入\ngo\n锁定准入\ngo\nGate Result\npassed\nShadow\ngreen\nP0 阻断失败\n0\nRollbackInstruction\nrollback-oam-acf-browser\n业务签收\nsignoff-oam-acf-browser\nNo-Go 阻断\n无\n发布总览\nM R I D\nMR-OAM-ACF\n发布状态\npilot\n负责人\nreleaseOwner\nFeatureFlag 状态\npilot\nSlice runtime_mode\npilot\n验收进度\n3/6 (50%)\nGateResult 明细\nGateResult 状态\npassed\nGate Result I D\ngate-oam-acf-browser\n生成方\ngate-runner\n门禁类型\nrelease\n等级\nP0\n自动化验收\nscripts/check-runtime-write-paths.mjs, scripts/check-api-boundaries.mjs, scripts/operations/check-l1-to-l2-readiness.mjs\nInvariant 引用\ninvariant-oam-acf-browser\nShadowCompare 引用\nshadow-oam-acf-browser\n结果哈希\nresult-oam-acf-browser\n影子对比报告\nShadow 等级\ngreen\ngreen\nShadowCompareReport ID\t等级\t差异数\tCI run id\nshadow-oam-acf-browser\tgreen\t0\tci-browser-verification\n不变量监控\nP0 1\nP1 0\nP2 0\nInvariant key\t模式\t等级\t状态\t违规数\nofficial_runtime_no_shadow_reference\tblocking\tP0\tpassed\t0\n回滚 / 补偿\nRollbackInstruction 编号\nrollback-oam-acf-browser\n指令类型\nrollback\n回滚类型\nruntime_mode\n负责人\nreleaseOwner\n风险等级\nP1\n执行步骤\nPause slice cutover, Route compatibility adapter through OperationsUnitOfWork only, Verify no shadow_r",
+      "url": "http://127.0.0.1:5175/?view=releaseControl&lang=zh-CN&device=pc"
+    },
+    {
+      "key": "search",
+      "screenshotPath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\browser-verification\\architecture-runtime-20260603\\search-final-zh-iab-full.png",
+      "screenshotBytes": 159960,
+      "forbiddenVisible": [],
+      "innerHeight": 912,
+      "innerWidth": 874,
+      "missing": [],
+      "overflowNodes": [],
+      "overflowX": false,
+      "scrollHeight": 2486,
+      "scrollWidth": 874,
+      "textSample": "WorkOSNext\n发布负责人\n中文\nРусский\nКыргызча\n后端 API 已连接\n已连接内测运行服务\n主动办理\nWorkOS 搜索\n\n搜索房间、床位、入住人、证据、提交记录、学习内容，也可以直接开始业务\n\n搜索\n待办任务\n房间配置卡\n住宿业务\n状态: 可办理\n\n下一步: 先配置房间和床位，再配置价格、准备度、阻断和释放。\n\n这条结果暂时没有可跳转目标，请换一个业务词搜索。\n\n服务任务创建卡\n住宿业务\n状态: 可办理\n\n下一步: 阻断可售的任务必须显式释放房间或床位。\n\n这条结果暂时没有可跳转目标，请换一个业务词搜索。\n\n支出登记卡\n住宿业务\n状态: 可办理\n\n下一步: 支出不和押金退款混淆，押金退款不是经营支出。\n\n这条结果暂时没有可跳转目标，请换一个业务词搜索。\n\n退房发起卡\n住宿业务\n状态: 可办理\n\n下一步: 先发起退房并完成房间检查。\n\n这条结果暂时没有可跳转目标，请换一个业务词搜索。\n\n业务记录\n我要创建住宿资源 · 房间配置卡\n住宿业务\n状态: 可办理\n\n下一步: 先配置房间和床位，再配置价格、准备度、阻断和释放。\n\n查看案件\n我要管理清洁维修任务 · 服务任务创建卡\n住宿业务\n状态: 可办理\n\n下一步: 阻断可售的任务必须显式释放房间或床位。\n\n查看案件\n我要管理宿舍支出 · 支出登记卡\n住宿业务\n状态: 可办理\n\n下一步: 支出不和押金退款混淆，押金退款不是经营支出。\n\n查看案件\n我要办理退房 · 退房发起卡\n住宿业务\n状态: 可办理\n\n下一步: 先发起退房并完成房间检查。\n\n查看案件\n房间\n房间 · 我要创建住宿资源\nW-STAY-RESOURCE\n状态: 可办理\n\n下一步: 先配置房间和床位，再配置价格、准备度、阻断和释放。\n\n打开对象\n房间 · 我要管理清洁维修任务\nW-STAY-SERVICE-TASK\n状态: 可办理\n\n下一步: 阻断可售的任务必须显式释放房间或床位。\n\n打开对象\n房间 · 我要办理退房\nW-STAY-CHECKOUT\n状态: 可办理\n\n下一步: 先发起退房并完成房间检查。\n\n打开对象\n证据\n房间重复校验\nW-STAY-RESOURCE · 房间配置卡\n状态: 可办理\n\n下一步: 补充证据\n\n补充证据\n配置人记录\nW-STAY-RESOURCE · 房间配置卡\n状态: 可办理\n\n下一步: 补充证据\n\n补充证据\n反馈\n今天\n工作\n搜索\n我的",
+      "url": "http://127.0.0.1:5175/?view=search&lang=zh-CN&q=%E6%88%BF%E9%97%B4&device=mobile"
+    }
+  ]
+}

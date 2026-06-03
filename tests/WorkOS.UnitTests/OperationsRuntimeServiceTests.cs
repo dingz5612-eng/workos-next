@@ -42,7 +42,7 @@ public sealed class OperationsRuntimeServiceTests
         Assert.AreEqual("W-OPS", payload["workspaceId"]);
         Assert.AreEqual("roomSetup", payload["cardId"]);
         StringAssert.StartsWith(payload["workItemId"]!.ToString(), "wi-");
-        Assert.AreEqual(1, runtime.PrepareCount);
+        Assert.AreEqual(0, runtime.PrepareCount);
         Assert.AreEqual(0, runtime.ConfirmCount);
         Assert.HasCount(1, workItems.List());
     }
@@ -83,7 +83,7 @@ public sealed class OperationsRuntimeServiceTests
         runtime = new FakeOperationsRuntime(policyResult);
         cases = new InMemoryOperationsCaseStore();
         workItems = new InMemoryOperationsWorkItemStore();
-        return new OperationsRuntimeService(runtime, new InMemoryOperationsCommandSubmissionStore(), cases, workItems);
+        return new OperationsRuntimeService(runtime, cases, workItems);
     }
 
     private sealed class FakeOperationsRuntime : IOperationsRuntimeAdapter

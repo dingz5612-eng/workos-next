@@ -9,7 +9,10 @@ describe("OAM-04B search intent hub contract", () => {
     const ctx = createSurfaceCtx({ view: "search", query: "创建房间" });
     const html = searchView(ctx);
 
-    expect(html).toContain("主动命令");
+    expect(html).toContain("主动办理");
+    expect(html).toContain("新增住宿房源");
+    expect(html).toContain("先录房号和床位数");
+    expect(html).toContain('data-start-resource-setup="true"');
     expect(html).toContain('data-work-item-id="W-STAY-RESOURCE:roomSetup"');
     expect(html).toContain(">处理</button>");
 
@@ -216,5 +219,57 @@ describe("OAM-04B search intent hub contract", () => {
     expect(vm.reasonIfNoAction).toContain("这条结果暂时没有可跳转目标");
     expect(visibleText(html)).not.toContain("[object Object]");
     expect(visibleText(html)).not.toMatch(/\b(stay|finance|lead|leadCapture)\b/);
+  });
+
+  it("preserves Search Kernel admission state in the surface view model", () => {
+    const ctx = createSurfaceCtx({ view: "search", query: "房间" });
+    const vm = buildSearchResultVM({
+      resultType: "workspaceCardCompatibility",
+      workspaceId: "W-STAY-RESOURCE",
+      cardId: "roomSetup",
+      admission: {
+        visibleAllowed: true,
+        prepareAllowed: true,
+        confirmAllowed: false,
+        productionAllowed: false,
+        mode: "internal_pilot_observation",
+        reason: "L1 observation only",
+        admissionDecisionRef: "admission:roomSetup:internal"
+      },
+      sourceRefs: {
+        source: "SearchKernelService",
+        compatibilityAdapter: "LensQueryService.Search",
+        admissionDecisionRef: "admission:roomSetup:internal"
+      }
+    }, ctx);
+
+    expect(vm.visibleAllowed).toBe(true);
+    expect(vm.prepareAllowed).toBe(true);
+    expect(vm.confirmAllowed).toBe(false);
+    expect(vm.productionAllowed).toBe(false);
+    expect(vm.admissionReason).toBe("L1 observation only");
+    expect(vm.sourceRefs.admissionDecisionRef).toBe("admission:roomSetup:internal");
+    expect(vm.sourceRefs.compatibilityAdapter).toBe("LensQueryService.Search");
+  });
+
+  it("localizes active room commands without English fallback", () => {
+    const ru = visibleText(searchView(createSurfaceCtx({ view: "search", lang: "ru-RU", query: "комната" })));
+    const ky = visibleText(searchView(createSurfaceCtx({ view: "search", lang: "ky-KG", query: "бөлмө" })));
+
+    expect(ru).toContain("Можно начать самому");
+    expect(ru).toContain("Добавить комнату");
+    expect(ru).toContain("Сначала внесите номер комнаты");
+    expect(ru).toContain("Статус: Можно начать");
+    expect(ru).toContain("Следующее действие: Начать с номера комнаты");
+    expect(ru).not.toContain("Commands");
+    expect(ru).not.toContain("Create room");
+    expect(ru).not.toContain("Start resource setup");
+    expect(ru).not.toContain("Start from room setup");
+
+    expect(ky).toContain("Өзүңүз баштай турган иштер");
+    expect(ky).toContain("Бөлмө кошуу");
+    expect(ky).toContain("Алгач бөлмө номерин");
+    expect(ky).not.toContain("Commands");
+    expect(ky).not.toContain("Create room");
   });
 });

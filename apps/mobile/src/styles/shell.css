@@ -34,11 +34,9 @@
 .topbar span,
 .onboarding span,
 .command-card span,
-.next-card span,
 .page-title span,
 .queue-head span,
 .workspace-page span,
-.task-card span,
 .profile-card span,
 .metric-grid span,
 .help-card span {
@@ -48,11 +46,9 @@
 .topbar span,
 .onboarding span,
 .command-card span,
-.next-card span,
 .page-title span,
 .queue-head span,
 .workspace-page span,
-.task-card span,
 .profile-card span,
 .metric-grid span,
 .help-card span {
@@ -73,6 +69,18 @@
   box-shadow: 0 14px 34px rgba(17, 39, 55, .08);
 }
 
+.onboarding {
+  display: grid;
+  gap: 16px;
+  padding: 20px 18px;
+  background: linear-gradient(180deg, #ffffff 0%, #f7fbfc 100%);
+}
+
+.onboarding-copy {
+  display: grid;
+  gap: 8px;
+}
+
 .onboarding h1,
 .login-panel h1,
 .command-card h1,
@@ -83,6 +91,7 @@
 .confirm-panel h1 {
   margin: 6px 0;
   font-size: 28px;
+  line-height: 1.18;
   letter-spacing: 0;
 }
 
@@ -90,7 +99,9 @@
 .login-panel p,
 .command-card dd,
 .confirm-panel p {
+  margin: 0;
   color: #23384b;
+  line-height: 1.6;
 }
 
 .login-panel {
@@ -105,7 +116,7 @@
 
 .login-panel label span,
 .login-panel > span {
-  color: rgba(255, 255, 255, .78);
+  color: #66788c;
   font-size: 12px;
   font-weight: 850;
 }
@@ -116,43 +127,75 @@
 }
 
 .login-message {
-  color: #fff;
+  color: #9a3412;
   font-weight: 850;
 }
 
 .mode-list {
   display: grid;
-  gap: 8px;
-  margin: 16px 0;
+  gap: 10px;
+  margin: 0;
 }
 
 .mode-list.light {
   margin: 0;
 }
 
-.mode-list article,
 .mode-card {
+  display: grid;
+  grid-template-columns: 38px minmax(0, 1fr);
+  gap: 10px;
+  align-items: start;
+  width: 100%;
+  min-height: 78px;
   padding: 12px;
-  border-radius: 16px;
-  background: rgba(255, 255, 255, .12);
+  border: 1px solid #d9e7ee;
+  border-radius: 8px;
+  color: #102033;
+  background: #fff;
+  text-align: left;
+  box-shadow: none;
 }
 
-.mode-list.light article,
 .mode-list.light .mode-card {
-  border: 1px solid #d9e7ee;
-  color: #102033;
   background: #f7fbfc;
 }
 
 .mode-list b {
   display: block;
+  color: #102033;
+  font-size: 15px;
+  line-height: 1.35;
 }
 
-.mode-card {
-  min-height: 0;
-  color: #fff;
-  text-align: left;
-  box-shadow: none;
+.mode-card small {
+  display: block;
+  margin-top: 4px;
+  color: #52677b;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.mode-card-index {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+  border-radius: 8px;
+  color: #0b6f63;
+  background: #dff3ee;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.mode-card-link {
+  cursor: pointer;
+}
+
+.onboarding-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
 .onboarding button,
@@ -160,14 +203,14 @@
 .confirm-panel button {
   width: auto;
   min-width: 108px;
-  margin-top: 12px;
+  margin-top: 0;
   color: #fff;
   background: #0b6f63;
 }
 
 .onboarding .ghost {
-  color: #fff;
-  background: rgba(255, 255, 255, .16);
+  color: #0b6f63;
+  background: #e7f3f0;
 }
 
 .command-card dl {
@@ -202,7 +245,6 @@
   font-size: 25px;
 }
 
-.next-card,
 .page-title,
 .search-box,
 .knowledge-search,
@@ -212,9 +254,7 @@
 .queue-head,
 .queue-filter,
 .queue-toolbar,
-.task-card,
 .workspace-page,
-
 .workspace-card,
 .profile-card,
 .personal-grid,
@@ -228,25 +268,13 @@
   backdrop-filter: blur(10px);
 }
 
-.next-card strong {
-  display: block;
-  margin: 5px 0;
-  font-size: 20px;
-}
-
-.next-card p,
 .page-title p,
-.task-card p,
 .compact-section p,
 .profile-card p,
 .help-card p,
 .personal-card span {
   color: #52677b;
   font-size: 13px;
-}
-
-.next-card button {
-  margin-top: 12px;
 }
 
 .home-search {
@@ -416,4 +444,70 @@
   color: #23384b;
   background: #fff;
   font-size: 13px;
+}
+
+.personal-runtime-surface {
+  display: grid;
+  gap: 14px;
+  margin-top: 12px;
+  padding: 16px;
+  border: 1px solid #d4e3eb;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.personal-runtime-surface > p {
+  margin: 0;
+  color: #50677c;
+  line-height: 1.55;
+}
+
+.personal-runtime-list {
+  display: grid;
+  gap: 10px;
+}
+
+.personal-runtime-row {
+  padding: 12px;
+  border: 1px solid #e0ebf0;
+  border-radius: 8px;
+  background: #f8fbfc;
+}
+
+.personal-runtime-row span {
+  display: block;
+  color: #64788c;
+  font-size: 12px;
+}
+
+.personal-runtime-row strong {
+  display: block;
+  margin-top: 4px;
+  color: #102033;
+  font-size: 17px;
+}
+
+.personal-runtime-row p {
+  margin: 6px 0 0;
+  color: #40566b;
+  line-height: 1.5;
+}
+
+.confirm-runtime-list {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 10px;
+  margin: 16px 0;
+}
+
+.confirm-runtime-list dt {
+  color: #64788c;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.confirm-runtime-list dd {
+  margin: -6px 0 0;
+  color: #23384b;
+  line-height: 1.55;
 }

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { renderSurface, visibleText } from "./surfaceContractTestHelpers.js";
+import { renderSurface, source, visibleText } from "./surfaceContractTestHelpers.js";
 
 describe("SURFACE-C Today Mission Control contract", () => {
   it("renders localized mission control and today learning on the mobile home surface", () => {
@@ -43,5 +43,18 @@ describe("SURFACE-C Today Mission Control contract", () => {
 
     expect((html.match(/class="today-scenario-card/g) || []).length).toBeLessThanOrEqual(1);
     expect(html).not.toContain("workspace-card-strip");
+  });
+
+  it("keeps blocked work item recovery copy from squeezing mobile task titles", () => {
+    const css = source("../styles/workspace.css");
+
+    expect(css).toContain(".workitem-card-head {\n  display: grid;\n  grid-template-columns: minmax(0, 1fr);");
+    expect(css).toContain(".workitem-card-head > div {\n  min-width: 0;");
+    expect(css).toContain(".workitem-route-blocked {\n  display: grid;");
+    expect(css).toContain(".workitem-card-grid,\n.trusted-confirm-sheet dl,\n.permission-diagnostic dl,\n.device-trust-panel dl {\n  display: grid;\n  grid-template-columns: minmax(0, 1fr);");
+    expect(css).toContain(".app-shell.surface-pc .workitem-card-head");
+    expect(css).not.toContain("@media (min-width: 520px)");
+    expect(css).not.toContain(".task-card");
+    expect(css).not.toContain(".loop-steps");
   });
 });

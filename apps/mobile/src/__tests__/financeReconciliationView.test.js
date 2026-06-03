@@ -121,7 +121,8 @@ describe("PC finance reconciliation bank import", () => {
 
     expect(html).toContain("data-bank-csv-file");
     expect(html).toContain("预览结果");
-    expect(html).toContain("parsed_count 1");
+    expect(html).toContain("已解析 1");
+    expect(html).not.toContain("parsed_count");
     expect(html).toContain("通过运行时确认导入");
     expect(html).toContain("data-import-history");
     expect(html).toContain("bank-import-1");

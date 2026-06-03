@@ -1,0 +1,20 @@
+{
+  "version": "oam-cab.surface-admission-matrix.v1",
+  "source": "docs/contracts/runtime-surface-policy.json",
+  "surfaceAdmissionFields": [
+    "visibleAllowed",
+    "prepareAllowed",
+    "confirmAllowed",
+    "productionAllowed",
+    "admissionReason"
+  ],
+  "invariants": [
+    "All Mobile / PC surfaces must carry admissionState.",
+    "visibleAllowed must not be used as confirmAllowed.",
+    "High-risk action surfaces require visual state, copy, confirmation, and evidence policy before later production readiness."
+  ],
+  "evidence": [
+    "scripts/check-surface-contract.mjs",
+    "scripts/surface/check-surface-runtime-guard-contract.mjs"
+  ]
+}

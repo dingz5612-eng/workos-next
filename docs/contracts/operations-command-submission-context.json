@@ -1,0 +1,47 @@
+{
+  "version": "oam.command-submission-context.v1",
+  "generatedBy": "oam-cab-v1-phase-5",
+  "status": "contract-and-migration-plan",
+  "productionReady": false,
+  "risk": {
+    "level": "P1",
+    "reason": "CommandSubmission context is carried in the command envelope payload during OAM-CAB v1 Phase 5; dedicated persisted columns are planned by additive migration before production readiness can be claimed."
+  },
+  "requiredContextFields": [
+    "actorId",
+    "actorRole",
+    "actorTenantId",
+    "authSource",
+    "deviceId",
+    "deviceTrustStatus",
+    "surface",
+    "reason",
+    "admissionDecisionRef"
+  ],
+  "currentCarrier": {
+    "path": "CommandEnvelope.v1.payload",
+    "implementation": "CanonicalOperationsApiService.PayloadFor",
+    "source": "Operations Runtime confirm pre-check",
+    "notes": "The context is written before OperationsUnitOfWork.Commit and is included in stable response/event payload where applicable."
+  },
+  "plannedPersistence": {
+    "migration": "infra/db/migrations/034_operations_command_submission_context.sql",
+    "targetTable": "operations_command_submissions",
+    "columns": [
+      "actor_id",
+      "actor_role",
+      "actor_tenant_id",
+      "auth_source",
+      "device_id",
+      "device_trust_status",
+      "surface",
+      "reason",
+      "admission_decision_ref"
+    ],
+    "mode": "additive nullable columns first, then backfill, then enforce not-null once production readiness gates pass"
+  },
+  "noGoItems": [
+    "not_production_ready_until_persisted_context_columns_are_enforced",
+    "not_production_ready_until_device_trust_status_is_verified_by RuntimeDeviceSessionStorage"
+  ]
+}

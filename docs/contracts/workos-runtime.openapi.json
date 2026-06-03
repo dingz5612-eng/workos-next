@@ -909,6 +909,51 @@
         }
       }
     },
+    "/api/mobile/drafts": {
+      "post": {
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/MobileDraftRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Mobile draft state event accepted" }
+        }
+      }
+    },
+    "/api/mobile/client-events": {
+      "post": {
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/MobileClientEventRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Mobile client event accepted" }
+        }
+      }
+    },
+    "/api/mobile/recent-objects": {
+      "post": {
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/MobileRecentObjectRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Mobile recent object event accepted" }
+        }
+      }
+    },
     "/api/behavior-events": {
       "get": {
         "responses": {
@@ -1083,6 +1128,7 @@
       },
       "ConfirmWorkItemRequest": {
         "type": "object",
+        "required": ["idempotencyKey"],
         "properties": {
           "workspaceId": { "type": ["string", "null"] },
           "cardId": { "type": ["string", "null"] },
@@ -1424,6 +1470,37 @@
           "objectId": { "type": ["string", "null"] },
           "language": { "type": "string" },
           "source": { "type": ["string", "null"] }
+        }
+      },
+      "MobileDraftRequest": {
+        "type": "object",
+        "properties": {
+          "draftId": { "type": ["string", "null"] },
+          "workspaceId": { "type": ["string", "null"] },
+          "cardId": { "type": ["string", "null"] },
+          "language": { "type": ["string", "null"] },
+          "payloadHash": { "type": ["string", "null"] }
+        }
+      },
+      "MobileClientEventRequest": {
+        "type": "object",
+        "required": ["eventType"],
+        "properties": {
+          "eventType": { "type": "string" },
+          "objectType": { "type": ["string", "null"] },
+          "objectId": { "type": ["string", "null"] },
+          "language": { "type": ["string", "null"] },
+          "source": { "type": ["string", "null"] }
+        }
+      },
+      "MobileRecentObjectRequest": {
+        "type": "object",
+        "properties": {
+          "objectType": { "type": ["string", "null"] },
+          "objectId": { "type": ["string", "null"] },
+          "workspaceId": { "type": ["string", "null"] },
+          "cardId": { "type": ["string", "null"] },
+          "language": { "type": ["string", "null"] }
         }
       }
     }

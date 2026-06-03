@@ -1,0 +1,35 @@
+{
+  "version": "oam.search-result-schema.v1",
+  "generatedBy": "oam-cab-v1-phase-4",
+  "required": [
+    "resultId",
+    "resultType",
+    "title",
+    "summary",
+    "matchedTerms",
+    "score",
+    "target",
+    "admission",
+    "traceRefs",
+    "sourceRefs",
+    "language",
+    "explain"
+  ],
+  "properties": {
+    "resultId": { "type": "string" },
+    "resultType": { "type": "enum", "ref": "docs/contracts/search/search-contract.json#objectTypes" },
+    "title": { "type": "localizedText", "languages": ["zh-CN", "ru-RU", "ky-KG"] },
+    "summary": { "type": "localizedText", "languages": ["zh-CN", "ru-RU", "ky-KG"] },
+    "matchedTerms": { "type": "string[]" },
+    "score": { "type": "number" },
+    "target": { "type": "object", "required": ["view", "kind"] },
+    "admission": {
+      "type": "object",
+      "required": ["visibleAllowed", "prepareAllowed", "confirmAllowed", "productionAllowed", "mode", "reason"]
+    },
+    "traceRefs": { "type": "string[]" },
+    "sourceRefs": { "type": "object" },
+    "language": { "type": "string", "allowedValues": ["zh-CN", "ru-RU", "ky-KG"] },
+    "explain": { "type": "localizedText", "languages": ["zh-CN", "ru-RU", "ky-KG"] }
+  }
+}
