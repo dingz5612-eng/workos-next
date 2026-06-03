@@ -130,7 +130,7 @@ internal static class PeriodAnalyticsPolicy
 
         if (cardId.Equals("periodActionPlanComplete", StringComparison.OrdinalIgnoreCase) &&
             string.IsNullOrWhiteSpace(Value(request, "actionPlanWorkItemId",
-                Value(request, "workItemId", Value(request, "actionPlanId", string.Empty)))))
+                Value(request, "workItemId", string.Empty))))
         {
             return new ConfirmResult(ConfirmStatus.Forbidden, "period_action_plan_completion_requires_work_item_confirm", null);
         }
