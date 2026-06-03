@@ -149,7 +149,8 @@ test("mobile work plane smoke covers login, WorkItem, search, me, and PC boundar
   await page.locator('[data-work-item-id="wi-e2e-room-setup"]').click();
   await expect(page.locator('[data-surface="operation-panel-route"]')).toBeVisible();
   await expect(page.locator('[data-surface="trusted-confirm"]')).toBeVisible();
-  await expect(page.getByRole("button", { name: /补齐证据/u })).toBeVisible();
+  await expect(page.locator("body")).toContainText("系统将在提交时自动绑定");
+  await expect(page.getByRole("button", { name: /提交处理/u })).toBeVisible();
   await expect(page.locator("body")).not.toContainText("payloadHash");
   await expect(page.locator("body")).not.toContainText("commandSubmissionId");
   await expect(page.locator("summary", { hasText: "技术详情" })).toBeVisible();
@@ -159,7 +160,7 @@ test("mobile work plane smoke covers login, WorkItem, search, me, and PC boundar
   await page.locator("#searchNow").click();
   await expect(page.locator("body")).not.toContainText("[object Object]");
   await expect(page.locator('[data-search-section="searchWorkItems"]')).toContainText("处理");
-  await expect(page.locator('[data-search-section="searchLearning"]')).toBeVisible();
+  await expect(page.locator('[data-search-section="searchLearning"]')).toHaveCount(0);
   await page.locator('[data-search-section="searchWorkItems"] [data-work-item-id]').first().click();
   await expect(page.locator('[data-surface="operation-panel-route"]')).toBeVisible();
 

@@ -151,8 +151,10 @@ public sealed class RuntimeHardeningTests
         Assert.AreEqual("checkout_deposit_settlement_required", checkout?.Reason);
 
         var service = ServiceTaskPolicy.Validate(
+            "W-STAY-RESOURCE",
             "roomReleaseAfterService",
-            Request(new Dictionary<string, string> { ["serviceTaskVerified"] = "false" }));
+            Request(new Dictionary<string, string> { ["serviceTaskVerified"] = "false" }),
+            new ConfirmSemanticsStore(ProjectionMode.Pending));
         Assert.AreEqual("service_task_verification_required_before_release", service?.Reason);
 
         var period = PeriodAnalyticsPolicy.Validate(
