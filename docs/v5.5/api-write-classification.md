@@ -21,6 +21,8 @@ one category. Unclassified write routes are P0.
   deposit confirmation facts.
 - `reconciliationGovernanceWrite`: bank import, matching, mismatch, and
   decision writes; no PaymentConfirmed or DepositConfirmed facts.
+- `governanceWrite`: allowed Dormitory workspace-start coordination writes;
+  they create a handling workspace instance but do not confirm business facts.
 - `correctionCenterWrite`: append-only correction request, approval, rejection,
   and apply path. Apply may affect ledger projections only as an explicit
   append-only correction service with invariants.

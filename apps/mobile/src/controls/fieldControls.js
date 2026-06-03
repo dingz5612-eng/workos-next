@@ -1,3 +1,5 @@
+import { translateTerm } from "../termDictionary.js";
+
 export function capacityForRoomType(roomType) {
   if (roomType === "single" || roomType === "单人间") return "1";
   if (roomType === "double" || roomType === "双人间") return "2";
@@ -13,7 +15,7 @@ export function fieldControlKind(field) {
 export function optionsForField(field, lang = "zh-CN") {
   return (field?.ui?.options || []).map((entry) => ({
     value: entry.value,
-    label: entry.label?.[lang] || entry.label?.["zh-CN"] || entry.value
+    label: entry.label?.[lang] || translateTerm(entry.label?.["zh-CN"] || entry.value, lang)
   }));
 }
 

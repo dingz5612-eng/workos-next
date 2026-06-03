@@ -6,6 +6,7 @@ export function meView(ctx) {
   const actorDisplayName = state.currentActor?.displayName ? ctx.escapeHtml(state.currentActor.displayName) : tr("personalMode");
   const actorRole = state.currentActor?.role ? roleLabel(state.currentActor.role, tr) : "-";
   const stats = selectSurfaceStats(state);
+  const hasStats = stats.queueCount || stats.blockedCount || stats.confirmCount;
   const searches = (state.recentSearches || []).map((item) => ctx.escapeHtml(item)).join(" · ");
   return shell(`
     <section class="profile-card" data-surface="personal-ops-center">
@@ -15,16 +16,12 @@ export function meView(ctx) {
       <p>${tr("permission")}: ${ctx.escapeHtml(actorRole)} · ${tr("stay")} · ${tr("myPermissions")}</p>
       <button id="logout" class="secondary">${tr("logout")}</button>
     </section>
-    <section class="metric-grid">${ctx.metric(stats.queueCount, "stats")}${ctx.metric(stats.blockedCount, "blocked")}${ctx.metric(stats.confirmCount, "confirm")}</section>
+    ${hasStats ? `<section class="metric-grid">${ctx.metric(stats.queueCount, tr("work"))}${ctx.metric(stats.blockedCount, tr("workBlocked"))}${ctx.metric(stats.confirmCount, tr("cardConfirm"))}</section>` : ""}
     <section class="personal-grid">
-      ${personal("notes", "noteTitle", "noteBody", tr)}
-      ${personal("reminders", "reminderTitle", "reminderBody", tr)}
       ${personal("learning", "learningCenter", "learningCenterBody", tr)}
       ${personal("permissions", "myPermissions", "myPermissionsBody", tr)}
       ${personalCopy("uploadQueue", ctx.tr("evidenceUpload"), tr("uploadQueueBody"))}
       ${personalCopy("submitQueue", ctx.tr("submissionQueue"), tr("submitQueueBody"))}
-      ${personal("drafts", "drafts", "draftsBody", tr)}
-      ${personal("failedSync", "failedSyncItems", "failedSyncItemsBody", tr)}
       ${personal("recentSubmissions", "recentSubmissions", "recentSubmissionsBody", tr)}
       ${personal("recentTraces", "recentTraces", "recentTracesBody", tr)}
       ${personalCopy("deviceTrust", `${ctx.tr("currentDevice")} · ${tr("deviceTrustStatus")}`, tr("deviceTrustStatusBody"))}

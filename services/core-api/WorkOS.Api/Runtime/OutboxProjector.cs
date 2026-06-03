@@ -101,10 +101,13 @@ internal sealed class CardProgressProjectorRule : IOutboxProjectorRule
         }
 
         cards[cardIndex] = cards[cardIndex] with { Status = "done", BlockerRules = Array.Empty<BlockerRule>() };
-        if (cardIndex + 1 < cards.Count && cards[cardIndex + 1].Status == "notStarted")
+        var nextCardIndex = NextCardIndex(workspace.Id, cards, cardIndex);
+        if (nextCardIndex >= 0 && cards[nextCardIndex].Status == "notStarted")
         {
-            cards[cardIndex + 1] = cards[cardIndex + 1] with { Status = "ready" };
+            cards[nextCardIndex] = cards[nextCardIndex] with { Status = "ready" };
         }
+
+        MarkSkippedBranchCards(workspace.Id, cards, cardIndex);
 
         state.Workspaces[workspaceIndex] = workspace with
         {
@@ -112,5 +115,39 @@ internal sealed class CardProgressProjectorRule : IOutboxProjectorRule
             Blockers = cards.SelectMany(item => item.BlockerRules).ToArray()
         };
         state.Events.Add(workspaceEvent);
+    }
+
+    private static int NextCardIndex(string workspaceId, IReadOnlyList<CardProjection> cards, int cardIndex)
+    {
+        if (IsLeadReservationWorkspace(workspaceId) &&
+            cards[cardIndex].Id.Equals("reservationCreate", StringComparison.OrdinalIgnoreCase))
+        {
+            var convertIndex = cards.ToList().FindIndex(card => card.Id.Equals("reservationConvert", StringComparison.OrdinalIgnoreCase));
+            if (convertIndex > cardIndex)
+            {
+                return convertIndex;
+            }
+        }
+
+        return cardIndex + 1 < cards.Count ? cardIndex + 1 : -1;
+    }
+
+    private static bool IsLeadReservationWorkspace(string workspaceId) =>
+        workspaceId.Equals("W-STAY-LEAD-RESERVATION", StringComparison.OrdinalIgnoreCase) ||
+        workspaceId.StartsWith("W-STAY-LEAD-RESERVATION-", StringComparison.OrdinalIgnoreCase);
+
+    private static void MarkSkippedBranchCards(string workspaceId, IList<CardProjection> cards, int cardIndex)
+    {
+        if (!IsLeadReservationWorkspace(workspaceId) ||
+            !cards[cardIndex].Id.Equals("reservationCreate", StringComparison.OrdinalIgnoreCase))
+        {
+            return;
+        }
+
+        var cancelIndex = cards.ToList().FindIndex(card => card.Id.Equals("reservationCancel", StringComparison.OrdinalIgnoreCase));
+        if (cancelIndex >= 0 && cards[cancelIndex].Status == "notStarted")
+        {
+            cards[cancelIndex] = cards[cancelIndex] with { Status = "skipped" };
+        }
     }
 }

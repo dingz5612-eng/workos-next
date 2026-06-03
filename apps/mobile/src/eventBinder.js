@@ -1,8 +1,8 @@
 import { login, logout } from "./authController.js";
 import { runLearningSearch, setCoachStage, setLearningDomain, setLearningType, updateLearningQuery } from "./coachController.js";
-import { collectDraftingValuesOnInput, saveCurrentDraft, submitCurrentCard, toggleEvidenceSelection } from "./operationController.js";
-import { clearQueueFilterState, closeAdvancedFilters, openAdvancedFilters, setQueueFilter, setQueueSort, setWorkFilter, toggleFilters } from "./queueController.js";
-import { onboard, openWorkspace, openWorkItem, runSearch, selectCard, setLang, setView, updateSearchQuery } from "./navigationController.js";
+import { collectDraftingValuesOnInput, saveCurrentDraft, submitCurrentCard } from "./operationController.js";
+import { clearQueueFilterState, setQueueFilter, setQueueSort, setWorkFilter } from "./queueController.js";
+import { onboard, openWorkspace, openWorkItem, runSearch, selectCard, setLang, setView, startResourceSetupCommand, startWorkspaceCommand, updateSearchQuery } from "./navigationController.js";
 import { isPcSurfaceView } from "./surfaceRegistry.js";
 
 export function bindEvents(ctx) {
@@ -18,6 +18,8 @@ export function bindEvents(ctx) {
     workspaceId: node.dataset.workspaceId,
     cardId: node.dataset.cardId
   })));
+  document.querySelectorAll("[data-start-resource-setup]").forEach((node) => node.addEventListener("click", () => startResourceSetupCommand(ctx)));
+  document.querySelectorAll("[data-start-workspace]").forEach((node) => node.addEventListener("click", () => startWorkspaceCommand(ctx, node.dataset.startWorkspace, node.dataset.firstCardId || "")));
   document.querySelectorAll("[data-card-index]").forEach((node) => node.addEventListener("click", () => selectCard(node.dataset.cardIndex, ctx)));
   document.querySelector("#query")?.addEventListener("input", (event) => updateSearchQuery(event.target.value, ctx));
   document.querySelector("#searchNow")?.addEventListener("click", () => runSearch(ctx));
@@ -25,10 +27,6 @@ export function bindEvents(ctx) {
   bindQueue(ctx);
   document.querySelector(".operation-inputs")?.addEventListener("input", (event) => collectDraftingValuesOnInput(event, ctx));
   document.querySelector(".operation-inputs")?.addEventListener("change", (event) => collectDraftingValuesOnInput(event, ctx));
-  document.querySelector(".evidence-row")?.addEventListener("click", (event) => {
-    const target = event.target.closest("[data-evidence-id]");
-    if (target) toggleEvidenceSelection({ ...event, target }, ctx);
-  });
   document.querySelector("#finish")?.addEventListener("click", () => setView("result", ctx));
   document.querySelector("[data-save-draft]")?.addEventListener("click", () => saveCurrentDraft(ctx));
   document.querySelectorAll("[data-submit-card]").forEach((node) => node.addEventListener("click", () => submitCurrentCard(ctx)));
@@ -54,8 +52,5 @@ function bindQueue(ctx) {
   document.querySelectorAll("[data-filter-field]").forEach((node) => node.addEventListener("click", () => setQueueFilter(node.dataset.filterField, node.dataset.filterValue, ctx)));
   document.querySelectorAll("[data-work-filter]").forEach((node) => node.addEventListener("click", () => setWorkFilter(node.dataset.workFilter, ctx)));
   document.querySelector("#clearQueueFilters")?.addEventListener("click", () => clearQueueFilterState(ctx));
-  document.querySelector("#toggleFilters")?.addEventListener("click", () => toggleFilters(ctx));
-  document.querySelector("#advanced")?.addEventListener("click", () => openAdvancedFilters(ctx));
-  document.querySelector("#closeAdvanced")?.addEventListener("click", () => closeAdvancedFilters(ctx));
   document.querySelector("#sort")?.addEventListener("change", (event) => setQueueSort(event.target.value, ctx));
 }

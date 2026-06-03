@@ -1,6 +1,6 @@
 import { capacityForRoomType } from "./controls/fieldControls.js";
 import { clearDraft, loadDraft, saveDraft } from "./operationDrafts.js";
-import { createSubmissionProtocol, materializeEvidenceObjects, submitWorkItemOperation } from "./operationRuntime.js";
+import { createSubmissionProtocol, materializeEvidenceObjects, submitCardOperation, submitWorkItemOperation } from "./operationRuntime.js";
 import { setView } from "./navigationController.js";
 import { activeWorkspaceCard, isCardActionDisabled } from "./selectors/workspaceSelectors.js";
 import { applyRuntimeProjection } from "./runtime/runtimeStore.js";
@@ -36,6 +36,25 @@ export function collectEvidenceDrafts() {
     .filter((draft) => draft.requirementId && draft.evidenceId);
 }
 
+export function systemEvidenceDraftsFor(card = {}, currentDrafts = []) {
+  const existing = new Map((currentDrafts || [])
+    .filter((draft) => draft?.requirementId)
+    .map((draft) => [draft.requirementId, draft]));
+  for (const field of card.evidence || []) {
+    if (!field?.id) continue;
+    const current = existing.get(field.id);
+    existing.set(field.id, {
+      requirementId: field.id,
+      evidenceId: (current?.source === "system" || current?.evidenceId?.startsWith("evd-")) && current.evidenceId
+        ? current.evidenceId
+        : `evidence-${field.id}-${randomDraftId()}`,
+      source: "system",
+      status: current?.evidenceId?.startsWith("evd-") ? "verified" : current?.status
+    });
+  }
+  return Array.from(existing.values());
+}
+
 export function toggleEvidenceSelection(event, ctx) {
   const item = ctx.workspace();
   const card = activeWorkspaceCard(item, ctx.state.selectedCardIndex, ctx.state.selectedCardId);
@@ -69,6 +88,25 @@ export function updateDerivedFields(ctx) {
   const roomType = roomTypeField ? document.querySelector(`[data-operation-field="${roomTypeField.id}"]`)?.value : "";
   const capacity = capacityField ? document.querySelector(`[data-operation-field="${capacityField.id}"]`) : null;
   if (roomType && capacity) capacity.value = capacityForRoomType(roomType);
+  const amount = document.querySelector('[data-operation-field="amount"]');
+  const unitRate = decimalValue("unitRate");
+  const tariffQuantity = decimalValue("tariffQuantity");
+  if (amount && unitRate > 0 && tariffQuantity > 0) amount.value = String(unitRate * tariffQuantity);
+  const refundAmount = document.querySelector('[data-operation-field="refundAmount"]');
+  if (refundAmount) {
+    const approved = decimalValue("confirmedAmount") || decimalValue("receivedAmount") || decimalValue("requiredDepositAmount");
+    const deduction = decimalValue("deductionAmount");
+    const applyToBalance = decimalValue("applyToBalanceAmount");
+    const paid = decimalValue("refundPaidAmount");
+    const available = approved - deduction - applyToBalance - paid;
+    if (available > 0) refundAmount.value = String(available);
+  }
+}
+
+function decimalValue(fieldId) {
+  const raw = document.querySelector(`[data-operation-field="${fieldId}"]`)?.value || "";
+  const value = Number(raw);
+  return Number.isFinite(value) ? value : 0;
 }
 
 export function collectDraftingValuesOnInput(event, ctx) {
@@ -85,7 +123,7 @@ export function collectDraftingValuesOnInput(event, ctx) {
 export async function submitCurrentCard(ctx) {
   if (ctx.state.operationSubmitting) return;
   const item = ctx.workspace();
-  const card = activeWorkspaceCard(item, ctx.state.selectedCardIndex, ctx.state.selectedCardId);
+  const card = operationActiveCard(item, ctx.state.selectedCardIndex, ctx.state.selectedCardId);
   if (!item || !card || isCardActionDisabled(card)) return;
   if (!ctx.state.currentActor) {
     ctx.state.loginMessage = ctx.tr("loginRequired");
@@ -101,7 +139,7 @@ export async function submitCurrentCard(ctx) {
     }
   }
   const fieldValues = collectOperationValues();
-  const evidenceDrafts = collectEvidenceDrafts();
+  const evidenceDrafts = systemEvidenceDraftsFor(card, collectEvidenceDrafts());
   const submissionProtocol = draftSubmissionProtocol(item, card, fieldValues, evidenceDrafts);
   saveDraft(item.id, card.id, fieldValues, evidenceDrafts, submissionProtocol);
   ctx.state.operationMessage = ctx.tr("submitting");
@@ -116,8 +154,15 @@ export async function submitCurrentCard(ctx) {
       submissionProtocol,
       evidenceDrafts
     });
+    for (const draft of evidenceDrafts) {
+      if (draft.evidenceId?.startsWith("evd-")) {
+        draft.source = "system";
+        draft.status = "verified";
+      }
+    }
     saveDraft(item.id, card.id, fieldValues, evidenceDrafts, submissionProtocol);
-    const result = await submitWorkItemOperation({
+    const submit = allowsWorkspaceConfirmFallback(item) ? submitCardOperation : submitWorkItemOperation;
+    const result = await submit({
       workspace: item,
       card,
       workItemId: persistedWorkItemIdFor(ctx.state, item, card),
@@ -127,7 +172,8 @@ export async function submitCurrentCard(ctx) {
       evidenceIds,
       submissionProtocol,
       onProjection: (payload) => applyProjectionPayload(payload, ctx),
-      onLens: (payload) => applyLensPayload(payload, ctx)
+      onLens: (payload) => applyLensPayload(payload, ctx),
+      allowCompatibilityFallback: allowsWorkspaceConfirmFallback(item)
     });
     if (isCommittedConfirmResult(result)) {
       applyCommittedCardLocalState(item.id, card.id, ctx);
@@ -136,14 +182,33 @@ export async function submitCurrentCard(ctx) {
       clearDraft(item.id, card.id);
     }
     ctx.state.selectedCardIndex = -1;
+    ctx.state.selectedCardId = "";
     ctx.state.operationMessage = confirmSuccessMessage(result, ctx);
-    ctx.state.lastActionResult = actionResultFromConfirm(result, ctx.state.operationMessage);
+    ctx.state.lastActionResult = actionResultFromConfirm(result, ctx.state.operationMessage, item, card);
   } catch (error) {
     if (applyConfirmError(error, ctx)) return;
   } finally {
     ctx.state.operationSubmitting = false;
   }
   ctx.render(true);
+}
+
+function operationActiveCard(item, selectedCardIndex, selectedCardId) {
+  if (!item) return null;
+  const requested = activeWorkspaceCard(item, selectedCardIndex, selectedCardId);
+  const workspaceCompleted = (item.cards || []).every((card) => isTerminalCardStatus(card.status));
+  if (requested && isTerminalCardStatus(requested.status) && !workspaceCompleted) {
+    return activeWorkspaceCard(item, -1, "");
+  }
+  return requested;
+}
+
+function isTerminalCardStatus(status) {
+  return ["done", "confirmed", "completed", "committed", "closed", "cancelled"].includes(String(status || ""));
+}
+
+function allowsWorkspaceConfirmFallback(workspace = {}) {
+  return /^W-STAY-[A-Z-]+-\d{14}-[a-f0-9]{32}$/i.test(String(workspace.id || ""));
 }
 
 export function applyConfirmError(error, ctx) {
@@ -242,7 +307,7 @@ function isCommittedConfirmResult(result) {
   return result?.confirmed === true && result?.commitStatus === "committed";
 }
 
-function actionResultFromConfirm(result, message) {
+function actionResultFromConfirm(result, message, workspace = {}, card = {}) {
   const status = result?.commitStatus === "committed" && result?.projectionStatus === "pending"
     ? "committed_projection_pending"
     : result?.commitStatus === "committed" && result?.projectionStatus === "failed"
@@ -251,6 +316,8 @@ function actionResultFromConfirm(result, message) {
   return {
     status,
     message,
+    workspaceId: workspace?.id || result?.caseId || result?.workspace?.id || "",
+    cardId: card?.id || "",
     commandSubmissionId: result?.commandSubmissionId || result?.submissionId || "",
     traceRefs: result?.traceRefs || result?.resultEventIds || []
   };

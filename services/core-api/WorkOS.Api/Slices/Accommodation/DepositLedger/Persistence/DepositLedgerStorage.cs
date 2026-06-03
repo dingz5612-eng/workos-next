@@ -68,7 +68,7 @@ internal sealed class DepositLedgerStorage
 
     private void UpsertLiability(WorkspaceEvent workspaceEvent, RuntimeDbSession db, decimal requiredAmount, decimal receivedAmount, string status)
     {
-        var depositId = DepositId(workspaceEvent);
+        var depositId = ResolveDepositId(workspaceEvent, db);
         using var command = db.CreateCommand("""
             insert into deposit_liabilities(deposit_id, workspace_id, folio_id, required_amount, received_amount, liability_balance, currency, rule_name, status, created_event_id, updated_at_utc)
             values (@depositId, @workspaceId, @folioId, @requiredAmount, @receivedAmount, @liabilityBalance, @currency, @ruleName, @status, @createdEventId, @updatedAtUtc)
@@ -95,13 +95,14 @@ internal sealed class DepositLedgerStorage
 
     private void AppendTransaction(WorkspaceEvent workspaceEvent, RuntimeDbSession db, string type, decimal amount, string status)
     {
+        var depositId = ResolveDepositId(workspaceEvent, db);
         using var command = db.CreateCommand("""
             insert into deposit_transactions(transaction_id, deposit_id, workspace_id, transaction_type, amount, currency, status, actor_id, created_event_id, occurred_at_utc)
             values (@transactionId, @depositId, @workspaceId, @transactionType, @amount, @currency, @status, @actorId, @createdEventId, @occurredAtUtc)
             on conflict(transaction_id) do nothing
             """);
         command.Parameters.AddWithValue("transactionId", $"deposit-tx-{workspaceEvent.EventId}".ToLowerInvariant());
-        command.Parameters.AddWithValue("depositId", DepositId(workspaceEvent));
+        command.Parameters.AddWithValue("depositId", depositId);
         command.Parameters.AddWithValue("workspaceId", workspaceEvent.WorkspaceId);
         command.Parameters.AddWithValue("transactionType", type);
         command.Parameters.AddWithValue("amount", NpgsqlDbType.Numeric, amount);
@@ -120,7 +121,63 @@ internal sealed class DepositLedgerStorage
         RuntimeFieldAliases.DecimalValue(workspaceEvent.Payload, RuntimeFieldAliases.CanonicalKey(key), defaultValue);
 
     private static string DepositId(WorkspaceEvent workspaceEvent) =>
-        Value(workspaceEvent, "depositId", Value(workspaceEvent, "depositReceiptId", StableId("deposit", workspaceEvent)));
+        Value(workspaceEvent, "depositId", string.Empty);
+
+    private static string ResolveDepositId(WorkspaceEvent workspaceEvent, RuntimeDbSession db)
+    {
+        var explicitDepositId = DepositId(workspaceEvent);
+        if (!string.IsNullOrWhiteSpace(explicitDepositId))
+        {
+            return explicitDepositId;
+        }
+
+        var receiptId = Value(workspaceEvent, "depositReceiptId", string.Empty);
+        if (!string.IsNullOrWhiteSpace(receiptId))
+        {
+            var receivedDepositId = ReceivedDepositId(workspaceEvent, db, receiptId);
+            if (!string.IsNullOrWhiteSpace(receivedDepositId))
+            {
+                return receivedDepositId;
+            }
+
+            return receiptId;
+        }
+
+        return StableId("deposit", workspaceEvent);
+    }
+
+    private static string ReceivedDepositId(WorkspaceEvent workspaceEvent, RuntimeDbSession db, string receiptId)
+    {
+        using (var exact = db.CreateCommand("""
+            select deposit_id
+            from deposit_transactions
+            where workspace_id = @workspaceId
+              and deposit_id = @receiptId
+              and transaction_type in ('received', 'evidence_submitted')
+            order by occurred_at_utc desc
+            limit 1
+            """))
+        {
+            exact.Parameters.AddWithValue("workspaceId", workspaceEvent.WorkspaceId);
+            exact.Parameters.AddWithValue("receiptId", receiptId);
+            var exactDepositId = Convert.ToString(exact.ExecuteScalar(), CultureInfo.InvariantCulture) ?? string.Empty;
+            if (!string.IsNullOrWhiteSpace(exactDepositId))
+            {
+                return exactDepositId;
+            }
+        }
+
+        using var command = db.CreateCommand("""
+            select deposit_id
+            from deposit_transactions
+            where workspace_id = @workspaceId
+              and transaction_type in ('received', 'evidence_submitted')
+            order by occurred_at_utc desc
+            limit 1
+            """);
+        command.Parameters.AddWithValue("workspaceId", workspaceEvent.WorkspaceId);
+        return Convert.ToString(command.ExecuteScalar(), CultureInfo.InvariantCulture) ?? string.Empty;
+    }
 
     private static string StableId(string prefix, WorkspaceEvent workspaceEvent) =>
         $"{prefix}-{workspaceEvent.WorkspaceId}".ToLowerInvariant();

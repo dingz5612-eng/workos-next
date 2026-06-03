@@ -429,8 +429,16 @@ app.MapPost("/api/pc-governance/exports/{exportType}", (string exportType, Gover
 
 app.MapOperationsRuntimeEndpoints();
 
-app.MapPost("/api/workspaces/{workspaceId}/cards/{cardId}/prepare", (string workspaceId, string cardId, PrepareCardRequest? request, WorkspaceCardCompatibilityAdapter operations) =>
+app.MapPost("/api/workspaces/{workspaceId}/cards/{cardId}/prepare", (string workspaceId, string cardId, PrepareCardRequest? request, ProjectionRuntime runtime, WorkspaceCardCompatibilityAdapter operations) =>
 {
+    if (IsDynamicDormitoryWorkspace(workspaceId))
+    {
+        var preparedCard = runtime.Prepare(workspaceId, cardId, request);
+        return preparedCard is null
+            ? Results.NotFound(new { error = "card_not_found", workspaceId, cardId })
+            : Results.Ok(preparedCard);
+    }
+
     var prepared = operations.PrepareWorkspaceCard(workspaceId, cardId, request);
     return prepared.StatusCode switch
     {
@@ -439,10 +447,64 @@ app.MapPost("/api/workspaces/{workspaceId}/cards/{cardId}/prepare", (string work
     };
 });
 
-app.MapPost("/api/workspaces/{workspaceId}/cards/{cardId}/confirm", (string workspaceId, string cardId, ConfirmCardRequest request, HttpRequest httpRequest, WorkspaceCardCompatibilityAdapter operations) =>
+app.MapPost("/api/workspaces/resource-setup/start", (HttpRequest httpRequest, ProjectionRuntime runtime) =>
+{
+    var actor = runtime.FindUserBySessionToken(httpRequest.SessionTokenForOperations());
+    if (actor is null)
+    {
+        return Results.Unauthorized();
+    }
+
+    if (!new[] { "operator", "manager", "admin" }.Contains(actor.Role, StringComparer.OrdinalIgnoreCase))
+    {
+        return Results.Json(new { error = "role_confirmation_forbidden:resource_setup_start" }, statusCode: StatusCodes.Status403Forbidden);
+    }
+
+    var workspace = runtime.StartResourceSetup();
+    return Results.Ok(new { workspace, projection = runtime.GetAll() });
+});
+
+app.MapPost("/api/workspaces/start", (StartWorkspaceRequest request, HttpRequest httpRequest, ProjectionRuntime runtime) =>
+{
+    var actor = runtime.FindUserBySessionToken(httpRequest.SessionTokenForOperations());
+    if (actor is null)
+    {
+        return Results.Unauthorized();
+    }
+
+    if (!new[] { "operator", "manager", "admin", "finance" }.Contains(actor.Role, StringComparer.OrdinalIgnoreCase))
+    {
+        return Results.Json(new { error = "role_confirmation_forbidden:workspace_start" }, statusCode: StatusCodes.Status403Forbidden);
+    }
+
+    if (!DormitoryTemplateWorkspaceIds().Contains(request.TemplateWorkspaceId, StringComparer.Ordinal))
+    {
+        return Results.Json(new { error = "workspace_template_not_allowed", request.TemplateWorkspaceId }, statusCode: StatusCodes.Status404NotFound);
+    }
+
+    var workspace = runtime.StartWorkspace(request.TemplateWorkspaceId);
+    return Results.Ok(new { workspace, projection = runtime.GetAll() });
+});
+
+app.MapPost("/api/workspaces/{workspaceId}/cards/{cardId}/confirm", (string workspaceId, string cardId, ConfirmCardRequest request, HttpRequest httpRequest, ProjectionRuntime runtime, WorkspaceCardCompatibilityAdapter operations) =>
 {
     var token = httpRequest.SessionTokenForOperations();
     var requestId = httpRequest.Headers["X-Request-Id"].FirstOrDefault() ?? httpRequest.HttpContext.TraceIdentifier;
+    if (IsDynamicDormitoryWorkspace(workspaceId))
+    {
+        var directResult = runtime.Confirm(workspaceId, cardId, request with { RequestId = request.RequestId ?? requestId }, token);
+        return ConfirmHttpStatusMapper.StatusCodeFor(directResult) switch
+        {
+            StatusCodes.Status404NotFound => Results.NotFound(new { error = "card_not_found", workspaceId, cardId }),
+            StatusCodes.Status400BadRequest => Results.BadRequest(new { error = "confirmation_invalid", directResult.Reason }),
+            StatusCodes.Status401Unauthorized => Results.Unauthorized(),
+            StatusCodes.Status403Forbidden => Results.Json(new { error = "confirmation_forbidden", directResult.Reason }, statusCode: StatusCodes.Status403Forbidden),
+            StatusCodes.Status409Conflict => Results.Json(new { error = "idempotency_conflict", directResult.Reason }, statusCode: StatusCodes.Status409Conflict),
+            StatusCodes.Status422UnprocessableEntity => Results.UnprocessableEntity(new { error = "business_rule_violation", directResult.Reason }),
+            _ => Results.Ok(directResult.Payload)
+        };
+    }
+
     var result = operations.ConfirmWorkspaceCard(workspaceId, cardId, request, token, requestId);
     return result.StatusCode switch
     {
@@ -480,12 +542,33 @@ app.MapPost("/api/behavior-events", (BehaviorEventRequest request) =>
 
 app.Run();
 
+static bool IsDynamicDormitoryWorkspace(string workspaceId) =>
+    DormitoryTemplateWorkspaceIds().Any(templateId =>
+        workspaceId.StartsWith($"{templateId}-", StringComparison.Ordinal));
+
+static string[] DormitoryTemplateWorkspaceIds() =>
+    new[]
+    {
+        "W-STAY-RESOURCE",
+        "W-STAY-LEAD-RESERVATION",
+        "W-STAY-CHECKIN",
+        "W-STAY-LIFECYCLE",
+        "W-STAY-DEPOSIT-LEDGER",
+        "W-STAY-PAYMENT-LEDGER",
+        "W-STAY-SERVICE-TASK",
+        "W-STAY-CHECKOUT",
+        "W-STAY-CHECKOUT-SETTLEMENT",
+        "W-STAY-PERIOD-ANALYTICS"
+    };
+
 internal sealed record BehaviorEventRequest(
     string EventType,
     string? ObjectType,
     string? ObjectId,
     string Language,
     string? Source);
+
+internal sealed record StartWorkspaceRequest(string TemplateWorkspaceId);
 
 internal sealed record LedgerCorrectionApproveRequest(
     string TenantId,

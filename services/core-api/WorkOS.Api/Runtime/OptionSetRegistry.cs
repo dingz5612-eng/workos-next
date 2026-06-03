@@ -31,6 +31,7 @@ internal static class OptionSetRegistry
         if (label.Contains("计费方式")) return "tariffType";
         if (label.Contains("到账状态")) return "paymentStatus";
         if (label.Contains("审批意见")) return "approvalDecision";
+        if (label == "押金规则说明") return string.Empty;
         if (ContractText.ContainsAny(label, "押金/费用规则", "押金规则")) return "depositFeeRule";
         if (label.Contains("押金类型")) return "depositType";
         if (ContractText.ContainsAny(label, "币种", "押金币种")) return "currency";
@@ -65,7 +66,7 @@ internal static class OptionSetRegistry
         if (label == "收款记录") return "paymentCandidates";
         if (label.Contains("应收项")) return "chargeCandidates";
         if (label == "任务" || label == "关联任务") return "serviceTaskCandidates";
-        if (label == "支出记录") return "expenseCandidates";
+        if (label == "支出记录" || label == "关联支出") return "expenseCandidates";
         if (label == "经营周期") return "periodCandidates";
         if (label.Contains("所属房间")) return "roomCandidates";
         if (ContractText.ContainsAny(label, "关联房间", "房间")) return "roomCandidates";

@@ -1,6 +1,7 @@
 import { normalizeQuery } from "../runtime/runtimeStore.js";
 
 const activeStatuses = new Set(["ready", "blocked", "inProgress"]);
+const terminalStatuses = new Set(["done", "confirmed", "completed", "committed", "closed", "cancelled", "skipped"]);
 const ledgerAmountFields = new Set([
   "receivedAmount",
   "confirmedAmount",
@@ -26,6 +27,8 @@ export function selectHomeSurface(state) {
   return source
     .map((item) => ({ ...item, workspace: byId.get(item.workspaceId) }))
     .filter((item) => item.workspace)
+    .filter((item) => homeItemAllowedForActor(item, state))
+    .filter((item) => state.debugSurface || !isTerminalHomeItem(item))
     .sort((a, b) => (b.priority || 0) - (a.priority || 0));
 }
 
@@ -42,7 +45,15 @@ export function selectWorkbenchQueue(state) {
   return materializeQueue(queue, byId, state);
 }
 
-function materializeQueue(queue, byId, state) {
+export function selectCompletedWorkbenchQueue(state) {
+  const workspaces = selectRuntimeWorkspaces(state);
+  const byId = new Map(workspaces.map((workspace) => [workspace.id, workspace]));
+  const runtimeQueue = state.runtimeStore?.workQueue || [];
+  if (!runtimeQueue.length) return [];
+  return materializeQueue(runtimeQueue, byId, state, { terminal: "only" });
+}
+
+function materializeQueue(queue, byId, state, options = {}) {
   return queue
     .filter((item) => state.debugSurface || isOrdinaryPilotQueueItem(item))
     .map((item) => {
@@ -58,7 +69,14 @@ function materializeQueue(queue, byId, state) {
         source: item.source || state.runtimeStore?.queueSource || "runtime-api"
       };
     })
-    .filter((item) => (item.workspace && item.card) || item.workItemId);
+    .filter((item) => (item.workspace && item.card) || item.workItemId)
+    .filter((item) => state.debugSurface || queueItemAllowedForActor(item, state))
+    .filter((item) => {
+      if (state.debugSurface) return true;
+      const terminal = isTerminalQueueItem(item);
+      if (options.terminal === "only") return terminal;
+      return !terminal;
+    });
 }
 
 function isOrdinaryPilotQueueItem(item = {}) {
@@ -74,6 +92,84 @@ function isOrdinaryPilotQueueItem(item = {}) {
     item.compatibilitySource
   ].join(" ");
   return !/(runtimeAudit|\brf[-_:]|engineering|diagnostic|fixture_replay|legacy_compatibility)/i.test(tokens);
+}
+
+function isTerminalQueueItem(item = {}) {
+  return [
+    item.lifecycleState,
+    item.lifecycle_state,
+    item.status,
+    item.card?.status
+  ].some((status) => terminalStatuses.has(String(status || "").trim()));
+}
+
+function isTerminalHomeItem(item = {}) {
+  const card = selectCardById(item.workspace, item.cardId) || activeCard(item.workspace);
+  return terminalStatuses.has(String(card?.status || "").trim());
+}
+
+function homeItemAllowedForActor(item = {}, state = {}) {
+  if (state.debugSurface) return true;
+  const role = String(state.currentActor?.role || "").toLowerCase();
+  if (["admin", "manager", "releaseowner"].includes(role)) return true;
+  const domain = item.workspace?.domain || item.domain || "";
+  const scopedItem = {
+    ...item,
+    card: selectCardById(item.workspace, item.cardId),
+    workspace: item.workspace
+  };
+  if (role === "finance") return domain === "finance" || isFinanceQueueItem(scopedItem);
+  if (role === "repair") return domain === "repair";
+  if (["operator", "frontdesk", "housekeeping"].includes(role)) return domain === "stay" && !isFinanceQueueItem(scopedItem);
+  return domain === "stay" && !isFinanceQueueItem(scopedItem);
+}
+
+function queueItemAllowedForActor(item = {}, state = {}) {
+  const role = String(state.currentActor?.role || "operator").toLowerCase();
+  if (["admin", "manager", "releaseowner"].includes(role)) return true;
+  const domain = item.domain || item.workspace?.domain || "";
+  const ownerRole = String(item.ownerRole || item.owner_role || "").toLowerCase();
+  if (role === "finance") return domain === "finance" || ownerRole === "finance" || isFinanceQueueItem(item);
+  if (role === "repair") return domain === "repair" || ownerRole === "repair";
+  if (["operator", "frontdesk", "housekeeping"].includes(role)) {
+    const accommodationOwner = !ownerRole || ["operator", "frontdesk", "housekeeping"].includes(ownerRole);
+    return domain === "stay" && accommodationOwner && !isFinanceQueueItem(item);
+  }
+  return domain === "stay" && !isFinanceQueueItem(item);
+}
+
+function isFinanceQueueItem(item = {}) {
+  const text = [
+    item.workItemType,
+    item.work_item_type,
+    item.workItemId,
+    item.work_item_id,
+    item.queueItemId,
+    item.workspaceId,
+    item.cardId,
+    item.card?.id,
+    item.card?.title?.["zh-CN"],
+    item.card?.title?.["ru-RU"],
+    item.card?.title,
+    item.workspace?.title?.["zh-CN"],
+    item.workspace?.title?.["ru-RU"],
+    item.workspace?.summary?.["zh-CN"],
+    item.workspace?.summary?.["ru-RU"],
+    item.workspace?.next?.["zh-CN"],
+    item.workspace?.next?.["ru-RU"],
+    item.title?.["zh-CN"],
+    item.title?.["ru-RU"],
+    item.title,
+    item.summary?.["zh-CN"],
+    item.summary?.["ru-RU"],
+    item.summary,
+    item.next?.["zh-CN"],
+    item.next?.["ru-RU"],
+    item.next,
+    item.domainGroup,
+    item.reason
+  ].join(" ");
+  return /(ledgerCorrection|deposit|finance|payment|receipt|balance|settlement|押金|财务|账本|收款|余额|结算)/i.test(text);
 }
 
 export function selectSearchSurfaceResults(state, query) {

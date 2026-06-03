@@ -1,12 +1,6 @@
-import { loadDraft } from "./operationDrafts.js";
-
 export function buildOperationActionState(workItem = {}, card = {}, runtimeResult = null, state = {}) {
-  const workspaceId = workItem.workspaceId || workItem.workspace?.id || state.selectedWorkspace || "";
-  const cardId = card.id || workItem.cardId || state.selectedCardId || "";
-  const draft = workspaceId && cardId ? loadDraft(workspaceId, cardId) : { evidenceDrafts: [] };
-  const requiredEvidenceCount = (card.evidence || workItem.requiredEvidence || []).length;
-  const attachedEvidenceCount = (draft.evidenceDrafts || []).length;
-  const result = runtimeResult || state.lastActionResult || null;
+  const candidateResult = runtimeResult || state.lastActionResult || null;
+  const result = resultAppliesToCurrentCard(candidateResult, workItem, card) ? candidateResult : null;
   const resultStatus = result?.status || "";
 
   if (state.operationSubmitting || resultStatus === "submitting") return OperationActionStateVM("submitting", { disabled: true });
@@ -19,8 +13,15 @@ export function buildOperationActionState(workItem = {}, card = {}, runtimeResul
   if (card.status === "done") return OperationActionStateVM("done", { disabled: true });
   if (card.status === "notStarted") return OperationActionStateVM("notStarted", { disabled: true });
   if (card.status === "blocked" || workItem.lifecycleState === "blocked") return OperationActionStateVM("blocked");
-  if (requiredEvidenceCount > attachedEvidenceCount) return OperationActionStateVM("missingEvidence");
   return OperationActionStateVM("ready");
+}
+
+function resultAppliesToCurrentCard(result, workItem = {}, card = {}) {
+  if (!result) return false;
+  if (result.cardId && card?.id && result.cardId !== card.id) return false;
+  const currentWorkspaceId = workItem.workspaceId || workItem.workspace?.id || "";
+  if (result.workspaceId && currentWorkspaceId && result.workspaceId !== currentWorkspaceId) return false;
+  return true;
 }
 
 export function OperationActionStateVM(status, extra = {}) {

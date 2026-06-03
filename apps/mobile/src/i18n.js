@@ -20,10 +20,14 @@ export const i18n = Object.fromEntries(
   languages.map((language) => [
     language,
     {
-      ...(shellCopy[language] || shellCopy["ru-RU"]),
-      ...(domainCopy[language] || domainCopy["ru-RU"]),
-      ...(coachCopy[language] || coachCopy["ru-RU"]),
-      ...(operationCopy[language] || operationCopy["ru-RU"])
+      ...shellCopy["ru-RU"],
+      ...domainCopy["ru-RU"],
+      ...coachCopy["ru-RU"],
+      ...operationCopy["ru-RU"],
+      ...(shellCopy[language] || {}),
+      ...(domainCopy[language] || {}),
+      ...(coachCopy[language] || {}),
+      ...(operationCopy[language] || {})
     }
   ])
 );

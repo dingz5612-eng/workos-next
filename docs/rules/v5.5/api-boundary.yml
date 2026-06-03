@@ -140,6 +140,34 @@ categories:
       notes: Evidence review decision only.
   evidenceRead:
   governanceWrite:
+    - route: "POST /api/workspaces/resource-setup/start"
+      class: governanceWrite
+      owner: operations-runtime
+      writesBusinessFact: false
+      writesGovernanceFact: true
+      requiresOperationsConfirm: false
+      authPolicy: WorkOSWrite
+      appendOnly: true
+      requiredInvariant:
+        - api.no_page_specific_business_write
+        - operations.case_write_not_business_fact
+      evidenceType: workspace_start
+      severity: P1
+      notes: Starts a Dormitory resource setup workspace instance for internal pilot demonstration; card confirmations still go through Operations Confirm.
+    - route: "POST /api/workspaces/start"
+      class: governanceWrite
+      owner: operations-runtime
+      writesBusinessFact: false
+      writesGovernanceFact: true
+      requiresOperationsConfirm: false
+      authPolicy: WorkOSWrite
+      appendOnly: true
+      requiredInvariant:
+        - api.no_page_specific_business_write
+        - operations.case_write_not_business_fact
+      evidenceType: workspace_start
+      severity: P1
+      notes: Starts an allowed Dormitory template workspace instance; business facts are still produced only by later confirmed cards.
   reconciliationGovernanceWrite:
     - route: "POST /api/reconciliation/bank-statement-imports/preview"
       class: reconciliationGovernanceWrite

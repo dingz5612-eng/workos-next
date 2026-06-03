@@ -158,8 +158,8 @@ export async function materializeEvidenceObjects({ workspace, card, actor, submi
       evidenceId: draft.evidenceId?.startsWith("evd-") ? draft.evidenceId : null
     }, actorToken);
     const attached = await attachEvidence(evidence.evidenceId, {
-      fileName: `${draft.requirementId}.runtime-evidence`,
-      contentType: "application/octet-stream",
+      fileName: `${draft.requirementId}.runtime-evidence.txt`,
+      contentType: "text/plain",
       contentSha256: draft.contentSha256 || stableHash(`${workspace.id}:${card.id}:${draft.requirementId}:${submissionProtocol.submissionId}`),
       sizeBytes: draft.sizeBytes || 1
     }, actorToken);

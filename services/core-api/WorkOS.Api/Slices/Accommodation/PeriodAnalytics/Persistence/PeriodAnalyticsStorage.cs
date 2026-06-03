@@ -406,7 +406,11 @@ internal sealed class PeriodAnalyticsStorage
     }
 
     private static string NormalizeCommittedStatus(string status) =>
-        status.Equals("completed", StringComparison.OrdinalIgnoreCase) ? "committed" : status;
+        status.Equals("in_progress", StringComparison.OrdinalIgnoreCase)
+            ? "in_progress"
+            : status.Equals("cancelled", StringComparison.OrdinalIgnoreCase)
+                ? "cancelled"
+                : "committed";
 
     private static void MarkActionPlanWorkItemCompleted(WorkspaceEvent workspaceEvent, RuntimeDbSession db)
     {

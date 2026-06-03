@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-06-02T14:37:51.536Z",
+  "generated_at_utc": "2026-06-03T01:35:00.743Z",
   "generated_by": "scripts/surface/check-no-raw-surface-labels.mjs",
   "status": "passed",
   "check": "no-raw-surface-labels",

@@ -239,10 +239,11 @@
 
 .sticky-action {
   position: sticky;
-  bottom: calc(var(--bottom-nav-height) + var(--safe-bottom) + 16px);
+  bottom: calc(var(--bottom-nav-height) + var(--safe-bottom) + 28px);
   margin-top: 12px;
   min-height: var(--sticky-action-height);
-  z-index: 4;
+  z-index: 12;
+  pointer-events: none;
 }
 
 .sticky-action button {
@@ -250,6 +251,7 @@
   min-height: 52px;
   background: linear-gradient(135deg, #087568, #0ea37f);
   box-shadow: 0 16px 28px rgba(8, 117, 104, .28);
+  pointer-events: auto;
 }
 
 .feedback-fab {
@@ -286,6 +288,7 @@
   background: rgba(255, 255, 255, .96);
   box-shadow: 0 14px 34px rgba(17, 39, 55, .16);
   transform: translateX(-50%);
+  z-index: 10;
 }
 
 .bottom-nav button {

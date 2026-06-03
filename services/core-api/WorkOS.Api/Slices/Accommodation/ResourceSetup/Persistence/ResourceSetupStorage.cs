@@ -41,7 +41,7 @@ internal sealed class ResourceSetupStorage
                 return true;
         }
 
-        if (!workspaceEvent.WorkspaceId.Equals("W-STAY-RESOURCE", StringComparison.Ordinal))
+        if (!IsResourceSetupWorkspace(workspaceEvent.WorkspaceId))
         {
             return false;
         }
@@ -87,15 +87,19 @@ internal sealed class ResourceSetupStorage
         }
     }
 
+    private static bool IsResourceSetupWorkspace(string workspaceId) =>
+        workspaceId.Equals("W-STAY-RESOURCE", StringComparison.Ordinal) ||
+        workspaceId.StartsWith("W-STAY-RESOURCE-", StringComparison.Ordinal);
+
     private void UpsertRoom(WorkspaceEvent workspaceEvent, RuntimeDbSession db, string status)
     {
         using var command = db.CreateCommand("""
             insert into accommodation_rooms(room_id, workspace_id, room_no, room_type, capacity, status, created_event_id, updated_at_utc)
             values (@roomId, @workspaceId, @roomNo, @roomType, @capacity, @status, @createdEventId, @updatedAtUtc)
             on conflict(room_id) do update set
-                room_no = excluded.room_no,
-                room_type = excluded.room_type,
-                capacity = excluded.capacity,
+                room_no = coalesce(nullif(excluded.room_no, ''), accommodation_rooms.room_no),
+                room_type = coalesce(nullif(excluded.room_type, ''), accommodation_rooms.room_type),
+                capacity = case when excluded.capacity > 0 then excluded.capacity else accommodation_rooms.capacity end,
                 status = excluded.status,
                 updated_at_utc = excluded.updated_at_utc
             """);
@@ -148,7 +152,7 @@ internal sealed class ResourceSetupStorage
                 status = excluded.status,
                 updated_at_utc = excluded.updated_at_utc
             """);
-        command.Parameters.AddWithValue("ratePlanId", Value(workspaceEvent, "ratePlanId", $"rate-{RoomNo(workspaceEvent)}".ToLowerInvariant()));
+        command.Parameters.AddWithValue("ratePlanId", Value(workspaceEvent, "ratePlanId", $"rate-{RoomId(workspaceEvent)}".ToLowerInvariant()));
         command.Parameters.AddWithValue("workspaceId", workspaceEvent.WorkspaceId);
         command.Parameters.AddWithValue("roomId", RoomId(workspaceEvent));
         command.Parameters.AddWithValue("dailyRate", NpgsqlDbType.Numeric, DecimalValue(workspaceEvent, "dailyRatePerBed", 350m));
@@ -167,6 +171,20 @@ internal sealed class ResourceSetupStorage
         if (TargetsBed(workspaceEvent))
         {
             UpdateBedStatus(workspaceEvent, db, status);
+            return;
+        }
+
+        using var update = db.CreateCommand("""
+            update accommodation_rooms
+            set status = @status,
+                updated_at_utc = @updatedAtUtc
+            where room_id = @roomId
+            """);
+        update.Parameters.AddWithValue("roomId", RoomId(workspaceEvent));
+        update.Parameters.AddWithValue("status", status);
+        update.Parameters.AddWithValue("updatedAtUtc", workspaceEvent.OccurredAtUtc);
+        if (update.ExecuteNonQuery() > 0)
+        {
             return;
         }
 

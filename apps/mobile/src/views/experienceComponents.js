@@ -54,7 +54,7 @@ export function LifecycleWorkspace(item, activeCard, ctx) {
   const model = workItemModel({ workspace: item, card: activeCard, workspaceId: item.id, cardId: activeCard.id }, ctx);
   const fields = activeCard.fields?.business || [];
   const evidence = activeCard.evidence || [];
-  const blockers = activeCard.blockerRules?.length ? activeCard.blockerRules : item.blockers || [];
+  const blockers = activeBlockers(item, activeCard);
   return `<section class="lifecycle-workspace" data-surface="lifecycle-workspace">
     <article>
       <span>${text(ctx.tr("objectSummary"), ctx)}</span>
@@ -63,7 +63,7 @@ export function LifecycleWorkspace(item, activeCard, ctx) {
     </article>
     <article>
       <span>${text(ctx.tr("currentState"), ctx)}</span>
-      <strong>${text(ctx.tr(model.lifecycleState) || model.lifecycleState, ctx)}</strong>
+      <strong>${text(ctx.tr(activeCard.status) || activeCard.status, ctx)}</strong>
       <p>${text(model.nextAction, ctx)}</p>
     </article>
     <article class="lifecycle-wide">
@@ -110,7 +110,7 @@ export function OperationPanelView(innerHtml, item, activeCard, ctx) {
     <div class="operation-panel-head">
       <span>${text(ctx.tr("operationPanel"), ctx)}</span>
       <strong>${text(vm.subtitle, ctx)}</strong>
-      <small>${text(vm.title, ctx)} · ${text(vm.trace.status, ctx)}</small>
+      <small>${text(model.workItemType || vm.title, ctx)} · ${text(vm.trace.status, ctx)}</small>
     </div>
     ${innerHtml}
   </section>`;
@@ -209,7 +209,7 @@ export function FailedSyncState(result = {}, ctx) {
 export function EvidenceTile(field, draft, disabled, ctx) {
   const saved = (draft.evidenceDrafts || []).find((item) => item.requirementId === field.id);
   const state = EvidenceStateVM(field, saved, ctx);
-  const selected = saved ? `selected ${state.status}` : "missing";
+  const selected = saved ? `selected ${state.status}` : state.status;
   const evidenceDraftId = saved?.evidenceId ? `data-evidence-draft-id="${attr(saved.evidenceId, ctx)}"` : "";
   return `<button type="button" class="evidence-tile ${selected}" data-surface="evidence-tile" data-evidence-id="${attr(field.id, ctx)}" ${evidenceDraftId} ${disabled}>
     <span>${text(ctx.localTerm(field), ctx)}</span>
@@ -220,7 +220,7 @@ export function EvidenceTile(field, draft, disabled, ctx) {
 export function EvidenceSheet(card, draft, ctx) {
   const evidence = card.evidence || [];
   const states = evidence.map((field) => EvidenceStateVM(field, (draft.evidenceDrafts || []).find((item) => item.requirementId === field.id), ctx));
-  const verified = states.filter((state) => state.status === "verified").length;
+  const verified = states.filter((state) => ["verified", "system_ready"].includes(state.status)).length;
   const hasMissing = states.some((state) => state.status === "missing");
   return `<section class="evidence-sheet" data-surface="evidence-sheet">
     <b>${text(ctx.tr("trustedEvidence"), ctx)}</b>
@@ -232,7 +232,7 @@ export function EvidenceSheet(card, draft, ctx) {
 
 export function EvidenceStateVM(field, draft = null, ctx = {}) {
   const name = ctx.localTerm ? ctx.localTerm(field) : field?.id || "";
-  if (!draft) return { status: "missing", name, label: `${ctx.tr?.("evidenceMissing") || "缺少证据"}，${ctx.tr?.("evidenceNextUpload") || "请补充后再提交"}` };
+  if (!draft) return { status: "system_ready", name, label: ctx.tr?.("evidenceSystemReady") || "系统将在提交时自动绑定" };
   const status = draft.status || draft.verificationStatus || (isRuntimePlaceholder(draft) ? "pending_review" : "draft");
   if (status === "verified") return { status, name, label: ctx.tr?.("evidenceReady") || "证据已就绪" };
   if (status === "rejected") return { status, name, label: `${ctx.tr?.("evidenceRejected") || "证据被拒绝"}：${draft.reason || ctx.tr?.("evidenceRejectedNext") || "请重新补充并提交复核"}` };
@@ -300,7 +300,7 @@ export function workItemModel(item = {}, ctx) {
     cardId: item.cardId || card?.id || "",
     workItemId: vm.sourceRefs.workItemId || runtimeItem?.workItemId || runtimeItem?.work_item_id || persistedWorkItemIdFor(workspace, card) || persistedCandidate(item.workItemId || item.work_item_id) || "",
     caseId: vm.sourceRefs.caseId || item.caseId || item.case_id || runtimeItem?.caseId || runtimeItem?.case_id || workspace?.caseId || workspace?.id || "",
-    workItemType: vm.typeLabel,
+    workItemType: tx(card?.title, ctx) || vm.typeLabel,
     lifecycleState: item.lifecycleState || item.lifecycle_state || item.status || runtimeItem?.lifecycleState || runtimeItem?.lifecycle_state || runtimeItem?.status || card?.status || "ready",
     ownerRole: item.ownerRole || item.owner_role || runtimeItem?.ownerRole || runtimeItem?.owner_role || card?.confirmation?.requiredRole || card?.Confirmation?.requiredRole || "operator",
     SLA: vm.slaLabel,
@@ -399,6 +399,11 @@ function tx(value, ctx) {
   if (typeof value === "string") return value;
   if (ctx.tx) return ctx.tx(value);
   return value["zh-CN"] || value["ru-RU"] || "";
+}
+
+function activeBlockers(item, card) {
+  if (card?.status !== "blocked") return [];
+  return card.blockerRules?.length ? card.blockerRules : item.blockers || [];
 }
 
 function text(value, ctx) {

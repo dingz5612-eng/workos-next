@@ -88,7 +88,7 @@
       "cards": ["checkoutStart", "roomInspection", "feeSettlement", "checkoutFinance", "checkoutClose"],
       "events": ["CheckoutStartConfirmed", "RoomInspectionConfirmed", "FeeSettlementConfirmed", "CheckoutFinanceConfirmed", "CheckoutCloseConfirmed"],
       "ownsAggregates": ["Checkout", "RoomInspection", "Settlement", "FinanceConfirmation"],
-      "status": "contract-only"
+      "status": "runtime-skeleton"
     },
     {
       "id": "Finance.DepositException",

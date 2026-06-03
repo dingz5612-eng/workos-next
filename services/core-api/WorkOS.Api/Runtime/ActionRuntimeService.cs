@@ -1,3 +1,4 @@
+using System.Globalization;
 using WorkOS.Api.Slices.Policies;
 using WorkOS.Api.Slices.Accommodation.DepositLedger.Policies;
 using WorkOS.Api.Slices.Accommodation.PaymentLedger.Policies;
@@ -143,6 +144,7 @@ public sealed class ActionRuntimeService
         }
 
         request = request with { FieldValues = NormalizeFieldValues(card, request.FieldValues) };
+        request = EnrichSystemFieldValues(state, workspace.Id, card.Id, request);
 
         var aggregateFailure = ValidateLedgerAggregateRef(workspace.Id, card.Id, request);
         if (aggregateFailure is not null)
@@ -180,7 +182,7 @@ public sealed class ActionRuntimeService
             return checkoutPolicyFailure;
         }
 
-        var servicePolicyFailure = ServiceTaskPolicy.Validate(card.Id, request);
+        var servicePolicyFailure = ServiceTaskPolicy.Validate(workspace.Id, card.Id, request, store);
         if (servicePolicyFailure is not null)
         {
             return servicePolicyFailure;
@@ -311,6 +313,7 @@ public sealed class ActionRuntimeService
         }
 
         request = request with { FieldValues = NormalizeFieldValues(card, request.FieldValues) };
+        request = EnrichSystemFieldValues(state, workspace.Id, card.Id, request);
 
         var aggregateFailure = ValidateLedgerAggregateRef(workspace.Id, card.Id, request);
         if (aggregateFailure is not null)
@@ -348,7 +351,7 @@ public sealed class ActionRuntimeService
             return checkoutPolicyFailure;
         }
 
-        var servicePolicyFailure = ServiceTaskPolicy.Validate(card.Id, request);
+        var servicePolicyFailure = ServiceTaskPolicy.Validate(workspace.Id, card.Id, request, store);
         if (servicePolicyFailure is not null)
         {
             return servicePolicyFailure;
@@ -499,6 +502,99 @@ public sealed class ActionRuntimeService
         return normalized;
     }
 
+    private static ConfirmCardRequest EnrichSystemFieldValues(
+        RuntimeState state,
+        string workspaceId,
+        string cardId,
+        ConfirmCardRequest request)
+    {
+        if (!cardId.Equals("periodClose", StringComparison.OrdinalIgnoreCase))
+        {
+            return request;
+        }
+
+        var values = new Dictionary<string, string>(request.FieldValues ?? new Dictionary<string, string>(), StringComparer.OrdinalIgnoreCase);
+        var workspaceEvents = state.Events
+            .Where(item => item.WorkspaceId.Equals(workspaceId, StringComparison.OrdinalIgnoreCase))
+            .ToArray();
+
+        SetIfMissing(values, "scopeConfirmed", HasEvent(workspaceEvents, "Accommodation.PeriodScopeConfirmed"));
+        SetIfMissing(values, "metricsReviewed", HasEvent(workspaceEvents, "Accommodation.PeriodMetricsReviewed"));
+        SetIfMissing(values, "financeReviewed", HasEvent(workspaceEvents, "Accommodation.PeriodFinanceReviewed"));
+        SetIfMissing(values, "operationsDiagnosed", HasEvent(workspaceEvents, "Accommodation.PeriodOperationsDiagnosed"));
+
+        var actionPlanCount = workspaceEvents.Count(item =>
+            item.EventType.Equals("Accommodation.PeriodActionPlanCommitted", StringComparison.OrdinalIgnoreCase));
+        if (!values.ContainsKey("actionPlanCount"))
+        {
+            values["actionPlanCount"] = actionPlanCount.ToString(CultureInfo.InvariantCulture);
+        }
+        SetIfMissing(values, "actionPlanCommitted", actionPlanCount > 0);
+
+        var blockingIssueCount = MaxDecimalPayload(workspaceEvents, "blockingIssueCount");
+        if (!values.ContainsKey("blockingIssueCount"))
+        {
+            values["blockingIssueCount"] = blockingIssueCount.ToString(CultureInfo.InvariantCulture);
+        }
+
+        var blockingInvariantViolationCount = MaxDecimalPayload(workspaceEvents, "blockingInvariantViolationCount");
+        if (!values.ContainsKey("blockingInvariantViolationCount"))
+        {
+            values["blockingInvariantViolationCount"] = blockingInvariantViolationCount.ToString(CultureInfo.InvariantCulture);
+        }
+        SetIfMissing(values, "noBlockingInvariantViolation", blockingInvariantViolationCount <= 0m);
+
+        var hasManagementConclusion = values.TryGetValue("managementConclusion", out var conclusion) &&
+            !string.IsNullOrWhiteSpace(conclusion);
+        var hasCloseResult = values.TryGetValue("closeResult", out var closeResult) &&
+            !string.IsNullOrWhiteSpace(closeResult);
+        SetIfMissing(values, "businessSignoffCompleted", hasManagementConclusion || hasCloseResult);
+
+        if (!values.ContainsKey("periodId"))
+        {
+            var periodId = LatestPayloadValue(workspaceEvents, "periodId");
+            if (!string.IsNullOrWhiteSpace(periodId))
+            {
+                values["periodId"] = periodId;
+            }
+        }
+
+        return request with { FieldValues = values };
+    }
+
+    private static bool HasEvent(IReadOnlyList<WorkspaceEvent> events, string eventType) =>
+        events.Any(item => item.EventType.Equals(eventType, StringComparison.OrdinalIgnoreCase));
+
+    private static void SetIfMissing(IDictionary<string, string> values, string key, bool value)
+    {
+        if (!values.ContainsKey(key))
+        {
+            values[key] = value ? "true" : "false";
+        }
+    }
+
+    private static decimal MaxDecimalPayload(IReadOnlyList<WorkspaceEvent> events, string key)
+    {
+        var max = 0m;
+        foreach (var workspaceEvent in events)
+        {
+            if (workspaceEvent.Payload.TryGetValue(key, out var raw) &&
+                decimal.TryParse(raw, NumberStyles.Number, CultureInfo.InvariantCulture, out var parsed) &&
+                parsed > max)
+            {
+                max = parsed;
+            }
+        }
+
+        return max;
+    }
+
+    private static string LatestPayloadValue(IReadOnlyList<WorkspaceEvent> events, string key) =>
+        events
+            .OrderByDescending(item => item.OccurredAtUtc)
+            .Select(item => item.Payload.TryGetValue(key, out var value) ? value : string.Empty)
+            .FirstOrDefault(value => !string.IsNullOrWhiteSpace(value)) ?? string.Empty;
+
     private static ConfirmResult? ValidateCanonicalFieldKeys(IReadOnlyDictionary<string, string>? rawValues)
     {
         if (rawValues is null)
@@ -508,7 +604,7 @@ public sealed class ActionRuntimeService
 
         foreach (var key in rawValues.Keys)
         {
-            if (!RuntimeFieldAliases.CanonicalKey(key).Equals(key, StringComparison.Ordinal) ||
+            if (RuntimeFieldAliases.CanonicalKey(key).Equals(key, StringComparison.Ordinal) &&
                 key.Any(IsCjkCharacter))
             {
                 return new ConfirmResult(ConfirmStatus.Invalid, "canonical_field_id_required", null);
@@ -563,6 +659,11 @@ public sealed class ActionRuntimeService
     private static ConfirmResult? ValidateLedgerAggregateRef(string workspaceId, string cardId, ConfirmCardRequest request)
     {
         if (!workspaceId.Contains("LEDGER", StringComparison.OrdinalIgnoreCase))
+        {
+            return null;
+        }
+
+        if (cardId.Equals("depositAssessment", StringComparison.OrdinalIgnoreCase))
         {
             return null;
         }

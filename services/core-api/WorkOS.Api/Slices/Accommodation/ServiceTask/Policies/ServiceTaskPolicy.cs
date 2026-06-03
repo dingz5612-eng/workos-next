@@ -4,10 +4,10 @@ namespace WorkOS.Api.Slices.Accommodation.ServiceTask.Policies;
 
 internal static class ServiceTaskPolicy
 {
-    public static ConfirmResult? Validate(string cardId, ConfirmCardRequest request)
+    public static ConfirmResult? Validate(string workspaceId, string cardId, ConfirmCardRequest request, IProjectionStore store)
     {
         if (cardId.Equals("roomReleaseAfterService", StringComparison.OrdinalIgnoreCase) &&
-            !IsTrue(request, "serviceTaskVerified"))
+            !IsVerifiedForRelease(workspaceId, request, store))
         {
             return new ConfirmResult(ConfirmStatus.Forbidden, "service_task_verification_required_before_release", null);
         }
@@ -15,13 +15,25 @@ internal static class ServiceTaskPolicy
         return null;
     }
 
-    private static bool IsTrue(ConfirmCardRequest request, string key)
+    private static bool IsVerifiedForRelease(string workspaceId, ConfirmCardRequest request, IProjectionStore store)
     {
-        if (request.FieldValues is null)
+        var values = request.FieldValues ?? new Dictionary<string, string>();
+        if (RuntimeFieldAliases.BoolValue(values, "serviceTaskVerified", false))
         {
-            return false;
+            return true;
         }
 
-        return RuntimeFieldAliases.BoolValue(request.FieldValues, key, false);
+        var taskId = RuntimeFieldAliases.Value(values, "taskId", string.Empty);
+        var verifiedEvents = store.GetAuditEvents(workspaceId)
+            .Where(item => item.EventType.Equals("Accommodation.ServiceTaskVerified", StringComparison.OrdinalIgnoreCase));
+
+        if (!string.IsNullOrWhiteSpace(taskId))
+        {
+            verifiedEvents = verifiedEvents.Where(item =>
+                RuntimeFieldAliases.Value(item.Payload, "taskId", string.Empty).Equals(taskId, StringComparison.OrdinalIgnoreCase));
+        }
+
+        return verifiedEvents.Any(item =>
+            RuntimeFieldAliases.Value(item.Payload, "verificationResult", string.Empty).Equals("approved", StringComparison.OrdinalIgnoreCase));
     }
 }

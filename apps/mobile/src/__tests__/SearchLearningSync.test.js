@@ -4,19 +4,25 @@ import { searchView } from "../views/searchView.js";
 import { meView } from "../views/meView.js";
 
 describe("HOTFIX-SURFACE-UX-01 Search and Learning sync", () => {
-  it("renders WorkOS Search sections for WorkItem, room, bed, stay, evidence, trace, and learning", () => {
+  it("renders only matching WorkOS Search sections instead of dumping every dormitory category", () => {
     const html = searchView(ctx({ view: "search", query: "住宿" }));
 
     expect(html).toContain("WorkOS 搜索");
-    for (const label of ["WorkItem", "OperationCase", "房间", "床位", "入住", "证据", "提交轨迹", "学习内容"]) {
+    for (const label of ["OperationCase", "提交轨迹"]) {
       expect(html).toContain(label);
     }
-    for (const learning of ["证据怎么补", "为什么被拒绝", "设备未验证怎么办", "权限不足怎么办", "押金/收款注意事项", "当前角色可办理什么"]) {
-      expect(html).toContain(learning);
-    }
+    expect(html).not.toContain('data-search-section="searchLearning"');
+    expect(html).not.toContain("没有匹配结果");
     expect(html).not.toContain("PC Governance");
     expect(html).not.toContain("Release Control");
     expect(html).not.toContain("Finance admin");
+  });
+
+  it("shows learning content when the search intent is learning or evidence help", () => {
+    const html = searchView(ctx({ view: "search", query: "证据" }));
+
+    expect(html).toContain("学习内容");
+    expect(html).toContain("证据怎么补");
   });
 
   it("keeps Learning Center in Me instead of adding a fifth bottom tab", () => {

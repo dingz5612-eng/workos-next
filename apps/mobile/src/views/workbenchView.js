@@ -1,9 +1,11 @@
 import { queueFiltersFromState } from "../queueFilterState.js";
 import { countBadge, countDomain, countEvidenceState, countTransferable, queueTasks } from "../selectors/queueSelectors.js";
+import { selectCompletedWorkbenchQueue } from "../selectors/surfaceSelectors.js";
 import { WorkItemCard } from "./experienceComponents.js";
 
 export function workbenchView(ctx) {
   const list = queueTasks(ctx.state);
+  const completed = selectCompletedWorkbenchQueue(ctx.state);
   const filters = queueFiltersFromState(ctx.state);
   return ctx.shell(`
     <section class="queue-head">
@@ -11,7 +13,7 @@ export function workbenchView(ctx) {
       <h1>${ctx.tr("workbench")}</h1>
       <strong>${list.length}</strong>
     </section>
-    <section class="compact-section mobile-work-ia" data-mobile-work-ia>
+    ${list.length ? `<section class="compact-section mobile-work-ia" data-mobile-work-ia>
       <h2>${ctx.tr("work")}</h2>
       <div class="ia-chip-grid">
         ${workChip("accommodation", "stay", countDomain(ctx.state, "stay"), ctx)}
@@ -27,53 +29,38 @@ export function workbenchView(ctx) {
       <strong>${filterSummary(filters, ctx)}</strong>
       <button id="clearQueueFilters">${ctx.tr("clearFilters")}</button>
     </section>
-    <section class="queue-filter">
-      <div class="filter-row">${domainFilters(ctx)}</div>
-      <div class="filter-row ${ctx.state.filterOpen ? "expanded" : "collapsed"}">${badgeFilters(ctx)}</div>
-      <button class="link-button" id="toggleFilters">${ctx.tr(ctx.state.filterOpen ? "filterLess" : "filterMore")}</button>
-    </section>
     <section class="queue-toolbar">
-      <label>${ctx.tr("sort")}<select id="sort"><option value="smartSort">${ctx.tr("smartSort")}</option><option value="dueSort">${ctx.tr("dueSort")}</option></select></label>
-      <button id="advanced">${ctx.tr("filter")}</button>
-    </section>
+      <label>${ctx.tr("sort")}<select id="sort">${sortOption("smartSort", ctx)}${sortOption("dueSort", ctx)}</select></label>
+    </section>` : ""}
     ${ctx.state.apiStatus === "offline" && !list.length ? `<section class="help-card"><p>${ctx.tr("apiOfflineHelp")}</p></section>` : ""}
     <section class="task-stack">${list.length ? list.map((item) => WorkItemCard(item, ctx)).join("") : `<article class="help-card"><p>${ctx.tr("mobileEmptyWork")}</p><button data-view="search">${ctx.tr("search")}</button></article>`}</section>
-    ${ctx.state.advancedOpen ? advancedSheet(ctx) : ""}
+    ${completed.length ? `<section class="completed-work-section">
+      <h2>${ctx.tr("completedWorkItems")}</h2>
+      <div class="completed-work-list">${completed.slice(0, 4).map((item) => completedWorkCard(item, ctx)).join("")}</div>
+    </section>` : ""}
   `);
 }
 
-function domainFilters(ctx) {
-  return ["all", "stay", "repair", "finance"].map((key) => filterPill("domain", key, countDomain(ctx.state, key), ctx)).join("");
-}
-
-function badgeFilters(ctx) {
-  return ["mine", "confirm", "blocked", "soon", "waiting"].map((key) => filterPill("badge", key, countBadge(ctx.state, key), ctx)).join("");
-}
-
-function filterPill(field, key, count, ctx) {
-  const filters = queueFiltersFromState(ctx.state);
-  const active = filters[field] === key;
-  return `<button class="pill ${active ? "active" : ""}" data-filter-field="${field}" data-filter-value="${key}">${ctx.tr(key)}<b>${count}</b></button>`;
-}
-
-function advancedSheet(ctx) {
-  return `<section class="sheet">
-    <div class="sheet-head"><h2>${ctx.tr("advancedFilter")}</h2><button id="closeAdvanced" aria-label="${ctx.tr("filterLess")}">×</button></div>
-    <div class="sheet-grid">
-      <button data-filter-field="ownerRole" data-filter-value="mine">${ctx.tr("role")}</button>
-      <button data-filter-field="domain" data-filter-value="stay">${ctx.tr("stay")}</button>
-      <button data-filter-field="domain" data-filter-value="repair">${ctx.tr("repair")}</button>
-      <button data-filter-field="status" data-filter-value="blocked">${ctx.tr("blocked")}</button>
-      <button data-filter-field="badge" data-filter-value="confirm">${ctx.tr("confirm")}</button>
-      <button data-filter-field="badge" data-filter-value="soon">${ctx.tr("soon")}</button>
-      <button data-filter-field="evidenceState" data-filter-value="missing">${ctx.tr("workNeedEvidence")}</button>
-      <button data-filter-field="transferable" data-filter-value="true">${ctx.tr("workTransferable")}</button>
-    </div>
-  </section>`;
+function sortOption(value, ctx) {
+  const selected = (ctx.state.sort || "smartSort") === value ? " selected" : "";
+  return `<option value="${value}"${selected}>${ctx.tr(value)}</option>`;
 }
 
 function workChip(id, labelKey, count, ctx) {
   return `<button class="ia-chip" data-work-filter="${ctx.escapeAttr(id)}" data-mobile-ia="filter"><span>${ctx.tr(labelKey)}</span><strong>${count}</strong></button>`;
+}
+
+function completedWorkCard(item, ctx) {
+  const title = item.businessObject || item.workspace?.title || item.card?.title || item.workItemType || ctx.tr("completedWorkItems");
+  const subtitle = item.workItemType || item.card?.id || "";
+  const status = item.lifecycleState || item.status || item.card?.status || "done";
+  return `<article class="completed-work-card">
+    <div>
+      <strong>${ctx.escapeHtml(ctx.tx ? ctx.tx(title) : title)}</strong>
+      <span>${ctx.escapeHtml(subtitle)} · ${ctx.tr(status) || ctx.escapeHtml(status)}</span>
+    </div>
+    <button data-workspace="${ctx.escapeAttr(item.workspaceId)}" data-card-id="${ctx.escapeAttr(item.cardId)}">${ctx.tr("viewOnly")}</button>
+  </article>`;
 }
 
 function countStatus(state, status) {

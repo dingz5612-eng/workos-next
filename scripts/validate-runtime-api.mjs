@@ -433,9 +433,9 @@ async function validateConfirmPolicyResponse() {
   const localizedKey = await fetch(`${baseUrl}/api/workspaces/W-STAY-RESOURCE/cards/roomSetup/confirm`, {
     method: "POST",
     headers: { "Content-Type": "application/json", "X-WorkOS-Actor-Token": login.token, "X-Request-Id": `api-localized-key-${Date.now()}` },
-    body: JSON.stringify(confirmBody(`api-localized-key-${Date.now()}`, { "房间号": "A999" }))
+    body: JSON.stringify(confirmBody(`api-localized-key-${Date.now()}`, { "未知字段": "A999" }))
   });
-  assert(localizedKey.status === 400, `localized label payload key must return 400, got ${localizedKey.status}`);
+  assert(localizedKey.status === 400, `unknown localized label payload key must return 400, got ${localizedKey.status}`);
 
   const financeLogin = await postJson("/api/auth/login", { username: "finance", password: "dev" });
   const forbidden = await fetch(`${baseUrl}/api/workspaces/W-STAY-RESOURCE/cards/roomSetup/confirm`, {

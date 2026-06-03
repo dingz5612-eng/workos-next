@@ -37,23 +37,27 @@ async function hydrateProjectionFromApi() {
   try {
     await checkHealth();
     state.apiStatus = "online";
-    if (!shouldHydrateProtectedSurfaces(state)) {
-      return;
-    }
-    const [projection, operationWorkItems, homeSurface, learningCatalog, accommodationLenses] = await Promise.all([
-      fetchWorkspaceProjection(),
-      optionalSurface(fetchOperationWorkItems),
-      optionalSurface(fetchHomeSurface),
-      optionalSurface(fetchLearningCatalog),
-      optionalSurface(refreshDefaultAccommodationLenses)
-    ]);
-    applyRuntimeProjection(state, projection);
-    applyRuntimeSurfacePayloads(state, { operationWorkItems, homeSurface, learningCatalog, accommodationLenses });
-    if (isPcSurfaceView(state.view)) await hydratePcSurfaceData();
   } catch {
     state.apiStatus = "offline";
     applyRuntimeOfflineFallback(state);
     state.operationMessage = ctx.tr("apiOffline");
+    return;
+  }
+  if (!shouldHydrateProtectedSurfaces(state)) {
+    return;
+  }
+  const [projection, operationWorkItems, homeSurface, learningCatalog, accommodationLenses] = await Promise.all([
+    optionalSurface(fetchWorkspaceProjection),
+    optionalSurface(fetchOperationWorkItems),
+    optionalSurface(fetchHomeSurface),
+    optionalSurface(fetchLearningCatalog),
+    optionalSurface(refreshDefaultAccommodationLenses)
+  ]);
+  if (projection) applyRuntimeProjection(state, projection);
+  applyRuntimeSurfacePayloads(state, { operationWorkItems, homeSurface, learningCatalog, accommodationLenses });
+  if (isPcSurfaceView(state.view)) await hydratePcSurfaceData();
+  if (state.operationMessage === ctx.tr("apiOffline")) {
+    state.operationMessage = "";
   }
 }
 

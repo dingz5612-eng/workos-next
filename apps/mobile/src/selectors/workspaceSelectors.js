@@ -8,11 +8,15 @@ export function tr(state, key) {
 
 export function tx(state, value) {
   if (value == null) return "";
-  return typeof value === "string" ? value : value[state.lang] || value["zh-CN"];
+  if (typeof value === "string") return translateTerm(value, state.lang);
+  return translateTerm(value[state.lang] || value["zh-CN"] || value["ru-RU"] || "", state.lang);
 }
 
 export function txFor(value, lang) {
-  return typeof value === "string" ? value : value[lang] || value["zh-CN"];
+  if (value == null) return "";
+  return typeof value === "string"
+    ? translateTerm(value, lang)
+    : translateTerm(value[lang] || value["zh-CN"] || value["ru-RU"] || "", lang);
 }
 
 export function localTerm(state, value, lang = state.lang) {

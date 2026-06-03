@@ -204,18 +204,18 @@
       "workspaceId": "W-STAY-CHECKOUT",
       "domainGroup": "Accommodation",
       "defaultLens": "checkout-queue",
-      "hiddenReason": "contract-only slice is visible for learning and prepare but blocked from confirm",
-      "home": { "visible": true, "priority": 40, "section": "contract-preview" },
-      "workbench": { "visible": true, "queueRule": "prepare_only" },
-      "search": { "visible": true, "keywords": ["checkout", "退房"], "intentTags": ["contract_preview"] },
-      "learning": { "visible": true, "section": "Contract Preview / Checkout" },
+      "hiddenReason": "runtime skeleton is enabled only for dormitory internal pilot observation",
+      "home": { "visible": true, "priority": 40, "section": "dormitory-internal-pilot" },
+      "workbench": { "visible": true, "queueRule": "active_runtime" },
+      "search": { "visible": true, "keywords": ["checkout", "退房"], "intentTags": ["dormitory_internal_pilot"] },
+      "learning": { "visible": true, "section": "Dormitory Internal Pilot / Checkout" },
       "lenses": ["checkout-queue"],
       "cards": [
-        { "cardId": "checkoutStart", "home": true, "workbench": true, "searchKeywords": ["checkout start"], "intentTags": ["contract_preview"], "learningSection": "Contract Preview / Checkout", "defaultLens": "checkout-queue", "hiddenReason": "" },
-        { "cardId": "roomInspection", "home": true, "workbench": true, "searchKeywords": ["inspection"], "intentTags": ["contract_preview"], "learningSection": "Contract Preview / Checkout", "defaultLens": "checkout-queue", "hiddenReason": "" },
-        { "cardId": "feeSettlement", "home": true, "workbench": true, "searchKeywords": ["fee settlement"], "intentTags": ["contract_preview"], "learningSection": "Contract Preview / Checkout", "defaultLens": "checkout-queue", "hiddenReason": "" },
-        { "cardId": "checkoutFinance", "home": true, "workbench": true, "searchKeywords": ["checkout finance"], "intentTags": ["contract_preview"], "learningSection": "Contract Preview / Checkout", "defaultLens": "checkout-queue", "hiddenReason": "" },
-        { "cardId": "checkoutClose", "home": true, "workbench": true, "searchKeywords": ["checkout close"], "intentTags": ["contract_preview"], "learningSection": "Contract Preview / Checkout", "defaultLens": "checkout-queue", "hiddenReason": "" }
+        { "cardId": "checkoutStart", "home": true, "workbench": true, "searchKeywords": ["checkout start"], "intentTags": ["dormitory_internal_pilot"], "learningSection": "Dormitory Internal Pilot / Checkout", "defaultLens": "checkout-queue", "hiddenReason": "" },
+        { "cardId": "roomInspection", "home": true, "workbench": true, "searchKeywords": ["inspection"], "intentTags": ["dormitory_internal_pilot"], "learningSection": "Dormitory Internal Pilot / Checkout", "defaultLens": "checkout-queue", "hiddenReason": "" },
+        { "cardId": "feeSettlement", "home": true, "workbench": true, "searchKeywords": ["fee settlement"], "intentTags": ["dormitory_internal_pilot"], "learningSection": "Dormitory Internal Pilot / Checkout", "defaultLens": "checkout-queue", "hiddenReason": "" },
+        { "cardId": "checkoutFinance", "home": true, "workbench": true, "searchKeywords": ["checkout finance"], "intentTags": ["dormitory_internal_pilot"], "learningSection": "Dormitory Internal Pilot / Checkout", "defaultLens": "checkout-queue", "hiddenReason": "" },
+        { "cardId": "checkoutClose", "home": true, "workbench": true, "searchKeywords": ["checkout close"], "intentTags": ["dormitory_internal_pilot"], "learningSection": "Dormitory Internal Pilot / Checkout", "defaultLens": "checkout-queue", "hiddenReason": "" }
       ]
     },
     {

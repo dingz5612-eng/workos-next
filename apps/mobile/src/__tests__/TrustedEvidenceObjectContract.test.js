@@ -11,8 +11,8 @@ describe("Stage B trusted evidence object contract", () => {
     const text = visibleText(html);
 
     expect(text).toContain("可信证据");
-    expect(text).toContain("缺少证据");
-    expect(text).toContain("证据待补齐或复核");
+    expect(text).toContain("系统将在提交时自动绑定");
+    expect(text).toContain("证据已就绪");
     expect(text).not.toContain("EvidenceSheet");
   });
 });

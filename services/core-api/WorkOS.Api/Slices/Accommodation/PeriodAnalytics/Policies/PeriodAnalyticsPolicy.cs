@@ -103,7 +103,10 @@ internal static class PeriodAnalyticsPolicy
 
         if (cardId.Equals("periodActionPlan", StringComparison.OrdinalIgnoreCase))
         {
-            if (Value(request, "actionStatus", string.Empty).Equals("completed", StringComparison.OrdinalIgnoreCase) ||
+            var actionStatus = Value(request, "actionStatus", string.Empty);
+            if (actionStatus.Equals("completed", StringComparison.OrdinalIgnoreCase) ||
+                actionStatus.Equals("done", StringComparison.OrdinalIgnoreCase) ||
+                actionStatus.Equals("verified", StringComparison.OrdinalIgnoreCase) ||
                 !string.IsNullOrWhiteSpace(Value(request, "completionResult", string.Empty)))
             {
                 return new ConfirmResult(ConfirmStatus.Forbidden, "period_action_plan_commit_cannot_complete", null);
@@ -126,7 +129,8 @@ internal static class PeriodAnalyticsPolicy
         }
 
         if (cardId.Equals("periodActionPlanComplete", StringComparison.OrdinalIgnoreCase) &&
-            string.IsNullOrWhiteSpace(Value(request, "actionPlanWorkItemId", Value(request, "workItemId", string.Empty))))
+            string.IsNullOrWhiteSpace(Value(request, "actionPlanWorkItemId",
+                Value(request, "workItemId", Value(request, "actionPlanId", string.Empty)))))
         {
             return new ConfirmResult(ConfirmStatus.Forbidden, "period_action_plan_completion_requires_work_item_confirm", null);
         }

@@ -771,6 +771,40 @@
         }
       }
     },
+    "/api/workspaces/resource-setup/start": {
+      "post": {
+        "parameters": [
+          { "name": "X-WorkOS-Actor-Token", "in": "header", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Started ResourceSetup workspace for dormitory internal pilot observation" },
+          "401": { "description": "Actor session missing or expired" },
+          "403": { "description": "Actor is not allowed to start this workspace" }
+        }
+      }
+    },
+    "/api/workspaces/start": {
+      "post": {
+        "parameters": [
+          { "name": "X-WorkOS-Actor-Token", "in": "header", "required": true, "schema": { "type": "string" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/StartWorkspaceRequest" }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Started a runtime workspace from an allowed dormitory internal pilot template" },
+          "400": { "description": "Malformed start request" },
+          "401": { "description": "Actor session missing or expired" },
+          "403": { "description": "Actor or slice capability forbids workspace start" },
+          "404": { "description": "Workspace template not found" }
+        }
+      }
+    },
     "/api/workspaces/{workspaceId}/cards/{cardId}/prepare": {
       "post": {
         "parameters": [
@@ -993,6 +1027,16 @@
           "payloadHash": { "type": ["string", "null"] },
           "commandSubmissionId": { "type": ["string", "null"] },
           "traceUrl": { "type": ["string", "null"] }
+        }
+      },
+      "StartWorkspaceRequest": {
+        "type": "object",
+        "required": ["templateWorkspaceId"],
+        "properties": {
+          "templateWorkspaceId": { "type": "string" },
+          "title": { "type": ["string", "null"] },
+          "summary": { "type": ["string", "null"] },
+          "taskId": { "type": ["string", "null"] }
         }
       },
       "PrepareCardRequest": {

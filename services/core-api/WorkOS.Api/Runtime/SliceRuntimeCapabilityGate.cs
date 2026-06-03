@@ -17,7 +17,22 @@ public sealed class SliceRuntimeCapabilityGate
     public SliceRuntimeCapability CapabilityFor(string workspaceId) =>
         capabilitiesByWorkspaceId.TryGetValue(workspaceId, out var capability)
             ? capability
+            : DynamicTemplateCapability(workspaceId) is { } dynamicCapability
+                ? dynamicCapability
             : new SliceRuntimeCapability("unknown", workspaceId, "runtime-skeleton");
+
+    private SliceRuntimeCapability? DynamicTemplateCapability(string workspaceId)
+    {
+        foreach (var template in capabilitiesByWorkspaceId.Values)
+        {
+            if (workspaceId.StartsWith($"{template.WorkspaceId}-", StringComparison.OrdinalIgnoreCase))
+            {
+                return template with { WorkspaceId = workspaceId };
+            }
+        }
+
+        return null;
+    }
 
     public ConfirmResult? ForbidConfirmIfContractOnly(string workspaceId)
     {

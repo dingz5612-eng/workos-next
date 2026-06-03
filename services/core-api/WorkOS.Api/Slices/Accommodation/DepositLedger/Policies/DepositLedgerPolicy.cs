@@ -62,7 +62,7 @@ internal static class DepositLedgerPolicy
         var required = cardId switch
         {
             "depositAssessment" => new[] { "stayId", "requiredDepositAmount", "currency" },
-            "depositReceipt" => new[] { "depositId", "receivedAmount", "currency", "paymentMethod" },
+            "depositReceipt" => new[] { "depositId", "receivedAmount", "paymentMethod" },
             "depositConfirmation" => new[] { "depositReceiptId", "confirmedAmount", "confirmationResult" },
             "depositDeduction" => new[] { "depositId" },
             "depositRefundApproval" => new[] { "depositId" },

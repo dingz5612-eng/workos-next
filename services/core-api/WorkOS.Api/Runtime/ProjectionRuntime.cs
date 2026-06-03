@@ -50,6 +50,30 @@ public sealed partial class ProjectionRuntime
         lock (gate) return queryService.FindWorkspace(state, workspaceId);
     }
 
+    public WorkspaceProjection StartResourceSetup() =>
+        StartWorkspace("W-STAY-RESOURCE");
+
+    public WorkspaceProjection StartWorkspace(string templateWorkspaceId)
+    {
+        lock (gate)
+        {
+            var template = ProjectionSeed.Create()
+                .Workspaces
+                .First(item => item.Id.Equals(templateWorkspaceId, StringComparison.Ordinal));
+            var workspace = template with
+            {
+                Id = $"{template.Id}-{DateTimeOffset.UtcNow:yyyyMMddHHmmss}-{Guid.NewGuid():N}",
+                Cards = template.Cards.Select((card, index) => card with
+                {
+                    Status = index == 0 ? "ready" : "notStarted"
+                }).ToArray()
+            };
+            state.Workspaces.Add(workspace);
+            store.SaveState(state);
+            return workspace;
+        }
+    }
+
     public IReadOnlyList<object> GetWorkQueue()
     {
         lock (gate) return lensQueryService.GetWorkQueue(state);

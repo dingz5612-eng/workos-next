@@ -48,10 +48,11 @@ internal static class FieldContractCatalog
         ContractText.ContainsAny(label, "容量", "财务确认人", "确认时间", "应收金额", "应退金额", "差异金额", "未结欠款", "周期名称", "指标已复核", "财务已复核", "运营已诊断");
 
     private static bool IsSearchSelect(string label) =>
-        label is "所属房间" or "启用对象" or "已审批申请" or "房间床位" or "预留房间/床位" or "入住人" or "住客" or "线索" or "预订单" or "入住单" or "押金单" or "押金收款记录" or "收款记录" or "支付记录" or "覆盖应收项" or "任务" or "支出记录" or "经营周期" or "客户" or "车辆" or "技师" or "工位" or "关联房间" or "关联床位" or "关联任务" ||
+        label is "所属房间" or "启用对象" or "已审批申请" or "房间床位" or "预留房间/床位" or "入住人" or "住客" or "线索" or "预订单" or "入住单" or "押金单" or "押金收款记录" or "收款记录" or "支付记录" or "覆盖应收项" or "任务" or "支出记录" or "关联支出" or "经营周期" or "客户" or "车辆" or "技师" or "工位" or "关联房间" or "关联床位" or "关联任务" ||
         label is "房间" or "床位";
 
     private static bool IsSelect(string label) =>
+        label != "押金规则说明" &&
         ContractText.ContainsAny(label,
             "房型",
             "性别策略",
@@ -119,7 +120,7 @@ internal static class FieldContractCatalog
 
     private static bool IsMoney(string label) =>
         ContractText.ContainsAny(label, "金额", "费用", "押金", "应退", "应补", "单价", "日价", "周价", "月价", "成本", "余额", "收入", "支出", "现金流", "欠款") &&
-        !ContractText.ContainsAny(label, "押金规则", "押金币种", "押金截止", "押金单", "押金类型", "押金凭证", "押金收款记录");
+        !ContractText.ContainsAny(label, "备注", "说明", "原因", "意见", "摘要", "关联支出", "支出记录", "押金规则", "押金币种", "押金截止", "押金单", "押金类型", "押金凭证", "押金收款记录");
 
     private static bool IsNumber(string label) =>
         ContractText.ContainsAny(label, "数量", "床位数", "人数", "次数", "天数", "周数", "月数", "年份", "周期编号", "入住率", "转化率", "置信度", "目标值");

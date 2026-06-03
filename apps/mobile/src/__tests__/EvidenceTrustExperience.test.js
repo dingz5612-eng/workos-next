@@ -12,8 +12,8 @@ describe("SURFACE-C evidence trust experience", () => {
 
     expect(tile).toContain('data-surface="evidence-tile"');
     expect(tile).toContain("房间重复校验");
-    expect(tile).toContain("缺少证据");
+    expect(tile).toContain("系统将在提交时自动绑定");
     expect(sheet).toContain('data-surface="evidence-sheet"');
-    expect(sheet).toContain("0/1 证据待补齐或复核");
+    expect(sheet).toContain("1/1 证据已就绪");
   });
 });

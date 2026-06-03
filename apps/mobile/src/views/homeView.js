@@ -2,7 +2,6 @@ import { selectHomeSurface, selectSurfaceStats, selectWorkbenchQueue } from "../
 import { modeCard } from "./loginView.js";
 import { WorkItemCard } from "./experienceComponents.js";
 import { learningContentItems } from "./searchView.js";
-import { workspaceCard } from "./workspaceView.js";
 
 export function homeView(ctx) {
   const { tr, shell, state } = ctx;
@@ -10,6 +9,7 @@ export function homeView(ctx) {
   const stats = selectSurfaceStats(state);
   const missions = selectWorkbenchQueue(state).slice(0, 3);
   const mission = missionControlVM(selectWorkbenchQueue(state), state, tr);
+  const totalFocusCount = stats.myQueueCount + mission.dueSoonCount + mission.missingEvidenceCount + mission.waitingFinanceCount + mission.syncingCount + stats.blockedCount;
   return shell(`
     <section class="command-card" data-surface="today-mission-control">
       <span>${tr("todayMissionControlEyebrow")}</span>
@@ -28,16 +28,11 @@ export function homeView(ctx) {
         <button id="searchNow">${tr("search")}</button>
       </div>
     </section>
-    <section class="metric-grid">
-      ${ctx.metric(stats.myQueueCount, "mine")}
-      ${ctx.metric(stats.blockedCount, "blocked")}
-      ${ctx.metric(stats.confirmCount, "confirm")}
-    </section>
     <section class="mission-stack">
       <h2>${tr("assignedWorkItems")}</h2>
       ${missions.length ? missions.map((item) => WorkItemCard(item, ctx)).join("") : `<article class="help-card"><p>${tr("mobileEmptyToday")}</p><button data-view="search">${tr("search")}</button></article>`}
     </section>
-    <section class="compact-section mobile-work-ia" data-mobile-today-ia>
+    ${totalFocusCount ? `<section class="compact-section mobile-work-ia" data-mobile-today-ia>
       <h2>${tr("mustDoToday")}</h2>
       <div class="ia-chip-grid">
         ${iaChip("must-do", "mustDoToday", stats.myQueueCount, ctx)}
@@ -47,16 +42,17 @@ export function homeView(ctx) {
         ${iaChip("just-submitted", "justSubmitted", mission.syncingCount, ctx)}
         ${iaChip("risk-reminder", "riskReminder", stats.blockedCount, ctx)}
       </div>
-    </section>
+    </section>` : ""}
     <section class="compact-section" data-surface="today-learning">
       <h2>${tr("todayLearning")}</h2>
-      ${learningContentItems(ctx).slice(0, 2).map((item) => `<article class="search-result-card learning"><strong>${item.title}</strong><span>${item.subtitle}</span><small>${tr("nextAction")}: ${item.nextAction}</small></article>`).join("")}
+      <div class="home-learning-list">${learningContentItems(ctx).slice(0, 2).map((item) => learningMiniCard(item, ctx)).join("")}</div>
+      <div class="home-learning-topics">${learningContentItems(ctx).map((item) => `<span>${ctx.escapeHtml(item.title)}</span>`).join("")}</div>
       <button data-view="learning">${tr("learningCenter")}</button>
     </section>
-    <section class="business-focus">
+    ${surface.length ? `<section class="business-focus">
       <h2>${tr("scenarioFocus")}</h2>
-      ${homeSurfaceSections(surface, ctx)}
-    </section>
+      ${homeSurfaceSections(surface.slice(0, 1), ctx)}
+    </section>` : ""}
   `);
 }
 
@@ -92,6 +88,14 @@ function iaChip(id, labelKey, count, ctx) {
   return `<article class="ia-chip" data-mobile-ia="${ctx.escapeAttr(id)}"><span>${ctx.tr(labelKey)}</span><strong>${count}</strong></article>`;
 }
 
+function learningMiniCard(item, ctx) {
+  return `<article class="home-learning-card">
+    <strong>${ctx.escapeHtml(item.title)}</strong>
+    <p>${ctx.escapeHtml(item.subtitle)}</p>
+    <small>${ctx.tr("nextAction")}: ${ctx.escapeHtml(item.nextAction)}</small>
+  </article>`;
+}
+
 function homeSurfaceSections(surface, ctx) {
   const groups = new Map();
   for (const item of surface) {
@@ -101,9 +105,23 @@ function homeSurfaceSections(surface, ctx) {
   return Array.from(groups.entries()).map(([group, items]) => `
     <section class="surface-group">
       <h3>${ctx.escapeHtml(group)}</h3>
-      ${items.map((item) => workspaceCard(item.workspace, ctx, item.cardId)).join("")}
+      ${items.map((item) => todayScenarioCard(item, ctx)).join("")}
     </section>
   `).join("");
+}
+
+function todayScenarioCard(item, ctx) {
+  const workspace = item.workspace;
+  if (!workspace) return "";
+  const card = workspace.cards?.find((candidate) => candidate.id === item.cardId) || workspace.cards?.find((candidate) => ["ready", "blocked", "inProgress"].includes(candidate.status)) || workspace.cards?.[0];
+  return `<article class="today-scenario-card ${ctx.escapeAttr(workspace.domain || "")}">
+    <div>
+      <span>${ctx.tr(workspace.domain)} · ${ctx.tr(card?.status || "ready")}</span>
+      <strong>${ctx.tx(workspace.title)}</strong>
+      <p>${ctx.tx(card?.title || workspace.summary)} · ${ctx.tx(workspace.next)}</p>
+    </div>
+    <button data-workspace="${ctx.escapeAttr(workspace.id)}" data-card-id="${ctx.escapeAttr(card?.id || item.cardId || "")}">${ctx.tr("openWorkspace")}</button>
+  </article>`;
 }
 
 export function simpleModeList(ctx) {

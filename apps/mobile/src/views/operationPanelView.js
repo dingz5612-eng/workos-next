@@ -51,6 +51,7 @@ export function operationPanelView(ctx) {
   const operationBody = workspaceCardPanel(activeCard, workspace, true, ctx);
   const traceCount = [commandSubmissionId, model.caseId, model.workItemId, ...(model.traceRefs || [])].filter(Boolean).length;
   const actionState = buildOperationActionState(operationContext, activeCard, state.lastActionResult, state);
+  const isCompleted = activeCard.status === "done";
 
   return shell(`
     <section class="operation-panel-page" data-surface="operation-panel-route">
@@ -68,7 +69,7 @@ export function operationPanelView(ctx) {
         <dt>${ctx.tr("decisionOwner")}</dt><dd>${ctx.escapeHtml(model.ownerRoleLabel)}</dd>
       </dl>
     </section>
-    ${WorkItemCard(operationContext, ctx)}
+    ${isCompleted ? completedRecordPanel(model, activeCard, ctx) : WorkItemCard(operationContext, ctx)}
     ${TechnicalAuditDetails({
       model,
       payloadHash: payloadFingerprint,
@@ -77,12 +78,30 @@ export function operationPanelView(ctx) {
       projectionStatus: state.lastActionResult?.status || "notSubmitted",
       policyRef: activeCard.policyRef || activeCard.confirmation?.policyRef || "operations-runtime-policy"
     }, ctx)}
-    ${OperationPanelView(operationBody, operationContext, activeCard, ctx)}
-    ${EvidenceSheet(activeCard, draft, ctx)}
-    ${TrustedConfirmSheet(operationContext, activeCard, ctx)}
-    ${ActionResult(state.lastActionResult || { status: "not_submitted", message: "Ready to prepare / confirm" }, ctx)}
-    <div class="sticky-action">${primaryActionButton(actionState, ctx)}</div>
+    ${isCompleted ? "" : OperationPanelView(operationBody, operationContext, activeCard, ctx)}
+    ${isCompleted ? "" : EvidenceSheet(activeCard, draft, ctx)}
+    ${isCompleted ? "" : TrustedConfirmSheet(operationContext, activeCard, ctx)}
+    ${isCompleted ? "" : ActionResult(state.lastActionResult || { status: "not_submitted", message: "Ready to prepare / confirm" }, ctx)}
+    ${isCompleted ? "" : `<div class="sticky-action">${primaryActionButton(actionState, ctx)}</div>`}
   `);
+}
+
+function completedRecordPanel(model, card, ctx) {
+  return `<section class="completed-record-panel" data-surface="completed-operation-record">
+    <div>
+      <span>${ctx.tr("completedRecordTitle")}</span>
+      <h2>${ctx.escapeHtml(model.displayTitle || model.businessObject)}</h2>
+      <p>${ctx.tr("completedRecordBody")}</p>
+    </div>
+    <dl>
+      <dt>${ctx.tr("currentState")}</dt><dd>${ctx.tr(card.status)}</dd>
+      <dt>${ctx.tr("decisionBusinessObject")}</dt><dd>${ctx.escapeHtml(model.businessObject)}</dd>
+      <dt>${ctx.tr("decisionOwner")}</dt><dd>${ctx.escapeHtml(model.ownerRoleLabel)}</dd>
+      <dt>${ctx.tr("decisionMissingEvidence")}</dt><dd>${ctx.escapeHtml(model.requiredEvidence.join(" · ") || ctx.tr("noRequiredEvidence"))}</dd>
+      <dt>${ctx.tr("auditSummary")}</dt><dd>${model.traceRefs.length ? ctx.tr("traceBound") : ctx.tr("traceWillBind")}</dd>
+      <dt>${ctx.tr("cardNext")}</dt><dd>${ctx.escapeHtml(model.nextAction)}</dd>
+    </dl>
+  </section>`;
 }
 
 export function resolveOperationItem(state) {

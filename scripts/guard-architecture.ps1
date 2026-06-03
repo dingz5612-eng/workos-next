@@ -535,6 +535,8 @@ $allowedMapPostPaths = @(
   "/api/operations/work-items",
   "/api/operations/work-items/{workItemId}/prepare",
   "/api/operations/work-items/{workItemId}/confirm",
+  "/api/workspaces/resource-setup/start",
+  "/api/workspaces/start",
   "/api/workspaces/{workspaceId}/cards/{cardId}/prepare",
   "/api/workspaces/{workspaceId}/cards/{cardId}/confirm",
   "/api/evidence/drafts",

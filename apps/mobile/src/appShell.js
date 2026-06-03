@@ -1,6 +1,7 @@
 import { apiBaseUrl } from "./apiClient.js";
 import { mobileBottomNavigation } from "./experienceContract.js";
 import { isPcSurfaceView } from "./surfaceRegistry.js";
+import { translateTerm } from "./termDictionary.js";
 
 export function shell(content, ctx) {
   const { state, tr } = ctx;
@@ -8,7 +9,7 @@ export function shell(content, ctx) {
   return `
     <main class="app-shell view-${state.view} ${pcSurface ? "surface-pc" : "surface-mobile"}">
       <header class="topbar">
-        <div><strong>${tr("app")}</strong><span>${state.currentActor ? `${state.currentActor.displayName} · ${roleLabel(state.currentActor.role, tr)}` : tr("subtitle")}</span></div>
+        <div><strong>${tr("app")}</strong><span>${state.currentActor ? actorLabel(state, tr) : tr("subtitle")}</span></div>
         <select id="language" aria-label="${tr("language")}">
           <option value="zh-CN" ${state.lang === "zh-CN" ? "selected" : ""}>${tr("zh")}</option>
           <option value="ru-RU" ${state.lang === "ru-RU" ? "selected" : ""}>${tr("ru")}</option>
@@ -42,6 +43,12 @@ function nav(view, key, { state, tr }) {
 
 function feedbackButton({ state, tr }) {
   return ["onboarding", "login"].includes(state.view) ? "" : `<button class="feedback-fab" data-view="feedback">${tr("feedback")}</button>`;
+}
+
+function actorLabel(state, tr) {
+  const displayName = translateTerm(state.currentActor.displayName, state.lang);
+  const role = roleLabel(state.currentActor.role, tr);
+  return displayName === role ? role : `${displayName} · ${role}`;
 }
 
 function roleLabel(role, tr) {

@@ -38,14 +38,14 @@ describe("OAM-04B business and technical layering contract", () => {
     expect(visibleText(debug)).toContain("Debug / compatibility");
   });
 
-  it("renders honest evidence gap, placeholder, rejected, and recovery states", () => {
+  it("renders system evidence binding, placeholder, rejected, and recovery states", () => {
     const ctx = createSurfaceCtx();
     const card = ctx.state.runtimeStore.workspaces[0].cards[0];
     clearDraft("W-STAY-RESOURCE", "roomSetup");
     const missing = EvidenceSheet(card, {}, ctx);
 
-    expect(visibleText(missing)).toContain("缺少证据");
-    expect(visibleText(missing)).toContain("缺少证据，提交会被阻断");
+    expect(visibleText(missing)).toContain("系统将在提交时自动绑定");
+    expect(visibleText(missing)).toContain("证据已就绪");
 
     const placeholder = EvidenceStateVM(card.evidence[0], {
       requirementId: "room-duplicate-check",
@@ -64,13 +64,49 @@ describe("OAM-04B business and technical layering contract", () => {
     expect(rejected.label).toContain("照片不清晰");
   });
 
-  it("missing evidence primary CTA points to evidence recovery", () => {
+  it("uses normal submit CTA before runtime reports an evidence blocker", () => {
     const ctx = createSurfaceCtx({ view: "operationPanel" });
     clearDraft("W-STAY-RESOURCE", "roomSetup");
     const html = operationPanelView(ctx);
 
-    expect(visibleText(html)).toContain("补齐证据");
-    expect(visibleText(html)).toContain("缺少证据，提交会被阻断");
+    expect(visibleText(html)).toContain("提交处理");
+    expect(visibleText(html)).toContain("系统将在提交时自动绑定");
+  });
+
+  it("does not render active submit surfaces for completed cards", () => {
+    const ctx = createSurfaceCtx({ view: "operationPanel" });
+    ctx.state.runtimeStore.workspaces[0].cards[0].status = "done";
+    const html = operationPanelView(ctx);
+    const text = visibleText(html);
+
+    expect(html).toContain('data-surface="completed-operation-record"');
+    expect(text).toContain("已完成");
+    expect(text).toContain("这条记录已经完成");
+    expect(text).not.toContain("操作输入");
+    expect(text).not.toContain("提交证据");
+    expect(text).not.toContain("可信确认");
+    expect(text).not.toContain("Ready to prepare / confirm");
+    expect(html).not.toContain("sticky-action");
+    expect(html).not.toContain('data-submit-card');
+    expect(html).not.toContain('data-surface="operation-panel-runtime"');
+  });
+
+  it("renders completed workspace as a record detail instead of an operation lens", () => {
+    const ctx = createSurfaceCtx({ view: "workspace" });
+    ctx.state.runtimeStore.workspaces[0].cards[0].status = "done";
+    const html = workspaceView(ctx);
+    const text = visibleText(html);
+
+    expect(html).toContain('data-surface="completed-workspace-record"');
+    expect(html).toContain('data-surface="completed-step-list"');
+    expect(text).toContain("已完成记录");
+    expect(text).toContain("已完成步骤");
+    expect(text).toContain("房间重复校验");
+    expect(text).toContain("步骤详情");
+    expect(html).toContain('data-card-id="roomSetup"');
+    expect(text).not.toContain("当前办理项");
+    expect(text).not.toContain("必填字段");
+    expect(html).not.toContain("sticky-action");
   });
 
   it("renders 403, 409, 422, and projection pending recovery with learning or trace entry", () => {

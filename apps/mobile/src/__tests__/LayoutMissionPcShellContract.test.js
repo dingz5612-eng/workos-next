@@ -12,7 +12,7 @@ describe("OAM-04B layout, mission control, and PC shell contract", () => {
     expect(shellCss).toContain("--sticky-action-height: 64px");
     expect(shellCss).toContain("--safe-bottom: env(safe-area-inset-bottom, 0px)");
     expect(shellCss).toContain("calc(var(--bottom-nav-height) + var(--sticky-action-height) + var(--safe-bottom)");
-    expect(operationCss).toContain("bottom: calc(var(--bottom-nav-height) + var(--safe-bottom) + 16px)");
+    expect(operationCss).toContain("bottom: calc(var(--bottom-nav-height) + var(--safe-bottom) + 28px)");
     expect(operationCss).toContain("min-height: var(--bottom-nav-height)");
     expect(operationCss).toContain("focus-visible");
     expect(html).toContain('aria-current="page"');

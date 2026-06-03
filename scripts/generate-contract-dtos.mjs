@@ -454,6 +454,8 @@ const apiPathDescriptors = [
   { key: "revokeDeviceSession", path: "/api/device-sessions/{deviceId}/revoke" },
   { key: "workspaces", path: "/api/workspaces" },
   { key: "workspace", path: "/api/workspaces/{workspaceId}" },
+  { key: "startResourceSetupWorkspace", path: "/api/workspaces/resource-setup/start" },
+  { key: "startWorkspace", path: "/api/workspaces/start" },
   { key: "bootstrap", path: "/api/bootstrap" },
   { key: "workQueue", path: "/api/work-queue" },
   { key: "operationsCases", path: "/api/operations/cases" },

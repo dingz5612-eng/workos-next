@@ -27,3 +27,46 @@
 - 不声明 L2 Production。
 - 不放开 Repair / Parts / HR。
 
+## 2026-06-03 Browser-Driven Dormitory Flow Proof
+
+本次补充验收覆盖 10 个宿舍业务办理流程，全部从移动端搜索页的主动命令发起真实 workspace，逐步输入、截图、提交，并以完成记录作为结束证据。
+
+证据根目录：`artifacts/local-demo/ten-dormitory-browser-demo/`
+
+汇总文件：`artifacts/local-demo/ten-dormitory-browser-demo/ten-flow-evidence-summary.json`
+
+覆盖流程：
+
+| 序号 | 目录 | 业务流程 | 完成证据 |
+| --- | --- | --- | --- |
+| 1 | `01-resource` | 创建住宿资源 | `06-roomRelease-completed.png` / `.txt` |
+| 2 | `02-lead` | 线索预订 | `04-reservationConvert-completed.png` / `.txt` |
+| 3 | `03-checkin` | 入住收款 | `10-operatingDashboard-completed.png` / `.txt` |
+| 4 | `04-lifecycle` | 在住生命周期 | `05-stayExtension-completed.png` / `.txt` |
+| 5 | `05-deposit` | 押金账本 | `07-depositClose-completed.png` / `.txt` |
+| 6 | `06-payment` | 普通收款账本 | `05-debtFollowUp-completed.png` / `.txt` |
+| 7 | `07-service` | 清洁维修任务 | `05-roomReleaseAfterService-completed.png` / `.txt` |
+| 8 | `08-checkout` | 退房 | `05-checkoutClose-completed.png` / `.txt` |
+| 9 | `09-settlement` | 退住结算 | `06-postCheckoutCleaning-completed.png` / `.txt` |
+| 10 | `10-period` | 周期经营复盘 | `07-periodClose-completed.png` / `.txt` |
+
+配套浏览器脚本：`artifacts/local-demo/ten-dormitory-browser-demo/run-ten-dormitory-browser-demo.mjs`
+
+脚本约束：
+- 入口必须来自搜索主动命令，不能直接后台造数。
+- 每张卡必须保存 `open` / `input` / `submitted` 截图和文本快照。
+- 完成流程必须保存 `completed` 截图和文本快照。
+- 涉及财务确认的卡按确认策略切换 `finance`，其他宿舍经办卡使用 `operator`。
+- `WORKOS_DEMO_ONLY_FLOW` 仅用于补跑单个流程，不改变验收范围。
+
+语言证据：
+- `artifacts/local-demo/language-smoke/language-smoke.json`
+- `ru-RU` 与 `ky-KG` 的搜索页和周期完成记录抽检均无中文业务文案残留。
+
+本次修复保持边界不变：
+- Dormitory 仍为 L1 Internal Pilot Observation。
+- Dormitory L2 Production 仍不放开。
+- Business Production 仍 blocked。
+- Repair / Parts / HR 未扩展出 L0 Contract Preview。
+- 不进入 Day-2。
+

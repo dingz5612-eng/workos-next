@@ -1,0 +1,154 @@
+[
+  {
+    "flow": "01-resource",
+    "screenshots": 24,
+    "textSnapshots": 24,
+    "completedEvidence": [
+      "06-roomRelease-completed.png",
+      "06-roomRelease-completed.txt"
+    ],
+    "lastSubmitted": [
+      "05-roomBlock-submitted.png",
+      "05-roomBlock-submitted.txt",
+      "06-roomRelease-submitted.png",
+      "06-roomRelease-submitted.txt"
+    ]
+  },
+  {
+    "flow": "02-lead",
+    "screenshots": 15,
+    "textSnapshots": 15,
+    "completedEvidence": [
+      "04-reservationConvert-completed.png",
+      "04-reservationConvert-completed.txt"
+    ],
+    "lastSubmitted": [
+      "03-reservationCreate-submitted.png",
+      "03-reservationCreate-submitted.txt",
+      "04-reservationConvert-submitted.png",
+      "04-reservationConvert-submitted.txt"
+    ]
+  },
+  {
+    "flow": "03-checkin",
+    "screenshots": 33,
+    "textSnapshots": 33,
+    "completedEvidence": [
+      "10-operatingDashboard-completed.png",
+      "10-operatingDashboard-completed.txt"
+    ],
+    "lastSubmitted": [
+      "09-checkin-submitted.png",
+      "09-checkin-submitted.txt",
+      "10-operatingDashboard-submitted.png",
+      "10-operatingDashboard-submitted.txt"
+    ]
+  },
+  {
+    "flow": "04-lifecycle",
+    "screenshots": 19,
+    "textSnapshots": 19,
+    "completedEvidence": [
+      "04-stayExtension-completed.png",
+      "04-stayExtension-completed.txt",
+      "05-stayExtension-completed.png",
+      "05-stayExtension-completed.txt"
+    ],
+    "lastSubmitted": [
+      "04-stayExtension-submitted.png",
+      "04-stayExtension-submitted.txt",
+      "05-stayExtension-submitted.png",
+      "05-stayExtension-submitted.txt"
+    ]
+  },
+  {
+    "flow": "05-deposit",
+    "screenshots": 24,
+    "textSnapshots": 24,
+    "completedEvidence": [
+      "07-depositClose-completed.png",
+      "07-depositClose-completed.txt"
+    ],
+    "lastSubmitted": [
+      "06-depositRefundPayment-submitted.png",
+      "06-depositRefundPayment-submitted.txt",
+      "07-depositClose-submitted.png",
+      "07-depositClose-submitted.txt"
+    ]
+  },
+  {
+    "flow": "06-payment",
+    "screenshots": 18,
+    "textSnapshots": 18,
+    "completedEvidence": [
+      "05-debtFollowUp-completed.png",
+      "05-debtFollowUp-completed.txt"
+    ],
+    "lastSubmitted": [
+      "04-paymentAdjustment-submitted.png",
+      "04-paymentAdjustment-submitted.txt",
+      "05-debtFollowUp-submitted.png",
+      "05-debtFollowUp-submitted.txt"
+    ]
+  },
+  {
+    "flow": "07-service",
+    "screenshots": 18,
+    "textSnapshots": 18,
+    "completedEvidence": [
+      "05-roomReleaseAfterService-completed.png",
+      "05-roomReleaseAfterService-completed.txt"
+    ],
+    "lastSubmitted": [
+      "04-serviceTaskVerify-submitted.png",
+      "04-serviceTaskVerify-submitted.txt",
+      "05-roomReleaseAfterService-submitted.png",
+      "05-roomReleaseAfterService-submitted.txt"
+    ]
+  },
+  {
+    "flow": "08-checkout",
+    "screenshots": 18,
+    "textSnapshots": 18,
+    "completedEvidence": [
+      "05-checkoutClose-completed.png",
+      "05-checkoutClose-completed.txt"
+    ],
+    "lastSubmitted": [
+      "04-checkoutFinance-submitted.png",
+      "04-checkoutFinance-submitted.txt",
+      "05-checkoutClose-submitted.png",
+      "05-checkoutClose-submitted.txt"
+    ]
+  },
+  {
+    "flow": "09-settlement",
+    "screenshots": 21,
+    "textSnapshots": 21,
+    "completedEvidence": [
+      "06-postCheckoutCleaning-completed.png",
+      "06-postCheckoutCleaning-completed.txt"
+    ],
+    "lastSubmitted": [
+      "05-bedRelease-submitted.png",
+      "05-bedRelease-submitted.txt",
+      "06-postCheckoutCleaning-submitted.png",
+      "06-postCheckoutCleaning-submitted.txt"
+    ]
+  },
+  {
+    "flow": "10-period",
+    "screenshots": 27,
+    "textSnapshots": 27,
+    "completedEvidence": [
+      "07-periodClose-completed.png",
+      "07-periodClose-completed.txt"
+    ],
+    "lastSubmitted": [
+      "06-periodActionPlanComplete-submitted.png",
+      "06-periodActionPlanComplete-submitted.txt",
+      "07-periodClose-submitted.png",
+      "07-periodClose-submitted.txt"
+    ]
+  }
+]

@@ -41,7 +41,7 @@ internal static class PaymentLedgerPolicy
     {
         var required = cardId switch
         {
-            "paymentReceipt" => new[] { "stayId", "paymentId", "payerName", "paymentAmount", "currency", "paymentMethod", "paymentPurpose" },
+            "paymentReceipt" => new[] { "stayId", "payerName", "paymentAmount", "currency", "paymentMethod", "paymentPurpose" },
             "paymentConfirmation" => new[] { "paymentId", "confirmedAmount", "confirmationResult" },
             "paymentAllocation" => new[] { "paymentId", "allocatedAmount" },
             _ => Array.Empty<string>()

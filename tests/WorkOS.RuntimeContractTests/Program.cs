@@ -65,9 +65,9 @@ ResetPostgres(connectionString);
     Assert(missingToken.Reason == "actor_session_required", "missing actor session must use auth-specific reason");
     var missingIdempotencyKey = AssertNoSideEffects(connectionString, () => runtime.Confirm("W-STAY-RESOURCE", "roomSetup", new ConfirmCardRequest("zh-CN", "", new Dictionary<string, string>(), Array.Empty<string>()), operatorToken));
     Assert(missingIdempotencyKey.Status == ConfirmStatus.Invalid, "confirm must require idempotency key");
-    var localizedPayloadKey = AssertNoSideEffects(connectionString, () => runtime.Confirm("W-STAY-RESOURCE", "roomSetup", new ConfirmCardRequest("zh-CN", "localized-field-key", new Dictionary<string, string> { ["房间号"] = "A999" }, Array.Empty<string>(), "submission-localized-field-key", "card-instance-localized-field-key"), operatorToken));
-    Assert(localizedPayloadKey.Status == ConfirmStatus.Invalid, "confirm must reject localized label keys as malformed input");
-    Assert(localizedPayloadKey.Reason == "canonical_field_id_required", "localized label key rejection must use stable reason");
+    var unknownLocalizedPayloadKey = AssertNoSideEffects(connectionString, () => runtime.Confirm("W-STAY-RESOURCE", "roomSetup", new ConfirmCardRequest("zh-CN", "localized-field-key", new Dictionary<string, string> { ["未知字段"] = "A999" }, Array.Empty<string>(), "submission-localized-field-key", "card-instance-localized-field-key"), operatorToken));
+    Assert(unknownLocalizedPayloadKey.Status == ConfirmStatus.Invalid, "confirm must reject unknown localized label keys as malformed input");
+    Assert(unknownLocalizedPayloadKey.Reason == "canonical_field_id_required", "unknown localized label key rejection must use stable reason");
 
     var aiFinance = AssertNoSideEffects(connectionString, () => runtime.Confirm("W-STAY-CHECKIN", "finance", Human("ai-finance"), aiToken));
     Assert(aiFinance.Status == ConfirmStatus.Forbidden, "AI finance confirmation must be rejected");
@@ -77,11 +77,10 @@ ResetPostgres(connectionString);
     Assert(operatorFinance.Status == ConfirmStatus.Forbidden, "operator must not confirm finance card");
     Assert(operatorFinance.Reason?.StartsWith("role_confirmation_forbidden:") == true, "role rejection must use stable policy decision code");
 
-    var contractOnlyPrepare = runtime.Prepare("W-STAY-CHECKOUT", "checkoutStart");
-    Assert(contractOnlyPrepare is not null, "contract-only slices should still allow prepare");
-    var contractOnlyConfirm = AssertNoSideEffects(connectionString, () => runtime.Confirm("W-STAY-CHECKOUT", "checkoutStart", Human("contract-only-checkout-start"), managerToken));
-    Assert(contractOnlyConfirm.Status == ConfirmStatus.Forbidden, "contract-only slice confirm must be forbidden until runtime status is upgraded");
-    Assert(contractOnlyConfirm.Reason == "slice_runtime_forbidden:Accommodation.CheckOut:contract-only", "contract-only rejection must name the owning slice");
+    var runtimeSkeletonPrepare = runtime.Prepare("W-STAY-CHECKOUT", "checkoutStart");
+    Assert(runtimeSkeletonPrepare is not null, "runtime-skeleton slices should allow prepare");
+    var runtimeSkeletonConfirm = runtime.Confirm("W-STAY-CHECKOUT", "checkoutStart", Human("runtime-skeleton-checkout-start"), managerToken);
+    Assert(runtimeSkeletonConfirm.Status == ConfirmStatus.Confirmed, "runtime-skeleton checkout should confirm for dormitory internal pilot observation");
     ValidateAllContractOnlySlicesAreGated(runtime, connectionString, projection, managerToken);
 
     var financeRoomSetup = AssertNoSideEffects(connectionString, () => runtime.Confirm("W-STAY-RESOURCE", "roomSetup", Human("resource-finance-role"), financeToken));
@@ -679,17 +678,17 @@ ResetPostgres(connectionString);
         ["periodId"] = "PER-2026-05-01",
         ["actionPlanId"] = "period-plan-001",
         ["actionTitle"] = "increase weekday reservation conversion",
-        ["actionType"] = "increase_occupancy",
-        ["targetMetric"] = "average_occupancy_rate",
+        ["actionType"] = "occupancy",
+        ["targetMetric"] = "occupancy_rate",
         ["targetValue"] = "0.75",
         ["ownerName"] = "manager",
         ["ownerRole"] = "manager",
         ["dueAtUtc"] = "2026-06-05T00:00:00Z",
         ["priority"] = "high",
-        ["actionStatus"] = "committed",
+        ["actionStatus"] = "pending",
         ["actionPlanWorkItemId"] = "wi-period-plan-001"
     }), operatorToken);
-    Assert(periodActionPlan.Status == ConfirmStatus.Confirmed, "period action plan should pass");
+    Assert(periodActionPlan.Status == ConfirmStatus.Confirmed, $"period action plan should pass: {periodActionPlan.Status} {periodActionPlan.Reason}");
     AssertConfirmEvents(periodActionPlan, "Accommodation.PeriodActionPlanCommitted");
     runtime.ProcessPendingOutbox();
     Assert(ScalarText(connectionString, "select status from period_action_plans where action_plan_id = 'period-plan-001'") == "committed", "PeriodActionPlanCommitted must not mark the plan completed");

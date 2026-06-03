@@ -9,7 +9,10 @@ export function buildSearchResultVM(item = {}, ctx = {}) {
   const traceId = item.traceId || item.commandSubmissionId || item.command_submission_id || item.traceRefs?.[0] || "";
   const learningId = item.learningId || "";
   const caseId = item.caseId || item.case_id || "";
-  const action = searchActionFor({ ...item, resultType, workspaceId, cardId, workItemId, evidenceId, traceId, learningId, caseId }, ctx);
+  const commandId = item.commandId || item.command_id || "";
+  const templateWorkspaceId = item.templateWorkspaceId || item.template_workspace_id || "";
+  const firstCardId = item.firstCardId || item.first_card_id || "";
+  const action = searchActionFor({ ...item, resultType, workspaceId, cardId, workItemId, evidenceId, traceId, learningId, caseId, commandId }, ctx);
   return {
     kind: "SearchResultVM",
     resultType,
@@ -26,6 +29,8 @@ export function buildSearchResultVM(item = {}, ctx = {}) {
     evidenceId,
     traceId,
     learningId,
+    templateWorkspaceId,
+    firstCardId,
     view: action.view,
     reasonIfNoAction: action.reason,
     sourceRefs: sourceRefs(item, { workspaceId, cardId, workItemId, caseId, evidenceId, traceId, learningId })
@@ -50,14 +55,17 @@ function searchActionFor(item, ctx) {
   if (item.resultType === "learning" && item.learningId) {
     return { type: "openLearning", label: ctx.tr?.("searchActionLearning") || "开始学习", view: "learning", reason: "" };
   }
-  if (item.workItemId && resolveOperationPanelTarget(item, ctx.state || {}).canOpen) {
-    return { type: "openWorkItem", label: ctx.tr?.("searchActionProcess") || "处理", view: "operationPanel", reason: "" };
-  }
-  if (item.resultType === "operationCase" && item.workItemId) {
-    return { type: "openWorkItem", label: ctx.tr?.("searchActionProcess") || "处理", view: "operationPanel", reason: "" };
-  }
   if (item.resultType === "operationCase" && item.workspaceId) {
+    if (isTerminalStatus(item.status || item.lifecycleState || item.statusLabel)) {
+      return { type: "openWorkspace", label: ctx.tr?.("viewOnly") || "查看", view: "workspace", reason: "" };
+    }
     return { type: "openWorkspace", label: ctx.tr?.("searchActionViewCase") || "查看案件", view: "workspace", reason: "" };
+  }
+  if (item.resultType === "command" && (item.commandId === "startResourceSetup" || item.templateWorkspaceId)) {
+    return { type: "startWorkspace", label: ctx.tr?.("startHandling") || "开始办理", view: "workspace", reason: "" };
+  }
+  if (item.resultType === "workItem" && item.workItemId && resolveOperationPanelTarget(item, ctx.state || {}).canOpen) {
+    return { type: "openWorkItem", label: ctx.tr?.("searchActionProcess") || "处理", view: "operationPanel", reason: "" };
   }
   if (["room", "bed", "stay", "object"].includes(item.resultType) && item.workspaceId) {
     return { type: "openObject", label: ctx.tr?.("searchActionOpenObject") || "打开对象", view: "workspace", reason: "" };
@@ -68,6 +76,10 @@ function searchActionFor(item, ctx) {
     view: "",
     reason: ctx.tr?.("searchNoActionReason") || "这条结果暂时没有可跳转目标，请换一个业务词搜索。"
   };
+}
+
+function isTerminalStatus(status) {
+  return /^(done|confirmed|completed|committed|closed|cancelled|已完成)$/i.test(String(status || "").trim());
 }
 
 function titleForType(type, ctx) {

@@ -71,7 +71,7 @@ internal static class WorkspaceSeedCatalog
                 Card("depositConfirmation", "notStarted", "押金财务确认卡", "Фин. подтверждение депозита", new[] { "financeReviewId", "depositReceiptId" }, new[] { "押金收款记录", "确认金额", "确认结果", "差异原因", "财务备注" }, new[] { "押金确认金额", "押金差异金额" }),
                 Card("depositDeduction", "notStarted", "押金扣除卡", "Удержание депозита", new[] { "depositTransactionId", "depositId" }, new[] { "押金单", "扣除金额", "扣除原因", "处理意见" }, new[] { "已扣押金", "剩余持有押金" }),
                 Card("depositRefundApproval", "notStarted", "押金退款审批卡", "Утверждение возврата депозита", new[] { "depositRefundApprovalId", "depositId" }, new[] { "押金单", "扣除金额", "扣除原因", "抵扣欠款金额", "应退金额", "处理意见" }, new[] { "当前持有押金", "押金退款待支付金额" }),
-                Card("depositRefundPayment", "notStarted", "押金退款支付卡", "Выплата возврата депозита", new[] { "depositRefundPaymentId", "depositId" }, new[] { "押金单", "退款方式", "退款接收人", "退款凭证", "付款时间", "人工确认摘要" }, new[] { "已退押金", "押金负债余额" }),
+                Card("depositRefundPayment", "notStarted", "押金退款支付卡", "Выплата возврата депозита", new[] { "depositRefundPaymentId", "depositId" }, new[] { "押金单", "退款金额", "退款方式", "退款接收人", "退款凭证", "付款时间", "人工确认摘要" }, new[] { "已退押金", "押金负债余额" }),
                 Card("depositClose", "notStarted", "押金关闭卡", "Закрытие депозита", new[] { "depositId", "auditTraceId" }, new[] { "押金单", "关闭结果", "人工确认摘要" }, new[] { "押金负债余额", "押金关闭耗时" })
             },
             "押金永远是负债账本，不进入普通收入。",
@@ -129,7 +129,7 @@ internal static class WorkspaceSeedCatalog
             "Расходы не смешиваются с возвратами депозитов."),
         Workspace("W-STAY-PERIOD-ANALYTICS", "stay", "T-STAY-PERIOD-ANALYTICS", "我要做周期经营复盘", "Провести периодический анализ",
             "10 日周期经营复盘拆成范围、指标、财务、运营诊断、行动计划和关闭。",
-            "10-дневный обзор разделен на scope, метрики, финансы, диагностику, план и закрытие.",
+            "10-дневный обзор разделен на границы периода, метрики, финансы, диагностику, план и закрытие.",
             new[]
             {
                 Card("periodScope", "ready", "周期范围卡", "Период", new[] { "periodId", "managerId" }, new[] { "年份", "周期编号", "周期开始时间", "周期结束时间", "周期说明" }, new[] { "周期名称", "周期天数" }),

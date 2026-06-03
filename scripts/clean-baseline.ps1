@@ -172,6 +172,7 @@ const csSource = csFiles.map((file) => fs.readFileSync(file, "utf8")).join("\n")
 const documentedSkeletonDirs = [
   `${path.sep}Slices${path.sep}Accommodation${path.sep}ResourceSetup${path.sep}`,
   `${path.sep}Slices${path.sep}Accommodation${path.sep}CheckIn${path.sep}`,
+  `${path.sep}Slices${path.sep}Accommodation${path.sep}CheckOut${path.sep}`,
   `${path.sep}Slices${path.sep}Repair${path.sep}Dispatch${path.sep}`
 ];
 const unusedTypes = [];

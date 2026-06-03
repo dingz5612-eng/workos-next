@@ -1,4 +1,4 @@
-import { fetchSearchResults } from "./apiClient.js";
+import { fetchSearchResults, startResourceSetup, startWorkspace } from "./apiClient.js";
 import { applyRuntimeSearchResults } from "./runtime/runtimeStore.js";
 import { selectWorkspaceById } from "./selectors/surfaceSelectors.js";
 import { evaluateSurfaceAccess } from "./surfaceGuard.js";
@@ -96,4 +96,47 @@ export async function runSearch(ctx) {
   }
   ctx.state.view = "search";
   ctx.render(true);
+}
+
+export async function startResourceSetupCommand(ctx) {
+  return startWorkspaceCommand(ctx, "W-STAY-RESOURCE", "roomSetup");
+}
+
+export async function startWorkspaceCommand(ctx, templateWorkspaceId, firstCardId = "") {
+  if (!ctx.state.currentActor) {
+    setView("login", ctx);
+    return;
+  }
+  ctx.state.operationMessage = ctx.tr("submitting");
+  ctx.render();
+  try {
+    const result = templateWorkspaceId === "W-STAY-RESOURCE"
+      ? await startResourceSetup(ctx.state.currentActor.token || "")
+      : await startWorkspace(templateWorkspaceId, ctx.state.currentActor.token || "");
+    if (result?.projection) {
+      ctx.applyRuntimeProjection(result.projection);
+    } else {
+      await ctx.hydrateProjectionFromApi();
+    }
+    const workspaceId = result?.workspace?.id || result?.workspace?.Id || latestStartedWorkspaceId(result?.projection, templateWorkspaceId);
+    if (workspaceId) {
+      const url = new URL(window.location.href);
+      url.searchParams.set("view", "workspace");
+      url.searchParams.set("workspace", workspaceId);
+      if (firstCardId) url.searchParams.set("card", firstCardId);
+      window.location.href = url.toString();
+      return;
+    }
+    ctx.state.operationMessage = ctx.tr("apiOffline");
+  } catch {
+    ctx.state.operationMessage = ctx.tr("apiOffline");
+  }
+  ctx.render();
+}
+
+function latestStartedWorkspaceId(projection = {}, templateWorkspaceId = "W-STAY-RESOURCE") {
+  return (projection.workspaces || projection.Workspaces || [])
+    .filter((workspace) => String(workspace.id || workspace.Id || "").startsWith(`${templateWorkspaceId}-`))
+    .map((workspace) => workspace.id || workspace.Id)
+    .at(-1) || "";
 }
