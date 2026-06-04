@@ -1,11 +1,11 @@
 {
-  "generatedAtUtc": "2026-06-04T23:02:00.793Z",
+  "generatedAtUtc": "2026-06-04T23:13:23.648Z",
   "generatedBy": "project-hygiene-checkers",
   "stage": "PROJECT-HYGIENE-CLEANUP",
   "status": "PROJECT_HYGIENE_CLEANUP_LOCAL_PASSED",
   "checks": {
     "stale_evidence_refs": {
-      "generatedAtUtc": "2026-06-04T23:00:36.526Z",
+      "generatedAtUtc": "2026-06-04T23:12:34.966Z",
       "generatedBy": "check-stale-evidence-refs",
       "stage": "PROJECT-HYGIENE-CLEANUP",
       "status": "passed",
@@ -1028,7 +1028,7 @@
       "repairPartsHrStatus": "L0 Contract Preview"
     },
     "route_surface_hygiene": {
-      "generatedAtUtc": "2026-06-04T23:00:38.793Z",
+      "generatedAtUtc": "2026-06-04T23:12:37.398Z",
       "generatedBy": "check-route-surface-hygiene",
       "stage": "PROJECT-HYGIENE-CLEANUP",
       "status": "passed",
@@ -1042,7 +1042,7 @@
       "repairPartsHrStatus": "L0 Contract Preview"
     },
     "screenshot_baseline": {
-      "generatedAtUtc": "2026-06-04T23:00:42.247Z",
+      "generatedAtUtc": "2026-06-04T23:12:53.908Z",
       "generatedBy": "check-screenshot-baseline",
       "stage": "PROJECT-HYGIENE-CLEANUP",
       "status": "passed",
@@ -1070,11 +1070,11 @@
       "repairPartsHrStatus": "L0 Contract Preview"
     },
     "artifact_hygiene": {
-      "generatedAtUtc": "2026-06-04T23:00:42.518Z",
+      "generatedAtUtc": "2026-06-04T23:12:54.232Z",
       "generatedBy": "check-artifact-hygiene",
       "stage": "PROJECT-HYGIENE-CLEANUP",
       "status": "passed",
-      "headSha": "9f06ca6d99af83d832f9240308fd8fe3e6049c62",
+      "headSha": "8fd3c2c05264c3bec3bd17572117c25893f5b50c",
       "originMain": "a259ae2c05e6d3648082e27987075cf295c905bd",
       "trackedArtifactCount": 212,
       "finalArtifactCount": 19,
@@ -1255,7 +1255,7 @@
           "finalEvidence": true,
           "stage": "OAM-07",
           "generatedBy": "check-l1-to-l2-readiness",
-          "generatedAtUtc": "2026-06-04T22:52:07.645Z",
+          "generatedAtUtc": "2026-06-04T23:01:56.507Z",
           "sourceMode": "machine_checked",
           "status": "NOT_ELIGIBLE",
           "evidenceRefs": [
@@ -1267,8 +1267,8 @@
           "forbiddenRefs": [],
           "missingRefs": [],
           "productionBoundaryOk": true,
-          "resultHash": "7ac8103d5ef16345592679264de2aef507fe0b85e98a6379d7ca2e56de36f283",
-          "fileHash": "dc9181d1727b499b2c491878264e3df798529f92a8d698b64676b6d3dbd28474",
+          "resultHash": "2fc17882c5747ee67c78367d0d07a2439e08025358359546e68bb0fd741b43c0",
+          "fileHash": "b81890e263cb384f8759c51ead69c4c57c3186378b170077e70bf25ecfbb0314",
           "headSha": "a259ae2c05e6d3648082e27987075cf295c905bd"
         },
         {
@@ -1563,7 +1563,7 @@
       "repairPartsHrStatus": "L0 Contract Preview"
     },
     "seed_data_isolation": {
-      "generatedAtUtc": "2026-06-04T23:00:41.933Z",
+      "generatedAtUtc": "2026-06-04T23:12:53.585Z",
       "generatedBy": "check-seed-data-isolation",
       "stage": "PROJECT-HYGIENE-CLEANUP",
       "status": "passed",
@@ -1576,7 +1576,7 @@
       "repairPartsHrStatus": "L0 Contract Preview"
     },
     "migration_sequence_hygiene": {
-      "generatedAtUtc": "2026-06-04T23:00:41.485Z",
+      "generatedAtUtc": "2026-06-04T23:12:53.291Z",
       "generatedBy": "check-migration-sequence-hygiene",
       "stage": "PROJECT-HYGIENE-CLEANUP",
       "status": "passed",
@@ -1603,7 +1603,7 @@
       "repairPartsHrStatus": "L0 Contract Preview"
     },
     "auxiliary_reference_hygiene": {
-      "generatedAtUtc": "2026-06-04T23:00:39.066Z",
+      "generatedAtUtc": "2026-06-04T23:12:37.646Z",
       "generatedBy": "check-auxiliary-reference-hygiene",
       "stage": "PROJECT-HYGIENE-CLEANUP",
       "status": "passed",
@@ -1955,11 +1955,11 @@
       "repairPartsHrStatus": "L0 Contract Preview"
     },
     "company_kernel_alignment": {
-      "generatedAtUtc": "2026-06-04T23:02:00.647Z",
+      "generatedAtUtc": "2026-06-04T23:13:23.142Z",
       "generatedBy": "check-company-kernel-alignment",
       "stage": "OAM-CAB-V1.1-COMPANY-KERNEL-ALIGNMENT",
       "status": "passed",
-      "headSha": "9f06ca6d99af83d832f9240308fd8fe3e6049c62",
+      "headSha": "8fd3c2c05264c3bec3bd17572117c25893f5b50c",
       "contractRef": "docs/contracts/company-kernels/company-kernel-alignment-contract.json",
       "businessRealityMapRef": "docs/architecture/business-reality-oam-kernel-map.json",
       "kernelCount": 7,
@@ -2238,5 +2238,5 @@
   "dormitoryL2ProductionAllowed": false,
   "businessProduction": "blocked",
   "repairPartsHrStatus": "L0 Contract Preview",
-  "headSha": "9f06ca6d99af83d832f9240308fd8fe3e6049c62"
+  "headSha": "8fd3c2c05264c3bec3bd17572117c25893f5b50c"
 }

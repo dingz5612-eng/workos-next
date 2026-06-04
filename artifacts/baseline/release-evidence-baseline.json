@@ -1,10 +1,10 @@
 {
-  "generatedAtUtc": "2026-06-04T23:01:08.535Z",
+  "generatedAtUtc": "2026-06-04T23:13:24.237Z",
   "generatedBy": "check-release-evidence-baseline",
   "stage": "OAM-CLEAN-BASELINE-D1",
   "status": "passed",
   "repositoryHead": "a259ae2c05e6d3648082e27987075cf295c905bd",
-  "prHead": "9f06ca6d99af83d832f9240308fd8fe3e6049c62",
+  "prHead": "8fd3c2c05264c3bec3bd17572117c25893f5b50c",
   "verifiedMainHead": "a259ae2c05e6d3648082e27987075cf295c905bd",
   "ci": {
     "id": 26886643261,
@@ -37,7 +37,7 @@
     "artifactGitBinding": "artifacts/release-state/artifact-git-binding-result.json"
   },
   "inputHash": "9352d8ffa94f1dc57cb2c4eb5283055ffaaa04782a9e366213992af7fb63450b",
-  "resultHash": "566fc6e2a6af44456d3ccb0c08bbc8947adaad9acd9cb0c6c3691023893cf132",
+  "resultHash": "553f606693b32921126131d0be92dc252ee62ae3cb8e660e8dbc55070e8e354e",
   "noGoItems": [],
   "productionAllowed": false,
   "dormitoryL2ProductionAllowed": false,

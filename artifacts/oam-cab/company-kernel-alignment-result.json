@@ -1,9 +1,9 @@
 {
-  "generatedAtUtc": "2026-06-04T23:02:00.647Z",
+  "generatedAtUtc": "2026-06-04T23:13:23.142Z",
   "generatedBy": "check-company-kernel-alignment",
   "stage": "OAM-CAB-V1.1-COMPANY-KERNEL-ALIGNMENT",
   "status": "passed",
-  "headSha": "9f06ca6d99af83d832f9240308fd8fe3e6049c62",
+  "headSha": "8fd3c2c05264c3bec3bd17572117c25893f5b50c",
   "contractRef": "docs/contracts/company-kernels/company-kernel-alignment-contract.json",
   "businessRealityMapRef": "docs/architecture/business-reality-oam-kernel-map.json",
   "kernelCount": 7,
