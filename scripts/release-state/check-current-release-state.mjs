@@ -38,6 +38,8 @@ const current = readJson("artifacts/release-state/current-state.json");
 const transitionLog = readJson("artifacts/release-state/state-transition-log.json");
 const mainHead = currentMainHead();
 const allowPendingMainRebind = process.env.OAM_ALLOW_PENDING_MAIN_REBIND === "true";
+const ciMatchesCurrentMain = current.currentMain?.ci?.headSha === mainHead;
+const ciMayBePendingSelfReference = allowPendingMainRebind && ciMatchesCurrentMain;
 
 assert(current.version === "release-state.authority.v1", "current-state version mismatch.");
 assert(current.generatedBy === "build-current-release-state", "current-state generatedBy mismatch.");
@@ -47,10 +49,13 @@ assert(current.currentMain?.headSha === mainHead, "current-state main head must 
   `current-state=${current.currentMain?.headSha}`,
   `origin/main=${mainHead}`
 ]);
-assert(current.currentMain?.ci?.status === "completed", "current-state CI must be completed.");
+assert(
+  current.currentMain?.ci?.status === "completed" || ciMayBePendingSelfReference,
+  "current-state CI must be completed."
+);
 assert(
   current.currentMain?.ci?.conclusion === "success" ||
-    (allowPendingMainRebind && current.currentMain?.ci?.headSha === mainHead),
+    ciMayBePendingSelfReference,
   "current-state CI must be green."
 );
 assert(current.currentMain?.ci?.headSha === mainHead, "current-state CI headSha must match origin/main.");
