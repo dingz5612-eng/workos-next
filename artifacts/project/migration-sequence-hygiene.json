@@ -1,10 +1,10 @@
 {
-  "generatedAtUtc": "2026-06-04T17:25:04.129Z",
+  "generatedAtUtc": "2026-06-04T23:00:41.485Z",
   "generatedBy": "check-migration-sequence-hygiene",
   "stage": "PROJECT-HYGIENE-CLEANUP",
   "status": "passed",
   "migrationDirectory": "infra/db/migrations",
-  "migrationFileCount": 39,
+  "migrationFileCount": 40,
   "duplicateOrdinals": [
     {
       "ordinal": "034",
@@ -17,7 +17,7 @@
   "missingOrdinals": [
     "035"
   ],
-  "nextRecommendedOrdinal": "040",
+  "nextRecommendedOrdinal": "041",
   "policyRef": "docs/project/migration-sequence-policy.json",
   "noGoItems": [],
   "productionAllowed": false,

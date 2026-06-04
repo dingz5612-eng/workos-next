@@ -14,6 +14,7 @@
     "tests"
   ],
   "ignoredOwners": [
+    "docs/project/auxiliary-reference-policy.json",
     "docs/project/project-cleanup-report.md",
     "docs/baseline/oam-clean-baseline.md"
   ],

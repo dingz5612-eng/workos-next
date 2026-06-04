@@ -5,7 +5,7 @@
   "migrationDirectory": "infra/db/migrations",
   "orderingRule": "MigrationScriptLoader orders SQL files by file name; schema_migrations records the full file stem as migration_id.",
   "doNotRenameAppliedMigrations": true,
-  "nextRecommendedOrdinal": "040",
+  "nextRecommendedOrdinal": "041",
   "allowedDuplicateOrdinals": [
     {
       "ordinal": "034",
