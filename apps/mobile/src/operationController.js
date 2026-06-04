@@ -3,7 +3,7 @@ import { clearDraft, loadDraft, saveDraft } from "./operationDrafts.js";
 import { createSubmissionProtocol, materializeEvidenceObjects, submitWorkItemOperation } from "./operationRuntime.js";
 import { setView } from "./navigationController.js";
 import { activeWorkspaceCard, isCardActionDisabled, isTerminalCardStatus } from "./selectors/workspaceSelectors.js";
-import { applyRuntimeProjection } from "./runtime/runtimeStore.js";
+import { applyRuntimeProjection, applyRuntimeSurfacePayloads } from "./runtime/runtimeStore.js";
 import { operationFieldId } from "./views/workspaceView.js";
 
 export function collectOperationValues() {
@@ -215,7 +215,8 @@ export async function submitCurrentCard(ctx) {
       evidenceIds,
       submissionProtocol,
       onProjection: (payload) => applyProjectionPayload(payload, ctx),
-      onLens: (payload) => applyLensPayload(payload, ctx)
+      onLens: (payload) => applyLensPayload(payload, ctx),
+      onOperationWorkItems: (items) => applyRuntimeSurfacePayloads(ctx.state, { operationWorkItems: items })
     });
     if (!isCommittedConfirmResult(result)) {
       ctx.state.operationMessage = confirmBlockedMessage(result, ctx);

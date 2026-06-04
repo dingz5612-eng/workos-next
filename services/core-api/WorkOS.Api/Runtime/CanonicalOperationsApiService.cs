@@ -21,17 +21,20 @@ public sealed class CanonicalOperationsApiService
     private readonly OperationsReadStore traces;
     private readonly WorkItemDefinitionRegistryService definitions;
     private readonly AdmissionKernelService admission;
+    private readonly ProjectionRuntime? projectionRuntime;
 
     public CanonicalOperationsApiService(
         OperationsRuntimeService catalog,
         OperationsUnitOfWork unitOfWork,
         OperationsReadStore traces,
         WorkItemDefinitionRegistryService? definitions = null,
-        AdmissionKernelService? admission = null)
+        AdmissionKernelService? admission = null,
+        ProjectionRuntime? projectionRuntime = null)
     {
         this.catalog = catalog;
         this.unitOfWork = unitOfWork;
         this.traces = traces;
+        this.projectionRuntime = projectionRuntime;
         this.definitions = definitions ?? WorkItemDefinitionRegistryService.LoadDefault();
         this.admission = admission ?? new AdmissionKernelService();
     }
@@ -148,7 +151,8 @@ public sealed class CanonicalOperationsApiService
             return ConfirmWorkItemResult.NotFound(workItemId, request.SubmissionId, request.IdempotencyKey, "operation_work_item_not_found");
         }
 
-        var normalized = request.Normalize(workItemId, workItem.WorkspaceId, request.CardId ?? workItem.WorkItemType);
+        var effectiveCardId = FirstNonEmpty(request.CardId, PayloadValue(workItem.Payload, "cardId"), workItem.WorkItemType);
+        var normalized = request.Normalize(workItemId, workItem.WorkspaceId, effectiveCardId);
         var caseId = FirstNonEmpty(workItem.CaseId, $"case-{workItem.TenantId}");
         var definition = definitions.Resolve(workItem, normalized.CardId);
         var actor = actorContext ?? new RuntimeActorContext(
@@ -191,6 +195,7 @@ public sealed class CanonicalOperationsApiService
         var commit = unitOfWork.Commit(command);
         if (commit is { StatusCode: StatusCodes.Status200OK, CommitStatus: "committed", Duplicate: false })
         {
+            var projected = ProjectDormitoryResourceLifecycle(workItem, normalized, actorToken);
             catalog.RecordWorkItemTransition(
                 workItem.TenantId,
                 caseId,
@@ -200,10 +205,103 @@ public sealed class CanonicalOperationsApiService
                 commit.SubmissionId,
                 "operations_confirm_committed",
                 actor.ActorId);
+            DispatchNextDormitoryResourceWorkItem(
+                workItem,
+                FirstNonEmpty(normalized.CardId, PayloadValue(workItem.Payload, "cardId"), workItem.WorkItemType),
+                actor,
+                caseId);
+            if (projected?.Payload is ConfirmCardResponse response && response.ProjectionStatus == "projected")
+            {
+                commit = commit with
+                {
+                    ProjectionStatus = "projected",
+                    DomainEventIds = response.ResultEventIds,
+                    ResponseBody = new Dictionary<string, object>(commit.ResponseBody, StringComparer.Ordinal)
+                    {
+                        ["projection"] = response.Projection!,
+                        ["projectionEventIds"] = response.ResultEventIds
+                    }
+                };
+            }
         }
 
         return ToConfirmResult(commit, normalized);
     }
+
+    private ConfirmResult? ProjectDormitoryResourceLifecycle(
+        WorkItem workItem,
+        ConfirmWorkItemRequest request,
+        string actorToken)
+    {
+        if (!workItem.WorkspaceId.StartsWith("W-STAY-RESOURCE-", StringComparison.OrdinalIgnoreCase))
+        {
+            return null;
+        }
+
+        if (projectionRuntime is null)
+        {
+            return null;
+        }
+
+        var cardId = FirstNonEmpty(request.CardId, PayloadValue(workItem.Payload, "cardId"), workItem.WorkItemType);
+        var projectionResult = projectionRuntime.Confirm(
+            workItem.WorkspaceId,
+            cardId,
+            request.ToConfirmCardRequest(request.RequestId ?? request.SubmissionId ?? request.IdempotencyKey ?? Guid.NewGuid().ToString("N")),
+            actorToken);
+        return projectionResult.Status is ConfirmStatus.Confirmed or ConfirmStatus.Duplicate
+            ? projectionResult
+            : null;
+    }
+
+    private void DispatchNextDormitoryResourceWorkItem(
+        WorkItem current,
+        string currentCardId,
+        RuntimeActorContext actor,
+        string caseId)
+    {
+        if (!current.WorkspaceId.StartsWith("W-STAY-RESOURCE-", StringComparison.OrdinalIgnoreCase))
+        {
+            return;
+        }
+
+        var nextCardId = NextDormitoryResourceCard(currentCardId);
+        if (string.IsNullOrWhiteSpace(nextCardId))
+        {
+            return;
+        }
+
+        var definition = definitions.ResolveByWorkspaceCard("W-STAY-RESOURCE", nextCardId);
+        catalog.CreateWorkItem(new CreateWorkItemRequest(
+            WorkspaceCardCompatibilityWorkItemResolver.WorkItemIdFor(current.WorkspaceId, nextCardId),
+            current.TenantId,
+            FirstNonEmpty(definition.Definition?.WorkItemType, nextCardId),
+            current.WorkspaceId,
+            current.WorkspaceId,
+            nextCardId,
+            FirstNonEmpty(current.OwnerRole, actor.Role, "operator"),
+            new Dictionary<string, string>
+            {
+                ["caseId"] = caseId,
+                ["cardId"] = nextCardId,
+                ["templateWorkspaceId"] = "W-STAY-RESOURCE",
+                ["definitionId"] = definition.DefinitionId,
+                ["operationAxis"] = "DomainEvent -> ProcessManager -> WorkItem",
+                ["sourceWorkItemId"] = current.WorkItemId,
+                ["dispatchedBy"] = "dormitory_resource_lifecycle_process_manager"
+            }));
+    }
+
+    private static string NextDormitoryResourceCard(string cardId) =>
+        cardId switch
+        {
+            "roomSetup" => "bedSetup",
+            "bedSetup" => "rateSetup",
+            "rateSetup" => "roomReadiness",
+            "roomReadiness" => "roomBlock",
+            "roomBlock" => "roomRelease",
+            _ => string.Empty
+        };
 
     public FactTraceV1? GetSubmissionTrace(string submissionId) =>
         traces.GetFactTraceBySubmission(submissionId);
@@ -385,6 +483,9 @@ public sealed class CanonicalOperationsApiService
             runtimeMode.Equals("production", StringComparison.OrdinalIgnoreCase)) ||
          (request.FieldValues.TryGetValue("productionConfirm", out var productionConfirm) &&
             productionConfirm.Equals("true", StringComparison.OrdinalIgnoreCase)));
+
+    private static string PayloadValue(IReadOnlyDictionary<string, string> payload, string key) =>
+        payload.TryGetValue(key, out var value) ? value : string.Empty;
 
     private static ConfirmWorkItemResult ToConfirmResult(OperationsCommitResult result, ConfirmWorkItemRequest request)
     {

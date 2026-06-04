@@ -3,6 +3,7 @@ import {
   confirmOperationWorkItem,
   createEvidenceDraft,
   fetchAccommodationLens,
+  fetchOperationWorkItems,
   prepareOperationWorkItem,
   waitForProjectionEvents
 } from "./apiClient.js";
@@ -37,7 +38,7 @@ export function createSubmissionProtocol(workspace, card, fieldValues = {}) {
   };
 }
 
-export async function submitWorkItemOperation({ workspace, card, workItemId: explicitWorkItemId, actor, language, fieldValues, evidenceIds, submissionProtocol, onProjection, onLens }) {
+export async function submitWorkItemOperation({ workspace, card, workItemId: explicitWorkItemId, actor, language, fieldValues, evidenceIds, submissionProtocol, onProjection, onLens, onOperationWorkItems }) {
   const workItemId = explicitWorkItemId || workItemIdFor(workspace, card);
   if (!workItemId) {
     return {
@@ -82,6 +83,12 @@ export async function submitWorkItemOperation({ workspace, card, workItemId: exp
     await refreshAccommodationLenses(lensIdsForWorkspace(workspace.id), onLens);
   } catch {
     // Lens refresh is read-side sync and must not change committed result semantics.
+  }
+  try {
+    const operationWorkItems = await fetchOperationWorkItems();
+    if (onOperationWorkItems) onOperationWorkItems(operationWorkItems);
+  } catch {
+    // WorkItem refresh is read-side sync; the committed command remains the source of truth.
   }
   return result;
 }

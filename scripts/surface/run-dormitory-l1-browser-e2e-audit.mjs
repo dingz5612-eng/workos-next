@@ -126,18 +126,32 @@ async function runPositiveScenario(browser, allNetworkEvents) {
     assertScenario(scenario, blocked.runtimeDecision === "blocked:required_field_missing", "positive.required_fields_blocked", "Empty required fields must block before runtime confirm.");
     assertScenario(scenario, blocked.domState.invalidFields.length > 0, "positive.required_fields_marked", "Blocked fields must be marked in DOM.");
 
-    await fillRequiredOperationFields(page, scenario);
-    await waitForHydrated(page);
-    await capture(page, scenario, "06-filled-before-submit", "Required business fields filled from DOM contract");
-    await click(page, scenario, "[data-submit-card]", "submit completed room setup");
-    await page.waitForFunction(() => {
-      const route = document.querySelector("[data-surface=\"operation-panel-route\"]");
-      return route?.dataset.admissionDecision === "visible_readonly_completed" ||
-        document.querySelector("[data-surface=\"completed-operation-record\"]");
-    }, null, { timeout: 45_000 });
-    const completed = await capture(page, scenario, "07-completed-readonly", "Completed record is read-only");
-    assertScenario(scenario, completed.admissionDecision === "visible_readonly_completed", "positive.completed_readonly_admission", "Completed WorkItem must be visible but read-only.");
-    assertScenario(scenario, completed.domState.submitCount === 0, "positive.no_submit_after_completion", "Completed WorkItem must not expose submit CTA.");
+    const lifecycleCards = ["roomSetup", "bedSetup", "rateSetup", "roomReadiness", "roomBlock", "roomRelease"];
+    let completed = null;
+    for (const [index, cardId] of lifecycleCards.entries()) {
+      if (index > 0) {
+        await click(page, scenario, "[data-work-item-id][data-card-id]", `continue to ${cardId}`);
+        await waitForOperationPanel(page);
+        const current = await capture(page, scenario, `${String(7 + index * 3).padStart(2, "0")}-${cardId}-ready`, `${cardId} ready from ProcessManager WorkItem`);
+        assertScenario(scenario, current.domState.fields.some((field) => field.id === cardIdPrimaryField(cardId) && field.required), `positive.${cardId}.business_fields`, `${cardId} must expose required business fields.`);
+      }
+
+      await fillRequiredOperationFields(page, scenario);
+      await waitForHydrated(page);
+      await capture(page, scenario, `${String(6 + index * 3).padStart(2, "0")}-${cardId}-filled-before-submit`, `${cardId} required business fields filled from DOM contract`);
+      await click(page, scenario, "[data-submit-card]", `submit completed ${cardId}`);
+      await page.waitForFunction(() => {
+        const route = document.querySelector("[data-surface=\"operation-panel-route\"]");
+        return route?.dataset.admissionDecision === "visible_readonly_completed" ||
+          document.querySelector("[data-surface=\"completed-operation-record\"]");
+      }, null, { timeout: 45_000 });
+      completed = await capture(page, scenario, `${String(7 + index * 3).padStart(2, "0")}-${cardId}-completed-readonly`, `${cardId} completed record is read-only`);
+      assertScenario(scenario, completed.admissionDecision === "visible_readonly_completed", `positive.${cardId}.completed_readonly_admission`, `${cardId} completed WorkItem must be visible but read-only.`);
+      assertScenario(scenario, completed.domState.submitCount === 0, `positive.${cardId}.no_submit_after_completion`, `${cardId} completed WorkItem must not expose submit CTA.`);
+      if (index < lifecycleCards.length - 1) {
+        assertScenario(scenario, completed.domState.nextStageCount > 0, `positive.${cardId}.next_work_item_visible`, `${cardId} completion must expose next stage WorkItem.`);
+      }
+    }
 
     return { scenario, completedUrl: page.url() };
   } finally {
@@ -395,6 +409,7 @@ async function readDomState(page) {
       actionState: primary.dataset?.actionState || "",
       blockerCode: primary.dataset?.blockerCode || "",
       submitCount: document.querySelectorAll("[data-submit-card]").length,
+      nextStageCount: document.querySelectorAll("[data-work-item-id][data-card-id]").length,
       startResourceCount: document.querySelectorAll("[data-start-resource-setup]").length,
       invalidFields,
       fields,
@@ -494,6 +509,7 @@ function architectureAssertions(currentReport) {
     assertion("coverage.illegal_access", scenarioIds.has("dormitory_l1_negative_illegal_access"), "Illegal access scenario is present."),
     assertion("coverage.unauthorized", scenarioIds.has("dormitory_l1_negative_unauthorized"), "Unauthorized role scenario is present."),
     assertion("coverage.wrong_status", scenarioIds.has("dormitory_l1_negative_wrong_status"), "Wrong status scenario is present."),
+    assertion("coverage.resource_lifecycle", ["roomSetup", "bedSetup", "rateSetup", "roomReadiness", "roomBlock", "roomRelease"].every((cardId) => steps.some((step) => step.stepId.includes(`${cardId}-completed-readonly`))), "Full dormitory resource lifecycle is captured."),
     assertion("admission.visible_not_allowed", steps.some((step) => /visible_blocked|visible_allowed_requires/.test(step.admissionDecision)), "Visible blocked/required admission state is captured."),
     assertion("admission.completed_readonly", steps.some((step) => step.admissionDecision === "visible_readonly_completed"), "Completed WorkItem is visible but read-only."),
     assertion("runtime.blocked_required", steps.some((step) => step.runtimeDecision === "blocked:required_field_missing"), "Required field blocker is enforced before runtime confirm."),
@@ -684,8 +700,27 @@ function valueForField(fieldId, type, index) {
     buildingName: "L1-A",
     buildingId: "L1-A",
     floor: "3",
+    roomId: `room-l1-${suffix}`,
     roomNo: `L1-${suffix}`,
     roomNote: "L1 browser audit room setup",
+    bedId: `bed-l1-${suffix}`,
+    bedNo: `L1-${suffix}-01`,
+    bedLabel: "01",
+    blockedReason: "maintenance",
+    blockReason: "maintenance",
+    ratePlanId: `rate-l1-${suffix}`,
+    dailyRatePerBed: "350",
+    weeklyRatePerBed: "2100",
+    monthlyRatePerBed: "9300",
+    effectiveFrom: "2026-06-04T10:00",
+    availabilityStatus: "available",
+    operatorId: "dorm-operator",
+    blockId: `block-l1-${suffix}`,
+    resourceScope: "room",
+    blockStartAt: "2026-06-04T11:00",
+    expectedReleaseAt: "2026-06-04T18:00",
+    releaseId: `release-l1-${suffix}`,
+    releaseAvailableAt: "2026-06-04T18:30",
     bedCount: "4",
     capacity: "4"
   };
@@ -693,6 +728,17 @@ function valueForField(fieldId, type, index) {
   if (type === "number") return "1";
   if (type === "datetime-local") return "2026-06-04T10:00";
   return `audit-${fieldId || index}-${suffix}`;
+}
+
+function cardIdPrimaryField(cardId) {
+  return {
+    roomSetup: "roomNo",
+    bedSetup: "bedNo",
+    rateSetup: "dailyRatePerBed",
+    roomReadiness: "availabilityStatus",
+    roomBlock: "resourceScope",
+    roomRelease: "releaseAvailableAt"
+  }[cardId] || "";
 }
 
 function dedupeBy(items, keyFn) {

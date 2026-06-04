@@ -70,7 +70,7 @@ export function operationPanelView(ctx) {
       </div>
     </section>
     ${OperationStepRail(workspace, activeCard, ctx)}
-    ${isCompleted ? completedRecordPanel(model, activeCard, ctx) : ""}
+    ${isCompleted ? completedRecordPanel(model, activeCard, operationContext, ctx) : ""}
     ${state.debugSurface ? TechnicalAuditDetails({
       model,
       payloadHash: payloadFingerprint,
@@ -90,7 +90,11 @@ function shouldOfferResourceSetup(state = {}) {
     (!state.selectedCardId || state.selectedCardId === "roomSetup");
 }
 
-function completedRecordPanel(model, card, ctx) {
+function completedRecordPanel(model, card, operationContext, ctx) {
+  const nextWorkItem = nextAvailableWorkItem(operationContext, ctx.state);
+  const nextAction = nextWorkItem
+    ? `<div class="operation-actions"><button data-work-item-id="${ctx.escapeAttr(nextWorkItem.workItemId)}" data-workspace-id="${ctx.escapeAttr(nextWorkItem.workspaceId)}" data-card-id="${ctx.escapeAttr(nextWorkItem.cardId)}">${ctx.tr("continueNextStage")}</button></div>`
+    : "";
   return `<section class="completed-record-panel" data-surface="completed-operation-record">
     <div>
       <span>${ctx.tr("completedRecordTitle")}</span>
@@ -105,7 +109,33 @@ function completedRecordPanel(model, card, ctx) {
       <dt>${ctx.tr("auditSummary")}</dt><dd>${model.traceRefs.length ? ctx.tr("traceBound") : ctx.tr("traceWillBind")}</dd>
       <dt>${ctx.tr("cardNext")}</dt><dd>${ctx.escapeHtml(model.nextAction)}</dd>
     </dl>
+    ${nextAction}
   </section>`;
+}
+
+function nextAvailableWorkItem(operationContext, state = {}) {
+  const workspace = operationContext.workspace;
+  const currentCardId = operationContext.cardId || operationContext.card?.id || "";
+  const currentIndex = (workspace?.cards || []).findIndex((card) => card.id === currentCardId);
+  if (currentIndex < 0) return null;
+  const nextCard = (workspace.cards || []).slice(currentIndex + 1).find((card) => !isTerminalCardStatus(card.status));
+  if (!nextCard) return null;
+  const runtimeItems = [
+    ...(state.runtimeStore?.operationWorkItems || []),
+    ...(state.runtimeStore?.workQueue || [])
+  ];
+  return runtimeItems
+    .map((item) => ({
+      workItemId: item.workItemId || item.work_item_id || "",
+      workspaceId: item.workspaceId || item.workspace_id || item.workspace?.id || "",
+      cardId: item.cardId || item.card_id || item.payload?.cardId || item.Payload?.cardId || item.card?.id || "",
+      lifecycleState: item.lifecycleState || item.lifecycle_state || item.status || ""
+    }))
+    .find((item) =>
+      item.workItemId &&
+      item.workspaceId === workspace.id &&
+      item.cardId === nextCard.id &&
+      !isTerminalCardStatus(item.lifecycleState)) || null;
 }
 
 function operationAdmissionDecision(model, card, actionState) {

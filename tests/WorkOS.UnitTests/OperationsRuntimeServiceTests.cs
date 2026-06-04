@@ -112,6 +112,49 @@ public sealed class OperationsRuntimeServiceTests
         Assert.HasCount(1, started.OperationWorkItems);
     }
 
+    [TestMethod]
+    public void operations_confirm_dispatches_next_resource_lifecycle_work_item()
+    {
+        var workspace = FakeOperationsRuntime.ResourceWorkspace("W-STAY-RESOURCE-202606040002");
+        var service = Service(out _, out _, out var workItems, workspaces: new[] { workspace });
+        var store = new InMemoryOperationsStore();
+        var unitOfWork = new OperationsUnitOfWork(
+            new CommandEnvelopeBuilder(),
+            new CommandSubmissionService(store),
+            new IdempotencyService(store),
+            new PayloadHashService(),
+            new SliceCommandHandlerRouter().Register(
+                CanonicalOperationsApiService.ConfirmCommandDefinition,
+                CanonicalOperationsApiService.HandleConfirmCommand));
+        var operations = new CanonicalOperationsApiService(service, unitOfWork, store);
+        var actor = new RuntimeActorContext(
+            "operator-1",
+            "operator",
+            "tenant-start",
+            new[] { "workos.write", "operations.confirm" },
+            "test",
+            "token-start");
+        var started = operations.StartWorkspaceCase(workspace, "W-STAY-RESOURCE", actor);
+
+        var result = operations.ConfirmWorkItem(
+            started.WorkItem.WorkItemId,
+            new ConfirmWorkItemRequest(
+                Language: "zh-CN",
+                IdempotencyKey: "idem-resource-next",
+                FieldValues: new Dictionary<string, string> { ["roomNo"] = "A101" },
+                EvidenceIds: Array.Empty<string>(),
+                SubmissionId: "sub-resource-next",
+                CardInstanceId: "ci-resource-next"),
+            actor,
+            "req-resource-next");
+
+        Assert.IsTrue(result.Confirmed);
+        Assert.IsTrue(workItems.List("tenant-start").Any(item =>
+            item.WorkspaceId == workspace.Id &&
+            item.Payload.TryGetValue("cardId", out var cardId) &&
+            cardId == "bedSetup"));
+    }
+
     private static OperationsRuntimeService Service(
         out FakeOperationsRuntime runtime,
         out InMemoryOperationsCaseStore cases,
@@ -179,6 +222,12 @@ public sealed class OperationsRuntimeServiceTests
                 new[] { Card("roomSetup") },
                 Text("Next"),
                 Array.Empty<BlockerRule>());
+
+        public static WorkspaceProjection ResourceWorkspace(string workspaceId) =>
+            Workspace(workspaceId) with
+            {
+                Cards = new[] { Card("roomSetup"), Card("bedSetup") with { Status = "notStarted" } }
+            };
 
         private static CardProjection Card(string cardId) =>
             new(
