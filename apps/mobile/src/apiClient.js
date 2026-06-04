@@ -91,10 +91,6 @@ export async function startResourceSetup(actorToken = "") {
   return startOperationsWorkspace("W-STAY-RESOURCE", actorToken, "resource_setup_start_failed");
 }
 
-export async function startWorkspace(templateWorkspaceId, actorToken = "", errorCode = "workspace_start_failed") {
-  return startOperationsWorkspace(templateWorkspaceId, actorToken, errorCode);
-}
-
 export async function startOperationsWorkspace(templateWorkspaceId, actorToken = "", errorCode = "operation_workspace_start_failed") {
   const response = await runtimeFetch(runtimeApiPaths.operationsWorkspaceStart, {
     method: "POST",
@@ -251,30 +247,6 @@ export async function loginActor(username, password) {
   return response.json();
 }
 
-export async function prepareCard(workspaceId, cardId, body = {}) {
-  const response = await runtimeFetch(runtimeApiPaths.prepareCard(workspaceId, cardId), {
-    method: "POST",
-    body: JSON.stringify(body || {}),
-    timeoutMs: 20000
-  });
-  if (!response.ok) throw await apiError("prepare_failed", response);
-  return response.json();
-}
-
-export async function confirmCard(workspaceId, cardId, actorToken, body) {
-  const response = await runtimeFetch(runtimeApiPaths.confirmCard(workspaceId, cardId), {
-    method: "POST",
-    headers: {
-      "X-Request-Id": body?.submissionId || body?.idempotencyKey || cryptoRandomRequestId()
-    },
-    actorToken,
-    body: JSON.stringify(body),
-    timeoutMs: 60000
-  });
-  if (!response.ok) throw await apiError("confirm_failed", response);
-  return response.json();
-}
-
 async function runtimeFetch(pathOrUrl, options = {}) {
   const method = options.method || "GET";
   const headers = {
@@ -326,7 +298,7 @@ async function apiError(code, response) {
   error.code = details.error || code;
   error.reason = details.reason || "";
   error.status = response.status;
-  if (response.status === 401 || response.status === 403) {
+  if (response.status === 401) {
     clearStoredActorSession();
   }
   return error;

@@ -2,8 +2,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("../apiClient.js", () => ({
   fetchSearchResults: vi.fn(),
-  startResourceSetup: vi.fn(),
-  startWorkspace: vi.fn()
+  startResourceSetup: vi.fn()
 }));
 
 import { fetchSearchResults, startResourceSetup } from "../apiClient.js";
@@ -75,6 +74,9 @@ describe("Operations Runtime start command contract", () => {
     const apiClient = source("../apiClient.js");
     expect(apiClient).toContain("operationsWorkspaceStart");
     expect(apiClient).not.toContain('runtimeFetch("/api/workspaces/start"');
+    expect(apiClient).not.toContain("startWorkspace(");
+    expect(apiClient).not.toContain("prepareCard(");
+    expect(apiClient).not.toContain("confirmCard(");
 
     const store = runtimeStore();
     const workspace = {
@@ -124,6 +126,19 @@ describe("Operations Runtime start command contract", () => {
     expect(ctx.state.lastActionResult).toBeNull();
     expect(visibleText(routeView(ctx))).toContain("提交处理");
     expect(visibleText(routeView(ctx))).not.toContain("查看阻断处理说明");
+  });
+
+  it("does not expose retired workspace/card compatibility write paths to the mobile client", () => {
+    const runtimePaths = source("../generated/runtimeApiPaths.js");
+    const apiClient = source("../apiClient.js");
+
+    expect(runtimePaths).not.toContain("startWorkspace:");
+    expect(runtimePaths).not.toContain("startResourceSetupWorkspace:");
+    expect(runtimePaths).not.toContain("prepareCard:");
+    expect(runtimePaths).not.toContain("confirmCard:");
+    expect(apiClient).not.toContain("startWorkspace(");
+    expect(apiClient).not.toContain("prepareCard(");
+    expect(apiClient).not.toContain("confirmCard(");
   });
 
   it("routes forbidden start commands to permission diagnosis instead of API offline copy", async () => {

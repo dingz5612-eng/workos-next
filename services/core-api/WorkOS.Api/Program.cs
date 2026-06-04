@@ -85,6 +85,22 @@ builder.Services.AddAuthorization(RuntimeActorAuthorization.Configure);
 
 var app = builder.Build();
 
+app.Use(async (context, next) =>
+{
+    if (RetiredWorkspaceCompatibilityWritePath(context.Request))
+    {
+        context.Response.StatusCode = StatusCodes.Status410Gone;
+        await context.Response.WriteAsJsonAsync(new
+        {
+            error = "workspace_card_compatibility_write_retired",
+            reason = "Operations Runtime is the only current business write path. Use /api/operations/workspaces/start or /api/operations/work-items/{workItemId}/confirm."
+        });
+        return;
+    }
+
+    await next();
+});
+
 app.UseCors();
 app.UseAuthentication();
 app.UseWorkOSRuntimeAccessPolicies();
@@ -638,6 +654,29 @@ app.MapPost("/api/behavior-events", (BehaviorEventRequest request, HttpRequest h
 });
 
 app.Run();
+
+static bool RetiredWorkspaceCompatibilityWritePath(HttpRequest request)
+{
+    if (!HttpMethods.IsPost(request.Method))
+    {
+        return false;
+    }
+
+    var path = request.Path.Value ?? "";
+    if (path.Equals("/api/workspaces/start", StringComparison.OrdinalIgnoreCase) ||
+        path.Equals("/api/workspaces/resource-setup/start", StringComparison.OrdinalIgnoreCase))
+    {
+        return true;
+    }
+
+    var parts = path.Split('/', StringSplitOptions.RemoveEmptyEntries);
+    return parts.Length == 6 &&
+        parts[0].Equals("api", StringComparison.OrdinalIgnoreCase) &&
+        parts[1].Equals("workspaces", StringComparison.OrdinalIgnoreCase) &&
+        parts[3].Equals("cards", StringComparison.OrdinalIgnoreCase) &&
+        (parts[5].Equals("prepare", StringComparison.OrdinalIgnoreCase) ||
+         parts[5].Equals("confirm", StringComparison.OrdinalIgnoreCase));
+}
 
 static string[] DormitoryTemplateWorkspaceIds() =>
     new[]

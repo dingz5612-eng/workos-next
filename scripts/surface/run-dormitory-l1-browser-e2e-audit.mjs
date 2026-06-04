@@ -188,7 +188,7 @@ async function runUnauthorizedScenario(browser, allNetworkEvents) {
     await waitForHydrated(page);
     await capture(page, scenario, "01-finance-search-command", "Finance can see visible command but is not allowed to start it");
     const forbiddenResponse = page.waitForResponse((response) =>
-      response.url().includes("/api/workspaces/start") && response.request().method() === "POST", { timeout: 30_000 }).catch(() => null);
+      response.url().includes("/api/operations/workspaces/start") && response.request().method() === "POST", { timeout: 30_000 }).catch(() => null);
     await click(page, scenario, "[data-start-resource-setup]", "finance clicks start command");
     await forbiddenResponse;
     await page.waitForFunction(() => {
