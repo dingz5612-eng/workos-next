@@ -1,0 +1,11 @@
+{
+  "version": "language-proof.v1",
+  "status": "passed",
+  "observedLanguages": [
+    "zh-CN"
+  ],
+  "sourceRefs": [
+    "docs/contracts/language/language-contract.json",
+    "docs/contracts/language/field-label-catalog.json"
+  ]
+}

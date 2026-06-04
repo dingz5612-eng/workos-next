@@ -1,0 +1,172 @@
+{
+  "version": "in-app.actor-role-matrix.v1",
+  "generatedAtUtc": "2026-06-04T11:02:26.491Z",
+  "commitSha": "edaf864f380b468ed8c45fff9471ac7f53f60dc1",
+  "ciRunId": "26944418435",
+  "roles": [
+    {
+      "role": "anonymous_user",
+      "loginAccount": null,
+      "canLogin": false,
+      "canViewDormitory": false,
+      "canSearch": false,
+      "canPrepare": false,
+      "canConfirm": false,
+      "canProductionConfirm": false,
+      "canSeeSensitiveFields": false,
+      "canWriteBusinessFacts": false,
+      "canAccessControlPlane": false,
+      "expectedBlockedReasons": [
+        "actor_session_required"
+      ]
+    },
+    {
+      "role": "unauthorized_user",
+      "loginAccount": "dormFinance",
+      "canLogin": true,
+      "canViewDormitory": true,
+      "canSearch": true,
+      "canPrepare": true,
+      "canConfirm": false,
+      "canProductionConfirm": false,
+      "canSeeSensitiveFields": false,
+      "canWriteBusinessFacts": false,
+      "canAccessControlPlane": false,
+      "expectedBlockedReasons": [
+        "permission_blocked_403",
+        "business_production_blocked"
+      ]
+    },
+    {
+      "role": "frontdesk_operator",
+      "loginAccount": "dormFrontdesk",
+      "canLogin": true,
+      "canViewDormitory": true,
+      "canSearch": true,
+      "canPrepare": true,
+      "canConfirm": true,
+      "canProductionConfirm": false,
+      "canSeeSensitiveFields": false,
+      "canWriteBusinessFacts": false,
+      "canAccessControlPlane": false,
+      "expectedBlockedReasons": [
+        "production_confirm_blocked"
+      ]
+    },
+    {
+      "role": "dormitory_operator",
+      "loginAccount": "dormOperator",
+      "canLogin": true,
+      "canViewDormitory": true,
+      "canSearch": true,
+      "canPrepare": true,
+      "canConfirm": true,
+      "canProductionConfirm": false,
+      "canSeeSensitiveFields": false,
+      "canWriteBusinessFacts": false,
+      "canAccessControlPlane": false,
+      "expectedBlockedReasons": [
+        "production_confirm_blocked"
+      ]
+    },
+    {
+      "role": "dormitory_manager",
+      "loginAccount": "dormManager",
+      "canLogin": true,
+      "canViewDormitory": true,
+      "canSearch": true,
+      "canPrepare": true,
+      "canConfirm": true,
+      "canProductionConfirm": false,
+      "canSeeSensitiveFields": true,
+      "canWriteBusinessFacts": false,
+      "canAccessControlPlane": false,
+      "expectedBlockedReasons": [
+        "business_production_blocked",
+        "period_close_high_risk_blocked"
+      ]
+    },
+    {
+      "role": "finance_operator",
+      "loginAccount": "dormFinance",
+      "canLogin": true,
+      "canViewDormitory": true,
+      "canSearch": true,
+      "canPrepare": true,
+      "canConfirm": false,
+      "canProductionConfirm": false,
+      "canSeeSensitiveFields": true,
+      "canWriteBusinessFacts": false,
+      "canAccessControlPlane": false,
+      "expectedBlockedReasons": [
+        "operations.workspace.start",
+        "business_production_blocked"
+      ]
+    },
+    {
+      "role": "governance_viewer",
+      "loginAccount": "admin",
+      "canLogin": true,
+      "canViewDormitory": true,
+      "canSearch": true,
+      "canPrepare": false,
+      "canConfirm": false,
+      "canProductionConfirm": false,
+      "canSeeSensitiveFields": true,
+      "canWriteBusinessFacts": false,
+      "canAccessControlPlane": true,
+      "expectedBlockedReasons": [
+        "mobile_pc_surface_blocked_for_mobile_device"
+      ]
+    },
+    {
+      "role": "pc_governance_admin",
+      "loginAccount": "admin",
+      "canLogin": true,
+      "canViewDormitory": true,
+      "canSearch": true,
+      "canPrepare": false,
+      "canConfirm": false,
+      "canProductionConfirm": false,
+      "canSeeSensitiveFields": true,
+      "canWriteBusinessFacts": false,
+      "canAccessControlPlane": true,
+      "expectedBlockedReasons": [
+        "pc_governance_readonly"
+      ]
+    },
+    {
+      "role": "language_admin",
+      "loginAccount": "admin",
+      "canLogin": true,
+      "canViewDormitory": true,
+      "canSearch": true,
+      "canPrepare": false,
+      "canConfirm": false,
+      "canProductionConfirm": false,
+      "canSeeSensitiveFields": false,
+      "canWriteBusinessFacts": false,
+      "canAccessControlPlane": true,
+      "expectedBlockedReasons": [
+        "business_fact_write_forbidden"
+      ]
+    },
+    {
+      "role": "auditor",
+      "loginAccount": "dormReleaseOwner",
+      "canLogin": true,
+      "canViewDormitory": true,
+      "canSearch": true,
+      "canPrepare": false,
+      "canConfirm": false,
+      "canProductionConfirm": false,
+      "canSeeSensitiveFields": true,
+      "canWriteBusinessFacts": false,
+      "canAccessControlPlane": true,
+      "expectedBlockedReasons": [
+        "manual_gate_result_forbidden",
+        "manual_passed_evidence_forbidden"
+      ]
+    }
+  ]
+}

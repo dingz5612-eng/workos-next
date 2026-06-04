@@ -7,15 +7,16 @@ export function loginView(ctx) {
       <p>${tr("loginBody")}</p>
       <label>
         <span>${tr("loginAccount")}</span>
-        <select id="loginAccount" autocomplete="username">
-          ${accountOption("dormFrontdesk", "frontdeskAccount", state, tr)}
-          ${accountOption("dormOperator", "operatorAccount", state, tr)}
-          ${accountOption("dormHousekeeping", "housekeepingAccount", state, tr)}
-          ${accountOption("dormFinance", "financeAccount", state, tr)}
-          ${accountOption("dormManager", "managerAccount", state, tr)}
-          ${isDevLoginEnabled() ? `${accountOption("admin", "adminAccount", state, tr)}${accountOption("dormReleaseOwner", "releaseOwnerAccount", state, tr)}` : ""}
-        </select>
+        <input id="loginAccount" autocomplete="username" value="${ctx.escapeAttr(state.loginAccount || "")}" placeholder="${tr("loginAccountPlaceholder")}" />
       </label>
+      <div class="login-account-hints" aria-label="${tr("loginAccountHelp")}">
+        ${accountHint("dormFrontdesk", "frontdeskAccount", ctx)}
+        ${accountHint("dormOperator", "operatorAccount", ctx)}
+        ${accountHint("dormHousekeeping", "housekeepingAccount", ctx)}
+        ${accountHint("dormFinance", "financeAccount", ctx)}
+        ${accountHint("dormManager", "managerAccount", ctx)}
+        ${isDevLoginEnabled() ? `${accountHint("admin", "adminAccount", ctx)}${accountHint("dormReleaseOwner", "releaseOwnerAccount", ctx)}` : ""}
+      </div>
       <label>
         <span>${tr("loginDepartment")}</span>
         <select id="loginDepartment">
@@ -36,9 +37,8 @@ export function loginView(ctx) {
   `);
 }
 
-function accountOption(value, labelKey, state, tr) {
-  const selected = (state.loginAccount || "dormFrontdesk") === value ? " selected" : "";
-  return `<option value="${value}"${selected}>${tr(labelKey)}</option>`;
+function accountHint(value, labelKey, ctx) {
+  return `<span><b>${ctx.escapeHtml(value)}</b>${ctx.tr(labelKey)}</span>`;
 }
 
 function departmentOption(value, labelKey, state, tr) {

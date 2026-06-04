@@ -89,8 +89,8 @@ export function updateDerivedFields(ctx) {
   const card = activeWorkspaceCard(item, ctx.state.selectedCardIndex, ctx.state.selectedCardId);
   const roomTypeField = card?.fields?.business?.find((field) => field.ui?.optionSet === "roomType");
   const capacityField = card?.fields?.business?.find((field) => field.ui?.derivedFrom === "roomType");
-  const roomType = roomTypeField ? document.querySelector(`[data-operation-field="${roomTypeField.id}"]`)?.value : "";
-  const capacity = capacityField ? document.querySelector(`[data-operation-field="${capacityField.id}"]`) : null;
+  const roomType = roomTypeField ? document.querySelector(`[data-operation-field="${operationFieldId(roomTypeField)}"]`)?.value : "";
+  const capacity = capacityField ? document.querySelector(`[data-operation-field="${operationFieldId(capacityField)}"]`) : null;
   if (roomType && capacity) capacity.value = capacityForRoomType(roomType);
   const amount = document.querySelector('[data-operation-field="amount"]');
   const unitRate = decimalValue("unitRate");

@@ -39,6 +39,7 @@ export function applyRuntimeSurfacePayloads(state, payloads = {}) {
   }
   if (payloads.operationWorkItems) {
     store.operationWorkItems = payloads.operationWorkItems;
+    store.workspaces = mergeOperationWorkItemStatuses(store.workspaces, payloads.operationWorkItems);
     store.workQueue = operationWorkItemsToQueue(payloads.operationWorkItems);
     store.queueSource = "operations-work-items";
   }
@@ -54,6 +55,42 @@ export function applyRuntimeSurfacePayloads(state, payloads = {}) {
     store.accommodationLenses = payloads.accommodationLenses;
     state.accommodationLenses = payloads.accommodationLenses;
   }
+}
+
+function mergeOperationWorkItemStatuses(workspaces = [], workItems = []) {
+  const statusesByWorkspaceCard = statusIndex(workItems);
+  if (!statusesByWorkspaceCard.size) return workspaces;
+  return (workspaces || []).map((workspace) => {
+    const cards = (workspace.cards || []).map((card) => {
+      const status = statusesByWorkspaceCard.get(`${workspace.id}:${card.id}`);
+      return status ? { ...card, status } : card;
+    });
+    return { ...workspace, cards };
+  });
+}
+
+function statusIndex(workItems = []) {
+  const index = new Map();
+  for (const item of Array.isArray(workItems) ? workItems : []) {
+    const workspaceId = item.workspaceId || item.workspace_id || item.workspace?.id || "";
+    const cardId = cardIdOf(item) || item.card?.id || "";
+    if (!workspaceId || !cardId) continue;
+    const nextStatus = normalizeOperationLifecycleState(item.lifecycleState || item.lifecycle_state || item.status || item.card?.status);
+    if (!nextStatus) continue;
+    const key = `${workspaceId}:${cardId}`;
+    const currentStatus = index.get(key);
+    if (statusRank(nextStatus) >= statusRank(currentStatus)) {
+      index.set(key, nextStatus);
+    }
+  }
+  return index;
+}
+
+function statusRank(status = "") {
+  if (["done", "confirmed", "completed", "committed", "closed", "cancelled", "skipped"].includes(String(status))) return 3;
+  if (["ready", "blocked", "inProgress"].includes(String(status))) return 2;
+  if (status) return 1;
+  return 0;
 }
 
 function operationWorkItemsToQueue(workItems) {

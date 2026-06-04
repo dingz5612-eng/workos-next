@@ -10,7 +10,7 @@ import { fetchSearchResults, startResourceSetup } from "../apiClient.js";
 import { runSearch, startWorkspaceCommand } from "../navigationController.js";
 import { routeView } from "../appRouter.js";
 import { applyRuntimeProjection } from "../runtime/runtimeStore.js";
-import { createSurfaceCtx, runtimeStore, visibleText } from "./surfaceContractTestHelpers.js";
+import { createSurfaceCtx, runtimeStore, source, visibleText } from "./surfaceContractTestHelpers.js";
 
 describe("Operations Runtime start command contract", () => {
   beforeEach(() => {
@@ -69,6 +69,61 @@ describe("Operations Runtime start command contract", () => {
     expect(visibleText(routeView(ctx))).toContain("可办理");
     expect(visibleText(routeView(ctx))).not.toContain("available");
     expect(visibleText(routeView(ctx))).not.toContain("暂不能直接办理");
+  });
+
+  it("starts new dormitory work through the Operations Runtime endpoint and clears stale route blockers", async () => {
+    const apiClient = source("../apiClient.js");
+    expect(apiClient).toContain("operationsWorkspaceStart");
+    expect(apiClient).not.toContain('runtimeFetch("/api/workspaces/start"');
+
+    const store = runtimeStore();
+    const workspace = {
+      ...store.workspaces[0],
+      id: "W-STAY-RESOURCE-202606040002"
+    };
+    const workItem = {
+      workItemId: "wi-start-room-002",
+      workspaceId: workspace.id,
+      caseId: workspace.id,
+      workItemType: "Dorm.RoomSetup",
+      lifecycleState: "available",
+      ownerRole: "operator",
+      payload: {
+        cardId: "roomSetup",
+        templateWorkspaceId: "W-STAY-RESOURCE"
+      }
+    };
+    startResourceSetup.mockResolvedValue({
+      workspace,
+      workItem,
+      operationWorkItems: [workItem],
+      projection: {
+        workspaces: [workspace],
+        events: []
+      }
+    });
+    store.workspaces = [];
+    store.operationWorkItems = [];
+    const ctx = createSurfaceCtx({
+      view: "operationPanel",
+      runtimeStore: store,
+      lastActionResult: {
+        status: "business_blocked_422",
+        reason: "operation_work_item_required",
+        message: "需要先生成可办理任务，再提交处理。"
+      }
+    });
+    ctx.applyRuntimeProjection = (payload) => applyRuntimeProjection(ctx.state, payload);
+    ctx.render = vi.fn();
+    ctx.hydrateProjectionFromApi = vi.fn();
+
+    await startWorkspaceCommand(ctx, "W-STAY-RESOURCE", "roomSetup");
+
+    expect(ctx.state.view).toBe("operationPanel");
+    expect(ctx.state.selectedWorkItemId).toBe("wi-start-room-002");
+    expect(ctx.state.lastActionResult).toBeNull();
+    expect(visibleText(routeView(ctx))).toContain("提交处理");
+    expect(visibleText(routeView(ctx))).not.toContain("查看阻断处理说明");
   });
 
   it("routes forbidden start commands to permission diagnosis instead of API offline copy", async () => {

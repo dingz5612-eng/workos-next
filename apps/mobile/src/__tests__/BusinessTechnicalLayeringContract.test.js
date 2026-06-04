@@ -180,8 +180,10 @@ describe("OAM-04B business and technical layering contract", () => {
 
     expect(html).toContain('data-surface="completed-operation-record"');
     expect(text).toContain("已完成");
-    expect(text).toContain("这条记录已经完成");
+    expect(text).toContain("已保存");
     expect(text).not.toContain("操作输入");
+    expect(text).not.toContain("系统证据要求");
+    expect(text).not.toContain("审计摘要");
     expect(text).not.toContain("提交证据");
     expect(text).not.toContain("可信确认");
     expect(text).not.toContain("Ready to prepare / confirm");
@@ -250,6 +252,25 @@ describe("OAM-04B business and technical layering contract", () => {
     expect(text).not.toContain("操作输入");
     expect(html).not.toContain("sticky-action");
     expect(html).not.toContain('data-submit-card');
+  });
+
+  it("keeps completed operation audit proof out of the default operator copy", () => {
+    const operatorCtx = createSurfaceCtx({ view: "operationPanel" });
+    operatorCtx.state.runtimeStore.workspaces[0].cards[0].status = "done";
+    const adminCtx = createSurfaceCtx({
+      view: "operationPanel",
+      currentActor: { role: "admin", displayName: "审计管理员", token: "admin-token", capabilities: ["operation.confirm"] }
+    });
+    adminCtx.state.runtimeStore.workspaces[0].cards[0].status = "done";
+
+    const operatorHtml = operationPanelView(operatorCtx);
+    const adminHtml = operationPanelView(adminCtx);
+
+    expect(visibleText(operatorHtml)).toContain("已保存");
+    expect(visibleText(operatorHtml)).not.toContain("审计摘要");
+    expect(operatorHtml).not.toContain('data-surface="completed-operation-audit-details"');
+    expect(adminHtml).toContain('data-surface="completed-operation-audit-details"');
+    expect(visibleText(adminHtml)).toContain("审计摘要");
   });
 
   it("renders 403, 409, 422, and projection pending recovery with learning or trace entry", () => {

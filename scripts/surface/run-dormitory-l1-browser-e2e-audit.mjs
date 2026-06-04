@@ -35,7 +35,7 @@ const report = {
   runId,
   generatedAtUtc: new Date().toISOString(),
   browserMode: "playwright-real-browser",
-  mockPolicy: "no route mocks, no backend simulation, no API substitute for user operations",
+  mockPolicy: "no route mocks, no backend simulation, no API substitute for user operations, no localStorage injection",
   scope: {
     included: ["Dormitory L1 observation flow"],
     excluded: ["Repair", "Parts", "HR"]
@@ -96,15 +96,16 @@ try {
 }
 
 async function runPositiveScenario(browser, allNetworkEvents) {
-  const scenario = createScenario("dormitory_l1_positive_normal", "positive", "Dormitory L1 normal room setup");
+  const scenario = createScenario("dormitory_l1_positive_normal", "positive", "Dormitory L1 normal room setup", "operator", "zh-CN");
   const { context, page } = await newMobilePage(browser, scenario, allNetworkEvents);
   try {
     await goto(page, scenario, "/?view=login&lang=zh-CN&device=mobile");
     await capture(page, scenario, "01-login", "Login page before operator sign-in");
-    await select(page, scenario, "#loginAccount", "dormOperator", "select dormitory operator account");
+    await fill(page, scenario, "#loginAccount", "dormOperator", "enter dormitory operator account");
     await select(page, scenario, "#loginDepartment", "stay", "select stay department");
     await fill(page, scenario, "#loginPassword", "dev", "fill password");
     await click(page, scenario, "#loginSubmit", "click login");
+    await completeOnboardingIfNeeded(page, scenario);
     await waitForLoggedIn(page);
     await capture(page, scenario, "02-home", "Home after operator login");
 
@@ -160,7 +161,7 @@ async function runPositiveScenario(browser, allNetworkEvents) {
 }
 
 async function runIllegalAccessScenario(browser, allNetworkEvents) {
-  const scenario = createScenario("dormitory_l1_negative_illegal_access", "negative", "Fake WorkItem URL cannot open a business write");
+  const scenario = createScenario("dormitory_l1_negative_illegal_access", "negative", "Fake WorkItem URL cannot open a business write", "operator", "zh-CN");
   const { context, page } = await newMobilePage(browser, scenario, allNetworkEvents);
   try {
     await loginAs(page, scenario, "dormOperator", "stay");
@@ -177,7 +178,7 @@ async function runIllegalAccessScenario(browser, allNetworkEvents) {
 }
 
 async function runUnauthorizedScenario(browser, allNetworkEvents) {
-  const scenario = createScenario("dormitory_l1_negative_unauthorized", "negative", "Finance account cannot start room setup");
+  const scenario = createScenario("dormitory_l1_negative_unauthorized", "negative", "Finance account cannot start room setup", "finance", "zh-CN");
   const { context, page } = await newMobilePage(browser, scenario, allNetworkEvents);
   try {
     await loginAs(page, scenario, "dormFinance", "finance");
@@ -206,7 +207,7 @@ async function runUnauthorizedScenario(browser, allNetworkEvents) {
 }
 
 async function runWrongStatusScenario(browser, allNetworkEvents, completedUrl) {
-  const scenario = createScenario("dormitory_l1_negative_wrong_status", "negative", "Completed WorkItem cannot be submitted again");
+  const scenario = createScenario("dormitory_l1_negative_wrong_status", "negative", "Completed WorkItem cannot be submitted again", "operator", "zh-CN");
   const { context, page } = await newMobilePage(browser, scenario, allNetworkEvents);
   try {
     await loginAs(page, scenario, "dormOperator", "stay");
@@ -229,10 +230,11 @@ async function runWrongStatusScenario(browser, allNetworkEvents, completedUrl) {
 
 async function loginAs(page, scenario, account, department) {
   await goto(page, scenario, "/?view=login&lang=zh-CN&device=mobile");
-  await select(page, scenario, "#loginAccount", account, `select ${account}`);
+  await fill(page, scenario, "#loginAccount", account, `enter ${account}`);
   await select(page, scenario, "#loginDepartment", department, `select ${department} department`);
   await fill(page, scenario, "#loginPassword", "dev", "fill password");
   await click(page, scenario, "#loginSubmit", "click login");
+  await completeOnboardingIfNeeded(page, scenario);
   await waitForLoggedIn(page);
   await capture(page, scenario, "00-login-complete", `Logged in as ${account}`);
 }
@@ -243,11 +245,6 @@ async function newMobilePage(browser, scenario, allNetworkEvents) {
     deviceScaleFactor: 1,
     isMobile: true,
     hasTouch: true
-  });
-  await context.addInitScript(() => {
-    localStorage.setItem("workosnext.lang", "zh-CN");
-    localStorage.setItem("workosnext.onboarded", "1");
-    localStorage.removeItem("workosnext.debugSurface");
   });
   const page = await context.newPage();
   page.on("response", (response) => {
@@ -300,6 +297,17 @@ async function select(page, scenario, selector, value, label) {
   scenario.clickSequence.at(-1).afterUrl = page.url();
 }
 
+async function completeOnboardingIfNeeded(page, scenario) {
+  await page.waitForFunction(() => {
+    return document.querySelector("#start") || document.querySelector("nav.bottom-nav");
+  }, null, { timeout: 20_000 }).catch(() => {});
+  await waitForHydrated(page);
+  const start = page.locator("#start");
+  if (await start.isVisible().catch(() => false)) {
+    await click(page, scenario, "#start", "complete onboarding guide");
+  }
+}
+
 async function fillRequiredOperationFields(page, scenario) {
   const fields = await page.locator("[data-operation-field][data-required-field=\"true\"], [data-operation-field][required]").evaluateAll((nodes) =>
     nodes.map((node) => ({
@@ -341,8 +349,19 @@ async function capture(page, scenario, stepId, title) {
   const fullPath = path.join(screenshotDir, `${safe}-full.png`);
   await page.screenshot({ path: fullPath, fullPage: true });
   const segments = await captureSegments(page, safe);
-  const full = screenshotEntry(fullPath, "fullPage", scenario.scenarioId, stepId);
-  const segmentEntries = segments.map((item) => screenshotEntry(item.path, item.kind, scenario.scenarioId, stepId, item.scrollY));
+  const screenshotMeta = {
+    scenarioId: scenario.scenarioId,
+    stepId,
+    role: scenario.role,
+    language: scenario.language,
+    url: page.url(),
+    admissionState: domState.admissionDecision,
+    runtimeDecision: domState.runtimeDecision,
+    commitSha: git.headSha,
+    ciRun: ciRun?.id || "not_available"
+  };
+  const full = screenshotEntry(fullPath, "fullPage", screenshotMeta);
+  const segmentEntries = segments.map((item) => screenshotEntry(item.path, item.kind, { ...screenshotMeta, segmentPosition: item.kind }, item.scrollY));
   report.screenshots.push(full, ...segmentEntries);
   const step = {
     stepId,
@@ -368,18 +387,24 @@ async function captureSegments(page, safe) {
   const viewport = page.viewportSize() || { width: 430, height: 932 };
   const height = Math.max(1, viewport.height);
   const scrollHeight = await page.evaluate(() => Math.max(document.documentElement.scrollHeight, document.body.scrollHeight));
-  const count = Math.max(1, Math.ceil(scrollHeight / height));
   const entries = [];
   const seen = new Set();
-  for (let index = 0; index < count; index += 1) {
-    const scrollY = Math.max(0, Math.min(index * height, scrollHeight - height));
+  const positions = scrollHeight > height
+    ? [
+        { kind: "top", scrollY: 0 },
+        { kind: "middle", scrollY: Math.max(0, Math.floor((scrollHeight - height) / 2)) },
+        { kind: "bottom", scrollY: Math.max(0, scrollHeight - height) }
+      ]
+    : [{ kind: "top", scrollY: 0 }];
+  for (const position of positions) {
+    const scrollY = position.scrollY;
     if (seen.has(scrollY)) continue;
     seen.add(scrollY);
     await page.evaluate((y) => window.scrollTo(0, y), scrollY);
     await page.waitForTimeout(120);
-    const segmentPath = path.join(screenshotDir, `${safe}-segment-${String(index + 1).padStart(2, "0")}.png`);
+    const segmentPath = path.join(screenshotDir, `${safe}-${position.kind}.png`);
     await page.screenshot({ path: segmentPath, fullPage: false });
-    entries.push({ path: segmentPath, kind: "scrollSegment", scrollY });
+    entries.push({ path: segmentPath, kind: position.kind, scrollY });
   }
   await page.evaluate(() => window.scrollTo(0, 0));
   return entries;
@@ -400,11 +425,16 @@ async function readDomState(page) {
       visible: !!(node.offsetWidth || node.offsetHeight || node.getClientRects().length),
       valuePresent: Boolean(String(node.value || "").trim())
     }));
+    const surface = primary.dataset?.surface || "";
+    const admissionDecision = primary.dataset?.admissionDecision ||
+      (surface ? "visible_readonly_surface" : "visible_public_surface");
+    const runtimeDecision = primary.dataset?.runtimeDecision ||
+      (surface ? "readonly:surface_no_business_confirm" : "readonly:public_surface_no_business_confirm");
     return {
       title: document.querySelector("h1")?.textContent?.trim() || "",
-      surface: primary.dataset?.surface || "",
-      admissionDecision: primary.dataset?.admissionDecision || "",
-      runtimeDecision: primary.dataset?.runtimeDecision || "",
+      surface,
+      admissionDecision,
+      runtimeDecision,
       lifecycleState: primary.dataset?.lifecycleState || "",
       actionState: primary.dataset?.actionState || "",
       blockerCode: primary.dataset?.blockerCode || "",
@@ -452,11 +482,13 @@ async function waitForOperationPanel(page) {
   await waitForHydrated(page);
 }
 
-function createScenario(scenarioId, caseType, title) {
+function createScenario(scenarioId, caseType, title, role, language) {
   return {
     scenarioId,
     caseType,
     title,
+    role,
+    language,
     status: "running",
     steps: [],
     clickSequence: [],
@@ -625,11 +657,19 @@ function markdownReport(currentReport) {
   return `${lines.join("\n")}\n`;
 }
 
-function screenshotEntry(filePath, kind, scenarioId, stepId, scrollY = null) {
+function screenshotEntry(filePath, kind, metadata, scrollY = null) {
   return {
     kind,
-    scenarioId,
-    stepId,
+    scenarioId: metadata.scenarioId,
+    stepId: metadata.stepId,
+    role: metadata.role,
+    language: metadata.language,
+    url: metadata.url,
+    admissionState: metadata.admissionState,
+    runtimeDecision: metadata.runtimeDecision,
+    commitSha: metadata.commitSha,
+    ciRun: metadata.ciRun,
+    segmentPosition: metadata.segmentPosition || null,
     path: rel(filePath),
     absolutePath: filePath,
     sha256: sha256(filePath),

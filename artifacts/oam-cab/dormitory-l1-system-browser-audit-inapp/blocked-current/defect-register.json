@@ -1,0 +1,18 @@
+{
+  "P0": [
+    {
+      "id": "in_app_browser_runtime_evaluate_timeout",
+      "message": "Visible in-app browser tab repeatedly timed out during DOM evaluation/screenshot-driven step capture after real UI operations."
+    },
+    {
+      "id": "in_app_browser_clipboard_fill_unavailable",
+      "message": "Visible in-app browser fill/type path requires virtual clipboard, so text input automation had to be reworked; full scenario run still did not complete."
+    },
+    {
+      "id": "required_scenario_coverage_incomplete",
+      "message": "All dormitory business scenarios and system scenarios were not completed in the visible in-app browser."
+    }
+  ],
+  "P1": [],
+  "P2": []
+}

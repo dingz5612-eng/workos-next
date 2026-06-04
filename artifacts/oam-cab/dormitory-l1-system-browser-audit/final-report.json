@@ -1,0 +1,68 @@
+{
+  "version": "dormitory-l1.system-browser-evidence-audit.final.v1",
+  "generatedAtUtc": "2026-06-04T10:32:10.449Z",
+  "status": "passed_no_go_business_production",
+  "browserStatus": "passed",
+  "commitSha": "edaf864f380b468ed8c45fff9471ac7f53f60dc1",
+  "ciRun": "26944418435",
+  "productionAllowed": false,
+  "dormitoryL2Allowed": false,
+  "productionConfirmAllowed": false,
+  "next_stage": {
+    "allowed": false,
+    "reason": "Dormitory L1 browser evidence is bound, but Business Production, Dormitory L2, and production_confirm remain blocked by contract."
+  },
+  "defects": {
+    "version": "dormitory-l1.defect-register.v1",
+    "generatedAtUtc": "2026-06-04T10:32:10.449Z",
+    "P0": [],
+    "P1": [
+      {
+        "id": "business_production_still_blocked",
+        "message": "Expected No-Go: Business Production remains blocked."
+      }
+    ],
+    "P2": []
+  },
+  "evidence": [
+    "artifacts/oam-cab/dormitory-l1-system-browser-audit/actor-role-matrix.json",
+    "artifacts/oam-cab/dormitory-l1-system-browser-audit/dormitory-scenario-matrix.json",
+    "artifacts/oam-cab/dormitory-l1-system-browser-audit/system-scenario-matrix.json",
+    "artifacts/oam-cab/dormitory-l1-system-browser-audit/browser-step-trace.jsonl",
+    "artifacts/oam-cab/dormitory-l1-system-browser-audit/screenshot-manifest.json",
+    "artifacts/oam-cab/dormitory-l1-system-browser-audit/evidence-manifest.json",
+    "artifacts/oam-cab/dormitory-l1-system-browser-audit/runtime-proof.json",
+    "artifacts/oam-cab/dormitory-l1-system-browser-audit/admission-proof.json",
+    "artifacts/oam-cab/dormitory-l1-system-browser-audit/compatibility-proof.json",
+    "artifacts/oam-cab/dormitory-l1-system-browser-audit/language-proof.json",
+    "artifacts/oam-cab/dormitory-l1-system-browser-audit/search-data-bi-proof.json",
+    "artifacts/oam-cab/dormitory-l1-system-browser-audit/field-validation-report.json",
+    "artifacts/oam-cab/dormitory-l1-system-browser-audit/ui-ux-report.md",
+    "artifacts/oam-cab/dormitory-l1-system-browser-audit/performance-baseline.json",
+    "artifacts/oam-cab/dormitory-l1-system-browser-audit/defect-register.json",
+    "artifacts/oam-cab/dormitory-l1-system-browser-audit/cleanup-candidates.json",
+    "artifacts/oam-cab/dormitory-l1-system-browser-audit/final-report.md",
+    "artifacts/oam-cab/dormitory-l1-system-browser-audit/final-report.json"
+  ],
+  "contracts": {
+    "apiBoundaryContract": "docs/contracts/oam-cab/api-boundary-contract.json",
+    "definitionRegistryContract": "docs/contracts/definition/workitem-definition-registry.json",
+    "commandSubmissionContract": "docs/contracts/command-submission/command-submission-contract.json",
+    "factOwnershipContract": "docs/contracts/oam-cab/fact-ownership-contract.json",
+    "compatibilityBoxContract": "docs/contracts/compatibility/compatibility-box-contract.json",
+    "admissionDecisionContract": "docs/contracts/admission/admission-decision-contract.json",
+    "businessLineAdmissionMatrix": "docs/contracts/admission/business-line-admission-matrix.json",
+    "releaseStateAdmissionMatrix": "docs/contracts/admission/release-state-admission-matrix.json",
+    "surfaceAdmissionMatrix": "docs/contracts/admission/surface-admission-matrix.json",
+    "actorDeviceAdmissionContract": "docs/contracts/admission/actor-device-admission-contract.json",
+    "productionAdmissionContract": "docs/contracts/admission/production-admission-contract.json",
+    "controlPlaneCommandAppendOnlyContract": "docs/contracts/control-plane/control-plane-command-append-only-contract.json",
+    "evidenceGraphRefsContract": "docs/contracts/evidence/evidence-graph-refs-contract.json",
+    "businessSignoffContract": "docs/contracts/governance/business-signoff-contract.json",
+    "rollbackCompensationContract": "docs/contracts/governance/rollback-compensation-contract.json",
+    "searchContract": "docs/contracts/search/search-contract.json",
+    "biKpiContract": "docs/contracts/bi-kpi/bi-kpi-contract.json",
+    "languageKernelContract": "docs/contracts/language/language-contract.json",
+    "permissionExplainabilityContract": "docs/contracts/language/permission-explainability-contract.json"
+  }
+}

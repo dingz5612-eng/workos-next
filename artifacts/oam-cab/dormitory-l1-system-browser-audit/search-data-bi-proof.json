@@ -1,0 +1,10 @@
+{
+  "version": "search-data-bi-proof.v1",
+  "status": "passed",
+  "sourceRefs": [
+    "docs/contracts/search/search-contract.json",
+    "docs/contracts/bi-kpi/bi-kpi-contract.json"
+  ],
+  "observedSearchSteps": 2,
+  "directBusinessFactWriteAllowed": false
+}

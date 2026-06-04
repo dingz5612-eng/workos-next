@@ -79,6 +79,7 @@ export function openOperationPanel(workItemId, ctx, fallback = {}) {
   }
   const selected = target.workItem;
   ctx.state.operationRouteIssue = null;
+  clearStaleRouteBlocker(ctx, selected);
   clearTransientOperationMessage(ctx);
   ctx.state.selectedWorkItemId = selected.workItemId;
   ctx.state.selectedWorkspace = selected.workspaceId || fallback.workspaceId || ctx.state.selectedWorkspace;
@@ -150,6 +151,9 @@ export async function startWorkspaceCommand(ctx, templateWorkspaceId, firstCardI
     const workItemId = result?.workItem?.workItemId || result?.workItem?.WorkItemId || "";
     const cardId = result?.workItem?.payload?.cardId || result?.workItem?.Payload?.cardId || firstCardId;
     if (workItemId || workspaceId) {
+      ctx.state.fieldValidation = null;
+      ctx.state.lastActionResult = null;
+      ctx.state.operationMessage = "";
       openOperationPanel(workItemId, ctx, { workspaceId, cardId });
       return;
     }
@@ -216,6 +220,19 @@ function nextSearchRequestId(ctx) {
 
 function invalidatePendingSearch(ctx) {
   ctx.state.searchRequestId = (ctx.state.searchRequestId || 0) + 1;
+}
+
+function clearStaleRouteBlocker(ctx, selected = {}) {
+  const result = ctx.state.lastActionResult;
+  if (result?.status !== "business_blocked_422") return;
+  const reason = result.reason || result.error || result.code || "";
+  const staleMissingWorkItem = ["operation_work_item_required", "persisted_work_item_required"].includes(reason);
+  if (!staleMissingWorkItem) return;
+  if (selected.workItemId || selected.workspaceId || selected.cardId) {
+    ctx.state.lastActionResult = null;
+    ctx.state.fieldValidation = null;
+    ctx.state.operationMessage = "";
+  }
 }
 
 function isReadonlyCompatibilityTarget(workspace = null, cardId = "") {

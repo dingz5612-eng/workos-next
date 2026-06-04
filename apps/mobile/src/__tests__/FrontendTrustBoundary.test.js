@@ -70,6 +70,20 @@ describe("Stage 5 frontend trust boundary", () => {
     expect(options.headers["X-WorkOS-Actor-Token"]).toBe("dev-token");
   });
 
+  it("gives login enough time for runtime-backed local authentication", async () => {
+    stubBrowser({ href: "http://localhost:5176/" });
+    const fetch = vi.fn().mockResolvedValue({ ok: true, json: async () => ({ authenticated: true }) });
+    const timeout = vi.fn((value) => `timeout-${value}`);
+    vi.stubGlobal("fetch", fetch);
+    vi.stubGlobal("AbortSignal", { timeout });
+    const { loginActor } = await import("../apiClient.js");
+
+    await loginActor("dormOperator", "dev");
+
+    expect(timeout).toHaveBeenCalledWith(8000);
+    expect(fetch.mock.calls[0][1].credentials).toBe("include");
+  });
+
   it("does not hydrate protected surfaces before login and defaults device trust to unknown", async () => {
     stubBrowser({ href: "http://localhost:5180/" });
     const { createInitialState, shouldHydrateProtectedSurfaces } = await import("../appState.js");

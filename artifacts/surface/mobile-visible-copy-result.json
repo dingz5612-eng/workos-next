@@ -1,8 +1,8 @@
 {
-  "generated_at_utc": "2026-06-04T09:12:08.210Z",
-  "generated_by": "scripts/surface/check-no-raw-surface-labels.mjs",
+  "generated_at_utc": "2026-06-04T11:49:34.616Z",
+  "generated_by": "scripts/surface/check-mobile-visible-copy.mjs",
   "status": "passed",
-  "check": "no-raw-surface-labels",
+  "check": "mobile-visible-copy",
   "violation_count": 0,
   "violations": []
 }

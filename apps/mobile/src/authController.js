@@ -4,6 +4,9 @@ import { setView } from "./navigationController.js";
 import { defaultHomeForSession } from "./surfaceResolver.js";
 
 export async function login(ctx) {
+  const username = document.querySelector("#loginAccount")?.value || document.querySelector("#loginRole")?.value || "operator";
+  const department = document.querySelector("#loginDepartment")?.value || "stay";
+  const password = document.querySelector("#loginPassword")?.value || "dev";
   await ctx.hydrateProjectionFromApi();
   if (ctx.state.apiStatus !== "online") {
     ctx.state.loginMessage = ctx.tr("apiOffline");
@@ -11,9 +14,6 @@ export async function login(ctx) {
     return;
   }
   try {
-    const username = document.querySelector("#loginAccount")?.value || document.querySelector("#loginRole")?.value || "operator";
-    const department = document.querySelector("#loginDepartment")?.value || "stay";
-    const password = document.querySelector("#loginPassword")?.value || "dev";
     const session = await loginActor(username, password);
     session.department = department;
     ctx.state.currentActor = session;

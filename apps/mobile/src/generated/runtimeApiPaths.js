@@ -15,6 +15,7 @@ export const runtimeApiPaths = {
   workQueue: "/api/work-queue",
   operationsCases: "/api/operations/cases",
   operationsCase: (caseId) => `/api/operations/cases/${caseId}`,
+  operationsWorkspaceStart: "/api/operations/workspaces/start",
   operationsWorkItems: "/api/operations/work-items",
   operationsWorkItem: (workItemId) => `/api/operations/work-items/${workItemId}`,
   operationsPrepare: (workItemId) => `/api/operations/work-items/${workItemId}/prepare`,

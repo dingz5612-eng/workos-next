@@ -23,6 +23,9 @@ if (report.browserMode !== "playwright-real-browser") {
 if (!/no route mocks/i.test(report.mockPolicy || "")) {
   violations.push("Report must declare no route mocks / no backend simulation.");
 }
+if (!/no localStorage injection/i.test(report.mockPolicy || "")) {
+  violations.push("Report must declare no localStorage injection.");
+}
 if (report.status !== "passed") {
   violations.push(`Report status must be passed, got ${report.status}.`);
 }
@@ -107,6 +110,9 @@ function validateScreenshot(entry, label) {
     return;
   }
   if (!entry.sha256) violations.push(`${label} missing sha256.`);
+  for (const field of ["scenarioId", "stepId", "role", "language", "url", "admissionState", "runtimeDecision", "commitSha", "ciRun"]) {
+    if (!entry[field]) violations.push(`${label} missing ${field}.`);
+  }
   const filePath = path.join(root, entry.path);
   if (!fs.existsSync(filePath)) violations.push(`${label} file does not exist: ${entry.path}`);
   if (entry.bytes <= 0) violations.push(`${label} has no bytes.`);

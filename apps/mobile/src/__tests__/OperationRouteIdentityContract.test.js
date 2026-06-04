@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import { openWorkspace, openWorkItem } from "../navigationController.js";
 import { resolveOperationPanelTarget, resolvePersistedWorkItem } from "../operationRouteResolver.js";
 import { routeView } from "../appRouter.js";
+import { applyRuntimeSurfacePayloads } from "../runtime/runtimeStore.js";
 import { WorkItemCard } from "../views/experienceComponents.js";
 import { searchView } from "../views/searchView.js";
 import { createSurfaceCtx, runtimeStore, visibleText } from "./surfaceContractTestHelpers.js";
@@ -75,6 +76,39 @@ describe("OAM-04B WorkItem route identity", () => {
     expect(target.workItem.workItemId).toBe("wi-started-room");
     expect(target.workItem.cardId).toBe("roomSetup");
     expect(target.workItem.lifecycleState).toBe("ready");
+  });
+
+  it("projects Operations WorkItem lifecycle states onto the operation progress rail", () => {
+    const store = runtimeStore();
+    store.workspaces[0].cards = [
+      { ...store.workspaces[0].cards[0], id: "roomSetup", status: "ready", title: { "zh-CN": "房间配置卡" } },
+      { id: "bedSetup", status: "notStarted", title: { "zh-CN": "床位配置卡" }, fields: { business: [], system: [], analytics: [] }, evidence: [], checks: [], blockerRules: [], confirmation: { required: true, requiredRole: "operator" } },
+      { id: "rateSetup", status: "notStarted", title: { "zh-CN": "价格配置卡" }, fields: { business: [], system: [], analytics: [] }, evidence: [], checks: [], blockerRules: [], confirmation: { required: true, requiredRole: "operator" } },
+      { id: "roomReadiness", status: "notStarted", title: { "zh-CN": "房间准备度卡" }, fields: { business: [], system: [], analytics: [] }, evidence: [], checks: [], blockerRules: [], confirmation: { required: true, requiredRole: "operator" } }
+    ];
+    const ctx = createSurfaceCtx({
+      view: "operationPanel",
+      selectedWorkItemId: "wi-rate",
+      selectedWorkspace: "W-STAY-RESOURCE",
+      selectedCardId: "rateSetup",
+      runtimeStore: store
+    });
+
+    applyRuntimeSurfacePayloads(ctx.state, { operationWorkItems: [
+      { workItemId: "wi-room", workspaceId: "W-STAY-RESOURCE", cardId: "roomSetup", lifecycleState: "done" },
+      { workItemId: "wi-bed", workspaceId: "W-STAY-RESOURCE", cardId: "bedSetup", lifecycleState: "confirmed" },
+      { workItemId: "wi-rate", workspaceId: "W-STAY-RESOURCE", cardId: "rateSetup", lifecycleState: "completed" },
+      { workItemId: "wi-readiness", workspaceId: "W-STAY-RESOURCE", cardId: "roomReadiness", lifecycleState: "ready" }
+    ] });
+
+    const text = visibleText(routeView(ctx));
+
+    expect(text).toContain("房间配置卡 已完成");
+    expect(text).toContain("床位配置卡 已完成");
+    expect(text).toContain("价格配置卡 已完成");
+    expect(text).toContain("房间准备度卡 可办理");
+    expect(text).not.toContain("房间配置卡 可办理");
+    expect(text).not.toContain("床位配置卡 未开始");
   });
 
   it("does not render an operation CTA when no persisted WorkItem exists", () => {

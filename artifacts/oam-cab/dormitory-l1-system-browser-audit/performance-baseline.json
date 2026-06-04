@@ -1,0 +1,9 @@
+{
+  "version": "dormitory-l1.performance-baseline.v1",
+  "generatedAtUtc": "2026-06-04T10:32:10.449Z",
+  "browserStepCount": 29,
+  "screenshotCount": 110,
+  "apiEventCount": 153,
+  "writeCount": 42,
+  "mode": "observed browser baseline; no synthetic performance budget asserted"
+}

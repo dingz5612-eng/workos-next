@@ -3,6 +3,7 @@ import { runtimeApiPaths } from "./generated/runtimeApiPaths.js";
 const ACTOR_SESSION_KEY = "workosnext.actorSession";
 const API_BASE_URL_KEY = "workosnext.apiBaseUrl";
 const CSRF_COOKIE_NAME = "workosnext_csrf";
+const LOGIN_TIMEOUT_MS = 8000;
 
 export function apiBaseUrl() {
   return resolveApiBaseUrl();
@@ -87,11 +88,15 @@ export async function fetchWorkspaceProjection() {
 }
 
 export async function startResourceSetup(actorToken = "") {
-  return startWorkspace("W-STAY-RESOURCE", actorToken, "resource_setup_start_failed");
+  return startOperationsWorkspace("W-STAY-RESOURCE", actorToken, "resource_setup_start_failed");
 }
 
 export async function startWorkspace(templateWorkspaceId, actorToken = "", errorCode = "workspace_start_failed") {
-  const response = await runtimeFetch("/api/workspaces/start", {
+  return startOperationsWorkspace(templateWorkspaceId, actorToken, errorCode);
+}
+
+export async function startOperationsWorkspace(templateWorkspaceId, actorToken = "", errorCode = "operation_workspace_start_failed") {
+  const response = await runtimeFetch(runtimeApiPaths.operationsWorkspaceStart, {
     method: "POST",
     actorToken,
     body: JSON.stringify({ templateWorkspaceId }),
@@ -240,7 +245,7 @@ export async function loginActor(username, password) {
     headers: { "Content-Type": "application/json" },
     credentials: "include",
     body: JSON.stringify({ username, password }),
-    signal: AbortSignal.timeout(2400)
+    signal: AbortSignal.timeout(LOGIN_TIMEOUT_MS)
   });
   if (!response.ok) throw await apiError("login_failed", response);
   return response.json();

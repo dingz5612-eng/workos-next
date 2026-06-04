@@ -33,7 +33,7 @@ describe("Role Operating System login route", () => {
   ])("%s mobile login routes to %s", async (role, expectedView) => {
     vi.stubGlobal("document", {
       querySelector: (selector) => ({
-        value: selector === "#loginRole" ? role : "dev"
+        value: selector === "#loginAccount" ? role : "dev"
       })
     });
     loginActor.mockResolvedValue({ role, displayName: role, token: `${role}-token` });
@@ -64,7 +64,7 @@ describe("Role Operating System login route", () => {
   ])("%s trusted PC login routes to %s", async (role, expectedView) => {
     vi.stubGlobal("document", {
       querySelector: (selector) => ({
-        value: selector === "#loginRole" ? role : "dev"
+        value: selector === "#loginAccount" ? role : "dev"
       })
     });
     loginActor.mockResolvedValue({ role, displayName: role, token: `${role}-token` });
@@ -85,5 +85,43 @@ describe("Role Operating System login route", () => {
 
     expect(setView).toHaveBeenCalledWith(expectedView, ctx);
     expect(ctx.state.view).toBe(expectedView);
+  });
+
+  it("keeps the selected login account when projection hydration re-renders login controls", async () => {
+    let selectedAccount = "dormOperator";
+    vi.stubGlobal("document", {
+      querySelector: (selector) => {
+        if (selector === "#loginAccount") {
+          return { value: selectedAccount };
+        }
+        if (selector === "#loginDepartment") {
+          return { value: "stay" };
+        }
+        if (selector === "#loginPassword") {
+          return { value: "dev" };
+        }
+        return { value: "" };
+      }
+    });
+    loginActor.mockResolvedValue({ role: "dorm_operator", displayName: "Dorm Operator", token: "operator-token" });
+    const ctx = {
+      state: {
+        apiStatus: "online",
+        currentActor: null,
+        view: "login",
+        currentDevice: { deviceId: "mobile-current", deviceTrustStatus: "trusted", surface: "mobile" },
+        pcGovernance: { currentDevice: { deviceId: "pc-current", deviceTrustStatus: "trusted", surface: "pc" } }
+      },
+      hydrateProjectionFromApi: vi.fn(async () => {
+        selectedAccount = "dormFrontdesk";
+      }),
+      tr: (key) => key,
+      render: vi.fn()
+    };
+
+    await login(ctx);
+
+    expect(loginActor).toHaveBeenCalledWith("dormOperator", "dev");
+    expect(ctx.state.currentActor.department).toBe("stay");
   });
 });

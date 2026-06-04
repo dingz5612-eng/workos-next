@@ -526,6 +526,22 @@ app.MapPost("/api/workspaces/start", (StartWorkspaceRequest request, HttpRequest
         "role_confirmation_forbidden:workspace_start");
 });
 
+app.MapPost("/api/operations/workspaces/start", (StartWorkspaceRequest request, HttpRequest httpRequest, ProjectionRuntime runtime, CanonicalOperationsApiService operations) =>
+{
+    if (!DormitoryTemplateWorkspaceIds().Contains(request.TemplateWorkspaceId, StringComparer.Ordinal))
+    {
+        return Results.Json(new { error = "workspace_template_not_allowed", request.TemplateWorkspaceId }, statusCode: StatusCodes.Status404NotFound);
+    }
+
+    return StartOperationsWorkspace(
+        request.TemplateWorkspaceId,
+        httpRequest,
+        runtime,
+        operations,
+        AllowedWorkspaceStartRoles(request.TemplateWorkspaceId),
+        "role_confirmation_forbidden:operation_workspace_start");
+});
+
 app.MapPost("/api/workspaces/{workspaceId}/cards/{cardId}/confirm", (string workspaceId, string cardId, ConfirmCardRequest request, HttpRequest httpRequest, WorkspaceCardCompatibilityAdapter operations) =>
 {
     var actor = httpRequest.HttpContext.RequireActor();

@@ -1,0 +1,63 @@
+{
+  "version": "dormitory-l1.actor-role-matrix.v1",
+  "generatedAtUtc": "2026-06-04T10:32:10.449Z",
+  "sourceRefs": [
+    "docs/contracts/admission/admission-matrix.json",
+    "docs/contracts/admission/business-line-admission-matrix.json",
+    "artifacts/surface/dormitory-l1-browser-e2e/20260604T102941Z/dormitory-l1-browser-e2e-report.json"
+  ],
+  "roles": [
+    {
+      "role": "operator",
+      "browserAccounts": [
+        "dormOperator"
+      ],
+      "allowed": [
+        "Dormitory L1 internal pilot resource work-item confirm"
+      ],
+      "denied": [
+        "Business Production",
+        "Dormitory L2",
+        "production_confirm"
+      ],
+      "observedScenarioIds": [
+        "dormitory_l1_positive_normal",
+        "dormitory_l1_negative_illegal_access",
+        "dormitory_l1_negative_wrong_status"
+      ]
+    },
+    {
+      "role": "finance",
+      "browserAccounts": [
+        "dormFinance"
+      ],
+      "allowed": [
+        "finance read/search visibility under L1"
+      ],
+      "denied": [
+        "room setup start",
+        "Business Production",
+        "Dormitory L2",
+        "production_confirm"
+      ],
+      "observedScenarioIds": [
+        "dormitory_l1_negative_unauthorized"
+      ]
+    },
+    {
+      "role": "manager",
+      "browserAccounts": [],
+      "allowed": [
+        "management read/review contract surfaces"
+      ],
+      "denied": [
+        "Business Production",
+        "Dormitory L2",
+        "production_confirm"
+      ],
+      "observedScenarioIds": []
+    }
+  ],
+  "productionAllowed": false,
+  "productionConfirmAllowed": false
+}

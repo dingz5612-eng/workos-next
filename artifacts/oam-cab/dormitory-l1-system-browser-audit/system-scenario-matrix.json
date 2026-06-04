@@ -1,0 +1,130 @@
+{
+  "version": "dormitory-l1.system-scenario-matrix.v1",
+  "generatedAtUtc": "2026-06-04T10:32:10.449Z",
+  "scenarios": [
+    {
+      "scenarioId": "sys-admission-production-blocked",
+      "title": "Admission blocks Business Production and production_confirm",
+      "source": "contract_and_browser_evidence",
+      "status": "covered",
+      "contractEvidence": {
+        "id": "production_confirm",
+        "businessLineId": "dormitory",
+        "action": "production_confirm",
+        "visibleAllowed": false,
+        "prepareAllowed": false,
+        "confirmAllowed": false,
+        "productionAllowed": false,
+        "mode": "blocked",
+        "reason": "Production confirm is blocked until Business Production and target business-line admission gates pass.",
+        "blockingSources": [
+          "artifacts/release-state/current-state.json",
+          "docs/business/business-line-registry.json"
+        ],
+        "requiredCapabilities": [
+          "production.confirm"
+        ],
+        "requiredDeviceTrust": [
+          "trusted_device"
+        ],
+        "businessLineState": "L1 Internal Pilot",
+        "releaseState": "BUSINESS_PRODUCTION_BLOCKED",
+        "surfaceState": "hidden",
+        "noGoItems": [
+          "business_production_blocked"
+        ],
+        "highRisk": true
+      }
+    },
+    {
+      "scenarioId": "sys-business-line-dormitory-l1",
+      "title": "Dormitory stays L1 internal pilot observation",
+      "source": "contract_and_browser_evidence",
+      "status": "covered",
+      "contractEvidence": {
+        "businessLineId": "dormitory",
+        "state": "L1_INTERNAL_PILOT_OBSERVATION",
+        "productionAllowed": false,
+        "productionConfirmAllowed": false
+      }
+    },
+    {
+      "scenarioId": "sys-compatibility-quarantine",
+      "title": "ProjectionRuntime and Workspace/Card remain quarantined compatibility",
+      "source": "contract_and_browser_evidence",
+      "status": "covered",
+      "contractEvidence": {
+        "version": "oam-cab.compatibility-box-contract.v1",
+        "status": "quarantined",
+        "components": [
+          "ProjectionRuntime",
+          "Workspace/Card prepare-confirm",
+          "WorkspaceCardCompatibilityAdapter",
+          "LensQueryService legacy search",
+          "RuntimeDocumentStorage / runtime_documents snapshot"
+        ],
+        "allowedUsage": [
+          "read",
+          "display",
+          "map",
+          "adapt through controlled interfaces"
+        ],
+        "forbiddenUsage": [
+          "new business fact write semantics",
+          "confirmAllowed decision",
+          "ProductionAdmission decision",
+          "Business Production release",
+          "new business extension point"
+        ],
+        "legacyWritePathClassification": [
+          "remove",
+          "forbidden",
+          "compatibility shim to Operations Confirm",
+          "non-business write"
+        ],
+        "evidence": [
+          "docs/architecture/compatibility-components.yml",
+          "docs/architecture/compatibility-quarantine-rules.md",
+          "scripts/check-compatibility-quarantine.mjs"
+        ]
+      }
+    },
+    {
+      "scenarioId": "sys-api-boundary",
+      "title": "Business fact writes stay on Operations Confirm; no direct page writes",
+      "source": "contract_and_browser_evidence",
+      "status": "covered",
+      "contractEvidence": {
+        "version": "oam-cab.api-boundary-contract.v1",
+        "source": "docs/rules/v5.5/api-boundary.yml",
+        "primaryBusinessWritePath": "POST /api/operations/work-items/{workItemId}/confirm",
+        "nonGetRoutePolicy": "Every non-GET /api/* route must be classified in exactly one api-boundary category.",
+        "forbiddenBusinessWritePatterns": [
+          "POST /api/mobile/*/confirm",
+          "POST /api/mobile/*/refund",
+          "POST /api/mobile/*/close",
+          "POST /api/payment/confirm",
+          "POST /api/deposit/refund",
+          "POST /api/checkout/close",
+          "POST /api/bed/release",
+          "POST /api/period/close"
+        ],
+        "businessProduction": "blocked",
+        "evidence": [
+          "scripts/check-api-boundaries.mjs",
+          "artifacts/oam-cab/oam-cab-v1-inventory.json"
+        ]
+      }
+    },
+    {
+      "scenarioId": "sys-browser-evidence-binding",
+      "title": "Every browser step has screenshot and runtime/admission evidence",
+      "source": "contract_and_browser_evidence",
+      "status": "covered",
+      "contractEvidence": {
+        "report": "artifacts/surface/dormitory-l1-browser-e2e/20260604T102941Z/dormitory-l1-browser-e2e-report.json",
+        "status": "passed"
+      }
+    }
+  ]
+}

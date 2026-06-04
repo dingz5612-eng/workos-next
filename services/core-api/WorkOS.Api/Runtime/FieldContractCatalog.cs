@@ -11,7 +11,7 @@ internal static class FieldContractCatalog
             ContractText.Text(label, ContractText.TermRu(label)),
             layer,
             type,
-            layer != "analytics",
+            IsRequired(label, layer),
             source,
             layer == "business",
             layer == "analytics" ? label : string.Empty,
@@ -43,6 +43,17 @@ internal static class FieldContractCatalog
         if (IsSearchSelect(label)) return "searchableProjection";
         return "userInput";
     }
+
+    private static bool IsRequired(string label, string layer)
+    {
+        if (layer == "analytics") return false;
+        if (layer == "system") return true;
+        return !IsOptionalAnnotation(label);
+    }
+
+    private static bool IsOptionalAnnotation(string label) =>
+        ContractText.ContainsAny(label, "备注", "补充说明", "说明", "摘要") &&
+        !ContractText.ContainsAny(label, "原因", "意见", "结论");
 
     private static bool IsReadonly(string label) =>
         ContractText.ContainsAny(label, "容量", "财务确认人", "确认时间", "应收金额", "应退金额", "差异金额", "未结欠款", "周期名称", "指标已复核", "财务已复核", "运营已诊断");

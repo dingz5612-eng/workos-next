@@ -92,6 +92,7 @@ function shouldOfferResourceSetup(state = {}) {
 
 function completedRecordPanel(model, card, operationContext, ctx) {
   const nextWorkItem = nextAvailableWorkItem(operationContext, ctx.state);
+  const auditDetails = completedAuditDetails(model, ctx);
   const nextAction = nextWorkItem
     ? `<div class="operation-actions"><button data-work-item-id="${ctx.escapeAttr(nextWorkItem.workItemId)}" data-workspace-id="${ctx.escapeAttr(nextWorkItem.workspaceId)}" data-card-id="${ctx.escapeAttr(nextWorkItem.cardId)}">${ctx.tr("continueNextStage")}</button></div>`
     : "";
@@ -104,13 +105,28 @@ function completedRecordPanel(model, card, operationContext, ctx) {
     <dl>
       <dt>${ctx.tr("currentState")}</dt><dd>${ctx.tr(card.status)}</dd>
       <dt>${ctx.tr("decisionBusinessObject")}</dt><dd>${ctx.escapeHtml(model.businessObject)}</dd>
+      <dt>${ctx.tr("cardNext")}</dt><dd>${ctx.escapeHtml(model.nextAction)}</dd>
+    </dl>
+    ${auditDetails}
+    ${nextAction}
+  </section>`;
+}
+
+function completedAuditDetails(model, ctx) {
+  if (!auditDetailsVisible(ctx)) return "";
+  return `<details class="completed-operation-audit-details" data-surface="completed-operation-audit-details" ${ctx.state?.debugSurface ? "open" : ""}>
+    <summary>${ctx.tr("auditDetails")}</summary>
+    <dl>
       <dt>${ctx.tr("decisionOwner")}</dt><dd>${ctx.escapeHtml(model.ownerRoleLabel)}</dd>
       <dt>${ctx.tr("decisionMissingEvidence")}</dt><dd>${ctx.escapeHtml(model.requiredEvidence.join(" · ") || ctx.tr("noRequiredEvidence"))}</dd>
       <dt>${ctx.tr("auditSummary")}</dt><dd>${model.traceRefs.length ? ctx.tr("traceBound") : ctx.tr("traceWillBind")}</dd>
-      <dt>${ctx.tr("cardNext")}</dt><dd>${ctx.escapeHtml(model.nextAction)}</dd>
     </dl>
-    ${nextAction}
-  </section>`;
+  </details>`;
+}
+
+function auditDetailsVisible(ctx) {
+  const role = ctx.state?.currentActor?.role || "";
+  return Boolean(ctx.state?.debugSurface || ["admin", "support", "audit", "releaseOwner"].includes(role));
 }
 
 function nextAvailableWorkItem(operationContext, state = {}) {
