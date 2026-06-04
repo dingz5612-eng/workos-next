@@ -182,7 +182,9 @@ describe("DORM-INT-02 WorkItem-native pilot", () => {
     expect(apiClient).not.toContain("recordGovernanceAuditEvent");
     expect(runtime).toContain("prepareOperationWorkItem");
     expect(runtime).toContain("confirmOperationWorkItem");
-    expect(runtime).toContain("submitCardOperationCompatibilityFallback");
+    expect(runtime).not.toContain("submitCardOperationCompatibilityFallback");
+    expect(runtime).not.toContain("prepareCard");
+    expect(runtime).not.toContain("confirmCard");
     expect(controller).toContain("submitWorkItemOperation");
     expect(controller).not.toContain("submitCardOperationCompatibilityFallback");
     expect(eventBinder).toContain("[data-work-item-id]");

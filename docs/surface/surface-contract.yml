@@ -13,7 +13,7 @@
       "card.workItemId when it is not persisted",
       "prepareCard in ordinary DORM-INT confirm path",
       "confirmCard in ordinary DORM-INT confirm path",
-      "submitCardOperationCompatibilityFallback unless explicitly diagnostic"
+      "submitCardOperationCompatibilityFallback in mobile normal runtime"
     ],
     "legacyTaskIdExample": "T-ROOM-CREATE",
     "resolvedPersistedExample": "W-STAY-RESOURCE:roomSetup"
@@ -73,8 +73,8 @@
     "dataHydrator": "apps/mobile/src/pcSurfaceData.js"
   },
   "compatibilityAdapter": {
-    "allowedOnlyAs": "legacy fallback diagnostic",
+    "allowedOnlyAs": "server-side quarantined compatibility adapter",
     "normalDormIntPath": "forbidden",
-    "diagnosticFunction": "submitCardOperationCompatibilityFallback"
+    "adapterClass": "WorkspaceCardCompatibilityAdapter"
   }
 }

@@ -72,8 +72,8 @@
     "Governance Center": {"zh-CN": "治理中心", "ru-RU": "Центр управления"},
     "Release Flight Deck": {"zh-CN": "发布飞行甲板", "ru-RU": "Пульт релиза"}
   },
-  "compatibilityFallback": {
-    "prepareCard": "allowed only when no persisted WorkItem ref is available",
-    "confirmCard": "allowed only when no persisted WorkItem ref is available"
+  "compatibilityQuarantine": {
+    "WorkspaceCardCompatibilityAdapter": "server-side compatibility adapter only",
+    "mobileOperationRuntime": "no prepareCard, confirmCard, or named fallback branch"
   }
 }

@@ -129,8 +129,10 @@ function validateMobileSources() {
   if (!runtime.includes("prepareOperationWorkItem") || !runtime.includes("confirmOperationWorkItem")) {
     violations.push(violation("experience_contract.operation_panel_main_path", "Operation Panel main path must call operationsPrepare and operationsConfirm."));
   }
-  if (!runtime.includes("submitCardOperationCompatibilityFallback") || !runtime.includes("prepareCard") || !runtime.includes("confirmCard")) {
-    violations.push(violation("experience_contract.compatibility_fallback_missing", "prepareCard/confirmCard must remain only as named compatibility fallback."));
+  for (const token of ["submitCardOperationCompatibilityFallback", "prepareCard", "confirmCard", "allowCompatibilityFallback"]) {
+    if (runtime.includes(token)) {
+      violations.push(violation("experience_contract.mobile_runtime_compatibility_fallback", `Mobile Operation Runtime must not carry ${token}.`, { token }));
+    }
   }
   if (!controller.includes("submitWorkItemOperation") || controller.includes("submitCardOperation({")) {
     violations.push(violation("experience_contract.operation_controller_legacy_submit", "Operation controller must use submitWorkItemOperation as the main path."));

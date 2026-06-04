@@ -60,7 +60,7 @@
 - Regenerated `artifacts/release-state/post-merge-attestation.json` with PR #80 `merged_at`, PR merge commit, requested merge commit, remote main, CI run, and Control Plane guard run.
 - Updated the post-merge attestation generator so future attestations record PR `merged_at`, PR URL, PR merge commit, requested merge commit, and remote main state.
 - Restored the named Workspace/Card compatibility fallback as a quarantined function while keeping Operation Panel main submit on Operations WorkItem prepare / confirm.
-- Added an explicit `allowCompatibilityFallback = false` policy marker for Operation Panel runtime and aligned tests.
+- Removed the mobile Operation Runtime compatibility fallback switch/function and aligned guards to require WorkItem prepare / confirm only.
 - Updated weak-network test copy to the current user-facing `运行服务未连接` wording.
 
 ## Parallel Branch Task

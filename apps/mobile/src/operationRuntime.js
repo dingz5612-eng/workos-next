@@ -1,20 +1,12 @@
 import {
   attachEvidence,
-  confirmCard,
   confirmOperationWorkItem,
   createEvidenceDraft,
   fetchAccommodationLens,
-  prepareCard,
   prepareOperationWorkItem,
   waitForProjectionEvents
 } from "./apiClient.js";
 import { defaultAccommodationLensIds, lensIdsForWorkspace } from "./runtimeLensCatalog.js";
-
-const allowCompatibilityFallback = false;
-
-export function operationPanelCompatibilityFallbackAllowed() {
-  return allowCompatibilityFallback;
-}
 
 export function operationIdempotencyKey() {
   return randomUuid();
@@ -73,40 +65,6 @@ export async function submitWorkItemOperation({ workspace, card, workItemId: exp
     language,
     idempotencyKey: protocol.idempotencyKey,
     submissionId: protocol.submissionId,
-    aggregateRef,
-    fieldValues,
-    evidenceIds
-  });
-  if (!isCommittedConfirm(result)) {
-    return result;
-  }
-  if (result.projection) onProjection(result.projection);
-  try {
-    await waitForProjectionEvents(eventIdsFromConfirmResult(result), onProjection);
-  } catch {
-    // The command is already committed. Projection pending is an ActionResult state, not submit failure.
-  }
-  try {
-    await refreshAccommodationLenses(lensIdsForWorkspace(workspace.id), onLens);
-  } catch {
-    // Lens refresh is read-side sync and must not change committed result semantics.
-  }
-  return result;
-}
-
-export async function submitCardOperationCompatibilityFallback({ workspace, card, actor, language, fieldValues, evidenceIds, submissionProtocol, onProjection, onLens }) {
-  const protocol = submissionProtocol || createSubmissionProtocol(workspace, card, fieldValues);
-  const aggregateRef = protocol.aggregateRef || aggregateRefFor(fieldValues);
-  await prepareCard(workspace.id, card.id, {
-    submissionId: protocol.submissionId,
-    cardInstanceId: protocol.cardInstanceId,
-    aggregateRef
-  });
-  const result = await confirmCard(workspace.id, card.id, actor.token, {
-    language,
-    idempotencyKey: protocol.idempotencyKey,
-    submissionId: protocol.submissionId,
-    cardInstanceId: protocol.cardInstanceId,
     aggregateRef,
     fieldValues,
     evidenceIds

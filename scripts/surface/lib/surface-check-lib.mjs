@@ -298,9 +298,12 @@ function validateOperationPanelRuntime(contracts, rendered, source, violations) 
   if (source.operationPanel.includes("ctx.workspace()")) {
     violations.push(violation("surface.operation_panel.workspace_fallback", "OperationPanelView 不得用 ctx.workspace() 重建 runtime identity。"));
   }
-  for (const token of ["allowCompatibilityFallback = false", "persisted_work_item_required"]) {
-    if (!source.operationRuntime.includes(token)) {
-      violations.push(violation("surface.operation_panel.compatibility_block_missing", `operationRuntime 缺少 ${token}。`, { token }));
+  if (!source.operationRuntime.includes("persisted_work_item_required")) {
+    violations.push(violation("surface.operation_panel.persisted_block_missing", "operationRuntime 缺少 persisted_work_item_required 阻断。"));
+  }
+  for (const token of ["allowCompatibilityFallback", "submitCardOperationCompatibilityFallback", "prepareCard", "confirmCard"]) {
+    if (source.operationRuntime.includes(token)) {
+      violations.push(violation("surface.operation_panel.mobile_runtime_compatibility_fallback", `operationRuntime 不得包含 ${token}。`, { token }));
     }
   }
   if (!source.operationRuntime.includes("prepareOperationWorkItem") || !source.operationRuntime.includes("confirmOperationWorkItem")) {

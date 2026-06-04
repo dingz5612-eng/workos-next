@@ -103,8 +103,13 @@ function validateSourceBoundary(contract) {
   if (!operationPanel.includes("operation_work_item_required") || !operationPanel.includes("state.selectedWorkItemId = persistedWorkItemId")) {
     violations.push(violation("surface_contract.operation_panel_runtime_resolution", "OperationPanelView must normalize legacy selected ids to persisted WorkItem ids or block."));
   }
-  if (!operationRuntime.includes("allowCompatibilityFallback = false") || !operationRuntime.includes("persisted_work_item_required")) {
-    violations.push(violation("surface_contract.compatibility_not_blocked", "submitWorkItemOperation must block missing persisted ids unless compatibility fallback is explicitly enabled."));
+  if (!operationRuntime.includes("persisted_work_item_required")) {
+    violations.push(violation("surface_contract.persisted_work_item_block_missing", "submitWorkItemOperation must block missing persisted ids."));
+  }
+  for (const token of ["allowCompatibilityFallback", "submitCardOperationCompatibilityFallback", "prepareCard", "confirmCard"]) {
+    if (operationRuntime.includes(token)) {
+      violations.push(violation("surface_contract.mobile_runtime_compatibility_fallback", `operationRuntime.js must not carry ${token}.`, { token }));
+    }
   }
   if (!operationController.includes("persistedWorkItemIdFor(ctx.state, item, card)")) {
     violations.push(violation("surface_contract.confirm_selected_persisted_id", "submitCurrentCard must pass selected persisted WorkItem id into submitWorkItemOperation."));

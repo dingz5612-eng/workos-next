@@ -46,11 +46,11 @@
     },
     "compatibilityAdapter": {
       "type": "object",
-      "required": ["allowedOnlyAs", "normalDormIntPath", "diagnosticFunction"],
+      "required": ["allowedOnlyAs", "normalDormIntPath", "adapterClass"],
       "properties": {
         "allowedOnlyAs": { "type": "string" },
         "normalDormIntPath": { "type": "string" },
-        "diagnosticFunction": { "type": "string" }
+        "adapterClass": { "type": "string" }
       }
     }
   }

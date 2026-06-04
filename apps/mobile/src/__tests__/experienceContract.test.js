@@ -61,12 +61,12 @@ describe("RT-5 Experience Contract", () => {
     expect(controller).not.toContain("submitCardOperation({");
   });
 
-  it("keeps prepareCard and confirmCard only in compatibility fallback", () => {
+  it("keeps workspace/card compatibility fallback out of the mobile runtime", () => {
     const runtime = source("../operationRuntime.js");
 
-    expect(runtime).toContain("submitCardOperationCompatibilityFallback");
-    expect(runtime).toContain("prepareCard");
-    expect(runtime).toContain("confirmCard");
+    expect(runtime).not.toContain("submitCardOperationCompatibilityFallback");
+    expect(runtime).not.toContain("prepareCard");
+    expect(runtime).not.toContain("confirmCard");
   });
 
   it("defines differentiated blocked and pending states", () => {

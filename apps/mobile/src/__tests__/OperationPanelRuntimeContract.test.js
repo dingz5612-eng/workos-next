@@ -22,8 +22,10 @@ describe("SURFACE-C Operation Panel runtime contract", () => {
     const panel = source("../views/operationPanelView.js");
 
     expect(runtime).toContain("persisted_work_item_required");
-    expect(runtime).toContain("allowCompatibilityFallback = false");
-    expect(runtime).toContain("submitCardOperationCompatibilityFallback");
+    expect(runtime).not.toContain("allowCompatibilityFallback");
+    expect(runtime).not.toContain("submitCardOperationCompatibilityFallback");
+    expect(runtime).not.toContain("prepareCard");
+    expect(runtime).not.toContain("confirmCard");
     expect(panel).toContain("state.selectedWorkItemId = persistedWorkItemId");
     expect(panel).not.toContain("ctx.workspace()");
   });
