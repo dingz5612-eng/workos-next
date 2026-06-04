@@ -24,14 +24,14 @@ public static class RuntimeStartupValidator
         RuntimeMigrationOptions migrationOptions)
     {
         var errors = new List<string>();
-        if (!IsProduction(environmentName))
+        if (IsDevelopment(environmentName))
         {
             return new RuntimeStartupValidationResult("passed", errors);
         }
 
-        if (authOptions.PasswordSha256ByUsername.Count == 0)
+        if (authOptions.AllowDevelopmentAccounts)
         {
-            errors.Add("Production 下 Auth.PasswordSha256ByUsername 不能为空。");
+            errors.Add("Production / Pilot 下禁止启用 development-only demo accounts。");
         }
 
         if (RuntimeAuthOptions.UsesDevelopmentPasswords(authOptions))
@@ -87,10 +87,10 @@ public static class RuntimeStartupValidator
     }
 
     public static bool ShouldRunMigrations(string environmentName, RuntimeMigrationOptions options) =>
-        options.RunOnStartup ?? !IsProduction(environmentName);
+        options.RunOnStartup ?? IsDevelopment(environmentName);
 
-    private static bool IsProduction(string environmentName) =>
-        environmentName.Equals("Production", StringComparison.OrdinalIgnoreCase);
+    private static bool IsDevelopment(string environmentName) =>
+        environmentName.Equals("Development", StringComparison.OrdinalIgnoreCase);
 
     private static bool LooksLikeDevelopmentConnection(string connectionString)
     {
@@ -114,7 +114,10 @@ public static class RuntimeReadiness
     {
         "schema_migrations",
         "runtime_documents",
+        "account_users",
+        "account_audit_events",
         "runtime_sessions",
+        "device_sessions",
         "operations_cases",
         "operations_work_items",
         "operations_command_submissions",

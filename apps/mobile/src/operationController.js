@@ -1,7 +1,11 @@
+import { generatedBedLabelsForCount, isGeneratedBedLabelList, splitBedLabels } from "./controls/bedLabelControls.js";
 import { capacityForRoomType } from "./controls/fieldControls.js";
+import { isScopedResourceFieldRequired } from "./controls/resourceScopeControls.js";
+import { fetchOperationWorkItems } from "./apiClient.js";
 import { clearDraft, loadDraft, saveCompletedRecordSnapshot, saveDraft } from "./operationDrafts.js";
 import { createSubmissionProtocol, materializeEvidenceObjects, submitWorkItemOperation } from "./operationRuntime.js";
-import { setView } from "./navigationController.js";
+import { setView, syncUrlFromState } from "./navigationController.js";
+import { normalizeOperationLifecycleState } from "./operationStatus.js";
 import { activeWorkspaceCard, isCardActionDisabled, isTerminalCardStatus } from "./selectors/workspaceSelectors.js";
 import { applyRuntimeProjection, applyRuntimeSurfacePayloads } from "./runtime/runtimeStore.js";
 import { operationFieldId } from "./views/workspaceView.js";
@@ -92,6 +96,14 @@ export function updateDerivedFields(ctx) {
   const roomType = roomTypeField ? document.querySelector(`[data-operation-field="${operationFieldId(roomTypeField)}"]`)?.value : "";
   const capacity = capacityField ? document.querySelector(`[data-operation-field="${operationFieldId(capacityField)}"]`) : null;
   if (roomType && capacity) capacity.value = capacityForRoomType(roomType);
+  const bedCount = document.querySelector('[data-operation-field="bedCount"]');
+  const bedLabels = document.querySelector('[data-operation-field="bedLabels"]');
+  if (bedCount && bedLabels) {
+    const generated = generatedBedLabelsForCount(bedCount.value);
+    if (generated && (!bedLabels.value.trim() || isGeneratedBedLabelList(bedLabels.value))) {
+      bedLabels.value = generated;
+    }
+  }
   const amount = document.querySelector('[data-operation-field="amount"]');
   const unitRate = decimalValue("unitRate");
   const tariffQuantity = decimalValue("tariffQuantity");
@@ -122,6 +134,10 @@ export function collectDraftingValuesOnInput(event, ctx) {
   const evidenceDrafts = loadDraft(item.id, card.id).evidenceDrafts || [];
   const fieldValues = collectOperationValues();
   saveDraft(item.id, card.id, fieldValues, evidenceDrafts, draftSubmissionProtocol(item, card, fieldValues, evidenceDrafts));
+  if (event.target.dataset.operationField === "resourceScope") {
+    ctx.render();
+    return;
+  }
   if (ctx.state.fieldValidation?.workspaceId === item.id && ctx.state.fieldValidation?.cardId === card.id) {
     const requiredValidation = validateRequiredFields(card, fieldValues, ctx);
     if (!requiredValidation.missingFields.length) {
@@ -139,6 +155,20 @@ export function collectDraftingValuesOnInput(event, ctx) {
       missingLabels: requiredValidation.missingLabels
     };
   }
+}
+
+export function setSegmentedOperationField(source, ctx) {
+  const target = source?.dataset?.operationFieldButton !== undefined
+    ? source
+    : source?.target?.closest ? source.target : source?.target?.parentElement;
+  const button = target?.closest?.("[data-operation-field-button]") || target;
+  if (!button || button.disabled || button.getAttribute("aria-disabled") === "true") return;
+  const fieldId = button.dataset.operationFieldButton || "";
+  const value = button.dataset.value || "";
+  const input = document.querySelector(`[data-operation-field="${fieldId}"]`);
+  if (!fieldId || !input) return;
+  input.value = value;
+  collectDraftingValuesOnInput({ target: input }, ctx);
 }
 
 export async function submitCurrentCard(ctx) {
@@ -216,17 +246,18 @@ export async function submitCurrentCard(ctx) {
       submissionProtocol,
       onProjection: (payload) => applyProjectionPayload(payload, ctx),
       onLens: (payload) => applyLensPayload(payload, ctx),
-      onOperationWorkItems: (items) => applyRuntimeSurfacePayloads(ctx.state, { operationWorkItems: items }),
+      onOperationWorkItems: (items) => applyRuntimeSurfacePayloads(ctx.state, { operationWorkItems: normalizeOperationWorkItemsPayload(items) }),
       onReadSideSynced: (syncResult) => applyCommittedReadSideSync(syncResult, ctx, item.id, card.id, submissionProtocol.submissionId)
     });
     if (!isCommittedConfirmResult(result)) {
       ctx.state.operationMessage = confirmBlockedMessage(result, ctx);
       ctx.state.lastActionResult = actionResultFromBlockedConfirm(result, ctx.state.operationMessage, item, card);
     } else {
+      const committedWorkItemId = persistedWorkItemIdFor(ctx.state, item, card);
       saveCompletedRecordSnapshot({
         workspaceId: item.id,
         cardId: card.id,
-        workItemId: persistedWorkItemIdFor(ctx.state, item, card),
+        workItemId: committedWorkItemId,
         sourceWorkItemId: selectedOperationWorkItem(ctx.state, item, card)?.payload?.sourceWorkItemId || "",
         submissionId: submissionProtocol.submissionId,
         cardInstanceId: submissionProtocol.cardInstanceId,
@@ -238,27 +269,68 @@ export async function submitCurrentCard(ctx) {
       });
       applyCommittedCardLocalState(item.id, card.id, ctx);
       if (result?.projectionStatus === "projected") clearDraft(item.id, card.id);
-      ctx.state.selectedCardIndex = -1;
-      ctx.state.selectedCardId = "";
       ctx.state.operationMessage = confirmSuccessMessage(result, ctx);
-      ctx.state.lastActionResult = actionResultFromConfirm(result, ctx.state.operationMessage, item, card, fieldValues);
+      const actionResult = {
+        ...actionResultFromConfirm(result, ctx.state.operationMessage, item, card, fieldValues),
+        workItemId: committedWorkItemId
+      };
+      let autoAdvanceTarget = postSubmitAutoAdvanceTarget(ctx.state, item.id, card.id, committedWorkItemId);
+      if (!autoAdvanceTarget) {
+        await refreshPostSubmitWorkItems(ctx, item.id);
+        autoAdvanceTarget = postSubmitAutoAdvanceTarget(ctx.state, item.id, card.id, committedWorkItemId);
+      }
+      if (autoAdvanceTarget) {
+        applyPostSubmitAutoAdvance(ctx, autoAdvanceTarget);
+        ctx.state.lastActionResult = {
+          ...actionResult,
+          autoAdvanced: true,
+          autoAdvancedToWorkItemId: autoAdvanceTarget.workItemId,
+          autoAdvancedToCardId: autoAdvanceTarget.cardId
+        };
+      } else {
+        ctx.state.selectedCardIndex = -1;
+        ctx.state.selectedCardId = "";
+        ctx.state.lastActionResult = actionResult;
+      }
     }
   } catch (error) {
     if (applyConfirmError(error, ctx)) return;
   } finally {
     ctx.state.operationSubmitting = false;
   }
+  syncUrlFromState(ctx);
   ctx.render(true);
 }
 
 function validateRequiredFields(card, values, ctx) {
   const missingFields = (card.fields?.business || [])
-    .filter((field) => field.required)
+    .filter((field) => isScopedResourceFieldRequired(card?.id, operationFieldId(field), values, Boolean(field.required)))
     .filter((field) => !hasBusinessValue(values, operationFieldId(field)));
+  const invalidFields = bedSetupCardinalityViolations(card, values, ctx);
+  const invalidFieldSet = new Set(invalidFields.map((entry) => entry.field));
   return {
-    missingFields,
-    missingLabels: missingFields.map((field) => labelForField(field, ctx))
+    missingFields: [...missingFields, ...invalidFields.map((entry) => entry.field).filter((field) => !missingFields.includes(field))],
+    missingLabels: [
+      ...missingFields.map((field) => labelForField(field, ctx)),
+      ...invalidFields
+        .filter((entry) => !missingFields.includes(entry.field) && invalidFieldSet.has(entry.field))
+        .map((entry) => entry.label)
+    ]
   };
+}
+
+function bedSetupCardinalityViolations(card = {}, values = {}, ctx) {
+  if (card.id !== "bedSetup") return [];
+  const bedCount = Number(values.bedCount || 0);
+  if (!Number.isFinite(bedCount) || bedCount <= 0) return [];
+  const labelField = (card.fields?.business || []).find((field) => operationFieldId(field) === "bedLabels");
+  if (!labelField) return [];
+  const labels = splitBedLabels(values.bedLabels || "");
+  if (labels.length === bedCount && new Set(labels.map((item) => item.toLocaleLowerCase())).size === labels.length) return [];
+  const label = labels.length === bedCount
+    ? `${labelForField(labelField, ctx)}: ${ctx.tr("bedLabelsMustBeUnique")}`
+    : `${labelForField(labelField, ctx)}: ${ctx.tr("bedLabelsMustMatchBedCount").replace("{count}", String(bedCount))}`;
+  return [{ field: labelField, label }];
 }
 
 function enrichCorrectionFieldValues(values = {}, state = {}, workspace = {}, card = {}) {
@@ -273,15 +345,96 @@ function enrichCorrectionFieldValues(values = {}, state = {}, workspace = {}, ca
 
 function selectedOperationWorkItem(state = {}, workspace = {}, card = {}) {
   const selectedWorkItemId = state.selectedWorkItemId || "";
-  const runtimeItems = [
-    ...(state.runtimeStore?.operationWorkItems || []),
-    ...(state.runtimeStore?.workQueue || [])
-  ];
+  const runtimeItems = runtimeWorkItems(state);
   return runtimeItems.find((item) => [item.workItemId, item.work_item_id].includes(selectedWorkItemId)) ||
     runtimeItems.find((item) =>
       (item.workspaceId || item.workspace_id) === workspace?.id &&
       (item.cardId || item.card_id || item.payload?.cardId || item.Payload?.cardId) === card?.id) ||
     null;
+}
+
+function postSubmitAutoAdvanceTarget(state = {}, workspaceId = "", completedCardId = "", completedWorkItemId = "") {
+  const workspace = state.runtimeStore?.workspaces?.find((item) => item.id === workspaceId);
+  const cards = workspace?.cards || [];
+  const completedIndex = cards.findIndex((card) => card.id === completedCardId);
+  if (completedIndex < 0) return null;
+  const nextCardIds = cards
+    .slice(completedIndex + 1)
+    .map((card) => card.id);
+  if (!nextCardIds.length) return null;
+  const runtimeItems = runtimeWorkItems(state);
+  for (const cardId of nextCardIds) {
+    const target = runtimeItems.find((item) =>
+      workItemIdOf(item) &&
+      workItemIdOf(item) !== completedWorkItemId &&
+      workItemWorkspaceId(item) === workspaceId &&
+      workItemCardId(item) === cardId &&
+      isPostSubmitActionableStatus(item.lifecycleState || item.lifecycle_state || item.status || item.card?.status));
+    if (target) {
+      return {
+        workItemId: workItemIdOf(target),
+        workspaceId,
+        cardId
+      };
+    }
+  }
+  return null;
+}
+
+function applyPostSubmitAutoAdvance(ctx, target) {
+  ctx.state.operationRouteIssue = null;
+  ctx.state.view = "operationPanel";
+  ctx.state.selectedWorkItemId = target.workItemId;
+  ctx.state.selectedWorkspace = target.workspaceId;
+  ctx.state.selectedCardId = target.cardId;
+  ctx.state.selectedCardIndex = -1;
+}
+
+async function refreshPostSubmitWorkItems(ctx, workspaceId = "") {
+  try {
+    const payload = await fetchOperationWorkItems(workspaceId ? { workspaceId } : {});
+    const operationWorkItems = normalizeOperationWorkItemsPayload(payload);
+    applyRuntimeSurfacePayloads(ctx.state, { operationWorkItems });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function isPostSubmitActionableStatus(status = "") {
+  const normalized = normalizeOperationLifecycleState(status, "");
+  return ["ready", "blocked", "inProgress"].includes(normalized);
+}
+
+function workItemIdOf(item = {}) {
+  return item.workItemId || item.work_item_id || "";
+}
+
+function workItemWorkspaceId(item = {}) {
+  return item.workspaceId || item.workspace_id || item.workspace?.id || "";
+}
+
+function workItemCardId(item = {}) {
+  return item.cardId || item.card_id || item.payload?.cardId || item.Payload?.cardId || item.card?.id || "";
+}
+
+function runtimeWorkItems(state = {}) {
+  return [
+    ...arrayPayload(state.runtimeStore?.operationWorkItems),
+    ...arrayPayload(state.runtimeStore?.workQueue)
+  ];
+}
+
+function normalizeOperationWorkItemsPayload(payload) {
+  if (Array.isArray(payload)) return payload;
+  if (Array.isArray(payload?.operationWorkItems)) return payload.operationWorkItems;
+  if (Array.isArray(payload?.workItems)) return payload.workItems;
+  if (Array.isArray(payload?.items)) return payload.items;
+  return [];
+}
+
+function arrayPayload(value) {
+  return Array.isArray(value) ? value : [];
 }
 
 function hasBusinessValue(values = {}, fieldId = "") {
@@ -463,12 +616,24 @@ function applyCommittedReadSideSync(syncResult, ctx, workspaceId, cardId, submis
   clearDraft(workspaceId, cardId);
   applyCommittedCardLocalState(workspaceId, cardId, ctx);
   ctx.state.operationMessage = ctx.tr("submitDone");
+  const autoAdvanceTarget = current.autoAdvanced
+    ? null
+    : postSubmitAutoAdvanceTarget(ctx.state, workspaceId, cardId, current.workItemId || ctx.state.selectedWorkItemId || "");
+  if (autoAdvanceTarget) {
+    applyPostSubmitAutoAdvance(ctx, autoAdvanceTarget);
+  }
   ctx.state.lastActionResult = {
     ...current,
     status: "committed_projected",
     message: ctx.state.operationMessage,
-    projectionStatus: "projected"
+    projectionStatus: "projected",
+    ...(autoAdvanceTarget ? {
+      autoAdvanced: true,
+      autoAdvancedToWorkItemId: autoAdvanceTarget.workItemId,
+      autoAdvancedToCardId: autoAdvanceTarget.cardId
+    } : {})
   };
+  syncUrlFromState(ctx);
   ctx.render(true);
 }
 
@@ -494,7 +659,7 @@ function applyCommittedCardLocalState(workspaceId, cardId, ctx) {
 
 function markRuntimeWorkItemCompleted(runtimeStore = {}, workspaceId = "", cardId = "", selectedWorkItemId = "") {
   for (const collectionName of ["operationWorkItems", "workQueue"]) {
-    const collection = runtimeStore?.[collectionName] || [];
+    const collection = arrayPayload(runtimeStore?.[collectionName]);
     for (let index = 0; index < collection.length; index += 1) {
       const item = collection[index];
       if (!matchesCompletedCard(item, workspaceId, cardId, selectedWorkItemId)) continue;
@@ -520,10 +685,7 @@ function matchesCompletedCard(item = {}, workspaceId = "", cardId = "", selected
 
 function persistedWorkItemIdFor(state, workspace, card) {
   const selectedWorkItemId = state.selectedWorkItemId || "";
-  const runtimeItems = [
-    ...(state.runtimeStore?.operationWorkItems || []),
-    ...(state.runtimeStore?.workQueue || [])
-  ];
+  const runtimeItems = runtimeWorkItems(state);
   const selected = runtimeItems.find((item) =>
     [item.workItemId, item.work_item_id].includes(selectedWorkItemId));
   if (selected?.workItemId || selected?.work_item_id) {

@@ -1,4 +1,4 @@
-import { failIfNeeded, readJson, requirePassed, sha256, stableJson, writeJson } from "./baseline-lib.mjs";
+import { failIfNeeded, isDirectRun, readJson, requirePassed, sha256, stableJson, writeJson } from "./baseline-lib.mjs";
 
 export function buildSeedDataBaseline() {
   const failures = [];
@@ -29,6 +29,8 @@ export function buildSeedDataBaseline() {
   return result;
 }
 
-const result = buildSeedDataBaseline();
-failIfNeeded(result.noGoItems, "seed data baseline check");
-console.log("seed data baseline check: PASS");
+if (isDirectRun(import.meta.url)) {
+  const result = buildSeedDataBaseline();
+  failIfNeeded(result.noGoItems, "seed data baseline check");
+  console.log("seed data baseline check: PASS");
+}

@@ -1,0 +1,179 @@
+{
+  "version": "frontend-experience-system.v1",
+  "contractId": "frontend-experience-system",
+  "architecture": "OAM-ACF v8 / Operations Runtime surface architecture",
+  "status": "contract_guard",
+  "rule": "Every user-visible page must use the shared Frontend Experience System. Pages may specialize business content, permissions, readonly state, and actions, but they must not specialize architecture.",
+  "layers": [
+    {
+      "id": "shared-components",
+      "description": "Reusable named components own common page shells, WorkItem cards, operation rails, readonly records, feedback, evidence, queues, and diagnostics.",
+      "contractRefs": [
+        "apps/mobile/src/views/experienceComponents.js",
+        "apps/mobile/src/views/workspaceView.js",
+        "apps/mobile/src/views/operationPanelView.js"
+      ],
+      "requiredComponents": [
+        "WorkItemCard",
+        "OperationStepRail",
+        "OperationCardShell",
+        "OperationPanelView",
+        "LifecycleWorkspace",
+        "TrustedConfirmSheet",
+        "ActionResult",
+        "EvidenceTile",
+        "EvidenceSheet",
+        "PermissionDiagnostic",
+        "ProjectionPendingState",
+        "FailedSyncState",
+        "UploadQueue",
+        "SubmitQueue",
+        "DeviceTrustPanel",
+        "completedWorkspaceRecord"
+      ],
+      "forbidden": [
+        "page-private legacy shell",
+        "intent-card operation wrapper",
+        "copied layout logic",
+        "completed-operation-record",
+        "completed-record-detail",
+        "completed-step-list",
+        "data-view-completed-record"
+      ]
+    },
+    {
+      "id": "surface-contract",
+      "description": "Routes, devices, guards, readonly records, PC/mobile boundaries, and retired paths are declared in machine-readable Surface contracts.",
+      "contractRefs": [
+        "docs/surface/surface-contract.yml",
+        "docs/surface/surface-experience-contract.yml",
+        "apps/mobile/src/surfaceRegistry.js",
+        "apps/mobile/src/surfaceResolver.js",
+        "apps/mobile/src/surfaceGuard.js"
+      ],
+      "machineChecks": [
+        "scripts/check-surface-contract.mjs",
+        "scripts/surface/check-surface-experience-contract.mjs",
+        "scripts/surface/check-mobile-pc-surface-boundary.mjs",
+        "scripts/surface/check-surface-runtime-guard-contract.mjs"
+      ]
+    },
+    {
+      "id": "multilingual-dictionary",
+      "description": "User-visible operational copy comes from shared language dictionaries and copy matrix contracts.",
+      "contractRefs": [
+        "docs/surface/operational-copy-matrix.yml",
+        "apps/mobile/src/i18n/operationCopy.js",
+        "apps/mobile/src/i18n/shellCopy.js",
+        "apps/mobile/src/i18n/domainCopy.js"
+      ],
+      "requiredLanguages": ["zh-CN", "ru-RU", "ky-KG"],
+      "machineChecks": [
+        "scripts/surface/check-operational-copy-matrix.mjs",
+        "scripts/surface/check-mobile-visible-copy.mjs",
+        "scripts/surface/check-no-raw-surface-labels.mjs"
+      ]
+    },
+    {
+      "id": "state-action-contract",
+      "description": "Visible page states and actions are driven by Operations Runtime state, Admission decisions, action state matrices, and append-only correction contracts.",
+      "contractRefs": [
+        "docs/business/experience-contract.yml",
+        "apps/mobile/src/operationActionState.js",
+        "apps/mobile/src/operationRouteResolver.js",
+        "apps/mobile/src/operationRuntime.js",
+        "apps/mobile/src/operationController.js"
+      ],
+      "requiredMatrices": [
+        "BusinessOperationActionPaths",
+        "ActionResultStateMatrix",
+        "EvidenceTileStateMatrix",
+        "EvidenceSheetStateMatrix",
+        "PermissionDiagnosticCopyMatrix",
+        "OfflineEmptyErrorProjectionPendingStates"
+      ],
+      "machineChecks": [
+        "scripts/check-experience-contract.mjs",
+        "scripts/surface/check-operation-panel-runtime-contract.mjs",
+        "scripts/surface/check-permission-explainability-contract.mjs",
+        "scripts/surface/check-evidence-trust-contract.mjs"
+      ]
+    },
+    {
+      "id": "real-browser-screenshot-evidence",
+      "description": "User-visible changes require real browser operation and screenshot evidence bound to the Evidence Graph workflow.",
+      "contractRefs": [
+        "scripts/surface/run-dormitory-l1-browser-e2e-audit.mjs",
+        "scripts/surface/check-dormitory-l1-browser-e2e-audit.mjs",
+        "scripts/surface/run-dormitory-ten-scenario-real-browser-audit.mjs",
+        "scripts/surface/check-dormitory-ten-scenario-real-browser-audit.mjs",
+        "scripts/surface/build-dormitory-l1-system-evidence-audit.mjs"
+      ],
+      "localEvidenceRef": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/frontend-experience-system-real-browser-proof.json",
+      "requiredEvidence": [
+        "real browser mode",
+        "full page screenshot",
+        "current URL",
+        "surface id",
+        "admission decision",
+        "runtime decision",
+        "no retired middle page marker"
+      ]
+    }
+  ],
+  "globalForbidden": [
+    "page-specific architecture",
+    "old compatibility fallback",
+    "intent-card operation wrapper on new, readonly, or correction step pages",
+    "retired Workspace/Card write UI flow",
+    "component copy-paste instead of reuse",
+    "new visible page without shared shell",
+    "visible copy outside the multilingual dictionary",
+    "duplicate local feedback action when the shared shell feedback entry exists",
+    "user-facing fix without real browser screenshot evidence"
+  ],
+  "stepPageExperienceParity": {
+    "modes": ["new-active-step", "readonly-completed-step", "append-only-correction-step"],
+    "requiredSharedStructure": [
+      "OperationStepRail",
+      "card-operation shell",
+      "no page-private outer intent-card wrapper",
+      "no workspace-control visual wrapper on readonly completed records",
+      "no redundant object summary block on readonly completed records",
+      "state or validation summary panel",
+      "operation-actions",
+      "single shared shell feedback entry",
+      "machine-readable admission and runtime decisions"
+    ],
+    "rule": "When one step-page mode gains an experience improvement, sibling new, readonly, and correction modes must be checked and aligned in the same Frontend Experience System pass. Users must not have to enumerate every page one by one. Step pages must render the shared OperationCardShell directly, without a page-private outer intent-card wrapper, workspace-control visual wrapper, or redundant object summary block on readonly completed records. Readonly completed records must prioritize submitted business fields, evidence, trace state, and correction actions."
+  },
+  "postSubmitNavigation": {
+    "sourceController": "apps/mobile/src/operationController.js",
+    "rule": "After a successful active Operations WorkItem confirm, the surface must auto-advance to the next actionable persisted WorkItem in the same workspace when one exists. Completed readonly records are opened by explicit completed-step review or when no next actionable WorkItem exists; users must not have to click return current work after every submit.",
+    "requiredMarkers": ["autoAdvanced", "autoAdvancedToWorkItemId", "autoAdvancedToCardId"],
+    "forbidden": ["post-submit forced readonly detour when a next actionable WorkItem exists", "return-current-work button as the normal submit continuation path"]
+  },
+  "stepStateVisualLanguage": {
+    "sourceComponent": "OperationStepRail",
+    "requiredStates": {
+      "completed": "green",
+      "ready": "blue",
+      "correction": "muted-indigo",
+      "in-progress": "amber",
+      "not-started": "neutral-gray",
+      "blocked": "red"
+    },
+    "requiredMarkers": ["data-step-state", "data-current-step", "aria-current"],
+    "visualTreatment": "subtle background tint, thin semantic top bar, numbered badge, and clean current-step ring instead of saturated full-button color blocks",
+    "rule": "Step state color is a semantic language, not decoration. Completed, ready, append-only correction, in-progress, not-started, and blocked states must remain visually distinct across new, readonly, and correction step pages without using harsh saturated blocks. Terminal completed records remain completed as the primary state even when a correction marker exists; only the active append-only correction WorkItem displays correction as the primary state. Append-only correction WorkItems must not display as ordinary ready blue."
+  },
+  "repairRule": "When a page is found outside the current architecture, rewrite it onto the Frontend Experience System and delete the obsolete implementation in the same impact scope.",
+  "machineChecks": [
+    "scripts/check-frontend-experience-system.mjs",
+    "scripts/check-experience-contract.mjs",
+    "scripts/check-surface-contract.mjs",
+    "scripts/surface/check-operational-copy-matrix.mjs",
+    "scripts/surface/check-dormitory-l1-browser-e2e-audit.mjs",
+    "scripts/surface/check-dormitory-ten-scenario-real-browser-audit.mjs"
+  ]
+}

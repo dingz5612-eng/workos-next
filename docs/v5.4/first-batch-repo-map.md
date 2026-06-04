@@ -2,7 +2,29 @@
 
 Date: 2026-05-29
 
-Scope: repository scan and execution planning only. No business code, directory rename, dependency, workflow, or test weakening change was made.
+Status: historical scan snapshot. This document is not current API authority,
+architecture authority, or production readiness evidence.
+
+Scope: repository scan and execution planning only. No business code, directory
+rename, dependency, workflow, or test weakening change was made.
+
+Current authority superseding this snapshot:
+
+- `docs/engineering/00-rule-authority.md`
+- `docs/rules/v5.5/api-boundary.yml`
+- `docs/rules/v5.5/rule-authority.yml`
+- `docs/business/experience-contract.yml`
+- `docs/surface/surface-contract.yml`
+
+Current architecture is OAM-ACF v8 with Operations Runtime as the execution
+axis. The only primary business fact write path is:
+
+```text
+POST /api/operations/work-items/{workItemId}/confirm
+```
+
+Workspace/Card prepare/confirm write routes listed below were scan-time
+findings and are now retired. They must stay absent.
 
 ## Project Type
 
@@ -32,9 +54,10 @@ Scope: repository scan and execution planning only. No business code, directory 
 - engineering rules path: `docs/architecture`
 - tools path: `scripts`
 
-## Current API Routes
+## Historical Scan-Time API Routes
 
-All current runtime routes are Minimal API mappings in `services/core-api/WorkOS.Api/Program.cs`.
+The following table records scan-time routes observed on 2026-05-29. It is not
+the current route authority.
 
 | Method | Route | Current handler target |
 | --- | --- | --- |
@@ -68,7 +91,10 @@ All current runtime routes are Minimal API mappings in `services/core-api/WorkOS
 
 Generated frontend path constants are in `apps/mobile/src/generated/runtimeApiPaths.js`.
 
-## Current Workspace/Card API Locations
+## Historical Workspace/Card API Locations
+
+These locations were scan-time investigation notes. Current work must treat
+Workspace/Card as projection/display input only.
 
 Backend:
 
@@ -93,9 +119,13 @@ Frontend:
 - `apps/mobile/src/operationRuntime.js`: materializes evidence, calls prepare/confirm, waits for projection/lens refresh.
 - `apps/mobile/src/operationController.js`: collects draft values and submits current card.
 
-## Current Confirm Handler Locations
+## Historical Confirm Handler Locations
 
-Backend confirm chain:
+This scan-time Workspace/Card confirm chain has been superseded by Operations
+Runtime confirm. Current business writes must use
+`POST /api/operations/work-items/{workItemId}/confirm`.
+
+Backend confirm chain from the historical snapshot:
 
 - `services/core-api/WorkOS.Api/Program.cs`: `POST /api/workspaces/{workspaceId}/cards/{cardId}/confirm`; extracts `X-WorkOS-Actor-Token` and `X-Request-Id`, maps `ConfirmStatus` to HTTP status.
 - `services/core-api/WorkOS.Api/Runtime/ProjectionRuntime.cs`: `Confirm(...)` lock/facade and failed-confirm reason counters.
@@ -106,7 +136,7 @@ Backend confirm chain:
 - `services/core-api/WorkOS.Api/Runtime/ConfirmUnitOfWork.cs`: confirm commit unit for events/card instances.
 - `services/core-api/WorkOS.Api/Runtime/EventSelectionPolicy.cs` and slice policy files under `services/core-api/WorkOS.Api/Slices/Accommodation/*/Policies`: confirm event and business rule selection.
 
-Frontend confirm chain:
+Frontend confirm chain from the historical snapshot:
 
 - `apps/mobile/src/eventBinder.js`: binds `[data-submit-card]` to `submitCurrentCard`.
 - `apps/mobile/src/operationController.js`: `submitCurrentCard`, confirm error handling, draft protocol creation.
@@ -114,16 +144,16 @@ Frontend confirm chain:
 - `apps/mobile/src/apiClient.js`: Operations Runtime confirm HTTP client.
 - `apps/mobile/src/views/workspaceView.js`: submit button and operation surface rendering.
 
-## Current Fake Fallback / Demo Data Suspected Locations
+## Historical Fake Fallback / Demo Data Suspected Locations
 
 These are suspected or explicitly declared fallback/demo locations, not changed in this scan:
 
 - `services/core-api/WorkOS.Api/Program.cs`: `DemoBootstrap` backs `/api/bootstrap`.
 - `services/core-api/WorkOS.Api/Runtime/WorkspaceSeedCatalog.cs`: static workspace/card seed catalog for runtime projection.
 - `services/core-api/WorkOS.Api/Runtime/ProjectionSeed.cs`: seed assembler.
-- `apps/mobile/src/workspaceProjections.js`: explicitly marked "Offline/dev/test fallback fixture only".
-- `apps/mobile/src/demoQueue.js`: offline demo task queue data.
-- `apps/mobile/src/i18n/demoCopy.js`: demo copy loaded by `apps/mobile/src/i18n.js`.
+- `apps/mobile/src/devFixtures/workspaceProjections.js`: historical/offline fixture material only; not an active runtime write contract.
+- `apps/mobile/src/devFixtures/demoQueue.js`: offline demo task queue data.
+- `apps/mobile/src/devFixtures/i18n/demoCopy.js`: historical demo copy retained only under explicit dev fixtures.
 - `apps/mobile/src/runtime/runtimeStore.js`: `local-fallback`, `projection-fallback`, and `offline-demo-fallback` state flags.
 - `apps/mobile/src/selectors/surfaceSelectors.js`: projection fallback and `offlineDemoQueue()` behavior.
 - `apps/mobile/src/views/workbenchView.js`: displays offline API fallback help when queue source is `offline-demo-fallback`.
@@ -131,16 +161,19 @@ These are suspected or explicitly declared fallback/demo locations, not changed 
 - `tests/WorkOS.UnitTests/RuntimeHardeningTests.cs`: `FakeStore` test double.
 - `scripts/guard-architecture.ps1` and `scripts/clean-baseline.ps1`: existing guards already police fake/default/demo leakage.
 
-## Current Migration Naming Convention
+## Historical Migration Naming Convention
 
 - Directory: `infra/db/migrations`.
 - Pattern: three-digit ordinal prefix plus snake_case description: `NNN_description.sql`.
-- Current range: `001_runtime_core.sql` through `014_runtime_evidence_card_instances.sql`.
+- Scan-time range: `001_runtime_core.sql` through `014_runtime_evidence_card_instances.sql`.
+- Current repository range is governed by `infra/db/migrations/*.sql` and the
+  migration hygiene checks; do not infer current completeness from this
+  historical range.
 - Application order: `MigrationScriptLoader` orders `*.sql` by file name.
 - Migration id: file stem, recorded in PostgreSQL table `schema_migrations(migration_id, applied_at_utc)`.
 - Runtime runner: `PostgresMigrationRunner`.
 
-## Current Commands
+## Historical Commands
 
 Build commands from CI:
 
@@ -199,7 +232,7 @@ Batch A: backend runtime/API/source-of-truth hardening.
 Batch B: frontend runtime surface and fallback cleanup.
 
 - Directories: `apps/mobile/src/runtime`, `apps/mobile/src/selectors`, `apps/mobile/src/views`, `apps/mobile/src/controls`, `apps/mobile/src/generated`, `apps/mobile/src/__tests__`.
-- Key files also in scope: `apps/mobile/src/apiClient.js`, `apps/mobile/src/operationRuntime.js`, `apps/mobile/src/operationController.js`, `apps/mobile/src/workspaceProjections.js`, `apps/mobile/src/demoQueue.js`.
+- Key files also in scope: `apps/mobile/src/apiClient.js`, `apps/mobile/src/operationRuntime.js`, `apps/mobile/src/operationController.js`, `apps/mobile/src/devFixtures/workspaceProjections.js`, `apps/mobile/src/devFixtures/demoQueue.js`.
 - Focus: make online surfaces consume runtime API/lens/card contracts first, keep offline/demo fixtures explicit, remove or fence suspected fake fallback paths.
 
 Batch C: governance, contracts, and CI proof.

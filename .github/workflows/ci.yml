@@ -119,7 +119,12 @@ jobs:
 
       - name: Validate OAM clean architecture baseline
         run: |
+          node scripts/project/check-project-hygiene.mjs
           node scripts/check-oam-clean-baseline.mjs
+          node scripts/check-company-kernel-alignment.mjs
+          node scripts/check-archive-cleanliness.mjs
+          node scripts/baseline/check-oam-clean-baseline.mjs
+          node scripts/baseline/check-oam-clean-baseline.mjs --check
           node scripts/check-compatibility-quarantine.mjs
           node scripts/check-definition-registry.mjs
           node scripts/check-language-kernel.mjs
@@ -166,6 +171,7 @@ jobs:
           node scripts/check-admission-surface-alignment.mjs --self-test
           node scripts/check-admission-surface-alignment.mjs
           node scripts/check-admission-kernel.mjs
+          node scripts/check-account-actor-kernel.mjs
           node scripts/check-policy-as-code.mjs --self-test
           node scripts/check-policy-as-code.mjs
 
@@ -200,6 +206,7 @@ jobs:
 
       - name: Validate RT-5 Experience Contract
         run: |
+          node scripts/check-frontend-experience-system.mjs
           node scripts/check-experience-contract.mjs
           node scripts/check-surface-contract.mjs
           node scripts/check-no-mobile-pc-cross-import.mjs

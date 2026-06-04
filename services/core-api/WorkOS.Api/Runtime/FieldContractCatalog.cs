@@ -75,6 +75,7 @@ internal static class FieldContractCatalog
             "价格规则",
             "维护状态",
             "可售状态",
+            "服务范围",
             "阻断范围",
             "释放范围",
             "启用范围",

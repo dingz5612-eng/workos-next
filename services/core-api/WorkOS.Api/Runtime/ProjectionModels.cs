@@ -221,7 +221,15 @@ public sealed record RuntimeLoginResult(
     string DisplayName,
     string Role,
     string Token,
-    DateTimeOffset ExpiresAtUtc);
+    DateTimeOffset ExpiresAtUtc,
+    string UserId = "",
+    string TenantId = RuntimeActorAuthorization.DefaultTenantId,
+    string Department = "",
+    string BusinessLine = "",
+    IReadOnlyList<string>? Roles = null,
+    IReadOnlyList<string>? Capabilities = null,
+    RuntimeSession? Session = null,
+    string Status = "active");
 
 public sealed record RuntimeSession(
     string Token,
@@ -290,7 +298,48 @@ public sealed record RuntimeUser(
     string DisplayName,
     string Role,
     bool Enabled,
-    string TenantId = RuntimeActorAuthorization.DefaultTenantId);
+    string TenantId = RuntimeActorAuthorization.DefaultTenantId,
+    string Department = "住宿运营",
+    string BusinessLine = "stay",
+    IReadOnlyList<string>? Roles = null,
+    IReadOnlyList<string>? Capabilities = null,
+    string Status = "active",
+    bool DevelopmentOnly = false)
+{
+    public IReadOnlyList<string> EffectiveRoles =>
+        Roles is { Count: > 0 }
+            ? Roles
+            : string.IsNullOrWhiteSpace(Role) ? Array.Empty<string>() : new[] { Role };
+
+    public IReadOnlyList<string> EffectiveCapabilities =>
+        Capabilities is { Count: > 0 }
+            ? Capabilities
+            : RuntimeActorAuthorization.CapabilitiesForRoles(EffectiveRoles);
+}
+
+public sealed record RuntimeUserCredential(RuntimeUser User, string PasswordHash);
+
+public sealed record AccountUserCreateRequest(
+    string Username,
+    string DisplayName,
+    string Password,
+    string TenantId,
+    string Department,
+    string BusinessLine,
+    IReadOnlyList<string>? Roles,
+    IReadOnlyList<string>? Capabilities,
+    string Status = "active");
+
+public sealed record AccountUserPasswordResetRequest(string Password);
+
+public sealed record AccountAuditRecord(
+    string AuditEventId,
+    string TenantId,
+    string ActorId,
+    string EventType,
+    string TargetUserId,
+    IReadOnlyDictionary<string, object> Payload,
+    DateTimeOffset OccurredAtUtc);
 
 public sealed record BehaviorEventRecord(
     string EventId,

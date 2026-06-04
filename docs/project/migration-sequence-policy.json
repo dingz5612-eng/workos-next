@@ -1,0 +1,26 @@
+{
+  "version": "migration-sequence-policy.v1",
+  "generatedBy": "pure-baseline-alignment",
+  "stage": "PROJECT-HYGIENE-CLEANUP",
+  "migrationDirectory": "infra/db/migrations",
+  "orderingRule": "MigrationScriptLoader orders SQL files by file name; schema_migrations records the full file stem as migration_id.",
+  "doNotRenameAppliedMigrations": true,
+  "nextRecommendedOrdinal": "040",
+  "allowedDuplicateOrdinals": [
+    {
+      "ordinal": "034",
+      "files": [
+        "034_next_control_plane_runtime_roles.sql",
+        "034_operations_command_submission_context.sql"
+      ],
+      "reason": "Both migrations are already applied by full migration_id in local/runtime ledgers; renumbering would break traceability."
+    }
+  ],
+  "allowedMissingOrdinals": [
+    {
+      "ordinal": "035",
+      "reason": "Reserved gap caused by the historical 034 duplicate; do not backfill with a renamed applied migration."
+    }
+  ],
+  "futureRule": "New migrations must use the next unused three-digit ordinal and unique snake_case file stem."
+}

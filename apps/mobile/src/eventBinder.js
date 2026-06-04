@@ -1,10 +1,10 @@
 import { login, logout } from "./authController.js";
 import { bindFeedbackEvents } from "./feedbackEventBinder.js";
 import { runLearningSearch, setCoachStage, setLearningDomain, setLearningType, updateLearningQuery } from "./coachController.js";
-import { collectDraftingValuesOnInput, saveCurrentDraft, submitCurrentCard } from "./operationController.js";
+import { collectDraftingValuesOnInput, saveCurrentDraft, setSegmentedOperationField, submitCurrentCard } from "./operationController.js";
 import { handleOperationRecovery, retryApi, startCompletedStepCorrection } from "./operationRecoveryController.js";
 import { clearQueueFilterState, setQueueFilter, setQueueSort, setWorkFilter } from "./queueController.js";
-import { onboard, openReadonlyWorkspaceRecord, openWorkspace, openWorkItem, runSearch, selectCard, setLang, setView, startOperationsResourceSetupCommand, startOperationsWorkspaceCommand, updateSearchQuery } from "./navigationController.js";
+import { onboard, openWorkspace, openWorkItem, runSearch, selectCard, setLang, setView, startOperationsWorkspaceCommand, updateSearchQuery } from "./navigationController.js";
 import { isPcSurfaceView } from "./surfaceRegistry.js";
 
 let activeEventContext = null;
@@ -35,11 +35,11 @@ function bindDelegatedOperationActions() {
   if (delegatedClickBound) return;
   delegatedClickBound = true;
   document.addEventListener("click", (event) => {
-    const node = event.target?.closest?.(`
-      button[data-start-operations-resource-setup],
+    const target = event.target?.closest ? event.target : event.target?.parentElement;
+    const node = target?.closest?.(`
       button[data-start-operations-workspace],
+      button[data-operation-field-button],
       button[data-work-item-id],
-      button[data-view-completed-record],
       button[data-workspace],
       button[data-card-index],
       button[data-submit-card],
@@ -54,20 +54,13 @@ function bindDelegatedOperationActions() {
     const ctx = activeEventContext;
     if (!ctx) return;
     event.preventDefault();
-    if (node.dataset.startOperationsResourceSetup !== undefined) {
-      void startOperationsResourceSetupCommand(ctx);
-      return;
-    }
+    if (node.dataset.operationFieldButton !== undefined) return setSegmentedOperationField(node, ctx);
     if (node.dataset.startOperationsWorkspace !== undefined) {
       void startOperationsWorkspaceCommand(ctx, node.dataset.startOperationsWorkspace, node.dataset.firstCardId || "");
       return;
     }
     if (node.dataset.correctionWorkItem !== undefined) {
       void startCompletedStepCorrection(ctx, node.dataset);
-      return;
-    }
-    if (node.dataset.viewCompletedRecord !== undefined) {
-      openReadonlyWorkspaceRecord(node.dataset.workspaceId, node.dataset.cardId || "", ctx);
       return;
     }
     if (node.dataset.workItemId) {

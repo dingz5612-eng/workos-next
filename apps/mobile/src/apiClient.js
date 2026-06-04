@@ -259,6 +259,26 @@ export async function loginActor(username, password) {
   return response.json();
 }
 
+export async function logoutActor() {
+  const response = await runtimeFetch(runtimeApiPaths.logout, {
+    method: "POST",
+    body: JSON.stringify({}),
+    timeoutMs: 2400
+  });
+  if (!response.ok) throw await apiError("logout_failed", response);
+  return response.json();
+}
+
+export async function registerDeviceSession(body) {
+  const response = await runtimeFetch(runtimeApiPaths.deviceSessions, {
+    method: "POST",
+    body: JSON.stringify(body || {}),
+    timeoutMs: 2400
+  });
+  if (!response.ok) throw await apiError("device_session_failed", response);
+  return response.json();
+}
+
 async function runtimeFetch(pathOrUrl, options = {}) {
   const method = options.method || "GET";
   const headers = {

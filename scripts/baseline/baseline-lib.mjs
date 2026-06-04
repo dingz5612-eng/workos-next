@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import crypto from "node:crypto";
 import { spawnSync } from "node:child_process";
+import { fileURLToPath } from "node:url";
 
 export const root = process.cwd();
 
@@ -47,6 +48,10 @@ export function currentHead() {
 
 export function originMainHead() {
   return git(["rev-parse", "origin/main"]);
+}
+
+export function isDirectRun(metaUrl) {
+  return Boolean(process.argv[1]) && path.resolve(process.argv[1]) === fileURLToPath(metaUrl);
 }
 
 export function sha256(value) {

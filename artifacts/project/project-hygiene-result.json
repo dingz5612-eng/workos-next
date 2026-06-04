@@ -1,17 +1,89 @@
 {
-  "generatedAtUtc": "2026-06-04T14:23:07.197Z",
+  "generatedAtUtc": "2026-06-04T22:36:51.810Z",
   "generatedBy": "project-hygiene-checkers",
   "stage": "PROJECT-HYGIENE-CLEANUP",
   "status": "PROJECT_HYGIENE_CLEANUP_LOCAL_PASSED",
   "checks": {
     "stale_evidence_refs": {
-      "generatedAtUtc": "2026-06-02T05:42:09.207Z",
+      "generatedAtUtc": "2026-06-04T17:24:58.543Z",
       "generatedBy": "check-stale-evidence-refs",
       "stage": "PROJECT-HYGIENE-CLEANUP",
       "status": "passed",
-      "finalEvidenceRefCount": 85,
-      "staleArtifactCount": 22,
+      "finalEvidenceRefCount": 92,
+      "staleArtifactCount": 120,
       "staleArtifacts": [
+        {
+          "artifactPath": "artifacts/baseline/artifact-inventory.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/baseline/oam-clean-baseline-result.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/baseline/portfolio-boundary-baseline.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/baseline/release-evidence-baseline.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/baseline/runtime-semantic-baseline.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/baseline/seed-data-baseline.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/baseline/surface-ux-baseline.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/browser-verification/architecture-runtime-20260603/verification-result-dom-after-fix.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/browser-verification/architecture-runtime-20260603/verification-result-dom.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/browser-verification/architecture-runtime-20260603/verification-result-final-zh-iab.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/browser-verification/architecture-runtime-20260603/verification-result-playwright.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/browser-verification/architecture-runtime-20260603/verification-result.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
         {
           "artifactPath": "artifacts/evidence/evidence-ledger-check-result.json",
           "retainedAs": "historical_artifact",
@@ -32,6 +104,312 @@
         },
         {
           "artifactPath": "artifacts/go-live/dormitory/source-mode-contract-result.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/local-demo/language-smoke/language-smoke.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/local-demo/runtime_state_restore.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/local-demo/ten-dormitory-browser-demo/run-result.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/local-demo/ten-dormitory-browser-demo/ten-flow-evidence-summary.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/mobile-ui-audit/all-pages-operations-runtime/affected-support-pages-after-fix.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/mobile-ui-audit/all-pages-operations-runtime/all-pages-audit.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/mobile-ui-audit/latest/audit-report.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/oam-acf/execution-log.jsonl",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/oam-acf/phase-0/oam-acf-baseline.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/oam-cab/browser-checks/phase-5/check-result.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/oam-cab/dormitory-l1-system-browser-audit-inapp/blocked-current/defect-register.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/oam-cab/dormitory-l1-system-browser-audit-inapp/blocked-current/final-report.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/oam-cab/dormitory-l1-system-browser-audit-inapp/blocked-current/final-report.md",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/oam-cab/dormitory-l1-system-browser-audit/actor-role-matrix.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/oam-cab/dormitory-l1-system-browser-audit/admission-proof.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/oam-cab/dormitory-l1-system-browser-audit/browser-step-trace.jsonl",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/oam-cab/dormitory-l1-system-browser-audit/cleanup-candidates.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/oam-cab/dormitory-l1-system-browser-audit/compatibility-proof.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/oam-cab/dormitory-l1-system-browser-audit/defect-register.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/oam-cab/dormitory-l1-system-browser-audit/dormitory-scenario-matrix.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/oam-cab/dormitory-l1-system-browser-audit/evidence-manifest.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/oam-cab/dormitory-l1-system-browser-audit/field-validation-report.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/oam-cab/dormitory-l1-system-browser-audit/final-report.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/oam-cab/dormitory-l1-system-browser-audit/final-report.md",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/oam-cab/dormitory-l1-system-browser-audit/language-proof.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/oam-cab/dormitory-l1-system-browser-audit/performance-baseline.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/oam-cab/dormitory-l1-system-browser-audit/runtime-proof.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/oam-cab/dormitory-l1-system-browser-audit/screenshot-manifest.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/oam-cab/dormitory-l1-system-browser-audit/search-data-bi-proof.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/oam-cab/dormitory-l1-system-browser-audit/system-scenario-matrix.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/oam-cab/dormitory-l1-system-browser-audit/ui-ux-report.md",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/oam-cab/dormitory-scenario-browser-audit-2026-06-03.md",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/oam-cab/execution-log.jsonl",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/oam-cab/in-app-dormitory-system-audit/actor-role-matrix.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/oam-cab/in-app-dormitory-system-audit/browser-step-trace.jsonl",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/oam-cab/in-app-dormitory-system-audit/dormitory-scenario-matrix.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/oam-cab/in-app-dormitory-system-audit/rule-authority-readme.md",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/oam-cab/in-app-dormitory-system-audit/system-scenario-matrix.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/oam-cab/oam-cab-v1-cleanup-authorization.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/oam-cab/oam-cab-v1-correction-apply-exception-artifact.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/oam-cab/oam-cab-v1-current-state.md",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/oam-cab/oam-cab-v1-execution-plan.md",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/oam-cab/oam-cab-v1-final-report.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/oam-cab/oam-cab-v1-inventory.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/oam-cab/oam-cab-v1-p0-evidence-repair-closure.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/oam-cab/oam-cab-v1-p0-evidence-repair-closure.md",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/oam-cab/oam-cab-v1-p1-p2-hardening-plan.md",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/oam-cab/oam-cab-v1-post-merge-review.md",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/oam-cab/oam-cab-v1-search-data-bi-proof-artifact.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/oam-cab/oam-cab-v1-surface-language-proof-artifact.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/operations/dormitory/day2-entry-gate-result.json",
           "retainedAs": "historical_artifact",
           "referencedByCurrentState": false,
           "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
@@ -61,6 +439,42 @@
           "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
         },
         {
+          "artifactPath": "artifacts/project/artifact-inventory.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/project/project-hygiene-result.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/project/route-surface-inventory.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/project/seed-data-inventory.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/project/stale-artifacts.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/real-browser-audit/2026-06-03/playwright-real/audit-report-login.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
           "artifactPath": "artifacts/release-state/evidence-rebinding-result.json",
           "retainedAs": "historical_artifact",
           "referencedByCurrentState": false,
@@ -69,6 +483,24 @@
         {
           "artifactPath": "artifacts/release-state/evidence-reconciliation-result.json",
           "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/screenshots/dormitory-journeys/index.json",
+          "retainedAs": "diagnostic_screenshot",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/screenshots/oam-04b-interaction-closure/index.json",
+          "retainedAs": "diagnostic_screenshot",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/screenshots/oam-ux-baseline/index.json",
+          "retainedAs": "diagnostic_screenshot",
           "referencedByCurrentState": false,
           "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
         },
@@ -91,7 +523,79 @@
           "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
         },
         {
+          "artifactPath": "artifacts/surface/dormitory-l1-browser-e2e/20260604T091706Z/dormitory-l1-browser-e2e-report.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/surface/dormitory-l1-browser-e2e/20260604T091706Z/dormitory-l1-browser-e2e-report.md",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/surface/dormitory-l1-browser-e2e/20260604T091706Z/screenshot-index.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/surface/dormitory-l1-browser-e2e/20260604T094623Z/dormitory-l1-browser-e2e-report.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/surface/dormitory-l1-browser-e2e/20260604T094623Z/dormitory-l1-browser-e2e-report.md",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/surface/dormitory-l1-browser-e2e/20260604T094623Z/screenshot-index.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/surface/dormitory-l1-browser-e2e/20260604T102941Z/dormitory-l1-browser-e2e-report.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/surface/dormitory-l1-browser-e2e/20260604T102941Z/dormitory-l1-browser-e2e-report.md",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/surface/dormitory-l1-browser-e2e/20260604T102941Z/screenshot-index.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/surface/dormitory-l1-browser-e2e/latest-report.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/surface/dormitory-scenario-journey-result.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
           "artifactPath": "artifacts/surface/evidence-trust-contract-result.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/surface/experience-module-productization-result.json",
           "retainedAs": "historical_artifact",
           "referencedByCurrentState": false,
           "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
@@ -109,7 +613,73 @@
           "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
         },
         {
+          "artifactPath": "artifacts/surface/mobile-work-productization-result.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/surface/oam-04b-business-technical-layering-result.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/surface/oam-04b-device-surface-context-result.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/surface/oam-04b-interaction-baseline-result.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/surface/oam-04b-layout-mission-pc-shell-result.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/surface/oam-04b-primary-action-state-machine-result.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/surface/oam-04b-search-and-queue-interaction-result.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/surface/oam-04b-surface-interaction-closure-result.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/surface/oam-04b-surface-productization-final-result.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/surface/oam-04b-workitem-route-identity-result.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
           "artifactPath": "artifacts/surface/operation-panel-runtime-contract-result.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/surface/pc-governance-productization-result.json",
           "retainedAs": "historical_artifact",
           "referencedByCurrentState": false,
           "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
@@ -143,6 +713,24 @@
           "retainedAs": "historical_artifact",
           "referencedByCurrentState": false,
           "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/surface/surface-productization-result.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/surface/user-facing-surface-copy-result.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+        },
+        {
+          "artifactPath": "artifacts/surface/view-model-contract-result.json",
+          "retainedAs": "historical_artifact",
+          "referencedByCurrentState": false,
+          "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
         }
       ],
       "noGoItems": [],
@@ -152,12 +740,12 @@
       "repairPartsHrStatus": "L0 Contract Preview"
     },
     "route_surface_hygiene": {
-      "generatedAtUtc": "2026-06-02T07:15:05.697Z",
+      "generatedAtUtc": "2026-06-04T18:12:16.323Z",
       "generatedBy": "check-route-surface-hygiene",
       "stage": "PROJECT-HYGIENE-CLEANUP",
       "status": "passed",
-      "routeCount": 21,
-      "mobileRouteCount": 13,
+      "routeCount": 29,
+      "mobileRouteCount": 21,
       "pcRouteCount": 8,
       "noGoItems": [],
       "productionAllowed": false,
@@ -166,7 +754,7 @@
       "repairPartsHrStatus": "L0 Contract Preview"
     },
     "screenshot_baseline": {
-      "generatedAtUtc": "2026-06-02T14:04:58.011Z",
+      "generatedAtUtc": "2026-06-04T17:25:04.626Z",
       "generatedBy": "check-screenshot-baseline",
       "stage": "PROJECT-HYGIENE-CLEANUP",
       "status": "passed",
@@ -194,13 +782,13 @@
       "repairPartsHrStatus": "L0 Contract Preview"
     },
     "artifact_hygiene": {
-      "generatedAtUtc": "2026-06-02T05:41:55.600Z",
+      "generatedAtUtc": "2026-06-04T17:25:04.894Z",
       "generatedBy": "check-artifact-hygiene",
       "stage": "PROJECT-HYGIENE-CLEANUP",
       "status": "passed",
-      "headSha": "acab1d397ff5f20bb0eda8f007b97f546396232d",
-      "originMain": "fad090ad45fb44efbcd22d3f13fd7b130dfc6ab0",
-      "trackedArtifactCount": 63,
+      "headSha": "4bd2b3381b9a7536915eaa4c3df8b653edf524e7",
+      "originMain": "a259ae2c05e6d3648082e27987075cf295c905bd",
+      "trackedArtifactCount": 164,
       "finalArtifactCount": 19,
       "finalArtifacts": [
         {
@@ -210,7 +798,7 @@
           "finalEvidence": true,
           "stage": "release-state",
           "generatedBy": "build-current-release-state",
-          "generatedAtUtc": "2026-06-02T04:50:02.010Z",
+          "generatedAtUtc": "2026-06-04T08:03:04.071Z",
           "sourceMode": "machine_checked",
           "status": "unknown",
           "evidenceRefs": [
@@ -230,9 +818,9 @@
           "forbiddenRefs": [],
           "missingRefs": [],
           "productionBoundaryOk": true,
-          "resultHash": "66cf22a4c95bf3c93f8f7abdaf635a09e5e390406ba72ce3fb3bfa72775e9e34",
-          "fileHash": "9b3ef873535e91b41cda043f79140a0a18b0de5e4f43adc702edb5494d04cc50",
-          "headSha": "fad090ad45fb44efbcd22d3f13fd7b130dfc6ab0"
+          "resultHash": "88ef0bc15c2d9f8418c2e0e62cc5fe2781d7b0ec0251b1a2d487ff1ff3292381",
+          "fileHash": "ff11c61fd1214df0191b4ccb73fc03211a9589edf76fd786f380c9cecfeb024d",
+          "headSha": "a259ae2c05e6d3648082e27987075cf295c905bd"
         },
         {
           "artifactPath": "artifacts/oam/oam-final-acceptance-result.json",
@@ -266,7 +854,7 @@
           "finalEvidence": true,
           "stage": "OAM-ACCEPTANCE-CLOSURE-A4",
           "generatedBy": "check-operating-assurance-mesh",
-          "generatedAtUtc": "2026-06-02T04:58:40.734Z",
+          "generatedAtUtc": "2026-06-02T07:15:04.368Z",
           "sourceMode": "machine_checked",
           "status": "passed",
           "evidenceRefs": [
@@ -280,9 +868,9 @@
           "forbiddenRefs": [],
           "missingRefs": [],
           "productionBoundaryOk": true,
-          "resultHash": "94ef43c800f507ca106606a70a2b6ea26a372e489637a4a23f9a5614108ab3f6",
-          "fileHash": "689edae8785d65ac10c671cef32971e890b992cc91b5f8a4631bc6b1e443639d",
-          "headSha": "fad090ad45fb44efbcd22d3f13fd7b130dfc6ab0"
+          "resultHash": "8fd7e85a280f830c61e367ca187d42ceb298c5a85836631eb3401699f056a3b9",
+          "fileHash": "465650d47e11d39e6db1ff3bed37ba91db0a25dc2a769f8fb301f9617d1b02c3",
+          "headSha": "b86aa1b60d90e2f18e780781b4077a63a7068c0f"
         },
         {
           "artifactPath": "artifacts/go-live/dormitory/internal-pilot-go-no-go.json",
@@ -291,7 +879,7 @@
           "finalEvidence": true,
           "stage": "DORM-INT-FINAL",
           "generatedBy": "check-dormitory-internal-pilot-go-no-go",
-          "generatedAtUtc": "2026-06-02T04:52:18.807Z",
+          "generatedAtUtc": "2026-06-04T06:18:25.948Z",
           "sourceMode": "machine_checked",
           "status": "GO_FOR_INTERNAL_PILOT",
           "evidenceRefs": [
@@ -315,9 +903,9 @@
           "forbiddenRefs": [],
           "missingRefs": [],
           "productionBoundaryOk": true,
-          "resultHash": "0dad3f8f4376b810be014cfd1d0a5aee2b2521ef2e5226e837aa3ed65df1b1fe",
-          "fileHash": "935f457f8694c796781c665616c40167ced092ea7ecdd0b7384760e96a7d3c9f",
-          "headSha": "fad090ad45fb44efbcd22d3f13fd7b130dfc6ab0"
+          "resultHash": "2a61445e4d7df637f788a046c1f7b10e9276ccdd468ffe3ab4161b7447056b34",
+          "fileHash": "8f4e96f6d57e031b9b1653259ad30169c89cea2e905fda2d571646c50e348785",
+          "headSha": "a259ae2c05e6d3648082e27987075cf295c905bd"
         },
         {
           "artifactPath": "artifacts/go-live/dormitory/day0-readiness-result.json",
@@ -353,31 +941,24 @@
           "exists": true,
           "tracked": true,
           "finalEvidence": true,
-          "stage": "DORM-L1-OBS-DAY1",
-          "generatedBy": "generate-dorm-l1-observation-day1",
-          "generatedAtUtc": "2026-06-02T01:34:14.117Z",
+          "stage": "OAM-07",
+          "generatedBy": "generate-observation-day",
+          "generatedAtUtc": "2026-06-04T08:04:36.782Z",
           "sourceMode": "actual",
           "status": "passed",
           "evidenceRefs": [
             "artifacts/go-live/dormitory/daily-observation-day-01.json",
-            "artifacts/go-live/dormitory/finance-daily-close-result.json",
-            "artifacts/go-live/dormitory/live-api-db-replay-result.json",
-            "artifacts/go-live/dormitory/rollback-drill-result.json",
-            "artifacts/go-live/dormitory/training-signoff-result.json",
-            "artifacts/portfolio/business-line-maturity-result.json",
-            "artifacts/proof/runtime-proof-result.json",
-            "artifacts/release-state/artifact-git-binding-result.json",
-            "artifacts/release-state/current-state.json",
-            "artifacts/release-state/post-merge-attestation.json",
-            "artifacts/trust/trust-boundary-result.json",
-            "docs/go-live/dormitory/training-signoff.yml"
+            "docs/go-live/dormitory/training-signoff.yml",
+            "docs/operations/dormitory-slo.yml",
+            "docs/operations/incident-root-cause-taxonomy.yml",
+            "docs/operations/observation-control-loop.yml"
           ],
           "forbiddenRefs": [],
           "missingRefs": [],
           "productionBoundaryOk": true,
-          "resultHash": "63655025b74fd38e8f114bb41ed8c20f31ced4420f914568d69719b641711795",
-          "fileHash": "244df9b5c1651b9fa094518c0bccfc850544e4786f99cf906ebe4b9980b2d25f",
-          "headSha": "52d55e17d6f0f37df69ba3bab7ddc240bc01887d"
+          "resultHash": "e86a904431305c637b5b0c5cfe04ed253e2ffe92ed5e7c485566c457ea5ddc56",
+          "fileHash": "729ccdf3e6fcf5a9ac1b13e8c2f8fd790fa75412826ffb72184a458f05d41a65",
+          "headSha": "6401149d636b84e5dfc33673e1e3868116fb426a"
         },
         {
           "artifactPath": "artifacts/operations/dormitory/l1-to-l2-readiness.json",
@@ -386,7 +967,7 @@
           "finalEvidence": true,
           "stage": "OAM-07",
           "generatedBy": "check-l1-to-l2-readiness",
-          "generatedAtUtc": "2026-06-02T03:09:52.080Z",
+          "generatedAtUtc": "2026-06-04T17:24:19.711Z",
           "sourceMode": "machine_checked",
           "status": "NOT_ELIGIBLE",
           "evidenceRefs": [
@@ -398,9 +979,9 @@
           "forbiddenRefs": [],
           "missingRefs": [],
           "productionBoundaryOk": true,
-          "resultHash": "f77c422c14ca1ca9cf4744e974e454e94d19591b53ab6f3f586188a838849ab3",
-          "fileHash": "e886421a08e629b0e05f04fc711519c6956e92cf62f7fde56f3fed19b1433d9a",
-          "headSha": "1a2fb45a89f3d1ef18eaf4ca216ecdc57660df30"
+          "resultHash": "1bcbd47a8a6e804e3668381253a5aa21088532f0f3dbe63892927f1799c86f89",
+          "fileHash": "0464c482841c1c7d56ba50615cc113b953d63f42029d84de12777d357a0d7645",
+          "headSha": "a259ae2c05e6d3648082e27987075cf295c905bd"
         },
         {
           "artifactPath": "artifacts/rt4/evidence-graph.json",
@@ -409,7 +990,7 @@
           "finalEvidence": true,
           "stage": "RT4",
           "generatedBy": "scripts/rt4/build-evidence-graph.mjs",
-          "generatedAtUtc": "2026-06-02T04:49:58.962Z",
+          "generatedAtUtc": "2026-06-04T06:18:25.948Z",
           "sourceMode": "machine_checked",
           "status": "unknown",
           "evidenceRefs": [
@@ -418,6 +999,9 @@
             "artifacts/rt4/completion-dashboard.json",
             "artifacts/rt4/evidence-graph.json",
             "artifacts/rt4/final-completion-assurance-result.json",
+            "artifacts/surface/dormitory-l1-browser-e2e/20260604T103403Z/dormitory-l1-browser-e2e-report.json",
+            "artifacts/surface/dormitory-l1-browser-e2e/20260604T103403Z/dormitory-l1-browser-e2e-report.md",
+            "artifacts/surface/dormitory-l1-browser-e2e/20260604T103403Z/screenshot-index.json",
             "docs/business/domains/dormitory/domain-pack.yml",
             "docs/business/experience-contract.yml",
             "docs/business/operating-control-tower.yml",
@@ -437,6 +1021,8 @@
             "scripts/rt4/check-final-completion-assurance.mjs",
             "scripts/rt4/check-six-file-coverage.mjs",
             "scripts/rt4/verify-evidence-graph.mjs",
+            "scripts/surface/check-dormitory-l1-browser-e2e-audit.mjs",
+            "scripts/surface/run-dormitory-l1-browser-e2e-audit.mjs",
             "services/core-api/WorkOS.Api/Runtime/OperationsUnitOfWork.cs",
             "services/core-api/WorkOS.Api/Runtime/OperationsWorkItemStore.cs",
             "tests/WorkOS.RuntimeIntegrationTests/OperationCaseWorkItemPersistenceTests.cs",
@@ -445,9 +1031,9 @@
           "forbiddenRefs": [],
           "missingRefs": [],
           "productionBoundaryOk": true,
-          "resultHash": "f1be6316ab579b4ae5ca9e0b461f470200ee3241b72aec1354bdf81729e273f3",
-          "fileHash": "59d77ddb25257fde4fd7547edb8a53834e13dba0c134f342518262ff2e1d6e5b",
-          "headSha": "fad090ad45fb44efbcd22d3f13fd7b130dfc6ab0"
+          "resultHash": "a150f71f73c9a0ad7c5ec9296c7f93997ae755c0e469cf2e5b70656831f20154",
+          "fileHash": "8feba02e4b872b33e50302956f9fc371ef52cbdb871726c6a6a8e08add007969",
+          "headSha": "a259ae2c05e6d3648082e27987075cf295c905bd"
         },
         {
           "artifactPath": "artifacts/rt4/completion-dashboard.json",
@@ -456,16 +1042,16 @@
           "finalEvidence": true,
           "stage": "RT4",
           "generatedBy": "build-completion-dashboard",
-          "generatedAtUtc": "2026-06-02T04:49:58.962Z",
+          "generatedAtUtc": "2026-06-04T06:18:25.948Z",
           "sourceMode": "machine_checked",
           "status": "unknown",
           "evidenceRefs": [],
           "forbiddenRefs": [],
           "missingRefs": [],
           "productionBoundaryOk": true,
-          "resultHash": "bc6893dd906b566f9806f5fa5c3076533b7233f69b0b7b8a6b775726fecf4cbd",
-          "fileHash": "639cec8943f437037ec174e64f121e370a6c16868a23fe0656271800d403ef7a",
-          "headSha": "fad090ad45fb44efbcd22d3f13fd7b130dfc6ab0"
+          "resultHash": "4aaa79a563b443bf5b2ce6185b1891bf6d3c8f90d06d56583b33ef6fe012803d",
+          "fileHash": "ad971ff41eb4dfecfe83cc2643efade3859348d493bca292df04de4e7772d766",
+          "headSha": "a259ae2c05e6d3648082e27987075cf295c905bd"
         },
         {
           "artifactPath": "artifacts/portfolio/business-line-maturity-result.json",
@@ -474,7 +1060,7 @@
           "finalEvidence": true,
           "stage": "PORTFOLIO",
           "generatedBy": "check-business-line-maturity",
-          "generatedAtUtc": "2026-06-02T01:20:29.160Z",
+          "generatedAtUtc": "2026-06-04T08:04:39.797Z",
           "sourceMode": "machine_checked",
           "status": "passed",
           "evidenceRefs": [
@@ -487,9 +1073,9 @@
           "forbiddenRefs": [],
           "missingRefs": [],
           "productionBoundaryOk": true,
-          "resultHash": "d681c4f690c7f560aebee0c95483495d55b2488cd4d768d09adcb8d459ab9e85",
-          "fileHash": "017f21a8962eb06cd95edf6f2ee6769b592312302d65128ed963f6f4768fbe1d",
-          "headSha": "d03d8d39c91135eb3f63d1a56b59e19b7dd35196"
+          "resultHash": "db0671c9ccc71d6e6d37a946c647bb1d398e9058643d44f59b36774ffb8d23b4",
+          "fileHash": "563f642d8ef3e5e4429bb04f46e463a0d918d3db4f063b806da53a4959684082",
+          "headSha": "a259ae2c05e6d3648082e27987075cf295c905bd"
         },
         {
           "artifactPath": "artifacts/portfolio/production-governance-result.json",
@@ -498,7 +1084,7 @@
           "finalEvidence": true,
           "stage": "PORTFOLIO",
           "generatedBy": "check-production-governance",
-          "generatedAtUtc": "2026-06-02T01:20:29.352Z",
+          "generatedAtUtc": "2026-06-04T08:04:40.578Z",
           "sourceMode": "machine_checked",
           "status": "passed",
           "evidenceRefs": [
@@ -512,9 +1098,9 @@
           "forbiddenRefs": [],
           "missingRefs": [],
           "productionBoundaryOk": true,
-          "resultHash": "5039d2b8713f1ab18b0a26013d0e96f8d2b08d208f49a32aee892ca075de6c94",
-          "fileHash": "2aee94b1b6cee0507221e221de3a2ffab83c4bdb3366fd2f45f92216beaf0ce9",
-          "headSha": "d03d8d39c91135eb3f63d1a56b59e19b7dd35196"
+          "resultHash": "dc414c946350fa7a9053367d887d6fe5e319492a38bfef559ef1dd2ec20f71cb",
+          "fileHash": "d04753d66daab3fafabeb9b372bd17ab2589b8a34f50ba326765de6d99dabee5",
+          "headSha": "a259ae2c05e6d3648082e27987075cf295c905bd"
         },
         {
           "artifactPath": "artifacts/business/dormitory/business-semantic-contract-result.json",
@@ -523,15 +1109,15 @@
           "finalEvidence": true,
           "stage": "BUSINESS-SEMANTIC",
           "generatedBy": "OAM-02 business semantic contract checkers",
-          "generatedAtUtc": "2026-06-02T01:20:25.075Z",
+          "generatedAtUtc": "2026-06-04T11:49:34.493Z",
           "sourceMode": "machine_checked",
           "status": "passed",
           "evidenceRefs": [],
           "forbiddenRefs": [],
           "missingRefs": [],
           "productionBoundaryOk": true,
-          "resultHash": "f01974450037ddf831198498aba5b4a1914ff39ecd0bb0ca294005222161d29b",
-          "fileHash": "d0446a735589f8372fe92498b801464cd13899801aad17ba68d856beedd1fac8",
+          "resultHash": "cfa7479a8055dc39e73645c249be51a87cbf48c4d0407acd129f4fa2f5d0a9ab",
+          "fileHash": "9ca95d2fc7c270a88ee6bb5fcd6329464a895a65799d464755dffe3c475ddc2c",
           "headSha": null
         },
         {
@@ -541,7 +1127,7 @@
           "finalEvidence": true,
           "stage": "RUNTIME-PROOF",
           "generatedBy": "run-runtime-proof",
-          "generatedAtUtc": "2026-06-01T21:01:59.369Z",
+          "generatedAtUtc": "2026-06-04T08:04:27.859Z",
           "sourceMode": "live_api_db",
           "status": "passed",
           "evidenceRefs": [
@@ -554,9 +1140,9 @@
           "forbiddenRefs": [],
           "missingRefs": [],
           "productionBoundaryOk": true,
-          "resultHash": "e837dc5314ff7035df055c624fae8b467fd4881b8f59840691a575fe4493852c",
-          "fileHash": "b7375306579d524289b3d0abc9da4594eddc98514a814f2131ea846bd98fb623",
-          "headSha": "523e430b0366096cf2dd5525920fde59d46d2df1"
+          "resultHash": "b9ace5ea0508487cccfb396cc6863821981f8f68b5a59e82123aa287bb01d926",
+          "fileHash": "031b04d638232148d7ad386d13586f2f452813b123b1480d35fcc2009c458b69",
+          "headSha": "a259ae2c05e6d3648082e27987075cf295c905bd"
         },
         {
           "artifactPath": "artifacts/go-live/dormitory/runtime-proof-result.json",
@@ -565,7 +1151,7 @@
           "finalEvidence": true,
           "stage": "DORM-INT",
           "generatedBy": "run-runtime-proof:dormitory-pack",
-          "generatedAtUtc": "2026-06-01T21:01:59.369Z",
+          "generatedAtUtc": "2026-06-04T08:04:27.859Z",
           "sourceMode": "live_api_db",
           "status": "passed",
           "evidenceRefs": [
@@ -578,9 +1164,9 @@
           "forbiddenRefs": [],
           "missingRefs": [],
           "productionBoundaryOk": true,
-          "resultHash": "de8092e24b448e001fa2bc7a21450636831650d7b400c76d0d357bd786b36cee",
-          "fileHash": "634486a9ca815dfa60c801cadbee2b7852cf8bd91a564bbcf0ffde0ef3a03c0e",
-          "headSha": "523e430b0366096cf2dd5525920fde59d46d2df1"
+          "resultHash": "8ca04745e97b769a4f2ab10eca30f13dea75daffe24cf1ed336bbc4935a59039",
+          "fileHash": "717221b30d618789ce11575817ea632465f0fb49313331809afa649b091f026f",
+          "headSha": "a259ae2c05e6d3648082e27987075cf295c905bd"
         },
         {
           "artifactPath": "artifacts/surface/oam-04-surface-twin-plane-result.json",
@@ -589,15 +1175,15 @@
           "finalEvidence": true,
           "stage": "SURFACE",
           "generatedBy": "scripts/surface/check-oam-04-surface-twin-plane-contract.mjs",
-          "generatedAtUtc": "2026-06-02T01:20:27.711Z",
+          "generatedAtUtc": "2026-06-04T08:04:32.275Z",
           "sourceMode": "machine_checked",
           "status": "passed",
           "evidenceRefs": [],
           "forbiddenRefs": [],
           "missingRefs": [],
           "productionBoundaryOk": true,
-          "resultHash": "be4a5754ed5f6dd3fdc6fd0e56b2cd1dc0b00004db134a1c14b4ce8e896adff9",
-          "fileHash": "3f35f173b5f21a517333ae79a92141493aedd3460ebc257a99088b8ecb2f912b",
+          "resultHash": "8b0157603e58caac03984a6b517f8c3f560e78858e79b1196e5cc9d8ad466b30",
+          "fileHash": "7be5fb786c486dea62c46c97c6c1f1b165d55b375cf9fee484039c504cb79c4a",
           "headSha": null
         },
         {
@@ -607,15 +1193,15 @@
           "finalEvidence": true,
           "stage": "FINANCE-SEMANTIC",
           "generatedBy": "check-finance-semantic-truth",
-          "generatedAtUtc": "2026-06-02T01:20:28.201Z",
+          "generatedAtUtc": "2026-06-04T08:04:33.272Z",
           "sourceMode": "machine_checked",
           "status": "passed",
           "evidenceRefs": [],
           "forbiddenRefs": [],
           "missingRefs": [],
           "productionBoundaryOk": true,
-          "resultHash": "08ba7da34f33f79721dcc72ed85cda86f8766b67b3fad47b699b8e29e8fa7667",
-          "fileHash": "8f607dc7e77d92fa28547379239452c9c05d90686821654fa2f7f7736093ea9d",
+          "resultHash": "7b2624765b9a1b8b606cd9b334b95be15693a60d567ada5f94f2b2343c2735a0",
+          "fileHash": "e89fb74845186aaf8e3b6b9f568f0cec32fdaab36a4cd68f49b55e375c9bcccb",
           "headSha": null
         },
         {
@@ -625,15 +1211,15 @@
           "finalEvidence": true,
           "stage": "OAM-06",
           "generatedBy": "check-trust-boundary-kernel",
-          "generatedAtUtc": "2026-06-02T01:20:28.521Z",
+          "generatedAtUtc": "2026-06-04T08:04:35.455Z",
           "sourceMode": "machine_checked",
           "status": "passed",
           "evidenceRefs": [],
           "forbiddenRefs": [],
           "missingRefs": [],
           "productionBoundaryOk": true,
-          "resultHash": "1fb197036dcce0322e13c88986620cca093d3dcb365921800b22271c5ec43bde",
-          "fileHash": "ebf7c169baa77e6e6e0607dde8c98b7f66a7f1ed2b8f22ba375eab9156a987b9",
+          "resultHash": "0698302401de70a9c1f89a9d6e8f6b5ccc7efe5cbca79ac00b132879e7769435",
+          "fileHash": "5e5805877bf08c90a055da7687f52edb2a6c05687ab1a00220e8d3d1671ae40a",
           "headSha": null
         },
         {
@@ -643,7 +1229,7 @@
           "finalEvidence": true,
           "stage": "OAM-07",
           "generatedBy": "check-dormitory-slo",
-          "generatedAtUtc": "2026-06-02T03:09:52.078Z",
+          "generatedAtUtc": "2026-06-04T08:04:36.146Z",
           "sourceMode": "machine_checked",
           "status": "passed",
           "evidenceRefs": [
@@ -654,8 +1240,8 @@
           "forbiddenRefs": [],
           "missingRefs": [],
           "productionBoundaryOk": true,
-          "resultHash": "3c1a73f3b9b475e00be82a6ca21c22eaea4273008490cb9259ea437408f6a687",
-          "fileHash": "9af4d862cdfc8d62ea19c74f1627b4620b4d5b360c2433f1c0e5247d59a21bf6",
+          "resultHash": "47834b981dc020a42c31159333886b1ff222a5c1dbeae7b4973ca569c168cc46",
+          "fileHash": "6a3fb2f61f8c9e05880c535e94efa18cf2d01496617288b631290d20495603b8",
           "headSha": null
         },
         {
@@ -665,7 +1251,7 @@
           "finalEvidence": true,
           "stage": "OAM-08",
           "generatedBy": "check-domain-replication-pack",
-          "generatedAtUtc": "2026-06-02T01:20:29.049Z",
+          "generatedAtUtc": "2026-06-04T08:04:39.061Z",
           "sourceMode": "machine_checked",
           "status": "passed",
           "evidenceRefs": [
@@ -677,8 +1263,8 @@
           "forbiddenRefs": [],
           "missingRefs": [],
           "productionBoundaryOk": true,
-          "resultHash": "4a282ebf6ab1abe0b33d57ab6a1ea07ef4505fe3014ae20c5dc1fdb32753575c",
-          "fileHash": "84097190abc044b91d06f0550f6ad550b72d18dc7b2cba8303789ac56ff302ff",
+          "resultHash": "6a0239ee95b037d0e71d99e1aa244400ee94c449a0dc1d91ee886da57c84fc16",
+          "fileHash": "b5d2a77aef8e88eb08fde159154a00acc8f94e7cbd96dd2aee4b5466ceddb9e0",
           "headSha": null
         }
       ],
@@ -689,7 +1275,7 @@
       "repairPartsHrStatus": "L0 Contract Preview"
     },
     "seed_data_isolation": {
-      "generatedAtUtc": "2026-06-04T14:23:07.154Z",
+      "generatedAtUtc": "2026-06-04T17:25:04.396Z",
       "generatedBy": "check-seed-data-isolation",
       "stage": "PROJECT-HYGIENE-CLEANUP",
       "status": "passed",
@@ -700,11 +1286,669 @@
       "dormitoryL2ProductionAllowed": false,
       "businessProduction": "blocked",
       "repairPartsHrStatus": "L0 Contract Preview"
+    },
+    "migration_sequence_hygiene": {
+      "generatedAtUtc": "2026-06-04T17:25:04.129Z",
+      "generatedBy": "check-migration-sequence-hygiene",
+      "stage": "PROJECT-HYGIENE-CLEANUP",
+      "status": "passed",
+      "migrationDirectory": "infra/db/migrations",
+      "migrationFileCount": 39,
+      "duplicateOrdinals": [
+        {
+          "ordinal": "034",
+          "files": [
+            "034_next_control_plane_runtime_roles.sql",
+            "034_operations_command_submission_context.sql"
+          ]
+        }
+      ],
+      "missingOrdinals": [
+        "035"
+      ],
+      "nextRecommendedOrdinal": "040",
+      "policyRef": "docs/project/migration-sequence-policy.json",
+      "noGoItems": [],
+      "productionAllowed": false,
+      "dormitoryL2ProductionAllowed": false,
+      "businessProduction": "blocked",
+      "repairPartsHrStatus": "L0 Contract Preview"
+    },
+    "auxiliary_reference_hygiene": {
+      "generatedAtUtc": "2026-06-04T17:25:01.723Z",
+      "generatedBy": "check-auxiliary-reference-hygiene",
+      "stage": "PROJECT-HYGIENE-CLEANUP",
+      "status": "passed",
+      "policyRef": "docs/project/auxiliary-reference-policy.json",
+      "scannedFileCount": 819,
+      "repoReferenceCount": 3104,
+      "missingReferenceCount": 40,
+      "allowedMissingReferenceCount": 40,
+      "unregisteredMissingReferenceCount": 0,
+      "missingRefs": [
+        {
+          "owner": "docs/acceptance/14-governance-closure-go-no-go.md",
+          "ref": "artifacts/v5_5/governance-closure-result.json",
+          "exists": false,
+          "allowedMissing": true,
+          "classification": "optional_generated_release_artifact",
+          "reason": "The governance closure checker writes this only when release packaging requests an artifacts output path; the default output is under .tmp."
+        },
+        {
+          "owner": "docs/testing/test-enhancement-report.md",
+          "ref": "apps/mobile/playwright-report/",
+          "exists": false,
+          "allowedMissing": true,
+          "classification": "generated_test_report",
+          "reason": "Playwright report is generated by test runs."
+        },
+        {
+          "owner": "docs/v5.4/fourth-batch-period-risk-pc-plan.md",
+          "ref": "docs/v5.4/mr-06-release-report.md",
+          "exists": false,
+          "allowedMissing": true,
+          "classification": "historical_missing_evidence_ref",
+          "reason": "The plan records missing MR-06 / MR-07 evidence as a production-readiness gap."
+        },
+        {
+          "owner": "docs/v5.4/fourth-batch-period-risk-pc-plan.md",
+          "ref": "docs/v5.4/mr-07-release-report.md",
+          "exists": false,
+          "allowedMissing": true,
+          "classification": "historical_missing_evidence_ref",
+          "reason": "The plan records missing MR-06 / MR-07 evidence as a production-readiness gap."
+        },
+        {
+          "owner": "docs/v5.4/fourth-batch-reconciliation-correction-plan.md",
+          "ref": "apps/mobile/src/__tests__/correctionCenterView.test.js",
+          "exists": false,
+          "allowedMissing": true,
+          "classification": "planned_slice_reference",
+          "reason": "This V5.4 planning document names target files for a planned reconciliation/correction slice; current runtime source is not inferred from these paths."
+        },
+        {
+          "owner": "docs/v5.4/fourth-batch-reconciliation-correction-plan.md",
+          "ref": "apps/mobile/src/styles/correction-center.css",
+          "exists": false,
+          "allowedMissing": true,
+          "classification": "planned_slice_reference",
+          "reason": "This V5.4 planning document names target files for a planned reconciliation/correction slice; current runtime source is not inferred from these paths."
+        },
+        {
+          "owner": "docs/v5.4/fourth-batch-reconciliation-correction-plan.md",
+          "ref": "apps/mobile/src/views/correctionCenterView.js",
+          "exists": false,
+          "allowedMissing": true,
+          "classification": "planned_slice_reference",
+          "reason": "This V5.4 planning document names target files for a planned reconciliation/correction slice; current runtime source is not inferred from these paths."
+        },
+        {
+          "owner": "docs/v5.4/fourth-batch-reconciliation-correction-plan.md",
+          "ref": "docs/v5.4/mr-06-release-report.md",
+          "exists": false,
+          "allowedMissing": true,
+          "classification": "planned_slice_reference",
+          "reason": "This V5.4 planning document names future slice evidence and implementation targets; it is not current source authority."
+        },
+        {
+          "owner": "docs/v5.4/fourth-batch-reconciliation-correction-plan.md",
+          "ref": "docs/v5.4/mr-07-release-report.md",
+          "exists": false,
+          "allowedMissing": true,
+          "classification": "planned_slice_reference",
+          "reason": "This V5.4 planning document names future slice evidence and implementation targets; it is not current source authority."
+        },
+        {
+          "owner": "docs/v5.4/fourth-batch-reconciliation-correction-plan.md",
+          "ref": "docs/v5.4/mr-09-shadow-compare.config.json",
+          "exists": false,
+          "allowedMissing": true,
+          "classification": "planned_slice_reference",
+          "reason": "This V5.4 planning document names future slice evidence and implementation targets; it is not current source authority."
+        },
+        {
+          "owner": "docs/v5.4/fourth-batch-reconciliation-correction-plan.md",
+          "ref": "infra/db/migrations/018_correction_center.sql",
+          "exists": false,
+          "allowedMissing": true,
+          "classification": "planned_slice_reference",
+          "reason": "This V5.4 planning document names target files for a planned reconciliation/correction slice; current runtime source is not inferred from these paths."
+        },
+        {
+          "owner": "docs/v5.4/fourth-batch-reconciliation-correction-plan.md",
+          "ref": "services/core-api/WorkOS.Api/Slices/Accommodation/CorrectionCenter/Commands/CorrectionCommands.cs",
+          "exists": false,
+          "allowedMissing": true,
+          "classification": "planned_slice_reference",
+          "reason": "This V5.4 planning document names target files for a planned reconciliation/correction slice; current runtime source is not inferred from these paths."
+        },
+        {
+          "owner": "docs/v5.4/fourth-batch-reconciliation-correction-plan.md",
+          "ref": "services/core-api/WorkOS.Api/Slices/Accommodation/CorrectionCenter/Persistence/CorrectionCenterStorage.cs",
+          "exists": false,
+          "allowedMissing": true,
+          "classification": "planned_slice_reference",
+          "reason": "This V5.4 planning document names target files for a planned reconciliation/correction slice; current runtime source is not inferred from these paths."
+        },
+        {
+          "owner": "docs/v5.4/fourth-batch-reconciliation-correction-plan.md",
+          "ref": "services/core-api/WorkOS.Api/Slices/Accommodation/CorrectionCenter/Policies/CorrectionPolicy.cs",
+          "exists": false,
+          "allowedMissing": true,
+          "classification": "planned_slice_reference",
+          "reason": "This V5.4 planning document names target files for a planned reconciliation/correction slice; current runtime source is not inferred from these paths."
+        },
+        {
+          "owner": "docs/v5.4/fourth-batch-reconciliation-correction-plan.md",
+          "ref": "services/core-api/WorkOS.Api/Slices/Accommodation/CorrectionCenter/Process/CorrectionProcessManager.cs",
+          "exists": false,
+          "allowedMissing": true,
+          "classification": "planned_slice_reference",
+          "reason": "This V5.4 planning document names target files for a planned reconciliation/correction slice; current runtime source is not inferred from these paths."
+        },
+        {
+          "owner": "docs/v5.4/fourth-batch-reconciliation-correction-plan.md",
+          "ref": "services/core-api/WorkOS.Api/Slices/Accommodation/CorrectionCenter/ProjectorRules/CorrectionProjectorRules.cs",
+          "exists": false,
+          "allowedMissing": true,
+          "classification": "planned_slice_reference",
+          "reason": "This V5.4 planning document names target files for a planned reconciliation/correction slice; current runtime source is not inferred from these paths."
+        },
+        {
+          "owner": "docs/v5.4/fourth-batch-reconciliation-correction-plan.md",
+          "ref": "services/core-api/WorkOS.Api/Slices/Accommodation/Reconciliation/Commands/ReconciliationCommands.cs",
+          "exists": false,
+          "allowedMissing": true,
+          "classification": "planned_slice_reference",
+          "reason": "This V5.4 planning document names target files for a planned reconciliation/correction slice; current runtime source is not inferred from these paths."
+        },
+        {
+          "owner": "docs/v5.4/fourth-batch-reconciliation-correction-plan.md",
+          "ref": "services/core-api/WorkOS.Api/Slices/Accommodation/Reconciliation/Persistence/ReconciliationStorage.cs",
+          "exists": false,
+          "allowedMissing": true,
+          "classification": "planned_slice_reference",
+          "reason": "This V5.4 planning document names target files for a planned reconciliation/correction slice; current runtime source is not inferred from these paths."
+        },
+        {
+          "owner": "docs/v5.4/fourth-batch-reconciliation-correction-plan.md",
+          "ref": "services/core-api/WorkOS.Api/Slices/Accommodation/Reconciliation/Policies/ReconciliationPolicy.cs",
+          "exists": false,
+          "allowedMissing": true,
+          "classification": "planned_slice_reference",
+          "reason": "This V5.4 planning document names target files for a planned reconciliation/correction slice; current runtime source is not inferred from these paths."
+        },
+        {
+          "owner": "docs/v5.4/fourth-batch-reconciliation-correction-plan.md",
+          "ref": "services/core-api/WorkOS.Api/Slices/Accommodation/Reconciliation/Process/ReconciliationProcessManager.cs",
+          "exists": false,
+          "allowedMissing": true,
+          "classification": "planned_slice_reference",
+          "reason": "This V5.4 planning document names target files for a planned reconciliation/correction slice; current runtime source is not inferred from these paths."
+        },
+        {
+          "owner": "docs/v5.4/fourth-batch-reconciliation-correction-plan.md",
+          "ref": "services/core-api/WorkOS.Api/Slices/Accommodation/Reconciliation/ProjectorRules/ReconciliationProjectorRules.cs",
+          "exists": false,
+          "allowedMissing": true,
+          "classification": "planned_slice_reference",
+          "reason": "This V5.4 planning document names target files for a planned reconciliation/correction slice; current runtime source is not inferred from these paths."
+        },
+        {
+          "owner": "docs/v5.4/fourth-batch-reconciliation-correction-plan.md",
+          "ref": "tests/WorkOS.UnitTests/CorrectionPolicyTests.cs",
+          "exists": false,
+          "allowedMissing": true,
+          "classification": "planned_slice_reference",
+          "reason": "This V5.4 planning document names future slice evidence and implementation targets; it is not current source authority."
+        },
+        {
+          "owner": "docs/v5.4/fourth-batch-reconciliation-correction-plan.md",
+          "ref": "tests/WorkOS.UnitTests/ReconciliationPolicyTests.cs",
+          "exists": false,
+          "allowedMissing": true,
+          "classification": "planned_slice_reference",
+          "reason": "This V5.4 planning document names future slice evidence and implementation targets; it is not current source authority."
+        },
+        {
+          "owner": "docs/v5.4/fourth-batch-reconciliation-correction-plan.md",
+          "ref": "tests/WorkOS.UnitTests/ReconciliationShadowCompareTests.cs",
+          "exists": false,
+          "allowedMissing": true,
+          "classification": "planned_slice_reference",
+          "reason": "This V5.4 planning document names future slice evidence and implementation targets; it is not current source authority."
+        },
+        {
+          "owner": "docs/v5.4/mr-08-gate-result.json",
+          "ref": "apps/mobile.checkoutServiceView",
+          "exists": false,
+          "allowedMissing": true,
+          "classification": "module_contract_id",
+          "reason": "These values are Control Plane module identifiers, not repository file paths."
+        },
+        {
+          "owner": "docs/v5.4/mr-09-gate-result.json",
+          "ref": "apps/mobile.financeReconciliationView",
+          "exists": false,
+          "allowedMissing": true,
+          "classification": "module_contract_id",
+          "reason": "These values are Control Plane module identifiers, not repository file paths."
+        },
+        {
+          "owner": "docs/v5.4/mr-09-release-report.md",
+          "ref": "apps/mobile.financeReconciliationView",
+          "exists": false,
+          "allowedMissing": true,
+          "classification": "module_contract_id",
+          "reason": "These values are Control Plane module identifiers, not repository file paths."
+        },
+        {
+          "owner": "docs/v5.4/mr-10-gate-result.json",
+          "ref": "apps/mobile.pcGovernanceView",
+          "exists": false,
+          "allowedMissing": true,
+          "classification": "module_contract_id",
+          "reason": "These values are Control Plane module identifiers, not repository file paths."
+        },
+        {
+          "owner": "docs/v5.4/mr-10-release-report.md",
+          "ref": "apps/mobile.pcGovernanceView",
+          "exists": false,
+          "allowedMissing": true,
+          "classification": "module_contract_id",
+          "reason": "These values are Control Plane module identifiers, not repository file paths."
+        },
+        {
+          "owner": "docs/v5.5/governance-closure-report.md",
+          "ref": "artifacts/v5_5/governance-closure-result.json",
+          "exists": false,
+          "allowedMissing": true,
+          "classification": "optional_generated_release_artifact",
+          "reason": "The governance closure checker writes this only when release packaging requests an artifacts output path; the default output is under .tmp."
+        },
+        {
+          "owner": "scripts/check-fact-ownership.mjs",
+          "ref": "infra/db/migrations/999_bad.sql",
+          "exists": false,
+          "allowedMissing": true,
+          "classification": "generated_or_self_test_reference",
+          "reason": "Checker scripts may reference generated outputs, CI placeholders, or self-test fixture paths."
+        },
+        {
+          "owner": "scripts/check-fact-ownership.mjs",
+          "ref": "services/core-api/WorkOS.Api/Runtime/MobileBffFake.cs",
+          "exists": false,
+          "allowedMissing": true,
+          "classification": "generated_or_self_test_reference",
+          "reason": "Checker scripts may reference generated outputs, CI placeholders, or self-test fixture paths."
+        },
+        {
+          "owner": "scripts/check-fact-ownership.mjs",
+          "ref": "services/core-api/WorkOS.Api/Runtime/ReconciliationFake.cs",
+          "exists": false,
+          "allowedMissing": true,
+          "classification": "generated_or_self_test_reference",
+          "reason": "Checker scripts may reference generated outputs, CI placeholders, or self-test fixture paths."
+        },
+        {
+          "owner": "scripts/check-fact-ownership.mjs",
+          "ref": "services/core-api/WorkOS.Api/Runtime/ServiceTaskFake.cs",
+          "exists": false,
+          "allowedMissing": true,
+          "classification": "generated_or_self_test_reference",
+          "reason": "Checker scripts may reference generated outputs, CI placeholders, or self-test fixture paths."
+        },
+        {
+          "owner": "scripts/check-pr-contract.mjs",
+          "ref": "infra/db/migrations/032_rule_fix.sql",
+          "exists": false,
+          "allowedMissing": true,
+          "classification": "generated_or_self_test_reference",
+          "reason": "Checker scripts may reference generated outputs, CI placeholders, or self-test fixture paths."
+        },
+        {
+          "owner": "scripts/check-runtime-write-paths.mjs",
+          "ref": "services/core-api/WorkOS.Api/Runtime/OfficialSource.cs",
+          "exists": false,
+          "allowedMissing": true,
+          "classification": "generated_or_self_test_reference",
+          "reason": "Checker scripts may reference generated outputs, CI placeholders, or self-test fixture paths."
+        },
+        {
+          "owner": "scripts/go-live/seed-dormitory-runtime-db.mjs",
+          "ref": "artifacts/go-live/dormitory/runtime-seed-result.json",
+          "exists": false,
+          "allowedMissing": true,
+          "classification": "generated_or_self_test_reference",
+          "reason": "Checker scripts may reference generated outputs, CI placeholders, or self-test fixture paths."
+        },
+        {
+          "owner": "scripts/operations/check-day2-entry-gate.mjs",
+          "ref": "artifacts/operations/dormitory/observation-day-02.json",
+          "exists": false,
+          "allowedMissing": true,
+          "classification": "generated_or_self_test_reference",
+          "reason": "Checker scripts may reference generated outputs, CI placeholders, or self-test fixture paths."
+        },
+        {
+          "owner": "scripts/operations/check-observation-sequence-gate.mjs",
+          "ref": "artifacts/operations/dormitory/observation-day-02.json",
+          "exists": false,
+          "allowedMissing": true,
+          "classification": "generated_or_self_test_reference",
+          "reason": "Checker scripts may reference generated outputs, CI placeholders, or self-test fixture paths."
+        },
+        {
+          "owner": "scripts/project/check-screenshot-baseline.mjs",
+          "ref": "artifacts/screenshots/dormitory-business-scenarios",
+          "exists": false,
+          "allowedMissing": true,
+          "classification": "generated_or_self_test_reference",
+          "reason": "Checker scripts may reference generated outputs, CI placeholders, or self-test fixture paths."
+        }
+      ],
+      "supersededHistoricalEvidence": [
+        {
+          "ref": "docs/v5.4/mr-02-gate-result.json",
+          "historicalStatement": "MR-02 used a compatibility adapter while old Workspace/Card API support still existed.",
+          "currentStatus": "Superseded by OAM-ACF v8 rule authority: old Workspace/Card prepare/confirm writes are retired and must not be restored."
+        }
+      ],
+      "currentAuthorityRefs": [
+        "docs/engineering/00-rule-authority.md",
+        "docs/rules/v5.5/rule-authority.yml",
+        "docs/business/experience-contract.yml",
+        "docs/surface/surface-contract.yml"
+      ],
+      "noGoItems": [],
+      "productionAllowed": false,
+      "dormitoryL2ProductionAllowed": false,
+      "businessProduction": "blocked",
+      "repairPartsHrStatus": "L0 Contract Preview"
+    },
+    "company_kernel_alignment": {
+      "generatedAtUtc": "2026-06-04T22:36:51.558Z",
+      "generatedBy": "check-company-kernel-alignment",
+      "stage": "OAM-CAB-V1.1-COMPANY-KERNEL-ALIGNMENT",
+      "status": "passed",
+      "headSha": "4bd2b3381b9a7536915eaa4c3df8b653edf524e7",
+      "contractRef": "docs/contracts/company-kernels/company-kernel-alignment-contract.json",
+      "businessRealityMapRef": "docs/architecture/business-reality-oam-kernel-map.json",
+      "kernelCount": 7,
+      "kernels": [
+        {
+          "kernelId": "BusinessDomainKernel",
+          "activeComponent": true,
+          "mappedBusinessReality": true,
+          "proofRefs": {
+            "contracts": [
+              "docs/business/domain-kit/domain-template.yml",
+              "docs/business/domains/dormitory/domain-pack.yml",
+              "docs/business/business-line-registry.json"
+            ],
+            "guards": [
+              "scripts/check-business-domain-kit.mjs",
+              "scripts/check-domain-packs.mjs",
+              "scripts/check-domain-kit-usage.mjs",
+              "scripts/check-business-line-admission.mjs"
+            ],
+            "evidence": [
+              "artifacts/go-live/dormitory/b-stage-gate-result.json"
+            ]
+          }
+        },
+        {
+          "kernelId": "MasterObjectKernel",
+          "activeComponent": true,
+          "mappedBusinessReality": true,
+          "proofRefs": {
+            "contracts": [
+              "docs/business/shared-governance/subject-vehicle-truth.yml",
+              "schemas/shared-governance.schema.json",
+              "docs/business/truth-owner-registry.yml"
+            ],
+            "guards": [
+              "scripts/check-shared-governance-boundary.mjs",
+              "scripts/check-truth-owners.mjs",
+              "scripts/check-receipt-projection.mjs"
+            ],
+            "evidence": [
+              "artifacts/rt4/evidence-graph.json"
+            ]
+          }
+        },
+        {
+          "kernelId": "TruthBoundaryKernel",
+          "activeComponent": true,
+          "mappedBusinessReality": true,
+          "proofRefs": {
+            "contracts": [
+              "docs/business/truth-owner-registry.yml",
+              "docs/contracts/oam-cab/fact-ownership-contract.json",
+              "docs/rules/v5.5/fact-ownership.yml"
+            ],
+            "guards": [
+              "scripts/check-truth-owners.mjs",
+              "scripts/check-fact-ownership.mjs",
+              "scripts/check-provisional-ref-usage.mjs",
+              "scripts/check-receipt-projection.mjs"
+            ],
+            "evidence": [
+              "artifacts/rt4/evidence-graph.json"
+            ]
+          }
+        },
+        {
+          "kernelId": "FinanceTruthKernel",
+          "activeComponent": true,
+          "mappedBusinessReality": true,
+          "proofRefs": {
+            "contracts": [
+              "docs/business/finance/finance-truth-pipeline.yml",
+              "docs/business/finance/money-kernel-rules.yml",
+              "docs/business/finance/ledger-transaction-contract.yml",
+              "docs/business/finance/correction-policy.yml"
+            ],
+            "guards": [
+              "scripts/check-finance-truth.mjs",
+              "scripts/finance/check-finance-semantic-truth.mjs",
+              "scripts/finance/check-ledger-basis-semantics.mjs",
+              "scripts/check-ledger-semantic-rules.mjs"
+            ],
+            "evidence": [
+              "artifacts/finance/finance-semantic-truth-result.json",
+              "artifacts/go-live/dormitory/finance-daily-close-result.json"
+            ]
+          }
+        },
+        {
+          "kernelId": "EventStateSummaryKernel",
+          "activeComponent": true,
+          "mappedBusinessReality": true,
+          "proofRefs": {
+            "contracts": [
+              "docs/contracts/fact-trace.schema.json",
+              "docs/contracts/operations-command-submission-context.json",
+              "docs/business/acceptance/b2-scenario-result-semantics.json",
+              "docs/contracts/projection-contract.schema.json"
+            ],
+            "guards": [
+              "scripts/validate-runtime-api.mjs",
+              "scripts/check-runtime-write-paths.mjs",
+              "scripts/proof/check-runtime-proof-result.mjs"
+            ],
+            "evidence": [
+              "artifacts/proof/runtime-proof-result.json",
+              "artifacts/business/dormitory/scenario-attempt-semantics-result.json"
+            ]
+          }
+        },
+        {
+          "kernelId": "BIKPIKernel",
+          "activeComponent": true,
+          "mappedBusinessReality": true,
+          "proofRefs": {
+            "contracts": [
+              "docs/contracts/bi-kpi/bi-kpi-contract.json",
+              "docs/business/dormitory/metric-formula-contract.yml",
+              "docs/business/dormitory/metrics-tree.yml",
+              "docs/operations/metric-deviation-policy.yml"
+            ],
+            "guards": [
+              "scripts/business/check-metric-formula-contract.mjs",
+              "scripts/check-operating-feedback-loop.mjs",
+              "scripts/check-operating-control-tower.mjs"
+            ],
+            "evidence": [
+              "artifacts/operations/dormitory/slo-result.json",
+              "artifacts/portfolio/business-line-maturity-result.json"
+            ]
+          }
+        },
+        {
+          "kernelId": "AccountApplicationBoundaryKernel",
+          "activeComponent": true,
+          "mappedBusinessReality": true,
+          "proofRefs": {
+            "contracts": [
+              "docs/contracts/admission/actor-device-admission-contract.json",
+              "docs/business/policies/permission-policy.yml",
+              "docs/business/policies/cutover-policy.yml",
+              "docs/contracts/oam-cab/api-boundary-contract.json"
+            ],
+            "guards": [
+              "scripts/check-admission-kernel.mjs",
+              "scripts/check-policy-as-code.mjs",
+              "scripts/check-api-boundaries.mjs",
+              "scripts/surface/check-device-trust-contract.mjs"
+            ],
+            "evidence": [
+              "artifacts/surface/device-trust-contract-result.json",
+              "artifacts/surface/surface-api-boundary-result.json"
+            ]
+          }
+        }
+      ],
+      "definitionRegistryScope": {
+        "eventDefinitions": [
+          {
+            "definitionId": "event.domainEvent.v1",
+            "ownerKernel": "EventStateSummaryKernel",
+            "eventType": "DomainEvent",
+            "refs": [
+              "docs/contracts/operations-runtime.schema.json",
+              "docs/contracts/fact-trace.schema.json"
+            ]
+          },
+          {
+            "definitionId": "event.ledgerEntry.v1",
+            "ownerKernel": "FinanceTruthKernel",
+            "eventType": "LedgerEntry",
+            "refs": [
+              "docs/business/finance/ledger-transaction-contract.yml",
+              "docs/business/finance/finance-truth-pipeline.yml"
+            ]
+          },
+          {
+            "definitionId": "event.projectionCommit.v1",
+            "ownerKernel": "EventStateSummaryKernel",
+            "eventType": "ProjectionCommit",
+            "refs": [
+              "docs/contracts/projection-contract.schema.json",
+              "docs/contracts/fact-trace.schema.json"
+            ]
+          }
+        ],
+        "stateDefinitions": [
+          {
+            "definitionId": "state.workItemLifecycle.v1",
+            "ownerKernel": "EventStateSummaryKernel",
+            "stateType": "WorkItemState",
+            "refs": [
+              "docs/contracts/operations-runtime.schema.json",
+              "docs/business/acceptance/b2-scenario-result-semantics.json"
+            ]
+          },
+          {
+            "definitionId": "state.admissionDecision.v1",
+            "ownerKernel": "AccountApplicationBoundaryKernel",
+            "stateType": "AdmissionDecision",
+            "refs": [
+              "docs/contracts/admission/admission-decision-contract.json",
+              "docs/contracts/admission/admission-contract.json"
+            ]
+          },
+          {
+            "definitionId": "state.releaseState.v1",
+            "ownerKernel": "TruthBoundaryKernel",
+            "stateType": "ReleaseState",
+            "refs": [
+              "artifacts/release-state/current-state.json",
+              "docs/contracts/admission/release-state-admission-matrix.json"
+            ]
+          }
+        ],
+        "summaryDefinitions": [
+          {
+            "definitionId": "summary.subjectSummary.v1",
+            "ownerKernel": "MasterObjectKernel",
+            "summaryType": "SubjectSummary",
+            "refs": [
+              "docs/business/shared-governance/subject-vehicle-truth.yml"
+            ]
+          },
+          {
+            "definitionId": "summary.vehicleSummary.v1",
+            "ownerKernel": "MasterObjectKernel",
+            "summaryType": "VehicleSummary",
+            "refs": [
+              "docs/business/shared-governance/subject-vehicle-truth.yml"
+            ]
+          },
+          {
+            "definitionId": "summary.runtimeProjection.v1",
+            "ownerKernel": "EventStateSummaryKernel",
+            "summaryType": "ProjectionSummary",
+            "refs": [
+              "docs/contracts/projection-contract.schema.json",
+              "docs/contracts/accommodation-lens-contract.json"
+            ]
+          }
+        ],
+        "metricDefinitions": [
+          {
+            "definitionId": "metric.depositLiabilityAccuracy.v1",
+            "ownerKernel": "BIKPIKernel",
+            "metricType": "FinanceKPI",
+            "refs": [
+              "docs/contracts/bi-kpi/bi-kpi-contract.json",
+              "docs/business/dormitory/metric-formula-contract.yml"
+            ]
+          },
+          {
+            "definitionId": "metric.balanceProjectionLagSeconds.v1",
+            "ownerKernel": "BIKPIKernel",
+            "metricType": "OperationalKPI",
+            "refs": [
+              "docs/contracts/bi-kpi/bi-kpi-contract.json",
+              "docs/business/dormitory/metrics-tree.yml"
+            ]
+          }
+        ]
+      },
+      "evidenceGraphProofRef": "artifacts/oam-cab/company-kernel-alignment-result.json",
+      "noGoItems": [],
+      "nextStageAllowed": false,
+      "productionAllowed": false,
+      "dormitoryL2ProductionAllowed": false,
+      "businessProduction": "blocked",
+      "repairPartsHrStatus": "L0 Contract Preview"
     }
   },
   "noGoItems": [],
   "productionAllowed": false,
   "dormitoryL2ProductionAllowed": false,
   "businessProduction": "blocked",
-  "repairPartsHrStatus": "L0 Contract Preview"
+  "repairPartsHrStatus": "L0 Contract Preview",
+  "headSha": "4bd2b3381b9a7536915eaa4c3df8b653edf524e7"
 }

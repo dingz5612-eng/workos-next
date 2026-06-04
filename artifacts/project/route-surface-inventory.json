@@ -1,5 +1,5 @@
 {
-  "generatedAtUtc": "2026-06-02T07:15:05.697Z",
+  "generatedAtUtc": "2026-06-04T18:12:16.323Z",
   "generatedBy": "check-route-surface-hygiene",
   "stage": "PROJECT-HYGIENE-CLEANUP",
   "routes": [
@@ -23,6 +23,72 @@
       "backendGuardRequired": true,
       "canWriteBusinessFact": false,
       "businessWritePath": "Operations Runtime via CommandSubmission only",
+      "productionAllowed": false
+    },
+    {
+      "route": "deviceTrust",
+      "surface": "mobile_work_plane",
+      "allowedRoles": [
+        "frontdesk",
+        "operator",
+        "housekeeping",
+        "finance",
+        "manager",
+        "admin",
+        "releaseOwner"
+      ],
+      "allowedDevices": [
+        "trusted_mobile"
+      ],
+      "ordinaryUserVisible": true,
+      "requiresRuntimeGuard": false,
+      "backendGuardRequired": false,
+      "canWriteBusinessFact": false,
+      "businessWritePath": "none",
+      "productionAllowed": false
+    },
+    {
+      "route": "drafts",
+      "surface": "mobile_work_plane",
+      "allowedRoles": [
+        "frontdesk",
+        "operator",
+        "housekeeping",
+        "finance",
+        "manager",
+        "admin",
+        "releaseOwner"
+      ],
+      "allowedDevices": [
+        "trusted_mobile"
+      ],
+      "ordinaryUserVisible": true,
+      "requiresRuntimeGuard": false,
+      "backendGuardRequired": false,
+      "canWriteBusinessFact": false,
+      "businessWritePath": "none",
+      "productionAllowed": false
+    },
+    {
+      "route": "failedSync",
+      "surface": "mobile_work_plane",
+      "allowedRoles": [
+        "frontdesk",
+        "operator",
+        "housekeeping",
+        "finance",
+        "manager",
+        "admin",
+        "releaseOwner"
+      ],
+      "allowedDevices": [
+        "trusted_mobile"
+      ],
+      "ordinaryUserVisible": true,
+      "requiresRuntimeGuard": false,
+      "backendGuardRequired": false,
+      "canWriteBusinessFact": false,
+      "businessWritePath": "none",
       "productionAllowed": false
     },
     {
@@ -180,6 +246,72 @@
       "productionAllowed": false
     },
     {
+      "route": "permissions",
+      "surface": "mobile_work_plane",
+      "allowedRoles": [
+        "frontdesk",
+        "operator",
+        "housekeeping",
+        "finance",
+        "manager",
+        "admin",
+        "releaseOwner"
+      ],
+      "allowedDevices": [
+        "trusted_mobile"
+      ],
+      "ordinaryUserVisible": true,
+      "requiresRuntimeGuard": false,
+      "backendGuardRequired": false,
+      "canWriteBusinessFact": false,
+      "businessWritePath": "none",
+      "productionAllowed": false
+    },
+    {
+      "route": "recentSubmissions",
+      "surface": "mobile_work_plane",
+      "allowedRoles": [
+        "frontdesk",
+        "operator",
+        "housekeeping",
+        "finance",
+        "manager",
+        "admin",
+        "releaseOwner"
+      ],
+      "allowedDevices": [
+        "trusted_mobile"
+      ],
+      "ordinaryUserVisible": true,
+      "requiresRuntimeGuard": false,
+      "backendGuardRequired": false,
+      "canWriteBusinessFact": false,
+      "businessWritePath": "none",
+      "productionAllowed": false
+    },
+    {
+      "route": "recentTraces",
+      "surface": "mobile_work_plane",
+      "allowedRoles": [
+        "frontdesk",
+        "operator",
+        "housekeeping",
+        "finance",
+        "manager",
+        "admin",
+        "releaseOwner"
+      ],
+      "allowedDevices": [
+        "trusted_mobile"
+      ],
+      "ordinaryUserVisible": true,
+      "requiresRuntimeGuard": false,
+      "backendGuardRequired": false,
+      "canWriteBusinessFact": false,
+      "businessWritePath": "none",
+      "productionAllowed": false
+    },
+    {
       "route": "reminders",
       "surface": "mobile_work_plane",
       "allowedRoles": [
@@ -225,6 +357,50 @@
     },
     {
       "route": "search",
+      "surface": "mobile_work_plane",
+      "allowedRoles": [
+        "frontdesk",
+        "operator",
+        "housekeeping",
+        "finance",
+        "manager",
+        "admin",
+        "releaseOwner"
+      ],
+      "allowedDevices": [
+        "trusted_mobile"
+      ],
+      "ordinaryUserVisible": true,
+      "requiresRuntimeGuard": false,
+      "backendGuardRequired": false,
+      "canWriteBusinessFact": false,
+      "businessWritePath": "none",
+      "productionAllowed": false
+    },
+    {
+      "route": "submitQueue",
+      "surface": "mobile_work_plane",
+      "allowedRoles": [
+        "frontdesk",
+        "operator",
+        "housekeeping",
+        "finance",
+        "manager",
+        "admin",
+        "releaseOwner"
+      ],
+      "allowedDevices": [
+        "trusted_mobile"
+      ],
+      "ordinaryUserVisible": true,
+      "requiresRuntimeGuard": false,
+      "backendGuardRequired": false,
+      "canWriteBusinessFact": false,
+      "businessWritePath": "none",
+      "productionAllowed": false
+    },
+    {
+      "route": "uploadQueue",
       "surface": "mobile_work_plane",
       "allowedRoles": [
         "frontdesk",

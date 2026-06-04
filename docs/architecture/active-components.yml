@@ -147,3 +147,110 @@ components:
       - docs/contracts/definition/workitem-definition-registry.json
       - services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs
       - scripts/check-definition-registry.mjs
+  - id: BusinessDomainKernel
+    name: Business Domain Kernel
+    path: docs/contracts/company-kernels/company-kernel-alignment-contract.json
+    status: active
+    owner: business-architecture
+    owner_domain: business-architecture
+    responsibility: Bind business lines, domain packs, maturity, and go/no-go domain semantics to OAM-CAB without creating business writes.
+    reason: Company-level architecture must start from business reality and domain semantics before Definition and Admission.
+    allowed_usage: Define domain packs, business-line maturity, domain object catalogs, and go/no-go readiness inputs.
+    forbidden_usage: Commit center truth facts, commit finance ledger facts, or grant Business Production.
+    evidence:
+      - docs/contracts/company-kernels/company-kernel-alignment-contract.json
+      - docs/business/domain-kit/domain-template.yml
+      - scripts/check-company-kernel-alignment.mjs
+      - scripts/check-business-domain-kit.mjs
+  - id: MasterObjectKernel
+    name: Master Object Kernel
+    path: docs/business/shared-governance/subject-vehicle-truth.yml
+    status: active
+    owner: shared-governance
+    owner_domain: shared-governance
+    responsibility: Own Subject, Vehicle, FormalRelationship, master receipts, and master summaries.
+    reason: Subject and vehicle master objects must be company-level truth, not per-domain or page-local data.
+    allowed_usage: Accept intake, steward duplicates, merge/supersede master objects, and expose read-only summaries.
+    forbidden_usage: Let domain packs, projections, management cockpit, or pages create formal master truth directly.
+    evidence:
+      - docs/business/shared-governance/subject-vehicle-truth.yml
+      - docs/business/truth-owner-registry.yml
+      - scripts/check-shared-governance-boundary.mjs
+      - scripts/check-company-kernel-alignment.mjs
+  - id: TruthBoundaryKernel
+    name: Truth Boundary Kernel
+    path: docs/business/truth-owner-registry.yml
+    status: active
+    owner: governance
+    owner_domain: governance
+    responsibility: Define truth owners, fact ownership, provisional reference policy, and receipt-only projection boundaries.
+    reason: Company-level truth boundaries prevent projection, cockpit, or domain shortcuts from becoming official fact owners.
+    allowed_usage: Decide who may commit each center truth fact and which references are draft or receipt-only.
+    forbidden_usage: Allow shadow runtime, projection fallback, management cockpit, or mobile surface to own official business facts.
+    evidence:
+      - docs/business/truth-owner-registry.yml
+      - docs/rules/v5.5/fact-ownership.yml
+      - scripts/check-truth-owners.mjs
+      - scripts/check-company-kernel-alignment.mjs
+  - id: FinanceTruthKernel
+    name: Finance Truth Kernel
+    path: docs/business/finance/finance-truth-pipeline.yml
+    status: active
+    owner: finance
+    owner_domain: finance
+    responsibility: Route MoneyBasis through FinanceTruthPack and MoneyKernelPack before ledger facts are committed.
+    reason: Payment, deposit, correction, and ledger truth must have one finance truth mouth and balanced ledger output.
+    allowed_usage: Define finance intake, finance commit, ledger transaction, ledger entry, correction, and unclear money routing.
+    forbidden_usage: Let business domain pages confirm payment/deposit facts directly or commit unbalanced ledger entries.
+    evidence:
+      - docs/business/finance/finance-truth-pipeline.yml
+      - docs/business/finance/ledger-transaction-contract.yml
+      - scripts/check-finance-truth.mjs
+      - scripts/check-company-kernel-alignment.mjs
+  - id: EventStateSummaryKernel
+    name: Event-State-Summary Kernel
+    path: docs/contracts/fact-trace.schema.json
+    status: active
+    owner: operations-runtime
+    owner_domain: operations-runtime
+    responsibility: Define DomainEvent, StateTransition, Summary, ProjectionCommit, and FactTrace scope.
+    reason: Runtime summaries and projections must trace to committed events and ledger facts rather than surface-only state.
+    allowed_usage: Define event/state/summary contracts, projection commit traceability, and source fact lineage.
+    forbidden_usage: Invent untraced read-side summaries or mutate business facts through event summary contracts.
+    evidence:
+      - docs/contracts/fact-trace.schema.json
+      - docs/contracts/projection-contract.schema.json
+      - scripts/validate-runtime-api.mjs
+      - scripts/check-company-kernel-alignment.mjs
+  - id: BIKPIKernel
+    name: BI/KPI Kernel
+    path: docs/contracts/bi-kpi/bi-kpi-contract.json
+    status: active
+    owner: operations-analytics
+    owner_domain: operations-analytics
+    responsibility: Define KPI formulas, lineage, read-only dashboards, and metric deviation routing.
+    reason: BI and dashboards must remain read-only and traceable, not hidden fact writers or production gate substitutes.
+    allowed_usage: Provide metric definitions, dimensions, lineage, maturity scope, and feedback-loop triggers.
+    forbidden_usage: Write business facts, manually override KPI truth, or grant production admission.
+    evidence:
+      - docs/contracts/bi-kpi/bi-kpi-contract.json
+      - docs/business/dormitory/metric-formula-contract.yml
+      - scripts/business/check-metric-formula-contract.mjs
+      - scripts/check-company-kernel-alignment.mjs
+  - id: AccountApplicationBoundaryKernel
+    name: Account/Application Boundary Kernel
+    path: docs/contracts/account-actor-kernel/account-actor-kernel-contract.json
+    status: active
+    owner: security-platform
+    owner_domain: security-platform
+    responsibility: Bind actor, device, permission, application/API boundary, and cutover policy into Admission.
+    reason: Application surfaces and accounts must not bypass Admission, API boundary, or release-state.
+    allowed_usage: Evaluate actor capability, device trust, API boundary, permission policy, and cutover constraints.
+    forbidden_usage: Override confirmAllowed, write business facts, bypass API boundary, or grant Business Production.
+    evidence:
+      - docs/contracts/account-actor-kernel/account-actor-kernel-contract.json
+      - docs/contracts/admission/actor-device-admission-contract.json
+      - docs/business/policies/permission-policy.yml
+      - scripts/check-account-actor-kernel.mjs
+      - scripts/check-admission-kernel.mjs
+      - scripts/check-company-kernel-alignment.mjs

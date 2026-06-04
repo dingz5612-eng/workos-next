@@ -1,0 +1,313 @@
+{
+  "scenario": {
+    "id": "payment-ledger",
+    "workspace": "W-STAY-PAYMENT-LEDGER",
+    "firstCard": "paymentReceipt",
+    "title": "登记普通收款"
+  },
+  "screenshots": {
+    "initial": {
+      "top": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\ten-dormitory-scenario-real-browser-20260605-rerun\\06-payment-ledger\\01-initial-01-top.png",
+      "bottom": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\ten-dormitory-scenario-real-browser-20260605-rerun\\06-payment-ledger\\01-initial-02-bottom.png",
+      "metrics": {
+        "scrollHeight": 2066,
+        "innerHeight": 855
+      }
+    },
+    "negative": {
+      "top": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\ten-dormitory-scenario-real-browser-20260605-rerun\\06-payment-ledger\\02-negative-empty-submit-01-top.png",
+      "bottom": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\ten-dormitory-scenario-real-browser-20260605-rerun\\06-payment-ledger\\02-negative-empty-submit-02-bottom.png",
+      "metrics": {
+        "scrollHeight": 2258,
+        "innerHeight": 855
+      }
+    },
+    "filled": {
+      "top": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\ten-dormitory-scenario-real-browser-20260605-rerun\\06-payment-ledger\\03-filled-before-submit-01-top.png",
+      "bottom": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\ten-dormitory-scenario-real-browser-20260605-rerun\\06-payment-ledger\\03-filled-before-submit-02-bottom.png",
+      "metrics": {
+        "scrollHeight": 2018,
+        "innerHeight": 855
+      }
+    },
+    "positive": {
+      "top": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\ten-dormitory-scenario-real-browser-20260605-rerun\\06-payment-ledger\\04-positive-after-submit-01-top.png",
+      "bottom": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\ten-dormitory-scenario-real-browser-20260605-rerun\\06-payment-ledger\\04-positive-after-submit-02-bottom.png",
+      "metrics": {
+        "scrollHeight": 1633,
+        "innerHeight": 855
+      }
+    }
+  },
+  "assertions": [
+    {
+      "id": "opened_operation_panel",
+      "passed": true
+    },
+    {
+      "id": "opened_expected_workspace_template",
+      "passed": true
+    },
+    {
+      "id": "opened_expected_card",
+      "passed": true
+    },
+    {
+      "id": "submit_button_visible_for_negative",
+      "passed": true
+    },
+    {
+      "id": "empty_submit_blocked_or_marked",
+      "passed": true
+    },
+    {
+      "id": "submit_button_visible_for_positive",
+      "passed": true
+    },
+    {
+      "id": "positive_progressed_without_required_block",
+      "passed": true
+    },
+    {
+      "id": "no_legacy_workspace_card_write",
+      "passed": true
+    },
+    {
+      "id": "uses_operations_confirm_for_positive_or_negative",
+      "passed": true
+    }
+  ],
+  "startMs": 2298,
+  "initial": {
+    "url": "http://127.0.0.1:5175/?view=operationPanel&lang=zh-CN&device=mobile&workspace=W-STAY-PAYMENT-LEDGER-20260604221028-9deb0c9a994c45cea0a5288e097f66b1&card=paymentReceipt&workItem=wi-90b3ea26ee79f0d6fd6be35d7a02ce80e2b47f8d4f23a4398fa54143a333f5f5",
+    "cardTitle": "普通收款登记卡",
+    "actionText": "提交处理",
+    "submitCount": 1,
+    "actionState": "primary-action ready",
+    "missingFields": [],
+    "resultText": "",
+    "visibleText": "WorkOSNext\n治理管理员\n已连接\n中文\nРусский\nКыргызча\n我要管理普通收款账本\n第 1/5 步\n可办理\n1\n2\n3\n4\n5\n本步要做\n普通收款登记卡\n怎么做\n\n把这一步需要的信息填完整。不能提交时，页面会直接标出还差哪一项。\n\n填写信息\n入住单\n必填\n· 可搜索选择\n从已有对象中选择。\n付款人\n必填\n请输入本步需要的信息。\n收款日期\n必填\n请选择时间。\n收款用途\n必填\n押金\n房费\n押金 + 房费\n其它\n请选择一个业务选项。\n覆盖周期开始\n必填\n请选择时间。\n覆盖周期结束\n必填\n请选择时间。\n收款金额\n必填\n请输入数字。\n币种\n必填\nKGS\nRUB\nUSD\n请选择一个业务选项。\n支付方式\n必填\n现金\n银行转账\nPOS\n请选择一个业务选项。\n收款人\n必填\n请输入本步需要的信息。\n收款凭证\n必填\n请输入本步需要的信息。\n提交前检查\n\n页面会先看信息是否完整、材料是否齐全、这一步是否可以提交；有问题会直接标出来。\n\n还需填写: 入住单 · 付款人 · 收款日期 · 覆盖周期开始 · 覆盖周期结束 · 收款金额 · 收款人 · 收款凭证\n材料核对: 收款凭证 · 收款人记录\n提交状态: 暂不能提交: 还需填写\n业务规则: 非现金收款凭证完整 · 普通收款不含押金\n保存草稿\n提交处理\n反馈\n今天\n工作\n搜索\n我的"
+  },
+  "negativeMs": 1395,
+  "negative": {
+    "url": "http://127.0.0.1:5175/?view=operationPanel&lang=zh-CN&device=mobile&workspace=W-STAY-PAYMENT-LEDGER-20260604221028-9deb0c9a994c45cea0a5288e097f66b1&card=paymentReceipt&workItem=wi-90b3ea26ee79f0d6fd6be35d7a02ce80e2b47f8d4f23a4398fa54143a333f5f5",
+    "cardTitle": "普通收款登记卡",
+    "actionText": "补齐必填项",
+    "submitCount": 1,
+    "actionState": "primary-action missingRequiredFields",
+    "missingFields": [
+      "入住单\n必填\n· 可搜索选择",
+      "付款人\n必填",
+      "收款日期\n必填",
+      "覆盖周期开始\n必填",
+      "覆盖周期结束\n必填",
+      "收款金额\n必填",
+      "收款人\n必填",
+      "收款凭证\n必填"
+    ],
+    "resultText": "请先补齐必填项： 入住单、付款人、收款日期、覆盖周期开始、覆盖周期结束、收款金额、收款人、收款凭证",
+    "visibleText": "WorkOSNext\n治理管理员\n已连接\n中文\nРусский\nКыргызча\n我要管理普通收款账本\n第 1/5 步\n可办理\n1\n2\n3\n4\n5\n本步要做\n普通收款登记卡\n怎么做\n\n把这一步需要的信息填完整。不能提交时，页面会直接标出还差哪一项。\n\n填写信息\n入住单\n必填\n· 可搜索选择\n从已有对象中选择。\n付款人\n必填\n请输入本步需要的信息。\n收款日期\n必填\n请选择时间。\n收款用途\n必填\n押金\n房费\n押金 + 房费\n其它\n请选择一个业务选项。\n覆盖周期开始\n必填\n请选择时间。\n覆盖周期结束\n必填\n请选择时间。\n收款金额\n必填\n请输入数字。\n币种\n必填\nKGS\nRUB\nUSD\n请选择一个业务选项。\n支付方式\n必填\n现金\n银行转账\nPOS\n请选择一个业务选项。\n收款人\n必填\n请输入本步需要的信息。\n收款凭证\n必填\n请输入本步需要的信息。\n提交前检查\n\n页面会先看信息是否完整、材料是否齐全、这一步是否可以提交；有问题会直接标出来。\n\n还需填写: 入住单 · 付款人 · 收款日期 · 覆盖周期开始 · 覆盖周期结束 · 收款金额 · 收款人 · 收款凭证\n材料核对: 收款凭证 · 收款人记录\n提交状态: 暂不能提交: 还需填写\n业务规则: 非现金收款凭证完整 · 普通收款不含押金\n保存草稿\n\n请先补齐必填项： 入住单、付款人、收款日期、覆盖周期开始、覆盖周期结束、收款金额、收款人、收款凭证\n\n提交校验未通过\n\n请补齐缺失字段或证据，再查看学习中心的补齐说明。\n\n学习中心\n补齐必填项\n反馈\n今天\n工作\n搜索\n我的"
+  },
+  "filled": [
+    {
+      "field": "stayId",
+      "kind": "input",
+      "value": "2026-06-05T09:00:00Z",
+      "label": "入住单\n必填\n· 可搜索选择",
+      "pass": 0
+    },
+    {
+      "field": "payerName",
+      "kind": "input",
+      "value": "payment-payment-ledger-20260604221033-2",
+      "label": "付款人\n必填",
+      "pass": 0
+    },
+    {
+      "field": "receivedDate",
+      "kind": "datetime-local",
+      "value": "2026-06-05T09:00",
+      "label": "收款日期\n必填",
+      "pass": 0
+    },
+    {
+      "field": "coverageStart",
+      "kind": "datetime-local",
+      "value": "2026-06-05T09:00",
+      "label": "覆盖周期开始\n必填",
+      "pass": 0
+    },
+    {
+      "field": "coverageEnd",
+      "kind": "datetime-local",
+      "value": "2026-06-05T09:00",
+      "label": "覆盖周期结束\n必填",
+      "pass": 0
+    },
+    {
+      "field": "paymentAmount",
+      "kind": "number",
+      "value": "1200",
+      "label": "收款金额\n必填",
+      "pass": 0
+    },
+    {
+      "field": "receivedBy",
+      "kind": "input",
+      "value": "payment-payment-ledger-20260604221033-7",
+      "label": "收款人\n必填",
+      "pass": 0
+    },
+    {
+      "field": "paymentEvidenceId",
+      "kind": "input",
+      "value": "payment-payment-ledger-20260604221033-8",
+      "label": "收款凭证\n必填",
+      "pass": 0
+    }
+  ],
+  "afterFill": {
+    "url": "http://127.0.0.1:5175/?view=operationPanel&lang=zh-CN&device=mobile&workspace=W-STAY-PAYMENT-LEDGER-20260604221028-9deb0c9a994c45cea0a5288e097f66b1&card=paymentReceipt&workItem=wi-90b3ea26ee79f0d6fd6be35d7a02ce80e2b47f8d4f23a4398fa54143a333f5f5",
+    "cardTitle": "普通收款登记卡",
+    "actionText": "提交处理",
+    "submitCount": 1,
+    "actionState": "primary-action ready",
+    "missingFields": [],
+    "resultText": "",
+    "visibleText": "WorkOSNext\n治理管理员\n已连接\n中文\nРусский\nКыргызча\n我要管理普通收款账本\n第 1/5 步\n可办理\n1\n2\n3\n4\n5\n本步要做\n普通收款登记卡\n怎么做\n\n把这一步需要的信息填完整。不能提交时，页面会直接标出还差哪一项。\n\n填写信息\n入住单\n必填\n· 可搜索选择\n从已有对象中选择。\n付款人\n必填\n请输入本步需要的信息。\n收款日期\n必填\n请选择时间。\n收款用途\n必填\n押金\n房费\n押金 + 房费\n其它\n请选择一个业务选项。\n覆盖周期开始\n必填\n请选择时间。\n覆盖周期结束\n必填\n请选择时间。\n收款金额\n必填\n请输入数字。\n币种\n必填\nKGS\nRUB\nUSD\n请选择一个业务选项。\n支付方式\n必填\n现金\n银行转账\nPOS\n请选择一个业务选项。\n收款人\n必填\n请输入本步需要的信息。\n收款凭证\n必填\n请输入本步需要的信息。\n提交前检查\n\n页面会先看信息是否完整、材料是否齐全、这一步是否可以提交；有问题会直接标出来。\n\n必填项: 已完成\n材料核对: 收款凭证 · 收款人记录\n提交状态: 可以提交\n业务规则: 非现金收款凭证完整 · 普通收款不含押金\n保存草稿\n提交处理\n反馈\n今天\n工作\n搜索\n我的"
+  },
+  "positiveMs": 2273,
+  "positive": {
+    "url": "http://127.0.0.1:5175/?view=operationPanel&lang=zh-CN&device=mobile&workspace=W-STAY-PAYMENT-LEDGER-20260604221028-9deb0c9a994c45cea0a5288e097f66b1&card=paymentReceipt&workItem=wi-90b3ea26ee79f0d6fd6be35d7a02ce80e2b47f8d4f23a4398fa54143a333f5f5",
+    "cardTitle": "普通收款登记卡",
+    "actionText": "",
+    "submitCount": 0,
+    "actionState": "",
+    "missingFields": [],
+    "resultText": "",
+    "visibleText": "WorkOSNext\n治理管理员\n已连接\n中文\nРусский\nКыргызча\n我要管理普通收款账本\n第 1/5 步\n已完成\n1\n2\n3\n4\n5\n只读记录\n普通收款登记卡\n已完成\n\n请先核对已提交的业务内容、材料和轨迹；发现错误后，再从本页发起更正办理。\n\n业务字段\n入住单\n2026-06-05T09:00:00Z\n付款人\npayment-payment-ledger-20260604221033-2\n收款日期\n2026-06-05T09:00\n收款用途\n押金\n覆盖周期开始\n2026-06-05T09:00\n覆盖周期结束\n2026-06-05T09:00\n收款金额\n1200\n币种\nKGS\n支付方式\n现金\n收款人\npayment-payment-ledger-20260604221033-7\n收款凭证\npayment-payment-ledger-20260604221033-8\n步骤详情\n必需证据\n收款凭证 · 收款人记录\n不能提交原因\n当前没有新的系统阻断，但关键动作仍需要人工确认。\n审计摘要\n该记录已进入审计轨迹；如需复核，请查看提交记录、证据对象和最近轨迹。\n记录核对\n\n这里用和新建步骤同源的检查面板核对已提交内容、材料、轨迹和更正入口；只读记录不会重复提交。\n\n已提交信息: 11/11\n材料核对: 收款凭证 · 收款人记录\n轨迹状态: 已绑定审计轨迹\n更正状态: 可从本记录发起更正\n记录操作\n\n更正会生成新的办理记录；原记录保留，系统追加更正轨迹。\n\n更正这一步\n反馈\n今天\n工作\n搜索\n我的"
+  },
+  "requests": [
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/workspaces"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/operations/work-items"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/lenses/home-surface"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/lenses/learning-catalog"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/lenses/accommodation/room-readiness"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/lenses/accommodation/bed-inventory"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/lenses/accommodation/rate-plan"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/lenses/accommodation/room-revenue-potential"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/lenses/accommodation/today-operations"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/lenses/accommodation/active-stay"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/lenses/accommodation/deposit-liability"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/lenses/accommodation/payment-risk"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/lenses/accommodation/stay-balance"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/lenses/accommodation/lead-funnel"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/lenses/accommodation/checkout-queue"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/lenses/accommodation/service-task-queue"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/lenses/accommodation/expense-analytics"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/lenses/accommodation/period-performance"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/lenses/accommodation/risk-command"
+    },
+    {
+      "method": "POST",
+      "url": "http://127.0.0.1:5191/api/operations/workspaces/start"
+    },
+    {
+      "method": "POST",
+      "url": "http://127.0.0.1:5191/api/evidence/drafts"
+    },
+    {
+      "method": "POST",
+      "url": "http://127.0.0.1:5191/api/evidence/drafts"
+    },
+    {
+      "method": "POST",
+      "url": "http://127.0.0.1:5191/api/evidence/evd-544534a8fa764660abc0bc59e2fd0c73/attachments"
+    },
+    {
+      "method": "POST",
+      "url": "http://127.0.0.1:5191/api/evidence/evd-7abc5b36c3ae4158a7492518fe78f111/attachments"
+    },
+    {
+      "method": "POST",
+      "url": "http://127.0.0.1:5191/api/operations/work-items/wi-90b3ea26ee79f0d6fd6be35d7a02ce80e2b47f8d4f23a4398fa54143a333f5f5/prepare"
+    },
+    {
+      "method": "POST",
+      "url": "http://127.0.0.1:5191/api/operations/work-items/wi-90b3ea26ee79f0d6fd6be35d7a02ce80e2b47f8d4f23a4398fa54143a333f5f5/confirm"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/operations/work-items?workspaceId=W-STAY-PAYMENT-LEDGER-20260604221028-9deb0c9a994c45cea0a5288e097f66b1"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/workspaces"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/workspaces"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/operations/work-items"
+    }
+  ],
+  "status": "passed"
+}

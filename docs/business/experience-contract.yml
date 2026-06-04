@@ -26,12 +26,46 @@
   "TodayMissionControlIA": ["role-default-priority", "blocked-work", "projection-pending", "risk-signal"],
   "WorkPageIA": ["assigned-work-items", "SLA", "evidence-state", "trusted-confirm"],
   "ObjectWorkspaceIA": ["case-summary", "fact-trace", "lens", "audit"],
+  "UnifiedSurfaceArchitecture": {
+    "currentArchitecture": "OAM-ACF v8 / Operations Runtime surface architecture",
+    "required": [
+      "every user-visible page uses the active shared shell, route guard, surface contract, and named experience components",
+      "new active, readonly completed, and append-only correction step pages render OperationCardShell directly without a page-private outer intent-card wrapper or workspace-control visual wrapper on readonly completed records",
+      "readonly completed records reuse the Operations surface shell and shared step rail instead of a page-private legacy detail shell",
+      "completed WorkItem routes and step-number clicks open the readonly completed record directly without an intermediate completed-operation page",
+      "page variants may specialize data, permissions, readonly state, and business actions only"
+    ],
+    "retired": [
+      "page-private legacy shell",
+      "intent-card operation wrapper",
+      "copied layout logic",
+      "old completed-record-detail grid",
+      "Workspace/Card write UI flow"
+    ],
+    "repair": "non-current architecture is a P0 defect and must be root-cause rewritten onto the current architecture with obsolete code deleted in the same impact scope"
+  },
+  "FrontendExperienceSystem": {
+    "contractRef": "docs/contracts/frontend-experience/frontend-experience-system-contract.json",
+    "layers": [
+      "shared-components",
+      "surface-contract",
+      "multilingual-dictionary",
+      "state-action-contract",
+      "real-browser-screenshot-evidence"
+    ],
+    "rule": "Pages may specialize business content, permissions, readonly state, and business actions, but not architecture; newly added or discovered old-architecture pages must be rewritten onto the current Frontend Experience System and the obsolete implementation deleted.",
+    "stepPageExperienceParity": "new active step, readonly completed step, and append-only correction step must share the same step rail, OperationCardShell, state/check panel, action hierarchy, feedback entry, and Admission/Runtime decision markers; they must not keep a page-private outer intent-card wrapper or workspace-control visual wrapper on readonly completed records; users must not have to enumerate every sibling page one by one",
+    "postSubmitNavigation": "after a successful active Operations WorkItem confirm, auto-advance to the next actionable persisted WorkItem in the same workspace when one exists; completed readonly records are opened by explicit completed-step review or when no next actionable WorkItem exists; return-current-work is not the normal submit continuation path",
+    "stepStateVisualLanguage": "OperationStepRail must expose data-step-state and data-current-step; completed is green, ready is blue, terminal completed records remain completed as the primary state even when a correction marker exists, active append-only correction WorkItems are muted indigo with a correction marker and must not display as ordinary ready blue, in-progress is amber, not-started is neutral gray, blocked is red, and current step has a clean focus ring across new, readonly, and correction pages; use subtle background tint, thin semantic top bar, and numbered badge instead of harsh saturated blocks",
+    "requiredEvidence": "user-visible frontend fixes require real browser operation and full-page screenshot evidence"
+  },
   "BusinessOperationActionPaths": {
     "create": "active work is created as an Operations WorkItem and confirmed only through POST /api/operations/work-items/{workItemId}/confirm",
-    "view": "completed business records must remain viewable as readonly fact trace, submitted values, evidence, audit, and next-state context before any correction action is offered",
+    "postSubmit": "successful active confirm auto-advances to the next actionable persisted WorkItem when one exists; readonly completed record is not a mandatory detour",
+    "view": "completed business records must open directly as readonly fact trace, submitted values, evidence, audit, and next-state context before any correction action is offered; an intermediate completed-operation page is forbidden",
     "correct": "completed facts are never edited in place; modification is append-only correction through a new Operations WorkItem or Correction Center request started from the readonly record",
     "order": ["create_active_work_item", "view_readonly_completed_record", "correct_append_only_from_record"],
-    "forbidden": ["in-place edit of completed fact", "repeat confirm as modification", "page-specific update API"]
+    "forbidden": ["in-place edit of completed fact", "repeat confirm as modification", "page-specific update API", "intermediate completed-operation page"]
   },
   "IssueRepairProtocol": {
     "order": ["observe_real_behavior", "classify_impact_scope", "locate_broken_layer", "align_target_flow_to_contract", "update_rule_or_model", "implement_root_cause_fix", "verify_with_tests_and_real_browser"],
@@ -43,7 +77,7 @@
     "entry": "right-bottom safe floating entry that opens feedback message channel without covering form fields or primary submit",
     "requiredContext": ["view", "actorRole", "workspace", "card", "workItem", "language", "deviceSurface"],
     "recipients": ["productDesign", "businessOwner", "systemSupport", "collaborationOwner"],
-    "forbidden": ["static feedback placeholder only", "feedback writes business facts", "feedback uses Operations confirm", "floating entry covers submit or required fields", "feedback placed in save or submit business action row"]
+    "forbidden": ["static feedback placeholder only", "feedback writes business facts", "feedback uses Operations confirm", "floating entry covers submit or required fields", "feedback placed in save or submit business action row", "duplicate record-local feedback entry when shell feedback entry exists"]
   },
   "TrustedConfirmSheet": {
     "content": ["workItemId", "caseId", "requiredEvidence", "policyRef", "idempotencyKey", "risk", "nextAction"]

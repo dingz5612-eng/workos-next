@@ -24,6 +24,27 @@ hardRules:
   - id: hard.issue_repair_protocol
     source: docs/engineering/00-rule-authority.md
     rule: Errors must be observed, impact-classified, layer-located, contract-aligned, rule/model-updated, root-cause fixed, and evidence-verified; page-level hard-adds and compatibility fallbacks are forbidden.
+  - id: hard.unified_surface_architecture
+    source: docs/engineering/00-rule-authority.md
+    rule: All user-visible pages must use the active OAM-ACF v8 / Operations Runtime surface architecture, shared shell, shared route guards, and shared named experience components; non-current architecture must be root-cause rewritten and obsolete implementation deleted.
+  - id: hard.frontend_experience_system
+    source: docs/engineering/00-rule-authority.md
+    rule: Frontend Experience System is mandatory for user-visible frontend work across shared components, Surface contract, multilingual dictionary, state/action contract, and real browser screenshot evidence; pages may specialize business content but not architecture, and old-architecture pages must be rewritten and deleted.
+  - id: hard.step_page_experience_parity
+    source: docs/engineering/00-rule-authority.md
+    rule: New active step, readonly completed step, and append-only correction step pages must share step rail, direct OperationCardShell, state/check panel, action hierarchy, feedback entry, and Admission/Runtime decision markers; page-private outer intent-card wrappers and readonly workspace-control visual wrappers are forbidden; users must not have to enumerate sibling pages one by one.
+  - id: hard.post_submit_navigation
+    source: docs/engineering/00-rule-authority.md
+    rule: Successful active Operations WorkItem confirm must auto-advance to the next actionable persisted WorkItem in the same workspace when one exists; completed readonly records are explicit review or terminal fallback surfaces, and return-current-work must not be the ordinary continuation path after submit.
+  - id: hard.step_state_visual_language
+    source: docs/engineering/00-rule-authority.md
+    rule: OperationStepRail must distinguish completed, ready, append-only correction, in-progress, not-started, and blocked states with stable semantic colors and machine-readable state markers; correction WorkItems must not display as ordinary ready blue, terminal completed records remain completed as the primary state when a correction marker exists, and current step requires a strong focus ring across new, readonly, and correction pages.
+  - id: hard.resource_setup_bed_cardinality
+    source: docs/engineering/00-rule-authority.md
+    rule: ResourceSetup bedSetup must confirm room bed cardinality in one Operations WorkItem with roomId, bedCount, and bedLabels; it must expand into one Bed fact per label, and room-beds block/release scope must apply to all beds in the room.
+  - id: hard.service_task_resource_availability_scope
+    source: docs/engineering/00-rule-authority.md
+    rule: Maintenance, cleaning, or service work that blocks saleability must enter serviceTaskCreate with resourceScope and blocksAvailability=true, then release through roomReleaseAfterService with taskId, the matching resourceScope, and a backend-approved ServiceTaskVerified event for the same task; client-provided serviceTaskVerified is not proof, and ResourceSetup remains the only BedStatus/RoomStatus fact owner.
 releaseRules:
   - id: release.v5_4_control_plane_transition
     source: docs/v5.4
@@ -44,6 +65,12 @@ engineeringRules:
   - id: engineering.testing_ci
     source: docs/engineering/14-testing-ci-rules.md
     rule: P0 invariants must declare maturity, target maturity, deadline MR, and blocker policy.
+  - id: engineering.surface_component_reuse
+    source: docs/engineering/00-rule-authority.md
+    rule: Surfaces may specialize data, permission, readonly state, and business actions, but must not keep a page-private legacy shell or outer intent-card operation wrapper when a current shared component exists.
+  - id: engineering.frontend_experience_layers
+    source: docs/contracts/frontend-experience/frontend-experience-system-contract.json
+    rule: The five-layer Frontend Experience System contract binds shared components, Surface contracts, multilingual dictionaries, state/action contracts, and real-browser screenshot evidence to every user-visible page.
 acceptanceRules:
   - id: acceptance.index
     source: docs/acceptance/00-index.md
@@ -62,9 +89,15 @@ deprecatedRules:
   - id: deprecated.card_centric_primary_path
     source: legacy Workspace/Card/Confirm model
     rule: Workspace/Card/Confirm is not an allowed business write path for new or current dormitory operations.
+  - id: deprecated.page_private_legacy_surface_shell
+    source: legacy mobile page shells
+    rule: Page-private legacy shells, deprecated record/detail grids, and copied layout logic are retired when a shared current architecture component exists.
 machineChecks:
   - scripts/check-rule-authority.mjs
   - scripts/check-api-boundaries.mjs
+  - scripts/check-experience-contract.mjs
+  - scripts/check-surface-contract.mjs
+  - scripts/check-frontend-experience-system.mjs
   - scripts/check-fact-ownership.mjs
   - scripts/check-mr-contract.mjs
   - scripts/check-invariant-maturity.mjs

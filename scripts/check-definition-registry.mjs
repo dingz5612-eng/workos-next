@@ -130,6 +130,17 @@ function checkDefinitionRefs() {
   for (const ref of fieldRefs.refs || []) {
     if (!Array.isArray(ref.requiredFieldIds) || ref.requiredFieldIds.length === 0) failures.push(`${ref.ref} must declare requiredFieldIds.`);
   }
+  const bedSetupFields = (fieldRefs.refs || []).find((ref) => ref.ref === "field.bedSetup.v1");
+  for (const required of ["roomId", "bedCount", "bedLabels"]) {
+    if (!bedSetupFields?.requiredFieldIds?.includes(required)) {
+      failures.push(`field.bedSetup.v1 must require ${required} for room-capacity bed setup.`);
+    }
+  }
+  for (const retired of ["bedId", "bedNo", "bedLabel"]) {
+    if (bedSetupFields?.requiredFieldIds?.includes(retired)) {
+      failures.push(`field.bedSetup.v1 must not require single-bed field ${retired}.`);
+    }
+  }
   for (const ref of evidenceRefs.refs || []) {
     if (!Array.isArray(ref.requiredEvidenceIds) || ref.requiredEvidenceIds.length === 0) failures.push(`${ref.ref} must declare requiredEvidenceIds.`);
   }
@@ -203,6 +214,58 @@ function checkRuntimeImplementation() {
     "[\"definitionMode\"]"
   ]) {
     if (!canonical.includes(term)) failures.push(`CanonicalOperationsApiService.cs missing Definition Registry binding: ${term}.`);
+  }
+
+  const seedCatalog = read("services/core-api/WorkOS.Api/Runtime/WorkspaceSeedCatalog.cs");
+  for (const term of ["Card(\"bedSetup\"", "\"床位数\"", "\"床位标签\""]) {
+    if (!seedCatalog.includes(term)) failures.push(`WorkspaceSeedCatalog.cs missing bedSetup cardinality term: ${term}.`);
+  }
+  for (const term of ["Card(\"serviceTaskCreate\"", "\"服务范围\"", "Card(\"roomReleaseAfterService\"", "\"任务\"", "\"释放范围\"", "\"恢复可售时间\""]) {
+    if (!seedCatalog.includes(term)) failures.push(`WorkspaceSeedCatalog.cs missing service task resource scope term: ${term}.`);
+  }
+  const releaseSeedLine = seedCatalog.split(/\r?\n/).find((line) => line.includes('Card("roomReleaseAfterService"')) || "";
+  if (releaseSeedLine.includes("\"释放床位\"")) {
+    failures.push("WorkspaceSeedCatalog.cs roomReleaseAfterService must not keep checkout-style 释放床位 field.");
+  }
+
+  const resourceSetupStorage = read("services/core-api/WorkOS.Api/Slices/Accommodation/ResourceSetup/Persistence/ResourceSetupStorage.cs");
+  for (const term of ["UpsertBeds", "BedLabels", "BedIdForLabel", "TargetsRoomBeds", "UpdateAllBedsForRoom"]) {
+    if (!resourceSetupStorage.includes(term)) failures.push(`ResourceSetupStorage.cs missing room-capacity bed setup implementation: ${term}.`);
+  }
+  for (const term of ["resourceScope", "TargetsBed", "TargetsRoomBeds"]) {
+    if (!resourceSetupStorage.includes(term)) failures.push(`ResourceSetupStorage.cs missing scoped service availability implementation: ${term}.`);
+  }
+
+  const eventSelectionPolicy = read("services/core-api/WorkOS.Api/Runtime/EventSelectionPolicy.cs");
+  for (const term of ["ServiceTaskCreateEvents", "ServiceTaskReleaseEvents", "Accommodation.RoomBlockedForService", "Accommodation.BedReleaseAfterServiceRequested"]) {
+    if (!eventSelectionPolicy.includes(term)) failures.push(`EventSelectionPolicy.cs missing scoped service event selection: ${term}.`);
+  }
+
+  const serviceTaskPolicy = read("services/core-api/WorkOS.Api/Slices/Accommodation/ServiceTask/Policies/ServiceTaskPolicy.cs");
+  for (const term of ["service_task_required_for_release", "service_task_verification_required_before_release", "Accommodation.ServiceTaskVerified", "taskId", "service_resource_scope_required", "service_bed_required_for_bed_scope", "service_room_required_for_room_scope", "service_resource_scope_invalid"]) {
+    if (!serviceTaskPolicy.includes(term)) failures.push(`ServiceTaskPolicy.cs missing scoped service validation: ${term}.`);
+  }
+  if (serviceTaskPolicy.includes("BoolValue(values, \"serviceTaskVerified\"")) {
+    failures.push("ServiceTaskPolicy.cs must not trust client-provided serviceTaskVerified flags for release.");
+  }
+  const runtimeFieldAliases = read("services/core-api/WorkOS.Api/Runtime/RuntimeFieldAliases.cs");
+  if (runtimeFieldAliases.includes("serviceTaskVerified")) {
+    failures.push("RuntimeFieldAliases.cs must not expose serviceTaskVerified as a normalized input field; release proof comes from ServiceTaskVerified events.");
+  }
+
+  const operationsOutboxRuntime = read("services/core-api/WorkOS.Api/Runtime/ProjectionRuntime.OperationsOutbox.cs");
+  if (!operationsOutboxRuntime.includes("store.ApplySliceAggregate(workspaceEvent)")) {
+    failures.push("ProjectionRuntime.OperationsOutbox.cs must apply Operations outbox events to slice aggregates.");
+  }
+
+  const sliceAggregateStorage = read("services/core-api/WorkOS.Api/Slices/Persistence/SliceAggregateStorage.cs");
+  for (const term of ["OperationsWorkItemConfirmed", "EventContractCatalog.ForCard", "workspaceEvent with { EventType = eventDefinition.EventType }"]) {
+    if (!sliceAggregateStorage.includes(term)) failures.push(`SliceAggregateStorage.cs missing Operations-to-domain aggregate bridge: ${term}.`);
+  }
+
+  const resourceSetupPolicy = read("services/core-api/WorkOS.Api/Slices/Accommodation/ResourceSetup/Policies/ResourceSetupPolicy.cs");
+  for (const term of ["bed_labels_must_match_bed_count", "bed_labels_must_be_unique"]) {
+    if (!resourceSetupPolicy.includes(term)) failures.push(`ResourceSetupPolicy.cs missing bed cardinality validation: ${term}.`);
   }
 }
 

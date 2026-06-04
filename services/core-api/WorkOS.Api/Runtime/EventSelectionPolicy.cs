@@ -72,7 +72,7 @@ internal static class EventSelectionPolicy
             "expenseRecord" => WithOptionalEvidence(card, "Accommodation.ExpenseRecorded", "Accommodation.ExpenseEvidenceSubmitted", request),
             "expenseLink" => AllEvents(card),
             "serviceTaskCreate" => ServiceTaskCreateEvents(card, request),
-            "roomReleaseAfterService" => AllEvents(card),
+            "roomReleaseAfterService" => ServiceTaskReleaseEvents(card, request),
             "depositDeduction" => DepositSettlementEvents(card, request),
             _ when card.Events.Count == 1 => card.Events,
             _ => throw new InvalidOperationException($"Multi-event card '{card.Id}' requires an explicit EventSelectionPolicy.")
@@ -93,18 +93,50 @@ internal static class EventSelectionPolicy
     private static IReadOnlyList<EventDefinition> ServiceTaskCreateEvents(CardProjection card, ConfirmCardRequest request)
     {
         var selected = EventsOf(card, "Accommodation.ServiceTaskCreated").ToList();
-        if (!RuntimeFieldAliases.BoolValue(request.FieldValues ?? new Dictionary<string, string>(), "blocksAvailability", false))
+        var values = request.FieldValues ?? new Dictionary<string, string>();
+        if (!RuntimeFieldAliases.BoolValue(values, "blocksAvailability", false))
         {
             return selected;
         }
 
+        var scope = RuntimeFieldAliases.Value(values, "resourceScope", string.Empty);
+        if (scope.Equals("bed", StringComparison.OrdinalIgnoreCase))
+        {
+            selected.AddRange(EventsOf(card, "Accommodation.BedBlockedForService"));
+            return selected;
+        }
+
         selected.AddRange(EventsOf(card, "Accommodation.RoomBlockedForService"));
-        if (!string.IsNullOrWhiteSpace(RuntimeFieldAliases.Value(request.FieldValues ?? new Dictionary<string, string>(), "bedId", string.Empty)))
+        if (string.IsNullOrWhiteSpace(scope) &&
+            !string.IsNullOrWhiteSpace(RuntimeFieldAliases.Value(values, "bedId", string.Empty)))
         {
             selected.AddRange(EventsOf(card, "Accommodation.BedBlockedForService"));
         }
 
         return selected;
+    }
+
+    private static IReadOnlyList<EventDefinition> ServiceTaskReleaseEvents(CardProjection card, ConfirmCardRequest request)
+    {
+        var values = request.FieldValues ?? new Dictionary<string, string>();
+        var scope = RuntimeFieldAliases.Value(values, "resourceScope", string.Empty);
+        if (scope.Equals("bed", StringComparison.OrdinalIgnoreCase))
+        {
+            return EventsOf(card, "Accommodation.BedReleaseAfterServiceRequested").ToArray();
+        }
+
+        if (scope.Equals("room", StringComparison.OrdinalIgnoreCase) ||
+            scope.Equals("room_beds", StringComparison.OrdinalIgnoreCase))
+        {
+            return EventsOf(card, "Accommodation.RoomReleaseAfterServiceRequested").ToArray();
+        }
+
+        if (!string.IsNullOrWhiteSpace(RuntimeFieldAliases.Value(values, "bedId", string.Empty)))
+        {
+            return AllEvents(card);
+        }
+
+        return EventsOf(card, "Accommodation.RoomReleaseAfterServiceRequested").ToArray();
     }
 
     private static IReadOnlyList<EventDefinition> DepositSettlementEvents(CardProjection card, ConfirmCardRequest request)

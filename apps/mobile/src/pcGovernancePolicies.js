@@ -11,6 +11,7 @@ export const pcGovernanceNavItems = [
   "Correction Center",
   "Period Review",
   "RiskCommand",
+  "Account Users",
   "Admin",
   "Audit",
   "Export",

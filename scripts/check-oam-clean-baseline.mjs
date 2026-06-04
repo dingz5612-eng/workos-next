@@ -10,7 +10,9 @@ const requiredFiles = [
   "docs/architecture/compatibility-components.yml",
   "docs/architecture/archive-candidates.yml",
   "docs/architecture/remove-candidates.yml",
-  "docs/architecture/CODEX_EXECUTION_PLAYBOOK.md"
+  "docs/architecture/CODEX_EXECUTION_PLAYBOOK.md",
+  "docs/contracts/company-kernels/company-kernel-alignment-contract.json",
+  "docs/architecture/business-reality-oam-kernel-map.json"
 ];
 
 for (const file of requiredFiles) {
@@ -50,7 +52,16 @@ function checkBaselineDoc() {
     "Admission Kernel",
     "Definition Registry",
     "Language Kernel",
-    "Search Kernel"
+    "Search Kernel",
+    "OAM-CAB v1.1 公司级内核对齐",
+    "Business Domain Kernel",
+    "Master Object Kernel",
+    "Truth Boundary Kernel",
+    "Finance Truth Kernel",
+    "Event-State-Summary Kernel",
+    "BI/KPI Kernel",
+    "Account/Application Boundary Kernel",
+    "不进入下一业务阶段"
   ]) {
     if (!text.includes(term)) failures.push(`CURRENT_ARCHITECTURE_BASELINE.md 缺少必需声明：${term}`);
   }
@@ -70,11 +81,18 @@ function checkActiveComponents() {
     "AdmissionKernel",
     "DefinitionRegistry",
     "ControlPlane",
-    "EvidenceGraph"
+    "EvidenceGraph",
+    "BusinessDomainKernel",
+    "MasterObjectKernel",
+    "TruthBoundaryKernel",
+    "FinanceTruthKernel",
+    "EventStateSummaryKernel",
+    "BIKPIKernel",
+    "AccountApplicationBoundaryKernel"
   ]) {
     if (!componentBlock(text, component)) failures.push(`active-components.yml 缺少 active/planned 组件：${component}`);
   }
-  for (const component of ["ArchitectureAuthority", "AdmissionKernel", "OperationsRuntime", "CompatibilityBox", "ExperienceKernel", "LanguageKernel", "SearchKernel", "ControlPlane", "EvidenceGraph", "DefinitionRegistry"]) {
+  for (const component of ["ArchitectureAuthority", "AdmissionKernel", "OperationsRuntime", "CompatibilityBox", "ExperienceKernel", "LanguageKernel", "SearchKernel", "ControlPlane", "EvidenceGraph", "DefinitionRegistry", "BusinessDomainKernel", "MasterObjectKernel", "TruthBoundaryKernel", "FinanceTruthKernel", "EventStateSummaryKernel", "BIKPIKernel", "AccountApplicationBoundaryKernel"]) {
     const block = componentBlock(text, component);
     if (!/status:\s*active/.test(block)) failures.push(`${component} 必须标记为 active。`);
     for (const field of ["name", "path", "status", "owner_domain", "reason", "allowed_usage", "forbidden_usage", "evidence"]) {

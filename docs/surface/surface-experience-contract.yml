@@ -23,7 +23,8 @@
     "docs/surface/permission-explainability-contract.yml",
     "docs/surface/operation-panel-runtime-contract.yml",
     "docs/surface/surface-api-boundary.yml",
-    "docs/surface/surface-runtime-guard-contract.yml"
+    "docs/surface/surface-runtime-guard-contract.yml",
+    "docs/contracts/frontend-experience/frontend-experience-system-contract.json"
   ],
   "runtimeAxis": [
     "Definition",
@@ -51,6 +52,7 @@
     "scripts/surface/check-operation-panel-runtime-contract.mjs",
     "scripts/surface/check-surface-api-boundary.mjs",
     "scripts/surface/check-surface-runtime-guard-contract.mjs",
+    "scripts/check-frontend-experience-system.mjs",
     "scripts/surface/check-oam-04-surface-twin-plane-contract.mjs"
   ],
   "forbidden": [

@@ -1,4 +1,6 @@
+import { generatedBedLabelsForCount, splitBedLabels } from "../controls/bedLabelControls.js";
 import { capacityForRoomType, defaultValueForField, fieldControlKind, isDerivedReadonlyField, optionsForField } from "../controls/fieldControls.js";
+import { isScopedResourceFieldRequired, isScopedResourceFieldVisible } from "../controls/resourceScopeControls.js";
 import { loadCompletedRecordSnapshot, loadDraft } from "../operationDrafts.js";
 import { completedRecordActionPolicy } from "../operationRecordPolicy.js";
 import { lensIdsForWorkspace, lensPreview, lensTitle } from "../runtimeLensCatalog.js";
@@ -26,21 +28,11 @@ export function workspaceView(ctx) {
   const isCompleted = workspaceCompleted && isTerminalCardStatus(activeCard.status);
   if (isCompleted) {
     return ctx.shell(`
-      <section class="workspace-page ${item.domain}">
-        <span>${ctx.tr("completedRecordTitle")} · ${ctx.tr(item.domain)}</span>
-        <h1>${ctx.tx(item.title)}</h1>
-        <p>${ctx.tx(item.summary)}</p>
-      </section>
       ${completedWorkspaceRecord(item, activeCard, ctx)}
     `);
   }
   if (viewingCompletedStep) {
     return ctx.shell(`
-      <section class="workspace-page ${item.domain}">
-        <span>${ctx.tr("viewingCompletedStep")} · ${ctx.tr(item.domain)}</span>
-        <h1>${ctx.tx(activeCard.title)}</h1>
-        <p>${ctx.tr("completedStepReadonlyHelp")}</p>
-      </section>
       ${completedWorkspaceRecord(item, activeCard, ctx)}
     `);
   }
@@ -61,73 +53,99 @@ export function workspaceView(ctx) {
   `);
 }
 
-function completedWorkspaceRecord(item, card, ctx) {
+export function completedWorkspaceRecord(item, card, ctx) {
   const completedSteps = (item.cards || []).filter((candidate) => isTerminalCardStatus(candidate.status));
   const selectedStep = isTerminalCardStatus(card.status) ? card : completedSteps[0] || card;
   const policy = completedRecordActionPolicy({ workspace: item, card: selectedStep, state: ctx.state, surface: "readonlyRecord" });
-  const currentCard = activeWorkspaceCard(item, -1, "");
   const nextWorkItem = policy.nextWorkItem;
-  const returnCurrent = currentCard?.id && currentCard.id !== selectedStep.id
-    ? `<button data-workspace="${ctx.escapeAttr(item.id)}" data-card-id="${ctx.escapeAttr(currentCard.id)}">${ctx.tr("returnCurrentWorkItem")}</button>`
-    : "";
   const continueNext = nextWorkItem
-    ? `<button data-work-item-id="${ctx.escapeAttr(nextWorkItem.workItemId)}" data-workspace-id="${ctx.escapeAttr(nextWorkItem.workspaceId)}" data-card-id="${ctx.escapeAttr(nextWorkItem.cardId)}">${ctx.tr("continueNextStage")}</button>`
+    ? `<button class="primary-action ready" data-work-item-id="${ctx.escapeAttr(nextWorkItem.workItemId)}" data-workspace-id="${ctx.escapeAttr(nextWorkItem.workspaceId)}" data-card-id="${ctx.escapeAttr(nextWorkItem.cardId)}">${ctx.tr("continueNextStage")}</button>`
     : "";
   const sourceWorkItemId = completedRecordSourceWorkItemId(item, selectedStep, ctx);
   const correctionAction = policy.canCorrect
     ? `<button class="secondary" data-correction-work-item="true" data-workspace-id="${ctx.escapeAttr(item.id)}" data-card-id="${ctx.escapeAttr(selectedStep.id)}" data-source-work-item-id="${ctx.escapeAttr(sourceWorkItemId)}">${ctx.tr("correctCompletedStep")}</button>`
     : "";
-  const feedbackAction = `<button class="secondary" data-view="feedback">${ctx.tr("feedback")}</button>`;
   const fieldRows = completedRecordFieldRows(selectedStep, item, ctx);
   const fieldsMissing = fieldRows.length > 0 && fieldRows.every((row) => !row.hasValue);
-  return `<section class="completed-record-detail" data-component="CompletedRecordDetail" data-surface="completed-workspace-record">
-    <div class="completed-record-hero">
+  const recordEvidence = evidenceForRecord(item, selectedStep);
+  const evidenceText = recordEvidence.length ? recordEvidence.map((entry) => ctx.localTerm(entry)).join(" · ") : ctx.tr("noRequiredEvidence");
+  return `<section class="completed-record-control" data-component="completedWorkspaceRecord" data-surface="completed-workspace-record" data-lifecycle-state="${ctx.escapeAttr(selectedStep.status)}" data-admission-decision="visible_readonly_completed" data-runtime-decision="work_item_terminal:${ctx.escapeAttr(selectedStep.status)}">
+    ${OperationStepRail(item, selectedStep, ctx, {
+      surface: "completed-workspace-route",
+      attrs: {
+        "data-card-id": selectedStep.id,
+        "data-lifecycle-state": selectedStep.status,
+        "data-readonly": "true"
+      }
+    })}
+    <div class="card-operation completed-record-operation" data-component="operation-card-shell">
       <span>${ctx.tr("completedRecordReadonly")}</span>
-      <h2>${ctx.tx(selectedStep.title)}</h2>
-      <p>${ctx.tr("completedReviewBeforeCorrection")}</p>
-    </div>
-    ${completedSteps.length > 1 ? `<section class="completed-step-list" data-surface="completed-step-list">
-      <h3>${ctx.tr("completedSteps")}</h3>
-      <div>${(item.cards || []).map((step, index) => completedStepButton(step, index, selectedStep, item, ctx)).join("")}</div>
-    </section>` : ""}
-    <section class="completed-record-grid compact">
-      ${recordTile(ctx.tr("objectSummary"), ctx.tx(item.title), ctx.tx(item.summary), ctx)}
-      ${recordTile(ctx.tr("currentState"), ctx.tr(selectedStep.status), ctx.tx(item.next), ctx)}
-      ${recordTile(ctx.tr("requiredEvidenceCopy"), evidenceForRecord(item, selectedStep).length ? evidenceForRecord(item, selectedStep).map((entry) => ctx.localTerm(entry)).join(" · ") : ctx.tr("noRequiredEvidence"), ctx.tr("traceBound"), ctx)}
-      ${recordTile(ctx.tr("submissionRecord"), item.caseId || item.id, ctx.tr("submissionRecordHelp"), ctx)}
-    </section>
-    ${fieldRows.length ? `<section class="completed-record-section">
-      <h3>${ctx.tr("businessFields")}</h3>
+      <h3>${ctx.tx(selectedStep.title)}</h3>
+      <section class="operation-state">
+        <b>${ctx.tr(selectedStep.status)}</b>
+        <p>${ctx.tr("completedReviewBeforeCorrection")}</p>
+      </section>
+      ${fieldRows.length ? `<section class="completed-record-facts">
+      <b>${ctx.tr("businessFields")}</b>
       ${fieldsMissing ? `<p class="record-sync-warning">${ctx.tr("recordFieldsNotSynced")}</p>` : ""}
-      <dl>${fieldRows.map((row) => `<dt>${ctx.localTerm(row.field)}</dt><dd>${row.displayValue || ctx.tr("recordValueMissing")}</dd>`).join("")}</dl>
+      <dl>${fieldRows.map((row) => completedFactRow(ctx.localTerm(row.field), row.displayValue || ctx.tr("recordValueMissing"), ctx)).join("")}</dl>
     </section>` : ""}
-    <section class="completed-record-section">
-      <h3>${ctx.tr("stepDetails")}</h3>
+      <section class="completed-record-facts">
+      <b>${ctx.tr("stepDetails")}</b>
       <dl>
-        <dt>${ctx.tr("requiredEvidenceCopy")}</dt><dd>${evidenceForRecord(item, selectedStep).length ? evidenceForRecord(item, selectedStep).map((entry) => ctx.localTerm(entry)).join(" · ") : ctx.tr("noRequiredEvidence")}</dd>
-        <dt>${ctx.tr("blockers")}</dt><dd>${blockersForRecord(item, selectedStep, ctx)}</dd>
-        <dt>${ctx.tr("auditSummary")}</dt><dd>${ctx.tr("completedAuditHelp")}</dd>
+        ${completedFactRow(ctx.tr("requiredEvidenceCopy"), evidenceText, ctx)}
+        ${completedFactRow(ctx.tr("blockers"), blockersForRecord(item, selectedStep, ctx), ctx)}
+        ${completedFactRow(ctx.tr("auditSummary"), ctx.tr("completedAuditHelp"), ctx)}
       </dl>
     </section>
-    <section class="completed-record-section completed-record-actions">
-      <h3>${ctx.tr("recordActions")}</h3>
+      ${readonlyStateSummaryPanel(selectedStep, fieldRows, recordEvidence, policy, ctx)}
+      <section class="completed-record-facts completed-record-actions">
+      <b>${ctx.tr("recordActions")}</b>
       <p>${ctx.tr("completedCorrectionHelp")}</p>
-      <div class="operation-actions">${continueNext}${returnCurrent}${correctionAction}${feedbackAction}</div>
+      <div class="operation-actions">${continueNext}${correctionAction}</div>
     </section>
+    </div>
   </section>`;
 }
 
-function completedStepButton(step, index, selectedStep, item, ctx) {
-  const selected = step.id === selectedStep.id ? " active" : "";
-  return `<button class="completed-step-button${selected}" data-workspace="${ctx.escapeAttr(item.id)}" data-card-id="${ctx.escapeAttr(step.id)}">
-    <span>${index + 1}</span>
-    <strong>${ctx.tx(step.title)}</strong>
-    <small>${ctx.tr(step.status)}</small>
-  </button>`;
+function readonlyStateSummaryPanel(card, fieldRows, recordEvidence, policy, ctx) {
+  const submittedFields = fieldRows.filter((row) => row.hasValue).length;
+  const fieldSummary = fieldRows.length
+    ? `${submittedFields}/${fieldRows.length}`
+    : ctx.tr("readonlyNoBusinessFields");
+  const evidenceSummary = recordEvidence.length
+    ? recordEvidence.map((entry) => ctx.localTerm(entry)).join(" · ")
+    : ctx.tr("noRequiredEvidence");
+  const correctionSummary = policy.canCorrect
+    ? ctx.tr("readonlyCorrectionAvailable")
+    : ctx.tr("readonlyCorrectionUnavailable");
+  const chips = [
+    `${ctx.tr("readonlyRecordFieldsCheck")}: ${fieldSummary}`,
+    `${ctx.tr("readonlyEvidenceCheck")}: ${evidenceSummary}`,
+    `${ctx.tr("readonlyTraceCheck")}: ${ctx.tr("traceBound")}`,
+    `${ctx.tr("readonlyCorrectionStatus")}: ${correctionSummary}`
+  ];
+  return `<section class="system-check-panel readonly-state-summary" data-surface="readonly-state-summary" data-lifecycle-state="${ctx.escapeAttr(card.status)}">
+    <b>${ctx.tr("readonlyStateSummary")}</b>
+    <p>${ctx.tr("readonlyStateSummaryHelp")}</p>
+    <div>${chips.map((chip) => `<span>${ctx.escapeHtml(chip)}</span>`).join("")}</div>
+  </section>`;
 }
 
-function fieldsForRecord(card, ctx) {
-  return operationInputFields(card, ctx);
+function completedFactRow(label, value, ctx) {
+  return `<dt>${ctx.escapeHtml(String(label || "-"))}</dt><dd>${ctx.escapeHtml(String(value || "-"))}</dd>`;
+}
+
+function fieldsForRecord(card, item, ctx) {
+  const values = completedRecordPayload(item, card, ctx);
+  return (card.fields?.business || []).filter((field) => {
+    const fieldId = operationFieldId(field);
+    const hasSubmittedValue = hasCarryValue(values[fieldId]) || hasCarryValue(values[field.id]);
+    const fallbackVisible = hasSubmittedValue ||
+      Boolean(field.required) ||
+      !["备注", "补充说明", "异议说明"].includes(ctx.localTerm(field, "zh-CN"));
+    return isScopedResourceFieldVisible(card?.id, fieldId, values, fallbackVisible);
+  });
 }
 
 function evidenceForRecord(item, card) {
@@ -145,7 +163,7 @@ function displayOperationValue(field, item, card, ctx) {
 }
 
 function completedRecordFieldRows(card, item, ctx) {
-  return fieldsForRecord(card, ctx).map((field) => {
+  return fieldsForRecord(card, item, ctx).map((field) => {
     const value = completedRecordRawValue(field, item, card, ctx);
     return {
       field,
@@ -254,14 +272,6 @@ function mergeRecordValues(...sources) {
   }, {});
 }
 
-function recordTile(label, value, body, ctx) {
-  return `<article>
-    <span>${label}</span>
-    <strong>${ctx.escapeHtml(String(value || "-"))}</strong>
-    <p>${ctx.escapeHtml(String(body || "-"))}</p>
-  </article>`;
-}
-
 function operationStepDebugTabs(item, activeCard, ctx) {
   if (!debugToolsVisible(ctx)) return "";
   return `<section class="operation-step-debug-tabs" data-component="OperationStepDebugTabs">
@@ -293,9 +303,13 @@ export function workspaceCard(item, ctx, cardId = "") {
 }
 
 export function workspaceCardPanel(card, item, expanded, ctx) {
-  return `<article class="intent-card ${card.status} ${expanded ? "expanded" : ""}">
-    ${expanded || ["ready", "blocked", "inProgress"].includes(card.status) ? cardOperation(card, item, ctx) : ""}
-  </article>`;
+  return expanded || ["ready", "blocked", "inProgress"].includes(card.status)
+    ? OperationCardShell(card, item, ctx)
+    : "";
+}
+
+export function OperationCardShell(card, item, ctx) {
+  return cardOperation(card, item, ctx);
 }
 
 export function cardOperation(card, item, ctx) {
@@ -303,34 +317,24 @@ export function cardOperation(card, item, ctx) {
   const visibleBlockers = activeBlockers(item, card);
   const statusHelp = cardStatusHelp(card, ctx);
   const draft = loadDraft(item.id, card.id);
-  const fields = operationInputFields(card, ctx);
+  const fields = operationInputFields(card, ctx, item);
   if (isTerminalCardStatus(card.status)) {
-    const currentCard = activeWorkspaceCard(item, -1, "");
-    const returnCurrent = currentCard?.id && currentCard.id !== card.id
-      ? `<div class="operation-actions"><button class="secondary" data-workspace="${ctx.escapeAttr(item.id)}" data-card-id="${ctx.escapeAttr(currentCard.id)}">${ctx.tr("returnCurrentWorkItem")}</button></div>`
-      : "";
-    return `<div class="card-operation completed-operation">
+    return `<div class="card-operation completed-operation" data-component="operation-card-shell">
       <span>${ctx.tr("completedRecordTitle")}</span>
       <h3>${ctx.tx(card.title)}</h3>
       <section class="operation-state"><b>${ctx.tr(card.status)}</b><p>${statusHelp}</p></section>
       <section><b>${ctx.tr("cardNext")}</b><p>${ctx.tr("cardNextHelp")} ${nextCardTitle(card, item, ctx)}</p></section>
       <section><b>${ctx.tr("nextBestAction")}</b><p>${ctx.tr("nextBestActionHelp")} ${ctx.tx(item.next)}</p></section>
-      ${returnCurrent}
     </div>`;
   }
   if (card.status === "notStarted") {
-    const currentCard = activeWorkspaceCard(item, -1, "");
-    const returnCurrent = currentCard?.id && currentCard.id !== card.id
-      ? `<div class="operation-actions"><button class="secondary" data-workspace="${ctx.escapeAttr(item.id)}" data-card-id="${ctx.escapeAttr(currentCard.id)}">${ctx.tr("returnCurrentWorkItem")}</button></div>`
-      : "";
-    return `<div class="card-operation pending-operation">
+    return `<div class="card-operation pending-operation" data-component="operation-card-shell">
       <span>${ctx.tr("cardOperation")}</span>
       <h3>${ctx.tx(card.title)}</h3>
       <section class="operation-state"><b>${ctx.tr(card.status)}</b><p>${statusHelp}</p></section>
-      ${returnCurrent}
     </div>`;
   }
-  return `<div class="card-operation">
+  return `<div class="card-operation" data-component="operation-card-shell">
     <span>${ctx.tr("cardOperation")}</span>
     <h3>${ctx.tx(card.title)}</h3>
     ${statusHelp ? `<section class="operation-state"><b>${ctx.tr(card.status)}</b><p>${statusHelp}</p></section>` : ""}
@@ -385,8 +389,8 @@ export function operationActionText(card, item, ctx) {
     : `Заполните данные для этого шага. Если отправка невозможна, страница покажет, чего не хватает.`;
 }
 
-export function operationInputFields(card, ctx) {
-  return (card.fields?.business || []).filter((field) => field.required || !["备注", "补充说明", "异议说明"].includes(ctx.localTerm(field, "zh-CN")));
+export function operationInputFields(card, ctx, item = null) {
+  return (card.fields?.business || []).filter((field) => operationFieldVisible(field, card, item, ctx));
 }
 
 export function operationControl(field, item, card, disabled, ctx) {
@@ -397,26 +401,46 @@ export function operationControl(field, item, card, disabled, ctx) {
   const options = optionsForField(field, ctx.state.lang);
   const help = ctx.tx(field.help);
   const missing = missingFieldIdsFor(card, item, ctx).includes(fieldId);
-  const required = field.required ? `required aria-required="true" data-required-field="true"` : "";
+  const requiredForOperation = operationFieldRequired(field, card, item, ctx);
+  const required = requiredForOperation ? `required aria-required="true" data-required-field="true"` : "";
   const invalid = missing ? `aria-invalid="true" data-validation-state="missing"` : "";
-  const labelClass = ["operation-field", field.required ? "required" : "", missing ? "field-error" : "", fieldState.source === "caseContext" ? "context-carried" : ""].filter(Boolean).join(" ");
-  const label = fieldLabel(field, ctx);
+  const labelClass = ["operation-field", requiredForOperation ? "required" : "", missing ? "field-error" : "", fieldState.source === "caseContext" ? "context-carried" : ""].filter(Boolean).join(" ");
+  const label = fieldLabel(field, ctx, requiredForOperation);
   if (fieldState.source === "caseContext" && isCaseContextIdentityField(fieldId)) {
     return contextCarriedControl(field, fieldId, fieldState, labelClass, label, required, invalid, ctx);
   }
   if (kind === "searchSelect") return `<label class="${labelClass} search-select"><span>${label} · ${ctx.tr("searchableSelect")}</span><input data-operation-field="${ctx.escapeAttr(fieldId)}" list="${ctx.escapeAttr(fieldId)}Options" value="${ctx.escapeAttr(value)}" ${required} ${invalid} ${disabled} /><datalist id="${ctx.escapeAttr(fieldId)}Options">${options.map((entry) => `<option value="${ctx.escapeAttr(entry.value)}" label="${ctx.escapeAttr(entry.label)}">`).join("")}</datalist>${help ? `<small>${help}</small>` : ""}</label>`;
-  if (kind === "select") return `<label class="${labelClass}"><span>${label}</span><select data-operation-field="${ctx.escapeAttr(fieldId)}" data-field-id="${ctx.escapeAttr(fieldId)}" ${required} ${invalid} ${disabled}>${options.map((entry) => `<option value="${ctx.escapeAttr(entry.value)}" ${entry.value === value ? "selected" : ""}>${ctx.escapeHtml(entry.label)}</option>`).join("")}</select>${help ? `<small>${help}</small>` : ""}</label>`;
+  if (kind === "select" && fieldId === "resourceScope") {
+    return segmentedOperationControl(fieldId, labelClass, label, value, options, required, invalid, disabled, help, ctx);
+  }
+  if (kind === "select") {
+    return `<label class="${labelClass}"><span>${label}</span><select data-operation-field="${ctx.escapeAttr(fieldId)}" data-field-id="${ctx.escapeAttr(fieldId)}" ${required} ${invalid} ${disabled}>${options.map((entry) => `<option value="${ctx.escapeAttr(entry.value)}" ${entry.value === value ? "selected" : ""}>${ctx.escapeHtml(entry.label)}</option>`).join("")}</select>${help ? `<small>${help}</small>` : ""}</label>`;
+  }
   if (kind === "dateTimeRange") {
     const [start = "", end = ""] = String(value || "").split(" 至 ");
     return `<label class="${labelClass}"><span>${label}</span><div class="datetime-range"><input data-operation-field-start="${ctx.escapeAttr(fieldId)}" type="datetime-local" value="${ctx.escapeAttr(start)}" ${required} ${invalid} ${disabled} /><input data-operation-field-end="${ctx.escapeAttr(fieldId)}" type="datetime-local" value="${ctx.escapeAttr(end)}" ${required} ${invalid} ${disabled} /></div>${help ? `<small>${help}</small>` : ""}</label>`;
   }
   if (kind === "dateTime") return `<label class="${labelClass}"><span>${label}</span><input data-operation-field="${ctx.escapeAttr(fieldId)}" type="datetime-local" value="${ctx.escapeAttr(value)}" ${required} ${invalid} ${disabled} />${help ? `<small>${help}</small>` : ""}</label>`;
   if (kind === "readonly") return `<label class="${labelClass}"><span>${label}</span><input data-operation-field="${ctx.escapeAttr(fieldId)}" value="${ctx.escapeAttr(value)}" readonly ${disabled} />${help ? `<small>${help}</small>` : ""}</label>`;
+  if (kind === "textarea") return `<label class="${labelClass}"><span>${label}</span><textarea data-operation-field="${ctx.escapeAttr(fieldId)}" data-field-id="${ctx.escapeAttr(fieldId)}" rows="3" ${required} ${invalid} ${disabled}>${ctx.escapeHtml(value)}</textarea>${help ? `<small>${help}</small>` : ""}</label>`;
   if (kind === "number") {
     const readonly = isDerivedReadonlyField(field) ? `readonly data-derived-from="${field.ui?.derivedFrom || ""}"` : "";
     return `<label class="${labelClass}"><span>${label}</span><input data-operation-field="${ctx.escapeAttr(fieldId)}" data-field-id="${ctx.escapeAttr(fieldId)}" type="number" inputmode="decimal" value="${ctx.escapeAttr(value)}" ${readonly} ${required} ${invalid} ${disabled} />${help ? `<small>${help}</small>` : ""}</label>`;
   }
   return `<label class="${labelClass}"><span>${label}</span><input data-operation-field="${ctx.escapeAttr(fieldId)}" value="${ctx.escapeAttr(value)}" ${required} ${invalid} ${disabled} />${help ? `<small>${help}</small>` : ""}</label>`;
+}
+
+function segmentedOperationControl(fieldId, labelClass, label, value, options, required, invalid, disabled, help, ctx) {
+  const buttons = options.map((entry) => {
+    const selected = String(entry.value) === String(value);
+    return `<button type="button" class="operation-segment${selected ? " active" : ""}" data-operation-field-button="${ctx.escapeAttr(fieldId)}" data-value="${ctx.escapeAttr(entry.value)}" aria-pressed="${selected ? "true" : "false"}" ${disabled}>${ctx.escapeHtml(entry.label)}</button>`;
+  }).join("");
+  return `<div class="${labelClass} segmented-operation-field" ${invalid}>
+    <span>${label}</span>
+    <input type="hidden" data-operation-field="${ctx.escapeAttr(fieldId)}" data-field-id="${ctx.escapeAttr(fieldId)}" value="${ctx.escapeAttr(value)}" ${required} ${invalid} />
+    <div class="operation-segmented-control" role="group" aria-label="${ctx.escapeAttr(ctx.tr("selectPlaceholder"))}">${buttons}</div>
+    ${help ? `<small>${help}</small>` : ""}
+  </div>`;
 }
 
 function contextCarriedControl(field, fieldId, fieldState, labelClass, label, required, invalid, ctx) {
@@ -453,6 +477,10 @@ function operationFieldState(field, item, card, ctx) {
   }
   const carried = carriedForwardValue(field, item, card, values, ctx);
   if (carried) return { value: carried.value, displayValue: carried.displayValue, source: "caseContext" };
+  if (fieldId === "bedLabels") {
+    const bedCount = values.bedCount || carriedForwardValue({ id: "bedCount", label: { "zh-CN": "床位数" } }, item, card, values, ctx)?.value || "";
+    return { value: generatedBedLabelsForCount(bedCount), source: "derived" };
+  }
   if (field.ui?.derivedFrom === "roomType") {
     const roomType = Object.entries(values).find(([, candidate]) => ["single", "double", "four_bed", "six_bed", "单人间", "双人间", "四人间", "六人间"].includes(candidate))?.[1] || "four_bed";
     return { value: capacityForRoomType(roomType), source: "derived" };
@@ -520,7 +548,8 @@ export function operationFieldId(field) {
     "床位": "bedId",
     "关联床位": "bedId",
     "床位号": "bedNo",
-    "床位标签": "bedLabel",
+    "床位标签": "bedLabels",
+    "床位标签清单": "bedLabels",
     "上/下铺": "bedType",
     "床位类型": "bedType",
     "初始床位状态": "bedStatus",
@@ -534,6 +563,9 @@ export function operationFieldId(field) {
     "生效日期": "effectiveFrom",
     "价格备注": "rateNote",
     "可售状态": "availabilityStatus",
+    "任务": "taskId",
+    "关联任务": "taskId",
+    "服务范围": "resourceScope",
     "阻断范围": "resourceScope",
     "释放范围": "resourceScope",
     "阻断开始时间": "blockStartAt",
@@ -781,8 +813,8 @@ function aggregateRefForValues(values) {
   return "";
 }
 
-function fieldLabel(field, ctx) {
-  const required = field.required ? `<em class="required-mark">${ctx.tr("requiredMark")}</em>` : "";
+function fieldLabel(field, ctx, requiredForOperation = field.required) {
+  const required = requiredForOperation ? `<em class="required-mark">${ctx.tr("requiredMark")}</em>` : "";
   return `${ctx.localTerm(field)}${required}`;
 }
 
@@ -798,7 +830,9 @@ function systemValidationPanel(card, item, draft, visibleBlockers, ctx) {
   const evidenceNames = evidenceStates.map((state) => businessCheckName(state.name)).filter(Boolean);
   const checkNames = (card.checks || []).map((entry) => businessCheckName(ctx.localTerm(entry))).filter(Boolean);
   const missingLabels = currentMissingRequiredLabels(card, item, ctx);
-  const submitStatus = visibleBlockers.length
+  const submitStatus = missingLabels.length
+    ? `${ctx.tr("cannotSubmitYet")}: ${ctx.tr("requiredFieldsMissing")}`
+    : visibleBlockers.length
     ? `${ctx.tr("cannotSubmitYet")}: ${visibleBlockers.map((entry) => ctx.tx(entry.title)).join(" · ")}`
     : ctx.tr("readyToSubmit");
   const chips = [
@@ -827,21 +861,47 @@ function currentMissingRequiredLabels(card, item, ctx) {
   if (validation.workspaceId === item.id && validation.cardId === card.id && validation.missingLabels?.length) {
     return validation.missingLabels;
   }
-  return operationInputFields(card, ctx)
-    .filter((field) => field.required)
+  return operationInputFields(card, ctx, item)
+    .filter((field) => operationFieldRequired(field, card, item, ctx))
     .filter((field) => !hasRequiredFieldValue(field, item, card, ctx))
     .map((field) => ctx.localTerm(field));
 }
 
+function operationFieldRequired(field, card, item, ctx) {
+  const fieldId = operationFieldId(field);
+  const values = operationDraftValues(item, card);
+  return isScopedResourceFieldRequired(card?.id, fieldId, values, Boolean(field.required));
+}
+
+function operationFieldVisible(field, card, item, ctx) {
+  const fieldId = operationFieldId(field);
+  const values = operationDraftValues(item, card);
+  const fallbackVisible = operationFieldRequired(field, card, item, ctx) ||
+    !["备注", "补充说明", "异议说明"].includes(ctx.localTerm(field, "zh-CN"));
+  return isScopedResourceFieldVisible(card?.id, fieldId, values, fallbackVisible);
+}
+
+function operationDraftValues(item, card) {
+  return item ? loadDraft(item.id, card.id).values || {} : {};
+}
+
 function hasRequiredFieldValue(field, item, card, ctx) {
   const kind = fieldControlKind(field);
+  const fieldId = operationFieldId(field);
   const value = operationFieldState(field, item, card, ctx).value;
+  if (fieldId === "bedLabels") {
+    const values = loadDraft(item.id, card.id).values || {};
+    const bedCount = Number(values.bedCount || carriedForwardValue({ id: "bedCount", label: { "zh-CN": "床位数" } }, item, card, values, ctx)?.value || 0);
+    const labels = splitBedLabels(value);
+    return labels.length > 0 && (!Number.isFinite(bedCount) || bedCount <= 0 || labels.length === bedCount);
+  }
   if (kind === "dateTimeRange") {
     const [start = "", end = ""] = String(value || "").split(" 至 ");
     return hasCarryValue(start) && hasCarryValue(end);
   }
   if (hasCarryValue(value)) return true;
   if (kind === "select") {
+    if (fieldId === "resourceScope") return hasCarryValue(value);
     return optionsForField(field, ctx.state.lang).some((entry) => hasCarryValue(entry.value));
   }
   return false;

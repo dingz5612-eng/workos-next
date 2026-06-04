@@ -1,4 +1,4 @@
-import { failIfNeeded, readJson, requirePassed, sha256, stableJson, writeJson } from "./baseline-lib.mjs";
+import { failIfNeeded, isDirectRun, readJson, requirePassed, sha256, stableJson, writeJson } from "./baseline-lib.mjs";
 
 export function buildSurfaceUxBaseline() {
   const failures = [];
@@ -53,6 +53,8 @@ export function buildSurfaceUxBaseline() {
   return result;
 }
 
-const result = buildSurfaceUxBaseline();
-failIfNeeded(result.noGoItems, "surface ux baseline check");
-console.log("surface ux baseline check: PASS");
+if (isDirectRun(import.meta.url)) {
+  const result = buildSurfaceUxBaseline();
+  failIfNeeded(result.noGoItems, "surface ux baseline check");
+  console.log("surface ux baseline check: PASS");
+}

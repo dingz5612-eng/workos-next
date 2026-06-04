@@ -1,0 +1,282 @@
+{
+  "scenario": {
+    "id": "checkout",
+    "workspace": "W-STAY-CHECKOUT",
+    "firstCard": "checkoutStart",
+    "title": "办理退房"
+  },
+  "screenshots": {
+    "initial": {
+      "top": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\ten-dormitory-scenario-real-browser-20260605\\08-checkout\\01-initial-01-top.png",
+      "bottom": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\ten-dormitory-scenario-real-browser-20260605\\08-checkout\\01-initial-02-bottom.png",
+      "metrics": {
+        "scrollHeight": 1309,
+        "innerHeight": 855,
+        "scrollY": 0
+      }
+    },
+    "negative": {
+      "top": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\ten-dormitory-scenario-real-browser-20260605\\08-checkout\\02-negative-empty-submit-01-top.png",
+      "bottom": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\ten-dormitory-scenario-real-browser-20260605\\08-checkout\\02-negative-empty-submit-02-bottom.png",
+      "metrics": {
+        "scrollHeight": 1482,
+        "innerHeight": 855,
+        "scrollY": 0
+      }
+    },
+    "filled": {
+      "top": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\ten-dormitory-scenario-real-browser-20260605\\08-checkout\\03-filled-before-submit-01-top.png",
+      "bottom": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\ten-dormitory-scenario-real-browser-20260605\\08-checkout\\03-filled-before-submit-02-bottom.png",
+      "metrics": {
+        "scrollHeight": 1275,
+        "innerHeight": 855,
+        "scrollY": 0
+      }
+    },
+    "positive": {
+      "top": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\ten-dormitory-scenario-real-browser-20260605\\08-checkout\\04-positive-after-submit-01-top.png",
+      "bottom": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\ten-dormitory-scenario-real-browser-20260605\\08-checkout\\04-positive-after-submit-02-bottom.png",
+      "metrics": {
+        "scrollHeight": 1345,
+        "innerHeight": 855,
+        "scrollY": 0
+      }
+    }
+  },
+  "assertions": [
+    {
+      "id": "opened_operation_panel",
+      "passed": true
+    },
+    {
+      "id": "opened_expected_workspace_template",
+      "passed": true
+    },
+    {
+      "id": "opened_expected_card",
+      "passed": true
+    },
+    {
+      "id": "submit_button_visible_for_negative",
+      "passed": true
+    },
+    {
+      "id": "empty_submit_blocked_or_marked",
+      "passed": true
+    },
+    {
+      "id": "submit_button_visible_for_positive",
+      "passed": true
+    },
+    {
+      "id": "positive_not_required_field_missing",
+      "passed": true
+    },
+    {
+      "id": "positive_reaches_done_or_next_step_or_committed",
+      "passed": true
+    },
+    {
+      "id": "no_legacy_workspace_card_write",
+      "passed": true
+    },
+    {
+      "id": "uses_operations_confirm_for_positive_or_negative",
+      "passed": true
+    }
+  ],
+  "requests": [
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/workspaces"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/operations/work-items"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/lenses/home-surface"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/lenses/learning-catalog"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/lenses/accommodation/room-readiness"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/lenses/accommodation/bed-inventory"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/lenses/accommodation/rate-plan"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/lenses/accommodation/room-revenue-potential"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/lenses/accommodation/today-operations"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/lenses/accommodation/active-stay"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/lenses/accommodation/deposit-liability"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/lenses/accommodation/payment-risk"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/lenses/accommodation/stay-balance"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/lenses/accommodation/lead-funnel"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/lenses/accommodation/checkout-queue"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/lenses/accommodation/service-task-queue"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/lenses/accommodation/expense-analytics"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/lenses/accommodation/period-performance"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/lenses/accommodation/risk-command"
+    },
+    {
+      "method": "POST",
+      "url": "http://127.0.0.1:5191/api/operations/workspaces/start"
+    },
+    {
+      "method": "POST",
+      "url": "http://127.0.0.1:5191/api/evidence/drafts"
+    },
+    {
+      "method": "POST",
+      "url": "http://127.0.0.1:5191/api/evidence/drafts"
+    },
+    {
+      "method": "POST",
+      "url": "http://127.0.0.1:5191/api/evidence/evd-9cc965dc5ff34113a8191483189b3bdb/attachments"
+    },
+    {
+      "method": "POST",
+      "url": "http://127.0.0.1:5191/api/evidence/evd-0036107b77424560a7b4ee3ef46746e1/attachments"
+    },
+    {
+      "method": "POST",
+      "url": "http://127.0.0.1:5191/api/operations/work-items/wi-bfa36f77d9f00904da491bc53fea72816ce58a197e8192eebd0a51e41c1d76bc/prepare"
+    },
+    {
+      "method": "POST",
+      "url": "http://127.0.0.1:5191/api/operations/work-items/wi-bfa36f77d9f00904da491bc53fea72816ce58a197e8192eebd0a51e41c1d76bc/confirm"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/operations/work-items?workspaceId=W-STAY-CHECKOUT-20260604220716-da4c5b1b2c1c40138e82b5679b257b34"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/workspaces"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/workspaces"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/operations/work-items"
+    }
+  ],
+  "startMs": 3288,
+  "initial": {
+    "url": "http://127.0.0.1:5175/?view=operationPanel&lang=zh-CN&device=mobile&workspace=W-STAY-CHECKOUT-20260604220716-da4c5b1b2c1c40138e82b5679b257b34&card=checkoutStart&workItem=wi-bfa36f77d9f00904da491bc53fea72816ce58a197e8192eebd0a51e41c1d76bc",
+    "title": "",
+    "cardTitle": "退房发起卡",
+    "actionText": "提交处理",
+    "submitCount": 1,
+    "actionState": "primary-action ready",
+    "missingFields": [],
+    "resultText": "",
+    "visibleText": "WorkOSNext\n治理管理员\n已连接\n中文\nРусский\nКыргызча\n我要办理退房\n第 1/5 步\n可办理\n1\n2\n3\n4\n5\n本步要做\n退房发起卡\n怎么做\n\n把这一步需要的信息填完整。不能提交时，页面会直接标出还差哪一项。\n\n填写信息\n退房人\n必填\n请输入本步需要的信息。\n退房原因\n必填\n请输入本步需要的信息。\n预计退房时间\n必填\n请选择时间。\n提交前检查\n\n页面会先看信息是否完整、材料是否齐全、这一步是否可以提交；有问题会直接标出来。\n\n还需填写: 退房人 · 退房原因 · 预计退房时间\n材料核对: 操作证据 · 人工处理记录\n提交状态: 暂不能提交: 还需填写\n业务规则: 字段完整 · 证据完整 · 权限满足\n保存草稿\n提交处理\n反馈\n今天\n工作\n搜索\n我的"
+  },
+  "negativeMs": 1442,
+  "negative": {
+    "url": "http://127.0.0.1:5175/?view=operationPanel&lang=zh-CN&device=mobile&workspace=W-STAY-CHECKOUT-20260604220716-da4c5b1b2c1c40138e82b5679b257b34&card=checkoutStart&workItem=wi-bfa36f77d9f00904da491bc53fea72816ce58a197e8192eebd0a51e41c1d76bc",
+    "title": "",
+    "cardTitle": "退房发起卡",
+    "actionText": "补齐必填项",
+    "submitCount": 1,
+    "actionState": "primary-action missingRequiredFields",
+    "missingFields": [
+      "退房人\n必填",
+      "退房原因\n必填",
+      "预计退房时间\n必填"
+    ],
+    "resultText": "请先补齐必填项： 退房人、退房原因、预计退房时间",
+    "visibleText": "WorkOSNext\n治理管理员\n已连接\n中文\nРусский\nКыргызча\n我要办理退房\n第 1/5 步\n可办理\n1\n2\n3\n4\n5\n本步要做\n退房发起卡\n怎么做\n\n把这一步需要的信息填完整。不能提交时，页面会直接标出还差哪一项。\n\n填写信息\n退房人\n必填\n请输入本步需要的信息。\n退房原因\n必填\n请输入本步需要的信息。\n预计退房时间\n必填\n请选择时间。\n提交前检查\n\n页面会先看信息是否完整、材料是否齐全、这一步是否可以提交；有问题会直接标出来。\n\n还需填写: 退房人 · 退房原因 · 预计退房时间\n材料核对: 操作证据 · 人工处理记录\n提交状态: 暂不能提交: 还需填写\n业务规则: 字段完整 · 证据完整 · 权限满足\n保存草稿\n\n请先补齐必填项： 退房人、退房原因、预计退房时间\n\n提交校验未通过\n\n请补齐缺失字段或证据，再查看学习中心的补齐说明。\n\n学习中心\n补齐必填项\n反馈\n今天\n工作\n搜索\n我的"
+  },
+  "filled": [
+    {
+      "field": "checkoutPerson",
+      "kind": "input",
+      "value": "audit-checkout-20260604220721-1",
+      "label": "退房人\n必填"
+    },
+    {
+      "field": "checkoutReason",
+      "kind": "input",
+      "value": "真实浏览器审计-办理退房",
+      "label": "退房原因\n必填"
+    },
+    {
+      "field": "plannedCheckOutAt",
+      "kind": "datetime-local",
+      "value": "2026-06-05T09:00",
+      "label": "预计退房时间\n必填"
+    }
+  ],
+  "afterFill": {
+    "url": "http://127.0.0.1:5175/?view=operationPanel&lang=zh-CN&device=mobile&workspace=W-STAY-CHECKOUT-20260604220716-da4c5b1b2c1c40138e82b5679b257b34&card=checkoutStart&workItem=wi-bfa36f77d9f00904da491bc53fea72816ce58a197e8192eebd0a51e41c1d76bc",
+    "title": "",
+    "cardTitle": "退房发起卡",
+    "actionText": "提交处理",
+    "submitCount": 1,
+    "actionState": "primary-action ready",
+    "missingFields": [],
+    "resultText": "",
+    "visibleText": "WorkOSNext\n治理管理员\n已连接\n中文\nРусский\nКыргызча\n我要办理退房\n第 1/5 步\n可办理\n1\n2\n3\n4\n5\n本步要做\n退房发起卡\n怎么做\n\n把这一步需要的信息填完整。不能提交时，页面会直接标出还差哪一项。\n\n填写信息\n退房人\n必填\n请输入本步需要的信息。\n退房原因\n必填\n请输入本步需要的信息。\n预计退房时间\n必填\n请选择时间。\n提交前检查\n\n页面会先看信息是否完整、材料是否齐全、这一步是否可以提交；有问题会直接标出来。\n\n必填项: 已完成\n材料核对: 操作证据 · 人工处理记录\n提交状态: 可以提交\n业务规则: 字段完整 · 证据完整 · 权限满足\n保存草稿\n提交处理\n反馈\n今天\n工作\n搜索\n我的"
+  },
+  "positiveMs": 2241,
+  "positive": {
+    "url": "http://127.0.0.1:5175/?view=operationPanel&lang=zh-CN&device=mobile&workspace=W-STAY-CHECKOUT-20260604220716-da4c5b1b2c1c40138e82b5679b257b34&card=checkoutStart&workItem=wi-bfa36f77d9f00904da491bc53fea72816ce58a197e8192eebd0a51e41c1d76bc",
+    "title": "",
+    "cardTitle": "退房发起卡",
+    "actionText": "",
+    "submitCount": 0,
+    "actionState": "",
+    "missingFields": [],
+    "resultText": "",
+    "visibleText": "WorkOSNext\n治理管理员\n已连接\n中文\nРусский\nКыргызча\n我要办理退房\n第 1/5 步\n已完成\n1\n2\n3\n4\n5\n只读记录\n退房发起卡\n已完成\n\n请先核对已提交的业务内容、材料和轨迹；发现错误后，再从本页发起更正办理。\n\n业务字段\n退房人\naudit-checkout-20260604220721-1\n退房原因\n真实浏览器审计-办理退房\n预计退房时间\n2026-06-05T09:00\n步骤详情\n必需证据\n操作证据 · 人工处理记录\n不能提交原因\n当前没有新的系统阻断，但关键动作仍需要人工确认。\n审计摘要\n该记录已进入审计轨迹；如需复核，请查看提交记录、证据对象和最近轨迹。\n记录核对\n\n这里用和新建步骤同源的检查面板核对已提交内容、材料、轨迹和更正入口；只读记录不会重复提交。\n\n已提交信息: 3/3\n材料核对: 操作证据 · 人工处理记录\n轨迹状态: 已绑定审计轨迹\n更正状态: 可从本记录发起更正\n记录操作\n\n更正会生成新的办理记录；原记录保留，系统追加更正轨迹。\n\n更正这一步\n反馈\n今天\n工作\n搜索\n我的"
+  },
+  "status": "passed"
+}

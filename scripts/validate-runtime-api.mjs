@@ -127,6 +127,7 @@ async function validateDeclaredRuntimePaths(projection) {
     lensId: "period-performance",
     evidenceId: "evd-openapi-path",
     token: "token-openapi-path",
+    userId: "u-operator",
     deviceId: "device-openapi-path",
     candidateId: "candidate-openapi-path",
     bankTransactionId: "bank-tx-openapi-path",
@@ -172,6 +173,17 @@ async function requestDeclaredPath(method, path) {
       method,
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username: "operator", password: "dev" })
+    });
+  }
+
+  if (method === "POST" && path === "/api/auth/logout") {
+    const login = await postJson("/api/auth/login", { username: "operator", password: "dev" });
+    return fetch(`${baseUrl}${path}`, {
+      method,
+      headers: {
+        "Content-Type": "application/json",
+        "X-WorkOS-Actor-Token": login.token
+      }
     });
   }
 

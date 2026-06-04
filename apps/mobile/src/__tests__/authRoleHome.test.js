@@ -5,6 +5,8 @@ import { login } from "../authController.js";
 
 vi.mock("../apiClient.js", () => ({
   loginActor: vi.fn(),
+  logoutActor: vi.fn(),
+  registerDeviceSession: vi.fn(async (device) => device),
   actorSessionForStorage: (session) => session
 }));
 
@@ -94,16 +96,22 @@ describe("Role Operating System login route", () => {
         if (selector === "#loginAccount") {
           return { value: selectedAccount };
         }
-        if (selector === "#loginDepartment") {
-          return { value: "stay" };
-        }
         if (selector === "#loginPassword") {
           return { value: "dev" };
         }
         return { value: "" };
       }
     });
-    loginActor.mockResolvedValue({ role: "dorm_operator", displayName: "Dorm Operator", token: "operator-token" });
+    loginActor.mockResolvedValue({
+      role: "operator",
+      displayName: "Dorm Operator",
+      token: "operator-token",
+      actorId: "u-dorm-operator",
+      tenantId: "tenant-dorm-int-001",
+      department: "住宿运营部",
+      businessLine: "stay",
+      capabilities: ["operations.confirm", "search.read", "mobile.work"]
+    });
     const ctx = {
       state: {
         apiStatus: "online",
@@ -122,6 +130,47 @@ describe("Role Operating System login route", () => {
     await login(ctx);
 
     expect(loginActor).toHaveBeenCalledWith("dormOperator", "dev");
-    expect(ctx.state.currentActor.department).toBe("stay");
+    expect(ctx.state.currentActor.department).toBe("住宿运营部");
+    expect(ctx.state.currentActor.capabilities).toContain("operations.confirm");
+  });
+
+  it("shows a pending login state immediately and does not pre-hydrate when the API is already online", async () => {
+    vi.stubGlobal("document", {
+      querySelector: (selector) => {
+        if (selector === "#loginAccount") return { value: "dormOperator" };
+        if (selector === "#loginPassword") return { value: "dev" };
+        return { value: "" };
+      }
+    });
+    let resolveLogin;
+    loginActor.mockReturnValue(new Promise((resolve) => {
+      resolveLogin = resolve;
+    }));
+    const ctx = {
+      state: {
+        apiStatus: "online",
+        currentActor: null,
+        view: "login",
+        currentDevice: { deviceId: "mobile-current", deviceTrustStatus: "trusted", surface: "mobile" },
+        pcGovernance: { currentDevice: { deviceId: "pc-current", deviceTrustStatus: "trusted", surface: "pc" } }
+      },
+      hydrateProjectionFromApi: vi.fn(async () => {}),
+      tr: (key) => key,
+      render: vi.fn()
+    };
+
+    const pending = login(ctx);
+    await Promise.resolve();
+
+    expect(ctx.state.loginSubmitting).toBe(true);
+    expect(ctx.state.loginMessage).toBe("loginSubmitting");
+    expect(ctx.render).toHaveBeenCalled();
+    expect(ctx.hydrateProjectionFromApi).not.toHaveBeenCalled();
+
+    resolveLogin({ role: "operator", displayName: "Dorm Operator", token: "operator-token", actorId: "u-operator", tenantId: "tenant-1" });
+    await pending;
+
+    expect(ctx.state.loginSubmitting).toBe(false);
+    expect(setView).toHaveBeenCalledWith("home", ctx);
   });
 });

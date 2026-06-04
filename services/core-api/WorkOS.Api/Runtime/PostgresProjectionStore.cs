@@ -11,6 +11,7 @@ public sealed partial class PostgresProjectionStore : IProjectionStore
     };
 
     private readonly RuntimeDocumentStorage documents;
+    private readonly AccountActorKernelStorage accounts;
     private readonly RuntimeSessionStorage sessions;
     private readonly RuntimeDeviceSessionStorage deviceSessions;
     private readonly RuntimeEventStorage events;
@@ -41,6 +42,7 @@ public sealed partial class PostgresProjectionStore : IProjectionStore
         }
 
         documents = new RuntimeDocumentStorage(connections);
+        accounts = new AccountActorKernelStorage(connections);
         sessions = new RuntimeSessionStorage(connections);
         deviceSessions = new RuntimeDeviceSessionStorage(connections);
         events = new RuntimeEventStorage(connections);
@@ -67,36 +69,6 @@ public sealed partial class PostgresProjectionStore : IProjectionStore
 
     public void SaveState(RuntimeState state) =>
         documents.SaveState(state);
-
-    public RuntimeSession CreateSession(RuntimeUser user) =>
-        sessions.CreateSession(user);
-
-    public void RevokeSession(string token, string actorId) =>
-        sessions.RevokeSession(token, actorId);
-
-    public RuntimeUser? FindUserBySessionToken(string token)
-    {
-        var userId = sessions.FindUserIdBySessionToken(token);
-        if (string.IsNullOrWhiteSpace(userId))
-        {
-            return null;
-        }
-
-        var state = documents.LoadOrSeed(ProjectionSeed.Create);
-        return state.Users.FirstOrDefault(user => user.Enabled && user.UserId == userId);
-    }
-
-    public RuntimeDeviceSession RegisterDeviceSession(RuntimeDeviceSessionRequest request) =>
-        deviceSessions.Register(request);
-
-    public RuntimeDeviceSession? FindDeviceSession(string deviceId) =>
-        deviceSessions.Find(deviceId);
-
-    public RuntimeDeviceSession? FindDeviceSession(string tenantId, string deviceId) =>
-        deviceSessions.Find(tenantId, deviceId);
-
-    public RuntimeDeviceSession? RevokeDeviceSession(string deviceId, string actorId) =>
-        deviceSessions.Revoke(deviceId, actorId);
 
     public WorkspaceEvent? FindEventByIdempotencyKey(string idempotencyKey) =>
         events.FindEventByIdempotencyKey(idempotencyKey);

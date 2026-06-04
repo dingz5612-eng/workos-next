@@ -61,6 +61,29 @@ internal sealed class RuntimeDeviceSessionStorage
         return reader.Read() ? Read(reader) : null;
     }
 
+    public IReadOnlyList<RuntimeDeviceSession> List(string tenantId)
+    {
+        using var connection = connections.Open();
+        using var command = connection.CreateCommand();
+        command.CommandText = """
+            select device_session_id, tenant_id, actor_id, device_id, device_trust_status,
+                   user_agent_hash, created_at_utc, last_seen_at_utc, revoked_at_utc
+            from device_sessions
+            where tenant_id = @tenantId
+            order by last_seen_at_utc desc
+            limit 100
+            """;
+        command.Parameters.AddWithValue("tenantId", tenantId);
+        using var reader = command.ExecuteReader();
+        var sessions = new List<RuntimeDeviceSession>();
+        while (reader.Read())
+        {
+            sessions.Add(Read(reader));
+        }
+
+        return sessions;
+    }
+
     public RuntimeDeviceSession? Find(string tenantId, string deviceId)
     {
         using var connection = connections.Open();

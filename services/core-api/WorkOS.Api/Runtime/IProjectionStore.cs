@@ -6,6 +6,22 @@ public interface IProjectionStore
 
     void SaveState(RuntimeState state);
 
+    void EnsureAccountKernelSeeded(IReadOnlyList<RuntimeUser> seedUsers, RuntimeAuthOptions authOptions)
+    {
+    }
+
+    RuntimeUserCredential? FindUserCredentialByUsername(string username) => null;
+
+    IReadOnlyList<RuntimeUser> ListAccountUsers(string tenantId) => Array.Empty<RuntimeUser>();
+
+    RuntimeUser? CreateAccountUser(AccountUserCreateRequest request, RuntimeActorContext actor) => null;
+
+    RuntimeUser? DisableAccountUser(string userId, RuntimeActorContext actor) => null;
+
+    RuntimeUser? ResetAccountUserPassword(string userId, AccountUserPasswordResetRequest request, RuntimeActorContext actor) => null;
+
+    IReadOnlyList<AccountAuditRecord> ListAccountAudit(string tenantId) => Array.Empty<AccountAuditRecord>();
+
     RuntimeSession CreateSession(RuntimeUser user);
 
     void RevokeSession(string token, string actorId);
@@ -13,6 +29,8 @@ public interface IProjectionStore
     RuntimeUser? FindUserBySessionToken(string token);
 
     RuntimeDeviceSession RegisterDeviceSession(RuntimeDeviceSessionRequest request);
+
+    IReadOnlyList<RuntimeDeviceSession> ListDeviceSessions(string tenantId) => Array.Empty<RuntimeDeviceSession>();
 
     RuntimeDeviceSession? FindDeviceSession(string deviceId);
 

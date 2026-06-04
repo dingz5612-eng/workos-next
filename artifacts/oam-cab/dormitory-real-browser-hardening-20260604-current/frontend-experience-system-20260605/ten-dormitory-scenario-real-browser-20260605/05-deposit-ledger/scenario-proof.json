@@ -1,0 +1,222 @@
+{
+  "scenario": {
+    "id": "deposit-ledger",
+    "workspace": "W-STAY-DEPOSIT-LEDGER",
+    "firstCard": "depositAssessment",
+    "title": "处理押金"
+  },
+  "screenshots": {
+    "initial": {
+      "top": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\ten-dormitory-scenario-real-browser-20260605\\05-deposit-ledger\\01-initial-01-top.png",
+      "bottom": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\ten-dormitory-scenario-real-browser-20260605\\05-deposit-ledger\\01-initial-02-bottom.png",
+      "metrics": {
+        "scrollHeight": 1602,
+        "innerHeight": 855,
+        "scrollY": 0
+      }
+    },
+    "negative": {
+      "top": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\ten-dormitory-scenario-real-browser-20260605\\05-deposit-ledger\\02-negative-empty-submit-01-top.png",
+      "bottom": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\ten-dormitory-scenario-real-browser-20260605\\05-deposit-ledger\\02-negative-empty-submit-02-bottom.png",
+      "metrics": {
+        "scrollHeight": 1775,
+        "innerHeight": 855,
+        "scrollY": 0
+      }
+    },
+    "error": {
+      "top": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\ten-dormitory-scenario-real-browser-20260605\\05-deposit-ledger\\99-error-01-top.png",
+      "bottom": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\ten-dormitory-scenario-real-browser-20260605\\05-deposit-ledger\\99-error-02-bottom.png",
+      "metrics": {
+        "scrollHeight": 1775,
+        "innerHeight": 855,
+        "scrollY": 0
+      }
+    }
+  },
+  "assertions": [
+    {
+      "id": "opened_operation_panel",
+      "passed": true
+    },
+    {
+      "id": "opened_expected_workspace_template",
+      "passed": true
+    },
+    {
+      "id": "opened_expected_card",
+      "passed": true
+    },
+    {
+      "id": "submit_button_visible_for_negative",
+      "passed": true
+    },
+    {
+      "id": "empty_submit_blocked_or_marked",
+      "passed": true
+    },
+    {
+      "id": "no_legacy_workspace_card_write",
+      "passed": true
+    },
+    {
+      "id": "uses_operations_confirm_for_positive_or_negative",
+      "passed": true
+    }
+  ],
+  "requests": [
+    {
+      "method": "POST",
+      "url": "http://127.0.0.1:5191/api/evidence/drafts"
+    },
+    {
+      "method": "POST",
+      "url": "http://127.0.0.1:5191/api/evidence/drafts"
+    },
+    {
+      "method": "POST",
+      "url": "http://127.0.0.1:5191/api/evidence/evd-7ea59238c9b6431ab5e5cde9cb365088/attachments"
+    },
+    {
+      "method": "POST",
+      "url": "http://127.0.0.1:5191/api/evidence/evd-755e1a50cc704fc5a12fbbfeba400e26/attachments"
+    },
+    {
+      "method": "POST",
+      "url": "http://127.0.0.1:5191/api/operations/work-items/wi-27ba16550821e3642f9486cc4017f822bf7b33fcc1b74f64ded8a0095fa69159/prepare"
+    },
+    {
+      "method": "POST",
+      "url": "http://127.0.0.1:5191/api/operations/work-items/wi-27ba16550821e3642f9486cc4017f822bf7b33fcc1b74f64ded8a0095fa69159/confirm"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/operations/work-items?workspaceId=W-STAY-LIFECYCLE-20260604220636-953f1d426c88452583fee54029685402"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/workspaces"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/workspaces"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/operations/work-items"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/workspaces"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/operations/work-items"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/lenses/home-surface"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/lenses/learning-catalog"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/lenses/accommodation/room-readiness"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/lenses/accommodation/bed-inventory"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/lenses/accommodation/rate-plan"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/lenses/accommodation/room-revenue-potential"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/lenses/accommodation/today-operations"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/lenses/accommodation/active-stay"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/lenses/accommodation/deposit-liability"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/lenses/accommodation/payment-risk"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/lenses/accommodation/stay-balance"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/lenses/accommodation/lead-funnel"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/lenses/accommodation/checkout-queue"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/lenses/accommodation/service-task-queue"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/lenses/accommodation/expense-analytics"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/lenses/accommodation/period-performance"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/lenses/accommodation/risk-command"
+    },
+    {
+      "method": "POST",
+      "url": "http://127.0.0.1:5191/api/operations/workspaces/start"
+    }
+  ],
+  "startMs": 3347,
+  "initial": {
+    "url": "http://127.0.0.1:5175/?view=operationPanel&lang=zh-CN&device=mobile&workspace=W-STAY-DEPOSIT-LEDGER-20260604220647-4f4e4afcf80147a5afaf86c70bf67883&card=depositAssessment&workItem=wi-cac3ceb8547c62625ee00db8f7ab5cf88bf26e04c9e29523f235dd4cc14022a5",
+    "title": "",
+    "cardTitle": "押金评估卡",
+    "actionText": "提交处理",
+    "submitCount": 1,
+    "actionState": "primary-action ready",
+    "missingFields": [],
+    "resultText": "",
+    "visibleText": "WorkOSNext\n治理管理员\n已连接\n中文\nРусский\nКыргызча\n我要管理押金账本\n第 1/7 步\n可办理\n1\n2\n3\n4\n5\n6\n7\n本步要做\n押金评估卡\n怎么做\n\n把这一步需要的信息填完整。不能提交时，页面会直接标出还差哪一项。\n\n填写信息\n入住单\n必填\n· 可搜索选择\n从已有对象中选择。\n押金类型\n必填\n安全押金\n钥匙押金\n损坏押金\n预订押金\n请选择一个业务选项。\n应收押金金额\n必填\n请输入数字。\n币种\n必填\nKGS\nRUB\nUSD\n请选择一个业务选项。\n押金截止日期\n必填\n请选择时间。\n押金规则说明\n请输入本步需要的信息。\n提交前检查\n\n页面会先看信息是否完整、材料是否齐全、这一步是否可以提交；有问题会直接标出来。\n\n还需填写: 入住单 · 应收押金金额 · 押金截止日期\n材料核对: 押金规则记录 · 押金责任账本记录\n提交状态: 暂不能提交: 还需填写\n业务规则: 押金规则有效 · 押金不计收入\n保存草稿\n提交处理\n反馈\n今天\n工作\n搜索\n我的"
+  },
+  "negativeMs": 1485,
+  "negative": {
+    "url": "http://127.0.0.1:5175/?view=operationPanel&lang=zh-CN&device=mobile&workspace=W-STAY-DEPOSIT-LEDGER-20260604220647-4f4e4afcf80147a5afaf86c70bf67883&card=depositAssessment&workItem=wi-cac3ceb8547c62625ee00db8f7ab5cf88bf26e04c9e29523f235dd4cc14022a5",
+    "title": "",
+    "cardTitle": "押金评估卡",
+    "actionText": "补齐必填项",
+    "submitCount": 1,
+    "actionState": "primary-action missingRequiredFields",
+    "missingFields": [
+      "入住单\n必填\n· 可搜索选择",
+      "应收押金金额\n必填",
+      "押金截止日期\n必填"
+    ],
+    "resultText": "请先补齐必填项： 入住单、应收押金金额、押金截止日期",
+    "visibleText": "WorkOSNext\n治理管理员\n已连接\n中文\nРусский\nКыргызча\n我要管理押金账本\n第 1/7 步\n可办理\n1\n2\n3\n4\n5\n6\n7\n本步要做\n押金评估卡\n怎么做\n\n把这一步需要的信息填完整。不能提交时，页面会直接标出还差哪一项。\n\n填写信息\n入住单\n必填\n· 可搜索选择\n从已有对象中选择。\n押金类型\n必填\n安全押金\n钥匙押金\n损坏押金\n预订押金\n请选择一个业务选项。\n应收押金金额\n必填\n请输入数字。\n币种\n必填\nKGS\nRUB\nUSD\n请选择一个业务选项。\n押金截止日期\n必填\n请选择时间。\n押金规则说明\n请输入本步需要的信息。\n提交前检查\n\n页面会先看信息是否完整、材料是否齐全、这一步是否可以提交；有问题会直接标出来。\n\n还需填写: 入住单 · 应收押金金额 · 押金截止日期\n材料核对: 押金规则记录 · 押金责任账本记录\n提交状态: 暂不能提交: 还需填写\n业务规则: 押金规则有效 · 押金不计收入\n保存草稿\n\n请先补齐必填项： 入住单、应收押金金额、押金截止日期\n\n提交校验未通过\n\n请补齐缺失字段或证据，再查看学习中心的补齐说明。\n\n学习中心\n补齐必填项\n反馈\n今天\n工作\n搜索\n我的"
+  },
+  "error": {
+    "message": "locator.fill: Error: Malformed value\nCall log:\n\u001b[2m  - waiting for locator('[data-operation-field=\"depositDueAt\"]')\u001b[22m\n\u001b[2m    - locator resolved to <input value=\"\" required=\"\" aria-invalid=\"true\" aria-required=\"true\" type=\"datetime-local\" data-required-field=\"true\" data-validation-state=\"missing\" data-operation-field=\"depositDueAt\"/>\u001b[22m\n\u001b[2m    - fill(\"1200\")\u001b[22m\n\u001b[2m  - attempting fill action\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and editable\u001b[22m\n",
+    "stack": "locator.fill: Error: Malformed value\nCall log:\n\u001b[2m  - waiting for locator('[data-operation-field=\"depositDueAt\"]')\u001b[22m\n\u001b[2m    - locator resolved to <input value=\"\" required=\"\" aria-invalid=\"true\" aria-required=\"true\" type=\"datetime-local\" data-required-field=\"true\" data-validation-state=\"missing\" data-operation-field=\"depositDueAt\"/>\u001b[22m\n\u001b[2m    - fill(\"1200\")\u001b[22m\n\u001b[2m  - attempting fill action\u001b[22m\n\u001b[2m    - waiting for element to be visible, enabled and editable\u001b[22m\n\n    at fillOperationForm ([stdin]:129:34)\n    at async [stdin]:202:22"
+  },
+  "status": "failed"
+}

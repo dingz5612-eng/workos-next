@@ -55,7 +55,10 @@ try {
   await requireHealthy(`${apiUrl}/health`, "Core API");
   await requireHealthy(baseUrl, "Mobile frontend");
 
-  const browser = await chromium.launch({ headless: true });
+  const browser = await chromium.launch({
+    headless: process.env.WORKOS_REAL_BROWSER_HEADLESS === "1",
+    slowMo: Number(process.env.WORKOS_REAL_BROWSER_SLOWMO_MS || 40)
+  });
   const allNetworkEvents = [];
   let completedUrl = "";
 
@@ -102,7 +105,6 @@ async function runPositiveScenario(browser, allNetworkEvents) {
     await goto(page, scenario, "/?view=login&lang=zh-CN&device=mobile");
     await capture(page, scenario, "01-login", "Login page before operator sign-in");
     await fill(page, scenario, "#loginAccount", "dormOperator", "enter dormitory operator account");
-    await select(page, scenario, "#loginDepartment", "stay", "select stay department");
     await fill(page, scenario, "#loginPassword", "dev", "fill password");
     await click(page, scenario, "#loginSubmit", "click login");
     await completeOnboardingIfNeeded(page, scenario);
@@ -115,7 +117,7 @@ async function runPositiveScenario(browser, allNetworkEvents) {
     await waitForHydrated(page);
     await capture(page, scenario, "03-search-command", "Search result with start command");
 
-    await click(page, scenario, "[data-start-operations-resource-setup]", "start accommodation resource setup");
+    await click(page, scenario, "[data-start-operations-workspace='W-STAY-RESOURCE']", "start accommodation resource setup");
     await waitForOperationPanel(page);
     const ready = await capture(page, scenario, "04-operation-ready", "Operation panel ready before validation");
     assertScenario(scenario, ready.domState.surface === "operation-panel-route", "positive.opened_operation_panel", "Operation panel must open from Operations WorkItem route.");
@@ -131,7 +133,6 @@ async function runPositiveScenario(browser, allNetworkEvents) {
     let completed = null;
     for (const [index, cardId] of lifecycleCards.entries()) {
       if (index > 0) {
-        await click(page, scenario, "[data-work-item-id][data-card-id]", `continue to ${cardId}`);
         await waitForOperationPanel(page);
         const current = await capture(page, scenario, `${String(7 + index * 3).padStart(2, "0")}-${cardId}-ready`, `${cardId} ready from ProcessManager WorkItem`);
         assertScenario(scenario, current.domState.fields.some((field) => field.id === cardIdPrimaryField(cardId) && field.required), `positive.${cardId}.business_fields`, `${cardId} must expose required business fields.`);
@@ -140,17 +141,26 @@ async function runPositiveScenario(browser, allNetworkEvents) {
       await fillRequiredOperationFields(page, scenario);
       await waitForHydrated(page);
       await capture(page, scenario, `${String(6 + index * 3).padStart(2, "0")}-${cardId}-filled-before-submit`, `${cardId} required business fields filled from DOM contract`);
+      const nextCardId = lifecycleCards[index + 1] || "";
       await click(page, scenario, "[data-submit-card]", `submit completed ${cardId}`);
-      await page.waitForFunction(() => {
-        const route = document.querySelector("[data-surface=\"operation-panel-route\"]");
-        return route?.dataset.admissionDecision === "visible_readonly_completed" ||
-          document.querySelector("[data-surface=\"completed-operation-record\"]");
-      }, null, { timeout: 45_000 });
-      completed = await capture(page, scenario, `${String(7 + index * 3).padStart(2, "0")}-${cardId}-completed-readonly`, `${cardId} completed record is read-only`);
-      assertScenario(scenario, completed.admissionDecision === "visible_readonly_completed", `positive.${cardId}.completed_readonly_admission`, `${cardId} completed WorkItem must be visible but read-only.`);
-      assertScenario(scenario, completed.domState.submitCount === 0, `positive.${cardId}.no_submit_after_completion`, `${cardId} completed WorkItem must not expose submit CTA.`);
-      if (index < lifecycleCards.length - 1) {
-        assertScenario(scenario, completed.domState.nextStageCount > 0, `positive.${cardId}.next_work_item_visible`, `${cardId} completion must expose next stage WorkItem.`);
+      if (nextCardId) {
+        await page.waitForFunction((expectedCardId) => {
+          const route = document.querySelector("[data-surface=\"operation-panel-route\"]");
+          return route?.dataset.runtimeDecision === "work_item_confirm_ready" &&
+            new URL(window.location.href).searchParams.get("card") === expectedCardId;
+        }, nextCardId, { timeout: 45_000 });
+        const advanced = await capture(page, scenario, `${String(7 + index * 3).padStart(2, "0")}-${cardId}-auto-advanced-next`, `${cardId} submit auto-advanced to ${nextCardId}`);
+        assertScenario(scenario, new URL(advanced.url).searchParams.get("card") === nextCardId, `positive.${cardId}.auto_advanced_next`, `${cardId} submit must auto-advance to next actionable persisted WorkItem.`);
+        assertScenario(scenario, advanced.runtimeDecision === "work_item_confirm_ready", `positive.${cardId}.next_ready_runtime`, `${nextCardId} must be ready after auto-advance.`);
+      } else {
+        await page.waitForFunction(() => {
+          const route = document.querySelector("[data-surface=\"operation-panel-route\"], [data-surface=\"completed-workspace-record\"]");
+          return route?.dataset.admissionDecision === "visible_readonly_completed" ||
+            document.querySelector("[data-surface=\"completed-workspace-record\"]");
+        }, null, { timeout: 45_000 });
+        completed = await capture(page, scenario, `${String(7 + index * 3).padStart(2, "0")}-${cardId}-completed-readonly`, `${cardId} completed record is read-only`);
+        assertScenario(scenario, completed.admissionDecision === "visible_readonly_completed", `positive.${cardId}.completed_readonly_admission`, `${cardId} final WorkItem must be visible but read-only.`);
+        assertScenario(scenario, completed.domState.submitCount === 0, `positive.${cardId}.no_submit_after_completion`, `${cardId} completed WorkItem must not expose submit CTA.`);
       }
     }
 
@@ -164,7 +174,7 @@ async function runIllegalAccessScenario(browser, allNetworkEvents) {
   const scenario = createScenario("dormitory_l1_negative_illegal_access", "negative", "Fake WorkItem URL cannot open a business write", "operator", "zh-CN");
   const { context, page } = await newMobilePage(browser, scenario, allNetworkEvents);
   try {
-    await loginAs(page, scenario, "dormOperator", "stay");
+    await loginAs(page, scenario, "dormOperator");
     await goto(page, scenario, "/?view=operationPanel&lang=zh-CN&device=mobile&workspace=W-STAY-RESOURCE&card=roomSetup&workItem=wi-does-not-exist-browser-audit");
     await waitForHydrated(page);
     const step = await capture(page, scenario, "01-fake-work-item-blocked", "Illegal fake WorkItem route is blocked");
@@ -181,7 +191,7 @@ async function runUnauthorizedScenario(browser, allNetworkEvents) {
   const scenario = createScenario("dormitory_l1_negative_unauthorized", "negative", "Finance account cannot start room setup", "finance", "zh-CN");
   const { context, page } = await newMobilePage(browser, scenario, allNetworkEvents);
   try {
-    await loginAs(page, scenario, "dormFinance", "finance");
+    await loginAs(page, scenario, "dormFinance");
     await click(page, scenario, "nav.bottom-nav [data-view=\"search\"]", "open search tab as finance");
     await fill(page, scenario, "#query", "新增住宿房源", "search room setup command as finance");
     await click(page, scenario, "#searchNow", "run finance search");
@@ -189,7 +199,7 @@ async function runUnauthorizedScenario(browser, allNetworkEvents) {
     await capture(page, scenario, "01-finance-search-command", "Finance can see visible command but is not allowed to start it");
     const forbiddenResponse = page.waitForResponse((response) =>
       response.url().includes("/api/operations/workspaces/start") && response.request().method() === "POST", { timeout: 30_000 }).catch(() => null);
-    await click(page, scenario, "[data-start-operations-resource-setup]", "finance clicks start command");
+    await click(page, scenario, "[data-start-operations-workspace='W-STAY-RESOURCE']", "finance clicks start command");
     await forbiddenResponse;
     await page.waitForFunction(() => {
       return document.querySelector("[data-surface=\"permission-diagnostic\"]") ||
@@ -228,10 +238,9 @@ async function runWrongStatusScenario(browser, allNetworkEvents, completedUrl) {
   }
 }
 
-async function loginAs(page, scenario, account, department) {
+async function loginAs(page, scenario, account) {
   await goto(page, scenario, "/?view=login&lang=zh-CN&device=mobile");
   await fill(page, scenario, "#loginAccount", account, `enter ${account}`);
-  await select(page, scenario, "#loginDepartment", department, `select ${department} department`);
   await fill(page, scenario, "#loginPassword", "dev", "fill password");
   await click(page, scenario, "#loginSubmit", "click login");
   await completeOnboardingIfNeeded(page, scenario);
@@ -328,6 +337,15 @@ async function fillRequiredOperationFields(page, scenario) {
       addViolation(scenario, `field.${field.id}.readonly_empty`, `Required field ${field.id} is readonly and empty.`);
       continue;
     }
+    const segmentedButton = page.locator(`[data-operation-field-button="${cssEscape(field.id)}"]`).first();
+    if (await segmentedButton.isVisible().catch(() => false)) {
+      scenario.clickSequence.push({ type: "click", label: `fill segmented field ${field.id}`, selector: `[data-operation-field-button="${field.id}"]`, beforeUrl: page.url() });
+      await segmentedButton.click();
+      await waitForHydrated(page);
+      scenario.clickSequence.at(-1).afterUrl = page.url();
+      continue;
+    }
+    if (field.type === "hidden") continue;
     const selector = `[data-operation-field="${cssEscape(field.id)}"]`;
     if (field.tag === "select") {
       const option = field.options.find((item) => item.value && !/请选择|select/i.test(item.text)) || field.options.find((item) => item.value);
@@ -412,7 +430,7 @@ async function captureSegments(page, safe) {
 
 async function readDomState(page) {
   return page.evaluate(() => {
-    const primary = document.querySelector("[data-surface=\"operation-panel-route\"], [data-surface=\"operation-panel-runtime\"], [data-surface=\"permission-diagnostic\"], [data-surface=\"workos-search\"], [data-surface=\"today-mission-control\"], [data-surface=\"runtime-hydration\"], [data-surface]") || document.body;
+    const primary = document.querySelector("[data-surface=\"completed-workspace-record\"], [data-surface=\"operation-panel-route\"], [data-surface=\"operation-panel-runtime\"], [data-surface=\"permission-diagnostic\"], [data-surface=\"workos-search\"], [data-surface=\"today-mission-control\"], [data-surface=\"runtime-hydration\"], [data-surface]") || document.body;
     const invalidFields = Array.from(document.querySelectorAll("[data-operation-field][aria-invalid=\"true\"], [data-operation-field][data-validation-state=\"missing\"]"))
       .map((node) => node.dataset.operationField || node.getAttribute("name") || "");
     const fields = Array.from(document.querySelectorAll("[data-operation-field]")).map((node) => ({
@@ -440,7 +458,7 @@ async function readDomState(page) {
       blockerCode: primary.dataset?.blockerCode || "",
       submitCount: document.querySelectorAll("[data-submit-card]").length,
       nextStageCount: document.querySelectorAll("[data-work-item-id][data-card-id]").length,
-      startResourceCount: document.querySelectorAll("[data-start-operations-resource-setup]").length,
+      startResourceCount: document.querySelectorAll("[data-start-operations-workspace='W-STAY-RESOURCE']").length,
       invalidFields,
       fields,
       textSample: (document.body.innerText || "").replace(/\s+/g, " ").trim().slice(0, 1800),
@@ -541,7 +559,7 @@ function architectureAssertions(currentReport) {
     assertion("coverage.illegal_access", scenarioIds.has("dormitory_l1_negative_illegal_access"), "Illegal access scenario is present."),
     assertion("coverage.unauthorized", scenarioIds.has("dormitory_l1_negative_unauthorized"), "Unauthorized role scenario is present."),
     assertion("coverage.wrong_status", scenarioIds.has("dormitory_l1_negative_wrong_status"), "Wrong status scenario is present."),
-    assertion("coverage.resource_lifecycle", ["roomSetup", "bedSetup", "rateSetup", "roomReadiness", "roomBlock", "roomRelease"].every((cardId) => steps.some((step) => step.stepId.includes(`${cardId}-completed-readonly`))), "Full dormitory resource lifecycle is captured."),
+    assertion("coverage.resource_lifecycle", resourceLifecycleCaptured(steps), "Full dormitory resource lifecycle is captured with post-submit auto-advance and final readonly completion."),
     assertion("admission.visible_not_allowed", steps.some((step) => /visible_blocked|visible_allowed_requires/.test(step.admissionDecision)), "Visible blocked/required admission state is captured."),
     assertion("admission.completed_readonly", steps.some((step) => step.admissionDecision === "visible_readonly_completed"), "Completed WorkItem is visible but read-only."),
     assertion("runtime.blocked_required", steps.some((step) => step.runtimeDecision === "blocked:required_field_missing"), "Required field blocker is enforced before runtime confirm."),
@@ -561,6 +579,15 @@ function assertion(id, passed, message) {
     blockerLevel: passed ? "none" : "P0",
     message
   };
+}
+
+function resourceLifecycleCaptured(steps) {
+  const cards = ["roomSetup", "bedSetup", "rateSetup", "roomReadiness", "roomBlock", "roomRelease"];
+  const filled = cards.every((cardId) => steps.some((step) => step.stepId.includes(`${cardId}-filled-before-submit`)));
+  const autoAdvanced = cards.slice(0, -1).every((cardId) => steps.some((step) => step.stepId.includes(`${cardId}-auto-advanced-next`)));
+  const finalReadonly = steps.some((step) => step.stepId.includes("roomRelease-completed-readonly") &&
+    step.admissionDecision === "visible_readonly_completed");
+  return filled && autoAdvanced && finalReadonly;
 }
 
 function writeArtifacts() {
@@ -773,7 +800,7 @@ function valueForField(fieldId, type, index) {
 function cardIdPrimaryField(cardId) {
   return {
     roomSetup: "roomNo",
-    bedSetup: "bedNo",
+    bedSetup: "bedLabels",
     rateSetup: "dailyRatePerBed",
     roomReadiness: "availabilityStatus",
     roomBlock: "resourceScope",

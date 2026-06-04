@@ -6,6 +6,7 @@
     "artifacts/rt4/evidence-graph.json",
     "artifacts/oam-cab/oam-cab-v1-inventory.json",
     "artifacts/oam-cab/oam-cab-v1-final-report.json",
+    "artifacts/oam-cab/company-kernel-alignment-result.json",
     "artifacts/oam-cab/execution-log.jsonl"
   ],
   "appendOnlyEvidenceRequired": true,

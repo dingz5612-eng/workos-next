@@ -181,30 +181,6 @@
   gap: 6px;
 }
 
-.login-account-hints {
-  display: grid;
-  gap: 6px;
-  padding: 10px;
-  border: 1px solid #d9e7ee;
-  border-radius: 8px;
-  background: #f7fbfc;
-}
-
-.login-account-hints span {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  align-items: baseline;
-  color: #23384b;
-  font-size: 12px;
-  line-height: 1.45;
-}
-
-.login-account-hints b {
-  color: #102033;
-  font-size: 12px;
-}
-
 .login-panel label span,
 .login-panel > span {
   color: #66788c;

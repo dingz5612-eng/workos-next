@@ -8,21 +8,24 @@ Dormitory remains L1 Internal Pilot Observation only。Dormitory L2 Production =
 
 ## 认证边界
 
-服务端身份只允许来自经过 runtime session storage 校验的 actor session。请求体中的 `ActorId`、`ApproverId`、`ActorCapabilities`、`DeviceTrustStatus` 只能作为审计输入或一致性校验输入，不能作为授权来源。
+服务端身份只允许来自 `account_users` 和 runtime session storage 校验过的 actor session。请求体中的 `ActorId`、`ApproverId`、`ActorCapabilities`、`DeviceTrustStatus` 只能作为审计输入或一致性校验输入，不能作为授权来源。
+
+Account / User / Actor Kernel 是账号真值边界。用户名、昵称、部门、业务线、角色、能力、状态、密码凭据、租户、会话和设备可信均为后端真值对象。登录页只允许用户名和密码；部门、业务线、角色、能力必须由有权限的管理员或主管在 PC 治理面分配，并写入账号审计。
 
 Development 可以使用 `X-WorkOS-Actor-Token` compatibility flow。Production 必须使用 HttpOnly cookie `workosnext_session`，并且 non-GET 请求必须带 `X-CSRF-Token`。Production 登录响应不得在 JSON body 暴露 actor token，移动端也不得把 actor token 写入 `localStorage`。
 
 ## 配置边界
 
+Production / Pilot 必须使用真实账号表和慢哈希密码凭据。`account_users.password_hash` 必须使用 versioned `pbkdf2-sha256`。Development-only demo accounts 只能在 Development 且 `AllowDevelopmentAccounts=true` 时启用。
+
 Production 必须显式配置：
 
 - `ConnectionStrings:WorkOSRuntime`
-- `Auth:PasswordSha256ByUsername`
 - `Cors:AllowedOrigins`
 - `AllowedHosts`
 - `Migrations:RunOnStartup`
 
-Production 禁止使用 development password、legacy SHA-256 password hash、空连接串、`localhost` / `127.0.0.1` / `workosnext_dev` 测试连接串、空 CORS allowlist、空 `AllowedHosts` 或 `AllowedHosts=*`。
+Production 禁止启用 development-only demo accounts，禁止使用 development password、legacy SHA-256 password hash、空连接串、`localhost` / `127.0.0.1` / `workosnext_dev` 测试连接串、空 CORS allowlist、空 `AllowedHosts` 或 `AllowedHosts=*`。如果历史 `Auth:PasswordSha256ByUsername` 被临时配置为启动凭据，也必须是 versioned slow hash，不能作为长期账号真值来源。
 
 Production 默认不自动执行 startup migration。`Migrations:RunOnStartup=true` 只能在受控发布窗口由发布负责人明确启用。
 

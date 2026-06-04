@@ -319,6 +319,54 @@ categories:
       evidenceType: governance_export_audit
       severity: P0
       notes: Creates governance export audit and access records.
+    - route: "POST /api/pc-governance/account-users"
+      class: pcGovernanceWrite
+      owner: account-actor-kernel
+      writesBusinessFact: false
+      writesGovernanceFact: true
+      requiresOperationsConfirm: false
+      authPolicy: AccountUserManagePolicy
+      appendOnly: true
+      requiresCapability: true
+      requiresAudit: true
+      requiredInvariant:
+        - account.user_permission_admin_assigned
+        - api.no_page_specific_business_write
+      evidenceType: account_user_audit
+      severity: P0
+      notes: Admin or supervisor creates an internal account and assigns department, roles, and capabilities; not self-registration and not a business fact.
+    - route: "POST /api/pc-governance/account-users/{userId}/disable"
+      class: pcGovernanceWrite
+      owner: account-actor-kernel
+      writesBusinessFact: false
+      writesGovernanceFact: true
+      requiresOperationsConfirm: false
+      authPolicy: AccountUserManagePolicy
+      appendOnly: true
+      requiresCapability: true
+      requiresAudit: true
+      requiredInvariant:
+        - account.user_status_admin_assigned
+        - api.no_page_specific_business_write
+      evidenceType: account_user_audit
+      severity: P0
+      notes: Disables an internal account through Account / User / Actor Kernel audit.
+    - route: "POST /api/pc-governance/account-users/{userId}/reset-password"
+      class: pcGovernanceWrite
+      owner: account-actor-kernel
+      writesBusinessFact: false
+      writesGovernanceFact: true
+      requiresOperationsConfirm: false
+      authPolicy: AccountUserManagePolicy
+      appendOnly: true
+      requiresCapability: true
+      requiresAudit: true
+      requiredInvariant:
+        - account.password_reset_audited
+        - api.no_page_specific_business_write
+      evidenceType: account_user_audit
+      severity: P0
+      notes: Resets an account credential with slow hash and audit; not a login-page permission binding.
   securitySessionWrite:
     - route: "POST /api/auth/login"
       class: securitySessionWrite
@@ -333,6 +381,19 @@ categories:
       evidenceType: auth_session
       severity: P1
       notes: Authentication session creation.
+    - route: "POST /api/auth/logout"
+      class: securitySessionWrite
+      owner: security
+      writesBusinessFact: false
+      writesGovernanceFact: false
+      requiresOperationsConfirm: false
+      authPolicy: WorkOSAuthenticated
+      appendOnly: true
+      requiredInvariant:
+        - security.session_write_not_business_fact
+      evidenceType: auth_session_revoke
+      severity: P1
+      notes: Current authenticated session revoke.
     - route: "POST /api/auth/sessions/{token}/revoke"
       class: securitySessionWrite
       owner: security

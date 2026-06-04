@@ -178,37 +178,44 @@ describe("OAM-04B business and technical layering contract", () => {
     const html = operationPanelView(ctx);
     const text = visibleText(html);
 
-    expect(html).toContain('data-surface="completed-operation-record"');
+    expect(html).toContain('data-surface="completed-workspace-record"');
+    expect(html).toContain('data-surface="completed-workspace-route"');
     expect(text).toContain("已完成");
-    expect(text).toContain("已保存");
+    expect(text).toContain("只读记录");
+    expect(text).toContain("请先核对已提交的业务内容");
     expect(text).not.toContain("操作输入");
     expect(text).not.toContain("系统证据要求");
-    expect(text).not.toContain("审计摘要");
     expect(text).not.toContain("提交证据");
     expect(text).not.toContain("可信确认");
     expect(text).not.toContain("Ready to prepare / confirm");
     expect(html).not.toContain("sticky-action");
     expect(html).not.toContain('data-submit-card');
     expect(html).not.toContain('data-surface="operation-panel-runtime"');
+    expect(html).not.toContain('data-surface="completed-operation-record"');
   });
 
-  it("renders completed workspace as a record detail instead of an operation lens", () => {
+  it("renders completed workspace through the shared operation shell as a readonly record", () => {
     const ctx = createSurfaceCtx({ view: "workspace" });
     ctx.state.runtimeStore.workspaces[0].cards[0].status = "done";
     const html = workspaceView(ctx);
     const text = visibleText(html);
 
     expect(html).toContain('data-surface="completed-workspace-record"');
-    expect(text).toContain("办理记录");
+    expect(html).toContain('data-surface="completed-workspace-route"');
+    expect(html).toContain('class="completed-record-control"');
+    expect(html).toContain('class="card-operation completed-record-operation"');
+    expect(html).toContain('data-component="operation-card-shell"');
     expect(text).toContain("只读记录");
-    expect(text).toContain("房间重复校验");
     expect(text).toContain("步骤详情");
     expect(html).toContain('data-card-id="roomSetup"');
+    expect(html).not.toContain("completed-record-detail");
     expect(html).not.toContain('data-surface="completed-step-list"');
     expect(text).not.toContain("已完成步骤");
     expect(text).not.toContain("当前办理项");
     expect(text).not.toContain("必填字段");
     expect(html).not.toContain("sticky-action");
+    expect(html).not.toContain("intent-card");
+    expect(html).not.toContain("workspace-control completed-record-control");
   });
 
   it("allows a completed previous step to be reviewed without making it submittable", () => {
@@ -226,6 +233,13 @@ describe("OAM-04B business and technical layering contract", () => {
       blockerRules: [],
       confirmation: { required: true, requiredRole: "operator", policyRef: "operations-runtime-policy" }
     });
+    ctx.state.runtimeStore.operationWorkItems.push({
+      workItemId: "W-STAY-RESOURCE:bedSetup",
+      workspaceId: "W-STAY-RESOURCE",
+      cardId: "bedSetup",
+      lifecycleState: "ready",
+      ownerRole: "operator"
+    });
 
     const html = workspaceView(ctx);
     const text = visibleText(html);
@@ -233,10 +247,12 @@ describe("OAM-04B business and technical layering contract", () => {
     expect(text).toContain("办理记录");
     expect(text).toContain("房间床位配置");
     expect(text).toContain("已完成");
-    expect(text).toContain("返回当前办理");
+    expect(text).toContain("继续办理下一阶段");
+    expect(text).not.toContain("返回当前办理");
     expect(text).not.toContain("可提交");
     expect(html).toContain('data-card-id="roomSetup"');
     expect(html).toContain('data-card-id="bedSetup"');
+    expect(html).toContain('data-work-item-id="W-STAY-RESOURCE:bedSetup"');
     expect(text).not.toContain("操作输入");
     expect(html).not.toContain("sticky-action");
     expect(html).not.toContain('data-submit-card');
@@ -248,14 +264,16 @@ describe("OAM-04B business and technical layering contract", () => {
     const html = operationPanelView(ctx);
     const text = visibleText(html);
 
-    expect(html).toContain('data-surface="completed-operation-record"');
-    expect(text).toContain("办理记录");
+    expect(html).toContain('data-surface="completed-workspace-record"');
+    expect(html).toContain('data-surface="completed-workspace-route"');
+    expect(text).toContain("只读记录");
     expect(text).not.toContain("操作输入");
     expect(html).not.toContain("sticky-action");
     expect(html).not.toContain('data-submit-card');
+    expect(html).not.toContain('data-surface="completed-operation-record"');
   });
 
-  it("keeps completed operation audit proof out of the default operator copy", () => {
+  it("renders completed operation audit summary in the readonly record without the retired audit detail panel", () => {
     const operatorCtx = createSurfaceCtx({ view: "operationPanel" });
     operatorCtx.state.runtimeStore.workspaces[0].cards[0].status = "done";
     const adminCtx = createSurfaceCtx({
@@ -267,11 +285,11 @@ describe("OAM-04B business and technical layering contract", () => {
     const operatorHtml = operationPanelView(operatorCtx);
     const adminHtml = operationPanelView(adminCtx);
 
-    expect(visibleText(operatorHtml)).toContain("已保存");
-    expect(visibleText(operatorHtml)).not.toContain("审计摘要");
+    expect(visibleText(operatorHtml)).toContain("审计摘要");
+    expect(visibleText(operatorHtml)).toContain("只读记录");
     expect(operatorHtml).not.toContain('data-surface="completed-operation-audit-details"');
-    expect(adminHtml).toContain('data-surface="completed-operation-audit-details"');
     expect(visibleText(adminHtml)).toContain("审计摘要");
+    expect(adminHtml).not.toContain('data-surface="completed-operation-audit-details"');
   });
 
   it("renders 403, 409, 422, and projection pending recovery with learning or trace entry", () => {

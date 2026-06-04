@@ -58,9 +58,9 @@ export function WorkItemIdentityVM(item = {}, state = {}) {
       ? itemLifecycle
       : normalizeOperationLifecycleState(itemLifecycle || projectedCard?.status || item.card?.status);
   const card = projectedCard
-    ? { ...projectedCard, ...(effectiveCard || {}), status: lifecycleState || projectedCard.status }
+    ? { ...projectedCard, ...(effectiveCard || {}), ...correctionCardMeta(item), status: lifecycleState || projectedCard.status }
     : effectiveCard
-      ? { ...effectiveCard, status: lifecycleState || effectiveCard.status }
+      ? { ...effectiveCard, ...correctionCardMeta(item), status: lifecycleState || effectiveCard.status }
       : null;
   const workspace = baseWorkspace && card
     ? {
@@ -152,6 +152,17 @@ function isCorrectionWorkItem(item = {}) {
   return mode === "append_only" ||
     item.payload?.operationMode === "correction" ||
     item.Payload?.operationMode === "correction";
+}
+
+function correctionCardMeta(item = {}) {
+  if (!isCorrectionWorkItem(item)) return {};
+  const payload = item.payload || item.Payload || {};
+  return {
+    operationMode: "correction",
+    correctionMode: "append_only",
+    sourceWorkItemId: payload.sourceWorkItemId || payload.source_work_item_id || "",
+    sourceCardStatus: payload.sourceCardStatus || payload.source_card_status || ""
+  };
 }
 
 function workspaceIdOf(item = {}) {

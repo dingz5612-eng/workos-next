@@ -1,6 +1,32 @@
 {
   "version": "oam.admission-contract.v1",
   "generatedBy": "oam-cab-v1-phase-3",
+  "inputAuthorities": {
+    "actor": {
+      "source": "Runtime actor session and capability policy",
+      "contractRef": "docs/contracts/admission/actor-device-admission-contract.json"
+    },
+    "device": {
+      "source": "Device trust and high-risk device requirements",
+      "contractRef": "docs/contracts/admission/actor-device-admission-contract.json"
+    },
+    "businessLine": {
+      "source": "Business Line Registry and business-line admission matrix",
+      "contractRef": "docs/contracts/admission/business-line-admission-matrix.json"
+    },
+    "risk": {
+      "source": "Risk policy refs from Definition Registry",
+      "contractRef": "docs/contracts/definition/risk-policy-refs.json"
+    },
+    "evidence": {
+      "source": "Evidence policy refs and Evidence Trust contract",
+      "contractRef": "docs/contracts/definition/evidence-policy-refs.json"
+    },
+    "releaseState": {
+      "source": "current-state and release-state admission matrix",
+      "contractRef": "docs/contracts/admission/release-state-admission-matrix.json"
+    }
+  },
   "outputFields": {
     "visibleAllowed": {
       "type": "boolean",

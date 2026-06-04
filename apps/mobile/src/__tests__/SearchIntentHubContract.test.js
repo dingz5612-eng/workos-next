@@ -12,7 +12,7 @@ describe("OAM-04B search intent hub contract", () => {
     expect(html).toContain("主动办理");
     expect(html).toContain("新增住宿房源");
     expect(html).toContain("先录房号和床位数");
-    expect(html).toContain('data-start-operations-resource-setup="true"');
+    expect(html).toContain('data-start-operations-workspace="W-STAY-RESOURCE"');
     expect(html).toContain('data-work-item-id="W-STAY-RESOURCE:roomSetup"');
     expect(html).toContain(">处理</button>");
 
@@ -27,7 +27,7 @@ describe("OAM-04B search intent hub contract", () => {
     const text = visibleText(html);
 
     expect(html).toContain('data-search-section="activeCommands"');
-    expect(html).toContain('data-start-operations-resource-setup="true"');
+    expect(html).toContain('data-start-operations-workspace="W-STAY-RESOURCE"');
     expect(text).toContain("新增住宿房源");
     expect(text).toContain("开始办理");
   });

@@ -57,6 +57,18 @@
         }
       }
     },
+    "/api/auth/logout": {
+      "post": {
+        "responses": {
+          "200": {
+            "description": "Current actor session revoked"
+          },
+          "401": {
+            "description": "Actor session required"
+          }
+        }
+      }
+    },
     "/api/auth/sessions/{token}/revoke": {
       "post": {
         "parameters": [
@@ -85,6 +97,16 @@
       }
     },
     "/api/device-sessions": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Device sessions for current tenant"
+          },
+          "401": {
+            "description": "Actor session required"
+          }
+        }
+      },
       "post": {
         "requestBody": {
           "required": true,
@@ -1286,6 +1308,113 @@
         }
       }
     },
+    "/api/pc-governance/account-users": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Account users for current tenant"
+          },
+          "403": {
+            "description": "Account management capability required"
+          }
+        }
+      },
+      "post": {
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AccountUserCreateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Account user created"
+          },
+          "403": {
+            "description": "Account management capability required"
+          },
+          "422": {
+            "description": "Account user create rejected"
+          }
+        }
+      }
+    },
+    "/api/pc-governance/account-users/{userId}/disable": {
+      "post": {
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Account user disabled"
+          },
+          "403": {
+            "description": "Account management capability required"
+          },
+          "404": {
+            "description": "Account user not found"
+          }
+        }
+      }
+    },
+    "/api/pc-governance/account-users/{userId}/reset-password": {
+      "post": {
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AccountUserPasswordResetRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Account password reset"
+          },
+          "403": {
+            "description": "Account management capability required"
+          },
+          "404": {
+            "description": "Account user not found"
+          }
+        }
+      }
+    },
+    "/api/pc-governance/account-audit": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Account user audit records"
+          },
+          "403": {
+            "description": "Account management capability required"
+          }
+        }
+      }
+    },
     "/api/workspaces/{workspaceId}/events": {
       "get": {
         "parameters": [
@@ -1488,6 +1617,69 @@
           "username": {
             "type": "string"
           },
+          "password": {
+            "type": "string"
+          }
+        }
+      },
+      "AccountUserCreateRequest": {
+        "type": "object",
+        "required": [
+          "username",
+          "displayName",
+          "password",
+          "tenantId",
+          "department",
+          "businessLine"
+        ],
+        "properties": {
+          "username": {
+            "type": "string"
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "tenantId": {
+            "type": "string"
+          },
+          "department": {
+            "type": "string"
+          },
+          "businessLine": {
+            "type": "string"
+          },
+          "roles": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "capabilities": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "invited",
+              "disabled",
+              "locked"
+            ]
+          }
+        }
+      },
+      "AccountUserPasswordResetRequest": {
+        "type": "object",
+        "required": [
+          "password"
+        ],
+        "properties": {
           "password": {
             "type": "string"
           }

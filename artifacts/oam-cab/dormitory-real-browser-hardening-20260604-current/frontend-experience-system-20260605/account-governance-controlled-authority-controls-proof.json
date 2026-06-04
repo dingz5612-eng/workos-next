@@ -1,0 +1,44 @@
+{
+  "checkedAt": "2026-06-04T21:51:04.039Z",
+  "screenshotPath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\account-governance-controlled-authority\\03-pc-account-role-capability-controls.png",
+  "controlsState": {
+    "freeTextCapabilityTextareas": 0,
+    "freeTextRoleInputs": 0,
+    "roleSelectRect": {
+      "height": 41.986812591552734,
+      "left": 26.906536102294922,
+      "top": -81.83773040771484,
+      "width": 326.9208679199219
+    },
+    "selectedRole": "finance",
+    "visibleCheckedCapabilities": [
+      "workos.write",
+      "search.read",
+      "operations.confirm",
+      "finance.work",
+      "payment.confirm",
+      "finance.payment.confirm",
+      "finance.deposit.confirm",
+      "finance.deposit.refund",
+      "finance.correction.apply",
+      "correction.request",
+      "finance.control.view",
+      "pc.finance"
+    ]
+  },
+  "assertions": [
+    {
+      "id": "role_select_in_view_or_present",
+      "passed": true
+    },
+    {
+      "id": "free_text_authority_removed",
+      "passed": true
+    },
+    {
+      "id": "finance_preset_checked",
+      "passed": true
+    }
+  ],
+  "status": "passed"
+}

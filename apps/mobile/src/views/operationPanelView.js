@@ -1,17 +1,17 @@
 import { loadDraft } from "../operationDrafts.js";
 import { buildOperationActionState } from "../operationActionState.js";
-import { completedRecordActionPolicy } from "../operationRecordPolicy.js";
+import { syncUrlFromState } from "../navigationController.js";
 import { resolveOperationPanelTarget } from "../operationRouteResolver.js";
 import { activeWorkspaceCard, isTerminalCardStatus } from "../selectors/workspaceSelectors.js";
 import { ActionResult, OperationStepRail, TechnicalAuditDetails, workItemModel } from "./experienceComponents.js";
-import { primaryActionButton, workspaceCardPanel } from "./workspaceView.js";
+import { completedWorkspaceRecord, primaryActionButton, workspaceCardPanel } from "./workspaceView.js";
 
 export function operationPanelView(ctx) {
   const { state, shell } = ctx;
-  const item = resolveOperationItem(state);
+  const item = resolveOperationItem(state, ctx);
   if (!item?.workItemId && !item?.work_item_id) {
     const startResourceAction = shouldOfferResourceSetup(state)
-      ? `<button data-start-operations-resource-setup="true">${ctx.tr("operationUnavailableStartResource")}</button>`
+      ? `<button data-start-operations-workspace="W-STAY-RESOURCE" data-first-card-id="roomSetup">${ctx.tr("operationUnavailableStartResource")}</button>`
       : `<button data-view="search">${ctx.tr("operationUnavailableSearchAction")}</button>`;
     state.lastActionResult = {
       confirmed: false,
@@ -46,6 +46,11 @@ export function operationPanelView(ctx) {
       </section>
     `);
   }
+  if (isTerminalCardStatus(activeCard.status)) {
+    return shell(`
+      ${completedWorkspaceRecord(workspace, activeCard, ctx)}
+    `);
+  }
   const operationContext = { ...item, workspace, card: activeCard, workspaceId: item?.workspaceId || workspace.id, cardId: item?.cardId || activeCard?.id };
   const model = workItemModel(operationContext, ctx);
   const draft = loadDraft(workspace.id, activeCard.id);
@@ -56,7 +61,6 @@ export function operationPanelView(ctx) {
   const operationBody = workspaceCardPanel(activeCard, workspace, true, ctx);
   const traceCount = [commandSubmissionId, model.caseId, model.workItemId, ...(model.traceRefs || [])].filter(Boolean).length;
   const actionState = buildOperationActionState(operationContext, activeCard, state.lastActionResult, state);
-  const isCompleted = isTerminalCardStatus(activeCard.status);
   const admissionDecision = operationAdmissionDecision(model, activeCard, actionState);
   const runtimeDecision = operationRuntimeDecision(model, activeCard, actionState);
 
@@ -72,7 +76,6 @@ export function operationPanelView(ctx) {
         "data-runtime-decision": runtimeDecision
       }
     })}
-    ${isCompleted ? completedRecordPanel(model, activeCard, operationContext, ctx) : ""}
     ${state.debugSurface ? TechnicalAuditDetails({
       model,
       payloadHash: payloadFingerprint,
@@ -81,54 +84,15 @@ export function operationPanelView(ctx) {
       projectionStatus: state.lastActionResult?.status || "notSubmitted",
       policyRef: activeCard.policyRef || activeCard.confirmation?.policyRef || "operations-runtime-policy"
     }, ctx) : ""}
-    ${isCompleted ? "" : operationBody}
-    ${isCompleted ? "" : ActionResult(state.lastActionResult || {}, ctx)}
-    ${isCompleted ? "" : `<div class="sticky-action">${primaryActionButton(actionState, ctx)}</div>`}
+    ${operationBody}
+    ${ActionResult(state.lastActionResult || {}, ctx)}
+    <div class="sticky-action">${primaryActionButton(actionState, ctx)}</div>
   `);
 }
 
 function shouldOfferResourceSetup(state = {}) {
   return state.selectedWorkspace === "W-STAY-RESOURCE" &&
     (!state.selectedCardId || state.selectedCardId === "roomSetup");
-}
-
-function completedRecordPanel(model, card, operationContext, ctx) {
-  const policy = completedRecordActionPolicy({ workspace: operationContext.workspace, card, state: ctx.state, surface: "operationPanel" });
-  const nextWorkItem = policy.nextWorkItem;
-  const auditDetails = completedAuditDetails(model, ctx);
-  const nextAction = nextWorkItem
-    ? `<button data-work-item-id="${ctx.escapeAttr(nextWorkItem.workItemId)}" data-workspace-id="${ctx.escapeAttr(nextWorkItem.workspaceId)}" data-card-id="${ctx.escapeAttr(nextWorkItem.cardId)}">${ctx.tr("continueNextStage")}</button>`
-    : "";
-  const viewAction = `<button class="secondary" data-view-completed-record="true" data-workspace-id="${ctx.escapeAttr(operationContext.workspaceId)}" data-card-id="${ctx.escapeAttr(operationContext.cardId)}">${ctx.tr("viewOnly")}</button>`;
-  return `<section class="completed-record-panel compact" data-surface="completed-operation-record">
-    <div>
-      <span>${ctx.tr("completedRecordTitle")}</span>
-      <h2>${ctx.escapeHtml(model.displayTitle || model.businessObject)}</h2>
-      <p>${ctx.tr("completedRecordPanelBody")}</p>
-      <p class="completed-correction-help">${ctx.tr("completedCorrectionHelp")}</p>
-      ${ctx.state.operationMessage ? `<p class="operation-message">${ctx.escapeHtml(ctx.state.operationMessage)}</p>` : ""}
-    </div>
-    <strong class="status-chip status-${ctx.escapeAttr(card.status)}">${ctx.tr(card.status)}</strong>
-    <div class="operation-actions">${nextAction}${viewAction}</div>
-    ${auditDetails}
-  </section>`;
-}
-
-function completedAuditDetails(model, ctx) {
-  if (!auditDetailsVisible(ctx)) return "";
-  return `<details class="completed-operation-audit-details" data-surface="completed-operation-audit-details" ${ctx.state?.debugSurface ? "open" : ""}>
-    <summary>${ctx.tr("auditDetails")}</summary>
-    <dl>
-      <dt>${ctx.tr("decisionOwner")}</dt><dd>${ctx.escapeHtml(model.ownerRoleLabel)}</dd>
-      <dt>${ctx.tr("decisionMissingEvidence")}</dt><dd>${ctx.escapeHtml(model.requiredEvidence.join(" · ") || ctx.tr("noRequiredEvidence"))}</dd>
-      <dt>${ctx.tr("auditSummary")}</dt><dd>${model.traceRefs.length ? ctx.tr("traceBound") : ctx.tr("traceWillBind")}</dd>
-    </dl>
-  </details>`;
-}
-
-function auditDetailsVisible(ctx) {
-  const role = ctx.state?.currentActor?.role || "";
-  return Boolean(ctx.state?.debugSurface || ["admin", "support", "audit", "releaseOwner"].includes(role));
 }
 
 function operationAdmissionDecision(model, card, actionState) {
@@ -151,7 +115,7 @@ function operationRuntimeDecision(model, card, actionState) {
   return `work_item_${actionState.status}`;
 }
 
-export function resolveOperationItem(state) {
+export function resolveOperationItem(state, ctx = null) {
   const target = resolveOperationPanelTarget({
     workItemId: state.selectedWorkItemId,
     workspaceId: state.selectedWorkspace,
@@ -163,10 +127,40 @@ export function resolveOperationItem(state) {
   }
   const selected = target.workItem;
   const persistedWorkItemId = selected.workItemId;
+  const canonicalWorkspaceId = selected.workspaceId || state.selectedWorkspace || "";
+  const canonicalCardId = selected.cardId || state.selectedCardId || "";
+  const routeChanged = (persistedWorkItemId && state.selectedWorkItemId !== persistedWorkItemId) ||
+    (canonicalWorkspaceId && state.selectedWorkspace !== canonicalWorkspaceId) ||
+    (canonicalCardId && state.selectedCardId !== canonicalCardId);
   if (persistedWorkItemId && state.selectedWorkItemId !== persistedWorkItemId) {
     state.selectedWorkItemId = persistedWorkItemId;
   }
+  if (canonicalWorkspaceId) state.selectedWorkspace = canonicalWorkspaceId;
+  if (canonicalCardId) state.selectedCardId = canonicalCardId;
+  if (routeChanged) {
+    state.selectedCardIndex = -1;
+    clearStaleOperationRouteState(state, selected);
+    if (ctx) syncUrlFromState(ctx);
+  }
   return selected;
+}
+
+function clearStaleOperationRouteState(state, selected = {}) {
+  const selectedWorkspaceId = selected.workspaceId || "";
+  const selectedCardId = selected.cardId || "";
+  if (state.fieldValidation?.workspaceId !== selectedWorkspaceId || state.fieldValidation?.cardId !== selectedCardId) {
+    state.fieldValidation = null;
+  }
+  if (state.lastActionResult?.workspaceId && state.lastActionResult.workspaceId !== selectedWorkspaceId) {
+    state.lastActionResult = null;
+  }
+  if (state.lastActionResult?.cardId && state.lastActionResult.cardId !== selectedCardId) {
+    state.lastActionResult = null;
+  }
+  if (!state.fieldValidation && !state.lastActionResult) {
+    state.operationMessage = "";
+  }
+  state.operationRouteIssue = null;
 }
 
 function payloadHashFor(values, evidenceDrafts) {

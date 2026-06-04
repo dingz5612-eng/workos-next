@@ -3,6 +3,113 @@
   "generatedBy": "oam-cab-v1-phase-4",
   "status": "contract-only",
   "axis": "Definition -> OperationCase -> WorkItem -> CommandSubmission -> SliceCommandHandler -> DomainEvent / LedgerEntry -> ProcessManager -> Projection / Lens -> Surface",
+  "companyKernelScope": {
+    "eventDefinitions": [
+      {
+        "definitionId": "event.domainEvent.v1",
+        "ownerKernel": "EventStateSummaryKernel",
+        "eventType": "DomainEvent",
+        "refs": [
+          "docs/contracts/operations-runtime.schema.json",
+          "docs/contracts/fact-trace.schema.json"
+        ]
+      },
+      {
+        "definitionId": "event.ledgerEntry.v1",
+        "ownerKernel": "FinanceTruthKernel",
+        "eventType": "LedgerEntry",
+        "refs": [
+          "docs/business/finance/ledger-transaction-contract.yml",
+          "docs/business/finance/finance-truth-pipeline.yml"
+        ]
+      },
+      {
+        "definitionId": "event.projectionCommit.v1",
+        "ownerKernel": "EventStateSummaryKernel",
+        "eventType": "ProjectionCommit",
+        "refs": [
+          "docs/contracts/projection-contract.schema.json",
+          "docs/contracts/fact-trace.schema.json"
+        ]
+      }
+    ],
+    "stateDefinitions": [
+      {
+        "definitionId": "state.workItemLifecycle.v1",
+        "ownerKernel": "EventStateSummaryKernel",
+        "stateType": "WorkItemState",
+        "refs": [
+          "docs/contracts/operations-runtime.schema.json",
+          "docs/business/acceptance/b2-scenario-result-semantics.json"
+        ]
+      },
+      {
+        "definitionId": "state.admissionDecision.v1",
+        "ownerKernel": "AccountApplicationBoundaryKernel",
+        "stateType": "AdmissionDecision",
+        "refs": [
+          "docs/contracts/admission/admission-decision-contract.json",
+          "docs/contracts/admission/admission-contract.json"
+        ]
+      },
+      {
+        "definitionId": "state.releaseState.v1",
+        "ownerKernel": "TruthBoundaryKernel",
+        "stateType": "ReleaseState",
+        "refs": [
+          "artifacts/release-state/current-state.json",
+          "docs/contracts/admission/release-state-admission-matrix.json"
+        ]
+      }
+    ],
+    "summaryDefinitions": [
+      {
+        "definitionId": "summary.subjectSummary.v1",
+        "ownerKernel": "MasterObjectKernel",
+        "summaryType": "SubjectSummary",
+        "refs": [
+          "docs/business/shared-governance/subject-vehicle-truth.yml"
+        ]
+      },
+      {
+        "definitionId": "summary.vehicleSummary.v1",
+        "ownerKernel": "MasterObjectKernel",
+        "summaryType": "VehicleSummary",
+        "refs": [
+          "docs/business/shared-governance/subject-vehicle-truth.yml"
+        ]
+      },
+      {
+        "definitionId": "summary.runtimeProjection.v1",
+        "ownerKernel": "EventStateSummaryKernel",
+        "summaryType": "ProjectionSummary",
+        "refs": [
+          "docs/contracts/projection-contract.schema.json",
+          "docs/contracts/accommodation-lens-contract.json"
+        ]
+      }
+    ],
+    "metricDefinitions": [
+      {
+        "definitionId": "metric.depositLiabilityAccuracy.v1",
+        "ownerKernel": "BIKPIKernel",
+        "metricType": "FinanceKPI",
+        "refs": [
+          "docs/contracts/bi-kpi/bi-kpi-contract.json",
+          "docs/business/dormitory/metric-formula-contract.yml"
+        ]
+      },
+      {
+        "definitionId": "metric.balanceProjectionLagSeconds.v1",
+        "ownerKernel": "BIKPIKernel",
+        "metricType": "OperationalKPI",
+        "refs": [
+          "docs/contracts/bi-kpi/bi-kpi-contract.json",
+          "docs/business/dormitory/metrics-tree.yml"
+        ]
+      }
+    ]
+  },
   "definitions": [
     {
       "definitionId": "definition.roomSetup.v1",

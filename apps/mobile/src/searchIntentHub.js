@@ -70,8 +70,8 @@ function searchActionFor(item, ctx) {
     }
     return { type: "openWorkspace", label: ctx.tr?.("searchActionViewCase") || "查看案件", view: "workspace", reason: "" };
   }
-  if (item.resultType === "command" && (item.commandId === "startOperationsResourceSetup" || item.templateWorkspaceId)) {
-    return { type: item.commandId === "startOperationsResourceSetup" ? "startOperationsResourceSetup" : "startOperationsWorkspace", label: ctx.tr?.("startHandling") || "开始办理", view: "operationPanel", reason: "" };
+  if (item.resultType === "command" && item.templateWorkspaceId) {
+    return { type: "startOperationsWorkspace", label: ctx.tr?.("startHandling") || "开始办理", view: "operationPanel", reason: "" };
   }
   if (item.resultType === "workItem" && item.workItemId && resolveOperationPanelTarget(item, ctx.state || {}).canOpen) {
     return { type: "openWorkItem", label: safeLocalized(item.actionLabel, ctx) || ctx.tr?.("searchActionProcess") || "处理", view: "operationPanel", reason: "" };
@@ -159,7 +159,7 @@ function rankFor(item, query) {
     || query.split(/\s+/).filter(Boolean).some((part) => text.includes(part))
     || (roomSetupIntent && text.includes("房间"));
   if (!matched) return 0;
-  if (roomSetupIntent && (item.commandId === "startOperationsResourceSetup" || item.templateWorkspaceId === "W-STAY-RESOURCE" || item.workItemId || item.cardId === "roomSetup")) return 100;
+  if (roomSetupIntent && (item.templateWorkspaceId === "W-STAY-RESOURCE" || item.workItemId || item.cardId === "roomSetup")) return 100;
   if (roomSetupIntent && text.includes("房间")) return 90;
   if (item.workItemId) return 80;
   if (["room", "bed", "stay"].includes(item.resultType || item.type)) return 70;

@@ -24,6 +24,7 @@ public sealed partial class ProjectionRuntime
             }
 
             store.AppendAuditEventAndOutbox(workspaceEvent, $"operations:{message.MessageId}");
+            store.ApplySliceAggregate(workspaceEvent);
             outboxProjector.ProcessPending(state);
             return true;
         }

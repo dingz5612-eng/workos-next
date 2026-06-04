@@ -142,10 +142,14 @@ public sealed class OperationsRuntimeServiceTests
         var surface = service.GetWorkItemSurface(workItem.WorkItemId);
         var surfaceBusinessIds = surface!.Card!.Fields.Business.Select(item => item.Id).ToArray();
 
-        CollectionAssert.Contains(preparedBusinessIds, "bedNo");
-        CollectionAssert.Contains(preparedBusinessIds, "bedLabel");
+        CollectionAssert.Contains(preparedBusinessIds, "bedCount");
+        CollectionAssert.Contains(preparedBusinessIds, "bedLabels");
         CollectionAssert.Contains(preparedBusinessIds, "bedStatus");
+        CollectionAssert.DoesNotContain(preparedBusinessIds, "bedNo");
+        CollectionAssert.DoesNotContain(preparedBusinessIds, "bedLabel");
         CollectionAssert.DoesNotContain(preparedBusinessIds, "blockedReason");
+        CollectionAssert.DoesNotContain(surfaceBusinessIds, "bedNo");
+        CollectionAssert.DoesNotContain(surfaceBusinessIds, "bedLabel");
         CollectionAssert.DoesNotContain(surfaceBusinessIds, "blockedReason");
     }
 

@@ -115,7 +115,7 @@ ResetPostgres(connectionString);
 
     foreach (var (cardId, key, values) in new[]
     {
-        ("bedSetup", "resource-bed", new Dictionary<string, string> { ["roomId"] = "room-phase7-001", ["bedId"] = "bed-phase7-001", ["bedNo"] = "A302-01", ["bedType"] = "lower", ["bedStatus"] = "available" }),
+        ("bedSetup", "resource-bed", new Dictionary<string, string> { ["roomId"] = "room-phase7-001", ["roomNo"] = "A302", ["bedId"] = "bed-phase7-001", ["bedNo"] = "A302-01", ["bedCount"] = "4", ["bedLabels"] = "01, 02, 03, 04", ["bedType"] = "lower", ["bedStatus"] = "available" }),
         ("rateSetup", "resource-rate", new Dictionary<string, string> { ["roomId"] = "room-phase7-001", ["ratePlanId"] = "rate-phase7-001", ["dailyRatePerBed"] = "350", ["weeklyRatePerBed"] = "2100", ["monthlyRatePerBed"] = "9300", ["currency"] = "KGS", ["effectiveFrom"] = "2026-06-01T00:00:00Z" }),
         ("roomReadiness", "resource-readiness", new Dictionary<string, string> { ["roomId"] = "room-phase7-001", ["roomNo"] = "A302", ["bedCount"] = "4", ["availabilityStatus"] = "available", ["furnitureStatus"] = "complete", ["technicalState"] = "ready" }),
         ("roomBlock", "resource-block", new Dictionary<string, string> { ["roomId"] = "room-phase7-001", ["roomNo"] = "A302", ["resourceScope"] = "room", ["blockReason"] = "maintenance", ["blockStartAt"] = "2026-06-02T09:00:00Z", ["expectedReleaseAt"] = "2026-06-02T18:00:00Z" }),
@@ -125,6 +125,8 @@ ResetPostgres(connectionString);
         Assert(runtime.Confirm("W-STAY-RESOURCE", cardId, Human(key, values), operatorToken).Status == ConfirmStatus.Confirmed, $"{cardId} confirmation should pass");
         runtime.ProcessPendingOutbox();
     }
+    Assert(ScalarInt(connectionString, "select count(*) from accommodation_beds where room_id = 'room-phase7-001'") == 4, "four-bed room setup must persist four bed aggregates from one bedSetup WorkItem");
+    ValidateOperationsOutboxProjectionResourceAggregates(runtime, connectionString);
 
     foreach (var cardId in new[] { "lead", "booking", "resident", "bedAssign", "tariff", "depositRequirement", "payment", "finance", "checkin", "operatingDashboard" })
     {
@@ -489,6 +491,7 @@ ResetPostgres(connectionString);
     {
         ["taskId"] = "task-phase3-001",
         ["taskType"] = "cleaning",
+        ["resourceScope"] = "bed",
         ["roomId"] = "room-phase7-001",
         ["bedId"] = "bed-phase7-001",
         ["blocksAvailability"] = "true"
@@ -514,12 +517,25 @@ ResetPostgres(connectionString);
     Assert(runtime.Confirm("W-STAY-SERVICE-TASK", "serviceTaskComplete", serviceTaskCompleteRequest with { EvidenceIds = new[] { completionEvidenceId } }, operatorToken).Status == ConfirmStatus.Confirmed, "service task complete should pass without releasing room");
     runtime.ProcessPendingOutbox();
 
+    var releaseWithoutTask = AssertNoSideEffects(connectionString, () => runtime.Confirm("W-STAY-SERVICE-TASK", "roomReleaseAfterService", Human("service-release-without-task", new Dictionary<string, string>
+    {
+        ["resourceScope"] = "bed",
+        ["roomId"] = "room-phase7-001",
+        ["bedId"] = "bed-phase7-001"
+    }), operatorToken));
+    Assert(releaseWithoutTask.Status == ConfirmStatus.Invalid, "service release must bind to a concrete service task");
+    Assert(releaseWithoutTask.Reason == "service_task_required_for_release", "service release without task must use a stable decision code");
+
     var releaseBeforeVerify = AssertNoSideEffects(connectionString, () => runtime.Confirm("W-STAY-SERVICE-TASK", "roomReleaseAfterService", Human("service-release-before-verify", new Dictionary<string, string>
     {
         ["taskId"] = "task-phase3-001",
-        ["serviceTaskVerified"] = "false"
+        ["serviceTaskVerified"] = "true",
+        ["resourceScope"] = "bed",
+        ["roomId"] = "room-phase7-001",
+        ["bedId"] = "bed-phase7-001"
     }), operatorToken));
     Assert(releaseBeforeVerify.Status == ConfirmStatus.Forbidden, "service release must require verification first");
+    Assert(releaseBeforeVerify.Reason == "service_task_verification_required_before_release", "client-provided verification flags must not bypass ServiceTaskVerified events");
 
     Assert(runtime.Confirm("W-STAY-SERVICE-TASK", "serviceTaskVerify", Human("service-task-verify", new Dictionary<string, string>
     {
@@ -531,13 +547,45 @@ ResetPostgres(connectionString);
     Assert(runtime.Confirm("W-STAY-SERVICE-TASK", "roomReleaseAfterService", Human("service-release-after-verify", new Dictionary<string, string>
     {
         ["taskId"] = "task-phase3-001",
-        ["serviceTaskVerified"] = "true",
+        ["resourceScope"] = "bed",
         ["roomId"] = "room-phase7-001",
         ["bedId"] = "bed-phase7-001"
     }), operatorToken).Status == ConfirmStatus.Confirmed, "service release request should pass after verification");
     runtime.ProcessPendingOutbox();
     Assert(CountRows(connectionString, "accommodation_beds") == bedCountBeforeServiceTask, "ServiceTask request must be consumed without creating duplicate BedStatus facts");
     Assert(ScalarText(connectionString, "select status from accommodation_beds where bed_id = 'bed-phase7-001'") == "available", "ResourceSetup must consume service release request and restore BedStatus");
+
+    var roomMaintenanceRequest = Human("service-task-room-maintenance", new Dictionary<string, string>
+    {
+        ["taskId"] = "task-phase3-room-001",
+        ["taskType"] = "repair",
+        ["resourceScope"] = "room",
+        ["roomId"] = "room-phase7-001",
+        ["blocksAvailability"] = "true"
+    });
+    var roomMaintenanceEvidenceId = EvidenceFor(runtime, roomMaintenanceRequest, "W-STAY-SERVICE-TASK", "serviceTaskCreate");
+    var roomMaintenanceResult = runtime.Confirm("W-STAY-SERVICE-TASK", "serviceTaskCreate", roomMaintenanceRequest with { EvidenceIds = new[] { roomMaintenanceEvidenceId } }, operatorToken);
+    Assert(roomMaintenanceResult.Status == ConfirmStatus.Confirmed, $"room-level maintenance should block the room without requiring a bed: {roomMaintenanceResult.Status}:{roomMaintenanceResult.Reason}");
+    runtime.ProcessPendingOutbox();
+    Assert(CountRows(connectionString, "accommodation_beds") == bedCountBeforeServiceTask, "Room-level maintenance must not create duplicate Bed facts");
+    Assert(ScalarText(connectionString, "select status from accommodation_rooms where room_id = 'room-phase7-001'") == "blocked", "Room-level maintenance must mark the room unavailable");
+
+    Assert(runtime.Confirm("W-STAY-SERVICE-TASK", "serviceTaskVerify", Human("service-task-room-verify", new Dictionary<string, string>
+    {
+        ["taskId"] = "task-phase3-room-001",
+        ["verificationResult"] = "approved"
+    }), operatorToken).Status == ConfirmStatus.Confirmed, "room-level service task verify should pass");
+    runtime.ProcessPendingOutbox();
+
+    var roomReleaseResult = runtime.Confirm("W-STAY-SERVICE-TASK", "roomReleaseAfterService", Human("service-room-release-after-verify", new Dictionary<string, string>
+    {
+        ["taskId"] = "task-phase3-room-001",
+        ["resourceScope"] = "room",
+        ["roomId"] = "room-phase7-001"
+    }), operatorToken);
+    Assert(roomReleaseResult.Status == ConfirmStatus.Confirmed, $"room-level service release should restore the room without requiring a bed: {roomReleaseResult.Status}:{roomReleaseResult.Reason}");
+    runtime.ProcessPendingOutbox();
+    Assert(ScalarText(connectionString, "select status from accommodation_rooms where room_id = 'room-phase7-001'") == "available", "Room-level service release must restore room availability");
 
     var expenseWithoutEvidence = AssertNoSideEffects(connectionString, () => runtime.Confirm("W-STAY-EXPENSE-LEDGER", "expenseRecord", Human("expense-without-evidence", new Dictionary<string, string>
     {
@@ -783,7 +831,7 @@ ResetPostgres(connectionString);
     Assert(reloaded.Events.All(item => !string.IsNullOrWhiteSpace(item.CorrelationId)), "audit events must include correlationId");
     Assert(reloaded.Events.All(item => !string.IsNullOrWhiteSpace(item.RequestId)), "audit events must include requestId");
     Assert(reloaded.Events.SelectMany(item => item.Payload.Keys).All(IsStableFactKey), "audit event payload keys must be canonical field ids, not localized labels");
-    AssertEventSequence(reloaded.Events.Where(item => item.WorkspaceId == "W-STAY-RESOURCE").Select(item => item.EventType).ToArray(), "Accommodation.RoomConfigured", "Accommodation.BedConfigured", "Accommodation.RateConfigured", "Accommodation.RoomReadinessChanged", "Accommodation.RoomBlocked", "Accommodation.BedBlocked", "Accommodation.RoomReleased", "Accommodation.BedReleased");
+    AssertEventSequence(reloaded.Events.Where(item => item.WorkspaceId == "W-STAY-RESOURCE" && item.EventType != "OperationsWorkItemConfirmed").Select(item => item.EventType).ToArray(), "Accommodation.RoomConfigured", "Accommodation.BedConfigured", "Accommodation.RateConfigured", "Accommodation.RoomReadinessChanged", "Accommodation.RoomBlocked", "Accommodation.BedBlocked", "Accommodation.RoomReleased", "Accommodation.BedReleased");
     AssertEventSequence(reloaded.Events.Where(item => item.WorkspaceId == "W-STAY-CHECKIN").Select(item => item.EventType).ToArray(), "LeadCaptured", "BookingConfirmed", "ResidentRegistered", "BedAssigned", "TariffAssigned", "DepositRequired", "PaymentRecordedByFrontDesk", "PaymentConfirmedByFinance", "StayCheckedIn", "OperatingMetricsReviewed");
     AssertEventSequence(reloaded.Events.Where(item => item.WorkspaceId == "W-STAY-LEAD-RESERVATION").Select(item => item.EventType).ToArray(), "Accommodation.LeadCaptured", "Accommodation.LeadStatusChanged", "Accommodation.ReservationCreated", "Accommodation.ReservationCancelled", "Accommodation.ReservationExpired", "Accommodation.ReservationConvertedToStay");
     AssertEventSequence(reloaded.Events.Where(item => item.WorkspaceId == "W-STAY-LIFECYCLE").Select(item => item.EventType).ToArray(), "Accommodation.ResidentProfileCaptured", "Accommodation.ResidentCheckedIn", "Accommodation.BedAssigned", "Accommodation.StayChargeAssessed", "Accommodation.StayExtended", "Accommodation.StayRateChanged");
@@ -1126,7 +1174,8 @@ static void ValidateFieldContracts(WorkspaceProjection workspace)
     if (bed is not null)
     {
         Assert(Field(bed, "所属房间").Ui.Control == "searchSelect", "所属房间 must select an existing room");
-        Assert(Field(bed, "床位号").Ui.Control == "text", "床位号 must be text on bed creation");
+        Assert(Field(bed, "床位数").Ui.Control == "number", "床位数 must be numeric on bed setup");
+        Assert(Field(bed, "床位标签").Ui.Control == "textarea", "床位标签 must capture the room bed label list");
     }
 }
 
@@ -1230,9 +1279,15 @@ static void ValidateAccommodationWorkOS20Contracts(ProjectionEnvelope projection
     Assert(!checkoutSettlement.Cards.SelectMany(card => card.Events).Any(item => item.EventType == "Accommodation.DepositSettledForCheckout"), "checkout settlement must not emit actual deposit settlement transactions");
 
     var serviceTask = projection.Workspaces.Single(item => item.Id == "W-STAY-SERVICE-TASK");
+    var serviceTaskCreate = serviceTask.Cards.Single(card => card.Id == "serviceTaskCreate");
+    Assert(serviceTaskCreate.Fields.Business.Any(field => field.Label["zh-CN"] == "服务范围"), "serviceTaskCreate must declare service scope before room or bed maintenance");
     var serviceTaskComplete = serviceTask.Cards.Single(card => card.Id == "serviceTaskComplete");
     Assert(!serviceTaskComplete.Fields.Business.Any(field => field.Label["zh-CN"] == "完成后释放房间"), "serviceTaskComplete must not release room directly");
     var roomReleaseAfterService = serviceTask.Cards.Single(card => card.Id == "roomReleaseAfterService");
+    Assert(roomReleaseAfterService.Fields.Business.Any(field => field.Label["zh-CN"] == "任务"), "roomReleaseAfterService must bind release to a concrete service task");
+    Assert(roomReleaseAfterService.Fields.Business.Any(field => field.Label["zh-CN"] == "释放范围"), "roomReleaseAfterService must declare release scope before restoring availability");
+    Assert(roomReleaseAfterService.Fields.Business.Any(field => field.Label["zh-CN"] == "恢复可售时间"), "roomReleaseAfterService must declare the saleability restoration time");
+    Assert(!roomReleaseAfterService.Fields.Business.Any(field => field.Label["zh-CN"] == "释放床位"), "roomReleaseAfterService must not keep a checkout-style single release-bed flag");
     Assert(roomReleaseAfterService.Checks.Any(check => check.Label["zh-CN"].Contains("服务任务已验收")), "roomReleaseAfterService must require ServiceTaskVerified first");
     Assert(roomReleaseAfterService.Events.All(item => item.EventType.EndsWith("Requested", StringComparison.Ordinal)), "service task release card must request resource release, not mutate bed status");
 }
@@ -2028,6 +2083,7 @@ static void ValidateProjectionContractFiles()
         "payment_deposit_purpose_forbidden",
         "checkout_deposit_settlement_required",
         "checkout_start_required_before_bed_release",
+        "service_task_required_for_release",
         "service_task_verification_required_before_release",
         "expense_evidence_required",
         "period_deposit_revenue_forbidden",
@@ -2214,6 +2270,74 @@ static void ValidateOperationsUnitOfWork(string connectionString)
     Assert(trace.WorkItemRef == "work-runtime-contract", "FactTrace must link work item");
     Assert(trace.SubmissionRef == committed.SubmissionId, "FactTrace must link submission");
     Assert(trace.DomainEventRefs.Contains("evt-runtime-uow-001"), "FactTrace must link domain event");
+}
+
+static void ValidateOperationsOutboxProjectionResourceAggregates(ProjectionRuntime runtime, string connectionString)
+{
+    var workspaceId = "W-STAY-RESOURCE";
+    var roomId = "room-operations-outbox-401";
+    var roomNo = "OPS401";
+    var occurredAt = DateTimeOffset.Parse("2026-06-04T12:30:00Z");
+    var roomMessage = new OperationsOutboxMessage(
+        "out-ops-resource-room",
+        "evt-ops-resource-room",
+        "tenant-runtime-contract",
+        "case-ops-resource",
+        "wi-ops-resource-room",
+        "sub-ops-resource-room",
+        "operations.work_item.confirmed",
+        new Dictionary<string, object>
+        {
+            ["workspaceId"] = workspaceId,
+            ["cardId"] = "roomSetup",
+            ["submissionId"] = "sub-ops-resource-room",
+            ["actorId"] = "operator-runtime",
+            ["actorRole"] = "operator",
+            ["fieldValues"] = new Dictionary<string, object>
+            {
+                ["roomId"] = roomId,
+                ["roomNo"] = roomNo,
+                ["roomType"] = "four_bed",
+                ["bedCount"] = "4",
+                ["genderPolicy"] = "unrestricted",
+                ["furnitureStatus"] = "complete",
+                ["technicalState"] = "ready"
+            }
+        },
+        occurredAt);
+    var bedMessage = new OperationsOutboxMessage(
+        "out-ops-resource-beds",
+        "evt-ops-resource-beds",
+        "tenant-runtime-contract",
+        "case-ops-resource",
+        "wi-ops-resource-bed",
+        "sub-ops-resource-bed",
+        "operations.work_item.confirmed",
+        new Dictionary<string, object>
+        {
+            ["workspaceId"] = workspaceId,
+            ["cardId"] = "bedSetup",
+            ["submissionId"] = "sub-ops-resource-bed",
+            ["actorId"] = "operator-runtime",
+            ["actorRole"] = "operator",
+            ["fieldValues"] = new Dictionary<string, object>
+            {
+                ["roomId"] = roomId,
+                ["roomNo"] = roomNo,
+                ["bedCount"] = "4",
+                ["bedLabels"] = "01, 02, 03, 04",
+                ["bedType"] = "lower",
+                ["bedStatus"] = "available"
+            }
+        },
+        occurredAt.AddMinutes(1));
+
+    Assert(runtime.ProjectOperationsOutboxMessage(roomMessage), "Operations room outbox projection should be accepted");
+    Assert(runtime.ProjectOperationsOutboxMessage(bedMessage), "Operations bed outbox projection should be accepted");
+    Assert(ScalarText(connectionString, "select event_type from audit_events where event_id = 'evt-ops-resource-beds'") == "OperationsWorkItemConfirmed", "Operations audit event must remain the user-action proof event");
+    Assert(ScalarInt(connectionString, $"select count(*) from accommodation_rooms where room_id = '{roomId}'") == 1, "Operations roomSetup outbox projection must write the room aggregate");
+    Assert(ScalarInt(connectionString, $"select count(*) from accommodation_beds where room_id = '{roomId}'") == 4, "Operations bedSetup outbox projection must expand four bed labels into four bed aggregates");
+    Assert(ScalarText(connectionString, $"select string_agg(bed_no, ',' order by bed_no) from accommodation_beds where room_id = '{roomId}'") == "OPS401-01,OPS401-02,OPS401-03,OPS401-04", "Operations bedSetup outbox projection must preserve generated labels as bed numbers");
 }
 
 static void ValidateGeneratedDtos()

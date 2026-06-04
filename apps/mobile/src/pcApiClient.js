@@ -19,6 +19,68 @@ export async function fetchProductionObservability() {
   return response.json();
 }
 
+export async function fetchAccountUsers() {
+  const response = await pcFetch(runtimeApiPaths.accountUsers, { signal: AbortSignal.timeout(2400) });
+  if (!response.ok) throw await apiError("account_users_failed", response);
+  return response.json();
+}
+
+export async function fetchAccountAudit() {
+  const response = await pcFetch(runtimeApiPaths.accountAudit, { signal: AbortSignal.timeout(2400) });
+  if (!response.ok) throw await apiError("account_audit_failed", response);
+  return response.json();
+}
+
+export async function fetchDeviceSessions() {
+  const response = await pcFetch(runtimeApiPaths.deviceSessions, { signal: AbortSignal.timeout(2400) });
+  if (!response.ok) throw await apiError("device_sessions_failed", response);
+  return response.json();
+}
+
+export async function createAccountUser(body) {
+  const response = await pcFetch(runtimeApiPaths.accountUsers, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+    signal: AbortSignal.timeout(6400)
+  });
+  if (!response.ok) throw await apiError("account_user_create_failed", response);
+  return response.json();
+}
+
+export async function disableAccountUser(userId) {
+  const response = await pcFetch(runtimeApiPaths.accountUserDisable(encodeURIComponent(userId)), {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({}),
+    signal: AbortSignal.timeout(4200)
+  });
+  if (!response.ok) throw await apiError("account_user_disable_failed", response);
+  return response.json();
+}
+
+export async function resetAccountUserPassword(userId, password) {
+  const response = await pcFetch(runtimeApiPaths.accountUserResetPassword(encodeURIComponent(userId)), {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ password }),
+    signal: AbortSignal.timeout(4200)
+  });
+  if (!response.ok) throw await apiError("account_user_password_reset_failed", response);
+  return response.json();
+}
+
+export async function revokeRuntimeDeviceSession(deviceId) {
+  const response = await pcFetch(runtimeApiPaths.revokeDeviceSession(deviceId), {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({}),
+    signal: AbortSignal.timeout(4200)
+  });
+  if (!response.ok) throw await apiError("device_session_revoke_failed", response);
+  return response.json();
+}
+
 export async function previewBankStatementImport(body) {
   const response = await pcFetch(runtimeApiPaths.bankStatementImportPreview, {
     method: "POST",

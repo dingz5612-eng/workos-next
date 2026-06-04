@@ -41,6 +41,93 @@ input. ProjectionRuntime may remain a projection/Lens compatibility facade, but
 it is not the command boundary, the top-level architecture, or a business write
 extension point.
 
+## Unified Surface Architecture Rule
+
+All user-visible pages must use the active OAM-ACF v8 / Operations Runtime
+surface architecture, shared shell, shared route guards, and shared named
+experience components. A page may specialize data, permissions, readonly state,
+or business actions, but it must not keep a page-private legacy shell when a
+current shared component exists.
+
+Non-current architecture is a P0 defect. When a surface is found using an old
+page-specific style, deprecated component, compatibility flow, or retired write
+model, the affected path must be root-cause rewritten onto the current
+architecture and the obsolete implementation must be deleted in the same impact
+scope. It is forbidden to hide deprecated UI behind a new page, copy old layout
+logic into a new component, or preserve retired compatibility code for visual
+convenience.
+
+Frontend Experience System is the mandatory execution system for user-visible
+frontend work. It has five required layers: shared components, Surface contract,
+multilingual dictionary, state/action contract, and real browser screenshot
+evidence. Pages may specialize business content, but not architecture. New or
+discovered old-architecture pages must be rewritten onto the current Frontend
+Experience System and the obsolete implementation must be deleted rather than
+wrapped, hidden, or kept as fallback.
+
+Step-page experience parity is mandatory. New active step, readonly completed
+step, and append-only correction step pages must share the same step rail,
+direct `OperationCardShell`, state/check panel, action hierarchy, feedback
+entry, and Admission/Runtime decision markers. They must not keep a
+page-private outer `intent-card` wrapper, and readonly completed records must
+not keep a `workspace-control` visual wrapper. When one mode improves, sibling
+modes must be checked and aligned in the same Frontend Experience System pass;
+users must not have to enumerate every page one by one.
+
+Post-submit navigation is part of the Operations Runtime surface contract. When
+an active Operations WorkItem confirm succeeds, the frontend must auto-advance
+to the next actionable persisted WorkItem in the same workspace when one exists.
+Completed readonly records are explicit review surfaces or terminal fallback
+surfaces, not the normal continuation path after every submit. A
+`returnCurrentWorkItem` button must not be required for ordinary post-submit
+continuation.
+
+Step status color is semantic language, not decoration. `OperationStepRail` must
+distinguish completed, ready, in-progress, not-started, and blocked states with
+stable visual tokens and machine-readable state markers, and the current step
+must have a stronger focus ring across new, readonly, and correction pages.
+Append-only correction WorkItems must use an explicit correction visual state
+and marker; they must not display as ordinary ready blue. Terminal completed
+records remain completed as the primary state even when a correction marker
+exists; only the active append-only correction WorkItem displays correction as
+the primary state.
+
+Resource setup bed cardinality is a Definition and Truth Boundary rule. When a
+room is configured with capacity or bedCount greater than one, `bedSetup` must
+confirm the room's bed list in one Operations WorkItem using `roomId`,
+`bedCount`, and `bedLabels`; it must not regress to one manual bed-only input.
+The ResourceSetup slice must expand that confirmation into one Bed fact per
+label, and room-beds block/release scope must apply to all beds in the room.
+
+Service task resource availability scope is mandatory. `roomSetup` and
+`bedSetup` define initial resource truth only; maintenance, cleaning, or service
+work that blocks saleability must enter `serviceTaskCreate` with `resourceScope`
+(`room`, `bed`, or `room_beds`) and `blocksAvailability=true`, then release
+through `roomReleaseAfterService` with `taskId`, the matching `resourceScope`,
+and a backend-approved `ServiceTaskVerified` event for the same task. A
+client-provided `serviceTaskVerified` field is not proof and must not bypass the
+event-state boundary. ServiceTask may request availability changes, but
+ResourceSetup remains the only BedStatus/RoomStatus fact owner. A room-scoped
+service task must not require or mutate a single bed; a bed-scoped service task
+must not mutate the whole room; `room_beds` applies to every bed in that room.
+
+Account / User / Actor Kernel is mandatory for internal operations identity.
+Username, nickname, department, business line, role, capability, account status,
+password credential, tenant, session, and device trust are backend truth
+objects. The login page may only accept username and password. It must not let a
+user self-select department, business line, role, capability, tenant, or device
+trust. User and permission management belongs in the PC Governance plane and
+requires backend session capabilities such as `account.user.manage` or
+`pc.governance.admin`; all account mutations must append account audit evidence.
+
+Admission Kernel must authorize Operations Confirm, Search, PC pages, finance
+actions, release actions, session revoke, and device trust from backend session
+capabilities, not frontend state, URL parameters, local storage, or request-body
+authority fields. Development demo accounts are allowed only in local
+Development when explicitly enabled; production and pilot runtimes must use the
+real account table with versioned slow password hashes and must not seed or
+accept development-only accounts.
+
 ## Batch Gate Rule
 
 P0 WON-18 gate evidence must be green before any business batch starts. If CI or

@@ -50,6 +50,8 @@ export function createInitialState() {
       domainEvents: [],
       commandSubmissions: [],
       releaseControlAudits: [],
+      accountUsers: [],
+      accountAudit: [],
       exportAudits: [],
       exports: [],
       capabilities: [],

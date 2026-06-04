@@ -31,6 +31,7 @@
     "payment_deposit_purpose_forbidden",
     "checkout_deposit_settlement_required",
     "checkout_start_required_before_bed_release",
+    "service_task_required_for_release",
     "service_task_verification_required_before_release",
     "expense_evidence_required",
     "period_deposit_revenue_forbidden",
@@ -98,8 +99,8 @@
     },
     {
       "id": "accommodation-boundary-policy",
-      "description": "Checkout and service slices may request settlement or release only after the required upstream runtime facts are confirmed.",
-      "denies": "checkout_deposit_settlement_required,checkout_start_required_before_bed_release,service_task_verification_required_before_release"
+      "description": "Checkout and service slices may request settlement or release only after the required upstream runtime facts are confirmed. Service release must bind to a concrete taskId and a matching approved ServiceTaskVerified event; client-provided verification flags are not proof.",
+      "denies": "checkout_deposit_settlement_required,checkout_start_required_before_bed_release,service_task_required_for_release,service_task_verification_required_before_release"
     },
     {
       "id": "period-analytics-policy",

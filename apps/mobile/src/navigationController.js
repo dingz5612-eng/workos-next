@@ -92,6 +92,7 @@ export function openOperationPanel(workItemId, ctx, fallback = {}) {
   }
   const selected = target.workItem;
   ctx.state.operationRouteIssue = null;
+  clearOperationStateForWorkItemChange(ctx, selected);
   clearStaleRouteBlocker(ctx, selected);
   clearTransientOperationMessage(ctx);
   ctx.state.selectedWorkItemId = selected.workItemId;
@@ -157,10 +158,6 @@ async function recordSearchIntentEvent(ctx, query) {
   } catch {
     // Search analytics must not block the user's search flow.
   }
-}
-
-export async function startOperationsResourceSetupCommand(ctx) {
-  return startOperationsWorkspaceCommand(ctx, "W-STAY-RESOURCE", "roomSetup");
 }
 
 export async function startOperationsWorkspaceCommand(ctx, templateWorkspaceId, firstCardId = "") {
@@ -268,6 +265,27 @@ function clearStaleRouteBlocker(ctx, selected = {}) {
     ctx.state.fieldValidation = null;
     ctx.state.operationMessage = "";
   }
+}
+
+function clearOperationStateForWorkItemChange(ctx, selected = {}) {
+  const currentKey = operationRouteKey({
+    workItemId: ctx.state.selectedWorkItemId,
+    workspaceId: ctx.state.selectedWorkspace,
+    cardId: ctx.state.selectedCardId
+  });
+  const nextKey = operationRouteKey(selected);
+  if (!currentKey || currentKey === nextKey) return;
+  ctx.state.operationMessage = "";
+  ctx.state.fieldValidation = null;
+  ctx.state.lastActionResult = null;
+}
+
+function operationRouteKey(value = {}) {
+  return [
+    value.workItemId || value.work_item_id || "",
+    value.workspaceId || value.workspace_id || "",
+    value.cardId || value.card_id || value.payload?.cardId || value.Payload?.cardId || ""
+  ].join(":");
 }
 
 function isReadonlyProjectionRecord(workspace = null, cardId = "") {

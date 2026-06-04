@@ -120,7 +120,7 @@ function activeCommands(workspaces, completedQueue, ctx) {
     .filter((command) => !query || command.keywords.some((keyword) => query.toLocaleLowerCase().includes(keyword.toLocaleLowerCase())))
     .map((command) => ({
       resultType: "command",
-      commandId: command.templateWorkspaceId === "W-STAY-RESOURCE" ? "startOperationsResourceSetup" : "startOperationsWorkspace",
+      commandId: "startOperationsWorkspace",
       templateWorkspaceId: command.templateWorkspaceId,
       firstCardId: command.firstCardId,
       title: command.title,
@@ -235,9 +235,6 @@ function searchAction(result, ctx) {
   }
   if (result.actionType === "openLearning") {
     return `<button data-view="${ctx.escapeAttr(result.view)}" data-learning-id="${ctx.escapeAttr(result.learningId)}">${ctx.escapeHtml(result.actionLabel)}</button>`;
-  }
-  if (result.actionType === "startOperationsResourceSetup") {
-    return `<button data-start-operations-resource-setup="true">${ctx.escapeHtml(result.actionLabel)}</button>`;
   }
   if (result.actionType === "startOperationsWorkspace") {
     return `<button data-start-operations-workspace="${ctx.escapeAttr(result.templateWorkspaceId)}" data-first-card-id="${ctx.escapeAttr(result.firstCardId)}">${ctx.escapeHtml(result.actionLabel)}</button>`;

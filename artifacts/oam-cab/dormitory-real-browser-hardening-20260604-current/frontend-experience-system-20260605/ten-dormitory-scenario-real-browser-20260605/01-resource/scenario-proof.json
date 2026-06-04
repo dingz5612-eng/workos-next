@@ -1,0 +1,313 @@
+{
+  "scenario": {
+    "id": "resource",
+    "workspace": "W-STAY-RESOURCE",
+    "firstCard": "roomSetup",
+    "title": "新增住宿房源",
+    "resourceSpecial": true
+  },
+  "screenshots": {
+    "initial": {
+      "top": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\ten-dormitory-scenario-real-browser-20260605\\01-resource\\01-initial-01-top.png",
+      "bottom": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\ten-dormitory-scenario-real-browser-20260605\\01-resource\\01-initial-02-bottom.png",
+      "metrics": {
+        "scrollHeight": 1773,
+        "innerHeight": 855,
+        "scrollY": 0
+      }
+    },
+    "negative": {
+      "top": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\ten-dormitory-scenario-real-browser-20260605\\01-resource\\02-negative-empty-submit-01-top.png",
+      "bottom": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\ten-dormitory-scenario-real-browser-20260605\\01-resource\\02-negative-empty-submit-02-bottom.png",
+      "metrics": {
+        "scrollHeight": 1946,
+        "innerHeight": 855,
+        "scrollY": 0
+      }
+    },
+    "filled": {
+      "top": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\ten-dormitory-scenario-real-browser-20260605\\01-resource\\03-filled-before-submit-01-top.png",
+      "bottom": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\ten-dormitory-scenario-real-browser-20260605\\01-resource\\03-filled-before-submit-02-bottom.png",
+      "metrics": {
+        "scrollHeight": 1739,
+        "innerHeight": 855,
+        "scrollY": 0
+      }
+    },
+    "positive": {
+      "top": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\ten-dormitory-scenario-real-browser-20260605\\01-resource\\04-positive-after-submit-01-top.png",
+      "bottom": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\ten-dormitory-scenario-real-browser-20260605\\01-resource\\04-positive-after-submit-02-bottom.png",
+      "metrics": {
+        "scrollHeight": 1591,
+        "innerHeight": 855,
+        "scrollY": 0
+      }
+    }
+  },
+  "assertions": [
+    {
+      "id": "opened_operation_panel",
+      "passed": true
+    },
+    {
+      "id": "opened_expected_workspace_template",
+      "passed": true
+    },
+    {
+      "id": "opened_expected_card",
+      "passed": true
+    },
+    {
+      "id": "submit_button_visible_for_negative",
+      "passed": true
+    },
+    {
+      "id": "empty_submit_blocked_or_marked",
+      "passed": true
+    },
+    {
+      "id": "submit_button_visible_for_positive",
+      "passed": true
+    },
+    {
+      "id": "positive_not_required_field_missing",
+      "passed": false
+    },
+    {
+      "id": "positive_reaches_done_or_next_step_or_committed",
+      "passed": true
+    },
+    {
+      "id": "no_legacy_workspace_card_write",
+      "passed": true
+    },
+    {
+      "id": "uses_operations_confirm_for_positive_or_negative",
+      "passed": true
+    }
+  ],
+  "requests": [
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/workspaces"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/operations/work-items"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/lenses/home-surface"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/lenses/learning-catalog"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/lenses/accommodation/room-readiness"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/lenses/accommodation/bed-inventory"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/lenses/accommodation/rate-plan"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/lenses/accommodation/room-revenue-potential"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/lenses/accommodation/today-operations"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/lenses/accommodation/active-stay"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/lenses/accommodation/deposit-liability"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/lenses/accommodation/payment-risk"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/lenses/accommodation/stay-balance"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/lenses/accommodation/lead-funnel"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/lenses/accommodation/checkout-queue"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/lenses/accommodation/service-task-queue"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/lenses/accommodation/expense-analytics"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/lenses/accommodation/period-performance"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/lenses/accommodation/risk-command"
+    },
+    {
+      "method": "POST",
+      "url": "http://127.0.0.1:5191/api/operations/workspaces/start"
+    },
+    {
+      "method": "POST",
+      "url": "http://127.0.0.1:5191/api/evidence/drafts"
+    },
+    {
+      "method": "POST",
+      "url": "http://127.0.0.1:5191/api/evidence/drafts"
+    },
+    {
+      "method": "POST",
+      "url": "http://127.0.0.1:5191/api/evidence/evd-2a27ba6c5d0b4ef9888bb3d981e7509b/attachments"
+    },
+    {
+      "method": "POST",
+      "url": "http://127.0.0.1:5191/api/evidence/evd-dc2e18f09fa8481383c4ea8ee996d3ff/attachments"
+    },
+    {
+      "method": "POST",
+      "url": "http://127.0.0.1:5191/api/operations/work-items/wi-d9d8c1f2f28d253ed2f2652beb135fdaa17611c14df9ec257f1cf0b833da133a/prepare"
+    },
+    {
+      "method": "POST",
+      "url": "http://127.0.0.1:5191/api/operations/work-items/wi-d9d8c1f2f28d253ed2f2652beb135fdaa17611c14df9ec257f1cf0b833da133a/confirm"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/operations/work-items?workspaceId=W-STAY-RESOURCE-20260604220604-733e6974124248d0b4ba2da124a62001"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/workspaces"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/workspaces"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/operations/work-items"
+    }
+  ],
+  "startMs": 3340,
+  "initial": {
+    "url": "http://127.0.0.1:5175/?view=operationPanel&lang=zh-CN&device=mobile&workspace=W-STAY-RESOURCE-20260604220604-733e6974124248d0b4ba2da124a62001&card=roomSetup&workItem=wi-d9d8c1f2f28d253ed2f2652beb135fdaa17611c14df9ec257f1cf0b833da133a",
+    "title": "",
+    "cardTitle": "房间配置卡",
+    "actionText": "提交处理",
+    "submitCount": 1,
+    "actionState": "primary-action ready",
+    "missingFields": [],
+    "resultText": "",
+    "visibleText": "WorkOSNext\n治理管理员\n已连接\n中文\nРусский\nКыргызча\n我要创建住宿资源\n第 1/6 步\n可办理\n1\n2\n3\n4\n5\n6\n本步要做\n房间配置卡\n怎么做\n\n把这一步需要的信息填完整。不能提交时，页面会直接标出还差哪一项。\n\n填写信息\n楼栋\n必填\n请输入本步需要的信息。\n房间号\n必填\n请输入本步需要的信息。\n房型\n必填\n单人间\n双人间\n四人间\n六人间\n请选择一个业务选项。\n床位数\n必填\n请输入数字。\n性别策略\n必填\n男生房\n女生房\n混住\n未限制\n请选择一个业务选项。\n家具状态\n必填\n家具齐全\n部分缺失\n缺失\n待配置\n请选择一个业务选项。\n技术状态\n必填\n可入住\n未准备\n需维修\n请选择一个业务选项。\n房间备注\n请输入本步需要的信息。\n提交前检查\n\n页面会先看信息是否完整、材料是否齐全、这一步是否可以提交；有问题会直接标出来。\n\n还需填写: 楼栋 · 房间号 · 床位数\n材料核对: 房间是否重复 · 记录办理人\n提交状态: 暂不能提交: 还需填写\n业务规则: 房间号未重复 · 床位数有效 · 房间配置完整\n保存草稿\n提交处理\n反馈\n今天\n工作\n搜索\n我的"
+  },
+  "negativeMs": 1483,
+  "negative": {
+    "url": "http://127.0.0.1:5175/?view=operationPanel&lang=zh-CN&device=mobile&workspace=W-STAY-RESOURCE-20260604220604-733e6974124248d0b4ba2da124a62001&card=roomSetup&workItem=wi-d9d8c1f2f28d253ed2f2652beb135fdaa17611c14df9ec257f1cf0b833da133a",
+    "title": "",
+    "cardTitle": "房间配置卡",
+    "actionText": "补齐必填项",
+    "submitCount": 1,
+    "actionState": "primary-action missingRequiredFields",
+    "missingFields": [
+      "楼栋\n必填",
+      "房间号\n必填",
+      "床位数\n必填"
+    ],
+    "resultText": "请先补齐必填项： 楼栋、房间号、床位数",
+    "visibleText": "WorkOSNext\n治理管理员\n已连接\n中文\nРусский\nКыргызча\n我要创建住宿资源\n第 1/6 步\n可办理\n1\n2\n3\n4\n5\n6\n本步要做\n房间配置卡\n怎么做\n\n把这一步需要的信息填完整。不能提交时，页面会直接标出还差哪一项。\n\n填写信息\n楼栋\n必填\n请输入本步需要的信息。\n房间号\n必填\n请输入本步需要的信息。\n房型\n必填\n单人间\n双人间\n四人间\n六人间\n请选择一个业务选项。\n床位数\n必填\n请输入数字。\n性别策略\n必填\n男生房\n女生房\n混住\n未限制\n请选择一个业务选项。\n家具状态\n必填\n家具齐全\n部分缺失\n缺失\n待配置\n请选择一个业务选项。\n技术状态\n必填\n可入住\n未准备\n需维修\n请选择一个业务选项。\n房间备注\n请输入本步需要的信息。\n提交前检查\n\n页面会先看信息是否完整、材料是否齐全、这一步是否可以提交；有问题会直接标出来。\n\n还需填写: 楼栋 · 房间号 · 床位数\n材料核对: 房间是否重复 · 记录办理人\n提交状态: 暂不能提交: 还需填写\n业务规则: 房间号未重复 · 床位数有效 · 房间配置完整\n保存草稿\n\n请先补齐必填项： 楼栋、房间号、床位数\n\n提交校验未通过\n\n请补齐缺失字段或证据，再查看学习中心的补齐说明。\n\n学习中心\n补齐必填项\n反馈\n今天\n工作\n搜索\n我的"
+  },
+  "filled": [
+    {
+      "field": "buildingName",
+      "kind": "input",
+      "value": "B1",
+      "label": "楼栋\n必填"
+    },
+    {
+      "field": "roomNo",
+      "kind": "input",
+      "value": "A-610-2",
+      "label": "房间号\n必填"
+    },
+    {
+      "field": "roomType",
+      "kind": "select",
+      "value": "single",
+      "label": "房型\n必填"
+    },
+    {
+      "field": "bedCount",
+      "kind": "number",
+      "value": "4",
+      "label": "床位数\n必填"
+    },
+    {
+      "field": "genderPolicy",
+      "kind": "select",
+      "value": "male",
+      "label": "性别策略\n必填"
+    },
+    {
+      "field": "furnitureStatus",
+      "kind": "select",
+      "value": "complete",
+      "label": "家具状态\n必填"
+    },
+    {
+      "field": "technicalState",
+      "kind": "select",
+      "value": "ready",
+      "label": "技术状态\n必填"
+    },
+    {
+      "field": "roomNote",
+      "kind": "input",
+      "value": "A-610-8",
+      "label": "房间备注"
+    }
+  ],
+  "afterFill": {
+    "url": "http://127.0.0.1:5175/?view=operationPanel&lang=zh-CN&device=mobile&workspace=W-STAY-RESOURCE-20260604220604-733e6974124248d0b4ba2da124a62001&card=roomSetup&workItem=wi-d9d8c1f2f28d253ed2f2652beb135fdaa17611c14df9ec257f1cf0b833da133a",
+    "title": "",
+    "cardTitle": "房间配置卡",
+    "actionText": "提交处理",
+    "submitCount": 1,
+    "actionState": "primary-action ready",
+    "missingFields": [],
+    "resultText": "",
+    "visibleText": "WorkOSNext\n治理管理员\n已连接\n中文\nРусский\nКыргызча\n我要创建住宿资源\n第 1/6 步\n可办理\n1\n2\n3\n4\n5\n6\n本步要做\n房间配置卡\n怎么做\n\n把这一步需要的信息填完整。不能提交时，页面会直接标出还差哪一项。\n\n填写信息\n楼栋\n必填\n请输入本步需要的信息。\n房间号\n必填\n请输入本步需要的信息。\n房型\n必填\n单人间\n双人间\n四人间\n六人间\n请选择一个业务选项。\n床位数\n必填\n请输入数字。\n性别策略\n必填\n男生房\n女生房\n混住\n未限制\n请选择一个业务选项。\n家具状态\n必填\n家具齐全\n部分缺失\n缺失\n待配置\n请选择一个业务选项。\n技术状态\n必填\n可入住\n未准备\n需维修\n请选择一个业务选项。\n房间备注\n请输入本步需要的信息。\n提交前检查\n\n页面会先看信息是否完整、材料是否齐全、这一步是否可以提交；有问题会直接标出来。\n\n必填项: 已完成\n材料核对: 房间是否重复 · 记录办理人\n提交状态: 可以提交\n业务规则: 房间号未重复 · 床位数有效 · 房间配置完整\n保存草稿\n提交处理\n反馈\n今天\n工作\n搜索\n我的"
+  },
+  "positiveMs": 2256,
+  "positive": {
+    "url": "http://127.0.0.1:5175/?view=operationPanel&lang=zh-CN&device=mobile&workspace=W-STAY-RESOURCE-20260604220604-733e6974124248d0b4ba2da124a62001&card=bedSetup&workItem=wi-134f12c6d9f1ff3e98da4e03a15860ff8ef3a3ec5ef381418502c90a92d2e249",
+    "title": "",
+    "cardTitle": "床位配置卡",
+    "actionText": "提交处理",
+    "submitCount": 1,
+    "actionState": "primary-action ready",
+    "missingFields": [],
+    "resultText": "已提交成功，视图同步中。",
+    "visibleText": "WorkOSNext\n治理管理员\n已连接\n中文\nРусский\nКыргызча\n我要创建住宿资源\n第 2/6 步\n可办理\n1\n2\n3\n4\n5\n6\n本步要做\n床位配置卡\n怎么做\n\n把这一步需要的信息填完整。不能提交时，页面会直接标出还差哪一项。\n\n填写信息\n所属房间\n必填\n已从本案带入\n已从前一步带入，不需要重复填写。\n床位数\n必填\n请输入数字。\n床位标签\n必填\n系统会按床位数生成，例如 01, 02, 03, 04；需要时可用逗号调整。\n床位类型\n必填\n下铺\n上铺\n整床\n请选择一个业务选项。\n初始床位状态\n必填\n可分配\n已预留\n已入住\n待清洁\n维修阻断\n未启用\n请选择一个业务选项。\n提交前检查\n\n页面会先看信息是否完整、材料是否齐全、这一步是否可以提交；有问题会直接标出来。\n\n必填项: 已完成\n材料核对: 床位容量确认 · 床位编号确认\n提交状态: 可以提交\n业务规则: 房间存在 · 未超过床位数 · 床位号未重复\n保存草稿\n\n已提交成功，视图同步中。\n\n视图同步中\n\n已提交成功，视图同步中。\n\n提交处理\n反馈\n今天\n工作\n搜索\n我的"
+  },
+  "status": "failed"
+}

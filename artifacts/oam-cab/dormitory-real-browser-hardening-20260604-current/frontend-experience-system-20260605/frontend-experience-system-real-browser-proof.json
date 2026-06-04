@@ -1,0 +1,349 @@
+{
+  "generatedAtUtc": "2026-06-04T19:13:10.000Z",
+  "browserMode": "real-browser",
+  "architecture": "OAM-ACF v8 / Operations Runtime surface architecture",
+  "contract": "docs/contracts/frontend-experience/frontend-experience-system-contract.json",
+  "layers": [
+    "shared-components",
+    "surface-contract",
+    "multilingual-dictionary",
+    "state-action-contract",
+    "real-browser-screenshot-evidence"
+  ],
+  "testedFlow": "completed WorkItem step-number click opens readonly shared record directly; successful active submit auto-advances to the next actionable persisted Operations WorkItem without a readonly detour",
+  "screenshots": [
+    {
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/001-fes-operation-panel-shared-shell-full.png",
+      "surface": "operation-panel-route",
+      "url": "http://127.0.0.1:5175/?view=operationPanel&lang=zh-CN&device=mobile&workspace=W-STAY-RESOURCE-20260604174542-1781a21b7a6f41f78663a140602469e2&card=roomReadiness&workItem=wi-0f171f36c04f9195bf5cfaf38380595f4836f2e07600c25d84323a6dbcd09957",
+      "assertions": {
+        "hasSharedStepRail": true,
+        "hasCardOperation": true,
+        "hasRetiredMiddlePage": false,
+        "admissionDecision": "visible_allowed_confirmable",
+        "runtimeDecision": "work_item_confirm_ready"
+      }
+    },
+    {
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/002-fes-completed-record-direct-shared-shell-full.png",
+      "surface": "completed-workspace-record",
+      "url": "http://127.0.0.1:5175/?view=operationPanel&lang=zh-CN&device=mobile&workspace=W-STAY-RESOURCE-20260604174542-1781a21b7a6f41f78663a140602469e2&card=roomSetup&workItem=wi-21be4fd1ed1d0997b8b33a2b76bbe64f2e367b3529693ca5ec147c7d4a78f47d",
+      "assertions": {
+        "clickedStepNumber": "1",
+        "opensReadonlyRecordDirectly": true,
+        "hasSharedStepRail": true,
+        "hasCardOperation": true,
+        "hasCompletedWorkspaceRecord": true,
+        "hasRetiredMiddlePage": false,
+        "feedbackButtonCount": 1,
+        "admissionDecision": "visible_readonly_completed",
+        "runtimeDecision": "work_item_terminal:confirmed"
+      }
+    },
+    {
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/003-fes-continue-next-stage-operation-panel-full.png",
+      "surface": "operation-panel-route",
+      "url": "http://127.0.0.1:5175/?view=operationPanel&lang=zh-CN&device=mobile&workspace=W-STAY-RESOURCE-20260604174542-1781a21b7a6f41f78663a140602469e2&card=roomReadiness&workItem=wi-0f171f36c04f9195bf5cfaf38380595f4836f2e07600c25d84323a6dbcd09957",
+      "assertions": {
+        "clickedContinueNextStage": true,
+        "hasOperationPanelRoute": true,
+        "hasSharedStepRail": true,
+        "hasCardOperation": true,
+        "hasRetiredMiddlePage": false,
+        "feedbackButtonCount": 1,
+        "admissionDecision": "visible_allowed_confirmable",
+        "runtimeDecision": "work_item_confirm_ready"
+      }
+    },
+    {
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/012-readonly-unified-shell-rendered-full.png",
+      "surface": "completed-workspace-record",
+      "url": "http://127.0.0.1:5175/?view=operationPanel&lang=zh-CN&device=mobile&workspace=W-STAY-RESOURCE&card=roomSetup&workItem=wi-21be4fd1ed1d0997b8b33a2b76bbe64f2e367b3529693ca5ec147c7d4a78f47d",
+      "assertions": {
+        "hasSharedStepRail": true,
+        "hasCardOperation": true,
+        "hasCompletedWorkspaceRecord": true,
+        "hasRetiredMiddlePage": false,
+        "hasWorkspaceControlCompletedWrapper": false,
+        "hasIntentCardWrapper": false,
+        "completedRecordControlPadding": "0px",
+        "completedRecordControlBorder": "0px none",
+        "completedRecordControlShadow": "none",
+        "admissionDecision": "visible_readonly_completed"
+      }
+    },
+    {
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/013-correction-step-unified-shell-full.png",
+      "surface": "operation-panel-route",
+      "url": "http://127.0.0.1:5175/?view=operationPanel&lang=zh-CN&device=mobile&workspace=W-STAY-RESOURCE-20260604174542-1781a21b7a6f41f78663a140602469e2&card=bedSetup&workItem=wi-correction-3525a3cf",
+      "assertions": {
+        "clickedContinueNextStage": true,
+        "hasSharedStepRail": true,
+        "hasCardOperation": true,
+        "hasRetiredMiddlePage": false,
+        "hasWorkspaceControlCompletedWrapper": false,
+        "hasIntentCardWrapper": false,
+        "activeStepState": "correction",
+        "cardShellCount": 1
+      }
+    },
+    {
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/014-active-step-unified-shell-full.png",
+      "surface": "operation-panel-route",
+      "url": "http://127.0.0.1:5175/?view=operationPanel&lang=zh-CN&device=mobile&workspace=W-STAY-RESOURCE-20260604174542-1781a21b7a6f41f78663a140602469e2&card=roomReadiness&workItem=wi-0f171f36c04f9195bf5cfaf38380595f4836f2e07600c25d84323a6dbcd09957",
+      "assertions": {
+        "clickedReadyStep": true,
+        "hasSharedStepRail": true,
+        "hasCardOperation": true,
+        "hasRetiredMiddlePage": false,
+        "hasWorkspaceControlCompletedWrapper": false,
+        "hasIntentCardWrapper": false,
+        "activeStepState": "ready",
+        "cardShellCount": 1,
+        "admissionDecision": "visible_allowed_confirmable"
+      }
+    },
+    {
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/016-readonly-completed-with-correction-status-fixed.png",
+      "surface": "completed-workspace-record",
+      "url": "http://127.0.0.1:5175/?view=operationPanel&lang=zh-CN&device=mobile&workspace=W-STAY-RESOURCE-20260604174542-1781a21b7a6f41f78663a140602469e2&card=bedSetup&workItem=wi-4834ce4e948b05abd89abaabe5c7dc85695390740d8f9b0e5281fac76d56b2e0",
+      "assertions": {
+        "hasSharedStepRail": true,
+        "hasCardOperation": true,
+        "hasCompletedWorkspaceRecord": true,
+        "hasRetiredMiddlePage": false,
+        "hasWorkspaceControlCompletedWrapper": false,
+        "hasIntentCardWrapper": false,
+        "currentStepState": "completed",
+        "currentStepLabel": "床位配置卡 已完成 · 有更正",
+        "statusChip": "已完成 · 有更正",
+        "bodyState": "已完成",
+        "noReadonlyCorrectionConflict": true
+      }
+    },
+    {
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/019-post-submit-active-before-fill.png",
+      "surface": "operation-panel-route",
+      "url": "http://127.0.0.1:5175/?view=operationPanel&lang=zh-CN&device=mobile&workspace=W-STAY-RESOURCE-20260604174542-1781a21b7a6f41f78663a140602469e2&card=roomBlock&workItem=wi-f9006c13855c579767d1ab0df34e80bc4c34116dc04d09bd219eead25918650f",
+      "assertions": {
+        "currentStep": "房间床位阻断卡 可办理",
+        "hasOperationPanelRoute": true,
+        "hasSubmit": true,
+        "hasReadonlyRecord": false,
+        "hasRetiredMiddlePage": false,
+        "hasRetiredReturnCurrentWork": false,
+        "admissionDecision": "visible_allowed_confirmable"
+      }
+    },
+    {
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/020-post-submit-active-filled-before-click.png",
+      "surface": "operation-panel-route",
+      "url": "http://127.0.0.1:5175/?view=operationPanel&lang=zh-CN&device=mobile&workspace=W-STAY-RESOURCE-20260604174542-1781a21b7a6f41f78663a140602469e2&card=roomBlock&workItem=wi-f9006c13855c579767d1ab0df34e80bc4c34116dc04d09bd219eead25918650f",
+      "assertions": {
+        "filledRequiredFields": ["blockedReason", "blockStartAt", "expectedReleaseAt"],
+        "submitEnabled": true,
+        "hasOperationPanelRoute": true,
+        "hasReadonlyRecord": false,
+        "hasRetiredMiddlePage": false
+      }
+    },
+    {
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/021-post-submit-after-click-auto-advance.png",
+      "surface": "operation-panel-route",
+      "url": "http://127.0.0.1:5175/?view=operationPanel&lang=zh-CN&device=mobile&workspace=W-STAY-RESOURCE-20260604174542-1781a21b7a6f41f78663a140602469e2&card=roomRelease&workItem=wi-cb0d8886df1ec46189833d1fcd964bd9cc0ac73b972d694b6abf6a8607e913c0",
+      "assertions": {
+        "clickedSubmit": true,
+        "autoAdvancedToNextActionableWorkItem": true,
+        "currentStep": "房间床位释放卡 可办理",
+        "previousStep": "房间床位阻断卡 已完成",
+        "hasOperationPanelRoute": true,
+        "hasSubmit": true,
+        "hasReadonlyRecord": false,
+        "hasRetiredMiddlePage": false,
+        "hasContinueNextStage": false,
+        "hasRetiredReturnCurrentWork": false,
+        "admissionDecision": "visible_allowed_confirmable"
+      }
+    },
+    {
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/024-updated-api-room-setup-four-bed.png",
+      "surface": "operation-panel-route",
+      "url": "http://127.0.0.1:5175/?view=operationPanel&lang=zh-CN&device=mobile&workspace=W-STAY-RESOURCE-20260604194355-9f5d1fe84d42440ab52cb5b9d8c7d566&card=roomSetup&workItem=wi-842d4368f8a14e6284fe014f100bb7ee691201d732c1b30ec8fd78035af51efd",
+      "assertions": {
+        "clickedStartResourceSetup": true,
+        "roomType": "four_bed",
+        "bedCount": "4",
+        "requiredFieldsComplete": true,
+        "hasOperationPanelRoute": true,
+        "hasRetiredMiddlePage": false
+      }
+    },
+    {
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/025-updated-api-bed-setup-four-bed-batch.png",
+      "surface": "operation-panel-route",
+      "url": "http://127.0.0.1:5175/?view=operationPanel&lang=zh-CN&device=mobile&workspace=W-STAY-RESOURCE-20260604194355-9f5d1fe84d42440ab52cb5b9d8c7d566&card=bedSetup&workItem=wi-cf1f4dc7a619771eb27e00e55ae6b1bcbc81e294a5e3baab17c4abf471067767",
+      "assertions": {
+        "autoAdvancedToBedSetup": true,
+        "bedCount": "4",
+        "bedLabels": "01, 02, 03, 04",
+        "hasBatchBedLabelsTextarea": true,
+        "hasSingularBedNoField": false,
+        "hasSingularBedLabelField": false,
+        "hasRetiredMiddlePage": false
+      }
+    },
+    {
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/026-updated-api-after-bed-submit-rate-step.png",
+      "surface": "operation-panel-route",
+      "url": "http://127.0.0.1:5175/?view=operationPanel&lang=zh-CN&device=mobile&workspace=W-STAY-RESOURCE-20260604194355-9f5d1fe84d42440ab52cb5b9d8c7d566&card=rateSetup&workItem=wi-f2f2aebcf4f3e22234ff2157db97f583d7d38869eda456339bfbba6c7adb5f8a",
+      "assertions": {
+        "clickedBedSetupSubmit": true,
+        "autoAdvancedToRateSetup": true,
+        "databaseRoomId": "room-rb4b237222",
+        "databaseRoomCapacity": 4,
+        "databaseBedCount": 4,
+        "databaseBedNos": ["01", "02", "03", "04"],
+        "operationsProofEvents": ["OperationsWorkItemConfirmed:roomSetup", "OperationsWorkItemConfirmed:bedSetup"],
+        "hasRetiredMiddlePage": false
+      }
+    },
+    {
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/027-service-task-scope-login-goto.png",
+      "surface": "operation-panel-route",
+      "url": "http://127.0.0.1:5175/?view=operationPanel&lang=zh-CN&device=mobile&workspace=W-STAY-SERVICE-TASK-20260604191434-5537547c78554b03a24255b90f5f9e29&card=serviceTaskCreate&workItem=wi-5694f0421140402ed43975c683f7c3bc704aa292bf013e47865a7ff42f2cba6e",
+      "assertions": {
+        "realLoginClicked": true,
+        "hasServiceScopeSegmentedControl": true,
+        "resourceScopeRequired": true,
+        "hasRoomField": false,
+        "hasBedField": false,
+        "hasRetiredMiddlePage": false
+      }
+    },
+    {
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/028-service-task-scope-room-target.png",
+      "surface": "operation-panel-route",
+      "url": "http://127.0.0.1:5175/?view=operationPanel&lang=zh-CN&device=mobile&workspace=W-STAY-SERVICE-TASK-20260604191434-5537547c78554b03a24255b90f5f9e29&card=serviceTaskCreate&workItem=wi-5694f0421140402ed43975c683f7c3bc704aa292bf013e47865a7ff42f2cba6e",
+      "assertions": {
+        "clickedResourceScope": "room",
+        "selectedResourceScope": "room",
+        "hasRoomField": true,
+        "hasBedField": false,
+        "roomFieldRequired": true,
+        "hasRetiredMiddlePage": false
+      }
+    },
+    {
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/029-service-task-scope-bed-target.png",
+      "surface": "operation-panel-route",
+      "url": "http://127.0.0.1:5175/?view=operationPanel&lang=zh-CN&device=mobile&workspace=W-STAY-SERVICE-TASK-20260604191434-5537547c78554b03a24255b90f5f9e29&card=serviceTaskCreate&workItem=wi-5694f0421140402ed43975c683f7c3bc704aa292bf013e47865a7ff42f2cba6e",
+      "assertions": {
+        "clickedResourceScope": "bed",
+        "selectedResourceScope": "bed",
+        "hasRoomField": false,
+        "hasBedField": true,
+        "bedFieldRequired": true,
+        "hasRetiredMiddlePage": false
+      }
+    },
+    {
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/030-service-task-route-canonicalized.png",
+      "surface": "operation-panel-route",
+      "url": "http://127.0.0.1:5175/?view=operationPanel&lang=zh-CN&device=mobile&workspace=W-STAY-SERVICE-TASK-20260604191434-5537547c78554b03a24255b90f5f9e29&card=serviceTaskCreate&workItem=wi-5694f0421140402ed43975c683f7c3bc704aa292bf013e47865a7ff42f2cba6e",
+      "assertions": {
+        "staleCardParamCorrected": true,
+        "canonicalCard": "serviceTaskCreate",
+        "workItemParam": "wi-5694f0421140402ed43975c683f7c3bc704aa292bf013e47865a7ff42f2cba6e",
+        "hasOperationPanelRoute": true,
+        "hasCardOperation": true,
+        "hasRetiredMiddlePage": false
+      }
+    },
+    {
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/031-service-task-submit-status-missing-fields.png",
+      "surface": "operation-panel-route",
+      "url": "http://127.0.0.1:5175/?view=operationPanel&lang=zh-CN&device=mobile&workspace=W-STAY-SERVICE-TASK-20260604191434-5537547c78554b03a24255b90f5f9e29&card=serviceTaskCreate&workItem=wi-5694f0421140402ed43975c683f7c3bc704aa292bf013e47865a7ff42f2cba6e",
+      "assertions": {
+        "requiredFieldsMissing": true,
+        "submitStatusBlocksWhenMissing": true,
+        "hasReadySubmitConflict": false,
+        "hasServiceScopeSegmentedControl": true,
+        "hasRetiredMiddlePage": false
+      }
+    },
+    {
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/032-service-task-room-scope-after-policy.png",
+      "surface": "operation-panel-route",
+      "url": "http://127.0.0.1:5175/?view=operationPanel&lang=zh-CN&device=mobile&workspace=W-STAY-SERVICE-TASK-20260604191434-5537547c78554b03a24255b90f5f9e29&card=serviceTaskCreate&workItem=wi-5694f0421140402ed43975c683f7c3bc704aa292bf013e47865a7ff42f2cba6e",
+      "assertions": {
+        "clickedResourceScope": "room",
+        "selectedResourceScope": "room",
+        "hasRoomField": true,
+        "hasBedField": false,
+        "hasRetiredMiddlePage": false
+      }
+    },
+    {
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/033-service-task-bed-scope-after-policy.png",
+      "surface": "operation-panel-route",
+      "url": "http://127.0.0.1:5175/?view=operationPanel&lang=zh-CN&device=mobile&workspace=W-STAY-SERVICE-TASK-20260604191434-5537547c78554b03a24255b90f5f9e29&card=serviceTaskCreate&workItem=wi-5694f0421140402ed43975c683f7c3bc704aa292bf013e47865a7ff42f2cba6e",
+      "assertions": {
+        "clickedResourceScope": "bed",
+        "selectedResourceScope": "bed",
+        "hasRoomField": false,
+        "hasBedField": true,
+        "hasRetiredMiddlePage": false
+      }
+    },
+    {
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/034-readonly-object-summary-before.png",
+      "surface": "completed-workspace-record",
+      "url": "http://127.0.0.1:5175/?view=operationPanel&lang=zh-CN&device=mobile&workspace=W-STAY-RESOURCE-20260604174542-1781a21b7a6f41f78663a140602469e2&card=roomBlock&workItem=wi-f9006c13855c579767d1ab0df34e80bc4c34116dc04d09bd219eead25918650f",
+      "assertions": {
+        "observedRedundantObjectSummary": true,
+        "hasBusinessFields": true,
+        "hasStepDetails": true,
+        "hasRetiredMiddlePage": false
+      }
+    },
+    {
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/035-readonly-object-summary-removed.png",
+      "surface": "completed-workspace-record",
+      "url": "http://127.0.0.1:5175/?view=operationPanel&lang=zh-CN&device=mobile&workspace=W-STAY-RESOURCE-20260604174542-1781a21b7a6f41f78663a140602469e2&card=roomBlock&workItem=wi-f9006c13855c579767d1ab0df34e80bc4c34116dc04d09bd219eead25918650f",
+      "assertions": {
+        "hasObjectSummary": false,
+        "startsWithBusinessFieldsAfterState": true,
+        "hasBusinessFields": true,
+        "hasStepDetails": true,
+        "hasReadonlyStateSummary": true,
+        "hasRecordActions": true,
+        "hasRetiredMiddlePage": false
+      }
+    }
+  ],
+  "assertions": {
+    "sharedComponents": true,
+    "surfaceContract": true,
+    "multilingualDictionary": true,
+    "stateActionContract": true,
+    "realBrowserScreenshotEvidence": true,
+    "noRetiredMiddlePage": true,
+    "noDuplicateRecordLocalFeedback": true,
+    "noWorkspaceControlCompletedWrapper": true,
+    "noIntentCardOperationWrapper": true,
+    "noReadonlyCorrectionConflict": true,
+    "postSubmitAutoAdvance": true,
+    "noReadonlySubmitDetour": true,
+    "noReturnCurrentWorkFallback": true,
+    "fourBedRoomBatchBedSetup": true,
+    "operationsOutboxWritesSliceAggregates": true,
+    "databaseFourBedAggregates": true,
+    "serviceTaskResourceScopeSegmented": true,
+    "roomMaintenanceDoesNotRequireSingleBed": true,
+    "bedMaintenanceDoesNotMutateWholeRoom": true,
+    "operationPanelRouteCanonicalizesWorkItemCard": true,
+    "missingRequiredFieldsBlockSubmitStatus": true,
+    "serviceReleaseRequiresTaskBoundVerification": true,
+    "readonlyObjectSummaryRemoved": true
+  }
+}

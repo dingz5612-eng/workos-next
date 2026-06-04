@@ -6,6 +6,11 @@ import {
   pcGovernanceNavItems,
   validateGovernanceExportRequest
 } from "../pcGovernancePolicies.js";
+import {
+  accountCapabilityOptions,
+  accountRoleOptions,
+  capabilitiesForAccountRole
+} from "../accountGovernanceCatalog.js";
 
 export function pcGovernanceView(ctx) {
   const governance = ctx.state.pcGovernance || {};
@@ -31,6 +36,7 @@ export function pcGovernanceView(ctx) {
         ${correctionCenterPanel(ctx)}
         ${periodReviewPanel(governance, ctx)}
         ${riskCommandPanel(ctx)}
+        ${accountUsersPanel(governance, ctx)}
         ${adminPanel(governance, ctx)}
         ${auditPanel(governance, ctx)}
         ${exportPanel(governance, ctx)}
@@ -205,6 +211,59 @@ function riskCommandPanel(ctx) {
   return panel("RiskCommand", "riskcommand", tableOrEmpty(rows, ["riskId", "riskType", "severity", "ownerRole", "resolveAction", "drilldownUrl"], ctx, "No source-backed risk items loaded."));
 }
 
+function accountUsersPanel(governance, ctx) {
+  const canManage = canManageAccountUsers(ctx.state);
+  const users = asArray(governance.accountUsers);
+  const audits = asArray(governance.accountAudit);
+  const defaultCapabilities = new Set(capabilitiesForAccountRole("operator"));
+  return panel("Account Users", "account-users", `
+    <section data-account-user-management>
+      <h3>用户与权限管理</h3>
+      <p data-capability-required="account.user.manage">账号由管理员或主管创建；部门、业务线、角色和能力只能在这里分配。</p>
+      <div class="account-user-form">
+        ${accountTextField("accountUsername", "用户名", "", canManage, "off")}
+        ${accountTextField("accountDisplayName", "昵称", "", canManage, "off")}
+        ${accountTextField("accountPassword", "初始密码", "", canManage, "new-password", "password")}
+        ${accountTextField("accountDepartment", "部门", "住宿运营部", canManage)}
+        ${accountTextField("accountBusinessLine", "业务线", "stay", canManage)}
+        <div class="account-form-field">
+          <label for="accountRoles">角色</label>
+          <select id="accountRoles" data-account-role-select ${canManage ? "" : "disabled"}>
+            ${accountRoleOptions.map((option) => `
+              <option value="${escapeAttr(ctx, option.value)}" ${option.value === "operator" ? "selected" : ""}>${escapeHtml(ctx, option.label)}</option>
+            `).join("")}
+          </select>
+        </div>
+        <fieldset class="account-capability-fieldset">
+          <legend>能力</legend>
+          <div class="account-capability-grid" data-account-capabilities>
+            ${accountCapabilityOptions.map((option) => `
+              <label class="account-capability-choice">
+                <input type="checkbox" data-account-capability value="${escapeAttr(ctx, option.value)}" ${defaultCapabilities.has(option.value) ? "checked" : ""} ${canManage ? "" : "disabled"}>
+                <span>${escapeHtml(ctx, option.label)}</span>
+                <small>${escapeHtml(ctx, option.value)}</small>
+              </label>
+            `).join("")}
+          </div>
+        </fieldset>
+        <button type="button" data-account-user-create ${canManage ? "" : "disabled"}>创建用户</button>
+      </div>
+      ${accountUserTable(users, canManage, ctx)}
+      <h3>账号审计</h3>
+      ${tableOrEmpty(audits, ["auditEventId", "eventType", "actorId", "targetUserId", "occurredAtUtc"], ctx, "No account audit records loaded.")}
+    </section>
+  `);
+}
+
+function accountTextField(id, label, defaultValue, canManage, autocomplete = "", type = "text") {
+  return `
+    <div class="account-form-field">
+      <label for="${id}">${label}</label>
+      <input id="${id}" type="${type}" value="${defaultValue}" ${autocomplete ? `autocomplete="${autocomplete}"` : ""} ${canManage ? "" : "disabled"}>
+    </div>
+  `;
+}
+
 function adminPanel(governance, ctx) {
   const roleEditAllowed = canEditRoleCapability(ctx.state);
   const deviceRevokeAllowed = canRevokeDevice(ctx.state);
@@ -236,6 +295,35 @@ function adminPanel(governance, ctx) {
       ${tableOrEmpty(asArray(governance.evidenceAccessAudits), ["auditEventId", "eventType", "actorId", "deviceId", "occurredAtUtc"], ctx, "No evidence access audit records loaded.")}
     </section>
   `);
+}
+
+function accountUserTable(users, canManage, ctx) {
+  if (!users.length) return `<p>${escapeHtml(ctx, governanceText("No account users loaded."))}</p>`;
+  return `
+    <table>
+      <thead><tr>
+        <th>用户名</th><th>昵称</th><th>部门</th><th>业务线</th><th>角色</th><th>能力</th><th>状态</th><th>操作</th>
+      </tr></thead>
+      <tbody>
+        ${users.map((user) => `
+          <tr>
+            <td>${escapeHtml(ctx, user.username)}</td>
+            <td>${escapeHtml(ctx, user.displayName)}</td>
+            <td>${escapeHtml(ctx, user.department)}</td>
+            <td>${escapeHtml(ctx, user.businessLine)}</td>
+            <td>${escapeHtml(ctx, asArray(user.roles).join(", ") || user.role)}</td>
+            <td>${escapeHtml(ctx, asArray(user.capabilities).slice(0, 6).join(", "))}</td>
+            <td>${escapeHtml(ctx, user.status || (user.enabled ? "active" : "disabled"))}</td>
+            <td>
+              <input type="password" data-account-reset-password="${escapeAttr(ctx, user.userId)}" placeholder="新密码" ${canManage ? "" : "disabled"}>
+              <button type="button" data-account-password-reset="${escapeAttr(ctx, user.userId)}" ${canManage ? "" : "disabled"}>重置</button>
+              <button type="button" data-account-user-disable="${escapeAttr(ctx, user.userId)}" ${(canManage && user.status !== "disabled") ? "" : "disabled"}>禁用</button>
+            </td>
+          </tr>
+        `).join("")}
+      </tbody>
+    </table>
+  `;
 }
 
 function auditPanel(governance, ctx) {
@@ -349,6 +437,7 @@ function panelTitle(title) {
     "Correction Center": "修正中心",
     "Period Review": "周期复盘",
     RiskCommand: "风险作战室",
+    "Account Users": "用户与权限",
     Admin: "治理配置",
     Audit: "审计",
     Export: "受控导出",
@@ -430,6 +519,8 @@ function governanceText(value) {
     "No correction audit records loaded.": "没有修正审计记录。",
     "No period reviews loaded.": "没有周期复盘记录。",
     "No source-backed risk items loaded.": "没有来源支撑的风险项。",
+    "No account users loaded.": "没有用户记录。",
+    "No account audit records loaded.": "没有账号审计记录。",
     "No RoleCapability rules loaded.": "没有 RoleCapability 规则。",
     "No FeatureFlags loaded.": "没有 FeatureFlag。",
     "No SliceCutoverState loaded.": "没有 SliceCutoverState。",
@@ -491,6 +582,7 @@ function governanceText(value) {
     severity: "等级",
     drilldownUrl: "详情入口",
     role: "角色",
+    targetUserId: "目标用户",
     capability: "权限",
     effect: "结果",
     source: "来源",
@@ -616,6 +708,14 @@ function releaseChainRows(release, overview) {
       refs: [...asArray(rollback.steps), ...asArray(rollback.validationSteps)].join(", ")
     }
   ].filter(Boolean);
+}
+
+function canManageAccountUsers(state = {}) {
+  const actor = state.currentActor || {};
+  const capabilities = new Set([...(actor.capabilities || []), ...(actor.capabilityIds || [])].map((item) => String(item).toLowerCase()));
+  return String(actor.role || "").toLowerCase() === "admin" ||
+    capabilities.has("account.user.manage") ||
+    capabilities.has("pc.governance.admin");
 }
 
 function productionMetrics(observability) {

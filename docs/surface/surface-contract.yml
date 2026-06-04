@@ -19,19 +19,35 @@
     "resolvedPersistedExample": "W-STAY-RESOURCE:roomSetup"
   },
   "completedBusinessRecord": {
-    "viewPath": "readonly workspace record / fact trace",
+    "viewPath": "direct readonly workspace record / fact trace without an intermediate completed-operation page",
+    "surfaceShell": "shared Operations surface shell with OperationStepRail and direct OperationCardShell/card-operation readonly state",
+    "forbiddenShell": "page-private legacy detail shell, intermediate completed-operation page, old completed-record-detail grid, copied completed-step-list layout, page-private outer intent-card wrapper, or workspace-control completed-record-control visual wrapper",
     "correctionPath": "new Operations WorkItem with correctionMode=append_only",
     "actionOrder": ["create_active_work_item", "view_readonly_completed_record", "correct_append_only_from_record"],
     "dataSources": ["OperationsWorkItemConfirmed payload", "ProjectionEvent payload", "mobile completed-record read cache"],
     "correctionEntry": "only from readonly completed record after submitted values are visible",
     "forbiddenPath": "direct edit or repeat submit of the completed work item"
   },
+  "activeSurfaceArchitecture": {
+    "architecture": "OAM-ACF v8 / Operations Runtime surface architecture",
+    "required": ["shared shell", "shared route guard", "shared named experience components", "surface contract", "direct OperationCardShell on step pages"],
+    "forbidden": ["page-private legacy shell", "intent-card operation wrapper", "copied layout logic", "old completed-record-detail grid", "retired Workspace/Card write UI flow"],
+    "repair": "rewrite non-current architecture onto the active surface architecture and delete obsolete implementation in the same impact scope"
+  },
+  "frontendExperienceSystem": {
+    "contractRef": "docs/contracts/frontend-experience/frontend-experience-system-contract.json",
+    "layers": ["shared-components", "surface-contract", "multilingual-dictionary", "state-action-contract", "real-browser-screenshot-evidence"],
+    "rule": "pages may specialize business content but not architecture; old-architecture surfaces must be rewritten and deleted, not wrapped or kept as fallback",
+    "stepPageExperienceParity": "new active, readonly completed, and append-only correction step pages must share step rail, direct OperationCardShell, state/check panel, action hierarchy, feedback entry, and decision markers, without a page-private outer intent-card wrapper or workspace-control visual wrapper on readonly completed records",
+    "postSubmitNavigation": "successful active Operations WorkItem confirm must auto-advance to the next actionable persisted WorkItem in the same workspace when one exists; completed readonly records are explicit review surfaces, not the normal submit continuation path",
+    "stepStateVisualLanguage": "OperationStepRail status colors are semantic: completed green, ready blue, terminal completed records remain completed as the primary state even when a correction marker exists, active append-only correction muted indigo with a correction marker and not ordinary ready blue, in-progress amber, not-started neutral gray, blocked red, with a clean current-step ring, subtle background tint, thin semantic top bar, and numbered badge instead of harsh saturated blocks"
+  },
   "collaborationFeedback": {
     "surface": "feedback-message-channel",
     "entry": "right-bottom safe floating entry on mobile business surfaces",
     "messagePath": "mobile collaboration message with role/account recipient and current page/business context",
     "eventPath": "/api/mobile/client-events records feedback.message.sent for runtime observability until dedicated inbox storage is added",
-    "forbiddenPath": "Operations Confirm, business fact mutation, static placeholder-only feedback, or placement inside save/submit business action row"
+    "forbiddenPath": "Operations Confirm, business fact mutation, static placeholder-only feedback, duplicate local feedback buttons, or placement inside save/submit business action row"
   },
   "mobile": {
     "allowedSurfaces": [
@@ -44,6 +60,14 @@
       "learning",
       "notes",
       "reminders",
+      "permissions",
+      "uploadQueue",
+      "submitQueue",
+      "drafts",
+      "failedSync",
+      "recentSubmissions",
+      "recentTraces",
+      "deviceTrust",
       "feedback",
       "result",
       "confirmPage"

@@ -69,11 +69,20 @@ export function mergeOperationWorkItemStatuses(workspaces = [], workItems = []) 
     const cards = (workspace.cards || []).map((card) => {
       const next = statusesByWorkspaceCard.get(`${workspace.id}:${card.id}`);
       return next && statusRank(next.status, next.item) >= statusRank(card.status)
-        ? { ...card, status: next.status }
+        ? cardWithOperationStatus(card, next.status, next.item)
         : card;
     });
     return { ...workspace, cards };
   });
+}
+
+function cardWithOperationStatus(card = {}, status = "", item = {}) {
+  const correction = correctionMeta(item);
+  return {
+    ...card,
+    status,
+    ...correction
+  };
 }
 
 function statusIndex(workItems = []) {
@@ -104,6 +113,17 @@ function statusRank(status = "", item = {}) {
 function isCorrectionWorkItem(item = {}) {
   const payload = item.payload || item.Payload || {};
   return payload.correctionMode === "append_only" || payload.operationMode === "correction";
+}
+
+function correctionMeta(item = {}) {
+  if (!isCorrectionWorkItem(item)) return {};
+  const payload = item.payload || item.Payload || {};
+  return {
+    operationMode: "correction",
+    correctionMode: "append_only",
+    sourceWorkItemId: payload.sourceWorkItemId || payload.source_work_item_id || "",
+    sourceCardStatus: payload.sourceCardStatus || payload.source_card_status || ""
+  };
 }
 
 function operationWorkItemsToQueue(workItems) {

@@ -80,7 +80,7 @@ public sealed class RuntimeActorAuthenticationHandler : AuthenticationHandler<Au
             new(RuntimeActorClaims.AuthSource, source),
             new(RuntimeActorClaims.SessionToken, token)
         };
-        claims.AddRange(RuntimeActorAuthorization.CapabilitiesForRole(user.Role)
+        claims.AddRange(user.EffectiveCapabilities
             .Select(capability => new Claim(RuntimeActorClaims.Capability, capability)));
 
         var identity = new ClaimsIdentity(claims, RuntimeActorAuthenticationDefaults.Scheme);
@@ -138,12 +138,19 @@ public static class RuntimeActorAuthorization
             policy.RequireAuthenticatedUser().RequireClaim(RuntimeActorClaims.Capability, "pc.export.all"));
     }
 
+    public static IReadOnlyList<string> CapabilitiesForRoles(IEnumerable<string> roles) =>
+        roles
+            .SelectMany(CapabilitiesForRole)
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+
     public static IReadOnlyList<string> CapabilitiesForRole(string role) =>
         role.ToLowerInvariant() switch
         {
             "operator" or "frontdesk" or "housekeeping" => new[]
             {
                 "workos.write",
+                "search.read",
                 "operations.confirm",
                 "evidence.write",
                 "mobile.work"
@@ -151,6 +158,7 @@ public static class RuntimeActorAuthorization
             "finance" => new[]
             {
                 "workos.write",
+                "search.read",
                 "operations.confirm",
                 "finance.work",
                 "payment.confirm",
@@ -159,16 +167,20 @@ public static class RuntimeActorAuthorization
                 "finance.deposit.refund",
                 "finance.correction.apply",
                 "correction.request",
-                "pc.finance"
+                "pc.finance",
+                "finance.control.view"
             },
             "manager" => new[]
             {
                 "workos.write",
+                "search.read",
                 "operations.confirm",
                 "case.close",
                 "correction.approve",
                 "pc.governance",
                 "pc.export.all",
+                "manager.control.view",
+                "governance.center.view",
                 "runtime.high_risk.all"
             },
             "admin" => AdminCapabilities,
@@ -180,13 +192,26 @@ public static class RuntimeActorAuthorization
     private static readonly string[] AdminCapabilities =
     {
         "workos.write",
+        "search.read",
         "operations.confirm",
         "case.close",
         "payment.confirm",
         "deposit.refund.pay",
         "correction.approve",
+        "admin.role_capability.edit",
+        "admin.device_session.revoke",
+        "account.user.manage",
+        "governance.center.view",
+        "manager.control.view",
+        "finance.control.view",
+        "release.flight_deck.view",
         "pc.governance",
+        "pc.governance.admin",
         "pc.export.all",
+        "pc.export.ledger",
+        "pc.export.case_timeline",
+        "pc.export.evidence_audit",
+        "pc.export.period_snapshot",
         "runtime.high_risk.all",
         "runtime.maintenance",
         "release.cutover"
@@ -299,8 +324,11 @@ public static class RuntimeActorAuthorization
             request.Path.StartsWithSegments("/api/observability/runtime", StringComparison.OrdinalIgnoreCase) ||
             request.Path.StartsWithSegments("/api/workspaces", StringComparison.OrdinalIgnoreCase) ||
             request.Path.StartsWithSegments("/api/work-queue", StringComparison.OrdinalIgnoreCase) ||
+            request.Path.StartsWithSegments("/api/device-sessions", StringComparison.OrdinalIgnoreCase) ||
             request.Path.StartsWithSegments("/api/search", StringComparison.OrdinalIgnoreCase) ||
             request.Path.StartsWithSegments("/api/lenses", StringComparison.OrdinalIgnoreCase) ||
+            request.Path.StartsWithSegments("/api/pc-governance/account-users", StringComparison.OrdinalIgnoreCase) ||
+            request.Path.StartsWithSegments("/api/pc-governance/account-audit", StringComparison.OrdinalIgnoreCase) ||
             request.Path.StartsWithSegments("/api/reconciliation", StringComparison.OrdinalIgnoreCase) ||
             request.Path.StartsWithSegments("/api/behavior-events", StringComparison.OrdinalIgnoreCase) ||
             request.Path.StartsWithSegments("/api/mobile", StringComparison.OrdinalIgnoreCase) ||
@@ -317,6 +345,21 @@ public static class RuntimeActorAuthorization
             !context.User.HasCapability("operations.confirm"))
         {
             return "operations_confirm_policy_required";
+        }
+
+        if ((path.StartsWithSegments("/api/search", StringComparison.OrdinalIgnoreCase) ||
+             path.StartsWithSegments("/api/lenses/search", StringComparison.OrdinalIgnoreCase)) &&
+            !context.User.HasCapability("search.read"))
+        {
+            return "search_read_policy_required";
+        }
+
+        if ((path.StartsWithSegments("/api/pc-governance/account-users", StringComparison.OrdinalIgnoreCase) ||
+             path.StartsWithSegments("/api/pc-governance/account-audit", StringComparison.OrdinalIgnoreCase)) &&
+            !context.User.HasCapability("account.user.manage") &&
+            !context.User.HasCapability("pc.governance.admin"))
+        {
+            return "account_user_manage_policy_required";
         }
 
         if (path.StartsWithSegments("/api/control-plane", StringComparison.OrdinalIgnoreCase) &&
@@ -349,6 +392,7 @@ public static class RuntimeActorAuthorization
 
         if (path.StartsWithSegments("/api/device-sessions", StringComparison.OrdinalIgnoreCase) &&
             path.Value?.Contains("/revoke", StringComparison.OrdinalIgnoreCase) == true &&
+            !context.User.HasCapability("admin.device_session.revoke") &&
             !context.User.HasCapability("runtime.maintenance"))
         {
             return "runtime_maintenance_policy_required";

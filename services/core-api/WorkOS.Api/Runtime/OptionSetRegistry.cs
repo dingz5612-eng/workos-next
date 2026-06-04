@@ -12,6 +12,7 @@ internal static class OptionSetRegistry
         if (label.Contains("床位类型")) return "bunkType";
         if (ContractText.ContainsAny(label, "床位状态", "初始床位状态")) return "bedStatus";
         if (label.Contains("可售状态")) return "availability";
+        if (label.Contains("服务范围")) return "resourceScope";
         if (label.Contains("阻断范围")) return "resourceScope";
         if (label.Contains("释放范围")) return "resourceScope";
         if (label.Contains("价格规则")) return "bedPriceRule";

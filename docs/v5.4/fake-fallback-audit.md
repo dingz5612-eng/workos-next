@@ -39,7 +39,7 @@ Production paths audited:
 | `apps/mobile/src/views/workbenchView.js` | Offline helper was tied to `offline-demo-fallback`. | Helper now renders only for offline empty Workbench state. |
 | `apps/mobile/src/controls/fieldControls.js` | Imported `projectionMetadata`, pulling fake candidate defaults into production bundle. | Moved `capacityForRoomType` into the control helper and removed the fixture import. |
 | `apps/mobile/src/i18n.js` | Imported `demoCopy`, which contained fake resident/deposit copy. | Replaced with `i18n/domainCopy.js` containing only domain/UI copy and no fake business object literals. |
-| `apps/mobile/src/workspaceProjections.js`, `demoQueue.js`, `projectionMetadata.js`, `i18n/demoCopy.js` | Explicit dev/demo fixture data. | Moved to `apps/mobile/src/devFixtures/**`. These are not production imports. |
+| `apps/mobile/src/devFixtures/workspaceProjections.js`, `demoQueue.js`, `projectionMetadata.js`, `i18n/demoCopy.js` | Explicit dev/demo fixture data. | These now live under `apps/mobile/src/devFixtures/**` and are not production imports. |
 
 ## Retained Non-Production Fixtures
 

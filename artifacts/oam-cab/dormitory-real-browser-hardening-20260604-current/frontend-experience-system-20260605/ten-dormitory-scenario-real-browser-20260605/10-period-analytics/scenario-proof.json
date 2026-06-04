@@ -1,0 +1,295 @@
+{
+  "scenario": {
+    "id": "period-analytics",
+    "workspace": "W-STAY-PERIOD-ANALYTICS",
+    "firstCard": "periodScope",
+    "title": "做周期复盘"
+  },
+  "screenshots": {
+    "initial": {
+      "top": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\ten-dormitory-scenario-real-browser-20260605\\10-period-analytics\\01-initial-01-top.png",
+      "bottom": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\ten-dormitory-scenario-real-browser-20260605\\10-period-analytics\\01-initial-02-bottom.png",
+      "metrics": {
+        "scrollHeight": 1509,
+        "innerHeight": 855,
+        "scrollY": 0
+      }
+    },
+    "negative": {
+      "top": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\ten-dormitory-scenario-real-browser-20260605\\10-period-analytics\\02-negative-empty-submit-01-top.png",
+      "bottom": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\ten-dormitory-scenario-real-browser-20260605\\10-period-analytics\\02-negative-empty-submit-02-bottom.png",
+      "metrics": {
+        "scrollHeight": 1701,
+        "innerHeight": 855,
+        "scrollY": 0
+      }
+    },
+    "filled": {
+      "top": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\ten-dormitory-scenario-real-browser-20260605\\10-period-analytics\\03-filled-before-submit-01-top.png",
+      "bottom": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\ten-dormitory-scenario-real-browser-20260605\\10-period-analytics\\03-filled-before-submit-02-bottom.png",
+      "metrics": {
+        "scrollHeight": 1475,
+        "innerHeight": 855,
+        "scrollY": 0
+      }
+    },
+    "positive": {
+      "top": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\ten-dormitory-scenario-real-browser-20260605\\10-period-analytics\\04-positive-after-submit-01-top.png",
+      "bottom": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\ten-dormitory-scenario-real-browser-20260605\\10-period-analytics\\04-positive-after-submit-02-bottom.png",
+      "metrics": {
+        "scrollHeight": 1478,
+        "innerHeight": 855,
+        "scrollY": 0
+      }
+    }
+  },
+  "assertions": [
+    {
+      "id": "opened_operation_panel",
+      "passed": true
+    },
+    {
+      "id": "opened_expected_workspace_template",
+      "passed": true
+    },
+    {
+      "id": "opened_expected_card",
+      "passed": true
+    },
+    {
+      "id": "submit_button_visible_for_negative",
+      "passed": true
+    },
+    {
+      "id": "empty_submit_blocked_or_marked",
+      "passed": true
+    },
+    {
+      "id": "submit_button_visible_for_positive",
+      "passed": true
+    },
+    {
+      "id": "positive_not_required_field_missing",
+      "passed": true
+    },
+    {
+      "id": "positive_reaches_done_or_next_step_or_committed",
+      "passed": true
+    },
+    {
+      "id": "no_legacy_workspace_card_write",
+      "passed": true
+    },
+    {
+      "id": "uses_operations_confirm_for_positive_or_negative",
+      "passed": true
+    }
+  ],
+  "requests": [
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/operations/work-items"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/lenses/home-surface"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/lenses/learning-catalog"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/lenses/accommodation/room-readiness"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/lenses/accommodation/bed-inventory"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/lenses/accommodation/rate-plan"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/lenses/accommodation/room-revenue-potential"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/lenses/accommodation/today-operations"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/lenses/accommodation/active-stay"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/lenses/accommodation/deposit-liability"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/lenses/accommodation/payment-risk"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/lenses/accommodation/stay-balance"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/lenses/accommodation/lead-funnel"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/lenses/accommodation/checkout-queue"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/lenses/accommodation/service-task-queue"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/lenses/accommodation/expense-analytics"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/lenses/accommodation/period-performance"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/lenses/accommodation/risk-command"
+    },
+    {
+      "method": "POST",
+      "url": "http://127.0.0.1:5191/api/operations/workspaces/start"
+    },
+    {
+      "method": "POST",
+      "url": "http://127.0.0.1:5191/api/evidence/drafts"
+    },
+    {
+      "method": "POST",
+      "url": "http://127.0.0.1:5191/api/evidence/drafts"
+    },
+    {
+      "method": "POST",
+      "url": "http://127.0.0.1:5191/api/evidence/evd-6405ee88ba9b4d6daea844a0d3b44531/attachments"
+    },
+    {
+      "method": "POST",
+      "url": "http://127.0.0.1:5191/api/evidence/evd-98e85bfcc43047f2b8cf640f75de70ba/attachments"
+    },
+    {
+      "method": "POST",
+      "url": "http://127.0.0.1:5191/api/operations/work-items/wi-54ed328a1209a92bd705d6b7e812d30ce404e3cb7abe8a3118796b13569ac8ac/prepare"
+    },
+    {
+      "method": "POST",
+      "url": "http://127.0.0.1:5191/api/operations/work-items/wi-54ed328a1209a92bd705d6b7e812d30ce404e3cb7abe8a3118796b13569ac8ac/confirm"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/operations/work-items?workspaceId=W-STAY-PERIOD-ANALYTICS-20260604220737-38a6cf8f25c64bcba24dc8b999dd8905"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/workspaces"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/workspaces"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/workspaces"
+    },
+    {
+      "method": "GET",
+      "url": "http://127.0.0.1:5191/api/operations/work-items"
+    }
+  ],
+  "startMs": 3357,
+  "initial": {
+    "url": "http://127.0.0.1:5175/?view=operationPanel&lang=zh-CN&device=mobile&workspace=W-STAY-PERIOD-ANALYTICS-20260604220737-38a6cf8f25c64bcba24dc8b999dd8905&card=periodScope&workItem=wi-54ed328a1209a92bd705d6b7e812d30ce404e3cb7abe8a3118796b13569ac8ac",
+    "title": "",
+    "cardTitle": "周期范围卡",
+    "actionText": "提交处理",
+    "submitCount": 1,
+    "actionState": "primary-action ready",
+    "missingFields": [],
+    "resultText": "",
+    "visibleText": "WorkOSNext\n治理管理员\n已连接\n中文\nРусский\nКыргызча\n我要做周期经营复盘\n第 1/7 步\n可办理\n1\n2\n3\n4\n5\n6\n7\n本步要做\n周期范围卡\n怎么做\n\n把这一步需要的信息填完整。不能提交时，页面会直接标出还差哪一项。\n\n填写信息\n年份\n必填\n请输入数字。\n周期编号\n必填\n请输入数字。\n周期开始时间\n必填\n请选择时间。\n周期结束时间\n必填\n请选择时间。\n周期说明\n请输入本步需要的信息。\n提交前检查\n\n页面会先看信息是否完整、材料是否齐全、这一步是否可以提交；有问题会直接标出来。\n\n还需填写: 年份 · 周期编号 · 周期开始时间 · 周期结束时间\n材料核对: 周期范围记录 · 复盘说明记录\n提交状态: 暂不能提交: 还需填写\n业务规则: 周期范围有效 · 周期未重复\n保存草稿\n提交处理\n反馈\n今天\n工作\n搜索\n我的"
+  },
+  "negativeMs": 1464,
+  "negative": {
+    "url": "http://127.0.0.1:5175/?view=operationPanel&lang=zh-CN&device=mobile&workspace=W-STAY-PERIOD-ANALYTICS-20260604220737-38a6cf8f25c64bcba24dc8b999dd8905&card=periodScope&workItem=wi-54ed328a1209a92bd705d6b7e812d30ce404e3cb7abe8a3118796b13569ac8ac",
+    "title": "",
+    "cardTitle": "周期范围卡",
+    "actionText": "补齐必填项",
+    "submitCount": 1,
+    "actionState": "primary-action missingRequiredFields",
+    "missingFields": [
+      "年份\n必填",
+      "周期编号\n必填",
+      "周期开始时间\n必填",
+      "周期结束时间\n必填"
+    ],
+    "resultText": "请先补齐必填项： 年份、周期编号、周期开始时间、周期结束时间",
+    "visibleText": "WorkOSNext\n治理管理员\n已连接\n中文\nРусский\nКыргызча\n我要做周期经营复盘\n第 1/7 步\n可办理\n1\n2\n3\n4\n5\n6\n7\n本步要做\n周期范围卡\n怎么做\n\n把这一步需要的信息填完整。不能提交时，页面会直接标出还差哪一项。\n\n填写信息\n年份\n必填\n请输入数字。\n周期编号\n必填\n请输入数字。\n周期开始时间\n必填\n请选择时间。\n周期结束时间\n必填\n请选择时间。\n周期说明\n请输入本步需要的信息。\n提交前检查\n\n页面会先看信息是否完整、材料是否齐全、这一步是否可以提交；有问题会直接标出来。\n\n还需填写: 年份 · 周期编号 · 周期开始时间 · 周期结束时间\n材料核对: 周期范围记录 · 复盘说明记录\n提交状态: 暂不能提交: 还需填写\n业务规则: 周期范围有效 · 周期未重复\n保存草稿\n\n请先补齐必填项： 年份、周期编号、周期开始时间、周期结束时间\n\n提交校验未通过\n\n请补齐缺失字段或证据，再查看学习中心的补齐说明。\n\n学习中心\n补齐必填项\n反馈\n今天\n工作\n搜索\n我的"
+  },
+  "filled": [
+    {
+      "field": "periodYear",
+      "kind": "number",
+      "value": "2026",
+      "label": "年份\n必填"
+    },
+    {
+      "field": "periodNo",
+      "kind": "number",
+      "value": "1200",
+      "label": "周期编号\n必填"
+    },
+    {
+      "field": "periodStartAt",
+      "kind": "datetime-local",
+      "value": "2026-06-05T09:00",
+      "label": "周期开始时间\n必填"
+    },
+    {
+      "field": "periodEndAt",
+      "kind": "datetime-local",
+      "value": "2026-06-05T09:00",
+      "label": "周期结束时间\n必填"
+    },
+    {
+      "field": "periodDescription",
+      "kind": "input",
+      "value": "period-period-analytics-20260604220743-5",
+      "label": "周期说明"
+    }
+  ],
+  "afterFill": {
+    "url": "http://127.0.0.1:5175/?view=operationPanel&lang=zh-CN&device=mobile&workspace=W-STAY-PERIOD-ANALYTICS-20260604220737-38a6cf8f25c64bcba24dc8b999dd8905&card=periodScope&workItem=wi-54ed328a1209a92bd705d6b7e812d30ce404e3cb7abe8a3118796b13569ac8ac",
+    "title": "",
+    "cardTitle": "周期范围卡",
+    "actionText": "提交处理",
+    "submitCount": 1,
+    "actionState": "primary-action ready",
+    "missingFields": [],
+    "resultText": "",
+    "visibleText": "WorkOSNext\n治理管理员\n已连接\n中文\nРусский\nКыргызча\n我要做周期经营复盘\n第 1/7 步\n可办理\n1\n2\n3\n4\n5\n6\n7\n本步要做\n周期范围卡\n怎么做\n\n把这一步需要的信息填完整。不能提交时，页面会直接标出还差哪一项。\n\n填写信息\n年份\n必填\n请输入数字。\n周期编号\n必填\n请输入数字。\n周期开始时间\n必填\n请选择时间。\n周期结束时间\n必填\n请选择时间。\n周期说明\n请输入本步需要的信息。\n提交前检查\n\n页面会先看信息是否完整、材料是否齐全、这一步是否可以提交；有问题会直接标出来。\n\n必填项: 已完成\n材料核对: 周期范围记录 · 复盘说明记录\n提交状态: 可以提交\n业务规则: 周期范围有效 · 周期未重复\n保存草稿\n提交处理\n反馈\n今天\n工作\n搜索\n我的"
+  },
+  "positiveMs": 2272,
+  "positive": {
+    "url": "http://127.0.0.1:5175/?view=operationPanel&lang=zh-CN&device=mobile&workspace=W-STAY-PERIOD-ANALYTICS-20260604220737-38a6cf8f25c64bcba24dc8b999dd8905&card=periodScope&workItem=wi-54ed328a1209a92bd705d6b7e812d30ce404e3cb7abe8a3118796b13569ac8ac",
+    "title": "",
+    "cardTitle": "周期范围卡",
+    "actionText": "",
+    "submitCount": 0,
+    "actionState": "",
+    "missingFields": [],
+    "resultText": "",
+    "visibleText": "WorkOSNext\n治理管理员\n已连接\n中文\nРусский\nКыргызча\n我要做周期经营复盘\n第 1/7 步\n已完成\n1\n2\n3\n4\n5\n6\n7\n只读记录\n周期范围卡\n已完成\n\n请先核对已提交的业务内容、材料和轨迹；发现错误后，再从本页发起更正办理。\n\n业务字段\n年份\n2026\n周期编号\n1200\n周期开始时间\n2026-06-05T09:00\n周期结束时间\n2026-06-05T09:00\n周期说明\nperiod-period-analytics-20260604220743-5\n步骤详情\n必需证据\n周期范围记录 · 复盘说明记录\n不能提交原因\n当前没有新的系统阻断，但关键动作仍需要人工确认。\n审计摘要\n该记录已进入审计轨迹；如需复核，请查看提交记录、证据对象和最近轨迹。\n记录核对\n\n这里用和新建步骤同源的检查面板核对已提交内容、材料、轨迹和更正入口；只读记录不会重复提交。\n\n已提交信息: 5/5\n材料核对: 周期范围记录 · 复盘说明记录\n轨迹状态: 已绑定审计轨迹\n更正状态: 可从本记录发起更正\n记录操作\n\n更正会生成新的办理记录；原记录保留，系统追加更正轨迹。\n\n更正这一步\n反馈\n今天\n工作\n搜索\n我的"
+  },
+  "status": "passed"
+}

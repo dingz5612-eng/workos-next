@@ -27,7 +27,7 @@ for (const route of pcRoutes) {
 if (!appRouter.includes("isPcSurfaceView(ctx.state.view)") || !appRouter.includes("routePcSurface(ctx)")) {
   noGoItems.push("appRouter 必须通过 PC route tree 分流 PC surfaces。");
 }
-if (!appShell.includes("isPcSurfaceView") || !appShell.includes("!isPcSurfaceView(state.view)") || !appShell.includes("bottomNav(ctx)")) {
+if (!appShell.includes("isPcSurfaceView") || !appShell.includes("bottomNav(ctx)") || !appShellBlocksPcBottomNav(appShell)) {
   noGoItems.push("appShell 必须阻止 PC surface 显示 mobile bottom nav。");
 }
 for (const route of pcRoutes) {
@@ -87,4 +87,12 @@ function allowedPcRoles(route) {
   if (/finance/i.test(route)) return ["finance"];
   if (/manager/i.test(route)) return ["manager"];
   return ["admin", "manager"];
+}
+
+function appShellBlocksPcBottomNav(source) {
+  const directGuard = source.includes("!isPcSurfaceView(state.view)") && source.includes("bottomNav(ctx)");
+  const namedGuard =
+    /(?:const|let)\s+pcSurface\s*=\s*isPcSurfaceView\(state\.view\)/.test(source) &&
+    /!\s*pcSurface\s*\?\s*bottomNav\(ctx\)/.test(source);
+  return directGuard || namedGuard;
 }

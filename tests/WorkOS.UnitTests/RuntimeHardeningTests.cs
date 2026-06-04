@@ -59,6 +59,34 @@ public sealed class RuntimeHardeningTests
         CollectionAssert.AreEqual(
             new[] { "Accommodation.ServiceTaskCreated", "Accommodation.RoomBlockedForService", "Accommodation.BedBlockedForService" },
             serviceTask.Events.Select(item => item.EventType).ToArray());
+
+        var roomMaintenance = EventSelectionPolicy.PlanForConfirm(
+            Card("serviceTaskCreate", "Accommodation.ServiceTaskCreated", "Accommodation.RoomBlockedForService", "Accommodation.BedBlockedForService"),
+            Request(new Dictionary<string, string> { ["resourceScope"] = "room", ["roomId"] = "R-1", ["bedId"] = "B-1", ["blocksAvailability"] = "true" }));
+        CollectionAssert.AreEqual(
+            new[] { "Accommodation.ServiceTaskCreated", "Accommodation.RoomBlockedForService" },
+            roomMaintenance.Events.Select(item => item.EventType).ToArray());
+
+        var bedMaintenance = EventSelectionPolicy.PlanForConfirm(
+            Card("serviceTaskCreate", "Accommodation.ServiceTaskCreated", "Accommodation.RoomBlockedForService", "Accommodation.BedBlockedForService"),
+            Request(new Dictionary<string, string> { ["resourceScope"] = "bed", ["bedId"] = "B-1", ["blocksAvailability"] = "true" }));
+        CollectionAssert.AreEqual(
+            new[] { "Accommodation.ServiceTaskCreated", "Accommodation.BedBlockedForService" },
+            bedMaintenance.Events.Select(item => item.EventType).ToArray());
+
+        var roomReleaseAfterService = EventSelectionPolicy.PlanForConfirm(
+            Card("roomReleaseAfterService", "Accommodation.RoomReleaseAfterServiceRequested", "Accommodation.BedReleaseAfterServiceRequested"),
+            Request(new Dictionary<string, string> { ["resourceScope"] = "room", ["roomId"] = "R-1", ["bedId"] = "B-1" }));
+        CollectionAssert.AreEqual(
+            new[] { "Accommodation.RoomReleaseAfterServiceRequested" },
+            roomReleaseAfterService.Events.Select(item => item.EventType).ToArray());
+
+        var bedReleaseAfterService = EventSelectionPolicy.PlanForConfirm(
+            Card("roomReleaseAfterService", "Accommodation.RoomReleaseAfterServiceRequested", "Accommodation.BedReleaseAfterServiceRequested"),
+            Request(new Dictionary<string, string> { ["resourceScope"] = "bed", ["bedId"] = "B-1" }));
+        CollectionAssert.AreEqual(
+            new[] { "Accommodation.BedReleaseAfterServiceRequested" },
+            bedReleaseAfterService.Events.Select(item => item.EventType).ToArray());
     }
 
     [TestMethod]
@@ -150,12 +178,49 @@ public sealed class RuntimeHardeningTests
             Request(new Dictionary<string, string> { ["depositSettlementRequested"] = "false" }));
         Assert.AreEqual("checkout_deposit_settlement_required", checkout?.Reason);
 
-        var service = ServiceTaskPolicy.Validate(
+        var serviceWithoutScope = ServiceTaskPolicy.Validate(
+            "W-STAY-RESOURCE",
+            "serviceTaskCreate",
+            Request(new Dictionary<string, string> { ["taskId"] = "T-1", ["blocksAvailability"] = "true" }),
+            new ConfirmSemanticsStore(ProjectionMode.Pending));
+        Assert.AreEqual("service_resource_scope_required", serviceWithoutScope?.Reason);
+
+        var bedServiceWithoutBed = ServiceTaskPolicy.Validate(
+            "W-STAY-RESOURCE",
+            "serviceTaskCreate",
+            Request(new Dictionary<string, string> { ["taskId"] = "T-1", ["resourceScope"] = "bed", ["blocksAvailability"] = "true" }),
+            new ConfirmSemanticsStore(ProjectionMode.Pending));
+        Assert.AreEqual("service_bed_required_for_bed_scope", bedServiceWithoutBed?.Reason);
+
+        var releaseWithoutTask = ServiceTaskPolicy.Validate(
             "W-STAY-RESOURCE",
             "roomReleaseAfterService",
-            Request(new Dictionary<string, string> { ["serviceTaskVerified"] = "false" }),
+            Request(new Dictionary<string, string> { ["resourceScope"] = "room", ["roomId"] = "R-1", ["serviceTaskVerified"] = "false" }),
             new ConfirmSemanticsStore(ProjectionMode.Pending));
-        Assert.AreEqual("service_task_verification_required_before_release", service?.Reason);
+        Assert.AreEqual("service_task_required_for_release", releaseWithoutTask?.Reason);
+
+        var forgedRelease = ServiceTaskPolicy.Validate(
+            "W-STAY-RESOURCE",
+            "roomReleaseAfterService",
+            Request(new Dictionary<string, string> { ["taskId"] = "T-1", ["resourceScope"] = "room", ["roomId"] = "R-1", ["serviceTaskVerified"] = "true" }),
+            new ConfirmSemanticsStore(ProjectionMode.Pending));
+        Assert.AreEqual("service_task_verification_required_before_release", forgedRelease?.Reason);
+
+        var verifiedStore = new ConfirmSemanticsStore(ProjectionMode.Pending);
+        verifiedStore.AuditEvents.Add(ServiceTaskVerifiedEvent("W-STAY-RESOURCE", "T-1"));
+        var mismatchedRelease = ServiceTaskPolicy.Validate(
+            "W-STAY-RESOURCE",
+            "roomReleaseAfterService",
+            Request(new Dictionary<string, string> { ["taskId"] = "T-2", ["resourceScope"] = "room", ["roomId"] = "R-1" }),
+            verifiedStore);
+        Assert.AreEqual("service_task_verification_required_before_release", mismatchedRelease?.Reason);
+
+        var matchingRelease = ServiceTaskPolicy.Validate(
+            "W-STAY-RESOURCE",
+            "roomReleaseAfterService",
+            Request(new Dictionary<string, string> { ["taskId"] = "T-1", ["resourceScope"] = "room", ["roomId"] = "R-1" }),
+            verifiedStore);
+        Assert.IsNull(matchingRelease);
 
         var period = PeriodAnalyticsPolicy.Validate(
             "periodFinanceReview",
@@ -463,6 +528,21 @@ public sealed class RuntimeHardeningTests
     }
 
     [TestMethod]
+    public void production_startup_validator_allows_account_table_as_auth_truth_without_config_passwords()
+    {
+        var result = RuntimeStartupValidator.Validate(
+            "Production",
+            new RuntimeAuthOptions(),
+            "Host=db.internal;Port=5432;Database=workosnext;Username=workosnext;Password=${WORKOS_DB_PASSWORD}",
+            new RuntimeCorsOptions { AllowedOrigins = new[] { "https://workosnext.example" } },
+            "workosnext.example",
+            new RuntimeMigrationOptions { RunOnStartup = false });
+
+        Assert.AreEqual("passed", result.Status);
+        Assert.AreEqual(0, result.Errors.Count);
+    }
+
+    [TestMethod]
     public void ConfirmProjectionPendingReturnsCommittedResponse()
     {
         var store = new ConfirmSemanticsStore(ProjectionMode.Pending);
@@ -664,6 +744,25 @@ public sealed class RuntimeHardeningTests
 
     private static WorkspaceEvent Event(string id) =>
         new(id, "W", "card", "Event", "corr", null, "req", "operator", "u", DateTimeOffset.UtcNow, new Dictionary<string, string>(), Array.Empty<string>());
+
+    private static WorkspaceEvent ServiceTaskVerifiedEvent(string workspaceId, string taskId) =>
+        new(
+            $"evt-{taskId}",
+            workspaceId,
+            "serviceTaskVerify",
+            "Accommodation.ServiceTaskVerified",
+            "corr",
+            null,
+            "req",
+            "operator",
+            "u",
+            DateTimeOffset.UtcNow,
+            new Dictionary<string, string>
+            {
+                ["taskId"] = taskId,
+                ["verificationResult"] = "approved"
+            },
+            Array.Empty<string>());
 
     private static IReadOnlyDictionary<string, string> Text(string value) =>
         new Dictionary<string, string> { ["zh-CN"] = value, ["ru-RU"] = value };

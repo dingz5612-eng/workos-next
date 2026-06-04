@@ -78,6 +78,67 @@
   gap: 8px;
 }
 
+.account-user-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
+  align-items: end;
+}
+
+.account-form-field,
+.account-capability-fieldset {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.account-user-form label,
+.account-capability-fieldset legend {
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: var(--muted);
+}
+
+.account-capability-fieldset {
+  grid-column: 1 / -1;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 10px;
+}
+
+.account-capability-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 8px;
+}
+
+.account-capability-choice {
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr);
+  gap: 4px 8px;
+  align-items: center;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 8px;
+  background: #f7fbfc;
+}
+
+.account-capability-choice input {
+  grid-row: span 2;
+  width: 18px;
+  height: 18px;
+}
+
+.account-capability-choice span,
+.account-capability-choice small {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.account-capability-choice small {
+  color: var(--muted);
+}
+
 .governance-metric,
 .export-control {
   display: grid;
@@ -115,7 +176,8 @@
   overflow-wrap: anywhere;
 }
 
-.governance-panel input,
+.governance-panel input:not([type="checkbox"]),
+.governance-panel select,
 .governance-panel textarea {
   width: 100%;
 }

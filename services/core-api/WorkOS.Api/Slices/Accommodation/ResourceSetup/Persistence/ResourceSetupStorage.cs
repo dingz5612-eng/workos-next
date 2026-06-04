@@ -52,7 +52,7 @@ internal sealed class ResourceSetupStorage
                 UpsertRoom(workspaceEvent, db, RoomStatus(workspaceEvent, "configured"));
                 return true;
             case ResourceSetupEvents.BedConfigured:
-                UpsertBed(workspaceEvent, db, BedStatus(workspaceEvent, "available"));
+                UpsertBeds(workspaceEvent, db, BedStatus(workspaceEvent, "available"));
                 return true;
             case ResourceSetupEvents.RateConfigured:
                 UpsertRatePlan(workspaceEvent, db);
@@ -116,6 +116,30 @@ internal sealed class ResourceSetupStorage
 
     private void UpsertBed(WorkspaceEvent workspaceEvent, RuntimeDbSession db, string status)
     {
+        UpsertBedRecord(workspaceEvent, db, status, BedId(workspaceEvent), BedNo(workspaceEvent), Value(workspaceEvent, "bedType", "lower"));
+    }
+
+    private void UpsertBeds(WorkspaceEvent workspaceEvent, RuntimeDbSession db, string status)
+    {
+        var labels = BedLabels(workspaceEvent);
+        if (labels.Count == 0)
+        {
+            UpsertBed(workspaceEvent, db, status);
+            return;
+        }
+
+        for (var index = 0; index < labels.Count; index++)
+        {
+            var label = labels[index];
+            var bedId = BedIdForLabel(workspaceEvent, label, index);
+            var bedNo = BedNoForLabel(workspaceEvent, label, index);
+            var bunkType = BedTypeForLabel(workspaceEvent, index);
+            UpsertBedRecord(workspaceEvent, db, status, bedId, bedNo, bunkType);
+        }
+    }
+
+    private void UpsertBedRecord(WorkspaceEvent workspaceEvent, RuntimeDbSession db, string status, string bedId, string bedNo, string bunkType)
+    {
         using var command = db.CreateCommand("""
             insert into accommodation_beds(bed_id, workspace_id, room_id, bed_no, bunk_type, status, created_event_id, updated_at_utc)
             values (@bedId, @workspaceId, @roomId, @bedNo, @bunkType, @status, @createdEventId, @updatedAtUtc)
@@ -126,11 +150,11 @@ internal sealed class ResourceSetupStorage
                 status = excluded.status,
                 updated_at_utc = excluded.updated_at_utc
             """);
-        command.Parameters.AddWithValue("bedId", BedId(workspaceEvent));
+        command.Parameters.AddWithValue("bedId", bedId);
         command.Parameters.AddWithValue("workspaceId", workspaceEvent.WorkspaceId);
         command.Parameters.AddWithValue("roomId", RoomId(workspaceEvent));
-        command.Parameters.AddWithValue("bedNo", BedNo(workspaceEvent));
-        command.Parameters.AddWithValue("bunkType", Value(workspaceEvent, "bedType", "lower"));
+        command.Parameters.AddWithValue("bedNo", bedNo);
+        command.Parameters.AddWithValue("bunkType", bunkType);
         command.Parameters.AddWithValue("status", status);
         command.Parameters.AddWithValue("createdEventId", workspaceEvent.EventId);
         command.Parameters.AddWithValue("updatedAtUtc", workspaceEvent.OccurredAtUtc);
@@ -174,6 +198,12 @@ internal sealed class ResourceSetupStorage
             return;
         }
 
+        if (TargetsRoomBeds(workspaceEvent))
+        {
+            UpdateAllBedsForRoom(workspaceEvent, db, status);
+            return;
+        }
+
         using var update = db.CreateCommand("""
             update accommodation_rooms
             set status = @status,
@@ -210,6 +240,20 @@ internal sealed class ResourceSetupStorage
         UpsertBed(workspaceEvent, db, status);
     }
 
+    private void UpdateAllBedsForRoom(WorkspaceEvent workspaceEvent, RuntimeDbSession db, string status)
+    {
+        using var update = db.CreateCommand("""
+            update accommodation_beds
+            set status = @status,
+                updated_at_utc = @updatedAtUtc
+            where room_id = @roomId
+            """);
+        update.Parameters.AddWithValue("roomId", RoomId(workspaceEvent));
+        update.Parameters.AddWithValue("status", status);
+        update.Parameters.AddWithValue("updatedAtUtc", workspaceEvent.OccurredAtUtc);
+        update.ExecuteNonQuery();
+    }
+
     private static string RoomId(WorkspaceEvent workspaceEvent)
     {
         var explicitId = Value(workspaceEvent, "roomId", string.Empty);
@@ -241,9 +285,73 @@ internal sealed class ResourceSetupStorage
         return string.IsNullOrWhiteSpace(explicitId) ? $"bed-{workspaceEvent.EventId}" : explicitId;
     }
 
+    private static IReadOnlyList<string> BedLabels(WorkspaceEvent workspaceEvent)
+    {
+        var explicitLabels = Value(workspaceEvent, "bedLabels", string.Empty);
+        var labels = SplitLabels(explicitLabels);
+        if (labels.Count > 0)
+        {
+            return labels;
+        }
+
+        var bedCount = IntValue(workspaceEvent, "bedCount", 0);
+        return bedCount > 0
+            ? Enumerable.Range(1, Math.Min(bedCount, 20)).Select(index => index.ToString("00", CultureInfo.InvariantCulture)).ToArray()
+            : Array.Empty<string>();
+    }
+
+    private static IReadOnlyList<string> SplitLabels(string value) =>
+        value.Split(new[] { ',', '，', ';', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .Where(label => !string.IsNullOrWhiteSpace(label))
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+
+    private static string BedIdForLabel(WorkspaceEvent workspaceEvent, string label, int index)
+    {
+        var explicitId = Value(workspaceEvent, "bedId", string.Empty);
+        if (index == 0 && !string.IsNullOrWhiteSpace(explicitId))
+        {
+            return explicitId;
+        }
+
+        return $"bed-{Slug(RoomId(workspaceEvent))}-{Slug(label)}".ToLowerInvariant();
+    }
+
+    private static string BedNoForLabel(WorkspaceEvent workspaceEvent, string label, int index)
+    {
+        var explicitNo = Value(workspaceEvent, "bedNo", string.Empty);
+        if (index == 0 && !string.IsNullOrWhiteSpace(explicitNo))
+        {
+            return explicitNo;
+        }
+
+        var roomNo = RoomNo(workspaceEvent);
+        return !string.IsNullOrWhiteSpace(roomNo) && !label.StartsWith(roomNo, StringComparison.OrdinalIgnoreCase)
+            ? $"{roomNo}-{label}"
+            : label;
+    }
+
+    private static string BedTypeForLabel(WorkspaceEvent workspaceEvent, int index)
+    {
+        var explicitType = Value(workspaceEvent, "bedType", string.Empty);
+        if (!string.IsNullOrWhiteSpace(explicitType))
+        {
+            return explicitType;
+        }
+
+        return index % 2 == 0 ? "lower" : "upper";
+    }
+
+    private static string Slug(string value) =>
+        string.Concat(value.Select(character => char.IsLetterOrDigit(character) ? char.ToLowerInvariant(character) : '-')).Trim('-');
+
     private static bool TargetsBed(WorkspaceEvent workspaceEvent) =>
-        Value(workspaceEvent, "resourceScope", string.Empty).Equals("bed", StringComparison.OrdinalIgnoreCase) ||
-        !string.IsNullOrWhiteSpace(Value(workspaceEvent, "bedId", string.Empty));
+        !string.IsNullOrWhiteSpace(Value(workspaceEvent, "resourceScope", string.Empty))
+            ? Value(workspaceEvent, "resourceScope", string.Empty).Equals("bed", StringComparison.OrdinalIgnoreCase)
+            : !string.IsNullOrWhiteSpace(Value(workspaceEvent, "bedId", string.Empty));
+
+    private static bool TargetsRoomBeds(WorkspaceEvent workspaceEvent) =>
+        Value(workspaceEvent, "resourceScope", string.Empty).Equals("room_beds", StringComparison.OrdinalIgnoreCase);
 
     private static string RoomStatus(WorkspaceEvent workspaceEvent, string defaultValue)
     {

@@ -24,7 +24,8 @@ internal static class RuntimeFieldAliases
         ["床位"] = "bedId",
         ["关联床位"] = "bedId",
         ["床位号"] = "bedNo",
-        ["床位标签"] = "bedLabel",
+        ["床位标签"] = "bedLabels",
+        ["床位标签清单"] = "bedLabels",
         ["上/下铺"] = "bedType",
         ["床位类型"] = "bedType",
         ["初始床位状态"] = "bedStatus",
@@ -40,6 +41,7 @@ internal static class RuntimeFieldAliases
         ["价格备注"] = "rateNote",
         ["可售状态"] = "availabilityStatus",
         ["准备备注"] = "readinessNote",
+        ["服务范围"] = "resourceScope",
         ["阻断范围"] = "resourceScope",
         ["释放范围"] = "resourceScope",
         ["阻断开始时间"] = "blockStartAt",
@@ -228,7 +230,6 @@ internal static class RuntimeFieldAliases
         ["完成日期"] = "completedAt",
         ["关联支出"] = "expenseId",
         ["完成凭证"] = "completionEvidenceId",
-        ["服务任务已验收"] = "serviceTaskVerified",
         ["实际成本"] = "actualCostAmount",
         ["负责人"] = "ownerName",
         ["责任角色"] = "ownerRole",
@@ -301,7 +302,6 @@ internal static class RuntimeFieldAliases
             ["yesNo"] = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase) { ["是"] = "true", ["否"] = "false" },
             ["checkoutStarted"] = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase) { ["是"] = "true", ["否"] = "false" },
             ["depositSettlementRequested"] = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase) { ["是"] = "true", ["否"] = "false" },
-            ["serviceTaskVerified"] = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase) { ["是"] = "true", ["否"] = "false" },
             ["taskStatus"] = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase) { ["待处理"] = "pending", ["处理中"] = "in_progress", ["已完成"] = "completed", ["done"] = "completed", ["已验收"] = "verified", ["已取消"] = "cancelled" }
         };
 
@@ -333,7 +333,6 @@ internal static class RuntimeFieldAliases
         "processingStatus" => "taskStatus",
         "checkoutStarted" => "checkoutStarted",
         "depositSettlementRequested" => "depositSettlementRequested",
-        "serviceTaskVerified" => "serviceTaskVerified",
         _ => null
     };
 

@@ -8,6 +8,9 @@ export const requiredChecks = [
   "artifact_hygiene",
   "stale_evidence_refs",
   "route_surface_hygiene",
+  "auxiliary_reference_hygiene",
+  "company_kernel_alignment",
+  "migration_sequence_hygiene",
   "seed_data_isolation",
   "screenshot_baseline"
 ];
@@ -180,7 +183,8 @@ export function inspectArtifact(artifactPath, finalEvidenceRefs = new Set()) {
 }
 
 function readArtifactValue(artifactPath) {
-  if (!artifactPath.endsWith(".jsonl")) return readJson(artifactPath);
+  if (artifactPath.endsWith(".json")) return readJson(artifactPath);
+  if (!artifactPath.endsWith(".jsonl")) return readTextArtifactValue(artifactPath);
   const lines = readText(artifactPath).split(/\r?\n/).filter(Boolean);
   const entries = lines.map((line) => JSON.parse(line));
   const last = entries.at(-1) ?? {};
@@ -195,6 +199,29 @@ function readArtifactValue(artifactPath) {
     lastEntryHash: last.entryHash,
     entries
   };
+}
+
+function readTextArtifactValue(artifactPath) {
+  const text = readText(artifactPath);
+  return {
+    generatedAtUtc: metadataFromText(text, "generatedAtUtc") ?? metadataFromText(text, "generated_at_utc"),
+    generatedBy: metadataFromText(text, "generatedBy") ?? metadataFromText(text, "generated_by") ?? inferGeneratedBy(artifactPath),
+    stage: metadataFromText(text, "stage") ?? inferStage(artifactPath),
+    sourceMode: metadataFromText(text, "sourceMode") ?? metadataFromText(text, "source_mode") ?? inferSourceMode(artifactPath, null),
+    status: statusFromText(text),
+    text
+  };
+}
+
+function metadataFromText(text, key) {
+  const match = new RegExp(`(?:^|\\n)\\s*["']?${key}["']?\\s*[:：]\\s*["']?([^"'\\r\\n,]+)`, "i").exec(text);
+  return match?.[1]?.trim() ?? null;
+}
+
+function statusFromText(text) {
+  if (/\b(failed|FAIL|NO-GO|blocked)\b/i.test(text)) return "failed";
+  if (/\b(passed|PASS|GO)\b/i.test(text)) return "passed";
+  return "documented";
 }
 
 export function updateProjectHygiene(checkName, payload) {
@@ -212,6 +239,7 @@ export function updateProjectHygiene(checkName, payload) {
     repairPartsHrStatus: "L0 Contract Preview"
   };
   current.generatedAtUtc = new Date().toISOString();
+  current.headSha = currentHead();
   current.checks[checkName] = payload;
   current.noGoItems = Object.values(current.checks).flatMap((item) => item.noGoItems ?? []);
   const allPresent = requiredChecks.every((check) => current.checks[check]);

@@ -1,5 +1,27 @@
 # Intent Workspace Card Model
 
+Status: archived projection/display product model.
+
+This WON-11 note is retained only to explain the historical
+IntentWorkspace/Card projection idea. It is not the current command model, API
+contract, or write-path authority. Current business writes must follow
+OAM-ACF v8 and Operations Runtime:
+
+```text
+Definition -> OperationCase -> WorkItem -> CommandSubmission
+-> SliceCommandHandler -> DomainEvent / LedgerEntry
+-> ProcessManager -> Projection / Lens -> Mobile / PC Surface
+```
+
+The only primary business fact write path is:
+
+```text
+POST /api/operations/work-items/{workItemId}/confirm
+```
+
+Workspace/Card may remain projection/display input only. Retired
+Workspace/Card prepare/confirm write routes must not be restored.
+
 WON-11 moves the product model away from page-per-step flows.
 
 The user sees one business intent workspace. The workspace contains dynamic task cards. Each card is a business action surface with fields, evidence, checks, confirmation, and analytics support.
@@ -56,11 +78,14 @@ Each card has:
 
 This supports user operation, backend DTO design, projection design, audit evidence, and later analytics.
 
-The active frontend contract is implemented in:
+Historical/offline fixture material lives in:
 
 ```text
-apps/mobile/src/workspaceProjections.js
+apps/mobile/src/devFixtures/workspaceProjections.js
 ```
+
+It is not an active business write contract. Active runtime surfaces consume
+Operations WorkItem, Projection, Lens, Admission, and Experience contracts.
 
 The backend DTO / Event / Projection draft is:
 
@@ -99,20 +124,24 @@ The same `IntentWorkspace + Card` data drives:
 
 Search and learning must not keep separate stage dictionaries. If a card field, blocker, evidence requirement, or next action changes, every entry point must reflect that change from the same model.
 
-## Backend Direction
+## Projection Direction
 
-Recommended projections:
+Projection/display objects that may still be useful:
 
 - `IntentWorkspaceProjection`
 - `WorkspaceCardProjection`
 - `WorkspaceBlockerProjection`
 - `WorkspaceNextActionProjection`
 
-Recommended APIs:
+Allowed read-model API shape:
 
 - `GET /workspaces`
 - `GET /workspaces/{workspaceId}`
+
+Retired write APIs, removed from the current command model:
+
 - `POST /workspaces/{workspaceId}/cards/{cardId}/prepare`
 - `POST /workspaces/{workspaceId}/cards/{cardId}/confirm`
 
-Actions remain granular, but the mobile user experience stays focused on one business intent.
+Actions remain granular, but command execution must enter Operations Runtime
+WorkItem prepare/confirm. Only Operations Confirm may write business facts.

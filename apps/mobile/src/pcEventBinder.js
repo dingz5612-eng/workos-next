@@ -12,7 +12,14 @@ import {
   rejectCorrectionRequest,
   rejectBankMatchCandidate
 } from "./financeReconciliationController.js";
-import { requestGovernanceExport, revokeGovernanceDevice } from "./pcGovernanceController.js";
+import {
+  applyAccountRolePreset,
+  createGovernanceAccountUser,
+  disableGovernanceAccountUser,
+  requestGovernanceExport,
+  resetGovernanceAccountPassword,
+  revokeGovernanceDevice
+} from "./pcGovernanceController.js";
 
 export function bindPcEvents(ctx) {
   document.querySelector("[data-bank-preview]")?.addEventListener("click", () => previewBankImport(ctx));
@@ -35,4 +42,10 @@ export function bindPcEvents(ctx) {
     node.addEventListener("click", () => requestGovernanceExport(node.dataset.governanceExport, ctx)));
   document.querySelectorAll("[data-device-revoke]").forEach((node) =>
     node.addEventListener("click", () => revokeGovernanceDevice(node.dataset.deviceRevoke, ctx)));
+  document.querySelector("[data-account-role-select]")?.addEventListener("change", (event) => applyAccountRolePreset(event.target.value));
+  document.querySelector("[data-account-user-create]")?.addEventListener("click", () => createGovernanceAccountUser(ctx));
+  document.querySelectorAll("[data-account-user-disable]").forEach((node) =>
+    node.addEventListener("click", () => disableGovernanceAccountUser(node.dataset.accountUserDisable, ctx)));
+  document.querySelectorAll("[data-account-password-reset]").forEach((node) =>
+    node.addEventListener("click", () => resetGovernanceAccountPassword(node.dataset.accountPasswordReset, ctx)));
 }

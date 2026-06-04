@@ -1,5 +1,5 @@
 {
-  "generatedAtUtc": "2026-06-02T14:38:34.056Z",
+  "generatedAtUtc": "2026-06-04T17:24:58.730Z",
   "generatedBy": "check-portfolio-boundary-baseline",
   "stage": "OAM-CLEAN-BASELINE-D6",
   "status": "passed",
@@ -26,8 +26,8 @@
     "artifacts/portfolio/production-governance-result.json",
     "artifacts/operations/dormitory/l1-to-l2-readiness.json"
   ],
-  "inputHash": "ba36cbbf5266633a6aae31dbf5a0bd10930ddaf793868271d3683eba76e3f327",
-  "resultHash": "5888cd32f88b00eaa37a20933ccad394284429ff4fc2fd44e7419442d33e6609",
+  "inputHash": "30505b4ae76ea32f4d844a1cfe8dc0b9aea5728d1b27d39fce6bb5d209522630",
+  "resultHash": "cbe81e9f7d46bab7da991d6266809789fbc14a918b95476509b1d21947bfd328",
   "noGoItems": [],
   "productionAllowed": false,
   "dormitoryL2ProductionAllowed": false,

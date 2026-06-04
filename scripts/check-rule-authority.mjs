@@ -31,6 +31,33 @@ const requiredAuthorityTerms = [
   "ProcessManager",
   "Projection / Lens",
   "Mobile / PC Surface",
+  "Unified Surface Architecture Rule",
+  "All user-visible pages must use the active OAM-ACF v8 / Operations Runtime surface architecture",
+  "Non-current architecture is a P0 defect",
+  "obsolete implementation must be deleted",
+  "Frontend Experience System",
+  "shared components, Surface contract, multilingual dictionary, state/action contract, and real browser screenshot evidence",
+  "Pages may specialize business content, but not architecture",
+  "Step-page experience parity",
+  "OperationCardShell",
+  "page-private outer `intent-card` wrapper",
+  "`workspace-control` visual wrapper",
+  "Post-submit navigation",
+  "auto-advance",
+  "returnCurrentWorkItem",
+  "users must not have to enumerate every page one by one",
+  "Step status color is semantic language",
+  "OperationStepRail",
+  "Append-only correction WorkItems must use an explicit correction visual state",
+  "Terminal completed records remain completed as the primary state",
+  "Resource setup bed cardinality",
+  "`bedSetup` must confirm the room's bed list",
+  "Service task resource availability scope",
+  "`serviceTaskCreate` with `resourceScope`",
+  "`roomReleaseAfterService` with `taskId`",
+  "backend-approved `ServiceTaskVerified` event",
+  "client-provided `serviceTaskVerified` field is not proof",
+  "ResourceSetup remains the only BedStatus/RoomStatus fact owner",
   "P0 WON-18 gate evidence must be green",
   "Workspace/Card prepare and confirm write endpoints are retired",
   "ProjectionRuntime may remain a projection/Lens compatibility facade",
@@ -55,8 +82,30 @@ const requiredYamlTerms = [
   "docs/architecture",
   "docs/v5.4",
   "hard.issue_repair_protocol",
+  "hard.unified_surface_architecture",
+  "hard.frontend_experience_system",
+  "hard.step_page_experience_parity",
+  "hard.post_submit_navigation",
+  "hard.step_state_visual_language",
+  "hard.resource_setup_bed_cardinality",
+  "hard.service_task_resource_availability_scope",
+  "roomId, bedCount, and bedLabels",
+  "serviceTaskCreate with resourceScope",
+  "roomReleaseAfterService with taskId",
+  "client-provided serviceTaskVerified is not proof",
+  "ResourceSetup remains the only BedStatus/RoomStatus fact owner",
+  "return-current-work must not be the ordinary continuation path after submit",
+  "terminal completed records remain completed as the primary state",
+  "direct OperationCardShell",
+  "outer intent-card operation wrapper",
+  "readonly workspace-control visual wrappers",
+  "engineering.frontend_experience_layers",
+  "deprecated.page_private_legacy_surface_shell",
   "Workspace/Card prepare and confirm write endpoints are retired",
   "scripts/check-api-boundaries.mjs",
+  "scripts/check-experience-contract.mjs",
+  "scripts/check-surface-contract.mjs",
+  "scripts/check-frontend-experience-system.mjs",
   "scripts/check-rule-drift.mjs"
 ];
 
@@ -78,7 +127,8 @@ for (const file of requiredFiles) {
 }
 
 const authority = fs.readFileSync("docs/engineering/00-rule-authority.md", "utf8");
-const missingAuthorityTerms = requiredAuthorityTerms.filter((term) => !authority.includes(term));
+const normalizedAuthority = authority.replace(/\s+/g, " ");
+const missingAuthorityTerms = requiredAuthorityTerms.filter((term) => !normalizedAuthority.includes(term));
 if (missingAuthorityTerms.length > 0) {
   fail("Rule authority is missing required terms.", missingAuthorityTerms);
 }
@@ -88,7 +138,8 @@ if (staleAuthorityMatches.length > 0) {
 }
 
 const machineAuthority = fs.readFileSync("docs/rules/v5.5/rule-authority.yml", "utf8");
-const missingYamlTerms = requiredYamlTerms.filter((term) => !machineAuthority.includes(term));
+const normalizedMachineAuthority = machineAuthority.replace(/\s+/g, " ");
+const missingYamlTerms = requiredYamlTerms.filter((term) => !normalizedMachineAuthority.includes(term));
 if (missingYamlTerms.length > 0) {
   fail("Machine rule authority is missing required terms.", missingYamlTerms);
 }

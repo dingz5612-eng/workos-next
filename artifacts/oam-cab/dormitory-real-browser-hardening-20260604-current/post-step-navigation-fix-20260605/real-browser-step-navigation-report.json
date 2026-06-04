@@ -1,0 +1,37 @@
+{
+  "generatedAt": "2026-06-04T18:10:03.437Z",
+  "startState": {
+    "admission": "visible_readonly_completed",
+    "hasMiddle": false,
+    "hasReadonly": true,
+    "text": "WorkOSNext\n住宿试点经办人 · 运营经办人\n已连接\n中文\nРусский\nКыргызча\n我要创建住宿资源\n第 1/6 步\n已完成\n1\n2\n3\n4\n5\n6\n只读记录\n房间配置卡\n已完成\n\n请先核对已提交的业务内容、材料和轨迹；发现错误后，再从本页发起更正办理。\n\n对象摘要\n业务对象\n我要创建住宿资源\n当前状态\n已完成\n最佳下一步\n先配置房间和床位，再配置价格、准备度、阻断和释放。\n提交记录\nW-STAY-RESOURCE-20260604174542-1781a21b7a6f41f78663a140602469e2\n业务字段\n楼栋\nFIX-buildingName-8472\n房间号\nF8540\n房型\n单人间\n床位数\n2\n性别策略\n男生房\n家具状态\n家具齐全\n技术状态\n可入住\n房间备注\n未填写\n步骤详情\n必需证据\n房间重复校验 · 配置人记录\n不能提交原因\n当前没有新的系统阻断，但关键动作仍需要人工确认。\n审计摘要\n该记录已进入审计轨迹；如需复核，请查看提交记录、证据对象和最近轨迹。\n记录操作\n\n更正会生成新的办理记录；原记录保留，系统追加更正轨迹。\n\n继续办理下一阶段\n返回当前办理\n更正这一步\n反馈\n反馈\n今天\n工作\n搜索\n我的",
+    "url": "http://127.0.0.1:5175/?view=workspace&lang=zh-CN&device=mobile&workspace=W-STAY-RESOURCE-20260604174542-1781a21b7a6f41f78663a140602469e2&card=roomSetup&workItem=wi-21be4fd1ed1d0997b8b33a2b76bbe64f2e367b3529693ca5ec147c7d4a78f47d"
+  },
+  "bedState": {
+    "card": "bedSetup",
+    "hasMiddle": false,
+    "hasOperationForm": true,
+    "hasReadonly": false,
+    "text": "WorkOSNext\n住宿试点经办人 · 运营经办人\n已连接\n中文\nРусский\nКыргызча\n我要创建住宿资源\n第 2/6 步\n可办理\n1\n2\n3\n4\n5\n6\n本步要做\n床位配置卡\n怎么做\n\n把这一步需要的信息填完整。不能提交时，页面会直接标出还差哪一项。\n\n填写信息\n所属房间\n必填\n· 可搜索选择\n从已有对象中选择。\n床位号\n必填\n请输入本步需要的信息。\n床位标签\n必填\n请输入本步需要的信息。\n床位类型\n必填\n下铺\n上铺\n整床\n请选择一个业务选项。\n初始床位状态\n必填\n可分配\n已预留\n已入住\n待清洁\n维修阻断\n未启用\n请选择一个业务选项。\n提交前检查\n\n页面会先看信息是否完整、材料是否齐全、这一步是否可以提交；有问题会直接标出来。\n\n还需填写: 床位标签\n材料核对: 床位容量确认 · 床位编号确认\n提交状态: 可以提交\n业务规则: 房间存在 · 未超过床位数 · 床位号未重复\n保存草稿\n提交处理\n反馈\n今天\n工作\n搜索\n我的",
+    "url": "http://127.0.0.1:5175/?view=operationPanel&lang=zh-CN&device=mobile&workspace=W-STAY-RESOURCE-20260604174542-1781a21b7a6f41f78663a140602469e2&card=bedSetup&workItem=wi-4834ce4e948b05abd89abaabe5c7dc85695390740d8f9b0e5281fac76d56b2e0",
+    "view": "operationPanel",
+    "workItem": "wi-4834ce4e948b05abd89abaabe5c7dc85695390740d8f9b0e5281fac76d56b2e0"
+  },
+  "afterStep1Direct": {
+    "admission": "visible_readonly_completed",
+    "card": "roomSetup",
+    "hasMiddle": false,
+    "hasReadonly": true,
+    "hasReadonlyRoute": true,
+    "hasViewRecordButton": false,
+    "text": "WorkOSNext\n住宿试点经办人 · 运营经办人\n已连接\n中文\nРусский\nКыргызча\n我要创建住宿资源\n第 1/6 步\n已完成\n1\n2\n3\n4\n5\n6\n只读记录\n房间配置卡\n已完成\n\n请先核对已提交的业务内容、材料和轨迹；发现错误后，再从本页发起更正办理。\n\n对象摘要\n业务对象\n我要创建住宿资源\n当前状态\n已完成\n最佳下一步\n先配置房间和床位，再配置价格、准备度、阻断和释放。\n提交记录\nW-STAY-RESOURCE-20260604174542-1781a21b7a6f41f78663a140602469e2\n业务字段\n楼栋\nFIX-buildingName-8472\n房间号\nF8540\n房型\n单人间\n床位数\n2\n性别策略\n男生房\n家具状态\n家具齐全\n技术状态\n可入住\n房间备注\n未填写\n步骤详情\n必需证据\n房间重复校验 · 配置人记录\n不能提交原因\n当前没有新的系统阻断，但关键动作仍需要人工确认。\n审计摘要\n该记录已进入审计轨迹；如需复核，请查看提交记录、证据对象和最近轨迹。\n记录操作\n\n更正会生成新的办理记录；原记录保留，系统追加更正轨迹。\n\n继续办理下一阶段\n返回当前办理\n更正这一步\n反馈\n反馈\n今天\n工作\n搜索\n我的",
+    "url": "http://127.0.0.1:5175/?view=operationPanel&lang=zh-CN&device=mobile&workspace=W-STAY-RESOURCE-20260604174542-1781a21b7a6f41f78663a140602469e2&card=roomSetup&workItem=wi-21be4fd1ed1d0997b8b33a2b76bbe64f2e367b3529693ca5ec147c7d4a78f47d",
+    "view": "operationPanel",
+    "workItem": "wi-21be4fd1ed1d0997b8b33a2b76bbe64f2e367b3529693ca5ec147c7d4a78f47d"
+  },
+  "screenshots": [
+    "001-start-readonly-direct-record-full.png",
+    "002-continue-next-stage-bed-setup-full.png",
+    "003-step-one-direct-readonly-no-middle-full.png"
+  ]
+}

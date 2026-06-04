@@ -7,6 +7,8 @@
     "version",
     "operationRuntimePure",
     "completedBusinessRecord",
+    "activeSurfaceArchitecture",
+    "frontendExperienceSystem",
     "collaborationFeedback",
     "mobile",
     "pc",
@@ -27,14 +29,37 @@
     },
     "completedBusinessRecord": {
       "type": "object",
-      "required": ["viewPath", "correctionPath", "actionOrder", "dataSources", "correctionEntry", "forbiddenPath"],
+      "required": ["viewPath", "surfaceShell", "forbiddenShell", "correctionPath", "actionOrder", "dataSources", "correctionEntry", "forbiddenPath"],
       "properties": {
         "viewPath": { "type": "string" },
+        "surfaceShell": { "type": "string" },
+        "forbiddenShell": { "type": "string" },
         "correctionPath": { "type": "string" },
         "actionOrder": { "type": "array", "items": { "type": "string" }, "minItems": 3 },
         "dataSources": { "type": "array", "items": { "type": "string" }, "minItems": 2 },
         "correctionEntry": { "type": "string" },
         "forbiddenPath": { "type": "string" }
+      }
+    },
+    "activeSurfaceArchitecture": {
+      "type": "object",
+      "required": ["architecture", "required", "forbidden", "repair"],
+      "properties": {
+        "architecture": { "type": "string" },
+        "required": { "type": "array", "items": { "type": "string" }, "minItems": 4 },
+        "forbidden": { "type": "array", "items": { "type": "string" }, "minItems": 4 },
+        "repair": { "type": "string" }
+      }
+    },
+    "frontendExperienceSystem": {
+      "type": "object",
+      "required": ["contractRef", "layers", "rule", "stepPageExperienceParity", "stepStateVisualLanguage"],
+      "properties": {
+        "contractRef": { "type": "string" },
+        "layers": { "type": "array", "items": { "type": "string" }, "minItems": 5 },
+        "rule": { "type": "string" },
+        "stepPageExperienceParity": { "type": "string" },
+        "stepStateVisualLanguage": { "type": "string" }
       }
     },
     "collaborationFeedback": {

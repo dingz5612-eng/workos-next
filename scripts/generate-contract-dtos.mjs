@@ -449,6 +449,7 @@ const dtoContent = `${content.trimEnd()}\n`;
 const apiPathDescriptors = [
   { key: "health", path: "/health" },
   { key: "login", path: "/api/auth/login" },
+  { key: "logout", path: "/api/auth/logout" },
   { key: "revokeSession", path: "/api/auth/sessions/{token}/revoke" },
   { key: "deviceSessions", path: "/api/device-sessions" },
   { key: "revokeDeviceSession", path: "/api/device-sessions/{deviceId}/revoke" },
@@ -498,6 +499,10 @@ const apiPathDescriptors = [
   { key: "correctionReject", path: "/api/correction-center/ledger-correction-requests/{correctionRequestId}/reject" },
   { key: "correctionApply", path: "/api/correction-center/ledger-correction-requests/{correctionRequestId}/apply" },
   { key: "pcGovernanceExport", path: "/api/pc-governance/exports/{exportType}" },
+  { key: "accountUsers", path: "/api/pc-governance/account-users" },
+  { key: "accountUserDisable", path: "/api/pc-governance/account-users/{userId}/disable" },
+  { key: "accountUserResetPassword", path: "/api/pc-governance/account-users/{userId}/reset-password" },
+  { key: "accountAudit", path: "/api/pc-governance/account-audit" },
   { key: "workspaceEvents", path: "/api/workspaces/{workspaceId}/events" },
   { key: "auditEvents", path: "/api/audit-events" },
   { key: "outbox", path: "/api/outbox" },

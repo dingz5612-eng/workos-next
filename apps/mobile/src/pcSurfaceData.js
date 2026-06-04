@@ -1,13 +1,22 @@
-import { fetchProductionObservability, fetchReleaseControlCenter } from "./pcApiClient.js";
+import { fetchAccountAudit, fetchAccountUsers, fetchDeviceSessions, fetchProductionObservability, fetchReleaseControlCenter } from "./pcApiClient.js";
 
 export async function hydratePcSurfaceData(state) {
-  const [releaseControl, productionObservability] = await Promise.all([
+  const [releaseControl, productionObservability, accountUsers, accountAudit, deviceSessions] = await Promise.all([
     optionalSurface(fetchReleaseControlCenter),
-    optionalSurface(fetchProductionObservability)
+    optionalSurface(fetchProductionObservability),
+    optionalSurface(fetchAccountUsers),
+    optionalSurface(fetchAccountAudit),
+    optionalSurface(fetchDeviceSessions)
   ]);
   if (releaseControl) state.releaseControl = releaseControl;
-  if (productionObservability) {
-    state.pcGovernance = { ...state.pcGovernance, productionObservability };
+  if (productionObservability || accountUsers || accountAudit || deviceSessions) {
+    state.pcGovernance = {
+      ...state.pcGovernance,
+      ...(productionObservability ? { productionObservability } : {}),
+      ...(accountUsers ? { accountUsers } : {}),
+      ...(accountAudit ? { accountAudit } : {}),
+      ...(deviceSessions ? { deviceSessions } : {})
+    };
   }
 }
 

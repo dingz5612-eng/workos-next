@@ -1,0 +1,29 @@
+{
+  "generatedAt": "2026-06-04T17:58:18.530Z",
+  "currentUrl": "http://127.0.0.1:5175/?view=workspace&lang=zh-CN&device=mobile&workspace=W-STAY-RESOURCE-20260604174542-1781a21b7a6f41f78663a140602469e2&card=roomSetup&workItem=wi-21be4fd1ed1d0997b8b33a2b76bbe64f2e367b3529693ca5ec147c7d4a78f47d",
+  "evidenceDir": "C:/Users/lenovo/Documents/WorkOSNext/artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/post-style-fix-20260605",
+  "observations": [
+    {
+      "step": "readonly_record_shared_shell",
+      "screenshot": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\post-style-fix-20260605\\004-readonly-record-shared-shell-final-full.png",
+      "assertions": {
+        "hasCompletedWorkspaceRecord": true,
+        "hasCompletedWorkspaceRoute": true,
+        "hasWorkspaceControl": true,
+        "hasCardOperation": true,
+        "hasOldDetail": false,
+        "hasOldStepList": false,
+        "hasBusinessObjectLabel": true
+      }
+    },
+    {
+      "step": "return_current_bed_setup",
+      "screenshot": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\post-style-fix-20260605\\002-return-current-bed-setup-full.png",
+      "assertions": {
+        "hasOperationForm": true,
+        "hasSubmitCard": true,
+        "hasStaleProjectionMessage": false
+      }
+    }
+  ]
+}

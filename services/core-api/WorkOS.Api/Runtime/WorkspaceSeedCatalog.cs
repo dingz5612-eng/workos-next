@@ -21,7 +21,7 @@ internal static class WorkspaceSeedCatalog
             new[]
             {
                 Card("roomSetup", "ready", "房间配置卡", "Комната", new[] { "roomId", "buildingId" }, new[] { "楼栋", "房间号", "房型", "床位数", "性别策略", "家具状态", "技术状态", "房间备注" }, new[] { "可售床位数", "已占床位数" }),
-                Card("bedSetup", "notStarted", "床位配置卡", "Койка", new[] { "bedId", "roomId" }, new[] { "所属房间", "床位号", "床位标签", "床位类型", "初始床位状态" }, new[] { "床位冲突数", "可售床位数" }),
+                Card("bedSetup", "notStarted", "床位配置卡", "Койка", new[] { "roomId", "bedCount" }, new[] { "所属房间", "床位数", "床位标签", "床位类型", "初始床位状态", "备注" }, new[] { "床位冲突数", "可售床位数" }),
                 Card("rateSetup", "notStarted", "价格配置卡", "Тариф", new[] { "ratePlanId", "roomId" }, new[] { "房间", "每床日价", "每床周价", "每床月价", "币种", "生效日期", "价格备注" }, new[] { "房间收益潜力", "价格版本数" }),
                 Card("roomReadiness", "notStarted", "房间准备度卡", "Готовность", new[] { "roomId", "operatorId" }, new[] { "房间", "家具状态", "技术状态", "可售状态", "准备备注" }, new[] { "可售床位数", "房间准备度" }),
                 Card("roomBlock", "notStarted", "房间床位阻断卡", "Блокировка", new[] { "blockId", "roomId", "bedId" }, new[] { "房间", "床位", "阻断范围", "阻断原因", "阻断开始时间", "预计恢复时间", "阻断备注" }, new[] { "阻断床位天数", "阻断损失估算" }),
@@ -119,11 +119,11 @@ internal static class WorkspaceSeedCatalog
             "Уборка, ремонт и комплектация влияют на доступность комнаты и койки.",
             new[]
             {
-                Card("serviceTaskCreate", "ready", "服务任务创建卡", "Создание задачи", new[] { "taskId", "operatorId" }, new[] { "任务日期", "任务类型", "房间", "床位", "区域", "问题描述", "处理措施", "紧急程度", "负责人", "是否阻断可售", "目标完成日期", "任务凭证" }, new[] { "阻断床位天数", "任务创建耗时" }),
+                Card("serviceTaskCreate", "ready", "服务任务创建卡", "Создание задачи", new[] { "taskId", "operatorId" }, new[] { "任务日期", "任务类型", "服务范围", "房间", "床位", "区域", "问题描述", "处理措施", "紧急程度", "负责人", "是否阻断可售", "目标完成日期", "任务凭证" }, new[] { "阻断床位天数", "任务创建耗时" }),
                 Card("serviceTaskAssign", "notStarted", "服务任务分派卡", "Назначение задачи", new[] { "taskId", "operatorId" }, new[] { "任务", "负责人", "优先级", "目标完成日期", "分派备注" }, new[] { "待处理任务数", "超时风险" }),
                 Card("serviceTaskComplete", "notStarted", "服务任务完成卡", "Завершение задачи", new[] { "taskId", "operatorId" }, new[] { "任务", "完成日期", "完成结果", "实际成本", "关联支出", "完成凭证" }, new[] { "实际成本", "任务完成耗时" }),
                 Card("serviceTaskVerify", "notStarted", "服务任务验收卡", "Проверка задачи", new[] { "taskId", "managerId" }, new[] { "任务", "验收结果", "验收备注", "处理意见" }, new[] { "验收通过率", "返工次数" }),
-                Card("roomReleaseAfterService", "notStarted", "服务后释放卡", "Освобождение после сервиса", new[] { "roomId", "bedId" }, new[] { "房间", "床位", "释放床位", "释放备注" }, new[] { "恢复可售床位数", "阻断恢复耗时" })
+                Card("roomReleaseAfterService", "notStarted", "服务后释放卡", "Освобождение после сервиса", new[] { "taskId", "roomId", "bedId" }, new[] { "任务", "释放范围", "房间", "床位", "恢复可售时间", "释放备注" }, new[] { "恢复可售床位数", "阻断恢复耗时" })
             },
             "阻断可售的任务必须显式释放房间或床位。",
             "Задача, блокирующая продажу, требует явного освобождения ресурса."),

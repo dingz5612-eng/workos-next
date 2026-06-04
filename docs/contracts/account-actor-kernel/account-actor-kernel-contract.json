@@ -1,0 +1,112 @@
+{
+  "version": "account-actor-kernel.v1",
+  "contractId": "account-actor-kernel",
+  "architecture": "OAM-ACF v8 / Account-Application Boundary Kernel / Admission Kernel",
+  "status": "contract_guard",
+  "rule": "Account, User, and Actor data are backend truth objects. Login only proves username and password. Department, business line, role, capability, tenant, session, and device trust must come from backend account/session truth and Admission policies.",
+  "backendTruthObjects": [
+    "account_users",
+    "account_audit_events",
+    "runtime_sessions",
+    "device_sessions"
+  ],
+  "accountFields": [
+    "username",
+    "displayName",
+    "department",
+    "businessLine",
+    "roles",
+    "capabilities",
+    "status",
+    "passwordHash",
+    "tenantId",
+    "developmentOnly"
+  ],
+  "login": {
+    "surface": "apps/mobile/src/views/loginView.js",
+    "allowedInputFields": [
+      "username",
+      "password"
+    ],
+    "forbiddenSelfAssignedFields": [
+      "department",
+      "businessLine",
+      "role",
+      "capability",
+      "tenant",
+      "deviceTrust"
+    ],
+    "responseFields": [
+      "actorId",
+      "displayName",
+      "tenantId",
+      "department",
+      "businessLine",
+      "roles",
+      "capabilities",
+      "session"
+    ]
+  },
+  "pcGovernance": {
+    "surface": "apps/mobile/src/views/pcGovernanceView.js",
+    "requiredCapabilities": [
+      "account.user.manage",
+      "pc.governance.admin"
+    ],
+    "actions": [
+      "createAccountUser",
+      "disableAccountUser",
+      "resetAccountUserPassword",
+      "listAccountAudit",
+      "listDeviceSessions",
+      "revokeDeviceSession"
+    ],
+    "authorityAssignmentSurface": {
+      "roleInputMode": "governed select from accountGovernanceCatalog",
+      "capabilityInputMode": "governed checkboxes from accountGovernanceCatalog",
+      "forbiddenInputModes": [
+        "free-text role input",
+        "free-text capability textarea",
+        "comma-separated authority typing"
+      ],
+      "presetSource": "apps/mobile/src/accountGovernanceCatalog.js"
+    }
+  },
+  "admission": {
+    "sourceOfAuthority": "backend session capabilities",
+    "protectedCapabilities": {
+      "operationsConfirm": "operations.confirm",
+      "search": "search.read",
+      "accountManagement": "account.user.manage",
+      "deviceRevoke": "admin.device_session.revoke"
+    },
+    "forbiddenAuthoritySources": [
+      "frontend selected department",
+      "frontend selected role",
+      "URL query permissions",
+      "localStorage permissions",
+      "request body ActorCapabilities"
+    ]
+  },
+  "developmentIsolation": {
+    "developmentAccountsAllowedOnlyWhen": "RuntimeAuthOptions.AllowDevelopmentAccounts == true and environment is Development",
+    "productionLikeRequirement": "Production and pilot runtimes must use account_users with versioned pbkdf2-sha256 password hashes. Development-only seed accounts must not be seeded or accepted."
+  },
+  "evidence": {
+    "requiredRealBrowserProof": [
+      "admin creates user",
+      "admin binds department roles capabilities",
+      "new user logs in with username password only",
+      "missing capability is blocked",
+      "capable user can operate an allowed action",
+      "logout revokes session",
+      "device session is listed and revoked"
+    ],
+    "localEvidenceRef": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/account-actor-kernel-real-browser-proof.json"
+  },
+  "machineChecks": [
+    "scripts/check-account-actor-kernel.mjs",
+    "scripts/check-api-boundaries.mjs",
+    "scripts/guard-architecture.ps1"
+  ]
+}

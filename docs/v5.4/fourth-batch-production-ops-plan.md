@@ -184,7 +184,10 @@ Gap:
 
 Plan:
 
-- Add `docs/ops/backup-restore-runbook.md`.
+- Keep `docs/v5.4/backup-restore-smoke.md` as the current V5.4 restore-drill
+  evidence reference.
+- Add a future operations backup/restore runbook only when the repository has
+  an active operations runbook area and owner.
 - Add `scripts/ops/backup-postgres.*` and `scripts/ops/restore-postgres-drill.*`
   or document the managed database provider commands if backup is external.
 - Declare RPO and RTO targets.

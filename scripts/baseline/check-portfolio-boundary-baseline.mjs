@@ -1,4 +1,4 @@
-import { failIfNeeded, productionLeaks, readJson, requirePassed, sha256, stableJson, writeJson } from "./baseline-lib.mjs";
+import { failIfNeeded, isDirectRun, productionLeaks, readJson, requirePassed, sha256, stableJson, writeJson } from "./baseline-lib.mjs";
 
 export function buildPortfolioBoundaryBaseline() {
   const failures = [];
@@ -47,6 +47,8 @@ export function buildPortfolioBoundaryBaseline() {
   return result;
 }
 
-const result = buildPortfolioBoundaryBaseline();
-failIfNeeded(result.noGoItems, "portfolio boundary baseline check");
-console.log("portfolio boundary baseline check: PASS");
+if (isDirectRun(import.meta.url)) {
+  const result = buildPortfolioBoundaryBaseline();
+  failIfNeeded(result.noGoItems, "portfolio boundary baseline check");
+  console.log("portfolio boundary baseline check: PASS");
+}

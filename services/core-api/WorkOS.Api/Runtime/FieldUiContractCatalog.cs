@@ -17,6 +17,7 @@ internal static class FieldUiContractCatalog
     public static IReadOnlyDictionary<string, string> Help(string label, string type, string source)
     {
         if (label == "容量") return ContractText.Text("容量由房型自动带出，不需要手填。", "Вместимость заполняется по типу комнаты автоматически.");
+        if (label == "床位标签") return ContractText.Text("系统会按床位数生成，例如 01, 02, 03, 04；需要时可用逗号调整。", "Система создаст метки по числу коек, например 01, 02, 03, 04; при необходимости измените через запятую.");
         if (type == "readonly") return ContractText.Text("已自动带出，不需要填写。", "Заполнено автоматически.");
         if (Control(label, type, source) == "select") return ContractText.Text("请选择一个业务选项。", "Выберите вариант.");
         if (Control(label, type, source) == "searchSelect") return ContractText.Text("从已有对象中选择。", "Выберите существующий объект.");
@@ -28,6 +29,7 @@ internal static class FieldUiContractCatalog
     private static string Control(string label, string type, string source)
     {
         if (label is "预计入住/退房" or "入住周期") return "dateTimeRange";
+        if (label == "床位标签") return "textarea";
         if (type == "readonly") return "readonly";
         if (type == "searchSelect" || source == "searchableProjection") return "searchSelect";
         if (type == "select" || source == "optionSet") return "select";

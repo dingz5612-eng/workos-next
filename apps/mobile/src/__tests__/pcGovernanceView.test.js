@@ -12,6 +12,7 @@ import {
   pcGovernanceNavItems,
   validateGovernanceExportRequest
 } from "../pcGovernancePolicies.js";
+import { accountCapabilityOptions, accountRoleOptions } from "../accountGovernanceCatalog.js";
 import { pcGovernanceView } from "../views/pcGovernanceView.js";
 
 describe("PC Governance Full", () => {
@@ -169,6 +170,23 @@ describe("PC Governance Full", () => {
     expect(html).toContain("revoked");
     expect(html).toContain("阻断");
     expect(html).toContain("data-governance-export=\"ledger\" disabled");
+  });
+
+  it("account_user_management_uses_governed_role_and_capability_controls", () => {
+    const html = pcGovernanceView(ctx());
+    const root = repoRoot();
+    const controller = readFileSync(resolve(root, "apps/mobile/src/pcGovernanceController.js"), "utf8");
+
+    expect(html).toContain("data-account-role-select");
+    expect(html).toContain("data-account-capability");
+    expect(html).toContain("account-capability-grid");
+    expect(html).toContain("operations.confirm");
+    expect(accountRoleOptions.map((item) => item.value)).toContain("operator");
+    expect(accountCapabilityOptions.map((item) => item.value)).toContain("account.user.manage");
+    expect(html).not.toContain("<input id=\"accountRoles\"");
+    expect(html).not.toContain("id=\"accountCapabilities\"");
+    expect(controller).toContain("capabilitiesForAccountRole");
+    expect(controller).not.toContain("splitCsv");
   });
 });
 

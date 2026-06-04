@@ -151,8 +151,22 @@ app.MapPost("/api/auth/login", (LoginRequest request, HttpContext httpContext) =
             result.ActorType,
             result.DisplayName,
             result.Role,
+            result.UserId,
+            result.TenantId,
+            result.Department,
+            result.BusinessLine,
+            result.Roles,
+            result.Capabilities,
+            Session = result.Session is null ? null : result.Session with { Token = string.Empty },
+            result.Status,
             result.ExpiresAtUtc
         });
+});
+app.MapPost("/api/auth/logout", (HttpRequest httpRequest) =>
+{
+    var actor = httpRequest.HttpContext.RequireActor();
+    runtime.RevokeSession(actor.SessionToken, actor.ActorId);
+    return Results.Ok(new { revoked = true, actor.ActorId });
 });
 app.MapPost("/api/auth/sessions/{token}/revoke", (string token, HttpRequest httpRequest) =>
 {
@@ -170,11 +184,53 @@ app.MapPost("/api/device-sessions", (RuntimeDeviceSessionRequest request, HttpRe
 
     return Results.Ok(runtime.RegisterDeviceSession(request));
 });
+app.MapGet("/api/device-sessions", (HttpRequest httpRequest) =>
+{
+    var actor = httpRequest.HttpContext.RequireActor();
+    return Results.Ok(runtime.ListDeviceSessions(actor.TenantId));
+});
 app.MapPost("/api/device-sessions/{deviceId}/revoke", (string deviceId, HttpRequest httpRequest) =>
 {
     var actorId = httpRequest.HttpContext.RequireActor().ActorId;
     var revoked = runtime.RevokeDeviceSession(deviceId, actorId);
     return revoked is null ? Results.NotFound(new { error = "device_session_not_found", deviceId }) : Results.Ok(revoked);
+});
+app.MapGet("/api/pc-governance/account-users", (HttpRequest httpRequest) =>
+{
+    var actor = httpRequest.HttpContext.RequireActor();
+    return Results.Ok(runtime.ListAccountUsers(actor.TenantId));
+});
+app.MapPost("/api/pc-governance/account-users", (AccountUserCreateRequest request, HttpRequest httpRequest) =>
+{
+    var actor = httpRequest.HttpContext.RequireActor();
+    try
+    {
+        var created = runtime.CreateAccountUser(request, actor);
+        return created is null
+            ? Results.UnprocessableEntity(new { error = "account_user_create_failed" })
+            : Results.Ok(created);
+    }
+    catch (InvalidOperationException ex)
+    {
+        return Results.UnprocessableEntity(new { error = ex.Message });
+    }
+});
+app.MapPost("/api/pc-governance/account-users/{userId}/disable", (string userId, HttpRequest httpRequest) =>
+{
+    var actor = httpRequest.HttpContext.RequireActor();
+    var disabled = runtime.DisableAccountUser(userId, actor);
+    return disabled is null ? Results.NotFound(new { error = "account_user_not_found", userId }) : Results.Ok(disabled);
+});
+app.MapPost("/api/pc-governance/account-users/{userId}/reset-password", (string userId, AccountUserPasswordResetRequest request, HttpRequest httpRequest) =>
+{
+    var actor = httpRequest.HttpContext.RequireActor();
+    var updated = runtime.ResetAccountUserPassword(userId, request, actor);
+    return updated is null ? Results.NotFound(new { error = "account_user_not_found", userId }) : Results.Ok(updated);
+});
+app.MapGet("/api/pc-governance/account-audit", (HttpRequest httpRequest) =>
+{
+    var actor = httpRequest.HttpContext.RequireActor();
+    return Results.Ok(runtime.ListAccountAudit(actor.TenantId));
 });
 
 app.MapGet("/api/workspaces", (HttpRequest httpRequest) =>

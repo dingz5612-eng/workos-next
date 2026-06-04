@@ -13,12 +13,20 @@ public sealed class AuthSessionService
 
     public RuntimeLoginResult? Login(RuntimeState state, LoginRequest request)
     {
-        var user = state.Users.FirstOrDefault(item =>
-            item.Enabled &&
-            item.Username.Equals(request.Username, StringComparison.OrdinalIgnoreCase));
+        var account = store.FindUserCredentialByUsername(request.Username);
+        var user = account?.User ?? (authOptions.AllowDevelopmentAccounts
+            ? state.Users.FirstOrDefault(item =>
+                item.Enabled &&
+                item.Username.Equals(request.Username, StringComparison.OrdinalIgnoreCase))
+            : null);
+        var passwordHash = account?.PasswordHash;
 
         if (user is null ||
-            !authOptions.PasswordSha256ByUsername.TryGetValue(user.Username, out var passwordHash) ||
+            !user.Enabled ||
+            string.Equals(user.Status, "disabled", StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(user.Status, "locked", StringComparison.OrdinalIgnoreCase) ||
+            (string.IsNullOrWhiteSpace(passwordHash) &&
+                !authOptions.PasswordSha256ByUsername.TryGetValue(user.Username, out passwordHash)) ||
             !RuntimePasswordHasher.Verify(request.Password, passwordHash))
         {
             return null;
@@ -32,6 +40,14 @@ public sealed class AuthSessionService
             user.DisplayName,
             user.Role,
             session.Token,
-            session.ExpiresAtUtc);
+            session.ExpiresAtUtc,
+            user.UserId,
+            user.TenantId,
+            user.Department,
+            user.BusinessLine,
+            user.EffectiveRoles,
+            user.EffectiveCapabilities,
+            session,
+            user.Status);
     }
 }

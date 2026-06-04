@@ -17,9 +17,39 @@ public sealed partial class ProjectionRuntime
         lock (gate) store.RevokeSession(token, actorId);
     }
 
+    public IReadOnlyList<RuntimeUser> ListAccountUsers(string tenantId)
+    {
+        lock (gate) return store.ListAccountUsers(tenantId);
+    }
+
+    public RuntimeUser? CreateAccountUser(AccountUserCreateRequest request, RuntimeActorContext actor)
+    {
+        lock (gate) return store.CreateAccountUser(request, actor);
+    }
+
+    public RuntimeUser? DisableAccountUser(string userId, RuntimeActorContext actor)
+    {
+        lock (gate) return store.DisableAccountUser(userId, actor);
+    }
+
+    public RuntimeUser? ResetAccountUserPassword(string userId, AccountUserPasswordResetRequest request, RuntimeActorContext actor)
+    {
+        lock (gate) return store.ResetAccountUserPassword(userId, request, actor);
+    }
+
+    public IReadOnlyList<AccountAuditRecord> ListAccountAudit(string tenantId)
+    {
+        lock (gate) return store.ListAccountAudit(tenantId);
+    }
+
     public RuntimeDeviceSession RegisterDeviceSession(RuntimeDeviceSessionRequest request)
     {
         lock (gate) return store.RegisterDeviceSession(request);
+    }
+
+    public IReadOnlyList<RuntimeDeviceSession> ListDeviceSessions(string tenantId)
+    {
+        lock (gate) return store.ListDeviceSessions(tenantId);
     }
 
     public RuntimeDeviceSession? RevokeDeviceSession(string deviceId, string actorId)

@@ -21,6 +21,8 @@ public sealed partial class ProjectionRuntime
         this.store = store;
         var searchProjectionService = new SearchProjectionService();
         lensQueryService = new LensQueryService(searchProjectionService);
+        state = store.LoadOrSeed(ProjectionSeed.Create);
+        store.EnsureAccountKernelSeeded(state.Users, authOptions);
         authSessionService = new AuthSessionService(store, authOptions);
         outboxProjector = new OutboxProjector(store);
         actionRuntimeService = new ActionRuntimeService(
@@ -30,7 +32,6 @@ public sealed partial class ProjectionRuntime
             SliceRuntimeCapabilityGate.LoadDefault(),
             outboxProjector,
             authOptions.RequireTrustedDeviceForHighRiskActions);
-        state = store.LoadOrSeed(ProjectionSeed.Create);
     }
 
     public static ProjectionRuntime OpenPostgres(

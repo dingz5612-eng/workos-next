@@ -1,7 +1,7 @@
 const searchIntents = {
   accommodationResourceSetup: {
     intentId: "accommodationResourceSetup",
-    commandId: "startOperationsResourceSetup",
+    commandId: "startOperationsWorkspace",
     templateWorkspaceId: "W-STAY-RESOURCE",
     firstCardId: "roomSetup",
     title: {

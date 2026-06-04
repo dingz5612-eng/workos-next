@@ -11,6 +11,7 @@ import {
   stableJson,
   writeJson
 } from "./baseline-lib.mjs";
+import { isDirectRun } from "./baseline-lib.mjs";
 
 export function buildReleaseEvidenceBaseline() {
   const failures = [];
@@ -73,6 +74,8 @@ export function buildReleaseEvidenceBaseline() {
   return result;
 }
 
-const result = buildReleaseEvidenceBaseline();
-failIfNeeded(result.noGoItems, "release evidence baseline check");
-console.log("release evidence baseline check: PASS");
+if (isDirectRun(import.meta.url)) {
+  const result = buildReleaseEvidenceBaseline();
+  failIfNeeded(result.noGoItems, "release evidence baseline check");
+  console.log("release evidence baseline check: PASS");
+}

@@ -52,6 +52,28 @@ internal sealed class SliceAggregateStorage
 
     public void Apply(WorkspaceEvent workspaceEvent, RuntimeDbSession db)
     {
+        if (workspaceEvent.EventType.Equals("OperationsWorkItemConfirmed", StringComparison.OrdinalIgnoreCase))
+        {
+            var appliedFromContract = false;
+            foreach (var eventDefinition in EventContractCatalog.ForCard(workspaceEvent.CardId))
+            {
+                appliedFromContract |= ApplyKnownEvent(workspaceEvent with { EventType = eventDefinition.EventType }, db);
+            }
+
+            if (appliedFromContract)
+            {
+                return;
+            }
+        }
+
+        if (ApplyKnownEvent(workspaceEvent, db))
+        {
+            return;
+        }
+    }
+
+    private bool ApplyKnownEvent(WorkspaceEvent workspaceEvent, RuntimeDbSession db)
+    {
         var applied =
             leadReservations.Apply(workspaceEvent, db) |
             stayLifecycle.Apply(workspaceEvent, db) |
@@ -64,32 +86,34 @@ internal sealed class SliceAggregateStorage
             periodAnalytics.Apply(workspaceEvent, db);
         if (applied)
         {
-            return;
+            return true;
         }
 
         switch (workspaceEvent.EventType)
         {
             case CheckInEvents.LeadCaptured:
                 UpsertHostelLead(HostelLeadFrom(workspaceEvent), db);
-                break;
+                return true;
             case CheckInEvents.BookingConfirmed:
                 UpsertHostelBooking(HostelBookingFrom(workspaceEvent), db);
-                break;
+                return true;
             case CheckInEvents.ResidentRegistered:
             case CheckInEvents.BedAssigned:
             case CheckInEvents.StayCheckedIn:
                 UpsertHostelStay(HostelStayFrom(workspaceEvent), db);
-                break;
+                return true;
             case CheckInEvents.TariffAssigned:
             case CheckInEvents.DepositRequired:
             case CheckInEvents.PaymentRecordedByFrontDesk:
             case CheckInEvents.PaymentConfirmedByFinance:
                 // Historical CheckIn remains a production intake flow, but ledger facts now belong
                 // exclusively to StayLifecycle, DepositLedger, PaymentLedger, and ExpenseLedger.
-                break;
+                return true;
             case CheckInEvents.OperatingMetricsReviewed:
                 UpsertOperatingMetrics(OperatingMetricsFrom(workspaceEvent), db);
-                break;
+                return true;
+            default:
+                return false;
         }
     }
 

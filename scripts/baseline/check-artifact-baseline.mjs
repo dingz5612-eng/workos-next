@@ -1,4 +1,4 @@
-import { failIfNeeded, readJson, requirePassed, sha256, stableJson, writeJson } from "./baseline-lib.mjs";
+import { failIfNeeded, isDirectRun, readJson, requirePassed, sha256, stableJson, writeJson } from "./baseline-lib.mjs";
 
 export function buildArtifactBaseline() {
   const failures = [];
@@ -34,6 +34,8 @@ export function buildArtifactBaseline() {
   return result;
 }
 
-const result = buildArtifactBaseline();
-failIfNeeded(result.noGoItems, "artifact baseline check");
-console.log("artifact baseline check: PASS");
+if (isDirectRun(import.meta.url)) {
+  const result = buildArtifactBaseline();
+  failIfNeeded(result.noGoItems, "artifact baseline check");
+  console.log("artifact baseline check: PASS");
+}

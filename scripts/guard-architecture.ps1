@@ -129,6 +129,7 @@ Assert-Exists "scripts/check-rule-authority.mjs"
 Assert-Exists "scripts/check-rule-drift.mjs"
 Assert-Exists "scripts/check-v5-5-rules-os.mjs"
 Assert-Exists "scripts/check-oam-clean-baseline.mjs"
+Assert-Exists "scripts/check-company-kernel-alignment.mjs"
 Assert-Exists "scripts/check-compatibility-quarantine.mjs"
 Assert-Exists "scripts/check-definition-registry.mjs"
 Assert-Exists "scripts/check-language-kernel.mjs"
@@ -151,6 +152,9 @@ Assert-Exists "scripts/check-business-line-admission.mjs"
 Assert-Exists "scripts/check-domain-kit-usage.mjs"
 Assert-Exists "scripts/v5_4/b-gate-runner.mjs"
 Assert-Exists "scripts/check-dormitory-golden-domain.mjs"
+Assert-Exists "scripts/check-frontend-experience-system.mjs"
+Assert-Exists "docs/contracts/account-actor-kernel/account-actor-kernel-contract.json"
+Assert-Exists "scripts/check-account-actor-kernel.mjs"
 Assert-Exists "scripts/check-experience-contract.mjs"
 foreach ($surfaceChecker in @(
   "scripts/surface/check-surface-experience-contract.mjs",
@@ -209,6 +213,8 @@ Assert-Exists "docs/business/policies/permission-policy.yml"
 Assert-Exists "docs/business/policies/cutover-policy.yml"
 Assert-Exists "docs/business/policies/invariant-policy.yml"
 Assert-Exists "docs/business/business-line-registry.json"
+Assert-Exists "docs/contracts/company-kernels/company-kernel-alignment-contract.json"
+Assert-Exists "docs/architecture/business-reality-oam-kernel-map.json"
 Assert-Exists "docs/business/acceptance/b2-scenario-result-semantics.md"
 Assert-Exists "docs/business/acceptance/b2-scenario-result-semantics.json"
 Assert-Exists "docs/business/acceptance/b-stage-runtime-boundary.md"
@@ -533,6 +539,7 @@ foreach ($pattern in $requiredEndpointPatterns) {
 
 $allowedMapPostPaths = @(
   "/api/auth/login",
+  "/api/auth/logout",
   "/api/auth/sessions/{token}/revoke",
   "/api/device-sessions",
   "/api/device-sessions/{deviceId}/revoke",
@@ -557,6 +564,9 @@ $allowedMapPostPaths = @(
   "/api/correction-center/ledger-correction-requests/{correctionRequestId}/approve",
   "/api/correction-center/ledger-correction-requests/{correctionRequestId}/reject",
   "/api/correction-center/ledger-correction-requests/{correctionRequestId}/apply",
+  "/api/pc-governance/account-users",
+  "/api/pc-governance/account-users/{userId}/disable",
+  "/api/pc-governance/account-users/{userId}/reset-password",
   "/api/pc-governance/exports/{exportType}",
   "/api/projections/process-outbox",
   "/api/mobile/drafts",
@@ -588,6 +598,9 @@ $allowedMapGetPaths = @(
   "/api/workspaces/{workspaceId}",
   "/api/work-queue",
   "/api/search",
+  "/api/device-sessions",
+  "/api/pc-governance/account-users",
+  "/api/pc-governance/account-audit",
   "/api/lenses/home-surface",
   "/api/lenses/work-queue",
   "/api/lenses/search",
@@ -664,6 +677,7 @@ Invoke-Checked "node" @("scripts/check-gate-result-hardening.mjs")
 Invoke-Checked "node" @("scripts/check-rule-drift.mjs")
 Invoke-Checked "node" @("scripts/check-v5-5-rules-os.mjs")
 Invoke-Checked "node" @("scripts/check-oam-clean-baseline.mjs")
+Invoke-Checked "node" @("scripts/check-company-kernel-alignment.mjs")
 Invoke-Checked "node" @("scripts/check-compatibility-quarantine.mjs")
 Invoke-Checked "node" @("scripts/check-definition-registry.mjs")
 Invoke-Checked "node" @("scripts/check-language-kernel.mjs")
@@ -699,6 +713,8 @@ Invoke-Checked "node" @("scripts/v5_4/certify-dormitory.mjs", "--sourceMode=real
 Invoke-Checked "node" @("scripts/v5_4/b-gate-runner.mjs")
 Invoke-Checked "node" @("scripts/check-dormitory-golden-domain.mjs", "--self-test")
 Invoke-Checked "node" @("scripts/check-dormitory-golden-domain.mjs")
+Invoke-Checked "node" @("scripts/check-frontend-experience-system.mjs")
+Invoke-Checked "node" @("scripts/check-account-actor-kernel.mjs")
 Invoke-Checked "node" @("scripts/check-experience-contract.mjs", "--self-test")
 Invoke-Checked "node" @("scripts/check-experience-contract.mjs")
 foreach ($surfaceChecker in @(
@@ -762,6 +778,9 @@ if ($ci -notmatch "check-v5-5-rules-os\.mjs") {
 if ($ci -notmatch "check-oam-clean-baseline\.mjs") {
   Fail "CI must run OAM clean baseline gate."
 }
+if ($ci -notmatch "check-company-kernel-alignment\.mjs") {
+  Fail "CI must run company kernel alignment gate."
+}
 if ($ci -notmatch "check-compatibility-quarantine\.mjs") {
   Fail "CI must run compatibility quarantine gate."
 }
@@ -793,6 +812,8 @@ foreach ($requiredCiCommand in @(
   "certify-dormitory.mjs",
   "b-gate-runner.mjs",
   "check-dormitory-golden-domain.mjs",
+  "check-frontend-experience-system.mjs",
+  "check-account-actor-kernel.mjs",
   "check-experience-contract.mjs",
   "scripts/surface/check-surface-experience-contract.mjs",
   "scripts/surface/check-mobile-pc-surface-boundary.mjs",
@@ -856,6 +877,7 @@ $runtimeApiPaths = Get-Content "apps/mobile/src/generated/runtimeApiPaths.js" -R
 $requiredRuntimeApiPathKeys = @(
   "health",
   "login",
+  "logout",
   "workspaces",
   "workspace",
   "bootstrap",
@@ -883,7 +905,13 @@ $requiredRuntimeApiPathKeys = @(
   "outbox",
   "processOutbox",
   "behaviorEvents",
-  "observability"
+  "observability",
+  "deviceSessions",
+  "revokeDeviceSession",
+  "accountUsers",
+  "accountUserDisable",
+  "accountUserResetPassword",
+  "accountAudit"
 )
 foreach ($runtimeApiPathKey in $requiredRuntimeApiPathKeys) {
   if ($runtimeApiPaths -notmatch "${runtimeApiPathKey}\s*:") {

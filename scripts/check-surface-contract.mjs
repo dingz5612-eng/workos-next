@@ -32,7 +32,7 @@ function validateContract(contract) {
   if (!fs.existsSync(path.join(root, schemaPath))) {
     violations.push(violation("surface_contract.schema_missing", `${schemaPath} is required.`));
   }
-  for (const field of ["version", "operationRuntimePure", "completedBusinessRecord", "collaborationFeedback", "mobile", "pc", "retiredWorkspaceCardWriteAdapter"]) {
+  for (const field of ["version", "operationRuntimePure", "completedBusinessRecord", "activeSurfaceArchitecture", "frontendExperienceSystem", "collaborationFeedback", "mobile", "pc", "retiredWorkspaceCardWriteAdapter"]) {
     if (!(field in contract)) {
       violations.push(violation("surface_contract.missing_field", `${contractPath} missing ${field}.`, { field }));
     }
@@ -57,6 +57,21 @@ function validateContract(contract) {
   if (!contract.completedBusinessRecord?.viewPath || !contract.completedBusinessRecord?.correctionPath) {
     violations.push(violation("surface_contract.completed_record_paths", "Completed business records must declare readonly view and append-only correction paths."));
   }
+  if (!String(contract.completedBusinessRecord?.viewPath || "").includes("without an intermediate completed-operation page")) {
+    violations.push(violation("surface_contract.completed_record_direct_view", "Completed business records must declare direct readonly view without an intermediate completed-operation page."));
+  }
+  if (!String(contract.completedBusinessRecord?.surfaceShell || "").includes("OperationStepRail") ||
+      !String(contract.completedBusinessRecord?.surfaceShell || "").includes("OperationCardShell") ||
+      !String(contract.completedBusinessRecord?.surfaceShell || "").includes("card-operation")) {
+    violations.push(violation("surface_contract.completed_record_surface_shell", "Completed business records must declare the shared Operations shell, OperationStepRail, and card-operation readonly state."));
+  }
+  if (!String(contract.completedBusinessRecord?.forbiddenShell || "").includes("page-private legacy detail shell") ||
+      !String(contract.completedBusinessRecord?.forbiddenShell || "").includes("page-private outer intent-card wrapper") ||
+      !String(contract.completedBusinessRecord?.forbiddenShell || "").includes("workspace-control completed-record-control visual wrapper") ||
+      !String(contract.completedBusinessRecord?.forbiddenShell || "").includes("intermediate completed-operation page") ||
+      !String(contract.completedBusinessRecord?.forbiddenShell || "").includes("completed-record-detail")) {
+    violations.push(violation("surface_contract.completed_record_forbidden_shell", "Completed business records must forbid page-private legacy detail shells and old completed-record-detail grids."));
+  }
   const requiredActionOrder = ["create_active_work_item", "view_readonly_completed_record", "correct_append_only_from_record"];
   if (!Array.isArray(contract.completedBusinessRecord?.actionOrder) ||
       requiredActionOrder.some((item, index) => contract.completedBusinessRecord.actionOrder[index] !== item)) {
@@ -70,6 +85,54 @@ function validateContract(contract) {
   }
   if (!String(contract.completedBusinessRecord?.correctionPath || "").includes("correctionMode=append_only")) {
     violations.push(violation("surface_contract.completed_record_correction_append_only", "Completed business record correction path must use correctionMode=append_only."));
+  }
+  const activeSurface = contract.activeSurfaceArchitecture || {};
+  if (!String(activeSurface.architecture || "").includes("OAM-ACF v8") || !String(activeSurface.architecture || "").includes("Operations Runtime")) {
+    violations.push(violation("surface_contract.active_surface_architecture_axis", "Active surface architecture must be OAM-ACF v8 / Operations Runtime."));
+  }
+  for (const required of ["shared shell", "shared route guard", "shared named experience components", "surface contract", "direct OperationCardShell on step pages"]) {
+    if (!Array.isArray(activeSurface.required) || !activeSurface.required.includes(required)) {
+      violations.push(violation("surface_contract.active_surface_required", `activeSurfaceArchitecture.required missing ${required}.`, { required }));
+    }
+  }
+  for (const forbidden of ["page-private legacy shell", "intent-card operation wrapper", "copied layout logic", "old completed-record-detail grid", "retired Workspace/Card write UI flow"]) {
+    if (!Array.isArray(activeSurface.forbidden) || !activeSurface.forbidden.includes(forbidden)) {
+      violations.push(violation("surface_contract.active_surface_forbidden", `activeSurfaceArchitecture.forbidden missing ${forbidden}.`, { forbidden }));
+    }
+  }
+  if (!String(activeSurface.repair || "").includes("rewrite non-current architecture") || !String(activeSurface.repair || "").includes("delete obsolete implementation")) {
+    violations.push(violation("surface_contract.active_surface_repair", "activeSurfaceArchitecture.repair must require rewrite of non-current architecture and obsolete implementation deletion."));
+  }
+  const frontendExperience = contract.frontendExperienceSystem || {};
+  if (frontendExperience.contractRef !== "docs/contracts/frontend-experience/frontend-experience-system-contract.json") {
+    violations.push(violation("surface_contract.frontend_experience_contract_ref", "frontendExperienceSystem must reference the FES contract."));
+  }
+  for (const layer of ["shared-components", "surface-contract", "multilingual-dictionary", "state-action-contract", "real-browser-screenshot-evidence"]) {
+    if (!Array.isArray(frontendExperience.layers) || !frontendExperience.layers.includes(layer)) {
+      violations.push(violation("surface_contract.frontend_experience_layer", `frontendExperienceSystem.layers missing ${layer}.`, { layer }));
+    }
+  }
+  if (!String(frontendExperience.rule || "").includes("but not architecture") ||
+      !String(frontendExperience.rule || "").includes("rewritten and deleted")) {
+    violations.push(violation("surface_contract.frontend_experience_rule", "frontendExperienceSystem must forbid architecture variance and require rewrite/delete of old surfaces."));
+  }
+  const stepPageParity = String(frontendExperience.stepPageExperienceParity || "");
+  for (const term of ["new active", "readonly completed", "append-only correction", "OperationCardShell", "page-private outer intent-card wrapper", "workspace-control visual wrapper", "state/check panel", "decision markers"]) {
+    if (!stepPageParity.includes(term)) {
+      violations.push(violation("surface_contract.step_page_experience_parity", `frontendExperienceSystem.stepPageExperienceParity missing ${term}.`, { term }));
+    }
+  }
+  const postSubmitNavigation = String(frontendExperience.postSubmitNavigation || "");
+  for (const term of ["auto-advance to the next actionable persisted WorkItem", "not the normal submit continuation path"]) {
+    if (!postSubmitNavigation.includes(term)) {
+      violations.push(violation("surface_contract.post_submit_navigation", `frontendExperienceSystem.postSubmitNavigation missing ${term}.`, { term }));
+    }
+  }
+  const stepStateVisualLanguage = String(frontendExperience.stepStateVisualLanguage || "");
+  for (const term of ["completed green", "ready blue", "terminal completed records remain completed as the primary state", "muted indigo", "not ordinary ready blue", "in-progress amber", "not-started neutral gray", "blocked red", "current-step ring", "instead of harsh saturated blocks"]) {
+    if (!stepStateVisualLanguage.includes(term)) {
+      violations.push(violation("surface_contract.step_state_visual_language", `frontendExperienceSystem.stepStateVisualLanguage missing ${term}.`, { term }));
+    }
   }
   if (contract.collaborationFeedback?.surface !== "feedback-message-channel") {
     violations.push(violation("surface_contract.feedback_surface", "Collaboration feedback must declare feedback-message-channel surface."));
@@ -86,6 +149,9 @@ function validateContract(contract) {
   if (!String(contract.collaborationFeedback?.forbiddenPath || "").includes("save/submit business action row")) {
     violations.push(violation("surface_contract.feedback_forbidden_action_row", "Collaboration feedback must not be placed inside save/submit business action rows."));
   }
+  if (!String(contract.collaborationFeedback?.forbiddenPath || "").includes("duplicate local feedback buttons")) {
+    violations.push(violation("surface_contract.feedback_duplicate_local_entry_rule", "Collaboration feedback must forbid duplicate local feedback buttons when the shell entry exists."));
+  }
   return violations;
 }
 
@@ -101,6 +167,8 @@ function validateSourceBoundary(contract) {
   const operationController = readSource("apps/mobile/src/operationController.js");
   const components = readSource("apps/mobile/src/views/experienceComponents.js");
   const workspace = readSource("apps/mobile/src/views/workspaceView.js");
+  const workspaceStyles = readSource("apps/mobile/src/styles/workspace.css");
+  const operationStyles = readSource("apps/mobile/src/styles/operation.css");
   const shell = readSource("apps/mobile/src/appShell.js");
   const feedbackView = readSource("apps/mobile/src/views/feedbackView.js");
   const feedbackController = readSource("apps/mobile/src/feedbackController.js");
@@ -150,11 +218,52 @@ function validateSourceBoundary(contract) {
   if (!operationController.includes("persistedWorkItemIdFor(ctx.state, item, card)")) {
     violations.push(violation("surface_contract.confirm_selected_persisted_id", "submitCurrentCard must pass selected persisted WorkItem id into submitWorkItemOperation."));
   }
-  if (!operationPanel.includes('data-surface="completed-operation-record"') ||
-      !operationPanel.includes("completedRecordActionPolicy") ||
-      !operationPanel.includes("viewOnly") ||
+  if (!operationController.includes("postSubmitAutoAdvanceTarget") ||
+      !operationController.includes("refreshPostSubmitWorkItems") ||
+      !operationController.includes("applyPostSubmitAutoAdvance") ||
+      !operationController.includes("autoAdvancedToWorkItemId") ||
+      !operationController.includes("syncUrlFromState(ctx)")) {
+    violations.push(violation("surface_contract.post_submit_auto_advance_missing", "Successful active submits must auto-advance to the next actionable persisted WorkItem and sync the URL."));
+  }
+  if (workspace.includes("returnCurrentWorkItem")) {
+    violations.push(violation("surface_contract.return_current_work_retired", "Readonly completed records must not use returnCurrentWorkItem as a normal continuation fallback."));
+  }
+  if (!operationPanel.includes("completedWorkspaceRecord") ||
+      !operationPanel.includes("isTerminalCardStatus(activeCard.status)") ||
       !workspace.includes("data-correction-work-item")) {
-    violations.push(violation("surface_contract.completed_record_actions_missing", "Completed records must expose readonly view first and append-only correction from the readonly record."));
+    violations.push(violation("surface_contract.completed_record_actions_missing", "Completed operation routes must render the readonly workspace record directly and keep append-only correction on the readonly record."));
+  }
+  const completedWorkspaceRoute = workspace.includes('data-surface="completed-workspace-route"') || workspace.includes('surface: "completed-workspace-route"');
+  if (!completedWorkspaceRoute ||
+      !workspace.includes("completed-record-control") ||
+      !workspace.includes("completed-record-operation") ||
+      !workspace.includes("OperationCardShell") ||
+      !workspace.includes('data-component="operation-card-shell"')) {
+    violations.push(violation("surface_contract.completed_record_shared_shell_missing", "Completed workspace records must reuse the shared operation step rail and card-operation readonly shell."));
+  }
+  if (workspace.includes("completed-record-intent") ||
+      workspace.includes('data-component="CompletedRecordDetail"') ||
+      workspace.includes('<article class="intent-card expanded completed-record-intent">')) {
+    violations.push(violation("surface_contract.completed_record_double_container", "Readonly completed surfaces must not keep a page-private intent-card wrapper outside card-operation."));
+  }
+  if (workspace.includes('<article class="intent-card') || operationStyles.includes(".intent-card")) {
+    violations.push(violation("surface_contract.intent_card_wrapper_retired", "Step pages must not keep the retired intent-card operation wrapper."));
+  }
+  if (workspace.includes('class="workspace-control completed-record-control"')) {
+    violations.push(violation("surface_contract.completed_record_workspace_control_wrapper", "Readonly completed records must not keep the workspace-control visual wrapper."));
+  }
+  for (const [file, source] of Object.entries({
+    "apps/mobile/src/views/workspaceView.js": workspace,
+    "apps/mobile/src/views/operationPanelView.js": operationPanel,
+    "apps/mobile/src/eventBinder.js": eventBinder,
+    "apps/mobile/src/styles/workspace.css": workspaceStyles,
+    "apps/mobile/src/styles/operation.css": operationStyles
+  })) {
+    for (const token of ["completed-record-detail", "completed-step-list", "completed-step-button", "completed-record-grid", "completed-record-hero", "completed-record-section", "completed-operation-record", "data-view-completed-record", "intent-card"]) {
+      if (source.includes(token)) {
+        violations.push(violation("surface_contract.retired_surface_shell_token", `${file} must not contain retired surface shell token ${token}.`, { file, token }));
+      }
+    }
   }
   if (!eventBinder.includes("startCompletedStepCorrection")) {
     violations.push(violation("surface_contract.completed_record_correction_handler_missing", "Completed record correction must be handled through Operations Runtime WorkItem creation."));
@@ -167,6 +276,21 @@ function validateSourceBoundary(contract) {
   }
   if (!shell.includes("feedback-fab") || !feedbackView.includes('data-surface="feedback-message-channel"')) {
     violations.push(violation("surface_contract.feedback_channel_missing", "Feedback must be a message channel, not a placeholder-only support page."));
+  }
+  if (workspace.includes('data-view="feedback"')) {
+    violations.push(violation("surface_contract.feedback_duplicate_local_entry", "Workspace surfaces must not render duplicate local feedback buttons when shell feedback exists."));
+  }
+  if (!workspace.includes('data-surface="readonly-state-summary"') ||
+      !workspace.includes('class="primary-action ready" data-work-item-id')) {
+    violations.push(violation("surface_contract.readonly_step_parity", "Readonly completed surfaces must share status/check panel and primary action hierarchy with active step pages."));
+  }
+  if (!components.includes("data-step-state") || !components.includes("data-current-step") || !components.includes("data-step-marker") || !components.includes("stepVisualState") || !components.includes("isCorrectionStep") || !components.includes("isTerminalCorrectionStep") || !components.includes("completedWithCorrectionStatus")) {
+    violations.push(violation("surface_contract.step_state_markers", "OperationStepRail must expose step state and correction markers for browser evidence and shared styling."));
+  }
+  for (const token of ["step-state-completed", "step-state-ready", "step-state-correction", "step-state-in-progress", "step-state-not-started", "step-state-blocked", "#2e7d5b", "#2f73b8", "#6b6f9f", "#b7791f", "#8a97a6", "#c24135", "--step-accent", "--step-bg", "--step-ring", "::before", "data-step-marker"]) {
+    if (!workspaceStyles.includes(token)) {
+      violations.push(violation("surface_contract.step_state_style_token", `workspace.css missing semantic step-state token ${token}.`, { token }));
+    }
   }
   if (!feedbackController.includes("recordMobileClientEvent") || feedbackController.includes("confirmOperationWorkItem")) {
     violations.push(violation("surface_contract.feedback_wrong_write_path", "Feedback must record collaboration events without using Operations Confirm."));

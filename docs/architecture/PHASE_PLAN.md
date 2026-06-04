@@ -1,5 +1,19 @@
 # WorkOSNext Phase Plan
 
+Status: historical phase plan. This file is retained for evolution traceability only.
+It is not current architecture authority.
+
+Current authority is:
+
+- `docs/engineering/00-rule-authority.md`
+- `docs/rules/v5.5/rule-authority.yml`
+- `docs/business/experience-contract.yml`
+- `docs/surface/surface-contract.yml`
+
+Current top-level architecture is OAM-ACF v8. The main execution chain is
+Operations Runtime, and the main business write path is
+`POST /api/operations/work-items/{workItemId}/confirm`.
+
 ## WON-00: Project Scaffold
 
 - Repository structure.
@@ -121,8 +135,12 @@
 
 ## Standing Engineering Rules
 
-- All future work must follow `docs/architecture/WORKOS_ENGINEERING_RULES.md`.
-- Backend contract drafts must follow `docs/architecture/WORKSPACE_CARD_BACKEND_CONTRACT.md`.
-- WON-13 backend runtime work must follow `docs/architecture/WON_13_PRODUCTION_RUNTIME_ARCHITECTURE.md`.
-- `IntentWorkspaceProjection + WorkspaceCardProjection` is the single center model for frontend, backend, search, workbench, scenario coach, and AI.
-- Do not create separate page models, search models, learning models, or AI models for the same business behavior.
+- Historical rule for the WON phase sequence: engineering work followed
+  `docs/architecture/WORKOS_ENGINEERING_RULES.md`,
+  `docs/architecture/WORKSPACE_CARD_BACKEND_CONTRACT.md`, and
+  `docs/architecture/WON_13_PRODUCTION_RUNTIME_ARCHITECTURE.md`.
+- These references are no longer current rule authority. Do not use this file to
+  restore retired Workspace/Card prepare/confirm writes or to recenter
+  ProjectionRuntime.
+- In current architecture, Workspace/Card is a projection/display compatibility
+  model only. Confirm writes must stay on Operations Runtime.

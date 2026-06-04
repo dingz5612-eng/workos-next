@@ -3,6 +3,7 @@ using WorkOS.Api.Slices.Policies;
 using WorkOS.Api.Slices.Accommodation.DepositLedger.Policies;
 using WorkOS.Api.Slices.Accommodation.PaymentLedger.Policies;
 using WorkOS.Api.Slices.Accommodation.CheckOutSettlement.Policies;
+using WorkOS.Api.Slices.Accommodation.ResourceSetup.Policies;
 using WorkOS.Api.Slices.Accommodation.ServiceTask.Policies;
 using WorkOS.Api.Slices.Accommodation.ExpenseLedger.Policies;
 using WorkOS.Api.Slices.Accommodation.PeriodAnalytics.Policies;
@@ -156,6 +157,12 @@ public sealed class ActionRuntimeService
         if (fieldContractFailure is not null)
         {
             return fieldContractFailure;
+        }
+
+        var resourceSetupPolicyFailure = ResourceSetupPolicy.Validate(card.Id, request);
+        if (resourceSetupPolicyFailure is not null)
+        {
+            return resourceSetupPolicyFailure;
         }
 
         var evidenceFailure = ValidateEvidenceObject(workspace.Id, card, request);
@@ -325,6 +332,12 @@ public sealed class ActionRuntimeService
         if (fieldContractFailure is not null)
         {
             return fieldContractFailure;
+        }
+
+        var resourceSetupPolicyFailure = ResourceSetupPolicy.Validate(card.Id, request);
+        if (resourceSetupPolicyFailure is not null)
+        {
+            return resourceSetupPolicyFailure;
         }
 
         var evidenceFailure = ValidateEvidenceObject(workspace.Id, card, request);

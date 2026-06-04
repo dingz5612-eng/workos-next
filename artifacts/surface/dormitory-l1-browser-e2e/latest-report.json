@@ -1,8 +1,8 @@
 {
-  "runId": "20260604T103403Z",
+  "runId": "20260604T223227Z",
   "status": "passed",
-  "report": "artifacts/surface/dormitory-l1-browser-e2e/20260604T103403Z/dormitory-l1-browser-e2e-report.json",
-  "markdown": "artifacts/surface/dormitory-l1-browser-e2e/20260604T103403Z/dormitory-l1-browser-e2e-report.md",
-  "screenshotIndex": "artifacts/surface/dormitory-l1-browser-e2e/20260604T103403Z/screenshot-index.json",
-  "generatedAtUtc": "2026-06-04T10:34:05.132Z"
+  "report": "artifacts/surface/dormitory-l1-browser-e2e/20260604T223227Z/dormitory-l1-browser-e2e-report.json",
+  "markdown": "artifacts/surface/dormitory-l1-browser-e2e/20260604T223227Z/dormitory-l1-browser-e2e-report.md",
+  "screenshotIndex": "artifacts/surface/dormitory-l1-browser-e2e/20260604T223227Z/screenshot-index.json",
+  "generatedAtUtc": "2026-06-04T22:32:28.982Z"
 }

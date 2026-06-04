@@ -1,5 +1,6 @@
 export function loginView(ctx) {
   const { tr, shell, state } = ctx;
+  const disabled = state.loginSubmitting ? " disabled" : "";
   return shell(`
     <section class="login-panel">
       <span>${tr("loginTitle")}</span>
@@ -7,48 +8,17 @@ export function loginView(ctx) {
       <p>${tr("loginBody")}</p>
       <label>
         <span>${tr("loginAccount")}</span>
-        <input id="loginAccount" autocomplete="username" value="${ctx.escapeAttr(state.loginAccount || "")}" placeholder="${tr("loginAccountPlaceholder")}" />
-      </label>
-      <div class="login-account-hints" aria-label="${tr("loginAccountHelp")}">
-        ${accountHint("dormFrontdesk", "frontdeskAccount", ctx)}
-        ${accountHint("dormOperator", "operatorAccount", ctx)}
-        ${accountHint("dormHousekeeping", "housekeepingAccount", ctx)}
-        ${accountHint("dormFinance", "financeAccount", ctx)}
-        ${accountHint("dormManager", "managerAccount", ctx)}
-        ${isDevLoginEnabled() ? `${accountHint("admin", "adminAccount", ctx)}${accountHint("dormReleaseOwner", "releaseOwnerAccount", ctx)}` : ""}
-      </div>
-      <label>
-        <span>${tr("loginDepartment")}</span>
-        <select id="loginDepartment">
-          ${departmentOption("stay", "stayDepartment", state, tr)}
-          ${departmentOption("finance", "financeDepartment", state, tr)}
-          ${departmentOption("operations", "operationsDepartment", state, tr)}
-        </select>
+        <input id="loginAccount" autocomplete="username" value="${ctx.escapeAttr(state.loginAccount || "")}" placeholder="${tr("loginAccountPlaceholder")}"${disabled} />
       </label>
       <label>
         <span>${tr("loginPassword")}</span>
-        <input id="loginPassword" type="password" value="dev" autocomplete="current-password" />
+        <input id="loginPassword" type="password" autocomplete="current-password"${disabled} />
       </label>
       <p class="login-hint">${tr("loginAuthorityHint")}</p>
-      <p class="login-hint subtle">${tr("loginDepartmentHelp")}</p>
-      <button id="loginSubmit">${tr("loginSubmit")}</button>
+      <button id="loginSubmit"${disabled} ${state.loginSubmitting ? 'aria-busy="true"' : ""}>${tr(state.loginSubmitting ? "loginSubmitting" : "loginSubmit")}</button>
       ${state.loginMessage ? `<p class="login-message">${ctx.escapeHtml(state.loginMessage)}</p>` : ""}
     </section>
   `);
-}
-
-function accountHint(value, labelKey, ctx) {
-  return `<span><b>${ctx.escapeHtml(value)}</b>${ctx.tr(labelKey)}</span>`;
-}
-
-function departmentOption(value, labelKey, state, tr) {
-  const selected = (state.selectedDepartment || "stay") === value ? " selected" : "";
-  return `<option value="${value}"${selected}>${tr(labelKey)}</option>`;
-}
-
-function isDevLoginEnabled() {
-  const host = globalThis.window?.location?.hostname || "";
-  return ["localhost", "127.0.0.1", "::1", ""].includes(host);
 }
 
 export function onboardingView(ctx) {

@@ -1,4 +1,4 @@
-import { failIfNeeded, readJson, requireNoGoEmpty, requirePassed, sha256, stableJson, writeJson } from "./baseline-lib.mjs";
+import { failIfNeeded, isDirectRun, readJson, requireNoGoEmpty, requirePassed, sha256, stableJson, writeJson } from "./baseline-lib.mjs";
 
 export function buildRuntimeSemanticBaseline() {
   const failures = [];
@@ -45,6 +45,8 @@ export function buildRuntimeSemanticBaseline() {
   return result;
 }
 
-const result = buildRuntimeSemanticBaseline();
-failIfNeeded(result.noGoItems, "runtime semantic baseline check");
-console.log("runtime semantic baseline check: PASS");
+if (isDirectRun(import.meta.url)) {
+  const result = buildRuntimeSemanticBaseline();
+  failIfNeeded(result.noGoItems, "runtime semantic baseline check");
+  console.log("runtime semantic baseline check: PASS");
+}

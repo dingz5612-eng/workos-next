@@ -1,6 +1,6 @@
 # 项目卫生清理报告
 
-生成时间：2026-06-04T14:23:07.197Z
+生成时间：2026-06-04T22:36:51.810Z
 
 ## 当前结论
 
@@ -15,6 +15,9 @@
 - artifact_hygiene: passed
 - stale_evidence_refs: passed
 - route_surface_hygiene: passed
+- auxiliary_reference_hygiene: passed
+- company_kernel_alignment: passed
+- migration_sequence_hygiene: passed
 - seed_data_isolation: passed
 - screenshot_baseline: passed
 

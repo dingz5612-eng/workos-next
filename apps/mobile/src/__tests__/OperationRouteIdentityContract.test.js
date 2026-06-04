@@ -1,6 +1,7 @@
 import fs from "node:fs";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { openWorkspace, openWorkItem } from "../navigationController.js";
+import { submitCurrentCard } from "../operationController.js";
 import { resolveOperationPanelTarget, resolvePersistedWorkItem } from "../operationRouteResolver.js";
 import { routeView } from "../appRouter.js";
 import { applyRuntimeSurfacePayloads } from "../runtime/runtimeStore.js";
@@ -214,9 +215,14 @@ describe("OAM-04B WorkItem route identity", () => {
     const text = visibleText(html);
 
     expect(resolveOperationPanelTarget({ workItemId: "wi-correction-room" }, ctx.state).workItem.lifecycleState).toBe("ready");
+    expect(html).toContain('data-step-state="correction"');
+    expect(html).toContain('data-step-marker="修"');
+    expect(html).toContain('status-correction status-ready');
     expect(text).toContain("填写信息");
+    expect(text).toContain("更正中");
     expect(text).toContain("提交处理");
     expect(text).not.toContain("办理记录");
+    expect(html).not.toContain("intent-card");
     expect(html).toContain('data-operation-field="roomNo"');
   });
 
@@ -249,6 +255,42 @@ describe("OAM-04B WorkItem route identity", () => {
     }] });
 
     expect(ctx.state.runtimeStore.workspaces[0].cards[0].status).toBe("ready");
+    expect(ctx.state.runtimeStore.workspaces[0].cards[0].operationMode).toBe("correction");
+    expect(ctx.state.runtimeStore.workspaces[0].cards[0].correctionMode).toBe("append_only");
+  });
+
+  it("keeps readonly completed records completed when a correction marker exists", () => {
+    const store = runtimeStore();
+    store.workspaces[0].cards[0] = {
+      ...store.workspaces[0].cards[0],
+      status: "confirmed",
+      operationMode: "correction",
+      correctionMode: "append_only"
+    };
+    const ctx = createSurfaceCtx({
+      view: "operationPanel",
+      selectedWorkItemId: "wi-completed-room",
+      selectedWorkspace: "W-STAY-RESOURCE",
+      selectedCardId: "roomSetup",
+      runtimeStore: store
+    });
+    store.operationWorkItems = [{
+      workItemId: "wi-completed-room",
+      workspaceId: "W-STAY-RESOURCE",
+      cardId: "roomSetup",
+      lifecycleState: "confirmed"
+    }];
+
+    const html = routeView(ctx);
+    const text = visibleText(html);
+
+    expect(html).toContain('data-surface="completed-workspace-record"');
+    expect(html).toContain('data-step-state="completed"');
+    expect(html).toContain('data-step-marker="修"');
+    expect(html).toContain('aria-label="房间床位配置 已完成 · 有更正"');
+    expect(text).toContain("已完成 · 有更正");
+    expect(text).toContain("已完成");
+    expect(html).not.toContain('aria-label="房间床位配置 更正中"');
   });
 
   it("projects Operations WorkItem lifecycle states onto the operation progress rail", () => {
@@ -388,6 +430,92 @@ describe("OAM-04B WorkItem route identity", () => {
     expect(ctx.state.selectedCardId).toBe("roomSetup");
   });
 
+  it("canonicalizes stale card URL params to the selected Operations WorkItem card", () => {
+    const store = runtimeStore();
+    const workspaceId = "W-STAY-SERVICE-TASK-ROUTE-001";
+    store.workspaces[0] = {
+      ...store.workspaces[0],
+      id: workspaceId,
+      title: { "zh-CN": "清洁维修任务" },
+      cards: [
+        {
+          id: "serviceTaskCreate",
+          status: "ready",
+          title: { "zh-CN": "服务任务创建卡" },
+          fields: { business: [field("resourceScope", "服务范围")], system: [], analytics: [] },
+          evidence: [],
+          checks: [],
+          blockerRules: [],
+          confirmation: { required: true, requiredRole: "operator" }
+        },
+        {
+          id: "roomReleaseAfterService",
+          status: "notStarted",
+          title: { "zh-CN": "服务后释放卡" },
+          fields: { business: [field("releaseAvailableAt", "恢复可售时间")], system: [], analytics: [] },
+          evidence: [],
+          checks: [],
+          blockerRules: [],
+          confirmation: { required: true, requiredRole: "operator" }
+        }
+      ]
+    };
+    store.operationWorkItems = [{
+      workItemId: "wi-service-create-route",
+      workspaceId,
+      cardId: "serviceTaskCreate",
+      lifecycleState: "available",
+      ownerRole: "operator"
+    }];
+    const ctx = createSurfaceCtx({
+      view: "operationPanel",
+      selectedWorkItemId: "wi-service-create-route",
+      selectedWorkspace: workspaceId,
+      selectedCardId: "roomReleaseAfterService",
+      runtimeStore: store,
+      operationMessage: "旧步骤提示",
+      fieldValidation: { workspaceId, cardId: "roomReleaseAfterService", missingLabels: ["恢复可售时间"] }
+    });
+
+    const text = visibleText(routeView(ctx));
+
+    expect(ctx.state.selectedWorkItemId).toBe("wi-service-create-route");
+    expect(ctx.state.selectedWorkspace).toBe(workspaceId);
+    expect(ctx.state.selectedCardId).toBe("serviceTaskCreate");
+    expect(ctx.state.fieldValidation).toBeNull();
+    expect(ctx.state.operationMessage).toBe("");
+    expect(text).toContain("服务任务创建卡");
+    expect(text).not.toContain("服务后释放卡");
+  });
+
+  it("clears stale submit result when routing to a different WorkItem", () => {
+    const store = runtimeStore();
+    store.workspaces[0].cards = [
+      { ...store.workspaces[0].cards[0], id: "roomSetup", status: "done", title: { "zh-CN": "房间配置卡" } },
+      { id: "bedSetup", status: "ready", title: { "zh-CN": "床位配置卡" }, fields: { business: [field("bedNo", "床位号")], system: [], analytics: [] }, evidence: [], checks: [], blockerRules: [], confirmation: { required: true, requiredRole: "operator" } }
+    ];
+    store.operationWorkItems = [
+      { workItemId: "wi-room-done", workspaceId: "W-STAY-RESOURCE", cardId: "roomSetup", lifecycleState: "confirmed" },
+      { workItemId: "wi-bed-next", workspaceId: "W-STAY-RESOURCE", cardId: "bedSetup", lifecycleState: "available" }
+    ];
+    const ctx = createSurfaceCtx({
+      view: "operationPanel",
+      selectedWorkItemId: "wi-room-done",
+      selectedWorkspace: "W-STAY-RESOURCE",
+      selectedCardId: "roomSetup",
+      runtimeStore: store,
+      operationMessage: "已提交成功，视图同步中。",
+      lastActionResult: { status: "committed_projection_pending", message: "已提交成功，视图同步中。" }
+    });
+
+    openWorkItem("wi-bed-next", ctx);
+
+    expect(ctx.state.selectedWorkItemId).toBe("wi-bed-next");
+    expect(ctx.state.operationMessage).toBe("");
+    expect(ctx.state.lastActionResult).toBeNull();
+    expect(visibleText(routeView(ctx))).not.toContain("已提交成功，视图同步中");
+  });
+
   it("keeps active command starts on the Operations WorkItem route instead of workspace/card direct URLs", () => {
     const source = fs.readFileSync(new URL("../navigationController.js", import.meta.url), "utf8");
     const startCommandSource = source.slice(source.indexOf("export async function startOperationsWorkspaceCommand"));
@@ -397,6 +525,62 @@ describe("OAM-04B WorkItem route identity", () => {
     expect(startCommandSource).toContain("result?.workItem?.workItemId");
     expect(startCommandSource).not.toContain("window.location.href");
     expect(startCommandSource).not.toContain('url.searchParams.set("view", "workspace")');
+  });
+
+  it("auto-advances to the next actionable WorkItem after a successful active submit", async () => {
+    vi.useFakeTimers();
+    vi.stubGlobal("fetch", vi.fn(async (url) => {
+      if (String(url).endsWith("/prepare")) {
+        return { ok: true, json: async () => ({ prepared: true, commandSubmissionId: "sub-room" }) };
+      }
+      if (String(url).endsWith("/confirm")) {
+        return {
+          ok: true,
+          json: async () => ({
+            confirmed: true,
+            commitStatus: "committed",
+            projectionStatus: "projected",
+            commandSubmissionId: "sub-room",
+            resultEventIds: ["evt-room"]
+          })
+        };
+      }
+      return { ok: true, json: async () => ({}) };
+    }));
+    const store = runtimeStore();
+    store.workspaces[0].cards = [
+      { ...store.workspaces[0].cards[0], id: "roomSetup", status: "ready", evidence: [], title: { "zh-CN": "房间配置卡" } },
+      { id: "bedSetup", status: "ready", title: { "zh-CN": "床位配置卡" }, fields: { business: [], system: [], analytics: [] }, evidence: [], checks: [], blockerRules: [], confirmation: { required: true, requiredRole: "operator" } }
+    ];
+    store.operationWorkItems = [
+      { workItemId: "wi-room-active", workspaceId: "W-STAY-RESOURCE", cardId: "roomSetup", lifecycleState: "ready", ownerRole: "operator" },
+      { workItemId: "wi-bed-next", workspaceId: "W-STAY-RESOURCE", cardId: "bedSetup", lifecycleState: "ready", ownerRole: "operator" }
+    ];
+    store.workQueue = [...store.operationWorkItems];
+    const ctx = createSurfaceCtx({
+      view: "operationPanel",
+      selectedWorkItemId: "wi-room-active",
+      selectedWorkspace: "W-STAY-RESOURCE",
+      selectedCardId: "roomSetup",
+      runtimeStore: store,
+      render: vi.fn()
+    });
+
+    await submitCurrentCard(ctx);
+    const html = routeView(ctx);
+    const text = visibleText(html);
+
+    expect(ctx.state.selectedWorkItemId).toBe("wi-bed-next");
+    expect(ctx.state.selectedCardId).toBe("bedSetup");
+    expect(ctx.state.lastActionResult?.autoAdvanced).toBe(true);
+    expect(ctx.state.lastActionResult?.autoAdvancedToCardId).toBe("bedSetup");
+    expect(html).toContain('data-surface="operation-panel-route"');
+    expect(html).not.toContain('data-surface="completed-workspace-record"');
+    expect(text).toContain("床位配置卡");
+    expect(text).toContain("提交处理");
+    vi.clearAllTimers();
+    vi.useRealTimers();
+    vi.unstubAllGlobals();
   });
 });
 

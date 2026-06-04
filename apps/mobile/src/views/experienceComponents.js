@@ -114,7 +114,7 @@ export function OperationStepRail(item, activeCard, ctx, options = {}) {
       </div>
       <div class="operation-step-meta">
         <strong>${text(stepPositionText(currentIndex, cards.length, ctx), ctx)}</strong>
-        <small class="status-chip status-${attr(activeCard.status, ctx)}">${text(ctx.tr(activeCard.status) || activeCard.status, ctx)}</small>
+        <small class="status-chip status-${attr(stepVisualState(activeCard.status, activeCard), ctx)} status-${attr(activeCard.status, ctx)}">${text(stepStatusLabel(activeCard, ctx), ctx)}</small>
       </div>
     </div>
     <div class="operation-step-list">
@@ -132,10 +132,41 @@ function dataAttrs(values = {}, ctx) {
 
 function timelineStep(item, card, activeCard, ctx, index = 0) {
   const current = card.id === activeCard.id;
-  const label = `${tx(card.title, ctx)} ${ctx.tr(card.status) || card.status}`.trim();
-  return `<button type="button" class="timeline-step status-${attr(card.status, ctx)}${current ? " current" : ""}" data-workspace="${attr(item.id, ctx)}" data-card-id="${attr(card.id, ctx)}" aria-label="${attr(label, ctx)}" title="${attr(label, ctx)}" ${current ? `aria-current="step"` : ""}>
+  const statusLabel = stepStatusLabel(card, ctx);
+  const label = `${tx(card.title, ctx)} ${statusLabel}`.trim();
+  const state = stepVisualState(card.status, card);
+  const marker = isCorrectionStep(card) ? ` data-step-marker="${attr(ctx.tr("correctionStepMarker"), ctx)}"` : "";
+  return `<button type="button" class="timeline-step status-${attr(card.status, ctx)} step-state-${attr(state, ctx)}${current ? " current" : ""}" data-step-state="${attr(state, ctx)}" data-current-step="${current ? "true" : "false"}"${marker} data-workspace="${attr(item.id, ctx)}" data-card-id="${attr(card.id, ctx)}" aria-label="${attr(label, ctx)}" title="${attr(label, ctx)}" ${current ? `aria-current="step"` : ""}>
     <strong>${index + 1}</strong>
   </button>`;
+}
+
+function stepStatusLabel(card = {}, ctx = {}) {
+  if (isTerminalCorrectionStep(card)) return ctx.tr("completedWithCorrectionStatus");
+  if (isCorrectionStep(card)) return ctx.tr("correctionStepStatus");
+  return ctx.tr(card.status) || card.status;
+}
+
+function stepVisualState(status = "", card = {}) {
+  if (isTerminalCardStatus(status)) return "completed";
+  if (isCorrectionStep(card)) return "correction";
+  if (status === "blocked") return "blocked";
+  if (status === "inProgress") return "in-progress";
+  if (["ready", "available"].includes(status)) return "ready";
+  return "not-started";
+}
+
+function isTerminalCorrectionStep(card = {}) {
+  return isCorrectionStep(card) && isTerminalCardStatus(card.status);
+}
+
+function isCorrectionStep(card = {}) {
+  return card.correctionMode === "append_only" ||
+    card.operationMode === "correction" ||
+    card.payload?.correctionMode === "append_only" ||
+    card.Payload?.correctionMode === "append_only" ||
+    card.payload?.operationMode === "correction" ||
+    card.Payload?.operationMode === "correction";
 }
 
 function stepPositionText(index, total, ctx) {
