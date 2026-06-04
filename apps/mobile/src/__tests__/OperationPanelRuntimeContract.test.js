@@ -17,12 +17,13 @@ describe("SURFACE-C Operation Panel runtime contract", () => {
     expect(visibleText(html)).not.toContain("operationsConfirm");
   });
 
-  it("keeps compatibility fallback diagnostic-only for the ordinary path", () => {
+  it("blocks submit when a persisted WorkItem is missing", () => {
     const runtime = source("../operationRuntime.js");
     const panel = source("../views/operationPanelView.js");
 
-    expect(runtime).toContain("allowCompatibilityFallback = false");
     expect(runtime).toContain("persisted_work_item_required");
+    expect(runtime).toContain("allowCompatibilityFallback = false");
+    expect(runtime).toContain("submitCardOperationCompatibilityFallback");
     expect(panel).toContain("state.selectedWorkItemId = persistedWorkItemId");
     expect(panel).not.toContain("ctx.workspace()");
   });

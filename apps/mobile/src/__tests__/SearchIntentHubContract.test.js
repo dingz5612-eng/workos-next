@@ -272,4 +272,14 @@ describe("OAM-04B search intent hub contract", () => {
     expect(ky).not.toContain("Commands");
     expect(ky).not.toContain("Create room");
   });
+
+  it("localizes learning result statuses without raw runtime status labels", () => {
+    const ru = visibleText(searchView(createSurfaceCtx({ view: "search", lang: "ru-RU", query: "устройство" })));
+    const ky = visibleText(searchView(createSurfaceCtx({ view: "search", lang: "ky-KG", query: "түзмөк" })));
+
+    expect(ru).toContain("Статус: Доверие устройства");
+    expect(ru).not.toMatch(/\b(rejection|device|permission|finance|role)\b/);
+    expect(ky).toContain("Статус: Түзмөк ишеними");
+    expect(ky).not.toMatch(/\b(rejection|device|permission|finance|role)\b/);
+  });
 });

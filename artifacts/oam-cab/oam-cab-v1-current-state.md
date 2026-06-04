@@ -6,7 +6,7 @@
 
 - repository: `dingz5612-eng/workos-next`
 - branch: `main`
-- headSha: `7bbf636041d79b19f2e3121f78f263e391b4931d`
+- headSha: `a259ae2c05e6d3648082e27987075cf295c905bd`
 - CI: `success`
 - V5.4 Control Plane Guards: `success`
 
@@ -40,7 +40,7 @@
 
 ## 阶段 0 自稳定结果
 
-阶段 0 发现旧 evidence 绑定 `ed4b0b4643a2808883197efa55326148b3456a48`，当前 `origin/main` 为 `7bbf636041d79b19f2e3121f78f263e391b4931d`。已通过现有 release-state 与 observation gate 脚本完成重绑定。
+阶段 0 发现旧 evidence 绑定 `ed4b0b4643a2808883197efa55326148b3456a48`。PR #80 合并后，当前 `origin/main` 为 `a259ae2c05e6d3648082e27987075cf295c905bd`。已通过现有 release-state 与 post-merge attestation 脚本完成重绑定。
 
 已确认通过：
 
@@ -55,7 +55,7 @@
 已通过：
 
 - `node scripts/check-rule-authority.mjs`
-- `node scripts/check-v5-5-rules-os.mjs --mode=ci --commitSha=7bbf636041d79b19f2e3121f78f263e391b4931d --ciRunId=26866430737 --v54RunId=26866430742`
+- `node scripts/check-v5-5-rules-os.mjs --mode=ci --commitSha=a259ae2c05e6d3648082e27987075cf295c905bd --ciRunId=26886643261 --v54RunId=26886643275`
 - `node scripts/check-api-boundaries.mjs`
 - `node scripts/check-fact-ownership.mjs`
 

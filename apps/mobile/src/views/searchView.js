@@ -15,6 +15,7 @@ export function searchView(ctx) {
         <button id="searchNow">${ctx.tr("search")}</button>
       </div>
     </section>
+    ${ctx.state.operationMessage ? `<p class="operation-message" role="status">${ctx.escapeHtml(ctx.state.operationMessage)}</p>` : ""}
     <section class="workos-search-results">
       ${results.map((section) => searchSection(section, ctx)).join("")}
     </section>
@@ -23,12 +24,12 @@ export function searchView(ctx) {
 
 export function learningContentItems(ctx) {
   return [
-    learning("learnEvidenceFix", "learnEvidenceFixBody", "evidence", ctx),
-    learning("learnRejectedReason", "learnRejectedReasonBody", "rejection", ctx),
-    learning("learnDeviceUntrusted", "learnDeviceUntrustedBody", "device", ctx),
-    learning("learnPermissionDenied", "learnPermissionDeniedBody", "permission", ctx),
-    learning("learnMoneyCaution", "learnMoneyCautionBody", "finance", ctx),
-    learning("learnRoleScope", "learnRoleScopeBody", "role", ctx)
+    learning("learnEvidenceFix", "learnEvidenceFixBody", "learnStatusEvidence", ctx),
+    learning("learnRejectedReason", "learnRejectedReasonBody", "learnStatusBlocked", ctx),
+    learning("learnDeviceUntrusted", "learnDeviceUntrustedBody", "learnStatusDevice", ctx),
+    learning("learnPermissionDenied", "learnPermissionDeniedBody", "learnStatusPermission", ctx),
+    learning("learnMoneyCaution", "learnMoneyCautionBody", "learnStatusFinance", ctx),
+    learning("learnRoleScope", "learnRoleScopeBody", "learnStatusRole", ctx)
   ];
 }
 

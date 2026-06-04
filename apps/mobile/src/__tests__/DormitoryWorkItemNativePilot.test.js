@@ -166,6 +166,7 @@ describe("DORM-INT-02 WorkItem-native pilot", () => {
     const main = source("../main.js");
     const apiClient = source("../apiClient.js");
     const runtime = source("../operationRuntime.js");
+    const controller = source("../operationController.js");
     const eventBinder = source("../eventBinder.js");
     const operationPanel = source("../views/operationPanelView.js");
 
@@ -182,6 +183,8 @@ describe("DORM-INT-02 WorkItem-native pilot", () => {
     expect(runtime).toContain("prepareOperationWorkItem");
     expect(runtime).toContain("confirmOperationWorkItem");
     expect(runtime).toContain("submitCardOperationCompatibilityFallback");
+    expect(controller).toContain("submitWorkItemOperation");
+    expect(controller).not.toContain("submitCardOperationCompatibilityFallback");
     expect(eventBinder).toContain("[data-work-item-id]");
     expect(eventBinder).toContain("openWorkItem");
     expect(eventBinder).not.toContain("financeReconciliationController");

@@ -13,7 +13,7 @@ describe("SURFACE-C weak network submit contract", () => {
 
     await submitCurrentCard(ctx);
 
-    expect(ctx.state.operationMessage).toContain("后端 API 未连接");
+    expect(ctx.state.operationMessage).toContain("运行服务未连接");
     expect(ctx.state.lastActionResult?.status).not.toBe("committed_projected");
     vi.unstubAllGlobals();
   });

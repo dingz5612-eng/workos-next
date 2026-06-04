@@ -216,7 +216,7 @@ export function cardOperation(card, item, ctx) {
       <b>${ctx.tr("cardInput")}</b>
       <div class="operation-inputs">${fields.map((field) => operationControl(field, item, card, disabled, ctx)).join("")}</div>
     </section>` : ""}
-    ${systemValidationPanel(card, draft, visibleBlockers, ctx)}
+    ${systemValidationPanel(card, item, draft, visibleBlockers, ctx)}
     ${checkoutServiceOperationAddon(card, item, ctx)}
     ${visibleBlockers.length ? `<section class="operation-blockers"><b>${ctx.tr("blockers")}</b><p>${visibleBlockers.map((entry) => ctx.tx(entry.title)).join(" · ")}</p></section>` : ""}
     <div class="operation-actions">
@@ -669,12 +669,12 @@ function missingFieldIdsFor(card, item, ctx) {
   return validation.missingFieldIds || [];
 }
 
-function systemValidationPanel(card, draft, visibleBlockers, ctx) {
+function systemValidationPanel(card, item, draft, visibleBlockers, ctx) {
   const evidenceStates = (card.evidence || []).map((field) =>
     EvidenceStateVM(field, (draft.evidenceDrafts || []).find((item) => item.requirementId === field.id), ctx));
   const evidenceNames = evidenceStates.map((state) => state.name).filter(Boolean);
   const checkNames = (card.checks || []).map((entry) => ctx.localTerm(entry)).filter(Boolean);
-  const missingLabels = ctx.state.fieldValidation?.cardId === card.id ? ctx.state.fieldValidation.missingLabels || [] : [];
+  const missingLabels = currentMissingRequiredLabels(card, item, ctx);
   const chips = [
     `${ctx.tr("requiredFields")}: ${missingLabels.length ? missingLabels.join(" · ") : ctx.tr("systemCheckReady")}`,
     `${ctx.tr("systemEvidenceCheck")}: ${evidenceNames.length ? evidenceNames.join(" · ") : ctx.tr("noRequiredEvidence")}`,
@@ -686,6 +686,31 @@ function systemValidationPanel(card, draft, visibleBlockers, ctx) {
     <p>${ctx.tr("systemValidationHelp")}</p>
     <div>${chips.map((chip) => `<span>${ctx.escapeHtml(chip)}</span>`).join("")}</div>
   </section>`;
+}
+
+function currentMissingRequiredLabels(card, item, ctx) {
+  const validation = ctx.state.fieldValidation || {};
+  if (validation.workspaceId === item.id && validation.cardId === card.id && validation.missingLabels?.length) {
+    return validation.missingLabels;
+  }
+  return operationInputFields(card, ctx)
+    .filter((field) => field.required)
+    .filter((field) => !hasRequiredFieldValue(field, item, card, ctx))
+    .map((field) => ctx.localTerm(field));
+}
+
+function hasRequiredFieldValue(field, item, card, ctx) {
+  const kind = fieldControlKind(field);
+  const value = operationFieldState(field, item, card, ctx).value;
+  if (kind === "dateTimeRange") {
+    const [start = "", end = ""] = String(value || "").split(" 至 ");
+    return hasCarryValue(start) && hasCarryValue(end);
+  }
+  if (hasCarryValue(value)) return true;
+  if (kind === "select") {
+    return optionsForField(field, ctx.state.lang).some((entry) => hasCarryValue(entry.value));
+  }
+  return false;
 }
 
 function sameAggregatePayload(payload, aggregateRef) {

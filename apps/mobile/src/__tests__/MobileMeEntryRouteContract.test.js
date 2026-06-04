@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { setView } from "../navigationController.js";
 import { createSurfaceCtx, renderSurface } from "./surfaceContractTestHelpers.js";
 
@@ -14,5 +14,28 @@ describe("Stage B mobile Me entry route contract", () => {
     expect(ctx.state.view).toBe("learning");
     setView("permissions", ctx);
     expect(ctx.state.view).toBe("permissions");
+  });
+
+  it("keeps browser URL view in sync with in-memory route changes", () => {
+    let replacedUrl = "";
+    vi.stubGlobal("window", {
+      location: {
+        href: "http://localhost:5175/?view=login&lang=zh-CN&device=mobile",
+        origin: "http://localhost:5175"
+      },
+      history: {
+        replaceState: vi.fn((state, title, url) => {
+          replacedUrl = url;
+        })
+      }
+    });
+    const ctx = createSurfaceCtx({ view: "login" });
+
+    setView("home", ctx);
+
+    expect(ctx.state.view).toBe("home");
+    expect(replacedUrl).toContain("view=home");
+    expect(replacedUrl).toContain("lang=zh-CN");
+    vi.unstubAllGlobals();
   });
 });

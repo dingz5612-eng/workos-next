@@ -10,6 +10,12 @@ import {
 } from "./apiClient.js";
 import { defaultAccommodationLensIds, lensIdsForWorkspace } from "./runtimeLensCatalog.js";
 
+const allowCompatibilityFallback = false;
+
+export function operationPanelCompatibilityFallbackAllowed() {
+  return allowCompatibilityFallback;
+}
+
 export function operationIdempotencyKey() {
   return randomUuid();
 }
@@ -39,26 +45,19 @@ export function createSubmissionProtocol(workspace, card, fieldValues = {}) {
   };
 }
 
-export async function submitCardOperation({ workspace, card, actor, language, fieldValues, evidenceIds, submissionProtocol, onProjection, onLens }) {
-  return submitCardOperationCompatibilityFallback({ workspace, card, actor, language, fieldValues, evidenceIds, submissionProtocol, onProjection, onLens });
-}
-
-export async function submitWorkItemOperation({ workspace, card, workItemId: explicitWorkItemId, actor, language, fieldValues, evidenceIds, submissionProtocol, onProjection, onLens, allowCompatibilityFallback = false }) {
+export async function submitWorkItemOperation({ workspace, card, workItemId: explicitWorkItemId, actor, language, fieldValues, evidenceIds, submissionProtocol, onProjection, onLens }) {
   const workItemId = explicitWorkItemId || workItemIdFor(workspace, card);
   if (!workItemId) {
-    if (!allowCompatibilityFallback) {
-      return {
-        confirmed: false,
-        status: "business_blocked_422",
-        commitStatus: "blocked",
-        projectionStatus: "not_started",
-        error: "persisted_work_item_required",
-        reason: "persisted_work_item_required",
-        message: "需要持久化 WorkItem 后才能确认。",
-        source: "operations_runtime_pure"
-      };
-    }
-    return submitCardOperationCompatibilityFallback({ workspace, card, actor, language, fieldValues, evidenceIds, submissionProtocol, onProjection, onLens });
+    return {
+      confirmed: false,
+      status: "business_blocked_422",
+      commitStatus: "blocked",
+      projectionStatus: "not_started",
+      error: "persisted_work_item_required",
+      reason: "persisted_work_item_required",
+      message: "需要先生成可办理任务，再提交处理。",
+      source: "operations_runtime_pure"
+    };
   }
 
   const protocol = submissionProtocol || createSubmissionProtocol(workspace, card, fieldValues);
@@ -119,14 +118,12 @@ export async function submitCardOperationCompatibilityFallback({ workspace, card
   try {
     await waitForProjectionEvents(eventIdsFromConfirmResult(result), onProjection);
   } catch {
-    // Confirm already succeeded. The outbox projector can lag briefly, so do not
-    // turn a committed event into a user-visible submit failure.
+    // The command is already committed. Projection pending is an ActionResult state, not submit failure.
   }
   try {
     await refreshAccommodationLenses(lensIdsForWorkspace(workspace.id), onLens);
   } catch {
-    // Lens refresh is read-side sync. The committed confirm response is still the
-    // source of truth for success semantics.
+    // Lens refresh is read-side sync and must not change committed result semantics.
   }
   return result;
 }

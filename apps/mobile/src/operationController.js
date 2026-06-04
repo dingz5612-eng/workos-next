@@ -1,6 +1,6 @@
 import { capacityForRoomType } from "./controls/fieldControls.js";
 import { clearDraft, loadDraft, saveDraft } from "./operationDrafts.js";
-import { createSubmissionProtocol, materializeEvidenceObjects, submitCardOperation, submitWorkItemOperation } from "./operationRuntime.js";
+import { createSubmissionProtocol, materializeEvidenceObjects, submitWorkItemOperation } from "./operationRuntime.js";
 import { setView } from "./navigationController.js";
 import { activeWorkspaceCard, isCardActionDisabled, isTerminalCardStatus } from "./selectors/workspaceSelectors.js";
 import { applyRuntimeProjection } from "./runtime/runtimeStore.js";
@@ -194,8 +194,7 @@ export async function submitCurrentCard(ctx) {
       }
     }
     saveDraft(item.id, card.id, fieldValues, evidenceDrafts, submissionProtocol);
-    const submit = allowsWorkspaceConfirmFallback(item) ? submitCardOperation : submitWorkItemOperation;
-    const result = await submit({
+    const result = await submitWorkItemOperation({
       workspace: item,
       card,
       workItemId: persistedWorkItemIdFor(ctx.state, item, card),
@@ -205,8 +204,7 @@ export async function submitCurrentCard(ctx) {
       evidenceIds,
       submissionProtocol,
       onProjection: (payload) => applyProjectionPayload(payload, ctx),
-      onLens: (payload) => applyLensPayload(payload, ctx),
-      allowCompatibilityFallback: allowsWorkspaceConfirmFallback(item)
+      onLens: (payload) => applyLensPayload(payload, ctx)
     });
     if (isCommittedConfirmResult(result)) {
       applyCommittedCardLocalState(item.id, card.id, ctx);
@@ -254,10 +252,6 @@ function operationActiveCard(item, selectedCardIndex, selectedCardId) {
     return activeWorkspaceCard(item, -1, "");
   }
   return requested;
-}
-
-function allowsWorkspaceConfirmFallback(workspace = {}) {
-  return /^W-STAY-[A-Z-]+-\d{14}-[a-f0-9]{32}$/i.test(String(workspace.id || ""));
 }
 
 export function applyConfirmError(error, ctx) {

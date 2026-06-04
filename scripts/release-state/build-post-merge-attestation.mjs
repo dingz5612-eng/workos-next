@@ -3,13 +3,21 @@ import { readJson, repositoryHead, workflowRunsForHead, pickWorkflowRun, normali
 const generatedAtUtc = new Date().toISOString();
 const repoHead = repositoryHead();
 const postMergePrNumber = Number(process.env.OAM_POST_MERGE_PR_NUMBER || 72);
+const requestedMergeCommitSha = process.env.OAM_POST_MERGE_MERGE_COMMIT_SHA || null;
 const pullRequest = await readPullRequest(postMergePrNumber);
 const runs = await workflowRunsForHead(repoHead);
 const ci = normalizeRun(pickWorkflowRun(runs, "CI"));
 const v54 = normalizeRun(pickWorkflowRun(runs, "V5.4 Control Plane Guards"));
 const ciGreen = ci?.status === "completed" && ci?.conclusion === "success" && ci?.headSha === repoHead;
 const v54Green = v54?.status === "completed" && v54?.conclusion === "success" && v54?.headSha === repoHead;
-const verified = ciGreen && v54Green;
+const requestedMergeMatches = !requestedMergeCommitSha || requestedMergeCommitSha === repoHead;
+const prMergeMatches = !pullRequest?.merge_commit_sha || pullRequest.merge_commit_sha === repoHead;
+const verified = ciGreen && v54Green && requestedMergeMatches && prMergeMatches;
+const noGoItems = [];
+if (!ciGreen) noGoItems.push("最新 main 的 CI 还没有可验证的成功证据。");
+if (!v54Green) noGoItems.push("最新 main 的 V5.4 Guards 还没有可验证的成功证据。");
+if (!requestedMergeMatches) noGoItems.push("请求绑定的 merge_commit_sha 与远端 main 不一致。");
+if (!prMergeMatches) noGoItems.push("PR merge_commit_sha 与远端 main 不一致。");
 
 const currentState = safeRead("artifacts/release-state/current-state.json");
 const goNoGo = safeRead("artifacts/go-live/dormitory/internal-pilot-go-no-go.json");
@@ -26,7 +34,17 @@ const result = {
   prNumber: postMergePrNumber,
   prHead: pullRequest?.head?.sha ?? null,
   prBase: pullRequest?.base?.sha ?? null,
+  prMergedAt: pullRequest?.merged_at ?? null,
+  prHtmlUrl: pullRequest?.html_url ?? null,
+  prMergeCommitSha: pullRequest?.merge_commit_sha ?? null,
+  requestedMergeCommitSha,
   mergeCommit: repoHead,
+  remoteMain: {
+    repository,
+    branch: "main",
+    headSha: repoHead,
+    verifiedAtUtc: generatedAtUtc
+  },
   ci,
   v54ControlPlaneGuards: v54,
   artifacts: {
@@ -62,7 +80,7 @@ const result = {
     "artifacts/go-live/dormitory/internal-pilot-go-no-go.json",
     "artifacts/release-state/current-state.json"
   ],
-  noGoItems: verified ? [] : ["最新 main 的 CI / V5.4 Guards 还没有可验证的成功证据，Day-2 必须等待 post-merge attestation。"]
+  noGoItems
 };
 
 writeJson("artifacts/release-state/post-merge-attestation.json", result);
@@ -97,6 +115,9 @@ function renderReport(result) {
     `生成时间：${result.generatedAtUtc}\n\n` +
     `- repositoryHead: \`${result.repositoryHead}\`\n` +
     `- verifiedMainHead: \`${result.verifiedMainHead ?? "WAITING"}\`\n` +
+    `- PR: \`#${result.prNumber}\`\n` +
+    `- PR merged_at: \`${result.prMergedAt ?? "missing"}\`\n` +
+    `- PR merge commit: \`${result.prMergeCommitSha ?? "missing"}\`\n` +
     `- CI run id: \`${result.ci?.id ?? "missing"}\`\n` +
     `- V5.4 Guards run id: \`${result.v54ControlPlaneGuards?.id ?? "missing"}\`\n` +
     `- status: \`${result.status}\`\n\n` +

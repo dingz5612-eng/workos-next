@@ -8,6 +8,7 @@ import { resolveOperationPanelTarget } from "./operationRouteResolver.js";
 export function setView(view, ctx) {
   if (!ctx.state.currentActor && view !== "login") {
     ctx.state.view = "login";
+    syncUrlFromState(ctx);
     ctx.render(true);
     return;
   }
@@ -15,17 +16,20 @@ export function setView(view, ctx) {
   if (!access.allowed) {
     ctx.state.permissionDiagnostic = access;
     ctx.state.view = "permissionDiagnostic";
+    syncUrlFromState(ctx);
     ctx.render(true);
     return;
   }
   ctx.state.permissionDiagnostic = null;
   ctx.state.view = view;
+  syncUrlFromState(ctx);
   ctx.render(true);
 }
 
 export function setLang(lang, ctx) {
   ctx.state.lang = lang;
   localStorage.setItem("workosnext.lang", lang);
+  syncUrlFromState(ctx);
   ctx.render();
 }
 
@@ -42,6 +46,7 @@ export function openWorkspace(workspaceId, ctx, cardId = "") {
   ctx.state.selectedWorkspace = workspaceId;
   ctx.state.selectedCardId = cardId;
   ctx.state.selectedCardIndex = -1;
+  clearTransientOperationMessage(ctx);
   const linked = selectWorkspaceById(ctx.state, workspaceId);
   ctx.state.selectedTask = linked?.taskId || ctx.state.selectedTask;
   setView("workspace", ctx);
@@ -64,6 +69,7 @@ export function openOperationPanel(workItemId, ctx, fallback = {}) {
   }
   const selected = target.workItem;
   ctx.state.operationRouteIssue = null;
+  clearTransientOperationMessage(ctx);
   ctx.state.selectedWorkItemId = selected.workItemId;
   ctx.state.selectedWorkspace = selected.workspaceId || fallback.workspaceId || ctx.state.selectedWorkspace;
   ctx.state.selectedCardId = selected.cardId || fallback.cardId || ctx.state.selectedCardId || "";
@@ -75,6 +81,7 @@ export function openOperationPanel(workItemId, ctx, fallback = {}) {
 export function selectCard(cardIndex, ctx) {
   ctx.state.selectedCardIndex = Number(cardIndex) || 0;
   ctx.state.selectedCardId = "";
+  syncUrlFromState(ctx);
   ctx.render(true);
 }
 
@@ -95,6 +102,7 @@ export async function runSearch(ctx) {
     }
   }
   ctx.state.view = "search";
+  syncUrlFromState(ctx);
   ctx.render(true);
 }
 
@@ -139,4 +147,45 @@ function latestStartedWorkspaceId(projection = {}, templateWorkspaceId = "W-STAY
     .filter((workspace) => String(workspace.id || workspace.Id || "").startsWith(`${templateWorkspaceId}-`))
     .map((workspace) => workspace.id || workspace.Id)
     .at(-1) || "";
+}
+
+export function syncUrlFromState(ctx) {
+  if (typeof window === "undefined" || !window.history?.replaceState) return;
+  const location = window.location || {};
+  const base = location.href || location.origin || "http://localhost:5175/";
+  let url;
+  try {
+    url = new URL(base, location.origin || "http://localhost:5175");
+  } catch {
+    return;
+  }
+  url.searchParams.set("view", ctx.state.view || "home");
+  url.searchParams.set("lang", ctx.state.lang || "zh-CN");
+  const surface = ctx.state.currentDevice?.surface;
+  if (surface) url.searchParams.set("device", surface);
+  if (["workspace", "operationPanel"].includes(ctx.state.view)) {
+    if (ctx.state.selectedWorkspace) url.searchParams.set("workspace", ctx.state.selectedWorkspace);
+    if (ctx.state.selectedCardId) url.searchParams.set("card", ctx.state.selectedCardId);
+    if (ctx.state.selectedWorkItemId) url.searchParams.set("workItem", ctx.state.selectedWorkItemId);
+  } else {
+    url.searchParams.delete("workspace");
+    url.searchParams.delete("card");
+    url.searchParams.delete("workItem");
+  }
+  if (ctx.state.view === "search" && ctx.state.query) {
+    url.searchParams.set("q", ctx.state.query);
+  } else if (ctx.state.view !== "search") {
+    url.searchParams.delete("q");
+  }
+  window.history.replaceState(null, "", url.toString());
+}
+
+function clearTransientOperationMessage(ctx) {
+  const message = String(ctx.state.operationMessage || "");
+  if (!message) return;
+  const transient = [ctx.tr("apiOffline"), ctx.tr("submitting")];
+  const offlineCopy = /运行服务未连接|Рабочий сервис не подключен|Иш кызматы туташкан жок/;
+  if (transient.includes(message) || offlineCopy.test(message)) {
+    ctx.state.operationMessage = "";
+  }
 }

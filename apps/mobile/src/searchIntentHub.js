@@ -206,7 +206,28 @@ function safeLocalized(value, ctx) {
 function localizedStatus(value, ctx) {
   const raw = safeLocalized(value, ctx);
   if (!raw) return ctx.tr?.("ready") || "可办理";
-  return ctx.tr?.(raw) || raw;
+  const key = statusTranslationKey(raw);
+  const translated = ctx.tr?.(key);
+  return translated && translated !== key ? translated : raw;
+}
+
+function statusTranslationKey(raw) {
+  const keyByStatus = {
+    ready: "ready",
+    done: "done",
+    confirmed: "confirmed",
+    completed: "completed",
+    inProgress: "inProgress",
+    notStarted: "notStarted",
+    blocked: "blocked",
+    evidence: "learnStatusEvidence",
+    rejection: "learnStatusBlocked",
+    device: "learnStatusDevice",
+    permission: "learnStatusPermission",
+    finance: "learnStatusFinance",
+    role: "learnStatusRole"
+  };
+  return keyByStatus[String(raw || "").trim()] || raw;
 }
 
 function safeText(value) {

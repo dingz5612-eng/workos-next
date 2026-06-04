@@ -50,7 +50,7 @@ function personalCopy(view, title, body) {
 
 function roleLabel(role, tr) {
   const labels = {
-    frontdesk: tr("operatorRole"),
+    frontdesk: tr("frontdeskRole"),
     operator: tr("operatorRole"),
     housekeeping: tr("housekeepingRole"),
     finance: tr("financeRole"),

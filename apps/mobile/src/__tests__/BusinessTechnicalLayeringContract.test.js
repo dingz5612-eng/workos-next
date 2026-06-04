@@ -97,6 +97,7 @@ describe("OAM-04B business and technical layering contract", () => {
     const html = workspaceView(ctx);
     expect(html).toContain('data-required-field="true"');
     expect(visibleText(html)).toContain("必填");
+    expect(visibleText(html)).toContain("必填字段: 楼栋");
 
     await submitCurrentCard(ctx);
 

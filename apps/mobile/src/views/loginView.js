@@ -8,10 +8,12 @@ export function loginView(ctx) {
       <label>
         <span>${tr("loginAccount")}</span>
         <select id="loginAccount" autocomplete="username">
-          ${accountOption("operator", "operatorAccount", state, tr)}
-          ${accountOption("finance", "financeAccount", state, tr)}
-          ${accountOption("manager", "managerAccount", state, tr)}
-          ${isDevLoginEnabled() ? `${accountOption("admin", "adminAccount", state, tr)}${accountOption("releaseOwner", "releaseOwnerAccount", state, tr)}` : ""}
+          ${accountOption("dormFrontdesk", "frontdeskAccount", state, tr)}
+          ${accountOption("dormOperator", "operatorAccount", state, tr)}
+          ${accountOption("dormHousekeeping", "housekeepingAccount", state, tr)}
+          ${accountOption("dormFinance", "financeAccount", state, tr)}
+          ${accountOption("dormManager", "managerAccount", state, tr)}
+          ${isDevLoginEnabled() ? `${accountOption("admin", "adminAccount", state, tr)}${accountOption("dormReleaseOwner", "releaseOwnerAccount", state, tr)}` : ""}
         </select>
       </label>
       <label>
@@ -35,7 +37,7 @@ export function loginView(ctx) {
 }
 
 function accountOption(value, labelKey, state, tr) {
-  const selected = (state.loginAccount || "operator") === value ? " selected" : "";
+  const selected = (state.loginAccount || "dormFrontdesk") === value ? " selected" : "";
   return `<option value="${value}"${selected}>${tr(labelKey)}</option>`;
 }
 

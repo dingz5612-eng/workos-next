@@ -339,13 +339,13 @@ function activeCard(workspace) {
 
 function roleLabel(role, ctx) {
   const labels = {
-    frontdesk: ctx.tr("operatorRole"),
+    frontdesk: ctx.tr("frontdeskRole"),
     operator: ctx.tr("operatorRole"),
-    housekeeping: ctx.tr("operatorRole"),
+    housekeeping: ctx.tr("housekeepingRole"),
     finance: ctx.tr("financeRole"),
     manager: ctx.tr("managerRole"),
-    admin: "admin",
-    releaseOwner: "releaseOwner"
+    admin: ctx.tr("adminRole"),
+    releaseOwner: ctx.tr("releaseOwnerRole")
   };
   return labels[role] || role;
 }

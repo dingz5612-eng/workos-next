@@ -57,6 +57,24 @@ describe("HOTFIX-SURFACE-UX-01 mobile visible copy contract", () => {
     vi.unstubAllGlobals();
   });
 
+  it("localizes the actor label instead of leaking a Chinese display name in non-Chinese shells", () => {
+    stubBrowser();
+    const ru = visibleText(render("home", {
+      lang: "ru-RU",
+      currentActor: { role: "frontdesk", displayName: "住宿试点前台" }
+    }));
+    const ky = visibleText(render("home", {
+      lang: "ky-KG",
+      currentActor: { role: "frontdesk", displayName: "住宿试点前台" }
+    }));
+
+    expect(ru).toContain("Сотрудник стойки проживания");
+    expect(ru).not.toContain("住宿试点前台");
+    expect(ky).toContain("Жатакана кабыл алуу кызматкери");
+    expect(ky).not.toContain("住宿试点前台");
+    vi.unstubAllGlobals();
+  });
+
   it("renders personal support pages as runtime read surfaces instead of placeholder forms", () => {
     stubBrowser();
     const supportViews = [

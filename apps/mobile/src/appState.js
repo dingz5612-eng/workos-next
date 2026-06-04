@@ -107,6 +107,7 @@ function applyUrlParams(state) {
   }
   if (params.has("workspace")) state.selectedWorkspace = params.get("workspace");
   if (params.has("card")) state.selectedCardId = params.get("card");
+  if (params.has("workItem")) state.selectedWorkItemId = params.get("workItem");
   if (params.has("q")) {
     state.query = params.get("q");
     state.learningQuery = params.get("q");

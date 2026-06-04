@@ -17,8 +17,9 @@ public sealed class WorkspaceCardCompatibilityPilotScopeTests
         StringAssert.Contains(adapter, "workspace_card_compatibility_adapter");
         StringAssert.Contains(adapter, "public static string WorkItemIdFor(string workspaceId, string cardId) => $\"wi-{OperationsHash.Short(workspaceId, cardId)}\";");
         Assert.IsFalse(adapter.Contains("=> $\"{workspaceId}:{cardId}\"", StringComparison.Ordinal), "Compatibility adapter must not use workspace/card id as persisted id.");
-        StringAssert.Contains(operationRuntime, "allowCompatibilityFallback = false");
         StringAssert.Contains(operationRuntime, "persisted_work_item_required");
+        Assert.IsFalse(operationRuntime.Contains("allowCompatibilityFallback", StringComparison.Ordinal), "Mobile normal runtime must not carry a compatibility fallback switch.");
+        Assert.IsFalse(operationRuntime.Contains("submitCardOperationCompatibilityFallback", StringComparison.Ordinal), "Mobile normal runtime must not call workspace/card fallback.");
         StringAssert.Contains(controller, "submitWorkItemOperation");
         Assert.IsFalse(controller.Contains("submitCardOperation({", StringComparison.Ordinal), "DORM-INT normal path must not call card fallback.");
     }
