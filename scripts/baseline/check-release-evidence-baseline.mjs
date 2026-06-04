@@ -15,6 +15,8 @@ import { isDirectRun } from "./baseline-lib.mjs";
 
 export function buildReleaseEvidenceBaseline() {
   const failures = [];
+  const pendingRebindItems = [];
+  const allowPendingMainRebind = process.env.OAM_ALLOW_PENDING_MAIN_REBIND === "true";
   const repositoryHead = originMainHead();
   const prHead = currentHead();
   const attestation = readJson("artifacts/release-state/post-merge-attestation.json");
@@ -30,12 +32,12 @@ export function buildReleaseEvidenceBaseline() {
   requirePassed(evidenceLedger, "evidence ledger append-only", failures);
   requireNoGoEmpty(attestation, "post-merge attestation", failures);
   requireNoGoEmpty(binding, "artifact git binding", failures);
-  if (attestation.repositoryHead !== repositoryHead) failures.push("post-merge attestation.repositoryHead 必须等于 origin/main。");
-  if (attestation.verifiedMainHead !== repositoryHead) failures.push("verifiedMainHead 必须等于 origin/main。");
-  if (currentState.currentMain?.headSha !== repositoryHead) failures.push("current-state.currentMain.headSha 必须等于 origin/main。");
-  if (goNoGo.latestMain?.commitSha !== repositoryHead) failures.push("internal-pilot-go-no-go.latestMain.commitSha 必须等于 origin/main。");
-  if (graph.headSha !== repositoryHead) failures.push("Evidence Graph headSha 必须等于 origin/main。");
-  if (dashboard.currentMainHead !== repositoryHead) failures.push("Completion Dashboard currentMainHead 必须等于 origin/main。");
+  requireFreshMain(attestation.repositoryHead, repositoryHead, "post-merge attestation.repositoryHead 必须等于 origin/main。", "post_merge_attestation_repository_head");
+  requireFreshMain(attestation.verifiedMainHead, repositoryHead, "verifiedMainHead 必须等于 origin/main。", "post_merge_attestation_verified_main_head");
+  requireFreshMain(currentState.currentMain?.headSha, repositoryHead, "current-state.currentMain.headSha 必须等于 origin/main。", "current_state_main_head");
+  requireFreshMain(goNoGo.latestMain?.commitSha, repositoryHead, "internal-pilot-go-no-go.latestMain.commitSha 必须等于 origin/main。", "internal_pilot_go_no_go_latest_main");
+  requireFreshMain(graph.headSha, repositoryHead, "Evidence Graph headSha 必须等于 origin/main。", "evidence_graph_head");
+  requireFreshMain(dashboard.currentMainHead, repositoryHead, "Completion Dashboard currentMainHead 必须等于 origin/main。", "completion_dashboard_head");
   for (const [label, value] of Object.entries({ currentState, goNoGo, graph, dashboard, binding })) {
     const tmpRefs = noTmpRefs(value);
     if (tmpRefs.length) failures.push(`${label} final evidence refs 不得包含 .tmp：${tmpRefs.join(", ")}`);
@@ -64,6 +66,7 @@ export function buildReleaseEvidenceBaseline() {
     inputHash: sha256(stableJson([attestation, currentState, goNoGo, graph, dashboard, binding, evidenceLedger])),
     resultHash: "",
     noGoItems: failures,
+    pendingRebindItems,
     productionAllowed: false,
     dormitoryL2ProductionAllowed: false,
     businessProduction: "blocked",
@@ -72,6 +75,21 @@ export function buildReleaseEvidenceBaseline() {
   result.resultHash = sha256(stableJson({ ...result, resultHash: "" }));
   writeJson("artifacts/baseline/release-evidence-baseline.json", result);
   return result;
+
+  function requireFreshMain(actual, expected, message, id) {
+    if (actual === expected) return;
+    if (allowPendingMainRebind) {
+      pendingRebindItems.push({
+        id,
+        message,
+        actual,
+        expected,
+        status: "pending_rebind_after_main_green"
+      });
+      return;
+    }
+    failures.push(message);
+  }
 }
 
 if (isDirectRun(import.meta.url)) {

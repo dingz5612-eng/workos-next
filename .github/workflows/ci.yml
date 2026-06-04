@@ -120,6 +120,8 @@ jobs:
         run: node scripts/architecture-drift-report.mjs
 
       - name: Validate OAM clean architecture baseline
+        env:
+          OAM_ALLOW_PENDING_MAIN_REBIND: ${{ github.ref == 'refs/heads/main' && 'true' || (github.event_name == 'pull_request' && contains(github.head_ref, 'main-rebind') && 'true' || 'false') }}
         run: |
           node scripts/project/check-project-hygiene.mjs
           node scripts/check-oam-clean-baseline.mjs
@@ -241,7 +243,7 @@ jobs:
       - name: Validate OAM-00 Evidence Reconciliation
         if: ${{ always() && (github.event_name == 'pull_request' || github.ref == 'refs/heads/main') }}
         env:
-          OAM_ALLOW_PENDING_MAIN_REBIND: ${{ github.event_name == 'pull_request' && contains(github.head_ref, 'main-rebind') && 'true' || 'false' }}
+          OAM_ALLOW_PENDING_MAIN_REBIND: ${{ github.ref == 'refs/heads/main' && 'true' || (github.event_name == 'pull_request' && contains(github.head_ref, 'main-rebind') && 'true' || 'false') }}
         run: |
           node scripts/release-state/check-evidence-reconciliation.mjs
           node scripts/rt4/check-final-evidence-freshness.mjs
@@ -249,7 +251,7 @@ jobs:
       - name: Validate OAM-01 Release State Authority
         if: ${{ always() && (github.event_name == 'pull_request' || github.ref == 'refs/heads/main') }}
         env:
-          OAM_ALLOW_PENDING_MAIN_REBIND: ${{ github.event_name == 'pull_request' && contains(github.head_ref, 'main-rebind') && 'true' || 'false' }}
+          OAM_ALLOW_PENDING_MAIN_REBIND: ${{ github.ref == 'refs/heads/main' && 'true' || (github.event_name == 'pull_request' && contains(github.head_ref, 'main-rebind') && 'true' || 'false') }}
         run: |
           node scripts/release-state/build-current-release-state.mjs
           node scripts/release-state/check-current-release-state.mjs

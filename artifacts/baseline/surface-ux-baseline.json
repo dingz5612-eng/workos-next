@@ -1,5 +1,5 @@
 {
-  "generatedAtUtc": "2026-06-04T23:13:24.410Z",
+  "generatedAtUtc": "2026-06-04T23:37:06.465Z",
   "generatedBy": "check-surface-ux-baseline",
   "stage": "OAM-CLEAN-BASELINE-D4",
   "status": "passed",
@@ -13,8 +13,8 @@
   ],
   "backendGuardCases": 13,
   "screenshotBaselineRef": "artifacts/screenshots/oam-ux-baseline/index.json",
-  "inputHash": "0de309dcabd01b4c0e2cd72c707be5242de16d743f365553316628b2cdb1f8a4",
-  "resultHash": "5808da0fa406c888a2c4ba70bf9780de09989a77c6b5affb7754fca5ad070b49",
+  "inputHash": "b20cdc848ce7db090efda0690398f5fd9d5279ddd06c7ca16221c9e8730b78af",
+  "resultHash": "eca252113339b7b0b58bbb8b89f6642060cc670d74ccad71b5509cb6cae7ed85",
   "noGoItems": [],
   "productionAllowed": false,
   "dormitoryL2ProductionAllowed": false,

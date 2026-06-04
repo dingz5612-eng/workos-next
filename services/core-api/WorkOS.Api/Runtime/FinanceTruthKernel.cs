@@ -324,7 +324,7 @@ public sealed record MoneyBasis(
 
     private static decimal ReadAmount(IReadOnlyDictionary<string, object> values)
     {
-        foreach (var field in new[] { "amount", "receivedAmount", "confirmedAmount", "paymentAmount", "depositAmount", "refundAmount", "deductionAmount", "expenseAmount", "settlementAmount" })
+        foreach (var field in new[] { "amount", "receivedAmount", "confirmedAmount", "paymentAmount", "depositAmount", "refundAmount", "deductionAmount", "adjustmentAmount", "expenseAmount", "settlementAmount" })
         {
             if (values.TryGetValue(field, out var value) &&
                 decimal.TryParse(Convert.ToString(value), out var parsed))

@@ -50,10 +50,10 @@
       "fieldValues": {
         "depositReceiptId": "deposit-receipt-d1-002",
         "depositId": "deposit-account-d1",
-        "depositAmount": "1200",
-        "currency": "KGS",
-        "paymentMethod": "bank",
-        "payer": "resident-d1"
+        "receivedAmount": "1200",
+        "paymentMethod": "bank_transfer",
+        "payerName": "resident-d1",
+        "receivedBy": "dormFinance"
       },
       "requiredEvidence": ["payment-proof", "finance-receipt"],
       "expected": {
@@ -78,8 +78,9 @@
         "stayId": "stay-d1-001",
         "paymentAmount": "650",
         "currency": "KGS",
-        "paymentMethod": "bank",
-        "payer": "resident-d1"
+        "paymentMethod": "bank_transfer",
+        "payerName": "resident-d1",
+        "receivedBy": "dormFinance"
       },
       "requiredEvidence": ["bank-or-cash-proof"],
       "expected": {
@@ -124,8 +125,9 @@
         "depositId": "deposit-account-d1",
         "depositAccountId": "deposit-account-d1",
         "refundAmount": "300",
-        "currency": "KGS",
-        "refundMethod": "bank"
+        "refundMethod": "bank_transfer",
+        "refundReceiver": "resident-d1",
+        "paymentTime": "2026-06-04T12:00:00Z"
       },
       "requiredEvidence": ["refund-request", "manager-approval"],
       "expected": {
@@ -146,9 +148,10 @@
       "money": true,
       "basisType": "ledger_correction_apply",
       "fieldValues": {
-        "correctionRequestId": "correction-d1-006",
-        "amount": "25",
-        "currency": "KGS",
+        "paymentAdjustmentId": "correction-d1-006",
+        "paymentId": "payment-d1-006",
+        "adjustmentAmount": "25",
+        "adjustmentReason": "bank_statement_exception",
         "correctionMode": "compensation",
         "sourcePack": "FinanceTruthPack"
       },
@@ -217,14 +220,18 @@
         "stayId": "stay-d1-009",
         "paymentAmount": "650",
         "currency": "KGS",
-        "paymentMethod": "bank"
+        "paymentMethod": "bank_transfer",
+        "payerName": "resident-d1",
+        "receivedBy": "dormFinance"
       },
       "duplicateFieldValues": {
         "paymentId": "payment-d1-009",
         "stayId": "stay-d1-009",
         "paymentAmount": "651",
         "currency": "KGS",
-        "paymentMethod": "bank"
+        "paymentMethod": "bank_transfer",
+        "payerName": "resident-d1",
+        "receivedBy": "dormFinance"
       },
       "requiredEvidence": ["bank-or-cash-proof"],
       "expected": {
@@ -248,8 +255,10 @@
         "runtimeReplayPolicy": "missing_evidence_422",
         "depositReceiptId": "deposit-receipt-d1-010",
         "depositId": "deposit-account-d1-010",
-        "depositAmount": "1200",
-        "currency": "KGS"
+        "receivedAmount": "1200",
+        "paymentMethod": "bank_transfer",
+        "payerName": "resident-d1",
+        "receivedBy": "dormFinance"
       },
       "requiredEvidence": ["payment-proof", "finance-receipt"],
       "expected": {
@@ -271,9 +280,10 @@
       "money": true,
       "basisType": "ledger_correction_apply",
       "fieldValues": {
-        "correctionRequestId": "rollback-comp-d1",
-        "amount": "10",
-        "currency": "KGS",
+        "paymentAdjustmentId": "rollback-comp-d1",
+        "paymentId": "payment-d1-rollback",
+        "adjustmentAmount": "10",
+        "adjustmentReason": "rollback_compensation_drill",
         "correctionMode": "compensation"
       },
       "requiredEvidence": ["rollback-drill"],

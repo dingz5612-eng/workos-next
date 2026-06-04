@@ -68,7 +68,17 @@ public sealed class BalancedMoneyKernelTests
         Assert.AreEqual("checkout_reads_projection_only", facts.ResponseFields["moneyBoundary"]);
     }
 
-    private static CommandEnvelopeV1 Envelope(string cardId, string amount) =>
+    [TestMethod]
+    public void payment_adjustment_uses_surface_adjustment_amount()
+    {
+        var facts = BalancedMoneyKernel.FromEnvelope(Envelope("paymentAdjustment", "25.00", "adjustmentAmount"));
+
+        Assert.AreEqual(1, facts.LedgerTransactions.Count);
+        Assert.AreEqual("balanced", facts.LedgerTransactions[0].BalanceStatus);
+        Assert.IsTrue(facts.LedgerEntries.All(item => item.Amount == 25.00m));
+    }
+
+    private static CommandEnvelopeV1 Envelope(string cardId, string amount, string amountField = "amount") =>
         new(
             "tenant-001",
             CanonicalOperationsApiService.ConfirmCommandType,
@@ -83,7 +93,7 @@ public sealed class BalancedMoneyKernelTests
                 ["cardId"] = cardId,
                 ["fieldValues"] = new Dictionary<string, object>
                 {
-                    ["amount"] = amount,
+                    [amountField] = amount,
                     ["currency"] = "KGS",
                     ["depositAccountId"] = cardId.Contains("refund", StringComparison.OrdinalIgnoreCase)
                         ? "deposit-account-001"

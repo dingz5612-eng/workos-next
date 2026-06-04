@@ -1,11 +1,11 @@
 {
-  "generatedAtUtc": "2026-06-04T23:13:23.648Z",
+  "generatedAtUtc": "2026-06-04T23:39:07.954Z",
   "generatedBy": "project-hygiene-checkers",
   "stage": "PROJECT-HYGIENE-CLEANUP",
   "status": "PROJECT_HYGIENE_CLEANUP_LOCAL_PASSED",
   "checks": {
     "stale_evidence_refs": {
-      "generatedAtUtc": "2026-06-04T23:12:34.966Z",
+      "generatedAtUtc": "2026-06-04T23:38:35.037Z",
       "generatedBy": "check-stale-evidence-refs",
       "stage": "PROJECT-HYGIENE-CLEANUP",
       "status": "passed",
@@ -1028,7 +1028,7 @@
       "repairPartsHrStatus": "L0 Contract Preview"
     },
     "route_surface_hygiene": {
-      "generatedAtUtc": "2026-06-04T23:12:37.398Z",
+      "generatedAtUtc": "2026-06-04T23:38:37.518Z",
       "generatedBy": "check-route-surface-hygiene",
       "stage": "PROJECT-HYGIENE-CLEANUP",
       "status": "passed",
@@ -1042,7 +1042,7 @@
       "repairPartsHrStatus": "L0 Contract Preview"
     },
     "screenshot_baseline": {
-      "generatedAtUtc": "2026-06-04T23:12:53.908Z",
+      "generatedAtUtc": "2026-06-04T23:38:40.903Z",
       "generatedBy": "check-screenshot-baseline",
       "stage": "PROJECT-HYGIENE-CLEANUP",
       "status": "passed",
@@ -1070,12 +1070,12 @@
       "repairPartsHrStatus": "L0 Contract Preview"
     },
     "artifact_hygiene": {
-      "generatedAtUtc": "2026-06-04T23:12:54.232Z",
+      "generatedAtUtc": "2026-06-04T23:38:41.272Z",
       "generatedBy": "check-artifact-hygiene",
       "stage": "PROJECT-HYGIENE-CLEANUP",
       "status": "passed",
-      "headSha": "8fd3c2c05264c3bec3bd17572117c25893f5b50c",
-      "originMain": "a259ae2c05e6d3648082e27987075cf295c905bd",
+      "headSha": "f8ecdacef58be6a06594dc7940a3701ba6b4e7ba",
+      "originMain": "f8ecdacef58be6a06594dc7940a3701ba6b4e7ba",
       "trackedArtifactCount": 212,
       "finalArtifactCount": 19,
       "finalArtifacts": [
@@ -1086,7 +1086,7 @@
           "finalEvidence": true,
           "stage": "release-state",
           "generatedBy": "build-current-release-state",
-          "generatedAtUtc": "2026-06-04T08:03:04.071Z",
+          "generatedAtUtc": "2026-06-04T23:37:10.038Z",
           "sourceMode": "machine_checked",
           "status": "unknown",
           "evidenceRefs": [
@@ -1106,9 +1106,9 @@
           "forbiddenRefs": [],
           "missingRefs": [],
           "productionBoundaryOk": true,
-          "resultHash": "88ef0bc15c2d9f8418c2e0e62cc5fe2781d7b0ec0251b1a2d487ff1ff3292381",
-          "fileHash": "ff11c61fd1214df0191b4ccb73fc03211a9589edf76fd786f380c9cecfeb024d",
-          "headSha": "a259ae2c05e6d3648082e27987075cf295c905bd"
+          "resultHash": "fcd9c8472c7be2b304d082b8f3c85c79f79e0d8415df93885de398c0e816f57c",
+          "fileHash": "745d7546d7ca6f3a27914242b31bfe9ddab3d55ea020b55753969a56d4594a9a",
+          "headSha": "f8ecdacef58be6a06594dc7940a3701ba6b4e7ba"
         },
         {
           "artifactPath": "artifacts/oam/oam-final-acceptance-result.json",
@@ -1192,7 +1192,7 @@
           "missingRefs": [],
           "productionBoundaryOk": true,
           "resultHash": "2a61445e4d7df637f788a046c1f7b10e9276ccdd468ffe3ab4161b7447056b34",
-          "fileHash": "8f4e96f6d57e031b9b1653259ad30169c89cea2e905fda2d571646c50e348785",
+          "fileHash": "328bed9da8039808da33a3e398067d8c8becbd0617d68f71920dbe437b985be0",
           "headSha": "a259ae2c05e6d3648082e27987075cf295c905bd"
         },
         {
@@ -1245,7 +1245,7 @@
           "missingRefs": [],
           "productionBoundaryOk": true,
           "resultHash": "e86a904431305c637b5b0c5cfe04ed253e2ffe92ed5e7c485566c457ea5ddc56",
-          "fileHash": "729ccdf3e6fcf5a9ac1b13e8c2f8fd790fa75412826ffb72184a458f05d41a65",
+          "fileHash": "022cc0eed58f9e4b2fe4fbd064c51d4aeb0ba6c852f833e3f5b62b03c980951b",
           "headSha": "6401149d636b84e5dfc33673e1e3868116fb426a"
         },
         {
@@ -1255,7 +1255,7 @@
           "finalEvidence": true,
           "stage": "OAM-07",
           "generatedBy": "check-l1-to-l2-readiness",
-          "generatedAtUtc": "2026-06-04T23:01:56.507Z",
+          "generatedAtUtc": "2026-06-04T23:36:22.396Z",
           "sourceMode": "machine_checked",
           "status": "NOT_ELIGIBLE",
           "evidenceRefs": [
@@ -1267,8 +1267,8 @@
           "forbiddenRefs": [],
           "missingRefs": [],
           "productionBoundaryOk": true,
-          "resultHash": "2fc17882c5747ee67c78367d0d07a2439e08025358359546e68bb0fd741b43c0",
-          "fileHash": "b81890e263cb384f8759c51ead69c4c57c3186378b170077e70bf25ecfbb0314",
+          "resultHash": "41c34bc67c62739a2fb46ffda25202f4707b1d8f71b201942c90df5d2961a86c",
+          "fileHash": "7acb32e97029f35ce78459fa418d87cf9b1297e3945cbed3cc83477df1a24aed",
           "headSha": "a259ae2c05e6d3648082e27987075cf295c905bd"
         },
         {
@@ -1320,7 +1320,7 @@
           "missingRefs": [],
           "productionBoundaryOk": true,
           "resultHash": "83c1c25ab8d3dc3bf35d963871e68714fecf59d4e714ca213ef6b32b5e0de32f",
-          "fileHash": "efd84d76214cbef4a63ca93390006c633cc8edd7b7de8ed45f38d5507a0c71e7",
+          "fileHash": "d896bf469240770c004f64035398b26073bcdd5120fbd517be14f4cedad7ceb4",
           "headSha": "a259ae2c05e6d3648082e27987075cf295c905bd"
         },
         {
@@ -1338,7 +1338,7 @@
           "missingRefs": [],
           "productionBoundaryOk": true,
           "resultHash": "4aaa79a563b443bf5b2ce6185b1891bf6d3c8f90d06d56583b33ef6fe012803d",
-          "fileHash": "ad971ff41eb4dfecfe83cc2643efade3859348d493bca292df04de4e7772d766",
+          "fileHash": "00095c8362b8b5508d0a1ea8e226b730e91ce1fae1f7729a2cc2897a846e9174",
           "headSha": "a259ae2c05e6d3648082e27987075cf295c905bd"
         },
         {
@@ -1362,7 +1362,7 @@
           "missingRefs": [],
           "productionBoundaryOk": true,
           "resultHash": "db0671c9ccc71d6e6d37a946c647bb1d398e9058643d44f59b36774ffb8d23b4",
-          "fileHash": "563f642d8ef3e5e4429bb04f46e463a0d918d3db4f063b806da53a4959684082",
+          "fileHash": "8860f7d1bf8edc2a4469d107667ad580ffa25b2b50e20f2355bf6534a00e5ac7",
           "headSha": "a259ae2c05e6d3648082e27987075cf295c905bd"
         },
         {
@@ -1387,7 +1387,7 @@
           "missingRefs": [],
           "productionBoundaryOk": true,
           "resultHash": "dc414c946350fa7a9053367d887d6fe5e319492a38bfef559ef1dd2ec20f71cb",
-          "fileHash": "d04753d66daab3fafabeb9b372bd17ab2589b8a34f50ba326765de6d99dabee5",
+          "fileHash": "7d9b55bfeb320fd26e91f194f07a9e4f2f440d0e3791e6c222dc844c56e756a5",
           "headSha": "a259ae2c05e6d3648082e27987075cf295c905bd"
         },
         {
@@ -1405,7 +1405,7 @@
           "missingRefs": [],
           "productionBoundaryOk": true,
           "resultHash": "cfa7479a8055dc39e73645c249be51a87cbf48c4d0407acd129f4fa2f5d0a9ab",
-          "fileHash": "9ca95d2fc7c270a88ee6bb5fcd6329464a895a65799d464755dffe3c475ddc2c",
+          "fileHash": "09c21625caf5141b5299a2ed41d004cd608ac51fd827b91b05aa1c0447c36c70",
           "headSha": null
         },
         {
@@ -1415,7 +1415,7 @@
           "finalEvidence": true,
           "stage": "RUNTIME-PROOF",
           "generatedBy": "run-runtime-proof",
-          "generatedAtUtc": "2026-06-04T08:04:27.859Z",
+          "generatedAtUtc": "2026-06-04T23:34:44.951Z",
           "sourceMode": "live_api_db",
           "status": "passed",
           "evidenceRefs": [
@@ -1428,9 +1428,9 @@
           "forbiddenRefs": [],
           "missingRefs": [],
           "productionBoundaryOk": true,
-          "resultHash": "b9ace5ea0508487cccfb396cc6863821981f8f68b5a59e82123aa287bb01d926",
-          "fileHash": "031b04d638232148d7ad386d13586f2f452813b123b1480d35fcc2009c458b69",
-          "headSha": "a259ae2c05e6d3648082e27987075cf295c905bd"
+          "resultHash": "6939b1169ff744b1d7741a70d143418db702c64ede787e2b32f0fee8af051e9d",
+          "fileHash": "8ef84fc17267ddb72cebf64d9693b67aabd51d0d39dea83a3c7849c299c968ff",
+          "headSha": "f8ecdacef58be6a06594dc7940a3701ba6b4e7ba"
         },
         {
           "artifactPath": "artifacts/go-live/dormitory/runtime-proof-result.json",
@@ -1439,7 +1439,7 @@
           "finalEvidence": true,
           "stage": "DORM-INT",
           "generatedBy": "run-runtime-proof:dormitory-pack",
-          "generatedAtUtc": "2026-06-04T08:04:27.859Z",
+          "generatedAtUtc": "2026-06-04T23:34:44.951Z",
           "sourceMode": "live_api_db",
           "status": "passed",
           "evidenceRefs": [
@@ -1452,9 +1452,9 @@
           "forbiddenRefs": [],
           "missingRefs": [],
           "productionBoundaryOk": true,
-          "resultHash": "8ca04745e97b769a4f2ab10eca30f13dea75daffe24cf1ed336bbc4935a59039",
-          "fileHash": "717221b30d618789ce11575817ea632465f0fb49313331809afa649b091f026f",
-          "headSha": "a259ae2c05e6d3648082e27987075cf295c905bd"
+          "resultHash": "3f1dcb2974313bc719c9786a1e31994deae12510e8a95863518ba8fc6250eea2",
+          "fileHash": "918fdbce67c803f94e87d67519bdaf9a4218fb9f3b2909f3d46be87d4a0f049d",
+          "headSha": "f8ecdacef58be6a06594dc7940a3701ba6b4e7ba"
         },
         {
           "artifactPath": "artifacts/surface/oam-04-surface-twin-plane-result.json",
@@ -1471,7 +1471,7 @@
           "missingRefs": [],
           "productionBoundaryOk": true,
           "resultHash": "8b0157603e58caac03984a6b517f8c3f560e78858e79b1196e5cc9d8ad466b30",
-          "fileHash": "7be5fb786c486dea62c46c97c6c1f1b165d55b375cf9fee484039c504cb79c4a",
+          "fileHash": "5fcc8e2472ce8e49d2addf89dca880defef5d703ea61113d5c922a91a5a8ed95",
           "headSha": null
         },
         {
@@ -1489,7 +1489,7 @@
           "missingRefs": [],
           "productionBoundaryOk": true,
           "resultHash": "7b2624765b9a1b8b606cd9b334b95be15693a60d567ada5f94f2b2343c2735a0",
-          "fileHash": "e89fb74845186aaf8e3b6b9f568f0cec32fdaab36a4cd68f49b55e375c9bcccb",
+          "fileHash": "e5cbd1b2a384a9c956e1c56e1f9fcbf5a71e63a3ce24db7cd79e5ac806c2197b",
           "headSha": null
         },
         {
@@ -1507,7 +1507,7 @@
           "missingRefs": [],
           "productionBoundaryOk": true,
           "resultHash": "0698302401de70a9c1f89a9d6e8f6b5ccc7efe5cbca79ac00b132879e7769435",
-          "fileHash": "5e5805877bf08c90a055da7687f52edb2a6c05687ab1a00220e8d3d1671ae40a",
+          "fileHash": "bb5fac9cae332fbb3d86a40b02f76608030cd99c1efbc5202ab6b9bd84af4de8",
           "headSha": null
         },
         {
@@ -1529,7 +1529,7 @@
           "missingRefs": [],
           "productionBoundaryOk": true,
           "resultHash": "47834b981dc020a42c31159333886b1ff222a5c1dbeae7b4973ca569c168cc46",
-          "fileHash": "6a3fb2f61f8c9e05880c535e94efa18cf2d01496617288b631290d20495603b8",
+          "fileHash": "04280e57618e55d587653b85c03a81a4f42dfdca6797851ee5b15223127e87e8",
           "headSha": null
         },
         {
@@ -1552,10 +1552,11 @@
           "missingRefs": [],
           "productionBoundaryOk": true,
           "resultHash": "6a0239ee95b037d0e71d99e1aa244400ee94c449a0dc1d91ee886da57c84fc16",
-          "fileHash": "b5d2a77aef8e88eb08fde159154a00acc8f94e7cbd96dd2aee4b5466ceddb9e0",
+          "fileHash": "f64118b2691a4eca2785b919b5f4d2e4ea4aec023e6b846b8c7312eae046801f",
           "headSha": null
         }
       ],
+      "pendingRebindItems": [],
       "noGoItems": [],
       "productionAllowed": false,
       "dormitoryL2ProductionAllowed": false,
@@ -1563,7 +1564,7 @@
       "repairPartsHrStatus": "L0 Contract Preview"
     },
     "seed_data_isolation": {
-      "generatedAtUtc": "2026-06-04T23:12:53.585Z",
+      "generatedAtUtc": "2026-06-04T23:38:40.555Z",
       "generatedBy": "check-seed-data-isolation",
       "stage": "PROJECT-HYGIENE-CLEANUP",
       "status": "passed",
@@ -1576,7 +1577,7 @@
       "repairPartsHrStatus": "L0 Contract Preview"
     },
     "migration_sequence_hygiene": {
-      "generatedAtUtc": "2026-06-04T23:12:53.291Z",
+      "generatedAtUtc": "2026-06-04T23:38:40.208Z",
       "generatedBy": "check-migration-sequence-hygiene",
       "stage": "PROJECT-HYGIENE-CLEANUP",
       "status": "passed",
@@ -1603,7 +1604,7 @@
       "repairPartsHrStatus": "L0 Contract Preview"
     },
     "auxiliary_reference_hygiene": {
-      "generatedAtUtc": "2026-06-04T23:12:37.646Z",
+      "generatedAtUtc": "2026-06-04T23:38:37.772Z",
       "generatedBy": "check-auxiliary-reference-hygiene",
       "stage": "PROJECT-HYGIENE-CLEANUP",
       "status": "passed",
@@ -1955,11 +1956,11 @@
       "repairPartsHrStatus": "L0 Contract Preview"
     },
     "company_kernel_alignment": {
-      "generatedAtUtc": "2026-06-04T23:13:23.142Z",
+      "generatedAtUtc": "2026-06-04T23:38:39.816Z",
       "generatedBy": "check-company-kernel-alignment",
       "stage": "OAM-CAB-V1.1-COMPANY-KERNEL-ALIGNMENT",
       "status": "passed",
-      "headSha": "8fd3c2c05264c3bec3bd17572117c25893f5b50c",
+      "headSha": "f8ecdacef58be6a06594dc7940a3701ba6b4e7ba",
       "contractRef": "docs/contracts/company-kernels/company-kernel-alignment-contract.json",
       "businessRealityMapRef": "docs/architecture/business-reality-oam-kernel-map.json",
       "kernelCount": 7,
@@ -2238,5 +2239,5 @@
   "dormitoryL2ProductionAllowed": false,
   "businessProduction": "blocked",
   "repairPartsHrStatus": "L0 Contract Preview",
-  "headSha": "8fd3c2c05264c3bec3bd17572117c25893f5b50c"
+  "headSha": "f8ecdacef58be6a06594dc7940a3701ba6b4e7ba"
 }

@@ -1,7 +1,7 @@
 # OAM-00 证据重绑定与状态调和报告
 
 - status: `passed`
-- current main: `a259ae2c05e6d3648082e27987075cf295c905bd`
+- current main: `f8ecdacef58be6a06594dc7940a3701ba6b4e7ba`
 - DORM-INT latestMain: `a259ae2c05e6d3648082e27987075cf295c905bd`
 - Evidence Graph mode: `L1_INTERNAL_PILOT_OBSERVATION`
 - Completion Dashboard mode: `L1_INTERNAL_PILOT_OBSERVATION`

@@ -1,43 +1,43 @@
 {
-  "generatedAtUtc": "2026-06-04T23:13:24.474Z",
+  "generatedAtUtc": "2026-06-04T23:37:06.486Z",
   "generatedBy": "check-oam-clean-baseline",
   "stage": "OAM-CLEAN-BASELINE-FINAL-GATE",
   "status": "OAM_CLEAN_BASELINE_ALIGNED",
-  "headSha": "8fd3c2c05264c3bec3bd17572117c25893f5b50c",
+  "headSha": "f8ecdacef58be6a06594dc7940a3701ba6b4e7ba",
   "baselines": {
     "releaseEvidence": {
       "status": "passed",
-      "resultHash": "553f606693b32921126131d0be92dc252ee62ae3cb8e660e8dbc55070e8e354e",
+      "resultHash": "570c2e97d32bafed2a46fe5fe30105909d8894e36b568a9180ff3db738b04318",
       "noGoCount": 0
     },
     "artifact": {
       "status": "passed",
-      "resultHash": "2bb070643010c5ef4964c0f4bc4c6009597ad0b215d9ec9ff3227f453b9b4724",
+      "resultHash": "e369d1be0843115bd2b44cdd84c733b9503d4c397ea7eca8e5077937874b95a2",
       "noGoCount": 0
     },
     "runtimeSemantic": {
       "status": "passed",
-      "resultHash": "3461f7bef88adf6b452cbe274a385f19289f1707e63cb8e4f2eed2a7900b19ad",
+      "resultHash": "5789a11956286ede165ca9482d7583dc2be91398b7e9b16db6df6ce08b869472",
       "noGoCount": 0
     },
     "surfaceUx": {
       "status": "passed",
-      "resultHash": "5808da0fa406c888a2c4ba70bf9780de09989a77c6b5affb7754fca5ad070b49",
+      "resultHash": "eca252113339b7b0b58bbb8b89f6642060cc670d74ccad71b5509cb6cae7ed85",
       "noGoCount": 0
     },
     "seedData": {
       "status": "passed",
-      "resultHash": "f441617f9334b1c493f6c4455762b20d3c914af57fa67076d71d6b6a5efbbd26",
+      "resultHash": "b8a7729052fa9a0dd391ae6bbdc026f9b428fe6fad74744d25c44f35966d7770",
       "noGoCount": 0
     },
     "portfolioBoundary": {
       "status": "passed",
-      "resultHash": "55a0eae3ef992b0fccb10742c84dadb33c4374ca3f002b4b1b9faa23403451c3",
+      "resultHash": "606ed748520711cdcf2da8127c60ab20247ff92a1c7195c9b600641af9fdaf8a",
       "noGoCount": 0
     }
   },
-  "inputHash": "23252b8869277d4f5b8394212e134510c44aca4c5e15a23a087b0a4811979f54",
-  "resultHash": "090cac4937718782774bf61a8811d4457b19ac872f41916bf8c9d89d9bf96af4",
+  "inputHash": "8d6765dd45e85459fc0dd86d611d23bc80e0e507606601b38827bce449f49906",
+  "resultHash": "f1f951233b5dce875864aceab1080c49c3aa65ebd57a02b57bb0ab2c6e9997d5",
   "noGoItems": [],
   "day2AllowedAfterPostMergeAttestation": true,
   "productionAllowed": false,

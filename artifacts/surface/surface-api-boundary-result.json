@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-06-04T23:02:36.824Z",
+  "generated_at_utc": "2026-06-04T23:36:55.481Z",
   "generated_by": "scripts/surface/check-surface-api-boundary.mjs",
   "status": "passed",
   "check": "surface-api-boundary",

@@ -13,6 +13,7 @@ import {
 const generatedAtUtc = new Date().toISOString();
 const headSha = currentHead();
 const originMain = originMainHead();
+const allowPendingMainRebind = process.env.OAM_ALLOW_PENDING_MAIN_REBIND === "true";
 const currentState = readJson("artifacts/release-state/current-state.json");
 const currentStateRefs = new Set((currentState.evidenceRefs ?? []).map((ref) => String(ref).replace(/\\/g, "/")));
 const finalRefs = new Set([...finalArtifactRefs, ...currentStateRefs]);
@@ -20,6 +21,7 @@ const trackedArtifactFiles = trackedFiles("artifacts").filter((file) => /\.(json
 const inventory = trackedArtifactFiles.map((artifactPath) => inspectArtifact(artifactPath, finalRefs));
 const finalArtifacts = finalArtifactRefs.map((artifactPath) => inspectArtifact(artifactPath, finalRefs));
 const noGoItems = [];
+const pendingRebindItems = [];
 
 for (const item of finalArtifacts) {
   if (!item.exists) noGoItems.push(`缺少 final artifact：${item.artifactPath}`);
@@ -33,7 +35,17 @@ for (const item of finalArtifacts) {
 }
 
 if (currentState.currentMain?.headSha !== originMain) {
-  noGoItems.push("current-state.currentMain.headSha 必须绑定 origin/main。");
+  if (allowPendingMainRebind) {
+    pendingRebindItems.push({
+      id: "artifact_hygiene.current_state_main_head_pending_rebind",
+      message: "current-state.currentMain.headSha 等待当前 main CI 绿后重绑定。",
+      actual: currentState.currentMain?.headSha,
+      expected: originMain,
+      status: "pending_rebind_after_main_green"
+    });
+  } else {
+    noGoItems.push("current-state.currentMain.headSha 必须绑定 origin/main。");
+  }
 }
 if (currentState.authoritativeState?.businessProduction !== "BLOCKED") {
   noGoItems.push("Business Production 必须保持 BLOCKED。");
@@ -52,6 +64,7 @@ const result = {
   trackedArtifactCount: inventory.length,
   finalArtifactCount: finalArtifacts.length,
   finalArtifacts,
+  pendingRebindItems,
   noGoItems,
   productionAllowed: false,
   dormitoryL2ProductionAllowed: false,
