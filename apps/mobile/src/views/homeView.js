@@ -1,5 +1,6 @@
+import { resolveOperationPanelTarget } from "../operationRouteResolver.js";
 import { selectHomeSurface, selectSurfaceStats, selectWorkbenchQueue } from "../selectors/surfaceSelectors.js";
-import { WorkItemCard } from "./experienceComponents.js";
+import { WorkItemSummaryCard } from "./experienceComponents.js";
 import { learningContentItems } from "./searchView.js";
 
 export function homeView(ctx) {
@@ -29,7 +30,7 @@ export function homeView(ctx) {
     </section>
     <section class="mission-stack">
       <h2>${tr("assignedWorkItems")}</h2>
-      ${missions.length ? missions.map((item) => WorkItemCard(item, ctx)).join("") : `<article class="help-card"><p>${tr("mobileEmptyToday")}</p><button data-view="search">${tr("search")}</button></article>`}
+      ${missions.length ? missions.map((item) => WorkItemSummaryCard(item, ctx)).join("") : `<article class="help-card"><p>${tr("mobileEmptyToday")}</p><button data-view="search">${tr("search")}</button></article>`}
     </section>
     ${totalFocusCount ? `<section class="compact-section mobile-work-ia" data-mobile-today-ia>
       <h2>${tr("mustDoToday")}</h2>
@@ -112,12 +113,20 @@ function todayScenarioCard(item, ctx) {
   const workspace = item.workspace;
   if (!workspace) return "";
   const card = workspace.cards?.find((candidate) => candidate.id === item.cardId) || workspace.cards?.find((candidate) => ["ready", "blocked", "inProgress"].includes(candidate.status)) || workspace.cards?.[0];
+  const route = resolveOperationPanelTarget({
+    workItemId: item.workItemId || item.work_item_id || workspace.workItemId || card?.workItemId,
+    workspaceId: workspace.id,
+    cardId: card?.id || item.cardId || ""
+  }, ctx.state);
+  const action = route.canOpen
+    ? `<button data-work-item-id="${ctx.escapeAttr(route.workItem.workItemId)}" data-workspace-id="${ctx.escapeAttr(route.workItem.workspaceId)}" data-card-id="${ctx.escapeAttr(route.workItem.cardId)}">${ctx.tr("startHandling")}</button>`
+    : `<button data-view="search">${ctx.tr("operationUnavailableSearchAction")}</button>`;
   return `<article class="today-scenario-card ${ctx.escapeAttr(workspace.domain || "")}">
     <div>
       <span>${ctx.tr(workspace.domain)} · ${ctx.tr(card?.status || "ready")}</span>
       <strong>${ctx.tx(workspace.title)}</strong>
       <p>${ctx.tx(card?.title || workspace.summary)} · ${ctx.tx(workspace.next)}</p>
     </div>
-    <button data-workspace="${ctx.escapeAttr(workspace.id)}" data-card-id="${ctx.escapeAttr(card?.id || item.cardId || "")}">${ctx.tr("openWorkspace")}</button>
+    ${action}
   </article>`;
 }

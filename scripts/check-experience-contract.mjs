@@ -153,7 +153,7 @@ function validateMobileSources() {
     violations.push(violation("experience_contract.workitem_card_not_rendered", "Work page must render WorkItemCard."));
   }
   if (!operationPanel.includes("operationPanelView") || !operationPanel.includes("payloadHash") || !operationPanel.includes("commandSubmissionId")) {
-    violations.push(violation("experience_contract.operation_panel_route_missing", "Operation Panel route must show prepare/confirm/trace/evidence/projection/commandSubmissionId/payloadHash."));
+    violations.push(violation("experience_contract.operation_panel_route_missing", "Operation Panel route must retain debug/audit proof for prepare/confirm/trace/evidence/projection/commandSubmissionId/payloadHash."));
   }
   if (!home.includes('tr("todayMissionControl")') || !home.includes('data-surface="today-mission-control"')) {
     violations.push(violation("experience_contract.today_mission_control_missing", "Today must render localized WorkItem Mission Control."));
@@ -161,8 +161,8 @@ function validateMobileSources() {
   if (!me.includes('tr("personalOpsCenter")') || !me.includes('data-surface="personal-ops-center"')) {
     violations.push(violation("experience_contract.personal_ops_center_missing", "Me must render localized Personal Ops Center."));
   }
-  if (!workspace.includes("LifecycleWorkspace") || !workspace.includes("OperationPanelView")) {
-    violations.push(violation("experience_contract.lifecycle_workspace_not_rendered", "Workspace must render LifecycleWorkspace and OperationPanelView as the primary experience."));
+  if (!workspace.includes("OperationStepRail") || workspace.includes("OperationPanelView")) {
+    violations.push(violation("experience_contract.workspace_compatibility_not_compact", "Workspace compatibility surface must render OperationStepRail and keep OperationPanelView on the Operations WorkItem route."));
   }
   for (const component of [
     "WorkItemCard",

@@ -15,7 +15,7 @@ export function countEvidenceState(state, key) {
 }
 
 export function countTransferable(state) {
-  return selectWorkbenchQueue(state).filter((item) => item.transferable || item.ownerRole !== state.currentActor?.role).length;
+  return selectWorkbenchQueue(state).filter((item) => item.transferable === true).length;
 }
 
 export function queueTasks(state) {
@@ -33,11 +33,11 @@ export function queueTasks(state) {
 
 export function evidenceStateFor(item = {}) {
   const explicit = item.evidenceState || item.card?.evidenceState;
-  if (explicit) return explicit;
+  if (explicit) return normalizeEvidenceState(explicit);
   const drafts = item.evidenceDrafts || item.card?.evidenceDrafts || [];
-  if (drafts.some((draft) => draft.status === "rejected")) return "rejected";
+  if (drafts.some((draft) => ["rejected", "scope_mismatch", "wrong_scope", "expired", "upload_failed"].includes(normalizeEvidenceState(draft.status || draft.verificationStatus)))) return "missing";
   if (drafts.length) return "draft";
-  return (item.card?.evidence || item.evidenceRequirements || []).length ? "missing" : "ready";
+  return (item.card?.evidence || item.evidenceRequirements || []).length ? "system_ready" : "ready";
 }
 
 function ownerRoleMatches(item, filter, state) {
@@ -46,6 +46,13 @@ function ownerRoleMatches(item, filter, state) {
 }
 
 function transferableMatches(item, filter, state) {
-  const transferable = Boolean(item.transferable || item.ownerRole && item.ownerRole !== state.currentActor?.role);
+  const transferable = item.transferable === true;
   return filter === "true" ? transferable : !transferable;
+}
+
+function normalizeEvidenceState(value = "") {
+  const state = String(value || "").trim();
+  if (state === "wrong_scope" || state === "scope_mismatch") return "missing";
+  if (["rejected", "expired", "upload_failed", "locked"].includes(state)) return "missing";
+  return state;
 }

@@ -1,9 +1,9 @@
 {
-  "generatedAtUtc": "2026-06-02T01:20:29.160Z",
+  "generatedAtUtc": "2026-06-04T08:04:39.797Z",
   "generatedBy": "check-business-line-maturity",
   "status": "passed",
-  "currentMainHead": "d03d8d39c91135eb3f63d1a56b59e19b7dd35196",
-  "releaseStateEvidenceHead": "d03d8d39c91135eb3f63d1a56b59e19b7dd35196",
+  "currentMainHead": "a259ae2c05e6d3648082e27987075cf295c905bd",
+  "releaseStateEvidenceHead": "a259ae2c05e6d3648082e27987075cf295c905bd",
   "releaseStateEvidenceFreshness": "current",
   "dormitory": {
     "maturityState": "L1 Internal Pilot Observation",

@@ -1,5 +1,6 @@
+import fs from "node:fs";
 import { describe, expect, it } from "vitest";
-import { openWorkItem } from "../navigationController.js";
+import { openWorkspace, openWorkItem } from "../navigationController.js";
 import { resolveOperationPanelTarget, resolvePersistedWorkItem } from "../operationRouteResolver.js";
 import { routeView } from "../appRouter.js";
 import { WorkItemCard } from "../views/experienceComponents.js";
@@ -45,6 +46,37 @@ describe("OAM-04B WorkItem route identity", () => {
     expect(target.workItem.workItemId).toBe("W-STAY-RESOURCE:roomSetup");
   });
 
+  it("resolves card identity from Operations WorkItem payload", () => {
+    const store = runtimeStore();
+    store.operationWorkItems = [{
+      workItemId: "wi-started-room",
+      workspaceId: "W-STAY-RESOURCE-202606040001",
+      workItemType: "Dorm.RoomSetup",
+      lifecycleState: "available",
+      ownerRole: "operator",
+      caseId: "W-STAY-RESOURCE-202606040001",
+      payload: {
+        cardId: "roomSetup",
+        templateWorkspaceId: "W-STAY-RESOURCE"
+      }
+    }];
+    store.workspaces = [{
+      ...store.workspaces[0],
+      id: "W-STAY-RESOURCE-202606040001"
+    }];
+    const ctx = createSurfaceCtx({ runtimeStore: store });
+
+    const target = resolveOperationPanelTarget({
+      workspaceId: "W-STAY-RESOURCE-202606040001",
+      cardId: "roomSetup"
+    }, ctx.state);
+
+    expect(target.canOpen).toBe(true);
+    expect(target.workItem.workItemId).toBe("wi-started-room");
+    expect(target.workItem.cardId).toBe("roomSetup");
+    expect(target.workItem.lifecycleState).toBe("ready");
+  });
+
   it("does not render an operation CTA when no persisted WorkItem exists", () => {
     const store = runtimeStore();
     store.workQueue = [];
@@ -82,5 +114,27 @@ describe("OAM-04B WorkItem route identity", () => {
 
     expect(html).toContain('data-work-item-id="W-STAY-RESOURCE:roomSetup"');
     expect(html).toContain(">处理</button>");
+  });
+
+  it("routes workspace/card compatibility clicks through the Operations WorkItem adapter", () => {
+    const ctx = createSurfaceCtx();
+
+    const target = openWorkspace("W-STAY-RESOURCE", ctx, "roomSetup");
+
+    expect(target.canOpen).toBe(true);
+    expect(ctx.state.view).toBe("operationPanel");
+    expect(ctx.state.selectedWorkItemId).toBe("W-STAY-RESOURCE:roomSetup");
+    expect(ctx.state.selectedCardId).toBe("roomSetup");
+  });
+
+  it("keeps active command starts on the Operations WorkItem route instead of workspace/card direct URLs", () => {
+    const source = fs.readFileSync(new URL("../navigationController.js", import.meta.url), "utf8");
+    const startCommandSource = source.slice(source.indexOf("export async function startWorkspaceCommand"));
+
+    expect(startCommandSource).toContain("openOperationPanel");
+    expect(startCommandSource).toContain("applyRuntimeSurfacePayloads");
+    expect(startCommandSource).toContain("result?.workItem?.workItemId");
+    expect(startCommandSource).not.toContain("window.location.href");
+    expect(startCommandSource).not.toContain('url.searchParams.set("view", "workspace")');
   });
 });

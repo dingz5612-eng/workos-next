@@ -1,4 +1,5 @@
 import { loadDraft } from "../operationDrafts.js";
+import { normalizeOperationLifecycleState } from "../operationStatus.js";
 import { resolveOperationPanelTarget, resolvePersistedWorkItem } from "../operationRouteResolver.js";
 import { isTerminalCardStatus } from "../selectors/workspaceSelectors.js";
 import { permissionDiagnosticCopy } from "../surfaceGuard.js";
@@ -51,6 +52,27 @@ export function WorkItemCard(item, ctx) {
   </article>`;
 }
 
+export function WorkItemSummaryCard(item, ctx) {
+  const model = workItemModel(item, ctx);
+  const route = resolveOperationPanelTarget({
+    workItemId: model.workItemId,
+    workspaceId: model.workspaceId,
+    cardId: model.cardId
+  }, ctx.state);
+  const action = route.canOpen
+    ? `<button data-work-item-id="${attr(route.workItem.workItemId, ctx)}" data-workspace-id="${attr(route.workItem.workspaceId, ctx)}" data-card-id="${attr(route.workItem.cardId, ctx)}">${text(ctx.tr("startHandling"), ctx)}</button>`
+    : `<button data-view="workbench">${text(ctx.tr("returnWorkbench"), ctx)}</button>`;
+
+  return `<article class="today-workitem-summary" data-surface="today-workitem-summary">
+    <div>
+      <span>${text(model.canHandleLabel, ctx)} · ${text(model.workItemType, ctx)}</span>
+      <strong>${text(model.displayTitle, ctx)}</strong>
+      <p>${text(model.nextAction || ctx.tr("operationUnavailableNextAction"), ctx)}</p>
+    </div>
+    ${action}
+  </article>`;
+}
+
 export function LifecycleWorkspace(item, activeCard, ctx) {
   const model = workItemModel({ workspace: item, card: activeCard, workspaceId: item.id, cardId: activeCard.id }, ctx);
   const blockers = activeBlockers(item, activeCard);
@@ -77,6 +99,20 @@ export function LifecycleWorkspace(item, activeCard, ctx) {
       <span>${text(ctx.tr("lifecycleTimeline"), ctx)}</span>
       <div class="lifecycle-timeline">${(item.cards || []).map((card) => timelineStep(item, card, activeCard, ctx)).join("")}</div>
     </article>
+  </section>`;
+}
+
+export function OperationStepRail(item, activeCard, ctx) {
+  const cards = item.cards || [];
+  return `<section class="operation-step-rail" data-surface="operation-step-rail">
+    <div class="operation-step-current">
+      <span>${text(ctx.tr("lifecycleTimeline"), ctx)}</span>
+      <strong>${text(tx(activeCard.title, ctx), ctx)}</strong>
+      <small class="status-chip status-${attr(activeCard.status, ctx)}">${text(ctx.tr(activeCard.status) || activeCard.status, ctx)}</small>
+    </div>
+    <div class="operation-step-list">
+      ${cards.map((card) => timelineStep(item, card, activeCard, ctx)).join("")}
+    </div>
   </section>`;
 }
 
@@ -287,7 +323,7 @@ export function workItemModel(item = {}, ctx) {
     workItemId: vm.sourceRefs.workItemId || runtimeItem?.workItemId || runtimeItem?.work_item_id || persistedWorkItemIdFor(workspace, card) || persistedCandidate(item.workItemId || item.work_item_id) || "",
     caseId: vm.sourceRefs.caseId || item.caseId || item.case_id || runtimeItem?.caseId || runtimeItem?.case_id || workspace?.caseId || workspace?.id || "",
     workItemType: tx(card?.title, ctx) || vm.typeLabel,
-    lifecycleState: item.lifecycleState || item.lifecycle_state || item.status || runtimeItem?.lifecycleState || runtimeItem?.lifecycle_state || runtimeItem?.status || card?.status || "ready",
+    lifecycleState: normalizeOperationLifecycleState(item.lifecycleState || item.lifecycle_state || item.status || runtimeItem?.lifecycleState || runtimeItem?.lifecycle_state || runtimeItem?.status || card?.status),
     ownerRole: item.ownerRole || item.owner_role || runtimeItem?.ownerRole || runtimeItem?.owner_role || card?.confirmation?.requiredRole || card?.Confirmation?.requiredRole || "operator",
     SLA: vm.slaLabel,
     requiredEvidence: vm.requiredEvidenceLabels,

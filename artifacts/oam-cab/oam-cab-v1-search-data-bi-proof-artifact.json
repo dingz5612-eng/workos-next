@@ -1,0 +1,62 @@
+{
+  "version": "oam-cab.v1.search-data-bi-proof-artifact",
+  "generatedAtUtc": "2026-06-04T08:08:20Z",
+  "status": "evidence_bound_local",
+  "businessProductionAllowed": false,
+  "dormitoryL2ProductionAllowed": false,
+  "searchKernelStatus": "passed",
+  "contracts": [
+    "docs/contracts/search/search-contract.json",
+    "docs/contracts/search/search-result-schema.json",
+    "docs/contracts/search/search-index-sources.json",
+    "docs/contracts/search/search-permission-policy.json",
+    "docs/contracts/search/search-ranking-policy.json",
+    "docs/contracts/bi-kpi/bi-kpi-contract.json"
+  ],
+  "runtimeProofRefs": [
+    "artifacts/surface/search-learning-contract-result.json",
+    "artifacts/surface/surface-api-boundary-result.json",
+    "artifacts/oam-cab/oam-cab-v1-inventory.json"
+  ],
+  "requiredTermsCovered": [
+    "SearchRequest",
+    "SearchResult",
+    "SearchTarget",
+    "SearchAdmission",
+    "SearchPermissionEnvelope",
+    "SearchIndexSource",
+    "SearchIndexBuildProof",
+    "SearchRankingProfile",
+    "LegacySearchAdapter quarantine",
+    "MetricDefinition",
+    "SLAClockDefinition",
+    "MetricLineage",
+    "DashboardWidgetContract",
+    "ReportDataSetContract",
+    "dashboard/report/KPI readonly proof"
+  ],
+  "sensitivityProof": [
+    "finance sensitive",
+    "audit sensitive",
+    "evidence redaction",
+    "governance sensitivity"
+  ],
+  "commandsRun": [
+    {
+      "command": "node scripts/check-search-kernel.mjs",
+      "status": "passed"
+    },
+    {
+      "command": "node scripts/surface/check-oam-04-surface-twin-plane-contract.mjs",
+      "status": "passed"
+    },
+    {
+      "command": "node scripts/check-oam-cab-final-report.mjs",
+      "status": "passed"
+    }
+  ],
+  "remainingRisk": [
+    "PR #81 CI must rerun after push before this can be called CI-bound.",
+    "This artifact does not allow Search to degrade to contains-only and does not mark compatibility wrapper as the final native kernel."
+  ]
+}

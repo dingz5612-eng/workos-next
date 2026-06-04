@@ -9,7 +9,8 @@ export function buildOperationActionState(workItem = {}, card = {}, runtimeResul
   if (resultStatus === "permission_blocked_403") return OperationActionStateVM("waitingPermission", { result });
   if (resultStatus === "idempotency_conflict_409") return OperationActionStateVM("submitted", { result });
   if (resultStatus === "business_blocked_422" && result?.reason === "required_field_missing") return OperationActionStateVM("missingRequiredFields", { result });
-  if (resultStatus === "business_blocked_422") return OperationActionStateVM("missingEvidence", { result });
+  if (resultStatus === "business_blocked_422" && isEvidenceBlocker(result)) return OperationActionStateVM("missingEvidence", { result });
+  if (resultStatus === "business_blocked_422") return OperationActionStateVM("blocked", { result });
   if (resultStatus === "committed_projection_pending") return OperationActionStateVM("projectionPending", { result });
   if (resultStatus === "committed_projection_failed" || resultStatus === "network_unknown") return OperationActionStateVM("failed", { result });
   if (resultStatus === "committed_projected") return OperationActionStateVM("submitted", { result });
@@ -17,6 +18,10 @@ export function buildOperationActionState(workItem = {}, card = {}, runtimeResul
   if (card.status === "notStarted") return OperationActionStateVM("notStarted", { disabled: true });
   if (card.status === "blocked" || workItem.lifecycleState === "blocked") return OperationActionStateVM("blocked");
   return OperationActionStateVM("ready");
+}
+
+function isEvidenceBlocker(result = {}) {
+  return /evidence|proof|credential|attachment|material|证据|材料/i.test(String(result.reason || result.code || result.message || ""));
 }
 
 function resultAppliesToCurrentCard(result, workItem = {}, card = {}) {

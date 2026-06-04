@@ -109,7 +109,8 @@
 }
 
 .today-scenario-card button {
-  width: 92px;
+  width: auto;
+  min-width: 92px;
   min-height: 44px;
   border-radius: 12px;
 }
@@ -138,7 +139,7 @@
 
 .workspace-control {
   margin-top: 12px;
-  padding: 15px;
+  padding: 10px;
   border: 1px solid rgba(214, 230, 234, .9);
   border-radius: 8px;
   background: rgba(255, 255, 255, .92);
@@ -458,6 +459,52 @@
   grid-column: 1 / -1;
 }
 
+.operation-step-rail {
+  display: grid;
+  gap: 8px;
+  margin-top: 10px;
+  padding: 10px;
+  border: 1px solid #d9e7ee;
+  border-radius: 8px;
+  background: #fbfdfe;
+}
+
+.operation-step-current {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 6px 10px;
+  align-items: center;
+}
+
+.operation-step-current span,
+.operation-step-current strong {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.operation-step-current span {
+  grid-column: 1 / -1;
+  color: #66788c;
+  font-size: 12px;
+  font-weight: 850;
+}
+
+.operation-step-current strong {
+  color: #102033;
+  font-size: 16px;
+}
+
+.operation-step-current small {
+  justify-self: end;
+}
+
+.operation-step-list {
+  display: flex;
+  gap: 7px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+}
+
 .lifecycle-timeline {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(132px, 1fr));
@@ -465,7 +512,8 @@
   overflow: visible;
 }
 
-.lifecycle-timeline .timeline-step {
+.lifecycle-timeline .timeline-step,
+.operation-step-list .timeline-step {
   display: grid;
   gap: 4px;
   min-height: 54px;
@@ -482,26 +530,38 @@
 }
 
 .lifecycle-timeline .timeline-step:hover,
-.lifecycle-timeline .timeline-step:focus-visible {
+.lifecycle-timeline .timeline-step:focus-visible,
+.operation-step-list .timeline-step:hover,
+.operation-step-list .timeline-step:focus-visible {
   border-color: #0b6f63;
   outline: none;
 }
 
 .lifecycle-timeline strong,
-.lifecycle-timeline small {
+.lifecycle-timeline small,
+.operation-step-list strong,
+.operation-step-list small {
   min-width: 0;
   overflow-wrap: anywhere;
 }
 
-.lifecycle-timeline strong {
+.lifecycle-timeline strong,
+.operation-step-list strong {
   color: #102033;
   font-size: 12px;
 }
 
-.lifecycle-timeline small {
+.lifecycle-timeline small,
+.operation-step-list small {
   color: #66788c;
   font-size: 11px;
   font-weight: 850;
+}
+
+.operation-step-list .timeline-step {
+  flex: 0 0 138px;
+  min-height: 48px;
+  padding: 7px 9px;
 }
 
 .app-shell.surface-pc .workitem-card-head {
@@ -516,7 +576,8 @@
   grid-template-columns: minmax(94px, auto) 1fr;
 }
 
-.lifecycle-timeline .current {
+.lifecycle-timeline .current,
+.operation-step-list .current {
   color: #102033;
   background: #ffd166;
   border-color: #ffd166;
@@ -822,8 +883,51 @@
   font-size: 20px;
 }
 
+.today-workitem-summary {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+  padding: 12px;
+  border: 1px solid #d9e7ee;
+  border-radius: 8px;
+  background: #fbfdfe;
+}
+
+.today-workitem-summary span,
+.today-workitem-summary strong,
+.today-workitem-summary p {
+  display: block;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.today-workitem-summary span {
+  color: #66788c;
+  font-size: 12px;
+  font-weight: 850;
+}
+
+.today-workitem-summary strong {
+  margin-top: 3px;
+  font-size: 17px;
+}
+
+.today-workitem-summary p {
+  margin: 5px 0 0;
+  color: #52677b;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.today-workitem-summary button {
+  width: 86px;
+  min-height: 42px;
+  border-radius: 12px;
+}
+
 .operation-panel-page {
-  padding: 16px;
+  padding: 12px;
   border: 1px solid #d9e7ee;
   border-radius: 8px;
   background: #f7fbfb;
@@ -833,7 +937,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
-  margin-top: 10px;
+  margin-top: 7px;
 }
 
 .operation-route-status span:not(.status-chip) {
@@ -857,7 +961,7 @@
 }
 
 .operation-panel-page h1 {
-  font-size: 24px;
+  font-size: 22px;
 }
 
 .operation-panel-runtime {

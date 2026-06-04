@@ -1,10 +1,10 @@
 {
-  "generated_at_utc": "2026-06-02T01:34:14.117Z",
-  "generated_by": "generate-dorm-l1-observation-day1",
-  "branch": "codex/dorm-l1-observation-day-01",
-  "headSha": "52d55e17d6f0f37df69ba3bab7ddc240bc01887d",
+  "generated_at_utc": "2026-06-04T08:04:36.782Z",
+  "generated_by": "generate-observation-day",
+  "branch": "codex/oam-cab-post-merge-browser-audit",
+  "headSha": "6401149d636b84e5dfc33673e1e3868116fb426a",
   "originMainHead": "1a2fb45a89f3d1ef18eaf4ca216ecdc57660df30",
-  "stage": "DORM-L1-OBS-DAY1",
+  "stage": "OAM-07",
   "day": 1,
   "status": "passed",
   "decision": "continue_l1_observation",
@@ -42,40 +42,40 @@
     "examples": [
       {
         "tenantId": "tenant-dorm-int-001",
-        "caseId": "case-d1-oam03-mpvp12ry-dorm-live-001",
-        "workItemId": "wi-d1-oam03-mpvp12ry-dorm-live-001",
+        "caseId": "case-d1-oam03-mpy2ky16-dorm-live-001",
+        "workItemId": "wi-d1-oam03-mpy2ky16-dorm-live-001",
         "workItemType": "roomSetup",
         "ownerRole": "frontdesk",
         "source": "persisted_work_item_runtime_model"
       },
       {
         "tenantId": "tenant-dorm-int-001",
-        "caseId": "case-d1-oam03-mpvp12ry-dorm-live-002",
-        "workItemId": "wi-d1-oam03-mpvp12ry-dorm-live-002",
+        "caseId": "case-d1-oam03-mpy2ky16-dorm-live-002",
+        "workItemId": "wi-d1-oam03-mpy2ky16-dorm-live-002",
         "workItemType": "depositReceipt",
         "ownerRole": "finance",
         "source": "persisted_work_item_runtime_model"
       },
       {
         "tenantId": "tenant-dorm-int-001",
-        "caseId": "case-d1-oam03-mpvp12ry-dorm-live-003",
-        "workItemId": "wi-d1-oam03-mpvp12ry-dorm-live-003",
+        "caseId": "case-d1-oam03-mpy2ky16-dorm-live-003",
+        "workItemId": "wi-d1-oam03-mpy2ky16-dorm-live-003",
         "workItemType": "paymentReceipt",
         "ownerRole": "finance",
         "source": "persisted_work_item_runtime_model"
       },
       {
         "tenantId": "tenant-dorm-int-001",
-        "caseId": "case-d1-oam03-mpvp12ry-dorm-live-004",
-        "workItemId": "wi-d1-oam03-mpvp12ry-dorm-live-004",
+        "caseId": "case-d1-oam03-mpy2ky16-dorm-live-004",
+        "workItemId": "wi-d1-oam03-mpy2ky16-dorm-live-004",
         "workItemType": "serviceTaskComplete",
         "ownerRole": "housekeeping",
         "source": "persisted_work_item_runtime_model"
       },
       {
         "tenantId": "tenant-dorm-int-001",
-        "caseId": "case-d1-oam03-mpvp12ry-dorm-live-005",
-        "workItemId": "wi-d1-oam03-mpvp12ry-dorm-live-005",
+        "caseId": "case-d1-oam03-mpy2ky16-dorm-live-005",
+        "workItemId": "wi-d1-oam03-mpy2ky16-dorm-live-005",
         "workItemType": "depositRefundPayment",
         "ownerRole": "manager",
         "source": "persisted_work_item_runtime_model"
@@ -88,7 +88,7 @@
     "rejectedCount": 2,
     "rejectionTraceCount": 2,
     "statusCodeCounts": {
-      "200": 146,
+      "200": 151,
       "403": 1,
       "409": 1,
       "422": 1
@@ -292,10 +292,6 @@
       "businessBlocked422Rate": 0.08,
       "idempotencyConflictNoSideEffect": true
     },
-    "runtimeSafety": {
-      "bedDoubleOccupancy": 0,
-      "deviceTrustBypass": 0
-    },
     "gateStatus": {
       "BStageGate": "passed",
       "ShadowCompare": "green",
@@ -365,8 +361,7 @@
   "periodReview": {
     "cadence": "daily",
     "frozen": true,
-    "reviewArtifact": "artifacts/operations/dormitory/observation-day-01.json",
-    "decision": "继续 Day-2"
+    "reviewArtifact": "artifacts/operations/dormitory/observation-day-01.json"
   },
   "sourceModeContract": {
     "runtimeProofSourceMode": "live_api_db",
@@ -380,14 +375,15 @@
     "maturityStatus": "passed"
   },
   "apiCallSummary": {
-    "total": 149,
+    "total": 154,
     "statusCodeCounts": {
-      "200": 146,
+      "200": 151,
       "403": 1,
       "409": 1,
       "422": 1
     },
     "contractPathCounts": {
+      "/api/auth/login": 5,
       "/api/operations/cases": 11,
       "/api/operations/work-items": 11,
       "/api/operations/work-items/{workItemId}/prepare": 11,
@@ -464,36 +460,19 @@
     }
   ],
   "evidenceRefs": [
-    "artifacts/proof/runtime-proof-result.json",
-    "artifacts/go-live/dormitory/live-api-db-replay-result.json",
-    "artifacts/go-live/dormitory/finance-daily-close-result.json",
     "artifacts/go-live/dormitory/daily-observation-day-01.json",
-    "artifacts/go-live/dormitory/rollback-drill-result.json",
-    "artifacts/go-live/dormitory/training-signoff-result.json",
-    "artifacts/trust/trust-boundary-result.json",
-    "artifacts/release-state/current-state.json",
-    "artifacts/portfolio/business-line-maturity-result.json"
+    "docs/operations/observation-control-loop.yml",
+    "docs/operations/incident-root-cause-taxonomy.yml",
+    "docs/operations/dormitory-slo.yml"
   ],
   "noGoItems": [],
-  "nextAction": "Day-1 green，允许继续 Day-2；宿舍仍仅为 L1 Internal Pilot Observation。",
-  "prNumber": 71,
-  "prHead": "52d55e17d6f0f37df69ba3bab7ddc240bc01887d",
-  "prBase": "1a2fb45a89f3d1ef18eaf4ca216ecdc57660df30",
-  "mergeCommit": "fad090ad45fb44efbcd22d3f13fd7b130dfc6ab0",
-  "postMergeAttestationRef": "artifacts/release-state/post-merge-attestation.json",
-  "postMergeAttestationStatus": "passed",
-  "artifactGitBindingRef": "artifacts/release-state/artifact-git-binding-result.json",
-  "gitBinding": {
-    "status": "post_merge_attested",
-    "repositoryHead": "fad090ad45fb44efbcd22d3f13fd7b130dfc6ab0",
-    "verifiedMainHead": "fad090ad45fb44efbcd22d3f13fd7b130dfc6ab0",
-    "prNumber": 71,
-    "prHead": "52d55e17d6f0f37df69ba3bab7ddc240bc01887d",
-    "prBase": "1a2fb45a89f3d1ef18eaf4ca216ecdc57660df30",
-    "mergeCommit": "fad090ad45fb44efbcd22d3f13fd7b130dfc6ab0",
-    "evidenceRefs": [
-      "artifacts/release-state/post-merge-attestation.json",
-      "artifacts/release-state/artifact-git-binding-result.json"
-    ]
+  "nextAction": "继续 L1 Internal Pilot Observation Window；不得自动升级 L2。",
+  "sloSummary": {
+    "sloCount": 19,
+    "green": true,
+    "financeDailyClose": "passed",
+    "projectionLagP95Minutes": 2,
+    "slaOverdue": 0,
+    "rollbackReadiness": "green"
   }
 }

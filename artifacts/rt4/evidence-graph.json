@@ -2,8 +2,8 @@
   "version": "rt4.evidence-graph.v1",
   "mode": "L1_INTERNAL_PILOT_OBSERVATION",
   "branch": "main",
-  "headSha": "7bbf636041d79b19f2e3121f78f263e391b4931d",
-  "generatedAtUtc": "2026-06-03T10:02:23.782Z",
+  "headSha": "a259ae2c05e6d3648082e27987075cf295c905bd",
+  "generatedAtUtc": "2026-06-04T06:18:25.948Z",
   "nodes": [
     {
       "id": "RT4-P0-001",
@@ -511,6 +511,79 @@
         "artifacts/go-live/dormitory/internal-pilot-go-no-go.json",
         "artifacts/go-live/dormitory/observation-window-result.json"
       ]
+    },
+    {
+      "id": "DORM-L1-BROWSER-E2E-20260604T091706Z",
+      "type": "browser_e2e_evidence",
+      "status": "local_passed",
+      "gate": "DORM-L1-BROWSER-E2E",
+      "branch": "codex/oam-cab-post-merge-browser-audit",
+      "headSha": "6401149d636b84e5dfc33673e1e3868116fb426a",
+      "ciRunId": "26934411215",
+      "ciRunUrl": "https://github.com/dingz5612-eng/workos-next/actions/runs/26934411215",
+      "scenarioIds": [
+        "dormitory_l1_positive_normal",
+        "dormitory_l1_negative_illegal_access",
+        "dormitory_l1_negative_unauthorized",
+        "dormitory_l1_negative_wrong_status"
+      ],
+      "screenshotHashes": [
+        "6d4a4582a563d0b0a46560b3843133882c74624478ab3f63d9f1825630fd7022",
+        "6d4a4582a563d0b0a46560b3843133882c74624478ab3f63d9f1825630fd7022",
+        "2c99cf3e10b9245b019fae79024e694fde6701b310f94e35e58ada525ddf89a7",
+        "87fa792e8a407e353f2195aa59c426f11d0698547b2aa54eb6e67991c864dfea",
+        "280c37d8ab212ffc611b237808f2f7d8cea71e070fe3450cc7ae1b241611a7b9",
+        "365d730fb6b5ed2e418ff5e41c8c22f72b60e7caf5ade64ee615dcdd1e7d0942",
+        "2e3f8819444f2636342feaf1775dd857c79346f3ce72319392f9a8c42915e577",
+        "ea3c206e6e05a3466baedd9f0c436c3498a7c2148d81321aa44e9f677dbc0a59",
+        "31a50112bfd10e8afa3a0f2b1fb4a7d9d86f7883fbcaaefb7f1b657be630420a",
+        "8cfb3a61da9ddd2323b8fe71ab6dbca730891a281698c91452fcdc2c8f5d2313",
+        "9bf6385852087d20820518a6dc4972106e4b908fd8fbcce70d1a3848db5c5ba5",
+        "cff481dea10325465fb989f89535764c2591e7b45b66db91fae254240a8d966a",
+        "47dee48dd4afbe70d8e8fac206e4f31411093f285afebf0133ae21a5582ea563",
+        "7d7c05544f06ede570a173056edd3e7ac1506415324e3a264123a6e6b895b2fa",
+        "c7d61629061427b5213a5a40968fef4e0fa306665c222cde3e831092e73400c7",
+        "3ac0702d0f29b41a5d7861c5baa264f49e8c779448b01223f7ea6b28d942d3d9",
+        "8d55137fcf428a3a7507764ee3176f4482044c4b811b2012761501cf0ddc1b9d",
+        "b6ee19808abfe1c1d483f2cf36d57e46282f93866da98e12ce238f1635662446",
+        "7a23f1f2b694efa4cdded32107667509b50563e983046390843d91eb5f33a7fd",
+        "c4e18bf333a8cdf3135a65fc0290db6c35e34454d0bb41209adb5cb61be4018c",
+        "e5e86fe285233516e4d1b0e5771eec2a8e7d62664f18bfdbda96ccbff3dad080",
+        "f545c6646cf1317b2433d78c83c9216a2cd8488c0b4ebc06dc6d4cbb360ddbf7",
+        "aef91aed5e6d1ba05125e4ba34d38fb4f86ed959f3e026e6bd378538b92b9f7f",
+        "b25e3c82ec11b1d02b427740dd9a2c25fce25a628280dff35ef2ed4640936f85",
+        "7da582f38caaaf868a03b6db2788fad80386760c11a1fc12d09d89ea98e74c3f",
+        "73adf2e107b98f9812f5d3d86210f5ae4f09005353c271b3d9f3cee164059f4e",
+        "2c99cf3e10b9245b019fae79024e694fde6701b310f94e35e58ada525ddf89a7",
+        "87fa792e8a407e353f2195aa59c426f11d0698547b2aa54eb6e67991c864dfea",
+        "280c37d8ab212ffc611b237808f2f7d8cea71e070fe3450cc7ae1b241611a7b9",
+        "07244c2618abbb4a953a3c93470c5e7d74e9bdf4a082d9345055f4bd9c895c8e",
+        "07244c2618abbb4a953a3c93470c5e7d74e9bdf4a082d9345055f4bd9c895c8e",
+        "8660cc60f6d031f6f0dc6334a05565ed2023e74a908a7a3d33a3523959b32b5f",
+        "d37133efdc4a53f4a87af672d5dd71c52e542932c096926a1514923acad626b9",
+        "d58c692f5f56ee9430a0266a48bf625ad305fcdd0217c0e13eb6ffd33a2629f2",
+        "c9816c8eed37e453696395a391a33c57b03b70e2feb4947b778d7fce75efe39e",
+        "fcaff324020efc0f10097ea50c764bec2b705f2fc2346bdc211f6323a427dbfe",
+        "ea3c206e6e05a3466baedd9f0c436c3498a7c2148d81321aa44e9f677dbc0a59",
+        "31a50112bfd10e8afa3a0f2b1fb4a7d9d86f7883fbcaaefb7f1b657be630420a",
+        "8cfb3a61da9ddd2323b8fe71ab6dbca730891a281698c91452fcdc2c8f5d2313",
+        "9bf6385852087d20820518a6dc4972106e4b908fd8fbcce70d1a3848db5c5ba5",
+        "c5b46936d83f068c1c9cfc8c1d88ce314eefc9f87904b95bb8d171849e99c672",
+        "c5b46936d83f068c1c9cfc8c1d88ce314eefc9f87904b95bb8d171849e99c672",
+        "2c99cf3e10b9245b019fae79024e694fde6701b310f94e35e58ada525ddf89a7",
+        "87fa792e8a407e353f2195aa59c426f11d0698547b2aa54eb6e67991c864dfea",
+        "280c37d8ab212ffc611b237808f2f7d8cea71e070fe3450cc7ae1b241611a7b9",
+        "ba1ba6fc8763449231898711689ea8e6abfd7eef185032945510174bc4e7d242",
+        "c3ff66308da5ef2025cbd57742b3f582b4f10684ab7b6218313a909ee82edde0",
+        "b5b2295a6150d8d9722013d98bab8f726056fff845d524e135df2ca8380bd23f"
+      ],
+      "refs": [
+        "artifacts/surface/dormitory-l1-browser-e2e/20260604T091706Z/dormitory-l1-browser-e2e-report.json",
+        "artifacts/surface/dormitory-l1-browser-e2e/20260604T091706Z/dormitory-l1-browser-e2e-report.md",
+        "artifacts/surface/dormitory-l1-browser-e2e/20260604T091706Z/screenshot-index.json",
+        "scripts/surface/run-dormitory-l1-browser-e2e-audit.mjs",
+        "scripts/surface/check-dormitory-l1-browser-e2e-audit.mjs"
+      ]
     }
   ],
   "edges": [
@@ -558,6 +631,11 @@
       "from": "RT4-P2-001",
       "to": "RT-5",
       "relation": "validated_by_gate"
+    },
+    {
+      "from": "DORM-L1-BROWSER-E2E-20260604T091706Z",
+      "to": "L1_INTERNAL_PILOT_OBSERVATION",
+      "relation": "binds_browser_evidence"
     }
   ],
   "generatedBy": "scripts/rt4/build-evidence-graph.mjs",

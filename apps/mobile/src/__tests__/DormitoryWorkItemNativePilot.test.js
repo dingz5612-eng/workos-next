@@ -34,8 +34,7 @@ describe("DORM-INT-02 WorkItem-native pilot", () => {
     expect(html).toContain('data-surface="operation-panel-route"');
     expect(visibleText(html)).not.toContain("operationsPrepare");
     expect(visibleText(html)).not.toContain("operationsConfirm");
-    expect(html).toContain("提交记录");
-    expect(html).toContain("载荷指纹");
+    expect(visibleText(html)).not.toContain("载荷指纹");
     expect(visibleText(html)).not.toMatch(/\b(commandSubmissionId|payloadHash|workItemId|caseId|OperationPanelView|TrustedConfirmSheet|ActionResult)\b/);
     vi.unstubAllGlobals();
   });
@@ -169,6 +168,7 @@ describe("DORM-INT-02 WorkItem-native pilot", () => {
     const controller = source("../operationController.js");
     const eventBinder = source("../eventBinder.js");
     const operationPanel = source("../views/operationPanelView.js");
+    const apiProgram = fs.readFileSync(new URL("../../../../services/core-api/WorkOS.Api/Program.cs", import.meta.url), "utf8");
 
     expect(main).toContain("fetchOperationWorkItems");
     expect(main).not.toContain("fetchWorkQueue");
@@ -194,6 +194,8 @@ describe("DORM-INT-02 WorkItem-native pilot", () => {
     expect(operationPanel).toContain("payloadFingerprint");
     expect(operationPanel).toContain("submissionRecord");
     expect(operationPanel).not.toContain("ctx.workspace()");
+    expect(apiProgram).toContain("AllowedWorkspaceStartRoles");
+    expect(apiProgram).toContain('"W-STAY-DEPOSIT-LEDGER" or "W-STAY-PAYMENT-LEDGER"');
   });
 });
 

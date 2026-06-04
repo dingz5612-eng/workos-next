@@ -10,7 +10,7 @@ const violations = [];
 const html = renderMobile();
 const text = visibleText(html);
 
-for (const label of ["必须做", "即将超时", "缺证据", "等待财务", "刚提交 / 同步中", "风险提醒", "今日必学", "可办任务", "阻断任务", "等待他人", "需补证据", "可转交"]) {
+for (const label of ["必须做", "即将超时", "缺证据", "等待财务", "刚提交 / 同步中", "风险提醒", "今日必学", "可处理", "有阻断", "等他人处理", "需人工补证", "可转交给同事"]) {
   if (!text.includes(label)) violations.push(v("mobile_work.ia_missing", `移动端 IA 缺少 ${label}`, { label }));
 }
 

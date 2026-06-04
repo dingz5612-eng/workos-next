@@ -1,0 +1,57 @@
+{
+  "version": "oam-cab.v1.correction-apply-exception-artifact",
+  "generatedAtUtc": "2026-06-04T08:08:20Z",
+  "status": "evidence_bound_local",
+  "route": "POST /api/correction-center/ledger-correction-requests/{correctionRequestId}/apply",
+  "selectedOption": "B",
+  "productionConfirm": false,
+  "businessProductionAllowed": false,
+  "dormitoryL2ProductionAllowed": false,
+  "classification": "correctionCenterWrite",
+  "contractRefs": [
+    "docs/rules/v5.5/api-boundary.yml",
+    "docs/v5.5/api-write-classification.md",
+    "infra/db/migrations/020_correction_center_schema.sql"
+  ],
+  "runtimeProofRefs": [
+    "tests/WorkOS.RuntimeContractTests/Program.cs",
+    "tests/WorkOS.UnitTests/CorrectionCenterSchemaTests.cs",
+    "tests/WorkOS.UnitTests/CorrectionCenterReversalTests.cs",
+    "tests/WorkOS.RuntimeIntegrationTests/PcGovernanceSurfaceRuntimeGuardTests.cs",
+    "tests/WorkOS.RuntimeIntegrationTests/FinanceMoneyCommandPilotScopeTests.cs"
+  ],
+  "appendOnlyProof": {
+    "ledgerCorrectionEntries": "append-only correction entries are inserted instead of editing old entries",
+    "ledgerReversalEntries": "reversal entries are appended for payment/deposit correction",
+    "auditEvents": "original audit events are retained",
+    "correctionAudit": "request, approval/rejection, and apply actions are audited"
+  },
+  "approvalProof": {
+    "highRisk": "requires approval before apply",
+    "mediumRisk": "may create apply WorkItem but still uses correction path",
+    "capability": "correction.approve is required for approval"
+  },
+  "admissionGuard": {
+    "notProductionConfirm": true,
+    "notL0Confirm": true,
+    "routeDoesNotOpenBusinessProduction": true
+  },
+  "commandsRun": [
+    {
+      "command": "dotnet test tests/WorkOS.UnitTests/WorkOS.UnitTests.csproj --filter OperationsRuntimeServiceTests|WorkspaceCardCompatibilityAdapterTests|ApiBoundaryRulesTests",
+      "status": "passed"
+    },
+    {
+      "command": "node scripts/check-api-boundaries.mjs",
+      "status": "passed"
+    },
+    {
+      "command": "node scripts/check-runtime-write-paths.mjs",
+      "status": "passed"
+    }
+  ],
+  "remainingRisk": [
+    "Dedicated CI-bound correction apply exception artifact must be revalidated by PR #81 CI after this artifact is pushed.",
+    "This exception is not Business Production GO and must not be interpreted as production_confirm."
+  ]
+}

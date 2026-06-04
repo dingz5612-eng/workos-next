@@ -39,10 +39,7 @@ export function selectWorkbenchQueue(state) {
   if (state.apiStatus === "offline") {
     return runtimeQueue.length ? materializeQueue(runtimeQueue, byId, state) : [];
   }
-  const queue = runtimeQueue.length
-    ? runtimeQueue
-    : workspaces.map((workspace) => projectionQueueItem(workspace));
-  return materializeQueue(queue, byId, state);
+  return runtimeQueue.length ? materializeQueue(runtimeQueue, byId, state) : [];
 }
 
 export function selectCompletedWorkbenchQueue(state) {
@@ -56,6 +53,7 @@ export function selectCompletedWorkbenchQueue(state) {
 function materializeQueue(queue, byId, state, options = {}) {
   return queue
     .filter((item) => state.debugSurface || isOrdinaryPilotQueueItem(item))
+    .filter((item) => state.debugSurface || isPersistedWorkItemId(item.workItemId || item.work_item_id))
     .map((item) => {
       const workspace = byId.get(item.workspaceId);
       const card = workspace ? selectCardById(workspace, item.cardId) || activeCard(workspace) : null;
@@ -69,7 +67,7 @@ function materializeQueue(queue, byId, state, options = {}) {
         source: item.source || state.runtimeStore?.queueSource || "runtime-api"
       };
     })
-    .filter((item) => (item.workspace && item.card) || item.workItemId)
+    .filter((item) => item.workItemId || item.work_item_id)
     .filter((item) => state.debugSurface || queueItemAllowedForActor(item, state))
     .filter((item) => {
       if (state.debugSurface) return true;
@@ -259,23 +257,6 @@ function projectionHomeItem(workspace) {
   };
 }
 
-function projectionQueueItem(workspace) {
-  const card = activeCard(workspace);
-  return {
-    queueItemId: `q-${workspace.id}-${card?.id || "workspace"}`,
-    workspaceId: workspace.id,
-    cardId: card?.id || "",
-    domain: workspace.domain,
-    domainGroup: domainGroupFor(workspace),
-    status: card?.status || "",
-    badges: badgesFor(card),
-    priority: priorityFor(card?.status),
-    reason: workspace.next,
-    nextActionId: `${card?.id || "workspace"}.prepare`,
-    source: "projection-fallback"
-  };
-}
-
 function learningCard(workspace, entry) {
   const card = selectCardById(workspace, entry.cardId);
   if (card) {
@@ -351,6 +332,11 @@ function priorityFor(status) {
   if (status === "ready") return 90;
   if (status === "inProgress") return 80;
   return 40;
+}
+
+function isPersistedWorkItemId(value) {
+  const id = String(value || "");
+  return id.includes(":") || /^wi-/i.test(id);
 }
 
 function domainGroupFor(workspace) {

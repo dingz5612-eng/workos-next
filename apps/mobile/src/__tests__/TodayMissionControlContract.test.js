@@ -43,6 +43,26 @@ describe("SURFACE-C Today Mission Control contract", () => {
 
     expect((html.match(/class="today-scenario-card/g) || []).length).toBeLessThanOrEqual(1);
     expect(html).not.toContain("workspace-card-strip");
+    expect(html).not.toContain('data-workspace="W-STAY-RESOURCE"');
+    expect(html).toContain('data-work-item-id="W-STAY-RESOURCE:roomSetup"');
+    expect(html).not.toContain("进入办理面");
+    expect(html).not.toContain('data-surface="action-decision-card"');
+  });
+
+  it("does not expose a workspace/card direct action when Home has no persisted WorkItem", () => {
+    const store = {
+      ...sourceRuntimeStoreWithoutWorkItems(),
+      workQueue: [],
+      operationWorkItems: []
+    };
+    const html = renderSurface("home", { runtimeStore: store });
+    const text = visibleText(html);
+
+    expect(html).not.toContain("data-work-item-id");
+    expect(html).not.toContain('data-workspace="W-STAY-RESOURCE"');
+    expect(html).toContain('data-view="search"');
+    expect(text).toContain("去搜索办理");
+    expect(text).not.toContain("暂不能直接办理");
   });
 
   it("keeps blocked work item recovery copy from squeezing mobile task titles", () => {
@@ -58,3 +78,32 @@ describe("SURFACE-C Today Mission Control contract", () => {
     expect(css).not.toContain(".loop-steps");
   });
 });
+
+function sourceRuntimeStoreWithoutWorkItems() {
+  return {
+    workspaces: [{
+      id: "W-STAY-RESOURCE",
+      domain: "stay",
+      caseId: "case:W-STAY-RESOURCE",
+      title: { "zh-CN": "我要创建住宿资源" },
+      summary: { "zh-CN": "房间床位入住资源" },
+      next: { "zh-CN": "先配置房间和床位" },
+      blockers: [],
+      cards: [{
+        id: "roomSetup",
+        status: "ready",
+        title: { "zh-CN": "房间配置卡" },
+        fields: { business: [], system: [], analytics: [] },
+        evidence: [],
+        checks: [],
+        blockerRules: [],
+        confirmation: { required: true, requiredRole: "operator", policyRef: "operations-runtime-policy" }
+      }]
+    }],
+    workQueue: [],
+    operationWorkItems: [],
+    homeSurface: [],
+    learningCatalog: [],
+    searchResultsByQuery: {}
+  };
+}

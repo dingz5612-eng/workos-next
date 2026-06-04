@@ -34,6 +34,7 @@ export function createInitialState() {
     sort: "smartSort",
     operationMessage: "",
     apiStatus: "checking",
+    runtimeHydrating: Boolean(actor),
     currentActor: actor,
     currentDevice: { deviceId: "mobile-current", deviceTrustStatus: "unknown", surface: "mobile" },
     loginMessage: "",

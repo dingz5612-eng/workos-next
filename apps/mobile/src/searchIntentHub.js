@@ -1,4 +1,5 @@
 import { resolveOperationPanelTarget } from "./operationRouteResolver.js";
+import { operationStatusTranslationKey } from "./operationStatus.js";
 
 export function buildSearchResultVM(item = {}, ctx = {}) {
   const resultType = item.resultType || item.type || item.kind || "object";
@@ -212,6 +213,8 @@ function localizedStatus(value, ctx) {
 }
 
 function statusTranslationKey(raw) {
+  const lifecycleKey = operationStatusTranslationKey(raw);
+  if (lifecycleKey && lifecycleKey !== raw) return lifecycleKey;
   const keyByStatus = {
     ready: "ready",
     done: "done",

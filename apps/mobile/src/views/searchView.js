@@ -387,7 +387,7 @@ function objectResults(workspaces, kind, ctx) {
       resultType: kind,
       workspaceId: workspace.id,
       cardId: workspace._surfaceCardId || workspace.cards?.[0]?.id || "",
-      subtitle: localized(workspace.localizedSubtitle, ctx) || workspace.id,
+      subtitle: localized(workspace.localizedSubtitle, ctx) || tx(workspace.summary, ctx) || tx(activeDisplayCard(workspace)?.title, ctx) || accommodationBusinessLabel(ctx),
       status: localized(workspace.localizedStatus, ctx) || workspace.cards?.[0]?.status || "ready",
       nextAction: localized(workspace.localizedNextAction, ctx) || tx(workspace.next, ctx) || ctx.tr("openWorkspace")
     }));
@@ -402,7 +402,7 @@ function evidenceResults(workspaces, ctx) {
       workspaceId: workspace.id,
       cardId: card.id,
       evidenceId: evidence.id,
-      subtitle: `${workspace.id} · ${tx(card.title, ctx)}`,
+      subtitle: [tx(workspace.title, ctx), tx(card.title, ctx)].filter(Boolean).join(" · ") || accommodationBusinessLabel(ctx),
       status: card.status || "ready",
       nextAction: ctx.tr("searchActionEvidence")
     })))).filter((item) => rankSearchResults([item], ctx.state.query).length || !ctx.state.query).slice(0, 6);
@@ -521,7 +521,7 @@ function accommodationBusinessLabel(ctx = {}) {
 function isRawRuntimeLabel(value = "") {
   return /^(stay|dorm|finance|lead|repair|parts|hr)$/i.test(String(value).trim())
     || /^[A-Z][A-Za-z0-9]*\.[A-Za-z0-9.]+$/.test(String(value).trim())
-    || /^W-[A-Z0-9-]+(?::[A-Za-z0-9-]+)?$/.test(String(value).trim());
+    || /W-[A-Z0-9-]+(?::[A-Za-z0-9-]+)?/.test(String(value).trim());
 }
 
 function tx(value, ctx) {

@@ -30,6 +30,7 @@ export function bindEvents(ctx) {
   document.querySelector("#finish")?.addEventListener("click", () => setView("result", ctx));
   document.querySelector("[data-save-draft]")?.addEventListener("click", () => saveCurrentDraft(ctx));
   document.querySelectorAll("[data-submit-card]").forEach((node) => node.addEventListener("click", () => submitCurrentCard(ctx)));
+  document.querySelectorAll("[data-action-state]").forEach((node) => node.addEventListener("click", () => handleOperationRecovery(node.dataset.actionState, ctx)));
   if (isPcSurfaceView(ctx.state.view)) {
     import("./pcEventBinder.js").then(({ bindPcEvents }) => bindPcEvents(ctx));
   }
@@ -38,6 +39,25 @@ export function bindEvents(ctx) {
 async function retryApi(ctx) {
   await ctx.hydrateProjectionFromApi();
   ctx.render();
+}
+
+async function handleOperationRecovery(actionState, ctx) {
+  if (actionState === "projectionPending" || actionState === "failed") {
+    await ctx.hydrateProjectionFromApi();
+    ctx.render();
+    return;
+  }
+  if (actionState === "submitted") {
+    setView("recentTraces", ctx);
+    return;
+  }
+  if (actionState === "blocked" || actionState === "missingEvidence") {
+    setView("learning", ctx);
+    return;
+  }
+  if (actionState === "waitingPermission") {
+    setView("permissions", ctx);
+  }
 }
 
 function bindLearning(ctx) {

@@ -131,6 +131,62 @@
   font-weight: 850;
 }
 
+.runtime-loading {
+  display: grid;
+  gap: 12px;
+  margin-top: 12px;
+  padding: 18px;
+  border: 1px solid rgba(214, 230, 234, .92);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, .96);
+  box-shadow: 0 12px 30px rgba(17, 39, 55, .07);
+}
+
+.runtime-loading span {
+  color: #66788c;
+  font-size: 12px;
+  font-weight: 850;
+}
+
+.runtime-loading h1 {
+  font-size: 26px;
+  line-height: 1.18;
+}
+
+.runtime-loading p {
+  color: #40566b;
+  line-height: 1.55;
+}
+
+.runtime-loading-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.runtime-loading-grid i {
+  display: block;
+  min-height: 54px;
+  border: 1px solid #dbe9ee;
+  border-radius: 8px;
+  background: linear-gradient(90deg, #f4f8fa 0%, #e7f1f3 50%, #f4f8fa 100%);
+  background-size: 220% 100%;
+  animation: surfaceLoading 1.2s ease-in-out infinite;
+}
+
+.runtime-loading-grid i:nth-child(2) {
+  animation-delay: .12s;
+}
+
+.runtime-loading-grid i:nth-child(3) {
+  animation-delay: .24s;
+}
+
+@keyframes surfaceLoading {
+  0% { background-position: 100% 0; }
+  100% { background-position: -100% 0; }
+}
+
 .mode-list {
   display: grid;
   gap: 10px;

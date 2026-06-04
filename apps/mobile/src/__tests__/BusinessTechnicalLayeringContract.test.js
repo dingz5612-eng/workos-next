@@ -10,14 +10,14 @@ import { operationFieldId, workspaceView } from "../views/workspaceView.js";
 import { createSurfaceCtx, visibleText } from "./surfaceContractTestHelpers.js";
 
 describe("OAM-04B business and technical layering contract", () => {
-  it("hides operation technical proof by default while keeping audit selectors", () => {
+  it("hides operation technical proof by default while keeping non-visible audit selectors", () => {
     const ctx = createSurfaceCtx({ view: "operationPanel" });
     const html = operationPanelView(ctx);
     const text = visibleText(html);
 
-    expect(html).toContain("<details");
-    expect(html).toContain('class="operation-technical-details"');
     expect(html).toContain('data-work-item-id="W-STAY-RESOURCE:roomSetup"');
+    expect(html).toContain('data-case-id=');
+    expect(html).not.toContain('class="operation-technical-details"');
     expect(html).not.toContain("open>");
     expect(text).not.toMatch(/\b(workItemId|caseId|payloadHash|commandSubmissionId)\b/);
   });
@@ -227,7 +227,7 @@ describe("OAM-04B business and technical layering contract", () => {
     const html = workspaceView(ctx);
     const text = visibleText(html);
 
-    expect(text).toContain("正在查看已完成步骤");
+    expect(text).toContain("已完成记录");
     expect(text).toContain("房间床位配置");
     expect(text).toContain("已完成");
     expect(text).toContain("返回当前办理");

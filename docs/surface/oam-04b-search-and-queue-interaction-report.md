@@ -24,7 +24,8 @@
 - 旧 `queueDomain` / `queueBadge` 只作为兼容适配。
 - IA chip、普通筛选、高级筛选均写入同一 `queueFilters`。
 - `queueTasks()` 明确消费统一筛选状态，筛选结果、数量和空态随状态变化。
-- “需补证据”基于 evidenceState；“可转交”基于 transferable 或办理角色差异。
+- “需人工补证”只基于运行时 evidenceState 的人工补证、拒绝、错范围、过期或上传失败状态；卡片声明了系统自动绑定证据时不计入补证。
+- “可转交给同事”只基于运行时显式 `transferable: true`；不得用 ownerRole 与当前角色字符串差异推断可转交。
 - 清除筛选恢复默认队列视图。
 
 ## 验收

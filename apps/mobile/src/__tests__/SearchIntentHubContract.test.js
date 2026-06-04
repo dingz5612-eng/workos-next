@@ -221,6 +221,13 @@ describe("OAM-04B search intent hub contract", () => {
     expect(visibleText(html)).not.toMatch(/\b(stay|finance|lead|leadCapture)\b/);
   });
 
+  it("does not expose runtime workspace ids in visible search result subtitles", () => {
+    const text = visibleText(searchView(createSurfaceCtx({ view: "search", query: "房间" })));
+
+    expect(text).not.toMatch(/\bW-STAY-[A-Z0-9-]+/);
+    expect(text).toContain("住宿业务");
+  });
+
   it("preserves Search Kernel admission state in the surface view model", () => {
     const ctx = createSurfaceCtx({ view: "search", query: "房间" });
     const vm = buildSearchResultVM({

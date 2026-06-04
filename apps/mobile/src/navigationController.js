@@ -1,5 +1,5 @@
 import { fetchSearchResults, startResourceSetup, startWorkspace } from "./apiClient.js";
-import { applyRuntimeSearchResults } from "./runtime/runtimeStore.js";
+import { applyRuntimeSearchResults, applyRuntimeSurfacePayloads } from "./runtime/runtimeStore.js";
 import { selectWorkspaceById } from "./selectors/surfaceSelectors.js";
 import { evaluateSurfaceAccess } from "./surfaceGuard.js";
 import { defaultHomeForCurrentSurface as resolveDefaultHomeForCurrentSurface } from "./surfaceResolver.js";
@@ -43,13 +43,23 @@ export function defaultHomeForCurrentSurface(ctx) {
 }
 
 export function openWorkspace(workspaceId, ctx, cardId = "") {
+  const target = resolveOperationPanelTarget({ workspaceId, cardId }, ctx.state);
+  if (target.canOpen) {
+    return openOperationPanel(target.workItem.workItemId, ctx, { workspaceId, cardId });
+  }
   ctx.state.selectedWorkspace = workspaceId;
   ctx.state.selectedCardId = cardId;
   ctx.state.selectedCardIndex = -1;
   clearTransientOperationMessage(ctx);
   const linked = selectWorkspaceById(ctx.state, workspaceId);
+  if (!isReadonlyCompatibilityTarget(linked, cardId)) {
+    ctx.state.operationRouteIssue = target;
+    setView("operationPanel", ctx);
+    return target;
+  }
   ctx.state.selectedTask = linked?.taskId || ctx.state.selectedTask;
   setView("workspace", ctx);
+  return target;
 }
 
 export function openWorkItem(workItemId, ctx, fallback = {}) {
@@ -91,16 +101,21 @@ export function updateSearchQuery(value, ctx) {
 
 export async function runSearch(ctx) {
   ctx.state.query = document.querySelector("#query")?.value || "";
+  const requestId = nextSearchRequestId(ctx);
   if (ctx.state.query) {
     ctx.state.recentSearches = [ctx.state.query, ...(ctx.state.recentSearches || []).filter((item) => item !== ctx.state.query)].slice(0, 5);
   }
   if (ctx.state.apiStatus === "online") {
     try {
-      applyRuntimeSearchResults(ctx.state, ctx.state.query, await fetchSearchResults(ctx.state.query));
+      const query = ctx.state.query;
+      const results = await fetchSearchResults(query);
+      if (ctx.state.searchRequestId !== requestId) return;
+      applyRuntimeSearchResults(ctx.state, query, results);
     } catch {
       // Projection fallback remains available through surface selectors.
     }
   }
+  if (ctx.state.searchRequestId !== requestId) return;
   ctx.state.view = "search";
   syncUrlFromState(ctx);
   ctx.render(true);
@@ -115,6 +130,7 @@ export async function startWorkspaceCommand(ctx, templateWorkspaceId, firstCardI
     setView("login", ctx);
     return;
   }
+  invalidatePendingSearch(ctx);
   ctx.state.operationMessage = ctx.tr("submitting");
   ctx.render();
   try {
@@ -123,23 +139,67 @@ export async function startWorkspaceCommand(ctx, templateWorkspaceId, firstCardI
       : await startWorkspace(templateWorkspaceId, ctx.state.currentActor.token || "");
     if (result?.projection) {
       ctx.applyRuntimeProjection(result.projection);
+    }
+    const operationWorkItems = result?.operationWorkItems || (result?.workItem ? [result.workItem] : null);
+    if (operationWorkItems) {
+      applyRuntimeSurfacePayloads(ctx.state, { operationWorkItems });
     } else {
       await ctx.hydrateProjectionFromApi();
     }
     const workspaceId = result?.workspace?.id || result?.workspace?.Id || latestStartedWorkspaceId(result?.projection, templateWorkspaceId);
-    if (workspaceId) {
-      const url = new URL(window.location.href);
-      url.searchParams.set("view", "workspace");
-      url.searchParams.set("workspace", workspaceId);
-      if (firstCardId) url.searchParams.set("card", firstCardId);
-      window.location.href = url.toString();
+    const workItemId = result?.workItem?.workItemId || result?.workItem?.WorkItemId || "";
+    const cardId = result?.workItem?.payload?.cardId || result?.workItem?.Payload?.cardId || firstCardId;
+    if (workItemId || workspaceId) {
+      openOperationPanel(workItemId, ctx, { workspaceId, cardId });
       return;
     }
     ctx.state.operationMessage = ctx.tr("apiOffline");
-  } catch {
-    ctx.state.operationMessage = ctx.tr("apiOffline");
+  } catch (error) {
+    handleStartWorkspaceError(error, ctx);
   }
   ctx.render();
+}
+
+function handleStartWorkspaceError(error, ctx) {
+  if (error?.status === 401 || error?.reason === "actor_session_required") {
+    ctx.state.currentActor = null;
+    ctx.state.loginMessage = ctx.tr("sessionExpired");
+    localStorage.removeItem("workosnext.actorSession");
+    setView("login", ctx);
+    return;
+  }
+  if (error?.status === 403) {
+    const decision = {
+      allowed: false,
+      view: "operationPanel",
+      reason: error.reason || error.code || "role_surface_not_allowed",
+      owner: "manager",
+      requiredPermission: "operations.workspace.start",
+      nextAction: ctx.tr("startCommandPermissionNext"),
+      status: "permission_blocked_403",
+      component: "PermissionDiagnostic"
+    };
+    ctx.state.permissionDiagnostic = decision;
+    ctx.state.lastActionResult = {
+      status: "permission_blocked_403",
+      message: `${ctx.tr("confirmForbidden")} ${decision.reason}`,
+      permissionDiagnostic: decision
+    };
+    ctx.state.operationMessage = "";
+    ctx.state.view = "permissionDiagnostic";
+    syncUrlFromState(ctx);
+    return;
+  }
+  if (error?.status === 422) {
+    ctx.state.operationMessage = `${ctx.tr("confirmBusinessBlocked")} ${error.reason || error.code || ""}`.trim();
+    ctx.state.lastActionResult = {
+      status: "business_blocked_422",
+      reason: error.reason || error.code || "workspace_start_blocked",
+      message: ctx.state.operationMessage
+    };
+    return;
+  }
+  ctx.state.operationMessage = ctx.tr("apiOffline");
 }
 
 function latestStartedWorkspaceId(projection = {}, templateWorkspaceId = "W-STAY-RESOURCE") {
@@ -147,6 +207,26 @@ function latestStartedWorkspaceId(projection = {}, templateWorkspaceId = "W-STAY
     .filter((workspace) => String(workspace.id || workspace.Id || "").startsWith(`${templateWorkspaceId}-`))
     .map((workspace) => workspace.id || workspace.Id)
     .at(-1) || "";
+}
+
+function nextSearchRequestId(ctx) {
+  ctx.state.searchRequestId = (ctx.state.searchRequestId || 0) + 1;
+  return ctx.state.searchRequestId;
+}
+
+function invalidatePendingSearch(ctx) {
+  ctx.state.searchRequestId = (ctx.state.searchRequestId || 0) + 1;
+}
+
+function isReadonlyCompatibilityTarget(workspace = null, cardId = "") {
+  const cards = workspace?.cards || [];
+  const selected = cardId ? cards.find((card) => card.id === cardId) : null;
+  if (isTerminalStatus(selected?.status)) return true;
+  return cards.length > 0 && cards.every((card) => isTerminalStatus(card.status));
+}
+
+function isTerminalStatus(status) {
+  return ["done", "confirmed", "completed", "committed", "closed", "cancelled", "skipped"].includes(String(status || ""));
 }
 
 export function syncUrlFromState(ctx) {

@@ -123,9 +123,20 @@ export function collectDraftingValuesOnInput(event, ctx) {
   const fieldValues = collectOperationValues();
   saveDraft(item.id, card.id, fieldValues, evidenceDrafts, draftSubmissionProtocol(item, card, fieldValues, evidenceDrafts));
   if (ctx.state.fieldValidation?.workspaceId === item.id && ctx.state.fieldValidation?.cardId === card.id) {
+    const requiredValidation = validateRequiredFields(card, fieldValues, ctx);
+    if (!requiredValidation.missingFields.length) {
+      ctx.state.fieldValidation = null;
+      if (ctx.state.lastActionResult?.status === "business_blocked_422" && ctx.state.lastActionResult?.reason === "required_field_missing") {
+        ctx.state.lastActionResult = null;
+      }
+      ctx.state.operationMessage = "";
+      ctx.render();
+      return;
+    }
     ctx.state.fieldValidation = {
       ...ctx.state.fieldValidation,
-      missingFieldIds: ctx.state.fieldValidation.missingFieldIds.filter((fieldId) => !hasBusinessValue(fieldValues, fieldId))
+      missingFieldIds: requiredValidation.missingFields.map((field) => operationFieldId(field)),
+      missingLabels: requiredValidation.missingLabels
     };
   }
 }
@@ -206,16 +217,17 @@ export async function submitCurrentCard(ctx) {
       onProjection: (payload) => applyProjectionPayload(payload, ctx),
       onLens: (payload) => applyLensPayload(payload, ctx)
     });
-    if (isCommittedConfirmResult(result)) {
+    if (!isCommittedConfirmResult(result)) {
+      ctx.state.operationMessage = confirmBlockedMessage(result, ctx);
+      ctx.state.lastActionResult = actionResultFromBlockedConfirm(result, ctx.state.operationMessage, item, card);
+    } else {
       applyCommittedCardLocalState(item.id, card.id, ctx);
+      if (result?.projectionStatus === "projected") clearDraft(item.id, card.id);
+      ctx.state.selectedCardIndex = -1;
+      ctx.state.selectedCardId = "";
+      ctx.state.operationMessage = confirmSuccessMessage(result, ctx);
+      ctx.state.lastActionResult = actionResultFromConfirm(result, ctx.state.operationMessage, item, card);
     }
-    if (result?.projectionStatus === "projected") {
-      clearDraft(item.id, card.id);
-    }
-    ctx.state.selectedCardIndex = -1;
-    ctx.state.selectedCardId = "";
-    ctx.state.operationMessage = confirmSuccessMessage(result, ctx);
-    ctx.state.lastActionResult = actionResultFromConfirm(result, ctx.state.operationMessage, item, card);
   } catch (error) {
     if (applyConfirmError(error, ctx)) return;
   } finally {
@@ -291,6 +303,7 @@ export function confirmErrorMessage(error, ctx) {
 }
 
 export function confirmSuccessMessage(result, ctx) {
+  if (!isCommittedConfirmResult(result)) return confirmBlockedMessage(result, ctx);
   if (result?.commitStatus === "committed" && result?.projectionStatus === "pending") {
     return ctx.tr("submitProjectionPending");
   }
@@ -298,6 +311,10 @@ export function confirmSuccessMessage(result, ctx) {
     return ctx.tr("submitProjectionFailed");
   }
   return ctx.tr("submitDone");
+}
+
+export function confirmBlockedMessage(result, ctx) {
+  return result?.message || result?.reason || result?.code || ctx.tr("confirmBusinessBlocked");
 }
 
 function randomDraftId() {
@@ -366,6 +383,19 @@ function actionResultFromConfirm(result, message, workspace = {}, card = {}) {
   };
 }
 
+function actionResultFromBlockedConfirm(result = {}, message, workspace = {}, card = {}) {
+  return {
+    status: result.status || "business_blocked_422",
+    message,
+    workspaceId: workspace?.id || result?.caseId || result?.workspace?.id || "",
+    cardId: card?.id || "",
+    reason: result.reason || result.error || result.code || "",
+    commitStatus: result.commitStatus || "blocked",
+    projectionStatus: result.projectionStatus || "not_started",
+    commandSubmissionId: result?.commandSubmissionId || result?.submissionId || ""
+  };
+}
+
 function actionResultFromError(error, message) {
   const byStatus = {
     403: "permission_blocked_403",
@@ -401,6 +431,33 @@ function applyCommittedCardLocalState(workspaceId, cardId, ctx) {
       status: "ready"
     };
   }
+  markRuntimeWorkItemCompleted(ctx.state.runtimeStore, workspaceId, cardId, ctx.state.selectedWorkItemId);
+}
+
+function markRuntimeWorkItemCompleted(runtimeStore = {}, workspaceId = "", cardId = "", selectedWorkItemId = "") {
+  for (const collectionName of ["operationWorkItems", "workQueue"]) {
+    const collection = runtimeStore?.[collectionName] || [];
+    for (let index = 0; index < collection.length; index += 1) {
+      const item = collection[index];
+      if (!matchesCompletedCard(item, workspaceId, cardId, selectedWorkItemId)) continue;
+      collection[index] = {
+        ...item,
+        status: "done",
+        lifecycleState: "done",
+        lifecycle_state: "done",
+        badges: Array.from(new Set([...(item.badges || []).filter((badge) => badge !== "ready"), "done"])),
+        card: item.card ? { ...item.card, status: "done", blockerRules: [] } : item.card
+      };
+    }
+  }
+}
+
+function matchesCompletedCard(item = {}, workspaceId = "", cardId = "", selectedWorkItemId = "") {
+  const itemWorkItemId = item.workItemId || item.work_item_id || "";
+  const itemWorkspaceId = item.workspaceId || item.workspace_id || item.workspace?.id || "";
+  const itemCardId = item.cardId || item.card_id || item.payload?.cardId || item.Payload?.cardId || item.card?.id || "";
+  if (selectedWorkItemId && itemWorkItemId === selectedWorkItemId) return true;
+  return itemWorkspaceId === workspaceId && (!itemCardId || itemCardId === cardId);
 }
 
 function persistedWorkItemIdFor(state, workspace, card) {

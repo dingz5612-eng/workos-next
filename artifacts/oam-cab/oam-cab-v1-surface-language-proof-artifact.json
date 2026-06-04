@@ -1,0 +1,61 @@
+{
+  "version": "oam-cab.v1.surface-language-proof-artifact",
+  "generatedAtUtc": "2026-06-04T08:08:20Z",
+  "status": "evidence_bound_local",
+  "businessProductionAllowed": false,
+  "dormitoryL2ProductionAllowed": false,
+  "languageKernelStatus": "passed",
+  "surfaceStatus": "passed",
+  "admissionStateRequired": true,
+  "contracts": [
+    "docs/contracts/language/language-contract.json",
+    "docs/contracts/language/permission-explainability-contract.json",
+    "docs/surface/surface-experience-contract.yml",
+    "docs/surface/mobile-work-plane-contract.yml",
+    "docs/surface/pc-governance-plane-contract.yml",
+    "docs/surface/operation-panel-runtime-contract.yml",
+    "docs/surface/surface-api-boundary.yml"
+  ],
+  "surfaceArtifacts": [
+    "artifacts/surface/oam-04-surface-twin-plane-result.json",
+    "artifacts/surface/mobile-visible-copy-result.json",
+    "artifacts/surface/permission-explainability-contract-result.json",
+    "artifacts/surface/operation-panel-runtime-contract-result.json",
+    "artifacts/surface/queue-state-contract-result.json",
+    "artifacts/surface/search-learning-contract-result.json"
+  ],
+  "requiredBehaviors": [
+    "visibleAllowed consumed by surfaces",
+    "prepareAllowed consumed by surfaces",
+    "confirmAllowed consumed by surfaces",
+    "productionAllowed consumed by surfaces",
+    "403/409/422 reasonCode to messageKey and nextStepKey path",
+    "L0 and L1 blocked copy is stable",
+    "Business Production blocked remains globally visible",
+    "ordinary mobile users do not see DomainEvent, LedgerEntry, ProcessManager, policyRef, or rawReason",
+    "Workspace/Card fallback is compatibility-only and not a business extension point",
+    "three-language user-visible state labels go through Language Kernel"
+  ],
+  "commandsRun": [
+    {
+      "command": "node scripts/check-language-kernel.mjs",
+      "status": "passed"
+    },
+    {
+      "command": "node scripts/check-admission-kernel.mjs",
+      "status": "passed"
+    },
+    {
+      "command": "node scripts/surface/check-oam-04-surface-twin-plane-contract.mjs",
+      "status": "passed"
+    },
+    {
+      "command": "node scripts/surface/check-mobile-work-shell.mjs",
+      "status": "passed"
+    }
+  ],
+  "remainingRisk": [
+    "PR #81 CI must rerun after push before this can be called CI-bound.",
+    "This artifact does not grant production confirm and does not open Dormitory L2."
+  ]
+}

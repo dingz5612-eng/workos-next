@@ -1,0 +1,117 @@
+{
+  "version": "oam-cab.v1.p0-evidence-repair-closure",
+  "generatedAtUtc": "2026-06-04T08:08:20Z",
+  "repository": "dingz5612-eng/workos-next",
+  "branch": "codex/oam-cab-post-merge-browser-audit",
+  "pr": {
+    "number": 81,
+    "state": "open",
+    "headSha": "6401149d636b84e5dfc33673e1e3868116fb426a",
+    "baseSha": "a259ae2c05e6d3648082e27987075cf295c905bd",
+    "url": "https://github.com/dingz5612-eng/workos-next/pull/81"
+  },
+  "currentMain": {
+    "headSha": "a259ae2c05e6d3648082e27987075cf295c905bd",
+    "ciRunId": 26886643261,
+    "ciConclusion": "success",
+    "v54ControlPlaneRunId": 26905100527,
+    "v54ControlPlaneConclusion": "success"
+  },
+  "remoteCiBeforeFix": {
+    "runId": 26934411236,
+    "jobId": 79460701244,
+    "conclusion": "failure",
+    "failedStep": "Validate OAM-00 Evidence Reconciliation",
+    "skippedAfterFailure": [
+      "Validate OAM-01 Release State Authority",
+      "Validate OAM-02 Business Semantic Contract Kernel",
+      "Validate OAM-03 Runtime Proof Harness",
+      "Validate OAM-04 Surface Twin-Plane Contract",
+      "Validate OAM-05 Finance Semantic Truth Kernel",
+      "Validate OAM-06 Trust Boundary Kernel",
+      "Validate OAM-07 Observation SLO Control Loop",
+      "Validate OAM-08 Golden Domain Replication Factory",
+      "Validate OAM-09 Portfolio Production Governance",
+      "Architecture guard",
+      "Clean baseline gate",
+      "Diff whitespace check"
+    ]
+  },
+  "rootCause": {
+    "summary": "PR #81 evidence artifacts were still bound to old main 7bbf636041d79b19f2e3121f78f263e391b4931d while origin/main was a259ae2c05e6d3648082e27987075cf295c905bd.",
+    "oam00Violations": [
+      "oam00.go_no_go_main_sha_stale",
+      "oam00.go_no_go_ci_sha_stale",
+      "oam00.go_no_go_v54_sha_stale",
+      "oam00.graph_head_stale",
+      "oam00.dashboard_head_stale",
+      "oam00.final_assurance_head_stale"
+    ],
+    "reproducedInCleanWorktree": true
+  },
+  "fix": {
+    "reboundMainSha": "a259ae2c05e6d3648082e27987075cf295c905bd",
+    "updatedEvidenceRefs": [
+      "artifacts/go-live/dormitory/internal-pilot-go-no-go.json",
+      "artifacts/rt4/evidence-graph.json",
+      "artifacts/rt4/completion-dashboard.json",
+      "artifacts/rt4/final-completion-assurance-result.json",
+      "artifacts/release-state/evidence-reconciliation-result.json",
+      "docs/release-state/evidence-reconciliation-report.md"
+    ],
+    "ciGateHardening": ".github/workflows/ci.yml critical OAM and baseline gates now use always(); OAM-00..OAM-03 run on pull_request and main push."
+  },
+  "gateStatus": [
+    { "gate": "OAM-00 Evidence Reconciliation", "status": "passed", "evidence": "node scripts/release-state/check-evidence-reconciliation.mjs; node scripts/rt4/check-final-evidence-freshness.mjs" },
+    { "gate": "OAM-01 Release State Authority", "status": "passed", "evidence": "node scripts/release-state/build-current-release-state.mjs; node scripts/release-state/check-current-release-state.mjs; node scripts/release-state/check-current-state-authority.mjs" },
+    { "gate": "OAM-02 Business Semantic Contract Kernel", "status": "passed", "evidence": "business semantic contract checker chain" },
+    { "gate": "OAM-03 Runtime Proof Harness", "status": "passed", "evidence": "artifacts/proof/runtime-proof-result.json" },
+    { "gate": "OAM-04 Surface Twin-Plane Contract", "status": "passed", "evidence": "artifacts/surface/oam-04-surface-twin-plane-result.json" },
+    { "gate": "OAM-05 Finance Semantic Truth Kernel", "status": "passed", "evidence": "artifacts/finance/finance-semantic-truth-result.json" },
+    { "gate": "OAM-06 Trust Boundary Kernel", "status": "passed", "evidence": "artifacts/trust/trust-boundary-result.json" },
+    { "gate": "OAM-07 Observation SLO Control Loop", "status": "not_eligible_for_l2", "evidence": "artifacts/operations/dormitory/l1-to-l2-readiness.json" },
+    { "gate": "OAM-08 Golden Domain Replication Factory", "status": "passed", "evidence": "artifacts/golden-domain/dormitory/golden-pack-result.json" },
+    { "gate": "OAM-09 Portfolio Production Governance", "status": "passed", "evidence": "artifacts/portfolio/production-governance-result.json" },
+    { "gate": "Architecture guard", "status": "passed", "evidence": "pwsh ./scripts/guard-architecture.ps1" },
+    { "gate": "Clean baseline gate", "status": "passed", "evidence": "pwsh ./scripts/clean-baseline.ps1" },
+    { "gate": "Diff whitespace check", "status": "passed", "evidence": "git diff --check" }
+  ],
+  "proofArtifacts": {
+    "runtimeProof": "artifacts/proof/runtime-proof-result.json",
+    "correctionApplyException": "artifacts/oam-cab/oam-cab-v1-correction-apply-exception-artifact.json",
+    "searchDataBiProof": "artifacts/oam-cab/oam-cab-v1-search-data-bi-proof-artifact.json",
+    "surfaceLanguageProof": "artifacts/oam-cab/oam-cab-v1-surface-language-proof-artifact.json",
+    "evidenceGraph": "artifacts/rt4/evidence-graph.json",
+    "currentState": "artifacts/release-state/current-state.json",
+    "postMergeAttestation": "artifacts/release-state/post-merge-attestation.json",
+    "finalReport": "artifacts/oam-cab/oam-cab-v1-final-report.json"
+  },
+  "skippedGates": [],
+  "failedGates": [],
+  "remoteCiStatusAfterLocalFix": "not_rerun_until_changes_are_pushed",
+  "productionAllowed": false,
+  "dormitoryL2ProductionAllowed": false,
+  "productionConfirmAllowed": false,
+  "nextStage": {
+    "allowed": false,
+    "reason": "PR #81 is open and remote CI must be rerun after this fix is pushed; main-bound evidence for PR #81 can only be regenerated after merge."
+  },
+  "risks": {
+    "P0": [
+      "PR #81 remote CI remains red until the repaired evidence and workflow hardening are pushed and CI reruns.",
+      "PR #81 is not merged, so its artifacts cannot be used as main evidence.",
+      "Post-merge attestation for PR #81 is blocked until PR #81 is actually merged."
+    ],
+    "P1": [
+      "Cookie / CSRF production browser auth baseline is not production-ready.",
+      "CommandSubmission context persisted columns remain contract / migration draft.",
+      "Workspace/Card compatibility wrapper migration remains pending.",
+      "Control Plane / Evidence Graph are still not Business Production GO."
+    ],
+    "P2": [
+      "dotnet analyzer / nullability warnings remain hardening work.",
+      "Dedicated lint/typecheck/regression commands remain not_available.",
+      "Archive/remove candidate cleanup has not been executed."
+    ]
+  }
+}

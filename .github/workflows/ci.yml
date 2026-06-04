@@ -230,24 +230,24 @@ jobs:
         run: node scripts/rt4/check-final-completion-assurance.mjs
 
       - name: Validate OAM-00 Evidence Reconciliation
-        if: github.event_name == 'pull_request'
+        if: ${{ always() && (github.event_name == 'pull_request' || github.ref == 'refs/heads/main') }}
         env:
-          OAM_ALLOW_PENDING_MAIN_REBIND: ${{ contains(github.head_ref, 'main-rebind') && 'true' || 'false' }}
+          OAM_ALLOW_PENDING_MAIN_REBIND: ${{ github.event_name == 'pull_request' && contains(github.head_ref, 'main-rebind') && 'true' || 'false' }}
         run: |
           node scripts/release-state/check-evidence-reconciliation.mjs
           node scripts/rt4/check-final-evidence-freshness.mjs
 
       - name: Validate OAM-01 Release State Authority
-        if: github.event_name == 'pull_request'
+        if: ${{ always() && (github.event_name == 'pull_request' || github.ref == 'refs/heads/main') }}
         env:
-          OAM_ALLOW_PENDING_MAIN_REBIND: ${{ contains(github.head_ref, 'main-rebind') && 'true' || 'false' }}
+          OAM_ALLOW_PENDING_MAIN_REBIND: ${{ github.event_name == 'pull_request' && contains(github.head_ref, 'main-rebind') && 'true' || 'false' }}
         run: |
           node scripts/release-state/build-current-release-state.mjs
           node scripts/release-state/check-current-release-state.mjs
           node scripts/release-state/check-current-state-authority.mjs
 
       - name: Validate OAM-02 Business Semantic Contract Kernel
-        if: github.event_name == 'pull_request'
+        if: ${{ always() && (github.event_name == 'pull_request' || github.ref == 'refs/heads/main') }}
         run: |
           node scripts/business/check-scenario-field-contract.mjs
           node scripts/business/check-canonical-scenario-map.mjs
@@ -256,7 +256,7 @@ jobs:
           node scripts/business/check-metric-formula-contract.mjs
 
       - name: Validate OAM-03 Runtime Proof Harness
-        if: github.event_name == 'pull_request'
+        if: ${{ always() && (github.event_name == 'pull_request' || github.ref == 'refs/heads/main') }}
         env:
           ConnectionStrings__WorkOSRuntime: Host=localhost;Port=54329;Database=workosnext_test;Username=workosnext;Password=workosnext_dev
           WORKOS_TEST_CONNECTION: Host=localhost;Port=54329;Database=workosnext_test;Username=workosnext;Password=workosnext_dev
@@ -266,18 +266,22 @@ jobs:
           node scripts/proof/check-runtime-proof-result.mjs
 
       - name: Validate OAM-04 Surface Twin-Plane Contract
+        if: ${{ always() }}
         run: node scripts/surface/check-oam-04-surface-twin-plane-contract.mjs
 
       - name: Validate OAM-05 Finance Semantic Truth Kernel
+        if: ${{ always() }}
         run: |
           node scripts/finance/check-finance-semantic-truth.mjs
           node scripts/finance/check-ledger-basis-semantics.mjs
           node scripts/check-ledger-semantic-rules.mjs
 
       - name: Validate OAM-06 Trust Boundary Kernel
+        if: ${{ always() }}
         run: node scripts/trust/check-trust-boundary-kernel.mjs
 
       - name: Validate OAM-07 Observation SLO Control Loop
+        if: ${{ always() }}
         run: |
           node scripts/operations/check-dormitory-slo.mjs
           node scripts/operations/generate-observation-day.mjs
@@ -285,14 +289,17 @@ jobs:
           node scripts/operations/check-incident-learning-loop.mjs
 
       - name: Validate OAM-08 Golden Domain Replication Factory
+        if: ${{ always() }}
         run: node scripts/golden-domain/check-domain-replication-pack.mjs
 
       - name: Validate OAM-09 Portfolio Production Governance
+        if: ${{ always() }}
         run: |
           node scripts/portfolio/check-business-line-maturity.mjs
           node scripts/portfolio/check-production-governance.mjs
 
       - name: Architecture guard
+        if: ${{ always() }}
         shell: pwsh
         env:
           ConnectionStrings__WorkOSRuntime: Host=localhost;Port=54329;Database=workosnext_test;Username=workosnext;Password=workosnext_dev
@@ -301,10 +308,12 @@ jobs:
         run: ./scripts/guard-architecture.ps1
 
       - name: Clean baseline gate
+        if: ${{ always() }}
         shell: pwsh
         run: ./scripts/clean-baseline.ps1
 
       - name: Diff whitespace check
+        if: ${{ always() }}
         run: git diff --check
 
       - name: Upload evidence-grade test artifacts

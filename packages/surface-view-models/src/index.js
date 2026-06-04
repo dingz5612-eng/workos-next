@@ -13,8 +13,11 @@ export function WorkItemDecisionVM(source = {}, ctx = {}) {
   const typeLabel = workItemTypeLabel(source.workItemType || source.work_item_type || card?.id || workspace?.domain, ctx);
   const ownerRole = source.ownerRole || source.owner_role || card?.confirmation?.requiredRole || "operator";
   const riskLevel = source.riskLevel || (lifecycleState === "blocked" ? "P0" : evidence.length ? "P1" : "P2");
-  const canHandle = !["blocked", "notStarted", "waiting"].includes(lifecycleState) && evidenceState !== "rejected";
-  const blocker = lifecycleState === "blocked"
+  const completed = isTerminalLifecycleState(lifecycleState);
+  const canHandle = !completed && !["blocked", "notStarted", "waiting"].includes(lifecycleState) && evidenceState !== "rejected";
+  const blocker = completed
+    ? tr(ctx, "completedRecordBody", "记录已经完成，只能查看结果、证据和审计轨迹，不能重复提交。")
+    : lifecycleState === "blocked"
     ? nextAction
     : evidenceState === "missing"
       ? tr(ctx, "missingEvidenceBlocks", "缺少可信证据，确认会被阻断")
@@ -28,7 +31,9 @@ export function WorkItemDecisionVM(source = {}, ctx = {}) {
     typeLabel,
     statusLabel: stateLabel(lifecycleState, ctx),
     canHandle,
-    canHandleLabel: canHandle ? tr(ctx, "canHandleNow", "当前可处理") : tr(ctx, "cannotHandleNow", "暂不能处理"),
+    canHandleLabel: completed
+      ? `${tr(ctx, "done", "已完成")}，${tr(ctx, "viewOnly", "只能查看")}`
+      : canHandle ? tr(ctx, "canHandleNow", "当前可处理") : tr(ctx, "cannotHandleNow", "暂不能处理"),
     blocker,
     requiredEvidenceLabels: evidence.map((item) => localTerm(item, ctx)).filter(Boolean),
     nextAction,
@@ -325,11 +330,21 @@ function stateLabel(value, ctx) {
     inProgress: "办理中",
     notStarted: "未开始",
     done: "已完成",
+    confirmed: "已完成",
+    completed: "已完成",
+    committed: "已完成",
+    closed: "已关闭",
+    cancelled: "已取消",
+    skipped: "已跳过",
     waiting: "等待他人",
     pending: "等待同步",
     failed: "需要支持"
   };
   return labels[raw] || tr(ctx, raw, raw || "未知");
+}
+
+function isTerminalLifecycleState(value) {
+  return ["done", "confirmed", "completed", "committed", "closed", "cancelled", "skipped"].includes(String(value || ""));
 }
 
 function evidenceStateLabel(value, ctx) {

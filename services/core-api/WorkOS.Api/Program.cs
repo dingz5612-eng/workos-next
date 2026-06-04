@@ -501,43 +501,29 @@ app.MapPost("/api/workspaces/{workspaceId}/cards/{cardId}/prepare", (string work
     };
 });
 
-app.MapPost("/api/workspaces/resource-setup/start", (HttpRequest httpRequest, ProjectionRuntime runtime) =>
+app.MapPost("/api/workspaces/resource-setup/start", (HttpRequest httpRequest, ProjectionRuntime runtime, CanonicalOperationsApiService operations) =>
+    StartOperationsWorkspace(
+        "W-STAY-RESOURCE",
+        httpRequest,
+        runtime,
+        operations,
+        new[] { "operator", "manager", "admin" },
+        "role_confirmation_forbidden:resource_setup_start"));
+
+app.MapPost("/api/workspaces/start", (StartWorkspaceRequest request, HttpRequest httpRequest, ProjectionRuntime runtime, CanonicalOperationsApiService operations) =>
 {
-    var actor = runtime.FindUserBySessionToken(httpRequest.SessionTokenForOperations());
-    if (actor is null)
-    {
-        return Results.Unauthorized();
-    }
-
-    if (!new[] { "operator", "manager", "admin" }.Contains(actor.Role, StringComparer.OrdinalIgnoreCase))
-    {
-        return Results.Json(new { error = "role_confirmation_forbidden:resource_setup_start" }, statusCode: StatusCodes.Status403Forbidden);
-    }
-
-    var workspace = runtime.StartResourceSetup();
-    return Results.Ok(new { workspace, projection = runtime.GetAll() });
-});
-
-app.MapPost("/api/workspaces/start", (StartWorkspaceRequest request, HttpRequest httpRequest, ProjectionRuntime runtime) =>
-{
-    var actor = runtime.FindUserBySessionToken(httpRequest.SessionTokenForOperations());
-    if (actor is null)
-    {
-        return Results.Unauthorized();
-    }
-
-    if (!new[] { "operator", "manager", "admin", "finance" }.Contains(actor.Role, StringComparer.OrdinalIgnoreCase))
-    {
-        return Results.Json(new { error = "role_confirmation_forbidden:workspace_start" }, statusCode: StatusCodes.Status403Forbidden);
-    }
-
     if (!DormitoryTemplateWorkspaceIds().Contains(request.TemplateWorkspaceId, StringComparer.Ordinal))
     {
         return Results.Json(new { error = "workspace_template_not_allowed", request.TemplateWorkspaceId }, statusCode: StatusCodes.Status404NotFound);
     }
 
-    var workspace = runtime.StartWorkspace(request.TemplateWorkspaceId);
-    return Results.Ok(new { workspace, projection = runtime.GetAll() });
+    return StartOperationsWorkspace(
+        request.TemplateWorkspaceId,
+        httpRequest,
+        runtime,
+        operations,
+        AllowedWorkspaceStartRoles(request.TemplateWorkspaceId),
+        "role_confirmation_forbidden:workspace_start");
 });
 
 app.MapPost("/api/workspaces/{workspaceId}/cards/{cardId}/confirm", (string workspaceId, string cardId, ConfirmCardRequest request, HttpRequest httpRequest, WorkspaceCardCompatibilityAdapter operations) =>
@@ -651,6 +637,46 @@ static string[] DormitoryTemplateWorkspaceIds() =>
         "W-STAY-CHECKOUT-SETTLEMENT",
         "W-STAY-PERIOD-ANALYTICS"
     };
+
+static string[] AllowedWorkspaceStartRoles(string templateWorkspaceId) =>
+    templateWorkspaceId switch
+    {
+        "W-STAY-DEPOSIT-LEDGER" or "W-STAY-PAYMENT-LEDGER" => new[] { "operator", "manager", "admin", "finance" },
+        _ => new[] { "operator", "manager", "admin" }
+    };
+
+static IResult StartOperationsWorkspace(
+    string templateWorkspaceId,
+    HttpRequest httpRequest,
+    ProjectionRuntime runtime,
+    CanonicalOperationsApiService operations,
+    IReadOnlyList<string> allowedRoles,
+    string forbiddenReason)
+{
+    var actor = httpRequest.HttpContext.RequireActor();
+    if (!allowedRoles.Contains(actor.Role, StringComparer.OrdinalIgnoreCase))
+    {
+        return Results.Json(new { error = forbiddenReason }, statusCode: StatusCodes.Status403Forbidden);
+    }
+
+    try
+    {
+        var workspace = runtime.StartWorkspace(templateWorkspaceId);
+        var started = operations.StartWorkspaceCase(workspace, templateWorkspaceId, actor);
+        return Results.Ok(new
+        {
+            started.Workspace,
+            started.OperationCase,
+            started.WorkItem,
+            started.OperationWorkItems,
+            projection = runtime.GetAll()
+        });
+    }
+    catch (InvalidOperationException ex) when (ex.Message.StartsWith("operation_workspace_start_", StringComparison.OrdinalIgnoreCase))
+    {
+        return Results.UnprocessableEntity(new { error = "operation_workspace_start_failed", reason = ex.Message, templateWorkspaceId });
+    }
+}
 
 static IResult AppendExperienceEvent(
     ProjectionRuntime runtime,

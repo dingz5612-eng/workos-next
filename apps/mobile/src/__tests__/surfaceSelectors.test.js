@@ -124,7 +124,17 @@ describe("runtime surface selectors", () => {
   it("covers manifest workspaces across Home Workbench Search Learning and Workspace selectors", () => {
     const manifestWorkspaces = manifest.slices.map((slice) =>
       workspace(slice.workspaceId, domainFor(slice.workspaceId), slice.cards[0], "ready", slice.id));
-    const state = runtimeState(manifestWorkspaces);
+    const state = runtimeState(manifestWorkspaces, {
+      workQueue: manifest.slices.map((slice) => ({
+        workItemId: `WI-${slice.workspaceId}-${slice.cards[0]}`,
+        workspaceId: slice.workspaceId,
+        cardId: slice.cards[0],
+        domain: domainFor(slice.workspaceId),
+        lifecycleState: "ready",
+        ownerRole: "operator",
+        badges: ["mine", "ready"]
+      }))
+    });
 
     const homeIds = selectHomeSurface({ ...state, currentActor: { role: "manager" } }).map((item) => item.workspaceId);
     const queueIds = selectWorkbenchQueue({ ...state, currentActor: { role: "manager" } }).map((item) => item.workspaceId);
@@ -139,9 +149,10 @@ describe("runtime surface selectors", () => {
     }
   });
 
-  it("uses runtime queue items with workspaceId/cardId for Workbench", () => {
+  it("uses persisted runtime queue items with workspaceId/cardId for Workbench", () => {
     const state = runtimeState([secondWorkspace], {
       workQueue: [{
+        workItemId: `WI-${secondProduction.workspaceId}-${secondProduction.cards[0]}`,
         queueItemId: `q-${secondProduction.workspaceId}-${secondProduction.cards[0]}`,
         workspaceId: secondProduction.workspaceId,
         cardId: secondProduction.cards[0],
@@ -157,6 +168,22 @@ describe("runtime surface selectors", () => {
     expect(queue[0].workspace.id).toBe(secondProduction.workspaceId);
     expect(queue[0].card.id).toBe(secondProduction.cards[0]);
     expect(queue[0].source).not.toBe("offline-demo-fallback");
+  });
+
+  it("does not promote workspace/card lens rows into active Workbench tasks without a persisted WorkItem", () => {
+    const state = runtimeState([secondWorkspace], {
+      workQueue: [{
+        queueItemId: `q-${secondProduction.workspaceId}-${secondProduction.cards[0]}`,
+        workspaceId: secondProduction.workspaceId,
+        cardId: secondProduction.cards[0],
+        domain: secondWorkspace.domain,
+        badges: ["mine", "ready"],
+        priority: 90,
+        reason: secondWorkspace.next
+      }]
+    });
+
+    expect(selectWorkbenchQueue({ ...state, currentActor: { role: "manager" } })).toEqual([]);
   });
 
   it("preserves backend runtime lens search results instead of local business boosts", () => {
@@ -176,7 +203,7 @@ describe("runtime surface selectors", () => {
 
   it("returns a true empty state instead of demo business objects when offline without cache", () => {
     const online = selectWorkbenchQueue(runtimeState([firstWorkspace]));
-    expect(online.every((item) => item.source !== "offline-demo-fallback")).toBe(true);
+    expect(online).toEqual([]);
 
     const offline = { apiStatus: "checking", runtimeStore: createRuntimeStore() };
     applyRuntimeOfflineFallback(offline);
@@ -188,6 +215,7 @@ describe("runtime surface selectors", () => {
   it("keeps real cached runtime queue data during API failure", () => {
     const offline = runtimeState([firstWorkspace], {
       workQueue: [{
+        workItemId: `WI-${firstProduction.workspaceId}-${firstProduction.cards[0]}`,
         queueItemId: `q-${firstProduction.workspaceId}-${firstProduction.cards[0]}`,
         workspaceId: firstProduction.workspaceId,
         cardId: firstProduction.cards[0],
@@ -205,7 +233,7 @@ describe("runtime surface selectors", () => {
     expect(queue[0].source).toBe("runtime-api");
   });
 
-  it("opens workspace from queue with card preselection", () => {
+  it("blocks workspace/card direct processing when no persisted WorkItem exists", () => {
     const state = runtimeState([secondWorkspace]);
     const ctx = { state: { ...state, currentActor: { role: "operator" } }, render: () => {} };
 
@@ -213,7 +241,8 @@ describe("runtime surface selectors", () => {
 
     expect(ctx.state.selectedWorkspace).toBe(secondProduction.workspaceId);
     expect(ctx.state.selectedCardId).toBe(secondProduction.cards[0]);
-    expect(ctx.state.view).toBe("workspace");
+    expect(ctx.state.view).toBe("operationPanel");
+    expect(ctx.state.operationRouteIssue.reason).toBe("missing_persisted_work_item");
   });
 
   it("resolves workspace view from runtimeStore without a business-id fallback", () => {

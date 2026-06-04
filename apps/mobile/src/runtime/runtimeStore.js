@@ -1,3 +1,5 @@
+import { normalizeOperationLifecycleState } from "../operationStatus.js";
+
 export function createRuntimeStore() {
   return {
     projection: null,
@@ -55,21 +57,34 @@ export function applyRuntimeSurfacePayloads(state, payloads = {}) {
 }
 
 function operationWorkItemsToQueue(workItems) {
-  return (Array.isArray(workItems) ? workItems : []).map((item) => ({
-    queueItemId: `q-${item.workItemId || item.work_item_id}`,
-    workItemId: item.workItemId || item.work_item_id,
-    caseId: item.caseId || item.case_id,
-    workItemType: item.workItemType || item.work_item_type,
-    lifecycleState: item.lifecycleState || item.lifecycle_state || item.status,
-    ownerRole: item.ownerRole || item.owner_role,
-    workspaceId: item.workspaceId,
-    cardId: item.cardId,
-    domain: item.domain || "operations",
-    badges: ["mine", item.lifecycleState || item.lifecycle_state || item.status || "ready"].filter(Boolean),
-    priority: item.priority ?? 80,
-    reason: item.nextAction || item.next_action || item.failureReason || item.failure_reason || "",
-    source: "operations-work-items"
-  }));
+  return (Array.isArray(workItems) ? workItems : []).map((item) => {
+    const lifecycleState = normalizeOperationLifecycleState(item.lifecycleState || item.lifecycle_state || item.status);
+    return {
+      queueItemId: `q-${item.workItemId || item.work_item_id}`,
+      workItemId: item.workItemId || item.work_item_id,
+      caseId: item.caseId || item.case_id,
+      workItemType: item.workItemType || item.work_item_type,
+      lifecycleState,
+      ownerRole: item.ownerRole || item.owner_role,
+      workspaceId: item.workspaceId || item.workspace_id,
+      cardId: cardIdOf(item),
+      domain: item.domain || "operations",
+      badges: ["mine", lifecycleState].filter(Boolean),
+      priority: item.priority ?? 80,
+      reason: item.nextAction || item.next_action || item.failureReason || item.failure_reason || "",
+      source: "operations-work-items"
+    };
+  });
+}
+
+function cardIdOf(item = {}) {
+  return item.cardId ||
+    item.card_id ||
+    item.payload?.cardId ||
+    item.Payload?.cardId ||
+    item.sourceRefs?.payload?.cardId ||
+    item.source_refs?.payload?.cardId ||
+    "";
 }
 
 export function applyRuntimeSearchResults(state, query, results) {

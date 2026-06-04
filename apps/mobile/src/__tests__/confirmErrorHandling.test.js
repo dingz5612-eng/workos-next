@@ -89,4 +89,16 @@ describe("confirm HTTP error handling", () => {
       projectionStatus: "pending"
     }, context)).toBe("submitProjectionPending");
   });
+
+  it("does not treat uncommitted business blockers as submit success", () => {
+    const context = ctx();
+
+    expect(confirmSuccessMessage({
+      confirmed: false,
+      commitStatus: "blocked",
+      projectionStatus: "not_started",
+      reason: "persisted_work_item_required",
+      message: "需要先生成真实办理任务"
+    }, context)).toBe("需要先生成真实办理任务");
+  });
 });

@@ -1,9 +1,9 @@
 {
-  "generated_at_utc": "2026-06-02T01:20:27.711Z",
+  "generated_at_utc": "2026-06-04T08:04:32.275Z",
   "generated_by": "scripts/surface/check-oam-04-surface-twin-plane-contract.mjs",
   "taskId": "OAM-04",
   "status": "passed",
-  "branch": "codex/oam-final-acceptance-and-dorm-l1-day0",
+  "branch": "codex/oam-cab-post-merge-browser-audit",
   "contracts": [
     "docs/surface/surface-experience-contract.yml",
     "docs/surface/mobile-work-plane-contract.yml",

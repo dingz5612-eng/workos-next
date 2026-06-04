@@ -74,13 +74,52 @@ public sealed class OperationsRuntimeServiceTests
         Assert.AreEqual(0, runtime.ConfirmCount);
     }
 
+    [TestMethod]
+    public void workspace_start_binds_operation_case_and_work_item()
+    {
+        var workspace = FakeOperationsRuntime.Workspace("W-STAY-RESOURCE-202606040001");
+        var service = Service(out _, out var cases, out var workItems, workspaces: new[] { workspace });
+        var store = new InMemoryOperationsStore();
+        var unitOfWork = new OperationsUnitOfWork(
+            new CommandEnvelopeBuilder(),
+            new CommandSubmissionService(store),
+            new IdempotencyService(store),
+            new PayloadHashService(),
+            new SliceCommandHandlerRouter().Register(
+                CanonicalOperationsApiService.ConfirmCommandDefinition,
+                CanonicalOperationsApiService.HandleConfirmCommand));
+        var operations = new CanonicalOperationsApiService(service, unitOfWork, store);
+
+        var started = operations.StartWorkspaceCase(
+            workspace,
+            "W-STAY-RESOURCE",
+            new RuntimeActorContext(
+                "operator-1",
+                "operator",
+                "tenant-start",
+                new[] { "workos.write", "operations.confirm" },
+                "test",
+                "token-start"));
+
+        Assert.AreEqual(workspace.Id, started.OperationCase.CaseId);
+        StringAssert.StartsWith(started.WorkItem.WorkItemId, "wi-");
+        Assert.AreEqual("Dorm.RoomSetup", started.WorkItem.WorkItemType);
+        Assert.AreEqual("roomSetup", started.WorkItem.Payload["cardId"]);
+        Assert.AreEqual("definition.roomSetup.v1", started.WorkItem.Payload["definitionId"]);
+        Assert.AreEqual("workspace-card", started.WorkItem.Source);
+        Assert.HasCount(1, cases.List("tenant-start"));
+        Assert.HasCount(1, workItems.List("tenant-start"));
+        Assert.HasCount(1, started.OperationWorkItems);
+    }
+
     private static OperationsRuntimeService Service(
         out FakeOperationsRuntime runtime,
         out InMemoryOperationsCaseStore cases,
         out InMemoryOperationsWorkItemStore workItems,
-        ConfirmResult? policyResult = null)
+        ConfirmResult? policyResult = null,
+        IReadOnlyList<WorkspaceProjection>? workspaces = null)
     {
-        runtime = new FakeOperationsRuntime(policyResult);
+        runtime = new FakeOperationsRuntime(policyResult, workspaces);
         cases = new InMemoryOperationsCaseStore();
         workItems = new InMemoryOperationsWorkItemStore();
         return new OperationsRuntimeService(runtime, cases, workItems);
@@ -89,11 +128,14 @@ public sealed class OperationsRuntimeServiceTests
     private sealed class FakeOperationsRuntime : IOperationsRuntimeAdapter
     {
         private readonly ConfirmResult? policyResult;
-        private readonly IReadOnlyList<WorkspaceProjection> workspaces = new[] { Workspace("W-OPS") };
+        private readonly IReadOnlyList<WorkspaceProjection> workspaces;
 
-        public FakeOperationsRuntime(ConfirmResult? policyResult)
+        public FakeOperationsRuntime(
+            ConfirmResult? policyResult,
+            IReadOnlyList<WorkspaceProjection>? workspaces = null)
         {
             this.policyResult = policyResult;
+            this.workspaces = workspaces ?? new[] { Workspace("W-OPS") };
         }
 
         public int PrepareCount { get; private set; }
@@ -126,7 +168,7 @@ public sealed class OperationsRuntimeServiceTests
             throw new InvalidOperationException("OperationsRuntimeService must not commit facts directly.");
         }
 
-        private static WorkspaceProjection Workspace(string workspaceId) =>
+        public static WorkspaceProjection Workspace(string workspaceId) =>
             new(
                 "IntentWorkspaceProjection",
                 workspaceId,

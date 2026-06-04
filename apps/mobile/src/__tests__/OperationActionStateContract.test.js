@@ -86,12 +86,22 @@ describe("OAM-04B primary action state machine", () => {
   it.each([
     ["permission_blocked_403", "primaryViewPermission"],
     ["idempotency_conflict_409", "primaryViewTrace"],
-    ["business_blocked_422", "primaryCompleteEvidence"]
-  ])("maps %s to a specific recovery action", (status, labelKey) => {
+    ["business_blocked_422", "primaryCompleteEvidence", "evidence_missing"]
+  ])("maps %s to a specific recovery action", (status, labelKey, reason = "") => {
     const card = { id: "roomSetup", status: "ready", evidence: [] };
     const workItem = { workspaceId: "W-STAY-RESOURCE", cardId: "roomSetup" };
 
-    expect(buildOperationActionState(workItem, card, { status }).primaryAction.labelKey).toBe(labelKey);
+    expect(buildOperationActionState(workItem, card, { status, reason }).primaryAction.labelKey).toBe(labelKey);
+  });
+
+  it("maps non-evidence business blockers to blocker guidance", () => {
+    const card = { id: "roomSetup", status: "ready", evidence: [] };
+    const workItem = { workspaceId: "W-STAY-RESOURCE", cardId: "roomSetup" };
+
+    expect(buildOperationActionState(workItem, card, {
+      status: "business_blocked_422",
+      reason: "persisted_work_item_required"
+    }).primaryAction.labelKey).toBe("primaryViewBlocker");
   });
 
   it("maps local required-field validation to a field completion action", () => {
@@ -102,5 +112,23 @@ describe("OAM-04B primary action state machine", () => {
       status: "business_blocked_422",
       reason: "required_field_missing"
     }).primaryAction.labelKey).toBe("primaryCompleteRequiredFields");
+  });
+
+  it("keeps required-field recovery bound to submit revalidation", () => {
+    const store = runtimeStore();
+    store.workspaces[0].cards[0].evidence = [];
+    const ctx = createSurfaceCtx({
+      view: "workspace",
+      runtimeStore: store,
+      lastActionResult: {
+        status: "business_blocked_422",
+        reason: "required_field_missing"
+      }
+    });
+
+    const html = routeView(ctx);
+
+    expect(visibleText(html)).toContain("补齐必填项");
+    expect((html.match(/data-submit-card/g) || []).length).toBe(1);
   });
 });

@@ -45,6 +45,47 @@ public sealed class CanonicalOperationsApiService
     public WorkItem? CreateWorkItem(CreateWorkItemRequest request) =>
         catalog.CreateWorkItem(request);
 
+    public OperationsWorkspaceStartResult StartWorkspaceCase(
+        WorkspaceProjection workspace,
+        string templateWorkspaceId,
+        RuntimeActorContext actor)
+    {
+        var card = workspace.Cards.FirstOrDefault(item => item.Status.Equals("ready", StringComparison.OrdinalIgnoreCase))
+            ?? workspace.Cards.FirstOrDefault();
+        if (card is null)
+        {
+            throw new InvalidOperationException("operation_workspace_start_template_has_no_cards");
+        }
+
+        var definition = definitions.ResolveByWorkspaceCard(templateWorkspaceId, card.Id);
+        var operationCase = CreateCase(new CreateOperationCaseRequest(workspace.Id, actor.TenantId, workspace.Id))
+            ?? throw new InvalidOperationException("operation_workspace_start_case_not_resolved");
+        var workItem = CreateWorkItem(new CreateWorkItemRequest(
+            WorkspaceCardCompatibilityWorkItemResolver.WorkItemIdFor(workspace.Id, card.Id),
+            actor.TenantId,
+            FirstNonEmpty(definition.Definition?.WorkItemType, card.Id),
+            workspace.Id,
+            workspace.Id,
+            card.Id,
+            FirstNonEmpty(card.Confirmation.RequiredRole, actor.Role, "operator"),
+            new Dictionary<string, string>
+            {
+                ["caseId"] = operationCase.CaseId,
+                ["cardId"] = card.Id,
+                ["templateWorkspaceId"] = templateWorkspaceId,
+                ["definitionId"] = definition.DefinitionId,
+                ["compatibilityRoute"] = "workspace-card",
+                ["operationAxis"] = "Definition -> OperationCase -> WorkItem",
+                ["startedByActorId"] = actor.ActorId
+            })) ?? throw new InvalidOperationException("operation_workspace_start_work_item_not_resolved");
+
+        return new OperationsWorkspaceStartResult(
+            workspace,
+            operationCase,
+            workItem,
+            ListWorkItems(actor.TenantId));
+    }
+
     public IReadOnlyList<WorkItem> ListWorkItems(string? tenantId = null, string? caseId = null) =>
         catalog.ListWorkItems(tenantId, caseId);
 
@@ -399,3 +440,9 @@ public sealed class CanonicalOperationsApiService
     private static string FirstNonEmpty(params string?[] values) =>
         values.FirstOrDefault(value => !string.IsNullOrWhiteSpace(value)) ?? string.Empty;
 }
+
+public sealed record OperationsWorkspaceStartResult(
+    WorkspaceProjection Workspace,
+    OperationCase OperationCase,
+    WorkItem WorkItem,
+    IReadOnlyList<WorkItem> OperationWorkItems);

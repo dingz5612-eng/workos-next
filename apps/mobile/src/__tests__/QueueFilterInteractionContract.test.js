@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import { clearQueueFilterState, setQueueFilter, setWorkFilter } from "../queueController.js";
 import { queueFiltersFromState } from "../queueFilterState.js";
-import { evidenceStateFor, queueTasks } from "../selectors/queueSelectors.js";
+import { countEvidenceState, countTransferable, evidenceStateFor, queueTasks } from "../selectors/queueSelectors.js";
 import { selectCompletedWorkbenchQueue } from "../selectors/surfaceSelectors.js";
 import { workbenchView } from "../views/workbenchView.js";
 import { createSurfaceCtx, runtimeStore } from "./surfaceContractTestHelpers.js";
@@ -14,6 +14,7 @@ describe("OAM-04B queue filter interaction contract", () => {
     expect(ctx.state.queueFilters.domain).toBe("stay");
     expect(queueTasks(ctx.state).map((item) => item.workspaceId)).toEqual(["W-STAY-RESOURCE"]);
 
+    ctx.state.runtimeStore.workQueue[0].evidenceState = "missing";
     setWorkFilter("need-evidence", ctx);
     expect(ctx.state.queueFilters.evidenceState).toBe("missing");
     expect(queueTasks(ctx.state)).toHaveLength(1);
@@ -84,10 +85,23 @@ describe("OAM-04B queue filter interaction contract", () => {
     expect(html).toContain('<option value="dueSort" selected>');
   });
 
-  it("evidence count uses evidenceState missing, draft, and rejected", () => {
-    expect(evidenceStateFor({ evidenceState: "rejected" })).toBe("rejected");
+  it("counts only runtime/manual evidence problems as needing operator evidence", () => {
+    expect(evidenceStateFor({ evidenceState: "rejected" })).toBe("missing");
     expect(evidenceStateFor({ evidenceDrafts: [{ status: "draft" }] })).toBe("draft");
-    expect(evidenceStateFor({ card: { evidence: [{ id: "ev-1" }] } })).toBe("missing");
+    expect(evidenceStateFor({ card: { evidence: [{ id: "ev-1" }] } })).toBe("system_ready");
+
+    const ctx = queueCtx();
+    expect(countEvidenceState(ctx.state, "missing")).toBe(0);
+    ctx.state.runtimeStore.workQueue[0].evidenceState = "missing";
+    expect(countEvidenceState(ctx.state, "missing")).toBe(1);
+  });
+
+  it("does not infer transferable tasks from owner-role mismatch without runtime permission", () => {
+    const ctx = queueCtx({ currentActor: { role: "frontdesk", displayName: "前台" } });
+
+    expect(countTransferable(ctx.state)).toBe(0);
+    ctx.state.runtimeStore.workQueue[0].transferable = true;
+    expect(countTransferable(ctx.state)).toBe(1);
   });
 
   it("keeps terminal WorkItems out of the active workbench queue", () => {

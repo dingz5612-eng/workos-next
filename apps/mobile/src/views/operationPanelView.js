@@ -2,7 +2,7 @@ import { loadDraft } from "../operationDrafts.js";
 import { buildOperationActionState } from "../operationActionState.js";
 import { resolveOperationPanelTarget } from "../operationRouteResolver.js";
 import { activeWorkspaceCard, isTerminalCardStatus } from "../selectors/workspaceSelectors.js";
-import { ActionResult, TechnicalAuditDetails, workItemModel } from "./experienceComponents.js";
+import { ActionResult, OperationStepRail, TechnicalAuditDetails, workItemModel } from "./experienceComponents.js";
 import { primaryActionButton, workspaceCardPanel } from "./workspaceView.js";
 
 export function operationPanelView(ctx) {
@@ -21,7 +21,7 @@ export function operationPanelView(ctx) {
       reason: "operation_work_item_required"
     };
     return shell(`
-      <section class="operation-panel-empty" data-surface="operation-panel-runtime" data-blocker-code="operation_work_item_required">
+      <section class="operation-panel-empty" data-surface="operation-panel-runtime" data-blocker-code="operation_work_item_required" data-admission-decision="visible_blocked_missing_work_item" data-runtime-decision="blocked:operation_work_item_required">
         <span>${ctx.tr("operationPanel")}</span>
         <h1>${ctx.tr(state.operationRouteIssue?.titleKey || "operationUnavailableTitle")}</h1>
         <p>${ctx.tr(state.operationRouteIssue?.bodyKey || "operationUnavailableBody")}</p>
@@ -38,7 +38,7 @@ export function operationPanelView(ctx) {
   const activeCard = item?.card || activeWorkspaceCard(workspace, state.selectedCardIndex, state.selectedCardId);
   if (!workspace || !activeCard) {
     return shell(`
-      <section class="operation-panel-empty" data-surface="operation-panel-runtime">
+      <section class="operation-panel-empty" data-surface="operation-panel-runtime" data-admission-decision="visible_blocked_projection_missing" data-runtime-decision="blocked:workspace_projection_missing">
         <span>${ctx.tr("operationPanel")}</span>
         <h1>${ctx.tr("runtimeWorkItemSelected")}</h1>
         <p>${ctx.tr("workspaceProjectionMissing")}</p>
@@ -56,9 +56,11 @@ export function operationPanelView(ctx) {
   const traceCount = [commandSubmissionId, model.caseId, model.workItemId, ...(model.traceRefs || [])].filter(Boolean).length;
   const actionState = buildOperationActionState(operationContext, activeCard, state.lastActionResult, state);
   const isCompleted = isTerminalCardStatus(activeCard.status);
+  const admissionDecision = operationAdmissionDecision(model, activeCard, actionState);
+  const runtimeDecision = operationRuntimeDecision(model, activeCard, actionState);
 
   return shell(`
-    <section class="operation-panel-page" data-surface="operation-panel-route">
+    <section class="operation-panel-page" data-surface="operation-panel-route" data-work-item-id="${ctx.escapeAttr(model.workItemId)}" data-case-id="${ctx.escapeAttr(model.caseId)}" data-lifecycle-state="${ctx.escapeAttr(model.lifecycleState)}" data-action-state="${ctx.escapeAttr(actionState.status)}" data-admission-decision="${ctx.escapeAttr(admissionDecision)}" data-runtime-decision="${ctx.escapeAttr(runtimeDecision)}">
       <span>${ctx.tr("operationPanel")}</span>
       <h1>${ctx.escapeHtml(model.displayTitle || model.businessObject || model.workItemType)}</h1>
       <p>${ctx.escapeHtml(model.businessObject)} · ${ctx.escapeHtml(model.nextAction)}</p>
@@ -67,15 +69,16 @@ export function operationPanelView(ctx) {
         <span>${ctx.escapeHtml(model.canHandleLabel)}</span>
       </div>
     </section>
+    ${OperationStepRail(workspace, activeCard, ctx)}
     ${isCompleted ? completedRecordPanel(model, activeCard, ctx) : ""}
-    ${TechnicalAuditDetails({
+    ${state.debugSurface ? TechnicalAuditDetails({
       model,
       payloadHash: payloadFingerprint,
       commandSubmissionId: submissionRecord,
       traceCount,
       projectionStatus: state.lastActionResult?.status || "notSubmitted",
       policyRef: activeCard.policyRef || activeCard.confirmation?.policyRef || "operations-runtime-policy"
-    }, ctx)}
+    }, ctx) : ""}
     ${isCompleted ? "" : operationBody}
     ${isCompleted ? "" : ActionResult(state.lastActionResult || {}, ctx)}
     ${isCompleted ? "" : `<div class="sticky-action">${primaryActionButton(actionState, ctx)}</div>`}
@@ -103,6 +106,26 @@ function completedRecordPanel(model, card, ctx) {
       <dt>${ctx.tr("cardNext")}</dt><dd>${ctx.escapeHtml(model.nextAction)}</dd>
     </dl>
   </section>`;
+}
+
+function operationAdmissionDecision(model, card, actionState) {
+  if (isTerminalCardStatus(card.status) || isTerminalCardStatus(model.lifecycleState)) return "visible_readonly_completed";
+  if (actionState.status === "waitingPermission") return "visible_blocked_permission";
+  if (actionState.status === "missingRequiredFields") return "visible_allowed_requires_required_fields";
+  if (actionState.status === "missingEvidence") return "visible_allowed_requires_evidence";
+  if (actionState.status === "blocked") return "visible_blocked_business_rule";
+  if (actionState.status === "notStarted") return "visible_blocked_previous_step";
+  return actionState.status === "ready" ? "visible_allowed_confirmable" : `visible_${actionState.status}`;
+}
+
+function operationRuntimeDecision(model, card, actionState) {
+  if (isTerminalCardStatus(card.status) || isTerminalCardStatus(model.lifecycleState)) return `work_item_terminal:${model.lifecycleState || card.status}`;
+  if (actionState.status === "ready") return "work_item_confirm_ready";
+  if (actionState.status === "missingRequiredFields") return "blocked:required_field_missing";
+  if (actionState.status === "missingEvidence") return "blocked:evidence_missing";
+  if (actionState.status === "notStarted") return "blocked:previous_step_required";
+  if (actionState.status === "blocked") return "blocked:business_rule";
+  return `work_item_${actionState.status}`;
 }
 
 export function resolveOperationItem(state) {

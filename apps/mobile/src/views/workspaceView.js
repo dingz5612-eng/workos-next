@@ -5,7 +5,7 @@ import { buildOperationActionState } from "../operationActionState.js";
 import { isUnsafeLedgerCarryForward } from "../selectors/surfaceSelectors.js";
 import { activeCardForWorkspace, activeWorkspaceCard, isCardActionDisabled, isTerminalCardStatus } from "../selectors/workspaceSelectors.js";
 import { checkoutServiceMobilePanel, checkoutServiceOperationAddon } from "./checkoutServiceView.js";
-import { EvidenceStateVM, LifecycleWorkspace, OperationPanelView } from "./experienceComponents.js";
+import { EvidenceStateVM, OperationStepRail } from "./experienceComponents.js";
 
 export function workspaceView(ctx) {
   const item = ctx.workspace();
@@ -40,11 +40,11 @@ export function workspaceView(ctx) {
       <p>${ctx.tx(item.summary)}</p>
     </section>
     <section class="workspace-control">
-      ${LifecycleWorkspace(item, activeCard, ctx)}
+      ${OperationStepRail(item, activeCard, ctx)}
       ${compatCardTabs(item, activeCard, ctx)}
       ${workspaceLensPanel(item, ctx)}
       ${checkoutServiceMobilePanel(item, activeCard, ctx)}
-      ${viewingCompletedStep ? workspaceCardPanel(activeCard, item, true, ctx) : OperationPanelView(workspaceCardPanel(activeCard, item, true, ctx), item, activeCard, ctx)}
+      ${workspaceCardPanel(activeCard, item, true, ctx)}
     </section>
     ${viewingCompletedStep || isCompleted ? "" : `<div class="sticky-action">${primaryActionButton(actionState, ctx)}</div>`}
   `);
@@ -235,7 +235,7 @@ export function primaryActionButton(actionState, ctx) {
   const action = actionState.primaryAction;
   const disabled = action.disabled ? "disabled" : "";
   const reason = action.reasonKey ? `<small>${ctx.tr(action.reasonKey)}</small>` : "";
-  const submit = ["ready"].includes(actionState.status) ? "data-submit-card" : `data-action-state="${ctx.escapeAttr(actionState.status)}"`;
+  const submit = ["ready", "missingRequiredFields"].includes(actionState.status) ? "data-submit-card" : `data-action-state="${ctx.escapeAttr(actionState.status)}"`;
   return `<button class="primary-action ${ctx.escapeAttr(actionState.status)}" ${submit} ${disabled}>${ctx.tr(action.labelKey)}</button>${reason}`;
 }
 

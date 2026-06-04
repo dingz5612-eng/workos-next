@@ -16,7 +16,7 @@ export function workbenchView(ctx) {
     ${list.length ? `<section class="compact-section mobile-work-ia" data-mobile-work-ia>
       <h2>${ctx.tr("work")}</h2>
       <div class="ia-chip-grid">
-        ${workChip("accommodation", "stay", countDomain(ctx.state, "stay"), ctx)}
+        ${workChip("accommodation", "workAccommodation", countDomain(ctx.state, "stay"), ctx)}
         ${workChip("can-do", "workCanDo", countStatus(ctx.state, "ready"), ctx)}
         ${workChip("blocked", "workBlocked", countStatus(ctx.state, "blocked"), ctx)}
         ${workChip("waiting-others", "workWaitingOthers", countBadge(ctx.state, "waiting"), ctx)}
@@ -47,7 +47,8 @@ function sortOption(value, ctx) {
 }
 
 function workChip(id, labelKey, count, ctx) {
-  return `<button class="ia-chip" data-work-filter="${ctx.escapeAttr(id)}" data-mobile-ia="filter"><span>${ctx.tr(labelKey)}</span><strong>${count}</strong></button>`;
+  const label = ctx.tr(labelKey);
+  return `<button class="ia-chip" data-work-filter="${ctx.escapeAttr(id)}" data-mobile-ia="filter" aria-label="${ctx.escapeAttr(`${label} ${count}`)}"><span>${label}</span><strong>${count}</strong></button>`;
 }
 
 function completedWorkCard(item, ctx) {
@@ -69,7 +70,7 @@ function countStatus(state, status) {
 
 function filterSummary(filters, ctx) {
   return [
-    filters.domain !== "all" ? ctx.tr(filters.domain) : "",
+    filters.domain !== "all" ? ctx.tr(filters.domain === "stay" ? "workAccommodation" : filters.domain) : "",
     filters.badge !== "all" ? ctx.tr(filters.badge) : "",
     filters.status !== "all" ? ctx.tr(filters.status) : "",
     filters.ownerRole !== "all" ? ctx.tr("role") : "",

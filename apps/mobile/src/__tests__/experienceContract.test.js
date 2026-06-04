@@ -51,6 +51,16 @@ describe("RT-5 Experience Contract", () => {
     expect(main).not.toContain("fetchWorkQueue");
   });
 
+  it("renders the shell before runtime hydration finishes", () => {
+    const main = source("../main.js");
+    const initialRender = main.lastIndexOf("render();");
+    const initialHydration = main.lastIndexOf("hydrateProjectionFromApi().finally");
+
+    expect(main).toContain("state.runtimeHydrating = true");
+    expect(initialRender).toBeGreaterThan(0);
+    expect(initialHydration).toBeGreaterThan(initialRender);
+  });
+
   it("uses operations prepare and confirm for Operation Panel main submit path", () => {
     const runtime = source("../operationRuntime.js");
     const controller = source("../operationController.js");
@@ -101,7 +111,7 @@ describe("RT-5 Experience Contract", () => {
 
     expect(html).toContain('data-surface="action-decision-card"');
     expect(workItemCardSchema).toContain("workItemId");
-    for (const label of ["当前能否处理", "为什么不能处理", "还缺什么证据", "下一步怎么做", "风险等级", "责任角色", "截止时间", "业务对象"]) {
+    for (const label of ["当前能否处理", "为什么不能处理", "系统证据要求", "下一步怎么做", "风险等级", "责任角色", "截止时间", "业务对象"]) {
       expect(html).toContain(label);
     }
     expect(visibleText(html)).not.toMatch(/\b(workItemId|caseId|traceRefs|lifecycleState|ownerRole)\b/);
@@ -192,7 +202,7 @@ function ctx(actor = { role: "operator" }) {
       noCriticalBlocker: "当前没有新的系统阻断，但关键动作仍需要人工确认。",
       decisionCanHandle: "当前能否处理",
       decisionBlocker: "为什么不能处理",
-      decisionMissingEvidence: "还缺什么证据",
+      decisionMissingEvidence: "系统证据要求",
       decisionNextAction: "下一步怎么做",
       decisionRisk: "风险等级",
       decisionOwner: "责任角色",

@@ -7,6 +7,8 @@ const sourceDay = readJson("artifacts/go-live/dormitory/daily-observation-day-01
 const controlLoop = readJson("docs/operations/observation-control-loop.yml");
 const taxonomy = readJson("docs/operations/incident-root-cause-taxonomy.yml");
 const slo = readJson("docs/operations/dormitory-slo.yml");
+const previousDay = readJsonIfExists("artifacts/operations/dormitory/observation-day-01.json") ?? {};
+const day1OriginMainHead = "1a2fb45a89f3d1ef18eaf4ca216ecdc57660df30";
 
 const failures = [];
 assertFalse(sourceDay.productionAllowed, "source observation day 不得允许 production。");
@@ -50,8 +52,12 @@ const resolutionEvents = incidentSamples.map((incident) => ({
 }));
 
 const result = {
+  ...previousDay,
   generated_at_utc: generatedAt,
   generated_by: "generate-observation-day",
+  branch: previousDay.branch ?? "main",
+  headSha: previousDay.headSha ?? null,
+  originMainHead: day1OriginMainHead,
   stage: "OAM-07",
   day: sourceDay.day,
   status: failures.length === 0 ? "passed" : "failed",
@@ -111,6 +117,12 @@ console.log("OAM-07 observation day: PASS");
 function readJson(relativePath) {
   const fullPath = path.join(root, relativePath);
   if (!fs.existsSync(fullPath)) throw new Error(`Missing required file: ${relativePath}`);
+  return JSON.parse(fs.readFileSync(fullPath, "utf8"));
+}
+
+function readJsonIfExists(relativePath) {
+  const fullPath = path.join(root, relativePath);
+  if (!fs.existsSync(fullPath)) return null;
   return JSON.parse(fs.readFileSync(fullPath, "utf8"));
 }
 
