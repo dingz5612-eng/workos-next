@@ -35,16 +35,17 @@ Admission Kernel 是 confirmAllowed 和业务写入前置裁决核心。Definiti
 
 ProjectionRuntime 是当前 compatibility facade，用于 projection 和 Lens materialization 的当前实现承接。它不是顶层架构，也不得成为新的业务写入中心。
 
-Workspace/Card 是 compatibility wrapper，用于承接旧 prepare / confirm 入口和旧 surface 结构。它不是新业务扩展点，不得新增业务动作或绕过 Operations Runtime。
+Workspace/Card 只能作为投影展示对象；旧 prepare / confirm 写入口已退役并删除。它不是命令边界，不得新增业务动作或绕过 Operations Runtime。
 
-允许的 Workspace/Card compatibility write 仅限当前 API boundary 中已分类的：
+允许的 Operations Runtime 写入口仅限当前 API boundary 中已分类的：
 
 ```text
-POST /api/workspaces/{workspaceId}/cards/{cardId}/prepare
-POST /api/workspaces/{workspaceId}/cards/{cardId}/confirm
+POST /api/operations/workspaces/start
+POST /api/operations/work-items/{workItemId}/prepare
+POST /api/operations/work-items/{workItemId}/confirm
 ```
 
-其中 confirm 必须通过 compatibility adapter 进入 Operations Runtime 约束链路。
+其中业务事实只能由 Operations Confirm 通过 OperationsUnitOfWork 追加写入。
 
 ## 治理与规则职责
 

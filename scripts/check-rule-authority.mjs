@@ -31,7 +31,15 @@ const requiredAuthorityTerms = [
   "ProcessManager",
   "Projection / Lens",
   "Mobile / PC Surface",
-  "P0 WON-18 gate evidence must be green"
+  "P0 WON-18 gate evidence must be green",
+  "Workspace/Card prepare and confirm write endpoints are retired",
+  "ProjectionRuntime may remain a projection/Lens compatibility facade",
+  "Issue Repair Protocol",
+  "Observe the real behavior",
+  "Classify the impact",
+  "Locate the broken layer",
+  "Update contract/model/rule first",
+  "Page-level hard-adds"
 ];
 
 const requiredYamlTerms = [
@@ -46,8 +54,16 @@ const requiredYamlTerms = [
   "docs/acceptance/00-index.md",
   "docs/architecture",
   "docs/v5.4",
+  "hard.issue_repair_protocol",
+  "Workspace/Card prepare and confirm write endpoints are retired",
   "scripts/check-api-boundaries.mjs",
   "scripts/check-rule-drift.mjs"
+];
+
+const staleAuthorityTerms = [
+  "Workspace/Card prepare and confirm remain compatibility wrappers only",
+  "Workspace/Card remains a compatibility wrapper",
+  "The current runtime still exposes the older Workspace/Card endpoints as a compatibility layer"
 ];
 
 function fail(message, details = []) {
@@ -66,11 +82,19 @@ const missingAuthorityTerms = requiredAuthorityTerms.filter((term) => !authority
 if (missingAuthorityTerms.length > 0) {
   fail("Rule authority is missing required terms.", missingAuthorityTerms);
 }
+const staleAuthorityMatches = staleAuthorityTerms.filter((term) => authority.includes(term));
+if (staleAuthorityMatches.length > 0) {
+  fail("Rule authority still contains retired compatibility wording.", staleAuthorityMatches);
+}
 
 const machineAuthority = fs.readFileSync("docs/rules/v5.5/rule-authority.yml", "utf8");
 const missingYamlTerms = requiredYamlTerms.filter((term) => !machineAuthority.includes(term));
 if (missingYamlTerms.length > 0) {
   fail("Machine rule authority is missing required terms.", missingYamlTerms);
+}
+const staleMachineMatches = staleAuthorityTerms.filter((term) => machineAuthority.includes(term));
+if (staleMachineMatches.length > 0) {
+  fail("Machine rule authority still contains retired compatibility wording.", staleMachineMatches);
 }
 
 const precedence = [...machineAuthority.matchAll(/^\s+-\s+(hardRules|releaseRules|engineeringRules|acceptanceRules|compatibilityRules|deprecatedRules)\s*$/gm)]

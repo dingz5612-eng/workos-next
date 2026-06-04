@@ -349,7 +349,7 @@
 .feedback-fab {
   position: fixed;
   right: calc(50% - min(50%, 215px) + 12px);
-  top: 92px;
+  bottom: calc(var(--bottom-nav-height) + var(--safe-bottom) + 18px);
   z-index: 2;
   min-height: 34px;
   border-radius: 999px;
@@ -359,10 +359,20 @@
   border: 1px solid #d9e7ee;
   box-shadow: 0 10px 24px rgba(17, 39, 55, .12);
   font-size: 12px;
+  transform: translateX(calc(100% + 8px));
 }
 
 .surface-pc .feedback-fab {
   right: 24px;
+  bottom: 24px;
+  transform: none;
+}
+
+@media (max-width: 520px) {
+  .feedback-fab {
+    right: 12px;
+    transform: none;
+  }
 }
 
 .bottom-nav {

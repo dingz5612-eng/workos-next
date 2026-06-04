@@ -1,16 +1,55 @@
 {
   "version": "oam.search-contract.v1",
   "generatedBy": "oam-cab-v1-phase-4",
-  "status": "implementation-with-legacy-adapter",
+  "status": "implementation-with-projection-adapter",
   "languageSynonymRef": "docs/contracts/language/search-synonyms.json",
   "admissionContractRef": "docs/contracts/admission/admission-contract.json",
+  "inputAdapters": [
+    {
+      "adapterId": "textSearchInput",
+      "status": "active",
+      "allowed": "Normalize typed search text through Language Kernel synonyms before Search Kernel ranking."
+    },
+    {
+      "adapterId": "voiceAiIntentInput",
+      "status": "planned",
+      "allowed": "May transcribe speech and translate it into structured SearchIntent candidates with confidence and explanation.",
+      "forbidden": "Must not execute writes or bypass Admission Kernel, Operations Runtime, Control Plane, or Evidence Graph."
+    }
+  ],
+  "analyticsPolicy": {
+    "status": "active-contract",
+    "sources": [
+      "BehaviorEventRecord search.performed",
+      "BehaviorEventRecord search.result.opened",
+      "CommandSubmission search-origin trace"
+    ],
+    "recommendationSignals": [
+      "tenantAggregatedIntentFrequency",
+      "actorRecentIntentFrequency",
+      "successfulOpenRate",
+      "successfulConfirmRate",
+      "currentRoleAdmissionAllowed"
+    ],
+    "privacyRules": [
+      "Do not show another user's raw query text.",
+      "Store and rank by canonical intent id when possible.",
+      "Recommendations must pass Search Kernel permission policy and Admission Kernel visibility.",
+      "Recommendations must never grant confirmAllowed or productionAllowed."
+    ],
+    "surfaceGroups": [
+      "常用",
+      "最近",
+      "团队常搜"
+    ]
+  },
   "resultSchemaRef": "docs/contracts/search/search-result-schema.json",
   "rankingPolicyRef": "docs/contracts/search/search-ranking-policy.json",
   "permissionPolicyRef": "docs/contracts/search/search-permission-policy.json",
   "objectTypes": [
     "workItem",
     "operationCase",
-    "workspaceCardCompatibility",
+    "workspaceCardProjection",
     "businessObject",
     "evidence",
     "ledger",
@@ -38,12 +77,12 @@
     "language",
     "explain"
   ],
-  "legacyAdapters": [
+  "projectionAdapters": [
     {
-      "name": "LensQueryService.Search",
-      "path": "services/core-api/WorkOS.Api/Runtime/LensQueryService.cs",
-      "status": "legacy-adapter",
-      "allowed": "May provide current workspace-card compatibility results only as input to LegacyWorkspaceSearchAdapter.",
+      "name": "ProjectionWorkspaceSearchAdapter",
+      "path": "services/core-api/WorkOS.Api/Runtime/SearchKernelService.cs",
+      "status": "projection-adapter",
+      "allowed": "May provide current workspace-card projection results only as input to SearchKernelService.",
       "forbidden": "Must not be treated as final Search Kernel and must not bypass Language Kernel synonyms, permission policy, or Admission Kernel.",
       "removalCondition": "SearchKernelService owns indexing, ranking, admission, trace refs, and language explain output."
     },
@@ -59,7 +98,7 @@
     "Every SearchResult includes an admission object.",
     "Blocked business lines cannot be made executable by search ranking.",
     "Search uses Language Kernel synonyms and domain terms.",
-    "Contains-only matching is allowed only inside registered legacy adapters.",
+    "Contains-only matching is allowed only inside registered projection adapters.",
     "Search visibility is not confirm permission."
   ]
 }

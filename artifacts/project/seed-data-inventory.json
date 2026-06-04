@@ -1,5 +1,5 @@
 {
-  "generatedAtUtc": "2026-06-02T07:15:05.862Z",
+  "generatedAtUtc": "2026-06-04T14:23:07.154Z",
   "generatedBy": "check-seed-data-isolation",
   "stage": "PROJECT-HYGIENE-CLEANUP",
   "taskSeeds": [
@@ -151,8 +151,8 @@
     }
   ],
   "isolationPolicy": {
-    "ordinaryMobileQueue": "DORM-L1/stay scoped runtime work items only; diagnostic, engineering, fixture, runtimeAudit and legacy compatibility seeds are excluded unless debugSurface=true.",
-    "diagnosticSurface": "engineering diagnostic, runtime audit, rf and legacy compatibility seeds may only appear in diagnostic or migration tests.",
+    "ordinaryMobileQueue": "DORM-L1/stay scoped runtime work items only; diagnostic, engineering, fixture, runtimeAudit and retired projection shadow seeds are excluded unless debugSurface=true.",
+    "diagnosticSurface": "engineering diagnostic, runtime audit, rf and retired projection shadow seeds may only appear in diagnostic or migration tests.",
     "productionAllowed": false
   }
 }

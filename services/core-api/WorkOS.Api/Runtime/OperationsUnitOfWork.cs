@@ -1375,7 +1375,14 @@ public sealed record OperationsOutboxMessage(
     string SubmissionId,
     string MessageType,
     IReadOnlyDictionary<string, object> Payload,
-    DateTimeOffset CreatedAtUtc);
+    DateTimeOffset CreatedAtUtc,
+    DateTimeOffset? ProcessedAtUtc = null,
+    string? ClaimedBy = null,
+    DateTimeOffset? ClaimedAtUtc = null,
+    DateTimeOffset? ClaimExpiresAtUtc = null,
+    int AttemptCount = 0,
+    DateTimeOffset? DeadLetteredAtUtc = null,
+    string? LastError = null);
 
 public sealed record OperationsStableResponse(
     string ResponseId,
@@ -1473,7 +1480,7 @@ public sealed record OperationsCommitResult(
             duplicate ? "duplicate" : response.CommitStatus,
             duplicate,
             response.StatusCode,
-            null,
+            response.Body.TryGetValue("reason", out var reason) ? reason?.ToString() : null,
             response.TenantId,
             response.CaseId,
             response.WorkItemId,

@@ -27,8 +27,10 @@ The architecture separates:
   lenses without writing business facts.
 
 `ProjectionRuntime` remains the current implementation facade for projection and
-Lens materialization. Workspace/Card remains a compatibility wrapper for older
-prepare/confirm entry points. Neither is the top-level architecture.
+Lens materialization. Workspace/Card may only be projection/display
+compatibility input. The older Workspace/Card prepare/confirm write entry
+points are retired and must stay deleted. Neither ProjectionRuntime nor
+Workspace/Card is the top-level architecture.
 
 Dormitory remains L1 internal pilot observation. Dormitory L2 and Business
 Production remain blocked. Repair, Parts, and HR remain L0 contract preview.

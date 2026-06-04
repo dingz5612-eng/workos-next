@@ -1,9 +1,11 @@
-import { fetchSearchResults, startResourceSetup, startWorkspace } from "./apiClient.js";
+import { fetchSearchResults, recordMobileClientEvent, startOperationsWorkspace } from "./apiClient.js";
+import { searchPreferenceKey } from "./appState.js";
 import { applyRuntimeSearchResults, applyRuntimeSurfacePayloads } from "./runtime/runtimeStore.js";
 import { selectWorkspaceById } from "./selectors/surfaceSelectors.js";
 import { evaluateSurfaceAccess } from "./surfaceGuard.js";
 import { defaultHomeForCurrentSurface as resolveDefaultHomeForCurrentSurface } from "./surfaceResolver.js";
 import { resolveOperationPanelTarget } from "./operationRouteResolver.js";
+import { resolveSearchIntentId } from "./searchIntentRegistry.js";
 
 export function setView(view, ctx) {
   if (!ctx.state.currentActor && view !== "login") {
@@ -22,6 +24,7 @@ export function setView(view, ctx) {
   }
   ctx.state.permissionDiagnostic = null;
   ctx.state.view = view;
+  clearOperationStateOutsideRuntimeSurface(ctx, view);
   syncUrlFromState(ctx);
   ctx.render(true);
 }
@@ -52,7 +55,7 @@ export function openWorkspace(workspaceId, ctx, cardId = "") {
   ctx.state.selectedCardIndex = -1;
   clearTransientOperationMessage(ctx);
   const linked = selectWorkspaceById(ctx.state, workspaceId);
-  if (!isReadonlyCompatibilityTarget(linked, cardId)) {
+  if (!isReadonlyProjectionRecord(linked, cardId)) {
     ctx.state.operationRouteIssue = target;
     setView("operationPanel", ctx);
     return target;
@@ -64,6 +67,16 @@ export function openWorkspace(workspaceId, ctx, cardId = "") {
 
 export function openWorkItem(workItemId, ctx, fallback = {}) {
   return openOperationPanel(workItemId, ctx, fallback);
+}
+
+export function openReadonlyWorkspaceRecord(workspaceId, cardId = "", ctx) {
+  ctx.state.operationRouteIssue = null;
+  ctx.state.selectedWorkItemId = "";
+  ctx.state.selectedWorkspace = workspaceId || ctx.state.selectedWorkspace;
+  ctx.state.selectedCardId = cardId || "";
+  ctx.state.selectedCardIndex = -1;
+  clearTransientOperationMessage(ctx);
+  setView("workspace", ctx);
 }
 
 export function openOperationPanel(workItemId, ctx, fallback = {}) {
@@ -100,11 +113,12 @@ export function updateSearchQuery(value, ctx) {
   ctx.state.query = value;
 }
 
-export async function runSearch(ctx) {
-  ctx.state.query = document.querySelector("#query")?.value || "";
+export async function runSearch(ctx, explicitQuery = null) {
+  ctx.state.query = explicitQuery !== null ? explicitQuery : document.querySelector("#query")?.value || "";
   const requestId = nextSearchRequestId(ctx);
   if (ctx.state.query) {
-    ctx.state.recentSearches = [ctx.state.query, ...(ctx.state.recentSearches || []).filter((item) => item !== ctx.state.query)].slice(0, 5);
+    rememberSearch(ctx, ctx.state.query);
+    void recordSearchIntentEvent(ctx, ctx.state.query);
   }
   if (ctx.state.apiStatus === "online") {
     try {
@@ -122,11 +136,34 @@ export async function runSearch(ctx) {
   ctx.render(true);
 }
 
-export async function startResourceSetupCommand(ctx) {
-  return startWorkspaceCommand(ctx, "W-STAY-RESOURCE", "roomSetup");
+function rememberSearch(ctx, query) {
+  ctx.state.recentSearches = [query, ...(ctx.state.recentSearches || []).filter((item) => item !== query)].slice(0, 8);
+  try {
+    localStorage.setItem(searchPreferenceKey(ctx.state.currentActor), JSON.stringify(ctx.state.recentSearches));
+  } catch {
+    // Local search preference storage is best-effort.
+  }
 }
 
-export async function startWorkspaceCommand(ctx, templateWorkspaceId, firstCardId = "") {
+async function recordSearchIntentEvent(ctx, query) {
+  try {
+    await recordMobileClientEvent({
+      eventType: "search.performed",
+      objectType: "searchIntent",
+      objectId: resolveSearchIntentId(query),
+      language: ctx.state.lang,
+      source: "mobile.search"
+    });
+  } catch {
+    // Search analytics must not block the user's search flow.
+  }
+}
+
+export async function startOperationsResourceSetupCommand(ctx) {
+  return startOperationsWorkspaceCommand(ctx, "W-STAY-RESOURCE", "roomSetup");
+}
+
+export async function startOperationsWorkspaceCommand(ctx, templateWorkspaceId, firstCardId = "") {
   if (!ctx.state.currentActor) {
     setView("login", ctx);
     return;
@@ -135,9 +172,7 @@ export async function startWorkspaceCommand(ctx, templateWorkspaceId, firstCardI
   ctx.state.operationMessage = ctx.tr("submitting");
   ctx.render();
   try {
-    const result = templateWorkspaceId === "W-STAY-RESOURCE"
-      ? await startResourceSetup(ctx.state.currentActor.token || "")
-      : await startWorkspace(templateWorkspaceId, ctx.state.currentActor.token || "");
+    const result = await startOperationsWorkspace(templateWorkspaceId, ctx.state.currentActor.token || "");
     if (result?.projection) {
       ctx.applyRuntimeProjection(result.projection);
     }
@@ -235,7 +270,7 @@ function clearStaleRouteBlocker(ctx, selected = {}) {
   }
 }
 
-function isReadonlyCompatibilityTarget(workspace = null, cardId = "") {
+function isReadonlyProjectionRecord(workspace = null, cardId = "") {
   const cards = workspace?.cards || [];
   const selected = cardId ? cards.find((card) => card.id === cardId) : null;
   if (isTerminalStatus(selected?.status)) return true;
@@ -285,4 +320,12 @@ function clearTransientOperationMessage(ctx) {
   if (transient.includes(message) || offlineCopy.test(message)) {
     ctx.state.operationMessage = "";
   }
+}
+
+function clearOperationStateOutsideRuntimeSurface(ctx, view) {
+  if (["operationPanel", "workspace"].includes(view)) return;
+  ctx.state.operationMessage = "";
+  ctx.state.fieldValidation = null;
+  ctx.state.lastActionResult = null;
+  ctx.state.operationRouteIssue = null;
 }

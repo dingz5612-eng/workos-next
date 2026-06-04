@@ -1,8 +1,8 @@
 {
-  "generated_at_utc": "2026-06-04T10:31:38.844Z",
-  "generated_by": "scripts/surface/check-mobile-search-contract.mjs",
+  "generated_at_utc": "2026-06-04T16:34:50.735Z",
+  "generated_by": "scripts/surface/check-learning-center-contract.mjs",
   "status": "passed",
-  "check": "mobile-search-contract",
+  "check": "learning-center-contract",
   "violation_count": 0,
   "violations": []
 }

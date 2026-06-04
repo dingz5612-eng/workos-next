@@ -21,12 +21,12 @@ public static class MigrationVerificationJob
         var backfillPath = options.Get("backfill-out", Path.Combine(".tmp", "v5_4", "legacy-backfill-report.json"));
         var registryPath = options.Get("registry", Path.Combine("docs", "contracts", "legacy-ledger-migration-registry.json"));
         var migrationsPath = options.Get("migrations", Path.Combine("infra", "db", "migrations"));
-        var compatibilitySourcePath = options.Get("compatibility-source", Path.Combine("services", "core-api", "WorkOS.Api", "Program.cs"));
+        var apiSourcePath = options.Get("api-source", Path.Combine("services", "core-api", "WorkOS.Api", "Program.cs"));
         var rollbackStartMigration = options.Get("rollback-start", "015");
         var generatedAtUtc = DateTimeOffset.UtcNow;
         var registry = MigrationVerificationFileLoader.LoadRegistry(registryPath);
-        var compatibilitySource = File.Exists(compatibilitySourcePath)
-            ? File.ReadAllText(compatibilitySourcePath)
+        var apiSource = File.Exists(apiSourcePath)
+            ? File.ReadAllText(apiSourcePath)
             : string.Empty;
         var dataSource = new PostgresMigrationVerificationDataSource(ControlPlaneDatabase.ResolveConnectionString(options));
         var migrationFiles = MigrationVerificationFileLoader.Load(migrationsPath);
@@ -42,7 +42,7 @@ public static class MigrationVerificationJob
             "migration-verification-job",
             generatedAtUtc,
             rollbackStartMigration,
-            compatibilitySource,
+            apiSource,
             registry,
             migrationFiles));
 
@@ -133,7 +133,7 @@ public sealed class MigrationVerificationJobService
         {
             $"{context.ReportId}-migration-dry-run-success",
             $"{context.ReportId}-legacy-mapping-report-generated",
-            $"{context.ReportId}-old-api-still-compatible",
+            $"{context.ReportId}-old-api-retired",
             $"{context.ReportId}-backfill-does-not-drop-legacy-data"
         };
         var compatibilityFreeze = new LegacyCompatibilityFreeze(
@@ -144,10 +144,10 @@ public sealed class MigrationVerificationJobService
             context.Registry.Version,
             context.DryRun ? "proposed" : "frozen",
             legacyTables.Select(table => table.LegacyTable).ToArray(),
-            "Legacy Workspace/Card compatibility and legacy ledger tables are frozen; backfill is dry-run only until audited mapping approval.",
+            "Retired Workspace/Card API family and legacy ledger tables are frozen; backfill is dry-run only until audited mapping approval.",
             context.GeneratedBy,
             context.GeneratedAtUtc);
-        var compatibilityOk = OldApiStillCompatible(context.CompatibilitySource);
+        var oldApiRetired = OldApiRetired(context.EffectiveApiSource);
         var backfillSafe = backfillPlan.All(row =>
             row.DryRun
             && !row.WouldWriteNewBusinessFacts
@@ -156,7 +156,7 @@ public sealed class MigrationVerificationJobService
         var mappingOk = mappings.Length > 0
             && mappings.All(row => row.Source == "legacy_migration")
             && mappings.Where(row => row.RequiresReconciliationNote).All(row => !string.IsNullOrWhiteSpace(row.OriginalRefColumn));
-        var status = rollbackValidation.Valid && compatibilityOk && backfillSafe && mappingOk
+        var status = rollbackValidation.Valid && oldApiRetired && backfillSafe && mappingOk
             ? "passed"
             : "failed";
         var report = new MigrationVerificationReport(
@@ -193,7 +193,7 @@ public sealed class MigrationVerificationJobService
             releaseGateRefs,
             context.GeneratedBy,
             context.GeneratedAtUtc);
-        var invariantChecks = BuildInvariantChecks(context, report, backfillReport, compatibilityOk, mappingOk, backfillSafe, rollbackValidation.Valid);
+        var invariantChecks = BuildInvariantChecks(context, report, backfillReport, oldApiRetired, mappingOk, backfillSafe, rollbackValidation.Valid);
 
         return new MigrationVerificationRunOutput(
             context.ReportId,
@@ -210,7 +210,7 @@ public sealed class MigrationVerificationJobService
         MigrationVerificationRunContext context,
         MigrationVerificationReport report,
         LegacyBackfillReport backfillReport,
-        bool compatibilityOk,
+        bool oldApiRetired,
         bool mappingOk,
         bool backfillSafe,
         bool rollbackOk)
@@ -241,13 +241,13 @@ public sealed class MigrationVerificationJobService
                 Array.Empty<IReadOnlyDictionary<string, object>>()),
             Check(
                 context,
-                "legacy.old_api_still_compatible",
-                "Workspace/Card compatibility prepare and confirm APIs must remain present.",
+                "legacy.old_api_retired",
+                "Retired Workspace/Card prepare and confirm APIs must stay absent from effective API source.",
                 "P1",
-                compatibilityOk,
-                new Dictionary<string, object> { ["old_api_compatible"] = compatibilityOk },
-                new Dictionary<string, object> { ["old_api_compatible"] = true },
-                compatibilityOk ? Array.Empty<IReadOnlyDictionary<string, object>>() : new[] { (IReadOnlyDictionary<string, object>)new Dictionary<string, object> { ["missing"] = "workspace-card-compatibility-endpoints" } }),
+                oldApiRetired,
+                new Dictionary<string, object> { ["old_api_retired"] = oldApiRetired },
+                new Dictionary<string, object> { ["old_api_retired"] = true },
+                oldApiRetired ? Array.Empty<IReadOnlyDictionary<string, object>>() : new[] { (IReadOnlyDictionary<string, object>)new Dictionary<string, object> { ["forbidden"] = "workspace-card-compatibility-endpoints" } }),
             Check(
                 context,
                 "legacy.backfill_does_not_drop_legacy_data",
@@ -314,9 +314,11 @@ public sealed class MigrationVerificationJobService
             missing);
     }
 
-    private static bool OldApiStillCompatible(string source) =>
-        source.Contains("/api/workspaces/{workspaceId}/cards/{cardId}/prepare", StringComparison.OrdinalIgnoreCase)
-        && source.Contains("/api/workspaces/{workspaceId}/cards/{cardId}/confirm", StringComparison.OrdinalIgnoreCase);
+    private static bool OldApiRetired(string source) =>
+        !source.Contains("/api/workspaces/resource-setup/start", StringComparison.OrdinalIgnoreCase)
+        && !source.Contains("/api/workspaces/start", StringComparison.OrdinalIgnoreCase)
+        && !source.Contains("/api/workspaces/{workspaceId}/cards/{cardId}/prepare", StringComparison.OrdinalIgnoreCase)
+        && !source.Contains("/api/workspaces/{workspaceId}/cards/{cardId}/confirm", StringComparison.OrdinalIgnoreCase);
 
     private static string Sanitize(string value) =>
         new(value.Select(ch => char.IsLetterOrDigit(ch) ? ch : '-').ToArray());
@@ -442,7 +444,7 @@ public sealed record MigrationVerificationRunContext(
     string GeneratedBy,
     DateTimeOffset GeneratedAtUtc,
     string RollbackStartMigration,
-    string CompatibilitySource,
+    string EffectiveApiSource,
     LegacyMigrationRegistry Registry,
     IReadOnlyList<MigrationFileSnapshot> MigrationFiles);
 

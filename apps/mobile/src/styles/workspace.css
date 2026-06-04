@@ -339,7 +339,7 @@
 .permission-diagnostic,
 .personal-ops-panel,
 .device-trust-panel,
-.compat-card-tabs {
+.operation-step-debug-tabs {
   border: 1px solid #d9e7ee;
   border-radius: 8px;
   background: #fbfdfe;
@@ -371,7 +371,7 @@
 .failed-sync-state b,
 .personal-ops-panel b,
 .device-trust-panel b,
-.compat-card-tabs > span {
+.operation-step-debug-tabs > span {
   color: #66788c;
   font-size: 12px;
   font-weight: 850;
@@ -461,7 +461,7 @@
 
 .operation-step-rail {
   display: grid;
-  gap: 8px;
+  gap: 10px;
   margin-top: 10px;
   padding: 10px;
   border: 1px solid #d9e7ee;
@@ -469,34 +469,64 @@
   background: #fbfdfe;
 }
 
-.operation-step-current {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 6px 10px;
+.operation-step-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 10px;
   align-items: center;
+  justify-content: space-between;
 }
 
-.operation-step-current span,
-.operation-step-current strong {
+.operation-step-title,
+.operation-step-meta {
   min-width: 0;
-  overflow-wrap: anywhere;
 }
 
-.operation-step-current span {
-  grid-column: 1 / -1;
+.operation-step-title {
+  display: grid;
+  flex: 999 1 180px;
+  gap: 2px;
+}
+
+.operation-step-title span {
   color: #66788c;
   font-size: 12px;
   font-weight: 850;
 }
 
-.operation-step-current strong {
+.operation-step-title strong {
   color: #102033;
   font-size: 16px;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
 }
 
-.operation-step-current small {
-  justify-self: end;
+.operation-step-meta {
+  display: flex;
+  flex: 1 1 160px;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  justify-content: flex-end;
 }
+
+.operation-step-meta > strong {
+  display: inline-flex;
+  min-height: 28px;
+  align-items: center;
+  border: 1px solid #cbd9e1;
+  border-radius: 999px;
+  padding: 3px 9px;
+  color: #102033;
+  background: #fff;
+  font-size: 13px;
+  line-height: 1.1;
+}
+
+.operation-step-meta .status-chip {
+  font-size: 12px;
+}
+
 
 .operation-step-list {
   display: flex;
@@ -559,9 +589,22 @@
 }
 
 .operation-step-list .timeline-step {
-  flex: 0 0 138px;
-  min-height: 48px;
-  padding: 7px 9px;
+  flex: 0 0 46px;
+  min-height: 40px;
+  justify-items: center;
+  padding: 6px;
+  text-align: center;
+}
+
+.operation-step-list .timeline-step strong {
+  display: inline-grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  color: #102033;
+  background: #eef6f7;
+  font-size: 12px;
 }
 
 .app-shell.surface-pc .workitem-card-head {
@@ -582,6 +625,50 @@
   background: #ffd166;
   border-color: #ffd166;
   font-weight: 850;
+}
+
+.operation-step-list .timeline-step.status-done,
+.operation-step-list .timeline-step.status-confirmed,
+.operation-step-list .timeline-step.status-completed,
+.status-chip.status-done,
+.status-chip.status-confirmed,
+.status-chip.status-completed {
+  color: #155f43;
+  background: #e5f7ee;
+  border-color: #81c7a6;
+}
+
+.operation-step-list .timeline-step.status-ready,
+.operation-step-list .timeline-step.status-available,
+.operation-step-list .timeline-step.status-inProgress,
+.status-chip.status-ready,
+.status-chip.status-available,
+.status-chip.status-inProgress {
+  color: #6d4a00;
+  background: #fff4cf;
+  border-color: #f0bc3f;
+}
+
+.operation-step-list .timeline-step.status-notStarted,
+.status-chip.status-notStarted {
+  color: #52677b;
+  background: #f2f5f7;
+  border-color: #cfd9e1;
+}
+
+.operation-step-list .timeline-step.status-blocked,
+.status-chip.status-blocked {
+  color: #8a4d00;
+  background: #fff0d8;
+  border-color: #f1a23a;
+}
+
+.operation-step-list .timeline-step.current {
+  box-shadow: 0 0 0 2px rgba(16, 32, 51, .08) inset;
+}
+
+.operation-step-list .timeline-step strong {
+  background: rgba(255, 255, 255, .7);
 }
 
 .status-chip {
@@ -617,6 +704,15 @@
   border: 1px solid #b9ded8;
   border-radius: 8px;
   background: #f0faf7;
+}
+
+.completed-record-panel.compact {
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+}
+
+.completed-record-panel.compact .operation-actions {
+  grid-column: 1 / -1;
 }
 
 .completed-record-detail {
@@ -733,6 +829,10 @@
   gap: 8px;
 }
 
+.completed-record-grid.compact {
+  grid-template-columns: repeat(auto-fit, minmax(138px, 1fr));
+}
+
 .completed-record-grid article {
   display: grid;
   gap: 5px;
@@ -772,6 +872,19 @@
   overflow-wrap: anywhere;
 }
 
+.record-sync-warning {
+  padding: 10px;
+  border: 1px solid #ffd166;
+  border-radius: 8px;
+  color: #684200;
+  background: #fff8df;
+  font-weight: 750;
+}
+
+.completed-record-actions {
+  background: #f7fbfc;
+}
+
 .completed-record-panel span {
   color: #4f6b7c;
   font-size: 12px;
@@ -780,11 +893,20 @@
 
 .completed-record-panel h2 {
   margin: 4px 0 0;
-  font-size: 22px;
+  font-size: 18px;
 }
 
 .completed-record-panel p {
   margin: 6px 0 0;
+}
+
+.completed-record-panel .completed-correction-help {
+  color: #24525a;
+  font-weight: 750;
+}
+
+.completed-correction-actions {
+  margin-top: -2px;
 }
 
 .completed-record-panel dl {
@@ -813,7 +935,7 @@
 .permission-diagnostic,
 .personal-ops-panel,
 .device-trust-panel,
-.compat-card-tabs {
+.operation-step-debug-tabs {
   padding: 12px;
 }
 
@@ -871,7 +993,6 @@
 }
 
 .mission-stack,
-.operation-panel-page,
 .operation-panel-runtime {
   display: grid;
   gap: 10px;
@@ -926,42 +1047,10 @@
   border-radius: 12px;
 }
 
-.operation-panel-page {
-  padding: 12px;
-  border: 1px solid #d9e7ee;
-  border-radius: 8px;
-  background: #f7fbfb;
-}
-
-.operation-route-status {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-top: 7px;
-}
-
-.operation-route-status span:not(.status-chip) {
-  display: inline-flex;
-  min-height: 28px;
-  align-items: center;
-  border-radius: 999px;
-  padding: 3px 9px;
-  color: #52677b;
-  background: #fff;
-  border: 1px solid #d9e7ee;
-  font-size: 12px;
-  font-weight: 850;
-}
-
-.operation-panel-page span,
 .operation-panel-runtime span {
   color: #66788c;
   font-size: 12px;
   font-weight: 850;
-}
-
-.operation-panel-page h1 {
-  font-size: 22px;
 }
 
 .operation-panel-runtime {

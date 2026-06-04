@@ -84,7 +84,7 @@ Backend:
 
 Frontend:
 
-- `apps/mobile/src/apiClient.js`: fetches workspaces/lenses/evidence and calls `prepareCard` / `confirmCard`.
+- `apps/mobile/src/apiClient.js`: fetches workspaces/lenses/evidence and calls Operations Runtime prepare / confirm endpoints.
 - `apps/mobile/src/generated/runtimeApiPaths.js`: generated runtime path constants.
 - `apps/mobile/src/runtime/runtimeStore.js`: stores runtime projection, lens payloads, source flags, and offline fallback state.
 - `apps/mobile/src/selectors/surfaceSelectors.js`: resolves workspace/card surfaces from runtime payloads or fallback projections.
@@ -111,7 +111,7 @@ Frontend confirm chain:
 - `apps/mobile/src/eventBinder.js`: binds `[data-submit-card]` to `submitCurrentCard`.
 - `apps/mobile/src/operationController.js`: `submitCurrentCard`, confirm error handling, draft protocol creation.
 - `apps/mobile/src/operationRuntime.js`: `submitCardOperation` calls prepare, confirm, and projection/lens refresh.
-- `apps/mobile/src/apiClient.js`: `confirmCard` HTTP client.
+- `apps/mobile/src/apiClient.js`: Operations Runtime confirm HTTP client.
 - `apps/mobile/src/views/workspaceView.js`: submit button and operation surface rendering.
 
 ## Current Fake Fallback / Demo Data Suspected Locations

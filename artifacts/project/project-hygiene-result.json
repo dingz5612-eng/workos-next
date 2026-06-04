@@ -1,5 +1,5 @@
 {
-  "generatedAtUtc": "2026-06-02T14:04:58.021Z",
+  "generatedAtUtc": "2026-06-04T14:23:07.197Z",
   "generatedBy": "project-hygiene-checkers",
   "stage": "PROJECT-HYGIENE-CLEANUP",
   "status": "PROJECT_HYGIENE_CLEANUP_LOCAL_PASSED",
@@ -689,7 +689,7 @@
       "repairPartsHrStatus": "L0 Contract Preview"
     },
     "seed_data_isolation": {
-      "generatedAtUtc": "2026-06-02T07:15:05.862Z",
+      "generatedAtUtc": "2026-06-04T14:23:07.154Z",
       "generatedBy": "check-seed-data-isolation",
       "stage": "PROJECT-HYGIENE-CLEANUP",
       "status": "passed",

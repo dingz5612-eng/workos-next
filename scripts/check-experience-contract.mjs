@@ -11,6 +11,9 @@ const requiredTopLevel = [
   "TodayMissionControlIA",
   "WorkPageIA",
   "ObjectWorkspaceIA",
+  "BusinessOperationActionPaths",
+  "IssueRepairProtocol",
+  "FeedbackMessageChannel",
   "TrustedConfirmSheet",
   "ActionResultStateMatrix",
   "EvidenceTileStateMatrix",
@@ -44,6 +47,9 @@ writeReport(violations, [
   "apps/mobile/src/authController.js",
   "apps/mobile/src/navigationController.js",
   "apps/mobile/src/surfaceResolver.js",
+  "apps/mobile/src/feedbackMessages.js",
+  "apps/mobile/src/feedbackController.js",
+  "apps/mobile/src/views/feedbackView.js",
   "apps/mobile/src/views/operationPanelView.js",
   "apps/mobile/src/views/experienceComponents.js"
 ]);
@@ -101,6 +107,60 @@ function validateContract(contract, file) {
       violations.push(violation("experience_contract.evidence_blocks_confirm", `${state} evidence must block confirm.`, { state }));
     }
   }
+  const actionPaths = contract.BusinessOperationActionPaths || {};
+  for (const pathName of ["create", "view", "correct"]) {
+    if (!actionPaths[pathName]) {
+      violations.push(violation("experience_contract.business_operation_path", `BusinessOperationActionPaths missing ${pathName}.`, { pathName }));
+    }
+  }
+  if (!String(actionPaths.create || "").includes("/api/operations/work-items/{workItemId}/confirm")) {
+    violations.push(violation("experience_contract.business_operation_create_path", "Create/active business operation path must use Operations Confirm."));
+  }
+  if (!String(actionPaths.view || "").includes("readonly")) {
+    violations.push(violation("experience_contract.business_operation_view_path", "View path must be readonly."));
+  }
+  if (!String(actionPaths.view || "").includes("before any correction action")) {
+    violations.push(violation("experience_contract.business_operation_view_before_correct", "View path must happen before correction action is offered."));
+  }
+  if (!String(actionPaths.correct || "").includes("append-only correction")) {
+    violations.push(violation("experience_contract.business_operation_correct_path", "Correct path must be append-only correction, not in-place edit."));
+  }
+  const requiredActionOrder = ["create_active_work_item", "view_readonly_completed_record", "correct_append_only_from_record"];
+  if (!Array.isArray(actionPaths.order) || requiredActionOrder.some((item, index) => actionPaths.order[index] !== item)) {
+    violations.push(violation("experience_contract.business_operation_action_order", "Business operation paths must enforce create -> readonly view -> append-only correction."));
+  }
+  for (const forbidden of ["in-place edit of completed fact", "repeat confirm as modification", "page-specific update API"]) {
+    if (!Array.isArray(actionPaths.forbidden) || !actionPaths.forbidden.includes(forbidden)) {
+      violations.push(violation("experience_contract.business_operation_forbidden_path", `BusinessOperationActionPaths.forbidden missing ${forbidden}.`, { forbidden }));
+    }
+  }
+  const repair = contract.IssueRepairProtocol || {};
+  const requiredRepairOrder = ["observe_real_behavior", "classify_impact_scope", "locate_broken_layer", "align_target_flow_to_contract", "update_rule_or_model", "implement_root_cause_fix", "verify_with_tests_and_real_browser"];
+  if (!Array.isArray(repair.order) || requiredRepairOrder.some((item, index) => repair.order[index] !== item)) {
+    violations.push(violation("experience_contract.issue_repair_order", "IssueRepairProtocol must enforce observe -> classify -> locate -> align -> update rule/model -> implement -> verify."));
+  }
+  for (const forbidden of ["page-level hard-add", "old compatibility fallback", "copy-only patch without model change", "direct edit of completed business fact"]) {
+    if (!Array.isArray(repair.forbidden) || !repair.forbidden.includes(forbidden)) {
+      violations.push(violation("experience_contract.issue_repair_forbidden", `IssueRepairProtocol.forbidden missing ${forbidden}.`, { forbidden }));
+    }
+  }
+  const feedback = contract.FeedbackMessageChannel || {};
+  if (feedback.mode !== "role_or_account_addressed_collaboration_message") {
+    violations.push(violation("experience_contract.feedback_message_mode", "Feedback must be a role/account addressed collaboration message channel."));
+  }
+  if (!String(feedback.entry || "").includes("right-bottom safe floating entry")) {
+    violations.push(violation("experience_contract.feedback_entry", "Feedback entry must be a right-bottom safe floating entry."));
+  }
+  for (const required of ["view", "actorRole", "workspace", "card", "workItem", "language", "deviceSurface"]) {
+    if (!Array.isArray(feedback.requiredContext) || !feedback.requiredContext.includes(required)) {
+      violations.push(violation("experience_contract.feedback_context", `Feedback context missing ${required}.`, { required }));
+    }
+  }
+  for (const forbidden of ["static feedback placeholder only", "feedback writes business facts", "feedback uses Operations confirm", "floating entry covers submit or required fields", "feedback placed in save or submit business action row"]) {
+    if (!Array.isArray(feedback.forbidden) || !feedback.forbidden.includes(forbidden)) {
+      violations.push(violation("experience_contract.feedback_forbidden", `FeedbackMessageChannel.forbidden missing ${forbidden}.`, { forbidden }));
+    }
+  }
   return violations;
 }
 
@@ -119,6 +179,11 @@ function validateMobileSources() {
   const operationPanel = readSource("apps/mobile/src/views/operationPanelView.js");
   const home = readSource("apps/mobile/src/views/homeView.js");
   const me = readSource("apps/mobile/src/views/meView.js");
+  const feedbackView = readSource("apps/mobile/src/views/feedbackView.js");
+  const feedbackMessages = readSource("apps/mobile/src/feedbackMessages.js");
+  const feedbackController = readSource("apps/mobile/src/feedbackController.js");
+  const simpleView = readSource("apps/mobile/src/views/simpleView.js");
+  const copy = readSource("apps/mobile/src/i18n/domainCopy.js") + readSource("apps/mobile/src/i18n/shellCopy.js");
 
   if (shell.includes('nav("releaseControl"') || shell.includes('"releaseControl", "releaseControl"')) {
     violations.push(violation("experience_contract.mobile_release_nav", "Ordinary mobile bottom nav must not expose Release Control."));
@@ -155,11 +220,28 @@ function validateMobileSources() {
   if (!operationPanel.includes("operationPanelView") || !operationPanel.includes("payloadHash") || !operationPanel.includes("commandSubmissionId")) {
     violations.push(violation("experience_contract.operation_panel_route_missing", "Operation Panel route must retain debug/audit proof for prepare/confirm/trace/evidence/projection/commandSubmissionId/payloadHash."));
   }
+  if (!operationPanel.includes("viewOnly") || !workspace.includes("data-correction-work-item")) {
+    violations.push(violation("experience_contract.completed_operation_paths_missing", "Completed operation records must expose readonly view first and correction from the readonly record."));
+  }
+  if (!operationPanel.includes("completedRecordActionPolicy") || !workspace.includes("completedRecordActionPolicy")) {
+    violations.push(violation("experience_contract.completed_operation_policy_missing", "Completed operation pages must consume completedRecordActionPolicy instead of hard-adding page-local action logic."));
+  }
   if (!home.includes('tr("todayMissionControl")') || !home.includes('data-surface="today-mission-control"')) {
     violations.push(violation("experience_contract.today_mission_control_missing", "Today must render localized WorkItem Mission Control."));
   }
   if (!me.includes('tr("personalOpsCenter")') || !me.includes('data-surface="personal-ops-center"')) {
     violations.push(violation("experience_contract.personal_ops_center_missing", "Me must render localized Personal Ops Center."));
+  }
+  if (!shell.includes("feedback-fab") || !shell.includes('state.view') || !feedbackView.includes('data-surface="feedback-message-channel"')) {
+    violations.push(violation("experience_contract.feedback_message_channel_missing", "Feedback must open a dedicated collaboration message channel from the shell entry."));
+  }
+  if (!feedbackMessages.includes("feedbackRecipients") || !feedbackMessages.includes("feedbackContextFromState") || !feedbackController.includes('eventType: "feedback.message.sent"')) {
+    violations.push(violation("experience_contract.feedback_message_model_missing", "Feedback must carry recipients, context, and message sent event."));
+  }
+  for (const stale of ["feedbackRuntimeBody", "页面反馈", "static feedback placeholder"]) {
+    if (simpleView.includes(stale) || copy.includes(stale)) {
+      violations.push(violation("experience_contract.feedback_static_placeholder_retired", `Feedback must not keep retired placeholder wording or static support branches: ${stale}.`, { stale }));
+    }
   }
   if (!workspace.includes("OperationStepRail") || workspace.includes("OperationPanelView")) {
     violations.push(violation("experience_contract.workspace_compatibility_not_compact", "Workspace compatibility surface must render OperationStepRail and keep OperationPanelView on the Operations WorkItem route."));

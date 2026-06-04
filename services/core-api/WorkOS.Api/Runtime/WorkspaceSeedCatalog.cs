@@ -2,6 +2,17 @@ namespace WorkOS.Api.Runtime;
 
 internal static class WorkspaceSeedCatalog
 {
+    public static WorkspaceSeed? FindWorkspace(string? workspaceId) =>
+        All()
+            .OrderByDescending(item => item.Id.Length)
+            .FirstOrDefault(item =>
+                item.Id.Equals(workspaceId ?? string.Empty, StringComparison.OrdinalIgnoreCase) ||
+                (workspaceId ?? string.Empty).StartsWith($"{item.Id}-", StringComparison.OrdinalIgnoreCase));
+
+    public static CardSeed? FindCard(string? workspaceId, string? cardId) =>
+        FindWorkspace(workspaceId)?.Cards.FirstOrDefault(item =>
+            item.Id.Equals(cardId ?? string.Empty, StringComparison.OrdinalIgnoreCase));
+
     public static IReadOnlyList<WorkspaceSeed> All() => new[]
     {
         Workspace("W-STAY-RESOURCE", "stay", "T-ROOM-CREATE", "我要创建住宿资源", "Создать ресурсы проживания",
@@ -10,7 +21,7 @@ internal static class WorkspaceSeedCatalog
             new[]
             {
                 Card("roomSetup", "ready", "房间配置卡", "Комната", new[] { "roomId", "buildingId" }, new[] { "楼栋", "房间号", "房型", "床位数", "性别策略", "家具状态", "技术状态", "房间备注" }, new[] { "可售床位数", "已占床位数" }),
-                Card("bedSetup", "notStarted", "床位配置卡", "Койка", new[] { "bedId", "roomId" }, new[] { "所属房间", "床位号", "床位标签", "床位类型", "初始床位状态", "阻断原因" }, new[] { "床位冲突数", "可售床位数" }),
+                Card("bedSetup", "notStarted", "床位配置卡", "Койка", new[] { "bedId", "roomId" }, new[] { "所属房间", "床位号", "床位标签", "床位类型", "初始床位状态" }, new[] { "床位冲突数", "可售床位数" }),
                 Card("rateSetup", "notStarted", "价格配置卡", "Тариф", new[] { "ratePlanId", "roomId" }, new[] { "房间", "每床日价", "每床周价", "每床月价", "币种", "生效日期", "价格备注" }, new[] { "房间收益潜力", "价格版本数" }),
                 Card("roomReadiness", "notStarted", "房间准备度卡", "Готовность", new[] { "roomId", "operatorId" }, new[] { "房间", "家具状态", "技术状态", "可售状态", "准备备注" }, new[] { "可售床位数", "房间准备度" }),
                 Card("roomBlock", "notStarted", "房间床位阻断卡", "Блокировка", new[] { "blockId", "roomId", "bedId" }, new[] { "房间", "床位", "阻断范围", "阻断原因", "阻断开始时间", "预计恢复时间", "阻断备注" }, new[] { "阻断床位天数", "阻断损失估算" }),

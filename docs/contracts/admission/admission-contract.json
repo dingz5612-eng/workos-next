@@ -12,7 +12,7 @@
     },
     "confirmAllowed": {
       "type": "boolean",
-      "description": "Whether a non-production internal or compatibility confirm may proceed under current admission."
+      "description": "Whether a non-production internal Operations confirm may proceed under current admission."
     },
     "productionAllowed": {
       "type": "boolean",

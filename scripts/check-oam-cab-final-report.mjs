@@ -104,7 +104,7 @@ function checkInventory() {
     "fact_ownership_matrix",
     "compatibility_scan",
     "projection_runtime_write_usage_scan",
-    "workspace_card_write_usage_scan",
+    "retired_workspace_card_write_usage_scan",
     "runtime_documents_source_of_truth_usage_scan",
     "runtime_documents_snapshot_only_audit",
     "search_usage_inventory",
@@ -131,7 +131,7 @@ function checkInventory() {
     if (!route.classification || route.classification === "unclassified") {
       failures.push(`non-GET route is unclassified: ${route.key}`);
     }
-    if (!["primary operations confirm", "compatibility shim to Operations Confirm", "non-business write", "remove", "forbidden"].includes(route.legacyWritePathClass)) {
+    if (!["primary operations confirm", "retired", "non-business write", "remove", "forbidden"].includes(route.legacyWritePathClass)) {
       failures.push(`legacy write path has invalid class: ${route.key} -> ${route.legacyWritePathClass}`);
     }
   }
@@ -358,10 +358,13 @@ function checkComponentFiles() {
   }
 
   const compatibility = read("docs/architecture/compatibility-components.yml");
-  for (const id of ["ProjectionRuntime", "Workspace/Card prepare-confirm", "WorkspaceCardCompatibilityAdapter", "LensQueryService legacy search"]) {
+  for (const id of ["ProjectionRuntime", "LensQueryService projection search adapter", "RuntimeDocumentStorage / runtime_documents snapshot"]) {
     const block = componentBlock(compatibility, id);
     if (!block) failures.push(`compatibility-components.yml missing ${id}`);
     else checkTextClassificationBlock(block, `compatibility-components.yml ${id}`);
+  }
+  for (const retired of ["Workspace/Card prepare-confirm", "WorkspaceCardCompatibilityAdapter"]) {
+    if (componentBlock(compatibility, retired) || compatibility.includes(retired)) failures.push(`${retired} must be retired from compatibility-components.yml.`);
   }
 
   const archive = read("docs/architecture/archive-candidates.yml");
@@ -394,7 +397,7 @@ function checkArchitectureDocs() {
   const quarantine = read("docs/architecture/compatibility-quarantine-rules.md");
   for (const term of [
     "ProjectionRuntime 只能作为 compatibility facade",
-    "Workspace/Card 只能作为 compatibility wrapper",
+    "Workspace/Card 只能作为展示/投影对象，不得作为 compatibility write wrapper",
     "兼容层不得新增业务写语义",
     "兼容层不得决定 confirmAllowed",
     "兼容层不得绕过 Operations Runtime",

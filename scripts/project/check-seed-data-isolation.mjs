@@ -30,7 +30,7 @@ const workspaceInventory = parseWorkspaceSeeds(workspaceProjectionSource).map((w
 if (!selectorsSource.includes("isOrdinaryPilotQueueItem")) {
   noGoItems.push("selectWorkbenchQueue 必须调用 isOrdinaryPilotQueueItem 隔离普通移动队列。");
 }
-for (const marker of ["runtimeAudit", "engineering", "diagnostic", "fixture_replay", "legacy_compatibility"]) {
+for (const marker of ["runtimeAudit", "engineering", "diagnostic", "fixture_replay", "retired_projection_shadow"]) {
   if (!selectorsSource.includes(marker)) noGoItems.push(`普通移动队列隔离缺少 marker：${marker}`);
 }
 if (!runtimeStoreSource.includes('source: "operations-work-items"')) {
@@ -64,8 +64,8 @@ writeJson("artifacts/project/seed-data-inventory.json", {
   taskSeeds: taskInventory,
   workspaceSeeds: workspaceInventory,
   isolationPolicy: {
-    ordinaryMobileQueue: "DORM-L1/stay scoped runtime work items only; diagnostic, engineering, fixture, runtimeAudit and legacy compatibility seeds are excluded unless debugSurface=true.",
-    diagnosticSurface: "engineering diagnostic, runtime audit, rf and legacy compatibility seeds may only appear in diagnostic or migration tests.",
+    ordinaryMobileQueue: "DORM-L1/stay scoped runtime work items only; diagnostic, engineering, fixture, runtimeAudit and retired projection shadow seeds are excluded unless debugSurface=true.",
+    diagnosticSurface: "engineering diagnostic, runtime audit, rf and retired projection shadow seeds may only appear in diagnostic or migration tests.",
     productionAllowed: false
   }
 });

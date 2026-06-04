@@ -5,17 +5,17 @@ namespace WorkOS.Api.Runtime;
 
 public sealed class SearchKernelService
 {
-    private readonly LegacyWorkspaceSearchAdapter compatibilityWorkspaceSearch;
+    private readonly ProjectionWorkspaceSearchAdapter projectionWorkspaceSearch;
     private readonly WorkItemDefinitionRegistryService definitions;
     private readonly AdmissionKernelService admission;
     private readonly LanguageSearchSynonymCatalog synonyms;
 
     public SearchKernelService(
-        LegacyWorkspaceSearchAdapter compatibilityWorkspaceSearch,
+        ProjectionWorkspaceSearchAdapter projectionWorkspaceSearch,
         WorkItemDefinitionRegistryService definitions,
         AdmissionKernelService admission)
     {
-        this.compatibilityWorkspaceSearch = compatibilityWorkspaceSearch;
+        this.projectionWorkspaceSearch = projectionWorkspaceSearch;
         this.definitions = definitions;
         this.admission = admission;
         synonyms = LanguageSearchSynonymCatalog.LoadDefault();
@@ -29,7 +29,7 @@ public sealed class SearchKernelService
     {
         var resolvedLanguage = NormalizeLanguage(language);
         var queryTerms = synonyms.Expand(query, resolvedLanguage);
-        return compatibilityWorkspaceSearch.Search(runtime, query)
+        return SearchProjectionSources(runtime, query, queryTerms)
             .Select(item => BuildResult(item, queryTerms, actor, resolvedLanguage))
             .OrderByDescending(item => Convert.ToInt32(item["score"]))
             .ThenBy(item => Convert.ToString(item["resultId"]))
@@ -37,37 +37,74 @@ public sealed class SearchKernelService
             .ToArray();
     }
 
+    private IReadOnlyList<object> SearchProjectionSources(
+        ProjectionRuntime runtime,
+        string? query,
+        IReadOnlyList<string> expandedTerms)
+    {
+        var sources = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
+        foreach (var term in SearchTerms(query, expandedTerms))
+        {
+            foreach (var item in projectionWorkspaceSearch.Search(runtime, term))
+            {
+                sources.TryAdd(SearchResultKey(item), item);
+            }
+        }
+
+        return sources.Values.ToArray();
+    }
+
+    private static IReadOnlyList<string> SearchTerms(string? query, IReadOnlyList<string> expandedTerms) =>
+        new[] { query ?? string.Empty }
+            .Concat(expandedTerms)
+            .Select(term => term.Trim())
+            .Where(term => term.Length > 0)
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .Take(16)
+            .ToArray();
+
+    private static string SearchResultKey(object item)
+    {
+        var resultId = ReadString(item, "resultId");
+        if (!string.IsNullOrWhiteSpace(resultId))
+        {
+            return resultId;
+        }
+
+        return string.Join(":", ReadString(item, "workspaceId"), ReadString(item, "cardId"), ReadString(item, "resultType"));
+    }
+
     private Dictionary<string, object?> BuildResult(
-        object compatibilitySource,
+        object projectionSource,
         IReadOnlyList<string> queryTerms,
         RuntimeActorContext actor,
         string language)
     {
-        var workspaceId = ReadString(compatibilitySource, "workspaceId");
-        var cardId = ReadString(compatibilitySource, "cardId");
-        var resultId = FirstNonEmpty(ReadString(compatibilitySource, "resultId"), $"search:{workspaceId}:{cardId}");
+        var workspaceId = ReadString(projectionSource, "workspaceId");
+        var cardId = ReadString(projectionSource, "cardId");
+        var resultId = FirstNonEmpty(ReadString(projectionSource, "resultId"), $"search:{workspaceId}:{cardId}");
         var definition = definitions.ResolveByWorkspaceCard(workspaceId, cardId);
         var decision = admission.EvaluateSearch(definition, actor);
-        var existingTerms = ReadStringArray(compatibilitySource, "matchedTerms");
-        var text = SafeText(compatibilitySource);
+        var existingTerms = ReadStringArray(projectionSource, "matchedTerms");
+        var text = SafeText(projectionSource);
         var matchedTerms = existingTerms
             .Concat(queryTerms.Where(term => text.Contains(term, StringComparison.OrdinalIgnoreCase)))
             .Distinct(StringComparer.OrdinalIgnoreCase)
             .ToArray();
-        var baseScore = ReadInt(compatibilitySource, "score");
+        var baseScore = ReadInt(projectionSource, "score");
         var score = baseScore + matchedTerms.Length * 40 + (decision.ConfirmAllowed ? 25 : 0);
 
         return new Dictionary<string, object?>
         {
             ["resultId"] = resultId,
-            ["resultType"] = FirstNonEmpty(ReadString(compatibilitySource, "resultType"), "workspaceCardCompatibility"),
+            ["resultType"] = FirstNonEmpty(ReadString(projectionSource, "resultType"), "workspaceCardProjection"),
             ["workspaceId"] = workspaceId,
             ["cardId"] = cardId,
-            ["title"] = ReadValue(compatibilitySource, "title") ?? Localized("Search result"),
-            ["summary"] = ReadValue(compatibilitySource, "summary") ?? Localized(decision.Reason),
+            ["title"] = ReadValue(projectionSource, "title") ?? Localized("Search result"),
+            ["summary"] = ReadValue(projectionSource, "summary") ?? Localized(decision.Reason),
             ["matchedTerms"] = matchedTerms,
             ["score"] = score,
-            ["target"] = ReadValue(compatibilitySource, "target") ?? new Dictionary<string, object?>
+            ["target"] = ReadValue(projectionSource, "target") ?? new Dictionary<string, object?>
             {
                 ["kind"] = "workspaceCard",
                 ["workspaceId"] = workspaceId,
@@ -78,8 +115,8 @@ public sealed class SearchKernelService
             ["sourceRefs"] = new Dictionary<string, object?>
             {
                 ["source"] = "SearchKernelService",
-                ["legacyAdapter"] = "LegacyWorkspaceSearchAdapter",
-                ["compatibilityAdapter"] = "LensQueryService.Search",
+                ["inputAdapter"] = "ProjectionWorkspaceSearchAdapter",
+                ["projectionAdapter"] = "LensQueryService.Search",
                 ["workspaceId"] = workspaceId,
                 ["cardId"] = cardId,
                 ["definitionId"] = definition.DefinitionId,
@@ -172,7 +209,7 @@ public sealed class SearchKernelService
     }
 }
 
-public sealed class LegacyWorkspaceSearchAdapter
+public sealed class ProjectionWorkspaceSearchAdapter
 {
     public IReadOnlyList<object> Search(ProjectionRuntime runtime, string? query) =>
         runtime.Search(query);

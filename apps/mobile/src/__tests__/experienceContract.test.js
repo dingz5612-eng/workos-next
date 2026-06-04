@@ -111,7 +111,7 @@ describe("RT-5 Experience Contract", () => {
 
     expect(html).toContain('data-surface="action-decision-card"');
     expect(workItemCardSchema).toContain("workItemId");
-    for (const label of ["当前能否处理", "为什么不能处理", "系统证据要求", "下一步怎么做", "风险等级", "责任角色", "截止时间", "业务对象"]) {
+    for (const label of ["当前能否处理", "为什么不能处理", "需要的材料", "下一步怎么做", "风险等级", "责任角色", "截止时间", "业务对象"]) {
       expect(html).toContain(label);
     }
     expect(visibleText(html)).not.toMatch(/\b(workItemId|caseId|traceRefs|lifecycleState|ownerRole)\b/);
@@ -198,11 +198,11 @@ function ctx(actor = { role: "operator" }) {
       deviceContextIssueBody: "当前移动端读到了 PC 设备上下文，请刷新或重新登录以绑定当前移动设备。",
       canHandleNow: "当前可处理",
       cannotHandleNow: "暂不能处理",
-      missingEvidenceBlocks: "缺少可信证据，确认会被阻断",
+      missingEvidenceBlocks: "缺少材料，暂不能提交",
       noCriticalBlocker: "当前没有新的系统阻断，但关键动作仍需要人工确认。",
       decisionCanHandle: "当前能否处理",
       decisionBlocker: "为什么不能处理",
-      decisionMissingEvidence: "系统证据要求",
+      decisionMissingEvidence: "需要的材料",
       decisionNextAction: "下一步怎么做",
       decisionRisk: "风险等级",
       decisionOwner: "责任角色",
@@ -212,7 +212,7 @@ function ctx(actor = { role: "operator" }) {
       currentState: "当前状态",
       lifecycleTimeline: "生命周期时间线",
       currentWorkItem: "当前办理项",
-      requiredFields: "必填字段",
+      requiredFields: "必填项",
       requiredEvidenceCopy: "必需证据",
       businessImpact: "业务影响",
       riskAndBlockers: "风险与阻断",
@@ -227,7 +227,7 @@ function ctx(actor = { role: "operator" }) {
       trustedEvidence: "可信证据",
       evidenceMissing: "缺少证据",
       evidenceTrustedDraft: "已选择，待可信校验",
-      noRequiredEvidence: "当前动作无必需证据",
+      noRequiredEvidence: "无需补材料",
       evidenceReady: "证据已就绪",
       evidenceNeedReview: "证据待补齐或复核",
       operatorRole: "运营经办人"

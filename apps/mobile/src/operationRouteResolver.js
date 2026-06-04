@@ -1,4 +1,5 @@
 import { normalizeOperationLifecycleState } from "./operationStatus.js";
+import { workspaceWithOperationWorkItemStatuses } from "./runtime/runtimeStore.js";
 
 export function resolveSurfaceTarget(input = {}, state = {}) {
   return SurfaceRouteVM(resolveOperationPanelTarget(input, state));
@@ -43,24 +44,30 @@ export function resolvePersistedWorkItem(input = {}, state = {}) {
 export function WorkItemIdentityVM(item = {}, state = {}) {
   const workspaceId = workspaceIdOf(item);
   const cardId = cardIdOf(item);
-  const baseWorkspace = item.workspace || workspaceById(state, workspaceId);
+  const baseWorkspace = authoritativeWorkspaceForWorkItem(item, state);
   const projectedCard = baseWorkspace?.cards?.find((entry) => entry.id === cardId) || null;
+  const effectiveCard = item.card && (!cardId || item.card.id === cardId) ? item.card : null;
   const projectedLifecycle = normalizeOperationLifecycleState(projectedCard?.status, "");
   const itemLifecycle = normalizeOperationLifecycleState(item.lifecycleState || item.lifecycle_state || item.status, "");
-  const lifecycleState = isTerminalStatus(projectedLifecycle)
+  const correctionWorkItem = isCorrectionWorkItem(item);
+  const lifecycleState = correctionWorkItem && !isTerminalStatus(itemLifecycle)
+    ? normalizeOperationLifecycleState(itemLifecycle || effectiveCard?.status || "ready")
+    : isAuthoritativeProjectionStatus(projectedLifecycle)
     ? projectedLifecycle
     : isTerminalStatus(itemLifecycle)
       ? itemLifecycle
       : normalizeOperationLifecycleState(itemLifecycle || projectedCard?.status || item.card?.status);
   const card = projectedCard
-    ? { ...(item.card || {}), ...projectedCard, status: isTerminalStatus(lifecycleState) ? lifecycleState : projectedCard.status }
-    : item.card
-      ? { ...item.card, status: isTerminalStatus(lifecycleState) ? lifecycleState : item.card.status }
+    ? { ...projectedCard, ...(effectiveCard || {}), status: lifecycleState || projectedCard.status }
+    : effectiveCard
+      ? { ...effectiveCard, status: lifecycleState || effectiveCard.status }
       : null;
   const workspace = baseWorkspace && card
     ? {
       ...baseWorkspace,
-      cards: (baseWorkspace.cards || []).map((entry) => entry.id === card.id ? { ...entry, status: card.status, blockerRules: card.blockerRules || entry.blockerRules || [] } : entry)
+      cards: (baseWorkspace.cards || []).map((entry) => entry.id === card.id
+        ? { ...entry, ...card, status: card.status, blockerRules: card.blockerRules || entry.blockerRules || [] }
+        : entry)
     }
     : baseWorkspace;
   return {
@@ -117,6 +124,12 @@ function workspaceById(state, workspaceId) {
   return (state.runtimeStore?.workspaces || []).find((workspace) => workspace.id === workspaceId) || null;
 }
 
+function authoritativeWorkspaceForWorkItem(item = {}, state = {}) {
+  const workspaceId = workspaceIdOf(item);
+  const baseWorkspace = workspaceById(state, workspaceId) || item.workspace || null;
+  return workspaceWithOperationWorkItemStatuses(baseWorkspace, runtimeItems(state));
+}
+
 function workItemIdOf(item = {}) {
   return item.workItemId || item.work_item_id || "";
 }
@@ -128,6 +141,17 @@ function isPersistedWorkItemId(value) {
 
 function isTerminalStatus(status) {
   return ["done", "confirmed", "completed", "committed", "closed", "cancelled", "skipped"].includes(String(status || ""));
+}
+
+function isAuthoritativeProjectionStatus(status) {
+  return isTerminalStatus(status) || status === "blocked";
+}
+
+function isCorrectionWorkItem(item = {}) {
+  const mode = item.payload?.correctionMode || item.Payload?.correctionMode || "";
+  return mode === "append_only" ||
+    item.payload?.operationMode === "correction" ||
+    item.Payload?.operationMode === "correction";
 }
 
 function workspaceIdOf(item = {}) {

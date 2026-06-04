@@ -5,7 +5,7 @@
 A release can move beyond planning only when evidence exists for:
 
 - Operations Confirm remains the primary business write path.
-- Any Workspace/Card prepare or confirm use is compatibility-only.
+- Workspace/Card prepare or confirm write routes remain retired and absent.
 - Mobile BFF routes do not write business facts.
 - Control Plane seven objects are physically present and writable.
 - Shadow Namespace exists and is isolated from official runtime facts.
@@ -17,8 +17,8 @@ A release can move beyond planning only when evidence exists for:
 
 ## Acceptance Checklist
 
-- `docs/v5.4/operations-api-allowlist.json` contains the Operations, business
-  write, compatibility, and forbidden route patterns.
+- `docs/rules/v5.5/api-boundary.yml` contains the Operations business write,
+  empty compatibility business write category, and forbidden route patterns.
 - `scripts/check-api-boundaries.mjs --self-test` detects a simulated forbidden
   route.
 - `scripts/check-api-boundaries.mjs` passes against repository route files.

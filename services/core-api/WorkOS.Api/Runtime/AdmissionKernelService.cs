@@ -17,6 +17,7 @@ public sealed class AdmissionKernelService
     public AdmissionKernelDecision EvaluateConfirm(
         WorkItemDefinitionResolution definition,
         RuntimeActorContext actor,
+        string? workItemOwnerRole,
         string? deviceId,
         bool productionRequested)
     {
@@ -26,11 +27,11 @@ public sealed class AdmissionKernelService
             return AdmissionKernelDecision.BlockProductionOnly(
                 definition,
                 "prepare_only",
-                "Definition Registry did not resolve this WorkItem; compatibility confirm may continue for L1 observation, but production confirm is blocked.",
+                "Definition Registry did not resolve this WorkItem; Operations Runtime confirm remains prepare-only for L1 observation and production confirm is blocked.",
                 new[] { "docs/contracts/definition/workitem-definition-registry.json" },
                 new[] { "definition_not_resolved_for_production_confirm" },
                 businessLine?.Level ?? "unknown",
-                businessLine?.SurfaceMode ?? "compatibility");
+                businessLine?.SurfaceMode ?? "operations-runtime");
         }
 
         var highRisk = IsHighRisk(definition);
@@ -79,11 +80,43 @@ public sealed class AdmissionKernelService
                 new[] { "business_production_blocked", "definition_production_confirm_blocked" });
         }
 
+        var requiredOwnerRoles = RequiredOwnerRolesFor(workItemOwnerRole);
+        if (requiredOwnerRoles.Length > 0 &&
+            !requiredOwnerRoles.Contains(actor.Role, StringComparer.OrdinalIgnoreCase))
+        {
+            return AdmissionKernelDecision.Blocked(
+                definition,
+                "role_forbidden",
+                "Actor role is not allowed to confirm this WorkItem owner role.",
+                new[] { "docs/architecture/WORKOS_ENGINEERING_RULES.md", "docs/contracts/admission/admission-matrix.json" },
+                requiredCapabilities,
+                requiredDeviceTrust,
+                businessLine.Level,
+                businessLine.SurfaceMode,
+                new[] { $"admission_role_forbidden:{FirstNonEmpty(workItemOwnerRole, "unknown")}" });
+        }
+
+        var missingStandardCapabilities = requiredCapabilities
+            .Where(capability => !HasCapability(actor, capability))
+            .ToArray();
+        if (missingStandardCapabilities.Length > 0)
+        {
+            return AdmissionKernelDecision.Blocked(
+                definition,
+                "capability_forbidden",
+                "Actor capability set does not satisfy this WorkItem definition.",
+                new[] { "docs/contracts/admission/admission-matrix.json", "docs/contracts/definition/risk-policy-refs.json" },
+                requiredCapabilities,
+                requiredDeviceTrust,
+                businessLine.Level,
+                businessLine.SurfaceMode,
+                missingStandardCapabilities);
+        }
+
         if (highRisk)
         {
             var missingCapabilities = requiredCapabilities
-                .Where(capability => !actor.Capabilities.Contains(capability, StringComparer.OrdinalIgnoreCase) &&
-                                     !actor.Capabilities.Contains("runtime.high_risk.all", StringComparer.OrdinalIgnoreCase))
+                .Where(capability => !HasCapability(actor, capability))
                 .ToArray();
             var deviceMissing = string.IsNullOrWhiteSpace(deviceId);
             if (missingCapabilities.Length > 0 || deviceMissing)
@@ -179,6 +212,24 @@ public sealed class AdmissionKernelService
 
         return Array.Empty<string>();
     }
+
+    private static bool HasCapability(RuntimeActorContext actor, string capability) =>
+        actor.Capabilities.Contains(capability, StringComparer.OrdinalIgnoreCase) ||
+        actor.Capabilities.Contains("runtime.high_risk.all", StringComparer.OrdinalIgnoreCase);
+
+    private static string[] RequiredOwnerRolesFor(string? ownerRole) =>
+        ownerRole?.ToLowerInvariant() switch
+        {
+            "operator" => new[] { "operator", "frontdesk", "housekeeping", "manager", "admin", "releaseowner" },
+            "operations" => new[] { "operations", "operator", "manager", "admin", "releaseowner" },
+            "finance" => new[] { "finance", "admin", "releaseowner" },
+            "repair" => new[] { "repair", "admin", "releaseowner" },
+            null or "" => Array.Empty<string>(),
+            _ => new[] { ownerRole! }
+        };
+
+    private static string FirstNonEmpty(params string?[] values) =>
+        values.FirstOrDefault(value => !string.IsNullOrWhiteSpace(value)) ?? string.Empty;
 }
 
 public sealed record AdmissionKernelDecision(

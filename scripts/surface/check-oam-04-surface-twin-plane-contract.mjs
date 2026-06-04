@@ -67,7 +67,6 @@ const tests = [
   "tests/WorkOS.RuntimeIntegrationTests/SearchScopeRuntimeTests.cs",
   "tests/WorkOS.RuntimeIntegrationTests/LearningScopeRuntimeTests.cs",
   "tests/WorkOS.RuntimeIntegrationTests/OperationsConfirmPilotScopeTests.cs",
-  "tests/WorkOS.RuntimeIntegrationTests/WorkspaceCardCompatibilityPilotScopeTests.cs",
   "tests/WorkOS.RuntimeIntegrationTests/EvidenceAttachPilotScopeTests.cs",
   "tests/WorkOS.RuntimeIntegrationTests/FinanceMoneyCommandPilotScopeTests.cs"
 ];

@@ -2,14 +2,14 @@
   "project": "WorkOSNext / FunRide",
   "baseline": "OAM-CAB v1",
   "current_stage": "OAM-CAB v1｜Baseline Repair & Evidence Closure",
-  "generatedAt": "2026-06-03T11:46:15.268Z",
+  "generatedAt": "2026-06-04T14:23:16.685Z",
   "architecture": {
     "top_level": "OAM-ACF v8",
     "main_runtime": "Operations Runtime",
     "main_axis": "Definition -> OperationCase -> WorkItem -> CommandSubmission -> SliceCommandHandler -> DomainEvent / LedgerEntry -> ProcessManager -> Projection / Lens -> Surface",
     "main_write_path": "POST /api/operations/work-items/{workItemId}/confirm",
-    "projection_runtime": "compatibility facade",
-    "workspace_card": "compatibility wrapper",
+    "projection_runtime": "quarantined projection facade",
+    "workspace_card": "retired write path; projection display only",
     "business_production": "blocked",
     "dormitory": "L1_INTERNAL_PILOT_OBSERVATION",
     "dormitory_l2": "BLOCKED",
@@ -224,20 +224,19 @@
   },
   "route_inventory": {
     "artifact": "artifacts/oam-cab/oam-cab-v1-inventory.json",
-    "count": 68,
+    "count": 65,
     "source": "services/**/*.cs Map* route scan"
   },
   "non_get_route_classification": {
     "artifact": "artifacts/oam-cab/oam-cab-v1-inventory.json",
-    "count": 34,
+    "count": 31,
     "byClassification": {
       "securitySessionWrite": 4,
       "evidenceWrite": 4,
       "reconciliationGovernanceWrite": 8,
       "correctionCenterWrite": 4,
       "pcGovernanceWrite": 1,
-      "compatibilityBusinessWrite": 2,
-      "governanceWrite": 2,
+      "governanceWrite": 1,
       "systemProjectionWrite": 4,
       "mobileExperienceWrite": 3,
       "behaviorEventWrite": 1,
@@ -246,7 +245,7 @@
   },
   "business_write_path_inventory": {
     "artifact": "artifacts/oam-cab/oam-cab-v1-inventory.json",
-    "count": 7,
+    "count": 5,
     "routes": [
       {
         "key": "POST /api/correction-center/ledger-correction-requests",
@@ -269,16 +268,6 @@
         "legacyWritePathClass": "non-business write"
       },
       {
-        "key": "POST /api/workspaces/{workspaceId}/cards/{cardId}/prepare",
-        "classification": "compatibilityBusinessWrite",
-        "legacyWritePathClass": "compatibility shim to Operations Confirm"
-      },
-      {
-        "key": "POST /api/workspaces/{workspaceId}/cards/{cardId}/confirm",
-        "classification": "compatibilityBusinessWrite",
-        "legacyWritePathClass": "compatibility shim to Operations Confirm"
-      },
-      {
         "key": "POST /api/operations/work-items/{workItemId}/confirm",
         "classification": "operationsBusinessWrite",
         "legacyWritePathClass": "primary operations confirm"
@@ -291,20 +280,10 @@
     "allowedClasses": [
       "remove",
       "forbidden",
-      "compatibility shim to Operations Confirm",
+      "retired",
       "non-business write"
     ],
     "classified": [
-      {
-        "key": "POST /api/workspaces/{workspaceId}/cards/{cardId}/prepare",
-        "classification": "compatibilityBusinessWrite",
-        "legacyWritePathClass": "compatibility shim to Operations Confirm"
-      },
-      {
-        "key": "POST /api/workspaces/{workspaceId}/cards/{cardId}/confirm",
-        "classification": "compatibilityBusinessWrite",
-        "legacyWritePathClass": "compatibility shim to Operations Confirm"
-      },
       {
         "key": "POST /api/operations/work-items/{workItemId}/confirm",
         "classification": "operationsBusinessWrite",
@@ -687,6 +666,14 @@
   "compatibility_scan": {
     "projectionRuntime": [
       {
+        "path": "services/core-api/WorkOS.Api/Runtime/CanonicalOperationsApiService.cs",
+        "mentions": {
+          "ProjectionRuntime": 2,
+          "RuntimeAggregateLensStorage": 0,
+          "shadow_runtime": 0
+        }
+      },
+      {
         "path": "services/core-api/WorkOS.Api/Runtime/OperationsRuntimeService.cs",
         "mentions": {
           "ProjectionRuntime": 4,
@@ -761,22 +748,13 @@
       {
         "path": "services/core-api/WorkOS.Api/Runtime/SearchKernelService.cs",
         "mentions": {
-          "ProjectionRuntime": 2,
+          "ProjectionRuntime": 3,
           "RuntimeAggregateLensStorage": 0,
           "shadow_runtime": 0
         }
       }
     ],
-    "workspaceCard": [
-      {
-        "path": "services/core-api/WorkOS.Api/Runtime/WorkspaceCardCompatibilityAdapter.cs",
-        "mentions": {
-          "WorkspaceCardCompatibilityAdapter": 2,
-          "ConfirmWorkspaceCard": 1,
-          "/api/workspaces/{workspaceId}/cards/{cardId}/confirm": 0
-        }
-      }
-    ],
+    "retiredWorkspaceCardWritePath": [],
     "runtimeDocuments": [
       {
         "path": "services/core-api/WorkOS.Api/Runtime/PostgresProjectionStore.cs",
@@ -871,7 +849,7 @@
     "objectTypes": [
       "workItem",
       "operationCase",
-      "workspaceCardCompatibility",
+      "workspaceCardProjection",
       "businessObject",
       "evidence",
       "ledger",
@@ -899,12 +877,12 @@
       "language",
       "explain"
     ],
-    "legacyAdapters": [
+    "projectionAdapters": [
       {
-        "name": "LensQueryService.Search",
-        "path": "services/core-api/WorkOS.Api/Runtime/LensQueryService.cs",
-        "status": "legacy-adapter",
-        "allowed": "May provide current workspace-card compatibility results only as input to LegacyWorkspaceSearchAdapter.",
+        "name": "ProjectionWorkspaceSearchAdapter",
+        "path": "services/core-api/WorkOS.Api/Runtime/SearchKernelService.cs",
+        "status": "projection-adapter",
+        "allowed": "May provide current workspace-card projection results only as input to SearchKernelService.",
         "forbidden": "Must not be treated as final Search Kernel and must not bypass Language Kernel synonyms, permission policy, or Admission Kernel.",
         "removalCondition": "SearchKernelService owns indexing, ranking, admission, trace refs, and language explain output."
       },
@@ -978,16 +956,8 @@
         {
           "file": "services/core-api/WorkOS.Api/Program.cs",
           "method": "POST",
-          "route": "/api/workspaces/resource-setup/start",
-          "key": "POST /api/workspaces/resource-setup/start",
-          "classification": "governanceWrite",
-          "legacyWritePathClass": "non-business write"
-        },
-        {
-          "file": "services/core-api/WorkOS.Api/Program.cs",
-          "method": "POST",
-          "route": "/api/workspaces/start",
-          "key": "POST /api/workspaces/start",
+          "route": "/api/operations/workspaces/start",
+          "key": "POST /api/operations/workspaces/start",
           "classification": "governanceWrite",
           "legacyWritePathClass": "non-business write"
         }
@@ -1367,15 +1337,6 @@
         }
       },
       {
-        "path": "services/core-api/WorkOS.Api/Runtime/WorkspaceCardCompatibilityAdapter.cs",
-        "mentions": {
-          "Evidence": 2,
-          "FactTrace": 0,
-          "RuntimeProof": 0,
-          "GateResult": 0
-        }
-      },
-      {
         "path": "services/core-api/WorkOS.Api/Runtime/WorkspaceSeedCatalog.cs",
         "mentions": {
           "Evidence": 2,
@@ -1520,7 +1481,7 @@
       "command": "node scripts/check-compatibility-quarantine.mjs",
       "status": "passed",
       "reason": "available command completed successfully",
-      "evidence": "ProjectionRuntime and Workspace/Card compatibility quarantine verified.",
+      "evidence": "ProjectionRuntime quarantine and retired Workspace/Card write-route deletion verified.",
       "blocker_level": "none"
     },
     {
@@ -1705,7 +1666,7 @@
     "P1": [
       "Cookie / CSRF production browser auth baseline is not production-ready in OAM-CAB baseline repair.",
       "CommandSubmission context persisted columns are contract and migration draft only, not production-ready.",
-      "Workspace/Card remains a compatibility wrapper pending full migration to the Operations Runtime main axis.",
+      "Retired Workspace/Card write routes must remain absent while Operations Runtime owns the command axis.",
       "Control Plane / Evidence Graph is evidence-backed for OAM-CAB, but Business Production remains blocked by current-state."
     ],
     "P2": [

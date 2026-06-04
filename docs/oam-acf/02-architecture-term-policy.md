@@ -7,7 +7,8 @@ Use these terms consistently:
 - Operations Runtime axis: execution main axis.
 - `ProjectionRuntime`: current implementation facade for projection and Lens
   materialization.
-- Workspace/Card: compatibility wrapper for older prepare/confirm endpoints.
+- Workspace/Card: projection/display compatibility input only; older
+  prepare/confirm write endpoints are retired and must stay deleted.
 - `current-state`: release posture decision authority.
 
 Do not describe `ProjectionRuntime`, Workspace/Card, page models, search models,

@@ -26,6 +26,25 @@
   "TodayMissionControlIA": ["role-default-priority", "blocked-work", "projection-pending", "risk-signal"],
   "WorkPageIA": ["assigned-work-items", "SLA", "evidence-state", "trusted-confirm"],
   "ObjectWorkspaceIA": ["case-summary", "fact-trace", "lens", "audit"],
+  "BusinessOperationActionPaths": {
+    "create": "active work is created as an Operations WorkItem and confirmed only through POST /api/operations/work-items/{workItemId}/confirm",
+    "view": "completed business records must remain viewable as readonly fact trace, submitted values, evidence, audit, and next-state context before any correction action is offered",
+    "correct": "completed facts are never edited in place; modification is append-only correction through a new Operations WorkItem or Correction Center request started from the readonly record",
+    "order": ["create_active_work_item", "view_readonly_completed_record", "correct_append_only_from_record"],
+    "forbidden": ["in-place edit of completed fact", "repeat confirm as modification", "page-specific update API"]
+  },
+  "IssueRepairProtocol": {
+    "order": ["observe_real_behavior", "classify_impact_scope", "locate_broken_layer", "align_target_flow_to_contract", "update_rule_or_model", "implement_root_cause_fix", "verify_with_tests_and_real_browser"],
+    "forbidden": ["page-level hard-add", "old compatibility fallback", "copy-only patch without model change", "direct edit of completed business fact"],
+    "requiredWhen": ["duplicate UI", "blank completed record", "slow submit", "invalid business copy", "architecture mismatch", "field validation gap", "search or language mismatch"]
+  },
+  "FeedbackMessageChannel": {
+    "mode": "role_or_account_addressed_collaboration_message",
+    "entry": "right-bottom safe floating entry that opens feedback message channel without covering form fields or primary submit",
+    "requiredContext": ["view", "actorRole", "workspace", "card", "workItem", "language", "deviceSurface"],
+    "recipients": ["productDesign", "businessOwner", "systemSupport", "collaborationOwner"],
+    "forbidden": ["static feedback placeholder only", "feedback writes business facts", "feedback uses Operations confirm", "floating entry covers submit or required fields", "feedback placed in save or submit business action row"]
+  },
   "TrustedConfirmSheet": {
     "content": ["workItemId", "caseId", "requiredEvidence", "policyRef", "idempotencyKey", "risk", "nextAction"]
   },
@@ -73,7 +92,7 @@
     "Release Flight Deck": {"zh-CN": "发布飞行甲板", "ru-RU": "Пульт релиза"}
   },
   "compatibilityQuarantine": {
-    "WorkspaceCardCompatibilityAdapter": "server-side compatibility adapter only",
+    "retiredWorkspaceCardWriteAdapter": "deleted; old Workspace/Card write adapter must stay absent",
     "mobileOperationRuntime": "no prepareCard, confirmCard, or named fallback branch"
   }
 }

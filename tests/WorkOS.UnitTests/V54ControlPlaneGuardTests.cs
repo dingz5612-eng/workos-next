@@ -164,7 +164,7 @@ public sealed class V54ControlPlaneGuardTests
         Assert.IsTrue(runner.Contains("money_mismatch_red", StringComparison.Ordinal));
         Assert.IsTrue(runner.Contains("shadow-compare-semantic-rules.json", StringComparison.Ordinal));
         Assert.IsTrue(runner.Contains("CanonicalOperationsApiService.cs", StringComparison.Ordinal));
-        Assert.IsTrue(runner.Contains("WorkspaceCardCompatibilityAdapter.cs", StringComparison.Ordinal));
+        Assert.IsTrue(runner.Contains("OperationsRuntimeService.cs", StringComparison.Ordinal));
         Assert.IsTrue(database.Contains("ShadowLedgerOfficialContaminationCheck", StringComparison.Ordinal));
         Assert.IsTrue(database.Contains("ShadowDomainEventOfficialContaminationCheck", StringComparison.Ordinal));
         Assert.IsTrue(database.Contains("shadow.shadow_ledger_entry_id", StringComparison.Ordinal));
@@ -196,15 +196,15 @@ public sealed class V54ControlPlaneGuardTests
     }
 
     [TestMethod]
-    public void ShadowCompareSemanticContractCheckPassesCurrentOperationsCompatibilityFields()
+    public void ShadowCompareSemanticContractCheckPassesCurrentOperationsFields()
     {
         var rules = RunnerJson.Read<ShadowSemanticRules>(RepoPath("docs", "v5.4", "shadow-compare-semantic-rules.json"));
         var source = string.Join(
             Environment.NewLine,
             File.ReadAllText(RepoPath("services", "core-api", "WorkOS.Api", "Runtime", "CanonicalOperationsApiService.cs")),
-            File.ReadAllText(RepoPath("services", "core-api", "WorkOS.Api", "Runtime", "WorkspaceCardCompatibilityAdapter.cs")));
+            File.ReadAllText(RepoPath("services", "core-api", "WorkOS.Api", "Runtime", "OperationsRuntimeService.cs")));
 
-        var result = ShadowSemanticChecks.CompareOperationsContract(rules, source, "Operations compatibility confirm sources");
+        var result = ShadowSemanticChecks.CompareOperationsContract(rules, source, "Operations confirm sources");
 
         Assert.AreEqual("green", result.Grade);
         Assert.AreEqual(0, result.ViolationCount);

@@ -1,4 +1,4 @@
-version: 2
+version: 3
 generatedBy: oam-cab-v1-final
 components:
   - id: ProjectionRuntime
@@ -17,54 +17,6 @@ components:
     evidence:
       - docs/architecture/compatibility-quarantine-rules.md
       - scripts/check-compatibility-quarantine.mjs
-  - id: Workspace/Card prepare-confirm
-    name: Workspace/Card prepare-confirm
-    path: services/core-api/WorkOS.Api/Program.cs
-    status: compatibility
-    owner: operations-runtime
-    owner_domain: operations-runtime
-    currentUse: Compatibility entry for old card prepare and confirm routes.
-    allowed: Wrap legacy route calls and forward confirm through Operations Runtime constraints.
-    forbidden: Add new business actions, new page-specific writes, or direct fact writes.
-    removalCondition: All active surfaces use Operations WorkItem confirm and compatibility traffic is zero.
-    reason: Old Workspace/Card routes still exist as controlled wrappers while surfaces migrate to WorkItem confirm.
-    allowed_usage: Preserve registered compatibility routes only when API boundary, adapter, and runtime guards stay green.
-    forbidden_usage: Add page-specific business write APIs, direct fact writes, or production confirm semantics.
-    evidence:
-      - docs/rules/v5.5/api-boundary.yml
-      - scripts/check-runtime-write-paths.mjs
-  - id: WorkspaceCardCompatibilityAdapter
-    name: WorkspaceCardCompatibilityAdapter
-    path: services/core-api/WorkOS.Api/Runtime/WorkspaceCardCompatibilityAdapter.cs
-    status: compatibility
-    owner: operations-runtime
-    owner_domain: operations-runtime
-    currentUse: Adapter from Workspace/Card compatibility calls into canonical Operations Runtime flow.
-    allowed: Translate compatibility card requests into canonical runtime operations.
-    forbidden: Own slice business facts or bypass OperationsUnitOfWork.
-    removalCondition: Workspace/Card routes are retired after Definition Registry and Surface migration are complete.
-    reason: The adapter prevents old routes from writing facts outside CanonicalOperationsApiService.
-    allowed_usage: Forward old confirm calls through CanonicalOperationsApiService and OperationsUnitOfWork.
-    forbidden_usage: Call legacy runtime.Confirm, decide admission, or own fact writes.
-    evidence:
-      - services/core-api/WorkOS.Api/Runtime/WorkspaceCardCompatibilityAdapter.cs
-      - scripts/check-runtime-write-paths.mjs
-  - id: ActionRuntimeService legacy validation path
-    name: ActionRuntimeService legacy validation path
-    path: services/core-api/WorkOS.Api/Runtime
-    status: compatibility
-    owner: operations-runtime
-    owner_domain: operations-runtime
-    currentUse: Existing validation path for compatibility card execution.
-    allowed: Preserve current validation behavior while compatibility remains registered.
-    forbidden: Become the source of new policy, slice command, or production admission decisions.
-    removalCondition: SliceCommandHandlerRegistry and Admission Kernel cover all active work items.
-    reason: Kept only to avoid breaking registered compatibility behavior during staged migration.
-    allowed_usage: Validate legacy compatibility payloads and pass through canonical runtime boundaries.
-    forbidden_usage: Define new business policy, grant production, or replace Admission Kernel.
-    evidence:
-      - scripts/check-runtime-write-paths.mjs
-      - docs/architecture/compatibility-quarantine-rules.md
   - id: RuntimeDocumentStorage / runtime_documents snapshot
     name: RuntimeDocumentStorage / runtime_documents snapshot
     path: services/core-api/WorkOS.Api/Runtime
@@ -81,31 +33,21 @@ components:
     evidence:
       - scripts/check-fact-ownership.mjs
       - docs/rules/v5.5/fact-ownership.yml
-  - id: LensQueryService legacy search
-    name: LensQueryService legacy search
+  - id: LensQueryService projection search adapter
+    name: LensQueryService projection search adapter
     path: services/core-api/WorkOS.Api/Runtime/LensQueryService.cs
     status: compatibility
     owner: search
     owner_domain: search
-    currentUse: Existing legacy search and Lens query implementation.
+    currentUse: Projection search and Lens query implementation wrapped by Search Kernel.
     allowed: Serve as adapter or wrapped implementation under Search Kernel.
     forbidden: Create final Search Kernel behavior using only local contains matching or bypass admission.
     removalCondition: SearchKernelService owns search contract, ranking, admission, language, and permission policy.
-    reason: Legacy query source is allowed only behind SearchKernelService.
+    reason: Projection query source is allowed only behind SearchKernelService.
     allowed_usage: Provide source material to SearchKernelService with admission, permission, language, and source refs.
     forbidden_usage: Serve search results directly or bypass Admission / Permission / Language.
     evidence:
       - docs/contracts/search/search-contract.json
       - services/core-api/WorkOS.Api/Runtime/SearchKernelService.cs
       - scripts/check-search-kernel.mjs
-existingCompatibilityRoutes:
-  - route: POST /api/workspaces/{workspaceId}/cards/{cardId}/prepare
-    owner: operations-runtime
-    whyStillNeeded: Old Workspace/Card prepare surface remains in compatibility while Operation WorkItem prepare migration is staged.
-    removalCondition: All active surfaces use Operations WorkItem prepare and legacy route traffic is zero.
-    guard: scripts/check-compatibility-quarantine.mjs
-  - route: POST /api/workspaces/{workspaceId}/cards/{cardId}/confirm
-    owner: operations-runtime
-    whyStillNeeded: Old Workspace/Card confirm surface remains only as wrapper through WorkspaceCardCompatibilityAdapter -> CanonicalOperationsApiService -> OperationsUnitOfWork.
-    removalCondition: All active surfaces use Operations WorkItem confirm and legacy route traffic is zero.
-    guard: scripts/check-runtime-write-paths.mjs
+retiredCompatibilityRoutes: []

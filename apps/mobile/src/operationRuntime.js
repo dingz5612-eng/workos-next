@@ -38,7 +38,20 @@ export function createSubmissionProtocol(workspace, card, fieldValues = {}) {
   };
 }
 
-export async function submitWorkItemOperation({ workspace, card, workItemId: explicitWorkItemId, actor, language, fieldValues, evidenceIds, submissionProtocol, onProjection, onLens, onOperationWorkItems }) {
+export async function submitWorkItemOperation({
+  workspace,
+  card,
+  workItemId: explicitWorkItemId,
+  actor,
+  language,
+  fieldValues,
+  evidenceIds,
+  submissionProtocol,
+  onProjection,
+  onLens,
+  onOperationWorkItems,
+  onReadSideSynced
+}) {
   const workItemId = explicitWorkItemId || workItemIdFor(workspace, card);
   if (!workItemId) {
     return {
@@ -73,24 +86,19 @@ export async function submitWorkItemOperation({ workspace, card, workItemId: exp
   if (!isCommittedConfirm(result)) {
     return result;
   }
-  if (result.projection) onProjection(result.projection);
-  try {
-    await waitForProjectionEvents(eventIdsFromConfirmResult(result), onProjection);
-  } catch {
-    // The command is already committed. Projection pending is an ActionResult state, not submit failure.
-  }
-  try {
-    await refreshAccommodationLenses(lensIdsForWorkspace(workspace.id), onLens);
-  } catch {
-    // Lens refresh is read-side sync and must not change committed result semantics.
-  }
-  try {
-    const operationWorkItems = await fetchOperationWorkItems();
-    if (onOperationWorkItems) onOperationWorkItems(operationWorkItems);
-  } catch {
-    // WorkItem refresh is read-side sync; the committed command remains the source of truth.
-  }
-  return result;
+  if (result.projection && onProjection) onProjection(result.projection);
+  scheduleCommittedReadSideSync({
+    result,
+    workspace,
+    onProjection,
+    onLens,
+    onOperationWorkItems,
+    onReadSideSynced
+  });
+  return {
+    ...result,
+    readSideSyncStatus: "scheduled"
+  };
 }
 
 function workItemIdFor(workspace, card) {
@@ -109,8 +117,7 @@ export async function materializeEvidenceObjects({ workspace, card, actor, submi
   const drafts = Array.isArray(evidenceDrafts) ? evidenceDrafts.filter((item) => item?.requirementId) : [];
   if (!drafts.length) return [];
   const actorToken = actor?.token || "";
-  const evidenceIds = [];
-  for (const draft of drafts) {
+  return Promise.all(drafts.map(async (draft) => {
     const evidence = await createEvidenceDraft({
       workspaceId: workspace.id,
       cardId: card.id,
@@ -125,11 +132,9 @@ export async function materializeEvidenceObjects({ workspace, card, actor, submi
       contentSha256: draft.contentSha256 || stableHash(`${workspace.id}:${card.id}:${draft.requirementId}:${submissionProtocol.submissionId}`),
       sizeBytes: draft.sizeBytes || 1
     }, actorToken);
-    evidenceIds.push(attached.evidenceId);
     draft.evidenceId = attached.evidenceId;
-  }
-
-  return evidenceIds;
+    return attached.evidenceId;
+  }));
 }
 
 export async function refreshDefaultAccommodationLenses(onLens) {
@@ -149,6 +154,71 @@ function eventIdsFromConfirmResult(result) {
   if (Array.isArray(result?.resultEventIds)) return result.resultEventIds.filter(Boolean);
   const events = Array.isArray(result?.events) ? result.events : [result?.event];
   return events.map((item) => item?.eventId).filter(Boolean);
+}
+
+function scheduleCommittedReadSideSync({ result, workspace, onProjection, onLens, onOperationWorkItems, onReadSideSynced }) {
+  const run = () => {
+    void syncCommittedReadSide({
+      result,
+      workspace,
+      onProjection,
+      onLens,
+      onOperationWorkItems
+    }).then((syncResult) => {
+      if (onReadSideSynced) onReadSideSynced(syncResult);
+    }).catch(() => {
+      if (onReadSideSynced) onReadSideSynced({
+        commandSubmissionId: result?.commandSubmissionId || result?.submissionId || "",
+        projectionStatus: "pending",
+        lensStatus: "failed",
+        workItemsStatus: "failed"
+      });
+    });
+  };
+  if (typeof globalThis.setTimeout === "function") {
+    globalThis.setTimeout(run, 0);
+    return;
+  }
+  if (typeof globalThis.queueMicrotask === "function") {
+    globalThis.queueMicrotask(run);
+  } else {
+    run();
+  }
+}
+
+async function syncCommittedReadSide({ result, workspace, onProjection, onLens, onOperationWorkItems }) {
+  const syncResult = {
+    commandSubmissionId: result?.commandSubmissionId || result?.submissionId || "",
+    projectionStatus: result?.projectionStatus === "projected" ? "projected" : "pending",
+    lensStatus: "not_started",
+    workItemsStatus: "not_started"
+  };
+
+  try {
+    const projected = await waitForProjectionEvents(eventIdsFromConfirmResult(result), onProjection);
+    if (projected || result?.projectionStatus === "projected") {
+      syncResult.projectionStatus = "projected";
+    }
+  } catch {
+    syncResult.projectionStatus = "pending";
+  }
+
+  try {
+    await refreshAccommodationLenses(lensIdsForWorkspace(workspace.id), onLens);
+    syncResult.lensStatus = "refreshed";
+  } catch {
+    syncResult.lensStatus = "failed";
+  }
+
+  try {
+    const operationWorkItems = await fetchOperationWorkItems();
+    if (onOperationWorkItems) onOperationWorkItems(operationWorkItems);
+    syncResult.workItemsStatus = "refreshed";
+  } catch {
+    syncResult.workItemsStatus = "failed";
+  }
+
+  return syncResult;
 }
 
 function isCommittedConfirm(result) {

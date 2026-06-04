@@ -23,7 +23,7 @@ if (isMain && process.argv.includes("--self-test")) {
       sourceMode: "synthetic",
       syntheticDomainEventsAllowed: true,
       syntheticLedgerTransactionsAllowed: true,
-      workspaceCardCompatibilityFallbackUsed: false,
+      retiredWorkspaceCardWritePathUsed: false,
       scenarioCount: 10,
       passedCount: 10,
       apiCallsExecuted: [],
@@ -138,7 +138,7 @@ function buildAssertions(contract, proofPack, replay) {
     assertion("projection_lens_replay", dbPassed(dbAssertions, "ProjectionCheckpoint") && dbPassed(dbAssertions, "Lens") && Array.isArray(scenarios.flatMap((item) => item.lensOutputs ?? []))),
     assertion("ui_state_matches_api_result", scenarios.every((item) => item.status === "passed" && item.apiResult && typeof item.apiResult.statusCode === "number")),
     assertion("trace_api_chain", contract.requiredApiCalls.every((required) => !required.startsWith("GET /api/operations/trace/") || hasApi(apiCalls, required)) && dbPassed(dbAssertions, "FactTrace")),
-    assertion("compatibility_fallback_not_used", replay.workspaceCardCompatibilityFallbackUsed === false && !apiCalls.some((item) => String(item.path).startsWith("/api/workspaces/"))),
+    assertion("retired_workspace_card_write_path_not_used", replay.retiredWorkspaceCardWritePathUsed === false && !apiCalls.some((item) => String(item.path).startsWith("/api/workspaces/"))),
     assertion("source_mode_live_api_db", replay.sourceMode === "real_api_db" && proofPack.sourceMode === "live_api_db")
   ];
 }
@@ -156,8 +156,8 @@ export function validateRuntimeProofResult(result, contract = readJson(contractP
   if (replay.syntheticDomainEventsAllowed !== false || replay.syntheticLedgerTransactionsAllowed !== false) {
     noGoItems.push(violation("oam03.synthetic_business_fact_forbidden", "OAM-03 不允许 synthetic DomainEvent / LedgerTransaction 作为证明。"));
   }
-  if (replay.workspaceCardCompatibilityFallbackUsed === true) {
-    noGoItems.push(violation("oam03.workspace_card_fallback_used", "OAM-03 普通 confirm path 不允许 workspace/card fallback。"));
+  if (replay.retiredWorkspaceCardWritePathUsed === true) {
+    noGoItems.push(violation("oam03.retired_workspace_card_write_path_used", "OAM-03 普通 confirm path 不允许 retired workspace/card write path。"));
   }
   if ((replay.scenarioCount ?? result.scenarioCount ?? 0) < 10 || (replay.passedCount ?? result.passedCount ?? 0) < 10) {
     noGoItems.push(violation("oam03.scenario_count_failed", "OAM-03 必须证明 10 条 dorm-live 场景全部通过。"));
@@ -194,7 +194,7 @@ function summarizeReplay(replay) {
     sourceMode: replay.sourceMode,
     syntheticDomainEventsAllowed: replay.syntheticDomainEventsAllowed,
     syntheticLedgerTransactionsAllowed: replay.syntheticLedgerTransactionsAllowed,
-    workspaceCardCompatibilityFallbackUsed: replay.workspaceCardCompatibilityFallbackUsed,
+    retiredWorkspaceCardWritePathUsed: replay.retiredWorkspaceCardWritePathUsed,
     scenarioCount: replay.scenarioCount,
     passedCount: replay.passedCount,
     apiCallsExecuted: replay.apiCallsExecuted ?? [],

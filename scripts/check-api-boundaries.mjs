@@ -32,11 +32,6 @@ const allowedMobileExperienceRoutes = new Set([
   "POST /api/mobile/recent-objects"
 ]);
 
-const compatibilityRoutes = new Set([
-  "POST /api/workspaces/{workspaceId}/cards/{cardId}/prepare",
-  "POST /api/workspaces/{workspaceId}/cards/{cardId}/confirm"
-]);
-
 const nonBusinessFactTokens = [
   "PaymentConfirmed",
   "DepositConfirmed",
@@ -308,9 +303,7 @@ function validateAllowlist(allowlist) {
   }
 
   for (const { route } of routeEntries(allowlist, "compatibilityBusinessWrite")) {
-    if (!compatibilityRoutes.has(route)) {
-      violations.push(`compatibilityBusinessWrite may only contain old Workspace/Card prepare/confirm: ${route}`);
-    }
+    violations.push(`compatibilityBusinessWrite is retired and must stay empty: ${route}`);
   }
 
   for (const { route } of routeEntries(allowlist, "mobileExperienceWrite")) {
@@ -397,8 +390,8 @@ function validateRouteCategory(route, category, allowlist) {
     violations.push(`${route.file}: business write route is not the Operations Confirm route: ${route.key}`);
   }
 
-  if (category === "compatibilityBusinessWrite" && route.key.endsWith("/confirm") && entry.requiresOperationsConfirm !== true) {
-    violations.push(`${route.file}: old Workspace/Card confirm compatibility route must require Operations Confirm: ${route.key}`);
+  if (category === "compatibilityBusinessWrite") {
+    violations.push(`${route.file}: retired compatibilityBusinessWrite route must not be registered: ${route.key}`);
   }
 
   if (category === "systemProjectionWrite" && businessToken) {
@@ -585,6 +578,17 @@ function runSelfTest() {
     extractRoutes('app.MapPost("/api/operations/work-items/{workItemId}/confirm", () => Results.Ok());', "simulated-operations-confirm.cs"),
     allowlist,
     "Operations Confirm route was rejected");
+
+  expectNoViolation(
+    extractRoutes('app.MapPost("/api/operations/workspaces/start", () => Results.Ok());', "simulated-operations-workspace-start.cs"),
+    allowlist,
+    "Operations Workspace Start route was rejected");
+
+  expectViolation(
+    extractRoutes('app.MapPost("/api/workspaces/{workspaceId}/cards/{cardId}/confirm", () => Results.Ok());', "simulated-retired-workspace-card-confirm.cs"),
+    allowlist,
+    "POST /api/workspaces/{workspaceId}/cards/{cardId}/confirm",
+    "retired Workspace/Card confirm route was not rejected");
 
   expectNoViolation(
     extractRoutes('app.MapPost("/api/evidence/{evidenceId}/attachments", () => Results.Ok());', "simulated-evidence-attachment.cs"),

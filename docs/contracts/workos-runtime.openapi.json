@@ -41,24 +41,46 @@
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/LoginRequest" }
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
             }
           }
         },
         "responses": {
-          "200": { "description": "Actor session issued" },
-          "401": { "description": "Invalid credentials" }
+          "200": {
+            "description": "Actor session issued"
+          },
+          "401": {
+            "description": "Invalid credentials"
+          }
         }
       }
     },
     "/api/auth/sessions/{token}/revoke": {
       "post": {
         "parameters": [
-          { "name": "token", "in": "path", "required": true, "schema": { "type": "string" } },
-          { "name": "X-WorkOS-Actor-Id", "in": "header", "required": false, "schema": { "type": "string" } }
+          {
+            "name": "token",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-WorkOS-Actor-Id",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
         ],
         "responses": {
-          "200": { "description": "Runtime session revoked" }
+          "200": {
+            "description": "Runtime session revoked"
+          }
         }
       }
     },
@@ -68,24 +90,46 @@
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/RuntimeDeviceSessionRequest" }
+              "schema": {
+                "$ref": "#/components/schemas/RuntimeDeviceSessionRequest"
+              }
             }
           }
         },
         "responses": {
-          "200": { "description": "Device session registered" }
+          "200": {
+            "description": "Device session registered"
+          }
         }
       }
     },
     "/api/device-sessions/{deviceId}/revoke": {
       "post": {
         "parameters": [
-          { "name": "deviceId", "in": "path", "required": true, "schema": { "type": "string" } },
-          { "name": "X-WorkOS-Actor-Id", "in": "header", "required": false, "schema": { "type": "string" } }
+          {
+            "name": "deviceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-WorkOS-Actor-Id",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
         ],
         "responses": {
-          "200": { "description": "Device revoked" },
-          "404": { "description": "Device session not found" }
+          "200": {
+            "description": "Device revoked"
+          },
+          "404": {
+            "description": "Device session not found"
+          }
         }
       }
     },
@@ -108,25 +152,40 @@
     "/api/workspaces/{workspaceId}": {
       "get": {
         "parameters": [
-          { "name": "workspaceId", "in": "path", "required": true, "schema": { "type": "string" } }
+          {
+            "name": "workspaceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
         ],
         "responses": {
-          "200": { "description": "Single workspace projection" },
-          "404": { "description": "Workspace not found" }
+          "200": {
+            "description": "Single workspace projection"
+          },
+          "404": {
+            "description": "Workspace not found"
+          }
         }
       }
     },
     "/api/bootstrap": {
       "get": {
         "responses": {
-          "200": { "description": "Development bootstrap payload" }
+          "200": {
+            "description": "Development bootstrap payload"
+          }
         }
       }
     },
     "/api/work-queue": {
       "get": {
         "responses": {
-          "200": { "description": "Workbench queue lens" }
+          "200": {
+            "description": "Workbench queue lens"
+          }
         }
       }
     },
@@ -136,7 +195,9 @@
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/CreateOperationCaseRequest" }
+              "schema": {
+                "$ref": "#/components/schemas/CreateOperationCaseRequest"
+              }
             }
           }
         },
@@ -145,29 +206,44 @@
             "description": "Existing operation case projection resolved",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/OperationCase" }
+                "schema": {
+                  "$ref": "#/components/schemas/OperationCase"
+                }
               }
             }
           },
-          "422": { "description": "No persisted operation case or workspace projection could be resolved" }
+          "422": {
+            "description": "No persisted operation case or workspace projection could be resolved"
+          }
         }
       }
     },
     "/api/operations/cases/{caseId}": {
       "get": {
         "parameters": [
-          { "name": "caseId", "in": "path", "required": true, "schema": { "type": "string" } }
+          {
+            "name": "caseId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
         ],
         "responses": {
           "200": {
             "description": "Existing operation case projection",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/OperationCase" }
+                "schema": {
+                  "$ref": "#/components/schemas/OperationCase"
+                }
               }
             }
           },
-          "404": { "description": "Operation case not found" }
+          "404": {
+            "description": "Operation case not found"
+          }
         }
       }
     },
@@ -177,7 +253,9 @@
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/CreateWorkItemRequest" }
+              "schema": {
+                "$ref": "#/components/schemas/CreateWorkItemRequest"
+              }
             }
           }
         },
@@ -186,17 +264,35 @@
             "description": "Existing operation work item projection resolved",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/WorkItem" }
+                "schema": {
+                  "$ref": "#/components/schemas/WorkItem"
+                }
               }
             }
           },
-          "422": { "description": "No persisted process intent or workspace card could be resolved" }
+          "422": {
+            "description": "No persisted process intent or workspace card could be resolved"
+          }
         }
       },
       "get": {
         "parameters": [
-          { "name": "tenantId", "in": "query", "required": false, "schema": { "type": "string" } },
-          { "name": "caseId", "in": "query", "required": false, "schema": { "type": "string" } }
+          {
+            "name": "tenantId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "caseId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
         ],
         "responses": {
           "200": {
@@ -205,7 +301,9 @@
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": { "$ref": "#/components/schemas/WorkItem" }
+                  "items": {
+                    "$ref": "#/components/schemas/WorkItem"
+                  }
                 }
               }
             }
@@ -216,31 +314,51 @@
     "/api/operations/work-items/{workItemId}": {
       "get": {
         "parameters": [
-          { "name": "workItemId", "in": "path", "required": true, "schema": { "type": "string" } }
+          {
+            "name": "workItemId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
         ],
         "responses": {
           "200": {
             "description": "Operation work item projection",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/WorkItem" }
+                "schema": {
+                  "$ref": "#/components/schemas/WorkItem"
+                }
               }
             }
           },
-          "404": { "description": "Operation work item not found" }
+          "404": {
+            "description": "Operation work item not found"
+          }
         }
       }
     },
     "/api/operations/work-items/{workItemId}/prepare": {
       "post": {
         "parameters": [
-          { "name": "workItemId", "in": "path", "required": true, "schema": { "type": "string" } }
+          {
+            "name": "workItemId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
         ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/PrepareWorkItemRequest" }
+              "schema": {
+                "$ref": "#/components/schemas/PrepareWorkItemRequest"
+              }
             }
           }
         },
@@ -249,26 +367,53 @@
             "description": "Operation work item field contract prepared",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/PrepareWorkItemResult" }
+                "schema": {
+                  "$ref": "#/components/schemas/PrepareWorkItemResult"
+                }
               }
             }
           },
-          "404": { "description": "Operation work item or backing card not found" }
+          "404": {
+            "description": "Operation work item or backing card not found"
+          }
         }
       }
     },
     "/api/operations/work-items/{workItemId}/confirm": {
       "post": {
         "parameters": [
-          { "name": "workItemId", "in": "path", "required": true, "schema": { "type": "string" } },
-          { "name": "X-WorkOS-Actor-Token", "in": "header", "required": true, "schema": { "type": "string" } },
-          { "name": "X-Request-Id", "in": "header", "required": false, "schema": { "type": "string" } }
+          {
+            "name": "workItemId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-WorkOS-Actor-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Request-Id",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
         ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/ConfirmWorkItemRequest" }
+              "schema": {
+                "$ref": "#/components/schemas/ConfirmWorkItemRequest"
+              }
             }
           }
         },
@@ -277,40 +422,80 @@
             "description": "Operation confirmation committed through the runtime",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/ConfirmWorkItemResult" }
+                "schema": {
+                  "$ref": "#/components/schemas/ConfirmWorkItemResult"
+                }
               }
             }
           },
-          "400": { "description": "Malformed confirm request" },
-          "401": { "description": "Actor session missing or expired" },
-          "403": { "description": "Actor role or slice capability forbids confirmation" },
-          "422": { "description": "Business policy violation" },
-          "404": { "description": "Operation work item or backing card not found" }
+          "400": {
+            "description": "Malformed confirm request"
+          },
+          "401": {
+            "description": "Actor session missing or expired"
+          },
+          "403": {
+            "description": "Actor role or slice capability forbids confirmation"
+          },
+          "404": {
+            "description": "Operation work item or backing card not found"
+          },
+          "409": {
+            "description": "Idempotency conflict for an existing command submission",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConfirmWorkItemResult"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Business policy violation"
+          }
         }
       }
     },
     "/api/operations/trace/submissions/{submissionId}": {
       "get": {
         "parameters": [
-          { "name": "submissionId", "in": "path", "required": true, "schema": { "type": "string" } }
+          {
+            "name": "submissionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
         ],
         "responses": {
           "200": {
             "description": "Fact trace for a command submission",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/FactTrace" }
+                "schema": {
+                  "$ref": "#/components/schemas/FactTrace"
+                }
               }
             }
           },
-          "404": { "description": "Submission trace not found" }
+          "404": {
+            "description": "Submission trace not found"
+          }
         }
       }
     },
     "/api/operations/trace/work-items/{workItemId}": {
       "get": {
         "parameters": [
-          { "name": "workItemId", "in": "path", "required": true, "schema": { "type": "string" } }
+          {
+            "name": "workItemId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
         ],
         "responses": {
           "200": {
@@ -319,7 +504,9 @@
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": { "$ref": "#/components/schemas/FactTrace" }
+                  "items": {
+                    "$ref": "#/components/schemas/FactTrace"
+                  }
                 }
               }
             }
@@ -330,7 +517,14 @@
     "/api/operations/trace/cases/{caseId}": {
       "get": {
         "parameters": [
-          { "name": "caseId", "in": "path", "required": true, "schema": { "type": "string" } }
+          {
+            "name": "caseId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
         ],
         "responses": {
           "200": {
@@ -339,7 +533,9 @@
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": { "$ref": "#/components/schemas/FactTrace" }
+                  "items": {
+                    "$ref": "#/components/schemas/FactTrace"
+                  }
                 }
               }
             }
@@ -350,41 +546,65 @@
     "/api/search": {
       "get": {
         "parameters": [
-          { "name": "q", "in": "query", "required": false, "schema": { "type": "string" } }
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
         ],
         "responses": {
-          "200": { "description": "Search lens results" }
+          "200": {
+            "description": "Search lens results"
+          }
         }
       }
     },
     "/api/lenses/work-queue": {
       "get": {
         "responses": {
-          "200": { "description": "Workbench queue lens" }
+          "200": {
+            "description": "Workbench queue lens"
+          }
         }
       }
     },
     "/api/lenses/home-surface": {
       "get": {
         "responses": {
-          "200": { "description": "Runtime home surface lens" }
+          "200": {
+            "description": "Runtime home surface lens"
+          }
         }
       }
     },
     "/api/lenses/search": {
       "get": {
         "parameters": [
-          { "name": "q", "in": "query", "required": false, "schema": { "type": "string" } }
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
         ],
         "responses": {
-          "200": { "description": "Search lens results" }
+          "200": {
+            "description": "Search lens results"
+          }
         }
       }
     },
     "/api/lenses/learning-catalog": {
       "get": {
         "responses": {
-          "200": { "description": "Runtime learning catalog lens" }
+          "200": {
+            "description": "Runtime learning catalog lens"
+          }
         }
       }
     },
@@ -397,83 +617,166 @@
             "required": true,
             "schema": {
               "type": "string",
-              "enum": ["bed-inventory", "room-readiness", "rate-plan", "blocked-bed", "room-revenue-potential", "today-operations", "lead-funnel", "active-stay", "deposit-liability", "payment-risk", "stay-balance", "checkout-queue", "service-task-queue", "expense-analytics", "period-performance", "risk-command"]
+              "enum": [
+                "bed-inventory",
+                "room-readiness",
+                "rate-plan",
+                "blocked-bed",
+                "room-revenue-potential",
+                "today-operations",
+                "lead-funnel",
+                "active-stay",
+                "deposit-liability",
+                "payment-risk",
+                "stay-balance",
+                "checkout-queue",
+                "service-task-queue",
+                "expense-analytics",
+                "period-performance",
+                "risk-command"
+              ]
             }
           }
         ],
         "responses": {
-          "200": { "description": "Accommodation aggregate lens results" }
+          "200": {
+            "description": "Accommodation aggregate lens results"
+          }
         }
       }
     },
     "/api/control-plane/releases": {
       "get": {
         "responses": {
-          "200": { "description": "Release Control Center release summaries" }
+          "200": {
+            "description": "Release Control Center release summaries"
+          }
         }
       }
     },
     "/api/control-plane/releases/{releaseId}": {
       "get": {
         "parameters": [
-          { "name": "releaseId", "in": "path", "required": true, "schema": { "type": "string" } }
+          {
+            "name": "releaseId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
         ],
         "responses": {
-          "200": { "description": "Release Control Center release detail" },
-          "404": { "description": "Release manifest not found" }
+          "200": {
+            "description": "Release Control Center release detail"
+          },
+          "404": {
+            "description": "Release manifest not found"
+          }
         }
       }
     },
     "/api/control-plane/gate-results/{gateResultId}": {
       "get": {
         "parameters": [
-          { "name": "gateResultId", "in": "path", "required": true, "schema": { "type": "string" } }
+          {
+            "name": "gateResultId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
         ],
         "responses": {
-          "200": { "description": "GateResult detail" },
-          "404": { "description": "GateResult not found" }
+          "200": {
+            "description": "GateResult detail"
+          },
+          "404": {
+            "description": "GateResult not found"
+          }
         }
       }
     },
     "/api/control-plane/shadow-compare-reports/{id}": {
       "get": {
         "parameters": [
-          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
         ],
         "responses": {
-          "200": { "description": "Shadow compare report detail" },
-          "404": { "description": "Shadow compare report not found" }
+          "200": {
+            "description": "Shadow compare report detail"
+          },
+          "404": {
+            "description": "Shadow compare report not found"
+          }
         }
       }
     },
     "/api/control-plane/invariant-checks": {
       "get": {
         "parameters": [
-          { "name": "releaseId", "in": "query", "required": true, "schema": { "type": "string" } }
+          {
+            "name": "releaseId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
         ],
         "responses": {
-          "200": { "description": "Runtime invariant checks for a release" }
+          "200": {
+            "description": "Runtime invariant checks for a release"
+          }
         }
       }
     },
     "/api/control-plane/rollback-instructions/{id}": {
       "get": {
         "parameters": [
-          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
         ],
         "responses": {
-          "200": { "description": "Rollback or compensation instruction detail" },
-          "404": { "description": "Rollback instruction not found" }
+          "200": {
+            "description": "Rollback or compensation instruction detail"
+          },
+          "404": {
+            "description": "Rollback instruction not found"
+          }
         }
       }
     },
     "/api/evidence": {
       "get": {
         "parameters": [
-          { "name": "evidenceId", "in": "query", "required": false, "schema": { "type": "string" } }
+          {
+            "name": "evidenceId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
         ],
         "responses": {
-          "200": { "description": "Evidence object runtime records" }
+          "200": {
+            "description": "Evidence object runtime records"
+          }
         }
       }
     },
@@ -483,87 +786,156 @@
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/EvidenceDraftRequest" }
+              "schema": {
+                "$ref": "#/components/schemas/EvidenceDraftRequest"
+              }
             }
           }
         },
         "responses": {
-          "200": { "description": "Evidence draft created or restored" }
+          "200": {
+            "description": "Evidence draft created or restored"
+          }
         }
       }
     },
     "/api/evidence/{evidenceId}/attachments": {
       "post": {
         "parameters": [
-          { "name": "evidenceId", "in": "path", "required": true, "schema": { "type": "string" } }
+          {
+            "name": "evidenceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
         ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/EvidenceAttachmentRequest" }
+              "schema": {
+                "$ref": "#/components/schemas/EvidenceAttachmentRequest"
+              }
             }
           }
         },
         "responses": {
-          "200": { "description": "Evidence attachment metadata added" }
+          "200": {
+            "description": "Evidence attachment metadata added"
+          }
         }
       }
     },
     "/api/evidence/{evidenceId}/verify": {
       "post": {
         "parameters": [
-          { "name": "evidenceId", "in": "path", "required": true, "schema": { "type": "string" } }
+          {
+            "name": "evidenceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
         ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/EvidenceDecisionRequest" }
+              "schema": {
+                "$ref": "#/components/schemas/EvidenceDecisionRequest"
+              }
             }
           }
         },
         "responses": {
-          "200": { "description": "Evidence verified" }
+          "200": {
+            "description": "Evidence verified"
+          }
         }
       }
     },
     "/api/evidence/{evidenceId}/reject": {
       "post": {
         "parameters": [
-          { "name": "evidenceId", "in": "path", "required": true, "schema": { "type": "string" } }
+          {
+            "name": "evidenceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
         ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/EvidenceDecisionRequest" }
+              "schema": {
+                "$ref": "#/components/schemas/EvidenceDecisionRequest"
+              }
             }
           }
         },
         "responses": {
-          "200": { "description": "Evidence rejected" }
+          "200": {
+            "description": "Evidence rejected"
+          }
         }
       }
     },
     "/api/evidence/{evidenceId}/signed-url": {
       "get": {
         "parameters": [
-          { "name": "evidenceId", "in": "path", "required": true, "schema": { "type": "string" } },
-          { "name": "actorId", "in": "query", "required": true, "schema": { "type": "string" } },
-          { "name": "deviceId", "in": "query", "required": true, "schema": { "type": "string" } },
-          { "name": "ttlSeconds", "in": "query", "required": false, "schema": { "type": "integer" } }
+          {
+            "name": "evidenceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "actorId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "deviceId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "ttlSeconds",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
         ],
         "responses": {
           "200": {
             "description": "Audited expiring signed URL for evidence attachment",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/EvidenceSignedUrlResponse" }
+                "schema": {
+                  "$ref": "#/components/schemas/EvidenceSignedUrlResponse"
+                }
               }
             }
           },
-          "403": { "description": "Evidence access forbidden" }
+          "403": {
+            "description": "Evidence access forbidden"
+          }
         }
       }
     },
@@ -573,12 +945,16 @@
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "type": "object" }
+              "schema": {
+                "type": "object"
+              }
             }
           }
         },
         "responses": {
-          "200": { "description": "Preview parsed bank statement import rows" }
+          "200": {
+            "description": "Preview parsed bank statement import rows"
+          }
         }
       }
     },
@@ -588,12 +964,16 @@
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "type": "object" }
+              "schema": {
+                "type": "object"
+              }
             }
           }
         },
         "responses": {
-          "200": { "description": "Confirm bank statement import without confirming payments" }
+          "200": {
+            "description": "Confirm bank statement import without confirming payments"
+          }
         }
       }
     },
@@ -603,12 +983,16 @@
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "type": "object" }
+              "schema": {
+                "type": "object"
+              }
             }
           }
         },
         "responses": {
-          "200": { "description": "Generate reconciliation match candidates" }
+          "200": {
+            "description": "Generate reconciliation match candidates"
+          }
         }
       }
     },
@@ -618,87 +1002,149 @@
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "type": "object" }
+              "schema": {
+                "type": "object"
+              }
             }
           }
         },
         "responses": {
-          "200": { "description": "Detect reconciliation mismatches" }
+          "200": {
+            "description": "Detect reconciliation mismatches"
+          }
         }
       }
     },
     "/api/reconciliation/match-candidates": {
       "get": {
         "parameters": [
-          { "name": "tenantId", "in": "query", "required": true, "schema": { "type": "string" } },
-          { "name": "bankTransactionId", "in": "query", "required": false, "schema": { "type": "string" } }
+          {
+            "name": "tenantId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "bankTransactionId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
         ],
         "responses": {
-          "200": { "description": "List reconciliation match candidates" }
+          "200": {
+            "description": "List reconciliation match candidates"
+          }
         }
       }
     },
     "/api/reconciliation/match-candidates/{candidateId}/accept": {
       "post": {
         "parameters": [
-          { "name": "candidateId", "in": "path", "required": true, "schema": { "type": "string" } }
+          {
+            "name": "candidateId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
         ],
         "responses": {
-          "200": { "description": "Accept reconciliation candidate without direct payment confirmation" }
+          "200": {
+            "description": "Accept reconciliation candidate without direct payment confirmation"
+          }
         }
       }
     },
     "/api/reconciliation/match-candidates/{candidateId}/reject": {
       "post": {
         "parameters": [
-          { "name": "candidateId", "in": "path", "required": true, "schema": { "type": "string" } }
+          {
+            "name": "candidateId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
         ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "type": "object" }
+              "schema": {
+                "type": "object"
+              }
             }
           }
         },
         "responses": {
-          "200": { "description": "Reject reconciliation candidate" }
+          "200": {
+            "description": "Reject reconciliation candidate"
+          }
         }
       }
     },
     "/api/reconciliation/bank-transactions/{bankTransactionId}/mismatch": {
       "post": {
         "parameters": [
-          { "name": "bankTransactionId", "in": "path", "required": true, "schema": { "type": "string" } }
+          {
+            "name": "bankTransactionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
         ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "type": "object" }
+              "schema": {
+                "type": "object"
+              }
             }
           }
         },
         "responses": {
-          "200": { "description": "Mark bank transaction mismatch" }
+          "200": {
+            "description": "Mark bank transaction mismatch"
+          }
         }
       }
     },
     "/api/reconciliation/bank-transactions/{bankTransactionId}/ignore": {
       "post": {
         "parameters": [
-          { "name": "bankTransactionId", "in": "path", "required": true, "schema": { "type": "string" } }
+          {
+            "name": "bankTransactionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
         ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "type": "object" }
+              "schema": {
+                "type": "object"
+              }
             }
           }
         },
         "responses": {
-          "200": { "description": "Ignore bank transaction for reconciliation" }
+          "200": {
+            "description": "Ignore bank transaction for reconciliation"
+          }
         }
       }
     },
@@ -708,204 +1154,181 @@
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "type": "object" }
+              "schema": {
+                "type": "object"
+              }
             }
           }
         },
         "responses": {
-          "200": { "description": "Request append-only ledger correction" }
+          "200": {
+            "description": "Request append-only ledger correction"
+          }
         }
       }
     },
     "/api/correction-center/ledger-correction-requests/{correctionRequestId}/approve": {
       "post": {
         "parameters": [
-          { "name": "correctionRequestId", "in": "path", "required": true, "schema": { "type": "string" } }
+          {
+            "name": "correctionRequestId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
         ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "type": "object" }
+              "schema": {
+                "type": "object"
+              }
             }
           }
         },
         "responses": {
-          "200": { "description": "Approve ledger correction request" }
+          "200": {
+            "description": "Approve ledger correction request"
+          }
         }
       }
     },
     "/api/correction-center/ledger-correction-requests/{correctionRequestId}/reject": {
       "post": {
         "parameters": [
-          { "name": "correctionRequestId", "in": "path", "required": true, "schema": { "type": "string" } }
+          {
+            "name": "correctionRequestId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
         ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "type": "object" }
+              "schema": {
+                "type": "object"
+              }
             }
           }
         },
         "responses": {
-          "200": { "description": "Reject ledger correction request" }
+          "200": {
+            "description": "Reject ledger correction request"
+          }
         }
       }
     },
     "/api/correction-center/ledger-correction-requests/{correctionRequestId}/apply": {
       "post": {
         "parameters": [
-          { "name": "correctionRequestId", "in": "path", "required": true, "schema": { "type": "string" } }
+          {
+            "name": "correctionRequestId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
         ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "type": "object" }
+              "schema": {
+                "type": "object"
+              }
             }
           }
         },
         "responses": {
-          "200": { "description": "Apply approved ledger correction" }
-        }
-      }
-    },
-    "/api/workspaces/resource-setup/start": {
-      "post": {
-        "parameters": [
-          { "name": "X-WorkOS-Actor-Token", "in": "header", "required": true, "schema": { "type": "string" } }
-        ],
-        "responses": {
-          "200": { "description": "Started ResourceSetup workspace for dormitory internal pilot observation" },
-          "401": { "description": "Actor session missing or expired" },
-          "403": { "description": "Actor is not allowed to start this workspace" }
-        }
-      }
-    },
-    "/api/workspaces/start": {
-      "post": {
-        "parameters": [
-          { "name": "X-WorkOS-Actor-Token", "in": "header", "required": true, "schema": { "type": "string" } }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": { "$ref": "#/components/schemas/StartWorkspaceRequest" }
-            }
+          "200": {
+            "description": "Apply approved ledger correction"
           }
-        },
-        "responses": {
-          "200": { "description": "Started a runtime workspace from an allowed dormitory internal pilot template" },
-          "400": { "description": "Malformed start request" },
-          "401": { "description": "Actor session missing or expired" },
-          "403": { "description": "Actor or slice capability forbids workspace start" },
-          "404": { "description": "Workspace template not found" }
-        }
-      }
-    },
-    "/api/workspaces/{workspaceId}/cards/{cardId}/prepare": {
-      "post": {
-        "parameters": [
-          { "name": "workspaceId", "in": "path", "required": true, "schema": { "type": "string" } },
-          { "name": "cardId", "in": "path", "required": true, "schema": { "type": "string" } }
-        ],
-        "requestBody": {
-          "required": false,
-          "content": {
-            "application/json": {
-              "schema": { "$ref": "#/components/schemas/PrepareCardRequest" }
-            }
-          }
-        },
-        "responses": {
-          "200": { "description": "Prepared card" },
-          "404": { "description": "Card not found" }
         }
       }
     },
     "/api/pc-governance/exports/{exportType}": {
       "post": {
         "parameters": [
-          { "name": "exportType", "in": "path", "required": true, "schema": { "type": "string" } }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": { "$ref": "#/components/schemas/GovernanceExportRequest" }
+          {
+            "name": "exportType",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
             }
           }
-        },
-        "responses": {
-          "200": { "description": "Audited export accepted" },
-          "403": { "description": "Export blocked by capability, reason, or trusted-device policy" }
-        }
-      }
-    },
-    "/api/workspaces/{workspaceId}/cards/{cardId}/confirm": {
-      "post": {
-        "parameters": [
-          { "name": "workspaceId", "in": "path", "required": true, "schema": { "type": "string" } },
-          { "name": "cardId", "in": "path", "required": true, "schema": { "type": "string" } },
-          { "name": "X-WorkOS-Actor-Token", "in": "header", "required": true, "schema": { "type": "string" } },
-          { "name": "X-Request-Id", "in": "header", "required": false, "schema": { "type": "string" } }
         ],
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/ConfirmCardRequest" }
+              "schema": {
+                "$ref": "#/components/schemas/GovernanceExportRequest"
+              }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Business facts committed; projection may be projected, pending, or failed independently",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/ConfirmCardResponse" }
-              }
-            }
+            "description": "Audited export accepted"
           },
-          "400": { "description": "Malformed confirm request" },
-          "401": { "description": "Actor session missing or expired" },
-          "403": { "description": "AI, role, or slice capability forbids confirmation" },
-          "409": { "description": "Idempotency conflict" },
-          "422": { "description": "Business policy violation" },
-          "404": { "description": "Card not found" }
+          "403": {
+            "description": "Export blocked by capability, reason, or trusted-device policy"
+          }
         }
       }
     },
     "/api/workspaces/{workspaceId}/events": {
       "get": {
         "parameters": [
-          { "name": "workspaceId", "in": "path", "required": true, "schema": { "type": "string" } }
+          {
+            "name": "workspaceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
         ],
         "responses": {
-          "200": { "description": "Audit events for one workspace" }
+          "200": {
+            "description": "Audit events for one workspace"
+          }
         }
       }
     },
     "/api/audit-events": {
       "get": {
         "responses": {
-          "200": { "description": "Audit event journal" }
+          "200": {
+            "description": "Audit event journal"
+          }
         }
       }
     },
     "/api/outbox": {
       "get": {
         "responses": {
-          "200": { "description": "Outbox messages" }
+          "200": {
+            "description": "Outbox messages"
+          }
         }
       }
     },
     "/api/projections/process-outbox": {
       "post": {
         "responses": {
-          "200": { "description": "Processes pending projection outbox messages" }
+          "200": {
+            "description": "Processes pending projection outbox messages"
+          }
         }
       }
     },
@@ -915,12 +1338,16 @@
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/MobileDraftRequest" }
+              "schema": {
+                "$ref": "#/components/schemas/MobileDraftRequest"
+              }
             }
           }
         },
         "responses": {
-          "200": { "description": "Mobile draft state event accepted" }
+          "200": {
+            "description": "Mobile draft state event accepted"
+          }
         }
       }
     },
@@ -930,12 +1357,16 @@
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/MobileClientEventRequest" }
+              "schema": {
+                "$ref": "#/components/schemas/MobileClientEventRequest"
+              }
             }
           }
         },
         "responses": {
-          "200": { "description": "Mobile client event accepted" }
+          "200": {
+            "description": "Mobile client event accepted"
+          }
         }
       }
     },
@@ -945,19 +1376,25 @@
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/MobileRecentObjectRequest" }
+              "schema": {
+                "$ref": "#/components/schemas/MobileRecentObjectRequest"
+              }
             }
           }
         },
         "responses": {
-          "200": { "description": "Mobile recent object event accepted" }
+          "200": {
+            "description": "Mobile recent object event accepted"
+          }
         }
       }
     },
     "/api/behavior-events": {
       "get": {
         "responses": {
-          "200": { "description": "Behavior event stream" }
+          "200": {
+            "description": "Behavior event stream"
+          }
         }
       },
       "post": {
@@ -965,12 +1402,16 @@
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/BehaviorEventRequest" }
+              "schema": {
+                "$ref": "#/components/schemas/BehaviorEventRequest"
+              }
             }
           }
         },
         "responses": {
-          "200": { "description": "Behavior event accepted" }
+          "200": {
+            "description": "Behavior event accepted"
+          }
         }
       }
     },
@@ -981,9 +1422,55 @@
             "description": "Runtime observation counters",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/RuntimeObservation" }
+                "schema": {
+                  "$ref": "#/components/schemas/RuntimeObservation"
+                }
               }
             }
+          }
+        }
+      }
+    },
+    "/api/operations/workspaces/start": {
+      "post": {
+        "parameters": [
+          {
+            "name": "X-WorkOS-Actor-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StartWorkspaceRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Started an Operations Runtime workspace and created an OperationCase plus first WorkItem"
+          },
+          "400": {
+            "description": "Malformed start request"
+          },
+          "401": {
+            "description": "Actor session missing or expired"
+          },
+          "403": {
+            "description": "Actor or slice capability forbids workspace start"
+          },
+          "404": {
+            "description": "Workspace template not found"
+          },
+          "422": {
+            "description": "Operations Runtime could not create the case or work item"
           }
         }
       }
@@ -993,514 +1480,1443 @@
     "schemas": {
       "LoginRequest": {
         "type": "object",
-        "required": ["username", "password"],
+        "required": [
+          "username",
+          "password"
+        ],
         "properties": {
-          "username": { "type": "string" },
-          "password": { "type": "string" }
+          "username": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
         }
       },
       "RuntimeDeviceSessionRequest": {
         "type": "object",
-        "required": ["tenantId", "actorId", "deviceId", "deviceTrustStatus", "userAgentHash"],
+        "required": [
+          "tenantId",
+          "actorId",
+          "deviceId",
+          "deviceTrustStatus",
+          "userAgentHash"
+        ],
         "properties": {
-          "tenantId": { "type": "string" },
-          "actorId": { "type": "string" },
-          "deviceId": { "type": "string" },
-          "deviceTrustStatus": { "type": "string", "enum": ["unknown", "trusted", "untrusted", "revoked"] },
-          "userAgentHash": { "type": "string" }
+          "tenantId": {
+            "type": "string"
+          },
+          "actorId": {
+            "type": "string"
+          },
+          "deviceId": {
+            "type": "string"
+          },
+          "deviceTrustStatus": {
+            "type": "string",
+            "enum": [
+              "unknown",
+              "trusted",
+              "untrusted",
+              "revoked"
+            ]
+          },
+          "userAgentHash": {
+            "type": "string"
+          }
         }
       },
       "ConfirmCardRequest": {
         "type": "object",
-        "required": ["language", "idempotencyKey", "submissionId", "cardInstanceId", "fieldValues", "evidenceIds"],
+        "required": [
+          "language",
+          "idempotencyKey",
+          "submissionId",
+          "cardInstanceId",
+          "fieldValues",
+          "evidenceIds"
+        ],
         "properties": {
-          "language": { "type": "string" },
-          "idempotencyKey": { "type": "string" },
-          "submissionId": { "type": "string" },
-          "cardInstanceId": { "type": "string" },
-          "aggregateRef": { "type": ["string", "null"] },
+          "language": {
+            "type": "string"
+          },
+          "idempotencyKey": {
+            "type": "string"
+          },
+          "submissionId": {
+            "type": "string"
+          },
+          "cardInstanceId": {
+            "type": "string"
+          },
+          "aggregateRef": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
           "fieldValues": {
             "type": "object",
-            "additionalProperties": { "type": "string" }
+            "additionalProperties": {
+              "type": "string"
+            }
           },
           "evidenceIds": {
             "type": "array",
-            "items": { "type": "string" }
+            "items": {
+              "type": "string"
+            }
           },
-          "requestId": { "type": ["string", "null"] },
-          "deviceId": { "type": ["string", "null"] }
+          "requestId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "deviceId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
         }
       },
       "ConfirmCardResponse": {
         "type": "object",
-        "required": ["confirmed", "commitStatus", "projectionStatus", "caseId", "workItemId", "submissionId", "resultEventIds", "userMessage", "clientInstruction"],
+        "required": [
+          "confirmed",
+          "commitStatus",
+          "projectionStatus",
+          "caseId",
+          "workItemId",
+          "submissionId",
+          "resultEventIds",
+          "userMessage",
+          "clientInstruction"
+        ],
         "properties": {
-          "confirmed": { "type": "boolean", "const": true },
-          "commitStatus": { "type": "string", "enum": ["committed"] },
-          "projectionStatus": { "type": "string", "enum": ["projected", "pending", "failed"] },
-          "caseId": { "type": "string" },
-          "workItemId": { "type": "string" },
-          "submissionId": { "type": "string" },
+          "confirmed": {
+            "type": "boolean",
+            "const": true
+          },
+          "commitStatus": {
+            "type": "string",
+            "enum": [
+              "committed"
+            ]
+          },
+          "projectionStatus": {
+            "type": "string",
+            "enum": [
+              "projected",
+              "pending",
+              "failed"
+            ]
+          },
+          "caseId": {
+            "type": "string"
+          },
+          "workItemId": {
+            "type": "string"
+          },
+          "submissionId": {
+            "type": "string"
+          },
           "resultEventIds": {
             "type": "array",
-            "items": { "type": "string" }
+            "items": {
+              "type": "string"
+            }
           },
-          "userMessage": { "type": "string" },
+          "userMessage": {
+            "type": "string"
+          },
           "clientInstruction": {
             "type": "object",
-            "required": ["disableRetry", "refreshProjection", "observeOutbox"],
+            "required": [
+              "disableRetry",
+              "refreshProjection",
+              "observeOutbox"
+            ],
             "properties": {
-              "disableRetry": { "type": "boolean" },
-              "refreshProjection": { "type": "boolean" },
-              "observeOutbox": { "type": "boolean" }
+              "disableRetry": {
+                "type": "boolean"
+              },
+              "refreshProjection": {
+                "type": "boolean"
+              },
+              "observeOutbox": {
+                "type": "boolean"
+              }
             },
             "additionalProperties": true
           },
           "events": {
             "type": "array",
-            "items": { "type": "object", "additionalProperties": true }
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            }
           },
           "projection": {
             "anyOf": [
-              { "type": "object", "additionalProperties": true },
-              { "type": "null" }
+              {
+                "type": "object",
+                "additionalProperties": true
+              },
+              {
+                "type": "null"
+              }
             ]
           },
-          "source": { "type": "string", "enum": ["operations_adapter", "operations_unit_of_work"] },
-          "compatibilitySource": { "type": "string", "enum": ["workspace_card_compatibility_adapter"] },
-          "idempotencyKey": { "type": ["string", "null"] },
-          "payloadHash": { "type": ["string", "null"] },
-          "commandSubmissionId": { "type": ["string", "null"] },
-          "traceUrl": { "type": ["string", "null"] }
+          "source": {
+            "type": "string",
+            "enum": [
+              "operations_adapter",
+              "operations_unit_of_work"
+            ]
+          },
+          "idempotencyKey": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "payloadHash": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "commandSubmissionId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "traceUrl": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
         }
       },
       "StartWorkspaceRequest": {
         "type": "object",
-        "required": ["templateWorkspaceId"],
+        "required": [
+          "templateWorkspaceId"
+        ],
         "properties": {
-          "templateWorkspaceId": { "type": "string" },
-          "title": { "type": ["string", "null"] },
-          "summary": { "type": ["string", "null"] },
-          "taskId": { "type": ["string", "null"] }
+          "templateWorkspaceId": {
+            "type": "string"
+          },
+          "title": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "summary": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "taskId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
         }
       },
       "PrepareCardRequest": {
         "type": "object",
         "properties": {
-          "submissionId": { "type": ["string", "null"] },
-          "cardInstanceId": { "type": ["string", "null"] },
-          "aggregateRef": { "type": ["string", "null"] }
+          "submissionId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "cardInstanceId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "aggregateRef": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
         }
       },
       "CreateOperationCaseRequest": {
         "type": "object",
         "properties": {
-          "caseId": { "type": ["string", "null"] },
-          "tenantId": { "type": ["string", "null"] },
-          "workspaceId": { "type": ["string", "null"] }
+          "caseId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "tenantId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "workspaceId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
         }
       },
       "CreateWorkItemRequest": {
         "type": "object",
         "properties": {
-          "workItemId": { "type": ["string", "null"] },
-          "tenantId": { "type": ["string", "null"] },
-          "workItemType": { "type": ["string", "null"] },
-          "targetWorkspaceId": { "type": ["string", "null"] },
-          "workspaceId": { "type": ["string", "null"] },
-          "cardId": { "type": ["string", "null"] },
-          "ownerRole": { "type": ["string", "null"] },
+          "workItemId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "tenantId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "workItemType": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "targetWorkspaceId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "workspaceId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "cardId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "ownerRole": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
           "payload": {
-            "type": ["object", "null"],
-            "additionalProperties": { "type": "string" }
+            "type": [
+              "object",
+              "null"
+            ],
+            "additionalProperties": {
+              "type": "string"
+            }
           }
         }
       },
       "PrepareWorkItemRequest": {
         "type": "object",
         "properties": {
-          "workspaceId": { "type": ["string", "null"] },
-          "cardId": { "type": ["string", "null"] },
-          "submissionId": { "type": ["string", "null"] },
-          "cardInstanceId": { "type": ["string", "null"] },
-          "aggregateRef": { "type": ["string", "null"] }
+          "workspaceId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "cardId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "submissionId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "cardInstanceId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "aggregateRef": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
         }
       },
       "ConfirmWorkItemRequest": {
         "type": "object",
-        "required": ["idempotencyKey"],
+        "required": [
+          "language",
+          "idempotencyKey",
+          "submissionId",
+          "cardInstanceId",
+          "fieldValues",
+          "evidenceIds"
+        ],
         "properties": {
-          "workspaceId": { "type": ["string", "null"] },
-          "cardId": { "type": ["string", "null"] },
-          "language": { "type": ["string", "null"] },
-          "idempotencyKey": { "type": ["string", "null"] },
-          "submissionId": { "type": ["string", "null"] },
-          "cardInstanceId": { "type": ["string", "null"] },
-          "aggregateRef": { "type": ["string", "null"] },
+          "workspaceId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "cardId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "language": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "idempotencyKey": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "submissionId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "cardInstanceId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "aggregateRef": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
           "fieldValues": {
-            "type": ["object", "null"],
-            "additionalProperties": { "type": "string" }
+            "type": [
+              "object",
+              "null"
+            ],
+            "additionalProperties": {
+              "type": "string"
+            }
           },
           "evidenceIds": {
-            "type": ["array", "null"],
-            "items": { "type": "string" }
+            "type": [
+              "array",
+              "null"
+            ],
+            "items": {
+              "type": "string"
+            }
           },
-          "requestId": { "type": ["string", "null"] },
-          "deviceId": { "type": ["string", "null"] }
+          "requestId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "deviceId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
         }
       },
       "OperationCase": {
         "type": "object",
-        "required": ["caseId", "status", "workItemIds", "projectionStatus", "source"],
+        "required": [
+          "caseId",
+          "status",
+          "workItemIds",
+          "projectionStatus",
+          "source"
+        ],
         "properties": {
-          "caseId": { "type": "string" },
-          "status": { "type": "string" },
-          "tenantId": { "type": ["string", "null"] },
-          "workspaceId": { "type": ["string", "null"] },
+          "caseId": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "tenantId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "workspaceId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
           "workItemIds": {
             "type": "array",
-            "items": { "type": "string" }
+            "items": {
+              "type": "string"
+            }
           },
-          "projectionStatus": { "type": "string" },
-          "source": { "type": "string", "enum": ["process-work-item-intents", "workspace-projection"] }
+          "projectionStatus": {
+            "type": "string"
+          },
+          "source": {
+            "type": "string",
+            "enum": [
+              "process-work-item-intents",
+              "workspace-projection"
+            ]
+          }
         }
       },
       "WorkItem": {
         "type": "object",
-        "required": ["workItemId", "workItemType", "status", "tenantId", "workspaceId", "ownerRole", "source", "createdAtUtc", "payload"],
+        "required": [
+          "workItemId",
+          "workItemType",
+          "status",
+          "tenantId",
+          "workspaceId",
+          "ownerRole",
+          "source",
+          "createdAtUtc",
+          "payload"
+        ],
         "properties": {
-          "workItemId": { "type": "string" },
-          "workItemType": { "type": "string" },
-          "status": { "type": "string" },
-          "caseId": { "type": ["string", "null"] },
-          "tenantId": { "type": "string" },
-          "workspaceId": { "type": "string" },
-          "ownerRole": { "type": "string" },
-          "source": { "type": "string", "enum": ["process-work-item-intent", "workspace-card"] },
-          "sourceEventId": { "type": ["string", "null"] },
-          "createdAtUtc": { "type": "string", "format": "date-time" },
+          "workItemId": {
+            "type": "string"
+          },
+          "workItemType": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "caseId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "tenantId": {
+            "type": "string"
+          },
+          "workspaceId": {
+            "type": "string"
+          },
+          "ownerRole": {
+            "type": "string"
+          },
+          "source": {
+            "type": "string",
+            "enum": [
+              "process-work-item-intent",
+              "workspace-card"
+            ]
+          },
+          "sourceEventId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "createdAtUtc": {
+            "type": "string",
+            "format": "date-time"
+          },
           "payload": {
             "type": "object",
-            "additionalProperties": { "type": "string" }
+            "additionalProperties": {
+              "type": "string"
+            }
           }
         }
       },
       "PrepareWorkItemResult": {
         "type": "object",
-        "required": ["workItemId", "fieldContract", "evidenceRequirements", "availableActions", "projectionStatus", "caseId", "workspaceId", "cardId"],
+        "required": [
+          "workItemId",
+          "fieldContract",
+          "evidenceRequirements",
+          "availableActions",
+          "projectionStatus",
+          "caseId",
+          "workspaceId",
+          "cardId"
+        ],
         "properties": {
-          "workItemId": { "type": "string" },
-          "fieldContract": { "type": "object", "additionalProperties": true },
+          "workItemId": {
+            "type": "string"
+          },
+          "fieldContract": {
+            "type": "object",
+            "additionalProperties": true
+          },
           "evidenceRequirements": {
             "type": "array",
-            "items": { "type": "object", "additionalProperties": true }
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            }
           },
           "availableActions": {
             "type": "array",
-            "items": { "$ref": "#/components/schemas/OperationsAvailableAction" }
+            "items": {
+              "$ref": "#/components/schemas/OperationsAvailableAction"
+            }
           },
-          "projectionStatus": { "type": "string", "enum": ["prepared"] },
-          "caseId": { "type": "string" },
-          "workspaceId": { "type": "string" },
-          "cardId": { "type": "string" }
+          "projectionStatus": {
+            "type": "string",
+            "enum": [
+              "prepared"
+            ]
+          },
+          "caseId": {
+            "type": "string"
+          },
+          "workspaceId": {
+            "type": "string"
+          },
+          "cardId": {
+            "type": "string"
+          }
         }
       },
       "OperationsAvailableAction": {
         "type": "object",
-        "required": ["actionId", "kind", "label", "confirmationPolicy"],
+        "required": [
+          "actionId",
+          "kind",
+          "label",
+          "confirmationPolicy"
+        ],
         "properties": {
-          "actionId": { "type": "string" },
-          "kind": { "type": "string" },
-          "label": { "type": "object", "additionalProperties": { "type": "string" } },
-          "confirmationPolicy": { "type": "object", "additionalProperties": true }
+          "actionId": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "label": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "confirmationPolicy": {
+            "type": "object",
+            "additionalProperties": true
+          }
         }
       },
       "ConfirmWorkItemResult": {
         "type": "object",
-        "required": ["statusCode", "confirmed", "commitStatus", "projectionStatus", "caseId", "workItemId", "submissionId", "resultEventIds", "userMessage", "clientInstruction", "source"],
+        "required": [
+          "statusCode",
+          "confirmed",
+          "commitStatus",
+          "projectionStatus",
+          "caseId",
+          "workItemId",
+          "submissionId",
+          "resultEventIds",
+          "userMessage",
+          "clientInstruction",
+          "source"
+        ],
         "properties": {
-          "statusCode": { "type": "integer" },
-          "error": { "type": ["string", "null"] },
-          "reason": { "type": ["string", "null"] },
-          "confirmed": { "type": "boolean" },
-          "commitStatus": { "type": "string", "enum": ["committed", "not_committed"] },
-          "projectionStatus": { "type": "string", "enum": ["projected", "pending", "failed", "not_projected"] },
-          "caseId": { "type": "string" },
-          "workItemId": { "type": "string" },
-          "submissionId": { "type": "string" },
+          "statusCode": {
+            "type": "integer"
+          },
+          "error": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "reason": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "confirmed": {
+            "type": "boolean"
+          },
+          "commitStatus": {
+            "type": "string",
+            "enum": [
+              "committed",
+              "not_committed"
+            ]
+          },
+          "projectionStatus": {
+            "type": "string",
+            "enum": [
+              "projected",
+              "pending",
+              "failed",
+              "not_projected"
+            ]
+          },
+          "caseId": {
+            "type": "string"
+          },
+          "workItemId": {
+            "type": "string"
+          },
+          "submissionId": {
+            "type": "string"
+          },
           "resultEventIds": {
             "type": "array",
-            "items": { "type": "string" }
+            "items": {
+              "type": "string"
+            }
           },
-          "userMessage": { "type": "string" },
+          "userMessage": {
+            "type": "string"
+          },
           "clientInstruction": {
             "type": "object",
-            "required": ["disableRetry", "refreshProjection", "observeOutbox"],
+            "required": [
+              "disableRetry",
+              "refreshProjection",
+              "observeOutbox"
+            ],
             "properties": {
-              "disableRetry": { "type": "boolean" },
-              "refreshProjection": { "type": "boolean" },
-              "observeOutbox": { "type": "boolean" }
+              "disableRetry": {
+                "type": "boolean"
+              },
+              "refreshProjection": {
+                "type": "boolean"
+              },
+              "observeOutbox": {
+                "type": "boolean"
+              }
             },
             "additionalProperties": true
           },
-          "source": { "type": "string", "enum": ["operations_adapter", "operations_unit_of_work"] },
-          "idempotencyKey": { "type": ["string", "null"] },
-          "payloadHash": { "type": ["string", "null"] },
-          "commandSubmissionId": { "type": ["string", "null"] }
+          "source": {
+            "type": "string",
+            "enum": [
+              "operations_adapter",
+              "operations_unit_of_work"
+            ]
+          },
+          "idempotencyKey": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "payloadHash": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "commandSubmissionId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
         }
       },
       "FactTrace": {
         "type": "object",
-        "required": ["tenantId", "traceId", "caseRef", "workItemRef", "submissionRef", "domainEventRefs", "ledgerTransactionRefs", "ledgerEntryRefs", "projectionCommitRefs"],
+        "required": [
+          "tenantId",
+          "traceId",
+          "caseRef",
+          "workItemRef",
+          "submissionRef",
+          "domainEventRefs",
+          "ledgerTransactionRefs",
+          "ledgerEntryRefs",
+          "projectionCommitRefs"
+        ],
         "properties": {
-          "tenantId": { "type": "string" },
-          "traceId": { "type": "string" },
-          "caseRef": { "type": "string" },
-          "workItemRef": { "type": "string" },
-          "submissionRef": { "type": "string" },
+          "tenantId": {
+            "type": "string"
+          },
+          "traceId": {
+            "type": "string"
+          },
+          "caseRef": {
+            "type": "string"
+          },
+          "workItemRef": {
+            "type": "string"
+          },
+          "submissionRef": {
+            "type": "string"
+          },
           "domainEventRefs": {
             "type": "array",
-            "items": { "type": "string" }
+            "items": {
+              "type": "string"
+            }
           },
           "ledgerTransactionRefs": {
             "type": "array",
-            "items": { "type": "string" }
+            "items": {
+              "type": "string"
+            }
           },
           "ledgerEntryRefs": {
             "type": "array",
-            "items": { "type": "string" }
+            "items": {
+              "type": "string"
+            }
           },
           "projectionCommitRefs": {
             "type": "array",
-            "items": { "type": "string" }
+            "items": {
+              "type": "string"
+            }
           }
         }
       },
       "EvidenceDraftRequest": {
         "type": "object",
-        "required": ["workspaceId", "cardId", "cardInstanceId", "submissionId", "requirementId"],
+        "required": [
+          "workspaceId",
+          "cardId",
+          "cardInstanceId",
+          "submissionId",
+          "requirementId"
+        ],
         "properties": {
-          "workspaceId": { "type": "string" },
-          "cardId": { "type": "string" },
-          "cardInstanceId": { "type": "string" },
-          "submissionId": { "type": "string" },
-          "requirementId": { "type": "string" },
-          "evidenceId": { "type": ["string", "null"] }
+          "workspaceId": {
+            "type": "string"
+          },
+          "cardId": {
+            "type": "string"
+          },
+          "cardInstanceId": {
+            "type": "string"
+          },
+          "submissionId": {
+            "type": "string"
+          },
+          "requirementId": {
+            "type": "string"
+          },
+          "evidenceId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
         }
       },
       "EvidenceAttachmentRequest": {
         "type": "object",
-        "required": ["fileName", "contentType", "contentSha256", "sizeBytes"],
+        "required": [
+          "fileName",
+          "contentType",
+          "contentSha256",
+          "sizeBytes"
+        ],
         "properties": {
-          "fileName": { "type": "string" },
-          "contentType": { "type": "string" },
-          "contentSha256": { "type": "string" },
-          "sizeBytes": { "type": "integer" }
+          "fileName": {
+            "type": "string"
+          },
+          "contentType": {
+            "type": "string"
+          },
+          "contentSha256": {
+            "type": "string"
+          },
+          "sizeBytes": {
+            "type": "integer"
+          }
         }
       },
       "EvidenceDecisionRequest": {
         "type": "object",
-        "required": ["actorId"],
+        "required": [
+          "actorId"
+        ],
         "properties": {
-          "actorId": { "type": "string" },
-          "reason": { "type": "string" }
+          "actorId": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          }
         }
       },
       "EvidenceSignedUrlResponse": {
         "type": "object",
-        "required": ["evidenceId", "attachmentId", "url", "expiresAtUtc", "auditEventId"],
+        "required": [
+          "evidenceId",
+          "attachmentId",
+          "url",
+          "expiresAtUtc",
+          "auditEventId"
+        ],
         "properties": {
-          "evidenceId": { "type": "string" },
-          "attachmentId": { "type": "string" },
-          "url": { "type": "string" },
-          "expiresAtUtc": { "type": "string", "format": "date-time" },
-          "auditEventId": { "type": "string" }
+          "evidenceId": {
+            "type": "string"
+          },
+          "attachmentId": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          },
+          "expiresAtUtc": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "auditEventId": {
+            "type": "string"
+          }
         }
       },
       "GovernanceExportRequest": {
         "type": "object",
-        "required": ["exportType", "actorId", "actorRole", "deviceId", "deviceTrustStatus", "surface", "reason"],
+        "required": [
+          "exportType",
+          "actorId",
+          "actorRole",
+          "deviceId",
+          "deviceTrustStatus",
+          "surface",
+          "reason"
+        ],
         "properties": {
-          "exportType": { "type": "string" },
-          "actorId": { "type": "string" },
-          "actorRole": { "type": "string" },
+          "exportType": {
+            "type": "string"
+          },
+          "actorId": {
+            "type": "string"
+          },
+          "actorRole": {
+            "type": "string"
+          },
           "actorCapabilities": {
             "type": "array",
-            "items": { "type": "string" }
+            "items": {
+              "type": "string"
+            }
           },
-          "deviceId": { "type": "string" },
-          "deviceTrustStatus": { "type": "string", "enum": ["unknown", "trusted", "untrusted", "revoked"] },
-          "surface": { "type": "string" },
-          "reason": { "type": "string" },
-          "nowUtc": { "type": ["string", "null"], "format": "date-time" }
+          "deviceId": {
+            "type": "string"
+          },
+          "deviceTrustStatus": {
+            "type": "string",
+            "enum": [
+              "unknown",
+              "trusted",
+              "untrusted",
+              "revoked"
+            ]
+          },
+          "surface": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "nowUtc": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          }
         }
       },
       "RuntimeObservation": {
         "type": "object",
-        "required": ["service", "version", "persistence", "workspaceCount", "cardCount", "auditEventCount", "outboxCount", "pendingOutboxCount", "deadLetterOutboxCount", "behaviorEventCount", "projectionLagSeconds", "failedConfirmReasonDistribution", "surfaceCoverageMissingCount", "ledgerInvariantViolationCount", "schemaVersion", "activeArchitectureExceptionCount", "activeArchitectureExceptions", "productionMetrics"],
+        "required": [
+          "service",
+          "version",
+          "persistence",
+          "workspaceCount",
+          "cardCount",
+          "auditEventCount",
+          "outboxCount",
+          "pendingOutboxCount",
+          "deadLetterOutboxCount",
+          "behaviorEventCount",
+          "projectionLagSeconds",
+          "failedConfirmReasonDistribution",
+          "surfaceCoverageMissingCount",
+          "ledgerInvariantViolationCount",
+          "schemaVersion",
+          "activeArchitectureExceptionCount",
+          "activeArchitectureExceptions",
+          "productionMetrics"
+        ],
         "properties": {
-          "service": { "type": "string" },
-          "version": { "type": "string" },
-          "persistence": { "type": "string" },
-          "workspaceCount": { "type": "integer" },
-          "cardCount": { "type": "integer" },
-          "auditEventCount": { "type": "integer" },
-          "outboxCount": { "type": "integer" },
-          "pendingOutboxCount": { "type": "integer" },
-          "deadLetterOutboxCount": { "type": "integer" },
-          "behaviorEventCount": { "type": "integer" },
-          "lastAuditEventAtUtc": { "type": ["string", "null"], "format": "date-time" },
-          "projectionLagSeconds": { "type": "integer" },
+          "service": {
+            "type": "string"
+          },
+          "version": {
+            "type": "string"
+          },
+          "persistence": {
+            "type": "string"
+          },
+          "workspaceCount": {
+            "type": "integer"
+          },
+          "cardCount": {
+            "type": "integer"
+          },
+          "auditEventCount": {
+            "type": "integer"
+          },
+          "outboxCount": {
+            "type": "integer"
+          },
+          "pendingOutboxCount": {
+            "type": "integer"
+          },
+          "deadLetterOutboxCount": {
+            "type": "integer"
+          },
+          "behaviorEventCount": {
+            "type": "integer"
+          },
+          "lastAuditEventAtUtc": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "date-time"
+          },
+          "projectionLagSeconds": {
+            "type": "integer"
+          },
           "failedConfirmReasonDistribution": {
             "type": "object",
-            "additionalProperties": { "type": "integer" }
+            "additionalProperties": {
+              "type": "integer"
+            }
           },
-          "surfaceCoverageMissingCount": { "type": "integer" },
-          "ledgerInvariantViolationCount": { "type": "integer" },
-          "schemaVersion": { "type": "string" },
-          "activeArchitectureExceptionCount": { "type": "integer" },
+          "surfaceCoverageMissingCount": {
+            "type": "integer"
+          },
+          "ledgerInvariantViolationCount": {
+            "type": "integer"
+          },
+          "schemaVersion": {
+            "type": "string"
+          },
+          "activeArchitectureExceptionCount": {
+            "type": "integer"
+          },
           "activeArchitectureExceptions": {
             "type": "array",
-            "items": { "type": "string" }
+            "items": {
+              "type": "string"
+            }
           },
-          "productionMetrics": { "$ref": "#/components/schemas/ProductionObservabilityMetrics" }
+          "productionMetrics": {
+            "$ref": "#/components/schemas/ProductionObservabilityMetrics"
+          }
         }
       },
       "ProductionObservabilityMetrics": {
         "type": "object",
-        "required": ["runtime", "outbox", "projection", "mobile", "money", "deposit", "checkout", "controlPlane", "generatedAtUtc"],
+        "required": [
+          "runtime",
+          "outbox",
+          "projection",
+          "mobile",
+          "money",
+          "deposit",
+          "checkout",
+          "controlPlane",
+          "generatedAtUtc"
+        ],
         "properties": {
-          "runtime": { "$ref": "#/components/schemas/RuntimeProductionMetrics" },
-          "outbox": { "$ref": "#/components/schemas/OutboxProductionMetrics" },
-          "projection": { "$ref": "#/components/schemas/ProjectionProductionMetrics" },
-          "mobile": { "$ref": "#/components/schemas/MobileProductionMetrics" },
-          "money": { "$ref": "#/components/schemas/MoneyProductionMetrics" },
-          "deposit": { "$ref": "#/components/schemas/DepositProductionMetrics" },
-          "checkout": { "$ref": "#/components/schemas/CheckoutProductionMetrics" },
-          "controlPlane": { "$ref": "#/components/schemas/ControlPlaneProductionMetrics" },
-          "generatedAtUtc": { "type": "string", "format": "date-time" }
+          "runtime": {
+            "$ref": "#/components/schemas/RuntimeProductionMetrics"
+          },
+          "outbox": {
+            "$ref": "#/components/schemas/OutboxProductionMetrics"
+          },
+          "projection": {
+            "$ref": "#/components/schemas/ProjectionProductionMetrics"
+          },
+          "mobile": {
+            "$ref": "#/components/schemas/MobileProductionMetrics"
+          },
+          "money": {
+            "$ref": "#/components/schemas/MoneyProductionMetrics"
+          },
+          "deposit": {
+            "$ref": "#/components/schemas/DepositProductionMetrics"
+          },
+          "checkout": {
+            "$ref": "#/components/schemas/CheckoutProductionMetrics"
+          },
+          "controlPlane": {
+            "$ref": "#/components/schemas/ControlPlaneProductionMetrics"
+          },
+          "generatedAtUtc": {
+            "type": "string",
+            "format": "date-time"
+          }
         }
       },
       "RuntimeProductionMetrics": {
         "type": "object",
-        "required": ["confirmLatencyP95Ms", "confirmLatencySampleCount", "confirmFailureCount", "idempotencyConflictCount", "forbiddenCount403", "conflictCount409", "validationCount422", "handlerFailureCount"],
+        "required": [
+          "confirmLatencyP95Ms",
+          "confirmLatencySampleCount",
+          "confirmFailureCount",
+          "idempotencyConflictCount",
+          "forbiddenCount403",
+          "conflictCount409",
+          "validationCount422",
+          "handlerFailureCount"
+        ],
         "properties": {
-          "confirmLatencyP95Ms": { "type": "integer" },
-          "confirmLatencySampleCount": { "type": "integer" },
-          "confirmFailureCount": { "type": "integer" },
-          "idempotencyConflictCount": { "type": "integer" },
-          "forbiddenCount403": { "type": "integer" },
-          "conflictCount409": { "type": "integer" },
-          "validationCount422": { "type": "integer" },
-          "handlerFailureCount": { "type": "integer" }
+          "confirmLatencyP95Ms": {
+            "type": "integer"
+          },
+          "confirmLatencySampleCount": {
+            "type": "integer"
+          },
+          "confirmFailureCount": {
+            "type": "integer"
+          },
+          "idempotencyConflictCount": {
+            "type": "integer"
+          },
+          "forbiddenCount403": {
+            "type": "integer"
+          },
+          "conflictCount409": {
+            "type": "integer"
+          },
+          "validationCount422": {
+            "type": "integer"
+          },
+          "handlerFailureCount": {
+            "type": "integer"
+          }
         }
       },
       "OutboxProductionMetrics": {
         "type": "object",
-        "required": ["outboxLagSeconds", "deadLetterCount", "replayCount"],
+        "required": [
+          "outboxLagSeconds",
+          "deadLetterCount",
+          "replayCount"
+        ],
         "properties": {
-          "outboxLagSeconds": { "type": "integer" },
-          "deadLetterCount": { "type": "integer" },
-          "replayCount": { "type": "integer" }
+          "outboxLagSeconds": {
+            "type": "integer"
+          },
+          "deadLetterCount": {
+            "type": "integer"
+          },
+          "replayCount": {
+            "type": "integer"
+          }
         }
       },
       "ProjectionProductionMetrics": {
         "type": "object",
-        "required": ["projectionLagSeconds", "rebuildCount", "staleLensCount"],
+        "required": [
+          "projectionLagSeconds",
+          "rebuildCount",
+          "staleLensCount"
+        ],
         "properties": {
-          "projectionLagSeconds": { "type": "integer" },
-          "rebuildCount": { "type": "integer" },
-          "staleLensCount": { "type": "integer" }
+          "projectionLagSeconds": {
+            "type": "integer"
+          },
+          "rebuildCount": {
+            "type": "integer"
+          },
+          "staleLensCount": {
+            "type": "integer"
+          }
         }
       },
       "MobileProductionMetrics": {
         "type": "object",
-        "required": ["workItemBundleP95Ms", "workItemBundleSampleCount", "uploadFailureCount", "submitRetryCount", "draftRecoveryCount"],
+        "required": [
+          "workItemBundleP95Ms",
+          "workItemBundleSampleCount",
+          "uploadFailureCount",
+          "submitRetryCount",
+          "draftRecoveryCount"
+        ],
         "properties": {
-          "workItemBundleP95Ms": { "type": "integer" },
-          "workItemBundleSampleCount": { "type": "integer" },
-          "uploadFailureCount": { "type": "integer" },
-          "submitRetryCount": { "type": "integer" },
-          "draftRecoveryCount": { "type": "integer" }
+          "workItemBundleP95Ms": {
+            "type": "integer"
+          },
+          "workItemBundleSampleCount": {
+            "type": "integer"
+          },
+          "uploadFailureCount": {
+            "type": "integer"
+          },
+          "submitRetryCount": {
+            "type": "integer"
+          },
+          "draftRecoveryCount": {
+            "type": "integer"
+          }
         }
       },
       "MoneyProductionMetrics": {
         "type": "object",
-        "required": ["paymentConfirmWithoutEvidenceViolations", "allocationOverAvailableViolations", "stayBalanceMismatchCount"],
+        "required": [
+          "paymentConfirmWithoutEvidenceViolations",
+          "allocationOverAvailableViolations",
+          "stayBalanceMismatchCount"
+        ],
         "properties": {
-          "paymentConfirmWithoutEvidenceViolations": { "type": "integer" },
-          "allocationOverAvailableViolations": { "type": "integer" },
-          "stayBalanceMismatchCount": { "type": "integer" }
+          "paymentConfirmWithoutEvidenceViolations": {
+            "type": "integer"
+          },
+          "allocationOverAvailableViolations": {
+            "type": "integer"
+          },
+          "stayBalanceMismatchCount": {
+            "type": "integer"
+          }
         }
       },
       "DepositProductionMetrics": {
         "type": "object",
-        "required": ["availableRefundNegativeCount", "refundFailedDoubleCount", "heldAmountNegativeCount"],
+        "required": [
+          "availableRefundNegativeCount",
+          "refundFailedDoubleCount",
+          "heldAmountNegativeCount"
+        ],
         "properties": {
-          "availableRefundNegativeCount": { "type": "integer" },
-          "refundFailedDoubleCount": { "type": "integer" },
-          "heldAmountNegativeCount": { "type": "integer" }
+          "availableRefundNegativeCount": {
+            "type": "integer"
+          },
+          "refundFailedDoubleCount": {
+            "type": "integer"
+          },
+          "heldAmountNegativeCount": {
+            "type": "integer"
+          }
         }
       },
       "CheckoutProductionMetrics": {
         "type": "object",
-        "required": ["openBlockers", "duplicateBlockers", "fakeCloseAttempts"],
+        "required": [
+          "openBlockers",
+          "duplicateBlockers",
+          "fakeCloseAttempts"
+        ],
         "properties": {
-          "openBlockers": { "type": "integer" },
-          "duplicateBlockers": { "type": "integer" },
-          "fakeCloseAttempts": { "type": "integer" }
+          "openBlockers": {
+            "type": "integer"
+          },
+          "duplicateBlockers": {
+            "type": "integer"
+          },
+          "fakeCloseAttempts": {
+            "type": "integer"
+          }
         }
       },
       "ControlPlaneProductionMetrics": {
         "type": "object",
-        "required": ["gateResultStatus", "redShadowReports", "blockingInvariantFailures", "releaseState"],
+        "required": [
+          "gateResultStatus",
+          "redShadowReports",
+          "blockingInvariantFailures",
+          "releaseState"
+        ],
         "properties": {
-          "gateResultStatus": { "type": "string" },
-          "redShadowReports": { "type": "integer" },
-          "blockingInvariantFailures": { "type": "integer" },
-          "releaseState": { "type": "string" }
+          "gateResultStatus": {
+            "type": "string"
+          },
+          "redShadowReports": {
+            "type": "integer"
+          },
+          "blockingInvariantFailures": {
+            "type": "integer"
+          },
+          "releaseState": {
+            "type": "string"
+          }
         }
       },
       "BehaviorEventRequest": {
         "type": "object",
-        "required": ["eventType", "language"],
+        "required": [
+          "eventType",
+          "language"
+        ],
         "properties": {
-          "eventType": { "type": "string" },
-          "objectType": { "type": ["string", "null"] },
-          "objectId": { "type": ["string", "null"] },
-          "language": { "type": "string" },
-          "source": { "type": ["string", "null"] }
+          "eventType": {
+            "type": "string"
+          },
+          "objectType": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "objectId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "language": {
+            "type": "string"
+          },
+          "source": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
         }
       },
       "MobileDraftRequest": {
         "type": "object",
         "properties": {
-          "draftId": { "type": ["string", "null"] },
-          "workspaceId": { "type": ["string", "null"] },
-          "cardId": { "type": ["string", "null"] },
-          "language": { "type": ["string", "null"] },
-          "payloadHash": { "type": ["string", "null"] }
+          "draftId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "workspaceId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "cardId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "language": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "payloadHash": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
         }
       },
       "MobileClientEventRequest": {
         "type": "object",
-        "required": ["eventType"],
+        "required": [
+          "eventType"
+        ],
         "properties": {
-          "eventType": { "type": "string" },
-          "objectType": { "type": ["string", "null"] },
-          "objectId": { "type": ["string", "null"] },
-          "language": { "type": ["string", "null"] },
-          "source": { "type": ["string", "null"] }
+          "eventType": {
+            "type": "string"
+          },
+          "objectType": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "objectId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "language": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "source": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
         }
       },
       "MobileRecentObjectRequest": {
         "type": "object",
         "properties": {
-          "objectType": { "type": ["string", "null"] },
-          "objectId": { "type": ["string", "null"] },
-          "workspaceId": { "type": ["string", "null"] },
-          "cardId": { "type": ["string", "null"] },
-          "language": { "type": ["string", "null"] }
+          "objectType": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "objectId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "workspaceId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "cardId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "language": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
         }
       }
     }

@@ -47,17 +47,17 @@ docs/engineering/03-api-boundary-rules.md
 docs/engineering/13-release-control-plane-rules.md
 docs/engineering/15-no-go-rules.md
 docs/acceptance/12-release-go-no-go.md
-docs/v5.4/operations-api-allowlist.json
+docs/rules/v5.5/api-boundary.yml
 ```
 
 Operations API is the legal primary business write path. The old
-Workspace/Card API remains compatibility-only, and Mobile BFF routes must not
-write business facts.
+Workspace/Card prepare/confirm write routes are retired and must stay absent,
+and Mobile BFF routes must not write business facts.
 
 `ProjectionRuntime` is the current implementation facade for projection and
-Lens materialization. It is not the top-level architecture. Workspace/Card is a
-compatibility wrapper, not the new business extension point. Release posture is
-decided by `artifacts/release-state/current-state.json`.
+Lens materialization. It is not the top-level architecture. Workspace/Card is
+projection/display compatibility input only, not a business extension point.
+Release posture is decided by `artifacts/release-state/current-state.json`.
 
 `tests/WorkOS.RuntimeContractTests` is the current Runtime Smoke /
 Integration transition suite. Keep focused behavior in unit, runtime
@@ -72,7 +72,7 @@ Primary business writes must use:
 POST /api/operations/work-items/{workItemId}/confirm
 ```
 
-Compatibility writes are limited to:
+Retired Workspace/Card write routes must stay absent:
 
 ```text
 POST /api/workspaces/{workspaceId}/cards/{cardId}/prepare

@@ -33,7 +33,7 @@ describe("OAM-04B queue filter interaction contract", () => {
     expect(queueTasks(ctx.state).map((item) => item.workspaceId)).toEqual(["W-REPAIR-TICKET"]);
   });
 
-  it("clear filters resets visible results and old queueDomain compatibility still works", () => {
+  it("clear filters resets visible results and queueDomain state still works", () => {
     const ctx = queueCtx({ queueDomain: "repair", queueBadge: "mine", currentActor: { role: "manager", displayName: "经理" } });
 
     expect(queueFiltersFromState(ctx.state).domain).toBe("repair");
@@ -149,7 +149,7 @@ describe("OAM-04B queue filter interaction contract", () => {
     expect(html).not.toContain("data-mobile-work-ia");
     expect(html).not.toContain("data-queue-filter-state");
     expect(html).not.toContain('id="sort"');
-    expect(html).toContain("当前没有分配给你的真实办理任务");
+    expect(html).toContain("当前没有分配给你的待办");
   });
 });
 

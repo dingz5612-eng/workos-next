@@ -486,8 +486,7 @@ public static class ShadowCompareRunner
         var relativePaths = new[]
         {
             Path.Combine("services", "core-api", "WorkOS.Api", "Runtime", "OperationsRuntimeService.cs"),
-            Path.Combine("services", "core-api", "WorkOS.Api", "Runtime", "CanonicalOperationsApiService.cs"),
-            Path.Combine("services", "core-api", "WorkOS.Api", "Runtime", "WorkspaceCardCompatibilityAdapter.cs")
+            Path.Combine("services", "core-api", "WorkOS.Api", "Runtime", "CanonicalOperationsApiService.cs")
         };
         var sources = relativePaths
             .Select(path => ResolveRepoPath(path))
@@ -989,14 +988,11 @@ public static class ShadowSemanticChecks
         var requiredFields = (rules.OperationsContractRequiredFields is { Count: > 0 }
             ? rules.OperationsContractRequiredFields
             : new[] { "workItemId", "submissionId", "commitStatus", "projectionStatus" }).ToArray();
-        var operationMissing = requiredFields
-            .Where(field => !serviceSource.Contains(ToPascal(field), StringComparison.Ordinal))
-            .ToArray();
-        var compatibilityMissing = requiredFields
-            .Where(field => !serviceSource.Contains($"[\"{field}\"]", StringComparison.Ordinal))
-            .ToArray();
-        var missing = operationMissing.Select(field => (schema: "operations_confirm_result", field))
-            .Concat(compatibilityMissing.Select(field => (schema: "old_compatibility_response", field)))
+        var missing = requiredFields
+            .Where(field =>
+                !serviceSource.Contains(ToPascal(field), StringComparison.Ordinal) &&
+                !serviceSource.Contains($"[\"{field}\"]", StringComparison.Ordinal))
+            .Select(field => (schema: "operations_response", field))
             .ToArray();
         var samples = missing
             .Select(item => (IReadOnlyDictionary<string, object>)new Dictionary<string, object>
@@ -1015,8 +1011,7 @@ public static class ShadowSemanticChecks
             {
                 ["service_path"] = servicePath,
                 ["required_fields"] = requiredFields,
-                ["operations_confirm_result_missing"] = operationMissing,
-                ["old_compatibility_response_missing"] = compatibilityMissing
+                ["operations_response_missing"] = missing.Select(item => item.field).ToArray()
             },
             new Dictionary<string, object>
             {

@@ -4,6 +4,7 @@ import { loginView, onboardingView } from "./views/loginView.js";
 import { meView } from "./views/meView.js";
 import { searchView } from "./views/searchView.js";
 import { confirmPageView, resultView, simpleView } from "./views/simpleView.js";
+import { feedbackView } from "./views/feedbackView.js";
 import { workbenchView } from "./views/workbenchView.js";
 import { workspaceView } from "./views/workspaceView.js";
 import { operationPanelView } from "./views/operationPanelView.js";
@@ -46,7 +47,7 @@ export function routeView(ctx) {
     recentSubmissions: () => simpleView("recentSubmissions", "recentSubmissionsBody", ctx),
     recentTraces: () => simpleView("recentTraces", "recentTracesBody", ctx),
     deviceTrust: () => simpleView("deviceTrustStatus", "deviceTrustStatusBody", ctx),
-    feedback: () => simpleView("feedbackTitle", "feedbackBody", ctx),
+    feedback: feedbackView,
     confirmPage: confirmPageView,
     result: resultView,
     permissionDiagnostic: () => PermissionDiagnostic(ctx.state.permissionDiagnostic, ctx)

@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { buildOperationActionState } from "../operationActionState.js";
 import { routeView } from "../appRouter.js";
+import { primaryActionButton } from "../views/workspaceView.js";
 import { createSurfaceCtx, runtimeStore, visibleText } from "./surfaceContractTestHelpers.js";
 
 describe("OAM-04B primary action state machine", () => {
@@ -27,7 +28,7 @@ describe("OAM-04B primary action state machine", () => {
   });
 
   it.each([
-    ["blocked", "查看阻断处理说明"],
+    ["blocked", "查看不能提交原因"],
     ["notStarted", "请先完成上一张卡"],
     ["done", "已完成"]
   ])("maps %s card state to the primary CTA", (status, label) => {
@@ -40,6 +41,17 @@ describe("OAM-04B primary action state machine", () => {
 
     expect(visibleText(html)).toContain(label);
     expect((html.match(/data-submit-card/g) || []).length).toBe(0);
+  });
+
+  it("does not repeat blocker explanations inside the primary CTA", () => {
+    const ctx = createSurfaceCtx();
+    const actionState = buildOperationActionState({}, { status: "notStarted" });
+    const html = primaryActionButton(actionState, ctx);
+    const text = visibleText(html);
+
+    expect(text).toContain("请先完成上一张卡");
+    expect(text).not.toContain("这张卡还没轮到办理");
+    expect(html).toContain("title=");
   });
 
   it("maps submitting and submitted states to recovery actions", () => {

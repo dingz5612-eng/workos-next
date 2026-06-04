@@ -145,7 +145,7 @@ public sealed record WorkItemDefinition(
     string AdmissionPolicyRef,
     string SurfacePolicyRef,
     bool ProductionConfirmAllowed,
-    string CompatibilityMode,
+    string DefinitionMode,
     string RemovalImpact);
 
 public sealed record WorkItemDefinitionResolution(
@@ -155,7 +155,7 @@ public sealed record WorkItemDefinitionResolution(
     string LegacyCardId,
     string BusinessLineId,
     string SliceId,
-    string CompatibilityMode,
+    string DefinitionMode,
     bool ProductionConfirmAllowed,
     string Reason)
 {
@@ -167,7 +167,7 @@ public sealed record WorkItemDefinitionResolution(
             definition.LegacyCardId,
             definition.BusinessLineId,
             definition.SliceId,
-            definition.CompatibilityMode,
+            definition.DefinitionMode,
             definition.ProductionConfirmAllowed,
             "definition_resolved");
 
@@ -183,7 +183,7 @@ public sealed record WorkItemDefinitionResolution(
             legacyCardId,
             businessLineId,
             string.Empty,
-            "unregistered-compatibility",
+            "unregistered-definition",
             false,
             reason);
 
@@ -195,7 +195,7 @@ public sealed record WorkItemDefinitionResolution(
             ["legacyCardId"] = LegacyCardId,
             ["businessLineId"] = BusinessLineId,
             ["sliceId"] = SliceId,
-            ["compatibilityMode"] = CompatibilityMode,
+            ["definitionMode"] = DefinitionMode,
             ["productionConfirmAllowed"] = ProductionConfirmAllowed,
             ["reason"] = Reason
         };

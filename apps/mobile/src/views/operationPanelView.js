@@ -1,5 +1,6 @@
 import { loadDraft } from "../operationDrafts.js";
 import { buildOperationActionState } from "../operationActionState.js";
+import { completedRecordActionPolicy } from "../operationRecordPolicy.js";
 import { resolveOperationPanelTarget } from "../operationRouteResolver.js";
 import { activeWorkspaceCard, isTerminalCardStatus } from "../selectors/workspaceSelectors.js";
 import { ActionResult, OperationStepRail, TechnicalAuditDetails, workItemModel } from "./experienceComponents.js";
@@ -10,7 +11,7 @@ export function operationPanelView(ctx) {
   const item = resolveOperationItem(state);
   if (!item?.workItemId && !item?.work_item_id) {
     const startResourceAction = shouldOfferResourceSetup(state)
-      ? `<button data-start-resource-setup="true">${ctx.tr("operationUnavailableStartResource")}</button>`
+      ? `<button data-start-operations-resource-setup="true">${ctx.tr("operationUnavailableStartResource")}</button>`
       : `<button data-view="search">${ctx.tr("operationUnavailableSearchAction")}</button>`;
     state.lastActionResult = {
       confirmed: false,
@@ -60,16 +61,17 @@ export function operationPanelView(ctx) {
   const runtimeDecision = operationRuntimeDecision(model, activeCard, actionState);
 
   return shell(`
-    <section class="operation-panel-page" data-surface="operation-panel-route" data-work-item-id="${ctx.escapeAttr(model.workItemId)}" data-case-id="${ctx.escapeAttr(model.caseId)}" data-lifecycle-state="${ctx.escapeAttr(model.lifecycleState)}" data-action-state="${ctx.escapeAttr(actionState.status)}" data-admission-decision="${ctx.escapeAttr(admissionDecision)}" data-runtime-decision="${ctx.escapeAttr(runtimeDecision)}">
-      <span>${ctx.tr("operationPanel")}</span>
-      <h1>${ctx.escapeHtml(model.displayTitle || model.businessObject || model.workItemType)}</h1>
-      <p>${ctx.escapeHtml(model.businessObject)} · ${ctx.escapeHtml(model.nextAction)}</p>
-      <div class="operation-route-status">
-        <span class="status-chip status-${ctx.escapeAttr(model.lifecycleState)}">${ctx.tr(model.lifecycleState)}</span>
-        <span>${ctx.escapeHtml(model.canHandleLabel)}</span>
-      </div>
-    </section>
-    ${OperationStepRail(workspace, activeCard, ctx)}
+    ${OperationStepRail(workspace, activeCard, ctx, {
+      surface: "operation-panel-route",
+      attrs: {
+        "data-work-item-id": model.workItemId,
+        "data-case-id": model.caseId,
+        "data-lifecycle-state": model.lifecycleState,
+        "data-action-state": actionState.status,
+        "data-admission-decision": admissionDecision,
+        "data-runtime-decision": runtimeDecision
+      }
+    })}
     ${isCompleted ? completedRecordPanel(model, activeCard, operationContext, ctx) : ""}
     ${state.debugSurface ? TechnicalAuditDetails({
       model,
@@ -91,24 +93,24 @@ function shouldOfferResourceSetup(state = {}) {
 }
 
 function completedRecordPanel(model, card, operationContext, ctx) {
-  const nextWorkItem = nextAvailableWorkItem(operationContext, ctx.state);
+  const policy = completedRecordActionPolicy({ workspace: operationContext.workspace, card, state: ctx.state, surface: "operationPanel" });
+  const nextWorkItem = policy.nextWorkItem;
   const auditDetails = completedAuditDetails(model, ctx);
   const nextAction = nextWorkItem
-    ? `<div class="operation-actions"><button data-work-item-id="${ctx.escapeAttr(nextWorkItem.workItemId)}" data-workspace-id="${ctx.escapeAttr(nextWorkItem.workspaceId)}" data-card-id="${ctx.escapeAttr(nextWorkItem.cardId)}">${ctx.tr("continueNextStage")}</button></div>`
+    ? `<button data-work-item-id="${ctx.escapeAttr(nextWorkItem.workItemId)}" data-workspace-id="${ctx.escapeAttr(nextWorkItem.workspaceId)}" data-card-id="${ctx.escapeAttr(nextWorkItem.cardId)}">${ctx.tr("continueNextStage")}</button>`
     : "";
-  return `<section class="completed-record-panel" data-surface="completed-operation-record">
+  const viewAction = `<button class="secondary" data-view-completed-record="true" data-workspace-id="${ctx.escapeAttr(operationContext.workspaceId)}" data-card-id="${ctx.escapeAttr(operationContext.cardId)}">${ctx.tr("viewOnly")}</button>`;
+  return `<section class="completed-record-panel compact" data-surface="completed-operation-record">
     <div>
       <span>${ctx.tr("completedRecordTitle")}</span>
       <h2>${ctx.escapeHtml(model.displayTitle || model.businessObject)}</h2>
-      <p>${ctx.tr("completedRecordBody")}</p>
+      <p>${ctx.tr("completedRecordPanelBody")}</p>
+      <p class="completed-correction-help">${ctx.tr("completedCorrectionHelp")}</p>
+      ${ctx.state.operationMessage ? `<p class="operation-message">${ctx.escapeHtml(ctx.state.operationMessage)}</p>` : ""}
     </div>
-    <dl>
-      <dt>${ctx.tr("currentState")}</dt><dd>${ctx.tr(card.status)}</dd>
-      <dt>${ctx.tr("decisionBusinessObject")}</dt><dd>${ctx.escapeHtml(model.businessObject)}</dd>
-      <dt>${ctx.tr("cardNext")}</dt><dd>${ctx.escapeHtml(model.nextAction)}</dd>
-    </dl>
+    <strong class="status-chip status-${ctx.escapeAttr(card.status)}">${ctx.tr(card.status)}</strong>
+    <div class="operation-actions">${nextAction}${viewAction}</div>
     ${auditDetails}
-    ${nextAction}
   </section>`;
 }
 
@@ -127,31 +129,6 @@ function completedAuditDetails(model, ctx) {
 function auditDetailsVisible(ctx) {
   const role = ctx.state?.currentActor?.role || "";
   return Boolean(ctx.state?.debugSurface || ["admin", "support", "audit", "releaseOwner"].includes(role));
-}
-
-function nextAvailableWorkItem(operationContext, state = {}) {
-  const workspace = operationContext.workspace;
-  const currentCardId = operationContext.cardId || operationContext.card?.id || "";
-  const currentIndex = (workspace?.cards || []).findIndex((card) => card.id === currentCardId);
-  if (currentIndex < 0) return null;
-  const nextCard = (workspace.cards || []).slice(currentIndex + 1).find((card) => !isTerminalCardStatus(card.status));
-  if (!nextCard) return null;
-  const runtimeItems = [
-    ...(state.runtimeStore?.operationWorkItems || []),
-    ...(state.runtimeStore?.workQueue || [])
-  ];
-  return runtimeItems
-    .map((item) => ({
-      workItemId: item.workItemId || item.work_item_id || "",
-      workspaceId: item.workspaceId || item.workspace_id || item.workspace?.id || "",
-      cardId: item.cardId || item.card_id || item.payload?.cardId || item.Payload?.cardId || item.card?.id || "",
-      lifecycleState: item.lifecycleState || item.lifecycle_state || item.status || ""
-    }))
-    .find((item) =>
-      item.workItemId &&
-      item.workspaceId === workspace.id &&
-      item.cardId === nextCard.id &&
-      !isTerminalCardStatus(item.lifecycleState)) || null;
 }
 
 function operationAdmissionDecision(model, card, actionState) {

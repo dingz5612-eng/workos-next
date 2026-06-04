@@ -37,7 +37,7 @@ const requiredNegativeIds = [
   "neg-repair-production-confirm-attempt",
   "neg-parts-production-confirm-attempt",
   "neg-mobile-route-release-control-attempt",
-  "neg-compatibility-confirm-without-workitem",
+  "neg-retired-route-without-workitem",
   "neg-manual-gateresult-passed-attempt",
   "neg-direct-ledger-entry-mutation-attempt"
 ];

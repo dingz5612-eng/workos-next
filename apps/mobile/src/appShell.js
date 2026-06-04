@@ -11,6 +11,7 @@ export function shell(content, ctx) {
     <main class="app-shell view-${state.view} ${pcSurface ? "surface-pc" : "surface-mobile"}">
       <header class="topbar">
         <div><strong>${tr("app")}</strong><span>${shouldShowActor ? actorLabel(state, tr) : tr("subtitle")}</span></div>
+        ${runtimeStatusChip(ctx)}
         <select id="language" aria-label="${tr("language")}">
           <option value="zh-CN" ${state.lang === "zh-CN" ? "selected" : ""}>${tr("zh")}</option>
           <option value="ru-RU" ${state.lang === "ru-RU" ? "selected" : ""}>${tr("ru")}</option>
@@ -25,9 +26,16 @@ export function shell(content, ctx) {
   `;
 }
 
-function apiBanner({ state, tr }) {
+function runtimeStatusChip({ state, tr }) {
   const label = state.apiStatus === "online" ? tr("apiOnline") : state.apiStatus === "checking" ? tr("apiChecking") : tr("apiOffline");
-  const diagnostic = state.debugSurface ? `<small>${apiBaseUrl()}</small>` : `<small>${state.apiStatus === "online" ? tr("apiReadyForPilot") : tr("apiOfflineHelp")}</small>`;
+  const title = state.debugSurface ? apiBaseUrl() : label;
+  return `<span class="runtime-status ${state.apiStatus}" title="${escapeAttr(title)}">${label}</span>`;
+}
+
+function apiBanner({ state, tr }) {
+  if (state.apiStatus === "online") return "";
+  const label = state.apiStatus === "online" ? tr("apiOnline") : state.apiStatus === "checking" ? tr("apiChecking") : tr("apiOffline");
+  const diagnostic = state.debugSurface ? `<small>${apiBaseUrl()}</small>` : `<small>${tr("apiOfflineHelp")}</small>`;
   return `<section class="api-status ${state.apiStatus}"><span>${label}</span>${diagnostic}${state.apiStatus === "offline" ? `<button id="retryApi">${tr("retryApi")}</button>` : ""}</section>`;
 }
 
@@ -43,7 +51,7 @@ function nav(view, key, { state, tr }) {
 }
 
 function feedbackButton({ state, tr }) {
-  return ["onboarding", "login"].includes(state.view) ? "" : `<button class="feedback-fab" data-view="feedback">${tr("feedback")}</button>`;
+  return ["onboarding", "login", "feedback"].includes(state.view) ? "" : `<button class="feedback-fab" data-view="feedback">${tr("feedback")}</button>`;
 }
 
 function actorLabel(state, tr) {
@@ -74,4 +82,12 @@ function roleLabel(role, tr) {
 
 function hasCjk(value) {
   return /[\u3400-\u9fff]/.test(String(value || ""));
+}
+
+function escapeAttr(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/"/g, "&quot;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
 }

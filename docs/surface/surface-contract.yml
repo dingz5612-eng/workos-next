@@ -18,6 +18,21 @@
     "legacyTaskIdExample": "T-ROOM-CREATE",
     "resolvedPersistedExample": "W-STAY-RESOURCE:roomSetup"
   },
+  "completedBusinessRecord": {
+    "viewPath": "readonly workspace record / fact trace",
+    "correctionPath": "new Operations WorkItem with correctionMode=append_only",
+    "actionOrder": ["create_active_work_item", "view_readonly_completed_record", "correct_append_only_from_record"],
+    "dataSources": ["OperationsWorkItemConfirmed payload", "ProjectionEvent payload", "mobile completed-record read cache"],
+    "correctionEntry": "only from readonly completed record after submitted values are visible",
+    "forbiddenPath": "direct edit or repeat submit of the completed work item"
+  },
+  "collaborationFeedback": {
+    "surface": "feedback-message-channel",
+    "entry": "right-bottom safe floating entry on mobile business surfaces",
+    "messagePath": "mobile collaboration message with role/account recipient and current page/business context",
+    "eventPath": "/api/mobile/client-events records feedback.message.sent for runtime observability until dedicated inbox storage is added",
+    "forbiddenPath": "Operations Confirm, business fact mutation, static placeholder-only feedback, or placement inside save/submit business action row"
+  },
   "mobile": {
     "allowedSurfaces": [
       "home",
@@ -72,9 +87,9 @@
     "apiModule": "apps/mobile/src/pcApiClient.js",
     "dataHydrator": "apps/mobile/src/pcSurfaceData.js"
   },
-  "compatibilityAdapter": {
-    "allowedOnlyAs": "server-side quarantined compatibility adapter",
+  "retiredWorkspaceCardWriteAdapter": {
+    "allowedOnlyAs": "retired server-side write adapter",
     "normalDormIntPath": "forbidden",
-    "adapterClass": "WorkspaceCardCompatibilityAdapter"
+    "adapterClass": "deleted"
   }
 }

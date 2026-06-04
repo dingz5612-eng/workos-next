@@ -31,13 +31,13 @@ describe("OAM-04B business and technical layering contract", () => {
     expect(visibleText(html)).toContain("审计详情");
   });
 
-  it("hides workspace Debug / compatibility unless debugSurface", () => {
+  it("hides workspace Operations step debug tabs unless debugSurface", () => {
     const normal = workspaceView(createSurfaceCtx({ view: "workspace" }));
     const debug = workspaceView(createSurfaceCtx({ view: "workspace", debugSurface: true }));
 
-    expect(visibleText(normal)).not.toContain("Debug / compatibility");
-    expect(debug).toContain("CompatibilityCardTabs");
-    expect(visibleText(debug)).toContain("Debug / compatibility");
+    expect(visibleText(normal)).not.toContain("Debug / Operations steps");
+    expect(debug).toContain("OperationStepDebugTabs");
+    expect(visibleText(debug)).toContain("Debug / Operations steps");
   });
 
   it("renders system evidence binding, placeholder, rejected, and recovery states", () => {
@@ -72,8 +72,8 @@ describe("OAM-04B business and technical layering contract", () => {
     const html = operationPanelView(ctx);
 
     expect(visibleText(html)).toContain("提交处理");
-    expect(visibleText(html)).toContain("提交前系统校验");
-    expect(visibleText(html)).toContain("系统证据校验");
+    expect(visibleText(html)).toContain("提交前检查");
+    expect(visibleText(html)).toContain("材料核对");
     expect(visibleText(html)).not.toContain("提交证据");
     expect(visibleText(html)).not.toContain("可信确认");
   });
@@ -97,7 +97,7 @@ describe("OAM-04B business and technical layering contract", () => {
     const html = workspaceView(ctx);
     expect(html).toContain('data-required-field="true"');
     expect(visibleText(html)).toContain("必填");
-    expect(visibleText(html)).toContain("必填字段: 楼栋");
+    expect(visibleText(html)).toContain("还需填写: 楼栋");
 
     await submitCurrentCard(ctx);
 
@@ -142,7 +142,7 @@ describe("OAM-04B business and technical layering contract", () => {
         label: { "zh-CN": "所属房间" },
         required: true,
         ui: { control: "searchSelect", options: [] },
-        help: { "zh-CN": "选择已存在的业务对象，不能在这里新建对象编号。" }
+        help: { "zh-CN": "从已有对象中选择。" }
       }, {
         id: "床位号",
         label: { "zh-CN": "床位号" },
@@ -168,7 +168,7 @@ describe("OAM-04B business and technical layering contract", () => {
     expect(html).toContain('type="hidden" data-operation-field="roomId" value="room-31"');
     expect(html).toContain('value="D03 / 31"');
     expect(text).toContain("已从本案带入");
-    expect(text).toContain("系统已从同一案件的前置步骤带入");
+    expect(text).toContain("已从前一步带入");
     expect(text).not.toContain("所属房间 · 可搜索选择");
   });
 
@@ -199,12 +199,13 @@ describe("OAM-04B business and technical layering contract", () => {
     const text = visibleText(html);
 
     expect(html).toContain('data-surface="completed-workspace-record"');
-    expect(html).toContain('data-surface="completed-step-list"');
-    expect(text).toContain("已完成记录");
-    expect(text).toContain("已完成步骤");
+    expect(text).toContain("办理记录");
+    expect(text).toContain("只读记录");
     expect(text).toContain("房间重复校验");
     expect(text).toContain("步骤详情");
     expect(html).toContain('data-card-id="roomSetup"');
+    expect(html).not.toContain('data-surface="completed-step-list"');
+    expect(text).not.toContain("已完成步骤");
     expect(text).not.toContain("当前办理项");
     expect(text).not.toContain("必填字段");
     expect(html).not.toContain("sticky-action");
@@ -229,7 +230,7 @@ describe("OAM-04B business and technical layering contract", () => {
     const html = workspaceView(ctx);
     const text = visibleText(html);
 
-    expect(text).toContain("已完成记录");
+    expect(text).toContain("办理记录");
     expect(text).toContain("房间床位配置");
     expect(text).toContain("已完成");
     expect(text).toContain("返回当前办理");
@@ -248,7 +249,7 @@ describe("OAM-04B business and technical layering contract", () => {
     const text = visibleText(html);
 
     expect(html).toContain('data-surface="completed-operation-record"');
-    expect(text).toContain("已完成记录");
+    expect(text).toContain("办理记录");
     expect(text).not.toContain("操作输入");
     expect(html).not.toContain("sticky-action");
     expect(html).not.toContain('data-submit-card');
@@ -292,7 +293,7 @@ describe("OAM-04B business and technical layering contract", () => {
 
     ctx.state.runtimeStore.workspaces[0].cards[0].status = "blocked";
     ctx.state.runtimeStore.workQueue[0].lifecycleState = "blocked";
-    expect(visibleText(operationPanelView(ctx))).toContain("查看阻断处理说明");
+    expect(visibleText(operationPanelView(ctx))).toContain("查看不能提交原因");
 
     const search = searchView(createSurfaceCtx({ view: "search", query: "证据" }));
     expect(search).toContain('data-learning-id="learnEvidenceFix"');

@@ -23,9 +23,9 @@
       "effect": "source query and sourceRefs must be tenant scoped"
     },
     {
-      "ruleId": "legacy-adapter-label-required",
-      "description": "Legacy workspace-card search results must be marked as workspaceCardCompatibility until Search Kernel is native.",
-      "effect": "result.resultType=workspaceCardCompatibility or sourceRefs.compatibilityAdapter present"
+      "ruleId": "projection-source-label-required",
+      "description": "Workspace-card projection search results must be marked as workspaceCardProjection until Search Kernel owns native indexing.",
+      "effect": "result.resultType=workspaceCardProjection or sourceRefs.projectionAdapter present"
     }
   ]
 }

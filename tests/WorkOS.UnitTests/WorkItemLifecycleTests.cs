@@ -20,8 +20,8 @@ public sealed class WorkItemLifecycleTests
             OwnerRole: "operations",
             Payload: new Dictionary<string, string> { ["caseId"] = "case-rf7" }));
 
-        var first = service.ConfirmWorkItem("wi-lifecycle-001", Request("idem-rf7"), "actor-token", "req-rf7-1");
-        var duplicate = service.ConfirmWorkItem("wi-lifecycle-001", Request("idem-rf7"), "actor-token", "req-rf7-2");
+        var first = service.ConfirmWorkItem("wi-lifecycle-001", Request("idem-rf7"), OperationsActor(), "req-rf7-1");
+        var duplicate = service.ConfirmWorkItem("wi-lifecycle-001", Request("idem-rf7"), OperationsActor(), "req-rf7-2");
 
         Assert.IsNotNull(workItem);
         Assert.AreEqual(StatusCodes.Status200OK, first.StatusCode);
@@ -45,8 +45,8 @@ public sealed class WorkItemLifecycleTests
             OwnerRole: "operations",
             Payload: new Dictionary<string, string> { ["caseId"] = "case-rf7-409" }));
 
-        var first = service.ConfirmWorkItem("wi-lifecycle-409", Request("idem-conflict", "A101"), "actor-token", "req-rf7-409-1");
-        var conflict = service.ConfirmWorkItem("wi-lifecycle-409", Request("idem-conflict", "B202"), "actor-token", "req-rf7-409-2");
+        var first = service.ConfirmWorkItem("wi-lifecycle-409", Request("idem-conflict", "A101"), OperationsActor(), "req-rf7-409-1");
+        var conflict = service.ConfirmWorkItem("wi-lifecycle-409", Request("idem-conflict", "B202"), OperationsActor(), "req-rf7-409-2");
 
         Assert.AreEqual(StatusCodes.Status200OK, first.StatusCode);
         Assert.AreEqual(StatusCodes.Status409Conflict, conflict.StatusCode);
@@ -80,6 +80,15 @@ public sealed class WorkItemLifecycleTests
             EvidenceIds: Array.Empty<string>(),
             SubmissionId: $"sub-{idempotencyKey}",
             CardInstanceId: $"ci-{idempotencyKey}");
+
+    private static RuntimeActorContext OperationsActor() =>
+        new(
+            "u-operations-test",
+            "operations",
+            "tenant-rf7",
+            new[] { "workos.write", "operations.confirm" },
+            "test",
+            "actor-token");
 
     private sealed class FakeRuntime : IOperationsRuntimeAdapter
     {
@@ -116,13 +125,26 @@ public sealed class WorkItemLifecycleTests
                 cardId,
                 "ready",
                 Text(cardId),
-                new FieldSet(Array.Empty<FieldProjection>(), Array.Empty<FieldProjection>(), Array.Empty<FieldProjection>()),
+                new FieldSet(Array.Empty<FieldProjection>(), new[] { Field("roomNo") }, Array.Empty<FieldProjection>()),
                 Array.Empty<EvidenceRequirement>(),
                 Array.Empty<SystemCheck>(),
                 Array.Empty<BlockerRule>(),
                 Array.Empty<EventDefinition>(),
                 new TransitionDefinition("prepare", "confirm", "block"),
                 new ConfirmationPolicy(true, false, "operator", Text("Confirm")));
+
+        private static FieldProjection Field(string fieldId) =>
+            new(
+                fieldId,
+                Text(fieldId),
+                "business",
+                "text",
+                true,
+                "runtime",
+                true,
+                fieldId,
+                new FieldUi("text", string.Empty, Array.Empty<FieldOption>(), string.Empty, string.Empty, false),
+                Text(fieldId));
 
         private static IReadOnlyDictionary<string, string> Text(string value) =>
             new Dictionary<string, string>

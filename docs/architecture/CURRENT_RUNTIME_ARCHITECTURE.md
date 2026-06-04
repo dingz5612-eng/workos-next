@@ -10,8 +10,8 @@ OAM-ACF v8 is the target top-level architecture. V5.5 Rule Authority is the
 highest engineering rules authority. The Operations Runtime axis is the
 execution main axis. `ProjectionRuntime` is the current implementation facade
 for projection and Lens materialization, not the top-level architecture.
-Workspace/Card remains a compatibility wrapper and is not the new business
-extension point.
+Workspace/Card remains a projection/display compatibility input only; retired
+Workspace/Card write routes are not business extension points.
 
 Last preflight source: local `main` after `git fetch origin main`,
 `git checkout main`, and `git pull --ff-only`.
@@ -45,16 +45,16 @@ The target legal primary business write endpoint is Operations Confirm:
 POST /api/operations/work-items/{workItemId}/confirm
 ```
 
-The current runtime still exposes the older Workspace/Card endpoints as a
-compatibility layer:
+The older Workspace/Card write endpoints are retired and must stay deleted:
 
 ```text
 POST /api/workspaces/{workspaceId}/cards/{cardId}/prepare
 POST /api/workspaces/{workspaceId}/cards/{cardId}/confirm
 ```
 
-No page-specific write API is part of the current architecture. Mobile BFF
-routes must not write business facts.
+They are not part of the current command boundary. No page-specific write API is
+part of the current architecture. Mobile BFF routes must not write business
+facts.
 
 ## Runtime Surface Architecture
 
@@ -193,9 +193,9 @@ metadata, and cross-check rules.
   distribution, surface coverage missing count, ledger invariant violation
   count, schema version, and active architecture exceptions.
 - Slice admission is automated by `scripts/validate-slice-admission.mjs`.
-- V5.4 API boundary checks are automated by
+- V5.5 API boundary checks are automated by
   `scripts/check-api-boundaries.mjs`, using
-  `docs/v5.4/operations-api-allowlist.json`.
+  `docs/rules/v5.5/api-boundary.yml`.
 - Control Plane release gates require durable GateResult, InvariantCheck, and
   ShadowCompareReport records, with Shadow Namespace facts physically isolated
   from official runtime facts.

@@ -4,7 +4,7 @@
   "grade_rules": {
     "green": [
       "no official projector consumes shadow_runtime",
-      "operations confirm and old compatibility confirm expose the required core response fields",
+      "operations confirm and response envelope expose the required core response fields",
       "no shadow business facts appear in official ledger or domain event tables",
       "shadow command idempotency keys do not conflict with active fact payload hashes"
     ],
@@ -44,7 +44,7 @@
     },
     {
       "check_id": "operations.contract_response_schema",
-      "description": "Operations confirm and old compatibility confirm must expose the same core response fields.",
+      "description": "Operations confirm and response envelope must expose the same core response fields.",
       "red_when": "workItemId, submissionId, commitStatus, or projectionStatus is missing",
       "yellow_when": "optional display-only response fields mismatch"
     },

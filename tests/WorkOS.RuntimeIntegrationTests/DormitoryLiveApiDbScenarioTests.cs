@@ -27,7 +27,7 @@ public sealed class DormitoryLiveApiDbScenarioTests
         }
 
         StringAssert.Contains(runner, "sourceMode: \"real_api_db\"");
-        StringAssert.Contains(runner, "workspaceCardCompatibilityFallbackUsed");
+        StringAssert.Contains(runner, "retiredWorkspaceCardWritePathUsed");
         Assert.IsFalse(runner.Contains("POST\", \"/api/workspaces/", StringComparison.Ordinal), "D1 ordinary replay must not call workspace/card confirm routes.");
         StringAssert.Contains(contract, "\"allowSyntheticDomainEvent\": false");
         StringAssert.Contains(contract, "\"allowSyntheticLedgerTransaction\": false");

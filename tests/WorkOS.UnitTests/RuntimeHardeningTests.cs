@@ -185,7 +185,7 @@ public sealed class RuntimeHardeningTests
         var service = ConfirmService(store, requireTrustedDevice: true);
         var state = ConfirmState();
 
-        var result = service.Confirm(state, "W-CONFIRM", "confirmCard", Request(new Dictionary<string, string>()), "session-token");
+        var result = service.Confirm(state, "W-CONFIRM", "confirmationCard", Request(new Dictionary<string, string>()), "session-token");
 
         Assert.AreEqual(ConfirmStatus.Forbidden, result.Status);
         Assert.AreEqual("actor_session_required", result.Reason);
@@ -469,7 +469,7 @@ public sealed class RuntimeHardeningTests
         var service = ConfirmService(store);
         var state = ConfirmState();
 
-        var result = service.Confirm(state, "W-CONFIRM", "confirmCard", Request(new Dictionary<string, string>()), "session-token");
+        var result = service.Confirm(state, "W-CONFIRM", "confirmationCard", Request(new Dictionary<string, string>()), "session-token");
         var payload = AssertConfirmResponse(result);
 
         Assert.AreEqual(ConfirmStatus.Confirmed, result.Status);
@@ -486,7 +486,7 @@ public sealed class RuntimeHardeningTests
         var service = ConfirmService(store);
         var state = ConfirmState();
 
-        var result = service.Confirm(state, "W-CONFIRM", "confirmCard", Request(new Dictionary<string, string>()), "session-token");
+        var result = service.Confirm(state, "W-CONFIRM", "confirmationCard", Request(new Dictionary<string, string>()), "session-token");
         var payload = AssertConfirmResponse(result);
 
         Assert.AreEqual(ConfirmStatus.Confirmed, result.Status);
@@ -505,8 +505,8 @@ public sealed class RuntimeHardeningTests
         var state = ConfirmState();
         var request = Request(new Dictionary<string, string>());
 
-        var first = AssertConfirmResponse(service.Confirm(state, "W-CONFIRM", "confirmCard", request, "session-token"));
-        var secondResult = service.Confirm(state, "W-CONFIRM", "confirmCard", request, "session-token");
+        var first = AssertConfirmResponse(service.Confirm(state, "W-CONFIRM", "confirmationCard", request, "session-token"));
+        var secondResult = service.Confirm(state, "W-CONFIRM", "confirmationCard", request, "session-token");
         var second = AssertConfirmResponse(secondResult);
 
         Assert.AreEqual(ConfirmStatus.Duplicate, secondResult.Status);
@@ -614,7 +614,7 @@ public sealed class RuntimeHardeningTests
 
     private static RuntimeState ConfirmState() =>
         new(
-            new List<WorkspaceProjection> { Workspace("W-CONFIRM", Card("confirmCard", "Confirm.Event")) },
+            new List<WorkspaceProjection> { Workspace("W-CONFIRM", Card("confirmationCard", "Confirm.Event")) },
             new List<WorkspaceEvent>(),
             new List<RuntimeUser> { new("user-1", "operator", "Operator", "operator", true) });
 
@@ -625,7 +625,7 @@ public sealed class RuntimeHardeningTests
         Assert.IsTrue(payload.Confirmed);
         Assert.AreEqual("committed", payload.CommitStatus);
         Assert.AreEqual("W-CONFIRM", payload.CaseId);
-        Assert.AreEqual("W-CONFIRM:confirmCard", payload.WorkItemId);
+        Assert.AreEqual("W-CONFIRM:confirmationCard", payload.WorkItemId);
         Assert.AreEqual("sub-1", payload.SubmissionId);
         Assert.IsTrue((bool)payload.ClientInstruction["disableRetry"]);
         return payload;

@@ -33,12 +33,13 @@ public sealed class ApiBoundaryRulesTests
         Assert.IsTrue(boundary.Contains("operationsBusinessWrite:", StringComparison.Ordinal));
         Assert.IsTrue(boundary.Contains("POST /api/operations/work-items/{workItemId}/confirm", StringComparison.Ordinal));
         Assert.IsTrue(boundary.Contains("authPolicy: OperationsConfirmPolicy", StringComparison.Ordinal));
+        Assert.IsTrue(boundary.Contains("POST /api/operations/workspaces/start", StringComparison.Ordinal));
         Assert.IsTrue(boundary.Contains("systemProjectionWrite:", StringComparison.Ordinal));
         Assert.IsTrue(boundary.Contains("POST /api/operations/cases", StringComparison.Ordinal));
         Assert.IsTrue(boundary.Contains("POST /api/operations/work-items/{workItemId}/prepare", StringComparison.Ordinal));
         Assert.IsTrue(boundary.Contains("authPolicy: WorkOSWrite", StringComparison.Ordinal));
         Assert.IsTrue(boundary.Contains("compatibilityBusinessWrite:", StringComparison.Ordinal));
-        Assert.IsTrue(boundary.Contains("POST /api/workspaces/{workspaceId}/cards/{cardId}/confirm", StringComparison.Ordinal));
+        Assert.IsTrue(boundary.Contains("POST /api/workspaces/*/cards/*/confirm", StringComparison.Ordinal));
         Assert.IsTrue(boundary.Contains("evidenceWrite:", StringComparison.Ordinal));
         Assert.IsTrue(boundary.Contains("POST /api/evidence/{evidenceId}/attachments", StringComparison.Ordinal));
         Assert.IsTrue(boundary.Contains("securitySessionWrite:", StringComparison.Ordinal));

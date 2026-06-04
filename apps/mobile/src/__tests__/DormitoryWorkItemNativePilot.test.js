@@ -137,6 +137,64 @@ describe("DORM-INT-02 WorkItem-native pilot", () => {
     vi.unstubAllGlobals();
   });
 
+  it("returns the committed command before background read-side sync completes", async () => {
+    vi.useFakeTimers();
+    const calls = [];
+    const readSideSynced = vi.fn();
+    vi.stubGlobal("window", { location: { protocol: "http:", hostname: "localhost", port: "5175", origin: "http://localhost:5175" } });
+    vi.stubGlobal("localStorage", { getItem: () => null });
+    vi.stubGlobal("fetch", vi.fn(async (url, options = {}) => {
+      calls.push({ url: String(url), options });
+      if (String(url).endsWith("/prepare")) {
+        return { ok: true, json: async () => ({ prepared: true, commandSubmissionId: "sub-room-setup" }) };
+      }
+      if (String(url).endsWith("/confirm")) {
+        return {
+          ok: true,
+          json: async () => ({
+            confirmed: true,
+            commitStatus: "committed",
+            projectionStatus: "pending",
+            commandSubmissionId: "sub-room-setup",
+            resultEventIds: ["evt-room-setup"]
+          })
+        };
+      }
+      return new Promise(() => {});
+    }));
+
+    const result = await submitWorkItemOperation({
+      workspace: resourceWorkspaceFixture(),
+      card: resourceWorkspaceFixture().cards[0],
+      workItemId: "W-STAY-RESOURCE:roomSetup",
+      actor: { token: "operator-token" },
+      language: "zh-CN",
+      fieldValues: { roomId: "R-101" },
+      evidenceIds: ["evd-room-check"],
+      submissionProtocol: {
+        idempotencyKey: "idem-room-setup",
+        submissionId: "sub-room-setup",
+        cardInstanceId: "ci-room-setup",
+        aggregateRef: "roomId:R-101"
+      },
+      onReadSideSynced: readSideSynced
+    });
+
+    expect(result).toMatchObject({
+      confirmed: true,
+      commitStatus: "committed",
+      projectionStatus: "pending",
+      readSideSyncStatus: "scheduled"
+    });
+    expect(calls).toHaveLength(2);
+    expect(readSideSynced).not.toHaveBeenCalled();
+    await vi.runOnlyPendingTimersAsync();
+    expect(calls).toHaveLength(3);
+    expect(readSideSynced).not.toHaveBeenCalled();
+    vi.useRealTimers();
+    vi.unstubAllGlobals();
+  });
+
   it("renders localized Today Mission Control and Personal Ops Center without component names", () => {
     vi.stubGlobal("localStorage", { getItem: () => null });
     const todayCtx = ctx({ view: "home" });

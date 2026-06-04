@@ -102,26 +102,47 @@ export function LifecycleWorkspace(item, activeCard, ctx) {
   </section>`;
 }
 
-export function OperationStepRail(item, activeCard, ctx) {
+export function OperationStepRail(item, activeCard, ctx, options = {}) {
   const cards = item.cards || [];
-  return `<section class="operation-step-rail" data-surface="operation-step-rail">
-    <div class="operation-step-current">
-      <span>${text(ctx.tr("lifecycleTimeline"), ctx)}</span>
-      <strong>${text(tx(activeCard.title, ctx), ctx)}</strong>
-      <small class="status-chip status-${attr(activeCard.status, ctx)}">${text(ctx.tr(activeCard.status) || activeCard.status, ctx)}</small>
+  const currentIndex = Math.max(0, cards.findIndex((card) => card.id === activeCard.id));
+  const surface = options.surface || "operation-step-rail";
+  const attrs = dataAttrs(options.attrs || {}, ctx);
+  return `<section class="operation-step-rail" data-surface="${attr(surface, ctx)}" data-component="operation-step-rail"${attrs}>
+    <div class="operation-step-summary">
+      <div class="operation-step-title">
+        <strong>${text(tx(item.title, ctx) || ctx.tr("operationPanel"), ctx)}</strong>
+      </div>
+      <div class="operation-step-meta">
+        <strong>${text(stepPositionText(currentIndex, cards.length, ctx), ctx)}</strong>
+        <small class="status-chip status-${attr(activeCard.status, ctx)}">${text(ctx.tr(activeCard.status) || activeCard.status, ctx)}</small>
+      </div>
     </div>
     <div class="operation-step-list">
-      ${cards.map((card) => timelineStep(item, card, activeCard, ctx)).join("")}
+      ${cards.map((card, index) => timelineStep(item, card, activeCard, ctx, index)).join("")}
     </div>
   </section>`;
 }
 
-function timelineStep(item, card, activeCard, ctx) {
+function dataAttrs(values = {}, ctx) {
+  return Object.entries(values)
+    .filter(([, value]) => value !== undefined && value !== null && String(value) !== "")
+    .map(([key, value]) => ` ${key}="${attr(value, ctx)}"`)
+    .join("");
+}
+
+function timelineStep(item, card, activeCard, ctx, index = 0) {
   const current = card.id === activeCard.id;
-  return `<button type="button" class="timeline-step status-${attr(card.status, ctx)}${current ? " current" : ""}" data-workspace="${attr(item.id, ctx)}" data-card-id="${attr(card.id, ctx)}" ${current ? `aria-current="step"` : ""}>
-    <strong>${text(tx(card.title, ctx), ctx)}</strong>
-    <small>${text(ctx.tr(card.status) || card.status, ctx)}</small>
+  const label = `${tx(card.title, ctx)} ${ctx.tr(card.status) || card.status}`.trim();
+  return `<button type="button" class="timeline-step status-${attr(card.status, ctx)}${current ? " current" : ""}" data-workspace="${attr(item.id, ctx)}" data-card-id="${attr(card.id, ctx)}" aria-label="${attr(label, ctx)}" title="${attr(label, ctx)}" ${current ? `aria-current="step"` : ""}>
+    <strong>${index + 1}</strong>
   </button>`;
+}
+
+function stepPositionText(index, total, ctx) {
+  const current = index + 1;
+  if (ctx.state?.lang === "ru-RU") return `Шаг ${current} из ${total || current}`;
+  if (ctx.state?.lang === "ky-KG") return `${current}/${total || current}-кадам`;
+  return `第 ${current}/${total || current} 步`;
 }
 
 export function OperationPanelView(innerHtml, item, activeCard, ctx) {

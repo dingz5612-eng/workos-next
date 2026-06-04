@@ -55,10 +55,10 @@ const cases = [
     expectedStatus: "403_or_422"
   },
   {
-    id: "workspace_card_compatibility_bypass_blocked",
-    description: "workspace/card compatibility bypass = 403/422",
-    evidenceFile: "tests/WorkOS.RuntimeIntegrationTests/WorkspaceCardCompatibilityPilotScopeTests.cs",
-    requiredMarkers: ["CompatibilityAdapter", "persisted_work_item_required"],
+    id: "retired_workspace_card_write_routes_blocked",
+    description: "retired workspace/card write routes are absent from runtime write path",
+    evidenceFile: "scripts/check-runtime-write-paths.mjs",
+    requiredMarkers: ["RT1-COMPAT-ADAPTER-DELETED", "RT1-RETIRED-WORKSPACE-COMPAT-ENDPOINT"],
     expectedStatus: "403_or_422"
   },
   {

@@ -115,7 +115,7 @@ async function runPositiveScenario(browser, allNetworkEvents) {
     await waitForHydrated(page);
     await capture(page, scenario, "03-search-command", "Search result with start command");
 
-    await click(page, scenario, "[data-start-resource-setup]", "start accommodation resource setup");
+    await click(page, scenario, "[data-start-operations-resource-setup]", "start accommodation resource setup");
     await waitForOperationPanel(page);
     const ready = await capture(page, scenario, "04-operation-ready", "Operation panel ready before validation");
     assertScenario(scenario, ready.domState.surface === "operation-panel-route", "positive.opened_operation_panel", "Operation panel must open from Operations WorkItem route.");
@@ -189,7 +189,7 @@ async function runUnauthorizedScenario(browser, allNetworkEvents) {
     await capture(page, scenario, "01-finance-search-command", "Finance can see visible command but is not allowed to start it");
     const forbiddenResponse = page.waitForResponse((response) =>
       response.url().includes("/api/operations/workspaces/start") && response.request().method() === "POST", { timeout: 30_000 }).catch(() => null);
-    await click(page, scenario, "[data-start-resource-setup]", "finance clicks start command");
+    await click(page, scenario, "[data-start-operations-resource-setup]", "finance clicks start command");
     await forbiddenResponse;
     await page.waitForFunction(() => {
       return document.querySelector("[data-surface=\"permission-diagnostic\"]") ||
@@ -440,7 +440,7 @@ async function readDomState(page) {
       blockerCode: primary.dataset?.blockerCode || "",
       submitCount: document.querySelectorAll("[data-submit-card]").length,
       nextStageCount: document.querySelectorAll("[data-work-item-id][data-card-id]").length,
-      startResourceCount: document.querySelectorAll("[data-start-resource-setup]").length,
+      startResourceCount: document.querySelectorAll("[data-start-operations-resource-setup]").length,
       invalidFields,
       fields,
       textSample: (document.body.innerText || "").replace(/\s+/g, " ").trim().slice(0, 1800),

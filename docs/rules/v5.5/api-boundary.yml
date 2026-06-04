@@ -18,33 +18,6 @@ categories:
       severity: P0
       notes: The only primary business write route.
   compatibilityBusinessWrite:
-    - route: "POST /api/workspaces/{workspaceId}/cards/{cardId}/prepare"
-      class: compatibilityBusinessWrite
-      owner: operations-runtime
-      writesBusinessFact: false
-      writesGovernanceFact: false
-      requiresOperationsConfirm: false
-      authPolicy: WorkOSWrite
-      appendOnly: true
-      requiredInvariant:
-        - api.no_page_specific_business_write
-      evidenceType: compatibility_wrapper
-      severity: P1
-      notes: Old Workspace/Card prepare compatibility wrapper.
-    - route: "POST /api/workspaces/{workspaceId}/cards/{cardId}/confirm"
-      class: compatibilityBusinessWrite
-      owner: operations-runtime
-      writesBusinessFact: true
-      writesGovernanceFact: false
-      requiresOperationsConfirm: true
-      authPolicy: OperationsConfirmPolicy
-      appendOnly: true
-      requiredInvariant:
-        - api.no_page_specific_business_write
-        - operations.confirm_has_submission_evidence
-      evidenceType: compatibility_wrapper
-      severity: P0
-      notes: Old Workspace/Card confirm compatibility wrapper that preflights compatibility policy and commits facts through WorkspaceCardCompatibilityAdapter -> OperationsUnitOfWork.
   mobileExperienceWrite:
     - route: "POST /api/mobile/drafts"
       class: mobileExperienceWrite
@@ -140,7 +113,7 @@ categories:
       notes: Evidence review decision only.
   evidenceRead:
   governanceWrite:
-    - route: "POST /api/workspaces/resource-setup/start"
+    - route: "POST /api/operations/workspaces/start"
       class: governanceWrite
       owner: operations-runtime
       writesBusinessFact: false
@@ -153,21 +126,7 @@ categories:
         - operations.case_write_not_business_fact
       evidenceType: workspace_start
       severity: P1
-      notes: Starts a Dormitory resource setup case and immediately binds the first Operations WorkItem; business facts are still produced only by later Operations Confirm.
-    - route: "POST /api/workspaces/start"
-      class: governanceWrite
-      owner: operations-runtime
-      writesBusinessFact: false
-      writesGovernanceFact: true
-      requiresOperationsConfirm: false
-      authPolicy: WorkOSWrite
-      appendOnly: true
-      requiredInvariant:
-        - api.no_page_specific_business_write
-        - operations.case_write_not_business_fact
-      evidenceType: workspace_start
-      severity: P1
-      notes: Starts an allowed Dormitory template case and immediately binds the first Operations WorkItem; business facts are still produced only by later Operations Confirm.
+      notes: Starts an allowed Dormitory template case through Operations Runtime and immediately binds the first Operations WorkItem; business facts are still produced only by later Operations Confirm.
   reconciliationGovernanceWrite:
     - route: "POST /api/reconciliation/bank-statement-imports/preview"
       class: reconciliationGovernanceWrite
@@ -490,3 +449,7 @@ forbiddenBusinessWritePatterns:
   - "POST /api/checkout/close"
   - "POST /api/bed/release"
   - "POST /api/period/close"
+  - "POST /api/workspaces/resource-setup/start"
+  - "POST /api/workspaces/start"
+  - "POST /api/workspaces/*/cards/*/prepare"
+  - "POST /api/workspaces/*/cards/*/confirm"

@@ -103,7 +103,6 @@ Assert-Exists "docs/engineering/16-v5.5-engineering-rules-os.md"
 Assert-Exists "docs/acceptance/00-index.md"
 Assert-Exists "docs/acceptance/12-release-go-no-go.md"
 Assert-Exists "docs/acceptance/13-v5.5-rules-os-go-no-go.md"
-Assert-Exists "docs/v5.4/operations-api-allowlist.json"
 Assert-Exists "docs/rules/v5.5/api-boundary.yml"
 Assert-Exists "docs/rules/v5.5/fact-ownership.yml"
 Assert-Exists "docs/rules/v5.5/invariant-maturity.yml"
@@ -505,8 +504,8 @@ $requiredPaths = @(
   "/api/auth/login",
   "/api/workspaces",
   "/api/workspaces/{workspaceId}",
-  "/api/workspaces/{workspaceId}/cards/{cardId}/prepare",
-  "/api/workspaces/{workspaceId}/cards/{cardId}/confirm",
+  "/api/operations/workspaces/start",
+  "/api/operations/work-items/{workItemId}/confirm",
   "/api/observability/runtime"
 )
 
@@ -521,8 +520,8 @@ $requiredEndpointPatterns = @(
   'MapPost\("/api/auth/login"',
   'MapGet\("/api/workspaces"',
   'MapGet\("/api/workspaces/\{workspaceId\}"',
-  'MapPost\("/api/workspaces/\{workspaceId\}/cards/\{cardId\}/prepare"',
-  'MapPost\("/api/workspaces/\{workspaceId\}/cards/\{cardId\}/confirm"',
+  'MapPost\("/api/operations/workspaces/start"',
+  'MapPost\("/api/operations/work-items/\{workItemId\}/confirm"',
   'MapGet\("/api/observability/runtime"'
 )
 
@@ -539,12 +538,9 @@ $allowedMapPostPaths = @(
   "/api/device-sessions/{deviceId}/revoke",
   "/api/operations/cases",
   "/api/operations/work-items",
+  "/api/operations/workspaces/start",
   "/api/operations/work-items/{workItemId}/prepare",
   "/api/operations/work-items/{workItemId}/confirm",
-  "/api/workspaces/resource-setup/start",
-  "/api/workspaces/start",
-  "/api/workspaces/{workspaceId}/cards/{cardId}/prepare",
-  "/api/workspaces/{workspaceId}/cards/{cardId}/confirm",
   "/api/evidence/drafts",
   "/api/evidence/{evidenceId}/attachments",
   "/api/evidence/{evidenceId}/verify",
@@ -567,6 +563,13 @@ $allowedMapPostPaths = @(
   "/api/mobile/client-events",
   "/api/mobile/recent-objects",
   "/api/behavior-events"
+)
+
+$forbiddenWorkspaceCompatibilityWritePaths = @(
+  "/api/workspaces/resource-setup/start",
+  "/api/workspaces/start",
+  "/api/workspaces/{workspaceId}/cards/{cardId}/prepare",
+  "/api/workspaces/{workspaceId}/cards/{cardId}/confirm"
 )
 
 $allowedMapGetPaths = @(
@@ -630,6 +633,14 @@ foreach ($match in $mapPostMatches) {
 }
 
 $minimalApiPaths = @($mapGetMatches | ForEach-Object { $_.Groups[1].Value }) + @($mapPostMatches | ForEach-Object { $_.Groups[1].Value })
+foreach ($path in $forbiddenWorkspaceCompatibilityWritePaths) {
+  if ($minimalApiPaths.Contains($path)) {
+    Fail "Retired Workspace/Card compatibility write endpoint must be deleted from Minimal API: $path"
+  }
+  if ($openApiPaths.Contains($path)) {
+    Fail "Retired Workspace/Card compatibility write endpoint must be deleted from OpenAPI: $path"
+  }
+}
 foreach ($path in $openApiPaths) {
   if (($path.StartsWith("/api/") -or $path -eq "/health") -and -not $minimalApiPaths.Contains($path)) {
     Fail "OpenAPI path has no matching Minimal API endpoint: $path"
@@ -848,9 +859,8 @@ $requiredRuntimeApiPathKeys = @(
   "workspaces",
   "workspace",
   "bootstrap",
-  "prepareCard",
-  "confirmCard",
   "workQueue",
+  "operationsWorkspaceStart",
   "search",
   "lensWorkQueue",
   "lensSearch",

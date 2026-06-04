@@ -21,20 +21,17 @@ public sealed class CanonicalOperationsApiService
     private readonly OperationsReadStore traces;
     private readonly WorkItemDefinitionRegistryService definitions;
     private readonly AdmissionKernelService admission;
-    private readonly ProjectionRuntime? projectionRuntime;
 
     public CanonicalOperationsApiService(
         OperationsRuntimeService catalog,
         OperationsUnitOfWork unitOfWork,
         OperationsReadStore traces,
         WorkItemDefinitionRegistryService? definitions = null,
-        AdmissionKernelService? admission = null,
-        ProjectionRuntime? projectionRuntime = null)
+        AdmissionKernelService? admission = null)
     {
         this.catalog = catalog;
         this.unitOfWork = unitOfWork;
         this.traces = traces;
-        this.projectionRuntime = projectionRuntime;
         this.definitions = definitions ?? WorkItemDefinitionRegistryService.LoadDefault();
         this.admission = admission ?? new AdmissionKernelService();
     }
@@ -64,7 +61,7 @@ public sealed class CanonicalOperationsApiService
         var operationCase = CreateCase(new CreateOperationCaseRequest(workspace.Id, actor.TenantId, workspace.Id))
             ?? throw new InvalidOperationException("operation_workspace_start_case_not_resolved");
         var workItem = CreateWorkItem(new CreateWorkItemRequest(
-            WorkspaceCardCompatibilityWorkItemResolver.WorkItemIdFor(workspace.Id, card.Id),
+            OperationsWorkItemIdFor(workspace.Id, card.Id),
             actor.TenantId,
             FirstNonEmpty(definition.Definition?.WorkItemType, card.Id),
             workspace.Id,
@@ -77,7 +74,6 @@ public sealed class CanonicalOperationsApiService
                 ["cardId"] = card.Id,
                 ["templateWorkspaceId"] = templateWorkspaceId,
                 ["definitionId"] = definition.DefinitionId,
-                ["compatibilityRoute"] = "workspace-card",
                 ["operationAxis"] = "Definition -> OperationCase -> WorkItem",
                 ["startedByActorId"] = actor.ActorId
             })) ?? throw new InvalidOperationException("operation_workspace_start_work_item_not_resolved");
@@ -92,8 +88,14 @@ public sealed class CanonicalOperationsApiService
     public IReadOnlyList<WorkItem> ListWorkItems(string? tenantId = null, string? caseId = null) =>
         catalog.ListWorkItems(tenantId, caseId);
 
+    public IReadOnlyList<OperationsWorkItemSurface> ListWorkItemSurfaces(string? tenantId = null, string? caseId = null) =>
+        catalog.ListWorkItemSurfaces(tenantId, caseId);
+
     public WorkItem? GetWorkItem(string workItemId) =>
         catalog.GetWorkItem(workItemId);
+
+    public OperationsWorkItemSurface? GetWorkItemSurface(string workItemId) =>
+        catalog.GetWorkItemSurface(workItemId);
 
     public PrepareWorkItemResult? PrepareWorkItem(string workItemId, PrepareWorkItemRequest request) =>
         catalog.PrepareWorkItem(workItemId, request);
@@ -101,25 +103,10 @@ public sealed class CanonicalOperationsApiService
     public ConfirmWorkItemResult ConfirmWorkItem(
         string workItemId,
         ConfirmWorkItemRequest request,
-        string actorToken,
-        string requestId) =>
-        ConfirmWorkItem(workItemId, request, null, actorToken, requestId);
-
-    public ConfirmWorkItemResult ConfirmWorkItem(
-        string workItemId,
-        ConfirmWorkItemRequest request,
         RuntimeActorContext actor,
-        string requestId) =>
-        ConfirmWorkItem(workItemId, request, actor, actor.SessionToken, requestId);
-
-    private ConfirmWorkItemResult ConfirmWorkItem(
-        string workItemId,
-        ConfirmWorkItemRequest request,
-        RuntimeActorContext? actorContext,
-        string actorToken,
         string requestId)
     {
-        if (string.IsNullOrWhiteSpace(actorToken))
+        if (string.IsNullOrWhiteSpace(actor.SessionToken))
         {
             return ConfirmWorkItemResult.Rejected(
                 StatusCodes.Status401Unauthorized,
@@ -154,17 +141,25 @@ public sealed class CanonicalOperationsApiService
         var effectiveCardId = FirstNonEmpty(request.CardId, PayloadValue(workItem.Payload, "cardId"), workItem.WorkItemType);
         var normalized = request.Normalize(workItemId, workItem.WorkspaceId, effectiveCardId);
         var caseId = FirstNonEmpty(workItem.CaseId, $"case-{workItem.TenantId}");
+        var fieldKeyFailure = ValidateFieldKeys(workItem.WorkItemId, normalized);
+        if (!string.IsNullOrWhiteSpace(fieldKeyFailure))
+        {
+            return ConfirmWorkItemResult.Rejected(
+                StatusCodes.Status400BadRequest,
+                "unknown_field_key",
+                fieldKeyFailure,
+                caseId,
+                workItem.WorkItemId,
+                normalized.SubmissionId,
+                normalized.IdempotencyKey,
+                null);
+        }
+
         var definition = definitions.Resolve(workItem, normalized.CardId);
-        var actor = actorContext ?? new RuntimeActorContext(
-            actorToken,
-            "compatibility",
-            workItem.TenantId,
-            Array.Empty<string>(),
-            "compatibility-token",
-            actorToken);
         var admissionDecision = admission.EvaluateConfirm(
             definition,
             actor,
+            workItem.OwnerRole,
             normalized.DeviceId,
             ProductionRequested(normalized));
         if (!admissionDecision.ConfirmAllowed)
@@ -195,7 +190,6 @@ public sealed class CanonicalOperationsApiService
         var commit = unitOfWork.Commit(command);
         if (commit is { StatusCode: StatusCodes.Status200OK, CommitStatus: "committed", Duplicate: false })
         {
-            var projected = ProjectDormitoryResourceLifecycle(workItem, normalized, actorToken);
             catalog.RecordWorkItemTransition(
                 workItem.TenantId,
                 caseId,
@@ -210,48 +204,9 @@ public sealed class CanonicalOperationsApiService
                 FirstNonEmpty(normalized.CardId, PayloadValue(workItem.Payload, "cardId"), workItem.WorkItemType),
                 actor,
                 caseId);
-            if (projected?.Payload is ConfirmCardResponse response && response.ProjectionStatus == "projected")
-            {
-                commit = commit with
-                {
-                    ProjectionStatus = "projected",
-                    DomainEventIds = response.ResultEventIds,
-                    ResponseBody = new Dictionary<string, object>(commit.ResponseBody, StringComparer.Ordinal)
-                    {
-                        ["projection"] = response.Projection!,
-                        ["projectionEventIds"] = response.ResultEventIds
-                    }
-                };
-            }
         }
 
         return ToConfirmResult(commit, normalized);
-    }
-
-    private ConfirmResult? ProjectDormitoryResourceLifecycle(
-        WorkItem workItem,
-        ConfirmWorkItemRequest request,
-        string actorToken)
-    {
-        if (!workItem.WorkspaceId.StartsWith("W-STAY-RESOURCE-", StringComparison.OrdinalIgnoreCase))
-        {
-            return null;
-        }
-
-        if (projectionRuntime is null)
-        {
-            return null;
-        }
-
-        var cardId = FirstNonEmpty(request.CardId, PayloadValue(workItem.Payload, "cardId"), workItem.WorkItemType);
-        var projectionResult = projectionRuntime.Confirm(
-            workItem.WorkspaceId,
-            cardId,
-            request.ToConfirmCardRequest(request.RequestId ?? request.SubmissionId ?? request.IdempotencyKey ?? Guid.NewGuid().ToString("N")),
-            actorToken);
-        return projectionResult.Status is ConfirmStatus.Confirmed or ConfirmStatus.Duplicate
-            ? projectionResult
-            : null;
     }
 
     private void DispatchNextDormitoryResourceWorkItem(
@@ -260,6 +215,11 @@ public sealed class CanonicalOperationsApiService
         RuntimeActorContext actor,
         string caseId)
     {
+        if (IsCorrectionWorkItem(current))
+        {
+            return;
+        }
+
         if (!current.WorkspaceId.StartsWith("W-STAY-RESOURCE-", StringComparison.OrdinalIgnoreCase))
         {
             return;
@@ -273,7 +233,7 @@ public sealed class CanonicalOperationsApiService
 
         var definition = definitions.ResolveByWorkspaceCard("W-STAY-RESOURCE", nextCardId);
         catalog.CreateWorkItem(new CreateWorkItemRequest(
-            WorkspaceCardCompatibilityWorkItemResolver.WorkItemIdFor(current.WorkspaceId, nextCardId),
+            OperationsWorkItemIdFor(current.WorkspaceId, nextCardId),
             current.TenantId,
             FirstNonEmpty(definition.Definition?.WorkItemType, nextCardId),
             current.WorkspaceId,
@@ -303,6 +263,9 @@ public sealed class CanonicalOperationsApiService
             _ => string.Empty
         };
 
+    private static string OperationsWorkItemIdFor(string workspaceId, string cardId) =>
+        $"wi-{OperationsHash.Short(workspaceId, cardId, "operations-runtime")}";
+
     public FactTraceV1? GetSubmissionTrace(string submissionId) =>
         traces.GetFactTraceBySubmission(submissionId);
 
@@ -320,7 +283,16 @@ public sealed class CanonicalOperationsApiService
             return SliceCommandHandlerResult.Rejected(replayPolicy.Value.StatusCode, replayPolicy.Value.Reason);
         }
 
-        var moneyFacts = BalancedMoneyKernel.FromEnvelope(envelope);
+        BalancedMoneyFacts moneyFacts;
+        try
+        {
+            moneyFacts = BalancedMoneyKernel.FromEnvelope(envelope);
+        }
+        catch (InvalidOperationException ex) when (ex.Message.StartsWith("finance_truth_", StringComparison.OrdinalIgnoreCase))
+        {
+            return SliceCommandHandlerResult.Rejected(StatusCodes.Status422UnprocessableEntity, ex.Message);
+        }
+
         var eventId = $"evt-{OperationsHash.Short(envelope.TenantId, envelope.WorkItemId, envelope.IdempotencyKey, "confirmed")}";
         var responseBody = new Dictionary<string, object>
         {
@@ -356,11 +328,11 @@ public sealed class CanonicalOperationsApiService
             eventPayload["admission"] = admission;
         }
 
-        var compatibilityMode = ReadString(envelope.Payload, "compatibilityMode");
-        if (!string.IsNullOrWhiteSpace(compatibilityMode))
+        var definitionMode = ReadString(envelope.Payload, "definitionMode");
+        if (!string.IsNullOrWhiteSpace(definitionMode))
         {
-            responseBody["compatibilityMode"] = compatibilityMode;
-            eventPayload["compatibilityMode"] = compatibilityMode;
+            responseBody["definitionMode"] = definitionMode;
+            eventPayload["definitionMode"] = definitionMode;
         }
 
         var admissionDecisionRef = ReadString(envelope.Payload, "admissionDecisionRef");
@@ -401,7 +373,20 @@ public sealed class CanonicalOperationsApiService
                     {
                         ["eventId"] = eventId,
                         ["workItemId"] = envelope.WorkItemId,
-                        ["caseId"] = envelope.CaseId
+                        ["caseId"] = envelope.CaseId,
+                        ["workspaceId"] = ReadString(envelope.Payload, "workspaceId"),
+                        ["cardId"] = ReadString(envelope.Payload, "cardId"),
+                        ["submissionId"] = ReadString(envelope.Payload, "submissionId"),
+                        ["cardInstanceId"] = ReadString(envelope.Payload, "cardInstanceId"),
+                        ["aggregateRef"] = ReadString(envelope.Payload, "aggregateRef"),
+                        ["actorId"] = ReadString(envelope.Payload, "actorId"),
+                        ["actorRole"] = ReadString(envelope.Payload, "actorRole"),
+                        ["operationMode"] = ReadString(envelope.Payload, "operationMode"),
+                        ["correctionMode"] = ReadString(envelope.Payload, "correctionMode"),
+                        ["sourceWorkItemId"] = ReadString(envelope.Payload, "sourceWorkItemId"),
+                        ["sourceSubmissionId"] = ReadString(envelope.Payload, "sourceSubmissionId"),
+                        ["fieldValues"] = ReadObject(envelope.Payload, PayloadFieldValues) ?? new Dictionary<string, object>(),
+                        ["evidenceIds"] = ReadStringArray(envelope.Payload, "evidenceIds")
                     },
                     eventId)
             },
@@ -448,18 +433,69 @@ public sealed class CanonicalOperationsApiService
             ["definition"] = definition.ToTrace(),
             ["definitionId"] = definition.DefinitionId,
             ["legacyCardId"] = definition.LegacyCardId,
-            ["compatibilityMode"] = definition.CompatibilityMode,
+            ["definitionMode"] = definition.DefinitionMode,
             ["admission"] = admission.ToContract(),
             ["admissionDecisionRef"] = admission.AdmissionDecisionRef,
             ["actorId"] = actor.ActorId,
             ["actorRole"] = actor.Role,
             ["actorTenantId"] = actor.TenantId,
             ["authSource"] = actor.AuthSource,
+            ["operationMode"] = PayloadValue(workItem.Payload, "operationMode"),
+            ["correctionMode"] = PayloadValue(workItem.Payload, "correctionMode"),
+            ["sourceWorkItemId"] = PayloadValue(workItem.Payload, "sourceWorkItemId"),
+            ["sourceSubmissionId"] = PayloadValue(workItem.Payload, "sourceSubmissionId"),
             ["fieldValues"] = (request.FieldValues ?? new Dictionary<string, string>())
                 .ToDictionary(item => item.Key, item => (object)item.Value),
             ["evidenceIds"] = request.EvidenceIds ?? Array.Empty<string>(),
             ["source"] = Source
         };
+
+    private static bool IsCorrectionWorkItem(WorkItem workItem) =>
+        PayloadValue(workItem.Payload, "correctionMode").Equals("append_only", StringComparison.OrdinalIgnoreCase) ||
+        PayloadValue(workItem.Payload, "operationMode").Equals("correction", StringComparison.OrdinalIgnoreCase);
+
+    private string? ValidateFieldKeys(string workItemId, ConfirmWorkItemRequest request)
+    {
+        var values = request.FieldValues ?? new Dictionary<string, string>();
+        if (values.Count == 0)
+        {
+            return null;
+        }
+
+        var prepared = catalog.PrepareWorkItem(workItemId, new PrepareWorkItemRequest(
+            request.WorkspaceId,
+            request.CardId,
+            request.SubmissionId,
+            request.CardInstanceId,
+            request.AggregateRef));
+        if (prepared is null)
+        {
+            return "field_contract_not_resolved";
+        }
+
+        var allowed = prepared.FieldContract.System
+            .Concat(prepared.FieldContract.Business)
+            .Concat(prepared.FieldContract.Analytics)
+            .Select(field => field.Id)
+            .ToHashSet(StringComparer.Ordinal);
+        foreach (var key in ReservedControlFieldKeys)
+        {
+            allowed.Add(key);
+        }
+        var unknown = values.Keys.FirstOrDefault(key => !allowed.Contains(key));
+        return string.IsNullOrWhiteSpace(unknown) ? null : $"unknown_field_key:{unknown}";
+    }
+
+    private static readonly string[] ReservedControlFieldKeys =
+    {
+        "runtimeMode",
+        "productionConfirm",
+        "runtimeReplayPolicy",
+        "sourcePack",
+        "targetFact",
+        "depositAccountId",
+        "correctionMode"
+    };
 
     private static IReadOnlyDictionary<string, object> ReadFieldValues(CommandEnvelopeV1 envelope) =>
         ReadObject(envelope.Payload, PayloadFieldValues) is IReadOnlyDictionary<string, object> fields
@@ -514,9 +550,9 @@ public sealed class CanonicalOperationsApiService
             clientInstruction["definition"] = definition!;
         }
 
-        if (result.ResponseBody.TryGetValue("compatibilityMode", out var compatibilityMode))
+        if (result.ResponseBody.TryGetValue("definitionMode", out var definitionMode))
         {
-            clientInstruction["compatibilityMode"] = compatibilityMode!;
+            clientInstruction["definitionMode"] = definitionMode!;
         }
 
         return new ConfirmWorkItemResult(
@@ -535,7 +571,8 @@ public sealed class CanonicalOperationsApiService
             Source,
             result.IdempotencyKey,
             result.PayloadHash,
-            string.IsNullOrWhiteSpace(result.SubmissionId) ? null : result.SubmissionId);
+            string.IsNullOrWhiteSpace(result.SubmissionId) ? null : result.SubmissionId,
+            string.IsNullOrWhiteSpace(result.SubmissionId) ? null : $"/api/operations/trace/submissions/{Uri.EscapeDataString(result.SubmissionId)}");
     }
 
     private static string FirstNonEmpty(params string?[] values) =>

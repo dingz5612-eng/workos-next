@@ -14,9 +14,9 @@
     "business-line hardcoded priority in a surface component",
     "rank boost that changes confirmAllowed or productionAllowed"
   ],
-  "legacyAllowance": {
+  "projectionInputIsolation": {
     "adapter": "LensQueryService.Search",
-    "reason": "Existing compatibility search may continue only as SearchKernelService input.",
-    "mustBeWrappedBy": "LegacyWorkspaceSearchAdapter"
+    "reason": "Projection search may provide source material only as SearchKernelService input.",
+    "mustBeWrappedBy": "ProjectionWorkspaceSearchAdapter"
   }
 }

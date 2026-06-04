@@ -146,13 +146,6 @@ function supportRows(view, ctx) {
       body: ctx.tr("deviceTrustStatusBody")
     }];
   }
-  if (view === "feedback") {
-    return [{
-      label: ctx.tr("feedbackContext"),
-      value: ctx.tr("feedbackContextReady"),
-      body: ctx.tr("feedbackRuntimeBody")
-    }];
-  }
   return emptyRows(ctx);
 }
 

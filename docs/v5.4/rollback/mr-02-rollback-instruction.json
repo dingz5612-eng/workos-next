@@ -12,16 +12,14 @@
       "GET /api/operations/work-items",
       "GET /api/operations/work-items/{workItemId}",
       "POST /api/operations/work-items/{workItemId}/prepare",
-      "POST /api/operations/work-items/{workItemId}/confirm",
-      "POST /api/workspaces/{workspaceId}/cards/{cardId}/prepare",
-      "POST /api/workspaces/{workspaceId}/cards/{cardId}/confirm"
+      "POST /api/operations/work-items/{workItemId}/confirm"
     ],
     "submission_evidence": [
       "shadow_runtime.command_submissions",
       "operations command submission store or equivalent"
     ],
     "technical_rollback_allowed_when": "Operations API has not carried production release evidence or durable business submissions beyond test tenants.",
-    "evidence_retention_required_when": "Operations API or legacy compatibility wrappers have recorded command submissions, GateResult evidence, or release audit evidence."
+    "evidence_retention_required_when": "Operations API, GateResult evidence, or release audit evidence has recorded command submissions; retired Workspace/Card write routes must not be restored."
   },
   "allowed_before_status": [
     "built",
@@ -34,15 +32,15 @@
     "paused"
   ],
   "steps": [
-    "Freeze new Operations API traffic and keep old Workspace/Card endpoints available for compatibility.",
-    "Revert the MR-02 runtime adapter and endpoint registration through a reviewed code rollback; do not add page-specific business write routes.",
+    "Freeze new Operations API traffic if the Operations Runtime command boundary is unsafe; do not restore retired Workspace/Card write endpoints.",
+    "Revert only through a reviewed Operations Runtime rollback; do not add page-specific business write routes or retired Workspace/Card routes.",
     "If command submissions are test-only and no release evidence depends on them, clean MR-02 shadow submissions by tenant and release scope.",
     "If command submissions or release evidence exist, do not truncate or drop evidence tables; archive or migrate the evidence first, then apply a reviewed compensating change.",
-    "Confirm old Workspace/Card prepare and confirm routes still return their compatible payloads after rollback."
+    "Confirm retired Workspace/Card prepare and confirm routes remain absent after rollback."
   ],
   "validation_steps": [
     "Run operations API contract tests and confirm rolled-back Operations routes are either intentionally unavailable or guarded by release mode.",
-    "Run old API compatibility tests.",
+    "Run retired Workspace/Card write-route absence guards.",
     "Run command submission idempotency tests against the rollback target.",
     "Run node scripts/check-api-boundaries.mjs.",
     "Run invariant-runner, shadow-compare-runner, gate-runner, and release-manifest-validate for the rollback evidence."

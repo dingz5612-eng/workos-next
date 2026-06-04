@@ -17,7 +17,7 @@
     "projection_lens_replay",
     "ui_state_matches_api_result",
     "trace_api_chain",
-    "compatibility_fallback_not_used",
+    "retired_workspace_card_write_path_not_used",
     "source_mode_live_api_db"
   ],
   "requiredApiCalls": [

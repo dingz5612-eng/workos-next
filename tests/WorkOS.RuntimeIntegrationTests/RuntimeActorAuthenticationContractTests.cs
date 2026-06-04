@@ -36,26 +36,25 @@ public sealed class RuntimeActorAuthenticationContractTests
     }
 
     [TestMethod]
-    public void OperationsAndCompatibilityConfirmUseTrustedSessionToken()
+    public void OperationsConfirmUsesTrustedSessionToken()
     {
         var operationsEndpoints = SurfaceRuntimeGuardTestFiles.Read("services", "core-api", "WorkOS.Api", "Runtime", "OperationsRuntimeEndpoints.cs");
         var program = SurfaceRuntimeGuardTestFiles.Read("services", "core-api", "WorkOS.Api", "Program.cs");
 
         StringAssert.Contains(operationsEndpoints, "httpRequest.SessionTokenForOperations()");
-        StringAssert.Contains(program, "httpRequest.SessionTokenForOperations()");
         Assert.IsFalse(
             program.Contains("Headers[\"X-WorkOS-Actor-Id\"]", StringComparison.Ordinal),
             "写接口不得把 X-WorkOS-Actor-Id 当成可信身份来源。");
     }
 
     [TestMethod]
-    public void RuntimeValidatorCoversUnauthenticatedAndDevelopmentCompatibilityFlow()
+    public void RuntimeValidatorCoversUnauthenticatedAndDevelopmentOperationsFlow()
     {
         var validator = SurfaceRuntimeGuardTestFiles.Read("scripts", "validate-runtime-api.mjs");
 
         StringAssert.Contains(validator, "confirm without actor token must return 401");
         StringAssert.Contains(validator, "ensureRuntimeActorToken");
-        StringAssert.Contains(validator, "Development login must return compatibility token");
+        StringAssert.Contains(validator, "Development login must return actor token");
         StringAssert.Contains(validator, "\"X-WorkOS-Actor-Token\"");
     }
 }

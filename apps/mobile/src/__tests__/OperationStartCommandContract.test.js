@@ -2,11 +2,12 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 vi.mock("../apiClient.js", () => ({
   fetchSearchResults: vi.fn(),
-  startResourceSetup: vi.fn()
+  recordMobileClientEvent: vi.fn(),
+  startOperationsWorkspace: vi.fn()
 }));
 
-import { fetchSearchResults, startResourceSetup } from "../apiClient.js";
-import { runSearch, startWorkspaceCommand } from "../navigationController.js";
+import { fetchSearchResults, startOperationsWorkspace } from "../apiClient.js";
+import { runSearch, startOperationsWorkspaceCommand } from "../navigationController.js";
 import { routeView } from "../appRouter.js";
 import { applyRuntimeProjection } from "../runtime/runtimeStore.js";
 import { createSurfaceCtx, runtimeStore, source, visibleText } from "./surfaceContractTestHelpers.js";
@@ -34,7 +35,7 @@ describe("Operations Runtime start command contract", () => {
         templateWorkspaceId: "W-STAY-RESOURCE"
       }
     };
-    startResourceSetup.mockResolvedValue({
+    startOperationsWorkspace.mockResolvedValue({
       workspace,
       workItem,
       operationWorkItems: [workItem],
@@ -51,7 +52,7 @@ describe("Operations Runtime start command contract", () => {
     ctx.render = vi.fn();
     ctx.hydrateProjectionFromApi = vi.fn();
 
-    await startWorkspaceCommand(ctx, "W-STAY-RESOURCE", "roomSetup");
+    await startOperationsWorkspaceCommand(ctx, "W-STAY-RESOURCE", "roomSetup");
 
     expect(ctx.state.view).toBe("operationPanel");
     expect(ctx.state.selectedWorkspace).toBe(workspace.id);
@@ -63,9 +64,9 @@ describe("Operations Runtime start command contract", () => {
     expect(ctx.render).toHaveBeenCalledWith(true);
     expect(ctx.hydrateProjectionFromApi).not.toHaveBeenCalled();
     expect(routeView(ctx)).toContain('data-surface="operation-panel-route"');
-    expect(visibleText(routeView(ctx))).toContain("办理操作");
+    expect(visibleText(routeView(ctx))).toContain("本步要做");
     expect(visibleText(routeView(ctx))).toContain("提交处理");
-    expect(visibleText(routeView(ctx))).toContain("可办理");
+    expect(visibleText(routeView(ctx))).toContain("提交前检查");
     expect(visibleText(routeView(ctx))).not.toContain("available");
     expect(visibleText(routeView(ctx))).not.toContain("暂不能直接办理");
   });
@@ -75,6 +76,7 @@ describe("Operations Runtime start command contract", () => {
     expect(apiClient).toContain("operationsWorkspaceStart");
     expect(apiClient).not.toContain('runtimeFetch("/api/workspaces/start"');
     expect(apiClient).not.toContain("startWorkspace(");
+    expect(apiClient).not.toContain("startResourceSetup(");
     expect(apiClient).not.toContain("prepareCard(");
     expect(apiClient).not.toContain("confirmCard(");
 
@@ -95,7 +97,7 @@ describe("Operations Runtime start command contract", () => {
         templateWorkspaceId: "W-STAY-RESOURCE"
       }
     };
-    startResourceSetup.mockResolvedValue({
+    startOperationsWorkspace.mockResolvedValue({
       workspace,
       workItem,
       operationWorkItems: [workItem],
@@ -119,13 +121,13 @@ describe("Operations Runtime start command contract", () => {
     ctx.render = vi.fn();
     ctx.hydrateProjectionFromApi = vi.fn();
 
-    await startWorkspaceCommand(ctx, "W-STAY-RESOURCE", "roomSetup");
+    await startOperationsWorkspaceCommand(ctx, "W-STAY-RESOURCE", "roomSetup");
 
     expect(ctx.state.view).toBe("operationPanel");
     expect(ctx.state.selectedWorkItemId).toBe("wi-start-room-002");
     expect(ctx.state.lastActionResult).toBeNull();
     expect(visibleText(routeView(ctx))).toContain("提交处理");
-    expect(visibleText(routeView(ctx))).not.toContain("查看阻断处理说明");
+    expect(visibleText(routeView(ctx))).not.toContain("查看不能提交原因");
   });
 
   it("does not expose retired workspace/card compatibility write paths to the mobile client", () => {
@@ -137,20 +139,21 @@ describe("Operations Runtime start command contract", () => {
     expect(runtimePaths).not.toContain("prepareCard:");
     expect(runtimePaths).not.toContain("confirmCard:");
     expect(apiClient).not.toContain("startWorkspace(");
+    expect(apiClient).not.toContain("startResourceSetup(");
     expect(apiClient).not.toContain("prepareCard(");
     expect(apiClient).not.toContain("confirmCard(");
   });
 
   it("routes forbidden start commands to permission diagnosis instead of API offline copy", async () => {
-    startResourceSetup.mockRejectedValue({
+    startOperationsWorkspace.mockRejectedValue({
       status: 403,
-      reason: "role_confirmation_forbidden:workspace_start",
-      code: "role_confirmation_forbidden:workspace_start"
+      reason: "admission_role_forbidden:workspace_start",
+      code: "operation_workspace_start_forbidden"
     });
     const ctx = createSurfaceCtx({ view: "search" });
     ctx.render = vi.fn();
 
-    await startWorkspaceCommand(ctx, "W-STAY-RESOURCE", "roomSetup");
+    await startOperationsWorkspaceCommand(ctx, "W-STAY-RESOURCE", "roomSetup");
 
     expect(ctx.state.view).toBe("permissionDiagnostic");
     expect(ctx.state.operationMessage).toBe("");
@@ -165,10 +168,10 @@ describe("Operations Runtime start command contract", () => {
     fetchSearchResults.mockReturnValue(new Promise((resolve) => {
       resolveSearch = resolve;
     }));
-    startResourceSetup.mockRejectedValue({
+    startOperationsWorkspace.mockRejectedValue({
       status: 403,
-      reason: "role_confirmation_forbidden:workspace_start",
-      code: "role_confirmation_forbidden:workspace_start"
+      reason: "admission_role_forbidden:workspace_start",
+      code: "operation_workspace_start_forbidden"
     });
     vi.stubGlobal("document", {
       querySelector: (selector) => selector === "#query" ? { value: "新增住宿房源" } : null
@@ -177,12 +180,12 @@ describe("Operations Runtime start command contract", () => {
     ctx.render = vi.fn();
 
     const pendingSearch = runSearch(ctx);
-    await startWorkspaceCommand(ctx, "W-STAY-RESOURCE", "roomSetup");
+    await startOperationsWorkspaceCommand(ctx, "W-STAY-RESOURCE", "roomSetup");
     resolveSearch([]);
     await pendingSearch;
 
     expect(ctx.state.view).toBe("permissionDiagnostic");
-    expect(ctx.state.permissionDiagnostic.reason).toBe("role_confirmation_forbidden:workspace_start");
+    expect(ctx.state.permissionDiagnostic.reason).toBe("admission_role_forbidden:workspace_start");
     vi.unstubAllGlobals();
   });
 });

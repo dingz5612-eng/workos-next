@@ -32,7 +32,7 @@ function validateContract(contract) {
   if (!fs.existsSync(path.join(root, schemaPath))) {
     violations.push(violation("surface_contract.schema_missing", `${schemaPath} is required.`));
   }
-  for (const field of ["version", "operationRuntimePure", "mobile", "pc", "compatibilityAdapter"]) {
+  for (const field of ["version", "operationRuntimePure", "completedBusinessRecord", "collaborationFeedback", "mobile", "pc", "retiredWorkspaceCardWriteAdapter"]) {
     if (!(field in contract)) {
       violations.push(violation("surface_contract.missing_field", `${contractPath} missing ${field}.`, { field }));
     }
@@ -54,6 +54,38 @@ function validateContract(contract) {
       violations.push(violation("surface_contract.pc_file_missing", `${file} is required by surface contract.`, { file }));
     }
   }
+  if (!contract.completedBusinessRecord?.viewPath || !contract.completedBusinessRecord?.correctionPath) {
+    violations.push(violation("surface_contract.completed_record_paths", "Completed business records must declare readonly view and append-only correction paths."));
+  }
+  const requiredActionOrder = ["create_active_work_item", "view_readonly_completed_record", "correct_append_only_from_record"];
+  if (!Array.isArray(contract.completedBusinessRecord?.actionOrder) ||
+      requiredActionOrder.some((item, index) => contract.completedBusinessRecord.actionOrder[index] !== item)) {
+    violations.push(violation("surface_contract.completed_record_action_order", "Completed business records must enforce create -> readonly view -> append-only correction."));
+  }
+  if (!String(contract.completedBusinessRecord?.correctionEntry || "").includes("readonly completed record")) {
+    violations.push(violation("surface_contract.completed_record_correction_entry", "Correction entry must be declared as readonly completed record only."));
+  }
+  if (!Array.isArray(contract.completedBusinessRecord?.dataSources) || !contract.completedBusinessRecord.dataSources.some((item) => String(item).includes("OperationsWorkItemConfirmed"))) {
+    violations.push(violation("surface_contract.completed_record_data_sources", "Completed business records must declare OperationsWorkItemConfirmed as a display data source."));
+  }
+  if (!String(contract.completedBusinessRecord?.correctionPath || "").includes("correctionMode=append_only")) {
+    violations.push(violation("surface_contract.completed_record_correction_append_only", "Completed business record correction path must use correctionMode=append_only."));
+  }
+  if (contract.collaborationFeedback?.surface !== "feedback-message-channel") {
+    violations.push(violation("surface_contract.feedback_surface", "Collaboration feedback must declare feedback-message-channel surface."));
+  }
+  if (!String(contract.collaborationFeedback?.entry || "").includes("right-bottom safe floating")) {
+    violations.push(violation("surface_contract.feedback_entry", "Collaboration feedback entry must be right-bottom safe floating."));
+  }
+  if (!String(contract.collaborationFeedback?.eventPath || "").includes("/api/mobile/client-events")) {
+    violations.push(violation("surface_contract.feedback_event_path", "Collaboration feedback must record runtime event through /api/mobile/client-events until dedicated inbox storage exists."));
+  }
+  if (!String(contract.collaborationFeedback?.forbiddenPath || "").includes("Operations Confirm")) {
+    violations.push(violation("surface_contract.feedback_forbidden_confirm", "Collaboration feedback must not use Operations Confirm."));
+  }
+  if (!String(contract.collaborationFeedback?.forbiddenPath || "").includes("save/submit business action row")) {
+    violations.push(violation("surface_contract.feedback_forbidden_action_row", "Collaboration feedback must not be placed inside save/submit business action rows."));
+  }
   return violations;
 }
 
@@ -68,6 +100,10 @@ function validateSourceBoundary(contract) {
   const operationRuntime = readSource("apps/mobile/src/operationRuntime.js");
   const operationController = readSource("apps/mobile/src/operationController.js");
   const components = readSource("apps/mobile/src/views/experienceComponents.js");
+  const workspace = readSource("apps/mobile/src/views/workspaceView.js");
+  const shell = readSource("apps/mobile/src/appShell.js");
+  const feedbackView = readSource("apps/mobile/src/views/feedbackView.js");
+  const feedbackController = readSource("apps/mobile/src/feedbackController.js");
 
   for (const token of contract.mobile?.forbiddenPcApiTokens || []) {
     if (apiClient.includes(token)) {
@@ -114,8 +150,26 @@ function validateSourceBoundary(contract) {
   if (!operationController.includes("persistedWorkItemIdFor(ctx.state, item, card)")) {
     violations.push(violation("surface_contract.confirm_selected_persisted_id", "submitCurrentCard must pass selected persisted WorkItem id into submitWorkItemOperation."));
   }
+  if (!operationPanel.includes('data-surface="completed-operation-record"') ||
+      !operationPanel.includes("completedRecordActionPolicy") ||
+      !operationPanel.includes("viewOnly") ||
+      !workspace.includes("data-correction-work-item")) {
+    violations.push(violation("surface_contract.completed_record_actions_missing", "Completed records must expose readonly view first and append-only correction from the readonly record."));
+  }
+  if (!eventBinder.includes("startCompletedStepCorrection")) {
+    violations.push(violation("surface_contract.completed_record_correction_handler_missing", "Completed record correction must be handled through Operations Runtime WorkItem creation."));
+  }
+  if (!operationController.includes("enrichCorrectionFieldValues") || !operationController.includes("correctionMode")) {
+    violations.push(violation("surface_contract.completed_record_correction_marker_missing", "Correction submissions must carry correctionMode through Operations Confirm."));
+  }
   if (!components.includes("runtimeItem?.workItemId") || !components.includes("persistedCandidate")) {
     violations.push(violation("surface_contract.trusted_sheet_persisted_model", "TrustedConfirmSheet/WorkItemCard model must prefer persisted runtime WorkItem ids over card workItemId."));
+  }
+  if (!shell.includes("feedback-fab") || !feedbackView.includes('data-surface="feedback-message-channel"')) {
+    violations.push(violation("surface_contract.feedback_channel_missing", "Feedback must be a message channel, not a placeholder-only support page."));
+  }
+  if (!feedbackController.includes("recordMobileClientEvent") || feedbackController.includes("confirmOperationWorkItem")) {
+    violations.push(violation("surface_contract.feedback_wrong_write_path", "Feedback must record collaboration events without using Operations Confirm."));
   }
   if (!pcApiClient.includes("postPcOperationsConfirm") || !pcApiClient.includes("X-WorkOS-Operation-Confirm")) {
     violations.push(violation("surface_contract.pc_confirm_header_missing", "pcApiClient.js must keep PC correction/reconciliation behind Operations Confirm headers."));

@@ -1,5 +1,5 @@
 import { capacityForRoomType } from "./controls/fieldControls.js";
-import { clearDraft, loadDraft, saveDraft } from "./operationDrafts.js";
+import { clearDraft, loadDraft, saveCompletedRecordSnapshot, saveDraft } from "./operationDrafts.js";
 import { createSubmissionProtocol, materializeEvidenceObjects, submitWorkItemOperation } from "./operationRuntime.js";
 import { setView } from "./navigationController.js";
 import { activeWorkspaceCard, isCardActionDisabled, isTerminalCardStatus } from "./selectors/workspaceSelectors.js";
@@ -67,7 +67,7 @@ export function toggleEvidenceSelection(event, ctx) {
   if (node.classList.contains("selected") && !node.dataset.evidenceDraftId) {
     node.dataset.evidenceDraftId = `evidence-${node.dataset.evidenceId}-${randomDraftId()}`;
   }
-  const fieldValues = collectOperationValues();
+  const fieldValues = enrichCorrectionFieldValues(collectOperationValues(), ctx.state, item, card);
   const evidenceDrafts = collectEvidenceDrafts();
   saveDraft(item.id, card.id, fieldValues, evidenceDrafts, draftSubmissionProtocol(item, card, fieldValues, evidenceDrafts));
 }
@@ -76,7 +76,7 @@ export function saveCurrentDraft(ctx) {
   const item = ctx.workspace();
   const card = activeWorkspaceCard(item, ctx.state.selectedCardIndex, ctx.state.selectedCardId);
   if (!item || !card) return;
-  const fieldValues = collectOperationValues();
+  const fieldValues = enrichCorrectionFieldValues(collectOperationValues(), ctx.state, item, card);
   const evidenceDrafts = collectEvidenceDrafts();
   saveDraft(item.id, card.id, fieldValues, evidenceDrafts, draftSubmissionProtocol(item, card, fieldValues, evidenceDrafts));
   ctx.state.fieldValidation = null;
@@ -151,7 +151,7 @@ export async function submitCurrentCard(ctx) {
     setView("login", ctx);
     return;
   }
-  const fieldValues = collectOperationValues();
+  const fieldValues = enrichCorrectionFieldValues(collectOperationValues(), ctx.state, item, card);
   const requiredValidation = validateRequiredFields(card, fieldValues, ctx);
   if (requiredValidation.missingFields.length) {
     const evidenceDrafts = collectEvidenceDrafts();
@@ -178,7 +178,7 @@ export async function submitCurrentCard(ctx) {
   if (ctx.state.apiStatus !== "online") {
     await ctx.hydrateProjectionFromApi();
     if (ctx.state.apiStatus !== "online") {
-      ctx.state.operationMessage = ctx.tr("apiOffline");
+      ctx.state.operationMessage = ctx.tr("apiOfflineSubmit");
       ctx.render();
       return;
     }
@@ -216,18 +216,32 @@ export async function submitCurrentCard(ctx) {
       submissionProtocol,
       onProjection: (payload) => applyProjectionPayload(payload, ctx),
       onLens: (payload) => applyLensPayload(payload, ctx),
-      onOperationWorkItems: (items) => applyRuntimeSurfacePayloads(ctx.state, { operationWorkItems: items })
+      onOperationWorkItems: (items) => applyRuntimeSurfacePayloads(ctx.state, { operationWorkItems: items }),
+      onReadSideSynced: (syncResult) => applyCommittedReadSideSync(syncResult, ctx, item.id, card.id, submissionProtocol.submissionId)
     });
     if (!isCommittedConfirmResult(result)) {
       ctx.state.operationMessage = confirmBlockedMessage(result, ctx);
       ctx.state.lastActionResult = actionResultFromBlockedConfirm(result, ctx.state.operationMessage, item, card);
     } else {
+      saveCompletedRecordSnapshot({
+        workspaceId: item.id,
+        cardId: card.id,
+        workItemId: persistedWorkItemIdFor(ctx.state, item, card),
+        sourceWorkItemId: selectedOperationWorkItem(ctx.state, item, card)?.payload?.sourceWorkItemId || "",
+        submissionId: submissionProtocol.submissionId,
+        cardInstanceId: submissionProtocol.cardInstanceId,
+        aggregateRef: submissionProtocol.aggregateRef,
+        values: fieldValues,
+        evidenceDrafts,
+        evidenceIds,
+        result
+      });
       applyCommittedCardLocalState(item.id, card.id, ctx);
       if (result?.projectionStatus === "projected") clearDraft(item.id, card.id);
       ctx.state.selectedCardIndex = -1;
       ctx.state.selectedCardId = "";
       ctx.state.operationMessage = confirmSuccessMessage(result, ctx);
-      ctx.state.lastActionResult = actionResultFromConfirm(result, ctx.state.operationMessage, item, card);
+      ctx.state.lastActionResult = actionResultFromConfirm(result, ctx.state.operationMessage, item, card, fieldValues);
     }
   } catch (error) {
     if (applyConfirmError(error, ctx)) return;
@@ -245,6 +259,29 @@ function validateRequiredFields(card, values, ctx) {
     missingFields,
     missingLabels: missingFields.map((field) => labelForField(field, ctx))
   };
+}
+
+function enrichCorrectionFieldValues(values = {}, state = {}, workspace = {}, card = {}) {
+  const selected = selectedOperationWorkItem(state, workspace, card);
+  const correctionMode = selected?.payload?.correctionMode || selected?.Payload?.correctionMode || "";
+  if (!correctionMode) return values;
+  return {
+    ...values,
+    correctionMode
+  };
+}
+
+function selectedOperationWorkItem(state = {}, workspace = {}, card = {}) {
+  const selectedWorkItemId = state.selectedWorkItemId || "";
+  const runtimeItems = [
+    ...(state.runtimeStore?.operationWorkItems || []),
+    ...(state.runtimeStore?.workQueue || [])
+  ];
+  return runtimeItems.find((item) => [item.workItemId, item.work_item_id].includes(selectedWorkItemId)) ||
+    runtimeItems.find((item) =>
+      (item.workspaceId || item.workspace_id) === workspace?.id &&
+      (item.cardId || item.card_id || item.payload?.cardId || item.Payload?.cardId) === card?.id) ||
+    null;
 }
 
 function hasBusinessValue(values = {}, fieldId = "") {
@@ -368,7 +405,7 @@ function isCommittedConfirmResult(result) {
   return result?.confirmed === true && result?.commitStatus === "committed";
 }
 
-function actionResultFromConfirm(result, message, workspace = {}, card = {}) {
+function actionResultFromConfirm(result, message, workspace = {}, card = {}, fieldValues = {}) {
   const status = result?.commitStatus === "committed" && result?.projectionStatus === "pending"
     ? "committed_projection_pending"
     : result?.commitStatus === "committed" && result?.projectionStatus === "failed"
@@ -380,7 +417,8 @@ function actionResultFromConfirm(result, message, workspace = {}, card = {}) {
     workspaceId: workspace?.id || result?.caseId || result?.workspace?.id || "",
     cardId: card?.id || "",
     commandSubmissionId: result?.commandSubmissionId || result?.submissionId || "",
-    traceRefs: result?.traceRefs || result?.resultEventIds || []
+    traceRefs: result?.traceRefs || result?.resultEventIds || [],
+    fieldValues: fieldValues || {}
   };
 }
 
@@ -413,6 +451,25 @@ function actionResultFromError(error, message) {
       nextAction: error.nextAction || message
     } : null
   };
+}
+
+function applyCommittedReadSideSync(syncResult, ctx, workspaceId, cardId, submissionId) {
+  const current = ctx.state.lastActionResult;
+  if (!current || current.commandSubmissionId !== submissionId) return;
+  if (syncResult?.projectionStatus !== "projected") {
+    ctx.render(true);
+    return;
+  }
+  clearDraft(workspaceId, cardId);
+  applyCommittedCardLocalState(workspaceId, cardId, ctx);
+  ctx.state.operationMessage = ctx.tr("submitDone");
+  ctx.state.lastActionResult = {
+    ...current,
+    status: "committed_projected",
+    message: ctx.state.operationMessage,
+    projectionStatus: "projected"
+  };
+  ctx.render(true);
 }
 
 function applyCommittedCardLocalState(workspaceId, cardId, ctx) {

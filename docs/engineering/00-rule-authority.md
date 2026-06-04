@@ -35,9 +35,11 @@ Definition
   -> Mobile / PC Surface
 ```
 
-The old Workspace/Card prepare and confirm endpoints remain compatibility
-wrappers only. They must not be the primary extension point for new business
-behavior.
+Workspace/Card prepare and confirm write endpoints are retired and must stay
+deleted. Workspace/Card may only appear as projection/display compatibility
+input. ProjectionRuntime may remain a projection/Lens compatibility facade, but
+it is not the command boundary, the top-level architecture, or a business write
+extension point.
 
 ## Batch Gate Rule
 
@@ -66,3 +68,25 @@ Codex and other automated agents must read this authority before starting a new
 engineering batch. If the task asks for a later batch while an earlier dependency
 is incomplete, the agent must stop at the dependency and produce evidence rather
 than implementing downstream business behavior.
+
+## Issue Repair Protocol
+
+When a user or test exposes an error, duplicate, redundant, compatibility,
+invalid, confusing, slow, or broken behavior, the repair order is mandatory:
+
+1. Observe the real behavior and name the affected user/business scenario.
+2. Classify the impact across business flow, architecture layer, data/fact
+   ownership, validation, surface experience, copy, performance, and evidence.
+3. Locate the broken layer in the Operations Runtime axis before changing UI.
+4. Align the target flow against the active contract, rule authority, Definition
+   Registry, Admission Kernel, Language/Search Kernel, Control Plane, and
+   Evidence Graph.
+5. Update contract/model/rule first when the behavior is a global rule.
+6. Implement the smallest root-cause architecture change that removes the broken
+   path; delete retired compatibility, duplicate, or invalid code found in the
+   impact scope.
+7. Verify with unit/contract/integration checks and real browser operation when
+   the behavior is user-facing.
+
+Page-level hard-adds, old compatibility fallbacks, repeated copy patches, and
+direct edits of completed business facts are forbidden repair strategies.

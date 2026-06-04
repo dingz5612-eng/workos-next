@@ -1916,7 +1916,7 @@ static void ValidateProjectionContractFiles()
     using var openApi = JsonDocument.Parse(File.ReadAllText(Path.Combine("docs", "contracts", "workos-runtime.openapi.json")));
     var confirm = openApi.RootElement
         .GetProperty("paths")
-        .GetProperty("/api/workspaces/{workspaceId}/cards/{cardId}/confirm")
+        .GetProperty("/api/operations/work-items/{workItemId}/confirm")
         .GetProperty("post");
 
     var hasActorHeader = confirm.GetProperty("parameters").EnumerateArray().Any(item =>
@@ -1928,14 +1928,14 @@ static void ValidateProjectionContractFiles()
     var confirmRequired = openApi.RootElement
         .GetProperty("components")
         .GetProperty("schemas")
-        .GetProperty("ConfirmCardRequest")
+        .GetProperty("ConfirmWorkItemRequest")
         .GetProperty("required")
         .EnumerateArray()
         .Select(item => item.GetString())
         .ToHashSet();
     foreach (var field in new[] { "language", "idempotencyKey", "submissionId", "cardInstanceId", "fieldValues", "evidenceIds" })
     {
-        Assert(confirmRequired.Contains(field), $"OpenAPI ConfirmCardRequest must require {field}");
+        Assert(confirmRequired.Contains(field), $"OpenAPI ConfirmWorkItemRequest must require {field}");
     }
     foreach (var statusCode in new[] { "200", "400", "401", "403", "422", "404" })
     {
@@ -1946,14 +1946,14 @@ static void ValidateProjectionContractFiles()
     var confirmResponseRequired = openApi.RootElement
         .GetProperty("components")
         .GetProperty("schemas")
-        .GetProperty("ConfirmCardResponse")
+        .GetProperty("ConfirmWorkItemResult")
         .GetProperty("required")
         .EnumerateArray()
         .Select(item => item.GetString())
         .ToHashSet();
     foreach (var field in new[] { "confirmed", "commitStatus", "projectionStatus", "caseId", "workItemId", "submissionId", "resultEventIds", "userMessage", "clientInstruction" })
     {
-        Assert(confirmResponseRequired.Contains(field), $"OpenAPI ConfirmCardResponse must require {field}");
+        Assert(confirmResponseRequired.Contains(field), $"OpenAPI ConfirmWorkItemResult must require {field}");
     }
 
     var observationRequired = openApi.RootElement
@@ -2229,7 +2229,7 @@ static void ValidateGeneratedDtos()
     var runtimeApiPathsPath = Path.Combine("apps", "mobile", "src", "generated", "runtimeApiPaths.js");
     Assert(File.Exists(runtimeApiPathsPath), "generated runtime API paths module must exist");
     var runtimeApiPaths = File.ReadAllText(runtimeApiPathsPath);
-    foreach (var apiPathKey in new[] { "health", "login", "workspaces", "workspace", "bootstrap", "workQueue", "operationsCases", "operationsCase", "operationsWorkItems", "operationsWorkItem", "operationsPrepare", "operationsConfirm", "operationsTraceSubmission", "operationsTraceWorkItem", "operationsTraceCase", "search", "lensWorkQueue", "lensSearch", "homeSurface", "learningCatalog", "accommodationLens", "prepareCard", "confirmCard", "workspaceEvents", "auditEvents", "outbox", "processOutbox", "behaviorEvents", "observability" })
+    foreach (var apiPathKey in new[] { "health", "login", "workspaces", "workspace", "bootstrap", "workQueue", "operationsCases", "operationsCase", "operationsWorkspaceStart", "operationsWorkItems", "operationsWorkItem", "operationsPrepare", "operationsConfirm", "operationsTraceSubmission", "operationsTraceWorkItem", "operationsTraceCase", "search", "lensWorkQueue", "lensSearch", "homeSurface", "learningCatalog", "accommodationLens", "workspaceEvents", "auditEvents", "outbox", "processOutbox", "behaviorEvents", "observability" })
     {
         Assert(runtimeApiPaths.Contains($"{apiPathKey}:"), $"generated runtime API paths must include {apiPathKey}");
     }

@@ -87,10 +87,6 @@ export async function fetchWorkspaceProjection() {
   return response.json();
 }
 
-export async function startResourceSetup(actorToken = "") {
-  return startOperationsWorkspace("W-STAY-RESOURCE", actorToken, "resource_setup_start_failed");
-}
-
 export async function startOperationsWorkspace(templateWorkspaceId, actorToken = "", errorCode = "operation_workspace_start_failed") {
   const response = await runtimeFetch(runtimeApiPaths.operationsWorkspaceStart, {
     method: "POST",
@@ -192,6 +188,22 @@ export async function fetchSearchResults(q = "") {
   if (q) url.searchParams.set("q", q);
   const response = await runtimeFetch(url, { timeoutMs: 6000 });
   if (!response.ok) throw await apiError("search_failed", response);
+  return response.json();
+}
+
+export async function recordMobileClientEvent(event = {}) {
+  const response = await runtimeFetch(runtimeApiPaths.mobileClientEvents, {
+    method: "POST",
+    body: JSON.stringify({
+      eventType: event.eventType,
+      objectType: event.objectType,
+      objectId: event.objectId,
+      language: event.language || "zh-CN",
+      source: event.source || "mobile.search"
+    }),
+    timeoutMs: 2400
+  });
+  if (!response.ok) throw await apiError("behavior_event_failed", response);
   return response.json();
 }
 
@@ -310,12 +322,13 @@ export async function waitForProjectionEvent(eventId, onProjection) {
 
 export async function waitForProjectionEvents(eventIds, onProjection) {
   const expectedIds = (eventIds || []).filter(Boolean);
-  if (!expectedIds.length) return;
+  if (!expectedIds.length) return true;
   for (let attempt = 0; attempt < 8; attempt += 1) {
     const payload = await fetchWorkspaceProjection();
-    onProjection(payload);
+    if (onProjection) onProjection(payload);
     const projectedIds = new Set((payload.events || []).map((item) => item.eventId));
-    if (expectedIds.every((eventId) => projectedIds.has(eventId))) return;
+    if (expectedIds.every((eventId) => projectedIds.has(eventId))) return true;
     await new Promise((resolve) => setTimeout(resolve, 250));
   }
+  return false;
 }

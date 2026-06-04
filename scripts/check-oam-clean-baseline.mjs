@@ -40,7 +40,7 @@ function checkBaselineDoc() {
     "Operations Runtime",
     "POST /api/operations/work-items/{workItemId}/confirm",
     "ProjectionRuntime 是当前 compatibility facade",
-    "Workspace/Card 是 compatibility wrapper",
+    "Workspace/Card 只能作为投影展示对象",
     "Control Plane",
     "Rules OS",
     "Business Line Registry",
@@ -89,11 +89,8 @@ function checkCompatibilityComponents() {
   const text = read("docs/architecture/compatibility-components.yml");
   for (const component of [
     "ProjectionRuntime",
-    "Workspace/Card prepare-confirm",
-    "WorkspaceCardCompatibilityAdapter",
-    "ActionRuntimeService legacy validation path",
     "RuntimeDocumentStorage / runtime_documents snapshot",
-    "LensQueryService legacy search"
+    "LensQueryService projection search adapter"
   ]) {
     const block = componentBlock(text, component);
     if (!block) {
@@ -103,6 +100,12 @@ function checkCompatibilityComponents() {
     for (const field of ["currentUse", "allowed", "forbidden", "owner", "removalCondition"]) {
       if (!new RegExp(`${field}:\\s*\\S`).test(block)) failures.push(`${component} 缺少非空 ${field}。`);
     }
+  }
+  for (const retired of ["Workspace/Card prepare-confirm", "ActionRuntimeService legacy validation path"]) {
+    if (componentBlock(text, retired)) failures.push(`compatibility-components.yml 不得继续声明已退役组件：${retired}`);
+  }
+  if (text.includes("WorkspaceCardCompatibilityAdapter")) {
+    failures.push("compatibility-components.yml 不得继续引用已删除的 Workspace/Card write adapter。");
   }
 }
 

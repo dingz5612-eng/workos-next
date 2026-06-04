@@ -185,7 +185,6 @@ export type ConfirmCardResponse = {
   events?: WorkspaceEvent[];
   projection?: ProjectionEnvelope | null;
   source?: "operations_adapter" | "operations_unit_of_work";
-  compatibilitySource?: "workspace_card_compatibility_adapter";
   idempotencyKey?: string | null;
   payloadHash?: string | null;
   commandSubmissionId?: string | null;
@@ -455,12 +454,11 @@ const apiPathDescriptors = [
   { key: "revokeDeviceSession", path: "/api/device-sessions/{deviceId}/revoke" },
   { key: "workspaces", path: "/api/workspaces" },
   { key: "workspace", path: "/api/workspaces/{workspaceId}" },
-  { key: "startResourceSetupWorkspace", path: "/api/workspaces/resource-setup/start" },
-  { key: "startWorkspace", path: "/api/workspaces/start" },
   { key: "bootstrap", path: "/api/bootstrap" },
   { key: "workQueue", path: "/api/work-queue" },
   { key: "operationsCases", path: "/api/operations/cases" },
   { key: "operationsCase", path: "/api/operations/cases/{caseId}" },
+  { key: "operationsWorkspaceStart", path: "/api/operations/workspaces/start" },
   { key: "operationsWorkItems", path: "/api/operations/work-items" },
   { key: "operationsWorkItem", path: "/api/operations/work-items/{workItemId}" },
   { key: "operationsPrepare", path: "/api/operations/work-items/{workItemId}/prepare" },
@@ -500,8 +498,6 @@ const apiPathDescriptors = [
   { key: "correctionReject", path: "/api/correction-center/ledger-correction-requests/{correctionRequestId}/reject" },
   { key: "correctionApply", path: "/api/correction-center/ledger-correction-requests/{correctionRequestId}/apply" },
   { key: "pcGovernanceExport", path: "/api/pc-governance/exports/{exportType}" },
-  { key: "prepareCard", path: "/api/workspaces/{workspaceId}/cards/{cardId}/prepare" },
-  { key: "confirmCard", path: "/api/workspaces/{workspaceId}/cards/{cardId}/confirm" },
   { key: "workspaceEvents", path: "/api/workspaces/{workspaceId}/events" },
   { key: "auditEvents", path: "/api/audit-events" },
   { key: "outbox", path: "/api/outbox" },

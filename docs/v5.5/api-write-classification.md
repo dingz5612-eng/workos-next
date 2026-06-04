@@ -13,16 +13,16 @@ one category. Unclassified write routes are P0.
 
 - `operationsBusinessWrite`: only
   `POST /api/operations/work-items/{workItemId}/confirm`.
-- `compatibilityBusinessWrite`: old Workspace/Card prepare and confirm
-  wrappers only.
+- `compatibilityBusinessWrite`: retired; the category must stay empty.
 - `mobileExperienceWrite`: mobile draft, client event, and recent-object state;
   no business facts.
 - `evidenceWrite`: evidence object, file, and review writes; no payment or
   deposit confirmation facts.
 - `reconciliationGovernanceWrite`: bank import, matching, mismatch, and
   decision writes; no PaymentConfirmed or DepositConfirmed facts.
-- `governanceWrite`: allowed Dormitory workspace-start coordination writes;
-  they create a handling workspace instance but do not confirm business facts.
+- `governanceWrite`: allowed Dormitory Operations workspace-start
+  coordination writes; they create a handling workspace instance but do not
+  confirm business facts.
 - `correctionCenterWrite`: append-only correction request, approval, rejection,
   and apply path. Apply may affect ledger projections only as an explicit
   append-only correction service with invariants.

@@ -1,5 +1,4 @@
 using System.Security.Cryptography;
-using System.Reflection;
 using System.Text;
 
 namespace WorkOS.Api.Runtime;
@@ -53,7 +52,7 @@ public sealed class OperationsRuntimeService
             : workItems.Get(request.WorkItemId);
         if (persisted is not null)
         {
-            return StabilizePersistedWorkItem(persisted, request);
+            return persisted;
         }
 
         var projected = string.IsNullOrWhiteSpace(request.WorkItemId)
@@ -62,26 +61,6 @@ public sealed class OperationsRuntimeService
         if (projected is not null)
         {
             return projected;
-        }
-
-        var workspaceId = FirstNonEmpty(request.TargetWorkspaceId, request.WorkspaceId);
-        if (!string.IsNullOrWhiteSpace(workspaceId) && !string.IsNullOrWhiteSpace(request.CardId))
-        {
-            var target = ResolveWorkspaceCard(workspaceId, request.CardId);
-            if (target is not null)
-            {
-                var caseId = FirstNonEmpty(PayloadValue(request.Payload ?? EmptyPayload, "caseId"), CaseIdFor(target.Intent, target.Workspace.Id)) ?? target.Workspace.Id;
-                var tenantId = FirstNonEmpty(request.TenantId, target.Intent?.TenantId, RuntimeActorAuthorization.DefaultTenantId)!;
-                PersistCase(new CreateOperationCaseRequest(caseId, tenantId, target.Workspace.Id));
-                return workItems.Upsert(ToCompatibilityWorkItem(
-                    request.WorkItemId ?? WorkItemIdFor(target.Workspace.Id, target.Card.Id),
-                    request.WorkItemType ?? target.Card.Id,
-                    tenantId,
-                    target,
-                    request.OwnerRole ?? target.Card.Confirmation.RequiredRole,
-                    request.Payload ?? EmptyPayload,
-                    "workspace-card"));
-            }
         }
 
         if (!string.IsNullOrWhiteSpace(request.WorkItemId) &&
@@ -121,6 +100,9 @@ public sealed class OperationsRuntimeService
             .Select(group => group.First())
             .ToArray();
 
+    public IReadOnlyList<OperationsWorkItemSurface> ListWorkItemSurfaces(string? tenantId = null, string? caseId = null) =>
+        ListWorkItems(tenantId, caseId).Select(ToSurface).ToArray();
+
     public WorkItem? GetWorkItem(string workItemId)
     {
         var persisted = workItems.Get(workItemId);
@@ -135,51 +117,14 @@ public sealed class OperationsRuntimeService
             return ToWorkItem(existing);
         }
 
-        var target = ResolveOperationTarget(workItemId, null, null);
-        return target is null
-            ? null
-            : ToCompatibilityWorkItem(
-                workItemId,
-                target.Card.Id,
-                TenantIdFor(target),
-                target,
-                target.Card.Confirmation.RequiredRole,
-                EmptyPayload,
-                "workspace-card");
+        return null;
     }
 
-    public CompatibilityApiResult PrepareWorkspaceCard(string workspaceId, string cardId, PrepareCardRequest? request, string? tenantId = null)
+    public OperationsWorkItemSurface? GetWorkItemSurface(string workItemId)
     {
-        var workItem = ResolveOrCreateWorkspaceCardWorkItem(workspaceId, cardId, tenantId);
-        if (workItem is null)
-        {
-            return new CompatibilityApiResult(StatusCodes.Status404NotFound, new { error = "card_not_found", workspaceId, cardId });
-        }
-
-        var prepared = ExecutePrepareWorkItem(
-            workItem.WorkItemId,
-            new PrepareWorkItemRequest(
-                workspaceId,
-                cardId,
-                request?.SubmissionId,
-                request?.CardInstanceId,
-                request?.AggregateRef));
-        if (prepared is null)
-        {
-            return new CompatibilityApiResult(StatusCodes.Status404NotFound, new { error = "card_not_found", workspaceId, cardId });
-        }
-
-        return new CompatibilityApiResult(
-            StatusCodes.Status200OK,
-            LegacyPreparePayload(prepared));
+        var workItem = GetWorkItem(workItemId);
+        return workItem is null ? null : ToSurface(workItem);
     }
-
-    public ConfirmResult ValidateWorkspaceCardConfirmPolicy(
-        string workspaceId,
-        string cardId,
-        ConfirmCardRequest request,
-        string actorToken) =>
-        runtime.ValidateConfirm(workspaceId, cardId, request, actorToken);
 
     public PrepareWorkItemResult? PrepareWorkItem(string workItemId, PrepareWorkItemRequest request) =>
         ExecutePrepareWorkItem(workItemId, request)?.Result;
@@ -229,54 +174,10 @@ public sealed class OperationsRuntimeService
             CaseIdFor(target.Intent, target.Workspace.Id),
             target.Workspace.Id,
             target.Card.Id);
-        return new PrepareWorkItemExecution(result, CompatibilityPreparePayload(target, request), target);
+        return new PrepareWorkItemExecution(result, PreparePayload(target, request), target);
     }
 
-    private WorkItem? ResolveOrCreateWorkspaceCardWorkItem(string workspaceId, string cardId, string? tenantId = null) =>
-        CreateWorkItem(new CreateWorkItemRequest(
-            WorkItemIdFor(workspaceId, cardId),
-            FirstNonEmpty(tenantId, RuntimeActorAuthorization.DefaultTenantId),
-            cardId,
-            workspaceId,
-            workspaceId,
-            cardId,
-            null,
-            new Dictionary<string, string>
-            {
-                ["caseId"] = workspaceId,
-                ["cardId"] = cardId,
-                ["compatibilityRoute"] = "workspace-card"
-            }));
-
-
-    private static object LegacyPreparePayload(PrepareWorkItemExecution prepared)
-    {
-        var target = prepared.Target;
-        var cardInstance = PropertyValue(prepared.CompatibilityPayload, "cardInstance");
-        return new Dictionary<string, object?>
-        {
-            ["prepared"] = true,
-            ["preparedAtUtc"] = PropertyValue(prepared.CompatibilityPayload, "preparedAtUtc") ?? DateTimeOffset.UtcNow,
-            ["workspaceId"] = target.Workspace.Id,
-            ["cardId"] = target.Card.Id,
-            ["workItemId"] = prepared.Result.WorkItemId,
-            ["caseId"] = prepared.Result.CaseId,
-            ["cardInstance"] = cardInstance,
-            ["card"] = target.Card,
-            ["allowedActions"] = prepared.Result.AvailableActions.Select(action => new Dictionary<string, object?>
-            {
-                ["actionId"] = action.ActionId,
-                ["kind"] = action.Kind,
-                ["label"] = action.Label,
-                ["confirmationPolicy"] = action.ConfirmationPolicy
-            }).ToArray(),
-            ["checks"] = target.Card.Checks,
-            ["blockers"] = target.Card.BlockerRules,
-            ["fieldDefaults"] = target.Card.Fields.Business.ToDictionary(field => field.Id, _ => string.Empty)
-        };
-    }
-
-    private static object CompatibilityPreparePayload(OperationTarget target, PrepareWorkItemRequest request)
+    private static object PreparePayload(OperationTarget target, PrepareWorkItemRequest request)
     {
         var now = DateTimeOffset.UtcNow;
         var cardInstanceId = string.IsNullOrWhiteSpace(request.CardInstanceId)
@@ -300,22 +201,6 @@ public sealed class OperationsRuntimeService
             ["cardId"] = target.Card.Id,
             ["cardInstance"] = cardInstance
         };
-    }
-
-    private static object? PropertyValue(object? source, string name)
-    {
-        if (source is null)
-        {
-            return null;
-        }
-
-        if (source is IReadOnlyDictionary<string, object?> dictionary && dictionary.TryGetValue(name, out var dictionaryValue))
-        {
-            return dictionaryValue;
-        }
-
-        var property = source.GetType().GetProperty(name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase);
-        return property?.GetValue(source);
     }
 
     private OperationCase? PersistCase(CreateOperationCaseRequest request)
@@ -374,46 +259,6 @@ public sealed class OperationsRuntimeService
             null));
     }
 
-    private WorkItem StabilizePersistedWorkItem(WorkItem existing, CreateWorkItemRequest request)
-    {
-        var payload = request.Payload ?? existing.Payload;
-        if (!IsWorkspaceCardCompatibility(existing, request, payload))
-        {
-            return existing;
-        }
-
-        var tenantId = FirstNonEmpty(request.TenantId, existing.TenantId) ?? existing.TenantId;
-        var workspaceId = FirstNonEmpty(request.TargetWorkspaceId, request.WorkspaceId, existing.WorkspaceId) ?? existing.WorkspaceId;
-        var caseId = FirstNonEmpty(PayloadValue(payload, "caseId"), existing.CaseId, workspaceId);
-        var workItemType = FirstNonEmpty(request.WorkItemType, existing.WorkItemType) ?? existing.WorkItemType;
-        var ownerRole = FirstNonEmpty(request.OwnerRole, existing.OwnerRole) ?? existing.OwnerRole;
-        var idempotencyScope = $"{tenantId}:{existing.WorkItemId}:confirm";
-
-        PersistCase(new CreateOperationCaseRequest(caseId, tenantId, workspaceId));
-        if (SameText(existing.TenantId, tenantId) &&
-            SameText(existing.WorkspaceId, workspaceId) &&
-            SameText(existing.CaseId, caseId) &&
-            SameText(existing.WorkItemType, workItemType) &&
-            SameText(existing.OwnerRole, ownerRole) &&
-            SameText(existing.IdempotencyScope, idempotencyScope) &&
-            SamePayload(existing.Payload, payload))
-        {
-            return existing;
-        }
-
-        return workItems.Upsert(existing with
-        {
-            TenantId = tenantId,
-            WorkspaceId = workspaceId,
-            CaseId = caseId,
-            WorkItemType = workItemType,
-            OwnerRole = ownerRole,
-            Payload = payload,
-            IdempotencyScope = idempotencyScope,
-            Source = "workspace-card"
-        });
-    }
-
     private OperationCase? ResolveCase(string? caseId, string? workspaceId, string? tenantId)
     {
         var requestedCaseId = FirstNonEmpty(caseId, workspaceId);
@@ -464,15 +309,6 @@ public sealed class OperationsRuntimeService
         string? workspaceId,
         string? cardId)
     {
-        if (!string.IsNullOrWhiteSpace(workspaceId) && !string.IsNullOrWhiteSpace(cardId))
-        {
-            var explicitTarget = ResolveWorkspaceCard(workspaceId, cardId);
-            if (explicitTarget is not null)
-            {
-                return explicitTarget;
-            }
-        }
-
         var persisted = workItems.Get(workItemId);
         if (persisted is not null)
         {
@@ -483,7 +319,7 @@ public sealed class OperationsRuntimeService
             var persistedTarget = ResolveWorkspaceCard(FirstNonEmpty(workspaceId, persisted.WorkspaceId) ?? string.Empty, persistedCardId ?? string.Empty);
             if (persistedTarget is not null)
             {
-                return persistedTarget;
+                return ApplyEffectiveCardContract(persisted, persistedTarget, persistedCardId);
             }
         }
 
@@ -503,13 +339,12 @@ public sealed class OperationsRuntimeService
                     ?? workspace.Cards.FirstOrDefault();
                 if (card is not null)
                 {
-                    return new OperationTarget(workspace, card, intent);
+                    return ApplyEffectiveCardContract(ToWorkItem(intent), new OperationTarget(workspace, card, intent), resolvedCardId);
                 }
             }
         }
 
-        var routeTarget = SplitWorkItemId(workItemId);
-        return routeTarget is null ? null : ResolveWorkspaceCard(routeTarget.Value.WorkspaceId, routeTarget.Value.CardId);
+        return null;
     }
 
     private OperationTarget? ResolveWorkspaceCard(string workspaceId, string cardId)
@@ -517,6 +352,43 @@ public sealed class OperationsRuntimeService
         var workspace = runtime.FindWorkspace(workspaceId);
         var card = workspace?.Cards.FirstOrDefault(item => item.Id.Equals(cardId, StringComparison.OrdinalIgnoreCase));
         return workspace is null || card is null ? null : new OperationTarget(workspace, card, null);
+    }
+
+    private OperationTarget ApplyEffectiveCardContract(WorkItem workItem, OperationTarget target, string? requestedCardId)
+    {
+        var cardId = FirstNonEmpty(requestedCardId, target.Card.Id) ?? target.Card.Id;
+        var templateWorkspaceId = FirstNonEmpty(
+            PayloadValue(workItem.Payload, "templateWorkspaceId"),
+            WorkspaceSeedCatalog.FindWorkspace(workItem.WorkspaceId)?.Id);
+        var seed = WorkspaceSeedCatalog.FindCard(templateWorkspaceId, cardId);
+        if (seed is null)
+        {
+            return target;
+        }
+
+        var effectiveCard = CardContractFactory.Create(seed) with
+        {
+            Status = EffectiveCardStatusFor(workItem, target.Card.Status),
+            BlockerRules = target.Card.BlockerRules
+        };
+        var effectiveWorkspace = target.Workspace with
+        {
+            Cards = target.Workspace.Cards
+                .Select(card => card.Id.Equals(effectiveCard.Id, StringComparison.OrdinalIgnoreCase) ? effectiveCard : card)
+                .ToArray()
+        };
+        return target with
+        {
+            Workspace = effectiveWorkspace,
+            Card = effectiveCard
+        };
+    }
+
+    private OperationsWorkItemSurface ToSurface(WorkItem workItem)
+    {
+        var cardId = FirstNonEmpty(PayloadValue(workItem.Payload, "cardId"), workItem.WorkItemType) ?? string.Empty;
+        var target = ResolveOperationTarget(workItem.WorkItemId, workItem.WorkspaceId, cardId);
+        return OperationsWorkItemSurface.From(workItem, cardId, target?.Workspace, target?.Card);
     }
 
     private ProcessWorkItemIntentRecord? FindProcessWorkItem(string workItemId) =>
@@ -540,38 +412,6 @@ public sealed class OperationsRuntimeService
             item.CreatedAtUtc,
             item.Payload);
 
-    private static WorkItem ToCompatibilityWorkItem(
-        string workItemId,
-        string workItemType,
-        string tenantId,
-        OperationTarget target,
-        string ownerRole,
-        IReadOnlyDictionary<string, string> payload,
-        string source)
-    {
-        var caseId = FirstNonEmpty(PayloadValue(payload, "caseId"), CaseIdFor(target.Intent, target.Workspace.Id));
-        return new(
-            workItemId,
-            workItemType,
-            "available",
-            caseId,
-            tenantId,
-            target.Workspace.Id,
-            ownerRole,
-            source,
-            target.Intent?.SourceEventId,
-            target.Intent?.CreatedAtUtc ?? DateTimeOffset.UtcNow,
-            payload,
-            $"work-item:{workItemType}:v1",
-            null,
-            "normal",
-            "medium",
-            $"{tenantId}:{workItemId}:confirm",
-            null,
-            null,
-            ownerRole);
-    }
-
     private static OperationsAvailableAction[] AvailableActionsFor(CardProjection card) =>
         new[]
         {
@@ -585,16 +425,29 @@ public sealed class OperationsRuntimeService
     private static string CaseIdFor(ProcessWorkItemIntentRecord? intent, string workspaceId) =>
         FirstNonEmpty(intent is null ? null : PayloadValue(intent.Payload, "caseId"), workspaceId) ?? workspaceId;
 
-    private static string TenantIdFor(OperationTarget target) =>
-        FirstNonEmpty(target.Intent?.TenantId, RuntimeActorAuthorization.DefaultTenantId) ?? RuntimeActorAuthorization.DefaultTenantId;
+    private static string EffectiveCardStatusFor(WorkItem workItem, string projectedStatus)
+    {
+        if (IsCorrectionWorkItem(workItem) && !IsTerminalStatus(workItem.Status))
+        {
+            return WorkItemStatusForCard(workItem.Status);
+        }
 
-    private static bool IsWorkspaceCardCompatibility(
-        WorkItem existing,
-        CreateWorkItemRequest request,
-        IReadOnlyDictionary<string, string> payload) =>
-        existing.Source.Equals("workspace-card", StringComparison.OrdinalIgnoreCase) ||
-        PayloadValue(payload, "compatibilityRoute").Equals("workspace-card", StringComparison.OrdinalIgnoreCase) ||
-        (!string.IsNullOrWhiteSpace(request.TargetWorkspaceId) && !string.IsNullOrWhiteSpace(request.CardId));
+        return projectedStatus;
+    }
+
+    private static bool IsCorrectionWorkItem(WorkItem workItem) =>
+        PayloadValue(workItem.Payload, "correctionMode").Equals("append_only", StringComparison.OrdinalIgnoreCase) ||
+        PayloadValue(workItem.Payload, "operationMode").Equals("correction", StringComparison.OrdinalIgnoreCase);
+
+    private static string WorkItemStatusForCard(string status) =>
+        status.Equals("available", StringComparison.OrdinalIgnoreCase) ||
+        status.Equals("open", StringComparison.OrdinalIgnoreCase)
+            ? "ready"
+            : status;
+
+    private static bool IsTerminalStatus(string status) =>
+        new[] { "done", "confirmed", "completed", "committed", "closed", "cancelled", "skipped" }
+            .Contains(status, StringComparer.OrdinalIgnoreCase);
 
     private static string PayloadValue(IReadOnlyDictionary<string, string> payload, string key) =>
         payload.TryGetValue(key, out var value) ? value : string.Empty;
@@ -614,23 +467,7 @@ public sealed class OperationsRuntimeService
         values.FirstOrDefault(value => !string.IsNullOrWhiteSpace(value));
 
     private static bool SameText(string? left, string? right) =>
-        (left ?? string.Empty).Equals(right ?? string.Empty, StringComparison.OrdinalIgnoreCase);
-
-    private static bool SamePayload(IReadOnlyDictionary<string, string> left, IReadOnlyDictionary<string, string> right) =>
-        left.Count == right.Count &&
-        left.All(item => right.TryGetValue(item.Key, out var value) &&
-            value.Equals(item.Value, StringComparison.Ordinal));
-
-    private static (string WorkspaceId, string CardId)? SplitWorkItemId(string workItemId)
-    {
-        var decoded = Uri.UnescapeDataString(workItemId);
-        var parts = decoded.Split(':', 2, StringSplitOptions.TrimEntries);
-        return parts.Length == 2 && !string.IsNullOrWhiteSpace(parts[0]) && !string.IsNullOrWhiteSpace(parts[1])
-            ? (parts[0], parts[1])
-            : null;
-    }
-
-    private static string WorkItemIdFor(string workspaceId, string cardId) => $"wi-{OperationsHash.Short(workspaceId, cardId)}";
+        string.Equals(left ?? string.Empty, right ?? string.Empty, StringComparison.Ordinal);
 
     private static string ShortHash(params string[] parts)
     {
@@ -647,8 +484,6 @@ public interface IOperationsRuntimeAdapter
     WorkspaceProjection? FindWorkspace(string workspaceId);
 
     IReadOnlyList<ProcessWorkItemIntentRecord> GetProcessWorkItemIntents(string? tenantId = null);
-
-    ConfirmResult ValidateConfirm(string workspaceId, string cardId, ConfirmCardRequest request, string actorToken);
 }
 
 public sealed class ProjectionOperationsRuntimeAdapter : IOperationsRuntimeAdapter
@@ -664,17 +499,12 @@ public sealed class ProjectionOperationsRuntimeAdapter : IOperationsRuntimeAdapt
 
     public IReadOnlyList<ProcessWorkItemIntentRecord> GetProcessWorkItemIntents(string? tenantId = null) =>
         runtime.GetProcessWorkItemIntents(tenantId);
-
-    public ConfirmResult ValidateConfirm(string workspaceId, string cardId, ConfirmCardRequest request, string actorToken) =>
-        runtime.ValidateConfirm(workspaceId, cardId, request, actorToken);
 }
 
 public sealed record CreateOperationCaseRequest(
     string? CaseId = null,
     string? TenantId = null,
     string? WorkspaceId = null);
-
-public sealed record CompatibilityApiResult(int StatusCode, object? Payload);
 
 public sealed record CreateWorkItemRequest(
     string? WorkItemId = null,
@@ -721,6 +551,64 @@ public sealed record WorkItem(
     string? EscalationOwnerRole = null,
     IReadOnlyList<string>? RequiredEvidenceRefs = null,
     IReadOnlyList<string>? AffectedFactRefs = null);
+
+public sealed record OperationsWorkItemSurface(
+    string WorkItemId,
+    string WorkItemType,
+    string Status,
+    string? CaseId,
+    string TenantId,
+    string WorkspaceId,
+    string CardId,
+    string OwnerRole,
+    string Source,
+    string? SourceEventId,
+    DateTimeOffset CreatedAtUtc,
+    IReadOnlyDictionary<string, string> Payload,
+    string DefinitionVersionId,
+    DateTimeOffset? DueAtUtc,
+    string? Priority,
+    string? RiskLevel,
+    string IdempotencyScope,
+    string? OwnerActorId,
+    string? BackupOwnerId,
+    string? EscalationOwnerRole,
+    IReadOnlyList<string>? RequiredEvidenceRefs,
+    IReadOnlyList<string>? AffectedFactRefs,
+    WorkspaceProjection? Workspace,
+    CardProjection? Card)
+{
+    public static OperationsWorkItemSurface From(
+        WorkItem workItem,
+        string cardId,
+        WorkspaceProjection? workspace,
+        CardProjection? card) =>
+        new(
+            workItem.WorkItemId,
+            workItem.WorkItemType,
+            workItem.Status,
+            workItem.CaseId,
+            workItem.TenantId,
+            workItem.WorkspaceId,
+            cardId,
+            workItem.OwnerRole,
+            workItem.Source,
+            workItem.SourceEventId,
+            workItem.CreatedAtUtc,
+            workItem.Payload,
+            workItem.DefinitionVersionId,
+            workItem.DueAtUtc,
+            workItem.Priority,
+            workItem.RiskLevel,
+            workItem.IdempotencyScope,
+            workItem.OwnerActorId,
+            workItem.BackupOwnerId,
+            workItem.EscalationOwnerRole,
+            workItem.RequiredEvidenceRefs,
+            workItem.AffectedFactRefs,
+            workspace,
+            card);
+}
 
 public sealed record PrepareWorkItemRequest(
     string? WorkspaceId = null,
@@ -805,7 +693,8 @@ public sealed record ConfirmWorkItemResult(
     string Source,
     string? IdempotencyKey,
     string? PayloadHash,
-    string? CommandSubmissionId)
+    string? CommandSubmissionId,
+    string? TraceUrl = null)
 {
     public static ConfirmWorkItemResult NotFound(string workItemId, string? submissionId, string? idempotencyKey, string reason) =>
         Rejected(StatusCodes.Status404NotFound, "operation_work_item_not_found", reason, string.Empty, workItemId, submissionId, idempotencyKey, null);
@@ -877,7 +766,7 @@ public sealed record ConfirmWorkItemResult(
                 ["observeOutbox"] = false,
                 ["admission"] = admission.ToContract(),
                 ["definition"] = definition.ToTrace(),
-                ["compatibilityMode"] = definition.CompatibilityMode
+                ["definitionMode"] = definition.DefinitionMode
             },
             "operations_admission_kernel",
             idempotencyKey,

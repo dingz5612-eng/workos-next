@@ -52,9 +52,9 @@ components:
     status: active
     owner: architecture
     owner_domain: architecture
-    responsibility: Register and quarantine compatibility facades and wrappers without promoting them to architecture center.
-    reason: ProjectionRuntime and Workspace/Card remain compatibility components while Operations Runtime migration continues.
-    allowed_usage: Read, display, map, and adapt legacy material through controlled boundaries.
+    responsibility: Register quarantined projection facades and enforce retired Workspace/Card write-route deletion without promoting them to architecture center.
+    reason: ProjectionRuntime remains a quarantined projection facade; retired Workspace/Card write routes must stay deleted while Operations Runtime owns commands.
+    allowed_usage: Read, display, map, and adapt non-authoritative legacy material through controlled boundaries.
     forbidden_usage: Add business write semantics, decide confirmAllowed, bypass Admission Kernel, or grant production.
     evidence:
       - docs/architecture/compatibility-components.yml
@@ -142,7 +142,7 @@ components:
     responsibility: Authoritative WorkItem, command, field, evidence, risk, ledger, surface, and projection owner semantics.
     reason: New business semantics must enter Definition Registry rather than Workspace/Card extension points.
     allowed_usage: Resolve work item definitions before admission, search, field rendering, and runtime confirm.
-    forbidden_usage: Keep business semantics only in page code, Workspace/Card compatibility, or ad hoc surface copy.
+    forbidden_usage: Keep business semantics only in page code, retired Workspace/Card write paths, or ad hoc surface copy.
     evidence:
       - docs/contracts/definition/workitem-definition-registry.json
       - services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs

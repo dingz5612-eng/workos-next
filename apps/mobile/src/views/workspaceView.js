@@ -1,5 +1,6 @@
 import { capacityForRoomType, defaultValueForField, fieldControlKind, isDerivedReadonlyField, optionsForField } from "../controls/fieldControls.js";
-import { loadDraft } from "../operationDrafts.js";
+import { loadCompletedRecordSnapshot, loadDraft } from "../operationDrafts.js";
+import { completedRecordActionPolicy } from "../operationRecordPolicy.js";
 import { lensIdsForWorkspace, lensPreview, lensTitle } from "../runtimeLensCatalog.js";
 import { buildOperationActionState } from "../operationActionState.js";
 import { isUnsafeLedgerCarryForward } from "../selectors/surfaceSelectors.js";
@@ -33,6 +34,16 @@ export function workspaceView(ctx) {
       ${completedWorkspaceRecord(item, activeCard, ctx)}
     `);
   }
+  if (viewingCompletedStep) {
+    return ctx.shell(`
+      <section class="workspace-page ${item.domain}">
+        <span>${ctx.tr("viewingCompletedStep")} · ${ctx.tr(item.domain)}</span>
+        <h1>${ctx.tx(activeCard.title)}</h1>
+        <p>${ctx.tr("completedStepReadonlyHelp")}</p>
+      </section>
+      ${completedWorkspaceRecord(item, activeCard, ctx)}
+    `);
+  }
   return ctx.shell(`
     <section class="workspace-page ${item.domain}">
       <span>${ctx.tr("intentWorkspace")} · ${ctx.tr(item.domain)}</span>
@@ -41,7 +52,7 @@ export function workspaceView(ctx) {
     </section>
     <section class="workspace-control">
       ${OperationStepRail(item, activeCard, ctx)}
-      ${compatCardTabs(item, activeCard, ctx)}
+      ${operationStepDebugTabs(item, activeCard, ctx)}
       ${workspaceLensPanel(item, ctx)}
       ${checkoutServiceMobilePanel(item, activeCard, ctx)}
       ${workspaceCardPanel(activeCard, item, true, ctx)}
@@ -52,40 +63,56 @@ export function workspaceView(ctx) {
 
 function completedWorkspaceRecord(item, card, ctx) {
   const completedSteps = (item.cards || []).filter((candidate) => isTerminalCardStatus(candidate.status));
-  const next = nextIncompleteCardTitle(card, item, ctx);
   const selectedStep = isTerminalCardStatus(card.status) ? card : completedSteps[0] || card;
-  return `<section class="completed-record-detail" data-surface="completed-workspace-record">
+  const policy = completedRecordActionPolicy({ workspace: item, card: selectedStep, state: ctx.state, surface: "readonlyRecord" });
+  const currentCard = activeWorkspaceCard(item, -1, "");
+  const nextWorkItem = policy.nextWorkItem;
+  const returnCurrent = currentCard?.id && currentCard.id !== selectedStep.id
+    ? `<button data-workspace="${ctx.escapeAttr(item.id)}" data-card-id="${ctx.escapeAttr(currentCard.id)}">${ctx.tr("returnCurrentWorkItem")}</button>`
+    : "";
+  const continueNext = nextWorkItem
+    ? `<button data-work-item-id="${ctx.escapeAttr(nextWorkItem.workItemId)}" data-workspace-id="${ctx.escapeAttr(nextWorkItem.workspaceId)}" data-card-id="${ctx.escapeAttr(nextWorkItem.cardId)}">${ctx.tr("continueNextStage")}</button>`
+    : "";
+  const sourceWorkItemId = completedRecordSourceWorkItemId(item, selectedStep, ctx);
+  const correctionAction = policy.canCorrect
+    ? `<button class="secondary" data-correction-work-item="true" data-workspace-id="${ctx.escapeAttr(item.id)}" data-card-id="${ctx.escapeAttr(selectedStep.id)}" data-source-work-item-id="${ctx.escapeAttr(sourceWorkItemId)}">${ctx.tr("correctCompletedStep")}</button>`
+    : "";
+  const feedbackAction = `<button class="secondary" data-view="feedback">${ctx.tr("feedback")}</button>`;
+  const fieldRows = completedRecordFieldRows(selectedStep, item, ctx);
+  const fieldsMissing = fieldRows.length > 0 && fieldRows.every((row) => !row.hasValue);
+  return `<section class="completed-record-detail" data-component="CompletedRecordDetail" data-surface="completed-workspace-record">
     <div class="completed-record-hero">
-      <span>${ctx.tr("completedRecordTitle")}</span>
-      <h2>${ctx.tx(item.title)}</h2>
-      <p>${ctx.tr("completedCardHelp")}</p>
+      <span>${ctx.tr("completedRecordReadonly")}</span>
+      <h2>${ctx.tx(selectedStep.title)}</h2>
+      <p>${ctx.tr("completedReviewBeforeCorrection")}</p>
     </div>
-    <section class="completed-step-list" data-surface="completed-step-list">
+    ${completedSteps.length > 1 ? `<section class="completed-step-list" data-surface="completed-step-list">
       <h3>${ctx.tr("completedSteps")}</h3>
       <div>${(item.cards || []).map((step, index) => completedStepButton(step, index, selectedStep, item, ctx)).join("")}</div>
-    </section>
-    <section class="completed-record-grid">
+    </section>` : ""}
+    <section class="completed-record-grid compact">
       ${recordTile(ctx.tr("objectSummary"), ctx.tx(item.title), ctx.tx(item.summary), ctx)}
       ${recordTile(ctx.tr("currentState"), ctx.tr(selectedStep.status), ctx.tx(item.next), ctx)}
       ${recordTile(ctx.tr("requiredEvidenceCopy"), evidenceForRecord(item, selectedStep).length ? evidenceForRecord(item, selectedStep).map((entry) => ctx.localTerm(entry)).join(" · ") : ctx.tr("noRequiredEvidence"), ctx.tr("traceBound"), ctx)}
       ${recordTile(ctx.tr("submissionRecord"), item.caseId || item.id, ctx.tr("submissionRecordHelp"), ctx)}
-      ${recordTile(ctx.tr("cardNext"), next || ctx.tr("allStepsCompleted"), ctx.tr("completedNextHelp"), ctx)}
     </section>
-    <section class="completed-record-section">
-      <h3>${ctx.tr("stepDetails")}: ${ctx.tx(selectedStep.title)}</h3>
-      <dl>
-        <dt>${ctx.tr("currentState")}</dt><dd>${ctx.tr(selectedStep.status)}</dd>
-        <dt>${ctx.tr("requiredEvidenceCopy")}</dt><dd>${evidenceForRecord(item, selectedStep).length ? evidenceForRecord(item, selectedStep).map((entry) => ctx.localTerm(entry)).join(" · ") : ctx.tr("noRequiredEvidence")}</dd>
-        <dt>${ctx.tr("blockers")}</dt><dd>${blockersForRecord(item, selectedStep, ctx)}</dd>
-      </dl>
-    </section>
-    ${fieldsForRecord(selectedStep, ctx).length ? `<section class="completed-record-section">
+    ${fieldRows.length ? `<section class="completed-record-section">
       <h3>${ctx.tr("businessFields")}</h3>
-      <dl>${fieldsForRecord(selectedStep, ctx).map((field) => `<dt>${ctx.localTerm(field)}</dt><dd>${ctx.escapeHtml(displayCompletedRecordValue(field, item, selectedStep, ctx) || "-")}</dd>`).join("")}</dl>
+      ${fieldsMissing ? `<p class="record-sync-warning">${ctx.tr("recordFieldsNotSynced")}</p>` : ""}
+      <dl>${fieldRows.map((row) => `<dt>${ctx.localTerm(row.field)}</dt><dd>${row.displayValue || ctx.tr("recordValueMissing")}</dd>`).join("")}</dl>
     </section>` : ""}
     <section class="completed-record-section">
-      <h3>${ctx.tr("auditSummary")}</h3>
-      <p>${ctx.tr("completedAuditHelp")}</p>
+      <h3>${ctx.tr("stepDetails")}</h3>
+      <dl>
+        <dt>${ctx.tr("requiredEvidenceCopy")}</dt><dd>${evidenceForRecord(item, selectedStep).length ? evidenceForRecord(item, selectedStep).map((entry) => ctx.localTerm(entry)).join(" · ") : ctx.tr("noRequiredEvidence")}</dd>
+        <dt>${ctx.tr("blockers")}</dt><dd>${blockersForRecord(item, selectedStep, ctx)}</dd>
+        <dt>${ctx.tr("auditSummary")}</dt><dd>${ctx.tr("completedAuditHelp")}</dd>
+      </dl>
+    </section>
+    <section class="completed-record-section completed-record-actions">
+      <h3>${ctx.tr("recordActions")}</h3>
+      <p>${ctx.tr("completedCorrectionHelp")}</p>
+      <div class="operation-actions">${continueNext}${returnCurrent}${correctionAction}${feedbackAction}</div>
     </section>
   </section>`;
 }
@@ -112,22 +139,66 @@ function blockersForRecord(item, card, ctx) {
   return blockers.length ? blockers.map((entry) => ctx.tx(entry.title || entry)).join(" · ") : ctx.tr("noCriticalBlocker");
 }
 
-function nextIncompleteCardTitle(card, item, ctx) {
-  const index = (item.cards || []).findIndex((candidate) => candidate.id === card.id);
-  const next = (item.cards || []).slice(index + 1).find((candidate) => !isTerminalCardStatus(candidate.status));
-  return next ? ctx.tx(next.title) : "";
-}
-
 function displayOperationValue(field, item, card, ctx) {
   const value = operationValue(field, item, card, ctx);
   return displayFieldValue(field, value, ctx);
 }
 
-function displayCompletedRecordValue(field, item, card, ctx) {
-  const payload = completedEventPayload(item, card, ctx);
+function completedRecordFieldRows(card, item, ctx) {
+  return fieldsForRecord(card, ctx).map((field) => {
+    const value = completedRecordRawValue(field, item, card, ctx);
+    return {
+      field,
+      hasValue: hasCarryValue(value),
+      displayValue: hasCarryValue(value) ? displayFieldValue(field, value, ctx) : ""
+    };
+  });
+}
+
+function completedRecordRawValue(field, item, card, ctx) {
+  const payload = completedRecordPayload(item, card, ctx);
   const fieldId = operationFieldId(field);
-  const value = payload?.[fieldId] || payload?.[field.id] || "";
-  return displayFieldValue(field, value, ctx);
+  return payload?.[fieldId] || payload?.[field.id] || "";
+}
+
+function completedRecordSourceWorkItemId(item, card, ctx) {
+  const payload = completedRecordPayload(item, card, ctx);
+  const candidates = [
+    payload.operationsWorkItemId,
+    payload.sourceWorkItemId,
+    ctx.state.lastActionResult?.workspaceId === item.id && ctx.state.lastActionResult?.cardId === card.id
+      ? ctx.state.selectedWorkItemId
+      : "",
+    ...runtimeItemsForRecord(ctx.state)
+      .filter((workItem) => workItemWorkspaceId(workItem) === item.id && workItemCardId(workItem) === card.id)
+      .map(workItemIdForRecord),
+    card.workItemId
+  ];
+  return candidates.find((id) => isPersistedOperationsWorkItemId(id)) || "";
+}
+
+function runtimeItemsForRecord(state = {}) {
+  return [
+    ...(state.runtimeStore?.operationWorkItems || []),
+    ...(state.runtimeStore?.workQueue || [])
+  ];
+}
+
+function workItemIdForRecord(item = {}) {
+  return item.workItemId || item.work_item_id || "";
+}
+
+function workItemWorkspaceId(item = {}) {
+  return item.workspaceId || item.workspace_id || item.workspace?.id || "";
+}
+
+function workItemCardId(item = {}) {
+  return item.cardId || item.card_id || item.payload?.cardId || item.Payload?.cardId || item.card?.id || "";
+}
+
+function isPersistedOperationsWorkItemId(value = "") {
+  const id = String(value || "");
+  return id && !id.startsWith("T-");
 }
 
 function displayFieldValue(field, value, ctx) {
@@ -136,11 +207,51 @@ function displayFieldValue(field, value, ctx) {
   return matched ? ctx.localTerm(matched.label) : ctx.localTerm(value);
 }
 
-function completedEventPayload(item, card, ctx) {
-  return (ctx.state.projectionEvents || [])
-    .filter((event) => event.workspaceId === item.id && event.cardId === card.id && event.payload)
-    .slice()
-    .reverse()[0]?.payload || {};
+function completedRecordPayload(item, card, ctx) {
+  const snapshot = loadCompletedRecordSnapshot(item.id, card.id, {
+    workItemId: card.workItemId || ctx.state.selectedWorkItemId || ""
+  });
+  return mergeRecordValues(
+    loadDraft(item.id, card.id).values || {},
+    ctx.state.lastActionResult?.workspaceId === item.id && ctx.state.lastActionResult?.cardId === card.id
+      ? ctx.state.lastActionResult.fieldValues || {}
+      : {},
+    snapshot?.values || {},
+    ...completedEventPayloads(item, card, ctx)
+  );
+}
+
+function completedEventPayloads(item, card, ctx) {
+  return sameWorkspaceEvents(item, ctx)
+    .filter((event) => event.cardId === card.id && event.payload)
+    .map((event) => flattenCompletedPayload(event.payload));
+}
+
+function flattenCompletedPayload(payload = {}) {
+  return mergeRecordValues(
+    objectMap(payload.input?.fieldValues),
+    objectMap(payload.input?.FieldValues),
+    objectMap(payload.Input?.fieldValues),
+    objectMap(payload.Input?.FieldValues),
+    objectMap(payload.fieldValues),
+    objectMap(payload.FieldValues),
+    objectMap(payload)
+  );
+}
+
+function objectMap(value) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return {};
+  return value;
+}
+
+function mergeRecordValues(...sources) {
+  return sources.reduce((current, source = {}) => {
+    for (const [key, value] of Object.entries(source || {})) {
+      if (!hasCarryValue(value)) continue;
+      current[key] = String(value);
+    }
+    return current;
+  }, {});
 }
 
 function recordTile(label, value, body, ctx) {
@@ -151,10 +262,10 @@ function recordTile(label, value, body, ctx) {
   </article>`;
 }
 
-function compatCardTabs(item, activeCard, ctx) {
+function operationStepDebugTabs(item, activeCard, ctx) {
   if (!debugToolsVisible(ctx)) return "";
-  return `<section class="compat-card-tabs" data-component="CompatibilityCardTabs">
-    <span>Debug / compatibility</span>
+  return `<section class="operation-step-debug-tabs" data-component="OperationStepDebugTabs">
+    <span>Debug / Operations steps</span>
     <div class="card-tabs">${item.cards.map((card, index) => `<button class="${card.id === activeCard.id ? "active" : ""} ${card.status}" data-card-index="${index}">${ctx.tx(card.title)}</button>`).join("")}</div>
   </section>`;
 }
@@ -207,6 +318,18 @@ export function cardOperation(card, item, ctx) {
       ${returnCurrent}
     </div>`;
   }
+  if (card.status === "notStarted") {
+    const currentCard = activeWorkspaceCard(item, -1, "");
+    const returnCurrent = currentCard?.id && currentCard.id !== card.id
+      ? `<div class="operation-actions"><button class="secondary" data-workspace="${ctx.escapeAttr(item.id)}" data-card-id="${ctx.escapeAttr(currentCard.id)}">${ctx.tr("returnCurrentWorkItem")}</button></div>`
+      : "";
+    return `<div class="card-operation pending-operation">
+      <span>${ctx.tr("cardOperation")}</span>
+      <h3>${ctx.tx(card.title)}</h3>
+      <section class="operation-state"><b>${ctx.tr(card.status)}</b><p>${statusHelp}</p></section>
+      ${returnCurrent}
+    </div>`;
+  }
   return `<div class="card-operation">
     <span>${ctx.tr("cardOperation")}</span>
     <h3>${ctx.tx(card.title)}</h3>
@@ -234,9 +357,9 @@ function activeBlockers(item, card) {
 export function primaryActionButton(actionState, ctx) {
   const action = actionState.primaryAction;
   const disabled = action.disabled ? "disabled" : "";
-  const reason = action.reasonKey ? `<small>${ctx.tr(action.reasonKey)}</small>` : "";
+  const title = action.reasonKey ? ` title="${ctx.escapeAttr(ctx.tr(action.reasonKey))}"` : "";
   const submit = ["ready", "missingRequiredFields"].includes(actionState.status) ? "data-submit-card" : `data-action-state="${ctx.escapeAttr(actionState.status)}"`;
-  return `<button class="primary-action ${ctx.escapeAttr(actionState.status)}" ${submit} ${disabled}>${ctx.tr(action.labelKey)}</button>${reason}`;
+  return `<button class="primary-action ${ctx.escapeAttr(actionState.status)}" ${submit} ${disabled}${title}>${ctx.tr(action.labelKey)}</button>`;
 }
 
 export function cardStatusHelp(card, ctx) {
@@ -258,8 +381,8 @@ export function operationActionText(card, item, ctx) {
   }
   if (card.status === "blocked") return ctx.tx(item.next);
   return ctx.state.lang === "zh-CN"
-    ? `填写这张卡需要的业务信息。提交时系统会校验字段、证据、权限和阻断；未通过会停在当前卡并提示原因。`
-    : `Заполните бизнес-данные этой карточки. При отправке система проверит поля, доказательства, права и блокировки; при ошибке карточка останется здесь.`;
+    ? `把这一步需要的信息填完整。不能提交时，页面会直接标出还差哪一项。`
+    : `Заполните данные для этого шага. Если отправка невозможна, страница покажет, чего не хватает.`;
 }
 
 export function operationInputFields(card, ctx) {
@@ -672,13 +795,16 @@ function missingFieldIdsFor(card, item, ctx) {
 function systemValidationPanel(card, item, draft, visibleBlockers, ctx) {
   const evidenceStates = (card.evidence || []).map((field) =>
     EvidenceStateVM(field, (draft.evidenceDrafts || []).find((item) => item.requirementId === field.id), ctx));
-  const evidenceNames = evidenceStates.map((state) => state.name).filter(Boolean);
-  const checkNames = (card.checks || []).map((entry) => ctx.localTerm(entry)).filter(Boolean);
+  const evidenceNames = evidenceStates.map((state) => businessCheckName(state.name)).filter(Boolean);
+  const checkNames = (card.checks || []).map((entry) => businessCheckName(ctx.localTerm(entry))).filter(Boolean);
   const missingLabels = currentMissingRequiredLabels(card, item, ctx);
+  const submitStatus = visibleBlockers.length
+    ? `${ctx.tr("cannotSubmitYet")}: ${visibleBlockers.map((entry) => ctx.tx(entry.title)).join(" · ")}`
+    : ctx.tr("readyToSubmit");
   const chips = [
-    `${ctx.tr("requiredFields")}: ${missingLabels.length ? missingLabels.join(" · ") : ctx.tr("systemCheckReady")}`,
+    `${ctx.tr(missingLabels.length ? "requiredFieldsMissing" : "requiredFields")}: ${missingLabels.length ? missingLabels.join(" · ") : ctx.tr("systemCheckReady")}`,
     `${ctx.tr("systemEvidenceCheck")}: ${evidenceNames.length ? evidenceNames.join(" · ") : ctx.tr("noRequiredEvidence")}`,
-    `${ctx.tr("blockers")}: ${visibleBlockers.length ? visibleBlockers.map((entry) => ctx.tx(entry.title)).join(" · ") : ctx.tr("noSubmitBlocker")}`,
+    `${ctx.tr("submitStatus")}: ${submitStatus}`,
     checkNames.length ? `${ctx.tr("systemRules")}: ${checkNames.slice(0, 3).join(" · ")}` : ""
   ].filter(Boolean);
   return `<section class="system-check-panel${missingLabels.length ? " has-error" : ""}" data-surface="system-validation-summary">
@@ -686,6 +812,14 @@ function systemValidationPanel(card, item, draft, visibleBlockers, ctx) {
     <p>${ctx.tr("systemValidationHelp")}</p>
     <div>${chips.map((chip) => `<span>${ctx.escapeHtml(chip)}</span>`).join("")}</div>
   </section>`;
+}
+
+function businessCheckName(name = "") {
+  return String(name || "")
+    .replace("房间重复校验", "房间是否重复")
+    .replace("配置人记录", "记录办理人")
+    .replace("系统规则", "业务规则")
+    .replace("校验", "确认");
 }
 
 function currentMissingRequiredLabels(card, item, ctx) {

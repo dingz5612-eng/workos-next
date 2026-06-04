@@ -14,10 +14,13 @@ describe("OAM-04B layout, mission control, and PC shell contract", () => {
     expect(shellCss).toContain("calc(var(--bottom-nav-height) + var(--sticky-action-height) + var(--safe-bottom)");
     expect(operationCss).toContain("position: static");
     expect(operationCss).toContain("min-height: var(--bottom-nav-height)");
+    expect(operationCss).toContain("bottom: calc(var(--bottom-nav-height) + var(--safe-bottom) + 18px)");
     expect(operationCss).toContain("focus-visible");
     expect(html).toContain('aria-current="page"');
     expect(html).toContain("sticky-action");
     expect(html).toContain("feedback-fab");
+    expect(renderSurface("home")).toContain("feedback-fab");
+    expect(renderSurface("feedback")).not.toContain("feedback-fab");
   });
 
   it("derives home mission control from runtime queue and shows real empty state", () => {

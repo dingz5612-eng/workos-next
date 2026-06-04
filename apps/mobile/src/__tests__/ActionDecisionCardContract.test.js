@@ -8,7 +8,7 @@ describe("Stage B ActionDecisionCard contract", () => {
     const html = WorkItemCard(ctx.state.runtimeStore.workQueue[0], ctx);
     const text = visibleText(html);
 
-    for (const label of ["当前能否处理", "为什么不能处理", "系统证据要求", "下一步怎么做", "风险等级", "责任角色", "截止时间", "业务对象"]) {
+    for (const label of ["当前能否处理", "为什么不能处理", "需要的材料", "下一步怎么做", "风险等级", "责任角色", "截止时间", "业务对象"]) {
       expect(text).toContain(label);
     }
     expect(text).not.toMatch(/\b(workItemId|caseId|traceRefs|lifecycleState|ownerRole)\b/);

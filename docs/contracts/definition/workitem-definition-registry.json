@@ -13,8 +13,18 @@
       "workItemType": "Dorm.RoomSetup",
       "commandType": "Resource.RoomSetup",
       "ownerSlice": "Accommodation.ResourceSetup",
-      "allowedFacts": ["Room", "EvidenceObject", "DomainEvent"],
-      "forbiddenFacts": ["Payment", "PaymentAllocation", "DepositAccount", "DepositEntry", "LedgerEntry"],
+      "allowedFacts": [
+        "Room",
+        "EvidenceObject",
+        "DomainEvent"
+      ],
+      "forbiddenFacts": [
+        "Payment",
+        "PaymentAllocation",
+        "DepositAccount",
+        "DepositEntry",
+        "LedgerEntry"
+      ],
       "fieldContractRef": "field.roomSetup.v1",
       "evidencePolicyRef": "evidence.roomSetup.v1",
       "riskPolicyRef": "risk.resource.standard.v1",
@@ -22,8 +32,8 @@
       "admissionPolicyRef": "admission.prepare_only_or_l1_observation.v1",
       "surfacePolicyRef": "surface.Accommodation.ResourceSetup.roomSetup",
       "productionConfirmAllowed": false,
-      "compatibilityMode": "workspace-card-compatibility-wrapper",
-      "removalImpact": "Remove after native Resource.RoomSetup handler owns Room facts and system validation evidence."
+      "removalImpact": "Remove after native Resource.RoomSetup handler owns Room facts and system validation evidence.",
+      "definitionMode": "operations-runtime-native"
     },
     {
       "definitionId": "definition.bedSetup.v1",
@@ -34,8 +44,18 @@
       "workItemType": "Dorm.BedSetup",
       "commandType": "Resource.BedSetup",
       "ownerSlice": "Accommodation.ResourceSetup",
-      "allowedFacts": ["Bed", "EvidenceObject", "DomainEvent"],
-      "forbiddenFacts": ["Payment", "PaymentAllocation", "DepositAccount", "DepositEntry", "LedgerEntry"],
+      "allowedFacts": [
+        "Bed",
+        "EvidenceObject",
+        "DomainEvent"
+      ],
+      "forbiddenFacts": [
+        "Payment",
+        "PaymentAllocation",
+        "DepositAccount",
+        "DepositEntry",
+        "LedgerEntry"
+      ],
       "fieldContractRef": "field.bedSetup.v1",
       "evidencePolicyRef": "evidence.bedSetup.v1",
       "riskPolicyRef": "risk.resource.standard.v1",
@@ -43,8 +63,8 @@
       "admissionPolicyRef": "admission.prepare_only_or_l1_observation.v1",
       "surfacePolicyRef": "surface.Accommodation.ResourceSetup.bedSetup",
       "productionConfirmAllowed": false,
-      "compatibilityMode": "workspace-card-compatibility-wrapper",
-      "removalImpact": "Remove after native Resource.BedSetup handler owns Bed facts and carries prior room context."
+      "removalImpact": "Remove after native Resource.BedSetup handler owns Bed facts and carries prior room context.",
+      "definitionMode": "operations-runtime-native"
     },
     {
       "definitionId": "definition.rateSetup.v1",
@@ -55,8 +75,18 @@
       "workItemType": "Dorm.RateSetup",
       "commandType": "Resource.RateSetup",
       "ownerSlice": "Accommodation.ResourceSetup",
-      "allowedFacts": ["RatePlan", "EvidenceObject", "DomainEvent"],
-      "forbiddenFacts": ["Payment", "PaymentAllocation", "DepositAccount", "DepositEntry", "LedgerEntry"],
+      "allowedFacts": [
+        "RatePlan",
+        "EvidenceObject",
+        "DomainEvent"
+      ],
+      "forbiddenFacts": [
+        "Payment",
+        "PaymentAllocation",
+        "DepositAccount",
+        "DepositEntry",
+        "LedgerEntry"
+      ],
       "fieldContractRef": "field.rateSetup.v1",
       "evidencePolicyRef": "evidence.rateSetup.v1",
       "riskPolicyRef": "risk.pricing.standard.v1",
@@ -64,8 +94,8 @@
       "admissionPolicyRef": "admission.prepare_only_or_l1_observation.v1",
       "surfacePolicyRef": "surface.Accommodation.ResourceSetup.rateSetup",
       "productionConfirmAllowed": false,
-      "compatibilityMode": "workspace-card-compatibility-wrapper",
-      "removalImpact": "Remove after native Resource.RateSetup handler owns RatePlan facts and verifies room/bed prerequisites."
+      "removalImpact": "Remove after native Resource.RateSetup handler owns RatePlan facts and verifies room/bed prerequisites.",
+      "definitionMode": "operations-runtime-native"
     },
     {
       "definitionId": "definition.roomReadiness.v1",
@@ -76,8 +106,19 @@
       "workItemType": "Dorm.RoomReadiness",
       "commandType": "Resource.RoomReadiness",
       "ownerSlice": "Accommodation.ResourceSetup",
-      "allowedFacts": ["Room", "BedStatus", "EvidenceObject", "DomainEvent"],
-      "forbiddenFacts": ["Payment", "PaymentAllocation", "DepositAccount", "DepositEntry", "LedgerEntry"],
+      "allowedFacts": [
+        "Room",
+        "BedStatus",
+        "EvidenceObject",
+        "DomainEvent"
+      ],
+      "forbiddenFacts": [
+        "Payment",
+        "PaymentAllocation",
+        "DepositAccount",
+        "DepositEntry",
+        "LedgerEntry"
+      ],
       "fieldContractRef": "field.roomReadiness.v1",
       "evidencePolicyRef": "evidence.roomReadiness.v1",
       "riskPolicyRef": "risk.resource.bed_status.v1",
@@ -85,8 +126,8 @@
       "admissionPolicyRef": "admission.prepare_only_or_l1_observation.v1",
       "surfacePolicyRef": "surface.Accommodation.ResourceSetup.roomReadiness",
       "productionConfirmAllowed": false,
-      "compatibilityMode": "workspace-card-compatibility-wrapper",
-      "removalImpact": "Remove after native Resource.RoomReadiness handler owns readiness and bed-status transitions."
+      "removalImpact": "Remove after native Resource.RoomReadiness handler owns readiness and bed-status transitions.",
+      "definitionMode": "operations-runtime-native"
     },
     {
       "definitionId": "definition.roomBlock.v1",
@@ -97,8 +138,18 @@
       "workItemType": "Dorm.RoomBlock",
       "commandType": "Resource.RoomBlock",
       "ownerSlice": "Accommodation.ResourceSetup",
-      "allowedFacts": ["BedStatus", "EvidenceObject", "DomainEvent"],
-      "forbiddenFacts": ["Payment", "PaymentAllocation", "DepositAccount", "DepositEntry", "LedgerEntry"],
+      "allowedFacts": [
+        "BedStatus",
+        "EvidenceObject",
+        "DomainEvent"
+      ],
+      "forbiddenFacts": [
+        "Payment",
+        "PaymentAllocation",
+        "DepositAccount",
+        "DepositEntry",
+        "LedgerEntry"
+      ],
       "fieldContractRef": "field.roomBlock.v1",
       "evidencePolicyRef": "evidence.roomBlock.v1",
       "riskPolicyRef": "risk.resource.bed_status.v1",
@@ -106,8 +157,8 @@
       "admissionPolicyRef": "admission.prepare_only_or_l1_observation.v1",
       "surfacePolicyRef": "surface.Accommodation.ResourceSetup.roomBlock",
       "productionConfirmAllowed": false,
-      "compatibilityMode": "workspace-card-compatibility-wrapper",
-      "removalImpact": "Remove after native Resource.RoomBlock handler enforces bed-status ownership."
+      "removalImpact": "Remove after native Resource.RoomBlock handler enforces bed-status ownership.",
+      "definitionMode": "operations-runtime-native"
     },
     {
       "definitionId": "definition.roomRelease.v1",
@@ -118,8 +169,18 @@
       "workItemType": "Dorm.RoomRelease",
       "commandType": "Resource.RoomRelease",
       "ownerSlice": "Accommodation.ResourceSetup",
-      "allowedFacts": ["BedStatus", "EvidenceObject", "DomainEvent"],
-      "forbiddenFacts": ["Payment", "PaymentAllocation", "DepositAccount", "DepositEntry", "LedgerEntry"],
+      "allowedFacts": [
+        "BedStatus",
+        "EvidenceObject",
+        "DomainEvent"
+      ],
+      "forbiddenFacts": [
+        "Payment",
+        "PaymentAllocation",
+        "DepositAccount",
+        "DepositEntry",
+        "LedgerEntry"
+      ],
       "fieldContractRef": "field.roomRelease.v1",
       "evidencePolicyRef": "evidence.roomRelease.v1",
       "riskPolicyRef": "risk.resource.bed_status.v1",
@@ -127,8 +188,8 @@
       "admissionPolicyRef": "admission.prepare_only_or_l1_observation.v1",
       "surfacePolicyRef": "surface.Accommodation.ResourceSetup.roomRelease",
       "productionConfirmAllowed": false,
-      "compatibilityMode": "workspace-card-compatibility-wrapper",
-      "removalImpact": "Remove after native Resource.RoomRelease handler enforces system validation and bed-status ownership."
+      "removalImpact": "Remove after native Resource.RoomRelease handler enforces system validation and bed-status ownership.",
+      "definitionMode": "operations-runtime-native"
     },
     {
       "definitionId": "definition.depositAssessment.v1",
@@ -139,8 +200,20 @@
       "workItemType": "Dorm.DepositAssessment",
       "commandType": "Deposit.Assess",
       "ownerSlice": "Accommodation.DepositLedger",
-      "allowedFacts": ["DepositAccount", "DepositEntry", "EvidenceObject", "LedgerEntry", "DomainEvent"],
-      "forbiddenFacts": ["Payment", "PaymentAllocation", "Room", "Bed", "Stay"],
+      "allowedFacts": [
+        "DepositAccount",
+        "DepositEntry",
+        "EvidenceObject",
+        "LedgerEntry",
+        "DomainEvent"
+      ],
+      "forbiddenFacts": [
+        "Payment",
+        "PaymentAllocation",
+        "Room",
+        "Bed",
+        "Stay"
+      ],
       "fieldContractRef": "field.depositAssessment.v1",
       "evidencePolicyRef": "evidence.depositAssessment.v1",
       "riskPolicyRef": "risk.deposit.standard.v1",
@@ -148,8 +221,8 @@
       "admissionPolicyRef": "admission.prepare_only_or_l1_observation.v1",
       "surfacePolicyRef": "surface.Accommodation.DepositLedger.depositAssessment",
       "productionConfirmAllowed": false,
-      "compatibilityMode": "workspace-card-compatibility-wrapper",
-      "removalImpact": "Remove legacy card route after native Deposit.Assess handler and evidence policy are enforced."
+      "removalImpact": "Remove legacy card route after native Deposit.Assess handler and evidence policy are enforced.",
+      "definitionMode": "operations-runtime-native"
     },
     {
       "definitionId": "definition.depositReceipt.v1",
@@ -160,8 +233,20 @@
       "workItemType": "Dorm.DepositReceipt",
       "commandType": "Deposit.Receive",
       "ownerSlice": "Accommodation.DepositLedger",
-      "allowedFacts": ["DepositAccount", "DepositEntry", "EvidenceObject", "LedgerEntry", "DomainEvent"],
-      "forbiddenFacts": ["Payment", "PaymentAllocation", "Room", "Bed", "Stay"],
+      "allowedFacts": [
+        "DepositAccount",
+        "DepositEntry",
+        "EvidenceObject",
+        "LedgerEntry",
+        "DomainEvent"
+      ],
+      "forbiddenFacts": [
+        "Payment",
+        "PaymentAllocation",
+        "Room",
+        "Bed",
+        "Stay"
+      ],
       "fieldContractRef": "field.depositReceipt.v1",
       "evidencePolicyRef": "evidence.depositReceipt.v1",
       "riskPolicyRef": "risk.deposit.money_in.v1",
@@ -169,8 +254,8 @@
       "admissionPolicyRef": "admission.prepare_only_or_l1_observation.v1",
       "surfacePolicyRef": "surface.Accommodation.DepositLedger.depositReceipt",
       "productionConfirmAllowed": false,
-      "compatibilityMode": "workspace-card-compatibility-wrapper",
-      "removalImpact": "Remove legacy depositReceipt card once Deposit.Receive handler owns CommandSubmission output."
+      "removalImpact": "Remove legacy depositReceipt card once Deposit.Receive handler owns CommandSubmission output.",
+      "definitionMode": "operations-runtime-native"
     },
     {
       "definitionId": "definition.depositConfirmation.v1",
@@ -181,8 +266,20 @@
       "workItemType": "Dorm.DepositConfirmation",
       "commandType": "Deposit.Confirm",
       "ownerSlice": "Accommodation.DepositLedger",
-      "allowedFacts": ["DepositAccount", "DepositEntry", "EvidenceObject", "LedgerEntry", "DomainEvent"],
-      "forbiddenFacts": ["Payment", "PaymentAllocation", "Room", "Bed", "Stay"],
+      "allowedFacts": [
+        "DepositAccount",
+        "DepositEntry",
+        "EvidenceObject",
+        "LedgerEntry",
+        "DomainEvent"
+      ],
+      "forbiddenFacts": [
+        "Payment",
+        "PaymentAllocation",
+        "Room",
+        "Bed",
+        "Stay"
+      ],
       "fieldContractRef": "field.depositConfirmation.v1",
       "evidencePolicyRef": "evidence.depositConfirmation.v1",
       "riskPolicyRef": "risk.deposit.high_risk_confirm.v1",
@@ -190,8 +287,8 @@
       "admissionPolicyRef": "admission.high_risk_deposit_confirmation.v1",
       "surfacePolicyRef": "surface.Accommodation.DepositLedger.depositConfirmation",
       "productionConfirmAllowed": false,
-      "compatibilityMode": "workspace-card-compatibility-wrapper",
-      "removalImpact": "Requires native finance capability, device trust, evidence validation, and Deposit.Confirm handler before removing compatibility."
+      "removalImpact": "Requires native finance capability, device trust, evidence validation, and Deposit.Confirm handler before removing compatibility.",
+      "definitionMode": "operations-runtime-native"
     },
     {
       "definitionId": "definition.depositDeduction.v1",
@@ -202,8 +299,20 @@
       "workItemType": "Dorm.DepositDeduction",
       "commandType": "Deposit.Deduct",
       "ownerSlice": "Accommodation.DepositLedger",
-      "allowedFacts": ["DepositAccount", "DepositEntry", "EvidenceObject", "LedgerEntry", "DomainEvent"],
-      "forbiddenFacts": ["Payment", "PaymentAllocation", "Room", "Bed", "Stay"],
+      "allowedFacts": [
+        "DepositAccount",
+        "DepositEntry",
+        "EvidenceObject",
+        "LedgerEntry",
+        "DomainEvent"
+      ],
+      "forbiddenFacts": [
+        "Payment",
+        "PaymentAllocation",
+        "Room",
+        "Bed",
+        "Stay"
+      ],
       "fieldContractRef": "field.depositDeduction.v1",
       "evidencePolicyRef": "evidence.depositDeduction.v1",
       "riskPolicyRef": "risk.deposit.money_out.v1",
@@ -211,8 +320,8 @@
       "admissionPolicyRef": "admission.prepare_only_or_l1_observation.v1",
       "surfacePolicyRef": "surface.Accommodation.DepositLedger.depositDeduction",
       "productionConfirmAllowed": false,
-      "compatibilityMode": "workspace-card-compatibility-wrapper",
-      "removalImpact": "Remove after native Deposit.Deduct handler proves deposit refund and deduction invariants."
+      "removalImpact": "Remove after native Deposit.Deduct handler proves deposit refund and deduction invariants.",
+      "definitionMode": "operations-runtime-native"
     },
     {
       "definitionId": "definition.depositRefundApproval.v1",
@@ -223,8 +332,20 @@
       "workItemType": "Dorm.DepositRefundApproval",
       "commandType": "Deposit.RefundApprove",
       "ownerSlice": "Accommodation.DepositLedger",
-      "allowedFacts": ["DepositAccount", "DepositEntry", "EvidenceObject", "LedgerEntry", "DomainEvent"],
-      "forbiddenFacts": ["Payment", "PaymentAllocation", "Room", "Bed", "Stay"],
+      "allowedFacts": [
+        "DepositAccount",
+        "DepositEntry",
+        "EvidenceObject",
+        "LedgerEntry",
+        "DomainEvent"
+      ],
+      "forbiddenFacts": [
+        "Payment",
+        "PaymentAllocation",
+        "Room",
+        "Bed",
+        "Stay"
+      ],
       "fieldContractRef": "field.depositRefundApproval.v1",
       "evidencePolicyRef": "evidence.depositRefundApproval.v1",
       "riskPolicyRef": "risk.deposit.high_risk_refund.v1",
@@ -232,8 +353,8 @@
       "admissionPolicyRef": "admission.high_risk_deposit_refund.v1",
       "surfacePolicyRef": "surface.Accommodation.DepositLedger.depositRefundApproval",
       "productionConfirmAllowed": false,
-      "compatibilityMode": "workspace-card-compatibility-wrapper",
-      "removalImpact": "Requires native refund approval handler and finance approval admission before compatibility removal."
+      "removalImpact": "Requires native refund approval handler and finance approval admission before compatibility removal.",
+      "definitionMode": "operations-runtime-native"
     },
     {
       "definitionId": "definition.depositRefundPayment.v1",
@@ -244,8 +365,20 @@
       "workItemType": "Dorm.DepositRefundPayment",
       "commandType": "Deposit.RefundPay",
       "ownerSlice": "Accommodation.DepositLedger",
-      "allowedFacts": ["DepositAccount", "DepositEntry", "EvidenceObject", "LedgerEntry", "DomainEvent"],
-      "forbiddenFacts": ["Payment", "PaymentAllocation", "Room", "Bed", "Stay"],
+      "allowedFacts": [
+        "DepositAccount",
+        "DepositEntry",
+        "EvidenceObject",
+        "LedgerEntry",
+        "DomainEvent"
+      ],
+      "forbiddenFacts": [
+        "Payment",
+        "PaymentAllocation",
+        "Room",
+        "Bed",
+        "Stay"
+      ],
       "fieldContractRef": "field.depositRefundPayment.v1",
       "evidencePolicyRef": "evidence.depositRefundPayment.v1",
       "riskPolicyRef": "risk.deposit.high_risk_refund.v1",
@@ -253,8 +386,8 @@
       "admissionPolicyRef": "admission.high_risk_deposit_refund.v1",
       "surfacePolicyRef": "surface.Accommodation.DepositLedger.depositRefundPayment",
       "productionConfirmAllowed": false,
-      "compatibilityMode": "workspace-card-compatibility-wrapper",
-      "removalImpact": "Requires native refund payment handler, trusted evidence, and append-only ledger output."
+      "removalImpact": "Requires native refund payment handler, trusted evidence, and append-only ledger output.",
+      "definitionMode": "operations-runtime-native"
     },
     {
       "definitionId": "definition.depositClose.v1",
@@ -265,8 +398,20 @@
       "workItemType": "Dorm.DepositClose",
       "commandType": "Deposit.Close",
       "ownerSlice": "Accommodation.DepositLedger",
-      "allowedFacts": ["DepositAccount", "DepositEntry", "EvidenceObject", "LedgerEntry", "DomainEvent"],
-      "forbiddenFacts": ["Payment", "PaymentAllocation", "Room", "Bed", "Stay"],
+      "allowedFacts": [
+        "DepositAccount",
+        "DepositEntry",
+        "EvidenceObject",
+        "LedgerEntry",
+        "DomainEvent"
+      ],
+      "forbiddenFacts": [
+        "Payment",
+        "PaymentAllocation",
+        "Room",
+        "Bed",
+        "Stay"
+      ],
       "fieldContractRef": "field.depositClose.v1",
       "evidencePolicyRef": "evidence.depositClose.v1",
       "riskPolicyRef": "risk.deposit.close.v1",
@@ -274,8 +419,8 @@
       "admissionPolicyRef": "admission.prepare_only_or_l1_observation.v1",
       "surfacePolicyRef": "surface.Accommodation.DepositLedger.depositClose",
       "productionConfirmAllowed": false,
-      "compatibilityMode": "workspace-card-compatibility-wrapper",
-      "removalImpact": "Remove once Deposit.Close handler enforces zero/settled liability and event output."
+      "removalImpact": "Remove once Deposit.Close handler enforces zero/settled liability and event output.",
+      "definitionMode": "operations-runtime-native"
     },
     {
       "definitionId": "definition.paymentReceipt.v1",
@@ -286,8 +431,20 @@
       "workItemType": "Dorm.PaymentReceipt",
       "commandType": "Payment.Receive",
       "ownerSlice": "Accommodation.PaymentLedger",
-      "allowedFacts": ["Payment", "PaymentAllocation", "EvidenceObject", "LedgerEntry", "DomainEvent"],
-      "forbiddenFacts": ["DepositAccount", "DepositEntry", "Room", "Bed", "Stay"],
+      "allowedFacts": [
+        "Payment",
+        "PaymentAllocation",
+        "EvidenceObject",
+        "LedgerEntry",
+        "DomainEvent"
+      ],
+      "forbiddenFacts": [
+        "DepositAccount",
+        "DepositEntry",
+        "Room",
+        "Bed",
+        "Stay"
+      ],
       "fieldContractRef": "field.paymentReceipt.v1",
       "evidencePolicyRef": "evidence.paymentReceipt.v1",
       "riskPolicyRef": "risk.payment.money_in.v1",
@@ -295,8 +452,8 @@
       "admissionPolicyRef": "admission.prepare_only_or_l1_observation.v1",
       "surfacePolicyRef": "surface.Accommodation.PaymentLedger.paymentReceipt",
       "productionConfirmAllowed": false,
-      "compatibilityMode": "workspace-card-compatibility-wrapper",
-      "removalImpact": "Remove after native Payment.Receive handler owns payment evidence and ledger output."
+      "removalImpact": "Remove after native Payment.Receive handler owns payment evidence and ledger output.",
+      "definitionMode": "operations-runtime-native"
     },
     {
       "definitionId": "definition.paymentConfirmation.v1",
@@ -307,8 +464,20 @@
       "workItemType": "Dorm.PaymentConfirmation",
       "commandType": "Payment.Confirm",
       "ownerSlice": "Accommodation.PaymentLedger",
-      "allowedFacts": ["Payment", "PaymentAllocation", "EvidenceObject", "LedgerEntry", "DomainEvent"],
-      "forbiddenFacts": ["DepositAccount", "DepositEntry", "Room", "Bed", "Stay"],
+      "allowedFacts": [
+        "Payment",
+        "PaymentAllocation",
+        "EvidenceObject",
+        "LedgerEntry",
+        "DomainEvent"
+      ],
+      "forbiddenFacts": [
+        "DepositAccount",
+        "DepositEntry",
+        "Room",
+        "Bed",
+        "Stay"
+      ],
       "fieldContractRef": "field.paymentConfirmation.v1",
       "evidencePolicyRef": "evidence.paymentConfirmation.v1",
       "riskPolicyRef": "risk.payment.high_risk_confirm.v1",
@@ -316,8 +485,8 @@
       "admissionPolicyRef": "admission.high_risk_payment_confirmation.v1",
       "surfacePolicyRef": "surface.Accommodation.PaymentLedger.paymentConfirmation",
       "productionConfirmAllowed": false,
-      "compatibilityMode": "workspace-card-compatibility-wrapper",
-      "removalImpact": "Requires native finance confirmation handler, trusted device, and evidence policy before compatibility removal."
+      "removalImpact": "Requires native finance confirmation handler, trusted device, and evidence policy before compatibility removal.",
+      "definitionMode": "operations-runtime-native"
     },
     {
       "definitionId": "definition.paymentAllocation.v1",
@@ -328,8 +497,20 @@
       "workItemType": "Dorm.PaymentAllocation",
       "commandType": "Payment.Allocate",
       "ownerSlice": "Accommodation.PaymentLedger",
-      "allowedFacts": ["Payment", "PaymentAllocation", "EvidenceObject", "LedgerEntry", "DomainEvent"],
-      "forbiddenFacts": ["DepositAccount", "DepositEntry", "Room", "Bed", "Stay"],
+      "allowedFacts": [
+        "Payment",
+        "PaymentAllocation",
+        "EvidenceObject",
+        "LedgerEntry",
+        "DomainEvent"
+      ],
+      "forbiddenFacts": [
+        "DepositAccount",
+        "DepositEntry",
+        "Room",
+        "Bed",
+        "Stay"
+      ],
       "fieldContractRef": "field.paymentAllocation.v1",
       "evidencePolicyRef": "evidence.paymentAllocation.v1",
       "riskPolicyRef": "risk.payment.allocation.v1",
@@ -337,8 +518,8 @@
       "admissionPolicyRef": "admission.prepare_only_or_l1_observation.v1",
       "surfacePolicyRef": "surface.Accommodation.PaymentLedger.paymentAllocation",
       "productionConfirmAllowed": false,
-      "compatibilityMode": "workspace-card-compatibility-wrapper",
-      "removalImpact": "Remove after allocation handler enforces available confirmed balance."
+      "removalImpact": "Remove after allocation handler enforces available confirmed balance.",
+      "definitionMode": "operations-runtime-native"
     },
     {
       "definitionId": "definition.paymentAdjustment.v1",
@@ -349,8 +530,20 @@
       "workItemType": "Dorm.PaymentAdjustment",
       "commandType": "Payment.Adjust",
       "ownerSlice": "Accommodation.PaymentLedger",
-      "allowedFacts": ["Payment", "PaymentAllocation", "EvidenceObject", "LedgerEntry", "DomainEvent"],
-      "forbiddenFacts": ["DepositAccount", "DepositEntry", "Room", "Bed", "Stay"],
+      "allowedFacts": [
+        "Payment",
+        "PaymentAllocation",
+        "EvidenceObject",
+        "LedgerEntry",
+        "DomainEvent"
+      ],
+      "forbiddenFacts": [
+        "DepositAccount",
+        "DepositEntry",
+        "Room",
+        "Bed",
+        "Stay"
+      ],
       "fieldContractRef": "field.paymentAdjustment.v1",
       "evidencePolicyRef": "evidence.paymentAdjustment.v1",
       "riskPolicyRef": "risk.payment.adjustment.v1",
@@ -358,8 +551,8 @@
       "admissionPolicyRef": "admission.prepare_only_or_l1_observation.v1",
       "surfacePolicyRef": "surface.Accommodation.PaymentLedger.paymentAdjustment",
       "productionConfirmAllowed": false,
-      "compatibilityMode": "workspace-card-compatibility-wrapper",
-      "removalImpact": "Remove after Payment.Adjust handler emits append-only correction events."
+      "removalImpact": "Remove after Payment.Adjust handler emits append-only correction events.",
+      "definitionMode": "operations-runtime-native"
     },
     {
       "definitionId": "definition.finalBalanceClose.v1",
@@ -370,8 +563,20 @@
       "workItemType": "Dorm.FinalBalanceClose",
       "commandType": "Checkout.FinalBalanceClose",
       "ownerSlice": "Accommodation.CheckOutSettlement",
-      "allowedFacts": ["CheckoutCase", "EvidenceObject", "LedgerEntry", "DomainEvent"],
-      "forbiddenFacts": ["Payment", "PaymentAllocation", "DepositAccount", "DepositEntry", "Room", "Bed"],
+      "allowedFacts": [
+        "CheckoutCase",
+        "EvidenceObject",
+        "LedgerEntry",
+        "DomainEvent"
+      ],
+      "forbiddenFacts": [
+        "Payment",
+        "PaymentAllocation",
+        "DepositAccount",
+        "DepositEntry",
+        "Room",
+        "Bed"
+      ],
       "fieldContractRef": "field.finalBalanceClose.v1",
       "evidencePolicyRef": "evidence.finalBalanceClose.v1",
       "riskPolicyRef": "risk.checkout.balance_close.v1",
@@ -379,8 +584,8 @@
       "admissionPolicyRef": "admission.prepare_only_or_l1_observation.v1",
       "surfacePolicyRef": "surface.Accommodation.CheckOutSettlement.finalBalanceClose",
       "productionConfirmAllowed": false,
-      "compatibilityMode": "workspace-card-compatibility-wrapper",
-      "removalImpact": "Remove after checkout settlement handler reads ledgers and emits close event without direct payment/deposit writes."
+      "removalImpact": "Remove after checkout settlement handler reads ledgers and emits close event without direct payment/deposit writes.",
+      "definitionMode": "operations-runtime-native"
     },
     {
       "definitionId": "definition.bedRelease.v1",
@@ -391,8 +596,18 @@
       "workItemType": "Dorm.BedRelease",
       "commandType": "Checkout.RequestBedRelease",
       "ownerSlice": "Accommodation.CheckOutSettlement",
-      "allowedFacts": ["CheckoutCase", "EvidenceObject", "DomainEvent"],
-      "forbiddenFacts": ["BedStatus", "Bed", "Room", "Payment", "DepositEntry"],
+      "allowedFacts": [
+        "CheckoutCase",
+        "EvidenceObject",
+        "DomainEvent"
+      ],
+      "forbiddenFacts": [
+        "BedStatus",
+        "Bed",
+        "Room",
+        "Payment",
+        "DepositEntry"
+      ],
       "fieldContractRef": "field.bedRelease.v1",
       "evidencePolicyRef": "evidence.bedRelease.v1",
       "riskPolicyRef": "risk.checkout.bed_release.v1",
@@ -400,8 +615,8 @@
       "admissionPolicyRef": "admission.prepare_only_or_l1_observation.v1",
       "surfacePolicyRef": "surface.Accommodation.CheckOutSettlement.bedRelease",
       "productionConfirmAllowed": false,
-      "compatibilityMode": "workspace-card-compatibility-wrapper",
-      "removalImpact": "Remove after process manager requests resource release without checkout directly writing BedStatus."
+      "removalImpact": "Remove after process manager requests resource release without checkout directly writing BedStatus.",
+      "definitionMode": "operations-runtime-native"
     },
     {
       "definitionId": "definition.periodClose.v1",
@@ -412,8 +627,18 @@
       "workItemType": "Dorm.PeriodClose",
       "commandType": "Period.Close",
       "ownerSlice": "Accommodation.PeriodAnalytics",
-      "allowedFacts": ["PeriodSnapshot", "EvidenceObject", "DomainEvent"],
-      "forbiddenFacts": ["Payment", "PaymentAllocation", "DepositEntry", "Room", "Bed"],
+      "allowedFacts": [
+        "PeriodSnapshot",
+        "EvidenceObject",
+        "DomainEvent"
+      ],
+      "forbiddenFacts": [
+        "Payment",
+        "PaymentAllocation",
+        "DepositEntry",
+        "Room",
+        "Bed"
+      ],
       "fieldContractRef": "field.periodClose.v1",
       "evidencePolicyRef": "evidence.periodClose.v1",
       "riskPolicyRef": "risk.period.high_risk_close.v1",
@@ -421,8 +646,8 @@
       "admissionPolicyRef": "admission.high_risk_period_close.v1",
       "surfacePolicyRef": "surface.Accommodation.PeriodAnalytics.periodClose",
       "productionConfirmAllowed": false,
-      "compatibilityMode": "workspace-card-compatibility-wrapper",
-      "removalImpact": "Requires native Period.Close handler with frozen snapshot evidence and governance admission."
+      "removalImpact": "Requires native Period.Close handler with frozen snapshot evidence and governance admission.",
+      "definitionMode": "operations-runtime-native"
     },
     {
       "definitionId": "definition.expenseRecord.v1",
@@ -433,8 +658,18 @@
       "workItemType": "Dorm.ExpenseRecord",
       "commandType": "Expense.Record",
       "ownerSlice": "Accommodation.ExpenseLedger",
-      "allowedFacts": ["EvidenceObject", "LedgerEntry", "DomainEvent"],
-      "forbiddenFacts": ["Payment", "PaymentAllocation", "DepositEntry", "Room", "Bed"],
+      "allowedFacts": [
+        "EvidenceObject",
+        "LedgerEntry",
+        "DomainEvent"
+      ],
+      "forbiddenFacts": [
+        "Payment",
+        "PaymentAllocation",
+        "DepositEntry",
+        "Room",
+        "Bed"
+      ],
       "fieldContractRef": "field.expenseRecord.v1",
       "evidencePolicyRef": "evidence.expenseRecord.v1",
       "riskPolicyRef": "risk.expense.standard.v1",
@@ -442,8 +677,8 @@
       "admissionPolicyRef": "admission.prepare_only_or_l1_observation.v1",
       "surfacePolicyRef": "surface.Accommodation.ExpenseLedger.expenseRecord",
       "productionConfirmAllowed": false,
-      "compatibilityMode": "workspace-card-compatibility-wrapper",
-      "removalImpact": "Remove after Expense.Record handler produces append-only ledger entry with evidence."
+      "removalImpact": "Remove after Expense.Record handler produces append-only ledger entry with evidence.",
+      "definitionMode": "operations-runtime-native"
     },
     {
       "definitionId": "definition.ledgerCorrectionApply.v1",
@@ -454,8 +689,21 @@
       "workItemType": "Finance.LedgerCorrectionApply",
       "commandType": "LedgerCorrection.Apply",
       "ownerSlice": "Governance.CorrectionCenter",
-      "allowedFacts": ["EvidenceObject", "LedgerEntry", "DomainEvent", "CommandSubmission"],
-      "forbiddenFacts": ["Payment", "PaymentAllocation", "DepositAccount", "DepositEntry", "Room", "Bed", "BedStatus"],
+      "allowedFacts": [
+        "EvidenceObject",
+        "LedgerEntry",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "forbiddenFacts": [
+        "Payment",
+        "PaymentAllocation",
+        "DepositAccount",
+        "DepositEntry",
+        "Room",
+        "Bed",
+        "BedStatus"
+      ],
       "fieldContractRef": "field.ledgerCorrectionApply.v1",
       "evidencePolicyRef": "evidence.ledgerCorrectionApply.v1",
       "riskPolicyRef": "risk.ledger.high_risk_correction.v1",
@@ -463,8 +711,8 @@
       "admissionPolicyRef": "admission.high_risk_ledger_correction.v1",
       "surfacePolicyRef": "surface.PCGovernance.ledgerCorrectionApply",
       "productionConfirmAllowed": false,
-      "compatibilityMode": "governance-provisional",
-      "removalImpact": "Requires native correction command handler, append-only ledger policy, and PC governance admission trace."
+      "removalImpact": "Requires native correction command handler, append-only ledger policy, and PC governance admission trace.",
+      "definitionMode": "governance-provisional"
     }
   ]
 }

@@ -1,6 +1,6 @@
 {
   "version": "oam-cab.inventory.v1",
-  "generatedAt": "2026-06-03T11:46:15.082Z",
+  "generatedAt": "2026-06-04T14:23:16.547Z",
   "route_inventory": [
     {
       "file": "services/core-api/WorkOS.Api/Program.cs",
@@ -269,26 +269,8 @@
     {
       "file": "services/core-api/WorkOS.Api/Program.cs",
       "method": "POST",
-      "route": "/api/workspaces/{workspaceId}/cards/{cardId}/prepare",
-      "key": "POST /api/workspaces/{workspaceId}/cards/{cardId}/prepare"
-    },
-    {
-      "file": "services/core-api/WorkOS.Api/Program.cs",
-      "method": "POST",
-      "route": "/api/workspaces/resource-setup/start",
-      "key": "POST /api/workspaces/resource-setup/start"
-    },
-    {
-      "file": "services/core-api/WorkOS.Api/Program.cs",
-      "method": "POST",
-      "route": "/api/workspaces/start",
-      "key": "POST /api/workspaces/start"
-    },
-    {
-      "file": "services/core-api/WorkOS.Api/Program.cs",
-      "method": "POST",
-      "route": "/api/workspaces/{workspaceId}/cards/{cardId}/confirm",
-      "key": "POST /api/workspaces/{workspaceId}/cards/{cardId}/confirm"
+      "route": "/api/operations/workspaces/start",
+      "key": "POST /api/operations/workspaces/start"
     },
     {
       "file": "services/core-api/WorkOS.Api/Program.cs",
@@ -583,34 +565,10 @@
     {
       "file": "services/core-api/WorkOS.Api/Program.cs",
       "method": "POST",
-      "route": "/api/workspaces/{workspaceId}/cards/{cardId}/prepare",
-      "key": "POST /api/workspaces/{workspaceId}/cards/{cardId}/prepare",
-      "classification": "compatibilityBusinessWrite",
-      "legacyWritePathClass": "compatibility shim to Operations Confirm"
-    },
-    {
-      "file": "services/core-api/WorkOS.Api/Program.cs",
-      "method": "POST",
-      "route": "/api/workspaces/resource-setup/start",
-      "key": "POST /api/workspaces/resource-setup/start",
+      "route": "/api/operations/workspaces/start",
+      "key": "POST /api/operations/workspaces/start",
       "classification": "governanceWrite",
       "legacyWritePathClass": "non-business write"
-    },
-    {
-      "file": "services/core-api/WorkOS.Api/Program.cs",
-      "method": "POST",
-      "route": "/api/workspaces/start",
-      "key": "POST /api/workspaces/start",
-      "classification": "governanceWrite",
-      "legacyWritePathClass": "non-business write"
-    },
-    {
-      "file": "services/core-api/WorkOS.Api/Program.cs",
-      "method": "POST",
-      "route": "/api/workspaces/{workspaceId}/cards/{cardId}/confirm",
-      "key": "POST /api/workspaces/{workspaceId}/cards/{cardId}/confirm",
-      "classification": "compatibilityBusinessWrite",
-      "legacyWritePathClass": "compatibility shim to Operations Confirm"
     },
     {
       "file": "services/core-api/WorkOS.Api/Program.cs",
@@ -719,22 +677,6 @@
       "legacyWritePathClass": "non-business write"
     },
     {
-      "file": "services/core-api/WorkOS.Api/Program.cs",
-      "method": "POST",
-      "route": "/api/workspaces/{workspaceId}/cards/{cardId}/prepare",
-      "key": "POST /api/workspaces/{workspaceId}/cards/{cardId}/prepare",
-      "classification": "compatibilityBusinessWrite",
-      "legacyWritePathClass": "compatibility shim to Operations Confirm"
-    },
-    {
-      "file": "services/core-api/WorkOS.Api/Program.cs",
-      "method": "POST",
-      "route": "/api/workspaces/{workspaceId}/cards/{cardId}/confirm",
-      "key": "POST /api/workspaces/{workspaceId}/cards/{cardId}/confirm",
-      "classification": "compatibilityBusinessWrite",
-      "legacyWritePathClass": "compatibility shim to Operations Confirm"
-    },
-    {
       "file": "services/core-api/WorkOS.Api/Runtime/OperationsRuntimeEndpoints.cs",
       "method": "POST",
       "route": "/api/operations/work-items/{workItemId}/confirm",
@@ -744,22 +686,6 @@
     }
   ],
   "legacy_write_path_classification": [
-    {
-      "file": "services/core-api/WorkOS.Api/Program.cs",
-      "method": "POST",
-      "route": "/api/workspaces/{workspaceId}/cards/{cardId}/prepare",
-      "key": "POST /api/workspaces/{workspaceId}/cards/{cardId}/prepare",
-      "classification": "compatibilityBusinessWrite",
-      "legacyWritePathClass": "compatibility shim to Operations Confirm"
-    },
-    {
-      "file": "services/core-api/WorkOS.Api/Program.cs",
-      "method": "POST",
-      "route": "/api/workspaces/{workspaceId}/cards/{cardId}/confirm",
-      "key": "POST /api/workspaces/{workspaceId}/cards/{cardId}/confirm",
-      "classification": "compatibilityBusinessWrite",
-      "legacyWritePathClass": "compatibility shim to Operations Confirm"
-    },
     {
       "file": "services/core-api/WorkOS.Api/Runtime/OperationsRuntimeEndpoints.cs",
       "method": "POST",
@@ -1143,6 +1069,14 @@
   "compatibility_scan": {
     "projectionRuntime": [
       {
+        "path": "services/core-api/WorkOS.Api/Runtime/CanonicalOperationsApiService.cs",
+        "mentions": {
+          "ProjectionRuntime": 2,
+          "RuntimeAggregateLensStorage": 0,
+          "shadow_runtime": 0
+        }
+      },
+      {
         "path": "services/core-api/WorkOS.Api/Runtime/OperationsRuntimeService.cs",
         "mentions": {
           "ProjectionRuntime": 4,
@@ -1217,22 +1151,13 @@
       {
         "path": "services/core-api/WorkOS.Api/Runtime/SearchKernelService.cs",
         "mentions": {
-          "ProjectionRuntime": 2,
+          "ProjectionRuntime": 3,
           "RuntimeAggregateLensStorage": 0,
           "shadow_runtime": 0
         }
       }
     ],
-    "workspaceCard": [
-      {
-        "path": "services/core-api/WorkOS.Api/Runtime/WorkspaceCardCompatibilityAdapter.cs",
-        "mentions": {
-          "WorkspaceCardCompatibilityAdapter": 2,
-          "ConfirmWorkspaceCard": 1,
-          "/api/workspaces/{workspaceId}/cards/{cardId}/confirm": 0
-        }
-      }
-    ],
+    "retiredWorkspaceCardWritePath": [],
     "runtimeDocuments": [
       {
         "path": "services/core-api/WorkOS.Api/Runtime/PostgresProjectionStore.cs",
@@ -1295,6 +1220,15 @@
     ]
   },
   "projection_runtime_write_usage_scan": [
+    {
+      "path": "services/core-api/WorkOS.Api/Runtime/CanonicalOperationsApiService.cs",
+      "mentions": {
+        "ProjectionRuntime": 2,
+        "RecordProjection": 0,
+        "ProcessOutbox": 0,
+        "runtime_documents": 0
+      }
+    },
     {
       "path": "services/core-api/WorkOS.Api/Runtime/OperationsRuntimeService.cs",
       "mentions": {
@@ -1379,31 +1313,14 @@
     {
       "path": "services/core-api/WorkOS.Api/Runtime/SearchKernelService.cs",
       "mentions": {
-        "ProjectionRuntime": 2,
+        "ProjectionRuntime": 3,
         "RecordProjection": 0,
         "ProcessOutbox": 0,
         "runtime_documents": 0
       }
     }
   ],
-  "workspace_card_write_usage_scan": [
-    {
-      "path": "services/core-api/WorkOS.Api/Runtime/OperationsRuntimeService.cs",
-      "mentions": {
-        "ConfirmWorkspaceCard": 0,
-        "PrepareWorkspaceCard": 1,
-        "WorkspaceCardCompatibilityAdapter": 0
-      }
-    },
-    {
-      "path": "services/core-api/WorkOS.Api/Runtime/WorkspaceCardCompatibilityAdapter.cs",
-      "mentions": {
-        "ConfirmWorkspaceCard": 1,
-        "PrepareWorkspaceCard": 1,
-        "WorkspaceCardCompatibilityAdapter": 2
-      }
-    }
-  ],
+  "retired_workspace_card_write_usage_scan": [],
   "runtime_documents_source_of_truth_usage_scan": [
     {
       "path": "services/core-api/WorkOS.Api/Runtime/RuntimeDocumentStorage.cs",
@@ -1434,7 +1351,7 @@
     "objectTypes": [
       "workItem",
       "operationCase",
-      "workspaceCardCompatibility",
+      "workspaceCardProjection",
       "businessObject",
       "evidence",
       "ledger",
@@ -1462,12 +1379,12 @@
       "language",
       "explain"
     ],
-    "legacyAdapters": [
+    "projectionAdapters": [
       {
-        "name": "LensQueryService.Search",
-        "path": "services/core-api/WorkOS.Api/Runtime/LensQueryService.cs",
-        "status": "legacy-adapter",
-        "allowed": "May provide current workspace-card compatibility results only as input to LegacyWorkspaceSearchAdapter.",
+        "name": "ProjectionWorkspaceSearchAdapter",
+        "path": "services/core-api/WorkOS.Api/Runtime/SearchKernelService.cs",
+        "status": "projection-adapter",
+        "allowed": "May provide current workspace-card projection results only as input to SearchKernelService.",
         "forbidden": "Must not be treated as final Search Kernel and must not bypass Language Kernel synonyms, permission policy, or Admission Kernel.",
         "removalCondition": "SearchKernelService owns indexing, ranking, admission, trace refs, and language explain output."
       },
@@ -1484,7 +1401,7 @@
         "path": "services/core-api/WorkOS.Api/Runtime/LensQueryService.cs",
         "mentions": {
           "SearchKernelService": 0,
-          "LegacyWorkspaceSearchAdapter": 0,
+          "ProjectionWorkspaceSearchAdapter": 0,
           "LensQueryService": 2
         }
       },
@@ -1492,7 +1409,7 @@
         "path": "services/core-api/WorkOS.Api/Runtime/ProjectionRuntime.cs",
         "mentions": {
           "SearchKernelService": 0,
-          "LegacyWorkspaceSearchAdapter": 0,
+          "ProjectionWorkspaceSearchAdapter": 0,
           "LensQueryService": 2
         }
       },
@@ -1500,7 +1417,7 @@
         "path": "services/core-api/WorkOS.Api/Runtime/SearchKernelService.cs",
         "mentions": {
           "SearchKernelService": 3,
-          "LegacyWorkspaceSearchAdapter": 4,
+          "ProjectionWorkspaceSearchAdapter": 4,
           "LensQueryService": 1
         }
       }
@@ -1548,6 +1465,16 @@
         }
       },
       {
+        "path": "apps/mobile/src/eventBinder.js",
+        "mentions": {
+          "blocked": 1,
+          "confirmAllowed": 0,
+          "productionAllowed": 0,
+          "idempotency_conflict_409": 0,
+          "business_blocked_422": 0
+        }
+      },
+      {
         "path": "apps/mobile/src/experienceContract.js",
         "mentions": {
           "blocked": 2,
@@ -1570,7 +1497,7 @@
       {
         "path": "apps/mobile/src/i18n/shellCopy.js",
         "mentions": {
-          "blocked": 5,
+          "blocked": 6,
           "confirmAllowed": 0,
           "productionAllowed": 0,
           "idempotency_conflict_409": 3,
@@ -1578,23 +1505,33 @@
         }
       },
       {
+        "path": "apps/mobile/src/navigationController.js",
+        "mentions": {
+          "blocked": 5,
+          "confirmAllowed": 0,
+          "productionAllowed": 0,
+          "idempotency_conflict_409": 0,
+          "business_blocked_422": 2
+        }
+      },
+      {
         "path": "apps/mobile/src/operationActionState.js",
         "mentions": {
-          "blocked": 9,
+          "blocked": 11,
           "confirmAllowed": 0,
           "productionAllowed": 0,
           "idempotency_conflict_409": 2,
-          "business_blocked_422": 3
+          "business_blocked_422": 4
         }
       },
       {
         "path": "apps/mobile/src/operationController.js",
         "mentions": {
-          "blocked": 7,
+          "blocked": 10,
           "confirmAllowed": 0,
           "productionAllowed": 0,
           "idempotency_conflict_409": 1,
-          "business_blocked_422": 2
+          "business_blocked_422": 4
         }
       },
       {
@@ -1605,6 +1542,16 @@
           "productionAllowed": 0,
           "idempotency_conflict_409": 0,
           "business_blocked_422": 1
+        }
+      },
+      {
+        "path": "apps/mobile/src/operationStatus.js",
+        "mentions": {
+          "blocked": 4,
+          "confirmAllowed": 0,
+          "productionAllowed": 0,
+          "idempotency_conflict_409": 0,
+          "business_blocked_422": 0
         }
       },
       {
@@ -1638,9 +1585,19 @@
         }
       },
       {
+        "path": "apps/mobile/src/runtime/runtimeStore.js",
+        "mentions": {
+          "blocked": 1,
+          "confirmAllowed": 0,
+          "productionAllowed": 0,
+          "idempotency_conflict_409": 0,
+          "business_blocked_422": 0
+        }
+      },
+      {
         "path": "apps/mobile/src/searchIntentHub.js",
         "mentions": {
-          "blocked": 0,
+          "blocked": 2,
           "confirmAllowed": 4,
           "productionAllowed": 4,
           "idempotency_conflict_409": 0,
@@ -1720,7 +1677,7 @@
       {
         "path": "apps/mobile/src/views/operationPanelView.js",
         "mentions": {
-          "blocked": 2,
+          "blocked": 15,
           "confirmAllowed": 0,
           "productionAllowed": 0,
           "idempotency_conflict_409": 0,
@@ -1798,6 +1755,16 @@
         }
       },
       {
+        "path": "apps/mobile/src/__tests__/confirmErrorHandling.test.js",
+        "mentions": {
+          "blocked": 1,
+          "confirmAllowed": 0,
+          "productionAllowed": 0,
+          "idempotency_conflict_409": 0,
+          "business_blocked_422": 0
+        }
+      },
+      {
         "path": "apps/mobile/src/__tests__/DormitoryScenarioJourneyAcceptance.test.js",
         "mentions": {
           "blocked": 0,
@@ -1830,11 +1797,21 @@
       {
         "path": "apps/mobile/src/__tests__/OperationActionStateContract.test.js",
         "mentions": {
-          "blocked": 4,
+          "blocked": 6,
           "confirmAllowed": 0,
           "productionAllowed": 0,
           "idempotency_conflict_409": 1,
-          "business_blocked_422": 2
+          "business_blocked_422": 4
+        }
+      },
+      {
+        "path": "apps/mobile/src/__tests__/OperationStartCommandContract.test.js",
+        "mentions": {
+          "blocked": 2,
+          "confirmAllowed": 0,
+          "productionAllowed": 0,
+          "idempotency_conflict_409": 0,
+          "business_blocked_422": 1
         }
       },
       {
@@ -1892,16 +1869,8 @@
       {
         "file": "services/core-api/WorkOS.Api/Program.cs",
         "method": "POST",
-        "route": "/api/workspaces/resource-setup/start",
-        "key": "POST /api/workspaces/resource-setup/start",
-        "classification": "governanceWrite",
-        "legacyWritePathClass": "non-business write"
-      },
-      {
-        "file": "services/core-api/WorkOS.Api/Program.cs",
-        "method": "POST",
-        "route": "/api/workspaces/start",
-        "key": "POST /api/workspaces/start",
+        "route": "/api/operations/workspaces/start",
+        "key": "POST /api/operations/workspaces/start",
         "classification": "governanceWrite",
         "legacyWritePathClass": "non-business write"
       }
@@ -2276,15 +2245,6 @@
         }
       },
       {
-        "path": "services/core-api/WorkOS.Api/Runtime/WorkspaceCardCompatibilityAdapter.cs",
-        "mentions": {
-          "Evidence": 2,
-          "FactTrace": 0,
-          "RuntimeProof": 0,
-          "GateResult": 0
-        }
-      },
-      {
         "path": "services/core-api/WorkOS.Api/Runtime/WorkspaceSeedCatalog.cs",
         "mentions": {
           "Evidence": 2,
@@ -2297,9 +2257,9 @@
   },
   "forbidden_findings": [],
   "summary": {
-    "routeCount": 68,
-    "nonGetRouteCount": 34,
-    "businessWriteRouteCount": 7,
+    "routeCount": 65,
+    "nonGetRouteCount": 31,
+    "businessWriteRouteCount": 5,
     "forbiddenFindingCount": 0,
     "definitionCount": 22,
     "searchResultTypeCount": 15,

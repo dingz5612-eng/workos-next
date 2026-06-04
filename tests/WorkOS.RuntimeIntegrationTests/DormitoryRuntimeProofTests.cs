@@ -25,7 +25,7 @@ public sealed class DormitoryRuntimeProofTests
             "rejected_has_no_domain_event_or_ledger",
             "projection_lens_replay",
             "trace_api_chain",
-            "compatibility_fallback_not_used"
+            "retired_workspace_card_write_path_not_used"
         })
         {
             StringAssert.Contains(contract + proofPack + runner + checker, required);

@@ -337,7 +337,6 @@ function validateSurfaceRuntimeGuard(contracts, source, violations) {
     "tests/WorkOS.RuntimeIntegrationTests/SearchScopeRuntimeTests.cs",
     "tests/WorkOS.RuntimeIntegrationTests/LearningScopeRuntimeTests.cs",
     "tests/WorkOS.RuntimeIntegrationTests/OperationsConfirmPilotScopeTests.cs",
-    "tests/WorkOS.RuntimeIntegrationTests/WorkspaceCardCompatibilityPilotScopeTests.cs",
     "tests/WorkOS.RuntimeIntegrationTests/EvidenceAttachPilotScopeTests.cs",
     "tests/WorkOS.RuntimeIntegrationTests/FinanceMoneyCommandPilotScopeTests.cs"
   ]) {
@@ -345,7 +344,7 @@ function validateSurfaceRuntimeGuard(contracts, source, violations) {
       violations.push(violation("surface.runtime_guard.test_missing", `缺少后端 runtime guard 测试 ${file}。`, { file }));
     }
   }
-  for (const marker of ["mobile token", "pc governance", "learning content", "workspace/card compatibility"]) {
+  for (const marker of ["mobile token", "pc governance", "learning content", "operations confirm"]) {
     if (!(contracts.runtimeGuard?.backendGuards ?? []).join(" ").includes(marker)) {
       violations.push(violation("surface.runtime_guard.contract_marker_missing", `后端 guard 合同缺少 ${marker}。`, { marker }));
     }

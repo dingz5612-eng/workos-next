@@ -17,7 +17,7 @@ an explicit architecture rule allows a different non-business transport.
 The route classification allowlist lives in:
 
 ```text
-docs/v5.4/operations-api-allowlist.json
+docs/rules/v5.5/api-boundary.yml
 ```
 
 Every non-GET `/api/*` route is treated as a write route by default. A write
@@ -31,24 +31,25 @@ POST /api/operations/work-items/{workItemId}/confirm
 ```
 
 Other non-business writes must be classified as Operations coordination,
-compatibility, mobile experience, evidence file, auth/device, control plane,
+mobile experience, evidence file, auth/device, control plane,
 governance, behavior event, or runtime maintenance writes. Governance writes
 must declare whether they write business facts, whether they use Operations
 Confirm, whether they only write control/governance/provisional records, and
 whether they are append-only.
 
-## Compatibility Layer
+## Retired Workspace/Card Write Routes
 
-The old Workspace/Card API is compatibility-only:
+The old Workspace/Card write routes are retired and must stay absent:
 
 ```text
 POST /api/workspaces/{workspaceId}/cards/{cardId}/prepare
 POST /api/workspaces/{workspaceId}/cards/{cardId}/confirm
 ```
 
-Compatibility endpoints may remain to support existing clients, but new product
-work must not treat them as the primary design surface. New business-write
-architecture, documentation, and tests must target Operations Confirm.
+They must not be registered, classified as current compatibility writes, or used
+as product, test, rollback, or mobile normal-runtime paths. Workspace/Card may
+only be projection/display compatibility input that resolves to a persisted
+Operations WorkItem before any business write.
 
 ## Mobile BFF Boundary
 

@@ -12,19 +12,19 @@ POST /api/operations/work-items/{workItemId}/confirm
 ```
 
 The Operations API may prepare work items, create cases, and expose work-item
-read models through the allowlist in `docs/v5.4/operations-api-allowlist.json`.
+read models through the allowlist in `docs/rules/v5.5/api-boundary.yml`.
 Confirm is the only primary mutation path for business facts.
 
-The older Workspace/Card endpoints are compatibility layer only:
+The older Workspace/Card write endpoints are retired and must stay deleted:
 
 ```text
 POST /api/workspaces/{workspaceId}/cards/{cardId}/prepare
 POST /api/workspaces/{workspaceId}/cards/{cardId}/confirm
 ```
 
-Compatibility prepare may load projection, card contract, blockers, defaults,
-and allowed actions for existing clients. New product work must use Operations
-Confirm as the business-write design surface.
+They must not be registered or used as rollback, mobile normal-runtime, or test
+paths. Projection/card data may be read for display only, and any business write
+must resolve to a persisted Operations WorkItem and use Operations Confirm.
 
 Mobile BFF routes must not write business facts. Adding page-specific business
 write endpoints such as `POST /api/payment/confirm` or

@@ -46,7 +46,7 @@ public static class OperationsRuntimeEndpoints
             var actor = httpRequest.HttpContext.RequireActor();
             return !TenantMatches(tenantId, actor.TenantId)
                 ? TenantScopeForbidden("operation_work_items_tenant_mismatch")
-                : Results.Ok(operations.ListWorkItems(actor.TenantId, caseId));
+                : Results.Ok(operations.ListWorkItemSurfaces(actor.TenantId, caseId));
         });
 
         app.MapGet("/api/operations/work-items/{workItemId}", (string workItemId, CanonicalOperationsApiService operations, HttpRequest httpRequest) =>
@@ -55,7 +55,7 @@ public static class OperationsRuntimeEndpoints
             var resolved = operations.GetWorkItem(workItemId);
             return resolved is null || !TenantMatches(resolved.TenantId, actor.TenantId)
                 ? Results.NotFound(new { error = "operation_work_item_not_found", workItemId })
-                : Results.Ok(resolved);
+                : Results.Ok(operations.GetWorkItemSurface(workItemId));
         });
 
         app.MapPost("/api/operations/work-items/{workItemId}/prepare", (string workItemId, PrepareWorkItemRequest request, CanonicalOperationsApiService operations, HttpRequest httpRequest) =>

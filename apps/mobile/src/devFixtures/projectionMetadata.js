@@ -126,8 +126,8 @@ function helpText(label, control, optionSet) {
   if (label === "容量") return localizedText("容量由房型自动带出，不需要手填。");
   if (control === "select") return localizedText("从合同给出的业务选项中选择。");
   if (control === "searchSelect") return localizedText("从投影候选对象中搜索选择，不手写对象。");
-  if (control === "dateTime" || control === "dateTimeRange") return localizedText("使用日期时间控件，便于后端校验周期冲突。");
-  if (control === "number") return localizedText("填写数值，提交后由系统检查规则。");
+  if (control === "dateTime" || control === "dateTimeRange") return localizedText("请选择时间。");
+  if (control === "number") return localizedText("请输入数字。");
   if (optionSet) return localizedText("选项由 projection 合同提供。");
   return localizedText("填写当前卡需要的业务信息。");
 }

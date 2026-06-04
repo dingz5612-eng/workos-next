@@ -16,17 +16,17 @@ for (const field of requiredProjectionFields) {
   }
 }
 
-const confirmPath = openApi.paths?.["/api/workspaces/{workspaceId}/cards/{cardId}/confirm"];
+const confirmPath = openApi.paths?.["/api/operations/work-items/{workItemId}/confirm"];
 const confirmPost = confirmPath?.post;
-if (!confirmPost) throw new Error("OpenAPI must define confirm POST path.");
+if (!confirmPost) throw new Error("OpenAPI must define Operations WorkItem confirm POST path.");
 
 const actorHeader = confirmPost.parameters?.find((item) => item.name === "X-WorkOS-Actor-Token" && item.in === "header" && item.required === true);
 if (!actorHeader) throw new Error("Confirm OpenAPI path must require X-WorkOS-Actor-Token header.");
 
-const confirmSchema = openApi.components?.schemas?.ConfirmCardRequest;
+const confirmSchema = openApi.components?.schemas?.ConfirmWorkItemRequest;
 for (const field of ["language", "idempotencyKey", "submissionId", "cardInstanceId", "fieldValues", "evidenceIds"]) {
   if (!confirmSchema?.required?.includes(field)) {
-    throw new Error(`ConfirmCardRequest schema must require ${field}`);
+    throw new Error(`ConfirmWorkItemRequest schema must require ${field}`);
   }
 }
 

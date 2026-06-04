@@ -3,8 +3,6 @@
   "status": "quarantined",
   "components": [
     "ProjectionRuntime",
-    "Workspace/Card prepare-confirm",
-    "WorkspaceCardCompatibilityAdapter",
     "LensQueryService legacy search",
     "RuntimeDocumentStorage / runtime_documents snapshot"
   ],
@@ -24,7 +22,6 @@
   "legacyWritePathClassification": [
     "remove",
     "forbidden",
-    "compatibility shim to Operations Confirm",
     "non-business write"
   ],
   "evidence": [

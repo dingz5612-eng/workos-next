@@ -78,7 +78,7 @@ It writes four release gate invariants:
 
 - `migration.dry_run_success`
 - `legacy.mapping_report_generated`
-- `legacy.old_api_still_compatible`
+- `legacy.old_api_retired`
 - `legacy.backfill_does_not_drop_legacy_data`
 
 In non-dry-run mode it writes `control_plane.migration_verification_reports`,

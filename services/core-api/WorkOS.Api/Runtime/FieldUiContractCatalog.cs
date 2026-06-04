@@ -17,12 +17,12 @@ internal static class FieldUiContractCatalog
     public static IReadOnlyDictionary<string, string> Help(string label, string type, string source)
     {
         if (label == "容量") return ContractText.Text("容量由房型自动带出，不需要手填。", "Вместимость заполняется по типу комнаты автоматически.");
-        if (type == "readonly") return ContractText.Text("由系统根据当前登录人、时间或上游字段生成。", "Система заполняет по пользователю, времени или предыдущим полям.");
-        if (Control(label, type, source) == "select") return ContractText.Text("从业务选项中选择，避免手写造成口径不一致。", "Выберите из бизнес-вариантов, чтобы избежать расхождений.");
-        if (Control(label, type, source) == "searchSelect") return ContractText.Text("选择已存在的业务对象，不能在这里新建对象编号。", "Выберите существующий бизнес-объект; новый номер здесь не создается.");
-        if (Control(label, type, source) is "dateTime" or "dateTimeRange") return ContractText.Text("使用日期时间控件，便于后端校验周期冲突。", "Используйте дату и время, чтобы backend мог проверить конфликты периода.");
-        if (Control(label, type, source) == "number") return ContractText.Text("填写数值，提交后由系统检查规则。", "Введите число; система проверит правила после отправки.");
-        return ContractText.Text("手工填写本次新建或办理需要的业务信息。", "Вручную заполните данные для создания или обработки.");
+        if (type == "readonly") return ContractText.Text("已自动带出，不需要填写。", "Заполнено автоматически.");
+        if (Control(label, type, source) == "select") return ContractText.Text("请选择一个业务选项。", "Выберите вариант.");
+        if (Control(label, type, source) == "searchSelect") return ContractText.Text("从已有对象中选择。", "Выберите существующий объект.");
+        if (Control(label, type, source) is "dateTime" or "dateTimeRange") return ContractText.Text("请选择时间。", "Выберите дату и время.");
+        if (Control(label, type, source) == "number") return ContractText.Text("请输入数字。", "Введите число.");
+        return ContractText.Text("请输入本步需要的信息。", "Введите данные для этого шага.");
     }
 
     private static string Control(string label, string type, string source)

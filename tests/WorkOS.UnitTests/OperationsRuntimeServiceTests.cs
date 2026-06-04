@@ -30,51 +30,6 @@ public sealed class OperationsRuntimeServiceTests
     }
 
     [TestMethod]
-    public void prepare_workspace_card_creates_compatibility_work_item_without_committing_fact()
-    {
-        var service = Service(out var runtime, out _, out var workItems);
-
-        var result = service.PrepareWorkspaceCard("W-OPS", "roomSetup", new PrepareCardRequest("sub-prepare", "ci-prepare", "room:A101"));
-        var payload = (IReadOnlyDictionary<string, object?>)result.Payload!;
-
-        Assert.AreEqual(200, result.StatusCode);
-        Assert.AreEqual(true, payload["prepared"]);
-        Assert.AreEqual("W-OPS", payload["workspaceId"]);
-        Assert.AreEqual("roomSetup", payload["cardId"]);
-        StringAssert.StartsWith(payload["workItemId"]!.ToString(), "wi-");
-        Assert.AreEqual(0, runtime.PrepareCount);
-        Assert.AreEqual(0, runtime.ConfirmCount);
-        Assert.HasCount(1, workItems.List());
-    }
-
-    [TestMethod]
-    public void policy_validation_delegates_to_runtime_without_committing_fact()
-    {
-        var service = Service(
-            out var runtime,
-            out _,
-            out _,
-            new ConfirmResult(ConfirmStatus.Forbidden, "role_confirmation_forbidden:operator", null));
-
-        var result = service.ValidateWorkspaceCardConfirmPolicy(
-            "W-OPS",
-            "roomSetup",
-            new ConfirmCardRequest(
-                "zh-CN",
-                "idem-policy",
-                new Dictionary<string, string> { ["roomNo"] = "A101" },
-                Array.Empty<string>(),
-                "sub-policy",
-                "ci-policy"),
-            "actor-token");
-
-        Assert.AreEqual(ConfirmStatus.Forbidden, result.Status);
-        Assert.AreEqual("role_confirmation_forbidden:operator", result.Reason);
-        Assert.AreEqual(1, runtime.ValidateCount);
-        Assert.AreEqual(0, runtime.ConfirmCount);
-    }
-
-    [TestMethod]
     public void workspace_start_binds_operation_case_and_work_item()
     {
         var workspace = FakeOperationsRuntime.Workspace("W-STAY-RESOURCE-202606040001");
@@ -106,7 +61,7 @@ public sealed class OperationsRuntimeServiceTests
         Assert.AreEqual("Dorm.RoomSetup", started.WorkItem.WorkItemType);
         Assert.AreEqual("roomSetup", started.WorkItem.Payload["cardId"]);
         Assert.AreEqual("definition.roomSetup.v1", started.WorkItem.Payload["definitionId"]);
-        Assert.AreEqual("workspace-card", started.WorkItem.Source);
+        Assert.AreEqual("operations-work-item-store", started.WorkItem.Source);
         Assert.HasCount(1, cases.List("tenant-start"));
         Assert.HasCount(1, workItems.List("tenant-start"));
         Assert.HasCount(1, started.OperationWorkItems);
@@ -155,14 +110,151 @@ public sealed class OperationsRuntimeServiceTests
             cardId == "bedSetup"));
     }
 
+    [TestMethod]
+    public void prepare_and_surface_use_active_definition_contract_not_stale_projection_fields()
+    {
+        var staleWorkspace = FakeOperationsRuntime.ResourceWorkspace("W-STAY-RESOURCE-202606040003") with
+        {
+            Cards = new[]
+            {
+                FakeOperationsRuntime.Card("roomSetup"),
+                FakeOperationsRuntime.Card("bedSetup", "roomId", "bedNo", "bedLabel", "blockedReason") with { Status = "ready" }
+            }
+        };
+        var service = Service(out _, out _, out _, workspaces: new[] { staleWorkspace });
+        var workItem = service.CreateWorkItem(new CreateWorkItemRequest(
+            WorkItemId: "wi-bed-stale-contract",
+            TenantId: "tenant-start",
+            WorkItemType: "Dorm.BedSetup",
+            WorkspaceId: staleWorkspace.Id,
+            CardId: "bedSetup",
+            OwnerRole: "operator",
+            Payload: new Dictionary<string, string>
+            {
+                ["caseId"] = staleWorkspace.Id,
+                ["cardId"] = "bedSetup",
+                ["templateWorkspaceId"] = "W-STAY-RESOURCE",
+                ["definitionId"] = "definition.bedSetup.v1"
+            }));
+
+        var prepared = service.PrepareWorkItem(workItem!.WorkItemId, new PrepareWorkItemRequest(staleWorkspace.Id, "bedSetup"));
+        var preparedBusinessIds = prepared!.FieldContract.Business.Select(item => item.Id).ToArray();
+        var surface = service.GetWorkItemSurface(workItem.WorkItemId);
+        var surfaceBusinessIds = surface!.Card!.Fields.Business.Select(item => item.Id).ToArray();
+
+        CollectionAssert.Contains(preparedBusinessIds, "bedNo");
+        CollectionAssert.Contains(preparedBusinessIds, "bedLabel");
+        CollectionAssert.Contains(preparedBusinessIds, "bedStatus");
+        CollectionAssert.DoesNotContain(preparedBusinessIds, "blockedReason");
+        CollectionAssert.DoesNotContain(surfaceBusinessIds, "blockedReason");
+    }
+
+    [TestMethod]
+    public void correction_work_item_reopens_completed_card_as_new_operations_task()
+    {
+        var completedWorkspace = FakeOperationsRuntime.ResourceWorkspace("W-STAY-RESOURCE-202606040004") with
+        {
+            Cards = new[]
+            {
+                FakeOperationsRuntime.Card("roomSetup") with { Status = "done" },
+                FakeOperationsRuntime.Card("bedSetup") with { Status = "ready" }
+            }
+        };
+        var service = Service(out _, out _, out _, workspaces: new[] { completedWorkspace });
+        var workItem = service.CreateWorkItem(new CreateWorkItemRequest(
+            WorkItemId: "wi-correction-room-setup",
+            TenantId: "tenant-start",
+            WorkItemType: "Dorm.RoomSetup",
+            WorkspaceId: completedWorkspace.Id,
+            CardId: "roomSetup",
+            OwnerRole: "operator",
+            Payload: new Dictionary<string, string>
+            {
+                ["caseId"] = completedWorkspace.Id,
+                ["cardId"] = "roomSetup",
+                ["templateWorkspaceId"] = "W-STAY-RESOURCE",
+                ["definitionId"] = "definition.roomSetup.v1",
+                ["operationMode"] = "correction",
+                ["correctionMode"] = "append_only"
+            }));
+
+        var surface = service.GetWorkItemSurface(workItem!.WorkItemId);
+
+        Assert.AreEqual("available", workItem.Status);
+        Assert.AreEqual("ready", surface!.Card!.Status);
+        CollectionAssert.Contains(surface.Card.Fields.Business.Select(item => item.Id).ToArray(), "roomNo");
+    }
+
+    [TestMethod]
+    public void correction_confirm_does_not_dispatch_next_resource_lifecycle_work_item()
+    {
+        var workspace = FakeOperationsRuntime.ResourceWorkspace("W-STAY-RESOURCE-202606040005");
+        var service = Service(out _, out _, out var workItems, workspaces: new[] { workspace });
+        var store = new InMemoryOperationsStore();
+        var unitOfWork = new OperationsUnitOfWork(
+            new CommandEnvelopeBuilder(),
+            new CommandSubmissionService(store),
+            new IdempotencyService(store),
+            new PayloadHashService(),
+            new SliceCommandHandlerRouter().Register(
+                CanonicalOperationsApiService.ConfirmCommandDefinition,
+                CanonicalOperationsApiService.HandleConfirmCommand));
+        var operations = new CanonicalOperationsApiService(service, unitOfWork, store);
+        var actor = new RuntimeActorContext(
+            "operator-1",
+            "operator",
+            "tenant-start",
+            new[] { "workos.write", "operations.confirm" },
+            "test",
+            "token-start");
+        var correction = operations.CreateWorkItem(new CreateWorkItemRequest(
+            WorkItemId: "wi-correction-no-next",
+            TenantId: "tenant-start",
+            WorkItemType: "Dorm.RoomSetup",
+            WorkspaceId: workspace.Id,
+            CardId: "roomSetup",
+            OwnerRole: "operator",
+            Payload: new Dictionary<string, string>
+            {
+                ["caseId"] = workspace.Id,
+                ["cardId"] = "roomSetup",
+                ["templateWorkspaceId"] = "W-STAY-RESOURCE",
+                ["definitionId"] = "definition.roomSetup.v1",
+                ["operationMode"] = "correction",
+                ["correctionMode"] = "append_only",
+                ["sourceWorkItemId"] = "wi-original-room"
+            }));
+
+        var result = operations.ConfirmWorkItem(
+            correction!.WorkItemId,
+            new ConfirmWorkItemRequest(
+                Language: "zh-CN",
+                IdempotencyKey: "idem-correction-no-next",
+                FieldValues: new Dictionary<string, string>
+                {
+                    ["roomNo"] = "A101",
+                    ["correctionMode"] = "append_only"
+                },
+                EvidenceIds: Array.Empty<string>(),
+                SubmissionId: "sub-correction-no-next",
+                CardInstanceId: "ci-correction-no-next"),
+            actor,
+            "req-correction-no-next");
+
+        Assert.IsTrue(result.Confirmed);
+        Assert.IsFalse(workItems.List("tenant-start").Any(item =>
+            item.WorkItemId != correction.WorkItemId &&
+            item.Payload.TryGetValue("cardId", out var cardId) &&
+            cardId == "bedSetup"));
+    }
+
     private static OperationsRuntimeService Service(
         out FakeOperationsRuntime runtime,
         out InMemoryOperationsCaseStore cases,
         out InMemoryOperationsWorkItemStore workItems,
-        ConfirmResult? policyResult = null,
         IReadOnlyList<WorkspaceProjection>? workspaces = null)
     {
-        runtime = new FakeOperationsRuntime(policyResult, workspaces);
+        runtime = new FakeOperationsRuntime(workspaces);
         cases = new InMemoryOperationsCaseStore();
         workItems = new InMemoryOperationsWorkItemStore();
         return new OperationsRuntimeService(runtime, cases, workItems);
@@ -170,20 +262,15 @@ public sealed class OperationsRuntimeServiceTests
 
     private sealed class FakeOperationsRuntime : IOperationsRuntimeAdapter
     {
-        private readonly ConfirmResult? policyResult;
         private readonly IReadOnlyList<WorkspaceProjection> workspaces;
 
         public FakeOperationsRuntime(
-            ConfirmResult? policyResult,
             IReadOnlyList<WorkspaceProjection>? workspaces = null)
         {
-            this.policyResult = policyResult;
             this.workspaces = workspaces ?? new[] { Workspace("W-OPS") };
         }
 
         public int PrepareCount { get; private set; }
-
-        public int ValidateCount { get; private set; }
 
         public int ConfirmCount { get; private set; }
 
@@ -197,12 +284,6 @@ public sealed class OperationsRuntimeServiceTests
         {
             PrepareCount++;
             return new { prepared = true };
-        }
-
-        public ConfirmResult ValidateConfirm(string workspaceId, string cardId, ConfirmCardRequest request, string actorToken)
-        {
-            ValidateCount++;
-            return policyResult ?? new ConfirmResult(ConfirmStatus.Confirmed, null, null);
         }
 
         public ConfirmResult Confirm(string workspaceId, string cardId, ConfirmCardRequest request, string actorToken)
@@ -229,19 +310,22 @@ public sealed class OperationsRuntimeServiceTests
                 Cards = new[] { Card("roomSetup"), Card("bedSetup") with { Status = "notStarted" } }
             };
 
-        private static CardProjection Card(string cardId) =>
-            new(
+        public static CardProjection Card(string cardId, params string[] businessFieldIds)
+        {
+            var fieldIds = businessFieldIds.Length == 0 ? new[] { "roomNo" } : businessFieldIds;
+            return new(
                 "WorkspaceCardProjection",
                 cardId,
                 "ready",
                 Text(cardId),
-                new FieldSet(Array.Empty<FieldProjection>(), new[] { Field("roomNo") }, Array.Empty<FieldProjection>()),
+                new FieldSet(Array.Empty<FieldProjection>(), fieldIds.Select(Field).ToArray(), Array.Empty<FieldProjection>()),
                 Array.Empty<EvidenceRequirement>(),
                 Array.Empty<SystemCheck>(),
                 Array.Empty<BlockerRule>(),
                 Array.Empty<EventDefinition>(),
                 new TransitionDefinition("prepare", "confirm", "block"),
                 new ConfirmationPolicy(true, false, "operator", Text("Confirm")));
+        }
 
         private static FieldProjection Field(string fieldId) =>
             new(

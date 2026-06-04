@@ -8,9 +8,9 @@ ProjectionRuntime 可以继续作为 compatibility facade，承接当前 project
 
 ProjectionRuntime 不得新增业务写入职责，不得成为顶层架构，不得读取或消费 `shadow_runtime`，不得绕过 Operations Runtime 写业务事实。
 
-## Workspace/Card
+## Retired Workspace/Card Write Routes
 
-Workspace/Card 可以继续作为 compatibility wrapper，用于承接旧 prepare / confirm surface。
+Workspace/Card prepare / confirm 写路由已退役，不得继续作为 compatibility wrapper 承接旧 surface。
 
 Workspace/Card 不得新增业务动作，不得新增业务扩展点，不得新增 page-specific business write API。Card 可以作为 surface 展示，但不得作为 command boundary。
 
@@ -30,20 +30,20 @@ POST /api/operations/work-items/{workItemId}/confirm
 
 ## LensQueryService
 
-LensQueryService legacy search 可以保留，但必须被 SearchKernel 接管或包裹。
+LensQueryService projection search adapter 可以保留，但必须被 SearchKernel 接管或包裹。
 
-Legacy search 不得作为最终 Search Kernel，不得只依赖局部 contains 匹配，不得绕过 Language Kernel、Search Kernel permission policy 或 Admission Kernel。
+Projection search adapter 不得作为最终 Search Kernel，不得只依赖局部 contains 匹配，不得绕过 Language Kernel、Search Kernel permission policy 或 Admission Kernel。
 
 ## 已登记兼容路径
 
-当前允许保留的 compatibility routes 必须在 `docs/architecture/compatibility-components.yml` 中登记 owner、why still needed、removalCondition 和 guard。
+当前允许保留的 Workspace/Card compatibility write routes 数量必须为 0。旧路由若再次出现在 Program.cs、OpenAPI 或移动端 API 客户端，必须被 `scripts/check-compatibility-quarantine.mjs` 和 `scripts/check-runtime-write-paths.mjs` 阻断。
 
-新增 compatibility 路径默认禁止。确需保留时必须先更新 API boundary、compatibility registry、quarantine guard 和 release evidence。
+新增 compatibility 路径默认禁止。确需引入任何兼容层能力时必须先证明它不是业务写入口，并更新 API boundary、compatibility registry、quarantine guard 和 release evidence。
 
 ## 兼容层通用硬规则
 
 1. ProjectionRuntime 只能作为 compatibility facade。
-2. Workspace/Card 只能作为 compatibility wrapper。
+2. Workspace/Card 只能作为展示/投影对象，不得作为 compatibility write wrapper。
 3. 兼容层不得新增业务写语义。
 4. 兼容层不得决定 confirmAllowed。
 5. 兼容层不得绕过 Operations Runtime。

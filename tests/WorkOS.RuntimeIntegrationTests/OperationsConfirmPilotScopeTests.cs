@@ -16,6 +16,10 @@ public sealed class OperationsConfirmPilotScopeTests
         StringAssert.Contains(service, "ConfirmWorkItemResult.NotFound(workItemId, request.SubmissionId, request.IdempotencyKey, \"operation_work_item_not_found\")");
         StringAssert.Contains(service, "OperationsCommandRequest(");
         StringAssert.Contains(service, "unitOfWork.Commit(command)");
+        Assert.IsFalse(
+            service.Contains("projectionRuntime.Confirm", StringComparison.Ordinal) ||
+            service.Contains("ProjectDormitoryResourceLifecycle", StringComparison.Ordinal),
+            "Canonical confirm must not synchronously route through ProjectionRuntime compatibility facade.");
         Assert.IsTrue(
             service.IndexOf("var workItem = catalog.GetWorkItem(workItemId);", StringComparison.Ordinal)
             < service.IndexOf("unitOfWork.Commit(command)", StringComparison.Ordinal),

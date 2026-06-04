@@ -57,13 +57,20 @@ export function applyRuntimeSurfacePayloads(state, payloads = {}) {
   }
 }
 
-function mergeOperationWorkItemStatuses(workspaces = [], workItems = []) {
+export function workspaceWithOperationWorkItemStatuses(workspace = null, workItems = []) {
+  if (!workspace) return workspace;
+  return mergeOperationWorkItemStatuses([workspace], workItems)[0] || workspace;
+}
+
+export function mergeOperationWorkItemStatuses(workspaces = [], workItems = []) {
   const statusesByWorkspaceCard = statusIndex(workItems);
   if (!statusesByWorkspaceCard.size) return workspaces;
   return (workspaces || []).map((workspace) => {
     const cards = (workspace.cards || []).map((card) => {
-      const status = statusesByWorkspaceCard.get(`${workspace.id}:${card.id}`);
-      return status ? { ...card, status } : card;
+      const next = statusesByWorkspaceCard.get(`${workspace.id}:${card.id}`);
+      return next && statusRank(next.status, next.item) >= statusRank(card.status)
+        ? { ...card, status: next.status }
+        : card;
     });
     return { ...workspace, cards };
   });
@@ -78,19 +85,25 @@ function statusIndex(workItems = []) {
     const nextStatus = normalizeOperationLifecycleState(item.lifecycleState || item.lifecycle_state || item.status || item.card?.status);
     if (!nextStatus) continue;
     const key = `${workspaceId}:${cardId}`;
-    const currentStatus = index.get(key);
-    if (statusRank(nextStatus) >= statusRank(currentStatus)) {
-      index.set(key, nextStatus);
+    const current = index.get(key);
+    if (statusRank(nextStatus, item) >= statusRank(current?.status, current?.item)) {
+      index.set(key, { status: nextStatus, item });
     }
   }
   return index;
 }
 
-function statusRank(status = "") {
+function statusRank(status = "", item = {}) {
+  if (isCorrectionWorkItem(item) && !["done", "confirmed", "completed", "committed", "closed", "cancelled", "skipped"].includes(String(status))) return 4;
   if (["done", "confirmed", "completed", "committed", "closed", "cancelled", "skipped"].includes(String(status))) return 3;
   if (["ready", "blocked", "inProgress"].includes(String(status))) return 2;
   if (status) return 1;
   return 0;
+}
+
+function isCorrectionWorkItem(item = {}) {
+  const payload = item.payload || item.Payload || {};
+  return payload.correctionMode === "append_only" || payload.operationMode === "correction";
 }
 
 function operationWorkItemsToQueue(workItems) {

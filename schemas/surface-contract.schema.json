@@ -6,9 +6,11 @@
   "required": [
     "version",
     "operationRuntimePure",
+    "completedBusinessRecord",
+    "collaborationFeedback",
     "mobile",
     "pc",
-    "compatibilityAdapter"
+    "retiredWorkspaceCardWriteAdapter"
   ],
   "properties": {
     "version": { "type": "string" },
@@ -21,6 +23,29 @@
         "forbiddenFallbackPaths": { "type": "array", "items": { "type": "string" }, "minItems": 4 },
         "legacyTaskIdExample": { "type": "string" },
         "resolvedPersistedExample": { "type": "string" }
+      }
+    },
+    "completedBusinessRecord": {
+      "type": "object",
+      "required": ["viewPath", "correctionPath", "actionOrder", "dataSources", "correctionEntry", "forbiddenPath"],
+      "properties": {
+        "viewPath": { "type": "string" },
+        "correctionPath": { "type": "string" },
+        "actionOrder": { "type": "array", "items": { "type": "string" }, "minItems": 3 },
+        "dataSources": { "type": "array", "items": { "type": "string" }, "minItems": 2 },
+        "correctionEntry": { "type": "string" },
+        "forbiddenPath": { "type": "string" }
+      }
+    },
+    "collaborationFeedback": {
+      "type": "object",
+      "required": ["surface", "entry", "messagePath", "eventPath", "forbiddenPath"],
+      "properties": {
+        "surface": { "type": "string" },
+        "entry": { "type": "string" },
+        "messagePath": { "type": "string" },
+        "eventPath": { "type": "string" },
+        "forbiddenPath": { "type": "string" }
       }
     },
     "mobile": {
@@ -44,7 +69,7 @@
         "dataHydrator": { "type": "string" }
       }
     },
-    "compatibilityAdapter": {
+    "retiredWorkspaceCardWriteAdapter": {
       "type": "object",
       "required": ["allowedOnlyAs", "normalDormIntPath", "adapterClass"],
       "properties": {

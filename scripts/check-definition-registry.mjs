@@ -86,7 +86,7 @@ function checkDefinitionCoverage() {
       "ledgerPolicyRef",
       "admissionPolicyRef",
       "surfacePolicyRef",
-      "compatibilityMode",
+      "definitionMode",
       "removalImpact"
     ]) {
       if (!present(definition[field])) failures.push(`${definition.legacyCardId || "<unknown>"} missing ${field}.`);
@@ -104,7 +104,7 @@ function checkDefinitionCoverage() {
     }
     const overlap = (definition.allowedFacts || []).filter((fact) => (definition.forbiddenFacts || []).includes(fact));
     if (overlap.length) failures.push(`${definition.definitionId} has facts in both allowedFacts and forbiddenFacts: ${overlap.join(", ")}.`);
-    if (definition.compatibilityMode !== "governance-provisional" && definition.ownerSlice !== definition.sliceId) {
+    if (definition.definitionMode !== "governance-provisional" && definition.ownerSlice !== definition.sliceId) {
       failures.push(`${definition.definitionId} ownerSlice must equal sliceId unless governance-provisional.`);
     }
   }
@@ -143,7 +143,7 @@ function checkSliceAndSurfaceAlignment() {
   const surfacePolicies = new Map((surfacePolicy.policies || []).map((policy) => [policy.sliceId, policy]));
 
   for (const definition of registry.definitions || []) {
-    if (definition.compatibilityMode === "governance-provisional") {
+    if (definition.definitionMode === "governance-provisional") {
       if (definition.sliceId !== "Governance.CorrectionCenter" || definition.workspaceId !== "PC-GOVERNANCE") {
         failures.push(`${definition.definitionId} governance-provisional definitions must stay in PC-GOVERNANCE.`);
       }
@@ -189,7 +189,7 @@ function checkRuntimeImplementation() {
     "WorkItemDefinitionRegistryService",
     "Resolve(WorkItem workItem",
     "ResolveByWorkspaceCard",
-    "CompatibilityMode",
+    "DefinitionMode",
     "ProductionConfirmAllowed"
   ]) {
     if (!registryService.includes(term)) failures.push(`WorkItemDefinitionRegistryService.cs missing ${term}.`);
@@ -200,7 +200,7 @@ function checkRuntimeImplementation() {
     "definitions.Resolve(workItem",
     "definition.ToTrace()",
     "[\"definitionId\"]",
-    "[\"compatibilityMode\"]"
+    "[\"definitionMode\"]"
   ]) {
     if (!canonical.includes(term)) failures.push(`CanonicalOperationsApiService.cs missing Definition Registry binding: ${term}.`);
   }

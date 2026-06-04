@@ -16,7 +16,6 @@ const classification = nonGetRoutes.map((route) => ({
 
 const businessWrites = classification.filter((route) =>
   route.classification === "operationsBusinessWrite" ||
-  route.classification === "compatibilityBusinessWrite" ||
   route.classification === "correctionCenterWrite");
 
 const definitionRegistry = readJson("docs/contracts/definition/workitem-definition-registry.json");
@@ -61,12 +60,12 @@ const inventory = {
   fact_ownership_matrix: factOwnership,
   compatibility_scan: {
     projectionRuntime: scanSource(runtimeSources, ["ProjectionRuntime", "RuntimeAggregateLensStorage", "shadow_runtime"]),
-    workspaceCard: scanSource(runtimeSources, ["WorkspaceCardCompatibilityAdapter", "ConfirmWorkspaceCard", "/api/workspaces/{workspaceId}/cards/{cardId}/confirm"]),
+    retiredWorkspaceCardWritePath: scanSource(runtimeSources, ["WorkspaceCardCompatibilityAdapter", "ConfirmWorkspaceCard", "PrepareWorkspaceCard"]),
     runtimeDocuments: scanSource(runtimeSources, ["runtime_documents", "RuntimeDocumentStorage"]),
     lensQueryService: scanSource(runtimeSources, ["LensQueryService", "Search("])
   },
   projection_runtime_write_usage_scan: scanSource(runtimeSources, ["ProjectionRuntime", "RecordProjection", "ProcessOutbox", "runtime_documents"]),
-  workspace_card_write_usage_scan: scanSource(runtimeSources, ["ConfirmWorkspaceCard", "PrepareWorkspaceCard", "WorkspaceCardCompatibilityAdapter"]),
+  retired_workspace_card_write_usage_scan: scanSource(runtimeSources, ["ConfirmWorkspaceCard", "PrepareWorkspaceCard", "WorkspaceCardCompatibilityAdapter"]),
   runtime_documents_source_of_truth_usage_scan: scanSource(runtimeSources, ["runtime_documents", "authoritative", "source of truth"]),
   runtime_documents_snapshot_only_audit: {
     status: "snapshot-only-contract",
@@ -75,8 +74,8 @@ const inventory = {
   search_usage_inventory: {
     objectTypes: searchContract.objectTypes,
     requiredResultFields: searchContract.requiredResultFields,
-    legacyAdapters: searchContract.legacyAdapters,
-    runtimeBindings: scanSource(runtimeSources, ["SearchKernelService", "LegacyWorkspaceSearchAdapter", "LensQueryService"])
+    projectionAdapters: searchContract.projectionAdapters,
+    runtimeBindings: scanSource(runtimeSources, ["SearchKernelService", "ProjectionWorkspaceSearchAdapter", "LensQueryService"])
   },
   language_key_status_explanation_inventory: {
     supportedLanguages: languageContract.supportedLanguages,
@@ -169,7 +168,7 @@ function classifyRoute(route, boundary) {
 function legacyWritePathClass(route, boundary) {
   const category = classifyRoute(route, boundary);
   if (category === "operationsBusinessWrite") return "primary operations confirm";
-  if (category === "compatibilityBusinessWrite") return "compatibility shim to Operations Confirm";
+  if (category === "compatibilityBusinessWrite") return "retired";
   if (category === "unclassified") return "forbidden";
   return "non-business write";
 }

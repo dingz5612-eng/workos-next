@@ -4,6 +4,11 @@ This document is mandatory context for future WorkOSNext backend work. It exists
 to prevent future AI or human changes from drifting back into page-specific
 APIs, duplicate projection models, or mock-only workflow demos.
 
+Current architecture has superseded WON-13 command boundaries: OAM-ACF v8 is
+the target top-level architecture, Operations Runtime is the execution axis, and
+retired Workspace/Card prepare/confirm write routes must stay absent. This file
+is historical context only when it conflicts with V5.5 Rule Authority.
+
 ## Current Maturity
 
 WON-13 is not the final business system yet. The current intended baseline is:
@@ -46,14 +51,15 @@ check-in execution is a transactional business process.
 
 ## Architecture Rule
 
-The system center remains:
+The historical projection center was:
 
 ```text
 IntentWorkspaceProjection + WorkspaceCardProjection
 ```
 
-Do not introduce independent page models, task models, object models, search
-models, learning models, or AI prompt models for the same business behavior.
+Current command architecture is Operations Runtime. Do not introduce
+independent page models, task models, object models, search models, learning
+models, or AI prompt models for the same business behavior.
 
 ## Non-Negotiable Runtime Guarantees
 
@@ -105,16 +111,16 @@ Every primary business write must go through Operations work-item confirm.
 Confirm requires `X-WorkOS-Actor-Token` and an idempotency key. The actor role is
 derived from the session token.
 
-### Compatibility Action Runtime API
+### Retired Workspace/Card Action Runtime API
 
 ```http
 POST /api/workspaces/{workspaceId}/cards/{cardId}/prepare
 POST /api/workspaces/{workspaceId}/cards/{cardId}/confirm
 ```
 
-The Workspace/Card API is compatibility-only. Existing clients may use it while
-the Operations API is adopted, but new product work must model business writes
-through Operations Confirm.
+The Workspace/Card prepare/confirm write API is retired and must stay absent.
+Workspace/Card may only be projection/display compatibility input that resolves
+to a persisted Operations WorkItem before any business write.
 
 Do not create direct write APIs such as:
 

@@ -65,7 +65,7 @@ The runner emits these invariant refs for GateResult binding:
 
 - `migration.dry_run_success`
 - `legacy.mapping_report_generated`
-- `legacy.old_api_still_compatible`
+- `legacy.old_api_retired`
 - `legacy.backfill_does_not_drop_legacy_data`
 
 The generated `release_gate_refs` in both report tables use the report id as a

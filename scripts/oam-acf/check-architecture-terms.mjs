@@ -49,6 +49,12 @@ for (const [file, text] of fileText) {
   if (/Workspace\/Card\s+is\s+(the\s+)?(new business extension point|primary extension model)/i.test(text)) {
     failures.push(`${file}: Workspace/Card must not be described as a new business extension point.`);
   }
+  if (/Workspace\/Card\s+(remains\s+)?(a\s+)?compatibility wrapper/i.test(text)) {
+    failures.push(`${file}: Workspace/Card must not be described as a current compatibility wrapper; it is projection/display input only.`);
+  }
+  if (/old(er)?\s+Workspace\/Card\s+(prepare\s+and\s+confirm\s+)?(routes|endpoints).*(remain reachable|remain supported|available for compatibility|compatibility layer only)/i.test(text)) {
+    failures.push(`${file}: retired Workspace/Card write routes must not be described as reachable or supported.`);
+  }
 }
 
 if (failures.length) {

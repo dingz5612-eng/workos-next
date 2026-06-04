@@ -15,7 +15,7 @@ const admissionContract = readJson("docs/contracts/admission/admission-contract.
 const requiredObjectTypes = [
   "workItem",
   "operationCase",
-  "workspaceCardCompatibility",
+  "workspaceCardProjection",
   "businessObject",
   "evidence",
   "ledger",
@@ -47,7 +47,7 @@ const requiredResultFields = [
 checkContract();
 checkSourcesAndSchema();
 checkRankingAndPermission();
-checkLegacyAdapterBoundary();
+checkProjectionAdapterBoundary();
 checkRuntimeImplementation();
 
 if (failures.length > 0) {
@@ -106,7 +106,7 @@ function checkRankingAndPermission() {
     "surface-visibility-not-confirm-permission",
     "high-risk-requires-capability-device",
     "tenant-filter-required",
-    "legacy-adapter-label-required"
+    "projection-source-label-required"
   ]) {
     if (!(permissionPolicy.rules || []).some((rule) => rule.ruleId === ruleId)) {
       failures.push(`search-permission-policy missing rule ${ruleId}.`);
@@ -114,21 +114,21 @@ function checkRankingAndPermission() {
   }
 }
 
-function checkLegacyAdapterBoundary() {
-  const adapters = searchContract.legacyAdapters || [];
-  const lensAdapter = adapters.find((adapter) => adapter.name === "LensQueryService.Search");
-  if (!lensAdapter || lensAdapter.status !== "legacy-adapter") {
-    failures.push("LensQueryService.Search must be registered as a legacy adapter.");
+function checkProjectionAdapterBoundary() {
+  const adapters = searchContract.projectionAdapters || [];
+  const lensAdapter = adapters.find((adapter) => adapter.name === "ProjectionWorkspaceSearchAdapter");
+  if (!lensAdapter || lensAdapter.status !== "projection-adapter") {
+    failures.push("ProjectionWorkspaceSearchAdapter must be registered as a projection adapter.");
   }
-  if (lensAdapter && !exists(lensAdapter.path)) failures.push(`LensQueryService.Search path missing: ${lensAdapter.path}.`);
+  if (lensAdapter && !exists(lensAdapter.path)) failures.push(`ProjectionWorkspaceSearchAdapter path missing: ${lensAdapter.path}.`);
 
   const compatibility = read("docs/architecture/compatibility-components.yml");
-  if (!compatibility.includes("LensQueryService legacy search")) {
-    failures.push("compatibility-components.yml must classify LensQueryService legacy search.");
+  if (!compatibility.includes("LensQueryService projection search adapter")) {
+    failures.push("compatibility-components.yml must classify LensQueryService projection search adapter.");
   }
   const quarantine = read("docs/architecture/compatibility-quarantine-rules.md");
-  if (!quarantine.includes("LensQueryService legacy search 可以保留") || !quarantine.includes("SearchKernel")) {
-    failures.push("compatibility quarantine rules must state LensQueryService is legacy and SearchKernel must take over.");
+  if (!quarantine.includes("LensQueryService projection search adapter 可以保留") || !quarantine.includes("SearchKernel")) {
+    failures.push("compatibility quarantine rules must state LensQueryService is isolated and SearchKernel must take over.");
   }
 
   const lensSource = read("services/core-api/WorkOS.Api/Runtime/LensQueryService.cs");
@@ -152,7 +152,7 @@ function checkRuntimeImplementation() {
   const searchKernel = read("services/core-api/WorkOS.Api/Runtime/SearchKernelService.cs");
   for (const term of [
     "SearchKernelService",
-    "LegacyWorkspaceSearchAdapter",
+    "ProjectionWorkspaceSearchAdapter",
     "EvaluateSearch",
     "LanguageSearchSynonymCatalog",
     "\"resultType\"",

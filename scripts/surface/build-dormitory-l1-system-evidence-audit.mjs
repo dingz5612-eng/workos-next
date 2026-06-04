@@ -85,7 +85,7 @@ const systemScenarioMatrix = {
   scenarios: [
     systemScenario("sys-admission-production-blocked", "Admission blocks Business Production and production_confirm", admissionMatrix.entries.find((entry) => entry.id === "production_confirm")),
     systemScenario("sys-business-line-dormitory-l1", "Dormitory stays L1 internal pilot observation", businessLineMatrix.businessLines.find((entry) => entry.businessLineId === "dormitory")),
-    systemScenario("sys-compatibility-quarantine", "ProjectionRuntime and Workspace/Card remain quarantined compatibility", compatibilityContract),
+    systemScenario("sys-retired-workspace-card-write-paths", "ProjectionRuntime remains quarantined and Workspace/Card write routes stay retired", compatibilityContract),
     systemScenario("sys-api-boundary", "Business fact writes stay on Operations Confirm; no direct page writes", apiBoundary),
     systemScenario("sys-browser-evidence-binding", "Every browser step has screenshot and runtime/admission evidence", { report: latest.report, status: browserReport.status })
   ]

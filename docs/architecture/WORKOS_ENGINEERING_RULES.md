@@ -76,16 +76,18 @@ The legal primary business write API shape is Operations Confirm:
 POST /api/operations/work-items/{workItemId}/confirm
 ```
 
-The older Workspace/Card write endpoints are compatibility layer only:
+The older Workspace/Card write endpoints are retired and must stay deleted:
 
 ```text
 POST /api/workspaces/{workspaceId}/cards/{cardId}/prepare
 POST /api/workspaces/{workspaceId}/cards/{cardId}/confirm
 ```
 
-Mobile BFF routes must not write business facts. New page-specific business
-write APIs are P0 No-Go items. The following page-specific write APIs are
-forbidden:
+They must not be registered or used as rollback, mobile normal-runtime, or test
+paths. Workspace/Card may only be read/projection compatibility input resolved
+to a persisted Operations WorkItem before confirm. Mobile BFF routes must not
+write business facts. New page-specific business write APIs are P0 No-Go items.
+The following page-specific write APIs are forbidden:
 
 ```text
 /api/hostel/checkin
@@ -96,7 +98,7 @@ forbidden:
 ```
 
 The Operations route allowlist lives at
-`docs/v5.4/operations-api-allowlist.json` and is enforced by
+`docs/rules/v5.5/api-boundary.yml` and is enforced by
 `scripts/check-api-boundaries.mjs`.
 
 ## Required Validation

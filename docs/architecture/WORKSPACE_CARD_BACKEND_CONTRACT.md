@@ -1,8 +1,17 @@
 # Workspace Card Backend Contract Draft
 
-This draft is the backend implementation target for the current mobile prototype.
+This document is an archived projection/display compatibility draft, not the
+current backend implementation target. Current business writes must follow
+OAM-ACF v8 and Operations Runtime:
 
-Frontend, backend, search, workbench, scenario coach, and AI must use the same center model:
+```text
+Definition -> OperationCase -> WorkItem -> CommandSubmission
+-> SliceCommandHandler -> DomainEvent / LedgerEntry
+-> ProcessManager -> Projection / Lens -> Mobile / PC Surface
+```
+
+Frontend, backend, search, workbench, scenario coach, and AI may read the
+projection/display model below, but it must not become a command boundary:
 
 ```text
 IntentWorkspaceProjection + WorkspaceCardProjection
@@ -121,9 +130,15 @@ POST /api/workspaces/{workspaceId}/cards/{cardId}/prepare
 POST /api/workspaces/{workspaceId}/cards/{cardId}/confirm
 ```
 
-`prepare` returns the current card with system checks, blockers, field defaults, and allowed actions.
+`GET /api/workspaces` and `GET /api/workspaces/{workspaceId}` remain read model
+surfaces. The `prepare` and `confirm` write routes shown above are retired and
+must stay absent.
 
-`confirm` accepts only card payloads prepared by the runtime and must enforce human confirmation when required.
+Current confirm accepts only Operations WorkItem payloads through:
+
+```http
+POST /api/operations/work-items/{workItemId}/confirm
+```
 
 AI, search, workbench, voice, and scenario coach must never call domain write actions directly.
 

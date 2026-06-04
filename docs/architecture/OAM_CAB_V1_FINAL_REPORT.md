@@ -1,6 +1,6 @@
 # OAM-CAB v1 Final Report
 
-生成时间：2026-06-03T11:46:15.268Z
+生成时间：2026-06-04T14:23:16.685Z
 
 ## 结论
 
@@ -12,8 +12,8 @@ OAM-CAB v1 当前结论是有证据的 No-Go for Business Production。当前阶
 - 主执行链：Operations Runtime
 - 目标主轴：`Definition -> OperationCase -> WorkItem -> CommandSubmission -> SliceCommandHandler -> DomainEvent / LedgerEntry -> ProcessManager -> Projection / Lens -> Surface`
 - 主业务写路径：`POST /api/operations/work-items/{workItemId}/confirm`
-- ProjectionRuntime：compatibility facade
-- Workspace/Card：compatibility wrapper
+- ProjectionRuntime：quarantined projection facade
+- Workspace/Card：retired write path; projection display only
 - Business Production：blocked
 - Dormitory：L1 Internal Pilot Observation
 - Repair / Parts / HR / business-3..7：L0 Contract Preview
@@ -22,9 +22,9 @@ OAM-CAB v1 当前结论是有证据的 No-Go for Business Production。当前阶
 
 ## Inventory Summary
 
-- API routes：68
-- non-GET routes：34
-- business write routes：7
+- API routes：65
+- non-GET routes：31
+- business write routes：5
 - forbidden findings：0
 - Definition Registry definitions：22
 - Search result types：15
@@ -56,7 +56,7 @@ P1：
 
 - Cookie / CSRF production browser auth baseline 尚未 production-ready。
 - CommandSubmission context 持久化列仍是合同和迁移草案，不是 production-ready。
-- Workspace/Card 仍是 compatibility wrapper，仍需继续迁移到 Operations Runtime 主轴。
+- Workspace/Card 旧写路径已退役，必须保持零注册；Operations Runtime 继续作为命令主轴。
 - Control Plane / Evidence Graph 已有证据闭环，但 Business Production 仍被 current-state 阻断。
 
 P2：

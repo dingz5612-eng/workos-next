@@ -30,12 +30,12 @@ public sealed class MigrationVerificationJobTests
     }
 
     [TestMethod]
-    public void old_api_still_compatible()
+    public void old_api_retired()
     {
         var output = Run();
 
-        Assert.AreEqual("passed", Check(output, "legacy.old_api_still_compatible").Status);
-        Assert.IsTrue(output.Report.ReleaseGateRefs.Any(item => item.Contains("old-api-still-compatible", StringComparison.Ordinal)));
+        Assert.AreEqual("passed", Check(output, "legacy.old_api_retired").Status);
+        Assert.IsTrue(output.Report.ReleaseGateRefs.Any(item => item.Contains("old-api-retired", StringComparison.Ordinal)));
     }
 
     [TestMethod]
@@ -123,8 +123,8 @@ public sealed class MigrationVerificationJobTests
             DateTimeOffset.Parse("2026-05-30T00:00:00Z"),
             "015",
             """
-            app.MapPost("/api/workspaces/{workspaceId}/cards/{cardId}/prepare", () => {});
-            app.MapPost("/api/workspaces/{workspaceId}/cards/{cardId}/confirm", () => {});
+            app.MapPost("/api/operations/workspaces/start", () => {});
+            app.MapPost("/api/operations/work-items/{workItemId}/confirm", () => {});
             """,
             Registry(),
             migrations ?? new[]

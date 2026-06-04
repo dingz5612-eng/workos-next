@@ -40,7 +40,7 @@ describe("Stage 5 frontend trust boundary", () => {
     expect(actorSessionForStorage({ role: "operator", token: "secret-token" })).toEqual({ role: "operator" });
   });
 
-  it("sends cookie credentials and CSRF while omitting compatibility actor token in Production", async () => {
+  it("sends cookie credentials and CSRF while omitting the development actor header in Production", async () => {
     stubBrowser({ cookie: "workosnext_csrf=csrf-production" });
     vi.stubEnv("VITE_WORKOS_RUNTIME_ENV", "production");
     const fetch = vi.fn().mockResolvedValue({ ok: true, json: async () => ({ confirmed: true }) });
@@ -56,7 +56,7 @@ describe("Stage 5 frontend trust boundary", () => {
     expect(options.headers["X-WorkOS-Actor-Token"]).toBeUndefined();
   });
 
-  it("keeps Development compatibility actor token while still sending credentials", async () => {
+  it("keeps the Development actor header while still sending credentials", async () => {
     stubBrowser();
     const fetch = vi.fn().mockResolvedValue({ ok: true, json: async () => ({ confirmed: true }) });
     vi.stubGlobal("fetch", fetch);

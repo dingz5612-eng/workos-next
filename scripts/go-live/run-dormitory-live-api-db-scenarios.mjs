@@ -83,7 +83,7 @@ async function main() {
     sourceMode: "real_api_db",
     syntheticDomainEventsAllowed: false,
     syntheticLedgerTransactionsAllowed: false,
-    workspaceCardCompatibilityFallbackUsed: apiCalls.some((item) => item.path.startsWith("/api/workspaces/")),
+    retiredWorkspaceCardWritePathUsed: apiCalls.some((item) => item.path.startsWith("/api/workspaces/")),
     runId,
     connectionString: maskConnection(connectionString),
     contractRef: contractPath,
@@ -429,8 +429,8 @@ export function validateReplayResult(result) {
   if (result.syntheticDomainEventsAllowed !== false || result.syntheticLedgerTransactionsAllowed !== false) {
     violations.push(violation("d1.synthetic_business_fact_forbidden", "D1 不允许 synthetic DomainEvent / LedgerTransaction。"));
   }
-  if (result.workspaceCardCompatibilityFallbackUsed === true) {
-    violations.push(violation("d1.workspace_card_fallback_used", "D1 ordinary confirm path 不允许 workspace/card compatibility fallback。"));
+  if (result.retiredWorkspaceCardWritePathUsed === true) {
+    violations.push(violation("d1.retired_workspace_card_write_path_used", "D1 ordinary confirm path 不允许 retired workspace/card write path。"));
   }
   if ((result.scenarioCount ?? 0) < 10 || (result.passedCount ?? 0) < 10) {
     violations.push(violation("d1.runtime_scenario_count_failed", "D1 必须通过 10 条 dorm-live 场景。", { scenarioCount: result.scenarioCount, passedCount: result.passedCount }));

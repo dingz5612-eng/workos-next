@@ -23,7 +23,7 @@
     { "id": "neg-repair-production-confirm-attempt", "title": "Repair L0 production confirm 尝试", "expectedStatus": 403, "owner": "releaseOwner", "nextAction": "Repair 保持 L0 Contract Preview", "auditRef": "BusinessLineAdmission" },
     { "id": "neg-parts-production-confirm-attempt", "title": "Parts L0 production confirm 尝试", "expectedStatus": 403, "owner": "releaseOwner", "nextAction": "Parts 保持 L0 Contract Preview", "auditRef": "BusinessLineAdmission" },
     { "id": "neg-mobile-route-release-control-attempt", "title": "mobile 路由到 Release Control 尝试", "expectedStatus": 403, "owner": "releaseOwner", "nextAction": "使用 PC release plane 并完成权限检查", "auditRef": "SurfaceGuard" },
-    { "id": "neg-compatibility-confirm-without-workitem", "title": "compatibility confirm 缺持久化 WorkItem", "expectedStatus": 422, "owner": "runtime", "nextAction": "先解析 persisted WorkItem runtime model", "auditRef": "OperationPanelRuntime" },
+    { "id": "neg-retired-route-without-workitem", "title": "retired route 缺持久化 WorkItem", "expectedStatus": 422, "owner": "runtime", "nextAction": "先解析 persisted WorkItem runtime model", "auditRef": "OperationPanelRuntime" },
     { "id": "neg-manual-gateresult-passed-attempt", "title": "人工改 GateResult passed 尝试", "expectedStatus": "blocked_gate", "owner": "releaseOwner", "nextAction": "只能机器重放 GateResult", "auditRef": "GateResultAppendOnly" },
     { "id": "neg-direct-ledger-entry-mutation-attempt", "title": "直接改 LedgerEntry 尝试", "expectedStatus": "blocked_db", "owner": "finance", "nextAction": "走 reversal / compensation", "auditRef": "LedgerMutationKill" }
   ]

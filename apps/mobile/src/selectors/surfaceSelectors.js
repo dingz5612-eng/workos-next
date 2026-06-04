@@ -87,9 +87,9 @@ function isOrdinaryPilotQueueItem(item = {}) {
     item.workItemType,
     item.work_item_type,
     item.source,
-    item.compatibilitySource
+    item.projectionSource
   ].join(" ");
-  return !/(runtimeAudit|\brf[-_:]|engineering|diagnostic|fixture_replay|legacy_compatibility)/i.test(tokens);
+  return !/(runtimeAudit|\brf[-_:]|engineering|diagnostic|fixture_replay|retired_projection_shadow)/i.test(tokens);
 }
 
 function isTerminalQueueItem(item = {}) {

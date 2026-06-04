@@ -12,7 +12,7 @@ public sealed class CanonicalOperationsApiServiceTests
     {
         var service = Service(out var runtime, out var store);
 
-        var result = service.ConfirmWorkItem("W-S3:roomSetup", Request("idem-s3"), "actor-token", "req-s3");
+        var result = service.ConfirmWorkItem("W-S3:roomSetup", Request("idem-s3"), OperatorActor(), "req-s3");
         var trace = service.GetSubmissionTrace(result.CommandSubmissionId!);
 
         Assert.AreEqual(StatusCodes.Status200OK, result.StatusCode);
@@ -22,10 +22,11 @@ public sealed class CanonicalOperationsApiServiceTests
         Assert.AreEqual(0, runtime.ConfirmCount);
         Assert.AreEqual(1, store.DomainEvents.Count);
         Assert.AreEqual(result.CommandSubmissionId, trace?.SubmissionRef);
+        Assert.AreEqual($"/api/operations/trace/submissions/{result.CommandSubmissionId}", result.TraceUrl);
         Assert.AreEqual(result.ResultEventIds[0], trace?.DomainEventRefs[0]);
         Assert.IsTrue(result.ClientInstruction.ContainsKey("admission"));
         Assert.IsTrue(result.ClientInstruction.ContainsKey("definition"));
-        Assert.AreEqual("workspace-card-compatibility-wrapper", result.ClientInstruction["compatibilityMode"]);
+        Assert.AreEqual("operations-runtime-native", result.ClientInstruction["definitionMode"]);
         var admission = (IReadOnlyDictionary<string, object>)result.ClientInstruction["admission"];
         Assert.AreEqual(false, admission["productionAllowed"]);
         Assert.AreEqual(true, admission["confirmAllowed"]);
@@ -36,8 +37,8 @@ public sealed class CanonicalOperationsApiServiceTests
     {
         var service = Service(out _, out var store);
 
-        var first = service.ConfirmWorkItem("W-S3:roomSetup", Request("idem-conflict", "A101"), "actor-token", "req-1");
-        var conflict = service.ConfirmWorkItem("W-S3:roomSetup", Request("idem-conflict", "B202"), "actor-token", "req-2");
+        var first = service.ConfirmWorkItem("W-S3:roomSetup", Request("idem-conflict", "A101"), OperatorActor(), "req-1");
+        var conflict = service.ConfirmWorkItem("W-S3:roomSetup", Request("idem-conflict", "B202"), OperatorActor(), "req-2");
 
         Assert.AreEqual(StatusCodes.Status200OK, first.StatusCode);
         Assert.AreEqual(StatusCodes.Status409Conflict, conflict.StatusCode);
@@ -58,7 +59,7 @@ public sealed class CanonicalOperationsApiServiceTests
                 EvidenceIds: Array.Empty<string>(),
                 SubmissionId: "sub-missing-idempotency",
                 CardInstanceId: "ci-missing-idempotency"),
-            "actor-token",
+            OperatorActor(),
             "req-missing-idempotency");
 
         Assert.AreEqual(StatusCodes.Status422UnprocessableEntity, result.StatusCode);
@@ -81,7 +82,7 @@ public sealed class CanonicalOperationsApiServiceTests
                     ["roomNo"] = "A101",
                     ["runtimeMode"] = "production"
                 }),
-            "actor-token",
+            OperatorActor(),
             "req-production-blocked");
 
         Assert.AreEqual(StatusCodes.Status403Forbidden, result.StatusCode);
@@ -98,7 +99,7 @@ public sealed class CanonicalOperationsApiServiceTests
     public void trace_routes_can_resolve_work_item_and_case_fact_graphs()
     {
         var service = Service(out _, out _);
-        var result = service.ConfirmWorkItem("W-S3:roomSetup", Request("idem-trace"), "actor-token", "req-trace");
+        var result = service.ConfirmWorkItem("W-S3:roomSetup", Request("idem-trace"), OperatorActor(), "req-trace");
 
         var byWorkItem = service.GetWorkItemTraces("W-S3:roomSetup");
         var byCase = service.GetCaseTraces("W-S3");
@@ -124,10 +125,10 @@ public sealed class CanonicalOperationsApiServiceTests
             "wi-money-trace",
             Request("idem-money-trace", "A101", "depositReceipt", new Dictionary<string, string>
             {
-                ["amount"] = "3000",
+                ["receivedAmount"] = "3000",
                 ["currency"] = "KGS"
             }),
-            "actor-token",
+            FinanceActor(),
             "req-money-trace");
         var trace = service.GetSubmissionTrace(result.CommandSubmissionId!);
 
@@ -137,6 +138,51 @@ public sealed class CanonicalOperationsApiServiceTests
         Assert.HasCount(1, trace!.DomainEventRefs);
         Assert.HasCount(1, trace.LedgerTransactionRefs);
         Assert.HasCount(2, trace.LedgerEntryRefs);
+    }
+
+    [TestMethod]
+    public void operations_confirm_blocks_actor_role_that_does_not_own_work_item()
+    {
+        var service = Service(out _, out var store);
+
+        var result = service.ConfirmWorkItem("W-S3:roomSetup", Request("idem-role-forbidden"), FinanceActor(), "req-role-forbidden");
+
+        Assert.AreEqual(StatusCodes.Status403Forbidden, result.StatusCode);
+        Assert.AreEqual("admission_rejected", result.Error);
+        Assert.IsFalse(result.Confirmed);
+        Assert.IsEmpty(store.DomainEvents);
+        var admission = (IReadOnlyDictionary<string, object>)result.ClientInstruction["admission"];
+        Assert.AreEqual(false, admission["confirmAllowed"]);
+        Assert.AreEqual("role_forbidden", admission["mode"]);
+    }
+
+    [TestMethod]
+    public void operations_confirm_returns_422_for_finance_truth_business_rule_failure()
+    {
+        var service = Service(out _, out var store);
+        service.CreateWorkItem(new CreateWorkItemRequest(
+            WorkItemId: "wi-money-business-blocked",
+            TenantId: "tenant-s3",
+            WorkItemType: "depositReceipt",
+            WorkspaceId: "W-S3",
+            CardId: "depositReceipt",
+            OwnerRole: "finance",
+            Payload: new Dictionary<string, string> { ["caseId"] = "case-money-business-blocked" }));
+
+        var result = service.ConfirmWorkItem(
+            "wi-money-business-blocked",
+            Request("idem-money-business-blocked", "A101", "depositReceipt", new Dictionary<string, string>
+            {
+                ["receivedAmount"] = "3000",
+                ["targetFact"] = "DepositFact"
+            }),
+            FinanceActor(),
+            "req-money-business-blocked");
+
+        Assert.AreEqual(StatusCodes.Status422UnprocessableEntity, result.StatusCode);
+        Assert.AreEqual("operations_confirm_failed", result.Error);
+        Assert.AreEqual("finance_truth_blocks_direct_fact_commit", result.Reason);
+        Assert.IsEmpty(store.DomainEvents);
     }
 
     private static CanonicalOperationsApiService Service(out FakeCatalogRuntime runtime, out InMemoryOperationsStore store)
@@ -168,6 +214,24 @@ public sealed class CanonicalOperationsApiServiceTests
             EvidenceIds: Array.Empty<string>(),
             SubmissionId: $"sub-{idempotencyKey}",
             CardInstanceId: $"ci-{idempotencyKey}");
+
+    private static RuntimeActorContext OperatorActor() =>
+        new(
+            "u-operator-test",
+            "operator",
+            "tenant-s3",
+            new[] { "workos.write", "operations.confirm" },
+            "test",
+            "actor-token");
+
+    private static RuntimeActorContext FinanceActor() =>
+        new(
+            "u-finance-test",
+            "finance",
+            "tenant-s3",
+            new[] { "workos.write", "operations.confirm", "finance.deposit.confirm", "finance.payment.confirm" },
+            "test",
+            "finance-token");
 
     private sealed class FakeCatalogRuntime : IOperationsRuntimeAdapter
     {
@@ -222,7 +286,7 @@ public sealed class CanonicalOperationsApiServiceTests
                 $"task-{workspaceId}",
                 Text("Operations"),
                 Text("Operations"),
-                new[] { Card("roomSetup") },
+                new[] { Card("roomSetup"), DepositReceiptCard() },
                 Text("Next"),
                 Array.Empty<BlockerRule>());
 
@@ -239,6 +303,23 @@ public sealed class CanonicalOperationsApiServiceTests
                 Array.Empty<EventDefinition>(),
                 new TransitionDefinition("prepare", "confirm", "block"),
                 new ConfirmationPolicy(true, false, "operator", Text("Confirm")));
+
+        private static CardProjection DepositReceiptCard() =>
+            new(
+                "WorkspaceCardProjection",
+                "depositReceipt",
+                "ready",
+                Text("depositReceipt"),
+                new FieldSet(
+                    new[] { Field("depositId") },
+                    new[] { Field("receivedAmount"), Field("currency") },
+                    Array.Empty<FieldProjection>()),
+                Array.Empty<EvidenceRequirement>(),
+                Array.Empty<SystemCheck>(),
+                Array.Empty<BlockerRule>(),
+                Array.Empty<EventDefinition>(),
+                new TransitionDefinition("prepare", "confirm", "block"),
+                new ConfirmationPolicy(true, false, "finance", Text("Confirm")));
 
         private static FieldProjection Field(string fieldId) =>
             new(

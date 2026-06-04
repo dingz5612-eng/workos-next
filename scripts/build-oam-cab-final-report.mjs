@@ -21,8 +21,8 @@ const report = {
     main_runtime: "Operations Runtime",
     main_axis: "Definition -> OperationCase -> WorkItem -> CommandSubmission -> SliceCommandHandler -> DomainEvent / LedgerEntry -> ProcessManager -> Projection / Lens -> Surface",
     main_write_path: "POST /api/operations/work-items/{workItemId}/confirm",
-    projection_runtime: "compatibility facade",
-    workspace_card: "compatibility wrapper",
+    projection_runtime: "quarantined projection facade",
+    workspace_card: "retired write path; projection display only",
     business_production: "blocked",
     dormitory: "L1_INTERNAL_PILOT_OBSERVATION",
     dormitory_l2: "BLOCKED",
@@ -62,7 +62,7 @@ const report = {
     allowedClasses: [
       "remove",
       "forbidden",
-      "compatibility shim to Operations Confirm",
+      "retired",
       "non-business write"
     ],
     classified: inventory.legacy_write_path_classification.map(({ key, classification, legacyWritePathClass }) => ({
@@ -94,7 +94,7 @@ const report = {
     resultTypeCount: inventory.summary.searchResultTypeCount,
     objectTypes: inventory.search_usage_inventory.objectTypes,
     requiredResultFields: inventory.search_usage_inventory.requiredResultFields,
-    legacyAdapters: inventory.search_usage_inventory.legacyAdapters,
+    projectionAdapters: inventory.search_usage_inventory.projectionAdapters,
     admissionPermissionLanguageRequired: true,
     readOnly: true
   },
@@ -148,7 +148,7 @@ const report = {
     P1: [
       "Cookie / CSRF production browser auth baseline is not production-ready in OAM-CAB baseline repair.",
       "CommandSubmission context persisted columns are contract and migration draft only, not production-ready.",
-      "Workspace/Card remains a compatibility wrapper pending full migration to the Operations Runtime main axis.",
+      "Retired Workspace/Card write routes must remain absent while Operations Runtime owns the command axis.",
       "Control Plane / Evidence Graph is evidence-backed for OAM-CAB, but Business Production remains blocked by current-state."
     ],
     P2: [
@@ -198,7 +198,7 @@ function buildGates() {
     passed("node scripts/build-oam-cab-inventory.mjs", "Inventory artifact generated and parsed."),
     passed("node scripts/check-oam-cab-final-report.mjs", "Final report schema, inventory, contracts, and No-Go evidence verified."),
     passed("node scripts/check-oam-clean-baseline.mjs", "Architecture baseline and component classification verified."),
-    passed("node scripts/check-compatibility-quarantine.mjs", "ProjectionRuntime and Workspace/Card compatibility quarantine verified."),
+    passed("node scripts/check-compatibility-quarantine.mjs", "ProjectionRuntime quarantine and retired Workspace/Card write-route deletion verified."),
     passed("node scripts/check-api-boundaries.mjs", "Route inventory, source-route diff, and business write boundary verified."),
     passed("node scripts/check-runtime-write-paths.mjs", "OperationsUnitOfWork write path and official-runtime shadow_runtime ban verified."),
     passed("node scripts/check-admission-kernel.mjs", "visible / prepare / confirm / production split verified."),
@@ -263,8 +263,8 @@ OAM-CAB v1 当前结论是有证据的 No-Go for Business Production。当前阶
 - 主执行链：Operations Runtime
 - 目标主轴：\`${currentReport.architecture.main_axis}\`
 - 主业务写路径：\`${currentReport.architecture.main_write_path}\`
-- ProjectionRuntime：compatibility facade
-- Workspace/Card：compatibility wrapper
+- ProjectionRuntime：quarantined projection facade
+- Workspace/Card：retired write path; projection display only
 - Business Production：blocked
 - Dormitory：L1 Internal Pilot Observation
 - Repair / Parts / HR / business-3..7：L0 Contract Preview
@@ -307,7 +307,7 @@ P1：
 
 - Cookie / CSRF production browser auth baseline 尚未 production-ready。
 - CommandSubmission context 持久化列仍是合同和迁移草案，不是 production-ready。
-- Workspace/Card 仍是 compatibility wrapper，仍需继续迁移到 Operations Runtime 主轴。
+- Workspace/Card 旧写路径已退役，必须保持零注册；Operations Runtime 继续作为命令主轴。
 - Control Plane / Evidence Graph 已有证据闭环，但 Business Production 仍被 current-state 阻断。
 
 P2：
@@ -327,10 +327,10 @@ function defaultModules() {
     architecture_authority: "docs/engineering and docs/rules/v5.5 remain highest authority; docs/architecture is compatibility/reference only.",
     admission_kernel: "docs/contracts/admission plus AdmissionKernelService decide visibleAllowed, prepareAllowed, confirmAllowed, productionAllowed.",
     operations_runtime: "CanonicalOperationsApiService and OperationsUnitOfWork own the primary business write path.",
-    compatibility_box: "ProjectionRuntime and Workspace/Card are quarantined compatibility facade/wrapper components.",
+    compatibility_box: "ProjectionRuntime remains quarantined as projection facade; retired Workspace/Card write routes must stay deleted.",
     experience_kernel: "Mobile and PC surfaces render runtime decisions, blockers, required fields, evidence state, and recovery guidance without writing facts.",
     language_kernel: "Language catalogs cover zh-CN, ru-RU, ky-KG domain terms, field labels, status explanations, errors, and search synonyms.",
-    search_kernel: "SearchKernelService wraps legacy search sources with Admission, permission, language, ranking, and source refs.",
+    search_kernel: "SearchKernelService wraps projection search sources with Admission, permission, language, ranking, and source refs.",
     control_plane: "Control Plane owns GateResult, Invariant, ShadowCompare, RollbackInstruction, release evidence, and governance evidence.",
     evidence_graph: "Evidence artifacts bind release-state, current-state, gates, screenshots, command logs, and final report.",
     definition_registry: "Definition Registry owns WorkItem, command, field, evidence, risk, ledger, surface, and projection-owner semantics."

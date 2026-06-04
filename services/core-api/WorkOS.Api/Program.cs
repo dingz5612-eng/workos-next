@@ -50,8 +50,10 @@ var runMigrations = RuntimeStartupValidator.ShouldRunMigrations(builder.Environm
 var runtime = ProjectionRuntime.OpenPostgres(connectionString, authOptions, migrationOptions.Path, runMigrations);
 var controlPlaneReadStore = new ControlPlaneReadStore(connectionString);
 var operationsFactStore = new PostgresOperationsStore(connectionString);
+var operationsOutboxProjectionStore = new OperationsOutboxProjectionStore(connectionString);
 builder.Services.AddSingleton(runtime);
 builder.Services.AddSingleton(controlPlaneReadStore);
+builder.Services.AddSingleton(operationsOutboxProjectionStore);
 builder.Services.AddSingleton(new OperationsRuntimeService(
     runtime,
     new PostgresOperationsCaseStore(connectionString),
@@ -64,17 +66,13 @@ builder.Services.AddSingleton<IdempotencyService>();
 builder.Services.AddSingleton<PayloadHashService>();
 builder.Services.AddSingleton(WorkItemDefinitionRegistryService.LoadDefault());
 builder.Services.AddSingleton<AdmissionKernelService>();
-builder.Services.AddSingleton<LegacyWorkspaceSearchAdapter>();
+builder.Services.AddSingleton<ProjectionWorkspaceSearchAdapter>();
 builder.Services.AddSingleton<SearchKernelService>();
 builder.Services.AddSingleton(_ => new SliceCommandHandlerRouter()
     .Register(CanonicalOperationsApiService.ConfirmCommandDefinition, CanonicalOperationsApiService.HandleConfirmCommand));
 builder.Services.AddSingleton<OperationsUnitOfWork>();
 builder.Services.AddSingleton<CanonicalOperationsApiService>();
-builder.Services.AddSingleton<WorkspaceCardCompatibilityWorkItemResolver>();
-builder.Services.AddSingleton<WorkspaceCardCompatibilityPolicy>();
-builder.Services.AddSingleton<WorkspaceCardCompatibilityRequestMapper>();
-builder.Services.AddSingleton<WorkspaceCardCompatibilityResponseMapper>();
-builder.Services.AddSingleton<WorkspaceCardCompatibilityAdapter>();
+builder.Services.AddHostedService<OperationsOutboxProjectionWorker>();
 builder.Services.AddHostedService<ProjectionOutboxWorker>();
 builder.Services
     .AddAuthentication(RuntimeActorAuthenticationDefaults.Scheme)
@@ -84,22 +82,6 @@ builder.Services
 builder.Services.AddAuthorization(RuntimeActorAuthorization.Configure);
 
 var app = builder.Build();
-
-app.Use(async (context, next) =>
-{
-    if (RetiredWorkspaceCompatibilityWritePath(context.Request))
-    {
-        context.Response.StatusCode = StatusCodes.Status410Gone;
-        await context.Response.WriteAsJsonAsync(new
-        {
-            error = "workspace_card_compatibility_write_retired",
-            reason = "Operations Runtime is the only current business write path. Use /api/operations/workspaces/start or /api/operations/work-items/{workItemId}/confirm."
-        });
-        return;
-    }
-
-    await next();
-});
 
 app.UseCors();
 app.UseAuthentication();
@@ -506,42 +488,6 @@ app.MapPost("/api/pc-governance/exports/{exportType}", (string exportType, Gover
 
 app.MapOperationsRuntimeEndpoints();
 
-app.MapPost("/api/workspaces/{workspaceId}/cards/{cardId}/prepare", (string workspaceId, string cardId, PrepareCardRequest? request, HttpRequest httpRequest, WorkspaceCardCompatibilityAdapter operations) =>
-{
-    var actor = httpRequest.HttpContext.RequireActor();
-    var prepared = operations.PrepareWorkspaceCard(workspaceId, cardId, request, actor.TenantId);
-    return prepared.StatusCode switch
-    {
-        StatusCodes.Status404NotFound => Results.NotFound(prepared.Payload),
-        _ => Results.Ok(prepared.Payload)
-    };
-});
-
-app.MapPost("/api/workspaces/resource-setup/start", (HttpRequest httpRequest, ProjectionRuntime runtime, CanonicalOperationsApiService operations) =>
-    StartOperationsWorkspace(
-        "W-STAY-RESOURCE",
-        httpRequest,
-        runtime,
-        operations,
-        new[] { "operator", "manager", "admin" },
-        "role_confirmation_forbidden:resource_setup_start"));
-
-app.MapPost("/api/workspaces/start", (StartWorkspaceRequest request, HttpRequest httpRequest, ProjectionRuntime runtime, CanonicalOperationsApiService operations) =>
-{
-    if (!DormitoryTemplateWorkspaceIds().Contains(request.TemplateWorkspaceId, StringComparer.Ordinal))
-    {
-        return Results.Json(new { error = "workspace_template_not_allowed", request.TemplateWorkspaceId }, statusCode: StatusCodes.Status404NotFound);
-    }
-
-    return StartOperationsWorkspace(
-        request.TemplateWorkspaceId,
-        httpRequest,
-        runtime,
-        operations,
-        AllowedWorkspaceStartRoles(request.TemplateWorkspaceId),
-        "role_confirmation_forbidden:workspace_start");
-});
-
 app.MapPost("/api/operations/workspaces/start", (StartWorkspaceRequest request, HttpRequest httpRequest, ProjectionRuntime runtime, CanonicalOperationsApiService operations) =>
 {
     if (!DormitoryTemplateWorkspaceIds().Contains(request.TemplateWorkspaceId, StringComparer.Ordinal))
@@ -555,26 +501,7 @@ app.MapPost("/api/operations/workspaces/start", (StartWorkspaceRequest request, 
         runtime,
         operations,
         AllowedWorkspaceStartRoles(request.TemplateWorkspaceId),
-        "role_confirmation_forbidden:operation_workspace_start");
-});
-
-app.MapPost("/api/workspaces/{workspaceId}/cards/{cardId}/confirm", (string workspaceId, string cardId, ConfirmCardRequest request, HttpRequest httpRequest, WorkspaceCardCompatibilityAdapter operations) =>
-{
-    var actor = httpRequest.HttpContext.RequireActor();
-    var token = httpRequest.SessionTokenForOperations();
-    var requestId = httpRequest.Headers["X-Request-Id"].FirstOrDefault() ?? httpRequest.HttpContext.TraceIdentifier;
-    var result = operations.ConfirmWorkspaceCard(workspaceId, cardId, request, token, requestId, actor.TenantId);
-    return result.StatusCode switch
-    {
-        StatusCodes.Status404NotFound => Results.NotFound(result.Payload),
-        StatusCodes.Status400BadRequest => Results.BadRequest(result.Payload),
-        StatusCodes.Status401Unauthorized => Results.Unauthorized(),
-        StatusCodes.Status403Forbidden => Results.Json(result.Payload, statusCode: StatusCodes.Status403Forbidden),
-        StatusCodes.Status500InternalServerError => Results.Json(result.Payload, statusCode: StatusCodes.Status500InternalServerError),
-        StatusCodes.Status409Conflict => Results.Json(result.Payload, statusCode: StatusCodes.Status409Conflict),
-        StatusCodes.Status422UnprocessableEntity => Results.UnprocessableEntity(result.Payload),
-        _ => Results.Ok(result.Payload)
-    };
+        "admission_role_forbidden:operation_workspace_start");
 });
 
 app.MapGet("/api/workspaces/{workspaceId}/events", (string workspaceId, HttpRequest httpRequest) =>
@@ -655,29 +582,6 @@ app.MapPost("/api/behavior-events", (BehaviorEventRequest request, HttpRequest h
 
 app.Run();
 
-static bool RetiredWorkspaceCompatibilityWritePath(HttpRequest request)
-{
-    if (!HttpMethods.IsPost(request.Method))
-    {
-        return false;
-    }
-
-    var path = request.Path.Value ?? "";
-    if (path.Equals("/api/workspaces/start", StringComparison.OrdinalIgnoreCase) ||
-        path.Equals("/api/workspaces/resource-setup/start", StringComparison.OrdinalIgnoreCase))
-    {
-        return true;
-    }
-
-    var parts = path.Split('/', StringSplitOptions.RemoveEmptyEntries);
-    return parts.Length == 6 &&
-        parts[0].Equals("api", StringComparison.OrdinalIgnoreCase) &&
-        parts[1].Equals("workspaces", StringComparison.OrdinalIgnoreCase) &&
-        parts[3].Equals("cards", StringComparison.OrdinalIgnoreCase) &&
-        (parts[5].Equals("prepare", StringComparison.OrdinalIgnoreCase) ||
-         parts[5].Equals("confirm", StringComparison.OrdinalIgnoreCase));
-}
-
 static string[] DormitoryTemplateWorkspaceIds() =>
     new[]
     {
@@ -711,7 +615,7 @@ static IResult StartOperationsWorkspace(
     var actor = httpRequest.HttpContext.RequireActor();
     if (!allowedRoles.Contains(actor.Role, StringComparer.OrdinalIgnoreCase))
     {
-        return Results.Json(new { error = forbiddenReason }, statusCode: StatusCodes.Status403Forbidden);
+        return Results.Json(new { error = "operation_workspace_start_forbidden", reason = forbiddenReason }, statusCode: StatusCodes.Status403Forbidden);
     }
 
     try
@@ -842,8 +746,6 @@ internal static class DemoBootstrap
         {
             "GET /api/workspaces",
             "GET /api/workspaces/{workspaceId}",
-            "POST /api/workspaces/{workspaceId}/cards/{cardId}/prepare",
-            "POST /api/workspaces/{workspaceId}/cards/{cardId}/confirm",
             "GET /api/work-queue",
             "GET /api/search?q=...",
             "GET /api/lenses/home-surface",
@@ -876,6 +778,7 @@ internal static class DemoBootstrap
             "POST /api/correction-center/ledger-correction-requests/{correctionRequestId}/apply",
             "POST /api/operations/cases",
             "GET /api/operations/cases/{caseId}",
+            "POST /api/operations/workspaces/start",
             "POST /api/operations/work-items",
             "GET /api/operations/work-items",
             "GET /api/operations/work-items/{workItemId}",

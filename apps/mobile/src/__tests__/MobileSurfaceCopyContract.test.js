@@ -75,6 +75,18 @@ describe("HOTFIX-SURFACE-UX-01 mobile visible copy contract", () => {
     vi.unstubAllGlobals();
   });
 
+  it("keeps online runtime status as a quiet topbar chip instead of a content banner", () => {
+    stubBrowser();
+    const html = render("operationPanel");
+
+    expect(html).toContain('class="runtime-status online"');
+    expect(html).not.toContain('class="api-status online"');
+    expect(visibleText(html)).toContain("已连接");
+    expect(visibleText(html)).not.toContain("运行服务已连接");
+    expect(visibleText(html)).not.toContain("已连接内测运行服务");
+    vi.unstubAllGlobals();
+  });
+
   it("renders personal support pages as runtime read surfaces instead of placeholder forms", () => {
     stubBrowser();
     const supportViews = [
@@ -87,8 +99,7 @@ describe("HOTFIX-SURFACE-UX-01 mobile visible copy contract", () => {
       "failedSync",
       "recentSubmissions",
       "recentTraces",
-      "deviceTrust",
-      "feedback"
+      "deviceTrust"
     ];
     const rendered = supportViews.map((view) => render(view));
     const html = [...rendered, render("result")].join("\n");
@@ -98,12 +109,36 @@ describe("HOTFIX-SURFACE-UX-01 mobile visible copy contract", () => {
       expect(page).toContain('data-surface="personal-runtime-support"');
       expect(page).not.toContain("权限诊断");
     }
-    expect(text).toContain("本页只读取草稿、提交、轨迹、证据和设备状态");
+    expect(text).toContain("本页只读取草稿、提交、轨迹、材料和设备状态");
     expect(text).toContain("系统判断");
     expect(text).toContain("设备已验证");
     expect(text).toContain("提交记录");
     expect(text).not.toContain("2026-05-28 18:00");
     expect(text).not.toMatch(/\bAudit\b/);
+    expect(text).not.toMatch(/\b(workItemId|cardId|workspaceId|payloadHash|commandSubmissionId)\b/);
+    vi.unstubAllGlobals();
+  });
+
+  it("renders feedback as a role-addressed collaboration message channel", () => {
+    stubBrowser();
+    const html = render("feedback", {
+      selectedWorkspace: "W-STAY-RESOURCE",
+      selectedCardId: "roomSetup",
+      selectedWorkItemId: "W-STAY-RESOURCE:roomSetup"
+    });
+    const text = visibleText(html);
+
+    expect(html).toContain('data-surface="feedback-message-channel"');
+    expect(html).toContain("data-feedback-recipient");
+    expect(html).toContain("data-feedback-account");
+    expect(html).toContain("data-feedback-body");
+    expect(html).toContain("data-send-feedback");
+    expect(text).toContain("协作消息");
+    expect(text).toContain("产品/设计负责人");
+    expect(text).toContain("指定账号");
+    expect(text).toContain("反馈上下文");
+    expect(text).toContain("住宿资源");
+    expect(text).toContain("房间配置");
     expect(text).not.toMatch(/\b(workItemId|cardId|workspaceId|payloadHash|commandSubmissionId)\b/);
     vi.unstubAllGlobals();
   });

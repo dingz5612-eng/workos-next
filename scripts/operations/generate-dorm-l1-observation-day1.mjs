@@ -215,7 +215,7 @@ const result = {
     runtimeProofSourceMode: runtimeProof.sourceMode,
     liveReplaySourceMode: liveReplay.sourceMode,
     syntheticScenarioRunnerUsed: false,
-    workspaceCardCompatibilityFallbackUsed: Boolean(liveReplay.workspaceCardCompatibilityFallbackUsed)
+    retiredWorkspaceCardWritePathUsed: Boolean(liveReplay.retiredWorkspaceCardWritePathUsed)
   },
   currentStateSummary: {
     currentStateStatus: currentState.status,

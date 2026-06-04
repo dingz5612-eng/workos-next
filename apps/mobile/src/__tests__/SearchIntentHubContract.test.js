@@ -12,7 +12,7 @@ describe("OAM-04B search intent hub contract", () => {
     expect(html).toContain("主动办理");
     expect(html).toContain("新增住宿房源");
     expect(html).toContain("先录房号和床位数");
-    expect(html).toContain('data-start-resource-setup="true"');
+    expect(html).toContain('data-start-operations-resource-setup="true"');
     expect(html).toContain('data-work-item-id="W-STAY-RESOURCE:roomSetup"');
     expect(html).toContain(">处理</button>");
 
@@ -20,6 +20,30 @@ describe("OAM-04B search intent hub contract", () => {
 
     expect(ctx.state.view).toBe("operationPanel");
     expect(ctx.state.selectedWorkItemId).toBe("W-STAY-RESOURCE:roomSetup");
+  });
+
+  it("routes the explicit accommodation resource wording to the Operations start command", () => {
+    const html = searchView(createSurfaceCtx({ view: "search", query: "新增住宿房源" }));
+    const text = visibleText(html);
+
+    expect(html).toContain('data-search-section="activeCommands"');
+    expect(html).toContain('data-start-operations-resource-setup="true"');
+    expect(text).toContain("新增住宿房源");
+    expect(text).toContain("开始办理");
+  });
+
+  it("renders account recent searches and registered common intent suggestions", () => {
+    const html = searchView(createSurfaceCtx({
+      view: "search",
+      query: "",
+      recentSearches: ["我要创建住宿资源", "21 号房间"]
+    }));
+    const text = visibleText(html);
+
+    expect(html).toContain('data-search-query="新增住宿房源"');
+    expect(html).toContain('data-search-query="我要创建住宿资源"');
+    expect(text).toContain("常用搜索");
+    expect(text).toContain("最近搜索");
   });
 
   it("routes evidence and object results through existing data attributes", () => {
@@ -231,7 +255,7 @@ describe("OAM-04B search intent hub contract", () => {
   it("preserves Search Kernel admission state in the surface view model", () => {
     const ctx = createSurfaceCtx({ view: "search", query: "房间" });
     const vm = buildSearchResultVM({
-      resultType: "workspaceCardCompatibility",
+      resultType: "workspaceCardProjection",
       workspaceId: "W-STAY-RESOURCE",
       cardId: "roomSetup",
       admission: {
@@ -245,7 +269,7 @@ describe("OAM-04B search intent hub contract", () => {
       },
       sourceRefs: {
         source: "SearchKernelService",
-        compatibilityAdapter: "LensQueryService.Search",
+        projectionAdapter: "LensQueryService.Search",
         admissionDecisionRef: "admission:roomSetup:internal"
       }
     }, ctx);
@@ -256,7 +280,7 @@ describe("OAM-04B search intent hub contract", () => {
     expect(vm.productionAllowed).toBe(false);
     expect(vm.admissionReason).toBe("L1 observation only");
     expect(vm.sourceRefs.admissionDecisionRef).toBe("admission:roomSetup:internal");
-    expect(vm.sourceRefs.compatibilityAdapter).toBe("LensQueryService.Search");
+    expect(vm.sourceRefs.projectionAdapter).toBe("LensQueryService.Search");
   });
 
   it("localizes active room commands without English fallback", () => {

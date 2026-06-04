@@ -21,7 +21,7 @@ export function createInitialState() {
     selectedCardIndex: -1,
     selectedCardId: "",
     query: "",
-    recentSearches: [],
+    recentSearches: loadRecentSearchesForActor(actor),
     filterOpen: false,
     advancedOpen: false,
     queueDomain: "all",
@@ -82,6 +82,21 @@ export function createInitialState() {
   if (state.view === "task" || state.view === "object") state.view = "workspace";
   if (!state.currentActor && state.view !== "login") state.view = "login";
   return state;
+}
+
+export function searchPreferenceKey(actor = null) {
+  const id = actor?.userId || actor?.actorId || actor?.role || "anonymous";
+  return `workosnext.search.recent.${id}`;
+}
+
+function loadRecentSearchesForActor(actor = null) {
+  try {
+    const raw = localStorage.getItem(searchPreferenceKey(actor));
+    const parsed = raw ? JSON.parse(raw) : [];
+    return Array.isArray(parsed) ? parsed.filter(Boolean).slice(0, 8) : [];
+  } catch {
+    return [];
+  }
 }
 
 function applyUrlParams(state) {

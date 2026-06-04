@@ -34,7 +34,8 @@ ProcessManager -> Projection / Lens -> Mobile / PC Surface.
 - LedgerEntry must belong to one LedgerTransaction.
 - Projection and Lens outputs are derived views, not fact sources.
 - Frontend field values are not financial fact sources.
-- Old Workspace/Card APIs are compatibility surfaces, not the main write axis.
+- Old Workspace/Card prepare/confirm write APIs are retired and must stay
+  absent; Workspace/Card is projection/display compatibility input only.
 - WorkItemBundle is an experience envelope, not a fact source.
 - EvidenceObject is evidence fact and does not replace PaymentConfirmed or
   DepositConfirmed facts.

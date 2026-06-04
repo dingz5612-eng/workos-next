@@ -1,5 +1,6 @@
 import { selectCompletedWorkbenchQueue, selectRuntimeWorkspaces, selectSearchSurfaceResults, selectWorkbenchQueue } from "../selectors/surfaceSelectors.js";
 import { buildSearchResultVM, rankSearchResults } from "../searchIntentHub.js";
+import { isAccommodationResourceSetupQuery, searchIntentSuggestions, searchIntentTerms } from "../searchIntentRegistry.js";
 
 export function searchView(ctx) {
   const results = workosSearchSections(ctx);
@@ -14,12 +15,35 @@ export function searchView(ctx) {
         <input id="query" value="${ctx.escapeAttr(ctx.state.query)}" placeholder="${ctx.tr("searchPlaceholder")}" />
         <button id="searchNow">${ctx.tr("search")}</button>
       </div>
+      ${searchRecommendations(ctx)}
     </section>
     ${ctx.state.operationMessage ? `<p class="operation-message" role="status">${ctx.escapeHtml(ctx.state.operationMessage)}</p>` : ""}
     <section class="workos-search-results">
       ${results.map((section) => searchSection(section, ctx)).join("")}
     </section>
   `);
+}
+
+function searchRecommendations(ctx) {
+  const frequent = searchIntentSuggestions(ctx.state.lang).slice(0, 4);
+  const recent = (ctx.state.recentSearches || [])
+    .filter(Boolean)
+    .filter((query) => !frequent.some((item) => item.query === query || item.label === query))
+    .slice(0, 4)
+    .map((query) => ({ label: query, query }));
+  const groups = [
+    recommendationGroup("commonSearch", frequent, ctx),
+    recommendationGroup("recentSearch", recent, ctx)
+  ].filter(Boolean);
+  return groups.length ? `<div class="search-recommendations">${groups.join("")}</div>` : "";
+}
+
+function recommendationGroup(titleKey, items, ctx) {
+  if (!items.length) return "";
+  return `<div class="search-recommendation-group">
+    <span>${ctx.tr(titleKey)}</span>
+    <div>${items.map((item) => `<button type="button" data-search-query="${ctx.escapeAttr(item.query)}">${ctx.escapeHtml(item.label)}</button>`).join("")}</div>
+  </div>`;
 }
 
 export function learningContentItems(ctx) {
@@ -96,7 +120,7 @@ function activeCommands(workspaces, completedQueue, ctx) {
     .filter((command) => !query || command.keywords.some((keyword) => query.toLocaleLowerCase().includes(keyword.toLocaleLowerCase())))
     .map((command) => ({
       resultType: "command",
-      commandId: command.templateWorkspaceId === "W-STAY-RESOURCE" ? "startResourceSetup" : "startWorkspace",
+      commandId: command.templateWorkspaceId === "W-STAY-RESOURCE" ? "startOperationsResourceSetup" : "startOperationsWorkspace",
       templateWorkspaceId: command.templateWorkspaceId,
       firstCardId: command.firstCardId,
       title: command.title,
@@ -112,7 +136,7 @@ function dormitoryCommandCatalog(ctx) {
       title: { "zh-CN": "新增住宿房源", "ru-RU": "Добавить комнату", "ky-KG": "Бөлмө кошуу" },
       subtitle: { "zh-CN": "先录房号和床位数，价格和可租状态后面再补。", "ru-RU": "Сначала внесите номер комнаты и число коек. Тарифы и готовность заполните дальше.", "ky-KG": "Алгач бөлмө номерин жана койка санын жазыңыз. Баа жана даярдык кийин толтурулат." },
       nextAction: { "zh-CN": "先填房号", "ru-RU": "Начать с номера комнаты", "ky-KG": "Бөлмө номеринен баштоо" }
-    }, ["创建房间", "新增房间", "新建房间", "配置房间", "住宿资源", "资源建档", "create room", "add room", "room setup", "добавить комнату", "создать комнату", "комната", "койки", "бөлмө", "койка"]),
+    }, searchIntentTerms("accommodationResourceSetup")),
     command("W-STAY-LEAD-RESERVATION", "leadCapture", {
       title: { "zh-CN": "登记咨询和预订", "ru-RU": "Записать заявку и бронь", "ky-KG": "Суроо жана бронь каттоо" },
       subtitle: { "zh-CN": "先把来访咨询记清楚，再决定预订、取消或转入住。", "ru-RU": "Сначала зафиксируйте обращение, затем бронь, отмена или заселение.", "ky-KG": "Адегенде кайрылууну так жазыңыз, анан бронь, жокко чыгаруу же кирүү." },
@@ -167,7 +191,7 @@ function command(templateWorkspaceId, firstCardId, { title, subtitle, nextAction
 
 function completedRoomCommand(workspaces, completedQueue, ctx) {
   const query = String(ctx.state.query || "").trim();
-  if (!/创建房间|新增房间|配置房间/i.test(query)) return [];
+  if (!isAccommodationResourceSetupQuery(query)) return [];
   const completed = completedQueue.find((item) => /roomsetup|room|房间/i.test(`${item.workItemId || ""} ${item.cardId || ""} ${tx(item.card?.title, ctx)} ${tx(item.workspace?.title, ctx)}`));
   if (!completed) {
     const terminalWorkspace = workspaces.find((workspace) => workspaceMatchesQuery(workspace, query, ctx) && isTerminalWorkspace(workspace));
@@ -212,11 +236,11 @@ function searchAction(result, ctx) {
   if (result.actionType === "openLearning") {
     return `<button data-view="${ctx.escapeAttr(result.view)}" data-learning-id="${ctx.escapeAttr(result.learningId)}">${ctx.escapeHtml(result.actionLabel)}</button>`;
   }
-  if (result.actionType === "startResourceSetup") {
-    return `<button data-start-resource-setup="true">${ctx.escapeHtml(result.actionLabel)}</button>`;
+  if (result.actionType === "startOperationsResourceSetup") {
+    return `<button data-start-operations-resource-setup="true">${ctx.escapeHtml(result.actionLabel)}</button>`;
   }
-  if (result.actionType === "startWorkspace") {
-    return `<button data-start-workspace="${ctx.escapeAttr(result.templateWorkspaceId)}" data-first-card-id="${ctx.escapeAttr(result.firstCardId)}">${ctx.escapeHtml(result.actionLabel)}</button>`;
+  if (result.actionType === "startOperationsWorkspace") {
+    return `<button data-start-operations-workspace="${ctx.escapeAttr(result.templateWorkspaceId)}" data-first-card-id="${ctx.escapeAttr(result.firstCardId)}">${ctx.escapeHtml(result.actionLabel)}</button>`;
   }
   if (["openObject", "openWorkspace"].includes(result.actionType)) {
     return `<button data-workspace="${ctx.escapeAttr(result.workspaceId)}" data-card-id="${ctx.escapeAttr(result.cardId)}" data-case-id="${ctx.escapeAttr(result.caseId)}">${ctx.escapeHtml(result.actionLabel)}</button>`;
@@ -299,7 +323,7 @@ function queueEntryKey(item = {}) {
 function shouldShowUnfinishedRecovery(query = "") {
   const normalized = String(query || "").trim().toLocaleLowerCase();
   if (!normalized) return false;
-  if (/创建房间|新增房间|配置房间/.test(normalized) && !/\d/.test(normalized)) return false;
+  if (isAccommodationResourceSetupQuery(normalized) && !/\d/.test(normalized)) return false;
   return /\d/.test(normalized) || /未办完|继续|找回|房号|号房间|room[-_\s]?\w+|bed[-_\s]?\w+|stay[-_\s]?\w+/i.test(normalized);
 }
 
@@ -459,7 +483,7 @@ function workspaceMatchesQuery(workspace = {}, query = "", ctx = {}) {
     tx(workspace.next, ctx),
     workspace.cards?.map((card) => `${card.id} ${tx(card.title, ctx)} ${card.status || ""}`).join(" ")
   ].join(" ").toLocaleLowerCase();
-  if (/创建房间|新增房间|配置房间/.test(normalized)) {
+  if (isAccommodationResourceSetupQuery(normalized)) {
     return /(roomsetup|房间配置|房间床位配置|创建住宿资源|住宿资源建档)/i.test(text);
   }
   if ((workspace._score || workspace.score || 0) > 0) return true;

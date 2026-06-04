@@ -107,13 +107,15 @@ async function validateHealth() {
 }
 
 async function validatePrepare(projection) {
-  const workspace = projection.workspaces.find((item) => item.cards.some((card) => card.status === "ready")) ?? projection.workspaces[0];
-  const card = workspace.cards.find((item) => item.status === "ready") ?? workspace.cards[0];
-  const prepared = await postJson(`/api/workspaces/${workspace.id}/cards/${card.id}/prepare`, {});
-  assert(prepared.prepared === true, "prepare response must mark prepared true");
-  assert(prepared.workspaceId === workspace.id, "prepare response workspaceId mismatch");
-  assert(prepared.cardId === card.id, "prepare response cardId mismatch");
-  assert(prepared.card?.fields?.business?.length > 0, "prepare response card must include business fields");
+  const item = await findOperationsWorkItem("W-STAY-RESOURCE", "roomSetup");
+  const prepared = await postJson(workItemPath(workItemIdOf(item), "/prepare"), {
+    workspaceId: workspaceIdOf(item),
+    cardId: cardIdOf(item)
+  });
+  assert(prepared.projectionStatus === "prepared", "prepare response must mark projectionStatus prepared");
+  assert(prepared.workspaceId === workspaceIdOf(item), "prepare response workspaceId mismatch");
+  assert(prepared.cardId === cardIdOf(item), "prepare response cardId mismatch");
+  assert(prepared.fieldContract?.business?.length > 0, "prepare response fieldContract must include business fields");
 }
 
 async function validateDeclaredRuntimePaths(projection) {
@@ -414,23 +416,80 @@ function resolveOpenApiPath(path, samples) {
   });
 }
 
+function workItemPath(workItemId, suffix = "") {
+  return `/api/operations/work-items/${encodeURIComponent(workItemId)}${suffix}`;
+}
+
+async function findOperationsWorkItem(workspaceId, cardId) {
+  const items = await getJson("/api/operations/work-items");
+  assert(Array.isArray(items), "Operations work-items response must be an array");
+  const existing = items.find((candidate) =>
+    workspaceIdOf(candidate) === workspaceId && cardIdOf(candidate) === cardId);
+  if (existing) return existing;
+
+  const started = await postJson("/api/operations/workspaces/start", { templateWorkspaceId: workspaceId });
+  const startedItems = [started.workItem, ...(started.operationWorkItems || [])].filter(Boolean);
+  const item = startedItems.find((candidate) =>
+    workspaceIdOf(candidate) === workspaceId && cardIdOf(candidate) === cardId);
+  if (!item) {
+    return await createOperationsWorkItem(workspaceId, cardId);
+  }
+  assert(item, `Operations Workspace Start did not return a WorkItem for ${workspaceId}/${cardId}`);
+  assert(workItemIdOf(item), `Operations WorkItem missing workItemId for ${workspaceId}/${cardId}`);
+  return item;
+}
+
+async function createOperationsWorkItem(workspaceId, cardId) {
+  const created = await postJson("/api/operations/work-items", {
+    workItemId: `validate-${workspaceId}-${cardId}-${Date.now()}`,
+    workItemType: cardId,
+    targetWorkspaceId: workspaceId,
+    workspaceId,
+    cardId,
+    ownerRole: "operator",
+    payload: {
+      caseId: `case-${workspaceId}`,
+      cardId,
+      templateWorkspaceId: workspaceId
+    }
+  });
+  assert(workItemIdOf(created), `Operations WorkItem create did not return workItemId for ${workspaceId}/${cardId}`);
+  assert(workspaceIdOf(created) === workspaceId, `created WorkItem workspace mismatch for ${workspaceId}/${cardId}`);
+  assert(cardIdOf(created) === cardId, `created WorkItem card mismatch for ${workspaceId}/${cardId}`);
+  return created;
+}
+
+function workItemIdOf(item) {
+  return item?.workItemId || item?.work_item_id || item?.id || "";
+}
+
+function workspaceIdOf(item) {
+  return item?.workspaceId || item?.workspace_id || item?.workspace?.id || item?.payload?.workspaceId || "";
+}
+
+function cardIdOf(item) {
+  return item?.cardId || item?.card_id || item?.card?.id || item?.payload?.cardId || "";
+}
+
 async function validateConfirmPolicyResponse() {
   const login = await postJson("/api/auth/login", { username: "operator", password: "dev" });
-  const response = await fetch(`${baseUrl}/api/workspaces/W-STAY-RESOURCE/cards/roomSetup/confirm`, {
+  const roomWorkItem = await findOperationsWorkItem("W-STAY-RESOURCE", "roomSetup");
+  const roomConfirmPath = workItemPath(workItemIdOf(roomWorkItem), "/confirm");
+  const response = await fetch(`${baseUrl}${roomConfirmPath}`, {
     method: "POST",
     headers: { "Content-Type": "application/json", "X-Request-Id": `api-contract-${Date.now()}` },
     body: JSON.stringify(confirmBody(`api-contract-${Date.now()}`))
   });
   assert(response.status === 401, `confirm without actor token must return 401, got ${response.status}`);
 
-  const invalid = await fetch(`${baseUrl}/api/workspaces/W-STAY-RESOURCE/cards/roomSetup/confirm`, {
+  const invalid = await fetch(`${baseUrl}${roomConfirmPath}`, {
     method: "POST",
     headers: { "Content-Type": "application/json", "X-WorkOS-Actor-Token": login.token, "X-Request-Id": `api-invalid-${Date.now()}` },
     body: JSON.stringify(confirmBody("", {}, "invalid-idempotency"))
   });
   assert(invalid.status === 422, `confirm without idempotencyKey must return 422, got ${invalid.status}`);
 
-  const localizedKey = await fetch(`${baseUrl}/api/workspaces/W-STAY-RESOURCE/cards/roomSetup/confirm`, {
+  const localizedKey = await fetch(`${baseUrl}${roomConfirmPath}`, {
     method: "POST",
     headers: { "Content-Type": "application/json", "X-WorkOS-Actor-Token": login.token, "X-Request-Id": `api-localized-key-${Date.now()}` },
     body: JSON.stringify(confirmBody(`api-localized-key-${Date.now()}`, { "未知字段": "A999" }))
@@ -438,23 +497,24 @@ async function validateConfirmPolicyResponse() {
   assert(localizedKey.status === 400, `unknown localized label payload key must return 400, got ${localizedKey.status}`);
 
   const financeLogin = await postJson("/api/auth/login", { username: "finance", password: "dev" });
-  const forbidden = await fetch(`${baseUrl}/api/workspaces/W-STAY-RESOURCE/cards/roomSetup/confirm`, {
+  const forbidden = await fetch(`${baseUrl}${roomConfirmPath}`, {
     method: "POST",
     headers: { "Content-Type": "application/json", "X-WorkOS-Actor-Token": financeLogin.token, "X-Request-Id": `api-forbidden-${Date.now()}` },
     body: JSON.stringify(confirmBody(`api-forbidden-${Date.now()}`))
   });
   assert(forbidden.status === 403, `role forbidden confirm must return 403, got ${forbidden.status}`);
 
-  const businessBlocked = await fetch(`${baseUrl}/api/workspaces/W-STAY-DEPOSIT-LEDGER/cards/depositReceipt/confirm`, {
+  const depositWorkItem = await findOperationsWorkItem("W-STAY-DEPOSIT-LEDGER", "depositReceipt");
+  const businessBlocked = await fetch(`${baseUrl}${workItemPath(workItemIdOf(depositWorkItem), "/confirm")}`, {
     method: "POST",
     headers: { "Content-Type": "application/json", "X-WorkOS-Actor-Token": login.token, "X-Request-Id": `api-business-${Date.now()}` },
     body: JSON.stringify(confirmBody(
       `api-business-${Date.now()}`,
       {
         depositId: "api-deposit-policy",
-        depositAmount: "3000",
-        currency: "KGS",
-        paymentMethod: "bank_transfer"
+        receivedAmount: "3000",
+        paymentMethod: "bank_transfer",
+        targetFact: "DepositFact"
       },
       "business-blocked"
     ))
@@ -538,8 +598,11 @@ async function validateConfirmLedgerProjectionLensChain() {
       technicalState: "ready"
     }, `room:${roomId}`)
   };
+  const chainWorkItem = await findOperationsWorkItem("W-STAY-RESOURCE", "roomSetup");
+  const workItemId = workItemIdOf(chainWorkItem);
+  const confirmPath = workItemPath(workItemId, "/confirm");
   const result = await postJsonWithActor(
-    "/api/workspaces/W-STAY-RESOURCE/cards/roomSetup/confirm",
+    confirmPath,
     confirmRequest,
     login.token,
     `api-chain-${suffix}`
@@ -555,15 +618,15 @@ async function validateConfirmLedgerProjectionLensChain() {
   assert(result.resultEventIds.join("|") === eventIds.join("|"), "confirm response resultEventIds must match committed event refs");
 
   if (result.source === "operations_unit_of_work") {
-    assert(result.commandSubmissionId, "S4 compatibility confirm must expose commandSubmissionId");
-    assert(result.traceUrl === `/api/operations/trace/submissions/${result.commandSubmissionId}`, "S4 compatibility confirm must expose canonical traceUrl");
-    assert(result.projectionStatus === "pending", `S4 UoW compatibility confirm projectionStatus must be pending, got ${result.projectionStatus}`);
+    assert(result.commandSubmissionId, "S4 Operations confirm must expose commandSubmissionId");
+    assert(result.traceUrl === `/api/operations/trace/submissions/${result.commandSubmissionId}`, "S4 Operations confirm must expose canonical traceUrl");
+    assert(result.projectionStatus === "pending", `S4 UoW Operations confirm projectionStatus must be pending, got ${result.projectionStatus}`);
     const trace = await getJson(result.traceUrl);
     assert(trace.submissionRef === result.commandSubmissionId, "S4 trace must bind to the commandSubmissionId");
     assert(trace.workItemRef === result.workItemId, "S4 trace must bind to the legacy-resolved workItemId");
     assert((trace.domainEventRefs || []).join("|") === eventIds.join("|"), "S4 trace domainEventRefs must match resultEventIds");
 
-    const duplicate = await fetch(`${baseUrl}/api/workspaces/W-STAY-RESOURCE/cards/roomSetup/confirm`, {
+    const duplicate = await fetch(`${baseUrl}${confirmPath}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -578,7 +641,7 @@ async function validateConfirmLedgerProjectionLensChain() {
     assert(duplicateResult.commandSubmissionId === result.commandSubmissionId, "duplicate confirm must return the original commandSubmissionId");
     assert(duplicateResult.resultEventIds?.[0] === eventIds[0], "duplicate confirm must return the original domain event id");
 
-    const conflict = await fetch(`${baseUrl}/api/workspaces/W-STAY-RESOURCE/cards/roomSetup/confirm`, {
+    const conflict = await fetch(`${baseUrl}${confirmPath}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -605,7 +668,7 @@ async function validateConfirmLedgerProjectionLensChain() {
   const refreshedIds = new Set((refreshed.events || []).map((item) => item.eventId));
   assert(eventIds.every((eventId) => refreshedIds.has(eventId)), "workspace projection endpoint must expose committed events after confirm");
 
-  const duplicate = await fetch(`${baseUrl}/api/workspaces/W-STAY-RESOURCE/cards/roomSetup/confirm`, {
+  const duplicate = await fetch(`${baseUrl}${confirmPath}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -701,7 +764,7 @@ async function ensureRuntimeActorToken() {
   assert(response.ok, `/api/auth/login expected 2xx, got ${response.status}`);
   const login = await response.json();
   runtimeActorToken = login.token;
-  assert(runtimeActorToken, "Development login must return compatibility token for validator");
+  assert(runtimeActorToken, "Development login must return actor token for validator");
   return runtimeActorToken;
 }
 
