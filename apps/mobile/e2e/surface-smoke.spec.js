@@ -155,7 +155,9 @@ test("mobile work plane smoke covers login, WorkItem, search, me, and PC boundar
   await expect(page.locator("body")).not.toContainText("payloadHash");
   await expect(page.locator("body")).not.toContainText("commandSubmissionId");
   await expect(page.locator("body")).not.toContainText("traceAvailable");
-  await expect(page.locator("summary", { hasText: "技术详情" })).toBeVisible();
+  await expect(page.locator('[data-surface="operation-runtime-proof"]')).toHaveCount(0);
+  await expect(page.locator('[data-surface="operation-panel-route"]')).toHaveAttribute("data-admission-decision", /visible_/u);
+  await expect(page.locator('[data-surface="operation-panel-route"]')).toHaveAttribute("data-runtime-decision", /^(work_item|blocked:)/u);
 
   await bottomNav.getByRole("button", { name: "搜索", exact: true }).click();
   await page.locator("#query").fill("创建房间");
