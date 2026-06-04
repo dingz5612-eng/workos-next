@@ -76,6 +76,7 @@ export function WorkItemSummaryCard(item, ctx) {
 export function LifecycleWorkspace(item, activeCard, ctx) {
   const model = workItemModel({ workspace: item, card: activeCard, workspaceId: item.id, cardId: activeCard.id }, ctx);
   const blockers = activeBlockers(item, activeCard);
+  const activeStepState = stepVisualState(activeCard.status, activeCard);
   const workspaceCompleted = (item.cards || []).every((card) => isTerminalCardStatus(card.status));
   const viewingCompletedStep = isTerminalCardStatus(activeCard.status) && !workspaceCompleted;
   const blockerText = blockers.length
@@ -92,7 +93,7 @@ export function LifecycleWorkspace(item, activeCard, ctx) {
     </article>
     <article>
       <span>${text(ctx.tr("currentState"), ctx)}</span>
-      <strong class="status-chip status-${attr(activeCard.status, ctx)}">${text(ctx.tr(activeCard.status) || activeCard.status, ctx)}</strong>
+      <strong class="status-chip" data-step-state="${attr(activeStepState, ctx)}" data-card-status="${attr(activeCard.status, ctx)}">${text(ctx.tr(activeCard.status) || activeCard.status, ctx)}</strong>
       <p>${text(stateHelp, ctx)}</p>
     </article>
     <article class="lifecycle-wide">
@@ -105,6 +106,7 @@ export function LifecycleWorkspace(item, activeCard, ctx) {
 export function OperationStepRail(item, activeCard, ctx, options = {}) {
   const cards = item.cards || [];
   const currentIndex = Math.max(0, cards.findIndex((card) => card.id === activeCard.id));
+  const activeStepState = stepVisualState(activeCard.status, activeCard);
   const surface = options.surface || "operation-step-rail";
   const attrs = dataAttrs(options.attrs || {}, ctx);
   return `<section class="operation-step-rail" data-surface="${attr(surface, ctx)}" data-component="operation-step-rail"${attrs}>
@@ -114,7 +116,7 @@ export function OperationStepRail(item, activeCard, ctx, options = {}) {
       </div>
       <div class="operation-step-meta">
         <strong>${text(stepPositionText(currentIndex, cards.length, ctx), ctx)}</strong>
-        <small class="status-chip status-${attr(stepVisualState(activeCard.status, activeCard), ctx)} status-${attr(activeCard.status, ctx)}">${text(stepStatusLabel(activeCard, ctx), ctx)}</small>
+        <small class="status-chip" data-step-state="${attr(activeStepState, ctx)}" data-card-status="${attr(activeCard.status, ctx)}">${text(stepStatusLabel(activeCard, ctx), ctx)}</small>
       </div>
     </div>
     <div class="operation-step-list">
@@ -136,7 +138,7 @@ function timelineStep(item, card, activeCard, ctx, index = 0) {
   const label = `${tx(card.title, ctx)} ${statusLabel}`.trim();
   const state = stepVisualState(card.status, card);
   const marker = isCorrectionStep(card) ? ` data-step-marker="${attr(ctx.tr("correctionStepMarker"), ctx)}"` : "";
-  return `<button type="button" class="timeline-step status-${attr(card.status, ctx)} step-state-${attr(state, ctx)}${current ? " current" : ""}" data-step-state="${attr(state, ctx)}" data-current-step="${current ? "true" : "false"}"${marker} data-workspace="${attr(item.id, ctx)}" data-card-id="${attr(card.id, ctx)}" aria-label="${attr(label, ctx)}" title="${attr(label, ctx)}" ${current ? `aria-current="step"` : ""}>
+  return `<button type="button" class="timeline-step${current ? " current" : ""}" data-step-state="${attr(state, ctx)}" data-card-status="${attr(card.status, ctx)}" data-current-step="${current ? "true" : "false"}"${marker} data-workspace="${attr(item.id, ctx)}" data-card-id="${attr(card.id, ctx)}" aria-label="${attr(label, ctx)}" title="${attr(label, ctx)}" ${current ? `aria-current="step"` : ""}>
     <strong>${index + 1}</strong>
   </button>`;
 }

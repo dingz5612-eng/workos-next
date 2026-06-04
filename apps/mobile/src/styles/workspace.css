@@ -654,13 +654,8 @@
   font-weight: 850;
 }
 
-.operation-step-list .timeline-step.step-state-completed,
-.operation-step-list .timeline-step.status-done,
-.operation-step-list .timeline-step.status-confirmed,
-.operation-step-list .timeline-step.status-completed,
-.status-chip.status-done,
-.status-chip.status-confirmed,
-.status-chip.status-completed {
+.operation-step-list .timeline-step[data-step-state="completed"],
+.status-chip[data-step-state="completed"] {
   --step-accent: #2e7d5b;
   --step-bg: #f3fbf7;
   --step-border: #c8ead7;
@@ -672,11 +667,8 @@
   border-color: #c8ead7;
 }
 
-.operation-step-list .timeline-step.step-state-ready,
-.operation-step-list .timeline-step.status-ready,
-.operation-step-list .timeline-step.status-available,
-.status-chip.status-ready,
-.status-chip.status-available {
+.operation-step-list .timeline-step[data-step-state="ready"],
+.status-chip[data-step-state="ready"] {
   --step-accent: #2f73b8;
   --step-bg: #f3f8ff;
   --step-border: #c9def4;
@@ -688,8 +680,8 @@
   border-color: #c9def4;
 }
 
-.operation-step-list .timeline-step.step-state-correction,
-.status-chip.status-correction {
+.operation-step-list .timeline-step[data-step-state="correction"],
+.status-chip[data-step-state="correction"] {
   --step-accent: #6b6f9f;
   --step-bg: #f6f7ff;
   --step-border: #d9dcef;
@@ -701,9 +693,8 @@
   border-color: #d9dcef;
 }
 
-.operation-step-list .timeline-step.step-state-in-progress,
-.operation-step-list .timeline-step.status-inProgress,
-.status-chip.status-inProgress {
+.operation-step-list .timeline-step[data-step-state="in-progress"],
+.status-chip[data-step-state="in-progress"] {
   --step-accent: #b7791f;
   --step-bg: #fff8ed;
   --step-border: #efd4a3;
@@ -715,9 +706,8 @@
   border-color: #efd4a3;
 }
 
-.operation-step-list .timeline-step.step-state-not-started,
-.operation-step-list .timeline-step.status-notStarted,
-.status-chip.status-notStarted {
+.operation-step-list .timeline-step[data-step-state="not-started"],
+.status-chip[data-step-state="not-started"] {
   --step-accent: #8a97a6;
   --step-bg: #f7f9fb;
   --step-border: #d8e1e8;
@@ -729,9 +719,8 @@
   border-color: #d8e1e8;
 }
 
-.operation-step-list .timeline-step.step-state-blocked,
-.operation-step-list .timeline-step.status-blocked,
-.status-chip.status-blocked {
+.operation-step-list .timeline-step[data-step-state="blocked"],
+.status-chip[data-step-state="blocked"] {
   --step-accent: #c24135;
   --step-bg: #fff5f3;
   --step-border: #f0c0bb;

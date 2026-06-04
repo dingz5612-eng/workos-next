@@ -216,8 +216,8 @@ describe("OAM-04B WorkItem route identity", () => {
 
     expect(resolveOperationPanelTarget({ workItemId: "wi-correction-room" }, ctx.state).workItem.lifecycleState).toBe("ready");
     expect(html).toContain('data-step-state="correction"');
+    expect(html).toContain('data-card-status="ready"');
     expect(html).toContain('data-step-marker="修"');
-    expect(html).toContain('status-correction status-ready');
     expect(text).toContain("填写信息");
     expect(text).toContain("更正中");
     expect(text).toContain("提交处理");

@@ -1,5 +1,5 @@
 {
-  "generatedAtUtc": "2026-06-04T22:36:10.164Z",
+  "generatedAtUtc": "2026-06-04T22:48:18.382Z",
   "generatedBy": "scripts/surface/check-dormitory-ten-scenario-real-browser-audit.mjs",
   "status": "passed",
   "report": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/ten-dormitory-scenario-real-browser-20260605-post-unified-start/ten-scenario-real-browser-report.json",

@@ -370,7 +370,7 @@ internal sealed class AccountActorKernelStorage
         return normalized.Length > 0 ? normalized : RuntimeActorAuthorization.CapabilitiesForRoles(roles ?? Array.Empty<string>());
     }
 
-    private static IReadOnlyList<string> NormalizeList(IReadOnlyList<string>? values, string fallback)
+    private static IReadOnlyList<string> NormalizeList(IReadOnlyList<string>? values, string defaultValue)
     {
         var normalized = (values ?? Array.Empty<string>())
             .Select(item => item.Trim())
@@ -379,7 +379,7 @@ internal sealed class AccountActorKernelStorage
             .ToArray();
         return normalized.Length > 0
             ? normalized
-            : string.IsNullOrWhiteSpace(fallback) ? Array.Empty<string>() : new[] { fallback };
+            : string.IsNullOrWhiteSpace(defaultValue) ? Array.Empty<string>() : new[] { defaultValue };
     }
 
     private static string[] JsonStringArray(string json) =>

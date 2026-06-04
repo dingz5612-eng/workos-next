@@ -354,7 +354,7 @@ function validateMobileSources() {
       !components.includes("data-step-marker")) {
     violations.push(violation("experience_contract.step_state_markers", "OperationStepRail must publish machine-readable step state and correction markers."));
   }
-  for (const token of ["step-state-completed", "step-state-ready", "step-state-correction", "step-state-in-progress", "step-state-not-started", "step-state-blocked", "#2e7d5b", "#2f73b8", "#6b6f9f", "#b7791f", "#8a97a6", "#c24135", "--step-accent", "--step-bg", "--step-ring", "::before", "data-step-marker"]) {
+  for (const token of ["[data-step-state=\"completed\"]", "[data-step-state=\"ready\"]", "[data-step-state=\"correction\"]", "[data-step-state=\"in-progress\"]", "[data-step-state=\"not-started\"]", "[data-step-state=\"blocked\"]", "#2e7d5b", "#2f73b8", "#6b6f9f", "#b7791f", "#8a97a6", "#c24135", "--step-accent", "--step-bg", "--step-ring", "::before", "data-step-marker"]) {
     if (!workspaceStyles.includes(token)) {
       violations.push(violation("experience_contract.step_state_style_token", `workspace.css missing semantic step-state token ${token}.`, { token }));
     }

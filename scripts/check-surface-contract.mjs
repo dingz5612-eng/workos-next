@@ -287,7 +287,7 @@ function validateSourceBoundary(contract) {
   if (!components.includes("data-step-state") || !components.includes("data-current-step") || !components.includes("data-step-marker") || !components.includes("stepVisualState") || !components.includes("isCorrectionStep") || !components.includes("isTerminalCorrectionStep") || !components.includes("completedWithCorrectionStatus")) {
     violations.push(violation("surface_contract.step_state_markers", "OperationStepRail must expose step state and correction markers for browser evidence and shared styling."));
   }
-  for (const token of ["step-state-completed", "step-state-ready", "step-state-correction", "step-state-in-progress", "step-state-not-started", "step-state-blocked", "#2e7d5b", "#2f73b8", "#6b6f9f", "#b7791f", "#8a97a6", "#c24135", "--step-accent", "--step-bg", "--step-ring", "::before", "data-step-marker"]) {
+  for (const token of ["[data-step-state=\"completed\"]", "[data-step-state=\"ready\"]", "[data-step-state=\"correction\"]", "[data-step-state=\"in-progress\"]", "[data-step-state=\"not-started\"]", "[data-step-state=\"blocked\"]", "#2e7d5b", "#2f73b8", "#6b6f9f", "#b7791f", "#8a97a6", "#c24135", "--step-accent", "--step-bg", "--step-ring", "::before", "data-step-marker"]) {
     if (!workspaceStyles.includes(token)) {
       violations.push(violation("surface_contract.step_state_style_token", `workspace.css missing semantic step-state token ${token}.`, { token }));
     }

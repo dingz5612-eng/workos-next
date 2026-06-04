@@ -199,9 +199,9 @@ function validateSourceBindings() {
       !experienceComponents.includes("data-step-marker")) {
     errors.push(v("fes.step_state_markers", "OperationStepRail timeline steps must expose step state, current step, and correction markers."));
   }
-  for (const stateClass of ["step-state-completed", "step-state-ready", "step-state-correction", "step-state-in-progress", "step-state-not-started", "step-state-blocked"]) {
-    if (!workspaceStyles.includes(stateClass)) {
-      errors.push(v("fes.step_state_css_missing", `Step state CSS missing ${stateClass}.`, { stateClass }));
+  for (const stateSelector of ["[data-step-state=\"completed\"]", "[data-step-state=\"ready\"]", "[data-step-state=\"correction\"]", "[data-step-state=\"in-progress\"]", "[data-step-state=\"not-started\"]", "[data-step-state=\"blocked\"]"]) {
+    if (!workspaceStyles.includes(stateSelector)) {
+      errors.push(v("fes.step_state_css_missing", `Step state CSS missing ${stateSelector}.`, { stateSelector }));
     }
   }
   for (const color of ["#2e7d5b", "#2f73b8", "#6b6f9f", "#b7791f", "#8a97a6", "#c24135"]) {
