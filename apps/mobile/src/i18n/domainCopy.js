@@ -1,6 +1,5 @@
 export const domainCopy = {
   "zh-CN": {
-    "scenarioFocus": "今日关键场景",
     "stay": "住宿",
     "repair": "维修",
     "finance": "财务",
@@ -24,7 +23,6 @@ export const domainCopy = {
     "actionBoundary": "关键动作需要人工确认，AI 只能解释、推荐和生成草稿。"
   },
   "ru-RU": {
-    "scenarioFocus": "Срочные сценарии",
     "stay": "Проживание",
     "repair": "Ремонт",
     "finance": "Финансы",
@@ -48,7 +46,6 @@ export const domainCopy = {
     "actionBoundary": "Критические действия подтверждает человек. AI только объясняет, рекомендует и готовит черновики."
   },
   "ky-KG": {
-    "scenarioFocus": "Бүгүнкү негизги сценарийлер",
     "stay": "Жатакана",
     "repair": "Оңдоо",
     "finance": "Финансы",

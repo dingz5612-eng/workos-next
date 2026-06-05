@@ -212,19 +212,6 @@
   font-weight: var(--font-strong);
 }
 
-.context-mark {
-  display: inline-grid;
-  place-items: center;
-  min-height: 18px;
-  padding: 0 6px;
-  border-radius: 999px;
-  color: var(--brand);
-  background: #e6f8f2;
-  font-size: 12px;
-  font-style: normal;
-  font-weight: var(--font-strong);
-}
-
 .operation-inputs .field-error input,
 .operation-inputs .field-error select {
   border-color: #d64242;

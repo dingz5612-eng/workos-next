@@ -113,7 +113,6 @@
 .onboarding span,
 .command-card span,
 .page-title span,
-.queue-head span,
 .workspace-page span,
 .profile-card span,
 .metric-grid span,
@@ -125,7 +124,6 @@
 .onboarding span,
 .command-card span,
 .page-title span,
-.queue-head span,
 .workspace-page span,
 .profile-card span,
 .metric-grid span,
@@ -163,7 +161,6 @@
 .login-panel h1,
 .command-card h1,
 .page-title h1,
-.queue-head h1,
 .workspace-page h1,
 .profile-card h1,
 .confirm-panel h1 {
@@ -387,10 +384,8 @@
 .page-title,
 .search-box,
 .knowledge-search,
-.home-search,
 .compact-section,
 .help-card,
-.queue-head,
 .queue-filter,
 .queue-toolbar,
 .workspace-page,
@@ -413,16 +408,6 @@
 .help-card p,
 .personal-card span {
   color: #52677b;
-  font-size: 13px;
-}
-
-.home-search {
-  display: grid;
-  gap: 9px;
-}
-
-.home-search > span {
-  color: #66788c;
   font-size: 13px;
 }
 

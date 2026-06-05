@@ -253,8 +253,8 @@ public sealed class LensQueryService
         ["ru-RU"] = ""
     };
 
-    private static string PayloadValue(IReadOnlyDictionary<string, string> payload, string key, string fallback = "") =>
-        payload.TryGetValue(key, out var value) && !string.IsNullOrWhiteSpace(value) ? value : fallback;
+    private static string PayloadValue(IReadOnlyDictionary<string, string> payload, string key, string defaultValue = "") =>
+        payload.TryGetValue(key, out var value) && !string.IsNullOrWhiteSpace(value) ? value : defaultValue;
 
     private static string DomainFromIntent(ProcessWorkItemIntentRecord intent)
     {

@@ -141,11 +141,11 @@ test("mobile work plane smoke covers login, WorkItem, search, me, and PC boundar
   const bottomNav = page.getByRole("navigation", { name: "移动端主导航" });
   await expect(bottomNav).toBeVisible();
   await expect(bottomNav.getByRole("button", { name: "今天", exact: true })).toBeVisible();
-  await expect(bottomNav.getByRole("button", { name: "工作", exact: true })).toBeVisible();
+  await expect(bottomNav.getByRole("button", { name: "工作项", exact: true })).toBeVisible();
   await expect(bottomNav.getByRole("button", { name: "搜索", exact: true })).toBeVisible();
   await expect(bottomNav.getByRole("button", { name: "我的", exact: true })).toBeVisible();
 
-  await bottomNav.getByRole("button", { name: "工作", exact: true }).click();
+  await bottomNav.getByRole("button", { name: "工作项", exact: true }).click();
   await page.locator('[data-work-item-id="wi-e2e-room-setup"]').click();
   await expect(page.locator('[data-surface="operation-panel-route"]')).toBeVisible();
   await expect(page.locator('[data-surface="trusted-confirm"]')).toHaveCount(0);
@@ -184,11 +184,11 @@ test("mobile finance session stays on home and direct PC route shows diagnostic"
 
   await page.goto("/?device=mobile");
   await expect(page.locator(".surface-mobile")).toBeVisible();
-  await expect(page.locator('[data-surface="today-mission-control"]')).toBeVisible();
+  await expect(page.locator("body")).toContainText("今日工作");
   await expect(page.locator("body")).not.toContainText("财务对账与修正工作区");
 
   await page.reload();
-  await expect(page.locator('[data-surface="today-mission-control"]')).toBeVisible();
+  await expect(page.locator("body")).toContainText("今日工作");
 
   await page.goto("/?device=mobile&view=financeControl");
   await expect(page.locator('[data-surface="permission-diagnostic"]')).toBeVisible();
