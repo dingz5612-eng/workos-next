@@ -169,10 +169,18 @@ function checkStepDependencyContract() {
     for (const field of ["caseType", "workItemId", "contractKind"]) {
       if (!present(contract[field])) failures.push(`step-dependency-contract item missing ${field}.`);
     }
-    if (!Array.isArray(contract.dependsOn) || contract.dependsOn.length === 0) {
+    if (!Array.isArray(contract.dependsOn)) {
       failures.push(`${contract.workItemId || "<unknown>"} step dependency must declare dependsOn.`);
     }
-    for (const bucket of ["inheritedFields", "userSelectableFields", "derivedFields"]) {
+    if (Array.isArray(contract.dependsOn) && contract.dependsOn.length === 0) {
+      const hasStartContext = (contract.inheritedFields || []).every((item) =>
+        item.sourceWorkItemId === "operations-start-context");
+      const hasNoInheritedFields = (contract.inheritedFields || []).length === 0;
+      if (!hasStartContext && !hasNoInheritedFields) {
+        failures.push(`${contract.workItemId || "<unknown>"} root step dependency must use operations-start-context for inherited fields.`);
+      }
+    }
+    for (const bucket of ["inheritedFields", "userSelectableFields", "derivedFields", "backendDefaultFields"]) {
       if (!Array.isArray(contract[bucket])) {
         failures.push(`${contract.workItemId || "<unknown>"} step dependency must declare ${bucket}.`);
       }
@@ -203,6 +211,7 @@ function checkStepDependencyContract() {
     }
   }
   checkDormitoryBedSetupStepDependency();
+  checkDormitorySystemContextCoverage();
 }
 
 function checkDormitoryBedSetupStepDependency() {
@@ -211,8 +220,8 @@ function checkDormitoryBedSetupStepDependency() {
     failures.push("step-dependency-contract must declare bedSetup.");
     return;
   }
-  if (bedSetup.contractKind !== "dormitory-golden-sample") {
-    failures.push("bedSetup step dependency must be marked as dormitory-golden-sample, not a global rule.");
+  if (bedSetup.contractKind !== "dormitory-system-context") {
+    failures.push("bedSetup step dependency must be marked as dormitory-system-context, not a global rule.");
   }
   if (!bedSetup.dependsOn?.includes("roomSetup")) failures.push("bedSetup step dependency must depend on roomSetup.");
   const inherited = new Set((bedSetup.inheritedFields || []).map((item) => item.fieldId));
@@ -225,8 +234,98 @@ function checkDormitoryBedSetupStepDependency() {
   for (const fieldId of ["bedLabels", "bedLayout"]) {
     if (!derived.has(fieldId)) failures.push(`bedSetup step dependency must derive ${fieldId}.`);
   }
+  const retired = new Set((bedSetup.retiredFields || []).map((item) => item.fieldId));
+  for (const fieldId of ["bedId", "bedNo", "bedLabel"]) {
+    if (!retired.has(fieldId)) failures.push(`bedSetup step dependency must retire stale single-bed field ${fieldId}.`);
+  }
   if (!(bedSetup.hiddenBackendDefaults || []).some((item) => item.fieldId === "bedStatus" && item.defaultValue === "available")) {
     failures.push("bedSetup step dependency must hide bedStatus and default it to available.");
+  }
+}
+
+function checkDormitorySystemContextCoverage() {
+  const contractByCard = new Map((stepDependencyContract.contracts || []).map((item) => [item.workItemId, item]));
+  const requiredContracts = [
+    "bedSetup",
+    "rateSetup",
+    "roomReadiness",
+    "roomBlock",
+    "roomRelease",
+    "serviceTaskCreate",
+    "serviceTaskAssign",
+    "serviceTaskComplete",
+    "serviceTaskVerify",
+    "roomReleaseAfterService",
+    "depositAssessment",
+    "depositReceipt",
+    "depositConfirmation",
+    "depositDeduction",
+    "depositRefundApproval",
+    "depositRefundPayment",
+    "depositClose",
+    "paymentReceipt",
+    "paymentConfirmation",
+    "paymentAllocation",
+    "paymentAdjustment",
+    "roomInspection",
+    "finalBalanceClose",
+    "bedRelease",
+    "expenseRecord",
+    "periodClose",
+    "ledgerCorrectionApply"
+  ];
+  for (const cardId of requiredContracts) {
+    if (!contractByCard.has(cardId)) failures.push(`step-dependency-contract must declare system context contract for ${cardId}.`);
+  }
+
+  const guardPolicy = stepDependencyContract.guardPolicy || {};
+  const protectedFields = new Set([
+    ...(guardPolicy.objectReferenceFieldIds || []),
+    ...(guardPolicy.actorFieldIds || []),
+    "correctionRequestId"
+  ]);
+  for (const ref of fieldRefs.refs || []) {
+    const cardId = String(ref.ref || "").replace(/^field\./, "").replace(/\.v\d+$/, "");
+    if (cardId === "roomSetup") continue;
+    const protectedRefFields = [...(ref.requiredFieldIds || []), ...(ref.optionalFieldIds || [])]
+      .filter((fieldId) => protectedFields.has(fieldId));
+    if (!protectedRefFields.length) continue;
+    const contract = contractByCard.get(cardId);
+    if (!contract) {
+      failures.push(`${cardId} includes protected context fields (${protectedRefFields.join(", ")}) but has no step dependency contract.`);
+      continue;
+    }
+    const declared = new Set([
+      ...(contract.inheritedFields || []).map((item) => item.fieldId),
+      ...(contract.userSelectableFields || []).map((item) => item.fieldId),
+      ...(contract.derivedFields || []).map((item) => item.fieldId),
+      ...(contract.backendDefaultFields || []).map((item) => item.fieldId),
+      ...(contract.hiddenBackendDefaults || []).map((item) => item.fieldId)
+    ]);
+    for (const fieldId of protectedRefFields) {
+      if (!declared.has(fieldId)) {
+        failures.push(`${cardId}.${fieldId} is a protected context field and must declare inherited/user/derived/backend source.`);
+      }
+    }
+  }
+
+  const serviceRelease = contractByCard.get("roomReleaseAfterService");
+  for (const fieldId of ["taskId", "roomId", "bedId"]) {
+    if (!(serviceRelease?.inheritedFields || []).some((item) => item.fieldId === fieldId)) {
+      failures.push(`roomReleaseAfterService must inherit ${fieldId} from service task proof.`);
+    }
+  }
+  for (const [cardId, actorField] of [
+    ["depositReceipt", "receivedBy"],
+    ["depositConfirmation", "financeReviewer"],
+    ["depositRefundApproval", "approverId"],
+    ["paymentReceipt", "receivedBy"],
+    ["paymentConfirmation", "financeReviewer"],
+    ["ledgerCorrectionApply", "approverId"]
+  ]) {
+    if (!(contractByCard.get(cardId)?.backendDefaultFields || []).some((item) => item.fieldId === actorField)) {
+      failures.push(`${cardId}.${actorField} must be backend-defaulted from session/approval chain, not user-entered.`);
+    }
   }
 }
 

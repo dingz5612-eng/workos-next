@@ -48,7 +48,9 @@ public sealed class CanonicalOperationsApiService
     public OperationsWorkspaceStartResult StartWorkspaceCase(
         WorkspaceProjection workspace,
         string templateWorkspaceId,
-        RuntimeActorContext actor)
+        RuntimeActorContext actor,
+        IReadOnlyDictionary<string, string>? anchorPayload = null,
+        string? anchorQuery = null)
     {
         var card = workspace.Cards.FirstOrDefault(item => item.Status.Equals("ready", StringComparison.OrdinalIgnoreCase))
             ?? workspace.Cards.FirstOrDefault();
@@ -68,15 +70,8 @@ public sealed class CanonicalOperationsApiService
             workspace.Id,
             card.Id,
             FirstNonEmpty(card.Confirmation.RequiredRole, actor.Role, "operator"),
-            new Dictionary<string, string>
-            {
-                ["caseId"] = operationCase.CaseId,
-                ["cardId"] = card.Id,
-                ["templateWorkspaceId"] = templateWorkspaceId,
-                ["definitionId"] = definition.DefinitionId,
-                ["operationAxis"] = "Definition -> OperationCase -> WorkItem",
-                ["startedByActorId"] = actor.ActorId
-            })) ?? throw new InvalidOperationException("operation_workspace_start_work_item_not_resolved");
+            StartWorkspacePayload(workspace, templateWorkspaceId, card.Id, definition.DefinitionId, operationCase.CaseId, actor, anchorPayload, anchorQuery))) ??
+            throw new InvalidOperationException("operation_workspace_start_work_item_not_resolved");
 
         return new OperationsWorkspaceStartResult(
             workspace,
@@ -199,9 +194,10 @@ public sealed class CanonicalOperationsApiService
                 commit.SubmissionId,
                 "operations_confirm_committed",
                 actor.ActorId);
-            DispatchNextDormitoryResourceWorkItem(
+            DispatchNextOperationWorkItem(
                 workItem,
                 FirstNonEmpty(normalized.CardId, PayloadValue(workItem.Payload, "cardId"), workItem.WorkItemType),
+                normalized.FieldValues,
                 actor,
                 caseId);
         }
@@ -209,9 +205,10 @@ public sealed class CanonicalOperationsApiService
         return ToConfirmResult(commit, normalized);
     }
 
-    private void DispatchNextDormitoryResourceWorkItem(
+    private void DispatchNextOperationWorkItem(
         WorkItem current,
         string currentCardId,
+        IReadOnlyDictionary<string, string>? fieldValues,
         RuntimeActorContext actor,
         string caseId)
     {
@@ -220,18 +217,22 @@ public sealed class CanonicalOperationsApiService
             return;
         }
 
-        if (!current.WorkspaceId.StartsWith("W-STAY-RESOURCE-", StringComparison.OrdinalIgnoreCase))
+        var templateWorkspaceId = FirstNonEmpty(
+            PayloadValue(current.Payload, "templateWorkspaceId"),
+            WorkspaceSeedCatalog.FindWorkspace(current.WorkspaceId)?.Id);
+        var seed = WorkspaceSeedCatalog.FindWorkspace(templateWorkspaceId);
+        if (seed is null)
         {
             return;
         }
 
-        var nextCardId = NextDormitoryResourceCard(currentCardId);
+        var nextCardId = OperationBranchResolver.NextCardId(seed, current.WorkspaceId, currentCardId, fieldValues);
         if (string.IsNullOrWhiteSpace(nextCardId))
         {
             return;
         }
 
-        var definition = definitions.ResolveByWorkspaceCard("W-STAY-RESOURCE", nextCardId);
+        var definition = definitions.ResolveByWorkspaceCard(seed.Id, nextCardId);
         catalog.CreateWorkItem(new CreateWorkItemRequest(
             OperationsWorkItemIdFor(current.WorkspaceId, nextCardId),
             current.TenantId,
@@ -239,32 +240,236 @@ public sealed class CanonicalOperationsApiService
             current.WorkspaceId,
             current.WorkspaceId,
             nextCardId,
-            FirstNonEmpty(current.OwnerRole, actor.Role, "operator"),
+            ConfirmationPolicyCatalog.OwnerRoleForCard(nextCardId),
             new Dictionary<string, string>
             {
                 ["caseId"] = caseId,
                 ["cardId"] = nextCardId,
-                ["templateWorkspaceId"] = "W-STAY-RESOURCE",
+                ["templateWorkspaceId"] = seed.Id,
                 ["definitionId"] = definition.DefinitionId,
                 ["operationAxis"] = "DomainEvent -> ProcessManager -> WorkItem",
                 ["sourceWorkItemId"] = current.WorkItemId,
-                ["dispatchedBy"] = "dormitory_resource_lifecycle_process_manager"
+                ["ownerRole"] = ConfirmationPolicyCatalog.OwnerRoleForCard(nextCardId),
+                ["dispatchedBy"] = "operation_flow_process_manager"
             }));
     }
 
-    private static string NextDormitoryResourceCard(string cardId) =>
-        cardId switch
-        {
-            "roomSetup" => "bedSetup",
-            "bedSetup" => "rateSetup",
-            "rateSetup" => "roomReadiness",
-            "roomReadiness" => "roomBlock",
-            "roomBlock" => "roomRelease",
-            _ => string.Empty
-        };
-
     private static string OperationsWorkItemIdFor(string workspaceId, string cardId) =>
         $"wi-{OperationsHash.Short(workspaceId, cardId, "operations-runtime")}";
+
+    private static IReadOnlyDictionary<string, string> StartWorkspacePayload(
+        WorkspaceProjection workspace,
+        string templateWorkspaceId,
+        string cardId,
+        string definitionId,
+        string caseId,
+        RuntimeActorContext actor,
+        IReadOnlyDictionary<string, string>? anchorPayload = null,
+        string? anchorQuery = null)
+    {
+        var payload = new Dictionary<string, string>(StringComparer.Ordinal)
+        {
+            ["caseId"] = caseId,
+            ["cardId"] = cardId,
+            ["templateWorkspaceId"] = templateWorkspaceId,
+            ["definitionId"] = definitionId,
+            ["operationAxis"] = "Definition -> OperationCase -> WorkItem",
+            ["startedByActorId"] = actor.ActorId
+        };
+        foreach (var (key, value) in DormitoryDirectStartContext(workspace.Id, templateWorkspaceId, cardId, actor, anchorPayload, anchorQuery))
+        {
+            payload[key] = value;
+        }
+
+        return payload;
+    }
+
+    private static IReadOnlyDictionary<string, string> DormitoryDirectStartContext(
+        string workspaceId,
+        string templateWorkspaceId,
+        string cardId,
+        RuntimeActorContext actor,
+        IReadOnlyDictionary<string, string>? anchorPayload = null,
+        string? anchorQuery = null)
+    {
+        if (!IsDormitoryDirectStartContextWorkspace(templateWorkspaceId))
+        {
+            return new Dictionary<string, string>();
+        }
+
+        var anchor = ResolveDormitoryAnchor(anchorPayload, anchorQuery);
+        var suffix = OperationsHash.Short(workspaceId, templateWorkspaceId, cardId, anchor.StableKey, "business-anchor-context")[..12];
+        var context = new Dictionary<string, string>(StringComparer.Ordinal)
+        {
+            ["startContextSource"] = "operations-start-context",
+            ["startContextKind"] = "business-anchor-context",
+            ["startContextBoundByActorId"] = actor.ActorId,
+            ["anchorQuery"] = anchor.Query,
+            ["stayId"] = $"stay-{suffix}",
+            ["residentId"] = $"resident-{suffix}",
+            ["residentName"] = anchor.ResidentName,
+            ["phone"] = anchor.Phone,
+            ["buildingName"] = anchor.BuildingName,
+            ["roomNo"] = anchor.RoomNo,
+            ["roomId"] = $"room-d02-22-{suffix}",
+            ["bedNo"] = anchor.BedNo,
+            ["bedId"] = $"bed-d02-22-01-{suffix}",
+            ["bedType"] = anchor.BedType,
+            ["bedTypeLabel"] = anchor.BedTypeLabel
+        };
+        context["roomId"] = $"room-{Slug(anchor.BuildingName)}-{Slug(anchor.RoomNo)}-{suffix}";
+        context["bedId"] = $"bed-{Slug(anchor.BuildingName)}-{Slug(anchor.RoomNo)}-{Slug(anchor.BedNo)}-{suffix}";
+
+        if (templateWorkspaceId.Equals("W-STAY-DEPOSIT-LEDGER", StringComparison.OrdinalIgnoreCase))
+        {
+            context["depositStatus"] = "押金待评估";
+        }
+        else if (templateWorkspaceId.Equals("W-STAY-PAYMENT-LEDGER", StringComparison.OrdinalIgnoreCase))
+        {
+            context["paymentStatus"] = "普通收款待登记";
+        }
+        else if (templateWorkspaceId.Equals("W-STAY-CHECKOUT-SETTLEMENT", StringComparison.OrdinalIgnoreCase) ||
+                 templateWorkspaceId.Equals("W-STAY-CHECKOUT", StringComparison.OrdinalIgnoreCase))
+        {
+            context["checkoutStatus"] = "退住待办理";
+        }
+
+        return context;
+    }
+
+    private static bool IsDormitoryDirectStartContextWorkspace(string templateWorkspaceId) =>
+        new[]
+        {
+            "W-STAY-DEPOSIT-LEDGER",
+            "W-STAY-PAYMENT-LEDGER",
+            "W-STAY-CHECKOUT-SETTLEMENT",
+            "W-STAY-CHECKOUT"
+        }.Contains(templateWorkspaceId, StringComparer.OrdinalIgnoreCase);
+
+    private sealed record DormitoryAnchor(
+        string Query,
+        string StableKey,
+        string ResidentName,
+        string Phone,
+        string BuildingName,
+        string RoomNo,
+        string BedNo,
+        string BedType,
+        string BedTypeLabel);
+
+    private static DormitoryAnchor ResolveDormitoryAnchor(IReadOnlyDictionary<string, string>? payload, string? query)
+    {
+        var values = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        if (payload is not null)
+        {
+            foreach (var item in payload)
+            {
+                if (!string.IsNullOrWhiteSpace(item.Value)) values[item.Key] = item.Value.Trim();
+            }
+        }
+
+        var rawQuery = FirstNonEmpty(query, Value(values, "anchorQuery"), Value(values, "businessAnchor"), Value(values, "phone"), Value(values, "roomNo"), Value(values, "residentName")) ?? "";
+        var phone = FirstNonEmpty(Value(values, "phone"), PhoneFromQuery(rawQuery), Digits(rawQuery, 7), "13800001234");
+        var roomParts = RoomParts(rawQuery);
+        var building = FirstNonEmpty(Value(values, "buildingName"), Value(values, "buildingId"), roomParts.Building, "D02");
+        var roomNo = FirstNonEmpty(Value(values, "roomNo"), roomParts.RoomNo, "22");
+        var bedNo = FirstNonEmpty(Value(values, "bedNo"), roomParts.BedNo, "01");
+        var resident = FirstNonEmpty(Value(values, "residentName"), Value(values, "customerName"), Value(values, "leadName"), NameFromQuery(rawQuery), "真实浏览器验收");
+        var bedType = FirstNonEmpty(Value(values, "bedType"), BedTypeFromQuery(rawQuery), "upper");
+        var bedTypeLabel = BedTypeLabelFor(bedType);
+        var stable = FirstNonEmpty(Value(values, "stayId"), rawQuery, $"{resident}|{phone}|{building}|{roomNo}|{bedNo}") ?? "";
+        return new DormitoryAnchor(rawQuery, stable, resident, phone, building, roomNo, bedNo, bedType, bedTypeLabel);
+    }
+
+    private static string Value(IReadOnlyDictionary<string, string> values, string key) =>
+        values.TryGetValue(key, out var value) ? value : "";
+
+    private static string? Digits(string value, int minLength)
+    {
+        var digits = new string((value ?? "").Where(char.IsDigit).ToArray());
+        return digits.Length >= minLength ? digits : null;
+    }
+
+    private static string? PhoneFromQuery(string value)
+    {
+        var parts = (value ?? "")
+            .Split(new[] { '/', '／', '·', ',', '，', ' ', '\t', '-' }, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .Select(item => new string(item.Where(char.IsDigit).ToArray()))
+            .Where(item => item.Length is >= 7 and <= 16)
+            .ToArray();
+        return parts.FirstOrDefault(item => item.Length >= 11) ?? parts.FirstOrDefault();
+    }
+
+    private static (string Building, string RoomNo, string BedNo) RoomParts(string value)
+    {
+        var parts = (value ?? "")
+            .Split(new[] { '/', '／', '·', ',', '，', ' ', '\t', '-' }, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .Where(item => !string.IsNullOrWhiteSpace(item))
+            .ToArray();
+        var building = parts.FirstOrDefault(item => item.Any(char.IsLetter) && item.Any(char.IsDigit)) ?? "";
+        var roomNo = parts.FirstOrDefault(item => item.Any(char.IsDigit) && !item.Any(char.IsLetter) && item.Length >= 2) ?? "";
+        var bedNo = parts.LastOrDefault(item => item.All(char.IsDigit) && item.Length <= 2) ?? "";
+        return (building, roomNo, bedNo);
+    }
+
+    private static string NameFromQuery(string value)
+    {
+        var tokens = (value ?? "")
+            .Split(new[] { '/', '／', '·', ',', '，', ' ', '\t', '-' }, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .Where(item => item.Any(ch => char.IsLetter(ch) || IsCjk(ch)) && !item.Any(char.IsDigit) && !IsBedTypeToken(item))
+            .ToArray();
+        return tokens.FirstOrDefault() ?? "";
+    }
+
+    private static bool IsCjk(char value) =>
+        value >= 0x4E00 && value <= 0x9FFF;
+
+    private static bool IsBedTypeToken(string value)
+    {
+        var text = value ?? "";
+        return text.Contains("上铺", StringComparison.OrdinalIgnoreCase) ||
+            text.Contains("下铺", StringComparison.OrdinalIgnoreCase) ||
+            text.Contains("平铺", StringComparison.OrdinalIgnoreCase) ||
+            text.Contains("upper", StringComparison.OrdinalIgnoreCase) ||
+            text.Contains("lower", StringComparison.OrdinalIgnoreCase) ||
+            text.Contains("whole", StringComparison.OrdinalIgnoreCase) ||
+            text.Contains("flat", StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static string BedTypeFromQuery(string value)
+    {
+        var text = value ?? "";
+        if (text.Contains("下铺", StringComparison.OrdinalIgnoreCase) ||
+            text.Contains("lower", StringComparison.OrdinalIgnoreCase))
+        {
+            return "lower";
+        }
+
+        if (text.Contains("平铺", StringComparison.OrdinalIgnoreCase) ||
+            text.Contains("whole", StringComparison.OrdinalIgnoreCase) ||
+            text.Contains("flat", StringComparison.OrdinalIgnoreCase))
+        {
+            return "whole";
+        }
+
+        if (text.Contains("上铺", StringComparison.OrdinalIgnoreCase) ||
+            text.Contains("upper", StringComparison.OrdinalIgnoreCase))
+        {
+            return "upper";
+        }
+
+        return string.Empty;
+    }
+
+    private static string BedTypeLabelFor(string value) =>
+        value.Equals("lower", StringComparison.OrdinalIgnoreCase) ? "下铺" :
+        value.Equals("whole", StringComparison.OrdinalIgnoreCase) ? "平铺" :
+        value.Equals("flat", StringComparison.OrdinalIgnoreCase) ? "平铺" : "上铺";
+
+    private static string Slug(string value) =>
+        string.IsNullOrWhiteSpace(value)
+            ? "x"
+            : FirstNonEmpty(new string(value.Trim().ToLowerInvariant().Select(ch => char.IsLetterOrDigit(ch) ? ch : '-').ToArray()).Trim('-'), "x");
 
     public FactTraceV1? GetSubmissionTrace(string submissionId) =>
         traces.GetFactTraceBySubmission(submissionId);

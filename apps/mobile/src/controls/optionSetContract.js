@@ -29,6 +29,34 @@ const optionValueLabels = {
     lower: "全部下铺",
     whole: "全部平铺"
   },
+  messenger: {
+    whatsapp: "WhatsApp",
+    phone: "电话",
+    instagram: "Instagram",
+    facebook: "Facebook",
+    other: "其他"
+  },
+  leadSource: {
+    whatsapp: "WhatsApp",
+    phone: "电话",
+    instagram: "Instagram",
+    listing_ad: "广告",
+    referral: "熟人推荐",
+    employer: "雇主",
+    other: "其他"
+  },
+  leadStatus: {
+    new: "新线索",
+    callback: "回访",
+    negotiating: "洽谈中",
+    reserved: "已预订",
+    checked_in: "已入住",
+    rejected: "拒绝"
+  },
+  reservationNextAction: {
+    convert: "继续转入住",
+    cancel: "取消并释放预留"
+  },
   gender: {
     male: "男",
     female: "女",

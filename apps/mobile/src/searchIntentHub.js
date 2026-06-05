@@ -1,6 +1,7 @@
 import { resolveOperationPanelTarget } from "./operationRouteResolver.js";
 import { operationStatusTranslationKey } from "./operationStatus.js";
 import { isAccommodationResourceSetupQuery } from "./searchIntentRegistry.js";
+import { admissionCopy, normalizeAdmissionState } from "./admissionSurface.js";
 
 export function buildSearchResultVM(item = {}, ctx = {}) {
   const resultType = item.resultType || item.type || item.kind || "object";
@@ -15,16 +16,19 @@ export function buildSearchResultVM(item = {}, ctx = {}) {
   const templateWorkspaceId = item.templateWorkspaceId || item.template_workspace_id || "";
   const firstCardId = item.firstCardId || item.first_card_id || "";
   const action = searchActionFor({ ...item, resultType, workspaceId, cardId, workItemId, evidenceId, traceId, learningId, caseId, commandId }, ctx);
-  const admission = normalizeAdmission(item.admission);
+  const admission = admissionForSearchItem(item, action);
+  const admissionSurface = admissionCopy(admission, ctx, "search");
+  const actionLabel = admissionActionLabel(action, admission, ctx);
+  const explicitNextAction = safeLocalized(item.localizedNextAction ?? item.nextActionLabel ?? item.nextAction, ctx);
   return {
     kind: "SearchResultVM",
     resultType,
     title: safeLocalized(item.localizedTitle ?? item.title, ctx) || titleForType(resultType, ctx),
     subtitle: safeLocalized(item.localizedSubtitle ?? item.subtitle, ctx) || ctx.tr?.("workosSearchSubtitle") || "",
     statusLabel: localizedStatus(item.localizedStatus ?? item.statusLabel ?? item.status ?? item.lifecycleState, ctx),
-    nextActionLabel: safeLocalized(item.localizedNextAction ?? item.nextActionLabel ?? item.nextAction, ctx) || action.label,
+    nextActionLabel: genericProcessCopy(explicitNextAction, ctx) ? actionLabel : explicitNextAction || actionLabel,
     actionType: action.type,
-    actionLabel: action.label,
+    actionLabel,
     workItemId,
     workspaceId,
     cardId,
@@ -40,6 +44,11 @@ export function buildSearchResultVM(item = {}, ctx = {}) {
     confirmAllowed: admission.confirmAllowed,
     productionAllowed: admission.productionAllowed,
     admissionReason: admission.reason,
+    admissionLabel: admissionSurface.label,
+    admissionReasonLabel: admissionSurface.reason,
+    admissionLabelKey: admissionSurface.labelKey,
+    admissionReasonKey: admissionSurface.reasonKey,
+    admissionDecision: admissionSurface.decision,
     view: action.view,
     reasonIfNoAction: action.reason,
     sourceRefs: sourceRefs(item, { workspaceId, cardId, workItemId, caseId, evidenceId, traceId, learningId })
@@ -136,6 +145,10 @@ function rankFor(item, query) {
     item.reason,
     item.nextAction,
     item.actionLabel,
+    item.businessAnchor,
+    item.anchorLabel,
+    item.anchor,
+    item.scenarioAnchor,
     item.workspaceId,
     item.cardId,
     item.caseId,
@@ -176,26 +189,53 @@ function sourceRefs(item, ids) {
     evidenceId: ids.evidenceId,
     traceId: ids.traceId,
     learningId: ids.learningId,
-    admissionDecisionRef: item.admission?.admissionDecisionRef || item.sourceRefs?.admissionDecisionRef || "",
     source: item.sourceRefs?.source || item.source || "",
     projectionAdapter: item.sourceRefs?.projectionAdapter || ""
   };
 }
 
-function normalizeAdmission(value = {}) {
-  return {
-    visibleAllowed: value.visibleAllowed !== false,
-    prepareAllowed: value.prepareAllowed !== false,
-    confirmAllowed: value.confirmAllowed === true,
-    productionAllowed: value.productionAllowed === true,
-    mode: value.mode || "prepare_only",
-    reason: value.reason || "",
-    blockingSources: Array.isArray(value.blockingSources) ? value.blockingSources : [],
-    requiredCapabilities: Array.isArray(value.requiredCapabilities) ? value.requiredCapabilities : [],
-    requiredDeviceTrust: Array.isArray(value.requiredDeviceTrust) ? value.requiredDeviceTrust : [],
-    noGoItems: Array.isArray(value.noGoItems) ? value.noGoItems : [],
-    admissionDecisionRef: value.admissionDecisionRef || ""
-  };
+function admissionActionLabel(action = {}, admission = {}, ctx = {}) {
+  if (action.type === "openWorkItem") {
+    if (!admission.confirmAllowed) return ctx.tr?.("viewOnly") || "查看记录";
+    if (!admission.productionAllowed) return ctx.tr?.("searchActionObservation") || "继续观察记录";
+  }
+  if (action.type === "startOperationsWorkspace") {
+    if (!admission.confirmAllowed) return ctx.tr?.("searchActionLearning") || "开始学习";
+    if (!admission.productionAllowed) return ctx.tr?.("startObservation") || "开始观察记录";
+  }
+  return action.label;
+}
+
+function genericProcessCopy(value, ctx = {}) {
+  const text = String(value || "").trim();
+  return Boolean(text) && [
+    ctx.tr?.("searchActionProcess") || "处理",
+    ctx.tr?.("startHandling") || "开始办理",
+    "处理",
+    "开始办理"
+  ].includes(text);
+}
+
+function admissionForSearchItem(item = {}, action = {}) {
+  if (item.admission) return normalizeAdmissionState(item.admission);
+  if (["openWorkItem", "startOperationsWorkspace"].includes(action.type)) {
+    return normalizeAdmissionState({
+      visibleAllowed: true,
+      prepareAllowed: true,
+      confirmAllowed: true,
+      productionAllowed: false,
+      mode: "internal_pilot_observation",
+      reason: "business_production_blocked"
+    });
+  }
+  return normalizeAdmissionState({
+    visibleAllowed: true,
+    prepareAllowed: false,
+    confirmAllowed: false,
+    productionAllowed: false,
+    mode: "contract_preview",
+    reason: "visible_only"
+  });
 }
 
 function safeLocalized(value, ctx) {

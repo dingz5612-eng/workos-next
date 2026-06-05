@@ -1,64 +1,4022 @@
 {
   "version": "oam.step-dependency-contract.v1",
-  "generatedBy": "oam-cab-v1-step-dependency-hardening",
+  "generatedBy": "oam-cab-v1-dormitory-field-context-baseline",
   "scope": "definition-contract",
   "ruleLayer": "scenario-instance-contract",
-  "abstractPattern": "later WorkItems declare inherited, user-selectable, system-derived, and hidden backend-default fields; surfaces render them according to the generic StepDependencyExperience and stepDependencySurface contracts",
+  "abstractPattern": "Dormitory sample step fields are declared as inherited, user-selectable, derived, backend-default, or retired fields. This is a reusable Definition pattern for other business domains: later WorkItems must not ask users to manually type object references, actor/person fields, generated ids, derived values, or hidden defaults. Surfaces render inherited fields read-only or hidden-submit, derived fields as preview/hidden-submit, user fields as the only editable fields, backend defaults as hidden/no-client-trust fields, and retired fields as suppressed legacy fields.",
+  "fieldBuckets": {
+    "inheritedFields": "system context from prior WorkItems, runtime events, projections, operations-start-context payloads, session, assignment chain, or completed records",
+    "userSelectableFields": "the fields the current operator can actually decide or correct in this step",
+    "derivedFields": "values generated from inherited/user fields and recomputed when inputs change",
+    "backendDefaultFields": "runtime/session/default values owned by backend; frontend never asks the user to type them",
+    "retiredFields": "legacy or misleading fields that must be hidden instead of accepted as current user input"
+  },
   "contracts": [
     {
       "caseType": "Accommodation.ResourceSetup",
+      "workItemId": "roomSetup",
+      "contractKind": "dormitory-system-context",
+      "dependsOn": [],
+      "inheritedFields": [],
+      "userSelectableFields": [
+        {
+          "fieldId": "buildingName",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "roomNo",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "roomType",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "bedCount",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "genderPolicy",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "furnitureStatus",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "technicalState",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "roomNote",
+          "surface": "editable"
+        }
+      ],
+      "derivedFields": [
+        {
+          "fieldId": "roomId",
+          "derivedFrom": [
+            "buildingName",
+            "roomNo"
+          ],
+          "surface": "hidden-submit-only",
+          "staleDraftPolicy": "always-recompute"
+        }
+      ],
+      "backendDefaultFields": [
+        {
+          "fieldId": "operatorId",
+          "source": "actor-session",
+          "surface": "hidden-no-client-trust",
+          "defaultValue": "runtime-owned"
+        }
+      ],
+      "hiddenBackendDefaults": [],
+      "retiredFields": []
+    },
+    {
+      "caseType": "Accommodation.ResourceSetup",
       "workItemId": "bedSetup",
-      "contractKind": "dormitory-golden-sample",
-      "dependsOn": ["roomSetup"],
+      "contractKind": "dormitory-system-context",
+      "dependsOn": [
+        "roomSetup"
+      ],
       "inheritedFields": [
         {
           "fieldId": "roomId",
           "sourceWorkItemId": "roomSetup",
           "surface": "readonly-hidden-submit",
-          "priority": ["latest-runtime-event-or-projection", "completed-record-snapshot", "non-conflicting-draft-fallback"]
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
         },
         {
           "fieldId": "bedCount",
           "sourceWorkItemId": "roomSetup",
           "surface": "readonly-hidden-submit",
-          "priority": ["latest-runtime-event-or-projection", "completed-record-snapshot", "non-conflicting-draft-fallback"]
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
         }
       ],
       "userSelectableFields": [
         {
           "fieldId": "bedType",
-          "surfaceLabel": {
-            "zh-CN": "床铺生成方式",
-            "ru-RU": "Как создать койки",
-            "ky-KG": "Койканы түзүү жолу"
-          },
-          "defaultValue": "bunk_pair"
+          "surface": "editable"
         }
       ],
       "derivedFields": [
         {
           "fieldId": "bedLabels",
-          "surfaceLabel": {
-            "zh-CN": "将生成的床位",
-            "ru-RU": "Будут созданы",
-            "ky-KG": "Түзүлө турган койкалар"
-          },
-          "derivedFrom": ["bedCount"],
+          "derivedFrom": [
+            "bedCount"
+          ],
+          "surface": "preview-hidden-submit",
           "staleDraftPolicy": "always-recompute"
         },
         {
           "fieldId": "bedLayout",
-          "derivedFrom": ["bedCount", "bedType"],
+          "derivedFrom": [
+            "bedCount",
+            "bedType"
+          ],
+          "surface": "hidden-submit-only",
           "staleDraftPolicy": "always-recompute"
+        }
+      ],
+      "backendDefaultFields": [
+        {
+          "fieldId": "bedStatus",
+          "source": "runtime-default",
+          "surface": "hidden-no-client-trust",
+          "defaultValue": "available"
         }
       ],
       "hiddenBackendDefaults": [
         {
           "fieldId": "bedStatus",
           "defaultValue": "available",
-          "reason": "maintenance, cleaning, and not-for-sale states must use roomReadiness or service task block/release flows"
+          "reason": "backend runtime owns this default; client must not ask the user to type it"
+        }
+      ],
+      "retiredFields": [
+        {
+          "fieldId": "bedId",
+          "reason": "retired by current step dependency contract; kept only to suppress stale legacy WorkItem fields"
+        },
+        {
+          "fieldId": "bedNo",
+          "reason": "retired by current step dependency contract; kept only to suppress stale legacy WorkItem fields"
+        },
+        {
+          "fieldId": "bedLabel",
+          "reason": "retired by current step dependency contract; kept only to suppress stale legacy WorkItem fields"
+        },
+        {
+          "fieldId": "note",
+          "reason": "retired by current step dependency contract; kept only to suppress stale legacy WorkItem fields"
         }
       ]
+    },
+    {
+      "caseType": "Accommodation.ResourceSetup",
+      "workItemId": "rateSetup",
+      "contractKind": "dormitory-system-context",
+      "dependsOn": [
+        "roomSetup",
+        "bedSetup"
+      ],
+      "inheritedFields": [
+        {
+          "fieldId": "roomId",
+          "sourceWorkItemId": "bedSetup",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        }
+      ],
+      "userSelectableFields": [
+        {
+          "fieldId": "ratePlan",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "dailyRatePerBed",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "weeklyRatePerBed",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "monthlyRatePerBed",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "currency",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "effectiveFrom",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "rateNote",
+          "surface": "editable"
+        }
+      ],
+      "derivedFields": [],
+      "backendDefaultFields": [],
+      "hiddenBackendDefaults": [],
+      "retiredFields": []
+    },
+    {
+      "caseType": "Accommodation.ResourceSetup",
+      "workItemId": "roomReadiness",
+      "contractKind": "dormitory-system-context",
+      "dependsOn": [
+        "roomSetup",
+        "bedSetup",
+        "rateSetup"
+      ],
+      "inheritedFields": [
+        {
+          "fieldId": "roomId",
+          "sourceWorkItemId": "rateSetup",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        }
+      ],
+      "userSelectableFields": [
+        {
+          "fieldId": "furnitureStatus",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "technicalState",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "availabilityStatus",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "readinessNote",
+          "surface": "editable"
+        }
+      ],
+      "derivedFields": [],
+      "backendDefaultFields": [
+        {
+          "fieldId": "operatorId",
+          "source": "actor-session",
+          "surface": "hidden-no-client-trust",
+          "defaultValue": "runtime-owned"
+        }
+      ],
+      "hiddenBackendDefaults": [],
+      "retiredFields": []
+    },
+    {
+      "caseType": "Accommodation.ResourceSetup",
+      "workItemId": "roomBlock",
+      "contractKind": "dormitory-system-context",
+      "dependsOn": [
+        "roomReadiness"
+      ],
+      "inheritedFields": [
+        {
+          "fieldId": "roomId",
+          "sourceWorkItemId": "roomReadiness",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        }
+      ],
+      "userSelectableFields": [
+        {
+          "fieldId": "resourceScope",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "bedId",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "blockedReason",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "blockStartAt",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "expectedReleaseAt",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "blockNote",
+          "surface": "editable"
+        }
+      ],
+      "derivedFields": [
+        {
+          "fieldId": "blockId",
+          "derivedFrom": [
+            "roomId",
+            "resourceScope"
+          ],
+          "surface": "hidden-submit-only",
+          "staleDraftPolicy": "always-recompute"
+        }
+      ],
+      "backendDefaultFields": [
+        {
+          "fieldId": "operatorId",
+          "source": "actor-session",
+          "surface": "hidden-no-client-trust",
+          "defaultValue": "runtime-owned"
+        }
+      ],
+      "hiddenBackendDefaults": [],
+      "retiredFields": []
+    },
+    {
+      "caseType": "Accommodation.ResourceSetup",
+      "workItemId": "roomRelease",
+      "contractKind": "dormitory-system-context",
+      "dependsOn": [
+        "roomBlock"
+      ],
+      "inheritedFields": [
+        {
+          "fieldId": "roomId",
+          "sourceWorkItemId": "roomBlock",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        },
+        {
+          "fieldId": "bedId",
+          "sourceWorkItemId": "roomBlock",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        }
+      ],
+      "userSelectableFields": [
+        {
+          "fieldId": "resourceScope",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "releaseAvailableAt",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "releaseReason",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "releaseNote",
+          "surface": "editable"
+        }
+      ],
+      "derivedFields": [
+        {
+          "fieldId": "releaseId",
+          "derivedFrom": [
+            "roomId",
+            "resourceScope"
+          ],
+          "surface": "hidden-submit-only",
+          "staleDraftPolicy": "always-recompute"
+        }
+      ],
+      "backendDefaultFields": [
+        {
+          "fieldId": "operatorId",
+          "source": "actor-session",
+          "surface": "hidden-no-client-trust",
+          "defaultValue": "runtime-owned"
+        }
+      ],
+      "hiddenBackendDefaults": [],
+      "retiredFields": []
+    },
+    {
+      "caseType": "Accommodation.ServiceTask",
+      "workItemId": "serviceTaskCreate",
+      "contractKind": "dormitory-system-context",
+      "dependsOn": [
+        "roomSetup",
+        "bedSetup"
+      ],
+      "inheritedFields": [],
+      "userSelectableFields": [
+        {
+          "fieldId": "taskDate",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "taskType",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "resourceScope",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "roomId",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "bedId",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "area",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "issueDescription",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "resolutionAction",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "urgency",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "blocksAvailability",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "targetCompletionDate",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "taskEvidenceId",
+          "surface": "editable"
+        }
+      ],
+      "derivedFields": [
+        {
+          "fieldId": "taskId",
+          "derivedFrom": [
+            "taskDate",
+            "taskType"
+          ],
+          "surface": "hidden-submit-only",
+          "staleDraftPolicy": "always-recompute"
+        }
+      ],
+      "backendDefaultFields": [
+        {
+          "fieldId": "operatorId",
+          "source": "actor-session",
+          "surface": "hidden-no-client-trust",
+          "defaultValue": "runtime-owned"
+        },
+        {
+          "fieldId": "ownerName",
+          "source": "assignment-chain",
+          "surface": "hidden-no-client-trust",
+          "defaultValue": "runtime-owned"
+        }
+      ],
+      "hiddenBackendDefaults": [],
+      "retiredFields": []
+    },
+    {
+      "caseType": "Accommodation.ServiceTask",
+      "workItemId": "serviceTaskAssign",
+      "contractKind": "dormitory-system-context",
+      "dependsOn": [
+        "serviceTaskCreate"
+      ],
+      "inheritedFields": [
+        {
+          "fieldId": "taskId",
+          "sourceWorkItemId": "serviceTaskCreate",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        },
+        {
+          "fieldId": "roomId",
+          "sourceWorkItemId": "serviceTaskCreate",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        },
+        {
+          "fieldId": "bedId",
+          "sourceWorkItemId": "serviceTaskCreate",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        }
+      ],
+      "userSelectableFields": [
+        {
+          "fieldId": "ownerName",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "priority",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "targetCompletionDate",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "assignmentNote",
+          "surface": "editable"
+        }
+      ],
+      "derivedFields": [],
+      "backendDefaultFields": [
+        {
+          "fieldId": "operatorId",
+          "source": "actor-session",
+          "surface": "hidden-no-client-trust",
+          "defaultValue": "runtime-owned"
+        }
+      ],
+      "hiddenBackendDefaults": [],
+      "retiredFields": []
+    },
+    {
+      "caseType": "Accommodation.ServiceTask",
+      "workItemId": "serviceTaskComplete",
+      "contractKind": "dormitory-system-context",
+      "dependsOn": [
+        "serviceTaskAssign"
+      ],
+      "inheritedFields": [
+        {
+          "fieldId": "taskId",
+          "sourceWorkItemId": "serviceTaskAssign",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        },
+        {
+          "fieldId": "roomId",
+          "sourceWorkItemId": "serviceTaskAssign",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        },
+        {
+          "fieldId": "bedId",
+          "sourceWorkItemId": "serviceTaskAssign",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        }
+      ],
+      "userSelectableFields": [
+        {
+          "fieldId": "completedAt",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "completionResult",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "actualCostAmount",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "expenseId",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "completionEvidenceId",
+          "surface": "editable"
+        }
+      ],
+      "derivedFields": [],
+      "backendDefaultFields": [
+        {
+          "fieldId": "operatorId",
+          "source": "actor-session",
+          "surface": "hidden-no-client-trust",
+          "defaultValue": "runtime-owned"
+        }
+      ],
+      "hiddenBackendDefaults": [],
+      "retiredFields": []
+    },
+    {
+      "caseType": "Accommodation.ServiceTask",
+      "workItemId": "serviceTaskVerify",
+      "contractKind": "dormitory-system-context",
+      "dependsOn": [
+        "serviceTaskComplete"
+      ],
+      "inheritedFields": [
+        {
+          "fieldId": "taskId",
+          "sourceWorkItemId": "serviceTaskComplete",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        },
+        {
+          "fieldId": "roomId",
+          "sourceWorkItemId": "serviceTaskComplete",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        },
+        {
+          "fieldId": "bedId",
+          "sourceWorkItemId": "serviceTaskComplete",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        }
+      ],
+      "userSelectableFields": [
+        {
+          "fieldId": "verificationResult",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "verificationNote",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "handlingOpinion",
+          "surface": "editable"
+        }
+      ],
+      "derivedFields": [],
+      "backendDefaultFields": [
+        {
+          "fieldId": "managerId",
+          "source": "approval-chain",
+          "surface": "hidden-no-client-trust",
+          "defaultValue": "runtime-owned"
+        }
+      ],
+      "hiddenBackendDefaults": [],
+      "retiredFields": []
+    },
+    {
+      "caseType": "Accommodation.ServiceTask",
+      "workItemId": "roomReleaseAfterService",
+      "contractKind": "dormitory-system-context",
+      "dependsOn": [
+        "serviceTaskVerify"
+      ],
+      "inheritedFields": [
+        {
+          "fieldId": "taskId",
+          "sourceWorkItemId": "serviceTaskVerify",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        },
+        {
+          "fieldId": "roomId",
+          "sourceWorkItemId": "serviceTaskVerify",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        },
+        {
+          "fieldId": "bedId",
+          "sourceWorkItemId": "serviceTaskVerify",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        }
+      ],
+      "userSelectableFields": [
+        {
+          "fieldId": "resourceScope",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "releaseAvailableAt",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "releaseNote",
+          "surface": "editable"
+        }
+      ],
+      "derivedFields": [],
+      "backendDefaultFields": [
+        {
+          "fieldId": "operatorId",
+          "source": "actor-session",
+          "surface": "hidden-no-client-trust",
+          "defaultValue": "runtime-owned"
+        }
+      ],
+      "hiddenBackendDefaults": [],
+      "retiredFields": []
+    },
+    {
+      "caseType": "Accommodation.LeadReservation",
+      "workItemId": "leadCapture",
+      "contractKind": "dormitory-system-context",
+      "dependsOn": [],
+      "inheritedFields": [],
+      "userSelectableFields": [
+        {
+          "fieldId": "contactDate",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "leadName",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "phone",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "contactChannel",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "requestedBedCount",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "expectedCheckInDate",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "stayDurationText",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "leadSource",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "budgetAmount",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "leadStatus",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "leadNote",
+          "surface": "editable"
+        }
+      ],
+      "derivedFields": [
+        {
+          "fieldId": "leadId",
+          "derivedFrom": [
+            "leadName",
+            "phone",
+            "contactDate"
+          ],
+          "surface": "hidden-submit-only",
+          "staleDraftPolicy": "always-recompute"
+        }
+      ],
+      "backendDefaultFields": [
+        {
+          "fieldId": "operatorId",
+          "source": "actor-session",
+          "surface": "hidden-no-client-trust",
+          "defaultValue": "runtime-owned"
+        }
+      ],
+      "hiddenBackendDefaults": [],
+      "retiredFields": []
+    },
+    {
+      "caseType": "Accommodation.LeadReservation",
+      "workItemId": "leadFollowUp",
+      "contractKind": "dormitory-system-context",
+      "dependsOn": [
+        "leadCapture"
+      ],
+      "inheritedFields": [
+        {
+          "fieldId": "leadId",
+          "sourceWorkItemId": "leadCapture",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        }
+      ],
+      "userSelectableFields": [
+        {
+          "fieldId": "followUpDate",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "followUpResult",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "nextFollowUpAt",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "leadStatus",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "leadNote",
+          "surface": "editable"
+        }
+      ],
+      "derivedFields": [],
+      "backendDefaultFields": [
+        {
+          "fieldId": "operatorId",
+          "source": "actor-session",
+          "surface": "hidden-no-client-trust",
+          "defaultValue": "runtime-owned"
+        }
+      ],
+      "hiddenBackendDefaults": [],
+      "retiredFields": []
+    },
+    {
+      "caseType": "Accommodation.LeadReservation",
+      "workItemId": "reservationCreate",
+      "contractKind": "dormitory-system-context",
+      "dependsOn": [
+        "leadFollowUp"
+      ],
+      "inheritedFields": [
+        {
+          "fieldId": "leadId",
+          "sourceWorkItemId": "leadFollowUp",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        }
+      ],
+      "userSelectableFields": [
+        {
+          "fieldId": "reservedBedCount",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "reservedRoomId",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "reservedBedIds",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "plannedCheckInDate",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "reservationHoldUntil",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "reservationDepositRequired",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "reservationDepositAmount",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "reservationNextAction",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "reservationNote",
+          "surface": "editable"
+        }
+      ],
+      "derivedFields": [
+        {
+          "fieldId": "reservationId",
+          "derivedFrom": [
+            "leadId",
+            "plannedCheckInDate"
+          ],
+          "surface": "hidden-submit-only",
+          "staleDraftPolicy": "always-recompute"
+        }
+      ],
+      "backendDefaultFields": [
+        {
+          "fieldId": "operatorId",
+          "source": "actor-session",
+          "surface": "hidden-no-client-trust",
+          "defaultValue": "runtime-owned"
+        }
+      ],
+      "hiddenBackendDefaults": [],
+      "retiredFields": []
+    },
+    {
+      "caseType": "Accommodation.LeadReservation",
+      "workItemId": "reservationCancel",
+      "contractKind": "dormitory-system-context",
+      "dependsOn": [
+        "reservationCreate"
+      ],
+      "inheritedFields": [
+        {
+          "fieldId": "reservationId",
+          "sourceWorkItemId": "reservationCreate",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        }
+      ],
+      "userSelectableFields": [
+        {
+          "fieldId": "cancelReason",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "releaseBed",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "cancelNote",
+          "surface": "editable"
+        }
+      ],
+      "derivedFields": [],
+      "backendDefaultFields": [
+        {
+          "fieldId": "operatorId",
+          "source": "actor-session",
+          "surface": "hidden-no-client-trust",
+          "defaultValue": "runtime-owned"
+        }
+      ],
+      "hiddenBackendDefaults": [],
+      "retiredFields": []
+    },
+    {
+      "caseType": "Accommodation.LeadReservation",
+      "workItemId": "reservationConvert",
+      "contractKind": "dormitory-system-context",
+      "dependsOn": [
+        "reservationCreate"
+      ],
+      "inheritedFields": [
+        {
+          "fieldId": "reservationId",
+          "sourceWorkItemId": "reservationCreate",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        }
+      ],
+      "userSelectableFields": [
+        {
+          "fieldId": "stayId",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "convertedAt",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "conversionNote",
+          "surface": "editable"
+        }
+      ],
+      "derivedFields": [],
+      "backendDefaultFields": [
+        {
+          "fieldId": "operatorId",
+          "source": "actor-session",
+          "surface": "hidden-no-client-trust",
+          "defaultValue": "runtime-owned"
+        }
+      ],
+      "hiddenBackendDefaults": [],
+      "retiredFields": []
+    },
+    {
+      "caseType": "Accommodation.Checkin",
+      "workItemId": "bedAssign",
+      "contractKind": "dormitory-system-context",
+      "dependsOn": [
+        "residentProfile"
+      ],
+      "inheritedFields": [
+        {
+          "fieldId": "residentId",
+          "sourceWorkItemId": "residentProfile",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        }
+      ],
+      "userSelectableFields": [
+        {
+          "fieldId": "roomBed",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "stayPeriod",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "bedLockNote",
+          "surface": "editable"
+        }
+      ],
+      "derivedFields": [
+        {
+          "fieldId": "roomId",
+          "derivedFrom": [
+            "roomBed"
+          ],
+          "surface": "hidden-submit-only",
+          "staleDraftPolicy": "always-recompute"
+        },
+        {
+          "fieldId": "bedId",
+          "derivedFrom": [
+            "roomBed"
+          ],
+          "surface": "hidden-submit-only",
+          "staleDraftPolicy": "always-recompute"
+        },
+        {
+          "fieldId": "stayId",
+          "derivedFrom": [
+            "residentId",
+            "roomBed"
+          ],
+          "surface": "hidden-submit-only",
+          "staleDraftPolicy": "always-recompute"
+        }
+      ],
+      "backendDefaultFields": [
+        {
+          "fieldId": "operatorId",
+          "source": "actor-session",
+          "surface": "hidden-no-client-trust",
+          "defaultValue": "runtime-owned"
+        }
+      ],
+      "hiddenBackendDefaults": [],
+      "retiredFields": []
+    },
+    {
+      "caseType": "Accommodation.Checkin",
+      "workItemId": "lead",
+      "contractKind": "dormitory-system-context",
+      "dependsOn": [],
+      "inheritedFields": [],
+      "userSelectableFields": [
+        {
+          "fieldId": "contactDate",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "guestName",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "phone",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "requestedBedCount",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "stayDurationText",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "leadSource",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "leadStatus",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "note",
+          "surface": "editable"
+        }
+      ],
+      "derivedFields": [
+        {
+          "fieldId": "leadId",
+          "derivedFrom": [
+            "phone",
+            "contactDate"
+          ],
+          "surface": "hidden-submit-only",
+          "staleDraftPolicy": "always-recompute"
+        }
+      ],
+      "backendDefaultFields": [
+        {
+          "fieldId": "operatorId",
+          "source": "actor-session",
+          "surface": "hidden-no-client-trust",
+          "defaultValue": "runtime-owned"
+        }
+      ],
+      "hiddenBackendDefaults": [],
+      "retiredFields": []
+    },
+    {
+      "caseType": "Accommodation.Checkin",
+      "workItemId": "booking",
+      "contractKind": "dormitory-system-context",
+      "dependsOn": [
+        "lead"
+      ],
+      "inheritedFields": [
+        {
+          "fieldId": "leadId",
+          "sourceWorkItemId": "lead",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        }
+      ],
+      "userSelectableFields": [
+        {
+          "fieldId": "checkInDate",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "reservedBedCount",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "reservedBedIds",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "leadStatus",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "note",
+          "surface": "editable"
+        }
+      ],
+      "derivedFields": [
+        {
+          "fieldId": "bookingId",
+          "derivedFrom": [
+            "leadId",
+            "checkInDate"
+          ],
+          "surface": "hidden-submit-only",
+          "staleDraftPolicy": "always-recompute"
+        }
+      ],
+      "backendDefaultFields": [
+        {
+          "fieldId": "operatorId",
+          "source": "actor-session",
+          "surface": "hidden-no-client-trust",
+          "defaultValue": "runtime-owned"
+        }
+      ],
+      "hiddenBackendDefaults": [],
+      "retiredFields": []
+    },
+    {
+      "caseType": "Accommodation.Checkin",
+      "workItemId": "resident",
+      "contractKind": "dormitory-system-context",
+      "dependsOn": [
+        "booking"
+      ],
+      "inheritedFields": [
+        {
+          "fieldId": "bookingId",
+          "sourceWorkItemId": "booking",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        }
+      ],
+      "userSelectableFields": [
+        {
+          "fieldId": "guestName",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "phone",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "checkInDate",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "plannedCheckOutDate",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "residentStatus",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "note",
+          "surface": "editable"
+        }
+      ],
+      "derivedFields": [
+        {
+          "fieldId": "residentId",
+          "derivedFrom": [
+            "phone",
+            "bookingId"
+          ],
+          "surface": "hidden-submit-only",
+          "staleDraftPolicy": "always-recompute"
+        }
+      ],
+      "backendDefaultFields": [
+        {
+          "fieldId": "operatorId",
+          "source": "actor-session",
+          "surface": "hidden-no-client-trust",
+          "defaultValue": "runtime-owned"
+        }
+      ],
+      "hiddenBackendDefaults": [],
+      "retiredFields": []
+    },
+    {
+      "caseType": "Accommodation.Checkin",
+      "workItemId": "tariff",
+      "contractKind": "dormitory-system-context",
+      "dependsOn": [
+        "bedAssign"
+      ],
+      "inheritedFields": [
+        {
+          "fieldId": "stayId",
+          "sourceWorkItemId": "bedAssign",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        }
+      ],
+      "userSelectableFields": [
+        {
+          "fieldId": "tariffType",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "unitRate",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "tariffQuantity",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "chargeNote",
+          "surface": "editable"
+        }
+      ],
+      "derivedFields": [
+        {
+          "fieldId": "folioId",
+          "derivedFrom": [
+            "stayId",
+            "tariffType"
+          ],
+          "surface": "hidden-submit-only",
+          "staleDraftPolicy": "always-recompute"
+        },
+        {
+          "fieldId": "amount",
+          "derivedFrom": [
+            "unitRate",
+            "tariffQuantity"
+          ],
+          "surface": "preview-hidden-submit",
+          "staleDraftPolicy": "always-recompute"
+        }
+      ],
+      "backendDefaultFields": [
+        {
+          "fieldId": "operatorId",
+          "source": "actor-session",
+          "surface": "hidden-no-client-trust",
+          "defaultValue": "runtime-owned"
+        }
+      ],
+      "hiddenBackendDefaults": [],
+      "retiredFields": [
+        {
+          "fieldId": "depositPolicyName",
+          "reason": "retired by current step dependency contract; kept only to suppress stale legacy WorkItem fields"
+        }
+      ]
+    },
+    {
+      "caseType": "Accommodation.DepositLedger",
+      "workItemId": "depositAssessment",
+      "contractKind": "dormitory-system-context",
+      "dependsOn": [
+        "tariff"
+      ],
+      "inheritedFields": [
+        {
+          "fieldId": "stayId",
+          "sourceWorkItemId": "tariff",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        }
+      ],
+      "userSelectableFields": [
+        {
+          "fieldId": "depositType",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "requiredDepositAmount",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "currency",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "depositDueAt",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "depositPolicyNote",
+          "surface": "editable"
+        }
+      ],
+      "derivedFields": [
+        {
+          "fieldId": "depositId",
+          "derivedFrom": [
+            "stayId"
+          ],
+          "surface": "hidden-submit-only",
+          "staleDraftPolicy": "always-recompute"
+        }
+      ],
+      "backendDefaultFields": [
+        {
+          "fieldId": "operatorId",
+          "source": "actor-session",
+          "surface": "hidden-no-client-trust",
+          "defaultValue": "runtime-owned"
+        }
+      ],
+      "hiddenBackendDefaults": [],
+      "retiredFields": []
+    },
+    {
+      "caseType": "Accommodation.DepositLedger",
+      "workItemId": "depositRequirement",
+      "contractKind": "dormitory-system-context",
+      "dependsOn": [
+        "tariff"
+      ],
+      "inheritedFields": [
+        {
+          "fieldId": "folioId",
+          "sourceWorkItemId": "tariff",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        }
+      ],
+      "userSelectableFields": [
+        {
+          "fieldId": "depositPolicyName",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "requiredDepositAmount",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "currency",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "depositDueAt",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "depositWaiverAllowed",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "depositWaiverReason",
+          "surface": "editable"
+        }
+      ],
+      "derivedFields": [
+        {
+          "fieldId": "depositId",
+          "derivedFrom": [
+            "folioId"
+          ],
+          "surface": "hidden-submit-only",
+          "staleDraftPolicy": "always-recompute"
+        }
+      ],
+      "backendDefaultFields": [
+        {
+          "fieldId": "operatorId",
+          "source": "actor-session",
+          "surface": "hidden-no-client-trust",
+          "defaultValue": "runtime-owned"
+        }
+      ],
+      "hiddenBackendDefaults": [],
+      "retiredFields": []
+    },
+    {
+      "caseType": "Accommodation.DepositLedger",
+      "workItemId": "depositReceipt",
+      "contractKind": "dormitory-system-context",
+      "dependsOn": [
+        "depositAssessment"
+      ],
+      "inheritedFields": [
+        {
+          "fieldId": "depositId",
+          "sourceWorkItemId": "depositAssessment",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        }
+      ],
+      "userSelectableFields": [
+        {
+          "fieldId": "receivedAmount",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "paymentMethod",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "payerName",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "receivedDate",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "depositEvidenceId",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "depositReceiptNote",
+          "surface": "editable"
+        }
+      ],
+      "derivedFields": [
+        {
+          "fieldId": "depositReceiptId",
+          "derivedFrom": [
+            "depositId",
+            "receivedDate",
+            "receivedAmount"
+          ],
+          "surface": "hidden-submit-only",
+          "staleDraftPolicy": "always-recompute"
+        }
+      ],
+      "backendDefaultFields": [
+        {
+          "fieldId": "receivedBy",
+          "source": "actor-session",
+          "surface": "hidden-no-client-trust",
+          "defaultValue": "runtime-owned"
+        }
+      ],
+      "hiddenBackendDefaults": [],
+      "retiredFields": []
+    },
+    {
+      "caseType": "Accommodation.DepositLedger",
+      "workItemId": "depositConfirmation",
+      "contractKind": "dormitory-system-context",
+      "dependsOn": [
+        "depositReceipt"
+      ],
+      "inheritedFields": [
+        {
+          "fieldId": "depositId",
+          "sourceWorkItemId": "depositReceipt",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        },
+        {
+          "fieldId": "depositReceiptId",
+          "sourceWorkItemId": "depositReceipt",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        }
+      ],
+      "userSelectableFields": [
+        {
+          "fieldId": "confirmedAmount",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "confirmationResult",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "differenceReason",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "financeNote",
+          "surface": "editable"
+        }
+      ],
+      "derivedFields": [],
+      "backendDefaultFields": [
+        {
+          "fieldId": "financeReviewer",
+          "source": "actor-session",
+          "surface": "hidden-no-client-trust",
+          "defaultValue": "runtime-owned"
+        }
+      ],
+      "hiddenBackendDefaults": [],
+      "retiredFields": []
+    },
+    {
+      "caseType": "Accommodation.DepositLedger",
+      "workItemId": "depositDeduction",
+      "contractKind": "dormitory-system-context",
+      "dependsOn": [
+        "depositConfirmation"
+      ],
+      "inheritedFields": [
+        {
+          "fieldId": "depositId",
+          "sourceWorkItemId": "depositConfirmation",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        }
+      ],
+      "userSelectableFields": [
+        {
+          "fieldId": "deductionAmount",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "deductionReason",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "handlingOpinion",
+          "surface": "editable"
+        }
+      ],
+      "derivedFields": [],
+      "backendDefaultFields": [
+        {
+          "fieldId": "operatorId",
+          "source": "actor-session",
+          "surface": "hidden-no-client-trust",
+          "defaultValue": "runtime-owned"
+        }
+      ],
+      "hiddenBackendDefaults": [],
+      "retiredFields": []
+    },
+    {
+      "caseType": "Accommodation.DepositLedger",
+      "workItemId": "depositRefundApproval",
+      "contractKind": "dormitory-system-context",
+      "dependsOn": [
+        "depositDeduction"
+      ],
+      "inheritedFields": [
+        {
+          "fieldId": "depositId",
+          "sourceWorkItemId": "depositDeduction",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        }
+      ],
+      "userSelectableFields": [
+        {
+          "fieldId": "deductionAmount",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "deductionReason",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "applyToBalanceAmount",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "handlingOpinion",
+          "surface": "editable"
+        }
+      ],
+      "derivedFields": [
+        {
+          "fieldId": "refundAmount",
+          "derivedFrom": [
+            "depositId",
+            "deductionAmount",
+            "applyToBalanceAmount"
+          ],
+          "surface": "preview-hidden-submit",
+          "staleDraftPolicy": "always-recompute"
+        }
+      ],
+      "backendDefaultFields": [
+        {
+          "fieldId": "approverId",
+          "source": "approval-chain",
+          "surface": "hidden-no-client-trust",
+          "defaultValue": "runtime-owned"
+        }
+      ],
+      "hiddenBackendDefaults": [],
+      "retiredFields": []
+    },
+    {
+      "caseType": "Accommodation.DepositLedger",
+      "workItemId": "depositRefundPayment",
+      "contractKind": "dormitory-system-context",
+      "dependsOn": [
+        "depositRefundApproval"
+      ],
+      "inheritedFields": [
+        {
+          "fieldId": "depositId",
+          "sourceWorkItemId": "depositRefundApproval",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        }
+      ],
+      "userSelectableFields": [
+        {
+          "fieldId": "refundAmount",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "refundMethod",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "refundReceiver",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "refundEvidenceId",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "paymentTime",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "manualConfirmSummary",
+          "surface": "editable"
+        }
+      ],
+      "derivedFields": [],
+      "backendDefaultFields": [
+        {
+          "fieldId": "financeReviewer",
+          "source": "actor-session",
+          "surface": "hidden-no-client-trust",
+          "defaultValue": "runtime-owned"
+        }
+      ],
+      "hiddenBackendDefaults": [],
+      "retiredFields": []
+    },
+    {
+      "caseType": "Accommodation.DepositLedger",
+      "workItemId": "depositClose",
+      "contractKind": "dormitory-system-context",
+      "dependsOn": [
+        "depositRefundPayment",
+        "depositConfirmation"
+      ],
+      "inheritedFields": [
+        {
+          "fieldId": "depositId",
+          "sourceWorkItemId": "depositConfirmation",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        }
+      ],
+      "userSelectableFields": [
+        {
+          "fieldId": "closeResult",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "manualConfirmSummary",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "note",
+          "surface": "editable"
+        }
+      ],
+      "derivedFields": [],
+      "backendDefaultFields": [
+        {
+          "fieldId": "financeReviewer",
+          "source": "actor-session",
+          "surface": "hidden-no-client-trust",
+          "defaultValue": "runtime-owned"
+        }
+      ],
+      "hiddenBackendDefaults": [],
+      "retiredFields": []
+    },
+    {
+      "caseType": "Accommodation.PaymentLedger",
+      "workItemId": "paymentReceipt",
+      "contractKind": "dormitory-system-context",
+      "dependsOn": [
+        "tariff"
+      ],
+      "inheritedFields": [
+        {
+          "fieldId": "stayId",
+          "sourceWorkItemId": "tariff",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        }
+      ],
+      "userSelectableFields": [
+        {
+          "fieldId": "paymentAmount",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "paymentMethod",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "payerName",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "receivedDate",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "paymentPurpose",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "coverageStart",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "coverageEnd",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "currency",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "paymentEvidenceId",
+          "surface": "editable"
+        }
+      ],
+      "derivedFields": [
+        {
+          "fieldId": "paymentId",
+          "derivedFrom": [
+            "stayId",
+            "paymentAmount"
+          ],
+          "surface": "hidden-submit-only",
+          "staleDraftPolicy": "always-recompute"
+        }
+      ],
+      "backendDefaultFields": [
+        {
+          "fieldId": "receivedBy",
+          "source": "actor-session",
+          "surface": "hidden-no-client-trust",
+          "defaultValue": "runtime-owned"
+        }
+      ],
+      "hiddenBackendDefaults": [],
+      "retiredFields": []
+    },
+    {
+      "caseType": "Accommodation.PaymentLedger",
+      "workItemId": "paymentConfirmation",
+      "contractKind": "dormitory-system-context",
+      "dependsOn": [
+        "paymentReceipt"
+      ],
+      "inheritedFields": [
+        {
+          "fieldId": "stayId",
+          "sourceWorkItemId": "paymentReceipt",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        },
+        {
+          "fieldId": "paymentId",
+          "sourceWorkItemId": "paymentReceipt",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        }
+      ],
+      "userSelectableFields": [
+        {
+          "fieldId": "confirmedAmount",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "confirmationResult",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "differenceReason",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "financeNote",
+          "surface": "editable"
+        }
+      ],
+      "derivedFields": [],
+      "backendDefaultFields": [
+        {
+          "fieldId": "financeReviewer",
+          "source": "actor-session",
+          "surface": "hidden-no-client-trust",
+          "defaultValue": "runtime-owned"
+        }
+      ],
+      "hiddenBackendDefaults": [],
+      "retiredFields": []
+    },
+    {
+      "caseType": "Accommodation.PaymentLedger",
+      "workItemId": "paymentAllocation",
+      "contractKind": "dormitory-system-context",
+      "dependsOn": [
+        "paymentConfirmation"
+      ],
+      "inheritedFields": [
+        {
+          "fieldId": "paymentId",
+          "sourceWorkItemId": "paymentConfirmation",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        }
+      ],
+      "userSelectableFields": [
+        {
+          "fieldId": "allocationMode",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "coveredChargeIds",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "allocatedAmount",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "allocationNote",
+          "surface": "editable"
+        }
+      ],
+      "derivedFields": [],
+      "backendDefaultFields": [
+        {
+          "fieldId": "operatorId",
+          "source": "actor-session",
+          "surface": "hidden-no-client-trust",
+          "defaultValue": "runtime-owned"
+        }
+      ],
+      "hiddenBackendDefaults": [],
+      "retiredFields": []
+    },
+    {
+      "caseType": "Accommodation.PaymentLedger",
+      "workItemId": "paymentAdjustment",
+      "contractKind": "dormitory-system-context",
+      "dependsOn": [
+        "paymentAllocation"
+      ],
+      "inheritedFields": [
+        {
+          "fieldId": "paymentId",
+          "sourceWorkItemId": "paymentAllocation",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        }
+      ],
+      "userSelectableFields": [
+        {
+          "fieldId": "adjustmentAmount",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "adjustmentReason",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "handlingOpinion",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "note",
+          "surface": "editable"
+        }
+      ],
+      "derivedFields": [],
+      "backendDefaultFields": [
+        {
+          "fieldId": "operatorId",
+          "source": "actor-session",
+          "surface": "hidden-no-client-trust",
+          "defaultValue": "runtime-owned"
+        }
+      ],
+      "hiddenBackendDefaults": [],
+      "retiredFields": []
+    },
+    {
+      "caseType": "Accommodation.PaymentLedger",
+      "workItemId": "payment",
+      "contractKind": "dormitory-system-context",
+      "dependsOn": [
+        "depositRequirement",
+        "tariff"
+      ],
+      "inheritedFields": [
+        {
+          "fieldId": "folioId",
+          "sourceWorkItemId": "tariff",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        },
+        {
+          "fieldId": "depositId",
+          "sourceWorkItemId": "tariff",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        }
+      ],
+      "userSelectableFields": [
+        {
+          "fieldId": "payerName",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "paymentTime",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "paymentAmount",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "currency",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "paymentMethod",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "paymentPurpose",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "evidenceNo",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "note",
+          "surface": "editable"
+        }
+      ],
+      "derivedFields": [
+        {
+          "fieldId": "paymentId",
+          "derivedFrom": [
+            "folioId",
+            "paymentAmount"
+          ],
+          "surface": "hidden-submit-only",
+          "staleDraftPolicy": "always-recompute"
+        }
+      ],
+      "backendDefaultFields": [
+        {
+          "fieldId": "receivedBy",
+          "source": "actor-session",
+          "surface": "hidden-no-client-trust",
+          "defaultValue": "runtime-owned"
+        }
+      ],
+      "hiddenBackendDefaults": [],
+      "retiredFields": []
+    },
+    {
+      "caseType": "Accommodation.PaymentLedger",
+      "workItemId": "finance",
+      "contractKind": "dormitory-system-context",
+      "dependsOn": [
+        "payment"
+      ],
+      "inheritedFields": [
+        {
+          "fieldId": "folioId",
+          "sourceWorkItemId": "payment",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        },
+        {
+          "fieldId": "paymentId",
+          "sourceWorkItemId": "payment",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        },
+        {
+          "fieldId": "depositId",
+          "sourceWorkItemId": "payment",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        }
+      ],
+      "userSelectableFields": [
+        {
+          "fieldId": "paymentChannel",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "confirmedAmount",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "confirmedAt",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "matchResult",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "differenceReason",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "handlingOpinion",
+          "surface": "editable"
+        }
+      ],
+      "derivedFields": [],
+      "backendDefaultFields": [
+        {
+          "fieldId": "financeReviewer",
+          "source": "actor-session",
+          "surface": "hidden-no-client-trust",
+          "defaultValue": "runtime-owned"
+        }
+      ],
+      "hiddenBackendDefaults": [],
+      "retiredFields": []
+    },
+    {
+      "caseType": "Accommodation.PaymentLedger",
+      "workItemId": "debtFollowUp",
+      "contractKind": "dormitory-system-context",
+      "dependsOn": [
+        "paymentConfirmation"
+      ],
+      "inheritedFields": [
+        {
+          "fieldId": "stayId",
+          "sourceWorkItemId": "paymentConfirmation",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        }
+      ],
+      "userSelectableFields": [
+        {
+          "fieldId": "debtReason",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "followUpDate",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "followUpResult",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "nextFollowUpAt",
+          "surface": "editable"
+        }
+      ],
+      "derivedFields": [],
+      "backendDefaultFields": [
+        {
+          "fieldId": "operatorId",
+          "source": "actor-session",
+          "surface": "hidden-no-client-trust",
+          "defaultValue": "runtime-owned"
+        }
+      ],
+      "hiddenBackendDefaults": [],
+      "retiredFields": []
+    },
+    {
+      "caseType": "Accommodation.Checkin",
+      "workItemId": "checkin",
+      "contractKind": "dormitory-system-context",
+      "dependsOn": [
+        "finance",
+        "bedAssign"
+      ],
+      "inheritedFields": [
+        {
+          "fieldId": "bedId",
+          "sourceWorkItemId": "bedAssign",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        },
+        {
+          "fieldId": "stayId",
+          "sourceWorkItemId": "bedAssign",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        },
+        {
+          "fieldId": "folioId",
+          "sourceWorkItemId": "bedAssign",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        },
+        {
+          "fieldId": "depositId",
+          "sourceWorkItemId": "bedAssign",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        }
+      ],
+      "userSelectableFields": [
+        {
+          "fieldId": "checkInDate",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "handoverStatus",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "manualConfirmSummary",
+          "surface": "editable"
+        }
+      ],
+      "derivedFields": [],
+      "backendDefaultFields": [
+        {
+          "fieldId": "operatorId",
+          "source": "actor-session",
+          "surface": "hidden-no-client-trust",
+          "defaultValue": "runtime-owned"
+        }
+      ],
+      "hiddenBackendDefaults": [],
+      "retiredFields": []
+    },
+    {
+      "caseType": "Accommodation.CheckinControl",
+      "workItemId": "operatingDashboard",
+      "contractKind": "dormitory-system-context",
+      "dependsOn": [
+        "checkin"
+      ],
+      "inheritedFields": [
+        {
+          "fieldId": "folioId",
+          "sourceWorkItemId": "checkin",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        },
+        {
+          "fieldId": "depositId",
+          "sourceWorkItemId": "checkin",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        }
+      ],
+      "userSelectableFields": [
+        {
+          "fieldId": "reviewConclusion",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "nextAction",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "ownerName",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "processingStatus",
+          "surface": "editable"
+        }
+      ],
+      "derivedFields": [],
+      "backendDefaultFields": [
+        {
+          "fieldId": "managerId",
+          "source": "actor-session",
+          "surface": "hidden-no-client-trust",
+          "defaultValue": "runtime-owned"
+        }
+      ],
+      "hiddenBackendDefaults": [],
+      "retiredFields": []
+    },
+    {
+      "caseType": "Accommodation.Lifecycle",
+      "workItemId": "residentProfile",
+      "contractKind": "dormitory-system-context",
+      "dependsOn": [],
+      "inheritedFields": [],
+      "userSelectableFields": [
+        {
+          "fieldId": "residentName",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "phone",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "identityType",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "identityNo",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "gender",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "nationality",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "emergencyContactName",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "emergencyContactPhone",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "residentNote",
+          "surface": "editable"
+        }
+      ],
+      "derivedFields": [
+        {
+          "fieldId": "residentId",
+          "derivedFrom": [
+            "residentName",
+            "phone"
+          ],
+          "surface": "hidden-submit-only",
+          "staleDraftPolicy": "always-recompute"
+        }
+      ],
+      "backendDefaultFields": [
+        {
+          "fieldId": "operatorId",
+          "source": "actor-session",
+          "surface": "hidden-no-client-trust",
+          "defaultValue": "runtime-owned"
+        }
+      ],
+      "hiddenBackendDefaults": [],
+      "retiredFields": []
+    },
+    {
+      "caseType": "Accommodation.Lifecycle",
+      "workItemId": "checkInBedAssign",
+      "contractKind": "dormitory-system-context",
+      "dependsOn": [
+        "residentProfile",
+        "reservationCreate"
+      ],
+      "inheritedFields": [
+        {
+          "fieldId": "residentId",
+          "sourceWorkItemId": "reservationCreate",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        }
+      ],
+      "userSelectableFields": [
+        {
+          "fieldId": "reservationId",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "checkInDate",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "plannedCheckOutDate",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "roomId",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "bedId",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "tariffType",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "unitRate",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "tariffQuantity",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "discountAmount",
+          "surface": "editable"
+        }
+      ],
+      "derivedFields": [
+        {
+          "fieldId": "stayId",
+          "derivedFrom": [
+            "residentId",
+            "bedId"
+          ],
+          "surface": "hidden-submit-only",
+          "staleDraftPolicy": "always-recompute"
+        }
+      ],
+      "backendDefaultFields": [
+        {
+          "fieldId": "operatorId",
+          "source": "actor-session",
+          "surface": "hidden-no-client-trust",
+          "defaultValue": "runtime-owned"
+        }
+      ],
+      "hiddenBackendDefaults": [],
+      "retiredFields": []
+    },
+    {
+      "caseType": "Accommodation.Lifecycle",
+      "workItemId": "chargeAssessment",
+      "contractKind": "dormitory-system-context",
+      "dependsOn": [
+        "checkInBedAssign"
+      ],
+      "inheritedFields": [
+        {
+          "fieldId": "stayId",
+          "sourceWorkItemId": "checkInBedAssign",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        }
+      ],
+      "userSelectableFields": [
+        {
+          "fieldId": "chargeType",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "periodStart",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "periodEnd",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "chargeReason",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "chargeNote",
+          "surface": "editable"
+        }
+      ],
+      "derivedFields": [
+        {
+          "fieldId": "amount",
+          "derivedFrom": [
+            "unitRate",
+            "tariffQuantity"
+          ],
+          "surface": "preview-hidden-submit",
+          "staleDraftPolicy": "always-recompute"
+        },
+        {
+          "fieldId": "chargeId",
+          "derivedFrom": [
+            "stayId",
+            "chargeType"
+          ],
+          "surface": "hidden-submit-only",
+          "staleDraftPolicy": "always-recompute"
+        }
+      ],
+      "backendDefaultFields": [
+        {
+          "fieldId": "operatorId",
+          "source": "actor-session",
+          "surface": "hidden-no-client-trust",
+          "defaultValue": "runtime-owned"
+        }
+      ],
+      "hiddenBackendDefaults": [],
+      "retiredFields": []
+    },
+    {
+      "caseType": "Accommodation.Lifecycle",
+      "workItemId": "stayExtension",
+      "contractKind": "dormitory-system-context",
+      "dependsOn": [
+        "chargeAssessment"
+      ],
+      "inheritedFields": [
+        {
+          "fieldId": "stayId",
+          "sourceWorkItemId": "chargeAssessment",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        }
+      ],
+      "userSelectableFields": [
+        {
+          "fieldId": "plannedCheckOutDate",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "tariffType",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "unitRate",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "extensionReason",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "extensionNote",
+          "surface": "editable"
+        }
+      ],
+      "derivedFields": [],
+      "backendDefaultFields": [
+        {
+          "fieldId": "operatorId",
+          "source": "actor-session",
+          "surface": "hidden-no-client-trust",
+          "defaultValue": "runtime-owned"
+        }
+      ],
+      "hiddenBackendDefaults": [],
+      "retiredFields": []
+    },
+    {
+      "caseType": "Accommodation.CheckoutSettlement",
+      "workItemId": "checkoutStart",
+      "contractKind": "dormitory-system-context",
+      "dependsOn": [],
+      "inheritedFields": [
+        {
+          "fieldId": "stayId",
+          "sourceWorkItemId": "operations-start-context",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        },
+        {
+          "fieldId": "roomId",
+          "sourceWorkItemId": "operations-start-context",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        },
+        {
+          "fieldId": "bedId",
+          "sourceWorkItemId": "operations-start-context",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        },
+        {
+          "fieldId": "depositId",
+          "sourceWorkItemId": "operations-start-context",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        }
+      ],
+      "userSelectableFields": [
+        {
+          "fieldId": "actualCheckOutDate",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "checkoutReason",
+          "surface": "editable"
+        }
+      ],
+      "derivedFields": [
+        {
+          "fieldId": "checkoutId",
+          "derivedFrom": [
+            "stayId",
+            "actualCheckOutDate"
+          ],
+          "surface": "hidden-submit-only",
+          "staleDraftPolicy": "always-recompute"
+        }
+      ],
+      "backendDefaultFields": [
+        {
+          "fieldId": "operatorId",
+          "source": "actor-session",
+          "surface": "hidden-no-client-trust",
+          "defaultValue": "runtime-owned"
+        }
+      ],
+      "hiddenBackendDefaults": [],
+      "retiredFields": []
+    },
+    {
+      "caseType": "Accommodation.Checkout",
+      "workItemId": "roomInspection",
+      "contractKind": "dormitory-system-context",
+      "dependsOn": [
+        "checkoutStart"
+      ],
+      "inheritedFields": [
+        {
+          "fieldId": "checkoutId",
+          "sourceWorkItemId": "checkoutStart",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        },
+        {
+          "fieldId": "stayId",
+          "sourceWorkItemId": "checkoutStart",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        },
+        {
+          "fieldId": "roomId",
+          "sourceWorkItemId": "checkoutStart",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        },
+        {
+          "fieldId": "bedId",
+          "sourceWorkItemId": "checkoutStart",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        },
+        {
+          "fieldId": "depositId",
+          "sourceWorkItemId": "checkoutStart",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        }
+      ],
+      "userSelectableFields": [
+        {
+          "fieldId": "roomCondition",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "bedCondition",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "damageFound",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "damageDescription",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "damageChargeAmount",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "cleaningRequired",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "inspectionEvidenceId",
+          "surface": "editable"
+        }
+      ],
+      "derivedFields": [],
+      "backendDefaultFields": [
+        {
+          "fieldId": "operatorId",
+          "source": "actor-session",
+          "surface": "hidden-no-client-trust",
+          "defaultValue": "runtime-owned"
+        }
+      ],
+      "hiddenBackendDefaults": [],
+      "retiredFields": []
+    },
+    {
+      "caseType": "Accommodation.Checkout",
+      "workItemId": "feeSettlement",
+      "contractKind": "dormitory-system-context",
+      "dependsOn": [
+        "roomInspection"
+      ],
+      "inheritedFields": [
+        {
+          "fieldId": "checkoutId",
+          "sourceWorkItemId": "roomInspection",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        },
+        {
+          "fieldId": "stayId",
+          "sourceWorkItemId": "roomInspection",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        },
+        {
+          "fieldId": "depositId",
+          "sourceWorkItemId": "roomInspection",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        }
+      ],
+      "userSelectableFields": [
+        {
+          "fieldId": "stayFeeAmount",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "extraFeeAmount",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "depositDeductionAmount",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "depositApplyToBalanceAmount",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "note",
+          "surface": "editable"
+        }
+      ],
+      "derivedFields": [
+        {
+          "fieldId": "refundOrSupplementAmount",
+          "derivedFrom": [
+            "stayFeeAmount",
+            "extraFeeAmount",
+            "depositDeductionAmount",
+            "depositApplyToBalanceAmount"
+          ],
+          "surface": "preview-hidden-submit",
+          "staleDraftPolicy": "always-recompute"
+        }
+      ],
+      "backendDefaultFields": [
+        {
+          "fieldId": "operatorId",
+          "source": "actor-session",
+          "surface": "hidden-no-client-trust",
+          "defaultValue": "runtime-owned"
+        }
+      ],
+      "hiddenBackendDefaults": [],
+      "retiredFields": []
+    },
+    {
+      "caseType": "Accommodation.Checkout",
+      "workItemId": "checkoutFinance",
+      "contractKind": "dormitory-system-context",
+      "dependsOn": [
+        "feeSettlement"
+      ],
+      "inheritedFields": [
+        {
+          "fieldId": "checkoutId",
+          "sourceWorkItemId": "feeSettlement",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        }
+      ],
+      "userSelectableFields": [
+        {
+          "fieldId": "refundOrSupplementConfirmation",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "financeEvidenceId",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "note",
+          "surface": "editable"
+        }
+      ],
+      "derivedFields": [],
+      "backendDefaultFields": [
+        {
+          "fieldId": "confirmer",
+          "source": "actor-session",
+          "surface": "hidden-no-client-trust",
+          "defaultValue": "runtime-owned"
+        }
+      ],
+      "hiddenBackendDefaults": [],
+      "retiredFields": []
+    },
+    {
+      "caseType": "Accommodation.CheckoutSettlement",
+      "workItemId": "finalBalanceClose",
+      "contractKind": "dormitory-system-context",
+      "dependsOn": [
+        "roomInspection",
+        "depositSettlement"
+      ],
+      "inheritedFields": [
+        {
+          "fieldId": "checkoutId",
+          "sourceWorkItemId": "depositSettlement",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        },
+        {
+          "fieldId": "stayId",
+          "sourceWorkItemId": "depositSettlement",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        },
+        {
+          "fieldId": "depositId",
+          "sourceWorkItemId": "depositSettlement",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        },
+        {
+          "fieldId": "roomId",
+          "sourceWorkItemId": "depositSettlement",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        },
+        {
+          "fieldId": "bedId",
+          "sourceWorkItemId": "depositSettlement",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        }
+      ],
+      "userSelectableFields": [
+        {
+          "fieldId": "depositDeductionAmount",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "depositApplyToBalanceAmount",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "finalBalanceAmount",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "settlementResult",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "note",
+          "surface": "editable"
+        }
+      ],
+      "derivedFields": [],
+      "backendDefaultFields": [
+        {
+          "fieldId": "operatorId",
+          "source": "actor-session",
+          "surface": "hidden-no-client-trust",
+          "defaultValue": "runtime-owned"
+        }
+      ],
+      "hiddenBackendDefaults": [],
+      "retiredFields": []
+    },
+    {
+      "caseType": "Accommodation.CheckoutSettlement",
+      "workItemId": "bedRelease",
+      "contractKind": "dormitory-system-context",
+      "dependsOn": [
+        "finalBalanceClose"
+      ],
+      "inheritedFields": [
+        {
+          "fieldId": "checkoutId",
+          "sourceWorkItemId": "finalBalanceClose",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        },
+        {
+          "fieldId": "roomId",
+          "sourceWorkItemId": "finalBalanceClose",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        },
+        {
+          "fieldId": "bedId",
+          "sourceWorkItemId": "finalBalanceClose",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        }
+      ],
+      "userSelectableFields": [
+        {
+          "fieldId": "releaseBed",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "releaseAvailableAt",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "releaseNote",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "note",
+          "surface": "editable"
+        }
+      ],
+      "derivedFields": [],
+      "backendDefaultFields": [
+        {
+          "fieldId": "operatorId",
+          "source": "actor-session",
+          "surface": "hidden-no-client-trust",
+          "defaultValue": "runtime-owned"
+        }
+      ],
+      "hiddenBackendDefaults": [],
+      "retiredFields": []
+    },
+    {
+      "caseType": "Accommodation.CheckoutSettlement",
+      "workItemId": "depositSettlement",
+      "contractKind": "dormitory-system-context",
+      "dependsOn": [
+        "roomInspection"
+      ],
+      "inheritedFields": [
+        {
+          "fieldId": "depositId",
+          "sourceWorkItemId": "roomInspection",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        }
+      ],
+      "userSelectableFields": [
+        {
+          "fieldId": "deductionAmount",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "applyToBalanceAmount",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "handlingOpinion",
+          "surface": "editable"
+        }
+      ],
+      "derivedFields": [
+        {
+          "fieldId": "refundAmount",
+          "derivedFrom": [
+            "depositId",
+            "deductionAmount",
+            "applyToBalanceAmount"
+          ],
+          "surface": "preview-hidden-submit",
+          "staleDraftPolicy": "always-recompute"
+        }
+      ],
+      "backendDefaultFields": [
+        {
+          "fieldId": "operatorId",
+          "source": "actor-session",
+          "surface": "hidden-no-client-trust",
+          "defaultValue": "runtime-owned"
+        }
+      ],
+      "hiddenBackendDefaults": [],
+      "retiredFields": []
+    },
+    {
+      "caseType": "Accommodation.CheckoutSettlement",
+      "workItemId": "postCheckoutCleaning",
+      "contractKind": "dormitory-system-context",
+      "dependsOn": [
+        "bedRelease"
+      ],
+      "inheritedFields": [
+        {
+          "fieldId": "roomId",
+          "sourceWorkItemId": "bedRelease",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        },
+        {
+          "fieldId": "bedId",
+          "sourceWorkItemId": "bedRelease",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        }
+      ],
+      "userSelectableFields": [
+        {
+          "fieldId": "taskType",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "targetCompletionDate",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "resolutionAction",
+          "surface": "editable"
+        }
+      ],
+      "derivedFields": [
+        {
+          "fieldId": "taskId",
+          "derivedFrom": [
+            "roomId",
+            "bedId",
+            "taskType"
+          ],
+          "surface": "hidden-submit-only",
+          "staleDraftPolicy": "always-recompute"
+        }
+      ],
+      "backendDefaultFields": [
+        {
+          "fieldId": "operatorId",
+          "source": "actor-session",
+          "surface": "hidden-no-client-trust",
+          "defaultValue": "runtime-owned"
+        }
+      ],
+      "hiddenBackendDefaults": [],
+      "retiredFields": []
+    },
+    {
+      "caseType": "Accommodation.ExpenseLedger",
+      "workItemId": "expenseRecord",
+      "contractKind": "dormitory-system-context",
+      "dependsOn": [],
+      "inheritedFields": [],
+      "userSelectableFields": [
+        {
+          "fieldId": "expenseDate",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "expenseCategory",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "expenseDescription",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "expenseAmount",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "currency",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "paymentMethod",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "expenseEvidenceId",
+          "surface": "editable"
+        }
+      ],
+      "derivedFields": [
+        {
+          "fieldId": "expenseId",
+          "derivedFrom": [
+            "expenseDate",
+            "expenseCategory"
+          ],
+          "surface": "hidden-submit-only",
+          "staleDraftPolicy": "always-recompute"
+        }
+      ],
+      "backendDefaultFields": [
+        {
+          "fieldId": "payerId",
+          "source": "actor-session",
+          "surface": "hidden-no-client-trust",
+          "defaultValue": "runtime-owned"
+        },
+        {
+          "fieldId": "payerName",
+          "source": "actor-session",
+          "surface": "hidden-no-client-trust",
+          "defaultValue": "runtime-owned"
+        }
+      ],
+      "hiddenBackendDefaults": [],
+      "retiredFields": [
+        {
+          "fieldId": "roomId",
+          "reason": "retired by current step dependency contract; kept only to suppress stale legacy WorkItem fields"
+        },
+        {
+          "fieldId": "bedId",
+          "reason": "retired by current step dependency contract; kept only to suppress stale legacy WorkItem fields"
+        },
+        {
+          "fieldId": "taskId",
+          "reason": "retired by current step dependency contract; kept only to suppress stale legacy WorkItem fields"
+        }
+      ]
+    },
+    {
+      "caseType": "Accommodation.ExpenseLedger",
+      "workItemId": "expenseApproval",
+      "contractKind": "dormitory-system-context",
+      "dependsOn": [
+        "expenseRecord"
+      ],
+      "inheritedFields": [
+        {
+          "fieldId": "expenseId",
+          "sourceWorkItemId": "expenseRecord",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        }
+      ],
+      "userSelectableFields": [
+        {
+          "fieldId": "confirmedAmount",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "approvalResult",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "differenceReason",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "approvalNote",
+          "surface": "editable"
+        }
+      ],
+      "derivedFields": [],
+      "backendDefaultFields": [
+        {
+          "fieldId": "reviewerId",
+          "source": "approval-chain",
+          "surface": "hidden-no-client-trust",
+          "defaultValue": "runtime-owned"
+        }
+      ],
+      "hiddenBackendDefaults": [],
+      "retiredFields": []
+    },
+    {
+      "caseType": "Accommodation.ExpenseLedger",
+      "workItemId": "expenseLink",
+      "contractKind": "dormitory-system-context",
+      "dependsOn": [
+        "expenseApproval"
+      ],
+      "inheritedFields": [
+        {
+          "fieldId": "expenseId",
+          "sourceWorkItemId": "expenseApproval",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        }
+      ],
+      "userSelectableFields": [
+        {
+          "fieldId": "roomId",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "bedId",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "taskId",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "linkNote",
+          "surface": "editable"
+        }
+      ],
+      "derivedFields": [],
+      "backendDefaultFields": [
+        {
+          "fieldId": "operatorId",
+          "source": "actor-session",
+          "surface": "hidden-no-client-trust",
+          "defaultValue": "runtime-owned"
+        }
+      ],
+      "hiddenBackendDefaults": [],
+      "retiredFields": []
+    },
+    {
+      "caseType": "Accommodation.CorrectionLedger",
+      "workItemId": "ledgerCorrectionApply",
+      "contractKind": "dormitory-system-context",
+      "dependsOn": [
+        "correctionRequest"
+      ],
+      "inheritedFields": [
+        {
+          "fieldId": "correctionRequestId",
+          "sourceWorkItemId": "correctionRequest",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        }
+      ],
+      "userSelectableFields": [
+        {
+          "fieldId": "adjustmentAmount",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "correctionReason",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "note",
+          "surface": "editable"
+        }
+      ],
+      "derivedFields": [],
+      "backendDefaultFields": [
+        {
+          "fieldId": "approverId",
+          "source": "approval-chain",
+          "surface": "hidden-no-client-trust",
+          "defaultValue": "runtime-owned"
+        }
+      ],
+      "hiddenBackendDefaults": [],
+      "retiredFields": []
+    },
+    {
+      "caseType": "Accommodation.PeriodAnalytics",
+      "workItemId": "periodScope",
+      "contractKind": "dormitory-system-context",
+      "dependsOn": [],
+      "inheritedFields": [],
+      "userSelectableFields": [
+        {
+          "fieldId": "periodYear",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "periodNo",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "periodStartAt",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "periodEndAt",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "periodDescription",
+          "surface": "editable"
+        }
+      ],
+      "derivedFields": [
+        {
+          "fieldId": "periodId",
+          "derivedFrom": [
+            "periodYear",
+            "periodNo"
+          ],
+          "surface": "hidden-submit-only",
+          "staleDraftPolicy": "always-recompute"
+        }
+      ],
+      "backendDefaultFields": [
+        {
+          "fieldId": "managerId",
+          "source": "actor-session",
+          "surface": "hidden-no-client-trust",
+          "defaultValue": "runtime-owned"
+        }
+      ],
+      "hiddenBackendDefaults": [],
+      "retiredFields": []
+    },
+    {
+      "caseType": "Accommodation.PeriodAnalytics",
+      "workItemId": "periodMetricsReview",
+      "contractKind": "dormitory-system-context",
+      "dependsOn": [
+        "periodScope"
+      ],
+      "inheritedFields": [
+        {
+          "fieldId": "periodId",
+          "sourceWorkItemId": "periodScope",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        }
+      ],
+      "userSelectableFields": [
+        {
+          "fieldId": "metricsSnapshotNote",
+          "surface": "editable"
+        }
+      ],
+      "derivedFields": [],
+      "backendDefaultFields": [
+        {
+          "fieldId": "managerId",
+          "source": "actor-session",
+          "surface": "hidden-no-client-trust",
+          "defaultValue": "runtime-owned"
+        }
+      ],
+      "hiddenBackendDefaults": [],
+      "retiredFields": []
+    },
+    {
+      "caseType": "Accommodation.PeriodAnalytics",
+      "workItemId": "periodFinanceReview",
+      "contractKind": "dormitory-system-context",
+      "dependsOn": [
+        "periodMetricsReview"
+      ],
+      "inheritedFields": [
+        {
+          "fieldId": "periodId",
+          "sourceWorkItemId": "periodMetricsReview",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        }
+      ],
+      "userSelectableFields": [
+        {
+          "fieldId": "financeReviewResult",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "financeReviewNote",
+          "surface": "editable"
+        }
+      ],
+      "derivedFields": [],
+      "backendDefaultFields": [
+        {
+          "fieldId": "financeReviewer",
+          "source": "actor-session",
+          "surface": "hidden-no-client-trust",
+          "defaultValue": "runtime-owned"
+        }
+      ],
+      "hiddenBackendDefaults": [],
+      "retiredFields": []
+    },
+    {
+      "caseType": "Accommodation.PeriodAnalytics",
+      "workItemId": "periodOperationsDiagnosis",
+      "contractKind": "dormitory-system-context",
+      "dependsOn": [
+        "periodFinanceReview"
+      ],
+      "inheritedFields": [
+        {
+          "fieldId": "periodId",
+          "sourceWorkItemId": "periodFinanceReview",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        }
+      ],
+      "userSelectableFields": [
+        {
+          "fieldId": "primaryIssueCategory",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "primaryIssue",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "rootCauseAnalysis",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "diagnosisConfidence",
+          "surface": "editable"
+        }
+      ],
+      "derivedFields": [],
+      "backendDefaultFields": [
+        {
+          "fieldId": "managerId",
+          "source": "actor-session",
+          "surface": "hidden-no-client-trust",
+          "defaultValue": "runtime-owned"
+        }
+      ],
+      "hiddenBackendDefaults": [],
+      "retiredFields": []
+    },
+    {
+      "caseType": "Accommodation.PeriodAnalytics",
+      "workItemId": "periodActionPlan",
+      "contractKind": "dormitory-system-context",
+      "dependsOn": [
+        "periodOperationsDiagnosis"
+      ],
+      "inheritedFields": [
+        {
+          "fieldId": "periodId",
+          "sourceWorkItemId": "periodOperationsDiagnosis",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        }
+      ],
+      "userSelectableFields": [
+        {
+          "fieldId": "actionTitle",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "actionType",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "targetMetric",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "targetValue",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "dueAt",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "ownerName",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "priority",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "actionStatus",
+          "surface": "editable"
+        }
+      ],
+      "derivedFields": [
+        {
+          "fieldId": "actionPlanId",
+          "derivedFrom": [
+            "periodId",
+            "actionTitle"
+          ],
+          "surface": "hidden-submit-only",
+          "staleDraftPolicy": "always-recompute"
+        }
+      ],
+      "backendDefaultFields": [
+        {
+          "fieldId": "managerId",
+          "source": "actor-session",
+          "surface": "hidden-no-client-trust",
+          "defaultValue": "runtime-owned"
+        }
+      ],
+      "hiddenBackendDefaults": [],
+      "retiredFields": []
+    },
+    {
+      "caseType": "Accommodation.PeriodAnalytics",
+      "workItemId": "periodActionPlanComplete",
+      "contractKind": "dormitory-system-context",
+      "dependsOn": [
+        "periodActionPlan"
+      ],
+      "inheritedFields": [
+        {
+          "fieldId": "actionPlanId",
+          "sourceWorkItemId": "periodActionPlan",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        },
+        {
+          "fieldId": "periodId",
+          "sourceWorkItemId": "periodActionPlan",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        }
+      ],
+      "userSelectableFields": [
+        {
+          "fieldId": "completedAt",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "completionResult",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "completionNote",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "ownerName",
+          "surface": "editable"
+        }
+      ],
+      "derivedFields": [],
+      "backendDefaultFields": [
+        {
+          "fieldId": "managerId",
+          "source": "actor-session",
+          "surface": "hidden-no-client-trust",
+          "defaultValue": "runtime-owned"
+        }
+      ],
+      "hiddenBackendDefaults": [],
+      "retiredFields": []
+    },
+    {
+      "caseType": "Accommodation.PeriodAnalytics",
+      "workItemId": "periodClose",
+      "contractKind": "dormitory-system-context",
+      "dependsOn": [
+        "periodScope",
+        "periodDiagnosis",
+        "periodActionPlan"
+      ],
+      "inheritedFields": [
+        {
+          "fieldId": "periodId",
+          "sourceWorkItemId": "periodActionPlan",
+          "surface": "readonly-hidden-submit",
+          "priority": [
+            "latest-runtime-event-or-projection",
+            "operations-start-context",
+            "completed-record-snapshot",
+            "non-conflicting-draft-fallback"
+          ]
+        }
+      ],
+      "userSelectableFields": [
+        {
+          "fieldId": "closeResult",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "managementConclusion",
+          "surface": "editable"
+        },
+        {
+          "fieldId": "nextPeriodFocus",
+          "surface": "editable"
+        }
+      ],
+      "derivedFields": [],
+      "backendDefaultFields": [
+        {
+          "fieldId": "operatorId",
+          "source": "actor-session",
+          "surface": "hidden-no-client-trust",
+          "defaultValue": "runtime-owned"
+        }
+      ],
+      "hiddenBackendDefaults": [],
+      "retiredFields": []
     }
-  ]
+  ],
+  "guardPolicy": {
+    "objectReferenceFieldIds": [
+      "leadId",
+      "reservationId",
+      "residentId",
+      "roomId",
+      "bedId",
+      "stayId",
+      "folioId",
+      "chargeId",
+      "depositId",
+      "depositReceiptId",
+      "paymentId",
+      "taskId",
+      "expenseId",
+      "checkoutId",
+      "periodId",
+      "actionPlanId",
+      "correctionRequestId"
+    ],
+    "actorFieldIds": [
+      "operatorId",
+      "receivedBy",
+      "financeReviewer",
+      "managerId",
+      "approverId",
+      "confirmer",
+      "payerId",
+      "payerName",
+      "reviewerId",
+      "ownerName",
+      "ownerActorId"
+    ],
+    "forbiddenLegacyFieldIds": [
+      "depositRule",
+      "varianceReason",
+      "actualCost",
+      "releaseScope",
+      "assigneeId"
+    ],
+    "rule": "If a later dormitory WorkItem exposes one of these protected fields, it must declare the field as inherited, derived, backendDefault, retired, or explicitly userSelectable in this contract; otherwise the Definition Registry guard fails. Submit-before-check summaries may show only user-actionable missing fields by default."
+  }
 }

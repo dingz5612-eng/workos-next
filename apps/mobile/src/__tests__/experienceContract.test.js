@@ -9,6 +9,7 @@ import {
   workItemCardSchema
 } from "../experienceContract.js";
 import { confirmSuccessMessage } from "../operationController.js";
+import { saveCompletedRecordSnapshot } from "../operationDrafts.js";
 import { evaluateSurfaceAccess } from "../surfaceGuard.js";
 import {
   ActionResult,
@@ -61,6 +62,17 @@ describe("RT-5 Experience Contract", () => {
     expect(initialHydration).toBeGreaterThan(initialRender);
   });
 
+  it("stops protected hydration after auth expiry instead of batch-fetching protected surfaces", () => {
+    const main = source("../main.js");
+
+    expect(main).toContain("optionalProtectedSurface(fetchWorkspaceProjection)");
+    expect(main).toContain("if (!state.currentActor) return;");
+    expect(main).toContain("function expireActorSession()");
+    expect(main).toContain('state.view = "login"');
+    expect(main).not.toContain("Promise.all([\n      optionalSurface(fetchWorkspaceProjection)");
+    expect(main).not.toContain("Promise.all([\n    optionalSurface(fetchHomeSurface)");
+  });
+
   it("uses operations prepare and confirm for Operation Panel main submit path", () => {
     const runtime = source("../operationRuntime.js");
     const controller = source("../operationController.js");
@@ -92,7 +104,7 @@ describe("RT-5 Experience Contract", () => {
     expect(evidenceStateMatrix.draft).toBe("can save draft");
   });
 
-  it("renders WorkItemCard with every contract field", () => {
+  it("renders WorkItemCard as a lightweight business task card", () => {
     const html = WorkItemCard({
       workItemId: "WI-1",
       caseId: "CASE-1",
@@ -110,11 +122,76 @@ describe("RT-5 Experience Contract", () => {
     }, ctx());
 
     expect(html).toContain('data-surface="action-decision-card"');
+    expect(html).toContain('data-surface="business-summary-header"');
+    expect(html).toContain('data-surface="business-task-body"');
+    expect(html).not.toContain("工作内容");
+    expect(html).not.toContain("处理：");
     expect(workItemCardSchema).toContain("workItemId");
-    for (const label of ["当前能否处理", "为什么不能处理", "需要的材料", "下一步怎么做", "风险等级", "责任角色", "截止时间", "业务对象"]) {
-      expect(html).toContain(label);
+    for (const label of ["当前能否处理", "处理说明", "需要的材料", "下一步怎么做", "风险等级", "责任角色", "截止时间", "业务对象"]) {
+      expect(html).not.toContain(label);
     }
     expect(visibleText(html)).not.toMatch(/\b(workItemId|caseId|traceRefs|lifecycleState|ownerRole)\b/);
+  });
+
+  it("renders completed core fields and current-step fields in the shared task overview", () => {
+    vi.stubGlobal("localStorage", memoryStorage());
+    const workspace = {
+      id: "W-STAY-RESOURCE-OVERVIEW",
+      domain: "stay",
+      title: { "zh-CN": "我要创建住宿资源" },
+      summary: { "zh-CN": "房间和床位配置" },
+      next: { "zh-CN": "配置床位" },
+      cards: [{
+        id: "roomSetup",
+        status: "confirmed",
+        title: { "zh-CN": "房间配置卡" },
+        fields: { business: [businessField("buildingName", "楼栋"), businessField("roomNo", "房间号"), businessField("roomType", "房型", { control: "select", optionSet: "roomType" }), businessField("bedCount", "床位数")], system: [], analytics: [] },
+        evidence: [],
+        checks: [],
+        blockerRules: [],
+        confirmation: { requiredRole: "operator" }
+      }, {
+        id: "bedSetup",
+        status: "ready",
+        title: { "zh-CN": "床位配置卡" },
+        fields: { business: [businessField("roomId", "所属房间"), businessField("bedCount", "床位数"), businessField("bedLabels", "床位标签"), businessField("bedType", "床位类型", { control: "select", optionSet: "bunkType", defaultValue: "bunk_pair" })], system: [], analytics: [] },
+        evidence: [],
+        checks: [],
+        blockerRules: [],
+        confirmation: { requiredRole: "operator" }
+      }]
+    };
+    saveCompletedRecordSnapshot({
+      workspaceId: workspace.id,
+      cardId: "roomSetup",
+      values: { buildingName: "D02", roomNo: "22", roomType: "four_bed", bedCount: "4" }
+    });
+
+    const html = WorkItemCard({
+      workItemId: "wi-bed-overview",
+      workspaceId: workspace.id,
+      cardId: "bedSetup",
+      lifecycleState: "ready",
+      workspace,
+      card: workspace.cards[1]
+    }, ctx());
+    const text = visibleText(html);
+
+    expect(html).toContain('data-surface="business-task-overview"');
+    expect(text).toContain("已办理");
+    expect(text).toContain("本步要办");
+    expect(text).toContain("房间号");
+    expect(text).toContain("22");
+    expect(text).toContain("房型");
+    expect(text).toContain("四人间");
+    expect(text).toContain("床位数");
+    expect(text).toContain("4");
+    expect(text).toContain("床铺生成方式");
+    expect(text).toContain("上下铺：两上两下");
+    expect(text).toContain("将生成的床位");
+    expect(text).toContain("01 · 上铺");
+    expect(text).toContain("04 · 下铺");
+    vi.unstubAllGlobals();
   });
 
   it("renders lifecycle workspace as the main object workspace", () => {
@@ -199,8 +276,16 @@ function ctx(actor = { role: "operator" }) {
       canHandleNow: "当前可处理",
       cannotHandleNow: "暂不能处理",
       missingEvidenceBlocks: "缺少材料，暂不能提交",
+      businessTaskCompletedFacts: "已办理",
+      businessTaskCurrentFields: "本步要办",
+      businessTaskPendingValue: "待确认",
+      businessTaskIssue: "当前问题",
+      businessTaskMissingEvidence: "还缺材料",
+      bedTypeTemplateLabel: "床铺生成方式",
+      bedLayoutPreviewLabel: "将生成的床位",
       noCriticalBlocker: "当前没有新的系统阻断，但关键动作仍需要人工确认。",
       decisionCanHandle: "当前能否处理",
+      decisionStatusNote: "处理说明",
       decisionBlocker: "为什么不能处理",
       decisionMissingEvidence: "需要的材料",
       decisionNextAction: "下一步怎么做",
@@ -236,6 +321,20 @@ function ctx(actor = { role: "operator" }) {
     localTerm: (value) => value?.label?.["zh-CN"] || value?.id || value,
     escapeHtml: (value) => String(value),
     escapeAttr: (value) => String(value)
+  };
+}
+
+function businessField(id, label, ui = {}) {
+  return { id, label: { "zh-CN": label }, required: true, ui };
+}
+
+function memoryStorage() {
+  const values = new Map();
+  return {
+    getItem: (key) => values.get(key) || null,
+    setItem: (key, value) => values.set(key, String(value)),
+    removeItem: (key) => values.delete(key),
+    clear: () => values.clear()
   };
 }
 

@@ -17,15 +17,26 @@ export function meView(ctx) {
       <button id="logout" class="secondary">${tr("logout")}</button>
     </section>
     ${hasStats ? `<section class="metric-grid">${ctx.metric(stats.queueCount, tr("work"))}${ctx.metric(stats.blockedCount, tr("workBlocked"))}${ctx.metric(stats.confirmCount, tr("cardConfirm"))}</section>` : ""}
-    <section class="personal-grid">
-      ${personal("learning", "learningCenter", "learningCenterBody", tr)}
-      ${personal("permissions", "myPermissions", "myPermissionsBody", tr)}
-      ${personalCopy("uploadQueue", ctx.tr("evidenceUpload"), tr("uploadQueueBody"))}
-      ${personalCopy("submitQueue", ctx.tr("submissionQueue"), tr("submitQueueBody"))}
-      ${personal("recentSubmissions", "recentSubmissions", "recentSubmissionsBody", tr)}
-      ${personal("recentTraces", "recentTraces", "recentTracesBody", tr)}
-      ${personalCopy("deviceTrust", `${ctx.tr("currentDevice")} · ${tr("deviceTrustStatus")}`, tr("deviceTrustStatusBody"))}
-      ${personal("feedback", "feedbackTitle", "feedbackBody", tr)}
+    <section class="personal-section" data-surface="personal-business-library">
+      <h2>${tr("personalBusinessLibrary")}</h2>
+      <div class="personal-grid">
+        ${personal("businessRecords", "searchOperationCases", "businessRecordsBody", tr)}
+        ${personal("completedRecords", "completedWorkItems", "completedRecordsBody", tr)}
+        ${personal("evidenceLibrary", "searchEvidence", "evidenceLibraryBody", tr)}
+        ${personal("learning", "learningCenter", "learningCenterBody", tr)}
+      </div>
+    </section>
+    <section class="personal-section" data-surface="personal-runtime-tools">
+      <h2>${tr("personalRuntimeTools")}</h2>
+      <div class="personal-grid">
+        ${personal("permissions", "myPermissions", "myPermissionsBody", tr)}
+        ${personalCopy("uploadQueue", ctx.tr("evidenceUpload"), tr("uploadQueueBody"))}
+        ${personalCopy("submitQueue", ctx.tr("submissionQueue"), tr("submitQueueBody"))}
+        ${personal("recentSubmissions", "recentSubmissions", "recentSubmissionsBody", tr)}
+        ${personal("recentTraces", "recentTraces", "recentTracesBody", tr)}
+        ${personalCopy("deviceTrust", `${ctx.tr("currentDevice")} · ${tr("deviceTrustStatus")}`, tr("deviceTrustStatusBody"))}
+        ${personal("feedback", "feedbackTitle", "feedbackBody", tr)}
+      </div>
     </section>
     <section class="compact-section">
       <h2>${tr("stats")}</h2>

@@ -1,9 +1,9 @@
-import { roleNavigation } from "./experienceContract.js";
+import { mobileSupportViews, roleNavigation } from "./experienceContract.js";
 import { isPcSurfaceView } from "./surfaceRegistry.js";
 import { resolveActiveDevice } from "./surfaceResolver.js";
 
 const publicViews = new Set(["login", "onboarding", "permissionDiagnostic"]);
-const commonViews = new Set(["home", "workbench", "search", "me", "workspace", "operationPanel", "learning", "notes", "reminders", "permissions", "uploadQueue", "submitQueue", "drafts", "failedSync", "recentSubmissions", "recentTraces", "deviceTrust", "feedback", "result", "confirmPage", "permissionDiagnostic"]);
+const commonViews = new Set(["home", "workbench", "search", "me", "workspace", "operationPanel", ...mobileSupportViews]);
 const viewCapabilities = {
   financeControl: "finance.control.view",
   financeReconciliation: "finance.control.view",

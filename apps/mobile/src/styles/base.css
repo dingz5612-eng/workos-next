@@ -1,17 +1,39 @@
 :root {
-  color: #102033;
-  background: #edf6f6;
-  font-family: Inter, "Segoe UI", Arial, sans-serif;
+  color: #13232b;
+  background: #eef5f4;
+  font-family: var(--font-sans);
   line-height: 1.45;
-  --ink: #092033;
-  --muted: #5d7286;
-  --line: #d6e6ea;
-  --surface: rgba(255, 255, 255, .94);
-  --teal: #087568;
-  --navy: #0b2c45;
-  --mint: #e9fbf5;
-  --gold: #ffd166;
-  --blue: #2f7df6;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  --font-sans: "Microsoft YaHei UI", "Microsoft YaHei", "PingFang SC", "Noto Sans SC", "Source Han Sans SC", "Segoe UI", Arial, sans-serif;
+  --font-title: 500;
+  --font-strong: 500;
+  --font-ui: 400;
+  --font-button: 500;
+  --ink: #172b32;
+  --ink-soft: #2f464e;
+  --muted: #5f737b;
+  --muted-soft: #7d9097;
+  --line: #d8e4e2;
+  --line-strong: #b8cfcb;
+  --surface: rgba(255, 255, 255, .96);
+  --surface-soft: #f6faf9;
+  --surface-muted: #edf5f3;
+  --brand: #12a6a0;
+  --brand-soft: #e7fbf7;
+  --brand-line: #7bd6cb;
+  --action: #0f9b96;
+  --action-hover: #0a7f7d;
+  --action-gradient: linear-gradient(135deg, #18b7aa 0%, #0f9b96 58%, #0b8f9a 100%);
+  --action-gradient-hover: linear-gradient(135deg, #14aa9f 0%, #0b8f8b 60%, #087f89 100%);
+  --action-shadow: 0 8px 18px rgba(15, 155, 150, .18);
+  --accent-warm: #f97316;
+  --attention: #f97316;
+  --attention-soft: #fff7ed;
+  --attention-line: #fdba74;
+  --danger: #ef4444;
+  --danger-soft: #fef2f2;
+  --danger-line: #fca5a5;
 }
 
 * {
@@ -35,11 +57,18 @@ datalist {
 button {
   min-height: 44px;
   border: 0;
-  border-radius: 14px;
+  border-radius: 12px;
   padding: 0 14px;
   color: #fff;
-  background: #0b6f63;
-  font-weight: 850;
+  background: var(--action-gradient);
+  font-weight: var(--font-button);
+  box-shadow: var(--action-shadow);
+  transition: transform .16s ease, box-shadow .16s ease, filter .16s ease;
+}
+
+button:hover:not(:disabled) {
+  background: var(--action-gradient-hover);
+  box-shadow: 0 10px 20px rgba(15, 155, 150, .2);
 }
 
 button:focus-visible,
@@ -51,8 +80,9 @@ textarea:focus-visible {
 }
 
 button.secondary {
-  color: #102033;
-  background: #eaf2f5;
+  color: var(--ink);
+  background: var(--surface-muted);
+  box-shadow: none;
 }
 
 button:disabled,
@@ -64,10 +94,10 @@ input,
 select {
   min-height: 42px;
   min-width: 0;
-  border: 1px solid #d3e1e9;
-  border-radius: 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
   padding: 0 12px;
-  color: #102033;
+  color: var(--ink);
   background: #fff;
 }
 
@@ -78,5 +108,17 @@ p,
 dl,
 dd {
   margin: 0;
+}
+
+h1,
+h2,
+h3 {
+  font-weight: var(--font-title);
+}
+
+strong,
+b,
+dt {
+  font-weight: var(--font-strong);
 }
 

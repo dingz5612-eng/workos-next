@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { i18n } from "../apps/mobile/src/i18n.js";
 import { routeView } from "../apps/mobile/src/appRouter.js";
+import { shell as appShell } from "../apps/mobile/src/appShell.js";
 
 const root = process.cwd();
 const out = ".tmp/surface/mobile-visible-copy-report.json";
@@ -9,7 +10,8 @@ const violations = [];
 const rendered = {
   home: render("home"),
   me: render("me"),
-  search: render("search")
+  search: render("search"),
+  searchCommand: render("search", { query: "新增住宿房源" })
 };
 const html = Object.values(rendered).join("\n");
 const text = visibleText(html);
@@ -42,15 +44,24 @@ for (const label of ["今天", "工作", "搜索", "我的"]) {
   }
 }
 
-for (const label of ["证据上传", "提交队列", "当前设备", "没有待上传证据", "没有待提交办理", "学习中心"]) {
+for (const label of ["业务资料", "业务记录", "已完成记录", "证据", "证据上传", "提交队列", "当前设备", "没有待上传证据", "没有待提交办理", "学习中心"]) {
   if (!rendered.me.includes(label)) {
     violations.push(violation("mobile.visible_copy.me_copy_missing", `Me 页面缺少中文 copy：${label}。`, { label }));
   }
 }
 
-for (const label of ["WorkOS 搜索", "待办任务", "业务记录", "房间", "床位", "入住", "证据", "提交轨迹", "学习内容"]) {
+for (const label of ["待办任务", "房间", "床位", "入住"]) {
   if (!rendered.search.includes(label)) {
     violations.push(violation("mobile.visible_copy.search_copy_missing", `Search 页面缺少 WorkOS Search copy：${label}。`, { label }));
+  }
+}
+if (!rendered.searchCommand.includes("主动办理")) {
+  violations.push(violation("mobile.visible_copy.search_copy_missing", "Search 页面缺少主动办理。", { label: "主动办理" }));
+}
+
+for (const sectionId of ["searchOperationCases", "completedWorkItems", "searchEvidence", "searchSubmissionTrace", "searchLearning"]) {
+  if (rendered.search.includes(`data-search-section="${sectionId}"`)) {
+    violations.push(violation("mobile.visible_copy.search_archive_section", `Search 不得显示个人资料库 section：${sectionId}。`, { sectionId }));
   }
 }
 
@@ -62,7 +73,7 @@ if (violations.length) {
 
 console.log("Mobile visible copy check: PASS");
 
-function render(view) {
+function render(view, overrides = {}) {
   const state = {
     view,
     lang: "zh-CN",
@@ -70,15 +81,17 @@ function render(view) {
     query: "住宿",
     recentSearches: [],
     queueDomain: "all",
-    queueBadge: "mine",
+    queueBadge: "all",
+    todayFilter: "must-do",
     currentActor: { role: "operator", displayName: "内测经办人" },
     currentDevice: { deviceId: "mobile-current", deviceTrustStatus: "trusted", surface: "mobile" },
     pcGovernance: { currentDevice: { deviceId: "pc-current", deviceTrustStatus: "unknown", surface: "pc" } },
-    runtimeStore: runtimeStore()
+    runtimeStore: runtimeStore(),
+    ...overrides
   };
   const ctx = {
     state,
-    shell: (content) => content,
+    shell: (content) => appShell(content, ctx),
     tr: (key) => escape(i18n[state.lang][key] || key),
     tx: (value) => escape(typeof value === "string" ? value : value?.[state.lang] || value?.["zh-CN"] || ""),
     localTerm: (value) => escape(value?.label?.[state.lang] || value?.label?.["zh-CN"] || value?.id || value),

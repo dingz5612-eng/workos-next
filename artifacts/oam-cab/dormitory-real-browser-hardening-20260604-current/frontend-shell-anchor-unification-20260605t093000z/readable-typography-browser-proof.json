@@ -1,0 +1,49 @@
+{
+  "generatedAtUtc": "2026-06-05T10:21:43.265Z",
+  "screenshots": [
+    "16-workbench-readable-typography.png",
+    "17-home-readable-typography.png"
+  ],
+  "typography": {
+    "workbench": [
+      {
+        "selector": ".topbar-title strong",
+        "text": "工作项",
+        "fontFamily": "\"Microsoft YaHei UI\", \"Microsoft YaHei\", \"PingFang SC\", \"Noto Sans SC\", \"Source Han Sans SC\", \"Segoe UI\", Arial, sans-serif",
+        "fontSize": "19px",
+        "fontWeight": "500",
+        "color": "rgb(23, 43, 50)",
+        "lineHeight": "22.8px"
+      },
+      {
+        "selector": "button",
+        "text": "搜索",
+        "fontFamily": "\"Microsoft YaHei UI\", \"Microsoft YaHei\", \"PingFang SC\", \"Noto Sans SC\", \"Source Han Sans SC\", \"Segoe UI\", Arial, sans-serif",
+        "fontSize": "16px",
+        "fontWeight": "500",
+        "color": "rgb(255, 255, 255)",
+        "lineHeight": "23.2px"
+      }
+    ],
+    "home": [
+      {
+        "selector": ".topbar-title strong",
+        "text": "今日重点概览",
+        "fontFamily": "\"Microsoft YaHei UI\", \"Microsoft YaHei\", \"PingFang SC\", \"Noto Sans SC\", \"Source Han Sans SC\", \"Segoe UI\", Arial, sans-serif",
+        "fontSize": "19px",
+        "fontWeight": "500",
+        "color": "rgb(23, 43, 50)",
+        "lineHeight": "22.8px"
+      },
+      {
+        "selector": "button",
+        "text": "搜索",
+        "fontFamily": "\"Microsoft YaHei UI\", \"Microsoft YaHei\", \"PingFang SC\", \"Noto Sans SC\", \"Source Han Sans SC\", \"Segoe UI\", Arial, sans-serif",
+        "fontSize": "16px",
+        "fontWeight": "500",
+        "color": "rgb(255, 255, 255)",
+        "lineHeight": "23.2px"
+      }
+    ]
+  }
+}

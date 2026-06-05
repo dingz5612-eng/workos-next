@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { i18n } from "../../../apps/mobile/src/i18n.js";
 import { routeView } from "../../../apps/mobile/src/appRouter.js";
+import { shell as appShell } from "../../../apps/mobile/src/appShell.js";
 
 const root = process.cwd();
 
@@ -157,6 +158,7 @@ function validateMobilePcBoundary(contracts, source, violations) {
   if (!source.eventBinder.includes('import("./pcEventBinder.js")')) {
     violations.push(violation("surface.boundary.pc_event_lazy_missing", "PC event binder 必须按 PC surface 懒加载。"));
   }
+  validatePcGovernanceOperationalRiskCommand(source, violations);
   for (const token of ["confirmBankStatementImport", "recordGovernanceAuditEvent", "requestLedgerCorrection"]) {
     if (source.apiClient.includes(token)) {
       violations.push(violation("surface.boundary.pc_api_in_mobile", `Mobile apiClient 不得包含 PC API ${token}。`, { token }));
@@ -216,9 +218,29 @@ function validateNoRawSurfaceLabels(contracts, rendered, source, violations) {
 }
 
 function validateSearch(contracts, rendered, source, violations) {
-  for (const label of ["WorkOS 搜索", "待办任务", "业务记录", "房间", "床位", "入住", "证据", "提交轨迹", "学习内容"]) {
-    if (!rendered.search.includes(label)) {
+  if (!rendered.search.includes('data-shell-page="search"') || !rendered.search.includes('class="search-box"')) {
+    violations.push(violation("surface.search.shell_title_missing", "Search 必须使用移动端共享顶部栏标题和搜索框，而不是正文重复页面标题。"));
+  }
+  for (const label of contracts.search?.contentTitleForbidden ?? []) {
+    if (rendered.search.includes(label)) {
+      violations.push(violation("surface.search.duplicate_content_title", `Search 正文不得重复通用页面标题 ${label}。`, { label }));
+    }
+  }
+  for (const label of contracts.search?.sections ?? []) {
+    const source = label === "主动办理" ? rendered.searchCommand : rendered.search;
+    if (!source.includes(label)) {
       violations.push(violation("surface.search.section_missing", `Search 缺少 ${label}。`, { label }));
+    }
+  }
+  for (const sectionId of contracts.search?.sectionsMovedToMe ?? []) {
+    if (rendered.search.includes(`data-search-section="${sectionId}"`)) {
+      violations.push(violation("surface.search.archive_section_leaked", `Search 不得展示个人资料库 section ${sectionId}。`, { sectionId }));
+    }
+  }
+  const personalArchiveLabels = ["业务记录", "已完成记录", "证据", "学习中心"];
+  for (const label of personalArchiveLabels) {
+    if (!rendered.me.includes(label)) {
+      violations.push(violation("surface.search.archive_not_in_me", `Me 必须承接个人资料入口：${label}。`, { label }));
     }
   }
   if (!source.searchView.includes("localizedTitle") && !(contracts.search?.resultContract ?? []).includes("localizedTitle")) {
@@ -229,19 +251,60 @@ function validateSearch(contracts, rendered, source, violations) {
       violations.push(violation("surface.search.pc_raw_visible", `普通 mobile search 不得显示 ${token}。`, { token }));
     }
   }
+  if (!rendered.search.includes("data-search-admission-state") || !source.searchView.includes("data-search-admission-state")) {
+    violations.push(violation("surface.search.admission_missing", "Search 结果卡必须携带 Admission 决策标记，但普通卡片不应强制展示准入术语。"));
+  }
+  if (contracts.search?.businessAnchor?.visible !== true ||
+      !source.searchView.includes("BusinessSummaryHeader") ||
+      !source.experienceComponents.includes("businessAnchorFieldsHtml") ||
+      !rendered.search.includes('data-surface="business-anchor-fields"')) {
+    violations.push(violation("surface.search.business_anchor_missing", "Search 结果卡必须使用 Business Anchor 展示人可记忆的业务锚点。"));
+  }
+  if (contracts.search?.businessAnchor?.mustMergeOperationsWorkItems !== true ||
+      !source.navigationController.includes("operationWorkItemsFromSearchResults") ||
+      !source.navigationController.includes("applyRuntimeSurfacePayloads")) {
+    violations.push(violation("surface.search.operations_result_not_openable", "Search 后端返回的 Operations 工作项必须合并进可打开的运行时待办池。"));
+  }
+  for (const token of ["admissionDecisionRef", "compatibilityAdapter", "definitionId", "raw reason", "raw code"]) {
+    if (visibleText(rendered.search).includes(token)) {
+      violations.push(violation("surface.search.admission_raw_visible", `Search 普通用户文案不得显示 ${token}。`, { token }));
+    }
+  }
+}
+
+function validatePcGovernanceOperationalRiskCommand(source, violations) {
+  const panelSource = source.pcGovernanceView.match(/function riskCommandPanel[\s\S]+?function accountUsersPanel/)?.[0] || "";
+  if (!panelSource) {
+    violations.push(violation("surface.pc.risk_command_missing", "PC 风险作战室必须有独立 riskCommandPanel。"));
+    return;
+  }
+  for (const label of ["影响", "负责人", "建议动作", "进入处理"]) {
+    if (!panelSource.includes(label)) {
+      violations.push(violation("surface.pc.risk_command_operator_label_missing", `风险作战室缺少运营可读字段：${label}。`, { label }));
+    }
+  }
+  if (panelSource.includes("tableOrEmpty") || panelSource.includes("drilldownUrl\"]")) {
+    violations.push(violation("surface.pc.risk_command_technical_table", "风险作战室不得回退成风险编号 / URL 技术表格。"));
+  }
+  if (!source.pcGovernanceView.includes("risk-command-card") || !source.pcGovernanceView.includes("data-risk-action")) {
+    violations.push(violation("surface.pc.risk_command_action_missing", "风险作战室必须用运营卡片并提供进入处理动作。"));
+  }
 }
 
 function validateLearning(contracts, rendered, source, violations) {
   for (const label of contracts.learning?.topics ?? []) {
-    if (!rendered.search.includes(label) && !rendered.home.includes(label)) {
+    if (!rendered.learning.includes(label)) {
       violations.push(violation("surface.learning.topic_missing", `学习内容缺少主题：${label}。`, { label }));
     }
   }
   if (!rendered.me.includes("学习中心")) {
     violations.push(violation("surface.learning.me_entry_missing", "Learning Center 必须在 Me 中可见。"));
   }
-  if (!source.homeView.includes("todayLearning")) {
-    violations.push(violation("surface.learning.today_missing", "Today 必须支持今日必学。"));
+  if (source.homeView.includes("todayLearning")) {
+    violations.push(violation("surface.learning.today_retired", "Today 首页内容区不得再放今日必学；学习内容应通过 Me 进入。"));
+  }
+  if (contracts.learning?.searchCanFindLearning === false && source.searchView.includes("learningResults")) {
+    violations.push(violation("surface.learning.search_archive_leaked", "Search 不得直接渲染学习内容结果；学习内容归 Me / Learning Center。"));
   }
 }
 
@@ -256,6 +319,23 @@ function validateQueue(contracts, rendered, source, violations) {
     (source.experienceComponents.includes('data-surface="upload-queue"') && source.experienceComponents.includes('data-surface="submit-queue"'));
   if (!queueUsesSurfaceAttribute) {
     violations.push(violation("surface.queue.data_surface_missing", "Upload/Submit queue 必须使用 surface 标记而不是组件名。"));
+  }
+  const todayOverview = rendered.home.match(/<section class="command-card today-focus-overview"[\s\S]*?<\/section>/)?.[0] || "";
+  if (!source.queueSelectors.includes("selectTodayFocusQueue") || !source.homeView.includes("todayFocusItems")) {
+    violations.push(violation("surface.today.selector_missing", "Today 必须通过 selectTodayFocusQueue / todayFocusItems 渲染本页今日列表。"));
+  }
+  if (todayOverview.includes("data-work-filter") || todayOverview.includes('data-view="workbench"')) {
+    violations.push(violation("surface.today.workbench_filter_leak", "Today 指标按钮不得使用 data-work-filter 或跳转 Workbench。"));
+  }
+  for (const token of ["data-today-filter=\"must-do\"", "data-today-filter=\"due-soon\"", "data-today-filter=\"missing-evidence\"", "data-today-filter=\"waiting-others\"", "data-today-filter=\"waiting-finance\"", "data-today-filter=\"just-submitted\"", "data-today-filter=\"risk-reminder\""]) {
+    if (!rendered.home.includes(token)) {
+      violations.push(violation("surface.today.filter_missing", `Today 缺少本页筛选 ${token}。`, { token }));
+    }
+  }
+  for (const token of ["data-work-filter=\"all-work\"", "data-work-filter=\"can-do\"", "data-work-filter=\"blocked\"", "data-work-filter=\"need-evidence\"", "data-work-filter=\"waiting-others\"", "data-work-filter=\"waiting-finance\"", "data-work-filter=\"due-risk\"", "data-work-filter=\"transferable\"", "data-work-filter=\"just-submitted\"", "data-mobile-work-scenario-ia", "riskSort", "recentSort"]) {
+    if (!rendered.workbench.includes(token)) {
+      violations.push(violation("surface.work.filter_missing", `Work 缺少全量工作筛选或排序 ${token}。`, { token }));
+    }
   }
 }
 
@@ -311,6 +391,15 @@ function validateOperationPanelRuntime(contracts, rendered, source, violations) 
   }
   if (rendered.operationPanel.includes("T-ROOM-CREATE")) {
     violations.push(violation("surface.operation_panel.legacy_id_visible", "Operation Panel 不得显示 T-ROOM-CREATE。"));
+  }
+  if (!rendered.operationPanel.includes("准入状态") || !source.operationPanel.includes("operation-admission")) {
+    violations.push(violation("surface.operation_panel.admission_missing", "Operation Panel 必须显示顶部 Admission 准入状态。"));
+  }
+  if (!source.operationActionState.includes("admissionStateFromWorkItem") || !source.operationActionState.includes("readyObservation") || !source.operationActionState.includes("confirmDenied")) {
+    violations.push(violation("surface.operation_panel.admission_action_missing", "OperationActionState 必须由 Admission 决定 confirmDenied / readyObservation。"));
+  }
+  if (!source.operationController.includes("safeConfirmErrorKey") || source.operationController.includes("error?.reason || error?.code || \"\"")) {
+    violations.push(violation("surface.operation_panel.raw_error_passthrough", "confirm error/blocked 文案不得直接拼接 raw reason/code。"));
   }
 }
 
@@ -377,7 +466,11 @@ function readSources() {
     meView: read("apps/mobile/src/views/meView.js"),
     searchView: read("apps/mobile/src/views/searchView.js"),
     operationPanel: read("apps/mobile/src/views/operationPanelView.js"),
+    operationActionState: read("apps/mobile/src/operationActionState.js"),
+    operationController: read("apps/mobile/src/operationController.js"),
     operationRuntime: read("apps/mobile/src/operationRuntime.js"),
+    queueSelectors: read("apps/mobile/src/selectors/queueSelectors.js"),
+    pcGovernanceView: read("apps/mobile/src/views/pcGovernanceView.js"),
     pcApiClient: read("apps/mobile/src/pcApiClient.js"),
     shellCopy: read("apps/mobile/src/i18n/shellCopy.js"),
     navigationController: read("apps/mobile/src/navigationController.js"),
@@ -401,7 +494,8 @@ function renderMobileSurfaces() {
     query: "住宿",
     recentSearches: [],
     queueDomain: "all",
-    queueBadge: "mine",
+    queueBadge: "all",
+    todayFilter: "must-do",
     selectedWorkItemId: "T-ROOM-CREATE",
     selectedWorkspace: "W-STAY-RESOURCE",
     selectedCardId: "roomSetup",
@@ -412,7 +506,7 @@ function renderMobileSurfaces() {
   };
   const ctx = {
     state,
-    shell: (content) => content,
+    shell: (content) => appShell(content, ctx),
     tr: (key) => escape(i18n[state.lang][key] || key),
     tx: (value) => escape(typeof value === "string" ? value : value?.[state.lang] || value?.["zh-CN"] || ""),
     localTerm: (value) => escape(value?.label?.[state.lang] || value?.label?.["zh-CN"] || value?.id || value),
@@ -427,10 +521,46 @@ function renderMobileSurfaces() {
   };
   return {
     home: render("home"),
+    workbench: render("workbench"),
     me: render("me"),
     search: render("search"),
+    searchCommand: renderWith({ view: "search", query: "新增住宿房源" }),
+    learning: renderWith({ view: "learning", learningQuery: "" }),
     operationPanel: render("operationPanel")
   };
+}
+
+function renderWith(overrides = {}) {
+  const state = {
+    view: "home",
+    lang: "zh-CN",
+    apiStatus: "online",
+    query: "住宿",
+    recentSearches: [],
+    queueDomain: "all",
+    queueBadge: "all",
+    todayFilter: "must-do",
+    selectedWorkItemId: "T-ROOM-CREATE",
+    selectedWorkspace: "W-STAY-RESOURCE",
+    selectedCardId: "roomSetup",
+    currentActor: { role: "operator", displayName: "内测经办人" },
+    currentDevice: { deviceId: "mobile-current", deviceTrustStatus: "trusted", surface: "mobile" },
+    pcGovernance: { currentDevice: { deviceId: "pc-current", deviceTrustStatus: "unknown", surface: "pc" } },
+    runtimeStore: runtimeStore(),
+    ...overrides
+  };
+  const ctx = {
+    state,
+    shell: (content) => appShell(content, ctx),
+    tr: (key) => escape(i18n[state.lang][key] || key),
+    tx: (value) => escape(typeof value === "string" ? value : value?.[state.lang] || value?.["zh-CN"] || ""),
+    localTerm: (value) => escape(value?.label?.[state.lang] || value?.label?.["zh-CN"] || value?.id || value),
+    escapeHtml: escape,
+    escapeAttr: escape,
+    metric: (value, label) => `<article><span>${label}</span><strong>${value}</strong></article>`,
+    render: () => {}
+  };
+  return routeView(ctx);
 }
 
 function runtimeStore() {

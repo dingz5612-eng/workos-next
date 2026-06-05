@@ -93,6 +93,16 @@ public sealed record FactTraceV1(
     IReadOnlyList<string> LedgerEntryRefs,
     IReadOnlyList<string> ProjectionCommitRefs);
 
+public sealed record OperationsSearchRecord(
+    string TenantId,
+    string EventId,
+    string CaseId,
+    string WorkItemId,
+    string SubmissionId,
+    string EventType,
+    IReadOnlyDictionary<string, object> Payload,
+    DateTimeOffset OccurredAtUtc);
+
 public sealed record RejectedCommandSubmissionV1(
     string TenantId,
     string SubmissionId,

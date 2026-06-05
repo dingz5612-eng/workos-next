@@ -71,6 +71,19 @@ function checkContract() {
   if (searchContract.languageSynonymRef !== "docs/contracts/language/search-synonyms.json") {
     failures.push("search-contract must reference Language Kernel search synonyms.");
   }
+  if (searchContract.indexSourcesRef !== "docs/contracts/search/search-index-sources.json") {
+    failures.push("search-contract must reference Search index sources.");
+  }
+  if (!(searchContract.inputAdapters || []).some((adapter) => adapter.adapterId === "operationsRuntimeFactInput" && adapter.status === "active")) {
+    failures.push("search-contract must declare active operationsRuntimeFactInput.");
+  }
+  if (!(searchContract.runtimeAdapters || []).some((adapter) => adapter.name === "OperationsReadStore.SearchOperations")) {
+    failures.push("search-contract must register OperationsReadStore.SearchOperations as a runtime adapter.");
+  }
+  const invariantText = (searchContract.invariants || []).join(" ");
+  if (!invariantText.includes("Operations Runtime confirmed events") || !invariantText.includes("display/search-only")) {
+    failures.push("search-contract must state Operations events and business anchors search boundary.");
+  }
 }
 
 function checkSourcesAndSchema() {
@@ -80,6 +93,10 @@ function checkSourcesAndSchema() {
   }
   for (const source of indexSources.sources || []) {
     if (source.admissionRequired !== true) failures.push(`${source.sourceId} must require admission.`);
+  }
+  const operationsEvents = (indexSources.sources || []).find((source) => source.sourceId === "operationsDomainEvents");
+  if (!operationsEvents || !String(operationsEvents.ref || "").includes("OperationsReadStore.SearchOperations")) {
+    failures.push("search-index-sources must include operationsDomainEvents through OperationsReadStore.SearchOperations.");
   }
 
   for (const field of requiredResultFields) {
@@ -106,7 +123,8 @@ function checkRankingAndPermission() {
     "surface-visibility-not-confirm-permission",
     "high-risk-requires-capability-device",
     "tenant-filter-required",
-    "projection-source-label-required"
+    "projection-source-label-required",
+    "operations-events-tenant-scoped-readonly"
   ]) {
     if (!(permissionPolicy.rules || []).some((rule) => rule.ruleId === ruleId)) {
       failures.push(`search-permission-policy missing rule ${ruleId}.`);
@@ -159,9 +177,25 @@ function checkRuntimeImplementation() {
     "\"admission\"",
     "\"traceRefs\"",
     "\"sourceRefs\"",
-    "\"language\""
+    "\"language\"",
+    "SearchOperationsSources",
+    "OperationsRuntime.SearchOperations",
+    "OperationsReadStore.SearchOperations",
+    "NextActionableWorkItem",
+    "BusinessAnchorKeys"
   ]) {
     if (!searchKernel.includes(term)) failures.push(`SearchKernelService.cs missing ${term}.`);
+  }
+  const operationsUnitOfWork = read("services/core-api/WorkOS.Api/Runtime/OperationsUnitOfWork.cs");
+  for (const term of ["SearchOperations(string tenantId", "operations_domain_events", "SearchText(record).Contains"]) {
+    if (!operationsUnitOfWork.includes(term)) failures.push(`OperationsUnitOfWork.cs missing operations search term: ${term}.`);
+  }
+  if (operationsUnitOfWork.includes("payload::text ilike")) {
+    failures.push("Operations search must not use payload::text ilike because it matches JSON field names such as buildingName.");
+  }
+  const navigation = read("apps/mobile/src/navigationController.js");
+  if (!navigation.includes("operationWorkItemsFromSearchResults") || !navigation.includes("applyRuntimeSurfacePayloads")) {
+    failures.push("navigationController must merge Operations Search Kernel work items into runtime operation items.");
   }
 
   const program = read("services/core-api/WorkOS.Api/Program.cs");

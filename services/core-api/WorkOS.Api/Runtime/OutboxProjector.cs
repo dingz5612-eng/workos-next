@@ -101,13 +101,13 @@ internal sealed class CardProgressProjectorRule : IOutboxProjectorRule
         }
 
         cards[cardIndex] = cards[cardIndex] with { Status = "done", BlockerRules = Array.Empty<BlockerRule>() };
-        var nextCardIndex = NextCardIndex(workspace.Id, cards, cardIndex);
+        var nextCardIndex = NextCardIndex(workspace.Id, cards, cardIndex, workspaceEvent.Payload);
         if (nextCardIndex >= 0 && cards[nextCardIndex].Status == "notStarted")
         {
             cards[nextCardIndex] = cards[nextCardIndex] with { Status = "ready" };
         }
 
-        MarkSkippedBranchCards(workspace.Id, cards, cardIndex);
+        MarkSkippedBranchCards(workspace.Id, cards, cardIndex, workspaceEvent.Payload);
 
         state.Workspaces[workspaceIndex] = workspace with
         {
@@ -117,15 +117,23 @@ internal sealed class CardProgressProjectorRule : IOutboxProjectorRule
         state.Events.Add(workspaceEvent);
     }
 
-    private static int NextCardIndex(string workspaceId, IReadOnlyList<CardProjection> cards, int cardIndex)
+    private static int NextCardIndex(
+        string workspaceId,
+        IReadOnlyList<CardProjection> cards,
+        int cardIndex,
+        IReadOnlyDictionary<string, string>? fieldValues)
     {
         if (IsLeadReservationWorkspace(workspaceId) &&
             cards[cardIndex].Id.Equals("reservationCreate", StringComparison.OrdinalIgnoreCase))
         {
-            var convertIndex = cards.ToList().FindIndex(card => card.Id.Equals("reservationConvert", StringComparison.OrdinalIgnoreCase));
-            if (convertIndex > cardIndex)
+            var nextAction = RuntimeFieldAliases.Value(fieldValues ?? new Dictionary<string, string>(), "reservationNextAction", "convert");
+            var branchCardId = nextAction.Contains("cancel", StringComparison.OrdinalIgnoreCase)
+                ? "reservationCancel"
+                : "reservationConvert";
+            var branchIndex = cards.ToList().FindIndex(card => card.Id.Equals(branchCardId, StringComparison.OrdinalIgnoreCase));
+            if (branchIndex >= 0)
             {
-                return convertIndex;
+                return branchIndex;
             }
         }
 
@@ -136,7 +144,11 @@ internal sealed class CardProgressProjectorRule : IOutboxProjectorRule
         workspaceId.Equals("W-STAY-LEAD-RESERVATION", StringComparison.OrdinalIgnoreCase) ||
         workspaceId.StartsWith("W-STAY-LEAD-RESERVATION-", StringComparison.OrdinalIgnoreCase);
 
-    private static void MarkSkippedBranchCards(string workspaceId, IList<CardProjection> cards, int cardIndex)
+    private static void MarkSkippedBranchCards(
+        string workspaceId,
+        IList<CardProjection> cards,
+        int cardIndex,
+        IReadOnlyDictionary<string, string>? fieldValues)
     {
         if (!IsLeadReservationWorkspace(workspaceId) ||
             !cards[cardIndex].Id.Equals("reservationCreate", StringComparison.OrdinalIgnoreCase))
@@ -144,10 +156,14 @@ internal sealed class CardProgressProjectorRule : IOutboxProjectorRule
             return;
         }
 
-        var cancelIndex = cards.ToList().FindIndex(card => card.Id.Equals("reservationCancel", StringComparison.OrdinalIgnoreCase));
-        if (cancelIndex >= 0 && cards[cancelIndex].Status == "notStarted")
+        var nextAction = RuntimeFieldAliases.Value(fieldValues ?? new Dictionary<string, string>(), "reservationNextAction", "convert");
+        var skippedCardId = nextAction.Contains("cancel", StringComparison.OrdinalIgnoreCase)
+            ? "reservationConvert"
+            : "reservationCancel";
+        var skippedIndex = cards.ToList().FindIndex(card => card.Id.Equals(skippedCardId, StringComparison.OrdinalIgnoreCase));
+        if (skippedIndex >= 0 && cards[skippedIndex].Status == "notStarted")
         {
-            cards[cancelIndex] = cards[cancelIndex] with { Status = "skipped" };
+            cards[skippedIndex] = cards[skippedIndex] with { Status = "skipped" };
         }
     }
 }

@@ -1,4 +1,4 @@
-import { defaultHomeForRole, roleNavigation } from "./experienceContract.js";
+import { defaultHomeForRole, mobileSupportViews, roleNavigation } from "./experienceContract.js";
 import { isPcSurfaceView } from "./surfaceRegistry.js";
 
 const mobileFallbackViews = {
@@ -42,7 +42,7 @@ export function canAccessSurface(state = {}, view = state.view) {
 }
 
 function commonMobileView(view) {
-  return ["home", "workbench", "search", "me", "workspace", "operationPanel", "learning", "notes", "reminders", "permissions", "uploadQueue", "submitQueue", "drafts", "failedSync", "recentSubmissions", "recentTraces", "deviceTrust", "feedback", "result", "confirmPage", "permissionDiagnostic"].includes(view);
+  return ["home", "workbench", "search", "me", "workspace", "operationPanel", ...mobileSupportViews].includes(view);
 }
 
 function normalizeDevice(device) {

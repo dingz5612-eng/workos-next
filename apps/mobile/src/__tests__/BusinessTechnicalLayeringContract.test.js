@@ -71,7 +71,7 @@ describe("OAM-04B business and technical layering contract", () => {
     clearDraft("W-STAY-RESOURCE", "roomSetup");
     const html = operationPanelView(ctx);
 
-    expect(visibleText(html)).toContain("提交处理");
+    expect(visibleText(html)).toContain("提交观察记录");
     expect(visibleText(html)).toContain("提交前检查");
     expect(visibleText(html)).toContain("材料核对");
     expect(visibleText(html)).not.toContain("提交证据");
@@ -165,10 +165,10 @@ describe("OAM-04B business and technical layering contract", () => {
     const text = visibleText(html);
 
     expect(operationFieldId(workspace.cards[1].fields.business[0])).toBe("roomId");
-    expect(html).toContain('type="hidden" data-operation-field="roomId" value="room-31"');
+    expect(html).toContain('type="hidden" data-operation-field="roomId" value="room-d03-31"');
     expect(html).toContain('value="D03 / 31"');
     expect(text).not.toContain("已从本案带入");
-    expect(text).toContain("来自房间配置，不需要重复填写。");
+    expect(text).toContain("系统已带入，不需要重复填写。");
     expect(text).not.toContain("所属房间 · 可搜索选择");
   });
 
@@ -304,17 +304,19 @@ describe("OAM-04B business and technical layering contract", () => {
     expect(visibleText(ActionResult({ status: "committed_projection_pending", message: "已提交，视图同步中" }, ctx))).not.toContain("失败");
   });
 
-  it("Home, blocked work, search learning, and permission diagnostic include learning recovery", () => {
+  it("blocked work and permission diagnostics keep learning recovery while Search stays focused on business entry", () => {
     const ctx = createSurfaceCtx({ view: "home" });
-    expect(homeView(ctx)).toContain('data-view="learning"');
-    expect(visibleText(homeView(ctx))).toContain("学习中心");
+    expect(homeView(ctx)).not.toContain('data-view="learning"');
+    expect(visibleText(homeView(ctx))).not.toContain("学习中心");
 
     ctx.state.runtimeStore.workspaces[0].cards[0].status = "blocked";
     ctx.state.runtimeStore.workQueue[0].lifecycleState = "blocked";
     expect(visibleText(operationPanelView(ctx))).toContain("查看不能提交原因");
 
     const search = searchView(createSurfaceCtx({ view: "search", query: "证据" }));
-    expect(search).toContain('data-learning-id="learnEvidenceFix"');
+    expect(search).not.toContain('data-learning-id="learnEvidenceFix"');
+    expect(search).not.toContain('data-search-section="searchLearning"');
+    expect(visibleText(search)).toContain("记录、证据和学习内容请到我的查看");
 
     const diagnostic = PermissionDiagnostic({ requiredPermission: "finance.control.view", owner: "finance" }, createSurfaceCtx());
     expect(visibleText(diagnostic)).not.toContain("finance.control.view");

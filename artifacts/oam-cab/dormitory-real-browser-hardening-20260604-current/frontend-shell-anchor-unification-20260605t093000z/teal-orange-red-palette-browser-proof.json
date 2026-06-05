@@ -1,0 +1,35 @@
+{
+  "generatedAtUtc": "2026-06-05T10:02:23.592Z",
+  "browserMode": "real-browser",
+  "evidenceDir": "C:/Users/lenovo/Documents/WorkOSNext/artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-shell-anchor-unification-20260605t093000z",
+  "screenshots": [
+    "C:/Users/lenovo/Documents/WorkOSNext/artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-shell-anchor-unification-20260605t093000z/14-home-teal-orange-red-palette.png",
+    "C:/Users/lenovo/Documents/WorkOSNext/artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-shell-anchor-unification-20260605t093000z/15-search-teal-orange-red-palette.png"
+  ],
+  "assertions": {
+    "usesBrightTealBrand": true,
+    "usesOrangeForAttention": true,
+    "reservesRedForDanger": true,
+    "staticTextDoesNotLookButtonLike": true,
+    "searchUsesShellTitleOnly": true,
+    "searchKeepsRealButtons": true
+  },
+  "metrics": {
+    "homePalette": {
+      "brand": "#12a6a0",
+      "action": "#0f9b96",
+      "attention": "#f97316",
+      "danger": "#ef4444",
+      "actionColor": "rgb(15, 155, 150)",
+      "readyAccent": "rgb(18, 166, 160)",
+      "attentionAccent": "rgb(249, 115, 22)",
+      "dangerAccent": "rgb(239, 68, 68)",
+      "staticTitleBorder": "none"
+    },
+    "searchPalette": {
+      "actionButtons": 4,
+      "staticFactBorderRadius": "0px",
+      "duplicateTitle": false
+    }
+  }
+}

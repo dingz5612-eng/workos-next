@@ -1,0 +1,139 @@
+export function normalizeAdmissionState(value = {}) {
+  return {
+    visibleAllowed: value.visibleAllowed !== false,
+    prepareAllowed: value.prepareAllowed !== false,
+    confirmAllowed: value.confirmAllowed === true,
+    productionAllowed: value.productionAllowed === true,
+    mode: normalizeAdmissionMode(value.mode),
+    reason: safeReasonCode(value.reason || value.reasonCode || value.code || ""),
+    blockingSources: Array.isArray(value.blockingSources) ? value.blockingSources : [],
+    requiredCapabilities: Array.isArray(value.requiredCapabilities) ? value.requiredCapabilities : [],
+    requiredDeviceTrust: Array.isArray(value.requiredDeviceTrust) ? value.requiredDeviceTrust : [],
+    noGoItems: Array.isArray(value.noGoItems) ? value.noGoItems : [],
+    admissionDecisionRef: value.admissionDecisionRef || ""
+  };
+}
+
+export function admissionStateFromWorkItem(workItem = {}, state = {}) {
+  const admission = workItem.admission || workItem.payload?.admission || workItem.Payload?.admission || {};
+  const hasExplicitAdmission = Boolean(workItem.admission || workItem.payload?.admission || workItem.Payload?.admission);
+  const businessAdmission = state.businessLineAdmission || state.runtimeStore?.businessLineAdmission || {};
+  const releaseBlocked = globalProductionBlocked(state);
+  const mode = admission.mode || businessAdmission.dormitory?.surfaceMode || businessAdmission.dormitory?.level || "";
+  if (!hasExplicitAdmission) {
+    return normalizeAdmissionState({
+      visibleAllowed: true,
+      prepareAllowed: true,
+      confirmAllowed: true,
+      productionAllowed: false,
+      mode: releaseBlocked ? (mode || "internal_pilot_observation") : (mode || "internal_pilot_observation"),
+      reason: releaseBlocked ? "business_production_blocked" : "internal_pilot_observation"
+    });
+  }
+  return normalizeAdmissionState({
+    visibleAllowed: admission.visibleAllowed,
+    prepareAllowed: admission.prepareAllowed,
+    confirmAllowed: admission.confirmAllowed ?? admission.confirm_allowed,
+    productionAllowed: releaseBlocked ? false : admission.productionAllowed ?? admission.production_allowed,
+    mode: releaseBlocked ? (mode || "internal_pilot_observation") : mode,
+    reason: admission.reason || admission.reasonCode || (releaseBlocked ? "business_production_blocked" : "")
+  });
+}
+
+export function admissionCopy(admission = {}, ctx = {}, prefix = "operations") {
+  const normalized = normalizeAdmissionState(admission);
+  const labelKey = admissionLabelKey(normalized, prefix);
+  const reasonKey = admissionReasonKey(normalized, prefix);
+  return {
+    labelKey,
+    reasonKey,
+    label: ctx.tr?.(labelKey) || labelKey,
+    reason: ctx.tr?.(reasonKey) || reasonKey,
+    modeLabelKey: modeLabelKey(normalized.mode, prefix),
+    modeLabel: ctx.tr?.(modeLabelKey(normalized.mode, prefix)) || modeLabelKey(normalized.mode, prefix),
+    decision: admissionDecisionCode(normalized),
+    normalized
+  };
+}
+
+export function safeConfirmErrorKey(status) {
+  const keyByStatus = {
+    400: "operations.error.safe.400",
+    403: "operations.error.safe.403",
+    409: "operations.error.safe.409",
+    422: "operations.error.safe.422"
+  };
+  return keyByStatus[status] || "operations.error.safe.generic";
+}
+
+export function safeConfirmBlockedKey(result = {}) {
+  if (result?.reason === "required_field_missing") return "operations.error.safe.422";
+  if (/evidence|proof|credential|attachment|material|证据|材料/i.test(String(result?.reason || result?.code || ""))) {
+    return "operations.error.safe.422";
+  }
+  return "operations.error.safe.422";
+}
+
+export function safeReasonCode(value = "") {
+  return String(value || "")
+    .trim()
+    .replace(/[^a-z0-9_.:-]+/gi, "_")
+    .replace(/^_+|_+$/g, "")
+    .slice(0, 120);
+}
+
+function admissionLabelKey(admission, prefix) {
+  if (!admission.visibleAllowed) return `${prefix}.admission.visibleDenied`;
+  if (!admission.prepareAllowed) return `${prefix}.admission.visibleOnly`;
+  if (!admission.confirmAllowed) return `${prefix}.admission.confirmDenied`;
+  if (!admission.productionAllowed) return `${prefix}.admission.productionBlocked`;
+  return `${prefix}.admission.confirmAllowed`;
+}
+
+function admissionReasonKey(admission, prefix) {
+  if (isContractPreview(admission.mode)) return `${prefix}.admission.contractPreview`;
+  if (isInternalPilot(admission.mode)) return `${prefix}.admission.internalPilotObservation`;
+  if (!admission.productionAllowed) return `${prefix}.admission.productionBlocked`;
+  if (!admission.confirmAllowed) return `${prefix}.admission.confirmDenied`;
+  if (!admission.prepareAllowed) return `${prefix}.admission.visibleOnly`;
+  return `${prefix}.admission.confirmAllowedHelp`;
+}
+
+function admissionDecisionCode(admission) {
+  if (!admission.visibleAllowed) return "visible_blocked";
+  if (!admission.prepareAllowed) return "visible_only";
+  if (!admission.confirmAllowed) return "prepare_only_confirm_denied";
+  if (!admission.productionAllowed) return "confirm_allowed_production_blocked";
+  return "confirm_allowed_production_allowed";
+}
+
+function modeLabelKey(mode, prefix) {
+  if (isContractPreview(mode)) return `${prefix}.admission.contractPreview`;
+  if (isInternalPilot(mode)) return `${prefix}.admission.internalPilotObservation`;
+  if (/production/i.test(mode)) return `${prefix}.admission.productionMode`;
+  return `${prefix}.admission.prepareOnly`;
+}
+
+function normalizeAdmissionMode(mode = "") {
+  const value = String(mode || "").trim();
+  if (!value) return "prepare_only";
+  if (/L0|contract.preview|contract_preview/i.test(value)) return "contract_preview";
+  if (/L1|internal.pilot|internal_pilot|observation/i.test(value)) return "internal_pilot_observation";
+  return value;
+}
+
+function isContractPreview(mode = "") {
+  return /contract_preview|L0|contract preview/i.test(String(mode || ""));
+}
+
+function isInternalPilot(mode = "") {
+  return /internal_pilot_observation|L1|internal pilot|observation/i.test(String(mode || ""));
+}
+
+function globalProductionBlocked(state = {}) {
+  const currentState = state.currentState || state.releaseState || state.runtimeStore?.currentState || {};
+  const businessProduction = currentState.businessProduction || currentState.businessProductionStatus || currentState.business_production || "";
+  if (/blocked/i.test(String(businessProduction))) return true;
+  const admission = state.businessLineAdmission || state.runtimeStore?.businessLineAdmission || {};
+  return admission.businessProduction?.productionAllowed === false || admission.dormitory?.productionAllowed === false;
+}

@@ -24,15 +24,36 @@ internal static class ConfirmationPolicyCatalog
 
     public static string OwnerRoleForCard(string cardId)
     {
-        if (ContractText.ContainsAny(cardId, "finance", "review", "feeMaterial", "depositConfirmation", "paymentConfirmation", "expenseApproval", "periodFinanceReview")) return "finance";
-        if (ContractText.ContainsAny(cardId, "dispatch", "diagnosis", "execution", "repairBlocker", "inspection", "close")) return "repair";
+        if (ContractText.ContainsAny(cardId,
+            "finance",
+            "checkoutFinance",
+            "feeMaterial",
+            "depositConfirmation",
+            "depositDeduction",
+            "depositRefundPayment",
+            "depositClose",
+            "paymentConfirmation",
+            "paymentAllocation",
+            "paymentAdjustment",
+            "debtFollowUp",
+            "expenseApproval",
+            "periodFinanceReview")) return "finance";
+        if (ContractText.ContainsAny(cardId,
+            "depositRefundApproval",
+            "serviceTaskVerify",
+            "periodScope",
+            "periodMetricsReview",
+            "periodOperationsDiagnosis",
+            "periodActionPlan",
+            "periodActionPlanComplete",
+            "periodClose",
+            "operatingDashboard")) return "manager";
+        if (ContractText.ContainsAny(cardId, "repairBlocker", "repairDispatch", "repairExecution")) return "repair";
         return "operator";
     }
 
     private static string RequiredRole(string cardId)
     {
-        if (ContractText.ContainsAny(cardId, "finance", "review", "feeMaterial", "depositConfirmation", "paymentConfirmation", "expenseApproval", "periodFinanceReview")) return "finance";
-        if (ContractText.ContainsAny(cardId, "checkin", "checkoutClose", "close")) return "operator";
-        return "operator";
+        return OwnerRoleForCard(cardId);
     }
 }

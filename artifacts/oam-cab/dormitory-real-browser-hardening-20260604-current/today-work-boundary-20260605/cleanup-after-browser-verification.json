@@ -1,0 +1,23 @@
+{
+  "status": "cleaned",
+  "generatedAtUtc": "2026-06-05T12:31:55.9674992+00:00",
+  "preserved": [
+    "development account seed users",
+    "runtime seed projection contracts"
+  ],
+  "before": {
+    "account_users": 12,
+    "behavior_events": 1,
+    "device_sessions": 1,
+    "operations_cases": 1,
+    "operations_work_items": 1,
+    "runtime_documents": 1,
+    "runtime_sessions": 1,
+    "schema_migrations": 40
+  },
+  "after": {
+    "account_users": 12,
+    "runtime_documents": 1,
+    "schema_migrations": 40
+  }
+}

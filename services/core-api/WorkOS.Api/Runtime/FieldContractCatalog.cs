@@ -102,6 +102,7 @@ internal static class FieldContractCatalog
             "紧急程度",
             "通讯方式",
             "来源渠道",
+            "预订后动作",
             "证件类型",
             "性别",
             "押金类型",

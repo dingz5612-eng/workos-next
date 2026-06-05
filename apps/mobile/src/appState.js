@@ -25,7 +25,8 @@ export function createInitialState() {
     filterOpen: false,
     advancedOpen: false,
     queueDomain: "all",
-    queueBadge: "mine",
+    queueBadge: "all",
+    todayFilter: "must-do",
     learningQuery: "",
     learningDomain: "all",
     learningType: "coachAll",
@@ -146,5 +147,5 @@ export function persistActorSession(session) {
 }
 
 export function shouldHydrateProtectedSurfaces(state) {
-  return !!state.currentActor;
+  return !!state.currentActor && state.view !== "login";
 }

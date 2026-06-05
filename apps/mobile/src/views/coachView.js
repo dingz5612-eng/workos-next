@@ -2,6 +2,7 @@ import { learningDomainFilters, learningTypeFilters } from "../selectors/coachSe
 import { cardSearchText, normalize, workspaceSearchText } from "../selectors/searchSelectors.js";
 import { selectLearningCatalog } from "../selectors/surfaceSelectors.js";
 import { activeCardForWorkspace } from "../selectors/workspaceSelectors.js";
+import { businessAnchorFieldsHtml, businessAnchorHtml } from "../businessAnchorKernel.js";
 import { modeCard } from "./loginView.js";
 import { nextCardTitle } from "./workspaceView.js";
 
@@ -22,6 +23,16 @@ export function learningView(ctx) {
       <div class="filter-row">${learningDomainFilters({ state: ctx.state, tr: ctx.tr })}</div>
       <span>${ctx.tr("coachPerspective")}</span>
       <div class="filter-row">${learningTypeFilters({ state: ctx.state, tr: ctx.tr })}</div>
+    </section>
+    <section class="compact-section" data-surface="personal-learning-topics">
+      <h2>${ctx.tr("searchLearning")}</h2>
+      <div class="home-learning-list">
+        ${learningSupportTopics(ctx).map((item) => `<article class="home-learning-card">
+          <small>${ctx.tr(item.statusKey)}</small>
+          <strong>${ctx.tr(item.titleKey)}</strong>
+          <p>${ctx.tr(item.bodyKey)}</p>
+        </article>`).join("")}
+      </div>
     </section>
     <section class="compact-section">
       <h2>${ctx.tr("sceneLearning")}</h2>
@@ -45,10 +56,22 @@ export function learningView(ctx) {
   `);
 }
 
+function learningSupportTopics(ctx) {
+  return [
+    { titleKey: "learnEvidenceFix", bodyKey: "learnEvidenceFixBody", statusKey: "learnStatusEvidence" },
+    { titleKey: "learnRejectedReason", bodyKey: "learnRejectedReasonBody", statusKey: "learnStatusBlocked" },
+    { titleKey: "learnDeviceUntrusted", bodyKey: "learnDeviceUntrustedBody", statusKey: "learnStatusDevice" },
+    { titleKey: "learnPermissionDenied", bodyKey: "learnPermissionDeniedBody", statusKey: "learnStatusPermission" },
+    { titleKey: "learnMoneyCaution", bodyKey: "learnMoneyCautionBody", statusKey: "learnStatusFinance" },
+    { titleKey: "learnRoleScope", bodyKey: "learnRoleScopeBody", statusKey: "learnStatusRole" }
+  ];
+}
+
 export function scenarioCoachEntries(ctx) {
   const query = normalize(ctx.state.learningQuery);
+  const domain = ctx.state.learningDomain || "all";
   return selectLearningCatalog(ctx.state)
-    .filter((item) => ctx.state.learningDomain === "all" || item.domain === ctx.state.learningDomain)
+    .filter((item) => domain === "all" || item.domain === domain)
     .filter((item) => !query || normalize(workspaceSearchText(item, ctx)).includes(query));
 }
 
@@ -58,6 +81,7 @@ export function learningScenarioCard(item, ctx) {
   return `<article class="learning-card">
     <span>${ctx.tr(item.domain)}</span>
     <strong>${ctx.tx(item.title)}</strong>
+    ${businessAnchorFieldsHtml({ workspace: item, card }, ctx, { compact: true }) || businessAnchorHtml({ workspace: item, card }, ctx, { compact: true })}
     <p>${ctx.tx(item.summary)}</p>
     <div class="coach-stages">${item.cards.map((entry, index) => `<button class="${index === activeStage ? "active" : ""} ${entry.status}" data-coach-flow="${item.id}" data-coach-stage="${index}">${ctx.tx(entry.title)}</button>`).join("")}</div>
     <div class="stage-coach">
@@ -91,13 +115,14 @@ export function coachDetailSections(item, card, ctx) {
     coachDetail("coachHowTo", "stageWhat", cardPurpose(card, ctx), ctx),
     coachDetail("coachFields", "stageFields", cardFieldGuidance(card, ctx), ctx),
     coachDetail("coachException", "stageJudgement", cardJudgement(card, ctx), ctx),
-    coachDetail("coachConfirm", "stageEvidence", ctx.localList(card.evidence), ctx),
+    coachDetail("coachConfirm", "stageEvidence", localList(card.evidence, ctx), ctx),
     coachDetail("coachConfirm", "stageConfirm", cardConfirmation(card, ctx), ctx),
     coachDetail("coachNext", "stageAfter", cardAfterState(card, ctx), ctx),
     coachDetail("coachNext", "stageNext", `${nextCardTitle(card, item, ctx)} · ${ctx.tx(item.next)}`, ctx),
     coachDetail("coachAi", "coachAi", `${ctx.tr("aiCanDo")} ${ctx.tr("aiCannotDo")}`, ctx)
   ];
-  return sections.filter((section) => ctx.state.learningType === "coachAll" || section.type === ctx.state.learningType).map((section) => section.html).join("");
+  const learningType = ctx.state.learningType || "coachAll";
+  return sections.filter((section) => learningType === "coachAll" || section.type === learningType).map((section) => section.html).join("");
 }
 
 function coachDetail(type, titleKey, body, ctx) {
@@ -119,10 +144,15 @@ export function cardFieldGuidance(card, ctx) {
 }
 
 export function cardJudgement(card, ctx) {
-  const checks = ctx.localList(card.checks);
+  const checks = localList(card.checks, ctx);
   return ctx.state.lang === "zh-CN"
     ? `系统会检查 ${checks}，并确认材料完整、权限满足、关键动作已人工确认。`
     : `Система проверит: ${checks}; также полноту материалов, право доступа и ручное подтверждение.`;
+}
+
+function localList(items = [], ctx = {}) {
+  if (ctx.localList) return ctx.localList(items);
+  return (items || []).map((item) => ctx.localTerm ? ctx.localTerm(item) : item?.label?.["zh-CN"] || item?.id || "").filter(Boolean).join(" · ");
 }
 
 export function cardConfirmation(card, ctx) {

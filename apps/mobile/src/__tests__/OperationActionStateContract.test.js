@@ -5,7 +5,7 @@ import { primaryActionButton } from "../views/workspaceView.js";
 import { createSurfaceCtx, runtimeStore, visibleText } from "./surfaceContractTestHelpers.js";
 
 describe("OAM-04B primary action state machine", () => {
-  it("renders one primary submit CTA when the active card is ready", () => {
+  it("renders one internal-observation submit CTA when the active card is ready", () => {
     const store = runtimeStore();
     store.workspaces[0].cards[0].evidence = [];
     const ctx = createSurfaceCtx({ view: "workspace", runtimeStore: store });
@@ -13,7 +13,7 @@ describe("OAM-04B primary action state machine", () => {
     const html = routeView(ctx);
 
     expect((html.match(/data-submit-card/g) || []).length).toBe(1);
-    expect(visibleText(html)).toContain("提交处理");
+    expect(visibleText(html)).toContain("提交观察记录");
   });
 
   it("does not render a second card-internal submit button", () => {
@@ -76,7 +76,30 @@ describe("OAM-04B primary action state machine", () => {
 
     expect(text).toContain("查看提交轨迹");
     expect(text).not.toContain("提交处理");
+    expect(text).not.toContain("提交观察记录");
     expect(text).not.toContain("确认办理");
+  });
+
+  it("does not bind submit when Admission denies confirm", () => {
+    const card = { id: "roomSetup", status: "ready", evidence: [] };
+    const workItem = {
+      workspaceId: "W-STAY-RESOURCE",
+      cardId: "roomSetup",
+      admission: {
+        visibleAllowed: true,
+        prepareAllowed: true,
+        confirmAllowed: false,
+        productionAllowed: false,
+        mode: "contract_preview"
+      }
+    };
+    const ctx = createSurfaceCtx();
+    const actionState = buildOperationActionState(workItem, card, null, ctx.state);
+    const html = primaryActionButton(actionState, ctx);
+
+    expect(actionState.status).toBe("confirmDenied");
+    expect(html).not.toContain("data-submit-card");
+    expect(visibleText(html)).toContain("查看不能提交原因");
   });
 
   it("keeps projection pending distinct from failure", () => {

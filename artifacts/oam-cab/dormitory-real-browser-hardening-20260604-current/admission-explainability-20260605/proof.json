@@ -1,0 +1,161 @@
+{
+  "version": "admission-explainability-browser-proof.v1",
+  "generatedAtUtc": "2026-06-05T06:25:31.874Z",
+  "actor": "dormOperator",
+  "baseUrl": "http://127.0.0.1:5175",
+  "evidenceDir": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\admission-explainability-20260605",
+  "screenshots": [
+    {
+      "name": "01-search-admission-top",
+      "path": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\admission-explainability-20260605\\01-search-admission-top.png",
+      "sha256": "8ccad0d116a5e7ad751fa600eea930f76cc7900f68354e283afbebe580f457cf",
+      "fullPage": false,
+      "url": "http://127.0.0.1:5175/?view=search&lang=zh-CN&device=mobile&q=%E6%96%B0%E5%A2%9E%E4%BD%8F%E5%AE%BF%E6%88%BF%E6%BA%90"
+    },
+    {
+      "name": "01-search-admission-full",
+      "path": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\admission-explainability-20260605\\01-search-admission-full.png",
+      "sha256": "a29f06c9d411508264e05eeb3ec8b04d1272a23ab5bec55f70c20d84f54f93dc",
+      "fullPage": true,
+      "url": "http://127.0.0.1:5175/?view=search&lang=zh-CN&device=mobile&q=%E6%96%B0%E5%A2%9E%E4%BD%8F%E5%AE%BF%E6%88%BF%E6%BA%90"
+    },
+    {
+      "name": "02-operation-admission-top",
+      "path": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\admission-explainability-20260605\\02-operation-admission-top.png",
+      "sha256": "0d555bb9c344b1f34fc68c1ebeed626884597f9ee0cdb201ed75a8772b359d86",
+      "fullPage": false,
+      "url": "http://127.0.0.1:5175/?view=operationPanel&lang=zh-CN&device=mobile&workspace=W-STAY-RESOURCE-20260605062529-ee9a910f8ec7494cb1bc8be74f0dbb4b&card=roomSetup&workItem=wi-fabd7dbec1ba61568629532c9d50379bbb373ba9dc5336680f93c7533b3b0f2e"
+    },
+    {
+      "name": "02-operation-admission-bottom",
+      "path": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\admission-explainability-20260605\\02-operation-admission-bottom.png",
+      "sha256": "6b6586f822981da0fa4f194e77113367cda0428899b9ddff6343ff7986afa09c",
+      "fullPage": false,
+      "url": "http://127.0.0.1:5175/?view=operationPanel&lang=zh-CN&device=mobile&workspace=W-STAY-RESOURCE-20260605062529-ee9a910f8ec7494cb1bc8be74f0dbb4b&card=roomSetup&workItem=wi-fabd7dbec1ba61568629532c9d50379bbb373ba9dc5336680f93c7533b3b0f2e"
+    },
+    {
+      "name": "02-operation-admission-full",
+      "path": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\admission-explainability-20260605\\02-operation-admission-full.png",
+      "sha256": "4ea5c84d696e843c681c0da5190bbc6b78b48f0a9155f9b4c281d566fc4ca4d6",
+      "fullPage": true,
+      "url": "http://127.0.0.1:5175/?view=operationPanel&lang=zh-CN&device=mobile&workspace=W-STAY-RESOURCE-20260605062529-ee9a910f8ec7494cb1bc8be74f0dbb4b&card=roomSetup&workItem=wi-fabd7dbec1ba61568629532c9d50379bbb373ba9dc5336680f93c7533b3b0f2e"
+    }
+  ],
+  "assertions": [
+    {
+      "id": "search.admission_chip_visible",
+      "status": "passed",
+      "message": "搜索卡片必须显示准入状态。"
+    },
+    {
+      "id": "search.internal_observation_copy",
+      "status": "passed",
+      "message": "搜索卡片必须说明内部试点观察。"
+    },
+    {
+      "id": "search.production_blocked_copy",
+      "status": "passed",
+      "message": "搜索卡片必须说明生产阻断。"
+    },
+    {
+      "id": "search.action_observation_copy",
+      "status": "passed",
+      "message": "搜索主动入口必须使用观察记录文案。"
+    },
+    {
+      "id": "search.no_raw.admissionDecisionRef",
+      "status": "passed",
+      "message": "搜索页不得显示 admissionDecisionRef。"
+    },
+    {
+      "id": "search.no_raw.compatibilityAdapter",
+      "status": "passed",
+      "message": "搜索页不得显示 compatibilityAdapter。"
+    },
+    {
+      "id": "search.no_raw.definitionId",
+      "status": "passed",
+      "message": "搜索页不得显示 definitionId。"
+    },
+    {
+      "id": "search.no_raw.payloadHash",
+      "status": "passed",
+      "message": "搜索页不得显示 payloadHash。"
+    },
+    {
+      "id": "search.no_raw.commandSubmissionId",
+      "status": "passed",
+      "message": "搜索页不得显示 commandSubmissionId。"
+    },
+    {
+      "id": "search.no_raw.raw reason",
+      "status": "passed",
+      "message": "搜索页不得显示 raw reason。"
+    },
+    {
+      "id": "search.no_raw.raw code",
+      "status": "passed",
+      "message": "搜索页不得显示 raw code。"
+    },
+    {
+      "id": "operation.admission_panel_visible",
+      "status": "passed",
+      "message": "操作页必须显示准入状态。"
+    },
+    {
+      "id": "operation.internal_observation_copy",
+      "status": "passed",
+      "message": "操作页必须说明内部试点观察。"
+    },
+    {
+      "id": "operation.submit_observation_copy",
+      "status": "passed",
+      "message": "操作页主按钮必须是提交观察记录。"
+    },
+    {
+      "id": "operation.admission_decision",
+      "status": "passed",
+      "message": "操作页 admissionDecision 应为 confirm_allowed_production_blocked，实际 confirm_allowed_production_blocked"
+    },
+    {
+      "id": "operation.runtime_decision",
+      "status": "passed",
+      "message": "操作页 runtimeDecision 应为 work_item_confirm_ready:production_blocked，实际 work_item_confirm_ready:production_blocked"
+    },
+    {
+      "id": "operation.no_raw.admissionDecisionRef",
+      "status": "passed",
+      "message": "操作页普通视图不得显示 admissionDecisionRef。"
+    },
+    {
+      "id": "operation.no_raw.compatibilityAdapter",
+      "status": "passed",
+      "message": "操作页普通视图不得显示 compatibilityAdapter。"
+    },
+    {
+      "id": "operation.no_raw.definitionId",
+      "status": "passed",
+      "message": "操作页普通视图不得显示 definitionId。"
+    },
+    {
+      "id": "operation.no_raw.payloadHash",
+      "status": "passed",
+      "message": "操作页普通视图不得显示 payloadHash。"
+    },
+    {
+      "id": "operation.no_raw.commandSubmissionId",
+      "status": "passed",
+      "message": "操作页普通视图不得显示 commandSubmissionId。"
+    },
+    {
+      "id": "operation.no_raw.raw reason",
+      "status": "passed",
+      "message": "操作页普通视图不得显示 raw reason。"
+    },
+    {
+      "id": "operation.no_raw.raw code",
+      "status": "passed",
+      "message": "操作页普通视图不得显示 raw code。"
+    }
+  ]
+}

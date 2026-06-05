@@ -1,4 +1,4 @@
-import { clearQueueFilters, workFilterToQueueFilter, writeQueueFilter } from "./queueFilterState.js";
+import { clearQueueFilters, defaultQueueFilters, workFilterToQueueFilters, writeQueueFilter, writeQueueFilters } from "./queueFilterState.js";
 
 export function setQueueFilter(field, value, ctx) {
   writeQueueFilter(ctx.state, field, value);
@@ -7,8 +7,18 @@ export function setQueueFilter(field, value, ctx) {
 }
 
 export function setWorkFilter(id, ctx) {
-  const [field, value] = workFilterToQueueFilter(id);
-  writeQueueFilter(ctx.state, field, value);
+  writeQueueFilters(ctx.state, { ...defaultQueueFilters, ...workFilterToQueueFilters(id) });
+  ctx.render();
+}
+
+export function setWorkFilterAndOpen(id, ctx) {
+  writeQueueFilters(ctx.state, { ...defaultQueueFilters, ...workFilterToQueueFilters(id) });
+  ctx.state.view = "workbench";
+  ctx.render(true);
+}
+
+export function setTodayFilter(id, ctx) {
+  ctx.state.todayFilter = id || "must-do";
   ctx.render();
 }
 

@@ -1,0 +1,9 @@
+{
+  "status": "passed",
+  "target": "http://127.0.0.1:5175/?view=operationPanel&lang=zh-CN&device=mobile&workspace=W-STAY-LEAD-RESERVATION-20260605134016-8e8b32c65c3a402a8087f0e1283bce9e&card=leadFollowUp&workItem=wi-c8f3c8864c5d9fc8eb7c8e583af7eef8b55bac57b8ecca1058dfb0f9d85dbc88",
+  "state": {
+    "hasMissingLead": false,
+    "leadHiddenValue": "lead-33ff6359",
+    "leadDisplayValue": "测试住客f764fe29 · 13800000000 · 新线索"
+  }
+}

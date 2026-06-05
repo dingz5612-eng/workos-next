@@ -33,6 +33,7 @@ function validateContract() {
   const layers = new Map((contract.layers || []).map((layer) => [layer.id, layer]));
   for (const layerId of [
     "shared-components",
+    "field-context-kernel",
     "surface-contract",
     "multilingual-dictionary",
     "state-action-contract",
@@ -126,11 +127,23 @@ function validateSourceBindings() {
   const components = read("apps/mobile/src/views/experienceComponents.js");
   const workspace = read("apps/mobile/src/views/workspaceView.js");
   const operationPanel = read("apps/mobile/src/views/operationPanelView.js");
+  const homeView = read("apps/mobile/src/views/homeView.js");
+  const searchView = read("apps/mobile/src/views/searchView.js");
   const operationController = read("apps/mobile/src/operationController.js");
+  const operationFieldKernel = read("apps/mobile/src/operationFieldKernel.js");
+  const fieldSourceRenderer = read("apps/mobile/src/fieldSourceRenderer.js");
   const eventBinder = read("apps/mobile/src/eventBinder.js");
   const workspaceStyles = read("apps/mobile/src/styles/workspace.css");
   const operationStyles = read("apps/mobile/src/styles/operation.css");
+  const shellStyles = read("apps/mobile/src/styles/shell.css");
+  const baseStyles = read("apps/mobile/src/styles/base.css");
+  const styleBundle = fs.readdirSync(path.join(root, "apps/mobile/src/styles"))
+    .filter((name) => name.endsWith(".css"))
+    .map((name) => read(path.join("apps/mobile/src/styles", name)))
+    .join("\n");
   const experienceComponents = components;
+  const systemContextContract = read("apps/mobile/src/systemContextContract.js");
+  const businessAnchorKernel = read("apps/mobile/src/businessAnchorKernel.js");
   const operationCopy = read("apps/mobile/src/i18n/operationCopy.js");
   const shellCopy = read("apps/mobile/src/i18n/shellCopy.js");
   const domainCopy = read("apps/mobile/src/i18n/domainCopy.js");
@@ -218,6 +231,165 @@ function validateSourceBindings() {
       !operationPanel.includes("isTerminalCardStatus(activeCard.status)")) {
     errors.push(v("fes.operation_panel_completed_delegate", "OperationPanel must delegate terminal WorkItems directly to completedWorkspaceRecord."));
   }
+
+  const fieldKernelLayer = (contract.layers || []).find((layer) => layer.id === "field-context-kernel") || {};
+  if (!fieldKernelLayer.contractRefs?.includes("apps/mobile/src/operationFieldKernel.js")) {
+    errors.push(v("fes.field_kernel_contract_ref", "Field context kernel layer must bind apps/mobile/src/operationFieldKernel.js."));
+  }
+  if (!fieldKernelLayer.contractRefs?.includes("apps/mobile/src/fieldSourceRenderer.js")) {
+    errors.push(v("fes.field_source_contract_ref", "Field context kernel layer must bind apps/mobile/src/fieldSourceRenderer.js."));
+  }
+  const fieldSourceExports = new Set([
+    "fieldSourceState",
+    "operationFieldState",
+    "operationFieldRequired",
+    "operationFieldVisible",
+    "currentMissingRequiredLabels",
+    "currentMissingContextLabels"
+  ]);
+  for (const exported of fieldKernelLayer.requiredExports || []) {
+    const source = fieldSourceExports.has(exported) ? fieldSourceRenderer : operationFieldKernel;
+    const owner = fieldSourceExports.has(exported) ? "FieldSourceRenderer" : "Operation field kernel";
+    if (!source.includes(`export function ${exported}`)) {
+      errors.push(v("fes.field_kernel_export_missing", `${owner} missing export ${exported}.`, { exported }));
+    }
+  }
+  for (const token of ["operationFieldAliases", "taskValueAliases", "preferredFieldsByCard"]) {
+    if (!operationFieldKernel.includes(token)) {
+      errors.push(v("fes.field_kernel_source_missing", `Operation field kernel missing shared source ${token}.`, { token }));
+    }
+  }
+  if (!Array.isArray(fieldKernelLayer.contextSources) ||
+      !fieldKernelLayer.contextSources.includes("operations-start-context")) {
+    errors.push(v("fes.field_kernel_start_context_source", "Field context kernel must declare operations-start-context as a valid context source."));
+  }
+  if (!systemContextContract.includes('"operations-start-context"')) {
+    errors.push(v("fes.system_context_start_context", "System context contract must include operations-start-context in inherited-field priority."));
+  }
+  if (!fieldSourceRenderer.includes("carriedFieldFromCurrentWorkItemPayload") ||
+      !fieldSourceRenderer.includes("workItem.payload || workItem.Payload")) {
+    errors.push(v("fes.current_work_item_payload_context", "Operation forms must read inherited fields from the current Operations WorkItem payload through FieldSourceRenderer before falling back to drafts."));
+  }
+  if (!workspace.includes('from "../fieldSourceRenderer.js"') ||
+      !fieldSourceRenderer.includes("export function fieldSourceState") ||
+      !fieldSourceRenderer.includes("export function operationFieldState") ||
+      !fieldSourceRenderer.includes("export function operationFieldRequired") ||
+      !fieldSourceRenderer.includes("export function operationFieldVisible") ||
+      !fieldSourceRenderer.includes("export function currentMissingRequiredLabels")) {
+    errors.push(v("fes.field_source_renderer_missing", "Workspace operation forms must consume the shared FieldSourceRenderer for field source, visibility, required, and missing-input decisions."));
+  }
+  for (const forbidden of [
+    "function operationFieldState",
+    "function carriedForwardValue",
+    "function derivedChargeAmount",
+    "function operationFieldRequired",
+    "function operationFieldVisible",
+    "function currentMissingRequiredLabels",
+    "function currentMissingContextLabels",
+    "function hasRequiredFieldValue"
+  ]) {
+    if (workspace.includes(forbidden)) {
+      errors.push(v("fes.page_private_field_source", `Workspace view must not own page-private field source logic ${forbidden}; use FieldSourceRenderer.`, { forbidden }));
+    }
+  }
+  if (!businessAnchorKernel.includes("source.payload,") ||
+      !experienceComponents.includes("task.source?.payload")) {
+    errors.push(v("fes.business_anchor_payload_context", "Business anchors and task overviews must read flat Operations WorkItem payload context."));
+  }
+  if (!workspace.includes('from "../operationFieldKernel.js"') ||
+      workspace.includes("export function operationFieldId(field)")) {
+    errors.push(v("fes.workspace_field_kernel", "Workspace view must re-use operationFieldKernel for field identity and must not keep a page-local operationFieldId implementation."));
+  }
+  if (!operationController.includes('from "./operationFieldKernel.js"') ||
+      operationController.includes('from "./views/workspaceView.js"')) {
+    errors.push(v("fes.controller_field_kernel", "Operation controller must import field identity from operationFieldKernel, not from a page view."));
+  }
+  if (!experienceComponents.includes('from "../operationFieldKernel.js"') ||
+      experienceComponents.includes("const taskValueAliases") ||
+      experienceComponents.includes("function canonicalTaskFieldId") ||
+      experienceComponents.includes("function taskDisplayValue") ||
+      experienceComponents.includes("function preferredTaskFieldIds") ||
+      experienceComponents.includes("function bedLayoutPreviewValue")) {
+    errors.push(v("fes.page_private_field_rules", "Experience components must consume operationFieldKernel and must not keep page-private task alias or display-value rules."));
+  }
+  if (!experienceComponents.includes("export function BusinessSummaryHeader") ||
+      !experienceComponents.includes("export function BusinessTaskBody") ||
+      !experienceComponents.includes("export function BusinessTaskOverview") ||
+      !experienceComponents.includes('data-surface="business-summary-header"') ||
+      !experienceComponents.includes('data-surface="business-task-body"') ||
+      !experienceComponents.includes('data-surface="business-task-overview"') ||
+      !homeView.includes("BusinessSummaryHeader") ||
+      !homeView.includes("BusinessTaskBody") ||
+      !searchView.includes("BusinessSummaryHeader")) {
+    errors.push(v("fes.business_summary_header_missing", "Business item titles, status, anchors, work content, and action context must render through shared BusinessSummaryHeader/BusinessTaskBody."));
+  }
+  for (const selector of [".business-summary-header", ".business-summary-heading", ".business-summary-anchor-panel", ".business-summary-title", ".business-summary-actions", ".business-summary-detail", ".business-task-body", ".business-task-row", ".business-task-alert", ".business-task-overview", ".business-task-field-group", ".business-task-field-grid", ".business-task-field"]) {
+    if (!workspaceStyles.includes(selector)) {
+      errors.push(v("fes.business_summary_style_missing", `Business summary hierarchy CSS missing ${selector}.`, { selector }));
+    }
+  }
+  if (!workspaceStyles.includes(".business-summary-title") ||
+      !workspaceStyles.includes(".business-summary-actions")) {
+    errors.push(v("fes.business_summary_title_container", "Business summary scenario titles and actions must be contained blocks, not naked text."));
+  }
+  if (!baseStyles.includes("--brand: #12a6a0") ||
+      !baseStyles.includes("--brand-soft: #e7fbf7") ||
+      !baseStyles.includes("--brand-line: #7bd6cb") ||
+      !baseStyles.includes("--action: #0f9b96") ||
+      !baseStyles.includes("--action-gradient: linear-gradient") ||
+      !baseStyles.includes("--action-shadow:") ||
+      !baseStyles.includes("--attention: #f97316") ||
+      !baseStyles.includes("--attention-soft: #fff7ed") ||
+      !baseStyles.includes("--danger: #ef4444") ||
+      !baseStyles.includes("--danger-soft: #fef2f2") ||
+      !baseStyles.includes("background: var(--action-gradient)")) {
+    errors.push(v("fes.premium_action_token", "Primary actions must use the shared lightweight teal-blue gradient token instead of page-local heavy action colors."));
+  }
+  if (!baseStyles.includes('--font-sans: "Microsoft YaHei UI", "Microsoft YaHei"') ||
+      !baseStyles.includes("--font-title: 500") ||
+      !baseStyles.includes("--font-strong: 500") ||
+      !baseStyles.includes("--font-ui: 400") ||
+      !baseStyles.includes("--font-button: 500") ||
+      !baseStyles.includes("text-rendering: optimizeLegibility") ||
+      !baseStyles.includes("-webkit-font-smoothing: antialiased")) {
+    errors.push(v("fes.premium_typography_token", "Business surfaces must use the shared clear Chinese-first typography tokens and antialiased rendering."));
+  }
+  if (/font-weight:\s*(7\d\d|800|850|900);/.test(styleBundle)) {
+    errors.push(v("fes.heavy_chinese_font_weight", "User-facing style sheets must use shared typography tokens instead of page-local bold/heavy 700+ weights."));
+  }
+  if (/font-size:\s*(10|11)px;/.test(styleBundle)) {
+    errors.push(v("fes.tiny_chinese_font_size", "Ordinary user-facing style sheets must not use 10px/11px helper text; use readable small copy sizes instead."));
+  }
+  for (const token of ["#0b6f63", "#087568", "#eff6ff", "#bfdbfe", "#1d4ed8"]) {
+    if (`${baseStyles}\n${shellStyles}\n${workspaceStyles}\n${operationStyles}`.includes(token)) {
+      errors.push(v("fes.premium_surface_forbidden_color", `Business surface styles must not use low-end saturated ready/action token ${token}.`, { token }));
+    }
+  }
+  for (const [selector, source] of [
+    [".business-summary-title", workspaceStyles],
+    [".business-anchor-field", workspaceStyles],
+    [".definition-row", workspaceStyles],
+    [".business-task-row", workspaceStyles],
+    [".search-section h2", shellStyles],
+    [".mission-stack h2", workspaceStyles]
+  ]) {
+    const block = cssBlock(source, selector);
+    if (!block) {
+      errors.push(v("fes.static_text_hierarchy_style_missing", `Missing static hierarchy style ${selector}.`, { selector }));
+      continue;
+    }
+    if (/border:\s*1px/i.test(block) || /border-radius:\s*(8px|999px|12px|14px)/i.test(block)) {
+      errors.push(v("fes.static_text_looks_clickable", `${selector} must not use button-like border/radius styling for static text.`, { selector }));
+    }
+  }
+  if (!workspaceStyles.includes(".business-summary-state::before") ||
+      !workspaceStyles.includes("background: transparent") ||
+      !styleBundle.includes("background: transparent")) {
+    errors.push(v("fes.static_text_not_button_like", "Static status, field, and fact text must use dots/dividers and transparent backgrounds instead of filled button-like blocks."));
+  }
+  if (searchView.includes('<section class="page-title" data-surface="workos-search"')) {
+    errors.push(v("fes.search_duplicate_content_title", "Search must use the shared mobile shell title and must not repeat a generic page title in content."));
+  }
   if (workspace.includes('data-view="feedback"')) {
     errors.push(v("fes.duplicate_local_feedback", "Workspace completed records must use the shared shell feedback entry instead of a record-local duplicate feedback button."));
   }
@@ -279,6 +451,22 @@ function validateSourceBindings() {
       !String(experience.FrontendExperienceSystem?.stepStateVisualLanguage || "").includes("instead of harsh saturated blocks")) {
     errors.push(v("fes.experience_step_state_visual_language", "Experience contract must define semantic step-state colors."));
   }
+  if (!String(experience.FrontendExperienceSystem?.contentContainerRule || "").includes("BusinessSummaryHeader") ||
+      !String(experience.FrontendExperienceSystem?.businessSummaryCardHierarchy || "").includes("business item cards")) {
+    errors.push(v("fes.experience_business_summary_rule", "Experience contract must make BusinessSummaryHeader a general business-card hierarchy rule."));
+  }
+  if (!String(experience.FrontendExperienceSystem?.fieldContextKernel || "").includes("operationFieldKernel") ||
+      !String(surface.frontendExperienceSystem?.fieldContextKernel || "").includes("operationFieldKernel")) {
+    errors.push(v("fes.field_context_kernel_contract", "Experience and Surface contracts must bind field identity and task overview rules to operationFieldKernel."));
+  }
+  if (!String(experience.FrontendExperienceSystem?.premiumSurfaceVisualLanguage || "").includes("static text") ||
+      !String(experience.FrontendExperienceSystem?.premiumSurfaceVisualLanguage || "").includes("must not mimic buttons")) {
+    errors.push(v("fes.experience_premium_visual_language", "Experience contract must forbid static text that visually mimics buttons."));
+  }
+  if (!String(experience.FrontendExperienceSystem?.premiumTypographySystem || "").includes("Chinese-first") ||
+      !String(surface.frontendExperienceSystem?.premiumTypographySystem || "").includes("Chinese-first")) {
+    errors.push(v("fes.typography_contract_missing", "Experience and Surface contracts must bind the Chinese-first premium typography system."));
+  }
   if (!String(experience.BusinessOperationActionPaths?.view || "").includes("intermediate completed-operation page is forbidden")) {
     errors.push(v("fes.completed_view_direct", "Experience contract must forbid intermediate completed-operation page."));
   }
@@ -309,6 +497,7 @@ function validateSourceBindings() {
   }
   for (const layerId of [
     "shared-components",
+    "field-context-kernel",
     "surface-contract",
     "multilingual-dictionary",
     "state-action-contract",
@@ -402,6 +591,11 @@ function read(relativePath) {
 
 function readJson(relativePath) {
   return JSON.parse(read(relativePath));
+}
+
+function cssBlock(source, selector) {
+  const escaped = selector.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return source.match(new RegExp(`${escaped}\\s*\\{[^}]*\\}`, "m"))?.[0] || "";
 }
 
 function v(id, message, extra = {}) {

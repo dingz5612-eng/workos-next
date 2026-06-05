@@ -130,6 +130,7 @@ Assert-Exists "scripts/check-rule-drift.mjs"
 Assert-Exists "scripts/check-v5-5-rules-os.mjs"
 Assert-Exists "scripts/check-oam-clean-baseline.mjs"
 Assert-Exists "scripts/check-company-kernel-alignment.mjs"
+Assert-Exists "scripts/check-business-anchor-kernel.mjs"
 Assert-Exists "scripts/check-compatibility-quarantine.mjs"
 Assert-Exists "scripts/check-definition-registry.mjs"
 Assert-Exists "scripts/check-language-kernel.mjs"
@@ -153,6 +154,8 @@ Assert-Exists "scripts/check-domain-kit-usage.mjs"
 Assert-Exists "scripts/v5_4/b-gate-runner.mjs"
 Assert-Exists "scripts/check-dormitory-golden-domain.mjs"
 Assert-Exists "scripts/check-frontend-experience-system.mjs"
+Assert-Exists "scripts/check-dormitory-field-context-contracts.mjs"
+Assert-Exists "scripts/check-responsibility-boundaries.mjs"
 Assert-Exists "docs/contracts/account-actor-kernel/account-actor-kernel-contract.json"
 Assert-Exists "scripts/check-account-actor-kernel.mjs"
 Assert-Exists "scripts/check-experience-contract.mjs"
@@ -215,6 +218,7 @@ Assert-Exists "docs/business/policies/invariant-policy.yml"
 Assert-Exists "docs/business/business-line-registry.json"
 Assert-Exists "docs/contracts/company-kernels/company-kernel-alignment-contract.json"
 Assert-Exists "docs/architecture/business-reality-oam-kernel-map.json"
+Assert-Exists "docs/contracts/business-anchor/business-anchor-contract.json"
 Assert-Exists "docs/business/acceptance/b2-scenario-result-semantics.md"
 Assert-Exists "docs/business/acceptance/b2-scenario-result-semantics.json"
 Assert-Exists "docs/business/acceptance/b-stage-runtime-boundary.md"
@@ -249,10 +253,9 @@ Assert-Exists "apps/mobile/src/__tests__/surfaceSelectors.test.js"
 Assert-Exists "apps/mobile/src/__tests__/evidenceInteraction.test.js"
 Assert-Exists "apps/mobile/src/runtime/runtimeStore.js"
 Assert-Exists "apps/mobile/src/selectors/surfaceSelectors.js"
-Assert-Exists "apps/mobile/src/devFixtures/demoQueue.js"
-Assert-Exists "apps/mobile/src/devFixtures/projectionMetadata.js"
-Assert-Exists "apps/mobile/src/devFixtures/workspaceProjections.js"
-Assert-Exists "apps/mobile/src/devFixtures/i18n/demoCopy.js"
+if (Test-Path "apps/mobile/src/devFixtures") {
+  Fail "apps/mobile/src/devFixtures has been retired from the pure baseline; use runtime contracts and real work items instead of local demo fixtures."
+}
 
 $rulesIndex = Get-Content "docs/architecture/rules/index.json" -Raw | ConvertFrom-Json
 $architectureExceptions = Get-Content "docs/architecture/architecture-exceptions.json" -Raw | ConvertFrom-Json
@@ -334,10 +337,7 @@ Assert-NoMatches @("apps/mobile/src") "taskWorkspaceMap|workspaceIdForTask" "Fro
 Assert-NoMatches @("apps/mobile/src/selectors/workspaceSelectors.js") "W-STAY-CHECKIN|W-STAY-DEPOSIT-LEDGER|W-STAY-PAYMENT-LEDGER|W-STAY-CHECKOUT-SETTLEMENT|W-REPAIR-" "Workspace selector must open runtimeStore workspaces without business workspace fallback IDs."
 Assert-NoMatches @("apps/mobile/src/selectors/surfaceSelectors.js") "intentBoost|W-STAY-DEPOSIT-LEDGER|W-STAY-PAYMENT-LEDGER|priority.*workspace\.domain" "Surface selectors must not contain local Accommodation business priority exceptions."
 Assert-NoMatches @("services/core-api/WorkOS.Api/Runtime/LensQueryService.cs") "W-STAY-DEPOSIT-LEDGER|W-STAY-PAYMENT-LEDGER|W-STAY-CHECKIN" "Runtime surface lenses must derive visibility and ranking from runtime-surface-policy.json."
-$workspaceProjectionFixture = Get-Content "apps/mobile/src/devFixtures/workspaceProjections.js" -Raw
-if ($workspaceProjectionFixture -notmatch "Dev/test fixture only") {
-  Fail "workspaceProjections.js must declare its dev/test fixture boundary."
-}
+Assert-NoMatches @("apps/mobile/src") "workspaceProjections|projectionMetadata|demoCopy" "Retired frontend demo fixture names must not reappear in active mobile source."
 $mainRuntime = Get-Content "apps/mobile/src/main.js" -Raw
 if ($mainRuntime -notmatch "escapeHtml\(tr\(state, key\)\)" -or
     $mainRuntime -notmatch "escapeHtml\(tx\(state, value\)\)" -or
@@ -678,6 +678,7 @@ Invoke-Checked "node" @("scripts/check-rule-drift.mjs")
 Invoke-Checked "node" @("scripts/check-v5-5-rules-os.mjs")
 Invoke-Checked "node" @("scripts/check-oam-clean-baseline.mjs")
 Invoke-Checked "node" @("scripts/check-company-kernel-alignment.mjs")
+Invoke-Checked "node" @("scripts/check-business-anchor-kernel.mjs")
 Invoke-Checked "node" @("scripts/check-compatibility-quarantine.mjs")
 Invoke-Checked "node" @("scripts/check-definition-registry.mjs")
 Invoke-Checked "node" @("scripts/check-language-kernel.mjs")
@@ -714,6 +715,8 @@ Invoke-Checked "node" @("scripts/v5_4/b-gate-runner.mjs")
 Invoke-Checked "node" @("scripts/check-dormitory-golden-domain.mjs", "--self-test")
 Invoke-Checked "node" @("scripts/check-dormitory-golden-domain.mjs")
 Invoke-Checked "node" @("scripts/check-frontend-experience-system.mjs")
+Invoke-Checked "node" @("scripts/check-dormitory-field-context-contracts.mjs")
+Invoke-Checked "node" @("scripts/check-responsibility-boundaries.mjs")
 Invoke-Checked "node" @("scripts/check-account-actor-kernel.mjs")
 Invoke-Checked "node" @("scripts/check-experience-contract.mjs", "--self-test")
 Invoke-Checked "node" @("scripts/check-experience-contract.mjs")
@@ -813,6 +816,7 @@ foreach ($requiredCiCommand in @(
   "b-gate-runner.mjs",
   "check-dormitory-golden-domain.mjs",
   "check-frontend-experience-system.mjs",
+  "check-responsibility-boundaries.mjs",
   "check-account-actor-kernel.mjs",
   "check-experience-contract.mjs",
   "scripts/surface/check-surface-experience-contract.mjs",

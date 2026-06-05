@@ -30,6 +30,9 @@ hardRules:
   - id: hard.frontend_experience_system
     source: docs/engineering/00-rule-authority.md
     rule: Frontend Experience System is mandatory for user-visible frontend work across shared components, Surface contract, multilingual dictionary, state/action contract, and real browser screenshot evidence; pages may specialize business content but not architecture, and old-architecture pages must be rewritten and deleted.
+  - id: hard.responsibility_boundaries
+    source: docs/engineering/00-rule-authority.md
+    rule: Frontend controllers may orchestrate collection, submit, navigation, and sync, but must not own case-context resolution, field identity, validation policy, multilingual labels, or shared layout semantics when a current kernel exists; frontend pages render shared shells and controls but must delegate field source resolution, required/visible decisions, cross-step carry-forward, derived values, and submit-before-check missing-input decisions to FieldSourceRenderer and Definition/System Context contracts; backend command services must delegate branch resolution, ProcessManager dispatch decisions, field normalization, and projection materialization to named runtime collaborators rather than hiding compatibility writes or page-specific business logic.
   - id: hard.step_page_experience_parity
     source: docs/engineering/00-rule-authority.md
     rule: New active step, readonly completed step, and append-only correction step pages must share step rail, direct OperationCardShell, state/check panel, action hierarchy, feedback entry, and Admission/Runtime decision markers; page-private outer intent-card wrappers and readonly workspace-control visual wrappers are forbidden; users must not have to enumerate sibling pages one by one.
@@ -51,6 +54,9 @@ hardRules:
   - id: hard.submit_check_matches_step_dependency
     source: docs/engineering/00-rule-authority.md
     rule: Submit-before-check summaries must follow the step dependency contract; default visible copy shows only user-actionable missing inputs, blockers, and submission readiness, while inherited/derived/hidden technical checks stay collapsed unless they explain a blocker. Surfaces must not tell users to fill inherited, hidden, or system-derived fields unless upstream truth is missing.
+  - id: hard.admission_explainability_surface
+    source: docs/engineering/00-rule-authority.md
+    rule: Search result cards, Operation WorkItem detail/confirm/receipt pages, and PC governance release/evidence pages must consume Admission/Language Kernel visibleAllowed, prepareAllowed, confirmAllowed, productionAllowed, mode, and safe reason copy; lifecycle ready/status labels must not imply confirm or Business Production readiness; confirmAllowed=false must not bind confirm or use process/start-handling wording; confirmAllowed=true with productionAllowed=false must be labeled as internal pilot observation or non-production confirmation; ordinary user surfaces must hide admissionDecisionRef, compatibilityAdapter, definitionId, payloadHash, commandSubmissionId, raw reason, and raw code; blocked/error copy must resolve through Language Kernel keys.
 releaseRules:
   - id: release.v5_4_control_plane_transition
     source: docs/v5.4
@@ -77,6 +83,9 @@ engineeringRules:
   - id: engineering.frontend_experience_layers
     source: docs/contracts/frontend-experience/frontend-experience-system-contract.json
     rule: The five-layer Frontend Experience System contract binds shared components, Surface contracts, multilingual dictionaries, state/action contracts, and real-browser screenshot evidence to every user-visible page.
+  - id: engineering.responsibility_boundaries
+    source: scripts/check-responsibility-boundaries.mjs
+    rule: Machine guards enforce that Operations controllers consume shared case-context and validation kernels, Workspace views consume FieldSourceRenderer for field-source decisions, and Canonical Operations Confirm delegates next-step branching to OperationBranchResolver.
 acceptanceRules:
   - id: acceptance.index
     source: docs/acceptance/00-index.md
@@ -104,6 +113,8 @@ machineChecks:
   - scripts/check-experience-contract.mjs
   - scripts/check-surface-contract.mjs
   - scripts/check-frontend-experience-system.mjs
+  - scripts/check-dormitory-field-context-contracts.mjs
+  - scripts/check-responsibility-boundaries.mjs
   - scripts/check-fact-ownership.mjs
   - scripts/check-mr-contract.mjs
   - scripts/check-invariant-maturity.mjs

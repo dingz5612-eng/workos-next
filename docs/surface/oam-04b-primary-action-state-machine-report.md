@@ -14,7 +14,9 @@
 
 ## 行为结果
 
-- `ready` -> 提交处理。
+- `ready + confirmAllowed=true + productionAllowed=true` -> 确认提交。
+- `ready + confirmAllowed=true + productionAllowed=false` -> 提交观察记录，明确不是生产提交。
+- `ready + confirmAllowed=false` -> 查看不能提交原因，不绑定提交动作。
 - `blocked` -> 查看阻断原因。
 - `missingEvidence` -> 补齐证据。
 - `waitingPermission` -> 查看权限处理说明。

@@ -118,6 +118,7 @@ describe("DORM-INT-02 WorkItem-native pilot", () => {
       card: resourceWorkspaceFixture().cards[0],
       workItemId: "W-STAY-RESOURCE:roomSetup",
       actor: { token: "operator-token" },
+      deviceId: "mobile-current",
       language: "zh-CN",
       fieldValues: { roomId: "R-101" },
       evidenceIds: ["evd-room-check"],
@@ -133,7 +134,10 @@ describe("DORM-INT-02 WorkItem-native pilot", () => {
     expect(calls[0].url).toContain("/api/operations/work-items/W-STAY-RESOURCE:roomSetup/prepare");
     expect(calls[1].url).toContain("/api/operations/work-items/W-STAY-RESOURCE:roomSetup/confirm");
     expect(calls.map((call) => call.url).join(" ")).not.toContain("T-ROOM-CREATE");
+    expect(calls[0].options.body).toContain("ci-room-setup");
     expect(calls[1].options.body).toContain("sub-room-setup");
+    expect(calls[1].options.body).toContain("ci-room-setup");
+    expect(JSON.parse(calls[1].options.body).deviceId).toBe("mobile-current");
     vi.unstubAllGlobals();
   });
 
@@ -195,15 +199,17 @@ describe("DORM-INT-02 WorkItem-native pilot", () => {
     vi.unstubAllGlobals();
   });
 
-  it("renders localized Today Mission Control and Personal Ops Center without component names", () => {
+  it("renders localized Today Focus Overview and Personal Ops Center without component names", () => {
     vi.stubGlobal("localStorage", { getItem: () => null });
     const todayCtx = ctx({ view: "home" });
     const meCtx = ctx({ view: "me" });
 
     const todayHtml = routeView(todayCtx);
     const meHtml = routeView(meCtx);
-    expect(todayHtml).toContain("今日任务中心");
+    expect(todayHtml).toContain('data-surface="today-focus-overview"');
+    expect(todayHtml).toContain('data-surface="today-focus-item"');
     expect(todayHtml).not.toContain("WorkItemMissionControl");
+    expect(todayHtml).not.toContain("TodayFocusOverview");
     expect(todayHtml).not.toContain("WorkItem Mission Control");
     expect(meHtml).toContain("个人运营中心");
     expect(meHtml).toContain("证据上传");
@@ -300,6 +306,7 @@ function ctx(overrides = {}) {
     tr: (key) => ({
       todayMissionControlEyebrow: "今天",
       todayMissionControl: "今日任务中心",
+      todayFocusOverview: "今日工作",
       assignedWorkItems: "今日待办",
       todayLearning: "今日必学",
       personalOpsCenter: "个人运营中心",

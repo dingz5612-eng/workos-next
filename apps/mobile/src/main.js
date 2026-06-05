@@ -1,5 +1,5 @@
 import "./styles.css";
-import { checkHealth, fetchHomeSurface, fetchLearningCatalog, fetchOperationWorkItems, fetchWorkspaceProjection } from "./apiClient.js";
+import { checkHealth, clearStoredActorSession, fetchHomeSurface, fetchLearningCatalog, fetchOperationWorkItems, fetchWorkspaceProjection } from "./apiClient.js";
 import { shell } from "./appShell.js";
 import { routeView } from "./appRouter.js";
 import { createInitialState, shouldHydrateProtectedSurfaces } from "./appState.js";
@@ -50,10 +50,10 @@ async function hydrateProjectionFromApi() {
     return;
   }
   try {
-    const [projection, operationWorkItems] = await Promise.all([
-      optionalSurface(fetchWorkspaceProjection),
-      optionalSurface(fetchOperationWorkItems)
-    ]);
+    const projection = await optionalProtectedSurface(fetchWorkspaceProjection);
+    if (!state.currentActor) return;
+    const operationWorkItems = await optionalProtectedSurface(fetchOperationWorkItems);
+    if (!state.currentActor) return;
     if (projection) applyRuntimeProjection(state, projection);
     applyRuntimeSurfacePayloads(state, { operationWorkItems });
     if (isPcSurfaceView(state.view)) await hydratePcSurfaceData();
@@ -80,13 +80,36 @@ async function optionalSurface(load) {
 }
 
 async function hydrateSecondarySurfaces() {
-  const [homeSurface, learningCatalog, accommodationLenses] = await Promise.all([
-    optionalSurface(fetchHomeSurface),
-    optionalSurface(fetchLearningCatalog),
-    optionalSurface(refreshDefaultAccommodationLenses)
-  ]);
+  if (!state.currentActor) return;
+  const homeSurface = await optionalProtectedSurface(fetchHomeSurface);
+  if (!state.currentActor) return;
+  const learningCatalog = await optionalProtectedSurface(fetchLearningCatalog);
+  if (!state.currentActor) return;
+  const accommodationLenses = await optionalProtectedSurface(refreshDefaultAccommodationLenses);
+  if (!state.currentActor) return;
   applyRuntimeSurfacePayloads(state, { homeSurface, learningCatalog, accommodationLenses });
   render();
+}
+
+async function optionalProtectedSurface(load) {
+  try {
+    return await load();
+  } catch (error) {
+    if (isAuthFailure(error)) expireActorSession();
+    return null;
+  }
+}
+
+function isAuthFailure(error) {
+  return error?.status === 401 || error?.reason === "actor_session_required";
+}
+
+function expireActorSession() {
+  clearStoredActorSession();
+  state.currentActor = null;
+  state.runtimeHydrating = false;
+  state.loginMessage = ctx.tr("sessionExpired");
+  state.view = "login";
 }
 
 function render(scrollTop = false) {

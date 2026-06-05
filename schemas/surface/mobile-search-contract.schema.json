@@ -6,7 +6,7 @@
   "required": ["contractId", "surface", "sections", "resultContract", "pcRawRecordsVisible"],
   "properties": {
     "contractId": { "type": "string" },
-    "sections": { "type": "array", "items": { "type": "string" }, "minItems": 8 },
+    "sections": { "type": "array", "items": { "type": "string" }, "minItems": 5 },
     "resultContract": { "type": "array", "items": { "type": "string" }, "minItems": 4 }
   }
 }

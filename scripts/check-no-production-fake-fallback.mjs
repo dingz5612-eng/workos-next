@@ -33,7 +33,6 @@ const productionRoots = [
 
 const ignoredSegments = new Set([
   "__tests__",
-  "devFixtures",
   "bin",
   "obj",
   "node_modules",

@@ -77,7 +77,7 @@ public sealed partial class ProjectionRuntime
 
     public IReadOnlyList<object> GetWorkQueue()
     {
-        lock (gate) return lensQueryService.GetWorkQueue(state);
+        lock (gate) return lensQueryService.GetWorkQueue(state, store.GetProcessWorkItemIntents());
     }
 
     public IReadOnlyList<object> GetHomeSurface()

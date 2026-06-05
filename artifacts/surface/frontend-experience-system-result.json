@@ -1,10 +1,11 @@
 {
-  "generatedAtUtc": "2026-06-05T05:51:00.264Z",
+  "generatedAtUtc": "2026-06-05T18:16:04.788Z",
   "generatedBy": "scripts/check-frontend-experience-system.mjs",
   "status": "passed",
   "contract": "docs/contracts/frontend-experience/frontend-experience-system-contract.json",
   "layers": [
     "shared-components",
+    "field-context-kernel",
     "surface-contract",
     "multilingual-dictionary",
     "state-action-contract",

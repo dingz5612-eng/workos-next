@@ -72,6 +72,12 @@
       "refPattern": "^(apps/mobile/dist|artifacts/go-live/dormitory/runtime-seed-result\\.json$|artifacts/operations/dormitory/observation-day-02\\.json$|artifacts/screenshots/dormitory-business-scenarios$|artifacts/test-results|artifacts/release-state/ci-|docs/v5\\.4/mr-|infra/db/migrations/(032_rule_fix|999_bad)\\.sql$|services/core-api/WorkOS\\.Api/Runtime/(MobileBffFake|OfficialSource|ReconciliationFake|ServiceTaskFake)\\.cs$|tests/fixtures/)",
       "classification": "generated_or_self_test_reference",
       "reason": "Checker scripts may reference generated outputs, CI placeholders, or self-test fixture paths."
+    },
+    {
+      "ownerPattern": "^scripts/(guard-architecture\\.ps1|project/check-seed-data-isolation\\.mjs)$",
+      "refPattern": "^apps/mobile/src/devFixtures(/.*)?$",
+      "classification": "retired_path_guard_reference",
+      "reason": "These scripts reference retired fixture paths only to assert they stay deleted from the active mobile baseline."
     }
   ],
   "supersededHistoricalEvidence": [

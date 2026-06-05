@@ -1,0 +1,28 @@
+{
+  "status": "passed",
+  "generatedAt": "2026-06-05T12:02:57.230Z",
+  "baseUrl": "http://127.0.0.1:5175",
+  "account": "admin / dev (local development)",
+  "checks": [
+    "搜索住宿: 搜索页未出现业务记录/已完成记录/证据/学习内容等资料库区块",
+    "搜索新增住宿房源: 搜索页未出现业务记录/已完成记录/证据/学习内容等资料库区块",
+    "搜索新增住宿房源: 主动办理仍保留在搜索页",
+    "搜索证据: 搜索页未出现业务记录/已完成记录/证据/学习内容等资料库区块",
+    "搜索证据: 不再展开证据资料库，提示用户去我的查看",
+    "我的: 业务资料库包含业务记录、已完成记录、证据、学习中心",
+    "我的 -> 业务记录: 只读资料页可打开",
+    "我的 -> 已完成记录: 只读资料页可打开",
+    "我的 -> 证据: 只读证据资料页可打开",
+    "我的 -> 学习中心: 学习内容从个人入口进入"
+  ],
+  "screenshots": [
+    "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/search-me-responsibility-20260605-fixed/01-search-query-accommodation-no-archive.png",
+    "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/search-me-responsibility-20260605-fixed/02-search-active-command.png",
+    "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/search-me-responsibility-20260605-fixed/03-search-evidence-query-no-library.png",
+    "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/search-me-responsibility-20260605-fixed/04-me-business-library.png",
+    "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/search-me-responsibility-20260605-fixed/05-me-business-records.png",
+    "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/search-me-responsibility-20260605-fixed/06-me-completed-records.png",
+    "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/search-me-responsibility-20260605-fixed/07-me-evidence-library.png",
+    "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/search-me-responsibility-20260605-fixed/08-me-learning-center.png"
+  ]
+}

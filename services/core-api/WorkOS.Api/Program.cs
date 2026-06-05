@@ -552,6 +552,7 @@ app.MapPost("/api/operations/workspaces/start", (StartWorkspaceRequest request, 
     }
 
     return StartOperationsWorkspace(
+        request,
         request.TemplateWorkspaceId,
         httpRequest,
         runtime,
@@ -648,19 +649,20 @@ static string[] DormitoryTemplateWorkspaceIds() =>
         "W-STAY-DEPOSIT-LEDGER",
         "W-STAY-PAYMENT-LEDGER",
         "W-STAY-SERVICE-TASK",
-        "W-STAY-CHECKOUT",
         "W-STAY-CHECKOUT-SETTLEMENT",
+        "W-STAY-EXPENSE-LEDGER",
         "W-STAY-PERIOD-ANALYTICS"
     };
 
 static string[] AllowedWorkspaceStartRoles(string templateWorkspaceId) =>
     templateWorkspaceId switch
     {
-        "W-STAY-DEPOSIT-LEDGER" or "W-STAY-PAYMENT-LEDGER" => new[] { "operator", "manager", "admin", "finance" },
+        "W-STAY-DEPOSIT-LEDGER" or "W-STAY-PAYMENT-LEDGER" or "W-STAY-EXPENSE-LEDGER" => new[] { "operator", "manager", "admin", "finance" },
         _ => new[] { "operator", "manager", "admin" }
     };
 
 static IResult StartOperationsWorkspace(
+    StartWorkspaceRequest request,
     string templateWorkspaceId,
     HttpRequest httpRequest,
     ProjectionRuntime runtime,
@@ -677,7 +679,7 @@ static IResult StartOperationsWorkspace(
     try
     {
         var workspace = runtime.StartWorkspace(templateWorkspaceId);
-        var started = operations.StartWorkspaceCase(workspace, templateWorkspaceId, actor);
+        var started = operations.StartWorkspaceCase(workspace, templateWorkspaceId, actor, request.AnchorPayload, request.AnchorQuery);
         return Results.Ok(new
         {
             started.Workspace,
@@ -754,7 +756,10 @@ internal sealed record MobileRecentObjectRequest(
     string? CardId,
     string? Language);
 
-internal sealed record StartWorkspaceRequest(string TemplateWorkspaceId);
+internal sealed record StartWorkspaceRequest(
+    string TemplateWorkspaceId,
+    string? AnchorQuery = null,
+    IReadOnlyDictionary<string, string>? AnchorPayload = null);
 
 internal sealed record LedgerCorrectionApproveRequest(
     string TenantId,

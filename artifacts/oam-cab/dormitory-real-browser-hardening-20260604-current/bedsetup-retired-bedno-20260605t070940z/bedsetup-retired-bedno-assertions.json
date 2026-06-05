@@ -1,0 +1,16 @@
+{
+  "url": "http://127.0.0.1:5175/?view=operationPanel&lang=zh-CN&device=mobile&workspace=W-STAY-RESOURCE-20260604173833-e7f6d0a5445e46038422a31580c02b90&card=bedSetup&workItem=wi-dad419be58f8bfe19285728f2a81464c325be2edc405c460c9c72184a6df9993",
+  "loggedIn": true,
+  "noMissingBedNo": true,
+  "noRetiredBedNoInput": true,
+  "noRetiredBedLabelInput": true,
+  "noCompleteRequiredCta": true,
+  "hasGeneratedBeds": true,
+  "readyToSubmit": true,
+  "hasCurrentStep": true,
+  "screenshots": [
+    "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\bedsetup-retired-bedno-20260605t070940z\\bedsetup-current-page-full.png",
+    "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\bedsetup-retired-bedno-20260605t070940z\\bedsetup-current-page-bottom.png"
+  ],
+  "bodyTextExcerpt": "WorkOSNext\n治理管理员\n已连接\n中文\nРусский\nКыргызча\n我要创建住宿资源\n第 2/6 步\n可办理\n1\n2\n3\n4\n5\n6\n准入状态: 可内部试点观察，生产阻断\n\n内部试点观察，不代表生产办理结果。\n\n当前状态: 内部试点观察，不代表生产办理结果。\n确认写入: 可确认\n业务承诺: 可内部试点观察，生产阻断\n本步要做\n床位配置卡\n怎么做\n\n把这一步需要的信息填完整。不能提交时，页面会直接标出还差哪一项。\n\n填写信息\n所属房间\n来自房间配置，不需要重复填写。\n床位数\n来自房间配置，不需要重复填写。\n将生成的床位\n01 · 上铺\n02 · 下铺\n跟随床位数和床铺生成方式自动更新，提交后会写成多个床位对象。\n床铺生成方式\n必填\n上下铺：两上两下\n全部下铺\n全部上铺\n全部平铺\n选择系统怎么生成每张床；四人间通常选“上下铺：两上两下”。\n提交前检查\n\n可以提交\n\n查看检查详情\n前步带入: 已完成\n系统生成: 已完成\n需要操作: 已完成\n后端默认: 已完成\n材料核对: 床位容量确认 · 床位编号确认\n提交状态: 可以提交\n业务规则: 房间存在 · 未超过床位数 · 床位号未重复\n保存草稿\n提交观察记录\n反馈\n今天\n工作\n搜索\n我的"
+}

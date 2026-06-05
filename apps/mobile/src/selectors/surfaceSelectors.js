@@ -1,4 +1,5 @@
 import { normalizeQuery } from "../runtime/runtimeStore.js";
+import { businessAnchorText } from "../businessAnchorKernel.js";
 
 const activeStatuses = new Set(["ready", "blocked", "inProgress"]);
 const terminalStatuses = new Set(["done", "confirmed", "completed", "committed", "closed", "cancelled", "skipped"]);
@@ -61,7 +62,7 @@ function materializeQueue(queue, byId, state, options = {}) {
         ...item,
         workspace,
         card,
-        domain: item.domain || workspace?.domain || "",
+        domain: queueDomainFor(item, workspace),
         badges: item.badges?.length ? item.badges : badgesFor(card),
         priority: item.priority ?? priorityFor(card?.status),
         source: item.source || state.runtimeStore?.queueSource || "runtime-api"
@@ -314,8 +315,41 @@ function workspaceText(workspace) {
     workspace.summary?.["ru-RU"],
     workspace.next?.["zh-CN"],
     workspace.next?.["ru-RU"],
+    businessAnchorText(workspace),
     workspace.cards?.map((card) => `${card.id} ${card.title?.["zh-CN"] || ""} ${card.title?.["ru-RU"] || ""}`).join(" ")
   ].join(" ").toLocaleLowerCase();
+}
+
+function queueDomainFor(item = {}, workspace = {}) {
+  const explicit = normalizeDomain(item.domain || item.domainGroup || item.domain_group || item.businessLine || item.business_line);
+  const workspaceDomain = normalizeDomain(workspace?.domain || workspace?.businessLine || workspace?.business_line);
+  if (explicit && explicit !== "operations" && explicit !== "ops") return explicit;
+  if (workspaceDomain) return workspaceDomain;
+  const text = [
+    item.workItemType,
+    item.work_item_type,
+    item.workItemId,
+    item.work_item_id,
+    item.workspaceId,
+    item.cardId,
+    item.card?.id,
+    item.workspace?.title?.["zh-CN"],
+    item.workspace?.summary?.["zh-CN"]
+  ].join(" ");
+  if (/stay|dorm|room|bed|checkin|checkout|deposit|payment|service|expense|period|lead|住宿|房间|床位|入住|退住|押金|收款|线索/i.test(text)) return "stay";
+  if (/repair|维修/i.test(text)) return "repair";
+  if (/finance|ledger|财务|账本/i.test(text)) return "finance";
+  return explicit || "";
+}
+
+function normalizeDomain(value = "") {
+  const text = String(value || "").trim().toLowerCase();
+  if (!text) return "";
+  if (["accommodation", "dormitory", "dorm", "stay"].includes(text)) return "stay";
+  if (["finance", "money", "ledger"].includes(text)) return "finance";
+  if (["repair", "service"].includes(text)) return "repair";
+  if (["operations", "operation", "ops"].includes(text)) return text === "ops" ? "ops" : "operations";
+  return text;
 }
 
 function badgesFor(card) {

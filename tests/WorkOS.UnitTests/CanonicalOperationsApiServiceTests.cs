@@ -157,6 +157,125 @@ public sealed class CanonicalOperationsApiServiceTests
     }
 
     [TestMethod]
+    public void operations_confirm_dispatches_next_work_item_from_shared_workspace_seed()
+    {
+        var service = Service(out _, out _);
+        service.CreateWorkItem(new CreateWorkItemRequest(
+            WorkItemId: "wi-lead-capture-shared-flow",
+            TenantId: "tenant-s3",
+            WorkItemType: "leadCapture",
+            WorkspaceId: "W-STAY-LEAD-RESERVATION-UNIT",
+            CardId: "leadCapture",
+            OwnerRole: "operator",
+            Payload: new Dictionary<string, string>
+            {
+                ["caseId"] = "case-lead-shared-flow",
+                ["cardId"] = "leadCapture",
+                ["templateWorkspaceId"] = "W-STAY-LEAD-RESERVATION"
+            }));
+
+        var result = service.ConfirmWorkItem(
+            "wi-lead-capture-shared-flow",
+            Request("idem-lead-shared-flow", cardId: "leadCapture", fieldValues: new Dictionary<string, string>()),
+            OperatorActor(),
+            "req-lead-shared-flow");
+        var next = service.ListWorkItems("tenant-s3")
+            .SingleOrDefault(item => item.WorkspaceId == "W-STAY-LEAD-RESERVATION-UNIT" && item.Payload.TryGetValue("cardId", out var cardId) && cardId == "leadFollowUp");
+
+        Assert.AreEqual(StatusCodes.Status200OK, result.StatusCode);
+        Assert.IsNotNull(next);
+        Assert.AreEqual("available", next!.Status);
+        Assert.AreEqual("operation_flow_process_manager", next.Payload["dispatchedBy"]);
+        Assert.AreEqual("W-STAY-LEAD-RESERVATION", next.Payload["templateWorkspaceId"]);
+        Assert.AreEqual("wi-lead-capture-shared-flow", next.Payload["sourceWorkItemId"]);
+    }
+
+    [TestMethod]
+    public void operations_confirm_dispatches_next_work_item_with_next_card_owner_role()
+    {
+        var service = Service(out _, out _, ProjectionSeed.Create().Workspaces);
+        service.CreateWorkItem(new CreateWorkItemRequest(
+            WorkItemId: "wi-deposit-receipt-shared-flow",
+            TenantId: "tenant-s3",
+            WorkItemType: "depositReceipt",
+            WorkspaceId: "W-STAY-DEPOSIT-LEDGER",
+            CardId: "depositReceipt",
+            OwnerRole: "operator",
+            Payload: new Dictionary<string, string>
+            {
+                ["caseId"] = "case-deposit-shared-flow",
+                ["cardId"] = "depositReceipt",
+                ["templateWorkspaceId"] = "W-STAY-DEPOSIT-LEDGER"
+            }));
+
+        var result = service.ConfirmWorkItem(
+            "wi-deposit-receipt-shared-flow",
+            Request("idem-deposit-owner-role", cardId: "depositReceipt", fieldValues: new Dictionary<string, string>
+            {
+                ["depositId"] = "deposit-owner-role-001",
+                ["depositReceiptId"] = "deposit-receipt-owner-role-001",
+                ["receivedAmount"] = "300",
+                ["paymentMethod"] = "cash",
+                ["payerName"] = "住客",
+                ["receivedDate"] = "2026-06-05T10:30"
+            }),
+            OperatorActor(),
+            "req-deposit-owner-role");
+        var next = service.ListWorkItems("tenant-s3")
+            .SingleOrDefault(item => item.WorkspaceId == "W-STAY-DEPOSIT-LEDGER" && item.Payload.TryGetValue("cardId", out var cardId) && cardId == "depositConfirmation");
+
+        Assert.AreEqual(StatusCodes.Status200OK, result.StatusCode);
+        Assert.IsNotNull(next);
+        Assert.AreEqual("finance", next!.OwnerRole);
+        Assert.AreEqual("finance", next.Payload["ownerRole"]);
+    }
+
+    [TestMethod]
+    public void lead_reservation_create_dispatches_cancel_branch_from_business_action()
+    {
+        var service = Service(out _, out _, ProjectionSeed.Create().Workspaces);
+        service.CreateWorkItem(new CreateWorkItemRequest(
+            WorkItemId: "wi-reservation-create-cancel-flow",
+            TenantId: "tenant-s3",
+            WorkItemType: "reservationCreate",
+            WorkspaceId: "W-STAY-LEAD-RESERVATION",
+            CardId: "reservationCreate",
+            OwnerRole: "operator",
+            Payload: new Dictionary<string, string>
+            {
+                ["caseId"] = "case-reservation-branch-flow",
+                ["cardId"] = "reservationCreate",
+                ["templateWorkspaceId"] = "W-STAY-LEAD-RESERVATION"
+            }));
+
+        var result = service.ConfirmWorkItem(
+            "wi-reservation-create-cancel-flow",
+            Request("idem-reservation-cancel-branch", cardId: "reservationCreate", fieldValues: new Dictionary<string, string>
+            {
+                ["leadId"] = "lead-branch-001",
+                ["reservationId"] = "reservation-branch-001",
+                ["reservedBedCount"] = "1",
+                ["reservedRoomId"] = "D02",
+                ["reservedBedIds"] = "01",
+                ["plannedCheckInDate"] = "2026-06-05T10:30",
+                ["reservationHoldUntil"] = "2026-06-05T18:30",
+                ["reservationDepositRequired"] = "false",
+                ["reservationDepositAmount"] = "0",
+                ["reservationNextAction"] = "cancel"
+            }),
+            OperatorActor(),
+            "req-reservation-cancel-branch");
+        var cancel = service.ListWorkItems("tenant-s3")
+            .SingleOrDefault(item => item.WorkspaceId == "W-STAY-LEAD-RESERVATION" && item.Payload.TryGetValue("cardId", out var cardId) && cardId == "reservationCancel");
+        var convert = service.ListWorkItems("tenant-s3")
+            .SingleOrDefault(item => item.WorkspaceId == "W-STAY-LEAD-RESERVATION" && item.Payload.TryGetValue("cardId", out var cardId) && cardId == "reservationConvert");
+
+        Assert.AreEqual(StatusCodes.Status200OK, result.StatusCode);
+        Assert.IsNotNull(cancel);
+        Assert.IsNull(convert);
+    }
+
+    [TestMethod]
     public void operations_confirm_returns_422_for_finance_truth_business_rule_failure()
     {
         var service = Service(out _, out var store);
@@ -185,9 +304,12 @@ public sealed class CanonicalOperationsApiServiceTests
         Assert.IsEmpty(store.DomainEvents);
     }
 
-    private static CanonicalOperationsApiService Service(out FakeCatalogRuntime runtime, out InMemoryOperationsStore store)
+    private static CanonicalOperationsApiService Service(
+        out FakeCatalogRuntime runtime,
+        out InMemoryOperationsStore store,
+        IReadOnlyList<WorkspaceProjection>? workspaces = null)
     {
-        runtime = new FakeCatalogRuntime();
+        runtime = new FakeCatalogRuntime(workspaces);
         var catalog = new OperationsRuntimeService(runtime);
         store = new InMemoryOperationsStore();
         var router = new SliceCommandHandlerRouter()
@@ -235,7 +357,7 @@ public sealed class CanonicalOperationsApiServiceTests
 
     private sealed class FakeCatalogRuntime : IOperationsRuntimeAdapter
     {
-        private readonly IReadOnlyList<WorkspaceProjection> workspaces = new[] { Workspace("W-S3") };
+        private readonly IReadOnlyList<WorkspaceProjection> workspaces;
         private readonly IReadOnlyList<ProcessWorkItemIntentRecord> intents = new[]
         {
             new ProcessWorkItemIntentRecord(
@@ -255,6 +377,11 @@ public sealed class CanonicalOperationsApiServiceTests
                     ["cardId"] = "roomSetup"
                 })
         };
+
+        public FakeCatalogRuntime(IReadOnlyList<WorkspaceProjection>? workspaces = null)
+        {
+            this.workspaces = workspaces ?? new[] { Workspace("W-S3") };
+        }
 
         public int ConfirmCount { get; private set; }
 

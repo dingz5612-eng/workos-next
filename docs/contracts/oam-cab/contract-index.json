@@ -20,6 +20,7 @@
     "rollbackCompensationContract": "docs/contracts/governance/rollback-compensation-contract.json",
     "companyKernelAlignmentContract": "docs/contracts/company-kernels/company-kernel-alignment-contract.json",
     "businessRealityKernelMap": "docs/architecture/business-reality-oam-kernel-map.json",
+    "businessAnchorContract": "docs/contracts/business-anchor/business-anchor-contract.json",
     "searchContract": "docs/contracts/search/search-contract.json",
     "biKpiContract": "docs/contracts/bi-kpi/bi-kpi-contract.json",
     "languageKernelContract": "docs/contracts/language/language-contract.json",

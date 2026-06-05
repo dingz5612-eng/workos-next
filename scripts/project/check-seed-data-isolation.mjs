@@ -1,31 +1,20 @@
-import { tasks } from "../../apps/mobile/src/devFixtures/demoQueue.js";
-import { readText, updateProjectHygiene, writeJson, failIfNeeded } from "./project-hygiene-lib.mjs";
+import { exists, readText, updateProjectHygiene, writeJson, failIfNeeded } from "./project-hygiene-lib.mjs";
 
 const generatedAtUtc = new Date().toISOString();
 const selectorsSource = readText("apps/mobile/src/selectors/surfaceSelectors.js");
 const runtimeStoreSource = readText("apps/mobile/src/runtime/runtimeStore.js");
-const workspaceProjectionSource = readText("apps/mobile/src/devFixtures/workspaceProjections.js");
 const noGoItems = [];
 
-const taskInventory = tasks.map((task) => ({
-  seedId: task.id,
-  domain: task.domain,
-  classification: classifyTask(task),
-  ordinaryMobileAllowed: task.domain === "stay",
-  diagnosticOnly: task.domain !== "stay",
-  productionAllowed: false
-}));
+const retiredFixturePaths = [
+  "apps/mobile/src/devFixtures/demoQueue.js",
+  "apps/mobile/src/devFixtures/projectionMetadata.js",
+  "apps/mobile/src/devFixtures/workspaceProjections.js",
+  "apps/mobile/src/devFixtures/i18n/demoCopy.js"
+];
 
-const workspaceInventory = parseWorkspaceSeeds(workspaceProjectionSource).map((workspace) => ({
-  workspaceId: workspace.workspaceId,
-  taskId: workspace.taskId,
-  domain: workspace.domain,
-  classification: classifyWorkspace(workspace),
-  cardCount: workspace.cardCount,
-  ordinaryMobileAllowed: workspace.domain === "stay",
-  diagnosticOnly: workspace.domain !== "stay",
-  productionAllowed: false
-}));
+for (const fixturePath of retiredFixturePaths) {
+  if (exists(fixturePath)) noGoItems.push(`旧离线 demo fixture 必须删除：${fixturePath}`);
+}
 
 if (!selectorsSource.includes("isOrdinaryPilotQueueItem")) {
   noGoItems.push("selectWorkbenchQueue 必须调用 isOrdinaryPilotQueueItem 隔离普通移动队列。");
@@ -33,14 +22,13 @@ if (!selectorsSource.includes("isOrdinaryPilotQueueItem")) {
 for (const marker of ["runtimeAudit", "engineering", "diagnostic", "fixture_replay", "retired_projection_shadow"]) {
   if (!selectorsSource.includes(marker)) noGoItems.push(`普通移动队列隔离缺少 marker：${marker}`);
 }
+for (const retiredToken of ["demoQueue", "workspaceProjections", "projectionMetadata", "demoCopy"]) {
+  if (selectorsSource.includes(retiredToken) || runtimeStoreSource.includes(retiredToken)) {
+    noGoItems.push(`普通移动端运行时不得再引用旧 demo fixture：${retiredToken}`);
+  }
+}
 if (!runtimeStoreSource.includes('source: "operations-work-items"')) {
   noGoItems.push("runtimeStore 必须将 operationWorkItems 映射为 operations-work-items queue source。");
-}
-if (taskInventory.filter((item) => item.ordinaryMobileAllowed).length === 0) {
-  noGoItems.push("至少需要一个 DORM-L1/stay seed 作为移动端学习或诊断基线。");
-}
-for (const item of [...taskInventory, ...workspaceInventory]) {
-  if (item.productionAllowed) noGoItems.push(`${item.seedId ?? item.workspaceId} seed 不得标记 productionAllowed。`);
 }
 
 const result = {
@@ -48,8 +36,9 @@ const result = {
   generatedBy: "check-seed-data-isolation",
   stage: "PROJECT-HYGIENE-CLEANUP",
   status: noGoItems.length ? "failed" : "passed",
-  taskSeedCount: taskInventory.length,
-  workspaceSeedCount: workspaceInventory.length,
+  taskSeedCount: 0,
+  workspaceSeedCount: 0,
+  retiredFixtureCount: retiredFixturePaths.length,
   noGoItems,
   productionAllowed: false,
   dormitoryL2ProductionAllowed: false,
@@ -61,46 +50,16 @@ writeJson("artifacts/project/seed-data-inventory.json", {
   generatedAtUtc,
   generatedBy: "check-seed-data-isolation",
   stage: "PROJECT-HYGIENE-CLEANUP",
-  taskSeeds: taskInventory,
-  workspaceSeeds: workspaceInventory,
+  taskSeeds: [],
+  workspaceSeeds: [],
+  retiredFixturePaths,
   isolationPolicy: {
     ordinaryMobileQueue: "DORM-L1/stay scoped runtime work items only; diagnostic, engineering, fixture, runtimeAudit and retired projection shadow seeds are excluded unless debugSurface=true.",
     diagnosticSurface: "engineering diagnostic, runtime audit, rf and retired projection shadow seeds may only appear in diagnostic or migration tests.",
+    frontendSeedFixtures: "retired; mobile surfaces must use runtime work items, projection, lens, admission, and experience contracts instead of local demo fixtures.",
     productionAllowed: false
   }
 });
 updateProjectHygiene("seed_data_isolation", result);
 failIfNeeded(noGoItems, "seed data isolation check");
 console.log("seed data isolation check: PASS");
-
-function classifyTask(task) {
-  if (task.domain === "stay") return "DORM-L1 candidate seed";
-  if (task.domain === "finance") return "finance diagnostic seed";
-  if (task.domain === "repair") return "L0 learning/diagnostic seed";
-  return "diagnostic seed";
-}
-
-function classifyWorkspace(workspace) {
-  if (workspace.domain === "stay") return "DORM-L1 lifecycle workspace seed";
-  if (workspace.domain === "finance") return "finance diagnostic workspace seed";
-  if (workspace.domain === "repair") return "L0 learning/diagnostic workspace seed";
-  return "diagnostic workspace seed";
-}
-
-function parseWorkspaceSeeds(source) {
-  const pattern = /workspaceModel\(\s*"([^"]+)"\s*,\s*"([^"]+)"\s*,\s*"([^"]+)"/g;
-  const seeds = [];
-  let match;
-  while ((match = pattern.exec(source))) {
-    const [workspaceId, domain, taskId] = match.slice(1);
-    const nextStart = source.indexOf("workspaceModel(", pattern.lastIndex);
-    const block = source.slice(match.index, nextStart === -1 ? source.length : nextStart);
-    seeds.push({
-      workspaceId,
-      domain,
-      taskId,
-      cardCount: (block.match(/cardModel\(/g) ?? []).length
-    });
-  }
-  return seeds;
-}

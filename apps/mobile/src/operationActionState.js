@@ -1,4 +1,5 @@
 import { isTerminalCardStatus } from "./selectors/workspaceSelectors.js";
+import { admissionCopy, admissionStateFromWorkItem } from "./admissionSurface.js";
 
 export function buildOperationActionState(workItem = {}, card = {}, runtimeResult = null, state = {}) {
   const candidateResult = runtimeResult || state.lastActionResult || null;
@@ -17,7 +18,10 @@ export function buildOperationActionState(workItem = {}, card = {}, runtimeResul
   if (isTerminalCardStatus(card.status)) return OperationActionStateVM("done", { disabled: true });
   if (card.status === "notStarted") return OperationActionStateVM("notStarted", { disabled: true });
   if (card.status === "blocked" || workItem.lifecycleState === "blocked") return OperationActionStateVM("blocked");
-  return OperationActionStateVM("ready");
+  const admission = admissionStateFromWorkItem(workItem, state);
+  if (!admission.confirmAllowed) return OperationActionStateVM("confirmDenied", { admission });
+  if (!admission.productionAllowed) return OperationActionStateVM("readyObservation", { admission });
+  return OperationActionStateVM("ready", { admission });
 }
 
 function isEvidenceBlocker(result = {}) {
@@ -37,6 +41,8 @@ export function OperationActionStateVM(status, extra = {}) {
     status,
     disabled: Boolean(extra.disabled),
     result: extra.result || null,
+    admission: extra.admission || null,
+    admissionCopy: extra.admission ? admissionCopy(extra.admission, extra.ctx || {}, "operations") : null,
     primaryAction: PrimaryActionVM(status, extra),
     submissionResult: SubmissionResultVM(extra.result),
     projectionStatus: ProjectionStatusVM(extra.result)
@@ -46,6 +52,8 @@ export function OperationActionStateVM(status, extra = {}) {
 export function PrimaryActionVM(status, extra = {}) {
   const table = {
     ready: { labelKey: "primarySubmit", disabled: false },
+    readyObservation: { labelKey: "primarySubmitObservation", disabled: false, reasonKey: "operations.admission.internalPilotObservation" },
+    confirmDenied: { labelKey: "primaryViewBlocker", disabled: false, reasonKey: "operations.admission.confirmDenied" },
     blocked: { labelKey: "primaryViewBlocker", disabled: false },
     missingRequiredFields: { labelKey: "primaryCompleteRequiredFields", disabled: false },
     missingEvidence: { labelKey: "primaryCompleteEvidence", disabled: false },

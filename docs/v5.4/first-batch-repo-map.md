@@ -151,9 +151,9 @@ These are suspected or explicitly declared fallback/demo locations, not changed 
 - `services/core-api/WorkOS.Api/Program.cs`: `DemoBootstrap` backs `/api/bootstrap`.
 - `services/core-api/WorkOS.Api/Runtime/WorkspaceSeedCatalog.cs`: static workspace/card seed catalog for runtime projection.
 - `services/core-api/WorkOS.Api/Runtime/ProjectionSeed.cs`: seed assembler.
-- `apps/mobile/src/devFixtures/workspaceProjections.js`: historical/offline fixture material only; not an active runtime write contract.
-- `apps/mobile/src/devFixtures/demoQueue.js`: offline demo task queue data.
-- `apps/mobile/src/devFixtures/i18n/demoCopy.js`: historical demo copy retained only under explicit dev fixtures.
+- Retired mobile local fixture files: historical/offline fixture material only; not an active runtime write contract.
+- Retired offline demo task queue data: removed from the active mobile baseline.
+- Retired historical demo copy: removed from the active mobile baseline.
 - `apps/mobile/src/runtime/runtimeStore.js`: `local-fallback`, `projection-fallback`, and `offline-demo-fallback` state flags.
 - `apps/mobile/src/selectors/surfaceSelectors.js`: projection fallback and `offlineDemoQueue()` behavior.
 - `apps/mobile/src/views/workbenchView.js`: displays offline API fallback help when queue source is `offline-demo-fallback`.
@@ -232,7 +232,7 @@ Batch A: backend runtime/API/source-of-truth hardening.
 Batch B: frontend runtime surface and fallback cleanup.
 
 - Directories: `apps/mobile/src/runtime`, `apps/mobile/src/selectors`, `apps/mobile/src/views`, `apps/mobile/src/controls`, `apps/mobile/src/generated`, `apps/mobile/src/__tests__`.
-- Key files also in scope: `apps/mobile/src/apiClient.js`, `apps/mobile/src/operationRuntime.js`, `apps/mobile/src/operationController.js`, `apps/mobile/src/devFixtures/workspaceProjections.js`, `apps/mobile/src/devFixtures/demoQueue.js`.
+- Key files also in scope: `apps/mobile/src/apiClient.js`, `apps/mobile/src/operationRuntime.js`, `apps/mobile/src/operationController.js`; retired mobile local fixture files are no longer part of the active baseline.
 - Focus: make online surfaces consume runtime API/lens/card contracts first, keep offline/demo fixtures explicit, remove or fence suspected fake fallback paths.
 
 Batch C: governance, contracts, and CI proof.

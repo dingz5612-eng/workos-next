@@ -3,6 +3,15 @@
   "runtimeModelOnly": true,
   "persistedWorkItemResolutionOrder": ["operationWorkItems", "workQueue", "workspaceId/cardId persisted mapping", "block"],
   "trustedConfirmSheetSource": "persisted WorkItem runtime model",
+  "admissionDrivenActionState": {
+    "requiredTopStatus": ["admissionLabel", "mode", "confirmAllowed", "productionAllowed"],
+    "readyMapping": {
+      "confirmAllowedFalse": "confirmDenied without submit binding",
+      "confirmAllowedTrueProductionFalse": "readyObservation with non-production observation copy",
+      "confirmAllowedTrueProductionTrue": "ready production confirm"
+    },
+    "safeErrorCopy": ["operations.error.safe.403", "operations.error.safe.409", "operations.error.safe.422", "operations.error.safe.generic"]
+  },
   "legacyTaskIdsForbiddenInPost": ["T-ROOM-CREATE"],
   "ordinaryConfirmPath": ["prepareOperationWorkItem", "confirmOperationWorkItem"],
   "forbiddenFallback": ["workspace.taskId", "card.workItemId non-persisted", "prepareCard", "confirmCard"]

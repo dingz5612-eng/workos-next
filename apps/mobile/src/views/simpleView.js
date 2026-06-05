@@ -1,3 +1,5 @@
+import { selectCompletedWorkbenchQueue, selectRuntimeWorkspaces, selectWorkbenchQueue } from "../selectors/surfaceSelectors.js";
+
 export function simpleView(titleKey, bodyKey, ctx) {
   const state = ctx.state || {};
   const view = state.view || "";
@@ -146,6 +148,15 @@ function supportRows(view, ctx) {
       body: ctx.tr("deviceTrustStatusBody")
     }];
   }
+  if (view === "businessRecords") {
+    return businessRecordRows(state, ctx);
+  }
+  if (view === "completedRecords") {
+    return completedRecordRows(state, ctx);
+  }
+  if (view === "evidenceLibrary") {
+    return evidenceLibraryRows(state, ctx);
+  }
   return emptyRows(ctx);
 }
 
@@ -163,6 +174,71 @@ function supportRow(row, ctx) {
     <strong>${ctx.escapeHtml(row.value)}</strong>
     <p>${ctx.escapeHtml(row.body)}</p>
   </article>`;
+}
+
+function businessRecordRows(state, ctx) {
+  const queue = selectWorkbenchQueue(state).slice(0, 6);
+  if (!queue.length) return emptyRows(ctx);
+  return queue.map((item) => ({
+    label: ctx.tr("searchOperationCases"),
+    value: displayRecordTitle(item, ctx),
+    body: [displayRecordContext(item, ctx), item.reason || item.nextAction || item.lifecycleState || item.status].filter(Boolean).join(" · ")
+  }));
+}
+
+function completedRecordRows(state, ctx) {
+  const records = selectCompletedWorkbenchQueue(state).slice(0, 6);
+  if (!records.length) return emptyRows(ctx);
+  return records.map((item) => ({
+    label: ctx.tr("completedWorkItems"),
+    value: displayRecordTitle(item, ctx),
+    body: [displayRecordContext(item, ctx), ctx.tr("viewOnly")].filter(Boolean).join(" · ")
+  }));
+}
+
+function evidenceLibraryRows(state, ctx) {
+  const runtimeEvidence = selectRuntimeWorkspaces(state).flatMap((workspace) => (workspace.cards || []).flatMap((card) =>
+    (card.evidence || []).map((item) => ({
+      label: ctx.tr("searchEvidence"),
+      value: ctx.localTerm ? ctx.localTerm(item) : localizedText(item?.label || item?.id, ctx),
+      body: [localizedText(workspace.title, ctx), localizedText(card.title, ctx)].filter(Boolean).join(" · ") || ctx.tr("evidenceLibraryBody")
+    }))));
+  const draftEvidence = operationDrafts().flatMap((draft) => (draft.evidenceDrafts || []).map((item) => ({
+    label: ctx.tr("evidenceUpload"),
+    value: item.fileName || item.name || item.evidenceId || ctx.tr(item.status || "evidenceTrustedDraft"),
+    body: ctx.tr(item.status || item.verificationStatus || "evidenceTrustedDraft")
+  })));
+  const rows = [...draftEvidence, ...runtimeEvidence].filter((item) => item.value).slice(0, 6);
+  return rows.length ? rows : [{
+    label: ctx.tr("searchEvidence"),
+    value: ctx.tr("noPendingEvidenceUpload"),
+    body: ctx.tr("evidenceLibraryBody")
+  }];
+}
+
+function displayRecordTitle(item, ctx) {
+  return [
+    item.businessObject,
+    localizedText(item.workspace?.title, ctx),
+    localizedText(item.card?.title, ctx),
+    item.workItemType
+  ].filter(Boolean).find((value) => !looksTechnicalLabel(value)) || ctx.tr("searchOperationCases");
+}
+
+function localizedText(value, ctx) {
+  if (!value) return "";
+  if (typeof value === "string" || typeof value === "number") return String(value);
+  const lang = ctx.state?.lang || "zh-CN";
+  return value[lang] || value["zh-CN"] || value["ru-RU"] || value["ky-KG"] || value.label || value.title || value.id || "";
+}
+
+function displayRecordContext(item, ctx) {
+  const status = item.lifecycleState || item.status || "";
+  return [
+    status ? ctx.tr(status) : "",
+    item.ownerRole ? roleLabel(item.ownerRole, ctx) : "",
+    item.commandSubmissionId || item.command_submission_id ? ctx.tr("traceAvailable") : ""
+  ].filter(Boolean).join(" · ");
 }
 
 function displayTaskTitle(item, ctx) {
@@ -193,4 +269,8 @@ function roleLabel(role, ctx) {
   const key = `${role || "operator"}Role`;
   const label = ctx.tr(key);
   return label === key ? ctx.tr("operatorRole") : label;
+}
+
+function looksTechnicalLabel(value = "") {
+  return /^[A-Z][A-Za-z0-9_.:-]+$/.test(String(value || "")) || /^wi-|^case:|^cmd-|^W-|^T-/i.test(String(value || ""));
 }

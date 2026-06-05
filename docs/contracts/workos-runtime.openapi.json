@@ -1903,23 +1903,20 @@
           "templateWorkspaceId": {
             "type": "string"
           },
-          "title": {
+          "anchorQuery": {
             "type": [
               "string",
               "null"
             ]
           },
-          "summary": {
+          "anchorPayload": {
             "type": [
-              "string",
+              "object",
               "null"
-            ]
-          },
-          "taskId": {
-            "type": [
-              "string",
-              "null"
-            ]
+            ],
+            "additionalProperties": {
+              "type": "string"
+            }
           }
         }
       },

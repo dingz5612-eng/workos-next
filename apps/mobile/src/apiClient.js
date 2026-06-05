@@ -87,11 +87,15 @@ export async function fetchWorkspaceProjection() {
   return response.json();
 }
 
-export async function startOperationsWorkspace(templateWorkspaceId, actorToken = "", errorCode = "operation_workspace_start_failed") {
+export async function startOperationsWorkspace(templateWorkspaceId, actorToken = "", errorCode = "operation_workspace_start_failed", context = {}) {
   const response = await runtimeFetch(runtimeApiPaths.operationsWorkspaceStart, {
     method: "POST",
     actorToken,
-    body: JSON.stringify({ templateWorkspaceId }),
+    body: JSON.stringify({
+      templateWorkspaceId,
+      anchorQuery: context.anchorQuery || "",
+      anchorPayload: context.anchorPayload || null
+    }),
     timeoutMs: 20000
   });
   if (!response.ok) throw await apiError(errorCode, response);

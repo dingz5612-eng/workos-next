@@ -1,16 +1,15 @@
 import { apiBaseUrl } from "./apiClient.js";
 import { mobileBottomNavigation } from "./experienceContract.js";
 import { isPcSurfaceView } from "./surfaceRegistry.js";
-import { translateTerm } from "./termDictionary.js";
 
 export function shell(content, ctx) {
   const { state, tr } = ctx;
   const pcSurface = isPcSurfaceView(state.view);
-  const shouldShowActor = state.currentActor && state.view !== "login";
+  const title = shellPageTitle(ctx);
   return `
     <main class="app-shell view-${state.view} ${pcSurface ? "surface-pc" : "surface-mobile"}">
-      <header class="topbar">
-        <div><strong>${tr("app")}</strong><span>${shouldShowActor ? actorLabel(state, tr) : tr("subtitle")}</span></div>
+      <header class="topbar" data-shell="page-title">
+        <div class="topbar-title" data-shell-page="${escapeAttr(state.view)}"><strong>${title}</strong></div>
         ${runtimeStatusChip(ctx)}
         <select id="language" aria-label="${tr("language")}">
           <option value="zh-CN" ${state.lang === "zh-CN" ? "selected" : ""}>${tr("zh")}</option>
@@ -54,34 +53,47 @@ function feedbackButton({ state, tr }) {
   return ["onboarding", "login", "feedback"].includes(state.view) ? "" : `<button class="feedback-fab" data-view="feedback">${tr("feedback")}</button>`;
 }
 
-function actorLabel(state, tr) {
-  const displayName = actorDisplayName(state.currentActor, state.lang, tr);
-  const role = roleLabel(state.currentActor.role, tr);
-  return displayName === role ? role : `${displayName} · ${role}`;
-}
-
-function actorDisplayName(actor, lang, tr) {
-  const translated = translateTerm(actor.displayName || "", lang);
-  if (lang === "zh-CN") return translated || roleLabel(actor.role, tr);
-  if (translated && translated !== actor.displayName && !hasCjk(translated)) return translated;
-  return roleLabel(actor.role, tr);
-}
-
-function roleLabel(role, tr) {
-  const labels = {
-    frontdesk: tr("frontdeskRole"),
-    operator: tr("operatorRole"),
-    housekeeping: tr("housekeepingRole"),
-    finance: tr("financeRole"),
-    manager: tr("managerRole"),
-    admin: tr("adminRole"),
-    releaseOwner: tr("releaseOwnerRole")
+function shellPageTitle({ state, tr }) {
+  if (state.permissionDiagnostic && state.permissionDiagnostic.allowed === false) {
+    return tr("permissionDiagnostic");
+  }
+  const titleKeys = {
+    login: "app",
+    onboarding: "app",
+    home: "todayFocusOverview",
+    workbench: "work",
+    search: "search",
+    me: "me",
+    workspace: "operationPanel",
+    operationPanel: "operationPanel",
+    learning: "learningCenter",
+    notes: "noteTitle",
+    reminders: "reminderTitle",
+    permissions: "myPermissions",
+    businessRecords: "searchOperationCases",
+    completedRecords: "completedWorkItems",
+    evidenceLibrary: "searchEvidence",
+    uploadQueue: "uploadQueue",
+    submitQueue: "submitQueue",
+    drafts: "drafts",
+    failedSync: "failedSyncItems",
+    recentSubmissions: "recentSubmissions",
+    recentTraces: "recentTraces",
+    deviceTrust: "deviceTrustStatus",
+    feedback: "feedbackTitle",
+    result: "actionResult",
+    confirmPage: "confirmFallbackTitle",
+    permissionDiagnostic: "permissionDiagnostic",
+    releaseControl: "releaseControl",
+    releaseFlightDeck: "releaseFlightDeck",
+    pcGovernance: "governanceCenter",
+    governanceCenter: "governanceCenter",
+    managerControlTower: "managerControlTower",
+    pcManager: "managerControlTower",
+    financeReconciliation: "financeReconciliation",
+    financeControl: "financeControl"
   };
-  return labels[role] || tr("operatorRole");
-}
-
-function hasCjk(value) {
-  return /[\u3400-\u9fff]/.test(String(value || ""));
+  return tr(titleKeys[state.view] || "app");
 }
 
 function escapeAttr(value) {

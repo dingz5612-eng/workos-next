@@ -68,6 +68,99 @@ public sealed class OperationsRuntimeServiceTests
     }
 
     [TestMethod]
+    public void finance_direct_start_workspaces_bind_operations_start_context()
+    {
+        foreach (var scenario in new[]
+        {
+            new { TemplateWorkspaceId = "W-STAY-DEPOSIT-LEDGER", WorkspaceId = "W-STAY-DEPOSIT-LEDGER-202606050001", CardId = "depositAssessment", StatusKey = "depositStatus" },
+            new { TemplateWorkspaceId = "W-STAY-PAYMENT-LEDGER", WorkspaceId = "W-STAY-PAYMENT-LEDGER-202606050001", CardId = "paymentReceipt", StatusKey = "paymentStatus" }
+        })
+        {
+            var workspace = FakeOperationsRuntime.Workspace(scenario.WorkspaceId) with
+            {
+                Cards = new[] { FakeOperationsRuntime.Card(scenario.CardId) }
+            };
+            var service = Service(out _, out _, out _, workspaces: new[] { workspace });
+            var store = new InMemoryOperationsStore();
+            var unitOfWork = new OperationsUnitOfWork(
+                new CommandEnvelopeBuilder(),
+                new CommandSubmissionService(store),
+                new IdempotencyService(store),
+                new PayloadHashService(),
+                new SliceCommandHandlerRouter().Register(
+                    CanonicalOperationsApiService.ConfirmCommandDefinition,
+                    CanonicalOperationsApiService.HandleConfirmCommand));
+            var operations = new CanonicalOperationsApiService(service, unitOfWork, store);
+
+            var started = operations.StartWorkspaceCase(
+                workspace,
+                scenario.TemplateWorkspaceId,
+                new RuntimeActorContext(
+                    "finance-1",
+                    "finance",
+                    "tenant-start",
+                    new[] { "workos.write", "operations.confirm", "finance.deposit.confirm", "finance.payment.confirm" },
+                    "test",
+                    "token-start"));
+
+            Assert.AreEqual("operations-start-context", started.WorkItem.Payload["startContextSource"]);
+            Assert.AreEqual("business-anchor-context", started.WorkItem.Payload["startContextKind"]);
+            StringAssert.StartsWith(started.WorkItem.Payload["stayId"], "stay-");
+            StringAssert.StartsWith(started.WorkItem.Payload["roomId"], "room-d02-22-");
+            StringAssert.StartsWith(started.WorkItem.Payload["bedId"], "bed-d02-22-01-");
+            Assert.AreEqual("真实浏览器验收", started.WorkItem.Payload["residentName"]);
+            Assert.AreEqual("13800001234", started.WorkItem.Payload["phone"]);
+            Assert.AreEqual("D02", started.WorkItem.Payload["buildingName"]);
+            Assert.AreEqual("22", started.WorkItem.Payload["roomNo"]);
+            Assert.IsTrue(started.WorkItem.Payload.ContainsKey(scenario.StatusKey));
+        }
+    }
+
+    [TestMethod]
+    public void finance_direct_start_context_uses_business_anchor_query_for_human_memory_keys()
+    {
+        var workspace = FakeOperationsRuntime.Workspace("W-STAY-DEPOSIT-LEDGER-202606050002") with
+        {
+            Cards = new[] { FakeOperationsRuntime.Card("depositAssessment") }
+        };
+        var service = Service(out _, out _, out _, workspaces: new[] { workspace });
+        var store = new InMemoryOperationsStore();
+        var unitOfWork = new OperationsUnitOfWork(
+            new CommandEnvelopeBuilder(),
+            new CommandSubmissionService(store),
+            new IdempotencyService(store),
+            new PayloadHashService(),
+            new SliceCommandHandlerRouter().Register(
+                CanonicalOperationsApiService.ConfirmCommandDefinition,
+                CanonicalOperationsApiService.HandleConfirmCommand));
+        var operations = new CanonicalOperationsApiService(service, unitOfWork, store);
+
+        var started = operations.StartWorkspaceCase(
+            workspace,
+            "W-STAY-DEPOSIT-LEDGER",
+            new RuntimeActorContext(
+                "finance-1",
+                "finance",
+                "tenant-start",
+                new[] { "workos.write", "operations.confirm", "finance.deposit.confirm" },
+                "test",
+                "token-start"),
+            anchorQuery: "D03 / 305 / 02 下铺 / 张三 / 13812341234");
+
+        Assert.AreEqual("business-anchor-context", started.WorkItem.Payload["startContextKind"]);
+        Assert.AreEqual("D03 / 305 / 02 下铺 / 张三 / 13812341234", started.WorkItem.Payload["anchorQuery"]);
+        Assert.AreEqual("张三", started.WorkItem.Payload["residentName"]);
+        Assert.AreEqual("13812341234", started.WorkItem.Payload["phone"]);
+        Assert.AreEqual("D03", started.WorkItem.Payload["buildingName"]);
+        Assert.AreEqual("305", started.WorkItem.Payload["roomNo"]);
+        Assert.AreEqual("02", started.WorkItem.Payload["bedNo"]);
+        Assert.AreEqual("lower", started.WorkItem.Payload["bedType"]);
+        Assert.AreEqual("下铺", started.WorkItem.Payload["bedTypeLabel"]);
+        StringAssert.StartsWith(started.WorkItem.Payload["roomId"], "room-d03-305-");
+        StringAssert.StartsWith(started.WorkItem.Payload["bedId"], "bed-d03-305-02-");
+    }
+
+    [TestMethod]
     public void operations_confirm_dispatches_next_resource_lifecycle_work_item()
     {
         var workspace = FakeOperationsRuntime.ResourceWorkspace("W-STAY-RESOURCE-202606040002");
@@ -144,12 +237,14 @@ public sealed class OperationsRuntimeServiceTests
 
         CollectionAssert.Contains(preparedBusinessIds, "bedCount");
         CollectionAssert.Contains(preparedBusinessIds, "bedLabels");
-        CollectionAssert.Contains(preparedBusinessIds, "bedStatus");
+        CollectionAssert.Contains(preparedBusinessIds, "bedType");
         CollectionAssert.DoesNotContain(preparedBusinessIds, "bedNo");
         CollectionAssert.DoesNotContain(preparedBusinessIds, "bedLabel");
+        CollectionAssert.DoesNotContain(preparedBusinessIds, "bedStatus");
         CollectionAssert.DoesNotContain(preparedBusinessIds, "blockedReason");
         CollectionAssert.DoesNotContain(surfaceBusinessIds, "bedNo");
         CollectionAssert.DoesNotContain(surfaceBusinessIds, "bedLabel");
+        CollectionAssert.DoesNotContain(surfaceBusinessIds, "bedStatus");
         CollectionAssert.DoesNotContain(surfaceBusinessIds, "blockedReason");
     }
 

@@ -43,6 +43,7 @@ export async function submitWorkItemOperation({
   card,
   workItemId: explicitWorkItemId,
   actor,
+  deviceId,
   language,
   fieldValues,
   evidenceIds,
@@ -61,7 +62,7 @@ export async function submitWorkItemOperation({
       projectionStatus: "not_started",
       error: "persisted_work_item_required",
       reason: "persisted_work_item_required",
-      message: "需要先生成可办理任务，再提交处理。",
+      message: "需要先生成可办理任务，再提交观察记录。",
       source: "operations_runtime_pure"
     };
   }
@@ -71,6 +72,7 @@ export async function submitWorkItemOperation({
   await prepareOperationWorkItem(workItemId, {
     language,
     submissionId: protocol.submissionId,
+    cardInstanceId: protocol.cardInstanceId,
     aggregateRef,
     fieldValues,
     evidenceIds
@@ -79,7 +81,9 @@ export async function submitWorkItemOperation({
     language,
     idempotencyKey: protocol.idempotencyKey,
     submissionId: protocol.submissionId,
+    cardInstanceId: protocol.cardInstanceId,
     aggregateRef,
+    deviceId: deviceId || "",
     fieldValues,
     evidenceIds
   });

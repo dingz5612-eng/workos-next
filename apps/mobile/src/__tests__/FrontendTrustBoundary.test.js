@@ -93,4 +93,16 @@ describe("Stage 5 frontend trust boundary", () => {
     expect(shouldHydrateProtectedSurfaces(state)).toBe(false);
     expect(state.currentDevice.deviceTrustStatus).toBe("unknown");
   });
+
+  it("does not hydrate protected surfaces on the login route even when stale actor storage exists", async () => {
+    const storage = stubBrowser({ href: "http://localhost:5175/?view=login&lang=zh-CN&device=mobile" });
+    storage.set("workosnext.actorSession", JSON.stringify({ role: "operator", token: "stale-token" }));
+    const { createInitialState, shouldHydrateProtectedSurfaces } = await import("../appState.js");
+
+    const state = createInitialState();
+
+    expect(state.view).toBe("login");
+    expect(state.currentActor?.token).toBe("stale-token");
+    expect(shouldHydrateProtectedSurfaces(state)).toBe(false);
+  });
 });

@@ -1,15 +1,12 @@
-import { selectCompletedWorkbenchQueue, selectRuntimeWorkspaces, selectSearchSurfaceResults, selectWorkbenchQueue } from "../selectors/surfaceSelectors.js";
+import { selectRuntimeWorkspaces, selectSearchSurfaceResults, selectWorkbenchQueue } from "../selectors/surfaceSelectors.js";
 import { buildSearchResultVM, rankSearchResults } from "../searchIntentHub.js";
 import { isAccommodationResourceSetupQuery, searchIntentSuggestions, searchIntentTerms } from "../searchIntentRegistry.js";
+import { buildBusinessAnchor } from "../businessAnchorKernel.js";
+import { BusinessSummaryHeader, BusinessTaskOverview } from "./experienceComponents.js";
 
 export function searchView(ctx) {
   const results = workosSearchSections(ctx);
   return ctx.shell(`
-    <section class="page-title" data-surface="workos-search">
-      <span>${ctx.tr("activeSearch")}</span>
-      <h1>${ctx.tr("workosSearch")}</h1>
-      <p>${ctx.tr("workosSearchSubtitle")}</p>
-    </section>
     <section class="search-box">
       <div class="search-line">
         <input id="query" value="${ctx.escapeAttr(ctx.state.query)}" placeholder="${ctx.tr("searchPlaceholder")}" />
@@ -46,43 +43,25 @@ function recommendationGroup(titleKey, items, ctx) {
   </div>`;
 }
 
-export function learningContentItems(ctx) {
-  return [
-    learning("learnEvidenceFix", "learnEvidenceFixBody", "learnStatusEvidence", ctx),
-    learning("learnRejectedReason", "learnRejectedReasonBody", "learnStatusBlocked", ctx),
-    learning("learnDeviceUntrusted", "learnDeviceUntrustedBody", "learnStatusDevice", ctx),
-    learning("learnPermissionDenied", "learnPermissionDeniedBody", "learnStatusPermission", ctx),
-    learning("learnMoneyCaution", "learnMoneyCautionBody", "learnStatusFinance", ctx),
-    learning("learnRoleScope", "learnRoleScopeBody", "learnStatusRole", ctx)
-  ];
-}
-
 function workosSearchSections(ctx) {
   const { state } = ctx;
   const query = String(state.query || "").trim();
   const workspaces = selectRuntimeWorkspaces(state);
   const queue = selectWorkbenchQueue(state);
-  const completedQueue = selectCompletedWorkbenchQueue(state);
+  const backendOperationResults = query ? backendOperationSearchResults(state, query) : [];
   const workspaceResults = query ? selectSearchSurfaceResults(state, query).filter((workspace) => workspaceMatchesQuery(workspace, query, ctx)) : workspaces;
-  const completedKeys = new Set(completedQueue.map((item) => `${item.workspaceId}:${item.cardId || ""}`));
-  const activeWorkspaceResults = workspaceResults.filter((workspace) => !workspaceCompletedByQueue(workspace, completedKeys));
-  const commands = activeCommands(workspaces, completedQueue, ctx);
-  const commandKeys = new Set(commands.map((item) => `${item.workspaceId}:${item.cardId || ""}`));
+  const activeWorkspaceResults = workspaceResults.filter((workspace) => !isTerminalWorkspace(workspace));
+  const commands = activeCommands(workspaces, ctx);
   const recoveryItems = unfinishedRecoveryItems(queue, ctx);
   const recoveryKeys = new Set(recoveryItems.map(queueEntryKey));
   const queueWithoutRecovery = queue.filter((item) => !recoveryKeys.has(queueEntryKey(item)));
   const sections = [
     section("activeCommands", commands),
     section("unfinishedRecovery", recoveryItems),
-    section("searchWorkItems", workItems(queueWithoutRecovery, ctx)),
-    section("searchOperationCases", operationCases(queueWithoutRecovery, activeWorkspaceResults, ctx)),
-    section("completedWorkItems", completedCases(completedQueue, workspaceResults, ctx).filter((item) => !commandKeys.has(`${item.workspaceId}:${item.cardId || ""}`))),
+    section("searchWorkItems", workItems(dedupeSearchItems([...backendOperationResults, ...queueWithoutRecovery]), ctx)),
     section("searchRooms", objectResults(activeWorkspaceResults, "room", ctx)),
     section("searchBeds", objectResults(activeWorkspaceResults, "bed", ctx)),
-    section("searchStays", objectResults(activeWorkspaceResults, "stay", ctx)),
-    section("searchEvidence", evidenceResults(activeWorkspaceResults, ctx)),
-    section("searchSubmissionTrace", traceResults([...queue, ...completedQueue], ctx)),
-    section("searchLearning", learningResults(ctx))
+    section("searchStays", objectResults(activeWorkspaceResults, "stay", ctx))
   ].filter((candidate) => candidate.items.length);
   return sections.length ? sections : [section("searchNoResult", [{
     resultType: "noAction",
@@ -103,18 +82,58 @@ function searchSection(section, ctx) {
 function searchCard(item, ctx) {
   const normalized = buildSearchResultVM(normalizeSearchCard(item, ctx), ctx);
   const action = searchAction(normalized, ctx);
-  return `<article class="search-result-card">
+  const taskBody = searchBusinessTaskBody(normalized, ctx, item);
+  const hasOverview = taskBody.includes('data-surface="business-task-overview"');
+  return `<article class="search-result-card" data-admission-decision="${ctx.escapeAttr(normalized.admissionDecision)}">
     <div class="search-result-main">
-      <strong>${ctx.escapeHtml(normalized.title)}</strong>
-      <span>${ctx.escapeHtml(normalized.subtitle)}</span>
-      <small>${ctx.tr("status")}: ${ctx.escapeHtml(normalized.statusLabel)}</small>
-      <p>${ctx.tr("nextAction")}: ${ctx.escapeHtml(normalized.nextActionLabel)}</p>
+      ${BusinessSummaryHeader({
+        stateLabel: normalized.statusLabel,
+        state: searchResultState(normalized),
+        title: normalized.title,
+        subtitle: normalized.nextActionLabel,
+        source: item
+      }, ctx, { compact: true, hideAnchor: shouldHideHeaderAnchor(item, ctx, hasOverview) })}
+      ${taskBody}
     </div>
-    <div class="search-result-action">${action}</div>
+    <div class="search-result-action business-summary-actions">${action}</div>
   </article>`;
 }
 
-function activeCommands(workspaces, completedQueue, ctx) {
+function shouldHideHeaderAnchor(source = {}, ctx = {}, hasOverview = false) {
+  if (!hasOverview) return false;
+  const importantKeys = new Set(["resident", "phone", "deposit", "payment", "task", "checkout", "period"]);
+  const anchor = buildBusinessAnchor(source, ctx);
+  return !anchor.fields.some((field) => importantKeys.has(field.key));
+}
+
+function searchBusinessTaskBody(normalized, ctx, item = {}) {
+  const issue = normalized.admissionDecision === "confirmDenied" ||
+    normalized.admissionDecision === "productionBlocked" ||
+    normalized.admissionDecision === "visibleOnly";
+  const overview = BusinessTaskOverview({
+    workItemType: normalized.title,
+    nextAction: normalized.nextActionLabel,
+    canHandle: !issue,
+    blocker: normalized.admissionReasonLabel
+  }, ctx, { item });
+  const note = !overview && normalized.nextActionLabel
+    ? `<p class="business-task-note">${ctx.escapeHtml(normalized.nextActionLabel)}</p>`
+    : "";
+  return `<div class="business-task-body search-business-task-body" data-surface="business-task-body">
+    ${overview}
+    ${note}
+    ${issue ? `<div class="business-task-row business-task-alert">
+      <span>${ctx.tr("businessTaskIssue")}</span>
+      <p><span class="admission-chip" data-search-admission-state="${ctx.escapeAttr(normalized.admissionDecision)}">${ctx.escapeHtml(normalized.admissionLabel)}</span>${ctx.escapeHtml(normalized.admissionReasonLabel)}</p>
+    </div>` : `<span class="business-task-state" data-search-admission-state="${ctx.escapeAttr(normalized.admissionDecision)}">${ctx.escapeHtml(normalized.admissionLabel)}</span>`}
+  </div>`;
+}
+
+function searchResultState(normalized) {
+  return ["confirmDenied", "productionBlocked", "visibleOnly"].includes(normalized.admissionDecision) ? "blocked" : "ready";
+}
+
+function activeCommands(workspaces, ctx) {
   const query = String(ctx.state.query || "").trim();
   return dormitoryCommandCatalog(ctx)
     .filter((command) => !query || command.keywords.some((keyword) => query.toLocaleLowerCase().includes(keyword.toLocaleLowerCase())))
@@ -167,16 +186,16 @@ function dormitoryCommandCatalog(ctx) {
       subtitle: { "zh-CN": "创建影响房间、床位可售状态的清洁、维修或配置任务。", "ru-RU": "Создайте задачу, которая влияет на доступность комнаты или койки.", "ky-KG": "Бөлмө же койканын сатылуу абалына таасир берген тапшырма түзүңүз." },
       nextAction: { "zh-CN": "先创建服务任务", "ru-RU": "Создайте задачу", "ky-KG": "Тапшырма түзүңүз" }
     }, ["清洁", "维修", "服务任务", "保洁", "cleaning", "repair", "уборка", "ремонт", "тазалоо", "оңдоо"]),
-    command("W-STAY-CHECKOUT", "checkoutStart", {
-      title: { "zh-CN": "办理退房", "ru-RU": "Оформить выезд", "ky-KG": "Чыгып кетүүнү жүргүзүү" },
-      subtitle: { "zh-CN": "发起退房、查房、结算费用、财务确认并关闭。", "ru-RU": "Начало выезда, проверка комнаты, расчет, фин. подтверждение и закрытие.", "ky-KG": "Чыгуу, бөлмө текшерүү, эсептешүү, финансы тастыктоо жана жабуу." },
-      nextAction: { "zh-CN": "先发起退房", "ru-RU": "Начните выезд", "ky-KG": "Чыгууну баштаңыз" }
-    }, ["退房", "离店", "checkout", "выезд", "чыгуу"]),
     command("W-STAY-CHECKOUT-SETTLEMENT", "checkoutStart", {
       title: { "zh-CN": "办理退住结算", "ru-RU": "Рассчитать выезд", "ky-KG": "Чыгуу эсептешүүсү" },
       subtitle: { "zh-CN": "处理退住、查房、押金、最终结算、床位释放和清洁任务。", "ru-RU": "Выезд, проверка, депозит, финальный расчет, освобождение койки и уборка.", "ky-KG": "Чыгуу, текшерүү, депозит, акыркы эсеп, койка бошотуу жана тазалоо." },
       nextAction: { "zh-CN": "先开始退住", "ru-RU": "Начните расчет", "ky-KG": "Эсептешүүнү баштаңыз" }
     }, ["退住", "结算", "退住结算", "查房", "settlement", "расчет", "эсептешүү"]),
+    command("W-STAY-EXPENSE-LEDGER", "expenseRecord", {
+      title: { "zh-CN": "登记宿舍支出", "ru-RU": "Записать расход общежития", "ky-KG": "Жатакана чыгымын каттоо" },
+      subtitle: { "zh-CN": "登记宿舍支出，后续审批并关联到房间、床位或服务任务。", "ru-RU": "Запишите расход, затем подтвердите и свяжите с комнатой, койкой или задачей.", "ky-KG": "Чыгымды каттап, кийин бөлмө, койка же тапшырмага байланыштырыңыз." },
+      nextAction: { "zh-CN": "先登记支出", "ru-RU": "Начните с расхода", "ky-KG": "Чыгымдан баштаңыз" }
+    }, ["登记宿舍支出", "宿舍支出", "支出", "成本", "费用", "expense", "cost", "расход", "стоимость", "чыгым"]),
     command("W-STAY-PERIOD-ANALYTICS", "periodScope", {
       title: { "zh-CN": "做周期复盘", "ru-RU": "Провести обзор периода", "ky-KG": "Мезгилдик талдоо жүргүзүү" },
       subtitle: { "zh-CN": "确认周期范围，查看指标、财务、运营诊断和行动计划。", "ru-RU": "Период, метрики, финансы, операционная диагностика и план действий.", "ky-KG": "Мезгил, көрсөткүч, финансы, операциялык диагноз жана аракет планы." },
@@ -189,33 +208,36 @@ function command(templateWorkspaceId, firstCardId, { title, subtitle, nextAction
   return { templateWorkspaceId, firstCardId, title, subtitle, nextAction, keywords };
 }
 
-function completedRoomCommand(workspaces, completedQueue, ctx) {
-  const query = String(ctx.state.query || "").trim();
-  if (!isAccommodationResourceSetupQuery(query)) return [];
-  const completed = completedQueue.find((item) => /roomsetup|room|房间/i.test(`${item.workItemId || ""} ${item.cardId || ""} ${tx(item.card?.title, ctx)} ${tx(item.workspace?.title, ctx)}`));
-  if (!completed) {
-    const terminalWorkspace = workspaces.find((workspace) => workspaceMatchesQuery(workspace, query, ctx) && isTerminalWorkspace(workspace));
-    if (!terminalWorkspace) return [];
-    const card = activeDisplayCard(terminalWorkspace);
-    return [{
-      resultType: "operationCase",
-      title: ctx.state.lang === "zh-CN" ? "创建房间已完成" : "Room creation completed",
-      subtitle: [tx(terminalWorkspace.title, ctx), tx(card?.title, ctx)].filter(Boolean).join(" · "),
-      workspaceId: terminalWorkspace.id,
-      cardId: card?.id || "",
-      caseId: terminalWorkspace.caseId || `case:${terminalWorkspace.id}`,
-      status: card?.status || "done",
-      nextAction: ctx.tr("viewOnly")
-    }];
-  }
-  return [{
-    ...completed,
-    resultType: "operationCase",
-    title: ctx.state.lang === "zh-CN" ? "创建房间已完成" : "Room creation completed",
-    subtitle: [tx(completed.workspace?.title, ctx), tx(completed.card?.title, ctx)].filter(Boolean).join(" · "),
-    status: completed.lifecycleState || completed.status || completed.card?.status || "done",
-    nextAction: ctx.tr("viewOnly")
-  }];
+function backendOperationSearchResults(state = {}, query = "") {
+  const results = state.runtimeStore?.searchResultsByQuery?.[normalizeQuery(query)] || [];
+  return results
+    .filter((item) => (item.resultType || item.result_type) === "workItem")
+    .filter((item) => item.workItemId || item.work_item_id || item.target?.workItemId)
+    .map((item) => ({
+      ...item,
+      resultType: "workItem",
+      workItemId: item.workItemId || item.work_item_id || item.target?.workItemId || "",
+      workspaceId: item.workspaceId || item.workspace_id || item.target?.workspaceId || "",
+      cardId: item.cardId || item.card_id || item.target?.cardId || "",
+      caseId: item.caseId || item.case_id || item.target?.caseId || "",
+      workItemType: item.workItemType || item.work_item_type || item.cardId || "",
+      lifecycleState: item.lifecycleState || item.lifecycle_state || item.status || "ready",
+      title: item.title,
+      subtitle: item.subtitle || item.summary || item.localizedSubtitle,
+      status: item.status || item.lifecycleState || "ready",
+      nextAction: item.nextAction || item.next_action,
+      businessAnchor: item.businessAnchor || item.business_anchor || item.payload?.fieldValues || {}
+    }));
+}
+
+function dedupeSearchItems(items = []) {
+  const seen = new Set();
+  return items.filter((item) => {
+    const key = item.workItemId || item.work_item_id || `${item.workspaceId || item.workspace_id || ""}:${item.cardId || item.card_id || ""}:${item.resultId || ""}`;
+    if (!key || seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
 }
 
 function sectionTitleOverride(id, ctx) {
@@ -225,19 +247,14 @@ function sectionTitleOverride(id, ctx) {
 
 function searchAction(result, ctx) {
   if (result.actionType === "openWorkItem") {
-    return `<button data-work-item-id="${ctx.escapeAttr(result.workItemId)}" data-workspace-id="${ctx.escapeAttr(result.workspaceId)}" data-card-id="${ctx.escapeAttr(result.cardId)}">${ctx.escapeHtml(result.actionLabel)}</button>`;
-  }
-  if (result.actionType === "openEvidence") {
-    return `<button data-workspace="${ctx.escapeAttr(result.workspaceId)}" data-card-id="${ctx.escapeAttr(result.cardId)}" data-evidence-id="${ctx.escapeAttr(result.evidenceId)}">${ctx.escapeHtml(result.actionLabel)}</button>`;
-  }
-  if (result.actionType === "openTrace") {
-    return `<button data-view="${ctx.escapeAttr(result.view)}" data-trace-id="${ctx.escapeAttr(result.traceId)}">${ctx.escapeHtml(result.actionLabel)}</button>`;
-  }
-  if (result.actionType === "openLearning") {
-    return `<button data-view="${ctx.escapeAttr(result.view)}" data-learning-id="${ctx.escapeAttr(result.learningId)}">${ctx.escapeHtml(result.actionLabel)}</button>`;
+    const label = result.confirmAllowed ? result.actionLabel : ctx.tr("viewOnly");
+    return `<button data-work-item-id="${ctx.escapeAttr(result.workItemId)}" data-workspace-id="${ctx.escapeAttr(result.workspaceId)}" data-card-id="${ctx.escapeAttr(result.cardId)}">${ctx.escapeHtml(label)}</button>`;
   }
   if (result.actionType === "startOperationsWorkspace") {
-    return `<button data-start-operations-workspace="${ctx.escapeAttr(result.templateWorkspaceId)}" data-first-card-id="${ctx.escapeAttr(result.firstCardId)}">${ctx.escapeHtml(result.actionLabel)}</button>`;
+    if (!result.confirmAllowed) {
+      return `<button data-view="learning">${ctx.tr("searchActionLearning")}</button>`;
+    }
+    return `<button data-start-operations-workspace="${ctx.escapeAttr(result.templateWorkspaceId)}" data-first-card-id="${ctx.escapeAttr(result.firstCardId)}" data-anchor-query="${ctx.escapeAttr(ctx.state.query || "")}">${ctx.escapeHtml(result.actionLabel)}</button>`;
   }
   if (["openObject", "openWorkspace"].includes(result.actionType)) {
     return `<button data-workspace="${ctx.escapeAttr(result.workspaceId)}" data-card-id="${ctx.escapeAttr(result.cardId)}" data-case-id="${ctx.escapeAttr(result.caseId)}">${ctx.escapeHtml(result.actionLabel)}</button>`;
@@ -260,10 +277,11 @@ function workItems(queue, ctx) {
   return rankSearchResults(queue.map((item) => ({
     ...item,
     resultType: "workItem",
-    title: item.businessObject || item.card?.title || item.workspace?.title || ctx.tr("searchWorkItems"),
-    subtitle: businessContextLabel(item, ctx, ctx.tr("workbench")),
+    title: item.businessObject || item.title || item.localizedTitle || item.card?.title || item.workspace?.title || ctx.tr("searchWorkItems"),
+    subtitle: item.subtitle || item.summary || item.localizedSubtitle || businessContextLabel(item, ctx, ctx.tr("workbench")),
     status: item.lifecycleState || item.status || item.card?.status || "ready",
-    nextAction: item.reason || tx(item.workspace?.next, ctx) || ctx.tr("searchActionProcess")
+    nextAction: item.nextAction || item.localizedNextAction || item.reason || tx(item.workspace?.next, ctx) || ctx.tr("searchActionProcess"),
+    businessAnchor: item.businessAnchor || item.business_anchor || buildBusinessAnchor(item, ctx)
   })), ctx.state.query).slice(0, 8);
 }
 
@@ -284,7 +302,8 @@ function unfinishedRecoveryItem(item, ctx) {
     subtitle: [workspaceTitle, cardTitle].filter(Boolean).join(" · ") || item.workItemType || ctx.tr("workbench"),
     status: item.lifecycleState || item.status || item.card?.status || "ready",
     nextAction: cardTitle ? `${ctx.tr("continueHandling")}：${cardTitle}` : (item.reason || ctx.tr("continueHandling")),
-    actionLabel: ctx.tr("continueHandling")
+    actionLabel: ctx.tr("continueHandling"),
+    businessAnchor: buildBusinessAnchor(item, ctx)
   };
 }
 
@@ -324,74 +343,6 @@ function shouldShowUnfinishedRecovery(query = "") {
   return /\d/.test(normalized) || /未办完|继续|找回|房号|号房间|room[-_\s]?\w+|bed[-_\s]?\w+|stay[-_\s]?\w+/i.test(normalized);
 }
 
-function operationCases(queue, workspaces, ctx) {
-  const cases = new Map();
-  for (const item of queue) {
-    const caseId = item.caseId || item.workspace?.caseId || item.workspaceId;
-    if (!caseId) continue;
-    cases.set(caseId, {
-      ...item,
-      resultType: "operationCase",
-      title: [tx(item.workspace?.title, ctx), tx(item.card?.title, ctx)].filter(Boolean).join(" · ") || ctx.tr("searchOperationCases"),
-      subtitle: businessContextLabel(item, ctx, ctx.tr("operation")),
-      status: item.lifecycleState || item.status || "ready",
-      nextAction: item.reason || ctx.tr("openWorkspace")
-    });
-  }
-  for (const workspace of workspaces) {
-    if (isTerminalWorkspace(workspace)) continue;
-    if (!workspace.caseId && cases.has(workspace.id)) continue;
-    const caseId = workspace.caseId || `case:${workspace.id}`;
-    if (!cases.has(caseId)) {
-      cases.set(caseId, {
-        title: operationCaseTitle(workspace, ctx),
-        resultType: "operationCase",
-        workspaceId: workspace.id,
-        cardId: workspace.cards?.[0]?.id || "",
-        caseId,
-        subtitle: tx(workspace.title, ctx),
-        status: workspace.cards?.[0]?.status || "ready",
-        nextAction: tx(workspace.next, ctx) || ctx.tr("openWorkspace")
-      });
-    }
-  }
-  return rankSearchResults(Array.from(cases.values()), ctx.state.query).slice(0, 6);
-}
-
-function operationCaseTitle(workspace = {}, ctx = {}) {
-  return tx(workspace.title, ctx) || localized(workspace.localizedTitle, ctx) || ctx.tr?.("searchOperationCases") || "";
-}
-
-function completedCases(completedQueue, workspaceResults, ctx) {
-  const records = new Map();
-  for (const item of completedQueue) {
-    const id = item.workItemId || item.caseId || `${item.workspaceId}:${item.cardId}`;
-    if (!id) continue;
-    records.set(id, {
-      ...item,
-      resultType: "operationCase",
-      title: [item.businessObject, tx(item.workspace?.title, ctx), tx(item.card?.title, ctx)].filter(Boolean).join(" · ") || ctx.tr("completedWorkItems"),
-      subtitle: businessContextLabel(item, ctx, ctx.tr("completedWorkItems")),
-      status: item.lifecycleState || item.status || item.card?.status || "done",
-      nextAction: ctx.tr("viewOnly")
-    });
-  }
-  for (const workspace of workspaceResults.filter(isTerminalWorkspace)) {
-    const card = activeDisplayCard(workspace);
-    records.set(workspace.id, {
-      resultType: "operationCase",
-      workspaceId: workspace.id,
-      cardId: card?.id || "",
-      caseId: workspace.caseId || `case:${workspace.id}`,
-      title: workspace.title,
-      subtitle: card?.title || workspace.summary,
-      status: card?.status || "done",
-      nextAction: ctx.tr("viewOnly")
-    });
-  }
-  return rankSearchResults(Array.from(records.values()), ctx.state.query).slice(0, 4);
-}
-
 function objectResults(workspaces, kind, ctx) {
   const labelByKind = {
     room: ctx.tr("searchRooms"),
@@ -410,42 +361,9 @@ function objectResults(workspaces, kind, ctx) {
       cardId: workspace._surfaceCardId || workspace.cards?.[0]?.id || "",
       subtitle: localized(workspace.localizedSubtitle, ctx) || tx(workspace.summary, ctx) || tx(activeDisplayCard(workspace)?.title, ctx) || accommodationBusinessLabel(ctx),
       status: localized(workspace.localizedStatus, ctx) || workspace.cards?.[0]?.status || "ready",
-      nextAction: localized(workspace.localizedNextAction, ctx) || tx(workspace.next, ctx) || ctx.tr("openWorkspace")
+      nextAction: localized(workspace.localizedNextAction, ctx) || tx(workspace.next, ctx) || ctx.tr("openWorkspace"),
+      businessAnchor: buildBusinessAnchor(workspace, ctx)
     }));
-}
-
-function evidenceResults(workspaces, ctx) {
-  return workspaces.filter((workspace) => !isTerminalWorkspace(workspace)).flatMap((workspace) => (workspace.cards || []).flatMap((card) =>
-    !["ready", "blocked", "inProgress"].includes(String(card.status || "")) ? [] :
-    (card.evidence || []).map((evidence) => ({
-      title: ctx.localTerm(evidence),
-      resultType: "evidence",
-      workspaceId: workspace.id,
-      cardId: card.id,
-      evidenceId: evidence.id,
-      subtitle: [tx(workspace.title, ctx), tx(card.title, ctx)].filter(Boolean).join(" · ") || accommodationBusinessLabel(ctx),
-      status: card.status || "ready",
-      nextAction: ctx.tr("searchActionEvidence")
-    })))).filter((item) => rankSearchResults([item], ctx.state.query).length || !ctx.state.query).slice(0, 6);
-}
-
-function traceResults(queue, ctx) {
-  const results = queue
-    .filter((item) => item.traceRefs?.length || item.commandSubmissionId || item.command_submission_id)
-    .map((item) => ({
-      ...item,
-      resultType: "trace",
-      traceId: item.traceRefs?.[0] || item.commandSubmissionId || item.command_submission_id,
-      title: ctx.tr("searchSubmissionTrace"),
-      subtitle: businessContextLabel(item, ctx, ctx.tr("recentTraces")),
-      status: item.lifecycleState || item.status || "ready",
-      nextAction: ctx.tr("recentTraces")
-    }));
-  return rankSearchResults(results, ctx.state.query).slice(0, 4);
-}
-
-function learningResults(ctx) {
-  return rankSearchResults(learningContentItems(ctx), ctx.state.query).slice(0, 4);
 }
 
 function section(titleKey, items) {
@@ -461,12 +379,6 @@ function isTerminalWorkspace(workspace = {}) {
 
 function activeDisplayCard(workspace = {}) {
   return workspace.cards?.find((card) => ["ready", "blocked", "inProgress"].includes(card.status)) || workspace.cards?.[0];
-}
-
-function workspaceCompletedByQueue(workspace = {}, completedKeys = new Set()) {
-  if (!workspace.id) return false;
-  if (completedKeys.has(`${workspace.id}:`)) return true;
-  return (workspace.cards || []).some((card) => completedKeys.has(`${workspace.id}:${card.id}`));
 }
 
 function workspaceMatchesQuery(workspace = {}, query = "", ctx = {}) {
@@ -499,17 +411,6 @@ function objectKindMatchesQuery(kind, query = "") {
   };
   const specific = Object.entries(kindTokens).filter(([, pattern]) => pattern.test(normalized)).map(([candidate]) => candidate);
   return specific.length ? specific.includes(kind) : true;
-}
-
-function learning(titleKey, bodyKey, status, ctx) {
-  return {
-    resultType: "learning",
-    learningId: titleKey,
-    title: ctx.tr(titleKey),
-    subtitle: ctx.tr(bodyKey),
-    status,
-    nextAction: ctx.tr("searchActionLearning")
-  };
 }
 
 function businessContextLabel(item = {}, ctx = {}, fallback = "") {
@@ -557,4 +458,8 @@ function localized(value, ctx) {
   if (Array.isArray(value)) return value.map((entry) => localized(entry, ctx)).filter(Boolean).join(" · ");
   if (ctx.tx) return ctx.tx(value);
   return value["zh-CN"] || value["ru-RU"] || value.title || value.label || "";
+}
+
+function normalizeQuery(value = "") {
+  return String(value || "").trim().toLocaleLowerCase();
 }

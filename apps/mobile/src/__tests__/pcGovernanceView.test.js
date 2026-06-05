@@ -165,6 +165,22 @@ describe("PC Governance Full", () => {
     expect(html).toContain("红色 Shadow 报告数");
   });
 
+  it("risk_command_renders_operator_cards_instead_of_technical_url_table", () => {
+    const html = pcGovernanceView(ctx());
+    const text = visibleText(html);
+
+    expect(html).toContain("risk-command-card");
+    expect(html).toContain('data-risk-id="risk-1"');
+    expect(text).toContain("在住欠款风险");
+    expect(text).toContain("影响");
+    expect(text).toContain("负责人");
+    expect(text).toContain("建议动作");
+    expect(text).toContain("进入处理");
+    expect(text).not.toContain("风险编号");
+    expect(text).not.toContain("详情入口");
+    expect(text).not.toContain("/pc/risk/risk-1");
+  });
+
   it("device_revoke_blocks_high_risk_actions", () => {
     const testCtx = ctx();
     expect(deviceCanPerformHighRiskAction(testCtx.state.pcGovernance.currentDevice)).toBe(true);
@@ -376,6 +392,10 @@ function escape(value) {
     .replaceAll("<", "&lt;")
     .replaceAll(">", "&gt;")
     .replaceAll("\"", "&quot;");
+}
+
+function visibleText(value) {
+  return String(value).replace(/<[^>]*>/g, " ").replace(/\s+/g, " ");
 }
 
 function repoRoot() {

@@ -26,6 +26,11 @@
       "ruleId": "projection-source-label-required",
       "description": "Workspace-card projection search results must be marked as workspaceCardProjection until Search Kernel owns native indexing.",
       "effect": "result.resultType=workspaceCardProjection or sourceRefs.projectionAdapter present"
+    },
+    {
+      "ruleId": "operations-events-tenant-scoped-readonly",
+      "description": "Operations Runtime event search must be tenant scoped, read-only, and routed back to an Admission-labeled WorkItem or completed operation case.",
+      "effect": "sourceRefs.inputAdapter=OperationsRuntime.SearchOperations and result.admission present; display anchors cannot become authoritative ids"
     }
   ]
 }

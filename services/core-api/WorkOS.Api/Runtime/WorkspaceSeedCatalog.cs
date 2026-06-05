@@ -21,7 +21,7 @@ internal static class WorkspaceSeedCatalog
             new[]
             {
                 Card("roomSetup", "ready", "房间配置卡", "Комната", new[] { "roomId", "buildingId" }, new[] { "楼栋", "房间号", "房型", "床位数", "性别策略", "家具状态", "技术状态", "房间备注" }, new[] { "可售床位数", "已占床位数" }),
-                Card("bedSetup", "notStarted", "床位配置卡", "Койка", new[] { "roomId", "bedCount" }, new[] { "所属房间", "床位数", "床位标签", "床铺生成方式", "备注" }, new[] { "床位冲突数", "可售床位数" }),
+                Card("bedSetup", "notStarted", "床位配置卡", "Койка", new[] { "roomId", "bedCount", "bedLayout" }, new[] { "所属房间", "床位数", "床位标签", "床铺生成方式", "备注" }, new[] { "床位冲突数", "可售床位数" }),
                 Card("rateSetup", "notStarted", "价格配置卡", "Тариф", new[] { "ratePlanId", "roomId" }, new[] { "房间", "每床日价", "每床周价", "每床月价", "币种", "生效日期", "价格备注" }, new[] { "房间收益潜力", "价格版本数" }),
                 Card("roomReadiness", "notStarted", "房间准备度卡", "Готовность", new[] { "roomId", "operatorId" }, new[] { "房间", "家具状态", "技术状态", "可售状态", "准备备注" }, new[] { "可售床位数", "房间准备度" }),
                 Card("roomBlock", "notStarted", "房间床位阻断卡", "Блокировка", new[] { "blockId", "roomId", "bedId" }, new[] { "房间", "床位", "阻断范围", "阻断原因", "阻断开始时间", "预计恢复时间", "阻断备注" }, new[] { "阻断床位天数", "阻断损失估算" }),
@@ -41,8 +41,8 @@ internal static class WorkspaceSeedCatalog
                 Card("tariff", "notStarted", "计费确认卡", "Тариф", new[] { "folioId", "stayId" }, new[] { "计费方式", "单价", "天数/周数/月数", "应收金额", "押金规则" }, new[] { "chargeAmount", "folioBalance" }),
                 Card("depositRequirement", "notStarted", "押金要求卡", "Требование депозита", new[] { "depositId", "folioId", "liabilityAccountId" }, new[] { "押金规则", "应收押金", "押金币种", "押金截止时间", "是否允许免押", "免押原因" }, new[] { "depositLiabilityAmount", "depositDueLeadTime" }),
                 Card("payment", "notStarted", "收款登记卡", "Платеж", new[] { "paymentId", "folioId", "depositId" }, new[] { "付款人", "付款时间", "付款金额", "币种", "付款方式", "收款用途", "凭证编号", "备注" }, new[] { "paymentRecordDuration", "unconfirmedPaymentAmount" }),
-                Card("finance", "notStarted", "财务到账确认卡", "Фин. подтверждение", new[] { "financeReviewId", "paymentId", "depositId" }, new[] { "支付记录", "银行/钱包渠道", "到账金额", "到账时间", "财务确认人", "匹配结果", "差异原因", "处理意见" }, new[] { "financeReviewDuration", "financeVarianceAmount" }),
-                Card("checkin", "notStarted", "入住确认卡", "Подтверждение заселения", new[] { "auditTraceId", "bedId", "stayId" }, new[] { "实际入住时间", "钥匙/物品交接", "人工确认摘要" }, new[] { "totalCheckinDuration", "manualConfirmCount" }),
+                Card("finance", "notStarted", "财务到账确认卡", "Фин. подтверждение", new[] { "financeReviewId", "paymentId", "depositId", "folioId" }, new[] { "支付记录", "银行/钱包渠道", "到账金额", "到账时间", "财务确认人", "匹配结果", "差异原因", "处理意见" }, new[] { "financeReviewDuration", "financeVarianceAmount" }),
+                Card("checkin", "notStarted", "入住确认卡", "Подтверждение заселения", new[] { "auditTraceId", "bedId", "stayId", "folioId", "depositId" }, new[] { "实际入住时间", "钥匙/物品交接", "人工确认摘要" }, new[] { "totalCheckinDuration", "manualConfirmCount" }),
                 Card("operatingDashboard", "notStarted", "经营驾驶舱卡", "Операционная панель", new[] { "metricsProjectionId", "folioId", "depositId" }, new[] { "复盘结论", "后续行动", "负责人", "处理状态" }, new[] { "occupancyRate", "leadBookingConversionRate", "bookingCheckinConversionRate", "depositLiabilityBalance", "unconfirmedPaymentAmount", "financeVarianceAmount", "folioBalance" })
             },
             "先把线索转预订，再分配床位、生成账本、完成押金和财务确认。",
@@ -54,7 +54,7 @@ internal static class WorkspaceSeedCatalog
             {
                 Card("leadCapture", "ready", "线索捕获卡", "Захват лида", new[] { "leadId", "operatorId" }, new[] { "联系日期", "线索姓名", "电话", "通讯方式", "需要床位数", "期望入住日期", "住宿时长", "来源渠道", "预算金额", "线索状态", "线索备注" }, new[] { "线索转预订率", "来源转化率" }),
                 Card("leadFollowUp", "notStarted", "线索跟进卡", "Follow-up лида", new[] { "leadId", "operatorId" }, new[] { "线索", "跟进日期", "跟进结果", "下一次跟进时间", "线索状态", "线索备注" }, new[] { "跟进次数", "跟进滞留天数" }),
-                Card("reservationCreate", "notStarted", "预订创建卡", "Создание брони", new[] { "reservationId", "leadId" }, new[] { "线索", "预订床位数", "预留房间", "预留床位", "计划入住日期", "保留截止时间", "是否需要预订押金", "预订押金金额", "预订备注" }, new[] { "未来占用床夜", "预订转入住率" }),
+                Card("reservationCreate", "notStarted", "预订创建卡", "Создание брони", new[] { "reservationId", "leadId" }, new[] { "线索", "预订床位数", "预留房间", "预留床位", "计划入住日期", "保留截止时间", "是否需要预订押金", "预订押金金额", "预订后动作", "预订备注" }, new[] { "未来占用床夜", "预订转入住率" }),
                 Card("reservationCancel", "notStarted", "预订取消卡", "Отмена брони", new[] { "reservationId", "operatorId" }, new[] { "预订单", "取消原因", "释放床位", "取消备注" }, new[] { "取消预订数", "释放床夜" }),
                 Card("reservationConvert", "notStarted", "预订转入住卡", "Конвертация брони", new[] { "reservationId", "stayId" }, new[] { "预订单", "入住单", "转入住日期", "转换备注" }, new[] { "预订转入住率", "转换耗时" })
             },
@@ -79,7 +79,7 @@ internal static class WorkspaceSeedCatalog
             {
                 Card("depositAssessment", "ready", "押金评估卡", "Оценка депозита", new[] { "depositId", "stayId" }, new[] { "入住单", "押金类型", "应收押金金额", "币种", "押金截止日期", "押金规则说明" }, new[] { "当前持有押金", "押金负债余额" }),
                 Card("depositReceipt", "notStarted", "押金收取卡", "Прием депозита", new[] { "depositReceiptId", "depositId" }, new[] { "押金单", "付款人", "实收押金金额", "收取日期", "支付方式", "收款人", "押金凭证", "押金收款备注" }, new[] { "待确认押金金额", "押金凭证缺失数" }),
-                Card("depositConfirmation", "notStarted", "押金财务确认卡", "Фин. подтверждение депозита", new[] { "financeReviewId", "depositReceiptId" }, new[] { "押金收款记录", "确认金额", "确认结果", "差异原因", "财务备注" }, new[] { "押金确认金额", "押金差异金额" }),
+                Card("depositConfirmation", "notStarted", "押金财务确认卡", "Фин. подтверждение депозита", new[] { "financeReviewId", "depositReceiptId", "depositId" }, new[] { "押金收款记录", "确认金额", "确认结果", "差异原因", "财务备注" }, new[] { "押金确认金额", "押金差异金额" }),
                 Card("depositDeduction", "notStarted", "押金扣除卡", "Удержание депозита", new[] { "depositTransactionId", "depositId" }, new[] { "押金单", "扣除金额", "扣除原因", "处理意见" }, new[] { "已扣押金", "剩余持有押金" }),
                 Card("depositRefundApproval", "notStarted", "押金退款审批卡", "Утверждение возврата депозита", new[] { "depositRefundApprovalId", "depositId" }, new[] { "押金单", "扣除金额", "扣除原因", "抵扣欠款金额", "应退金额", "处理意见" }, new[] { "当前持有押金", "押金退款待支付金额" }),
                 Card("depositRefundPayment", "notStarted", "押金退款支付卡", "Выплата возврата депозита", new[] { "depositRefundPaymentId", "depositId" }, new[] { "押金单", "退款金额", "退款方式", "退款接收人", "退款凭证", "付款时间", "人工确认摘要" }, new[] { "已退押金", "押金负债余额" }),
@@ -93,7 +93,7 @@ internal static class WorkspaceSeedCatalog
             new[]
             {
                 Card("paymentReceipt", "ready", "普通收款登记卡", "Регистрация платежа", new[] { "paymentId", "stayId" }, new[] { "入住单", "付款人", "收款日期", "收款用途", "覆盖周期开始", "覆盖周期结束", "收款金额", "币种", "支付方式", "收款人", "收款凭证" }, new[] { "当前欠款余额", "待确认普通收款" }),
-                Card("paymentConfirmation", "notStarted", "普通收款确认卡", "Подтверждение платежа", new[] { "financeReviewId", "paymentId" }, new[] { "收款记录", "确认金额", "确认结果", "差异原因", "财务备注" }, new[] { "已确认普通收款", "普通收款差异金额" }),
+                Card("paymentConfirmation", "notStarted", "普通收款确认卡", "Подтверждение платежа", new[] { "financeReviewId", "paymentId", "stayId" }, new[] { "收款记录", "确认金额", "确认结果", "差异原因", "财务备注" }, new[] { "已确认普通收款", "普通收款差异金额" }),
                 Card("paymentAllocation", "notStarted", "收款分配卡", "Распределение платежа", new[] { "allocationId", "paymentId" }, new[] { "收款记录", "分配方式", "覆盖应收项", "分配金额", "分配备注" }, new[] { "已分配金额", "欠款余额" }),
                 Card("paymentAdjustment", "notStarted", "收款调整卡", "Корректировка платежа", new[] { "paymentAdjustmentId", "paymentId" }, new[] { "收款记录", "调整金额", "调整原因", "处理意见" }, new[] { "调整后余额", "调整次数" }),
                 Card("debtFollowUp", "notStarted", "欠款跟进卡", "Контроль долга", new[] { "stayId", "operatorId" }, new[] { "入住单", "欠款原因", "跟进日期", "跟进结果", "下一次跟进时间" }, new[] { "欠款余额", "逾期天数" })
@@ -105,12 +105,12 @@ internal static class WorkspaceSeedCatalog
             "Выезд, инспекция, депозит, финальный расчет, освобождение койки и уборка.",
             new[]
             {
-                Card("checkoutStart", "ready", "退住开始卡", "Начало выезда", new[] { "checkoutId", "stayId" }, new[] { "入住单", "实际退住日期", "退住原因" }, new[] { "当前余额", "持有押金" }),
-                Card("roomInspection", "notStarted", "查房卡", "Инспекция комнаты", new[] { "inspectionId", "stayId" }, new[] { "入住单", "房间状态", "床位状态", "是否发现损坏", "损坏说明", "损坏扣款金额", "是否需要清洁", "查房凭证" }, new[] { "损坏数", "查房耗时" }),
-                Card("depositSettlement", "notStarted", "押金结算卡", "Расчет депозита", new[] { "settlementId", "depositId" }, new[] { "押金单", "扣除金额", "抵扣欠款金额", "处理意见" }, new[] { "应退金额", "押金负债余额" }),
-                Card("finalBalanceClose", "notStarted", "最终余额关闭卡", "Закрытие баланса", new[] { "settlementId", "stayId" }, new[] { "入住单", "押金扣除金额", "押金抵欠金额", "结算结果" }, new[] { "总应收", "总已收", "持有押金", "未结欠款" }),
-                Card("bedRelease", "notStarted", "床位释放卡", "Освобождение койки", new[] { "bedId", "checkoutId" }, new[] { "床位", "释放床位", "释放备注" }, new[] { "释放床夜", "周转耗时" }),
-                Card("postCheckoutCleaning", "notStarted", "退住后清洁卡", "Уборка после выезда", new[] { "serviceTaskId", "roomId" }, new[] { "房间", "床位", "任务类型", "目标完成日期", "处理措施" }, new[] { "待清洁任务数", "阻断床位天数" })
+                Card("checkoutStart", "ready", "退住开始卡", "Начало выезда", new[] { "checkoutId", "stayId", "roomId", "bedId", "depositId" }, new[] { "入住单", "实际退住日期", "退住原因" }, new[] { "当前余额", "持有押金" }),
+                Card("roomInspection", "notStarted", "查房卡", "Инспекция комнаты", new[] { "inspectionId", "checkoutId", "stayId", "roomId", "bedId", "depositId" }, new[] { "入住单", "房间状态", "床位检查情况", "是否发现损坏", "损坏说明", "损坏扣款金额", "是否需要清洁", "查房凭证" }, new[] { "损坏数", "查房耗时" }),
+                Card("depositSettlement", "notStarted", "押金结算卡", "Расчет депозита", new[] { "settlementId", "depositId", "refundAmount" }, new[] { "押金单", "扣除金额", "抵扣欠款金额", "处理意见" }, new[] { "应退金额", "押金负债余额" }),
+                Card("finalBalanceClose", "notStarted", "最终余额关闭卡", "Закрытие баланса", new[] { "settlementId", "checkoutId", "stayId", "depositId", "roomId", "bedId" }, new[] { "入住单", "押金扣除金额", "押金抵欠金额", "结算结果" }, new[] { "总应收", "总已收", "持有押金", "未结欠款" }),
+                Card("bedRelease", "notStarted", "床位释放卡", "Освобождение койки", new[] { "bedId", "checkoutId", "roomId" }, new[] { "床位", "释放床位", "释放备注" }, new[] { "释放床夜", "周转耗时" }),
+                Card("postCheckoutCleaning", "notStarted", "退住后清洁卡", "Уборка после выезда", new[] { "serviceTaskId", "taskId", "roomId" }, new[] { "房间", "床位", "任务类型", "目标完成日期", "处理措施" }, new[] { "待清洁任务数", "阻断床位天数" })
             },
             "退住关闭前必须解释余额、押金、查房和床位释放。",
             "Перед закрытием нужны баланс, депозит, инспекция и койка."),
@@ -120,9 +120,9 @@ internal static class WorkspaceSeedCatalog
             new[]
             {
                 Card("serviceTaskCreate", "ready", "服务任务创建卡", "Создание задачи", new[] { "taskId", "operatorId" }, new[] { "任务日期", "任务类型", "服务范围", "房间", "床位", "区域", "问题描述", "处理措施", "紧急程度", "负责人", "是否阻断可售", "目标完成日期", "任务凭证" }, new[] { "阻断床位天数", "任务创建耗时" }),
-                Card("serviceTaskAssign", "notStarted", "服务任务分派卡", "Назначение задачи", new[] { "taskId", "operatorId" }, new[] { "任务", "负责人", "优先级", "目标完成日期", "分派备注" }, new[] { "待处理任务数", "超时风险" }),
-                Card("serviceTaskComplete", "notStarted", "服务任务完成卡", "Завершение задачи", new[] { "taskId", "operatorId" }, new[] { "任务", "完成日期", "完成结果", "实际成本", "关联支出", "完成凭证" }, new[] { "实际成本", "任务完成耗时" }),
-                Card("serviceTaskVerify", "notStarted", "服务任务验收卡", "Проверка задачи", new[] { "taskId", "managerId" }, new[] { "任务", "验收结果", "验收备注", "处理意见" }, new[] { "验收通过率", "返工次数" }),
+                Card("serviceTaskAssign", "notStarted", "服务任务分派卡", "Назначение задачи", new[] { "taskId", "operatorId", "roomId", "bedId" }, new[] { "任务", "负责人", "优先级", "目标完成日期", "分派备注" }, new[] { "待处理任务数", "超时风险" }),
+                Card("serviceTaskComplete", "notStarted", "服务任务完成卡", "Завершение задачи", new[] { "taskId", "operatorId", "roomId", "bedId" }, new[] { "任务", "完成日期", "完成结果", "实际成本", "关联支出", "完成凭证" }, new[] { "实际成本", "任务完成耗时" }),
+                Card("serviceTaskVerify", "notStarted", "服务任务验收卡", "Проверка задачи", new[] { "taskId", "managerId", "roomId", "bedId" }, new[] { "任务", "验收结果", "验收备注", "处理意见" }, new[] { "验收通过率", "返工次数" }),
                 Card("roomReleaseAfterService", "notStarted", "服务后释放卡", "Освобождение после сервиса", new[] { "taskId", "roomId", "bedId" }, new[] { "任务", "释放范围", "房间", "床位", "恢复可售时间", "释放备注" }, new[] { "恢复可售床位数", "阻断恢复耗时" })
             },
             "阻断可售的任务必须显式释放房间或床位。",

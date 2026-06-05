@@ -8,7 +8,8 @@ describe("OAM-04B mobile accessibility contract", () => {
 
     expect(home).toContain('aria-label="移动端主导航"');
     expect(home).toContain('aria-current="page"');
-    expect(work).toContain('data-work-filter="accommodation"');
+    expect(work).toContain('data-work-filter="all-work"');
+    expect(work).toContain('data-work-filter="scenario-resource"');
     expect(work).toContain('data-mobile-ia="filter"');
   });
 });

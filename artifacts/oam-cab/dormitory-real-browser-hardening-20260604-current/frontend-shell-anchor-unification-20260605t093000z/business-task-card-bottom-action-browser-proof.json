@@ -1,0 +1,15 @@
+{
+  "generatedAtUtc": "2026-06-05T10:33:30.770Z",
+  "screenshot": "18-search-business-task-card-bottom-action.png",
+  "proof": {
+    "cardText": "可办理 新增住宿房源 状态先填房号 工作内容 先填房号 可进入内部试点观察，生产仍被阻断 开始观察记录",
+    "hasBusinessTaskBody": true,
+    "hasBottomActionAfterTask": true,
+    "hasOldTechnicalLabels": false,
+    "rects": {
+      "headerTop": 320.78125,
+      "taskTop": 461.46875,
+      "actionTop": 540.3125
+    }
+  }
+}

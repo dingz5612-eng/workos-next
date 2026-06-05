@@ -3,7 +3,8 @@
   "bottomNavSlot": false,
   "meEntryRequired": true,
   "todayCanShowDailyLearning": true,
-  "searchCanFindLearning": true,
+  "searchCanFindLearning": false,
+  "entrySurface": "me",
   "topics": ["证据怎么补", "为什么被拒绝", "设备未验证怎么办", "权限不足怎么办", "押金/收款注意事项", "当前角色可办理什么"],
   "scopeRules": ["role", "surface", "tenant"]
 }

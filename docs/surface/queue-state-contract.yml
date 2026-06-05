@@ -3,7 +3,15 @@
   "queues": {
     "uploadQueue": { "label": "证据上传", "empty": "没有待上传证据", "recovery": "保留本地草稿并重试上传" },
     "submitQueue": { "label": "提交队列", "empty": "没有待提交办理", "recovery": "保留提交草稿并等待网络恢复" },
-    "projectionPending": { "label": "视图同步中", "isFailure": false, "recovery": "继续追踪投影状态" }
+    "projectionPending": { "label": "视图同步中", "isFailure": false, "recovery": "继续追踪投影状态" },
+    "workItemQueue": {
+      "source": "Operations Runtime work items",
+      "domainRule": "Queue items must keep the business domain from the WorkItem workspace or business type; a generic operations source label must not override stay, finance, repair, or other business domains.",
+      "manualEvidenceRule": "Need-evidence counts only explicit runtime/manual evidence problems such as missing, rejected, scope_mismatch, expired, upload_failed, or locked. System-bound submit checks and automatically attached audit evidence must not be counted as user missing evidence.",
+      "todayOverviewRule": "The mobile Today first screen shows a compact focus overview plus concrete work items. Each metric is a Workbench filter entry, not a separate explanatory report; reason, impact, next-action rows, page-title headings, learning blocks, and scenario directories must stay out of the Today content area unless a concrete blocker requires explanation.",
+      "shellTitleRule": "The shared mobile shell owns the visible page title. The top bar shows the current page title, runtime status, and language selector; it must not reserve the first screen for the product brand or actor role. Page content must not repeat generic titles such as Today Focus Overview or Work.",
+      "statusColorRule": "Today and Work metric buttons must use the shared state color identifiers: ready for actionable work, due-soon or syncing for time/sync attention, waiting for waiting handoffs, and blocked for evidence/risk/blocker attention."
+    }
   },
   "rawComponentNamesVisible": false
 }

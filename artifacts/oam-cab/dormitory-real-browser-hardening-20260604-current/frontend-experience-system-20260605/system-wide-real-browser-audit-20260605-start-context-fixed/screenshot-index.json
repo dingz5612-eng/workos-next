@@ -1,0 +1,1255 @@
+{
+  "version": "dormitory.ten-scenario.screenshot-index.v1",
+  "runId": "system-wide-real-browser-audit-20260605-start-context-fixed",
+  "generatedAtUtc": "2026-06-05T11:29:16.846Z",
+  "screenshots": [
+    {
+      "kind": "full",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/00-login-complete-full.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\00-login-complete-full.png",
+      "sha256": "0342b5bd03b52317c73d765a479ef904c2364c494defdd55f742d92054cac590",
+      "bytes": 79623,
+      "scrollY": null
+    },
+    {
+      "kind": "top",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/00-login-complete-top.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\00-login-complete-top.png",
+      "sha256": "4f1af5aac69b52da3bdfdc6ca85ea325bf751da0cc2b972d7e45245fe595c588",
+      "bytes": 78651,
+      "scrollY": 0
+    },
+    {
+      "kind": "bottom",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/00-login-complete-bottom.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\00-login-complete-bottom.png",
+      "sha256": "9ad52d2758e6f616b3c437947bcb70e31ae603717bf781c948178ffacda118af",
+      "bytes": 73134,
+      "scrollY": 112
+    },
+    {
+      "kind": "full",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/00-search-entry-full.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\00-search-entry-full.png",
+      "sha256": "47f5308888cd83d14a934c0fa18df79cdd18539c0791449f7b69c77e01039182",
+      "bytes": 1211492,
+      "scrollY": null
+    },
+    {
+      "kind": "top",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/00-search-entry-top.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\00-search-entry-top.png",
+      "sha256": "3bb6f205c7890a8b9a893d802ea08b571238e7b0b41f88b256a96ad971ddd9ef",
+      "bytes": 77558,
+      "scrollY": 0
+    },
+    {
+      "kind": "bottom",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/00-search-entry-bottom.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\00-search-entry-bottom.png",
+      "sha256": "fc1261d7755c38d2b4cd7746f32f97ed15e9f7c6071d03e7d13deeff76c8f4d3",
+      "bytes": 62606,
+      "scrollY": 15954
+    },
+    {
+      "kind": "full",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/01-resource-01-search-full.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\01-resource-01-search-full.png",
+      "sha256": "690b28b0b4c293ceb931cdeb57f24bb4e1b1db79425e41a76adc49c8b10ee406",
+      "bytes": 812750,
+      "scrollY": null
+    },
+    {
+      "kind": "top",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/01-resource-01-search-top.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\01-resource-01-search-top.png",
+      "sha256": "d4d12b690e147411a9f53fe5fd565faadebf493a46bf291761d2a5fd49d112e2",
+      "bytes": 73531,
+      "scrollY": 0
+    },
+    {
+      "kind": "bottom",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/01-resource-01-search-bottom.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\01-resource-01-search-bottom.png",
+      "sha256": "a93dc9ff6de283c67bce561ed25dbc9e0084fa284596edfac28152549586862b",
+      "bytes": 60557,
+      "scrollY": 11049
+    },
+    {
+      "kind": "full",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/01-resource-02-ready-full.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\01-resource-02-ready-full.png",
+      "sha256": "9d2c8b50e75a2a9f63cc3c5d3edf67e629c2b05f88320b28ff13ee5e2d8c4f33",
+      "bytes": 129256,
+      "scrollY": null
+    },
+    {
+      "kind": "top",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/01-resource-02-ready-top.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\01-resource-02-ready-top.png",
+      "sha256": "16a0445aaea270107697e4ca7519446e95fca3666e6da9bf05b351315b68036a",
+      "bytes": 69976,
+      "scrollY": 0
+    },
+    {
+      "kind": "bottom",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/01-resource-02-ready-bottom.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\01-resource-02-ready-bottom.png",
+      "sha256": "350bfa1d12c2b819353041ec603fb64c17750982594512f92de1d99b70e853aa",
+      "bytes": 73258,
+      "scrollY": 1036
+    },
+    {
+      "kind": "full",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/01-resource-03-empty-blocked-full.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\01-resource-03-empty-blocked-full.png",
+      "sha256": "cb3acc4854b808f1232b3d2cb93e2603e8db3d9693bf0d8ee4b75be08b55caff",
+      "bytes": 127111,
+      "scrollY": null
+    },
+    {
+      "kind": "top",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/01-resource-03-empty-blocked-top.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\01-resource-03-empty-blocked-top.png",
+      "sha256": "85321965a0760380178cb7442cdd9d7b26d61ae9bad9f26361e44347a14f55f4",
+      "bytes": 65551,
+      "scrollY": 0
+    },
+    {
+      "kind": "bottom",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/01-resource-03-empty-blocked-bottom.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\01-resource-03-empty-blocked-bottom.png",
+      "sha256": "7d57e3224ff03d96d5206a18a3c3ccca9f894830e90288462d5517363cd06f5d",
+      "bytes": 70391,
+      "scrollY": 1026
+    },
+    {
+      "kind": "full",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/01-resource-04-filled-full.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\01-resource-04-filled-full.png",
+      "sha256": "337140088b0b62ef6d5a2355a666f43f35c5757e9757d15b6a0d38f69415fd64",
+      "bytes": 121258,
+      "scrollY": null
+    },
+    {
+      "kind": "top",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/01-resource-04-filled-top.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\01-resource-04-filled-top.png",
+      "sha256": "4922734599f09b5d0660121f805875f94877c78dd7722e1172b79f6557db4786",
+      "bytes": 70744,
+      "scrollY": 0
+    },
+    {
+      "kind": "bottom",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/01-resource-04-filled-bottom.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\01-resource-04-filled-bottom.png",
+      "sha256": "4979f1faadcfa0c08a75194a7f5cae82ca6348a68c0170d2be2f14e762795ccd",
+      "bytes": 60311,
+      "scrollY": 964
+    },
+    {
+      "kind": "full",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/01-resource-05-positive-after-submit-full.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\01-resource-05-positive-after-submit-full.png",
+      "sha256": "34d19babeb201486db8f06e776aca64b2b71330ccc75ffee13965213ea9a22ae",
+      "bytes": 112677,
+      "scrollY": null
+    },
+    {
+      "kind": "top",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/01-resource-05-positive-after-submit-top.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\01-resource-05-positive-after-submit-top.png",
+      "sha256": "7a0b92059f08d88567c0e6deefae65a6342f9ee90b51984aae7afb6c3f3c73d6",
+      "bytes": 74123,
+      "scrollY": 0
+    },
+    {
+      "kind": "bottom",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/01-resource-05-positive-after-submit-bottom.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\01-resource-05-positive-after-submit-bottom.png",
+      "sha256": "41215be2864a47c2bf7156c8fbdb96fbbb1f6cf18e20aa834920b5892edd99d7",
+      "bytes": 66452,
+      "scrollY": 653
+    },
+    {
+      "kind": "full",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/02-lead-reservation-01-search-full.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\02-lead-reservation-01-search-full.png",
+      "sha256": "9d9614bd3f1344dd194b4d066ea0e3a0b4b9069ebfa1a968806c3d0ae9c50f41",
+      "bytes": 263137,
+      "scrollY": null
+    },
+    {
+      "kind": "top",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/02-lead-reservation-01-search-top.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\02-lead-reservation-01-search-top.png",
+      "sha256": "e7608b89781172aa4665315903f66eec0405af6f800a868ecb80e1c728a7111d",
+      "bytes": 78540,
+      "scrollY": 0
+    },
+    {
+      "kind": "bottom",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/02-lead-reservation-01-search-bottom.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\02-lead-reservation-01-search-bottom.png",
+      "sha256": "f0f9d94d5ad32bbd7766bac27d1d1fe446332a7ef57e20311564e66e96c3fa49",
+      "bytes": 71186,
+      "scrollY": 2350
+    },
+    {
+      "kind": "full",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/02-lead-reservation-02-ready-full.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\02-lead-reservation-02-ready-full.png",
+      "sha256": "3ed0c80d0adbfc96c1cfc1a64fe51414475cb7339cddf703c19defa0d2c6e3f0",
+      "bytes": 145264,
+      "scrollY": null
+    },
+    {
+      "kind": "top",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/02-lead-reservation-02-ready-top.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\02-lead-reservation-02-ready-top.png",
+      "sha256": "06c95c6a35740bf0fca204e2880d8956407658d08c98321c8b67c355139a5aab",
+      "bytes": 68859,
+      "scrollY": 0
+    },
+    {
+      "kind": "bottom",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/02-lead-reservation-02-ready-bottom.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\02-lead-reservation-02-ready-bottom.png",
+      "sha256": "b1eb62f845025c379f619b48b059352925f62ba2e69c0c039901df315fd48e16",
+      "bytes": 66903,
+      "scrollY": 1360
+    },
+    {
+      "kind": "full",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/02-lead-reservation-03-empty-blocked-full.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\02-lead-reservation-03-empty-blocked-full.png",
+      "sha256": "651edec6c548a44fb407f71d973179a71111a9d4a440a1eb9d88a7cff85550db",
+      "bytes": 145493,
+      "scrollY": null
+    },
+    {
+      "kind": "top",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/02-lead-reservation-03-empty-blocked-top.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\02-lead-reservation-03-empty-blocked-top.png",
+      "sha256": "e8d65585ca2e0e8d42ff09a65e06e93260ce185fee17acbe81258bd1b830772c",
+      "bytes": 65554,
+      "scrollY": 0
+    },
+    {
+      "kind": "bottom",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/02-lead-reservation-03-empty-blocked-bottom.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\02-lead-reservation-03-empty-blocked-bottom.png",
+      "sha256": "8e12c60576ee886bc73546f1fb6436c9f0d0761c6334b48890604965f57438f1",
+      "bytes": 71184,
+      "scrollY": 1350
+    },
+    {
+      "kind": "full",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/02-lead-reservation-04-filled-full.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\02-lead-reservation-04-filled-full.png",
+      "sha256": "d412f12e7d01a56753e37bbef427676cec527d0782d069f3e7a1c9c478677e59",
+      "bytes": 140788,
+      "scrollY": null
+    },
+    {
+      "kind": "top",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/02-lead-reservation-04-filled-top.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\02-lead-reservation-04-filled-top.png",
+      "sha256": "633d1b3a6bb47b285049ec986d021e5c9704477b690caa5f26a857c04bd4c2b2",
+      "bytes": 71252,
+      "scrollY": 0
+    },
+    {
+      "kind": "bottom",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/02-lead-reservation-04-filled-bottom.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\02-lead-reservation-04-filled-bottom.png",
+      "sha256": "f38e7dca8244ebf3e5847ead21f77dbd435626f2bfd433c396c1f80aed2c039d",
+      "bytes": 61492,
+      "scrollY": 1271
+    },
+    {
+      "kind": "full",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/02-lead-reservation-05-positive-after-submit-full.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\02-lead-reservation-05-positive-after-submit-full.png",
+      "sha256": "68e41f0577a3e4d59db502b9e597506965313282b669b702b1b3c4d7af877d50",
+      "bytes": 133007,
+      "scrollY": null
+    },
+    {
+      "kind": "top",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/02-lead-reservation-05-positive-after-submit-top.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\02-lead-reservation-05-positive-after-submit-top.png",
+      "sha256": "9753ebf5d8d0dd417e73231502b48a511dc7eff89915d51fc61d9dca50d5cfb7",
+      "bytes": 67558,
+      "scrollY": 0
+    },
+    {
+      "kind": "bottom",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/02-lead-reservation-05-positive-after-submit-bottom.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\02-lead-reservation-05-positive-after-submit-bottom.png",
+      "sha256": "de83da6effc3e581f99c458b385d1bbeab39ffff31598a22ae48024b9984f820",
+      "bytes": 61129,
+      "scrollY": 1194
+    },
+    {
+      "kind": "full",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/03-checkin-01-search-full.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\03-checkin-01-search-full.png",
+      "sha256": "af0396d8c6e0168863bb7a35ca2b8572583820be1e5c792a35be638b8a735536",
+      "bytes": 212637,
+      "scrollY": null
+    },
+    {
+      "kind": "top",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/03-checkin-01-search-top.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\03-checkin-01-search-top.png",
+      "sha256": "3792fc5a4488ef28ab0d9d6b21d9c225f55ac9838d86931dd5097ccf70c319d5",
+      "bytes": 81290,
+      "scrollY": 0
+    },
+    {
+      "kind": "bottom",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/03-checkin-01-search-bottom.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\03-checkin-01-search-bottom.png",
+      "sha256": "272ed036fdd1ebe6fa37344eeb69184983e185ba178a20b565bf41f3795c34b8",
+      "bytes": 69558,
+      "scrollY": 1732
+    },
+    {
+      "kind": "full",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/03-checkin-02-ready-full.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\03-checkin-02-ready-full.png",
+      "sha256": "c7b0c8081906d2be00d297ac6bc555e4a2de0ae9d225b30beee82815fcf391cc",
+      "bytes": 125159,
+      "scrollY": null
+    },
+    {
+      "kind": "top",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/03-checkin-02-ready-top.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\03-checkin-02-ready-top.png",
+      "sha256": "a2ad5c220385354111262ba6825eaed709a4d01ab03d4a1781248e2118dafe4c",
+      "bytes": 69237,
+      "scrollY": 0
+    },
+    {
+      "kind": "bottom",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/03-checkin-02-ready-bottom.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\03-checkin-02-ready-bottom.png",
+      "sha256": "e1be2eaad9d50b1c1e3f1ede64b9910fd533483b056c0ce6b8de5807d03a93b6",
+      "bytes": 66710,
+      "scrollY": 941
+    },
+    {
+      "kind": "full",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/03-checkin-03-empty-blocked-full.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\03-checkin-03-empty-blocked-full.png",
+      "sha256": "70bf81e55316eb0e847cd7a1638ecd1e14234e73721a0c5287977b9d2e3b3f81",
+      "bytes": 124724,
+      "scrollY": null
+    },
+    {
+      "kind": "top",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/03-checkin-03-empty-blocked-top.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\03-checkin-03-empty-blocked-top.png",
+      "sha256": "5d1f579f51e153a9097a7cca0015961634a92ec7ef6aaf99a12f9274a86af3c2",
+      "bytes": 65610,
+      "scrollY": 0
+    },
+    {
+      "kind": "bottom",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/03-checkin-03-empty-blocked-bottom.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\03-checkin-03-empty-blocked-bottom.png",
+      "sha256": "575ecec78718fc7deabb43f20d8c628e97f86eef3718cf4bb9b09c1667744b92",
+      "bytes": 72080,
+      "scrollY": 931
+    },
+    {
+      "kind": "full",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/03-checkin-04-filled-full.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\03-checkin-04-filled-full.png",
+      "sha256": "d7eef98cd8f25e571ff94b54e755c8a436af176901874bb37634e70c43d15ad7",
+      "bytes": 122580,
+      "scrollY": null
+    },
+    {
+      "kind": "top",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/03-checkin-04-filled-top.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\03-checkin-04-filled-top.png",
+      "sha256": "a021aa49ad217a208cf0777ead6db437c51acfe5e0615641ace57579f0c59125",
+      "bytes": 73711,
+      "scrollY": 0
+    },
+    {
+      "kind": "bottom",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/03-checkin-04-filled-bottom.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\03-checkin-04-filled-bottom.png",
+      "sha256": "34cf77b9f8289ba3e62aca8aadf2463a9d7f85be3bba9fde17e4bd86a1285815",
+      "bytes": 64416,
+      "scrollY": 869
+    },
+    {
+      "kind": "full",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/03-checkin-05-positive-after-submit-full.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\03-checkin-05-positive-after-submit-full.png",
+      "sha256": "1e8f18343488b0f83b0910fbaa4d1550aa3661c11122dbf42595a849de85475e",
+      "bytes": 113494,
+      "scrollY": null
+    },
+    {
+      "kind": "top",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/03-checkin-05-positive-after-submit-top.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\03-checkin-05-positive-after-submit-top.png",
+      "sha256": "c01077a2b96f99982d21c975ca3cceb42b3a6075c26947834146253e5eee182c",
+      "bytes": 68883,
+      "scrollY": 0
+    },
+    {
+      "kind": "bottom",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/03-checkin-05-positive-after-submit-bottom.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\03-checkin-05-positive-after-submit-bottom.png",
+      "sha256": "68c3187f2eb9aed6e570ca419193f877a0b24fdd05456e3ec141a927c06f376e",
+      "bytes": 64941,
+      "scrollY": 792
+    },
+    {
+      "kind": "full",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/04-lifecycle-01-search-full.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\04-lifecycle-01-search-full.png",
+      "sha256": "921ef03eb9501c7219ca8102e452067b254d39462ea6ad22dc63a2ed79280969",
+      "bytes": 82220,
+      "scrollY": null
+    },
+    {
+      "kind": "top",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/04-lifecycle-01-search-top.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\04-lifecycle-01-search-top.png",
+      "sha256": "fea72897352fb2503cd59d3a3bc7ea4265e5446b62ee6075d06de399488caf0d",
+      "bytes": 80319,
+      "scrollY": 0
+    },
+    {
+      "kind": "bottom",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/04-lifecycle-01-search-bottom.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\04-lifecycle-01-search-bottom.png",
+      "sha256": "4f328df6ece2cefc041af5efb50921b5527ed4d43db281df88405393a7b368f7",
+      "bytes": 75728,
+      "scrollY": 104
+    },
+    {
+      "kind": "full",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/04-lifecycle-02-ready-full.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\04-lifecycle-02-ready-full.png",
+      "sha256": "93092b0f67a17be99c4c78357309e08165c39a669fa301d981c579dff88115b3",
+      "bytes": 132717,
+      "scrollY": null
+    },
+    {
+      "kind": "top",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/04-lifecycle-02-ready-top.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\04-lifecycle-02-ready-top.png",
+      "sha256": "a82b2a9c8f67f93d9445da5ec123ef8847460b2ad459d5c5cd64aa6acfe41166",
+      "bytes": 69516,
+      "scrollY": 0
+    },
+    {
+      "kind": "bottom",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/04-lifecycle-02-ready-bottom.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\04-lifecycle-02-ready-bottom.png",
+      "sha256": "a54135c146224d377dba4074b8362428bba8683ad90370dd0f1da6c4dc8e9063",
+      "bytes": 65145,
+      "scrollY": 1131
+    },
+    {
+      "kind": "full",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/04-lifecycle-03-empty-blocked-full.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\04-lifecycle-03-empty-blocked-full.png",
+      "sha256": "9e5d96d479f745734f0e18a0735b9c1500febf13b76cb9d3d11f4c293782831e",
+      "bytes": 131401,
+      "scrollY": null
+    },
+    {
+      "kind": "top",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/04-lifecycle-03-empty-blocked-top.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\04-lifecycle-03-empty-blocked-top.png",
+      "sha256": "3db905dd2dab1813db77f0c892f0b8952f9a01a85ee324682ac1b56ce5e32b22",
+      "bytes": 65276,
+      "scrollY": 0
+    },
+    {
+      "kind": "bottom",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/04-lifecycle-03-empty-blocked-bottom.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\04-lifecycle-03-empty-blocked-bottom.png",
+      "sha256": "d4131cfe1c15be9d306a8535bc16c84859d8c413a056f2491379bc5e75a5c092",
+      "bytes": 70260,
+      "scrollY": 1121
+    },
+    {
+      "kind": "full",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/04-lifecycle-04-filled-full.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\04-lifecycle-04-filled-full.png",
+      "sha256": "d745a0fdf79064d34faae815d8f553eab7b969cc4105fe2b740feb787f32d127",
+      "bytes": 131165,
+      "scrollY": null
+    },
+    {
+      "kind": "top",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/04-lifecycle-04-filled-top.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\04-lifecycle-04-filled-top.png",
+      "sha256": "4f9d0da332c8cf8f5377c3bc9f3333d58222a2e67c454d7a3775b506d4bf3bdb",
+      "bytes": 71894,
+      "scrollY": 0
+    },
+    {
+      "kind": "bottom",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/04-lifecycle-04-filled-bottom.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\04-lifecycle-04-filled-bottom.png",
+      "sha256": "fb10cf38f2944fb3b3c86568a845c69e5c0cba19822922f8d0a1b43ea319c684",
+      "bytes": 63720,
+      "scrollY": 1059
+    },
+    {
+      "kind": "full",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/04-lifecycle-05-positive-after-submit-full.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\04-lifecycle-05-positive-after-submit-full.png",
+      "sha256": "60edf52f60efeab1186fea466df68ec9e168dcdb5bd0dbd503565f46a6bad81e",
+      "bytes": 138806,
+      "scrollY": null
+    },
+    {
+      "kind": "top",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/04-lifecycle-05-positive-after-submit-top.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\04-lifecycle-05-positive-after-submit-top.png",
+      "sha256": "b1cb9f45ae690d3c9c7cc95a9fb30d1d819251e2502abbbc7472eac75f83f0b6",
+      "bytes": 69752,
+      "scrollY": 0
+    },
+    {
+      "kind": "bottom",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/04-lifecycle-05-positive-after-submit-bottom.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\04-lifecycle-05-positive-after-submit-bottom.png",
+      "sha256": "78818409363a06e0d53f32e253123ab34350c097eb9b8475d85680afb81ffe56",
+      "bytes": 63905,
+      "scrollY": 1248
+    },
+    {
+      "kind": "full",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/05-deposit-ledger-01-search-full.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\05-deposit-ledger-01-search-full.png",
+      "sha256": "80144666c5b3e8c1dbe2063d3b7ecad792e790daf37f7cf9efe5013698483ef3",
+      "bytes": 514095,
+      "scrollY": null
+    },
+    {
+      "kind": "top",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/05-deposit-ledger-01-search-top.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\05-deposit-ledger-01-search-top.png",
+      "sha256": "12c6a6e03867ffa60a0d5396b7e386e4661fefdeb31cb2ea28e88d9f91316b08",
+      "bytes": 82892,
+      "scrollY": 0
+    },
+    {
+      "kind": "bottom",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/05-deposit-ledger-01-search-bottom.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\05-deposit-ledger-01-search-bottom.png",
+      "sha256": "ed5a8ce9a67d523cb4e39f5c5c70403967b19e2d4fc42eb727ffe8b54c6b491f",
+      "bytes": 61130,
+      "scrollY": 5512
+    },
+    {
+      "kind": "full",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/05-deposit-ledger-02-ready-full.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\05-deposit-ledger-02-ready-full.png",
+      "sha256": "49b95dc0edef7732f970a2b6b4864b7164698375579eda9e78cabc44adb1fbb4",
+      "bytes": 118425,
+      "scrollY": null
+    },
+    {
+      "kind": "top",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/05-deposit-ledger-02-ready-top.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\05-deposit-ledger-02-ready-top.png",
+      "sha256": "1c04f777dc350f7817ead34f6e6b3ef39f7645a8970cb52d2728df4bacabb9dd",
+      "bytes": 70413,
+      "scrollY": 0
+    },
+    {
+      "kind": "bottom",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/05-deposit-ledger-02-ready-bottom.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\05-deposit-ledger-02-ready-bottom.png",
+      "sha256": "99af40e7f5224467d180c72eeceb4e9e91fc3c9c0418f4ac44bd26e55770730c",
+      "bytes": 63435,
+      "scrollY": 846
+    },
+    {
+      "kind": "full",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/05-deposit-ledger-03-empty-blocked-full.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\05-deposit-ledger-03-empty-blocked-full.png",
+      "sha256": "7b17dac3faeebd173b98680c44cdec7a6720b1ecf50e43640bbca65b51e228be",
+      "bytes": 117429,
+      "scrollY": null
+    },
+    {
+      "kind": "top",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/05-deposit-ledger-03-empty-blocked-top.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\05-deposit-ledger-03-empty-blocked-top.png",
+      "sha256": "6acc25766937a191b0c9853af9575ea92bfe79a3c3324c8fad3f28daec37db51",
+      "bytes": 67174,
+      "scrollY": 0
+    },
+    {
+      "kind": "bottom",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/05-deposit-ledger-03-empty-blocked-bottom.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\05-deposit-ledger-03-empty-blocked-bottom.png",
+      "sha256": "a426fe2101d44af652e6ed8d50a0eec8d772b95e3805d9ec6ed53a01cbe5646a",
+      "bytes": 69310,
+      "scrollY": 836
+    },
+    {
+      "kind": "full",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/05-deposit-ledger-04-filled-full.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\05-deposit-ledger-04-filled-full.png",
+      "sha256": "3ced27d0e479578de6b2e8c82cc36033f65d7bb114841241a89bb8ee3bbd76df",
+      "bytes": 111473,
+      "scrollY": null
+    },
+    {
+      "kind": "top",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/05-deposit-ledger-04-filled-top.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\05-deposit-ledger-04-filled-top.png",
+      "sha256": "237c3734f15b0601c3e4736838f790f57ec71f94e6fd1022a245e5e0b11a7404",
+      "bytes": 71601,
+      "scrollY": 0
+    },
+    {
+      "kind": "bottom",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/05-deposit-ledger-04-filled-bottom.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\05-deposit-ledger-04-filled-bottom.png",
+      "sha256": "9469291733c31fa9220cc9a801fefb608a80bf6e25a4a81069d7acbae837594f",
+      "bytes": 60614,
+      "scrollY": 774
+    },
+    {
+      "kind": "full",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/05-deposit-ledger-05-positive-after-submit-full.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\05-deposit-ledger-05-positive-after-submit-full.png",
+      "sha256": "6ac8d526e1032cc417db3cd33135a8f913f094b7430c0b3cfccdc475c20770ba",
+      "bytes": 103891,
+      "scrollY": null
+    },
+    {
+      "kind": "top",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/05-deposit-ledger-05-positive-after-submit-top.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\05-deposit-ledger-05-positive-after-submit-top.png",
+      "sha256": "5adb958665a44c68a803500d470fadc54506c5d64ea367c8df3c85e8408420a8",
+      "bytes": 66319,
+      "scrollY": 0
+    },
+    {
+      "kind": "bottom",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/05-deposit-ledger-05-positive-after-submit-bottom.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\05-deposit-ledger-05-positive-after-submit-bottom.png",
+      "sha256": "c03436d320ee129b0811dfc392f9c7262d0278d0ac2a8d21edf6169f8d698eb1",
+      "bytes": 61451,
+      "scrollY": 697
+    },
+    {
+      "kind": "full",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/06-payment-ledger-01-search-full.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\06-payment-ledger-01-search-full.png",
+      "sha256": "48e2d66c57bb274894fd1c0d43bf61a594d6af43716d2c46a01d189b3bcc020c",
+      "bytes": 431033,
+      "scrollY": null
+    },
+    {
+      "kind": "top",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/06-payment-ledger-01-search-top.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\06-payment-ledger-01-search-top.png",
+      "sha256": "678d38784afa58c6565210448c0331a434ea92c2c37322c1c36212df8f137db3",
+      "bytes": 88919,
+      "scrollY": 0
+    },
+    {
+      "kind": "bottom",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/06-payment-ledger-01-search-bottom.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\06-payment-ledger-01-search-bottom.png",
+      "sha256": "52dca5ec844611f0478e06be7185fd30354f516556869fae49b0cd938b0637cc",
+      "bytes": 67640,
+      "scrollY": 4369
+    },
+    {
+      "kind": "full",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/06-payment-ledger-02-ready-full.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\06-payment-ledger-02-ready-full.png",
+      "sha256": "6cc7215eaeaa40007639b8901ef71fa88265a2bd70e15daaae0e1d8067a48cf2",
+      "bytes": 142753,
+      "scrollY": null
+    },
+    {
+      "kind": "top",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/06-payment-ledger-02-ready-top.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\06-payment-ledger-02-ready-top.png",
+      "sha256": "a69b79b30115009edfee4d6fce05b8f36451b879ab2c9553f823878b969a78e0",
+      "bytes": 71854,
+      "scrollY": 0
+    },
+    {
+      "kind": "bottom",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/06-payment-ledger-02-ready-bottom.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\06-payment-ledger-02-ready-bottom.png",
+      "sha256": "43f630d174df9c1c2a584569e78830c647b936183f2eb6d0f5b3bf52a16a7d3d",
+      "bytes": 65545,
+      "scrollY": 1243
+    },
+    {
+      "kind": "full",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/06-payment-ledger-03-empty-blocked-full.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\06-payment-ledger-03-empty-blocked-full.png",
+      "sha256": "3014ec612e0cb1e584c53b1f488ef5b17d3b04f398c18412952a4e8b367b536a",
+      "bytes": 142270,
+      "scrollY": null
+    },
+    {
+      "kind": "top",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/06-payment-ledger-03-empty-blocked-top.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\06-payment-ledger-03-empty-blocked-top.png",
+      "sha256": "490981d55fa0c36fe1c6b30ef6a189064f48c642864034d17e352018e4d845fe",
+      "bytes": 68500,
+      "scrollY": 0
+    },
+    {
+      "kind": "bottom",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/06-payment-ledger-03-empty-blocked-bottom.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\06-payment-ledger-03-empty-blocked-bottom.png",
+      "sha256": "b0100b92310ecd8ea19cae3ef06fda1c13a255f7b2e782006667336d4d77c575",
+      "bytes": 71355,
+      "scrollY": 1234
+    },
+    {
+      "kind": "full",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/06-payment-ledger-04-filled-full.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\06-payment-ledger-04-filled-full.png",
+      "sha256": "2b036bb0969137222fc0ea2d0dacdbf1d636e6e9784663900ba89953058d4d12",
+      "bytes": 137578,
+      "scrollY": null
+    },
+    {
+      "kind": "top",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/06-payment-ledger-04-filled-top.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\06-payment-ledger-04-filled-top.png",
+      "sha256": "63e8b2317eff39d6c084f16312e0698e04fa06cb9e1af90e9147d6f391061f21",
+      "bytes": 74725,
+      "scrollY": 0
+    },
+    {
+      "kind": "bottom",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/06-payment-ledger-04-filled-bottom.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\06-payment-ledger-04-filled-bottom.png",
+      "sha256": "38f5c8c554941d74e810442e61b906faa1a74e341f4c92a8c9400ece2ef0a00b",
+      "bytes": 62190,
+      "scrollY": 1154
+    },
+    {
+      "kind": "full",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/06-payment-ledger-05-positive-after-submit-full.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\06-payment-ledger-05-positive-after-submit-full.png",
+      "sha256": "484b036d1894850d43314718f337cb903700504b7ba810df9f7b587ce75a407a",
+      "bytes": 116284,
+      "scrollY": null
+    },
+    {
+      "kind": "top",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/06-payment-ledger-05-positive-after-submit-top.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\06-payment-ledger-05-positive-after-submit-top.png",
+      "sha256": "ebd9726845464683cfc8c7d67ae91bccf9bafa791f0ebecafcc15844a489c911",
+      "bytes": 72366,
+      "scrollY": 0
+    },
+    {
+      "kind": "bottom",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/06-payment-ledger-05-positive-after-submit-bottom.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\06-payment-ledger-05-positive-after-submit-bottom.png",
+      "sha256": "c78c25d5a1bb267210849d97618a63231b37dd8ac849a0560cfa0b16e5db35d8",
+      "bytes": 64400,
+      "scrollY": 768
+    },
+    {
+      "kind": "full",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/07-service-task-01-search-full.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\07-service-task-01-search-full.png",
+      "sha256": "dc4743a62a64acc23d26966b5e8c21efd648d97707712fc2a48f84f40145eae0",
+      "bytes": 174816,
+      "scrollY": null
+    },
+    {
+      "kind": "top",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/07-service-task-01-search-top.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\07-service-task-01-search-top.png",
+      "sha256": "6d9b9e893870de53656589780dfb771593c4c6d09dd9b5045eb062fcab4517df",
+      "bytes": 85680,
+      "scrollY": 0
+    },
+    {
+      "kind": "bottom",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/07-service-task-01-search-bottom.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\07-service-task-01-search-bottom.png",
+      "sha256": "060786abb0d4ad03feeae5c74c0cab256a50b3dccba16df183586ae32ac822d1",
+      "bytes": 70148,
+      "scrollY": 1263
+    },
+    {
+      "kind": "full",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/07-service-task-02-ready-full.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\07-service-task-02-ready-full.png",
+      "sha256": "d9b1df369d24ce59eb467749bbe6aea9628236ee21cd10f54d20d12e2b677cff",
+      "bytes": 147592,
+      "scrollY": null
+    },
+    {
+      "kind": "top",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/07-service-task-02-ready-top.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\07-service-task-02-ready-top.png",
+      "sha256": "6aad28a2c089fb348c9a2f510b3991f06870fb6404e0e2b7f61ee7848500ffda",
+      "bytes": 72800,
+      "scrollY": 0
+    },
+    {
+      "kind": "bottom",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/07-service-task-02-ready-bottom.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\07-service-task-02-ready-bottom.png",
+      "sha256": "bfab91e79e81e9c26752aa9a8bcde9fcb2f7bde53927f108ebfc01f00e242c8f",
+      "bytes": 66494,
+      "scrollY": 1243
+    },
+    {
+      "kind": "full",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/07-service-task-03-empty-blocked-full.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\07-service-task-03-empty-blocked-full.png",
+      "sha256": "78c94d7c7a678dd52417ec8c7f3a4a8482ab46c301a571b8fe6bb51e531e3804",
+      "bytes": 149820,
+      "scrollY": null
+    },
+    {
+      "kind": "top",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/07-service-task-03-empty-blocked-top.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\07-service-task-03-empty-blocked-top.png",
+      "sha256": "ec0ead5879876acd35c4290fac50ca5403ec09073705535e11279b27f4174b20",
+      "bytes": 74104,
+      "scrollY": 0
+    },
+    {
+      "kind": "bottom",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/07-service-task-03-empty-blocked-bottom.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\07-service-task-03-empty-blocked-bottom.png",
+      "sha256": "542efe3e730e9de88e2362daebaa58048e444a33543e85e7024c3e79b0e1c55d",
+      "bytes": 71460,
+      "scrollY": 1234
+    },
+    {
+      "kind": "full",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/07-service-task-04-filled-full.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\07-service-task-04-filled-full.png",
+      "sha256": "b509e1fa9b4bd84ecf57aebf4f5a791be2d220f4087bc1a4b908279f6d427cd3",
+      "bytes": 150370,
+      "scrollY": null
+    },
+    {
+      "kind": "top",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/07-service-task-04-filled-top.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\07-service-task-04-filled-top.png",
+      "sha256": "a86400bc28e2938f7f6b8f95bc80c11f2bdff72294fbf097f3b348f27058ef04",
+      "bytes": 73478,
+      "scrollY": 0
+    },
+    {
+      "kind": "bottom",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/07-service-task-04-filled-bottom.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\07-service-task-04-filled-bottom.png",
+      "sha256": "b483f9c7bcf275a6e099a786270d522ee7f6e6b2404b22b989b1f8f021087093",
+      "bytes": 61468,
+      "scrollY": 1249
+    },
+    {
+      "kind": "full",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/07-service-task-05-positive-after-submit-full.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\07-service-task-05-positive-after-submit-full.png",
+      "sha256": "33aa15f5ba0bfbcd3ac54ab3a100c528e94281a58df3ab4273281a9ece77533b",
+      "bytes": 141406,
+      "scrollY": null
+    },
+    {
+      "kind": "top",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/07-service-task-05-positive-after-submit-top.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\07-service-task-05-positive-after-submit-top.png",
+      "sha256": "9eb524d37c197f9e4047fbd14dc6828834e5986c7fd99b3e0106c99b0bf443ef",
+      "bytes": 72809,
+      "scrollY": 0
+    },
+    {
+      "kind": "bottom",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/07-service-task-05-positive-after-submit-bottom.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\07-service-task-05-positive-after-submit-bottom.png",
+      "sha256": "43991e3523b64fd99dfe394d8d1ce037c24b886d4324de6fdb694c8e0a295c90",
+      "bytes": 63645,
+      "scrollY": 1173
+    },
+    {
+      "kind": "full",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/08-checkout-01-search-full.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\08-checkout-01-search-full.png",
+      "sha256": "9d5bb1089903770036e8124456dd3b760df5b76e3fd8f5ff830398de9774987b",
+      "bytes": 670827,
+      "scrollY": null
+    },
+    {
+      "kind": "top",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/08-checkout-01-search-top.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\08-checkout-01-search-top.png",
+      "sha256": "618291d4d6dc53cd379cbd514b08f0ef6d39a2069adbb3f98c23547da319e8dc",
+      "bytes": 82851,
+      "scrollY": 0
+    },
+    {
+      "kind": "bottom",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/08-checkout-01-search-bottom.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\08-checkout-01-search-bottom.png",
+      "sha256": "666d8d7e60dfc84a8270fbf1e4fbdda9ea49ebb68a049fcb791206d93a351c2f",
+      "bytes": 61195,
+      "scrollY": 8127
+    },
+    {
+      "kind": "full",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/08-checkout-02-ready-full.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\08-checkout-02-ready-full.png",
+      "sha256": "55b097505ba21f2253f9304847d6a865f077a51f66113f7d08d118c12be01c6f",
+      "bytes": 102379,
+      "scrollY": null
+    },
+    {
+      "kind": "top",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/08-checkout-02-ready-top.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\08-checkout-02-ready-top.png",
+      "sha256": "117cbb0f6beab66c7a74f510c98284a6575b8c44239040dcb4ac65aa749b96e6",
+      "bytes": 70617,
+      "scrollY": 0
+    },
+    {
+      "kind": "bottom",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/08-checkout-02-ready-bottom.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\08-checkout-02-ready-bottom.png",
+      "sha256": "c66ce208226a4a8a6a5eba942b4f3a7ce116fe2867cab2991ba57d0d0e50a039",
+      "bytes": 62548,
+      "scrollY": 544
+    },
+    {
+      "kind": "full",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/08-checkout-03-empty-blocked-full.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\08-checkout-03-empty-blocked-full.png",
+      "sha256": "517833d525f0730f259c4e1c2b42dad19440f8db57cc200a77ce203edfb480e0",
+      "bytes": 101065,
+      "scrollY": null
+    },
+    {
+      "kind": "top",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/08-checkout-03-empty-blocked-top.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\08-checkout-03-empty-blocked-top.png",
+      "sha256": "358ac159af29393da9d7addd2a2762ec9c8b9d7bf37424fbb39204bbe8318a52",
+      "bytes": 65750,
+      "scrollY": 0
+    },
+    {
+      "kind": "bottom",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/08-checkout-03-empty-blocked-bottom.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\08-checkout-03-empty-blocked-bottom.png",
+      "sha256": "7155fd740a3dc74b765e92c382d41a8f370679c5ba43c9fec45c27b6c6d88deb",
+      "bytes": 70434,
+      "scrollY": 534
+    },
+    {
+      "kind": "full",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/08-checkout-04-filled-full.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\08-checkout-04-filled-full.png",
+      "sha256": "739b9218ec44bd78f72ff512c08a97e10193c04ea99f1629c4ec270f7112396e",
+      "bytes": 101635,
+      "scrollY": null
+    },
+    {
+      "kind": "top",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/08-checkout-04-filled-top.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\08-checkout-04-filled-top.png",
+      "sha256": "066bc3b01adcde6d2af7783971bb48b9780b459e18ef7b62e4217810918ade70",
+      "bytes": 76029,
+      "scrollY": 0
+    },
+    {
+      "kind": "bottom",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/08-checkout-04-filled-bottom.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\08-checkout-04-filled-bottom.png",
+      "sha256": "1b3646c7a6ccccb5addbad896f1b549957d892b5ad6134090daf8b53922e17d2",
+      "bytes": 66489,
+      "scrollY": 489
+    },
+    {
+      "kind": "full",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/08-checkout-05-positive-after-submit-full.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\08-checkout-05-positive-after-submit-full.png",
+      "sha256": "23cfa486b01c606769224bc0ee5b5cc771574e8022cb8df56ec54642dde0741f",
+      "bytes": 108270,
+      "scrollY": null
+    },
+    {
+      "kind": "top",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/08-checkout-05-positive-after-submit-top.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\08-checkout-05-positive-after-submit-top.png",
+      "sha256": "c37b3f16d65f4b554ed075b28bdcbc21baf27f158ce2d764c4bf88a756b2974d",
+      "bytes": 71414,
+      "scrollY": 0
+    },
+    {
+      "kind": "bottom",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/08-checkout-05-positive-after-submit-bottom.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\08-checkout-05-positive-after-submit-bottom.png",
+      "sha256": "149f1257859cd7f3c7f12b6ccee4a8ba8c6411ec60e81ee4d19907614e0f3e91",
+      "bytes": 66884,
+      "scrollY": 578
+    },
+    {
+      "kind": "full",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/09-checkout-settlement-01-search-full.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\09-checkout-settlement-01-search-full.png",
+      "sha256": "dbe60e67c9504ede7728b31cb53352bc6272c1c772eb16decce27a531db4b848",
+      "bytes": 665631,
+      "scrollY": null
+    },
+    {
+      "kind": "top",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/09-checkout-settlement-01-search-top.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\09-checkout-settlement-01-search-top.png",
+      "sha256": "92a3382669b7c27f9023cf22865147b87e4b9c0f0b6260fb54dab60bdb191bea",
+      "bytes": 83615,
+      "scrollY": 0
+    },
+    {
+      "kind": "bottom",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/09-checkout-settlement-01-search-bottom.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\09-checkout-settlement-01-search-bottom.png",
+      "sha256": "cbc8d9709df7e1a82ddf5a67a16cf9c5068042841c42e80de8a34334df345500",
+      "bytes": 60176,
+      "scrollY": 8056
+    },
+    {
+      "kind": "full",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/09-checkout-settlement-02-ready-full.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\09-checkout-settlement-02-ready-full.png",
+      "sha256": "0f5374ae6d85b9cba0c55802f150673f6b67cd8da20501b5e8f42d50a5002ea8",
+      "bytes": 104808,
+      "scrollY": null
+    },
+    {
+      "kind": "top",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/09-checkout-settlement-02-ready-top.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\09-checkout-settlement-02-ready-top.png",
+      "sha256": "06f844f2c782aeb3fb3bbf8776dda415c3c0f57f5917dd48c5826b879f82029b",
+      "bytes": 72667,
+      "scrollY": 0
+    },
+    {
+      "kind": "bottom",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/09-checkout-settlement-02-ready-bottom.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\09-checkout-settlement-02-ready-bottom.png",
+      "sha256": "344ff1ff11605982a506a197ea351bc6272cb005fc3491e470583eba00f6663b",
+      "bytes": 64460,
+      "scrollY": 544
+    },
+    {
+      "kind": "full",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/09-checkout-settlement-03-empty-blocked-full.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\09-checkout-settlement-03-empty-blocked-full.png",
+      "sha256": "18a30097ad80ea4318b5c2b751921e05d6270c6bf5ce98f107e55517a64ce647",
+      "bytes": 103378,
+      "scrollY": null
+    },
+    {
+      "kind": "top",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/09-checkout-settlement-03-empty-blocked-top.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\09-checkout-settlement-03-empty-blocked-top.png",
+      "sha256": "9e20ca4fb0b7cc4b05d8e36ad1b48c8eac956285adee03f18d0ed59d9c6b105b",
+      "bytes": 68172,
+      "scrollY": 0
+    },
+    {
+      "kind": "bottom",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/09-checkout-settlement-03-empty-blocked-bottom.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\09-checkout-settlement-03-empty-blocked-bottom.png",
+      "sha256": "f4945c9f764ffe8dc3fa3e3aa7bf9654b7d9638340ef5f4c805943a4a323341a",
+      "bytes": 70868,
+      "scrollY": 534
+    },
+    {
+      "kind": "full",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/09-checkout-settlement-04-filled-full.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\09-checkout-settlement-04-filled-full.png",
+      "sha256": "544c9535a57448d6a16cb94fcd4e9fce7bbba117d1102a6d13e3c8a6f785ea31",
+      "bytes": 100393,
+      "scrollY": null
+    },
+    {
+      "kind": "top",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/09-checkout-settlement-04-filled-top.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\09-checkout-settlement-04-filled-top.png",
+      "sha256": "2d7d61bfd403ac0bde3c5eb463d6d9837f29361854ec67c85dcb539cbfae1314",
+      "bytes": 74182,
+      "scrollY": 0
+    },
+    {
+      "kind": "bottom",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/09-checkout-settlement-04-filled-bottom.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\09-checkout-settlement-04-filled-bottom.png",
+      "sha256": "5ddecb4f4916a6ac4ca45efd0dc9b93921990421bbe7d56a3dc8e6128a01cf4d",
+      "bytes": 64676,
+      "scrollY": 489
+    },
+    {
+      "kind": "full",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/09-checkout-settlement-05-positive-after-submit-full.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\09-checkout-settlement-05-positive-after-submit-full.png",
+      "sha256": "ad44bb786501d71e888e486fde49be433760ecd5d058fcedfecee4239770bd7f",
+      "bytes": 134741,
+      "scrollY": null
+    },
+    {
+      "kind": "top",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/09-checkout-settlement-05-positive-after-submit-top.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\09-checkout-settlement-05-positive-after-submit-top.png",
+      "sha256": "9f5c277100c623e7c07537b4774d63150ecf92e5b4625108d1ed2ffd8c5011ed",
+      "bytes": 72187,
+      "scrollY": 0
+    },
+    {
+      "kind": "bottom",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/09-checkout-settlement-05-positive-after-submit-bottom.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\09-checkout-settlement-05-positive-after-submit-bottom.png",
+      "sha256": "4808f28939964a969f1705c0d777e8957248986e13f3cf9dcd613b718543b6f1",
+      "bytes": 67529,
+      "scrollY": 1070
+    },
+    {
+      "kind": "full",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/10-period-analytics-01-search-full.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\10-period-analytics-01-search-full.png",
+      "sha256": "2412975839453758873cc09a512db9eb6244879fb4039899b46d9d0b369d4577",
+      "bytes": 283210,
+      "scrollY": null
+    },
+    {
+      "kind": "top",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/10-period-analytics-01-search-top.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\10-period-analytics-01-search-top.png",
+      "sha256": "af8ae24fde386444cee2df541b66a890448c618804a251bd6e7435498661d7f4",
+      "bytes": 83421,
+      "scrollY": 0
+    },
+    {
+      "kind": "bottom",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/10-period-analytics-01-search-bottom.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\10-period-analytics-01-search-bottom.png",
+      "sha256": "d6a433376bc0097d3049042d34b0ee84cc0f8782f663476fc11cacf74b13e715",
+      "bytes": 66594,
+      "scrollY": 2605
+    },
+    {
+      "kind": "full",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/10-period-analytics-02-ready-full.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\10-period-analytics-02-ready-full.png",
+      "sha256": "b26662506b3c97a8d8cdb9b7b80d765b52964db632bf106d8a79738cb4678882",
+      "bytes": 112408,
+      "scrollY": null
+    },
+    {
+      "kind": "top",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/10-period-analytics-02-ready-top.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\10-period-analytics-02-ready-top.png",
+      "sha256": "84c3babe5ae5218878c4e388bde99bea1719a2a8a588a91de6eef27e20a6b075",
+      "bytes": 69849,
+      "scrollY": 0
+    },
+    {
+      "kind": "bottom",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/10-period-analytics-02-ready-bottom.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\10-period-analytics-02-ready-bottom.png",
+      "sha256": "99453ff5693cfc88c8a669a2258c68efd003082c9c0713ca433fe45d90d2845c",
+      "bytes": 62747,
+      "scrollY": 751
+    },
+    {
+      "kind": "full",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/10-period-analytics-03-empty-blocked-full.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\10-period-analytics-03-empty-blocked-full.png",
+      "sha256": "87a72a5ba0cc34f478dcb9597b8cf397d118571abf0f62815c3612a2a3b7ab84",
+      "bytes": 110713,
+      "scrollY": null
+    },
+    {
+      "kind": "top",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/10-period-analytics-03-empty-blocked-top.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\10-period-analytics-03-empty-blocked-top.png",
+      "sha256": "692c3f1900434d3f4bee87aeedf33da52d096148df3590504cfba953dc803a27",
+      "bytes": 65425,
+      "scrollY": 0
+    },
+    {
+      "kind": "bottom",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/10-period-analytics-03-empty-blocked-bottom.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\10-period-analytics-03-empty-blocked-bottom.png",
+      "sha256": "80f4bdef6d094a1c4cbb307de34279f15e0ebc8ec0f44cedccdddb9828019e48",
+      "bytes": 68743,
+      "scrollY": 741
+    },
+    {
+      "kind": "full",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/10-period-analytics-04-filled-full.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\10-period-analytics-04-filled-full.png",
+      "sha256": "58c3e2da1e2e0c2a5ecd9f0b08818e800271ff4fc339fcebd0b06ad1ce03dc4a",
+      "bytes": 107394,
+      "scrollY": null
+    },
+    {
+      "kind": "top",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/10-period-analytics-04-filled-top.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\10-period-analytics-04-filled-top.png",
+      "sha256": "5f43123d418c765cb95988544006c8c1866621f233855772da36ea33e526d9f4",
+      "bytes": 71950,
+      "scrollY": 0
+    },
+    {
+      "kind": "bottom",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/10-period-analytics-04-filled-bottom.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\10-period-analytics-04-filled-bottom.png",
+      "sha256": "a0e03b1617ae2b3840abd6727baf166e07cc348e98dfdd2019f4ce316d81482e",
+      "bytes": 61167,
+      "scrollY": 679
+    },
+    {
+      "kind": "full",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/10-period-analytics-05-positive-after-submit-full.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\10-period-analytics-05-positive-after-submit-full.png",
+      "sha256": "8a434e401a9270b9dc95125ba8cc880be2fa9a243c42cb8bd18da73784cd996b",
+      "bytes": 90989,
+      "scrollY": null
+    },
+    {
+      "kind": "top",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/10-period-analytics-05-positive-after-submit-top.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\10-period-analytics-05-positive-after-submit-top.png",
+      "sha256": "6b7aa39106fcab0d4af7b7c00a1f4629641c34fbb2a940b7ee30b9ff3ed4bbad",
+      "bytes": 71298,
+      "scrollY": 0
+    },
+    {
+      "kind": "bottom",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/system-wide-real-browser-audit-20260605-start-context-fixed/screenshots/10-period-analytics-05-positive-after-submit-bottom.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\frontend-experience-system-20260605\\system-wide-real-browser-audit-20260605-start-context-fixed\\screenshots\\10-period-analytics-05-positive-after-submit-bottom.png",
+      "sha256": "f92e4d99fddfe8a3b94b5484b4fba923874f7bbf79815ad77b1ac242c520afe5",
+      "bytes": 64408,
+      "scrollY": 321
+    }
+  ]
+}

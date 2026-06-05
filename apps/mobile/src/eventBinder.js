@@ -3,13 +3,12 @@ import { bindFeedbackEvents } from "./feedbackEventBinder.js";
 import { runLearningSearch, setCoachStage, setLearningDomain, setLearningType, updateLearningQuery } from "./coachController.js";
 import { collectDraftingValuesOnInput, saveCurrentDraft, setSegmentedOperationField, submitCurrentCard } from "./operationController.js";
 import { handleOperationRecovery, retryApi, startCompletedStepCorrection } from "./operationRecoveryController.js";
-import { clearQueueFilterState, setQueueFilter, setQueueSort, setWorkFilter } from "./queueController.js";
+import { clearQueueFilterState, setQueueFilter, setQueueSort, setTodayFilter, setWorkFilter, setWorkFilterAndOpen } from "./queueController.js";
 import { onboard, openWorkspace, openWorkItem, runSearch, selectCard, setLang, setView, startOperationsWorkspaceCommand, updateSearchQuery } from "./navigationController.js";
 import { isPcSurfaceView } from "./surfaceRegistry.js";
 
-let activeEventContext = null;
-let delegatedClickBound = false;
-let bindPass = 0;
+let activeEventContext = null, delegatedClickBound = false, bindPass = 0;
+const delegatedClickSelector = "button[data-start-operations-workspace],button[data-operation-field-button],button[data-work-item-id],button[data-workspace],button[data-card-index],button[data-submit-card],button[data-correction-work-item],button[data-action-state],button[data-search-query],button[data-today-filter],button[data-view],a[data-view],[role=\"button\"][data-view]";
 
 export function bindEvents(ctx) {
   activeEventContext = ctx;
@@ -43,27 +42,16 @@ function bindDelegatedOperationActions() {
   delegatedClickBound = true;
   document.addEventListener("click", (event) => {
     const target = event.target?.closest ? event.target : event.target?.parentElement;
-    const node = target?.closest?.(`
-      button[data-start-operations-workspace],
-      button[data-operation-field-button],
-      button[data-work-item-id],
-      button[data-workspace],
-      button[data-card-index],
-      button[data-submit-card],
-      button[data-correction-work-item],
-      button[data-action-state],
-      button[data-search-query],
-      button[data-view],
-      a[data-view],
-      [role="button"][data-view]
-    `);
+    const node = target?.closest?.(delegatedClickSelector);
     if (!node || node.disabled || node.getAttribute("aria-disabled") === "true") return;
     const ctx = activeEventContext;
     if (!ctx) return;
     event.preventDefault();
     if (node.dataset.operationFieldButton !== undefined) return setSegmentedOperationField(node, ctx);
     if (node.dataset.startOperationsWorkspace !== undefined) {
-      void startOperationsWorkspaceCommand(ctx, node.dataset.startOperationsWorkspace, node.dataset.firstCardId || "");
+      void startOperationsWorkspaceCommand(ctx, node.dataset.startOperationsWorkspace, node.dataset.firstCardId || "", {
+        anchorQuery: node.dataset.anchorQuery || ctx.state.query || ""
+      });
       return;
     }
     if (node.dataset.correctionWorkItem !== undefined) {
@@ -98,6 +86,14 @@ function bindDelegatedOperationActions() {
       void runSearch(ctx, node.dataset.searchQuery || "");
       return;
     }
+    if (node.dataset.todayFilter !== undefined) {
+      setTodayFilter(node.dataset.todayFilter, ctx);
+      return;
+    }
+    if (node.dataset.workFilter && node.dataset.view === "workbench") {
+      setWorkFilterAndOpen(node.dataset.workFilter, ctx);
+      return;
+    }
     if (node.dataset.view) {
       setView(node.dataset.view, ctx);
     }
@@ -114,7 +110,10 @@ function bindLearning(ctx) {
 
 function bindQueue(ctx) {
   document.querySelectorAll("[data-filter-field]").forEach((node) => node.addEventListener("click", () => setQueueFilter(node.dataset.filterField, node.dataset.filterValue, ctx)));
-  document.querySelectorAll("[data-work-filter]").forEach((node) => node.addEventListener("click", () => setWorkFilter(node.dataset.workFilter, ctx)));
+  document.querySelectorAll("[data-work-filter]").forEach((node) => {
+    if (node.dataset.view === "workbench") return;
+    node.addEventListener("click", () => setWorkFilter(node.dataset.workFilter, ctx));
+  });
   document.querySelector("#clearQueueFilters")?.addEventListener("click", () => clearQueueFilterState(ctx));
   document.querySelector("#sort")?.addEventListener("change", (event) => setQueueSort(event.target.value, ctx));
 }

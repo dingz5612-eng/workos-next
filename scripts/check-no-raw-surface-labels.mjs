@@ -57,8 +57,8 @@ for (const token of ["deviceId", "trustState", "surface"]) {
 }
 
 for (const required of [
-  'ctx.tr("workosSearch")',
-  '"searchLearning"',
+  'ctx.tr("searchPlaceholder")',
+  'tr("personalBusinessLibrary")',
   'ctx.tr("learningCenter")',
   'ctx.tr("evidenceUpload")',
   'ctx.tr("submissionQueue")',

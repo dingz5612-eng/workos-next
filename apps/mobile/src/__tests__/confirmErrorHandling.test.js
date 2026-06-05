@@ -34,9 +34,9 @@ describe("confirm HTTP error handling", () => {
   });
 
   it.each([
-    [400, "confirmBadRequest"],
-    [409, "confirmDuplicate"],
-    [422, "confirmBusinessBlocked"]
+    [400, "operations.error.safe.400"],
+    [409, "operations.error.safe.409"],
+    [422, "operations.error.safe.422"]
   ])("keeps session for %s confirm blockers", (status, messageKey) => {
     const context = ctx();
     vi.stubGlobal("localStorage", {
@@ -49,7 +49,7 @@ describe("confirm HTTP error handling", () => {
     expect(handled).toBe(false);
     expect(context.state.currentActor).not.toBeNull();
     expect(context.state.view).toBe("workspace");
-    expect(context.state.operationMessage).toBe(`${messageKey} stable_reason`);
+    expect(context.state.operationMessage).toBe(messageKey);
     vi.unstubAllGlobals();
   });
 
@@ -75,9 +75,9 @@ describe("confirm HTTP error handling", () => {
   it("maps frontend copy keys by confirm status", () => {
     const context = ctx();
 
-    expect(confirmErrorMessage({ status: 403 }, context)).toBe("confirmForbidden");
-    expect(confirmErrorMessage({ status: 409 }, context)).toBe("confirmDuplicate");
-    expect(confirmErrorMessage({ status: 422 }, context)).toBe("confirmBusinessBlocked");
+    expect(confirmErrorMessage({ status: 403 }, context)).toBe("operations.error.safe.403");
+    expect(confirmErrorMessage({ status: 409 }, context)).toBe("operations.error.safe.409");
+    expect(confirmErrorMessage({ status: 422 }, context)).toBe("operations.error.safe.422");
   });
 
   it("uses committed projection pending copy instead of submit failed", () => {
@@ -99,6 +99,6 @@ describe("confirm HTTP error handling", () => {
       projectionStatus: "not_started",
       reason: "persisted_work_item_required",
       message: "需要先生成真实办理任务"
-    }, context)).toBe("需要先生成真实办理任务");
+    }, context)).toBe("operations.error.safe.422");
   });
 });

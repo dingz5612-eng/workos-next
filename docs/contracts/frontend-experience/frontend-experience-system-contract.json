@@ -9,11 +9,14 @@
       "id": "shared-components",
       "description": "Reusable named components own common page shells, WorkItem cards, operation rails, readonly records, feedback, evidence, queues, and diagnostics.",
       "contractRefs": [
+        "apps/mobile/src/appShell.js",
         "apps/mobile/src/views/experienceComponents.js",
         "apps/mobile/src/views/workspaceView.js",
         "apps/mobile/src/views/operationPanelView.js"
       ],
       "requiredComponents": [
+        "BusinessSummaryHeader",
+        "BusinessTaskBody",
         "WorkItemCard",
         "OperationStepRail",
         "OperationCardShell",
@@ -33,12 +36,65 @@
       ],
       "forbidden": [
         "page-private legacy shell",
+        "product brand or actor role occupying the ordinary mobile topbar",
+        "duplicated generic page title inside ordinary mobile content",
+        "naked business summary title or status text outside BusinessSummaryHeader",
         "intent-card operation wrapper",
         "copied layout logic",
         "completed-operation-record",
         "completed-record-detail",
         "completed-step-list",
         "data-view-completed-record"
+      ]
+    },
+    {
+      "id": "field-context-kernel",
+      "description": "A shared pure frontend kernel owns operation field identity, multilingual aliases, task overview field ordering, option display values, cross-step derived previews, and operations-start-context values carried by the current WorkItem payload. Pages and controllers may consume it but must not copy field alias maps or infer field identity locally.",
+      "contractRefs": [
+        "apps/mobile/src/operationFieldKernel.js",
+        "apps/mobile/src/fieldSourceRenderer.js",
+        "apps/mobile/src/systemContextContract.js",
+        "apps/mobile/src/views/experienceComponents.js",
+        "apps/mobile/src/views/workspaceView.js",
+        "apps/mobile/src/operationController.js"
+      ],
+      "requiredExports": [
+        "operationFieldId",
+        "canonicalTaskFieldId",
+        "taskValueByFieldId",
+        "taskDisplayLabel",
+        "taskDisplayValue",
+        "preferredTaskFieldIds",
+        "bedLayoutPreviewValue",
+        "fieldSourceState",
+        "operationFieldState",
+        "operationFieldRequired",
+        "operationFieldVisible",
+        "currentMissingRequiredLabels",
+        "currentMissingContextLabels"
+      ],
+      "contextSources": [
+        "latest-runtime-event-or-projection",
+        "operations-start-context",
+        "completed-record-snapshot",
+        "non-conflicting-draft-fallback"
+      ],
+      "machineChecks": [
+        "scripts/check-dormitory-field-context-contracts.mjs"
+      ],
+      "forbidden": [
+        "controller importing field identity from a page view",
+        "page-private taskValueAliases",
+        "page-private canonicalTaskFieldId",
+        "page-private taskDisplayValue",
+        "page-private preferredTaskFieldIds",
+        "page-private bedLayoutPreviewValue",
+        "page-private operationFieldState",
+        "page-private carriedForwardValue",
+        "page-private currentMissingRequiredLabels",
+        "page-private currentMissingContextLabels",
+        "page-private operationFieldRequired",
+        "page-private operationFieldVisible"
       ]
     },
     {
@@ -167,9 +223,49 @@
     "visualTreatment": "subtle background tint, thin semantic top bar, numbered badge, and clean current-step ring instead of saturated full-button color blocks",
     "rule": "Step state color is a semantic language, not decoration. Completed, ready, append-only correction, in-progress, not-started, and blocked states must remain visually distinct across new, readonly, and correction step pages without using harsh saturated blocks. Terminal completed records remain completed as the primary state even when a correction marker exists; only the active append-only correction WorkItem displays correction as the primary state. Append-only correction WorkItems must not display as ordinary ready blue."
   },
+  "mobileShellTitle": {
+    "source": "apps/mobile/src/appShell.js",
+    "rule": "The ordinary mobile topbar owns the current page title, runtime status, and language selector. Product brand and actor role must not occupy the first screen, and page content must not repeat generic page titles.",
+    "requiredMarkers": ["data-shell=\"page-title\"", "data-shell-page"]
+  },
+  "contentContainers": {
+    "rule": "Ordinary mobile content must render through shared overview containers, control containers, result groups, repeated item cards, or BusinessSummaryHeader. Filter state, empty state, group headings, operation messages, completed-record groups, business titles, status labels, and next-action copy must not appear as naked text on the page background.",
+    "requiredClasses": ["today-focus-overview", "queue-filter-state", "search-section", "completed-work-section", "operation-message", "business-summary-header"]
+  },
+  "premiumSurfaceVisualLanguage": {
+    "rule": "Mobile business surfaces must use a fresh premium visual system: bright teal-blue brand actions with a lightweight primary-action gradient, soft white/neutral surfaces, subtle teal-tinted backgrounds, thin neutral borders, contained section headings, and lightweight status labels. Use bright orange only for attention states such as due soon, waiting, or syncing; use red only for blockers, risk, or destructive states. Static text such as section headings, scenario titles, field values, status explanations, and next-action copy must not mimic buttons; only real clickable controls use filled/gradient button styling or elevated blocks. Business summary ready states and ordinary metric chips may use small brand accents but must not use saturated blue/green blocks or bright green primary buttons; semantic color is reserved for real exception states and the OperationStepRail state language.",
+    "requiredTokens": ["--brand", "--brand-soft", "--brand-line", "--action", "--action-gradient", "--action-shadow", "--attention", "--attention-soft", "--danger", "--danger-soft", "--surface-soft", "--line", "--ink", "business-summary-state", "business-summary-actions"],
+    "forbiddenOnBusinessSurfaces": ["bright-green primary action", "ready blue business summary pill", "naked section heading", "static text styled as a button", "saturated full-button status block"]
+  },
+  "premiumTypographySystem": {
+    "source": "apps/mobile/src/styles/base.css",
+    "rule": "Mobile and PC business surfaces must use a clear Chinese-first system UI font stack with Microsoft YaHei UI / Microsoft YaHei preferred on Windows and antialiased rendering. Titles, buttons, and important labels may use only light medium-weight tokens, while hierarchy comes from spacing, color, and containers rather than heavy bold text. User-facing helper text and labels must not be too small; ordinary mobile copy should stay readable without forcing users to zoom.",
+    "requiredTokens": ["--font-sans", "--font-title", "--font-strong", "--font-ui", "--font-button", "text-rendering: optimizeLegibility", "-webkit-font-smoothing: antialiased"],
+    "forbiddenOnBusinessSurfaces": ["Inter-first Chinese UI stack", "DengXian-first mobile stack", "page-local font-weight: 700 or above", "10px or 11px ordinary helper text", "heavy bold status labels"]
+  },
+  "businessSummaryCardHierarchy": {
+    "sourceComponent": "BusinessSummaryHeader",
+    "rule": "Any user-facing business item card across Today, Work items, Search, Me, and learning/support surfaces must render scenario title and status inside BusinessSummaryHeader, render room/bed/resident/phone/status anchors as structured non-clickable fields, render completed core fields and current-step core fields through BusinessTaskBody/BusinessTaskOverview, and place the primary action in a separate bottom action container. Business cards may specialize fields by scenario, but not the layout hierarchy. Risk, owner, due date, evidence diagnostics, and technical admission details are not default card content; show them only when they explain a blocker or inside diagnostic details.",
+    "requiredMarkers": ["data-surface=\"business-summary-header\"", "data-surface=\"business-task-body\"", "business-summary-heading", "business-summary-anchor-panel", "business-summary-title", "business-task-work-row", "business-summary-actions"]
+  },
+  "businessAnchorDisplay": {
+    "source": "apps/mobile/src/businessAnchorKernel.js",
+    "rule": "The Business Anchor Kernel keeps the full anchor text for search, while user-facing cards render structured fields for room, bed, resident, phone, period, and current business status.",
+    "requiredMarkers": ["businessAnchorFieldsHtml", "data-surface=\"business-anchor-fields\""]
+  },
+  "responsibilityBoundaries": {
+    "rule": "Shared frontend and backend responsibilities must be owned by named kernels and runtime collaborators. Operation controllers consume operationCaseContext and operationValidation; Canonical Operations Confirm delegates next-step branch selection to OperationBranchResolver. Page-private case context, field validation, branch dispatch, or compatibility write fallback is forbidden.",
+    "requiredFiles": [
+      "apps/mobile/src/operationCaseContext.js",
+      "apps/mobile/src/operationValidation.js",
+      "services/core-api/WorkOS.Api/Runtime/OperationBranchResolver.cs"
+    ],
+    "machineChecks": ["scripts/check-responsibility-boundaries.mjs"]
+  },
   "repairRule": "When a page is found outside the current architecture, rewrite it onto the Frontend Experience System and delete the obsolete implementation in the same impact scope.",
   "machineChecks": [
     "scripts/check-frontend-experience-system.mjs",
+    "scripts/check-responsibility-boundaries.mjs",
     "scripts/check-experience-contract.mjs",
     "scripts/check-surface-contract.mjs",
     "scripts/surface/check-operational-copy-matrix.mjs",

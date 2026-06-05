@@ -10,18 +10,41 @@ export const roleDefaultHome = {
 
 export const mobileBottomNavigation = ["home", "workbench", "search", "me"];
 
+export const personalLibraryViews = ["businessRecords", "completedRecords", "evidenceLibrary"];
+
+export const mobileSupportViews = [
+  "learning",
+  "notes",
+  "reminders",
+  "permissions",
+  ...personalLibraryViews,
+  "uploadQueue",
+  "submitQueue",
+  "drafts",
+  "failedSync",
+  "recentSubmissions",
+  "recentTraces",
+  "deviceTrust",
+  "feedback",
+  "result",
+  "confirmPage",
+  "permissionDiagnostic"
+];
+
+const mobileWorkPlaneViews = ["home", "workbench", "search", "me", "workspace", "operationPanel", ...mobileSupportViews];
+
 export const roleNavigation = {
-  frontdesk: ["home", "workbench", "search", "me", "workspace", "operationPanel"],
-  operator: ["home", "workbench", "search", "me", "workspace", "operationPanel"],
-  finance: ["financeControl", "financeReconciliation", "workbench", "search", "me", "workspace", "operationPanel"],
-  housekeeping: ["workbench", "home", "search", "me", "workspace", "operationPanel"],
-  manager: ["managerControlTower", "pcManager", "workbench", "search", "me", "workspace", "operationPanel"],
-  admin: ["governanceCenter", "pcGovernance", "managerControlTower", "pcManager", "workbench", "search", "me", "workspace", "operationPanel"],
-  releaseOwner: ["releaseFlightDeck", "releaseControl", "governanceCenter", "pcGovernance", "workbench", "me", "workspace", "operationPanel"]
+  frontdesk: mobileWorkPlaneViews,
+  operator: mobileWorkPlaneViews,
+  finance: ["financeControl", "financeReconciliation", ...mobileWorkPlaneViews],
+  housekeeping: mobileWorkPlaneViews,
+  manager: ["managerControlTower", "pcManager", ...mobileWorkPlaneViews],
+  admin: ["governanceCenter", "pcGovernance", "managerControlTower", "pcManager", ...mobileWorkPlaneViews],
+  releaseOwner: ["releaseFlightDeck", "releaseControl", "governanceCenter", "pcGovernance", ...mobileWorkPlaneViews]
 };
 
 export const deviceSurfaceMatrix = {
-  mobile: ["home", "workbench", "search", "me", "workspace", "operationPanel"],
+  mobile: mobileWorkPlaneViews,
   pc: ["financeControl", "managerControlTower", "governanceCenter", "workbench", "workspace", "operationPanel"],
   release: ["releaseFlightDeck", "governanceCenter", "releaseControl"]
 };

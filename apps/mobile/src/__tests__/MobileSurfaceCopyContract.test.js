@@ -57,7 +57,7 @@ describe("HOTFIX-SURFACE-UX-01 mobile visible copy contract", () => {
     vi.unstubAllGlobals();
   });
 
-  it("localizes the actor label instead of leaking a Chinese display name in non-Chinese shells", () => {
+  it("keeps actor labels out of the mobile topbar and localizes them in Me", () => {
     stubBrowser();
     const ru = visibleText(render("home", {
       lang: "ru-RU",
@@ -67,10 +67,13 @@ describe("HOTFIX-SURFACE-UX-01 mobile visible copy contract", () => {
       lang: "ky-KG",
       currentActor: { role: "frontdesk", displayName: "住宿试点前台" }
     }));
+    const ruMe = visibleText(render("me", {
+      lang: "ru-RU",
+      currentActor: { role: "frontdesk", displayName: "住宿试点前台" }
+    }));
 
-    expect(ru).toContain("Сотрудник стойки проживания");
     expect(ru).not.toContain("住宿试点前台");
-    expect(ky).toContain("Жатакана кабыл алуу кызматкери");
+    expect(ruMe).toContain("Сотрудник стойки проживания");
     expect(ky).not.toContain("住宿试点前台");
     vi.unstubAllGlobals();
   });

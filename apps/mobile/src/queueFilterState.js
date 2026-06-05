@@ -1,11 +1,13 @@
 export const defaultQueueFilters = {
   domain: "all",
-  badge: "mine",
+  badge: "all",
   status: "all",
   ownerRole: "all",
   evidenceState: "all",
   transferable: "all",
-  riskLevel: "all"
+  riskLevel: "all",
+  due: "all",
+  scenario: "all"
 };
 
 export function queueFiltersFromState(state = {}) {
@@ -28,6 +30,20 @@ export function writeQueueFilter(state, field, value) {
   return state.queueFilters;
 }
 
+export function writeQueueFilters(state, patch = {}) {
+  const filters = queueFiltersFromState(state);
+  const next = { ...filters };
+  for (const [field, value] of Object.entries(patch)) {
+    const normalizedField = fieldMap[field] || field;
+    if (!Object.prototype.hasOwnProperty.call(defaultQueueFilters, normalizedField)) continue;
+    next[normalizedField] = value || defaultQueueFilters[normalizedField];
+  }
+  state.queueFilters = next;
+  state.queueDomain = state.queueFilters.domain;
+  state.queueBadge = state.queueFilters.badge;
+  return state.queueFilters;
+}
+
 export function clearQueueFilters(state) {
   state.queueFilters = { ...defaultQueueFilters };
   state.queueDomain = defaultQueueFilters.domain;
@@ -35,15 +51,34 @@ export function clearQueueFilters(state) {
   return state.queueFilters;
 }
 
-export function workFilterToQueueFilter(id) {
+export function workFilterToQueueFilters(id) {
   return {
-    accommodation: ["domain", "stay"],
-    "can-do": ["status", "ready"],
-    blocked: ["status", "blocked"],
-    "waiting-others": ["badge", "waiting"],
-    "need-evidence": ["evidenceState", "missing"],
-    transferable: ["transferable", "true"]
-  }[id] || ["badge", id];
+    "all-work": { ...defaultQueueFilters },
+    mine: { badge: "mine" },
+    "can-do": { badge: "mine", status: "ready" },
+    blocked: { status: "blocked" },
+    "need-evidence": { evidenceState: "missing" },
+    "waiting-others": { ownerRole: "not-mine" },
+    "waiting-finance": { ownerRole: "finance" },
+    "due-risk": { due: "risk" },
+    "just-submitted": { status: "committed_projection_pending" },
+    transferable: { transferable: "true" },
+    accommodation: { domain: "stay" },
+    "scenario-resource": { scenario: "resource" },
+    "scenario-checkin": { scenario: "checkin" },
+    "scenario-deposit": { scenario: "deposit" },
+    "scenario-payment": { scenario: "payment" },
+    "scenario-service": { scenario: "service" },
+    "scenario-checkout": { scenario: "checkout" },
+    "scenario-expense": { scenario: "expense" },
+    "scenario-period": { scenario: "period" }
+  }[id] || { badge: id };
+}
+
+export function workFilterToQueueFilter(id) {
+  const filters = workFilterToQueueFilters(id);
+  const [field, value] = Object.entries(filters)[0] || ["badge", id];
+  return [field, value];
 }
 
 const fieldMap = {

@@ -568,6 +568,8 @@ public interface OperationsReadStore
 {
     OperationsCommandSubmission? FindCommandSubmission(string tenantId, string scope, string idempotencyKey);
 
+    IReadOnlyList<OperationsSearchRecord> SearchOperations(string tenantId, string query, int take = 50);
+
     FactTraceV1? GetFactTrace(string tenantId, string submissionId);
 
     FactTraceV1? GetFactTraceBySubmission(string submissionId);
@@ -661,6 +663,32 @@ public sealed class InMemoryOperationsStore : OperationsWriteStore, OperationsRe
             ? submission
             : null;
 
+    public IReadOnlyList<OperationsSearchRecord> SearchOperations(string tenantId, string query, int take = 50)
+    {
+        var normalized = (query ?? string.Empty).Trim();
+        if (string.IsNullOrWhiteSpace(tenantId) || string.IsNullOrWhiteSpace(normalized))
+        {
+            return Array.Empty<OperationsSearchRecord>();
+        }
+
+        return DomainEvents
+            .Where(item => item.TenantId.Equals(tenantId, StringComparison.OrdinalIgnoreCase))
+            .Where(item => SearchText(item).Contains(normalized, StringComparison.OrdinalIgnoreCase))
+            .OrderByDescending(item => item.OccurredAtUtc)
+            .ThenBy(item => item.EventId, StringComparer.OrdinalIgnoreCase)
+            .Take(Math.Max(1, Math.Min(take, 100)))
+            .Select(item => new OperationsSearchRecord(
+                item.TenantId,
+                item.EventId,
+                item.CaseId,
+                item.WorkItemId,
+                item.SubmissionId,
+                item.EventType,
+                item.Payload,
+                item.OccurredAtUtc))
+            .ToArray();
+    }
+
     public FactTraceV1? GetFactTrace(string tenantId, string submissionId)
     {
         var submission = submissions.Values.FirstOrDefault(item =>
@@ -721,6 +749,34 @@ public sealed class InMemoryOperationsStore : OperationsWriteStore, OperationsRe
 
     private static string? ReasonFrom(OperationsStableResponse response) =>
         response.Body.TryGetValue("reason", out var reason) ? reason?.ToString() : null;
+
+    private static string SearchText(OperationsDomainEvent item) =>
+        string.Join(" ", item.EventId, item.CaseId, item.WorkItemId, item.SubmissionId, item.EventType, SafeText(item.Payload));
+
+    private static string SafeText(object? value)
+    {
+        if (value is null)
+        {
+            return string.Empty;
+        }
+
+        if (value is string or int or long or decimal or double or bool)
+        {
+            return Convert.ToString(value) ?? string.Empty;
+        }
+
+        if (value is System.Collections.IDictionary dictionary)
+        {
+            return string.Join(" ", dictionary.Values.Cast<object?>().Select(SafeText));
+        }
+
+        if (value is System.Collections.IEnumerable enumerable && value is not string)
+        {
+            return string.Join(" ", enumerable.Cast<object?>().Select(SafeText));
+        }
+
+        return value.ToString() ?? string.Empty;
+    }
 }
 
 public sealed class PostgresOperationsStore : OperationsWriteStore, OperationsReadStore
@@ -1015,10 +1071,100 @@ public sealed class PostgresOperationsStore : OperationsWriteStore, OperationsRe
         }
     }
 
+    public IReadOnlyList<OperationsSearchRecord> SearchOperations(string tenantId, string query, int take = 50)
+    {
+        var normalized = (query ?? string.Empty).Trim();
+        if (string.IsNullOrWhiteSpace(tenantId) || string.IsNullOrWhiteSpace(normalized))
+        {
+            return Array.Empty<OperationsSearchRecord>();
+        }
+
+        try
+        {
+            using var connection = connections.Open();
+            using var command = connection.CreateCommand();
+            command.CommandText = """
+                select event_id, tenant_id, case_id, work_item_id, submission_id, event_type, payload, occurred_at_utc
+                from operations_domain_events
+                where tenant_id = @tenantId
+                order by occurred_at_utc desc, event_id
+                limit @scanTake
+                """;
+            command.Parameters.AddWithValue("tenantId", tenantId);
+            command.Parameters.AddWithValue("scanTake", Math.Max(100, Math.Min(take * 40, 2000)));
+            using var reader = command.ExecuteReader();
+            var records = new List<OperationsSearchRecord>();
+            while (reader.Read())
+            {
+                var payload = JsonSerializer.Deserialize<Dictionary<string, object>>(
+                    reader.GetString(6),
+                    PostgresProjectionStore.JsonOptions)
+                    ?? new Dictionary<string, object>();
+                records.Add(new OperationsSearchRecord(
+                    reader.GetString(1),
+                    reader.GetString(0),
+                    reader.GetString(2),
+                    reader.GetString(3),
+                    reader.GetString(4),
+                    reader.GetString(5),
+                    payload,
+                    reader.GetFieldValue<DateTimeOffset>(7)));
+            }
+
+            return records
+                .Where(record => SearchText(record).Contains(normalized, StringComparison.OrdinalIgnoreCase))
+                .Take(Math.Max(1, Math.Min(take, 100)))
+                .ToArray();
+        }
+        catch (PostgresException ex) when (ex.SqlState == MissingTable)
+        {
+            return Array.Empty<OperationsSearchRecord>();
+        }
+    }
+
     private static string? RejectedReasonFrom(OperationsStableResponse response, string status) =>
         status == "rejected" && response.Body.TryGetValue("reason", out var reason)
             ? reason?.ToString()
             : null;
+
+    private static string SearchText(OperationsSearchRecord record) =>
+        string.Join(" ", record.EventId, record.CaseId, record.WorkItemId, record.SubmissionId, record.EventType, SafeText(record.Payload));
+
+    private static string SafeText(object? value)
+    {
+        if (value is null)
+        {
+            return string.Empty;
+        }
+
+        if (value is string or int or long or decimal or double or bool)
+        {
+            return Convert.ToString(value) ?? string.Empty;
+        }
+
+        if (value is JsonElement element)
+        {
+            return element.ValueKind switch
+            {
+                JsonValueKind.Object => string.Join(" ", element.EnumerateObject().Select(item => SafeText(item.Value))),
+                JsonValueKind.Array => string.Join(" ", element.EnumerateArray().Select(item => SafeText((object)item))),
+                JsonValueKind.String => element.GetString() ?? string.Empty,
+                _ => element.ToString()
+            };
+        }
+
+        if (value is System.Collections.IDictionary dictionary)
+        {
+            return string.Join(" ", dictionary.Values.Cast<object?>().Select(SafeText));
+        }
+
+        if (value is System.Collections.IEnumerable enumerable && value is not string)
+        {
+            return string.Join(" ", enumerable.Cast<object?>().Select(SafeText));
+        }
+
+        return value.ToString() ?? string.Empty;
+    }
 
     public FactTraceV1? GetFactTrace(string tenantId, string submissionId)
     {

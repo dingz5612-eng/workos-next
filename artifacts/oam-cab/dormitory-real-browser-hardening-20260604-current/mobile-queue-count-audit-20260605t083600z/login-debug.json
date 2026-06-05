@@ -1,0 +1,245 @@
+{
+  "before": {
+    "html": "<section class=\"login-panel\">\n      <span>登录办理系统</span>\n      <h1>WorkOSNext</h1>\n      <p>请输入用户名和密码。部门、业务线、角色和权限由管理员在 PC 治理面分配。</p>\n      <label>\n        <span>账号</span>\n        <input id=\"loginAccount\" autocomplete=\"username\" value=\"\" placeholder=\"输入用户名\">\n      </label>\n      <label>\n        <span>密码</span>\n        <input id=\"loginPassword\" type=\"password\" autocomplete=\"current-password\">\n      </label>\n      <p class=\"login-hint\">登录页不能选择部门或权限；办理权限来自后端账号与会话。</p>\n      <button id=\"loginSubmit\">登录</button>\n      \n    </section>",
+    "hasCtx": true,
+    "view": "login",
+    "apiStatus": "online",
+    "actor": null
+  },
+  "after": {
+    "href": "http://127.0.0.1:5175/?view=onboarding&lang=zh-CN&device=mobile",
+    "text": "WorkOSNext\n治理管理员\n已连接\n中文\nРусский\nКыргызча\n先选入口，再开始办理\n今天看判断，搜索找对象，工作接派单\n\n不知道从哪开始，先看“今天”；已经知道房间、床位、入住人或证据，直接搜；系统分配给你的任务只在“工作”里处理。\n\n01\n今天\n看今天最该先处理的业务、风险和学习提醒。\n02\n搜索\n按房间、床位、入住人、证据或动作进入具体业务。\n03\n工作\n只处理系统派给你的任务；没有分配就保持空态。\n04\n我的\n管理草稿、笔记、提醒、提交记录、语言和反馈。\n进入今天\n稍后再说",
+    "view": "onboarding",
+    "apiStatus": "online",
+    "actor": {
+      "authenticated": true,
+      "actorId": "u-admin",
+      "actorType": "admin",
+      "displayName": "治理管理员",
+      "role": "admin",
+      "token": "sess-8834d9679f554e27936fa287ece55576",
+      "expiresAtUtc": "2026-06-05T16:39:55.8049897+00:00",
+      "userId": "u-admin",
+      "tenantId": "tenant-1",
+      "department": "治理办公室",
+      "businessLine": "stay",
+      "roles": [
+        "admin"
+      ],
+      "capabilities": [
+        "workos.write",
+        "search.read",
+        "operations.confirm",
+        "case.close",
+        "payment.confirm",
+        "deposit.refund.pay",
+        "correction.approve",
+        "admin.role_capability.edit",
+        "admin.device_session.revoke",
+        "account.user.manage",
+        "governance.center.view",
+        "manager.control.view",
+        "finance.control.view",
+        "release.flight_deck.view",
+        "pc.governance",
+        "pc.governance.admin",
+        "pc.export.all",
+        "pc.export.ledger",
+        "pc.export.case_timeline",
+        "pc.export.evidence_audit",
+        "pc.export.period_snapshot",
+        "runtime.high_risk.all",
+        "runtime.maintenance",
+        "release.cutover"
+      ],
+      "session": {
+        "token": "sess-8834d9679f554e27936fa287ece55576",
+        "userId": "u-admin",
+        "issuedAtUtc": "2026-06-05T08:39:55.8049896+00:00",
+        "expiresAtUtc": "2026-06-05T16:39:55.8049897+00:00",
+        "revokedAtUtc": null
+      },
+      "status": "active"
+    },
+    "loginMessage": "",
+    "local": "{\"authenticated\":true,\"actorId\":\"u-admin\",\"actorType\":\"admin\",\"displayName\":\"治理管理员\",\"role\":\"admin\",\"token\":\"sess-8834d9679f554e27936fa287ece55576\",\"expiresAtUtc\":\"2026-06-05T16:39:55.8049897+00:00\",\"userId\":\"u-admin\",\"tenantId\":\"tenant-1\",\"department\":\"治理办公室\",\"businessLine\":\"stay\",\"roles\":[\"admin\"],\"capabilities\":[\"workos.write\",\"search.read\",\"operations.confirm\",\"case.close\",\"payment.confirm\",\"deposit.refund.pay\",\"correction.approve\",\"admin.role_capability.edit\",\"admin.device_session.revoke\",\"account.user.manage\",\"governance.center.view\",\"manager.control.view\",\"finance.control.view\",\"release.flight_deck.view\",\"pc.governance\",\"pc.governance.admin\",\"pc.export.all\",\"pc.export.ledger\",\"pc.export.case_timeline\",\"pc.export.evidence_audit\",\"pc.export.period_snapshot\",\"runtime.high_risk.all\",\"runtime.maintenance\",\"release.cutover\"],\"session\":{\"token\":\"sess-8834d9679f554e27936fa287ece55576\",\"userId\":\"u-admin\",\"issuedAtUtc\":\"2026-06-05T08:39:55.8049896+00:00\",\"expiresAtUtc\":\"2026-06-05T16:39:55.8049897+00:00\",\"revokedAtUtc\":null},\"status\":\"active\"}"
+  },
+  "logs": [
+    {
+      "type": "debug",
+      "text": "[vite] connecting..."
+    },
+    {
+      "type": "debug",
+      "text": "[vite] connected."
+    },
+    {
+      "type": "request",
+      "text": "POST http://127.0.0.1:5191/api/auth/login"
+    },
+    {
+      "type": "response",
+      "text": "200 http://127.0.0.1:5191/api/auth/login"
+    },
+    {
+      "type": "request",
+      "text": "POST http://127.0.0.1:5191/api/device-sessions"
+    },
+    {
+      "type": "response",
+      "text": "200 http://127.0.0.1:5191/api/device-sessions"
+    },
+    {
+      "type": "request",
+      "text": "GET http://127.0.0.1:5191/api/workspaces"
+    },
+    {
+      "type": "request",
+      "text": "GET http://127.0.0.1:5191/api/operations/work-items"
+    },
+    {
+      "type": "response",
+      "text": "200 http://127.0.0.1:5191/api/workspaces"
+    },
+    {
+      "type": "response",
+      "text": "200 http://127.0.0.1:5191/api/operations/work-items"
+    },
+    {
+      "type": "request",
+      "text": "GET http://127.0.0.1:5191/api/lenses/home-surface"
+    },
+    {
+      "type": "request",
+      "text": "GET http://127.0.0.1:5191/api/lenses/learning-catalog"
+    },
+    {
+      "type": "request",
+      "text": "GET http://127.0.0.1:5191/api/lenses/accommodation/room-readiness"
+    },
+    {
+      "type": "request",
+      "text": "GET http://127.0.0.1:5191/api/lenses/accommodation/bed-inventory"
+    },
+    {
+      "type": "request",
+      "text": "GET http://127.0.0.1:5191/api/lenses/accommodation/rate-plan"
+    },
+    {
+      "type": "request",
+      "text": "GET http://127.0.0.1:5191/api/lenses/accommodation/room-revenue-potential"
+    },
+    {
+      "type": "request",
+      "text": "GET http://127.0.0.1:5191/api/lenses/accommodation/today-operations"
+    },
+    {
+      "type": "request",
+      "text": "GET http://127.0.0.1:5191/api/lenses/accommodation/active-stay"
+    },
+    {
+      "type": "request",
+      "text": "GET http://127.0.0.1:5191/api/lenses/accommodation/deposit-liability"
+    },
+    {
+      "type": "request",
+      "text": "GET http://127.0.0.1:5191/api/lenses/accommodation/payment-risk"
+    },
+    {
+      "type": "request",
+      "text": "GET http://127.0.0.1:5191/api/lenses/accommodation/stay-balance"
+    },
+    {
+      "type": "request",
+      "text": "GET http://127.0.0.1:5191/api/lenses/accommodation/lead-funnel"
+    },
+    {
+      "type": "request",
+      "text": "GET http://127.0.0.1:5191/api/lenses/accommodation/checkout-queue"
+    },
+    {
+      "type": "request",
+      "text": "GET http://127.0.0.1:5191/api/lenses/accommodation/service-task-queue"
+    },
+    {
+      "type": "request",
+      "text": "GET http://127.0.0.1:5191/api/lenses/accommodation/expense-analytics"
+    },
+    {
+      "type": "request",
+      "text": "GET http://127.0.0.1:5191/api/lenses/accommodation/period-performance"
+    },
+    {
+      "type": "request",
+      "text": "GET http://127.0.0.1:5191/api/lenses/accommodation/risk-command"
+    },
+    {
+      "type": "response",
+      "text": "200 http://127.0.0.1:5191/api/lenses/home-surface"
+    },
+    {
+      "type": "response",
+      "text": "200 http://127.0.0.1:5191/api/lenses/learning-catalog"
+    },
+    {
+      "type": "response",
+      "text": "200 http://127.0.0.1:5191/api/lenses/accommodation/bed-inventory"
+    },
+    {
+      "type": "response",
+      "text": "200 http://127.0.0.1:5191/api/lenses/accommodation/room-readiness"
+    },
+    {
+      "type": "response",
+      "text": "200 http://127.0.0.1:5191/api/lenses/accommodation/rate-plan"
+    },
+    {
+      "type": "response",
+      "text": "200 http://127.0.0.1:5191/api/lenses/accommodation/room-revenue-potential"
+    },
+    {
+      "type": "response",
+      "text": "200 http://127.0.0.1:5191/api/lenses/accommodation/today-operations"
+    },
+    {
+      "type": "response",
+      "text": "200 http://127.0.0.1:5191/api/lenses/accommodation/active-stay"
+    },
+    {
+      "type": "response",
+      "text": "200 http://127.0.0.1:5191/api/lenses/accommodation/deposit-liability"
+    },
+    {
+      "type": "response",
+      "text": "200 http://127.0.0.1:5191/api/lenses/accommodation/payment-risk"
+    },
+    {
+      "type": "response",
+      "text": "200 http://127.0.0.1:5191/api/lenses/accommodation/stay-balance"
+    },
+    {
+      "type": "response",
+      "text": "200 http://127.0.0.1:5191/api/lenses/accommodation/lead-funnel"
+    },
+    {
+      "type": "response",
+      "text": "200 http://127.0.0.1:5191/api/lenses/accommodation/service-task-queue"
+    },
+    {
+      "type": "response",
+      "text": "200 http://127.0.0.1:5191/api/lenses/accommodation/checkout-queue"
+    },
+    {
+      "type": "response",
+      "text": "200 http://127.0.0.1:5191/api/lenses/accommodation/period-performance"
+    },
+    {
+      "type": "response",
+      "text": "200 http://127.0.0.1:5191/api/lenses/accommodation/expense-analytics"
+    },
+    {
+      "type": "response",
+      "text": "200 http://127.0.0.1:5191/api/lenses/accommodation/risk-command"
+    }
+  ]
+}

@@ -223,6 +223,9 @@ public sealed class AdmissionKernelService
             "operator" => new[] { "operator", "frontdesk", "housekeeping", "manager", "admin", "releaseowner" },
             "operations" => new[] { "operations", "operator", "manager", "admin", "releaseowner" },
             "finance" => new[] { "finance", "admin", "releaseowner" },
+            "manager" => new[] { "manager", "admin", "releaseowner" },
+            "frontdesk" => new[] { "frontdesk", "operator", "manager", "admin", "releaseowner" },
+            "housekeeping" => new[] { "housekeeping", "operator", "manager", "admin", "releaseowner" },
             "repair" => new[] { "repair", "admin", "releaseowner" },
             null or "" => Array.Empty<string>(),
             _ => new[] { ownerRole! }

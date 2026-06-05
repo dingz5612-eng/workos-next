@@ -39,7 +39,7 @@
 .pc-governance-nav-group > span {
   color: var(--muted);
   font-size: 0.76rem;
-  font-weight: 800;
+  font-weight: var(--font-strong);
 }
 
 .pc-governance-nav-group > div {
@@ -60,7 +60,7 @@
   color: var(--ink);
   background: var(--surface);
   text-decoration: none;
-  font-weight: 800;
+  font-weight: var(--font-strong);
   overflow-wrap: anywhere;
   text-align: center;
   white-space: nowrap;
@@ -69,7 +69,7 @@
 .pc-governance-nav a small {
   color: var(--muted);
   font-size: 0.68rem;
-  font-weight: 800;
+  font-weight: var(--font-strong);
 }
 
 .pc-governance-nav a[aria-current="page"],
@@ -129,7 +129,7 @@
   color: var(--muted);
   background: #f7fbfc;
   font-size: 0.76rem;
-  font-weight: 900;
+  font-weight: var(--font-title);
 }
 
 .governance-mode-pill[data-governance-mode="command"],
@@ -153,7 +153,7 @@
   border-radius: 50%;
   color: var(--ink);
   background: #ffffff;
-  font-weight: 900;
+  font-weight: var(--font-title);
   cursor: pointer;
   list-style: none;
 }
@@ -186,7 +186,7 @@
 
 .governance-help dt {
   color: var(--muted);
-  font-weight: 900;
+  font-weight: var(--font-title);
 }
 
 .governance-help dd,
@@ -223,6 +223,76 @@
   gap: 8px;
 }
 
+.risk-command-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 12px;
+}
+
+.risk-command-card {
+  display: grid;
+  gap: 12px;
+  min-width: 0;
+  border: 1px solid #d7e5e2;
+  border-left: 4px solid #1f6f68;
+  border-radius: 8px;
+  padding: 12px;
+  background: #fbfdfc;
+}
+
+.risk-command-card[data-risk-severity="critical"],
+.risk-command-card[data-risk-severity="high"],
+.risk-command-card[data-risk-severity="red"],
+.risk-command-card[data-risk-severity="p0"] {
+  border-left-color: #b94a3f;
+}
+
+.risk-command-card > div {
+  display: grid;
+  gap: 4px;
+}
+
+.risk-command-card span {
+  width: fit-content;
+  border-radius: 999px;
+  padding: 3px 8px;
+  color: #185447;
+  background: #e8f4f1;
+  font-size: 0.76rem;
+  font-weight: var(--font-title);
+}
+
+.risk-command-card dl {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr);
+  gap: 8px 10px;
+  margin: 0;
+}
+
+.risk-command-card dt {
+  color: var(--muted);
+  font-weight: var(--font-title);
+}
+
+.risk-command-card dd {
+  min-width: 0;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.risk-command-action {
+  width: fit-content;
+  min-height: 36px;
+  border: 0;
+  border-radius: 8px;
+  padding: 9px 14px;
+  color: #ffffff;
+  background: #0f8f78;
+  font-weight: var(--font-title);
+  text-decoration: none;
+  cursor: pointer;
+}
+
 .account-user-form {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -240,7 +310,7 @@
 .account-user-form label,
 .account-capability-fieldset legend {
   font-size: 0.82rem;
-  font-weight: 800;
+  font-weight: var(--font-strong);
   color: var(--muted);
 }
 
@@ -357,6 +427,10 @@
   }
 
   .governance-kv {
+    grid-template-columns: 1fr;
+  }
+
+  .risk-command-card dl {
     grid-template-columns: 1fr;
   }
 

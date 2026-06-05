@@ -36,8 +36,14 @@
   },
   "frontendExperienceSystem": {
     "contractRef": "docs/contracts/frontend-experience/frontend-experience-system-contract.json",
-    "layers": ["shared-components", "surface-contract", "multilingual-dictionary", "state-action-contract", "real-browser-screenshot-evidence"],
+    "layers": ["shared-components", "field-context-kernel", "surface-contract", "multilingual-dictionary", "state-action-contract", "real-browser-screenshot-evidence"],
     "rule": "pages may specialize business content but not architecture; old-architecture surfaces must be rewritten and deleted, not wrapped or kept as fallback",
+    "contentContainerRule": "ordinary mobile content must render as shared containers; business titles, status labels, anchors, explanations, and next-action copy must not appear as naked text on the page background",
+    "premiumSurfaceVisualLanguage": "mobile business surfaces use bright teal-blue lightweight gradients for primary actions, calm neutral surfaces for content, orange for attention, and red for blockers; static text must not mimic buttons, and only real clickable controls may use filled or gradient button styling with restrained elevation",
+    "premiumTypographySystem": "mobile and PC business surfaces use a clear Chinese-first system UI font stack with Microsoft YaHei UI / Microsoft YaHei preferred on Windows, antialiased rendering, readable helper text sizes, and light medium-weight titles/buttons; page-local 700+ bold/heavy weights and too-small ordinary copy are forbidden on user-facing UI text",
+    "businessSummaryCardHierarchy": "business item cards across Today, Work items, Search, Me, and support surfaces must use BusinessSummaryHeader for scenario title/status, structured non-clickable business anchors for room/bed/resident/phone/status, BusinessTaskBody/BusinessTaskOverview for completed core fields and current-step core fields, and a separate bottom action container for the primary action; technical diagnostics are not default card content unless they explain a blocker",
+    "searchMeResponsibilityBoundary": "Search is for active business discovery and entry; Me owns readonly personal archives including business records, completed records, evidence materials, submission traces, and learning content.",
+    "fieldContextKernel": "operation field identity, aliases, task overview fields, option labels, and derived previews must come from apps/mobile/src/operationFieldKernel.js; controllers must not import field identity from views, and pages must not copy private field alias/display maps",
     "stepPageExperienceParity": "new active, readonly completed, and append-only correction step pages must share step rail, direct OperationCardShell, state/check panel, action hierarchy, feedback entry, and decision markers, without a page-private outer intent-card wrapper or workspace-control visual wrapper on readonly completed records",
     "postSubmitNavigation": "successful active Operations WorkItem confirm must auto-advance to the next actionable persisted WorkItem in the same workspace when one exists; completed readonly records are explicit review surfaces, not the normal submit continuation path",
     "stepStateVisualLanguage": "OperationStepRail status colors are semantic: completed green, ready blue, terminal completed records remain completed as the primary state even when a correction marker exists, active append-only correction muted indigo with a correction marker and not ordinary ready blue, in-progress amber, not-started neutral gray, blocked red, with a clean current-step ring, subtle background tint, thin semantic top bar, and numbered badge instead of harsh saturated blocks"
@@ -53,6 +59,24 @@
     "submitCheckDefault": "show only missing user action, blockers, and readiness",
     "submitCheckDetails": "collapse inherited, derived, hidden, material, and rule diagnostics unless they explain a blocker",
     "forbidden": ["page-local step dependency mapping", "manual input prompt for inherited fields", "manual input prompt for derived fields", "visible hidden-default fields"]
+  },
+  "admissionExplainabilitySurface": {
+    "scope": ["mobile.search.resultCard", "mobile.operations.workItem.detail", "mobile.operations.workItem.confirm", "mobile.operations.workItem.receipt", "pc.governance.releaseState", "pc.governance.evidenceGraph"],
+    "rule": "visibleAllowed, prepareAllowed, confirmAllowed, productionAllowed, mode, and safe reason copy must be consumed by the visible surface; lifecycle ready/status labels must not imply confirm or production admission.",
+    "searchResultCard": {
+      "visible": ["title", "subtitle", "statusLabel", "admissionLabel", "admissionReasonLabel", "nextAction"],
+      "hiddenForOrdinaryUsers": ["admissionDecisionRef", "compatibilityAdapter", "definitionId", "payloadHash", "commandSubmissionId", "rawReason", "rawCode"],
+      "confirmDeniedPrimaryAction": "view-only or learning action; never process/start-handling wording"
+    },
+    "operationWorkItemDetail": {
+      "requiredTopStatus": ["admissionLabel", "mode", "confirmAllowed", "productionAllowed"],
+      "readyStateRule": "ready + confirmAllowed=false is confirmDenied, ready + confirmAllowed=true + productionAllowed=false is internal observation submit, and only confirmAllowed=true may bind the submit action"
+    },
+    "safeErrorCopy": {
+      "source": "Language Kernel key",
+      "requiredKeys": ["operations.error.safe.403", "operations.error.safe.409", "operations.error.safe.422", "operations.error.safe.generic"],
+      "forbidden": ["visible raw reason", "visible raw code", "direct result.message passthrough for blocked confirm"]
+    }
   },
   "collaborationFeedback": {
     "surface": "feedback-message-channel",
@@ -73,6 +97,9 @@
       "notes",
       "reminders",
       "permissions",
+      "businessRecords",
+      "completedRecords",
+      "evidenceLibrary",
       "uploadQueue",
       "submitQueue",
       "drafts",

@@ -1,0 +1,104 @@
+{
+  "version": "system-field-ux-audit.screenshot-index.v1",
+  "runId": "system-field-ux-audit-20260605t055542z",
+  "screenshots": [
+    {
+      "pageId": "pc-riskcommand",
+      "kind": "fullPage",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/system-field-ux-audit/system-field-ux-audit-20260605t055542z/screenshots/pc-riskcommand-full.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\system-field-ux-audit\\system-field-ux-audit-20260605t055542z\\screenshots\\pc-riskcommand-full.png",
+      "sha256": "d5145903652fe8fc7365ce1837187452914c0a5ca28160d2ce9584cc8682943e"
+    },
+    {
+      "pageId": "pc-riskcommand",
+      "kind": "top",
+      "scrollY": 0,
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/system-field-ux-audit/system-field-ux-audit-20260605t055542z/screenshots/pc-riskcommand-top.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\system-field-ux-audit\\system-field-ux-audit-20260605t055542z\\screenshots\\pc-riskcommand-top.png",
+      "sha256": "d5145903652fe8fc7365ce1837187452914c0a5ca28160d2ce9584cc8682943e"
+    },
+    {
+      "pageId": "resource-rateSetup",
+      "kind": "fullPage",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/system-field-ux-audit/system-field-ux-audit-20260605t055542z/screenshots/resource-rateSetup-full.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\system-field-ux-audit\\system-field-ux-audit-20260605t055542z\\screenshots\\resource-rateSetup-full.png",
+      "sha256": "ed83a3dd64d97c82ae9fd7653549f669777ab7d42bb075aea486653779bdd7fc"
+    },
+    {
+      "pageId": "resource-rateSetup",
+      "kind": "top",
+      "scrollY": 0,
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/system-field-ux-audit/system-field-ux-audit-20260605t055542z/screenshots/resource-rateSetup-top.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\system-field-ux-audit\\system-field-ux-audit-20260605t055542z\\screenshots\\resource-rateSetup-top.png",
+      "sha256": "ed83a3dd64d97c82ae9fd7653549f669777ab7d42bb075aea486653779bdd7fc"
+    },
+    {
+      "pageId": "resource-roomReadiness",
+      "kind": "fullPage",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/system-field-ux-audit/system-field-ux-audit-20260605t055542z/screenshots/resource-roomReadiness-full.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\system-field-ux-audit\\system-field-ux-audit-20260605t055542z\\screenshots\\resource-roomReadiness-full.png",
+      "sha256": "ed83a3dd64d97c82ae9fd7653549f669777ab7d42bb075aea486653779bdd7fc"
+    },
+    {
+      "pageId": "resource-roomReadiness",
+      "kind": "top",
+      "scrollY": 0,
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/system-field-ux-audit/system-field-ux-audit-20260605t055542z/screenshots/resource-roomReadiness-top.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\system-field-ux-audit\\system-field-ux-audit-20260605t055542z\\screenshots\\resource-roomReadiness-top.png",
+      "sha256": "ed83a3dd64d97c82ae9fd7653549f669777ab7d42bb075aea486653779bdd7fc"
+    },
+    {
+      "pageId": "resource-roomBlock",
+      "kind": "fullPage",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/system-field-ux-audit/system-field-ux-audit-20260605t055542z/screenshots/resource-roomBlock-full.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\system-field-ux-audit\\system-field-ux-audit-20260605t055542z\\screenshots\\resource-roomBlock-full.png",
+      "sha256": "ed83a3dd64d97c82ae9fd7653549f669777ab7d42bb075aea486653779bdd7fc"
+    },
+    {
+      "pageId": "resource-roomBlock",
+      "kind": "top",
+      "scrollY": 0,
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/system-field-ux-audit/system-field-ux-audit-20260605t055542z/screenshots/resource-roomBlock-top.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\system-field-ux-audit\\system-field-ux-audit-20260605t055542z\\screenshots\\resource-roomBlock-top.png",
+      "sha256": "ed83a3dd64d97c82ae9fd7653549f669777ab7d42bb075aea486653779bdd7fc"
+    },
+    {
+      "pageId": "service-roomReleaseAfterService",
+      "kind": "fullPage",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/system-field-ux-audit/system-field-ux-audit-20260605t055542z/screenshots/service-roomReleaseAfterService-full.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\system-field-ux-audit\\system-field-ux-audit-20260605t055542z\\screenshots\\service-roomReleaseAfterService-full.png",
+      "sha256": "ed83a3dd64d97c82ae9fd7653549f669777ab7d42bb075aea486653779bdd7fc"
+    },
+    {
+      "pageId": "service-roomReleaseAfterService",
+      "kind": "top",
+      "scrollY": 0,
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/system-field-ux-audit/system-field-ux-audit-20260605t055542z/screenshots/service-roomReleaseAfterService-top.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\system-field-ux-audit\\system-field-ux-audit-20260605t055542z\\screenshots\\service-roomReleaseAfterService-top.png",
+      "sha256": "ed83a3dd64d97c82ae9fd7653549f669777ab7d42bb075aea486653779bdd7fc"
+    },
+    {
+      "pageId": "resource-bedSetup-golden",
+      "kind": "fullPage",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/system-field-ux-audit/system-field-ux-audit-20260605t055542z/screenshots/resource-bedSetup-golden-full.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\system-field-ux-audit\\system-field-ux-audit-20260605t055542z\\screenshots\\resource-bedSetup-golden-full.png",
+      "sha256": "29951c93bc0b6b7e1d5e5285bbdb1ac4dea9c0907751b92153e115c0cfef0f96"
+    },
+    {
+      "pageId": "resource-bedSetup-golden",
+      "kind": "top",
+      "scrollY": 0,
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/system-field-ux-audit/system-field-ux-audit-20260605t055542z/screenshots/resource-bedSetup-golden-top.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\system-field-ux-audit\\system-field-ux-audit-20260605t055542z\\screenshots\\resource-bedSetup-golden-top.png",
+      "sha256": "3d2978ec59c2e485e32c69340fab373431daa24b77c21c62eb4bb1e895d84d8e"
+    },
+    {
+      "pageId": "resource-bedSetup-golden",
+      "kind": "bottom",
+      "scrollY": 424,
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/system-field-ux-audit/system-field-ux-audit-20260605t055542z/screenshots/resource-bedSetup-golden-bottom.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\system-field-ux-audit\\system-field-ux-audit-20260605t055542z\\screenshots\\resource-bedSetup-golden-bottom.png",
+      "sha256": "79ff895a0eb9d7febfbbcaf4c966144ca6ee135488af98f32761a903ced0a1e1"
+    }
+  ]
+}

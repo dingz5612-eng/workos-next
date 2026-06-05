@@ -13,11 +13,14 @@ export function capacityForRoomType(roomType) {
 }
 
 export function fieldControlKind(field) {
-  return field?.ui?.control || field?.type || "text";
+  const optionSet = optionSetForField(field);
+  const explicit = field?.ui?.control || field?.type || "";
+  if (optionSet && (!explicit || ["text", "string", "input"].includes(explicit))) return "select";
+  return explicit || "text";
 }
 
 export function optionsForField(field, lang = "zh-CN") {
-  const optionSet = field?.ui?.optionSet || "";
+  const optionSet = optionSetForField(field);
   const canonical = canonicalOptionLabels(optionSet);
   const merged = new Map();
   const add = (entry = {}) => {
@@ -37,6 +40,18 @@ export function optionsForField(field, lang = "zh-CN") {
     for (const value of Object.keys(canonical)) add({ value });
   }
   return Array.from(merged.values());
+}
+
+function optionSetForField(field = {}) {
+  return field?.ui?.optionSet || fallbackOptionSetForField(field);
+}
+
+function fallbackOptionSetForField(field = {}) {
+  const id = String(field?.id || "").trim();
+  const zh = String(field?.label?.["zh-CN"] || "").trim();
+  if (id === "bedType" || zh === "床铺生成方式" || zh === "床位类型") return "bunkType";
+  if (id === "reservationNextAction" || zh === "预订后动作") return "reservationNextAction";
+  return "";
 }
 
 function optionLabelForField(field, entry = {}, lang) {

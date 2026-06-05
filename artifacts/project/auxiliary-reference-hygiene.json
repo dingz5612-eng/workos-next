@@ -1,13 +1,13 @@
 {
-  "generatedAtUtc": "2026-06-04T23:38:37.772Z",
+  "generatedAtUtc": "2026-06-05T17:52:56.004Z",
   "generatedBy": "check-auxiliary-reference-hygiene",
   "stage": "PROJECT-HYGIENE-CLEANUP",
   "status": "passed",
   "policyRef": "docs/project/auxiliary-reference-policy.json",
-  "scannedFileCount": 835,
-  "repoReferenceCount": 3320,
-  "missingReferenceCount": 40,
-  "allowedMissingReferenceCount": 40,
+  "scannedFileCount": 839,
+  "repoReferenceCount": 3360,
+  "missingReferenceCount": 45,
+  "allowedMissingReferenceCount": 45,
   "unregisteredMissingReferenceCount": 0,
   "missingRefs": [
     {
@@ -307,6 +307,14 @@
       "reason": "Checker scripts may reference generated outputs, CI placeholders, or self-test fixture paths."
     },
     {
+      "owner": "scripts/guard-architecture.ps1",
+      "ref": "apps/mobile/src/devFixtures",
+      "exists": false,
+      "allowedMissing": true,
+      "classification": "retired_path_guard_reference",
+      "reason": "These scripts reference retired fixture paths only to assert they stay deleted from the active mobile baseline."
+    },
+    {
       "owner": "scripts/operations/check-day2-entry-gate.mjs",
       "ref": "artifacts/operations/dormitory/observation-day-02.json",
       "exists": false,
@@ -329,6 +337,38 @@
       "allowedMissing": true,
       "classification": "generated_or_self_test_reference",
       "reason": "Checker scripts may reference generated outputs, CI placeholders, or self-test fixture paths."
+    },
+    {
+      "owner": "scripts/project/check-seed-data-isolation.mjs",
+      "ref": "apps/mobile/src/devFixtures/demoQueue.js",
+      "exists": false,
+      "allowedMissing": true,
+      "classification": "retired_path_guard_reference",
+      "reason": "These scripts reference retired fixture paths only to assert they stay deleted from the active mobile baseline."
+    },
+    {
+      "owner": "scripts/project/check-seed-data-isolation.mjs",
+      "ref": "apps/mobile/src/devFixtures/i18n/demoCopy.js",
+      "exists": false,
+      "allowedMissing": true,
+      "classification": "retired_path_guard_reference",
+      "reason": "These scripts reference retired fixture paths only to assert they stay deleted from the active mobile baseline."
+    },
+    {
+      "owner": "scripts/project/check-seed-data-isolation.mjs",
+      "ref": "apps/mobile/src/devFixtures/projectionMetadata.js",
+      "exists": false,
+      "allowedMissing": true,
+      "classification": "retired_path_guard_reference",
+      "reason": "These scripts reference retired fixture paths only to assert they stay deleted from the active mobile baseline."
+    },
+    {
+      "owner": "scripts/project/check-seed-data-isolation.mjs",
+      "ref": "apps/mobile/src/devFixtures/workspaceProjections.js",
+      "exists": false,
+      "allowedMissing": true,
+      "classification": "retired_path_guard_reference",
+      "reason": "These scripts reference retired fixture paths only to assert they stay deleted from the active mobile baseline."
     }
   ],
   "supersededHistoricalEvidence": [

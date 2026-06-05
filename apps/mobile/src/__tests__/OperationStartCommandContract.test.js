@@ -52,8 +52,19 @@ describe("Operations Runtime start command contract", () => {
     ctx.render = vi.fn();
     ctx.hydrateProjectionFromApi = vi.fn();
 
-    await startOperationsWorkspaceCommand(ctx, "W-STAY-RESOURCE", "roomSetup");
+    await startOperationsWorkspaceCommand(ctx, "W-STAY-RESOURCE", "roomSetup", {
+      anchorQuery: "D02 / 22 / 01 / 张三 / 13800001234"
+    });
 
+    expect(startOperationsWorkspace).toHaveBeenCalledWith(
+      "W-STAY-RESOURCE",
+      "operator-token",
+      "operation_workspace_start_failed",
+      {
+        anchorQuery: "D02 / 22 / 01 / 张三 / 13800001234",
+        anchorPayload: null
+      }
+    );
     expect(ctx.state.view).toBe("operationPanel");
     expect(ctx.state.selectedWorkspace).toBe(workspace.id);
     expect(ctx.state.selectedCardId).toBe("roomSetup");
@@ -65,7 +76,7 @@ describe("Operations Runtime start command contract", () => {
     expect(ctx.hydrateProjectionFromApi).not.toHaveBeenCalled();
     expect(routeView(ctx)).toContain('data-surface="operation-panel-route"');
     expect(visibleText(routeView(ctx))).toContain("本步要做");
-    expect(visibleText(routeView(ctx))).toContain("提交处理");
+    expect(visibleText(routeView(ctx))).toContain("提交观察记录");
     expect(visibleText(routeView(ctx))).toContain("提交前检查");
     expect(visibleText(routeView(ctx))).not.toContain("available");
     expect(visibleText(routeView(ctx))).not.toContain("暂不能直接办理");
@@ -114,7 +125,7 @@ describe("Operations Runtime start command contract", () => {
       lastActionResult: {
         status: "business_blocked_422",
         reason: "operation_work_item_required",
-        message: "需要先生成可办理任务，再提交处理。"
+        message: "需要先生成可办理任务，再提交观察记录。"
       }
     });
     ctx.applyRuntimeProjection = (payload) => applyRuntimeProjection(ctx.state, payload);
@@ -126,7 +137,7 @@ describe("Operations Runtime start command contract", () => {
     expect(ctx.state.view).toBe("operationPanel");
     expect(ctx.state.selectedWorkItemId).toBe("wi-start-room-002");
     expect(ctx.state.lastActionResult).toBeNull();
-    expect(visibleText(routeView(ctx))).toContain("提交处理");
+    expect(visibleText(routeView(ctx))).toContain("提交观察记录");
     expect(visibleText(routeView(ctx))).not.toContain("查看不能提交原因");
   });
 
@@ -142,6 +153,19 @@ describe("Operations Runtime start command contract", () => {
     expect(apiClient).not.toContain("startResourceSetup(");
     expect(apiClient).not.toContain("prepareCard(");
     expect(apiClient).not.toContain("confirmCard(");
+  });
+
+  it("keeps business anchor query on the shared Operations workspace start request", () => {
+    const apiClient = source("../apiClient.js");
+    const navigation = source("../navigationController.js");
+    const search = source("../views/searchView.js");
+    const binder = source("../eventBinder.js");
+
+    expect(apiClient).toContain("anchorQuery: context.anchorQuery");
+    expect(apiClient).toContain("anchorPayload: context.anchorPayload");
+    expect(navigation).toContain("anchorQuery: options.anchorQuery || ctx.state.query");
+    expect(search).toContain("data-anchor-query");
+    expect(binder).toContain("node.dataset.anchorQuery || ctx.state.query");
   });
 
   it("routes forbidden start commands to permission diagnosis instead of API offline copy", async () => {

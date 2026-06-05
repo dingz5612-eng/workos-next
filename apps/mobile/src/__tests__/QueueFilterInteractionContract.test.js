@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { clearQueueFilterState, setQueueFilter, setWorkFilter } from "../queueController.js";
+import { clearQueueFilterState, setQueueFilter, setTodayFilter, setWorkFilter } from "../queueController.js";
 import { queueFiltersFromState } from "../queueFilterState.js";
 import { countEvidenceState, countTransferable, evidenceStateFor, queueTasks } from "../selectors/queueSelectors.js";
 import { selectCompletedWorkbenchQueue } from "../selectors/surfaceSelectors.js";
@@ -41,7 +41,7 @@ describe("OAM-04B queue filter interaction contract", () => {
 
     clearQueueFilterState(ctx);
 
-    expect(queueFiltersFromState(ctx.state)).toMatchObject({ domain: "all", badge: "mine" });
+    expect(queueFiltersFromState(ctx.state)).toMatchObject({ domain: "all", badge: "all" });
     expect(queueTasks(ctx.state)).toHaveLength(2);
   });
 
@@ -70,7 +70,10 @@ describe("OAM-04B queue filter interaction contract", () => {
     const ctx = queueCtx();
     const html = workbenchView(ctx);
 
-    expect(html).toContain('data-work-filter="accommodation"');
+    expect(html).toContain('data-work-filter="all-work"');
+    expect(html).toContain('data-work-filter="can-do"');
+    expect(html).toContain('data-work-filter="scenario-resource"');
+    expect(html).toContain('data-mobile-work-scenario-ia');
     expect(html).toContain('data-mobile-ia="filter"');
     expect(html).toContain('data-queue-filter-state');
     expect(html).toContain("清除筛选");
@@ -92,8 +95,20 @@ describe("OAM-04B queue filter interaction contract", () => {
 
     const ctx = queueCtx();
     expect(countEvidenceState(ctx.state, "missing")).toBe(0);
+    expect(workbenchView(ctx)).not.toContain("缺少材料，暂不能提交");
     ctx.state.runtimeStore.workQueue[0].evidenceState = "missing";
     expect(countEvidenceState(ctx.state, "missing")).toBe(1);
+  });
+
+  it("Home overview chips filter Today in place instead of opening Workbench", () => {
+    const ctx = queueCtx({ view: "home" });
+
+    setTodayFilter("missing-evidence", ctx);
+
+    expect(ctx.state.view).toBe("home");
+    expect(ctx.state.todayFilter).toBe("missing-evidence");
+    expect(ctx.state.queueFilters).toBeUndefined();
+    expect(ctx.render).toHaveBeenCalledWith();
   });
 
   it("does not infer transferable tasks from owner-role mismatch without runtime permission", () => {
@@ -185,7 +200,8 @@ function queueCtx(overrides = {}) {
   const ctx = createSurfaceCtx({
     queueFilters: undefined,
     queueDomain: "all",
-    queueBadge: "mine",
+    queueBadge: "all",
+    todayFilter: "must-do",
     runtimeStore: store,
     ...overrides
   });

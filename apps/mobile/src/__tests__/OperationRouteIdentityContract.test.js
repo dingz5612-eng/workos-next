@@ -128,7 +128,9 @@ describe("OAM-04B WorkItem route identity", () => {
     const text = visibleText(routeView(ctx));
 
     expect(target.workItem.card.fields.business.map((item) => item.id)).toEqual(["bedNo", "bedLabel"]);
-    expect(text).toContain("床位号");
+    expect(text).toContain("缺少上游信息: 所属房间、床位数");
+    expect(text).not.toContain("床位号");
+    expect(text).not.toContain("床位标签");
     expect(text).not.toContain("阻断原因");
   });
 
@@ -174,8 +176,10 @@ describe("OAM-04B WorkItem route identity", () => {
 
     const text = visibleText(routeView(ctx));
 
-    expect(text).toContain("填写信息");
-    expect(text).toContain("提交处理");
+    expect(text).toContain("提交前检查");
+    expect(text).toContain("缺少上游信息: 所属房间");
+    expect(text).toContain("提交观察记录");
+    expect(text).not.toContain("床位号");
     expect(text).not.toContain("这张卡还没轮到办理");
   });
 
@@ -220,7 +224,7 @@ describe("OAM-04B WorkItem route identity", () => {
     expect(html).toContain('data-step-marker="修"');
     expect(text).toContain("填写信息");
     expect(text).toContain("更正中");
-    expect(text).toContain("提交处理");
+    expect(text).toContain("提交观察记录");
     expect(text).not.toContain("办理记录");
     expect(html).not.toContain("intent-card");
     expect(html).toContain('data-operation-field="roomNo"');
@@ -416,7 +420,7 @@ describe("OAM-04B WorkItem route identity", () => {
     const html = searchView(ctx);
 
     expect(html).toContain('data-work-item-id="W-STAY-RESOURCE:roomSetup"');
-    expect(html).toContain(">处理</button>");
+    expect(html).toContain(">继续观察记录</button>");
   });
 
   it("routes workspace/card display clicks through the Operations WorkItem route", () => {
@@ -577,7 +581,7 @@ describe("OAM-04B WorkItem route identity", () => {
     expect(html).toContain('data-surface="operation-panel-route"');
     expect(html).not.toContain('data-surface="completed-workspace-record"');
     expect(text).toContain("床位配置卡");
-    expect(text).toContain("提交处理");
+    expect(text).toContain("提交观察记录");
     vi.clearAllTimers();
     vi.useRealTimers();
     vi.unstubAllGlobals();

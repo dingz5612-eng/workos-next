@@ -1,8 +1,8 @@
 {
-  "generatedAtUtc": "2026-06-04T22:48:18.382Z",
+  "generatedAtUtc": "2026-06-05T16:54:52.938Z",
   "generatedBy": "scripts/surface/check-dormitory-ten-scenario-real-browser-audit.mjs",
   "status": "passed",
-  "report": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/ten-dormitory-scenario-real-browser-20260605-post-unified-start/ten-scenario-real-browser-report.json",
+  "report": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/pure-baseline-field-source-renderer-ten-20260606-current/ten-scenario-real-browser-report.json",
   "scenarioCount": 10,
   "screenshotCount": 156,
   "workspaceStartCount": 10,

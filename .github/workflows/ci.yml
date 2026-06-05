@@ -211,6 +211,8 @@ jobs:
       - name: Validate RT-5 Experience Contract
         run: |
           node scripts/check-frontend-experience-system.mjs
+          node scripts/check-dormitory-field-context-contracts.mjs
+          node scripts/check-responsibility-boundaries.mjs
           node scripts/check-experience-contract.mjs
           node scripts/check-surface-contract.mjs
           node scripts/check-no-mobile-pc-cross-import.mjs

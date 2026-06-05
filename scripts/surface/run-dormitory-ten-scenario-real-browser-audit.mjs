@@ -23,9 +23,9 @@ const scenarios = [
   scenario("04", "lifecycle", "W-STAY-LIFECYCLE", "residentProfile", "维护在住信息"),
   scenario("05", "deposit-ledger", "W-STAY-DEPOSIT-LEDGER", "depositAssessment", "处理押金"),
   scenario("06", "payment-ledger", "W-STAY-PAYMENT-LEDGER", "paymentReceipt", "登记普通收款"),
-  scenario("07", "service-task", "W-STAY-SERVICE-TASK", "serviceTaskCreate", "安排清洁或维修"),
-  scenario("08", "checkout", "W-STAY-CHECKOUT", "checkoutStart", "办理退房"),
-  scenario("09", "checkout-settlement", "W-STAY-CHECKOUT-SETTLEMENT", "checkoutStart", "办理退住结算"),
+  scenario("07", "checkout-settlement", "W-STAY-CHECKOUT-SETTLEMENT", "checkoutStart", "办理退住结算"),
+  scenario("08", "service-task", "W-STAY-SERVICE-TASK", "serviceTaskCreate", "安排清洁或维修"),
+  scenario("09", "expense-ledger", "W-STAY-EXPENSE-LEDGER", "expenseRecord", "登记宿舍支出"),
   scenario("10", "period-analytics", "W-STAY-PERIOD-ANALYTICS", "periodScope", "做周期复盘")
 ];
 

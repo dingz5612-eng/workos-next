@@ -11,44 +11,12 @@ public sealed class LensQueryService
         surfacePolicies = RuntimeSurfacePolicyCatalog.LoadDefault();
     }
 
-    public IReadOnlyList<object> GetWorkQueue(RuntimeState state) =>
-        state.Workspaces
-            .Select(workspace =>
-            {
-                var policy = surfacePolicies.ForWorkspace(workspace.Id);
-                if (policy?.Workbench.Visible != true)
-                {
-                    return null;
-                }
-
-                var card = searchProjection.CurrentCard(workspace);
-                var cardPolicy = card is null ? null : policy.Card(card.Id);
-                if (card is null || cardPolicy?.Workbench != true)
-                {
-                    return null;
-                }
-
-                return card is null ? null : new
-                {
-                    queueItemId = $"q-{workspace.Id}-{card.Id}",
-                    workspaceId = workspace.Id,
-                    cardId = card.Id,
-                    domain = workspace.Domain,
-                    domainGroup = policy.DomainGroup,
-                    status = card.Status,
-                    badges = BadgesFor(card),
-                    title = workspace.Title,
-                    cardTitle = card.Title,
-                    priority = policy.Home.Priority + StatusPriorityFor(card.Status),
-                    reason = workspace.Next,
-                    nextActionId = $"{card.Id}.prepare",
-                    queueRule = policy.Workbench.QueueRule,
-                    defaultLens = cardPolicy.DefaultLens,
-                    lenses = policy.Lenses
-                };
-            })
-            .Where(item => item is not null)
-            .Cast<object>()
+    public IReadOnlyList<object> GetWorkQueue(
+        RuntimeState state,
+        IReadOnlyList<ProcessWorkItemIntentRecord> workItemIntents) =>
+        (workItemIntents ?? Array.Empty<ProcessWorkItemIntentRecord>())
+            .Where(item => !TerminalStatuses.Contains(item.Status))
+            .Select(item => ProcessIntentQueueItem(state, item))
             .ToArray();
 
     public IReadOnlyList<object> GetHomeSurface(RuntimeState state) =>
@@ -233,6 +201,98 @@ public sealed class LensQueryService
         if (card.Confirmation.Required) badges.Add("confirm");
         return badges.Distinct(StringComparer.OrdinalIgnoreCase).ToArray();
     }
+
+    private object ProcessIntentQueueItem(RuntimeState state, ProcessWorkItemIntentRecord intent)
+    {
+        var workspace = state.Workspaces.FirstOrDefault(item =>
+            item.Id.Equals(intent.TargetWorkspaceId, StringComparison.OrdinalIgnoreCase));
+        var policy = workspace is null ? null : surfacePolicies.ForWorkspace(workspace.Id);
+        var cardId = PayloadValue(intent.Payload, "cardId", intent.WorkItemType);
+        var card = workspace?.Cards.FirstOrDefault(item =>
+            item.Id.Equals(cardId, StringComparison.OrdinalIgnoreCase));
+        var cardPolicy = card is null || policy is null ? null : policy.Card(card.Id);
+        var status = string.IsNullOrWhiteSpace(intent.Status) ? "ready" : intent.Status;
+
+        return new
+        {
+            queueItemId = $"q-{intent.WorkItemId}",
+            workItemId = intent.WorkItemId,
+            caseId = PayloadValue(intent.Payload, "caseId", intent.TargetWorkspaceId),
+            workspaceId = intent.TargetWorkspaceId,
+            cardId,
+            domain = workspace?.Domain ?? DomainFromIntent(intent),
+            domainGroup = policy?.DomainGroup ?? "Operations",
+            status,
+            lifecycleState = status,
+            badges = BadgesFor(status),
+            title = workspace?.Title ?? EmptyText(),
+            cardTitle = card?.Title ?? EmptyText(),
+            priority = (policy?.Home.Priority ?? 0) + StatusPriorityFor(status),
+            reason = PayloadValue(intent.Payload, "nextAction", intent.SourceEventId),
+            nextActionId = $"{cardId}.prepare",
+            queueRule = "process-work-item-intent",
+            defaultLens = cardPolicy?.DefaultLens ?? string.Empty,
+            lenses = policy?.Lenses ?? Array.Empty<string>(),
+            ownerRole = intent.OwnerRole,
+            source = "process-work-item-intent",
+            payload = intent.Payload
+        };
+    }
+
+    private static IReadOnlyList<string> BadgesFor(string status)
+    {
+        var badges = new List<string> { status };
+        if (status is "ready" or "open" or "available" or "blocked" or "inProgress") badges.Add("mine");
+        if (status is "blocked") badges.Add("blocked");
+        return badges.Distinct(StringComparer.OrdinalIgnoreCase).ToArray();
+    }
+
+    private static IReadOnlyDictionary<string, string> EmptyText() => new Dictionary<string, string>
+    {
+        ["zh-CN"] = "",
+        ["ru-RU"] = ""
+    };
+
+    private static string PayloadValue(IReadOnlyDictionary<string, string> payload, string key, string fallback = "") =>
+        payload.TryGetValue(key, out var value) && !string.IsNullOrWhiteSpace(value) ? value : fallback;
+
+    private static string DomainFromIntent(ProcessWorkItemIntentRecord intent)
+    {
+        var text = string.Join(" ", intent.WorkItemType, intent.TargetWorkspaceId, string.Join(" ", intent.Payload.Values));
+        if (text.Contains("stay", StringComparison.OrdinalIgnoreCase) ||
+            text.Contains("dorm", StringComparison.OrdinalIgnoreCase) ||
+            text.Contains("room", StringComparison.OrdinalIgnoreCase) ||
+            text.Contains("bed", StringComparison.OrdinalIgnoreCase) ||
+            text.Contains("住宿", StringComparison.OrdinalIgnoreCase) ||
+            text.Contains("房间", StringComparison.OrdinalIgnoreCase) ||
+            text.Contains("床位", StringComparison.OrdinalIgnoreCase))
+        {
+            return "stay";
+        }
+
+        if (text.Contains("finance", StringComparison.OrdinalIgnoreCase) ||
+            text.Contains("payment", StringComparison.OrdinalIgnoreCase) ||
+            text.Contains("deposit", StringComparison.OrdinalIgnoreCase) ||
+            text.Contains("财务", StringComparison.OrdinalIgnoreCase) ||
+            text.Contains("押金", StringComparison.OrdinalIgnoreCase) ||
+            text.Contains("收款", StringComparison.OrdinalIgnoreCase))
+        {
+            return "finance";
+        }
+
+        return "operations";
+    }
+
+    private static readonly ISet<string> TerminalStatuses = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+    {
+        "done",
+        "confirmed",
+        "completed",
+        "committed",
+        "closed",
+        "cancelled",
+        "skipped"
+    };
 
     private sealed record SearchSurfaceResult(
         string WorkspaceId,

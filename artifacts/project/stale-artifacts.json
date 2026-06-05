@@ -1,10 +1,10 @@
 {
-  "generatedAtUtc": "2026-06-04T23:38:35.037Z",
+  "generatedAtUtc": "2026-06-05T17:52:52.388Z",
   "generatedBy": "check-stale-evidence-refs",
   "stage": "PROJECT-HYGIENE-CLEANUP",
   "status": "passed",
   "finalEvidenceRefCount": 92,
-  "staleArtifactCount": 168,
+  "staleArtifactCount": 218,
   "staleArtifacts": [
     {
       "artifactPath": "artifacts/baseline/artifact-inventory.json",
@@ -295,6 +295,72 @@
       "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
     },
     {
+      "artifactPath": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/bed-setup-real-browser/bed-setup-layout-20260605-051906/bed-setup-real-browser-report.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/bed-setup-real-browser/bed-setup-layout-20260605-051906/screenshot-index.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/bed-setup-real-browser/bed-setup-layout-20260605-053230/bed-setup-real-browser-report.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/bed-setup-real-browser/bed-setup-layout-20260605-053230/screenshot-index.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/bed-setup-real-browser/bed-setup-layout-20260605-053615/bed-setup-real-browser-report.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/bed-setup-real-browser/bed-setup-layout-20260605-053615/screenshot-index.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/bed-setup-real-browser/bed-setup-layout-20260605-053713/bed-setup-real-browser-report.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/bed-setup-real-browser/bed-setup-layout-20260605-053713/screenshot-index.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/bed-setup-real-browser/bed-setup-layout-20260605-053912/bed-setup-real-browser-report.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/bed-setup-real-browser/bed-setup-layout-20260605-053912/screenshot-index.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/duplicate-submit-message/duplicate-submit-message-20260605-054914/duplicate-submit-message-report.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
       "artifactPath": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/account-actor-kernel-real-browser-proof.json",
       "retainedAs": "historical_artifact",
       "referencedByCurrentState": false,
@@ -320,6 +386,78 @@
     },
     {
       "artifactPath": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/frontend-experience-system-real-browser-proof.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/ten-dormitory-scenario-real-browser-20260605-global-audit-01/screenshot-index.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/ten-dormitory-scenario-real-browser-20260605-global-audit-01/ten-scenario-real-browser-report.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/ten-dormitory-scenario-real-browser-20260605-global-audit-01/ten-scenario-real-browser-report.md",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/ten-dormitory-scenario-real-browser-20260605-global-audit-02/screenshot-index.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/ten-dormitory-scenario-real-browser-20260605-global-audit-02/ten-scenario-real-browser-report.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/ten-dormitory-scenario-real-browser-20260605-global-audit-02/ten-scenario-real-browser-report.md",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/ten-dormitory-scenario-real-browser-20260605-global-audit-03/screenshot-index.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/ten-dormitory-scenario-real-browser-20260605-global-audit-03/ten-scenario-real-browser-report.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/ten-dormitory-scenario-real-browser-20260605-global-audit-03/ten-scenario-real-browser-report.md",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/ten-dormitory-scenario-real-browser-20260605-global-audit-04/screenshot-index.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/ten-dormitory-scenario-real-browser-20260605-global-audit-04/ten-scenario-real-browser-report.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/ten-dormitory-scenario-real-browser-20260605-global-audit-04/ten-scenario-real-browser-report.md",
       "retainedAs": "historical_artifact",
       "referencedByCurrentState": false,
       "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
@@ -476,6 +614,114 @@
     },
     {
       "artifactPath": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/global-real-browser-audit-20260605-2026-06-04T17-38-03-553Z/mobile-real-browser-audit.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-classified-help-20260605-01/pc-governance-real-browser-report.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-classified-help-20260605-01/pc-governance-real-browser-report.md",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-classified-help-20260605-01/screenshot-index.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-global-audit-20260605-01/pc-governance-real-browser-report.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-global-audit-20260605-01/pc-governance-real-browser-report.md",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-global-audit-20260605-01/screenshot-index.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-global-audit-20260605-02/pc-governance-real-browser-report.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-global-audit-20260605-02/pc-governance-real-browser-report.md",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-global-audit-20260605-02/screenshot-index.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-top-menu-20260605-01/pc-governance-real-browser-report.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-top-menu-20260605-01/pc-governance-real-browser-report.md",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-top-menu-20260605-01/screenshot-index.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-top-menu-20260605-02/pc-governance-real-browser-report.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-top-menu-20260605-02/pc-governance-real-browser-report.md",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-top-menu-20260605-02/screenshot-index.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-top-menu-20260605-03/pc-governance-real-browser-report.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-top-menu-20260605-03/pc-governance-real-browser-report.md",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-top-menu-20260605-03/screenshot-index.json",
       "retainedAs": "historical_artifact",
       "referencedByCurrentState": false,
       "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
@@ -842,6 +1088,60 @@
     },
     {
       "artifactPath": "artifacts/surface/dormitory-l1-browser-e2e/20260604T223103Z/screenshot-index.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/surface/dormitory-l1-browser-e2e/20260604T223227Z/dormitory-l1-browser-e2e-report.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/surface/dormitory-l1-browser-e2e/20260604T223227Z/dormitory-l1-browser-e2e-report.md",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/surface/dormitory-l1-browser-e2e/20260604T223227Z/screenshot-index.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/surface/dormitory-l1-browser-e2e/dormitory-l1-real-browser-global-audit-20260605-01/dormitory-l1-browser-e2e-report.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/surface/dormitory-l1-browser-e2e/dormitory-l1-real-browser-global-audit-20260605-01/dormitory-l1-browser-e2e-report.md",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/surface/dormitory-l1-browser-e2e/dormitory-l1-real-browser-global-audit-20260605-01/screenshot-index.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/surface/dormitory-l1-browser-e2e/dormitory-l1-real-browser-global-audit-20260605-02/dormitory-l1-browser-e2e-report.json",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/surface/dormitory-l1-browser-e2e/dormitory-l1-real-browser-global-audit-20260605-02/dormitory-l1-browser-e2e-report.md",
+      "retainedAs": "historical_artifact",
+      "referencedByCurrentState": false,
+      "action": "保留为历史或诊断材料，不作为 final go-live evidence。"
+    },
+    {
+      "artifactPath": "artifacts/surface/dormitory-l1-browser-e2e/dormitory-l1-real-browser-global-audit-20260605-02/screenshot-index.json",
       "retainedAs": "historical_artifact",
       "referencedByCurrentState": false,
       "action": "保留为历史或诊断材料，不作为 final go-live evidence。"

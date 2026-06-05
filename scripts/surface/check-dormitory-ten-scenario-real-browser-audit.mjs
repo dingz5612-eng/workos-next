@@ -47,8 +47,8 @@ function validateReport() {
     "W-STAY-DEPOSIT-LEDGER",
     "W-STAY-PAYMENT-LEDGER",
     "W-STAY-SERVICE-TASK",
-    "W-STAY-CHECKOUT",
     "W-STAY-CHECKOUT-SETTLEMENT",
+    "W-STAY-EXPENSE-LEDGER",
     "W-STAY-PERIOD-ANALYTICS"
   ]);
   for (const item of report.scenarios || []) {

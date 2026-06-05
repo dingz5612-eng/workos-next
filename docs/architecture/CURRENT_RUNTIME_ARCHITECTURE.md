@@ -70,11 +70,10 @@ must consume one runtime surface source built from:
 - `GET /api/lenses/learning-catalog`
 - `GET /api/lenses/accommodation/{lensId}`
 
-`demoQueue` and static `workspaceProjections` live under
-`apps/mobile/src/devFixtures` and are dev/test fixtures only. Production API
-failure must render a true empty state, an error state, or already-cached real
-runtime data; it must never hydrate Home or Workbench from fake business
-objects.
+Local demo queue and static workspace projection fixtures are retired from the
+active mobile baseline. Production API failure must render a true empty state,
+an error state, or already-cached real runtime data; it must never hydrate Home
+or Workbench from fake business objects.
 
 Surface visibility is contract-driven through:
 

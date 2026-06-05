@@ -20,8 +20,11 @@ describe("Stage B search result render contract", () => {
 
     expect(visibleText(html)).not.toContain("[object Object]");
     expect(html).toContain("房间配置办理");
+    expect(html).toContain('data-surface="business-summary-header"');
+    expect(html).toContain('data-surface="business-task-body"');
     expect(html).toContain('class="search-result-main"');
-    expect(html).toContain('class="search-result-action"');
+    expect(html).toContain('class="search-result-action business-summary-actions"');
+    expect(html).not.toContain('class="search-result-facts"');
     expect(html).not.toContain("PC Governance");
   });
 

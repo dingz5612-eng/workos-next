@@ -3,6 +3,7 @@ import { searchPreferenceKey } from "./appState.js";
 import { applyRuntimeSearchResults, applyRuntimeSurfacePayloads } from "./runtime/runtimeStore.js";
 import { selectWorkspaceById } from "./selectors/surfaceSelectors.js";
 import { evaluateSurfaceAccess } from "./surfaceGuard.js";
+import { safeConfirmErrorKey, safeReasonCode } from "./admissionSurface.js";
 import { defaultHomeForCurrentSurface as resolveDefaultHomeForCurrentSurface } from "./surfaceResolver.js";
 import { resolveOperationPanelTarget } from "./operationRouteResolver.js";
 import { resolveSearchIntentId } from "./searchIntentRegistry.js";
@@ -127,6 +128,12 @@ export async function runSearch(ctx, explicitQuery = null) {
       const results = await fetchSearchResults(query);
       if (ctx.state.searchRequestId !== requestId) return;
       applyRuntimeSearchResults(ctx.state, query, results);
+      const operationItems = operationWorkItemsFromSearchResults(results);
+      if (operationItems.length) {
+        applyRuntimeSurfacePayloads(ctx.state, {
+          operationWorkItems: mergeOperationWorkItems(ctx.state.runtimeStore?.operationWorkItems || [], operationItems)
+        });
+      }
     } catch {
       // Projection fallback remains available through surface selectors.
     }
@@ -160,7 +167,52 @@ async function recordSearchIntentEvent(ctx, query) {
   }
 }
 
-export async function startOperationsWorkspaceCommand(ctx, templateWorkspaceId, firstCardId = "") {
+function operationWorkItemsFromSearchResults(results = []) {
+  return (Array.isArray(results) ? results : [])
+    .filter((item) => (item.resultType || item.result_type) === "workItem")
+    .filter((item) => item.workItemId || item.work_item_id || item.target?.workItemId)
+    .map((item) => ({
+      workItemId: item.workItemId || item.work_item_id || item.target?.workItemId || "",
+      caseId: item.caseId || item.case_id || item.target?.caseId || "",
+      workItemType: item.workItemType || item.work_item_type || item.cardId || item.card_id || "",
+      lifecycleState: item.lifecycleState || item.lifecycle_state || item.status || "ready",
+      status: item.status || item.lifecycleState || item.lifecycle_state || "ready",
+      ownerRole: item.ownerRole || item.owner_role || "operator",
+      workspaceId: item.workspaceId || item.workspace_id || item.target?.workspaceId || "",
+      cardId: item.cardId || item.card_id || item.target?.cardId || "",
+      domain: item.domain || "operations",
+      badges: ["mine", item.status || item.lifecycleState || "ready"].filter(Boolean),
+      priority: item.score || 90,
+      reason: localizedSearchValue(item.nextAction || item.next_action || item.summary || item.subtitle),
+      businessAnchor: item.businessAnchor || item.business_anchor || item.payload?.fieldValues || item.payload?.field_values || {},
+      payload: {
+        ...(item.payload || {}),
+        cardId: item.cardId || item.card_id || item.target?.cardId || "",
+        caseId: item.caseId || item.case_id || item.target?.caseId || "",
+        sourceEventId: item.payload?.sourceEventId || item.sourceRefs?.sourceEventId || "",
+        sourceSubmissionId: item.payload?.sourceSubmissionId || item.sourceRefs?.sourceSubmissionId || ""
+      },
+      source: "search-kernel-operations"
+    }));
+}
+
+function mergeOperationWorkItems(existing = [], incoming = []) {
+  const byId = new Map();
+  for (const item of [...incoming, ...existing]) {
+    const id = item.workItemId || item.work_item_id || "";
+    if (!id || byId.has(id)) continue;
+    byId.set(id, item);
+  }
+  return Array.from(byId.values());
+}
+
+function localizedSearchValue(value) {
+  if (!value) return "";
+  if (typeof value === "string" || typeof value === "number") return String(value);
+  return value["zh-CN"] || value["ru-RU"] || value["ky-KG"] || value.label || value.title || "";
+}
+
+export async function startOperationsWorkspaceCommand(ctx, templateWorkspaceId, firstCardId = "", options = {}) {
   if (!ctx.state.currentActor) {
     setView("login", ctx);
     return;
@@ -169,7 +221,10 @@ export async function startOperationsWorkspaceCommand(ctx, templateWorkspaceId, 
   ctx.state.operationMessage = ctx.tr("submitting");
   ctx.render();
   try {
-    const result = await startOperationsWorkspace(templateWorkspaceId, ctx.state.currentActor.token || "");
+    const result = await startOperationsWorkspace(templateWorkspaceId, ctx.state.currentActor.token || "", "operation_workspace_start_failed", {
+      anchorQuery: options.anchorQuery || ctx.state.query || "",
+      anchorPayload: options.anchorPayload || null
+    });
     if (result?.projection) {
       ctx.applyRuntimeProjection(result.projection);
     }
@@ -208,17 +263,17 @@ function handleStartWorkspaceError(error, ctx) {
     const decision = {
       allowed: false,
       view: "operationPanel",
-      reason: error.reason || error.code || "role_surface_not_allowed",
+      reason: safeReasonCode(error.reason || error.code || "role_surface_not_allowed"),
       owner: "manager",
       requiredPermission: "operations.workspace.start",
-      nextAction: ctx.tr("startCommandPermissionNext"),
+      nextAction: ctx.tr("operations.error.safe.403"),
       status: "permission_blocked_403",
       component: "PermissionDiagnostic"
     };
     ctx.state.permissionDiagnostic = decision;
     ctx.state.lastActionResult = {
       status: "permission_blocked_403",
-      message: `${ctx.tr("confirmForbidden")} ${decision.reason}`,
+      message: ctx.tr("operations.error.safe.403"),
       permissionDiagnostic: decision
     };
     ctx.state.operationMessage = "";
@@ -227,10 +282,10 @@ function handleStartWorkspaceError(error, ctx) {
     return;
   }
   if (error?.status === 422) {
-    ctx.state.operationMessage = `${ctx.tr("confirmBusinessBlocked")} ${error.reason || error.code || ""}`.trim();
+    ctx.state.operationMessage = ctx.tr(safeConfirmErrorKey(422));
     ctx.state.lastActionResult = {
       status: "business_blocked_422",
-      reason: error.reason || error.code || "workspace_start_blocked",
+      reason: safeReasonCode(error.reason || error.code || "workspace_start_blocked"),
       message: ctx.state.operationMessage
     };
     return;

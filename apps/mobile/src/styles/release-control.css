@@ -12,8 +12,8 @@
 
 .release-control > header span {
   color: #52677b;
-  font-size: 12px;
-  font-weight: 850;
+  font-size: 13px;
+  font-weight: var(--font-strong);
 }
 
 .release-control > header h1 {
@@ -54,8 +54,8 @@
 
 .release-panel dt {
   color: #52677b;
-  font-size: 11px;
-  font-weight: 850;
+  font-size: 12px;
+  font-weight: var(--font-strong);
 }
 
 .release-panel dd {
@@ -64,7 +64,7 @@
   overflow-wrap: anywhere;
   color: #102033;
   font-size: 13px;
-  font-weight: 800;
+  font-weight: var(--font-strong);
 }
 
 .release-panel table {
@@ -81,13 +81,13 @@
   text-align: left;
   vertical-align: top;
   color: #102033;
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .release-panel th {
   color: #52677b;
-  font-size: 11px;
-  font-weight: 850;
+  font-size: 12px;
+  font-weight: var(--font-strong);
 }
 
 .release-panel tr[data-selected-release="true"] td {
@@ -107,8 +107,8 @@
   border-radius: 8px;
   color: #102033;
   background: #edf6f6;
-  font-size: 12px;
-  font-weight: 850;
+  font-size: 13px;
+  font-weight: var(--font-strong);
 }
 
 .grade-green dd,

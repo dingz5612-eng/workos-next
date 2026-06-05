@@ -10,8 +10,21 @@ const violations = [];
 const html = renderMobile();
 const text = visibleText(html);
 
-for (const label of ["必须做", "即将超时", "缺证据", "等待财务", "刚提交 / 同步中", "风险提醒", "今日必学", "可处理", "有阻断", "等他人处理", "需人工补证", "可转交给同事"]) {
+for (const label of ["必须做", "即将超时", "缺材料/缺证据", "等他人", "等待财务", "刚提交 / 同步中", "风险提醒", "全部工作项", "我的可办", "有阻断", "等他人处理", "可转交", "住宿资源", "入住收款", "押金", "普通收款", "服务任务", "退住", "支出", "周期复盘"]) {
   if (!text.includes(label)) violations.push(v("mobile_work.ia_missing", `移动端 IA 缺少 ${label}`, { label }));
+}
+
+const todayOverview = html.match(/<section class="command-card today-focus-overview"[\s\S]*?<\/section>/)?.[0] || "";
+if (todayOverview.includes("data-work-filter") || todayOverview.includes('data-view="workbench"')) {
+  violations.push(v("mobile_work.today_filter_leaks_workbench", "今日重点数字只能使用 data-today-filter，不得复用 data-work-filter 跳工作项。"));
+}
+
+if (!html.includes("data-today-filter=\"must-do\"") || !html.includes("data-work-filter=\"all-work\"") || !html.includes("data-mobile-work-scenario-ia")) {
+  violations.push(v("mobile_work.filter_contract_missing", "Today / Work 必须拆成 data-today-filter 和 data-work-filter 两套合同，并包含场景筛选。"));
+}
+
+if (text.includes("今日必学")) {
+  violations.push(v("mobile_work.today_learning_retired", "Today 首页内容区不得再放今日必学；学习入口应从搜索或我的进入。"));
 }
 
 if (!html.includes('aria-label="移动端主导航"') || !html.includes('aria-current="page"')) {
@@ -40,7 +53,8 @@ function renderMobile() {
     apiStatus: "online",
     query: "住宿",
     queueDomain: "all",
-    queueBadge: "mine",
+    queueBadge: "all",
+    todayFilter: "must-do",
     selectedWorkspace: "W-STAY-RESOURCE",
     selectedCardId: "roomSetup",
     currentActor: { role: "operator", displayName: "内测经办人" },

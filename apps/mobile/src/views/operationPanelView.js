@@ -1,10 +1,11 @@
 import { loadDraft } from "../operationDrafts.js";
+import { admissionCopy } from "../admissionSurface.js";
 import { buildOperationActionState } from "../operationActionState.js";
 import { syncUrlFromState } from "../navigationController.js";
 import { resolveOperationPanelTarget } from "../operationRouteResolver.js";
 import { activeWorkspaceCard, isTerminalCardStatus } from "../selectors/workspaceSelectors.js";
 import { ActionResult, OperationStepRail, TechnicalAuditDetails, workItemModel } from "./experienceComponents.js";
-import { completedWorkspaceRecord, primaryActionButton, workspaceCardPanel } from "./workspaceView.js";
+import { completedWorkspaceRecord, currentActionResultForOperationCard, primaryActionButton, workspaceCardPanel } from "./workspaceView.js";
 
 export function operationPanelView(ctx) {
   const { state, shell } = ctx;
@@ -54,14 +55,19 @@ export function operationPanelView(ctx) {
   const operationContext = { ...item, workspace, card: activeCard, workspaceId: item?.workspaceId || workspace.id, cardId: item?.cardId || activeCard?.id };
   const model = workItemModel(operationContext, ctx);
   const draft = loadDraft(workspace.id, activeCard.id);
-  const currentActionResult = actionResultForActiveCard(state.lastActionResult, workspace, activeCard);
+  const currentActionResult = currentActionResultForOperationCard(
+    actionResultForActiveCard(state.lastActionResult, workspace, activeCard),
+    workspace,
+    activeCard,
+    ctx
+  );
   const payloadHash = currentActionResult?.payloadHash || payloadHashFor(draft.values || {}, draft.evidenceDrafts || []);
   const payloadFingerprint = payloadHash;
   const commandSubmissionId = currentActionResult?.commandSubmissionId || draft.submissionProtocol?.submissionId || model.traceRefs[0] || "";
   const submissionRecord = commandSubmissionId;
   const operationBody = workspaceCardPanel(activeCard, workspace, true, ctx);
   const traceCount = [commandSubmissionId, model.caseId, model.workItemId, ...(model.traceRefs || [])].filter(Boolean).length;
-  const actionState = buildOperationActionState(operationContext, activeCard, currentActionResult, state);
+  const actionState = buildOperationActionState(operationContext, activeCard, currentActionResult, { ...state, lastActionResult: currentActionResult });
   const admissionDecision = operationAdmissionDecision(model, activeCard, actionState);
   const runtimeDecision = operationRuntimeDecision(model, activeCard, actionState);
 
@@ -85,6 +91,7 @@ export function operationPanelView(ctx) {
       projectionStatus: currentActionResult?.status || "notSubmitted",
       policyRef: activeCard.policyRef || activeCard.confirmation?.policyRef || "operations-runtime-policy"
     }, ctx) : ""}
+    ${admissionStatusPanel(actionState, ctx)}
     ${operationBody}
     ${ActionResult(currentActionResult || {}, ctx)}
     <div class="sticky-action">${primaryActionButton(actionState, ctx)}</div>
@@ -106,22 +113,42 @@ function shouldOfferResourceSetup(state = {}) {
 
 function operationAdmissionDecision(model, card, actionState) {
   if (isTerminalCardStatus(card.status) || isTerminalCardStatus(model.lifecycleState)) return "visible_readonly_completed";
+  if (actionState.admission) return admissionCopy(actionState.admission, { tr: (key) => key }, "operations").decision;
   if (actionState.status === "waitingPermission") return "visible_blocked_permission";
   if (actionState.status === "missingRequiredFields") return "visible_allowed_requires_required_fields";
   if (actionState.status === "missingEvidence") return "visible_allowed_requires_evidence";
   if (actionState.status === "blocked") return "visible_blocked_business_rule";
   if (actionState.status === "notStarted") return "visible_blocked_previous_step";
-  return actionState.status === "ready" ? "visible_allowed_confirmable" : `visible_${actionState.status}`;
+  if (actionState.status === "readyObservation") return "confirm_allowed_production_blocked";
+  if (actionState.status === "ready") return "confirm_allowed_production_allowed";
+  return `visible_${actionState.status}`;
 }
 
 function operationRuntimeDecision(model, card, actionState) {
   if (isTerminalCardStatus(card.status) || isTerminalCardStatus(model.lifecycleState)) return `work_item_terminal:${model.lifecycleState || card.status}`;
-  if (actionState.status === "ready") return "work_item_confirm_ready";
+  if (["ready", "readyObservation"].includes(actionState.status)) return actionState.status === "readyObservation" ? "work_item_confirm_ready:production_blocked" : "work_item_confirm_ready";
+  if (actionState.status === "confirmDenied") return "blocked:confirm_denied";
   if (actionState.status === "missingRequiredFields") return "blocked:required_field_missing";
   if (actionState.status === "missingEvidence") return "blocked:evidence_missing";
   if (actionState.status === "notStarted") return "blocked:previous_step_required";
   if (actionState.status === "blocked") return "blocked:business_rule";
   return `work_item_${actionState.status}`;
+}
+
+function admissionStatusPanel(actionState, ctx) {
+  if (!actionState.admission) return "";
+  const copy = admissionCopy(actionState.admission, ctx, "operations");
+  const confirmLabel = actionState.admission.confirmAllowed ? ctx.tr("operations.admission.confirmAllowed") : ctx.tr("operations.admission.confirmDenied");
+  const productionLabel = actionState.admission.productionAllowed ? ctx.tr("operations.admission.productionMode") : ctx.tr("operations.admission.productionBlocked");
+  return `<section class="operation-admission-panel" data-surface="operation-admission" data-admission-decision="${ctx.escapeAttr(copy.decision)}">
+    <b>${ctx.tr("admissionStatus")}: ${ctx.escapeHtml(copy.label)}</b>
+    <p>${ctx.escapeHtml(copy.reason)}</p>
+    <div>
+      <span>${ctx.tr("currentState")}: ${ctx.escapeHtml(copy.modeLabel)}</span>
+      <span>${ctx.tr("confirmCommit")}: ${ctx.escapeHtml(confirmLabel)}</span>
+      <span>${ctx.tr("businessCommitment")}: ${ctx.escapeHtml(productionLabel)}</span>
+    </div>
+  </section>`;
 }
 
 export function resolveOperationItem(state, ctx = null) {

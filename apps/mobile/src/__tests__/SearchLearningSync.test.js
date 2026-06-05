@@ -4,30 +4,40 @@ import { searchView } from "../views/searchView.js";
 import { meView } from "../views/meView.js";
 
 describe("HOTFIX-SURFACE-UX-01 Search and Learning sync", () => {
-  it("renders only matching WorkOS Search sections instead of dumping every dormitory category", () => {
+  it("keeps Search focused on active business entry instead of personal archives", () => {
     const html = searchView(ctx({ view: "search", query: "住宿" }));
 
-    expect(html).toContain("WorkOS 搜索");
-    for (const label of ["业务记录", "提交轨迹"]) {
-      expect(html).toContain(label);
-    }
+    expect(html).toContain('class="search-box"');
+    expect(html).not.toContain("WorkOS 搜索");
+    expect(html).toContain("待办任务");
+    expect(html).not.toContain('data-search-section="searchOperationCases"');
+    expect(html).not.toContain('data-search-section="completedWorkItems"');
+    expect(html).not.toContain('data-search-section="searchEvidence"');
+    expect(html).not.toContain('data-search-section="searchSubmissionTrace"');
     expect(html).not.toContain('data-search-section="searchLearning"');
     expect(html).not.toContain("没有匹配结果");
     expect(html).not.toContain("PC Governance");
     expect(html).not.toContain("Release Control");
     expect(html).not.toContain("Finance admin");
+
+    expect(searchView(ctx({ view: "search", query: "新增住宿房源" }))).toContain("主动办理");
   });
 
-  it("shows learning content when the search intent is learning or evidence help", () => {
+  it("keeps learning and evidence libraries in Me instead of Search results", () => {
     const html = searchView(ctx({ view: "search", query: "证据" }));
 
-    expect(html).toContain("学习内容");
-    expect(html).toContain("证据怎么补");
+    expect(html).not.toContain('data-search-section="searchLearning"');
+    expect(html).not.toContain('data-search-section="searchEvidence"');
+    expect(html).toContain("记录、证据和学习内容请到我的查看");
   });
 
-  it("keeps Learning Center in Me instead of adding a fifth bottom tab", () => {
+  it("keeps personal archives in Me instead of adding a fifth bottom tab", () => {
     const html = meView(ctx({ view: "me" }));
 
+    expect(html).toContain("业务资料");
+    expect(html).toContain("业务记录");
+    expect(html).toContain("已完成记录");
+    expect(html).toContain("证据");
     expect(html).toContain("学习中心");
     expect(html).toContain("我的权限");
     expect(html).toContain("最近轨迹");

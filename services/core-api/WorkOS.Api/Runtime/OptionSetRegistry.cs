@@ -25,6 +25,7 @@ internal static class OptionSetRegistry
         if (label.Contains("来源渠道")) return "leadSource";
         if (label.Contains("线索状态")) return "leadStatus";
         if (label.Contains("跟进结果")) return "leadStatus";
+        if (label.Contains("预订后动作")) return "reservationNextAction";
         if (label.Contains("住客状态")) return "residentStatus";
         if (label.Contains("证件类型")) return "identityType";
         if (label == "性别") return "gender";
@@ -106,6 +107,7 @@ internal static class OptionSetRegistry
         "messenger" => new[] { ("whatsapp", "WhatsApp"), ("phone", "电话"), ("instagram", "Instagram"), ("facebook", "Facebook"), ("other", "其他") },
         "leadSource" => new[] { ("whatsapp", "WhatsApp"), ("phone", "电话"), ("instagram", "Instagram"), ("listing_ad", "广告"), ("referral", "熟人推荐"), ("employer", "雇主"), ("other", "其他") },
         "leadStatus" => new[] { ("new", "新线索"), ("callback", "回访"), ("negotiating", "洽谈中"), ("reserved", "已预订"), ("checked_in", "已入住"), ("rejected", "拒绝") },
+        "reservationNextAction" => new[] { ("convert", "继续转入住"), ("cancel", "取消并释放预留") },
         "residentStatus" => new[] { ("active", "在住"), ("checked_out", "已退住"), ("reserved", "预订") },
         "identityType" => new[] { ("passport", "护照"), ("national_id", "身份证"), ("other", "其他证件") },
         "gender" => new[] { ("male", "男"), ("female", "女"), ("unspecified", "未说明") },

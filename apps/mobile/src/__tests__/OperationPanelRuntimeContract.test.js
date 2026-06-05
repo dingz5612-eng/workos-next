@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { routeView } from "../appRouter.js";
 import { saveCompletedRecordSnapshot, saveDraft } from "../operationDrafts.js";
+import { withSystemGeneratedOperationValues } from "../operationSystemValues.js";
 import { createSurfaceCtx, runtimeStore, source, visibleText } from "./surfaceContractTestHelpers.js";
 
 describe("SURFACE-C Operation Panel runtime contract", () => {
@@ -42,10 +43,15 @@ describe("SURFACE-C Operation Panel runtime contract", () => {
   it("publishes machine-readable admission and runtime decisions for browser evidence", () => {
     const ctx = createSurfaceCtx({ view: "operationPanel" });
     const html = routeView(ctx);
+    const text = visibleText(html);
 
-    expect(html).toContain('data-admission-decision="visible_allowed_confirmable"');
-    expect(html).toContain('data-runtime-decision="work_item_confirm_ready"');
+    expect(html).toContain('data-admission-decision="confirm_allowed_production_blocked"');
+    expect(html).toContain('data-runtime-decision="work_item_confirm_ready:production_blocked"');
     expect(html).toContain('data-lifecycle-state="ready"');
+    expect(html).toContain('data-surface="operation-admission"');
+    expect(text).toContain("准入状态");
+    expect(text).toContain("内部试点观察");
+    expect(text).toContain("提交观察记录");
   });
 
   it("renders route metadata on the progress rail without a repeated context container", () => {
@@ -150,6 +156,257 @@ describe("SURFACE-C Operation Panel runtime contract", () => {
     expect(text).toContain("还需填写: 楼栋");
     expect(text).toContain("提交状态: 暂不能提交: 还需填写");
     expect(text).not.toContain("提交状态: 可以提交");
+  });
+
+  it("does not treat a required select as filled just because options exist", () => {
+    const store = runtimeStore();
+    store.workspaces[0].cards[0] = {
+      ...store.workspaces[0].cards[0],
+      fields: {
+        business: [{
+          ...field("roomType", "房型"),
+          type: "select",
+          ui: {
+            control: "select",
+            optionSet: "roomType",
+            options: [
+              { value: "four_bed", label: { "zh-CN": "四人间" } },
+              { value: "six_bed", label: { "zh-CN": "六人间" } }
+            ],
+            defaultValue: "",
+            derivedFrom: "",
+            readonly: false
+          }
+        }],
+        system: [],
+        analytics: []
+      }
+    };
+    const ctx = createSurfaceCtx({
+      view: "operationPanel",
+      runtimeStore: store
+    });
+
+    const html = routeView(ctx);
+    const text = visibleText(html);
+
+    expect(html).toContain('<option value="" selected disabled>请选择</option>');
+    expect(text).toContain("还需填写: 房型");
+    expect(text).toContain("提交状态: 暂不能提交: 还需填写");
+    expect(text).not.toContain("提交状态: 可以提交");
+  });
+
+  it("hides backend-default actor fields while keeping upstream object context readonly", () => {
+    const store = runtimeStore();
+    const workspaceId = "W-STAY-DEPOSIT-CONTEXT-001";
+    store.workspaces[0] = {
+      ...store.workspaces[0],
+      id: workspaceId,
+      title: { "zh-CN": "押金账本" },
+      cards: [{
+        id: "depositConfirmation",
+        status: "ready",
+        title: { "zh-CN": "押金财务确认卡" },
+        fields: {
+          business: [
+            field("depositReceiptId", "押金收款记录"),
+            field("confirmedAmount", "确认金额"),
+            field("confirmationResult", "确认结果"),
+            field("financeReviewer", "财务确认人")
+          ],
+          system: [],
+          analytics: []
+        },
+        evidence: [],
+        checks: [],
+        blockerRules: [],
+        confirmation: { required: true, requiredRole: "finance" }
+      }]
+    };
+    store.operationWorkItems = [{ workItemId: "wi-deposit-confirm", workspaceId, cardId: "depositConfirmation", lifecycleState: "ready", ownerRole: "finance" }];
+    store.workQueue = [...store.operationWorkItems];
+    const ctx = createSurfaceCtx({
+      view: "operationPanel",
+      selectedWorkItemId: "wi-deposit-confirm",
+      selectedWorkspace: workspaceId,
+      selectedCardId: "depositConfirmation",
+      runtimeStore: store,
+      projectionEvents: [{
+        workspaceId,
+        cardId: "depositReceipt",
+        eventType: "Accommodation.DepositReceiptRecorded",
+        payload: { depositReceiptId: "drec-001" }
+      }]
+    });
+
+    const html = routeView(ctx);
+    const text = visibleText(html);
+
+    expect(html).toContain('data-operation-field="depositReceiptId"');
+    expect(html).toContain('data-operation-field="depositReceiptId" value="drec-001"');
+    expect(html).not.toContain('data-operation-field="financeReviewer"');
+    expect(text).not.toContain("财务确认人");
+    expect(text).not.toContain("还需填写: 押金收款记录");
+  });
+
+  it("uses operations-start-context payload as readonly upstream context for direct ledger starts", () => {
+    const store = runtimeStore();
+    const workspaceId = "W-STAY-DEPOSIT-LEDGER-DIRECT-001";
+    store.workspaces[0] = {
+      ...store.workspaces[0],
+      id: workspaceId,
+      title: { "zh-CN": "押金账本" },
+      cards: [{
+        id: "depositAssessment",
+        status: "ready",
+        title: { "zh-CN": "押金评估卡" },
+        fields: {
+          business: [
+            field("stayId", "入住单"),
+            field("depositType", "押金类型"),
+            field("requiredDepositAmount", "应收押金金额")
+          ],
+          system: [],
+          analytics: []
+        },
+        evidence: [],
+        checks: [],
+        blockerRules: [],
+        confirmation: { required: true, requiredRole: "finance" }
+      }]
+    };
+    store.operationWorkItems = [{
+      workItemId: "wi-deposit-direct-start",
+      workspaceId,
+      cardId: "depositAssessment",
+      lifecycleState: "ready",
+      ownerRole: "finance",
+      payload: {
+        cardId: "depositAssessment",
+        templateWorkspaceId: "W-STAY-DEPOSIT-LEDGER",
+        startContextSource: "operations-start-context",
+        stayId: "stay-direct-001",
+        residentName: "真实浏览器验收",
+        phone: "13800001234",
+        buildingName: "D02",
+        roomNo: "22",
+        bedNo: "01",
+        bedTypeLabel: "上铺",
+        depositStatus: "押金待评估"
+      }
+    }];
+    store.workQueue = [...store.operationWorkItems];
+    const ctx = createSurfaceCtx({
+      view: "operationPanel",
+      selectedWorkItemId: "wi-deposit-direct-start",
+      selectedWorkspace: workspaceId,
+      selectedCardId: "depositAssessment",
+      runtimeStore: store
+    });
+
+    const html = routeView(ctx);
+    const text = visibleText(html);
+
+    expect(html).toContain('data-operation-field="stayId" value="stay-direct-001"');
+    expect(text).toContain("系统已带入，不需要重复填写。");
+    expect(text).not.toContain("还需填写: 入住单");
+    expect(text).toContain("还需填写: 押金类型、应收押金金额");
+  });
+
+  it("generates hidden object ids for the first step before Operations Runtime submit", () => {
+    const values = withSystemGeneratedOperationValues(
+      { id: "W-STAY-LEAD-RESERVATION-001" },
+      { id: "leadCapture" },
+      {
+        contactDate: "2026-06-05",
+        leadName: "测试住客",
+        phone: "13800000000",
+        leadStatus: "new"
+      }
+    );
+
+    expect(values.leadId).toMatch(/^lead-/);
+  });
+
+  it("carries a generated lead context into follow-up instead of showing a missing upstream blocker", () => {
+    const store = runtimeStore();
+    const workspaceId = "W-STAY-LEAD-RESERVATION-CARRY-001";
+    store.workspaces[0] = {
+      ...store.workspaces[0],
+      id: workspaceId,
+      title: { "zh-CN": "我要管理线索预订" },
+      cards: [
+        {
+          id: "leadCapture",
+          status: "done",
+          title: { "zh-CN": "线索捕获卡" },
+          fields: { business: [field("leadName", "线索姓名"), field("phone", "电话"), field("contactDate", "联系日期")], system: [], analytics: [] },
+          evidence: [],
+          checks: [],
+          blockerRules: [],
+          confirmation: { required: true, requiredRole: "operator" }
+        },
+        {
+          id: "leadFollowUp",
+          status: "ready",
+          title: { "zh-CN": "线索跟进卡" },
+          fields: {
+            business: [
+              field("leadId", "线索"),
+              field("followUpDate", "跟进日期"),
+              field("followUpResult", "跟进结果"),
+              field("nextFollowUpAt", "下一次跟进时间"),
+              field("leadStatus", "线索状态")
+            ],
+            system: [],
+            analytics: []
+          },
+          evidence: [],
+          checks: [],
+          blockerRules: [],
+          confirmation: { required: true, requiredRole: "operator" }
+        }
+      ]
+    };
+    store.operationWorkItems = [{
+      workItemId: "wi-lead-follow-up",
+      workspaceId,
+      cardId: "leadFollowUp",
+      lifecycleState: "ready",
+      ownerRole: "operator"
+    }];
+    store.workQueue = [...store.operationWorkItems];
+    const ctx = createSurfaceCtx({
+      view: "operationPanel",
+      selectedWorkItemId: "wi-lead-follow-up",
+      selectedWorkspace: workspaceId,
+      selectedCardId: "leadFollowUp",
+      runtimeStore: store,
+      projectionEvents: [{
+        workspaceId,
+        cardId: "leadCapture",
+        eventType: "OperationsWorkItemConfirmed",
+        payload: {
+          input: {
+            fieldValues: {
+              contactDate: "2026-06-05",
+              leadName: "测试住客",
+              phone: "13800000000",
+              leadStatus: "新线索"
+            }
+          }
+        }
+      }]
+    });
+    ctx.state.runtimeStore.events = ctx.state.projectionEvents;
+
+    const html = routeView(ctx);
+    const text = visibleText(html);
+
+    expect(html).toContain('data-operation-field="leadId" value="lead-');
+    expect(html).toContain('value="测试住客 · 13800000000 · 新线索"');
+    expect(text).not.toContain("缺少上游信息: 线索");
+    expect(text).toContain("还需填写: 跟进日期、跟进结果、下一次跟进时间、线索状态");
   });
 
   it("uses the current projection card state over stale WorkItem snapshots after commit", () => {
@@ -337,9 +594,9 @@ describe("SURFACE-C Operation Panel runtime contract", () => {
     expect(html).toContain('data-operation-field="bedCount"');
     expect(html).toContain('value="4"');
     expect(html).toContain('value="401" readonly aria-readonly="true"');
-    expect(html).toContain('value="room-401" required');
+    expect(html).toContain('data-operation-field="roomId" value="room-401"');
     expect(html).toContain('value="4" readonly aria-readonly="true"');
-    expect(visibleText(html)).toContain("来自房间配置，不需要重复填写。");
+    expect(visibleText(html)).toContain("系统已带入，不需要重复填写。");
     expect(visibleText(html)).not.toContain("所属房间 · 可搜索选择");
     expect(visibleText(html)).not.toContain("已从本案带入");
     expect(html).not.toContain('<textarea data-operation-field="bedLabels"');
@@ -362,6 +619,106 @@ describe("SURFACE-C Operation Panel runtime contract", () => {
     expect(html).not.toContain('data-operation-field="bedStatus"');
     expect(html).not.toContain('data-operation-field="bedNo"');
     expect(html).not.toContain('data-operation-field="bedLabel"');
+  });
+
+  it("ignores retired single-bed validation after bed setup switches to generated room-capacity beds", () => {
+    const store = runtimeStore();
+    const workspaceId = "W-STAY-RESOURCE-BED-RETIRED-001";
+    const bedCount = {
+      ...field("bedCount", "床位数"),
+      type: "number",
+      ui: { control: "number", optionSet: "", options: [], defaultValue: "", derivedFrom: "", readonly: false }
+    };
+    const bedLabels = {
+      ...field("bedLabels", "床位标签"),
+      ui: { control: "textarea", optionSet: "", options: [], defaultValue: "", derivedFrom: "", readonly: false }
+    };
+    const bedType = {
+      ...field("bedType", "床位类型"),
+      type: "select",
+      ui: {
+        control: "select",
+        optionSet: "bunkType",
+        options: [{ value: "bunk_pair", label: { "zh-CN": "上下铺：两上两下" } }],
+        defaultValue: "bunk_pair",
+        derivedFrom: "",
+        readonly: false
+      }
+    };
+    store.workspaces[0] = {
+      ...store.workspaces[0],
+      id: workspaceId,
+      cards: [
+        { ...store.workspaces[0].cards[0], id: "roomSetup", status: "done", title: { "zh-CN": "房间配置卡" } },
+        {
+          id: "bedSetup",
+          status: "ready",
+          title: { "zh-CN": "床位配置卡" },
+          fields: {
+            business: [
+              field("roomId", "所属房间"),
+              bedCount,
+              bedLabels,
+              bedType,
+              field("bedNo", "床位号"),
+              field("bedLabel", "床位标签")
+            ],
+            system: [],
+            analytics: []
+          },
+          evidence: [],
+          checks: [],
+          blockerRules: [],
+          confirmation: { required: true, requiredRole: "operator" }
+        }
+      ]
+    };
+    store.operationWorkItems = [{
+      workItemId: "wi-bed-retired-validation",
+      workspaceId,
+      cardId: "bedSetup",
+      lifecycleState: "ready",
+      ownerRole: "operator"
+    }];
+    store.workQueue = [...store.operationWorkItems];
+    saveCompletedRecordSnapshot({
+      workspaceId,
+      cardId: "roomSetup",
+      values: { roomId: "room-a9888", buildingName: "真实浏览器验收", roomNo: "A9888", bedCount: "2" }
+    });
+    const ctx = createSurfaceCtx({
+      view: "operationPanel",
+      selectedWorkItemId: "wi-bed-retired-validation",
+      selectedWorkspace: workspaceId,
+      selectedCardId: "bedSetup",
+      runtimeStore: store,
+      fieldValidation: {
+        workspaceId,
+        cardId: "bedSetup",
+        missingFieldIds: ["bedNo"],
+        missingLabels: ["床位号"]
+      },
+      lastActionResult: {
+        workspaceId,
+        cardId: "bedSetup",
+        status: "business_blocked_422",
+        reason: "required_field_missing",
+        message: "提交校验未通过"
+      }
+    });
+
+    const html = routeView(ctx);
+    const text = visibleText(html);
+
+    expect(html).not.toContain('data-operation-field="bedNo"');
+    expect(html).not.toContain('data-operation-field="bedLabel"');
+    expect(text).toContain("将生成的床位");
+    expect(text).toContain("01 · 上铺");
+    expect(text).toContain("02 · 下铺");
+    expect(text).toContain("提交状态: 可以提交");
+    expect(text).not.toContain("还需填写: 床位号");
+    expect(text).not.toContain("补齐必填项");
+    expect(text).not.toContain("提交校验未通过");
   });
 
   it("regenerates bed labels from the carried bed count instead of stale bed setup draft values", () => {

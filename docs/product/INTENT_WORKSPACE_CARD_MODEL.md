@@ -78,14 +78,9 @@ Each card has:
 
 This supports user operation, backend DTO design, projection design, audit evidence, and later analytics.
 
-Historical/offline fixture material lives in:
-
-```text
-apps/mobile/src/devFixtures/workspaceProjections.js
-```
-
-It is not an active business write contract. Active runtime surfaces consume
-Operations WorkItem, Projection, Lens, Admission, and Experience contracts.
+Historical/offline fixture material is retired from the active mobile baseline.
+Active runtime surfaces consume Operations WorkItem, Projection, Lens,
+Admission, and Experience contracts.
 
 The backend DTO / Event / Projection draft is:
 

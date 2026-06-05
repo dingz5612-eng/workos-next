@@ -121,7 +121,7 @@ async function runPositiveScenario(browser, allNetworkEvents) {
     await waitForOperationPanel(page);
     const ready = await capture(page, scenario, "04-operation-ready", "Operation panel ready before validation");
     assertScenario(scenario, ready.domState.surface === "operation-panel-route", "positive.opened_operation_panel", "Operation panel must open from Operations WorkItem route.");
-    assertScenario(scenario, ready.runtimeDecision === "work_item_confirm_ready", "positive.ready_runtime_decision", "Ready operation must expose work_item_confirm_ready.");
+    assertScenario(scenario, ready.runtimeDecision === "work_item_confirm_ready:production_blocked", "positive.ready_runtime_decision", "L1 operation must expose confirm-ready observation with production blocked.");
 
     await click(page, scenario, "[data-submit-card]", "submit empty form to validate blockers");
     await waitForHydrated(page);
@@ -146,12 +146,12 @@ async function runPositiveScenario(browser, allNetworkEvents) {
       if (nextCardId) {
         await page.waitForFunction((expectedCardId) => {
           const route = document.querySelector("[data-surface=\"operation-panel-route\"]");
-          return route?.dataset.runtimeDecision === "work_item_confirm_ready" &&
+          return route?.dataset.runtimeDecision === "work_item_confirm_ready:production_blocked" &&
             new URL(window.location.href).searchParams.get("card") === expectedCardId;
         }, nextCardId, { timeout: 45_000 });
         const advanced = await capture(page, scenario, `${String(7 + index * 3).padStart(2, "0")}-${cardId}-auto-advanced-next`, `${cardId} submit auto-advanced to ${nextCardId}`);
         assertScenario(scenario, new URL(advanced.url).searchParams.get("card") === nextCardId, `positive.${cardId}.auto_advanced_next`, `${cardId} submit must auto-advance to next actionable persisted WorkItem.`);
-        assertScenario(scenario, advanced.runtimeDecision === "work_item_confirm_ready", `positive.${cardId}.next_ready_runtime`, `${nextCardId} must be ready after auto-advance.`);
+        assertScenario(scenario, advanced.runtimeDecision === "work_item_confirm_ready:production_blocked", `positive.${cardId}.next_ready_runtime`, `${nextCardId} must be ready for observation after auto-advance with production blocked.`);
       } else {
         await page.waitForFunction(() => {
           const route = document.querySelector("[data-surface=\"operation-panel-route\"], [data-surface=\"completed-workspace-record\"]");

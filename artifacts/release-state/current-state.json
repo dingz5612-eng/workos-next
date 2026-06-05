@@ -1,32 +1,32 @@
 {
   "version": "release-state.authority.v1",
-  "generatedAtUtc": "2026-06-04T23:45:12.248Z",
+  "generatedAtUtc": "2026-06-05T17:52:39.664Z",
   "generatedBy": "build-current-release-state",
   "currentMain": {
     "repository": "dingz5612-eng/workos-next",
     "branch": "main",
-    "headSha": "3a1130d4b4d7e49f4006f4ed7ea320b1682072a5",
+    "headSha": "7f831685510ca2681e30c49453b1818b842bdd86",
     "ci": {
-      "id": 26986172224,
+      "id": 26986389538,
       "name": "CI",
       "event": "push",
       "status": "completed",
-      "conclusion": "failure",
-      "headSha": "3a1130d4b4d7e49f4006f4ed7ea320b1682072a5",
-      "htmlUrl": "https://github.com/dingz5612-eng/workos-next/actions/runs/26986172224",
-      "createdAt": "2026-06-04T23:39:27Z",
-      "updatedAt": "2026-06-04T23:43:26Z"
+      "conclusion": "success",
+      "headSha": "7f831685510ca2681e30c49453b1818b842bdd86",
+      "htmlUrl": "https://github.com/dingz5612-eng/workos-next/actions/runs/26986389538",
+      "createdAt": "2026-06-04T23:45:28Z",
+      "updatedAt": "2026-06-04T23:49:40Z"
     },
     "v54ControlPlaneGuards": {
-      "id": 26986172208,
+      "id": 27014843409,
       "name": "V5.4 Control Plane Guards",
-      "event": "push",
+      "event": "schedule",
       "status": "completed",
       "conclusion": "success",
-      "headSha": "3a1130d4b4d7e49f4006f4ed7ea320b1682072a5",
-      "htmlUrl": "https://github.com/dingz5612-eng/workos-next/actions/runs/26986172208",
-      "createdAt": "2026-06-04T23:39:27Z",
-      "updatedAt": "2026-06-04T23:41:49Z"
+      "headSha": "7f831685510ca2681e30c49453b1818b842bdd86",
+      "htmlUrl": "https://github.com/dingz5612-eng/workos-next/actions/runs/27014843409",
+      "createdAt": "2026-06-05T12:28:23Z",
+      "updatedAt": "2026-06-05T12:30:56Z"
     }
   },
   "sources": {

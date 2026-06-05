@@ -27,16 +27,22 @@ describe("OAM-04B layout, mission control, and PC shell contract", () => {
     const ctx = createSurfaceCtx({ view: "home" });
     let text = visibleText(routeView(ctx));
 
-    expect(text).toContain("有办理项缺少可信证据");
-    expect(text).toContain("住宿资源");
+    expect(text).toContain("今日工作");
+    expect(text).toContain("缺证据 0");
+    expect(text).toContain("房间");
     expect(text).not.toContain("globalReason");
+
+    ctx.state.runtimeStore.workQueue[0].evidenceState = "missing";
+    text = visibleText(routeView(ctx));
+
+    expect(text).toContain("缺证据 1");
 
     ctx.state.runtimeStore.workQueue = [];
     ctx.state.runtimeStore.operationWorkItems = [];
     ctx.state.runtimeStore.workspaces = [];
     text = visibleText(routeView(ctx));
 
-    expect(text).toContain("当前没有运行时派发的待办");
+    expect(text).toContain("今天没有新的具体事项");
     expect(text).not.toContain("住宿/维修");
   });
 

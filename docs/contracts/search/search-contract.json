@@ -1,7 +1,7 @@
 {
   "version": "oam.search-contract.v1",
   "generatedBy": "oam-cab-v1-phase-4",
-  "status": "implementation-with-projection-adapter",
+  "status": "implementation-with-operations-and-projection-adapters",
   "languageSynonymRef": "docs/contracts/language/search-synonyms.json",
   "admissionContractRef": "docs/contracts/admission/admission-contract.json",
   "inputAdapters": [
@@ -9,6 +9,12 @@
       "adapterId": "textSearchInput",
       "status": "active",
       "allowed": "Normalize typed search text through Language Kernel synonyms before Search Kernel ranking."
+    },
+    {
+      "adapterId": "operationsRuntimeFactInput",
+      "status": "active",
+      "allowed": "May read tenant-scoped Operations Runtime work items, operation cases, and confirmed domain events through OperationsReadStore.SearchOperations to build read-only SearchResult targets.",
+      "forbidden": "Must not execute writes, infer authority from display anchors, expose ordinary users to raw runtime ids when a business anchor exists, or replace Operations Runtime as fact owner."
     },
     {
       "adapterId": "voiceAiIntentInput",
@@ -44,6 +50,7 @@
     ]
   },
   "resultSchemaRef": "docs/contracts/search/search-result-schema.json",
+  "indexSourcesRef": "docs/contracts/search/search-index-sources.json",
   "rankingPolicyRef": "docs/contracts/search/search-ranking-policy.json",
   "permissionPolicyRef": "docs/contracts/search/search-permission-policy.json",
   "objectTypes": [
@@ -94,11 +101,22 @@
       "forbidden": "Must not decide business production permission or business-line maturity."
     }
   ],
+  "runtimeAdapters": [
+    {
+      "name": "OperationsReadStore.SearchOperations",
+      "path": "services/core-api/WorkOS.Api/Runtime/OperationsUnitOfWork.cs",
+      "status": "operations-read-source",
+      "allowed": "May provide tenant-scoped Operations domain events to SearchKernelService so a submitted step can route to the next actionable WorkItem in the same case.",
+      "forbidden": "Must not write facts, bypass Admission Kernel, or treat person name, phone, room display text, or bed display text as authoritative ids."
+    }
+  ],
   "invariants": [
     "Every SearchResult includes an admission object.",
     "Blocked business lines cannot be made executable by search ranking.",
     "Search uses Language Kernel synonyms and domain terms.",
     "Contains-only matching is allowed only inside registered projection adapters.",
-    "Search visibility is not confirm permission."
+    "Search visibility is not confirm permission.",
+    "Search Kernel must include Operations Runtime confirmed events and next actionable WorkItems when business anchor terms match.",
+    "Business anchors such as names, phones, room labels, and bed labels are display/search-only and must not become fact owners."
   ]
 }

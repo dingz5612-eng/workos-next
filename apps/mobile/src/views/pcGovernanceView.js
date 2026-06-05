@@ -217,8 +217,97 @@ function periodReviewPanel(governance, ctx) {
 }
 
 function riskCommandPanel(ctx) {
-  const rows = riskItems(ctx);
-  return panel("RiskCommand", "riskcommand", tableOrEmpty(rows, ["riskId", "riskType", "severity", "ownerRole", "resolveAction", "drilldownUrl"], ctx, "No source-backed risk items loaded."));
+  const rows = riskItems(ctx).map((item) => riskCommandViewModel(item, ctx));
+  if (!rows.length) {
+    return panel("RiskCommand", "riskcommand", `<p>${escapeHtml(ctx, governanceText("No source-backed risk items loaded."))}</p>`);
+  }
+  return panel("RiskCommand", "riskcommand", `
+    <div class="risk-command-list" data-risk-command-list>
+      ${rows.map((item) => `
+        <article class="risk-command-card" data-risk-command-card data-risk-id="${escapeAttr(ctx, item.id)}" data-risk-severity="${escapeAttr(ctx, item.severity)}">
+          <div>
+            <span>${escapeHtml(ctx, item.severityLabel)}</span>
+            <h3>${escapeHtml(ctx, item.problem)}</h3>
+          </div>
+          <dl>
+            <dt>影响</dt><dd>${escapeHtml(ctx, item.impact)}</dd>
+            <dt>负责人</dt><dd>${escapeHtml(ctx, item.owner)}</dd>
+            <dt>建议动作</dt><dd>${escapeHtml(ctx, item.action)}</dd>
+          </dl>
+          ${item.url
+            ? `<a class="risk-command-action" href="${escapeAttr(ctx, item.url)}" data-risk-action data-drilldown-url="${escapeAttr(ctx, item.url)}">进入处理</a>`
+            : `<button type="button" class="risk-command-action" data-risk-action data-risk-id="${escapeAttr(ctx, item.id)}">进入处理</button>`}
+        </article>
+      `).join("")}
+    </div>
+  `);
+}
+
+function riskCommandViewModel(item = {}, ctx) {
+  const type = String(item.riskType || item.type || item.category || "");
+  const severity = String(item.severity || item.riskLevel || item.level || "medium");
+  return {
+    id: String(item.riskId || item.id || item.objectId || ""),
+    problem: riskProblem(type, item, ctx),
+    impact: riskImpact(item, ctx),
+    owner: riskOwnerLabel(item.ownerRole || item.owner || item.assignedRole || "运营负责人"),
+    action: riskAction(item, ctx),
+    severity,
+    severityLabel: riskSeverityLabel(severity),
+    url: String(item.drilldownUrl || item.url || item.actionUrl || "")
+  };
+}
+
+function riskProblem(type, item, ctx) {
+  const normalized = type.toLocaleLowerCase();
+  if (/blocked|block/.test(normalized)) return "有房间或床位被阻断，影响可售";
+  if (/deposit/.test(normalized)) return "押金责任需要复核";
+  if (/debt|arrear/.test(normalized)) return "在住欠款风险";
+  if (/payment/.test(normalized)) return "收款需要确认或分配";
+  if (/service|task|repair/.test(normalized)) return "服务任务影响房间恢复";
+  if (/period|close/.test(normalized)) return "经营周期复盘未关闭";
+  return governanceText(item.title || item.summary || type || "发现一个需要处理的问题");
+}
+
+function riskImpact(item, ctx) {
+  const parts = [
+    item.impact || item.businessImpact || item.summary,
+    item.amount ? `金额 ${item.amount}` : "",
+    item.count ? `数量 ${item.count}` : "",
+    item.objectType || item.objectId ? [item.objectType, item.objectId].filter(Boolean).join(" ") : ""
+  ].filter(Boolean);
+  return parts.length ? parts.map((part) => governanceText(part)).join(" · ") : "可能影响入住、可售、收款或周期复盘，请及时处理。";
+}
+
+function riskAction(item, ctx) {
+  const action = String(item.resolveAction || item.nextAction || item.action || "");
+  const normalized = action.toLocaleLowerCase();
+  if (normalized.includes("resourcerelease")) return "打开资源释放待办，确认房间或床位恢复可售。";
+  if (normalized.includes("depositliability")) return "查看押金责任队列，复核押金余额和退款状态。";
+  if (normalized.includes("balanceclose")) return "生成余额关闭办理，核对欠款后处理。";
+  if (normalized.includes("payment")) return "打开收款确认或分配办理。";
+  if (normalized.includes("service")) return "进入服务任务队列，先完成验收再释放资源。";
+  if (normalized.includes("period")) return "进入周期复盘，关闭未完成诊断或行动计划。";
+  return governanceText(action || "进入对应办理项，按来源证据处理。");
+}
+
+function riskOwnerLabel(owner = "") {
+  const normalized = String(owner || "").toLocaleLowerCase();
+  const labels = {
+    operations: "运营负责人",
+    operator: "运营经办人",
+    finance: "财务负责人",
+    manager: "主管",
+    admin: "治理管理员"
+  };
+  return labels[normalized] || governanceText(owner || "运营负责人");
+}
+
+function riskSeverityLabel(severity = "") {
+  const normalized = String(severity).toLocaleLowerCase();
+  if (["critical", "high", "red", "p0"].includes(normalized)) return "高优先级";
+  if (["low", "green", "p3"].includes(normalized)) return "低优先级";
+  return "需关注";
 }
 
 function accountUsersPanel(governance, ctx) {

@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { openWorkItem, setView } from "../navigationController.js";
 import { buildSearchResultVM, rankSearchResults } from "../searchIntentHub.js";
 import { searchView } from "../views/searchView.js";
-import { createSurfaceCtx, visibleText } from "./surfaceContractTestHelpers.js";
+import { createSurfaceCtx, runtimeStore, visibleText } from "./surfaceContractTestHelpers.js";
 
 describe("OAM-04B search intent hub contract", () => {
   it("renders a WorkItem action button and opens the persisted operation panel", () => {
@@ -11,10 +11,12 @@ describe("OAM-04B search intent hub contract", () => {
 
     expect(html).toContain("主动办理");
     expect(html).toContain("新增住宿房源");
-    expect(html).toContain("先录房号和床位数");
+    expect(html).not.toContain("工作内容");
+    expect(html).not.toContain("处理：");
+    expect(html).toContain("先填房号");
     expect(html).toContain('data-start-operations-workspace="W-STAY-RESOURCE"');
     expect(html).toContain('data-work-item-id="W-STAY-RESOURCE:roomSetup"');
-    expect(html).toContain(">处理</button>");
+    expect(html).toContain(">继续观察记录</button>");
 
     openWorkItem("W-STAY-RESOURCE:roomSetup", ctx);
 
@@ -29,7 +31,7 @@ describe("OAM-04B search intent hub contract", () => {
     expect(html).toContain('data-search-section="activeCommands"');
     expect(html).toContain('data-start-operations-workspace="W-STAY-RESOURCE"');
     expect(text).toContain("新增住宿房源");
-    expect(text).toContain("开始办理");
+    expect(text).toContain("开始观察记录");
   });
 
   it("renders account recent searches and registered common intent suggestions", () => {
@@ -46,31 +48,34 @@ describe("OAM-04B search intent hub contract", () => {
     expect(text).toContain("最近搜索");
   });
 
-  it("routes evidence and object results through existing data attributes", () => {
+  it("routes object results while keeping evidence archives out of Search", () => {
     const ctx = createSurfaceCtx({ view: "search", query: "房间" });
     const html = searchView(ctx);
 
-    expect(html).toContain('data-evidence-id="room-duplicate-check"');
+    expect(html).not.toContain('data-evidence-id="room-duplicate-check"');
+    expect(html).not.toContain('data-search-section="searchEvidence"');
     expect(html).toContain('data-workspace="W-STAY-RESOURCE"');
 
     setView("learning", ctx);
     expect(ctx.state.view).toBe("learning");
   });
 
-  it("routes trace results when the query asks for submission traces", () => {
+  it("keeps submission traces out of Search archive sections", () => {
     const ctx = createSurfaceCtx({ view: "search", query: "提交" });
     const html = searchView(ctx);
 
-    expect(html).toContain('data-trace-id="trace-room"');
-    expect(visibleText(html)).toContain("提交轨迹");
+    expect(html).not.toContain('data-trace-id="trace-room"');
+    expect(html).not.toContain('data-search-section="searchSubmissionTrace"');
+    expect(visibleText(html)).toContain("记录、证据和学习内容请到我的查看");
   });
 
-  it("routes learning results only when the query asks for learning content", () => {
+  it("keeps learning results in Me / Learning Center instead of Search", () => {
     const ctx = createSurfaceCtx({ view: "search", query: "证据" });
     const html = searchView(ctx);
 
-    expect(html).toContain('data-learning-id="learnEvidenceFix"');
-    expect(html).toContain("证据怎么补");
+    expect(html).not.toContain('data-learning-id="learnEvidenceFix"');
+    expect(html).not.toContain('data-search-section="searchLearning"');
+    expect(visibleText(html)).toContain("记录、证据和学习内容请到我的查看");
   });
 
   it("ranks room creation before generic object results", () => {
@@ -201,7 +206,7 @@ describe("OAM-04B search intent hub contract", () => {
     expect(text).toContain("未办完业务");
     expect(text).toContain("21 号房间");
     expect(text).toContain("价格配置卡");
-    expect(html).toContain(">继续办理</button>");
+    expect(html).toContain(">继续观察记录</button>");
 
     openWorkItem("W-STAY-RESOURCE:rateSetup", ctx);
 
@@ -210,7 +215,7 @@ describe("OAM-04B search intent hub contract", () => {
     expect(ctx.state.selectedCardId).toBe("rateSetup");
   });
 
-  it("does not render completed WorkItems as processable search results", () => {
+  it("does not render completed WorkItems or completed archives as processable search results", () => {
     const ctx = createSurfaceCtx({ view: "search", query: "房间" });
     ctx.state.runtimeStore.workQueue = [{
       queueItemId: "q-completed-room",
@@ -227,8 +232,7 @@ describe("OAM-04B search intent hub contract", () => {
 
     expect(html).not.toContain('data-work-item-id="W-STAY-RESOURCE:roomSetup"');
     expect(html).toContain('data-workspace="W-STAY-RESOURCE"');
-    expect(visibleText(html)).toContain("状态: 已完成");
-    expect(visibleText(html)).toContain("查看");
+    expect(html).not.toContain('data-search-section="completedWorkItems"');
   });
 
   it("keeps localized visible copy and no-action reason without raw object text", () => {
@@ -249,7 +253,8 @@ describe("OAM-04B search intent hub contract", () => {
     const text = visibleText(searchView(createSurfaceCtx({ view: "search", query: "房间" })));
 
     expect(text).not.toMatch(/\bW-STAY-[A-Z0-9-]+/);
-    expect(text).toContain("住宿业务");
+    expect(text).toContain("房间");
+    expect(text).toContain("待配置");
   });
 
   it("preserves Search Kernel admission state in the surface view model", () => {
@@ -278,9 +283,105 @@ describe("OAM-04B search intent hub contract", () => {
     expect(vm.prepareAllowed).toBe(true);
     expect(vm.confirmAllowed).toBe(false);
     expect(vm.productionAllowed).toBe(false);
-    expect(vm.admissionReason).toBe("L1 observation only");
-    expect(vm.sourceRefs.admissionDecisionRef).toBe("admission:roomSetup:internal");
+    expect(vm.admissionReason).toBe("L1_observation_only");
+    expect(vm.admission.admissionDecisionRef).toBe("admission:roomSetup:internal");
+    expect(vm.sourceRefs.admissionDecisionRef).toBeUndefined();
     expect(vm.sourceRefs.projectionAdapter).toBe("LensQueryService.Search");
+  });
+
+  it("renders admission explainability on search cards without ordinary-user raw refs", () => {
+    const ctx = createSurfaceCtx({ view: "search", query: "创建房间" });
+    const html = searchView(ctx);
+    const text = visibleText(html);
+
+    expect(html).toContain("data-search-admission-state");
+    expect(text).not.toContain("工作内容");
+    expect(text).not.toContain("处理：");
+    expect(text).not.toContain("准入状态");
+    expect(text).toContain("内部试点观察");
+    expect(text).toContain("生产");
+    expect(text).not.toContain("admissionDecisionRef");
+    expect(text).not.toContain("compatibilityAdapter");
+    expect(text).not.toContain("definitionId");
+    expect(text).not.toContain("raw reason");
+    expect(text).not.toContain("raw code");
+  });
+
+  it("does not use process wording when explicit search admission denies confirm", () => {
+    const store = runtimeStore();
+    const blockedItem = {
+      resultType: "workItem",
+      workItemId: "W-STAY-RESOURCE:blocked",
+      workspaceId: "W-STAY-RESOURCE",
+      cardId: "roomSetup",
+      businessObject: "拒绝准入房间",
+      actionLabel: "处理",
+      lifecycleState: "ready",
+      admission: {
+        visibleAllowed: true,
+        prepareAllowed: true,
+        confirmAllowed: false,
+        productionAllowed: false,
+        mode: "contract_preview"
+      }
+    };
+    store.workQueue = [blockedItem];
+    store.operationWorkItems = [blockedItem];
+    const ctx = createSurfaceCtx({ view: "search", query: "拒绝准入", runtimeStore: store });
+    const html = searchView(ctx);
+    const text = visibleText(html);
+
+    expect(text).toContain("当前不能确认");
+    expect(html).not.toContain(">处理</button>");
+    expect(html).toContain(">查看记录</button>");
+  });
+
+  it("renders Operations Search Kernel work items found by lead customer anchor", () => {
+    const store = runtimeStore();
+    const workspaceId = "W-STAY-LEAD-RESERVATION-DING";
+    const result = {
+      resultId: "operations:evt-ding:wi-lead-follow-ding",
+      resultType: "workItem",
+      workItemId: "wi-lead-follow-ding",
+      workspaceId,
+      cardId: "leadFollowUp",
+      caseId: workspaceId,
+      workItemType: "leadFollowUp",
+      title: { "zh-CN": "线索跟进卡" },
+      summary: { "zh-CN": "登记咨询和预订" },
+      status: "available",
+      nextAction: { "zh-CN": "继续当前办理" },
+      score: 300,
+      businessAnchor: {
+        leadName: "DING",
+        phone: "13812341234"
+      }
+    };
+    store.workspaces = [{
+      id: workspaceId,
+      domain: "stay",
+      title: { "zh-CN": "登记咨询和预订" },
+      summary: { "zh-CN": "咨询、跟进和预订。" },
+      next: { "zh-CN": "继续跟进线索" },
+      cards: [
+        { id: "leadCapture", status: "confirmed", title: { "zh-CN": "线索捕获卡" }, fields: { business: [], system: [], analytics: [] }, evidence: [], checks: [], blockerRules: [], confirmation: { required: true, requiredRole: "operator" } },
+        { id: "leadFollowUp", status: "ready", title: { "zh-CN": "线索跟进卡" }, fields: { business: [], system: [], analytics: [] }, evidence: [], checks: [], blockerRules: [], confirmation: { required: true, requiredRole: "operator" } }
+      ]
+    }];
+    store.searchResultsByQuery = { ding: [result] };
+    store.operationWorkItems = [result];
+    store.workQueue = [result];
+
+    const ctx = createSurfaceCtx({ view: "search", query: "DING", runtimeStore: store });
+    const html = searchView(ctx);
+    const text = visibleText(html);
+
+    expect(html).toContain('data-work-item-id="wi-lead-follow-ding"');
+    expect(text).toContain("线索跟进卡");
+    expect(text).toContain("DING");
+    expect(text).toContain("138****1234");
+    expect(text).toContain("继续当前办理");
+    expect(text).not.toContain("没有匹配结果");
   });
 
   it("localizes active room commands without English fallback", () => {
@@ -289,9 +390,8 @@ describe("OAM-04B search intent hub contract", () => {
 
     expect(ru).toContain("Можно начать самому");
     expect(ru).toContain("Добавить комнату");
-    expect(ru).toContain("Сначала внесите номер комнаты");
-    expect(ru).toContain("Статус: Можно начать");
-    expect(ru).toContain("Следующее действие: Начать с номера комнаты");
+    expect(ru).not.toContain("Что сделать");
+    expect(ru).toContain("Начать с номера комнаты");
     expect(ru).not.toContain("Commands");
     expect(ru).not.toContain("Create room");
     expect(ru).not.toContain("Start resource setup");
@@ -299,18 +399,20 @@ describe("OAM-04B search intent hub contract", () => {
 
     expect(ky).toContain("Өзүңүз баштай турган иштер");
     expect(ky).toContain("Бөлмө кошуу");
-    expect(ky).toContain("Алгач бөлмө номерин");
+    expect(ky).toContain("Бөлмө номеринен баштоо");
     expect(ky).not.toContain("Commands");
     expect(ky).not.toContain("Create room");
   });
 
-  it("localizes learning result statuses without raw runtime status labels", () => {
+  it("does not leak localized learning archives into ordinary Search", () => {
     const ru = visibleText(searchView(createSurfaceCtx({ view: "search", lang: "ru-RU", query: "устройство" })));
     const ky = visibleText(searchView(createSurfaceCtx({ view: "search", lang: "ky-KG", query: "түзмөк" })));
 
-    expect(ru).toContain("Статус: Доверие устройства");
+    expect(ru).not.toContain("Доверие устройства");
+    expect(ru).not.toContain("Обучение");
     expect(ru).not.toMatch(/\b(rejection|device|permission|finance|role)\b/);
-    expect(ky).toContain("Статус: Түзмөк ишеними");
+    expect(ky).not.toContain("Түзмөк ишеними");
+    expect(ky).not.toContain("Окуу мазмуну");
     expect(ky).not.toMatch(/\b(rejection|device|permission|finance|role)\b/);
   });
 });

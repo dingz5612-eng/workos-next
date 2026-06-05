@@ -6,6 +6,8 @@ namespace WorkOS.Api.Runtime;
 public sealed class SearchKernelService
 {
     private readonly ProjectionWorkspaceSearchAdapter projectionWorkspaceSearch;
+    private readonly OperationsRuntimeService? operations;
+    private readonly OperationsReadStore? operationsReadStore;
     private readonly WorkItemDefinitionRegistryService definitions;
     private readonly AdmissionKernelService admission;
     private readonly LanguageSearchSynonymCatalog synonyms;
@@ -13,9 +15,13 @@ public sealed class SearchKernelService
     public SearchKernelService(
         ProjectionWorkspaceSearchAdapter projectionWorkspaceSearch,
         WorkItemDefinitionRegistryService definitions,
-        AdmissionKernelService admission)
+        AdmissionKernelService admission,
+        OperationsRuntimeService? operations = null,
+        OperationsReadStore? operationsReadStore = null)
     {
         this.projectionWorkspaceSearch = projectionWorkspaceSearch;
+        this.operations = operations;
+        this.operationsReadStore = operationsReadStore;
         this.definitions = definitions;
         this.admission = admission;
         synonyms = LanguageSearchSynonymCatalog.LoadDefault();
@@ -31,6 +37,9 @@ public sealed class SearchKernelService
         var queryTerms = synonyms.Expand(query, resolvedLanguage);
         return SearchProjectionSources(runtime, query, queryTerms)
             .Select(item => BuildResult(item, queryTerms, actor, resolvedLanguage))
+            .Concat(SearchOperationsSources(query, queryTerms, actor, resolvedLanguage))
+            .GroupBy(item => Convert.ToString(item["resultId"]), StringComparer.OrdinalIgnoreCase)
+            .Select(group => group.OrderByDescending(item => Convert.ToInt32(item["score"])).First())
             .OrderByDescending(item => Convert.ToInt32(item["score"]))
             .ThenBy(item => Convert.ToString(item["resultId"]))
             .Cast<object>()
@@ -52,6 +61,32 @@ public sealed class SearchKernelService
         }
 
         return sources.Values.ToArray();
+    }
+
+    internal IReadOnlyList<Dictionary<string, object?>> SearchOperationsSources(
+        string? query,
+        IReadOnlyList<string> expandedTerms,
+        RuntimeActorContext actor,
+        string language)
+    {
+        if (operations is null || operationsReadStore is null || string.IsNullOrWhiteSpace(query))
+        {
+            return Array.Empty<Dictionary<string, object?>>();
+        }
+
+        var records = new Dictionary<string, OperationsSearchRecord>(StringComparer.OrdinalIgnoreCase);
+        foreach (var term in SearchTerms(query, expandedTerms))
+        {
+            foreach (var record in operationsReadStore.SearchOperations(actor.TenantId, term))
+            {
+                records.TryAdd(record.EventId, record);
+            }
+        }
+
+        return records.Values
+            .Select(record => BuildOperationsResult(record, expandedTerms, actor, language))
+            .OfType<Dictionary<string, object?>>()
+            .ToArray();
     }
 
     private static IReadOnlyList<string> SearchTerms(string? query, IReadOnlyList<string> expandedTerms) =>
@@ -132,6 +167,161 @@ public sealed class SearchKernelService
         };
     }
 
+    private Dictionary<string, object?>? BuildOperationsResult(
+        OperationsSearchRecord record,
+        IReadOnlyList<string> queryTerms,
+        RuntimeActorContext actor,
+        string language)
+    {
+        if (operations is null)
+        {
+            return null;
+        }
+
+        var sourceWorkItem = operations.GetWorkItem(record.WorkItemId);
+        var targetWorkItem = NextActionableWorkItem(record, sourceWorkItem, actor)
+            ?? sourceWorkItem;
+        if (targetWorkItem is null)
+        {
+            return null;
+        }
+
+        var cardId = PayloadValue(targetWorkItem.Payload, "cardId");
+        var surface = operations.GetWorkItemSurface(targetWorkItem.WorkItemId);
+        var workspace = surface?.Workspace;
+        var card = surface?.Card;
+        var definition = definitions.Resolve(targetWorkItem, cardId);
+        var decision = admission.EvaluateSearch(definition, actor);
+        var fieldValues = FieldValues(record.Payload);
+        var businessAnchor = BusinessAnchorPayload(fieldValues);
+        var title = card is null
+            ? Localized(FirstNonEmpty(targetWorkItem.WorkItemType, cardId, "Operations WorkItem"))
+            : card.Title;
+        var workspaceTitle = workspace?.Title ?? Localized("Operations");
+        var text = SafeText(record);
+        var matchedTerms = queryTerms
+            .Where(term => text.Contains(term, StringComparison.OrdinalIgnoreCase))
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+        var targetIsTerminal = IsTerminalStatus(targetWorkItem.Status);
+        var resultType = targetIsTerminal ? "operationCase" : "workItem";
+        var score = 220 + matchedTerms.Length * 45 + (targetIsTerminal ? 0 : 80) + (decision.ConfirmAllowed ? 25 : 0);
+
+        return new Dictionary<string, object?>
+        {
+            ["resultId"] = $"operations:{record.EventId}:{targetWorkItem.WorkItemId}",
+            ["resultType"] = resultType,
+            ["workItemId"] = targetWorkItem.WorkItemId,
+            ["workspaceId"] = targetWorkItem.WorkspaceId,
+            ["cardId"] = cardId,
+            ["caseId"] = targetWorkItem.CaseId,
+            ["workItemType"] = targetWorkItem.WorkItemType,
+            ["title"] = title,
+            ["summary"] = workspaceTitle,
+            ["subtitle"] = workspaceTitle,
+            ["status"] = targetWorkItem.Status,
+            ["nextAction"] = targetIsTerminal
+                ? LocalizedByLanguage(language, "查看已完成记录", "View completed record", "View completed record")
+                : LocalizedByLanguage(language, "继续当前办理", "Continue current work", "Continue current work"),
+            ["matchedTerms"] = matchedTerms,
+            ["score"] = score,
+            ["businessAnchor"] = businessAnchor,
+            ["payload"] = new Dictionary<string, object?>
+            {
+                ["fieldValues"] = fieldValues,
+                ["sourceWorkItemId"] = record.WorkItemId,
+                ["sourceSubmissionId"] = record.SubmissionId,
+                ["sourceEventId"] = record.EventId
+            },
+            ["target"] = new Dictionary<string, object?>
+            {
+                ["kind"] = "operationsWorkItem",
+                ["workspaceId"] = targetWorkItem.WorkspaceId,
+                ["cardId"] = cardId,
+                ["workItemId"] = targetWorkItem.WorkItemId,
+                ["caseId"] = targetWorkItem.CaseId
+            },
+            ["admission"] = decision.ToContract(),
+            ["traceRefs"] = new[] { record.SubmissionId, record.EventId },
+            ["sourceRefs"] = new Dictionary<string, object?>
+            {
+                ["source"] = "SearchKernelService",
+                ["inputAdapter"] = "OperationsRuntime.SearchOperations",
+                ["projectionAdapter"] = "OperationsReadStore.SearchOperations",
+                ["workspaceId"] = targetWorkItem.WorkspaceId,
+                ["cardId"] = cardId,
+                ["workItemId"] = targetWorkItem.WorkItemId,
+                ["caseId"] = targetWorkItem.CaseId,
+                ["sourceEventId"] = record.EventId,
+                ["sourceSubmissionId"] = record.SubmissionId,
+                ["definitionId"] = definition.DefinitionId,
+                ["admissionDecisionRef"] = decision.AdmissionDecisionRef
+            },
+            ["language"] = language,
+            ["explain"] = new Dictionary<string, string>
+            {
+                ["zh-CN"] = "搜索结果来自 Operations Runtime 事件和工作项；姓名和电话只作检索与展示锚点。",
+                ["ru-RU"] = "Результат найден по событиям и задачам Operations Runtime; имя и телефон используются только как поисковый якорь.",
+                ["ky-KG"] = "Натыйжа Operations Runtime окуялары жана иштеринен табылды; ат жана телефон издөө белгиси гана."
+            }
+        };
+    }
+
+    private WorkItem? NextActionableWorkItem(
+        OperationsSearchRecord record,
+        WorkItem? sourceWorkItem,
+        RuntimeActorContext actor)
+    {
+        if (operations is null)
+        {
+            return null;
+        }
+
+        var workItems = operations.ListWorkItems(actor.TenantId, record.CaseId)
+            .Where(item => !IsTerminalStatus(item.Status))
+            .Where(item => !item.WorkItemId.Equals(record.WorkItemId, StringComparison.OrdinalIgnoreCase))
+            .ToArray();
+        if (workItems.Length == 0)
+        {
+            return null;
+        }
+
+        var direct = workItems.FirstOrDefault(item =>
+            PayloadValue(item.Payload, "sourceWorkItemId").Equals(record.WorkItemId, StringComparison.OrdinalIgnoreCase));
+        if (direct is not null)
+        {
+            return direct;
+        }
+
+        if (sourceWorkItem is null)
+        {
+            return workItems.OrderBy(item => item.CreatedAtUtc).FirstOrDefault();
+        }
+
+        var templateWorkspaceId = FirstNonEmpty(
+            PayloadValue(sourceWorkItem.Payload, "templateWorkspaceId"),
+            WorkspaceSeedCatalog.FindWorkspace(sourceWorkItem.WorkspaceId)?.Id);
+        var seed = WorkspaceSeedCatalog.FindWorkspace(templateWorkspaceId);
+        var sourceCardId = PayloadValue(sourceWorkItem.Payload, "cardId");
+        if (seed is null || string.IsNullOrWhiteSpace(sourceCardId))
+        {
+            return workItems.OrderBy(item => item.CreatedAtUtc).FirstOrDefault();
+        }
+
+        var sourceIndex = CardIndex(seed, sourceCardId);
+        return workItems
+            .Select(item => new { Item = item, Index = CardIndex(seed, PayloadValue(item.Payload, "cardId")) })
+            .Where(item => item.Index > sourceIndex)
+            .OrderBy(item => item.Index)
+            .ThenBy(item => item.Item.CreatedAtUtc)
+            .Select(item => item.Item)
+            .FirstOrDefault()
+            ?? workItems.OrderBy(item => item.CreatedAtUtc).FirstOrDefault();
+    }
+
+    private static int CardIndex(WorkspaceSeed seed, string cardId) =>
+        seed.Cards.ToList().FindIndex(card => card.Id.Equals(cardId, StringComparison.OrdinalIgnoreCase));
+
     private static string NormalizeLanguage(string? language) =>
         language is "ru-RU" or "ky-KG" ? language : "zh-CN";
 
@@ -143,8 +333,87 @@ public sealed class SearchKernelService
             ["ky-KG"] = value
         };
 
+    private static object LocalizedByLanguage(string language, string zh, string ru, string ky) =>
+        new Dictionary<string, string>
+        {
+            ["zh-CN"] = zh,
+            ["ru-RU"] = language == "ru-RU" ? ru : zh,
+            ["ky-KG"] = language == "ky-KG" ? ky : zh
+        };
+
     private static string FirstNonEmpty(params string?[] values) =>
         values.FirstOrDefault(value => !string.IsNullOrWhiteSpace(value)) ?? string.Empty;
+
+    private static bool IsTerminalStatus(string status) =>
+        new[] { "done", "confirmed", "completed", "committed", "closed", "cancelled", "skipped" }
+            .Contains(status, StringComparer.OrdinalIgnoreCase);
+
+    private static string PayloadValue(IReadOnlyDictionary<string, string> payload, string key) =>
+        payload.TryGetValue(key, out var value) ? value : string.Empty;
+
+    private static IReadOnlyDictionary<string, object> BusinessAnchorPayload(IReadOnlyDictionary<string, object> fieldValues) =>
+        fieldValues
+            .Where(item => BusinessAnchorKeys.Contains(item.Key))
+            .ToDictionary(item => item.Key, item => item.Value, StringComparer.OrdinalIgnoreCase);
+
+    private static IReadOnlyDictionary<string, object> FieldValues(IReadOnlyDictionary<string, object> payload)
+    {
+        var input = ReadObject(payload, "input");
+        var fieldValues = ReadObject(input, "fieldValues") ?? ReadObject(payload, "fieldValues");
+        if (fieldValues is IReadOnlyDictionary<string, object> typed)
+        {
+            return typed;
+        }
+
+        if (fieldValues is JsonElement element && element.ValueKind == JsonValueKind.Object)
+        {
+            return element.EnumerateObject()
+                .ToDictionary(item => item.Name, item => JsonValue(item.Value), StringComparer.OrdinalIgnoreCase);
+        }
+
+        if (fieldValues is System.Collections.IDictionary dictionary)
+        {
+            return dictionary.Keys
+                .Cast<object>()
+                .ToDictionary(key => Convert.ToString(key) ?? string.Empty, key => dictionary[key] ?? string.Empty, StringComparer.OrdinalIgnoreCase);
+        }
+
+        return new Dictionary<string, object>();
+    }
+
+    private static object? ReadObject(object? value, string propertyName)
+    {
+        if (value is null)
+        {
+            return null;
+        }
+
+        if (value is IReadOnlyDictionary<string, object> dictionary &&
+            dictionary.TryGetValue(propertyName, out var dictionaryValue))
+        {
+            return dictionaryValue;
+        }
+
+        if (value is JsonElement element && element.ValueKind == JsonValueKind.Object &&
+            element.TryGetProperty(propertyName, out var property))
+        {
+            return property;
+        }
+
+        return null;
+    }
+
+    private static object JsonValue(JsonElement element) =>
+        element.ValueKind switch
+        {
+            JsonValueKind.String => element.GetString() ?? string.Empty,
+            JsonValueKind.Number => element.ToString(),
+            JsonValueKind.True => true,
+            JsonValueKind.False => false,
+            JsonValueKind.Object => element.EnumerateObject().ToDictionary(item => item.Name, item => JsonValue(item.Value), StringComparer.OrdinalIgnoreCase),
+            JsonValueKind.Array => element.EnumerateArray().Select(JsonValue).ToArray(),
+            _ => string.Empty
+        };
 
     private static object? ReadValue(object source, string propertyName)
     {
@@ -181,32 +450,98 @@ public sealed class SearchKernelService
             _ => Array.Empty<string>()
         };
 
-    private static string SafeText(object? value)
+    private static string SafeText(object? value) => SafeText(value, 0);
+
+    private static string SafeText(object? value, int depth)
     {
-        if (value is null)
+        if (value is null || depth > 6)
         {
             return string.Empty;
         }
 
-        if (value is string or int or long or decimal or double or bool)
+        if (value is string or int or long or decimal or double or bool or DateTimeOffset or DateTime or Guid ||
+            value.GetType().IsEnum)
         {
             return Convert.ToString(value) ?? string.Empty;
         }
 
+        if (value is Type type)
+        {
+            return type.Name;
+        }
+
+        if (value is JsonElement element)
+        {
+            return element.ValueKind switch
+            {
+                JsonValueKind.Object => string.Join(" ", element.EnumerateObject().Select(item => SafeText(item.Value, depth + 1))),
+                JsonValueKind.Array => string.Join(" ", element.EnumerateArray().Select(item => SafeText(item, depth + 1))),
+                JsonValueKind.String => element.GetString() ?? string.Empty,
+                _ => element.ToString()
+            };
+        }
+
         if (value is System.Collections.IDictionary dictionary)
         {
-            return string.Join(" ", dictionary.Values.Cast<object?>().Select(SafeText));
+            return string.Join(" ", dictionary.Values.Cast<object?>().Select(item => SafeText(item, depth + 1)));
         }
 
         if (value is System.Collections.IEnumerable enumerable && value is not string)
         {
-            return string.Join(" ", enumerable.Cast<object?>().Select(SafeText));
+            return string.Join(" ", enumerable.Cast<object?>().Select(item => SafeText(item, depth + 1)));
         }
 
-        return string.Join(" ", value.GetType()
+        var valueType = value.GetType();
+        if (valueType.Namespace?.StartsWith("System", StringComparison.OrdinalIgnoreCase) == true)
+        {
+            return Convert.ToString(value) ?? string.Empty;
+        }
+
+        return string.Join(" ", valueType
             .GetProperties(BindingFlags.Instance | BindingFlags.Public)
-            .Select(property => SafeText(property.GetValue(value))));
+            .Where(property => property.GetIndexParameters().Length == 0)
+            .Select(property =>
+            {
+                try
+                {
+                    return SafeText(property.GetValue(value), depth + 1);
+                }
+                catch
+                {
+                    return string.Empty;
+                }
+            }));
     }
+
+    private static readonly HashSet<string> BusinessAnchorKeys = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "buildingName",
+        "building",
+        "roomLabel",
+        "roomNo",
+        "roomId",
+        "bedLabel",
+        "bedNo",
+        "bedId",
+        "bedType",
+        "bedTypeLabel",
+        "residentName",
+        "guestName",
+        "leadName",
+        "customerName",
+        "contactName",
+        "name",
+        "phone",
+        "residentPhone",
+        "customerPhone",
+        "contactPhone",
+        "mobile",
+        "periodLabel",
+        "depositStatus",
+        "paymentStatus",
+        "taskStatus",
+        "checkoutStatus"
+    };
 }
 
 public sealed class ProjectionWorkspaceSearchAdapter

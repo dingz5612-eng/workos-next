@@ -1,0 +1,23 @@
+{
+  "status": "pass",
+  "generatedAtUtc": "2026-06-05T12:46:38.740Z",
+  "home": {
+    "view": "home",
+    "apiStatus": "online",
+    "operationWorkItems": 0,
+    "workQueue": 0,
+    "homeSurface": 16,
+    "text": "今日重点概览\n已连接\n中文\nРусский\nКыргызча\n\n今天没有新的具体事项。可以从搜索找业务对象，或等待系统派单。\n\n搜索\n反馈\n今天\n工作项\n搜索\n我的"
+  },
+  "workbench": {
+    "view": "workbench",
+    "apiStatus": "online",
+    "operationWorkItems": 0,
+    "workQueue": 0,
+    "text": "工作项\n已连接\n中文\nРусский\nКыргызча\n\n当前没有分配给你的待办。请先从搜索找业务对象，或等待系统派单。\n\n搜索\n反馈\n今天\n工作项\n搜索\n我的"
+  },
+  "screenshots": [
+    "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\test-case-cleanup-20260605-browser\\01-home-after-test-case-cleanup.png",
+    "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\test-case-cleanup-20260605-browser\\02-workbench-after-test-case-cleanup.png"
+  ]
+}

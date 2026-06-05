@@ -1,0 +1,11 @@
+{
+  "url": "http://127.0.0.1:5175/?view=operationPanel&lang=zh-CN&device=mobile&workspace=W-STAY-RESOURCE-20260604173833-e7f6d0a5445e46038422a31580c02b90&card=bedSetup&workItem=wi-dad419be58f8bfe19285728f2a81464c325be2edc405c460c9c72184a6df9993",
+  "loggedIn": false,
+  "noMissingBedNo": true,
+  "noCompleteRequiredCta": true,
+  "hasGeneratedBeds": false,
+  "readyToSubmit": false,
+  "hasCurrentStep": false,
+  "screenshot": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\bedsetup-retired-bedno-20260605t070842z\\bedsetup-current-page-full.png",
+  "bodyTextExcerpt": "WorkOSNext\n移动端业务操作系统\n已连接\n中文\nРусский\nКыргызча\n登录办理系统\nWorkOSNext\n\n请输入用户名和密码。部门、业务线、角色和权限由管理员在 PC 治理面分配。\n\n账号\n密码\n\n登录页不能选择部门或权限；办理权限来自后端账号与会话。\n\n登录"
+}

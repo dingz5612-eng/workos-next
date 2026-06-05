@@ -568,7 +568,11 @@ async function validateAccommodationLens() {
 async function validateRuntimeSurfaces(projection) {
   const queue = await getJson("/api/lenses/work-queue");
   assert(Array.isArray(queue), "work queue lens response must be an array");
-  assert(queue.some((item) => item.workspaceId && item.cardId), "work queue items must include workspaceId/cardId");
+  for (const item of queue) {
+    assert(item.workItemId, "work queue lens items must be real work items, not projection templates");
+    assert(item.workspaceId && item.cardId, "work queue items must include workspaceId/cardId");
+    assert(item.source !== "projection-fallback", "work queue must not synthesize actionable cases from projection templates");
+  }
 
   const home = await getJson("/api/lenses/home-surface");
   assert(Array.isArray(home), "home surface lens response must be an array");
@@ -586,7 +590,6 @@ async function validateRuntimeSurfaces(projection) {
     const policy = policies.get(slice.id);
     assert(policy, `production slice ${slice.id} must have surface policy`);
     assert(home.some((item) => item.workspaceId === slice.workspaceId) || policy.hiddenReason, `home surface must expose ${slice.id}`);
-    assert(queue.some((item) => item.workspaceId === slice.workspaceId) || policy.hiddenReason, `work queue must expose ${slice.id}`);
     assert(learning.some((item) => item.workspaceId === slice.workspaceId) || policy.hiddenReason, `learning catalog must expose ${slice.id}`);
 
     const query = encodeURIComponent(policy.search?.keywords?.[0] || slice.workspaceId);

@@ -8,7 +8,7 @@ const requiredTopLevel = [
   "roleNavigation",
   "deviceSurfaceMatrix",
   "WorkItemCard",
-  "TodayMissionControlIA",
+  "TodayFocusOverviewIA",
   "WorkPageIA",
   "ObjectWorkspaceIA",
   "UnifiedSurfaceArchitecture",
@@ -56,7 +56,8 @@ writeReport(violations, [
   "apps/mobile/src/views/operationPanelView.js",
   "apps/mobile/src/views/experienceComponents.js",
   "apps/mobile/src/styles/workspace.css",
-  "apps/mobile/src/styles/operation.css"
+  "apps/mobile/src/styles/operation.css",
+  "services/core-api/WorkOS.Api/Runtime/CanonicalOperationsApiService.cs"
 ]);
 if (violations.length > 0) {
   for (const item of violations) {
@@ -117,6 +118,14 @@ function validateContract(contract, file) {
     if (!actionPaths[pathName]) {
       violations.push(violation("experience_contract.business_operation_path", `BusinessOperationActionPaths missing ${pathName}.`, { pathName }));
     }
+  }
+  if (!String(actionPaths.operationFlowKernel || "").includes("shared workspace/step seed or definition contract") ||
+      !String(actionPaths.operationFlowKernel || "").includes("must not hard-code a single sample scenario")) {
+    violations.push(violation("experience_contract.operation_flow_kernel_path", "BusinessOperationActionPaths must require shared operation flow dispatch instead of sample-scenario hard-coding."));
+  }
+  if (!String(actionPaths.liveValidation || "").includes("current operation draft values") ||
+      !String(actionPaths.liveValidation || "").includes("same field-role contract")) {
+    violations.push(violation("experience_contract.live_validation_path", "BusinessOperationActionPaths must require live submit checks from current draft values and the shared field-role contract."));
   }
   if (!String(actionPaths.create || "").includes("/api/operations/work-items/{workItemId}/confirm")) {
     violations.push(violation("experience_contract.business_operation_create_path", "Create/active business operation path must use Operations Confirm."));
@@ -252,6 +261,7 @@ function validateMobileSources() {
   const searchView = readSource("apps/mobile/src/views/searchView.js");
   const searchIntentHub = readSource("apps/mobile/src/searchIntentHub.js");
   const searchIntentRegistry = readSource("apps/mobile/src/searchIntentRegistry.js");
+  const canonicalOperations = readSource("services/core-api/WorkOS.Api/Runtime/CanonicalOperationsApiService.cs");
   const home = readSource("apps/mobile/src/views/homeView.js");
   const me = readSource("apps/mobile/src/views/meView.js");
   const eventBinder = readSource("apps/mobile/src/eventBinder.js");
@@ -308,8 +318,8 @@ function validateMobileSources() {
   if (!operationPanel.includes("completedWorkspaceRecord") || !workspace.includes("completedRecordActionPolicy")) {
     violations.push(violation("experience_contract.completed_operation_policy_missing", "Completed operation pages must delegate to completedWorkspaceRecord, where completedRecordActionPolicy owns readonly record actions."));
   }
-  if (!home.includes('tr("todayMissionControl")') || !home.includes('data-surface="today-mission-control"')) {
-    violations.push(violation("experience_contract.today_mission_control_missing", "Today must render localized WorkItem Mission Control."));
+  if (!shell.includes('home: "todayFocusOverview"') || !home.includes('data-surface="today-focus-overview"')) {
+    violations.push(violation("experience_contract.today_focus_overview_missing", "The shared shell must own the localized Today Focus Overview title and Today must render shared queue counts."));
   }
   if (!me.includes('tr("personalOpsCenter")') || !me.includes('data-surface="personal-ops-center"')) {
     violations.push(violation("experience_contract.personal_ops_center_missing", "Me must render localized Personal Ops Center."));
@@ -331,6 +341,20 @@ function validateMobileSources() {
       !controller.includes("autoAdvancedToWorkItemId") ||
       !controller.includes("syncUrlFromState(ctx)")) {
     violations.push(violation("experience_contract.post_submit_auto_advance_missing", "Successful active submits must auto-advance to the next actionable persisted WorkItem and sync the URL."));
+  }
+  if (!controller.includes("validateRequiredFields(card, fieldValues, ctx)") ||
+      !controller.includes("shouldRefreshValidationSurface") ||
+      !controller.includes('event.target.tagName === "SELECT"') ||
+      controller.includes("hadValidationForCard")) {
+    violations.push(violation("experience_contract.live_operation_validation_missing", "Operation input changes must refresh submit checks from current draft values through the shared field-role contract."));
+  }
+  if (!canonicalOperations.includes("DispatchNextOperationWorkItem") ||
+      !canonicalOperations.includes("WorkspaceSeedCatalog.FindWorkspace") ||
+      !canonicalOperations.includes("operation_flow_process_manager") ||
+      canonicalOperations.includes("DispatchNextDormitoryResourceWorkItem") ||
+      canonicalOperations.includes("NextDormitoryResourceCard") ||
+      canonicalOperations.includes("dormitory_resource_lifecycle_process_manager")) {
+    violations.push(violation("experience_contract.shared_operation_flow_dispatch_missing", "Operations Confirm must dispatch next WorkItems from the shared workspace seed instead of a sample-specific resource chain."));
   }
   if (workspace.includes("returnCurrentWorkItem")) {
     violations.push(violation("experience_contract.return_current_work_retired", "Readonly completed records must not use returnCurrentWorkItem as a normal continuation fallback."));

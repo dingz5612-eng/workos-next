@@ -4,6 +4,7 @@
   "sources": [
     { "sourceId": "operationsWorkItems", "ref": "Operations Runtime WorkItem store", "objectTypes": ["workItem"], "admissionRequired": true },
     { "sourceId": "operationCases", "ref": "Operations Runtime OperationCase store", "objectTypes": ["operationCase"], "admissionRequired": true },
+    { "sourceId": "operationsDomainEvents", "ref": "Operations Runtime confirmed domain events through OperationsReadStore.SearchOperations", "objectTypes": ["workItem", "operationCase"], "admissionRequired": true },
     { "sourceId": "workspaceCardProjection", "ref": "ProjectionRuntime workspace/card projection source", "objectTypes": ["workspaceCardProjection", "learningItem"], "admissionRequired": true },
     { "sourceId": "businessObjects", "ref": "official projections and lens snapshots", "objectTypes": ["businessObject", "payment", "deposit", "ledger"], "admissionRequired": true },
     { "sourceId": "evidence", "ref": "RuntimeEvidenceStorage", "objectTypes": ["evidence"], "admissionRequired": true },

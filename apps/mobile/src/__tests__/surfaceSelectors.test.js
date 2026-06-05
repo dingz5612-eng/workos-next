@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import { describe, expect, it } from "vitest";
 import { openWorkspace } from "../navigationController.js";
-import { applyRuntimeOfflineFallback, createRuntimeStore } from "../runtime/runtimeStore.js";
+import { applyRuntimeOfflineFallback, applyRuntimeSurfacePayloads, createRuntimeStore } from "../runtime/runtimeStore.js";
 import {
   selectHomeSurface,
   selectLearningCatalog,
@@ -168,6 +168,30 @@ describe("runtime surface selectors", () => {
     expect(queue[0].workspace.id).toBe(secondProduction.workspaceId);
     expect(queue[0].card.id).toBe(secondProduction.cards[0]);
     expect(queue[0].source).not.toBe("offline-demo-fallback");
+  });
+
+  it("keeps Operations Runtime work items in their business domain for Workbench counts", () => {
+    const state = runtimeState([firstWorkspace]);
+    applyRuntimeSurfacePayloads(state, {
+      operationWorkItems: [{
+        workItemId: "wi-runtime-room",
+        workspaceId: firstWorkspace.id,
+        cardId: firstWorkspace.cards[0].id,
+        workItemType: "Dorm.RoomSetup",
+        status: "ready",
+        lifecycleState: "ready",
+        ownerRole: "operator",
+        domain: "operations",
+        priority: "normal",
+        workspace: firstWorkspace
+      }]
+    });
+
+    const queue = selectWorkbenchQueue({ ...state, currentActor: { role: "manager" } });
+
+    expect(queue).toHaveLength(1);
+    expect(queue[0].domain).toBe("stay");
+    expect(queue[0].priority).toBe(80);
   });
 
   it("does not promote workspace/card lens rows into active Workbench tasks without a persisted WorkItem", () => {

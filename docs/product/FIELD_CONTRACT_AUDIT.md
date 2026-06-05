@@ -121,7 +121,7 @@ charges.
 | 单价 | number | userInput | no | no |
 | 天数/周数/月数 | number | userInput | no | no |
 | 应收金额 | readonly | derivedFrom: 计费方式 + 单价 + 数量 | yes | yes |
-| 押金规则 | select | optionSet: depositRule | no | no |
+| 押金规则 | hidden | moved to 押金责任卡 / depositPolicyName | yes | no |
 
 ### 押金责任卡
 
@@ -130,7 +130,7 @@ collected.
 
 | Field | Control | Source | Read-only | System-generated |
 | --- | --- | --- | --- | --- |
-| 押金规则 | select | optionSet: depositRule | no | no |
+| 押金规则 | select | optionSet: depositPolicyName | no | no |
 | 应收押金 | number | userInput | no | no |
 | 押金币种 | select | optionSet: currency | no | no |
 | 押金截止时间 | dateTime | userInput | no | no |

@@ -129,6 +129,7 @@ function correctionMeta(item = {}) {
 function operationWorkItemsToQueue(workItems) {
   return (Array.isArray(workItems) ? workItems : []).map((item) => {
     const lifecycleState = normalizeOperationLifecycleState(item.lifecycleState || item.lifecycle_state || item.status);
+    const workspace = item.workspace || item.Workspace || {};
     return {
       queueItemId: `q-${item.workItemId || item.work_item_id}`,
       workItemId: item.workItemId || item.work_item_id,
@@ -138,13 +139,55 @@ function operationWorkItemsToQueue(workItems) {
       ownerRole: item.ownerRole || item.owner_role,
       workspaceId: item.workspaceId || item.workspace_id,
       cardId: cardIdOf(item),
-      domain: item.domain || "operations",
+      domain: queueDomainOf(item, workspace),
       badges: ["mine", lifecycleState].filter(Boolean),
-      priority: item.priority ?? 80,
+      priority: queuePriorityOf(item.priority),
       reason: item.nextAction || item.next_action || item.failureReason || item.failure_reason || "",
       source: "operations-work-items"
     };
   });
+}
+
+function queueDomainOf(item = {}, workspace = {}) {
+  const explicit = normalizeDomain(item.domain || item.domain_group || item.businessLine || item.business_line);
+  const workspaceDomain = normalizeDomain(workspace.domain || workspace.businessLine || workspace.business_line);
+  if (explicit && explicit !== "operations" && explicit !== "ops") return explicit;
+  if (workspaceDomain) return workspaceDomain;
+  const text = [
+    item.workItemType,
+    item.work_item_type,
+    item.workspaceId,
+    item.workspace_id,
+    item.caseId,
+    item.case_id,
+    item.cardId,
+    item.card_id
+  ].join(" ");
+  if (/stay|dorm|room|bed|checkin|checkout|deposit|payment|service|expense|period|lead|住宿|房间|床位|入住|退住|押金|收款|线索/i.test(text)) return "stay";
+  if (/repair|维修/i.test(text)) return "repair";
+  if (/finance|ledger|财务|账本/i.test(text)) return "finance";
+  return explicit || "operations";
+}
+
+function normalizeDomain(value = "") {
+  const text = String(value || "").trim().toLowerCase();
+  if (!text) return "";
+  if (["accommodation", "dormitory", "dorm", "stay"].includes(text)) return "stay";
+  if (["finance", "money", "ledger"].includes(text)) return "finance";
+  if (["repair", "service"].includes(text)) return "repair";
+  if (["operations", "operation", "ops"].includes(text)) return text === "ops" ? "ops" : "operations";
+  return text;
+}
+
+function queuePriorityOf(value) {
+  if (typeof value === "number") return value;
+  const text = String(value || "").trim().toLowerCase();
+  if (text === "critical" || text === "urgent") return 110;
+  if (text === "high") return 100;
+  if (text === "normal" || !text) return 80;
+  if (text === "low") return 50;
+  const parsed = Number(text);
+  return Number.isFinite(parsed) ? parsed : 80;
 }
 
 function cardIdOf(item = {}) {

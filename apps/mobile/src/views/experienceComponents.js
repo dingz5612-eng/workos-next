@@ -1,8 +1,23 @@
-import { loadDraft } from "../operationDrafts.js";
+import { capacityForRoomType, defaultValueForField } from "../controls/fieldControls.js";
+import { loadCompletedRecordSnapshot, loadDraft } from "../operationDrafts.js";
+import {
+  bedLayoutPreviewValue,
+  canonicalTaskFieldId,
+  isLowValueTaskField,
+  preferredTaskFieldIds,
+  syntheticTaskField,
+  taskDisplayLabel,
+  taskDisplayValue,
+  taskFieldForId,
+  taskValueByFieldId
+} from "../operationFieldKernel.js";
 import { normalizeOperationLifecycleState } from "../operationStatus.js";
 import { resolveOperationPanelTarget, resolvePersistedWorkItem } from "../operationRouteResolver.js";
+import { evidenceStateFor } from "../selectors/queueSelectors.js";
 import { isTerminalCardStatus } from "../selectors/workspaceSelectors.js";
 import { permissionDiagnosticCopy } from "../surfaceGuard.js";
+import { buildBusinessAnchor, businessAnchorFieldsHtml, businessAnchorHtml } from "../businessAnchorKernel.js";
+import { stepContextContract } from "../systemContextContract.js";
 import {
   DeviceTrustVM,
   OperationPanelVM,
@@ -11,11 +26,35 @@ import {
   WorkItemDecisionVM
 } from "../viewModels/index.js";
 
+export function BusinessSummaryHeader(summary = {}, ctx, options = {}) {
+  const stateAttr = summary.state ? ` data-queue-state="${attr(summary.state, ctx)}"` : "";
+  const state = summary.stateLabel
+    ? `<span class="business-summary-state${summary.stateClass ? ` ${attr(summary.stateClass, ctx)}` : ""}"${stateAttr}>${text(summary.stateLabel, ctx)}</span>`
+    : "";
+  const title = summary.title ? `<strong class="business-summary-title">${text(summary.title, ctx)}</strong>` : "";
+  const subtitle = summary.subtitle ? `<span class="business-summary-subtitle">${text(summary.subtitle, ctx)}</span>` : "";
+  const source = summary.source || summary.item || {};
+  const anchor = options.hideAnchor
+    ? ""
+    : businessAnchorFieldsHtml(source, ctx, { compact: true }) || businessAnchorHtml(source, ctx, { compact: true });
+  const detail = summary.detail ? `<p class="business-summary-detail">${text(summary.detail, ctx)}</p>` : "";
+  const classes = ["business-summary-header", options.compact ? "compact" : ""].filter(Boolean).join(" ");
+  return `<div class="${classes}" data-surface="business-summary-header">
+    <div class="business-summary-heading">
+      ${state}
+      ${title}
+      ${subtitle}
+    </div>
+    ${anchor ? `<div class="business-summary-anchor-panel">${anchor}</div>` : ""}
+    ${detail}
+  </div>`;
+}
+
 export function WorkItemCard(item, ctx) {
   const model = workItemModel(item, ctx);
-  const evidence = model.requiredEvidence.length ? model.requiredEvidence.join(" · ") : "-";
+  const taskBody = BusinessTaskBody(model, ctx, { item });
+  const hasOverview = taskBody.includes('data-surface="business-task-overview"');
   const canHandle = model.canHandleLabel;
-  const blocker = model.blocker;
   const route = resolveOperationPanelTarget({
     workItemId: model.workItemId,
     workspaceId: model.workspaceId,
@@ -32,28 +71,24 @@ export function WorkItemCard(item, ctx) {
 
   return `<article class="workitem-card action-decision-card risk-${attr(model.riskLevel, ctx)}" data-surface="action-decision-card">
     <div class="workitem-card-head">
-      <div>
-        <span>${text(canHandle, ctx)} · ${text(model.workItemType, ctx)}</span>
-        <strong>${text(model.displayTitle, ctx)}</strong>
-      </div>
-      ${workspaceButton}
+      ${BusinessSummaryHeader({
+        stateLabel: canHandle,
+        state: model.canHandle ? "ready" : "blocked",
+        title: model.displayTitle,
+        subtitle: model.workItemType,
+        source: { ...item, workspace: item.workspace || item, card: item.card || model.card }
+      }, ctx, { compact: true, hideAnchor: shouldHideHeaderAnchor({ ...item, workspace: item.workspace || item, card: item.card || model.card }, ctx, hasOverview) })}
     </div>
-    <dl class="workitem-card-grid">
-      ${field(ctx.tr("decisionCanHandle"), canHandle, ctx)}
-      ${field(ctx.tr("decisionBlocker"), blocker, ctx)}
-      ${field(ctx.tr("decisionMissingEvidence"), evidence, ctx)}
-      ${field(ctx.tr("decisionNextAction"), model.nextAction, ctx)}
-      ${field(ctx.tr("decisionRisk"), model.riskLevel, ctx)}
-      ${field(ctx.tr("decisionOwner"), model.ownerRoleLabel, ctx)}
-      ${field(ctx.tr("decisionDueAt"), model.dueAt, ctx)}
-      ${field(ctx.tr("decisionBusinessObject"), model.businessObject, ctx)}
-    </dl>
+    ${taskBody}
+    <div class="business-summary-actions">${workspaceButton}</div>
     ${debug}
   </article>`;
 }
 
 export function WorkItemSummaryCard(item, ctx) {
   const model = workItemModel(item, ctx);
+  const taskBody = BusinessTaskBody(model, ctx, { item });
+  const hasOverview = taskBody.includes('data-surface="business-task-overview"');
   const route = resolveOperationPanelTarget({
     workItemId: model.workItemId,
     workspaceId: model.workspaceId,
@@ -64,13 +99,291 @@ export function WorkItemSummaryCard(item, ctx) {
     : `<button data-view="workbench">${text(ctx.tr("returnWorkbench"), ctx)}</button>`;
 
   return `<article class="today-workitem-summary" data-surface="today-workitem-summary">
-    <div>
-      <span>${text(model.canHandleLabel, ctx)} · ${text(model.workItemType, ctx)}</span>
-      <strong>${text(model.displayTitle, ctx)}</strong>
-      <p>${text(model.nextAction || ctx.tr("operationUnavailableNextAction"), ctx)}</p>
-    </div>
-    ${action}
+    ${BusinessSummaryHeader({
+      stateLabel: model.canHandleLabel,
+      state: model.canHandle ? "ready" : "blocked",
+      title: model.displayTitle,
+      subtitle: model.workItemType,
+      source: item
+    }, ctx, { compact: true, hideAnchor: shouldHideHeaderAnchor(item, ctx, hasOverview) })}
+    ${taskBody}
+    <div class="business-summary-actions">${action}</div>
   </article>`;
+}
+
+export function BusinessTaskBody(model = {}, ctx, options = {}) {
+  const rows = [];
+  const overview = BusinessTaskOverview(model, ctx, options);
+  if (overview) rows.push(overview);
+  if (!model.canHandle && model.blocker) {
+    rows.push(`<div class="business-task-row business-task-alert"><span>${text(ctx.tr("businessTaskIssue"), ctx)}</span><p>${text(model.blocker, ctx)}</p></div>`);
+  }
+  if (!model.canHandle && model.requiredEvidence?.length) {
+    rows.push(`<div class="business-task-row business-task-alert"><span>${text(ctx.tr("businessTaskMissingEvidence"), ctx)}</span><p>${text(model.requiredEvidence.join(" · "), ctx)}</p></div>`);
+  }
+  return `<div class="business-task-body" data-surface="business-task-body">${rows.join("")}</div>`;
+}
+
+export function BusinessTaskOverview(model = {}, ctx, options = {}) {
+  const source = options.item || options.source || model.item || {};
+  const task = businessTaskContext(source, model);
+  if (!task.workspace?.id || !task.card?.id) return "";
+  const completed = completedTaskFacts(task, ctx).slice(0, 4);
+  const current = currentTaskFacts(task, ctx).slice(0, 4);
+  if (!completed.length && !current.length) return "";
+  const groups = [
+    completed.length ? taskFieldGroup("businessTaskCompletedFacts", completed, ctx) : "",
+    current.length ? taskFieldGroup("businessTaskCurrentFields", current, ctx) : ""
+  ].filter(Boolean);
+  return `<div class="business-task-overview" data-surface="business-task-overview">${groups.join("")}</div>`;
+}
+
+function taskFieldGroup(titleKey, rows, ctx) {
+  return `<section class="business-task-field-group">
+    <span>${text(ctx.tr(titleKey), ctx)}</span>
+    <div class="business-task-field-grid">
+      ${rows.map((row) => taskField(row, ctx)).join("")}
+    </div>
+  </section>`;
+}
+
+function taskField(row, ctx) {
+  const empty = row.empty ? ` data-empty="true"` : "";
+  const source = row.source ? ` data-field-source="${attr(row.source, ctx)}"` : "";
+  return `<div class="business-task-field"${empty}${source}>
+    <span>${text(row.label, ctx)}</span>
+    <strong>${text(row.value, ctx)}</strong>
+  </div>`;
+}
+
+function businessTaskContext(source = {}, model = {}) {
+  const workspace = source.workspace || source;
+  const cardId = source.cardId || source.card_id || source._surfaceCardId || model.cardId || source.card?.id || "";
+  const card = source.card || (workspace?.cards || []).find((candidate) => candidate.id === cardId) || activeCard(workspace) || {};
+  return {
+    source,
+    workspace,
+    card,
+    workspaceId: model.workspaceId || source.workspaceId || source.workspace_id || workspace?.id || "",
+    cardId: model.cardId || cardId || card?.id || ""
+  };
+}
+
+function completedTaskFacts(task, ctx) {
+  const previousCards = previousCardsForTask(task);
+  return previousCards.flatMap((card) => {
+    const values = taskValues(task, card, ctx, { mode: "completed" });
+    return taskRowsForCard(card, task, values, ctx, { completed: true });
+  });
+}
+
+function currentTaskFacts(task, ctx) {
+  const values = taskValues(task, task.card, ctx, { mode: "current" });
+  const contract = stepContextContract(task.card?.id);
+  const fields = contract
+    ? [
+        ...contract.userSelectableFields.map((entry) => taskFieldForId(task.card, entry.fieldId, ctx)),
+        ...contract.derivedFields
+          .filter((entry) => entry.surface !== "hidden-submit-only")
+          .map((entry) => taskFieldForId(task.card, entry.fieldId, ctx))
+      ]
+    : taskCoreFields(task.card, ctx, { includeEmpty: true });
+  return uniqueTaskRows(fields
+    .filter(Boolean)
+    .filter((field) => !isLowValueTaskField(field, ctx))
+    .map((field) => taskRowForField(field, task.card, task, values, ctx, { current: true }))
+    .filter(Boolean));
+}
+
+function previousCardsForTask(task) {
+  const cards = task.workspace?.cards || [];
+  const activeIndex = cards.findIndex((card) => card.id === task.card?.id);
+  const contract = stepContextContract(task.card?.id);
+  const dependentIds = contract?.dependsOn?.length ? contract.dependsOn : [];
+  const byDependency = dependentIds
+    .map((id) => cards.find((card) => card.id === id))
+    .filter(Boolean);
+  if (byDependency.length) return byDependency;
+  return cards
+    .slice(0, activeIndex < 0 ? 0 : activeIndex)
+    .filter((card) => isTerminalCardStatus(card.status));
+}
+
+function taskRowsForCard(card, task, values, ctx, options = {}) {
+  const fields = taskCoreFields(card, ctx, { values });
+  const rows = fields
+    .map((field) => taskRowForField(field, card, task, values, ctx, options))
+    .filter((row) => row && (!options.completed || !row.empty));
+  return uniqueTaskRows(rows);
+}
+
+function taskCoreFields(card, ctx, options = {}) {
+  const values = options.values || {};
+  const fields = card?.fields?.business || [];
+  const preferred = preferredTaskFieldIds(card?.id);
+  const byId = new Map(fields.map((field) => [canonicalTaskFieldId(field), field]));
+  const ordered = [
+    ...preferred.map((id) => byId.get(id) || (taskValueByFieldId(values, id, null, ctx) ? syntheticTaskField(id, ctx) : null)),
+    ...fields
+  ].filter(Boolean);
+  return uniqueTaskFields(ordered)
+    .filter((field) => options.includeEmpty || hasDisplayableTaskValue(values, canonicalTaskFieldId(field), field, ctx))
+    .filter((field) => !isLowValueTaskField(field, ctx));
+}
+
+function taskRowForField(field, card, task, values, ctx, options = {}) {
+  const fieldId = canonicalTaskFieldId(field);
+  if (!fieldId || fieldId === "bedLayout" || fieldId === "bedStatus") return null;
+  const state = taskFieldState(field, fieldId, card, task, values, ctx, options);
+  if (!state.value && options.completed) return null;
+  const display = state.displayValue || (state.value ? taskDisplayValue(field, fieldId, state.value, ctx) : ctx.tr("businessTaskPendingValue"));
+  return {
+    id: fieldId,
+    label: taskDisplayLabel(field, fieldId, card, ctx),
+    value: display,
+    source: state.source || "",
+    empty: !state.value
+  };
+}
+
+function taskFieldState(field, fieldId, card, task, values, ctx, options = {}) {
+  if (card?.id === "bedSetup" && fieldId === "bedLabels") {
+    const bedCount = taskValueByFieldId(values, "bedCount", field, ctx) ||
+      inheritedTaskValue(task, "bedCount", ctx) ||
+      taskValueByFieldId(values, "capacity", field, ctx);
+    const pattern = taskValueByFieldId(values, "bedType", field, ctx) || defaultValueForField(taskFieldForId(card, "bedType", ctx)) || "bunk_pair";
+    const displayValue = bedLayoutPreviewValue(bedCount, pattern, ctx);
+    return { value: displayValue, displayValue, source: "derived" };
+  }
+  if (card?.id === "bedSetup" && fieldId === "bedType") {
+    const value = taskValueByFieldId(values, fieldId, field, ctx) || defaultValueForField(field) || "bunk_pair";
+    return { value, source: value ? "default" : "" };
+  }
+  if (field?.ui?.derivedFrom === "roomType") {
+    const roomType = taskValueByFieldId(values, "roomType", field, ctx);
+    const value = taskValueByFieldId(values, fieldId, field, ctx) || capacityForRoomType(roomType);
+    return { value, source: "derived" };
+  }
+  const value = taskValueByFieldId(values, fieldId, field, ctx);
+  if (value) return { value, source: options.current ? "current" : "completed" };
+  return { value: "", source: "" };
+}
+
+function inheritedTaskValue(task, fieldId, ctx) {
+  const previous = previousCardsForTask(task);
+  for (const card of previous) {
+    const values = taskValues(task, card, ctx, { mode: "completed" });
+    const value = taskValueByFieldId(values, fieldId, null, ctx);
+    if (value) return value;
+  }
+  return "";
+}
+
+function taskValues(task, card, ctx, options = {}) {
+  const workspaceId = task.workspaceId || task.workspace?.id || "";
+  const cardId = card?.id || "";
+  const draft = workspaceId && cardId ? loadDraft(workspaceId, cardId).values || {} : {};
+  const snapshot = workspaceId && cardId ? loadCompletedRecordSnapshot(workspaceId, cardId, {
+    workItemId: card?.workItemId || task.source?.workItemId || task.source?.work_item_id || ""
+  })?.values || {} : {};
+  const sourceValues = [
+    task.source?.payload?.input?.fieldValues,
+    task.source?.payload?.fieldValues,
+    task.source?.Payload?.input?.fieldValues,
+    task.source?.Payload?.fieldValues,
+    task.source?.payload,
+    task.source?.Payload,
+    task.source?.fieldValues,
+    task.source?.field_values,
+    task.source?.values,
+    task.source?.businessAnchor,
+    task.source?.business_anchor,
+    task.workspace?.fieldValues,
+    task.workspace?.field_values,
+    task.workspace?.values,
+    task.workspace?.businessAnchor,
+    task.workspace?.business_anchor,
+    card?.fieldValues,
+    card?.field_values,
+    card?.values,
+    card?.businessAnchor,
+    card?.business_anchor
+  ];
+  const eventValues = taskEventValues(task, card, ctx);
+  return options.mode === "current"
+    ? mergeTaskValues(...sourceValues, snapshot, ...eventValues, draft)
+    : mergeTaskValues(...sourceValues, draft, snapshot, ...eventValues);
+}
+
+function taskEventValues(task, card, ctx) {
+  const workspaceId = task.workspaceId || task.workspace?.id || "";
+  if (!workspaceId) return [];
+  return [
+    ...(ctx.state?.projectionEvents || []),
+    ...(ctx.state?.runtimeStore?.events || [])
+  ]
+    .map((event) => ({
+      workspaceId: event.workspaceId || event.WorkspaceId,
+      cardId: event.cardId || event.CardId,
+      payload: event.payload || event.Payload || {}
+    }))
+    .filter((event) => event.workspaceId === workspaceId && (!card?.id || !event.cardId || event.cardId === card.id))
+    .map((event) => flattenTaskPayload(event.payload));
+}
+
+function flattenTaskPayload(payload = {}) {
+  return mergeTaskValues(
+    payload?.input?.fieldValues,
+    payload?.input?.FieldValues,
+    payload?.Input?.fieldValues,
+    payload?.Input?.FieldValues,
+    payload?.fieldValues,
+    payload?.FieldValues,
+    payload
+  );
+}
+
+function mergeTaskValues(...sources) {
+  return sources.reduce((current, source = {}) => {
+    if (!source || typeof source !== "object" || Array.isArray(source)) return current;
+    for (const [key, value] of Object.entries(source)) {
+      if (value === undefined || value === null || typeof value === "object") continue;
+      const textValue = String(value).trim();
+      if (textValue) current[key] = textValue;
+    }
+    return current;
+  }, {});
+}
+
+function hasDisplayableTaskValue(values, fieldId, field, ctx) {
+  return Boolean(taskValueByFieldId(values, fieldId, field, ctx));
+}
+
+function uniqueTaskRows(rows = []) {
+  const seen = new Set();
+  return rows.filter((row) => {
+    const key = `${row.id}:${row.label}:${row.value}`;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
+function uniqueTaskFields(fields = []) {
+  const seen = new Set();
+  return fields.filter((field) => {
+    const id = canonicalTaskFieldId(field);
+    if (!id || seen.has(id)) return false;
+    seen.add(id);
+    return true;
+  });
+}
+
+function shouldHideHeaderAnchor(source = {}, ctx = {}, hasOverview = false) {
+  if (!hasOverview) return false;
+  const importantKeys = new Set(["resident", "phone", "deposit", "payment", "task", "checkout", "period"]);
+  const anchor = buildBusinessAnchor(source, ctx);
+  return !anchor.fields.some((field) => importantKeys.has(field.key));
 }
 
 export function LifecycleWorkspace(item, activeCard, ctx) {
@@ -113,6 +426,7 @@ export function OperationStepRail(item, activeCard, ctx, options = {}) {
     <div class="operation-step-summary">
       <div class="operation-step-title">
         <strong>${text(tx(item.title, ctx) || ctx.tr("operationPanel"), ctx)}</strong>
+        ${businessAnchorHtml({ workspace: item, card: activeCard, workspaceId: item.id, cardId: activeCard.id }, ctx, { compact: true })}
       </div>
       <div class="operation-step-meta">
         <strong>${text(stepPositionText(currentIndex, cards.length, ctx), ctx)}</strong>
@@ -369,7 +683,8 @@ export function workItemModel(item = {}, ctx) {
   const evidence = card?.evidence || item.requiredEvidence || [];
   const drafts = workspace?.id && card?.id ? loadDraft(workspace.id, card.id) : { evidenceDrafts: [] };
   const title = item.title || workspace?.title || card?.title || item.workItemId || "";
-  const vm = WorkItemDecisionVM({ ...item, workspace, card }, ctx);
+  const evidenceState = evidenceStateFor({ ...item, card, evidenceDrafts: drafts.evidenceDrafts });
+  const vm = WorkItemDecisionVM({ ...item, workspace, card, evidenceState }, ctx);
   return {
     ...vm,
     workspaceId: item.workspaceId || workspace?.id || "",
@@ -384,7 +699,7 @@ export function workItemModel(item = {}, ctx) {
     nextAction: vm.nextAction,
     traceRefs: array(item.traceRefs || item.trace_refs || item.commandSubmissionId || item.command_submission_id || workspace?.traceRefs),
     riskLevel: vm.riskLabel,
-    evidenceState: item.evidenceState || ((drafts.evidenceDrafts || []).length >= evidence.length && evidence.length ? "attached" : evidence.length ? "missing" : "not_required"),
+    evidenceState,
     dueAt: vm.dueAtLabel,
     businessObject: vm.businessObject
   };
@@ -450,7 +765,7 @@ function isRuntimePlaceholder(draft = {}) {
 }
 
 function field(label, value, ctx) {
-  return `<dt>${text(label, ctx)}</dt><dd>${text(value || "-", ctx)}</dd>`;
+  return `<div class="definition-row"><dt>${text(label, ctx)}</dt><dd>${text(value || "-", ctx)}</dd></div>`;
 }
 
 function statusFromMessage(message = "") {

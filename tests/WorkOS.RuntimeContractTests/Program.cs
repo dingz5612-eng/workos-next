@@ -1385,9 +1385,8 @@ static void ValidateStableOptionValues(ProjectionEnvelope projection)
 static void ValidateRuntimeSurfaceLenses(ProjectionRuntime runtime)
 {
     var queueJson = JsonSerializer.Serialize(runtime.GetWorkQueue());
-    Assert(queueJson.Contains("workspaceId", StringComparison.Ordinal), "work queue items must include workspaceId");
-    Assert(queueJson.Contains("cardId", StringComparison.Ordinal), "work queue items must include cardId");
-    Assert(queueJson.Contains("W-STAY-PAYMENT-LEDGER", StringComparison.Ordinal), "work queue must expose current PaymentLedger workspace");
+    Assert(!queueJson.Contains("W-STAY-PAYMENT-LEDGER", StringComparison.Ordinal), "work queue must not expose seed template workspaces as actionable cases");
+    Assert(queueJson == "[]", "empty runtime must not synthesize work queue cases from projection templates");
 
     var searchJson = JsonSerializer.Serialize(runtime.Search("押金"));
     var depositIndex = searchJson.IndexOf("W-STAY-DEPOSIT-LEDGER", StringComparison.Ordinal);
@@ -1412,7 +1411,6 @@ static void ValidateManifestDrivenSurfaceCoverage(ProjectionRuntime runtime)
     var slices = manifest.RootElement.GetProperty("slices").EnumerateArray().ToArray();
     var projection = runtime.GetAll();
     var homeJson = JsonSerializer.Serialize(runtime.GetHomeSurface());
-    var queueJson = JsonSerializer.Serialize(runtime.GetWorkQueue());
     var learningJson = JsonSerializer.Serialize(runtime.GetLearningCatalog());
 
     foreach (var slice in slices)
@@ -1422,7 +1420,6 @@ static void ValidateManifestDrivenSurfaceCoverage(ProjectionRuntime runtime)
         var workspace = projection.Workspaces.SingleOrDefault(item => item.Id == workspaceId);
         Assert(workspace is not null, $"surface coverage slice references missing workspace {workspaceId}");
         Assert(homeJson.Contains(workspaceId, StringComparison.Ordinal), $"home surface must include {workspaceId}");
-        Assert(queueJson.Contains(workspaceId, StringComparison.Ordinal), $"work queue surface must include {workspaceId}");
         Assert(learningJson.Contains(workspaceId, StringComparison.Ordinal), $"learning catalog must include {workspaceId}");
         Assert(JsonSerializer.Serialize(runtime.Search(workspaceId)).Contains(workspaceId, StringComparison.Ordinal), $"search surface must find {workspaceId}");
 

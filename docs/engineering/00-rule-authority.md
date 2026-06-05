@@ -75,6 +75,20 @@ discovered old-architecture pages must be rewritten onto the current Frontend
 Experience System and the obsolete implementation must be deleted rather than
 wrapped, hidden, or kept as fallback.
 
+Responsibility boundaries are mandatory. Frontend controllers may orchestrate
+collection, submit, navigation, and sync, but they must not own case-context
+resolution, field identity, validation policy, multilingual labels, or shared
+layout semantics when a current kernel exists. Frontend pages may render
+OperationCardShell controls and business layout, but field source resolution,
+required/visible decisions, cross-step carry-forward, derived values, and
+submit-before-check missing-input decisions must come from FieldSourceRenderer
+and Definition/System Context contracts rather than page-private logic. Backend
+command services may authorize and execute the command boundary, but branch resolution,
+ProcessManager dispatch decisions, field normalization, and projection
+materialization must live in their named runtime collaborators. Compatibility
+adapters may be read-only and quarantined; they must not become hidden write
+fallbacks or page-specific business logic.
+
 Step-page experience parity is mandatory. New active step, readonly completed
 step, and append-only correction step pages must share the same step rail,
 direct `OperationCardShell`, state/check panel, action hierarchy, feedback
@@ -162,6 +176,21 @@ authority fields. Development demo accounts are allowed only in local
 Development when explicitly enabled; production and pilot runtimes must use the
 real account table with versioned slow password hashes and must not seed or
 accept development-only accounts.
+
+Admission explainability is mandatory on user-visible action surfaces. Search
+result cards, Operation WorkItem detail/confirm/receipt pages, and PC
+governance release/evidence pages must consume visibleAllowed, prepareAllowed,
+confirmAllowed, productionAllowed, mode, and safe reason copy from Admission /
+Language Kernel. A workflow state such as `ready` only says where the WorkItem
+is in the process; it must not be presented as confirmation permission or
+Business Production readiness. When confirmAllowed=false, the primary action
+must not bind confirm and must not use "process/start handling" wording. When
+confirmAllowed=true and productionAllowed=false, the surface must label the
+action as internal pilot observation or non-production confirmation. Ordinary
+user surfaces must not show admissionDecisionRef, compatibilityAdapter,
+definitionId, payloadHash, commandSubmissionId, raw reason, or raw code.
+Blocked/error copy must resolve reasonCode through Language Kernel keys instead
+of appending raw backend values.
 
 ## Batch Gate Rule
 

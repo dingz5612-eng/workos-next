@@ -1,0 +1,18 @@
+{
+  "apiPayloads": [],
+  "homeText": "WorkOSNext\n移动端业务操作系统\n已连接\n中文\nРусский\nКыргызча\n登录办理系统\nWorkOSNext\n\n请输入用户名和密码。部门、业务线、角色和权限由管理员在 PC 治理面分配。\n\n账号\n密码\n\n登录页不能选择部门或权限；办理权限来自后端账号与会话。\n\n登录",
+  "workText": "WorkOSNext\n移动端业务操作系统\n已连接\n中文\nРусский\nКыргызча\n登录办理系统\nWorkOSNext\n\n请输入用户名和密码。部门、业务线、角色和权限由管理员在 PC 治理面分配。\n\n账号\n密码\n\n登录页不能选择部门或权限；办理权限来自后端账号与会话。\n\n登录",
+  "homeWindowState": {
+    "href": "http://127.0.0.1:5175/?view=home&lang=zh-CN&device=mobile",
+    "actor": null,
+    "keys": [
+      "workosnext.onboarded"
+    ],
+    "appState": null
+  },
+  "workWindowState": {
+    "href": "http://127.0.0.1:5175/?view=workbench&lang=zh-CN&device=mobile",
+    "actor": null,
+    "appState": null
+  }
+}

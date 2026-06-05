@@ -68,7 +68,7 @@ function fail(message, details = []) {
 
 function walk(dir, predicate, output = []) {
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
-    if (entry.name === "node_modules" || entry.name === "dist" || entry.name === "__tests__" || entry.name === "devFixtures") continue;
+    if (entry.name === "node_modules" || entry.name === "dist" || entry.name === "__tests__") continue;
     const fullPath = path.join(dir, entry.name);
     if (entry.isDirectory()) {
       walk(fullPath, predicate, output);

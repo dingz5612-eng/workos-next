@@ -1,14 +1,17 @@
-import { bedLayoutForLabels, generatedBedLabelsForCount, isGeneratedBedLabelList, serializeBedLayout, splitBedLabels } from "./controls/bedLabelControls.js";
+import { bedLayoutForLabels, generatedBedLabelsForCount, isGeneratedBedLabelList, serializeBedLayout } from "./controls/bedLabelControls.js";
+import { safeConfirmBlockedKey, safeConfirmErrorKey, safeReasonCode } from "./admissionSurface.js";
 import { capacityForRoomType } from "./controls/fieldControls.js";
-import { isScopedResourceFieldRequired } from "./controls/resourceScopeControls.js";
 import { fetchOperationWorkItems } from "./apiClient.js";
 import { clearDraft, loadDraft, saveCompletedRecordSnapshot, saveDraft } from "./operationDrafts.js";
+import { arrayPayload, normalizeOperationWorkItemsPayload, operationCaseContextPayloads, runtimeWorkItems, selectedOperationWorkItem, workItemCardId, workItemIdOf, workItemWorkspaceId } from "./operationCaseContext.js";
 import { createSubmissionProtocol, materializeEvidenceObjects, submitWorkItemOperation } from "./operationRuntime.js";
 import { setView, syncUrlFromState } from "./navigationController.js";
 import { normalizeOperationLifecycleState } from "./operationStatus.js";
+import { operationFieldId } from "./operationFieldKernel.js";
+import { generatedContextValue, withSystemGeneratedOperationValues } from "./operationSystemValues.js";
 import { activeWorkspaceCard, isCardActionDisabled, isTerminalCardStatus } from "./selectors/workspaceSelectors.js";
 import { applyRuntimeProjection, applyRuntimeSurfacePayloads } from "./runtime/runtimeStore.js";
-import { operationFieldId } from "./views/workspaceView.js";
+import { validateRequiredFields } from "./operationValidation.js";
 
 export function collectOperationValues() {
   if (typeof document === "undefined") return {};
@@ -82,7 +85,7 @@ export function toggleEvidenceSelection(event, ctx) {
   if (node.classList.contains("selected") && !node.dataset.evidenceDraftId) {
     node.dataset.evidenceDraftId = `evidence-${node.dataset.evidenceId}-${randomDraftId()}`;
   }
-  const fieldValues = enrichCorrectionFieldValues(collectOperationValues(), ctx.state, item, card);
+  const fieldValues = operationSubmissionValues(item, card, collectOperationValues(), ctx);
   const evidenceDrafts = collectEvidenceDrafts();
   saveDraft(item.id, card.id, fieldValues, evidenceDrafts, draftSubmissionProtocol(item, card, fieldValues, evidenceDrafts));
 }
@@ -91,7 +94,7 @@ export function saveCurrentDraft(ctx) {
   const item = ctx.workspace();
   const card = activeWorkspaceCard(item, ctx.state.selectedCardIndex, ctx.state.selectedCardId);
   if (!item || !card) return;
-  const fieldValues = enrichCorrectionFieldValues(collectOperationValues(), ctx.state, item, card);
+  const fieldValues = operationSubmissionValues(item, card, collectOperationValues(), ctx);
   const evidenceDrafts = collectEvidenceDrafts();
   saveDraft(item.id, card.id, fieldValues, evidenceDrafts, draftSubmissionProtocol(item, card, fieldValues, evidenceDrafts));
   ctx.state.fieldValidation = null;
@@ -124,15 +127,30 @@ export function updateDerivedFields(ctx) {
   const amount = document.querySelector('[data-operation-field="amount"]');
   const unitRate = decimalValue("unitRate");
   const tariffQuantity = decimalValue("tariffQuantity");
-  if (amount && unitRate > 0 && tariffQuantity > 0) amount.value = String(unitRate * tariffQuantity);
+  if (amount) {
+    const values = collectOperationValues();
+    const derived = generatedContextValue("amount", values, {
+      workspace: item,
+      card,
+      payloads: operationCaseContextPayloads(ctx.state || {}, item, card),
+      currentValues: values
+    }, { preferDirect: false });
+    if (derived?.value) {
+      amount.value = derived.value;
+    } else if (unitRate > 0 && tariffQuantity > 0) {
+      amount.value = String(unitRate * tariffQuantity);
+    }
+  }
   const refundAmount = document.querySelector('[data-operation-field="refundAmount"]');
   if (refundAmount) {
-    const approved = decimalValue("confirmedAmount") || decimalValue("receivedAmount") || decimalValue("requiredDepositAmount");
-    const deduction = decimalValue("deductionAmount");
-    const applyToBalance = decimalValue("applyToBalanceAmount");
-    const paid = decimalValue("refundPaidAmount");
-    const available = approved - deduction - applyToBalance - paid;
-    if (available > 0) refundAmount.value = String(available);
+    const values = collectOperationValues();
+    const derived = generatedContextValue("refundAmount", values, {
+      workspace: item,
+      card,
+      payloads: operationCaseContextPayloads(ctx.state || {}, item, card),
+      currentValues: values
+    }, { preferDirect: false });
+    if (derived?.value) refundAmount.value = derived.value;
   }
 }
 
@@ -170,28 +188,29 @@ export function collectDraftingValuesOnInput(event, ctx) {
   const card = activeWorkspaceCard(item, ctx.state.selectedCardIndex, ctx.state.selectedCardId);
   if (!item || !card) return;
   const evidenceDrafts = loadDraft(item.id, card.id).evidenceDrafts || [];
-  const fieldValues = collectOperationValues();
+  const fieldValues = operationSubmissionValues(item, card, collectOperationValues(), ctx);
   saveDraft(item.id, card.id, fieldValues, evidenceDrafts, draftSubmissionProtocol(item, card, fieldValues, evidenceDrafts));
-  if (event.target.dataset.operationField === "resourceScope") {
-    ctx.render();
-    return;
-  }
-  if (ctx.state.fieldValidation?.workspaceId === item.id && ctx.state.fieldValidation?.cardId === card.id) {
-    const requiredValidation = validateRequiredFields(card, fieldValues, ctx);
-    if (!requiredValidation.missingFields.length) {
-      ctx.state.fieldValidation = null;
-      if (ctx.state.lastActionResult?.status === "business_blocked_422" && ctx.state.lastActionResult?.reason === "required_field_missing") {
-        ctx.state.lastActionResult = null;
+  const requiredValidation = validateRequiredFields(card, fieldValues, ctx);
+  const hasMissing = requiredValidation.missingFields.length > 0;
+  ctx.state.fieldValidation = hasMissing
+    ? {
+        workspaceId: item.id,
+        cardId: card.id,
+        missingFieldIds: requiredValidation.missingFields.map((field) => operationFieldId(field)),
+        missingLabels: requiredValidation.missingLabels,
+        missingContextLabels: requiredValidation.missingContextLabels
       }
-      ctx.state.operationMessage = "";
-      ctx.render();
-      return;
-    }
-    ctx.state.fieldValidation = {
-      ...ctx.state.fieldValidation,
-      missingFieldIds: requiredValidation.missingFields.map((field) => operationFieldId(field)),
-      missingLabels: requiredValidation.missingLabels
-    };
+    : null;
+  if (!hasMissing && ctx.state.lastActionResult?.status === "business_blocked_422" && ctx.state.lastActionResult?.reason === "required_field_missing") {
+    ctx.state.lastActionResult = null;
+    ctx.state.operationMessage = "";
+  }
+  const shouldRefreshValidationSurface = event.type === "change" ||
+    event.target.tagName === "SELECT" ||
+    event.target.dataset.operationField === "resourceScope" ||
+    !hasMissing;
+  if (shouldRefreshValidationSurface) {
+    ctx.render();
   }
 }
 
@@ -219,7 +238,7 @@ export async function submitCurrentCard(ctx) {
     setView("login", ctx);
     return;
   }
-  const fieldValues = enrichCorrectionFieldValues(collectOperationValues(), ctx.state, item, card);
+  const fieldValues = operationSubmissionValues(item, card, collectOperationValues(), ctx);
   const requiredValidation = validateRequiredFields(card, fieldValues, ctx);
   if (requiredValidation.missingFields.length) {
     const evidenceDrafts = collectEvidenceDrafts();
@@ -228,9 +247,10 @@ export async function submitCurrentCard(ctx) {
       workspaceId: item.id,
       cardId: card.id,
       missingFieldIds: requiredValidation.missingFields.map((field) => operationFieldId(field)),
-      missingLabels: requiredValidation.missingLabels
+      missingLabels: requiredValidation.missingLabels,
+      missingContextLabels: requiredValidation.missingContextLabels
     };
-    ctx.state.operationMessage = `${ctx.tr("requiredFieldMissing")} ${requiredValidation.missingLabels.join("、")}`;
+    ctx.state.operationMessage = `${ctx.tr("requiredFieldMissing")} ${requiredValidation.displayLabels.join("、")}`;
     ctx.state.lastActionResult = {
       confirmed: false,
       status: "business_blocked_422",
@@ -278,6 +298,7 @@ export async function submitCurrentCard(ctx) {
       card,
       workItemId: persistedWorkItemIdFor(ctx.state, item, card),
       actor: ctx.state.currentActor,
+      deviceId: ctx.state.currentDevice?.deviceId || "",
       language: ctx.state.lang,
       fieldValues,
       evidenceIds,
@@ -341,42 +362,14 @@ export async function submitCurrentCard(ctx) {
   ctx.render(true);
 }
 
-function validateRequiredFields(card, values, ctx) {
-  const missingFields = (card.fields?.business || [])
-    .filter((field) => operationFieldParticipatesInUserSubmit(card, field))
-    .filter((field) => isScopedResourceFieldRequired(card?.id, operationFieldId(field), values, Boolean(field.required)))
-    .filter((field) => !hasBusinessValue(values, operationFieldId(field)));
-  const invalidFields = bedSetupCardinalityViolations(card, values, ctx);
-  const invalidFieldSet = new Set(invalidFields.map((entry) => entry.field));
-  return {
-    missingFields: [...missingFields, ...invalidFields.map((entry) => entry.field).filter((field) => !missingFields.includes(field))],
-    missingLabels: [
-      ...missingFields.map((field) => labelForField(field, ctx)),
-      ...invalidFields
-        .filter((entry) => !missingFields.includes(entry.field) && invalidFieldSet.has(entry.field))
-        .map((entry) => entry.label)
-    ]
-  };
-}
-
-function operationFieldParticipatesInUserSubmit(card = {}, field = {}) {
-  const fieldId = operationFieldId(field);
-  if (card?.id === "bedSetup" && fieldId === "bedStatus") return false;
-  return true;
-}
-
-function bedSetupCardinalityViolations(card = {}, values = {}, ctx) {
-  if (card.id !== "bedSetup") return [];
-  const bedCount = Number(values.bedCount || 0);
-  if (!Number.isFinite(bedCount) || bedCount <= 0) return [];
-  const labelField = (card.fields?.business || []).find((field) => operationFieldId(field) === "bedLabels");
-  if (!labelField) return [];
-  const labels = splitBedLabels(values.bedLabels || "");
-  if (labels.length === bedCount && new Set(labels.map((item) => item.toLocaleLowerCase())).size === labels.length) return [];
-  const label = labels.length === bedCount
-    ? `${labelForField(labelField, ctx)}: ${ctx.tr("bedLabelsMustBeUnique")}`
-    : `${labelForField(labelField, ctx)}: ${ctx.tr("bedLabelsMustMatchBedCount").replace("{count}", String(bedCount))}`;
-  return [{ field: labelField, label }];
+function operationSubmissionValues(item = {}, card = {}, values = {}, ctx = {}) {
+  const payloads = operationCaseContextPayloads(ctx.state || {}, item, card);
+  return enrichCorrectionFieldValues(
+    withSystemGeneratedOperationValues(item, card, values, { payloads }),
+    ctx.state || {},
+    item,
+    card
+  );
 }
 
 function enrichCorrectionFieldValues(values = {}, state = {}, workspace = {}, card = {}) {
@@ -387,16 +380,6 @@ function enrichCorrectionFieldValues(values = {}, state = {}, workspace = {}, ca
     ...values,
     correctionMode
   };
-}
-
-function selectedOperationWorkItem(state = {}, workspace = {}, card = {}) {
-  const selectedWorkItemId = state.selectedWorkItemId || "";
-  const runtimeItems = runtimeWorkItems(state);
-  return runtimeItems.find((item) => [item.workItemId, item.work_item_id].includes(selectedWorkItemId)) ||
-    runtimeItems.find((item) =>
-      (item.workspaceId || item.workspace_id) === workspace?.id &&
-      (item.cardId || item.card_id || item.payload?.cardId || item.Payload?.cardId) === card?.id) ||
-    null;
 }
 
 function postSubmitAutoAdvanceTarget(state = {}, workspaceId = "", completedCardId = "", completedWorkItemId = "") {
@@ -452,47 +435,6 @@ function isPostSubmitActionableStatus(status = "") {
   return ["ready", "blocked", "inProgress"].includes(normalized);
 }
 
-function workItemIdOf(item = {}) {
-  return item.workItemId || item.work_item_id || "";
-}
-
-function workItemWorkspaceId(item = {}) {
-  return item.workspaceId || item.workspace_id || item.workspace?.id || "";
-}
-
-function workItemCardId(item = {}) {
-  return item.cardId || item.card_id || item.payload?.cardId || item.Payload?.cardId || item.card?.id || "";
-}
-
-function runtimeWorkItems(state = {}) {
-  return [
-    ...arrayPayload(state.runtimeStore?.operationWorkItems),
-    ...arrayPayload(state.runtimeStore?.workQueue)
-  ];
-}
-
-function normalizeOperationWorkItemsPayload(payload) {
-  if (Array.isArray(payload)) return payload;
-  if (Array.isArray(payload?.operationWorkItems)) return payload.operationWorkItems;
-  if (Array.isArray(payload?.workItems)) return payload.workItems;
-  if (Array.isArray(payload?.items)) return payload.items;
-  return [];
-}
-
-function arrayPayload(value) {
-  return Array.isArray(value) ? value : [];
-}
-
-function hasBusinessValue(values = {}, fieldId = "") {
-  const value = values[fieldId];
-  return !(value === undefined || value === null || String(value).trim() === "");
-}
-
-function labelForField(field, ctx) {
-  if (ctx.localTerm) return ctx.localTerm(field);
-  return field?.label?.[ctx.state?.lang] || field?.label?.["zh-CN"] || field?.id || "";
-}
-
 function operationActiveCard(item, selectedCardIndex, selectedCardId) {
   if (!item) return null;
   const requested = activeWorkspaceCard(item, selectedCardIndex, selectedCardId);
@@ -517,10 +459,10 @@ export function applyConfirmError(error, ctx) {
   if (error?.status === 403) {
     localStorage.removeItem("workosnext.actorSession");
     ctx.state.permissionDiagnostic = {
-      reason: error.reason || error.code || "permission_blocked_403",
+      reason: safeReasonCode(error.reason || error.code || "permission_blocked_403"),
       owner: "manager",
       requiredPermission: error.requiredPermission || "operation.confirm",
-      nextAction: error.nextAction || ctx.tr("confirmForbidden"),
+      nextAction: ctx.tr("operations.error.safe.403"),
       status: "permission_blocked_403"
     };
   }
@@ -528,15 +470,7 @@ export function applyConfirmError(error, ctx) {
 }
 
 export function confirmErrorMessage(error, ctx) {
-  const keyByStatus = {
-    400: "confirmBadRequest",
-    403: "confirmForbidden",
-    409: "confirmDuplicate",
-    422: "confirmBusinessBlocked"
-  };
-  const prefix = ctx.tr(keyByStatus[error?.status] || "submitFailed");
-  const detail = error?.reason || error?.code || "";
-  return [prefix, detail].filter(Boolean).join(" ");
+  return ctx.tr(safeConfirmErrorKey(error?.status));
 }
 
 export function confirmSuccessMessage(result, ctx) {
@@ -551,7 +485,7 @@ export function confirmSuccessMessage(result, ctx) {
 }
 
 export function confirmBlockedMessage(result, ctx) {
-  return result?.message || result?.reason || result?.code || ctx.tr("confirmBusinessBlocked");
+  return ctx.tr(safeConfirmBlockedKey(result));
 }
 
 function randomDraftId() {
@@ -644,10 +578,10 @@ function actionResultFromError(error, message) {
     status: byStatus[error?.status] || "network_unknown",
     message,
     permissionDiagnostic: error?.status === 403 ? {
-      reason: error.reason || error.code || "permission_blocked_403",
+      reason: safeReasonCode(error.reason || error.code || "permission_blocked_403"),
       owner: "manager",
       requiredPermission: error.requiredPermission || "operation.confirm",
-      nextAction: error.nextAction || message
+      nextAction: message
     } : null
   };
 }

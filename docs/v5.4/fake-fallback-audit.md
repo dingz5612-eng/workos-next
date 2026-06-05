@@ -26,7 +26,7 @@ hardcoded resident
 
 Production paths audited:
 
-- `apps/mobile/src`, excluding `apps/mobile/src/devFixtures` and `apps/mobile/src/__tests__`.
+- `apps/mobile/src`, excluding mobile unit tests.
 - `services/core-api/WorkOS.Api`, excluding build outputs.
 - Production mobile build output `apps/mobile/dist` when `node scripts/check-no-production-fake-fallback.mjs --dist` is run after build.
 
@@ -39,13 +39,12 @@ Production paths audited:
 | `apps/mobile/src/views/workbenchView.js` | Offline helper was tied to `offline-demo-fallback`. | Helper now renders only for offline empty Workbench state. |
 | `apps/mobile/src/controls/fieldControls.js` | Imported `projectionMetadata`, pulling fake candidate defaults into production bundle. | Moved `capacityForRoomType` into the control helper and removed the fixture import. |
 | `apps/mobile/src/i18n.js` | Imported `demoCopy`, which contained fake resident/deposit copy. | Replaced with `i18n/domainCopy.js` containing only domain/UI copy and no fake business object literals. |
-| `apps/mobile/src/devFixtures/workspaceProjections.js`, `demoQueue.js`, `projectionMetadata.js`, `i18n/demoCopy.js` | Explicit dev/demo fixture data. | These now live under `apps/mobile/src/devFixtures/**` and are not production imports. |
+| Retired mobile local fixture files | Explicit dev/demo fixture data. | Removed from the active mobile baseline; runtime surfaces use Operations WorkItem, Projection, Lens, Admission, and Experience contracts. |
 
 ## Retained Non-Production Fixtures
 
 The banned literals still exist only in non-production contexts:
 
-- `apps/mobile/src/devFixtures/**`: explicit dev/test fixture data.
 - `tests/WorkOS.RuntimeContractTests/Program.cs`: contract fixtures and negative fake-evidence tests.
 - `apps/mobile/src/__tests__/surfaceSelectors.test.js`: banned-literal regex assertion that offline state does not include fake business objects.
 - Architecture/rules docs and guard scripts: banned terms are listed as examples or scanner inputs.
