@@ -131,7 +131,12 @@ ResetPostgres(connectionString);
 
     foreach (var cardId in new[] { "lead", "booking", "resident", "bedAssign", "tariff", "depositRequirement", "payment", "finance", "checkin", "operatingDashboard" })
     {
-        var token = cardId == "finance" ? financeToken : operatorToken;
+        var token = cardId switch
+        {
+            "finance" => financeToken,
+            "operatingDashboard" => managerToken,
+            _ => operatorToken
+        };
         var result = runtime.Confirm("W-STAY-CHECKIN", cardId, Human($"checkin-{cardId}"), token);
         Assert(result.Status == ConfirmStatus.Confirmed, $"{cardId} confirmation should pass");
         runtime.ProcessPendingOutbox();
@@ -275,9 +280,9 @@ ResetPostgres(connectionString);
         ["depositId"] = "deposit-missing-ledger",
         ["heldAmount"] = "999999",
         ["refundAmount"] = "1"
-    }), operatorToken));
+    }), managerToken));
     Assert(missingDepositLedger.Status == ConfirmStatus.Forbidden, "deposit settlement policies must require backend ledger state");
-    Assert(missingDepositLedger.Reason == "deposit_ledger_state_required", "deposit missing ledger reason must be stable");
+    Assert(missingDepositLedger.Reason == "deposit_ledger_state_required", $"deposit missing ledger reason must be stable, got {missingDepositLedger.Status}:{missingDepositLedger.Reason}");
 
     var overRefund = AssertNoSideEffects(connectionString, () => runtime.Confirm("W-STAY-DEPOSIT-LEDGER", "depositRefundApproval", Human("deposit-refund-over-held", new Dictionary<string, string>
     {
@@ -286,7 +291,7 @@ ResetPostgres(connectionString);
         ["deductionAmount"] = "0",
         ["applyToBalanceAmount"] = "0",
         ["refundAmount"] = "3001"
-    }), operatorToken));
+    }), managerToken));
     Assert(overRefund.Status == ConfirmStatus.Forbidden, "deposit refund approval must reject more than backend-held deposit");
 
     var depositDeduction = runtime.Confirm("W-STAY-DEPOSIT-LEDGER", "depositDeduction", Human("deposit-deduction", new Dictionary<string, string>
@@ -294,7 +299,7 @@ ResetPostgres(connectionString);
         ["depositId"] = "deposit-ledger-001",
         ["deductionAmount"] = "500",
         ["applyToBalanceAmount"] = "500"
-    }), operatorToken);
+    }), financeToken);
     Assert(depositDeduction.Status == ConfirmStatus.Confirmed, "deposit deduction/apply-to-balance should be a separate ledger card");
     AssertConfirmEvents(depositDeduction, "Accommodation.DepositDeducted", "Accommodation.DepositAppliedToBalance");
     runtime.ProcessPendingOutbox();
@@ -303,7 +308,7 @@ ResetPostgres(connectionString);
     {
         ["depositId"] = "deposit-ledger-001",
         ["refundAmount"] = "2000"
-    }), operatorToken).Status == ConfirmStatus.Confirmed, "deposit refund approval within held amount should pass");
+    }), managerToken).Status == ConfirmStatus.Confirmed, "deposit refund approval within held amount should pass");
     runtime.ProcessPendingOutbox();
 
     var refundPaymentRequest = Human("deposit-refund-payment", new Dictionary<string, string>
@@ -314,7 +319,7 @@ ResetPostgres(connectionString);
         ["paymentTime"] = "2026-05-29T18:00"
     });
     var refundEvidenceId = EvidenceFor(runtime, refundPaymentRequest, "W-STAY-DEPOSIT-LEDGER", "depositRefundPayment");
-    Assert(runtime.Confirm("W-STAY-DEPOSIT-LEDGER", "depositRefundPayment", refundPaymentRequest with { EvidenceIds = new[] { refundEvidenceId } }, operatorToken).Status == ConfirmStatus.Confirmed, "deposit refund payment should pass");
+    Assert(runtime.Confirm("W-STAY-DEPOSIT-LEDGER", "depositRefundPayment", refundPaymentRequest with { EvidenceIds = new[] { refundEvidenceId } }, financeToken).Status == ConfirmStatus.Confirmed, "deposit refund payment should pass");
     runtime.ProcessPendingOutbox();
     Assert(ScalarDecimal(connectionString, "select coalesce(sum(amount), 0) from deposit_transactions where deposit_id = 'deposit-ledger-001' and transaction_type = 'confirmed'") == 3000m, "DepositLedger held amount must come from confirmed deposit transactions");
     Assert(ScalarDecimal(connectionString, "select coalesce(sum(amount), 0) from deposit_transactions where deposit_id = 'deposit-ledger-001' and transaction_type = 'refund_paid'") == 2000m, "DepositRefundPaid must persist liability-release transaction amount");
@@ -387,7 +392,7 @@ ResetPostgres(connectionString);
         ["paymentId"] = "payment-missing-ledger",
         ["confirmedAmount"] = "999999",
         ["allocatedAmount"] = "1"
-    }), operatorToken));
+    }), financeToken));
     Assert(missingPaymentLedger.Status == ConfirmStatus.Forbidden, "payment allocation policies must require backend ledger state");
     Assert(missingPaymentLedger.Reason == "payment_ledger_state_required", "payment missing ledger reason must be stable");
 
@@ -396,7 +401,7 @@ ResetPostgres(connectionString);
         ["paymentId"] = "payment-ledger-001",
         ["confirmedAmount"] = "999999",
         ["allocatedAmount"] = "10000"
-    }), operatorToken));
+    }), financeToken));
     Assert(overAllocation.Status == ConfirmStatus.Forbidden, "payment allocation must reject more than backend-confirmed amount");
 
     var paymentAllocation = runtime.Confirm("W-STAY-PAYMENT-LEDGER", "paymentAllocation", Human("payment-allocation", new Dictionary<string, string>
@@ -406,7 +411,7 @@ ResetPostgres(connectionString);
         ["confirmedAmount"] = "9300",
         ["allocatedAmount"] = "9300",
         ["totalCharges"] = "999999"
-    }), operatorToken);
+    }), financeToken);
     Assert(paymentAllocation.Status == ConfirmStatus.Confirmed, "payment allocation within confirmed amount should pass");
     AssertConfirmEvents(paymentAllocation, "Accommodation.PaymentAllocated", "Accommodation.BalanceRecalculated");
     runtime.ProcessPendingOutbox();
@@ -542,7 +547,7 @@ ResetPostgres(connectionString);
     {
         ["taskId"] = "task-phase3-001",
         ["verificationResult"] = "approved"
-    }), operatorToken).Status == ConfirmStatus.Confirmed, "service task verify should pass");
+    }), managerToken).Status == ConfirmStatus.Confirmed, "service task verify should pass");
     runtime.ProcessPendingOutbox();
 
     Assert(runtime.Confirm("W-STAY-SERVICE-TASK", "roomReleaseAfterService", Human("service-release-after-verify", new Dictionary<string, string>
@@ -575,7 +580,7 @@ ResetPostgres(connectionString);
     {
         ["taskId"] = "task-phase3-room-001",
         ["verificationResult"] = "approved"
-    }), operatorToken).Status == ConfirmStatus.Confirmed, "room-level service task verify should pass");
+    }), managerToken).Status == ConfirmStatus.Confirmed, "room-level service task verify should pass");
     runtime.ProcessPendingOutbox();
 
     var roomReleaseResult = runtime.Confirm("W-STAY-SERVICE-TASK", "roomReleaseAfterService", Human("service-room-release-after-verify", new Dictionary<string, string>
@@ -633,7 +638,7 @@ ResetPostgres(connectionString);
         ["periodNo"] = "15",
         ["periodStartAt"] = "2026-05-01T00:00:00Z",
         ["periodEndAt"] = "2026-05-10T23:59:59Z"
-    }), operatorToken).Status == ConfirmStatus.Confirmed, "period scope should pass after PeriodAnalytics runtime upgrade");
+    }), managerToken).Status == ConfirmStatus.Confirmed, "period scope should pass after PeriodAnalytics runtime upgrade");
     runtime.ProcessPendingOutbox();
 
     Assert(runtime.Confirm("W-STAY-PERIOD-ANALYTICS", "periodMetricsReview", Human("period-metrics-zero-denominator", new Dictionary<string, string>
@@ -644,7 +649,7 @@ ResetPostgres(connectionString);
         ["newLeadCount"] = "0",
         ["reservationCount"] = "0",
         ["checkInCount"] = "0"
-    }), financeToken).Status == ConfirmStatus.Confirmed, "period metrics should allow zero denominator and freeze a snapshot");
+    }), managerToken).Status == ConfirmStatus.Confirmed, "period metrics should allow zero denominator and freeze a snapshot");
     runtime.ProcessPendingOutbox();
 
     Assert(runtime.Confirm("W-STAY-PERIOD-ANALYTICS", "periodMetricsReview", Human("period-metrics-late-replay", new Dictionary<string, string>
@@ -655,7 +660,7 @@ ResetPostgres(connectionString);
         ["newLeadCount"] = "20",
         ["reservationCount"] = "10",
         ["checkInCount"] = "9"
-    }), financeToken).Status == ConfirmStatus.Confirmed, "late metric replay should not mutate the frozen snapshot");
+    }), managerToken).Status == ConfirmStatus.Confirmed, "late metric replay should not mutate the frozen snapshot");
     runtime.ProcessPendingOutbox();
 
     var periodDepositRevenue = AssertNoSideEffects(connectionString, () => runtime.Confirm("W-STAY-PERIOD-ANALYTICS", "periodFinanceReview", Human("period-finance-deposit-as-revenue", new Dictionary<string, string>
@@ -690,7 +695,7 @@ ResetPostgres(connectionString);
         ["unfinishedTaskCount"] = "1",
         ["overdueTaskCount"] = "0",
         ["debtorCount"] = "0"
-    }), operatorToken).Status == ConfirmStatus.Confirmed, "period operations diagnosis should pass");
+    }), managerToken).Status == ConfirmStatus.Confirmed, "period operations diagnosis should pass");
     runtime.ProcessPendingOutbox();
 
     var periodCloseWithoutActionPlan = AssertNoSideEffects(connectionString, () => runtime.Confirm("W-STAY-PERIOD-ANALYTICS", "periodClose", Human("period-close-without-action-plan", new Dictionary<string, string>
@@ -736,7 +741,7 @@ ResetPostgres(connectionString);
         ["priority"] = "high",
         ["actionStatus"] = "pending",
         ["actionPlanWorkItemId"] = "wi-period-plan-001"
-    }), operatorToken);
+    }), managerToken);
     Assert(periodActionPlan.Status == ConfirmStatus.Confirmed, $"period action plan should pass: {periodActionPlan.Status} {periodActionPlan.Reason}");
     AssertConfirmEvents(periodActionPlan, "Accommodation.PeriodActionPlanCommitted");
     runtime.ProcessPendingOutbox();
@@ -758,7 +763,7 @@ ResetPostgres(connectionString);
         ["completionResult"] = "done",
         ["completionNote"] = "reservation conversion actions shipped",
         ["ownerName"] = "manager"
-    }), operatorToken);
+    }), managerToken);
     Assert(periodActionPlanComplete.Status == ConfirmStatus.Confirmed, $"period action plan completion should pass on its own card: {periodActionPlanComplete.Status} {periodActionPlanComplete.Reason}");
     AssertConfirmEvents(periodActionPlanComplete, "Accommodation.PeriodActionPlanCompleted");
     runtime.ProcessPendingOutbox();
