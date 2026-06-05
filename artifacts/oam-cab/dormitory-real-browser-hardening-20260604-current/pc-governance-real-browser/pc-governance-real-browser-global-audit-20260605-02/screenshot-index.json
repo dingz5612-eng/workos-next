@@ -1,0 +1,615 @@
+{
+  "version": "pc-governance.screenshot-index.v1",
+  "runId": "pc-governance-real-browser-global-audit-20260605-02",
+  "generatedAtUtc": "2026-06-05T04:03:55.783Z",
+  "screenshots": [
+    {
+      "kind": "fullPage",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-global-audit-20260605-02/screenshots/00-login-full.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\pc-governance-real-browser\\pc-governance-real-browser-global-audit-20260605-02\\screenshots\\00-login-full.png",
+      "sha256": "54902f6f96e97e800316ec8a3b342a1a6640b5f55b5bff57c21865977e545b05",
+      "bytes": 68475,
+      "scrollY": null
+    },
+    {
+      "kind": "top",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-global-audit-20260605-02/screenshots/00-login-top.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\pc-governance-real-browser\\pc-governance-real-browser-global-audit-20260605-02\\screenshots\\00-login-top.png",
+      "sha256": "54902f6f96e97e800316ec8a3b342a1a6640b5f55b5bff57c21865977e545b05",
+      "bytes": 68475,
+      "scrollY": 0
+    },
+    {
+      "kind": "fullPage",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-global-audit-20260605-02/screenshots/00-login-complete-full.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\pc-governance-real-browser\\pc-governance-real-browser-global-audit-20260605-02\\screenshots\\00-login-complete-full.png",
+      "sha256": "2516495b473e718659b73f0402f9148ea51921e143fa95326ff4c9608a06ea52",
+      "bytes": 111479,
+      "scrollY": null
+    },
+    {
+      "kind": "top",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-global-audit-20260605-02/screenshots/00-login-complete-top.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\pc-governance-real-browser\\pc-governance-real-browser-global-audit-20260605-02\\screenshots\\00-login-complete-top.png",
+      "sha256": "2516495b473e718659b73f0402f9148ea51921e143fa95326ff4c9608a06ea52",
+      "bytes": 111479,
+      "scrollY": 0
+    },
+    {
+      "kind": "fullPage",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-global-audit-20260605-02/screenshots/01-governance-dashboard-full.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\pc-governance-real-browser\\pc-governance-real-browser-global-audit-20260605-02\\screenshots\\01-governance-dashboard-full.png",
+      "sha256": "1da504198071b8e7ff18a3f61c05f8959bad3f80d8d37e016be29db1305cca60",
+      "bytes": 1713997,
+      "scrollY": null
+    },
+    {
+      "kind": "top",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-global-audit-20260605-02/screenshots/01-governance-dashboard-top.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\pc-governance-real-browser\\pc-governance-real-browser-global-audit-20260605-02\\screenshots\\01-governance-dashboard-top.png",
+      "sha256": "1b78ade8e288d2392802a1f7bab5c10dea474bf78309c31b56ae6737468d0f00",
+      "bytes": 127892,
+      "scrollY": 0
+    },
+    {
+      "kind": "bottom",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-global-audit-20260605-02/screenshots/01-governance-dashboard-bottom.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\pc-governance-real-browser\\pc-governance-real-browser-global-audit-20260605-02\\screenshots\\01-governance-dashboard-bottom.png",
+      "sha256": "e066cdc06b0654fc3aeb7fb5acdccec4965a837384d24c4c707c61ced0b59f3b",
+      "bytes": 99976,
+      "scrollY": 16345
+    },
+    {
+      "kind": "fullPage",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-global-audit-20260605-02/screenshots/02-nav-01-Dashboard-full.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\pc-governance-real-browser\\pc-governance-real-browser-global-audit-20260605-02\\screenshots\\02-nav-01-Dashboard-full.png",
+      "sha256": "07ef9d51c5fb0fe4f95c5953bb2577e5a80b290bea460e1641d9f58b58602c89",
+      "bytes": 1714737,
+      "scrollY": null
+    },
+    {
+      "kind": "top",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-global-audit-20260605-02/screenshots/02-nav-01-Dashboard-top.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\pc-governance-real-browser\\pc-governance-real-browser-global-audit-20260605-02\\screenshots\\02-nav-01-Dashboard-top.png",
+      "sha256": "7be4472954ab8d6901f1c2171fdb4686fadac307f7f444fc721decba9d7b8271",
+      "bytes": 127882,
+      "scrollY": 0
+    },
+    {
+      "kind": "bottom",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-global-audit-20260605-02/screenshots/02-nav-01-Dashboard-bottom.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\pc-governance-real-browser\\pc-governance-real-browser-global-audit-20260605-02\\screenshots\\02-nav-01-Dashboard-bottom.png",
+      "sha256": "e066cdc06b0654fc3aeb7fb5acdccec4965a837384d24c4c707c61ced0b59f3b",
+      "bytes": 99976,
+      "scrollY": 16345
+    },
+    {
+      "kind": "fullPage",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-global-audit-20260605-02/screenshots/02-nav-02-Production-Observability-full.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\pc-governance-real-browser\\pc-governance-real-browser-global-audit-20260605-02\\screenshots\\02-nav-02-Production-Observability-full.png",
+      "sha256": "dcd6a8755c19a7882a03eae9e4c025fa30602b86362e1538752141a330bf44b5",
+      "bytes": 1714539,
+      "scrollY": null
+    },
+    {
+      "kind": "top",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-global-audit-20260605-02/screenshots/02-nav-02-Production-Observability-top.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\pc-governance-real-browser\\pc-governance-real-browser-global-audit-20260605-02\\screenshots\\02-nav-02-Production-Observability-top.png",
+      "sha256": "7be4472954ab8d6901f1c2171fdb4686fadac307f7f444fc721decba9d7b8271",
+      "bytes": 127882,
+      "scrollY": 0
+    },
+    {
+      "kind": "bottom",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-global-audit-20260605-02/screenshots/02-nav-02-Production-Observability-bottom.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\pc-governance-real-browser\\pc-governance-real-browser-global-audit-20260605-02\\screenshots\\02-nav-02-Production-Observability-bottom.png",
+      "sha256": "e066cdc06b0654fc3aeb7fb5acdccec4965a837384d24c4c707c61ced0b59f3b",
+      "bytes": 99976,
+      "scrollY": 16345
+    },
+    {
+      "kind": "fullPage",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-global-audit-20260605-02/screenshots/02-nav-03-Lens-Health-full.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\pc-governance-real-browser\\pc-governance-real-browser-global-audit-20260605-02\\screenshots\\02-nav-03-Lens-Health-full.png",
+      "sha256": "e99f84504f41144fac053efdc2b240fbc2bc45e4067da7dc8d499c805fe6c3d9",
+      "bytes": 1714767,
+      "scrollY": null
+    },
+    {
+      "kind": "top",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-global-audit-20260605-02/screenshots/02-nav-03-Lens-Health-top.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\pc-governance-real-browser\\pc-governance-real-browser-global-audit-20260605-02\\screenshots\\02-nav-03-Lens-Health-top.png",
+      "sha256": "7be4472954ab8d6901f1c2171fdb4686fadac307f7f444fc721decba9d7b8271",
+      "bytes": 127882,
+      "scrollY": 0
+    },
+    {
+      "kind": "bottom",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-global-audit-20260605-02/screenshots/02-nav-03-Lens-Health-bottom.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\pc-governance-real-browser\\pc-governance-real-browser-global-audit-20260605-02\\screenshots\\02-nav-03-Lens-Health-bottom.png",
+      "sha256": "e066cdc06b0654fc3aeb7fb5acdccec4965a837384d24c4c707c61ced0b59f3b",
+      "bytes": 99976,
+      "scrollY": 16345
+    },
+    {
+      "kind": "fullPage",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-global-audit-20260605-02/screenshots/02-nav-04-Work-Management-full.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\pc-governance-real-browser\\pc-governance-real-browser-global-audit-20260605-02\\screenshots\\02-nav-04-Work-Management-full.png",
+      "sha256": "957b234e1b47a70e711968c5255b559e2b79d728c13261f36e1c864e5c1c7949",
+      "bytes": 1714763,
+      "scrollY": null
+    },
+    {
+      "kind": "top",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-global-audit-20260605-02/screenshots/02-nav-04-Work-Management-top.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\pc-governance-real-browser\\pc-governance-real-browser-global-audit-20260605-02\\screenshots\\02-nav-04-Work-Management-top.png",
+      "sha256": "7be4472954ab8d6901f1c2171fdb4686fadac307f7f444fc721decba9d7b8271",
+      "bytes": 127882,
+      "scrollY": 0
+    },
+    {
+      "kind": "bottom",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-global-audit-20260605-02/screenshots/02-nav-04-Work-Management-bottom.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\pc-governance-real-browser\\pc-governance-real-browser-global-audit-20260605-02\\screenshots\\02-nav-04-Work-Management-bottom.png",
+      "sha256": "e066cdc06b0654fc3aeb7fb5acdccec4965a837384d24c4c707c61ced0b59f3b",
+      "bytes": 99976,
+      "scrollY": 16345
+    },
+    {
+      "kind": "fullPage",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-global-audit-20260605-02/screenshots/02-nav-05-Objects-full.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\pc-governance-real-browser\\pc-governance-real-browser-global-audit-20260605-02\\screenshots\\02-nav-05-Objects-full.png",
+      "sha256": "6493b00c643f19f6c6fc0a342961310a88a4292e29afb4ceeef60c4517f64ef2",
+      "bytes": 1714507,
+      "scrollY": null
+    },
+    {
+      "kind": "top",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-global-audit-20260605-02/screenshots/02-nav-05-Objects-top.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\pc-governance-real-browser\\pc-governance-real-browser-global-audit-20260605-02\\screenshots\\02-nav-05-Objects-top.png",
+      "sha256": "7be4472954ab8d6901f1c2171fdb4686fadac307f7f444fc721decba9d7b8271",
+      "bytes": 127882,
+      "scrollY": 0
+    },
+    {
+      "kind": "bottom",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-global-audit-20260605-02/screenshots/02-nav-05-Objects-bottom.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\pc-governance-real-browser\\pc-governance-real-browser-global-audit-20260605-02\\screenshots\\02-nav-05-Objects-bottom.png",
+      "sha256": "e066cdc06b0654fc3aeb7fb5acdccec4965a837384d24c4c707c61ced0b59f3b",
+      "bytes": 99976,
+      "scrollY": 16345
+    },
+    {
+      "kind": "fullPage",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-global-audit-20260605-02/screenshots/02-nav-06-Cases-full.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\pc-governance-real-browser\\pc-governance-real-browser-global-audit-20260605-02\\screenshots\\02-nav-06-Cases-full.png",
+      "sha256": "188da54f21e17253c9fb7d1bfe95d35f957dff6c1f5c08117f4dbe7cb66ee231",
+      "bytes": 1714584,
+      "scrollY": null
+    },
+    {
+      "kind": "top",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-global-audit-20260605-02/screenshots/02-nav-06-Cases-top.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\pc-governance-real-browser\\pc-governance-real-browser-global-audit-20260605-02\\screenshots\\02-nav-06-Cases-top.png",
+      "sha256": "7be4472954ab8d6901f1c2171fdb4686fadac307f7f444fc721decba9d7b8271",
+      "bytes": 127882,
+      "scrollY": 0
+    },
+    {
+      "kind": "bottom",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-global-audit-20260605-02/screenshots/02-nav-06-Cases-bottom.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\pc-governance-real-browser\\pc-governance-real-browser-global-audit-20260605-02\\screenshots\\02-nav-06-Cases-bottom.png",
+      "sha256": "e066cdc06b0654fc3aeb7fb5acdccec4965a837384d24c4c707c61ced0b59f3b",
+      "bytes": 99976,
+      "scrollY": 16345
+    },
+    {
+      "kind": "fullPage",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-global-audit-20260605-02/screenshots/02-nav-07-Ledgers-full.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\pc-governance-real-browser\\pc-governance-real-browser-global-audit-20260605-02\\screenshots\\02-nav-07-Ledgers-full.png",
+      "sha256": "c58bb76f708be20109ef77409ff7c1158778006999e4379c1bb8ff206c1fa8b7",
+      "bytes": 1714581,
+      "scrollY": null
+    },
+    {
+      "kind": "top",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-global-audit-20260605-02/screenshots/02-nav-07-Ledgers-top.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\pc-governance-real-browser\\pc-governance-real-browser-global-audit-20260605-02\\screenshots\\02-nav-07-Ledgers-top.png",
+      "sha256": "7be4472954ab8d6901f1c2171fdb4686fadac307f7f444fc721decba9d7b8271",
+      "bytes": 127882,
+      "scrollY": 0
+    },
+    {
+      "kind": "bottom",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-global-audit-20260605-02/screenshots/02-nav-07-Ledgers-bottom.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\pc-governance-real-browser\\pc-governance-real-browser-global-audit-20260605-02\\screenshots\\02-nav-07-Ledgers-bottom.png",
+      "sha256": "e066cdc06b0654fc3aeb7fb5acdccec4965a837384d24c4c707c61ced0b59f3b",
+      "bytes": 99976,
+      "scrollY": 16345
+    },
+    {
+      "kind": "fullPage",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-global-audit-20260605-02/screenshots/02-nav-08-Evidence-Review-full.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\pc-governance-real-browser\\pc-governance-real-browser-global-audit-20260605-02\\screenshots\\02-nav-08-Evidence-Review-full.png",
+      "sha256": "79a42d4b04ca269e267272c2d491cdb998e1781420a5794abf61639f8a5a3ec7",
+      "bytes": 1714480,
+      "scrollY": null
+    },
+    {
+      "kind": "top",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-global-audit-20260605-02/screenshots/02-nav-08-Evidence-Review-top.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\pc-governance-real-browser\\pc-governance-real-browser-global-audit-20260605-02\\screenshots\\02-nav-08-Evidence-Review-top.png",
+      "sha256": "7be4472954ab8d6901f1c2171fdb4686fadac307f7f444fc721decba9d7b8271",
+      "bytes": 127882,
+      "scrollY": 0
+    },
+    {
+      "kind": "bottom",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-global-audit-20260605-02/screenshots/02-nav-08-Evidence-Review-bottom.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\pc-governance-real-browser\\pc-governance-real-browser-global-audit-20260605-02\\screenshots\\02-nav-08-Evidence-Review-bottom.png",
+      "sha256": "e066cdc06b0654fc3aeb7fb5acdccec4965a837384d24c4c707c61ced0b59f3b",
+      "bytes": 99976,
+      "scrollY": 16345
+    },
+    {
+      "kind": "fullPage",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-global-audit-20260605-02/screenshots/02-nav-09-Reconciliation-full.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\pc-governance-real-browser\\pc-governance-real-browser-global-audit-20260605-02\\screenshots\\02-nav-09-Reconciliation-full.png",
+      "sha256": "498aab9cc98efd30f29a9cee57b4c1a46287aca9f67905d6b11b35c9dfb3a096",
+      "bytes": 1714400,
+      "scrollY": null
+    },
+    {
+      "kind": "top",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-global-audit-20260605-02/screenshots/02-nav-09-Reconciliation-top.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\pc-governance-real-browser\\pc-governance-real-browser-global-audit-20260605-02\\screenshots\\02-nav-09-Reconciliation-top.png",
+      "sha256": "7be4472954ab8d6901f1c2171fdb4686fadac307f7f444fc721decba9d7b8271",
+      "bytes": 127882,
+      "scrollY": 0
+    },
+    {
+      "kind": "bottom",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-global-audit-20260605-02/screenshots/02-nav-09-Reconciliation-bottom.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\pc-governance-real-browser\\pc-governance-real-browser-global-audit-20260605-02\\screenshots\\02-nav-09-Reconciliation-bottom.png",
+      "sha256": "e066cdc06b0654fc3aeb7fb5acdccec4965a837384d24c4c707c61ced0b59f3b",
+      "bytes": 99976,
+      "scrollY": 16345
+    },
+    {
+      "kind": "fullPage",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-global-audit-20260605-02/screenshots/02-nav-10-Correction-Center-full.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\pc-governance-real-browser\\pc-governance-real-browser-global-audit-20260605-02\\screenshots\\02-nav-10-Correction-Center-full.png",
+      "sha256": "e88af2ba60cbf0d1d4ab5d04138ec17e6c338fcd729914788eada1dd69711e03",
+      "bytes": 1714467,
+      "scrollY": null
+    },
+    {
+      "kind": "top",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-global-audit-20260605-02/screenshots/02-nav-10-Correction-Center-top.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\pc-governance-real-browser\\pc-governance-real-browser-global-audit-20260605-02\\screenshots\\02-nav-10-Correction-Center-top.png",
+      "sha256": "7be4472954ab8d6901f1c2171fdb4686fadac307f7f444fc721decba9d7b8271",
+      "bytes": 127882,
+      "scrollY": 0
+    },
+    {
+      "kind": "bottom",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-global-audit-20260605-02/screenshots/02-nav-10-Correction-Center-bottom.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\pc-governance-real-browser\\pc-governance-real-browser-global-audit-20260605-02\\screenshots\\02-nav-10-Correction-Center-bottom.png",
+      "sha256": "e066cdc06b0654fc3aeb7fb5acdccec4965a837384d24c4c707c61ced0b59f3b",
+      "bytes": 99976,
+      "scrollY": 16345
+    },
+    {
+      "kind": "fullPage",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-global-audit-20260605-02/screenshots/02-nav-11-Period-Review-full.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\pc-governance-real-browser\\pc-governance-real-browser-global-audit-20260605-02\\screenshots\\02-nav-11-Period-Review-full.png",
+      "sha256": "9a375464ed82d258f89c2261ad6ab78857c4c99ddf824d57bca9f3d20afb5ccb",
+      "bytes": 1714513,
+      "scrollY": null
+    },
+    {
+      "kind": "top",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-global-audit-20260605-02/screenshots/02-nav-11-Period-Review-top.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\pc-governance-real-browser\\pc-governance-real-browser-global-audit-20260605-02\\screenshots\\02-nav-11-Period-Review-top.png",
+      "sha256": "7be4472954ab8d6901f1c2171fdb4686fadac307f7f444fc721decba9d7b8271",
+      "bytes": 127882,
+      "scrollY": 0
+    },
+    {
+      "kind": "bottom",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-global-audit-20260605-02/screenshots/02-nav-11-Period-Review-bottom.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\pc-governance-real-browser\\pc-governance-real-browser-global-audit-20260605-02\\screenshots\\02-nav-11-Period-Review-bottom.png",
+      "sha256": "e066cdc06b0654fc3aeb7fb5acdccec4965a837384d24c4c707c61ced0b59f3b",
+      "bytes": 99976,
+      "scrollY": 16345
+    },
+    {
+      "kind": "fullPage",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-global-audit-20260605-02/screenshots/02-nav-12-RiskCommand-full.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\pc-governance-real-browser\\pc-governance-real-browser-global-audit-20260605-02\\screenshots\\02-nav-12-RiskCommand-full.png",
+      "sha256": "12deaa75f433eec04ae65065506edc4a3b929041906f46df3036d9637543e37b",
+      "bytes": 1714584,
+      "scrollY": null
+    },
+    {
+      "kind": "top",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-global-audit-20260605-02/screenshots/02-nav-12-RiskCommand-top.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\pc-governance-real-browser\\pc-governance-real-browser-global-audit-20260605-02\\screenshots\\02-nav-12-RiskCommand-top.png",
+      "sha256": "7be4472954ab8d6901f1c2171fdb4686fadac307f7f444fc721decba9d7b8271",
+      "bytes": 127882,
+      "scrollY": 0
+    },
+    {
+      "kind": "bottom",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-global-audit-20260605-02/screenshots/02-nav-12-RiskCommand-bottom.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\pc-governance-real-browser\\pc-governance-real-browser-global-audit-20260605-02\\screenshots\\02-nav-12-RiskCommand-bottom.png",
+      "sha256": "e066cdc06b0654fc3aeb7fb5acdccec4965a837384d24c4c707c61ced0b59f3b",
+      "bytes": 99976,
+      "scrollY": 16345
+    },
+    {
+      "kind": "fullPage",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-global-audit-20260605-02/screenshots/02-nav-13-Account-Users-full.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\pc-governance-real-browser\\pc-governance-real-browser-global-audit-20260605-02\\screenshots\\02-nav-13-Account-Users-full.png",
+      "sha256": "f1c7c9fbd64100d7e674adc62692dbbef867beba61098e7899dee95c7fbf8ae1",
+      "bytes": 1714756,
+      "scrollY": null
+    },
+    {
+      "kind": "top",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-global-audit-20260605-02/screenshots/02-nav-13-Account-Users-top.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\pc-governance-real-browser\\pc-governance-real-browser-global-audit-20260605-02\\screenshots\\02-nav-13-Account-Users-top.png",
+      "sha256": "7be4472954ab8d6901f1c2171fdb4686fadac307f7f444fc721decba9d7b8271",
+      "bytes": 127882,
+      "scrollY": 0
+    },
+    {
+      "kind": "bottom",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-global-audit-20260605-02/screenshots/02-nav-13-Account-Users-bottom.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\pc-governance-real-browser\\pc-governance-real-browser-global-audit-20260605-02\\screenshots\\02-nav-13-Account-Users-bottom.png",
+      "sha256": "e066cdc06b0654fc3aeb7fb5acdccec4965a837384d24c4c707c61ced0b59f3b",
+      "bytes": 99976,
+      "scrollY": 16345
+    },
+    {
+      "kind": "fullPage",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-global-audit-20260605-02/screenshots/02-nav-14-Admin-full.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\pc-governance-real-browser\\pc-governance-real-browser-global-audit-20260605-02\\screenshots\\02-nav-14-Admin-full.png",
+      "sha256": "988557b98f690e8577be3befa970d9e692c1fc10b6e3b0615c279c215876bd8a",
+      "bytes": 1714634,
+      "scrollY": null
+    },
+    {
+      "kind": "top",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-global-audit-20260605-02/screenshots/02-nav-14-Admin-top.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\pc-governance-real-browser\\pc-governance-real-browser-global-audit-20260605-02\\screenshots\\02-nav-14-Admin-top.png",
+      "sha256": "7be4472954ab8d6901f1c2171fdb4686fadac307f7f444fc721decba9d7b8271",
+      "bytes": 127882,
+      "scrollY": 0
+    },
+    {
+      "kind": "bottom",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-global-audit-20260605-02/screenshots/02-nav-14-Admin-bottom.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\pc-governance-real-browser\\pc-governance-real-browser-global-audit-20260605-02\\screenshots\\02-nav-14-Admin-bottom.png",
+      "sha256": "e066cdc06b0654fc3aeb7fb5acdccec4965a837384d24c4c707c61ced0b59f3b",
+      "bytes": 99976,
+      "scrollY": 16345
+    },
+    {
+      "kind": "fullPage",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-global-audit-20260605-02/screenshots/02-nav-15-Audit-full.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\pc-governance-real-browser\\pc-governance-real-browser-global-audit-20260605-02\\screenshots\\02-nav-15-Audit-full.png",
+      "sha256": "b404ec329109b59d59dcbb5387ae57e7429173a3d1acfb08a57c046b2ba48fed",
+      "bytes": 1711252,
+      "scrollY": null
+    },
+    {
+      "kind": "top",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-global-audit-20260605-02/screenshots/02-nav-15-Audit-top.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\pc-governance-real-browser\\pc-governance-real-browser-global-audit-20260605-02\\screenshots\\02-nav-15-Audit-top.png",
+      "sha256": "7be4472954ab8d6901f1c2171fdb4686fadac307f7f444fc721decba9d7b8271",
+      "bytes": 127882,
+      "scrollY": 0
+    },
+    {
+      "kind": "bottom",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-global-audit-20260605-02/screenshots/02-nav-15-Audit-bottom.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\pc-governance-real-browser\\pc-governance-real-browser-global-audit-20260605-02\\screenshots\\02-nav-15-Audit-bottom.png",
+      "sha256": "e066cdc06b0654fc3aeb7fb5acdccec4965a837384d24c4c707c61ced0b59f3b",
+      "bytes": 99976,
+      "scrollY": 16345
+    },
+    {
+      "kind": "fullPage",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-global-audit-20260605-02/screenshots/02-nav-16-Export-full.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\pc-governance-real-browser\\pc-governance-real-browser-global-audit-20260605-02\\screenshots\\02-nav-16-Export-full.png",
+      "sha256": "e7b2c5209cf16e8c98f6098f01a3292094acb99412eec0cecf3ea633f04bbbd7",
+      "bytes": 1709968,
+      "scrollY": null
+    },
+    {
+      "kind": "top",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-global-audit-20260605-02/screenshots/02-nav-16-Export-top.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\pc-governance-real-browser\\pc-governance-real-browser-global-audit-20260605-02\\screenshots\\02-nav-16-Export-top.png",
+      "sha256": "7be4472954ab8d6901f1c2171fdb4686fadac307f7f444fc721decba9d7b8271",
+      "bytes": 127882,
+      "scrollY": 0
+    },
+    {
+      "kind": "bottom",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-global-audit-20260605-02/screenshots/02-nav-16-Export-bottom.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\pc-governance-real-browser\\pc-governance-real-browser-global-audit-20260605-02\\screenshots\\02-nav-16-Export-bottom.png",
+      "sha256": "e066cdc06b0654fc3aeb7fb5acdccec4965a837384d24c4c707c61ced0b59f3b",
+      "bytes": 99976,
+      "scrollY": 16345
+    },
+    {
+      "kind": "fullPage",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-global-audit-20260605-02/screenshots/02-nav-17-Release-Control-Center-full.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\pc-governance-real-browser\\pc-governance-real-browser-global-audit-20260605-02\\screenshots\\02-nav-17-Release-Control-Center-full.png",
+      "sha256": "b404ec329109b59d59dcbb5387ae57e7429173a3d1acfb08a57c046b2ba48fed",
+      "bytes": 1711252,
+      "scrollY": null
+    },
+    {
+      "kind": "top",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-global-audit-20260605-02/screenshots/02-nav-17-Release-Control-Center-top.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\pc-governance-real-browser\\pc-governance-real-browser-global-audit-20260605-02\\screenshots\\02-nav-17-Release-Control-Center-top.png",
+      "sha256": "7be4472954ab8d6901f1c2171fdb4686fadac307f7f444fc721decba9d7b8271",
+      "bytes": 127882,
+      "scrollY": 0
+    },
+    {
+      "kind": "bottom",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-global-audit-20260605-02/screenshots/02-nav-17-Release-Control-Center-bottom.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\pc-governance-real-browser\\pc-governance-real-browser-global-audit-20260605-02\\screenshots\\02-nav-17-Release-Control-Center-bottom.png",
+      "sha256": "e066cdc06b0654fc3aeb7fb5acdccec4965a837384d24c4c707c61ced0b59f3b",
+      "bytes": 99976,
+      "scrollY": 16345
+    },
+    {
+      "kind": "fullPage",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-global-audit-20260605-02/screenshots/03-account-users-before-create-full.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\pc-governance-real-browser\\pc-governance-real-browser-global-audit-20260605-02\\screenshots\\03-account-users-before-create-full.png",
+      "sha256": "755722a977d2be093a43f2bead4a0f12deb4efceeda14009ab1219a6e6c46cf5",
+      "bytes": 1714488,
+      "scrollY": null
+    },
+    {
+      "kind": "top",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-global-audit-20260605-02/screenshots/03-account-users-before-create-top.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\pc-governance-real-browser\\pc-governance-real-browser-global-audit-20260605-02\\screenshots\\03-account-users-before-create-top.png",
+      "sha256": "7be4472954ab8d6901f1c2171fdb4686fadac307f7f444fc721decba9d7b8271",
+      "bytes": 127882,
+      "scrollY": 0
+    },
+    {
+      "kind": "bottom",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-global-audit-20260605-02/screenshots/03-account-users-before-create-bottom.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\pc-governance-real-browser\\pc-governance-real-browser-global-audit-20260605-02\\screenshots\\03-account-users-before-create-bottom.png",
+      "sha256": "e066cdc06b0654fc3aeb7fb5acdccec4965a837384d24c4c707c61ced0b59f3b",
+      "bytes": 99976,
+      "scrollY": 16345
+    },
+    {
+      "kind": "fullPage",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-global-audit-20260605-02/screenshots/04-account-users-form-filled-full.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\pc-governance-real-browser\\pc-governance-real-browser-global-audit-20260605-02\\screenshots\\04-account-users-form-filled-full.png",
+      "sha256": "1c5c4e52003c864069a4966b347ce45ea6a56952607e77dde05e98d708162869",
+      "bytes": 1717572,
+      "scrollY": null
+    },
+    {
+      "kind": "top",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-global-audit-20260605-02/screenshots/04-account-users-form-filled-top.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\pc-governance-real-browser\\pc-governance-real-browser-global-audit-20260605-02\\screenshots\\04-account-users-form-filled-top.png",
+      "sha256": "7be4472954ab8d6901f1c2171fdb4686fadac307f7f444fc721decba9d7b8271",
+      "bytes": 127882,
+      "scrollY": 0
+    },
+    {
+      "kind": "bottom",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-global-audit-20260605-02/screenshots/04-account-users-form-filled-bottom.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\pc-governance-real-browser\\pc-governance-real-browser-global-audit-20260605-02\\screenshots\\04-account-users-form-filled-bottom.png",
+      "sha256": "e066cdc06b0654fc3aeb7fb5acdccec4965a837384d24c4c707c61ced0b59f3b",
+      "bytes": 99976,
+      "scrollY": 16345
+    },
+    {
+      "kind": "fullPage",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-global-audit-20260605-02/screenshots/05-account-user-created-full.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\pc-governance-real-browser\\pc-governance-real-browser-global-audit-20260605-02\\screenshots\\05-account-user-created-full.png",
+      "sha256": "8a07340f4308fde67f523fec231486be97dd07a6f15e1deed5971ca1dd35498b",
+      "bytes": 1844247,
+      "scrollY": null
+    },
+    {
+      "kind": "top",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-global-audit-20260605-02/screenshots/05-account-user-created-top.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\pc-governance-real-browser\\pc-governance-real-browser-global-audit-20260605-02\\screenshots\\05-account-user-created-top.png",
+      "sha256": "900954fa2a0be6de47f36e37aaf3fe2d396add83ce3e9e5eb247dfa68b87393c",
+      "bytes": 137399,
+      "scrollY": 0
+    },
+    {
+      "kind": "bottom",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-global-audit-20260605-02/screenshots/05-account-user-created-bottom.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\pc-governance-real-browser\\pc-governance-real-browser-global-audit-20260605-02\\screenshots\\05-account-user-created-bottom.png",
+      "sha256": "665cea3f541bd8c7c0421951e7aa50ce28cfee29bfc5eedd1b57865ad3ae0df5",
+      "bytes": 108084,
+      "scrollY": 16538
+    },
+    {
+      "kind": "fullPage",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-global-audit-20260605-02/screenshots/06-account-password-reset-full.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\pc-governance-real-browser\\pc-governance-real-browser-global-audit-20260605-02\\screenshots\\06-account-password-reset-full.png",
+      "sha256": "321a164b8339d200031059593e445f791e413f5716ad8cb56912477a9d712721",
+      "bytes": 1860654,
+      "scrollY": null
+    },
+    {
+      "kind": "top",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-global-audit-20260605-02/screenshots/06-account-password-reset-top.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\pc-governance-real-browser\\pc-governance-real-browser-global-audit-20260605-02\\screenshots\\06-account-password-reset-top.png",
+      "sha256": "31d2c7696e13213f8a3a9040304c0171b406dfb2dcdd6807dddceb8ecdfb8aa2",
+      "bytes": 137754,
+      "scrollY": 0
+    },
+    {
+      "kind": "bottom",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-global-audit-20260605-02/screenshots/06-account-password-reset-bottom.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\pc-governance-real-browser\\pc-governance-real-browser-global-audit-20260605-02\\screenshots\\06-account-password-reset-bottom.png",
+      "sha256": "7198f15544e2a71d63f3a3dd7039d9e031980eeec9c6affca37520e81c1bda71",
+      "bytes": 108958,
+      "scrollY": 16615
+    },
+    {
+      "kind": "fullPage",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-global-audit-20260605-02/screenshots/07-account-user-disabled-full.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\pc-governance-real-browser\\pc-governance-real-browser-global-audit-20260605-02\\screenshots\\07-account-user-disabled-full.png",
+      "sha256": "505a0a8ce08c5db1038e21a7a1730f8add8fa97b250efab3d917770e5ebe75a6",
+      "bytes": 1857083,
+      "scrollY": null
+    },
+    {
+      "kind": "top",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-global-audit-20260605-02/screenshots/07-account-user-disabled-top.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\pc-governance-real-browser\\pc-governance-real-browser-global-audit-20260605-02\\screenshots\\07-account-user-disabled-top.png",
+      "sha256": "fd30bf876eae232b3347d4602fc0536f22682ae24f1f92d8cfd62515325ea67d",
+      "bytes": 138047,
+      "scrollY": 0
+    },
+    {
+      "kind": "bottom",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-global-audit-20260605-02/screenshots/07-account-user-disabled-bottom.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\pc-governance-real-browser\\pc-governance-real-browser-global-audit-20260605-02\\screenshots\\07-account-user-disabled-bottom.png",
+      "sha256": "7cd8606130fe25d8aac96be68c29e243c057cf93081171f1d3ccb47c97e4dbc0",
+      "bytes": 107871,
+      "scrollY": 16692
+    },
+    {
+      "kind": "fullPage",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-global-audit-20260605-02/screenshots/08-account-audit-visible-full.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\pc-governance-real-browser\\pc-governance-real-browser-global-audit-20260605-02\\screenshots\\08-account-audit-visible-full.png",
+      "sha256": "b94c3106b3cfc3d0a43f41fefb08462d02f359e13ade2b691788bf0b37aa3573",
+      "bytes": 1858142,
+      "scrollY": null
+    },
+    {
+      "kind": "top",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-global-audit-20260605-02/screenshots/08-account-audit-visible-top.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\pc-governance-real-browser\\pc-governance-real-browser-global-audit-20260605-02\\screenshots\\08-account-audit-visible-top.png",
+      "sha256": "fd30bf876eae232b3347d4602fc0536f22682ae24f1f92d8cfd62515325ea67d",
+      "bytes": 138047,
+      "scrollY": 0
+    },
+    {
+      "kind": "bottom",
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/pc-governance-real-browser/pc-governance-real-browser-global-audit-20260605-02/screenshots/08-account-audit-visible-bottom.png",
+      "absolutePath": "C:\\Users\\lenovo\\Documents\\WorkOSNext\\artifacts\\oam-cab\\dormitory-real-browser-hardening-20260604-current\\pc-governance-real-browser\\pc-governance-real-browser-global-audit-20260605-02\\screenshots\\08-account-audit-visible-bottom.png",
+      "sha256": "7cd8606130fe25d8aac96be68c29e243c057cf93081171f1d3ccb47c97e4dbc0",
+      "bytes": 107871,
+      "scrollY": 16692
+    }
+  ]
+}

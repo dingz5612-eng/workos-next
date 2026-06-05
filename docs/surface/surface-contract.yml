@@ -42,6 +42,18 @@
     "postSubmitNavigation": "successful active Operations WorkItem confirm must auto-advance to the next actionable persisted WorkItem in the same workspace when one exists; completed readonly records are explicit review surfaces, not the normal submit continuation path",
     "stepStateVisualLanguage": "OperationStepRail status colors are semantic: completed green, ready blue, terminal completed records remain completed as the primary state even when a correction marker exists, active append-only correction muted indigo with a correction marker and not ordinary ready blue, in-progress amber, not-started neutral gray, blocked red, with a clean current-step ring, subtle background tint, thin semantic top bar, and numbered badge instead of harsh saturated blocks"
   },
+  "stepDependencySurface": {
+    "contractRef": "docs/contracts/definition/step-dependency-contract.json",
+    "requiredSurfaceTreatment": {
+      "inheritedFields": "readonly context plus canonical hidden submit value",
+      "userSelectableFields": "visible current-step control",
+      "derivedFields": "system-generated preview plus canonical hidden submit value",
+      "hiddenBackendDefaults": "not user-visible unless a backend blocker needs explanation"
+    },
+    "submitCheckDefault": "show only missing user action, blockers, and readiness",
+    "submitCheckDetails": "collapse inherited, derived, hidden, material, and rule diagnostics unless they explain a blocker",
+    "forbidden": ["page-local step dependency mapping", "manual input prompt for inherited fields", "manual input prompt for derived fields", "visible hidden-default fields"]
+  },
   "collaborationFeedback": {
     "surface": "feedback-message-channel",
     "entry": "right-bottom safe floating entry on mobile business surfaces",

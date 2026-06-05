@@ -41,10 +41,16 @@ hardRules:
     rule: OperationStepRail must distinguish completed, ready, append-only correction, in-progress, not-started, and blocked states with stable semantic colors and machine-readable state markers; correction WorkItems must not display as ordinary ready blue, terminal completed records remain completed as the primary state when a correction marker exists, and current step requires a strong focus ring across new, readonly, and correction pages.
   - id: hard.resource_setup_bed_cardinality
     source: docs/engineering/00-rule-authority.md
-    rule: ResourceSetup bedSetup must confirm room bed cardinality in one Operations WorkItem with roomId, bedCount, and bedLabels; it must expand into one Bed fact per label, and room-beds block/release scope must apply to all beds in the room.
+    rule: ResourceSetup bedSetup must confirm room bed cardinality in one Operations WorkItem with roomId, bedCount, and bedLabels; bedType is a layout template and optional bedLayout may carry per-bed label/type expansion; bedStatus is only an initial status template defaulting to available, while maintenance/cleaning/not-for-sale changes must use roomReadiness or service task block/release flows; it must expand into one Bed fact per label, preserve each bed type, and room-beds block/release scope must apply to all beds in the room.
   - id: hard.service_task_resource_availability_scope
     source: docs/engineering/00-rule-authority.md
     rule: Maintenance, cleaning, or service work that blocks saleability must enter serviceTaskCreate with resourceScope and blocksAvailability=true, then release through roomReleaseAfterService with taskId, the matching resourceScope, and a backend-approved ServiceTaskVerified event for the same task; client-provided serviceTaskVerified is not proof, and ResourceSetup remains the only BedStatus/RoomStatus fact owner.
+  - id: hard.step_dependency_carry_forward_contract
+    source: docs/engineering/00-rule-authority.md
+    rule: Later WorkItems in the same Operations case must declare inherited, user-selectable, system-derived, and hidden backend-default fields in Definition step dependency contracts; inherited fields are read-only surface values submitted as canonical hidden values, derived fields recompute from current inherited/user-selectable values, and stale drafts must not override upstream truth. Domain/sample field mappings must live in docs/contracts/definition/step-dependency-contract.json or a domain-specific Definition contract, not in global rule prose or page-local logic.
+  - id: hard.submit_check_matches_step_dependency
+    source: docs/engineering/00-rule-authority.md
+    rule: Submit-before-check summaries must follow the step dependency contract; default visible copy shows only user-actionable missing inputs, blockers, and submission readiness, while inherited/derived/hidden technical checks stay collapsed unless they explain a blocker. Surfaces must not tell users to fill inherited, hidden, or system-derived fields unless upstream truth is missing.
 releaseRules:
   - id: release.v5_4_control_plane_transition
     source: docs/v5.4

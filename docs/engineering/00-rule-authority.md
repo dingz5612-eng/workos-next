@@ -49,6 +49,16 @@ experience components. A page may specialize data, permissions, readonly state,
 or business actions, but it must not keep a page-private legacy shell when a
 current shared component exists.
 
+Rules must be layered by scope. Company-level engineering rules describe
+architecture, ownership, permissions, evidence, surface behavior, and repair
+protocols that every business line must follow. Domain rules describe a sample
+business or admitted business line such as Accommodation / Dormitory.
+Scenario-instance contracts describe a concrete case, WorkItem, field mapping,
+step dependency, evidence policy, or UI dictionary entry. A sample-domain rule
+must not be promoted into company-level prose unless it is genuinely reusable
+across businesses; instead, the global rule must point to the Definition,
+Surface, Experience, or domain contract that carries the concrete mapping.
+
 Non-current architecture is a P0 defect. When a surface is found using an old
 page-specific style, deprecated component, compatibility flow, or retired write
 model, the affected path must be root-cause rewritten onto the current
@@ -96,8 +106,33 @@ Resource setup bed cardinality is a Definition and Truth Boundary rule. When a
 room is configured with capacity or bedCount greater than one, `bedSetup` must
 confirm the room's bed list in one Operations WorkItem using `roomId`,
 `bedCount`, and `bedLabels`; it must not regress to one manual bed-only input.
-The ResourceSetup slice must expand that confirmation into one Bed fact per
-label, and room-beds block/release scope must apply to all beds in the room.
+`bedType` is a layout template, not a single room-wide bed type; `bedLayout`
+may carry the per-bed `{label,type}` expansion when the surface generates it.
+`bedStatus` must not be a user-visible `bedSetup` input; ResourceSetup defaults
+new beds to available when no explicit backend/system value is provided.
+Maintenance, cleaning, or not-for-sale changes must use roomReadiness or
+service task block/release flows. The ResourceSetup slice must expand that
+confirmation into one Bed fact per label, preserve each bed's type, and
+room-beds block/release scope must apply to all beds in the room.
+
+Step dependency and carry-forward contracts are mandatory inside one
+Operations case. A later WorkItem must declare which fields are inherited from
+earlier truth-setting WorkItems, which fields are user-selectable in the
+current step, and which fields are derived by the system. Inherited fields must
+be read-only on the surface, submitted as canonical hidden values, and resolved
+by this priority: latest persisted runtime event/projection, completed record
+snapshot, then non-conflicting draft fallback. Derived fields must be
+recomputed from the current inherited/user-selectable values; stale local
+drafts must not override upstream truth. Concrete per-card mappings must live
+in the Definition step dependency contract instead of page-local logic.
+Submit-before-check summaries must follow the same dependency contract:
+inherited fields are reported as carried-forward readiness, derived fields are
+reported as system generation readiness, and only current-step user-selectable
+fields are reported as manual action. Default visible summaries must show only
+user-actionable missing inputs, blockers, and submission readiness; inherited,
+derived, hidden, and technical check details stay collapsed unless they explain
+a blocker. A surface must not tell the user to fill a field that is inherited,
+hidden, or system-derived unless the upstream truth is actually missing.
 
 Service task resource availability scope is mandatory. `roomSetup` and
 `bedSetup` define initial resource truth only; maintenance, cleaning, or service

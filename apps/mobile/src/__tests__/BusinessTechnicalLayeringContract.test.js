@@ -167,8 +167,8 @@ describe("OAM-04B business and technical layering contract", () => {
     expect(operationFieldId(workspace.cards[1].fields.business[0])).toBe("roomId");
     expect(html).toContain('type="hidden" data-operation-field="roomId" value="room-31"');
     expect(html).toContain('value="D03 / 31"');
-    expect(text).toContain("已从本案带入");
-    expect(text).toContain("已从前一步带入");
+    expect(text).not.toContain("已从本案带入");
+    expect(text).toContain("来自房间配置，不需要重复填写。");
     expect(text).not.toContain("所属房间 · 可搜索选择");
   });
 

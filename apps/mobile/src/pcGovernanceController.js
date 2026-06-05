@@ -54,15 +54,19 @@ export function revokeGovernanceDevice(deviceId, ctx) {
 }
 
 export async function createGovernanceAccountUser(ctx) {
-  const role = selectedAccountRole();
-  const capabilities = selectedAccountCapabilities(role);
+  const lockKey = "accountUserCreate";
+  if (isGovernanceActionLocked(ctx, lockKey)) return;
+  setGovernanceActionLocked(ctx, lockKey, true);
+  const draft = currentAccountUserDraft(ctx);
+  const role = value("[data-account-role-select]", draft.role || "operator");
+  const capabilities = selectedAccountCapabilities(role, draft);
   const body = {
-    username: value("#accountUsername"),
-    displayName: value("#accountDisplayName"),
-    password: value("#accountPassword"),
+    username: value("#accountUsername", draft.username),
+    displayName: value("#accountDisplayName", draft.displayName),
+    password: value("#accountPassword", draft.password),
     tenantId: ctx.state.currentActor?.tenantId || "tenant-1",
-    department: value("#accountDepartment", "住宿运营部"),
-    businessLine: value("#accountBusinessLine", "stay"),
+    department: value("#accountDepartment", draft.department || "住宿运营部"),
+    businessLine: value("#accountBusinessLine", draft.businessLine || "stay"),
     roles: [role],
     capabilities,
     status: "active"
@@ -72,11 +76,19 @@ export async function createGovernanceAccountUser(ctx) {
   try {
     const created = await createAccountUser(body);
     await refreshAccountGovernance(ctx);
+    ctx.state.pcGovernanceAccountDraft = {
+      ...currentAccountUserDraft(ctx),
+      username: "",
+      displayName: "",
+      password: ""
+    };
     ctx.state.operationMessage = `已创建用户 ${created.displayName || created.username}`;
   } catch (error) {
     ctx.state.operationMessage = `创建用户失败：${error.reason || error.code || error.message}`;
+  } finally {
+    setGovernanceActionLocked(ctx, lockKey, false);
+    ctx.render();
   }
-  ctx.render();
 }
 
 export function applyAccountRolePreset(role, root = document) {
@@ -86,27 +98,46 @@ export function applyAccountRolePreset(role, root = document) {
   });
 }
 
+export function updateGovernanceAccountDraft(ctx, patch = {}) {
+  ctx.state.pcGovernanceAccountDraft = {
+    ...currentAccountUserDraft(ctx),
+    ...patch
+  };
+}
+
 export async function disableGovernanceAccountUser(userId, ctx) {
+  const lockKey = `accountUserDisable:${userId}`;
+  if (isGovernanceActionLocked(ctx, lockKey)) return;
+  setGovernanceActionLocked(ctx, lockKey, true);
+  ctx.render();
   try {
     await disableAccountUser(userId);
     await refreshAccountGovernance(ctx);
     ctx.state.operationMessage = "账号已禁用。";
   } catch (error) {
     ctx.state.operationMessage = `禁用失败：${error.reason || error.code || error.message}`;
+  } finally {
+    setGovernanceActionLocked(ctx, lockKey, false);
+    ctx.render();
   }
-  ctx.render();
 }
 
 export async function resetGovernanceAccountPassword(userId, ctx) {
   const password = document.querySelector(`[data-account-reset-password="${userId}"]`)?.value || "";
+  const lockKey = `accountPasswordReset:${userId}`;
+  if (isGovernanceActionLocked(ctx, lockKey)) return;
+  setGovernanceActionLocked(ctx, lockKey, true);
+  ctx.render();
   try {
     await resetAccountUserPassword(userId, password);
     await refreshAccountGovernance(ctx);
     ctx.state.operationMessage = "密码已重置。";
   } catch (error) {
     ctx.state.operationMessage = `重置失败：${error.reason || error.code || error.message}`;
+  } finally {
+    setGovernanceActionLocked(ctx, lockKey, false);
+    ctx.render();
   }
-  ctx.render();
 }
 
 function currentDevice(state) {
@@ -136,9 +167,40 @@ function selectedAccountRole() {
   return (document.querySelector("[data-account-role-select]")?.value || "operator").trim();
 }
 
-function selectedAccountCapabilities(role) {
+function selectedAccountCapabilities(role, draft = {}) {
   const checked = Array.from(document.querySelectorAll("[data-account-capability]:checked"))
     .map((node) => String(node.value || "").trim())
     .filter(Boolean);
-  return checked.length ? checked : capabilitiesForAccountRole(role);
+  if (checked.length) return checked;
+  if (asArray(draft.capabilities).length) return asArray(draft.capabilities);
+  return capabilitiesForAccountRole(role);
+}
+
+function currentAccountUserDraft(ctx) {
+  return {
+    username: "",
+    displayName: "",
+    password: "",
+    department: "住宿运营部",
+    businessLine: "stay",
+    role: "operator",
+    capabilities: [],
+    ...(ctx.state.pcGovernanceAccountDraft || {})
+  };
+}
+
+function asArray(value) {
+  if (!value) return [];
+  return Array.isArray(value) ? value : [value];
+}
+
+function isGovernanceActionLocked(ctx, key) {
+  return Boolean(ctx.state.pcGovernanceActionLocks?.[key]);
+}
+
+function setGovernanceActionLocked(ctx, key, locked) {
+  ctx.state.pcGovernanceActionLocks = {
+    ...(ctx.state.pcGovernanceActionLocks || {}),
+    [key]: locked
+  };
 }

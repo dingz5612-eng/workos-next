@@ -2,7 +2,7 @@ import { translateTerm } from "./termDictionary.js";
 
 const optionSets = {
   roomType: ["单人间", "双人间", "四人间", "六人间"],
-  bunkType: ["下铺", "上铺", "整床"],
+  bunkType: ["上下铺：两上两下", "全部上铺", "全部下铺", "全部平铺"],
   activationScope: ["当前床位", "当前房间全部床位"],
   availability: ["可分配", "暂不开放", "仅内部预留"],
   maintenance: ["检查通过", "待保洁", "待维修"],
@@ -24,7 +24,7 @@ const defaults = {
   入住人: "张三",
   房型: "四人间",
   容量: "4",
-  "上/下铺": "下铺",
+  "床铺生成方式": "上下铺：两上两下",
   启用范围: "当前床位",
   可分配时间: "2026-05-29T10:00",
   启用备注: "检查通过，可进入分配池",
@@ -95,7 +95,7 @@ function controlForLabel(label, type, source) {
 
 function optionSetForLabel(label) {
   if (label.includes("房型")) return "roomType";
-  if (label.includes("上/下铺")) return "bunkType";
+  if (label.includes("上/下铺") || label.includes("床位类型") || label.includes("床型模板") || label.includes("床铺生成方式")) return "bunkType";
   if (label.includes("启用范围")) return "activationScope";
   if (label.includes("可用状态")) return "availability";
   if (label.includes("维护状态")) return "maintenance";

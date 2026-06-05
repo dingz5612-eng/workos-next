@@ -8,6 +8,7 @@ internal static class OptionSetRegistry
         if (label.Contains("性别策略")) return "genderPolicy";
         if (label.Contains("家具状态")) return "furnitureStatus";
         if (label.Contains("技术状态")) return "technicalState";
+        if (ContractText.ContainsAny(label, "床型模板", "床铺生成方式")) return "bunkType";
         if (label.Contains("上/下铺")) return "bunkType";
         if (label.Contains("床位类型")) return "bunkType";
         if (ContractText.ContainsAny(label, "床位状态", "初始床位状态")) return "bedStatus";
@@ -95,7 +96,7 @@ internal static class OptionSetRegistry
         "genderPolicy" => new[] { ("male", "男生房"), ("female", "女生房"), ("mixed", "混住"), ("unrestricted", "未限制") },
         "furnitureStatus" => new[] { ("complete", "家具齐全"), ("partial", "部分缺失"), ("missing", "缺失"), ("pending", "待配置") },
         "technicalState" => new[] { ("ready", "可入住"), ("not_ready", "未准备"), ("repair", "需维修") },
-        "bunkType" => new[] { ("lower", "下铺"), ("upper", "上铺"), ("whole", "整床") },
+        "bunkType" => new[] { ("bunk_pair", "上下铺：两上两下"), ("upper", "全部上铺"), ("lower", "全部下铺"), ("whole", "全部平铺") },
         "bedStatus" => new[] { ("available", "可分配"), ("reserved", "已预留"), ("occupied", "已入住"), ("cleaning_required", "待清洁"), ("maintenance_blocked", "维修阻断"), ("inactive", "未启用") },
         "bedPriceRule" => new[] { ("monthly_standard", "月租标准"), ("daily_short_stay", "短住日租"), ("internal_free", "内部免费"), ("contract_rate", "合同价") },
         "activationScope" => new[] { ("current_bed", "当前床位"), ("current_room_beds", "当前房间全部床位") },

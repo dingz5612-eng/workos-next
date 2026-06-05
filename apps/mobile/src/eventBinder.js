@@ -9,9 +9,11 @@ import { isPcSurfaceView } from "./surfaceRegistry.js";
 
 let activeEventContext = null;
 let delegatedClickBound = false;
+let bindPass = 0;
 
 export function bindEvents(ctx) {
   activeEventContext = ctx;
+  const currentBindPass = ++bindPass;
   bindDelegatedOperationActions();
   document.querySelector("#language")?.addEventListener("change", (event) => setLang(event.target.value, ctx));
   document.querySelector("#retryApi")?.addEventListener("click", () => retryApi(ctx));
@@ -28,7 +30,12 @@ export function bindEvents(ctx) {
   document.querySelector(".operation-inputs")?.addEventListener("change", (event) => collectDraftingValuesOnInput(event, ctx));
   document.querySelector("#finish")?.addEventListener("click", () => setView("result", ctx));
   document.querySelector("[data-save-draft]")?.addEventListener("click", () => saveCurrentDraft(ctx));
-  if (isPcSurfaceView(ctx.state.view)) import("./pcEventBinder.js").then(({ bindPcEvents }) => bindPcEvents(ctx));
+  if (isPcSurfaceView(ctx.state.view)) {
+    import("./pcEventBinder.js").then(({ bindPcEvents }) => {
+      if (currentBindPass !== bindPass || activeEventContext !== ctx || !isPcSurfaceView(ctx.state.view)) return;
+      bindPcEvents(ctx);
+    });
+  }
 }
 
 function bindDelegatedOperationActions() {

@@ -1,4 +1,4 @@
-import { generatedBedLabelsForCount, isGeneratedBedLabelList, splitBedLabels } from "./controls/bedLabelControls.js";
+import { bedLayoutForLabels, generatedBedLabelsForCount, isGeneratedBedLabelList, serializeBedLayout, splitBedLabels } from "./controls/bedLabelControls.js";
 import { capacityForRoomType } from "./controls/fieldControls.js";
 import { isScopedResourceFieldRequired } from "./controls/resourceScopeControls.js";
 import { fetchOperationWorkItems } from "./apiClient.js";
@@ -21,6 +21,17 @@ export function collectOperationValues() {
     const end = document.querySelector(`[data-operation-field-end="${key}"]`)?.value || "";
     values[key] = [node.value, end].filter(Boolean).join(" 至 ");
   });
+  return normalizeCollectedOperationValues(values);
+}
+
+function normalizeCollectedOperationValues(values = {}) {
+  if (values.bedCount && values.bedLabels !== undefined) {
+    const generated = generatedBedLabelsForCount(values.bedCount);
+    if (generated) {
+      values.bedLabels = generated;
+    }
+    values.bedLayout = serializeBedLayout(bedLayoutForLabels(values.bedLabels || generated, values.bedType || "bunk_pair", "zh-CN"));
+  }
   return values;
 }
 
@@ -98,11 +109,17 @@ export function updateDerivedFields(ctx) {
   if (roomType && capacity) capacity.value = capacityForRoomType(roomType);
   const bedCount = document.querySelector('[data-operation-field="bedCount"]');
   const bedLabels = document.querySelector('[data-operation-field="bedLabels"]');
+  const bedType = document.querySelector('[data-operation-field="bedType"]');
+  const bedLayout = document.querySelector('[data-operation-field="bedLayout"]');
   if (bedCount && bedLabels) {
     const generated = generatedBedLabelsForCount(bedCount.value);
-    if (generated && (!bedLabels.value.trim() || isGeneratedBedLabelList(bedLabels.value))) {
+    const derivedHiddenLabels = bedLabels.type === "hidden" || bedLabels.closest("[data-bed-layout-derived]");
+    if (generated && (derivedHiddenLabels || !bedLabels.value.trim() || isGeneratedBedLabelList(bedLabels.value))) {
       bedLabels.value = generated;
     }
+    const layout = bedLayoutForLabels(bedLabels.value, bedType?.value || "bunk_pair", ctx.state.lang);
+    if (bedLayout) bedLayout.value = serializeBedLayout(layout);
+    updateBedLayoutPreview(layout, ctx);
   }
   const amount = document.querySelector('[data-operation-field="amount"]');
   const unitRate = decimalValue("unitRate");
@@ -117,6 +134,27 @@ export function updateDerivedFields(ctx) {
     const available = approved - deduction - applyToBalance - paid;
     if (available > 0) refundAmount.value = String(available);
   }
+}
+
+function updateBedLayoutPreview(layout = [], ctx) {
+  const preview = document.querySelector("[data-bed-layout-preview]");
+  if (!preview) return;
+  preview.innerHTML = "";
+  if (!layout.length) {
+    const empty = document.createElement("span");
+    empty.className = "bed-layout-empty";
+    empty.textContent = ctx?.tr?.("bedLayoutEmpty") || "No beds generated";
+    preview.appendChild(empty);
+    return;
+  }
+  layout.forEach((entry) => {
+    const chip = document.createElement("span");
+    chip.className = "bed-layout-chip";
+    chip.dataset.bedLabel = entry.label;
+    chip.dataset.bedType = entry.type;
+    chip.textContent = `${entry.label} · ${entry.typeLabel}`;
+    preview.appendChild(chip);
+  });
 }
 
 function decimalValue(fieldId) {
@@ -304,6 +342,7 @@ export async function submitCurrentCard(ctx) {
 
 function validateRequiredFields(card, values, ctx) {
   const missingFields = (card.fields?.business || [])
+    .filter((field) => operationFieldParticipatesInUserSubmit(card, field))
     .filter((field) => isScopedResourceFieldRequired(card?.id, operationFieldId(field), values, Boolean(field.required)))
     .filter((field) => !hasBusinessValue(values, operationFieldId(field)));
   const invalidFields = bedSetupCardinalityViolations(card, values, ctx);
@@ -317,6 +356,12 @@ function validateRequiredFields(card, values, ctx) {
         .map((entry) => entry.label)
     ]
   };
+}
+
+function operationFieldParticipatesInUserSubmit(card = {}, field = {}) {
+  const fieldId = operationFieldId(field);
+  if (card?.id === "bedSetup" && fieldId === "bedStatus") return false;
+  return true;
 }
 
 function bedSetupCardinalityViolations(card = {}, values = {}, ctx) {

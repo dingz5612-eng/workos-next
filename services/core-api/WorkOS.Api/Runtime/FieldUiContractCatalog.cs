@@ -17,7 +17,7 @@ internal static class FieldUiContractCatalog
     public static IReadOnlyDictionary<string, string> Help(string label, string type, string source)
     {
         if (label == "容量") return ContractText.Text("容量由房型自动带出，不需要手填。", "Вместимость заполняется по типу комнаты автоматически.");
-        if (label == "床位标签") return ContractText.Text("系统会按床位数生成，例如 01, 02, 03, 04；需要时可用逗号调整。", "Система создаст метки по числу коек, например 01, 02, 03, 04; при необходимости измените через запятую.");
+        if (label == "床位标签") return ContractText.Text("跟随床位数和床铺生成方式自动更新，提交后会写成多个床位对象。", "Автоматически обновляется по количеству коек и способу создания, затем сохраняется как отдельные койки.");
         if (type == "readonly") return ContractText.Text("已自动带出，不需要填写。", "Заполнено автоматически.");
         if (Control(label, type, source) == "select") return ContractText.Text("请选择一个业务选项。", "Выберите вариант.");
         if (Control(label, type, source) == "searchSelect") return ContractText.Text("从已有对象中选择。", "Выберите существующий объект.");

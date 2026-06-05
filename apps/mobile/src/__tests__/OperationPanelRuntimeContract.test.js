@@ -259,13 +259,30 @@ describe("SURFACE-C Operation Panel runtime contract", () => {
       ...field("bedLabels", "床位标签"),
       ui: { control: "textarea", optionSet: "", options: [], defaultValue: "", derivedFrom: "", readonly: false }
     };
+    const bedType = {
+      ...field("bedType", "床位类型"),
+      type: "select",
+      ui: {
+        control: "select",
+        optionSet: "bunkType",
+        options: [
+          { value: "bunk_pair", label: { "zh-CN": "上下铺：两上两下" } },
+          { value: "upper", label: { "zh-CN": "全部上铺" } },
+          { value: "lower", label: { "zh-CN": "全部下铺" } },
+          { value: "whole", label: { "zh-CN": "全部平铺" } }
+        ],
+        defaultValue: "bunk_pair",
+        derivedFrom: "",
+        readonly: false
+      }
+    };
     store.workspaces[0].cards = [
       { ...store.workspaces[0].cards[0], id: "roomSetup", status: "done", title: { "zh-CN": "房间配置卡" } },
       {
         id: "bedSetup",
         status: "ready",
         title: { "zh-CN": "床位配置卡" },
-        fields: { business: [field("roomId", "所属房间"), bedCount, bedLabels, field("bedType", "床位类型")], system: [], analytics: [] },
+        fields: { business: [field("roomId", "所属房间"), bedCount, bedLabels, bedType, field("bedStatus", "初始床位状态")], system: [], analytics: [] },
         evidence: [],
         checks: [],
         blockerRules: [],
@@ -298,10 +315,92 @@ describe("SURFACE-C Operation Panel runtime contract", () => {
 
     expect(html).toContain('data-operation-field="bedCount"');
     expect(html).toContain('value="4"');
-    expect(html).toContain('<textarea data-operation-field="bedLabels"');
-    expect(html).toContain("01, 02, 03, 04");
+    expect(html).toContain('value="401" readonly aria-readonly="true"');
+    expect(html).toContain('value="room-401" required');
+    expect(html).toContain('value="4" readonly aria-readonly="true"');
+    expect(visibleText(html)).toContain("来自房间配置，不需要重复填写。");
+    expect(visibleText(html)).not.toContain("所属房间 · 可搜索选择");
+    expect(visibleText(html)).not.toContain("已从本案带入");
+    expect(html).not.toContain('<textarea data-operation-field="bedLabels"');
+    expect(html).toContain('type="hidden" data-operation-field="bedLabels"');
+    expect(html).toContain('value="01, 02, 03, 04"');
+    expect(html).toContain('data-operation-field="bedLayout"');
+    expect(html).toContain("01 · 上铺");
+    expect(html).toContain("02 · 下铺");
+    expect(html).toContain("03 · 上铺");
+    expect(html).toContain("04 · 下铺");
+    expect(visibleText(html)).toContain("床铺生成方式");
+    expect(visibleText(html)).toContain("将生成的床位");
+    expect(visibleText(html)).toContain("前步带入: 已完成");
+    expect(visibleText(html)).toContain("系统生成: 已完成");
+    expect(visibleText(html)).toContain("需要操作: 已完成");
+    expect(visibleText(html)).not.toContain("还需填写: 所属房间");
+    expect(visibleText(html)).not.toContain("还需填写: 床位数");
+    expect(visibleText(html)).not.toContain("还需填写: 床位标签");
+    expect(visibleText(html)).not.toContain("初始床位状态");
+    expect(html).not.toContain('data-operation-field="bedStatus"');
     expect(html).not.toContain('data-operation-field="bedNo"');
     expect(html).not.toContain('data-operation-field="bedLabel"');
+  });
+
+  it("regenerates bed labels from the carried bed count instead of stale bed setup draft values", () => {
+    const store = runtimeStore();
+    const bedCount = {
+      ...field("bedCount", "床位数"),
+      type: "number",
+      ui: { control: "number", optionSet: "", options: [], defaultValue: "", derivedFrom: "", readonly: false }
+    };
+    const bedLabels = {
+      ...field("bedLabels", "床位标签"),
+      ui: { control: "textarea", optionSet: "", options: [], defaultValue: "", derivedFrom: "", readonly: false }
+    };
+    const bedType = {
+      ...field("bedType", "床位类型"),
+      type: "select",
+      ui: {
+        control: "select",
+        optionSet: "bunkType",
+        options: [{ value: "bunk_pair", label: { "zh-CN": "上下铺：两上两下" } }],
+        defaultValue: "bunk_pair",
+        derivedFrom: "",
+        readonly: false
+      }
+    };
+    store.workspaces[0].cards = [
+      { ...store.workspaces[0].cards[0], id: "roomSetup", status: "done", title: { "zh-CN": "房间配置卡" } },
+      {
+        id: "bedSetup",
+        status: "ready",
+        title: { "zh-CN": "床位配置卡" },
+        fields: { business: [field("roomId", "所属房间"), bedCount, bedLabels, bedType], system: [], analytics: [] },
+        evidence: [],
+        checks: [],
+        blockerRules: [],
+        confirmation: { required: true, requiredRole: "operator" }
+      }
+    ];
+    store.operationWorkItems = [{ workItemId: "wi-bed-stale-draft", workspaceId: "W-STAY-RESOURCE", cardId: "bedSetup", lifecycleState: "ready", ownerRole: "operator" }];
+    store.workQueue = [...store.operationWorkItems];
+    saveDraft("W-STAY-RESOURCE", "bedSetup", { roomId: "room-401", bedCount: "2", bedLabels: "01, 02", bedType: "bunk_pair" });
+    saveCompletedRecordSnapshot({
+      workspaceId: "W-STAY-RESOURCE",
+      cardId: "roomSetup",
+      values: { roomId: "room-401", roomNo: "401", bedCount: "4" }
+    });
+    const ctx = createSurfaceCtx({
+      view: "operationPanel",
+      selectedWorkItemId: "wi-bed-stale-draft",
+      selectedWorkspace: "W-STAY-RESOURCE",
+      selectedCardId: "bedSetup",
+      runtimeStore: store
+    });
+
+    const html = routeView(ctx);
+
+    expect(html).toContain('value="01, 02, 03, 04"');
+    expect(html).toContain("03 · 上铺");
+    expect(html).toContain("04 · 下铺");
+    expect(html).not.toContain('value="01, 02"');
   });
 
   it("uses service scope to reveal only the relevant room or bed target", () => {

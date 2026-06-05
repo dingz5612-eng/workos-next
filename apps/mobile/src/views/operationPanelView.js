@@ -54,13 +54,14 @@ export function operationPanelView(ctx) {
   const operationContext = { ...item, workspace, card: activeCard, workspaceId: item?.workspaceId || workspace.id, cardId: item?.cardId || activeCard?.id };
   const model = workItemModel(operationContext, ctx);
   const draft = loadDraft(workspace.id, activeCard.id);
-  const payloadHash = state.lastActionResult?.payloadHash || payloadHashFor(draft.values || {}, draft.evidenceDrafts || []);
+  const currentActionResult = actionResultForActiveCard(state.lastActionResult, workspace, activeCard);
+  const payloadHash = currentActionResult?.payloadHash || payloadHashFor(draft.values || {}, draft.evidenceDrafts || []);
   const payloadFingerprint = payloadHash;
-  const commandSubmissionId = state.lastActionResult?.commandSubmissionId || draft.submissionProtocol?.submissionId || model.traceRefs[0] || "";
+  const commandSubmissionId = currentActionResult?.commandSubmissionId || draft.submissionProtocol?.submissionId || model.traceRefs[0] || "";
   const submissionRecord = commandSubmissionId;
   const operationBody = workspaceCardPanel(activeCard, workspace, true, ctx);
   const traceCount = [commandSubmissionId, model.caseId, model.workItemId, ...(model.traceRefs || [])].filter(Boolean).length;
-  const actionState = buildOperationActionState(operationContext, activeCard, state.lastActionResult, state);
+  const actionState = buildOperationActionState(operationContext, activeCard, currentActionResult, state);
   const admissionDecision = operationAdmissionDecision(model, activeCard, actionState);
   const runtimeDecision = operationRuntimeDecision(model, activeCard, actionState);
 
@@ -81,13 +82,21 @@ export function operationPanelView(ctx) {
       payloadHash: payloadFingerprint,
       commandSubmissionId: submissionRecord,
       traceCount,
-      projectionStatus: state.lastActionResult?.status || "notSubmitted",
+      projectionStatus: currentActionResult?.status || "notSubmitted",
       policyRef: activeCard.policyRef || activeCard.confirmation?.policyRef || "operations-runtime-policy"
     }, ctx) : ""}
     ${operationBody}
-    ${ActionResult(state.lastActionResult || {}, ctx)}
+    ${ActionResult(currentActionResult || {}, ctx)}
     <div class="sticky-action">${primaryActionButton(actionState, ctx)}</div>
   `);
+}
+
+function actionResultForActiveCard(result = null, workspace = {}, activeCard = {}) {
+  if (!result) return null;
+  if (result.autoAdvanced && result.autoAdvancedToCardId === activeCard.id) return null;
+  if (result.workspaceId && result.workspaceId !== workspace.id) return null;
+  if (result.cardId && result.cardId !== activeCard.id) return null;
+  return result;
 }
 
 function shouldOfferResourceSetup(state = {}) {

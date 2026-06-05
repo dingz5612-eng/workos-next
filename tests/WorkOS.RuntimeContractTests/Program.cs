@@ -115,7 +115,7 @@ ResetPostgres(connectionString);
 
     foreach (var (cardId, key, values) in new[]
     {
-        ("bedSetup", "resource-bed", new Dictionary<string, string> { ["roomId"] = "room-phase7-001", ["roomNo"] = "A302", ["bedId"] = "bed-phase7-001", ["bedNo"] = "A302-01", ["bedCount"] = "4", ["bedLabels"] = "01, 02, 03, 04", ["bedType"] = "lower", ["bedStatus"] = "available" }),
+        ("bedSetup", "resource-bed", new Dictionary<string, string> { ["roomId"] = "room-phase7-001", ["roomNo"] = "A302", ["bedId"] = "bed-phase7-001", ["bedNo"] = "A302-01", ["bedCount"] = "4", ["bedLabels"] = "01, 02, 03, 04", ["bedType"] = "bunk_pair", ["bedLayout"] = "[{\"label\":\"01\",\"type\":\"upper\"},{\"label\":\"02\",\"type\":\"lower\"},{\"label\":\"03\",\"type\":\"upper\"},{\"label\":\"04\",\"type\":\"lower\"}]", ["bedStatus"] = "available" }),
         ("rateSetup", "resource-rate", new Dictionary<string, string> { ["roomId"] = "room-phase7-001", ["ratePlanId"] = "rate-phase7-001", ["dailyRatePerBed"] = "350", ["weeklyRatePerBed"] = "2100", ["monthlyRatePerBed"] = "9300", ["currency"] = "KGS", ["effectiveFrom"] = "2026-06-01T00:00:00Z" }),
         ("roomReadiness", "resource-readiness", new Dictionary<string, string> { ["roomId"] = "room-phase7-001", ["roomNo"] = "A302", ["bedCount"] = "4", ["availabilityStatus"] = "available", ["furnitureStatus"] = "complete", ["technicalState"] = "ready" }),
         ("roomBlock", "resource-block", new Dictionary<string, string> { ["roomId"] = "room-phase7-001", ["roomNo"] = "A302", ["resourceScope"] = "room", ["blockReason"] = "maintenance", ["blockStartAt"] = "2026-06-02T09:00:00Z", ["expectedReleaseAt"] = "2026-06-02T18:00:00Z" }),
@@ -126,6 +126,7 @@ ResetPostgres(connectionString);
         runtime.ProcessPendingOutbox();
     }
     Assert(ScalarInt(connectionString, "select count(*) from accommodation_beds where room_id = 'room-phase7-001'") == 4, "four-bed room setup must persist four bed aggregates from one bedSetup WorkItem");
+    Assert(ScalarText(connectionString, "select string_agg(bunk_type, ',' order by bed_no) from accommodation_beds where room_id = 'room-phase7-001'") == "upper,lower,upper,lower", "four-bed room setup must persist two upper and two lower beds from bedLayout");
     ValidateOperationsOutboxProjectionResourceAggregates(runtime, connectionString);
 
     foreach (var cardId in new[] { "lead", "booking", "resident", "bedAssign", "tariff", "depositRequirement", "payment", "finance", "checkin", "operatingDashboard" })
@@ -2326,7 +2327,8 @@ static void ValidateOperationsOutboxProjectionResourceAggregates(ProjectionRunti
                 ["roomNo"] = roomNo,
                 ["bedCount"] = "4",
                 ["bedLabels"] = "01, 02, 03, 04",
-                ["bedType"] = "lower",
+                ["bedType"] = "bunk_pair",
+                ["bedLayout"] = "[{\"label\":\"01\",\"type\":\"upper\"},{\"label\":\"02\",\"type\":\"lower\"},{\"label\":\"03\",\"type\":\"upper\"},{\"label\":\"04\",\"type\":\"lower\"}]",
                 ["bedStatus"] = "available"
             }
         },
@@ -2338,6 +2340,7 @@ static void ValidateOperationsOutboxProjectionResourceAggregates(ProjectionRunti
     Assert(ScalarInt(connectionString, $"select count(*) from accommodation_rooms where room_id = '{roomId}'") == 1, "Operations roomSetup outbox projection must write the room aggregate");
     Assert(ScalarInt(connectionString, $"select count(*) from accommodation_beds where room_id = '{roomId}'") == 4, "Operations bedSetup outbox projection must expand four bed labels into four bed aggregates");
     Assert(ScalarText(connectionString, $"select string_agg(bed_no, ',' order by bed_no) from accommodation_beds where room_id = '{roomId}'") == "OPS401-01,OPS401-02,OPS401-03,OPS401-04", "Operations bedSetup outbox projection must preserve generated labels as bed numbers");
+    Assert(ScalarText(connectionString, $"select string_agg(bunk_type, ',' order by bed_no) from accommodation_beds where room_id = '{roomId}'") == "upper,lower,upper,lower", "Operations bedSetup outbox projection must preserve per-bed bunk types");
 }
 
 static void ValidateGeneratedDtos()

@@ -1,0 +1,64 @@
+{
+  "version": "oam.step-dependency-contract.v1",
+  "generatedBy": "oam-cab-v1-step-dependency-hardening",
+  "scope": "definition-contract",
+  "ruleLayer": "scenario-instance-contract",
+  "abstractPattern": "later WorkItems declare inherited, user-selectable, system-derived, and hidden backend-default fields; surfaces render them according to the generic StepDependencyExperience and stepDependencySurface contracts",
+  "contracts": [
+    {
+      "caseType": "Accommodation.ResourceSetup",
+      "workItemId": "bedSetup",
+      "contractKind": "dormitory-golden-sample",
+      "dependsOn": ["roomSetup"],
+      "inheritedFields": [
+        {
+          "fieldId": "roomId",
+          "sourceWorkItemId": "roomSetup",
+          "surface": "readonly-hidden-submit",
+          "priority": ["latest-runtime-event-or-projection", "completed-record-snapshot", "non-conflicting-draft-fallback"]
+        },
+        {
+          "fieldId": "bedCount",
+          "sourceWorkItemId": "roomSetup",
+          "surface": "readonly-hidden-submit",
+          "priority": ["latest-runtime-event-or-projection", "completed-record-snapshot", "non-conflicting-draft-fallback"]
+        }
+      ],
+      "userSelectableFields": [
+        {
+          "fieldId": "bedType",
+          "surfaceLabel": {
+            "zh-CN": "床铺生成方式",
+            "ru-RU": "Как создать койки",
+            "ky-KG": "Койканы түзүү жолу"
+          },
+          "defaultValue": "bunk_pair"
+        }
+      ],
+      "derivedFields": [
+        {
+          "fieldId": "bedLabels",
+          "surfaceLabel": {
+            "zh-CN": "将生成的床位",
+            "ru-RU": "Будут созданы",
+            "ky-KG": "Түзүлө турган койкалар"
+          },
+          "derivedFrom": ["bedCount"],
+          "staleDraftPolicy": "always-recompute"
+        },
+        {
+          "fieldId": "bedLayout",
+          "derivedFrom": ["bedCount", "bedType"],
+          "staleDraftPolicy": "always-recompute"
+        }
+      ],
+      "hiddenBackendDefaults": [
+        {
+          "fieldId": "bedStatus",
+          "defaultValue": "available",
+          "reason": "maintenance, cleaning, and not-for-sale states must use roomReadiness or service task block/release flows"
+        }
+      ]
+    }
+  ]
+}

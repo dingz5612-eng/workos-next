@@ -1,7 +1,7 @@
-import { generatedBedLabelsForCount, splitBedLabels } from "../controls/bedLabelControls.js";
+import { bedLayoutForLabels, generatedBedLabelsForCount, serializeBedLayout, splitBedLabels } from "../controls/bedLabelControls.js";
 import { capacityForRoomType, defaultValueForField, fieldControlKind, isDerivedReadonlyField, optionsForField } from "../controls/fieldControls.js";
 import { isScopedResourceFieldRequired, isScopedResourceFieldVisible } from "../controls/resourceScopeControls.js";
-import { loadCompletedRecordSnapshot, loadDraft } from "../operationDrafts.js";
+import { loadCompletedRecordSnapshot, loadCompletedRecordSnapshots, loadDraft } from "../operationDrafts.js";
 import { completedRecordActionPolicy } from "../operationRecordPolicy.js";
 import { lensIdsForWorkspace, lensPreview, lensTitle } from "../runtimeLensCatalog.js";
 import { buildOperationActionState } from "../operationActionState.js";
@@ -349,8 +349,27 @@ export function cardOperation(card, item, ctx) {
     <div class="operation-actions">
       <button class="secondary" data-save-draft ${disabled}>${ctx.tr("saveDraft")}</button>
     </div>
-    ${ctx.state.operationMessage ? `<p class="operation-message">${ctx.escapeHtml(ctx.state.operationMessage)}</p>` : ""}
+    ${inlineOperationMessage(card, item, ctx)}
   </div>`;
+}
+
+function inlineOperationMessage(card, item, ctx) {
+  const message = ctx.state.operationMessage || "";
+  if (!message) return "";
+  const result = ctx.state.lastActionResult;
+  if (result?.message === message || isSubmitResultMessage(message, ctx)) {
+    return "";
+  }
+  return `<p class="operation-message">${ctx.escapeHtml(message)}</p>`;
+}
+
+function isSubmitResultMessage(message, ctx) {
+  return [
+    "submitting",
+    "submitDone",
+    "submitProjectionPending",
+    "submitProjectionFailed"
+  ].some((key) => message === ctx.tr(key));
 }
 
 function activeBlockers(item, card) {
@@ -399,15 +418,20 @@ export function operationControl(field, item, card, disabled, ctx) {
   const value = fieldState.value;
   const kind = fieldControlKind(field);
   const options = optionsForField(field, ctx.state.lang);
-  const help = ctx.tx(field.help);
+  const help = operationFieldHelp(field, fieldId, card, ctx);
   const missing = missingFieldIdsFor(card, item, ctx).includes(fieldId);
   const requiredForOperation = operationFieldRequired(field, card, item, ctx);
   const required = requiredForOperation ? `required aria-required="true" data-required-field="true"` : "";
   const invalid = missing ? `aria-invalid="true" data-validation-state="missing"` : "";
-  const labelClass = ["operation-field", requiredForOperation ? "required" : "", missing ? "field-error" : "", fieldState.source === "caseContext" ? "context-carried" : ""].filter(Boolean).join(" ");
-  const label = fieldLabel(field, ctx, requiredForOperation);
-  if (fieldState.source === "caseContext" && isCaseContextIdentityField(fieldId)) {
+  const carriedReadonly = isCaseContextReadonlyField(fieldId, card);
+  const forcedReadonly = isForcedCaseContextReadonlyField(fieldId, card);
+  const labelClass = ["operation-field", requiredForOperation ? "required" : "", missing ? "field-error" : "", forcedReadonly || fieldState.source === "caseContext" ? "context-carried" : ""].filter(Boolean).join(" ");
+  const label = operationFieldLabel(field, fieldId, card, ctx, requiredForOperation);
+  if (carriedReadonly && (forcedReadonly || fieldState.source === "caseContext")) {
     return contextCarriedControl(field, fieldId, fieldState, labelClass, label, required, invalid, ctx);
+  }
+  if (card.id === "bedSetup" && fieldId === "bedLabels") {
+    return bedLayoutDerivedControl(field, item, card, labelClass, label, value, required, invalid, disabled, help, ctx);
   }
   if (kind === "searchSelect") return `<label class="${labelClass} search-select"><span>${label} · ${ctx.tr("searchableSelect")}</span><input data-operation-field="${ctx.escapeAttr(fieldId)}" list="${ctx.escapeAttr(fieldId)}Options" value="${ctx.escapeAttr(value)}" ${required} ${invalid} ${disabled} /><datalist id="${ctx.escapeAttr(fieldId)}Options">${options.map((entry) => `<option value="${ctx.escapeAttr(entry.value)}" label="${ctx.escapeAttr(entry.label)}">`).join("")}</datalist>${help ? `<small>${help}</small>` : ""}</label>`;
   if (kind === "select" && fieldId === "resourceScope") {
@@ -443,10 +467,31 @@ function segmentedOperationControl(fieldId, labelClass, label, value, options, r
   </div>`;
 }
 
+function bedLayoutDerivedControl(field, item, card, labelClass, label, value, required, invalid, disabled, help, ctx) {
+  const values = operationDraftValues(item, card);
+  const bedCountField = (card.fields?.business || []).find((candidate) => operationFieldId(candidate) === "bedCount") || { id: "bedCount", label: { "zh-CN": "床位数" } };
+  const bedTypeField = (card.fields?.business || []).find((candidate) => operationFieldId(candidate) === "bedType") || { id: "bedType", label: { "zh-CN": "床铺生成方式" } };
+  const bedCount = operationFieldState(bedCountField, item, card, ctx).value || values.bedCount || "";
+  const pattern = operationFieldState(bedTypeField, item, card, ctx).value || "bunk_pair";
+  const labelsValue = value || generatedBedLabelsForCount(bedCount);
+  const layout = bedLayoutForLabels(labelsValue, pattern, ctx.state.lang);
+  const layoutValue = serializeBedLayout(layout);
+  const chips = layout.map((entry) =>
+    `<span class="bed-layout-chip" data-bed-label="${ctx.escapeAttr(entry.label)}" data-bed-type="${ctx.escapeAttr(entry.type)}">${ctx.escapeHtml(entry.label)} · ${ctx.escapeHtml(entry.typeLabel)}</span>`
+  ).join("");
+  return `<div class="${labelClass} bed-layout-derived" ${invalid} data-bed-layout-derived>
+    <span>${label}</span>
+    <input type="hidden" data-operation-field="bedLabels" data-field-id="bedLabels" value="${ctx.escapeAttr(labelsValue)}" ${required} ${invalid} ${disabled} />
+    <input type="hidden" data-operation-field="bedLayout" data-field-id="bedLayout" value="${ctx.escapeAttr(layoutValue)}" ${disabled} />
+    <div class="bed-layout-preview" data-bed-layout-preview aria-live="polite">${chips || `<span class="bed-layout-empty">${ctx.escapeHtml(ctx.tr("bedLayoutEmpty"))}</span>`}</div>
+    ${help ? `<small data-bed-layout-help>${help}</small>` : ""}
+  </div>`;
+}
+
 function contextCarriedControl(field, fieldId, fieldState, labelClass, label, required, invalid, ctx) {
   const displayValue = fieldState.displayValue || displayFieldValue(field, fieldState.value, ctx);
   return `<label class="${labelClass}">
-    <span>${label}<em class="context-mark">${ctx.tr("caseContextAutoFilled")}</em></span>
+    <span>${label}</span>
     <input value="${ctx.escapeAttr(displayValue)}" readonly aria-readonly="true" ${invalid} />
     <input type="hidden" data-operation-field="${ctx.escapeAttr(fieldId)}" value="${ctx.escapeAttr(fieldState.value)}" ${required} />
     <small>${ctx.tr("caseContextAutoFilledHelp")}</small>
@@ -457,6 +502,26 @@ function isCaseContextIdentityField(fieldId) {
   return ["roomId", "bedId", "stayId", "residentId", "reservationId", "leadId", "depositId", "depositReceiptId", "paymentId", "chargeId", "taskId", "expenseId", "periodId"].includes(fieldId);
 }
 
+function isCaseContextReadonlyField(fieldId, card) {
+  if (isForcedCaseContextReadonlyField(fieldId, card)) return true;
+  if (isCaseContextIdentityField(fieldId)) return true;
+  return false;
+}
+
+function isForcedCaseContextReadonlyField(fieldId, card) {
+  return card?.id === "bedSetup" && ["roomId", "bedCount"].includes(fieldId);
+}
+
+function bedSetupGenerationModeState(field, item, card, values, ctx) {
+  const bedCount = carriedForwardValue({ id: "bedCount", label: { "zh-CN": "床位数" } }, item, card, values, ctx)?.value || values.bedCount || "";
+  const generatedLabels = generatedBedLabelsForCount(bedCount);
+  const draftMatchesCurrentCount = generatedLabels && values.bedLabels === generatedLabels;
+  if (values.bedType && draftMatchesCurrentCount && values.bedLayout) {
+    return { value: values.bedType, source: "draft" };
+  }
+  return { value: defaultValueForField(field) || "bunk_pair", source: "default" };
+}
+
 export function operationValue(field, item, card, ctx) {
   return operationFieldState(field, item, card, ctx).value;
 }
@@ -465,6 +530,17 @@ function operationFieldState(field, item, card, ctx) {
   const draft = loadDraft(item.id, card.id);
   const values = draft.values || {};
   const fieldId = operationFieldId(field);
+  if (isForcedCaseContextReadonlyField(fieldId, card)) {
+    const carried = carriedForwardValue(field, item, card, values, ctx);
+    if (carried) return { value: carried.value, displayValue: carried.displayValue, source: "caseContext" };
+  }
+  if (card?.id === "bedSetup" && fieldId === "bedLabels") {
+    const bedCount = carriedForwardValue({ id: "bedCount", label: { "zh-CN": "床位数" } }, item, card, values, ctx)?.value || values.bedCount || "";
+    return { value: generatedBedLabelsForCount(bedCount), source: "derived" };
+  }
+  if (card?.id === "bedSetup" && fieldId === "bedType") {
+    return bedSetupGenerationModeState(field, item, card, values, ctx);
+  }
   if (values[fieldId]) return { value: values[fieldId], source: "draft" };
   if (values[field.id]) return { value: values[field.id], source: "draft" };
   if (fieldId === "amount") {
@@ -477,10 +553,6 @@ function operationFieldState(field, item, card, ctx) {
   }
   const carried = carriedForwardValue(field, item, card, values, ctx);
   if (carried) return { value: carried.value, displayValue: carried.displayValue, source: "caseContext" };
-  if (fieldId === "bedLabels") {
-    const bedCount = values.bedCount || carriedForwardValue({ id: "bedCount", label: { "zh-CN": "床位数" } }, item, card, values, ctx)?.value || "";
-    return { value: generatedBedLabelsForCount(bedCount), source: "derived" };
-  }
   if (field.ui?.derivedFrom === "roomType") {
     const roomType = Object.entries(values).find(([, candidate]) => ["single", "double", "four_bed", "six_bed", "单人间", "双人间", "四人间", "六人间"].includes(candidate))?.[1] || "four_bed";
     return { value: capacityForRoomType(roomType), source: "derived" };
@@ -550,6 +622,10 @@ export function operationFieldId(field) {
     "床位号": "bedNo",
     "床位标签": "bedLabels",
     "床位标签清单": "bedLabels",
+    "将生成的床位": "bedLabels",
+    "床位布局": "bedLayout",
+    "床铺生成方式": "bedType",
+    "床型模板": "bedType",
     "上/下铺": "bedType",
     "床位类型": "bedType",
     "初始床位状态": "bedStatus",
@@ -720,6 +796,8 @@ function carriedForwardValue(field, item, card, values, ctx) {
     const carried = carriedFieldFromPayload(fieldId, event.payload, ctx);
     if (carried) return carried;
   }
+  const completedSnapshot = carriedFieldFromLatestCompletedSnapshot(fieldId, item, card, ctx);
+  if (completedSnapshot) return completedSnapshot;
   return carriedFieldFromCompletedDraft(fieldId, item, card, ctx);
 }
 
@@ -779,6 +857,23 @@ function carriedFieldFromPayload(fieldId, payload = {}, ctx) {
       return { value, displayValue: bedDisplayValue(value, payload, ctx) };
     }
   }
+  if (fieldId === "bedCount" && hasCarryValue(payload.capacity)) {
+    return { value: String(payload.capacity), displayValue: String(payload.capacity) };
+  }
+  return null;
+}
+
+function carriedFieldFromLatestCompletedSnapshot(fieldId, item, card, ctx) {
+  const currentIndex = (item.cards || []).findIndex((candidate) => candidate.id === card.id);
+  const previousCardIds = new Set((item.cards || [])
+    .slice(0, currentIndex < 0 ? 0 : currentIndex)
+    .map((candidate) => candidate.id));
+  if (!previousCardIds.size) return null;
+  for (const snapshot of loadCompletedRecordSnapshots()) {
+    if (snapshot.workspaceId !== item.id || !previousCardIds.has(snapshot.cardId)) continue;
+    const carried = carriedFieldFromPayload(fieldId, snapshot.values || {}, ctx);
+    if (carried) return carried;
+  }
   return null;
 }
 
@@ -818,6 +913,33 @@ function fieldLabel(field, ctx, requiredForOperation = field.required) {
   return `${ctx.localTerm(field)}${required}`;
 }
 
+function operationFieldLabel(field, fieldId, card, ctx, requiredForOperation = field.required) {
+  const required = requiredForOperation ? `<em class="required-mark">${ctx.tr("requiredMark")}</em>` : "";
+  if (card?.id === "bedSetup" && fieldId === "bedType") {
+    return `${ctx.tr("bedTypeTemplateLabel")}${required}`;
+  }
+  if (card?.id === "bedSetup" && fieldId === "bedLabels") {
+    return `${ctx.tr("bedLayoutPreviewLabel")}${required}`;
+  }
+  if (card?.id === "bedSetup" && fieldId === "bedStatus") {
+    return `${ctx.tr("bedStatusTemplateLabel")}${required}`;
+  }
+  return `${ctx.localTerm(field)}${required}`;
+}
+
+function operationFieldHelp(field, fieldId, card, ctx) {
+  if (card?.id === "bedSetup" && fieldId === "bedType") {
+    return ctx.tr("bedTypeTemplateHelp");
+  }
+  if (card?.id === "bedSetup" && fieldId === "bedLabels") {
+    return ctx.tr("bedLayoutGeneratedHelp");
+  }
+  if (card?.id === "bedSetup" && fieldId === "bedStatus") {
+    return ctx.tr("bedStatusTemplateHelp");
+  }
+  return ctx.tx(field.help);
+}
+
 function missingFieldIdsFor(card, item, ctx) {
   const validation = ctx.state.fieldValidation || {};
   if (validation.workspaceId !== item.id || validation.cardId !== card.id) return [];
@@ -830,21 +952,30 @@ function systemValidationPanel(card, item, draft, visibleBlockers, ctx) {
   const evidenceNames = evidenceStates.map((state) => businessCheckName(state.name)).filter(Boolean);
   const checkNames = (card.checks || []).map((entry) => businessCheckName(ctx.localTerm(entry))).filter(Boolean);
   const missingLabels = currentMissingRequiredLabels(card, item, ctx);
+  const stepCheck = stepDependencyValidationChips(card, item, ctx);
   const submitStatus = missingLabels.length
     ? `${ctx.tr("cannotSubmitYet")}: ${ctx.tr("requiredFieldsMissing")}`
     : visibleBlockers.length
     ? `${ctx.tr("cannotSubmitYet")}: ${visibleBlockers.map((entry) => ctx.tx(entry.title)).join(" · ")}`
     : ctx.tr("readyToSubmit");
-  const chips = [
-    `${ctx.tr(missingLabels.length ? "requiredFieldsMissing" : "requiredFields")}: ${missingLabels.length ? missingLabels.join(" · ") : ctx.tr("systemCheckReady")}`,
+  const detailChips = [
+    ...(stepCheck.length ? stepCheck : [`${ctx.tr(missingLabels.length ? "requiredFieldsMissing" : "requiredFields")}: ${missingLabels.length ? missingLabels.join(" · ") : ctx.tr("systemCheckReady")}`]),
     `${ctx.tr("systemEvidenceCheck")}: ${evidenceNames.length ? evidenceNames.join(" · ") : ctx.tr("noRequiredEvidence")}`,
     `${ctx.tr("submitStatus")}: ${submitStatus}`,
     checkNames.length ? `${ctx.tr("systemRules")}: ${checkNames.slice(0, 3).join(" · ")}` : ""
   ].filter(Boolean);
+  const actionChips = [
+    ...missingLabels.map((label) => `${ctx.tr("requiredFieldsMissing")}: ${label}`),
+    ...visibleBlockers.map((entry) => ctx.tx(entry.title))
+  ].filter(Boolean);
   return `<section class="system-check-panel${missingLabels.length ? " has-error" : ""}" data-surface="system-validation-summary">
     <b>${ctx.tr("systemValidation")}</b>
-    <p>${ctx.tr("systemValidationHelp")}</p>
-    <div>${chips.map((chip) => `<span>${ctx.escapeHtml(chip)}</span>`).join("")}</div>
+    <p>${actionChips.length ? ctx.tr("systemValidationHelp") : ctx.tr("readyToSubmit")}</p>
+    ${actionChips.length ? `<div>${actionChips.map((chip) => `<span>${ctx.escapeHtml(chip)}</span>`).join("")}</div>` : ""}
+    <details class="system-check-details">
+      <summary>${ctx.tr("systemCheckDetails")}</summary>
+      <div>${detailChips.map((chip) => `<span>${ctx.escapeHtml(chip)}</span>`).join("")}</div>
+    </details>
   </section>`;
 }
 
@@ -869,13 +1000,35 @@ function currentMissingRequiredLabels(card, item, ctx) {
 
 function operationFieldRequired(field, card, item, ctx) {
   const fieldId = operationFieldId(field);
+  if (card?.id === "bedSetup" && fieldId === "bedStatus") return false;
   const values = operationDraftValues(item, card);
   return isScopedResourceFieldRequired(card?.id, fieldId, values, Boolean(field.required));
+}
+
+function stepDependencyValidationChips(card, item, ctx) {
+  if (card?.id !== "bedSetup") return [];
+  const fields = card.fields?.business || [];
+  const fieldById = new Map(fields.map((field) => [operationFieldId(field), field]));
+  const roomId = operationFieldState(fieldById.get("roomId") || { id: "roomId", label: { "zh-CN": "所属房间" } }, item, card, ctx).value;
+  const bedCount = operationFieldState(fieldById.get("bedCount") || { id: "bedCount", label: { "zh-CN": "床位数" } }, item, card, ctx).value;
+  const bedType = operationFieldState(fieldById.get("bedType") || { id: "bedType", label: { "zh-CN": "床铺生成方式" }, ui: { defaultValue: "bunk_pair" } }, item, card, ctx).value;
+  const labels = splitBedLabels(operationFieldState(fieldById.get("bedLabels") || { id: "bedLabels", label: { "zh-CN": "床位标签" } }, item, card, ctx).value);
+  const inheritedMissing = [
+    hasCarryValue(roomId) ? "" : ctx.localTerm(fieldById.get("roomId") || { label: { "zh-CN": "所属房间" } }),
+    hasCarryValue(bedCount) ? "" : ctx.localTerm(fieldById.get("bedCount") || { label: { "zh-CN": "床位数" } })
+  ].filter(Boolean);
+  const expectedCount = Number(bedCount || 0);
+  return [
+    `${ctx.tr("systemInheritedCheck")}: ${inheritedMissing.length ? inheritedMissing.join(" · ") : ctx.tr("systemCheckReady")}`,
+    `${ctx.tr("systemDerivedCheck")}: ${labels.length === expectedCount && expectedCount > 0 ? ctx.tr("systemCheckReady") : ctx.tr("requiredFieldsMissing")}`,
+    `${ctx.tr("systemInteractiveCheck")}: ${hasCarryValue(bedType) ? ctx.tr("systemCheckReady") : ctx.tr("bedTypeTemplateLabel")}`
+  ];
 }
 
 function operationFieldVisible(field, card, item, ctx) {
   const fieldId = operationFieldId(field);
   const values = operationDraftValues(item, card);
+  if (card?.id === "bedSetup" && fieldId === "bedStatus") return false;
   const fallbackVisible = operationFieldRequired(field, card, item, ctx) ||
     !["备注", "补充说明", "异议说明"].includes(ctx.localTerm(field, "zh-CN"));
   return isScopedResourceFieldVisible(card?.id, fieldId, values, fallbackVisible);
@@ -891,7 +1044,7 @@ function hasRequiredFieldValue(field, item, card, ctx) {
   const value = operationFieldState(field, item, card, ctx).value;
   if (fieldId === "bedLabels") {
     const values = loadDraft(item.id, card.id).values || {};
-    const bedCount = Number(values.bedCount || carriedForwardValue({ id: "bedCount", label: { "zh-CN": "床位数" } }, item, card, values, ctx)?.value || 0);
+    const bedCount = Number(carriedForwardValue({ id: "bedCount", label: { "zh-CN": "床位数" } }, item, card, values, ctx)?.value || values.bedCount || 0);
     const labels = splitBedLabels(value);
     return labels.length > 0 && (!Number.isFinite(bedCount) || bedCount <= 0 || labels.length === bedCount);
   }

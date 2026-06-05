@@ -3,7 +3,7 @@
   "generatedBy": "oam-cab-v1-phase-4",
   "refs": [
     { "ref": "field.roomSetup.v1", "requiredFieldIds": ["buildingId", "roomNo", "roomType"], "optionalFieldIds": ["floor", "roomNote"] },
-    { "ref": "field.bedSetup.v1", "requiredFieldIds": ["roomId", "bedCount", "bedLabels"], "optionalFieldIds": ["bedType", "note"] },
+    { "ref": "field.bedSetup.v1", "requiredFieldIds": ["roomId", "bedCount", "bedLabels"], "optionalFieldIds": ["bedType", "bedLayout", "note"] },
     { "ref": "field.rateSetup.v1", "requiredFieldIds": ["roomId", "ratePlan", "currency", "price"], "optionalFieldIds": ["effectiveFrom", "note"] },
     { "ref": "field.roomReadiness.v1", "requiredFieldIds": ["roomId", "readinessState"], "optionalFieldIds": ["readinessNote"] },
     { "ref": "field.roomBlock.v1", "requiredFieldIds": ["roomId", "blockReason"], "optionalFieldIds": ["blockedUntil", "note"] },

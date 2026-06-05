@@ -1,0 +1,351 @@
+{
+  "version": "bed-setup.real-browser.audit.v1",
+  "status": "passed",
+  "runId": "bed-setup-layout-20260605-053912",
+  "generatedAtUtc": "2026-06-05T05:39:12.407Z",
+  "browserMode": "playwright-chromium-headless",
+  "mockPolicy": "real browser page navigation, clicks, selects, and screenshots only; no backend simulation and no DOM stubbing",
+  "endpoints": {
+    "baseUrl": "http://127.0.0.1:5175",
+    "apiUrl": "http://127.0.0.1:5191",
+    "targetUrl": "http://127.0.0.1:5175/?view=operationPanel&lang=zh-CN&device=mobile&workspace=W-STAY-RESOURCE-20260604113929-d8be2bd7995e41c5a2cee7a559e1fed4&workItem=wi-b3c851d7d6b4248cea09c648d66a149b0f0f1bfc2af041568bfedc13048fe590&card=bedSetup"
+  },
+  "screenshots": [
+    {
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/bed-setup-real-browser/bed-setup-layout-20260605-053912/screenshots/01-bed-setup-initial.png",
+      "surface": "床位配置页初始状态",
+      "url": "http://127.0.0.1:5175/?view=operationPanel&lang=zh-CN&device=mobile&workspace=W-STAY-RESOURCE-20260604113929-d8be2bd7995e41c5a2cee7a559e1fed4&workItem=wi-b3c851d7d6b4248cea09c648d66a149b0f0f1bfc2af041568bfedc13048fe590&card=bedSetup",
+      "mode": "fullPage",
+      "sha256": "29951c93bc0b6b7e1d5e5285bbdb1ac4dea9c0907751b92153e115c0cfef0f96"
+    },
+    {
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/bed-setup-real-browser/bed-setup-layout-20260605-053912/screenshots/01-bed-setup-initial-segment-01.png",
+      "surface": "床位配置页初始状态",
+      "url": "http://127.0.0.1:5175/?view=operationPanel&lang=zh-CN&device=mobile&workspace=W-STAY-RESOURCE-20260604113929-d8be2bd7995e41c5a2cee7a559e1fed4&workItem=wi-b3c851d7d6b4248cea09c648d66a149b0f0f1bfc2af041568bfedc13048fe590&card=bedSetup",
+      "mode": "segment-1",
+      "sha256": "3d2978ec59c2e485e32c69340fab373431daa24b77c21c62eb4bb1e895d84d8e"
+    },
+    {
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/bed-setup-real-browser/bed-setup-layout-20260605-053912/screenshots/01-bed-setup-initial-segment-02.png",
+      "surface": "床位配置页初始状态",
+      "url": "http://127.0.0.1:5175/?view=operationPanel&lang=zh-CN&device=mobile&workspace=W-STAY-RESOURCE-20260604113929-d8be2bd7995e41c5a2cee7a559e1fed4&workItem=wi-b3c851d7d6b4248cea09c648d66a149b0f0f1bfc2af041568bfedc13048fe590&card=bedSetup",
+      "mode": "segment-2",
+      "sha256": "79ff895a0eb9d7febfbbcaf4c966144ca6ee135488af98f32761a903ced0a1e1"
+    },
+    {
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/bed-setup-real-browser/bed-setup-layout-20260605-053912/screenshots/02-bed-generation-mode-selected.png",
+      "surface": "床铺生成方式点击后生成两上两下",
+      "url": "http://127.0.0.1:5175/?view=operationPanel&lang=zh-CN&device=mobile&workspace=W-STAY-RESOURCE-20260604113929-d8be2bd7995e41c5a2cee7a559e1fed4&workItem=wi-b3c851d7d6b4248cea09c648d66a149b0f0f1bfc2af041568bfedc13048fe590&card=bedSetup",
+      "mode": "fullPage",
+      "sha256": "ae5f02e7111b42e1d0d6988197bcf3d10e4639b8a08ca0c6e5eb12ecdff09ede"
+    },
+    {
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/bed-setup-real-browser/bed-setup-layout-20260605-053912/screenshots/02-bed-generation-mode-selected-segment-01.png",
+      "surface": "床铺生成方式点击后生成两上两下",
+      "url": "http://127.0.0.1:5175/?view=operationPanel&lang=zh-CN&device=mobile&workspace=W-STAY-RESOURCE-20260604113929-d8be2bd7995e41c5a2cee7a559e1fed4&workItem=wi-b3c851d7d6b4248cea09c648d66a149b0f0f1bfc2af041568bfedc13048fe590&card=bedSetup",
+      "mode": "segment-1",
+      "sha256": "71a15194337468f3104803e0f42a94c5d02421195bd03d973ea09a8a8eb79311"
+    },
+    {
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/bed-setup-real-browser/bed-setup-layout-20260605-053912/screenshots/02-bed-generation-mode-selected-segment-02.png",
+      "surface": "床铺生成方式点击后生成两上两下",
+      "url": "http://127.0.0.1:5175/?view=operationPanel&lang=zh-CN&device=mobile&workspace=W-STAY-RESOURCE-20260604113929-d8be2bd7995e41c5a2cee7a559e1fed4&workItem=wi-b3c851d7d6b4248cea09c648d66a149b0f0f1bfc2af041568bfedc13048fe590&card=bedSetup",
+      "mode": "segment-2",
+      "sha256": "99fc5e6774c9b437aa76b8811a12876e3e320576290694b0b51e50a55ed73d2d"
+    },
+    {
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/bed-setup-real-browser/bed-setup-layout-20260605-053912/screenshots/03-save-draft-clicked.png",
+      "surface": "保存草稿后仍保持统一床位配置页",
+      "url": "http://127.0.0.1:5175/?view=operationPanel&lang=zh-CN&device=mobile&workspace=W-STAY-RESOURCE-20260604113929-d8be2bd7995e41c5a2cee7a559e1fed4&workItem=wi-b3c851d7d6b4248cea09c648d66a149b0f0f1bfc2af041568bfedc13048fe590&card=bedSetup",
+      "mode": "fullPage",
+      "sha256": "30b086ba69d94caa2b50f125c8c48ff23875bacb29bc28428cb9f072f37d32d7"
+    },
+    {
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/bed-setup-real-browser/bed-setup-layout-20260605-053912/screenshots/03-save-draft-clicked-segment-01.png",
+      "surface": "保存草稿后仍保持统一床位配置页",
+      "url": "http://127.0.0.1:5175/?view=operationPanel&lang=zh-CN&device=mobile&workspace=W-STAY-RESOURCE-20260604113929-d8be2bd7995e41c5a2cee7a559e1fed4&workItem=wi-b3c851d7d6b4248cea09c648d66a149b0f0f1bfc2af041568bfedc13048fe590&card=bedSetup",
+      "mode": "segment-1",
+      "sha256": "b5fc8bb00f4a916a206527e9c60cbbb5c3af4d863a5f1201bdc049b820a022a4"
+    },
+    {
+      "path": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/bed-setup-real-browser/bed-setup-layout-20260605-053912/screenshots/03-save-draft-clicked-segment-02.png",
+      "surface": "保存草稿后仍保持统一床位配置页",
+      "url": "http://127.0.0.1:5175/?view=operationPanel&lang=zh-CN&device=mobile&workspace=W-STAY-RESOURCE-20260604113929-d8be2bd7995e41c5a2cee7a559e1fed4&workItem=wi-b3c851d7d6b4248cea09c648d66a149b0f0f1bfc2af041568bfedc13048fe590&card=bedSetup",
+      "mode": "segment-2",
+      "sha256": "d2e86ff787103b9718b487b8f61e6c2e34f5b63c79e6390f4da6e9b74e641548"
+    }
+  ],
+  "assertions": [
+    {
+      "id": "bed_setup.room_readonly",
+      "status": "passed",
+      "message": "所属房间必须从房间配置只读带入，不再可搜索选择。",
+      "details": {
+        "url": "http://127.0.0.1:5175/?view=operationPanel&lang=zh-CN&device=mobile&workspace=W-STAY-RESOURCE-20260604113929-d8be2bd7995e41c5a2cee7a559e1fed4&workItem=wi-b3c851d7d6b4248cea09c648d66a149b0f0f1bfc2af041568bfedc13048fe590&card=bedSetup",
+        "visibleText": "WorkOSNext\n治理管理员\n已连接\n中文\nРусский\nКыргызча\n我要创建住宿资源\n第 2/6 步\n可办理\n1\n2\n3\n4\n5\n6\n本步要做\n床位配置卡\n怎么做\n\n把这一步需要的信息填完整。不能提交时，页面会直接标出还差哪一项。\n\n填写信息\n所属房间\n必填\n来自房间配置，不需要重复填写。\n床位数\n必填\n来自房间配置，不需要重复填写。\n将生成的床位\n必填\n01 · 上铺\n02 · 下铺\n03 · 上铺\n04 · 下铺\n跟随床位数和床铺生成方式自动更新，提交后会写成多个床位对象。\n床铺生成方式\n必填\n上下铺：两上两下\n全部下铺\n全部上铺\n全部平铺\n选择系统怎么生成每张床；四人间通常选“上下铺：两上两下”。\n提交前检查\n\n可以提交\n\n查看检查详情\n保存草稿\n\n草稿已保存到本机，下次打开这张卡会自动恢复。\n\n提交处理\n反馈\n今天\n工作\n搜索\n我的",
+        "roomIdHidden": true,
+        "roomSearchSelectVisible": false,
+        "bedCountHidden": true,
+        "bedCountEditableVisible": false,
+        "bedLabelsTextareaVisible": false,
+        "bedLabelsValue": "01, 02, 03, 04",
+        "bedLayoutRaw": "[{\"label\":\"01\",\"type\":\"upper\"},{\"label\":\"02\",\"type\":\"lower\"},{\"label\":\"03\",\"type\":\"upper\"},{\"label\":\"04\",\"type\":\"lower\"}]",
+        "bedLayoutTypes": [
+          "upper",
+          "lower",
+          "upper",
+          "lower"
+        ],
+        "bedTypeValue": "bunk_pair",
+        "bedStatusValue": "",
+        "bedStatusVisible": false,
+        "systemCheckDetailsOpen": false,
+        "systemCheckDetailsText": "\n      查看检查详情\n      前步带入: 已完成系统生成: 已完成需要操作: 已完成材料核对: 床位容量确认 · 床位编号确认提交状态: 可以提交业务规则: 房间存在 · 未超过床位数 · 床位号未重复\n    "
+      }
+    },
+    {
+      "id": "bed_setup.bed_count_readonly",
+      "status": "passed",
+      "message": "床位数必须从房间配置只读带入，不再重复填写。",
+      "details": {
+        "url": "http://127.0.0.1:5175/?view=operationPanel&lang=zh-CN&device=mobile&workspace=W-STAY-RESOURCE-20260604113929-d8be2bd7995e41c5a2cee7a559e1fed4&workItem=wi-b3c851d7d6b4248cea09c648d66a149b0f0f1bfc2af041568bfedc13048fe590&card=bedSetup",
+        "visibleText": "WorkOSNext\n治理管理员\n已连接\n中文\nРусский\nКыргызча\n我要创建住宿资源\n第 2/6 步\n可办理\n1\n2\n3\n4\n5\n6\n本步要做\n床位配置卡\n怎么做\n\n把这一步需要的信息填完整。不能提交时，页面会直接标出还差哪一项。\n\n填写信息\n所属房间\n必填\n来自房间配置，不需要重复填写。\n床位数\n必填\n来自房间配置，不需要重复填写。\n将生成的床位\n必填\n01 · 上铺\n02 · 下铺\n03 · 上铺\n04 · 下铺\n跟随床位数和床铺生成方式自动更新，提交后会写成多个床位对象。\n床铺生成方式\n必填\n上下铺：两上两下\n全部下铺\n全部上铺\n全部平铺\n选择系统怎么生成每张床；四人间通常选“上下铺：两上两下”。\n提交前检查\n\n可以提交\n\n查看检查详情\n保存草稿\n\n草稿已保存到本机，下次打开这张卡会自动恢复。\n\n提交处理\n反馈\n今天\n工作\n搜索\n我的",
+        "roomIdHidden": true,
+        "roomSearchSelectVisible": false,
+        "bedCountHidden": true,
+        "bedCountEditableVisible": false,
+        "bedLabelsTextareaVisible": false,
+        "bedLabelsValue": "01, 02, 03, 04",
+        "bedLayoutRaw": "[{\"label\":\"01\",\"type\":\"upper\"},{\"label\":\"02\",\"type\":\"lower\"},{\"label\":\"03\",\"type\":\"upper\"},{\"label\":\"04\",\"type\":\"lower\"}]",
+        "bedLayoutTypes": [
+          "upper",
+          "lower",
+          "upper",
+          "lower"
+        ],
+        "bedTypeValue": "bunk_pair",
+        "bedStatusValue": "",
+        "bedStatusVisible": false,
+        "systemCheckDetailsOpen": false,
+        "systemCheckDetailsText": "\n      查看检查详情\n      前步带入: 已完成系统生成: 已完成需要操作: 已完成材料核对: 床位容量确认 · 床位编号确认提交状态: 可以提交业务规则: 房间存在 · 未超过床位数 · 床位号未重复\n    "
+      }
+    },
+    {
+      "id": "bed_setup.no_context_badge",
+      "status": "passed",
+      "message": "只读带入字段不得显示多余的“已从本案带入”标签。",
+      "details": {
+        "url": "http://127.0.0.1:5175/?view=operationPanel&lang=zh-CN&device=mobile&workspace=W-STAY-RESOURCE-20260604113929-d8be2bd7995e41c5a2cee7a559e1fed4&workItem=wi-b3c851d7d6b4248cea09c648d66a149b0f0f1bfc2af041568bfedc13048fe590&card=bedSetup",
+        "visibleText": "WorkOSNext\n治理管理员\n已连接\n中文\nРусский\nКыргызча\n我要创建住宿资源\n第 2/6 步\n可办理\n1\n2\n3\n4\n5\n6\n本步要做\n床位配置卡\n怎么做\n\n把这一步需要的信息填完整。不能提交时，页面会直接标出还差哪一项。\n\n填写信息\n所属房间\n必填\n来自房间配置，不需要重复填写。\n床位数\n必填\n来自房间配置，不需要重复填写。\n将生成的床位\n必填\n01 · 上铺\n02 · 下铺\n03 · 上铺\n04 · 下铺\n跟随床位数和床铺生成方式自动更新，提交后会写成多个床位对象。\n床铺生成方式\n必填\n上下铺：两上两下\n全部下铺\n全部上铺\n全部平铺\n选择系统怎么生成每张床；四人间通常选“上下铺：两上两下”。\n提交前检查\n\n可以提交\n\n查看检查详情\n保存草稿\n\n草稿已保存到本机，下次打开这张卡会自动恢复。\n\n提交处理\n反馈\n今天\n工作\n搜索\n我的",
+        "roomIdHidden": true,
+        "roomSearchSelectVisible": false,
+        "bedCountHidden": true,
+        "bedCountEditableVisible": false,
+        "bedLabelsTextareaVisible": false,
+        "bedLabelsValue": "01, 02, 03, 04",
+        "bedLayoutRaw": "[{\"label\":\"01\",\"type\":\"upper\"},{\"label\":\"02\",\"type\":\"lower\"},{\"label\":\"03\",\"type\":\"upper\"},{\"label\":\"04\",\"type\":\"lower\"}]",
+        "bedLayoutTypes": [
+          "upper",
+          "lower",
+          "upper",
+          "lower"
+        ],
+        "bedTypeValue": "bunk_pair",
+        "bedStatusValue": "",
+        "bedStatusVisible": false,
+        "systemCheckDetailsOpen": false,
+        "systemCheckDetailsText": "\n      查看检查详情\n      前步带入: 已完成系统生成: 已完成需要操作: 已完成材料核对: 床位容量确认 · 床位编号确认提交状态: 可以提交业务规则: 房间存在 · 未超过床位数 · 床位号未重复\n    "
+      }
+    },
+    {
+      "id": "bed_setup.help_copy",
+      "status": "passed",
+      "message": "只读带入字段必须保留轻量说明。",
+      "details": {
+        "url": "http://127.0.0.1:5175/?view=operationPanel&lang=zh-CN&device=mobile&workspace=W-STAY-RESOURCE-20260604113929-d8be2bd7995e41c5a2cee7a559e1fed4&workItem=wi-b3c851d7d6b4248cea09c648d66a149b0f0f1bfc2af041568bfedc13048fe590&card=bedSetup",
+        "visibleText": "WorkOSNext\n治理管理员\n已连接\n中文\nРусский\nКыргызча\n我要创建住宿资源\n第 2/6 步\n可办理\n1\n2\n3\n4\n5\n6\n本步要做\n床位配置卡\n怎么做\n\n把这一步需要的信息填完整。不能提交时，页面会直接标出还差哪一项。\n\n填写信息\n所属房间\n必填\n来自房间配置，不需要重复填写。\n床位数\n必填\n来自房间配置，不需要重复填写。\n将生成的床位\n必填\n01 · 上铺\n02 · 下铺\n03 · 上铺\n04 · 下铺\n跟随床位数和床铺生成方式自动更新，提交后会写成多个床位对象。\n床铺生成方式\n必填\n上下铺：两上两下\n全部下铺\n全部上铺\n全部平铺\n选择系统怎么生成每张床；四人间通常选“上下铺：两上两下”。\n提交前检查\n\n可以提交\n\n查看检查详情\n保存草稿\n\n草稿已保存到本机，下次打开这张卡会自动恢复。\n\n提交处理\n反馈\n今天\n工作\n搜索\n我的",
+        "roomIdHidden": true,
+        "roomSearchSelectVisible": false,
+        "bedCountHidden": true,
+        "bedCountEditableVisible": false,
+        "bedLabelsTextareaVisible": false,
+        "bedLabelsValue": "01, 02, 03, 04",
+        "bedLayoutRaw": "[{\"label\":\"01\",\"type\":\"upper\"},{\"label\":\"02\",\"type\":\"lower\"},{\"label\":\"03\",\"type\":\"upper\"},{\"label\":\"04\",\"type\":\"lower\"}]",
+        "bedLayoutTypes": [
+          "upper",
+          "lower",
+          "upper",
+          "lower"
+        ],
+        "bedTypeValue": "bunk_pair",
+        "bedStatusValue": "",
+        "bedStatusVisible": false,
+        "systemCheckDetailsOpen": false,
+        "systemCheckDetailsText": "\n      查看检查详情\n      前步带入: 已完成系统生成: 已完成需要操作: 已完成材料核对: 床位容量确认 · 床位编号确认提交状态: 可以提交业务规则: 房间存在 · 未超过床位数 · 床位号未重复\n    "
+      }
+    },
+    {
+      "id": "bed_setup.no_bed_label_textarea",
+      "status": "passed",
+      "message": "床位标签不得继续作为大文本框让用户手工维护。",
+      "details": {
+        "url": "http://127.0.0.1:5175/?view=operationPanel&lang=zh-CN&device=mobile&workspace=W-STAY-RESOURCE-20260604113929-d8be2bd7995e41c5a2cee7a559e1fed4&workItem=wi-b3c851d7d6b4248cea09c648d66a149b0f0f1bfc2af041568bfedc13048fe590&card=bedSetup",
+        "visibleText": "WorkOSNext\n治理管理员\n已连接\n中文\nРусский\nКыргызча\n我要创建住宿资源\n第 2/6 步\n可办理\n1\n2\n3\n4\n5\n6\n本步要做\n床位配置卡\n怎么做\n\n把这一步需要的信息填完整。不能提交时，页面会直接标出还差哪一项。\n\n填写信息\n所属房间\n必填\n来自房间配置，不需要重复填写。\n床位数\n必填\n来自房间配置，不需要重复填写。\n将生成的床位\n必填\n01 · 上铺\n02 · 下铺\n03 · 上铺\n04 · 下铺\n跟随床位数和床铺生成方式自动更新，提交后会写成多个床位对象。\n床铺生成方式\n必填\n上下铺：两上两下\n全部下铺\n全部上铺\n全部平铺\n选择系统怎么生成每张床；四人间通常选“上下铺：两上两下”。\n提交前检查\n\n可以提交\n\n查看检查详情\n保存草稿\n\n草稿已保存到本机，下次打开这张卡会自动恢复。\n\n提交处理\n反馈\n今天\n工作\n搜索\n我的",
+        "roomIdHidden": true,
+        "roomSearchSelectVisible": false,
+        "bedCountHidden": true,
+        "bedCountEditableVisible": false,
+        "bedLabelsTextareaVisible": false,
+        "bedLabelsValue": "01, 02, 03, 04",
+        "bedLayoutRaw": "[{\"label\":\"01\",\"type\":\"upper\"},{\"label\":\"02\",\"type\":\"lower\"},{\"label\":\"03\",\"type\":\"upper\"},{\"label\":\"04\",\"type\":\"lower\"}]",
+        "bedLayoutTypes": [
+          "upper",
+          "lower",
+          "upper",
+          "lower"
+        ],
+        "bedTypeValue": "bunk_pair",
+        "bedStatusValue": "",
+        "bedStatusVisible": false,
+        "systemCheckDetailsOpen": false,
+        "systemCheckDetailsText": "\n      查看检查详情\n      前步带入: 已完成系统生成: 已完成需要操作: 已完成材料核对: 床位容量确认 · 床位编号确认提交状态: 可以提交业务规则: 房间存在 · 未超过床位数 · 床位号未重复\n    "
+      }
+    },
+    {
+      "id": "bed_setup.generation_mode_label",
+      "status": "passed",
+      "message": "床位配置页必须使用用户能看懂的床铺生成方式和将生成的床位表达。",
+      "details": {
+        "url": "http://127.0.0.1:5175/?view=operationPanel&lang=zh-CN&device=mobile&workspace=W-STAY-RESOURCE-20260604113929-d8be2bd7995e41c5a2cee7a559e1fed4&workItem=wi-b3c851d7d6b4248cea09c648d66a149b0f0f1bfc2af041568bfedc13048fe590&card=bedSetup",
+        "visibleText": "WorkOSNext\n治理管理员\n已连接\n中文\nРусский\nКыргызча\n我要创建住宿资源\n第 2/6 步\n可办理\n1\n2\n3\n4\n5\n6\n本步要做\n床位配置卡\n怎么做\n\n把这一步需要的信息填完整。不能提交时，页面会直接标出还差哪一项。\n\n填写信息\n所属房间\n必填\n来自房间配置，不需要重复填写。\n床位数\n必填\n来自房间配置，不需要重复填写。\n将生成的床位\n必填\n01 · 上铺\n02 · 下铺\n03 · 上铺\n04 · 下铺\n跟随床位数和床铺生成方式自动更新，提交后会写成多个床位对象。\n床铺生成方式\n必填\n上下铺：两上两下\n全部下铺\n全部上铺\n全部平铺\n选择系统怎么生成每张床；四人间通常选“上下铺：两上两下”。\n提交前检查\n\n可以提交\n\n查看检查详情\n保存草稿\n\n草稿已保存到本机，下次打开这张卡会自动恢复。\n\n提交处理\n反馈\n今天\n工作\n搜索\n我的",
+        "roomIdHidden": true,
+        "roomSearchSelectVisible": false,
+        "bedCountHidden": true,
+        "bedCountEditableVisible": false,
+        "bedLabelsTextareaVisible": false,
+        "bedLabelsValue": "01, 02, 03, 04",
+        "bedLayoutRaw": "[{\"label\":\"01\",\"type\":\"upper\"},{\"label\":\"02\",\"type\":\"lower\"},{\"label\":\"03\",\"type\":\"upper\"},{\"label\":\"04\",\"type\":\"lower\"}]",
+        "bedLayoutTypes": [
+          "upper",
+          "lower",
+          "upper",
+          "lower"
+        ],
+        "bedTypeValue": "bunk_pair",
+        "bedStatusValue": "",
+        "bedStatusVisible": false,
+        "systemCheckDetailsOpen": false,
+        "systemCheckDetailsText": "\n      查看检查详情\n      前步带入: 已完成系统生成: 已完成需要操作: 已完成材料核对: 床位容量确认 · 床位编号确认提交状态: 可以提交业务规则: 房间存在 · 未超过床位数 · 床位号未重复\n    "
+      }
+    },
+    {
+      "id": "bed_setup.layout_template",
+      "status": "passed",
+      "message": "床铺生成方式默认必须是上下铺：两上两下。",
+      "details": {
+        "url": "http://127.0.0.1:5175/?view=operationPanel&lang=zh-CN&device=mobile&workspace=W-STAY-RESOURCE-20260604113929-d8be2bd7995e41c5a2cee7a559e1fed4&workItem=wi-b3c851d7d6b4248cea09c648d66a149b0f0f1bfc2af041568bfedc13048fe590&card=bedSetup",
+        "visibleText": "WorkOSNext\n治理管理员\n已连接\n中文\nРусский\nКыргызча\n我要创建住宿资源\n第 2/6 步\n可办理\n1\n2\n3\n4\n5\n6\n本步要做\n床位配置卡\n怎么做\n\n把这一步需要的信息填完整。不能提交时，页面会直接标出还差哪一项。\n\n填写信息\n所属房间\n必填\n来自房间配置，不需要重复填写。\n床位数\n必填\n来自房间配置，不需要重复填写。\n将生成的床位\n必填\n01 · 上铺\n02 · 下铺\n03 · 上铺\n04 · 下铺\n跟随床位数和床铺生成方式自动更新，提交后会写成多个床位对象。\n床铺生成方式\n必填\n上下铺：两上两下\n全部下铺\n全部上铺\n全部平铺\n选择系统怎么生成每张床；四人间通常选“上下铺：两上两下”。\n提交前检查\n\n可以提交\n\n查看检查详情\n保存草稿\n\n草稿已保存到本机，下次打开这张卡会自动恢复。\n\n提交处理\n反馈\n今天\n工作\n搜索\n我的",
+        "roomIdHidden": true,
+        "roomSearchSelectVisible": false,
+        "bedCountHidden": true,
+        "bedCountEditableVisible": false,
+        "bedLabelsTextareaVisible": false,
+        "bedLabelsValue": "01, 02, 03, 04",
+        "bedLayoutRaw": "[{\"label\":\"01\",\"type\":\"upper\"},{\"label\":\"02\",\"type\":\"lower\"},{\"label\":\"03\",\"type\":\"upper\"},{\"label\":\"04\",\"type\":\"lower\"}]",
+        "bedLayoutTypes": [
+          "upper",
+          "lower",
+          "upper",
+          "lower"
+        ],
+        "bedTypeValue": "bunk_pair",
+        "bedStatusValue": "",
+        "bedStatusVisible": false,
+        "systemCheckDetailsOpen": false,
+        "systemCheckDetailsText": "\n      查看检查详情\n      前步带入: 已完成系统生成: 已完成需要操作: 已完成材料核对: 床位容量确认 · 床位编号确认提交状态: 可以提交业务规则: 房间存在 · 未超过床位数 · 床位号未重复\n    "
+      }
+    },
+    {
+      "id": "bed_setup.four_bed_two_up_two_down",
+      "status": "passed",
+      "message": "四人间上下铺：两上两下必须生成两个上铺和两个下铺。",
+      "details": {
+        "url": "http://127.0.0.1:5175/?view=operationPanel&lang=zh-CN&device=mobile&workspace=W-STAY-RESOURCE-20260604113929-d8be2bd7995e41c5a2cee7a559e1fed4&workItem=wi-b3c851d7d6b4248cea09c648d66a149b0f0f1bfc2af041568bfedc13048fe590&card=bedSetup",
+        "visibleText": "WorkOSNext\n治理管理员\n已连接\n中文\nРусский\nКыргызча\n我要创建住宿资源\n第 2/6 步\n可办理\n1\n2\n3\n4\n5\n6\n本步要做\n床位配置卡\n怎么做\n\n把这一步需要的信息填完整。不能提交时，页面会直接标出还差哪一项。\n\n填写信息\n所属房间\n必填\n来自房间配置，不需要重复填写。\n床位数\n必填\n来自房间配置，不需要重复填写。\n将生成的床位\n必填\n01 · 上铺\n02 · 下铺\n03 · 上铺\n04 · 下铺\n跟随床位数和床铺生成方式自动更新，提交后会写成多个床位对象。\n床铺生成方式\n必填\n上下铺：两上两下\n全部下铺\n全部上铺\n全部平铺\n选择系统怎么生成每张床；四人间通常选“上下铺：两上两下”。\n提交前检查\n\n可以提交\n\n查看检查详情\n保存草稿\n\n草稿已保存到本机，下次打开这张卡会自动恢复。\n\n提交处理\n反馈\n今天\n工作\n搜索\n我的",
+        "roomIdHidden": true,
+        "roomSearchSelectVisible": false,
+        "bedCountHidden": true,
+        "bedCountEditableVisible": false,
+        "bedLabelsTextareaVisible": false,
+        "bedLabelsValue": "01, 02, 03, 04",
+        "bedLayoutRaw": "[{\"label\":\"01\",\"type\":\"upper\"},{\"label\":\"02\",\"type\":\"lower\"},{\"label\":\"03\",\"type\":\"upper\"},{\"label\":\"04\",\"type\":\"lower\"}]",
+        "bedLayoutTypes": [
+          "upper",
+          "lower",
+          "upper",
+          "lower"
+        ],
+        "bedTypeValue": "bunk_pair",
+        "bedStatusValue": "",
+        "bedStatusVisible": false,
+        "systemCheckDetailsOpen": false,
+        "systemCheckDetailsText": "\n      查看检查详情\n      前步带入: 已完成系统生成: 已完成需要操作: 已完成材料核对: 床位容量确认 · 床位编号确认提交状态: 可以提交业务规则: 房间存在 · 未超过床位数 · 床位号未重复\n    "
+      }
+    },
+    {
+      "id": "bed_setup.submit_check_dependency_aligned",
+      "status": "passed",
+      "message": "提交前检查默认只显示用户关心的状态，诊断细节收起且不得把带入/派生字段说成用户要填写。",
+      "details": {
+        "url": "http://127.0.0.1:5175/?view=operationPanel&lang=zh-CN&device=mobile&workspace=W-STAY-RESOURCE-20260604113929-d8be2bd7995e41c5a2cee7a559e1fed4&workItem=wi-b3c851d7d6b4248cea09c648d66a149b0f0f1bfc2af041568bfedc13048fe590&card=bedSetup",
+        "visibleText": "WorkOSNext\n治理管理员\n已连接\n中文\nРусский\nКыргызча\n我要创建住宿资源\n第 2/6 步\n可办理\n1\n2\n3\n4\n5\n6\n本步要做\n床位配置卡\n怎么做\n\n把这一步需要的信息填完整。不能提交时，页面会直接标出还差哪一项。\n\n填写信息\n所属房间\n必填\n来自房间配置，不需要重复填写。\n床位数\n必填\n来自房间配置，不需要重复填写。\n将生成的床位\n必填\n01 · 上铺\n02 · 下铺\n03 · 上铺\n04 · 下铺\n跟随床位数和床铺生成方式自动更新，提交后会写成多个床位对象。\n床铺生成方式\n必填\n上下铺：两上两下\n全部下铺\n全部上铺\n全部平铺\n选择系统怎么生成每张床；四人间通常选“上下铺：两上两下”。\n提交前检查\n\n可以提交\n\n查看检查详情\n保存草稿\n\n草稿已保存到本机，下次打开这张卡会自动恢复。\n\n提交处理\n反馈\n今天\n工作\n搜索\n我的",
+        "roomIdHidden": true,
+        "roomSearchSelectVisible": false,
+        "bedCountHidden": true,
+        "bedCountEditableVisible": false,
+        "bedLabelsTextareaVisible": false,
+        "bedLabelsValue": "01, 02, 03, 04",
+        "bedLayoutRaw": "[{\"label\":\"01\",\"type\":\"upper\"},{\"label\":\"02\",\"type\":\"lower\"},{\"label\":\"03\",\"type\":\"upper\"},{\"label\":\"04\",\"type\":\"lower\"}]",
+        "bedLayoutTypes": [
+          "upper",
+          "lower",
+          "upper",
+          "lower"
+        ],
+        "bedTypeValue": "bunk_pair",
+        "bedStatusValue": "",
+        "bedStatusVisible": false,
+        "systemCheckDetailsOpen": false,
+        "systemCheckDetailsText": "\n      查看检查详情\n      前步带入: 已完成系统生成: 已完成需要操作: 已完成材料核对: 床位容量确认 · 床位编号确认提交状态: 可以提交业务规则: 房间存在 · 未超过床位数 · 床位号未重复\n    "
+      }
+    },
+    {
+      "id": "bed_setup.initial_status_hidden",
+      "status": "passed",
+      "message": "初始床位状态不得在新建床位步骤显示；后端默认可分配，后续状态变更走房间准备或服务任务。",
+      "details": {
+        "url": "http://127.0.0.1:5175/?view=operationPanel&lang=zh-CN&device=mobile&workspace=W-STAY-RESOURCE-20260604113929-d8be2bd7995e41c5a2cee7a559e1fed4&workItem=wi-b3c851d7d6b4248cea09c648d66a149b0f0f1bfc2af041568bfedc13048fe590&card=bedSetup",
+        "visibleText": "WorkOSNext\n治理管理员\n已连接\n中文\nРусский\nКыргызча\n我要创建住宿资源\n第 2/6 步\n可办理\n1\n2\n3\n4\n5\n6\n本步要做\n床位配置卡\n怎么做\n\n把这一步需要的信息填完整。不能提交时，页面会直接标出还差哪一项。\n\n填写信息\n所属房间\n必填\n来自房间配置，不需要重复填写。\n床位数\n必填\n来自房间配置，不需要重复填写。\n将生成的床位\n必填\n01 · 上铺\n02 · 下铺\n03 · 上铺\n04 · 下铺\n跟随床位数和床铺生成方式自动更新，提交后会写成多个床位对象。\n床铺生成方式\n必填\n上下铺：两上两下\n全部下铺\n全部上铺\n全部平铺\n选择系统怎么生成每张床；四人间通常选“上下铺：两上两下”。\n提交前检查\n\n可以提交\n\n查看检查详情\n保存草稿\n\n草稿已保存到本机，下次打开这张卡会自动恢复。\n\n提交处理\n反馈\n今天\n工作\n搜索\n我的",
+        "roomIdHidden": true,
+        "roomSearchSelectVisible": false,
+        "bedCountHidden": true,
+        "bedCountEditableVisible": false,
+        "bedLabelsTextareaVisible": false,
+        "bedLabelsValue": "01, 02, 03, 04",
+        "bedLayoutRaw": "[{\"label\":\"01\",\"type\":\"upper\"},{\"label\":\"02\",\"type\":\"lower\"},{\"label\":\"03\",\"type\":\"upper\"},{\"label\":\"04\",\"type\":\"lower\"}]",
+        "bedLayoutTypes": [
+          "upper",
+          "lower",
+          "upper",
+          "lower"
+        ],
+        "bedTypeValue": "bunk_pair",
+        "bedStatusValue": "",
+        "bedStatusVisible": false,
+        "systemCheckDetailsOpen": false,
+        "systemCheckDetailsText": "\n      查看检查详情\n      前步带入: 已完成系统生成: 已完成需要操作: 已完成材料核对: 床位容量确认 · 床位编号确认提交状态: 可以提交业务规则: 房间存在 · 未超过床位数 · 床位号未重复\n    "
+      }
+    }
+  ],
+  "findings": []
+}

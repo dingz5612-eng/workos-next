@@ -6,6 +6,7 @@ const failures = [];
 
 const registry = readJson("docs/contracts/definition/workitem-definition-registry.json");
 const fieldRefs = readJson("docs/contracts/definition/field-contract-refs.json");
+const stepDependencyContract = readJson("docs/contracts/definition/step-dependency-contract.json");
 const evidenceRefs = readJson("docs/contracts/definition/evidence-policy-refs.json");
 const riskRefs = readJson("docs/contracts/definition/risk-policy-refs.json");
 const ledgerRefs = readJson("docs/contracts/definition/ledger-policy-refs.json");
@@ -42,6 +43,7 @@ const requiredLegacyCards = [
 checkRegistryShape();
 checkDefinitionCoverage();
 checkDefinitionRefs();
+checkStepDependencyContract();
 checkSliceAndSurfaceAlignment();
 checkFactOwnershipAlignment();
 checkRuntimeImplementation();
@@ -146,6 +148,85 @@ function checkDefinitionRefs() {
   }
   for (const ref of ledgerRefs.refs || []) {
     if (typeof ref.appendOnly !== "boolean") failures.push(`${ref.ref} appendOnly must be boolean.`);
+  }
+}
+
+function checkStepDependencyContract() {
+  if (stepDependencyContract.version !== "oam.step-dependency-contract.v1") {
+    failures.push("step-dependency-contract version mismatch.");
+  }
+  if (stepDependencyContract.ruleLayer !== "scenario-instance-contract") {
+    failures.push("step-dependency-contract must declare ruleLayer scenario-instance-contract so sample mappings do not masquerade as global rules.");
+  }
+  if (!String(stepDependencyContract.abstractPattern || "").includes("inherited")) {
+    failures.push("step-dependency-contract must document the reusable inherited/user-selectable/derived/default pattern.");
+  }
+  if (!Array.isArray(stepDependencyContract.contracts) || stepDependencyContract.contracts.length === 0) {
+    failures.push("step-dependency-contract must declare at least one contract.");
+    return;
+  }
+  for (const contract of stepDependencyContract.contracts || []) {
+    for (const field of ["caseType", "workItemId", "contractKind"]) {
+      if (!present(contract[field])) failures.push(`step-dependency-contract item missing ${field}.`);
+    }
+    if (!Array.isArray(contract.dependsOn) || contract.dependsOn.length === 0) {
+      failures.push(`${contract.workItemId || "<unknown>"} step dependency must declare dependsOn.`);
+    }
+    for (const bucket of ["inheritedFields", "userSelectableFields", "derivedFields"]) {
+      if (!Array.isArray(contract[bucket])) {
+        failures.push(`${contract.workItemId || "<unknown>"} step dependency must declare ${bucket}.`);
+      }
+    }
+    if (contract.hiddenBackendDefaults !== undefined && !Array.isArray(contract.hiddenBackendDefaults)) {
+      failures.push(`${contract.workItemId || "<unknown>"} hiddenBackendDefaults must be an array when present.`);
+    }
+    for (const inherited of contract.inheritedFields || []) {
+      if (!present(inherited.fieldId)) failures.push(`${contract.workItemId} inherited field missing fieldId.`);
+      if (!present(inherited.sourceWorkItemId)) failures.push(`${contract.workItemId}.${inherited.fieldId || "<unknown>"} inherited field missing sourceWorkItemId.`);
+      if (inherited.surface !== "readonly-hidden-submit") failures.push(`${contract.workItemId}.${inherited.fieldId || "<unknown>"} inherited surface must be readonly-hidden-submit.`);
+      if (!Array.isArray(inherited.priority) || !inherited.priority.includes("latest-runtime-event-or-projection")) {
+        failures.push(`${contract.workItemId}.${inherited.fieldId || "<unknown>"} inherited priority must prefer latest runtime truth.`);
+      }
+    }
+    for (const selectable of contract.userSelectableFields || []) {
+      if (!present(selectable.fieldId)) failures.push(`${contract.workItemId} user-selectable field missing fieldId.`);
+      if (selectable.surface === "readonly-hidden-submit") failures.push(`${contract.workItemId}.${selectable.fieldId || "<unknown>"} user-selectable field must not use inherited readonly surface.`);
+    }
+    for (const derived of contract.derivedFields || []) {
+      if (!present(derived.fieldId)) failures.push(`${contract.workItemId} derived field missing fieldId.`);
+      if (!Array.isArray(derived.derivedFrom) || derived.derivedFrom.length === 0) failures.push(`${contract.workItemId}.${derived.fieldId || "<unknown>"} derived field must declare derivedFrom.`);
+      if (!present(derived.staleDraftPolicy)) failures.push(`${contract.workItemId}.${derived.fieldId || "<unknown>"} derived field must declare staleDraftPolicy.`);
+    }
+    for (const hiddenDefault of contract.hiddenBackendDefaults || []) {
+      if (!present(hiddenDefault.fieldId)) failures.push(`${contract.workItemId} hidden backend default missing fieldId.`);
+      if (!present(hiddenDefault.defaultValue)) failures.push(`${contract.workItemId}.${hiddenDefault.fieldId || "<unknown>"} hidden backend default missing defaultValue.`);
+    }
+  }
+  checkDormitoryBedSetupStepDependency();
+}
+
+function checkDormitoryBedSetupStepDependency() {
+  const bedSetup = (stepDependencyContract.contracts || []).find((item) => item.workItemId === "bedSetup");
+  if (!bedSetup) {
+    failures.push("step-dependency-contract must declare bedSetup.");
+    return;
+  }
+  if (bedSetup.contractKind !== "dormitory-golden-sample") {
+    failures.push("bedSetup step dependency must be marked as dormitory-golden-sample, not a global rule.");
+  }
+  if (!bedSetup.dependsOn?.includes("roomSetup")) failures.push("bedSetup step dependency must depend on roomSetup.");
+  const inherited = new Set((bedSetup.inheritedFields || []).map((item) => item.fieldId));
+  for (const fieldId of ["roomId", "bedCount"]) {
+    if (!inherited.has(fieldId)) failures.push(`bedSetup step dependency must inherit ${fieldId}.`);
+  }
+  const selectable = new Set((bedSetup.userSelectableFields || []).map((item) => item.fieldId));
+  if (!selectable.has("bedType")) failures.push("bedSetup step dependency must expose bedType as user-selectable generation mode.");
+  const derived = new Set((bedSetup.derivedFields || []).map((item) => item.fieldId));
+  for (const fieldId of ["bedLabels", "bedLayout"]) {
+    if (!derived.has(fieldId)) failures.push(`bedSetup step dependency must derive ${fieldId}.`);
+  }
+  if (!(bedSetup.hiddenBackendDefaults || []).some((item) => item.fieldId === "bedStatus" && item.defaultValue === "available")) {
+    failures.push("bedSetup step dependency must hide bedStatus and default it to available.");
   }
 }
 

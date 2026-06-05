@@ -59,6 +59,19 @@
     "stepStateVisualLanguage": "OperationStepRail must expose data-step-state and data-current-step; completed is green, ready is blue, terminal completed records remain completed as the primary state even when a correction marker exists, active append-only correction WorkItems are muted indigo with a correction marker and must not display as ordinary ready blue, in-progress is amber, not-started is neutral gray, blocked is red, and current step has a clean focus ring across new, readonly, and correction pages; use subtle background tint, thin semantic top bar, and numbered badge instead of harsh saturated blocks",
     "requiredEvidence": "user-visible frontend fixes require real browser operation and full-page screenshot evidence"
   },
+  "RuleScopeLayering": {
+    "companyKernelRules": "architecture, ownership, permissions, evidence, surface behavior, multilingual behavior, and repair protocol that every business line must follow",
+    "domainSampleRules": "business-specific semantics for an admitted or sample domain such as Accommodation / Dormitory",
+    "scenarioInstanceContracts": "concrete WorkItem fields, step dependencies, evidence policies, UI labels, and validation mappings",
+    "samplePurpose": "Dormitory is the golden sample used to extract reusable kernels for future business lines; concrete dormitory field names must stay in domain contracts, while reusable patterns are promoted only as abstract contracts."
+  },
+  "StepDependencyExperience": {
+    "contractRef": "docs/contracts/definition/step-dependency-contract.json",
+    "rule": "A step surface must render inherited fields as readonly context, user-selectable fields as the current interaction, derived fields as system output, and hidden backend defaults as non-user-visible contract values.",
+    "submitCheckDefault": "Default visible submit checks show only user-actionable missing inputs, blockers, and submission readiness.",
+    "submitCheckDetails": "Inherited, derived, hidden, material, and rule diagnostics are available as collapsed details or support/debug evidence only when they explain a blocker.",
+    "forbidden": ["telling a user to fill inherited values", "showing hidden backend defaults as manual inputs", "letting stale drafts override upstream truth", "hard-coding a sample-domain field mapping into global surface logic"]
+  },
   "BusinessOperationActionPaths": {
     "create": "active work is created as an Operations WorkItem and confirmed only through POST /api/operations/work-items/{workItemId}/confirm",
     "postSubmit": "successful active confirm auto-advances to the next actionable persisted WorkItem when one exists; readonly completed record is not a mandatory detour",

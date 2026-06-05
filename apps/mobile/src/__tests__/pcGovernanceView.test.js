@@ -18,6 +18,8 @@ import { pcGovernanceView } from "../views/pcGovernanceView.js";
 describe("PC Governance Full", () => {
   it("pc_governance_navigation_loads", () => {
     const html = routeView(ctx());
+    const root = repoRoot();
+    const css = readFileSync(resolve(root, "apps/mobile/src/styles/pc-governance.css"), "utf8");
 
     expect(html).toContain("data-pc-governance-full");
     expect(html).toContain("data-pc-governance-nav");
@@ -29,6 +31,20 @@ describe("PC Governance Full", () => {
     expect(html).toContain("Lens 健康");
     expect(html).toContain("办理管理");
     expect(html).toContain("发布工作区");
+    expect(html).toContain("data-governance-nav-group=\"read\"");
+    expect(html).toContain("data-governance-nav-group=\"admin\"");
+    expect(html).toContain("data-governance-section-mode=\"read\"");
+    expect(html).toContain("data-governance-section-mode=\"admin\"");
+    expect(html).toContain("data-governance-help");
+    expect(html).toContain("能做什么");
+    expect(html).toContain("不能做什么");
+    expect(html).toContain("权限与证据");
+    expect(css).toContain("position: sticky");
+    expect(css).toContain(".pc-governance-nav-group");
+    expect(css).toContain(".governance-help");
+    expect(css).toContain(".pc-governance-full[data-pc-governance-full] .governance-panel:target");
+    expect(css).toContain(".governance-panel.is-active-section");
+    expect(css).toContain("governance-grid:not(:has(.governance-panel:target))");
   });
 
   it("role_capability_admin_guarded", () => {
@@ -187,6 +203,74 @@ describe("PC Governance Full", () => {
     expect(html).not.toContain("id=\"accountCapabilities\"");
     expect(controller).toContain("capabilitiesForAccountRole");
     expect(controller).not.toContain("splitCsv");
+  });
+
+  it("account_user_actions_are_locked_against_duplicate_submits", () => {
+    const testCtx = ctx();
+    testCtx.state.pcGovernance.accountUsers = [{
+      userId: "u-1",
+      username: "audited-operator",
+      displayName: "Audited Operator",
+      department: "住宿运营部",
+      businessLine: "stay",
+      roles: ["operator"],
+      capabilities: ["operations.confirm"],
+      status: "active"
+    }];
+    testCtx.state.pcGovernanceActionLocks = {
+      accountUserCreate: true,
+      "accountPasswordReset:u-1": true,
+      "accountUserDisable:u-1": true
+    };
+    const html = pcGovernanceView(testCtx);
+
+    expect(html).toContain("data-account-user-create disabled");
+    expect(html).toContain("正在创建...");
+    expect(html).toContain("data-account-password-reset=\"u-1\" disabled");
+    expect(html).toContain("重置中...");
+    expect(html).toContain("data-account-user-disable=\"u-1\" disabled");
+    expect(html).toContain("禁用中...");
+  });
+
+  it("account_user_form_renders_from_draft_state", () => {
+    const testCtx = ctx({
+      pcGovernanceAccountDraft: {
+        username: "draft-user",
+        displayName: "草稿用户",
+        password: "DraftPassword123",
+        department: "住宿运营部",
+        businessLine: "stay",
+        role: "manager",
+        capabilities: ["operations.confirm", "account.user.manage"]
+      }
+    });
+    const html = pcGovernanceView(testCtx);
+
+    expect(html).toContain("value=\"draft-user\"");
+    expect(html).toContain("value=\"草稿用户\"");
+    expect(html).toContain("value=\"DraftPassword123\"");
+    expect(html).toContain("data-account-draft-field=\"username\"");
+    expect(html).toContain("data-account-draft-field=\"role\"");
+    expect(html).toContain("value=\"manager\" selected");
+    expect(html).toContain("value=\"account.user.manage\" checked");
+  });
+
+  it("pc_event_binding_is_generation_guarded_and_idempotent", () => {
+    const root = repoRoot();
+    const eventBinder = readFileSync(resolve(root, "apps/mobile/src/eventBinder.js"), "utf8");
+    const pcEventBinder = readFileSync(resolve(root, "apps/mobile/src/pcEventBinder.js"), "utf8");
+    const controller = readFileSync(resolve(root, "apps/mobile/src/pcGovernanceController.js"), "utf8");
+
+    expect(eventBinder).toContain("currentBindPass !== bindPass");
+    expect(pcEventBinder).toContain("const boundPcEvents = new WeakMap()");
+    expect(pcEventBinder).toContain("function bindOnce");
+    expect(pcEventBinder).toContain("syncGovernanceNavigationState");
+    expect(pcEventBinder).toContain("is-active-section");
+    expect(pcEventBinder).toContain("bindAccountDraftEvents");
+    expect(pcEventBinder).toContain("updateGovernanceAccountDraft");
+    expect(controller).toContain("pcGovernanceActionLocks");
+    expect(controller).toContain("isGovernanceActionLocked");
+    expect(controller).toContain("currentAccountUserDraft");
   });
 });
 

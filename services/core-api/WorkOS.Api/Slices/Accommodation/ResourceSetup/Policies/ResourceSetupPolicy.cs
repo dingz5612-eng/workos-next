@@ -1,4 +1,5 @@
 using WorkOS.Api.Runtime;
+using WorkOS.Api.Slices.Accommodation.ResourceSetup;
 
 namespace WorkOS.Api.Slices.Accommodation.ResourceSetup.Policies;
 
@@ -29,6 +30,20 @@ internal static class ResourceSetupPolicy
             return new ConfirmResult(ConfirmStatus.Invalid, "bed_labels_must_be_unique", null);
         }
 
+        var layoutValue = RuntimeFieldAliases.Value(values, "bedLayout", string.Empty);
+        if (!string.IsNullOrWhiteSpace(layoutValue))
+        {
+            if (!BedLayoutContract.TryParse(layoutValue, out var layout))
+            {
+                return new ConfirmResult(ConfirmStatus.Invalid, "bed_layout_invalid", null);
+            }
+
+            if (!SameLabels(labels, layout.Select(item => item.Label).ToArray()))
+            {
+                return new ConfirmResult(ConfirmStatus.Invalid, "bed_layout_must_match_bed_labels", new { bedCount, layoutCount = layout.Count });
+            }
+        }
+
         return null;
     }
 
@@ -36,4 +51,10 @@ internal static class ResourceSetupPolicy
         value.Split(new[] { ',', '，', ';', '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
             .Where(label => !string.IsNullOrWhiteSpace(label))
             .ToArray();
+
+    private static bool SameLabels(IReadOnlyList<string> labels, IReadOnlyList<string> layoutLabels) =>
+        labels.Count == layoutLabels.Count &&
+        labels
+            .OrderBy(item => item, StringComparer.OrdinalIgnoreCase)
+            .SequenceEqual(layoutLabels.OrderBy(item => item, StringComparer.OrdinalIgnoreCase), StringComparer.OrdinalIgnoreCase);
 }

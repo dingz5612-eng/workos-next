@@ -71,8 +71,18 @@ export function managerControlTowerView(ctx) {
 function navigation(ctx) {
   return `
     <nav class="pc-governance-nav" data-pc-governance-nav aria-label="PC Governance navigation">
-      ${pcGovernanceNavItems.map((label) => `
-        <a href="#${slug(label)}" data-governance-nav="${escapeAttr(ctx, label)}">${escapeHtml(ctx, panelTitle(label))}</a>
+      ${governanceNavGroups().map((group) => `
+        <div class="pc-governance-nav-group" data-governance-nav-group="${escapeAttr(ctx, group.kind)}">
+          <span>${escapeHtml(ctx, group.label)}</span>
+          <div>
+            ${group.items.map((label) => `
+              <a href="#${slug(label)}" data-governance-nav="${escapeAttr(ctx, label)}" data-governance-section-mode="${escapeAttr(ctx, governanceMode(label))}">
+                <span>${escapeHtml(ctx, panelTitle(label))}</span>
+                <small>${escapeHtml(ctx, governanceModeLabel(label))}</small>
+              </a>
+            `).join("")}
+          </div>
+        </div>
       `).join("")}
     </nav>
   `;
@@ -215,22 +225,26 @@ function accountUsersPanel(governance, ctx) {
   const canManage = canManageAccountUsers(ctx.state);
   const users = asArray(governance.accountUsers);
   const audits = asArray(governance.accountAudit);
-  const defaultCapabilities = new Set(capabilitiesForAccountRole("operator"));
+  const draft = accountUserDraft(ctx.state);
+  const draftCapabilities = asArray(draft.capabilities);
+  const defaultCapabilities = new Set((draftCapabilities.length ? draftCapabilities : capabilitiesForAccountRole(draft.role)).map((item) => String(item)));
+  const actionLocks = ctx.state.pcGovernanceActionLocks || {};
+  const createLocked = Boolean(actionLocks.accountUserCreate);
   return panel("Account Users", "account-users", `
     <section data-account-user-management>
       <h3>用户与权限管理</h3>
       <p data-capability-required="account.user.manage">账号由管理员或主管创建；部门、业务线、角色和能力只能在这里分配。</p>
       <div class="account-user-form">
-        ${accountTextField("accountUsername", "用户名", "", canManage, "off")}
-        ${accountTextField("accountDisplayName", "昵称", "", canManage, "off")}
-        ${accountTextField("accountPassword", "初始密码", "", canManage, "new-password", "password")}
-        ${accountTextField("accountDepartment", "部门", "住宿运营部", canManage)}
-        ${accountTextField("accountBusinessLine", "业务线", "stay", canManage)}
+        ${accountTextField(ctx, "accountUsername", "用户名", draft.username, canManage, "off", "text", "username")}
+        ${accountTextField(ctx, "accountDisplayName", "昵称", draft.displayName, canManage, "off", "text", "displayName")}
+        ${accountTextField(ctx, "accountPassword", "初始密码", draft.password, canManage, "new-password", "password", "password")}
+        ${accountTextField(ctx, "accountDepartment", "部门", draft.department, canManage, "", "text", "department")}
+        ${accountTextField(ctx, "accountBusinessLine", "业务线", draft.businessLine, canManage, "", "text", "businessLine")}
         <div class="account-form-field">
           <label for="accountRoles">角色</label>
-          <select id="accountRoles" data-account-role-select ${canManage ? "" : "disabled"}>
+          <select id="accountRoles" data-account-role-select data-account-draft-field="role" ${canManage ? "" : "disabled"}>
             ${accountRoleOptions.map((option) => `
-              <option value="${escapeAttr(ctx, option.value)}" ${option.value === "operator" ? "selected" : ""}>${escapeHtml(ctx, option.label)}</option>
+              <option value="${escapeAttr(ctx, option.value)}" ${option.value === draft.role ? "selected" : ""}>${escapeHtml(ctx, option.label)}</option>
             `).join("")}
           </select>
         </div>
@@ -246,20 +260,20 @@ function accountUsersPanel(governance, ctx) {
             `).join("")}
           </div>
         </fieldset>
-        <button type="button" data-account-user-create ${canManage ? "" : "disabled"}>创建用户</button>
+        <button type="button" data-account-user-create ${(canManage && !createLocked) ? "" : "disabled"}>${createLocked ? "正在创建..." : "创建用户"}</button>
       </div>
-      ${accountUserTable(users, canManage, ctx)}
+      ${accountUserTable(users, canManage, actionLocks, ctx)}
       <h3>账号审计</h3>
       ${tableOrEmpty(audits, ["auditEventId", "eventType", "actorId", "targetUserId", "occurredAtUtc"], ctx, "No account audit records loaded.")}
     </section>
   `);
 }
 
-function accountTextField(id, label, defaultValue, canManage, autocomplete = "", type = "text") {
+function accountTextField(ctx, id, label, defaultValue, canManage, autocomplete = "", type = "text", draftField = "") {
   return `
     <div class="account-form-field">
-      <label for="${id}">${label}</label>
-      <input id="${id}" type="${type}" value="${defaultValue}" ${autocomplete ? `autocomplete="${autocomplete}"` : ""} ${canManage ? "" : "disabled"}>
+      <label for="${id}">${escapeHtml(ctx, label)}</label>
+      <input id="${id}" type="${type}" value="${escapeAttr(ctx, defaultValue)}" ${draftField ? `data-account-draft-field="${escapeAttr(ctx, draftField)}"` : ""} ${autocomplete ? `autocomplete="${escapeAttr(ctx, autocomplete)}"` : ""} ${canManage ? "" : "disabled"}>
     </div>
   `;
 }
@@ -297,7 +311,7 @@ function adminPanel(governance, ctx) {
   `);
 }
 
-function accountUserTable(users, canManage, ctx) {
+function accountUserTable(users, canManage, actionLocks, ctx) {
   if (!users.length) return `<p>${escapeHtml(ctx, governanceText("No account users loaded."))}</p>`;
   return `
     <table>
@@ -305,7 +319,10 @@ function accountUserTable(users, canManage, ctx) {
         <th>用户名</th><th>昵称</th><th>部门</th><th>业务线</th><th>角色</th><th>能力</th><th>状态</th><th>操作</th>
       </tr></thead>
       <tbody>
-        ${users.map((user) => `
+        ${users.map((user) => {
+          const resetLocked = Boolean(actionLocks[`accountPasswordReset:${user.userId}`]);
+          const disableLocked = Boolean(actionLocks[`accountUserDisable:${user.userId}`]);
+          return `
           <tr>
             <td>${escapeHtml(ctx, user.username)}</td>
             <td>${escapeHtml(ctx, user.displayName)}</td>
@@ -315,12 +332,13 @@ function accountUserTable(users, canManage, ctx) {
             <td>${escapeHtml(ctx, asArray(user.capabilities).slice(0, 6).join(", "))}</td>
             <td>${escapeHtml(ctx, user.status || (user.enabled ? "active" : "disabled"))}</td>
             <td>
-              <input type="password" data-account-reset-password="${escapeAttr(ctx, user.userId)}" placeholder="新密码" ${canManage ? "" : "disabled"}>
-              <button type="button" data-account-password-reset="${escapeAttr(ctx, user.userId)}" ${canManage ? "" : "disabled"}>重置</button>
-              <button type="button" data-account-user-disable="${escapeAttr(ctx, user.userId)}" ${(canManage && user.status !== "disabled") ? "" : "disabled"}>禁用</button>
+              <input type="password" data-account-reset-password="${escapeAttr(ctx, user.userId)}" placeholder="新密码" ${(canManage && !resetLocked) ? "" : "disabled"}>
+              <button type="button" data-account-password-reset="${escapeAttr(ctx, user.userId)}" ${(canManage && !resetLocked) ? "" : "disabled"}>${resetLocked ? "重置中..." : "重置"}</button>
+              <button type="button" data-account-user-disable="${escapeAttr(ctx, user.userId)}" ${(canManage && user.status !== "disabled" && !disableLocked) ? "" : "disabled"}>${disableLocked ? "禁用中..." : "禁用"}</button>
             </td>
           </tr>
-        `).join("")}
+        `;
+        }).join("")}
       </tbody>
     </table>
   `;
@@ -417,10 +435,111 @@ function deviceSessionTable(governance, revokeAllowed, ctx) {
 function panel(title, id, body) {
   return `
     <section id="${id}" class="governance-panel" data-pc-section="${id}">
-      <h2>${panelTitle(title)}</h2>
+      <header class="governance-panel-header">
+        <div>
+          <span class="governance-mode-pill" data-governance-mode="${governanceMode(title)}">${governanceModeLabel(title)}</span>
+          <h2>${panelTitle(title)}</h2>
+        </div>
+        ${governanceHelp(title)}
+      </header>
       ${body}
     </section>
   `;
+}
+
+function governanceNavGroups() {
+  const groups = [
+    { label: "只读观察", kind: "read", items: ["Dashboard", "Production Observability", "Lens Health", "Work Management", "Objects", "Cases", "Ledgers", "Period Review", "RiskCommand"] },
+    { label: "证据审计", kind: "evidence", items: ["Evidence Review", "Audit"] },
+    { label: "受控操作", kind: "command", items: ["Reconciliation", "Correction Center", "Export", "Release Control Center"] },
+    { label: "权限治理", kind: "admin", items: ["Account Users", "Admin"] }
+  ];
+  const known = new Set(groups.flatMap((group) => group.items));
+  const remainder = pcGovernanceNavItems.filter((item) => !known.has(item));
+  return remainder.length ? [...groups, { label: "其他", kind: "other", items: remainder }] : groups;
+}
+
+function governanceMode(title) {
+  if (["Account Users", "Admin"].includes(title)) return "admin";
+  if (["Export", "Release Control Center"].includes(title)) return "command";
+  if (["Evidence Review", "Audit"].includes(title)) return "evidence";
+  return "read";
+}
+
+function governanceModeLabel(title) {
+  const labels = {
+    read: "只读",
+    evidence: "证据",
+    command: "可操作",
+    admin: "治理"
+  };
+  return labels[governanceMode(title)] || "只读";
+}
+
+function governanceHelp(title) {
+  const help = governanceHelpText(title);
+  if (!help) return "";
+  return `
+    <details class="governance-help" data-governance-help>
+      <summary aria-label="${escapeStatic(`${panelTitle(title)}说明`)}">?</summary>
+      <div>
+        <p>${escapeStatic(help.purpose)}</p>
+        <dl>
+          <dt>能做什么</dt><dd>${escapeStatic(help.action)}</dd>
+          <dt>不能做什么</dt><dd>${escapeStatic(help.boundary)}</dd>
+          <dt>权限与证据</dt><dd>${escapeStatic(help.proof)}</dd>
+        </dl>
+      </div>
+    </details>
+  `;
+}
+
+function governanceHelpText(title) {
+  const commonRead = {
+    action: "查看由后端真值、Projection/Lens 和审计数据汇总出的当前状态。",
+    boundary: "不能在本页直接改写业务事实；事实写入仍走 Operations Runtime 或对应 ControlPlaneCommand。",
+    proof: "读取动作受后端 session 能力控制；关键数据保留来源、事件或审计引用。"
+  };
+  const definitions = {
+    Dashboard: { purpose: "快速判断今天治理面是否健康。", ...commonRead },
+    "Production Observability": { purpose: "查看运行、Outbox、Projection、移动端和财务相关指标。", ...commonRead },
+    "Lens Health": { purpose: "查看 Lens 投影来源、延迟和降级原因。", ...commonRead },
+    "Work Management": { purpose: "查看办理项队列和当前分派状态。", ...commonRead },
+    Objects: { purpose: "查看房间、床位、余额等主对象读模型。", ...commonRead },
+    Cases: { purpose: "查看案件、阻断和需要跟进的风险对象。", ...commonRead },
+    Ledgers: { purpose: "查看账务摘要和关联账本引用。", ...commonRead },
+    "Evidence Review": { purpose: "查看证据对象和证据访问审计。", ...commonRead },
+    Reconciliation: { purpose: "查看对账候选项和差异队列。", ...commonRead },
+    "Correction Center": { purpose: "查看修正请求和修正审计。", ...commonRead },
+    "Period Review": { purpose: "查看周期复盘和周期快照状态。", ...commonRead },
+    RiskCommand: { purpose: "查看风险作战室中的来源支撑风险项。", ...commonRead },
+    "Account Users": {
+      purpose: "管理员或主管创建账号、绑定部门业务线、分配角色和能力。",
+      action: "可创建用户、重置密码、禁用账号；表单草稿会在页面刷新时保留。",
+      boundary: "不能在登录页自助选择部门、角色或权限；权限必须由这里的治理动作授予。",
+      proof: "所有账号动作写入 Account/User Kernel，并生成账号审计记录。"
+    },
+    Admin: {
+      purpose: "查看角色能力、功能开关、切换状态、定义版本和设备会话。",
+      action: "有治理权限时可维护角色能力或撤销设备会话。",
+      boundary: "不得绕过后端能力判断，也不得直接改写业务事实。",
+      proof: "治理动作需要对应 capability，并写入治理或设备审计。"
+    },
+    Audit: { purpose: "查看 DomainEvent、CommandSubmission、发布控制和修正审计。", ...commonRead },
+    Export: {
+      purpose: "发起受控导出，用于账务、案件时间线、证据审计和周期快照。",
+      action: "填写导出原因后发起审计导出；高风险导出要求可信 PC 设备。",
+      boundary: "不能无权限导出、不能跳过原因、不能生成无审计下载链接。",
+      proof: "导出请求会生成审计记录，下载链接有过期时间。"
+    },
+    "Release Control Center": {
+      purpose: "查看发布证据链和 GateResult，并进入发布工作区。",
+      action: "可打开发布工作区处理发布控制动作。",
+      boundary: "不能在治理总览里直接改写业务事实或绕过发布门禁。",
+      proof: "发布动作必须绑定 GateResult、Invariant、Shadow 和回滚证据。"
+    }
+  };
+  return definitions[title] || null;
 }
 
 function panelTitle(title) {
@@ -718,6 +837,19 @@ function canManageAccountUsers(state = {}) {
     capabilities.has("pc.governance.admin");
 }
 
+function accountUserDraft(state = {}) {
+  return {
+    username: "",
+    displayName: "",
+    password: "",
+    department: "住宿运营部",
+    businessLine: "stay",
+    role: "operator",
+    capabilities: [],
+    ...(state.pcGovernanceAccountDraft || {})
+  };
+}
+
 function productionMetrics(observability) {
   return observability?.productionMetrics || observability || {};
 }
@@ -758,4 +890,12 @@ function escapeHtml(ctx, value) {
 
 function escapeAttr(ctx, value) {
   return (ctx.escapeAttr || ctx.escapeHtml || String)(String(value ?? ""));
+}
+
+function escapeStatic(value) {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll("\"", "&quot;");
 }

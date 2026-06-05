@@ -40,6 +40,15 @@ export function createInitialState() {
     loginMessage: "",
     projectionEvents: [],
     releaseControl: { releases: [], selectedRelease: null },
+    pcGovernanceAccountDraft: {
+      username: "",
+      displayName: "",
+      password: "",
+      department: "住宿运营部",
+      businessLine: "stay",
+      role: "operator",
+      capabilities: []
+    },
     pcGovernance: {
       roleCapabilities: [],
       featureFlags: [],

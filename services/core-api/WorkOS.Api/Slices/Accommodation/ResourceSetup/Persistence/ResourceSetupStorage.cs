@@ -1,6 +1,7 @@
 using System.Globalization;
 using NpgsqlTypes;
 using WorkOS.Api.Runtime;
+using WorkOS.Api.Slices.Accommodation.ResourceSetup;
 using WorkOS.Api.Slices.Accommodation.ResourceSetup.Events;
 
 namespace WorkOS.Api.Slices.Accommodation.ResourceSetup.Persistence;
@@ -122,6 +123,7 @@ internal sealed class ResourceSetupStorage
     private void UpsertBeds(WorkspaceEvent workspaceEvent, RuntimeDbSession db, string status)
     {
         var labels = BedLabels(workspaceEvent);
+        var layoutTypes = BedLayoutTypes(workspaceEvent);
         if (labels.Count == 0)
         {
             UpsertBed(workspaceEvent, db, status);
@@ -133,7 +135,7 @@ internal sealed class ResourceSetupStorage
             var label = labels[index];
             var bedId = BedIdForLabel(workspaceEvent, label, index);
             var bedNo = BedNoForLabel(workspaceEvent, label, index);
-            var bunkType = BedTypeForLabel(workspaceEvent, index);
+            var bunkType = BedTypeForLabel(workspaceEvent, label, index, layoutTypes);
             UpsertBedRecord(workspaceEvent, db, status, bedId, bedNo, bunkType);
         }
     }
@@ -331,15 +333,26 @@ internal sealed class ResourceSetupStorage
             : label;
     }
 
-    private static string BedTypeForLabel(WorkspaceEvent workspaceEvent, int index)
+    private static IReadOnlyDictionary<string, string> BedLayoutTypes(WorkspaceEvent workspaceEvent)
     {
-        var explicitType = Value(workspaceEvent, "bedType", string.Empty);
-        if (!string.IsNullOrWhiteSpace(explicitType))
+        if (!BedLayoutContract.TryParse(Value(workspaceEvent, "bedLayout", string.Empty), out var layout) || layout.Count == 0)
         {
-            return explicitType;
+            return new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
         }
 
-        return index % 2 == 0 ? "lower" : "upper";
+        return layout
+            .GroupBy(entry => entry.Label, StringComparer.OrdinalIgnoreCase)
+            .ToDictionary(group => group.Key, group => group.First().Type, StringComparer.OrdinalIgnoreCase);
+    }
+
+    private static string BedTypeForLabel(WorkspaceEvent workspaceEvent, string label, int index, IReadOnlyDictionary<string, string> layoutTypes)
+    {
+        if (layoutTypes.TryGetValue(label, out var layoutType) && !string.IsNullOrWhiteSpace(layoutType))
+        {
+            return layoutType;
+        }
+
+        return BedLayoutContract.BedTypeForTemplate(Value(workspaceEvent, "bedType", string.Empty), index);
     }
 
     private static string Slug(string value) =>
