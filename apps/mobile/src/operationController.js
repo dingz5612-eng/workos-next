@@ -307,9 +307,9 @@ export async function submitCurrentCard(ctx) {
       });
       applyCommittedCardLocalState(item.id, card.id, ctx);
       if (result?.projectionStatus === "projected") clearDraft(item.id, card.id);
-      ctx.state.operationMessage = confirmSuccessMessage(result, ctx);
+      const successMessage = confirmSuccessMessage(result, ctx);
       const actionResult = {
-        ...actionResultFromConfirm(result, ctx.state.operationMessage, item, card, fieldValues),
+        ...actionResultFromConfirm(result, successMessage, item, card, fieldValues),
         workItemId: committedWorkItemId
       };
       let autoAdvanceTarget = postSubmitAutoAdvanceTarget(ctx.state, item.id, card.id, committedWorkItemId);
@@ -330,6 +330,7 @@ export async function submitCurrentCard(ctx) {
         ctx.state.selectedCardId = "";
         ctx.state.lastActionResult = actionResult;
       }
+      ctx.state.operationMessage = "";
     }
   } catch (error) {
     if (applyConfirmError(error, ctx)) return;
@@ -660,7 +661,8 @@ function applyCommittedReadSideSync(syncResult, ctx, workspaceId, cardId, submis
   }
   clearDraft(workspaceId, cardId);
   applyCommittedCardLocalState(workspaceId, cardId, ctx);
-  ctx.state.operationMessage = ctx.tr("submitDone");
+  const successMessage = ctx.tr("submitDone");
+  ctx.state.operationMessage = "";
   const autoAdvanceTarget = current.autoAdvanced
     ? null
     : postSubmitAutoAdvanceTarget(ctx.state, workspaceId, cardId, current.workItemId || ctx.state.selectedWorkItemId || "");
@@ -670,7 +672,7 @@ function applyCommittedReadSideSync(syncResult, ctx, workspaceId, cardId, submis
   ctx.state.lastActionResult = {
     ...current,
     status: "committed_projected",
-    message: ctx.state.operationMessage,
+    message: successMessage,
     projectionStatus: "projected",
     ...(autoAdvanceTarget ? {
       autoAdvanced: true,

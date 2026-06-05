@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-06-05T05:40:30.615Z",
+  "generated_at_utc": "2026-06-05T05:51:05.203Z",
   "generated_by": "scripts/surface/check-surface-runtime-guard-contract.mjs",
   "status": "passed",
   "check": "surface-runtime-guard-contract",

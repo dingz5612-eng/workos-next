@@ -1,5 +1,5 @@
 {
-  "generatedAtUtc": "2026-06-05T05:40:05.450Z",
+  "generatedAtUtc": "2026-06-05T05:50:30.305Z",
   "generatedBy": "project-hygiene-checkers",
   "stage": "PROJECT-HYGIENE-CLEANUP",
   "status": "PROJECT_HYGIENE_CLEANUP_LOCAL_PASSED",
@@ -1956,11 +1956,11 @@
       "repairPartsHrStatus": "L0 Contract Preview"
     },
     "company_kernel_alignment": {
-      "generatedAtUtc": "2026-06-05T05:40:05.312Z",
+      "generatedAtUtc": "2026-06-05T05:50:30.173Z",
       "generatedBy": "check-company-kernel-alignment",
       "stage": "OAM-CAB-V1.1-COMPANY-KERNEL-ALIGNMENT",
       "status": "passed",
-      "headSha": "7f831685510ca2681e30c49453b1818b842bdd86",
+      "headSha": "15ffa258859d0bff53a3855a29d635c5034e4f99",
       "contractRef": "docs/contracts/company-kernels/company-kernel-alignment-contract.json",
       "businessRealityMapRef": "docs/architecture/business-reality-oam-kernel-map.json",
       "kernelCount": 7,
@@ -2239,5 +2239,5 @@
   "dormitoryL2ProductionAllowed": false,
   "businessProduction": "blocked",
   "repairPartsHrStatus": "L0 Contract Preview",
-  "headSha": "7f831685510ca2681e30c49453b1818b842bdd86"
+  "headSha": "15ffa258859d0bff53a3855a29d635c5034e4f99"
 }

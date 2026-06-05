@@ -188,6 +188,27 @@ describe("SURFACE-C Operation Panel runtime contract", () => {
     expect(html).not.toContain('data-surface="completed-operation-record"');
   });
 
+  it("deduplicates projection pending success copy across operation message and result card", () => {
+    const message = "已提交成功，视图同步中。";
+    const ctx = createSurfaceCtx({
+      view: "operationPanel",
+      operationMessage: message,
+      lastActionResult: {
+        status: "committed_projection_pending",
+        workspaceId: "W-STAY-RESOURCE",
+        cardId: "roomSetup",
+        message
+      }
+    });
+
+    const html = routeView(ctx);
+    const text = visibleText(html);
+
+    expect((text.match(/已提交成功，视图同步中。/g) || []).length).toBe(1);
+    expect(html).toContain('data-surface="projection-pending"');
+    expect(html).not.toContain('class="operation-message"');
+  });
+
   it("renders completed operation records directly as the readonly record before correction", () => {
     const ctx = createSurfaceCtx({ view: "operationPanel" });
     ctx.state.runtimeStore.workspaces[0].cards[0].status = "done";
