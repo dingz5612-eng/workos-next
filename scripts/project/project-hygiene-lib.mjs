@@ -74,7 +74,12 @@ export function fileHash(relativePath) {
 }
 
 export function git(args) {
-  const result = spawnSync("git", args, { cwd: root, encoding: "utf8", shell: process.platform === "win32" });
+  const result = spawnSync("git", args, {
+    cwd: root,
+    encoding: "utf8",
+    shell: process.platform === "win32",
+    maxBuffer: 64 * 1024 * 1024
+  });
   if (result.status !== 0) throw new Error(result.stderr || result.stdout || `git ${args.join(" ")} failed`);
   return result.stdout.trim();
 }

@@ -121,7 +121,7 @@ jobs:
 
       - name: Validate OAM clean architecture baseline
         env:
-          OAM_ALLOW_PENDING_MAIN_REBIND: ${{ github.ref == 'refs/heads/main' && 'true' || (github.event_name == 'pull_request' && contains(github.head_ref, 'main-rebind') && 'true' || 'false') }}
+          OAM_ALLOW_PENDING_MAIN_REBIND: ${{ github.ref != 'refs/heads/main' && 'true' || 'false' }}
         run: |
           node scripts/project/check-project-hygiene.mjs
           node scripts/check-oam-clean-baseline.mjs
