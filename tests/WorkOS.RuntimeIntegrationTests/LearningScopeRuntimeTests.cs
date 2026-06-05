@@ -14,9 +14,9 @@ public sealed class LearningScopeRuntimeTests
         var homeView = SurfaceRuntimeGuardTestFiles.Read("apps", "mobile", "src", "views", "homeView.js");
 
         StringAssert.Contains(learningContract, "\"scopeRules\": [\"role\", \"surface\", \"tenant\"]");
-        StringAssert.Contains(searchView, "learningContentItems");
+        Assert.IsFalse(searchView.Contains("learningContentItems", StringComparison.Ordinal), "Search must not render learning content after personal library consolidation.");
         StringAssert.Contains(meView, "learningCenter");
-        StringAssert.Contains(homeView, "todayLearning");
+        Assert.IsFalse(homeView.Contains("todayLearning", StringComparison.Ordinal), "Home must stay focused on today's work, not learning catalog content.");
         StringAssert.Contains(SurfaceRuntimeGuardTestFiles.Read("docs", "surface", "surface-runtime-guard-contract.yml"), "learning content scoped by role/surface/tenant");
     }
 }
