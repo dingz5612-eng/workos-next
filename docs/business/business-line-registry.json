@@ -3,7 +3,7 @@
   "businessLines": [
     {
       "businessLineId": "dormitory",
-      "displayName": "Dormitory",
+      "displayName": "宿舍",
       "level": "L1 Internal Pilot",
       "productionAllowed": false,
       "internalPilotAllowed": true,
@@ -12,11 +12,11 @@
       "allowedScopes": ["internal_pilot_scope", "oam_release_control", "workitem_native_mobile"],
       "blockedActions": ["production_confirm", "unrestricted_refund", "period_close", "bulk_import"],
       "owner": "dormitory-business-owner",
-      "nextGate": "L1 Internal Pilot Observation Window"
+      "nextGate": "L1 内部试点观察窗口"
     },
     {
       "businessLineId": "repair",
-      "displayName": "Repair",
+      "displayName": "维修",
       "level": "L0 Contract Preview",
       "productionAllowed": false,
       "internalPilotAllowed": false,
@@ -25,11 +25,11 @@
       "allowedScopes": ["learning", "prepare_only"],
       "blockedActions": ["production_confirm", "production_work_item"],
       "owner": "repair-domain-owner",
-      "nextGate": "future L0 to L1 admission"
+      "nextGate": "后续 L0 到 L1 准入"
     },
     {
       "businessLineId": "parts",
-      "displayName": "Parts",
+      "displayName": "配件",
       "level": "L0 Contract Preview",
       "productionAllowed": false,
       "internalPilotAllowed": false,
@@ -38,7 +38,7 @@
       "allowedScopes": ["learning", "prepare_only"],
       "blockedActions": ["production_confirm", "production_work_item"],
       "owner": "parts-domain-owner",
-      "nextGate": "future L0 to L1 admission"
+      "nextGate": "后续 L0 到 L1 准入"
     },
     {
       "businessLineId": "hr",
@@ -51,7 +51,7 @@
       "allowedScopes": ["learning", "prepare_only"],
       "blockedActions": ["production_confirm", "production_work_item"],
       "owner": "hr-domain-owner",
-      "nextGate": "future L0 to L1 admission"
+      "nextGate": "后续 L0 到 L1 准入"
     }
   ]
 }

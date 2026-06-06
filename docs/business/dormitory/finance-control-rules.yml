@@ -1,21 +1,21 @@
 {
   "domainId": "dormitory",
   "version": "oam.dormitory.v1",
-  "moneyFactSource": "FinanceTruthPack intake with MoneyKernelPack balanced ledger commit only",
+  "moneyFactSource": "金额事实只能进入 FinanceTruthPack，并由 MoneyKernelPack 生成平衡账本提交。",
   "rules": [
-    {"id":"dorm-fin-001","statement":"deposit is liability, not revenue","blocksProductionIfMissing":true},
-    {"id":"dorm-fin-002","statement":"ordinary payment must not mix with deposit movement","blocksProductionIfMissing":true},
-    {"id":"dorm-fin-003","statement":"every money confirmation must route through FinanceTruthPack then produce balanced LedgerTransaction through MoneyKernelPack","blocksProductionIfMissing":true},
-    {"id":"dorm-fin-004","statement":"ledger_entry is immutable and corrections are append-only reversal or compensating transactions","blocksProductionIfMissing":true},
-    {"id":"dorm-fin-005","statement":"checkout settlement reads ledger/projection and must not fabricate deposit facts","blocksProductionIfMissing":true},
-    {"id":"dorm-fin-006","statement":"frontend balance and total fields are not finance facts","blocksProductionIfMissing":true}
+    {"id":"dorm-fin-001","statement":"押金是负债，不是收入。","blocksProductionIfMissing":true},
+    {"id":"dorm-fin-002","statement":"普通收款不得混入押金流转。","blocksProductionIfMissing":true},
+    {"id":"dorm-fin-003","statement":"每个金额确认必须先进入 FinanceTruthPack，再由 MoneyKernelPack 生成平衡 LedgerTransaction。","blocksProductionIfMissing":true},
+    {"id":"dorm-fin-004","statement":"LedgerEntry 不可变，纠错只能追加 reversal 或 compensation 交易。","blocksProductionIfMissing":true},
+    {"id":"dorm-fin-005","statement":"退住结算只能读取账本和投影，不得伪造押金事实。","blocksProductionIfMissing":true},
+    {"id":"dorm-fin-006","statement":"前端余额和合计字段不是财务事实。","blocksProductionIfMissing":true}
   ],
   "commands": [
-    {"commandType":"DepositReceipt","ledgerImpact":"debit cash, credit deposit liability"},
-    {"commandType":"PaymentReceipt","ledgerImpact":"debit cash, credit receivable/revenue allocation"},
-    {"commandType":"RefundDeposit","ledgerImpact":"debit deposit liability, credit cash"},
-    {"commandType":"CheckoutSettlement","ledgerImpact":"balanced settlement only from ledger projection"},
-    {"commandType":"LedgerCorrectionApply","ledgerImpact":"append-only reversal or compensating transaction"}
+    {"commandType":"DepositReceipt","ledgerImpact":"借记现金或银行资产，贷记押金负债。"},
+    {"commandType":"PaymentReceipt","ledgerImpact":"借记现金或银行资产，贷记住宿应收或收入分配。"},
+    {"commandType":"RefundDeposit","ledgerImpact":"借记押金负债，贷记现金或银行资产。"},
+    {"commandType":"CheckoutSettlement","ledgerImpact":"只能基于账本投影生成平衡结算。"},
+    {"commandType":"LedgerCorrectionApply","ledgerImpact":"只能追加 reversal 或 compensation 交易。"}
   ],
   "productionAllowed": false
 }

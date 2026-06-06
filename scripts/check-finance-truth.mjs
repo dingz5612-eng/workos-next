@@ -79,10 +79,25 @@ function validateContracts() {
   }
 
   const kernel = readDocument("docs/business/finance/money-kernel-rules.yml");
-  for (const required of ["deposit is liability, not revenue", "refund is liability decrease, not expense", "correction must be reversal or compensation"]) {
-    if (!(kernel.rules ?? []).some((item) => item.statement === required)) {
-      violations.push(violation("finance_truth.money_kernel_rule_missing", "docs/business/finance/money-kernel-rules.yml", `Missing money kernel rule: ${required}.`, { required }));
+  const requiredMoneyKernelRules = [
+    "money-kernel-003",
+    "money-kernel-004",
+    "money-kernel-006"
+  ];
+  const moneyKernelRuleIds = new Set((kernel.rules ?? []).map((item) => item.id));
+  for (const required of requiredMoneyKernelRules) {
+    if (!moneyKernelRuleIds.has(required)) {
+      violations.push(violation("finance_truth.money_kernel_rule_missing", "docs/business/finance/money-kernel-rules.yml", `缺少 Money Kernel 规则: ${required}.`, { required }));
     }
+  }
+  if (kernel.accountMappings?.deposit_receipt?.credit !== "liability.deposit") {
+    violations.push(violation("finance_truth.deposit_liability_mapping_missing", "docs/business/finance/money-kernel-rules.yml", "押金收取必须贷记 liability.deposit。"));
+  }
+  if (kernel.accountMappings?.refund_deposit?.debit !== "liability.deposit") {
+    violations.push(violation("finance_truth.refund_liability_mapping_missing", "docs/business/finance/money-kernel-rules.yml", "押金退款必须借记 liability.deposit。"));
+  }
+  if (kernel.accountMappings?.ledger_correction_apply?.debit !== "correction.reversal" || kernel.accountMappings?.ledger_correction_apply?.credit !== "correction.offset") {
+    violations.push(violation("finance_truth.correction_mapping_missing", "docs/business/finance/money-kernel-rules.yml", "财务纠错必须使用 reversal 与 compensation 映射。"));
   }
 
   const ledger = readDocument("docs/business/finance/ledger-transaction-contract.yml");

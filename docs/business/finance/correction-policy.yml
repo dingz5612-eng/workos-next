@@ -4,10 +4,10 @@
   "allowedModes": ["reversal", "compensation"],
   "forbiddenModes": ["update_old_entry", "delete_old_entry", "overwrite_snapshot"],
   "rules": [
-    {"id":"finance-correction-001","statement":"correction never updates old ledger_entries","severity":"P0"},
-    {"id":"finance-correction-002","statement":"correction never deletes old ledger_entries","severity":"P0"},
-    {"id":"finance-correction-003","statement":"correction appends reversal or compensation LedgerTransaction","severity":"P0"},
-    {"id":"finance-correction-004","statement":"correction rebuilds affected ledger projections","severity":"P0"}
+    {"id":"finance-correction-001","statement":"纠错不得更新旧 ledger_entries。","severity":"P0"},
+    {"id":"finance-correction-002","statement":"纠错不得删除旧 ledger_entries。","severity":"P0"},
+    {"id":"finance-correction-003","statement":"纠错只能追加 reversal 或 compensation LedgerTransaction。","severity":"P0"},
+    {"id":"finance-correction-004","statement":"纠错后必须重建受影响的账本投影。","severity":"P0"}
   ],
   "runtimeService": "LedgerProjectionRebuilder"
 }

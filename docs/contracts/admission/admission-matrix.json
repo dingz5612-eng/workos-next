@@ -11,7 +11,7 @@
       "confirmAllowed": true,
       "productionAllowed": false,
       "mode": "internal_pilot_observation",
-      "reason": "Dormitory is admitted only for L1 internal pilot observation; production remains blocked.",
+      "reason": "宿舍当前只准入 L1 内部试点观察，生产仍保持阻断。",
       "blockingSources": [
         "docs/oam/current-admission-state.json"
       ],
@@ -35,7 +35,7 @@
       "confirmAllowed": false,
       "productionAllowed": false,
       "mode": "production_blocked",
-      "reason": "Business production and dormitory production are blocked by current OAM admission state.",
+      "reason": "当前 OAM 准入状态阻断 Business Production 和 Dormitory Production。",
       "blockingSources": [
         "docs/oam/current-admission-state.json",
         "docs/business/business-line-registry.json"
@@ -64,7 +64,7 @@
       "confirmAllowed": false,
       "productionAllowed": false,
       "mode": "contract_preview",
-      "reason": "Repair is L0 Contract Preview and can only expose learning or prepare-only surfaces.",
+      "reason": "维修当前为 L0 合同预览，只能展示学习或 prepare-only 界面。",
       "blockingSources": [
         "docs/business/business-line-registry.json"
       ],
@@ -86,7 +86,7 @@
       "confirmAllowed": false,
       "productionAllowed": false,
       "mode": "contract_preview",
-      "reason": "Parts is L0 Contract Preview and can only expose learning or prepare-only surfaces.",
+      "reason": "配件当前为 L0 合同预览，只能展示学习或 prepare-only 界面。",
       "blockingSources": [
         "docs/business/business-line-registry.json"
       ],
@@ -108,7 +108,7 @@
       "confirmAllowed": false,
       "productionAllowed": false,
       "mode": "contract_preview",
-      "reason": "HR is L0 Contract Preview and can only expose learning or prepare-only surfaces.",
+      "reason": "HR 当前为 L0 合同预览，只能展示学习或 prepare-only 界面。",
       "blockingSources": [
         "docs/business/business-line-registry.json"
       ],
@@ -132,7 +132,7 @@
       "confirmAllowed": false,
       "productionAllowed": false,
       "mode": "production_blocked",
-      "reason": "Payment confirmation is high risk and needs finance capability, trusted device, evidence, and current admission; production remains blocked.",
+      "reason": "收款确认属于高风险动作，必须具备财务能力、可信设备、证据和当前准入；生产仍保持阻断。",
       "blockingSources": [
         "docs/oam/current-admission-state.json",
         "docs/contracts/oam.current.json#/productCapabilities"
@@ -168,7 +168,7 @@
       "confirmAllowed": false,
       "productionAllowed": false,
       "mode": "production_blocked",
-      "reason": "Deposit refund is high risk and needs finance approval, trusted device, evidence, and current admission; production remains blocked.",
+      "reason": "押金退款属于高风险动作，必须具备财务审批、可信设备、证据和当前准入；生产仍保持阻断。",
       "blockingSources": [
         "docs/oam/current-admission-state.json",
         "docs/contracts/oam.current.json#/productCapabilities"
@@ -208,7 +208,7 @@
       "confirmAllowed": false,
       "productionAllowed": false,
       "mode": "production_blocked",
-      "reason": "Period close is high risk and needs governance capability, trusted device, frozen ledger evidence, and current admission; production remains blocked.",
+      "reason": "周期关闭属于高风险动作，必须具备治理能力、可信设备、冻结账本证据和当前准入；生产仍保持阻断。",
       "blockingSources": [
         "docs/oam/current-admission-state.json",
         "docs/contracts/oam.current.json#/productCapabilities"
@@ -242,7 +242,7 @@
       "confirmAllowed": false,
       "productionAllowed": false,
       "mode": "blocked",
-      "reason": "Bulk import is blocked for L1 observation and requires a separate production readiness gate.",
+      "reason": "批量导入在 L1 观察期内保持阻断，必须另行通过生产就绪门禁。",
       "blockingSources": [
         "docs/business/business-line-registry.json",
         "docs/oam/current-admission-state.json"
@@ -271,7 +271,7 @@
       "confirmAllowed": false,
       "productionAllowed": false,
       "mode": "blocked",
-      "reason": "Production confirm is blocked until Business Production and target business-line admission gates pass.",
+      "reason": "production_confirm 在 Business Production 与目标业务线准入门禁通过前保持阻断。",
       "blockingSources": [
         "docs/oam/current-admission-state.json",
         "docs/business/business-line-registry.json"
@@ -299,7 +299,7 @@
       "confirmAllowed": false,
       "productionAllowed": false,
       "mode": "prepare_only",
-      "reason": "Prepare-only surfaces can expose fields and evidence requirements but cannot confirm.",
+      "reason": "prepare-only 界面可以展示字段和证据要求，但不能确认。",
       "blockingSources": [
         "docs/contracts/runtime-surface-policy.json"
       ],
@@ -321,7 +321,7 @@
       "confirmAllowed": false,
       "productionAllowed": false,
       "mode": "contract_preview",
-      "reason": "Contract preview surfaces are visible for learning and planning only.",
+      "reason": "合同预览界面只用于学习和计划。",
       "blockingSources": [
         "docs/business/business-line-registry.json"
       ],

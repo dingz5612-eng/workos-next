@@ -2,13 +2,13 @@
   "version": "oam.finance.money-kernel-rules.v1",
   "packId": "MoneyKernelPack",
   "rules": [
-    {"id":"money-kernel-001","statement":"LedgerTransaction must balance before commit","severity":"P0"},
-    {"id":"money-kernel-002","statement":"LedgerEntry is append-only; update/delete is forbidden","severity":"P0"},
-    {"id":"money-kernel-003","statement":"deposit is liability, not revenue","severity":"P0"},
-    {"id":"money-kernel-004","statement":"refund is liability decrease, not expense","severity":"P0"},
-    {"id":"money-kernel-005","statement":"ordinary payment must not use deposit liability account","severity":"P0"},
-    {"id":"money-kernel-006","statement":"correction must be reversal or compensation","severity":"P0"},
-    {"id":"money-kernel-007","statement":"checkout settlement reads projection and never fabricates ledger facts","severity":"P0"}
+    {"id":"money-kernel-001","statement":"LedgerTransaction 提交前必须借贷平衡。","severity":"P0"},
+    {"id":"money-kernel-002","statement":"LedgerEntry 只能追加写入，禁止更新或删除。","severity":"P0"},
+    {"id":"money-kernel-003","statement":"押金是负债，不是收入。","severity":"P0"},
+    {"id":"money-kernel-004","statement":"押金退款是负债减少，不是费用。","severity":"P0"},
+    {"id":"money-kernel-005","statement":"普通收款不得使用押金负债账户。","severity":"P0"},
+    {"id":"money-kernel-006","statement":"财务纠错只能使用 reversal 或 compensation。","severity":"P0"},
+    {"id":"money-kernel-007","statement":"退住结算只能读取投影和账本，不得伪造账务事实。","severity":"P0"}
   ],
   "accountMappings": {
     "deposit_receipt": {"debit":"asset.cash_or_bank","credit":"liability.deposit"},

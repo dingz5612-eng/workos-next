@@ -13,7 +13,7 @@ function stubBrowser({ href = "https://mobile.workosnext.local/?api=http://127.0
   return storage;
 }
 
-describe("Stage 5 frontend trust boundary", () => {
+describe("frontend trust boundary", () => {
   beforeEach(() => {
     vi.resetModules();
     vi.unstubAllGlobals();

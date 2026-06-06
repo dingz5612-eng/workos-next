@@ -8,6 +8,34 @@
   "stewardshipWorkItems": ["SubjectStewardshipWorkItem", "VehicleStewardshipWorkItem"],
   "receipts": ["SubjectReceipt", "VehicleReceipt", "SubjectRelationshipReceipt", "SubjectVehicleRelationshipReceipt", "MergedReceipt", "SupersededReceipt", "SharedReceipt"],
   "readModels": ["SubjectSummary", "VehicleSummary", "Profile"],
+  "currentDesignInputRules": [
+    {
+      "ruleId": "shared-governance.subject-is-center-truth",
+      "中文名称": "主体唯一中心真值",
+      "statement": "主体可以代表客户、员工、司机、供应商或合作方；业务域不得为同一人或组织另建主数据。",
+      "allowedDomainUse": ["提交 SubjectIntake", "读取 SubjectReceipt", "读取 Profile"],
+      "forbiddenDomainUse": ["直接创建 Subject", "用页面字段替代 SubjectReceipt", "用登录角色替代正式主体关系"]
+    },
+    {
+      "ruleId": "shared-governance.vehicle-is-center-truth",
+      "中文名称": "车辆唯一中心真值",
+      "statement": "车辆、车辆画像、车辆状态和主体车辆关系归共享治理；维修、配件、能源保障和自有车辆回收只能引用回执。",
+      "allowedDomainUse": ["提交 VehicleIntake", "读取 VehicleReceipt", "读取 SubjectVehicleRelationshipReceipt"],
+      "forbiddenDomainUse": ["直接创建 Vehicle", "按业务线复制车辆档案", "用车辆画像替代财务事实"]
+    },
+    {
+      "ruleId": "shared-governance.receipt-is-read-side",
+      "中文名称": "共享回执只读",
+      "statement": "SharedReceipt 只能帮助业务域、财务和搜索识别当前主体或车辆引用，不得替代准入、确认或账务判断。",
+      "forbiddenDomainUse": ["替代 AdmissionDecision", "替代 confirmAllowed", "替代 productionAllowed", "作为 LedgerEntry 提交依据"]
+    },
+    {
+      "ruleId": "shared-governance.conflict-must-return-to-stewardship",
+      "中文名称": "冲突回到治理工单",
+      "statement": "主体重复、车辆冲突、关系冲突和跨域信息冲突必须创建治理工单处理，不能由业务页面静默覆盖。",
+      "requiredWorkItems": ["SubjectStewardshipWorkItem", "VehicleStewardshipWorkItem"]
+    }
+  ],
   "duplicatePolicy": {
     "policyId": "shared-governance.duplicate-review",
     "routeTo": "SubjectStewardshipWorkItem",

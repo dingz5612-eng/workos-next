@@ -54,6 +54,26 @@
     "FinanceTruthPipeline.ValidateBalanced",
     "OperationsUnitOfWork.ValidateLedgerBoundary"
   ],
+  "currentDesignInputBoundaries": [
+    {
+      "boundaryId": "ledger.business-domain-no-direct-write",
+      "中文名称": "业务域不得直接写正式账本",
+      "statement": "宿舍、维修、配件和 HR 只能提交金额依据或费用依据；LedgerTransaction 与 LedgerEntry 只能由 MoneyKernelPack 追加生成。",
+      "mustFailWhen": ["业务域提交 LedgerEntry", "业务域更新 LedgerEntry", "业务域删除 LedgerEntry"]
+    },
+    {
+      "boundaryId": "ledger.deposit-liability",
+      "中文名称": "押金是负债",
+      "statement": "押金收取只能贷记押金负债；押金退款只能冲减原押金负债，不得进入收入或经营支出。",
+      "mustFailWhen": ["押金记入 revenue", "退款记入 expense", "退款未引用原押金账户"]
+    },
+    {
+      "boundaryId": "ledger.read-side-no-truth",
+      "中文名称": "读侧不得成为账务真值",
+      "statement": "Search、BI、Dashboard、Projection、Lens、Profile、Summary、Receipt 只能读取或展示财务结果，不得生成正式账本事实。",
+      "mustFailWhen": ["读侧提交 LedgerTransaction", "共享回执替代财务确认", "看板手动覆盖账务结果"]
+    }
+  ],
   "testRefs": [
     "tests/WorkOS.UnitTests/LedgerSemanticRulesTests.cs",
     "tests/WorkOS.RuntimeIntegrationTests/DormitoryFinanceRuntimeSemanticTests.cs"

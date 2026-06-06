@@ -3,20 +3,20 @@
   "version": "oam.dormitory.v1",
   "stage": "current_oam",
   "goCriteria": [
-    "north-star and metrics-tree complete",
-    "five value streams complete",
-    "WorkItem catalog has owner SLA evidence ledgerImpact affectedFacts",
-    "evidence policy binds requirementId workItemId submissionId tenantId evidenceHash",
-    "finance rules keep deposit liability separate from revenue",
-    "risk command rules block 403 409 422 correctly",
-    "certification scenarios declared"
+    "北极星指标和指标树完整。",
+    "五条价值流完整。",
+    "WorkItem 目录包含责任人、SLA、证据、账务影响和受影响事实。",
+    "证据策略绑定 requirementId、workItemId、submissionId、tenantId 和 evidenceHash。",
+    "财务规则保持押金负债与收入分离。",
+    "风险命令规则正确阻断 403、409、422。",
+    "认证场景已经声明。"
   ],
   "noGoCriteria": [
-    "Dormitory page-specific write API",
-    "Dormitory runtime behavior in current OAM",
-    "productionAllowed true",
-    "deposit treated as revenue",
-    "WorkItemBundle as fact source"
+    "出现宿舍页面私有写 API。",
+    "宿舍运行行为绕过当前 OAM。",
+    "productionAllowed 被设为 true。",
+    "押金被当作收入。",
+    "WorkItemBundle 被当作事实源。"
   ],
   "productionAllowed": false
 }

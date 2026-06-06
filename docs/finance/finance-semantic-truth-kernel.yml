@@ -19,13 +19,13 @@
     "OperationsUnitOfWork.ValidateLedgerBoundary"
   ],
   "semanticRules": [
-    "deposit_receipt credits deposit liability and never revenue",
-    "ordinary_payment credits stay receivable and never deposit liability",
-    "refund_deposit debits original deposit liability and never expense",
-    "correction uses reversal or compensation only",
-    "unclear money routes to UnclearMoneyCase before ledger commit",
-    "currency mismatch fails before commit",
-    "balanced but wrong accountType fails before commit"
+    "deposit_receipt 必须贷记押金负债，绝不能记入收入。",
+    "ordinary_payment 必须贷记住宿应收，绝不能混入押金负债。",
+    "refund_deposit 必须借记原押金负债，绝不能记入费用。",
+    "纠错只能使用 reversal 或 compensation 追加模式。",
+    "不清楚款项必须先进入 UnclearMoneyCase，澄清前不得写账。",
+    "币种不一致必须在提交前失败。",
+    "账平但 accountType 语义错误必须在提交前失败。"
   ],
   "artifacts": [
     "artifacts/oam/checks/finance-semantic-truth-result.json",

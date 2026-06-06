@@ -7,9 +7,9 @@
   "productionConfirmAllowed": false,
   "internalPilotConfirmAllowed": true,
   "rules": [
-    "Business production requires OAM product capability, domain invariant, API, DB, permission, evidence, trace, audit, and test coverage.",
-    "Dormitory internal pilot work items may confirm through Operations Runtime when backend session capability and device checks pass.",
-    "Search, Projection, PC Governance, and Control Plane may not open production confirmation."
+    "Business Production 必须同时具备 OAM 产品能力、领域不变量、API、数据库、权限、证据、追踪、审计和测试覆盖。",
+    "宿舍内部试点 WorkItem 只有在后端会话能力和设备检查通过后，才能通过 Operations Runtime 确认。",
+    "Search、Projection、PC Governance 和 Control Plane 不得打开生产确认。"
   ],
   "blockingSources": [
     "docs/oam/current-architecture.md",

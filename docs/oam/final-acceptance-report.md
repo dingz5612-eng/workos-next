@@ -15,7 +15,7 @@ WorkOSNext 已收敛为唯一当前 OAM 架构：主执行链是 Operations Runt
 
 本次收敛覆盖并复验了以下合并阻断点：PC 测试已纳入独立 CI 入口，合同本地路径引用已由当前引用完整性检查保护，旧入口和旧阶段语义由 OAM 纯净度检查阻断，已删除 artifact 引用已改为当前证据目录或当前生成命令，Control Plane runner 的 `script`、`checkRef`、`evidenceRef` 均指向真实存在或当前运行时生成的路径。
 
-阶段 7 全量测试在当前源码上重新构建运行完成：移动端单测、PC 单测、移动端覆盖率、Playwright smoke、`WorkOSNext.sln` Release 构建、后端 Unit、Runtime Integration、Database Security、Policy as Code、Release Evidence 和 Runtime Contract 全部通过。
+完整最终验收在当前源码上重新构建运行完成：移动端单测、PC 单测、移动端覆盖率、Playwright smoke、`WorkOSNext.sln` Release 构建、后端 Unit、Runtime Integration、Database Security、Policy as Code、Release Evidence 和 Runtime Contract 全部通过。
 
 ## 全项目文件职责和边界表
 
@@ -83,21 +83,21 @@ WorkOSNext 已收敛为唯一当前 OAM 架构：主执行链是 Operations Runt
 
 ## 测试覆盖率报告
 
-前端覆盖率：Statements 75.75%，Branches 62.15%，Functions 81.07%，Lines 79.75%。
+前端覆盖率：Statements 78.54%，Branches 63.38%，Functions 85.00%，Lines 82.69%。
 
 后端覆盖率文件已生成：
-- Unit tests: line 33.28%，branch 45.52%。
+- Unit tests: line 33.28%，branch 45.53%。
 - Runtime integration tests: line 20.09%，branch 33.03%。
 - Database security tests: line 0.58%，branch 0.49%。
 - Policy tests: line 0.95%，branch 0.78%。
 - Release control tests: line 0.00%，branch 0.00%。
 
-阶段 7 重新构建测试结果：
-- 移动端单测：57 个测试文件、306 个用例通过。
+完整最终验收重新构建测试结果：
+- 移动端单测：59 个测试文件、313 个用例通过。
 - PC 单测：4 个测试文件、4 个用例通过，作为独立验收入口。
 - Playwright smoke：5 个真实浏览器用例通过。
 - 后端构建：`WorkOSNext.sln` Release 构建通过，仅保留既有 analyzer warning。
-- 后端测试：Unit 224 个、Runtime Integration 55 个、Database Security 9 个、Policy as Code 4 个、Release Evidence 3 个全部通过。
+- 后端测试：Unit 224 个、Runtime Integration 55 个、Database Security 9 个、Policy as Code 4 个、Release Evidence 5 个全部通过。
 - Runtime Contract：运行型合同检查通过。
 
 ## 远端分支处置建议

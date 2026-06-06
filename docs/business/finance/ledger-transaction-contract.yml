@@ -23,11 +23,11 @@
     "entryRole"
   ],
   "invariants": [
-    "debits equal credits",
-    "all entries reference a LedgerTransaction",
-    "all entries use the same currency as the transaction",
-    "amount is positive",
-    "balanceStatus must be balanced"
+    "借方合计必须等于贷方合计。",
+    "所有分录必须引用同一个 LedgerTransaction。",
+    "所有分录必须使用与交易相同的币种。",
+    "金额必须为正数。",
+    "balanceStatus 必须为 balanced。"
   ],
   "mutationPolicy": {
     "updateLedgerEntryAllowed": false,

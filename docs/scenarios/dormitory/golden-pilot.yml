@@ -4,7 +4,7 @@
   "scenarios": [
     {
       "scenarioId": "dorm-cert-001",
-      "name": "lead -> reservation -> stay -> bed assignment",
+      "name": "线索到预订、入住和床位分配",
       "scenarioType": "committed_scenario",
       "expectedOutcome": "committed_projected",
       "workItemType": "Dorm.CheckinConfirm",
@@ -22,7 +22,7 @@
     },
     {
       "scenarioId": "dorm-cert-002",
-      "name": "deposit assess -> receive -> confirm -> liability update",
+      "name": "押金评估、收取、确认和负债更新",
       "scenarioType": "committed_scenario",
       "expectedOutcome": "committed_projected",
       "workItemType": "Dorm.DepositConfirm",
@@ -42,7 +42,7 @@
     },
     {
       "scenarioId": "dorm-cert-003",
-      "name": "ordinary payment -> finance confirm -> allocation -> balance update",
+      "name": "普通收款、财务确认、分配和余额更新",
       "scenarioType": "committed_scenario",
       "expectedOutcome": "committed_projected",
       "workItemType": "Dorm.PaymentConfirm",
@@ -62,7 +62,7 @@
     },
     {
       "scenarioId": "dorm-cert-004",
-      "name": "service task blocks bed -> complete -> verify -> release",
+      "name": "服务任务阻断床位、完成、验收和释放",
       "scenarioType": "committed_scenario",
       "expectedOutcome": "committed_projected",
       "workItemType": "Dorm.RoomReadinessCheck",
@@ -80,7 +80,7 @@
     },
     {
       "scenarioId": "dorm-cert-005",
-      "name": "checkout -> inspection -> deposit deduction/refund -> cleaning -> available",
+      "name": "退住、验房、押金扣退、清洁和恢复可售",
       "scenarioType": "committed_scenario",
       "expectedOutcome": "committed_projected",
       "workItemType": "Dorm.RefundApprove",
@@ -100,7 +100,7 @@
     },
     {
       "scenarioId": "dorm-cert-006",
-      "name": "bank import -> match -> mismatch -> correction",
+      "name": "银行导入、匹配、差异和追加纠错",
       "scenarioType": "committed_scenario",
       "expectedOutcome": "committed_projected",
       "workItemType": "Finance.CorrectionApply",
@@ -120,7 +120,7 @@
     },
     {
       "scenarioId": "dorm-cert-007",
-      "name": "period review -> action plan -> period close",
+      "name": "周期复盘、行动计划和周期关闭",
       "scenarioType": "committed_scenario",
       "expectedOutcome": "projection_pending_committed",
       "workItemType": "Dorm.PeriodReview",
@@ -138,7 +138,7 @@
     },
     {
       "scenarioId": "dorm-cert-008",
-      "name": "permission denied -> escalation -> audit",
+      "name": "权限拒绝、升级和审计",
       "scenarioType": "rejected_command_scenario",
       "expectedOutcome": "permission_denied_403",
       "workItemType": "Dorm.ExceptionResolve",
@@ -157,7 +157,7 @@
     },
     {
       "scenarioId": "dorm-cert-009",
-      "name": "duplicate submit -> idempotent response -> no duplicate side effect",
+      "name": "重复提交、幂等响应和无重复副作用",
       "scenarioType": "rejected_command_scenario",
       "expectedOutcome": "idempotency_conflict_409",
       "workItemType": "Dorm.PaymentConfirm",
@@ -177,7 +177,7 @@
     },
     {
       "scenarioId": "dorm-cert-010",
-      "name": "missing evidence -> block confirm -> add evidence -> confirm",
+      "name": "缺证据阻断确认、补证后再确认",
       "scenarioType": "rejected_command_scenario",
       "expectedOutcome": "business_blocked_422",
       "workItemType": "Dorm.DepositConfirm",
@@ -196,7 +196,7 @@
     },
     {
       "scenarioId": "dorm-cert-gate-red-shadow",
-      "name": "red shadow blocks release gate",
+      "name": "语义影子红灯阻断发布门禁",
       "scenarioType": "gate_only_blocked_scenario",
       "expectedOutcome": "semantic_shadow_red_blocked",
       "workItemType": "Gate.SemanticShadowReview",
@@ -214,7 +214,7 @@
     },
     {
       "scenarioId": "dorm-cert-gate-missing-rollback",
-      "name": "missing rollback blocks active cutover",
+      "name": "缺少回滚证据阻断切换",
       "scenarioType": "gate_only_blocked_scenario",
       "expectedOutcome": "missing_rollback_blocked",
       "workItemType": "Gate.RollbackReview",

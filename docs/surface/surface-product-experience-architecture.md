@@ -1,6 +1,6 @@
 # OAM Surface 端面体验产品化架构
 
-本阶段只重建用户体验层，不重写 Runtime，不进入 Day-2，不授予 Dormitory L2 Production，也不授予 Business Production。
+本轮只重建用户体验层，不重写 Runtime，不进入 Day-2，不授予 Dormitory L2 Production，也不授予 Business Production。
 
 ## 主路径
 

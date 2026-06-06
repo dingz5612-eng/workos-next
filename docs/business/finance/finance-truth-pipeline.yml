@@ -2,9 +2,9 @@
   "version": "oam.finance.finance-truth-pipeline.v1",
   "packId": "FinanceTruthPack",
   "moneyKernelPack": "MoneyKernelPack",
-  "goal": "route every MoneyBasis through FinanceTruthPack before canonical financial facts are committed",
-  "acceptedInputs": ["MoneyBasis", "FinanceIntake", "FinanceReviewWorkItem"],
-  "forbiddenDirectFacts": ["PaymentFact", "DepositFact", "LedgerEntry"],
+  "goal": "所有金额依据必须先进入 FinanceTruthPack，才能形成正式财务事实或账本分录。",
+  "acceptedInputs": ["MoneyBasis", "AmountBasis", "ExpenseBasis", "CompanyExpenseBasis", "FinanceIntake", "FinanceReviewWorkItem"],
+  "forbiddenDirectFacts": ["PaymentFact", "DepositFact", "FinancialFact", "LedgerTransaction", "LedgerEntry"],
   "pipeline": [
     "MoneyBasis",
     "FinanceIntake",
@@ -29,8 +29,36 @@
     "businessDomainDirectLedgerEntryAllowed": false,
     "bankImportDirectPaymentConfirmedAllowed": false,
     "moneyBasisOwner": "FinanceTruthPack",
-    "ledgerTransactionOwner": "MoneyKernelPack"
+    "ledgerTransactionOwner": "MoneyKernelPack",
+    "businessDomainAmountBasisAllowed": true,
+    "businessDomainFormalFinanceFactAllowed": false,
+    "managementCockpitFinanceWriteAllowed": false,
+    "sharedReceiptFinanceTruthAllowed": false,
+    "searchOrDashboardFinanceTruthAllowed": false
   },
+  "businessInputPolicy": [
+    {
+      "inputType": "AmountBasis",
+      "中文名称": "金额依据",
+      "allowedSources": ["DormitoryDomainPack", "RepairDomainPack", "PartsDomainPack", "HRDomainPack", "management-approved-company-expense-intake"],
+      "requiredRefs": ["workItemId", "commandSubmissionId", "evidenceRefs", "ownerRole"],
+      "forbiddenOutcomeBeforeFinanceReview": ["PaymentFact", "DepositFact", "FinancialFact", "LedgerTransaction", "LedgerEntry"]
+    },
+    {
+      "inputType": "CompanyExpenseBasis",
+      "中文名称": "公司费用依据",
+      "allowedSources": ["operations-admin-intake", "finance-review-work-item", "management-decision-context"],
+      "requiredRefs": ["expenseReason", "ownerRole", "approvalTrace", "evidenceRefs"],
+      "forbiddenOutcomeBeforeFinanceReview": ["ExpensePaymentFact", "LedgerEntry"]
+    },
+    {
+      "inputType": "UnclearMoneyCase",
+      "中文名称": "不清楚款项案件",
+      "allowedSources": ["bank-import", "cashier-review", "reconciliation-mismatch"],
+      "requiredRefs": ["bankImportRowId", "ownerRole", "reviewTrace"],
+      "forbiddenOutcomeBeforeFinanceReview": ["LedgerTransaction", "LedgerEntry", "FinanceReceipt"]
+    }
+  ],
   "unclearMoneyPolicy": "routeToUnclearMoneyCase",
   "certification": {
     "checker": "scripts/check-finance-truth.mjs",

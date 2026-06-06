@@ -2,12 +2,12 @@
   "version": "oam.finance.unclear-money-policy.v1",
   "owner": "FinanceTruthPack",
   "triggers": [
-    "unknown payer",
-    "unknown purpose",
-    "bank amount mismatch",
-    "currency mismatch",
-    "missing evidence",
-    "ambiguous deposit versus ordinary payment"
+    "付款人不明确",
+    "用途不明确",
+    "银行金额不匹配",
+    "币种不匹配",
+    "缺少证据",
+    "无法判断押金或普通收款"
   ],
   "routing": {
     "caseType": "UnclearMoneyCase",

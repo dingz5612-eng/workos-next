@@ -1,124 +1,124 @@
-# WorkOSNext Project Review Manual
+# WorkOSNext 项目审查手册
 
-## Purpose
+## 用途
 
-This manual is for product and architecture alignment while building WorkOSNext.
+本手册用于 WorkOSNext 建设过程中的产品与架构对齐。
 
-It is not an end-user guide. End users learn the system through `Me -> Learning Center`.
+它不是终端用户指南。终端用户通过“我的 -> 学习中心”学习系统。
 
-## Current Product Position
+## 当前产品定位
 
-WorkOSNext is a mobile-first business operating system.
+WorkOSNext 是移动优先的业务操作系统。
 
-It is not a traditional admin dashboard and it should not become a collection of module pages.
+它不是传统后台管理看板，也不应变成模块页面集合。
 
-Current stage:
+当前 OAM 状态：
 
-- UI/UX reference.
-- Scenario flow definition.
-- Frontend business contract for backend development.
+- UI/UX 参考必须服从当前 OAM。
+- 场景流定义必须能映射到 WorkItem 和 Confirm Runtime。
+- 前端业务合同必须能支撑后端 DTO、读模型和测试。
 
-## Fixed Navigation Principle
+## 固定导航原则
 
-The bottom navigation is four working modes:
+底部导航是四种工作模式：
 
-- Home: what should be handled first today.
-- Search: active intent and direct business entry.
-- Workbench: passive task queue assigned by the system.
-- Me: profile, statistics, notes, reminders, learning center, feedback, preferences.
+- 今天：先处理今天最重要的事项。
+- 搜索：主动意图和直接业务入口。
+- 工作台：系统分派的被动任务队列。
+- 我的：画像、统计、笔记、提醒、学习中心、反馈和偏好。
 
-Do not add `Help` back as a primary tab.
+不得把 `Help` 恢复为主导航。
 
-## Fixed Scenario Principle
+## 固定场景原则
 
-The system is built from scenario flows, not large module loops.
+系统由场景流构成，不由大模块循环构成。
 
-Every flow belongs to one category:
+每条场景流属于一类：
 
-- Object creation.
-- Business handling.
-- Exception handling.
+- 对象创建。
+- 业务处理。
+- 异常处理。
 
-Each scenario flow must define:
+每条场景流必须定义：
 
-- Business domain.
-- Steps.
-- Fields.
-- Evidence.
-- Human confirmation policy.
-- Exception branches.
-- End condition.
+- 业务域。
+- 步骤。
+- 字段。
+- 证据。
+- 人工确认策略。
+- 异常分支。
+- 结束条件。
 
-## Current Covered Scenarios
+## 当前覆盖场景
 
-Accommodation:
+住宿：
 
-- Create room.
-- Create bed.
-- Check-in.
-- Checkout.
-- Deposit exception.
+- 创建房间。
+- 创建床位。
+- 入住。
+- 退住。
+- 押金异常。
 
-Repair:
+维修：
 
-- Create vehicle profile.
-- Dispatch and diagnosis.
-- Inspection and close.
+- 创建车辆画像。
+- 派工和诊断。
+- 验收和关闭。
 
-Finance:
+财务：
 
-- Deposit payment confirmation.
+- 押金收款确认。
 
-## UX Rules That Must Hold
+## 必须保持的体验规则
 
-- Home must not become a list page.
-- Home local cards must be scenario flows, not module loops.
-- Search must route missing objects to creation flows.
-- Workbench must show tasks before deep filters.
-- Every critical action must require human confirmation.
-- Feedback must be available without blocking the primary task.
-- Chinese and Russian must be considered together.
+- 今天不得变成列表页。
+- 今天的本地卡片必须是场景流，不是模块循环。
+- 搜索必须把缺失对象路由到创建流程。
+- 工作台必须先展示任务，再展示深层筛选。
+- 所有关键动作必须要求人工确认。
+- 反馈必须可用，且不得阻断主任务。
+- 中文、俄语和吉尔吉斯语必须共同考虑。
 
-## Backend Readiness Checklist
+## 后端就绪清单
 
-Before implementing write APIs, define:
+实现写 API 前必须定义：
 
-- Scenario semantic model.
-- ScenarioFlow.
-- ScenarioStep.
-- ScenarioField.
-- ScenarioException.
-- ScenarioEvidence.
-- ScenarioPolicy.
-- BusinessObject.
-- Task.
-- Action preparation.
-- Action confirmation.
-- Audit event.
-- Note.
-- Reminder.
-- Feedback.
+- Scenario semantic model。
+- ScenarioFlow。
+- ScenarioStep。
+- ScenarioField。
+- ScenarioException。
+- ScenarioEvidence。
+- ScenarioPolicy。
+- BusinessObject。
+- Task。
+- Action preparation。
+- Action confirmation。
+- Audit event。
+- Note。
+- Reminder。
+- Feedback。
 
-## Prohibited Directions
+## 禁止方向
 
-- Do not rebuild the old FunRide page collection.
-- Do not use module menus as the main product structure.
-- Do not hide deprecated UI behind new screens.
-- Do not let AI execute confirmation, payment, refund, write-off, or final closing.
-- Do not hard-code fields that cannot later become DTOs or seed data.
+- 不重建旧 FunRide 页面集合。
+- 不把模块菜单作为主产品结构。
+- 不把已替换 UI 藏在新屏幕后面。
+- 不让 AI 执行确认、付款、退款、核销或最终关闭。
+- 不硬编码后续无法成为 DTO 或种子数据的字段。
 
-## Review Checklist Per Change
+## 单次变更审查清单
 
-- Does it respect the four working modes?
-- Is it scenario-flow based?
-- Does it support object creation, business handling, or exception handling clearly?
-- Does it keep the human confirmation boundary?
-- Does it preserve bilingual readiness?
-- Does it remove replaced UI instead of keeping duplicate paths?
-- Can backend DTOs, read models, and tests be derived from it?
-- Are objects, fields, states, tasks, actions, evidence, policy, analytics, and exceptions aligned?
+- 是否遵守四种工作模式。
+- 是否基于场景流。
+- 是否清楚支持对象创建、业务处理或异常处理。
+- 是否保持人工确认边界。
+- 是否保持多语言就绪。
+- 是否删除已替换 UI，而不是保留重复路径。
+- 是否可推导后端 DTO、读模型和测试。
+- 对象、字段、状态、任务、动作、证据、策略、分析和异常是否对齐。
 
-Final review verdict for this manual:
+最终审查结论：
 
 ```text
 PROJECT_REVIEW_MANUAL_READY

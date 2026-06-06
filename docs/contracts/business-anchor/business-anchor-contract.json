@@ -1,7 +1,7 @@
 {
   "version": "oam.business-anchor-contract.v1",
   "kernel": "Business Anchor Kernel",
-  "rule": "Business anchors are human-memory display and search labels composed from truth-object projections, runtime events, WorkItem context, and session-safe payload context. They must not become authoritative business facts or write inputs.",
+  "rule": "业务锚点是由真值对象投影、运行事件、WorkItem 上下文和会话安全载荷组成的展示与搜索标签。它们不得成为权威业务事实或写入输入。",
   "truthBoundary": {
     "authoritativeObjects": [
       "roomId",
@@ -27,23 +27,23 @@
       "mobile"
     ],
     "forbiddenUses": [
-      "using name or phone as fact owner",
-      "submitting anchor text as command truth",
-      "letting frontend-generated anchors replace backend object ids",
-      "showing raw runtime ids to ordinary users when a display anchor exists"
+      "把姓名或电话当作事实归属",
+      "把锚点文本当作命令真值提交",
+      "让前端生成锚点替代后端对象 ID",
+      "已有展示锚点时仍向普通用户展示运行时原始 ID"
     ]
   },
   "anchorPattern": {
     "surface": "business-anchor",
-    "visiblePattern": "room label · bed label · person display name · masked phone · current action",
-    "example": "D02 / 22 · 01 upper bunk · Zhang San · 138****1234 · deposit waiting confirmation",
-    "searchPattern": "room label, bed label, person display name, masked and raw phone tokens, current action",
-    "privacy": "Visible phone values must be masked. Raw phone values may be used only as local search tokens or backend search keys under Search Kernel permission."
+    "visiblePattern": "房间标签 · 床位标签 · 人员展示名 · 脱敏电话 · 当前动作",
+    "example": "D02 / 22 · 01 上铺 · 张三 · 138****1234 · 押金待确认",
+    "searchPattern": "房间标签、床位标签、人员展示名、脱敏电话、原始电话搜索令牌、当前动作",
+    "privacy": "可见电话必须脱敏。原始电话只能在 Search Kernel 权限内作为本地搜索令牌或后端搜索键使用。"
   },
   "scenarioAnchors": [
     {
       "scenarioId": "dorm-cert-001",
-      "name": "lead to reservation to stay to bed assignment",
+      "name": "线索到预订、入住和床位分配",
       "primaryTruthObjects": [
         "residentId",
         "stayId",
@@ -56,11 +56,11 @@
         "residentName",
         "residentPhone"
       ],
-      "currentActionSource": "active WorkItem card or admission-safe next action"
+      "currentActionSource": "当前 WorkItem 卡片或准入安全的下一步动作"
     },
     {
       "scenarioId": "dorm-cert-002",
-      "name": "deposit assess receive confirm liability update",
+      "name": "押金评估、收取、确认和负债更新",
       "primaryTruthObjects": [
         "depositId",
         "stayId",
@@ -73,11 +73,11 @@
         "residentName",
         "residentPhone"
       ],
-      "currentActionSource": "deposit ledger state"
+      "currentActionSource": "押金账本状态"
     },
     {
       "scenarioId": "dorm-cert-003",
-      "name": "ordinary payment finance confirm allocation balance update",
+      "name": "普通收款、财务确认、分配和余额更新",
       "primaryTruthObjects": [
         "paymentId",
         "stayId",
@@ -90,11 +90,11 @@
         "residentName",
         "residentPhone"
       ],
-      "currentActionSource": "payment ledger state"
+      "currentActionSource": "收款账本状态"
     },
     {
       "scenarioId": "dorm-cert-004",
-      "name": "service task blocks bed complete verify release",
+      "name": "服务任务阻断床位、完成、验收和释放",
       "primaryTruthObjects": [
         "taskId",
         "roomId",
@@ -104,11 +104,11 @@
         "roomLabel",
         "bedLabel"
       ],
-      "currentActionSource": "service task state"
+      "currentActionSource": "服务任务状态"
     },
     {
       "scenarioId": "dorm-cert-005",
-      "name": "checkout inspection deposit deduction refund cleaning available",
+      "name": "退住、验房、押金扣退、清洁和恢复可售",
       "primaryTruthObjects": [
         "checkoutId",
         "stayId",
@@ -122,11 +122,11 @@
         "residentName",
         "residentPhone"
       ],
-      "currentActionSource": "checkout and deposit settlement state"
+      "currentActionSource": "退住和押金结算状态"
     },
     {
       "scenarioId": "dorm-cert-006",
-      "name": "bank import match mismatch correction",
+      "name": "银行导入、匹配、差异和追加纠错",
       "primaryTruthObjects": [
         "paymentId",
         "depositId",
@@ -138,22 +138,22 @@
         "residentName",
         "residentPhone"
       ],
-      "currentActionSource": "correction ledger state"
+      "currentActionSource": "纠错账本状态"
     },
     {
       "scenarioId": "dorm-cert-007",
-      "name": "period review action plan period close",
+      "name": "周期复盘、行动计划和周期关闭",
       "primaryTruthObjects": [
         "periodId"
       ],
       "displayFields": [
         "periodLabel"
       ],
-      "currentActionSource": "period analytics state"
+      "currentActionSource": "周期分析状态"
     },
     {
       "scenarioId": "dorm-cert-008",
-      "name": "permission denied escalation audit",
+      "name": "权限拒绝、升级和审计",
       "primaryTruthObjects": [
         "workItemId",
         "caseId"
@@ -164,11 +164,11 @@
         "residentName",
         "residentPhone"
       ],
-      "currentActionSource": "admission decision"
+      "currentActionSource": "准入决定"
     },
     {
       "scenarioId": "dorm-cert-009",
-      "name": "duplicate submit idempotency conflict no duplicate side effect",
+      "name": "重复提交、幂等冲突和无重复副作用",
       "primaryTruthObjects": [
         "workItemId",
         "commandSubmissionId"
@@ -179,11 +179,11 @@
         "residentName",
         "residentPhone"
       ],
-      "currentActionSource": "command submission state"
+      "currentActionSource": "命令提交状态"
     },
     {
       "scenarioId": "dorm-cert-010",
-      "name": "missing evidence block confirm add evidence confirm",
+      "name": "缺证据阻断确认、补证后再确认",
       "primaryTruthObjects": [
         "workItemId",
         "evidenceId"
@@ -194,19 +194,19 @@
         "residentName",
         "residentPhone"
       ],
-      "currentActionSource": "evidence policy state"
+      "currentActionSource": "证据策略状态"
     }
   ],
   "surfaceRequirements": [
-    "Workbench task cards must show one business anchor line when any anchor token is available.",
-    "Search result cards must include the same anchor line and rank against anchor tokens.",
-    "Learning Center scenario cards must explain scenarios through the same anchor pattern.",
-    "Operation step rails must show the case anchor near the current workspace title.",
-    "Anchor rendering must share the kernel and must not be copied page by page."
+    "工作台任务卡在有锚点令牌时必须显示一行业务锚点。",
+    "搜索结果卡必须包含同一锚点行，并按锚点令牌参与排序。",
+    "学习中心场景卡必须使用同一锚点模式解释场景。",
+    "办理步骤栏必须在当前工作区标题附近显示案件锚点。",
+    "锚点渲染必须共用内核，不得逐页面复制。"
   ],
   "evidenceRequirements": [
-    "real browser screenshot for Learning Center anchor",
-    "real browser screenshot for Search anchor",
-    "real browser screenshot for Workbench or Operation Panel anchor"
+    "学习中心锚点真实浏览器截图",
+    "搜索锚点真实浏览器截图",
+    "工作台或办理面板锚点真实浏览器截图"
   ]
 }

@@ -17,7 +17,7 @@
 - 保持一等目录边界：`services/core-api`、`modules/accommodation`、`modules/finance-gate`、`modules/identity`、`modules/maintenance`、`packages/surface-view-models`。
 - 删除没有当前职责的空壳目录。
 - 修正策略输入命名，避免 OAM 拼写残留。
-- 更新最终验收报告和当前系统图，明确阶段 7 全量测试与当前合并验收网。
+- 更新最终验收报告和当前系统图，明确完整最终验收与当前合并验收网。
 
 ## 检查命令
 
@@ -35,12 +35,12 @@
 
 ## 测试结果
 
-- 移动端单测：57 个测试文件、306 个用例通过。
+- 移动端单测：59 个测试文件、313 个用例通过。
 - PC 单测：4 个测试文件、4 个用例通过。
-- 移动端覆盖率：Statements 75.75%，Branches 62.15%，Functions 81.07%，Lines 79.75%。
+- 移动端覆盖率：Statements 78.54%，Branches 63.38%，Functions 85.00%，Lines 82.69%。
 - Playwright smoke：5 个真实浏览器用例通过。
 - 后端 Release 构建：通过，仅保留既有 analyzer warning。
-- 后端测试：Unit 224 个、Runtime Integration 55 个、Database Security 9 个、Policy as Code 4 个、Release Evidence 3 个全部通过。
+- 后端测试：Unit 224 个、Runtime Integration 55 个、Database Security 9 个、Policy as Code 4 个、Release Evidence 5 个全部通过。
 - Runtime Contract：通过。
 
 ## 剩余风险

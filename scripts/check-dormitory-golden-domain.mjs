@@ -171,13 +171,25 @@ function validateEvidencePolicy(policy) {
 }
 
 function validateFinanceRules(finance) {
-  const text = JSON.stringify(finance).toLowerCase();
   const violations = [];
-  if (!text.includes("deposit is liability") || text.includes("deposit is revenue")) {
-    violations.push(violation("dormitory.deposit_revenue_boundary", "Dormitory finance rules must keep deposit as liability, never revenue."));
+  const ruleIds = new Set((finance.rules ?? []).map((item) => item.id));
+  for (const requiredRule of ["dorm-fin-001", "dorm-fin-002", "dorm-fin-003", "dorm-fin-004", "dorm-fin-005", "dorm-fin-006"]) {
+    if (!ruleIds.has(requiredRule)) {
+      violations.push(violation("dormitory.finance_rule_missing", `Dormitory finance rules missing ${requiredRule}.`, { requiredRule }));
+    }
   }
-  if (!text.includes("balanced") || !text.includes("financetruthpack") || !text.includes("moneykernelpack")) {
-    violations.push(violation("dormitory.finance_truth_pipeline_missing", "Dormitory money commands must route through FinanceTruthPack/MoneyKernelPack with balanced ledger."));
+  const commands = new Map((finance.commands ?? []).map((item) => [item.commandType, item]));
+  if (!commands.has("DepositReceipt") || !commands.has("RefundDeposit")) {
+    violations.push(violation("dormitory.deposit_revenue_boundary", "Dormitory finance rules must declare deposit receipt and refund commands."));
+  }
+  if (!String(finance.moneyFactSource ?? "").includes("FinanceTruthPack") || !String(finance.moneyFactSource ?? "").includes("MoneyKernelPack")) {
+    violations.push(violation("dormitory.finance_truth_pipeline_missing", "Dormitory money commands must route through FinanceTruthPack/MoneyKernelPack."));
+  }
+  for (const commandType of ["DepositReceipt", "PaymentReceipt", "RefundDeposit", "CheckoutSettlement", "LedgerCorrectionApply"]) {
+    const command = commands.get(commandType);
+    if (!command?.ledgerImpact) {
+      violations.push(violation("dormitory.finance_command_impact_missing", `Dormitory finance command ${commandType} missing ledgerImpact.`, { commandType }));
+    }
   }
   return violations;
 }

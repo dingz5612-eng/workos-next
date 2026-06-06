@@ -6,7 +6,7 @@
 
 - 当前分支：`codex/oam-pure-current-architecture`。
 - 当前最新提交：`6653315d Rebuild repository around current OAM architecture`。
-- 工作区状态：阶段 0 开始时干净。
+- 工作区状态：初始审查开始时干净。
 
 ## 已复现缺陷
 
@@ -34,6 +34,6 @@
 | Policy | `dotnet test tests/WorkOS.PolicyAsCodeTests/WorkOS.PolicyAsCodeTests.csproj -c Release` | 4 tests PASS |
 | ReleaseEvidence | `dotnet test tests/WorkOS.ReleaseEvidenceTests/WorkOS.ReleaseEvidenceTests.csproj -c Release` | 3 tests PASS |
 
-## 阶段 0 结论
+## 初始审查结论
 
 审查发现均已复现。当前通过项说明主线重构方向可继续，但 PC 测试入口、合同路径完整性、旧语义纯净度、artifact 引用和 Control Plane 证据链存在明确验收洞，必须在后续阶段逐项修复。
