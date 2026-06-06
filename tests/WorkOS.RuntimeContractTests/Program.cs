@@ -978,7 +978,16 @@ ResetPostgres(connectionString);
         "W-STAY-PAYMENT-LEDGER",
         paymentCorrectionRequest.CorrectionRequestId,
         "finance",
-        "wi-payment-correction-apply")));
+        "wi-payment-correction-apply",
+        null,
+        "reverse duplicate allocation",
+        ActorRole: "finance",
+        ActorCapabilities: ["finance.correction.apply"],
+        DeviceId: "pc-finance-1",
+        DeviceTrustStatus: "trusted",
+        Surface: "pc",
+        EvidenceRefs: ["payment-correction-evidence"],
+        AdmissionDecisionRef: "admission:payment-correction:approved")));
     var paymentCorrectionApproval = runtime.ApproveLedgerCorrection(new LedgerCorrectionApproveCommand(
         "W-STAY-PAYMENT-LEDGER",
         paymentCorrectionRequest.CorrectionRequestId,
@@ -996,7 +1005,14 @@ ResetPostgres(connectionString);
         "finance",
         "wi-payment-correction-apply",
         null,
-        "reverse duplicate allocation"));
+        "reverse duplicate allocation",
+        ActorRole: "finance",
+        ActorCapabilities: ["finance.correction.apply"],
+        DeviceId: "pc-finance-1",
+        DeviceTrustStatus: "trusted",
+        Surface: "pc",
+        EvidenceRefs: ["payment-correction-evidence"],
+        AdmissionDecisionRef: paymentCorrectionApproval.EventId));
     Assert(paymentCorrectionApply.Status == "applied", "correction_apply_appends_reversal");
     Assert(paymentCorrectionApply.BalanceRebuilds.Contains("StayBalance"), "payment_correction_rebuilds_stay_balance");
     Assert(ScalarInt(connectionString, $"select count(*) from ledger_reversal_entries where correction_request_id = '{paymentCorrectionRequest.CorrectionRequestId}'") == 1, "correction_apply_appends_reversal entry");

@@ -50,7 +50,8 @@
   "objectTypes": [
     "workItem",
     "operationCase",
-    "workspaceCardProjection",
+    "workspaceCardCompatibility",
+    "gateResult",
     "businessObject",
     "evidence",
     "ledger",
@@ -66,16 +67,39 @@
   "requiredResultFields": [
     "resultId",
     "resultType",
+    "objectKind",
     "title",
     "summary",
     "matchedTerms",
     "score",
     "target",
     "admission",
+    "permission",
+    "lineage",
+    "freshness",
+    "ranking",
+    "businessContext",
+    "availableActions",
+    "gateResult",
     "traceRefs",
     "sourceRefs",
     "language",
     "explain"
+  ],
+  "sourceTypes": [
+    "workspaceCardProjection",
+    "operationsDomainEvent",
+    "controlPlaneGateReadModel",
+    "financeReadModel",
+    "evidenceReadModel"
+  ],
+  "forbiddenSearchActions": [
+    "confirm",
+    "refund",
+    "close",
+    "applyCorrection",
+    "productionConfirm",
+    "writeBusinessFact"
   ],
   "projectionAdapters": [
     {
@@ -104,6 +128,11 @@
   ],
   "invariants": [
     "Every SearchResult includes an admission object.",
+    "Every SearchResult includes permission, lineage, freshness, ranking, businessContext, availableActions, gateResult, traceRefs, and sourceRefs.",
+    "SearchResult.target.writeThroughSearchAllowed must be false.",
+    "SearchResult.availableActions may only contain read-only navigation or learning actions with writeBusinessFact=false.",
+    "workspaceCardProjection may appear only as a source type, adapter name, or sourceRefs value; the external resultType is workspaceCardCompatibility.",
+    "gateResult may appear as a read-only SearchResult.",
     "Blocked business lines cannot be made executable by search ranking.",
     "Search uses Language Kernel synonyms and domain terms.",
     "Contains-only matching is allowed only inside registered projection adapters.",

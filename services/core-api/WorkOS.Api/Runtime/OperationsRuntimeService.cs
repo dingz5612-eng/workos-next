@@ -631,7 +631,10 @@ public sealed record ConfirmWorkItemRequest(
     string? CardInstanceId = null,
     string? AggregateRef = null,
     string? RequestId = null,
-    string? DeviceId = null)
+    string? DeviceId = null,
+    string? DeviceTrustStatus = null,
+    string? Surface = null,
+    string? Reason = null)
 {
     public ConfirmWorkItemRequest Normalize(string workItemId, string workspaceId, string cardId)
     {
@@ -651,7 +654,11 @@ public sealed record ConfirmWorkItemRequest(
             SubmissionId = submissionId,
             CardInstanceId = cardInstanceId,
             FieldValues = FieldValues ?? new Dictionary<string, string>(),
-            EvidenceIds = EvidenceIds ?? Array.Empty<string>()
+            EvidenceIds = EvidenceIds ?? Array.Empty<string>(),
+            DeviceTrustStatus = string.IsNullOrWhiteSpace(DeviceTrustStatus)
+                ? (string.IsNullOrWhiteSpace(DeviceId) ? "not_provided" : "unknown")
+                : DeviceTrustStatus,
+            Surface = string.IsNullOrWhiteSpace(Surface) ? "operations-api" : Surface
         };
     }
 

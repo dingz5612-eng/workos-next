@@ -15,7 +15,8 @@ const admissionContract = readJson("docs/contracts/admission/admission-contract.
 const requiredObjectTypes = [
   "workItem",
   "operationCase",
-  "workspaceCardProjection",
+  "workspaceCardCompatibility",
+  "gateResult",
   "businessObject",
   "evidence",
   "ledger",
@@ -31,12 +32,20 @@ const requiredObjectTypes = [
 const requiredResultFields = [
   "resultId",
   "resultType",
+  "objectKind",
   "title",
   "summary",
   "matchedTerms",
   "score",
   "target",
   "admission",
+  "permission",
+  "lineage",
+  "freshness",
+  "ranking",
+  "businessContext",
+  "availableActions",
+  "gateResult",
   "traceRefs",
   "sourceRefs",
   "language",
@@ -125,6 +134,23 @@ function checkSourcesAndSchema(failures) {
       failures.push(`SearchResult.admission missing ${admissionField}.`);
     }
   }
+  for (const targetField of ["view", "kind", "writeThroughSearchAllowed"]) {
+    if (!(resultSchema.properties?.target?.required || []).includes(targetField)) {
+      failures.push(`SearchResult.target missing ${targetField}.`);
+    }
+  }
+  for (const [group, fields] of Object.entries({
+    permission: ["visibility", "redaction", "dataClassification", "requiredPermissions", "checkedAt", "policyVersion"],
+    lineage: ["sourceSystem", "sourceType", "sourceId", "sourceUpdatedAt", "definitionVersion"],
+    freshness: ["indexedAt", "indexLagMs", "stale"],
+    gateResult: ["status", "source", "sourceType", "checkedAt", "policyVersion", "admissionDecisionRef", "writeThroughSearchAllowed", "writeBusinessFactAllowed"]
+  })) {
+    for (const field of fields) {
+      if (!(resultSchema.properties?.[group]?.required || []).includes(field)) {
+        failures.push(`SearchResult.${group} missing ${field}.`);
+      }
+    }
+  }
 }
 
 function checkRankingAndPermission(failures) {
@@ -141,7 +167,11 @@ function checkRankingAndPermission(failures) {
     "high-risk-requires-capability-device",
     "tenant-filter-required",
     "projection-source-label-required",
-    "operations-events-tenant-scoped-readonly"
+    "operations-events-tenant-scoped-readonly",
+    "search-result-required-trust-fields",
+    "search-actions-readonly-only",
+    "hidden-results-not-ranked",
+    "sensitive-results-redacted-for-ordinary-users"
   ]) {
     if (!(permissionPolicy.rules || []).some((rule) => rule.ruleId === ruleId)) {
       failures.push(`search-permission-policy missing rule ${ruleId}.`);
@@ -179,7 +209,18 @@ function checkRuntimeImplementation(failures) {
     "EvaluateSearch",
     "LanguageSearchSynonymCatalog",
     "\"resultType\"",
+    "\"objectKind\"",
     "\"admission\"",
+    "\"permission\"",
+    "\"lineage\"",
+    "\"freshness\"",
+    "\"ranking\"",
+    "\"businessContext\"",
+    "\"availableActions\"",
+    "\"gateResult\"",
+    "\"writeThroughSearchAllowed\"",
+    "\"writeBusinessFactAllowed\"",
+    "\"writeBusinessFact\"",
     "\"traceRefs\"",
     "\"sourceRefs\"",
     "\"language\"",
@@ -191,6 +232,14 @@ function checkRuntimeImplementation(failures) {
   ]) {
     if (!searchKernel.includes(term)) failures.push(`SearchKernelService.cs missing ${term}`);
   }
+  if (searchKernel.includes("[\"resultType\"] = FirstNonEmpty(ReadString(projectionSource, \"resultType\"), \"workspaceCardProjection\")")) {
+    failures.push("Projection source results must expose workspaceCardCompatibility, not workspaceCardProjection.");
+  }
+  for (const action of ["confirm", "refund", "close", "applyCorrection", "productionConfirm", "writeBusinessFact"]) {
+    if ((searchContract.forbiddenSearchActions || []).includes(action) === false && !JSON.stringify(searchContract).includes(action)) {
+      failures.push(`search-contract must explicitly forbid Search action ${action}.`);
+    }
+  }
   const operationsUnitOfWork = read("services/core-api/WorkOS.Api/Runtime/OperationsUnitOfWork.cs");
   for (const term of ["SearchOperations(string tenantId", "operations_domain_events", "SearchText(record).Contains"]) {
     if (!operationsUnitOfWork.includes(term)) failures.push(`OperationsUnitOfWork.cs missing operations search term: ${term}`);
@@ -201,6 +250,10 @@ function checkRuntimeImplementation(failures) {
   const navigation = read("apps/mobile/src/navigationController.js");
   if (!navigation.includes("operationWorkItemsFromSearchResults") || !navigation.includes("applyRuntimeSurfacePayloads")) {
     failures.push("navigationController must merge Operations Search Kernel work items into runtime operation items.");
+  }
+  const searchIntentHub = read("apps/mobile/src/searchIntentHub.js");
+  for (const term of ["gateResultForSearchItem", "writeThroughSearchAllowed", "writeBusinessFactAllowed"]) {
+    if (!searchIntentHub.includes(term)) failures.push(`searchIntentHub.js missing SearchResult gate proof term: ${term}`);
   }
 
   const program = read("services/core-api/WorkOS.Api/Program.cs");

@@ -364,19 +364,23 @@ public sealed record SliceCommandHandlerDefinition(
     string SliceId,
     string DefinitionVersionId,
     IReadOnlyList<string> AllowedFacts,
+    IReadOnlyList<string> ForbiddenFacts,
     string LedgerPolicy,
     IReadOnlyList<string> RequiredEvidence,
-    string ProjectionOwner)
+    string ProjectionOwner,
+    string TruthOwnerRef)
 {
     public static SliceCommandHandlerDefinition Default(string commandType) =>
         new(
             commandType,
             "operations.generic",
             "CommandEnvelope.v1",
-            new[] { "DomainEvent", "WorkItem", "LedgerEntry" },
-            "balanced-ledger-or-none",
+            new[] { "DomainEvent", "WorkItem" },
+            new[] { "LedgerEntry", "LedgerTransaction", "PaymentFact", "DepositFact", "FinancialFact" },
+            "none",
             new[] { "declared-by-test-or-source-handler" },
-            "OperationsRuntimeProjection");
+            "OperationsRuntimeProjection",
+            "operations-runtime");
 }
 
 public sealed class DefinitionRegistry
@@ -406,7 +410,8 @@ public sealed class DefinitionRegistry
             ("sliceId", definition.SliceId),
             ("definitionVersionId", definition.DefinitionVersionId),
             ("ledgerPolicy", definition.LedgerPolicy),
-            ("projectionOwner", definition.ProjectionOwner)
+            ("projectionOwner", definition.ProjectionOwner),
+            ("truthOwnerRef", definition.TruthOwnerRef)
         })
         {
             if (string.IsNullOrWhiteSpace(value))
@@ -465,8 +470,9 @@ public sealed class SliceCommandHandlerRegistry
             ?? throw new InvalidOperationException($"operations_handler_definition_not_registered:{envelope.CommandType}");
         var handled = handler(envelope);
         ValidateDeclaredOutputFacts(definition, handled);
+        ValidateForbiddenOutputFacts(definition, handled);
         ValidateLedgerPolicy(definition, handled);
-        return handled;
+        return EnrichDomainEventPayloads(definition, handled);
     }
 
     private static void ValidateDeclaredOutputFacts(SliceCommandHandlerDefinition definition, SliceCommandHandlerResult handled)
@@ -478,6 +484,18 @@ public sealed class SliceCommandHandlerRegistry
         if (undeclared.Length > 0)
         {
             throw new InvalidOperationException($"operations_handler_fact_not_allowed:{definition.CommandType}:{string.Join(",", undeclared)}");
+        }
+    }
+
+    private static void ValidateForbiddenOutputFacts(SliceCommandHandlerDefinition definition, SliceCommandHandlerResult handled)
+    {
+        var forbidden = definition.ForbiddenFacts.ToHashSet(StringComparer.OrdinalIgnoreCase);
+        var blocked = OutputFactsFor(handled)
+            .Where(fact => forbidden.Contains(fact))
+            .ToArray();
+        if (blocked.Length > 0)
+        {
+            throw new InvalidOperationException($"operations_handler_fact_forbidden:{definition.CommandType}:{string.Join(",", blocked)}");
         }
     }
 
@@ -502,6 +520,42 @@ public sealed class SliceCommandHandlerRegistry
         return facts;
     }
 
+    private static SliceCommandHandlerResult EnrichDomainEventPayloads(
+        SliceCommandHandlerDefinition definition,
+        SliceCommandHandlerResult handled)
+    {
+        if (handled.DomainEvents.Count == 0)
+        {
+            return handled;
+        }
+
+        var producedFactIds = OutputFactsFor(handled)
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+        var enrichedEvents = handled.DomainEvents
+            .Select(item => item with
+            {
+                Payload = EnrichPayload(item.Payload, definition, producedFactIds)
+            })
+            .ToArray();
+
+        return handled with { DomainEvents = enrichedEvents };
+    }
+
+    private static IReadOnlyDictionary<string, object> EnrichPayload(
+        IReadOnlyDictionary<string, object> payload,
+        SliceCommandHandlerDefinition definition,
+        IReadOnlyList<string> producedFactIds)
+    {
+        var enriched = new Dictionary<string, object>(payload, StringComparer.Ordinal)
+        {
+            ["definitionRef"] = definition.DefinitionVersionId,
+            ["truthOwnerRef"] = definition.TruthOwnerRef,
+            ["producedFactIds"] = producedFactIds
+        };
+        return enriched;
+    }
+
     private static void ValidateLedgerPolicy(SliceCommandHandlerDefinition definition, SliceCommandHandlerResult handled)
     {
         var hasLedgerOutput = handled.LedgerTransactions.Count > 0 || handled.LedgerEntries.Count > 0;
@@ -509,6 +563,12 @@ public sealed class SliceCommandHandlerRegistry
             definition.LedgerPolicy.Equals("none", StringComparison.OrdinalIgnoreCase))
         {
             throw new InvalidOperationException($"operations_handler_ledger_not_allowed:{definition.CommandType}");
+        }
+
+        if (hasLedgerOutput &&
+            !definition.TruthOwnerRef.Equals("MoneyKernelPack", StringComparison.OrdinalIgnoreCase))
+        {
+            throw new InvalidOperationException($"operations_handler_ledger_truth_owner_not_allowed:{definition.CommandType}:{definition.TruthOwnerRef}");
         }
     }
 }

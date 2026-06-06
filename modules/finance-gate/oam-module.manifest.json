@@ -22,9 +22,9 @@
     "hostel_payments",
     "deposit_liabilities",
     "finance_reconciliations",
-    "reconciliation_match_candidates",
+    "payment_match_candidates",
     "ledger_correction_requests",
-    "expense_records"
+    "expenses"
   ],
   "tests": [
     "tests/WorkOS.UnitTests",

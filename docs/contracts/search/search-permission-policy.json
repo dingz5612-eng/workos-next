@@ -24,13 +24,33 @@
     },
     {
       "ruleId": "projection-source-label-required",
-      "description": "Workspace-card projection search results must be marked as workspaceCardProjection until Search Kernel owns native indexing.",
-      "effect": "result.resultType=workspaceCardProjection or sourceRefs.projectionAdapter present"
+      "description": "Workspace-card projection may only appear as source material; external SearchResult type must be workspaceCardCompatibility.",
+      "effect": "result.resultType=workspaceCardCompatibility and sourceRefs.sourceType=workspaceCardProjection"
     },
     {
       "ruleId": "operations-events-tenant-scoped-readonly",
       "description": "Operations Runtime event search must be tenant scoped, read-only, and routed back to an Admission-labeled WorkItem or completed operation case.",
       "effect": "sourceRefs.inputAdapter=OperationsRuntime.SearchOperations and result.admission present; display anchors cannot become authoritative ids"
+    },
+    {
+      "ruleId": "search-result-required-trust-fields",
+      "description": "Every SearchResult must include permission, lineage, freshness, and gateResult.",
+      "effect": "result.permission, result.lineage, result.freshness, and result.gateResult are required"
+    },
+    {
+      "ruleId": "search-actions-readonly-only",
+      "description": "Search actions must never write business facts.",
+      "effect": "availableActions only contains navigate/view/learn actions and every action has writeBusinessFact=false"
+    },
+    {
+      "ruleId": "hidden-results-not-ranked",
+      "description": "Hidden results must not enter ranking.",
+      "effect": "permission.visibility=hidden excludes result from ranked response"
+    },
+    {
+      "ruleId": "sensitive-results-redacted-for-ordinary-users",
+      "description": "Financial and audit sensitive results must be redacted or hidden for ordinary users.",
+      "effect": "permission.redaction and dataClassification must reflect the actor permission"
     }
   ]
 }

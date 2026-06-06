@@ -207,7 +207,8 @@ public sealed class ActionRuntimeService
             return periodPolicyFailure;
         }
 
-        var correlationId = request.SubmissionId ?? request.IdempotencyKey;
+        var normalizedIdempotencyKey = request.IdempotencyKey!;
+        var correlationId = request.SubmissionId ?? normalizedIdempotencyKey;
         var requestId = request.RequestId ?? correlationId;
         var normalizedFieldValues = request.FieldValues ?? new Dictionary<string, string>();
         var evidenceIds = request.EvidenceIds ?? Array.Empty<string>();
@@ -236,8 +237,8 @@ public sealed class ActionRuntimeService
                 request.AggregateRef);
 
             var eventIdempotencyKey = events.Count == 0
-                ? request.IdempotencyKey
-                : $"{request.IdempotencyKey}:{eventDefinition.EventType}";
+                ? normalizedIdempotencyKey
+                : $"{normalizedIdempotencyKey}:{eventDefinition.EventType}";
             committedEvents.Add(new IdempotentWorkspaceEvent(workspaceEvent, eventIdempotencyKey));
             events.Add(workspaceEvent);
             causationId = workspaceEvent.EventId;

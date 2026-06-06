@@ -35,6 +35,7 @@ function validateContract(contract) {
     "frontendExperienceSystem",
     "stepDependencySurface",
     "admissionExplainabilitySurface",
+    "userSemanticBoundaries",
     "collaborationFeedback",
     "mobile",
     "pc",
@@ -82,6 +83,23 @@ function validateContract(contract) {
   if (contract.currentForbiddenWriteAdapter?.adapterClass !== "deleted") {
     failures.push(v("surface.blocked_adapter", "Blocked Workspace/Card write adapter must stay deleted."));
   }
+  const semantics = contract.userSemanticBoundaries || {};
+  for (const field of [
+    "summaryDoesNotImplyConfirm",
+    "receiptDoesNotImplyProduction",
+    "visibleDoesNotImplyConfirm",
+    "dashboardSummaryCannotUnlockProduction",
+    "sharedReceiptCannotReplaceFinanceTruth",
+    "ordinaryUserNoInternalRuntimeTerms",
+    "permissionExplainabilityUsesLanguageKernel"
+  ]) {
+    if (!(field in semantics)) failures.push(v("surface.user_semantic_boundary", `userSemanticBoundaries missing ${field}.`));
+  }
+  for (const token of ["DomainEvent", "LedgerEntry", "ProcessManager", "Lens", "slice", "Confirm Runtime", "Unit of Work", "Projection", "Outbox", "raw capability", "raw surface view id"]) {
+    if (!semantics.ordinaryUserNoInternalRuntimeTerms?.includes(token)) {
+      failures.push(v("surface.internal_term_boundary", `ordinaryUserNoInternalRuntimeTerms missing ${token}.`));
+    }
+  }
   return failures;
 }
 
@@ -102,6 +120,10 @@ function validateSourceBoundary(contract) {
   requireText(operationView, "workspaceCardPanel", "surface.operation_panel_uses_shell", "Operation panel must route active work through the shared card shell.", failures);
   requireText(workspaceView, "data-component=\"operation-card-shell\"", "surface.operation_card_shell", "Workspace view must render the shared operation shell.", failures);
   forbidText(main, "fetch(", "surface.no_main_fetch", "main.js must not own direct fetch calls.", failures);
+  requireText(readText("apps/mobile/src/views/experienceComponents.js"), "permissionDiagnosticCopy(decision, ctx.tr)", "surface.permission_language_kernel", "Permission diagnostics must use Language Kernel translation.", failures);
+  for (const forbidden of ["写入 DomainEvent", "LedgerEntry 后", "ProcessManager 会", "运行时 Lens", "slice 状态不允许"]) {
+    forbidText(readText("apps/mobile/src/i18n/operationCopy.js"), forbidden, "surface.ordinary_internal_copy", `Ordinary operation copy must not expose ${forbidden}.`, failures);
+  }
   return failures;
 }
 

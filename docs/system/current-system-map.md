@@ -40,6 +40,20 @@ flowchart TD
   Projection --> DB
 ```
 
+## 1.1 当前权威定位
+
+| 需要变更的内容 | 先查这里 | 再跑这里 |
+| --- | --- | --- |
+| 当前文件身份和是否可作为真值 | `docs/oam/current-authority-index.json` | `scripts/oam/check-current-authority-index.mjs` |
+| 职责边界、owner、checker、证据绑定 | `docs/contracts/oam-responsibility-boundary-matrix.json` | `scripts/oam/check-oam-responsibility-boundary-matrix.mjs` |
+| 业务对象和字段 | `docs/contracts/business/oam-business-object-field-registry.json` | `scripts/oam/check-business-object-field-registry.mjs` |
+| 流程状态和动作 | `docs/contracts/business/oam-workflow-state-registry.json` | `scripts/oam/check-workflow-state-registry.mjs` |
+| 数据库表 owner 和写入口 | `docs/contracts/database/oam-db-ownership-map.json` | `scripts/oam/check-db-ownership-map.mjs` |
+| 证据根和发布证明 | `docs/contracts/evidence/evidence-graph-refs-contract.json` | `scripts/oam/check-evidence-contract-refs.mjs` |
+| 普通移动端文案和 PC 治理隔离 | `docs/surface/surface-contract.yml` | `scripts/oam/check-surface-language-v2.mjs` |
+
+系统地图只说明边界，不直接定义字段、状态、准入、owner 或 DB 事实。定义必须落到上表的机器合同中。
+
 ## 2. 服务边界
 
 | 服务 | 边界 |
@@ -83,6 +97,8 @@ PC Governance Surface 负责治理：财务控制、经理控制塔、治理中�
 - schema validation
 - coverage report
 - current evidence generation
+- current authority and responsibility checks
+- surface language v2 checks
 - local development helper
 
 阶段证明、基线验收包和旧架构脚本不得保留为当前 CI 或规则来源。

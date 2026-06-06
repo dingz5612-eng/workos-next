@@ -409,6 +409,18 @@ public sealed class RuntimeHardeningTests
             "pc",
             "green gate result approved");
 
+        RuntimeSecurityPolicy.ValidateHighRiskOperation(
+            "correction.apply",
+            "finance-1",
+            "finance",
+            ["finance.correction.apply"],
+            "trusted",
+            "pc",
+            "approved after finance review",
+            ["ledger-correction-evidence"],
+            "admission:ledger-correction:approved",
+            requireEvidenceAndAdmission: true);
+
         AssertInvalidOperation(() => RuntimeSecurityPolicy.ValidateHighRiskOperation(
             "release.cutover",
             "release-1",
@@ -435,6 +447,30 @@ public sealed class RuntimeHardeningTests
             "trusted",
             "pc",
             ""));
+
+        AssertInvalidOperation(() => RuntimeSecurityPolicy.ValidateHighRiskOperation(
+            "correction.apply",
+            "finance-1",
+            "finance",
+            ["finance.correction.apply"],
+            "trusted",
+            "pc",
+            "approved after finance review",
+            Array.Empty<string>(),
+            "admission:ledger-correction:approved",
+            requireEvidenceAndAdmission: true));
+
+        AssertInvalidOperation(() => RuntimeSecurityPolicy.ValidateHighRiskOperation(
+            "correction.apply",
+            "finance-1",
+            "finance",
+            ["finance.correction.apply"],
+            "trusted",
+            "pc",
+            "approved after finance review",
+            ["ledger-correction-evidence"],
+            "",
+            requireEvidenceAndAdmission: true));
     }
 
     [TestMethod]

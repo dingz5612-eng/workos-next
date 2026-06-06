@@ -251,5 +251,41 @@
       "previous-proof-stage-terms"
     ],
     "allowedEvidenceTerm": "current-oam-evidence-object-only"
+  },
+  "currentEvidenceRoot": {
+    "path": "artifacts/oam/evidence",
+    "finalReport": "artifacts/oam/final-report.json",
+    "generator": "scripts/oam/generate-current-evidence-root.mjs",
+    "checker": "scripts/oam/check-current-evidence-root.mjs",
+    "ciWorkflow": ".github/workflows/ci.yml",
+    "ciUpload": [
+      "artifacts/oam/evidence/**",
+      "artifacts/oam/checks/**",
+      "artifacts/oam/test-results/**",
+      "artifacts/oam/final-report.json"
+    ],
+    "requiredFiles": [
+      "artifacts/oam/evidence/evidence-graph.json",
+      "artifacts/oam/evidence/execution-log.jsonl",
+      "artifacts/oam/evidence/current-oam-final-report.json",
+      "artifacts/oam/evidence/runtime-proof.json",
+      "artifacts/oam/evidence/truth-ownership-proof.json",
+      "artifacts/oam/evidence/search-readonly-proof.json",
+      "artifacts/oam/evidence/surface-language-proof.json",
+      "artifacts/oam/evidence/high-risk-trust-proof.json",
+      "artifacts/oam/evidence/master-design-proof.json",
+      "artifacts/oam/evidence/master-outline-proof.json",
+      "artifacts/oam/final-report.json"
+    ],
+    "binding": [
+      "commitSha",
+      "branch",
+      "ciRunId",
+      "artifactDigest",
+      "gateSummary",
+      "testSummary",
+      "coverageSummary",
+      "goNoGo"
+    ]
   }
 }

@@ -507,6 +507,7 @@ app.MapPost("/api/correction-center/ledger-correction-requests/{correctionReques
 app.MapPost("/api/correction-center/ledger-correction-requests/{correctionRequestId}/apply", (string correctionRequestId, LedgerCorrectionApplyRequest request, HttpRequest httpRequest) =>
 {
     var actor = httpRequest.HttpContext.RequireActor();
+    var device = RuntimeActorAuthorization.TrustedDeviceFromRequest(runtime, actor, request.DeviceId);
     try
     {
         return Results.Ok(runtime.ApplyLedgerCorrection(new LedgerCorrectionApplyCommand(
@@ -515,7 +516,14 @@ app.MapPost("/api/correction-center/ledger-correction-requests/{correctionReques
             actor.ActorId,
             request.WorkItemId,
             request.AdjustmentAmount,
-            request.Reason)));
+            request.Reason,
+            actor.Role,
+            actor.Capabilities,
+            request.DeviceId,
+            device?.DeviceTrustStatus ?? "unknown",
+            request.Surface ?? "pc",
+            request.EvidenceRefs,
+            request.AdmissionDecisionRef)));
     }
     catch (InvalidOperationException ex) when (ex.Message.StartsWith("correction_", StringComparison.OrdinalIgnoreCase))
     {
@@ -781,7 +789,11 @@ internal sealed record LedgerCorrectionApplyRequest(
     string ActorId,
     string WorkItemId,
     decimal? AdjustmentAmount,
-    string? Reason);
+    string? Reason,
+    string? DeviceId,
+    string? Surface,
+    IReadOnlyList<string>? EvidenceRefs,
+    string? AdmissionDecisionRef);
 
 internal static class DemoBootstrap
 {

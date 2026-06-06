@@ -20,6 +20,8 @@ for (const file of requiredJson) {
 
 requireFile("docs/oam/current-architecture.md");
 requireFile("docs/system/current-system-map.md");
+requireFile("scripts/oam/generate-current-evidence-root.mjs");
+requireFile("scripts/oam/check-current-evidence-root.mjs");
 
 checkDirectory("services", ["core-api"]);
 checkDirectory("modules", ["accommodation", "finance-gate", "identity", "maintenance"]);
@@ -30,6 +32,20 @@ for (const moduleName of ["accommodation", "finance-gate", "identity", "maintena
   for (const key of ["productCapability", "domainInvariant", "api", "database", "tests", "rules"]) {
     if (!Array.isArray(manifest?.[key]) || manifest[key].length === 0) {
       violations.push(v("module_manifest_incomplete", `模块 ${moduleName} 缺少 ${key} 绑定。`));
+    }
+  }
+}
+
+const migrationTables = databaseTablesFromMigrations();
+for (const moduleName of ["accommodation", "finance-gate", "identity", "maintenance"]) {
+  const manifest = readJson(`modules/${moduleName}/oam-module.manifest.json`);
+  for (const table of manifest?.database ?? []) {
+    if (typeof table !== "string" || !table.trim()) {
+      violations.push(v("module_database_binding_invalid", `模块 ${moduleName} 存在空数据库绑定。`));
+      continue;
+    }
+    if (!migrationTables.has(table)) {
+      violations.push(v("module_database_table_missing", `模块 ${moduleName} 声明的数据库表不存在于迁移中：${table}。`));
     }
   }
 }
@@ -143,6 +159,17 @@ function readJson(file) {
   }
 }
 
+function databaseTablesFromMigrations() {
+  const tables = new Set();
+  for (const file of filesUnder("infra/db/migrations").filter((item) => item.endsWith(".sql"))) {
+    const text = fs.readFileSync(abs(file), "utf8");
+    for (const match of text.matchAll(/create\s+table\s+(?:if\s+not\s+exists\s+)?(?:public\.)?([a-zA-Z_][a-zA-Z0-9_]*)/gi)) {
+      tables.add(match[1]);
+    }
+  }
+  return tables;
+}
+
 function requireFile(file) {
   if (!exists(file)) {
     violations.push(v("file_missing", `文件缺失：${file}`));
@@ -219,7 +246,6 @@ function previousTermPatterns() {
     exact(["tenant", "-", "r", "f", "7"]),
     word(["R", "T"]),
     word(["M", "R"]),
-    exact(["Gate", "Result"]),
     exact(["WON", "-", "18"]),
     exact(["attes", "tation"]),
     exact(["Operations", " ", "Management", " ", "Architecture"]),

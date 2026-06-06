@@ -10,9 +10,11 @@ public sealed class CanonicalOperationsApiService
         "operations.work-item-confirm",
         "work-item.confirm.v1",
         new[] { "DomainEvent", "WorkItem", "LedgerEntry" },
+        new[] { "PaymentFact", "DepositFact", "FinancialFact", "DashboardSummary", "Profile", "SharedReceipt" },
         "balanced-ledger-or-none",
         new[] { "confirm-request.evidenceIds" },
-        "OperationsRuntimeProjection");
+        "OperationsRuntimeProjection",
+        "MoneyKernelPack");
 
     private const string Source = "operations_unit_of_work";
     private const string PayloadFieldValues = "fieldValues";
@@ -155,7 +157,9 @@ public sealed class CanonicalOperationsApiService
             definition,
             actor,
             workItem.OwnerRole,
-            normalized.DeviceId,
+            VerifiedDeviceTrustContext.FromRequest(normalized.DeviceId, normalized.DeviceTrustStatus, normalized.Surface),
+            HighRiskReason(normalized),
+            normalized.EvidenceIds,
             ProductionRequested(normalized));
         if (!admissionDecision.ConfirmAllowed)
         {
@@ -632,9 +636,9 @@ public sealed class CanonicalOperationsApiService
             ["cardInstanceId"] = request.CardInstanceId ?? string.Empty,
             ["aggregateRef"] = request.AggregateRef ?? string.Empty,
             ["deviceId"] = request.DeviceId ?? string.Empty,
-            ["deviceTrustStatus"] = string.IsNullOrWhiteSpace(request.DeviceId) ? "not_provided" : "provided_unverified",
-            ["surface"] = "operations-api",
-            ["reason"] = admission.Reason,
+            ["deviceTrustStatus"] = request.DeviceTrustStatus ?? (string.IsNullOrWhiteSpace(request.DeviceId) ? "not_provided" : "unknown"),
+            ["surface"] = request.Surface ?? "operations-api",
+            ["reason"] = FirstNonEmpty(HighRiskReason(request), admission.Reason),
             ["definition"] = definition.ToTrace(),
             ["definitionId"] = definition.DefinitionId,
             ["sourceCardId"] = definition.SourceCardId,
@@ -654,6 +658,14 @@ public sealed class CanonicalOperationsApiService
             ["evidenceIds"] = request.EvidenceIds ?? Array.Empty<string>(),
             ["source"] = Source
         };
+
+    private static string HighRiskReason(ConfirmWorkItemRequest request) =>
+        FirstNonEmpty(
+            request.Reason,
+            FieldValue(request.FieldValues, "reason"),
+            FieldValue(request.FieldValues, "auditReason"),
+            FieldValue(request.FieldValues, "correctionReason"),
+            FieldValue(request.FieldValues, "approvalReason"));
 
     private static bool IsCorrectionWorkItem(WorkItem workItem) =>
         PayloadValue(workItem.Payload, "correctionMode").Equals("append_only", StringComparison.OrdinalIgnoreCase) ||
@@ -724,6 +736,9 @@ public sealed class CanonicalOperationsApiService
             runtimeMode.Equals("production", StringComparison.OrdinalIgnoreCase)) ||
          (request.FieldValues.TryGetValue("productionConfirm", out var productionConfirm) &&
             productionConfirm.Equals("true", StringComparison.OrdinalIgnoreCase)));
+
+    private static string FieldValue(IReadOnlyDictionary<string, string>? values, string key) =>
+        values is not null && values.TryGetValue(key, out var value) ? value : string.Empty;
 
     private static string PayloadValue(IReadOnlyDictionary<string, string> payload, string key) =>
         payload.TryGetValue(key, out var value) ? value : string.Empty;

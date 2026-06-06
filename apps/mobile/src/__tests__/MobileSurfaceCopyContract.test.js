@@ -153,7 +153,7 @@ describe("HOTFIX-SURFACE-UX-01 mobile visible copy contract", () => {
 
     expect(html).toContain('data-surface="runtime-confirmation"');
     expect(text).toContain("确认当前办理");
-    expect(text).toContain("写入事件并刷新视图");
+    expect(text).toContain("保存办理结果并刷新视图");
     expect(text).toContain("返回工作台");
     vi.unstubAllGlobals();
   });

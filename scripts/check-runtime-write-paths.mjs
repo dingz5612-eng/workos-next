@@ -86,6 +86,11 @@ function analyzeSources(files) {
   requirePattern(unitOfWork, /GetFactTraceBySubmission\s*\(/, "OAM-WRITE-TRACE-BY-SUBMISSION", "FactTrace store must resolve trace by CommandSubmission.", "OperationsUnitOfWork.cs", add);
   requirePattern(unitOfWork, /GetFactTracesByWorkItem\s*\(/, "OAM-WRITE-TRACE-BY-WORKITEM", "FactTrace store must resolve traces by WorkItem.", "OperationsUnitOfWork.cs", add);
   requirePattern(unitOfWork, /GetFactTracesByCase\s*\(/, "OAM-WRITE-TRACE-BY-CASE", "FactTrace store must resolve traces by OperationCase.", "OperationsUnitOfWork.cs", add);
+  requirePattern(unitOfWork, /IReadOnlyList<string>\s+ForbiddenFacts/, "OAM-WRITE-FORBIDDEN-FACTS-GUARD", "Slice handler definition must declare forbidden output facts.", "OperationsUnitOfWork.cs", add);
+  requirePattern(unitOfWork, /string\s+TruthOwnerRef/, "OAM-WRITE-TRUTH-OWNER-GUARD", "Slice handler definition must declare truth owner for output facts.", "OperationsUnitOfWork.cs", add);
+  requirePattern(unitOfWork, /ValidateForbiddenOutputFacts\s*\(/, "OAM-WRITE-FORBIDDEN-FACTS-VALIDATED", "OperationsUnitOfWork must reject forbidden output facts before materialization.", "OperationsUnitOfWork.cs", add);
+  requirePattern(unitOfWork, /operations_handler_ledger_truth_owner_not_allowed/, "OAM-WRITE-LEDGER-OWNER-VALIDATED", "OperationsUnitOfWork must reject LedgerEntry output not owned by MoneyKernelPack.", "OperationsUnitOfWork.cs", add);
+  requirePattern(canonical, /ConfirmCommandDefinition[\s\S]*MoneyKernelPack/, "OAM-WRITE-CONFIRM-MONEY-KERNEL-OWNER", "Canonical confirm handler must route ledger output through MoneyKernelPack truth owner.", "CanonicalOperationsApiService.cs", add);
 
   return violations;
 }
@@ -150,9 +155,9 @@ function runSelfTest() {
   const valid = {
     "Program.cs": "app.MapPost(\"/api/operations/workspaces/start\", () => StartOperationsWorkspace());",
     "OperationsRuntimeService.cs": "public sealed class OperationsRuntimeService { public PrepareWorkItemResult? PrepareWorkItem() => null; } public sealed class ProjectionOperationsRuntimeAdapter {}",
-    "CanonicalOperationsApiService.cs": "private readonly OperationsUnitOfWork unitOfWork; void StartWorkspaceCase(){ CreateCase(); CreateWorkItem(); } void Confirm(){ var commit = unitOfWork.Commit(command); catalog.RecordWorkItemTransition(); }",
+    "CanonicalOperationsApiService.cs": "private readonly OperationsUnitOfWork unitOfWork; public static readonly SliceCommandHandlerDefinition ConfirmCommandDefinition = new(\"cmd\",\"slice\",\"v1\", new[]{\"DomainEvent\",\"LedgerEntry\"}, new[]{\"PaymentFact\"}, \"balanced-ledger-or-none\", new[]{\"evidence\"}, \"Projection\", \"MoneyKernelPack\"); void StartWorkspaceCase(){ CreateCase(); CreateWorkItem(); } void Confirm(){ var commit = unitOfWork.Commit(command); catalog.RecordWorkItemTransition(); }",
     "OperationsRuntimeEndpoints.cs": "app.MapPost(\"/api/operations/work-items/{workItemId}/confirm\", (string workItemId, ConfirmWorkItemRequest request, CanonicalOperationsApiService operations) => { operations.ConfirmWorkItem(workItemId, request, actor, requestId); });",
-    "OperationsUnitOfWork.cs": "void Commit(){ var submission = OperationsCommandSubmission.Pending(\"cmd\", scope, envelope); var e = new OperationsDomainEvent(request.WorkItemId); } FactTrace GetFactTraceBySubmission(){} IReadOnlyList<FactTrace> GetFactTracesByWorkItem(){} IReadOnlyList<FactTrace> GetFactTracesByCase(){}",
+    "OperationsUnitOfWork.cs": "public sealed record SliceCommandHandlerDefinition(IReadOnlyList<string> ForbiddenFacts, string TruthOwnerRef); void Commit(){ var submission = OperationsCommandSubmission.Pending(\"cmd\", scope, envelope); var e = new OperationsDomainEvent(request.WorkItemId); ValidateForbiddenOutputFacts(definition, handled); throw new Exception(\"operations_handler_ledger_truth_owner_not_allowed\"); } FactTrace GetFactTraceBySubmission(){} IReadOnlyList<FactTrace> GetFactTracesByWorkItem(){} IReadOnlyList<FactTrace> GetFactTracesByCase(){}",
     "OpenAPI": "{\"paths\":{\"/api/operations/work-items/{workItemId}/confirm\":{},\"/api/operations/workspaces/start\":{}}}",
     "services/core-api/WorkOS.Api/Runtime/OfficialSource.cs": "public sealed class OfficialSource {}"
   };

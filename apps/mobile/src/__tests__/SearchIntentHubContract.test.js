@@ -260,7 +260,7 @@ describe("OAM Surface search intent hub contract", () => {
   it("preserves Search Kernel admission state in the surface view model", () => {
     const ctx = createSurfaceCtx({ view: "search", query: "房间" });
     const vm = buildSearchResultVM({
-      resultType: "workspaceCardProjection",
+      resultType: "workspaceCardCompatibility",
       workspaceId: "W-STAY-RESOURCE",
       cardId: "roomSetup",
       admission: {
@@ -274,8 +274,19 @@ describe("OAM Surface search intent hub contract", () => {
       },
       sourceRefs: {
         source: "SearchKernelService",
+        sourceType: "workspaceCardProjection",
         projectionAdapter: "LensQueryService.Search",
         admissionDecisionRef: "admission:roomSetup:internal"
+      },
+      gateResult: {
+        status: "visible_readonly",
+        source: "SearchKernelService",
+        sourceType: "workspaceCardProjection",
+        checkedAt: "2026-06-06T00:00:00.0000000Z",
+        policyVersion: "oam.search-permission-policy.v1",
+        admissionDecisionRef: "admission:roomSetup:internal",
+        writeThroughSearchAllowed: false,
+        writeBusinessFactAllowed: false
       }
     }, ctx);
 
@@ -285,7 +296,12 @@ describe("OAM Surface search intent hub contract", () => {
     expect(vm.productionAllowed).toBe(false);
     expect(vm.admissionReason).toBe("L1_observation_only");
     expect(vm.admission.admissionDecisionRef).toBe("admission:roomSetup:internal");
+    expect(vm.gateResult.status).toBe("visible_readonly");
+    expect(vm.gateResult.admissionDecisionRef).toBe("admission:roomSetup:internal");
+    expect(vm.gateResult.writeThroughSearchAllowed).toBe(false);
+    expect(vm.gateResult.writeBusinessFactAllowed).toBe(false);
     expect(vm.sourceRefs.admissionDecisionRef).toBeUndefined();
+    expect(vm.sourceRefs.sourceType).toBe("workspaceCardProjection");
     expect(vm.sourceRefs.projectionAdapter).toBe("LensQueryService.Search");
   });
 

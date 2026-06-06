@@ -128,28 +128,45 @@ public sealed class SearchKernelService
             .ToArray();
         var baseScore = ReadInt(projectionSource, "score");
         var score = baseScore + matchedTerms.Length * 40 + (decision.ConfirmAllowed ? 25 : 0);
+        var indexedAt = DateTimeOffset.UtcNow;
 
         return new Dictionary<string, object?>
         {
             ["resultId"] = resultId,
-            ["resultType"] = FirstNonEmpty(ReadString(projectionSource, "resultType"), "workspaceCardProjection"),
+            ["resultType"] = "workspaceCardCompatibility",
+            ["objectKind"] = "workspaceCard",
             ["workspaceId"] = workspaceId,
             ["cardId"] = cardId,
             ["title"] = ReadValue(projectionSource, "title") ?? Localized("Search result"),
             ["summary"] = ReadValue(projectionSource, "summary") ?? Localized(decision.Reason),
             ["matchedTerms"] = matchedTerms,
             ["score"] = score,
-            ["target"] = ReadValue(projectionSource, "target") ?? new Dictionary<string, object?>
+            ["target"] = new Dictionary<string, object?>
             {
+                ["view"] = "operationPanel",
                 ["kind"] = "workspaceCard",
                 ["workspaceId"] = workspaceId,
-                ["cardId"] = cardId
+                ["cardId"] = cardId,
+                ["writeThroughSearchAllowed"] = false
             },
             ["admission"] = decision.ToContract(),
+            ["permission"] = Permission("visible", "none", "business", Array.Empty<string>(), indexedAt),
+            ["lineage"] = Lineage("ProjectionRuntime", "workspaceCardProjection", $"{workspaceId}:{cardId}", indexedAt, definition.DefinitionId),
+            ["freshness"] = Freshness(indexedAt, 0, false),
+            ["ranking"] = Ranking("oam.search-ranking-policy.v1", matchedTerms, decision.ConfirmAllowed),
+            ["businessContext"] = new Dictionary<string, object?>
+            {
+                ["workspaceId"] = workspaceId,
+                ["cardId"] = cardId,
+                ["businessLine"] = "dormitory"
+            },
+            ["availableActions"] = ReadonlyActions("navigate", "operationPanel"),
+            ["gateResult"] = GateResult(decision, indexedAt, "workspaceCardProjection"),
             ["traceRefs"] = Array.Empty<string>(),
             ["sourceRefs"] = new Dictionary<string, object?>
             {
                 ["source"] = "SearchKernelService",
+                ["sourceType"] = "workspaceCardProjection",
                 ["inputAdapter"] = "ProjectionWorkspaceSearchAdapter",
                 ["projectionAdapter"] = "LensQueryService.Search",
                 ["workspaceId"] = workspaceId,
@@ -206,11 +223,13 @@ public sealed class SearchKernelService
         var targetIsTerminal = IsTerminalStatus(targetWorkItem.Status);
         var resultType = targetIsTerminal ? "operationCase" : "workItem";
         var score = 220 + matchedTerms.Length * 45 + (targetIsTerminal ? 0 : 80) + (decision.ConfirmAllowed ? 25 : 0);
+        var indexedAt = DateTimeOffset.UtcNow;
 
         return new Dictionary<string, object?>
         {
             ["resultId"] = $"operations:{record.EventId}:{targetWorkItem.WorkItemId}",
             ["resultType"] = resultType,
+            ["objectKind"] = targetIsTerminal ? "operationCase" : "workItem",
             ["workItemId"] = targetWorkItem.WorkItemId,
             ["workspaceId"] = targetWorkItem.WorkspaceId,
             ["cardId"] = cardId,
@@ -235,17 +254,33 @@ public sealed class SearchKernelService
             },
             ["target"] = new Dictionary<string, object?>
             {
+                ["view"] = targetIsTerminal ? "completedRecords" : "operationPanel",
                 ["kind"] = "operationsWorkItem",
                 ["workspaceId"] = targetWorkItem.WorkspaceId,
                 ["cardId"] = cardId,
                 ["workItemId"] = targetWorkItem.WorkItemId,
-                ["caseId"] = targetWorkItem.CaseId
+                ["caseId"] = targetWorkItem.CaseId,
+                ["writeThroughSearchAllowed"] = false
             },
             ["admission"] = decision.ToContract(),
+            ["permission"] = Permission("visible", "business-anchor", "business", new[] { "search.read" }, indexedAt),
+            ["lineage"] = Lineage("OperationsRuntime", "operationsDomainEvent", record.EventId, record.OccurredAtUtc, definition.DefinitionId),
+            ["freshness"] = Freshness(indexedAt, Math.Max(0, (long)(indexedAt - record.OccurredAtUtc).TotalMilliseconds), false),
+            ["ranking"] = Ranking("oam.search-ranking-policy.v1", matchedTerms, decision.ConfirmAllowed),
+            ["businessContext"] = new Dictionary<string, object?>
+            {
+                ["workspaceId"] = targetWorkItem.WorkspaceId,
+                ["caseId"] = targetWorkItem.CaseId,
+                ["workItemId"] = targetWorkItem.WorkItemId,
+                ["businessLine"] = "dormitory"
+            },
+            ["availableActions"] = ReadonlyActions(targetIsTerminal ? "view" : "navigate", targetIsTerminal ? "completedRecords" : "operationPanel"),
+            ["gateResult"] = GateResult(decision, indexedAt, "operationsDomainEvent"),
             ["traceRefs"] = new[] { record.SubmissionId, record.EventId },
             ["sourceRefs"] = new Dictionary<string, object?>
             {
                 ["source"] = "SearchKernelService",
+                ["sourceType"] = "operationsDomainEvent",
                 ["inputAdapter"] = "OperationsRuntime.SearchOperations",
                 ["projectionAdapter"] = "OperationsReadStore.SearchOperations",
                 ["workspaceId"] = targetWorkItem.WorkspaceId,
@@ -321,6 +356,83 @@ public sealed class SearchKernelService
 
     private static int CardIndex(WorkspaceSeed seed, string cardId) =>
         seed.Cards.ToList().FindIndex(card => card.Id.Equals(cardId, StringComparison.OrdinalIgnoreCase));
+
+    private static Dictionary<string, object?> Permission(
+        string visibility,
+        string redaction,
+        string dataClassification,
+        IReadOnlyList<string> requiredPermissions,
+        DateTimeOffset checkedAt) =>
+        new()
+        {
+            ["visibility"] = visibility,
+            ["redaction"] = redaction,
+            ["dataClassification"] = dataClassification,
+            ["requiredPermissions"] = requiredPermissions,
+            ["checkedAt"] = checkedAt.ToString("O"),
+            ["policyVersion"] = "oam.search-permission-policy.v1"
+        };
+
+    private static Dictionary<string, object?> Lineage(
+        string sourceSystem,
+        string sourceType,
+        string sourceId,
+        DateTimeOffset sourceUpdatedAt,
+        string definitionVersion) =>
+        new()
+        {
+            ["sourceSystem"] = sourceSystem,
+            ["sourceType"] = sourceType,
+            ["sourceId"] = sourceId,
+            ["sourceUpdatedAt"] = sourceUpdatedAt.ToString("O"),
+            ["definitionVersion"] = definitionVersion
+        };
+
+    private static Dictionary<string, object?> Freshness(DateTimeOffset indexedAt, long indexLagMs, bool stale) =>
+        new()
+        {
+            ["indexedAt"] = indexedAt.ToString("O"),
+            ["indexLagMs"] = indexLagMs,
+            ["stale"] = stale
+        };
+
+    private static Dictionary<string, object?> Ranking(
+        string policyVersion,
+        IReadOnlyList<string> matchedTerms,
+        bool confirmAllowed) =>
+        new()
+        {
+            ["policyVersion"] = policyVersion,
+            ["matchedTermCount"] = matchedTerms.Count,
+            ["rankReason"] = confirmAllowed ? "visible_with_confirm_admission" : "visible_readonly_or_prepare_only"
+        };
+
+    private static IReadOnlyList<Dictionary<string, object?>> ReadonlyActions(string action, string view) =>
+        new[]
+        {
+            new Dictionary<string, object?>
+            {
+                ["action"] = action,
+                ["view"] = view,
+                ["writeBusinessFact"] = false
+            }
+        };
+
+    private static Dictionary<string, object?> GateResult(
+        AdmissionKernelDecision decision,
+        DateTimeOffset checkedAt,
+        string sourceType) =>
+        new()
+        {
+            ["status"] = decision.VisibleAllowed ? "visible_readonly" : "hidden",
+            ["source"] = "SearchKernelService",
+            ["sourceType"] = sourceType,
+            ["checkedAt"] = checkedAt.ToString("O"),
+            ["policyVersion"] = "oam.search-permission-policy.v1",
+            ["admissionDecisionRef"] = decision.AdmissionDecisionRef,
+            ["writeThroughSearchAllowed"] = false,
+            ["writeBusinessFactAllowed"] = false
+        };
 
     private static string NormalizeLanguage(string? language) =>
         language is "ru-RU" or "ky-KG" ? language : "zh-CN";

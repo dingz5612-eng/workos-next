@@ -121,6 +121,21 @@ WorkOSNext 是移动优先的业务操作系统。
 - WorkItem 状态记录必须使用 `operations_work_item_state_event_log`。
 - 本地提交前必须通过 `scripts/oam/run-control-plane-checks.ps1`。
 
+## 当前 OAM v2 审查入口
+
+人工审查只判断变更是否落到正确权威，不在手册里重新定义合同：
+
+- 文件身份：查 `docs/oam/current-authority-index.json`，跑 `scripts/oam/check-current-authority-index.mjs`。
+- 职责边界：查 `docs/contracts/oam-responsibility-boundary-matrix.json`，跑 `scripts/oam/check-oam-responsibility-boundary-matrix.mjs`。
+- 业务对象和字段：查 `docs/contracts/business/oam-business-object-field-registry.json`，跑 `scripts/oam/check-business-object-field-registry.mjs`。
+- 流程状态和动作：查 `docs/contracts/business/oam-workflow-state-registry.json`，跑 `scripts/oam/check-workflow-state-registry.mjs`。
+- 数据库 owner：查 `docs/contracts/database/oam-db-ownership-map.json`，跑 `scripts/oam/check-db-ownership-map.mjs`。
+- Search 读侧：查 `docs/contracts/search/search-contract.json`，跑 `scripts/check-search-kernel.mjs`。
+- 普通用户文案和 PC 治理隔离：查 `docs/surface/surface-contract.yml`，跑 `scripts/oam/check-surface-language-v2.mjs`。
+- 证据根：查 `docs/contracts/evidence/evidence-graph-refs-contract.json`，跑 `scripts/oam/check-evidence-contract-refs.mjs`、`scripts/oam/check-current-evidence-root.mjs`。
+
+失败修复规则：先修合同和 owner，再修实现，再补测试和证据；不得用页面私有逻辑、读侧摘要或单项测试绿灯替代当前 OAM 权威。
+
 ## 单次变更审查清单
 
 - 是否遵守四种工作模式。

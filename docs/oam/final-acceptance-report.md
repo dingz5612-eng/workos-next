@@ -1,5 +1,7 @@
 # WorkOSNext 当前 OAM 最终验收报告
 
+> 职责边界：本文是人工可读的验收快照，不是当前 GO/NO_GO 的机器权威。当前裁决以 `artifacts/oam/final-report.json`、`artifacts/oam/evidence/evidence-graph.json` 和 `scripts/oam/check-current-evidence-root.mjs` 为准；若本文与机器证据根冲突，机器证据根优先。
+
 ## 最终当前架构说明
 
 WorkOSNext 已收敛为唯一当前 OAM 架构：主执行链是 Operations Runtime，主业务写路径是 `POST /api/operations/work-items/{workItemId}/confirm`。Projection、Lens、Search、Language 只作为读侧和体验侧内核；Control Plane 和 Management Cockpit 只能通过当前控制命令与只读治理面参与，不直接写业务事实。
@@ -14,6 +16,21 @@ WorkOSNext 已收敛为唯一当前 OAM 架构：主执行链是 Operations Runt
 ## 本次审查修复覆盖
 
 本次硬收口覆盖并复验了以下合并阻断点：PC 测试已纳入独立 CI 入口，合同本地路径引用已由当前引用完整性检查保护，旧入口、旧阶段词和旧运行体系字段由 OAM 纯净度检查阻断，已删除 artifact 引用已改为当前证据目录或当前生成命令，Control Plane runner 的 `script`、`checkRef`、`evidenceRef` 均指向真实存在或当前运行时生成的路径。
+
+## 当前 OAM v2 定稿补充
+
+本轮 v2 硬闭环新增机器权威和检查入口：
+
+- 权威索引：`docs/oam/current-authority-index.json`，由 `scripts/oam/check-current-authority-index.mjs` 验收。
+- 职责边界矩阵：`docs/contracts/oam-responsibility-boundary-matrix.json`，由 `scripts/oam/check-oam-responsibility-boundary-matrix.mjs` 验收。
+- 业务对象字段总表：`docs/contracts/business/oam-business-object-field-registry.json`，由 `scripts/oam/check-business-object-field-registry.mjs` 验收。
+- WorkItem 流程状态总表：`docs/contracts/business/oam-workflow-state-registry.json`，由 `scripts/oam/check-workflow-state-registry.mjs` 验收。
+- 数据库归属图：`docs/contracts/database/oam-db-ownership-map.json`，由 `scripts/oam/check-db-ownership-map.mjs` 验收。
+- 证据引用合同：`docs/contracts/evidence/evidence-graph-refs-contract.json`，由 `scripts/oam/check-evidence-contract-refs.mjs` 验收。
+- 运行时治理 v2：`scripts/oam/check-runtime-governance-v2.mjs`，覆盖 Admission、可信设备、修正中心、UOW 和事实 owner。
+- Surface 语言 v2：`scripts/oam/check-surface-language-v2.mjs`，覆盖普通移动端可见文案、PC 治理面隔离、结构化准入字段和 Search 读侧门禁。
+
+这些检查已接入 `.github/workflows/ci.yml` 和 `scripts/oam/run-control-plane-checks.ps1`。阶段 10 会刷新全量测试、覆盖率、构建、浏览器 smoke、运行时合同和证据根结果；最终提交前以阶段 10 的结果为准。
 
 本轮已完成的当前 OAM 原生改写：
 - Surface 写阻断统一为 `currentForbiddenWriteAdapter`，非持久化任务标识统一为 `nonPersistedWorkItemKey`。
@@ -90,7 +107,7 @@ WorkOSNext 已收敛为唯一当前 OAM 架构：主执行链是 Operations Runt
 
 ## 测试覆盖率报告
 
-前端覆盖率：Statements 78.54%，Branches 63.38%，Functions 85.00%，Lines 82.69%。
+前端覆盖率：Statements 78.74%，Branches 63.58%，Functions 85.05%，Lines 82.91%。
 
 后端覆盖率文件已生成：
 - Unit tests: line 33.28%，branch 45.53%。
@@ -100,16 +117,16 @@ WorkOSNext 已收敛为唯一当前 OAM 架构：主执行链是 Operations Runt
 - Release control tests: line 0.00%，branch 0.00%。
 
 完整最终验收重新构建测试结果：
-- 移动端单测：59 个测试文件、313 个用例通过。
+- 移动端单测：59 个测试文件、315 个用例通过。
 - PC 单测：4 个测试文件、4 个用例通过，作为独立验收入口。
 - Playwright smoke：5 个真实浏览器用例通过。
-- 后端构建：`WorkOSNext.sln` Release 构建通过，仅保留既有 nullable/analyzer warning。
-- 后端测试：Unit 224 个、Runtime Integration 55 个、Database Security 9 个、Policy as Code 4 个、Release Evidence 5 个全部通过。
+- 后端构建：`WorkOSNext.sln` Release 构建通过，0 warning，0 error。
+- 后端测试：Unit 228 个、Runtime Integration 55 个、Database Security 9 个、Policy as Code 4 个、Release Evidence 5 个全部通过。
 - Runtime Contract：运行型合同检查通过。
 
 剩余 warning：
 - Vite build 保留既有单 chunk 体积提示。
-- .NET build 保留既有 nullable/analyzer warning，未形成当前 OAM 验收阻断。
+- .NET build 本轮为 0 warning，0 error。
 
 ## 远端分支处置建议
 

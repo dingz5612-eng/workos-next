@@ -9,6 +9,11 @@ import {
 } from "./btos-compiler-lib.mjs";
 
 const checkName = "check-ledger-semantic-rules";
+const allowedArtifactPrefixes = [
+  "artifacts/oam/evidence/",
+  "artifacts/oam/checks/",
+  "artifacts/oam/test-results/"
+];
 const files = [
   "docs/business/finance/ledger-semantic-rules.yml",
   "schemas/finance/ledger-semantic-rules.schema.json",
@@ -76,9 +81,15 @@ function validateRefs() {
     }
   }
   for (const ref of rules.artifactRefs ?? []) {
-    if (!ref.startsWith("artifacts/") || ref.includes(".tmp/")) {
+    if (!isAllowedOamArtifactRef(ref)) {
       violations.push(violation("oam.finance.artifact_ref_not_persistent", files[0], `artifact 引用必须是持久路径且不能包含 .tmp: ${ref}.`, { ref }));
     }
   }
   return violations;
+}
+
+function isAllowedOamArtifactRef(ref) {
+  return typeof ref === "string" &&
+    allowedArtifactPrefixes.some((prefix) => ref.startsWith(prefix)) &&
+    !ref.includes(".tmp/");
 }

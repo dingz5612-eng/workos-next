@@ -30,8 +30,9 @@
     {
       "sourceId": "workspaceCardProjection",
       "ref": "ProjectionRuntime workspace/card projection source",
+      "sourceType": "workspaceCardProjection",
       "objectTypes": [
-        "workspaceCardProjection",
+        "workspaceCardCompatibility",
         "learningItem"
       ],
       "admissionRequired": true
@@ -59,6 +60,7 @@
       "sourceId": "controlPlane",
       "ref": "Control Plane release-control and governance audit read models",
       "objectTypes": [
+        "gateResult",
         "release",
         "auditEvent"
       ],

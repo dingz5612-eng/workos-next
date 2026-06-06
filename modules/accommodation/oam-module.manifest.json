@@ -20,8 +20,8 @@
     "GET /api/lenses/accommodation/{lensId}"
   ],
   "database": [
-    "hostel_rooms",
-    "hostel_beds",
+    "accommodation_rooms",
+    "accommodation_beds",
     "hostel_leads",
     "hostel_bookings",
     "hostel_stays",

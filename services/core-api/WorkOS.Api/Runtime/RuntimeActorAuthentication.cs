@@ -23,6 +23,13 @@ public static class RuntimeActorPolicies
     public const string GovernanceExportPolicy = "GovernanceExportPolicy";
 }
 
+public static class ProductionBrowserAuthPolicy
+{
+    public const string PrimarySessionPath = "cookie+csrf";
+    public const string ApiBearerSource = "api-bearer-non-browser";
+    public const string PriorHeaderSource = "non-browser-actor-token";
+}
+
 public static class RuntimeActorClaims
 {
     public const string ActorId = "workos.actorId";
@@ -91,26 +98,26 @@ public sealed class RuntimeActorAuthenticationHandler : AuthenticationHandler<Au
 
     private static string? TokenFromRequest(HttpRequest request, out string source)
     {
+        if (request.Cookies.TryGetValue(RuntimeActorAuthenticationDefaults.SessionCookieName, out var cookie) &&
+            !string.IsNullOrWhiteSpace(cookie))
+        {
+            source = "cookie";
+            return cookie.Trim();
+        }
+
         var authorization = request.Headers.Authorization.FirstOrDefault();
         if (!string.IsNullOrWhiteSpace(authorization) &&
             authorization.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
         {
-            source = "bearer";
+            source = ProductionBrowserAuthPolicy.ApiBearerSource;
             return authorization["Bearer ".Length..].Trim();
         }
 
         var priorHeader = request.Headers["X-WorkOS-Actor-Token"].FirstOrDefault();
         if (!string.IsNullOrWhiteSpace(priorHeader))
         {
-            source = "prior-header";
+            source = ProductionBrowserAuthPolicy.PriorHeaderSource;
             return priorHeader.Trim();
-        }
-
-        if (request.Cookies.TryGetValue(RuntimeActorAuthenticationDefaults.SessionCookieName, out var cookie) &&
-            !string.IsNullOrWhiteSpace(cookie))
-        {
-            source = "cookie";
-            return cookie.Trim();
         }
 
         source = "none";

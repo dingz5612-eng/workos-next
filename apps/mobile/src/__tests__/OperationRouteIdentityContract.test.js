@@ -327,8 +327,8 @@ describe("OAM Surface WorkItem route identity", () => {
     expect(html).toContain('aria-label="房间配置卡 已完成"');
     expect(html).toContain('aria-label="床位配置卡 已完成"');
     expect(html).toContain('aria-label="价格配置卡 已完成"');
-    expect(html).toContain('aria-label="房间准备度卡 可办理"');
-    expect(text).not.toContain("房间配置卡 可办理");
+    expect(html).toContain('aria-label="房间准备度卡 待处理"');
+    expect(text).not.toContain("房间配置卡 待处理");
     expect(text).not.toContain("床位配置卡 未开始");
   });
 
@@ -380,8 +380,8 @@ describe("OAM Surface WorkItem route identity", () => {
     expect(target.workItem.workspace.cards.find((card) => card.id === "roomSetup").status).toBe("confirmed");
     expect(target.workItem.workspace.cards.find((card) => card.id === "bedSetup").status).toBe("ready");
     expect(html).toContain('aria-label="房间配置卡 已完成"');
-    expect(html).toContain('aria-label="床位配置卡 可办理"');
-    expect(visibleText(html)).not.toContain("房间配置卡 可办理");
+    expect(html).toContain('aria-label="床位配置卡 待处理"');
+    expect(visibleText(html)).not.toContain("房间配置卡 待处理");
   });
 
   it("does not render an operation CTA when no persisted WorkItem exists", () => {

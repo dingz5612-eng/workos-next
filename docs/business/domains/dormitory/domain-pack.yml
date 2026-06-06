@@ -63,6 +63,34 @@
     "Dorm.PeriodReview",
     "Dorm.ExceptionResolve"
   ],
+  "objectTraceability": [
+    {"objectId":"Subject","中文名称":"主体","owner":"SubjectVehicleTruthPack","writers":["shared-governance-owner"],"readers":["DormitoryDomainPack","FinanceTruthPack","SearchKernel","ManagementCockpit"],"workItem":"Dorm.CheckinConfirm","event":"SubjectLinkedToStay","producesLedgerEntry":false,"searchable":true,"kpiIncluded":false,"evidenceRequired":true,"protectedByGate":"scripts/check-shared-governance-boundary.mjs"},
+    {"objectId":"Vehicle","中文名称":"车辆","owner":"SubjectVehicleTruthPack","writers":["shared-governance-owner"],"readers":["DormitoryDomainPack","SearchKernel","ManagementCockpit"],"workItem":"Dorm.CheckinConfirm","event":"VehicleLinkedForVisit","producesLedgerEntry":false,"searchable":true,"kpiIncluded":false,"evidenceRequired":false,"protectedByGate":"scripts/check-shared-governance-boundary.mjs"},
+    {"objectId":"Room","中文名称":"房间","owner":"DormitoryDomainPack","writers":["Resource Manager"],"readers":["SearchKernel","ManagementCockpit","FinanceTruthPack"],"workItem":"Dorm.ResourceSetup","event":"DormitoryRoomPrepared","producesLedgerEntry":false,"searchable":true,"kpiIncluded":true,"evidenceRequired":true,"protectedByGate":"scripts/check-dormitory-golden-domain.mjs"},
+    {"objectId":"Bed","中文名称":"床位","owner":"DormitoryDomainPack","writers":["Resource Manager"],"readers":["SearchKernel","ManagementCockpit","FinanceTruthPack"],"workItem":"Dorm.BedAvailabilityConfirm","event":"DormitoryBedAssigned","producesLedgerEntry":false,"searchable":true,"kpiIncluded":true,"evidenceRequired":true,"protectedByGate":"scripts/check-dormitory-golden-domain.mjs"},
+    {"objectId":"AccommodationOrder","中文名称":"住宿单","owner":"DormitoryDomainPack","writers":["Front Desk Lead"],"readers":["FinanceTruthPack","SearchKernel","ManagementCockpit"],"workItem":"Dorm.CheckinConfirm","event":"DormitoryStayPrepared","producesLedgerEntry":false,"searchable":true,"kpiIncluded":true,"evidenceRequired":true,"protectedByGate":"scripts/business/check-canonical-scenario-map.mjs"},
+    {"objectId":"StayChargeBasis","中文名称":"费用依据","owner":"DormitoryDomainPack","writers":["Finance Cashier"],"readers":["FinanceTruthPack","SearchKernel","ManagementCockpit"],"workItem":"Dorm.ChargeGenerate","event":"DormitoryPaymentBasisCaptured","producesLedgerEntry":false,"searchable":true,"kpiIncluded":true,"evidenceRequired":true,"protectedByGate":"scripts/check-finance-truth.mjs"},
+    {"objectId":"DepositRequest","中文名称":"押金申请","owner":"DormitoryDomainPack","writers":["Finance Supervisor"],"readers":["FinanceTruthPack","SearchKernel","ManagementCockpit"],"workItem":"Dorm.DepositAssess","event":"DormitoryDepositBasisCaptured","producesLedgerEntry":false,"searchable":true,"kpiIncluded":true,"evidenceRequired":true,"protectedByGate":"scripts/finance/check-finance-semantic-truth.mjs"},
+    {"objectId":"FinancialFact","中文名称":"财务事实","owner":"FinanceTruthPack","writers":["Finance Controller"],"readers":["DormitoryDomainPack","SearchKernel","ManagementCockpit"],"workItem":"Dorm.PaymentConfirm","event":"FinanceTruthCommitted","producesLedgerEntry":true,"searchable":true,"kpiIncluded":true,"evidenceRequired":true,"protectedByGate":"scripts/check-finance-truth.mjs"},
+    {"objectId":"LedgerEntry","中文名称":"账务事实","owner":"FinanceTruthPack","writers":["Finance Controller"],"readers":["DormitoryDomainPack","SearchKernel","ManagementCockpit"],"workItem":"Finance.CorrectionApply","event":"LedgerEntryAppended","producesLedgerEntry":true,"searchable":false,"kpiIncluded":true,"evidenceRequired":true,"protectedByGate":"scripts/check-ledger-semantic-rules.mjs"},
+    {"objectId":"ExceptionCase","中文名称":"异常","owner":"DormitoryDomainPack","writers":["Operations Director"],"readers":["FinanceTruthPack","SearchKernel","ManagementCockpit"],"workItem":"Dorm.ExceptionResolve","event":"DormitoryCorrectionRequested","producesLedgerEntry":false,"searchable":true,"kpiIncluded":true,"evidenceRequired":true,"protectedByGate":"scripts/check-runtime-write-paths.mjs"},
+    {"objectId":"SharedReceipt","中文名称":"回执","owner":"SharedGovernancePack","writers":["shared-governance-owner"],"readers":["DormitoryDomainPack","SearchKernel","ManagementCockpit"],"workItem":"Dorm.CheckinConfirm","event":"SharedReceiptIssued","producesLedgerEntry":false,"searchable":true,"kpiIncluded":false,"evidenceRequired":true,"protectedByGate":"scripts/check-shared-governance-boundary.mjs"},
+    {"objectId":"Profile","中文名称":"画像","owner":"ProfileProjectionPack","writers":["projection-runtime"],"readers":["DormitoryDomainPack","SearchKernel","ManagementCockpit"],"workItem":"Dorm.PeriodReview","event":"ProfileProjectionUpdated","producesLedgerEntry":false,"searchable":true,"kpiIncluded":false,"evidenceRequired":false,"protectedByGate":"scripts/check-api-boundaries.mjs"},
+    {"objectId":"DashboardSummary","中文名称":"驾驶舱摘要","owner":"ManagementCockpit","writers":["projection-runtime"],"readers":["DormitoryDomainPack","SearchKernel","ManagementCockpit"],"workItem":"Dorm.PeriodReview","event":"DashboardSummaryProjected","producesLedgerEntry":false,"searchable":true,"kpiIncluded":true,"evidenceRequired":false,"protectedByGate":"scripts/check-management-cockpit-boundary.mjs"}
+  ],
+  "goldenChainTrace": {
+    "sourceScenario": "docs/scenarios/dormitory/golden-pilot.yml",
+    "scenarioMap": "docs/business/dormitory/canonical-scenario-map.json",
+    "fieldContract": "docs/business/dormitory/scenario-field-contract.yml",
+    "stateContract": "docs/contracts/definition/workitem-definition-registry.json",
+    "eventContract": "services/core-api/WorkOS.Api/Runtime/OperationsUnitOfWork.cs",
+    "evidenceContract": "docs/business/dormitory/evidence-coverage-contract.yml",
+    "financeBoundary": "docs/business/dormitory/ledger-posting-contract.yml",
+    "searchBoundary": "docs/contracts/search/search-contract.json",
+    "kpiBoundary": "docs/business/dormitory/metric-formula-contract.yml",
+    "surfaceBoundary": "docs/surface/surface-contract.yml",
+    "gate": "scripts/oam/run-control-plane-checks.ps1"
+  },
   "evidence": {
     "required": [
       "identity-document",
