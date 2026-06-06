@@ -23,7 +23,7 @@ internal sealed class ArchitectureExceptionCatalog
 
     private static ArchitectureExceptionCatalog LoadFromRepo()
     {
-        var path = LocateArchitectureFile("architecture-exceptions.json");
+        var path = LocateArchitectureFile("current-architecture-exceptions.json");
         using var document = JsonDocument.Parse(File.ReadAllText(path));
         var records = document.RootElement.GetProperty("exceptions").EnumerateArray()
             .Select(item => new ArchitectureExceptionRecord(
@@ -38,7 +38,7 @@ internal sealed class ArchitectureExceptionCatalog
         var current = new DirectoryInfo(AppContext.BaseDirectory);
         while (current is not null)
         {
-            var candidate = Path.Combine(current.FullName, "docs", "architecture", fileName);
+            var candidate = Path.Combine(current.FullName, "docs", "oma", fileName);
             if (File.Exists(candidate))
             {
                 return candidate;
@@ -47,7 +47,7 @@ internal sealed class ArchitectureExceptionCatalog
             current = current.Parent;
         }
 
-        throw new FileNotFoundException($"Could not locate docs/architecture/{fileName}.");
+        throw new FileNotFoundException($"Could not locate docs/oma/{fileName}.");
     }
 
     private sealed record ArchitectureExceptionRecord(string RuleId, DateTimeOffset ExpiresAt);

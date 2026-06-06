@@ -1,6 +1,6 @@
 {
-  "version": "oam.definition-registry.v1",
-  "generatedBy": "oam-cab-v1-phase-4",
+  "version": "oma.definition-registry.v1",
+  "generatedBy": "oma-current",
   "status": "contract-only",
   "axis": "Definition -> OperationCase -> WorkItem -> CommandSubmission -> SliceCommandHandler -> DomainEvent / LedgerEntry -> ProcessManager -> Projection / Lens -> Surface",
   "companyKernelScope": {
@@ -40,7 +40,7 @@
         "stateType": "WorkItemState",
         "refs": [
           "docs/contracts/operations-runtime.schema.json",
-          "docs/business/acceptance/b2-scenario-result-semantics.json"
+          "docs/business/dormitory/scenario-result-semantics.json"
         ]
       },
       {
@@ -57,8 +57,8 @@
         "ownerKernel": "TruthBoundaryKernel",
         "stateType": "ReleaseState",
         "refs": [
-          "artifacts/release-state/current-state.json",
-          "docs/contracts/admission/release-state-admission-matrix.json"
+          "docs/oma/current-admission-state.json",
+          "docs/contracts/admission/current-admission-state-contract.json"
         ]
       }
     ],

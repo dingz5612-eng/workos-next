@@ -1,6 +1,6 @@
 {
-  "version": "oam.admission-sources.v1",
-  "generatedBy": "oam-cab-v1-phase-3",
+  "version": "oma.admission-sources.v1",
+  "generatedBy": "oma-current",
   "sources": [
     {
       "id": "businessLineRegistry",
@@ -8,9 +8,9 @@
       "role": "business line maturity, blocked actions, and surface mode"
     },
     {
-      "id": "releaseState",
-      "ref": "artifacts/release-state/current-state.json",
-      "role": "current state authority and production block"
+      "id": "currentAdmissionState",
+      "ref": "docs/oma/current-admission-state.json",
+      "role": "current OMA admission authority and production block"
     },
     {
       "id": "sliceManifest",
@@ -24,12 +24,12 @@
     },
     {
       "id": "apiBoundary",
-      "ref": "docs/rules/v5.5/api-boundary.yml",
+      "ref": "docs/contracts/oma.current.json#/apiBoundary",
       "role": "write route classification and forbidden write patterns"
     },
     {
       "id": "factOwnership",
-      "ref": "docs/rules/v5.5/fact-ownership.yml",
+      "ref": "docs/contracts/oma.current.json#/productCapabilities",
       "role": "fact owners, allowed writers, forbidden writers, and projection owners"
     },
     {
@@ -49,7 +49,7 @@
     },
     {
       "id": "workItemDefinition",
-      "ref": "future Definition Registry",
+      "ref": "docs/contracts/definition/workitem-definition-registry.json",
       "role": "work item type, command type, required evidence, risk, ledger, and admission refs"
     }
   ]

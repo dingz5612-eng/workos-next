@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 const root = process.cwd();
-const resultPath = path.join(root, "artifacts/surface/dormitory-scenario-journey-result.json");
+const resultPath = path.join(root, "artifacts/oma/checks/dormitory-scenario-journey-result.json");
 const indexPath = path.join(root, "artifacts/screenshots/dormitory-journeys/index.json");
 const violations = [];
 
@@ -10,7 +10,7 @@ const result = readJson(resultPath);
 const index = readJson(indexPath);
 
 if (result.status !== "passed") violations.push(v("journey.status", "场景旅程结果必须 passed。"));
-if (result.day2Started !== false) violations.push(v("journey.day2_started", "OAM-04C 不得启动 Day-2。"));
+if (result.day2Started !== false) violations.push(v("journey.day2_started", "当前 OMA 场景旅程不得启动 Day-2。"));
 if (result.productionAllowed !== false || result.dormitoryL2ProductionAllowed !== false || result.repairPartsHrProductionAllowed !== false) {
   violations.push(v("journey.production_boundary", "场景旅程不得声明 L2 / Production / Repair / Parts / HR production。"));
 }

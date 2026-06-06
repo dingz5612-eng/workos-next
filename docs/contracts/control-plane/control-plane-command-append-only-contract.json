@@ -1,6 +1,6 @@
 {
-  "version": "oam-cab.control-plane-command-append-only-contract.v1",
-  "status": "baseline-contract",
+  "version": "oma.control-plane-command-append-only-contract.v1",
+  "status": "authoritative-current-contract",
   "commandTypes": [
     "GateResultWrite",
     "RollbackInstruction",
@@ -18,6 +18,6 @@
   ],
   "evidence": [
     "services/core-api/WorkOS.Api/Runtime/ControlPlaneWriteStore.cs",
-    "scripts/check-oam-cab-final-report.mjs"
+    "scripts/guard-architecture.ps1"
   ]
 }

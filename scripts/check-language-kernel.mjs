@@ -18,7 +18,6 @@ checkRuntimeBindings();
 checkCatalogLanguages();
 checkFieldCoverage();
 checkHighRiskReasons();
-checkLegacyAdapters();
 
 if (failures.length > 0) {
   for (const failure of failures) console.error(`P0 ${failure}`);
@@ -28,7 +27,9 @@ if (failures.length > 0) {
 console.log("Language Kernel check: PASS");
 
 function checkContract() {
-  if (contract.version !== "oam.language-contract.v1") failures.push("language-contract version mismatch.");
+  if (contract.version !== "oma.language-contract.v1") failures.push("language-contract version mismatch.");
+  if (contract.status !== "authoritative-read-side-kernel") failures.push("language-contract must be current authoritative read-side kernel.");
+  if ("legacyAdapters" in contract) failures.push("language-contract must not retain legacyAdapters.");
   assertSameLanguages(contract.supportedLanguages, "language-contract.supportedLanguages");
   for (const file of Object.values(contract.authoritativeCatalogs || {})) {
     if (!exists(file)) failures.push(`language-contract references missing catalog: ${file}.`);
@@ -99,18 +100,6 @@ function checkHighRiskReasons() {
     "admission.ledgerCorrection.reason"
   ]) {
     if (!copyIds.has(copyId)) failures.push(`surface-copy-catalog missing high-risk reason ${copyId}.`);
-  }
-}
-
-function checkLegacyAdapters() {
-  const adapters = contract.legacyAdapters || [];
-  const termDictionary = adapters.find((adapter) => adapter.name === "LegacyTermDictionaryAdapter");
-  if (!termDictionary) failures.push("language-contract must register LegacyTermDictionaryAdapter.");
-  if (termDictionary && !exists(termDictionary.path)) failures.push(`LegacyTermDictionaryAdapter path missing: ${termDictionary.path}.`);
-
-  const termDictionarySource = read("apps/mobile/src/termDictionary.js");
-  for (const exportName of ["zhTerms", "ruTerms", "kyTerms", "translateTerm"]) {
-    if (!termDictionarySource.includes(exportName)) failures.push(`termDictionary legacy adapter missing ${exportName}.`);
   }
 }
 

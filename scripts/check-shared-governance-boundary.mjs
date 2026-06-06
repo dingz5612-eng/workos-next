@@ -11,10 +11,10 @@ import {
 
 const cli = parseArgs(process.argv.slice(2));
 const checkName = "check-shared-governance-boundary";
-const out = cli.value("out", ".tmp/rt2a/shared-governance-boundary-report.json");
+const out = cli.value("out", "artifacts/oma/checks/shared-governance-boundary-report.json");
 const policyPath = "docs/business/shared-governance/subject-vehicle-truth.yml";
-const positiveRoot = "tests/fixtures/rt2a-shared-governance/positive";
-const negativeRoot = "tests/fixtures/rt2a-shared-governance/negative";
+const positiveRoot = "tests/fixtures/oma-shared-governance/positive";
+const negativeRoot = "tests/fixtures/oma-shared-governance/negative";
 
 function main() {
   if (cli.has("self-test")) {

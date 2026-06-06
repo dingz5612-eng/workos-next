@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { routeView } from "../appRouter.js";
 import { createSurfaceCtx, visibleText } from "./surfaceContractTestHelpers.js";
 
-describe("OAM-04B experience module productization", () => {
+describe("OMA Surface experience module productization", () => {
   it("keeps raw technical refs out of ordinary module containers", () => {
     const ctx = createSurfaceCtx({ view: "operationPanel", selectedWorkItemId: "T-ROOM-CREATE" });
     const html = routeView(ctx);

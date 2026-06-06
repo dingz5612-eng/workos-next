@@ -26,40 +26,62 @@ public sealed class ControlPlaneDatabase : ILedgerInspectionInvariantEvaluator
     public void ApplyMigrations(string migrationsPath)
     {
         using var connection = Open();
-        using var bootstrap = connection.CreateCommand();
-        bootstrap.CommandText = """
-            create table if not exists schema_migrations (
-                migration_id text primary key,
-                applied_at_utc timestamptz not null
-            );
-            """;
-        bootstrap.ExecuteNonQuery();
-
-        foreach (var file in Directory.GetFiles(migrationsPath, "*.sql").OrderBy(Path.GetFileName, StringComparer.OrdinalIgnoreCase))
+        AcquireMigrationLock(connection);
+        try
         {
-            var migrationId = Path.GetFileNameWithoutExtension(file);
-            using var exists = connection.CreateCommand();
-            exists.CommandText = "select 1 from schema_migrations where migration_id = @migrationId";
-            exists.Parameters.AddWithValue("migrationId", migrationId);
-            if (exists.ExecuteScalar() is not null)
+            using var bootstrap = connection.CreateCommand();
+            bootstrap.CommandText = """
+                create table if not exists schema_migrations (
+                    migration_id text primary key,
+                    applied_at_utc timestamptz not null
+                );
+                """;
+            bootstrap.ExecuteNonQuery();
+
+            foreach (var file in Directory.GetFiles(migrationsPath, "*.sql").OrderBy(Path.GetFileName, StringComparer.OrdinalIgnoreCase))
             {
-                continue;
+                var migrationId = Path.GetFileNameWithoutExtension(file);
+                using var exists = connection.CreateCommand();
+                exists.CommandText = "select 1 from schema_migrations where migration_id = @migrationId";
+                exists.Parameters.AddWithValue("migrationId", migrationId);
+                if (exists.ExecuteScalar() is not null)
+                {
+                    continue;
+                }
+
+                using var transaction = connection.BeginTransaction();
+                using var command = connection.CreateCommand();
+                command.Transaction = transaction;
+                command.CommandText = File.ReadAllText(file);
+                command.ExecuteNonQuery();
+
+                using var insert = connection.CreateCommand();
+                insert.Transaction = transaction;
+                insert.CommandText = "insert into schema_migrations(migration_id, applied_at_utc) values (@migrationId, @appliedAtUtc)";
+                insert.Parameters.AddWithValue("migrationId", migrationId);
+                insert.Parameters.AddWithValue("appliedAtUtc", DateTimeOffset.UtcNow);
+                insert.ExecuteNonQuery();
+                transaction.Commit();
             }
-
-            using var transaction = connection.BeginTransaction();
-            using var command = connection.CreateCommand();
-            command.Transaction = transaction;
-            command.CommandText = File.ReadAllText(file);
-            command.ExecuteNonQuery();
-
-            using var insert = connection.CreateCommand();
-            insert.Transaction = transaction;
-            insert.CommandText = "insert into schema_migrations(migration_id, applied_at_utc) values (@migrationId, @appliedAtUtc)";
-            insert.Parameters.AddWithValue("migrationId", migrationId);
-            insert.Parameters.AddWithValue("appliedAtUtc", DateTimeOffset.UtcNow);
-            insert.ExecuteNonQuery();
-            transaction.Commit();
         }
+        finally
+        {
+            ReleaseMigrationLock(connection);
+        }
+    }
+
+    private static void AcquireMigrationLock(NpgsqlConnection connection)
+    {
+        using var command = connection.CreateCommand();
+        command.CommandText = "select pg_advisory_lock(hashtext('workosnext_runtime_migrations'))";
+        command.ExecuteNonQuery();
+    }
+
+    private static void ReleaseMigrationLock(NpgsqlConnection connection)
+    {
+        using var command = connection.CreateCommand();
+        command.CommandText = "select pg_advisory_unlock(hashtext('workosnext_runtime_migrations'))";
+        command.ExecuteNonQuery();
     }
 
     public void EnsureReleaseManifest(string releaseId, string mrId, string ciRunId)
@@ -74,9 +96,9 @@ public sealed class ControlPlaneDatabase : ILedgerInspectionInvariantEvaluator
                 invariant_check_ids, acceptance_scenarios, go_criteria, no_go_criteria,
                 known_risks)
             values(
-                @releaseId, @mrId, 'V5.4 control plane runner', 'planned',
+                @releaseId, @mrId, 'OMA current control plane runner', 'planned',
                 '["platform"]'::jsonb, @commitSha, '015_control_plane_shadow_runtime',
-                'v5.4', 'not-set', @ciRunId, '[]'::jsonb, '[]'::jsonb, '[]'::jsonb,
+                'oma.current', 'not-set', @ciRunId, '[]'::jsonb, '[]'::jsonb, '[]'::jsonb,
                 '[]'::jsonb, '["runner executed"]'::jsonb, '["automated guard evidence exists"]'::jsonb,
                 '["P0 blocked"]'::jsonb, '["minimal runner"]'::jsonb)
             on conflict(release_id) do nothing

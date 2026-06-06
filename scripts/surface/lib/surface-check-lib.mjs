@@ -23,20 +23,20 @@ const docs = {
 };
 
 const artifacts = {
-  "surface-experience-contract": "artifacts/surface/surface-experience-contract-result.json",
-  "mobile-pc-surface-boundary": "artifacts/surface/mobile-pc-boundary-result.json",
-  "operational-copy-matrix": "artifacts/surface/mobile-visible-copy-result.json",
-  "mobile-visible-copy": "artifacts/surface/mobile-visible-copy-result.json",
-  "no-raw-surface-labels": "artifacts/surface/mobile-visible-copy-result.json",
-  "mobile-search-contract": "artifacts/surface/search-learning-contract-result.json",
-  "learning-center-contract": "artifacts/surface/search-learning-contract-result.json",
-  "queue-state-contract": "artifacts/surface/queue-state-contract-result.json",
-  "device-trust-contract": "artifacts/surface/device-trust-contract-result.json",
-  "evidence-trust-contract": "artifacts/surface/evidence-trust-contract-result.json",
-  "permission-explainability-contract": "artifacts/surface/permission-explainability-contract-result.json",
-  "operation-panel-runtime-contract": "artifacts/surface/operation-panel-runtime-contract-result.json",
-  "surface-api-boundary": "artifacts/surface/surface-api-boundary-result.json",
-  "surface-runtime-guard-contract": "artifacts/surface/backend-runtime-guard-result.json"
+  "surface-experience-contract": "artifacts/oma/checks/surface-experience-contract-result.json",
+  "mobile-pc-surface-boundary": "artifacts/oma/checks/mobile-pc-boundary-result.json",
+  "operational-copy-matrix": "artifacts/oma/checks/mobile-visible-copy-result.json",
+  "mobile-visible-copy": "artifacts/oma/checks/mobile-visible-copy-result.json",
+  "no-raw-surface-labels": "artifacts/oma/checks/mobile-visible-copy-result.json",
+  "mobile-search-contract": "artifacts/oma/checks/search-learning-contract-result.json",
+  "learning-center-contract": "artifacts/oma/checks/search-learning-contract-result.json",
+  "queue-state-contract": "artifacts/oma/checks/queue-state-contract-result.json",
+  "device-trust-contract": "artifacts/oma/checks/device-trust-contract-result.json",
+  "evidence-trust-contract": "artifacts/oma/checks/evidence-trust-contract-result.json",
+  "permission-explainability-contract": "artifacts/oma/checks/permission-explainability-contract-result.json",
+  "operation-panel-runtime-contract": "artifacts/oma/checks/operation-panel-runtime-contract-result.json",
+  "surface-api-boundary": "artifacts/oma/checks/surface-api-boundary-result.json",
+  "surface-runtime-guard-contract": "artifacts/oma/checks/backend-runtime-guard-result.json"
 };
 
 export function runSurfaceCheck(checkName) {
@@ -616,7 +616,7 @@ function runtimeStore() {
 }
 
 function writeArtifact(checkName, violations) {
-  const relativePath = artifacts[checkName] || `artifacts/surface/${checkName}-result.json`;
+  const relativePath = artifacts[checkName] || `artifacts/oma/checks/${checkName}-result.json`;
   const fullPath = path.join(root, relativePath);
   fs.mkdirSync(path.dirname(fullPath), { recursive: true });
   fs.writeFileSync(fullPath, `${JSON.stringify({

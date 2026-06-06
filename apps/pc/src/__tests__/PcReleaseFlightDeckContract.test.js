@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 describe("SURFACE-C PC Release Flight Deck contract", () => {
   it("does not allow manual GateResult passed updates", () => {
     const contract = source("../../../../docs/surface/pc-governance-plane-contract.yml");
-    const gateMigration = source("../../../../infra/db/migrations/029_v5_5_gate_result_hardening.sql");
+    const gateMigration = source("../../../../infra/db/migrations/029_oma_gate_result_hardening.sql");
 
     expect(contract).toContain('"manualGateResultPassedUpdateAllowed": false');
     expect(gateMigration).toContain("prevent_gate_results_immutable_update");

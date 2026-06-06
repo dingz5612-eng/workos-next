@@ -10,10 +10,21 @@ build/
 .flutter-plugins
 .flutter-plugins-dependencies
 coverage/
-artifacts/test-results/
+
+# Test and local runtime output
+artifacts/*
+!artifacts/oma/
+!artifacts/oma/evidence/
+!artifacts/oma/evidence/**
+artifacts/oma/checks/
+artifacts/oma/test-results/
+apps/mobile/artifacts/
 apps/mobile/test-results/
 apps/mobile/playwright-report/
+**/TestResults/
 .tmp/
+
+# Local files
 *.user
 *.suo
 *.log
@@ -23,3 +34,4 @@ apps/mobile/playwright-report/
 .env
 .env.*
 !/.env.example
+!apps/mobile/.env.example

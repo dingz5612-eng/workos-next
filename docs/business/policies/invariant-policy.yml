@@ -1,9 +1,9 @@
 {
   "policyId": "business.invariant-policy",
   "policyType": "invariant",
-  "version": "rtp.v1",
+  "version": "oma.policy.v1",
   "owner": "ControlPlane",
-  "sourceFile": "docs/v5.4/invariant-definitions.json",
+  "sourceFile": "docs/contracts/oma.current.json#/productCapabilities",
   "runtimeBinding": {
     "loader": "InvariantPolicyLoader",
     "evaluator": "PolicyEvaluator"
@@ -14,7 +14,7 @@
     "manualInvariantPassForbidden": true
   },
   "gateBinding": {
-    "gateInput": "runtimeInvariantResult",
+    "gateInput": "omaRuntimeInvariantResult",
     "failureSeverity": "P0"
   }
 }

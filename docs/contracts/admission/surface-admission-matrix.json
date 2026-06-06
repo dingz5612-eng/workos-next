@@ -1,5 +1,5 @@
 {
-  "version": "oam-cab.surface-admission-matrix.v1",
+  "version": "oma.surface-admission-matrix.v1",
   "source": "docs/contracts/runtime-surface-policy.json",
   "surfaceAdmissionFields": [
     "visibleAllowed",

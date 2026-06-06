@@ -1,0 +1,20 @@
+{
+  "version": "oma.current-admission-state-contract.v1",
+  "stateRef": "docs/oma/current-admission-state.json",
+  "states": {
+    "businessProduction": "BLOCKED",
+    "dormitoryProduction": "BLOCKED",
+    "dormitoryObservation": "L1_INTERNAL_PILOT",
+    "productionConfirmAllowed": false,
+    "internalPilotConfirmAllowed": true
+  },
+  "invariants": [
+    "Current admission state is an OMA authority, not a historical evidence artifact.",
+    "Internal pilot confirmation does not imply production confirmation.",
+    "No surface, search result, projection adapter, or governance page may open production confirmation."
+  ],
+  "checks": [
+    "scripts/check-admission-kernel.mjs",
+    "scripts/guard-architecture.ps1"
+  ]
+}

@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "registryId": "rt2-truth-owner-registry",
+  "registryId": "oma-truth-owner-registry",
   "defaultPolicy": "Only the declared truth owner may commit a center truth fact.",
   "truthOwners": [
     {

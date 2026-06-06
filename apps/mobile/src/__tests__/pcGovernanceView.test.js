@@ -298,7 +298,7 @@ function ctx(overrides = {}) {
       roleCapabilities: [{ role: "finance", capability: "payment.confirm", effect: "allow", source: "seed" }],
       featureFlags: [{ flagKey: "pc.governance_full.enabled", status: "pilot", scope: "tenant-1" }],
       sliceCutoverStates: [{ sliceId: "PCGovernance", runtimeMode: "pilot", tenantId: "tenant-1", dependencyStatus: "green" }],
-      definitionVersions: [{ definitionVersion: "v5.4", contractHash: "hash-1", status: "active", activatedAtUtc: "2026-05-30T00:00:00Z" }],
+      definitionVersions: [{ definitionVersion: "oma.current", contractHash: "hash-1", status: "active", activatedAtUtc: "2026-05-30T00:00:00Z" }],
       deviceSessions: [{ deviceId: "pc-device-1", actorId: "admin-1", deviceTrustStatus: "trusted", surface: "pc" }],
       currentDevice: { deviceId: "pc-device-1", actorId: "admin-1", deviceTrustStatus: "trusted", surface: "pc" },
       evidenceAccessAudits: [{ auditEventId: "evidence-audit-1", eventType: "EvidenceSignedUrlViewed", actorId: "finance-1", deviceId: "pc-device-1", occurredAtUtc: "2026-05-30T01:00:00Z" }],

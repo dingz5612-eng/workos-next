@@ -1,0 +1,49 @@
+{
+  "version": "oma.dormitory.scenario-result-semantics.v1",
+  "scenarioTypes": {
+    "committed_scenario": {
+      "required": [
+        "CommandSubmission",
+        "DomainEvent",
+        "FactTrace"
+      ],
+      "moneyRequired": [
+        "LedgerTransaction"
+      ],
+      "forbidden": [
+        "RejectedCommandSubmission",
+        "RejectionTrace"
+      ]
+    },
+    "rejected_command_scenario": {
+      "required": [
+        "RejectedCommandSubmission",
+        "RejectionTrace",
+        "AuditOrInvariantEvidence"
+      ],
+      "forbidden": [
+        "DomainEvent",
+        "LedgerTransaction"
+      ],
+      "statusCodes": [
+        403,
+        409,
+        422
+      ]
+    },
+    "control_plane_blocked_scenario": {
+      "required": [
+        "ControlPlaneDecision",
+        "InvariantCheckOrAuditReport",
+        "RollbackOrCompensationBlocker"
+      ],
+      "forbidden": [
+        "BusinessDomainEvent",
+        "LedgerTransaction"
+      ],
+      "commandSubmissionRequired": false
+    }
+  },
+  "productionAllowed": false,
+  "nextGate": "OMA current admission and control-plane review"
+}

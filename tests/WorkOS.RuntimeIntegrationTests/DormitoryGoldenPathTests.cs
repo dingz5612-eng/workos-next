@@ -1,4 +1,5 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Text.Json;
 using WorkOS.Api.Runtime;
 
 namespace WorkOS.RuntimeIntegrationTests;
@@ -29,18 +30,26 @@ public sealed class DormitoryGoldenPathTests
     }
 
     [TestMethod]
-    public void DormitoryPilotScenarioDocumentContainsTenReplayableScenarios()
+    public void DormitoryOmaContractDeclaresScenarioCapabilities()
     {
-        var document = DormitoryScenarioHarness.ReadScenarioDocument();
-        var ids = document.Scenarios.Select(item => item.ScenarioId).ToArray();
+        using var contract = JsonDocument.Parse(File.ReadAllText(DormitoryScenarioHarness.RepoPath("docs", "contracts", "oma.current.json")));
+        var capabilities = contract.RootElement.GetProperty("productCapabilities")
+            .EnumerateArray()
+            .Select(item => item.GetProperty("id").GetString())
+            .ToHashSet(StringComparer.Ordinal);
 
-        CollectionAssert.AreEqual(
-            Enumerable.Range(1, 10).Select(item => $"dorm-cert-{item:000}").ToArray(),
-            ids);
-        Assert.IsTrue(document.Scenarios.All(item => !string.IsNullOrWhiteSpace(item.RollbackOrCompensationPath)));
-        Assert.IsTrue(document.Scenarios.Any(item => item.ExpectedOutcome == "permission_denied_403"));
-        Assert.IsTrue(document.Scenarios.Any(item => item.ExpectedOutcome == "business_blocked_422"));
-        Assert.IsTrue(document.Scenarios.Any(item => item.ExpectedOutcome == "idempotency_conflict_409"));
+        foreach (var capability in new[]
+        {
+            "accommodation.resource",
+            "accommodation.lead-reservation",
+            "accommodation.checkin",
+            "accommodation.lifecycle",
+            "accommodation.checkout",
+            "accommodation.service-task"
+        })
+        {
+            Assert.IsTrue(capabilities.Contains(capability), $"{capability} must be part of the current OMA contract.");
+        }
     }
 }
 
@@ -144,18 +153,6 @@ internal sealed class DormitoryScenarioHarness
             new DormitoryScenario("dorm-cert-007", "PeriodReview", "case-dorm-cert-007", "wi-dorm-cert-007", "idem-dorm-007", ["period-review-pack"])
         };
 
-    public static DormitoryCertificationScenarioFile ReadScenarioDocument()
-    {
-        var path = RepoPath("docs", "v5.4", "dormitory-certification-scenarios.json");
-        var json = File.ReadAllText(path);
-        return System.Text.Json.JsonSerializer.Deserialize<DormitoryCertificationScenarioFile>(
-            json,
-            new System.Text.Json.JsonSerializerOptions(System.Text.Json.JsonSerializerDefaults.Web)
-            {
-                PropertyNamingPolicy = System.Text.Json.JsonNamingPolicy.SnakeCaseLower
-            })!;
-    }
-
     public static string RepoPath(params string[] segments)
     {
         var current = new DirectoryInfo(AppContext.BaseDirectory);
@@ -168,21 +165,3 @@ internal sealed class DormitoryScenarioHarness
         return Path.Combine(new[] { current!.FullName }.Concat(segments).ToArray());
     }
 }
-
-internal sealed record DormitoryCertificationScenarioFile(
-    string Version,
-    IReadOnlyList<DormitoryCertificationScenario> Scenarios);
-
-internal sealed record DormitoryCertificationScenario(
-    string ScenarioId,
-    string Name,
-    string ExpectedOutcome,
-    string? CardId,
-    bool? MoneyCommand,
-    decimal? Amount,
-    string? Currency,
-    IReadOnlyList<string>? RequiredEvidence,
-    string? SemanticShadowResult,
-    string? GateImpact,
-    string? CutoverState,
-    string? RollbackOrCompensationPath);

@@ -1,10 +1,18 @@
 {
-  "version": "oam.language-contract.v1",
-  "generatedBy": "oam-cab-v1-phase-4",
-  "status": "contract-only-with-legacy-adapters",
-  "supportedLanguages": ["zh-CN", "ru-RU", "ky-KG"],
+  "version": "oma.language-contract.v1",
+  "generatedBy": "oma-current",
+  "status": "authoritative-read-side-kernel",
+  "supportedLanguages": [
+    "zh-CN",
+    "ru-RU",
+    "ky-KG"
+  ],
   "defaultLanguage": "zh-CN",
-  "fallbackOrder": ["ky-KG", "ru-RU", "zh-CN"],
+  "fallbackOrder": [
+    "ky-KG",
+    "ru-RU",
+    "zh-CN"
+  ],
   "authoritativeCatalogs": {
     "domainTerms": "docs/contracts/language/domain-term-catalog.json",
     "errorCodeCopy": "docs/contracts/language/error-code-copy.json",
@@ -19,22 +27,6 @@
     "backendEnvelope": "services/core-api/WorkOS.Api/Runtime/RuntimeQueryService.cs",
     "backendBootstrap": "services/core-api/WorkOS.Api/Program.cs"
   },
-  "legacyAdapters": [
-    {
-      "name": "LegacyTermDictionaryAdapter",
-      "path": "apps/mobile/src/termDictionary.js",
-      "allowed": "May translate legacy projection text until Language Kernel catalogs are wired into runtime.",
-      "forbidden": "Must not become a new source of business facts, action definitions, or search admission.",
-      "removalCondition": "All runtime projection text and search synonyms are generated from Language Kernel catalogs."
-    },
-    {
-      "name": "LegacySurfaceCopyAdapter",
-      "path": "apps/mobile/src/i18n",
-      "allowed": "May render existing shell and operation copy while catalogs are adopted.",
-      "forbidden": "Must not define new architecture, admission, definition, or search rules.",
-      "removalCondition": "Surface copy catalog becomes the generated source for mobile and PC copy."
-    }
-  ],
   "invariants": [
     "Frontend and backend supportedLanguages must match this contract.",
     "Error code copy must include zh-CN, ru-RU, and ky-KG.",
@@ -42,5 +34,6 @@
     "Field labels must include zh-CN, ru-RU, and ky-KG.",
     "Search synonyms must include zh-CN, ru-RU, and ky-KG.",
     "Language catalogs do not grant visibleAllowed, confirmAllowed, or productionAllowed."
-  ]
+  ],
+  "runtimeRole": "Language Kernel supplies localized labels, errors, status, actions, permission explanations, and search synonyms. It never grants admission or owns business facts."
 }

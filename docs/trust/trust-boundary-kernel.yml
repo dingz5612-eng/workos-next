@@ -1,4 +1,4 @@
-kernelId: OAM-06
+kernelId: oma.trust-boundary
 name: 信任边界内核
 status: active
 scope:

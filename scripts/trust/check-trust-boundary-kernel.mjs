@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 const root = process.cwd();
-const artifactPath = path.join(root, "artifacts", "trust", "trust-boundary-result.json");
+const artifactPath = path.join(root, "artifacts", "oma", "checks", "trust-boundary-result.json");
 const violations = [];
 
 function read(relativePath) {
@@ -110,7 +110,7 @@ for (const test of [
 
 const result = {
   status: violations.length === 0 ? "passed" : "failed",
-  stage: "OAM-06",
+  architecture: "OMA",
   generatedAtUtc: new Date().toISOString(),
   checks: {
     contracts: contracts.length,
@@ -143,4 +143,4 @@ if (violations.length > 0) {
   process.exit(1);
 }
 
-console.log("OAM-06_TRUST_BOUNDARY_KERNEL_LOCAL_PASSED");
+console.log("OMA_TRUST_BOUNDARY_KERNEL_LOCAL_PASSED");

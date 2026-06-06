@@ -1,6 +1,6 @@
 {
-  "version": "oam.admission-contract.v1",
-  "generatedBy": "oam-cab-v1-phase-3",
+  "version": "oma.admission-contract.v1",
+  "generatedBy": "oma-current",
   "inputAuthorities": {
     "actor": {
       "source": "Runtime actor session and capability policy",
@@ -23,8 +23,8 @@
       "contractRef": "docs/contracts/definition/evidence-policy-refs.json"
     },
     "releaseState": {
-      "source": "current-state and release-state admission matrix",
-      "contractRef": "docs/contracts/admission/release-state-admission-matrix.json"
+      "source": "Current OMA admission state and admission matrix",
+      "contractRef": "docs/contracts/admission/current-admission-state-contract.json"
     }
   },
   "outputFields": {
@@ -46,7 +46,13 @@
     },
     "mode": {
       "type": "string",
-      "allowedValues": ["internal_pilot_observation", "production_blocked", "contract_preview", "prepare_only", "blocked"]
+      "allowedValues": [
+        "internal_pilot_observation",
+        "production_blocked",
+        "contract_preview",
+        "prepare_only",
+        "blocked"
+      ]
     },
     "reason": {
       "type": "string",
@@ -70,7 +76,7 @@
     },
     "releaseState": {
       "type": "string",
-      "description": "Release posture from current-state."
+      "description": "Production posture from current OMA admission state."
     },
     "surfaceState": {
       "type": "string",

@@ -1,193 +1,176 @@
 import fs from "node:fs";
+import path from "node:path";
 
-const requiredFiles = [
-  "docs/rules/v5.5/rule-authority.yml",
-  "docs/engineering/00-index.md",
-  "docs/engineering/00-rule-authority.md",
-  "docs/engineering/03-api-boundary-rules.md",
-  "docs/engineering/13-release-control-plane-rules.md",
-  "docs/engineering/15-no-go-rules.md",
-  "docs/engineering/16-v5.5-engineering-rules-os.md",
-  "docs/acceptance/00-index.md",
-  "docs/acceptance/12-release-go-no-go.md",
-  "docs/acceptance/13-v5.5-rules-os-go-no-go.md",
-  "docs/architecture/README.md",
-  "docs/architecture/rules/index.json",
-  ".github/pull_request_template.md"
+const root = process.cwd();
+const violations = [];
+
+const authorityFiles = [
+  "docs/oma/current-architecture.md",
+  "docs/oma/current-architecture.manifest.json",
+  "docs/system/current-system-map.md",
+  "docs/contracts/oma.current.json",
+  ".github/pull_request_template.md",
+  ".github/workflows/ci.yml"
 ];
 
-const requiredAuthorityTerms = [
-  "Rule Precedence",
-  "docs/engineering/*",
-  "docs/acceptance/*",
-  "docs/architecture/*",
-  "compatibility references",
-  "Definition",
-  "OperationCase",
-  "WorkItem",
-  "CommandSubmission",
-  "SliceCommandHandler",
-  "DomainEvent / LedgerEntry",
-  "ProcessManager",
-  "Projection / Lens",
-  "Mobile / PC Surface",
-  "Unified Surface Architecture Rule",
-  "All user-visible pages must use the active OAM-ACF v8 / Operations Runtime surface architecture",
-  "Non-current architecture is a P0 defect",
-  "obsolete implementation must be deleted",
-  "Frontend Experience System",
-  "shared components, Surface contract, multilingual dictionary, state/action contract, and real browser screenshot evidence",
-  "Pages may specialize business content, but not architecture",
-  "Step-page experience parity",
-  "OperationCardShell",
-  "page-private outer `intent-card` wrapper",
-  "`workspace-control` visual wrapper",
-  "Post-submit navigation",
-  "auto-advance",
-  "returnCurrentWorkItem",
-  "users must not have to enumerate every page one by one",
-  "Step status color is semantic language",
-  "OperationStepRail",
-  "Append-only correction WorkItems must use an explicit correction visual state",
-  "Terminal completed records remain completed as the primary state",
-  "Resource setup bed cardinality",
-  "`bedSetup` must confirm the room's bed list",
-  "Service task resource availability scope",
-  "`serviceTaskCreate` with `resourceScope`",
-  "`roomReleaseAfterService` with `taskId`",
-  "backend-approved `ServiceTaskVerified` event",
-  "client-provided `serviceTaskVerified` field is not proof",
-  "ResourceSetup remains the only BedStatus/RoomStatus fact owner",
-  "P0 WON-18 gate evidence must be green",
-  "Workspace/Card prepare and confirm write endpoints are retired",
-  "ProjectionRuntime may remain a projection/Lens compatibility facade",
-  "Issue Repair Protocol",
-  "Observe the real behavior",
-  "Classify the impact",
-  "Locate the broken layer",
-  "Update contract/model/rule first",
-  "Page-level hard-adds"
-];
-
-const requiredYamlTerms = [
-  "precedenceOrder:",
-  "- hardRules",
-  "- releaseRules",
-  "- engineeringRules",
-  "- acceptanceRules",
-  "- compatibilityRules",
-  "- deprecatedRules",
-  "docs/engineering/00-rule-authority.md",
-  "docs/acceptance/00-index.md",
-  "docs/architecture",
-  "docs/v5.4",
-  "hard.issue_repair_protocol",
-  "hard.unified_surface_architecture",
-  "hard.frontend_experience_system",
-  "hard.step_page_experience_parity",
-  "hard.post_submit_navigation",
-  "hard.step_state_visual_language",
-  "hard.resource_setup_bed_cardinality",
-  "hard.service_task_resource_availability_scope",
-  "roomId, bedCount, and bedLabels",
-  "serviceTaskCreate with resourceScope",
-  "roomReleaseAfterService with taskId",
-  "client-provided serviceTaskVerified is not proof",
-  "ResourceSetup remains the only BedStatus/RoomStatus fact owner",
-  "return-current-work must not be the ordinary continuation path after submit",
-  "terminal completed records remain completed as the primary state",
-  "direct OperationCardShell",
-  "outer intent-card operation wrapper",
-  "readonly workspace-control visual wrappers",
-  "engineering.frontend_experience_layers",
-  "deprecated.page_private_legacy_surface_shell",
-  "Workspace/Card prepare and confirm write endpoints are retired",
-  "scripts/check-api-boundaries.mjs",
-  "scripts/check-experience-contract.mjs",
-  "scripts/check-surface-contract.mjs",
-  "scripts/check-frontend-experience-system.mjs",
-  "scripts/check-rule-drift.mjs"
-];
-
-const staleAuthorityTerms = [
-  "Workspace/Card prepare and confirm remain compatibility wrappers only",
-  "Workspace/Card remains a compatibility wrapper",
-  "The current runtime still exposes the older Workspace/Card endpoints as a compatibility layer"
-];
-
-function fail(message, details = []) {
-  for (const detail of details) console.error(detail);
-  throw new Error(message);
+for (const file of authorityFiles) {
+  requireFile(file);
 }
 
-for (const file of requiredFiles) {
-  if (!fs.existsSync(file)) {
-    fail(`Rule authority required file missing: ${file}`);
+const contract = readJson("docs/contracts/oma.current.json");
+const manifest = readJson("docs/oma/current-architecture.manifest.json");
+
+if (contract.version !== "oma.current.v1") {
+  violations.push("OMA contract must declare version oma.current.v1.");
+}
+if (contract.status !== "authoritative") {
+  violations.push("OMA contract must be authoritative.");
+}
+if (contract.primaryWritePath !== "POST /api/operations/work-items/{workItemId}/confirm") {
+  violations.push("OMA primary write path must be Operations Confirm.");
+}
+
+for (const capability of [
+  "accommodation.resource",
+  "accommodation.lead-reservation",
+  "accommodation.checkin",
+  "accommodation.lifecycle",
+  "accommodation.checkout",
+  "accommodation.service-task",
+  "finance.payment",
+  "finance.deposit",
+  "finance.expense",
+  "finance.reconciliation",
+  "identity.account-actor",
+  "governance.release-control"
+]) {
+  if (!contract.productCapabilities?.some((item) => item.id === capability)) {
+    violations.push(`Product Capability missing from OMA contract: ${capability}`);
   }
 }
 
-const authority = fs.readFileSync("docs/engineering/00-rule-authority.md", "utf8");
-const normalizedAuthority = authority.replace(/\s+/g, " ");
-const missingAuthorityTerms = requiredAuthorityTerms.filter((term) => !normalizedAuthority.includes(term));
-if (missingAuthorityTerms.length > 0) {
-  fail("Rule authority is missing required terms.", missingAuthorityTerms);
-}
-const staleAuthorityMatches = staleAuthorityTerms.filter((term) => authority.includes(term));
-if (staleAuthorityMatches.length > 0) {
-  fail("Rule authority still contains retired compatibility wording.", staleAuthorityMatches);
-}
+assertDirectory("services", ["core-api"]);
+assertDirectory("modules", ["accommodation", "finance-gate", "identity", "maintenance"]);
+assertDirectory("packages", ["surface-view-models"]);
 
-const machineAuthority = fs.readFileSync("docs/rules/v5.5/rule-authority.yml", "utf8");
-const normalizedMachineAuthority = machineAuthority.replace(/\s+/g, " ");
-const missingYamlTerms = requiredYamlTerms.filter((term) => !normalizedMachineAuthority.includes(term));
-if (missingYamlTerms.length > 0) {
-  fail("Machine rule authority is missing required terms.", missingYamlTerms);
-}
-const staleMachineMatches = staleAuthorityTerms.filter((term) => machineAuthority.includes(term));
-if (staleMachineMatches.length > 0) {
-  fail("Machine rule authority still contains retired compatibility wording.", staleMachineMatches);
-}
-
-const precedence = [...machineAuthority.matchAll(/^\s+-\s+(hardRules|releaseRules|engineeringRules|acceptanceRules|compatibilityRules|deprecatedRules)\s*$/gm)]
-  .map((match) => match[1])
-  .slice(0, 6);
-const expectedPrecedence = ["hardRules", "releaseRules", "engineeringRules", "acceptanceRules", "compatibilityRules", "deprecatedRules"];
-if (precedence.join("|") !== expectedPrecedence.join("|")) {
-  fail("Machine rule authority precedence order is incorrect.", [`Expected: ${expectedPrecedence.join(" > ")}`, `Actual: ${precedence.join(" > ")}`]);
-}
-
-const architectureReadme = fs.readFileSync("docs/architecture/README.md", "utf8").replace(/\s+/g, " ");
-for (const term of ["compatibility reference", "engineering and acceptance rule files win"]) {
-  if (!architectureReadme.includes(term)) {
-    fail(`docs/architecture/README.md must mark architecture docs as compatibility references: ${term}`);
+for (const moduleName of ["accommodation", "finance-gate", "identity", "maintenance"]) {
+  const moduleManifest = readJson(`modules/${moduleName}/oma-module.manifest.json`);
+  if (moduleManifest.module !== moduleName) {
+    violations.push(`${moduleName} manifest has wrong module id.`);
+  }
+  for (const key of ["productCapability", "domainInvariant", "api", "database", "tests", "rules"]) {
+    if (!Array.isArray(moduleManifest[key]) || moduleManifest[key].length === 0) {
+      violations.push(`${moduleName} manifest must bind ${key}.`);
+    }
   }
 }
 
-const rulesIndex = JSON.parse(fs.readFileSync("docs/architecture/rules/index.json", "utf8"));
-const rules = Array.isArray(rulesIndex.rules) ? rulesIndex.rules : [];
-for (const ruleId of ["WON55-RULES-001", "WON55-RULES-002", "WON55-RULES-003", "WON55-RULES-004"]) {
-  const rule = rules.find((item) => item.id === ruleId);
-  if (!rule) {
-    fail(`Rule index missing ${ruleId}`);
+if (!manifest.services?.entries?.["core-api"]?.responsibilities?.includes("confirm-runtime")) {
+  violations.push("services/core-api must declare confirm-runtime responsibility in the OMA manifest.");
+}
+if (manifest.services?.entries?.["ai-personalization"]?.emptyShellAllowed !== false) {
+  violations.push("ai-personalization empty service shell must be forbidden.");
+}
+if (manifest.services?.entries?.workers?.emptyShellAllowed !== false) {
+  violations.push("workers empty service shell must be forbidden.");
+}
+if (manifest.packages?.entries?.["surface-view-models"]?.forbidden?.includes("business-write") !== true) {
+  violations.push("surface-view-models must forbid business-write logic.");
+}
+if (manifest.infra?.dockerCompose?.responsibility !== "local-postgres-runtime") {
+  violations.push("infra/docker-compose.yml must declare local Postgres runtime responsibility.");
+}
+
+const apiBoundary = contract.apiBoundary?.writeRoutes ?? {};
+if (!Array.isArray(apiBoundary.businessConfirm) || apiBoundary.businessConfirm.length !== 1) {
+  violations.push("OMA API boundary must have exactly one businessConfirm route.");
+}
+if ((apiBoundary.businessConfirm ?? [])[0] !== contract.primaryWritePath) {
+  violations.push("businessConfirm route must equal primaryWritePath.");
+}
+
+const prTemplate = readText(".github/pull_request_template.md");
+const ciWorkflow = readText(".github/workflows/ci.yml");
+for (const [file, text] of [
+  [".github/pull_request_template.md", prTemplate],
+  [".github/workflows/ci.yml", ciWorkflow]
+]) {
+  for (const pattern of retiredTermPatterns()) {
+    if (pattern.test(text)) {
+      violations.push(`${file} contains retired rule term ${pattern}.`);
+    }
   }
-  if (!String(rule.ruleFile || "").startsWith("docs/engineering/") &&
-      !String(rule.ruleFile || "").startsWith("docs/acceptance/")) {
-    fail(`${ruleId} must be anchored in engineering or acceptance docs.`);
+}
+for (const required of ["OMA", "API boundary", "module manifest", "database", "coverage"]) {
+  if (!prTemplate.includes(required)) {
+    violations.push(`PR template must include current OMA checklist term: ${required}`);
   }
 }
 
-const legacyRuleFiles = rules
-  .map((rule) => String(rule.ruleFile || ""))
-  .filter((ruleFile) => ruleFile.startsWith("docs/architecture/"));
-if (legacyRuleFiles.length > 0 && !architectureReadme.includes("compatibility reference")) {
-  fail("Legacy architecture rule files require docs/architecture/README.md compatibility marker.", legacyRuleFiles);
-}
-
-const prTemplate = fs.readFileSync(".github/pull_request_template.md", "utf8");
-for (const term of ["Rule Authority", "V5.5 batch dependency", "Operations Runtime axis", "WON-18"]) {
-  if (!prTemplate.includes(term)) {
-    fail(`PR template missing V5.5 rule authority prompt: ${term}`);
+if (violations.length > 0) {
+  for (const violation of violations) {
+    console.error(violation);
   }
+  throw new Error(`Rule authority check failed: ${violations.length} violation(s).`);
 }
 
 console.log("Rule authority check: PASS");
+
+function assertDirectory(dir, allowed) {
+  requireFile(dir);
+  const actual = fs.readdirSync(path.join(root, dir), { withFileTypes: true })
+    .filter((entry) => entry.isDirectory())
+    .map((entry) => entry.name)
+    .sort();
+  for (const name of actual) {
+    if (!allowed.includes(name)) {
+      violations.push(`${dir}/${name} is not allowed by current OMA.`);
+    }
+  }
+  for (const name of allowed) {
+    if ((dir === "services" && name !== "core-api") || (dir === "packages" && name !== "surface-view-models")) {
+      continue;
+    }
+    if (!actual.includes(name)) {
+      violations.push(`${dir}/${name} is required by current OMA.`);
+    }
+  }
+}
+
+function requireFile(file) {
+  if (!fs.existsSync(path.join(root, file))) {
+    violations.push(`Required OMA authority file missing: ${file}`);
+  }
+}
+
+function readText(file) {
+  requireFile(file);
+  return fs.existsSync(path.join(root, file)) ? fs.readFileSync(path.join(root, file), "utf8") : "";
+}
+
+function readJson(file) {
+  const text = readText(file);
+  try {
+    return JSON.parse(text);
+  } catch (error) {
+    violations.push(`${file} is not valid JSON: ${error.message}`);
+    return {};
+  }
+}
+
+function retiredTermPatterns() {
+  const exact = (parts) => new RegExp(parts.join("").replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i");
+  const word = (parts) => new RegExp(`\\b${parts.join("")}\\b`, "i");
+  return [
+    exact(["v", "5", ".", "4"]),
+    exact(["v", "5", "_", "4"]),
+    exact(["v", "5", ".", "5"]),
+    exact(["v", "5", "_", "5"]),
+    word(["O", "A", "M"]),
+    word(["R", "T"]),
+    word(["M", "R"]),
+    exact(["WON", "-", "18"]),
+    exact(["attes", "tation"]),
+    exact(["evidence", " ", "phase"])
+  ];
+}

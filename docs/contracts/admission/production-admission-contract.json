@@ -1,10 +1,10 @@
 {
-  "version": "oam-cab.production-admission-contract.v1",
+  "version": "oma.production-admission-contract.v1",
   "status": "blocked",
   "productionAllowed": false,
   "productionConfirmAllowed": false,
   "blockedBy": [
-    "artifacts/release-state/current-state.json",
+    "docs/oma/current-admission-state.json",
     "docs/business/business-line-registry.json",
     "docs/contracts/admission/admission-matrix.json"
   ],
@@ -14,7 +14,7 @@
     "No surface, search result, compatibility route, or governance page may open production."
   ],
   "evidence": [
-    "scripts/check-admission-kernel.mjs",
-    "scripts/check-oam-cab-final-report.mjs"
-  ]
+    "scripts/check-admission-kernel.mjs"
+  ],
+  "generatedBy": "oma-current"
 }

@@ -1,52 +1,50 @@
 {
-  "version": "surface-contract.v1",
-  "status": "pilot_guard",
+  "version": "oma.surface-contract.v1",
+  "status": "current",
+  "authority": "docs/oma/current-architecture.md",
   "operationRuntimePure": {
     "persistedWorkItemResolutionOrder": [
       "selected persisted WorkItem from operationWorkItems",
       "selected persisted WorkItem from workQueue",
-      "workspaceId/cardId mapped persisted WorkItem",
+      "case/workItem route identity",
       "block with operation_work_item_required"
     ],
     "forbiddenFallbackPaths": [
       "workspace.taskId",
       "card.workItemId when it is not persisted",
-      "prepareCard in ordinary DORM-INT confirm path",
-      "confirmCard in ordinary DORM-INT confirm path",
-      "submitCardOperationCompatibilityFallback in mobile normal runtime"
+      "prepareCard in normal confirm path",
+      "confirmCard in normal confirm path",
+      "mobile compatibility write fallback"
     ],
-    "legacyTaskIdExample": "T-ROOM-CREATE",
-    "resolvedPersistedExample": "W-STAY-RESOURCE:roomSetup"
+    "primaryWritePath": "POST /api/operations/work-items/{workItemId}/confirm"
   },
   "completedBusinessRecord": {
     "viewPath": "direct readonly workspace record / fact trace without an intermediate completed-operation page",
     "surfaceShell": "shared Operations surface shell with OperationStepRail and direct OperationCardShell/card-operation readonly state",
-    "forbiddenShell": "page-private legacy detail shell, intermediate completed-operation page, old completed-record-detail grid, copied completed-step-list layout, page-private outer intent-card wrapper, or workspace-control completed-record-control visual wrapper",
-    "correctionPath": "new Operations WorkItem with correctionMode=append_only",
+    "forbiddenShell": "page-private detail shell, intermediate completed-operation page, copied completed-step-list layout, page-private outer wrapper, or completed-record-control visual wrapper",
+    "correctionPath": "new OMA WorkItem with correctionMode=append_only",
     "actionOrder": ["create_active_work_item", "view_readonly_completed_record", "correct_append_only_from_record"],
     "dataSources": ["OperationsWorkItemConfirmed payload", "ProjectionEvent payload", "mobile completed-record read cache"],
     "correctionEntry": "only from readonly completed record after submitted values are visible",
     "forbiddenPath": "direct edit or repeat submit of the completed work item"
   },
-  "activeSurfaceArchitecture": {
-    "architecture": "OAM-ACF v8 / Operations Runtime surface architecture",
+  "currentSurfaceArchitecture": {
+    "architecture": "Operations Management Architecture surface system",
     "required": ["shared shell", "shared route guard", "shared named experience components", "surface contract", "direct OperationCardShell on step pages"],
-    "forbidden": ["page-private legacy shell", "intent-card operation wrapper", "copied layout logic", "old completed-record-detail grid", "retired Workspace/Card write UI flow"],
+    "forbidden": ["page-private shell", "intent-card operation wrapper", "copied layout logic", "old completed-record grid", "retired Workspace/Card write UI flow"],
     "repair": "rewrite non-current architecture onto the active surface architecture and delete obsolete implementation in the same impact scope"
   },
   "frontendExperienceSystem": {
     "contractRef": "docs/contracts/frontend-experience/frontend-experience-system-contract.json",
-    "layers": ["shared-components", "field-context-kernel", "surface-contract", "multilingual-dictionary", "state-action-contract", "real-browser-screenshot-evidence"],
-    "rule": "pages may specialize business content but not architecture; old-architecture surfaces must be rewritten and deleted, not wrapped or kept as fallback",
+    "layers": ["shared-components", "field-context-kernel", "surface-contract", "multilingual-dictionary", "state-action-contract", "real-browser-verification"],
+    "rule": "pages may specialize business content but not architecture",
     "contentContainerRule": "ordinary mobile content must render as shared containers; business titles, status labels, anchors, explanations, and next-action copy must not appear as naked text on the page background",
-    "premiumSurfaceVisualLanguage": "mobile business surfaces use bright teal-blue lightweight gradients for primary actions, calm neutral surfaces for content, orange for attention, and red for blockers; static text must not mimic buttons, and only real clickable controls may use filled or gradient button styling with restrained elevation",
-    "premiumTypographySystem": "mobile and PC business surfaces use a clear Chinese-first system UI font stack with Microsoft YaHei UI / Microsoft YaHei preferred on Windows, antialiased rendering, readable helper text sizes, and light medium-weight titles/buttons; page-local 700+ bold/heavy weights and too-small ordinary copy are forbidden on user-facing UI text",
-    "businessSummaryCardHierarchy": "business item cards across Today, Work items, Search, Me, and support surfaces must use BusinessSummaryHeader for scenario title/status, structured non-clickable business anchors for room/bed/resident/phone/status, BusinessTaskBody/BusinessTaskOverview for completed core fields and current-step core fields, and a separate bottom action container for the primary action; technical diagnostics are not default card content unless they explain a blocker",
-    "searchMeResponsibilityBoundary": "Search is for active business discovery and entry; Me owns readonly personal archives including business records, completed records, evidence materials, submission traces, and learning content.",
-    "fieldContextKernel": "operation field identity, aliases, task overview fields, option labels, and derived previews must come from apps/mobile/src/operationFieldKernel.js; controllers must not import field identity from views, and pages must not copy private field alias/display maps",
-    "stepPageExperienceParity": "new active, readonly completed, and append-only correction step pages must share step rail, direct OperationCardShell, state/check panel, action hierarchy, feedback entry, and decision markers, without a page-private outer intent-card wrapper or workspace-control visual wrapper on readonly completed records",
-    "postSubmitNavigation": "successful active Operations WorkItem confirm must auto-advance to the next actionable persisted WorkItem in the same workspace when one exists; completed readonly records are explicit review surfaces, not the normal submit continuation path",
-    "stepStateVisualLanguage": "OperationStepRail status colors are semantic: completed green, ready blue, terminal completed records remain completed as the primary state even when a correction marker exists, active append-only correction muted indigo with a correction marker and not ordinary ready blue, in-progress amber, not-started neutral gray, blocked red, with a clean current-step ring, subtle background tint, thin semantic top bar, and numbered badge instead of harsh saturated blocks"
+    "businessSummaryCardHierarchy": "business item cards use BusinessSummaryHeader, structured non-clickable business anchors, BusinessTaskOverview, and a separate bottom action container",
+    "searchMeResponsibilityBoundary": "Search is for active business discovery and entry; Me owns readonly personal archives and support surfaces.",
+    "fieldContextKernel": "field identity, aliases, task overview fields, option labels, and derived previews must come from apps/mobile/src/operationFieldKernel.js",
+    "stepPageExperienceParity": "new active, readonly completed, and append-only correction step pages must share step rail, direct OperationCardShell, state/check panel, action hierarchy, feedback entry, and decision markers",
+    "postSubmitNavigation": "successful active confirm must auto-advance to the next actionable persisted WorkItem in the same case when one exists",
+    "stepStateVisualLanguage": "OperationStepRail status colors are semantic and must expose completed, ready, correction, in-progress, not-started, blocked, and current-step states"
   },
   "stepDependencySurface": {
     "contractRef": "docs/contracts/definition/step-dependency-contract.json",
@@ -62,7 +60,7 @@
   },
   "admissionExplainabilitySurface": {
     "scope": ["mobile.search.resultCard", "mobile.operations.workItem.detail", "mobile.operations.workItem.confirm", "mobile.operations.workItem.receipt", "pc.governance.releaseState", "pc.governance.evidenceGraph"],
-    "rule": "visibleAllowed, prepareAllowed, confirmAllowed, productionAllowed, mode, and safe reason copy must be consumed by the visible surface; lifecycle ready/status labels must not imply confirm or production admission.",
+    "rule": "visibleAllowed, prepareAllowed, confirmAllowed, productionAllowed, mode, and safe reason copy must be consumed by the visible surface",
     "searchResultCard": {
       "visible": ["title", "subtitle", "statusLabel", "admissionLabel", "admissionReasonLabel", "nextAction"],
       "hiddenForOrdinaryUsers": ["admissionDecisionRef", "compatibilityAdapter", "definitionId", "payloadHash", "commandSubmissionId", "rawReason", "rawCode"],
@@ -70,7 +68,7 @@
     },
     "operationWorkItemDetail": {
       "requiredTopStatus": ["admissionLabel", "mode", "confirmAllowed", "productionAllowed"],
-      "readyStateRule": "ready + confirmAllowed=false is confirmDenied, ready + confirmAllowed=true + productionAllowed=false is internal observation submit, and only confirmAllowed=true may bind the submit action"
+      "readyStateRule": "only confirmAllowed=true may bind the submit action"
     },
     "safeErrorCopy": {
       "source": "Language Kernel key",
@@ -82,77 +80,25 @@
     "surface": "feedback-message-channel",
     "entry": "right-bottom safe floating entry on mobile business surfaces",
     "messagePath": "mobile collaboration message with role/account recipient and current page/business context",
-    "eventPath": "/api/mobile/client-events records feedback.message.sent for runtime observability until dedicated inbox storage is added",
+    "eventPath": "/api/mobile/client-events",
     "forbiddenPath": "Operations Confirm, business fact mutation, static placeholder-only feedback, duplicate local feedback buttons, or placement inside save/submit business action row"
   },
   "mobile": {
-    "allowedSurfaces": [
-      "home",
-      "workbench",
-      "search",
-      "me",
-      "workspace",
-      "operationPanel",
-      "learning",
-      "notes",
-      "reminders",
-      "permissions",
-      "businessRecords",
-      "completedRecords",
-      "evidenceLibrary",
-      "uploadQueue",
-      "submitQueue",
-      "drafts",
-      "failedSync",
-      "recentSubmissions",
-      "recentTraces",
-      "deviceTrust",
-      "feedback",
-      "result",
-      "confirmPage"
-    ],
-    "allowedApiModules": [
-      "apps/mobile/src/apiClient.js",
-      "apps/mobile/src/operationRuntime.js"
-    ],
-    "forbiddenPcSurfaces": [
-      "releaseControl",
-      "releaseFlightDeck",
-      "pcGovernance",
-      "governanceCenter",
-      "financeControl",
-      "financeReconciliation",
-      "managerControlTower",
-      "pcManager"
-    ],
-    "forbiddenPcApiTokens": [
-      "controlPlaneReleases",
-      "observability",
-      "bankStatementImport",
-      "reconciliation",
-      "correction",
-      "behaviorEvents"
-    ]
+    "allowedSurfaces": ["home", "workbench", "search", "me", "workspace", "operationPanel", "learning", "notes", "reminders", "permissions", "businessRecords", "completedRecords", "evidenceLibrary", "uploadQueue", "submitQueue", "drafts", "failedSync", "recentSubmissions", "recentTraces", "deviceTrust", "feedback", "result", "confirmPage"],
+    "allowedApiModules": ["apps/mobile/src/apiClient.js", "apps/mobile/src/operationRuntime.js"],
+    "forbiddenPcSurfaces": ["releaseControl", "releaseFlightDeck", "pcGovernance", "governanceCenter", "financeControl", "financeReconciliation", "managerControlTower", "pcManager"],
+    "forbiddenPcApiTokens": ["controlPlaneReleases", "observability", "bankStatementImport", "reconciliation", "correction", "behaviorEvents"]
   },
   "pc": {
-    "allowedSurfaces": [
-      "releaseControl",
-      "releaseFlightDeck",
-      "pcGovernance",
-      "governanceCenter",
-      "financeControl",
-      "financeReconciliation",
-      "managerControlTower",
-      "pcManager"
-    ],
+    "allowedSurfaces": ["releaseControl", "releaseFlightDeck", "pcGovernance", "governanceCenter", "financeControl", "financeReconciliation", "managerControlTower", "pcManager"],
     "routeTree": "apps/mobile/src/pcRouteTree.js",
     "eventBinder": "apps/mobile/src/pcEventBinder.js",
     "apiModule": "apps/mobile/src/pcApiClient.js",
     "dataHydrator": "apps/mobile/src/pcSurfaceData.js"
   },
   "retiredWorkspaceCardWriteAdapter": {
-    "allowedOnlyAs": "retired server-side write adapter",
-    "normalDormIntPath": "forbidden",
+    "allowedOnlyAs": "deleted",
+    "normalConfirmPath": "forbidden",
     "adapterClass": "deleted"
   }
 }

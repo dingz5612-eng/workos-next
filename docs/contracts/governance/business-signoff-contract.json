@@ -1,6 +1,6 @@
 {
-  "version": "oam-cab.business-signoff-contract.v1",
-  "status": "baseline-contract",
+  "version": "oma.business-signoff-contract.v1",
+  "status": "authoritative-current-contract",
   "requiredFields": [
     "signoffId",
     "businessLineId",

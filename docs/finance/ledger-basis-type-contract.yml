@@ -1,5 +1,5 @@
 {
-  "version": "oam-05.ledger-basis-type-contract.v1",
+  "version": "oma.finance-gate.ledger-basis-type-contract.v1",
   "owner": "MoneyKernelPack",
   "productionAllowed": false,
   "basisTypes": [

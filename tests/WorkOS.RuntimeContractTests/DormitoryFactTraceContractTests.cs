@@ -5,18 +5,23 @@ internal static class DormitoryFactTraceContractTests
 {
     public static void Run()
     {
-        var scenariosPath = RepoPath("docs", "v5.4", "dormitory-certification-scenarios.json");
-        using var document = JsonDocument.Parse(File.ReadAllText(scenariosPath));
-        var scenarios = document.RootElement.GetProperty("scenarios").EnumerateArray().ToArray();
-        Require(scenarios.Length == 10, "Dormitory certification pack must define ten scenarios.");
+        using var contract = JsonDocument.Parse(File.ReadAllText(RepoPath("docs", "contracts", "oma.current.json")));
+        var capabilities = contract.RootElement.GetProperty("productCapabilities")
+            .EnumerateArray()
+            .Select(item => item.GetProperty("id").GetString())
+            .ToHashSet(StringComparer.Ordinal);
 
-        foreach (var scenario in scenarios)
+        foreach (var capability in new[]
         {
-            foreach (var field in new[] { "scenario_id", "name", "expected_outcome", "card_id", "cutover_state", "rollback_or_compensation_path" })
-            {
-                Require(scenario.TryGetProperty(field, out var value) && value.ValueKind != JsonValueKind.Null && !string.IsNullOrWhiteSpace(value.ToString()),
-                    $"Dormitory scenario missing {field}.");
-            }
+            "accommodation.resource",
+            "accommodation.lead-reservation",
+            "accommodation.checkin",
+            "accommodation.lifecycle",
+            "accommodation.checkout",
+            "accommodation.service-task"
+        })
+        {
+            Require(capabilities.Contains(capability), $"OMA contract missing dormitory capability {capability}.");
         }
 
         var trace = new FactTraceV1(

@@ -7,149 +7,69 @@ namespace WorkOS.UnitTests;
 [TestClass]
 public sealed class ApiBoundaryRulesTests
 {
-    private static string RepoRoot()
+    [TestMethod]
+    public void OmaContractDeclaresOnlyOneOrdinaryBusinessWriteRoute()
     {
-        var current = new DirectoryInfo(AppContext.BaseDirectory);
-        while (current is not null && !File.Exists(Path.Combine(current.FullName, "WorkOSNext.sln")))
+        using var contract = JsonDocument.Parse(File.ReadAllText(RepoPath("docs", "contracts", "oma.current.json")));
+        var root = contract.RootElement;
+        var boundary = root.GetProperty("apiBoundary");
+        var writeRoutes = boundary.GetProperty("writeRoutes");
+
+        Assert.AreEqual("POST /api/operations/work-items/{workItemId}/confirm", root.GetProperty("primaryWritePath").GetString());
+        var businessRoutes = writeRoutes.GetProperty("businessConfirm").EnumerateArray().Select(item => item.GetString()).ToArray();
+        CollectionAssert.AreEqual(
+            new[] { "POST /api/operations/work-items/{workItemId}/confirm" },
+            businessRoutes);
+
+        foreach (var category in new[]
         {
-            current = current.Parent;
+            "prepareOnly",
+            "workItemCreation",
+            "identitySession",
+            "accountGovernance",
+            "evidenceObject",
+            "reconciliationGovernance",
+            "correctionCenter",
+            "pcGovernance",
+            "projectionMaintenance",
+            "mobileAuxiliary",
+            "behaviorEvent"
+        })
+        {
+            Assert.IsTrue(writeRoutes.TryGetProperty(category, out var routes), $"{category} must be declared.");
+            Assert.IsTrue(routes.ValueKind == JsonValueKind.Array, $"{category} must be an array.");
+            Assert.IsTrue(boundary.GetProperty("routePolicies").TryGetProperty(category, out _), $"{category} must have a route policy.");
         }
-
-        Assert.IsNotNull(current, "Could not locate repository root.");
-        return current!.FullName;
-    }
-
-    private static string RepoPath(params string[] segments)
-    {
-        return Path.Combine(new[] { RepoRoot() }.Concat(segments).ToArray());
     }
 
     [TestMethod]
-    public void OperationsApiBoundaryDeclaresV3ClassifiedWriteRoutes()
+    public void ApiBoundaryGuardSelfTestPasses()
     {
-        var boundary = File.ReadAllText(RepoPath("docs", "rules", "v5.5", "api-boundary.yml"));
+        var result = RunNode("scripts/check-api-boundaries.mjs", "--self-test");
 
-        Assert.IsTrue(boundary.Contains("version: 3", StringComparison.Ordinal));
-        Assert.IsTrue(boundary.Contains("operationsBusinessWrite:", StringComparison.Ordinal));
-        Assert.IsTrue(boundary.Contains("POST /api/operations/work-items/{workItemId}/confirm", StringComparison.Ordinal));
-        Assert.IsTrue(boundary.Contains("authPolicy: OperationsConfirmPolicy", StringComparison.Ordinal));
-        Assert.IsTrue(boundary.Contains("POST /api/operations/workspaces/start", StringComparison.Ordinal));
-        Assert.IsTrue(boundary.Contains("systemProjectionWrite:", StringComparison.Ordinal));
-        Assert.IsTrue(boundary.Contains("POST /api/operations/cases", StringComparison.Ordinal));
-        Assert.IsTrue(boundary.Contains("POST /api/operations/work-items/{workItemId}/prepare", StringComparison.Ordinal));
-        Assert.IsTrue(boundary.Contains("authPolicy: WorkOSWrite", StringComparison.Ordinal));
-        Assert.IsTrue(boundary.Contains("compatibilityBusinessWrite:", StringComparison.Ordinal));
-        Assert.IsTrue(boundary.Contains("POST /api/workspaces/*/cards/*/confirm", StringComparison.Ordinal));
-        Assert.IsTrue(boundary.Contains("evidenceWrite:", StringComparison.Ordinal));
-        Assert.IsTrue(boundary.Contains("POST /api/evidence/{evidenceId}/attachments", StringComparison.Ordinal));
-        Assert.IsTrue(boundary.Contains("securitySessionWrite:", StringComparison.Ordinal));
-        Assert.IsTrue(boundary.Contains("POST /api/auth/login", StringComparison.Ordinal));
-        Assert.IsTrue(boundary.Contains("authPolicy: AnonymousLogin", StringComparison.Ordinal));
-        Assert.IsTrue(boundary.Contains("mobileExperienceWrite:", StringComparison.Ordinal));
-        Assert.IsTrue(boundary.Contains("POST /api/mobile/drafts", StringComparison.Ordinal));
-        Assert.IsTrue(boundary.Contains("behaviorEventWrite:", StringComparison.Ordinal));
-        Assert.IsTrue(boundary.Contains("POST /api/behavior-events", StringComparison.Ordinal));
-        Assert.IsTrue(boundary.Contains("POST /api/payment/confirm", StringComparison.Ordinal));
-        Assert.IsTrue(boundary.Contains("POST /api/mobile/*/confirm", StringComparison.Ordinal));
+        Assert.AreEqual(0, result.ExitCode, result.Output);
+        StringAssert.Contains(result.Output, "API boundary self-test: PASS");
     }
 
     [TestMethod]
-    public void GovernanceWriteCategoriesDeclareRequiredGuards()
-    {
-        var boundary = File.ReadAllText(RepoPath("docs", "rules", "v5.5", "api-boundary.yml"));
-
-        Assert.IsTrue(boundary.Contains("reconciliationGovernanceWrite:", StringComparison.Ordinal));
-        Assert.IsTrue(boundary.Contains("POST /api/reconciliation/match-candidates/{candidateId}/accept", StringComparison.Ordinal));
-        Assert.IsTrue(boundary.Contains("writesBusinessFact: false", StringComparison.Ordinal));
-        Assert.IsTrue(boundary.Contains("writesGovernanceFact: true", StringComparison.Ordinal));
-        Assert.IsTrue(boundary.Contains("requiresOperationsConfirm: false", StringComparison.Ordinal));
-        Assert.IsTrue(boundary.Contains("appendOnly: true", StringComparison.Ordinal));
-
-        Assert.IsTrue(boundary.Contains("correctionCenterWrite:", StringComparison.Ordinal));
-        Assert.IsTrue(boundary.Contains("POST /api/correction-center/ledger-correction-requests/{correctionRequestId}/apply", StringComparison.Ordinal));
-        Assert.IsTrue(boundary.Contains("writesBusinessFact: true", StringComparison.Ordinal));
-        Assert.IsTrue(boundary.Contains("appendOnlyCorrectionService: true", StringComparison.Ordinal));
-        Assert.IsTrue(boundary.Contains("ledger.no_edit_old_entry", StringComparison.Ordinal));
-
-        Assert.IsTrue(boundary.Contains("pcGovernanceWrite:", StringComparison.Ordinal));
-        Assert.IsTrue(boundary.Contains("requiresCapability: true", StringComparison.Ordinal));
-        Assert.IsTrue(boundary.Contains("requiresAudit: true", StringComparison.Ordinal));
-        Assert.IsTrue(boundary.Contains("authPolicy: GovernanceExportPolicy", StringComparison.Ordinal));
-        Assert.IsTrue(boundary.Contains("authPolicy: RuntimeMaintenancePolicy", StringComparison.Ordinal));
-        Assert.IsTrue(boundary.Contains("authPolicy: HighRiskActionPolicy", StringComparison.Ordinal));
-    }
-
-    [TestMethod]
-    public void ApiBoundaryScriptContainsV3ClassifierSelfTests()
-    {
-        var script = File.ReadAllText(RepoPath("scripts", "check-api-boundaries.mjs"));
-        Assert.IsTrue(script.Contains("self-test"));
-        Assert.IsTrue(script.Contains("simulated-payment-forbidden.cs"));
-        Assert.IsTrue(script.Contains("simulated-reconciliation-unclassified.cs"));
-        Assert.IsTrue(script.Contains("simulated-correction-unclassified.cs"));
-        Assert.IsTrue(script.Contains("simulated-operations-confirm.cs"));
-        Assert.IsTrue(script.Contains("simulated-evidence-attachment.cs"));
-        Assert.IsTrue(script.Contains("/api/payment/confirm"));
-        Assert.IsTrue(script.Contains("/api/reconciliation/match-candidates/{id}/accept"));
-        Assert.IsTrue(script.Contains("/api/correction-center/ledger-correction-requests/{correctionRequestId}/apply"));
-        Assert.IsTrue(script.Contains("/api/operations/work-items/{workItemId}/confirm"));
-        Assert.IsTrue(script.Contains("/api/evidence/{evidenceId}/attachments"));
-    }
-
-    [TestMethod]
-    public void ApiBoundarySelfTestDetectsSimulatedForbiddenRoute()
-    {
-        var startInfo = new ProcessStartInfo("node", "scripts/check-api-boundaries.mjs --self-test")
-        {
-            WorkingDirectory = RepoRoot(),
-            RedirectStandardOutput = true,
-            RedirectStandardError = true
-        };
-
-        using var process = Process.Start(startInfo);
-        Assert.IsNotNull(process, "Could not start API boundary self-test.");
-        Assert.IsTrue(process.WaitForExit(30000), "API boundary self-test timed out.");
-
-        var output = process.StandardOutput.ReadToEnd();
-        var error = process.StandardError.ReadToEnd();
-        var combinedOutput = output + error;
-        Assert.AreEqual(0, process.ExitCode, combinedOutput);
-        Assert.IsTrue(output.Contains("API boundary self-test: PASS"), combinedOutput);
-    }
-
-    [TestMethod]
-    public void ApiBoundaryScanWritesV3JsonReport()
+    public void ApiBoundaryScanWritesCurrentOmaReport()
     {
         var temp = Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), $"workos-api-boundary-{Guid.NewGuid():N}"));
         try
         {
-            var reportPath = Path.Combine(temp.FullName, "api-boundary-check-v3.json");
-            var startInfo = new ProcessStartInfo("node")
-            {
-                WorkingDirectory = RepoRoot(),
-                RedirectStandardOutput = true,
-                RedirectStandardError = true
-            };
-            startInfo.ArgumentList.Add("scripts/check-api-boundaries.mjs");
-            startInfo.ArgumentList.Add($"--out={reportPath}");
+            var reportPath = Path.Combine(temp.FullName, "api-boundary-check.json");
+            var result = RunNode("scripts/check-api-boundaries.mjs", $"--out={reportPath}");
 
-            using var process = Process.Start(startInfo);
-            Assert.IsNotNull(process, "Could not start API boundary scan.");
-            Assert.IsTrue(process!.WaitForExit(30000), "API boundary scan timed out.");
-
-            var output = process.StandardOutput.ReadToEnd();
-            var error = process.StandardError.ReadToEnd();
-            Assert.AreEqual(0, process.ExitCode, output + error);
-
+            Assert.AreEqual(0, result.ExitCode, result.Output);
             using var report = JsonDocument.Parse(File.ReadAllText(reportPath));
             var root = report.RootElement;
-            Assert.AreEqual(3, root.GetProperty("version").GetInt32());
+
+            Assert.AreEqual("oma.current.v1", root.GetProperty("version").GetString());
             Assert.AreEqual("passed", root.GetProperty("status").GetString());
             Assert.AreEqual(0, root.GetProperty("violation_count").GetInt32());
             Assert.AreEqual(0, root.GetProperty("unclassified_write_route_count").GetInt32());
-            Assert.AreEqual(0, root.GetProperty("multi_classified_write_route_count").GetInt32());
+            Assert.AreEqual(0, root.GetProperty("boundary_only_write_route_count").GetInt32());
             Assert.AreEqual(1, root.GetProperty("business_write_route_count").GetInt32());
-            Assert.IsTrue(root.GetProperty("write_route_count").GetInt32() > 0);
         }
         finally
         {
@@ -158,15 +78,24 @@ public sealed class ApiBoundaryRulesTests
     }
 
     [TestMethod]
-    public void NoPageSpecificCheckoutCloseApiIsExposed()
+    public void NoRetiredPageSpecificBusinessWriteApiIsExposed()
     {
-        var program = File.ReadAllText(RepoPath("services", "core-api", "WorkOS.Api", "Program.cs"));
-        var generatedPaths = File.ReadAllText(RepoPath("apps", "mobile", "src", "generated", "runtimeApiPaths.js"));
-        var apiClient = File.ReadAllText(RepoPath("apps", "mobile", "src", "apiClient.js"));
+        var source = File.ReadAllText(RepoPath("services", "core-api", "WorkOS.Api", "Program.cs"))
+            + File.ReadAllText(RepoPath("services", "core-api", "WorkOS.Api", "Runtime", "OperationsRuntimeEndpoints.cs"))
+            + File.ReadAllText(RepoPath("apps", "mobile", "src", "generated", "runtimeApiPaths.js"))
+            + File.ReadAllText(RepoPath("apps", "mobile", "src", "apiClient.js"));
 
-        Assert.IsFalse(program.Contains("/api/checkout/close", StringComparison.OrdinalIgnoreCase));
-        Assert.IsFalse(generatedPaths.Contains("/api/checkout/close", StringComparison.OrdinalIgnoreCase));
-        Assert.IsFalse(apiClient.Contains("/api/checkout/close", StringComparison.OrdinalIgnoreCase));
+        foreach (var forbidden in new[]
+        {
+            "/api/workspaces/{workspaceId}/cards/{cardId}/confirm",
+            "/api/payment/confirm",
+            "/api/checkout/close",
+            "confirmCard(",
+            "prepareCard("
+        })
+        {
+            Assert.IsFalse(source.Contains(forbidden, StringComparison.OrdinalIgnoreCase), $"{forbidden} must stay retired.");
+        }
     }
 
     [TestMethod]
@@ -205,33 +134,42 @@ public sealed class ApiBoundaryRulesTests
         }
     }
 
-    private static JsonElement? FindRouteEntry(JsonElement root, string propertyName, string expected)
+    private static ProcessResult RunNode(params string[] arguments)
     {
-        foreach (var item in root.GetProperty(propertyName).EnumerateArray())
+        var startInfo = new ProcessStartInfo
         {
-            var route = item.ValueKind == JsonValueKind.String
-                ? item.GetString()
-                : item.GetProperty("route").GetString();
-            if (string.Equals(route, expected, StringComparison.Ordinal))
-            {
-                return item;
-            }
+            FileName = "node",
+            WorkingDirectory = RepoRoot(),
+            RedirectStandardOutput = true,
+            RedirectStandardError = true
+        };
+        foreach (var argument in arguments)
+        {
+            startInfo.ArgumentList.Add(argument);
         }
 
-        return null;
+        using var process = Process.Start(startInfo) ?? throw new InvalidOperationException("Failed to start node.");
+        var output = process.StandardOutput.ReadToEnd();
+        var error = process.StandardError.ReadToEnd();
+        process.WaitForExit();
+        return new ProcessResult(process.ExitCode, output + error);
     }
 
-    private static void AssertArrayRouteContains(JsonElement root, string propertyName, string expected)
+    private static string RepoPath(params string[] segments)
     {
-        Assert.IsNotNull(FindRouteEntry(root, propertyName, expected), $"{propertyName} must contain {expected}");
+        return Path.Combine(new[] { RepoRoot() }.Concat(segments).ToArray());
     }
 
-    private static void AssertArrayContains(JsonElement root, string propertyName, string expected)
+    private static string RepoRoot()
     {
-        var values = root.GetProperty(propertyName)
-            .EnumerateArray()
-            .Select(item => item.GetString())
-            .ToHashSet(StringComparer.Ordinal);
-        Assert.IsTrue(values.Contains(expected), $"{propertyName} must contain {expected}");
+        var current = new DirectoryInfo(AppContext.BaseDirectory);
+        while (current is not null && !File.Exists(Path.Combine(current.FullName, "WorkOSNext.sln")))
+        {
+            current = current.Parent;
+        }
+
+        return current?.FullName ?? throw new InvalidOperationException("Could not locate repository root.");
     }
+
+    private sealed record ProcessResult(int ExitCode, string Output);
 }

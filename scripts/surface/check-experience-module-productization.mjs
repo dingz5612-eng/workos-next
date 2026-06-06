@@ -4,7 +4,7 @@ import { routeView } from "../../apps/mobile/src/appRouter.js";
 import { createSurfaceCtx, visibleText } from "../../apps/mobile/src/__tests__/surfaceContractTestHelpers.js";
 
 const root = process.cwd();
-const artifactPath = "artifacts/surface/experience-module-productization-result.json";
+const artifactPath = "artifacts/oma/checks/experience-module-productization-result.json";
 const violations = [];
 
 const ctx = createSurfaceCtx({ view: "operationPanel", selectedWorkItemId: "T-ROOM-CREATE" });

@@ -4,7 +4,7 @@ import { buildSearchResultVM, rankSearchResults } from "../searchIntentHub.js";
 import { searchView } from "../views/searchView.js";
 import { createSurfaceCtx, runtimeStore, visibleText } from "./surfaceContractTestHelpers.js";
 
-describe("OAM-04B search intent hub contract", () => {
+describe("OMA Surface search intent hub contract", () => {
   it("renders a WorkItem action button and opens the persisted operation panel", () => {
     const ctx = createSurfaceCtx({ view: "search", query: "创建房间" });
     const html = searchView(ctx);

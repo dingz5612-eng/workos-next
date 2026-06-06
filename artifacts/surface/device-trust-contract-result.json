@@ -1,8 +1,0 @@
-{
-  "generated_at_utc": "2026-06-05T18:16:09.695Z",
-  "generated_by": "scripts/surface/check-device-trust-contract.mjs",
-  "status": "passed",
-  "check": "device-trust-contract",
-  "violation_count": 0,
-  "violations": []
-}

@@ -1,6 +1,6 @@
 {
-  "version": "oam-cab.bi-kpi-contract.v1",
-  "status": "baseline-contract",
+  "version": "oma.bi-kpi-contract.v1",
+  "status": "authoritative-current-contract",
   "requiredFields": [
     "metricId",
     "numerator",
@@ -21,7 +21,7 @@
     "KPI display cannot confirm or mutate business facts."
   ],
   "evidence": [
-    "docs/v5.4/production-observability.md",
-    "scripts/check-oam-cab-final-report.mjs"
+    "docs/contracts/period-analytics-contract.json",
+    "scripts/guard-architecture.ps1"
   ]
 }

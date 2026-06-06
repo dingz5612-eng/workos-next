@@ -6,12 +6,12 @@ public static class CutoverStateRunner
 {
     public static Task<IReadOnlyList<InvariantCheckEvidence>> Run(RunnerOptions options)
     {
-        var releaseId = options.Get("releaseId", "v5.4-cutover-state");
+        var releaseId = options.Get("releaseId", "oma.current-cutover-state");
         var tenantId = options.Get("tenantId", "all-tenants");
         var sliceId = options.Get("sliceId", "operations-runtime");
         var ciRunId = options.Get("ciRunId") ?? Environment.GetEnvironmentVariable("GITHUB_RUN_ID") ?? "local";
         var sourceMode = ResolveSourceMode(options);
-        var outputPath = options.Get("out", Path.Combine(".tmp", "v5_4", "cutover-state-invariants.json"));
+        var outputPath = options.Get("out", Path.Combine(".tmp", "oma", "cutover-state-invariants.json"));
         var request = new CutoverTransitionRequest(
             options.Get("from", "off"),
             options.Get("to", "shadow"),
@@ -38,7 +38,7 @@ public static class CutoverStateRunner
                 "P0",
                 "cutover-state-runner",
                 null,
-                "scripts/v5_4/cutover-state-runner.mjs",
+                "scripts/oma/cutover-state-runner.mjs",
                 decision.Allowed ? "passed" : "failed",
                 new Dictionary<string, object>
                 {

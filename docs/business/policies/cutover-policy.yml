@@ -1,7 +1,7 @@
 {
   "policyId": "business.cutover-policy",
   "policyType": "cutover",
-  "version": "rtp.v1",
+  "version": "oma.policy.v1",
   "owner": "ReleaseControl",
   "runtimeBinding": {
     "loader": "CutoverPolicyLoader",

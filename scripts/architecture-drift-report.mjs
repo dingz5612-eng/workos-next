@@ -3,8 +3,8 @@ import fs from "node:fs";
 const manifest = JSON.parse(fs.readFileSync("docs/contracts/slice-manifest.json", "utf8"));
 const surfacePolicy = JSON.parse(fs.readFileSync("docs/contracts/runtime-surface-policy.json", "utf8"));
 const lensContract = JSON.parse(fs.readFileSync("docs/contracts/accommodation-lens-contract.json", "utf8"));
-const rulesIndex = JSON.parse(fs.readFileSync("docs/architecture/rules/index.json", "utf8"));
-const exceptions = JSON.parse(fs.readFileSync("docs/architecture/architecture-exceptions.json", "utf8"));
+const omaContract = JSON.parse(fs.readFileSync("docs/contracts/oma.current.json", "utf8"));
+const exceptions = JSON.parse(fs.readFileSync("docs/oma/current-architecture-exceptions.json", "utf8"));
 
 const policySliceIds = new Set((surfacePolicy.policies || []).map((policy) => policy.sliceId));
 const productionSlices = (manifest.slices || []).filter((slice) => slice.status === "production-slice");
@@ -28,7 +28,7 @@ const report = {
   surfaceCoverageMissingCount: missingSurfacePolicies.length,
   missingSurfacePolicies,
   lensContractCount: (lensContract.lenses || []).length,
-  ruleCount: (rulesIndex.rules || []).length,
+  productCapabilityCount: (omaContract.productCapabilities || []).length,
   activeArchitectureExceptions: activeExceptions,
   expiredArchitectureExceptions: expiredExceptions
 };

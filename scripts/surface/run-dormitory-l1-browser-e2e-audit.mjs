@@ -10,15 +10,15 @@ const { chromium } = require("../../apps/mobile/node_modules/playwright");
 const root = process.cwd();
 const baseUrl = process.env.WORKOS_MOBILE_URL || "http://127.0.0.1:5175";
 const apiUrl = process.env.WORKOS_API_URL || "http://127.0.0.1:5191";
-const runId = process.env.OAM_DORM_L1_AUDIT_RUN_ID || timestampId();
-const artifactRoot = path.join(root, "artifacts", "surface", "dormitory-l1-browser-e2e");
+const runId = process.env.WORKOS_DORM_L1_AUDIT_RUN_ID || timestampId();
+const artifactRoot = path.join(root, "artifacts", "oma", "evidence", "dormitory-l1-browser-e2e");
 const runDir = path.join(artifactRoot, runId);
 const screenshotDir = path.join(runDir, "screenshots");
 const reportPath = path.join(runDir, "dormitory-l1-browser-e2e-report.json");
 const mdPath = path.join(runDir, "dormitory-l1-browser-e2e-report.md");
 const screenshotIndexPath = path.join(runDir, "screenshot-index.json");
 const latestPath = path.join(artifactRoot, "latest-report.json");
-const graphPath = path.join(root, "artifacts", "rt4", "evidence-graph.json");
+const graphPath = path.join(root, "artifacts", "oma", "evidence", "evidence-graph.json");
 
 fs.mkdirSync(screenshotDir, { recursive: true });
 
@@ -710,7 +710,7 @@ function outputRefs() {
     report: rel(reportPath),
     markdown: rel(mdPath),
     screenshotIndex: rel(screenshotIndexPath),
-    evidenceGraph: "artifacts/rt4/evidence-graph.json"
+    evidenceGraph: "artifacts/oma/evidence/evidence-graph.json"
   };
 }
 

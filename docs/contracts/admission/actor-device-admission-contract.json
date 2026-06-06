@@ -1,6 +1,6 @@
 {
-  "version": "oam-cab.actor-device-admission-contract.v1",
-  "status": "baseline-contract",
+  "version": "oma.actor-device-admission-contract.v1",
+  "status": "authoritative-current-contract",
   "actorContextFields": [
     "actorId",
     "actorRole",
@@ -23,5 +23,6 @@
     "services/core-api/WorkOS.Api/Runtime/RuntimeActorAuthentication.cs",
     "services/core-api/WorkOS.Api/Runtime/CanonicalOperationsApiService.cs",
     "docs/contracts/operations-command-submission-context.json"
-  ]
+  ],
+  "generatedBy": "oma-current"
 }

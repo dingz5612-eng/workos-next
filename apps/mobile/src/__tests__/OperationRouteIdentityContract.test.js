@@ -9,7 +9,7 @@ import { WorkItemCard } from "../views/experienceComponents.js";
 import { searchView } from "../views/searchView.js";
 import { createSurfaceCtx, runtimeStore, visibleText } from "./surfaceContractTestHelpers.js";
 
-describe("OAM-04B WorkItem route identity", () => {
+describe("OMA Surface WorkItem route identity", () => {
   it("opens workbench WorkItem with a persisted runtime identity", () => {
     const ctx = createSurfaceCtx();
 

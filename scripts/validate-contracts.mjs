@@ -6,8 +6,9 @@ const sliceManifest = JSON.parse(fs.readFileSync("docs/contracts/slice-manifest.
 const policyContract = JSON.parse(fs.readFileSync("docs/contracts/policy-contract.json", "utf8"));
 const surfacePolicy = JSON.parse(fs.readFileSync("docs/contracts/runtime-surface-policy.json", "utf8"));
 const lensContract = JSON.parse(fs.readFileSync("docs/contracts/accommodation-lens-contract.json", "utf8"));
-const rulesIndex = JSON.parse(fs.readFileSync("docs/architecture/rules/index.json", "utf8"));
-const architectureExceptions = JSON.parse(fs.readFileSync("docs/architecture/architecture-exceptions.json", "utf8"));
+const omaContract = JSON.parse(fs.readFileSync("docs/contracts/oma.current.json", "utf8"));
+const omaManifest = JSON.parse(fs.readFileSync("docs/oma/current-architecture.manifest.json", "utf8"));
+const architectureExceptions = JSON.parse(fs.readFileSync("docs/oma/current-architecture-exceptions.json", "utf8"));
 
 const requiredProjectionFields = ["projection", "version", "languages", "sourceOfTruth", "workspaces", "events"];
 for (const field of requiredProjectionFields) {
@@ -157,33 +158,33 @@ for (const schemaName of ["EvidenceDraftRequest", "EvidenceAttachmentRequest", "
   }
 }
 
-for (const rule of rulesIndex.rules || []) {
-  for (const field of ["id", "title", "scope", "severity", "owner", "ruleFile", "enforcedBy", "exceptionAllowed"]) {
-    if (!(field in rule) || (Array.isArray(rule[field]) && rule[field].length === 0)) {
-      throw new Error(`Rule registry entry ${rule.id || "<missing>"} missing ${field}`);
+if (omaContract.version !== "oma.current.v1") {
+  throw new Error("OMA contract must declare oma.current.v1.");
+}
+
+if (omaManifest.version !== "oma.current.v1") {
+  throw new Error("OMA manifest must declare oma.current.v1.");
+}
+
+for (const capability of omaContract.productCapabilities || []) {
+  for (const field of ["id", "module", "owns", "forbidden"]) {
+    if (!(field in capability) || (Array.isArray(capability[field]) && capability[field].length === 0)) {
+      throw new Error(`Product capability ${capability.id || "<missing>"} missing ${field}`);
     }
   }
-  if (!fs.existsSync(rule.ruleFile)) {
-    throw new Error(`Rule registry file does not exist for ${rule.id}: ${rule.ruleFile}`);
+  if (!omaManifest.modules.required.includes(capability.module)) {
+    throw new Error(`Product capability ${capability.id} references unknown module ${capability.module}`);
   }
 }
 
-const rulesById = new Map((rulesIndex.rules || []).map((rule) => [rule.id, rule]));
 for (const exception of architectureExceptions.exceptions || []) {
   for (const field of ["ruleId", "owner", "reason", "createdAt", "expiresAt", "removalCondition", "linkedTest"]) {
     if (!exception[field]) {
-      throw new Error(`Architecture exception missing ${field}`);
+      throw new Error(`OMA architecture exception missing ${field}`);
     }
   }
-  const rule = rulesById.get(exception.ruleId);
-  if (!rule) {
-    throw new Error(`Architecture exception references unknown ruleId ${exception.ruleId}`);
-  }
-  if (!rule.exceptionAllowed) {
-    throw new Error(`Rule ${exception.ruleId} does not allow exceptions`);
-  }
   if (Date.parse(exception.expiresAt) < Date.now()) {
-    throw new Error(`Architecture exception expired for ${exception.ruleId}`);
+    throw new Error(`OMA architecture exception expired for ${exception.ruleId}`);
   }
 }
 

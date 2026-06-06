@@ -1,6 +1,6 @@
 {
-  "version": "oam.step-dependency-contract.v1",
-  "generatedBy": "oam-cab-v1-dormitory-field-context-baseline",
+  "version": "oma.step-dependency-contract.v1",
+  "generatedBy": "oma-current",
   "scope": "definition-contract",
   "ruleLayer": "scenario-instance-contract",
   "abstractPattern": "Dormitory sample step fields are declared as inherited, user-selectable, derived, backend-default, or retired fields. This is a reusable Definition pattern for other business domains: later WorkItems must not ask users to manually type object references, actor/person fields, generated ids, derived values, or hidden defaults. Surfaces render inherited fields read-only or hidden-submit, derived fields as preview/hidden-submit, user fields as the only editable fields, backend defaults as hidden/no-client-trust fields, and retired fields as suppressed legacy fields.",

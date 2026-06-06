@@ -7,7 +7,7 @@
     "version",
     "operationRuntimePure",
     "completedBusinessRecord",
-    "activeSurfaceArchitecture",
+    "currentSurfaceArchitecture",
     "frontendExperienceSystem",
     "collaborationFeedback",
     "mobile",
@@ -19,11 +19,11 @@
     "status": { "type": "string" },
     "operationRuntimePure": {
       "type": "object",
-      "required": ["persistedWorkItemResolutionOrder", "forbiddenFallbackPaths", "legacyTaskIdExample", "resolvedPersistedExample"],
+      "required": ["persistedWorkItemResolutionOrder", "forbiddenFallbackPaths", "retiredTaskIdExample", "resolvedPersistedExample"],
       "properties": {
         "persistedWorkItemResolutionOrder": { "type": "array", "items": { "type": "string" }, "minItems": 4 },
         "forbiddenFallbackPaths": { "type": "array", "items": { "type": "string" }, "minItems": 4 },
-        "legacyTaskIdExample": { "type": "string" },
+        "retiredTaskIdExample": { "type": "string" },
         "resolvedPersistedExample": { "type": "string" }
       }
     },
@@ -41,7 +41,7 @@
         "forbiddenPath": { "type": "string" }
       }
     },
-    "activeSurfaceArchitecture": {
+    "currentSurfaceArchitecture": {
       "type": "object",
       "required": ["architecture", "required", "forbidden", "repair"],
       "properties": {

@@ -9,13 +9,10 @@ const { chromium } = require("../../apps/mobile/node_modules/playwright");
 const root = process.cwd();
 const baseUrl = process.env.WORKOS_MOBILE_URL || "http://127.0.0.1:5175";
 const apiUrl = process.env.WORKOS_API_URL || "http://127.0.0.1:5191";
-const runId = process.env.OAM_PC_GOVERNANCE_AUDIT_RUN_ID || `pc-governance-real-browser-${timestampId()}`;
+const runId = process.env.WORKOS_PC_GOVERNANCE_AUDIT_RUN_ID || `pc-governance-real-browser-${timestampId()}`;
 const artifactRoot = path.join(
   root,
-  "artifacts",
-  "oam-cab",
-  "dormitory-real-browser-hardening-20260604-current",
-  "pc-governance-real-browser",
+  "artifacts", "oma", "evidence", "pc-governance-real-browser",
   runId);
 const screenshotRoot = path.join(artifactRoot, "screenshots");
 const reportPath = path.join(artifactRoot, "pc-governance-real-browser-report.json");

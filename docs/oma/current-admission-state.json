@@ -1,0 +1,20 @@
+{
+  "version": "oma.current-admission-state.v1",
+  "status": "authoritative",
+  "businessProduction": "BLOCKED",
+  "dormitoryProduction": "BLOCKED",
+  "dormitoryObservation": "L1_INTERNAL_PILOT",
+  "productionConfirmAllowed": false,
+  "internalPilotConfirmAllowed": true,
+  "rules": [
+    "Business production requires OMA product capability, domain invariant, API, DB, permission, evidence, trace, audit, and test coverage.",
+    "Dormitory internal pilot work items may confirm through Operations Runtime when backend session capability and device checks pass.",
+    "Search, Projection, PC Governance, and Control Plane may not open production confirmation."
+  ],
+  "blockingSources": [
+    "docs/oma/current-architecture.md",
+    "docs/contracts/oma.current.json",
+    "docs/business/business-line-registry.json",
+    "docs/contracts/admission/admission-matrix.json"
+  ]
+}

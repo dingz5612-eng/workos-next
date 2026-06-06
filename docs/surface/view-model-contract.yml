@@ -1,6 +1,6 @@
 {
-  "contractId": "oam-04b-view-model-contract.v1",
-  "stage": "OAM-04B",
+  "contractId": "oma.surface-view-model-contract.v1",
+  "architecture": "OMA",
   "status": "contract_guard",
   "architecture": "Runtime data -> ViewModel adapter -> User-facing surface",
   "centerModel": {

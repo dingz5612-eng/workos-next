@@ -8,7 +8,7 @@ public static class MigrationVerificationJob
 {
     public static Task<MigrationVerificationRunOutput> Run(RunnerOptions options)
     {
-        var releaseId = options.Get("releaseId", "v5.4-migration-verification");
+        var releaseId = options.Get("releaseId", "oma.current-migration-verification");
         var mrId = options.Get("mrId", "local");
         var tenantId = options.Get("tenantId", "all-tenants");
         var ciRunId = options.Get("ciRunId")
@@ -16,9 +16,9 @@ public static class MigrationVerificationJob
             ?? "local";
         var reportId = options.Get("reportId", $"migration-verification-{DateTimeOffset.UtcNow:yyyyMMddHHmmss}");
         var dryRun = options.GetBool("dry-run", defaultValue: true);
-        var outputPath = options.Get("out", Path.Combine(".tmp", "v5_4", "migration-verification-invariant-checks.json"));
-        var reportPath = options.Get("report-out", Path.Combine(".tmp", "v5_4", "migration-verification-report.json"));
-        var backfillPath = options.Get("backfill-out", Path.Combine(".tmp", "v5_4", "legacy-backfill-report.json"));
+        var outputPath = options.Get("out", Path.Combine(".tmp", "oma", "migration-verification-invariant-checks.json"));
+        var reportPath = options.Get("report-out", Path.Combine(".tmp", "oma", "migration-verification-report.json"));
+        var backfillPath = options.Get("backfill-out", Path.Combine(".tmp", "oma", "legacy-backfill-report.json"));
         var registryPath = options.Get("registry", Path.Combine("docs", "contracts", "legacy-ledger-migration-registry.json"));
         var migrationsPath = options.Get("migrations", Path.Combine("infra", "db", "migrations"));
         var apiSourcePath = options.Get("api-source", Path.Combine("services", "core-api", "WorkOS.Api", "Program.cs"));

@@ -1,0 +1,9 @@
+{
+  "version": "oma.checkout-service-cutover.v1",
+  "responsibility": "checkout case closure and blocker resolution use current OMA Operations Runtime only",
+  "requiredRuntimePath": "POST /api/operations/work-items/{workItemId}/confirm",
+  "forbidden": [
+    "direct bed status mutation",
+    "manual case closure outside OperationsUnitOfWork"
+  ]
+}

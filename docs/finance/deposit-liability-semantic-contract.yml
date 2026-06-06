@@ -1,5 +1,5 @@
 {
-  "version": "oam-05.deposit-liability-semantic-contract.v1",
+  "version": "oma.finance-gate.deposit-liability-semantic-contract.v1",
   "owner": "FinanceTruthPack",
   "productionAllowed": false,
   "liabilityFact": "DepositFact",

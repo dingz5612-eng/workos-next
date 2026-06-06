@@ -1,15 +1,85 @@
 {
-  "version": "oam.search-index-sources.v1",
-  "generatedBy": "oam-cab-v1-phase-4",
+  "version": "oma.search-index-sources.v1",
+  "generatedBy": "oma-current",
   "sources": [
-    { "sourceId": "operationsWorkItems", "ref": "Operations Runtime WorkItem store", "objectTypes": ["workItem"], "admissionRequired": true },
-    { "sourceId": "operationCases", "ref": "Operations Runtime OperationCase store", "objectTypes": ["operationCase"], "admissionRequired": true },
-    { "sourceId": "operationsDomainEvents", "ref": "Operations Runtime confirmed domain events through OperationsReadStore.SearchOperations", "objectTypes": ["workItem", "operationCase"], "admissionRequired": true },
-    { "sourceId": "workspaceCardProjection", "ref": "ProjectionRuntime workspace/card projection source", "objectTypes": ["workspaceCardProjection", "learningItem"], "admissionRequired": true },
-    { "sourceId": "businessObjects", "ref": "official projections and lens snapshots", "objectTypes": ["businessObject", "payment", "deposit", "ledger"], "admissionRequired": true },
-    { "sourceId": "evidence", "ref": "RuntimeEvidenceStorage", "objectTypes": ["evidence"], "admissionRequired": true },
-    { "sourceId": "controlPlane", "ref": "Control Plane release and governance artifacts", "objectTypes": ["gateResult", "release", "auditEvent"], "admissionRequired": true },
-    { "sourceId": "reconciliation", "ref": "Finance reconciliation read model", "objectTypes": ["reconciliation", "correction"], "admissionRequired": true },
-    { "sourceId": "lens", "ref": "Projection / Lens contract", "objectTypes": ["lensItem"], "admissionRequired": true }
+    {
+      "sourceId": "operationsWorkItems",
+      "ref": "Operations Runtime WorkItem store",
+      "objectTypes": [
+        "workItem"
+      ],
+      "admissionRequired": true
+    },
+    {
+      "sourceId": "operationCases",
+      "ref": "Operations Runtime OperationCase store",
+      "objectTypes": [
+        "operationCase"
+      ],
+      "admissionRequired": true
+    },
+    {
+      "sourceId": "operationsDomainEvents",
+      "ref": "Operations Runtime confirmed domain events through OperationsReadStore.SearchOperations",
+      "objectTypes": [
+        "workItem",
+        "operationCase"
+      ],
+      "admissionRequired": true
+    },
+    {
+      "sourceId": "workspaceCardProjection",
+      "ref": "ProjectionRuntime workspace/card projection source",
+      "objectTypes": [
+        "workspaceCardProjection",
+        "learningItem"
+      ],
+      "admissionRequired": true
+    },
+    {
+      "sourceId": "businessObjects",
+      "ref": "official projections and lens snapshots",
+      "objectTypes": [
+        "businessObject",
+        "payment",
+        "deposit",
+        "ledger"
+      ],
+      "admissionRequired": true
+    },
+    {
+      "sourceId": "evidence",
+      "ref": "RuntimeEvidenceStorage",
+      "objectTypes": [
+        "evidence"
+      ],
+      "admissionRequired": true
+    },
+    {
+      "sourceId": "controlPlane",
+      "ref": "Control Plane release-control and governance audit read models",
+      "objectTypes": [
+        "release",
+        "auditEvent"
+      ],
+      "admissionRequired": true
+    },
+    {
+      "sourceId": "reconciliation",
+      "ref": "Finance reconciliation read model",
+      "objectTypes": [
+        "reconciliation",
+        "correction"
+      ],
+      "admissionRequired": true
+    },
+    {
+      "sourceId": "lens",
+      "ref": "Projection / Lens contract",
+      "objectTypes": [
+        "lensItem"
+      ],
+      "admissionRequired": true
+    }
   ]
 }

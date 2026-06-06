@@ -1,7 +1,7 @@
 {
   "policyId": "business.truth-owner-policy",
   "policyType": "truth-owner",
-  "version": "rtp.v1",
+  "version": "oma.policy.v1",
   "owner": "BusinessTruthOS",
   "sourceFile": "docs/business/truth-owner-registry.yml",
   "runtimeBinding": {

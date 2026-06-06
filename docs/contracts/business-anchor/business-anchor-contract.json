@@ -1,10 +1,31 @@
 {
-  "version": "oam-cab.business-anchor-contract.v1",
+  "version": "oma.business-anchor-contract.v1",
   "kernel": "Business Anchor Kernel",
   "rule": "Business anchors are human-memory display and search labels composed from truth-object projections, runtime events, WorkItem context, and session-safe payload context. They must not become authoritative business facts or write inputs.",
   "truthBoundary": {
-    "authoritativeObjects": ["roomId", "bedId", "stayId", "residentId", "depositId", "paymentId", "taskId", "checkoutId", "periodId"],
-    "displaySearchOnlyFields": ["residentName", "customerName", "contactName", "guestName", "leadName", "residentPhone", "customerPhone", "contactPhone", "phone", "mobile"],
+    "authoritativeObjects": [
+      "roomId",
+      "bedId",
+      "stayId",
+      "residentId",
+      "depositId",
+      "paymentId",
+      "taskId",
+      "checkoutId",
+      "periodId"
+    ],
+    "displaySearchOnlyFields": [
+      "residentName",
+      "customerName",
+      "contactName",
+      "guestName",
+      "leadName",
+      "residentPhone",
+      "customerPhone",
+      "contactPhone",
+      "phone",
+      "mobile"
+    ],
     "forbiddenUses": [
       "using name or phone as fact owner",
       "submitting anchor text as command truth",
@@ -23,71 +44,156 @@
     {
       "scenarioId": "dorm-cert-001",
       "name": "lead to reservation to stay to bed assignment",
-      "primaryTruthObjects": ["residentId", "stayId", "roomId", "bedId"],
-      "displayFields": ["roomLabel", "bedLabel", "residentName", "residentPhone"],
+      "primaryTruthObjects": [
+        "residentId",
+        "stayId",
+        "roomId",
+        "bedId"
+      ],
+      "displayFields": [
+        "roomLabel",
+        "bedLabel",
+        "residentName",
+        "residentPhone"
+      ],
       "currentActionSource": "active WorkItem card or admission-safe next action"
     },
     {
       "scenarioId": "dorm-cert-002",
       "name": "deposit assess receive confirm liability update",
-      "primaryTruthObjects": ["depositId", "stayId", "roomId", "bedId"],
-      "displayFields": ["roomLabel", "bedLabel", "residentName", "residentPhone"],
+      "primaryTruthObjects": [
+        "depositId",
+        "stayId",
+        "roomId",
+        "bedId"
+      ],
+      "displayFields": [
+        "roomLabel",
+        "bedLabel",
+        "residentName",
+        "residentPhone"
+      ],
       "currentActionSource": "deposit ledger state"
     },
     {
       "scenarioId": "dorm-cert-003",
       "name": "ordinary payment finance confirm allocation balance update",
-      "primaryTruthObjects": ["paymentId", "stayId", "roomId", "bedId"],
-      "displayFields": ["roomLabel", "bedLabel", "residentName", "residentPhone"],
+      "primaryTruthObjects": [
+        "paymentId",
+        "stayId",
+        "roomId",
+        "bedId"
+      ],
+      "displayFields": [
+        "roomLabel",
+        "bedLabel",
+        "residentName",
+        "residentPhone"
+      ],
       "currentActionSource": "payment ledger state"
     },
     {
       "scenarioId": "dorm-cert-004",
       "name": "service task blocks bed complete verify release",
-      "primaryTruthObjects": ["taskId", "roomId", "bedId"],
-      "displayFields": ["roomLabel", "bedLabel"],
+      "primaryTruthObjects": [
+        "taskId",
+        "roomId",
+        "bedId"
+      ],
+      "displayFields": [
+        "roomLabel",
+        "bedLabel"
+      ],
       "currentActionSource": "service task state"
     },
     {
       "scenarioId": "dorm-cert-005",
       "name": "checkout inspection deposit deduction refund cleaning available",
-      "primaryTruthObjects": ["checkoutId", "stayId", "depositId", "roomId", "bedId"],
-      "displayFields": ["roomLabel", "bedLabel", "residentName", "residentPhone"],
+      "primaryTruthObjects": [
+        "checkoutId",
+        "stayId",
+        "depositId",
+        "roomId",
+        "bedId"
+      ],
+      "displayFields": [
+        "roomLabel",
+        "bedLabel",
+        "residentName",
+        "residentPhone"
+      ],
       "currentActionSource": "checkout and deposit settlement state"
     },
     {
       "scenarioId": "dorm-cert-006",
       "name": "bank import match mismatch correction",
-      "primaryTruthObjects": ["paymentId", "depositId", "correctionRequestId"],
-      "displayFields": ["roomLabel", "bedLabel", "residentName", "residentPhone"],
+      "primaryTruthObjects": [
+        "paymentId",
+        "depositId",
+        "correctionRequestId"
+      ],
+      "displayFields": [
+        "roomLabel",
+        "bedLabel",
+        "residentName",
+        "residentPhone"
+      ],
       "currentActionSource": "correction ledger state"
     },
     {
       "scenarioId": "dorm-cert-007",
       "name": "period review action plan period close",
-      "primaryTruthObjects": ["periodId"],
-      "displayFields": ["periodLabel"],
+      "primaryTruthObjects": [
+        "periodId"
+      ],
+      "displayFields": [
+        "periodLabel"
+      ],
       "currentActionSource": "period analytics state"
     },
     {
       "scenarioId": "dorm-cert-008",
       "name": "permission denied escalation audit",
-      "primaryTruthObjects": ["workItemId", "caseId"],
-      "displayFields": ["roomLabel", "bedLabel", "residentName", "residentPhone"],
+      "primaryTruthObjects": [
+        "workItemId",
+        "caseId"
+      ],
+      "displayFields": [
+        "roomLabel",
+        "bedLabel",
+        "residentName",
+        "residentPhone"
+      ],
       "currentActionSource": "admission decision"
     },
     {
       "scenarioId": "dorm-cert-009",
       "name": "duplicate submit idempotency conflict no duplicate side effect",
-      "primaryTruthObjects": ["workItemId", "commandSubmissionId"],
-      "displayFields": ["roomLabel", "bedLabel", "residentName", "residentPhone"],
+      "primaryTruthObjects": [
+        "workItemId",
+        "commandSubmissionId"
+      ],
+      "displayFields": [
+        "roomLabel",
+        "bedLabel",
+        "residentName",
+        "residentPhone"
+      ],
       "currentActionSource": "command submission state"
     },
     {
       "scenarioId": "dorm-cert-010",
       "name": "missing evidence block confirm add evidence confirm",
-      "primaryTruthObjects": ["workItemId", "evidenceId"],
-      "displayFields": ["roomLabel", "bedLabel", "residentName", "residentPhone"],
+      "primaryTruthObjects": [
+        "workItemId",
+        "evidenceId"
+      ],
+      "displayFields": [
+        "roomLabel",
+        "bedLabel",
+        "residentName",
+        "residentPhone"
+      ],
       "currentActionSource": "evidence policy state"
     }
   ],

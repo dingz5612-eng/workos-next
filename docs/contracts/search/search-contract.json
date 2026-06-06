@@ -1,7 +1,7 @@
 {
-  "version": "oam.search-contract.v1",
-  "generatedBy": "oam-cab-v1-phase-4",
-  "status": "implementation-with-operations-and-projection-adapters",
+  "version": "oma.search-contract.v1",
+  "generatedBy": "oma-current",
+  "status": "authoritative-read-side-kernel",
   "languageSynonymRef": "docs/contracts/language/search-synonyms.json",
   "admissionContractRef": "docs/contracts/admission/admission-contract.json",
   "inputAdapters": [
@@ -15,12 +15,6 @@
       "status": "active",
       "allowed": "May read tenant-scoped Operations Runtime work items, operation cases, and confirmed domain events through OperationsReadStore.SearchOperations to build read-only SearchResult targets.",
       "forbidden": "Must not execute writes, infer authority from display anchors, expose ordinary users to raw runtime ids when a business anchor exists, or replace Operations Runtime as fact owner."
-    },
-    {
-      "adapterId": "voiceAiIntentInput",
-      "status": "planned",
-      "allowed": "May transcribe speech and translate it into structured SearchIntent candidates with confidence and explanation.",
-      "forbidden": "Must not execute writes or bypass Admission Kernel, Operations Runtime, Control Plane, or Evidence Graph."
     }
   ],
   "analyticsPolicy": {
@@ -64,7 +58,6 @@
     "deposit",
     "correction",
     "reconciliation",
-    "gateResult",
     "release",
     "lensItem",
     "auditEvent",
@@ -88,16 +81,15 @@
     {
       "name": "ProjectionWorkspaceSearchAdapter",
       "path": "services/core-api/WorkOS.Api/Runtime/SearchKernelService.cs",
-      "status": "projection-adapter",
-      "allowed": "May provide current workspace-card projection results only as input to SearchKernelService.",
-      "forbidden": "Must not be treated as final Search Kernel and must not bypass Language Kernel synonyms, permission policy, or Admission Kernel.",
-      "removalCondition": "SearchKernelService owns indexing, ranking, admission, trace refs, and language explain output."
+      "status": "projection-facade-adapter",
+      "allowed": "May provide current workspace-card projection results only as read-side input to SearchKernelService.",
+      "forbidden": "Must not bypass Language Kernel synonyms, permission policy, Admission Kernel, or Operations Runtime fact ownership."
     },
     {
       "name": "searchIntentHub",
       "path": "apps/mobile/src/searchIntentHub.js",
       "status": "surface-adapter",
-      "allowed": "May adapt backend or fallback results to mobile navigation view models.",
+      "allowed": "May adapt current backend SearchResult view models to mobile navigation.",
       "forbidden": "Must not decide business production permission or business-line maturity."
     }
   ],

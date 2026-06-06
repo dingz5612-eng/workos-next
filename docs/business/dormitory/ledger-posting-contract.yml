@@ -1,5 +1,5 @@
 {
-  "version": "oam-02.ledger-posting-contract.v1",
+  "version": "oma.dormitory.ledger-posting-contract.v1",
   "domain": "dormitory",
   "productionAllowed": false,
   "sourceRules": "docs/business/finance/money-kernel-rules.yml",

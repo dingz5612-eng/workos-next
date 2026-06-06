@@ -11,7 +11,7 @@ import {
 
 const cli = parseArgs(process.argv.slice(2));
 const checkName = "check-truth-owners";
-const out = cli.value("out", ".tmp/rt2/truth-owner-report.json");
+const out = cli.value("out", "artifacts/oma/checks/truth-owner-report.json");
 
 function main() {
   if (cli.has("self-test")) {
@@ -69,7 +69,7 @@ function validateTruthOwners(file) {
 
   for (const [required, owner] of requiredOwners) {
     if (!seen.has(required)) {
-      violations.push(violation("truth_owner.required_fact_missing", file, `Missing required RT-2 truth fact: ${required}.`));
+      violations.push(violation("truth_owner.required_fact_missing", file, `Missing required current OMA truth fact: ${required}.`));
       continue;
     }
     const entry = doc.truthOwners.find((item) => item.factId === required);

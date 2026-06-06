@@ -1,4 +1,4 @@
--- V5.4 backup / restore smoke evidence.
+-- Current OMA backup / restore smoke evidence.
 -- Rollback note: WorkOSNext migrations are up-only. To reverse before
 -- production use, add a compensating migration that archives
 -- backup_restore_smoke_reports, then drops this Control Plane table.

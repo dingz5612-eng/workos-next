@@ -1,5 +1,5 @@
 {
-  "version": "oam-02.scenario-field-contract.v1",
+  "version": "oma.dormitory.scenario-field-contract.v1",
   "domain": "dormitory",
   "productionAllowed": false,
   "sourceScenarioFile": "docs/scenarios/dormitory/golden-pilot.yml",

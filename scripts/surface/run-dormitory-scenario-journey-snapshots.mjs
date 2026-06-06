@@ -5,7 +5,7 @@ import { createSurfaceCtx } from "../../apps/mobile/src/__tests__/surfaceContrac
 
 const root = process.cwd();
 const screenshotDir = path.join(root, "artifacts/screenshots/dormitory-journeys");
-const resultPath = path.join(root, "artifacts/surface/dormitory-scenario-journey-result.json");
+const resultPath = path.join(root, "artifacts/oma/checks/dormitory-scenario-journey-result.json");
 const indexPath = path.join(screenshotDir, "index.json");
 
 const scenarios = [

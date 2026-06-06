@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://workosnext.local/schemas/finance/ledger-semantic-rules.schema.json",
-  "title": "OAM-05 Ledger Semantic Rules",
+  "title": "OMA Finance Gate Ledger Semantic Rules",
   "type": "object",
   "required": [
     "version",

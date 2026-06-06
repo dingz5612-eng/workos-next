@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { renderSurface } from "./surfaceContractTestHelpers.js";
 
-describe("OAM-04B mobile accessibility contract", () => {
+describe("OMA Surface mobile accessibility contract", () => {
   it("adds bottom nav labels, active state, and advanced filter semantics", () => {
     const home = renderSurface("home");
     const work = renderSurface("workbench");

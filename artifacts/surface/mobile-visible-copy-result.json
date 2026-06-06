@@ -1,8 +1,0 @@
-{
-  "generated_at_utc": "2026-06-05T18:16:07.969Z",
-  "generated_by": "scripts/surface/check-no-raw-surface-labels.mjs",
-  "status": "passed",
-  "check": "no-raw-surface-labels",
-  "violation_count": 0,
-  "violations": []
-}

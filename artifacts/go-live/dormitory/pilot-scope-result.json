@@ -1,8 +1,0 @@
-{
-  "version": "dorm-int-00.pilot-scope-result.v1",
-  "pilotId": "dorm-int-l1-2026-06",
-  "status": "passed",
-  "scopeRef": "docs/go-live/dormitory/internal-pilot-scope.yml",
-  "checkedAtUtc": "2026-06-01T15:06:04.046Z",
-  "violations": []
-}

@@ -296,7 +296,7 @@ function hasCjk(value) {
 }
 
 function writeReport() {
-  const outputPath = path.join(root, "artifacts/surface/dormitory-field-context-contract-result.json");
+  const outputPath = path.join(root, "artifacts/oma/checks/dormitory-field-context-contract-result.json");
   fs.mkdirSync(path.dirname(outputPath), { recursive: true });
   fs.writeFileSync(outputPath, JSON.stringify({
     status: failures.length ? "failed" : "passed",

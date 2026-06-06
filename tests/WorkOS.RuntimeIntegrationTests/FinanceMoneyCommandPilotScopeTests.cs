@@ -6,12 +6,12 @@ namespace WorkOS.RuntimeIntegrationTests;
 public sealed class FinanceMoneyCommandPilotScopeTests
 {
     [TestMethod]
-    public void PcFinanceCommandsStayBehindOperationsConfirmAndGateResultIsAppendOnly()
+    public void PcFinanceCommandsStayBehindOperationsConfirmAndReleaseGovernanceIsAppendOnly()
     {
         var mobileApiClient = SurfaceRuntimeGuardTestFiles.Read("apps", "mobile", "src", "apiClient.js");
         var pcApiClient = SurfaceRuntimeGuardTestFiles.Read("apps", "mobile", "src", "pcApiClient.js");
         var correctionStorage = SurfaceRuntimeGuardTestFiles.Read("services", "core-api", "WorkOS.Api", "Runtime", "RuntimeCorrectionCenterStorage.cs");
-        var gateHardeningMigration = SurfaceRuntimeGuardTestFiles.Read("infra", "db", "migrations", "029_v5_5_gate_result_hardening.sql");
+        var gateAppendOnlyMigration = SurfaceRuntimeGuardTestFiles.Read("infra", "db", "migrations", "029_control_plane_gate_result_append_only.sql");
 
         foreach (var forbidden in new[]
         {
@@ -32,8 +32,8 @@ public sealed class FinanceMoneyCommandPilotScopeTests
         Assert.IsFalse(pcApiClient.Contains("/api/payment/confirm", StringComparison.Ordinal), "PC finance surface must not call direct payment confirm.");
         StringAssert.Contains(correctionStorage, "InsertReversalEntry");
         StringAssert.Contains(correctionStorage, "InsertCorrectionEntry");
-        StringAssert.Contains(gateHardeningMigration, "before update or delete on control_plane.gate_results");
-        StringAssert.Contains(gateHardeningMigration, "prevent_gate_results_immutable_update");
-        StringAssert.Contains(gateHardeningMigration, "status <> 'passed' or generated_by = 'gate-runner'");
+        StringAssert.Contains(gateAppendOnlyMigration, "before update or delete on control_plane.gate_results");
+        StringAssert.Contains(gateAppendOnlyMigration, "prevent_gate_results_immutable_update");
+        StringAssert.Contains(gateAppendOnlyMigration, "status <> 'passed' or generated_by = 'gate-runner'");
     }
 }

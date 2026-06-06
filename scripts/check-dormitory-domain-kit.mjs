@@ -96,7 +96,7 @@ for (const phrase of ["CommandSubmission", "DomainEvent", "LedgerTransaction", "
 const metrics = readStructured("metrics-tree.yml");
 assert(metrics.northStarMetric?.id === "trusted_available_bed_nights", "metrics-tree must declare trusted_available_bed_nights");
 assert((metrics.metricTree ?? []).length >= 5, "metrics-tree must cover the five Dormitory value streams");
-assert(metrics.productionAllowed === false, "Dormitory metrics must not allow production in B1");
+assert(metrics.productionAllowed === false, "Dormitory metrics must not allow production in current OMA");
 
 const valueStreams = readStructured("value-streams.yml").valueStreams ?? [];
 assert(valueStreams.length === 5, "Dormitory must define exactly five value streams");
@@ -139,8 +139,8 @@ for (const statusCode of [403, 409, 422]) {
 }
 
 const scenarios = JSON.parse(fs.readFileSync(path.join(dormRoot, "certification-scenarios.json"), "utf8"));
-assert((scenarios.scenarios ?? []).length === 10, "Dormitory B1 certification scenarios must define ten dorm-cert scenarios");
-assert(scenarios.productionAllowed === false, "Dormitory scenarios must not allow production in B1");
+assert((scenarios.scenarios ?? []).length === 10, "Dormitory current OMA certification scenarios must define ten dorm-cert scenarios");
+assert(scenarios.productionAllowed === false, "Dormitory scenarios must not allow production in current OMA");
 
 console.log("Dormitory Domain Kit check: PASS");
 

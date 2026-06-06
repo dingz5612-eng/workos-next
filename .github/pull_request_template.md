@@ -1,111 +1,43 @@
-## Summary
+## 摘要
 
 -
 
-<!-- Machine gate: this template is validated by scripts/check-pr-contract.mjs. Empty placeholders, unchecked required statements, or N/A without a reason will fail PR CI. -->
+## OMA 检查
 
-## Rule Authority
+- [ ] 已阅读 `docs/oma/current-architecture.md`
+- [ ] 已确认改动映射到 `docs/oma/current-architecture.manifest.json`
+- [ ] 已确认机器合同 `docs/contracts/oma.current.json` 覆盖本次改动
+- [ ] 没有引入历史阶段命名、旧兼容入口、旧证据产物或旧规则口径
 
-- [ ] I read `docs/engineering/00-rule-authority.md`.
-- [ ] I checked `docs/rules/v5.5/rule-authority.yml` for precedence.
-- [ ] I checked the V5.5 batch dependency and did not skip a prerequisite rules batch.
-- [ ] WON-18 CI and V5.4 Control Plane Guards are green, or this PR only fixes a gate blocker.
-- [ ] New design follows the Operations Runtime axis.
-- [ ] This PR does not enter Mobile / Resource / Stay / Money / Deposit / Checkout business batches before V5.5 Rules OS Go.
+## 职责和边界
 
-## MR Contract
+- Product Capability:
+- Domain module manifest:
+- API boundary:
+- database / data boundary:
+- Permission / Trust Boundary:
+- Evidence / Trace / Audit Boundary:
 
-- MR:
-- Slice:
-- Runtime Layer:
-- Owner:
-- Contract file:
-- GateResult required:
-- Rollback / compensation instruction:
+## 文件处置
 
-## Fact Ownership
+- [ ] 新增文件已归类到 OMA manifest
+- [ ] 删除文件不再被代码、测试、CI、文档或 Schema 引用
+- [ ] 重写文件已删除旧语义并对齐当前 OMA
+- [ ] 没有空服务壳、空模块壳、空包或未来占位包
 
-- [ ] Added or changed facts are declared in `docs/rules/v5.5/fact-ownership.yml`.
-- [ ] Non-owner writes are not introduced.
-- [ ] ProcessManager creates WorkItem or CrossSliceRequest only.
-- [ ] Mobile BFF does not write business facts.
-- [ ] PC Governance / Reconciliation / Correction does not directly write business facts outside an allowed governance or append-only correction path.
+## 验证
 
-## API Boundary
+- [ ] `node scripts/oma/check-current-oma.mjs`
+- [ ] `npm --prefix apps/mobile run test`
+- [ ] `npm --prefix apps/mobile run test:coverage`
+- [ ] `npm --prefix apps/mobile run build`
+- [ ] `dotnet build WorkOSNext.sln -c Release`
+- [ ] 后端相关测试：
+- [ ] 数据库相关测试：
+- [ ] 真实浏览器证据（涉及用户可见交互时必须填写）：
 
-- [ ] Every non-GET `/api/*` route is classified in `docs/rules/v5.5/api-boundary.yml`.
-- [ ] Business writes use Operations Confirm.
-- [ ] Compatibility writes are old Workspace/Card wrappers only.
-- [ ] No page-specific business write API was added.
-- [ ] `node scripts/check-api-boundaries.mjs --self-test`
-- [ ] `node scripts/check-api-boundaries.mjs`
+## 风险
 
-## Idempotency
-
-- [ ] CommandSubmission or equivalent submission evidence is recorded.
-- [ ] Same tenant + idempotency key + same payload is stable.
-- [ ] Same tenant + idempotency key + different payload returns 409.
-- [ ] 403 / 409 / 422 have no business side effects.
-
-## Evidence
-
-- [ ] Evidence writes do not confirm Payment / Deposit / Checkout facts.
-- [ ] Non-cash confirmation evidence requirements are enforced or declared as blocked.
-- [ ] Evidence IDs and files are append-only or reviewed through the evidence owner.
-
-## Ledger
-
-- [ ] LedgerEntry writes are append-only.
-- [ ] Old ledger entries are not edited in place.
-- [ ] Correction paths use explicit append-only correction service or Operations Confirm.
-- [ ] Period snapshots are derived from ledgers, not user-entered finance totals.
-
-## Process / Blocker
-
-- [ ] Blockers are represented as WorkItems or process state.
-- [ ] Closed cases have no open blocker.
-- [ ] ProcessManager does not directly mutate facts owned by another slice.
-
-## Projection / Lens
-
-- [ ] Official projectors do not consume `shadow_runtime`.
-- [ ] Projection / Lens outputs are derived from DomainEvent / LedgerEntry / owner facts.
-- [ ] ShadowCompareReport impact is documented if touched.
-
-## Mobile
-
-- [ ] Mobile surface uses runtime APIs and generated paths.
-- [ ] No Mobile BFF business fact write was added.
-- [ ] No demo fallback supports production behavior.
-
-## PC
-
-- [ ] PC governance write paths require capability, reason, and audit where applicable.
-- [ ] Exports are audited and do not write business facts.
-- [ ] Reconciliation / Correction remains governance or append-only correction, not page-specific business write.
-
-## Migration / Release
-
-- [ ] Migration is forward-compatible and rollback or compensation is documented.
-- [ ] ReleaseManifest / GateResult / RollbackInstruction evidence is updated when needed.
-- [ ] GateResult is machine-generated and CI-bound.
-- [ ] BusinessSignoff or waiver rules are respected when release state requires them.
-
-## Tests
-
-- [ ] `node scripts/check-rule-authority.mjs`
-- [ ] `node scripts/check-fact-ownership.mjs`
-- [ ] `node scripts/check-mr-contract.mjs`
-- [ ] `node scripts/check-invariant-maturity.mjs`
-- [ ] `node scripts/check-gate-result-hardening.mjs`
-- [ ] `node scripts/check-rule-drift.mjs`
-- [ ] Relevant backend tests:
-- [ ] Relevant frontend tests:
-- [ ] Relevant migration or runtime contract tests:
-
-## No-Go
-
-- P0 risks:
-- P1 risks:
-- P2 risks:
-- [ ] No P0 blocker is hidden, skipped, renamed, or downgraded.
+- P0:
+- P1:
+- P2:

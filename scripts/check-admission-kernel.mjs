@@ -2,22 +2,25 @@ import fs from "node:fs";
 import path from "node:path";
 
 const root = process.cwd();
-const failures = [];
+const selfTest = process.argv.includes("--self-test");
 
 const contract = readJson("docs/contracts/admission/admission-contract.json");
 const matrix = readJson("docs/contracts/admission/admission-matrix.json");
 const sources = readJson("docs/contracts/admission/admission-sources.json");
-const currentState = readJson("artifacts/release-state/current-state.json");
+const currentState = readJson("docs/oma/current-admission-state.json");
 const registry = readJson("docs/business/business-line-registry.json");
 const surfacePolicy = readJson("docs/contracts/runtime-surface-policy.json");
 
-checkContract();
-checkSources();
-checkMatrix();
-checkBusinessLineAlignment();
-checkHighRiskSurfaceReasons();
-checkRuntimeImplementation();
+if (selfTest) {
+  const badState = { ...currentState, businessProduction: "OPEN" };
+  const badFailures = runChecks({ currentState: badState });
+  if (!badFailures.some((item) => item.includes("businessProduction"))) {
+    throw new Error("Admission Kernel self-test did not detect opened production state.");
+  }
+  console.log("Admission Kernel self-test: PASS");
+}
 
+const failures = runChecks({ currentState });
 if (failures.length > 0) {
   for (const failure of failures) console.error(`P0 ${failure}`);
   throw new Error("Admission Kernel check failed.");
@@ -25,8 +28,20 @@ if (failures.length > 0) {
 
 console.log("Admission Kernel check: PASS");
 
-function checkContract() {
-  if (contract.version !== "oam.admission-contract.v1") failures.push("admission-contract version mismatch.");
+function runChecks(context) {
+  const failures = [];
+  checkContract(failures);
+  checkSources(failures);
+  checkCurrentState(context.currentState, failures);
+  checkMatrix(context.currentState, failures);
+  checkBusinessLineAlignment(failures);
+  checkHighRiskSurfaceReasons(failures);
+  checkRuntimeImplementation(failures);
+  return failures;
+}
+
+function checkContract(failures) {
+  if (contract.version !== "oma.admission-contract.v1") failures.push("admission-contract version mismatch.");
   for (const field of [
     "visibleAllowed",
     "prepareAllowed",
@@ -46,11 +61,11 @@ function checkContract() {
   }
 }
 
-function checkSources() {
+function checkSources(failures) {
   const ids = new Set((sources.sources || []).map((source) => source.id));
   for (const id of [
     "businessLineRegistry",
-    "releaseState",
+    "currentAdmissionState",
     "sliceManifest",
     "surfacePolicy",
     "apiBoundary",
@@ -64,7 +79,22 @@ function checkSources() {
   }
 }
 
-function checkMatrix() {
+function checkCurrentState(state, failures) {
+  if (state.version !== "oma.current-admission-state.v1") {
+    failures.push("current admission state version mismatch.");
+  }
+  if (state.businessProduction !== "BLOCKED") {
+    failures.push("current admission state businessProduction must remain BLOCKED.");
+  }
+  if (state.productionConfirmAllowed !== false) {
+    failures.push("current admission state productionConfirmAllowed must be false.");
+  }
+  if (!Array.isArray(state.blockingSources) || !state.blockingSources.includes("docs/contracts/oma.current.json")) {
+    failures.push("current admission state must cite the OMA contract.");
+  }
+}
+
+function checkMatrix(state, failures) {
   const entries = matrix.entries || [];
   const requiredEntries = [
     "dormitory_l1_internal_pilot_observation",
@@ -85,9 +115,9 @@ function checkMatrix() {
     if (!entries.some((entry) => entry.id === id)) failures.push(`admission-matrix missing entry: ${id}`);
   }
 
-  if (currentState.authoritativeState?.businessProduction === "BLOCKED") {
+  if (state.businessProduction === "BLOCKED") {
     for (const entry of entries) {
-      if (entry.productionAllowed !== false) failures.push(`${entry.id} productionAllowed must be false while Business Production is BLOCKED.`);
+      if (entry.productionAllowed !== false) failures.push(`${entry.id} productionAllowed must be false while businessProduction is BLOCKED.`);
     }
   }
 
@@ -111,7 +141,7 @@ function checkMatrix() {
   }
 }
 
-function checkBusinessLineAlignment() {
+function checkBusinessLineAlignment(failures) {
   const entries = matrix.entries || [];
   const productionConfirm = entries.find((entry) => entry.id === "production_confirm");
   if (productionConfirm?.productionAllowed !== false || productionConfirm?.confirmAllowed !== false) {
@@ -138,7 +168,7 @@ function checkBusinessLineAlignment() {
   }
 }
 
-function checkHighRiskSurfaceReasons() {
+function checkHighRiskSurfaceReasons(failures) {
   const policies = surfacePolicy.policies || [];
   for (const entry of matrix.entries || []) {
     if (!entry.highRisk || !Array.isArray(entry.surfaceRefs)) continue;
@@ -156,7 +186,7 @@ function checkHighRiskSurfaceReasons() {
   }
 }
 
-function checkRuntimeImplementation() {
+function checkRuntimeImplementation(failures) {
   const admissionSource = read("services/core-api/WorkOS.Api/Runtime/AdmissionKernelService.cs");
   for (const term of [
     "AdmissionKernelService",
@@ -169,6 +199,9 @@ function checkRuntimeImplementation() {
     "contract_preview"
   ]) {
     if (!admissionSource.includes(term)) failures.push(`AdmissionKernelService.cs missing ${term}.`);
+  }
+  if (!admissionSource.includes("docs/oma/current-admission-state.json")) {
+    failures.push("AdmissionKernelService must cite the current OMA admission state.");
   }
 
   const canonical = read("services/core-api/WorkOS.Api/Runtime/CanonicalOperationsApiService.cs");
@@ -194,7 +227,5 @@ function read(relativePath) {
 }
 
 function readJson(relativePath) {
-  const fullPath = path.join(root, relativePath);
-  if (!fs.existsSync(fullPath)) throw new Error(`Missing file: ${relativePath}`);
-  return JSON.parse(fs.readFileSync(fullPath, "utf8"));
+  return JSON.parse(read(relativePath));
 }

@@ -1,6 +1,6 @@
 {
   "domainId": "dormitory",
-  "version": "b1",
+  "version": "oma.dormitory.v1",
   "moneyFactSource": "FinanceTruthPack intake with MoneyKernelPack balanced ledger commit only",
   "rules": [
     {"id":"dorm-fin-001","statement":"deposit is liability, not revenue","blocksProductionIfMissing":true},

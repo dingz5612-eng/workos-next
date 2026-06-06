@@ -1,6 +1,6 @@
 {
-  "version": "oam.surface-copy-catalog.v1",
-  "generatedBy": "oam-cab-v1-phase-4",
+  "version": "oma.surface-copy-catalog.v1",
+  "generatedBy": "oma-current",
   "copies": [
     {
       "copyId": "admission.paymentConfirmation.reason",

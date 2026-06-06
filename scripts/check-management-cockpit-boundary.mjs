@@ -13,7 +13,7 @@ import {
 
 const cli = parseArgs(process.argv.slice(2));
 const checkName = "check-management-cockpit-boundary";
-const out = cli.value("out", ".tmp/rt2/management-cockpit-boundary-report.json");
+const out = cli.value("out", "artifacts/oma/checks/management-cockpit-boundary-report.json");
 
 function main() {
   if (cli.has("self-test")) {

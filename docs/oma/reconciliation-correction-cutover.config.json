@@ -1,0 +1,10 @@
+{
+  "version": "oma.reconciliation-correction-cutover.v1",
+  "responsibility": "finance reconciliation and correction remain append-only and permission-checked",
+  "requiredRuntimePath": "POST /api/operations/work-items/{workItemId}/confirm",
+  "forbidden": [
+    "bank import creates payment fact directly",
+    "ledger entry mutation",
+    "silent correction without reason"
+  ]
+}

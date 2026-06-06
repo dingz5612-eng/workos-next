@@ -3,7 +3,7 @@
   "$id": "https://workosnext.local/schemas/surface/operation-panel-runtime-contract.schema.json",
   "title": "Operation Panel Runtime Contract",
   "type": "object",
-  "required": ["contractId", "runtimeModelOnly", "persistedWorkItemResolutionOrder", "trustedConfirmSheetSource", "legacyTaskIdsForbiddenInPost", "ordinaryConfirmPath", "forbiddenFallback"],
+  "required": ["contractId", "runtimeModelOnly", "persistedWorkItemResolutionOrder", "trustedConfirmSheetSource", "retiredTaskIdsForbiddenInPost", "ordinaryConfirmPath", "forbiddenFallback"],
   "properties": {
     "contractId": { "type": "string" },
     "persistedWorkItemResolutionOrder": { "type": "array", "items": { "type": "string" }, "minItems": 4 },

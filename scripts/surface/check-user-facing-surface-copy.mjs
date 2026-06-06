@@ -5,7 +5,7 @@ import { routeView } from "../../apps/mobile/src/appRouter.js";
 import { shell } from "../../apps/mobile/src/appShell.js";
 
 const root = process.cwd();
-const artifactPath = "artifacts/surface/user-facing-surface-copy-result.json";
+const artifactPath = "artifacts/oma/checks/user-facing-surface-copy-result.json";
 const violations = [];
 
 const rendered = renderAll();

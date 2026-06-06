@@ -1,0 +1,45 @@
+{
+  "module": "finance-gate",
+  "productCapability": [
+    "finance.payment",
+    "finance.deposit",
+    "finance.expense",
+    "finance.reconciliation"
+  ],
+  "domainInvariant": [
+    "普通收款不得混入押金",
+    "押金退款不得作为经营支出",
+    "支出关联必须选择对象候选，不允许手填房间床位任务编号",
+    "财务确认必须由后端 session capability 决定"
+  ],
+  "api": [
+    "POST /api/operations/work-items/{workItemId}/confirm",
+    "POST /api/reconciliation/*",
+    "POST /api/correction-center/*",
+    "POST /api/pc-governance/exports/{exportType}"
+  ],
+  "database": [
+    "hostel_payments",
+    "deposit_liabilities",
+    "finance_reconciliations",
+    "reconciliation_match_candidates",
+    "ledger_correction_requests",
+    "expense_records"
+  ],
+  "tests": [
+    "tests/WorkOS.UnitTests",
+    "tests/WorkOS.RuntimeIntegrationTests",
+    "tests/WorkOS.DatabaseSecurityTests"
+  ],
+  "rules": [
+    "docs/contracts/oma.current.json",
+    "docs/contracts/runtime-surface-policy.json"
+  ],
+  "currentCodeOwners": [
+    "services/core-api/WorkOS.Api/Slices/Accommodation/DepositLedger",
+    "services/core-api/WorkOS.Api/Slices/Accommodation/PaymentLedger",
+    "services/core-api/WorkOS.Api/Slices/Accommodation/ExpenseLedger",
+    "services/core-api/WorkOS.Api/Runtime/Reconciliation*",
+    "services/core-api/WorkOS.Api/Runtime/Finance*"
+  ]
+}

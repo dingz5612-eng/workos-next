@@ -1,8 +1,8 @@
 {
   "version": "account-actor-kernel.v1",
   "contractId": "account-actor-kernel",
-  "architecture": "OAM-ACF v8 / Account-Application Boundary Kernel / Admission Kernel",
-  "status": "contract_guard",
+  "architecture": "Operations Management Architecture",
+  "status": "authoritative-kernel-contract",
   "rule": "Account, User, and Actor data are backend truth objects. Login only proves username and password. Department, business line, role, capability, tenant, session, and device trust must come from backend account/session truth and Admission policies.",
   "backendTruthObjects": [
     "account_users",
@@ -102,7 +102,7 @@
       "logout revokes session",
       "device session is listed and revoked"
     ],
-    "localEvidenceRef": "artifacts/oam-cab/dormitory-real-browser-hardening-20260604-current/frontend-experience-system-20260605/account-actor-kernel-real-browser-proof.json"
+    "localEvidenceRef": "artifacts/oma/evidence/account-actor-kernel-real-browser-proof.json"
   },
   "machineChecks": [
     "scripts/check-account-actor-kernel.mjs",

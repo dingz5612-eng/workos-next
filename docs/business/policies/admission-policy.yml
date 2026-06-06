@@ -1,7 +1,7 @@
 {
   "policyId": "business.admission-policy",
   "policyType": "admission",
-  "version": "rtp.v1",
+  "version": "oma.policy.v1",
   "owner": "ReleaseControl",
   "sourceDirectory": "docs/business/admission",
   "runtimeBinding": {

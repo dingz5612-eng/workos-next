@@ -1,5 +1,25 @@
 {
-  "version": "rt5.experience-contract.v1",
+  "version": "oma.experience-contract.v1",
+  "authority": "docs/oma/current-architecture.md",
+  "currentSurfaceArchitecture": {
+    "name": "Operations Management Architecture surface system",
+    "runtimeAxis": "Product Capability -> Domain Module -> WorkItem -> Confirm Runtime -> Unit of Work -> Event or Ledger -> Outbox -> Projection or Lens -> Surface",
+    "required": [
+      "shared shell",
+      "shared route guard",
+      "shared named experience components",
+      "surface contract",
+      "direct OperationCardShell on operation step pages"
+    ],
+    "forbidden": [
+      "page-private shell",
+      "copied layout logic",
+      "page-private field source mapping",
+      "retired Workspace/Card write UI flow",
+      "completed record detour page"
+    ],
+    "repair": "any non-current surface is rewritten onto the OMA surface system and the obsolete implementation is deleted in the same scope"
+  },
   "roleDefaultHome": {
     "frontdesk": "Today",
     "operator": "Today",
@@ -7,44 +27,20 @@
     "housekeeping": "Work",
     "manager": "Manager Control Tower",
     "admin": "Governance Center",
-    "releaseOwner": "Release Flight Deck"
+    "releaseOwner": "Governance Center"
   },
   "roleNavigation": {
     "ordinaryMobile": ["Today", "Work", "Search", "Me"],
     "finance": ["Finance Control", "Work", "Search", "Me"],
     "manager": ["Manager Control Tower", "Work", "Search", "Me"],
-    "releaseOwner": ["Release Flight Deck", "Governance Center", "Work", "Me"]
+    "admin": ["Governance Center", "Manager Control Tower", "Work", "Me"],
+    "releaseOwner": ["Governance Center", "Work", "Me"]
   },
   "deviceSurfaceMatrix": {
     "mobile": ["Today", "Work", "Search", "Me"],
-    "pc": ["Finance Control", "Manager Control Tower", "Governance Center"],
-    "release": ["Release Flight Deck"]
+    "pc": ["Finance Control", "Manager Control Tower", "Governance Center"]
   },
-  "WorkItemCard": {
-    "required": ["workItemId", "caseId", "workItemType", "lifecycleState", "ownerRole", "SLA", "requiredEvidence", "nextAction", "traceRefs"]
-  },
-  "TodayFocusOverviewIA": ["shared-shell-page-title", "selectTodayFocusQueue-only", "data-today-filter-local-filtering", "compact-filter-metrics", "concrete-today-work-items", "structured-business-anchor", "completed-core-fields", "current-action-core-fields", "manual-evidence", "blocked-work", "projection-pending", "risk-signal", "no-workbench-navigation-from-metric-chips", "no-all-work-items-dump", "no-learning-block-or-scenario-directory-in-content"],
-  "WorkPageIA": ["shared-shell-page-title", "selectWorkbenchQueue-only", "all-work-filter", "my-actionable-filter", "blocked-filter", "missing-material-or-evidence-filter", "waiting-others-filter", "waiting-finance-filter", "due-risk-filter", "transferable-filter", "syncing-filter", "scenario-filter-group", "smart-due-risk-recent-sorts", "filter-state-container", "completed-record-container"],
-  "ObjectWorkspaceIA": ["case-summary", "fact-trace", "lens", "audit"],
-  "UnifiedSurfaceArchitecture": {
-    "currentArchitecture": "OAM-ACF v8 / Operations Runtime surface architecture",
-    "required": [
-      "every user-visible page uses the active shared shell, route guard, surface contract, and named experience components",
-      "new active, readonly completed, and append-only correction step pages render OperationCardShell directly without a page-private outer intent-card wrapper or workspace-control visual wrapper on readonly completed records",
-      "readonly completed records reuse the Operations surface shell and shared step rail instead of a page-private legacy detail shell",
-      "completed WorkItem routes and step-number clicks open the readonly completed record directly without an intermediate completed-operation page",
-      "page variants may specialize data, permissions, readonly state, and business actions only"
-    ],
-    "retired": [
-      "page-private legacy shell",
-      "intent-card operation wrapper",
-      "copied layout logic",
-      "old completed-record-detail grid",
-      "Workspace/Card write UI flow"
-    ],
-    "repair": "non-current architecture is a P0 defect and must be root-cause rewritten onto the current architecture with obsolete code deleted in the same impact scope"
-  },
-  "FrontendExperienceSystem": {
+  "frontendExperienceSystem": {
     "contractRef": "docs/contracts/frontend-experience/frontend-experience-system-contract.json",
     "layers": [
       "shared-components",
@@ -52,69 +48,57 @@
       "surface-contract",
       "multilingual-dictionary",
       "state-action-contract",
-      "real-browser-screenshot-evidence"
+      "real-browser-verification"
     ],
-    "rule": "Pages may specialize business content, permissions, readonly state, and business actions, but not architecture; newly added or discovered old-architecture pages must be rewritten onto the current Frontend Experience System and the obsolete implementation deleted.",
-    "mobileShellTitleRule": "ordinary mobile topbar owns the current page title, runtime status, and language selector; product brand and actor role must not occupy the first screen, and content sections must not repeat generic page titles",
-    "contentContainerRule": "ordinary mobile content must render as shared overview containers, control containers, result groups, repeated item cards, or BusinessSummaryHeader; filter state, empty state, group headings, operation messages, completed-record groups, business titles, status labels, and next-action copy must not appear as naked text on the page background",
-    "premiumSurfaceVisualLanguage": "mobile business surfaces use fresh premium visual tokens: bright teal-blue brand actions with lightweight primary-action gradients, soft white/neutral cards, subtle teal-tinted backgrounds, thin neutral borders, contained section headings, and lightweight status labels; bright orange is reserved for attention states such as due soon, waiting, or syncing; red is reserved for blockers, risk, or destructive states; static text such as headings, scenario titles, field values, status explanations, and next-action copy must not mimic buttons; only real clickable controls use filled or gradient button styling and restrained elevation; business summary ready states and ordinary metric chips may use small brand accents but must not use saturated blue/green blocks or bright green primary buttons",
-    "premiumTypographySystem": "business surfaces must use a clear Chinese-first system UI font stack with Microsoft YaHei UI / Microsoft YaHei preferred on Windows, antialiased rendering, readable helper text sizes, and only light medium-weight titles/buttons; page-local bold/heavy weights and too-small 10px/11px ordinary copy are forbidden because they make Chinese mobile copy hard to read and low-end",
-    "businessSummaryCardHierarchy": "business item cards across Today, Work items, Search, Me, and learning/support surfaces must place scenario title/status inside BusinessSummaryHeader, render room/bed/resident/phone/status anchors as structured non-clickable fields, render completed core fields and current-step core fields through BusinessTaskBody/BusinessTaskOverview, and keep the primary action in a bottom action container; business pages may specialize fields but not the layout hierarchy; risk, owner, due date, evidence diagnostics, and technical admission details are shown only when they explain a blocker or inside diagnostic details",
-    "todayWorkResponsibilityBoundary": "Today owns a local focus list built only by selectTodayFocusQueue and data-today-filter; Today metric chips must not carry data-view=workbench or data-work-filter. Work owns the full permitted work queue via selectWorkbenchQueue, data-work-filter, scenario filters, and smart/due/risk/recent sorting.",
-    "searchMeResponsibilityBoundary": "Search is the business discovery and entry surface for active commands, active WorkItems, and memorable business object anchors; personal archives such as business records, completed records, evidence materials, submission traces, and learning content belong in Me as readonly support surfaces and must not be dumped into ordinary search result sections.",
-    "fieldContextKernel": "operation field identity, multilingual aliases, task overview field ordering, option display values, and derived previews must be owned by apps/mobile/src/operationFieldKernel.js; controllers must not import field identity from page views, and pages must not keep page-private alias maps or display-value rules",
-    "businessAnchorDisplayRule": "business anchors must remain searchable as a full text string but user-facing cards should render structured fields such as room, bed, resident, phone, period, and current business status instead of one long concatenated sentence",
-    "stepPageExperienceParity": "new active step, readonly completed step, and append-only correction step must share the same step rail, OperationCardShell, state/check panel, action hierarchy, feedback entry, and Admission/Runtime decision markers; they must not keep a page-private outer intent-card wrapper or workspace-control visual wrapper on readonly completed records; users must not have to enumerate every sibling page one by one",
-    "postSubmitNavigation": "after a successful active Operations WorkItem confirm, auto-advance to the next actionable persisted WorkItem in the same workspace when one exists; completed readonly records are opened by explicit completed-step review or when no next actionable WorkItem exists; return-current-work is not the normal submit continuation path",
-    "stepStateVisualLanguage": "OperationStepRail must expose data-step-state and data-current-step; completed is green, ready is blue, terminal completed records remain completed as the primary state even when a correction marker exists, active append-only correction WorkItems are muted indigo with a correction marker and must not display as ordinary ready blue, in-progress is amber, not-started is neutral gray, blocked is red, and current step has a clean focus ring across new, readonly, and correction pages; use subtle background tint, thin semantic top bar, and numbered badge instead of harsh saturated blocks",
-    "requiredEvidence": "user-visible frontend fixes require real browser operation and full-page screenshot evidence"
+    "rule": "pages may specialize business content, permissions, readonly state, and business actions, but not architecture",
+    "mobileShellTitleRule": "ordinary mobile topbar owns the current page title, runtime status, and language selector",
+    "contentContainerRule": "ordinary mobile content renders in shared overview containers, control containers, result groups, repeated item cards, or BusinessSummaryHeader",
+    "businessSummaryCardHierarchy": "business item cards use BusinessSummaryHeader, structured anchors, BusinessTaskOverview, and one primary action container",
+    "todayWorkResponsibilityBoundary": "Today owns today's work only; Work owns the full permitted work queue",
+    "searchMeResponsibilityBoundary": "Search is active business discovery; Me owns readonly personal archives and support surfaces",
+    "fieldContextKernel": "field identity, aliases, task overview fields, option labels, and derived previews come from the shared field kernel",
+    "stepPageExperienceParity": "new active, readonly completed, and append-only correction step pages share step rail, OperationCardShell, state/check panel, action hierarchy, feedback entry, and decision markers",
+    "postSubmitNavigation": "successful active confirm advances to the next actionable persisted WorkItem in the same case when one exists",
+    "stepStateVisualLanguage": "OperationStepRail exposes semantic states for completed, ready, correction, in progress, not started, blocked, and current step"
   },
-  "RuleScopeLayering": {
-    "companyKernelRules": "architecture, ownership, permissions, evidence, surface behavior, multilingual behavior, and repair protocol that every business line must follow",
-    "domainSampleRules": "business-specific semantics for an admitted or sample domain such as Accommodation / Dormitory",
-    "scenarioInstanceContracts": "concrete WorkItem fields, step dependencies, evidence policies, UI labels, and validation mappings",
-    "samplePurpose": "Dormitory is the golden sample used to extract reusable kernels for future business lines; concrete dormitory field names must stay in domain contracts, while reusable patterns are promoted only as abstract contracts."
+  "workItemCard": {
+    "required": ["workItemId", "caseId", "workItemType", "lifecycleState", "ownerRole", "SLA", "requiredEvidence", "nextAction", "traceRefs"],
+    "visibleDefault": ["scenarioName", "businessAnchor", "completedCoreFields", "currentStepCoreFields", "status", "primaryAction"],
+    "hiddenDefault": ["rawIds", "payloadHash", "commandSubmissionId", "technicalAdmissionDetails"]
   },
-  "StepDependencyExperience": {
+  "stepDependencyExperience": {
     "contractRef": "docs/contracts/definition/step-dependency-contract.json",
-    "rule": "A step surface must render inherited fields as readonly context, user-selectable fields as the current interaction, derived fields as system output, and hidden backend defaults as non-user-visible contract values.",
-    "submitCheckDefault": "Default visible submit checks show only user-actionable missing inputs, blockers, and submission readiness.",
-    "submitCheckDetails": "Inherited, derived, hidden, material, and rule diagnostics are available as collapsed details or support/debug evidence only when they explain a blocker.",
-    "forbidden": ["telling a user to fill inherited values", "showing hidden backend defaults as manual inputs", "letting stale drafts override upstream truth", "hard-coding a sample-domain field mapping into global surface logic"]
+    "rule": "inherited fields are readonly context, user-selectable fields are current-step controls, derived fields are system previews, backend defaults stay hidden unless they explain a blocker",
+    "submitCheckDefault": "show only missing user action, blockers, and readiness",
+    "submitCheckDetails": "collapse inherited, derived, hidden, material, and rule diagnostics unless they explain a blocker",
+    "forbidden": ["manual input prompt for inherited fields", "manual input prompt for system generated ids", "stale draft overriding upstream truth"]
   },
-  "AdmissionExplainabilityExperience": {
-    "rule": "Admission state is user-facing truth for whether a visible item can be prepared, confirmed, or treated as production. Lifecycle labels such as ready, inProgress, or done are workflow state only and must not replace Admission.",
-    "mobileSearch": "Search result cards must show a localized admission label and explanation. visibleAllowed=true means viewable only; it does not imply confirmAllowed or productionAllowed.",
-    "operationPanel": "Operation pages must show top admission status before the form and primary action. confirmAllowed=false must not bind submit. confirmAllowed=true plus productionAllowed=false must be labeled as internal observation or non-production confirmation.",
-    "safeErrors": "403, 409, 422, and generic confirm errors must resolve reasonCode through Language Kernel keys and must not append raw reason/code to ordinary user copy.",
-    "ordinaryUserHidden": ["admissionDecisionRef", "compatibilityAdapter", "definitionId", "payloadHash", "commandSubmissionId", "raw reason", "raw code"]
+  "admissionExplainabilityExperience": {
+    "rule": "visibleAllowed, prepareAllowed, confirmAllowed, productionAllowed, mode, and safe reason copy are consumed by the visible surface",
+    "ordinaryUserHidden": ["admissionDecisionRef", "compatibilityAdapter", "definitionId", "payloadHash", "commandSubmissionId", "rawReason", "rawCode"],
+    "safeErrors": ["operations.error.safe.403", "operations.error.safe.409", "operations.error.safe.422", "operations.error.safe.generic"]
   },
-  "BusinessOperationActionPaths": {
-    "create": "active work is created as an Operations WorkItem and confirmed only through POST /api/operations/work-items/{workItemId}/confirm",
-    "postSubmit": "successful active confirm auto-advances to the next actionable persisted WorkItem when one exists; readonly completed record is not a mandatory detour",
-    "operationFlowKernel": "next-step dispatch must be derived from the shared workspace/step seed or definition contract for every admitted scenario; page code and runtime code must not hard-code a single sample scenario such as W-STAY-RESOURCE as the only chain that can advance",
-    "liveValidation": "active step submit checks must read the current operation draft values and refresh when user fields change; submit checks and backend confirm validation must use the same field-role contract",
-    "view": "completed business records must open directly as readonly fact trace, submitted values, evidence, audit, and next-state context before any correction action is offered; an intermediate completed-operation page is forbidden",
-    "correct": "completed facts are never edited in place; modification is append-only correction through a new Operations WorkItem or Correction Center request started from the readonly record",
+  "businessOperationActionPaths": {
+    "create": "active work is created as an OMA WorkItem and confirmed only through POST /api/operations/work-items/{workItemId}/confirm",
+    "view": "completed business records open directly as readonly fact trace, submitted values, evidence, audit, and next-state context",
+    "correct": "completed facts are modified only by append-only correction through a new WorkItem or Correction Center request",
     "order": ["create_active_work_item", "view_readonly_completed_record", "correct_append_only_from_record"],
-    "forbidden": ["in-place edit of completed fact", "repeat confirm as modification", "page-specific update API", "intermediate completed-operation page"]
+    "forbidden": ["in-place edit of completed fact", "repeat confirm as modification", "page-specific update API"]
   },
-  "IssueRepairProtocol": {
-    "order": ["observe_real_behavior", "classify_impact_scope", "locate_broken_layer", "align_target_flow_to_contract", "update_rule_or_model", "implement_root_cause_fix", "verify_with_tests_and_real_browser"],
-    "forbidden": ["page-level hard-add", "old compatibility fallback", "copy-only patch without model change", "direct edit of completed business fact"],
-    "requiredWhen": ["duplicate UI", "blank completed record", "slow submit", "invalid business copy", "architecture mismatch", "field validation gap", "search or language mismatch"]
+  "issueRepairProtocol": {
+    "order": ["observe_real_behavior", "classify_impact_scope", "locate_broken_layer", "align_to_contract", "update_rule_or_model", "implement_root_cause_fix", "verify_with_tests_and_real_browser"],
+    "forbidden": ["page-level hard-add", "old compatibility fallback", "copy-only patch without model change", "direct edit of completed business fact"]
   },
-  "FeedbackMessageChannel": {
+  "feedbackMessageChannel": {
     "mode": "role_or_account_addressed_collaboration_message",
     "entry": "right-bottom safe floating entry that opens feedback message channel without covering form fields or primary submit",
-    "requiredContext": ["view", "actorRole", "workspace", "card", "workItem", "language", "deviceSurface"],
-    "recipients": ["productDesign", "businessOwner", "systemSupport", "collaborationOwner"],
-    "forbidden": ["static feedback placeholder only", "feedback writes business facts", "feedback uses Operations confirm", "floating entry covers submit or required fields", "feedback placed in save or submit business action row", "duplicate record-local feedback entry when shell feedback entry exists"]
+    "eventPath": "/api/mobile/client-events",
+    "forbidden": ["feedback writes business facts", "feedback uses Operations Confirm", "feedback placed in save or submit business action row"]
   },
-  "TrustedConfirmSheet": {
+  "trustedConfirmSheet": {
     "content": ["workItemId", "caseId", "requiredEvidence", "policyRef", "idempotencyKey", "risk", "nextAction"]
   },
-  "ActionResultStateMatrix": {
+  "actionResultStateMatrix": {
     "committed_projected": "show success and trace refs",
     "committed_projection_pending": "show pending, not failed",
     "committed_projection_failed": "show support action, not duplicate submit",
@@ -123,25 +107,19 @@
     "business_blocked_422": "show business blocker plus next action",
     "network_unknown": "show requires support"
   },
-  "EvidenceTileStateMatrix": {
+  "evidenceTileStateMatrix": {
     "missing": "blocks confirm",
     "draft": "can save draft",
     "attached": "can submit",
     "rejected": "blocks confirm",
     "wrong_scope": "blocks confirm"
   },
-  "EvidenceSheetStateMatrix": {
-    "empty": "show required evidence checklist",
-    "uploading": "show upload queue",
-    "verified": "bind to submissionId and eventId",
-    "rejected": "show rejection reason"
-  },
-  "PermissionDiagnosticCopyMatrix": {
+  "permissionDiagnosticCopyMatrix": {
     "403": {"zh-CN": "权限不足，请升级给负责人处理。", "ru-RU": "Недостаточно прав, передайте ответственному."},
     "409": {"zh-CN": "重复提交已被拦截，请查看原提交结果。", "ru-RU": "Дубликат остановлен, проверьте исходный результат."},
     "422": {"zh-CN": "业务条件未满足，请按下一步补齐。", "ru-RU": "Бизнес-условие не выполнено, выполните следующий шаг."}
   },
-  "OfflineEmptyErrorProjectionPendingStates": {
+  "offlineEmptyErrorProjectionPendingStates": {
     "offline": "can save draft but cannot confirm",
     "empty": "show no assigned WorkItem",
     "error": "show support action",
@@ -154,11 +132,6 @@
     "Me": {"zh-CN": "我的", "ru-RU": "Мой"},
     "Finance Control": {"zh-CN": "财务控制", "ru-RU": "Финансовый контроль"},
     "Manager Control Tower": {"zh-CN": "经理控制塔", "ru-RU": "Башня управления"},
-    "Governance Center": {"zh-CN": "治理中心", "ru-RU": "Центр управления"},
-    "Release Flight Deck": {"zh-CN": "发布飞行甲板", "ru-RU": "Пульт релиза"}
-  },
-  "compatibilityQuarantine": {
-    "retiredWorkspaceCardWriteAdapter": "deleted; old Workspace/Card write adapter must stay absent",
-    "mobileOperationRuntime": "no prepareCard, confirmCard, or named fallback branch"
+    "Governance Center": {"zh-CN": "治理中心", "ru-RU": "Центр управления"}
   }
 }

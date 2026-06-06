@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { routeView } from "../appRouter.js";
 import { createSurfaceCtx, renderSurface, source, visibleText } from "./surfaceContractTestHelpers.js";
 
-describe("OAM-04B layout, mission control, and PC shell contract", () => {
+describe("OMA Surface layout, mission control, and PC shell contract", () => {
   it("uses fixed-layer tokens and keeps the primary action in flow above bottom nav", () => {
     const shellCss = source("../styles/shell.css");
     const operationCss = source("../styles/operation.css");

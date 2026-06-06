@@ -1,13 +1,13 @@
 {
-  "version": "oam-cab.evidence-graph-refs-contract.v1",
-  "status": "baseline-contract",
+  "version": "oma.evidence-graph-refs-contract.v1",
+  "status": "authoritative-evidence-contract",
   "requiredRefs": [
-    "artifacts/release-state/current-state.json",
-    "artifacts/rt4/evidence-graph.json",
-    "artifacts/oam-cab/oam-cab-v1-inventory.json",
-    "artifacts/oam-cab/oam-cab-v1-final-report.json",
-    "artifacts/oam-cab/company-kernel-alignment-result.json",
-    "artifacts/oam-cab/execution-log.jsonl"
+    "docs/oma/current-admission-state.json",
+    "artifacts/oma/evidence/evidence-graph.json",
+    "docs/oma/current-architecture.manifest.json",
+    "docs/contracts/oma.current.json",
+    "artifacts/oma/checks/company-kernel-alignment-result.json",
+    "artifacts/oma/evidence/execution-log.jsonl"
   ],
   "appendOnlyEvidenceRequired": true,
   "businessFactWriteAllowed": false,
@@ -17,7 +17,6 @@
     "Evidence cannot replace executable gates."
   ],
   "evidence": [
-    "scripts/rt4/verify-evidence-graph.mjs",
-    "scripts/check-oam-cab-final-report.mjs"
+    "scripts/guard-architecture.ps1"
   ]
 }

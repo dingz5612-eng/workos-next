@@ -142,11 +142,11 @@ function exists(file) {
 }
 
 function writeReport(items) {
-  const reportPath = path.join(root, "artifacts", "surface", "responsibility-boundaries-result.json");
+  const reportPath = path.join(root, "artifacts", "oma", "checks", "responsibility-boundaries-result.json");
   fs.mkdirSync(path.dirname(reportPath), { recursive: true });
   fs.writeFileSync(reportPath, JSON.stringify({
     checkedAt: new Date().toISOString(),
-    architecture: "OAM-ACF v8 / Operations Runtime",
+    architecture: "Operations Management Architecture",
     status: items.length ? "fail" : "pass",
     violations: items
   }, null, 2));

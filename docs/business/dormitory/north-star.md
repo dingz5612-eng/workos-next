@@ -17,7 +17,7 @@
 - `Projection` / `Lens` 只读事实，不拥有事实。
 - `WorkItemBundle` 只属于 ExperienceEnvelope，不是事实源。
 - 押金是 liability，不是 revenue。
-- 宿舍在 B1 阶段不得 production-ready。
+- 宿舍在当前 OMA 范围内不得 production-ready。
 
 ## Metric Tree
 

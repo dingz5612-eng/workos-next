@@ -24,7 +24,7 @@ const violations = [
   ...validateRefs()
 ];
 
-writeReport("artifacts/go-live/dormitory/ledger-semantic-result.json", checkName, violations, files);
+writeReport("artifacts/oma/checks/ledger-semantic-result.json", checkName, violations, files);
 failIfViolations("Ledger semantic rules check", violations);
 console.log("Ledger semantic rules check: PASS");
 
@@ -40,14 +40,14 @@ function validateRules() {
   })) {
     const rule = byBasis.get(basisType);
     if (!rule) {
-      violations.push(violation("oam05.semantic_rule_missing", files[0], `缺少 ${basisType} 语义规则。`, { basisType }));
+      violations.push(violation("oma.finance.semantic_rule_missing", files[0], `缺少 ${basisType} 语义规则。`, { basisType }));
       continue;
     }
     if (rule.debitAccountType !== expected[0] || rule.creditAccountType !== expected[1]) {
-      violations.push(violation("oam05.semantic_account_mismatch", files[0], `${basisType} 的借贷 accountType 不符合合同。`, { basisType, expected }));
+      violations.push(violation("oma.finance.semantic_account_mismatch", files[0], `${basisType} 的借贷 accountType 不符合合同。`, { basisType, expected }));
     }
     if (!rule.failureCode?.startsWith("finance_semantic_")) {
-      violations.push(violation("oam05.failure_code_missing", files[0], `${basisType} 必须有 finance_semantic_* failureCode。`, { basisType }));
+      violations.push(violation("oma.finance.failure_code_missing", files[0], `${basisType} 必须有 finance_semantic_* failureCode。`, { basisType }));
     }
   }
 
@@ -59,11 +59,11 @@ function validateRules() {
     "FinanceCase must carry owner, evidence, and trace"
   ]) {
     if (!(rules.globalFailures ?? []).includes(failure)) {
-      violations.push(violation("oam05.global_failure_missing", files[0], `缺少全局失败规则: ${failure}.`, { failure }));
+      violations.push(violation("oma.finance.global_failure_missing", files[0], `缺少全局失败规则: ${failure}.`, { failure }));
     }
   }
   if (rules.productionAllowed !== false || rules.businessProduction !== "BLOCKED") {
-    violations.push(violation("oam05.production_drift", files[0], "OAM-05 必须保持 Business Production blocked。"));
+    violations.push(violation("oma.finance.production_drift", files[0], "OMA finance-gate 必须保持 Business Production blocked。"));
   }
   return violations;
 }
@@ -72,12 +72,12 @@ function validateRefs() {
   const violations = [];
   for (const ref of rules.testRefs ?? []) {
     if (!fs.existsSync(path.join(process.cwd(), ref))) {
-      violations.push(violation("oam05.ref_missing", files[0], `引用不存在: ${ref}.`, { ref }));
+      violations.push(violation("oma.finance.ref_missing", files[0], `引用不存在: ${ref}.`, { ref }));
     }
   }
   for (const ref of rules.artifactRefs ?? []) {
     if (!ref.startsWith("artifacts/") || ref.includes(".tmp/")) {
-      violations.push(violation("oam05.artifact_ref_not_persistent", files[0], `artifact 引用必须是持久路径且不能包含 .tmp: ${ref}.`, { ref }));
+      violations.push(violation("oma.finance.artifact_ref_not_persistent", files[0], `artifact 引用必须是持久路径且不能包含 .tmp: ${ref}.`, { ref }));
     }
   }
   return violations;

@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { routeView } from "../appRouter.js";
 import { createSurfaceCtx, visibleText } from "./surfaceContractTestHelpers.js";
 
-describe("OAM-04B PC Finance Workspace contract", () => {
+describe("OMA Surface PC Finance Workspace contract", () => {
   it("renders finance workspace in PC shell without mobile nav", () => {
     const ctx = createSurfaceCtx({
       view: "financeControl",

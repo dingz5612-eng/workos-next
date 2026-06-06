@@ -1,5 +1,5 @@
 {
-  "version": "oam-cab.business-line-admission-matrix.v1",
+  "version": "oma.business-line-admission-matrix.v1",
   "source": "docs/business/business-line-registry.json",
   "businessLines": [
     {

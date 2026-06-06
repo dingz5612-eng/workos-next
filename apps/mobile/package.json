@@ -8,8 +8,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "test": "vitest run src",
-    "test:report": "vitest run src --reporter=default --reporter=json --outputFile=../../artifacts/test-results/mobile/vitest-report.json",
-    "test:coverage": "vitest run src --coverage --coverage.reportsDirectory=../../artifacts/test-results/mobile/coverage",
+    "test:report": "vitest run src --reporter=default --reporter=json --outputFile=../../artifacts/oma/test-results/mobile/vitest-report.json",
+    "test:coverage": "vitest run src --coverage --coverage.reportsDirectory=../../artifacts/oma/test-results/mobile/coverage",
     "test:e2e": "playwright test --config=playwright.config.js"
   },
   "devDependencies": {

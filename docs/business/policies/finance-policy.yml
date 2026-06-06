@@ -1,7 +1,7 @@
 {
   "policyId": "business.finance-policy",
   "policyType": "finance",
-  "version": "rtp.v1",
+  "version": "oma.policy.v1",
   "owner": "FinanceTruthPack",
   "runtimeBinding": {
     "loader": "FinancePolicyLoader",

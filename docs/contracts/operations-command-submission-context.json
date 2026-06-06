@@ -1,11 +1,11 @@
 {
-  "version": "oam.command-submission-context.v1",
-  "generatedBy": "oam-cab-v1-phase-5",
+  "version": "oma.command-submission-context.v1",
+  "generatedBy": "oma-current",
   "status": "contract-and-migration-plan",
   "productionReady": false,
   "risk": {
     "level": "P1",
-    "reason": "CommandSubmission context is carried in the command envelope payload during OAM-CAB v1 Phase 5; dedicated persisted columns are planned by additive migration before production readiness can be claimed."
+    "reason": "CommandSubmission context is carried in the command envelope payload during OMA current; dedicated persisted columns are planned by additive migration before production readiness can be claimed."
   },
   "requiredContextFields": [
     "actorId",

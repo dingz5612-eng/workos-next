@@ -1,5 +1,5 @@
 {
-  "version": "rtb.business-line-registry.v1",
+  "version": "oma.business-line-registry.v1",
   "businessLines": [
     {
       "businessLineId": "dormitory",
@@ -9,7 +9,7 @@
       "internalPilotAllowed": true,
       "productionConfirmAllowed": false,
       "surfaceMode": "internal-pilot-scope",
-      "allowedScopes": ["internal_pilot_scope", "b_stage_gate", "workitem_native_mobile"],
+      "allowedScopes": ["internal_pilot_scope", "oma_release_control", "workitem_native_mobile"],
       "blockedActions": ["production_confirm", "unrestricted_refund", "period_close", "bulk_import"],
       "owner": "dormitory-business-owner",
       "nextGate": "L1 Internal Pilot Observation Window"

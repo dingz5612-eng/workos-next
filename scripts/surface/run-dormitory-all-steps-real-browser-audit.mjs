@@ -9,8 +9,8 @@ const { chromium } = require("../../apps/mobile/node_modules/playwright");
 const root = process.cwd();
 const baseUrl = process.env.WORKOS_MOBILE_URL || "http://127.0.0.1:5175";
 const apiUrl = process.env.WORKOS_API_URL || "http://127.0.0.1:5191";
-const runId = process.env.OAM_DORM_ALL_STEPS_RUN_ID || "dormitory-all-steps-real-browser-20260605";
-const artifactRoot = path.join(root, "artifacts", "oam-cab", "dormitory-real-browser-hardening-20260604-current", "frontend-experience-system-20260605", runId);
+const runId = process.env.WORKOS_DORM_ALL_STEPS_RUN_ID || "dormitory-all-steps-real-browser-20260605";
+const artifactRoot = path.join(root, "artifacts", "oma", "evidence", "dormitory-real-browser", runId);
 const screenshotRoot = path.join(artifactRoot, "screenshots");
 const reportPath = path.join(artifactRoot, "all-steps-real-browser-report.json");
 

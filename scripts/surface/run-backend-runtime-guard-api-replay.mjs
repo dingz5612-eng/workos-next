@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 const root = process.cwd();
-const outPath = "artifacts/surface/backend-runtime-guard-api-replay-result.json";
+const outPath = "artifacts/oma/checks/backend-runtime-guard-api-replay-result.json";
 
 const cases = [
   {

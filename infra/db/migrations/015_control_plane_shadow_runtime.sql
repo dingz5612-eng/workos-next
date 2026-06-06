@@ -1,4 +1,4 @@
--- V5.4 Control Plane and Shadow Runtime namespaces.
+-- Current OMA control plane and shadow runtime namespaces.
 -- Rollback note: the current WorkOSNext migration runner is up-only.
 -- If an approved rollback is required before data is retained, run a reviewed
 -- compensating migration that drops shadow_runtime first, then control_plane:

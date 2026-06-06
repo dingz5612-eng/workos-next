@@ -1,4 +1,0 @@
-version: 2
-generatedBy: oam-cab-v1-final
-removeCandidates: []
-note: Phase 7 may add removal candidates only with name, path, status, owner_domain, reason, allowed_usage, forbidden_usage, evidence, replacement, proofNotUsed, deleteStage, and requiredGate. OAM-CAB v1 final baseline does not approve deletion by default.

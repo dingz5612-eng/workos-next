@@ -1,7 +1,0 @@
-{
-  "status": "passed",
-  "generatedAtUtc": "2026-06-05T18:15:28.804Z",
-  "contract": "docs/contracts/business-anchor/business-anchor-contract.json",
-  "scenarioCount": 10,
-  "failures": []
-}

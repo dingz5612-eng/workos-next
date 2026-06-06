@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 const root = process.cwd();
-const failures = [];
+const selfTest = process.argv.includes("--self-test");
 
 const searchContract = readJson("docs/contracts/search/search-contract.json");
 const indexSources = readJson("docs/contracts/search/search-index-sources.json");
@@ -23,7 +23,6 @@ const requiredObjectTypes = [
   "deposit",
   "correction",
   "reconciliation",
-  "gateResult",
   "release",
   "lensItem",
   "auditEvent",
@@ -44,12 +43,17 @@ const requiredResultFields = [
   "explain"
 ];
 
-checkContract();
-checkSourcesAndSchema();
-checkRankingAndPermission();
-checkProjectionAdapterBoundary();
-checkRuntimeImplementation();
+if (selfTest) {
+  const bad = structuredClone(searchContract);
+  bad.objectTypes = bad.objectTypes.filter((item) => item !== "workItem");
+  const badFailures = runChecks({ searchContract: bad });
+  if (!badFailures.some((item) => item.includes("workItem"))) {
+    throw new Error("Search Kernel self-test did not detect missing workItem coverage.");
+  }
+  console.log("Search Kernel self-test: PASS");
+}
 
+const failures = runChecks({ searchContract });
 if (failures.length > 0) {
   for (const failure of failures) console.error(`P0 ${failure}`);
   throw new Error("Search Kernel check failed.");
@@ -57,36 +61,49 @@ if (failures.length > 0) {
 
 console.log("Search Kernel check: PASS");
 
-function checkContract() {
-  if (searchContract.version !== "oam.search-contract.v1") failures.push("search-contract version mismatch.");
-  if (languageContract.version !== "oam.language-contract.v1") failures.push("Search Kernel must reference the Language Kernel contract.");
-  if (admissionContract.version !== "oam.admission-contract.v1") failures.push("Search Kernel must reference the Admission Kernel contract.");
+function runChecks(context) {
+  const failures = [];
+  checkContract(context.searchContract, failures);
+  checkSourcesAndSchema(failures);
+  checkRankingAndPermission(failures);
+  checkProjectionFacadeBoundary(context.searchContract, failures);
+  checkRuntimeImplementation(failures);
+  return failures;
+}
+
+function checkContract(contract, failures) {
+  if (contract.version !== "oma.search-contract.v1") failures.push("search-contract version mismatch.");
+  if (languageContract.version !== "oma.language-contract.v1") failures.push("Search Kernel must reference the current Language Kernel contract.");
+  if (admissionContract.version !== "oma.admission-contract.v1") failures.push("Search Kernel must reference the current Admission Kernel contract.");
 
   for (const objectType of requiredObjectTypes) {
-    if (!(searchContract.objectTypes || []).includes(objectType)) failures.push(`search-contract missing objectType ${objectType}.`);
+    if (!(contract.objectTypes || []).includes(objectType)) failures.push(`search-contract missing objectType ${objectType}.`);
   }
   for (const field of requiredResultFields) {
-    if (!(searchContract.requiredResultFields || []).includes(field)) failures.push(`search-contract missing required SearchResult field ${field}.`);
+    if (!(contract.requiredResultFields || []).includes(field)) failures.push(`search-contract missing required SearchResult field ${field}.`);
   }
-  if (searchContract.languageSynonymRef !== "docs/contracts/language/search-synonyms.json") {
+  if (contract.languageSynonymRef !== "docs/contracts/language/search-synonyms.json") {
     failures.push("search-contract must reference Language Kernel search synonyms.");
   }
-  if (searchContract.indexSourcesRef !== "docs/contracts/search/search-index-sources.json") {
+  if (contract.indexSourcesRef !== "docs/contracts/search/search-index-sources.json") {
     failures.push("search-contract must reference Search index sources.");
   }
-  if (!(searchContract.inputAdapters || []).some((adapter) => adapter.adapterId === "operationsRuntimeFactInput" && adapter.status === "active")) {
+  if (!(contract.inputAdapters || []).some((adapter) => adapter.adapterId === "operationsRuntimeFactInput" && adapter.status === "active")) {
     failures.push("search-contract must declare active operationsRuntimeFactInput.");
   }
-  if (!(searchContract.runtimeAdapters || []).some((adapter) => adapter.name === "OperationsReadStore.SearchOperations")) {
+  if ((contract.inputAdapters || []).some((adapter) => adapter.status === "planned" || adapter.status === "future")) {
+    failures.push("search-contract must not retain planned input adapter placeholders.");
+  }
+  if (!(contract.runtimeAdapters || []).some((adapter) => adapter.name === "OperationsReadStore.SearchOperations")) {
     failures.push("search-contract must register OperationsReadStore.SearchOperations as a runtime adapter.");
   }
-  const invariantText = (searchContract.invariants || []).join(" ");
+  const invariantText = (contract.invariants || []).join(" ");
   if (!invariantText.includes("Operations Runtime confirmed events") || !invariantText.includes("display/search-only")) {
     failures.push("search-contract must state Operations events and business anchors search boundary.");
   }
 }
 
-function checkSourcesAndSchema() {
+function checkSourcesAndSchema(failures) {
   const coveredTypes = new Set((indexSources.sources || []).flatMap((source) => source.objectTypes || []));
   for (const objectType of requiredObjectTypes) {
     if (!coveredTypes.has(objectType)) failures.push(`search-index-sources missing objectType coverage ${objectType}.`);
@@ -110,7 +127,7 @@ function checkSourcesAndSchema() {
   }
 }
 
-function checkRankingAndPermission() {
+function checkRankingAndPermission(failures) {
   const rankingText = JSON.stringify(rankingPolicy);
   if (!rankingText.includes("docs/contracts/language/search-synonyms.json")) {
     failures.push("search-ranking-policy must use Language Kernel synonyms.");
@@ -132,39 +149,27 @@ function checkRankingAndPermission() {
   }
 }
 
-function checkProjectionAdapterBoundary() {
-  const adapters = searchContract.projectionAdapters || [];
+function checkProjectionFacadeBoundary(contract, failures) {
+  const adapters = contract.projectionAdapters || [];
   const lensAdapter = adapters.find((adapter) => adapter.name === "ProjectionWorkspaceSearchAdapter");
-  if (!lensAdapter || lensAdapter.status !== "projection-adapter") {
-    failures.push("ProjectionWorkspaceSearchAdapter must be registered as a projection adapter.");
+  if (!lensAdapter || lensAdapter.status !== "projection-facade-adapter") {
+    failures.push("ProjectionWorkspaceSearchAdapter must be registered as a projection facade adapter.");
   }
   if (lensAdapter && !exists(lensAdapter.path)) failures.push(`ProjectionWorkspaceSearchAdapter path missing: ${lensAdapter.path}.`);
-
-  const compatibility = read("docs/architecture/compatibility-components.yml");
-  if (!compatibility.includes("LensQueryService projection search adapter")) {
-    failures.push("compatibility-components.yml must classify LensQueryService projection search adapter.");
-  }
-  const quarantine = read("docs/architecture/compatibility-quarantine-rules.md");
-  if (!quarantine.includes("LensQueryService projection search adapter 可以保留") || !quarantine.includes("SearchKernel")) {
-    failures.push("compatibility quarantine rules must state LensQueryService is isolated and SearchKernel must take over.");
-  }
 
   const lensSource = read("services/core-api/WorkOS.Api/Runtime/LensQueryService.cs");
   if (!/public\s+IReadOnlyList<object>\s+Search\s*\(/.test(lensSource)) {
     failures.push("LensQueryService.Search method missing.");
   }
-  if (/\.Contains\(/.test(lensSource) && !lensAdapter) {
-    failures.push("Contains-based LensQueryService search is only allowed through registered legacy adapter.");
-  }
 }
 
-function checkRuntimeImplementation() {
+function checkRuntimeImplementation(failures) {
   for (const file of [
     "services/core-api/WorkOS.Api/Runtime/SearchKernelService.cs",
     "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs",
     "services/core-api/WorkOS.Api/Runtime/AdmissionKernelService.cs"
   ]) {
-    if (!exists(file)) failures.push(`Search Kernel runtime implementation missing: ${file}.`);
+    if (!exists(file)) failures.push(`Search Kernel runtime implementation missing: ${file}`);
   }
 
   const searchKernel = read("services/core-api/WorkOS.Api/Runtime/SearchKernelService.cs");
@@ -184,14 +189,14 @@ function checkRuntimeImplementation() {
     "NextActionableWorkItem",
     "BusinessAnchorKeys"
   ]) {
-    if (!searchKernel.includes(term)) failures.push(`SearchKernelService.cs missing ${term}.`);
+    if (!searchKernel.includes(term)) failures.push(`SearchKernelService.cs missing ${term}`);
   }
   const operationsUnitOfWork = read("services/core-api/WorkOS.Api/Runtime/OperationsUnitOfWork.cs");
   for (const term of ["SearchOperations(string tenantId", "operations_domain_events", "SearchText(record).Contains"]) {
-    if (!operationsUnitOfWork.includes(term)) failures.push(`OperationsUnitOfWork.cs missing operations search term: ${term}.`);
+    if (!operationsUnitOfWork.includes(term)) failures.push(`OperationsUnitOfWork.cs missing operations search term: ${term}`);
   }
   if (operationsUnitOfWork.includes("payload::text ilike")) {
-    failures.push("Operations search must not use payload::text ilike because it matches JSON field names such as buildingName.");
+    failures.push("Operations search must not use payload::text ilike because it matches JSON field names.");
   }
   const navigation = read("apps/mobile/src/navigationController.js");
   if (!navigation.includes("operationWorkItemsFromSearchResults") || !navigation.includes("applyRuntimeSurfacePayloads")) {

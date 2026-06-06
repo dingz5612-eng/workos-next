@@ -1,7 +1,7 @@
 {
   "domainId": "dormitory",
-  "version": "b1",
-  "stage": "B1",
+  "version": "oma.dormitory.v1",
+  "stage": "current_oma",
   "goCriteria": [
     "north-star and metrics-tree complete",
     "five value streams complete",
@@ -14,7 +14,7 @@
   ],
   "noGoCriteria": [
     "Dormitory page-specific write API",
-    "Dormitory runtime behavior in B1",
+    "Dormitory runtime behavior in current OMA",
     "productionAllowed true",
     "deposit treated as revenue",
     "WorkItemBundle as fact source"

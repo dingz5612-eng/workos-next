@@ -8,8 +8,8 @@ public sealed class DormitoryLiveApiDbScenarioTests
     [TestMethod]
     public void d1_runner_executes_operations_api_and_rejects_synthetic_mode()
     {
-        var runner = DormitoryRuntimeReplayHarness.ReadText("scripts/go-live/run-dormitory-live-api-db-scenarios.mjs");
-        var contract = DormitoryRuntimeReplayHarness.ReadText("docs/go-live/dormitory/runtime-replay-contract.yml");
+        var runner = DormitoryRuntimeReplayHarness.ReadText("scripts/oma/run-dormitory-live-api-db-scenarios.mjs");
+        var contract = DormitoryRuntimeReplayHarness.ReadText("docs/contracts/oma.dormitory-runtime-replay.json");
 
         foreach (var required in new[]
         {
@@ -26,7 +26,7 @@ public sealed class DormitoryLiveApiDbScenarioTests
             StringAssert.Contains(runner + contract, required);
         }
 
-        StringAssert.Contains(runner, "sourceMode: \"real_api_db\"");
+        StringAssert.Contains(runner, "const sourceMode = \"real_api_db\"");
         StringAssert.Contains(runner, "retiredWorkspaceCardWritePathUsed");
         Assert.IsFalse(runner.Contains("POST\", \"/api/workspaces/", StringComparison.Ordinal), "D1 ordinary replay must not call workspace/card confirm routes.");
         StringAssert.Contains(contract, "\"allowSyntheticDomainEvent\": false");

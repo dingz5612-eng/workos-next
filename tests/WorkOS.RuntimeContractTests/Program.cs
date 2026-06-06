@@ -1655,9 +1655,9 @@ static void ValidateControlPlaneShadowSchemas(string connectionString)
             invariant_check_ids, acceptance_scenarios, go_criteria, no_go_criteria,
             known_risks)
         values(
-            @releaseId, 'MR-V54', 'V5.4 control plane contract', 'shadow',
-            '["platform"]'::jsonb, 'sha-v54', '015_control_plane_shadow_runtime',
-            'v5.4', 'schema-hash', 'ci-v54', '[]'::jsonb, '[]'::jsonb,
+            @releaseId, 'OMA-RC', 'OMA release control contract', 'shadow',
+            '["platform"]'::jsonb, 'sha-oma', '015_control_plane_shadow_runtime',
+            'oma.current.v1', 'schema-hash', 'ci-oma', '[]'::jsonb, '[]'::jsonb,
             '[]'::jsonb, '[]'::jsonb, '["shadow compare green"]'::jsonb,
             '["all gates passed"]'::jsonb, '["red compare"]'::jsonb,
             '["pilot scope only"]'::jsonb)
@@ -1668,7 +1668,7 @@ static void ValidateControlPlaneShadowSchemas(string connectionString)
             feature_flag_id, release_id, flag_key, description, status,
             scope_rules, default_behavior, created_by)
         values(
-            @flagId, @releaseId, 'v54.shadow.runtime', 'V5.4 shadow runtime gate',
+            @flagId, @releaseId, 'oma.shadow.runtime', 'OMA shadow runtime gate',
             'shadow',
             '{
                 "tenantIds": ["tenant-a"],
@@ -1724,7 +1724,7 @@ static void ValidateControlPlaneShadowSchemas(string connectionString)
         Array.Empty<IReadOnlyDictionary<string, object>>(),
         new Dictionary<string, object> { ["result"] = "matched" },
         "shadow-compare-runner",
-        "ci-v54"));
+        "ci-oma"));
 
     controlPlaneWrites.WriteRuntimeInvariantCheck(new RuntimeInvariantCheckWrite(
         invariantId,
@@ -1744,20 +1744,20 @@ static void ValidateControlPlaneShadowSchemas(string connectionString)
         0,
         Array.Empty<IReadOnlyDictionary<string, object>>(),
         "contract-test",
-        "ci-v54",
+        "ci-oma",
         DateTimeOffset.UtcNow));
 
     controlPlaneWrites.WriteGateResult(new GateResultWrite(
         gateId,
         releaseId,
-        "MR-V54",
+        "OMA-RC",
         "tenant-a",
         "Accommodation.DepositLedger",
         "shadow_compare_gate",
         "automated",
         "passed",
         "P0",
-        "ci-v54",
+        "ci-oma",
         new[] { "runtime-contract" },
         new[] { invariantId },
         new[] { compareId },
@@ -1784,14 +1784,14 @@ static void ValidateControlPlaneShadowSchemas(string connectionString)
     AssertPostgresSqlStateRejects(PostgresErrorCodes.UniqueViolation, () => controlPlaneWrites.WriteGateResult(new GateResultWrite(
         gateId,
         releaseId,
-        "MR-V54",
+        "OMA-RC",
         "tenant-a",
         "Accommodation.DepositLedger",
         "shadow_compare_gate",
         "automated",
         "blocked",
         "P0",
-        "ci-v54-rerun",
+        "ci-oma-rerun",
         new[] { "runtime-contract-rerun" },
         new[] { invariantId },
         new[] { compareId },
@@ -1812,7 +1812,7 @@ static void ValidateControlPlaneShadowSchemas(string connectionString)
             requires_architecture_approval, requires_finance_approval)
         values(
             @rollbackId, @releaseId, 'rollback', 'feature_flag',
-            'Disable V5.4 shadow flag', '{"tenantId":"tenant-a"}'::jsonb,
+            'Disable OMA shadow flag', '{"tenantId":"tenant-a"}'::jsonb,
             '["shadow","pilot"]'::jsonb, '["paused","rollback"]'::jsonb,
             '["disable flag"]'::jsonb, '["verify legacy active"]'::jsonb,
             'platform', 'medium', true, true, false)
@@ -2103,7 +2103,10 @@ static void ValidateProjectionContractFiles()
 
 static void ValidateOperationsRuntimeContracts()
 {
-    var contractDoc = File.ReadAllText(Path.Combine("docs", "v5.4", "runtime-contracts.md"));
+    var contractDoc = File.ReadAllText(Path.Combine("docs", "contracts", "oma.current.json"))
+        + File.ReadAllText(Path.Combine("docs", "oma", "current-architecture.md"))
+        + File.ReadAllText(Path.Combine("docs", "contracts", "operations-runtime.schema.json"))
+        + File.ReadAllText(Path.Combine("docs", "contracts", "fact-trace.schema.json"));
     foreach (var token in new[]
     {
         "CommandEnvelope.v1",
@@ -2116,8 +2119,8 @@ static void ValidateOperationsRuntimeContracts()
         "WorkItemTransition.v1",
         "ProjectionCommit.v1",
         "FactTrace.v1",
-        "ShadowFactGraph.v1",
-        "S1 contract-only"
+        "FactTrace",
+        "Operations Management Architecture"
     })
     {
         Assert(contractDoc.Contains(token, StringComparison.Ordinal), $"runtime contracts doc must mention {token}");
@@ -2800,7 +2803,7 @@ static void WriteRuntimeContractReport(string connectionString)
     };
 
     var repoRoot = FindRepoRoot();
-    var reportPath = Path.Combine(repoRoot, "artifacts", "test-results", "runtime-contract-report.json");
+    var reportPath = Path.Combine(repoRoot, "artifacts", "oma", "test-results", "runtime-contract-report.json");
     Directory.CreateDirectory(Path.GetDirectoryName(reportPath)!);
     File.WriteAllText(reportPath, JsonSerializer.Serialize(report, new JsonSerializerOptions { WriteIndented = true }));
 }

@@ -6,7 +6,7 @@ const contractPath = "docs/surface/view-model-contract.yml";
 const packagePath = "packages/surface-view-models/src/index.js";
 const mobileVmPath = "apps/mobile/src/viewModels/index.js";
 const pcVmPath = "apps/pc/src/viewModels/index.js";
-const artifactPath = "artifacts/surface/view-model-contract-result.json";
+const artifactPath = "artifacts/oma/checks/view-model-contract-result.json";
 
 const violations = [];
 const contract = readJson(contractPath);

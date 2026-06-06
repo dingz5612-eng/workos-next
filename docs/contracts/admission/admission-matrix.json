@@ -1,6 +1,6 @@
 {
-  "version": "oam.admission-matrix.v1",
-  "generatedBy": "oam-cab-v1-phase-3",
+  "version": "oma.admission-matrix.v1",
+  "generatedBy": "oma-current",
   "entries": [
     {
       "id": "dormitory_l1_internal_pilot_observation",
@@ -12,9 +12,15 @@
       "productionAllowed": false,
       "mode": "internal_pilot_observation",
       "reason": "Dormitory is admitted only for L1 internal pilot observation; production remains blocked.",
-      "blockingSources": ["artifacts/release-state/current-state.json"],
-      "requiredCapabilities": ["workitem.confirm.internal_pilot"],
-      "requiredDeviceTrust": ["trusted_or_development_device"],
+      "blockingSources": [
+        "docs/oma/current-admission-state.json"
+      ],
+      "requiredCapabilities": [
+        "workitem.confirm.internal_pilot"
+      ],
+      "requiredDeviceTrust": [
+        "trusted_or_development_device"
+      ],
       "businessLineState": "L1 Internal Pilot",
       "releaseState": "L1_INTERNAL_PILOT_OBSERVATION",
       "surfaceState": "internal-pilot-scope",
@@ -29,14 +35,24 @@
       "confirmAllowed": false,
       "productionAllowed": false,
       "mode": "production_blocked",
-      "reason": "Business Production and Dormitory L2 are blocked by current-state.",
-      "blockingSources": ["artifacts/release-state/current-state.json", "docs/business/business-line-registry.json"],
-      "requiredCapabilities": ["production.confirm"],
-      "requiredDeviceTrust": ["trusted_device"],
+      "reason": "Business production and dormitory production are blocked by current OMA admission state.",
+      "blockingSources": [
+        "docs/oma/current-admission-state.json",
+        "docs/business/business-line-registry.json"
+      ],
+      "requiredCapabilities": [
+        "production.confirm"
+      ],
+      "requiredDeviceTrust": [
+        "trusted_device"
+      ],
       "businessLineState": "L1 Internal Pilot",
       "releaseState": "BUSINESS_PRODUCTION_BLOCKED",
       "surfaceState": "internal-pilot-scope",
-      "noGoItems": ["business_production_blocked", "dormitory_l2_blocked"],
+      "noGoItems": [
+        "business_production_blocked",
+        "dormitory_l2_blocked"
+      ],
       "highRisk": true
     },
     {
@@ -49,13 +65,17 @@
       "productionAllowed": false,
       "mode": "contract_preview",
       "reason": "Repair is L0 Contract Preview and can only expose learning or prepare-only surfaces.",
-      "blockingSources": ["docs/business/business-line-registry.json"],
+      "blockingSources": [
+        "docs/business/business-line-registry.json"
+      ],
       "requiredCapabilities": [],
       "requiredDeviceTrust": [],
       "businessLineState": "L0 Contract Preview",
       "releaseState": "BUSINESS_PRODUCTION_BLOCKED",
       "surfaceState": "contract-preview",
-      "noGoItems": ["l0_contract_preview"]
+      "noGoItems": [
+        "l0_contract_preview"
+      ]
     },
     {
       "id": "parts_l0_contract_preview",
@@ -67,13 +87,17 @@
       "productionAllowed": false,
       "mode": "contract_preview",
       "reason": "Parts is L0 Contract Preview and can only expose learning or prepare-only surfaces.",
-      "blockingSources": ["docs/business/business-line-registry.json"],
+      "blockingSources": [
+        "docs/business/business-line-registry.json"
+      ],
       "requiredCapabilities": [],
       "requiredDeviceTrust": [],
       "businessLineState": "L0 Contract Preview",
       "releaseState": "BUSINESS_PRODUCTION_BLOCKED",
       "surfaceState": "contract-preview",
-      "noGoItems": ["l0_contract_preview"]
+      "noGoItems": [
+        "l0_contract_preview"
+      ]
     },
     {
       "id": "hr_l0_contract_preview",
@@ -85,17 +109,27 @@
       "productionAllowed": false,
       "mode": "contract_preview",
       "reason": "HR is L0 Contract Preview and can only expose learning or prepare-only surfaces.",
-      "blockingSources": ["docs/business/business-line-registry.json"],
+      "blockingSources": [
+        "docs/business/business-line-registry.json"
+      ],
       "requiredCapabilities": [],
       "requiredDeviceTrust": [],
       "businessLineState": "L0 Contract Preview",
       "releaseState": "BUSINESS_PRODUCTION_BLOCKED",
       "surfaceState": "contract-preview",
-      "noGoItems": ["l0_contract_preview"]
+      "noGoItems": [
+        "l0_contract_preview"
+      ]
     },
     {
       "id": "business_3_7_l0_contract_preview",
-      "businessLineIds": ["business-3", "business-4", "business-5", "business-6", "business-7"],
+      "businessLineIds": [
+        "business-3",
+        "business-4",
+        "business-5",
+        "business-6",
+        "business-7"
+      ],
       "action": "contract_preview",
       "visibleAllowed": true,
       "prepareAllowed": true,
@@ -103,13 +137,17 @@
       "productionAllowed": false,
       "mode": "contract_preview",
       "reason": "Business 3 through Business 7 remain L0 Contract Preview.",
-      "blockingSources": ["docs/business/business-line-registry.json"],
+      "blockingSources": [
+        "docs/business/business-line-registry.json"
+      ],
       "requiredCapabilities": [],
       "requiredDeviceTrust": [],
       "businessLineState": "L0 Contract Preview",
       "releaseState": "BUSINESS_PRODUCTION_BLOCKED",
       "surfaceState": "contract-preview",
-      "noGoItems": ["l0_contract_preview"]
+      "noGoItems": [
+        "l0_contract_preview"
+      ]
     },
     {
       "id": "payment_confirmation",
@@ -123,15 +161,29 @@
       "productionAllowed": false,
       "mode": "production_blocked",
       "reason": "Payment confirmation is high risk and needs finance capability, trusted device, evidence, and current admission; production remains blocked.",
-      "blockingSources": ["artifacts/release-state/current-state.json", "docs/rules/v5.5/fact-ownership.yml"],
-      "requiredCapabilities": ["finance.payment.confirm"],
-      "requiredDeviceTrust": ["trusted_device"],
+      "blockingSources": [
+        "docs/oma/current-admission-state.json",
+        "docs/contracts/oma.current.json#/productCapabilities"
+      ],
+      "requiredCapabilities": [
+        "finance.payment.confirm"
+      ],
+      "requiredDeviceTrust": [
+        "trusted_device"
+      ],
       "businessLineState": "L1 Internal Pilot",
       "releaseState": "BUSINESS_PRODUCTION_BLOCKED",
       "surfaceState": "internal-pilot-scope",
-      "noGoItems": ["business_production_blocked"],
+      "noGoItems": [
+        "business_production_blocked"
+      ],
       "highRisk": true,
-      "surfaceRefs": [{ "sliceId": "Accommodation.PaymentLedger", "cardId": "paymentConfirmation" }]
+      "surfaceRefs": [
+        {
+          "sliceId": "Accommodation.PaymentLedger",
+          "cardId": "paymentConfirmation"
+        }
+      ]
     },
     {
       "id": "deposit_refund",
@@ -145,17 +197,32 @@
       "productionAllowed": false,
       "mode": "production_blocked",
       "reason": "Deposit refund is high risk and needs finance approval, trusted device, evidence, and current admission; production remains blocked.",
-      "blockingSources": ["artifacts/release-state/current-state.json", "docs/rules/v5.5/fact-ownership.yml"],
-      "requiredCapabilities": ["finance.deposit.refund"],
-      "requiredDeviceTrust": ["trusted_device"],
+      "blockingSources": [
+        "docs/oma/current-admission-state.json",
+        "docs/contracts/oma.current.json#/productCapabilities"
+      ],
+      "requiredCapabilities": [
+        "finance.deposit.refund"
+      ],
+      "requiredDeviceTrust": [
+        "trusted_device"
+      ],
       "businessLineState": "L1 Internal Pilot",
       "releaseState": "BUSINESS_PRODUCTION_BLOCKED",
       "surfaceState": "internal-pilot-scope",
-      "noGoItems": ["business_production_blocked"],
+      "noGoItems": [
+        "business_production_blocked"
+      ],
       "highRisk": true,
       "surfaceRefs": [
-        { "sliceId": "Accommodation.DepositLedger", "cardId": "depositRefundApproval" },
-        { "sliceId": "Accommodation.DepositLedger", "cardId": "depositRefundPayment" }
+        {
+          "sliceId": "Accommodation.DepositLedger",
+          "cardId": "depositRefundApproval"
+        },
+        {
+          "sliceId": "Accommodation.DepositLedger",
+          "cardId": "depositRefundPayment"
+        }
       ]
     },
     {
@@ -170,15 +237,29 @@
       "productionAllowed": false,
       "mode": "production_blocked",
       "reason": "Period close is high risk and needs governance capability, trusted device, frozen ledger evidence, and current admission; production remains blocked.",
-      "blockingSources": ["artifacts/release-state/current-state.json", "docs/rules/v5.5/fact-ownership.yml"],
-      "requiredCapabilities": ["period.close"],
-      "requiredDeviceTrust": ["trusted_device"],
+      "blockingSources": [
+        "docs/oma/current-admission-state.json",
+        "docs/contracts/oma.current.json#/productCapabilities"
+      ],
+      "requiredCapabilities": [
+        "period.close"
+      ],
+      "requiredDeviceTrust": [
+        "trusted_device"
+      ],
       "businessLineState": "L1 Internal Pilot",
       "releaseState": "BUSINESS_PRODUCTION_BLOCKED",
       "surfaceState": "internal-pilot-scope",
-      "noGoItems": ["business_production_blocked"],
+      "noGoItems": [
+        "business_production_blocked"
+      ],
       "highRisk": true,
-      "surfaceRefs": [{ "sliceId": "Accommodation.PeriodAnalytics", "cardId": "periodClose" }]
+      "surfaceRefs": [
+        {
+          "sliceId": "Accommodation.PeriodAnalytics",
+          "cardId": "periodClose"
+        }
+      ]
     },
     {
       "id": "bulk_import",
@@ -190,13 +271,23 @@
       "productionAllowed": false,
       "mode": "blocked",
       "reason": "Bulk import is blocked for L1 observation and requires a separate production readiness gate.",
-      "blockingSources": ["docs/business/business-line-registry.json", "artifacts/release-state/current-state.json"],
-      "requiredCapabilities": ["bulk.import"],
-      "requiredDeviceTrust": ["trusted_device"],
+      "blockingSources": [
+        "docs/business/business-line-registry.json",
+        "docs/oma/current-admission-state.json"
+      ],
+      "requiredCapabilities": [
+        "bulk.import"
+      ],
+      "requiredDeviceTrust": [
+        "trusted_device"
+      ],
       "businessLineState": "L1 Internal Pilot",
       "releaseState": "BUSINESS_PRODUCTION_BLOCKED",
       "surfaceState": "hidden",
-      "noGoItems": ["bulk_import_blocked", "business_production_blocked"],
+      "noGoItems": [
+        "bulk_import_blocked",
+        "business_production_blocked"
+      ],
       "highRisk": true
     },
     {
@@ -209,13 +300,22 @@
       "productionAllowed": false,
       "mode": "blocked",
       "reason": "Production confirm is blocked until Business Production and target business-line admission gates pass.",
-      "blockingSources": ["artifacts/release-state/current-state.json", "docs/business/business-line-registry.json"],
-      "requiredCapabilities": ["production.confirm"],
-      "requiredDeviceTrust": ["trusted_device"],
+      "blockingSources": [
+        "docs/oma/current-admission-state.json",
+        "docs/business/business-line-registry.json"
+      ],
+      "requiredCapabilities": [
+        "production.confirm"
+      ],
+      "requiredDeviceTrust": [
+        "trusted_device"
+      ],
       "businessLineState": "L1 Internal Pilot",
       "releaseState": "BUSINESS_PRODUCTION_BLOCKED",
       "surfaceState": "hidden",
-      "noGoItems": ["business_production_blocked"],
+      "noGoItems": [
+        "business_production_blocked"
+      ],
       "highRisk": true
     },
     {
@@ -228,13 +328,17 @@
       "productionAllowed": false,
       "mode": "prepare_only",
       "reason": "Prepare-only surfaces can expose fields and evidence requirements but cannot confirm.",
-      "blockingSources": ["docs/contracts/runtime-surface-policy.json"],
+      "blockingSources": [
+        "docs/contracts/runtime-surface-policy.json"
+      ],
       "requiredCapabilities": [],
       "requiredDeviceTrust": [],
       "businessLineState": "L0 Contract Preview",
       "releaseState": "BUSINESS_PRODUCTION_BLOCKED",
       "surfaceState": "prepare_only",
-      "noGoItems": ["confirm_not_allowed"]
+      "noGoItems": [
+        "confirm_not_allowed"
+      ]
     },
     {
       "id": "contract_preview",
@@ -246,13 +350,17 @@
       "productionAllowed": false,
       "mode": "contract_preview",
       "reason": "Contract preview surfaces are visible for learning and planning only.",
-      "blockingSources": ["docs/business/business-line-registry.json"],
+      "blockingSources": [
+        "docs/business/business-line-registry.json"
+      ],
       "requiredCapabilities": [],
       "requiredDeviceTrust": [],
       "businessLineState": "L0 Contract Preview",
       "releaseState": "BUSINESS_PRODUCTION_BLOCKED",
       "surfaceState": "contract-preview",
-      "noGoItems": ["l0_contract_preview"]
+      "noGoItems": [
+        "l0_contract_preview"
+      ]
     }
   ]
 }

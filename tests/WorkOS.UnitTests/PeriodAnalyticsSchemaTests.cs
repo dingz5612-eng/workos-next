@@ -103,10 +103,10 @@ public sealed class PeriodAnalyticsSchemaTests
             "before insert or update on period_metric_snapshots",
             "before insert or update on period_finance_snapshots",
             "before insert or update on period_operation_snapshots",
-            "normalize_period_action_plan_v54",
-            "trg_period_action_plans_normalize_v54",
-            "normalize_period_late_adjustment_v54",
-            "trg_period_late_adjustments_normalize_v54",
+            "normalize_period_action_plan_oma",
+            "trg_period_action_plans_normalize_oma",
+            "normalize_period_late_adjustment_oma",
+            "trg_period_late_adjustments_normalize_oma",
             "forbid_period_late_adjustment_mutation",
             "period_late_adjustments_append_only",
             "period_late_adjustment_requires_closed_period",
@@ -162,7 +162,7 @@ public sealed class PeriodAnalyticsSchemaTests
     }
 
     private static string ReadMigration() =>
-        File.ReadAllText(RepoPath("infra", "db", "migrations", "021_period_analytics_v54_schema.sql"));
+        File.ReadAllText(RepoPath("infra", "db", "migrations", "021_period_analytics_schema.sql"));
 
     private static string RepoPath(params string[] segments)
     {

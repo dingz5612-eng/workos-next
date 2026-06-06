@@ -6,7 +6,7 @@ import {
   requiredScenarioIds,
   validateSchemaFile,
   violation
-} from "./lib/oam02-semantic-lib.mjs";
+} from "./lib/oma-business-semantic-lib.mjs";
 
 const checkId = "canonical-scenario-map";
 const scannedFiles = [

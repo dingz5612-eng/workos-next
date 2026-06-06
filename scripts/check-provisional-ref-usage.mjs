@@ -14,7 +14,7 @@ import {
 
 const cli = parseArgs(process.argv.slice(2));
 const checkName = "check-provisional-ref-usage";
-const out = cli.value("out", ".tmp/rt2/provisional-ref-report.json");
+const out = cli.value("out", "artifacts/oma/checks/provisional-ref-report.json");
 
 function main() {
   if (cli.has("self-test")) {

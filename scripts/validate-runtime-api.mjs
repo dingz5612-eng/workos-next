@@ -136,9 +136,9 @@ async function validateDeclaredRuntimePaths(projection) {
     workItemId: "W-STAY-RESOURCE:roomSetup",
     submissionId: "cmd-openapi-path",
     exportType: "period-risk",
-    releaseId: "v5.4-first-batch",
-    gateResultId: "gate-v5-4-runner",
-    id: "scr-v54-shadow-domain-events-vs-audit-events"
+    releaseId: "oma.current-first-batch",
+    gateResultId: "gate-oma-current-runner",
+    id: "scr-oma-current-shadow-domain-events-vs-audit-events"
   };
 
   for (const [path, pathItem] of Object.entries(openApi.paths)) {
@@ -160,7 +160,7 @@ async function validateDeclaredRuntimePaths(projection) {
 async function requestDeclaredPath(method, path) {
   if (method === "GET") {
     if (path === "/api/control-plane/invariant-checks") {
-      return fetch(`${baseUrl}${path}?releaseId=v5.4-first-batch`, { headers: authHeaders() });
+      return fetch(`${baseUrl}${path}?releaseId=oma.current-first-batch`, { headers: authHeaders() });
     }
     if (path === "/api/reconciliation/match-candidates") {
       return fetch(`${baseUrl}${path}?tenantId=tenant-1`, { headers: authHeaders() });

@@ -1,0 +1,36 @@
+{
+  "invariants": [
+    {
+      "invariant_key": "api.no_page_specific_business_write",
+      "description": "Only current OMA classified APIs may write business facts.",
+      "mode": "blocking",
+      "severity": "P0",
+      "source_type": "api-boundary-check-v2",
+      "check_ref": "docs/contracts/oma.current.json#/apiBoundary"
+    },
+    {
+      "invariant_key": "runtime.no_production_demo_fallback",
+      "description": "Production runtime must not fall back to fake demo data.",
+      "mode": "blocking",
+      "severity": "P0",
+      "source_type": "file+dist-scan",
+      "check_ref": "scripts/check-no-production-fake-fallback.mjs"
+    },
+    {
+      "invariant_key": "case.closed_has_no_open_blocker",
+      "description": "A closed checkout case must not carry unresolved blockers.",
+      "mode": "blocking",
+      "severity": "P0",
+      "source_type": "skeleton",
+      "check_ref": "docs/oma/checkout-service-cutover.config.json"
+    },
+    {
+      "invariant_key": "bank.import_does_not_create_payment_fact",
+      "description": "Bank import can create reconciliation candidates, not payment facts.",
+      "mode": "blocking",
+      "severity": "P0",
+      "source_type": "skeleton",
+      "check_ref": "docs/oma/reconciliation-correction-cutover.config.json"
+    }
+  ]
+}

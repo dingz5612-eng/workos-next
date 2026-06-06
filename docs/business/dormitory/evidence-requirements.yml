@@ -1,6 +1,6 @@
 {
   "domainId": "dormitory",
-  "version": "b1",
+  "version": "oma.dormitory.v1",
   "evidenceRequirements": [
     {"requirementId":"room-photo","requiredFields":["tenantId","workItemId","submissionId","evidenceHash"]},
     {"requirementId":"cleaning-checklist","requiredFields":["tenantId","workItemId","submissionId","evidenceHash","capturedBy"]},

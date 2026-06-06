@@ -1,6 +1,6 @@
 {
   "domainId": "dormitory",
-  "version": "b1",
+  "version": "oma.dormitory.v1",
   "scenarios": [
     {"scenarioId":"dorm-cert-001","name":"lead to reservation to stay to bed assignment","requires":["CommandSubmission","DomainEvent","FactTrace","CutoverState"]},
     {"scenarioId":"dorm-cert-002","name":"deposit assess receive confirm liability update","requires":["CommandSubmission","DomainEvent","BalancedLedgerTransaction","DepositLiabilityLens"]},

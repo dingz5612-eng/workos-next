@@ -1,8 +1,0 @@
-{
-  "generated_at_utc": "2026-06-05T18:16:10.949Z",
-  "generated_by": "scripts/surface/check-operation-panel-runtime-contract.mjs",
-  "status": "passed",
-  "check": "operation-panel-runtime-contract",
-  "violation_count": 0,
-  "violations": []
-}

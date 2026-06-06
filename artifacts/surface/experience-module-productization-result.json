@@ -1,8 +1,0 @@
-{
-  "generatedAtUtc": "2026-06-02T13:50:38.028Z",
-  "generatedBy": "scripts/surface/check-experience-module-productization.mjs",
-  "status": "passed",
-  "productionAllowed": false,
-  "dormitoryL2ProductionAllowed": false,
-  "violations": []
-}

@@ -1,7 +1,10 @@
+name: workosnext-local
+
 services:
   postgres:
     image: postgres:16
     container_name: workosnext-postgres
+    restart: unless-stopped
     environment:
       POSTGRES_DB: workosnext
       POSTGRES_USER: workosnext
@@ -10,7 +13,16 @@ services:
       - "54329:5432"
     volumes:
       - workosnext-postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U workosnext -d workosnext"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    labels:
+      oma.workosnext.role: "local-postgres-runtime"
+      oma.workosnext.boundary: "local-development-only"
 
 volumes:
   workosnext-postgres:
-
+    labels:
+      oma.workosnext.role: "local-postgres-data"

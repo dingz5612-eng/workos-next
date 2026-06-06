@@ -1,6 +1,6 @@
 {
-  "version": "rtp.policy-as-code.v1",
-  "stage": "RT-P",
+  "version": "oma.policy-as-code.v1",
+  "architecture": "OMA",
   "status": "LOCAL_POLICY_CONTRACT",
   "productionAllowed": false,
   "policies": [

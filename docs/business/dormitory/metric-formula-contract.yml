@@ -1,8 +1,8 @@
 {
-  "version": "oam-02.metric-formula-contract.v1",
+  "version": "oma.dormitory.metric-formula-contract.v1",
   "domain": "dormitory",
   "productionAllowed": false,
-  "sourceMetricContract": "docs/go-live/dormitory/observation-metric-contract.yml",
+  "sourceMetricContract": "docs/contracts/period-analytics-contract.json",
   "metrics": [
     {"metricId":"sellable_bed_night_conversion","中文名称":"可售床夜转化效率","formula":"confirmedStayBedNights / availableBedNights","unit":"ratio","window":"daily","dimension":["tenantId","siteId","buildingId"],"target":0.85,"yellowThreshold":0.7,"redThreshold":0.55,"minSampleSize":10,"owner":"Dormitory Operations Owner","drillDown":["roomId","bedId","workItemId","caseId"]},
     {"metricId":"checkin_duration_p95","中文名称":"入住办理时长 P95","formula":"p95(checkinConfirmedAt - checkinPreparedAt)","unit":"minutes","window":"daily","dimension":["tenantId","siteId","role"],"target":30,"yellowThreshold":45,"redThreshold":60,"minSampleSize":5,"owner":"Front Desk Lead","drillDown":["workItemId","caseId","residentSubjectRef"]},

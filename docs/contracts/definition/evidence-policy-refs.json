@@ -1,28 +1,171 @@
 {
-  "version": "oam.evidence-policy-refs.v1",
-  "generatedBy": "oam-cab-v1-phase-4",
+  "version": "oma.evidence-policy-refs.v1",
+  "generatedBy": "oma-current",
   "refs": [
-    { "ref": "evidence.roomSetup.v1", "requiredEvidenceIds": ["room-duplicate-check", "operator-configuration-record"], "trust": "system-or-reviewed" },
-    { "ref": "evidence.bedSetup.v1", "requiredEvidenceIds": ["room-exists-check", "operator-configuration-record"], "trust": "system-or-reviewed" },
-    { "ref": "evidence.rateSetup.v1", "requiredEvidenceIds": ["rate-plan-validation", "operator-configuration-record"], "trust": "system-or-reviewed" },
-    { "ref": "evidence.roomReadiness.v1", "requiredEvidenceIds": ["readiness-validation"], "trust": "system-or-reviewed" },
-    { "ref": "evidence.roomBlock.v1", "requiredEvidenceIds": ["block-reason-record"], "trust": "reviewed" },
-    { "ref": "evidence.roomRelease.v1", "requiredEvidenceIds": ["release-validation"], "trust": "system-or-reviewed" },
-    { "ref": "evidence.depositAssessment.v1", "requiredEvidenceIds": ["deposit-rule-record"], "trust": "system-or-reviewed" },
-    { "ref": "evidence.depositReceipt.v1", "requiredEvidenceIds": ["payment-proof", "finance-receipt"], "trust": "reviewed" },
-    { "ref": "evidence.depositConfirmation.v1", "requiredEvidenceIds": ["bank-or-cash-proof", "finance-approval"], "trust": "trusted-device-reviewed" },
-    { "ref": "evidence.depositDeduction.v1", "requiredEvidenceIds": ["deduction-reason-record", "resident-acknowledgement"], "trust": "reviewed" },
-    { "ref": "evidence.depositRefundApproval.v1", "requiredEvidenceIds": ["refund-request", "manager-approval"], "trust": "trusted-device-reviewed" },
-    { "ref": "evidence.depositRefundPayment.v1", "requiredEvidenceIds": ["refund-approval", "refund-payment-proof"], "trust": "trusted-device-reviewed" },
-    { "ref": "evidence.depositClose.v1", "requiredEvidenceIds": ["zero-liability-check"], "trust": "system-or-reviewed" },
-    { "ref": "evidence.paymentReceipt.v1", "requiredEvidenceIds": ["payment-intake-record"], "trust": "reviewed" },
-    { "ref": "evidence.paymentConfirmation.v1", "requiredEvidenceIds": ["bank-or-cash-proof", "finance-approval"], "trust": "trusted-device-reviewed" },
-    { "ref": "evidence.paymentAllocation.v1", "requiredEvidenceIds": ["allocation-basis"], "trust": "system-or-reviewed" },
-    { "ref": "evidence.paymentAdjustment.v1", "requiredEvidenceIds": ["adjustment-reason-record"], "trust": "reviewed" },
-    { "ref": "evidence.finalBalanceClose.v1", "requiredEvidenceIds": ["checkout-balance-snapshot"], "trust": "system-or-reviewed" },
-    { "ref": "evidence.bedRelease.v1", "requiredEvidenceIds": ["checkout-close-or-release-request"], "trust": "system-or-reviewed" },
-    { "ref": "evidence.periodClose.v1", "requiredEvidenceIds": ["period-frozen-snapshot", "business-signoff"], "trust": "trusted-device-reviewed" },
-    { "ref": "evidence.expenseRecord.v1", "requiredEvidenceIds": ["expense-proof"], "trust": "reviewed" },
-    { "ref": "evidence.ledgerCorrectionApply.v1", "requiredEvidenceIds": ["correction-approval", "before-after-ledger-snapshot"], "trust": "trusted-device-reviewed" }
+    {
+      "ref": "evidence.roomSetup.v1",
+      "requiredEvidenceIds": [
+        "room-duplicate-check",
+        "operator-configuration-record"
+      ],
+      "trust": "system-or-reviewed"
+    },
+    {
+      "ref": "evidence.bedSetup.v1",
+      "requiredEvidenceIds": [
+        "room-exists-check",
+        "operator-configuration-record"
+      ],
+      "trust": "system-or-reviewed"
+    },
+    {
+      "ref": "evidence.rateSetup.v1",
+      "requiredEvidenceIds": [
+        "rate-plan-validation",
+        "operator-configuration-record"
+      ],
+      "trust": "system-or-reviewed"
+    },
+    {
+      "ref": "evidence.roomReadiness.v1",
+      "requiredEvidenceIds": [
+        "readiness-validation"
+      ],
+      "trust": "system-or-reviewed"
+    },
+    {
+      "ref": "evidence.roomBlock.v1",
+      "requiredEvidenceIds": [
+        "block-reason-record"
+      ],
+      "trust": "reviewed"
+    },
+    {
+      "ref": "evidence.roomRelease.v1",
+      "requiredEvidenceIds": [
+        "release-validation"
+      ],
+      "trust": "system-or-reviewed"
+    },
+    {
+      "ref": "evidence.depositAssessment.v1",
+      "requiredEvidenceIds": [
+        "deposit-rule-record"
+      ],
+      "trust": "system-or-reviewed"
+    },
+    {
+      "ref": "evidence.depositReceipt.v1",
+      "requiredEvidenceIds": [
+        "payment-proof",
+        "finance-receipt"
+      ],
+      "trust": "reviewed"
+    },
+    {
+      "ref": "evidence.depositConfirmation.v1",
+      "requiredEvidenceIds": [
+        "bank-or-cash-proof",
+        "finance-approval"
+      ],
+      "trust": "trusted-device-reviewed"
+    },
+    {
+      "ref": "evidence.depositDeduction.v1",
+      "requiredEvidenceIds": [
+        "deduction-reason-record",
+        "resident-acknowledgement"
+      ],
+      "trust": "reviewed"
+    },
+    {
+      "ref": "evidence.depositRefundApproval.v1",
+      "requiredEvidenceIds": [
+        "refund-request",
+        "manager-approval"
+      ],
+      "trust": "trusted-device-reviewed"
+    },
+    {
+      "ref": "evidence.depositRefundPayment.v1",
+      "requiredEvidenceIds": [
+        "refund-approval",
+        "refund-payment-proof"
+      ],
+      "trust": "trusted-device-reviewed"
+    },
+    {
+      "ref": "evidence.depositClose.v1",
+      "requiredEvidenceIds": [
+        "zero-liability-check"
+      ],
+      "trust": "system-or-reviewed"
+    },
+    {
+      "ref": "evidence.paymentReceipt.v1",
+      "requiredEvidenceIds": [
+        "payment-intake-record"
+      ],
+      "trust": "reviewed"
+    },
+    {
+      "ref": "evidence.paymentConfirmation.v1",
+      "requiredEvidenceIds": [
+        "bank-or-cash-proof",
+        "finance-approval"
+      ],
+      "trust": "trusted-device-reviewed"
+    },
+    {
+      "ref": "evidence.paymentAllocation.v1",
+      "requiredEvidenceIds": [
+        "allocation-basis"
+      ],
+      "trust": "system-or-reviewed"
+    },
+    {
+      "ref": "evidence.paymentAdjustment.v1",
+      "requiredEvidenceIds": [
+        "adjustment-reason-record"
+      ],
+      "trust": "reviewed"
+    },
+    {
+      "ref": "evidence.finalBalanceClose.v1",
+      "requiredEvidenceIds": [
+        "checkout-balance-snapshot"
+      ],
+      "trust": "system-or-reviewed"
+    },
+    {
+      "ref": "evidence.bedRelease.v1",
+      "requiredEvidenceIds": [
+        "checkout-close-or-release-request"
+      ],
+      "trust": "system-or-reviewed"
+    },
+    {
+      "ref": "evidence.periodClose.v1",
+      "requiredEvidenceIds": [
+        "period-frozen-snapshot",
+        "business-signoff"
+      ],
+      "trust": "trusted-device-reviewed"
+    },
+    {
+      "ref": "evidence.expenseRecord.v1",
+      "requiredEvidenceIds": [
+        "expense-proof"
+      ],
+      "trust": "reviewed"
+    },
+    {
+      "ref": "evidence.ledgerCorrectionApply.v1",
+      "requiredEvidenceIds": [
+        "correction-approval",
+        "before-after-ledger-snapshot"
+      ],
+      "trust": "trusted-device-reviewed"
+    }
   ]
 }

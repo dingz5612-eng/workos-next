@@ -1,6 +1,6 @@
 {
-  "version": "oam.search-permission-policy.v1",
-  "generatedBy": "oam-cab-v1-phase-4",
+  "version": "oma.search-permission-policy.v1",
+  "generatedBy": "oma-current",
   "rules": [
     {
       "ruleId": "business-line-blocked-cannot-execute",

@@ -4,14 +4,11 @@ import path from "node:path";
 const root = process.cwd();
 const reportPath = path.join(
   root,
-  "artifacts",
-  "oam-cab",
-  "dormitory-real-browser-hardening-20260604-current",
-  "frontend-experience-system-20260605",
-  process.env.OAM_TEN_DORM_SCENARIO_RUN_ID || "ten-dormitory-scenario-real-browser-20260605-post-unified-start",
+  "artifacts", "oma", "evidence", "dormitory-real-browser",
+  process.env.WORKOS_TEN_DORM_SCENARIO_RUN_ID || "ten-dormitory-scenario-real-browser-20260605-post-unified-start",
   "ten-scenario-real-browser-report.json"
 );
-const outputPath = path.join(root, "artifacts", "surface", "dormitory-ten-scenario-real-browser-result.json");
+const outputPath = path.join(root, "artifacts", "oma", "checks", "dormitory-ten-scenario-real-browser-result.json");
 const violations = [];
 const report = readJson(reportPath);
 

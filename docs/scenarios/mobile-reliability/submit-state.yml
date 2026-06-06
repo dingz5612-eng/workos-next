@@ -1,5 +1,5 @@
 {
-  "version": "rt-s.mobile-reliability.scenarios.v1",
+  "version": "oma.scenario.mobile-reliability.scenarios.v1",
   "domain": "mobile-reliability",
   "scenarios": [
     {

@@ -1,4 +1,4 @@
-# OAM-04C Dormitory Scenario Journey Acceptance
+# OMA Dormitory Journey Dormitory Scenario Journey Acceptance
 
 中文目标：按系统场景走完宿舍 L1 内测的 10 条旅程，形成可复核的体验截图索引和验收结果。
 

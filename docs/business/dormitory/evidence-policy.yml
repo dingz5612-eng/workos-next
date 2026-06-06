@@ -1,6 +1,6 @@
 {
   "domainId": "dormitory",
-  "version": "b1",
+  "version": "oma.dormitory.v1",
   "policy": "High-risk Dormitory confirmations require EvidenceObject refs bound to tenantId, caseId, workItemId, submissionId, evidenceHash, capturedAt, capturedBy, and trustLevel.",
   "runtimeBinding": {"loader":"DormitoryEvidencePolicyLoader","evaluator":"EvidencePolicyEvaluator","sourceMode":"policy-file"},
   "bindingRules": ["requirementId", "workItemId", "submissionId", "tenantId", "evidenceHash"],

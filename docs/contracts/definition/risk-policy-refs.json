@@ -1,24 +1,182 @@
 {
-  "version": "oam.risk-policy-refs.v1",
-  "generatedBy": "oam-cab-v1-phase-4",
+  "version": "oma.risk-policy-refs.v1",
+  "generatedBy": "oma-current",
   "refs": [
-    { "ref": "risk.resource.standard.v1", "level": "P2", "requiredCapabilities": ["operations.confirm"], "deviceTrust": [] },
-    { "ref": "risk.resource.bed_status.v1", "level": "P1", "requiredCapabilities": ["operations.confirm"], "deviceTrust": ["known_device"] },
-    { "ref": "risk.pricing.standard.v1", "level": "P1", "requiredCapabilities": ["operations.confirm"], "deviceTrust": ["known_device"] },
-    { "ref": "risk.deposit.standard.v1", "level": "P2", "requiredCapabilities": ["deposit.prepare"], "deviceTrust": [] },
-    { "ref": "risk.deposit.money_in.v1", "level": "P1", "requiredCapabilities": ["finance.deposit.receive"], "deviceTrust": ["known_device"] },
-    { "ref": "risk.deposit.high_risk_confirm.v1", "level": "P1", "requiredCapabilities": ["finance.deposit.confirm"], "deviceTrust": ["trusted_device"] },
-    { "ref": "risk.deposit.money_out.v1", "level": "P1", "requiredCapabilities": ["finance.deposit.deduct"], "deviceTrust": ["trusted_device"] },
-    { "ref": "risk.deposit.high_risk_refund.v1", "level": "P1", "requiredCapabilities": ["finance.deposit.refund"], "deviceTrust": ["trusted_device"] },
-    { "ref": "risk.deposit.close.v1", "level": "P1", "requiredCapabilities": ["finance.deposit.close"], "deviceTrust": ["known_device"] },
-    { "ref": "risk.payment.money_in.v1", "level": "P1", "requiredCapabilities": ["finance.payment.receive"], "deviceTrust": ["known_device"] },
-    { "ref": "risk.payment.high_risk_confirm.v1", "level": "P1", "requiredCapabilities": ["finance.payment.confirm"], "deviceTrust": ["trusted_device"] },
-    { "ref": "risk.payment.allocation.v1", "level": "P1", "requiredCapabilities": ["finance.payment.allocate"], "deviceTrust": ["known_device"] },
-    { "ref": "risk.payment.adjustment.v1", "level": "P1", "requiredCapabilities": ["finance.payment.adjust"], "deviceTrust": ["trusted_device"] },
-    { "ref": "risk.checkout.balance_close.v1", "level": "P1", "requiredCapabilities": ["checkout.close"], "deviceTrust": ["known_device"] },
-    { "ref": "risk.checkout.bed_release.v1", "level": "P1", "requiredCapabilities": ["checkout.request_bed_release"], "deviceTrust": ["known_device"] },
-    { "ref": "risk.period.high_risk_close.v1", "level": "P1", "requiredCapabilities": ["period.close"], "deviceTrust": ["trusted_device"] },
-    { "ref": "risk.expense.standard.v1", "level": "P2", "requiredCapabilities": ["finance.expense.record"], "deviceTrust": ["known_device"] },
-    { "ref": "risk.ledger.high_risk_correction.v1", "level": "P0", "requiredCapabilities": ["finance.correction.apply"], "deviceTrust": ["trusted_device"] }
+    {
+      "ref": "risk.resource.standard.v1",
+      "level": "P2",
+      "requiredCapabilities": [
+        "operations.confirm"
+      ],
+      "deviceTrust": []
+    },
+    {
+      "ref": "risk.resource.bed_status.v1",
+      "level": "P1",
+      "requiredCapabilities": [
+        "operations.confirm"
+      ],
+      "deviceTrust": [
+        "known_device"
+      ]
+    },
+    {
+      "ref": "risk.pricing.standard.v1",
+      "level": "P1",
+      "requiredCapabilities": [
+        "operations.confirm"
+      ],
+      "deviceTrust": [
+        "known_device"
+      ]
+    },
+    {
+      "ref": "risk.deposit.standard.v1",
+      "level": "P2",
+      "requiredCapabilities": [
+        "deposit.prepare"
+      ],
+      "deviceTrust": []
+    },
+    {
+      "ref": "risk.deposit.money_in.v1",
+      "level": "P1",
+      "requiredCapabilities": [
+        "finance.deposit.receive"
+      ],
+      "deviceTrust": [
+        "known_device"
+      ]
+    },
+    {
+      "ref": "risk.deposit.high_risk_confirm.v1",
+      "level": "P1",
+      "requiredCapabilities": [
+        "finance.deposit.confirm"
+      ],
+      "deviceTrust": [
+        "trusted_device"
+      ]
+    },
+    {
+      "ref": "risk.deposit.money_out.v1",
+      "level": "P1",
+      "requiredCapabilities": [
+        "finance.deposit.deduct"
+      ],
+      "deviceTrust": [
+        "trusted_device"
+      ]
+    },
+    {
+      "ref": "risk.deposit.high_risk_refund.v1",
+      "level": "P1",
+      "requiredCapabilities": [
+        "finance.deposit.refund"
+      ],
+      "deviceTrust": [
+        "trusted_device"
+      ]
+    },
+    {
+      "ref": "risk.deposit.close.v1",
+      "level": "P1",
+      "requiredCapabilities": [
+        "finance.deposit.close"
+      ],
+      "deviceTrust": [
+        "known_device"
+      ]
+    },
+    {
+      "ref": "risk.payment.money_in.v1",
+      "level": "P1",
+      "requiredCapabilities": [
+        "finance.payment.receive"
+      ],
+      "deviceTrust": [
+        "known_device"
+      ]
+    },
+    {
+      "ref": "risk.payment.high_risk_confirm.v1",
+      "level": "P1",
+      "requiredCapabilities": [
+        "finance.payment.confirm"
+      ],
+      "deviceTrust": [
+        "trusted_device"
+      ]
+    },
+    {
+      "ref": "risk.payment.allocation.v1",
+      "level": "P1",
+      "requiredCapabilities": [
+        "finance.payment.allocate"
+      ],
+      "deviceTrust": [
+        "known_device"
+      ]
+    },
+    {
+      "ref": "risk.payment.adjustment.v1",
+      "level": "P1",
+      "requiredCapabilities": [
+        "finance.payment.adjust"
+      ],
+      "deviceTrust": [
+        "trusted_device"
+      ]
+    },
+    {
+      "ref": "risk.checkout.balance_close.v1",
+      "level": "P1",
+      "requiredCapabilities": [
+        "checkout.close"
+      ],
+      "deviceTrust": [
+        "known_device"
+      ]
+    },
+    {
+      "ref": "risk.checkout.bed_release.v1",
+      "level": "P1",
+      "requiredCapabilities": [
+        "checkout.request_bed_release"
+      ],
+      "deviceTrust": [
+        "known_device"
+      ]
+    },
+    {
+      "ref": "risk.period.high_risk_close.v1",
+      "level": "P1",
+      "requiredCapabilities": [
+        "period.close"
+      ],
+      "deviceTrust": [
+        "trusted_device"
+      ]
+    },
+    {
+      "ref": "risk.expense.standard.v1",
+      "level": "P2",
+      "requiredCapabilities": [
+        "finance.expense.record"
+      ],
+      "deviceTrust": [
+        "known_device"
+      ]
+    },
+    {
+      "ref": "risk.ledger.high_risk_correction.v1",
+      "level": "P0",
+      "requiredCapabilities": [
+        "finance.correction.apply"
+      ],
+      "deviceTrust": [
+        "trusted_device"
+      ]
+    }
   ]
 }

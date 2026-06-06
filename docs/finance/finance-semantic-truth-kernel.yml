@@ -1,5 +1,5 @@
 {
-  "version": "oam-05.finance-semantic-truth-kernel.v1",
+  "version": "oma.finance-gate.finance-semantic-truth-kernel.v1",
   "kernelId": "FinanceSemanticTruthKernel",
   "owner": "FinanceTruthPack",
   "moneyKernelPack": "MoneyKernelPack",
@@ -29,7 +29,7 @@
   ],
   "artifacts": [
     "artifacts/finance/finance-semantic-truth-result.json",
-    "artifacts/go-live/dormitory/ledger-semantic-result.json"
+    "artifacts/oma/checks/ledger-semantic-result.json"
   ],
   "tests": [
     "LedgerSemanticRulesTests",

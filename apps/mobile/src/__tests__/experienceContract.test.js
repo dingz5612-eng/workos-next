@@ -23,7 +23,7 @@ import {
   WorkItemCard
 } from "../views/experienceComponents.js";
 
-describe("RT-5 Experience Contract", () => {
+describe("OMA Experience Contract", () => {
   it("keeps ordinary operator mobile bottom nav to Today Work Search Me", () => {
     vi.stubGlobal("window", { location: { protocol: "http:", hostname: "localhost", port: "5173", origin: "http://localhost:5173" } });
     vi.stubGlobal("localStorage", { getItem: () => null });

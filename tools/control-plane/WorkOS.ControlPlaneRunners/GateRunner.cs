@@ -6,10 +6,10 @@ public static class GateRunner
 {
     public static Task<GateResultEvidence> Run(RunnerOptions options)
     {
-        var releaseId = options.Get("releaseId", "v5.4-first-batch");
+        var releaseId = options.Get("releaseId", "oma.current-first-batch");
         var mrId = options.Get("mrId") ?? Environment.GetEnvironmentVariable("GITHUB_REF_NAME") ?? "local";
         var ciRunId = options.Get("ciRunId") ?? Environment.GetEnvironmentVariable("GITHUB_RUN_ID") ?? "local";
-        var outputPath = options.Get("out", Path.Combine(".tmp", "v5_4", "gate-result.json"));
+        var outputPath = options.Get("out", Path.Combine(".tmp", "oma", "gate-result.json"));
         var dryRun = options.GetBool("dry-run");
         var formalReleaseGate = options.GetBool("formal-release-gate");
         var sourceMode = ResolveSourceMode(options);
@@ -45,17 +45,17 @@ public static class GateRunner
         });
 
         var evidence = new GateResultEvidence(
-            GateResultId: options.Get("id", "gate-v5-4-runner"),
+            GateResultId: options.Get("id", "gate-oma-current-runner"),
             ReleaseId: releaseId,
             MrId: mrId,
             TenantId: options.Get("tenantId"),
             SliceId: options.Get("sliceId"),
-            GateName: options.Get("gateName", "v5.4-control-plane"),
+            GateName: options.Get("gateName", "oma.current-control-plane"),
             GateType: options.Get("gateType", "automated"),
             Status: decision.Status,
             Severity: decision.Severity,
             CiRunId: ciRunId,
-            AutomatedTestRefs: SplitRefs(options.Get("automated-test")).DefaultIfEmpty("scripts/v5_4/run-control-plane-checks.ps1").ToArray(),
+            AutomatedTestRefs: SplitRefs(options.Get("automated-test")).DefaultIfEmpty("scripts/oma/run-control-plane-checks.ps1").ToArray(),
             InvariantCheckRefs: invariants.Select(item => item.InvariantCheckId).ToArray(),
             ShadowCompareReportRefs: shadowReports.Select(item => item.ShadowCompareReportId).ToArray(),
             BusinessSignoffRefs: businessSignoffs,

@@ -14,7 +14,7 @@ import {
 
 const cli = parseArgs(process.argv.slice(2));
 const checkName = "check-receipt-projection";
-const out = cli.value("out", ".tmp/rt2/receipt-projection-report.json");
+const out = cli.value("out", "artifacts/oma/checks/receipt-projection-report.json");
 
 function main() {
   if (cli.has("self-test")) {

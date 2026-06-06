@@ -1,0 +1,15 @@
+{
+  "scenarioId": "oma-finance-negative-deposit-as-revenue",
+  "sourcePack": "FinanceTruthPack",
+  "inputFact": "MoneyBasis",
+  "basisType": "deposit_receipt",
+  "targetFact": "MoneyBasis",
+  "amount": 1000,
+  "currency": "KGS",
+  "expectedLedger": {
+    "balanced": true,
+    "debitAccount": "asset.cash_or_bank",
+    "creditAccount": "revenue.stay"
+  },
+  "expectedViolation": "finance_truth.deposit_as_revenue"
+}

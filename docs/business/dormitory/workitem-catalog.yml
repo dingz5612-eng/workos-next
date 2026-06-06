@@ -1,6 +1,6 @@
 {
   "domainId": "dormitory",
-  "version": "b1",
+  "version": "oma.dormitory.v1",
   "workItems": [
     {"workItemType":"Dorm.ResourceSetup","中文名称":"资源建档","ownerRole":"Resource Manager","backupOwner":"Resource Coordinator","escalationOwner":"Operations Director","SLA":"4h","requiredEvidence":["room-photo"],"affectedFacts":["Room","Bed"],"ledgerImpact":"none","confirmationPolicy":"resource-owner-confirm","riskLevel":"medium","idempotencyScope":"tenant:room","factTraceRequired":true,"lensOutputs":["DormAvailabilityLens"],"certificationScenario":"dorm-cert-004"},
     {"workItemType":"Dorm.RoomReadinessCheck","中文名称":"房态检查","ownerRole":"Housekeeping Lead","backupOwner":"Resource Manager","escalationOwner":"Operations Director","SLA":"1h","requiredEvidence":["cleaning-checklist","completion-photo","verification-check"],"affectedFacts":["RoomReadiness"],"ledgerImpact":"none","confirmationPolicy":"evidence-required","riskLevel":"medium","idempotencyScope":"tenant:room:shift","factTraceRequired":true,"lensOutputs":["RoomReadinessLens"],"certificationScenario":"dorm-cert-004"},

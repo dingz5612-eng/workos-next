@@ -3,8 +3,8 @@ import fs from "node:fs";
 const manifest = JSON.parse(fs.readFileSync("docs/contracts/slice-manifest.json", "utf8"));
 const surfacePolicy = JSON.parse(fs.readFileSync("docs/contracts/runtime-surface-policy.json", "utf8"));
 const lensContract = JSON.parse(fs.readFileSync("docs/contracts/accommodation-lens-contract.json", "utf8"));
-const rulesIndex = JSON.parse(fs.readFileSync("docs/architecture/rules/index.json", "utf8"));
-const exceptions = JSON.parse(fs.readFileSync("docs/architecture/architecture-exceptions.json", "utf8"));
+const omaContract = JSON.parse(fs.readFileSync("docs/contracts/oma.current.json", "utf8"));
+const exceptions = JSON.parse(fs.readFileSync("docs/oma/current-architecture-exceptions.json", "utf8"));
 
 const eventCatalogSource = fs.readFileSync("services/core-api/WorkOS.Api/Runtime/EventContractCatalog.cs", "utf8");
 const eventSelectionSource = fs.readFileSync("services/core-api/WorkOS.Api/Runtime/EventSelectionPolicy.cs", "utf8");
@@ -52,8 +52,8 @@ for (const requiredLens of ["payment-risk", "checkout-queue", "service-task-queu
   assert(lens.crossCheck, `${requiredLens} must declare a cross-check rule.`);
 }
 
-for (const ruleId of ["WON16-SURFACE-002", "WON16-ADMISSION-001", "WON16-LENS-001", "WON16-OBS-001"]) {
-  assert((rulesIndex.rules || []).some((rule) => rule.id === ruleId), `Rule registry missing ${ruleId}.`);
+for (const capabilityId of ["accommodation.resource", "accommodation.checkin", "finance.payment", "identity.account-actor"]) {
+  assert((omaContract.productCapabilities || []).some((capability) => capability.id === capabilityId), `OMA contract missing capability ${capabilityId}.`);
 }
 
 for (const exception of exceptions.exceptions || []) {

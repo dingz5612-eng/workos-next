@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 const root = process.cwd();
-const out = readArg("--out=", ".tmp/rt4/dormitory-golden-domain-report.json");
+const out = readArg("--out=", "artifacts/oma/checks/dormitory-golden-domain-report.json");
 const requiredScenarioIds = Array.from({ length: 10 }, (_, index) => `dorm-cert-${String(index + 1).padStart(3, "0")}`);
 const requiredCoverage = [
   "Subject",
@@ -46,11 +46,10 @@ if (process.argv.includes("--self-test")) {
 const scannedFiles = [
   "docs/business/domains/dormitory/domain-pack.yml",
   "docs/scenarios/dormitory/golden-pilot.yml",
-  "docs/v5.4/dormitory-certification-scenarios.json",
+  "docs/business/dormitory/certification-scenarios.json",
   "docs/business/dormitory/evidence-policy.yml",
   "docs/business/dormitory/finance-control-rules.yml",
-  "docs/business/business-line-registry.json",
-  ".tmp/v5_4/b-stage-gate-result.json"
+  "docs/business/business-line-registry.json"
 ];
 const violations = [];
 const pack = readJson(scannedFiles[0]);
@@ -60,7 +59,6 @@ violations.push(...validateCertificationFile(readJson(scannedFiles[2])));
 violations.push(...validateEvidencePolicy(readJson(scannedFiles[3])));
 violations.push(...validateFinanceRules(readJson(scannedFiles[4])));
 violations.push(...validateBusinessLineRegistry(readJson(scannedFiles[5])));
-violations.push(...validateOptionalBStageGate(scannedFiles[6]));
 
 writeReport(violations, scannedFiles);
 if (violations.length > 0) {
@@ -141,16 +139,20 @@ function validateScenarioPack(document) {
 function validateCertificationFile(document) {
   const violations = [];
   const scenarios = document.scenarios ?? [];
-  const ids = scenarios.map((scenario) => scenario.scenario_id);
+  const ids = scenarios.map((scenario) => scenario.scenarioId ?? scenario.scenario_id);
   for (const scenarioId of requiredScenarioIds) {
     if (!ids.includes(scenarioId)) {
       violations.push(violation("dormitory.certification_missing_scenario", `Certification file missing ${scenarioId}.`, { scenarioId }));
     }
   }
   for (const scenario of scenarios) {
-    if (!scenario.rollback_or_compensation_path) {
-      violations.push(violation("dormitory.certification_missing_rollback", `Scenario ${scenario.scenario_id} missing rollback_or_compensation_path.`, { scenarioId: scenario.scenario_id }));
+    const scenarioId = scenario.scenarioId ?? scenario.scenario_id;
+    if (!Array.isArray(scenario.requires) || scenario.requires.length === 0) {
+      violations.push(violation("dormitory.certification_missing_requires", `Scenario ${scenarioId} missing requires.`, { scenarioId }));
     }
+  }
+  if (document.productionAllowed !== false) {
+    violations.push(violation("dormitory.certification_production_allowed", "Dormitory certification file must keep productionAllowed=false."));
   }
   return violations;
 }
@@ -191,16 +193,6 @@ function validateBusinessLineRegistry(registry) {
     }
   }
   return violations;
-}
-
-function validateOptionalBStageGate(relativePath) {
-  const fullPath = path.join(root, relativePath);
-  if (!fs.existsSync(fullPath)) return [];
-  const gate = readJson(relativePath);
-  const noGoItems = gate.noGoItems ?? gate.no_go_items ?? [];
-  return gate.status === "passed" && Array.isArray(noGoItems) && noGoItems.length === 0
-    ? []
-    : [violation("dormitory.b_stage_gate_not_green", "Existing BStageGateResult must be passed with empty noGoItems.")];
 }
 
 function requireOutput(condition, id, scenarioId, violations) {

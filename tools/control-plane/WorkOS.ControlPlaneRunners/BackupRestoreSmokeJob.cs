@@ -7,7 +7,7 @@ public static class BackupRestoreSmokeJob
 {
     public static Task<BackupRestoreSmokeRunOutput> Run(RunnerOptions options)
     {
-        var releaseId = options.Get("releaseId", "v5.4-backup-restore-smoke");
+        var releaseId = options.Get("releaseId", "oma.current-backup-restore-smoke");
         var mrId = options.Get("mrId", "local");
         var tenantId = options.Get("tenantId", "all-tenants");
         var ciRunId = options.Get("ciRunId")
@@ -18,9 +18,9 @@ public static class BackupRestoreSmokeJob
         var dryRun = options.GetBool("dry-run", defaultValue: true);
         var cleanup = options.GetBool("cleanup", defaultValue: true);
         var migrationsPath = options.Get("migrations", Path.Combine("infra", "db", "migrations"));
-        var outputPath = options.Get("out", Path.Combine(".tmp", "v5_4", "backup-restore-smoke-invariant-checks.json"));
-        var reportPath = options.Get("report-out", Path.Combine(".tmp", "v5_4", "backup-restore-smoke-report.json"));
-        var invariantOutputPath = options.Get("restore-invariant-out", Path.Combine(".tmp", "v5_4", "backup-restore-after-restore-invariants.json"));
+        var outputPath = options.Get("out", Path.Combine(".tmp", "oma", "backup-restore-smoke-invariant-checks.json"));
+        var reportPath = options.Get("report-out", Path.Combine(".tmp", "oma", "backup-restore-smoke-report.json"));
+        var invariantOutputPath = options.Get("restore-invariant-out", Path.Combine(".tmp", "oma", "backup-restore-after-restore-invariants.json"));
         var connectionString = ControlPlaneDatabase.ResolveConnectionString(options);
         var isolatedSchema = BackupRestoreSmokePostgresStore.SmokeSchemaName(reportId);
 
@@ -611,7 +611,7 @@ public sealed class PostgresBackupRestoreInvariantRunner : IBackupRestoreInvaria
 
     public IReadOnlyList<BackupRestoreInvariantResult> Run(BackupRestoreSmokeRunContext context)
     {
-        var definitionsPath = Path.Combine(".tmp", "v5_4", $"{context.ReportId}-after-restore-invariants.json");
+        var definitionsPath = Path.Combine(".tmp", "oma", $"{context.ReportId}-after-restore-invariants.json");
         RunnerJson.Write(definitionsPath, new InvariantDefinitionFile([
             new InvariantDefinition(
                 "restore.key_queries_available_after_restore",

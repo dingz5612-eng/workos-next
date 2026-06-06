@@ -14,7 +14,7 @@ import {
 
 const cli = parseArgs(process.argv.slice(2));
 const checkName = "check-domain-packs";
-const out = cli.value("out", ".tmp/rt2/domain-pack-report.json");
+const out = cli.value("out", "artifacts/oma/checks/domain-pack-report.json");
 
 function main() {
   if (cli.has("self-test")) {

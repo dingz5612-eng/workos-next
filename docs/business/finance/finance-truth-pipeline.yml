@@ -1,5 +1,5 @@
 {
-  "version": "rt3.finance-truth-pipeline.v1",
+  "version": "oma.finance.finance-truth-pipeline.v1",
   "packId": "FinanceTruthPack",
   "moneyKernelPack": "MoneyKernelPack",
   "goal": "route every MoneyBasis through FinanceTruthPack before canonical financial facts are committed",
