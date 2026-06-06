@@ -14,7 +14,7 @@
     "manualInvariantPassForbidden": true
   },
   "gateBinding": {
-    "gateInput": "omaRuntimeInvariantResult",
+    "gateInput": "oamRuntimeInvariantResult",
     "failureSeverity": "P0"
   }
 }

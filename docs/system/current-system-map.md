@@ -85,3 +85,7 @@ PC Governance Surface 负责治理：财务控制、经理控制塔、治理中�
 - local development helper
 
 历史阶段证明、历史基线、历史验收包和旧架构脚本不得保留为当前 CI 或规则来源。
+
+## 8. 当前合并验收网
+
+合并前必须通过当前 OAM 守卫、合同校验、路径引用完整性、PC 单测、移动端单测、移动端覆盖率、真实浏览器 smoke、后端 Release 构建、后端测试和 Runtime Contract。PC 测试是独立验收项；合同断链、旧 artifact 引用、旧入口语义和 Control Plane 虚假脚本引用都必须阻断合并。

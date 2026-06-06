@@ -11,6 +11,12 @@ WorkOSNext 已收敛为唯一当前 OAM 架构：主执行链是 Operations Runt
 - `infra`: 只保留当前 Postgres、本地 compose、当前迁移链职责。
 - `.github`: 只保留当前 OAM CI 和 PR 检查口径。
 
+## 本次审查修复覆盖
+
+本次收敛覆盖并复验了以下合并阻断点：PC 测试已纳入独立 CI 入口，合同本地路径引用已由当前引用完整性检查保护，旧入口和旧阶段语义由 OAM 纯净度检查阻断，已删除 artifact 引用已改为当前证据目录或当前生成命令，Control Plane runner 的 `script`、`checkRef`、`evidenceRef` 均指向真实存在或当前运行时生成的路径。
+
+阶段 7 全量测试在当前源码上重新构建运行完成：移动端单测、PC 单测、移动端覆盖率、Playwright smoke、`WorkOSNext.sln` Release 构建、后端 Unit、Runtime Integration、Database Security、Policy as Code、Release Evidence 和 Runtime Contract 全部通过。
+
 ## 全项目文件职责和边界表
 
 | 范围 | 当前职责 | 边界 |
@@ -86,7 +92,13 @@ WorkOSNext 已收敛为唯一当前 OAM 架构：主执行链是 Operations Runt
 - Policy tests: line 0.95%，branch 0.78%。
 - Release control tests: line 0.00%，branch 0.00%。
 
-测试结果：移动端 306 个单测通过，浏览器 5 个 e2e 通过；后端 Unit 224 个、Policy 4 个、Release 3 个、Database 9 个、Runtime Integration 55 个全部通过；Runtime Contract 通过。
+阶段 7 重新构建测试结果：
+- 移动端单测：57 个测试文件、306 个用例通过。
+- PC 单测：4 个测试文件、4 个用例通过，作为独立验收入口。
+- Playwright smoke：5 个真实浏览器用例通过。
+- 后端构建：`WorkOSNext.sln` Release 构建通过，仅保留既有 analyzer warning。
+- 后端测试：Unit 224 个、Runtime Integration 55 个、Database Security 9 个、Policy as Code 4 个、Release Evidence 3 个全部通过。
+- Runtime Contract：运行型合同检查通过。
 
 ## 远端分支处置建议
 
@@ -108,4 +120,4 @@ WorkOSNext 已收敛为唯一当前 OAM 架构：主执行链是 Operations Runt
 
 ## 最终验收结论
 
-当前分支满足“纯净当前架构重建”的本地验收：当前 OAM 架构唯一，旧兼容和旧阶段噪音已删除或重写，服务/模块/包/infra/.github 已一等归类，关键守卫、构建、前端测试、浏览器测试、后端测试、数据库安全测试和运行时合同均通过。
+当前架构纯净验收通过。当前分支满足“纯净当前架构重建”的本地验收：当前 OAM 架构唯一，旧兼容和旧阶段噪音已删除或重写，服务/模块/包/infra/.github 已一等归类，关键守卫、构建、前端测试、PC 测试、浏览器测试、后端测试、数据库安全测试和运行时合同均通过。
