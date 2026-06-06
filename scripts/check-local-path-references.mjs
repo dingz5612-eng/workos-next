@@ -18,6 +18,8 @@ const scanRoots = [
 const scanExtensions = new Set([".json", ".yml", ".yaml", ".md", ".mjs", ".js", ".cs"]);
 const skipDirectories = new Set([".git", ".tmp", "node_modules", "bin", "obj", "dist", "coverage", "TestResults"]);
 const generatedArtifactPrefixes = [
+  "apps/mobile/dist",
+  "apps/mobile/dist/",
   "artifacts/",
   "artifacts/oam/checks/",
   "artifacts/oam/test-results/",
@@ -134,7 +136,7 @@ function toRepoPath(file) {
 function runSelfTest() {
   const fakeFile = "docs/contracts/path-reference-self-test.json";
   const textByFile = new Map([
-    [fakeFile, '{"migration":"infra/db/migrations/__missing_path_reference_self_test.sql"}']
+    [fakeFile, '{"migration":"infra/db/migrations/__missing_path_reference_self_test.sql","generated":"apps/mobile/dist"}']
   ]);
   const violations = validateLocalPathReferences({
     files: [path.join(repoRoot, fakeFile)],
