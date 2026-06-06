@@ -89,6 +89,8 @@ jobs:
           node scripts/check-truth-owners.mjs
           node scripts/check-finance-truth.mjs --self-test
           node scripts/check-finance-truth.mjs
+          node scripts/check-ledger-semantic-rules.mjs
+          node scripts/finance/check-finance-semantic-truth.mjs
           node scripts/check-shared-governance-boundary.mjs --self-test
           node scripts/check-shared-governance-boundary.mjs
           node scripts/check-dormitory-golden-domain.mjs --self-test

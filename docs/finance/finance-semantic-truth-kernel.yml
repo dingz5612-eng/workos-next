@@ -28,7 +28,7 @@
     "balanced but wrong accountType fails before commit"
   ],
   "artifacts": [
-    "artifacts/finance/finance-semantic-truth-result.json",
+    "artifacts/oam/checks/finance-semantic-truth-result.json",
     "artifacts/oam/checks/ledger-semantic-result.json"
   ],
   "tests": [

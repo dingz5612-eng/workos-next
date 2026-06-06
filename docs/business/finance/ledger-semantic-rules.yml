@@ -59,7 +59,7 @@
     "tests/WorkOS.RuntimeIntegrationTests/DormitoryFinanceRuntimeSemanticTests.cs"
   ],
   "artifactRefs": [
-    "artifacts/finance/finance-semantic-truth-result.json",
+    "artifacts/oam/checks/finance-semantic-truth-result.json",
     "artifacts/oam/checks/ledger-semantic-result.json"
   ]
 }

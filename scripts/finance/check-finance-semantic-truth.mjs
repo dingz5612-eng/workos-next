@@ -29,7 +29,7 @@ const violations = [
   ...validateTestsAndCi()
 ];
 
-writeReport("artifacts/finance/finance-semantic-truth-result.json", checkName, violations, files);
+writeReport("artifacts/oam/checks/finance-semantic-truth-result.json", checkName, violations, files);
 failIfViolations("Finance semantic truth check", violations);
 console.log("Finance semantic truth check: PASS");
 
