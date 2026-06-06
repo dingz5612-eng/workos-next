@@ -1,5 +1,7 @@
 # OAM 最终审查修复报告
 
+> 职责边界：本文是人工审查修复快照，只说明当时发现与处置过的缺陷；它不替代 P0 规则账本、证据根、CI 或本地总门禁。当前发布裁决以 `docs/system/oam-p0-rule-ledger.json`、`artifacts/oam/final-report.json` 和 `scripts/oam/run-control-plane-checks.ps1` 为准。
+
 ## 审查缺陷清单
 
 | 缺陷 | 影响 | 当前处置 |

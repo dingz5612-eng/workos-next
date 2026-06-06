@@ -17,6 +17,7 @@ export function buildSearchResultVM(item = {}, ctx = {}) {
   const firstCardId = item.firstCardId || item.first_card_id || "";
   const action = searchActionFor({ ...item, resultType, workspaceId, cardId, workItemId, evidenceId, traceId, learningId, caseId, commandId }, ctx);
   const admission = admissionForSearchItem(item, action);
+  const gateResult = gateResultForSearchItem(item, admission);
   const admissionSurface = admissionCopy(admission, ctx, "search");
   const actionLabel = admissionActionLabel(action, admission, ctx);
   const explicitNextAction = safeLocalized(item.localizedNextAction ?? item.nextActionLabel ?? item.nextAction, ctx);
@@ -39,6 +40,7 @@ export function buildSearchResultVM(item = {}, ctx = {}) {
     templateWorkspaceId,
     firstCardId,
     admission,
+    gateResult,
     visibleAllowed: admission.visibleAllowed,
     prepareAllowed: admission.prepareAllowed,
     confirmAllowed: admission.confirmAllowed,
@@ -239,6 +241,20 @@ function admissionForSearchItem(item = {}, action = {}) {
     mode: "contract_preview",
     reason: "visible_only"
   });
+}
+
+function gateResultForSearchItem(item = {}, admission = {}) {
+  const source = item.gateResult || {};
+  return {
+    status: source.status || (admission.visibleAllowed ? "visible_readonly" : "hidden"),
+    source: source.source || "SearchKernelService",
+    sourceType: source.sourceType || item.sourceRefs?.sourceType || "",
+    checkedAt: source.checkedAt || "",
+    policyVersion: source.policyVersion || "oam.search-permission-policy.v1",
+    admissionDecisionRef: source.admissionDecisionRef || "",
+    writeThroughSearchAllowed: source.writeThroughSearchAllowed === true ? true : false,
+    writeBusinessFactAllowed: source.writeBusinessFactAllowed === true ? true : false
+  };
 }
 
 function safeLocalized(value, ctx) {

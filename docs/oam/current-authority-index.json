@@ -1,0 +1,267 @@
+{
+  "version": "oam.current-authority-index.v1",
+  "status": "authoritative",
+  "architecture": "oam.current",
+  "coreAuthorities": {
+    "currentArchitecture": "docs/oam/current-architecture.md",
+    "machineContract": "docs/contracts/oam.current.json",
+    "manifest": "docs/oam/current-architecture.manifest.json",
+    "systemMap": "docs/system/current-system-map.md"
+  },
+  "identityClasses": [
+    "current_architecture_authority",
+    "current_business_contract",
+    "current_admission_contract",
+    "current_truth_contract",
+    "current_manual",
+    "current_rule_script",
+    "current_runtime_implementation",
+    "current_database_asset",
+    "current_evidence_asset",
+    "historical_design_input",
+    "deprecated_file",
+    "read_side_allowed_file"
+  ],
+  "entries": [
+    {
+      "path": "docs/oam/current-architecture.md",
+      "identity": "current_architecture_authority",
+      "owner": "oam-release-owner",
+      "checker": "scripts/oam/check-current-authority-index.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "notesZh": "当前 OAM 人工可读架构权威。"
+    },
+    {
+      "path": "docs/contracts/oam.current.json",
+      "identity": "current_architecture_authority",
+      "owner": "oam-release-owner",
+      "checker": "scripts/validate-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/runtime-proof.json",
+      "currentTruthAllowed": true,
+      "notesZh": "当前 OAM 机器合同权威。"
+    },
+    {
+      "path": "docs/oam/current-architecture.manifest.json",
+      "identity": "current_architecture_authority",
+      "owner": "oam-release-owner",
+      "checker": "scripts/oam/check-current-oam.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "notesZh": "当前目录、服务、模块、证据根和 CI 绑定清单。"
+    },
+    {
+      "path": "docs/system/current-system-map.md",
+      "identity": "current_architecture_authority",
+      "owner": "oam-release-owner",
+      "checker": "scripts/check-rule-authority.mjs",
+      "evidence": "artifacts/oam/evidence/master-outline-proof.json",
+      "currentTruthAllowed": true,
+      "notesZh": "当前系统边界图。"
+    },
+    {
+      "path": "docs/system/oam-p0-rule-ledger.json",
+      "identity": "current_rule_script",
+      "owner": "oam-release-owner",
+      "checker": "scripts/oam/check-p0-rule-ledger.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "notesZh": "P0 发布内核机器账本。"
+    },
+    {
+      "path": "docs/contracts/business/oam-business-object-field-registry.json",
+      "identity": "current_business_contract",
+      "owner": "business-contract-owner",
+      "checker": "scripts/oam/check-business-object-field-registry.mjs",
+      "evidence": "artifacts/oam/evidence/runtime-proof.json",
+      "currentTruthAllowed": true,
+      "notesZh": "住宿、财务、维修、身份、治理业务对象与字段总表。"
+    },
+    {
+      "path": "docs/contracts/business/oam-workflow-state-registry.json",
+      "identity": "current_business_contract",
+      "owner": "workflow-contract-owner",
+      "checker": "scripts/oam/check-workflow-state-registry.mjs",
+      "evidence": "artifacts/oam/evidence/runtime-proof.json",
+      "currentTruthAllowed": true,
+      "notesZh": "WorkItem 流程、状态、动作、前置条件、证据和修正路径总表。"
+    },
+    {
+      "path": "docs/business/business-line-registry.json",
+      "identity": "current_business_contract",
+      "owner": "business-admission-owner",
+      "checker": "scripts/check-business-line-admission.mjs",
+      "evidence": "artifacts/oam/evidence/master-design-proof.json",
+      "currentTruthAllowed": true,
+      "notesZh": "业务线准入状态权威。"
+    },
+    {
+      "path": "docs/contracts/admission/admission-matrix.json",
+      "identity": "current_admission_contract",
+      "owner": "admission-kernel-owner",
+      "checker": "scripts/check-admission-kernel.mjs",
+      "evidence": "artifacts/oam/evidence/high-risk-trust-proof.json",
+      "currentTruthAllowed": true,
+      "notesZh": "准入动作、权限、设备和阻断原因权威。"
+    },
+    {
+      "path": "docs/business/truth-owner-registry.yml",
+      "identity": "current_truth_contract",
+      "owner": "truth-owner-kernel-owner",
+      "checker": "scripts/check-truth-owners.mjs",
+      "evidence": "artifacts/oam/evidence/truth-ownership-proof.json",
+      "currentTruthAllowed": true,
+      "notesZh": "业务真值 owner 和禁止 owner 权威。"
+    },
+    {
+      "path": "docs/contracts/definition/workitem-definition-registry.json",
+      "identity": "current_business_contract",
+      "owner": "definition-kernel-owner",
+      "checker": "scripts/check-admission-kernel.mjs",
+      "evidence": "artifacts/oam/evidence/runtime-proof.json",
+      "currentTruthAllowed": true,
+      "notesZh": "WorkItem Definition、allowedFacts、forbiddenFacts、ledgerPolicy 权威。"
+    },
+    {
+      "path": "docs/contracts/search/search-contract.json",
+      "identity": "current_business_contract",
+      "owner": "search-kernel-owner",
+      "checker": "scripts/check-search-kernel.mjs",
+      "evidence": "artifacts/oam/evidence/search-readonly-proof.json",
+      "currentTruthAllowed": true,
+      "notesZh": "Search 只读自证合同。"
+    },
+    {
+      "path": "docs/contracts/language/language-contract.json",
+      "identity": "current_business_contract",
+      "owner": "language-kernel-owner",
+      "checker": "scripts/check-language-kernel.mjs",
+      "evidence": "artifacts/oam/evidence/surface-language-proof.json",
+      "currentTruthAllowed": true,
+      "notesZh": "语言内核和多语言目录权威。"
+    },
+    {
+      "path": "scripts/oam/check-surface-language-v2.mjs",
+      "identity": "current_rule_script",
+      "owner": "surface-owner",
+      "checker": "scripts/oam/check-surface-language-v2.mjs",
+      "evidence": "artifacts/oam/checks/surface-language-v2-result.json",
+      "currentTruthAllowed": false,
+      "notesZh": "移动端普通用户语言、PC 治理面隔离、结构化准入和 Search 读侧门禁的当前验收脚本。"
+    },
+    {
+      "path": "infra/db/migrations",
+      "identity": "current_database_asset",
+      "owner": "runtime-db-owner",
+      "checker": "scripts/oam/check-db-ownership-map.mjs",
+      "evidence": "artifacts/oam/evidence/runtime-proof.json",
+      "currentTruthAllowed": true,
+      "notesZh": "当前 OAM 数据库迁移链。"
+    },
+    {
+      "path": "docs/contracts/database/oam-db-ownership-map.json",
+      "identity": "current_database_asset",
+      "owner": "runtime-db-owner",
+      "checker": "scripts/oam/check-db-ownership-map.mjs",
+      "evidence": "artifacts/oam/evidence/runtime-proof.json",
+      "currentTruthAllowed": true,
+      "notesZh": "每张当前 OAM 数据库表的 owner、写入口、读侧、迁移和测试绑定。"
+    },
+    {
+      "path": "services/core-api/WorkOS.Api/Runtime",
+      "identity": "current_runtime_implementation",
+      "owner": "runtime-kernel-owner",
+      "checker": "scripts/check-runtime-write-paths.mjs",
+      "evidence": "artifacts/oam/evidence/runtime-proof.json",
+      "currentTruthAllowed": true,
+      "notesZh": "Confirm Runtime、Admission Kernel、Unit of Work、Search、Finance、Trust 的运行实现。"
+    },
+    {
+      "path": "apps/mobile/src",
+      "identity": "current_runtime_implementation",
+      "owner": "surface-owner",
+      "checker": "scripts/check-language-kernel.mjs",
+      "evidence": "artifacts/oam/evidence/surface-language-proof.json",
+      "currentTruthAllowed": false,
+      "notesZh": "移动端只能展示、解释、排队和跳转，不拥有业务真值。"
+    },
+    {
+      "path": "apps/pc/src",
+      "identity": "current_runtime_implementation",
+      "owner": "pc-governance-owner",
+      "checker": "scripts/check-surface-contract.mjs",
+      "evidence": "artifacts/oam/evidence/surface-language-proof.json",
+      "currentTruthAllowed": false,
+      "notesZh": "PC 治理面可以治理和审批，不直接写普通业务事实。"
+    },
+    {
+      "path": "docs/contracts/evidence/evidence-graph-refs-contract.json",
+      "identity": "current_evidence_asset",
+      "owner": "release-evidence-owner",
+      "checker": "scripts/oam/check-evidence-contract-refs.mjs",
+      "evidence": "artifacts/oam/checks/company-kernel-alignment-result.json",
+      "currentTruthAllowed": false,
+      "notesZh": "证据根引用合同，证明 required refs 真实存在。"
+    },
+    {
+      "path": "artifacts/oam/evidence",
+      "identity": "current_evidence_asset",
+      "owner": "release-evidence-owner",
+      "checker": "scripts/oam/check-current-evidence-root.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "notesZh": "证据根证明检查执行状态，不替代业务事实权威。"
+    }
+  ],
+  "historicalDesignInputs": [
+    {
+      "path": "docs/review/oam-business-operating-input-audit.md",
+      "allowedUseZh": "只能作为业务梳理输入，不得作为当前业务真值、运行合同或准入权威。",
+      "currentTruthAllowed": false
+    },
+    {
+      "path": "docs/review/PROJECT_REVIEW_MANUAL.md",
+      "allowedUseZh": "只能作为审查手册入口，不重复定义机器合同。",
+      "currentTruthAllowed": false
+    },
+    {
+      "path": "docs/oam/review-defect-record.md",
+      "allowedUseZh": "只能记录已处理缺陷，不得作为当前 GO/NO_GO 权威。",
+      "currentTruthAllowed": false
+    }
+  ],
+  "readSideAllowedTerms": [
+    {
+      "term": "workspace",
+      "allowedUseZh": "读侧路由、旧投影输入和 WorkItem 展示锚点。",
+      "forbiddenUseZh": "不得作为业务真值 owner 或业务写入口。"
+    },
+    {
+      "term": "card",
+      "allowedUseZh": "读侧展示锚点和 WorkItem Definition 来源标识。",
+      "forbiddenUseZh": "不得作为确认权威、账务事实或字段 owner。"
+    },
+    {
+      "term": "slice",
+      "allowedUseZh": "合同中的领域切片标识和运行适配层标识。",
+      "forbiddenUseZh": "不得绕过 OAM 模块、Confirm Runtime 或 Unit of Work。"
+    },
+    {
+      "term": "projection",
+      "allowedUseZh": "Outbox 之后的只读视图同步状态。",
+      "forbiddenUseZh": "不得写业务事实、账务事实或准入裁决。"
+    },
+    {
+      "term": "lens",
+      "allowedUseZh": "只读聚合视图和导航入口。",
+      "forbiddenUseZh": "不得确认 WorkItem 或替代 Truth Owner。"
+    }
+  ],
+  "deprecatedFiles": [],
+  "invariants": [
+    "Current authority must resolve through the four core OAM files.",
+    "Historical design input cannot be referenced as current truth authority.",
+    "读侧允许术语不能拥有业务事实。",
+    "Every current authority entry must bind owner, checker, and evidence path."
+  ]
+}

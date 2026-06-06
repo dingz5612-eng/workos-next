@@ -17,6 +17,7 @@
     "ranking",
     "businessContext",
     "availableActions",
+    "gateResult",
     "traceRefs",
     "sourceRefs",
     "language",
@@ -112,6 +113,19 @@
     "availableActions": {
       "type": "array",
       "itemRule": "read-only actions only; writeBusinessFact must be false"
+    },
+    "gateResult": {
+      "type": "object",
+      "required": [
+        "status",
+        "source",
+        "sourceType",
+        "checkedAt",
+        "policyVersion",
+        "admissionDecisionRef",
+        "writeThroughSearchAllowed",
+        "writeBusinessFactAllowed"
+      ]
     },
     "traceRefs": {
       "type": "string[]"

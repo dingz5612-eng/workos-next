@@ -80,6 +80,7 @@
     "ranking",
     "businessContext",
     "availableActions",
+    "gateResult",
     "traceRefs",
     "sourceRefs",
     "language",
@@ -127,7 +128,7 @@
   ],
   "invariants": [
     "Every SearchResult includes an admission object.",
-    "Every SearchResult includes permission, lineage, freshness, ranking, businessContext, availableActions, traceRefs, and sourceRefs.",
+    "Every SearchResult includes permission, lineage, freshness, ranking, businessContext, availableActions, gateResult, traceRefs, and sourceRefs.",
     "SearchResult.target.writeThroughSearchAllowed must be false.",
     "SearchResult.availableActions may only contain read-only navigation or learning actions with writeBusinessFact=false.",
     "workspaceCardProjection may appear only as a source type, adapter name, or sourceRefs value; the external resultType is workspaceCardCompatibility.",

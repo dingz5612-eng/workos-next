@@ -266,6 +266,7 @@
     ],
     "requiredFiles": [
       "artifacts/oam/evidence/evidence-graph.json",
+      "artifacts/oam/evidence/execution-log.jsonl",
       "artifacts/oam/evidence/current-oam-final-report.json",
       "artifacts/oam/evidence/runtime-proof.json",
       "artifacts/oam/evidence/truth-ownership-proof.json",

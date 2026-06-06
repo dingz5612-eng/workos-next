@@ -5,11 +5,11 @@
   "binding": {
     "root": "current-oam-trust-closure-v1",
     "kind": "truth-ownership-proof",
-    "commitSha": "433ec9537bc7b355b978ef6b9bf7bf37a9cc0168",
+    "commitSha": "ea4a542c9e4e654919356a21fd9751f147df920c",
     "branch": "codex/oam-stage-6-current-architecture-cleanup",
     "ciRunId": "local",
-    "generatedAt": "2026-06-06T11:19:43.528Z",
-    "artifactDigest": "sha256:85830453ed41586506c0852e6164db0714334acded71d9c2ae1df2ef515710b9"
+    "generatedAt": "2026-06-06T12:43:40.822Z",
+    "artifactDigest": "sha256:cb1c83e0469e22fbe9a93ce53b8b542b72108e654aef5a46b381ff9909610cb8"
   },
   "summary": {
     "status": "passed",
@@ -25,6 +25,10 @@
     "commands": [
       {
         "command": "node scripts/oam/check-current-oam.mjs",
+        "status": "required"
+      },
+      {
+        "command": "node scripts/oam/check-p0-rule-ledger.mjs",
         "status": "required"
       },
       {
@@ -170,28 +174,28 @@
     },
     "mobile": {
       "lines": {
-        "total": 3996,
-        "covered": 3304,
+        "total": 4004,
+        "covered": 3320,
         "skipped": 0,
-        "pct": 82.68
+        "pct": 82.91
       },
       "statements": {
-        "total": 4823,
-        "covered": 3788,
+        "total": 4828,
+        "covered": 3802,
         "skipped": 0,
-        "pct": 78.54
+        "pct": 78.74
       },
       "functions": {
-        "total": 1401,
-        "covered": 1190,
+        "total": 1405,
+        "covered": 1195,
         "skipped": 0,
-        "pct": 84.93
+        "pct": 85.05
       },
       "branches": {
-        "total": 7379,
-        "covered": 4677,
+        "total": 7409,
+        "covered": 4711,
         "skipped": 0,
-        "pct": 63.38
+        "pct": 63.58
       },
       "branchesTrue": {
         "total": 0,
@@ -206,25 +210,30 @@
       "tests/WorkOS.DatabaseSecurityTests/TestResults/66b98ba3-fd89-456e-9c8a-db607cd1821e/coverage.cobertura.xml",
       "tests/WorkOS.DatabaseSecurityTests/TestResults/adea6eaf-b558-40df-9cab-538058ef9739/coverage.cobertura.xml",
       "tests/WorkOS.DatabaseSecurityTests/TestResults/b18f36f3-4d98-4a1e-b180-ce1e78eb3e24/coverage.cobertura.xml",
+      "tests/WorkOS.DatabaseSecurityTests/TestResults/bda8a5cb-8999-495e-bdca-06a5ded9468f/coverage.cobertura.xml",
       "tests/WorkOS.DatabaseSecurityTests/TestResults/d2b5500f-4c0d-4bde-8c23-ac8e71d305e0/coverage.cobertura.xml",
       "tests/WorkOS.PolicyAsCodeTests/TestResults/1750c98a-5aab-4365-9131-c5c63d9d364d/coverage.cobertura.xml",
       "tests/WorkOS.PolicyAsCodeTests/TestResults/2242c17b-bf06-4394-8a9f-4efb6f8c6d23/coverage.cobertura.xml",
+      "tests/WorkOS.PolicyAsCodeTests/TestResults/655e6ed3-92d3-4386-b9df-49c0db17a553/coverage.cobertura.xml",
       "tests/WorkOS.PolicyAsCodeTests/TestResults/6aaeb3e2-e4cb-4529-ae59-2377acd1fc70/coverage.cobertura.xml",
       "tests/WorkOS.PolicyAsCodeTests/TestResults/6b5718e8-cb1c-47b8-8586-05039a689572/coverage.cobertura.xml",
       "tests/WorkOS.PolicyAsCodeTests/TestResults/ef539d11-1842-4f32-9a20-9785fc71e25f/coverage.cobertura.xml",
       "tests/WorkOS.ReleaseEvidenceTests/TestResults/14ac0a1a-2a95-4c0b-93e8-1d060ad40551/coverage.cobertura.xml",
       "tests/WorkOS.ReleaseEvidenceTests/TestResults/75f271dd-e3b9-4f09-8964-c39e24ddb4a1/coverage.cobertura.xml",
+      "tests/WorkOS.ReleaseEvidenceTests/TestResults/aa64e8b6-a256-40a9-87f4-dbb691624eb2/coverage.cobertura.xml",
       "tests/WorkOS.ReleaseEvidenceTests/TestResults/e2dab566-9600-45af-8b5a-a6c35b647edd/coverage.cobertura.xml",
       "tests/WorkOS.ReleaseEvidenceTests/TestResults/f4b50db9-83da-4b95-93c2-08cc9dacda51/coverage.cobertura.xml",
       "tests/WorkOS.ReleaseEvidenceTests/TestResults/fd3b827e-a278-4a2e-ab08-7c590e6d5307/coverage.cobertura.xml",
       "tests/WorkOS.RuntimeIntegrationTests/TestResults/0b7ccc16-ea0f-411d-b552-18cf64062179/coverage.cobertura.xml",
       "tests/WorkOS.RuntimeIntegrationTests/TestResults/565e6282-b437-4d3d-9f90-f50089456d6e/coverage.cobertura.xml",
       "tests/WorkOS.RuntimeIntegrationTests/TestResults/67f98990-cc2f-4a6e-a7fd-18456864ae0d/coverage.cobertura.xml",
+      "tests/WorkOS.RuntimeIntegrationTests/TestResults/904db4ae-25b4-48e6-b8a0-1ff58677ced4/coverage.cobertura.xml",
       "tests/WorkOS.RuntimeIntegrationTests/TestResults/b2e404f3-bbbb-48a6-b2db-d783a80f8837/coverage.cobertura.xml",
       "tests/WorkOS.RuntimeIntegrationTests/TestResults/e8f4e326-b616-43b3-8d32-745c25d35180/coverage.cobertura.xml",
       "tests/WorkOS.RuntimeIntegrationTests/TestResults/f45dcbe4-41b8-40be-93d4-48e260f7ba2c/coverage.cobertura.xml",
       "tests/WorkOS.UnitTests/TestResults/14f1ae66-d410-4347-8c0a-0dfb3b0e3ede/coverage.cobertura.xml",
       "tests/WorkOS.UnitTests/TestResults/385566ad-9d70-41c7-877e-7f48d829e5f3/coverage.cobertura.xml",
+      "tests/WorkOS.UnitTests/TestResults/7bd8a8f3-2722-4229-acfd-5815e5451535/coverage.cobertura.xml",
       "tests/WorkOS.UnitTests/TestResults/8415554f-fc29-4949-9f06-a1cf4bd61dab/coverage.cobertura.xml",
       "tests/WorkOS.UnitTests/TestResults/f4355d82-462e-4de3-88d7-5ab9626f47e1/coverage.cobertura.xml",
       "tests/WorkOS.UnitTests/TestResults/f49c440a-de27-4cae-89f4-1e51bf65acf5/coverage.cobertura.xml"

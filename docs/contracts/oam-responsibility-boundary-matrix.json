@@ -1,0 +1,239 @@
+{
+  "version": "oam.responsibility-boundary-matrix.v1",
+  "status": "authoritative",
+  "architecture": "oam.current",
+  "categories": [
+    {
+      "categoryId": "manuals",
+      "displayNameZh": "手册与人工说明",
+      "allowedResponsibilities": ["解释当前 OAM 操作方式", "说明查看证据和失败修复路径"],
+      "forbiddenResponsibilities": ["重复定义机器合同", "打开生产准入", "替代证据根"],
+      "upstreamAuthority": "docs/oam/current-authority-index.json",
+      "acceptanceScript": "scripts/oam/check-current-authority-index.mjs",
+      "failureHandling": "修正文档身份或删除冲突说明后重跑权威索引检查。",
+      "reuseScope": "人工审查、交接、发布说明"
+    },
+    {
+      "categoryId": "architecture-contracts",
+      "displayNameZh": "当前架构合同",
+      "allowedResponsibilities": ["定义 OAM 机器身份", "定义唯一业务写路径", "定义目录、模块、证据根和 CI 绑定"],
+      "forbiddenResponsibilities": ["引用旧架构权威", "允许页面私有业务写 API", "允许读侧写业务事实"],
+      "upstreamAuthority": "docs/oam/current-architecture.md",
+      "acceptanceScript": "scripts/validate-contracts.mjs",
+      "failureHandling": "修复合同字段或路径引用后重跑合同校验和 OAM purity。",
+      "reuseScope": "全部模块、运行时代码、规则脚本、CI"
+    },
+    {
+      "categoryId": "business-contracts",
+      "displayNameZh": "业务合同",
+      "allowedResponsibilities": ["定义业务线、业务对象、字段、流程、状态、动作和真值归属"],
+      "forbiddenResponsibilities": ["直接写正式财务事实", "绕过准入内核", "把读侧摘要设为真值"],
+      "upstreamAuthority": "docs/contracts/oam.current.json",
+      "acceptanceScript": "scripts/oam/check-business-object-field-registry.mjs",
+      "failureHandling": "补齐 owner、字段、流程、准入、真值引用后重跑业务闭环检查。",
+      "reuseScope": "住宿、财务、维修、身份、治理"
+    },
+    {
+      "categoryId": "admission-contracts",
+      "displayNameZh": "准入合同",
+      "allowedResponsibilities": ["定义 visible、prepare、confirm、production、权限、设备、原因、证据要求"],
+      "forbiddenResponsibilities": ["用 CI green 打开生产", "用 Search 命中打开办理", "用 Surface 可见打开 confirm"],
+      "upstreamAuthority": "docs/oam/current-admission-state.json",
+      "acceptanceScript": "scripts/check-admission-kernel.mjs",
+      "failureHandling": "修复准入矩阵、业务线状态或运行时断言后重跑 Admission Kernel。",
+      "reuseScope": "Confirm Runtime、Search、Mobile、PC、Correction Center"
+    },
+    {
+      "categoryId": "truth-contracts",
+      "displayNameZh": "真值合同",
+      "allowedResponsibilities": ["声明事实 owner、禁止 owner、账务 owner、读侧用途"],
+      "forbiddenResponsibilities": ["让业务域直接产生正式 LedgerEntry", "让 Projection/Receipt/Summary 成为事实写入口"],
+      "upstreamAuthority": "docs/business/truth-owner-registry.yml",
+      "acceptanceScript": "scripts/check-truth-owners.mjs",
+      "failureHandling": "修正 owner、forbiddenOwner、ledgerPolicy 后重跑 Truth Owner 和 Finance 检查。",
+      "reuseScope": "业务事实、财务事实、读侧投影、证据链"
+    },
+    {
+      "categoryId": "rule-scripts",
+      "displayNameZh": "规则脚本",
+      "allowedResponsibilities": ["校验合同、边界、路径、证据、覆盖率和发布阻断条件"],
+      "forbiddenResponsibilities": ["生成业务事实", "替代运行时权限判断", "跳过失败检查"],
+      "upstreamAuthority": "scripts/oam/run-control-plane-checks.ps1",
+      "acceptanceScript": "scripts/oam/check-oam-responsibility-boundary-matrix.mjs",
+      "failureHandling": "把缺失规则接入总门禁和 CI 后重跑总门禁。",
+      "reuseScope": "本地开发、CI、发布前验收"
+    },
+    {
+      "categoryId": "runtime-services",
+      "displayNameZh": "运行时代码",
+      "allowedResponsibilities": ["执行 Confirm Runtime、Admission Kernel、Unit of Work、Money/Ledger Kernel、Outbox、Projection、Search"],
+      "forbiddenResponsibilities": ["绕过 WorkItem Definition", "绕过可信设备", "原地修改已确认事实"],
+      "upstreamAuthority": "docs/contracts/oam.current.json",
+      "acceptanceScript": "scripts/check-runtime-write-paths.mjs",
+      "failureHandling": "修复运行时路径、权限、UOW 或测试断言后重跑后端测试。",
+      "reuseScope": "core-api 当前唯一服务"
+    },
+    {
+      "categoryId": "mobile-surface",
+      "displayNameZh": "移动端",
+      "allowedResponsibilities": ["展示、解释、排队、提交到合法办理入口", "显示准入与失败原因"],
+      "forbiddenResponsibilities": ["拥有业务真值", "暴露普通用户不需要的内部运行术语", "直接写业务事实"],
+      "upstreamAuthority": "docs/surface/surface-contract.yml",
+      "acceptanceScript": "scripts/oam/check-surface-language-v2.mjs",
+      "failureHandling": "修正文案、语言键、selector 或路由后重跑移动端测试。",
+      "reuseScope": "普通业务办理界面"
+    },
+    {
+      "categoryId": "pc-governance-surface",
+      "displayNameZh": "PC 治理面",
+      "allowedResponsibilities": ["治理、审批、导出、审计、发布控制"],
+      "forbiddenResponsibilities": ["被移动端普通文案复用", "直接写普通业务事实", "绕过 Confirm Runtime"],
+      "upstreamAuthority": "docs/surface/pc-governance-plane-contract.yml",
+      "acceptanceScript": "scripts/check-surface-contract.mjs",
+      "failureHandling": "修正治理面边界、权限或测试后重跑 PC 测试。",
+      "reuseScope": "治理角色和发布角色"
+    },
+    {
+      "categoryId": "search-read-side",
+      "displayNameZh": "Search 与读侧",
+      "allowedResponsibilities": ["发现、解释、排序、权限过滤、跳转合法入口"],
+      "forbiddenResponsibilities": ["直接确认", "写业务事实", "替代准入裁决"],
+      "upstreamAuthority": "docs/contracts/search/search-contract.json",
+      "acceptanceScript": "scripts/check-search-kernel.mjs",
+      "failureHandling": "修复 SearchResult 自证字段、禁止动作或测试后重跑 Search Kernel。",
+      "reuseScope": "Mobile、PC、读侧投影和学习入口"
+    },
+    {
+      "categoryId": "database-assets",
+      "displayNameZh": "数据库资产",
+      "allowedResponsibilities": ["保存当前 OAM 运行事实、证据、审计、账务、投影"],
+      "forbiddenResponsibilities": ["多 owner 写入同一业务事实", "账务表无追加保护", "模块声明不存在表"],
+      "upstreamAuthority": "docs/contracts/database/oam-db-ownership-map.json",
+      "acceptanceScript": "scripts/oam/check-db-ownership-map.mjs",
+      "failureHandling": "修正 DB owner、manifest 或迁移后重跑 DB ownership 检查和数据库安全测试。",
+      "reuseScope": "Postgres 迁移链和运行时持久化"
+    },
+    {
+      "categoryId": "tests-ci-evidence",
+      "displayNameZh": "测试、CI 与证据",
+      "allowedResponsibilities": ["证明检查已执行", "上传 OAM 证据根", "阻断失败发布"],
+      "forbiddenResponsibilities": ["替代业务事实", "把单项绿灯解释为生产准入", "保留非 OAM artifact"],
+      "upstreamAuthority": "docs/oam/current-architecture.manifest.json",
+      "acceptanceScript": "scripts/oam/check-current-evidence-root.mjs",
+      "failureHandling": "补齐产物、修复 CI 或重跑失败测试后重新生成证据根。",
+      "reuseScope": "本地验收、远端 CI、发布审查"
+    }
+  ],
+  "currentContractBindings": [
+    {
+      "contract": "docs/contracts/business/oam-business-object-field-registry.json",
+      "owner": "business-contract-owner",
+      "checker": "scripts/oam/check-business-object-field-registry.mjs",
+      "runtimeBinding": "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs",
+      "testBinding": "tests/WorkOS.RuntimeIntegrationTests",
+      "evidenceBinding": "artifacts/oam/evidence/runtime-proof.json"
+    },
+    {
+      "contract": "docs/contracts/business/oam-workflow-state-registry.json",
+      "owner": "workflow-contract-owner",
+      "checker": "scripts/oam/check-workflow-state-registry.mjs",
+      "runtimeBinding": "services/core-api/WorkOS.Api/Runtime/OperationsRuntimeService.cs",
+      "testBinding": "tests/WorkOS.RuntimeIntegrationTests",
+      "evidenceBinding": "artifacts/oam/evidence/runtime-proof.json"
+    },
+    {
+      "contract": "docs/contracts/evidence/evidence-graph-refs-contract.json",
+      "owner": "release-evidence-owner",
+      "checker": "scripts/oam/check-evidence-contract-refs.mjs",
+      "runtimeBinding": "scripts/oam/generate-current-evidence-root.mjs",
+      "testBinding": "tests/WorkOS.ReleaseEvidenceTests",
+      "evidenceBinding": "artifacts/oam/checks/company-kernel-alignment-result.json"
+    },
+    {
+      "contract": "docs/contracts/database/oam-db-ownership-map.json",
+      "owner": "runtime-db-owner",
+      "checker": "scripts/oam/check-db-ownership-map.mjs",
+      "runtimeBinding": "infra/db/migrations",
+      "testBinding": "tests/WorkOS.DatabaseSecurityTests",
+      "evidenceBinding": "artifacts/oam/evidence/runtime-proof.json"
+    },
+    {
+      "contract": "docs/contracts/oam.current.json",
+      "owner": "oam-release-owner",
+      "checker": "scripts/validate-contracts.mjs",
+      "runtimeBinding": "services/core-api/WorkOS.Api/Runtime",
+      "testBinding": "tests/WorkOS.RuntimeContractTests",
+      "evidenceBinding": "artifacts/oam/evidence/runtime-proof.json"
+    },
+    {
+      "contract": "docs/contracts/admission/admission-matrix.json",
+      "owner": "admission-kernel-owner",
+      "checker": "scripts/check-admission-kernel.mjs",
+      "runtimeBinding": "services/core-api/WorkOS.Api/Runtime/AdmissionKernelService.cs",
+      "testBinding": "tests/WorkOS.UnitTests",
+      "evidenceBinding": "artifacts/oam/evidence/high-risk-trust-proof.json"
+    },
+    {
+      "contract": "docs/business/truth-owner-registry.yml",
+      "owner": "truth-owner-kernel-owner",
+      "checker": "scripts/check-truth-owners.mjs",
+      "runtimeBinding": "services/core-api/WorkOS.Api/Runtime/OperationsUnitOfWork.cs",
+      "testBinding": "tests/WorkOS.PolicyAsCodeTests",
+      "evidenceBinding": "artifacts/oam/evidence/truth-ownership-proof.json"
+    },
+    {
+      "contract": "docs/contracts/definition/workitem-definition-registry.json",
+      "owner": "definition-kernel-owner",
+      "checker": "scripts/check-admission-kernel.mjs",
+      "runtimeBinding": "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs",
+      "testBinding": "tests/WorkOS.RuntimeIntegrationTests",
+      "evidenceBinding": "artifacts/oam/evidence/runtime-proof.json"
+    },
+    {
+      "contract": "docs/contracts/search/search-contract.json",
+      "owner": "search-kernel-owner",
+      "checker": "scripts/check-search-kernel.mjs",
+      "runtimeBinding": "services/core-api/WorkOS.Api/Runtime/SearchKernelService.cs",
+      "testBinding": "tests/WorkOS.UnitTests/SearchKernelServiceTests.cs",
+      "evidenceBinding": "artifacts/oam/evidence/search-readonly-proof.json"
+    },
+    {
+      "contract": "docs/contracts/language/language-contract.json",
+      "owner": "language-kernel-owner",
+      "checker": "scripts/check-language-kernel.mjs",
+      "runtimeBinding": "apps/mobile/src/i18n.js",
+      "testBinding": "apps/mobile/src/__tests__/MobileSurfaceCopyContract.test.js",
+      "evidenceBinding": "artifacts/oam/evidence/surface-language-proof.json"
+    },
+    {
+      "contract": "docs/business/finance/ledger-semantic-rules.yml",
+      "owner": "finance-kernel-owner",
+      "checker": "scripts/check-ledger-semantic-rules.mjs",
+      "runtimeBinding": "services/core-api/WorkOS.Api/Runtime/FinanceTruthKernel.cs",
+      "testBinding": "tests/WorkOS.UnitTests/LedgerSemanticRulesTests.cs",
+      "evidenceBinding": "artifacts/oam/evidence/truth-ownership-proof.json"
+    },
+    {
+      "contract": "docs/finance/finance-semantic-truth-kernel.yml",
+      "owner": "finance-kernel-owner",
+      "checker": "scripts/finance/check-finance-semantic-truth.mjs",
+      "runtimeBinding": "services/core-api/WorkOS.Api/Runtime/FinanceTruthKernel.cs",
+      "testBinding": "tests/WorkOS.UnitTests",
+      "evidenceBinding": "artifacts/oam/evidence/truth-ownership-proof.json"
+    },
+    {
+      "contract": "docs/surface/surface-contract.yml",
+      "owner": "surface-owner",
+      "checker": "scripts/check-surface-contract.mjs",
+      "runtimeBinding": "apps/mobile/src",
+      "testBinding": "apps/mobile/src/__tests__/experienceContract.test.js",
+      "evidenceBinding": "artifacts/oam/evidence/surface-language-proof.json"
+    }
+  ],
+  "invariants": [
+    "Every category must declare allowed and forbidden responsibilities.",
+    "Every category must bind upstream authority and acceptance script.",
+    "Every current contract must bind owner, checker, runtime, test, and evidence.",
+    "Mobile, PC, Search, Projection, Lens, Summary, Profile, and Receipt cannot be business fact write owners."
+  ]
+}

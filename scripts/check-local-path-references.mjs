@@ -20,7 +20,6 @@ const skipDirectories = new Set([".git", ".tmp", "node_modules", "bin", "obj", "
 const generatedArtifactPrefixes = [
   "apps/mobile/dist",
   "apps/mobile/dist/",
-  "artifacts/",
   "artifacts/oam/checks/",
   "artifacts/oam/test-results/",
   "artifacts/oam/evidence/"
@@ -135,15 +134,28 @@ function toRepoPath(file) {
 
 function runSelfTest() {
   const fakeFile = "docs/contracts/path-reference-self-test.json";
+  const oldArtifactRef = ["artifacts", "finance", "old-result.json"].join("/");
   const textByFile = new Map([
-    [fakeFile, '{"migration":"infra/db/migrations/__missing_path_reference_self_test.sql","generated":"apps/mobile/dist"}']
+    [
+      fakeFile,
+      JSON.stringify({
+        migration: "infra/db/migrations/__missing_path_reference_self_test.sql",
+        generated: "apps/mobile/dist",
+        oldArtifact: oldArtifactRef
+      })
+    ]
   ]);
   const violations = validateLocalPathReferences({
     files: [path.join(repoRoot, fakeFile)],
     textByFile
   });
 
-  if (violations.length !== 1 || violations[0].normalized !== "infra/db/migrations/__missing_path_reference_self_test.sql") {
+  const rejected = new Set(violations.map((item) => item.normalized));
+  if (
+    violations.length !== 2 ||
+    !rejected.has("infra/db/migrations/__missing_path_reference_self_test.sql") ||
+    !rejected.has(oldArtifactRef)
+  ) {
     throw new Error("Local path reference self-test must reject a nonexistent path.");
   }
 

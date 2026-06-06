@@ -34,8 +34,8 @@
     },
     {
       "ruleId": "search-result-required-trust-fields",
-      "description": "Every SearchResult must include permission, lineage, and freshness.",
-      "effect": "result.permission, result.lineage, and result.freshness are required"
+      "description": "Every SearchResult must include permission, lineage, freshness, and gateResult.",
+      "effect": "result.permission, result.lineage, result.freshness, and result.gateResult are required"
     },
     {
       "ruleId": "search-actions-readonly-only",

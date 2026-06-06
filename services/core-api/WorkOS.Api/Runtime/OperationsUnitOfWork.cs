@@ -472,7 +472,7 @@ public sealed class SliceCommandHandlerRegistry
         ValidateDeclaredOutputFacts(definition, handled);
         ValidateForbiddenOutputFacts(definition, handled);
         ValidateLedgerPolicy(definition, handled);
-        return handled;
+        return EnrichDomainEventPayloads(definition, handled);
     }
 
     private static void ValidateDeclaredOutputFacts(SliceCommandHandlerDefinition definition, SliceCommandHandlerResult handled)
@@ -518,6 +518,42 @@ public sealed class SliceCommandHandlerRegistry
         }
 
         return facts;
+    }
+
+    private static SliceCommandHandlerResult EnrichDomainEventPayloads(
+        SliceCommandHandlerDefinition definition,
+        SliceCommandHandlerResult handled)
+    {
+        if (handled.DomainEvents.Count == 0)
+        {
+            return handled;
+        }
+
+        var producedFactIds = OutputFactsFor(handled)
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+        var enrichedEvents = handled.DomainEvents
+            .Select(item => item with
+            {
+                Payload = EnrichPayload(item.Payload, definition, producedFactIds)
+            })
+            .ToArray();
+
+        return handled with { DomainEvents = enrichedEvents };
+    }
+
+    private static IReadOnlyDictionary<string, object> EnrichPayload(
+        IReadOnlyDictionary<string, object> payload,
+        SliceCommandHandlerDefinition definition,
+        IReadOnlyList<string> producedFactIds)
+    {
+        var enriched = new Dictionary<string, object>(payload, StringComparer.Ordinal)
+        {
+            ["definitionRef"] = definition.DefinitionVersionId,
+            ["truthOwnerRef"] = definition.TruthOwnerRef,
+            ["producedFactIds"] = producedFactIds
+        };
+        return enriched;
     }
 
     private static void ValidateLedgerPolicy(SliceCommandHandlerDefinition definition, SliceCommandHandlerResult handled)

@@ -149,8 +149,28 @@ function violatesAdmission(view, state, admission) {
   const selected = state.selectedWorkspace || "";
   const line = selected.toLowerCase().includes("repair") ? "repair" : selected.toLowerCase().includes("parts") ? "parts" : "";
   if (!line) return false;
-  const status = admission[line]?.level || admission[line]?.status || "";
-  return /L0|Contract Preview/i.test(status) && admission[line]?.productionAllowed === true;
+  const decision = admission[line] || {};
+  const mode = normalizeSurfaceMode(decision.mode || decision.surfaceMode || decision.admissionMode || decision.level || decision.status);
+  const productionAllowed = decision.productionAllowed === true || decision.productionConfirmAllowed === true;
+  return mode === "contract_preview" && productionAllowed;
+}
+
+function normalizeSurfaceMode(value = "") {
+  const token = String(value || "")
+    .trim()
+    .replaceAll("-", "_")
+    .replaceAll(".", "_")
+    .replace(/\s+/g, "_")
+    .toLocaleLowerCase();
+  const map = {
+    contract_preview: "contract_preview",
+    l0_contract_preview: "contract_preview",
+    internal_pilot: "internal_pilot_observation",
+    internal_pilot_scope: "internal_pilot_observation",
+    internal_pilot_observation: "internal_pilot_observation",
+    l1_internal_pilot: "internal_pilot_observation"
+  };
+  return map[token] || token;
 }
 
 function reasonCopyKey(reason = "surface_not_allowed") {

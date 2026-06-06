@@ -1,0 +1,233 @@
+{
+  "version": "current-oam.p0-rule-ledger.v1",
+  "status": "authoritative",
+  "humanReadableLedger": "docs/system/oam-p0-rule-ledger.md",
+  "releaseKernelGate": "scripts/oam/check-p0-rule-ledger.mjs",
+  "rules": [
+    {
+      "ruleId": "P0-01",
+      "ruleNameZh": "Business Production 不得由 CI green、Surface 可见性、Search 命中、Control Plane 可见性打开",
+      "authorityFile": "docs/oam/current-admission-state.json",
+      "structuredContract": "docs/contracts/admission/production-admission-contract.json",
+      "runtimeExecutionPoint": "AdmissionKernelService",
+      "primaryGate": "scripts/check-admission-kernel.mjs",
+      "auxiliaryGates": [
+        "scripts/check-business-line-admission.mjs"
+      ],
+      "evidenceArtifact": "artifacts/oam/evidence/master-design-proof.json",
+      "status": "passed",
+      "riskLevel": "P0",
+      "blocksRelease": true,
+      "riskDescriptionZh": "若被间接打开，会把观察态误判为生产放行。"
+    },
+    {
+      "ruleId": "P0-02",
+      "ruleNameZh": "Dormitory L2 不得由设计稿、页面展示、搜索命中、驾驶舱摘要打开",
+      "authorityFile": "docs/business/business-line-registry.json",
+      "structuredContract": "docs/contracts/admission/business-line-admission-matrix.json",
+      "runtimeExecutionPoint": "BusinessLineAdmission",
+      "primaryGate": "scripts/check-business-line-admission.mjs",
+      "auxiliaryGates": [
+        "scripts/check-dormitory-golden-domain.mjs"
+      ],
+      "evidenceArtifact": "artifacts/oam/evidence/master-outline-proof.json",
+      "status": "passed",
+      "riskLevel": "P0",
+      "blocksRelease": true,
+      "riskDescriptionZh": "若 L2 被间接打开，会绕过业务线准入。"
+    },
+    {
+      "ruleId": "P0-03",
+      "ruleNameZh": "production_confirm 默认 false，必须由单独生产准入 gate 打开",
+      "authorityFile": "docs/oam/current-admission-state.json",
+      "structuredContract": "docs/contracts/admission/admission-matrix.json",
+      "runtimeExecutionPoint": "AdmissionKernelService",
+      "primaryGate": "scripts/check-admission-kernel.mjs",
+      "auxiliaryGates": [
+        "scripts/check-rule-authority.mjs"
+      ],
+      "evidenceArtifact": "artifacts/oam/evidence/master-design-proof.json",
+      "status": "passed",
+      "riskLevel": "P0",
+      "blocksRelease": true,
+      "riskDescriptionZh": "若 production_confirm 被默认打开，会绕过生产准入。"
+    },
+    {
+      "ruleId": "P0-04",
+      "ruleNameZh": "业务写入只能通过 OAM Confirm Runtime / Unit of Work",
+      "authorityFile": "docs/contracts/oam.current.json",
+      "structuredContract": "docs/contracts/definition/workitem-definition-registry.json",
+      "runtimeExecutionPoint": "OperationsUnitOfWork",
+      "primaryGate": "scripts/check-runtime-write-paths.mjs",
+      "auxiliaryGates": [
+        "scripts/check-api-boundaries.mjs"
+      ],
+      "evidenceArtifact": "artifacts/oam/evidence/runtime-proof.json",
+      "status": "passed",
+      "riskLevel": "P0",
+      "blocksRelease": true,
+      "riskDescriptionZh": "若出现旁路写入，业务事实来源会失去唯一权威。"
+    },
+    {
+      "ruleId": "P0-05",
+      "ruleNameZh": "Projection / Lens / Search / BI / Dashboard / 画像 / 摘要 / 回执不得写业务事实",
+      "authorityFile": "docs/contracts/oam.current.json",
+      "structuredContract": "docs/contracts/runtime-surface-policy.json",
+      "runtimeExecutionPoint": "API boundary guards",
+      "primaryGate": "scripts/check-api-boundaries.mjs",
+      "auxiliaryGates": [
+        "scripts/check-search-kernel.mjs"
+      ],
+      "evidenceArtifact": "artifacts/oam/evidence/search-readonly-proof.json",
+      "status": "passed",
+      "riskLevel": "P0",
+      "blocksRelease": true,
+      "riskDescriptionZh": "若读取面可写事实，会把解释性视图变成事实源。"
+    },
+    {
+      "ruleId": "P0-06",
+      "ruleNameZh": "管理驾驶舱不得直接写业务事实、财务事实、异常处理事实",
+      "authorityFile": "docs/contracts/oam.current.json",
+      "structuredContract": "docs/contracts/runtime-surface-policy.json",
+      "runtimeExecutionPoint": "ManagementCockpit boundary",
+      "primaryGate": "scripts/check-management-cockpit-boundary.mjs",
+      "auxiliaryGates": [
+        "scripts/check-runtime-write-paths.mjs"
+      ],
+      "evidenceArtifact": "artifacts/oam/evidence/runtime-proof.json",
+      "status": "passed",
+      "riskLevel": "P0",
+      "blocksRelease": true,
+      "riskDescriptionZh": "若驾驶舱直接写事实，会绕过 Confirm Runtime。"
+    },
+    {
+      "ruleId": "P0-07",
+      "ruleNameZh": "共享治理回执不得替代 AdmissionDecision",
+      "authorityFile": "docs/business/shared-governance/subject-vehicle-truth.yml",
+      "structuredContract": "docs/contracts/admission/admission-decision-contract.json",
+      "runtimeExecutionPoint": "Shared governance boundary",
+      "primaryGate": "scripts/check-shared-governance-boundary.mjs",
+      "auxiliaryGates": [
+        "scripts/check-admission-kernel.mjs"
+      ],
+      "evidenceArtifact": "artifacts/oam/evidence/master-outline-proof.json",
+      "status": "passed",
+      "riskLevel": "P0",
+      "blocksRelease": true,
+      "riskDescriptionZh": "若回执替代准入裁决，会造成治理确认越权。"
+    },
+    {
+      "ruleId": "P0-08",
+      "ruleNameZh": "金额依据不得作为正式财务事实",
+      "authorityFile": "docs/business/finance/finance-truth-pipeline.yml",
+      "structuredContract": "docs/finance/finance-semantic-truth-kernel.yml",
+      "runtimeExecutionPoint": "Finance Truth Kernel",
+      "primaryGate": "scripts/finance/check-finance-semantic-truth.mjs",
+      "auxiliaryGates": [
+        "scripts/check-finance-truth.mjs"
+      ],
+      "evidenceArtifact": "artifacts/oam/evidence/truth-ownership-proof.json",
+      "status": "passed",
+      "riskLevel": "P0",
+      "blocksRelease": true,
+      "riskDescriptionZh": "若金额依据成为财务事实，会污染财务真值。"
+    },
+    {
+      "ruleId": "P0-09",
+      "ruleNameZh": "非财务域不得产生 LedgerEntry",
+      "authorityFile": "docs/business/truth-owner-registry.yml",
+      "structuredContract": "docs/business/finance/ledger-semantic-rules.yml",
+      "runtimeExecutionPoint": "OperationsUnitOfWork",
+      "primaryGate": "scripts/check-ledger-semantic-rules.mjs",
+      "auxiliaryGates": [
+        "scripts/check-finance-truth.mjs"
+      ],
+      "evidenceArtifact": "artifacts/oam/evidence/truth-ownership-proof.json",
+      "status": "passed",
+      "riskLevel": "P0",
+      "blocksRelease": true,
+      "riskDescriptionZh": "若非财务域可产生账务分录，会破坏账务权威边界。"
+    },
+    {
+      "ruleId": "P0-10",
+      "ruleNameZh": "未解析 WorkItem Definition 不得 confirm",
+      "authorityFile": "docs/contracts/definition/workitem-definition-registry.json",
+      "structuredContract": "docs/contracts/admission/admission-decision-contract.json",
+      "runtimeExecutionPoint": "WorkItemDefinitionRegistryService",
+      "primaryGate": "scripts/check-admission-kernel.mjs",
+      "auxiliaryGates": [
+        "scripts/check-runtime-write-paths.mjs"
+      ],
+      "evidenceArtifact": "artifacts/oam/evidence/runtime-proof.json",
+      "status": "passed",
+      "riskLevel": "P0",
+      "blocksRelease": true,
+      "riskDescriptionZh": "若未解析定义可确认，会产生不可追溯事实。"
+    },
+    {
+      "ruleId": "P0-11",
+      "ruleNameZh": "SearchResult 必须有 permission、lineage、freshness，并且不得包含业务写 action",
+      "authorityFile": "docs/contracts/search/search-contract.json",
+      "structuredContract": "docs/contracts/search/search-result-schema.json",
+      "runtimeExecutionPoint": "SearchKernelService",
+      "primaryGate": "scripts/check-search-kernel.mjs",
+      "auxiliaryGates": [
+        "scripts/check-api-boundaries.mjs"
+      ],
+      "evidenceArtifact": "artifacts/oam/evidence/search-readonly-proof.json",
+      "status": "passed",
+      "riskLevel": "P0",
+      "blocksRelease": true,
+      "riskDescriptionZh": "若 SearchResult 缺权限、血缘或新鲜度，会形成假只读。"
+    },
+    {
+      "ruleId": "P0-12",
+      "ruleNameZh": "普通用户文案不得暴露内部运行术语",
+      "authorityFile": "docs/surface/surface-contract.yml",
+      "structuredContract": "docs/contracts/language/surface-copy-catalog.json",
+      "runtimeExecutionPoint": "Surface language v2 gate / Language Kernel",
+      "primaryGate": "scripts/oam/check-surface-language-v2.mjs",
+      "auxiliaryGates": [
+        "scripts/check-language-kernel.mjs",
+        "scripts/check-surface-contract.mjs"
+      ],
+      "evidenceArtifact": "artifacts/oam/evidence/surface-language-proof.json",
+      "status": "passed",
+      "riskLevel": "P0",
+      "blocksRelease": true,
+      "riskDescriptionZh": "若普通用户看到内部术语，会误解可见、摘要或回执为可确认。"
+    },
+    {
+      "ruleId": "P0-13",
+      "ruleNameZh": "高风险动作必须有 verified device trust、reason、evidenceRefs、admissionDecisionRef",
+      "authorityFile": "docs/contracts/admission/admission-matrix.json",
+      "structuredContract": "docs/contracts/admission/actor-device-admission-contract.json",
+      "runtimeExecutionPoint": "RuntimeActorAuthentication",
+      "primaryGate": "scripts/check-admission-kernel.mjs",
+      "auxiliaryGates": [
+        "scripts/trust/check-trust-boundary-kernel.mjs"
+      ],
+      "evidenceArtifact": "artifacts/oam/evidence/high-risk-trust-proof.json",
+      "status": "passed",
+      "riskLevel": "P0",
+      "blocksRelease": true,
+      "riskDescriptionZh": "若高风险动作缺可信设备、原因、证据或准入裁决，会绕过审批链。"
+    },
+    {
+      "ruleId": "P0-14",
+      "ruleNameZh": "Current OAM evidence root 必须生成、校验、上传并绑定 commit / CI run / artifact digest",
+      "authorityFile": "docs/oam/current-architecture.manifest.json",
+      "structuredContract": "artifacts/oam/evidence/evidence-graph.json",
+      "runtimeExecutionPoint": "evidence root scripts",
+      "primaryGate": "scripts/oam/check-current-evidence-root.mjs",
+      "auxiliaryGates": [
+        "scripts/oam/generate-current-evidence-root.mjs"
+      ],
+      "evidenceArtifact": "artifacts/oam/evidence/evidence-graph.json",
+      "status": "passed",
+      "riskLevel": "P0",
+      "blocksRelease": true,
+      "riskDescriptionZh": "若证据根缺失或不可校验，CI 绿无法证明当前工作区可信。"
+    }
+  ]
+}

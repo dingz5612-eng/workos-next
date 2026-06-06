@@ -87,6 +87,10 @@ public sealed class SearchKernelServiceTests
         Assert.AreEqual("DING", anchor["leadName"]);
         Assert.AreEqual("13812341234", anchor["phone"]);
         Assert.AreEqual("OperationsRuntime.SearchOperations", ((IReadOnlyDictionary<string, object?>)result["sourceRefs"]!)["inputAdapter"]);
+        var gateResult = (IReadOnlyDictionary<string, object?>)result["gateResult"]!;
+        Assert.AreEqual("operationsDomainEvent", gateResult["sourceType"]);
+        Assert.AreEqual(false, gateResult["writeThroughSearchAllowed"]);
+        Assert.AreEqual(false, gateResult["writeBusinessFactAllowed"]);
     }
 
     [TestMethod]

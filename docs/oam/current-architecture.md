@@ -34,6 +34,24 @@ Product Capability
 8. `.github`、`infra`、`services`、`modules`、`packages` 都必须在 OAM manifest 中归类。
 9. 覆盖率口径以 `docs/oam/coverage-policy.json` 为准；普通 KPI 不纳入生成代码和测试代码，规则、finance、ledger、权限和写路径按分层目标验收。
 
+## 2.1 当前定稿操作系统
+
+当前 OAM 不靠人工口头约定保持一致；以下机器合同负责定位、归属、验收和证据：
+
+| 问题 | 当前权威 | 验收脚本 |
+| --- | --- | --- |
+| 文件是否能作为当前权威 | `docs/oam/current-authority-index.json` | `scripts/oam/check-current-authority-index.mjs` |
+| 每类文件负责什么、禁止什么 | `docs/contracts/oam-responsibility-boundary-matrix.json` | `scripts/oam/check-oam-responsibility-boundary-matrix.mjs` |
+| 业务对象、字段、owner、语言键 | `docs/contracts/business/oam-business-object-field-registry.json` | `scripts/oam/check-business-object-field-registry.mjs` |
+| WorkItem 状态、动作、证据和修正路径 | `docs/contracts/business/oam-workflow-state-registry.json` | `scripts/oam/check-workflow-state-registry.mjs` |
+| 每张数据库表 owner 和唯一写入口 | `docs/contracts/database/oam-db-ownership-map.json` | `scripts/oam/check-db-ownership-map.mjs` |
+| 证据根引用是否真实存在 | `docs/contracts/evidence/evidence-graph-refs-contract.json` | `scripts/oam/check-evidence-contract-refs.mjs` |
+| 高风险准入、可信设备、修正和 UOW | `docs/contracts/admission/admission-matrix.json` | `scripts/oam/check-runtime-governance-v2.mjs` |
+| Search 只读自证 | `docs/contracts/search/search-contract.json` | `scripts/check-search-kernel.mjs` |
+| 普通用户语言、PC 治理隔离和结构化准入 | `docs/surface/surface-contract.yml` | `scripts/oam/check-surface-language-v2.mjs` |
+
+人工手册只能解释这些权威如何使用，不重复定义机器合同。修改业务场景、字段、流程、数据库或可见文案时，先改对应合同，再改实现、测试和证据。
+
 ## 3. 一等目录
 
 ### 3.1 services

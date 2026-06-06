@@ -5,6 +5,7 @@
 | 闭环对象 | 唯一权威 | 结构化合同 | 执行点 | 门禁 |
 | --- | --- | --- | --- | --- |
 | 当前架构身份 | `docs/oam/current-architecture.md` | `docs/contracts/oam.current.json` | `scripts/oam/check-current-oam.mjs` | OAM purity |
+| P0 发布内核 | `docs/system/oam-p0-rule-ledger.json` | `docs/system/oam-p0-rule-ledger.md` | `scripts/oam/check-p0-rule-ledger.mjs` | P0 release kernel |
 | 生产准入 | `docs/oam/current-admission-state.json` | `docs/contracts/admission/production-admission-contract.json` | `AdmissionKernelService` | `scripts/check-admission-kernel.mjs` |
 | 业务线准入 | `docs/business/business-line-registry.json` | `docs/contracts/admission/business-line-admission-matrix.json` | `BusinessLineAdmission` | `scripts/check-business-line-admission.mjs` |
 | 业务事实写入 | `docs/contracts/oam.current.json` | `docs/contracts/definition/workitem-definition-registry.json` | `OperationsUnitOfWork` | `scripts/check-runtime-write-paths.mjs` |

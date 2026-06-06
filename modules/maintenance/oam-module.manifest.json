@@ -16,10 +16,8 @@
   ],
   "database": [
     "service_tasks",
-    "service_task_assignments",
-    "service_task_verifications",
-    "hostel_rooms",
-    "hostel_beds"
+    "accommodation_rooms",
+    "accommodation_beds"
   ],
   "tests": [
     "tests/WorkOS.UnitTests",

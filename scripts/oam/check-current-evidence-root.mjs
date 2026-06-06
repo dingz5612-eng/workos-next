@@ -6,6 +6,7 @@ const root = process.cwd();
 const digestPlaceholder = "__CURRENT_OAM_EVIDENCE_DIGEST__";
 const requiredFiles = [
   "artifacts/oam/evidence/evidence-graph.json",
+  "artifacts/oam/evidence/execution-log.jsonl",
   "artifacts/oam/evidence/current-oam-final-report.json",
   "artifacts/oam/evidence/runtime-proof.json",
   "artifacts/oam/evidence/truth-ownership-proof.json",
@@ -25,7 +26,7 @@ for (const file of requiredFiles) {
     failures.push(`missing evidence file: ${file}`);
     continue;
   }
-  documents.set(file, readJson(file));
+  documents.set(file, file.endsWith(".jsonl") ? readJsonl(file) : readJson(file));
 }
 
 if (documents.size === requiredFiles.length) {
@@ -42,6 +43,7 @@ if (documents.size === requiredFiles.length) {
     checkBinding(file, document, expectedDigest);
     checkSummaries(file, document);
   }
+  checkExecutionLog(readJsonl("artifacts/oam/evidence/execution-log.jsonl"), expectedDigest);
 
   for (const file of requiredFiles) {
     if (!graph.requiredFiles?.includes(file)) {
@@ -89,6 +91,27 @@ if (failures.length > 0) {
 console.log("Current OAM evidence root check: PASS");
 
 function checkBinding(file, document, expectedDigest) {
+  if (typeof document === "string") return;
+  if (Array.isArray(document)) {
+    if (document.length === 0) {
+      failures.push(`${file} must contain at least one execution event.`);
+    }
+    for (const [index, item] of document.entries()) {
+      checkBinding(`${file}#${index + 1}`, item, expectedDigest);
+    }
+    return;
+  }
+  if (document.artifactDigest && document.commitSha) {
+    for (const key of ["commitSha", "branch", "ciRunId", "generatedAt", "artifactDigest"]) {
+      if (document[key] === undefined || document[key] === null || document[key] === "") {
+        failures.push(`${file} missing ${key}.`);
+      }
+    }
+    if (document.artifactDigest !== expectedDigest) {
+      failures.push(`${file} digest does not match evidence graph.`);
+    }
+    return;
+  }
   const binding = document.binding;
   if (!binding) {
     failures.push(`${file} missing binding.`);
@@ -105,6 +128,8 @@ function checkBinding(file, document, expectedDigest) {
 }
 
 function checkSummaries(file, document) {
+  if (typeof document === "string") return;
+  if (Array.isArray(document)) return;
   if (!document.gateSummary?.commands?.length) {
     failures.push(`${file} missing gate summary.`);
   }
@@ -128,6 +153,7 @@ function digestFor(fileMap) {
 }
 
 function normalizeForDigest(value) {
+  if (typeof value === "string") return value.replaceAll(/sha256:[a-f0-9]{64}|__CURRENT_OAM_EVIDENCE_DIGEST__/g, digestPlaceholder);
   if (Array.isArray(value)) return value.map(normalizeForDigest);
   if (!value || typeof value !== "object") return value;
   const output = {};
@@ -154,12 +180,53 @@ function controlPlaneContainsEvidenceRoot() {
     gate.includes("node scripts/oam/check-current-evidence-root.mjs");
 }
 
+function checkExecutionLog(entries, expectedDigest) {
+  if (!Array.isArray(entries) || entries.length === 0) {
+    failures.push("execution log must contain JSONL entries.");
+    return;
+  }
+  for (const requiredEvent of ["冻结检查", "P0 账本状态", "本地总门禁绑定", "测试验收绑定", "覆盖率绑定", "最终裁决"]) {
+    if (!entries.some((entry) => entry.event === requiredEvent)) {
+      failures.push(`execution log missing event: ${requiredEvent}`);
+    }
+  }
+  for (const entry of entries) {
+    if (entry.artifactDigest !== expectedDigest) {
+      failures.push(`execution log event ${entry.event || "unknown"} digest does not match evidence graph.`);
+    }
+    for (const key of ["commitSha", "branch", "ciRunId", "generatedAt"]) {
+      if (!entry[key]) {
+        failures.push(`execution log event ${entry.event || "unknown"} missing ${key}.`);
+      }
+    }
+  }
+}
+
 function readJson(file) {
   try {
     return JSON.parse(readText(file));
   } catch (error) {
     failures.push(`${file} is not valid JSON: ${error.message}`);
     return {};
+  }
+}
+
+function readJsonl(file) {
+  try {
+    return readText(file)
+      .split(/\r?\n/)
+      .filter((line) => line.trim().length > 0)
+      .map((line, index) => {
+        try {
+          return JSON.parse(line);
+        } catch (error) {
+          failures.push(`${file}:${index + 1} is not valid JSONL: ${error.message}`);
+          return {};
+        }
+      });
+  } catch (error) {
+    failures.push(`${file} cannot be read: ${error.message}`);
+    return [];
   }
 }
 

@@ -10,6 +10,8 @@ Current work must follow these files first:
 docs/oam/current-architecture.md
 docs/oam/current-architecture.manifest.json
 docs/contracts/oam.current.json
+docs/oam/current-authority-index.json
+docs/contracts/oam-responsibility-boundary-matrix.json
 docs/business/experience-contract.yml
 docs/surface/surface-contract.yml
 ```
@@ -37,6 +39,22 @@ POST /api/operations/work-items/{workItemId}/confirm
 ```
 
 Projection and Lens are read-side facades. Mobile BFF helpers, search, language, projection, PC governance, and control-plane surfaces must not become direct business fact writers.
+
+## Current OAM Operating Map
+
+Use these current contracts when changing the system:
+
+```text
+Business objects and fields: docs/contracts/business/oam-business-object-field-registry.json
+WorkItem states and actions: docs/contracts/business/oam-workflow-state-registry.json
+Database ownership: docs/contracts/database/oam-db-ownership-map.json
+Evidence references: docs/contracts/evidence/evidence-graph-refs-contract.json
+Search read-side proof: docs/contracts/search/search-contract.json
+Language and visible copy: docs/contracts/language/language-contract.json
+Surface responsibility: docs/surface/surface-contract.yml
+```
+
+Every current contract must have an owner, checker, runtime binding, test binding, and OAM evidence binding in `docs/contracts/oam-responsibility-boundary-matrix.json`.
 
 ## Directory Responsibilities
 
@@ -100,6 +118,9 @@ node scripts/check-api-boundaries.mjs
 node scripts/check-runtime-write-paths.mjs
 node scripts/check-experience-contract.mjs
 node scripts/check-surface-contract.mjs
+node scripts/oam/check-surface-language-v2.mjs
+node scripts/oam/check-current-authority-index.mjs
+node scripts/oam/check-oam-responsibility-boundary-matrix.mjs
 pwsh scripts/guard-architecture.ps1
 npm --prefix apps/mobile run test
 npm --prefix apps/mobile run build

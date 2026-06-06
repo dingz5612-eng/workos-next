@@ -31,4 +31,34 @@ describe("SURFACE-C mobile/PC surface boundary", () => {
     expect(pcApiClient).toContain("confirmBankStatementImport");
     expect(pcApiClient).toContain("recordGovernanceAuditEvent");
   });
+
+  it("uses structured admission fields for preview business-line blocking", () => {
+    const ctx = createSurfaceCtx({
+      view: "workspace",
+      selectedWorkspace: "W-REPAIR-REQUEST",
+      businessLineAdmission: {
+        repair: {
+          surfaceMode: "contract-preview",
+          productionAllowed: true,
+          productionConfirmAllowed: false
+        }
+      }
+    });
+
+    const decision = evaluateSurfaceAccess("workspace", ctx.state);
+
+    expect(decision.allowed).toBe(false);
+    expect(decision.reason).toBe("business_line_admission_blocked");
+  });
+
+  it("does not use admission mode display text as a mobile surface decision source", () => {
+    const admissionSurface = source("../admissionSurface.js");
+    const surfaceGuard = source("../surfaceGuard.js");
+
+    expect(admissionSurface).not.toContain("/L0|");
+    expect(admissionSurface).not.toContain("/production/i.test");
+    expect(surfaceGuard).not.toContain("/L0|Contract Preview/i");
+    expect(surfaceGuard).toContain("surfaceMode");
+    expect(surfaceGuard).toContain("productionAllowed");
+  });
 });

@@ -161,6 +161,7 @@ public sealed class SearchKernelService
                 ["businessLine"] = "dormitory"
             },
             ["availableActions"] = ReadonlyActions("navigate", "operationPanel"),
+            ["gateResult"] = GateResult(decision, indexedAt, "workspaceCardProjection"),
             ["traceRefs"] = Array.Empty<string>(),
             ["sourceRefs"] = new Dictionary<string, object?>
             {
@@ -274,6 +275,7 @@ public sealed class SearchKernelService
                 ["businessLine"] = "dormitory"
             },
             ["availableActions"] = ReadonlyActions(targetIsTerminal ? "view" : "navigate", targetIsTerminal ? "completedRecords" : "operationPanel"),
+            ["gateResult"] = GateResult(decision, indexedAt, "operationsDomainEvent"),
             ["traceRefs"] = new[] { record.SubmissionId, record.EventId },
             ["sourceRefs"] = new Dictionary<string, object?>
             {
@@ -414,6 +416,22 @@ public sealed class SearchKernelService
                 ["view"] = view,
                 ["writeBusinessFact"] = false
             }
+        };
+
+    private static Dictionary<string, object?> GateResult(
+        AdmissionKernelDecision decision,
+        DateTimeOffset checkedAt,
+        string sourceType) =>
+        new()
+        {
+            ["status"] = decision.VisibleAllowed ? "visible_readonly" : "hidden",
+            ["source"] = "SearchKernelService",
+            ["sourceType"] = sourceType,
+            ["checkedAt"] = checkedAt.ToString("O"),
+            ["policyVersion"] = "oam.search-permission-policy.v1",
+            ["admissionDecisionRef"] = decision.AdmissionDecisionRef,
+            ["writeThroughSearchAllowed"] = false,
+            ["writeBusinessFactAllowed"] = false
         };
 
     private static string NormalizeLanguage(string? language) =>

@@ -45,6 +45,7 @@ const requiredResultFields = [
   "ranking",
   "businessContext",
   "availableActions",
+  "gateResult",
   "traceRefs",
   "sourceRefs",
   "language",
@@ -141,7 +142,8 @@ function checkSourcesAndSchema(failures) {
   for (const [group, fields] of Object.entries({
     permission: ["visibility", "redaction", "dataClassification", "requiredPermissions", "checkedAt", "policyVersion"],
     lineage: ["sourceSystem", "sourceType", "sourceId", "sourceUpdatedAt", "definitionVersion"],
-    freshness: ["indexedAt", "indexLagMs", "stale"]
+    freshness: ["indexedAt", "indexLagMs", "stale"],
+    gateResult: ["status", "source", "sourceType", "checkedAt", "policyVersion", "admissionDecisionRef", "writeThroughSearchAllowed", "writeBusinessFactAllowed"]
   })) {
     for (const field of fields) {
       if (!(resultSchema.properties?.[group]?.required || []).includes(field)) {
@@ -215,7 +217,9 @@ function checkRuntimeImplementation(failures) {
     "\"ranking\"",
     "\"businessContext\"",
     "\"availableActions\"",
+    "\"gateResult\"",
     "\"writeThroughSearchAllowed\"",
+    "\"writeBusinessFactAllowed\"",
     "\"writeBusinessFact\"",
     "\"traceRefs\"",
     "\"sourceRefs\"",
@@ -246,6 +250,10 @@ function checkRuntimeImplementation(failures) {
   const navigation = read("apps/mobile/src/navigationController.js");
   if (!navigation.includes("operationWorkItemsFromSearchResults") || !navigation.includes("applyRuntimeSurfacePayloads")) {
     failures.push("navigationController must merge Operations Search Kernel work items into runtime operation items.");
+  }
+  const searchIntentHub = read("apps/mobile/src/searchIntentHub.js");
+  for (const term of ["gateResultForSearchItem", "writeThroughSearchAllowed", "writeBusinessFactAllowed"]) {
+    if (!searchIntentHub.includes(term)) failures.push(`searchIntentHub.js missing SearchResult gate proof term: ${term}`);
   }
 
   const program = read("services/core-api/WorkOS.Api/Program.cs");

@@ -36,6 +36,20 @@ for (const moduleName of ["accommodation", "finance-gate", "identity", "maintena
   }
 }
 
+const migrationTables = databaseTablesFromMigrations();
+for (const moduleName of ["accommodation", "finance-gate", "identity", "maintenance"]) {
+  const manifest = readJson(`modules/${moduleName}/oam-module.manifest.json`);
+  for (const table of manifest?.database ?? []) {
+    if (typeof table !== "string" || !table.trim()) {
+      violations.push(v("module_database_binding_invalid", `模块 ${moduleName} 存在空数据库绑定。`));
+      continue;
+    }
+    if (!migrationTables.has(table)) {
+      violations.push(v("module_database_table_missing", `模块 ${moduleName} 声明的数据库表不存在于迁移中：${table}。`));
+    }
+  }
+}
+
 checkGithubText(".github/pull_request_template.md");
 for (const file of filesUnder(".github/workflows")) {
   checkGithubText(file);
@@ -143,6 +157,17 @@ function readJson(file) {
     violations.push(v("json_invalid", `${file} 不是合法 JSON：${error.message}`));
     return null;
   }
+}
+
+function databaseTablesFromMigrations() {
+  const tables = new Set();
+  for (const file of filesUnder("infra/db/migrations").filter((item) => item.endsWith(".sql"))) {
+    const text = fs.readFileSync(abs(file), "utf8");
+    for (const match of text.matchAll(/create\s+table\s+(?:if\s+not\s+exists\s+)?(?:public\.)?([a-zA-Z_][a-zA-Z0-9_]*)/gi)) {
+      tables.add(match[1]);
+    }
+  }
+  return tables;
 }
 
 function requireFile(file) {

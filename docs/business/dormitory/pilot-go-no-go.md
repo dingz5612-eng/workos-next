@@ -1,5 +1,7 @@
 # Dormitory Golden Pilot Go/No-Go
 
+> 职责边界：本文是宿舍 Golden Pilot 的人工说明，不是当前 OAM 下一阶段准入权威，也不代表 Business Production、Dormitory L2 或 `production_confirm` 放行。当前准入以 `docs/system/oam-next-stage-admission.md`、`docs/system/oam-p0-rule-ledger.json` 和证据根为准。
+
 ## 中文结论
 
 B2 只验证宿舍 Golden Pilot runtime scenarios 可以被 Operations Runtime、Balanced Money Kernel、Semantic Shadow、GateRunner 和 Cutover State 控制，不声明宿舍 production-ready。

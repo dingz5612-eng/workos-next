@@ -6,11 +6,14 @@ const violations = [];
 
 const authorityFiles = [
   "docs/oam/current-architecture.md",
+  "docs/oam/current-authority-index.json",
   "docs/oam/current-architecture.manifest.json",
+  "docs/contracts/oam-responsibility-boundary-matrix.json",
   "docs/system/current-system-map.md",
   "docs/system/oam-authority-map.md",
   "docs/system/oam-rule-to-gate-map.md",
   "docs/system/oam-p0-rule-ledger.md",
+  "docs/system/oam-p0-rule-ledger.json",
   "docs/system/oam-next-stage-admission.md",
   "docs/contracts/oam.current.json",
   ".github/pull_request_template.md",
@@ -117,10 +120,17 @@ for (const ruleId of Array.from({ length: 14 }, (_, index) => `P0-${String(index
     violations.push(`OAM P0 rule ledger missing ${ruleId}.`);
   }
 }
-for (const required of ["权威文件", "结构化合同", "运行时执行点", "负向测试或 gate", "证据产物", "当前状态", "风险等级"]) {
+for (const required of ["权威文件", "结构化合同", "运行时执行点", "主门禁", "辅助门禁", "证据产物", "当前状态", "风险等级", "是否阻断发布", "中文风险说明"]) {
   if (!ruleLedger.includes(required)) {
     violations.push(`OAM P0 rule ledger missing column ${required}.`);
   }
+}
+const machineRuleLedger = readJson("docs/system/oam-p0-rule-ledger.json");
+if (machineRuleLedger.status !== "authoritative") {
+  violations.push("OAM P0 machine rule ledger must be authoritative.");
+}
+if (!Array.isArray(machineRuleLedger.rules) || machineRuleLedger.rules.length < 14) {
+  violations.push("OAM P0 machine rule ledger must contain P0-01 through P0-14.");
 }
 
 const nextStageAdmission = readText("docs/system/oam-next-stage-admission.md");

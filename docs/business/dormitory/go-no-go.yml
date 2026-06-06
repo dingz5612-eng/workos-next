@@ -2,6 +2,9 @@
   "domainId": "dormitory",
   "version": "oam.dormitory.v1",
   "stage": "current_oam",
+  "authorityScope": "human_readable_domain_snapshot",
+  "currentGoNoGoAuthority": "artifacts/oam/final-report.json",
+  "doesNotOpenProduction": true,
   "goCriteria": [
     "北极星指标和指标树完整。",
     "五条价值流完整。",

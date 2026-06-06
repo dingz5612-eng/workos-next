@@ -1,0 +1,279 @@
+{
+  "version": "oam.business-object-field-registry.v1",
+  "status": "authoritative",
+  "architecture": "oam.current",
+  "languageCatalog": "docs/contracts/language/field-label-catalog.json",
+  "truthOwnerRegistry": "docs/business/truth-owner-registry.yml",
+  "objects": [
+    {
+      "objectId": "Room",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
+      "truthOwnerRef": "Room",
+      "fields": [
+        { "fieldId": "roomId", "owner": "accommodation", "visibleScope": ["mobile", "pc", "search"], "editableWhen": "system_generated_or_resource_setup_only", "auditRequired": true, "languageKey": "roomId", "source": "Confirm Runtime", "searchable": true, "ledgerRelevant": false },
+        { "fieldId": "roomNo", "owner": "accommodation", "visibleScope": ["mobile", "pc", "search"], "editableWhen": "resource_setup_before_confirm", "auditRequired": true, "languageKey": "roomNo", "source": "WorkItem field contract", "searchable": true, "ledgerRelevant": false },
+        { "fieldId": "readinessState", "owner": "accommodation", "visibleScope": ["mobile", "pc", "search"], "editableWhen": "readiness_work_item_before_confirm", "auditRequired": true, "languageKey": "readinessState", "source": "Domain Event", "searchable": true, "ledgerRelevant": false }
+      ]
+    },
+    {
+      "objectId": "Bed",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
+      "truthOwnerRef": "Bed",
+      "fields": [
+        { "fieldId": "roomId", "owner": "accommodation", "visibleScope": ["mobile", "pc", "search"], "editableWhen": "bed_setup_before_confirm", "auditRequired": true, "languageKey": "roomId", "source": "Room fact", "searchable": true, "ledgerRelevant": false },
+        { "fieldId": "bedLabels", "owner": "accommodation", "visibleScope": ["mobile", "pc", "search"], "editableWhen": "bed_setup_before_confirm", "auditRequired": true, "languageKey": "bedLabels", "source": "WorkItem field contract", "searchable": true, "ledgerRelevant": false },
+        { "fieldId": "bedType", "owner": "accommodation", "visibleScope": ["mobile", "pc"], "editableWhen": "bed_setup_before_confirm", "auditRequired": true, "languageKey": "bedType", "source": "WorkItem field contract", "searchable": false, "ledgerRelevant": false }
+      ]
+    },
+    {
+      "objectId": "BedStatus",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
+      "truthOwnerRef": "BedStatus",
+      "fields": [
+        { "fieldId": "readinessState", "owner": "accommodation", "visibleScope": ["mobile", "pc", "search"], "editableWhen": "room_readiness_or_service_completion", "auditRequired": true, "languageKey": "readinessState", "source": "Domain Event", "searchable": true, "ledgerRelevant": false },
+        { "fieldId": "blockReason", "owner": "maintenance", "visibleScope": ["mobile", "pc"], "editableWhen": "service_task_or_room_block_before_confirm", "auditRequired": true, "languageKey": "blockReason", "source": "WorkItem field contract", "searchable": true, "ledgerRelevant": false }
+      ]
+    },
+    {
+      "objectId": "RatePlan",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
+      "truthOwnerRef": "RatePlan",
+      "fields": [
+        { "fieldId": "ratePlan", "owner": "accommodation", "visibleScope": ["mobile", "pc", "search"], "editableWhen": "rate_setup_before_confirm", "auditRequired": true, "languageKey": "ratePlan", "source": "ledger basis only; Money/Ledger Kernel finalizes", "searchable": true, "ledgerRelevant": true },
+        { "fieldId": "price", "owner": "accommodation", "visibleScope": ["mobile", "pc"], "editableWhen": "rate_setup_before_confirm", "auditRequired": true, "languageKey": "price", "source": "ledger basis only; Money/Ledger Kernel finalizes", "searchable": false, "ledgerRelevant": true }
+      ]
+    },
+    {
+      "objectId": "Lead",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.lead-reservation",
+      "truthOwnerRef": "Lead",
+      "fields": [
+        { "fieldId": "note", "owner": "accommodation", "visibleScope": ["mobile", "pc"], "editableWhen": "lead_followup_before_confirm", "auditRequired": true, "languageKey": "note", "source": "WorkItem field contract", "searchable": true, "ledgerRelevant": false }
+      ]
+    },
+    {
+      "objectId": "Reservation",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.lead-reservation",
+      "truthOwnerRef": "Reservation",
+      "fields": [
+        { "fieldId": "roomId", "owner": "accommodation", "visibleScope": ["mobile", "pc", "search"], "editableWhen": "reservation_before_confirm", "auditRequired": true, "languageKey": "roomId", "source": "Room fact", "searchable": true, "ledgerRelevant": false },
+        { "fieldId": "note", "owner": "accommodation", "visibleScope": ["mobile", "pc"], "editableWhen": "reservation_before_confirm", "auditRequired": true, "languageKey": "note", "source": "WorkItem field contract", "searchable": true, "ledgerRelevant": false }
+      ]
+    },
+    {
+      "objectId": "CheckinHandoff",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.checkin",
+      "truthOwnerRef": "CheckinHandoff",
+      "fields": [
+        { "fieldId": "roomId", "owner": "accommodation", "visibleScope": ["mobile", "pc"], "editableWhen": "checkin_handoff_before_confirm", "auditRequired": true, "languageKey": "roomId", "source": "Reservation or direct checkin", "searchable": true, "ledgerRelevant": false },
+        { "fieldId": "bedLabels", "owner": "accommodation", "visibleScope": ["mobile", "pc"], "editableWhen": "checkin_handoff_before_confirm", "auditRequired": true, "languageKey": "bedLabels", "source": "Bed fact", "searchable": true, "ledgerRelevant": false }
+      ]
+    },
+    {
+      "objectId": "Stay",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.lifecycle",
+      "truthOwnerRef": "Stay",
+      "fields": [
+        { "fieldId": "stayId", "owner": "accommodation", "visibleScope": ["mobile", "pc", "search"], "editableWhen": "system_generated_only", "auditRequired": true, "languageKey": "stayId", "source": "ledger basis only; Money/Ledger Kernel finalizes", "searchable": true, "ledgerRelevant": true },
+        { "fieldId": "roomId", "owner": "accommodation", "visibleScope": ["mobile", "pc", "search"], "editableWhen": "approved_bed_change_only", "auditRequired": true, "languageKey": "roomId", "source": "Room fact", "searchable": true, "ledgerRelevant": false }
+      ]
+    },
+    {
+      "objectId": "CheckoutCase",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.checkout",
+      "truthOwnerRef": "CheckoutCase",
+      "fields": [
+        { "fieldId": "checkoutId", "owner": "accommodation", "visibleScope": ["mobile", "pc", "search"], "editableWhen": "system_generated_only", "auditRequired": true, "languageKey": "checkoutId", "source": "ledger basis only; Money/Ledger Kernel finalizes", "searchable": true, "ledgerRelevant": true },
+        { "fieldId": "finalBalanceAmount", "owner": "finance-gate", "visibleScope": ["mobile", "pc"], "editableWhen": "finance_close_before_confirm", "auditRequired": true, "languageKey": "finalBalanceAmount", "source": "Money/Ledger Kernel", "searchable": false, "ledgerRelevant": true }
+      ]
+    },
+    {
+      "objectId": "ServiceTask",
+      "module": "maintenance",
+      "ownerCapability": "accommodation.service-task",
+      "truthOwnerRef": "ServiceTask",
+      "fields": [
+        { "fieldId": "taskId", "owner": "maintenance", "visibleScope": ["mobile", "pc", "search"], "editableWhen": "system_generated_only", "auditRequired": true, "languageKey": "taskId", "source": "Confirm Runtime", "searchable": true, "ledgerRelevant": false },
+        { "fieldId": "resourceScope", "owner": "maintenance", "visibleScope": ["mobile", "pc"], "editableWhen": "task_create_before_confirm_only", "auditRequired": true, "languageKey": "resourceScope", "source": "WorkItem field contract", "searchable": true, "ledgerRelevant": false }
+      ]
+    },
+    {
+      "objectId": "Payment",
+      "module": "finance-gate",
+      "ownerCapability": "finance.payment",
+      "truthOwnerRef": "Payment",
+      "fields": [
+        { "fieldId": "paymentId", "owner": "finance-gate", "visibleScope": ["mobile", "pc", "search"], "editableWhen": "system_generated_only", "auditRequired": true, "languageKey": "paymentId", "source": "Money/Ledger Kernel", "searchable": true, "ledgerRelevant": true },
+        { "fieldId": "receivedAmount", "owner": "finance-gate", "visibleScope": ["mobile", "pc"], "editableWhen": "payment_receipt_before_confirm", "auditRequired": true, "languageKey": "receivedAmount", "source": "WorkItem field contract", "searchable": false, "ledgerRelevant": true },
+        { "fieldId": "paymentMethod", "owner": "finance-gate", "visibleScope": ["mobile", "pc"], "editableWhen": "payment_receipt_before_confirm", "auditRequired": true, "languageKey": "paymentMethod", "source": "WorkItem field contract", "searchable": false, "ledgerRelevant": true }
+      ]
+    },
+    {
+      "objectId": "PaymentAllocation",
+      "module": "finance-gate",
+      "ownerCapability": "finance.payment",
+      "truthOwnerRef": "PaymentAllocation",
+      "fields": [
+        { "fieldId": "allocationMode", "owner": "finance-gate", "visibleScope": ["mobile", "pc"], "editableWhen": "payment_allocation_before_confirm", "auditRequired": true, "languageKey": "allocationMode", "source": "Money/Ledger Kernel", "searchable": false, "ledgerRelevant": true },
+        { "fieldId": "allocatedAmount", "owner": "finance-gate", "visibleScope": ["mobile", "pc"], "editableWhen": "payment_allocation_before_confirm", "auditRequired": true, "languageKey": "allocatedAmount", "source": "Money/Ledger Kernel", "searchable": false, "ledgerRelevant": true }
+      ]
+    },
+    {
+      "objectId": "DepositAccount",
+      "module": "finance-gate",
+      "ownerCapability": "finance.deposit",
+      "truthOwnerRef": "DepositAccount",
+      "fields": [
+        { "fieldId": "depositId", "owner": "finance-gate", "visibleScope": ["mobile", "pc", "search"], "editableWhen": "system_generated_only", "auditRequired": true, "languageKey": "depositId", "source": "Money/Ledger Kernel", "searchable": true, "ledgerRelevant": true },
+        { "fieldId": "requiredDepositAmount", "owner": "finance-gate", "visibleScope": ["mobile", "pc"], "editableWhen": "deposit_assessment_before_confirm", "auditRequired": true, "languageKey": "requiredDepositAmount", "source": "Money/Ledger Kernel", "searchable": false, "ledgerRelevant": true }
+      ]
+    },
+    {
+      "objectId": "DepositEntry",
+      "module": "finance-gate",
+      "ownerCapability": "finance.deposit",
+      "truthOwnerRef": "DepositEntry",
+      "fields": [
+        { "fieldId": "depositReceiptId", "owner": "finance-gate", "visibleScope": ["mobile", "pc", "search"], "editableWhen": "system_generated_only", "auditRequired": true, "languageKey": "depositReceiptId", "source": "Money/Ledger Kernel", "searchable": true, "ledgerRelevant": true },
+        { "fieldId": "refundAmount", "owner": "finance-gate", "visibleScope": ["mobile", "pc"], "editableWhen": "deposit_refund_before_confirm", "auditRequired": true, "languageKey": "refundAmount", "source": "Money/Ledger Kernel", "searchable": false, "ledgerRelevant": true }
+      ]
+    },
+    {
+      "objectId": "Expense",
+      "module": "finance-gate",
+      "ownerCapability": "finance.expense",
+      "truthOwnerRef": "Expense",
+      "fields": [
+        { "fieldId": "expenseId", "owner": "finance-gate", "visibleScope": ["mobile", "pc", "search"], "editableWhen": "system_generated_only", "auditRequired": true, "languageKey": "expenseId", "source": "Money/Ledger Kernel", "searchable": true, "ledgerRelevant": true },
+        { "fieldId": "expenseAmount", "owner": "finance-gate", "visibleScope": ["mobile", "pc"], "editableWhen": "expense_record_before_confirm", "auditRequired": true, "languageKey": "expenseAmount", "source": "WorkItem field contract", "searchable": false, "ledgerRelevant": true }
+      ]
+    },
+    {
+      "objectId": "ReconciliationCase",
+      "module": "finance-gate",
+      "ownerCapability": "finance.reconciliation",
+      "truthOwnerRef": "ReconciliationCase",
+      "fields": [
+        { "fieldId": "paymentId", "owner": "finance-gate", "visibleScope": ["pc", "search"], "editableWhen": "reconciliation_governance_only", "auditRequired": true, "languageKey": "paymentId", "source": "Reconciliation Runtime", "searchable": true, "ledgerRelevant": true },
+        { "fieldId": "differenceReason", "owner": "finance-gate", "visibleScope": ["pc"], "editableWhen": "reconciliation_review_before_confirm", "auditRequired": true, "languageKey": "differenceReason", "source": "Reconciliation Runtime", "searchable": false, "ledgerRelevant": true }
+      ]
+    },
+    {
+      "objectId": "CorrectionRequest",
+      "module": "finance-gate",
+      "ownerCapability": "finance.reconciliation",
+      "truthOwnerRef": "CorrectionRequest",
+      "fields": [
+        { "fieldId": "correctionRequestId", "owner": "finance-gate", "visibleScope": ["pc", "search"], "editableWhen": "system_generated_only", "auditRequired": true, "languageKey": "correctionRequestId", "source": "Correction Center", "searchable": true, "ledgerRelevant": true },
+        { "fieldId": "correctionReason", "owner": "finance-gate", "visibleScope": ["pc"], "editableWhen": "correction_request_before_approval", "auditRequired": true, "languageKey": "correctionReason", "source": "Correction Center", "searchable": true, "ledgerRelevant": true }
+      ]
+    },
+    {
+      "objectId": "LedgerEntry",
+      "module": "finance-gate",
+      "ownerCapability": "finance.deposit",
+      "truthOwnerRef": "LedgerEntry",
+      "fields": [
+        { "fieldId": "currency", "owner": "finance-gate", "visibleScope": ["pc"], "editableWhen": "money_kernel_only", "auditRequired": true, "languageKey": "currency", "source": "Money/Ledger Kernel", "searchable": false, "ledgerRelevant": true },
+        { "fieldId": "confirmedAmount", "owner": "finance-gate", "visibleScope": ["pc"], "editableWhen": "money_kernel_only", "auditRequired": true, "languageKey": "confirmedAmount", "source": "Money/Ledger Kernel", "searchable": false, "ledgerRelevant": true }
+      ]
+    },
+    {
+      "objectId": "PeriodSnapshot",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.lifecycle",
+      "truthOwnerRef": "PeriodSnapshot",
+      "fields": [
+        { "fieldId": "periodId", "owner": "accommodation", "visibleScope": ["pc", "search"], "editableWhen": "period_scope_before_confirm", "auditRequired": true, "languageKey": "periodId", "source": "Period Runtime", "searchable": true, "ledgerRelevant": false },
+        { "fieldId": "managementConclusion", "owner": "accommodation", "visibleScope": ["pc"], "editableWhen": "period_close_before_confirm", "auditRequired": true, "languageKey": "managementConclusion", "source": "Manager signoff", "searchable": true, "ledgerRelevant": false }
+      ]
+    },
+    {
+      "objectId": "EvidenceObject",
+      "module": "identity",
+      "ownerCapability": "identity.account-actor",
+      "truthOwnerRef": "EvidenceObject",
+      "fields": [
+        { "fieldId": "note", "owner": "identity", "visibleScope": ["mobile", "pc"], "editableWhen": "evidence_draft_before_verify", "auditRequired": true, "languageKey": "note", "source": "Evidence Runtime", "searchable": true, "ledgerRelevant": false }
+      ]
+    },
+    {
+      "objectId": "DomainEvent",
+      "module": "identity",
+      "ownerCapability": "governance.release-control",
+      "truthOwnerRef": "DomainEvent",
+      "fields": [
+        { "fieldId": "note", "owner": "identity", "visibleScope": ["pc"], "editableWhen": "runtime_only", "auditRequired": true, "languageKey": "note", "source": "Unit of Work", "searchable": false, "ledgerRelevant": false }
+      ]
+    },
+    {
+      "objectId": "CommandSubmission",
+      "module": "identity",
+      "ownerCapability": "governance.release-control",
+      "truthOwnerRef": "CommandSubmission",
+      "fields": [
+        { "fieldId": "note", "owner": "identity", "visibleScope": ["pc"], "editableWhen": "runtime_only", "auditRequired": true, "languageKey": "note", "source": "Confirm Runtime", "searchable": false, "ledgerRelevant": false }
+      ]
+    },
+    {
+      "objectId": "AccountUser",
+      "module": "identity",
+      "ownerCapability": "identity.account-actor",
+      "truthOwnerRef": "AccountUser",
+      "fields": [
+        { "fieldId": "note", "owner": "identity", "visibleScope": ["pc"], "editableWhen": "account_governance_before_confirm", "auditRequired": true, "languageKey": "note", "source": "Account Actor Kernel", "searchable": true, "ledgerRelevant": false }
+      ]
+    },
+    {
+      "objectId": "DeviceSession",
+      "module": "identity",
+      "ownerCapability": "identity.account-actor",
+      "truthOwnerRef": "DeviceSession",
+      "fields": [
+        { "fieldId": "note", "owner": "identity", "visibleScope": ["pc"], "editableWhen": "device_trust_governance", "auditRequired": true, "languageKey": "note", "source": "Device Trust Kernel", "searchable": false, "ledgerRelevant": false }
+      ]
+    },
+    {
+      "objectId": "AdmissionDecision",
+      "module": "identity",
+      "ownerCapability": "identity.account-actor",
+      "truthOwnerRef": "AdmissionDecision",
+      "fields": [
+        { "fieldId": "handlingOpinion", "owner": "identity", "visibleScope": ["mobile", "pc"], "editableWhen": "admission_kernel_only", "auditRequired": true, "languageKey": "handlingOpinion", "source": "Admission Kernel", "searchable": false, "ledgerRelevant": false }
+      ]
+    },
+    {
+      "objectId": "ControlPlaneGateResult",
+      "module": "identity",
+      "ownerCapability": "governance.release-control",
+      "truthOwnerRef": "ControlPlaneGateResult",
+      "fields": [
+        { "fieldId": "confirmationResult", "owner": "identity", "visibleScope": ["pc"], "editableWhen": "release_control_gate_only", "auditRequired": true, "languageKey": "confirmationResult", "source": "Release Control", "searchable": true, "ledgerRelevant": false }
+      ]
+    },
+    {
+      "objectId": "ProjectionReadModel",
+      "module": "identity",
+      "ownerCapability": "governance.release-control",
+      "truthOwnerRef": "ProjectionReadModel",
+      "fields": [
+        { "fieldId": "note", "owner": "identity", "visibleScope": ["mobile", "pc", "search"], "editableWhen": "read_side_never_edits_business_fact", "auditRequired": false, "languageKey": "note", "source": "Outbox Projection", "searchable": true, "ledgerRelevant": false }
+      ]
+    }
+  ],
+  "invariants": [
+    "Every object must have a module, owner capability, truth owner ref, and at least one field.",
+    "Every field must bind a language key from the Language Kernel.",
+    "Searchable fields are read-side only and do not become fact owners.",
+    "Ledger relevant fields can only be finalized by finance-gate or the Money/Ledger Kernel."
+  ]
+}

@@ -10,6 +10,7 @@ const digestPlaceholder = "__CURRENT_OAM_EVIDENCE_DIGEST__";
 
 const requiredEvidenceFiles = [
   "artifacts/oam/evidence/evidence-graph.json",
+  "artifacts/oam/evidence/execution-log.jsonl",
   "artifacts/oam/evidence/current-oam-final-report.json",
   "artifacts/oam/evidence/runtime-proof.json",
   "artifacts/oam/evidence/truth-ownership-proof.json",
@@ -26,7 +27,7 @@ const commitSha = env("GITHUB_SHA") || git("rev-parse HEAD") || "local";
 const branch = env("GITHUB_HEAD_REF") || env("GITHUB_REF_NAME") || git("branch --show-current") || "local";
 const ciRunId = env("GITHUB_RUN_ID") || "local";
 const admission = readJson("docs/oam/current-admission-state.json");
-const p0Ledger = readP0Ledger("docs/system/oam-p0-rule-ledger.md");
+const p0Ledger = readP0Ledger("docs/system/oam-p0-rule-ledger.json");
 const workspace = workspaceStatus();
 const gateSummary = buildGateSummary();
 const testSummary = buildTestSummary();
@@ -298,14 +299,38 @@ const evidenceGraph = {
   nextStageAllowed: finalReport.nextStageAllowed
 };
 addEvidence("artifacts/oam/evidence/evidence-graph.json", evidenceGraph);
+addTextEvidence("artifacts/oam/evidence/execution-log.jsonl", executionLogText(digestPlaceholder));
 
-const artifactDigest = digestFor(files);
-for (const document of files.values()) {
-  setDigest(document, artifactDigest);
+for (const [file, document] of files) {
+  writeJson(file, document);
+}
+
+let artifactDigest = digestForDisk(requiredEvidenceFiles);
+for (const [file, document] of files) {
+  if (typeof document === "string") {
+    files.set(file, document.replaceAll(digestPlaceholder, artifactDigest));
+  } else {
+    setDigest(document, artifactDigest);
+  }
 }
 
 for (const [file, document] of files) {
   writeJson(file, document);
+}
+
+const finalDigest = digestForDisk(requiredEvidenceFiles);
+if (finalDigest !== artifactDigest) {
+  artifactDigest = finalDigest;
+  for (const [file, document] of files) {
+    if (typeof document === "string") {
+      files.set(file, document.replaceAll(/sha256:[a-f0-9]{64}|__CURRENT_OAM_EVIDENCE_DIGEST__/g, artifactDigest));
+    } else {
+      setDigest(document, artifactDigest);
+    }
+  }
+  for (const [file, document] of files) {
+    writeJson(file, document);
+  }
 }
 
 console.log(`Current OAM evidence root generated: ${evidenceDir}`);
@@ -347,6 +372,10 @@ function addEvidence(file, document) {
   files.set(file, document);
 }
 
+function addTextEvidence(file, text) {
+  files.set(file, text);
+}
+
 function setDigest(value, digest) {
   if (Array.isArray(value)) {
     for (const item of value) setDigest(item, digest);
@@ -364,12 +393,31 @@ function setDigest(value, digest) {
 function digestFor(fileMap) {
   const normalized = {};
   for (const [file, document] of [...fileMap.entries()].sort(([left], [right]) => left.localeCompare(right))) {
-    normalized[file] = normalizeForDigest(document);
+    normalized[file] = normalizeForDigest(documentForDigest(file, document));
   }
   return `sha256:${sha256(JSON.stringify(normalized))}`;
 }
 
+function digestForDisk(fileList) {
+  const normalized = {};
+  for (const file of [...fileList].sort((left, right) => left.localeCompare(right))) {
+    normalized[file] = normalizeForDigest(file.endsWith(".jsonl") ? readJsonl(file) : readJson(file));
+  }
+  return `sha256:${sha256(JSON.stringify(normalized))}`;
+}
+
+function documentForDigest(file, document) {
+  if (file.endsWith(".jsonl") && typeof document === "string") {
+    return document
+      .split(/\r?\n/)
+      .filter((line) => line.trim().length > 0)
+      .map((line) => JSON.parse(line));
+  }
+  return document;
+}
+
 function normalizeForDigest(value) {
+  if (typeof value === "string") return value.replaceAll(/sha256:[a-f0-9]{64}|__CURRENT_OAM_EVIDENCE_DIGEST__/g, digestPlaceholder);
   if (Array.isArray(value)) return value.map(normalizeForDigest);
   if (!value || typeof value !== "object") return value;
   const output = {};
@@ -382,6 +430,7 @@ function normalizeForDigest(value) {
 function buildGateSummary() {
   const requiredCommands = [
     "node scripts/oam/check-current-oam.mjs",
+    "node scripts/oam/check-p0-rule-ledger.mjs",
     "node scripts/check-rule-authority.mjs",
     "node scripts/check-local-path-references.mjs",
     "node scripts/check-api-boundaries.mjs",
@@ -411,6 +460,84 @@ function buildGateSummary() {
       status: "required"
     }))
   };
+}
+
+function executionLogText(digest) {
+  const entries = [
+    {
+      event: "冻结检查",
+      status: workspace.summary,
+      commitSha,
+      branch,
+      ciRunId,
+      generatedAt,
+      artifactDigest: digest,
+      details: {
+        changedFiles: workspace.changedFiles,
+        createdFiles: workspace.createdFiles,
+        deletedOrMovedFiles: workspace.deletedOrMovedFiles
+      }
+    },
+    {
+      event: "P0 账本状态",
+      status: unresolvedP0.length === 0 ? "passed" : "failed",
+      commitSha,
+      branch,
+      ciRunId,
+      generatedAt,
+      artifactDigest: digest,
+      details: {
+        total: p0Ledger.length,
+        unresolvedP0
+      }
+    },
+    {
+      event: "本地总门禁绑定",
+      status: "required",
+      commitSha,
+      branch,
+      ciRunId,
+      generatedAt,
+      artifactDigest: digest,
+      details: gateSummary
+    },
+    {
+      event: "测试验收绑定",
+      status: "required",
+      commitSha,
+      branch,
+      ciRunId,
+      generatedAt,
+      artifactDigest: digest,
+      details: testSummary
+    },
+    {
+      event: "覆盖率绑定",
+      status: coverageSummary.status,
+      commitSha,
+      branch,
+      ciRunId,
+      generatedAt,
+      artifactDigest: digest,
+      details: coverageSummary
+    },
+    {
+      event: "最终裁决",
+      status: finalGoNoGo,
+      commitSha,
+      branch,
+      ciRunId,
+      generatedAt,
+      artifactDigest: digest,
+      details: {
+        businessProduction: admission.businessProduction,
+        dormitoryL2: admission.dormitoryProduction,
+        productionConfirmAllowed: admission.productionConfirmAllowed
+      }
+    }
+  ];
+
+  return `${entries.map((entry) => JSON.stringify(entry)).join("\n")}\n`;
 }
 
 function buildTestSummary() {
@@ -489,19 +616,15 @@ function statusLine(name, status) {
 }
 
 function readP0Ledger(file) {
-  const text = readText(file);
-  return text
-    .split(/\r?\n/)
-    .filter((line) => /^\|\s*P0-\d+/.test(line))
-    .map((line) => line.split("|").map((cell) => cell.trim()))
-    .map((cells) => ({
-      ruleId: cells[1],
-      name: stripInlineCode(cells[2]),
-      gate: stripInlineCode(cells[6]),
-      evidence: stripInlineCode(cells[7]),
-      status: cells[8],
-      risk: cells[9]
-    }));
+  const ledger = readJson(file);
+  return (ledger.rules ?? []).map((rule) => ({
+    ruleId: rule.ruleId,
+    name: rule.ruleNameZh,
+    gate: rule.primaryGate,
+    evidence: rule.evidenceArtifact,
+    status: rule.status,
+    risk: rule.riskLevel
+  }));
 }
 
 function workspaceStatus() {
@@ -528,6 +651,13 @@ function readJson(file) {
   return JSON.parse(readText(file));
 }
 
+function readJsonl(file) {
+  return readText(file)
+    .split(/\r?\n/)
+    .filter((line) => line.trim().length > 0)
+    .map((line) => JSON.parse(line));
+}
+
 function readJsonIfExists(file) {
   return fileExists(file) ? readJson(file) : null;
 }
@@ -539,6 +669,10 @@ function readText(file) {
 function writeJson(file, document) {
   const target = path.join(root, file);
   fs.mkdirSync(path.dirname(target), { recursive: true });
+  if (typeof document === "string") {
+    fs.writeFileSync(target, document.endsWith("\n") ? document : `${document}\n`);
+    return;
+  }
   fs.writeFileSync(target, `${JSON.stringify(document, null, 2)}\n`);
 }
 

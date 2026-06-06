@@ -19,7 +19,7 @@ export function admissionStateFromWorkItem(workItem = {}, state = {}) {
   const hasExplicitAdmission = Boolean(workItem.admission || workItem.payload?.admission || workItem.Payload?.admission);
   const businessAdmission = state.businessLineAdmission || state.runtimeStore?.businessLineAdmission || {};
   const releaseBlocked = globalProductionBlocked(state);
-  const mode = admission.mode || businessAdmission.dormitory?.surfaceMode || businessAdmission.dormitory?.level || "";
+  const mode = admission.mode || businessAdmission.dormitory?.mode || businessAdmission.dormitory?.surfaceMode || "";
   if (!hasExplicitAdmission) {
     return normalizeAdmissionState({
       visibleAllowed: true,
@@ -110,30 +110,53 @@ function admissionDecisionCode(admission) {
 function modeLabelKey(mode, prefix) {
   if (isContractPreview(mode)) return `${prefix}.admission.contractPreview`;
   if (isInternalPilot(mode)) return `${prefix}.admission.internalPilotObservation`;
-  if (/production/i.test(mode)) return `${prefix}.admission.productionMode`;
+  if (normalizeAdmissionMode(mode) === "production") return `${prefix}.admission.productionMode`;
   return `${prefix}.admission.prepareOnly`;
 }
 
 function normalizeAdmissionMode(mode = "") {
-  const value = String(mode || "").trim();
-  if (!value) return "prepare_only";
-  if (/L0|contract.preview|contract_preview/i.test(value)) return "contract_preview";
-  if (/L1|internal.pilot|internal_pilot|observation/i.test(value)) return "internal_pilot_observation";
-  return value;
+  const token = normalizeStructuredToken(mode);
+  const map = {
+    contract_preview: "contract_preview",
+    contract_preview_scope: "contract_preview",
+    l0_contract_preview: "contract_preview",
+    internal_pilot: "internal_pilot_observation",
+    internal_pilot_scope: "internal_pilot_observation",
+    internal_pilot_observation: "internal_pilot_observation",
+    l1_internal_pilot: "internal_pilot_observation",
+    l1_internal_pilot_observation: "internal_pilot_observation",
+    prepare_only: "prepare_only",
+    production: "production",
+    production_allowed: "production"
+  };
+  return map[token] || token || "prepare_only";
 }
 
 function isContractPreview(mode = "") {
-  return /contract_preview|L0|contract preview/i.test(String(mode || ""));
+  return normalizeAdmissionMode(mode) === "contract_preview";
 }
 
 function isInternalPilot(mode = "") {
-  return /internal_pilot_observation|L1|internal pilot|observation/i.test(String(mode || ""));
+  return normalizeAdmissionMode(mode) === "internal_pilot_observation";
 }
 
 function globalProductionBlocked(state = {}) {
   const currentState = state.currentState || state.releaseState || state.runtimeStore?.currentState || {};
-  const businessProduction = currentState.businessProduction || currentState.businessProductionStatus || currentState.business_production || "";
-  if (/blocked/i.test(String(businessProduction))) return true;
+  const businessProduction = currentState.businessProductionState || currentState.businessProduction || currentState.businessProductionStatus || currentState.business_production || "";
+  if (isBlockedState(businessProduction)) return true;
   const admission = state.businessLineAdmission || state.runtimeStore?.businessLineAdmission || {};
   return admission.businessProduction?.productionAllowed === false || admission.dormitory?.productionAllowed === false;
+}
+
+function isBlockedState(value = "") {
+  return ["blocked", "business_production_blocked", "production_blocked"].includes(normalizeStructuredToken(value));
+}
+
+function normalizeStructuredToken(value = "") {
+  return String(value || "")
+    .trim()
+    .replaceAll("-", "_")
+    .replaceAll(".", "_")
+    .replace(/\s+/g, "_")
+    .toLocaleLowerCase();
 }
