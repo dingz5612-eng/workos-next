@@ -146,7 +146,7 @@ function writeReport(items) {
   fs.mkdirSync(path.dirname(reportPath), { recursive: true });
   fs.writeFileSync(reportPath, JSON.stringify({
     checkedAt: new Date().toISOString(),
-    architecture: "Operations Management Architecture",
+    architecture: "oam.current",
     status: items.length ? "fail" : "pass",
     violations: items
   }, null, 2));

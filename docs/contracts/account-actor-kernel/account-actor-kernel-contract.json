@@ -1,7 +1,7 @@
 {
   "version": "account-actor-kernel.v1",
   "contractId": "account-actor-kernel",
-  "architecture": "Operations Management Architecture",
+  "architecture": "oam.current",
   "status": "authoritative-kernel-contract",
   "rule": "Account, User, and Actor data are backend truth objects. Login only proves username and password. Department, business line, role, capability, tenant, session, and device trust must come from backend account/session truth and Admission policies.",
   "backendTruthObjects": [

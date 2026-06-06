@@ -2,7 +2,7 @@
   "version": "oam.experience-contract.v1",
   "authority": "docs/oam/current-architecture.md",
   "currentSurfaceArchitecture": {
-    "name": "Operations Management Architecture surface system",
+    "name": "oam.current surface system",
     "runtimeAxis": "Product Capability -> Domain Module -> WorkItem -> Confirm Runtime -> Unit of Work -> Event or Ledger -> Outbox -> Projection or Lens -> Surface",
     "required": [
       "shared shell",

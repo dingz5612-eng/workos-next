@@ -83,6 +83,10 @@ function validateTestsAndCi() {
   if (!ci.includes("scripts/finance/check-finance-semantic-truth.mjs") || !ci.includes("scripts/check-ledger-semantic-rules.mjs")) {
     violations.push(violation("oam.finance.ci_missing", ".github/workflows/ci.yml", "CI 必须接入 OAM finance-gate finance semantic checker。"));
   }
+  const controlPlaneGate = fs.readFileSync(path.join(process.cwd(), "scripts/oam/run-control-plane-checks.ps1"), "utf8");
+  if (!controlPlaneGate.includes("scripts/finance/check-finance-semantic-truth.mjs") || !controlPlaneGate.includes("scripts/check-ledger-semantic-rules.mjs")) {
+    violations.push(violation("oam.finance.local_gate_missing", "scripts/oam/run-control-plane-checks.ps1", "本地 OAM 总门禁必须接入 finance semantic 与 ledger semantic checker。"));
+  }
   return violations;
 }
 

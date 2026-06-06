@@ -1,6 +1,6 @@
--- RF6: CommandSubmission audit closure for failed and rejected submissions.
+-- Current OAM: CommandSubmission audit closure for failed and rejected submissions.
 -- Rollback guidance: this migration is additive. To reverse before production,
--- history operations_command_submissions, drop dependent response rows, then
+-- review operations_command_submissions, drop dependent response rows, then
 -- drop these audit columns and restore the prior status constraint.
 
 alter table operations_command_submissions

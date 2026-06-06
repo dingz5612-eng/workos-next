@@ -2120,7 +2120,7 @@ static void ValidateOperationsRuntimeContracts()
         "ProjectionCommit.v1",
         "FactTrace.v1",
         "FactTrace",
-        "Operations Management Architecture"
+        "oam.current"
     })
     {
         Assert(contractDoc.Contains(token, StringComparison.Ordinal), $"runtime contracts doc must mention {token}");

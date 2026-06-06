@@ -1,0 +1,78 @@
+{
+  "version": "oam.coverage-policy.v1",
+  "status": "authoritative",
+  "ordinaryKpiExcludes": [
+    "apps/mobile/src/generated/**",
+    "apps/mobile/src/__tests__/**"
+  ],
+  "ordinaryKpiArtifact": "artifacts/oam/test-results/mobile/coverage/coverage-summary.json",
+  "layeredTargets": [
+    {
+      "layer": "rule-gates",
+      "target": "100%",
+      "scope": [
+        "OAM purity",
+        "rule authority",
+        "API boundaries",
+        "runtime write path",
+        "finance semantic",
+        "ledger semantic",
+        "truth owners"
+      ]
+    },
+    {
+      "layer": "finance-ledger-permission-write-path",
+      "target": "95%-100%",
+      "scope": [
+        "finance truth",
+        "ledger semantic runtime",
+        "permission/admission blockers",
+        "business write path guards"
+      ]
+    },
+    {
+      "layer": "domain-runtime-kernel",
+      "target": "90%+",
+      "scope": [
+        "domain/runtime kernels",
+        "operation action state",
+        "operation field kernel",
+        "system context"
+      ]
+    },
+    {
+      "layer": "api-client",
+      "target": "80%-90%",
+      "scope": [
+        "success wrappers",
+        "safe error branches",
+        "auth/session failure",
+        "CSRF and actor headers",
+        "projection wait"
+      ]
+    },
+    {
+      "layer": "controls-selectors",
+      "target": "85%-90%",
+      "scope": [
+        "field controls",
+        "bed layout controls",
+        "surface selectors",
+        "queue selectors",
+        "permission and empty states"
+      ]
+    },
+    {
+      "layer": "views",
+      "target": "75%-85%",
+      "scope": [
+        "workbench",
+        "workspace",
+        "search",
+        "PC governance",
+        "finance reconciliation",
+        "release control"
+      ]
+    }
+  ]
+}

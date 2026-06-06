@@ -1,6 +1,6 @@
 # WorkOSNext
 
-WorkOSNext is a mobile-first Business Work OS platform. The current architecture is OAM: Operations Management Architecture.
+WorkOSNext is a mobile-first Business Work OS platform. The current architecture identity is `oam.current`.
 
 ## Current Authority
 

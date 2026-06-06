@@ -290,7 +290,7 @@ public sealed class RuntimePersistenceContractTests
         }
 
         Assert.Contains("RecordWorkItemTransition", runtimeService);
-        Assert.DoesNotContain("=> $\"{workspaceId}:{cardId}\"", runtimeService, "RF7 must not generate workspaceId:cardId as the retired WorkItem identity.");
+        Assert.DoesNotContain("=> $\"{workspaceId}:{cardId}\"", runtimeService, "current OAM must not generate workspaceId:cardId as the retired WorkItem identity.");
     }
 
     [TestMethod]

@@ -63,6 +63,39 @@ public sealed class OamReleaseControlTests
         }
     }
 
+    [TestMethod]
+    public void CiAndLocalControlPlaneGateCoverCurrentOamCoreChecks()
+    {
+        var workflow = File.ReadAllText(RepoPath(".github", "workflows", "ci.yml"));
+        var localGate = File.ReadAllText(RepoPath("scripts", "oam", "run-control-plane-checks.ps1"));
+        foreach (var script in CurrentOamCoreCheckScripts())
+        {
+            StringAssert.Contains(workflow, script);
+            StringAssert.Contains(localGate, script);
+        }
+    }
+
+    [TestMethod]
+    public void RepositoryDoesNotContainRetiredStageTokens()
+    {
+        var forbidden = new[]
+        {
+            string.Concat("R", "F", "6"),
+            string.Concat("R", "F", "7"),
+            string.Concat("W", "-", "R", "F", "7"),
+            string.Concat("tenant", "-", "r", "f", "7")
+        };
+
+        foreach (var file in EnumerateRepositoryTextFiles())
+        {
+            var text = File.ReadAllText(file);
+            foreach (var token in forbidden)
+            {
+                Assert.IsFalse(ContainsForbiddenToken(text, token), $"{RelativeToRepo(file)} must not contain retired stage token {token}.");
+            }
+        }
+    }
+
     private static bool ContainsForbiddenToken(string text, string token)
     {
         if (token.All(char.IsLetterOrDigit))
@@ -72,6 +105,56 @@ public sealed class OamReleaseControlTests
 
         return text.Contains(token, StringComparison.OrdinalIgnoreCase);
     }
+
+    private static IEnumerable<string> EnumerateRepositoryTextFiles()
+    {
+        var root = RepoRoot();
+        var allowedExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            ".cs",
+            ".js",
+            ".mjs",
+            ".json",
+            ".yml",
+            ".yaml",
+            ".md",
+            ".sql",
+            ".ps1"
+        };
+
+        return Directory.EnumerateFiles(root, "*", SearchOption.AllDirectories)
+            .Where(file => allowedExtensions.Contains(Path.GetExtension(file)))
+            .Where(file => !RelativeToRepo(file).Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
+                .Any(segment => segment is ".git" or ".tmp" or ".codex-run" or ".codex-runtime" or "node_modules" or "bin" or "obj" or "dist" or "TestResults"))
+            .Where(file => !RelativeToRepo(file).Replace('\\', '/').StartsWith("artifacts/oam/test-results/", StringComparison.OrdinalIgnoreCase))
+            .Where(file => !RelativeToRepo(file).Replace('\\', '/').StartsWith("artifacts/oam/checks/", StringComparison.OrdinalIgnoreCase));
+    }
+
+    private static string RelativeToRepo(string file) =>
+        Path.GetRelativePath(RepoRoot(), file);
+
+    private static IReadOnlyList<string> CurrentOamCoreCheckScripts() =>
+        new[]
+        {
+            "scripts/oam/check-current-oam.mjs",
+            "scripts/validate-contracts.mjs",
+            "scripts/check-rule-authority.mjs",
+            "scripts/check-local-path-references.mjs",
+            "scripts/check-api-boundaries.mjs",
+            "scripts/check-runtime-write-paths.mjs",
+            "scripts/check-policy-as-code.mjs",
+            "scripts/check-domain-packs.mjs",
+            "scripts/check-truth-owners.mjs",
+            "scripts/check-finance-truth.mjs",
+            "scripts/check-ledger-semantic-rules.mjs",
+            "scripts/finance/check-finance-semantic-truth.mjs",
+            "scripts/check-shared-governance-boundary.mjs",
+            "scripts/check-dormitory-golden-domain.mjs",
+            "scripts/check-language-kernel.mjs",
+            "scripts/check-search-kernel.mjs",
+            "scripts/check-admission-kernel.mjs",
+            "scripts/check-account-actor-kernel.mjs"
+        };
 
     private static ProcessResult RunNode(params string[] arguments)
     {

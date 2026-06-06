@@ -13,15 +13,15 @@ public sealed class WorkItemLifecycleTests
         var service = Service(out var workItems);
         var workItem = service.CreateWorkItem(new CreateWorkItemRequest(
             WorkItemId: "wi-lifecycle-001",
-            TenantId: "tenant-rf7",
+            TenantId: "tenant-oam-current",
             WorkItemType: "runtimeAudit",
-            WorkspaceId: "W-RF7",
+            WorkspaceId: "W-OAM-CURRENT",
             CardId: "runtimeAudit",
             OwnerRole: "operations",
-            Payload: new Dictionary<string, string> { ["caseId"] = "case-rf7" }));
+            Payload: new Dictionary<string, string> { ["caseId"] = "case-oam-current" }));
 
-        var first = service.ConfirmWorkItem("wi-lifecycle-001", Request("idem-rf7"), OperationsActor(), "req-rf7-1");
-        var duplicate = service.ConfirmWorkItem("wi-lifecycle-001", Request("idem-rf7"), OperationsActor(), "req-rf7-2");
+        var first = service.ConfirmWorkItem("wi-lifecycle-001", Request("idem-oam-current"), OperationsActor(), "req-oam-current-1");
+        var duplicate = service.ConfirmWorkItem("wi-lifecycle-001", Request("idem-oam-current"), OperationsActor(), "req-oam-current-2");
 
         Assert.IsNotNull(workItem);
         Assert.AreEqual(StatusCodes.Status200OK, first.StatusCode);
@@ -38,15 +38,15 @@ public sealed class WorkItemLifecycleTests
         var service = Service(out var workItems);
         service.CreateWorkItem(new CreateWorkItemRequest(
             WorkItemId: "wi-lifecycle-409",
-            TenantId: "tenant-rf7",
+            TenantId: "tenant-oam-current",
             WorkItemType: "runtimeAudit",
-            WorkspaceId: "W-RF7",
+            WorkspaceId: "W-OAM-CURRENT",
             CardId: "runtimeAudit",
             OwnerRole: "operations",
-            Payload: new Dictionary<string, string> { ["caseId"] = "case-rf7-409" }));
+            Payload: new Dictionary<string, string> { ["caseId"] = "case-oam-current-409" }));
 
-        var first = service.ConfirmWorkItem("wi-lifecycle-409", Request("idem-conflict", "A101"), OperationsActor(), "req-rf7-409-1");
-        var conflict = service.ConfirmWorkItem("wi-lifecycle-409", Request("idem-conflict", "B202"), OperationsActor(), "req-rf7-409-2");
+        var first = service.ConfirmWorkItem("wi-lifecycle-409", Request("idem-conflict", "A101"), OperationsActor(), "req-oam-current-409-1");
+        var conflict = service.ConfirmWorkItem("wi-lifecycle-409", Request("idem-conflict", "B202"), OperationsActor(), "req-oam-current-409-2");
 
         Assert.AreEqual(StatusCodes.Status200OK, first.StatusCode);
         Assert.AreEqual(StatusCodes.Status409Conflict, conflict.StatusCode);
@@ -85,7 +85,7 @@ public sealed class WorkItemLifecycleTests
         new(
             "u-operations-test",
             "operations",
-            "tenant-rf7",
+            "tenant-oam-current",
             new[] { "workos.write", "operations.confirm" },
             "test",
             "actor-token");
@@ -93,7 +93,7 @@ public sealed class WorkItemLifecycleTests
     private sealed class FakeRuntime : IOperationsRuntimeAdapter
     {
         public WorkspaceProjection? FindWorkspace(string workspaceId) =>
-            workspaceId.Equals("W-RF7", StringComparison.OrdinalIgnoreCase) ? Workspace(workspaceId) : null;
+            workspaceId.Equals("W-OAM-CURRENT", StringComparison.OrdinalIgnoreCase) ? Workspace(workspaceId) : null;
 
         public IReadOnlyList<ProcessWorkItemIntentRecord> GetProcessWorkItemIntents(string? tenantId = null) =>
             Array.Empty<ProcessWorkItemIntentRecord>();
@@ -113,8 +113,8 @@ public sealed class WorkItemLifecycleTests
                 workspaceId,
                 "stay",
                 $"task-{workspaceId}",
-                Text("RF7"),
-                Text("RF7"),
+                Text("OAM current"),
+                Text("OAM current"),
                 new[] { Card("runtimeAudit") },
                 Text("Next"),
                 Array.Empty<BlockerRule>());

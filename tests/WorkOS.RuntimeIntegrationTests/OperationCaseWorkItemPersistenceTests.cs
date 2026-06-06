@@ -15,27 +15,27 @@ public sealed class OperationCaseWorkItemPersistenceTests
         var workItemStore = new PostgresOperationsWorkItemStore(connectionString);
         var service = new OperationsRuntimeService(new FakeRuntime(), caseStore, workItemStore);
         var suffix = Guid.NewGuid().ToString("N");
-        var caseId = $"case-rf7-{suffix}";
-        var workItemId = $"wi-rf7-{suffix}";
+        var caseId = $"case-oam-current-{suffix}";
+        var workItemId = $"wi-oam-current-{suffix}";
 
-        var operationCase = service.CreateCase(new CreateOperationCaseRequest(caseId, "tenant-rf7", "W-RF7"));
+        var operationCase = service.CreateCase(new CreateOperationCaseRequest(caseId, "tenant-oam-current", "W-OAM-CURRENT"));
         var workItem = service.CreateWorkItem(new CreateWorkItemRequest(
             WorkItemId: workItemId,
-            TenantId: "tenant-rf7",
+            TenantId: "tenant-oam-current",
             WorkItemType: "runtimeAudit",
-            WorkspaceId: "W-RF7",
+            WorkspaceId: "W-OAM-CURRENT",
             CardId: "runtimeAudit",
             OwnerRole: "operations",
             Payload: new Dictionary<string, string> { ["caseId"] = caseId }));
         service.RecordWorkItemTransition(
-            "tenant-rf7",
+            "tenant-oam-current",
             caseId,
             workItemId,
             "available",
             "confirmed",
-            $"sub-rf7-{suffix}",
+            $"sub-oam-current-{suffix}",
             "integration_confirm",
-            "actor-rf7");
+            "actor-oam-current");
 
         var reloadedCase = caseStore.Get(caseId);
         var reloadedWorkItem = workItemStore.Get(workItemId);
@@ -45,7 +45,7 @@ public sealed class OperationCaseWorkItemPersistenceTests
         Assert.IsNotNull(workItem);
         Assert.IsNotNull(reloadedCase);
         Assert.IsNotNull(reloadedWorkItem);
-        Assert.AreEqual("tenant-rf7", reloadedCase.TenantId);
+        Assert.AreEqual("tenant-oam-current", reloadedCase.TenantId);
         Assert.AreEqual(caseId, reloadedWorkItem.CaseId);
         Assert.AreEqual("confirmed", reloadedWorkItem.Status);
         Assert.AreEqual("work-item:runtimeAudit:v1", reloadedWorkItem.DefinitionVersionId);
@@ -62,7 +62,7 @@ public sealed class OperationCaseWorkItemPersistenceTests
     private sealed class FakeRuntime : IOperationsRuntimeAdapter
     {
         public WorkspaceProjection? FindWorkspace(string workspaceId) =>
-            workspaceId.Equals("W-RF7", StringComparison.OrdinalIgnoreCase) ? Workspace(workspaceId) : null;
+            workspaceId.Equals("W-OAM-CURRENT", StringComparison.OrdinalIgnoreCase) ? Workspace(workspaceId) : null;
 
         public IReadOnlyList<ProcessWorkItemIntentRecord> GetProcessWorkItemIntents(string? tenantId = null) =>
             Array.Empty<ProcessWorkItemIntentRecord>();
@@ -82,8 +82,8 @@ public sealed class OperationCaseWorkItemPersistenceTests
                 workspaceId,
                 "stay",
                 $"task-{workspaceId}",
-                Text("RF7"),
-                Text("RF7"),
+                Text("OAM current"),
+                Text("OAM current"),
                 new[] { Card("runtimeAudit") },
                 Text("Next"),
                 Array.Empty<BlockerRule>());

@@ -60,7 +60,10 @@ jobs:
         run: node scripts/oam/check-current-oam.mjs
 
       - name: Validate contracts
-        run: node scripts/validate-contracts.mjs
+        run: |
+          node scripts/validate-contracts.mjs
+          node scripts/check-rule-authority.mjs
+          node scripts/check-local-path-references.mjs
 
       - name: Validate API boundaries
         run: |

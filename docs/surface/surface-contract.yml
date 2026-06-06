@@ -29,7 +29,7 @@
     "forbiddenPath": "direct edit or repeat submit of the completed work item"
   },
   "currentSurfaceArchitecture": {
-    "architecture": "Operations Management Architecture surface system",
+    "architecture": "oam.current surface system",
     "required": ["shared shell", "shared route guard", "shared named experience components", "surface contract", "direct OperationCardShell on step pages"],
     "forbidden": ["page-private shell", "intent-card operation wrapper", "copied layout logic", "old completed-record grid", "retired Workspace/Card write UI flow"],
     "repair": "rewrite non-current architecture onto the active surface architecture and delete obsolete implementation in the same impact scope"

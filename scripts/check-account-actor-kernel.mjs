@@ -47,7 +47,7 @@ function validateContract(targetContract, violations) {
   if (targetContract.version !== "account-actor-kernel.v1") {
     fail(violations, "contract.version", "Account Actor Kernel contract version must be account-actor-kernel.v1.");
   }
-  if (targetContract.architecture !== "Operations Management Architecture") {
+  if (targetContract.architecture !== "oam.current") {
     fail(violations, "contract.architecture", "Account Actor Kernel must bind to current OAM.");
   }
   for (const table of ["account_users", "account_audit_events", "runtime_sessions", "device_sessions"]) {

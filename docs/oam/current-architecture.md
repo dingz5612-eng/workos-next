@@ -4,7 +4,7 @@
 
 ## 1. OAM 定义
 
-OAM 是当前项目的唯一运行架构，含义为 Operations Management Architecture。它只承认一条业务执行链：
+OAM 是当前项目的唯一运行架构身份，机器名为 `oam.current`。OAM 不作为其他英文全称的缩写使用；它只承认一条业务执行链：
 
 ```text
 Product Capability
@@ -32,6 +32,7 @@ Product Capability
 6. 证据必须作为 Evidence Object 进入 Evidence / Trace / Audit 链，图片识别只能作为建议带入，不能静默覆盖业务事实。
 7. 账号、角色、能力、会话、设备信任由后端 Account / Actor / Device / Session 内核控制，登录页只允许用户名和密码。
 8. `.github`、`infra`、`services`、`modules`、`packages` 都必须在 OAM manifest 中归类。
+9. 覆盖率口径以 `docs/oam/coverage-policy.json` 为准；普通 KPI 不纳入生成代码和测试代码，规则、finance、ledger、权限和写路径按分层目标验收。
 
 ## 3. 一等目录
 

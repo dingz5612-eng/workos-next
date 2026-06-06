@@ -1,7 +1,7 @@
 {
   "version": "frontend-experience-system.v1",
   "contractId": "frontend-experience-system",
-  "architecture": "Operations Management Architecture surface architecture",
+  "architecture": "oam.current surface architecture",
   "status": "authoritative-surface-contract",
   "rule": "Every user-visible page must use the shared Frontend Experience System. Pages may specialize business content, permissions, readonly state, and actions, but they must not specialize architecture.",
   "layers": [

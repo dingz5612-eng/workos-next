@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "version": "oam.current.v1",
   "status": "authoritative",
-  "architecture": "Operations Management Architecture",
+  "architecture": "oam.current",
   "primaryWritePath": "POST /api/operations/work-items/{workItemId}/confirm",
   "productCapabilities": [
     {
