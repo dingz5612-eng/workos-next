@@ -14,7 +14,7 @@
       "card.workItemId when it is not persisted",
       "prepareCard in normal confirm path",
       "confirmCard in normal confirm path",
-      "mobile retired write fallback"
+      "mobile blocked write fallback"
     ],
     "primaryWritePath": "POST /api/operations/work-items/{workItemId}/confirm"
   },
@@ -31,7 +31,7 @@
   "currentSurfaceArchitecture": {
     "architecture": "oam.current surface system",
     "required": ["shared shell", "shared route guard", "shared named experience components", "surface contract", "direct OperationCardShell on step pages"],
-    "forbidden": ["page-private shell", "intent-card operation wrapper", "copied layout logic", "old completed-record grid", "retired Workspace/Card write UI flow"],
+    "forbidden": ["page-private shell", "intent-card operation wrapper", "copied layout logic", "obsolete completed-record grid", "blocked Workspace/Card write path"],
     "repair": "rewrite non-current architecture onto the active surface architecture and delete obsolete implementation in the same impact scope"
   },
   "frontendExperienceSystem": {
@@ -40,7 +40,7 @@
     "rule": "pages may specialize business content but not architecture",
     "contentContainerRule": "ordinary mobile content must render as shared containers; business titles, status labels, anchors, explanations, and next-action copy must not appear as naked text on the page background",
     "businessSummaryCardHierarchy": "business item cards use BusinessSummaryHeader, structured non-clickable business anchors, BusinessTaskOverview, and a separate bottom action container",
-    "searchMeResponsibilityBoundary": "Search is for active business discovery and entry; Me owns readonly personal history and support surfaces.",
+    "searchMeResponsibilityBoundary": "Search is for active business discovery and entry; Me owns readonly personal activity log and support surfaces.",
     "fieldContextKernel": "field identity, aliases, task overview fields, option labels, and derived previews must come from apps/mobile/src/operationFieldKernel.js",
     "stepPageExperienceParity": "new active, readonly completed, and append-only correction step pages must share step rail, direct OperationCardShell, state/check panel, action hierarchy, feedback entry, and decision markers",
     "postSubmitNavigation": "successful active confirm must auto-advance to the next actionable persisted WorkItem in the same case when one exists",
@@ -63,7 +63,7 @@
     "rule": "visibleAllowed, prepareAllowed, confirmAllowed, productionAllowed, mode, and safe reason copy must be consumed by the visible surface",
     "searchResultCard": {
       "visible": ["title", "subtitle", "statusLabel", "admissionLabel", "admissionReasonLabel", "nextAction"],
-      "hiddenForOrdinaryUsers": ["admissionDecisionRef", "retiredAdapter", "definitionId", "payloadHash", "commandSubmissionId", "rawReason", "rawCode"],
+      "hiddenForOrdinaryUsers": ["admissionDecisionRef", "blockedAdapter", "definitionId", "payloadHash", "commandSubmissionId", "rawReason", "rawCode"],
       "confirmDeniedPrimaryAction": "view-only or learning action; never process/start-handling wording"
     },
     "operationWorkItemDetail": {
@@ -96,7 +96,7 @@
     "apiModule": "apps/mobile/src/pcApiClient.js",
     "dataHydrator": "apps/mobile/src/pcSurfaceData.js"
   },
-  "retiredWorkspaceCardWriteAdapter": {
+  "currentForbiddenWriteAdapter": {
     "allowedOnlyAs": "deleted",
     "normalConfirmPath": "forbidden",
     "adapterClass": "deleted"

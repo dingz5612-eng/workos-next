@@ -248,7 +248,7 @@ public sealed class RuntimePersistenceContractTests
             "delete from shadow_runtime.command_submissions",
             operationsRuntimeService,
             StringComparison.OrdinalIgnoreCase,
-            "retired command submissions must be marked failed instead of deleted");
+            "blocked command submissions must be marked failed instead of deleted");
     }
 
     [TestMethod]
@@ -259,7 +259,7 @@ public sealed class RuntimePersistenceContractTests
         {
             "operations_cases",
             "operations_work_items",
-            "operations_work_item_state_history",
+            "operations_work_item_state_event_log",
             "operations_work_item_assignments",
             "operations_work_item_escalations",
             "definition_version_id",
@@ -290,7 +290,7 @@ public sealed class RuntimePersistenceContractTests
         }
 
         Assert.Contains("RecordWorkItemTransition", runtimeService);
-        Assert.DoesNotContain("=> $\"{workspaceId}:{cardId}\"", runtimeService, "current OAM must not generate workspaceId:cardId as the retired WorkItem identity.");
+        Assert.DoesNotContain("=> $\"{workspaceId}:{cardId}\"", runtimeService, "current OAM must not generate workspaceId:cardId as the non-persisted WorkItem identity.");
     }
 
     [TestMethod]
@@ -454,7 +454,7 @@ public sealed class RuntimePersistenceContractTests
             "guard_hostel_payments_fact_update",
             "guard_finance_reconciliations_fact_update",
             "guard_hostel_charges_fact_update",
-            "forbid_retired_ledger_entry_update",
+            "forbid_direct_ledger_entry_update",
             "trg_hostel_payments_fact_update_guard",
             "trg_deposit_transactions_forbid_update",
             "trg_payment_allocations_forbid_update"

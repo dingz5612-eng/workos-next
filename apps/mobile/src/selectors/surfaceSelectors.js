@@ -90,7 +90,7 @@ function isOrdinaryPilotQueueItem(item = {}) {
     item.source,
     item.projectionSource
   ].join(" ");
-  return !/(runtimeAudit|\brf[-_:]|engineering|diagnostic|fixture_replay|retired_projection_shadow)/i.test(tokens);
+  return !/(runtimeAudit|\brf[-_:]|engineering|diagnostic|fixture_replay|projection_guard_shadow)/i.test(tokens);
 }
 
 function isTerminalQueueItem(item = {}) {

@@ -32,7 +32,7 @@ public sealed class DormitoryRuntimeProofTests
         }
 
         Assert.IsTrue(apiBoundary.GetProperty("writeRoutes").GetProperty("businessConfirm").EnumerateArray().Any(item => item.GetString() == root.GetProperty("primaryWritePath").GetString()));
-        Assert.IsTrue(apiBoundary.GetProperty("forbidden").EnumerateArray().Any(item => item.GetString() == "retiredWorkspaceCardConfirm"));
+        Assert.IsTrue(apiBoundary.GetProperty("forbidden").EnumerateArray().Any(item => item.GetString() == "blockedWorkspaceCardConfirm"));
     }
 
     [TestMethod]

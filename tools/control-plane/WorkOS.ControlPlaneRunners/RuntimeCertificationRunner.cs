@@ -701,7 +701,7 @@ public static class RuntimeCertificationRunner
                 ["type"] = "semantic_certification_fact_graph",
                 ["objects"] = RuntimeCertificationFactGraph.Objects
             },
-            "retired-runtime-certification",
+            "source-runtime-certification",
             "operations-runtime-certification",
             "semantic-shadow-fact-graph",
             DateTimeOffset.UtcNow,

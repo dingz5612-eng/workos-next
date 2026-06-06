@@ -1,6 +1,6 @@
 -- Final Ops outbox dead-letter replay audit.
 -- Rollback note: WorkOSNext migrations are up-only. If this ops schema must be
--- removed before production use, history outbox_dead_letter_replay_audits first,
+-- removed before production use, event_log outbox_dead_letter_replay_audits first,
 -- then drop the audit table in a reviewed compensating migration.
 
 create table if not exists outbox_dead_letter_replay_audits (

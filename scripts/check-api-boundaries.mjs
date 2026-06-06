@@ -141,9 +141,9 @@ function validateContract(contract) {
   if (businessRoutes.length !== 1 || businessRoutes[0] !== businessConfirmRoute) {
     violations.push("businessConfirm may contain only the Operations Confirm route");
   }
-  const retiredRetired = String(contract.apiBoundary?.writeRoutes?.retiredBusinessWrite ?? "");
-  if (retiredRetired) {
-    violations.push("retiredBusinessWrite must not exist in current OAM");
+  const blockedWrite = String(contract.apiBoundary?.writeRoutes?.blockedBusinessWrite ?? "");
+  if (blockedWrite) {
+    violations.push("blockedBusinessWrite must not exist in current OAM");
   }
   return violations;
 }
@@ -180,7 +180,7 @@ function findViolations(routes, contract, options = {}) {
     if (!isApiRoute(route)) continue;
 
     if (forbiddenWritePatterns.some((pattern) => pattern.test(route.key))) {
-      violations.push(`${route.file}: retired or forbidden write route is registered: ${route.key}`);
+      violations.push(`${route.file}: blocked or forbidden write route is registered: ${route.key}`);
     }
 
     if (!isWriteRoute(route)) continue;
@@ -297,10 +297,10 @@ function runSelfTest() {
     "Operations workspace start route was rejected");
 
   expectViolation(
-    extractRoutes('app.MapPost("/api/workspaces/{workspaceId}/cards/{cardId}/confirm", () => Results.Ok());', "simulated-retired-workspace-card-confirm.cs"),
+    extractRoutes('app.MapPost("/api/workspaces/{workspaceId}/cards/{cardId}/confirm", () => Results.Ok());', "simulated-blocked-workspace-card-confirm.cs"),
     contract,
     "POST /api/workspaces/{workspaceId}/cards/{cardId}/confirm",
-    "retired Workspace/Card confirm was not rejected");
+    "blocked Workspace/Card confirm was not rejected");
 
   expectNoViolation(
     extractRoutes('app.MapPost("/api/evidence/{evidenceId}/attachments", () => Results.Ok());', "simulated-evidence-attachment.cs"),

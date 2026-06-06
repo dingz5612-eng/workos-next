@@ -638,7 +638,7 @@ async function validateConfirmLedgerProjectionLensChain() {
     assert(result.projectionStatus === "pending", `S4 UoW Operations confirm projectionStatus must be pending, got ${result.projectionStatus}`);
     const trace = await getJson(result.traceUrl);
     assert(trace.submissionRef === result.commandSubmissionId, "S4 trace must bind to the commandSubmissionId");
-    assert(trace.workItemRef === result.workItemId, "S4 trace must bind to the retired-resolved workItemId");
+    assert(trace.workItemRef === result.workItemId, "S4 trace must bind to the non-persisted-resolved workItemId");
     assert((trace.domainEventRefs || []).join("|") === eventIds.join("|"), "S4 trace domainEventRefs must match resultEventIds");
 
     const duplicate = await fetch(`${baseUrl}${confirmPath}`, {

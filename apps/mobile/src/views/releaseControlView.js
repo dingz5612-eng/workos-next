@@ -91,7 +91,7 @@ function mrOverview(overview, manifest, flags, cutovers, escapeHtml) {
       ${field("release status", overview.releaseStatus || manifest.status, escapeHtml)}
       ${field("owner", overview.owner || first(manifest.owners) || "unassigned", escapeHtml)}
       ${field("feature flag status", overview.featureFlagStatus || flags[0]?.status || "none", escapeHtml)}
-      ${field("slice runtime_mode", overview.sliceRuntimeMode || cutovers[0]?.runtimeMode || "retired", escapeHtml)}
+      ${field("slice runtime_mode", overview.sliceRuntimeMode || cutovers[0]?.runtimeMode || "source-locked", escapeHtml)}
       ${field("acceptance progress", `${acceptance.completed || 0}/${acceptance.total || 0} (${acceptance.percent || 0}%)`, escapeHtml)}
     </section>
   `;

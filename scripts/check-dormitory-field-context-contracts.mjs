@@ -21,7 +21,7 @@ const dormitoryWorkspaceIds = new Set([
   "W-STAY-PERIOD-ANALYTICS"
 ]);
 
-const forbiddenRetiredFieldIds = new Set([
+const forbiddenSuppressedFieldIds = new Set([
   "depositRule",
   "varianceReason",
   "actualCost",
@@ -135,12 +135,12 @@ function checkBusinessFieldsDeclaredByContextContract() {
       ...summary.user,
       ...summary.derived,
       ...summary.backend,
-      ...summary.retired
+      ...summary.suppressed
     ]);
     for (const label of card.businessLabels) {
       const fieldId = backendAliases.get(label) || operationFieldId({ label: { "zh-CN": label } });
       if (!declared.has(fieldId)) {
-        failures.push(`${card.workspaceId}.${card.cardId}.${label} -> ${fieldId} must be declared inherited, user, derived, backend, or retired in systemContextContract.`);
+        failures.push(`${card.workspaceId}.${card.cardId}.${label} -> ${fieldId} must be declared inherited, user, derived, backend, or suppressed in systemContextContract.`);
       }
     }
     for (const fieldId of [...declared]) {
@@ -209,7 +209,7 @@ function checkDefinitionDocsAligned() {
       userSelectableFields: summary.user,
       derivedFields: summary.derived,
       backendDefaultFields: summary.backend,
-      retiredFields: summary.retired
+      suppressedFields: summary.suppressed
     })) {
       const actual = new Set((docContract[bucket] || []).map((item) => item.fieldId));
       for (const fieldId of expected) {
@@ -227,7 +227,7 @@ function checkDefinitionDocsAligned() {
       ...(contract.derivedFields || []),
       ...(contract.backendDefaultFields || []),
       ...(contract.hiddenBackendDefaults || []),
-      ...(contract.retiredFields || [])
+      ...(contract.suppressedFields || [])
     ].map((item) => item.fieldId)),
     ...(fieldContractRefs.refs || []).flatMap((ref) => [
       ...(ref.requiredFieldIds || []),
@@ -235,8 +235,8 @@ function checkDefinitionDocsAligned() {
     ])
   ];
   for (const fieldId of allDocFieldIds) {
-    if (forbiddenRetiredFieldIds.has(fieldId)) {
-      failures.push(`Definition docs still contain retired field id ${fieldId}; use the canonical current field id.`);
+    if (forbiddenSuppressedFieldIds.has(fieldId)) {
+      failures.push(`Definition docs still contain suppressed-source field id ${fieldId}; use the canonical current field id.`);
     }
   }
 
@@ -304,7 +304,7 @@ function writeReport() {
     checkedWorkspaces: [...dormitoryWorkspaceIds],
     checkedCardCount: seedCards.length,
     protectedFieldIds: [...protectedFieldIds],
-    forbiddenRetiredFieldIds: [...forbiddenRetiredFieldIds],
+    forbiddenSuppressedFieldIds: [...forbiddenSuppressedFieldIds],
     failures
   }, null, 2));
 }

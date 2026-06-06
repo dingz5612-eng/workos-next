@@ -32,7 +32,7 @@ if (!operationPanel.includes('data-work-item-id="W-STAY-RESOURCE:roomSetup"')) {
 }
 
 if (operationPanel.includes("T-ROOM-CREATE")) {
-  violations.push(v("experience_module.retired_task_id_visible", "普通 Operation Panel 不得出现 retired task id。"));
+  violations.push(v("experience_module.non_persisted_task_id_visible", "普通 Operation Panel 不得出现 non-persisted task id。"));
 }
 
 for (const label of ["可信确认", "提交结果", "可信证据", "当前设备", "权限诊断"]) {

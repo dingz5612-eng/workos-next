@@ -32,7 +32,7 @@ describe("OAM Surface WorkItem route identity", () => {
     expect(workItem.workItemId).toBe("W-STAY-RESOURCE:roomSetup");
   });
 
-  it("does not treat retired task id as the operation identity", () => {
+  it("does not treat non-persisted task id as the operation identity", () => {
     const ctx = createSurfaceCtx({
       selectedWorkspace: "W-STAY-RESOURCE",
       selectedCardId: "roomSetup"

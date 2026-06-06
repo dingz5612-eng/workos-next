@@ -5,7 +5,7 @@ import { withSystemGeneratedOperationValues } from "../operationSystemValues.js"
 import { createSurfaceCtx, runtimeStore, source, visibleText } from "./surfaceContractTestHelpers.js";
 
 describe("SURFACE-C Operation Panel runtime contract", () => {
-  it("normalizes retired task ids and renders only persisted WorkItem runtime identity", () => {
+  it("normalizes non-persisted task ids and renders only persisted WorkItem runtime identity", () => {
     const ctx = createSurfaceCtx({ view: "operationPanel", selectedWorkItemId: "T-ROOM-CREATE" });
     const html = routeView(ctx);
 
@@ -32,8 +32,8 @@ describe("SURFACE-C Operation Panel runtime contract", () => {
     const panel = source("../views/operationPanelView.js");
 
     expect(runtime).toContain("persisted_work_item_required");
-    expect(runtime).not.toContain("allowRetiredFallback");
-    expect(runtime).not.toContain("submitCardOperationRetiredFallback");
+    expect(runtime).not.toContain("allowBlockedFallback");
+    expect(runtime).not.toContain("submitCardOperationBlockedFallback");
     expect(runtime).not.toContain("prepareCard");
     expect(runtime).not.toContain("confirmCard");
     expect(panel).toContain("state.selectedWorkItemId = persistedWorkItemId");
@@ -621,9 +621,9 @@ describe("SURFACE-C Operation Panel runtime contract", () => {
     expect(html).not.toContain('data-operation-field="bedLabel"');
   });
 
-  it("ignores retired single-bed validation after bed setup switches to generated room-capacity beds", () => {
+  it("ignores suppressed single-bed validation after bed setup switches to generated room-capacity beds", () => {
     const store = runtimeStore();
-    const workspaceId = "W-STAY-RESOURCE-BED-RETIRED-001";
+    const workspaceId = "W-STAY-RESOURCE-BED-SUPPRESSED-001";
     const bedCount = {
       ...field("bedCount", "床位数"),
       type: "number",
@@ -674,7 +674,7 @@ describe("SURFACE-C Operation Panel runtime contract", () => {
       ]
     };
     store.operationWorkItems = [{
-      workItemId: "wi-bed-retired-validation",
+      workItemId: "wi-bed-suppressed-validation",
       workspaceId,
       cardId: "bedSetup",
       lifecycleState: "ready",
@@ -688,7 +688,7 @@ describe("SURFACE-C Operation Panel runtime contract", () => {
     });
     const ctx = createSurfaceCtx({
       view: "operationPanel",
-      selectedWorkItemId: "wi-bed-retired-validation",
+      selectedWorkItemId: "wi-bed-suppressed-validation",
       selectedWorkspace: workspaceId,
       selectedCardId: "bedSetup",
       runtimeStore: store,

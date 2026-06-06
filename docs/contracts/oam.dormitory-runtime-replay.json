@@ -30,6 +30,6 @@
   "factRules": {
     "allowSyntheticDomainEvent": false,
     "allowSyntheticLedgerTransaction": false,
-    "retiredWorkspaceCardWritePathUsed": false
+    "forbiddenWorkspaceCardWritePathUsed": false
   }
 }

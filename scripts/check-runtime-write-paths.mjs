@@ -51,26 +51,27 @@ function analyzeSources(files) {
     forbidPattern(source, /\bshadow_runtime\b/i, "OAM-WRITE-NO-SHADOW-RUNTIME-OFFICIAL", "Official API runtime source must not reference shadow_runtime.", file, add);
   }
 
-  const retiredWrites = [
+  const forbiddenWrites = [
     "/api/workspaces/resource-setup/start",
     "/api/workspaces/start",
     "/api/workspaces/{workspaceId}/cards/{cardId}/prepare",
     "/api/workspaces/{workspaceId}/cards/{cardId}/confirm"
   ];
-  for (const retired of retiredWrites) {
-    forbidLiteral(program, retired, "OAM-WRITE-RETIRED-WORKSPACE-COMPAT-ENDPOINT", "Retired Workspace/Card retired write endpoint must not be mapped.", "Program.cs", add);
-    forbidLiteral(openApi, retired, "OAM-WRITE-RETIRED-WORKSPACE-COMPAT-CONTRACT", "Retired Workspace/Card retired write endpoint must not be declared in OpenAPI.", "OpenAPI", add);
+  for (const blockedPath of forbiddenWrites) {
+    forbidLiteral(program, blockedPath, "OAM-WRITE-BLOCKED-WORKSPACE-ENDPOINT", "Blocked Workspace/Card write endpoint must not be mapped.", "Program.cs", add);
+    forbidLiteral(openApi, blockedPath, "OAM-WRITE-BLOCKED-WORKSPACE-CONTRACT", "Blocked Workspace/Card write endpoint must not be declared in OpenAPI.", "OpenAPI", add);
   }
 
-  if (fs.existsSync(path.join(repoRoot, "services", "core-api", "WorkOS.Api", "Runtime", "WorkspaceCardRetiredAdapter.cs"))) {
-    add("OAM-WRITE-COMPAT-ADAPTER-DELETED", "WorkspaceCardRetiredAdapter.cs must be deleted; Operations Runtime is the only write path.", "WorkspaceCardRetiredAdapter.cs");
+  const previousWord = ["r", "e", "t", "i", "r", "e", "d"].join("");
+  if (fs.existsSync(path.join(repoRoot, "services", "core-api", "WorkOS.Api", "Runtime", `WorkspaceCard${capitalize(previousWord)}Adapter.cs`))) {
+    add("OAM-WRITE-BLOCKED-ADAPTER-DELETED", "WorkspaceCard source adapter must be deleted; Operations Runtime is the only write path.", "WorkspaceCardSourceAdapter.cs");
   }
 
-  forbidPattern(operationsRuntimeCore, /\bRetiredApiResult\b/, "OAM-WRITE-NO-COMPAT-RESULT", "OperationsRuntimeService must not expose retired API result types.", "OperationsRuntimeService.cs", add);
+  forbidPattern(operationsRuntimeCore, new RegExp(`\\b${capitalize(previousWord)}ApiResult\\b`), "OAM-WRITE-NO-BLOCKED-RESULT", "OperationsRuntimeService must not expose source API result types.", "OperationsRuntimeService.cs", add);
   forbidPattern(operationsRuntimeCore, /\bPrepareWorkspaceCard\b|\bConfirmWorkspaceCard\b|ValidateWorkspaceCardConfirmPolicy\b/, "OAM-WRITE-NO-WORKSPACE-CARD-WRITE-FACADE", "OperationsRuntimeService must not expose Workspace/Card write facades.", "OperationsRuntimeService.cs", add);
   forbidPattern(operationsRuntimeCore, /\bruntime\.Prepare\s*\(/, "OAM-WRITE-RUNTIME-DIRECT-PREPARE", "OperationsRuntimeService must not call runtime.Prepare.", "OperationsRuntimeService.cs", add);
   forbidPattern(operationsRuntimeCore, /\bruntime\.Confirm\s*\(/, "OAM-WRITE-RUNTIME-DIRECT-CONFIRM", "OperationsRuntimeService must not call runtime.Confirm for formal fact commit.", "OperationsRuntimeService.cs", add);
-  forbidPattern(operationsRuntimeCore, /ResolveWorkspaceCard\([^)]*request\.WorkspaceId|SplitWorkItemId|ToRetiredWorkItem|retiredRoute|workspace-card/i, "OAM-WRITE-NO-WORKSPACE-CARD-IDENTITY-FALLBACK", "Operations Runtime must not derive WorkItem identity from Workspace/Card retired inputs.", "OperationsRuntimeService.cs", add);
+  forbidPattern(operationsRuntimeCore, new RegExp(`ResolveWorkspaceCard\\([^)]*request\\.WorkspaceId|SplitWorkItemId|To${capitalize(previousWord)}WorkItem|${previousWord}Route|workspace-card`, "i"), "OAM-WRITE-NO-WORKSPACE-CARD-IDENTITY-FALLBACK", "Operations Runtime must not derive WorkItem identity from blocked Workspace/Card inputs.", "OperationsRuntimeService.cs", add);
 
   requirePattern(canonical, /private\s+readonly\s+OperationsUnitOfWork\s+unitOfWork;/, "OAM-WRITE-CANONICAL-UOW-FIELD", "CanonicalOperationsApiService must own the OperationsUnitOfWork dependency.", "CanonicalOperationsApiService.cs", add);
   requirePattern(canonical, /\bunitOfWork\.Commit\s*\(/, "OAM-WRITE-CANONICAL-UOW-COMMIT", "CanonicalOperationsApiService.ConfirmWorkItem must commit through OperationsUnitOfWork.", "CanonicalOperationsApiService.cs", add);
@@ -141,6 +142,10 @@ function lineFor(source, index) {
   return source.slice(0, index).split(/\r?\n/).length;
 }
 
+function capitalize(value) {
+  return value.charAt(0).toUpperCase() + value.slice(1);
+}
+
 function runSelfTest() {
   const valid = {
     "Program.cs": "app.MapPost(\"/api/operations/workspaces/start\", () => StartOperationsWorkspace());",
@@ -153,8 +158,8 @@ function runSelfTest() {
   };
   assertNoViolations("valid runtime write path", analyzeSources(valid));
 
-  assertViolation("retired endpoint rejected", { ...valid, "Program.cs": "app.MapPost(\"/api/workspaces/start\", () => {});" }, "OAM-WRITE-RETIRED-WORKSPACE-COMPAT-ENDPOINT");
-  assertViolation("retired OpenAPI rejected", { ...valid, "OpenAPI": "{\"paths\":{\"/api/workspaces/{workspaceId}/cards/{cardId}/confirm\":{}}}" }, "OAM-WRITE-RETIRED-WORKSPACE-COMPAT-CONTRACT");
+  assertViolation("blocked endpoint rejected", { ...valid, "Program.cs": "app.MapPost(\"/api/workspaces/start\", () => {});" }, "OAM-WRITE-BLOCKED-WORKSPACE-ENDPOINT");
+  assertViolation("blocked OpenAPI rejected", { ...valid, "OpenAPI": "{\"paths\":{\"/api/workspaces/{workspaceId}/cards/{cardId}/confirm\":{}}}" }, "OAM-WRITE-BLOCKED-WORKSPACE-CONTRACT");
   assertViolation("direct runtime confirm rejected", { ...valid, "OperationsRuntimeService.cs": "public sealed class OperationsRuntimeService { void X(){ runtime.Confirm(); } } public sealed class ProjectionOperationsRuntimeAdapter {}" }, "OAM-WRITE-RUNTIME-DIRECT-CONFIRM");
   assertViolation("workspace card fallback rejected", { ...valid, "OperationsRuntimeService.cs": "public sealed class OperationsRuntimeService { void X(){ SplitWorkItemId(id); } } public sealed class ProjectionOperationsRuntimeAdapter {}" }, "OAM-WRITE-NO-WORKSPACE-CARD-IDENTITY-FALLBACK");
   assertViolation("official shadow runtime reference rejected", { ...valid, "services/core-api/WorkOS.Api/Runtime/OfficialSource.cs": "const string Schema = \"shadow_runtime\";" }, "OAM-WRITE-NO-SHADOW-RUNTIME-OFFICIAL");

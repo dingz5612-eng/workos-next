@@ -1,6 +1,6 @@
 -- OAM current period analytics schema.
 -- Rollback note: WorkOSNext migrations are up-only. If this schema must be
--- reversed before production use, add a compensating migration that history
+-- reversed before production use, add a compensating migration that event_logs
 -- period review records, drops triggers/functions, then drops period analytics
 -- tables and columns in dependency order.
 
@@ -882,7 +882,7 @@ begin
 end $$;
 
 comment on table period_reviews is
-    'OAM current PeriodAnalytics review header. Existing period_id/workspace_id columns are retained for retired; OAM current callers use period_review_id and tenant_id.';
+    'OAM current PeriodAnalytics review header. Existing period_id/workspace_id columns are retained for source-locked; OAM current callers use period_review_id and tenant_id.';
 
 comment on table period_scopes is
     'OAM current PeriodAnalytics scope table. PeriodScopeConfirmed freezes period_start, period_end, timezone, and business_day_cutoff.';

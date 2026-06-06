@@ -1,5 +1,5 @@
 -- Rollback note: WorkOSNext migrations are up-only. To reverse before
--- production use, add a compensating migration that history process run
+-- production use, add a compensating migration that event_log process run
 -- evidence and drops process intent/request tables in dependency order.
 
 create table if not exists process_runs (

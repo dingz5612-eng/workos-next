@@ -61,7 +61,7 @@ if (!rendered.searchCommand.includes("主动办理")) {
 
 for (const sectionId of ["searchOperationCases", "completedWorkItems", "searchEvidence", "searchSubmissionTrace", "searchLearning"]) {
   if (rendered.search.includes(`data-search-section="${sectionId}"`)) {
-    violations.push(violation("mobile.visible_copy.search_history_section", `Search 不得显示个人资料库 section：${sectionId}。`, { sectionId }));
+    violations.push(violation("mobile.visible_copy.search_event_log_section", `Search 不得显示个人资料库 section：${sectionId}。`, { sectionId }));
   }
 }
 

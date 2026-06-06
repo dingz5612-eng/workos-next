@@ -12,18 +12,18 @@
     "collaborationFeedback",
     "mobile",
     "pc",
-    "retiredWorkspaceCardWriteAdapter"
+    "currentForbiddenWriteAdapter"
   ],
   "properties": {
     "version": { "type": "string" },
     "status": { "type": "string" },
     "operationRuntimePure": {
       "type": "object",
-      "required": ["persistedWorkItemResolutionOrder", "forbiddenFallbackPaths", "retiredTaskIdExample", "resolvedPersistedExample"],
+      "required": ["persistedWorkItemResolutionOrder", "forbiddenFallbackPaths", "nonPersistedTaskIdExample", "resolvedPersistedExample"],
       "properties": {
         "persistedWorkItemResolutionOrder": { "type": "array", "items": { "type": "string" }, "minItems": 4 },
         "forbiddenFallbackPaths": { "type": "array", "items": { "type": "string" }, "minItems": 4 },
-        "retiredTaskIdExample": { "type": "string" },
+        "nonPersistedTaskIdExample": { "type": "string" },
         "resolvedPersistedExample": { "type": "string" }
       }
     },
@@ -94,7 +94,7 @@
         "dataHydrator": { "type": "string" }
       }
     },
-    "retiredWorkspaceCardWriteAdapter": {
+    "currentForbiddenWriteAdapter": {
       "type": "object",
       "required": ["allowedOnlyAs", "normalDormIntPath", "adapterClass"],
       "properties": {

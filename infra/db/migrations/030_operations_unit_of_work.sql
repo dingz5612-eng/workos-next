@@ -1,5 +1,5 @@
 -- Rollback note: WorkOSNext migrations are up-only. To reverse before
--- production use, add a reviewed compensating migration that history
+-- production use, add a reviewed compensating migration that event_logs
 -- operations_* rows, drops child tables first, and then drops
 -- operations_command_submissions.
 

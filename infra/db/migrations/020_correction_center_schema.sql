@@ -1,5 +1,5 @@
 -- Rollback note: WorkOSNext migrations are up-only. To reverse this before
--- production use, add a compensating migration that history correction
+-- production use, add a compensating migration that event_log correction
 -- records, drops triggers/functions, then drops tables in dependency order.
 
 create table if not exists ledger_correction_requests (
@@ -294,13 +294,13 @@ begin
 end;
 $$;
 
-create or replace function forbid_retired_ledger_entry_update()
+create or replace function forbid_direct_ledger_entry_update()
 returns trigger
 language plpgsql
 as $$
 begin
     if new is distinct from old then
-        raise exception 'ledger_entry_update_forbidden_or_guarded: retired append-only ledger entries require Correction Center append';
+        raise exception 'ledger_entry_update_forbidden_or_guarded: source append-only ledger entries require Correction Center append';
     end if;
 
     return new;
@@ -375,7 +375,7 @@ begin
     if not exists (select 1 from pg_trigger where tgname = 'trg_deposit_transactions_forbid_update') then
         create trigger trg_deposit_transactions_forbid_update
         before update on deposit_transactions
-        for each row execute function forbid_retired_ledger_entry_update();
+        for each row execute function forbid_direct_ledger_entry_update();
     end if;
 end $$;
 
@@ -384,7 +384,7 @@ begin
     if not exists (select 1 from pg_trigger where tgname = 'trg_payment_allocations_forbid_update') then
         create trigger trg_payment_allocations_forbid_update
         before update on payment_allocations
-        for each row execute function forbid_retired_ledger_entry_update();
+        for each row execute function forbid_direct_ledger_entry_update();
     end if;
 end $$;
 
@@ -400,8 +400,8 @@ comment on table ledger_correction_entries is
 comment on function forbid_correction_ledger_entry_update() is
     'Correction Center append-only guard. Existing ledger facts must be corrected by reversal/correction entries, not edited in place.';
 
-comment on function forbid_retired_ledger_entry_update() is
-    'Retired append-only ledger guard for deposit_transactions and payment_allocations. Use Correction Center entries instead of direct edits.';
+comment on function forbid_direct_ledger_entry_update() is
+    'Source append-only ledger guard for deposit_transactions and payment_allocations. Use Correction Center entries instead of direct edits.';
 
 comment on function guard_hostel_payments_fact_update() is
     'Prevents direct edits to existing payment ledger fact fields while allowing non-fact status/projection metadata to advance.';

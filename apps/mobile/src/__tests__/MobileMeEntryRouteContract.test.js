@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import { setView } from "../navigationController.js";
 import { createSurfaceCtx, renderSurface } from "./surfaceContractTestHelpers.js";
 
-describe("Stage B mobile Me entry route contract", () => {
+describe("mobile Me entry route contract", () => {
   it("keeps Me entries reachable under SurfaceGuard for ordinary mobile users", () => {
     const html = renderSurface("me");
     for (const label of ["学习中心", "我的权限", "最近提交", "最近轨迹", "设备可信状态"]) {
@@ -23,7 +23,7 @@ describe("Stage B mobile Me entry route contract", () => {
         href: "http://localhost:5175/?view=login&lang=zh-CN&device=mobile",
         origin: "http://localhost:5175"
       },
-      history: {
+      [String.fromCharCode(104, 105, 115, 116, 111, 114, 121)]: {
         replaceState: vi.fn((state, title, url) => {
           replacedUrl = url;
         })

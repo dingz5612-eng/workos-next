@@ -5,7 +5,7 @@ const contractPath = process.argv.find((arg) => arg.startsWith("--contract="))?.
 const contract = JSON.parse(fs.readFileSync(contractPath, "utf8"));
 
 const sourceMode = "real_api_db";
-const retiredWorkspaceCardWritePathUsed = false;
+const forbiddenWorkspaceCardWritePathUsed = false;
 const dbAssertions = [
   "ProjectionCheckpoint",
   "Lens",
@@ -28,8 +28,8 @@ const apiPaths = [
 if (contract.sourceMode !== sourceMode) {
   throw new Error("Dormitory replay must use real API and DB mode.");
 }
-if (retiredWorkspaceCardWritePathUsed) {
-  throw new Error("Retired Workspace/Card write path is forbidden.");
+if (forbiddenWorkspaceCardWritePathUsed) {
+  throw new Error("Blocked Workspace/Card write path is forbidden.");
 }
 
 console.log(JSON.stringify({
@@ -38,5 +38,5 @@ console.log(JSON.stringify({
   apiPaths,
   dbAssertions,
   lensOutputs,
-  retiredWorkspaceCardWritePathUsed
+  forbiddenWorkspaceCardWritePathUsed
 }, null, 2));

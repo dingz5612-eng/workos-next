@@ -1,6 +1,6 @@
 -- Current OAM: OperationCase and WorkItem persistence closure.
 -- Rollback guidance: this migration is additive. To reverse before production,
--- review operations_work_item_state_history, operations_work_items, and
+-- review operations_work_item_state_event_log, operations_work_items, and
 -- operations_cases, then drop the tables in child-to-parent order.
 
 create table if not exists operations_cases (
@@ -55,7 +55,7 @@ create table if not exists operations_work_items (
         check (jsonb_typeof(metadata) = 'object')
 );
 
-create table if not exists operations_work_item_state_history (
+create table if not exists operations_work_item_state_event_log (
     transition_id text primary key,
     tenant_id text not null,
     case_id text not null,
@@ -67,7 +67,7 @@ create table if not exists operations_work_item_state_history (
     actor_id text null,
     occurred_at_utc timestamptz not null,
     metadata jsonb not null default '{}'::jsonb,
-    constraint ck_operations_work_item_state_history_metadata_shape
+    constraint ck_operations_work_item_state_event_log_metadata_shape
         check (jsonb_typeof(metadata) = 'object')
 );
 
@@ -105,5 +105,5 @@ create index if not exists ix_operations_cases_tenant_status
 create index if not exists ix_operations_work_items_case_state
     on operations_work_items(tenant_id, case_id, lifecycle_state, updated_at_utc);
 
-create index if not exists ix_operations_work_item_state_history_work_item
-    on operations_work_item_state_history(tenant_id, work_item_id, occurred_at_utc);
+create index if not exists ix_operations_work_item_state_event_log_work_item
+    on operations_work_item_state_event_log(tenant_id, work_item_id, occurred_at_utc);

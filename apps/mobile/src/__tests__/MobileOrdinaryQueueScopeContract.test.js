@@ -9,12 +9,12 @@ describe("Stage B ordinary queue scope contract", () => {
       ...store.workQueue,
       { workItemId: "runtimeAudit-001", workspaceId: "W-STAY-RESOURCE", cardId: "roomSetup", domain: "diagnostic", badges: ["mine"] },
       { workItemId: "rf-guard-001", workspaceId: "W-STAY-RESOURCE", cardId: "roomSetup", domain: "engineering", badges: ["mine"] },
-      { workItemId: "retired-projection-001", workspaceId: "W-STAY-RESOURCE", cardId: "roomSetup", source: "retired_projection_shadow", badges: ["mine"] }
+      { workItemId: "projection-guard-001", workspaceId: "W-STAY-RESOURCE", cardId: "roomSetup", source: "projection_guard_shadow", badges: ["mine"] }
     ];
 
     const tasks = queueTasks({ runtimeStore: store, queueDomain: "all", queueBadge: "mine", sort: "smartSort" });
 
     expect(tasks.map((item) => item.workItemId)).toContain("W-STAY-RESOURCE:roomSetup");
-    expect(tasks.map((item) => item.workItemId).join(" ")).not.toMatch(/runtimeAudit|rf-guard|retired-projection-001/);
+    expect(tasks.map((item) => item.workItemId).join(" ")).not.toMatch(/runtimeAudit|rf-guard|projection-guard-001/);
   });
 });

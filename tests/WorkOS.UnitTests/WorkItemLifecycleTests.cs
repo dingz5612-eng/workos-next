@@ -105,7 +105,7 @@ public sealed class WorkItemLifecycleTests
             new(ConfirmStatus.Confirmed, null, null);
 
         public ConfirmResult Confirm(string workspaceId, string cardId, ConfirmCardRequest request, string actorToken) =>
-            throw new InvalidOperationException("canonical confirm must not call retired runtime");
+            throw new InvalidOperationException("canonical confirm must not call blocked runtime");
 
         private static WorkspaceProjection Workspace(string workspaceId) =>
             new(

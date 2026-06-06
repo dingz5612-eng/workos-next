@@ -9,7 +9,7 @@ public static class CutoverStateMachine
         "dual_compare",
         "adapter_primary",
         "operations_primary",
-        "retired_readonly",
+        "source_readonly",
         "locked",
         "rollback"
     ];
@@ -56,16 +56,16 @@ public static class CutoverStateMachine
             ("adapter_primary", "operations_primary") =>
                 Block(request, "operations_primary_requires_signoff_and_rollback"),
 
-            ("operations_primary", "retired_readonly") when request.ObservationWindowComplete && !request.HasP0InvariantFailure =>
+            ("operations_primary", "source_readonly") when request.ObservationWindowComplete && !request.HasP0InvariantFailure =>
                 Allow(request, "observation_window_green"),
             ("operations_primary", "locked") when request.ObservationWindowComplete && !request.HasP0InvariantFailure && request.BusinessSignoffPresent =>
                 Allow(request, "observation_window_green_and_signoff_present"),
-            ("operations_primary", "retired_readonly") or ("operations_primary", "locked") =>
-                Block(request, "locked_or_retired_readonly_requires_observation_window_and_no_p0"),
+            ("operations_primary", "source_readonly") or ("operations_primary", "locked") =>
+                Block(request, "locked_or_source_readonly_requires_observation_window_and_no_p0"),
 
-            ("retired_readonly", "locked") when request.ObservationWindowComplete && !request.HasP0InvariantFailure && request.BusinessSignoffPresent =>
-                Allow(request, "retired_readonly_lock_ready"),
-            ("retired_readonly", "locked") =>
+            ("source_readonly", "locked") when request.ObservationWindowComplete && !request.HasP0InvariantFailure && request.BusinessSignoffPresent =>
+                Allow(request, "source_readonly_lock_ready"),
+            ("source_readonly", "locked") =>
                 Block(request, "locked_requires_business_signoff_observation_and_no_p0"),
 
             var same when same.FromState == same.ToState =>
@@ -78,14 +78,14 @@ public static class CutoverStateMachine
     public static string WritePathFor(string state) =>
         state switch
         {
-            "off" => "retired_workspace_card",
-            "shadow" => "retired_workspace_card_with_shadow_capture",
-            "dual_compare" => "retired_workspace_card_with_semantic_compare",
-            "adapter_primary" => "retired_adapter_to_operations_uow",
+            "off" => "blocked_workspace_card",
+            "shadow" => "blocked_workspace_card_with_shadow_capture",
+            "dual_compare" => "blocked_workspace_card_with_semantic_compare",
+            "adapter_primary" => "blocked_adapter_to_operations_uow",
             "operations_primary" => "operations_runtime",
-            "retired_readonly" => "operations_runtime_with_retired_readonly",
+            "source_readonly" => "operations_runtime_with_source_readonly",
             "locked" => "operations_runtime_locked",
-            "rollback" => "rollback_to_retired_or_hold",
+            "rollback" => "rollback_to_source_lock_or_hold",
             _ => "unknown"
         };
 
@@ -121,7 +121,7 @@ public static class CutoverStateMachine
         var targeted = IsTargeted(target, context);
         if (!targeted)
         {
-            return new CutoverRuntimeDecision(state, false, "retired_workspace_card", "feature_flag_not_targeted");
+            return new CutoverRuntimeDecision(state, false, "blocked_workspace_card", "feature_flag_not_targeted");
         }
 
         var writePath = WritePathFor(state);

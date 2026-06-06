@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { renderSurface, visibleText } from "./surfaceContractTestHelpers.js";
 
 describe("Stage B Operation Panel deep link contract", () => {
-  it("renders a retired deep link through the persisted runtime WorkItem without blank panel or raw labels", () => {
+  it("renders a non-persisted deep link through the persisted runtime WorkItem without blank panel or raw labels", () => {
     const html = renderSurface("operationPanel", { selectedWorkItemId: "T-ROOM-CREATE" });
     const text = visibleText(html);
 

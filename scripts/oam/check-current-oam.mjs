@@ -38,16 +38,16 @@ checkGithubText(".github/pull_request_template.md");
 for (const file of filesUnder(".github/workflows")) {
   checkGithubText(file);
 }
-checkGlobalRetiredTerms();
+checkGlobalPreviousTerms();
 
 if (exists(".github/workflows/oam_control_plane.yml")) {
-  violations.push(v("retired_workflow_present", "旧 OAM current workflow 不得存在。"));
+  violations.push(v("previous_workflow_present", "旧 OAM current workflow 不得存在。"));
 }
 
 for (const file of existingFilesUnder("artifacts")) {
   const normalized = slash(file);
   if (!normalized.startsWith("artifacts/oam/")) {
-    violations.push(v("retired_artifact_present", `非 OAM artifact 不得保留：${normalized}`));
+    violations.push(v("non_oam_artifact_present", `非 OAM artifact 不得保留：${normalized}`));
   }
 }
 
@@ -82,29 +82,29 @@ console.log("OAM purity check: PASS");
 function checkGithubText(file) {
   if (!exists(file)) return;
   const text = fs.readFileSync(abs(file), "utf8");
-  const forbidden = retiredTermPatterns();
+  const forbidden = previousTermPatterns();
   for (const pattern of forbidden) {
     if (pattern.test(text)) {
-      violations.push(v("github_retired_term", `${file} 含旧阶段语义 ${pattern}.`));
+      violations.push(v("github_previous_term", `${file} 含旧阶段语义 ${pattern}.`));
     }
   }
 }
 
-function checkGlobalRetiredTerms() {
-  const forbidden = retiredGlobalTermPatterns();
-  const forbiddenArtifactRefs = retiredArtifactReferencePatterns();
+function checkGlobalPreviousTerms() {
+  const forbidden = previousGlobalTermPatterns();
+  const forbiddenArtifactRefs = previousArtifactReferencePatterns();
   for (const file of filesUnder(".")) {
     const normalized = slash(file);
     if (!shouldScanText(normalized)) continue;
     const text = fs.readFileSync(abs(file), "utf8");
     for (const pattern of forbidden) {
       if (pattern.test(text)) {
-        violations.push(v("global_retired_term", `${normalized} 含旧阶段语义 ${pattern}.`));
+        violations.push(v("global_previous_term", `${normalized} 含旧阶段语义 ${pattern}.`));
       }
     }
     for (const pattern of forbiddenArtifactRefs) {
       if (pattern.test(text)) {
-        violations.push(v("retired_artifact_reference", `${normalized} 含旧 artifact 引用 ${pattern}.`));
+        violations.push(v("previous_artifact_reference", `${normalized} 含旧 artifact 引用 ${pattern}.`));
       }
     }
   }
@@ -204,7 +204,7 @@ function v(id, message) {
   return { id, message };
 }
 
-function retiredTermPatterns() {
+function previousTermPatterns() {
   const exact = (parts) => new RegExp(parts.join("").replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i");
   const word = (parts) => new RegExp(`\\b${parts.join("")}\\b`, "i");
   return [
@@ -229,11 +229,23 @@ function retiredTermPatterns() {
   ];
 }
 
-function retiredGlobalTermPatterns() {
+function previousGlobalTermPatterns() {
   const exact = (parts) => new RegExp(parts.join("").replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i");
   const word = (parts) => new RegExp(`\\b${parts.join("")}\\b`, "i");
   const prefix = (parts) => new RegExp(`\\b${parts.join("").replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}`, "i");
   return [
+    word(["r", "e", "t", "i", "r", "e", "d"]),
+    prefix(["r", "e", "t", "i", "r", "e", "d", "-"]),
+    prefix(["r", "e", "t", "i", "r", "e", "d", "_"]),
+    exact(["r", "e", "t", "i", "r", "e", "d", "W", "o", "r", "k", "s", "p", "a", "c", "e", "C", "a", "r", "d"]),
+    exact(["r", "e", "t", "i", "r", "e", "d", "-", "i", "n", "t", "a", "k", "e"]),
+    exact(["r", "e", "t", "i", "r", "e", "d", "_", "r", "e", "m", "e", "d", "i", "a", "t", "i", "o", "n"]),
+    exact(["r", "e", "t", "i", "r", "e", "d", "_", "s", "o", "u", "r", "c", "e"]),
+    exact(["r", "e", "t", "i", "r", "e", "d", "_", "d", "a", "t", "a", "_", "m", "i", "g", "r", "a", "t", "i", "o", "n"]),
+    word(["h", "i", "s", "t", "o", "r", "y"]),
+    exact(["T", "r", "a", "n", "s", "i", "t", "i", "o", "n", "a", "l"]),
+    exact(["o", "l", "d", "_", "r", "u", "n", "t", "i", "m", "e"]),
+    exact(["o", "l", "d", "_", "v", "i", "e", "w"]),
     exact(["v", "5", ".", "4"]),
     exact(["v", "5", "_", "4"]),
     exact(["v", "5", "-", "4"]),
@@ -268,7 +280,7 @@ function retiredGlobalTermPatterns() {
   ];
 }
 
-function retiredArtifactReferencePatterns() {
+function previousArtifactReferencePatterns() {
   const exact = (parts) => new RegExp(parts.join("").replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i");
   return [
     exact(["artifacts", "/", "local-demo"]),

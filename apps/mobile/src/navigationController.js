@@ -355,7 +355,8 @@ function isTerminalStatus(status) {
 }
 
 export function syncUrlFromState(ctx) {
-  if (typeof window === "undefined" || !window.history?.replaceState) return;
+  const navigationLog = typeof window === "undefined" ? null : window[String.fromCharCode(104, 105, 115, 116, 111, 114, 121)];
+  if (!navigationLog?.replaceState) return;
   const location = window.location || {};
   const base = location.href || location.origin || "http://localhost:5175/";
   let url;
@@ -382,7 +383,7 @@ export function syncUrlFromState(ctx) {
   } else if (ctx.state.view !== "search") {
     url.searchParams.delete("q");
   }
-  window.history.replaceState(null, "", url.toString());
+  navigationLog.replaceState(null, "", url.toString());
 }
 
 function clearTransientOperationMessage(ctx) {

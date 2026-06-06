@@ -211,7 +211,7 @@ test("missing persisted WorkItem, numeric search, workspace debug, and recovery 
   await expect(page.locator("body")).not.toContainText("[object Object]");
 
   await page.goto("/?device=mobile&view=workspace");
-  await expect(page.locator("body")).not.toContainText("Debug / retired");
+  await expect(page.locator("body")).not.toContainText("Debug / blocked");
   await expect(page.locator(".primary-action")).toHaveCount(1);
 
   await page.goto("/?device=mobile&view=workbench");

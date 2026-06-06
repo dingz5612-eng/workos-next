@@ -29,7 +29,7 @@ console.log("Language Kernel check: PASS");
 function checkContract() {
   if (contract.version !== "oam.language-contract.v1") failures.push("language-contract version mismatch.");
   if (contract.status !== "authoritative-read-side-kernel") failures.push("language-contract must be current authoritative read-side kernel.");
-  if ("retiredAdapters" in contract) failures.push("language-contract must not retain retiredAdapters.");
+  if ("blockedAdapters" in contract) failures.push("language-contract must not retain blockedAdapters.");
   assertSameLanguages(contract.supportedLanguages, "language-contract.supportedLanguages");
   for (const file of Object.values(contract.authoritativeCatalogs || {})) {
     if (!exists(file)) failures.push(`language-contract references missing catalog: ${file}.`);

@@ -106,6 +106,20 @@ WorkOSNext 是移动优先的业务操作系统。
 - 不把已替换 UI 藏在新屏幕后面。
 - 不让 AI 执行确认、付款、退款、核销或最终关闭。
 - 不硬编码后续无法成为 DTO 或种子数据的字段。
+- 不新增页面私有业务写 API。
+- 不让 Search、BI、Dashboard、Projection、Lens、Profile、Summary、Receipt 成为业务事实写入路径。
+- 不让业务域直接写正式财务事实或 LedgerEntry。
+- 不把证据输出到 `artifacts/oam` 之外。
+
+## 当前 OAM 硬收口审查项
+
+- Surface 阻断字段必须使用 `currentForbiddenWriteAdapter`。
+- 非持久化 WorkItem 标识必须使用 `nonPersistedWorkItemKey`。
+- WorkItem 定义入口必须使用 `sourceCardId`。
+- 步骤依赖隐藏字段必须使用 `suppressedFields`。
+- Ledger/control-plane 迁移验证必须使用 `migrationReadonlySources`、`sourceLock`、`readonlySourceVerification`、`projectionConsistencyCompare`。
+- WorkItem 状态记录必须使用 `operations_work_item_state_event_log`。
+- 本地提交前必须通过 `scripts/oam/run-control-plane-checks.ps1`。
 
 ## 单次变更审查清单
 

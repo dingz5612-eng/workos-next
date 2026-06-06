@@ -7,7 +7,7 @@
       "sourceOfTruthTables": ["hostel_payments"],
       "workspaceScope": ["W-STAY-PAYMENT-LEDGER"],
       "freshness": { "timestampField": "updated_at_utc", "lagMetric": "projectionLagSeconds" },
-      "crossCheck": "PaymentRiskLens must not read retired CheckIn payment rows."
+      "crossCheck": "PaymentRiskLens must not read source CheckIn payment rows."
     },
     {
       "id": "checkout-queue",

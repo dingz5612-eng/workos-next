@@ -11,7 +11,7 @@
   "invariants": [
     "Business Production blocked must be preserved.",
     "production_confirm remains closed.",
-    "No surface, search result, retired route, or governance page may open production."
+    "No surface, search result, blocked route, or governance page may open production."
   ],
   "evidence": [
     "scripts/check-admission-kernel.mjs"

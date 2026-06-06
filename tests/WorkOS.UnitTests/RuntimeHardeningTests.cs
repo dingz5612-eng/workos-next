@@ -470,7 +470,7 @@ public sealed class RuntimeHardeningTests
     }
 
     [TestMethod]
-    public void runtime_password_hasher_supports_versioned_slow_hash_and_marks_retired_sha256()
+    public void runtime_password_hasher_supports_versioned_slow_hash_and_marks_superseded_sha256()
     {
         var slowHash = RuntimePasswordHasher.Pbkdf2Sha256("secret", iterations: 100_000);
 
@@ -478,10 +478,10 @@ public sealed class RuntimeHardeningTests
         Assert.IsTrue(RuntimePasswordHasher.Verify("secret", slowHash));
         Assert.IsFalse(RuntimePasswordHasher.Verify("wrong", slowHash));
 
-        var retired = RuntimePasswordHasher.Sha256("dev");
-        Assert.IsTrue(RuntimePasswordHasher.IsRetiredSha256(retired));
-        Assert.IsFalse(RuntimePasswordHasher.IsVersionedSlowHash(retired));
-        Assert.IsTrue(RuntimePasswordHasher.Verify("dev", retired));
+        var superseded = RuntimePasswordHasher.Sha256("dev");
+        Assert.IsTrue(RuntimePasswordHasher.IsSupersededSha256(superseded));
+        Assert.IsFalse(RuntimePasswordHasher.IsVersionedSlowHash(superseded));
+        Assert.IsTrue(RuntimePasswordHasher.Verify("dev", superseded));
     }
 
     [TestMethod]
@@ -640,14 +640,14 @@ public sealed class RuntimeHardeningTests
         var oldState = new RuntimeState(
             new List<WorkspaceProjection> { Workspace("W-OLD", Card("oldCard", "Old.Event")) },
             new List<WorkspaceEvent> { Event("evt-old") },
-            new List<RuntimeUser> { new("retired-user", "retired", "Retired", "operator", true) },
+            new List<RuntimeUser> { new("superseded-user", "superseded", "Superseded", "operator", true) },
             "won-13-runtime-document");
 
         var migrated = RuntimeStateMigrator.Migrate(oldState);
         Assert.AreEqual(RuntimeStateMigrator.CurrentSchemaVersion, migrated.SchemaVersion);
         Assert.IsTrue(migrated.Workspaces.Any(item => item.Id == "W-OLD"));
         Assert.IsTrue(migrated.Events.Any(item => item.EventId == "evt-old"));
-        Assert.IsTrue(migrated.Users.Any(item => item.UserId == "retired-user"));
+        Assert.IsTrue(migrated.Users.Any(item => item.UserId == "superseded-user"));
         Assert.IsTrue(RuntimeStateMigrator.Entries.Any(item => item.Contains("card-instance-evidence", StringComparison.OrdinalIgnoreCase)));
     }
 

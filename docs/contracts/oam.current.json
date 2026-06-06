@@ -316,7 +316,7 @@
       }
     },
     "forbidden": [
-      "retiredWorkspaceCardConfirm",
+      "blockedWorkspaceCardConfirm",
       "pageSpecificBusinessWriteApi",
       "mobileBffBusinessFactWrite",
       "projectionAsCommand"
@@ -399,9 +399,9 @@
       "purity-scan"
     ],
     "forbiddenTerms": [
-      "retired-architecture-stage-terms",
-      "retired-runtime-stage-terms",
-      "retired-proof-stage-terms"
+      "previous-architecture-stage-terms",
+      "previous-runtime-stage-terms",
+      "previous-proof-stage-terms"
     ]
   }
 }

@@ -12,7 +12,7 @@
     },
     "safeErrorCopy": ["operations.error.safe.403", "operations.error.safe.409", "operations.error.safe.422", "operations.error.safe.generic"]
   },
-  "retiredTaskIdsForbiddenInPost": ["T-ROOM-CREATE"],
+  "nonPersistedTaskIdsForbiddenInPost": ["T-ROOM-CREATE"],
   "ordinaryConfirmPath": ["prepareOperationWorkItem", "confirmOperationWorkItem"],
   "forbiddenFallback": ["workspace.taskId", "card.workItemId non-persisted", "prepareCard", "confirmCard"]
 }

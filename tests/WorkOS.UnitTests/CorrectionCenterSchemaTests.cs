@@ -45,7 +45,7 @@ public sealed class CorrectionCenterSchemaTests
         foreach (var term in new[]
         {
             "forbid_correction_ledger_entry_update",
-            "forbid_retired_ledger_entry_update",
+            "forbid_direct_ledger_entry_update",
             "guard_hostel_payments_fact_update",
             "guard_finance_reconciliations_fact_update",
             "guard_hostel_charges_fact_update",
@@ -74,7 +74,7 @@ public sealed class CorrectionCenterSchemaTests
             "new.period_start_utc is distinct from old.period_start_utc"
         })
         {
-            Assert.IsTrue(migration.Contains(protectedFactColumn, StringComparison.OrdinalIgnoreCase), $"Retired ledger fact column must be guarded: {protectedFactColumn}");
+            Assert.IsTrue(migration.Contains(protectedFactColumn, StringComparison.OrdinalIgnoreCase), $"Source ledger fact column must be guarded: {protectedFactColumn}");
         }
 
         Assert.IsFalse(migration.Contains("update hostel_payments set", StringComparison.OrdinalIgnoreCase));

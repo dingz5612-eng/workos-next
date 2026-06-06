@@ -62,7 +62,7 @@ create table if not exists control_plane.feature_flags (
     updated_at_utc timestamptz not null default now(),
     expires_at_utc timestamptz null,
     constraint ck_feature_flags_status
-        check (status in ('disabled', 'shadow', 'pilot', 'active', 'paused', 'retired')),
+        check (status in ('disabled', 'shadow', 'pilot', 'active', 'paused', 'source_readonly')),
     constraint uq_feature_flags_release_flag_key unique(release_id, flag_key),
     constraint ck_feature_flags_scope_rules_shape
         check (
@@ -104,9 +104,9 @@ create table if not exists control_plane.slice_cutover_states (
     updated_at_utc timestamptz not null default now(),
     ended_at_utc timestamptz null,
     constraint ck_slice_cutover_states_runtime_mode
-        check (runtime_mode in ('retired', 'shadow', 'pilot', 'active', 'rollback', 'locked', 'paused')),
+        check (runtime_mode in ('source_readonly', 'shadow', 'pilot', 'active', 'rollback', 'locked', 'paused')),
     constraint ck_slice_cutover_states_previous_runtime_mode
-        check (previous_runtime_mode is null or previous_runtime_mode in ('retired', 'shadow', 'pilot', 'active', 'rollback', 'locked', 'paused')),
+        check (previous_runtime_mode is null or previous_runtime_mode in ('source_readonly', 'shadow', 'pilot', 'active', 'rollback', 'locked', 'paused')),
     constraint uq_slice_cutover_states_release_tenant_slice unique(release_id, tenant_id, slice_id),
     constraint ck_slice_cutover_states_scope_shape
         check (
@@ -128,7 +128,7 @@ create table if not exists control_plane.shadow_compare_reports (
     tenant_id text not null,
     slice_id text not null,
     compare_scope jsonb not null default '{}'::jsonb,
-    source_retired_ref text null,
+    source_baseline_ref text null,
     source_active_ref text null,
     source_shadow_ref text null,
     compared_at_utc timestamptz not null default now(),
@@ -329,7 +329,7 @@ create table if not exists shadow_runtime.compare_inputs (
     tenant_id text not null,
     slice_id text not null,
     command_submission_id text null references shadow_runtime.command_submissions(command_submission_id) on delete set null,
-    source_retired_ref text null,
+    source_baseline_ref text null,
     source_active_ref text null,
     source_shadow_ref text null,
     input_payload jsonb not null default '{}'::jsonb,

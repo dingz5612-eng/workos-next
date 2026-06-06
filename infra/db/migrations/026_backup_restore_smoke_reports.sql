@@ -1,6 +1,6 @@
 -- Current OAM backup / restore smoke evidence.
 -- Rollback note: WorkOSNext migrations are up-only. To reverse before
--- production use, add a compensating migration that history
+-- production use, add a compensating migration that event_logs
 -- backup_restore_smoke_reports, then drops this Control Plane table.
 
 create table if not exists control_plane.backup_restore_smoke_reports (

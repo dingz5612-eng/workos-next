@@ -212,8 +212,8 @@ public sealed class PostgresOperationsWorkItemStore : IOperationsWorkItemStore
     {
         using var connection = connections.Open();
         using var db = new RuntimeDbSession(connection);
-        using (var history = db.CreateCommand("""
-            insert into operations_work_item_state_history(
+        using (var eventLog = db.CreateCommand("""
+            insert into operations_work_item_state_event_log(
                 transition_id, tenant_id, case_id, work_item_id, from_state, to_state,
                 submission_id, reason, actor_id, occurred_at_utc, metadata)
             values (
@@ -222,17 +222,17 @@ public sealed class PostgresOperationsWorkItemStore : IOperationsWorkItemStore
             on conflict(transition_id) do nothing
             """))
         {
-            history.Parameters.AddWithValue("transitionId", transition.TransitionId);
-            history.Parameters.AddWithValue("tenantId", transition.TenantId);
-            history.Parameters.AddWithValue("caseId", transition.CaseId);
-            history.Parameters.AddWithValue("workItemId", transition.WorkItemId);
-            history.Parameters.AddWithValue("fromState", (object?)transition.FromState ?? DBNull.Value);
-            history.Parameters.AddWithValue("toState", transition.ToState);
-            history.Parameters.AddWithValue("submissionId", (object?)transition.SubmissionId ?? DBNull.Value);
-            history.Parameters.AddWithValue("reason", transition.Reason);
-            history.Parameters.AddWithValue("actorId", (object?)transition.ActorId ?? DBNull.Value);
-            history.Parameters.AddWithValue("occurredAtUtc", transition.OccurredAtUtc);
-            history.ExecuteNonQuery();
+            eventLog.Parameters.AddWithValue("transitionId", transition.TransitionId);
+            eventLog.Parameters.AddWithValue("tenantId", transition.TenantId);
+            eventLog.Parameters.AddWithValue("caseId", transition.CaseId);
+            eventLog.Parameters.AddWithValue("workItemId", transition.WorkItemId);
+            eventLog.Parameters.AddWithValue("fromState", (object?)transition.FromState ?? DBNull.Value);
+            eventLog.Parameters.AddWithValue("toState", transition.ToState);
+            eventLog.Parameters.AddWithValue("submissionId", (object?)transition.SubmissionId ?? DBNull.Value);
+            eventLog.Parameters.AddWithValue("reason", transition.Reason);
+            eventLog.Parameters.AddWithValue("actorId", (object?)transition.ActorId ?? DBNull.Value);
+            eventLog.Parameters.AddWithValue("occurredAtUtc", transition.OccurredAtUtc);
+            eventLog.ExecuteNonQuery();
         }
 
         using (var update = db.CreateCommand("""
@@ -261,7 +261,7 @@ public sealed class PostgresOperationsWorkItemStore : IOperationsWorkItemStore
             command.CommandText = """
                 select transition_id, tenant_id, case_id, work_item_id, from_state, to_state,
                        submission_id, reason, actor_id, occurred_at_utc
-                from operations_work_item_state_history
+                from operations_work_item_state_event_log
                 where work_item_id = @workItemId
                 order by occurred_at_utc, transition_id
                 """;

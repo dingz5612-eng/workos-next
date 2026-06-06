@@ -18,37 +18,37 @@ public sealed class MigrationVerificationJobTests
     }
 
     [TestMethod]
-    public void retired_mapping_report_generated()
+    public void source_mapping_report_generated()
     {
         var output = Run();
-        var mapping = output.Report.RetiredMappingReport.Single(row => row.RetiredTable == "hostel_payments");
+        var mapping = output.Report.SourceMappingReport.Single(row => row.SourceTable == "hostel_payments");
 
-        Assert.AreEqual("retired_data_migration", mapping.Source);
+        Assert.AreEqual("migration_readonly_source", mapping.Source);
         Assert.AreEqual("hostel_payments.primary_key", mapping.OriginalRefColumn);
         Assert.IsTrue(mapping.RequiresReconciliationNote);
-        Assert.AreEqual("passed", Check(output, "retired.mapping_report_generated").Status);
+        Assert.AreEqual("passed", Check(output, "source.mapping_report_generated").Status);
     }
 
     [TestMethod]
-    public void old_api_retired()
+    public void workspace_card_api_absent()
     {
         var output = Run();
 
-        Assert.AreEqual("passed", Check(output, "retired.old_api_retired").Status);
-        Assert.IsTrue(output.Report.ReleaseGateRefs.Any(item => item.Contains("old-api-retired", StringComparison.Ordinal)));
+        Assert.AreEqual("passed", Check(output, "source.workspace_card_api_absent").Status);
+        Assert.IsTrue(output.Report.ReleaseGateRefs.Any(item => item.Contains("workspace-card-api-absent", StringComparison.Ordinal)));
     }
 
     [TestMethod]
-    public void remediation_does_not_drop_retired_data()
+    public void reconciliation_review_is_readonly()
     {
         var output = Run();
         var plan = output.RemediationReport.RemediationPlan;
 
         Assert.IsTrue(output.RemediationReport.DryRun);
         Assert.IsTrue(plan.All(row => !row.WouldWriteNewBusinessFacts));
-        Assert.IsTrue(plan.All(row => row.Source == "retired_data_migration"));
+        Assert.IsTrue(plan.All(row => row.Source == "migration_readonly_source"));
         Assert.IsTrue(plan.Where(row => row.RequiresReconciliationNote).All(row => row.ReconciliationNote.Contains("reconciliation note", StringComparison.OrdinalIgnoreCase)));
-        Assert.AreEqual("passed", Check(output, "retired.remediation_does_not_drop_retired_data").Status);
+        Assert.AreEqual("passed", Check(output, "source.reconciliation_review_is_readonly").Status);
     }
 
     [TestMethod]
@@ -66,7 +66,7 @@ public sealed class MigrationVerificationJobTests
     }
 
     [TestMethod]
-    public void retired_registry_loader_reads_camel_case_contract()
+    public void source_registry_loader_reads_camel_case_contract()
     {
         var directory = Path.Combine(Path.GetTempPath(), "workos-migration-verification", Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(directory);
@@ -78,11 +78,11 @@ public sealed class MigrationVerificationJobTests
                 {
                   "version": "0.16.2",
                   "sourceSlice": "Accommodation.CheckIn",
-                  "phase": "retired-intake-ledger-read-only",
+                  "phase": "stay-intake-ledger-source-lock",
                   "authoritativeOwners": {
                     "ordinaryPayment": "Accommodation.PaymentLedger"
                   },
-                  "retiredTables": [
+                  "migrationReadonlySources": [
                     {
                       "table": "hostel_payments",
                       "replacement": "PaymentLedger payment receipt + allocation facts",
@@ -99,9 +99,9 @@ public sealed class MigrationVerificationJobTests
             var registry = MigrationVerificationFileLoader.LoadRegistry(registryPath);
 
             Assert.AreEqual("Accommodation.CheckIn", registry.SourceSlice);
-            Assert.AreEqual("retired-intake-ledger-read-only", registry.Phase);
+            Assert.AreEqual("stay-intake-ledger-source-lock", registry.Phase);
             Assert.AreEqual("Accommodation.PaymentLedger", registry.AuthoritativeOwners["ordinaryPayment"]);
-            Assert.AreEqual("hostel_payments", registry.RetiredTables[0].Table);
+            Assert.AreEqual("hostel_payments", registry.MigrationReadonlySources[0].Table);
         }
         finally
         {
@@ -131,22 +131,22 @@ public sealed class MigrationVerificationJobTests
             {
                 new MigrationFileSnapshot("015_control_plane_shadow_runtime", "015.sql", "-- Rollback note: ok"),
                 new MigrationFileSnapshot("016_checkout_service_process_manager", "016.sql", "-- compensating migration"),
-                new MigrationFileSnapshot("025_migration_verification_retired_sourceLock", "025.sql", "-- Rollback note: ok")
+                new MigrationFileSnapshot("025_migration_verification_sourceLock", "025.sql", "-- Rollback note: ok")
             }));
     }
 
     private static InvariantCheckEvidence Check(MigrationVerificationRunOutput output, string key) =>
         output.InvariantChecks.Single(check => check.InvariantKey == key);
 
-    private static RetiredMigrationRegistry Registry() =>
+    private static MigrationConsistencyRegistry Registry() =>
         new(
             "0.16.2",
             "Accommodation.CheckIn",
-            "retired-intake-ledger-read-only",
+            "stay-intake-ledger-source-lock",
             new Dictionary<string, string> { ["ordinaryPayment"] = "Accommodation.PaymentLedger" },
             new[]
             {
-                new RetiredRegistryTable(
+                new MigrationReadonlySource(
                     "hostel_payments",
                     "PaymentLedger payment receipt + allocation facts",
                     "locked-read-only",
@@ -156,10 +156,10 @@ public sealed class MigrationVerificationJobTests
 
     private sealed class FakeMigrationVerificationDataSource : IMigrationVerificationDataSource
     {
-        public IReadOnlyList<RetiredTableScanRow> ScanRetiredTables(IReadOnlyList<RetiredTableMapping> mappings) =>
+        public IReadOnlyList<ReadonlySourceScanRow> ScanMigrationReadonlySources(IReadOnlyList<MigrationSourceMapping> mappings) =>
             mappings
-                .Select(mapping => new RetiredTableScanRow(
-                    mapping.RetiredTable,
+                .Select(mapping => new ReadonlySourceScanRow(
+                    mapping.SourceTable,
                     true,
                     2,
                     mapping.Source,
@@ -167,10 +167,10 @@ public sealed class MigrationVerificationJobTests
                     mapping.RequiresReconciliationNote))
                 .ToArray();
 
-        public IReadOnlyList<OldViewNewLensComparison> CompareRetiredToNewLens(IReadOnlyList<RetiredTableMapping> mappings) =>
+        public IReadOnlyList<ProjectionConsistencyComparison> CompareReadonlySourcesToProjection(IReadOnlyList<MigrationSourceMapping> mappings) =>
             mappings
-                .Select(mapping => new OldViewNewLensComparison(
-                    mapping.RetiredTable,
+                .Select(mapping => new ProjectionConsistencyComparison(
+                    mapping.SourceTable,
                     mapping.TargetTables,
                     2,
                     2,

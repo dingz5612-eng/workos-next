@@ -4,7 +4,7 @@
   "rollbackModes": [
     "runtime_mode",
     "feature_flag",
-    "route_to_retired_off"
+    "route_to_source_off"
   ],
   "compensationModes": [
     "append_only_correction",

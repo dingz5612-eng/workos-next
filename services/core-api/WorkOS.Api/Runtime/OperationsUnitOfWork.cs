@@ -375,7 +375,7 @@ public sealed record SliceCommandHandlerDefinition(
             "CommandEnvelope.v1",
             new[] { "DomainEvent", "WorkItem", "LedgerEntry" },
             "balanced-ledger-or-none",
-            new[] { "declared-by-test-or-retired-handler" },
+            new[] { "declared-by-test-or-source-handler" },
             "OperationsRuntimeProjection");
 }
 

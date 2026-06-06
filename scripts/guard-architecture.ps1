@@ -36,7 +36,7 @@ function Assert-OnlyDirectories($root, $allowed) {
 
 function Assert-NoFile($path) {
   if (Test-Path $path) {
-    Fail "Retired file or directory must be deleted: $path"
+    Fail "Previous file or directory must be deleted: $path"
   }
 }
 

@@ -91,7 +91,7 @@ function validateContract(contract, file) {
   for (const required of ["shared shell", "shared route guard", "shared named experience components", "surface contract", "direct OperationCardShell on operation step pages"]) {
     if (!architecture.required?.includes(required)) failures.push(v("experience.surface_required", `currentSurfaceArchitecture.required missing ${required}.`));
   }
-  for (const forbidden of ["page-private shell", "copied layout logic", "page-private field source mapping", "retired Workspace/Card write UI flow"]) {
+  for (const forbidden of ["page-private shell", "copied layout logic", "page-private field source mapping", "blocked Workspace/Card write path"]) {
     if (!architecture.forbidden?.includes(forbidden)) failures.push(v("experience.surface_forbidden", `currentSurfaceArchitecture.forbidden missing ${forbidden}.`));
   }
 
@@ -127,9 +127,9 @@ function validateMobileSources() {
 
   requireText(runtime, "prepareOperationWorkItem", "experience.runtime_prepare", "Mobile runtime must prepare persisted operation work items.", failures);
   requireText(runtime, "confirmOperationWorkItem", "experience.runtime_confirm", "Mobile runtime must confirm through the operation work item endpoint.", failures);
-  forbidText(runtime, "submitCardOperationRetiredFallback", "experience.no_card_fallback", "Mobile runtime must not keep card retired fallback.", failures);
-  forbidText(runtime, "prepareCard", "experience.no_prepare_card", "Mobile runtime must not prepare retired cards.", failures);
-  forbidText(runtime, "confirmCard", "experience.no_confirm_card", "Mobile runtime must not confirm retired cards.", failures);
+  forbidText(runtime, "submitCardOperationBlockedFallback", "experience.no_card_fallback", "Mobile runtime must not keep card blocked fallback.", failures);
+  forbidText(runtime, "prepareCard", "experience.no_prepare_card", "Mobile runtime must not prepare blocked card paths.", failures);
+  forbidText(runtime, "confirmCard", "experience.no_confirm_card", "Mobile runtime must not confirm blocked card paths.", failures);
   requireText(controller, "submitWorkItemOperation", "experience.controller_submit", "Operation controller must submit persisted WorkItems.", failures);
   requireText(shell, "bottom-nav", "experience.shell_nav", "App shell must own shared navigation.", failures);
   requireText(operationView, "workspaceCardPanel", "experience.operation_panel_uses_shell", "Operation panel must route active work through the shared card shell.", failures);

@@ -25,13 +25,13 @@ export async function confirmBankImport(ctx) {
   const actorId = ctx.state.currentActor?.userId || "runtime";
   const result = await confirmBankStatementImport(current, actorId);
   const previous = ctx.state.bankStatementImport || {};
-  const importHistory = [result, ...(previous.importHistory || []).filter((item) => item.importId !== result.importId)];
+  const importEventLog = [result, ...(previous.importEventLog || []).filter((item) => item.importId !== result.importId)];
   const bankTransactions = [...(result.transactions || []), ...(previous.bankTransactions || []).filter((item) => item.importId !== result.importId)];
   ctx.state.bankStatementImport = auditState({
     ...previous,
     request: current,
     result,
-    importHistory,
+    importEventLog,
     bankTransactions,
     error: ""
   }, "bankStatementImport.confirm", result);

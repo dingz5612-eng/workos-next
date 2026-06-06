@@ -3,7 +3,7 @@
   "shadow_table": "shadow_runtime.shadow_event_queue",
   "active_table": "public.runtime_documents",
   "count_mismatch_grade": "red",
-  "retired_ref": null,
+  "source_ref": null,
   "compare_scopes": [
     "operations-runtime",
     "finance-ledger",

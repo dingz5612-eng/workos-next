@@ -13,7 +13,14 @@ WorkOSNext 已收敛为唯一当前 OAM 架构：主执行链是 Operations Runt
 
 ## 本次审查修复覆盖
 
-本次收敛覆盖并复验了以下合并阻断点：PC 测试已纳入独立 CI 入口，合同本地路径引用已由当前引用完整性检查保护，旧入口和旧阶段语义由 OAM 纯净度检查阻断，已删除 artifact 引用已改为当前证据目录或当前生成命令，Control Plane runner 的 `script`、`checkRef`、`evidenceRef` 均指向真实存在或当前运行时生成的路径。
+本次硬收口覆盖并复验了以下合并阻断点：PC 测试已纳入独立 CI 入口，合同本地路径引用已由当前引用完整性检查保护，旧入口、旧阶段词和旧运行体系字段由 OAM 纯净度检查阻断，已删除 artifact 引用已改为当前证据目录或当前生成命令，Control Plane runner 的 `script`、`checkRef`、`evidenceRef` 均指向真实存在或当前运行时生成的路径。
+
+本轮已完成的当前 OAM 原生改写：
+- Surface 写阻断统一为 `currentForbiddenWriteAdapter`，非持久化任务标识统一为 `nonPersistedWorkItemKey`。
+- WorkItem 定义入口统一为 `sourceCardId`，步骤依赖隐藏字段统一为 `suppressedFields`。
+- Ledger/control-plane 迁移口径统一为 `migrationReadonlySources`、`sourceLock`、`readonlySourceVerification`、`projectionConsistencyCompare`。
+- DB 状态记录统一为 `operations_work_item_state_event_log`，新增 `041_current_oam_work_item_state_event_log.sql` 处理已应用库的当前命名升级。
+- 全项目大小写扫描确认无旧架构缩写、旧阶段词、非 `artifacts/oam` 财务产物路径和旧运行体系英文残留。
 
 完整最终验收在当前源码上重新构建运行完成：移动端单测、PC 单测、移动端覆盖率、Playwright smoke、`WorkOSNext.sln` Release 构建、后端 Unit、Runtime Integration、Database Security、Policy as Code、Release Evidence 和 Runtime Contract 全部通过。
 
@@ -30,7 +37,7 @@ WorkOSNext 已收敛为唯一当前 OAM 架构：主执行链是 Operations Runt
 | `docs/oam` | 唯一架构权威和验收报告 | 不保存历史归档语义 |
 | `docs/contracts` | 当前合同事实来源 | 合同与脚本、测试、API 保持一致 |
 | `scripts` | 当前 OAM 守卫、合同、业务规则、纯净度检查 | 不保留历史阶段脚本 |
-| `infra/db/migrations` | 当前顺序迁移链 | 无重复迁移序号，无旧迁移命名 |
+| `infra/db/migrations` | 当前顺序迁移链 | 无重复迁移序号；状态记录、控制面和财务语义均使用当前命名 |
 
 ## 删除清单
 
@@ -59,7 +66,7 @@ WorkOSNext 已收敛为唯一当前 OAM 架构：主执行链是 Operations Runt
 
 ## 数据库父子关系说明
 
-`operations_cases` 是父级，`operations_work_items` 是子级；状态历史、分派、升级、提交、审计、证据、outbox、projection 关系围绕 `operation_case_id` 和 `work_item_id` 串接。迁移链已清理重复编号，并保留当前控制面、运行时、财务、投影和安全职责。
+`operations_cases` 是父级，`operations_work_items` 是子级；状态事件日志、分派、升级、提交、审计、证据、outbox、projection 关系围绕 `operation_case_id` 和 `work_item_id` 串接。迁移链已清理重复编号，并保留当前控制面、运行时、财务、投影和安全职责。
 
 ## 后端复用方法清单
 
@@ -79,7 +86,7 @@ WorkOSNext 已收敛为唯一当前 OAM 架构：主执行链是 Operations Runt
 
 ## 规则覆盖率报告
 
-规则守卫已覆盖 OAM 纯净度、规则权威、API 边界、运行时写路径、Admission、Account Actor、Language、Search、Policy as Code、Experience Contract、Surface Contract、财务真相、领域包、共享治理、真相归属和宿舍 golden domain。`guard-architecture` 与清洁检查均通过。
+规则守卫已覆盖 OAM 纯净度、合同校验、规则权威、本地路径引用、API 边界、运行时写路径、Admission、Business Line Admission、Account Actor、Language、Search、Policy as Code、Domain Packs、Truth Owners、Finance Truth、Ledger Semantic、Finance Semantic Truth、Management Cockpit、Shared Governance、Dormitory Golden Domain、场景字段合同、Canonical Scenario Map、Evidence Coverage 和 Ledger Posting。`scripts/oam/run-control-plane-checks.ps1` 已通过。
 
 ## 测试覆盖率报告
 
@@ -88,7 +95,7 @@ WorkOSNext 已收敛为唯一当前 OAM 架构：主执行链是 Operations Runt
 后端覆盖率文件已生成：
 - Unit tests: line 33.28%，branch 45.53%。
 - Runtime integration tests: line 20.09%，branch 33.03%。
-- Database security tests: line 0.58%，branch 0.49%。
+- Database security tests: line 0.63%，branch 0.50%。
 - Policy tests: line 0.95%，branch 0.78%。
 - Release control tests: line 0.00%，branch 0.00%。
 
@@ -96,9 +103,13 @@ WorkOSNext 已收敛为唯一当前 OAM 架构：主执行链是 Operations Runt
 - 移动端单测：59 个测试文件、313 个用例通过。
 - PC 单测：4 个测试文件、4 个用例通过，作为独立验收入口。
 - Playwright smoke：5 个真实浏览器用例通过。
-- 后端构建：`WorkOSNext.sln` Release 构建通过，仅保留既有 analyzer warning。
+- 后端构建：`WorkOSNext.sln` Release 构建通过，仅保留既有 nullable/analyzer warning。
 - 后端测试：Unit 224 个、Runtime Integration 55 个、Database Security 9 个、Policy as Code 4 个、Release Evidence 5 个全部通过。
 - Runtime Contract：运行型合同检查通过。
+
+剩余 warning：
+- Vite build 保留既有单 chunk 体积提示。
+- .NET build 保留既有 nullable/analyzer warning，未形成当前 OAM 验收阻断。
 
 ## 远端分支处置建议
 
@@ -120,4 +131,4 @@ WorkOSNext 已收敛为唯一当前 OAM 架构：主执行链是 Operations Runt
 
 ## 最终验收结论
 
-当前架构纯净验收通过。当前分支满足“纯净当前架构重建”的本地验收：当前 OAM 架构唯一，旧兼容和旧阶段噪音已删除或重写，服务/模块/包/infra/.github 已一等归类，关键守卫、构建、前端测试、PC 测试、浏览器测试、后端测试、数据库安全测试和运行时合同均通过。
+当前架构纯净验收通过。当前分支满足“纯净当前 OAM 架构最终硬收口”的本地验收：当前 OAM 架构唯一，旧适配和旧阶段噪音已删除或重写，服务/模块/包/infra/.github 已一等归类，关键守卫、构建、前端测试、PC 测试、浏览器测试、后端测试、数据库安全测试和运行时合同均通过。

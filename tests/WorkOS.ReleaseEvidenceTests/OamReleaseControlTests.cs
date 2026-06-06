@@ -76,7 +76,7 @@ public sealed class OamReleaseControlTests
     }
 
     [TestMethod]
-    public void RepositoryDoesNotContainRetiredStageTokens()
+    public void RepositoryDoesNotContainPreviousStageTokens()
     {
         var forbidden = new[]
         {
@@ -91,7 +91,7 @@ public sealed class OamReleaseControlTests
             var text = File.ReadAllText(file);
             foreach (var token in forbidden)
             {
-                Assert.IsFalse(ContainsForbiddenToken(text, token), $"{RelativeToRepo(file)} must not contain retired stage token {token}.");
+                Assert.IsFalse(ContainsForbiddenToken(text, token), $"{RelativeToRepo(file)} must not contain previous stage token {token}.");
             }
         }
     }

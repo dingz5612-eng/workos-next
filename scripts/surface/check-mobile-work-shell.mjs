@@ -24,7 +24,7 @@ if (!html.includes("data-today-filter=\"must-do\"") || !html.includes("data-work
 }
 
 if (text.includes("今日必学")) {
-  violations.push(v("mobile_work.today_learning_retired", "Today 首页内容区不得再放今日必学；学习入口应从搜索或我的进入。"));
+  violations.push(v("mobile_work.today_learning_not_home", "Today 首页内容区不得再放今日必学；学习入口应从搜索或我的进入。"));
 }
 
 if (!html.includes('aria-label="移动端主导航"') || !html.includes('aria-current="page"')) {

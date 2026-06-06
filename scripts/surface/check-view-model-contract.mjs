@@ -58,8 +58,8 @@ for (const token of ["fetch(", "XMLHttpRequest", "localStorage.setItem", "Domain
   }
 }
 
-if (!packageSource.includes("retiredWorkItemKey")) {
-  violations.push(v("view_model.retired_key_missing", "workspaceId:cardId 只能命名为 retiredWorkItemKey。"));
+if (!packageSource.includes("nonPersistedWorkItemKey")) {
+  violations.push(v("view_model.source-locked_key_missing", "workspaceId:cardId 只能命名为 nonPersistedWorkItemKey。"));
 }
 
 if (!experienceSource.includes("WorkItemDecisionVM") || !experienceSource.includes("TrustedConfirmVM")) {

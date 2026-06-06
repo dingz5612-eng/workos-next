@@ -18,7 +18,7 @@ public static class MigrationVerificationJob
         var dryRun = options.GetBool("dry-run", defaultValue: true);
         var outputPath = options.Get("out", Path.Combine(".tmp", "oam", "migration-verification-invariant-checks.json"));
         var reportPath = options.Get("report-out", Path.Combine(".tmp", "oam", "migration-verification-report.json"));
-        var remediationPath = options.Get("remediation-out", Path.Combine(".tmp", "oam", "retired-remediation-report.json"));
+        var remediationPath = options.Get("remediation-out", Path.Combine(".tmp", "oam", "source-reconciliation-review-report.json"));
         var registryPath = options.Get("registry", Path.Combine("docs", "contracts", "ledger-data-consistency-registry.json"));
         var migrationsPath = options.Get("migrations", Path.Combine("infra", "db", "migrations"));
         var apiSourcePath = options.Get("api-source", Path.Combine("services", "core-api", "WorkOS.Api", "Program.cs"));
@@ -98,19 +98,19 @@ public sealed class MigrationVerificationJobService
 
     public MigrationVerificationRunOutput Run(MigrationVerificationRunContext context)
     {
-        var retiredTables = context.Registry.RetiredTables
-            .Select(table => RetiredTableMapping.FromRegistry(table, context.Registry))
+        var migrationReadonlySources = context.Registry.MigrationReadonlySources
+            .Select(table => MigrationSourceMapping.FromRegistry(table, context.Registry))
             .ToArray();
-        var scans = dataSource.ScanRetiredTables(retiredTables);
-        var comparisons = dataSource.CompareRetiredToNewLens(retiredTables);
+        var scans = dataSource.ScanMigrationReadonlySources(migrationReadonlySources);
+        var comparisons = dataSource.CompareReadonlySourcesToProjection(migrationReadonlySources);
         var rollbackValidation = ValidateRollbackNotes(context.MigrationFiles, context.RollbackStartMigration);
         var migrationDryRun = new MigrationDryRunResult(
             true,
             context.MigrationFiles.Count,
             rollbackValidation.Valid,
             "No business facts are written during migration dry-run verification.");
-        var mappings = retiredTables.Select(table => new RetiredMappingReportRow(
-            table.RetiredTable,
+        var mappings = migrationReadonlySources.Select(table => new SourceMappingReportRow(
+            table.SourceTable,
             table.Replacement,
             table.Source,
             table.OriginalRefColumn,
@@ -118,8 +118,8 @@ public sealed class MigrationVerificationJobService
             table.RequiresReconciliationNote,
             table.ConsistencyPolicy,
             "dry_run_only")).ToArray();
-        var remediationPlan = retiredTables.Select(table => new RetiredRemediationPlanRow(
-            table.RetiredTable,
+        var remediationPlan = migrationReadonlySources.Select(table => new ExplicitReconciliationPlanRow(
+            table.SourceTable,
             table.TargetTables,
             true,
             false,
@@ -127,36 +127,36 @@ public sealed class MigrationVerificationJobService
             table.OriginalRefColumn,
             table.RequiresReconciliationNote,
             table.RequiresReconciliationNote
-                ? $"retired_data_migration reconciliation note required for {table.RetiredTable}"
+                ? $"migration_readonly_source reconciliation note required for {table.SourceTable}"
                 : "not_required")).ToArray();
         var releaseGateRefs = new[]
         {
             $"{context.ReportId}-migration-dry-run-success",
-            $"{context.ReportId}-retired-mapping-report-generated",
-            $"{context.ReportId}-old-api-retired",
-            $"{context.ReportId}-remediation-does-not-drop-retired-data"
+            $"{context.ReportId}-source-mapping-report-generated",
+            $"{context.ReportId}-workspace-card-api-absent",
+            $"{context.ReportId}-reconciliation-review-readonly"
         };
-        var retiredSourceLock = new RetiredSourceLock(
-            $"{context.ReportId}-retired-source-lock",
+        var sourceLock = new SourceLock(
+            $"{context.ReportId}-source-lock",
             context.ReleaseId,
             context.TenantId,
             context.Registry.SourceSlice,
             context.Registry.Version,
             context.DryRun ? "proposed" : "locked",
-            retiredTables.Select(table => table.RetiredTable).ToArray(),
-            "Retired Workspace/Card API family and retired ledger tables are locked; remediation is dry-run only until audited mapping approval.",
+            migrationReadonlySources.Select(table => table.SourceTable).ToArray(),
+            "Workspace/Card API family and ledger source tables are locked; reconciliation review is dry-run only until audited mapping approval.",
             context.GeneratedBy,
             context.GeneratedAtUtc);
-        var oldApiRetired = OldApiRetired(context.EffectiveApiSource);
+        var workspaceCardApiAbsent = WorkspaceCardApiAbsent(context.EffectiveApiSource);
         var remediationSafe = remediationPlan.All(row =>
             row.DryRun
             && !row.WouldWriteNewBusinessFacts
-            && row.Source == "retired_data_migration"
+            && row.Source == "migration_readonly_source"
             && !string.IsNullOrWhiteSpace(row.OriginalRefColumn));
         var mappingOk = mappings.Length > 0
-            && mappings.All(row => row.Source == "retired_data_migration")
+            && mappings.All(row => row.Source == "migration_readonly_source")
             && mappings.Where(row => row.RequiresReconciliationNote).All(row => !string.IsNullOrWhiteSpace(row.OriginalRefColumn));
-        var status = rollbackValidation.Valid && oldApiRetired && remediationSafe && mappingOk
+        var status = rollbackValidation.Valid && workspaceCardApiAbsent && remediationSafe && mappingOk
             ? "passed"
             : "failed";
         var report = new MigrationVerificationReport(
@@ -174,26 +174,26 @@ public sealed class MigrationVerificationJobService
             releaseGateRefs,
             context.GeneratedBy,
             context.GeneratedAtUtc);
-        var remediationReport = new RetiredRemediationReport(
-            $"{context.ReportId}-retired-remediation",
+        var remediationReport = new ExplicitReconciliationReviewReport(
+            $"{context.ReportId}-source-reconciliation-review",
             context.ReportId,
             context.ReleaseId,
             context.TenantId,
             remediationSafe ? "passed" : "failed",
             true,
-            "retired_data_migration",
+            "migration_readonly_source",
             context.Registry.Phase,
             mappings,
             remediationPlan,
             remediationPlan
                 .Where(row => row.RequiresReconciliationNote)
-                .Select(row => new RetiredReconciliationNote(row.RetiredTable, row.ReconciliationNote, row.OriginalRefColumn))
+                .Select(row => new ExplicitReconciliationNote(row.SourceTable, row.ReconciliationNote, row.OriginalRefColumn))
                 .ToArray(),
-            retiredSourceLock,
+            sourceLock,
             releaseGateRefs,
             context.GeneratedBy,
             context.GeneratedAtUtc);
-        var invariantChecks = BuildInvariantChecks(context, report, remediationReport, oldApiRetired, mappingOk, remediationSafe, rollbackValidation.Valid);
+        var invariantChecks = BuildInvariantChecks(context, report, remediationReport, workspaceCardApiAbsent, mappingOk, remediationSafe, rollbackValidation.Valid);
 
         return new MigrationVerificationRunOutput(
             context.ReportId,
@@ -203,14 +203,14 @@ public sealed class MigrationVerificationJobService
             invariantChecks,
             report,
             remediationReport,
-            retiredSourceLock);
+            sourceLock);
     }
 
     private static IReadOnlyList<InvariantCheckEvidence> BuildInvariantChecks(
         MigrationVerificationRunContext context,
         MigrationVerificationReport report,
-        RetiredRemediationReport remediationReport,
-        bool oldApiRetired,
+        ExplicitReconciliationReviewReport remediationReport,
+        bool workspaceCardApiAbsent,
         bool mappingOk,
         bool remediationSafe,
         bool rollbackOk)
@@ -232,26 +232,26 @@ public sealed class MigrationVerificationJobService
                 report.RollbackNoteValidation.MissingRollbackNotes.Select(missing => (IReadOnlyDictionary<string, object>)new Dictionary<string, object> { ["migration_id"] = missing }).ToArray()),
             Check(
                 context,
-                "retired.mapping_report_generated",
-                "Retired to new runtime mapping report must be generated with source and original_ref.",
+                "source.mapping_report_generated",
+                "Source to current runtime mapping report must be generated with source and original_ref.",
                 "P1",
                 mappingOk,
-                new Dictionary<string, object> { ["mapping_count"] = report.RetiredMappingReport.Count },
+                new Dictionary<string, object> { ["mapping_count"] = report.SourceMappingReport.Count },
                 new Dictionary<string, object> { ["minimum_mapping_count"] = 1 },
                 Array.Empty<IReadOnlyDictionary<string, object>>()),
             Check(
                 context,
-                "retired.old_api_retired",
-                "Retired Workspace/Card prepare and confirm APIs must stay absent from effective API source.",
+                "source.workspace_card_api_absent",
+                "Blocked Workspace/Card prepare and confirm APIs must stay absent from effective API source.",
                 "P1",
-                oldApiRetired,
-                new Dictionary<string, object> { ["old_api_retired"] = oldApiRetired },
-                new Dictionary<string, object> { ["old_api_retired"] = true },
-                oldApiRetired ? Array.Empty<IReadOnlyDictionary<string, object>>() : new[] { (IReadOnlyDictionary<string, object>)new Dictionary<string, object> { ["forbidden"] = "workspace-card-retired-endpoints" } }),
+                workspaceCardApiAbsent,
+                new Dictionary<string, object> { ["workspace_card_api_absent"] = workspaceCardApiAbsent },
+                new Dictionary<string, object> { ["workspace_card_api_absent"] = true },
+                workspaceCardApiAbsent ? Array.Empty<IReadOnlyDictionary<string, object>>() : new[] { (IReadOnlyDictionary<string, object>)new Dictionary<string, object> { ["forbidden"] = "workspace-card-blocked-endpoints" } }),
             Check(
                 context,
-                "retired.remediation_does_not_drop_retired_data",
-                "Retired remediation dry-run must not drop retired data or write new business facts.",
+                "source.reconciliation_review_is_readonly",
+                "Explicit reconciliation dry-run must not drop readonly source data or write new business facts.",
                 "P0",
                 remediationSafe,
                 new Dictionary<string, object>
@@ -314,7 +314,7 @@ public sealed class MigrationVerificationJobService
             missing);
     }
 
-    private static bool OldApiRetired(string source) =>
+    private static bool WorkspaceCardApiAbsent(string source) =>
         !source.Contains("/api/workspaces/resource-setup/start", StringComparison.OrdinalIgnoreCase)
         && !source.Contains("/api/workspaces/start", StringComparison.OrdinalIgnoreCase)
         && !source.Contains("/api/workspaces/{workspaceId}/cards/{cardId}/prepare", StringComparison.OrdinalIgnoreCase)
@@ -326,9 +326,9 @@ public sealed class MigrationVerificationJobService
 
 public interface IMigrationVerificationDataSource
 {
-    IReadOnlyList<RetiredTableScanRow> ScanRetiredTables(IReadOnlyList<RetiredTableMapping> mappings);
+    IReadOnlyList<ReadonlySourceScanRow> ScanMigrationReadonlySources(IReadOnlyList<MigrationSourceMapping> mappings);
 
-    IReadOnlyList<OldViewNewLensComparison> CompareRetiredToNewLens(IReadOnlyList<RetiredTableMapping> mappings);
+    IReadOnlyList<ProjectionConsistencyComparison> CompareReadonlySourcesToProjection(IReadOnlyList<MigrationSourceMapping> mappings);
 }
 
 internal sealed class PostgresMigrationVerificationDataSource : IMigrationVerificationDataSource
@@ -340,35 +340,35 @@ internal sealed class PostgresMigrationVerificationDataSource : IMigrationVerifi
         this.connectionString = connectionString;
     }
 
-    public IReadOnlyList<RetiredTableScanRow> ScanRetiredTables(IReadOnlyList<RetiredTableMapping> mappings)
+    public IReadOnlyList<ReadonlySourceScanRow> ScanMigrationReadonlySources(IReadOnlyList<MigrationSourceMapping> mappings)
     {
         using var connection = Open();
         return mappings
-            .Select(mapping => new RetiredTableScanRow(
-                mapping.RetiredTable,
-                TableExists(connection, mapping.RetiredTable),
-                CountRows(connection, mapping.RetiredTable),
+            .Select(mapping => new ReadonlySourceScanRow(
+                mapping.SourceTable,
+                TableExists(connection, mapping.SourceTable),
+                CountRows(connection, mapping.SourceTable),
                 mapping.Source,
                 mapping.OriginalRefColumn,
                 mapping.RequiresReconciliationNote))
             .ToArray();
     }
 
-    public IReadOnlyList<OldViewNewLensComparison> CompareRetiredToNewLens(IReadOnlyList<RetiredTableMapping> mappings)
+    public IReadOnlyList<ProjectionConsistencyComparison> CompareReadonlySourcesToProjection(IReadOnlyList<MigrationSourceMapping> mappings)
     {
         using var connection = Open();
         return mappings
             .Select(mapping =>
             {
-                var oldCount = CountRows(connection, mapping.RetiredTable);
+                var oldCount = CountRows(connection, mapping.SourceTable);
                 var newCount = mapping.TargetTables.Sum(table => CountRows(connection, table));
-                return new OldViewNewLensComparison(
-                    mapping.RetiredTable,
+                return new ProjectionConsistencyComparison(
+                    mapping.SourceTable,
                     mapping.TargetTables,
                     oldCount,
                     newCount,
                     "count_only",
-                    oldCount == 0 || newCount > 0 ? "comparable" : "retired_data_requires_mapping_review");
+                    oldCount == 0 || newCount > 0 ? "comparable" : "readonly_source_requires_mapping_review");
             })
             .ToArray();
     }
@@ -405,21 +405,21 @@ internal sealed class PostgresMigrationVerificationDataSource : IMigrationVerifi
 
 public static class MigrationVerificationFileLoader
 {
-    public static RetiredMigrationRegistry LoadRegistry(string registryPath)
+    public static MigrationConsistencyRegistry LoadRegistry(string registryPath)
     {
         var options = new JsonSerializerOptions(JsonSerializerDefaults.Web)
         {
             PropertyNameCaseInsensitive = true
         };
-        var registry = JsonSerializer.Deserialize<RetiredMigrationRegistry>(File.ReadAllText(registryPath), options)
+        var registry = JsonSerializer.Deserialize<MigrationConsistencyRegistry>(File.ReadAllText(registryPath), options)
             ?? throw new InvalidOperationException($"Could not deserialize {registryPath}");
         return registry with
         {
             Version = registry.Version ?? "unknown",
-            SourceSlice = registry.SourceSlice ?? "retired",
-            Phase = registry.Phase ?? "retired-remediation-sourceLock",
+            SourceSlice = registry.SourceSlice ?? "source-lock",
+            Phase = registry.Phase ?? "migration-source-lock",
             AuthoritativeOwners = registry.AuthoritativeOwners ?? new Dictionary<string, string>(),
-            RetiredTables = registry.RetiredTables ?? Array.Empty<RetiredRegistryTable>(),
+            MigrationReadonlySources = registry.MigrationReadonlySources ?? Array.Empty<MigrationReadonlySource>(),
             Guards = registry.Guards ?? Array.Empty<string>()
         };
     }
@@ -445,7 +445,7 @@ public sealed record MigrationVerificationRunContext(
     DateTimeOffset GeneratedAtUtc,
     string RollbackStartMigration,
     string EffectiveApiSource,
-    RetiredMigrationRegistry Registry,
+    MigrationConsistencyRegistry Registry,
     IReadOnlyList<MigrationFileSnapshot> MigrationFiles);
 
 public sealed record MigrationVerificationRunOutput(
@@ -455,8 +455,8 @@ public sealed record MigrationVerificationRunOutput(
     string Status,
     IReadOnlyList<InvariantCheckEvidence> InvariantChecks,
     MigrationVerificationReport Report,
-    RetiredRemediationReport RemediationReport,
-    RetiredSourceLock SourceLock);
+    ExplicitReconciliationReviewReport RemediationReport,
+    SourceLock SourceLock);
 
 public sealed record MigrationVerificationReport(
     string ReportId,
@@ -466,15 +466,15 @@ public sealed record MigrationVerificationReport(
     string Status,
     bool DryRun,
     MigrationDryRunResult MigrationDryRun,
-    IReadOnlyList<RetiredTableScanRow> OldRuntimeDataScan,
-    IReadOnlyList<RetiredMappingReportRow> RetiredMappingReport,
-    IReadOnlyList<OldViewNewLensComparison> OldViewNewLensCompare,
+    IReadOnlyList<ReadonlySourceScanRow> ReadonlySourceVerification,
+    IReadOnlyList<SourceMappingReportRow> SourceMappingReport,
+    IReadOnlyList<ProjectionConsistencyComparison> ProjectionConsistencyCompare,
     MigrationRollbackValidation RollbackNoteValidation,
     IReadOnlyList<string> ReleaseGateRefs,
     string GeneratedBy,
     DateTimeOffset GeneratedAtUtc);
 
-public sealed record RetiredRemediationReport(
+public sealed record ExplicitReconciliationReviewReport(
     string RemediationReportId,
     string MigrationReportId,
     string ReleaseId,
@@ -483,15 +483,15 @@ public sealed record RetiredRemediationReport(
     bool DryRun,
     string Source,
     string Phase,
-    IReadOnlyList<RetiredMappingReportRow> Mappings,
-    IReadOnlyList<RetiredRemediationPlanRow> RemediationPlan,
-    IReadOnlyList<RetiredReconciliationNote> ReconciliationNotes,
-    RetiredSourceLock RetiredSourceLock,
+    IReadOnlyList<SourceMappingReportRow> Mappings,
+    IReadOnlyList<ExplicitReconciliationPlanRow> RemediationPlan,
+    IReadOnlyList<ExplicitReconciliationNote> ReconciliationNotes,
+    SourceLock SourceLock,
     IReadOnlyList<string> ReleaseGateRefs,
     string GeneratedBy,
     DateTimeOffset GeneratedAtUtc);
 
-public sealed record RetiredSourceLock(
+public sealed record SourceLock(
     string SourceLockId,
     string ReleaseId,
     string TenantId,
@@ -515,16 +515,16 @@ public sealed record MigrationRollbackValidation(
     int CheckedMigrationCount,
     IReadOnlyList<string> MissingRollbackNotes);
 
-public sealed record RetiredTableScanRow(
-    string RetiredTable,
+public sealed record ReadonlySourceScanRow(
+    string SourceTable,
     bool Exists,
     long RowCount,
     string Source,
     string OriginalRefColumn,
     bool RequiresReconciliationNote);
 
-public sealed record RetiredMappingReportRow(
-    string RetiredTable,
+public sealed record SourceMappingReportRow(
+    string SourceTable,
     string Replacement,
     string Source,
     string OriginalRefColumn,
@@ -533,8 +533,8 @@ public sealed record RetiredMappingReportRow(
     string ConsistencyPolicy,
     string ApplyMode);
 
-public sealed record RetiredRemediationPlanRow(
-    string RetiredTable,
+public sealed record ExplicitReconciliationPlanRow(
+    string SourceTable,
     IReadOnlyList<string> TargetTables,
     bool DryRun,
     bool WouldWriteNewBusinessFacts,
@@ -543,13 +543,13 @@ public sealed record RetiredRemediationPlanRow(
     bool RequiresReconciliationNote,
     string ReconciliationNote);
 
-public sealed record RetiredReconciliationNote(
-    string RetiredTable,
+public sealed record ExplicitReconciliationNote(
+    string SourceTable,
     string Note,
     string OriginalRefColumn);
 
-public sealed record OldViewNewLensComparison(
-    string RetiredTable,
+public sealed record ProjectionConsistencyComparison(
+    string SourceTable,
     IReadOnlyList<string> NewLensTables,
     long OldRowCount,
     long NewRowCount,
@@ -561,22 +561,22 @@ public sealed record MigrationFileSnapshot(
     string Path,
     string Sql);
 
-public sealed record RetiredMigrationRegistry(
+public sealed record MigrationConsistencyRegistry(
     string Version,
     string SourceSlice,
     string Phase,
     IReadOnlyDictionary<string, string> AuthoritativeOwners,
-    IReadOnlyList<RetiredRegistryTable> RetiredTables,
+    IReadOnlyList<MigrationReadonlySource> MigrationReadonlySources,
     IReadOnlyList<string> Guards);
 
-public sealed record RetiredRegistryTable(
+public sealed record MigrationReadonlySource(
     string Table,
     string Replacement,
     string Mode,
     string ConsistencyPolicy);
 
-public sealed record RetiredTableMapping(
-    string RetiredTable,
+public sealed record MigrationSourceMapping(
+    string SourceTable,
     string Replacement,
     string Source,
     string OriginalRefColumn,
@@ -584,7 +584,7 @@ public sealed record RetiredTableMapping(
     bool RequiresReconciliationNote,
     string ConsistencyPolicy)
 {
-    public static RetiredTableMapping FromRegistry(RetiredRegistryTable table, RetiredMigrationRegistry registry)
+    public static MigrationSourceMapping FromRegistry(MigrationReadonlySource table, MigrationConsistencyRegistry registry)
     {
         var targetTables = table.Table switch
         {
@@ -595,17 +595,17 @@ public sealed record RetiredTableMapping(
             "finance_confirmations" => new[] { "deposit_transactions", "finance_reconciliations" },
             _ => new[] { table.Replacement.Split([' ', '+'], StringSplitOptions.RemoveEmptyEntries).FirstOrDefault() ?? table.Replacement }
         };
-        return new RetiredTableMapping(
+        return new MigrationSourceMapping(
             table.Table,
             table.Replacement,
-            "retired_data_migration",
+            "migration_readonly_source",
             $"{table.Table}.primary_key",
             targetTables,
             IsMoneyRelated(table.Table, registry),
             table.ConsistencyPolicy);
     }
 
-    private static bool IsMoneyRelated(string table, RetiredMigrationRegistry registry) =>
+    private static bool IsMoneyRelated(string table, MigrationConsistencyRegistry registry) =>
         table.Contains("deposit", StringComparison.OrdinalIgnoreCase)
         || table.Contains("payment", StringComparison.OrdinalIgnoreCase)
         || table.Contains("finance", StringComparison.OrdinalIgnoreCase)

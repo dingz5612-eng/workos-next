@@ -333,12 +333,12 @@ function addNetworkAssertions() {
   const accountCreates = writes.filter((event) => event.method === "POST" && event.path === "/api/pc-governance/account-users");
   const passwordResets = writes.filter((event) => event.method === "POST" && /\/api\/pc-governance\/account-users\/[^/]+\/reset-password$/.test(event.path));
   const disables = writes.filter((event) => event.method === "POST" && /\/api\/pc-governance\/account-users\/[^/]+\/disable$/.test(event.path));
-  const retiredWorkspaceCardWrites = writes.filter((event) => /\/api\/workspaces\/[^/]+\/cards\/[^/]+\/(prepare|confirm)$/i.test(event.path));
+  const forbiddenWorkspaceCardWrites = writes.filter((event) => /\/api\/workspaces\/[^/]+\/cards\/[^/]+\/(prepare|confirm)$/i.test(event.path));
   const directBusinessFactWrites = writes.filter((event) => /\/api\/(audit-events|outbox|projections\/process-outbox)$/i.test(event.path));
   addAssertion("network.account_create_count", accountCreates.length === 1, "PC 治理真实操作必须创建 1 个账号。", { accountCreates });
   addAssertion("network.account_reset_count", passwordResets.length === 1, "PC 治理真实操作必须重置 1 次密码。", { passwordResets });
   addAssertion("network.account_disable_count", disables.length === 1, "PC 治理真实操作必须禁用 1 个账号。", { disables });
-  addAssertion("network.no_retired_workspace_card_writes", retiredWorkspaceCardWrites.length === 0, "PC 治理不得调用旧 Workspace/Card 写入口。", { retiredWorkspaceCardWrites });
+  addAssertion("network.no_blocked_workspace_card_writes", forbiddenWorkspaceCardWrites.length === 0, "PC 治理不得调用旧 Workspace/Card 写入口。", { forbiddenWorkspaceCardWrites });
   addAssertion("network.no_direct_business_fact_writes", directBusinessFactWrites.length === 0, "PC 治理不得直接写业务事实、outbox 或投影。", { directBusinessFactWrites });
 }
 

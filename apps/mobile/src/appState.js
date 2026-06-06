@@ -72,7 +72,7 @@ export function createInitialState() {
       preview: null,
       result: null,
       request: null,
-      importHistory: [],
+      importEventLog: [],
       bankTransactions: [],
       candidates: null,
       mismatchCases: null,

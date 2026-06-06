@@ -12,7 +12,7 @@ const stepContracts = [
     user: ["bedType"],
     derived: [{ fieldId: "bedLabels", from: ["bedCount"] }, { fieldId: "bedLayout", from: ["bedCount", "bedType"], surface: "hidden-submit-only" }],
     backend: [{ fieldId: "bedStatus", defaultValue: "available", source: "runtime-default" }],
-    retired: ["bedId", "bedNo", "bedLabel", "note"]
+    suppressed: ["bedId", "bedNo", "bedLabel", "note"]
   }),
   contract("Accommodation.ResourceSetup", "rateSetup", ["roomSetup", "bedSetup"], {
     inherited: ["roomId"],
@@ -134,7 +134,7 @@ const stepContracts = [
       { fieldId: "amount", from: ["unitRate", "tariffQuantity"] }
     ],
     backend: [{ fieldId: "operatorId", source: "actor-session" }],
-    retired: ["depositPolicyName"]
+    suppressed: ["depositPolicyName"]
   }),
   contract("Accommodation.DepositLedger", "depositAssessment", ["tariff"], {
     inherited: ["stayId"],
@@ -318,7 +318,7 @@ const stepContracts = [
     user: ["expenseDate", "expenseCategory", "expenseDescription", "expenseAmount", "currency", "paymentMethod", "expenseEvidenceId"],
     derived: [{ fieldId: "expenseId", from: ["expenseDate", "expenseCategory"], surface: "hidden-submit-only" }],
     backend: [{ fieldId: "payerId", source: "actor-session" }, { fieldId: "payerName", source: "actor-session" }],
-    retired: ["roomId", "bedId", "taskId"]
+    suppressed: ["roomId", "bedId", "taskId"]
   }),
   contract("Accommodation.ExpenseLedger", "expenseApproval", ["expenseRecord"], {
     inherited: ["expenseId"],
@@ -402,8 +402,8 @@ export function fieldContextRole(cardId = "", fieldId = "") {
   const backend = contract.backendDefaultFields.find((item) => item.fieldId === fieldId) ||
     contract.hiddenBackendDefaults.find((item) => item.fieldId === fieldId);
   if (backend) return { kind: "backendDefault", fieldId, contract, entry: backend };
-  const retired = contract.retiredFields.find((item) => item.fieldId === fieldId);
-  if (retired) return { kind: "retired", fieldId, contract, entry: retired };
+  const suppressed = contract.suppressedFields.find((item) => item.fieldId === fieldId);
+  if (suppressed) return { kind: "suppressed", fieldId, contract, entry: suppressed };
   const user = contract.userSelectableFields.find((item) => item.fieldId === fieldId);
   if (user) return { kind: "user", fieldId, contract, entry: user };
   return { kind: "user", fieldId, contract };
@@ -411,7 +411,7 @@ export function fieldContextRole(cardId = "", fieldId = "") {
 
 export function fieldVisibleByContext(cardId = "", fieldId = "") {
   const role = fieldContextRole(cardId, fieldId);
-  if (role.kind === "retired") return false;
+  if (role.kind === "suppressed") return false;
   if (role.kind === "backendDefault") return false;
   if (role.kind === "derived" && role.entry?.surface === "hidden-submit-only") return false;
   return true;
@@ -419,7 +419,7 @@ export function fieldVisibleByContext(cardId = "", fieldId = "") {
 
 export function fieldRequiresUserAction(cardId = "", fieldId = "", fallbackRequired = false) {
   const role = fieldContextRole(cardId, fieldId);
-  if (["inherited", "derived", "backendDefault", "retired"].includes(role.kind)) return false;
+  if (["inherited", "derived", "backendDefault", "suppressed"].includes(role.kind)) return false;
   if (role.entry?.required === true) return true;
   if (role.entry?.required === false) return false;
   return fallbackRequired;
@@ -441,19 +441,19 @@ export function isBackendDefaultField(cardId = "", fieldId = "") {
   return fieldContextRole(cardId, fieldId).kind === "backendDefault";
 }
 
-export function isRetiredContextField(cardId = "", fieldId = "") {
-  return fieldContextRole(cardId, fieldId).kind === "retired";
+export function isSuppressedContextField(cardId = "", fieldId = "") {
+  return fieldContextRole(cardId, fieldId).kind === "suppressed";
 }
 
 export function contextContractSummary(cardId = "") {
   const contract = stepContextContract(cardId);
-  if (!contract) return { inherited: [], user: [], derived: [], backend: [], retired: [] };
+  if (!contract) return { inherited: [], user: [], derived: [], backend: [], suppressed: [] };
   return {
     inherited: contract.inheritedFields.map((item) => item.fieldId),
     user: contract.userSelectableFields.map((item) => item.fieldId),
     derived: contract.derivedFields.map((item) => item.fieldId),
     backend: [...contract.backendDefaultFields, ...contract.hiddenBackendDefaults].map((item) => item.fieldId),
-    retired: contract.retiredFields.map((item) => item.fieldId)
+    suppressed: contract.suppressedFields.map((item) => item.fieldId)
   };
 }
 
@@ -489,9 +489,9 @@ function contract(caseType, workItemId, dependsOn, fields) {
         defaultValue: entry.defaultValue,
         reason: "backend runtime owns this default; client must not ask the user to type it"
       })),
-    retiredFields: (fields.retired || []).map((fieldId) => ({
+    suppressedFields: (fields.suppressed || []).map((fieldId) => ({
       fieldId,
-      reason: "retired by current step dependency contract; kept only to suppress stale retired WorkItem fields"
+      reason: "suppressed by current step dependency contract; blocks stale WorkItem fields"
     }))
   };
 }

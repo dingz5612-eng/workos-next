@@ -47,7 +47,7 @@ public static class ShadowRuntimeDbMapping
             new[]
             {
                 "compare_input_id", "release_id", "tenant_id", "slice_id",
-                "command_submission_id", "source_retired_ref", "source_active_ref",
+                "command_submission_id", "source_baseline_ref", "source_active_ref",
                 "source_shadow_ref", "input_payload", "captured_at_utc"
             })
     };

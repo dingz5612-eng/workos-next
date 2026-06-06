@@ -4,7 +4,7 @@ import { searchView } from "../views/searchView.js";
 import { meView } from "../views/meView.js";
 
 describe("HOTFIX-SURFACE-UX-01 Search and Learning sync", () => {
-  it("keeps Search focused on active business entry instead of personal history", () => {
+  it("keeps Search focused on active business entry instead of personal activity log", () => {
     const html = searchView(ctx({ view: "search", query: "住宿" }));
 
     expect(html).toContain('class="search-box"');
@@ -31,7 +31,7 @@ describe("HOTFIX-SURFACE-UX-01 Search and Learning sync", () => {
     expect(html).toContain("记录、证据和学习内容请到我的查看");
   });
 
-  it("keeps personal history in Me instead of adding a fifth bottom tab", () => {
+  it("keeps personal activity log in Me instead of adding a fifth bottom tab", () => {
     const html = meView(ctx({ view: "me" }));
 
     expect(html).toContain("业务资料");

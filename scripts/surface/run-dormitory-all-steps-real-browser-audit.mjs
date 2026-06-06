@@ -601,7 +601,7 @@ function analyzeNetwork(events = []) {
     event.method === "POST" && event.path === "/api/operations/workspaces/start").length;
   const operationsConfirmCount = events.filter((event) =>
     event.method === "POST" && /\/api\/operations\/work-items\/[^/]+\/confirm$/i.test(event.path)).length;
-  const retiredWrites = events.filter((event) =>
+  const forbiddenWrites = events.filter((event) =>
     event.method === "POST" && /\/api\/workspaces\/[^/]+\/cards\/[^/]+\/(prepare|confirm)$/i.test(event.path));
   const directFactWrites = events.filter((event) =>
     event.method === "POST" && /\/api\/(events|outbox|projections|facts)\b/i.test(event.path));
@@ -611,7 +611,7 @@ function analyzeNetwork(events = []) {
     operationsConfirmCount,
     errorCount: errors.length,
     errors,
-    noRetiredWorkspaceCardWrites: retiredWrites.length === 0,
+    noForbiddenWorkspaceCardWrites: forbiddenWrites.length === 0,
     noDirectBusinessFactWrites: directFactWrites.length === 0
   };
 }
@@ -619,7 +619,7 @@ function analyzeNetwork(events = []) {
 function addNetworkAssertions(policy) {
   addAssertion("network.workspace_start_count", policy.workspaceStartCount >= 10, "必须至少启动 10 个 Operations workspace。", policy);
   addAssertion("network.operations_confirm_count", policy.operationsConfirmCount === report.expectedStepCount, `必须形成 ${report.expectedStepCount} 次 Operations Confirm。`, policy);
-  addAssertion("network.no_retired_workspace_card_writes", policy.noRetiredWorkspaceCardWrites, "不得出现旧 Workspace/Card prepare/confirm 写入口。", policy);
+  addAssertion("network.no_blocked_workspace_card_writes", policy.noForbiddenWorkspaceCardWrites, "不得出现旧 Workspace/Card prepare/confirm 写入口。", policy);
   addAssertion("network.no_direct_business_fact_writes", policy.noDirectBusinessFactWrites, "前端不得直接写业务事实、outbox 或投影。", policy);
 }
 

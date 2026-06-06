@@ -95,9 +95,9 @@ for (const [file, text] of [
   [".github/pull_request_template.md", prTemplate],
   [".github/workflows/ci.yml", ciWorkflow]
 ]) {
-  for (const pattern of retiredTermPatterns()) {
+  for (const pattern of previousTermPatterns()) {
     if (pattern.test(text)) {
-      violations.push(`${file} contains retired rule term ${pattern}.`);
+      violations.push(`${file} contains previous rule term ${pattern}.`);
     }
   }
 }
@@ -158,7 +158,7 @@ function readJson(file) {
   }
 }
 
-function retiredTermPatterns() {
+function previousTermPatterns() {
   const exact = (parts) => new RegExp(parts.join("").replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i");
   const word = (parts) => new RegExp(`\\b${parts.join("")}\\b`, "i");
   return [

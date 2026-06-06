@@ -55,10 +55,10 @@ const cases = [
     expectedStatus: "403_or_422"
   },
   {
-    id: "retired_workspace_card_write_routes_blocked",
-    description: "retired workspace/card write routes are absent from runtime write path",
+    id: "blocked_workspace_card_write_routes_blocked",
+    description: "blocked workspace/card write routes are absent from runtime write path",
     evidenceFile: "scripts/check-runtime-write-paths.mjs",
-    requiredMarkers: ["OAM-WRITE-COMPAT-ADAPTER-DELETED", "OAM-WRITE-RETIRED-WORKSPACE-COMPAT-ENDPOINT"],
+    requiredMarkers: ["OAM-WRITE-BLOCKED-ADAPTER-DELETED", "OAM-WRITE-BLOCKED-WORKSPACE-ENDPOINT"],
     expectedStatus: "403_or_422"
   },
   {

@@ -48,8 +48,8 @@ Invoke-Checked "pwsh" @("scripts/guard-architecture.ps1")
 
 Assert-NoMatches @("apps", "services", "tests") "scenarioFlows|data-task|data-scenario|taskView|objectView" "Old page/task/object model terms must not remain in current OAM source."
 Assert-NoMatches @("docs") "local scaffold currently targets net9\.0" "Stale .NET scaffold documentation is forbidden."
-Assert-NoMatches @("services/core-api/WorkOS.Api/Program.cs", "docs/contracts/workos-runtime.openapi.json") "/api/workspaces/\{workspaceId\}/cards/\{cardId\}/(prepare|confirm)" "Retired Workspace/Card write endpoints must stay absent."
-Assert-NoMatches @(".github", "docs/oam", "docs/contracts/oam.current.json") "GateResult|WON-18" "Current OAM authority surfaces must not use retired gate names."
+Assert-NoMatches @("services/core-api/WorkOS.Api/Program.cs", "docs/contracts/workos-runtime.openapi.json") "/api/workspaces/\{workspaceId\}/cards/\{cardId\}/(prepare|confirm)" "Blocked Workspace/Card write endpoints must stay absent."
+Assert-NoMatches @(".github", "docs/oam", "docs/contracts/oam.current.json") "GateResult|WON-18" "Current OAM authority surfaces must not use previous gate names."
 
 $solutionText = (Get-Content "WorkOSNext.sln" -Raw) -replace "\\", "/"
 $repoRoot = (Get-Location).Path

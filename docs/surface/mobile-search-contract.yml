@@ -21,7 +21,7 @@
   "admission": {
     "visible": ["visibleAllowed", "prepareAllowed", "confirmAllowed", "productionAllowed", "mode"],
     "copyKeys": ["search.admission.visibleOnly", "search.admission.confirmDenied", "search.admission.productionBlocked", "search.admission.contractPreview"],
-    "forbiddenOrdinaryVisibleTokens": ["admissionDecisionRef", "retiredAdapter", "definitionId", "raw reason", "raw code"]
+    "forbiddenOrdinaryVisibleTokens": ["admissionDecisionRef", "blockedAdapter", "definitionId", "raw reason", "raw code"]
   },
   "pcRawRecordsVisible": false,
   "adminRecordsVisibleToOrdinaryMobile": false

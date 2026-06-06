@@ -116,20 +116,20 @@ public sealed class ControlPlaneWriteStore
         command.CommandText = $"""
             insert into control_plane.shadow_compare_reports(
                 shadow_compare_report_id, release_id, tenant_id, slice_id, compare_scope,
-                {ControlPlaneDbMapping.SourceRetiredRefColumn}, source_active_ref, source_shadow_ref, compared_at_utc,
+                {ControlPlaneDbMapping.SourceBaselineRefColumn}, source_active_ref, source_shadow_ref, compared_at_utc,
                 grade, total_compared, matched_count, mismatch_count,
                 missing_in_shadow_count, extra_in_shadow_count, mismatch_examples,
                 summary, generated_by, ci_run_id)
             values(
                 @shadowCompareReportId, @releaseId, @tenantId, @sliceId,
-                @compareScope::jsonb, @sourceRetiredRef, @sourceActiveRef,
+                @compareScope::jsonb, @sourceBaselineRef, @sourceActiveRef,
                 @sourceShadowRef, @comparedAtUtc, @grade, @totalCompared,
                 @matchedCount, @mismatchCount, @missingInShadowCount,
                 @extraInShadowCount, @mismatchExamples::jsonb, @summary::jsonb,
                 @generatedBy, @ciRunId)
             on conflict(shadow_compare_report_id) do update set
                 compare_scope = excluded.compare_scope,
-                {ControlPlaneDbMapping.SourceRetiredRefColumn} = excluded.{ControlPlaneDbMapping.SourceRetiredRefColumn},
+                {ControlPlaneDbMapping.SourceBaselineRefColumn} = excluded.{ControlPlaneDbMapping.SourceBaselineRefColumn},
                 source_active_ref = excluded.source_active_ref,
                 source_shadow_ref = excluded.source_shadow_ref,
                 compared_at_utc = excluded.compared_at_utc,
@@ -149,7 +149,7 @@ public sealed class ControlPlaneWriteStore
         command.Parameters.AddWithValue("tenantId", report.TenantId);
         command.Parameters.AddWithValue("sliceId", report.SliceId);
         AddJson(command, "compareScope", report.CompareScope);
-        command.Parameters.AddWithValue("sourceRetiredRef", (object?)report.SourceRetiredRef ?? DBNull.Value);
+        command.Parameters.AddWithValue("sourceBaselineRef", (object?)report.SourceBaselineRef ?? DBNull.Value);
         command.Parameters.AddWithValue("sourceActiveRef", (object?)report.SourceActiveRef ?? DBNull.Value);
         command.Parameters.AddWithValue("sourceShadowRef", (object?)report.SourceShadowRef ?? DBNull.Value);
         command.Parameters.AddWithValue("comparedAtUtc", report.ComparedAtUtc);
@@ -229,7 +229,7 @@ public sealed record ShadowCompareReportWrite(
     string TenantId,
     string SliceId,
     IReadOnlyDictionary<string, object> CompareScope,
-    string? SourceRetiredRef,
+    string? SourceBaselineRef,
     string? SourceActiveRef,
     string? SourceShadowRef,
     DateTimeOffset ComparedAtUtc,

@@ -15,7 +15,7 @@
       "page-private shell",
       "copied layout logic",
       "page-private field source mapping",
-      "retired Workspace/Card write UI flow",
+      "blocked Workspace/Card write path",
       "completed record detour page"
     ],
     "repair": "any non-current surface is rewritten onto the OAM surface system and the obsolete implementation is deleted in the same scope"
@@ -55,7 +55,7 @@
     "contentContainerRule": "ordinary mobile content renders in shared overview containers, control containers, result groups, repeated item cards, or BusinessSummaryHeader",
     "businessSummaryCardHierarchy": "business item cards use BusinessSummaryHeader, structured anchors, BusinessTaskOverview, and one primary action container",
     "todayWorkResponsibilityBoundary": "Today owns today's work only; Work owns the full permitted work queue",
-    "searchMeResponsibilityBoundary": "Search is active business discovery; Me owns readonly personal history and support surfaces",
+    "searchMeResponsibilityBoundary": "Search is active business discovery; Me owns readonly personal activity log and support surfaces",
     "fieldContextKernel": "field identity, aliases, task overview fields, option labels, and derived previews come from the shared field kernel",
     "stepPageExperienceParity": "new active, readonly completed, and append-only correction step pages share step rail, OperationCardShell, state/check panel, action hierarchy, feedback entry, and decision markers",
     "postSubmitNavigation": "successful active confirm advances to the next actionable persisted WorkItem in the same case when one exists",
@@ -75,7 +75,7 @@
   },
   "admissionExplainabilityExperience": {
     "rule": "visibleAllowed, prepareAllowed, confirmAllowed, productionAllowed, mode, and safe reason copy are consumed by the visible surface",
-    "ordinaryUserHidden": ["admissionDecisionRef", "retiredAdapter", "definitionId", "payloadHash", "commandSubmissionId", "rawReason", "rawCode"],
+    "ordinaryUserHidden": ["admissionDecisionRef", "blockedAdapter", "definitionId", "payloadHash", "commandSubmissionId", "rawReason", "rawCode"],
     "safeErrors": ["operations.error.safe.403", "operations.error.safe.409", "operations.error.safe.422", "operations.error.safe.generic"]
   },
   "businessOperationActionPaths": {
@@ -87,7 +87,7 @@
   },
   "issueRepairProtocol": {
     "order": ["observe_real_behavior", "classify_impact_scope", "locate_broken_layer", "align_to_contract", "update_rule_or_model", "implement_root_cause_fix", "verify_with_tests_and_real_browser"],
-    "forbidden": ["page-level hard-add", "old retired fallback", "copy-only patch without model change", "direct edit of completed business fact"]
+    "forbidden": ["page-level hard-add", "blocked fallback", "copy-only patch without model change", "direct edit of completed business fact"]
   },
   "feedbackMessageChannel": {
     "mode": "role_or_account_addressed_collaboration_message",

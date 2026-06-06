@@ -787,7 +787,7 @@ internal sealed record OperationTarget(
 
 internal sealed record PrepareWorkItemExecution(
     PrepareWorkItemResult Result,
-    object? RetiredPayload,
+    object? SourcePayload,
     OperationTarget Target);
 
 internal static class OperationsHash

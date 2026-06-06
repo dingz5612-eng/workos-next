@@ -174,7 +174,7 @@
       "target": "current-oam-starting-point-or-clean-sequential-migrations",
       "forbidden": [
         "duplicate-migration-number",
-        "retired-source-lock",
+        "source-lock",
         "v5-stage-name"
       ]
     }
@@ -193,18 +193,18 @@
         "purity-scan"
       ],
       "forbiddenTerms": [
-        "retired-architecture-stage-terms",
-        "retired-gate-result-terms",
-        "retired-evidence-phase-terms"
+        "previous-architecture-stage-terms",
+        "previous-gate-result-terms",
+        "previous-evidence-phase-terms"
       ]
     },
     "pullRequestTemplate": {
       "path": ".github/pull_request_template.md",
       "mustUse": "current-OAM-checklist",
       "forbiddenTerms": [
-        "retired-architecture-stage-terms",
-        "retired-governance-abbreviations",
-        "retired-gate-result-terms"
+        "previous-architecture-stage-terms",
+        "previous-governance-abbreviations",
+        "previous-gate-result-terms"
       ]
     }
   },
@@ -246,9 +246,9 @@
   "purity": {
     "deleteHistoricalArtifactsByDefault": true,
     "forbiddenStageTerms": [
-      "retired-architecture-stage-terms",
-      "retired-runtime-stage-terms",
-      "retired-proof-stage-terms"
+      "previous-architecture-stage-terms",
+      "previous-runtime-stage-terms",
+      "previous-proof-stage-terms"
     ],
     "allowedEvidenceTerm": "current-oam-evidence-object-only"
   }

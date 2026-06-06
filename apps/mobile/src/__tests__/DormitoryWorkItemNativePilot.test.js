@@ -39,7 +39,7 @@ describe("DORM-INT-02 WorkItem-native pilot", () => {
     vi.unstubAllGlobals();
   });
 
-  it("normalizes retired task ids to persisted Operations WorkItem ids", () => {
+  it("normalizes non-persisted task ids to persisted Operations WorkItem ids", () => {
     vi.stubGlobal("localStorage", { getItem: () => null });
     const testCtx = ctx({
       selectedWorkspace: "W-STAY-RESOURCE",
@@ -69,7 +69,7 @@ describe("DORM-INT-02 WorkItem-native pilot", () => {
     vi.unstubAllGlobals();
   });
 
-  it("renders persisted WorkItem ids when Operation Panel reopens with a retired task id", () => {
+  it("renders persisted WorkItem ids when Operation Panel reopens with a non-persisted task id", () => {
     vi.stubGlobal("localStorage", { getItem: () => null });
     const testCtx = ctx({
       selectedWorkItemId: "T-ROOM-CREATE",
@@ -246,11 +246,11 @@ describe("DORM-INT-02 WorkItem-native pilot", () => {
     expect(apiClient).not.toContain("recordGovernanceAuditEvent");
     expect(runtime).toContain("prepareOperationWorkItem");
     expect(runtime).toContain("confirmOperationWorkItem");
-    expect(runtime).not.toContain("submitCardOperationRetiredFallback");
+    expect(runtime).not.toContain("submitCardOperationBlockedFallback");
     expect(runtime).not.toContain("prepareCard");
     expect(runtime).not.toContain("confirmCard");
     expect(controller).toContain("submitWorkItemOperation");
-    expect(controller).not.toContain("submitCardOperationRetiredFallback");
+    expect(controller).not.toContain("submitCardOperationBlockedFallback");
     expect(eventBinder).toContain("[data-work-item-id]");
     expect(eventBinder).toContain("openWorkItem");
     expect(eventBinder).not.toContain("financeReconciliationController");

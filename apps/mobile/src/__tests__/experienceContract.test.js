@@ -83,10 +83,10 @@ describe("OAM Experience Contract", () => {
     expect(controller).not.toContain("submitCardOperation({");
   });
 
-  it("keeps workspace/card retired fallback out of the mobile runtime", () => {
+  it("keeps workspace/card blocked fallback out of the mobile runtime", () => {
     const runtime = source("../operationRuntime.js");
 
-    expect(runtime).not.toContain("submitCardOperationRetiredFallback");
+    expect(runtime).not.toContain("submitCardOperationBlockedFallback");
     expect(runtime).not.toContain("prepareCard");
     expect(runtime).not.toContain("confirmCard");
   });

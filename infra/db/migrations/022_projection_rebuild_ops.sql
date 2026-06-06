@@ -1,6 +1,6 @@
 -- Final Ops projection rebuild checkpoints and audit.
 -- Rollback note: WorkOSNext migrations are up-only. If this ops schema must be
--- removed before production use, history projection_rebuild_audits and
+-- removed before production use, event_log projection_rebuild_audits and
 -- projection_checkpoints first, then drop these two tables in a reviewed
 -- compensating migration.
 

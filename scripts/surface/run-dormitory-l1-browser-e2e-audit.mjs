@@ -535,7 +535,7 @@ function addViolation(scenario, id, message) {
 
 function analyzeNetwork(events) {
   const writes = events.filter((event) => event.method !== "GET");
-  const retiredWorkspaceCardWrites = writes.filter((event) => /\/api\/workspaces\/[^/]+\/cards\/[^/]+\/(prepare|confirm)$/i.test(event.path));
+  const forbiddenWorkspaceCardWrites = writes.filter((event) => /\/api\/workspaces\/[^/]+\/cards\/[^/]+\/(prepare|confirm)$/i.test(event.path));
   const operationsRuntimeWrites = writes.filter((event) => /\/api\/operations\/work-items\/[^/]+\/(prepare|confirm)$/i.test(event.path));
   const directBusinessFactWrites = writes.filter((event) =>
     /\/api\/(audit-events|outbox|projections\/process-outbox)$/i.test(event.path));
@@ -544,9 +544,9 @@ function analyzeNetwork(events) {
     writeCount: writes.length,
     writes,
     operationsRuntimeWrites,
-    retiredWorkspaceCardWrites,
+    forbiddenWorkspaceCardWrites,
     directBusinessFactWrites,
-    noRetiredWorkspaceCardWrites: retiredWorkspaceCardWrites.length === 0,
+    noForbiddenWorkspaceCardWrites: forbiddenWorkspaceCardWrites.length === 0,
     noDirectBusinessFactWrites: directBusinessFactWrites.length === 0
   };
 }
@@ -565,7 +565,7 @@ function architectureAssertions(currentReport) {
     assertion("runtime.blocked_required", steps.some((step) => step.runtimeDecision === "blocked:required_field_missing"), "Required field blocker is enforced before runtime confirm."),
     assertion("runtime.terminal", steps.some((step) => String(step.runtimeDecision).startsWith("work_item_terminal:")), "Terminal runtime state is captured."),
     assertion("runtime.only_write_entry", currentReport.networkPolicy.operationsRuntimeWrites.length > 0, "Operations Runtime prepare/confirm write path is used."),
-    assertion("compat.no_retired_card_write", currentReport.networkPolicy.noRetiredWorkspaceCardWrites, "UI does not call retired workspace/card prepare or confirm writes."),
+    assertion("network.no_blocked_card_write", currentReport.networkPolicy.noForbiddenWorkspaceCardWrites, "UI does not call blocked workspace/card prepare or confirm writes."),
     assertion("ui.no_submit_terminal", steps.filter((step) => step.admissionDecision === "visible_readonly_completed").every((step) => step.domState.submitCount === 0), "Terminal surfaces expose no submit CTA."),
     assertion("evidence.screenshots_hashed", currentReport.screenshots.length > 0 && currentReport.screenshots.every((item) => item.sha256), "Screenshots are hashed for Evidence Graph binding."),
     assertion("ci.bound", Boolean(currentReport.ciRun?.id), "CI run id is bound.")

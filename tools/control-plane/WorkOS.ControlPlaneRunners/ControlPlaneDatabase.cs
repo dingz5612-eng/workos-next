@@ -402,8 +402,8 @@ public sealed class ControlPlaneDatabase : ILedgerInspectionInvariantEvaluator
 
     public void WriteMigrationVerificationReports(
         MigrationVerificationReport report,
-        RetiredRemediationReport remediationReport,
-        RetiredSourceLock sourceLock)
+        ExplicitReconciliationReviewReport remediationReport,
+        SourceLock sourceLock)
     {
         using var connection = Open();
         using var transaction = connection.BeginTransaction();
@@ -413,19 +413,19 @@ public sealed class ControlPlaneDatabase : ILedgerInspectionInvariantEvaluator
             command.CommandText = """
                 insert into control_plane.migration_verification_reports(
                     report_id, release_id, tenant_id, status, dry_run, migration_dry_run,
-                    old_runtime_data_scan, retired_mapping_report, old_view_new_lens_compare,
+                    readonly_source_verification, source_mapping_report, projection_consistency_compare,
                     rollback_note_validation, release_gate_refs, generated_by, generated_at_utc)
                 values (
                     @reportId, @releaseId, @tenantId, @status, @dryRun, @migrationDryRun::jsonb,
-                    @oldRuntimeDataScan::jsonb, @retiredMappingReport::jsonb, @oldViewNewLensCompare::jsonb,
+                    @readonlySourceVerification::jsonb, @sourceMappingReport::jsonb, @projectionConsistencyCompare::jsonb,
                     @rollbackNoteValidation::jsonb, @releaseGateRefs::jsonb, @generatedBy, @generatedAtUtc)
                 on conflict(report_id) do update set
                     status = excluded.status,
                     dry_run = excluded.dry_run,
                     migration_dry_run = excluded.migration_dry_run,
-                    old_runtime_data_scan = excluded.old_runtime_data_scan,
-                    retired_mapping_report = excluded.retired_mapping_report,
-                    old_view_new_lens_compare = excluded.old_view_new_lens_compare,
+                    readonly_source_verification = excluded.readonly_source_verification,
+                    source_mapping_report = excluded.source_mapping_report,
+                    projection_consistency_compare = excluded.projection_consistency_compare,
                     rollback_note_validation = excluded.rollback_note_validation,
                     release_gate_refs = excluded.release_gate_refs,
                     generated_by = excluded.generated_by,
@@ -437,9 +437,9 @@ public sealed class ControlPlaneDatabase : ILedgerInspectionInvariantEvaluator
             command.Parameters.AddWithValue("status", report.Status);
             command.Parameters.AddWithValue("dryRun", report.DryRun);
             command.Parameters.AddWithValue("migrationDryRun", NpgsqlDbType.Jsonb, JsonSerializer.Serialize(report.MigrationDryRun, RunnerJson.Options));
-            command.Parameters.AddWithValue("oldRuntimeDataScan", NpgsqlDbType.Jsonb, JsonSerializer.Serialize(report.OldRuntimeDataScan, RunnerJson.Options));
-            command.Parameters.AddWithValue("retiredMappingReport", NpgsqlDbType.Jsonb, JsonSerializer.Serialize(report.RetiredMappingReport, RunnerJson.Options));
-            command.Parameters.AddWithValue("oldViewNewLensCompare", NpgsqlDbType.Jsonb, JsonSerializer.Serialize(report.OldViewNewLensCompare, RunnerJson.Options));
+            command.Parameters.AddWithValue("readonlySourceVerification", NpgsqlDbType.Jsonb, JsonSerializer.Serialize(report.ReadonlySourceVerification, RunnerJson.Options));
+            command.Parameters.AddWithValue("sourceMappingReport", NpgsqlDbType.Jsonb, JsonSerializer.Serialize(report.SourceMappingReport, RunnerJson.Options));
+            command.Parameters.AddWithValue("projectionConsistencyCompare", NpgsqlDbType.Jsonb, JsonSerializer.Serialize(report.ProjectionConsistencyCompare, RunnerJson.Options));
             command.Parameters.AddWithValue("rollbackNoteValidation", NpgsqlDbType.Jsonb, JsonSerializer.Serialize(report.RollbackNoteValidation, RunnerJson.Options));
             command.Parameters.AddWithValue("releaseGateRefs", NpgsqlDbType.Jsonb, JsonSerializer.Serialize(report.ReleaseGateRefs, RunnerJson.Options));
             command.Parameters.AddWithValue("generatedBy", report.GeneratedBy);
@@ -451,14 +451,14 @@ public sealed class ControlPlaneDatabase : ILedgerInspectionInvariantEvaluator
         {
             command.Transaction = transaction;
             command.CommandText = """
-                insert into control_plane.retired_remediation_reports(
+                insert into control_plane.explicit_reconciliation_review_reports(
                     remediation_report_id, migration_report_id, release_id, tenant_id, status,
                     dry_run, source, phase, mappings, remediation_plan, reconciliation_notes,
-                    retired_source_lock, release_gate_refs, generated_by, generated_at_utc)
+                    source_lock, release_gate_refs, generated_by, generated_at_utc)
                 values (
                     @remediationReportId, @migrationReportId, @releaseId, @tenantId, @status,
                     @dryRun, @source, @phase, @mappings::jsonb, @remediationPlan::jsonb,
-                    @reconciliationNotes::jsonb, @retiredSourceLock::jsonb, @releaseGateRefs::jsonb,
+                    @reconciliationNotes::jsonb, @sourceLock::jsonb, @releaseGateRefs::jsonb,
                     @generatedBy, @generatedAtUtc)
                 on conflict(remediation_report_id) do update set
                     status = excluded.status,
@@ -466,7 +466,7 @@ public sealed class ControlPlaneDatabase : ILedgerInspectionInvariantEvaluator
                     mappings = excluded.mappings,
                     remediation_plan = excluded.remediation_plan,
                     reconciliation_notes = excluded.reconciliation_notes,
-                    retired_source_lock = excluded.retired_source_lock,
+                    source_lock = excluded.source_lock,
                     release_gate_refs = excluded.release_gate_refs,
                     generated_by = excluded.generated_by,
                     generated_at_utc = excluded.generated_at_utc
@@ -482,7 +482,7 @@ public sealed class ControlPlaneDatabase : ILedgerInspectionInvariantEvaluator
             command.Parameters.AddWithValue("mappings", NpgsqlDbType.Jsonb, JsonSerializer.Serialize(remediationReport.Mappings, RunnerJson.Options));
             command.Parameters.AddWithValue("remediationPlan", NpgsqlDbType.Jsonb, JsonSerializer.Serialize(remediationReport.RemediationPlan, RunnerJson.Options));
             command.Parameters.AddWithValue("reconciliationNotes", NpgsqlDbType.Jsonb, JsonSerializer.Serialize(remediationReport.ReconciliationNotes, RunnerJson.Options));
-            command.Parameters.AddWithValue("retiredSourceLock", NpgsqlDbType.Jsonb, JsonSerializer.Serialize(remediationReport.RetiredSourceLock, RunnerJson.Options));
+            command.Parameters.AddWithValue("sourceLock", NpgsqlDbType.Jsonb, JsonSerializer.Serialize(remediationReport.SourceLock, RunnerJson.Options));
             command.Parameters.AddWithValue("releaseGateRefs", NpgsqlDbType.Jsonb, JsonSerializer.Serialize(remediationReport.ReleaseGateRefs, RunnerJson.Options));
             command.Parameters.AddWithValue("generatedBy", remediationReport.GeneratedBy);
             command.Parameters.AddWithValue("generatedAtUtc", remediationReport.GeneratedAtUtc);
@@ -493,7 +493,7 @@ public sealed class ControlPlaneDatabase : ILedgerInspectionInvariantEvaluator
         {
             command.Transaction = transaction;
             command.CommandText = """
-                insert into control_plane.retired_source_locks(
+                insert into control_plane.source_locks(
                     source_lock_id, release_id, tenant_id, source_slice, registry_version,
                     status, locked_tables, reason, locked_by, locked_at_utc)
                 values (

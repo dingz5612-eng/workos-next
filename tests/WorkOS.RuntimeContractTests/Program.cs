@@ -141,11 +141,11 @@ ResetPostgres(connectionString);
         Assert(result.Status == ConfirmStatus.Confirmed, $"{cardId} confirmation should pass");
         runtime.ProcessPendingOutbox();
     }
-    Assert(CountRows(connectionString, "deposit_liabilities") == 0, "retired CheckIn must not write DepositLedger authoritative liability facts");
-    Assert(CountRows(connectionString, "hostel_payments") == 0, "retired CheckIn must not write PaymentLedger authoritative payment facts");
-    Assert(CountRows(connectionString, "finance_reconciliations") == 0, "retired CheckIn must not write PaymentLedger finance reconciliation facts");
-    Assert(CountRows(connectionString, "accommodation_deposits") == 0, "retired CheckIn must not write retired deposit facts after ledger ownership migration");
-    Assert(CountRows(connectionString, "finance_confirmations") == 0, "retired CheckIn finance confirmation is transitional read-only after ledger ownership migration");
+    Assert(CountRows(connectionString, "deposit_liabilities") == 0, "source-locked CheckIn must not write DepositLedger authoritative liability facts");
+    Assert(CountRows(connectionString, "hostel_payments") == 0, "source-locked CheckIn must not write PaymentLedger authoritative payment facts");
+    Assert(CountRows(connectionString, "finance_reconciliations") == 0, "source-locked CheckIn must not write PaymentLedger finance reconciliation facts");
+    Assert(CountRows(connectionString, "accommodation_deposits") == 0, "source-locked CheckIn must not write source deposit facts after ledger ownership migration");
+    Assert(CountRows(connectionString, "finance_confirmations") == 0, "source-locked CheckIn finance confirmation is readonly after ledger ownership migration");
 
     var financeLeadCapture = AssertNoSideEffects(connectionString, () => runtime.Confirm("W-STAY-LEAD-RESERVATION", "leadCapture", Human("lead-reservation-finance-role"), financeToken));
     Assert(financeLeadCapture.Status == ConfirmStatus.Forbidden, "finance actor must not confirm operator-owned lead capture");
@@ -851,8 +851,8 @@ ResetPostgres(connectionString);
     Assert(CountRows(connectionString, "accommodation_rooms") >= 1, "Room aggregate should persist in accommodation_rooms");
     Assert(CountRows(connectionString, "accommodation_beds") >= 1, "Bed aggregate should persist in accommodation_beds");
     Assert(CountRows(connectionString, "accommodation_rate_plans") >= 1, "RatePlan aggregate should persist in accommodation_rate_plans");
-    Assert(CountRows(connectionString, "accommodation_deposits") == 0, "retired accommodation_deposits must stay read-only after DepositLedger ownership migration");
-    Assert(CountRows(connectionString, "finance_confirmations") == 0, "retired finance_confirmations must stay read-only after PaymentLedger ownership migration");
+    Assert(CountRows(connectionString, "accommodation_deposits") == 0, "source accommodation_deposits must stay read-only after DepositLedger ownership migration");
+    Assert(CountRows(connectionString, "finance_confirmations") == 0, "source finance_confirmations must stay read-only after PaymentLedger ownership migration");
     Assert(CountRows(connectionString, "hostel_leads") >= 1, "Hostel lead should persist in hostel_leads");
     Assert(CountRows(connectionString, "hostel_bookings") >= 1, "Hostel booking should persist in hostel_bookings");
     Assert(CountRows(connectionString, "hostel_residents") >= 1, "StayLifecycle should persist hostel_residents");
@@ -1397,7 +1397,7 @@ static void ValidateRuntimeSurfaceLenses(ProjectionRuntime runtime)
     var depositIndex = searchJson.IndexOf("W-STAY-DEPOSIT-LEDGER", StringComparison.Ordinal);
     var checkinIndex = searchJson.IndexOf("W-STAY-CHECKIN", StringComparison.Ordinal);
     Assert(depositIndex >= 0, "search must expose current DepositLedger workspace for deposit intent");
-    Assert(checkinIndex < 0 || depositIndex < checkinIndex, "search must rank DepositLedger before retired CheckIn for deposit intent");
+    Assert(checkinIndex < 0 || depositIndex < checkinIndex, "search must rank DepositLedger before source-locked CheckIn for deposit intent");
 
     var homeJson = JsonSerializer.Serialize(runtime.GetHomeSurface());
     Assert(homeJson.Contains("W-STAY-DEPOSIT-LEDGER", StringComparison.Ordinal), "home surface must expose DepositLedger");
@@ -1680,7 +1680,7 @@ static void ValidateControlPlaneShadowSchemas(string connectionString)
                 "amount": { "currency": "KGS", "lte": 10000, "gte": 100 },
                 "percentage": 25
             }'::jsonb,
-            '{"runtimeMode":"retired"}'::jsonb,
+            '{"runtimeMode":"source_readonly"}'::jsonb,
             'contract-test')
         """, ("flagId", flagId), ("releaseId", releaseId));
 
@@ -1700,7 +1700,7 @@ static void ValidateControlPlaneShadowSchemas(string connectionString)
             dependency_status)
         values(
             @cutoverId, @releaseId, 'tenant-a', 'Accommodation.DepositLedger',
-            'shadow', 'retired', '["operator"]'::jsonb, '["actor-1"]'::jsonb,
+            'shadow', 'source_readonly', '["operator"]'::jsonb, '["actor-1"]'::jsonb,
             '["device-1"]'::jsonb, '{"currency":"KGS","lte":10000,"gte":100}'::jsonb,
             25, '{"finance":"ready"}'::jsonb)
         """, ("cutoverId", cutoverId), ("releaseId", releaseId));
@@ -1711,7 +1711,7 @@ static void ValidateControlPlaneShadowSchemas(string connectionString)
         "tenant-a",
         "Accommodation.DepositLedger",
         new Dictionary<string, object> { ["window"] = "pilot" },
-        "retired-ref",
+        "source-ref",
         "active-ref",
         "shadow-ref",
         DateTimeOffset.UtcNow,
@@ -1814,7 +1814,7 @@ static void ValidateControlPlaneShadowSchemas(string connectionString)
             @rollbackId, @releaseId, 'rollback', 'feature_flag',
             'Disable OAM shadow flag', '{"tenantId":"tenant-a"}'::jsonb,
             '["shadow","pilot"]'::jsonb, '["paused","rollback"]'::jsonb,
-            '["disable flag"]'::jsonb, '["verify retired active"]'::jsonb,
+            '["disable flag"]'::jsonb, '["verify source active"]'::jsonb,
             'platform', 'medium', true, true, false)
         """, ("rollbackId", rollbackId), ("releaseId", releaseId));
 
@@ -1861,10 +1861,10 @@ static void ValidateControlPlaneShadowSchemas(string connectionString)
     ExecuteSql(connectionString, """
         insert into shadow_runtime.compare_inputs(
             compare_input_id, release_id, tenant_id, slice_id, command_submission_id,
-            source_retired_ref, source_active_ref, source_shadow_ref, input_payload)
+            source_baseline_ref, source_active_ref, source_shadow_ref, input_payload)
         values(
             @compareInputId, @releaseId, 'tenant-a', 'Accommodation.DepositLedger',
-            @commandId, 'retired-ref', 'active-ref', 'shadow-ref',
+            @commandId, 'source-ref', 'active-ref', 'shadow-ref',
             '{"basis":"command"}'::jsonb)
         """, ("compareInputId", $"shadow-input-{suffix}"), ("releaseId", releaseId), ("commandId", commandId));
 

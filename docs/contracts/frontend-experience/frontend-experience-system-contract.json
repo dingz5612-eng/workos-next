@@ -35,7 +35,7 @@
         "completedWorkspaceRecord"
       ],
       "forbidden": [
-        "page-private retired shell",
+        "page-private blocked shell",
         "product brand or actor role occupying the ordinary mobile topbar",
         "duplicated generic page title inside ordinary mobile content",
         "naked business summary title or status text outside BusinessSummaryHeader",
@@ -99,7 +99,7 @@
     },
     {
       "id": "surface-contract",
-      "description": "Routes, devices, guards, readonly records, PC/mobile boundaries, and retired paths are declared in machine-readable Surface contracts.",
+      "description": "Routes, devices, guards, readonly records, PC/mobile boundaries, and blocked paths are declared in machine-readable Surface contracts.",
       "contractRefs": [
         "docs/surface/surface-contract.yml",
         "docs/surface/surface-experience-contract.yml",
@@ -176,15 +176,15 @@
         "surface id",
         "admission decision",
         "runtime decision",
-        "no retired middle page marker"
+        "no blocked middle page marker"
       ]
     }
   ],
   "globalForbidden": [
     "page-specific architecture",
-    "old retired fallback",
+    "blocked fallback",
     "intent-card operation wrapper on new, readonly, or correction step pages",
-    "retired Workspace/Card write UI flow",
+    "blocked Workspace/Card write path",
     "component copy-paste instead of reuse",
     "new visible page without shared shell",
     "visible copy outside the multilingual dictionary",
@@ -329,7 +329,7 @@
     ]
   },
   "responsibilityBoundaries": {
-    "rule": "Shared frontend and backend responsibilities must be owned by named kernels and runtime collaborators. Operation controllers consume operationCaseContext and operationValidation; Canonical Operations Confirm delegates next-step branch selection to OperationBranchResolver. Page-private case context, field validation, branch dispatch, or retired write fallback is forbidden.",
+    "rule": "Shared frontend and backend responsibilities must be owned by named kernels and runtime collaborators. Operation controllers consume operationCaseContext and operationValidation; Canonical Operations Confirm delegates next-step branch selection to OperationBranchResolver. Page-private case context, field validation, branch dispatch, or blocked write fallback is forbidden.",
     "requiredFiles": [
       "apps/mobile/src/operationCaseContext.js",
       "apps/mobile/src/operationValidation.js",

@@ -7,7 +7,7 @@ namespace WorkOS.RuntimeIntegrationTests;
 public sealed class OperationCaseWorkItemPersistenceTests
 {
     [TestMethod]
-    public void operation_case_work_item_and_state_history_are_persisted()
+    public void operation_case_work_item_and_state_event_log_is_persisted()
     {
         var connectionString = ConnectionString();
         ProjectionRuntime.OpenPostgres(connectionString, RuntimeAuthOptions.Development);

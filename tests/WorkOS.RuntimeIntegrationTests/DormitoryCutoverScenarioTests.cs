@@ -29,7 +29,7 @@ public sealed class DormitoryCutoverScenarioTests
         var targeted = CutoverStateMachine.DecideRuntimePath("operations_primary", target, context);
         var nonTargeted = CutoverStateMachine.DecideRuntimePath("operations_primary", target, context with { SliceId = "repair" });
         Assert.AreEqual("operations_runtime", targeted.WritePath);
-        Assert.AreEqual("retired_workspace_card", nonTargeted.WritePath);
+        Assert.AreEqual("blocked_workspace_card", nonTargeted.WritePath);
     }
 
     [TestMethod]

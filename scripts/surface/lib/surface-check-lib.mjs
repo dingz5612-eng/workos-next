@@ -234,13 +234,13 @@ function validateSearch(contracts, rendered, source, violations) {
   }
   for (const sectionId of contracts.search?.sectionsMovedToMe ?? []) {
     if (rendered.search.includes(`data-search-section="${sectionId}"`)) {
-      violations.push(violation("surface.search.history_section_leaked", `Search 不得展示个人资料库 section ${sectionId}。`, { sectionId }));
+      violations.push(violation("surface.search.activity_log_section_leaked", `Search 不得展示个人资料库 section ${sectionId}。`, { sectionId }));
     }
   }
-  const personalHistoryLabels = ["业务记录", "已完成记录", "证据", "学习中心"];
-  for (const label of personalHistoryLabels) {
+  const personalActivityLogLabels = ["业务记录", "已完成记录", "证据", "学习中心"];
+  for (const label of personalActivityLogLabels) {
     if (!rendered.me.includes(label)) {
-      violations.push(violation("surface.search.history_not_in_me", `Me 必须承接个人资料入口：${label}。`, { label }));
+      violations.push(violation("surface.search.activity_log_not_in_me", `Me 必须承接个人资料入口：${label}。`, { label }));
     }
   }
   if (!source.searchView.includes("localizedTitle") && !(contracts.search?.resultContract ?? []).includes("localizedTitle")) {
@@ -265,7 +265,7 @@ function validateSearch(contracts, rendered, source, violations) {
       !source.navigationController.includes("applyRuntimeSurfacePayloads")) {
     violations.push(violation("surface.search.operations_result_not_openable", "Search 后端返回的 Operations 工作项必须合并进可打开的运行时待办池。"));
   }
-  for (const token of ["admissionDecisionRef", "retiredAdapter", "definitionId", "raw reason", "raw code"]) {
+  for (const token of ["admissionDecisionRef", "blockedAdapter", "definitionId", "raw reason", "raw code"]) {
     if (visibleText(rendered.search).includes(token)) {
       violations.push(violation("surface.search.admission_raw_visible", `Search 普通用户文案不得显示 ${token}。`, { token }));
     }
@@ -301,10 +301,10 @@ function validateLearning(contracts, rendered, source, violations) {
     violations.push(violation("surface.learning.me_entry_missing", "Learning Center 必须在 Me 中可见。"));
   }
   if (source.homeView.includes("todayLearning")) {
-    violations.push(violation("surface.learning.today_retired", "Today 首页内容区不得再放今日必学；学习内容应通过 Me 进入。"));
+    violations.push(violation("surface.learning.today_source-locked", "Today 首页内容区不得再放今日必学；学习内容应通过 Me 进入。"));
   }
   if (contracts.learning?.searchCanFindLearning === false && source.searchView.includes("learningResults")) {
-    violations.push(violation("surface.learning.search_history_leaked", "Search 不得直接渲染学习内容结果；学习内容归 Me / Learning Center。"));
+    violations.push(violation("surface.learning.search_activity_log_leaked", "Search 不得直接渲染学习内容结果；学习内容归 Me / Learning Center。"));
   }
 }
 
@@ -373,7 +373,7 @@ function validatePermissionExplainability(contracts, rendered, source, violation
 
 function validateOperationPanelRuntime(contracts, rendered, source, violations) {
   if (!source.operationPanel.includes("state.selectedWorkItemId = persistedWorkItemId")) {
-    violations.push(violation("surface.operation_panel.persisted_resolution_missing", "OperationPanelView 必须把 retired id 归一到 persisted WorkItemId。"));
+    violations.push(violation("surface.operation_panel.persisted_resolution_missing", "OperationPanelView 必须把 non-persisted id 归一到 persisted WorkItemId。"));
   }
   if (source.operationPanel.includes("ctx.workspace()")) {
     violations.push(violation("surface.operation_panel.workspace_fallback", "OperationPanelView 不得用 ctx.workspace() 重建 runtime identity。"));
@@ -381,16 +381,16 @@ function validateOperationPanelRuntime(contracts, rendered, source, violations) 
   if (!source.operationRuntime.includes("persisted_work_item_required")) {
     violations.push(violation("surface.operation_panel.persisted_block_missing", "operationRuntime 缺少 persisted_work_item_required 阻断。"));
   }
-  for (const token of ["allowRetiredFallback", "submitCardOperationRetiredFallback", "prepareCard", "confirmCard"]) {
+  for (const token of ["allowBlockedFallback", "submitCardOperationBlockedFallback", "prepareCard", "confirmCard"]) {
     if (source.operationRuntime.includes(token)) {
-      violations.push(violation("surface.operation_panel.mobile_runtime_retired_fallback", `operationRuntime 不得包含 ${token}。`, { token }));
+      violations.push(violation("surface.operation_panel.mobile_runtime_blocked_fallback", `operationRuntime 不得包含 ${token}。`, { token }));
     }
   }
   if (!source.operationRuntime.includes("prepareOperationWorkItem") || !source.operationRuntime.includes("confirmOperationWorkItem")) {
     violations.push(violation("surface.operation_panel.operations_api_missing", "Operation Panel 必须使用 operations prepare/confirm。"));
   }
   if (rendered.operationPanel.includes("T-ROOM-CREATE")) {
-    violations.push(violation("surface.operation_panel.retired_id_visible", "Operation Panel 不得显示 T-ROOM-CREATE。"));
+    violations.push(violation("surface.operation_panel.non_persisted_id_visible", "Operation Panel 不得显示 T-ROOM-CREATE。"));
   }
   if (!rendered.operationPanel.includes("准入状态") || !source.operationPanel.includes("operation-admission")) {
     violations.push(violation("surface.operation_panel.admission_missing", "Operation Panel 必须显示顶部 Admission 准入状态。"));

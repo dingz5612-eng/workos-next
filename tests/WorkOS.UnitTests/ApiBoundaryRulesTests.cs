@@ -78,7 +78,7 @@ public sealed class ApiBoundaryRulesTests
     }
 
     [TestMethod]
-    public void NoRetiredPageSpecificBusinessWriteApiIsExposed()
+    public void NoBlockedPageSpecificBusinessWriteApiIsExposed()
     {
         var source = File.ReadAllText(RepoPath("services", "core-api", "WorkOS.Api", "Program.cs"))
             + File.ReadAllText(RepoPath("services", "core-api", "WorkOS.Api", "Runtime", "OperationsRuntimeEndpoints.cs"))
@@ -94,7 +94,7 @@ public sealed class ApiBoundaryRulesTests
             "prepareCard("
         })
         {
-            Assert.IsFalse(source.Contains(forbidden, StringComparison.OrdinalIgnoreCase), $"{forbidden} must stay retired.");
+            Assert.IsFalse(source.Contains(forbidden, StringComparison.OrdinalIgnoreCase), $"{forbidden} must stay blocked.");
         }
     }
 

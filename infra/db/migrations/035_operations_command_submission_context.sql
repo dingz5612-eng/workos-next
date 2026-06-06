@@ -1,6 +1,6 @@
 -- OAM current: CommandSubmission context columns.
 -- Rollback guidance: additive-only before production. To reverse before
--- production readiness, history operations_command_submissions and drop these
+-- production readiness, event_log operations_command_submissions and drop these
 -- nullable columns after dependent evidence has been rebuilt from envelopes.
 
 alter table operations_command_submissions

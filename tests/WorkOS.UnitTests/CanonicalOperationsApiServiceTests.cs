@@ -402,7 +402,7 @@ public sealed class CanonicalOperationsApiServiceTests
         public ConfirmResult Confirm(string workspaceId, string cardId, ConfirmCardRequest request, string actorToken)
         {
             ConfirmCount++;
-            throw new InvalidOperationException("canonical S3 confirm must not call retired card confirm");
+            throw new InvalidOperationException("canonical S3 confirm must not call source card confirm");
         }
 
         private static WorkspaceProjection Workspace(string workspaceId) =>

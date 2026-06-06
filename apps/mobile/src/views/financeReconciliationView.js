@@ -2,7 +2,7 @@ export function financeReconciliationView(ctx) {
   const state = ctx.state.bankStatementImport || {};
   const preview = state.preview;
   const result = state.result;
-  const importHistory = state.importHistory?.length ? state.importHistory : (result ? [result] : []);
+  const importEventLog = state.importEventLog?.length ? state.importEventLog : (result ? [result] : []);
   const bankTransactions = state.bankTransactions?.length ? state.bankTransactions : (result?.transactions || []);
   return ctx.shell(`
     <section class="finance-reconciliation" data-finance-reconciliation>
@@ -34,7 +34,7 @@ export function financeReconciliationView(ctx) {
       </section>
       ${previewPanel(preview, ctx)}
       ${resultPanel(result, ctx)}
-      ${importHistoryPanel(importHistory, ctx)}
+      ${importEventLogPanel(importEventLog, ctx)}
       ${bankTransactionListPanel(bankTransactions, ctx)}
       ${candidatePanel(state.candidates, state.decision, result, ctx)}
       ${mismatchQueuePanel(state.mismatchCases, ctx)}
@@ -116,15 +116,15 @@ function resultPanel(result, ctx) {
   `;
 }
 
-function importHistoryPanel(importHistory, ctx) {
+function importEventLogPanel(importEventLog, ctx) {
   return `
-    <section class="finance-import-panel" data-import-history>
+    <section class="finance-import-panel" data-import-event-log>
       <h2>导入历史</h2>
-      ${importHistory.length ? `
+      ${importEventLog.length ? `
         <table>
           <thead><tr><th>导入编号</th><th>来源</th><th>状态</th><th>已解析</th><th>已拦截</th></tr></thead>
           <tbody>
-            ${importHistory.map((item) => `
+            ${importEventLog.map((item) => `
               <tr>
                 <td>${ctx.escapeHtml(item.importId || "")}</td>
                 <td>${ctx.escapeHtml(item.sourceType || "")}</td>

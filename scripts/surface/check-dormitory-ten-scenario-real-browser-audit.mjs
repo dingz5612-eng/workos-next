@@ -63,7 +63,7 @@ function validateReport() {
   const policy = report.networkPolicy || {};
   if (policy.workspaceStartCount < 10) violations.push(v("ten_scenario.workspace_start_count", "必须至少有 10 次 Operations workspace start。", policy));
   if (policy.operationsConfirmCount !== 10) violations.push(v("ten_scenario.confirm_count", "10 个正例必须刚好形成 10 次 Operations Confirm。", policy));
-  if (!policy.noRetiredWorkspaceCardWrites) violations.push(v("ten_scenario.retired_workspace_card_write", "不得出现旧 Workspace/Card prepare/confirm 写入口。", policy));
+  if (!policy.noForbiddenWorkspaceCardWrites) violations.push(v("ten_scenario.blocked_workspace_card_write", "不得出现旧 Workspace/Card prepare/confirm 写入口。", policy));
   if (!policy.noDirectBusinessFactWrites) violations.push(v("ten_scenario.direct_fact_write", "前端不得直接写业务事实、outbox 或投影。", policy));
   const assertions = new Map((report.assertions || []).map((item) => [item.id, item.status]));
   for (const id of [
@@ -71,7 +71,7 @@ function validateReport() {
     "search.entry.no_resource_special_start",
     "network.workspace_start_count",
     "network.operations_confirm_count",
-    "network.no_retired_workspace_card_writes",
+    "network.no_blocked_workspace_card_writes",
     "network.no_direct_business_fact_writes"
   ]) {
     if (assertions.get(id) !== "passed") violations.push(v("ten_scenario.assertion", `断言 ${id} 必须 passed。`, { assertion: id }));

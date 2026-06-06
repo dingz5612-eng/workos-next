@@ -196,7 +196,7 @@ public sealed class ReleaseControlCenterTests
             "release-1",
             "rollback",
             "runtime_mode",
-            "Rollback to retired",
+            "Rollback to source lock",
             new Dictionary<string, object>(),
             ["shadow", "pilot", "active"],
             ["rollback"],

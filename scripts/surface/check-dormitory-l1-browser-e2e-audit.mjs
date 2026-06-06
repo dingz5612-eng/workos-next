@@ -67,8 +67,8 @@ if (!steps.filter((step) => step.admissionDecision === "visible_readonly_complet
   violations.push("Completed read-only steps must not expose submit CTA.");
 }
 
-if (report.networkPolicy?.noRetiredWorkspaceCardWrites !== true) {
-  violations.push("Network policy detected retired workspace/card write path.");
+if (report.networkPolicy?.noForbiddenWorkspaceCardWrites !== true) {
+  violations.push("Network policy detected blocked workspace/card write path.");
 }
 if (!report.networkPolicy?.operationsRuntimeWrites?.length) {
   violations.push("Network policy did not observe Operations Runtime prepare/confirm writes.");

@@ -4,7 +4,7 @@ const registry = JSON.parse(fs.readFileSync("docs/contracts/ledger-data-consiste
 const dryRun = process.argv.includes("--dry-run") || !process.argv.includes("--apply");
 
 if (!dryRun) {
-  throw new Error("Retired ledger remediation apply mode is intentionally disabled until an operator supplies an audited mapping plan.");
+  throw new Error("Source ledger reconciliation apply mode is intentionally disabled until an operator supplies an audited mapping plan.");
 }
 
 console.log(JSON.stringify({
@@ -12,7 +12,7 @@ console.log(JSON.stringify({
   phase: registry.phase,
   sourceSlice: registry.sourceSlice,
   authoritativeOwners: registry.authoritativeOwners,
-  retiredTables: registry.retiredTables.map((item) => ({
+  migrationReadonlySources: registry.migrationReadonlySources.map((item) => ({
     table: item.table,
     replacement: item.replacement,
     mode: item.mode

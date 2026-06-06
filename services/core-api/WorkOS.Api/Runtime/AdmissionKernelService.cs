@@ -153,7 +153,7 @@ public sealed class AdmissionKernelService
             return AdmissionKernelDecision.SearchVisible(
                 definition,
                 "blocked",
-                "Search may show this retired result, but business line admission is unresolved and production remains blocked.",
+                "Search may show this source result, but business line admission is unresolved and production remains blocked.",
                 Array.Empty<string>(),
                 Array.Empty<string>(),
                 "unknown",
@@ -181,7 +181,7 @@ public sealed class AdmissionKernelService
             definition.Resolved ? "internal_pilot_observation" : "prepare_only",
             definition.Resolved
                 ? "Search result is visible in L1 internal pilot observation; production confirm remains blocked."
-                : "Search result is visible through retired, but production confirm is blocked until Definition Registry resolves it.",
+                : "Search result is visible through source contract, but production confirm is blocked until Definition Registry resolves it.",
             requiredCapabilities,
             requiredDeviceTrust,
             businessLine.Level,
@@ -197,15 +197,15 @@ public sealed class AdmissionKernelService
     private static IReadOnlyList<string> RequiredCapabilitiesFor(WorkItemDefinitionResolution definition)
     {
         var policy = definition.Definition?.RiskPolicyRef ?? string.Empty;
-        var retiredCard = definition.RetiredCardId;
+        var sourceCard = definition.SourceCardId;
         if (policy.Contains("payment.high_risk_confirm", StringComparison.OrdinalIgnoreCase)) return new[] { "finance.payment.confirm" };
         if (policy.Contains("deposit.high_risk_confirm", StringComparison.OrdinalIgnoreCase)) return new[] { "finance.deposit.confirm" };
         if (policy.Contains("deposit.high_risk_refund", StringComparison.OrdinalIgnoreCase)) return new[] { "finance.deposit.refund" };
         if (policy.Contains("period.high_risk_close", StringComparison.OrdinalIgnoreCase)) return new[] { "period.close" };
         if (policy.Contains("ledger.high_risk_correction", StringComparison.OrdinalIgnoreCase)) return new[] { "finance.correction.apply" };
-        if (retiredCard.Contains("room", StringComparison.OrdinalIgnoreCase) ||
-            retiredCard.Contains("bed", StringComparison.OrdinalIgnoreCase) ||
-            retiredCard.Contains("rate", StringComparison.OrdinalIgnoreCase))
+        if (sourceCard.Contains("room", StringComparison.OrdinalIgnoreCase) ||
+            sourceCard.Contains("bed", StringComparison.OrdinalIgnoreCase) ||
+            sourceCard.Contains("rate", StringComparison.OrdinalIgnoreCase))
         {
             return new[] { "operations.confirm" };
         }
@@ -369,5 +369,5 @@ public sealed record AdmissionKernelDecision(
         };
 
     private static string RefFor(WorkItemDefinitionResolution definition, string mode) =>
-        $"admission:{definition.RetiredCardId}:{mode}:{OperationsHash.Short(definition.DefinitionId, definition.RetiredCardId, mode)[..12]}";
+        $"admission:{definition.SourceCardId}:{mode}:{OperationsHash.Short(definition.DefinitionId, definition.SourceCardId, mode)[..12]}";
 }

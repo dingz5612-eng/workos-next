@@ -273,7 +273,7 @@ describe("OAM Surface business and technical layering contract", () => {
     expect(html).not.toContain('data-surface="completed-operation-record"');
   });
 
-  it("renders completed operation audit summary in the readonly record without the retired audit detail panel", () => {
+  it("renders completed operation audit summary in the readonly record without the obsolete audit detail panel", () => {
     const operatorCtx = createSurfaceCtx({ view: "operationPanel" });
     operatorCtx.state.runtimeStore.workspaces[0].cards[0].status = "done";
     const adminCtx = createSurfaceCtx({

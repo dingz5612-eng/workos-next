@@ -3,8 +3,8 @@ namespace WorkOS.Api.Runtime;
 public static class ControlPlaneDbMapping
 {
     public const string ControlPlaneSchema = "control_plane";
-    public const string RetiredRuntimeMode = "retired";
-    public const string SourceRetiredRefColumn = "source_retired_ref";
+    public const string SourceReadonlyRuntimeMode = "source_readonly";
+    public const string SourceBaselineRefColumn = "source_baseline_ref";
 
     public static readonly DbTableContract ReleaseManifests = new(
         ControlPlaneSchema,
@@ -47,7 +47,7 @@ public static class ControlPlaneDbMapping
         new[]
         {
             "shadow_compare_report_id", "release_id", "tenant_id", "slice_id",
-            "compare_scope", SourceRetiredRefColumn, "source_active_ref", "source_shadow_ref",
+            "compare_scope", SourceBaselineRefColumn, "source_active_ref", "source_shadow_ref",
             "compared_at_utc", "grade", "total_compared", "matched_count",
             "mismatch_count", "missing_in_shadow_count", "extra_in_shadow_count",
             "mismatch_examples", "summary", "generated_by", "ci_run_id"
@@ -107,12 +107,12 @@ public static class ControlPlaneDbMapping
 
     public static readonly IReadOnlyList<string> FeatureFlagStatuses = new[]
     {
-        "disabled", "shadow", "pilot", "active", "paused", "retired"
+        "disabled", "shadow", "pilot", "active", "paused", "source_readonly"
     };
 
     public static readonly IReadOnlyList<string> RuntimeModes = new[]
     {
-        RetiredRuntimeMode, "shadow", "pilot", "active", "rollback", "locked", "paused"
+        SourceReadonlyRuntimeMode, "shadow", "pilot", "active", "rollback", "locked", "paused"
     };
 
     public static readonly IReadOnlyList<string> GateStatuses = new[]
