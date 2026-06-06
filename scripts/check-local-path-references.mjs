@@ -20,8 +20,11 @@ const skipDirectories = new Set([".git", ".tmp", "node_modules", "bin", "obj", "
 const generatedArtifactPrefixes = [
   "apps/mobile/dist",
   "apps/mobile/dist/",
+  "artifacts/oam/checks",
   "artifacts/oam/checks/",
+  "artifacts/oam/test-results",
   "artifacts/oam/test-results/",
+  "artifacts/oam/evidence",
   "artifacts/oam/evidence/"
 ];
 
@@ -141,6 +144,9 @@ function runSelfTest() {
       JSON.stringify({
         migration: "infra/db/migrations/__missing_path_reference_self_test.sql",
         generated: "apps/mobile/dist",
+        currentOamCheckOutput: "artifacts/oam/checks/",
+        currentOamTestOutput: "artifacts/oam/test-results/",
+        currentOamEvidenceOutput: "artifacts/oam/evidence/",
         oldArtifact: oldArtifactRef
       })
     ]

@@ -5,11 +5,11 @@
   "binding": {
     "root": "current-oam-trust-closure-v1",
     "kind": "master-outline-proof",
-    "commitSha": "ea4a542c9e4e654919356a21fd9751f147df920c",
+    "commitSha": "c8ddf99e211fe11f9bc11f4aff7b5e4b5d99d33a",
     "branch": "codex/oam-stage-6-current-architecture-cleanup",
     "ciRunId": "local",
-    "generatedAt": "2026-06-06T12:43:40.822Z",
-    "artifactDigest": "sha256:cb1c83e0469e22fbe9a93ce53b8b542b72108e654aef5a46b381ff9909610cb8"
+    "generatedAt": "2026-06-06T12:53:10.396Z",
+    "artifactDigest": "sha256:389b97eb144db3633fef482b18d2beee210e7559c023b00b591837a0f34aa312"
   },
   "summary": {
     "status": "passed",

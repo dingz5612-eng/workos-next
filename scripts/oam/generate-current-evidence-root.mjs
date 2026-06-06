@@ -701,7 +701,7 @@ function walk(current, result) {
 
 function git(command) {
   try {
-    return execSync(`git ${command}`, { cwd: root, encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] }).trim();
+    return execSync(`git ${command}`, { cwd: root, encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] }).trimEnd();
   } catch {
     return "";
   }
