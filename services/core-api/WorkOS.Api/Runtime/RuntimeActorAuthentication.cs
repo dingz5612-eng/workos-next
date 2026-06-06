@@ -99,11 +99,11 @@ public sealed class RuntimeActorAuthenticationHandler : AuthenticationHandler<Au
             return authorization["Bearer ".Length..].Trim();
         }
 
-        var compatibility = request.Headers["X-WorkOS-Actor-Token"].FirstOrDefault();
-        if (!string.IsNullOrWhiteSpace(compatibility))
+        var retired = request.Headers["X-WorkOS-Actor-Token"].FirstOrDefault();
+        if (!string.IsNullOrWhiteSpace(retired))
         {
-            source = "compatibility-header";
-            return compatibility.Trim();
+            source = "retired-header";
+            return retired.Trim();
         }
 
         if (request.Cookies.TryGetValue(RuntimeActorAuthenticationDefaults.SessionCookieName, out var cookie) &&

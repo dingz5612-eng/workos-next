@@ -1,6 +1,6 @@
 {
   "contractId": "surface-experience-contract.v1",
-  "architecture": "OMA",
+  "architecture": "OAM",
   "status": "contract_guard",
   "statusBoundary": {
     "dormitoryL2ProductionAllowed": false,
@@ -52,7 +52,7 @@
     "scripts/surface/check-operation-panel-runtime-contract.mjs",
     "scripts/surface/check-surface-api-boundary.mjs",
     "scripts/surface/check-surface-runtime-guard-contract.mjs",
-    "scripts/check-frontend-experience-system.mjs",
+    "scripts/check-experience-contract.mjs",
     "scripts/check-surface-contract.mjs"
   ],
   "forbidden": [

@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { routeView } from "../appRouter.js";
 import { createSurfaceCtx, visibleText } from "./surfaceContractTestHelpers.js";
 
-describe("OMA Surface PC Release Workspace contract", () => {
+describe("OAM Surface PC Release Workspace contract", () => {
   it("renders release workspace in PC shell without mobile nav", () => {
     const ctx = createSurfaceCtx({
       view: "releaseFlightDeck",

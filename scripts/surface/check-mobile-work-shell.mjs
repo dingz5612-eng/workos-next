@@ -5,7 +5,7 @@ import { routeView } from "../../apps/mobile/src/appRouter.js";
 import { shell } from "../../apps/mobile/src/appShell.js";
 
 const root = process.cwd();
-const artifactPath = "artifacts/oma/checks/mobile-work-productization-result.json";
+const artifactPath = "artifacts/oam/checks/mobile-work-productization-result.json";
 const violations = [];
 const html = renderMobile();
 const text = visibleText(html);

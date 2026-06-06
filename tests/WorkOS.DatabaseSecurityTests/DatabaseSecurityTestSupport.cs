@@ -76,9 +76,9 @@ internal static class DatabaseSecurityTestSupport
                 invariant_check_ids, acceptance_scenarios, go_criteria, no_go_criteria,
                 known_risks)
             values(
-                '{releaseId}', 'OMA-DB', 'OMA database role isolation test', 'planned',
-                '["platform"]'::jsonb, 'local-oma-db', '034_next_control_plane_runtime_roles',
-                'oma-db', 'not-set', 'local', '[]'::jsonb, '[]'::jsonb, '[]'::jsonb,
+                '{releaseId}', 'OAM-DB', 'OAM database role isolation test', 'planned',
+                '["platform"]'::jsonb, 'local-oam-db', '034_next_control_plane_runtime_roles',
+                'oam-db', 'not-set', 'local', '[]'::jsonb, '[]'::jsonb, '[]'::jsonb,
                 '[]'::jsonb, '[]'::jsonb, '[]'::jsonb, '["test"]'::jsonb, '[]'::jsonb)
             on conflict(release_id) do nothing
             """);

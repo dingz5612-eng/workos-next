@@ -1,5 +1,5 @@
 {
-  "version": "oma.scenario.dormitory.scenarios.v1",
+  "version": "oam.scenario.dormitory.scenarios.v1",
   "domain": "dormitory",
   "scenarios": [
     {

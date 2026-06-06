@@ -1,7 +1,7 @@
 {
   "policyId": "business.finance-policy",
   "policyType": "finance",
-  "version": "oma.policy.v1",
+  "version": "oam.policy.v1",
   "owner": "FinanceTruthPack",
   "runtimeBinding": {
     "loader": "FinancePolicyLoader",

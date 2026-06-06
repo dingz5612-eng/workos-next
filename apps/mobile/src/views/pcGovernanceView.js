@@ -468,7 +468,7 @@ function releaseControlPanel(release, ctx) {
   const overview = release.overview || release.manifest || {};
   const chain = releaseChainRows(release, overview);
   return panel("Release Control Center", "release-control-center", `
-    <dl class="governance-kv"><dt>MR ID</dt><dd>${escapeHtml(ctx, overview.mrId || overview.mr_id || "MR")}</dd></dl>
+    <dl class="governance-kv"><dt>发布请求 ID</dt><dd>${escapeHtml(ctx, overview.mrId || overview.mr_id || "release-request")}</dd></dl>
     <dl class="governance-kv"><dt>GateResult 状态</dt><dd>${escapeHtml(ctx, release.gateResult?.status || overview.gateResultStatus || "not_run")}</dd></dl>
     <dl class="governance-kv"><dt>Shadow 等级</dt><dd>${escapeHtml(ctx, overview.shadowGrade || release.shadowReports?.[0]?.grade || "unknown")}</dd></dl>
     <h3>发布证据链</h3>

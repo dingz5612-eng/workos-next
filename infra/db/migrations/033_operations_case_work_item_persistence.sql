@@ -1,6 +1,6 @@
 -- RF7: OperationCase and WorkItem persistence closure.
 -- Rollback guidance: this migration is additive. To reverse before production,
--- archive operations_work_item_state_history, operations_work_items, and
+-- history operations_work_item_state_history, operations_work_items, and
 -- operations_cases, then drop the tables in child-to-parent order.
 
 create table if not exists operations_cases (

@@ -1,7 +1,7 @@
 {
   "policyId": "business.permission-policy",
   "policyType": "permission",
-  "version": "oma.policy.v1",
+  "version": "oam.policy.v1",
   "owner": "RuntimeSecurity",
   "runtimeBinding": {
     "loader": "PermissionPolicyLoader",

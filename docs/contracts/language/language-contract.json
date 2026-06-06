@@ -1,6 +1,6 @@
 {
-  "version": "oma.language-contract.v1",
-  "generatedBy": "oma-current",
+  "version": "oam.language-contract.v1",
+  "generatedBy": "oam-current",
   "status": "authoritative-read-side-kernel",
   "supportedLanguages": [
     "zh-CN",

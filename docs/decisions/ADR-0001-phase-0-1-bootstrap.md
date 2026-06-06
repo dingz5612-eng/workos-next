@@ -19,6 +19,6 @@ Phase 0-1 will use:
 ## Consequences
 
 - The user can test UI/UX immediately.
-- No legacy FunRide UI is reused.
+- No retired FunRide UI is reused.
 - The product model remains portable to Flutter.
 - The API project targets `net10.0`.

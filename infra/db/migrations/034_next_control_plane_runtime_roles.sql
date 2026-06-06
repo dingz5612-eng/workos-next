@@ -1,4 +1,4 @@
--- OMA current Control Plane and runtime database role isolation.
+-- OAM current Control Plane and runtime database role isolation.
 -- Rollback note: role grants are cluster-level security configuration. If this
 -- contract must be reversed before production use, first revoke the grants
 -- below from each workos_* role, then drop the no-login roles after confirming

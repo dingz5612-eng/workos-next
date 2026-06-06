@@ -4,11 +4,11 @@ import path from "node:path";
 const root = process.cwd();
 const reportPath = path.join(
   root,
-  "artifacts", "oma", "evidence", "dormitory-real-browser",
+  "artifacts", "oam", "evidence", "dormitory-real-browser",
   process.env.WORKOS_TEN_DORM_SCENARIO_RUN_ID || "ten-dormitory-scenario-real-browser-20260605-post-unified-start",
   "ten-scenario-real-browser-report.json"
 );
-const outputPath = path.join(root, "artifacts", "oma", "checks", "dormitory-ten-scenario-real-browser-result.json");
+const outputPath = path.join(root, "artifacts", "oam", "checks", "dormitory-ten-scenario-real-browser-result.json");
 const violations = [];
 const report = readJson(reportPath);
 
@@ -63,7 +63,7 @@ function validateReport() {
   const policy = report.networkPolicy || {};
   if (policy.workspaceStartCount < 10) violations.push(v("ten_scenario.workspace_start_count", "必须至少有 10 次 Operations workspace start。", policy));
   if (policy.operationsConfirmCount !== 10) violations.push(v("ten_scenario.confirm_count", "10 个正例必须刚好形成 10 次 Operations Confirm。", policy));
-  if (!policy.noLegacyWorkspaceCardWrites) violations.push(v("ten_scenario.legacy_workspace_card_write", "不得出现旧 Workspace/Card prepare/confirm 写入口。", policy));
+  if (!policy.noRetiredWorkspaceCardWrites) violations.push(v("ten_scenario.retired_workspace_card_write", "不得出现旧 Workspace/Card prepare/confirm 写入口。", policy));
   if (!policy.noDirectBusinessFactWrites) violations.push(v("ten_scenario.direct_fact_write", "前端不得直接写业务事实、outbox 或投影。", policy));
   const assertions = new Map((report.assertions || []).map((item) => [item.id, item.status]));
   for (const id of [
@@ -71,7 +71,7 @@ function validateReport() {
     "search.entry.no_resource_special_start",
     "network.workspace_start_count",
     "network.operations_confirm_count",
-    "network.no_legacy_workspace_card_writes",
+    "network.no_retired_workspace_card_writes",
     "network.no_direct_business_fact_writes"
   ]) {
     if (assertions.get(id) !== "passed") violations.push(v("ten_scenario.assertion", `断言 ${id} 必须 passed。`, { assertion: id }));

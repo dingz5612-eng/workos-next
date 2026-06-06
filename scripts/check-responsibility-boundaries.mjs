@@ -142,7 +142,7 @@ function exists(file) {
 }
 
 function writeReport(items) {
-  const reportPath = path.join(root, "artifacts", "oma", "checks", "responsibility-boundaries-result.json");
+  const reportPath = path.join(root, "artifacts", "oam", "checks", "responsibility-boundaries-result.json");
   fs.mkdirSync(path.dirname(reportPath), { recursive: true });
   fs.writeFileSync(reportPath, JSON.stringify({
     checkedAt: new Date().toISOString(),

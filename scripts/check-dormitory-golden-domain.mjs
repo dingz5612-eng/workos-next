@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 const root = process.cwd();
-const out = readArg("--out=", "artifacts/oma/checks/dormitory-golden-domain-report.json");
+const out = readArg("--out=", "artifacts/oam/checks/dormitory-golden-domain-report.json");
 const requiredScenarioIds = Array.from({ length: 10 }, (_, index) => `dorm-cert-${String(index + 1).padStart(3, "0")}`);
 const requiredCoverage = [
   "Subject",

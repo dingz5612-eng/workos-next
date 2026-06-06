@@ -1,6 +1,6 @@
 {
   "domainId": "dormitory",
-  "version": "oma.dormitory.v1",
+  "version": "oam.dormitory.v1",
   "riskRules": [
     {"id":"dorm-risk-001","risk":"missing required evidence","status":"block confirm","httpStatus":422},
     {"id":"dorm-risk-002","risk":"rejected evidence","status":"block confirm","httpStatus":422},

@@ -1,0 +1,407 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "version": "oam.current.v1",
+  "status": "authoritative",
+  "architecture": "Operations Management Architecture",
+  "primaryWritePath": "POST /api/operations/work-items/{workItemId}/confirm",
+  "productCapabilities": [
+    {
+      "id": "accommodation.resource",
+      "module": "accommodation",
+      "owns": [
+        "room",
+        "bed",
+        "rate",
+        "initialReadiness"
+      ],
+      "forbidden": [
+        "dailyServiceAvailabilityRelease",
+        "financeConfirmation"
+      ]
+    },
+    {
+      "id": "accommodation.lead-reservation",
+      "module": "accommodation",
+      "owns": [
+        "lead",
+        "reservation",
+        "checkinHandoff"
+      ],
+      "forbidden": [
+        "stayIdCreation",
+        "formalCheckin"
+      ]
+    },
+    {
+      "id": "accommodation.checkin",
+      "module": "accommodation",
+      "owns": [
+        "formalCheckin",
+        "residentSupplement",
+        "finalBedConfirmation",
+        "chargeOrchestration"
+      ],
+      "forbidden": [
+        "leadCapture",
+        "reservationCreationDuplication"
+      ]
+    },
+    {
+      "id": "accommodation.lifecycle",
+      "module": "accommodation",
+      "owns": [
+        "postCheckinResidentChange",
+        "bedChange",
+        "stayExtension",
+        "additionalCharge"
+      ],
+      "forbidden": [
+        "firstCheckinCreation"
+      ]
+    },
+    {
+      "id": "accommodation.checkout",
+      "module": "accommodation",
+      "owns": [
+        "checkoutStart",
+        "inspection",
+        "depositSettlement",
+        "finalBalanceClose",
+        "bedRelease"
+      ],
+      "forbidden": [
+        "serviceTaskCompletion"
+      ]
+    },
+    {
+      "id": "accommodation.service-task",
+      "module": "maintenance",
+      "owns": [
+        "serviceTask",
+        "assignment",
+        "completion",
+        "verification",
+        "availabilityReleaseRequest"
+      ],
+      "forbidden": [
+        "resourceObjectReselectionAfterCreate"
+      ]
+    },
+    {
+      "id": "finance.payment",
+      "module": "finance-gate",
+      "owns": [
+        "ordinaryPayment",
+        "paymentConfirmation",
+        "paymentAllocation",
+        "debtFollowUp"
+      ],
+      "forbidden": [
+        "depositAsOrdinaryIncome"
+      ]
+    },
+    {
+      "id": "finance.deposit",
+      "module": "finance-gate",
+      "owns": [
+        "depositLiability",
+        "depositReceipt",
+        "depositConfirmation",
+        "deduction",
+        "refund",
+        "close"
+      ],
+      "forbidden": [
+        "depositRefundAsExpense"
+      ]
+    },
+    {
+      "id": "finance.expense",
+      "module": "finance-gate",
+      "owns": [
+        "expenseRecord",
+        "expenseApproval",
+        "costLink"
+      ],
+      "forbidden": [
+        "freeTextRoomOrBedOrTaskReference"
+      ]
+    },
+    {
+      "id": "finance.reconciliation",
+      "module": "finance-gate",
+      "owns": [
+        "bankStatementPreview",
+        "bankStatementImport",
+        "matchCandidate",
+        "mismatch",
+        "correctionRequest"
+      ],
+      "forbidden": [
+        "directBusinessFactRewrite",
+        "unapprovedLedgerMutation"
+      ]
+    },
+    {
+      "id": "identity.account-actor",
+      "module": "identity",
+      "owns": [
+        "account",
+        "role",
+        "capability",
+        "session",
+        "deviceTrust",
+        "accountAudit"
+      ],
+      "forbidden": [
+        "loginPageRoleSelfBinding"
+      ]
+    },
+    {
+      "id": "governance.release-control",
+      "module": "identity",
+      "owns": [
+        "controlPlaneCommand",
+        "releaseControlReadModel",
+        "rollbackInstruction",
+        "governanceAudit"
+      ],
+      "forbidden": [
+        "directBusinessFactWrite",
+        "manualProductionBypass"
+      ]
+    }
+  ],
+  "apiBoundary": {
+    "businessConfirm": [
+      "POST /api/operations/work-items/{workItemId}/confirm"
+    ],
+    "prepareOnly": [
+      "POST /api/operations/work-items/{workItemId}/prepare"
+    ],
+    "workItemCreation": [
+      "POST /api/operations/cases",
+      "POST /api/operations/work-items",
+      "POST /api/operations/workspaces/start"
+    ],
+    "readOnly": [
+      "GET /api/search",
+      "GET /api/lenses/*",
+      "GET /api/workspaces/*",
+      "GET /api/work-queue"
+    ],
+    "evidence": [
+      "POST /api/evidence/drafts",
+      "POST /api/evidence/{evidenceId}/attachments",
+      "POST /api/evidence/{evidenceId}/verify",
+      "POST /api/evidence/{evidenceId}/reject"
+    ],
+    "governance": [
+      "POST /api/pc-governance/*",
+      "POST /api/control-plane/*",
+      "POST /api/reconciliation/*",
+      "POST /api/correction-center/*"
+    ],
+    "writeRoutes": {
+      "businessConfirm": [
+        "POST /api/operations/work-items/{workItemId}/confirm"
+      ],
+      "prepareOnly": [
+        "POST /api/operations/work-items/{workItemId}/prepare"
+      ],
+      "workItemCreation": [
+        "POST /api/operations/cases",
+        "POST /api/operations/work-items",
+        "POST /api/operations/workspaces/start"
+      ],
+      "identitySession": [
+        "POST /api/auth/login",
+        "POST /api/auth/logout",
+        "POST /api/auth/sessions/{token}/revoke",
+        "POST /api/device-sessions",
+        "POST /api/device-sessions/{deviceId}/revoke"
+      ],
+      "accountGovernance": [
+        "POST /api/pc-governance/account-users",
+        "POST /api/pc-governance/account-users/{userId}/disable",
+        "POST /api/pc-governance/account-users/{userId}/reset-password"
+      ],
+      "evidenceObject": [
+        "POST /api/evidence/drafts",
+        "POST /api/evidence/{evidenceId}/attachments",
+        "POST /api/evidence/{evidenceId}/verify",
+        "POST /api/evidence/{evidenceId}/reject"
+      ],
+      "reconciliationGovernance": [
+        "POST /api/reconciliation/bank-statement-imports/preview",
+        "POST /api/reconciliation/bank-statement-imports",
+        "POST /api/reconciliation/match-candidates/generate",
+        "POST /api/reconciliation/mismatches/detect",
+        "POST /api/reconciliation/match-candidates/{candidateId}/accept",
+        "POST /api/reconciliation/match-candidates/{candidateId}/reject",
+        "POST /api/reconciliation/bank-transactions/{bankTransactionId}/mismatch",
+        "POST /api/reconciliation/bank-transactions/{bankTransactionId}/ignore"
+      ],
+      "correctionCenter": [
+        "POST /api/correction-center/ledger-correction-requests",
+        "POST /api/correction-center/ledger-correction-requests/{correctionRequestId}/approve",
+        "POST /api/correction-center/ledger-correction-requests/{correctionRequestId}/reject",
+        "POST /api/correction-center/ledger-correction-requests/{correctionRequestId}/apply"
+      ],
+      "pcGovernance": [
+        "POST /api/pc-governance/exports/{exportType}"
+      ],
+      "projectionMaintenance": [
+        "POST /api/projections/process-outbox"
+      ],
+      "mobileAuxiliary": [
+        "POST /api/mobile/drafts",
+        "POST /api/mobile/client-events",
+        "POST /api/mobile/recent-objects"
+      ],
+      "behaviorEvent": [
+        "POST /api/behavior-events"
+      ]
+    },
+    "routePolicies": {
+      "businessConfirm": {
+        "writesBusinessFact": true,
+        "requiresPermission": true,
+        "requiresIdempotency": true,
+        "requiresEvidenceTraceAudit": true
+      },
+      "prepareOnly": {
+        "writesBusinessFact": false,
+        "purpose": "readiness-check-and-explanation"
+      },
+      "workItemCreation": {
+        "writesBusinessFact": false,
+        "purpose": "case-and-work-item-coordination"
+      },
+      "evidenceObject": {
+        "writesBusinessFact": false,
+        "purpose": "evidence-object-only"
+      },
+      "reconciliationGovernance": {
+        "writesBusinessFact": false,
+        "purpose": "governance-and-matching-facts"
+      },
+      "correctionCenter": {
+        "writesBusinessFact": true,
+        "purpose": "append-only-approved-correction"
+      },
+      "pcGovernance": {
+        "writesBusinessFact": false,
+        "purpose": "governance-command-and-audit"
+      },
+      "accountGovernance": {
+        "writesBusinessFact": false,
+        "purpose": "account-and-capability-governance"
+      },
+      "identitySession": {
+        "writesBusinessFact": false,
+        "purpose": "session-and-device-trust"
+      },
+      "projectionMaintenance": {
+        "writesBusinessFact": false,
+        "purpose": "outbox-to-projection-processing"
+      },
+      "mobileAuxiliary": {
+        "writesBusinessFact": false,
+        "purpose": "draft-feedback-and-recent-object-client-support"
+      },
+      "behaviorEvent": {
+        "writesBusinessFact": false,
+        "purpose": "observability-event-only"
+      }
+    },
+    "forbidden": [
+      "retiredWorkspaceCardConfirm",
+      "pageSpecificBusinessWriteApi",
+      "mobileBffBusinessFactWrite",
+      "projectionAsCommand"
+    ]
+  },
+  "dataModel": {
+    "parent": "operations_cases",
+    "child": "operations_work_items",
+    "mustReferenceWorkItem": [
+      "command_submissions",
+      "work_item_transitions",
+      "evidence_refs",
+      "trace_refs",
+      "audit_events"
+    ],
+    "outboxSource": [
+      "domain_event",
+      "ledger_entry",
+      "account_audit",
+      "governance_event"
+    ],
+    "projectionRule": "projection-and-lens-are-read-side-only"
+  },
+  "permissionTrust": {
+    "source": "backend-session-capabilities",
+    "loginFields": [
+      "username",
+      "password"
+    ],
+    "forbiddenLoginFields": [
+      "department",
+      "role",
+      "capability",
+      "tenant",
+      "deviceTrust"
+    ],
+    "stepCapabilityMatrixRequired": true
+  },
+  "evidenceTraceAudit": {
+    "evidenceObjectRequired": true,
+    "ocrPolicy": "suggestion-only-user-adopts-before-business-write",
+    "traceRequired": [
+      "workItemId",
+      "caseId",
+      "submissionId",
+      "actorId",
+      "tenantId"
+    ]
+  },
+  "directoryPolicy": {
+    "services": [
+      "core-api",
+      "ai-personalization",
+      "workers"
+    ],
+    "modules": [
+      "accommodation",
+      "finance-gate",
+      "identity",
+      "maintenance"
+    ],
+    "packages": [
+      "surface-view-models",
+      "contracts",
+      "design-system"
+    ],
+    "emptyShellAllowed": false,
+    "historicalStageArtifactsAllowed": false
+  },
+  "ciPolicy": {
+    "allowedChecks": [
+      "build",
+      "unit-test",
+      "frontend-test",
+      "coverage",
+      "rule-coverage",
+      "api-contract",
+      "db-migration",
+      "schema-validation",
+      "purity-scan"
+    ],
+    "forbiddenTerms": [
+      "retired-architecture-stage-terms",
+      "retired-runtime-stage-terms",
+      "retired-proof-stage-terms"
+    ]
+  }
+}

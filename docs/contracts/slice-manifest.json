@@ -15,7 +15,7 @@
       "cards": ["lead", "booking", "resident", "bedAssign", "tariff", "depositRequirement", "payment", "finance", "checkin", "operatingDashboard"],
       "events": ["LeadCaptured", "BookingConfirmed", "ResidentRegistered", "BedAssigned", "TariffAssigned", "DepositRequired", "PaymentRecordedByFrontDesk", "PaymentConfirmedByFinance", "StayCheckedIn", "OperatingMetricsReviewed"],
       "ownsAggregates": ["LeadIntake", "BookingIntake", "ResidentIntake", "StayIntake", "OperatingMetrics"],
-      "migrationPhase": "legacy-intake-ledger-read-only",
+      "migrationPhase": "retired-intake-ledger-read-only",
       "status": "production-slice"
     },
     {

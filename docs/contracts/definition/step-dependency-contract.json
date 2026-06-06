@@ -1,15 +1,15 @@
 {
-  "version": "oma.step-dependency-contract.v1",
-  "generatedBy": "oma-current",
+  "version": "oam.step-dependency-contract.v1",
+  "generatedBy": "oam-current",
   "scope": "definition-contract",
   "ruleLayer": "scenario-instance-contract",
-  "abstractPattern": "Dormitory sample step fields are declared as inherited, user-selectable, derived, backend-default, or retired fields. This is a reusable Definition pattern for other business domains: later WorkItems must not ask users to manually type object references, actor/person fields, generated ids, derived values, or hidden defaults. Surfaces render inherited fields read-only or hidden-submit, derived fields as preview/hidden-submit, user fields as the only editable fields, backend defaults as hidden/no-client-trust fields, and retired fields as suppressed legacy fields.",
+  "abstractPattern": "Dormitory sample step fields are declared as inherited, user-selectable, derived, backend-default, or retired fields. This is a reusable Definition pattern for other business domains: later WorkItems must not ask users to manually type object references, actor/person fields, generated ids, derived values, or hidden defaults. Surfaces render inherited fields read-only or hidden-submit, derived fields as preview/hidden-submit, user fields as the only editable fields, backend defaults as hidden/no-client-trust fields, and retired fields as suppressed retired fields.",
   "fieldBuckets": {
     "inheritedFields": "system context from prior WorkItems, runtime events, projections, operations-start-context payloads, session, assignment chain, or completed records",
     "userSelectableFields": "the fields the current operator can actually decide or correct in this step",
     "derivedFields": "values generated from inherited/user fields and recomputed when inputs change",
     "backendDefaultFields": "runtime/session/default values owned by backend; frontend never asks the user to type them",
-    "retiredFields": "legacy or misleading fields that must be hidden instead of accepted as current user input"
+    "retiredFields": "retired or misleading fields that must be hidden instead of accepted as current user input"
   },
   "contracts": [
     {
@@ -148,19 +148,19 @@
       "retiredFields": [
         {
           "fieldId": "bedId",
-          "reason": "retired by current step dependency contract; kept only to suppress stale legacy WorkItem fields"
+          "reason": "retired by current step dependency contract; kept only to suppress stale retired WorkItem fields"
         },
         {
           "fieldId": "bedNo",
-          "reason": "retired by current step dependency contract; kept only to suppress stale legacy WorkItem fields"
+          "reason": "retired by current step dependency contract; kept only to suppress stale retired WorkItem fields"
         },
         {
           "fieldId": "bedLabel",
-          "reason": "retired by current step dependency contract; kept only to suppress stale legacy WorkItem fields"
+          "reason": "retired by current step dependency contract; kept only to suppress stale retired WorkItem fields"
         },
         {
           "fieldId": "note",
-          "reason": "retired by current step dependency contract; kept only to suppress stale legacy WorkItem fields"
+          "reason": "retired by current step dependency contract; kept only to suppress stale retired WorkItem fields"
         }
       ]
     },
@@ -1419,7 +1419,7 @@
       "retiredFields": [
         {
           "fieldId": "depositPolicyName",
-          "reason": "retired by current step dependency contract; kept only to suppress stale legacy WorkItem fields"
+          "reason": "retired by current step dependency contract; kept only to suppress stale retired WorkItem fields"
         }
       ]
     },
@@ -3453,15 +3453,15 @@
       "retiredFields": [
         {
           "fieldId": "roomId",
-          "reason": "retired by current step dependency contract; kept only to suppress stale legacy WorkItem fields"
+          "reason": "retired by current step dependency contract; kept only to suppress stale retired WorkItem fields"
         },
         {
           "fieldId": "bedId",
-          "reason": "retired by current step dependency contract; kept only to suppress stale legacy WorkItem fields"
+          "reason": "retired by current step dependency contract; kept only to suppress stale retired WorkItem fields"
         },
         {
           "fieldId": "taskId",
-          "reason": "retired by current step dependency contract; kept only to suppress stale legacy WorkItem fields"
+          "reason": "retired by current step dependency contract; kept only to suppress stale retired WorkItem fields"
         }
       ]
     },
@@ -4010,7 +4010,7 @@
       "ownerName",
       "ownerActorId"
     ],
-    "forbiddenLegacyFieldIds": [
+    "forbiddenRetiredFieldIds": [
       "depositRule",
       "varianceReason",
       "actualCost",

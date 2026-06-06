@@ -9,7 +9,7 @@ import { WorkItemCard } from "../views/experienceComponents.js";
 import { searchView } from "../views/searchView.js";
 import { createSurfaceCtx, runtimeStore, visibleText } from "./surfaceContractTestHelpers.js";
 
-describe("OMA Surface WorkItem route identity", () => {
+describe("OAM Surface WorkItem route identity", () => {
   it("opens workbench WorkItem with a persisted runtime identity", () => {
     const ctx = createSurfaceCtx();
 
@@ -32,7 +32,7 @@ describe("OMA Surface WorkItem route identity", () => {
     expect(workItem.workItemId).toBe("W-STAY-RESOURCE:roomSetup");
   });
 
-  it("does not treat legacy task id as the operation identity", () => {
+  it("does not treat retired task id as the operation identity", () => {
     const ctx = createSurfaceCtx({
       selectedWorkspace: "W-STAY-RESOURCE",
       selectedCardId: "roomSetup"

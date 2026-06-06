@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { renderSurface, visibleText } from "./surfaceContractTestHelpers.js";
 
-describe("OMA Surface mobile work plane IA", () => {
+describe("OAM Surface mobile work plane IA", () => {
   it("renders Today and Work as Chinese work-execution IA", () => {
     const text = visibleText(`${renderSurface("home")}\n${renderSurface("workbench")}`);
 

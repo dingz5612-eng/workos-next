@@ -1,6 +1,6 @@
 {
-  "version": "oma.search-result-schema.v1",
-  "generatedBy": "oma-current",
+  "version": "oam.search-result-schema.v1",
+  "generatedBy": "oam-current",
   "required": [
     "resultId",
     "resultType",

@@ -4,7 +4,7 @@ import { routeView } from "../../apps/mobile/src/appRouter.js";
 import { createSurfaceCtx, visibleText } from "../../apps/mobile/src/__tests__/surfaceContractTestHelpers.js";
 
 const root = process.cwd();
-const artifactPath = "artifacts/oma/checks/experience-module-productization-result.json";
+const artifactPath = "artifacts/oam/checks/experience-module-productization-result.json";
 const violations = [];
 
 const ctx = createSurfaceCtx({ view: "operationPanel", selectedWorkItemId: "T-ROOM-CREATE" });
@@ -32,7 +32,7 @@ if (!operationPanel.includes('data-work-item-id="W-STAY-RESOURCE:roomSetup"')) {
 }
 
 if (operationPanel.includes("T-ROOM-CREATE")) {
-  violations.push(v("experience_module.legacy_task_id_visible", "普通 Operation Panel 不得出现 legacy task id。"));
+  violations.push(v("experience_module.retired_task_id_visible", "普通 Operation Panel 不得出现 retired task id。"));
 }
 
 for (const label of ["可信确认", "提交结果", "可信证据", "当前设备", "权限诊断"]) {

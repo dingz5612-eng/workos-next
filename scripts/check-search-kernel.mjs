@@ -72,9 +72,9 @@ function runChecks(context) {
 }
 
 function checkContract(contract, failures) {
-  if (contract.version !== "oma.search-contract.v1") failures.push("search-contract version mismatch.");
-  if (languageContract.version !== "oma.language-contract.v1") failures.push("Search Kernel must reference the current Language Kernel contract.");
-  if (admissionContract.version !== "oma.admission-contract.v1") failures.push("Search Kernel must reference the current Admission Kernel contract.");
+  if (contract.version !== "oam.search-contract.v1") failures.push("search-contract version mismatch.");
+  if (languageContract.version !== "oam.language-contract.v1") failures.push("Search Kernel must reference the current Language Kernel contract.");
+  if (admissionContract.version !== "oam.admission-contract.v1") failures.push("Search Kernel must reference the current Admission Kernel contract.");
 
   for (const objectType of requiredObjectTypes) {
     if (!(contract.objectTypes || []).includes(objectType)) failures.push(`search-contract missing objectType ${objectType}.`);

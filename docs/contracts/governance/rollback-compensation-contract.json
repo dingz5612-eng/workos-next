@@ -1,10 +1,10 @@
 {
-  "version": "oma.rollback-compensation-contract.v1",
+  "version": "oam.rollback-compensation-contract.v1",
   "status": "authoritative-current-contract",
   "rollbackModes": [
     "runtime_mode",
     "feature_flag",
-    "route_to_legacy_off"
+    "route_to_retired_off"
   ],
   "compensationModes": [
     "append_only_correction",
@@ -18,6 +18,6 @@
   ],
   "evidence": [
     "services/core-api/WorkOS.Api/Runtime/ControlPlaneDbMapping.cs",
-    "docs/oma/current-architecture.md"
+    "docs/oam/current-architecture.md"
   ]
 }

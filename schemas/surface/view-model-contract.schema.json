@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://workosnext.local/schemas/surface/view-model-contract.schema.json",
-  "title": "OMA Surface ViewModel Contract",
+  "title": "OAM Surface ViewModel Contract",
   "type": "object",
   "required": ["contractId", "stage", "architecture", "centerModel", "sourceRefsRequired", "viewModels", "rules", "statusBoundary", "machineChecks"],
   "properties": {

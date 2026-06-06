@@ -27,7 +27,7 @@ console.log("Surface Contract check: PASS");
 
 function validateContract(contract) {
   const failures = [];
-  if (contract.version !== "oma.surface-contract.v1") failures.push(v("surface.version", `${contractPath} must use the current OMA surface version.`));
+  if (contract.version !== "oam.surface-contract.v1") failures.push(v("surface.version", `${contractPath} must use the current OAM surface version.`));
   for (const field of [
     "operationRuntimePure",
     "completedBusinessRecord",
@@ -72,7 +72,7 @@ function validateContract(contract) {
     failures.push(v("surface.completed_action_order", "Completed record action order must include append-only correction."));
   }
 
-  for (const layer of ["shared-components", "field-context-kernel", "surface-contract", "multilingual-dictionary", "state-action-contract", "real-browser-verification"]) {
+  for (const layer of ["shared-components", "field-context-kernel", "surface-contract", "multilingual-dictionary", "state-action-contract", "real-browser-evidence"]) {
     if (!contract.frontendExperienceSystem?.layers?.includes(layer)) failures.push(v("surface.fes_layer", `frontendExperienceSystem.layers missing ${layer}.`));
   }
 

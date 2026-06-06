@@ -128,7 +128,7 @@ describe("PC Governance Full", () => {
     const html = pcGovernanceView(ctx());
 
     expect(html).toContain("发布工作区");
-    expect(html).toContain("MR-10");
+    expect(html).toContain("RR-10");
     expect(html).toContain("GateResult 状态");
     expect(html).toContain("发布证据链");
     expect(html).toContain("GateResult");
@@ -298,7 +298,7 @@ function ctx(overrides = {}) {
       roleCapabilities: [{ role: "finance", capability: "payment.confirm", effect: "allow", source: "seed" }],
       featureFlags: [{ flagKey: "pc.governance_full.enabled", status: "pilot", scope: "tenant-1" }],
       sliceCutoverStates: [{ sliceId: "PCGovernance", runtimeMode: "pilot", tenantId: "tenant-1", dependencyStatus: "green" }],
-      definitionVersions: [{ definitionVersion: "oma.current", contractHash: "hash-1", status: "active", activatedAtUtc: "2026-05-30T00:00:00Z" }],
+      definitionVersions: [{ definitionVersion: "oam.current", contractHash: "hash-1", status: "active", activatedAtUtc: "2026-05-30T00:00:00Z" }],
       deviceSessions: [{ deviceId: "pc-device-1", actorId: "admin-1", deviceTrustStatus: "trusted", surface: "pc" }],
       currentDevice: { deviceId: "pc-device-1", actorId: "admin-1", deviceTrustStatus: "trusted", surface: "pc" },
       evidenceAccessAudits: [{ auditEventId: "evidence-audit-1", eventType: "EvidenceSignedUrlViewed", actorId: "finance-1", deviceId: "pc-device-1", occurredAtUtc: "2026-05-30T01:00:00Z" }],
@@ -336,7 +336,7 @@ function ctx(overrides = {}) {
     },
     releaseControl: {
       selectedRelease: {
-        overview: { releaseId: "rel-10", mrId: "MR-10", gateResultStatus: "warning", shadowGrade: "green" },
+        overview: { releaseId: "rel-10", mrId: "RR-10", gateResultStatus: "warning", shadowGrade: "green" },
         gateResult: {
           gateResultId: "gate-10",
           status: "warning",

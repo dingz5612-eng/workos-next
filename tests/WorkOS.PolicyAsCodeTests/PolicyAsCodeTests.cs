@@ -97,7 +97,7 @@ public sealed class PolicyAsCodeTests
         var cutover = CutoverPolicyEvaluator.Evaluate(new CutoverPolicyRequest(
             "active_locked",
             "red",
-            "scr-oma-current-shadow-domain-events-vs-audit-events",
+            "scr-oam-current-shadow-domain-events-vs-audit-events",
             "rollback-mr-00-control-plane-bootstrap",
             "real"));
         Assert.IsFalse(cutover.Allowed);

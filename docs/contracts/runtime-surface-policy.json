@@ -27,9 +27,9 @@
       "domainGroup": "Accommodation",
       "defaultLens": "active-stay",
       "hiddenReason": "",
-      "home": { "visible": true, "priority": 70, "section": "accommodation-legacy-intake" },
+      "home": { "visible": true, "priority": 70, "section": "accommodation-retired-intake" },
       "workbench": { "visible": true, "queueRule": "ready_or_blocked_cards" },
-      "search": { "visible": true, "keywords": ["checkin", "intake", "入住", "登记", "заселение"], "intentTags": ["legacy_intake", "stay_intake"] },
+      "search": { "visible": true, "keywords": ["checkin", "intake", "入住", "登记", "заселение"], "intentTags": ["retired_intake", "stay_intake"] },
       "learning": { "visible": true, "section": "Accommodation / Transitional CheckIn" },
       "lenses": ["today-operations", "active-stay"],
       "cards": [
@@ -38,11 +38,11 @@
         { "cardId": "resident", "home": true, "workbench": true, "searchKeywords": ["resident", "入住人"], "intentTags": ["resident_intake"], "learningSection": "Accommodation / Transitional CheckIn", "defaultLens": "active-stay", "hiddenReason": "" },
         { "cardId": "bedAssign", "home": true, "workbench": true, "searchKeywords": ["bed assign", "分配床位"], "intentTags": ["stay_intake"], "learningSection": "Accommodation / Transitional CheckIn", "defaultLens": "active-stay", "hiddenReason": "" },
         { "cardId": "tariff", "home": true, "workbench": true, "searchKeywords": ["tariff", "计费"], "intentTags": ["stay_intake"], "learningSection": "Accommodation / Transitional CheckIn", "defaultLens": "stay-balance", "hiddenReason": "" },
-        { "cardId": "depositRequirement", "home": true, "workbench": true, "searchKeywords": ["deposit requirement", "押金要求"], "intentTags": ["legacy_deposit_read_only"], "learningSection": "Accommodation / Transitional CheckIn", "defaultLens": "deposit-liability", "hiddenReason": "" },
-        { "cardId": "payment", "home": true, "workbench": true, "searchKeywords": ["payment intake", "收款登记"], "intentTags": ["legacy_payment_read_only"], "learningSection": "Accommodation / Transitional CheckIn", "defaultLens": "payment-risk", "hiddenReason": "" },
-        { "cardId": "finance", "home": true, "workbench": true, "searchKeywords": ["finance intake", "财务确认"], "intentTags": ["legacy_payment_read_only"], "learningSection": "Accommodation / Transitional CheckIn", "defaultLens": "payment-risk", "hiddenReason": "" },
+        { "cardId": "depositRequirement", "home": true, "workbench": true, "searchKeywords": ["deposit requirement", "押金要求"], "intentTags": ["retired_deposit_read_only"], "learningSection": "Accommodation / Transitional CheckIn", "defaultLens": "deposit-liability", "hiddenReason": "" },
+        { "cardId": "payment", "home": true, "workbench": true, "searchKeywords": ["payment intake", "收款登记"], "intentTags": ["retired_payment_read_only"], "learningSection": "Accommodation / Transitional CheckIn", "defaultLens": "payment-risk", "hiddenReason": "" },
+        { "cardId": "finance", "home": true, "workbench": true, "searchKeywords": ["finance intake", "财务确认"], "intentTags": ["retired_payment_read_only"], "learningSection": "Accommodation / Transitional CheckIn", "defaultLens": "payment-risk", "hiddenReason": "" },
         { "cardId": "checkin", "home": true, "workbench": true, "searchKeywords": ["checkin", "入住确认"], "intentTags": ["stay_intake"], "learningSection": "Accommodation / Transitional CheckIn", "defaultLens": "active-stay", "hiddenReason": "" },
-        { "cardId": "operatingDashboard", "home": true, "workbench": true, "searchKeywords": ["dashboard", "驾驶舱"], "intentTags": ["legacy_operating"], "learningSection": "Accommodation / Transitional CheckIn", "defaultLens": "today-operations", "hiddenReason": "" }
+        { "cardId": "operatingDashboard", "home": true, "workbench": true, "searchKeywords": ["dashboard", "驾驶舱"], "intentTags": ["retired_operating"], "learningSection": "Accommodation / Transitional CheckIn", "defaultLens": "today-operations", "hiddenReason": "" }
       ]
     },
     {

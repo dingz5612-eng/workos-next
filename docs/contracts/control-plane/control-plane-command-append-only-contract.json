@@ -1,5 +1,5 @@
 {
-  "version": "oma.control-plane-command-append-only-contract.v1",
+  "version": "oam.control-plane-command-append-only-contract.v1",
   "status": "authoritative-current-contract",
   "commandTypes": [
     "GateResultWrite",

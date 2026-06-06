@@ -1,6 +1,6 @@
 {
   "domainId": "dormitory",
-  "version": "oma.dormitory.v1",
+  "version": "oam.dormitory.v1",
   "northStarMetric": {
     "id": "trusted_available_bed_nights",
     "name": "Trusted Available Bed Nights",

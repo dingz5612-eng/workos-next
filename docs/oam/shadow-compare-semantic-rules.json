@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "name": "current-oam-shadow-semantic-rules",
+  "grade_rules": {
+    "green": [
+      "no semantic mismatch"
+    ],
+    "yellow": [
+      "projection lag only"
+    ],
+    "red": [
+      "business fact mismatch",
+      "permission or evidence bypass"
+    ]
+  },
+  "checks": [],
+  "operations_contract_required_fields": [
+    "operationCaseId",
+    "workItemId",
+    "commandSubmissionId",
+    "actorId"
+  ],
+  "official_projector_files": [
+    "services/core-api/WorkOS.Api/Runtime"
+  ],
+  "official_ledger_tables": [
+    "ledger_transactions",
+    "ledger_entries"
+  ]
+}

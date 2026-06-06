@@ -7,7 +7,7 @@ public sealed class WorkItemDefinitionRegistryService
     private static readonly Lazy<WorkItemDefinitionRegistryService> Default = new(LoadDefaultRegistry);
     private readonly IReadOnlyList<WorkItemDefinition> definitions;
     private readonly IReadOnlyDictionary<string, WorkItemDefinition> byDefinitionId;
-    private readonly IReadOnlyDictionary<string, WorkItemDefinition> byLegacyCardId;
+    private readonly IReadOnlyDictionary<string, WorkItemDefinition> byRetiredCardId;
     private readonly IReadOnlyDictionary<string, WorkItemDefinition> byWorkItemType;
 
     public WorkItemDefinitionRegistryService(IReadOnlyList<WorkItemDefinition> definitions)
@@ -16,9 +16,9 @@ public sealed class WorkItemDefinitionRegistryService
         byDefinitionId = definitions
             .GroupBy(item => item.DefinitionId, StringComparer.OrdinalIgnoreCase)
             .ToDictionary(group => group.Key, group => group.First(), StringComparer.OrdinalIgnoreCase);
-        byLegacyCardId = definitions
-            .Where(item => !string.IsNullOrWhiteSpace(item.LegacyCardId))
-            .GroupBy(item => item.LegacyCardId, StringComparer.OrdinalIgnoreCase)
+        byRetiredCardId = definitions
+            .Where(item => !string.IsNullOrWhiteSpace(item.RetiredCardId))
+            .GroupBy(item => item.RetiredCardId, StringComparer.OrdinalIgnoreCase)
             .ToDictionary(group => group.Key, group => group.First(), StringComparer.OrdinalIgnoreCase);
         byWorkItemType = definitions
             .Where(item => !string.IsNullOrWhiteSpace(item.WorkItemType))
@@ -35,9 +35,9 @@ public sealed class WorkItemDefinitionRegistryService
         var payloadDefinitionId = PayloadValue(workItem.Payload, "definitionId");
         var definition = FindByDefinitionId(payloadDefinitionId)
             ?? FindByDefinitionId(workItem.DefinitionVersionId)
-            ?? FindByLegacyCardId(PayloadValue(workItem.Payload, "cardId"))
-            ?? FindByLegacyCardId(requestedCardId)
-            ?? FindByLegacyCardId(workItem.WorkItemType)
+            ?? FindByRetiredCardId(PayloadValue(workItem.Payload, "cardId"))
+            ?? FindByRetiredCardId(requestedCardId)
+            ?? FindByRetiredCardId(workItem.WorkItemType)
             ?? FindByWorkItemType(workItem.WorkItemType);
 
         return definition is null
@@ -53,7 +53,7 @@ public sealed class WorkItemDefinitionRegistryService
     {
         var definition = definitions.FirstOrDefault(item =>
             item.WorkspaceId.Equals(workspaceId ?? string.Empty, StringComparison.OrdinalIgnoreCase) &&
-            item.LegacyCardId.Equals(cardId ?? string.Empty, StringComparison.OrdinalIgnoreCase));
+            item.RetiredCardId.Equals(cardId ?? string.Empty, StringComparison.OrdinalIgnoreCase));
         return definition is null
             ? WorkItemDefinitionResolution.Unresolved(
                 string.Empty,
@@ -69,9 +69,9 @@ public sealed class WorkItemDefinitionRegistryService
             ? definition
             : null;
 
-    public WorkItemDefinition? FindByLegacyCardId(string? legacyCardId) =>
-        !string.IsNullOrWhiteSpace(legacyCardId) &&
-        byLegacyCardId.TryGetValue(legacyCardId, out var definition)
+    public WorkItemDefinition? FindByRetiredCardId(string? retiredCardId) =>
+        !string.IsNullOrWhiteSpace(retiredCardId) &&
+        byRetiredCardId.TryGetValue(retiredCardId, out var definition)
             ? definition
             : null;
 
@@ -132,7 +132,7 @@ public sealed record WorkItemDefinition(
     string BusinessLineId,
     string SliceId,
     string WorkspaceId,
-    string LegacyCardId,
+    string RetiredCardId,
     string WorkItemType,
     string CommandType,
     string OwnerSlice,
@@ -152,7 +152,7 @@ public sealed record WorkItemDefinitionResolution(
     bool Resolved,
     WorkItemDefinition? Definition,
     string DefinitionId,
-    string LegacyCardId,
+    string RetiredCardId,
     string BusinessLineId,
     string SliceId,
     string DefinitionMode,
@@ -164,7 +164,7 @@ public sealed record WorkItemDefinitionResolution(
             true,
             definition,
             definition.DefinitionId,
-            definition.LegacyCardId,
+            definition.RetiredCardId,
             definition.BusinessLineId,
             definition.SliceId,
             definition.DefinitionMode,
@@ -173,14 +173,14 @@ public sealed record WorkItemDefinitionResolution(
 
     public static WorkItemDefinitionResolution Unresolved(
         string definitionId,
-        string legacyCardId,
+        string retiredCardId,
         string businessLineId,
         string reason) =>
         new(
             false,
             null,
             definitionId,
-            legacyCardId,
+            retiredCardId,
             businessLineId,
             string.Empty,
             "unregistered-definition",
@@ -192,7 +192,7 @@ public sealed record WorkItemDefinitionResolution(
         {
             ["resolved"] = Resolved,
             ["definitionId"] = DefinitionId,
-            ["legacyCardId"] = LegacyCardId,
+            ["retiredCardId"] = RetiredCardId,
             ["businessLineId"] = BusinessLineId,
             ["sliceId"] = SliceId,
             ["definitionMode"] = DefinitionMode,

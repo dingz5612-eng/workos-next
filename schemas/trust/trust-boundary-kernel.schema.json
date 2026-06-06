@@ -1,10 +1,10 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "OMA Trust Boundary Kernel",
+  "title": "OAM Trust Boundary Kernel",
   "type": "object",
   "required": ["kernelId", "status", "scope", "controls", "outcomes"],
   "properties": {
-    "kernelId": { "const": "oma.trust-boundary" },
+    "kernelId": { "const": "oam.trust-boundary" },
     "status": { "enum": ["active"] },
     "scope": { "type": "array", "minItems": 7 },
     "controls": {

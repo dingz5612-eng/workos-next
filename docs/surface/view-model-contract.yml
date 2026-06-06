@@ -1,6 +1,6 @@
 {
-  "contractId": "oma.surface-view-model-contract.v1",
-  "architecture": "OMA",
+  "contractId": "oam.surface-view-model-contract.v1",
+  "architecture": "OAM",
   "status": "contract_guard",
   "architecture": "Runtime data -> ViewModel adapter -> User-facing surface",
   "centerModel": {
@@ -33,7 +33,7 @@
     "rawIdsVisibleOnlyIn": ["technicalDiagnostic", "traceDrawer", "auditDrawer"],
     "copySource": "docs/surface/operational-copy-matrix.yml",
     "ordinaryConfirmRequiresPersistedWorkItem": true,
-    "compatibilityWorkItemKeyName": "compatibilityWorkItemKey"
+    "retiredWorkItemKeyName": "retiredWorkItemKey"
   },
   "forbiddenVisibleRawKeys": [
     "workItemId",

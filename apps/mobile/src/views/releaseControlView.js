@@ -31,7 +31,7 @@ export function releaseControlView(ctx) {
     <section class="release-control">
       <header>
         <span>发布工作区</span>
-        <h1>${escapeHtml(overview.mrId || manifest.mrId || "MR")}</h1>
+        <h1>${escapeHtml(overview.mrId || manifest.mrId || "release-request")}</h1>
       </header>
       ${mrList(releases, overview.releaseId, escapeHtml)}
       <section class="release-grid">
@@ -76,8 +76,8 @@ function launchControlPanel(overview, gate, shadowReports, invariants, rollback,
 function mrList(releases, selectedReleaseId, escapeHtml) {
   return `
     <section class="release-panel release-wide">
-      <h2>全部 MR</h2>
-      ${table(releases, ["mrId", "releaseStatus", "gateResultStatus", "shadowGrade"], escapeHtml, "No MRs loaded.", selectedReleaseId)}
+      <h2>全部发布请求</h2>
+      ${table(releases, ["mrId", "releaseStatus", "gateResultStatus", "shadowGrade"], escapeHtml, "No release requests loaded.", selectedReleaseId)}
     </section>
   `;
 }
@@ -87,11 +87,11 @@ function mrOverview(overview, manifest, flags, cutovers, escapeHtml) {
   return `
     <section class="release-panel">
       <h2>发布总览</h2>
-      ${field("MR ID", overview.mrId || manifest.mrId, escapeHtml)}
+      ${field("发布请求 ID", overview.mrId || manifest.mrId, escapeHtml)}
       ${field("release status", overview.releaseStatus || manifest.status, escapeHtml)}
       ${field("owner", overview.owner || first(manifest.owners) || "unassigned", escapeHtml)}
       ${field("feature flag status", overview.featureFlagStatus || flags[0]?.status || "none", escapeHtml)}
-      ${field("slice runtime_mode", overview.sliceRuntimeMode || cutovers[0]?.runtimeMode || "legacy", escapeHtml)}
+      ${field("slice runtime_mode", overview.sliceRuntimeMode || cutovers[0]?.runtimeMode || "retired", escapeHtml)}
       ${field("acceptance progress", `${acceptance.completed || 0}/${acceptance.total || 0} (${acceptance.percent || 0}%)`, escapeHtml)}
     </section>
   `;
@@ -297,7 +297,7 @@ function label(value) {
     runtimeMode: "runtime_mode",
     sliceId: "slice_id",
     tenantId: "tenant_id",
-    mrId: "MR ID",
+    mrId: "发布请求 ID",
     ciRunId: "CI run id",
     "active readiness": "当前准入",
     "locked readiness": "锁定准入",
@@ -361,7 +361,7 @@ function label(value) {
 
 function releaseText(value) {
   const labels = {
-    "No MRs loaded.": "没有 MR 记录。",
+    "No release requests loaded.": "没有发布请求记录。",
     "No ShadowCompareReport loaded.": "没有 ShadowCompareReport。",
     "No invariant checks loaded.": "没有 Invariant 检查。",
     "No FeatureFlags loaded.": "没有 FeatureFlag。",

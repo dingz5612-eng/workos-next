@@ -6,7 +6,7 @@ import { selectCompletedWorkbenchQueue } from "../selectors/surfaceSelectors.js"
 import { workbenchView } from "../views/workbenchView.js";
 import { createSurfaceCtx, runtimeStore } from "./surfaceContractTestHelpers.js";
 
-describe("OMA Surface queue filter interaction contract", () => {
+describe("OAM Surface queue filter interaction contract", () => {
   it("Workbench IA chips write queueFilters and change the visible result set", () => {
     const ctx = queueCtx();
     setWorkFilter("accommodation", ctx);

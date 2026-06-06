@@ -1,5 +1,5 @@
 {
-  "version": "oma.finance-gate.ledger-semantic-rules.v1",
+  "version": "oam.finance-gate.ledger-semantic-rules.v1",
   "owner": "MoneyKernelPack",
   "productionAllowed": false,
   "businessProduction": "BLOCKED",
@@ -60,6 +60,6 @@
   ],
   "artifactRefs": [
     "artifacts/finance/finance-semantic-truth-result.json",
-    "artifacts/oma/checks/ledger-semantic-result.json"
+    "artifacts/oam/checks/ledger-semantic-result.json"
   ]
 }

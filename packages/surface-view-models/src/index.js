@@ -51,12 +51,12 @@ export function WorkItemDecisionVM(source = {}, ctx = {}) {
 export function OperationPanelVM(source = {}, ctx = {}) {
   const decision = WorkItemDecisionVM(source, ctx);
   const persistedWorkItemId = decision.sourceRefs.workItemId;
-  const compatibilityWorkItemKey = decision.sourceRefs.compatibilityWorkItemKey;
+  const retiredWorkItemKey = decision.sourceRefs.retiredWorkItemKey;
   return {
     kind: "OperationPanelVM",
     sourceRefs: decision.sourceRefs,
     persistedWorkItemId,
-    compatibilityWorkItemKey,
+    retiredWorkItemKey,
     title: decision.typeLabel,
     subtitle: `${decision.businessObject} · ${decision.nextAction}`,
     prepare: {
@@ -216,7 +216,7 @@ export function sourceRefsFrom(source = {}) {
     workspaceId,
     cardId,
     workItemId: isPersistedWorkItemId(workItemId) ? workItemId : "",
-    compatibilityWorkItemKey: workspaceId && cardId ? `${workspaceId}:${cardId}` : !isPersistedWorkItemId(workItemId) ? workItemId : "",
+    retiredWorkItemKey: workspaceId && cardId ? `${workspaceId}:${cardId}` : !isPersistedWorkItemId(workItemId) ? workItemId : "",
     caseId: source.caseId || source.case_id || workspace.caseId || "",
     aggregateRef: source.aggregateRef || workspace.aggregateRef || workspace.id || workItemId || "",
     traceRefs: asArray(source.traceRefs || source.trace_refs || source.commandSubmissionId || source.command_submission_id)

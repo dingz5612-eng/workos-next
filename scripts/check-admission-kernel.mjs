@@ -7,7 +7,7 @@ const selfTest = process.argv.includes("--self-test");
 const contract = readJson("docs/contracts/admission/admission-contract.json");
 const matrix = readJson("docs/contracts/admission/admission-matrix.json");
 const sources = readJson("docs/contracts/admission/admission-sources.json");
-const currentState = readJson("docs/oma/current-admission-state.json");
+const currentState = readJson("docs/oam/current-admission-state.json");
 const registry = readJson("docs/business/business-line-registry.json");
 const surfacePolicy = readJson("docs/contracts/runtime-surface-policy.json");
 
@@ -41,7 +41,7 @@ function runChecks(context) {
 }
 
 function checkContract(failures) {
-  if (contract.version !== "oma.admission-contract.v1") failures.push("admission-contract version mismatch.");
+  if (contract.version !== "oam.admission-contract.v1") failures.push("admission-contract version mismatch.");
   for (const field of [
     "visibleAllowed",
     "prepareAllowed",
@@ -80,7 +80,7 @@ function checkSources(failures) {
 }
 
 function checkCurrentState(state, failures) {
-  if (state.version !== "oma.current-admission-state.v1") {
+  if (state.version !== "oam.current-admission-state.v1") {
     failures.push("current admission state version mismatch.");
   }
   if (state.businessProduction !== "BLOCKED") {
@@ -89,8 +89,8 @@ function checkCurrentState(state, failures) {
   if (state.productionConfirmAllowed !== false) {
     failures.push("current admission state productionConfirmAllowed must be false.");
   }
-  if (!Array.isArray(state.blockingSources) || !state.blockingSources.includes("docs/contracts/oma.current.json")) {
-    failures.push("current admission state must cite the OMA contract.");
+  if (!Array.isArray(state.blockingSources) || !state.blockingSources.includes("docs/contracts/oam.current.json")) {
+    failures.push("current admission state must cite the OAM contract.");
   }
 }
 
@@ -102,7 +102,6 @@ function checkMatrix(state, failures) {
     "repair_l0_contract_preview",
     "parts_l0_contract_preview",
     "hr_l0_contract_preview",
-    "business_3_7_l0_contract_preview",
     "payment_confirmation",
     "deposit_refund",
     "period_close",
@@ -200,8 +199,8 @@ function checkRuntimeImplementation(failures) {
   ]) {
     if (!admissionSource.includes(term)) failures.push(`AdmissionKernelService.cs missing ${term}.`);
   }
-  if (!admissionSource.includes("docs/oma/current-admission-state.json")) {
-    failures.push("AdmissionKernelService must cite the current OMA admission state.");
+  if (!admissionSource.includes("docs/oam/current-admission-state.json")) {
+    failures.push("AdmissionKernelService must cite the current OAM admission state.");
   }
 
   const canonical = read("services/core-api/WorkOS.Api/Runtime/CanonicalOperationsApiService.cs");

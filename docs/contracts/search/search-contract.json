@@ -1,6 +1,6 @@
 {
-  "version": "oma.search-contract.v1",
-  "generatedBy": "oma-current",
+  "version": "oam.search-contract.v1",
+  "generatedBy": "oam-current",
   "status": "authoritative-read-side-kernel",
   "languageSynonymRef": "docs/contracts/language/search-synonyms.json",
   "admissionContractRef": "docs/contracts/admission/admission-contract.json",

@@ -14,7 +14,7 @@ import {
 
 const cli = parseArgs(process.argv.slice(2));
 const checkName = "check-domain-packs";
-const out = cli.value("out", "artifacts/oma/checks/domain-pack-report.json");
+const out = cli.value("out", "artifacts/oam/checks/domain-pack-report.json");
 
 function main() {
   if (cli.has("self-test")) {
@@ -23,7 +23,6 @@ function main() {
   }
 
   const files = [
-    "docs/business/domains/_template/domain-pack.yml",
     ...listDocuments("docs/business/domains/dormitory"),
     ...listDocuments(`${positiveFixtureRoot}/domain-packs`)
   ];

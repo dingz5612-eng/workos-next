@@ -14,13 +14,13 @@ function Invoke-Checked($command, $arguments) {
 
 function Assert-Exists($path) {
   if (-not (Test-Path $path)) {
-    Fail "Required OMA artifact is missing: $path"
+    Fail "Required OAM artifact is missing: $path"
   }
 }
 
 function Assert-RipgrepAvailable {
   if (-not (Get-Command rg -ErrorAction SilentlyContinue)) {
-    Fail "ripgrep (rg) is required for OMA architecture checks."
+    Fail "ripgrep (rg) is required for OAM architecture checks."
   }
 }
 
@@ -29,7 +29,7 @@ function Assert-OnlyDirectories($root, $allowed) {
   $actual = Get-ChildItem $root -Directory | Select-Object -ExpandProperty Name
   foreach ($name in $actual) {
     if ($allowed -notcontains $name) {
-      Fail "$root/$name is not allowed by current OMA."
+      Fail "$root/$name is not allowed by current OAM."
     }
   }
 }
@@ -46,9 +46,9 @@ function Join-Parts($parts) {
 
 Assert-RipgrepAvailable
 
-Assert-Exists "docs/oma/current-architecture.md"
-Assert-Exists "docs/oma/current-architecture.manifest.json"
-Assert-Exists "docs/contracts/oma.current.json"
+Assert-Exists "docs/oam/current-architecture.md"
+Assert-Exists "docs/oam/current-architecture.manifest.json"
+Assert-Exists "docs/contracts/oam.current.json"
 Assert-Exists "docs/system/current-system-map.md"
 Assert-Exists "docs/business/experience-contract.yml"
 Assert-Exists "docs/surface/surface-contract.yml"
@@ -59,7 +59,7 @@ Assert-Exists "infra/db/migrations"
 Assert-Exists "services/core-api"
 Assert-Exists "packages/surface-view-models"
 foreach ($module in @("accommodation", "finance-gate", "identity", "maintenance")) {
-  Assert-Exists "modules/$module/oma-module.manifest.json"
+  Assert-Exists "modules/$module/oam-module.manifest.json"
 }
 
 Assert-OnlyDirectories "services" @("core-api")
@@ -73,7 +73,7 @@ Assert-NoFile (Join-Parts @("docs/", "v", "5", ".", "5"))
 Assert-NoFile (Join-Parts @("scripts/", "v", "5", "_", "4"))
 Assert-NoFile (Join-Parts @("scripts/", "o", "a", "m", "-acf"))
 
-Invoke-Checked "node" @("scripts/oma/check-current-oma.mjs")
+Invoke-Checked "node" @("scripts/oam/check-current-oam.mjs")
 Invoke-Checked "node" @("scripts/check-rule-authority.mjs")
 Invoke-Checked "node" @("scripts/check-api-boundaries.mjs", "--self-test")
 Invoke-Checked "node" @("scripts/check-api-boundaries.mjs")
@@ -95,7 +95,7 @@ Invoke-Checked "node" @("scripts/check-surface-contract.mjs")
 
 $ci = Get-Content ".github/workflows/ci.yml" -Raw
 foreach ($required in @(
-  "scripts/oma/check-current-oma.mjs",
+  "scripts/oam/check-current-oam.mjs",
   "scripts/validate-contracts.mjs",
   "scripts/check-api-boundaries.mjs",
   "scripts/check-runtime-write-paths.mjs",
@@ -111,9 +111,9 @@ foreach ($required in @(
   "WorkOS.RuntimeContractTests"
 )) {
   if ($ci -notmatch [regex]::Escape($required)) {
-    Fail "CI must run current OMA check or verification: $required"
+    Fail "CI must run current OAM check or verification: $required"
   }
 }
 
-Write-Host "OMA architecture guard: PASS"
+Write-Host "OAM architecture guard: PASS"
 exit 0

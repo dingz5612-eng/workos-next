@@ -637,7 +637,7 @@ public sealed class CanonicalOperationsApiService
             ["reason"] = admission.Reason,
             ["definition"] = definition.ToTrace(),
             ["definitionId"] = definition.DefinitionId,
-            ["legacyCardId"] = definition.LegacyCardId,
+            ["retiredCardId"] = definition.RetiredCardId,
             ["definitionMode"] = definition.DefinitionMode,
             ["admission"] = admission.ToContract(),
             ["admissionDecisionRef"] = admission.AdmissionDecisionRef,

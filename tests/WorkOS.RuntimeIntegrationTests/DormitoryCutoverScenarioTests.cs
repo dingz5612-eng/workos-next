@@ -29,7 +29,7 @@ public sealed class DormitoryCutoverScenarioTests
         var targeted = CutoverStateMachine.DecideRuntimePath("operations_primary", target, context);
         var nonTargeted = CutoverStateMachine.DecideRuntimePath("operations_primary", target, context with { SliceId = "repair" });
         Assert.AreEqual("operations_runtime", targeted.WritePath);
-        Assert.AreEqual("legacy_workspace_card", nonTargeted.WritePath);
+        Assert.AreEqual("retired_workspace_card", nonTargeted.WritePath);
     }
 
     [TestMethod]
@@ -53,11 +53,7 @@ public sealed class DormitoryCutoverScenarioTests
             ["dormitory"] = false,
             ["repair"] = false,
             ["parts"] = false,
-            ["business-3"] = false,
-            ["business-4"] = false,
-            ["business-5"] = false,
-            ["business-6"] = false,
-            ["business-7"] = false
+            ["hr"] = false
         };
 
         Assert.IsTrue(productionAllowed.All(item => item.Value == false));

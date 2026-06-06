@@ -8,9 +8,9 @@ namespace WorkOS.UnitTests;
 public sealed class ApiBoundaryRulesTests
 {
     [TestMethod]
-    public void OmaContractDeclaresOnlyOneOrdinaryBusinessWriteRoute()
+    public void OamContractDeclaresOnlyOneOrdinaryBusinessWriteRoute()
     {
-        using var contract = JsonDocument.Parse(File.ReadAllText(RepoPath("docs", "contracts", "oma.current.json")));
+        using var contract = JsonDocument.Parse(File.ReadAllText(RepoPath("docs", "contracts", "oam.current.json")));
         var root = contract.RootElement;
         var boundary = root.GetProperty("apiBoundary");
         var writeRoutes = boundary.GetProperty("writeRoutes");
@@ -52,7 +52,7 @@ public sealed class ApiBoundaryRulesTests
     }
 
     [TestMethod]
-    public void ApiBoundaryScanWritesCurrentOmaReport()
+    public void ApiBoundaryScanWritesCurrentOamReport()
     {
         var temp = Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), $"workos-api-boundary-{Guid.NewGuid():N}"));
         try
@@ -64,7 +64,7 @@ public sealed class ApiBoundaryRulesTests
             using var report = JsonDocument.Parse(File.ReadAllText(reportPath));
             var root = report.RootElement;
 
-            Assert.AreEqual("oma.current.v1", root.GetProperty("version").GetString());
+            Assert.AreEqual("oam.current.v1", root.GetProperty("version").GetString());
             Assert.AreEqual("passed", root.GetProperty("status").GetString());
             Assert.AreEqual(0, root.GetProperty("violation_count").GetInt32());
             Assert.AreEqual(0, root.GetProperty("unclassified_write_route_count").GetInt32());

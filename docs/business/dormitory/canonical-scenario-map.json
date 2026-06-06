@@ -1,5 +1,5 @@
 {
-  "version": "oma.dormitory.canonical-scenario-map.v1",
+  "version": "oam.dormitory.canonical-scenario-map.v1",
   "domain": "dormitory",
   "productionAllowed": false,
   "mappings": [

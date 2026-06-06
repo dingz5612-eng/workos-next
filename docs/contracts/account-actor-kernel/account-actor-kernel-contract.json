@@ -102,7 +102,7 @@
       "logout revokes session",
       "device session is listed and revoked"
     ],
-    "localEvidenceRef": "artifacts/oma/evidence/account-actor-kernel-real-browser-proof.json"
+    "localEvidenceRef": "artifacts/oam/evidence/account-actor-kernel-real-browser-proof.json"
   },
   "machineChecks": [
     "scripts/check-account-actor-kernel.mjs",

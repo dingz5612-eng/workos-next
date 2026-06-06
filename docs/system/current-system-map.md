@@ -1,6 +1,6 @@
 # 当前系统边界图
 
-本图只描述当前 OMA 系统，不解释历史阶段系统。
+本图只描述当前 OAM 系统，不解释历史阶段系统。
 
 ## 1. 系统总览
 
@@ -69,14 +69,14 @@ flowchart TD
 
 Mobile Surface 负责一线办理：今天、工作项、搜索、我的、Operation Panel、证据、结果、草稿。
 
-PC Governance Surface 负责治理：财务控制、经理控制塔、治理中心、发布控制。PC 可以发治理命令和审批动作，但不能绕过 OMA 写普通业务事实。
+PC Governance Surface 负责治理：财务控制、经理控制塔、治理中心、发布控制。PC 可以发治理命令和审批动作，但不能绕过 OAM 写普通业务事实。
 
 ## 7. 工具和脚本边界
 
 脚本只能属于以下类型：
 
-- OMA contract check
-- OMA purity scan
+- OAM contract check
+- OAM purity scan
 - API boundary check
 - DB migration check
 - schema validation

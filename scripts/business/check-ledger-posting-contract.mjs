@@ -5,7 +5,7 @@ import {
   requireValue,
   validateSchemaFile,
   violation
-} from "./lib/oma-business-semantic-lib.mjs";
+} from "./lib/oam-business-semantic-lib.mjs";
 
 const checkId = "ledger-posting-contract";
 const scannedFiles = [

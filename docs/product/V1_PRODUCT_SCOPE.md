@@ -51,7 +51,7 @@ Automotive repair:
 - Model training.
 - Automatic high-impact action execution.
 - Traditional module menu as primary work model.
-- Migration of legacy FunRide pages.
+- Migration of retired FunRide pages.
 
 ## Success Criteria
 

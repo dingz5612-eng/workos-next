@@ -8,7 +8,7 @@ public static class MigrationVerificationJob
 {
     public static Task<MigrationVerificationRunOutput> Run(RunnerOptions options)
     {
-        var releaseId = options.Get("releaseId", "oma.current-migration-verification");
+        var releaseId = options.Get("releaseId", "oam.current-migration-verification");
         var mrId = options.Get("mrId", "local");
         var tenantId = options.Get("tenantId", "all-tenants");
         var ciRunId = options.Get("ciRunId")
@@ -16,10 +16,10 @@ public static class MigrationVerificationJob
             ?? "local";
         var reportId = options.Get("reportId", $"migration-verification-{DateTimeOffset.UtcNow:yyyyMMddHHmmss}");
         var dryRun = options.GetBool("dry-run", defaultValue: true);
-        var outputPath = options.Get("out", Path.Combine(".tmp", "oma", "migration-verification-invariant-checks.json"));
-        var reportPath = options.Get("report-out", Path.Combine(".tmp", "oma", "migration-verification-report.json"));
-        var backfillPath = options.Get("backfill-out", Path.Combine(".tmp", "oma", "legacy-backfill-report.json"));
-        var registryPath = options.Get("registry", Path.Combine("docs", "contracts", "legacy-ledger-migration-registry.json"));
+        var outputPath = options.Get("out", Path.Combine(".tmp", "oam", "migration-verification-invariant-checks.json"));
+        var reportPath = options.Get("report-out", Path.Combine(".tmp", "oam", "migration-verification-report.json"));
+        var remediationPath = options.Get("remediation-out", Path.Combine(".tmp", "oam", "retired-remediation-report.json"));
+        var registryPath = options.Get("registry", Path.Combine("docs", "contracts", "ledger-data-consistency-registry.json"));
         var migrationsPath = options.Get("migrations", Path.Combine("infra", "db", "migrations"));
         var apiSourcePath = options.Get("api-source", Path.Combine("services", "core-api", "WorkOS.Api", "Program.cs"));
         var rollbackStartMigration = options.Get("rollback-start", "015");
@@ -76,12 +76,12 @@ public static class MigrationVerificationJob
                     check.CheckedAtUtc));
             }
 
-            database.WriteMigrationVerificationReports(output.Report, output.BackfillReport, output.Freeze);
+            database.WriteMigrationVerificationReports(output.Report, output.RemediationReport, output.SourceLock);
         }
 
         RunnerJson.Write(outputPath, output.InvariantChecks);
         RunnerJson.Write(reportPath, output.Report);
-        RunnerJson.Write(backfillPath, output.BackfillReport);
+        RunnerJson.Write(remediationPath, output.RemediationReport);
         Console.WriteLine($"migration-verification: wrote {Path.GetRelativePath(Directory.GetCurrentDirectory(), reportPath)} status={output.Status}");
         return Task.FromResult(output);
     }
@@ -98,28 +98,28 @@ public sealed class MigrationVerificationJobService
 
     public MigrationVerificationRunOutput Run(MigrationVerificationRunContext context)
     {
-        var legacyTables = context.Registry.LegacyTables
-            .Select(table => LegacyTableMapping.FromRegistry(table, context.Registry))
+        var retiredTables = context.Registry.RetiredTables
+            .Select(table => RetiredTableMapping.FromRegistry(table, context.Registry))
             .ToArray();
-        var scans = dataSource.ScanLegacyTables(legacyTables);
-        var comparisons = dataSource.CompareLegacyToNewLens(legacyTables);
+        var scans = dataSource.ScanRetiredTables(retiredTables);
+        var comparisons = dataSource.CompareRetiredToNewLens(retiredTables);
         var rollbackValidation = ValidateRollbackNotes(context.MigrationFiles, context.RollbackStartMigration);
         var migrationDryRun = new MigrationDryRunResult(
             true,
             context.MigrationFiles.Count,
             rollbackValidation.Valid,
             "No business facts are written during migration dry-run verification.");
-        var mappings = legacyTables.Select(table => new LegacyMappingReportRow(
-            table.LegacyTable,
+        var mappings = retiredTables.Select(table => new RetiredMappingReportRow(
+            table.RetiredTable,
             table.Replacement,
             table.Source,
             table.OriginalRefColumn,
             table.TargetTables,
             table.RequiresReconciliationNote,
-            table.BackfillPolicy,
+            table.ConsistencyPolicy,
             "dry_run_only")).ToArray();
-        var backfillPlan = legacyTables.Select(table => new LegacyBackfillPlanRow(
-            table.LegacyTable,
+        var remediationPlan = retiredTables.Select(table => new RetiredRemediationPlanRow(
+            table.RetiredTable,
             table.TargetTables,
             true,
             false,
@@ -127,36 +127,36 @@ public sealed class MigrationVerificationJobService
             table.OriginalRefColumn,
             table.RequiresReconciliationNote,
             table.RequiresReconciliationNote
-                ? $"legacy_migration reconciliation note required for {table.LegacyTable}"
+                ? $"retired_data_migration reconciliation note required for {table.RetiredTable}"
                 : "not_required")).ToArray();
         var releaseGateRefs = new[]
         {
             $"{context.ReportId}-migration-dry-run-success",
-            $"{context.ReportId}-legacy-mapping-report-generated",
+            $"{context.ReportId}-retired-mapping-report-generated",
             $"{context.ReportId}-old-api-retired",
-            $"{context.ReportId}-backfill-does-not-drop-legacy-data"
+            $"{context.ReportId}-remediation-does-not-drop-retired-data"
         };
-        var compatibilityFreeze = new LegacyCompatibilityFreeze(
-            $"{context.ReportId}-legacy-compatibility-freeze",
+        var retiredSourceLock = new RetiredSourceLock(
+            $"{context.ReportId}-retired-source-lock",
             context.ReleaseId,
             context.TenantId,
             context.Registry.SourceSlice,
             context.Registry.Version,
-            context.DryRun ? "proposed" : "frozen",
-            legacyTables.Select(table => table.LegacyTable).ToArray(),
-            "Retired Workspace/Card API family and legacy ledger tables are frozen; backfill is dry-run only until audited mapping approval.",
+            context.DryRun ? "proposed" : "locked",
+            retiredTables.Select(table => table.RetiredTable).ToArray(),
+            "Retired Workspace/Card API family and retired ledger tables are locked; remediation is dry-run only until audited mapping approval.",
             context.GeneratedBy,
             context.GeneratedAtUtc);
         var oldApiRetired = OldApiRetired(context.EffectiveApiSource);
-        var backfillSafe = backfillPlan.All(row =>
+        var remediationSafe = remediationPlan.All(row =>
             row.DryRun
             && !row.WouldWriteNewBusinessFacts
-            && row.Source == "legacy_migration"
+            && row.Source == "retired_data_migration"
             && !string.IsNullOrWhiteSpace(row.OriginalRefColumn));
         var mappingOk = mappings.Length > 0
-            && mappings.All(row => row.Source == "legacy_migration")
+            && mappings.All(row => row.Source == "retired_data_migration")
             && mappings.Where(row => row.RequiresReconciliationNote).All(row => !string.IsNullOrWhiteSpace(row.OriginalRefColumn));
-        var status = rollbackValidation.Valid && oldApiRetired && backfillSafe && mappingOk
+        var status = rollbackValidation.Valid && oldApiRetired && remediationSafe && mappingOk
             ? "passed"
             : "failed";
         var report = new MigrationVerificationReport(
@@ -174,26 +174,26 @@ public sealed class MigrationVerificationJobService
             releaseGateRefs,
             context.GeneratedBy,
             context.GeneratedAtUtc);
-        var backfillReport = new LegacyBackfillReport(
-            $"{context.ReportId}-legacy-backfill",
+        var remediationReport = new RetiredRemediationReport(
+            $"{context.ReportId}-retired-remediation",
             context.ReportId,
             context.ReleaseId,
             context.TenantId,
-            backfillSafe ? "passed" : "failed",
+            remediationSafe ? "passed" : "failed",
             true,
-            "legacy_migration",
+            "retired_data_migration",
             context.Registry.Phase,
             mappings,
-            backfillPlan,
-            backfillPlan
+            remediationPlan,
+            remediationPlan
                 .Where(row => row.RequiresReconciliationNote)
-                .Select(row => new LegacyReconciliationNote(row.LegacyTable, row.ReconciliationNote, row.OriginalRefColumn))
+                .Select(row => new RetiredReconciliationNote(row.RetiredTable, row.ReconciliationNote, row.OriginalRefColumn))
                 .ToArray(),
-            compatibilityFreeze,
+            retiredSourceLock,
             releaseGateRefs,
             context.GeneratedBy,
             context.GeneratedAtUtc);
-        var invariantChecks = BuildInvariantChecks(context, report, backfillReport, oldApiRetired, mappingOk, backfillSafe, rollbackValidation.Valid);
+        var invariantChecks = BuildInvariantChecks(context, report, remediationReport, oldApiRetired, mappingOk, remediationSafe, rollbackValidation.Valid);
 
         return new MigrationVerificationRunOutput(
             context.ReportId,
@@ -202,17 +202,17 @@ public sealed class MigrationVerificationJobService
             status,
             invariantChecks,
             report,
-            backfillReport,
-            compatibilityFreeze);
+            remediationReport,
+            retiredSourceLock);
     }
 
     private static IReadOnlyList<InvariantCheckEvidence> BuildInvariantChecks(
         MigrationVerificationRunContext context,
         MigrationVerificationReport report,
-        LegacyBackfillReport backfillReport,
+        RetiredRemediationReport remediationReport,
         bool oldApiRetired,
         bool mappingOk,
-        bool backfillSafe,
+        bool remediationSafe,
         bool rollbackOk)
     {
         return
@@ -232,33 +232,33 @@ public sealed class MigrationVerificationJobService
                 report.RollbackNoteValidation.MissingRollbackNotes.Select(missing => (IReadOnlyDictionary<string, object>)new Dictionary<string, object> { ["migration_id"] = missing }).ToArray()),
             Check(
                 context,
-                "legacy.mapping_report_generated",
-                "Legacy to new runtime mapping report must be generated with source and original_ref.",
+                "retired.mapping_report_generated",
+                "Retired to new runtime mapping report must be generated with source and original_ref.",
                 "P1",
                 mappingOk,
-                new Dictionary<string, object> { ["mapping_count"] = report.LegacyMappingReport.Count },
+                new Dictionary<string, object> { ["mapping_count"] = report.RetiredMappingReport.Count },
                 new Dictionary<string, object> { ["minimum_mapping_count"] = 1 },
                 Array.Empty<IReadOnlyDictionary<string, object>>()),
             Check(
                 context,
-                "legacy.old_api_retired",
+                "retired.old_api_retired",
                 "Retired Workspace/Card prepare and confirm APIs must stay absent from effective API source.",
                 "P1",
                 oldApiRetired,
                 new Dictionary<string, object> { ["old_api_retired"] = oldApiRetired },
                 new Dictionary<string, object> { ["old_api_retired"] = true },
-                oldApiRetired ? Array.Empty<IReadOnlyDictionary<string, object>>() : new[] { (IReadOnlyDictionary<string, object>)new Dictionary<string, object> { ["forbidden"] = "workspace-card-compatibility-endpoints" } }),
+                oldApiRetired ? Array.Empty<IReadOnlyDictionary<string, object>>() : new[] { (IReadOnlyDictionary<string, object>)new Dictionary<string, object> { ["forbidden"] = "workspace-card-retired-endpoints" } }),
             Check(
                 context,
-                "legacy.backfill_does_not_drop_legacy_data",
-                "Legacy backfill dry-run must not drop legacy data or write new business facts.",
+                "retired.remediation_does_not_drop_retired_data",
+                "Retired remediation dry-run must not drop retired data or write new business facts.",
                 "P0",
-                backfillSafe,
+                remediationSafe,
                 new Dictionary<string, object>
                 {
-                    ["dry_run"] = backfillReport.DryRun,
-                    ["plan_rows"] = backfillReport.BackfillPlan.Count,
-                    ["would_write_new_business_facts"] = backfillReport.BackfillPlan.Any(row => row.WouldWriteNewBusinessFacts)
+                    ["dry_run"] = remediationReport.DryRun,
+                    ["plan_rows"] = remediationReport.RemediationPlan.Count,
+                    ["would_write_new_business_facts"] = remediationReport.RemediationPlan.Any(row => row.WouldWriteNewBusinessFacts)
                 },
                 new Dictionary<string, object> { ["would_write_new_business_facts"] = false },
                 Array.Empty<IReadOnlyDictionary<string, object>>())
@@ -326,9 +326,9 @@ public sealed class MigrationVerificationJobService
 
 public interface IMigrationVerificationDataSource
 {
-    IReadOnlyList<LegacyTableScanRow> ScanLegacyTables(IReadOnlyList<LegacyTableMapping> mappings);
+    IReadOnlyList<RetiredTableScanRow> ScanRetiredTables(IReadOnlyList<RetiredTableMapping> mappings);
 
-    IReadOnlyList<OldViewNewLensComparison> CompareLegacyToNewLens(IReadOnlyList<LegacyTableMapping> mappings);
+    IReadOnlyList<OldViewNewLensComparison> CompareRetiredToNewLens(IReadOnlyList<RetiredTableMapping> mappings);
 }
 
 internal sealed class PostgresMigrationVerificationDataSource : IMigrationVerificationDataSource
@@ -340,35 +340,35 @@ internal sealed class PostgresMigrationVerificationDataSource : IMigrationVerifi
         this.connectionString = connectionString;
     }
 
-    public IReadOnlyList<LegacyTableScanRow> ScanLegacyTables(IReadOnlyList<LegacyTableMapping> mappings)
+    public IReadOnlyList<RetiredTableScanRow> ScanRetiredTables(IReadOnlyList<RetiredTableMapping> mappings)
     {
         using var connection = Open();
         return mappings
-            .Select(mapping => new LegacyTableScanRow(
-                mapping.LegacyTable,
-                TableExists(connection, mapping.LegacyTable),
-                CountRows(connection, mapping.LegacyTable),
+            .Select(mapping => new RetiredTableScanRow(
+                mapping.RetiredTable,
+                TableExists(connection, mapping.RetiredTable),
+                CountRows(connection, mapping.RetiredTable),
                 mapping.Source,
                 mapping.OriginalRefColumn,
                 mapping.RequiresReconciliationNote))
             .ToArray();
     }
 
-    public IReadOnlyList<OldViewNewLensComparison> CompareLegacyToNewLens(IReadOnlyList<LegacyTableMapping> mappings)
+    public IReadOnlyList<OldViewNewLensComparison> CompareRetiredToNewLens(IReadOnlyList<RetiredTableMapping> mappings)
     {
         using var connection = Open();
         return mappings
             .Select(mapping =>
             {
-                var oldCount = CountRows(connection, mapping.LegacyTable);
+                var oldCount = CountRows(connection, mapping.RetiredTable);
                 var newCount = mapping.TargetTables.Sum(table => CountRows(connection, table));
                 return new OldViewNewLensComparison(
-                    mapping.LegacyTable,
+                    mapping.RetiredTable,
                     mapping.TargetTables,
                     oldCount,
                     newCount,
                     "count_only",
-                    oldCount == 0 || newCount > 0 ? "comparable" : "legacy_data_requires_mapping_review");
+                    oldCount == 0 || newCount > 0 ? "comparable" : "retired_data_requires_mapping_review");
             })
             .ToArray();
     }
@@ -405,21 +405,21 @@ internal sealed class PostgresMigrationVerificationDataSource : IMigrationVerifi
 
 public static class MigrationVerificationFileLoader
 {
-    public static LegacyMigrationRegistry LoadRegistry(string registryPath)
+    public static RetiredMigrationRegistry LoadRegistry(string registryPath)
     {
         var options = new JsonSerializerOptions(JsonSerializerDefaults.Web)
         {
             PropertyNameCaseInsensitive = true
         };
-        var registry = JsonSerializer.Deserialize<LegacyMigrationRegistry>(File.ReadAllText(registryPath), options)
+        var registry = JsonSerializer.Deserialize<RetiredMigrationRegistry>(File.ReadAllText(registryPath), options)
             ?? throw new InvalidOperationException($"Could not deserialize {registryPath}");
         return registry with
         {
             Version = registry.Version ?? "unknown",
-            SourceSlice = registry.SourceSlice ?? "legacy",
-            Phase = registry.Phase ?? "legacy-backfill-freeze",
+            SourceSlice = registry.SourceSlice ?? "retired",
+            Phase = registry.Phase ?? "retired-remediation-sourceLock",
             AuthoritativeOwners = registry.AuthoritativeOwners ?? new Dictionary<string, string>(),
-            LegacyTables = registry.LegacyTables ?? Array.Empty<LegacyRegistryTable>(),
+            RetiredTables = registry.RetiredTables ?? Array.Empty<RetiredRegistryTable>(),
             Guards = registry.Guards ?? Array.Empty<string>()
         };
     }
@@ -445,7 +445,7 @@ public sealed record MigrationVerificationRunContext(
     DateTimeOffset GeneratedAtUtc,
     string RollbackStartMigration,
     string EffectiveApiSource,
-    LegacyMigrationRegistry Registry,
+    RetiredMigrationRegistry Registry,
     IReadOnlyList<MigrationFileSnapshot> MigrationFiles);
 
 public sealed record MigrationVerificationRunOutput(
@@ -455,8 +455,8 @@ public sealed record MigrationVerificationRunOutput(
     string Status,
     IReadOnlyList<InvariantCheckEvidence> InvariantChecks,
     MigrationVerificationReport Report,
-    LegacyBackfillReport BackfillReport,
-    LegacyCompatibilityFreeze Freeze);
+    RetiredRemediationReport RemediationReport,
+    RetiredSourceLock SourceLock);
 
 public sealed record MigrationVerificationReport(
     string ReportId,
@@ -466,16 +466,16 @@ public sealed record MigrationVerificationReport(
     string Status,
     bool DryRun,
     MigrationDryRunResult MigrationDryRun,
-    IReadOnlyList<LegacyTableScanRow> OldRuntimeDataScan,
-    IReadOnlyList<LegacyMappingReportRow> LegacyMappingReport,
+    IReadOnlyList<RetiredTableScanRow> OldRuntimeDataScan,
+    IReadOnlyList<RetiredMappingReportRow> RetiredMappingReport,
     IReadOnlyList<OldViewNewLensComparison> OldViewNewLensCompare,
     MigrationRollbackValidation RollbackNoteValidation,
     IReadOnlyList<string> ReleaseGateRefs,
     string GeneratedBy,
     DateTimeOffset GeneratedAtUtc);
 
-public sealed record LegacyBackfillReport(
-    string BackfillReportId,
+public sealed record RetiredRemediationReport(
+    string RemediationReportId,
     string MigrationReportId,
     string ReleaseId,
     string TenantId,
@@ -483,25 +483,25 @@ public sealed record LegacyBackfillReport(
     bool DryRun,
     string Source,
     string Phase,
-    IReadOnlyList<LegacyMappingReportRow> Mappings,
-    IReadOnlyList<LegacyBackfillPlanRow> BackfillPlan,
-    IReadOnlyList<LegacyReconciliationNote> ReconciliationNotes,
-    LegacyCompatibilityFreeze CompatibilityFreeze,
+    IReadOnlyList<RetiredMappingReportRow> Mappings,
+    IReadOnlyList<RetiredRemediationPlanRow> RemediationPlan,
+    IReadOnlyList<RetiredReconciliationNote> ReconciliationNotes,
+    RetiredSourceLock RetiredSourceLock,
     IReadOnlyList<string> ReleaseGateRefs,
     string GeneratedBy,
     DateTimeOffset GeneratedAtUtc);
 
-public sealed record LegacyCompatibilityFreeze(
-    string FreezeId,
+public sealed record RetiredSourceLock(
+    string SourceLockId,
     string ReleaseId,
     string TenantId,
     string SourceSlice,
     string RegistryVersion,
     string Status,
-    IReadOnlyList<string> FrozenTables,
+    IReadOnlyList<string> LockedTables,
     string Reason,
-    string FrozenBy,
-    DateTimeOffset FrozenAtUtc);
+    string LockedBy,
+    DateTimeOffset LockedAtUtc);
 
 public sealed record MigrationDryRunResult(
     bool Success,
@@ -515,26 +515,26 @@ public sealed record MigrationRollbackValidation(
     int CheckedMigrationCount,
     IReadOnlyList<string> MissingRollbackNotes);
 
-public sealed record LegacyTableScanRow(
-    string LegacyTable,
+public sealed record RetiredTableScanRow(
+    string RetiredTable,
     bool Exists,
     long RowCount,
     string Source,
     string OriginalRefColumn,
     bool RequiresReconciliationNote);
 
-public sealed record LegacyMappingReportRow(
-    string LegacyTable,
+public sealed record RetiredMappingReportRow(
+    string RetiredTable,
     string Replacement,
     string Source,
     string OriginalRefColumn,
     IReadOnlyList<string> TargetTables,
     bool RequiresReconciliationNote,
-    string BackfillPolicy,
+    string ConsistencyPolicy,
     string ApplyMode);
 
-public sealed record LegacyBackfillPlanRow(
-    string LegacyTable,
+public sealed record RetiredRemediationPlanRow(
+    string RetiredTable,
     IReadOnlyList<string> TargetTables,
     bool DryRun,
     bool WouldWriteNewBusinessFacts,
@@ -543,13 +543,13 @@ public sealed record LegacyBackfillPlanRow(
     bool RequiresReconciliationNote,
     string ReconciliationNote);
 
-public sealed record LegacyReconciliationNote(
-    string LegacyTable,
+public sealed record RetiredReconciliationNote(
+    string RetiredTable,
     string Note,
     string OriginalRefColumn);
 
 public sealed record OldViewNewLensComparison(
-    string LegacyTable,
+    string RetiredTable,
     IReadOnlyList<string> NewLensTables,
     long OldRowCount,
     long NewRowCount,
@@ -561,30 +561,30 @@ public sealed record MigrationFileSnapshot(
     string Path,
     string Sql);
 
-public sealed record LegacyMigrationRegistry(
+public sealed record RetiredMigrationRegistry(
     string Version,
     string SourceSlice,
     string Phase,
     IReadOnlyDictionary<string, string> AuthoritativeOwners,
-    IReadOnlyList<LegacyRegistryTable> LegacyTables,
+    IReadOnlyList<RetiredRegistryTable> RetiredTables,
     IReadOnlyList<string> Guards);
 
-public sealed record LegacyRegistryTable(
+public sealed record RetiredRegistryTable(
     string Table,
     string Replacement,
     string Mode,
-    string BackfillPolicy);
+    string ConsistencyPolicy);
 
-public sealed record LegacyTableMapping(
-    string LegacyTable,
+public sealed record RetiredTableMapping(
+    string RetiredTable,
     string Replacement,
     string Source,
     string OriginalRefColumn,
     IReadOnlyList<string> TargetTables,
     bool RequiresReconciliationNote,
-    string BackfillPolicy)
+    string ConsistencyPolicy)
 {
-    public static LegacyTableMapping FromRegistry(LegacyRegistryTable table, LegacyMigrationRegistry registry)
+    public static RetiredTableMapping FromRegistry(RetiredRegistryTable table, RetiredMigrationRegistry registry)
     {
         var targetTables = table.Table switch
         {
@@ -595,17 +595,17 @@ public sealed record LegacyTableMapping(
             "finance_confirmations" => new[] { "deposit_transactions", "finance_reconciliations" },
             _ => new[] { table.Replacement.Split([' ', '+'], StringSplitOptions.RemoveEmptyEntries).FirstOrDefault() ?? table.Replacement }
         };
-        return new LegacyTableMapping(
+        return new RetiredTableMapping(
             table.Table,
             table.Replacement,
-            "legacy_migration",
+            "retired_data_migration",
             $"{table.Table}.primary_key",
             targetTables,
             IsMoneyRelated(table.Table, registry),
-            table.BackfillPolicy);
+            table.ConsistencyPolicy);
     }
 
-    private static bool IsMoneyRelated(string table, LegacyMigrationRegistry registry) =>
+    private static bool IsMoneyRelated(string table, RetiredMigrationRegistry registry) =>
         table.Contains("deposit", StringComparison.OrdinalIgnoreCase)
         || table.Contains("payment", StringComparison.OrdinalIgnoreCase)
         || table.Contains("finance", StringComparison.OrdinalIgnoreCase)

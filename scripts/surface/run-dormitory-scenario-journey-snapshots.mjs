@@ -4,8 +4,8 @@ import { routeView } from "../../apps/mobile/src/appRouter.js";
 import { createSurfaceCtx } from "../../apps/mobile/src/__tests__/surfaceContractTestHelpers.js";
 
 const root = process.cwd();
-const screenshotDir = path.join(root, "artifacts/screenshots/dormitory-journeys");
-const resultPath = path.join(root, "artifacts/oma/checks/dormitory-scenario-journey-result.json");
+const screenshotDir = path.join(root, "artifacts/oam/evidence/dormitory-journeys");
+const resultPath = path.join(root, "artifacts/oam/checks/dormitory-scenario-journey-result.json");
 const indexPath = path.join(screenshotDir, "index.json");
 
 const scenarios = [
@@ -41,7 +41,7 @@ fs.writeFileSync(resultPath, `${JSON.stringify(result, null, 2)}\n`, "utf8");
 fs.writeFileSync(indexPath, `${JSON.stringify({
   generatedAtUtc: result.generatedAtUtc,
   status: result.status,
-  screenshotDir: "artifacts/screenshots/dormitory-journeys",
+  screenshotDir: "artifacts/oam/evidence/dormitory-journeys",
   entries
 }, null, 2)}\n`, "utf8");
 
@@ -65,8 +65,8 @@ function writeScenario(item) {
     status: "passed",
     decision: decisionFor(item),
     workItemType: item.workItemType,
-    htmlSnapshot: `artifacts/screenshots/dormitory-journeys/${htmlName}`,
-    svgSnapshot: `artifacts/screenshots/dormitory-journeys/${svgName}`,
+    htmlSnapshot: `artifacts/oam/evidence/dormitory-journeys/${htmlName}`,
+    svgSnapshot: `artifacts/oam/evidence/dormitory-journeys/${svgName}`,
     workItem: `${item.id}:workItem`,
     commandSubmission: item.kind.startsWith("rejected") ? "RejectedCommandSubmission" : "CommandSubmission",
     domainEvent: item.kind.startsWith("rejected") ? "none" : "present",

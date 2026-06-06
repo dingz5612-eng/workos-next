@@ -1,7 +1,7 @@
 {
   "policyId": "business.evidence-policy",
   "policyType": "evidence",
-  "version": "oma.policy.v1",
+  "version": "oam.policy.v1",
   "owner": "EvidenceTrustPack",
   "sourceFile": "docs/business/dormitory/evidence-policy.yml",
   "runtimeBinding": {

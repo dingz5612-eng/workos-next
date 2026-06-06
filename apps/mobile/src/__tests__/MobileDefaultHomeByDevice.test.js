@@ -4,7 +4,7 @@ import { defaultHomeForSession } from "../authController.js";
 import { defaultHomeForCurrentSurface } from "../navigationController.js";
 import { resolveActiveDevice, resolveCurrentSurface } from "../surfaceResolver.js";
 
-describe("OMA Surface mobile default home by device", () => {
+describe("OAM Surface mobile default home by device", () => {
   it("keeps PC-only roles on a mobile-accessible work plane after login", () => {
     const mobile = {
       currentDevice: { deviceId: "mobile-current", surface: "mobile", deviceTrustStatus: "trusted" },

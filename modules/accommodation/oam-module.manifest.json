@@ -1,0 +1,46 @@
+{
+  "module": "accommodation",
+  "productCapability": [
+    "accommodation.resource",
+    "accommodation.lead-reservation",
+    "accommodation.checkin",
+    "accommodation.lifecycle",
+    "accommodation.checkout"
+  ],
+  "domainInvariant": [
+    "线索预订不能创建正式 stayId",
+    "入住只能从 checkinHandoff 或直接入住交接开始",
+    "房间床位编号不得由用户手填",
+    "退住清洁必须生成 service task handoff"
+  ],
+  "api": [
+    "POST /api/operations/work-items/{workItemId}/confirm",
+    "POST /api/operations/workspaces/start",
+    "GET /api/search",
+    "GET /api/lenses/accommodation/{lensId}"
+  ],
+  "database": [
+    "hostel_rooms",
+    "hostel_beds",
+    "hostel_leads",
+    "hostel_bookings",
+    "hostel_stays",
+    "guest_folios",
+    "checkout_settlements"
+  ],
+  "tests": [
+    "tests/WorkOS.UnitTests",
+    "tests/WorkOS.RuntimeIntegrationTests",
+    "tests/WorkOS.RuntimeContractTests"
+  ],
+  "rules": [
+    "docs/contracts/oam.current.json",
+    "docs/business/experience-contract.yml",
+    "docs/surface/surface-contract.yml"
+  ],
+  "currentCodeOwners": [
+    "services/core-api/WorkOS.Api/Slices/Accommodation",
+    "services/core-api/WorkOS.Api/Runtime/WorkspaceSeedCatalog.cs",
+    "apps/mobile/src/systemContextContract.js"
+  ]
+}

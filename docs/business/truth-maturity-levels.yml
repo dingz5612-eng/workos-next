@@ -14,6 +14,12 @@
       "mayServeAsCenterTruth": false
     },
     {
+      "id": "domainTruth",
+      "description": "A business-domain truth fact owned by an admitted product capability.",
+      "mayCommitLedger": false,
+      "mayServeAsCenterTruth": false
+    },
+    {
       "id": "ownerCommitted",
       "description": "A fact committed by its registered truth owner.",
       "mayCommitLedger": true,
@@ -22,6 +28,12 @@
     {
       "id": "projectedReceipt",
       "description": "A receipt view over committed truth, never a copied truth source.",
+      "mayCommitLedger": false,
+      "mayServeAsCenterTruth": false
+    },
+    {
+      "id": "readModel",
+      "description": "Search, profile, dashboard, or lens view produced from committed truth.",
       "mayCommitLedger": false,
       "mayServeAsCenterTruth": false
     }

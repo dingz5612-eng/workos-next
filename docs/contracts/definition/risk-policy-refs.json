@@ -1,6 +1,6 @@
 {
-  "version": "oma.risk-policy-refs.v1",
-  "generatedBy": "oma-current",
+  "version": "oam.risk-policy-refs.v1",
+  "generatedBy": "oam-current",
   "refs": [
     {
       "ref": "risk.resource.standard.v1",

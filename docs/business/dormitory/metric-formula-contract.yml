@@ -1,5 +1,5 @@
 {
-  "version": "oma.dormitory.metric-formula-contract.v1",
+  "version": "oam.dormitory.metric-formula-contract.v1",
   "domain": "dormitory",
   "productionAllowed": false,
   "sourceMetricContract": "docs/contracts/period-analytics-contract.json",

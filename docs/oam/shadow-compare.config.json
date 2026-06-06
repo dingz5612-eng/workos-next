@@ -1,0 +1,22 @@
+{
+  "name": "current-oam-shadow-compare",
+  "shadow_table": "shadow_runtime.shadow_event_queue",
+  "active_table": "public.runtime_documents",
+  "count_mismatch_grade": "red",
+  "retired_ref": null,
+  "compare_scopes": [
+    "operations-runtime",
+    "finance-ledger",
+    "projection-lens"
+  ],
+  "green_rules": [
+    "current OAM facts match active runtime records"
+  ],
+  "yellow_rules": [
+    "read-side projection lag without write-path mismatch"
+  ],
+  "red_rules": [
+    "business fact mismatch",
+    "write-path bypass"
+  ]
+}

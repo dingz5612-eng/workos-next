@@ -1,6 +1,6 @@
 {
-  "version": "oma.field-contract-refs.v1",
-  "generatedBy": "oma-current",
+  "version": "oam.field-contract-refs.v1",
+  "generatedBy": "oam-current",
   "refs": [
     {
       "ref": "field.roomSetup.v1",

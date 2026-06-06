@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 const root = process.cwd();
-const artifactPath = "artifacts/oma/checks/surface-productization-result.json";
+const artifactPath = "artifacts/oam/checks/surface-productization-result.json";
 const violations = [];
 const files = [
   "packages/surface-view-models/src/index.js",

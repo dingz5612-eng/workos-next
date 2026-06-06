@@ -1,5 +1,5 @@
 {
-  "version": "oma.finance.correction-policy.v1",
+  "version": "oam.finance.correction-policy.v1",
   "owner": "FinanceTruthPack",
   "allowedModes": ["reversal", "compensation"],
   "forbiddenModes": ["update_old_entry", "delete_old_entry", "overwrite_snapshot"],

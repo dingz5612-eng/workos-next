@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "registryId": "oma-truth-owner-registry",
+  "registryId": "oam-truth-owner-registry",
   "defaultPolicy": "Only the declared truth owner may commit a center truth fact.",
   "truthOwners": [
     {
@@ -22,6 +22,51 @@
       "provisionalRefPolicy": "allowedForDraftOnly"
     },
     {
+      "factId": "SubjectRelationship",
+      "owner": "SharedGovernancePack",
+      "truthLevel": "centerTruth",
+      "allowedCommitters": ["SharedGovernancePack"],
+      "forbiddenOwners": ["domain-pack", "management-cockpit", "receipt-projection", "DormitoryDomainPack", "RepairDomainPack", "PartsDomainPack"],
+      "receiptProjection": "referenceOnly",
+      "provisionalRefPolicy": "allowedForDraftOnly"
+    },
+    {
+      "factId": "SubjectVehicleRelationship",
+      "owner": "SharedGovernancePack",
+      "truthLevel": "centerTruth",
+      "allowedCommitters": ["SharedGovernancePack"],
+      "forbiddenOwners": ["domain-pack", "management-cockpit", "receipt-projection", "DormitoryDomainPack", "RepairDomainPack", "PartsDomainPack"],
+      "receiptProjection": "referenceOnly",
+      "provisionalRefPolicy": "allowedForDraftOnly"
+    },
+    {
+      "factId": "Room",
+      "owner": "accommodation.resource",
+      "truthLevel": "domainTruth",
+      "allowedCommitters": ["accommodation.resource"],
+      "forbiddenOwners": ["management-cockpit", "receipt-projection"],
+      "receiptProjection": "referenceOnly",
+      "provisionalRefPolicy": "allowedForDraftOnly"
+    },
+    {
+      "factId": "Bed",
+      "owner": "accommodation.resource",
+      "truthLevel": "domainTruth",
+      "allowedCommitters": ["accommodation.resource"],
+      "forbiddenOwners": ["management-cockpit", "receipt-projection"],
+      "receiptProjection": "referenceOnly",
+      "provisionalRefPolicy": "allowedForDraftOnly"
+    },
+    {
+      "factId": "AccommodationOrder",
+      "owner": "accommodation.lifecycle",
+      "truthLevel": "domainTruth",
+      "allowedCommitters": ["accommodation.lifecycle"],
+      "forbiddenOwners": ["management-cockpit", "receipt-projection"],
+      "receiptProjection": "referenceOnly",
+      "provisionalRefPolicy": "notAllowedForLedgerCommit"
+    },
+    {
       "factId": "PaymentFact",
       "owner": "FinanceTruthPack",
       "truthLevel": "centerTruth",
@@ -40,7 +85,25 @@
       "provisionalRefPolicy": "notAllowedForLedgerCommit"
     },
     {
+      "factId": "FinancialFact",
+      "owner": "FinanceTruthPack",
+      "truthLevel": "centerTruth",
+      "allowedCommitters": ["FinanceTruthPack"],
+      "forbiddenOwners": ["domain-pack", "management-cockpit", "receipt-projection", "DormitoryDomainPack", "RepairDomainPack", "PartsDomainPack"],
+      "receiptProjection": "referenceOnly",
+      "provisionalRefPolicy": "notAllowedForLedgerCommit"
+    },
+    {
       "factId": "LedgerTransaction",
+      "owner": "MoneyKernelPack",
+      "truthLevel": "centerTruth",
+      "allowedCommitters": ["MoneyKernelPack"],
+      "forbiddenOwners": ["domain-pack", "management-cockpit", "receipt-projection", "DormitoryDomainPack", "RepairDomainPack", "PartsDomainPack"],
+      "receiptProjection": "referenceOnly",
+      "provisionalRefPolicy": "notAllowedForLedgerCommit"
+    },
+    {
+      "factId": "LedgerEntry",
       "owner": "MoneyKernelPack",
       "truthLevel": "centerTruth",
       "allowedCommitters": ["MoneyKernelPack"],
@@ -54,6 +117,15 @@
       "truthLevel": "centerTruth",
       "allowedCommitters": ["EvidenceTrustPack"],
       "forbiddenOwners": ["domain-pack", "management-cockpit", "receipt-projection", "DormitoryDomainPack", "RepairDomainPack", "PartsDomainPack"],
+      "receiptProjection": "referenceOnly",
+      "provisionalRefPolicy": "allowedForDraftOnly"
+    },
+    {
+      "factId": "AmountBasis",
+      "owner": "FinanceTruthPack",
+      "truthLevel": "workflowTruth",
+      "allowedCommitters": ["FinanceTruthPack", "MoneyKernelPack"],
+      "forbiddenOwners": ["domain-pack", "management-cockpit", "receipt-projection"],
       "receiptProjection": "referenceOnly",
       "provisionalRefPolicy": "allowedForDraftOnly"
     },
@@ -76,6 +148,51 @@
       "provisionalRefPolicy": "notAllowedForLedgerCommit"
     },
     {
+      "factId": "ExceptionCase",
+      "owner": "operations-runtime",
+      "truthLevel": "workflowTruth",
+      "allowedCommitters": ["operations-runtime"],
+      "forbiddenOwners": ["domain-pack", "management-cockpit", "receipt-projection"],
+      "receiptProjection": "referenceOnly",
+      "provisionalRefPolicy": "allowedForDraftOnly"
+    },
+    {
+      "factId": "DecisionIntent",
+      "owner": "control-plane-command",
+      "truthLevel": "workflowTruth",
+      "allowedCommitters": ["control-plane-command"],
+      "forbiddenOwners": ["business-domain", "management-cockpit-direct-write", "receipt-projection"],
+      "receiptProjection": "referenceOnly",
+      "provisionalRefPolicy": "allowedForDraftOnly"
+    },
+    {
+      "factId": "SharedReceipt",
+      "owner": "SharedGovernancePack",
+      "truthLevel": "readModel",
+      "allowedCommitters": [],
+      "forbiddenOwners": ["domain-pack", "management-cockpit", "finance-truth"],
+      "receiptProjection": "referenceOnly",
+      "provisionalRefPolicy": "notAllowedForLedgerCommit"
+    },
+    {
+      "factId": "DashboardSummary",
+      "owner": "projection-kernel",
+      "truthLevel": "readModel",
+      "allowedCommitters": [],
+      "forbiddenOwners": ["domain-pack", "management-cockpit-direct-write", "finance-truth"],
+      "receiptProjection": "referenceOnly",
+      "provisionalRefPolicy": "notAllowedForLedgerCommit"
+    },
+    {
+      "factId": "Profile",
+      "owner": "SharedGovernancePack",
+      "truthLevel": "readModel",
+      "allowedCommitters": [],
+      "forbiddenOwners": ["domain-pack", "management-cockpit", "finance-truth"],
+      "receiptProjection": "referenceOnly",
+      "provisionalRefPolicy": "notAllowedForLedgerCommit"
+    },
+    {
       "factId": "WorkItemFact",
       "owner": "operations-runtime",
       "truthLevel": "workflowTruth",
@@ -83,6 +200,232 @@
       "forbiddenOwners": ["domain-pack"],
       "receiptProjection": "referenceOnly",
       "provisionalRefPolicy": "allowedForDraftOnly"
+    }
+  ],
+  "businessOperatingObjects": [
+    {
+      "objectId": "Subject",
+      "chineseName": "主体",
+      "ownerDomain": "SharedGovernancePack",
+      "sourceOfTruth": true,
+      "writable": true,
+      "writePath": "SharedGovernance stewardship work item through Operations Confirm",
+      "readonly": false,
+      "readOnlyUsage": ["business domain reference", "search result label", "profile projection"],
+      "searchable": true,
+      "metrics": true,
+      "forbiddenUse": ["business domain direct commit", "login self-bound authority", "finance fact substitute"],
+      "maturityScope": "current_oam_shared_governance"
+    },
+    {
+      "objectId": "Vehicle",
+      "chineseName": "车辆",
+      "ownerDomain": "SharedGovernancePack",
+      "sourceOfTruth": true,
+      "writable": true,
+      "writePath": "SharedGovernance stewardship work item through Operations Confirm",
+      "readonly": false,
+      "readOnlyUsage": ["repair reference", "parts reference", "search result label", "profile projection"],
+      "searchable": true,
+      "metrics": true,
+      "forbiddenUse": ["business domain direct commit", "finance fact substitute"],
+      "maturityScope": "current_oam_shared_governance"
+    },
+    {
+      "objectId": "SubjectRelationship",
+      "chineseName": "主体关系",
+      "ownerDomain": "SharedGovernancePack",
+      "sourceOfTruth": true,
+      "writable": true,
+      "writePath": "SharedGovernance relationship stewardship through Operations Confirm",
+      "readonly": false,
+      "readOnlyUsage": ["permission context", "profile projection", "search filter"],
+      "searchable": true,
+      "metrics": true,
+      "forbiddenUse": ["page-local role binding", "login self-bound authority", "finance fact substitute"],
+      "maturityScope": "current_oam_shared_governance"
+    },
+    {
+      "objectId": "SubjectVehicleRelationship",
+      "chineseName": "主体车辆关系",
+      "ownerDomain": "SharedGovernancePack",
+      "sourceOfTruth": true,
+      "writable": true,
+      "writePath": "SharedGovernance relationship stewardship through Operations Confirm",
+      "readonly": false,
+      "readOnlyUsage": ["repair reference", "parts reference", "search filter", "profile projection"],
+      "searchable": true,
+      "metrics": true,
+      "forbiddenUse": ["business domain direct commit", "finance fact substitute"],
+      "maturityScope": "current_oam_shared_governance"
+    },
+    {
+      "objectId": "Room",
+      "chineseName": "房间",
+      "ownerDomain": "accommodation.resource",
+      "sourceOfTruth": true,
+      "writable": true,
+      "writePath": "POST /api/operations/work-items/{workItemId}/confirm",
+      "readonly": false,
+      "readOnlyUsage": ["downstream step carry-forward", "service task target", "search result label"],
+      "searchable": true,
+      "metrics": true,
+      "forbiddenUse": ["user-entered room id", "management cockpit direct mutation", "financial truth substitute"],
+      "maturityScope": "dormitory_l1_internal_pilot"
+    },
+    {
+      "objectId": "Bed",
+      "chineseName": "床位",
+      "ownerDomain": "accommodation.resource",
+      "sourceOfTruth": true,
+      "writable": true,
+      "writePath": "POST /api/operations/work-items/{workItemId}/confirm",
+      "readonly": false,
+      "readOnlyUsage": ["downstream step carry-forward", "service task target", "search result label"],
+      "searchable": true,
+      "metrics": true,
+      "forbiddenUse": ["user-entered bed id", "repeat selection after task target is fixed", "financial truth substitute"],
+      "maturityScope": "dormitory_l1_internal_pilot"
+    },
+    {
+      "objectId": "Stay/AccommodationOrder",
+      "chineseName": "入住单",
+      "ownerDomain": "accommodation.lifecycle",
+      "sourceOfTruth": true,
+      "writable": true,
+      "writePath": "POST /api/operations/work-items/{workItemId}/confirm",
+      "readonly": false,
+      "readOnlyUsage": ["handoff carry-forward", "fee basis reference", "search result label"],
+      "searchable": true,
+      "metrics": true,
+      "forbiddenUse": ["created by lead reservation", "manual stay id entry", "finance ledger substitute"],
+      "maturityScope": "dormitory_l1_internal_pilot"
+    },
+    {
+      "objectId": "AmountBasis",
+      "chineseName": "金额依据",
+      "ownerDomain": "FinanceTruthPack",
+      "sourceOfTruth": true,
+      "writable": true,
+      "writePath": "Operations Confirm routes basis proposal to FinanceTruthPack",
+      "readonly": false,
+      "readOnlyUsage": ["business amount preview", "finance review input", "search result context"],
+      "searchable": true,
+      "metrics": true,
+      "forbiddenUse": ["domain direct ledger commit", "formal payment fact substitute", "unreviewed metric"],
+      "maturityScope": "current_oam_finance_gate"
+    },
+    {
+      "objectId": "FinancialFact",
+      "chineseName": "财务事实",
+      "ownerDomain": "FinanceTruthPack",
+      "sourceOfTruth": true,
+      "writable": true,
+      "writePath": "FinanceTruthPack append-only commit from admitted Operations Confirm",
+      "readonly": false,
+      "readOnlyUsage": ["receipt projection", "ledger input", "finance search context"],
+      "searchable": true,
+      "metrics": true,
+      "forbiddenUse": ["business domain direct commit", "shared receipt truth substitute", "dashboard manual override"],
+      "maturityScope": "current_oam_finance_gate"
+    },
+    {
+      "objectId": "LedgerEntry",
+      "chineseName": "账本分录",
+      "ownerDomain": "MoneyKernelPack",
+      "sourceOfTruth": true,
+      "writable": true,
+      "writePath": "MoneyKernelPack balanced ledger commit from FinanceTruthPack fact",
+      "readonly": false,
+      "readOnlyUsage": ["finance summary", "audit trace", "search result context"],
+      "searchable": true,
+      "metrics": true,
+      "forbiddenUse": ["unbalanced direct entry", "business domain direct commit", "receipt projection truth substitute"],
+      "maturityScope": "current_oam_finance_gate"
+    },
+    {
+      "objectId": "EvidenceObject",
+      "chineseName": "证据对象",
+      "ownerDomain": "EvidenceTrustPack",
+      "sourceOfTruth": true,
+      "writable": true,
+      "writePath": "EvidenceTrustPack object commit bound to Operations Confirm evidence refs",
+      "readonly": false,
+      "readOnlyUsage": ["work item evidence", "audit trace", "OCR suggestion source"],
+      "searchable": true,
+      "metrics": false,
+      "forbiddenUse": ["plain text replacement", "silent OCR overwrite", "business fact substitute"],
+      "maturityScope": "current_oam_evidence_trust"
+    },
+    {
+      "objectId": "ExceptionCase",
+      "chineseName": "异常案件",
+      "ownerDomain": "operations-runtime",
+      "sourceOfTruth": true,
+      "writable": true,
+      "writePath": "POST /api/operations/work-items/{workItemId}/confirm",
+      "readonly": false,
+      "readOnlyUsage": ["management cockpit routing context", "search result context", "risk metric input"],
+      "searchable": true,
+      "metrics": true,
+      "forbiddenUse": ["management cockpit direct resolution", "finance fact substitute", "hidden page-only state"],
+      "maturityScope": "current_oam_operations_runtime"
+    },
+    {
+      "objectId": "DecisionIntent",
+      "chineseName": "决策意图",
+      "ownerDomain": "control-plane-command",
+      "sourceOfTruth": false,
+      "writable": true,
+      "writePath": "ControlPlaneCommand append-only command path",
+      "readonly": false,
+      "readOnlyUsage": ["control plane trace", "release decision context"],
+      "searchable": false,
+      "metrics": false,
+      "forbiddenUse": ["business fact commit", "finance fact commit", "admission decision replacement"],
+      "maturityScope": "current_oam_control_plane"
+    },
+    {
+      "objectId": "SharedReceipt",
+      "chineseName": "共享回执",
+      "ownerDomain": "SharedGovernancePack",
+      "sourceOfTruth": false,
+      "writable": false,
+      "writePath": null,
+      "readonly": true,
+      "readOnlyUsage": ["business domain reference", "finance reference", "search result context"],
+      "searchable": true,
+      "metrics": false,
+      "forbiddenUse": ["center truth replacement", "admission decision replacement", "ledger commit basis"],
+      "maturityScope": "current_oam_read_side"
+    },
+    {
+      "objectId": "DashboardSummary",
+      "chineseName": "看板汇总",
+      "ownerDomain": "projection-kernel",
+      "sourceOfTruth": false,
+      "writable": false,
+      "writePath": null,
+      "readonly": true,
+      "readOnlyUsage": ["management cockpit overview", "BI/KPI display", "risk trend display"],
+      "searchable": true,
+      "metrics": true,
+      "forbiddenUse": ["business fact commit", "finance fact commit", "manual production unlock"],
+      "maturityScope": "current_oam_read_side"
+    },
+    {
+      "objectId": "Profile",
+      "chineseName": "画像",
+      "ownerDomain": "SharedGovernancePack",
+      "sourceOfTruth": false,
+      "writable": false,
+      "writePath": null,
+      "readonly": true,
+      "readOnlyUsage": ["subject profile display", "vehicle profile display", "search result context"],
+      "searchable": true,
+      "metrics": true,
+      "forbiddenUse": ["parallel master data", "finance fact substitute", "business direct mutation"],
+      "maturityScope": "current_oam_read_side"
     }
   ]
 }

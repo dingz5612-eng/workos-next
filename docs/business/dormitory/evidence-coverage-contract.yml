@@ -1,5 +1,5 @@
 {
-  "version": "oma.dormitory.evidence-coverage-contract.v1",
+  "version": "oam.dormitory.evidence-coverage-contract.v1",
   "domain": "dormitory",
   "productionAllowed": false,
   "sourceFiles": {

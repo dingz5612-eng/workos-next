@@ -11,15 +11,15 @@ public static class RuntimeCertificationRunner
 
     public static Task<RuntimeCertificationEvidence> Run(RunnerOptions options)
     {
-        var releaseId = options.Get("releaseId", "oma.current-runtime-certification");
+        var releaseId = options.Get("releaseId", "oam.current-runtime-certification");
         var tenantId = options.Get("tenantId", "cert-tenant");
         var sliceId = options.Get("sliceId", "operations-runtime");
         var ciRunId = options.Get("ciRunId") ?? Environment.GetEnvironmentVariable("GITHUB_RUN_ID") ?? "local";
         var sourceMode = ResolveSourceMode(options);
-        var scenariosPath = ResolveRepoPath(options.Get("scenarios", Path.Combine("docs", "oma", "certification-scenarios.json")));
-        var outputPath = options.Get("out", Path.Combine(".tmp", "oma", "runtime-certification-report.json"));
-        var invariantOut = options.Get("invariantOut", Path.Combine(".tmp", "oma", "runtime-certification-invariants.json"));
-        var shadowOut = options.Get("shadowOut", Path.Combine(".tmp", "oma", "runtime-certification-shadow.json"));
+        var scenariosPath = ResolveRepoPath(options.Get("scenarios", Path.Combine("docs", "oam", "certification-scenarios.json")));
+        var outputPath = options.Get("out", Path.Combine(".tmp", "oam", "runtime-certification-report.json"));
+        var invariantOut = options.Get("invariantOut", Path.Combine(".tmp", "oam", "runtime-certification-invariants.json"));
+        var shadowOut = options.Get("shadowOut", Path.Combine(".tmp", "oam", "runtime-certification-shadow.json"));
 
         var file = RunnerJson.Read<RuntimeCertificationScenarioFile>(scenariosPath);
         var context = new RuntimeCertificationContext(tenantId, sliceId, DormitoryEvidencePolicyLoader.LoadDefault());
@@ -653,7 +653,7 @@ public static class RuntimeCertificationRunner
             "P0",
             "runtime-certification",
             null,
-            "scripts/oma/certify-runtime.mjs",
+            "scripts/oam/certify-runtime.mjs",
             status,
             observed,
             new Dictionary<string, object> { ["expected_failed_scenarios"] = 0 },
@@ -701,7 +701,7 @@ public static class RuntimeCertificationRunner
                 ["type"] = "semantic_certification_fact_graph",
                 ["objects"] = RuntimeCertificationFactGraph.Objects
             },
-            "legacy-runtime-certification",
+            "retired-runtime-certification",
             "operations-runtime-certification",
             "semantic-shadow-fact-graph",
             DateTimeOffset.UtcNow,

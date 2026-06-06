@@ -1,6 +1,6 @@
 {
-  "version": "oma.admission-contract.v1",
-  "generatedBy": "oma-current",
+  "version": "oam.admission-contract.v1",
+  "generatedBy": "oam-current",
   "inputAuthorities": {
     "actor": {
       "source": "Runtime actor session and capability policy",
@@ -23,7 +23,7 @@
       "contractRef": "docs/contracts/definition/evidence-policy-refs.json"
     },
     "releaseState": {
-      "source": "Current OMA admission state and admission matrix",
+      "source": "Current OAM admission state and admission matrix",
       "contractRef": "docs/contracts/admission/current-admission-state-contract.json"
     }
   },
@@ -76,7 +76,7 @@
     },
     "releaseState": {
       "type": "string",
-      "description": "Production posture from current OMA admission state."
+      "description": "Production posture from current OAM admission state."
     },
     "surfaceState": {
       "type": "string",

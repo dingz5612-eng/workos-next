@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 const root = process.cwd();
-const outPath = "artifacts/oma/checks/backend-runtime-guard-api-replay-result.json";
+const outPath = "artifacts/oam/checks/backend-runtime-guard-api-replay-result.json";
 
 const cases = [
   {
@@ -58,7 +58,7 @@ const cases = [
     id: "retired_workspace_card_write_routes_blocked",
     description: "retired workspace/card write routes are absent from runtime write path",
     evidenceFile: "scripts/check-runtime-write-paths.mjs",
-    requiredMarkers: ["RT1-COMPAT-ADAPTER-DELETED", "RT1-RETIRED-WORKSPACE-COMPAT-ENDPOINT"],
+    requiredMarkers: ["OAM-WRITE-COMPAT-ADAPTER-DELETED", "OAM-WRITE-RETIRED-WORKSPACE-COMPAT-ENDPOINT"],
     expectedStatus: "403_or_422"
   },
   {

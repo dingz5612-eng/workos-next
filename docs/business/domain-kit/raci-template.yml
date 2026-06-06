@@ -1,1 +1,0 @@
-{"templateId":"raci-template","requiredFields":["ownerRole","backupOwner","escalationRole","approverRole","shiftCoverage","handoffRule","auditRule"],"ownerRequired":true,"escalationRequired":true}

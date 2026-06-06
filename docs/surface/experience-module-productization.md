@@ -1,4 +1,4 @@
-# OMA Surface Experience Module Productization
+# OAM Surface Experience Module Productization
 
 中文目标：把 Operation Panel、Trusted Confirm、Action Result、Evidence、Queue、Device Trust、Permission Diagnostic 从工程组件展示整理为用户体验模块。
 

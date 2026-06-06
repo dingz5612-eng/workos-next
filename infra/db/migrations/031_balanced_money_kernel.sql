@@ -1,5 +1,5 @@
 -- Rollback note: WorkOSNext migrations are up-only. To reverse this before
--- production use, add a compensating migration that archives balanced ledger
+-- production use, add a compensating migration that history balanced ledger
 -- rows, posts reversing transactions for committed money facts, and only then
 -- drops child tables in dependency order.
 

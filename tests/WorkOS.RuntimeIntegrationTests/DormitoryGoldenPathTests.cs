@@ -30,9 +30,9 @@ public sealed class DormitoryGoldenPathTests
     }
 
     [TestMethod]
-    public void DormitoryOmaContractDeclaresScenarioCapabilities()
+    public void DormitoryOamContractDeclaresScenarioCapabilities()
     {
-        using var contract = JsonDocument.Parse(File.ReadAllText(DormitoryScenarioHarness.RepoPath("docs", "contracts", "oma.current.json")));
+        using var contract = JsonDocument.Parse(File.ReadAllText(DormitoryScenarioHarness.RepoPath("docs", "contracts", "oam.current.json")));
         var capabilities = contract.RootElement.GetProperty("productCapabilities")
             .EnumerateArray()
             .Select(item => item.GetProperty("id").GetString())
@@ -48,7 +48,7 @@ public sealed class DormitoryGoldenPathTests
             "accommodation.service-task"
         })
         {
-            Assert.IsTrue(capabilities.Contains(capability), $"{capability} must be part of the current OMA contract.");
+            Assert.IsTrue(capabilities.Contains(capability), $"{capability} must be part of the current OAM contract.");
         }
     }
 }

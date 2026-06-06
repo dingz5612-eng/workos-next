@@ -96,9 +96,9 @@ public sealed class ControlPlaneDatabase : ILedgerInspectionInvariantEvaluator
                 invariant_check_ids, acceptance_scenarios, go_criteria, no_go_criteria,
                 known_risks)
             values(
-                @releaseId, @mrId, 'OMA current control plane runner', 'planned',
+                @releaseId, @mrId, 'OAM current control plane runner', 'planned',
                 '["platform"]'::jsonb, @commitSha, '015_control_plane_shadow_runtime',
-                'oma.current', 'not-set', @ciRunId, '[]'::jsonb, '[]'::jsonb, '[]'::jsonb,
+                'oam.current', 'not-set', @ciRunId, '[]'::jsonb, '[]'::jsonb, '[]'::jsonb,
                 '[]'::jsonb, '["runner executed"]'::jsonb, '["automated guard evidence exists"]'::jsonb,
                 '["P0 blocked"]'::jsonb, '["minimal runner"]'::jsonb)
             on conflict(release_id) do nothing
@@ -402,8 +402,8 @@ public sealed class ControlPlaneDatabase : ILedgerInspectionInvariantEvaluator
 
     public void WriteMigrationVerificationReports(
         MigrationVerificationReport report,
-        LegacyBackfillReport backfillReport,
-        LegacyCompatibilityFreeze freeze)
+        RetiredRemediationReport remediationReport,
+        RetiredSourceLock sourceLock)
     {
         using var connection = Open();
         using var transaction = connection.BeginTransaction();
@@ -413,18 +413,18 @@ public sealed class ControlPlaneDatabase : ILedgerInspectionInvariantEvaluator
             command.CommandText = """
                 insert into control_plane.migration_verification_reports(
                     report_id, release_id, tenant_id, status, dry_run, migration_dry_run,
-                    old_runtime_data_scan, legacy_mapping_report, old_view_new_lens_compare,
+                    old_runtime_data_scan, retired_mapping_report, old_view_new_lens_compare,
                     rollback_note_validation, release_gate_refs, generated_by, generated_at_utc)
                 values (
                     @reportId, @releaseId, @tenantId, @status, @dryRun, @migrationDryRun::jsonb,
-                    @oldRuntimeDataScan::jsonb, @legacyMappingReport::jsonb, @oldViewNewLensCompare::jsonb,
+                    @oldRuntimeDataScan::jsonb, @retiredMappingReport::jsonb, @oldViewNewLensCompare::jsonb,
                     @rollbackNoteValidation::jsonb, @releaseGateRefs::jsonb, @generatedBy, @generatedAtUtc)
                 on conflict(report_id) do update set
                     status = excluded.status,
                     dry_run = excluded.dry_run,
                     migration_dry_run = excluded.migration_dry_run,
                     old_runtime_data_scan = excluded.old_runtime_data_scan,
-                    legacy_mapping_report = excluded.legacy_mapping_report,
+                    retired_mapping_report = excluded.retired_mapping_report,
                     old_view_new_lens_compare = excluded.old_view_new_lens_compare,
                     rollback_note_validation = excluded.rollback_note_validation,
                     release_gate_refs = excluded.release_gate_refs,
@@ -438,7 +438,7 @@ public sealed class ControlPlaneDatabase : ILedgerInspectionInvariantEvaluator
             command.Parameters.AddWithValue("dryRun", report.DryRun);
             command.Parameters.AddWithValue("migrationDryRun", NpgsqlDbType.Jsonb, JsonSerializer.Serialize(report.MigrationDryRun, RunnerJson.Options));
             command.Parameters.AddWithValue("oldRuntimeDataScan", NpgsqlDbType.Jsonb, JsonSerializer.Serialize(report.OldRuntimeDataScan, RunnerJson.Options));
-            command.Parameters.AddWithValue("legacyMappingReport", NpgsqlDbType.Jsonb, JsonSerializer.Serialize(report.LegacyMappingReport, RunnerJson.Options));
+            command.Parameters.AddWithValue("retiredMappingReport", NpgsqlDbType.Jsonb, JsonSerializer.Serialize(report.RetiredMappingReport, RunnerJson.Options));
             command.Parameters.AddWithValue("oldViewNewLensCompare", NpgsqlDbType.Jsonb, JsonSerializer.Serialize(report.OldViewNewLensCompare, RunnerJson.Options));
             command.Parameters.AddWithValue("rollbackNoteValidation", NpgsqlDbType.Jsonb, JsonSerializer.Serialize(report.RollbackNoteValidation, RunnerJson.Options));
             command.Parameters.AddWithValue("releaseGateRefs", NpgsqlDbType.Jsonb, JsonSerializer.Serialize(report.ReleaseGateRefs, RunnerJson.Options));
@@ -451,41 +451,41 @@ public sealed class ControlPlaneDatabase : ILedgerInspectionInvariantEvaluator
         {
             command.Transaction = transaction;
             command.CommandText = """
-                insert into control_plane.legacy_backfill_reports(
-                    backfill_report_id, migration_report_id, release_id, tenant_id, status,
-                    dry_run, source, phase, mappings, backfill_plan, reconciliation_notes,
-                    compatibility_freeze, release_gate_refs, generated_by, generated_at_utc)
+                insert into control_plane.retired_remediation_reports(
+                    remediation_report_id, migration_report_id, release_id, tenant_id, status,
+                    dry_run, source, phase, mappings, remediation_plan, reconciliation_notes,
+                    retired_source_lock, release_gate_refs, generated_by, generated_at_utc)
                 values (
-                    @backfillReportId, @migrationReportId, @releaseId, @tenantId, @status,
-                    @dryRun, @source, @phase, @mappings::jsonb, @backfillPlan::jsonb,
-                    @reconciliationNotes::jsonb, @compatibilityFreeze::jsonb, @releaseGateRefs::jsonb,
+                    @remediationReportId, @migrationReportId, @releaseId, @tenantId, @status,
+                    @dryRun, @source, @phase, @mappings::jsonb, @remediationPlan::jsonb,
+                    @reconciliationNotes::jsonb, @retiredSourceLock::jsonb, @releaseGateRefs::jsonb,
                     @generatedBy, @generatedAtUtc)
-                on conflict(backfill_report_id) do update set
+                on conflict(remediation_report_id) do update set
                     status = excluded.status,
                     dry_run = excluded.dry_run,
                     mappings = excluded.mappings,
-                    backfill_plan = excluded.backfill_plan,
+                    remediation_plan = excluded.remediation_plan,
                     reconciliation_notes = excluded.reconciliation_notes,
-                    compatibility_freeze = excluded.compatibility_freeze,
+                    retired_source_lock = excluded.retired_source_lock,
                     release_gate_refs = excluded.release_gate_refs,
                     generated_by = excluded.generated_by,
                     generated_at_utc = excluded.generated_at_utc
                 """;
-            command.Parameters.AddWithValue("backfillReportId", backfillReport.BackfillReportId);
-            command.Parameters.AddWithValue("migrationReportId", backfillReport.MigrationReportId);
-            command.Parameters.AddWithValue("releaseId", backfillReport.ReleaseId);
-            command.Parameters.AddWithValue("tenantId", backfillReport.TenantId);
-            command.Parameters.AddWithValue("status", backfillReport.Status);
-            command.Parameters.AddWithValue("dryRun", backfillReport.DryRun);
-            command.Parameters.AddWithValue("source", backfillReport.Source);
-            command.Parameters.AddWithValue("phase", backfillReport.Phase);
-            command.Parameters.AddWithValue("mappings", NpgsqlDbType.Jsonb, JsonSerializer.Serialize(backfillReport.Mappings, RunnerJson.Options));
-            command.Parameters.AddWithValue("backfillPlan", NpgsqlDbType.Jsonb, JsonSerializer.Serialize(backfillReport.BackfillPlan, RunnerJson.Options));
-            command.Parameters.AddWithValue("reconciliationNotes", NpgsqlDbType.Jsonb, JsonSerializer.Serialize(backfillReport.ReconciliationNotes, RunnerJson.Options));
-            command.Parameters.AddWithValue("compatibilityFreeze", NpgsqlDbType.Jsonb, JsonSerializer.Serialize(backfillReport.CompatibilityFreeze, RunnerJson.Options));
-            command.Parameters.AddWithValue("releaseGateRefs", NpgsqlDbType.Jsonb, JsonSerializer.Serialize(backfillReport.ReleaseGateRefs, RunnerJson.Options));
-            command.Parameters.AddWithValue("generatedBy", backfillReport.GeneratedBy);
-            command.Parameters.AddWithValue("generatedAtUtc", backfillReport.GeneratedAtUtc);
+            command.Parameters.AddWithValue("remediationReportId", remediationReport.RemediationReportId);
+            command.Parameters.AddWithValue("migrationReportId", remediationReport.MigrationReportId);
+            command.Parameters.AddWithValue("releaseId", remediationReport.ReleaseId);
+            command.Parameters.AddWithValue("tenantId", remediationReport.TenantId);
+            command.Parameters.AddWithValue("status", remediationReport.Status);
+            command.Parameters.AddWithValue("dryRun", remediationReport.DryRun);
+            command.Parameters.AddWithValue("source", remediationReport.Source);
+            command.Parameters.AddWithValue("phase", remediationReport.Phase);
+            command.Parameters.AddWithValue("mappings", NpgsqlDbType.Jsonb, JsonSerializer.Serialize(remediationReport.Mappings, RunnerJson.Options));
+            command.Parameters.AddWithValue("remediationPlan", NpgsqlDbType.Jsonb, JsonSerializer.Serialize(remediationReport.RemediationPlan, RunnerJson.Options));
+            command.Parameters.AddWithValue("reconciliationNotes", NpgsqlDbType.Jsonb, JsonSerializer.Serialize(remediationReport.ReconciliationNotes, RunnerJson.Options));
+            command.Parameters.AddWithValue("retiredSourceLock", NpgsqlDbType.Jsonb, JsonSerializer.Serialize(remediationReport.RetiredSourceLock, RunnerJson.Options));
+            command.Parameters.AddWithValue("releaseGateRefs", NpgsqlDbType.Jsonb, JsonSerializer.Serialize(remediationReport.ReleaseGateRefs, RunnerJson.Options));
+            command.Parameters.AddWithValue("generatedBy", remediationReport.GeneratedBy);
+            command.Parameters.AddWithValue("generatedAtUtc", remediationReport.GeneratedAtUtc);
             command.ExecuteNonQuery();
         }
 
@@ -493,29 +493,29 @@ public sealed class ControlPlaneDatabase : ILedgerInspectionInvariantEvaluator
         {
             command.Transaction = transaction;
             command.CommandText = """
-                insert into control_plane.legacy_compatibility_freezes(
-                    freeze_id, release_id, tenant_id, source_slice, registry_version,
-                    status, frozen_tables, reason, frozen_by, frozen_at_utc)
+                insert into control_plane.retired_source_locks(
+                    source_lock_id, release_id, tenant_id, source_slice, registry_version,
+                    status, locked_tables, reason, locked_by, locked_at_utc)
                 values (
-                    @freezeId, @releaseId, @tenantId, @sourceSlice, @registryVersion,
-                    @status, @frozenTables::jsonb, @reason, @frozenBy, @frozenAtUtc)
-                on conflict(freeze_id) do update set
+                    @sourceLockId, @releaseId, @tenantId, @sourceSlice, @registryVersion,
+                    @status, @lockedTables::jsonb, @reason, @lockedBy, @lockedAtUtc)
+                on conflict(source_lock_id) do update set
                     status = excluded.status,
-                    frozen_tables = excluded.frozen_tables,
+                    locked_tables = excluded.locked_tables,
                     reason = excluded.reason,
-                    frozen_by = excluded.frozen_by,
-                    frozen_at_utc = excluded.frozen_at_utc
+                    locked_by = excluded.locked_by,
+                    locked_at_utc = excluded.locked_at_utc
                 """;
-            command.Parameters.AddWithValue("freezeId", freeze.FreezeId);
-            command.Parameters.AddWithValue("releaseId", freeze.ReleaseId);
-            command.Parameters.AddWithValue("tenantId", freeze.TenantId);
-            command.Parameters.AddWithValue("sourceSlice", freeze.SourceSlice);
-            command.Parameters.AddWithValue("registryVersion", freeze.RegistryVersion);
-            command.Parameters.AddWithValue("status", freeze.Status);
-            command.Parameters.AddWithValue("frozenTables", NpgsqlDbType.Jsonb, JsonSerializer.Serialize(freeze.FrozenTables, RunnerJson.Options));
-            command.Parameters.AddWithValue("reason", freeze.Reason);
-            command.Parameters.AddWithValue("frozenBy", freeze.FrozenBy);
-            command.Parameters.AddWithValue("frozenAtUtc", freeze.FrozenAtUtc);
+            command.Parameters.AddWithValue("sourceLockId", sourceLock.SourceLockId);
+            command.Parameters.AddWithValue("releaseId", sourceLock.ReleaseId);
+            command.Parameters.AddWithValue("tenantId", sourceLock.TenantId);
+            command.Parameters.AddWithValue("sourceSlice", sourceLock.SourceSlice);
+            command.Parameters.AddWithValue("registryVersion", sourceLock.RegistryVersion);
+            command.Parameters.AddWithValue("status", sourceLock.Status);
+            command.Parameters.AddWithValue("lockedTables", NpgsqlDbType.Jsonb, JsonSerializer.Serialize(sourceLock.LockedTables, RunnerJson.Options));
+            command.Parameters.AddWithValue("reason", sourceLock.Reason);
+            command.Parameters.AddWithValue("lockedBy", sourceLock.LockedBy);
+            command.Parameters.AddWithValue("lockedAtUtc", sourceLock.LockedAtUtc);
             command.ExecuteNonQuery();
         }
 

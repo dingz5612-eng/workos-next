@@ -7,7 +7,7 @@ import {
   requiredScenarioIds,
   validateSchemaFile,
   violation
-} from "./lib/oma-business-semantic-lib.mjs";
+} from "./lib/oam-business-semantic-lib.mjs";
 
 const checkId = "scenario-field-contract";
 const scannedFiles = [

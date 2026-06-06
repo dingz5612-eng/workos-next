@@ -9,13 +9,13 @@ public static class ShadowCompareRunner
 
     public static Task<ShadowCompareEvidence> Run(RunnerOptions options)
     {
-        var releaseId = options.Get("releaseId", "oma.current-first-batch");
+        var releaseId = options.Get("releaseId", "oam.current-first-batch");
         var tenantId = options.Get("tenantId", "all-tenants");
         var sliceId = options.Get("sliceId", "all-slices");
         var ciRunId = options.Get("ciRunId") ?? Environment.GetEnvironmentVariable("GITHUB_RUN_ID") ?? "local";
-        var outputPath = options.Get("out", Path.Combine(".tmp", "oma", "shadow-compare-report.json"));
-        var configPath = options.Get("config", Path.Combine("docs", "oma", "shadow-compare.config.json"));
-        var semanticRulesPath = options.Get("semantic-rules", Path.Combine("docs", "oma", "shadow-compare-semantic-rules.json"));
+        var outputPath = options.Get("out", Path.Combine(".tmp", "oam", "shadow-compare-report.json"));
+        var configPath = options.Get("config", Path.Combine("docs", "oam", "shadow-compare.config.json"));
+        var semanticRulesPath = options.Get("semantic-rules", Path.Combine("docs", "oam", "shadow-compare-semantic-rules.json"));
         var mode = options.Get("mode");
         var sourceMode = ResolveSourceMode(options, mode);
         var dryRun = options.GetBool("dry-run");
@@ -62,7 +62,7 @@ public static class ShadowCompareRunner
                 report.TenantId,
                 report.SliceId,
                 report.CompareScope,
-                report.SourceLegacyRef,
+                report.SourceRetiredRef,
                 report.SourceActiveRef,
                 report.SourceShadowRef,
                 report.ComparedAtUtc,
@@ -802,12 +802,12 @@ public static class ShadowCompareRunner
         string sourceMode = "real")
     {
         return new ShadowCompareEvidence(
-            ShadowCompareReportId: $"scr-oma-current-{Sanitize(config.Name)}",
+            ShadowCompareReportId: $"scr-oam-current-{Sanitize(config.Name)}",
             ReleaseId: releaseId,
             TenantId: tenantId,
             SliceId: sliceId,
             CompareScope: compareScope ?? CompareScope(config),
-            SourceLegacyRef: config.LegacyRef,
+            SourceRetiredRef: config.RetiredRef,
             SourceActiveRef: config.ActiveTable,
             SourceShadowRef: config.ShadowTable,
             ComparedAtUtc: comparedAt,
@@ -928,7 +928,7 @@ public sealed record ShadowCompareConfig(
     string ShadowTable,
     string ActiveTable,
     string CountMismatchGrade,
-    string? LegacyRef,
+    string? RetiredRef,
     IReadOnlyList<string>? CompareScopes = null,
     IReadOnlyList<string>? GreenRules = null,
     IReadOnlyList<string>? YellowRules = null,
@@ -960,7 +960,7 @@ public sealed record ShadowCompareEvidence(
     string TenantId,
     string SliceId,
     IReadOnlyDictionary<string, object> CompareScope,
-    string? SourceLegacyRef,
+    string? SourceRetiredRef,
     string? SourceActiveRef,
     string? SourceShadowRef,
     DateTimeOffset ComparedAtUtc,

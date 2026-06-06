@@ -35,7 +35,7 @@
         "completedWorkspaceRecord"
       ],
       "forbidden": [
-        "page-private legacy shell",
+        "page-private retired shell",
         "product brand or actor role occupying the ordinary mobile topbar",
         "duplicated generic page title inside ordinary mobile content",
         "naked business summary title or status text outside BusinessSummaryHeader",
@@ -168,7 +168,7 @@
         "scripts/surface/run-dormitory-ten-scenario-real-browser-audit.mjs",
         "scripts/surface/check-dormitory-ten-scenario-real-browser-audit.mjs"
       ],
-      "localEvidenceRef": "artifacts/oma/evidence/frontend-experience-system-real-browser-proof.json",
+      "localEvidenceRef": "artifacts/oam/evidence/frontend-experience-system-real-browser-proof.json",
       "requiredEvidence": [
         "real browser mode",
         "full page screenshot",
@@ -182,7 +182,7 @@
   ],
   "globalForbidden": [
     "page-specific architecture",
-    "old compatibility fallback",
+    "old retired fallback",
     "intent-card operation wrapper on new, readonly, or correction step pages",
     "retired Workspace/Card write UI flow",
     "component copy-paste instead of reuse",
@@ -329,7 +329,7 @@
     ]
   },
   "responsibilityBoundaries": {
-    "rule": "Shared frontend and backend responsibilities must be owned by named kernels and runtime collaborators. Operation controllers consume operationCaseContext and operationValidation; Canonical Operations Confirm delegates next-step branch selection to OperationBranchResolver. Page-private case context, field validation, branch dispatch, or compatibility write fallback is forbidden.",
+    "rule": "Shared frontend and backend responsibilities must be owned by named kernels and runtime collaborators. Operation controllers consume operationCaseContext and operationValidation; Canonical Operations Confirm delegates next-step branch selection to OperationBranchResolver. Page-private case context, field validation, branch dispatch, or retired write fallback is forbidden.",
     "requiredFiles": [
       "apps/mobile/src/operationCaseContext.js",
       "apps/mobile/src/operationValidation.js",

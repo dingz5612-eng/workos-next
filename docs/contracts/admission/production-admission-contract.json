@@ -1,20 +1,20 @@
 {
-  "version": "oma.production-admission-contract.v1",
+  "version": "oam.production-admission-contract.v1",
   "status": "blocked",
   "productionAllowed": false,
   "productionConfirmAllowed": false,
   "blockedBy": [
-    "docs/oma/current-admission-state.json",
+    "docs/oam/current-admission-state.json",
     "docs/business/business-line-registry.json",
     "docs/contracts/admission/admission-matrix.json"
   ],
   "invariants": [
     "Business Production blocked must be preserved.",
     "production_confirm remains closed.",
-    "No surface, search result, compatibility route, or governance page may open production."
+    "No surface, search result, retired route, or governance page may open production."
   ],
   "evidence": [
     "scripts/check-admission-kernel.mjs"
   ],
-  "generatedBy": "oma-current"
+  "generatedBy": "oam-current"
 }

@@ -37,14 +37,14 @@ public sealed class DormitoryRuntimeAdmissionGuardTests
     [TestMethod]
     public void d1_contract_keeps_repair_parts_hr_l0_and_blocks_business_production_go()
     {
-        using var contract = DormitoryRuntimeReplayHarness.ReadJson("docs/contracts/oma.dormitory-runtime-replay.json");
+        using var contract = DormitoryRuntimeReplayHarness.ReadJson("docs/contracts/oam.dormitory-runtime-replay.json");
         var boundary = contract.RootElement.GetProperty("runtimeBoundary");
 
-        Assert.AreEqual("OMA Current Controlled Domain", boundary.GetProperty("dormitoryStatus").GetString());
+        Assert.AreEqual("OAM Current Controlled Domain", boundary.GetProperty("dormitoryStatus").GetString());
         Assert.IsFalse(boundary.GetProperty("dormitoryProductionAllowed").GetBoolean());
-        Assert.AreEqual("OMA Contract Preview", boundary.GetProperty("repairStatus").GetString());
-        Assert.AreEqual("OMA Contract Preview", boundary.GetProperty("partsStatus").GetString());
-        Assert.AreEqual("OMA Contract Preview", boundary.GetProperty("hrStatus").GetString());
+        Assert.AreEqual("OAM Contract Preview", boundary.GetProperty("repairStatus").GetString());
+        Assert.AreEqual("OAM Contract Preview", boundary.GetProperty("partsStatus").GetString());
+        Assert.AreEqual("OAM Contract Preview", boundary.GetProperty("hrStatus").GetString());
         Assert.IsFalse(boundary.GetProperty("businessProductionGo").GetBoolean());
     }
 }

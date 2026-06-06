@@ -873,7 +873,7 @@ internal sealed class RuntimeCorrectionCenterStorage : ICorrectionCenterStore
             request.CorrectionType,
             before = beforeSnapshot,
             after = afterSnapshot,
-            note = "Closed period snapshot is not edited; MR-10 handles late adjustment governance."
+            note = "Closed period snapshot is not edited; the release request handles late adjustment governance."
         }, PostgresProjectionStore.JsonOptions));
         insert.Parameters.AddWithValue("createdEventId", appliedEventId);
         insert.Parameters.AddWithValue("occurredAtUtc", now);

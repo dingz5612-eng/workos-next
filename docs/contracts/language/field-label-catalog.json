@@ -1,6 +1,6 @@
 {
-  "version": "oma.field-label-catalog.v1",
-  "generatedBy": "oma-current",
+  "version": "oam.field-label-catalog.v1",
+  "generatedBy": "oam-current",
   "fields": [
     {
       "fieldId": "buildingName",

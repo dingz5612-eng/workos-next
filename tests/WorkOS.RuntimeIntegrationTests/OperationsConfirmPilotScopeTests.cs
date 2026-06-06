@@ -19,7 +19,7 @@ public sealed class OperationsConfirmPilotScopeTests
         Assert.IsFalse(
             service.Contains("projectionRuntime.Confirm", StringComparison.Ordinal) ||
             service.Contains("ProjectDormitoryResourceLifecycle", StringComparison.Ordinal),
-            "Canonical confirm must not synchronously route through ProjectionRuntime compatibility facade.");
+            "Canonical confirm must not synchronously route through ProjectionRuntime retired facade.");
         Assert.IsTrue(
             service.IndexOf("var workItem = catalog.GetWorkItem(workItemId);", StringComparison.Ordinal)
             < service.IndexOf("unitOfWork.Commit(command)", StringComparison.Ordinal),

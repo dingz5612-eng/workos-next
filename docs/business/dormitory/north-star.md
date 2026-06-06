@@ -17,7 +17,7 @@
 - `Projection` / `Lens` 只读事实，不拥有事实。
 - `WorkItemBundle` 只属于 ExperienceEnvelope，不是事实源。
 - 押金是 liability，不是 revenue。
-- 宿舍在当前 OMA 范围内不得 production-ready。
+- 宿舍在当前 OAM 范围内不得 production-ready。
 
 ## Metric Tree
 
@@ -29,4 +29,4 @@
 
 ## Go/No-Go Summary
 
-GO requires complete value streams, WorkItem catalog, evidence policy, finance control rules, risk rules, certification scenarios, and reusable Business Domain Kit templates. NO-GO if any high-risk action can confirm without evidence, any money path treats deposit as revenue, or any Dormitory page-specific write API appears.
+GO requires complete value streams, WorkItem catalog, evidence policy, finance control rules, risk rules, and certification scenarios. NO-GO if any high-risk action can confirm without evidence, any money path treats deposit as revenue, or any Dormitory page-specific write API appears.

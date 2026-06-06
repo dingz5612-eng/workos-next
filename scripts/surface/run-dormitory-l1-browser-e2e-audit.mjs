@@ -11,14 +11,14 @@ const root = process.cwd();
 const baseUrl = process.env.WORKOS_MOBILE_URL || "http://127.0.0.1:5175";
 const apiUrl = process.env.WORKOS_API_URL || "http://127.0.0.1:5191";
 const runId = process.env.WORKOS_DORM_L1_AUDIT_RUN_ID || timestampId();
-const artifactRoot = path.join(root, "artifacts", "oma", "evidence", "dormitory-l1-browser-e2e");
+const artifactRoot = path.join(root, "artifacts", "oam", "evidence", "dormitory-l1-browser-e2e");
 const runDir = path.join(artifactRoot, runId);
 const screenshotDir = path.join(runDir, "screenshots");
 const reportPath = path.join(runDir, "dormitory-l1-browser-e2e-report.json");
 const mdPath = path.join(runDir, "dormitory-l1-browser-e2e-report.md");
 const screenshotIndexPath = path.join(runDir, "screenshot-index.json");
 const latestPath = path.join(artifactRoot, "latest-report.json");
-const graphPath = path.join(root, "artifacts", "oma", "evidence", "evidence-graph.json");
+const graphPath = path.join(root, "artifacts", "oam", "evidence", "evidence-graph.json");
 
 fs.mkdirSync(screenshotDir, { recursive: true });
 
@@ -535,7 +535,7 @@ function addViolation(scenario, id, message) {
 
 function analyzeNetwork(events) {
   const writes = events.filter((event) => event.method !== "GET");
-  const legacyWorkspaceCardWrites = writes.filter((event) => /\/api\/workspaces\/[^/]+\/cards\/[^/]+\/(prepare|confirm)$/i.test(event.path));
+  const retiredWorkspaceCardWrites = writes.filter((event) => /\/api\/workspaces\/[^/]+\/cards\/[^/]+\/(prepare|confirm)$/i.test(event.path));
   const operationsRuntimeWrites = writes.filter((event) => /\/api\/operations\/work-items\/[^/]+\/(prepare|confirm)$/i.test(event.path));
   const directBusinessFactWrites = writes.filter((event) =>
     /\/api\/(audit-events|outbox|projections\/process-outbox)$/i.test(event.path));
@@ -544,9 +544,9 @@ function analyzeNetwork(events) {
     writeCount: writes.length,
     writes,
     operationsRuntimeWrites,
-    legacyWorkspaceCardWrites,
+    retiredWorkspaceCardWrites,
     directBusinessFactWrites,
-    noLegacyWorkspaceCardWrites: legacyWorkspaceCardWrites.length === 0,
+    noRetiredWorkspaceCardWrites: retiredWorkspaceCardWrites.length === 0,
     noDirectBusinessFactWrites: directBusinessFactWrites.length === 0
   };
 }
@@ -565,7 +565,7 @@ function architectureAssertions(currentReport) {
     assertion("runtime.blocked_required", steps.some((step) => step.runtimeDecision === "blocked:required_field_missing"), "Required field blocker is enforced before runtime confirm."),
     assertion("runtime.terminal", steps.some((step) => String(step.runtimeDecision).startsWith("work_item_terminal:")), "Terminal runtime state is captured."),
     assertion("runtime.only_write_entry", currentReport.networkPolicy.operationsRuntimeWrites.length > 0, "Operations Runtime prepare/confirm write path is used."),
-    assertion("compat.no_legacy_card_write", currentReport.networkPolicy.noLegacyWorkspaceCardWrites, "UI does not call legacy workspace/card prepare or confirm writes."),
+    assertion("compat.no_retired_card_write", currentReport.networkPolicy.noRetiredWorkspaceCardWrites, "UI does not call retired workspace/card prepare or confirm writes."),
     assertion("ui.no_submit_terminal", steps.filter((step) => step.admissionDecision === "visible_readonly_completed").every((step) => step.domState.submitCount === 0), "Terminal surfaces expose no submit CTA."),
     assertion("evidence.screenshots_hashed", currentReport.screenshots.length > 0 && currentReport.screenshots.every((item) => item.sha256), "Screenshots are hashed for Evidence Graph binding."),
     assertion("ci.bound", Boolean(currentReport.ciRun?.id), "CI run id is bound.")
@@ -710,7 +710,7 @@ function outputRefs() {
     report: rel(reportPath),
     markdown: rel(mdPath),
     screenshotIndex: rel(screenshotIndexPath),
-    evidenceGraph: "artifacts/oma/evidence/evidence-graph.json"
+    evidenceGraph: "artifacts/oam/evidence/evidence-graph.json"
   };
 }
 

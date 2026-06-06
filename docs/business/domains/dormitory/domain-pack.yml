@@ -8,6 +8,7 @@
     "Room",
     "Bed",
     "Stay",
+    "AccommodationOrder",
     "BedOccupancyInterval",
     "StayChargeBasis",
     "DepositRequest",
@@ -22,11 +23,19 @@
   ],
   "requestedFacts": [
     "Subject",
+    "SubjectRelationship",
+    "SharedReceipt",
+    "Profile",
     "MoneyBasis",
+    "AmountBasis",
     "PaymentFact",
     "DepositFact",
+    "FinancialFact",
+    "LedgerEntry",
     "LedgerTransaction",
     "EvidenceObject",
+    "ExceptionCase",
+    "DashboardSummary",
     "DepositReceipt",
     "PaymentReceipt",
     "RefundDeposit",
@@ -84,7 +93,9 @@
     "dormitory.confirm_uses_operations_uow",
     "dormitory.money_basis_routes_to_finance_truth",
     "dormitory.evidence_required_before_confirm",
-    "dormitory.l1_pilot_not_production"
+    "dormitory.l1_pilot_not_production",
+    "dormitory.downstream_steps_carry_forward_fixed_objects",
+    "dormitory.ocr_suggestions_must_be_user_adopted_before_write"
   ],
   "certification": {
     "requiredScenarios": [

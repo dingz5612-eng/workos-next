@@ -7,8 +7,8 @@ export default defineConfig({
   fullyParallel: false,
   reporter: [
     ["list"],
-    ["html", { outputFolder: "../../artifacts/oma/test-results/mobile/playwright-report", open: "never" }],
-    ["json", { outputFile: "../../artifacts/oma/test-results/mobile/playwright-report.json" }]
+    ["html", { outputFolder: "../../artifacts/oam/test-results/mobile/playwright-report", open: "never" }],
+    ["json", { outputFile: "../../artifacts/oam/test-results/mobile/playwright-report.json" }]
   ],
   use: {
     baseURL: "http://127.0.0.1:5175",

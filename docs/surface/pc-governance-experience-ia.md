@@ -1,4 +1,4 @@
-# OMA Surface PC Governance Experience IA
+# OAM Surface PC Governance Experience IA
 
 中文目标：把 PC 端从移动壳里的调试页面，整理为治理控制平面。
 

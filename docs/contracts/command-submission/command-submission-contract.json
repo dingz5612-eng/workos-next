@@ -1,5 +1,5 @@
 {
-  "version": "oma.command-submission-contract.v1",
+  "version": "oam.command-submission-contract.v1",
   "status": "authoritative-current-contract",
   "primaryRoute": "POST /api/operations/work-items/{workItemId}/confirm",
   "requiredFields": [

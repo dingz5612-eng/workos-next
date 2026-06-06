@@ -1,5 +1,5 @@
 {
-  "version": "oma.finance.money-kernel-rules.v1",
+  "version": "oam.finance.money-kernel-rules.v1",
   "packId": "MoneyKernelPack",
   "rules": [
     {"id":"money-kernel-001","statement":"LedgerTransaction must balance before commit","severity":"P0"},

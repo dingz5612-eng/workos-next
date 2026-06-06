@@ -136,9 +136,9 @@ async function validateDeclaredRuntimePaths(projection) {
     workItemId: "W-STAY-RESOURCE:roomSetup",
     submissionId: "cmd-openapi-path",
     exportType: "period-risk",
-    releaseId: "oma.current-first-batch",
-    gateResultId: "gate-oma-current-runner",
-    id: "scr-oma-current-shadow-domain-events-vs-audit-events"
+    releaseId: "oam.current-first-batch",
+    gateResultId: "gate-oam-current-runner",
+    id: "scr-oam-current-shadow-domain-events-vs-audit-events"
   };
 
   for (const [path, pathItem] of Object.entries(openApi.paths)) {
@@ -160,7 +160,7 @@ async function validateDeclaredRuntimePaths(projection) {
 async function requestDeclaredPath(method, path) {
   if (method === "GET") {
     if (path === "/api/control-plane/invariant-checks") {
-      return fetch(`${baseUrl}${path}?releaseId=oma.current-first-batch`, { headers: authHeaders() });
+      return fetch(`${baseUrl}${path}?releaseId=oam.current-first-batch`, { headers: authHeaders() });
     }
     if (path === "/api/reconciliation/match-candidates") {
       return fetch(`${baseUrl}${path}?tenantId=tenant-1`, { headers: authHeaders() });
@@ -638,7 +638,7 @@ async function validateConfirmLedgerProjectionLensChain() {
     assert(result.projectionStatus === "pending", `S4 UoW Operations confirm projectionStatus must be pending, got ${result.projectionStatus}`);
     const trace = await getJson(result.traceUrl);
     assert(trace.submissionRef === result.commandSubmissionId, "S4 trace must bind to the commandSubmissionId");
-    assert(trace.workItemRef === result.workItemId, "S4 trace must bind to the legacy-resolved workItemId");
+    assert(trace.workItemRef === result.workItemId, "S4 trace must bind to the retired-resolved workItemId");
     assert((trace.domainEventRefs || []).join("|") === eventIds.join("|"), "S4 trace domainEventRefs must match resultEventIds");
 
     const duplicate = await fetch(`${baseUrl}${confirmPath}`, {

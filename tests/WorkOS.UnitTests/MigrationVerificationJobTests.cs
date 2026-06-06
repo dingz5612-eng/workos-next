@@ -18,15 +18,15 @@ public sealed class MigrationVerificationJobTests
     }
 
     [TestMethod]
-    public void legacy_mapping_report_generated()
+    public void retired_mapping_report_generated()
     {
         var output = Run();
-        var mapping = output.Report.LegacyMappingReport.Single(row => row.LegacyTable == "hostel_payments");
+        var mapping = output.Report.RetiredMappingReport.Single(row => row.RetiredTable == "hostel_payments");
 
-        Assert.AreEqual("legacy_migration", mapping.Source);
+        Assert.AreEqual("retired_data_migration", mapping.Source);
         Assert.AreEqual("hostel_payments.primary_key", mapping.OriginalRefColumn);
         Assert.IsTrue(mapping.RequiresReconciliationNote);
-        Assert.AreEqual("passed", Check(output, "legacy.mapping_report_generated").Status);
+        Assert.AreEqual("passed", Check(output, "retired.mapping_report_generated").Status);
     }
 
     [TestMethod]
@@ -34,21 +34,21 @@ public sealed class MigrationVerificationJobTests
     {
         var output = Run();
 
-        Assert.AreEqual("passed", Check(output, "legacy.old_api_retired").Status);
+        Assert.AreEqual("passed", Check(output, "retired.old_api_retired").Status);
         Assert.IsTrue(output.Report.ReleaseGateRefs.Any(item => item.Contains("old-api-retired", StringComparison.Ordinal)));
     }
 
     [TestMethod]
-    public void backfill_does_not_drop_legacy_data()
+    public void remediation_does_not_drop_retired_data()
     {
         var output = Run();
-        var plan = output.BackfillReport.BackfillPlan;
+        var plan = output.RemediationReport.RemediationPlan;
 
-        Assert.IsTrue(output.BackfillReport.DryRun);
+        Assert.IsTrue(output.RemediationReport.DryRun);
         Assert.IsTrue(plan.All(row => !row.WouldWriteNewBusinessFacts));
-        Assert.IsTrue(plan.All(row => row.Source == "legacy_migration"));
+        Assert.IsTrue(plan.All(row => row.Source == "retired_data_migration"));
         Assert.IsTrue(plan.Where(row => row.RequiresReconciliationNote).All(row => row.ReconciliationNote.Contains("reconciliation note", StringComparison.OrdinalIgnoreCase)));
-        Assert.AreEqual("passed", Check(output, "legacy.backfill_does_not_drop_legacy_data").Status);
+        Assert.AreEqual("passed", Check(output, "retired.remediation_does_not_drop_retired_data").Status);
     }
 
     [TestMethod]
@@ -66,7 +66,7 @@ public sealed class MigrationVerificationJobTests
     }
 
     [TestMethod]
-    public void legacy_registry_loader_reads_camel_case_contract()
+    public void retired_registry_loader_reads_camel_case_contract()
     {
         var directory = Path.Combine(Path.GetTempPath(), "workos-migration-verification", Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(directory);
@@ -78,20 +78,20 @@ public sealed class MigrationVerificationJobTests
                 {
                   "version": "0.16.2",
                   "sourceSlice": "Accommodation.CheckIn",
-                  "phase": "legacy-intake-ledger-read-only",
+                  "phase": "retired-intake-ledger-read-only",
                   "authoritativeOwners": {
                     "ordinaryPayment": "Accommodation.PaymentLedger"
                   },
-                  "legacyTables": [
+                  "retiredTables": [
                     {
                       "table": "hostel_payments",
                       "replacement": "PaymentLedger payment receipt + allocation facts",
-                      "mode": "frozen-read-only",
-                      "backfillPolicy": "convert only non-deposit ordinary payment rows"
+                      "mode": "locked-read-only",
+                      "consistencyPolicy": "convert only non-deposit ordinary payment rows"
                     }
                   ],
                   "guards": [
-                    "Backfill must be dry-run first"
+                    "Remediation must be dry-run first"
                   ]
                 }
                 """);
@@ -99,9 +99,9 @@ public sealed class MigrationVerificationJobTests
             var registry = MigrationVerificationFileLoader.LoadRegistry(registryPath);
 
             Assert.AreEqual("Accommodation.CheckIn", registry.SourceSlice);
-            Assert.AreEqual("legacy-intake-ledger-read-only", registry.Phase);
+            Assert.AreEqual("retired-intake-ledger-read-only", registry.Phase);
             Assert.AreEqual("Accommodation.PaymentLedger", registry.AuthoritativeOwners["ordinaryPayment"]);
-            Assert.AreEqual("hostel_payments", registry.LegacyTables[0].Table);
+            Assert.AreEqual("hostel_payments", registry.RetiredTables[0].Table);
         }
         finally
         {
@@ -115,7 +115,7 @@ public sealed class MigrationVerificationJobTests
         return service.Run(new MigrationVerificationRunContext(
             "migration-verification-test",
             "release-test",
-            "MR-test",
+            "release-request-test",
             "tenant-test",
             "ci-test",
             true,
@@ -131,35 +131,35 @@ public sealed class MigrationVerificationJobTests
             {
                 new MigrationFileSnapshot("015_control_plane_shadow_runtime", "015.sql", "-- Rollback note: ok"),
                 new MigrationFileSnapshot("016_checkout_service_process_manager", "016.sql", "-- compensating migration"),
-                new MigrationFileSnapshot("025_migration_verification_legacy_freeze", "025.sql", "-- Rollback note: ok")
+                new MigrationFileSnapshot("025_migration_verification_retired_sourceLock", "025.sql", "-- Rollback note: ok")
             }));
     }
 
     private static InvariantCheckEvidence Check(MigrationVerificationRunOutput output, string key) =>
         output.InvariantChecks.Single(check => check.InvariantKey == key);
 
-    private static LegacyMigrationRegistry Registry() =>
+    private static RetiredMigrationRegistry Registry() =>
         new(
             "0.16.2",
             "Accommodation.CheckIn",
-            "legacy-intake-ledger-read-only",
+            "retired-intake-ledger-read-only",
             new Dictionary<string, string> { ["ordinaryPayment"] = "Accommodation.PaymentLedger" },
             new[]
             {
-                new LegacyRegistryTable(
+                new RetiredRegistryTable(
                     "hostel_payments",
                     "PaymentLedger payment receipt + allocation facts",
-                    "frozen-read-only",
+                    "locked-read-only",
                     "convert only non-deposit ordinary payment rows; deposit purpose rows migrate to DepositLedger")
             },
-            new[] { "Backfill must be dry-run first and must be idempotent" });
+            new[] { "Remediation must be dry-run first and must be idempotent" });
 
     private sealed class FakeMigrationVerificationDataSource : IMigrationVerificationDataSource
     {
-        public IReadOnlyList<LegacyTableScanRow> ScanLegacyTables(IReadOnlyList<LegacyTableMapping> mappings) =>
+        public IReadOnlyList<RetiredTableScanRow> ScanRetiredTables(IReadOnlyList<RetiredTableMapping> mappings) =>
             mappings
-                .Select(mapping => new LegacyTableScanRow(
-                    mapping.LegacyTable,
+                .Select(mapping => new RetiredTableScanRow(
+                    mapping.RetiredTable,
                     true,
                     2,
                     mapping.Source,
@@ -167,10 +167,10 @@ public sealed class MigrationVerificationJobTests
                     mapping.RequiresReconciliationNote))
                 .ToArray();
 
-        public IReadOnlyList<OldViewNewLensComparison> CompareLegacyToNewLens(IReadOnlyList<LegacyTableMapping> mappings) =>
+        public IReadOnlyList<OldViewNewLensComparison> CompareRetiredToNewLens(IReadOnlyList<RetiredTableMapping> mappings) =>
             mappings
                 .Select(mapping => new OldViewNewLensComparison(
-                    mapping.LegacyTable,
+                    mapping.RetiredTable,
                     mapping.TargetTables,
                     2,
                     2,

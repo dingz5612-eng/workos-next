@@ -23,7 +23,7 @@ import {
   WorkItemCard
 } from "../views/experienceComponents.js";
 
-describe("OMA Experience Contract", () => {
+describe("OAM Experience Contract", () => {
   it("keeps ordinary operator mobile bottom nav to Today Work Search Me", () => {
     vi.stubGlobal("window", { location: { protocol: "http:", hostname: "localhost", port: "5173", origin: "http://localhost:5173" } });
     vi.stubGlobal("localStorage", { getItem: () => null });
@@ -83,10 +83,10 @@ describe("OMA Experience Contract", () => {
     expect(controller).not.toContain("submitCardOperation({");
   });
 
-  it("keeps workspace/card compatibility fallback out of the mobile runtime", () => {
+  it("keeps workspace/card retired fallback out of the mobile runtime", () => {
     const runtime = source("../operationRuntime.js");
 
-    expect(runtime).not.toContain("submitCardOperationCompatibilityFallback");
+    expect(runtime).not.toContain("submitCardOperationRetiredFallback");
     expect(runtime).not.toContain("prepareCard");
     expect(runtime).not.toContain("confirmCard");
   });

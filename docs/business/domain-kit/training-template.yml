@@ -1,1 +1,0 @@
-{"templateId":"training-template","requiredFields":["scenarioId","role","learningObjective","practiceWorkItems","blockedActions","evidenceExamples","certificationRefs"],"mustMapToCertification":true}

@@ -9,7 +9,7 @@ import { searchView } from "../views/searchView.js";
 import { operationFieldId, workspaceView } from "../views/workspaceView.js";
 import { createSurfaceCtx, visibleText } from "./surfaceContractTestHelpers.js";
 
-describe("OMA Surface business and technical layering contract", () => {
+describe("OAM Surface business and technical layering contract", () => {
   it("hides operation technical proof by default while keeping non-visible audit selectors", () => {
     const ctx = createSurfaceCtx({ view: "operationPanel" });
     const html = operationPanelView(ctx);

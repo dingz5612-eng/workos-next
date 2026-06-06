@@ -1,6 +1,6 @@
 {
   "domainId": "dormitory",
-  "version": "oma.dormitory.v1",
+  "version": "oam.dormitory.v1",
   "valueStreams": [
     {
       "id": "resource_availability",

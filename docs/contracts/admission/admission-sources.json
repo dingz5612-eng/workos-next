@@ -1,6 +1,6 @@
 {
-  "version": "oma.admission-sources.v1",
-  "generatedBy": "oma-current",
+  "version": "oam.admission-sources.v1",
+  "generatedBy": "oam-current",
   "sources": [
     {
       "id": "businessLineRegistry",
@@ -9,8 +9,8 @@
     },
     {
       "id": "currentAdmissionState",
-      "ref": "docs/oma/current-admission-state.json",
-      "role": "current OMA admission authority and production block"
+      "ref": "docs/oam/current-admission-state.json",
+      "role": "current OAM admission authority and production block"
     },
     {
       "id": "sliceManifest",
@@ -24,12 +24,12 @@
     },
     {
       "id": "apiBoundary",
-      "ref": "docs/contracts/oma.current.json#/apiBoundary",
+      "ref": "docs/contracts/oam.current.json#/apiBoundary",
       "role": "write route classification and forbidden write patterns"
     },
     {
       "id": "factOwnership",
-      "ref": "docs/contracts/oma.current.json#/productCapabilities",
+      "ref": "docs/contracts/oam.current.json#/productCapabilities",
       "role": "fact owners, allowed writers, forbidden writers, and projection owners"
     },
     {

@@ -78,7 +78,7 @@ public sealed class LedgerInspectionJobTests
         return service.Run(new LedgerInspectionRunContext(
             "ledger-inspection-test",
             "release-test",
-            "MR-test",
+            "release-request-test",
             "tenant-test",
             "LedgerInspection",
             "ci-test",

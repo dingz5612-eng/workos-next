@@ -70,7 +70,7 @@ public static class RuntimePasswordHasher
             return VerifyPbkdf2Sha256(value, expectedHash);
         }
 
-        if (IsLegacySha256(expectedHash))
+        if (IsRetiredSha256(expectedHash))
         {
             return CryptographicOperations.FixedTimeEquals(
                 Encoding.UTF8.GetBytes(Sha256(value)),
@@ -83,7 +83,7 @@ public static class RuntimePasswordHasher
     public static bool IsVersionedSlowHash(string hash) =>
         IsPbkdf2Sha256(hash);
 
-    public static bool IsLegacySha256(string hash) =>
+    public static bool IsRetiredSha256(string hash) =>
         hash.Length == 64 && hash.All(Uri.IsHexDigit);
 
     private static bool IsPbkdf2Sha256(string hash) =>

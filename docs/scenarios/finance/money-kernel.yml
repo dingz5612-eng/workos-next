@@ -1,5 +1,5 @@
 {
-  "version": "oma.scenario.finance.scenarios.v1",
+  "version": "oam.scenario.finance.scenarios.v1",
   "domain": "finance",
   "scenarios": [
     {

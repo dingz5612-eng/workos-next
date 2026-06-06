@@ -23,7 +23,7 @@ public sealed class RealDbRolePermissionTests
                 """
                 insert into shadow_runtime.command_submissions(
                     command_submission_id, tenant_id, slice_id, idempotency_key, actor_ref, command_payload)
-                values('shadow-official-denied', 'tenant-oma-db', 'Accommodation.Stay', 'idem-denied',
+                values('shadow-official-denied', 'tenant-oam-db', 'Accommodation.Stay', 'idem-denied',
                     '{}'::jsonb, '{}'::jsonb)
                 """));
     }
@@ -41,9 +41,9 @@ public sealed class RealDbRolePermissionTests
                 insert into operations_domain_events(
                     event_id, submission_id, tenant_id, case_id, work_item_id, event_type,
                     causation_id, correlation_id, occurred_at_utc, payload)
-                values('evt-shadow-denied', 'sub-shadow-denied', 'tenant-oma-db', 'case-oma-db',
-                    'wi-oma-db', 'ShadowShouldNotWriteOfficial', 'sub-shadow-denied',
-                    'case-oma-db', now(), '{}'::jsonb)
+                values('evt-shadow-denied', 'sub-shadow-denied', 'tenant-oam-db', 'case-oam-db',
+                    'wi-oam-db', 'ShadowShouldNotWriteOfficial', 'sub-shadow-denied',
+                    'case-oam-db', now(), '{}'::jsonb)
                 """));
 
         DatabaseSecurityTestSupport.AssertSqlState(
@@ -54,9 +54,9 @@ public sealed class RealDbRolePermissionTests
                 insert into operations_domain_events(
                     event_id, submission_id, tenant_id, case_id, work_item_id, event_type,
                     causation_id, correlation_id, occurred_at_utc, payload)
-                values('evt-gate-denied', 'sub-gate-denied', 'tenant-oma-db', 'case-oma-db',
-                    'wi-oma-db', 'GateShouldNotWriteOfficial', 'sub-gate-denied',
-                    'case-oma-db', now(), '{}'::jsonb)
+                values('evt-gate-denied', 'sub-gate-denied', 'tenant-oam-db', 'case-oam-db',
+                    'wi-oam-db', 'GateShouldNotWriteOfficial', 'sub-gate-denied',
+                    'case-oam-db', now(), '{}'::jsonb)
                 """));
     }
 
@@ -65,8 +65,8 @@ public sealed class RealDbRolePermissionTests
     {
         DatabaseSecurityTestSupport.ApplyMigrations();
         var suffix = Guid.NewGuid().ToString("N");
-        var releaseId = $"release-oma-db-{suffix}";
-        var gateId = $"gate-oma-db-{suffix}";
+        var releaseId = $"release-oam-db-{suffix}";
+        var gateId = $"gate-oam-db-{suffix}";
         DatabaseSecurityTestSupport.SeedRelease(releaseId);
         DatabaseSecurityTestSupport.ExecuteOwner($"""
             insert into control_plane.gate_results(
@@ -76,8 +76,8 @@ public sealed class RealDbRolePermissionTests
                 no_go_items, go_items, known_risks, generated_by, generated_at_utc,
                 input_hash, result_hash)
             values(
-                '{gateId}', '{releaseId}', 'OMA-DB', 'tenant-oma-db', 'Accommodation.Stay',
-                'oma-db-seed', 'automated', 'blocked', 'P0', 'local',
+                '{gateId}', '{releaseId}', 'OAM-DB', 'tenant-oam-db', 'Accommodation.Stay',
+                'oam-db-seed', 'automated', 'blocked', 'P0', 'local',
                 '[]'::jsonb, '[]'::jsonb, '[]'::jsonb, '[]'::jsonb,
                 '["seed"]'::jsonb, '[]'::jsonb, '[]'::jsonb, 'gate-runner',
                 now(), 'input-seed', 'result-seed')
@@ -93,8 +93,8 @@ public sealed class RealDbRolePermissionTests
                 no_go_items, go_items, known_risks, generated_by, generated_at_utc,
                 input_hash, result_hash)
             values(
-                'gate-oma-db-allowed-{suffix}', '{releaseId}', 'OMA-DB', 'tenant-oma-db',
-                'Accommodation.Stay', 'oma-db-allowed', 'automated', 'blocked', 'P0',
+                'gate-oam-db-allowed-{suffix}', '{releaseId}', 'OAM-DB', 'tenant-oam-db',
+                'Accommodation.Stay', 'oam-db-allowed', 'automated', 'blocked', 'P0',
                 'local', '[]'::jsonb, '[]'::jsonb, '[]'::jsonb, '[]'::jsonb,
                 '["allowed blocked gate"]'::jsonb, '[]'::jsonb, '[]'::jsonb,
                 'gate-runner', now(), 'input-{suffix}', 'result-{suffix}')
@@ -114,8 +114,8 @@ public sealed class RealDbRolePermissionTests
                 insert into control_plane.gate_results(
                     gate_result_id, release_id, mr_id, gate_name, gate_type, status,
                     severity, ci_run_id, generated_by, input_hash, result_hash)
-                values('gate-invariant-denied-{suffix}', '{releaseId}', 'OMA-DB',
-                    'oma-db-denied', 'automated', 'blocked', 'P0', 'local',
+                values('gate-invariant-denied-{suffix}', '{releaseId}', 'OAM-DB',
+                    'oam-db-denied', 'automated', 'blocked', 'P0', 'local',
                     'gate-runner', 'input-denied', 'result-denied')
                 """));
     }
@@ -125,7 +125,7 @@ public sealed class RealDbRolePermissionTests
     {
         DatabaseSecurityTestSupport.ApplyMigrations();
         var suffix = Guid.NewGuid().ToString("N");
-        var releaseId = $"release-oma-db-shadow-{suffix}";
+        var releaseId = $"release-oam-db-shadow-{suffix}";
         DatabaseSecurityTestSupport.SeedRelease(releaseId);
 
         DatabaseSecurityTestSupport.ExecuteAsRole(
@@ -137,7 +137,7 @@ public sealed class RealDbRolePermissionTests
                 missing_in_shadow_count, extra_in_shadow_count, mismatch_examples,
                 summary, generated_by, ci_run_id)
             values(
-                'scr-oma-db-allowed-{{suffix}}', '{{releaseId}}', 'tenant-oma-db',
+                'scr-oam-db-allowed-{{suffix}}', '{{releaseId}}', 'tenant-oam-db',
                 'Accommodation.Stay', '{}'::jsonb, 'shadow_runtime.domain_events',
                 'green', 1, 1, 0, 0, 0, '[]'::jsonb, '{}'::jsonb,
                 'shadow-compare-runner', 'local')
@@ -151,8 +151,8 @@ public sealed class RealDbRolePermissionTests
                 insert into control_plane.gate_results(
                     gate_result_id, release_id, mr_id, gate_name, gate_type, status,
                     severity, ci_run_id, generated_by, input_hash, result_hash)
-                values('gate-shadow-compare-denied-{suffix}', '{releaseId}', 'OMA-DB',
-                    'oma-db-denied', 'automated', 'blocked', 'P0', 'local',
+                values('gate-shadow-compare-denied-{suffix}', '{releaseId}', 'OAM-DB',
+                    'oam-db-denied', 'automated', 'blocked', 'P0', 'local',
                     'gate-runner', 'input-denied', 'result-denied')
                 """));
     }

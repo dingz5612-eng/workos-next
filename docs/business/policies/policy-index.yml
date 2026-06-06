@@ -1,6 +1,6 @@
 {
-  "version": "oma.policy-as-code.v1",
-  "architecture": "OMA",
+  "version": "oam.policy-as-code.v1",
+  "architecture": "OAM",
   "status": "LOCAL_POLICY_CONTRACT",
   "productionAllowed": false,
   "policies": [

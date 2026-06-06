@@ -12,9 +12,9 @@ import fs from "node:fs";
 
 const cli = parseArgs(process.argv.slice(2));
 const checkName = "check-finance-truth";
-const out = cli.value("out", "artifacts/oma/checks/finance-truth-report.json");
-const positiveRoot = "tests/fixtures/oma-finance-truth/positive";
-const negativeRoot = "tests/fixtures/oma-finance-truth/negative";
+const out = cli.value("out", "artifacts/oam/checks/finance-truth-report.json");
+const positiveRoot = "tests/fixtures/oam-finance-truth/positive";
+const negativeRoot = "tests/fixtures/oam-finance-truth/negative";
 
 function main() {
   if (cli.has("self-test")) {
@@ -75,7 +75,7 @@ function validateContracts() {
     violations.push(violation("finance_truth.bank_import_direct_payment", "docs/business/finance/finance-truth-pipeline.yml", "Bank import must not directly create PaymentConfirmed."));
   }
   if (pipeline.goNoGo?.productionAllowed !== false) {
-    violations.push(violation("finance_truth.production_claim", "docs/business/finance/finance-truth-pipeline.yml", "OMA finance-gate must not declare production allowed."));
+    violations.push(violation("finance_truth.production_claim", "docs/business/finance/finance-truth-pipeline.yml", "OAM finance-gate must not declare production allowed."));
   }
 
   const kernel = readDocument("docs/business/finance/money-kernel-rules.yml");

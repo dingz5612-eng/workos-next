@@ -13,11 +13,11 @@ coverage/
 
 # Test and local runtime output
 artifacts/*
-!artifacts/oma/
-!artifacts/oma/evidence/
-!artifacts/oma/evidence/**
-artifacts/oma/checks/
-artifacts/oma/test-results/
+!artifacts/oam/
+!artifacts/oam/evidence/
+!artifacts/oam/evidence/**
+artifacts/oam/checks/
+artifacts/oam/test-results/
 apps/mobile/artifacts/
 apps/mobile/test-results/
 apps/mobile/playwright-report/

@@ -491,7 +491,7 @@ function contract(caseType, workItemId, dependsOn, fields) {
       })),
     retiredFields: (fields.retired || []).map((fieldId) => ({
       fieldId,
-      reason: "retired by current step dependency contract; kept only to suppress stale legacy WorkItem fields"
+      reason: "retired by current step dependency contract; kept only to suppress stale retired WorkItem fields"
     }))
   };
 }

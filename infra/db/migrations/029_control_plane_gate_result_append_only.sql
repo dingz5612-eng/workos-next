@@ -1,6 +1,6 @@
--- OMA current Control Plane gate result append-only contract.
+-- OAM current Control Plane gate result append-only contract.
 -- Rollback guidance: drop trigger/function first, then constraints and
--- control_plane.business_signoffs only if release governance records have been archived.
+-- control_plane.business_signoffs only if release governance records have been closed.
 -- Formal GateResult rows are insert-only. A corrected run must create a new
 -- gate_result_id or an append-only revision record, never update governance records in
 -- place.

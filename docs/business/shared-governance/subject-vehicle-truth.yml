@@ -2,12 +2,12 @@
   "version": 1,
   "packId": "SharedGovernancePack",
   "truthKernel": "subject-vehicle-formal-relationship",
-  "ownsCenterTruth": ["Subject", "Vehicle", "FormalRelationship"],
-  "intakeFacts": ["SubjectIntake", "VehicleIntake"],
+  "ownsCenterTruth": ["Subject", "Vehicle", "SubjectRelationship", "SubjectVehicleRelationship", "FormalRelationship"],
+  "intakeFacts": ["SubjectIntake", "VehicleIntake", "SubjectRelationshipIntake", "SubjectVehicleRelationshipIntake"],
   "provisionalFacts": ["ProvisionalSubject", "ProvisionalVehicle"],
   "stewardshipWorkItems": ["SubjectStewardshipWorkItem", "VehicleStewardshipWorkItem"],
-  "receipts": ["SubjectReceipt", "VehicleReceipt", "MergedReceipt", "SupersededReceipt"],
-  "readModels": ["SubjectSummary", "VehicleSummary"],
+  "receipts": ["SubjectReceipt", "VehicleReceipt", "SubjectRelationshipReceipt", "SubjectVehicleRelationshipReceipt", "MergedReceipt", "SupersededReceipt", "SharedReceipt"],
+  "readModels": ["SubjectSummary", "VehicleSummary", "Profile"],
   "duplicatePolicy": {
     "policyId": "shared-governance.duplicate-review",
     "routeTo": "SubjectStewardshipWorkItem",
@@ -29,31 +29,31 @@
     "decisionOwner": "SharedGovernancePack"
   },
   "businessPackRules": {
-    "mayProduce": ["SubjectIntake", "VehicleIntake"],
-    "mustNotCreateFormalTruth": ["Subject", "Vehicle", "FormalRelationship"],
+    "mayProduce": ["SubjectIntake", "VehicleIntake", "SubjectRelationshipIntake", "SubjectVehicleRelationshipIntake"],
+    "mustNotCreateFormalTruth": ["Subject", "Vehicle", "SubjectRelationship", "SubjectVehicleRelationship", "FormalRelationship"],
     "financeCommitForbiddenRefs": ["ProvisionalSubject", "ProvisionalVehicle"],
-    "readOnly": ["SubjectReceipt", "VehicleReceipt", "SubjectSummary", "VehicleSummary"]
+    "readOnly": ["SubjectReceipt", "VehicleReceipt", "SubjectRelationshipReceipt", "SubjectVehicleRelationshipReceipt", "SharedReceipt", "SubjectSummary", "VehicleSummary", "Profile"]
   },
   "consumerPacks": [
     {
       "packId": "DormitoryDomainPack",
-      "allowedOutputs": ["SubjectIntake"],
-      "allowedReads": ["SubjectReceipt", "SubjectSummary"]
+      "allowedOutputs": ["SubjectIntake", "SubjectRelationshipIntake"],
+      "allowedReads": ["SubjectReceipt", "SubjectRelationshipReceipt", "SharedReceipt", "SubjectSummary", "Profile"]
     },
     {
       "packId": "RepairDomainPack",
-      "allowedOutputs": ["VehicleIntake"],
-      "allowedReads": ["VehicleReceipt", "VehicleSummary"]
+      "allowedOutputs": ["VehicleIntake", "SubjectVehicleRelationshipIntake"],
+      "allowedReads": ["VehicleReceipt", "SubjectVehicleRelationshipReceipt", "SharedReceipt", "VehicleSummary", "Profile"]
     },
     {
       "packId": "HRDomainPack",
-      "allowedOutputs": ["SubjectIntake"],
-      "allowedReads": ["SubjectReceipt", "SubjectSummary"]
+      "allowedOutputs": ["SubjectIntake", "SubjectRelationshipIntake"],
+      "allowedReads": ["SubjectReceipt", "SubjectRelationshipReceipt", "SharedReceipt", "SubjectSummary", "Profile"]
     },
     {
       "packId": "FinanceTruthPack",
       "allowedOutputs": [],
-      "allowedReads": ["SubjectReceipt", "VehicleReceipt", "SubjectSummary", "VehicleSummary"]
+      "allowedReads": ["SubjectReceipt", "VehicleReceipt", "SubjectRelationshipReceipt", "SubjectVehicleRelationshipReceipt", "SharedReceipt", "SubjectSummary", "VehicleSummary", "Profile"]
     }
   ],
   "conflictRouting": {

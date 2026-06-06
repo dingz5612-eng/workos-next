@@ -1,4 +1,4 @@
-# OMA Dormitory Journey Dormitory Scenario Journey Acceptance
+# OAM Dormitory Journey Dormitory Scenario Journey Acceptance
 
 中文目标：按系统场景走完宿舍 L1 内测的 10 条旅程，形成可复核的体验截图索引和验收结果。
 
@@ -27,30 +27,38 @@
 - 不声明 L2 Production。
 - 不放开 Repair / Parts / HR。
 
-## 2026-06-03 Browser-Driven Dormitory Flow Proof
+## 当前浏览器驱动宿舍流程证明
 
-本次补充验收覆盖 10 个宿舍业务办理流程，全部从移动端搜索页的主动命令发起真实 workspace，逐步输入、截图、提交，并以完成记录作为结束证据。
+当前补充验收覆盖 10 个宿舍业务办理流程，全部从移动端搜索页的主动命令发起真实 workspace，逐步输入、截图、提交，并以完成记录作为结束证据。
 
-证据根目录：`artifacts/local-demo/ten-dormitory-browser-demo/`
+当前证据由检查命令重新生成，不保留旧本地 demo 目录。
 
-汇总文件：`artifacts/local-demo/ten-dormitory-browser-demo/ten-flow-evidence-summary.json`
+生成命令：
+
+- `node scripts/surface/run-dormitory-scenario-journey-snapshots.mjs`
+- `node scripts/surface/check-dormitory-scenario-journey.mjs`
+- `npm --prefix apps/mobile run test:e2e`
+
+当前证据路径：
+
+- 截图和 HTML/SVG 索引：`artifacts/oam/evidence/dormitory-journeys/index.json`
+- 旅程检查结果：`artifacts/oam/checks/dormitory-scenario-journey-result.json`
+- 移动端真实浏览器结果：`artifacts/oam/test-results/mobile/playwright-report.json`
 
 覆盖流程：
 
-| 序号 | 目录 | 业务流程 | 完成证据 |
+| 序号 | 场景 | 业务流程 | 完成证据 |
 | --- | --- | --- | --- |
-| 1 | `01-resource` | 创建住宿资源 | `06-roomRelease-completed.png` / `.txt` |
-| 2 | `02-lead` | 线索预订 | `04-reservationConvert-completed.png` / `.txt` |
-| 3 | `03-checkin` | 入住收款 | `10-operatingDashboard-completed.png` / `.txt` |
-| 4 | `04-lifecycle` | 在住生命周期 | `05-stayExtension-completed.png` / `.txt` |
-| 5 | `05-deposit` | 押金账本 | `07-depositClose-completed.png` / `.txt` |
-| 6 | `06-payment` | 普通收款账本 | `05-debtFollowUp-completed.png` / `.txt` |
-| 7 | `07-service` | 清洁维修任务 | `05-roomReleaseAfterService-completed.png` / `.txt` |
-| 8 | `08-checkout` | 退房 | `05-checkoutClose-completed.png` / `.txt` |
-| 9 | `09-settlement` | 退住结算 | `06-postCheckoutCleaning-completed.png` / `.txt` |
-| 10 | `10-period` | 周期经营复盘 | `07-periodClose-completed.png` / `.txt` |
-
-配套浏览器脚本：`artifacts/local-demo/ten-dormitory-browser-demo/run-ten-dormitory-browser-demo.mjs`
+| 1 | `dorm-live-001` | 创建住宿资源到入住分床 | HTML/SVG snapshot + WorkItem / CommandSubmission / FactTrace |
+| 2 | `dorm-live-002` | 押金评估、收取、财务确认 | HTML/SVG snapshot + LedgerTransaction |
+| 3 | `dorm-live-003` | 普通收款、确认、分配 | HTML/SVG snapshot + ordinary payment ledger |
+| 4 | `dorm-live-004` | 清洁维修任务、验收、释放 | HTML/SVG snapshot + room readiness lens |
+| 5 | `dorm-live-005` | 退住、查房、押金处理、清洁 | HTML/SVG snapshot + refund boundary |
+| 6 | `dorm-live-006` | 银行流水导入、异常、纠错 | HTML/SVG snapshot + FinanceCase / CorrectionWorkItem |
+| 7 | `dorm-live-007` | 周期复盘、行动计划、周期关闭 | HTML/SVG snapshot + period review lens |
+| 8 | `dorm-live-008` | 权限不足、阻断、升级、审计 | HTML/SVG snapshot + RejectionTrace |
+| 9 | `dorm-live-009` | 重复提交、幂等返回 | HTML/SVG snapshot + no duplicate side effect |
+| 10 | `dorm-live-010` | 证据缺失、补证、再确认 | HTML/SVG snapshot + evidence trace |
 
 脚本约束：
 - 入口必须来自搜索主动命令，不能直接后台造数。
@@ -59,9 +67,7 @@
 - 涉及财务确认的卡按确认策略切换 `finance`，其他宿舍经办卡使用 `operator`。
 - `WORKOS_DEMO_ONLY_FLOW` 仅用于补跑单个流程，不改变验收范围。
 
-语言证据：
-- `artifacts/local-demo/language-smoke/language-smoke.json`
-- `ru-RU` 与 `ky-KG` 的搜索页和周期完成记录抽检均无中文业务文案残留。
+语言证据由当前语言内核检查重新生成：`node scripts/check-language-kernel.mjs`。`ru-RU` 与 `ky-KG` 的搜索页和周期完成记录抽检不得出现中文业务文案残留。
 
 本次修复保持边界不变：
 - Dormitory 仍为 L1 Internal Pilot Observation。

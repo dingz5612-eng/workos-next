@@ -5,10 +5,10 @@ const root = process.cwd();
 const violations = [];
 
 const authorityFiles = [
-  "docs/oma/current-architecture.md",
-  "docs/oma/current-architecture.manifest.json",
+  "docs/oam/current-architecture.md",
+  "docs/oam/current-architecture.manifest.json",
   "docs/system/current-system-map.md",
-  "docs/contracts/oma.current.json",
+  "docs/contracts/oam.current.json",
   ".github/pull_request_template.md",
   ".github/workflows/ci.yml"
 ];
@@ -17,17 +17,17 @@ for (const file of authorityFiles) {
   requireFile(file);
 }
 
-const contract = readJson("docs/contracts/oma.current.json");
-const manifest = readJson("docs/oma/current-architecture.manifest.json");
+const contract = readJson("docs/contracts/oam.current.json");
+const manifest = readJson("docs/oam/current-architecture.manifest.json");
 
-if (contract.version !== "oma.current.v1") {
-  violations.push("OMA contract must declare version oma.current.v1.");
+if (contract.version !== "oam.current.v1") {
+  violations.push("OAM contract must declare version oam.current.v1.");
 }
 if (contract.status !== "authoritative") {
-  violations.push("OMA contract must be authoritative.");
+  violations.push("OAM contract must be authoritative.");
 }
 if (contract.primaryWritePath !== "POST /api/operations/work-items/{workItemId}/confirm") {
-  violations.push("OMA primary write path must be Operations Confirm.");
+  violations.push("OAM primary write path must be Operations Confirm.");
 }
 
 for (const capability of [
@@ -45,7 +45,7 @@ for (const capability of [
   "governance.release-control"
 ]) {
   if (!contract.productCapabilities?.some((item) => item.id === capability)) {
-    violations.push(`Product Capability missing from OMA contract: ${capability}`);
+    violations.push(`Product Capability missing from OAM contract: ${capability}`);
   }
 }
 
@@ -54,7 +54,7 @@ assertDirectory("modules", ["accommodation", "finance-gate", "identity", "mainte
 assertDirectory("packages", ["surface-view-models"]);
 
 for (const moduleName of ["accommodation", "finance-gate", "identity", "maintenance"]) {
-  const moduleManifest = readJson(`modules/${moduleName}/oma-module.manifest.json`);
+  const moduleManifest = readJson(`modules/${moduleName}/oam-module.manifest.json`);
   if (moduleManifest.module !== moduleName) {
     violations.push(`${moduleName} manifest has wrong module id.`);
   }
@@ -66,7 +66,7 @@ for (const moduleName of ["accommodation", "finance-gate", "identity", "maintena
 }
 
 if (!manifest.services?.entries?.["core-api"]?.responsibilities?.includes("confirm-runtime")) {
-  violations.push("services/core-api must declare confirm-runtime responsibility in the OMA manifest.");
+  violations.push("services/core-api must declare confirm-runtime responsibility in the OAM manifest.");
 }
 if (manifest.services?.entries?.["ai-personalization"]?.emptyShellAllowed !== false) {
   violations.push("ai-personalization empty service shell must be forbidden.");
@@ -83,7 +83,7 @@ if (manifest.infra?.dockerCompose?.responsibility !== "local-postgres-runtime") 
 
 const apiBoundary = contract.apiBoundary?.writeRoutes ?? {};
 if (!Array.isArray(apiBoundary.businessConfirm) || apiBoundary.businessConfirm.length !== 1) {
-  violations.push("OMA API boundary must have exactly one businessConfirm route.");
+  violations.push("OAM API boundary must have exactly one businessConfirm route.");
 }
 if ((apiBoundary.businessConfirm ?? [])[0] !== contract.primaryWritePath) {
   violations.push("businessConfirm route must equal primaryWritePath.");
@@ -101,9 +101,9 @@ for (const [file, text] of [
     }
   }
 }
-for (const required of ["OMA", "API boundary", "module manifest", "database", "coverage"]) {
+for (const required of ["OAM", "API boundary", "module manifest", "database", "coverage"]) {
   if (!prTemplate.includes(required)) {
-    violations.push(`PR template must include current OMA checklist term: ${required}`);
+    violations.push(`PR template must include current OAM checklist term: ${required}`);
   }
 }
 
@@ -124,7 +124,7 @@ function assertDirectory(dir, allowed) {
     .sort();
   for (const name of actual) {
     if (!allowed.includes(name)) {
-      violations.push(`${dir}/${name} is not allowed by current OMA.`);
+      violations.push(`${dir}/${name} is not allowed by current OAM.`);
     }
   }
   for (const name of allowed) {
@@ -132,14 +132,14 @@ function assertDirectory(dir, allowed) {
       continue;
     }
     if (!actual.includes(name)) {
-      violations.push(`${dir}/${name} is required by current OMA.`);
+      violations.push(`${dir}/${name} is required by current OAM.`);
     }
   }
 }
 
 function requireFile(file) {
   if (!fs.existsSync(path.join(root, file))) {
-    violations.push(`Required OMA authority file missing: ${file}`);
+    violations.push(`Required OAM authority file missing: ${file}`);
   }
 }
 
@@ -166,7 +166,7 @@ function retiredTermPatterns() {
     exact(["v", "5", "_", "4"]),
     exact(["v", "5", ".", "5"]),
     exact(["v", "5", "_", "5"]),
-    word(["O", "A", "M"]),
+    word(["O", "M", "A"]),
     word(["R", "T"]),
     word(["M", "R"]),
     exact(["WON", "-", "18"]),

@@ -1,6 +1,6 @@
 {
-  "version": "oma.search-synonyms.v1",
-  "generatedBy": "oma-current",
+  "version": "oam.search-synonyms.v1",
+  "generatedBy": "oam-current",
   "synonyms": [
     {
       "canonical": "room",

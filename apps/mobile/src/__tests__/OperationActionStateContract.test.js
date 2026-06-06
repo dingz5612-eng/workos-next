@@ -4,7 +4,7 @@ import { routeView } from "../appRouter.js";
 import { primaryActionButton } from "../views/workspaceView.js";
 import { createSurfaceCtx, runtimeStore, visibleText } from "./surfaceContractTestHelpers.js";
 
-describe("OMA Surface primary action state machine", () => {
+describe("OAM Surface primary action state machine", () => {
   it("renders one internal-observation submit CTA when the active card is ready", () => {
     const store = runtimeStore();
     store.workspaces[0].cards[0].evidence = [];

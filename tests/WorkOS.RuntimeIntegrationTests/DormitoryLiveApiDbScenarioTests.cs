@@ -8,8 +8,8 @@ public sealed class DormitoryLiveApiDbScenarioTests
     [TestMethod]
     public void d1_runner_executes_operations_api_and_rejects_synthetic_mode()
     {
-        var runner = DormitoryRuntimeReplayHarness.ReadText("scripts/oma/run-dormitory-live-api-db-scenarios.mjs");
-        var contract = DormitoryRuntimeReplayHarness.ReadText("docs/contracts/oma.dormitory-runtime-replay.json");
+        var runner = DormitoryRuntimeReplayHarness.ReadText("scripts/oam/run-dormitory-live-api-db-scenarios.mjs");
+        var contract = DormitoryRuntimeReplayHarness.ReadText("docs/contracts/oam.dormitory-runtime-replay.json");
 
         foreach (var required in new[]
         {

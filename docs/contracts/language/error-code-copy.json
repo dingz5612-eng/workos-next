@@ -1,6 +1,6 @@
 {
-  "version": "oma.error-code-copy.v1",
-  "generatedBy": "oma-current",
+  "version": "oam.error-code-copy.v1",
+  "generatedBy": "oam-current",
   "codes": [
     {
       "code": "401",

@@ -1,11 +1,11 @@
 {
-  "version": "oma.command-submission-context.v1",
-  "generatedBy": "oma-current",
+  "version": "oam.command-submission-context.v1",
+  "generatedBy": "oam-current",
   "status": "contract-and-migration-plan",
   "productionReady": false,
   "risk": {
     "level": "P1",
-    "reason": "CommandSubmission context is carried in the command envelope payload during OMA current; dedicated persisted columns are planned by additive migration before production readiness can be claimed."
+    "reason": "CommandSubmission context is carried in the command envelope payload during OAM current; dedicated persisted columns are planned by additive migration before production readiness can be claimed."
   },
   "requiredContextFields": [
     "actorId",
@@ -25,7 +25,7 @@
     "notes": "The context is written before OperationsUnitOfWork.Commit and is included in stable response/event payload where applicable."
   },
   "plannedPersistence": {
-    "migration": "infra/db/migrations/034_operations_command_submission_context.sql",
+    "migration": "infra/db/migrations/035_operations_command_submission_context.sql",
     "targetTable": "operations_command_submissions",
     "columns": [
       "actor_id",

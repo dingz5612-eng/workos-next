@@ -3,8 +3,8 @@ namespace WorkOS.Api.Runtime;
 public static class ControlPlaneDbMapping
 {
     public const string ControlPlaneSchema = "control_plane";
-    public static readonly string CompatibilityRuntimeMode = string.Concat("leg", "acy");
-    public static readonly string SourceBaselineRefColumn = "source_" + string.Concat("leg", "acy_ref");
+    public const string RetiredRuntimeMode = "retired";
+    public const string SourceRetiredRefColumn = "source_retired_ref";
 
     public static readonly DbTableContract ReleaseManifests = new(
         ControlPlaneSchema,
@@ -47,7 +47,7 @@ public static class ControlPlaneDbMapping
         new[]
         {
             "shadow_compare_report_id", "release_id", "tenant_id", "slice_id",
-            "compare_scope", SourceBaselineRefColumn, "source_active_ref", "source_shadow_ref",
+            "compare_scope", SourceRetiredRefColumn, "source_active_ref", "source_shadow_ref",
             "compared_at_utc", "grade", "total_compared", "matched_count",
             "mismatch_count", "missing_in_shadow_count", "extra_in_shadow_count",
             "mismatch_examples", "summary", "generated_by", "ci_run_id"
@@ -112,7 +112,7 @@ public static class ControlPlaneDbMapping
 
     public static readonly IReadOnlyList<string> RuntimeModes = new[]
     {
-        CompatibilityRuntimeMode, "shadow", "pilot", "active", "rollback", "locked", "paused"
+        RetiredRuntimeMode, "shadow", "pilot", "active", "rollback", "locked", "paused"
     };
 
     public static readonly IReadOnlyList<string> GateStatuses = new[]

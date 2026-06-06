@@ -1,6 +1,6 @@
 {
-  "version": "oma.search-ranking-policy.v1",
-  "generatedBy": "oma-current",
+  "version": "oam.search-ranking-policy.v1",
+  "generatedBy": "oam-current",
   "signals": [
     {
       "signalId": "languageSynonymMatch",

@@ -22,7 +22,7 @@ public static class ControlPlaneSchemaVerifyJob
 
     public static Task Run(RunnerOptions options)
     {
-        var outputPath = options.Get("out", Path.Combine(".tmp", "oma", "control-plane-schema-verify.json"));
+        var outputPath = options.Get("out", Path.Combine(".tmp", "oam", "control-plane-schema-verify.json"));
         var migrationsPath = options.Get("migrations", Path.Combine("infra", "db", "migrations"));
         var connection = ResolveConnectionString();
         var requiredTables = RequiredTables.Concat(ParseAdditionalRequiredTables(options.Get("require-table"))).ToArray();
@@ -288,7 +288,7 @@ public static class ControlPlaneSchemaVerifyJob
                 no_go_criteria, known_risks)
             values(
                 @releaseId, 'schema-verify', 'Schema verify probe', 'planned',
-                '[]'::jsonb, '015_control_plane_shadow_runtime', 'oma.current',
+                '[]'::jsonb, '015_control_plane_shadow_runtime', 'oam.current',
                 '[]'::jsonb, '[]'::jsonb, '[]'::jsonb, '[]'::jsonb,
                 '[]'::jsonb, '[]'::jsonb, '[]'::jsonb, '[]'::jsonb)
             """;

@@ -10,7 +10,7 @@ const root = process.cwd();
 const baseUrl = process.env.WORKOS_MOBILE_URL || "http://127.0.0.1:5175";
 const apiUrl = process.env.WORKOS_API_URL || "http://127.0.0.1:5191";
 const runId = process.env.WORKOS_TEN_DORM_SCENARIO_RUN_ID || "ten-dormitory-scenario-real-browser-20260605-post-unified-start";
-const artifactRoot = path.join(root, "artifacts", "oma", "evidence", "dormitory-real-browser", runId);
+const artifactRoot = path.join(root, "artifacts", "oam", "evidence", "dormitory-real-browser", runId);
 const screenshotRoot = path.join(artifactRoot, "screenshots");
 const reportPath = path.join(artifactRoot, "ten-scenario-real-browser-report.json");
 const markdownPath = path.join(artifactRoot, "ten-scenario-real-browser-report.md");
@@ -70,7 +70,7 @@ try {
     await openSearch(page);
     const entry = await capture(page, "00-search-entry", "搜索入口和 10 个统一新建入口");
     addAssertion("search.entry.unified_count", entry.domState.unifiedStartCount === 10, "搜索页必须暴露 10 个统一 Operations workspace 启动入口。", entry.domState);
-    addAssertion("search.entry.no_resource_special_start", entry.domState.legacyResourceStartCount === 0, "房源入口不得继续使用旧的专用启动分支。", entry.domState);
+    addAssertion("search.entry.no_resource_special_start", entry.domState.retiredResourceStartCount === 0, "房源入口不得继续使用旧的专用启动分支。", entry.domState);
 
     for (const item of scenarios) {
       const scenarioResult = await runScenario(page, item);
@@ -124,8 +124,8 @@ async function runScenario(page, item) {
   result.steps.push(await capture(page, `${item.index}-${item.id}-01-search`, `${item.title} 搜索结果`));
 
   const commandState = await readDomState(page);
-  if (commandState.legacyResourceStartCount > 0) {
-    addFinding(result, "legacy_resource_start_visible", "页面仍然出现旧房源专用启动入口。", commandState);
+  if (commandState.retiredResourceStartCount > 0) {
+    addFinding(result, "retired_resource_start_visible", "页面仍然出现旧房源专用启动入口。", commandState);
   }
   if (commandState.unifiedStartCount < 1) {
     addFinding(result, "unified_start_missing", `${item.title} 没有统一 Operations workspace 启动入口。`, commandState);
@@ -367,7 +367,7 @@ async function readDomState(page) {
       submitCount: document.querySelectorAll("[data-submit-card]").length,
       nextStageCount: document.querySelectorAll("[data-work-item-id][data-card-id]").length,
       unifiedStartCount: document.querySelectorAll("[data-start-operations-workspace]").length,
-      legacyResourceStartCount: document.querySelectorAll("[data-start-operations-resource-setup]").length,
+      retiredResourceStartCount: document.querySelectorAll("[data-start-operations-resource-setup]").length,
       invalidFields: fields.filter((field) => field.invalid).map((field) => field.id),
       emptyRequiredFields: fields.filter((field) => field.required && field.visible && !field.readonly && !field.valuePresent).map((field) => field.id),
       fields,
@@ -464,16 +464,16 @@ function analyzeNetwork(events) {
   const writes = events.filter((event) => event.method !== "GET");
   const workspaceStarts = writes.filter((event) => event.method === "POST" && event.path === "/api/operations/workspaces/start");
   const operationsConfirms = writes.filter((event) => event.method === "POST" && /\/api\/operations\/work-items\/[^/]+\/confirm$/i.test(event.path));
-  const legacyWorkspaceCardWrites = writes.filter((event) => /\/api\/workspaces\/[^/]+\/cards\/[^/]+\/(prepare|confirm)$/i.test(event.path));
+  const retiredWorkspaceCardWrites = writes.filter((event) => /\/api\/workspaces\/[^/]+\/cards\/[^/]+\/(prepare|confirm)$/i.test(event.path));
   const directBusinessFactWrites = writes.filter((event) => /\/api\/(audit-events|outbox|projections\/process-outbox)$/i.test(event.path));
   return {
     apiRequestCount: events.length,
     writeCount: writes.length,
     workspaceStartCount: workspaceStarts.length,
     operationsConfirmCount: operationsConfirms.length,
-    legacyWorkspaceCardWrites,
+    retiredWorkspaceCardWrites,
     directBusinessFactWrites,
-    noLegacyWorkspaceCardWrites: legacyWorkspaceCardWrites.length === 0,
+    noRetiredWorkspaceCardWrites: retiredWorkspaceCardWrites.length === 0,
     noDirectBusinessFactWrites: directBusinessFactWrites.length === 0,
     writes
   };
@@ -483,7 +483,7 @@ function networkAssertions(policy) {
   return [
     assertion("network.workspace_start_count", policy.workspaceStartCount >= scenarios.length, "10 个场景必须通过 Operations workspace start 进入。", policy),
     assertion("network.operations_confirm_count", policy.operationsConfirmCount === scenarios.length, "10 个正例必须各形成一次 Operations Confirm。", policy),
-    assertion("network.no_legacy_workspace_card_writes", policy.noLegacyWorkspaceCardWrites, "不得调用旧 Workspace/Card prepare/confirm 写入口。", policy),
+    assertion("network.no_retired_workspace_card_writes", policy.noRetiredWorkspaceCardWrites, "不得调用旧 Workspace/Card prepare/confirm 写入口。", policy),
     assertion("network.no_direct_business_fact_writes", policy.noDirectBusinessFactWrites, "前端不得直接写业务事实、outbox 或投影。", policy)
   ];
 }
@@ -529,7 +529,7 @@ function markdownReport(current) {
     `- Screenshot count: ${current.screenshots.length}`,
     `- Operations workspace starts: ${current.networkPolicy.workspaceStartCount || 0}`,
     `- Operations confirms: ${current.networkPolicy.operationsConfirmCount || 0}`,
-    `- Legacy workspace/card writes: ${current.networkPolicy.legacyWorkspaceCardWrites?.length || 0}`,
+    `- Retired workspace/card writes: ${current.networkPolicy.retiredWorkspaceCardWrites?.length || 0}`,
     "",
     "| Scenario | Negative | Positive | Findings |",
     "| --- | --- | --- | ---: |",

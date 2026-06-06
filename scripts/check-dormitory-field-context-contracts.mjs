@@ -21,7 +21,7 @@ const dormitoryWorkspaceIds = new Set([
   "W-STAY-PERIOD-ANALYTICS"
 ]);
 
-const forbiddenLegacyFieldIds = new Set([
+const forbiddenRetiredFieldIds = new Set([
   "depositRule",
   "varianceReason",
   "actualCost",
@@ -235,7 +235,7 @@ function checkDefinitionDocsAligned() {
     ])
   ];
   for (const fieldId of allDocFieldIds) {
-    if (forbiddenLegacyFieldIds.has(fieldId)) {
+    if (forbiddenRetiredFieldIds.has(fieldId)) {
       failures.push(`Definition docs still contain retired field id ${fieldId}; use the canonical current field id.`);
     }
   }
@@ -296,7 +296,7 @@ function hasCjk(value) {
 }
 
 function writeReport() {
-  const outputPath = path.join(root, "artifacts/oma/checks/dormitory-field-context-contract-result.json");
+  const outputPath = path.join(root, "artifacts/oam/checks/dormitory-field-context-contract-result.json");
   fs.mkdirSync(path.dirname(outputPath), { recursive: true });
   fs.writeFileSync(outputPath, JSON.stringify({
     status: failures.length ? "failed" : "passed",
@@ -304,7 +304,7 @@ function writeReport() {
     checkedWorkspaces: [...dormitoryWorkspaceIds],
     checkedCardCount: seedCards.length,
     protectedFieldIds: [...protectedFieldIds],
-    forbiddenLegacyFieldIds: [...forbiddenLegacyFieldIds],
+    forbiddenRetiredFieldIds: [...forbiddenRetiredFieldIds],
     failures
   }, null, 2));
 }

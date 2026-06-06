@@ -1,4 +1,5 @@
 import fs from "node:fs";
+import { validateLocalPathReferences } from "./check-local-path-references.mjs";
 
 const projectionSchema = JSON.parse(fs.readFileSync("docs/contracts/projection-contract.schema.json", "utf8"));
 const openApi = JSON.parse(fs.readFileSync("docs/contracts/workos-runtime.openapi.json", "utf8"));
@@ -6,9 +7,9 @@ const sliceManifest = JSON.parse(fs.readFileSync("docs/contracts/slice-manifest.
 const policyContract = JSON.parse(fs.readFileSync("docs/contracts/policy-contract.json", "utf8"));
 const surfacePolicy = JSON.parse(fs.readFileSync("docs/contracts/runtime-surface-policy.json", "utf8"));
 const lensContract = JSON.parse(fs.readFileSync("docs/contracts/accommodation-lens-contract.json", "utf8"));
-const omaContract = JSON.parse(fs.readFileSync("docs/contracts/oma.current.json", "utf8"));
-const omaManifest = JSON.parse(fs.readFileSync("docs/oma/current-architecture.manifest.json", "utf8"));
-const architectureExceptions = JSON.parse(fs.readFileSync("docs/oma/current-architecture-exceptions.json", "utf8"));
+const oamContract = JSON.parse(fs.readFileSync("docs/contracts/oam.current.json", "utf8"));
+const oamManifest = JSON.parse(fs.readFileSync("docs/oam/current-architecture.manifest.json", "utf8"));
+const architectureExceptions = JSON.parse(fs.readFileSync("docs/oam/current-architecture-exceptions.json", "utf8"));
 
 const requiredProjectionFields = ["projection", "version", "languages", "sourceOfTruth", "workspaces", "events"];
 for (const field of requiredProjectionFields) {
@@ -158,21 +159,21 @@ for (const schemaName of ["EvidenceDraftRequest", "EvidenceAttachmentRequest", "
   }
 }
 
-if (omaContract.version !== "oma.current.v1") {
-  throw new Error("OMA contract must declare oma.current.v1.");
+if (oamContract.version !== "oam.current.v1") {
+  throw new Error("OAM contract must declare oam.current.v1.");
 }
 
-if (omaManifest.version !== "oma.current.v1") {
-  throw new Error("OMA manifest must declare oma.current.v1.");
+if (oamManifest.version !== "oam.current.v1") {
+  throw new Error("OAM manifest must declare oam.current.v1.");
 }
 
-for (const capability of omaContract.productCapabilities || []) {
+for (const capability of oamContract.productCapabilities || []) {
   for (const field of ["id", "module", "owns", "forbidden"]) {
     if (!(field in capability) || (Array.isArray(capability[field]) && capability[field].length === 0)) {
       throw new Error(`Product capability ${capability.id || "<missing>"} missing ${field}`);
     }
   }
-  if (!omaManifest.modules.required.includes(capability.module)) {
+  if (!oamManifest.modules.required.includes(capability.module)) {
     throw new Error(`Product capability ${capability.id} references unknown module ${capability.module}`);
   }
 }
@@ -180,12 +181,20 @@ for (const capability of omaContract.productCapabilities || []) {
 for (const exception of architectureExceptions.exceptions || []) {
   for (const field of ["ruleId", "owner", "reason", "createdAt", "expiresAt", "removalCondition", "linkedTest"]) {
     if (!exception[field]) {
-      throw new Error(`OMA architecture exception missing ${field}`);
+      throw new Error(`OAM architecture exception missing ${field}`);
     }
   }
   if (Date.parse(exception.expiresAt) < Date.now()) {
-    throw new Error(`OMA architecture exception expired for ${exception.ruleId}`);
+    throw new Error(`OAM architecture exception expired for ${exception.ruleId}`);
   }
+}
+
+const pathReferenceViolations = validateLocalPathReferences();
+if (pathReferenceViolations.length > 0) {
+  const details = pathReferenceViolations
+    .map((violation) => `${violation.file}:${violation.line} -> ${violation.ref}`)
+    .join("\n");
+  throw new Error(`Local path references must exist:\n${details}`);
 }
 
 console.log("Contract files: PASS");

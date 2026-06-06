@@ -1,6 +1,6 @@
 {
-  "version": "oma.domain-term-catalog.v1",
-  "generatedBy": "oma-current",
+  "version": "oam.domain-term-catalog.v1",
+  "generatedBy": "oam-current",
   "terms": [
     {
       "termId": "operationsRuntime",

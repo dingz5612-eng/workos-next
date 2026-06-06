@@ -19,10 +19,10 @@ services:
       timeout: 5s
       retries: 5
     labels:
-      oma.workosnext.role: "local-postgres-runtime"
-      oma.workosnext.boundary: "local-development-only"
+      oam.workosnext.role: "local-postgres-runtime"
+      oam.workosnext.boundary: "local-development-only"
 
 volumes:
   workosnext-postgres:
     labels:
-      oma.workosnext.role: "local-postgres-data"
+      oam.workosnext.role: "local-postgres-data"

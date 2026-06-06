@@ -1,6 +1,6 @@
 {
-  "version": "oma.evidence-policy-refs.v1",
-  "generatedBy": "oma-current",
+  "version": "oam.evidence-policy-refs.v1",
+  "generatedBy": "oam-current",
   "refs": [
     {
       "ref": "evidence.roomSetup.v1",

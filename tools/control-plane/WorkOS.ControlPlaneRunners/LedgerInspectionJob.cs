@@ -13,7 +13,7 @@ public static class LedgerInspectionJob
 
     public static Task<LedgerInspectionRunOutput> Run(RunnerOptions options)
     {
-        var releaseId = options.Get("releaseId", "oma.current-ledger-inspection");
+        var releaseId = options.Get("releaseId", "oam.current-ledger-inspection");
         var mrId = options.Get("mrId", "local");
         var tenantId = options.Get("tenantId", "all-tenants");
         var sliceId = options.Get("sliceId", "LedgerInspection");
@@ -24,9 +24,9 @@ public static class LedgerInspectionJob
             throw new InvalidOperationException($"ledger_inspection_job_mode_invalid:{jobMode}");
         }
 
-        var outputPath = options.Get("out", Path.Combine(".tmp", "oma", "ledger-inspection-invariant-checks.json"));
-        var reportPath = options.Get("report-out", Path.Combine(".tmp", "oma", "ledger-inspection-report.json"));
-        var dashboardPath = options.Get("dashboard-out", Path.Combine(".tmp", "oma", "ledger-inspection-dashboard-summary.json"));
+        var outputPath = options.Get("out", Path.Combine(".tmp", "oam", "ledger-inspection-invariant-checks.json"));
+        var reportPath = options.Get("report-out", Path.Combine(".tmp", "oam", "ledger-inspection-report.json"));
+        var dashboardPath = options.Get("dashboard-out", Path.Combine(".tmp", "oam", "ledger-inspection-dashboard-summary.json"));
         var dryRun = options.GetBool("dry-run");
         var generatedAtUtc = DateTimeOffset.UtcNow;
         var jobRunId = options.Get("jobRunId", $"ledger-inspection-{jobMode}-{generatedAtUtc:yyyyMMddHHmmss}");

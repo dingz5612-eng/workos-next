@@ -11,7 +11,7 @@ on:
       - "codex/**"
 
 jobs:
-  oma-current:
+  oam-current:
     runs-on: ubuntu-latest
 
     services:
@@ -56,8 +56,8 @@ jobs:
       - name: Install browser runtime
         run: npm --prefix apps/mobile exec playwright install --with-deps chromium
 
-      - name: OMA purity check
-        run: node scripts/oma/check-current-oma.mjs
+      - name: OAM purity check
+        run: node scripts/oam/check-current-oam.mjs
 
       - name: Validate contracts
         run: node scripts/validate-contracts.mjs
@@ -99,6 +99,9 @@ jobs:
 
       - name: Test mobile
         run: npm --prefix apps/mobile run test
+
+      - name: Test PC
+        run: npm --prefix apps/mobile run test:pc
 
       - name: Mobile coverage
         run: npm --prefix apps/mobile run test:coverage

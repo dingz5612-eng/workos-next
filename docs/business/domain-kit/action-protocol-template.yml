@@ -1,1 +1,0 @@
-{"templateId":"action-protocol-template","requiredFields":["commandType","preparePolicy","confirmPolicy","idempotencyScope","requiredEvidence","permissionPolicy","businessBlocked422","conflict409","auditRefs"],"mustUseCommandSubmission":true,"pageSpecificWriteApiAllowed":false}

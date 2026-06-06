@@ -1,6 +1,6 @@
 -- Rollback note: WorkOSNext migrations are up-only. To reverse before
 -- production, add a compensating migration that drops the added case columns
--- after dependent process and reconciliation records are archived.
+-- after dependent process and reconciliation records are closed.
 
 alter table payment_mismatches
     alter column bank_transaction_id drop not null;

@@ -4,7 +4,7 @@ import { buildSearchResultVM, rankSearchResults } from "../searchIntentHub.js";
 import { searchView } from "../views/searchView.js";
 import { createSurfaceCtx, runtimeStore, visibleText } from "./surfaceContractTestHelpers.js";
 
-describe("OMA Surface search intent hub contract", () => {
+describe("OAM Surface search intent hub contract", () => {
   it("renders a WorkItem action button and opens the persisted operation panel", () => {
     const ctx = createSurfaceCtx({ view: "search", query: "创建房间" });
     const html = searchView(ctx);
@@ -48,7 +48,7 @@ describe("OMA Surface search intent hub contract", () => {
     expect(text).toContain("最近搜索");
   });
 
-  it("routes object results while keeping evidence archives out of Search", () => {
+  it("routes object results while keeping evidence history out of Search", () => {
     const ctx = createSurfaceCtx({ view: "search", query: "房间" });
     const html = searchView(ctx);
 
@@ -60,7 +60,7 @@ describe("OMA Surface search intent hub contract", () => {
     expect(ctx.state.view).toBe("learning");
   });
 
-  it("keeps submission traces out of Search archive sections", () => {
+  it("keeps submission traces out of Search history sections", () => {
     const ctx = createSurfaceCtx({ view: "search", query: "提交" });
     const html = searchView(ctx);
 
@@ -215,7 +215,7 @@ describe("OMA Surface search intent hub contract", () => {
     expect(ctx.state.selectedCardId).toBe("rateSetup");
   });
 
-  it("does not render completed WorkItems or completed archives as processable search results", () => {
+  it("does not render completed WorkItems or completed history as processable search results", () => {
     const ctx = createSurfaceCtx({ view: "search", query: "房间" });
     ctx.state.runtimeStore.workQueue = [{
       queueItemId: "q-completed-room",
@@ -301,7 +301,7 @@ describe("OMA Surface search intent hub contract", () => {
     expect(text).toContain("内部试点观察");
     expect(text).toContain("生产");
     expect(text).not.toContain("admissionDecisionRef");
-    expect(text).not.toContain("compatibilityAdapter");
+    expect(text).not.toContain("retiredAdapter");
     expect(text).not.toContain("definitionId");
     expect(text).not.toContain("raw reason");
     expect(text).not.toContain("raw code");
@@ -404,7 +404,7 @@ describe("OMA Surface search intent hub contract", () => {
     expect(ky).not.toContain("Create room");
   });
 
-  it("does not leak localized learning archives into ordinary Search", () => {
+  it("does not leak localized learning history into ordinary Search", () => {
     const ru = visibleText(searchView(createSurfaceCtx({ view: "search", lang: "ru-RU", query: "устройство" })));
     const ky = visibleText(searchView(createSurfaceCtx({ view: "search", lang: "ky-KG", query: "түзмөк" })));
 

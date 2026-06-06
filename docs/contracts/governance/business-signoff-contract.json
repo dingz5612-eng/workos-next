@@ -1,5 +1,5 @@
 {
-  "version": "oma.business-signoff-contract.v1",
+  "version": "oam.business-signoff-contract.v1",
   "status": "authoritative-current-contract",
   "requiredFields": [
     "signoffId",

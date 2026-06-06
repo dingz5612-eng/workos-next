@@ -1,7 +1,7 @@
 {
-  "version": "oma.surface-contract.v1",
+  "version": "oam.surface-contract.v1",
   "status": "current",
-  "authority": "docs/oma/current-architecture.md",
+  "authority": "docs/oam/current-architecture.md",
   "operationRuntimePure": {
     "persistedWorkItemResolutionOrder": [
       "selected persisted WorkItem from operationWorkItems",
@@ -14,7 +14,7 @@
       "card.workItemId when it is not persisted",
       "prepareCard in normal confirm path",
       "confirmCard in normal confirm path",
-      "mobile compatibility write fallback"
+      "mobile retired write fallback"
     ],
     "primaryWritePath": "POST /api/operations/work-items/{workItemId}/confirm"
   },
@@ -22,7 +22,7 @@
     "viewPath": "direct readonly workspace record / fact trace without an intermediate completed-operation page",
     "surfaceShell": "shared Operations surface shell with OperationStepRail and direct OperationCardShell/card-operation readonly state",
     "forbiddenShell": "page-private detail shell, intermediate completed-operation page, copied completed-step-list layout, page-private outer wrapper, or completed-record-control visual wrapper",
-    "correctionPath": "new OMA WorkItem with correctionMode=append_only",
+    "correctionPath": "new OAM WorkItem with correctionMode=append_only",
     "actionOrder": ["create_active_work_item", "view_readonly_completed_record", "correct_append_only_from_record"],
     "dataSources": ["OperationsWorkItemConfirmed payload", "ProjectionEvent payload", "mobile completed-record read cache"],
     "correctionEntry": "only from readonly completed record after submitted values are visible",
@@ -36,11 +36,11 @@
   },
   "frontendExperienceSystem": {
     "contractRef": "docs/contracts/frontend-experience/frontend-experience-system-contract.json",
-    "layers": ["shared-components", "field-context-kernel", "surface-contract", "multilingual-dictionary", "state-action-contract", "real-browser-verification"],
+    "layers": ["shared-components", "field-context-kernel", "surface-contract", "multilingual-dictionary", "state-action-contract", "real-browser-evidence"],
     "rule": "pages may specialize business content but not architecture",
     "contentContainerRule": "ordinary mobile content must render as shared containers; business titles, status labels, anchors, explanations, and next-action copy must not appear as naked text on the page background",
     "businessSummaryCardHierarchy": "business item cards use BusinessSummaryHeader, structured non-clickable business anchors, BusinessTaskOverview, and a separate bottom action container",
-    "searchMeResponsibilityBoundary": "Search is for active business discovery and entry; Me owns readonly personal archives and support surfaces.",
+    "searchMeResponsibilityBoundary": "Search is for active business discovery and entry; Me owns readonly personal history and support surfaces.",
     "fieldContextKernel": "field identity, aliases, task overview fields, option labels, and derived previews must come from apps/mobile/src/operationFieldKernel.js",
     "stepPageExperienceParity": "new active, readonly completed, and append-only correction step pages must share step rail, direct OperationCardShell, state/check panel, action hierarchy, feedback entry, and decision markers",
     "postSubmitNavigation": "successful active confirm must auto-advance to the next actionable persisted WorkItem in the same case when one exists",
@@ -63,7 +63,7 @@
     "rule": "visibleAllowed, prepareAllowed, confirmAllowed, productionAllowed, mode, and safe reason copy must be consumed by the visible surface",
     "searchResultCard": {
       "visible": ["title", "subtitle", "statusLabel", "admissionLabel", "admissionReasonLabel", "nextAction"],
-      "hiddenForOrdinaryUsers": ["admissionDecisionRef", "compatibilityAdapter", "definitionId", "payloadHash", "commandSubmissionId", "rawReason", "rawCode"],
+      "hiddenForOrdinaryUsers": ["admissionDecisionRef", "retiredAdapter", "definitionId", "payloadHash", "commandSubmissionId", "rawReason", "rawCode"],
       "confirmDeniedPrimaryAction": "view-only or learning action; never process/start-handling wording"
     },
     "operationWorkItemDetail": {

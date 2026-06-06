@@ -1,5 +1,5 @@
 {
-  "version": "oma.business-anchor-contract.v1",
+  "version": "oam.business-anchor-contract.v1",
   "kernel": "Business Anchor Kernel",
   "rule": "Business anchors are human-memory display and search labels composed from truth-object projections, runtime events, WorkItem context, and session-safe payload context. They must not become authoritative business facts or write inputs.",
   "truthBoundary": {

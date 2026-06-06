@@ -1,5 +1,5 @@
 {
-  "version": "oma.bi-kpi-contract.v1",
+  "version": "oam.bi-kpi-contract.v1",
   "status": "authoritative-current-contract",
   "requiredFields": [
     "metricId",

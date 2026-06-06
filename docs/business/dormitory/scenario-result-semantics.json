@@ -1,5 +1,5 @@
 {
-  "version": "oma.dormitory.scenario-result-semantics.v1",
+  "version": "oam.dormitory.scenario-result-semantics.v1",
   "scenarioTypes": {
     "committed_scenario": {
       "required": [
@@ -45,5 +45,5 @@
     }
   },
   "productionAllowed": false,
-  "nextGate": "OMA current admission and control-plane review"
+  "nextGate": "OAM current admission and control-plane review"
 }

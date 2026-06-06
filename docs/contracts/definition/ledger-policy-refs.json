@@ -1,6 +1,6 @@
 {
-  "version": "oma.ledger-policy-refs.v1",
-  "generatedBy": "oma-current",
+  "version": "oam.ledger-policy-refs.v1",
+  "generatedBy": "oam-current",
   "refs": [
     {
       "ref": "ledger.deposit.liability.v1",

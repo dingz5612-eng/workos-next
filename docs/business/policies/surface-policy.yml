@@ -1,7 +1,7 @@
 {
   "policyId": "business.surface-policy",
   "policyType": "surface",
-  "version": "oma.policy.v1",
+  "version": "oam.policy.v1",
   "owner": "SurfaceGovernance",
   "sourceFile": "docs/contracts/runtime-surface-policy.json",
   "runtimeBinding": {

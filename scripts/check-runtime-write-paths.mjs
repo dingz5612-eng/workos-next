@@ -48,7 +48,7 @@ function analyzeSources(files) {
 
   for (const [file, source] of Object.entries(files)) {
     if (!isOfficialRuntimeSource(file)) continue;
-    forbidPattern(source, /\bshadow_runtime\b/i, "RT1-NO-SHADOW-RUNTIME-OFFICIAL", "Official API runtime source must not reference shadow_runtime.", file, add);
+    forbidPattern(source, /\bshadow_runtime\b/i, "OAM-WRITE-NO-SHADOW-RUNTIME-OFFICIAL", "Official API runtime source must not reference shadow_runtime.", file, add);
   }
 
   const retiredWrites = [
@@ -58,33 +58,33 @@ function analyzeSources(files) {
     "/api/workspaces/{workspaceId}/cards/{cardId}/confirm"
   ];
   for (const retired of retiredWrites) {
-    forbidLiteral(program, retired, "RT1-RETIRED-WORKSPACE-COMPAT-ENDPOINT", "Retired Workspace/Card compatibility write endpoint must not be mapped.", "Program.cs", add);
-    forbidLiteral(openApi, retired, "RT1-RETIRED-WORKSPACE-COMPAT-CONTRACT", "Retired Workspace/Card compatibility write endpoint must not be declared in OpenAPI.", "OpenAPI", add);
+    forbidLiteral(program, retired, "OAM-WRITE-RETIRED-WORKSPACE-COMPAT-ENDPOINT", "Retired Workspace/Card retired write endpoint must not be mapped.", "Program.cs", add);
+    forbidLiteral(openApi, retired, "OAM-WRITE-RETIRED-WORKSPACE-COMPAT-CONTRACT", "Retired Workspace/Card retired write endpoint must not be declared in OpenAPI.", "OpenAPI", add);
   }
 
-  if (fs.existsSync(path.join(repoRoot, "services", "core-api", "WorkOS.Api", "Runtime", "WorkspaceCardCompatibilityAdapter.cs"))) {
-    add("RT1-COMPAT-ADAPTER-DELETED", "WorkspaceCardCompatibilityAdapter.cs must be deleted; Operations Runtime is the only write path.", "WorkspaceCardCompatibilityAdapter.cs");
+  if (fs.existsSync(path.join(repoRoot, "services", "core-api", "WorkOS.Api", "Runtime", "WorkspaceCardRetiredAdapter.cs"))) {
+    add("OAM-WRITE-COMPAT-ADAPTER-DELETED", "WorkspaceCardRetiredAdapter.cs must be deleted; Operations Runtime is the only write path.", "WorkspaceCardRetiredAdapter.cs");
   }
 
-  forbidPattern(operationsRuntimeCore, /\bCompatibilityApiResult\b/, "RT1-NO-COMPAT-RESULT", "OperationsRuntimeService must not expose compatibility API result types.", "OperationsRuntimeService.cs", add);
-  forbidPattern(operationsRuntimeCore, /\bPrepareWorkspaceCard\b|\bConfirmWorkspaceCard\b|ValidateWorkspaceCardConfirmPolicy\b/, "RT1-NO-WORKSPACE-CARD-WRITE-FACADE", "OperationsRuntimeService must not expose Workspace/Card write facades.", "OperationsRuntimeService.cs", add);
-  forbidPattern(operationsRuntimeCore, /\bruntime\.Prepare\s*\(/, "RT1-RUNTIME-DIRECT-PREPARE", "OperationsRuntimeService must not call runtime.Prepare.", "OperationsRuntimeService.cs", add);
-  forbidPattern(operationsRuntimeCore, /\bruntime\.Confirm\s*\(/, "RT1-RUNTIME-DIRECT-CONFIRM", "OperationsRuntimeService must not call runtime.Confirm for formal fact commit.", "OperationsRuntimeService.cs", add);
-  forbidPattern(operationsRuntimeCore, /ResolveWorkspaceCard\([^)]*request\.WorkspaceId|SplitWorkItemId|ToCompatibilityWorkItem|compatibilityRoute|workspace-card/i, "RT1-NO-WORKSPACE-CARD-IDENTITY-FALLBACK", "Operations Runtime must not derive WorkItem identity from Workspace/Card compatibility inputs.", "OperationsRuntimeService.cs", add);
+  forbidPattern(operationsRuntimeCore, /\bRetiredApiResult\b/, "OAM-WRITE-NO-COMPAT-RESULT", "OperationsRuntimeService must not expose retired API result types.", "OperationsRuntimeService.cs", add);
+  forbidPattern(operationsRuntimeCore, /\bPrepareWorkspaceCard\b|\bConfirmWorkspaceCard\b|ValidateWorkspaceCardConfirmPolicy\b/, "OAM-WRITE-NO-WORKSPACE-CARD-WRITE-FACADE", "OperationsRuntimeService must not expose Workspace/Card write facades.", "OperationsRuntimeService.cs", add);
+  forbidPattern(operationsRuntimeCore, /\bruntime\.Prepare\s*\(/, "OAM-WRITE-RUNTIME-DIRECT-PREPARE", "OperationsRuntimeService must not call runtime.Prepare.", "OperationsRuntimeService.cs", add);
+  forbidPattern(operationsRuntimeCore, /\bruntime\.Confirm\s*\(/, "OAM-WRITE-RUNTIME-DIRECT-CONFIRM", "OperationsRuntimeService must not call runtime.Confirm for formal fact commit.", "OperationsRuntimeService.cs", add);
+  forbidPattern(operationsRuntimeCore, /ResolveWorkspaceCard\([^)]*request\.WorkspaceId|SplitWorkItemId|ToRetiredWorkItem|retiredRoute|workspace-card/i, "OAM-WRITE-NO-WORKSPACE-CARD-IDENTITY-FALLBACK", "Operations Runtime must not derive WorkItem identity from Workspace/Card retired inputs.", "OperationsRuntimeService.cs", add);
 
-  requirePattern(canonical, /private\s+readonly\s+OperationsUnitOfWork\s+unitOfWork;/, "RT1-CANONICAL-UOW-FIELD", "CanonicalOperationsApiService must own the OperationsUnitOfWork dependency.", "CanonicalOperationsApiService.cs", add);
-  requirePattern(canonical, /\bunitOfWork\.Commit\s*\(/, "RT1-CANONICAL-UOW-COMMIT", "CanonicalOperationsApiService.ConfirmWorkItem must commit through OperationsUnitOfWork.", "CanonicalOperationsApiService.cs", add);
-  requirePattern(canonical, /catalog\.RecordWorkItemTransition\s*\(/, "RT1-WORKITEM-LIFECYCLE", "Canonical confirm must record WorkItem lifecycle transition after committed UoW result.", "CanonicalOperationsApiService.cs", add);
-  requirePattern(canonical, /StartWorkspaceCase\([\s\S]*CreateCase[\s\S]*CreateWorkItem/, "RT1-START-CREATES-CASE-WORKITEM", "Operations workspace start must create OperationCase and WorkItem through the runtime catalog.", "CanonicalOperationsApiService.cs", add);
+  requirePattern(canonical, /private\s+readonly\s+OperationsUnitOfWork\s+unitOfWork;/, "OAM-WRITE-CANONICAL-UOW-FIELD", "CanonicalOperationsApiService must own the OperationsUnitOfWork dependency.", "CanonicalOperationsApiService.cs", add);
+  requirePattern(canonical, /\bunitOfWork\.Commit\s*\(/, "OAM-WRITE-CANONICAL-UOW-COMMIT", "CanonicalOperationsApiService.ConfirmWorkItem must commit through OperationsUnitOfWork.", "CanonicalOperationsApiService.cs", add);
+  requirePattern(canonical, /catalog\.RecordWorkItemTransition\s*\(/, "OAM-WRITE-WORKITEM-LIFECYCLE", "Canonical confirm must record WorkItem lifecycle transition after committed UoW result.", "CanonicalOperationsApiService.cs", add);
+  requirePattern(canonical, /StartWorkspaceCase\([\s\S]*CreateCase[\s\S]*CreateWorkItem/, "OAM-WRITE-START-CREATES-CASE-WORKITEM", "Operations workspace start must create OperationCase and WorkItem through the runtime catalog.", "CanonicalOperationsApiService.cs", add);
 
-  requirePattern(endpoints, /MapPost\("\/api\/operations\/work-items\/\{workItemId\}\/confirm"[\s\S]*CanonicalOperationsApiService\s+operations[\s\S]*operations\.ConfirmWorkItem\s*\(/, "RT1-OPERATIONS-ENDPOINT-CANONICAL", "Operations confirm endpoint must use CanonicalOperationsApiService.", "OperationsRuntimeEndpoints.cs", add);
-  requirePattern(program, /MapPost\("\/api\/operations\/workspaces\/start"[\s\S]*StartOperationsWorkspace\s*\(/, "RT1-OPERATIONS-START-ENDPOINT", "Dormitory workspace start must use the Operations Runtime start endpoint.", "Program.cs", add);
+  requirePattern(endpoints, /MapPost\("\/api\/operations\/work-items\/\{workItemId\}\/confirm"[\s\S]*CanonicalOperationsApiService\s+operations[\s\S]*operations\.ConfirmWorkItem\s*\(/, "OAM-WRITE-OPERATIONS-ENDPOINT-CANONICAL", "Operations confirm endpoint must use CanonicalOperationsApiService.", "OperationsRuntimeEndpoints.cs", add);
+  requirePattern(program, /MapPost\("\/api\/operations\/workspaces\/start"[\s\S]*StartOperationsWorkspace\s*\(/, "OAM-WRITE-OPERATIONS-START-ENDPOINT", "Dormitory workspace start must use the Operations Runtime start endpoint.", "Program.cs", add);
 
-  requirePattern(unitOfWork, /new\s+OperationsDomainEvent\([\s\S]*request\.WorkItemId/, "RT1-DOMAIN-EVENT-WORKITEM-REF", "DomainEvent materialization must reference the real WorkItemId.", "OperationsUnitOfWork.cs", add);
-  requirePattern(unitOfWork, /OperationsCommandSubmission\.Pending\([\s\S]*envelope\)/, "RT1-SUBMISSION-WORKITEM-REF", "CommandSubmission must be started with the real WorkItemId.", "OperationsUnitOfWork.cs", add);
-  requirePattern(unitOfWork, /GetFactTraceBySubmission\s*\(/, "RT1-TRACE-BY-SUBMISSION", "FactTrace store must resolve trace by CommandSubmission.", "OperationsUnitOfWork.cs", add);
-  requirePattern(unitOfWork, /GetFactTracesByWorkItem\s*\(/, "RT1-TRACE-BY-WORKITEM", "FactTrace store must resolve traces by WorkItem.", "OperationsUnitOfWork.cs", add);
-  requirePattern(unitOfWork, /GetFactTracesByCase\s*\(/, "RT1-TRACE-BY-CASE", "FactTrace store must resolve traces by OperationCase.", "OperationsUnitOfWork.cs", add);
+  requirePattern(unitOfWork, /new\s+OperationsDomainEvent\([\s\S]*request\.WorkItemId/, "OAM-WRITE-DOMAIN-EVENT-WORKITEM-REF", "DomainEvent materialization must reference the real WorkItemId.", "OperationsUnitOfWork.cs", add);
+  requirePattern(unitOfWork, /OperationsCommandSubmission\.Pending\([\s\S]*envelope\)/, "OAM-WRITE-SUBMISSION-WORKITEM-REF", "CommandSubmission must be started with the real WorkItemId.", "OperationsUnitOfWork.cs", add);
+  requirePattern(unitOfWork, /GetFactTraceBySubmission\s*\(/, "OAM-WRITE-TRACE-BY-SUBMISSION", "FactTrace store must resolve trace by CommandSubmission.", "OperationsUnitOfWork.cs", add);
+  requirePattern(unitOfWork, /GetFactTracesByWorkItem\s*\(/, "OAM-WRITE-TRACE-BY-WORKITEM", "FactTrace store must resolve traces by WorkItem.", "OperationsUnitOfWork.cs", add);
+  requirePattern(unitOfWork, /GetFactTracesByCase\s*\(/, "OAM-WRITE-TRACE-BY-CASE", "FactTrace store must resolve traces by OperationCase.", "OperationsUnitOfWork.cs", add);
 
   return violations;
 }
@@ -153,11 +153,11 @@ function runSelfTest() {
   };
   assertNoViolations("valid runtime write path", analyzeSources(valid));
 
-  assertViolation("retired endpoint rejected", { ...valid, "Program.cs": "app.MapPost(\"/api/workspaces/start\", () => {});" }, "RT1-RETIRED-WORKSPACE-COMPAT-ENDPOINT");
-  assertViolation("retired OpenAPI rejected", { ...valid, "OpenAPI": "{\"paths\":{\"/api/workspaces/{workspaceId}/cards/{cardId}/confirm\":{}}}" }, "RT1-RETIRED-WORKSPACE-COMPAT-CONTRACT");
-  assertViolation("direct runtime confirm rejected", { ...valid, "OperationsRuntimeService.cs": "public sealed class OperationsRuntimeService { void X(){ runtime.Confirm(); } } public sealed class ProjectionOperationsRuntimeAdapter {}" }, "RT1-RUNTIME-DIRECT-CONFIRM");
-  assertViolation("workspace card fallback rejected", { ...valid, "OperationsRuntimeService.cs": "public sealed class OperationsRuntimeService { void X(){ SplitWorkItemId(id); } } public sealed class ProjectionOperationsRuntimeAdapter {}" }, "RT1-NO-WORKSPACE-CARD-IDENTITY-FALLBACK");
-  assertViolation("official shadow runtime reference rejected", { ...valid, "services/core-api/WorkOS.Api/Runtime/OfficialSource.cs": "const string Schema = \"shadow_runtime\";" }, "RT1-NO-SHADOW-RUNTIME-OFFICIAL");
+  assertViolation("retired endpoint rejected", { ...valid, "Program.cs": "app.MapPost(\"/api/workspaces/start\", () => {});" }, "OAM-WRITE-RETIRED-WORKSPACE-COMPAT-ENDPOINT");
+  assertViolation("retired OpenAPI rejected", { ...valid, "OpenAPI": "{\"paths\":{\"/api/workspaces/{workspaceId}/cards/{cardId}/confirm\":{}}}" }, "OAM-WRITE-RETIRED-WORKSPACE-COMPAT-CONTRACT");
+  assertViolation("direct runtime confirm rejected", { ...valid, "OperationsRuntimeService.cs": "public sealed class OperationsRuntimeService { void X(){ runtime.Confirm(); } } public sealed class ProjectionOperationsRuntimeAdapter {}" }, "OAM-WRITE-RUNTIME-DIRECT-CONFIRM");
+  assertViolation("workspace card fallback rejected", { ...valid, "OperationsRuntimeService.cs": "public sealed class OperationsRuntimeService { void X(){ SplitWorkItemId(id); } } public sealed class ProjectionOperationsRuntimeAdapter {}" }, "OAM-WRITE-NO-WORKSPACE-CARD-IDENTITY-FALLBACK");
+  assertViolation("official shadow runtime reference rejected", { ...valid, "services/core-api/WorkOS.Api/Runtime/OfficialSource.cs": "const string Schema = \"shadow_runtime\";" }, "OAM-WRITE-NO-SHADOW-RUNTIME-OFFICIAL");
 
   console.log("Runtime write path guard self-test: PASS");
 }

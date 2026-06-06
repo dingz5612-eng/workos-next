@@ -141,7 +141,7 @@ describe("Operations Runtime start command contract", () => {
     expect(visibleText(routeView(ctx))).not.toContain("查看不能提交原因");
   });
 
-  it("does not expose retired workspace/card compatibility write paths to the mobile client", () => {
+  it("does not expose retired workspace/card retired write paths to the mobile client", () => {
     const runtimePaths = source("../generated/runtimeApiPaths.js");
     const apiClient = source("../apiClient.js");
 

@@ -5,7 +5,7 @@ import { routeView } from "../../apps/mobile/src/appRouter.js";
 import { shell } from "../../apps/mobile/src/appShell.js";
 
 const root = process.cwd();
-const artifactPath = "artifacts/oma/checks/pc-governance-productization-result.json";
+const artifactPath = "artifacts/oam/checks/pc-governance-productization-result.json";
 const violations = [];
 
 const renders = {

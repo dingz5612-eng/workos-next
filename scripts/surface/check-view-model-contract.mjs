@@ -6,7 +6,7 @@ const contractPath = "docs/surface/view-model-contract.yml";
 const packagePath = "packages/surface-view-models/src/index.js";
 const mobileVmPath = "apps/mobile/src/viewModels/index.js";
 const pcVmPath = "apps/pc/src/viewModels/index.js";
-const artifactPath = "artifacts/oma/checks/view-model-contract-result.json";
+const artifactPath = "artifacts/oam/checks/view-model-contract-result.json";
 
 const violations = [];
 const contract = readJson(contractPath);
@@ -58,8 +58,8 @@ for (const token of ["fetch(", "XMLHttpRequest", "localStorage.setItem", "Domain
   }
 }
 
-if (!packageSource.includes("compatibilityWorkItemKey")) {
-  violations.push(v("view_model.compatibility_key_missing", "workspaceId:cardId 只能命名为 compatibilityWorkItemKey。"));
+if (!packageSource.includes("retiredWorkItemKey")) {
+  violations.push(v("view_model.retired_key_missing", "workspaceId:cardId 只能命名为 retiredWorkItemKey。"));
 }
 
 if (!experienceSource.includes("WorkItemDecisionVM") || !experienceSource.includes("TrustedConfirmVM")) {

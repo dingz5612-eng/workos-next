@@ -1,9 +1,9 @@
 {
   "policyId": "business.invariant-policy",
   "policyType": "invariant",
-  "version": "oma.policy.v1",
+  "version": "oam.policy.v1",
   "owner": "ControlPlane",
-  "sourceFile": "docs/contracts/oma.current.json#/productCapabilities",
+  "sourceFile": "docs/contracts/oam.current.json#/productCapabilities",
   "runtimeBinding": {
     "loader": "InvariantPolicyLoader",
     "evaluator": "PolicyEvaluator"

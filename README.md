@@ -1,20 +1,20 @@
 # WorkOSNext
 
-WorkOSNext is a mobile-first Business Work OS platform. The current architecture is OMA: Operations Management Architecture.
+WorkOSNext is a mobile-first Business Work OS platform. The current architecture is OAM: Operations Management Architecture.
 
 ## Current Authority
 
 Current work must follow these files first:
 
 ```text
-docs/oma/current-architecture.md
-docs/oma/current-architecture.manifest.json
-docs/contracts/oma.current.json
+docs/oam/current-architecture.md
+docs/oam/current-architecture.manifest.json
+docs/contracts/oam.current.json
 docs/business/experience-contract.yml
 docs/surface/surface-contract.yml
 ```
 
-Only the current OMA chain may own business execution:
+Only the current OAM chain may own business execution:
 
 ```text
 Product Capability
@@ -40,7 +40,7 @@ Projection and Lens are read-side facades. Mobile BFF helpers, search, language,
 
 ## Directory Responsibilities
 
-`services` is limited to current OMA services. Today only `services/core-api` is present. It owns the HTTP API, Confirm Runtime, Unit of Work, policy, evidence, trace, audit, projection, and migration runner.
+`services` is limited to current OAM services. Today only `services/core-api` is present. It owns the HTTP API, Confirm Runtime, Unit of Work, policy, evidence, trace, audit, projection, and migration runner.
 
 `modules` is limited to:
 
@@ -51,7 +51,7 @@ modules/identity
 modules/maintenance
 ```
 
-Each module must bind Product Capability, Domain Invariant, API, DB, tests, and rules in `oma-module.manifest.json`.
+Each module must bind Product Capability, Domain Invariant, API, DB, tests, and rules in `oam-module.manifest.json`.
 
 `packages` is limited to current shared packages. Today only `packages/surface-view-models` is present, and it may contain read-only view model code only.
 
@@ -94,7 +94,7 @@ docker compose -f infra/docker-compose.yml up -d
 Core local checks:
 
 ```powershell
-node scripts/oma/check-current-oma.mjs
+node scripts/oam/check-current-oam.mjs
 node scripts/check-rule-authority.mjs
 node scripts/check-api-boundaries.mjs
 node scripts/check-runtime-write-paths.mjs
@@ -106,4 +106,4 @@ npm --prefix apps/mobile run build
 dotnet build WorkOSNext.sln -c Release
 ```
 
-User-visible experience changes also require real browser operation and screenshot evidence under current OMA evidence paths.
+User-visible experience changes also require real browser operation and screenshot evidence under current OAM evidence paths.

@@ -1,5 +1,5 @@
 {
-  "version": "oma.scenario.repair-l0.scenarios.v1",
+  "version": "oam.scenario.repair-l0.scenarios.v1",
   "domain": "repair-l0",
   "scenarios": [
     {

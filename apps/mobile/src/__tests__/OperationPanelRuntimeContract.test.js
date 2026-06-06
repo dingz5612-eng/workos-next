@@ -5,7 +5,7 @@ import { withSystemGeneratedOperationValues } from "../operationSystemValues.js"
 import { createSurfaceCtx, runtimeStore, source, visibleText } from "./surfaceContractTestHelpers.js";
 
 describe("SURFACE-C Operation Panel runtime contract", () => {
-  it("normalizes legacy task ids and renders only persisted WorkItem runtime identity", () => {
+  it("normalizes retired task ids and renders only persisted WorkItem runtime identity", () => {
     const ctx = createSurfaceCtx({ view: "operationPanel", selectedWorkItemId: "T-ROOM-CREATE" });
     const html = routeView(ctx);
 
@@ -32,8 +32,8 @@ describe("SURFACE-C Operation Panel runtime contract", () => {
     const panel = source("../views/operationPanelView.js");
 
     expect(runtime).toContain("persisted_work_item_required");
-    expect(runtime).not.toContain("allowCompatibilityFallback");
-    expect(runtime).not.toContain("submitCardOperationCompatibilityFallback");
+    expect(runtime).not.toContain("allowRetiredFallback");
+    expect(runtime).not.toContain("submitCardOperationRetiredFallback");
     expect(runtime).not.toContain("prepareCard");
     expect(runtime).not.toContain("confirmCard");
     expect(panel).toContain("state.selectedWorkItemId = persistedWorkItemId");

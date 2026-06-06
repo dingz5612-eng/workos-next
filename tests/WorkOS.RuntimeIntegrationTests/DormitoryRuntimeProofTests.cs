@@ -7,9 +7,9 @@ namespace WorkOS.RuntimeIntegrationTests;
 public sealed class DormitoryRuntimeProofTests
 {
     [TestMethod]
-    public void CurrentOmaRuntimeContractRequiresConfirmUnitOfWorkTraceAndProjectionChain()
+    public void CurrentOamRuntimeContractRequiresConfirmUnitOfWorkTraceAndProjectionChain()
     {
-        using var contract = JsonDocument.Parse(DormitoryRuntimeReplayHarness.ReadText("docs/contracts/oma.current.json"));
+        using var contract = JsonDocument.Parse(DormitoryRuntimeReplayHarness.ReadText("docs/contracts/oam.current.json"));
         var root = contract.RootElement;
         var dataModel = root.GetProperty("dataModel");
         var apiBoundary = root.GetProperty("apiBoundary");
@@ -32,13 +32,13 @@ public sealed class DormitoryRuntimeProofTests
         }
 
         Assert.IsTrue(apiBoundary.GetProperty("writeRoutes").GetProperty("businessConfirm").EnumerateArray().Any(item => item.GetString() == root.GetProperty("primaryWritePath").GetString()));
-        Assert.IsTrue(apiBoundary.GetProperty("forbidden").EnumerateArray().Any(item => item.GetString() == "legacyWorkspaceCardConfirm"));
+        Assert.IsTrue(apiBoundary.GetProperty("forbidden").EnumerateArray().Any(item => item.GetString() == "retiredWorkspaceCardConfirm"));
     }
 
     [TestMethod]
-    public void CurrentOmaEvidencePolicyKeepsOcrSuggestionOnly()
+    public void CurrentOamEvidencePolicyKeepsOcrSuggestionOnly()
     {
-        using var contract = JsonDocument.Parse(DormitoryRuntimeReplayHarness.ReadText("docs/contracts/oma.current.json"));
+        using var contract = JsonDocument.Parse(DormitoryRuntimeReplayHarness.ReadText("docs/contracts/oam.current.json"));
         var evidence = contract.RootElement.GetProperty("evidenceTraceAudit");
 
         Assert.IsTrue(evidence.GetProperty("evidenceObjectRequired").GetBoolean());

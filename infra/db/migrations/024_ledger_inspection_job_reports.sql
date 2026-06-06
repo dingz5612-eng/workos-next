@@ -1,6 +1,6 @@
--- Current OMA ledger inspection job reports.
+-- Current OAM ledger inspection job reports.
 -- Rollback note: WorkOSNext migrations are up-only. To reverse before
--- production use, add a compensating migration that archives
+-- production use, add a compensating migration that history
 -- control_plane.ledger_inspection_job_reports, then drops this table.
 
 create table if not exists control_plane.ledger_inspection_job_reports (

@@ -2,8 +2,8 @@ import fs from "node:fs";
 import path from "node:path";
 
 const root = process.cwd();
-const latestPath = path.join(root, "artifacts", "oma", "evidence", "dormitory-l1-browser-e2e", "latest-report.json");
-const graphPath = path.join(root, "artifacts", "oma", "evidence", "evidence-graph.json");
+const latestPath = path.join(root, "artifacts", "oam", "evidence", "dormitory-l1-browser-e2e", "latest-report.json");
+const graphPath = path.join(root, "artifacts", "oam", "evidence", "evidence-graph.json");
 const requiredScenarios = new Set([
   "dormitory_l1_positive_normal",
   "dormitory_l1_negative_illegal_access",
@@ -67,8 +67,8 @@ if (!steps.filter((step) => step.admissionDecision === "visible_readonly_complet
   violations.push("Completed read-only steps must not expose submit CTA.");
 }
 
-if (report.networkPolicy?.noLegacyWorkspaceCardWrites !== true) {
-  violations.push("Network policy detected legacy workspace/card write path.");
+if (report.networkPolicy?.noRetiredWorkspaceCardWrites !== true) {
+  violations.push("Network policy detected retired workspace/card write path.");
 }
 if (!report.networkPolicy?.operationsRuntimeWrites?.length) {
   violations.push("Network policy did not observe Operations Runtime prepare/confirm writes.");

@@ -38,7 +38,7 @@ internal sealed class ArchitectureExceptionCatalog
         var current = new DirectoryInfo(AppContext.BaseDirectory);
         while (current is not null)
         {
-            var candidate = Path.Combine(current.FullName, "docs", "oma", fileName);
+            var candidate = Path.Combine(current.FullName, "docs", "oam", fileName);
             if (File.Exists(candidate))
             {
                 return candidate;
@@ -47,7 +47,7 @@ internal sealed class ArchitectureExceptionCatalog
             current = current.Parent;
         }
 
-        throw new FileNotFoundException($"Could not locate docs/oma/{fileName}.");
+        throw new FileNotFoundException($"Could not locate docs/oam/{fileName}.");
     }
 
     private sealed record ArchitectureExceptionRecord(string RuleId, DateTimeOffset ExpiresAt);

@@ -1,1 +1,0 @@
-{"templateId":"surface-template","requiredFields":["surfaceName","allowedRoles","runtimePaths","readModels","forbiddenWrites","releaseControlVisibility"],"mobileBffWritesFacts":false,"ordinaryWorkerReleaseControlVisible":false}

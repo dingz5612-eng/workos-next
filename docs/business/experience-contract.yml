@@ -1,6 +1,6 @@
 {
-  "version": "oma.experience-contract.v1",
-  "authority": "docs/oma/current-architecture.md",
+  "version": "oam.experience-contract.v1",
+  "authority": "docs/oam/current-architecture.md",
   "currentSurfaceArchitecture": {
     "name": "Operations Management Architecture surface system",
     "runtimeAxis": "Product Capability -> Domain Module -> WorkItem -> Confirm Runtime -> Unit of Work -> Event or Ledger -> Outbox -> Projection or Lens -> Surface",
@@ -18,7 +18,7 @@
       "retired Workspace/Card write UI flow",
       "completed record detour page"
     ],
-    "repair": "any non-current surface is rewritten onto the OMA surface system and the obsolete implementation is deleted in the same scope"
+    "repair": "any non-current surface is rewritten onto the OAM surface system and the obsolete implementation is deleted in the same scope"
   },
   "roleDefaultHome": {
     "frontdesk": "Today",
@@ -48,14 +48,14 @@
       "surface-contract",
       "multilingual-dictionary",
       "state-action-contract",
-      "real-browser-verification"
+      "real-browser-evidence"
     ],
     "rule": "pages may specialize business content, permissions, readonly state, and business actions, but not architecture",
     "mobileShellTitleRule": "ordinary mobile topbar owns the current page title, runtime status, and language selector",
     "contentContainerRule": "ordinary mobile content renders in shared overview containers, control containers, result groups, repeated item cards, or BusinessSummaryHeader",
     "businessSummaryCardHierarchy": "business item cards use BusinessSummaryHeader, structured anchors, BusinessTaskOverview, and one primary action container",
     "todayWorkResponsibilityBoundary": "Today owns today's work only; Work owns the full permitted work queue",
-    "searchMeResponsibilityBoundary": "Search is active business discovery; Me owns readonly personal archives and support surfaces",
+    "searchMeResponsibilityBoundary": "Search is active business discovery; Me owns readonly personal history and support surfaces",
     "fieldContextKernel": "field identity, aliases, task overview fields, option labels, and derived previews come from the shared field kernel",
     "stepPageExperienceParity": "new active, readonly completed, and append-only correction step pages share step rail, OperationCardShell, state/check panel, action hierarchy, feedback entry, and decision markers",
     "postSubmitNavigation": "successful active confirm advances to the next actionable persisted WorkItem in the same case when one exists",
@@ -75,11 +75,11 @@
   },
   "admissionExplainabilityExperience": {
     "rule": "visibleAllowed, prepareAllowed, confirmAllowed, productionAllowed, mode, and safe reason copy are consumed by the visible surface",
-    "ordinaryUserHidden": ["admissionDecisionRef", "compatibilityAdapter", "definitionId", "payloadHash", "commandSubmissionId", "rawReason", "rawCode"],
+    "ordinaryUserHidden": ["admissionDecisionRef", "retiredAdapter", "definitionId", "payloadHash", "commandSubmissionId", "rawReason", "rawCode"],
     "safeErrors": ["operations.error.safe.403", "operations.error.safe.409", "operations.error.safe.422", "operations.error.safe.generic"]
   },
   "businessOperationActionPaths": {
-    "create": "active work is created as an OMA WorkItem and confirmed only through POST /api/operations/work-items/{workItemId}/confirm",
+    "create": "active work is created as an OAM WorkItem and confirmed only through POST /api/operations/work-items/{workItemId}/confirm",
     "view": "completed business records open directly as readonly fact trace, submitted values, evidence, audit, and next-state context",
     "correct": "completed facts are modified only by append-only correction through a new WorkItem or Correction Center request",
     "order": ["create_active_work_item", "view_readonly_completed_record", "correct_append_only_from_record"],
@@ -87,7 +87,7 @@
   },
   "issueRepairProtocol": {
     "order": ["observe_real_behavior", "classify_impact_scope", "locate_broken_layer", "align_to_contract", "update_rule_or_model", "implement_root_cause_fix", "verify_with_tests_and_real_browser"],
-    "forbidden": ["page-level hard-add", "old compatibility fallback", "copy-only patch without model change", "direct edit of completed business fact"]
+    "forbidden": ["page-level hard-add", "old retired fallback", "copy-only patch without model change", "direct edit of completed business fact"]
   },
   "feedbackMessageChannel": {
     "mode": "role_or_account_addressed_collaboration_message",

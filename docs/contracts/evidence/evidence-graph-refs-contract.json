@@ -1,13 +1,13 @@
 {
-  "version": "oma.evidence-graph-refs-contract.v1",
+  "version": "oam.evidence-graph-refs-contract.v1",
   "status": "authoritative-evidence-contract",
   "requiredRefs": [
-    "docs/oma/current-admission-state.json",
-    "artifacts/oma/evidence/evidence-graph.json",
-    "docs/oma/current-architecture.manifest.json",
-    "docs/contracts/oma.current.json",
-    "artifacts/oma/checks/company-kernel-alignment-result.json",
-    "artifacts/oma/evidence/execution-log.jsonl"
+    "docs/oam/current-admission-state.json",
+    "artifacts/oam/evidence/evidence-graph.json",
+    "docs/oam/current-architecture.manifest.json",
+    "docs/contracts/oam.current.json",
+    "artifacts/oam/checks/company-kernel-alignment-result.json",
+    "artifacts/oam/evidence/execution-log.jsonl"
   ],
   "appendOnlyEvidenceRequired": true,
   "businessFactWriteAllowed": false,

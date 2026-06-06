@@ -1,6 +1,6 @@
 {
   "domainId": "dormitory",
-  "version": "oma.dormitory.v1",
+  "version": "oam.dormitory.v1",
   "lenses": [
     {"lensId":"DormAvailabilityLens","sourceFacts":["Room","Bed","BedStatus","RoomReadiness"],"notFactSource":true},
     {"lensId":"LeadFunnelLens","sourceFacts":["Lead","Reservation","Stay"],"notFactSource":true},

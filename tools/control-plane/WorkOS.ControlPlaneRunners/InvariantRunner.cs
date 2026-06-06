@@ -11,13 +11,13 @@ public static class InvariantRunner
 
     public static Task<IReadOnlyList<InvariantCheckEvidence>> Run(RunnerOptions options)
     {
-        var releaseId = options.Get("releaseId", "oma.current-first-batch");
+        var releaseId = options.Get("releaseId", "oam.current-first-batch");
         var tenantId = options.Get("tenantId", "all-tenants");
         var sliceId = options.Get("sliceId", "all-slices");
         var ciRunId = ResolveCiRunId(options);
         var sourceMode = ResolveSourceMode(options);
-        var definitionsPath = options.Get("definitions", Path.Combine("docs", "oma", "invariant-definitions.json"));
-        var outputPath = options.Get("out", Path.Combine(".tmp", "oma", "invariant-checks.json"));
+        var definitionsPath = options.Get("definitions", Path.Combine("docs", "oam", "invariant-definitions.json"));
+        var outputPath = options.Get("out", Path.Combine(".tmp", "oam", "invariant-checks.json"));
         var dryRun = options.GetBool("dry-run");
         var database = new ControlPlaneDatabase(ControlPlaneDatabase.ResolveConnectionString(options));
         var definitions = RunnerJson.Read<InvariantDefinitionFile>(definitionsPath).Invariants;
@@ -91,7 +91,7 @@ public static class InvariantRunner
             : definition.Mode == "observing" ? "warning" : "failed";
 
         return new InvariantCheckEvidence(
-            InvariantCheckId: $"inv-oma-current-{Sanitize(definition.InvariantKey)}",
+            InvariantCheckId: $"inv-oam-current-{Sanitize(definition.InvariantKey)}",
             ReleaseId: releaseId,
             TenantId: tenantId,
             SliceId: sliceId,
@@ -122,7 +122,7 @@ public static class InvariantRunner
             "shadow.no_shadow_event_consumed_by_official_projector" => OfficialProjectorShadowReadCheck(),
             "api.no_page_specific_business_write" => ApiBoundaryCheck(),
             "runtime.no_production_demo_fallback" => ProductionDemoFallbackCheck(),
-            "case.closed_has_no_open_blocker" => ConfiguredSkeletonCheck(key, "docs/oma/checkout-service-cutover.config.json"),
+            "case.closed_has_no_open_blocker" => ConfiguredSkeletonCheck(key, "docs/oam/checkout-service-cutover.config.json"),
             "case.close_requires_closure_policy" => FileContainsCheck(
                 key,
                 "services/core-api/WorkOS.Api/Runtime/CheckoutServiceProcessManager.cs",
@@ -143,12 +143,12 @@ public static class InvariantRunner
                 key,
                 "services/core-api/WorkOS.Api/Runtime/SystemCheckCatalog.cs",
                 new[] { "roomReleaseAfterService", "服务任务已验收" }),
-            "bank.import_does_not_create_payment_fact" => ConfiguredSkeletonCheck(key, "docs/oma/reconciliation-correction-cutover.config.json"),
-            "reconciliation.bank_transaction_single_match_default" => ConfiguredSkeletonCheck(key, "docs/oma/reconciliation-correction-cutover.config.json"),
-            "ledger.no_edit_old_entry" => ConfiguredSkeletonCheck(key, "docs/oma/reconciliation-correction-cutover.config.json"),
-            "correction.requires_reason" => ConfiguredSkeletonCheck(key, "docs/oma/reconciliation-correction-cutover.config.json"),
-            "correction.high_risk_requires_approval" => ConfiguredSkeletonCheck(key, "docs/oma/reconciliation-correction-cutover.config.json"),
-            "balance.rebuild_after_correction" => ConfiguredSkeletonCheck(key, "docs/oma/reconciliation-correction-cutover.config.json"),
+            "bank.import_does_not_create_payment_fact" => ConfiguredSkeletonCheck(key, "docs/oam/reconciliation-correction-cutover.config.json"),
+            "reconciliation.bank_transaction_single_match_default" => ConfiguredSkeletonCheck(key, "docs/oam/reconciliation-correction-cutover.config.json"),
+            "ledger.no_edit_old_entry" => ConfiguredSkeletonCheck(key, "docs/oam/reconciliation-correction-cutover.config.json"),
+            "correction.requires_reason" => ConfiguredSkeletonCheck(key, "docs/oam/reconciliation-correction-cutover.config.json"),
+            "correction.high_risk_requires_approval" => ConfiguredSkeletonCheck(key, "docs/oam/reconciliation-correction-cutover.config.json"),
+            "balance.rebuild_after_correction" => ConfiguredSkeletonCheck(key, "docs/oam/reconciliation-correction-cutover.config.json"),
             _ => new SqlInvariantResult(0, new Dictionary<string, object> { ["skeleton"] = key }, new Dictionary<string, object>(), [])
         };
     }
@@ -242,7 +242,7 @@ public static class InvariantRunner
 
     private static SqlInvariantResult ApiBoundaryCheckV2()
     {
-        var reportPath = Path.Combine(RepoRoot(), ".tmp", "oma", "api-boundary-check-v2.json");
+        var reportPath = Path.Combine(RepoRoot(), ".tmp", "oam", "api-boundary-check-v2.json");
         Directory.CreateDirectory(Path.GetDirectoryName(reportPath)!);
         var nodeResult = RunNode("scripts/check-api-boundaries.mjs", $"--out={reportPath}");
         if (!File.Exists(reportPath))

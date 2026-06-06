@@ -1,5 +1,5 @@
 {
-  "version": "oma.finance.ledger-transaction-contract.v1",
+  "version": "oam.finance.ledger-transaction-contract.v1",
   "owner": "MoneyKernelPack",
   "transactionRequiredFields": [
     "tenantId",

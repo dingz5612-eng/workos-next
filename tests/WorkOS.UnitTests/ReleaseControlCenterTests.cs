@@ -126,7 +126,7 @@ public sealed class ReleaseControlCenterTests
         new(
             "gate-1",
             "release-1",
-            "MR-1",
+            "RR-1",
             "tenant-1",
             "slice-1",
             "release-gate",
@@ -196,7 +196,7 @@ public sealed class ReleaseControlCenterTests
             "release-1",
             "rollback",
             "runtime_mode",
-            "Rollback to legacy",
+            "Rollback to retired",
             new Dictionary<string, object>(),
             ["shadow", "pilot", "active"],
             ["rollback"],

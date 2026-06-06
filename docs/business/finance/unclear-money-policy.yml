@@ -1,5 +1,5 @@
 {
-  "version": "oma.finance.unclear-money-policy.v1",
+  "version": "oam.finance.unclear-money-policy.v1",
   "owner": "FinanceTruthPack",
   "triggers": [
     "unknown payer",

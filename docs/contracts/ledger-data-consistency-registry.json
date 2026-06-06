@@ -1,0 +1,49 @@
+{
+  "version": "0.16.2",
+  "sourceSlice": "Accommodation.CheckIn",
+  "phase": "retired-intake-ledger-read-only",
+  "authoritativeOwners": {
+    "deposit": "Accommodation.DepositLedger",
+    "ordinaryPayment": "Accommodation.PaymentLedger",
+    "stayBalance": "Accommodation.PaymentLedger",
+    "expense": "Accommodation.ExpenseLedger",
+    "periodSnapshot": "Accommodation.PeriodAnalytics"
+  },
+  "retiredTables": [
+    {
+      "table": "accommodation_deposits",
+      "replacement": "deposit_transactions",
+      "mode": "locked-read-only",
+      "consistencyPolicy": "convert retired deposit receipts to DepositLedger received/confirmed transaction entries during explicit remediation only"
+    },
+    {
+      "table": "deposit_liabilities",
+      "replacement": "deposit_transactions + deposit_liabilities projection",
+      "mode": "locked-read-only",
+      "consistencyPolicy": "derive liability from DepositLedger transaction history; do not double-count retired liability rows"
+    },
+    {
+      "table": "hostel_payments",
+      "replacement": "PaymentLedger payment receipt + allocation facts",
+      "mode": "locked-read-only",
+      "consistencyPolicy": "convert only non-deposit ordinary payment rows; deposit purpose rows migrate to DepositLedger"
+    },
+    {
+      "table": "finance_reconciliations",
+      "replacement": "PaymentLedger payment confirmation facts",
+      "mode": "locked-read-only",
+      "consistencyPolicy": "attach to converted PaymentLedger payment ids by original payment_id"
+    },
+    {
+      "table": "finance_confirmations",
+      "replacement": "DepositLedger/PaymentLedger confirmation events",
+      "mode": "locked-read-only",
+      "consistencyPolicy": "sourceLock as audit history unless explicitly mapped to a ledger confirmation event"
+    }
+  ],
+  "guards": [
+    "CheckIn persistence must not write new ledger fact tables",
+    "PeriodAnalytics and risk lenses must not sum retired and new ledger facts together",
+    "Remediation must be dry-run first and must be idempotent"
+  ]
+}

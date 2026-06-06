@@ -1,0 +1,18 @@
+{
+  "scenarioId": "oam-finance-positive-refund-deposit",
+  "sourcePack": "FinanceTruthPack",
+  "inputFact": "MoneyBasis",
+  "basisType": "refund_deposit",
+  "targetFact": "MoneyBasis",
+  "amount": 300,
+  "currency": "KGS",
+  "depositAccountId": "deposit-account-001",
+  "availableLiability": 1000,
+  "expectedLedger": {
+    "balanced": true,
+    "debitAccount": "liability.deposit",
+    "creditAccount": "asset.cash_or_bank",
+    "forbiddenAccountTypes": ["expense"]
+  },
+  "expectedReceipt": "FinanceReceipt"
+}

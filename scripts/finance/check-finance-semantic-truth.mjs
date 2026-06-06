@@ -36,7 +36,7 @@ console.log("Finance semantic truth check: PASS");
 function runChecker(script) {
   const result = spawnSync("node", [script], { cwd: process.cwd(), encoding: "utf8", shell: isWindows() });
   if (result.status === 0) return [];
-  return [violation("oma.finance.subchecker_failed", script, `${script} failed.`, {
+  return [violation("oam.finance.subchecker_failed", script, `${script} failed.`, {
     stdout: result.stdout,
     stderr: result.stderr
   })];
@@ -45,14 +45,14 @@ function runChecker(script) {
 function validateKernel() {
   const violations = [];
   if (kernel.productionAllowed !== false || kernel.businessProduction !== "BLOCKED" || kernel.dormitoryL2ProductionAllowed !== false) {
-    violations.push(violation("oma.finance.production_boundary_drift", files[0], "OMA finance-gate 不允许声明业务生产或宿舍 L2。"));
+    violations.push(violation("oam.finance.production_boundary_drift", files[0], "OAM finance-gate 不允许声明业务生产或宿舍 L2。"));
   }
   if (kernel.repairPartsHrStatus !== "L0 Contract Preview") {
-    violations.push(violation("oma.finance.downstream_line_drift", files[0], "Repair / Parts / HR 必须保持 L0 Contract Preview。"));
+    violations.push(violation("oam.finance.downstream_line_drift", files[0], "Repair / Parts / HR 必须保持 L0 Contract Preview。"));
   }
   for (const guard of ["LedgerSemanticRules.Validate", "FinanceTruthPipeline.ValidateBalanced", "OperationsUnitOfWork.ValidateLedgerBoundary"]) {
     if (!(kernel.runtimeGuards ?? []).includes(guard)) {
-      violations.push(violation("oma.finance.runtime_guard_missing", files[0], `缺少 runtime guard: ${guard}.`, { guard }));
+      violations.push(violation("oam.finance.runtime_guard_missing", files[0], `缺少 runtime guard: ${guard}.`, { guard }));
     }
   }
   for (const [key, expected] of Object.entries({
@@ -63,7 +63,7 @@ function validateKernel() {
     businessProductionAllowed: false
   })) {
     if (kernel.noGo?.[key] !== expected) {
-      violations.push(violation("oma.finance.no_go_boundary_wrong", files[0], `noGo.${key} 必须是 false。`, { key }));
+      violations.push(violation("oam.finance.no_go_boundary_wrong", files[0], `noGo.${key} 必须是 false。`, { key }));
     }
   }
   return violations;
@@ -76,12 +76,12 @@ function validateTestsAndCi() {
     "tests/WorkOS.RuntimeIntegrationTests/DormitoryFinanceRuntimeSemanticTests.cs"
   ]) {
     if (!fs.existsSync(path.join(process.cwd(), testFile))) {
-      violations.push(violation("oma.finance.test_missing", testFile, `${testFile} 必须存在。`));
+      violations.push(violation("oam.finance.test_missing", testFile, `${testFile} 必须存在。`));
     }
   }
   const ci = fs.readFileSync(path.join(process.cwd(), ".github/workflows/ci.yml"), "utf8");
   if (!ci.includes("scripts/finance/check-finance-semantic-truth.mjs") || !ci.includes("scripts/check-ledger-semantic-rules.mjs")) {
-    violations.push(violation("oma.finance.ci_missing", ".github/workflows/ci.yml", "CI 必须接入 OMA finance-gate finance semantic checker。"));
+    violations.push(violation("oam.finance.ci_missing", ".github/workflows/ci.yml", "CI 必须接入 OAM finance-gate finance semantic checker。"));
   }
   return violations;
 }

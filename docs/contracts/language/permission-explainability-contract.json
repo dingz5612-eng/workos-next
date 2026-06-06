@@ -1,5 +1,5 @@
 {
-  "version": "oma.permission-explainability-contract.v1",
+  "version": "oam.permission-explainability-contract.v1",
   "status": "authoritative-current-contract",
   "supportedLanguages": [
     "zh-CN",

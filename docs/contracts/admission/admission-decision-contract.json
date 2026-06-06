@@ -1,5 +1,5 @@
 {
-  "version": "oma.admission-decision-contract.v1",
+  "version": "oam.admission-decision-contract.v1",
   "source": "docs/contracts/admission/admission-contract.json",
   "decisionFields": [
     "visibleAllowed",

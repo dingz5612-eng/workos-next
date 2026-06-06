@@ -2,8 +2,8 @@ import fs from "node:fs";
 import path from "node:path";
 
 export const repoRoot = process.cwd();
-export const positiveFixtureRoot = "tests/fixtures/oma-business-contracts/positive";
-export const negativeFixtureRoot = "tests/fixtures/oma-business-contracts/negative";
+export const positiveFixtureRoot = "tests/fixtures/oam-business-contracts/positive";
+export const negativeFixtureRoot = "tests/fixtures/oam-business-contracts/negative";
 
 export function parseArgs(argv) {
   const flags = new Set();

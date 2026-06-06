@@ -5,7 +5,7 @@ internal static class DormitoryFactTraceContractTests
 {
     public static void Run()
     {
-        using var contract = JsonDocument.Parse(File.ReadAllText(RepoPath("docs", "contracts", "oma.current.json")));
+        using var contract = JsonDocument.Parse(File.ReadAllText(RepoPath("docs", "contracts", "oam.current.json")));
         var capabilities = contract.RootElement.GetProperty("productCapabilities")
             .EnumerateArray()
             .Select(item => item.GetProperty("id").GetString())
@@ -21,7 +21,7 @@ internal static class DormitoryFactTraceContractTests
             "accommodation.service-task"
         })
         {
-            Require(capabilities.Contains(capability), $"OMA contract missing dormitory capability {capability}.");
+            Require(capabilities.Contains(capability), $"OAM contract missing dormitory capability {capability}.");
         }
 
         var trace = new FactTraceV1(

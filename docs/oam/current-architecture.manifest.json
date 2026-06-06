@@ -1,0 +1,255 @@
+{
+  "version": "oam.current.v1",
+  "name": "WorkOSNext Current OAM",
+  "authority": {
+    "humanReadable": "docs/oam/current-architecture.md",
+    "machineContract": "docs/contracts/oam.current.json",
+    "systemMap": "docs/system/current-system-map.md",
+    "decisionRecord": "docs/decisions/ADR-0002-oam-authority-correction.md",
+    "designInputAudit": "docs/review/oam-business-operating-input-audit.md",
+    "currentEvidenceRoot": "artifacts/oam/evidence"
+  },
+  "runtimeAxis": [
+    "ProductCapability",
+    "DomainModule",
+    "WorkItemDefinition",
+    "OperationCase",
+    "WorkItem",
+    "ConfirmRuntime",
+    "OperationsUnitOfWork",
+    "DomainEventOrLedgerEntry",
+    "Outbox",
+    "ProjectionOrLens",
+    "Surface"
+  ],
+  "allowedTopLevel": [
+    ".github",
+    "apps",
+    "docs",
+    "infra",
+    "modules",
+    "packages",
+    "schemas",
+    "scripts",
+    "services",
+    "tests",
+    "tools",
+    "artifacts",
+    "README.md",
+    "WorkOSNext.sln",
+    ".env.example",
+    ".gitignore"
+  ],
+  "services": {
+    "allowed": [
+      "core-api",
+      "ai-personalization",
+      "workers"
+    ],
+    "presentRequired": [
+      "core-api"
+    ],
+    "entries": {
+      "core-api": {
+        "status": "present",
+        "path": "services/core-api",
+        "responsibilities": [
+          "api",
+          "confirm-runtime",
+          "unit-of-work",
+          "policy",
+          "evidence",
+          "trace",
+          "audit",
+          "projection",
+          "migration-runner"
+        ],
+        "apiBoundary": "docs/contracts/oam.current.json#/apiBoundary",
+        "dataBoundary": "infra/db/migrations",
+        "taskBoundary": [
+          "http-request",
+          "migration-runner",
+          "projection-process-request"
+        ],
+        "runBoundary": [
+          "aspnet-core-api",
+          "postgres-backed-runtime"
+        ]
+      },
+      "ai-personalization": {
+        "status": "absent",
+        "createOnlyWhen": [
+          "personalization-api",
+          "privacy-boundary",
+          "model-task-boundary",
+          "data-retention-rule"
+        ],
+        "emptyShellAllowed": false
+      },
+      "workers": {
+        "status": "absent",
+        "createOnlyWhen": [
+          "queue-contract",
+          "retry-policy",
+          "idempotency-policy",
+          "operational-runbook"
+        ],
+        "emptyShellAllowed": false
+      }
+    }
+  },
+  "modules": {
+    "required": [
+      "accommodation",
+      "finance-gate",
+      "identity",
+      "maintenance"
+    ],
+    "manifestFile": "oam-module.manifest.json",
+    "mustBind": [
+      "productCapability",
+      "domainInvariant",
+      "api",
+      "database",
+      "tests",
+      "rules"
+    ],
+    "emptyModuleAllowed": false
+  },
+  "packages": {
+    "allowed": [
+      "surface-view-models",
+      "contracts",
+      "design-system"
+    ],
+    "presentRequired": [
+      "surface-view-models"
+    ],
+    "entries": {
+      "surface-view-models": {
+        "status": "present",
+        "path": "packages/surface-view-models",
+        "responsibilities": [
+          "cross-surface-readonly-view-models"
+        ],
+        "forbidden": [
+          "business-write",
+          "api-side-effect",
+          "domain-fact-ownership"
+        ]
+      },
+      "contracts": {
+        "status": "absent",
+        "createOnlyWhen": [
+          "versioned-cross-runtime-contract-package"
+        ],
+        "emptyShellAllowed": false
+      },
+      "design-system": {
+        "status": "absent",
+        "createOnlyWhen": [
+          "shared-token-package",
+          "shared-component-api"
+        ],
+        "emptyShellAllowed": false
+      }
+    }
+  },
+  "infra": {
+    "dockerCompose": {
+      "path": "infra/docker-compose.yml",
+      "responsibility": "local-postgres-runtime"
+    },
+    "postgres": {
+      "status": "implicit-through-docker-compose",
+      "allowedDirectory": "infra/postgres",
+      "createOnlyWhen": [
+        "postgres-config",
+        "init-script",
+        "local-runbook"
+      ]
+    },
+    "database": {
+      "path": "infra/db/migrations",
+      "target": "current-oam-starting-point-or-clean-sequential-migrations",
+      "forbidden": [
+        "duplicate-migration-number",
+        "retired-source-lock",
+        "v5-stage-name"
+      ]
+    }
+  },
+  "github": {
+    "workflows": {
+      "allowedPurpose": [
+        "build",
+        "frontend-test",
+        "backend-test",
+        "coverage",
+        "api-boundary",
+        "db-migration",
+        "schema-validation",
+        "rule-coverage",
+        "purity-scan"
+      ],
+      "forbiddenTerms": [
+        "retired-architecture-stage-terms",
+        "retired-gate-result-terms",
+        "retired-evidence-phase-terms"
+      ]
+    },
+    "pullRequestTemplate": {
+      "path": ".github/pull_request_template.md",
+      "mustUse": "current-OAM-checklist",
+      "forbiddenTerms": [
+        "retired-architecture-stage-terms",
+        "retired-governance-abbreviations",
+        "retired-gate-result-terms"
+      ]
+    }
+  },
+  "businessWritePath": {
+    "primary": "POST /api/operations/work-items/{workItemId}/confirm",
+    "allowedPrepare": [
+      "POST /api/operations/work-items/{workItemId}/prepare",
+      "POST /api/operations/workspaces/start"
+    ],
+    "forbidden": [
+      "workspace-card-confirm",
+      "page-specific-business-write-api",
+      "mobile-bff-business-write",
+      "projection-write-as-command"
+    ]
+  },
+  "language": {
+    "locales": [
+      "zh-CN",
+      "ru-RU",
+      "ky-KG"
+    ],
+    "source": [
+      "docs/contracts/language/field-label-catalog.json",
+      "apps/mobile/src/i18n"
+    ]
+  },
+  "search": {
+    "source": [
+      "services/core-api/WorkOS.Api/Runtime/SearchKernelService.cs",
+      "apps/mobile/src/searchIntentHub.js"
+    ],
+    "rules": [
+      "permission-filtered",
+      "contracted-result-types",
+      "no-business-write"
+    ]
+  },
+  "purity": {
+    "deleteHistoricalArtifactsByDefault": true,
+    "forbiddenStageTerms": [
+      "retired-architecture-stage-terms",
+      "retired-runtime-stage-terms",
+      "retired-proof-stage-terms"
+    ],
+    "allowedEvidenceTerm": "current-oam-evidence-object-only"
+  }
+}

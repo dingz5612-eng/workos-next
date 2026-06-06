@@ -1,6 +1,6 @@
--- OMA current period analytics schema.
+-- OAM current period analytics schema.
 -- Rollback note: WorkOSNext migrations are up-only. If this schema must be
--- reversed before production use, add a compensating migration that archives
+-- reversed before production use, add a compensating migration that history
 -- period review records, drops triggers/functions, then drops period analytics
 -- tables and columns in dependency order.
 
@@ -229,11 +229,11 @@ do $$
 begin
     if not exists (
         select 1 from pg_constraint
-        where conname = 'ck_period_metric_snapshots_oma_json_shape'
+        where conname = 'ck_period_metric_snapshots_oam_json_shape'
           and conrelid = 'period_metric_snapshots'::regclass
     ) then
         alter table period_metric_snapshots
-            add constraint ck_period_metric_snapshots_oma_json_shape
+            add constraint ck_period_metric_snapshots_oam_json_shape
             check (
                 jsonb_typeof(body) = 'object'
                 and jsonb_typeof(source_projection_versions) = 'object'
@@ -335,11 +335,11 @@ do $$
 begin
     if not exists (
         select 1 from pg_constraint
-        where conname = 'ck_period_finance_snapshots_oma_json_shape'
+        where conname = 'ck_period_finance_snapshots_oam_json_shape'
           and conrelid = 'period_finance_snapshots'::regclass
     ) then
         alter table period_finance_snapshots
-            add constraint ck_period_finance_snapshots_oma_json_shape
+            add constraint ck_period_finance_snapshots_oam_json_shape
             check (
                 jsonb_typeof(body) = 'object'
                 and jsonb_typeof(source_ledger_versions) = 'object'
@@ -358,7 +358,7 @@ create table if not exists period_operation_snapshots (
     source_event_high_watermark text not null,
     generated_at_utc timestamptz not null,
     generated_by text not null,
-    constraint ck_period_operation_snapshots_oma_json_shape
+    constraint ck_period_operation_snapshots_oam_json_shape
         check (
             jsonb_typeof(body) = 'object'
             and jsonb_typeof(source_lens_versions) = 'object'
@@ -402,11 +402,11 @@ do $$
 begin
     if not exists (
         select 1 from pg_constraint
-        where conname = 'ck_period_action_plans_oma_status'
+        where conname = 'ck_period_action_plans_oam_status'
           and conrelid = 'period_action_plans'::regclass
     ) then
         alter table period_action_plans
-            add constraint ck_period_action_plans_oma_status
+            add constraint ck_period_action_plans_oam_status
             check (status in ('open', 'committed', 'in_progress', 'completed', 'cancelled', 'superseded'));
     end if;
 end $$;
@@ -505,7 +505,7 @@ create table if not exists risk_command_snapshots (
 create index if not exists ix_risk_command_snapshots_tenant_scope
     on risk_command_snapshots(tenant_id, scope_key, generated_at_utc);
 
-create or replace function normalize_period_review_oma()
+create or replace function normalize_period_review_oam()
 returns trigger
 language plpgsql
 as $$
@@ -541,7 +541,7 @@ begin
 end;
 $$;
 
-create or replace function sync_period_scope_from_review_oma()
+create or replace function sync_period_scope_from_review_oam()
 returns trigger
 language plpgsql
 as $$
@@ -634,7 +634,7 @@ begin
 end;
 $$;
 
-create or replace function normalize_period_metric_snapshot_oma()
+create or replace function normalize_period_metric_snapshot_oam()
 returns trigger
 language plpgsql
 as $$
@@ -660,7 +660,7 @@ begin
 end;
 $$;
 
-create or replace function normalize_period_finance_snapshot_oma()
+create or replace function normalize_period_finance_snapshot_oam()
 returns trigger
 language plpgsql
 as $$
@@ -718,7 +718,7 @@ begin
 end;
 $$;
 
-create or replace function normalize_period_action_plan_oma()
+create or replace function normalize_period_action_plan_oam()
 returns trigger
 language plpgsql
 as $$
@@ -735,7 +735,7 @@ begin
 end;
 $$;
 
-create or replace function normalize_period_late_adjustment_oma()
+create or replace function normalize_period_late_adjustment_oam()
 returns trigger
 language plpgsql
 as $$
@@ -775,19 +775,19 @@ $$;
 
 do $$
 begin
-    if not exists (select 1 from pg_trigger where tgname = 'trg_period_reviews_normalize_oma') then
-        create trigger trg_period_reviews_normalize_oma
+    if not exists (select 1 from pg_trigger where tgname = 'trg_period_reviews_normalize_oam') then
+        create trigger trg_period_reviews_normalize_oam
         before insert or update on period_reviews
-        for each row execute function normalize_period_review_oma();
+        for each row execute function normalize_period_review_oam();
     end if;
 end $$;
 
 do $$
 begin
-    if not exists (select 1 from pg_trigger where tgname = 'trg_period_reviews_sync_scope_oma') then
-        create trigger trg_period_reviews_sync_scope_oma
+    if not exists (select 1 from pg_trigger where tgname = 'trg_period_reviews_sync_scope_oam') then
+        create trigger trg_period_reviews_sync_scope_oam
         after insert or update on period_reviews
-        for each row execute function sync_period_scope_from_review_oma();
+        for each row execute function sync_period_scope_from_review_oam();
     end if;
 end $$;
 
@@ -802,19 +802,19 @@ end $$;
 
 do $$
 begin
-    if not exists (select 1 from pg_trigger where tgname = 'trg_period_metric_snapshots_normalize_oma') then
-        create trigger trg_period_metric_snapshots_normalize_oma
+    if not exists (select 1 from pg_trigger where tgname = 'trg_period_metric_snapshots_normalize_oam') then
+        create trigger trg_period_metric_snapshots_normalize_oam
         before insert or update on period_metric_snapshots
-        for each row execute function normalize_period_metric_snapshot_oma();
+        for each row execute function normalize_period_metric_snapshot_oam();
     end if;
 end $$;
 
 do $$
 begin
-    if not exists (select 1 from pg_trigger where tgname = 'trg_period_finance_snapshots_normalize_oma') then
-        create trigger trg_period_finance_snapshots_normalize_oma
+    if not exists (select 1 from pg_trigger where tgname = 'trg_period_finance_snapshots_normalize_oam') then
+        create trigger trg_period_finance_snapshots_normalize_oam
         before insert or update on period_finance_snapshots
-        for each row execute function normalize_period_finance_snapshot_oma();
+        for each row execute function normalize_period_finance_snapshot_oam();
     end if;
 end $$;
 
@@ -847,19 +847,19 @@ end $$;
 
 do $$
 begin
-    if not exists (select 1 from pg_trigger where tgname = 'trg_period_action_plans_normalize_oma') then
-        create trigger trg_period_action_plans_normalize_oma
+    if not exists (select 1 from pg_trigger where tgname = 'trg_period_action_plans_normalize_oam') then
+        create trigger trg_period_action_plans_normalize_oam
         before insert or update on period_action_plans
-        for each row execute function normalize_period_action_plan_oma();
+        for each row execute function normalize_period_action_plan_oam();
     end if;
 end $$;
 
 do $$
 begin
-    if not exists (select 1 from pg_trigger where tgname = 'trg_period_late_adjustments_normalize_oma') then
-        create trigger trg_period_late_adjustments_normalize_oma
+    if not exists (select 1 from pg_trigger where tgname = 'trg_period_late_adjustments_normalize_oam') then
+        create trigger trg_period_late_adjustments_normalize_oam
         before insert on period_late_adjustments
-        for each row execute function normalize_period_late_adjustment_oma();
+        for each row execute function normalize_period_late_adjustment_oam();
     end if;
 end $$;
 
@@ -882,13 +882,13 @@ begin
 end $$;
 
 comment on table period_reviews is
-    'OMA current PeriodAnalytics review header. Existing period_id/workspace_id columns are retained for compatibility; OMA current callers use period_review_id and tenant_id.';
+    'OAM current PeriodAnalytics review header. Existing period_id/workspace_id columns are retained for retired; OAM current callers use period_review_id and tenant_id.';
 
 comment on table period_scopes is
-    'OMA current PeriodAnalytics scope table. PeriodScopeConfirmed freezes period_start, period_end, timezone, and business_day_cutoff.';
+    'OAM current PeriodAnalytics scope table. PeriodScopeConfirmed freezes period_start, period_end, timezone, and business_day_cutoff.';
 
 comment on table period_finance_snapshots is
-    'OMA current finance snapshots are machine-generated from ledgers. User-filled final finance numbers and zero-by-default expense status are forbidden.';
+    'OAM current finance snapshots are machine-generated from ledgers. User-filled final finance numbers and zero-by-default expense status are forbidden.';
 
 comment on table period_late_adjustments is
-    'OMA current late adjustments are append-only after period close; frozen snapshots are not edited.';
+    'OAM current late adjustments are append-only after period close; frozen snapshots are not edited.';

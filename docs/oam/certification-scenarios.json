@@ -1,0 +1,21 @@
+{
+  "version": "oam.runtime-certification.v1",
+  "scenarios": [
+    {
+      "scenario_id": "oam-cert-operations-confirm",
+      "name": "Operations confirm writes through current OAM runtime",
+      "expected_outcome": "committed",
+      "card_id": "roomSetup",
+      "required_evidence": [
+        "receipt-proof",
+        "deposit-policy"
+      ],
+      "field_values": {
+        "roomNo": "401",
+        "bedCount": "4"
+      },
+      "cutover_state": "current_oam",
+      "rollback_or_compensation_path": "operations-correction-work-item"
+    }
+  ]
+}

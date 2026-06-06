@@ -6,12 +6,7 @@ const admissionRoot = path.join(root, "docs/business/admission");
 const registryPath = path.join(root, "docs/business/business-line-registry.json");
 const admissionFiles = [
   "repair-l0-admission.yml",
-  "parts-l0-admission.yml",
-  "business-3-l0-admission.yml",
-  "business-4-l0-admission.yml",
-  "business-5-l0-admission.yml",
-  "business-6-l0-admission.yml",
-  "business-7-l0-admission.yml"
+  "parts-l0-admission.yml"
 ];
 
 const levels = read("business-line-levels.yml");

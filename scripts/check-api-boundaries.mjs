@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 const repoRoot = process.cwd();
-const contractPath = path.join(repoRoot, "docs", "contracts", "oma.current.json");
+const contractPath = path.join(repoRoot, "docs", "contracts", "oam.current.json");
 const routeRoot = path.join(repoRoot, "services", "core-api");
 const cli = parseArgs(process.argv.slice(2));
 
@@ -123,8 +123,8 @@ function containsBusinessFactToken(route) {
 
 function validateContract(contract) {
   const violations = [];
-  if (contract.version !== "oma.current.v1") {
-    violations.push("docs/contracts/oma.current.json must declare version oma.current.v1");
+  if (contract.version !== "oam.current.v1") {
+    violations.push("docs/contracts/oam.current.json must declare version oam.current.v1");
   }
   if (contract.primaryWritePath !== businessConfirmRoute) {
     violations.push(`primaryWritePath must be ${businessConfirmRoute}`);
@@ -141,9 +141,9 @@ function validateContract(contract) {
   if (businessRoutes.length !== 1 || businessRoutes[0] !== businessConfirmRoute) {
     violations.push("businessConfirm may contain only the Operations Confirm route");
   }
-  const legacyCompatibility = String(contract.apiBoundary?.writeRoutes?.compatibilityBusinessWrite ?? "");
-  if (legacyCompatibility) {
-    violations.push("compatibilityBusinessWrite must not exist in current OMA");
+  const retiredRetired = String(contract.apiBoundary?.writeRoutes?.retiredBusinessWrite ?? "");
+  if (retiredRetired) {
+    violations.push("retiredBusinessWrite must not exist in current OAM");
   }
   return violations;
 }
@@ -187,7 +187,7 @@ function findViolations(routes, contract, options = {}) {
 
     const category = map.get(route.key);
     if (!category) {
-      violations.push(`${route.file}: unclassified current OMA write route: ${route.key}`);
+      violations.push(`${route.file}: unclassified current OAM write route: ${route.key}`);
       continue;
     }
     violations.push(...validateRoute(route, category, contract));
@@ -198,7 +198,7 @@ function findViolations(routes, contract, options = {}) {
     for (const [category, configuredRoutes] of Object.entries(writeRoutes)) {
       for (const configuredRoute of configuredRoutes) {
         if (!sourceWriteRoutes.has(configuredRoute)) {
-          violations.push(`docs/contracts/oma.current.json: ${category} route missing from source: ${configuredRoute}`);
+          violations.push(`docs/contracts/oam.current.json: ${category} route missing from source: ${configuredRoute}`);
         }
       }
     }
@@ -226,8 +226,8 @@ function buildReport(routes, contract, violations) {
   }
 
   return {
-    version: "oma.current.v1",
-    source_type: "oma-api-boundary-check",
+    version: "oam.current.v1",
+    source_type: "oam-api-boundary-check",
     config_path: path.relative(repoRoot, contractPath).replaceAll("\\", "/"),
     status: violations.length === 0 ? "passed" : "failed",
     violation_count: violations.length,

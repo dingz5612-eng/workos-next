@@ -141,11 +141,11 @@ ResetPostgres(connectionString);
         Assert(result.Status == ConfirmStatus.Confirmed, $"{cardId} confirmation should pass");
         runtime.ProcessPendingOutbox();
     }
-    Assert(CountRows(connectionString, "deposit_liabilities") == 0, "legacy CheckIn must not write DepositLedger authoritative liability facts");
-    Assert(CountRows(connectionString, "hostel_payments") == 0, "legacy CheckIn must not write PaymentLedger authoritative payment facts");
-    Assert(CountRows(connectionString, "finance_reconciliations") == 0, "legacy CheckIn must not write PaymentLedger finance reconciliation facts");
-    Assert(CountRows(connectionString, "accommodation_deposits") == 0, "legacy CheckIn must not write legacy deposit facts after ledger ownership migration");
-    Assert(CountRows(connectionString, "finance_confirmations") == 0, "legacy CheckIn finance confirmation is transitional read-only after ledger ownership migration");
+    Assert(CountRows(connectionString, "deposit_liabilities") == 0, "retired CheckIn must not write DepositLedger authoritative liability facts");
+    Assert(CountRows(connectionString, "hostel_payments") == 0, "retired CheckIn must not write PaymentLedger authoritative payment facts");
+    Assert(CountRows(connectionString, "finance_reconciliations") == 0, "retired CheckIn must not write PaymentLedger finance reconciliation facts");
+    Assert(CountRows(connectionString, "accommodation_deposits") == 0, "retired CheckIn must not write retired deposit facts after ledger ownership migration");
+    Assert(CountRows(connectionString, "finance_confirmations") == 0, "retired CheckIn finance confirmation is transitional read-only after ledger ownership migration");
 
     var financeLeadCapture = AssertNoSideEffects(connectionString, () => runtime.Confirm("W-STAY-LEAD-RESERVATION", "leadCapture", Human("lead-reservation-finance-role"), financeToken));
     Assert(financeLeadCapture.Status == ConfirmStatus.Forbidden, "finance actor must not confirm operator-owned lead capture");
@@ -851,8 +851,8 @@ ResetPostgres(connectionString);
     Assert(CountRows(connectionString, "accommodation_rooms") >= 1, "Room aggregate should persist in accommodation_rooms");
     Assert(CountRows(connectionString, "accommodation_beds") >= 1, "Bed aggregate should persist in accommodation_beds");
     Assert(CountRows(connectionString, "accommodation_rate_plans") >= 1, "RatePlan aggregate should persist in accommodation_rate_plans");
-    Assert(CountRows(connectionString, "accommodation_deposits") == 0, "legacy accommodation_deposits must stay read-only after DepositLedger ownership migration");
-    Assert(CountRows(connectionString, "finance_confirmations") == 0, "legacy finance_confirmations must stay read-only after PaymentLedger ownership migration");
+    Assert(CountRows(connectionString, "accommodation_deposits") == 0, "retired accommodation_deposits must stay read-only after DepositLedger ownership migration");
+    Assert(CountRows(connectionString, "finance_confirmations") == 0, "retired finance_confirmations must stay read-only after PaymentLedger ownership migration");
     Assert(CountRows(connectionString, "hostel_leads") >= 1, "Hostel lead should persist in hostel_leads");
     Assert(CountRows(connectionString, "hostel_bookings") >= 1, "Hostel booking should persist in hostel_bookings");
     Assert(CountRows(connectionString, "hostel_residents") >= 1, "StayLifecycle should persist hostel_residents");
@@ -1397,7 +1397,7 @@ static void ValidateRuntimeSurfaceLenses(ProjectionRuntime runtime)
     var depositIndex = searchJson.IndexOf("W-STAY-DEPOSIT-LEDGER", StringComparison.Ordinal);
     var checkinIndex = searchJson.IndexOf("W-STAY-CHECKIN", StringComparison.Ordinal);
     Assert(depositIndex >= 0, "search must expose current DepositLedger workspace for deposit intent");
-    Assert(checkinIndex < 0 || depositIndex < checkinIndex, "search must rank DepositLedger before legacy CheckIn for deposit intent");
+    Assert(checkinIndex < 0 || depositIndex < checkinIndex, "search must rank DepositLedger before retired CheckIn for deposit intent");
 
     var homeJson = JsonSerializer.Serialize(runtime.GetHomeSurface());
     Assert(homeJson.Contains("W-STAY-DEPOSIT-LEDGER", StringComparison.Ordinal), "home surface must expose DepositLedger");
@@ -1655,9 +1655,9 @@ static void ValidateControlPlaneShadowSchemas(string connectionString)
             invariant_check_ids, acceptance_scenarios, go_criteria, no_go_criteria,
             known_risks)
         values(
-            @releaseId, 'OMA-RC', 'OMA release control contract', 'shadow',
-            '["platform"]'::jsonb, 'sha-oma', '015_control_plane_shadow_runtime',
-            'oma.current.v1', 'schema-hash', 'ci-oma', '[]'::jsonb, '[]'::jsonb,
+            @releaseId, 'OAM-RC', 'OAM release control contract', 'shadow',
+            '["platform"]'::jsonb, 'sha-oam', '015_control_plane_shadow_runtime',
+            'oam.current.v1', 'schema-hash', 'ci-oam', '[]'::jsonb, '[]'::jsonb,
             '[]'::jsonb, '[]'::jsonb, '["shadow compare green"]'::jsonb,
             '["all gates passed"]'::jsonb, '["red compare"]'::jsonb,
             '["pilot scope only"]'::jsonb)
@@ -1668,7 +1668,7 @@ static void ValidateControlPlaneShadowSchemas(string connectionString)
             feature_flag_id, release_id, flag_key, description, status,
             scope_rules, default_behavior, created_by)
         values(
-            @flagId, @releaseId, 'oma.shadow.runtime', 'OMA shadow runtime gate',
+            @flagId, @releaseId, 'oam.shadow.runtime', 'OAM shadow runtime gate',
             'shadow',
             '{
                 "tenantIds": ["tenant-a"],
@@ -1680,7 +1680,7 @@ static void ValidateControlPlaneShadowSchemas(string connectionString)
                 "amount": { "currency": "KGS", "lte": 10000, "gte": 100 },
                 "percentage": 25
             }'::jsonb,
-            '{"runtimeMode":"legacy"}'::jsonb,
+            '{"runtimeMode":"retired"}'::jsonb,
             'contract-test')
         """, ("flagId", flagId), ("releaseId", releaseId));
 
@@ -1700,7 +1700,7 @@ static void ValidateControlPlaneShadowSchemas(string connectionString)
             dependency_status)
         values(
             @cutoverId, @releaseId, 'tenant-a', 'Accommodation.DepositLedger',
-            'shadow', 'legacy', '["operator"]'::jsonb, '["actor-1"]'::jsonb,
+            'shadow', 'retired', '["operator"]'::jsonb, '["actor-1"]'::jsonb,
             '["device-1"]'::jsonb, '{"currency":"KGS","lte":10000,"gte":100}'::jsonb,
             25, '{"finance":"ready"}'::jsonb)
         """, ("cutoverId", cutoverId), ("releaseId", releaseId));
@@ -1711,7 +1711,7 @@ static void ValidateControlPlaneShadowSchemas(string connectionString)
         "tenant-a",
         "Accommodation.DepositLedger",
         new Dictionary<string, object> { ["window"] = "pilot" },
-        "legacy-ref",
+        "retired-ref",
         "active-ref",
         "shadow-ref",
         DateTimeOffset.UtcNow,
@@ -1724,7 +1724,7 @@ static void ValidateControlPlaneShadowSchemas(string connectionString)
         Array.Empty<IReadOnlyDictionary<string, object>>(),
         new Dictionary<string, object> { ["result"] = "matched" },
         "shadow-compare-runner",
-        "ci-oma"));
+        "ci-oam"));
 
     controlPlaneWrites.WriteRuntimeInvariantCheck(new RuntimeInvariantCheckWrite(
         invariantId,
@@ -1744,20 +1744,20 @@ static void ValidateControlPlaneShadowSchemas(string connectionString)
         0,
         Array.Empty<IReadOnlyDictionary<string, object>>(),
         "contract-test",
-        "ci-oma",
+        "ci-oam",
         DateTimeOffset.UtcNow));
 
     controlPlaneWrites.WriteGateResult(new GateResultWrite(
         gateId,
         releaseId,
-        "OMA-RC",
+        "OAM-RC",
         "tenant-a",
         "Accommodation.DepositLedger",
         "shadow_compare_gate",
         "automated",
         "passed",
         "P0",
-        "ci-oma",
+        "ci-oam",
         new[] { "runtime-contract" },
         new[] { invariantId },
         new[] { compareId },
@@ -1784,14 +1784,14 @@ static void ValidateControlPlaneShadowSchemas(string connectionString)
     AssertPostgresSqlStateRejects(PostgresErrorCodes.UniqueViolation, () => controlPlaneWrites.WriteGateResult(new GateResultWrite(
         gateId,
         releaseId,
-        "OMA-RC",
+        "OAM-RC",
         "tenant-a",
         "Accommodation.DepositLedger",
         "shadow_compare_gate",
         "automated",
         "blocked",
         "P0",
-        "ci-oma-rerun",
+        "ci-oam-rerun",
         new[] { "runtime-contract-rerun" },
         new[] { invariantId },
         new[] { compareId },
@@ -1812,9 +1812,9 @@ static void ValidateControlPlaneShadowSchemas(string connectionString)
             requires_architecture_approval, requires_finance_approval)
         values(
             @rollbackId, @releaseId, 'rollback', 'feature_flag',
-            'Disable OMA shadow flag', '{"tenantId":"tenant-a"}'::jsonb,
+            'Disable OAM shadow flag', '{"tenantId":"tenant-a"}'::jsonb,
             '["shadow","pilot"]'::jsonb, '["paused","rollback"]'::jsonb,
-            '["disable flag"]'::jsonb, '["verify legacy active"]'::jsonb,
+            '["disable flag"]'::jsonb, '["verify retired active"]'::jsonb,
             'platform', 'medium', true, true, false)
         """, ("rollbackId", rollbackId), ("releaseId", releaseId));
 
@@ -1861,10 +1861,10 @@ static void ValidateControlPlaneShadowSchemas(string connectionString)
     ExecuteSql(connectionString, """
         insert into shadow_runtime.compare_inputs(
             compare_input_id, release_id, tenant_id, slice_id, command_submission_id,
-            source_legacy_ref, source_active_ref, source_shadow_ref, input_payload)
+            source_retired_ref, source_active_ref, source_shadow_ref, input_payload)
         values(
             @compareInputId, @releaseId, 'tenant-a', 'Accommodation.DepositLedger',
-            @commandId, 'legacy-ref', 'active-ref', 'shadow-ref',
+            @commandId, 'retired-ref', 'active-ref', 'shadow-ref',
             '{"basis":"command"}'::jsonb)
         """, ("compareInputId", $"shadow-input-{suffix}"), ("releaseId", releaseId), ("commandId", commandId));
 
@@ -2103,8 +2103,8 @@ static void ValidateProjectionContractFiles()
 
 static void ValidateOperationsRuntimeContracts()
 {
-    var contractDoc = File.ReadAllText(Path.Combine("docs", "contracts", "oma.current.json"))
-        + File.ReadAllText(Path.Combine("docs", "oma", "current-architecture.md"))
+    var contractDoc = File.ReadAllText(Path.Combine("docs", "contracts", "oam.current.json"))
+        + File.ReadAllText(Path.Combine("docs", "oam", "current-architecture.md"))
         + File.ReadAllText(Path.Combine("docs", "contracts", "operations-runtime.schema.json"))
         + File.ReadAllText(Path.Combine("docs", "contracts", "fact-trace.schema.json"));
     foreach (var token in new[]
@@ -2803,7 +2803,7 @@ static void WriteRuntimeContractReport(string connectionString)
     };
 
     var repoRoot = FindRepoRoot();
-    var reportPath = Path.Combine(repoRoot, "artifacts", "oma", "test-results", "runtime-contract-report.json");
+    var reportPath = Path.Combine(repoRoot, "artifacts", "oam", "test-results", "runtime-contract-report.json");
     Directory.CreateDirectory(Path.GetDirectoryName(reportPath)!);
     File.WriteAllText(reportPath, JsonSerializer.Serialize(report, new JsonSerializerOptions { WriteIndented = true }));
 }

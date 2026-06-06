@@ -1,7 +1,7 @@
 {
   "domainId": "dormitory",
-  "version": "oma.dormitory.v1",
-  "stage": "current_oma",
+  "version": "oam.dormitory.v1",
+  "stage": "current_oam",
   "goCriteria": [
     "north-star and metrics-tree complete",
     "five value streams complete",
@@ -9,12 +9,11 @@
     "evidence policy binds requirementId workItemId submissionId tenantId evidenceHash",
     "finance rules keep deposit liability separate from revenue",
     "risk command rules block 403 409 422 correctly",
-    "certification scenarios declared",
-    "Business Domain Kit templates complete"
+    "certification scenarios declared"
   ],
   "noGoCriteria": [
     "Dormitory page-specific write API",
-    "Dormitory runtime behavior in current OMA",
+    "Dormitory runtime behavior in current OAM",
     "productionAllowed true",
     "deposit treated as revenue",
     "WorkItemBundle as fact source"

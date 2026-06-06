@@ -5,8 +5,8 @@ const root = process.cwd();
 const selfTest = process.argv.includes("--self-test");
 const contractPath = "docs/contracts/account-actor-kernel/account-actor-kernel-contract.json";
 const contract = readJson(contractPath);
-const oma = readJson("docs/contracts/oma.current.json");
-const identityModule = readJson("modules/identity/oma-module.manifest.json");
+const oam = readJson("docs/contracts/oam.current.json");
+const identityModule = readJson("modules/identity/oam-module.manifest.json");
 const openApi = readJson("docs/contracts/workos-runtime.openapi.json");
 
 if (selfTest) {
@@ -34,7 +34,7 @@ console.log("Account Actor Kernel check: PASS");
 function runChecks(targetContract) {
   const violations = [];
   validateContract(targetContract, violations);
-  validateOmaBinding(violations);
+  validateOamBinding(violations);
   validateBackendTruth(violations);
   validateFrontendLogin(violations);
   validatePcGovernance(violations);
@@ -48,7 +48,7 @@ function validateContract(targetContract, violations) {
     fail(violations, "contract.version", "Account Actor Kernel contract version must be account-actor-kernel.v1.");
   }
   if (targetContract.architecture !== "Operations Management Architecture") {
-    fail(violations, "contract.architecture", "Account Actor Kernel must bind to current OMA.");
+    fail(violations, "contract.architecture", "Account Actor Kernel must bind to current OAM.");
   }
   for (const table of ["account_users", "account_audit_events", "runtime_sessions", "device_sessions"]) {
     requireArrayIncludes(targetContract.backendTruthObjects, table, "contract.backend_truth", violations);
@@ -75,10 +75,10 @@ function validateContract(targetContract, violations) {
   }
 }
 
-function validateOmaBinding(violations) {
-  const identityCapability = oma.productCapabilities?.find((item) => item.id === "identity.account-actor");
+function validateOamBinding(violations) {
+  const identityCapability = oam.productCapabilities?.find((item) => item.id === "identity.account-actor");
   if (!identityCapability || identityCapability.module !== "identity") {
-    fail(violations, "oma.identity_capability", "OMA contract must bind identity.account-actor to identity module.");
+    fail(violations, "oam.identity_capability", "OAM contract must bind identity.account-actor to identity module.");
   }
   for (const capability of ["identity.account-actor", "governance.release-control"]) {
     requireArrayIncludes(identityModule.productCapability, capability, "module.identity_capability", violations);
@@ -195,7 +195,7 @@ function validateApiContracts(violations) {
     if (!openApi.paths?.[route]) fail(violations, "api.openapi", `OpenAPI missing ${route}.`);
   }
 
-  const writeRoutes = oma.apiBoundary?.writeRoutes || {};
+  const writeRoutes = oam.apiBoundary?.writeRoutes || {};
   for (const route of [
     "POST /api/auth/logout",
     "POST /api/device-sessions",
@@ -205,7 +205,7 @@ function validateApiContracts(violations) {
     "POST /api/pc-governance/account-users/{userId}/reset-password"
   ]) {
     const present = Object.values(writeRoutes).some((routes) => Array.isArray(routes) && routes.includes(route));
-    if (!present) fail(violations, "api.oma_boundary", `OMA API boundary missing ${route}.`);
+    if (!present) fail(violations, "api.oam_boundary", `OAM API boundary missing ${route}.`);
   }
 
   const runtimeApiPaths = read("apps/mobile/src/generated/runtimeApiPaths.js");
@@ -248,7 +248,7 @@ function fail(violations, id, message) {
 }
 
 function writeReport(violations) {
-  const outPath = path.join(root, "artifacts", "oma", "checks", "account-actor-kernel-result.json");
+  const outPath = path.join(root, "artifacts", "oam", "checks", "account-actor-kernel-result.json");
   fs.mkdirSync(path.dirname(outPath), { recursive: true });
   fs.writeFileSync(outPath, JSON.stringify({
     status: violations.length ? "failed" : "passed",

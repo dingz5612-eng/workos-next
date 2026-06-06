@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 const root = process.cwd();
-const out = readArg("--out=", ".tmp/oma/experience-contract-report.json");
+const out = readArg("--out=", ".tmp/oam/experience-contract-report.json");
 const contractPath = "docs/business/experience-contract.yml";
 
 if (process.argv.includes("--self-test")) {
@@ -21,8 +21,8 @@ const failures = [
 
 writeReport(failures, [
   contractPath,
-  "docs/oma/current-architecture.md",
-  "docs/contracts/oma.current.json",
+  "docs/oam/current-architecture.md",
+  "docs/contracts/oam.current.json",
   "apps/mobile/src/appShell.js",
   "apps/mobile/src/operationRuntime.js",
   "apps/mobile/src/operationController.js",
@@ -39,7 +39,7 @@ console.log("Experience Contract check: PASS");
 
 function validateContract(contract, file) {
   const failures = [];
-  requireEqual(contract.version, "oma.experience-contract.v1", "experience.version", `${file} must use the current OMA experience version.`, failures);
+  requireEqual(contract.version, "oam.experience-contract.v1", "experience.version", `${file} must use the current OAM experience version.`, failures);
   for (const field of [
     "currentSurfaceArchitecture",
     "roleDefaultHome",
@@ -95,7 +95,7 @@ function validateContract(contract, file) {
     if (!architecture.forbidden?.includes(forbidden)) failures.push(v("experience.surface_forbidden", `currentSurfaceArchitecture.forbidden missing ${forbidden}.`));
   }
 
-  for (const layer of ["shared-components", "field-context-kernel", "surface-contract", "multilingual-dictionary", "state-action-contract", "real-browser-verification"]) {
+  for (const layer of ["shared-components", "field-context-kernel", "surface-contract", "multilingual-dictionary", "state-action-contract", "real-browser-evidence"]) {
     if (!contract.frontendExperienceSystem?.layers?.includes(layer)) failures.push(v("experience.fes_layer", `frontendExperienceSystem.layers missing ${layer}.`));
   }
 
@@ -108,7 +108,7 @@ function validateContract(contract, file) {
 
   const paths = contract.businessOperationActionPaths || {};
   if (!String(paths.create || "").includes("/api/operations/work-items/{workItemId}/confirm")) {
-    failures.push(v("experience.primary_write_path", "create path must bind to the current OMA confirm endpoint."));
+    failures.push(v("experience.primary_write_path", "create path must bind to the current OAM confirm endpoint."));
   }
   if (!paths.order?.includes("correct_append_only_from_record")) {
     failures.push(v("experience.append_only_order", "action order must include append-only correction."));
@@ -127,7 +127,7 @@ function validateMobileSources() {
 
   requireText(runtime, "prepareOperationWorkItem", "experience.runtime_prepare", "Mobile runtime must prepare persisted operation work items.", failures);
   requireText(runtime, "confirmOperationWorkItem", "experience.runtime_confirm", "Mobile runtime must confirm through the operation work item endpoint.", failures);
-  forbidText(runtime, "submitCardOperationCompatibilityFallback", "experience.no_card_fallback", "Mobile runtime must not keep card compatibility fallback.", failures);
+  forbidText(runtime, "submitCardOperationRetiredFallback", "experience.no_card_fallback", "Mobile runtime must not keep card retired fallback.", failures);
   forbidText(runtime, "prepareCard", "experience.no_prepare_card", "Mobile runtime must not prepare retired cards.", failures);
   forbidText(runtime, "confirmCard", "experience.no_confirm_card", "Mobile runtime must not confirm retired cards.", failures);
   requireText(controller, "submitWorkItemOperation", "experience.controller_submit", "Operation controller must submit persisted WorkItems.", failures);

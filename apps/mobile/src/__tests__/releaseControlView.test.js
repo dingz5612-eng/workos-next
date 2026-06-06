@@ -6,12 +6,12 @@ describe("Release Control Center", () => {
     const selectedRelease = releaseDetail();
     const html = releaseControlView(ctx(selectedRelease, [
       selectedRelease.overview,
-      { ...selectedRelease.overview, releaseId: "release-43", mrId: "MR-43", releaseStatus: "pilot" }
+      { ...selectedRelease.overview, releaseId: "release-43", mrId: "RR-43", releaseStatus: "pilot" }
     ]));
 
-    expect(html).toContain("全部 MR");
-    expect(html).toContain("MR-42");
-    expect(html).toContain("MR-43");
+    expect(html).toContain("全部发布请求");
+    expect(html).toContain("RR-42");
+    expect(html).toContain("RR-43");
   });
 
   it("release_control_center_can_serve_as_launch_console", () => {
@@ -34,7 +34,7 @@ describe("Release Control Center", () => {
   it("loads release manifest overview and read-only GateResult status", () => {
     const html = releaseControlView(ctx(releaseDetail()));
 
-    expect(html).toContain("MR-42");
+    expect(html).toContain("RR-42");
     expect(html).toContain("发布状态");
     expect(html).toContain("shadow");
     expect(html).toContain("GateResult 状态");
@@ -177,7 +177,7 @@ function releaseDetail(overrides = {}) {
   return {
     overview: {
       releaseId: "release-42",
-      mrId: "MR-42",
+      mrId: "RR-42",
       releaseStatus: "shadow",
       owner: "platform",
       gateResultId: "gate-42",
@@ -203,7 +203,7 @@ function releaseDetail(overrides = {}) {
     rollbackInstruction: rollback("rollback"),
     manifest: {
       releaseId: "release-42",
-      mrId: "MR-42",
+      mrId: "RR-42",
       releaseName: "Mission Loop",
       status: "shadow",
       owners: ["platform"],
