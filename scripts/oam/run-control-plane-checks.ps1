@@ -16,6 +16,8 @@ node scripts/check-account-actor-kernel.mjs
 node scripts/check-language-kernel.mjs
 node scripts/check-search-kernel.mjs --self-test
 node scripts/check-search-kernel.mjs
+node scripts/check-surface-contract.mjs
+node scripts/check-experience-contract.mjs
 node scripts/check-policy-as-code.mjs --self-test
 node scripts/check-policy-as-code.mjs
 node scripts/check-domain-packs.mjs --self-test
@@ -36,3 +38,5 @@ node scripts/business/check-scenario-field-contract.mjs
 node scripts/business/check-canonical-scenario-map.mjs
 node scripts/business/check-evidence-coverage-contract.mjs
 node scripts/business/check-ledger-posting-contract.mjs
+node scripts/oam/generate-current-evidence-root.mjs
+node scripts/oam/check-current-evidence-root.mjs

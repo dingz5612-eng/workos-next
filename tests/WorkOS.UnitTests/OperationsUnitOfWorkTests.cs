@@ -154,9 +154,11 @@ public sealed class OperationsUnitOfWorkTests
             "accommodation.resource",
             "resource.room.prepare.v1",
             new[] { "DomainEvent" },
+            new[] { "LedgerEntry" },
             "none",
             new[] { "room-photo" },
-            "BedInventoryLens");
+            "BedInventoryLens",
+            "accommodation.resource");
         var router = new SliceCommandHandlerRouter()
             .Register(definition, _ => HandlerResult("RoomPrepared"));
         var unitOfWork = new OperationsUnitOfWork(
@@ -184,9 +186,40 @@ public sealed class OperationsUnitOfWorkTests
         CollectionAssert.Contains(definition.AllowedFacts.ToArray(), "DomainEvent");
         CollectionAssert.Contains(definition.AllowedFacts.ToArray(), "WorkItem");
         CollectionAssert.Contains(definition.AllowedFacts.ToArray(), "LedgerEntry");
+        CollectionAssert.Contains(definition.ForbiddenFacts.ToArray(), "PaymentFact");
+        CollectionAssert.Contains(definition.ForbiddenFacts.ToArray(), "DashboardSummary");
         CollectionAssert.Contains(definition.RequiredEvidence.ToArray(), "confirm-request.evidenceIds");
         Assert.AreEqual("balanced-ledger-or-none", definition.LedgerPolicy);
         Assert.AreEqual("OperationsRuntimeProjection", definition.ProjectionOwner);
+        Assert.AreEqual("MoneyKernelPack", definition.TruthOwnerRef);
+    }
+
+    [TestMethod]
+    public void default_handler_definition_rejects_non_finance_ledger_output()
+    {
+        var store = new InMemoryOperationsStore();
+        var unitOfWork = UnitOfWork(store, _ => new SliceCommandHandlerResult(
+            "committed",
+            "projected",
+            StatusCodes.Status200OK,
+            new Dictionary<string, object> { ["accepted"] = true },
+            new[] { new OperationsDomainEventDraft("RoomPrepared", new Dictionary<string, object>()) },
+            Array.Empty<OperationsWorkItemEventDraft>(),
+            Array.Empty<OperationsOutboxMessageDraft>(),
+            new[] { new LedgerTransactionV1("tenant-001", "ltx-non-finance", "case-001", "work-001", "", "KGS", "balanced") },
+            new[]
+            {
+                new LedgerEntryV1("tenant-001", "entry-debit", "ltx-non-finance", "debit", 10m, "KGS"),
+                new LedgerEntryV1("tenant-001", "entry-credit", "ltx-non-finance", "credit", 10m, "KGS")
+            }));
+
+        var result = unitOfWork.Commit(Request("idem-non-finance-ledger"));
+
+        Assert.AreEqual(StatusCodes.Status500InternalServerError, result.StatusCode);
+        Assert.AreEqual("handler_failure", result.ResponseBody["error"]);
+        StringAssert.Contains(result.ResponseBody["reason"]!.ToString(), "operations_handler_fact_not_allowed");
+        Assert.AreEqual(0, store.DomainEvents.Count);
+        Assert.AreEqual(0, store.LedgerEntries.Count);
     }
 
     [TestMethod]
@@ -289,7 +322,7 @@ public sealed class OperationsUnitOfWorkTests
     {
         var router = new SliceCommandHandlerRouter()
             .Register("resource.room.prepare", handler)
-            .Register(CanonicalOperationsApiService.ConfirmCommandType, handler);
+            .Register(CanonicalOperationsApiService.ConfirmCommandDefinition, handler);
         return new OperationsUnitOfWork(
             new CommandEnvelopeBuilder(),
             new CommandSubmissionService(store),

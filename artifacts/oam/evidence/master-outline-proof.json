@@ -1,0 +1,255 @@
+{
+  "schemaVersion": "current-oam.evidence.v1",
+  "kind": "master-outline-proof",
+  "title": "总纲输入可信",
+  "binding": {
+    "root": "current-oam-trust-closure-v1",
+    "kind": "master-outline-proof",
+    "commitSha": "433ec9537bc7b355b978ef6b9bf7bf37a9cc0168",
+    "branch": "codex/oam-stage-6-current-architecture-cleanup",
+    "ciRunId": "local",
+    "generatedAt": "2026-06-06T11:19:43.528Z",
+    "artifactDigest": "sha256:85830453ed41586506c0852e6164db0714334acded71d9c2ae1df2ef515710b9"
+  },
+  "summary": {
+    "status": "passed",
+    "goNoGo": "GO",
+    "businessProduction": "BLOCKED",
+    "dormitoryL2": "BLOCKED",
+    "productionConfirmAllowed": false
+  },
+  "gateSummary": {
+    "status": "bound_to_current_oam_ci",
+    "ciWorkflow": ".github/workflows/ci.yml",
+    "controlPlaneEntry": "scripts/oam/run-control-plane-checks.ps1",
+    "commands": [
+      {
+        "command": "node scripts/oam/check-current-oam.mjs",
+        "status": "required"
+      },
+      {
+        "command": "node scripts/check-rule-authority.mjs",
+        "status": "required"
+      },
+      {
+        "command": "node scripts/check-local-path-references.mjs",
+        "status": "required"
+      },
+      {
+        "command": "node scripts/check-api-boundaries.mjs",
+        "status": "required"
+      },
+      {
+        "command": "node scripts/check-runtime-write-paths.mjs",
+        "status": "required"
+      },
+      {
+        "command": "node scripts/check-business-line-admission.mjs",
+        "status": "required"
+      },
+      {
+        "command": "node scripts/check-admission-kernel.mjs",
+        "status": "required"
+      },
+      {
+        "command": "node scripts/check-account-actor-kernel.mjs",
+        "status": "required"
+      },
+      {
+        "command": "node scripts/check-language-kernel.mjs",
+        "status": "required"
+      },
+      {
+        "command": "node scripts/check-search-kernel.mjs",
+        "status": "required"
+      },
+      {
+        "command": "node scripts/check-truth-owners.mjs",
+        "status": "required"
+      },
+      {
+        "command": "node scripts/check-finance-truth.mjs",
+        "status": "required"
+      },
+      {
+        "command": "node scripts/check-ledger-semantic-rules.mjs",
+        "status": "required"
+      },
+      {
+        "command": "node scripts/finance/check-finance-semantic-truth.mjs",
+        "status": "required"
+      },
+      {
+        "command": "node scripts/check-shared-governance-boundary.mjs",
+        "status": "required"
+      },
+      {
+        "command": "node scripts/check-management-cockpit-boundary.mjs",
+        "status": "required"
+      },
+      {
+        "command": "node scripts/check-dormitory-golden-domain.mjs",
+        "status": "required"
+      },
+      {
+        "command": "node scripts/oam/generate-current-evidence-root.mjs",
+        "status": "required"
+      },
+      {
+        "command": "node scripts/oam/check-current-evidence-root.mjs",
+        "status": "required"
+      },
+      {
+        "command": "node scripts/validate-contracts.mjs",
+        "status": "required"
+      }
+    ]
+  },
+  "testSummary": {
+    "status": "bound_to_final_validation",
+    "commands": [
+      {
+        "command": "npm --prefix apps/mobile run test",
+        "status": "required"
+      },
+      {
+        "command": "npm --prefix apps/mobile run build",
+        "status": "required"
+      },
+      {
+        "command": "npm --prefix apps/mobile run test:coverage",
+        "status": "required"
+      },
+      {
+        "command": "npm --prefix apps/mobile run test:pc",
+        "status": "required"
+      },
+      {
+        "command": "npm --prefix apps/mobile run test:e2e",
+        "status": "required"
+      },
+      {
+        "command": "dotnet build WorkOSNext.sln -c Release",
+        "status": "required"
+      },
+      {
+        "command": "dotnet test tests/WorkOS.UnitTests/WorkOS.UnitTests.csproj -c Release",
+        "status": "required"
+      },
+      {
+        "command": "dotnet test tests/WorkOS.RuntimeIntegrationTests/WorkOS.RuntimeIntegrationTests.csproj -c Release",
+        "status": "required"
+      },
+      {
+        "command": "dotnet test tests/WorkOS.DatabaseSecurityTests/WorkOS.DatabaseSecurityTests.csproj -c Release",
+        "status": "required"
+      },
+      {
+        "command": "dotnet test tests/WorkOS.PolicyAsCodeTests/WorkOS.PolicyAsCodeTests.csproj -c Release",
+        "status": "required"
+      },
+      {
+        "command": "dotnet test tests/WorkOS.ReleaseEvidenceTests/WorkOS.ReleaseEvidenceTests.csproj -c Release",
+        "status": "required"
+      },
+      {
+        "command": "dotnet test tests/WorkOS.RuntimeContractTests/WorkOS.RuntimeContractTests.csproj -c Release",
+        "status": "required"
+      }
+    ]
+  },
+  "coverageSummary": {
+    "status": "reports_detected",
+    "targets": {
+      "ruleCoverage": "100%",
+      "financeLedgerPermissionWritePath": "95%-100%",
+      "domainRuntimeKernel": "90%+",
+      "apiClient": "80%-90%",
+      "controlsSelectors": "85%-90%",
+      "views": "75%-85%"
+    },
+    "mobile": {
+      "lines": {
+        "total": 3996,
+        "covered": 3304,
+        "skipped": 0,
+        "pct": 82.68
+      },
+      "statements": {
+        "total": 4823,
+        "covered": 3788,
+        "skipped": 0,
+        "pct": 78.54
+      },
+      "functions": {
+        "total": 1401,
+        "covered": 1190,
+        "skipped": 0,
+        "pct": 84.93
+      },
+      "branches": {
+        "total": 7379,
+        "covered": 4677,
+        "skipped": 0,
+        "pct": 63.38
+      },
+      "branchesTrue": {
+        "total": 0,
+        "covered": 0,
+        "skipped": 0,
+        "pct": 100
+      }
+    },
+    "dotnetCoverageFiles": [
+      "tests/WorkOS.DatabaseSecurityTests/TestResults/2b83e6e3-4cb9-4329-9934-229606695337/coverage.cobertura.xml",
+      "tests/WorkOS.DatabaseSecurityTests/TestResults/5dce7403-7447-4a67-a8b4-7905d1f9d101/coverage.cobertura.xml",
+      "tests/WorkOS.DatabaseSecurityTests/TestResults/66b98ba3-fd89-456e-9c8a-db607cd1821e/coverage.cobertura.xml",
+      "tests/WorkOS.DatabaseSecurityTests/TestResults/adea6eaf-b558-40df-9cab-538058ef9739/coverage.cobertura.xml",
+      "tests/WorkOS.DatabaseSecurityTests/TestResults/b18f36f3-4d98-4a1e-b180-ce1e78eb3e24/coverage.cobertura.xml",
+      "tests/WorkOS.DatabaseSecurityTests/TestResults/d2b5500f-4c0d-4bde-8c23-ac8e71d305e0/coverage.cobertura.xml",
+      "tests/WorkOS.PolicyAsCodeTests/TestResults/1750c98a-5aab-4365-9131-c5c63d9d364d/coverage.cobertura.xml",
+      "tests/WorkOS.PolicyAsCodeTests/TestResults/2242c17b-bf06-4394-8a9f-4efb6f8c6d23/coverage.cobertura.xml",
+      "tests/WorkOS.PolicyAsCodeTests/TestResults/6aaeb3e2-e4cb-4529-ae59-2377acd1fc70/coverage.cobertura.xml",
+      "tests/WorkOS.PolicyAsCodeTests/TestResults/6b5718e8-cb1c-47b8-8586-05039a689572/coverage.cobertura.xml",
+      "tests/WorkOS.PolicyAsCodeTests/TestResults/ef539d11-1842-4f32-9a20-9785fc71e25f/coverage.cobertura.xml",
+      "tests/WorkOS.ReleaseEvidenceTests/TestResults/14ac0a1a-2a95-4c0b-93e8-1d060ad40551/coverage.cobertura.xml",
+      "tests/WorkOS.ReleaseEvidenceTests/TestResults/75f271dd-e3b9-4f09-8964-c39e24ddb4a1/coverage.cobertura.xml",
+      "tests/WorkOS.ReleaseEvidenceTests/TestResults/e2dab566-9600-45af-8b5a-a6c35b647edd/coverage.cobertura.xml",
+      "tests/WorkOS.ReleaseEvidenceTests/TestResults/f4b50db9-83da-4b95-93c2-08cc9dacda51/coverage.cobertura.xml",
+      "tests/WorkOS.ReleaseEvidenceTests/TestResults/fd3b827e-a278-4a2e-ab08-7c590e6d5307/coverage.cobertura.xml",
+      "tests/WorkOS.RuntimeIntegrationTests/TestResults/0b7ccc16-ea0f-411d-b552-18cf64062179/coverage.cobertura.xml",
+      "tests/WorkOS.RuntimeIntegrationTests/TestResults/565e6282-b437-4d3d-9f90-f50089456d6e/coverage.cobertura.xml",
+      "tests/WorkOS.RuntimeIntegrationTests/TestResults/67f98990-cc2f-4a6e-a7fd-18456864ae0d/coverage.cobertura.xml",
+      "tests/WorkOS.RuntimeIntegrationTests/TestResults/b2e404f3-bbbb-48a6-b2db-d783a80f8837/coverage.cobertura.xml",
+      "tests/WorkOS.RuntimeIntegrationTests/TestResults/e8f4e326-b616-43b3-8d32-745c25d35180/coverage.cobertura.xml",
+      "tests/WorkOS.RuntimeIntegrationTests/TestResults/f45dcbe4-41b8-40be-93d4-48e260f7ba2c/coverage.cobertura.xml",
+      "tests/WorkOS.UnitTests/TestResults/14f1ae66-d410-4347-8c0a-0dfb3b0e3ede/coverage.cobertura.xml",
+      "tests/WorkOS.UnitTests/TestResults/385566ad-9d70-41c7-877e-7f48d829e5f3/coverage.cobertura.xml",
+      "tests/WorkOS.UnitTests/TestResults/8415554f-fc29-4949-9f06-a1cf4bd61dab/coverage.cobertura.xml",
+      "tests/WorkOS.UnitTests/TestResults/f4355d82-462e-4de3-88d7-5ab9626f47e1/coverage.cobertura.xml",
+      "tests/WorkOS.UnitTests/TestResults/f49c440a-de27-4cae-89f4-1e51bf65acf5/coverage.cobertura.xml"
+    ]
+  },
+  "details": {
+    "masterOutlineClosure": {
+      "authorityClosed": true,
+      "businessDefinitionClosed": true,
+      "runtimeWriteClosed": true,
+      "searchReadonlyClosed": true,
+      "surfaceLanguageClosed": true,
+      "highRiskTrustClosed": true,
+      "evidenceRootClosed": true,
+      "nextStageRequiresSeparateAdmission": true
+    },
+    "authorityRefs": [
+      "docs/system/oam-authority-map.md",
+      "docs/system/oam-rule-to-gate-map.md",
+      "docs/system/oam-p0-rule-ledger.md"
+    ],
+    "gates": [
+      "node scripts/check-business-line-admission.mjs",
+      "node scripts/check-dormitory-golden-domain.mjs",
+      "node scripts/oam/check-current-evidence-root.mjs"
+    ]
+  }
+}

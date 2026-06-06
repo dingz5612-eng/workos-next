@@ -21,8 +21,18 @@ public sealed class LedgerMutationKillTests
     public void OperationsUnitOfWorkRejectsUnbalancedLedgerTransaction()
     {
         var store = new InMemoryOperationsStore();
+        var definition = new SliceCommandHandlerDefinition(
+            "test.unbalanced",
+            "finance.semantic-test",
+            "definition-test",
+            new[] { "DomainEvent", "LedgerEntry" },
+            Array.Empty<string>(),
+            "balanced-ledger-or-none",
+            new[] { "semantic-test" },
+            "FinanceTruthProjection",
+            "MoneyKernelPack");
         var router = new SliceCommandHandlerRouter()
-            .Register("test.unbalanced", _ => SliceCommandHandlerResult.Committed(
+            .Register(definition, _ => SliceCommandHandlerResult.Committed(
                 new Dictionary<string, object> { ["ok"] = false },
                 new[] { new OperationsDomainEventDraft("UnbalancedAttempted", new Dictionary<string, object>()) },
                 ledgerTransactions: new[]

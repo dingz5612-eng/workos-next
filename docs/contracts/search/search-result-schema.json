@@ -4,12 +4,19 @@
   "required": [
     "resultId",
     "resultType",
+    "objectKind",
     "title",
     "summary",
     "matchedTerms",
     "score",
     "target",
     "admission",
+    "permission",
+    "lineage",
+    "freshness",
+    "ranking",
+    "businessContext",
+    "availableActions",
     "traceRefs",
     "sourceRefs",
     "language",
@@ -22,6 +29,9 @@
     "resultType": {
       "type": "enum",
       "ref": "docs/contracts/search/search-contract.json#objectTypes"
+    },
+    "objectKind": {
+      "type": "string"
     },
     "title": {
       "type": "localizedText",
@@ -49,7 +59,8 @@
       "type": "object",
       "required": [
         "view",
-        "kind"
+        "kind",
+        "writeThroughSearchAllowed"
       ]
     },
     "admission": {
@@ -62,6 +73,45 @@
         "mode",
         "reason"
       ]
+    },
+    "permission": {
+      "type": "object",
+      "required": [
+        "visibility",
+        "redaction",
+        "dataClassification",
+        "requiredPermissions",
+        "checkedAt",
+        "policyVersion"
+      ]
+    },
+    "lineage": {
+      "type": "object",
+      "required": [
+        "sourceSystem",
+        "sourceType",
+        "sourceId",
+        "sourceUpdatedAt",
+        "definitionVersion"
+      ]
+    },
+    "freshness": {
+      "type": "object",
+      "required": [
+        "indexedAt",
+        "indexLagMs",
+        "stale"
+      ]
+    },
+    "ranking": {
+      "type": "object"
+    },
+    "businessContext": {
+      "type": "object"
+    },
+    "availableActions": {
+      "type": "array",
+      "itemRule": "read-only actions only; writeBusinessFact must be false"
     },
     "traceRefs": {
       "type": "string[]"

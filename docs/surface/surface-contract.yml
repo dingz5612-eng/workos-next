@@ -76,6 +76,15 @@
       "forbidden": ["visible raw reason", "visible raw code", "direct result.message passthrough for blocked confirm"]
     }
   },
+  "userSemanticBoundaries": {
+    "summaryDoesNotImplyConfirm": "摘要只用于帮助理解，不得作为确认依据。",
+    "receiptDoesNotImplyProduction": "回执只证明已收到或已记录，不得作为生产放行。",
+    "visibleDoesNotImplyConfirm": "visibleAllowed 只代表可见，不等于 confirmAllowed。",
+    "dashboardSummaryCannotUnlockProduction": "驾驶舱摘要只能观察或形成意图，不得打开生产。",
+    "sharedReceiptCannotReplaceFinanceTruth": "共享回执不得替代财务定真或 AdmissionDecision。",
+    "ordinaryUserNoInternalRuntimeTerms": ["DomainEvent", "LedgerEntry", "ProcessManager", "Lens", "slice", "Confirm Runtime", "Unit of Work", "Projection", "Outbox", "raw capability", "raw surface view id"],
+    "permissionExplainabilityUsesLanguageKernel": "权限解释标题、原因、负责人、权限范围和下一步必须来自 Language Kernel。"
+  },
   "collaborationFeedback": {
     "surface": "feedback-message-channel",
     "entry": "right-bottom safe floating entry on mobile business surfaces",

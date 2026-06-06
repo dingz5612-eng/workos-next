@@ -1,0 +1,486 @@
+{
+  "schemaVersion": "current-oam.evidence.v1",
+  "kind": "current-oam-final-report",
+  "title": "当前 OAM 可信运行闭环最终报告",
+  "binding": {
+    "root": "current-oam-trust-closure-v1",
+    "kind": "current-oam-final-report",
+    "commitSha": "433ec9537bc7b355b978ef6b9bf7bf37a9cc0168",
+    "branch": "codex/oam-stage-6-current-architecture-cleanup",
+    "ciRunId": "local",
+    "generatedAt": "2026-06-06T11:19:43.528Z",
+    "artifactDigest": "sha256:85830453ed41586506c0852e6164db0714334acded71d9c2ae1df2ef515710b9"
+  },
+  "summary": {
+    "status": "passed",
+    "goNoGo": "GO",
+    "businessProduction": "BLOCKED",
+    "dormitoryL2": "BLOCKED",
+    "productionConfirmAllowed": false
+  },
+  "gateSummary": {
+    "status": "bound_to_current_oam_ci",
+    "ciWorkflow": ".github/workflows/ci.yml",
+    "controlPlaneEntry": "scripts/oam/run-control-plane-checks.ps1",
+    "commands": [
+      {
+        "command": "node scripts/oam/check-current-oam.mjs",
+        "status": "required"
+      },
+      {
+        "command": "node scripts/check-rule-authority.mjs",
+        "status": "required"
+      },
+      {
+        "command": "node scripts/check-local-path-references.mjs",
+        "status": "required"
+      },
+      {
+        "command": "node scripts/check-api-boundaries.mjs",
+        "status": "required"
+      },
+      {
+        "command": "node scripts/check-runtime-write-paths.mjs",
+        "status": "required"
+      },
+      {
+        "command": "node scripts/check-business-line-admission.mjs",
+        "status": "required"
+      },
+      {
+        "command": "node scripts/check-admission-kernel.mjs",
+        "status": "required"
+      },
+      {
+        "command": "node scripts/check-account-actor-kernel.mjs",
+        "status": "required"
+      },
+      {
+        "command": "node scripts/check-language-kernel.mjs",
+        "status": "required"
+      },
+      {
+        "command": "node scripts/check-search-kernel.mjs",
+        "status": "required"
+      },
+      {
+        "command": "node scripts/check-truth-owners.mjs",
+        "status": "required"
+      },
+      {
+        "command": "node scripts/check-finance-truth.mjs",
+        "status": "required"
+      },
+      {
+        "command": "node scripts/check-ledger-semantic-rules.mjs",
+        "status": "required"
+      },
+      {
+        "command": "node scripts/finance/check-finance-semantic-truth.mjs",
+        "status": "required"
+      },
+      {
+        "command": "node scripts/check-shared-governance-boundary.mjs",
+        "status": "required"
+      },
+      {
+        "command": "node scripts/check-management-cockpit-boundary.mjs",
+        "status": "required"
+      },
+      {
+        "command": "node scripts/check-dormitory-golden-domain.mjs",
+        "status": "required"
+      },
+      {
+        "command": "node scripts/oam/generate-current-evidence-root.mjs",
+        "status": "required"
+      },
+      {
+        "command": "node scripts/oam/check-current-evidence-root.mjs",
+        "status": "required"
+      },
+      {
+        "command": "node scripts/validate-contracts.mjs",
+        "status": "required"
+      }
+    ]
+  },
+  "testSummary": {
+    "status": "bound_to_final_validation",
+    "commands": [
+      {
+        "command": "npm --prefix apps/mobile run test",
+        "status": "required"
+      },
+      {
+        "command": "npm --prefix apps/mobile run build",
+        "status": "required"
+      },
+      {
+        "command": "npm --prefix apps/mobile run test:coverage",
+        "status": "required"
+      },
+      {
+        "command": "npm --prefix apps/mobile run test:pc",
+        "status": "required"
+      },
+      {
+        "command": "npm --prefix apps/mobile run test:e2e",
+        "status": "required"
+      },
+      {
+        "command": "dotnet build WorkOSNext.sln -c Release",
+        "status": "required"
+      },
+      {
+        "command": "dotnet test tests/WorkOS.UnitTests/WorkOS.UnitTests.csproj -c Release",
+        "status": "required"
+      },
+      {
+        "command": "dotnet test tests/WorkOS.RuntimeIntegrationTests/WorkOS.RuntimeIntegrationTests.csproj -c Release",
+        "status": "required"
+      },
+      {
+        "command": "dotnet test tests/WorkOS.DatabaseSecurityTests/WorkOS.DatabaseSecurityTests.csproj -c Release",
+        "status": "required"
+      },
+      {
+        "command": "dotnet test tests/WorkOS.PolicyAsCodeTests/WorkOS.PolicyAsCodeTests.csproj -c Release",
+        "status": "required"
+      },
+      {
+        "command": "dotnet test tests/WorkOS.ReleaseEvidenceTests/WorkOS.ReleaseEvidenceTests.csproj -c Release",
+        "status": "required"
+      },
+      {
+        "command": "dotnet test tests/WorkOS.RuntimeContractTests/WorkOS.RuntimeContractTests.csproj -c Release",
+        "status": "required"
+      }
+    ]
+  },
+  "coverageSummary": {
+    "status": "reports_detected",
+    "targets": {
+      "ruleCoverage": "100%",
+      "financeLedgerPermissionWritePath": "95%-100%",
+      "domainRuntimeKernel": "90%+",
+      "apiClient": "80%-90%",
+      "controlsSelectors": "85%-90%",
+      "views": "75%-85%"
+    },
+    "mobile": {
+      "lines": {
+        "total": 3996,
+        "covered": 3304,
+        "skipped": 0,
+        "pct": 82.68
+      },
+      "statements": {
+        "total": 4823,
+        "covered": 3788,
+        "skipped": 0,
+        "pct": 78.54
+      },
+      "functions": {
+        "total": 1401,
+        "covered": 1190,
+        "skipped": 0,
+        "pct": 84.93
+      },
+      "branches": {
+        "total": 7379,
+        "covered": 4677,
+        "skipped": 0,
+        "pct": 63.38
+      },
+      "branchesTrue": {
+        "total": 0,
+        "covered": 0,
+        "skipped": 0,
+        "pct": 100
+      }
+    },
+    "dotnetCoverageFiles": [
+      "tests/WorkOS.DatabaseSecurityTests/TestResults/2b83e6e3-4cb9-4329-9934-229606695337/coverage.cobertura.xml",
+      "tests/WorkOS.DatabaseSecurityTests/TestResults/5dce7403-7447-4a67-a8b4-7905d1f9d101/coverage.cobertura.xml",
+      "tests/WorkOS.DatabaseSecurityTests/TestResults/66b98ba3-fd89-456e-9c8a-db607cd1821e/coverage.cobertura.xml",
+      "tests/WorkOS.DatabaseSecurityTests/TestResults/adea6eaf-b558-40df-9cab-538058ef9739/coverage.cobertura.xml",
+      "tests/WorkOS.DatabaseSecurityTests/TestResults/b18f36f3-4d98-4a1e-b180-ce1e78eb3e24/coverage.cobertura.xml",
+      "tests/WorkOS.DatabaseSecurityTests/TestResults/d2b5500f-4c0d-4bde-8c23-ac8e71d305e0/coverage.cobertura.xml",
+      "tests/WorkOS.PolicyAsCodeTests/TestResults/1750c98a-5aab-4365-9131-c5c63d9d364d/coverage.cobertura.xml",
+      "tests/WorkOS.PolicyAsCodeTests/TestResults/2242c17b-bf06-4394-8a9f-4efb6f8c6d23/coverage.cobertura.xml",
+      "tests/WorkOS.PolicyAsCodeTests/TestResults/6aaeb3e2-e4cb-4529-ae59-2377acd1fc70/coverage.cobertura.xml",
+      "tests/WorkOS.PolicyAsCodeTests/TestResults/6b5718e8-cb1c-47b8-8586-05039a689572/coverage.cobertura.xml",
+      "tests/WorkOS.PolicyAsCodeTests/TestResults/ef539d11-1842-4f32-9a20-9785fc71e25f/coverage.cobertura.xml",
+      "tests/WorkOS.ReleaseEvidenceTests/TestResults/14ac0a1a-2a95-4c0b-93e8-1d060ad40551/coverage.cobertura.xml",
+      "tests/WorkOS.ReleaseEvidenceTests/TestResults/75f271dd-e3b9-4f09-8964-c39e24ddb4a1/coverage.cobertura.xml",
+      "tests/WorkOS.ReleaseEvidenceTests/TestResults/e2dab566-9600-45af-8b5a-a6c35b647edd/coverage.cobertura.xml",
+      "tests/WorkOS.ReleaseEvidenceTests/TestResults/f4b50db9-83da-4b95-93c2-08cc9dacda51/coverage.cobertura.xml",
+      "tests/WorkOS.ReleaseEvidenceTests/TestResults/fd3b827e-a278-4a2e-ab08-7c590e6d5307/coverage.cobertura.xml",
+      "tests/WorkOS.RuntimeIntegrationTests/TestResults/0b7ccc16-ea0f-411d-b552-18cf64062179/coverage.cobertura.xml",
+      "tests/WorkOS.RuntimeIntegrationTests/TestResults/565e6282-b437-4d3d-9f90-f50089456d6e/coverage.cobertura.xml",
+      "tests/WorkOS.RuntimeIntegrationTests/TestResults/67f98990-cc2f-4a6e-a7fd-18456864ae0d/coverage.cobertura.xml",
+      "tests/WorkOS.RuntimeIntegrationTests/TestResults/b2e404f3-bbbb-48a6-b2db-d783a80f8837/coverage.cobertura.xml",
+      "tests/WorkOS.RuntimeIntegrationTests/TestResults/e8f4e326-b616-43b3-8d32-745c25d35180/coverage.cobertura.xml",
+      "tests/WorkOS.RuntimeIntegrationTests/TestResults/f45dcbe4-41b8-40be-93d4-48e260f7ba2c/coverage.cobertura.xml",
+      "tests/WorkOS.UnitTests/TestResults/14f1ae66-d410-4347-8c0a-0dfb3b0e3ede/coverage.cobertura.xml",
+      "tests/WorkOS.UnitTests/TestResults/385566ad-9d70-41c7-877e-7f48d829e5f3/coverage.cobertura.xml",
+      "tests/WorkOS.UnitTests/TestResults/8415554f-fc29-4949-9f06-a1cf4bd61dab/coverage.cobertura.xml",
+      "tests/WorkOS.UnitTests/TestResults/f4355d82-462e-4de3-88d7-5ab9626f47e1/coverage.cobertura.xml",
+      "tests/WorkOS.UnitTests/TestResults/f49c440a-de27-4cae-89f4-1e51bf65acf5/coverage.cobertura.xml"
+    ]
+  },
+  "details": {},
+  "currentBranch": "codex/oam-stage-6-current-architecture-cleanup",
+  "latestCommit": "433ec9537bc7b355b978ef6b9bf7bf37a9cc0168",
+  "workspaceStatus": "has_task_changes",
+  "changedFiles": [
+    "github/workflows/ci.yml",
+    "apps/mobile/src/__tests__/MobileSurfaceCopyContract.test.js",
+    "apps/mobile/src/__tests__/OperationRouteIdentityContract.test.js",
+    "apps/mobile/src/__tests__/SearchIntentHubContract.test.js",
+    "apps/mobile/src/__tests__/experienceContract.test.js",
+    "apps/mobile/src/i18n/operationCopy.js",
+    "apps/mobile/src/searchIntentHub.js",
+    "apps/mobile/src/surfaceGuard.js",
+    "apps/mobile/src/views/experienceComponents.js",
+    "docs/business/domains/dormitory/domain-pack.yml",
+    "docs/business/finance/correction-policy.yml",
+    "docs/contracts/admission/actor-device-admission-contract.json",
+    "docs/contracts/language/surface-copy-catalog.json",
+    "docs/contracts/search/search-contract.json",
+    "docs/contracts/search/search-index-sources.json",
+    "docs/contracts/search/search-permission-policy.json",
+    "docs/contracts/search/search-ranking-policy.json",
+    "docs/contracts/search/search-result-schema.json",
+    "docs/oam/current-architecture.manifest.json",
+    "docs/surface/surface-contract.yml",
+    "scripts/check-admission-kernel.mjs",
+    "scripts/check-domain-packs.mjs",
+    "scripts/check-language-kernel.mjs",
+    "scripts/check-rule-authority.mjs",
+    "scripts/check-runtime-write-paths.mjs",
+    "scripts/check-search-kernel.mjs",
+    "scripts/check-surface-contract.mjs",
+    "scripts/oam/check-current-oam.mjs",
+    "scripts/oam/run-control-plane-checks.ps1",
+    "services/core-api/WorkOS.Api/Program.cs",
+    "services/core-api/WorkOS.Api/Runtime/AdmissionKernelService.cs",
+    "services/core-api/WorkOS.Api/Runtime/CanonicalOperationsApiService.cs",
+    "services/core-api/WorkOS.Api/Runtime/CorrectionCenterModels.cs",
+    "services/core-api/WorkOS.Api/Runtime/OperationsRuntimeEndpoints.cs",
+    "services/core-api/WorkOS.Api/Runtime/OperationsRuntimeService.cs",
+    "services/core-api/WorkOS.Api/Runtime/OperationsUnitOfWork.cs",
+    "services/core-api/WorkOS.Api/Runtime/RuntimeActorAuthentication.cs",
+    "services/core-api/WorkOS.Api/Runtime/RuntimeCorrectionCenterStorage.cs",
+    "services/core-api/WorkOS.Api/Runtime/RuntimeScenarioRunner.cs",
+    "services/core-api/WorkOS.Api/Runtime/RuntimeSecurityPolicy.cs",
+    "services/core-api/WorkOS.Api/Runtime/SearchKernelService.cs",
+    "tests/WorkOS.RuntimeContractTests/Program.cs",
+    "tests/WorkOS.RuntimeIntegrationTests/DormitoryFinanceRuntimeSemanticTests.cs",
+    "tests/WorkOS.RuntimeIntegrationTests/DormitoryGoldenPathTests.cs",
+    "tests/WorkOS.RuntimeIntegrationTests/DormitoryRuntimeTraceReplayTests.cs",
+    "tests/WorkOS.UnitTests/CanonicalOperationsApiServiceTests.cs",
+    "tests/WorkOS.UnitTests/LedgerMutationKillTests.cs",
+    "tests/WorkOS.UnitTests/OperationsUnitOfWorkTests.cs",
+    "tests/WorkOS.UnitTests/RuntimeHardeningTests.cs",
+    "tests/WorkOS.UnitTests/WorkItemLifecycleTests.cs",
+    "artifacts/oam/evidence/current-oam-final-report.json",
+    "artifacts/oam/evidence/evidence-graph.json",
+    "artifacts/oam/evidence/high-risk-trust-proof.json",
+    "artifacts/oam/evidence/master-design-proof.json",
+    "artifacts/oam/evidence/master-outline-proof.json",
+    "artifacts/oam/evidence/runtime-proof.json",
+    "artifacts/oam/evidence/search-readonly-proof.json",
+    "artifacts/oam/evidence/surface-language-proof.json",
+    "artifacts/oam/evidence/truth-ownership-proof.json",
+    "artifacts/oam/final-report.json",
+    "docs/system/oam-authority-map.md",
+    "docs/system/oam-next-stage-admission.md",
+    "docs/system/oam-p0-rule-ledger.md",
+    "docs/system/oam-rule-to-gate-map.md",
+    "scripts/oam/check-current-evidence-root.mjs",
+    "scripts/oam/generate-current-evidence-root.mjs"
+  ],
+  "createdFiles": [
+    "artifacts/oam/evidence/current-oam-final-report.json",
+    "artifacts/oam/evidence/evidence-graph.json",
+    "artifacts/oam/evidence/high-risk-trust-proof.json",
+    "artifacts/oam/evidence/master-design-proof.json",
+    "artifacts/oam/evidence/master-outline-proof.json",
+    "artifacts/oam/evidence/runtime-proof.json",
+    "artifacts/oam/evidence/search-readonly-proof.json",
+    "artifacts/oam/evidence/surface-language-proof.json",
+    "artifacts/oam/evidence/truth-ownership-proof.json",
+    "artifacts/oam/final-report.json",
+    "docs/system/oam-authority-map.md",
+    "docs/system/oam-next-stage-admission.md",
+    "docs/system/oam-p0-rule-ledger.md",
+    "docs/system/oam-rule-to-gate-map.md",
+    "scripts/oam/check-current-evidence-root.mjs",
+    "scripts/oam/generate-current-evidence-root.mjs"
+  ],
+  "deletedOrMovedFiles": [],
+  "authorityClosure": {
+    "name": "权威闭环",
+    "status": "passed"
+  },
+  "businessDefinitionClosure": {
+    "name": "业务定义闭环",
+    "status": "passed"
+  },
+  "surfaceLanguageClosure": {
+    "name": "Surface 用户语义闭环",
+    "status": "passed"
+  },
+  "searchReadonlyClosure": {
+    "name": "Search / BI / KPI / Lineage / Permission 只读闭环",
+    "status": "passed"
+  },
+  "runtimeTruthOutputClosure": {
+    "name": "Runtime 真值输出闭环",
+    "status": "passed"
+  },
+  "highRiskTrustClosure": {
+    "name": "高风险信任闭环",
+    "status": "passed"
+  },
+  "evidenceRootClosure": {
+    "name": "证据根闭环",
+    "status": "passed"
+  },
+  "nextStageAdmissionClosure": {
+    "name": "下一阶段准入闭环",
+    "status": "passed"
+  },
+  "failedChecks": [],
+  "skippedOrNotApplicable": [],
+  "ciEvidenceRootStatus": {
+    "generated": true,
+    "checkedBy": "scripts/oam/check-current-evidence-root.mjs",
+    "uploadedByCi": true,
+    "evidenceRoot": "artifacts/oam/evidence"
+  },
+  "businessProductionStatus": "BLOCKED",
+  "dormitoryL2Status": "BLOCKED",
+  "productionConfirmAllowed": false,
+  "unresolvedP0": [],
+  "unresolvedP1": [],
+  "unresolvedP2": [],
+  "finalGoNoGo": "GO",
+  "nextStageAllowed": "仅允许进入补强下一阶段准入证据和 P1/P2 收敛；不得进入 Business Production、Dormitory L2 或 production_confirm。",
+  "p0RuleLedger": [
+    {
+      "ruleId": "P0-01",
+      "name": "Business Production 不得由 CI green、Surface 可见性、Search 命中、Control Plane 可见性打开",
+      "gate": "scripts/check-admission-kernel.mjs",
+      "evidence": "artifacts/oam/checks/admission-kernel-result.json",
+      "status": "passed",
+      "risk": "P0"
+    },
+    {
+      "ruleId": "P0-02",
+      "name": "Dormitory L2 不得由设计稿、页面展示、搜索命中、驾驶舱摘要打开",
+      "gate": "scripts/check-business-line-admission.mjs",
+      "evidence": "artifacts/oam/checks/business-line-admission-result.json",
+      "status": "passed",
+      "risk": "P0"
+    },
+    {
+      "ruleId": "P0-03",
+      "name": "production_confirm 默认 false，必须由单独生产准入 gate 打开",
+      "gate": "scripts/check-admission-kernel.mjs",
+      "evidence": "artifacts/oam/checks/admission-kernel-result.json",
+      "status": "passed",
+      "risk": "P0"
+    },
+    {
+      "ruleId": "P0-04",
+      "name": "业务写入只能通过 OAM Confirm Runtime / Unit of Work",
+      "gate": "scripts/check-runtime-write-paths.mjs",
+      "evidence": "artifacts/oam/checks/runtime-write-paths-result.json",
+      "status": "passed",
+      "risk": "P0"
+    },
+    {
+      "ruleId": "P0-05",
+      "name": "Projection / Lens / Search / BI / Dashboard / 画像 / 摘要 / 回执不得写业务事实",
+      "gate": "scripts/check-api-boundaries.mjs",
+      "evidence": "artifacts/oam/checks/api-boundaries-result.json",
+      "status": "passed",
+      "risk": "P0"
+    },
+    {
+      "ruleId": "P0-06",
+      "name": "管理驾驶舱不得直接写业务事实、财务事实、异常处理事实",
+      "gate": "scripts/check-management-cockpit-boundary.mjs",
+      "evidence": "artifacts/oam/checks/management-cockpit-boundary-result.json",
+      "status": "passed",
+      "risk": "P0"
+    },
+    {
+      "ruleId": "P0-07",
+      "name": "共享治理回执不得替代 AdmissionDecision",
+      "gate": "scripts/check-shared-governance-boundary.mjs",
+      "evidence": "artifacts/oam/checks/shared-governance-boundary-result.json",
+      "status": "passed",
+      "risk": "P0"
+    },
+    {
+      "ruleId": "P0-08",
+      "name": "金额依据不得作为正式财务事实",
+      "gate": "scripts/finance/check-finance-semantic-truth.mjs",
+      "evidence": "artifacts/oam/checks/finance-semantic-truth-result.json",
+      "status": "passed",
+      "risk": "P0"
+    },
+    {
+      "ruleId": "P0-09",
+      "name": "非财务域不得产生 LedgerEntry",
+      "gate": "scripts/check-ledger-semantic-rules.mjs",
+      "evidence": "artifacts/oam/checks/ledger-semantic-rules-result.json",
+      "status": "passed",
+      "risk": "P0"
+    },
+    {
+      "ruleId": "P0-10",
+      "name": "未解析 WorkItem Definition 不得 confirm",
+      "gate": "runtime contract tests",
+      "evidence": "artifacts/oam/test-results/runtime-contract.json",
+      "status": "passed",
+      "risk": "P0"
+    },
+    {
+      "ruleId": "P0-11",
+      "name": "SearchResult 必须有 permission、lineage、freshness，并且不得包含业务写 action",
+      "gate": "scripts/check-search-kernel.mjs",
+      "evidence": "artifacts/oam/checks/search-kernel-result.json",
+      "status": "passed",
+      "risk": "P0"
+    },
+    {
+      "ruleId": "P0-12",
+      "name": "普通用户文案不得暴露内部运行术语",
+      "gate": "scripts/check-language-kernel.mjs",
+      "evidence": "artifacts/oam/checks/language-kernel-result.json",
+      "status": "passed",
+      "risk": "P0"
+    },
+    {
+      "ruleId": "P0-13",
+      "name": "高风险动作必须有 verified device trust、reason、evidenceRefs、admissionDecisionRef",
+      "gate": "policy tests",
+      "evidence": "artifacts/oam/checks/admission-kernel-result.json",
+      "status": "passed",
+      "risk": "P0"
+    },
+    {
+      "ruleId": "P0-14",
+      "name": "Current OAM evidence root 必须生成、校验、上传并绑定 commit / CI run / artifact digest",
+      "gate": "scripts/oam/check-current-evidence-root.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "status": "passed",
+      "risk": "P0"
+    }
+  ]
+}

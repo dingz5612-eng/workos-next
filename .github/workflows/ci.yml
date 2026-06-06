@@ -145,5 +145,24 @@ jobs:
       - name: Runtime contract tests
         run: dotnet run --project tests/WorkOS.RuntimeContractTests/WorkOS.RuntimeContractTests.csproj -c Release
 
+      - name: Generate current OAM evidence root
+        if: always()
+        run: node scripts/oam/generate-current-evidence-root.mjs
+
+      - name: Validate current OAM evidence root
+        if: always()
+        run: node scripts/oam/check-current-evidence-root.mjs
+
+      - name: Upload current OAM evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: current-oam-evidence
+          path: |
+            artifacts/oam/evidence/**
+            artifacts/oam/checks/**
+            artifacts/oam/test-results/**
+            artifacts/oam/final-report.json
+
       - name: Diff whitespace check
         run: git diff --check

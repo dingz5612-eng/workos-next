@@ -14,11 +14,16 @@ public sealed class WorkItemLifecycleTests
         var workItem = service.CreateWorkItem(new CreateWorkItemRequest(
             WorkItemId: "wi-lifecycle-001",
             TenantId: "tenant-oam-current",
-            WorkItemType: "runtimeAudit",
-            WorkspaceId: "W-OAM-CURRENT",
-            CardId: "runtimeAudit",
+            WorkItemType: "Dorm.RoomSetup",
+            WorkspaceId: "W-STAY-RESOURCE",
+            CardId: "roomSetup",
             OwnerRole: "operations",
-            Payload: new Dictionary<string, string> { ["caseId"] = "case-oam-current" }));
+            Payload: new Dictionary<string, string>
+            {
+                ["caseId"] = "case-oam-current",
+                ["cardId"] = "roomSetup",
+                ["definitionId"] = "definition.roomSetup.v1"
+            }));
 
         var first = service.ConfirmWorkItem("wi-lifecycle-001", Request("idem-oam-current"), OperationsActor(), "req-oam-current-1");
         var duplicate = service.ConfirmWorkItem("wi-lifecycle-001", Request("idem-oam-current"), OperationsActor(), "req-oam-current-2");
@@ -39,11 +44,16 @@ public sealed class WorkItemLifecycleTests
         service.CreateWorkItem(new CreateWorkItemRequest(
             WorkItemId: "wi-lifecycle-409",
             TenantId: "tenant-oam-current",
-            WorkItemType: "runtimeAudit",
-            WorkspaceId: "W-OAM-CURRENT",
-            CardId: "runtimeAudit",
+            WorkItemType: "Dorm.RoomSetup",
+            WorkspaceId: "W-STAY-RESOURCE",
+            CardId: "roomSetup",
             OwnerRole: "operations",
-            Payload: new Dictionary<string, string> { ["caseId"] = "case-oam-current-409" }));
+            Payload: new Dictionary<string, string>
+            {
+                ["caseId"] = "case-oam-current-409",
+                ["cardId"] = "roomSetup",
+                ["definitionId"] = "definition.roomSetup.v1"
+            }));
 
         var first = service.ConfirmWorkItem("wi-lifecycle-409", Request("idem-conflict", "A101"), OperationsActor(), "req-oam-current-409-1");
         var conflict = service.ConfirmWorkItem("wi-lifecycle-409", Request("idem-conflict", "B202"), OperationsActor(), "req-oam-current-409-2");
@@ -62,7 +72,7 @@ public sealed class WorkItemLifecycleTests
         var catalog = new OperationsRuntimeService(runtime, cases, workItems);
         var store = new InMemoryOperationsStore();
         var router = new SliceCommandHandlerRouter()
-            .Register(CanonicalOperationsApiService.ConfirmCommandType, CanonicalOperationsApiService.HandleConfirmCommand);
+            .Register(CanonicalOperationsApiService.ConfirmCommandDefinition, CanonicalOperationsApiService.HandleConfirmCommand);
         var unitOfWork = new OperationsUnitOfWork(
             new CommandEnvelopeBuilder(),
             new CommandSubmissionService(store),
@@ -93,7 +103,7 @@ public sealed class WorkItemLifecycleTests
     private sealed class FakeRuntime : IOperationsRuntimeAdapter
     {
         public WorkspaceProjection? FindWorkspace(string workspaceId) =>
-            workspaceId.Equals("W-OAM-CURRENT", StringComparison.OrdinalIgnoreCase) ? Workspace(workspaceId) : null;
+            workspaceId.Equals("W-STAY-RESOURCE", StringComparison.OrdinalIgnoreCase) ? Workspace(workspaceId) : null;
 
         public IReadOnlyList<ProcessWorkItemIntentRecord> GetProcessWorkItemIntents(string? tenantId = null) =>
             Array.Empty<ProcessWorkItemIntentRecord>();
@@ -115,7 +125,7 @@ public sealed class WorkItemLifecycleTests
                 $"task-{workspaceId}",
                 Text("OAM current"),
                 Text("OAM current"),
-                new[] { Card("runtimeAudit") },
+                new[] { Card("roomSetup") },
                 Text("Next"),
                 Array.Empty<BlockerRule>());
 

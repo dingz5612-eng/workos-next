@@ -260,7 +260,7 @@ describe("OAM Surface search intent hub contract", () => {
   it("preserves Search Kernel admission state in the surface view model", () => {
     const ctx = createSurfaceCtx({ view: "search", query: "房间" });
     const vm = buildSearchResultVM({
-      resultType: "workspaceCardProjection",
+      resultType: "workspaceCardCompatibility",
       workspaceId: "W-STAY-RESOURCE",
       cardId: "roomSetup",
       admission: {
@@ -274,6 +274,7 @@ describe("OAM Surface search intent hub contract", () => {
       },
       sourceRefs: {
         source: "SearchKernelService",
+        sourceType: "workspaceCardProjection",
         projectionAdapter: "LensQueryService.Search",
         admissionDecisionRef: "admission:roomSetup:internal"
       }
@@ -286,6 +287,7 @@ describe("OAM Surface search intent hub contract", () => {
     expect(vm.admissionReason).toBe("L1_observation_only");
     expect(vm.admission.admissionDecisionRef).toBe("admission:roomSetup:internal");
     expect(vm.sourceRefs.admissionDecisionRef).toBeUndefined();
+    expect(vm.sourceRefs.sourceType).toBe("workspaceCardProjection");
     expect(vm.sourceRefs.projectionAdapter).toBe("LensQueryService.Search");
   });
 

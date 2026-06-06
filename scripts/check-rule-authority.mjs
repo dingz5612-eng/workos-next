@@ -8,6 +8,10 @@ const authorityFiles = [
   "docs/oam/current-architecture.md",
   "docs/oam/current-architecture.manifest.json",
   "docs/system/current-system-map.md",
+  "docs/system/oam-authority-map.md",
+  "docs/system/oam-rule-to-gate-map.md",
+  "docs/system/oam-p0-rule-ledger.md",
+  "docs/system/oam-next-stage-admission.md",
   "docs/contracts/oam.current.json",
   ".github/pull_request_template.md",
   ".github/workflows/ci.yml"
@@ -104,6 +108,35 @@ for (const [file, text] of [
 for (const required of ["OAM", "API boundary", "module manifest", "database", "coverage"]) {
   if (!prTemplate.includes(required)) {
     violations.push(`PR template must include current OAM checklist term: ${required}`);
+  }
+}
+
+const ruleLedger = readText("docs/system/oam-p0-rule-ledger.md");
+for (const ruleId of Array.from({ length: 14 }, (_, index) => `P0-${String(index + 1).padStart(2, "0")}`)) {
+  if (!ruleLedger.includes(ruleId)) {
+    violations.push(`OAM P0 rule ledger missing ${ruleId}.`);
+  }
+}
+for (const required of ["权威文件", "结构化合同", "运行时执行点", "负向测试或 gate", "证据产物", "当前状态", "风险等级"]) {
+  if (!ruleLedger.includes(required)) {
+    violations.push(`OAM P0 rule ledger missing column ${required}.`);
+  }
+}
+
+const nextStageAdmission = readText("docs/system/oam-next-stage-admission.md");
+for (const required of [
+  "docs/system/oam-p0-rule-ledger.md",
+  "artifacts/oam/evidence/evidence-graph.json",
+  "artifacts/oam/final-report.json",
+  "CI success 不等于 Business Production GO",
+  "Coverage 达标不等于 Dormitory L2 GO",
+  "Surface 可见不等于 confirmAllowed",
+  "Search 命中不等于可办理",
+  "final go/no-go",
+  "next_stage_allowed"
+]) {
+  if (!nextStageAdmission.includes(required)) {
+    violations.push(`OAM next-stage admission missing required rule: ${required}`);
   }
 }
 

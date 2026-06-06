@@ -636,7 +636,7 @@ export function EvidenceStateVM(field, draft = null, ctx = {}) {
 }
 
 export function PermissionDiagnostic(decision = {}, ctx) {
-  const copy = permissionDiagnosticCopy(decision);
+  const copy = permissionDiagnosticCopy(decision, ctx.tr);
   return `<section class="permission-diagnostic" data-surface="permission-diagnostic">
     <span>${ctx.tr("permissionDiagnostic")}</span>
     <h1>${text(copy.reason, ctx)}</h1>

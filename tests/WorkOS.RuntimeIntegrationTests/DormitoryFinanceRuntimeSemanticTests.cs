@@ -12,7 +12,7 @@ public sealed class DormitoryFinanceRuntimeSemanticTests
     {
         var store = new InMemoryOperationsStore();
         var router = new SliceCommandHandlerRouter()
-            .Register(CanonicalOperationsApiService.ConfirmCommandType, _ => SliceCommandHandlerResult.Committed(
+            .Register(CanonicalOperationsApiService.ConfirmCommandDefinition, _ => SliceCommandHandlerResult.Committed(
                 new Dictionary<string, object> { ["accepted"] = true },
                 new[] { new OperationsDomainEventDraft("Accommodation.DepositReceived", new Dictionary<string, object>()) },
                 ledgerTransactions: new[]

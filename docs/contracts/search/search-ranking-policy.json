@@ -36,7 +36,9 @@
   "forbiddenFinalSignals": [
     "raw contains-only match without Language Kernel synonym expansion",
     "business-line hardcoded priority in a surface component",
-    "rank boost that changes confirmAllowed or productionAllowed"
+    "rank boost that changes confirmAllowed or productionAllowed",
+    "ranking hidden result",
+    "ranking blocked business line into executable result"
   ],
   "projectionInputIsolation": {
     "adapter": "LensQueryService.Search",

@@ -195,6 +195,21 @@ internal sealed class RuntimeCorrectionCenterStorage : ICorrectionCenterStore
             throw new InvalidOperationException("correction_request_not_applicable");
         }
 
+        if (IsHighRisk(request.RiskLevel))
+        {
+            RuntimeSecurityPolicy.ValidateHighRiskOperation(
+                "correction.apply",
+                command.ActorId,
+                command.ActorRole,
+                command.ActorCapabilities,
+                command.DeviceTrustStatus,
+                command.Surface,
+                command.Reason,
+                command.EvidenceRefs,
+                command.AdmissionDecisionRef,
+                requireEvidenceAndAdmission: true);
+        }
+
         if (IsHighRisk(request.RiskLevel) && !HasApprovedDecision(db, request.TenantId, request.CorrectionRequestId))
         {
             throw new InvalidOperationException("correction_approval_required_for_high_risk");

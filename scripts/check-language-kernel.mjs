@@ -97,9 +97,33 @@ function checkHighRiskReasons() {
     "admission.depositConfirmation.reason",
     "admission.depositRefund.reason",
     "admission.periodClose.reason",
-    "admission.ledgerCorrection.reason"
+    "admission.ledgerCorrection.reason",
+    "permission.explain.title",
+    "permission.reason.roleNotAllowed",
+    "permission.reason.capabilityMissing",
+    "permission.reason.deviceUntrusted",
+    "permission.next.contactOwner",
+    "permission.next.switchAllowedSurface",
+    "semantic.summary.notConfirmBasis",
+    "semantic.receipt.notProductionRelease",
+    "semantic.amountBasis.notFinanceResult",
+    "semantic.managementCockpit.readonly",
+    "semantic.financeTruth.explain"
   ]) {
     if (!copyIds.has(copyId)) failures.push(`surface-copy-catalog missing high-risk reason ${copyId}.`);
+  }
+  const operationCopy = read("apps/mobile/src/i18n/operationCopy.js");
+  for (const copyKey of [
+    "permission.reason.role_surface_not_allowed",
+    "permission.reason.capability_missing",
+    "permission.reason.device_not_trusted",
+    "permission.next.contactOwner",
+    "permission.next.switchAllowedSurface"
+  ]) {
+    if (!operationCopy.includes(`"${copyKey}"`)) failures.push(`operation copy missing Language Kernel key ${copyKey}.`);
+  }
+  for (const forbidden of ["写入 DomainEvent", "LedgerEntry 后", "ProcessManager 会", "运行时 Lens", "slice 状态不允许"]) {
+    if (operationCopy.includes(forbidden)) failures.push(`ordinary user copy exposes internal runtime term: ${forbidden}.`);
   }
 }
 

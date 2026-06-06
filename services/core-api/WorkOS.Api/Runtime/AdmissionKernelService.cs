@@ -18,20 +18,25 @@ public sealed class AdmissionKernelService
         WorkItemDefinitionResolution definition,
         RuntimeActorContext actor,
         string? workItemOwnerRole,
-        string? deviceId,
+        VerifiedDeviceTrustContext deviceTrust,
+        string? reason,
+        IReadOnlyList<string>? evidenceRefs,
         bool productionRequested)
     {
         var businessLine = businessLines.Find(definition.BusinessLineId);
         if (!definition.Resolved)
         {
-            return AdmissionKernelDecision.BlockProductionOnly(
+            return AdmissionKernelDecision.Blocked(
                 definition,
                 "prepare_only",
-                "Definition Registry did not resolve this WorkItem; Operations Runtime confirm remains prepare-only for L1 observation and production confirm is blocked.",
+                "Definition Registry did not resolve this WorkItem; Operations Runtime can show prepare-only context, but confirm is blocked before Unit of Work.",
                 new[] { "docs/contracts/definition/workitem-definition-registry.json" },
-                new[] { "definition_not_resolved_for_production_confirm" },
+                Array.Empty<string>(),
+                Array.Empty<string>(),
                 businessLine?.Level ?? "unknown",
-                businessLine?.SurfaceMode ?? "operations-runtime");
+                businessLine?.SurfaceMode ?? "operations-runtime",
+                new[] { "definition_not_resolved_for_production_confirm" }
+            );
         }
 
         var highRisk = IsHighRisk(definition);
@@ -118,19 +123,35 @@ public sealed class AdmissionKernelService
             var missingCapabilities = requiredCapabilities
                 .Where(capability => !HasCapability(actor, capability))
                 .ToArray();
-            var deviceMissing = string.IsNullOrWhiteSpace(deviceId);
-            if (missingCapabilities.Length > 0 || deviceMissing)
+            var highRiskNoGoItems = new List<string>();
+            highRiskNoGoItems.AddRange(missingCapabilities);
+            if (!deviceTrust.Verified)
+            {
+                highRiskNoGoItems.Add(deviceTrust.NoGoItem);
+            }
+
+            if (string.IsNullOrWhiteSpace(reason))
+            {
+                highRiskNoGoItems.Add("high_risk_reason_required");
+            }
+
+            if ((evidenceRefs ?? Array.Empty<string>()).Count == 0)
+            {
+                highRiskNoGoItems.Add("high_risk_evidence_refs_required");
+            }
+
+            if (highRiskNoGoItems.Count > 0)
             {
                 return AdmissionKernelDecision.Blocked(
                     definition,
-                    "production_blocked",
-                    "High-risk action requires declared capability, trusted device context, admission reason, and evidence before confirm.",
-                    new[] { "docs/contracts/admission/admission-matrix.json", "docs/contracts/runtime-surface-policy.json" },
+                    "high_risk_blocked",
+                    "High-risk action requires declared capability, verified trusted device context, admission reason, and evidence before confirm.",
+                    new[] { "docs/contracts/admission/admission-matrix.json", "docs/contracts/admission/actor-device-admission-contract.json", "docs/contracts/runtime-surface-policy.json" },
                     requiredCapabilities,
                     requiredDeviceTrust,
                     businessLine.Level,
                     businessLine.SurfaceMode,
-                    missingCapabilities.Concat(deviceMissing ? new[] { "trusted_device_context_required" } : Array.Empty<string>()).ToArray());
+                    highRiskNoGoItems.Distinct(StringComparer.OrdinalIgnoreCase).ToArray());
             }
         }
 
@@ -190,9 +211,7 @@ public sealed class AdmissionKernelService
     }
 
     private static bool IsHighRisk(WorkItemDefinitionResolution definition) =>
-        definition.Definition?.AdmissionPolicyRef.Contains("high_risk", StringComparison.OrdinalIgnoreCase) == true ||
-        definition.Definition?.RiskPolicyRef.Contains("high_risk", StringComparison.OrdinalIgnoreCase) == true ||
-        definition.Definition?.RiskPolicyRef.Contains("money_out", StringComparison.OrdinalIgnoreCase) == true;
+        HighRiskActionMatrix.RequiresVerifiedTrust(definition);
 
     private static IReadOnlyList<string> RequiredCapabilitiesFor(WorkItemDefinitionResolution definition)
     {
@@ -235,6 +254,52 @@ public sealed class AdmissionKernelService
         values.FirstOrDefault(value => !string.IsNullOrWhiteSpace(value)) ?? string.Empty;
 }
 
+public sealed record VerifiedDeviceTrustContext(
+    string DeviceId,
+    string DeviceTrustStatus,
+    string Surface,
+    bool TenantMatched,
+    DateTimeOffset? RevokedAtUtc = null)
+{
+    public static VerifiedDeviceTrustContext FromRequest(string? deviceId, string? deviceTrustStatus, string? surface) =>
+        new(
+            deviceId ?? string.Empty,
+            string.IsNullOrWhiteSpace(deviceTrustStatus)
+                ? (string.IsNullOrWhiteSpace(deviceId) ? "not_provided" : "unknown")
+                : deviceTrustStatus!,
+            string.IsNullOrWhiteSpace(surface) ? "operations-api" : surface!,
+            true);
+
+    public bool Verified =>
+        !string.IsNullOrWhiteSpace(DeviceId) &&
+        TenantMatched &&
+        RevokedAtUtc is null &&
+        DeviceTrustStatus.Equals("trusted", StringComparison.OrdinalIgnoreCase);
+
+    public string NoGoItem =>
+        string.IsNullOrWhiteSpace(DeviceId) ? "trusted_device_required" :
+        !TenantMatched ? "trusted_device_tenant_mismatch" :
+        RevokedAtUtc is not null || DeviceTrustStatus.Equals("revoked", StringComparison.OrdinalIgnoreCase) ? "trusted_device_revoked" :
+        !DeviceTrustStatus.Equals("trusted", StringComparison.OrdinalIgnoreCase) ? "trusted_device_unverified" :
+        "trusted_device_required";
+}
+
+public static class HighRiskActionMatrix
+{
+    public static readonly IReadOnlyList<string> RequiredEvidenceFields = new[]
+    {
+        "reason",
+        "evidenceRefs",
+        "admissionDecisionRef",
+        "verifiedDeviceTrust"
+    };
+
+    public static bool RequiresVerifiedTrust(WorkItemDefinitionResolution definition) =>
+        definition.Definition?.AdmissionPolicyRef.Contains("high_risk", StringComparison.OrdinalIgnoreCase) == true ||
+        definition.Definition?.RiskPolicyRef.Contains("high_risk", StringComparison.OrdinalIgnoreCase) == true ||
+        definition.Definition?.RiskPolicyRef.Contains("money_out", StringComparison.OrdinalIgnoreCase) == true;
+}
+
 public sealed record AdmissionKernelDecision(
     bool VisibleAllowed,
     bool PrepareAllowed,
@@ -273,30 +338,6 @@ public sealed record AdmissionKernelDecision(
             surfaceState,
             Array.Empty<string>(),
             RefFor(definition, "internal_pilot_observation"));
-
-    public static AdmissionKernelDecision BlockProductionOnly(
-        WorkItemDefinitionResolution definition,
-        string mode,
-        string reason,
-        IReadOnlyList<string> blockingSources,
-        IReadOnlyList<string> noGoItems,
-        string businessLineState,
-        string surfaceState) =>
-        new(
-            true,
-            true,
-            true,
-            false,
-            mode,
-            reason,
-            blockingSources,
-            Array.Empty<string>(),
-            Array.Empty<string>(),
-            businessLineState,
-            "BUSINESS_PRODUCTION_BLOCKED",
-            surfaceState,
-            noGoItems,
-            RefFor(definition, mode));
 
     public static AdmissionKernelDecision Blocked(
         WorkItemDefinitionResolution definition,

@@ -49,7 +49,14 @@ public sealed record LedgerCorrectionApplyCommand(
     string ActorId,
     string WorkItemId,
     decimal? AdjustmentAmount = null,
-    string? Reason = null);
+    string? Reason = null,
+    string? ActorRole = null,
+    IReadOnlyList<string>? ActorCapabilities = null,
+    string? DeviceId = null,
+    string? DeviceTrustStatus = null,
+    string Surface = "pc",
+    IReadOnlyList<string>? EvidenceRefs = null,
+    string? AdmissionDecisionRef = null);
 
 public sealed record LedgerCorrectionRequestResult(
     string CorrectionRequestId,

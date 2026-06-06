@@ -177,7 +177,7 @@ public sealed class RuntimeScenarioRunner
 
     private static OperationsUnitOfWork UnitOfWork(InMemoryOperationsStore store, Func<CommandEnvelopeV1, SliceCommandHandlerResult> handler)
     {
-        var router = new SliceCommandHandlerRouter().Register(CanonicalOperationsApiService.ConfirmCommandType, handler);
+        var router = new SliceCommandHandlerRouter().Register(CanonicalOperationsApiService.ConfirmCommandDefinition, handler);
         return new OperationsUnitOfWork(
             new CommandEnvelopeBuilder(),
             new CommandSubmissionService(store),

@@ -58,7 +58,7 @@ internal static class DormitoryRuntimeReplayHarness
             new IdempotencyService(store),
             new PayloadHashService(),
             new SliceCommandHandlerRouter().Register(
-                CanonicalOperationsApiService.ConfirmCommandType,
+                CanonicalOperationsApiService.ConfirmCommandDefinition,
                 CanonicalOperationsApiService.HandleConfirmCommand));
 
     public static OperationsCommandRequest Request(

@@ -12,12 +12,51 @@
   "deviceContextFields": [
     "deviceId",
     "deviceTrustStatus",
-    "surface"
+    "surface",
+    "tenantMatched",
+    "revokedAtUtc"
   ],
+  "verifiedDeviceTrustContext": {
+    "requiredForHighRisk": true,
+    "trustedStatuses": ["trusted"],
+    "tenantScopeRequired": true,
+    "revokedDeviceAllowed": false,
+    "missingDeviceAllowed": false
+  },
+  "highRiskActionMatrix": {
+    "requiredFields": ["actor", "capability", "verifiedDeviceTrust", "reason", "evidenceRefs", "admissionDecisionRef"],
+    "actions": [
+      "production_confirm",
+      "payment_confirmation",
+      "deposit_refund",
+      "period_close",
+      "bulk_import",
+      "correction_apply",
+      "release_state_change",
+      "business_signoff",
+      "management_cockpit_decision_that_affects_execution",
+      "shared_receipt_that_affects_block_or_risk"
+    ]
+  },
+  "correctionApplyAdmission": {
+    "requiresTrustedDevice": true,
+    "requiresReason": true,
+    "requiresEvidenceRefs": true,
+    "requiresAdmissionDecisionRef": true,
+    "appendOnly": true,
+    "unapprovedLedgerMutationAllowed": false
+  },
+  "productionBrowserAuthPolicy": {
+    "primaryPath": "Cookie + CSRF",
+    "browserBearerPrimaryPathAllowed": false,
+    "priorHeaderPrimaryPathAllowed": false
+  },
   "invariants": [
-    "High-risk action requires actor capability and trusted device.",
+    "High-risk action requires actor capability and verified trusted device.",
     "Actor and device context are captured with CommandSubmission payload context.",
-    "Missing actor/session blocks confirm and does not produce business facts."
+    "Missing actor/session blocks confirm and does not produce business facts.",
+    "Correction apply requires reason, evidenceRefs, admissionDecisionRef, and append-only ledger mutation.",
+    "Production browser authentication uses Cookie + CSRF as the primary path; Bearer and prior actor header are non-browser API token paths."
   ],
   "evidence": [
     "services/core-api/WorkOS.Api/Runtime/RuntimeActorAuthentication.cs",

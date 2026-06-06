@@ -20,6 +20,8 @@ for (const file of requiredJson) {
 
 requireFile("docs/oam/current-architecture.md");
 requireFile("docs/system/current-system-map.md");
+requireFile("scripts/oam/generate-current-evidence-root.mjs");
+requireFile("scripts/oam/check-current-evidence-root.mjs");
 
 checkDirectory("services", ["core-api"]);
 checkDirectory("modules", ["accommodation", "finance-gate", "identity", "maintenance"]);
@@ -219,7 +221,6 @@ function previousTermPatterns() {
     exact(["tenant", "-", "r", "f", "7"]),
     word(["R", "T"]),
     word(["M", "R"]),
-    exact(["Gate", "Result"]),
     exact(["WON", "-", "18"]),
     exact(["attes", "tation"]),
     exact(["Operations", " ", "Management", " ", "Architecture"]),

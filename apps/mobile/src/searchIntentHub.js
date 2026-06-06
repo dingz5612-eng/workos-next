@@ -85,7 +85,7 @@ function searchActionFor(item, ctx) {
   if (item.resultType === "workItem" && item.workItemId && resolveOperationPanelTarget(item, ctx.state || {}).canOpen) {
     return { type: "openWorkItem", label: safeLocalized(item.actionLabel, ctx) || ctx.tr?.("searchActionProcess") || "处理", view: "operationPanel", reason: "" };
   }
-  if (["room", "bed", "stay", "object"].includes(item.resultType) && item.workspaceId) {
+  if (["room", "bed", "stay", "object", "workspaceCardCompatibility"].includes(item.resultType) && item.workspaceId) {
     return { type: "openObject", label: ctx.tr?.("searchActionOpenObject") || "打开对象", view: "workspace", reason: "" };
   }
   return {
@@ -104,6 +104,8 @@ function titleForType(type, ctx) {
   const keyByType = {
     workItem: "searchWorkItems",
     operationCase: "searchOperationCases",
+    workspaceCardCompatibility: "workosSearch",
+    gateResult: "workosSearch",
     room: "searchRooms",
     bed: "searchBeds",
     stay: "searchStays",
@@ -190,6 +192,7 @@ function sourceRefs(item, ids) {
     traceId: ids.traceId,
     learningId: ids.learningId,
     source: item.sourceRefs?.source || item.source || "",
+    sourceType: item.sourceRefs?.sourceType || "",
     projectionAdapter: item.sourceRefs?.projectionAdapter || ""
   };
 }

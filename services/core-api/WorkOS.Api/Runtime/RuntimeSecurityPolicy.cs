@@ -14,6 +14,7 @@ public static class RuntimeSecurityPolicy
             ["period.close"] = "period.close",
             ["ledger.export"] = "pc.export.ledger",
             ["correction.approve"] = "correction.approve",
+            ["correction.apply"] = "finance.correction.apply",
             ["release.cutover"] = "release.cutover",
             ["projection.rebuild"] = "projection.rebuild",
             ["deadletter.replay"] = "deadletter.replay"
@@ -34,9 +35,10 @@ public static class RuntimeSecurityPolicy
         "deposit.deduct",
         "case.close",
         "period.close",
-        "ledger.export",
-        "correction.approve",
-        "release.cutover",
+            "ledger.export",
+            "correction.approve",
+            "correction.apply",
+            "release.cutover",
         "projection.rebuild",
         "deadletter.replay"
     };
@@ -94,7 +96,10 @@ public static class RuntimeSecurityPolicy
         IReadOnlyList<string>? actorCapabilities,
         string? deviceTrustStatus,
         string? surface,
-        string? reason)
+        string? reason,
+        IReadOnlyList<string>? evidenceRefs = null,
+        string? admissionDecisionRef = null,
+        bool requireEvidenceAndAdmission = false)
     {
         if (!IsHighRiskAction(actionKey))
         {
@@ -123,6 +128,16 @@ public static class RuntimeSecurityPolicy
         if (!TrustedDeviceCanPerformHighRiskAction(deviceTrustStatus ?? string.Empty, surface ?? string.Empty))
         {
             throw new InvalidOperationException($"{actionKey}_trusted_device_required");
+        }
+
+        if (requireEvidenceAndAdmission && (evidenceRefs ?? Array.Empty<string>()).Count == 0)
+        {
+            throw new InvalidOperationException($"{actionKey}_evidence_refs_required");
+        }
+
+        if (requireEvidenceAndAdmission && string.IsNullOrWhiteSpace(admissionDecisionRef))
+        {
+            throw new InvalidOperationException($"{actionKey}_admission_decision_ref_required");
         }
     }
 

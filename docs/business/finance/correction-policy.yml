@@ -7,7 +7,16 @@
     {"id":"finance-correction-001","statement":"纠错不得更新旧 ledger_entries。","severity":"P0"},
     {"id":"finance-correction-002","statement":"纠错不得删除旧 ledger_entries。","severity":"P0"},
     {"id":"finance-correction-003","statement":"纠错只能追加 reversal 或 compensation LedgerTransaction。","severity":"P0"},
-    {"id":"finance-correction-004","statement":"纠错后必须重建受影响的账本投影。","severity":"P0"}
+    {"id":"finance-correction-004","statement":"纠错后必须重建受影响的账本投影。","severity":"P0"},
+    {"id":"finance-correction-005","statement":"高风险纠错 apply 必须具备可信设备、原因、evidenceRefs、admissionDecisionRef，并保持 append-only。","severity":"P0"}
   ],
+  "correctionApplyAdmission": {
+    "requiresTrustedDevice": true,
+    "requiresReason": true,
+    "requiresEvidenceRefs": true,
+    "requiresAdmissionDecisionRef": true,
+    "appendOnly": true,
+    "unapprovedLedgerMutationAllowed": false
+  },
   "runtimeService": "LedgerProjectionRebuilder"
 }

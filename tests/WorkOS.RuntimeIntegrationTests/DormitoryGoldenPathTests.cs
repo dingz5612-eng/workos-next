@@ -79,7 +79,7 @@ internal sealed class DormitoryScenarioHarness
     {
         var store = new InMemoryOperationsStore();
         var router = new SliceCommandHandlerRouter()
-            .Register(CanonicalOperationsApiService.ConfirmCommandType, CanonicalOperationsApiService.HandleConfirmCommand);
+            .Register(CanonicalOperationsApiService.ConfirmCommandDefinition, CanonicalOperationsApiService.HandleConfirmCommand);
         return new DormitoryScenarioHarness(
             store,
             new OperationsUnitOfWork(

@@ -96,6 +96,29 @@ public sealed class CanonicalOperationsApiServiceTests
     }
 
     [TestMethod]
+    public void operations_confirm_blocks_unresolved_definition_before_unit_of_work()
+    {
+        var service = Service(
+            out _,
+            out var store,
+            definitions: new WorkItemDefinitionRegistryService(Array.Empty<WorkItemDefinition>()));
+
+        var result = service.ConfirmWorkItem("W-S3:roomSetup", Request("idem-unresolved-definition"), OperatorActor(), "req-unresolved-definition");
+
+        Assert.AreEqual(StatusCodes.Status403Forbidden, result.StatusCode);
+        Assert.AreEqual("admission_rejected", result.Error);
+        Assert.IsFalse(result.Confirmed);
+        Assert.IsEmpty(store.Submissions);
+        Assert.IsEmpty(store.DomainEvents);
+        var admission = (IReadOnlyDictionary<string, object>)result.ClientInstruction["admission"];
+        Assert.AreEqual("prepare_only", admission["mode"]);
+        Assert.AreEqual(false, admission["confirmAllowed"]);
+        Assert.AreEqual(false, admission["productionAllowed"]);
+        var definition = (IReadOnlyDictionary<string, object>)result.ClientInstruction["definition"];
+        Assert.AreEqual(false, definition["resolved"]);
+    }
+
+    [TestMethod]
     public void trace_routes_can_resolve_work_item_and_case_fact_graphs()
     {
         var service = Service(out _, out _);
@@ -157,9 +180,87 @@ public sealed class CanonicalOperationsApiServiceTests
     }
 
     [TestMethod]
+    public void high_risk_confirm_requires_verified_device_reason_and_evidence_before_unit_of_work()
+    {
+        var service = Service(out _, out var store);
+        service.CreateWorkItem(new CreateWorkItemRequest(
+            WorkItemId: "wi-high-risk-device-missing",
+            TenantId: "tenant-s3",
+            WorkItemType: "Dorm.DepositConfirmation",
+            WorkspaceId: "W-STAY-DEPOSIT-LEDGER",
+            CardId: "depositConfirmation",
+            OwnerRole: "finance",
+            Payload: new Dictionary<string, string>
+            {
+                ["caseId"] = "case-high-risk-device-missing",
+                ["cardId"] = "depositConfirmation",
+                ["definitionId"] = "definition.depositConfirmation.v1"
+            }));
+
+        var result = service.ConfirmWorkItem(
+            "wi-high-risk-device-missing",
+            Request("idem-high-risk-device-missing", cardId: "depositConfirmation", fieldValues: new Dictionary<string, string>()),
+            FinanceActor(),
+            "req-high-risk-device-missing");
+
+        Assert.AreEqual(StatusCodes.Status403Forbidden, result.StatusCode);
+        Assert.AreEqual("admission_rejected", result.Error);
+        Assert.IsEmpty(store.Submissions);
+        Assert.IsEmpty(store.DomainEvents);
+        var admission = (IReadOnlyDictionary<string, object>)result.ClientInstruction["admission"];
+        Assert.AreEqual(false, admission["confirmAllowed"]);
+        var noGo = (IReadOnlyList<string>)admission["noGoItems"];
+        CollectionAssert.Contains(noGo.ToArray(), "trusted_device_required");
+        CollectionAssert.Contains(noGo.ToArray(), "high_risk_reason_required");
+        CollectionAssert.Contains(noGo.ToArray(), "high_risk_evidence_refs_required");
+    }
+
+    [TestMethod]
+    public void high_risk_confirm_with_verified_device_reason_and_evidence_reaches_unit_of_work()
+    {
+        var service = Service(out _, out var store);
+        service.CreateWorkItem(new CreateWorkItemRequest(
+            WorkItemId: "wi-high-risk-trusted",
+            TenantId: "tenant-s3",
+            WorkItemType: "Dorm.DepositConfirmation",
+            WorkspaceId: "W-STAY-DEPOSIT-LEDGER",
+            CardId: "depositConfirmation",
+            OwnerRole: "finance",
+            Payload: new Dictionary<string, string>
+            {
+                ["caseId"] = "case-high-risk-trusted",
+                ["cardId"] = "depositConfirmation",
+                ["definitionId"] = "definition.depositConfirmation.v1"
+            }));
+
+        var result = service.ConfirmWorkItem(
+            "wi-high-risk-trusted",
+            Request("idem-high-risk-trusted", cardId: "depositConfirmation", fieldValues: new Dictionary<string, string>()) with
+            {
+                EvidenceIds = new[] { "ev-high-risk-trusted" },
+                DeviceId = "device-trusted",
+                DeviceTrustStatus = "trusted",
+                Surface = "pc",
+                Reason = "财务复核通过，允许进入内部试点确认。"
+            },
+            FinanceActor(),
+            "req-high-risk-trusted");
+
+        Assert.AreEqual(StatusCodes.Status200OK, result.StatusCode);
+        Assert.AreEqual("committed", result.CommitStatus);
+        Assert.HasCount(1, store.Submissions);
+        var admission = (IReadOnlyDictionary<string, object>)result.ClientInstruction["admission"];
+        Assert.AreEqual(true, admission["confirmAllowed"]);
+        Assert.AreEqual(false, admission["productionAllowed"]);
+    }
+
+    [TestMethod]
     public void operations_confirm_dispatches_next_work_item_from_shared_workspace_seed()
     {
-        var service = Service(out _, out _);
+        var service = Service(
+            out _,
+            out _,
+            definitions: RegistryWith(Definition("leadCapture", "leadCapture", "W-STAY-LEAD-RESERVATION")));
         service.CreateWorkItem(new CreateWorkItemRequest(
             WorkItemId: "wi-lead-capture-shared-flow",
             TenantId: "tenant-s3",
@@ -233,7 +334,11 @@ public sealed class CanonicalOperationsApiServiceTests
     [TestMethod]
     public void lead_reservation_create_dispatches_cancel_branch_from_business_action()
     {
-        var service = Service(out _, out _, ProjectionSeed.Create().Workspaces);
+        var service = Service(
+            out _,
+            out _,
+            ProjectionSeed.Create().Workspaces,
+            definitions: RegistryWith(Definition("reservationCreate", "reservationCreate", "W-STAY-LEAD-RESERVATION")));
         service.CreateWorkItem(new CreateWorkItemRequest(
             WorkItemId: "wi-reservation-create-cancel-flow",
             TenantId: "tenant-s3",
@@ -307,20 +412,21 @@ public sealed class CanonicalOperationsApiServiceTests
     private static CanonicalOperationsApiService Service(
         out FakeCatalogRuntime runtime,
         out InMemoryOperationsStore store,
-        IReadOnlyList<WorkspaceProjection>? workspaces = null)
+        IReadOnlyList<WorkspaceProjection>? workspaces = null,
+        WorkItemDefinitionRegistryService? definitions = null)
     {
         runtime = new FakeCatalogRuntime(workspaces);
         var catalog = new OperationsRuntimeService(runtime);
         store = new InMemoryOperationsStore();
         var router = new SliceCommandHandlerRouter()
-            .Register(CanonicalOperationsApiService.ConfirmCommandType, CanonicalOperationsApiService.HandleConfirmCommand);
+            .Register(CanonicalOperationsApiService.ConfirmCommandDefinition, CanonicalOperationsApiService.HandleConfirmCommand);
         var unitOfWork = new OperationsUnitOfWork(
             new CommandEnvelopeBuilder(),
             new CommandSubmissionService(store),
             new IdempotencyService(store),
             new PayloadHashService(),
             router);
-        return new CanonicalOperationsApiService(catalog, unitOfWork, store);
+        return new CanonicalOperationsApiService(catalog, unitOfWork, store, definitions);
     }
 
     private static ConfirmWorkItemRequest Request(
@@ -354,6 +460,31 @@ public sealed class CanonicalOperationsApiServiceTests
             new[] { "workos.write", "operations.confirm", "finance.deposit.confirm", "finance.payment.confirm" },
             "test",
             "finance-token");
+
+    private static WorkItemDefinitionRegistryService RegistryWith(params WorkItemDefinition[] definitions) =>
+        new(WorkItemDefinitionRegistryService.LoadDefault().Definitions.Concat(definitions).ToArray());
+
+    private static WorkItemDefinition Definition(string sourceCardId, string workItemType, string workspaceId) =>
+        new(
+            $"definition.test.{sourceCardId}.v1",
+            "dormitory",
+            "Accommodation.TestFixture",
+            workspaceId,
+            sourceCardId,
+            workItemType,
+            $"Test.{sourceCardId}.Confirm",
+            "Accommodation.TestFixture",
+            new[] { "DomainEvent", "WorkItem" },
+            new[] { "LedgerEntry", "LedgerTransaction", "PaymentFact", "DepositFact", "FinancialFact", "DashboardSummary", "Profile", "SharedReceipt" },
+            "field.test.v1",
+            "evidence.test.v1",
+            "risk.standard.v1",
+            "ledger.none.v1",
+            "admission.prepare_only_or_l1_observation.v1",
+            $"surface.test.{sourceCardId}",
+            false,
+            "operations-runtime-native",
+            "当前 OAM 测试夹具定义，仅用于确认未解析 definition 不再被隐式放行。");
 
     private sealed class FakeCatalogRuntime : IOperationsRuntimeAdapter
     {

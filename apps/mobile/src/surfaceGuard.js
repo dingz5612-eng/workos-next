@@ -20,7 +20,7 @@ export function evaluateSurfaceAccess(view, state = {}) {
 
   const actor = state.currentActor;
   if (!actor) {
-    return denied(view, "actor_session_required", "operator", "login", "Login is required before opening this surface.");
+    return denied(view, "actor_session_required", "operator", "login", "permission.next.login");
   }
 
   const role = actor.role || "operator";
@@ -37,36 +37,36 @@ export function evaluateSurfaceAccess(view, state = {}) {
 
   const device = resolveActiveDevice(state, view);
   if (["revoked", "blocked", "untrusted"].includes(device.deviceTrustStatus)) {
-    return denied(view, "device_not_trusted", "admin", "trusted_device", "Ask admin to restore device trust before continuing.");
+    return denied(view, "device_not_trusted", "admin", "trusted_device", "permission.next.contactOwner");
   }
   if (isPcSurfaceView(view) && (device.deviceTrustStatus !== "trusted" || !["pc", "release"].includes(device.surface))) {
-    return denied(view, "pc_surface_requires_pc_device", ownerFor(view), "pc_or_release_surface", `Switch to an allowed PC/release surface before opening ${view}.`);
+    return denied(view, "pc_surface_requires_pc_device", ownerFor(view), "pc_or_release_surface", "permission.next.switchAllowedSurface");
   }
 
   if (isReleaseSurface(view) && role !== "releaseOwner") {
-    return denied(view, "release_surface_restricted", "releaseOwner", "release.flight_deck.view", "Only releaseOwner can operate Release Flight Deck.");
+    return denied(view, "release_surface_restricted", "releaseOwner", "release.flight_deck.view", "permission.next.contactOwner");
   }
 
   const admission = state.businessLineAdmission || state.runtimeStore?.businessLineAdmission;
   if (admission && violatesAdmission(view, state, admission)) {
-    return denied(view, "business_line_admission_blocked", "manager", "business_line_admission", "Move the business line through admission before production-like work.");
+    return denied(view, "business_line_admission_blocked", "manager", "business_line_admission", "permission.next.businessAdmission");
   }
 
   const pilotScope = state.pilotScope || state.runtimeStore?.pilotScope;
   if (pilotScope?.status === "blocked") {
-    return denied(view, "pilot_scope_blocked", "supportOwner", "pilot_scope", "Resolve pilot scope blocker before opening this surface.");
+    return denied(view, "pilot_scope_blocked", "supportOwner", "pilot_scope", "permission.next.contactOwner");
   }
 
   return allowed(view);
 }
 
-export function permissionDiagnosticCopy(decision = {}) {
+export function permissionDiagnosticCopy(decision = {}, tr = (key) => key) {
   return {
-    title: "权限诊断",
-    reason: reasonCopy(decision.reason),
-    owner: ownerCopy(decision.owner || "manager"),
-    requiredPermission: permissionCopy(decision.requiredPermission || "surface_access"),
-    nextAction: decision.nextAction || "请联系对应负责人授权，或切换到当前角色允许访问的工作面。"
+    title: tr("permissionDiagnostic"),
+    reason: tr(reasonCopyKey(decision.reason)),
+    owner: tr(ownerCopyKey(decision.owner || "manager")),
+    requiredPermission: tr(permissionCopyKey(decision.requiredPermission || "surface_access")),
+    nextAction: tr(decision.nextAction || "permission.next.contactOwner")
   };
 }
 
@@ -98,28 +98,29 @@ function ownerFor(view) {
   return "operator";
 }
 
-function ownerCopy(owner) {
+function ownerCopyKey(owner) {
   const map = {
-    releaseOwner: "发布负责人",
-    admin: "治理管理员",
-    finance: "财务确认人",
-    manager: "主管",
-    operator: "运营经办人",
-    supportOwner: "支持负责人"
+    releaseOwner: "permission.owner.releaseOwner",
+    admin: "permission.owner.admin",
+    finance: "permission.owner.finance",
+    manager: "permission.owner.manager",
+    operator: "permission.owner.operator",
+    supportOwner: "permission.owner.supportOwner"
   };
-  return map[owner] || "对应负责人";
+  return map[owner] || "permission.owner.default";
 }
 
-function permissionCopy(permission) {
-  if (String(permission || "").includes("finance")) return "财务工作台访问权限";
-  if (String(permission || "").includes("manager")) return "主管工作台访问权限";
-  if (String(permission || "").includes("governance")) return "治理中心访问权限";
-  if (String(permission || "").includes("release")) return "发布观察面访问权限";
-  return "当前工作面访问权限";
+function permissionCopyKey(permission) {
+  if (String(permission || "").includes("pc_or_release_surface")) return "permission.scope.surface";
+  if (String(permission || "").includes("finance")) return "permission.scope.finance";
+  if (String(permission || "").includes("manager")) return "permission.scope.manager";
+  if (String(permission || "").includes("governance")) return "permission.scope.governance";
+  if (String(permission || "").includes("release")) return "permission.scope.release";
+  return "permission.scope.surface";
 }
 
 function nextActionFor(view) {
-  return `申请 ${requiredCapabilityFor(view)}，或切换到当前角色允许访问的工作面后再打开 ${view}。`;
+  return "permission.next.switchAllowedSurface";
 }
 
 function isReleaseSurface(view) {
@@ -152,17 +153,17 @@ function violatesAdmission(view, state, admission) {
   return /L0|Contract Preview/i.test(status) && admission[line]?.productionAllowed === true;
 }
 
-function reasonCopy(reason = "surface_not_allowed") {
+function reasonCopyKey(reason = "surface_not_allowed") {
   const copy = {
-    actor_session_required: "请先登录后再访问这个工作面。",
-    role_surface_not_allowed: "当前角色不能访问这个工作面。",
-    capability_missing: "当前账号缺少访问这个工作面的权限。",
-    device_not_trusted: "当前设备未通过可信校验。",
-    pc_surface_requires_pc_device: "这个工作面只能在 PC 或发布设备打开。",
-    release_surface_restricted: "发布工作面只允许 releaseOwner 访问。",
-    business_line_admission_blocked: "当前业务线尚未通过准入门禁。",
-    pilot_scope_blocked: "当前内测范围处于阻断状态。",
-    surface_not_allowed: "当前工作面不可访问。"
+    actor_session_required: "permission.reason.actor_session_required",
+    role_surface_not_allowed: "permission.reason.role_surface_not_allowed",
+    capability_missing: "permission.reason.capability_missing",
+    device_not_trusted: "permission.reason.device_not_trusted",
+    pc_surface_requires_pc_device: "permission.reason.pc_surface_requires_pc_device",
+    release_surface_restricted: "permission.reason.release_surface_restricted",
+    business_line_admission_blocked: "permission.reason.business_line_admission_blocked",
+    pilot_scope_blocked: "permission.reason.pilot_scope_blocked",
+    surface_not_allowed: "permission.reason.surface_not_allowed"
   };
   return copy[reason] || copy.surface_not_allowed;
 }

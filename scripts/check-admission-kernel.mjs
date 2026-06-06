@@ -10,6 +10,7 @@ const sources = readJson("docs/contracts/admission/admission-sources.json");
 const currentState = readJson("docs/oam/current-admission-state.json");
 const registry = readJson("docs/business/business-line-registry.json");
 const surfacePolicy = readJson("docs/contracts/runtime-surface-policy.json");
+const actorDevice = readJson("docs/contracts/admission/actor-device-admission-contract.json");
 
 if (selfTest) {
   const badState = { ...currentState, businessProduction: "OPEN" };
@@ -36,6 +37,7 @@ function runChecks(context) {
   checkMatrix(context.currentState, failures);
   checkBusinessLineAlignment(failures);
   checkHighRiskSurfaceReasons(failures);
+  checkHighRiskTrustClosure(failures);
   checkRuntimeImplementation(failures);
   return failures;
 }
@@ -185,6 +187,39 @@ function checkHighRiskSurfaceReasons(failures) {
   }
 }
 
+function checkHighRiskTrustClosure(failures) {
+  if (actorDevice.verifiedDeviceTrustContext?.requiredForHighRisk !== true) {
+    failures.push("actor-device contract must require verified device trust for high-risk actions.");
+  }
+  if (actorDevice.correctionApplyAdmission?.requiresTrustedDevice !== true ||
+      actorDevice.correctionApplyAdmission?.requiresEvidenceRefs !== true ||
+      actorDevice.correctionApplyAdmission?.requiresAdmissionDecisionRef !== true ||
+      actorDevice.correctionApplyAdmission?.appendOnly !== true) {
+    failures.push("actor-device contract must define CorrectionApplyAdmission with trusted device, evidenceRefs, admissionDecisionRef, and append-only.");
+  }
+  if (actorDevice.productionBrowserAuthPolicy?.primaryPath !== "Cookie + CSRF" ||
+      actorDevice.productionBrowserAuthPolicy?.browserBearerPrimaryPathAllowed !== false ||
+      actorDevice.productionBrowserAuthPolicy?.priorHeaderPrimaryPathAllowed !== false) {
+    failures.push("production browser auth policy must keep Cookie + CSRF as primary path and forbid Bearer/header primary browser path.");
+  }
+  const requiredActions = [
+    "production_confirm",
+    "payment_confirmation",
+    "deposit_refund",
+    "period_close",
+    "bulk_import",
+    "correction_apply",
+    "release_state_change",
+    "business_signoff",
+    "management_cockpit_decision_that_affects_execution",
+    "shared_receipt_that_affects_block_or_risk"
+  ];
+  const actions = new Set(actorDevice.highRiskActionMatrix?.actions ?? []);
+  for (const action of requiredActions) {
+    if (!actions.has(action)) failures.push(`high-risk action matrix missing action: ${action}`);
+  }
+}
+
 function checkRuntimeImplementation(failures) {
   const admissionSource = read("services/core-api/WorkOS.Api/Runtime/AdmissionKernelService.cs");
   for (const term of [
@@ -195,9 +230,23 @@ function checkRuntimeImplementation(failures) {
     "ConfirmAllowed",
     "BusinessLineAdmissionRegistry",
     "production_blocked",
-    "contract_preview"
+    "contract_preview",
+    "VerifiedDeviceTrustContext",
+    "HighRiskActionMatrix",
+    "high_risk_reason_required",
+    "high_risk_evidence_refs_required",
+    "trusted_device_unverified"
   ]) {
     if (!admissionSource.includes(term)) failures.push(`AdmissionKernelService.cs missing ${term}.`);
+  }
+  if (admissionSource.includes("BlockProductionOnly")) {
+    failures.push("AdmissionKernelService must not allow unresolved definition confirm through BlockProductionOnly.");
+  }
+  if (!/!definition\.Resolved[\s\S]*AdmissionKernelDecision\.Blocked/.test(admissionSource)) {
+    failures.push("Unresolved WorkItem Definition must be blocked before confirm reaches Unit of Work.");
+  }
+  if (!/definition_not_resolved_for_production_confirm/.test(admissionSource)) {
+    failures.push("Unresolved definition admission must expose definition_not_resolved_for_production_confirm no-go item.");
   }
   if (!admissionSource.includes("docs/oam/current-admission-state.json")) {
     failures.push("AdmissionKernelService must cite the current OAM admission state.");
@@ -208,9 +257,30 @@ function checkRuntimeImplementation(failures) {
     "admission.EvaluateConfirm",
     "AdmissionRejected",
     "[\"admission\"]",
-    "[\"admissionDecisionRef\"]"
+    "[\"admissionDecisionRef\"]",
+    "VerifiedDeviceTrustContext.FromRequest",
+    "HighRiskReason",
+    "DeviceTrustStatus",
+    "EvidenceIds"
   ]) {
     if (!canonical.includes(term)) failures.push(`CanonicalOperationsApiService.cs missing Admission Kernel binding: ${term}.`);
+  }
+
+  const correctionModels = read("services/core-api/WorkOS.Api/Runtime/CorrectionCenterModels.cs");
+  for (const term of ["EvidenceRefs", "AdmissionDecisionRef", "DeviceTrustStatus", "Surface"]) {
+    if (!correctionModels.includes(term)) failures.push(`CorrectionCenterModels.cs missing high-risk apply context: ${term}.`);
+  }
+  const correctionStorage = read("services/core-api/WorkOS.Api/Runtime/RuntimeCorrectionCenterStorage.cs");
+  for (const term of ["correction.apply", "requireEvidenceAndAdmission: true", "AdmissionDecisionRef", "EvidenceRefs"]) {
+    if (!correctionStorage.includes(term)) failures.push(`RuntimeCorrectionCenterStorage.cs missing CorrectionApplyAdmission guard: ${term}.`);
+  }
+
+  const actorAuth = read("services/core-api/WorkOS.Api/Runtime/RuntimeActorAuthentication.cs");
+  for (const term of ["ProductionBrowserAuthPolicy", "PrimarySessionPath", "cookie+csrf", "ApiBearerSource", "PriorHeaderSource"]) {
+    if (!actorAuth.includes(term)) failures.push(`RuntimeActorAuthentication.cs missing production browser auth policy token: ${term}.`);
+  }
+  if (actorAuth.includes('source = "bearer"') || actorAuth.includes('source = "prior-header"')) {
+    failures.push("RuntimeActorAuthentication must not label Bearer/prior header as production browser auth source.");
   }
 
   const searchKernel = read("services/core-api/WorkOS.Api/Runtime/SearchKernelService.cs");
