@@ -21,6 +21,7 @@ const requiredFiles = [
   "artifacts/oam/test-results/mobile/coverage/coverage-summary.json",
   "artifacts/oam/checks/mobile-coverage-policy-result.json",
   "artifacts/oam/checks/mobile-critical-branch-scenarios-result.json",
+  "artifacts/oam/checks/control-plane-gate-results.json",
   "artifacts/oam/final-report.json"
 ];
 
@@ -58,13 +59,15 @@ if (documents.size === requiredFiles.length) {
     }
   }
 
-  if (finalReport.finalGoNoGo !== "GO") {
-    failures.push(`final report must be GO after P0 closure, actual: ${finalReport.finalGoNoGo}`);
+  if (!["GO", "NO_GO"].includes(finalReport.finalGoNoGo)) {
+    failures.push(`final report must be GO or NO_GO, actual: ${finalReport.finalGoNoGo}`);
   }
 
   if (Array.isArray(finalReport.unresolvedP0) && finalReport.unresolvedP0.length > 0) {
     failures.push(`final report has unresolved P0: ${finalReport.unresolvedP0.map((item) => item.ruleId).join(", ")}`);
   }
+
+  checkFinalDecision(finalReport);
 
   if (finalReport.businessProductionStatus !== "BLOCKED") {
     failures.push("Business Production must remain BLOCKED.");
@@ -225,6 +228,44 @@ function checkMobileBranchRiskKernel(graph, finalReport) {
   }
 }
 
+function checkFinalDecision(finalReport) {
+  const reasons = finalReport.finalDecision?.noGoReasons ?? finalReport.noGoReasons ?? [];
+  const controlPlane = finalReport.controlPlaneGateResult;
+  const release = finalReport.releaseReadiness;
+
+  if (!controlPlane) {
+    failures.push("final report missing control plane gate result.");
+  }
+  if (!release) {
+    failures.push("final report missing release readiness.");
+  }
+
+  if (finalReport.finalGoNoGo === "GO") {
+    if (reasons.length > 0) {
+      failures.push(`final report is GO but has NO_GO reasons: ${reasons.join("; ")}`);
+    }
+    if (controlPlane?.status !== "passed" || (controlPlane?.failedGateCount ?? 0) > 0) {
+      failures.push("final report is GO but control plane gate did not pass.");
+    }
+    if ((controlPlane?.missingRequiredGates ?? []).length > 0) {
+      failures.push("final report is GO but control plane gate is missing required gates.");
+    }
+    if (controlPlane?.stale === true) {
+      failures.push("final report is GO but control plane gate result is stale.");
+    }
+    if (release?.releaseEligible !== true) {
+      failures.push("final report is GO but workspace is not release eligible.");
+    }
+    if (finalReport.mobileBranchRiskKernel?.status !== "passed") {
+      failures.push("final report is GO but mobile branch risk kernel is not passed.");
+    }
+  }
+
+  if (finalReport.finalGoNoGo === "NO_GO" && reasons.length === 0) {
+    failures.push("final report is NO_GO but has no noGoReasons.");
+  }
+}
+
 function checkExecutionLog(entries, expectedDigest) {
   if (!Array.isArray(entries) || entries.length === 0) {
     failures.push("execution log must contain JSONL entries.");
@@ -276,7 +317,7 @@ function readJsonl(file) {
 }
 
 function readText(file) {
-  return fs.readFileSync(path.join(root, file), "utf8");
+  return fs.readFileSync(path.join(root, file), "utf8").replace(/^\uFEFF/, "");
 }
 
 function exists(file) {

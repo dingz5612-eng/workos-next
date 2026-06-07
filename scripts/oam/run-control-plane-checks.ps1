@@ -1,16 +1,84 @@
 $ErrorActionPreference = "Stop"
+$script:GateResults = @()
+$script:GateReportPath = "artifacts/oam/checks/control-plane-gate-results.json"
+
+function Get-GitValue {
+  param([string[]] $Arguments)
+
+  try {
+    $value = & git @Arguments
+    if ($LASTEXITCODE -eq 0) {
+      return (($value -join "`n").Trim())
+    }
+  } catch {
+    return "unknown"
+  }
+  return "unknown"
+}
+
+function Write-GateReport {
+  param([string] $Status = "running")
+
+  $failed = @($script:GateResults | Where-Object { $_.status -ne "passed" })
+  $effectiveStatus = if ($failed.Count -eq 0 -and $Status -ne "failed") { "passed" } else { "failed" }
+  $report = [ordered]@{
+    version = "oam.control-plane-gate-results.v1"
+    generatedAtUtc = (Get-Date).ToUniversalTime().ToString("o")
+    commitSha = Get-GitValue -Arguments @("rev-parse", "HEAD")
+    branch = Get-GitValue -Arguments @("branch", "--show-current")
+    status = $effectiveStatus
+    requiredGateCount = $script:GateResults.Count
+    failedGateCount = $failed.Count
+    gates = $script:GateResults
+  }
+
+  $dir = Split-Path -Parent $script:GateReportPath
+  if (-not (Test-Path $dir)) {
+    New-Item -ItemType Directory -Path $dir | Out-Null
+  }
+  $report | ConvertTo-Json -Depth 8 | Set-Content -Path $script:GateReportPath -Encoding UTF8
+}
 
 function Invoke-Gate {
   param(
     [Parameter(Mandatory = $true, Position = 0)]
     [string] $Command,
     [Parameter(ValueFromRemainingArguments = $true, Position = 1)]
-    [string[]] $Arguments
+    [string[]] $Arguments,
+    [bool] $RecordResult = $true
   )
 
-  & $Command @Arguments
-  if ($LASTEXITCODE -ne 0) {
-    throw "Gate failed: $Command $($Arguments -join ' ')"
+  $commandLine = "$Command $($Arguments -join ' ')".Trim()
+  $startedAtUtc = (Get-Date).ToUniversalTime().ToString("o")
+  try {
+    & $Command @Arguments
+    $exitCode = $LASTEXITCODE
+    if ($exitCode -ne 0) {
+      throw "Gate failed with exit code ${exitCode}: $commandLine"
+    }
+    if ($RecordResult) {
+      $script:GateResults += [ordered]@{
+        command = $commandLine
+        status = "passed"
+        exitCode = 0
+        startedAtUtc = $startedAtUtc
+        endedAtUtc = (Get-Date).ToUniversalTime().ToString("o")
+      }
+      Write-GateReport
+    }
+  } catch {
+    if ($RecordResult) {
+      $script:GateResults += [ordered]@{
+        command = $commandLine
+        status = "failed"
+        exitCode = if ($null -ne $LASTEXITCODE) { $LASTEXITCODE } else { 1 }
+        startedAtUtc = $startedAtUtc
+        endedAtUtc = (Get-Date).ToUniversalTime().ToString("o")
+        message = $_.Exception.Message
+      }
+      Write-GateReport -Status "failed"
+    }
+    throw
   }
 }
 
@@ -70,5 +138,5 @@ if (-not (Test-Path "artifacts/oam/test-results/mobile/coverage/coverage-summary
 Invoke-Gate node scripts/oam/generate-mobile-branch-risk-ledger.mjs
 Invoke-Gate node scripts/oam/check-mobile-coverage-policy.mjs
 Invoke-Gate node scripts/oam/check-mobile-critical-branch-scenarios.mjs
-Invoke-Gate node scripts/oam/generate-current-evidence-root.mjs
-Invoke-Gate node scripts/oam/check-current-evidence-root.mjs
+Invoke-Gate node scripts/oam/generate-current-evidence-root.mjs -RecordResult $false
+Invoke-Gate node scripts/oam/check-current-evidence-root.mjs -RecordResult $false

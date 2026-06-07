@@ -104,7 +104,9 @@ function validateLedgerShape(ledger, failures, options = {}) {
       if (!rule.evidenceArtifact.startsWith(evidenceArtifactPrefix)) {
         failures.push({ id: rule.ruleId, message: `证据产物必须位于 ${evidenceArtifactPrefix}: ${rule.evidenceArtifact}` });
       }
-      requirePath(rule.evidenceArtifact, `${rule.ruleId} 证据产物`, failures);
+      if (!isGeneratedEvidenceArtifact(rule.evidenceArtifact)) {
+        requirePath(rule.evidenceArtifact, `${rule.ruleId} 证据产物`, failures);
+      }
       for (const gate of rule.auxiliaryGates ?? []) {
         if (looksLikeRepoPath(gate)) {
           requirePath(gate, `${rule.ruleId} 辅助门禁`, failures);
@@ -238,6 +240,10 @@ function requirePath(repoPath, label, failures) {
   if (!fs.existsSync(path.join(root, repoPath))) {
     failures.push(f("p0_referenced_path_missing", `${label} 不存在：${repoPath}。`));
   }
+}
+
+function isGeneratedEvidenceArtifact(repoPath) {
+  return typeof repoPath === "string" && repoPath.startsWith(evidenceArtifactPrefix);
 }
 
 function looksLikeRepoPath(value) {

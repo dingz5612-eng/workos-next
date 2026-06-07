@@ -30,7 +30,7 @@ if (contract.version !== "oam.evidence-graph-refs-contract.v1" || contract.statu
 }
 
 for (const ref of contract.requiredRefs ?? []) {
-  requirePath(ref, `证据合同 requiredRef ${ref}`);
+  requirePath(ref, `证据合同 requiredRef ${ref}`, { allowGeneratedEvidence: true });
 }
 
 if (contract.businessFactWriteAllowed !== false) {
@@ -78,10 +78,22 @@ function readJson(file) {
   }
 }
 
-function requirePath(file, label) {
+function requirePath(file, label, options = {}) {
+  if (options.allowGeneratedEvidence && isGeneratedEvidencePath(file)) {
+    return;
+  }
   if (!fs.existsSync(abs(file))) {
     fail("path_missing", `${label} 不存在：${file}`);
   }
+}
+
+function isGeneratedEvidencePath(file) {
+  return typeof file === "string" && (
+    file.startsWith("artifacts/oam/evidence/") ||
+    file.startsWith("artifacts/oam/checks/") ||
+    file.startsWith("artifacts/oam/test-results/") ||
+    file === "artifacts/oam/final-report.json"
+  );
 }
 
 function writeReport() {

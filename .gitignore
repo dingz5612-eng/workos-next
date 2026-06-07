@@ -14,8 +14,8 @@ coverage/
 # Test and local runtime output
 artifacts/*
 !artifacts/oam/
-!artifacts/oam/evidence/
-!artifacts/oam/evidence/**
+artifacts/oam/evidence/
+artifacts/oam/final-report.json
 artifacts/oam/checks/
 artifacts/oam/test-results/
 apps/mobile/artifacts/

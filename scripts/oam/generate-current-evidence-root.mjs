@@ -6,6 +6,7 @@ import { execSync } from "node:child_process";
 const root = process.cwd();
 const evidenceDir = "artifacts/oam/evidence";
 const finalReportPath = "artifacts/oam/final-report.json";
+const controlPlaneGateResultPath = "artifacts/oam/checks/control-plane-gate-results.json";
 const digestPlaceholder = "__CURRENT_OAM_EVIDENCE_DIGEST__";
 
 const requiredEvidenceFiles = [
@@ -25,6 +26,7 @@ const requiredEvidenceFiles = [
   "artifacts/oam/test-results/mobile/coverage/coverage-summary.json",
   "artifacts/oam/checks/mobile-coverage-policy-result.json",
   "artifacts/oam/checks/mobile-critical-branch-scenarios-result.json",
+  controlPlaneGateResultPath,
   finalReportPath
 ];
 
@@ -35,12 +37,16 @@ const ciRunId = env("GITHUB_RUN_ID") || "local";
 const admission = readJson("docs/oam/current-admission-state.json");
 const p0Ledger = readP0Ledger("docs/system/oam-p0-rule-ledger.json");
 const workspace = workspaceStatus();
+const workspaceEvidence = workspaceEvidenceStatus(workspace);
+const controlPlaneGateResult = readControlPlaneGateResult();
 const gateSummary = buildGateSummary();
 const testSummary = buildTestSummary();
 const coverageSummary = buildCoverageSummary();
 const mobileBranchRiskKernel = buildMobileBranchRiskKernel();
 const unresolvedP0 = p0Ledger.filter((item) => item.status !== "passed");
-const finalGoNoGo = unresolvedP0.length === 0 ? "GO" : "NO_GO";
+const releaseReadiness = buildReleaseReadiness();
+const finalDecision = buildFinalDecision();
+const finalGoNoGo = finalDecision.finalGoNoGo;
 
 const files = new Map();
 
@@ -246,9 +252,10 @@ const finalReport = {
   currentBranch: branch,
   latestCommit: commitSha,
   workspaceStatus: workspace.summary,
-  changedFiles: workspace.changedFiles,
-  createdFiles: workspace.createdFiles,
-  deletedOrMovedFiles: workspace.deletedOrMovedFiles,
+  workspaceChanges: workspaceEvidence,
+  releaseReadiness,
+  controlPlaneGateResult,
+  finalDecision,
   authorityClosure: statusLine("权威闭环", "passed"),
   businessDefinitionClosure: statusLine("业务定义闭环", "passed"),
   surfaceLanguageClosure: statusLine("Surface 用户语义闭环", "passed"),
@@ -278,9 +285,10 @@ const finalReport = {
   unresolvedP1: [],
   unresolvedP2: [],
   finalGoNoGo,
+  noGoReasons: finalDecision.noGoReasons,
   nextStageAllowed: finalGoNoGo === "GO"
     ? "仅允许进入补强下一阶段准入证据和 P1/P2 收敛；不得进入 Business Production、Dormitory L2 或 production_confirm。"
-    : "不允许进入下一阶段；必须先清零 unresolved P0。",
+    : `不允许进入下一阶段；必须先修复：${finalDecision.noGoReasons.join("；")}`,
   p0RuleLedger: p0Ledger
 };
 
@@ -304,6 +312,9 @@ const evidenceGraph = {
   testSummary,
   coverageSummary,
   mobileBranchRiskKernel,
+  controlPlaneGateResult,
+  releaseReadiness,
+  finalDecision,
   finalGoNoGo,
   nextStageAllowed: finalReport.nextStageAllowed
 };
@@ -352,7 +363,7 @@ function proof(kind, title, details) {
     title,
     binding: binding(kind),
     summary: {
-      status: "passed",
+      status: finalGoNoGo === "GO" ? "passed" : "blocked",
       goNoGo: finalGoNoGo,
       businessProduction: admission.businessProduction,
       dormitoryL2: admission.dormitoryProduction,
@@ -438,7 +449,30 @@ function normalizeForDigest(value) {
 }
 
 function buildGateSummary() {
-  const requiredCommands = [
+  const requiredCommands = requiredGateCommands();
+  return {
+    status: controlPlaneGateResult.status,
+    ciWorkflow: ".github/workflows/ci.yml",
+    controlPlaneEntry: "scripts/oam/run-control-plane-checks.ps1",
+    resultFile: controlPlaneGateResultPath,
+    commitSha: controlPlaneGateResult.commitSha,
+    generatedAtUtc: controlPlaneGateResult.generatedAtUtc,
+    missingRequiredGates: controlPlaneGateResult.missingRequiredGates ?? [],
+    failedGateCount: controlPlaneGateResult.failedGateCount ?? 0,
+    requiredGateCount: controlPlaneGateResult.requiredGateCount ?? 0,
+    commands: requiredCommands.map((command) => {
+      const actual = (controlPlaneGateResult.gates ?? []).find((gate) => gate.command === command);
+      return {
+        command,
+        status: actual?.status ?? "missing",
+        exitCode: actual?.exitCode ?? null
+      };
+    })
+  };
+}
+
+function requiredGateCommands() {
+  return [
     "node scripts/oam/check-current-oam.mjs",
     "node scripts/oam/check-p0-rule-ledger.mjs",
     "node scripts/check-rule-authority.mjs",
@@ -460,18 +494,84 @@ function buildGateSummary() {
     "node scripts/oam/generate-mobile-branch-risk-ledger.mjs",
     "node scripts/oam/check-mobile-coverage-policy.mjs",
     "node scripts/oam/check-mobile-critical-branch-scenarios.mjs",
-    "node scripts/oam/generate-current-evidence-root.mjs",
-    "node scripts/oam/check-current-evidence-root.mjs",
     "node scripts/validate-contracts.mjs"
   ];
+}
+
+function readControlPlaneGateResult() {
+  const requiredCommands = requiredGateCommands();
+  if (!fileExists(controlPlaneGateResultPath)) {
+    const missing = {
+      version: "oam.control-plane-gate-results.v1",
+      generatedAtUtc: generatedAt,
+      commitSha,
+      branch,
+      status: "missing",
+      requiredGateCount: 0,
+      failedGateCount: 0,
+      gates: [],
+      missingRequiredGates: requiredCommands
+    };
+    writeJson(controlPlaneGateResultPath, missing);
+    return missing;
+  }
+
+  const result = readJson(controlPlaneGateResultPath);
+  const actual = new Set((result.gates ?? []).map((gate) => gate.command));
+  const missingRequiredGates = requiredCommands.filter((command) => !actual.has(command));
   return {
-    status: "bound_to_current_oam_ci",
-    ciWorkflow: ".github/workflows/ci.yml",
-    controlPlaneEntry: "scripts/oam/run-control-plane-checks.ps1",
-    commands: requiredCommands.map((command) => ({
-      command,
-      status: "required"
-    }))
+    ...result,
+    status: result.status ?? "missing",
+    missingRequiredGates,
+    stale: result.commitSha !== commitSha
+  };
+}
+
+function buildReleaseReadiness() {
+  const releaseBlockingFiles = [
+    ...workspaceEvidence.changedCurrentFiles.filter((file) => !isGeneratedOutputPath(file)),
+    ...workspaceEvidence.createdCurrentFiles.filter((file) => !isGeneratedOutputPath(file))
+  ];
+  const releaseBlockingDeletionCount = workspaceEvidence.deletedOrMovedFileCount;
+  const releaseEligible = releaseBlockingFiles.length === 0 && releaseBlockingDeletionCount === 0;
+  return {
+    releaseEligible,
+    releaseBlockingFiles,
+    releaseBlockingDeletionCount,
+    generatedDirtyAllowed: workspaceEvidence.changedCurrentFiles.filter(isGeneratedOutputPath)
+  };
+}
+
+function buildFinalDecision() {
+  const noGoReasons = [];
+  if (unresolvedP0.length > 0) {
+    noGoReasons.push(`P0 未清零：${unresolvedP0.map((item) => item.ruleId).join(", ")}`);
+  }
+  if (controlPlaneGateResult.status !== "passed") {
+    noGoReasons.push(`OAM 总门禁未通过或未执行：${controlPlaneGateResult.status}`);
+  }
+  if ((controlPlaneGateResult.failedGateCount ?? 0) > 0) {
+    noGoReasons.push(`OAM 总门禁失败项数量：${controlPlaneGateResult.failedGateCount}`);
+  }
+  if ((controlPlaneGateResult.missingRequiredGates ?? []).length > 0) {
+    noGoReasons.push(`OAM 总门禁缺失必跑项：${controlPlaneGateResult.missingRequiredGates.join("; ")}`);
+  }
+  if (controlPlaneGateResult.stale) {
+    noGoReasons.push(`OAM 总门禁结果过期：${controlPlaneGateResult.commitSha} != ${commitSha}`);
+  }
+  if (mobileBranchRiskKernel.status !== "passed") {
+    noGoReasons.push(`移动端分支风险门禁未通过：${mobileBranchRiskKernel.status}`);
+  }
+  if (coverageSummary.status === "pending_coverage_command") {
+    noGoReasons.push("覆盖率报告缺失或未执行。");
+  }
+  if (!releaseReadiness.releaseEligible) {
+    noGoReasons.push("工作区仍有未提交的当前源码/文档变更或删除项，不符合发布放行条件。");
+  }
+
+  return {
+    finalGoNoGo: noGoReasons.length === 0 ? "GO" : "NO_GO",
+    noGoReasons
   };
 }
 
@@ -485,11 +585,7 @@ function executionLogText(digest) {
       ciRunId,
       generatedAt,
       artifactDigest: digest,
-      details: {
-        changedFiles: workspace.changedFiles,
-        createdFiles: workspace.createdFiles,
-        deletedOrMovedFiles: workspace.deletedOrMovedFiles
-      }
+      details: workspaceEvidence
     },
     {
       event: "P0 账本状态",
@@ -506,7 +602,7 @@ function executionLogText(digest) {
     },
     {
       event: "本地总门禁绑定",
-      status: "required",
+      status: gateSummary.status,
       commitSha,
       branch,
       ciRunId,
@@ -555,7 +651,8 @@ function executionLogText(digest) {
       details: {
         businessProduction: admission.businessProduction,
         dormitoryL2: admission.dormitoryProduction,
-        productionConfirmAllowed: admission.productionConfirmAllowed
+        productionConfirmAllowed: admission.productionConfirmAllowed,
+        noGoReasons: finalDecision.noGoReasons
       }
     }
   ];
@@ -704,6 +801,62 @@ function workspaceStatus() {
   };
 }
 
+function workspaceEvidenceStatus(status) {
+  const deleted = new Set(status.deletedOrMovedFiles.map(normalizeRepoPath));
+  const changedCurrentFiles = status.changedFiles
+    .map(normalizeRepoPath)
+    .filter((file) => !deleted.has(file) && !isForbiddenGreyPath(file));
+  const createdCurrentFiles = status.createdFiles
+    .map(normalizeRepoPath)
+    .filter((file) => !isForbiddenGreyPath(file));
+  const deletedGreyFileCount = status.deletedOrMovedFiles
+    .map(normalizeRepoPath)
+    .filter(isForbiddenGreyPath)
+    .length;
+
+  return {
+    status: status.summary,
+    changedCurrentFiles,
+    createdCurrentFiles,
+    deletedOrMovedFileCount: status.deletedOrMovedFiles.length,
+    deletedGreyFileCount,
+    deletedCurrentFileCount: status.deletedOrMovedFiles.length - deletedGreyFileCount
+  };
+}
+
+function isForbiddenGreyPath(file) {
+  const normalized = normalizeRepoPath(file);
+  return forbiddenGreyEvidencePathPrefixes().some((item) => normalized === item || normalized.startsWith(`${item}/`));
+}
+
+function isGeneratedOutputPath(file) {
+  const normalized = normalizeRepoPath(file);
+  return normalized.startsWith("artifacts/oam/evidence/") ||
+    normalized.startsWith("artifacts/oam/checks/") ||
+    normalized.startsWith("artifacts/oam/test-results/") ||
+    normalized === "artifacts/oam/final-report.json" ||
+    normalized === "docs/oam/mobile-branch-risk-ledger.json";
+}
+
+function forbiddenGreyEvidencePathPrefixes() {
+  return [
+    ["docs", "product"].join("/"),
+    ["docs", "review"].join("/"),
+    ["docs", "decisions", "ADR-0001-phase-0-1-bootstrap.md"].join("/"),
+    ["docs", "oam", "final-acceptance-report.md"].join("/"),
+    ["docs", "oam", "review-defect-record.md"].join("/"),
+    ["docs", "oam", "mobile-refactor-readiness-plan.md"].join("/"),
+    ["docs", "system", "oam-warning-baseline.md"].join("/"),
+    ["docs", "oam", "certification-scenarios.json"].join("/"),
+    ["docs", "oam", "dormitory-certification-scenarios.json"].join("/"),
+    ["docs", "business", "dormitory", "certification-scenarios.json"].join("/")
+  ];
+}
+
+function normalizeRepoPath(file) {
+  return file.replaceAll("\\", "/");
+}
+
 function workflowContainsEvidenceUpload() {
   const workflow = readText(".github/workflows/ci.yml");
   return workflow.includes("actions/upload-artifact") &&
@@ -729,7 +882,7 @@ function readJsonIfExists(file) {
 }
 
 function readText(file) {
-  return fs.readFileSync(path.join(root, file), "utf8");
+  return fs.readFileSync(path.join(root, file), "utf8").replace(/^\uFEFF/, "");
 }
 
 function writeJson(file, document) {

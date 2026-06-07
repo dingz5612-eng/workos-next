@@ -165,6 +165,9 @@ jobs:
       - name: Runtime contract tests
         run: dotnet run --project tests/WorkOS.RuntimeContractTests/WorkOS.RuntimeContractTests.csproj -c Release
 
+      - name: OAM total gate
+        run: pwsh -NoProfile -ExecutionPolicy Bypass -File scripts/oam/run-control-plane-checks.ps1
+
       - name: Generate current OAM evidence root
         if: always()
         run: node scripts/oam/generate-current-evidence-root.mjs
