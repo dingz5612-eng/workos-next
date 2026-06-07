@@ -15,6 +15,12 @@ const requiredFiles = [
   "artifacts/oam/evidence/high-risk-trust-proof.json",
   "artifacts/oam/evidence/master-design-proof.json",
   "artifacts/oam/evidence/master-outline-proof.json",
+  "docs/oam/mobile-branch-risk-policy.json",
+  "docs/oam/mobile-branch-risk-ledger.json",
+  "docs/oam/mobile-critical-branch-scenarios.json",
+  "artifacts/oam/test-results/mobile/coverage/coverage-summary.json",
+  "artifacts/oam/checks/mobile-coverage-policy-result.json",
+  "artifacts/oam/checks/mobile-critical-branch-scenarios-result.json",
   "artifacts/oam/final-report.json"
 ];
 
@@ -40,6 +46,7 @@ if (documents.size === requiredFiles.length) {
   }
 
   for (const [file, document] of documents) {
+    if (!requiresEvidenceBinding(file)) continue;
     checkBinding(file, document, expectedDigest);
     checkSummaries(file, document);
   }
@@ -78,6 +85,8 @@ if (documents.size === requiredFiles.length) {
   if (!controlPlaneContainsEvidenceRoot()) {
     failures.push("Control plane gate must generate and check current OAM evidence root.");
   }
+
+  checkMobileBranchRiskKernel(graph, finalReport);
 }
 
 if (failures.length > 0) {
@@ -127,6 +136,10 @@ function checkBinding(file, document, expectedDigest) {
   }
 }
 
+function requiresEvidenceBinding(file) {
+  return file.startsWith("artifacts/oam/evidence/") || file === "artifacts/oam/final-report.json";
+}
+
 function checkSummaries(file, document) {
   if (typeof document === "string") return;
   if (Array.isArray(document)) return;
@@ -167,6 +180,9 @@ function workflowContainsEvidenceUpload() {
   const workflow = readText(".github/workflows/ci.yml");
   return workflow.includes("node scripts/oam/generate-current-evidence-root.mjs") &&
     workflow.includes("node scripts/oam/check-current-evidence-root.mjs") &&
+    workflow.includes("node scripts/oam/generate-mobile-branch-risk-ledger.mjs") &&
+    workflow.includes("node scripts/oam/check-mobile-coverage-policy.mjs") &&
+    workflow.includes("node scripts/oam/check-mobile-critical-branch-scenarios.mjs") &&
     workflow.includes("actions/upload-artifact") &&
     workflow.includes("artifacts/oam/evidence/**") &&
     workflow.includes("artifacts/oam/checks/**") &&
@@ -177,7 +193,36 @@ function workflowContainsEvidenceUpload() {
 function controlPlaneContainsEvidenceRoot() {
   const gate = readText("scripts/oam/run-control-plane-checks.ps1");
   return gate.includes("node scripts/oam/generate-current-evidence-root.mjs") &&
-    gate.includes("node scripts/oam/check-current-evidence-root.mjs");
+    gate.includes("node scripts/oam/check-current-evidence-root.mjs") &&
+    gate.includes("node scripts/oam/generate-mobile-branch-risk-ledger.mjs") &&
+    gate.includes("node scripts/oam/check-mobile-coverage-policy.mjs") &&
+    gate.includes("node scripts/oam/check-mobile-critical-branch-scenarios.mjs");
+}
+
+function checkMobileBranchRiskKernel(graph, finalReport) {
+  const kernel = finalReport.mobileBranchRiskKernel;
+  if (!kernel) {
+    failures.push("final report missing mobile branch risk kernel.");
+    return;
+  }
+  if (kernel.status !== "passed") {
+    failures.push(`mobile branch risk kernel must be passed, actual: ${kernel.status}`);
+  }
+  if (kernel.branchRiskLedgerGenerated !== true) {
+    failures.push("mobile branch risk ledger must be generated.");
+  }
+  if (kernel.checks?.coveragePolicy !== "passed") {
+    failures.push("mobile coverage policy result must be passed.");
+  }
+  if (kernel.checks?.criticalScenarios !== "passed") {
+    failures.push("mobile critical scenario result must be passed.");
+  }
+  if (kernel.p0ScenariosCovered !== true) {
+    failures.push("mobile P0 critical scenarios must be covered.");
+  }
+  if (!graph.mobileBranchRiskKernel) {
+    failures.push("evidence graph missing mobile branch risk kernel.");
+  }
 }
 
 function checkExecutionLog(entries, expectedDigest) {
@@ -185,7 +230,7 @@ function checkExecutionLog(entries, expectedDigest) {
     failures.push("execution log must contain JSONL entries.");
     return;
   }
-  for (const requiredEvent of ["冻结检查", "P0 账本状态", "本地总门禁绑定", "测试验收绑定", "覆盖率绑定", "最终裁决"]) {
+  for (const requiredEvent of ["冻结检查", "P0 账本状态", "本地总门禁绑定", "测试验收绑定", "覆盖率绑定", "移动覆盖率治理", "最终裁决"]) {
     if (!entries.some((entry) => entry.event === requiredEvent)) {
       failures.push(`execution log missing event: ${requiredEvent}`);
     }

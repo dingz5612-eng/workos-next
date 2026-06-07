@@ -19,6 +19,12 @@ const requiredEvidenceFiles = [
   "artifacts/oam/evidence/high-risk-trust-proof.json",
   "artifacts/oam/evidence/master-design-proof.json",
   "artifacts/oam/evidence/master-outline-proof.json",
+  "docs/oam/mobile-branch-risk-policy.json",
+  "docs/oam/mobile-branch-risk-ledger.json",
+  "docs/oam/mobile-critical-branch-scenarios.json",
+  "artifacts/oam/test-results/mobile/coverage/coverage-summary.json",
+  "artifacts/oam/checks/mobile-coverage-policy-result.json",
+  "artifacts/oam/checks/mobile-critical-branch-scenarios-result.json",
   finalReportPath
 ];
 
@@ -32,6 +38,7 @@ const workspace = workspaceStatus();
 const gateSummary = buildGateSummary();
 const testSummary = buildTestSummary();
 const coverageSummary = buildCoverageSummary();
+const mobileBranchRiskKernel = buildMobileBranchRiskKernel();
 const unresolvedP0 = p0Ledger.filter((item) => item.status !== "passed");
 const finalGoNoGo = unresolvedP0.length === 0 ? "GO" : "NO_GO";
 
@@ -257,6 +264,7 @@ const finalReport = {
   failedChecks: [],
   skippedOrNotApplicable: buildSkippedOrNotApplicable(),
   coverageSummary,
+  mobileBranchRiskKernel,
   ciEvidenceRootStatus: {
     generated: true,
     checkedBy: "scripts/oam/check-current-evidence-root.mjs",
@@ -295,6 +303,7 @@ const evidenceGraph = {
   gateSummary,
   testSummary,
   coverageSummary,
+  mobileBranchRiskKernel,
   finalGoNoGo,
   nextStageAllowed: finalReport.nextStageAllowed
 };
@@ -352,6 +361,7 @@ function proof(kind, title, details) {
     gateSummary,
     testSummary,
     coverageSummary,
+    mobileBranchRiskKernel,
     details
   };
 }
@@ -447,6 +457,9 @@ function buildGateSummary() {
     "node scripts/check-shared-governance-boundary.mjs",
     "node scripts/check-management-cockpit-boundary.mjs",
     "node scripts/check-dormitory-golden-domain.mjs",
+    "node scripts/oam/generate-mobile-branch-risk-ledger.mjs",
+    "node scripts/oam/check-mobile-coverage-policy.mjs",
+    "node scripts/oam/check-mobile-critical-branch-scenarios.mjs",
     "node scripts/oam/generate-current-evidence-root.mjs",
     "node scripts/oam/check-current-evidence-root.mjs",
     "node scripts/validate-contracts.mjs"
@@ -522,6 +535,16 @@ function executionLogText(digest) {
       details: coverageSummary
     },
     {
+      event: "移动覆盖率治理",
+      status: mobileBranchRiskKernel.status,
+      commitSha,
+      branch,
+      ciRunId,
+      generatedAt,
+      artifactDigest: digest,
+      details: mobileBranchRiskKernel
+    },
+    {
       event: "最终裁决",
       status: finalGoNoGo,
       commitSha,
@@ -585,6 +608,49 @@ function buildCoverageSummary() {
     targets,
     mobile: mobileCoverage?.total ?? null,
     dotnetCoverageFiles
+  };
+}
+
+function buildMobileBranchRiskKernel() {
+  const policy = readJsonIfExists("docs/oam/mobile-branch-risk-policy.json");
+  const ledger = readJsonIfExists("docs/oam/mobile-branch-risk-ledger.json");
+  const scenarios = readJsonIfExists("docs/oam/mobile-critical-branch-scenarios.json");
+  const coveragePolicyResult = readJsonIfExists("artifacts/oam/checks/mobile-coverage-policy-result.json");
+  const criticalScenarioResult = readJsonIfExists("artifacts/oam/checks/mobile-critical-branch-scenarios-result.json");
+  const currentBranches = Number(ledger?.globalCoverage?.branches?.pct ?? coverageSummary.mobile?.branches?.pct ?? 0);
+  const scenarioList = scenarios?.scenarios || [];
+  const p0Scenarios = scenarioList.filter((scenario) => scenario.riskLevel === "P0");
+  const p1Scenarios = scenarioList.filter((scenario) => scenario.riskLevel === "P1");
+  const status = ledger?.status === "generated" &&
+    coveragePolicyResult?.status === "passed" &&
+    criticalScenarioResult?.status === "passed"
+    ? "passed"
+    : "pending";
+
+  return {
+    status,
+    policyFile: "docs/oam/mobile-branch-risk-policy.json",
+    ledgerFile: "docs/oam/mobile-branch-risk-ledger.json",
+    scenarioFile: "docs/oam/mobile-critical-branch-scenarios.json",
+    coverageSource: "artifacts/oam/test-results/mobile/coverage/coverage-summary.json",
+    coveragePolicyResult: "artifacts/oam/checks/mobile-coverage-policy-result.json",
+    criticalScenarioResult: "artifacts/oam/checks/mobile-critical-branch-scenarios-result.json",
+    branchRiskLedgerGenerated: ledger?.status === "generated",
+    registeredPolicyFiles: ledger?.summary?.registeredFiles ?? 0,
+    unregisteredExistingFiles: ledger?.summary?.unregisteredFiles ?? 0,
+    newSourceFiles: ledger?.summary?.newSourceFiles ?? 0,
+    criticalScenarioCount: scenarioList.length,
+    p0ScenarioCount: p0Scenarios.length,
+    p1ScenarioCount: p1Scenarios.length,
+    p0ScenariosCovered: p0Scenarios.every((scenario) => scenario.covered === true),
+    checks: {
+      coveragePolicy: coveragePolicyResult?.status || "missing",
+      criticalScenarios: criticalScenarioResult?.status || "missing"
+    },
+    currentCoverage: ledger?.globalCoverage || coverageSummary.mobile || null,
+    firstStageHardBaseline: policy?.stage?.globalHardBaseline || null,
+    nextStageTarget: policy?.stage?.nextStageTarget || null,
+    branches70Reached: currentBranches >= 70
   };
 }
 

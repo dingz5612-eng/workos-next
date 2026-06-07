@@ -1,0 +1,274 @@
+{
+  "version": "current-oam.mobile-critical-branch-scenarios.v1",
+  "status": "authoritative",
+  "descriptionZh": "移动端关键业务分支场景账本。该文件人工维护业务行为和测试绑定，不记录动态覆盖率数字。",
+  "checkScript": "scripts/oam/check-mobile-critical-branch-scenarios.mjs",
+  "scenarios": [
+    {
+      "scenarioId": "MBRK-P0-001",
+      "nameZh": "无权限必须返回 403",
+      "riskLevel": "P0",
+      "affectedFiles": [
+        "apps/mobile/src/operationRuntime.js",
+        "apps/mobile/src/operationController.js",
+        "apps/mobile/src/surfaceGuard.js"
+      ],
+      "expectedStatus": "403 forbidden",
+      "forbiddenBehaviorZh": "不得把无权限当成可继续提交、可见即允许或普通错误提示。",
+      "testFiles": [
+        "apps/mobile/src/__tests__/confirmErrorHandling.test.js",
+        "apps/mobile/src/__tests__/OperationPanelRuntimeContract.test.js",
+        "apps/mobile/src/__tests__/MobilePcSurfaceBoundary.test.js"
+      ],
+      "covered": true,
+      "gapDescriptionZh": "已绑定现有错误解释、运行面和 Surface 边界测试；后续矩阵继续扩展角色组合。"
+    },
+    {
+      "scenarioId": "MBRK-P0-002",
+      "nameZh": "业务阻断必须返回 422",
+      "riskLevel": "P0",
+      "affectedFiles": [
+        "apps/mobile/src/operationRuntime.js",
+        "apps/mobile/src/operationValidation.js",
+        "apps/mobile/src/operationController.js"
+      ],
+      "expectedStatus": "422 business_blocked",
+      "forbiddenBehaviorZh": "不得把业务阻断当成网络失败、成功提交或可重试成功。",
+      "testFiles": [
+        "apps/mobile/src/__tests__/confirmErrorHandling.test.js",
+        "apps/mobile/src/__tests__/OperationPanelRuntimeContract.test.js",
+        "apps/mobile/src/__tests__/OperationFieldKernelContract.test.js"
+      ],
+      "covered": true,
+      "gapDescriptionZh": "已覆盖错误映射与字段校验；后续补更多业务阻断明细。"
+    },
+    {
+      "scenarioId": "MBRK-P0-003",
+      "nameZh": "重复提交必须返回 409",
+      "riskLevel": "P0",
+      "affectedFiles": [
+        "apps/mobile/src/operationRuntime.js",
+        "apps/mobile/src/operationController.js"
+      ],
+      "expectedStatus": "409 duplicate_or_conflict",
+      "forbiddenBehaviorZh": "不得重复写入业务事实，不得把重复提交展示为新的成功。",
+      "testFiles": [
+        "apps/mobile/src/__tests__/operationRuntime.test.js",
+        "apps/mobile/src/__tests__/confirmErrorHandling.test.js",
+        "apps/mobile/src/__tests__/OperationPanelRuntimeContract.test.js"
+      ],
+      "covered": true,
+      "gapDescriptionZh": "已绑定提交协议和错误解释测试；后续补重复点击状态矩阵。"
+    },
+    {
+      "scenarioId": "MBRK-P0-004",
+      "nameZh": "无 WorkItem 不得 confirm",
+      "riskLevel": "P0",
+      "affectedFiles": [
+        "apps/mobile/src/operationRuntime.js",
+        "apps/mobile/src/operationController.js",
+        "apps/mobile/src/navigationController.js"
+      ],
+      "expectedStatus": "blocked_without_work_item",
+      "forbiddenBehaviorZh": "不得生成确认请求、不得进入提交中、不得构造业务事实。",
+      "testFiles": [
+        "apps/mobile/src/__tests__/OperationRouteIdentityContract.test.js",
+        "apps/mobile/src/__tests__/DormitoryWorkItemNativePilot.test.js",
+        "apps/mobile/src/__tests__/OperationStartCommandContract.test.js"
+      ],
+      "covered": true,
+      "gapDescriptionZh": "已绑定 WorkItem 身份、原生试点和开始命令测试；后续补深链缺失矩阵。"
+    },
+    {
+      "scenarioId": "MBRK-P0-005",
+      "nameZh": "必填字段缺失必须阻断",
+      "riskLevel": "P0",
+      "affectedFiles": [
+        "apps/mobile/src/operationValidation.js",
+        "apps/mobile/src/fieldSourceRenderer.js",
+        "apps/mobile/src/views/workspaceView.js"
+      ],
+      "expectedStatus": "blocked_required_field_missing",
+      "forbiddenBehaviorZh": "不得允许提交，不得把字段缺失展示成可稍后补齐的成功状态。",
+      "testFiles": [
+        "apps/mobile/src/__tests__/OperationFieldKernelContract.test.js",
+        "apps/mobile/src/__tests__/OperationPanelRuntimeContract.test.js",
+        "apps/mobile/src/__tests__/BusinessTechnicalLayeringContract.test.js"
+      ],
+      "covered": true,
+      "gapDescriptionZh": "已绑定字段内核和工作台测试；后续补格式错误与字段不可编辑组合。"
+    },
+    {
+      "scenarioId": "MBRK-P0-006",
+      "nameZh": "证据缺失不得高风险确认",
+      "riskLevel": "P0",
+      "affectedFiles": [
+        "apps/mobile/src/operationValidation.js",
+        "apps/mobile/src/operationRuntime.js",
+        "apps/mobile/src/views/experienceComponents.js"
+      ],
+      "expectedStatus": "blocked_evidence_missing",
+      "forbiddenBehaviorZh": "不得提交高风险确认，不得隐藏证据缺口，不得把缺证据当成普通警告。",
+      "testFiles": [
+        "apps/mobile/src/__tests__/EvidenceTrustExperience.test.js",
+        "apps/mobile/src/__tests__/TrustedEvidenceObjectContract.test.js",
+        "apps/mobile/src/__tests__/OperationPanelRuntimeContract.test.js"
+      ],
+      "covered": true,
+      "gapDescriptionZh": "已绑定证据信任和运行面测试；后续补不同高风险动作证据矩阵。"
+    },
+    {
+      "scenarioId": "MBRK-P0-007",
+      "nameZh": "设备不可信不得高风险确认",
+      "riskLevel": "P0",
+      "affectedFiles": [
+        "apps/mobile/src/authController.js",
+        "apps/mobile/src/surfaceGuard.js",
+        "apps/mobile/src/views/experienceComponents.js"
+      ],
+      "expectedStatus": "blocked_untrusted_device",
+      "forbiddenBehaviorZh": "不得显示高风险确认入口，不得把未可信设备当作可确认设备。",
+      "testFiles": [
+        "apps/mobile/src/__tests__/DeviceTrustExperience.test.js",
+        "apps/mobile/src/__tests__/MobileDefaultHomeByDevice.test.js",
+        "apps/mobile/src/__tests__/MobilePcSurfaceBoundary.test.js"
+      ],
+      "covered": true,
+      "gapDescriptionZh": "已绑定设备信任体验和默认入口测试；后续补 session 过期与设备缺失组合。"
+    },
+    {
+      "scenarioId": "MBRK-P0-008",
+      "nameZh": "Search 命中不得直接写业务事实",
+      "riskLevel": "P0",
+      "affectedFiles": [
+        "apps/mobile/src/views/searchView.js",
+        "apps/mobile/src/searchIntentHub.js",
+        "apps/mobile/src/navigationController.js",
+        "apps/mobile/src/surfaceGuard.js"
+      ],
+      "expectedStatus": "search_readonly",
+      "forbiddenBehaviorZh": "不得在 SearchResult 上暴露 confirm、refund、close、writeBusinessFact 或 production_confirm。",
+      "testFiles": [
+        "apps/mobile/src/__tests__/SearchIntentHubContract.test.js",
+        "apps/mobile/src/__tests__/SearchResultRenderContract.test.js",
+        "apps/pc/src/__tests__/PcSearchScopeContract.test.js"
+      ],
+      "covered": true,
+      "gapDescriptionZh": "已绑定 Search 只读和 PC scope 测试；后续补 projection pending/failed 搜索文案矩阵。"
+    },
+    {
+      "scenarioId": "MBRK-P0-009",
+      "nameZh": "mobile 与 PC 边界不得串面",
+      "riskLevel": "P0",
+      "affectedFiles": [
+        "apps/mobile/src/surfaceGuard.js",
+        "apps/mobile/src/views/pcGovernanceView.js",
+        "apps/mobile/src/views/searchView.js"
+      ],
+      "expectedStatus": "surface_boundary_blocked",
+      "forbiddenBehaviorZh": "普通移动端不得进入 PC 治理面，PC 治理能力不得变成移动办理能力。",
+      "testFiles": [
+        "apps/mobile/src/__tests__/MobilePcSurfaceBoundary.test.js",
+        "apps/mobile/src/__tests__/pcGovernanceView.test.js",
+        "apps/pc/src/__tests__/PcGovernancePlaneContract.test.js"
+      ],
+      "covered": true,
+      "gapDescriptionZh": "已绑定移动/PC 边界和治理面测试；后续补更多角色切换组合。"
+    },
+    {
+      "scenarioId": "MBRK-P1-010",
+      "nameZh": "projection pending 不得当成失败",
+      "riskLevel": "P1",
+      "affectedFiles": [
+        "apps/mobile/src/operationRuntime.js",
+        "apps/mobile/src/views/experienceComponents.js",
+        "apps/mobile/src/views/searchView.js"
+      ],
+      "expectedStatus": "projection_pending",
+      "forbiddenBehaviorZh": "不得把 pending 展示为业务失败、不得误触发纠错或重复提交。",
+      "testFiles": [
+        "apps/mobile/src/__tests__/ProjectionPendingRecovery.test.js",
+        "apps/mobile/src/__tests__/SearchIntentHubContract.test.js",
+        "apps/mobile/src/__tests__/OperationPanelRuntimeContract.test.js"
+      ],
+      "covered": true,
+      "gapDescriptionZh": "已绑定 pending 恢复和搜索展示测试；后续补更多读侧同步失败组合。"
+    },
+    {
+      "scenarioId": "MBRK-P1-011",
+      "nameZh": "projection failed 不得当成业务成功",
+      "riskLevel": "P1",
+      "affectedFiles": [
+        "apps/mobile/src/operationRuntime.js",
+        "apps/mobile/src/views/experienceComponents.js",
+        "apps/mobile/src/feedbackMessages.js"
+      ],
+      "expectedStatus": "projection_failed",
+      "forbiddenBehaviorZh": "不得显示已完成、不得写事实、不得把读侧失败当成业务成功。",
+      "testFiles": [
+        "apps/mobile/src/__tests__/ProjectionPendingRecovery.test.js",
+        "apps/mobile/src/__tests__/OperationPanelRuntimeContract.test.js",
+        "apps/mobile/src/__tests__/MobileSurfaceCopyContract.test.js"
+      ],
+      "covered": true,
+      "gapDescriptionZh": "已绑定恢复和文案测试；后续补读侧失败后的安全提示矩阵。"
+    },
+    {
+      "scenarioId": "MBRK-P1-012",
+      "nameZh": "已完成只读态不得再提交",
+      "riskLevel": "P1",
+      "affectedFiles": [
+        "apps/mobile/src/operationValidation.js",
+        "apps/mobile/src/operationController.js",
+        "apps/mobile/src/views/workspaceView.js"
+      ],
+      "expectedStatus": "readonly_completed",
+      "forbiddenBehaviorZh": "不得再次提交，不得显示主确认按钮，不得修改已完成事实。",
+      "testFiles": [
+        "apps/mobile/src/__tests__/OperationActionStateContract.test.js",
+        "apps/mobile/src/__tests__/OperationRouteIdentityContract.test.js",
+        "apps/mobile/src/__tests__/BusinessTechnicalLayeringContract.test.js"
+      ],
+      "covered": true,
+      "gapDescriptionZh": "已绑定动作状态和工作台测试；后续补只读字段与完成态组合。"
+    },
+    {
+      "scenarioId": "MBRK-P1-013",
+      "nameZh": "纠错态必须走 Correction Center",
+      "riskLevel": "P1",
+      "affectedFiles": [
+        "apps/mobile/src/operationController.js",
+        "apps/mobile/src/views/workspaceView.js",
+        "apps/mobile/src/views/checkoutServiceView.js"
+      ],
+      "expectedStatus": "correction_center_required",
+      "forbiddenBehaviorZh": "不得在普通办理流直接修正正式事实，不得绕过纠错中心。",
+      "testFiles": [
+        "apps/mobile/src/__tests__/OperationPanelRuntimeContract.test.js",
+        "apps/mobile/src/__tests__/BusinessTechnicalLayeringContract.test.js",
+        "apps/mobile/src/__tests__/checkoutServiceView.test.js"
+      ],
+      "covered": true,
+      "gapDescriptionZh": "已绑定运行面和工作台测试；后续补更多纠错态入口组合。"
+    },
+    {
+      "scenarioId": "MBRK-P1-014",
+      "nameZh": "网络失败必须显示安全业务文案",
+      "riskLevel": "P1",
+      "affectedFiles": [
+        "apps/mobile/src/operationController.js",
+        "apps/mobile/src/feedbackMessages.js",
+        "apps/mobile/src/operationRuntime.js"
+      ],
+      "expectedStatus": "network_failure_safe_copy",
+      "forbiddenBehaviorZh": "不得展示为成功，不得要求用户重复高风险提交，不得暴露内部错误术语。",
+      "testFiles": [
+        "apps/mobile/src/__tests__/DormitoryWeakNetworkSubmit.test.js",
+        "apps/mobile/src/__tests__/confirmErrorHandling.test.js",
+        "apps/mobile/src/__tests__/MobileSurfaceCopyContract.test.js"
+      ],
+      "covered": true,
+      "gapDescriptionZh": "已绑定弱网和文案测试；后续补网络失败后的重试保护矩阵。"
+    }
+  ]
+}

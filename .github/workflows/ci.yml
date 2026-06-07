@@ -135,6 +135,12 @@ jobs:
       - name: Mobile coverage
         run: npm --prefix apps/mobile run test:coverage
 
+      - name: Validate mobile branch risk kernel
+        run: |
+          node scripts/oam/generate-mobile-branch-risk-ledger.mjs
+          node scripts/oam/check-mobile-coverage-policy.mjs
+          node scripts/oam/check-mobile-critical-branch-scenarios.mjs
+
       - name: Browser smoke
         run: npm --prefix apps/mobile run test:e2e
 

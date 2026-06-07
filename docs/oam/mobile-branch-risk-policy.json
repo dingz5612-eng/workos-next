@@ -1,0 +1,379 @@
+{
+  "version": "current-oam.mobile-branch-risk-policy.v1",
+  "status": "authoritative",
+  "descriptionZh": "移动端分支覆盖率治理政策。该文件只维护人工判断、固定基线、目标、风险说明和测试绑定；动态覆盖率数字由 docs/oam/mobile-branch-risk-ledger.json 自动生成。",
+  "coverageSource": "artifacts/oam/test-results/mobile/coverage/coverage-summary.json",
+  "ledgerOutput": "docs/oam/mobile-branch-risk-ledger.json",
+  "stage": {
+    "nameZh": "第一阶段防回退",
+    "mode": "no-regression",
+    "globalHardBaseline": {
+      "statementsPct": 78.54,
+      "branchesPct": 63.38,
+      "functionsPct": 84.93,
+      "linesPct": 82.68
+    },
+    "nextStageTarget": {
+      "statementsPct": 82,
+      "branchesPct": 70,
+      "functionsPct": 88,
+      "linesPct": 85
+    },
+    "notesZh": "Branches 达到 70% 之前不切硬 70% 门禁，不做大规模控制器拆分。"
+  },
+  "allowedLayers": [
+    "P0 业务保护",
+    "P1 状态决策",
+    "P2 展示组合",
+    "PC 治理或 debug"
+  ],
+  "rules": [
+    {
+      "filePath": "apps/mobile/src/operationRuntime.js",
+      "layer": "P0 业务保护",
+      "riskLevel": "P0",
+      "targetBranchCoveragePct": 70,
+      "currentStageHardBaselinePct": 29.54,
+      "nextStageTargetPct": 70,
+      "affectsBusinessWrite": true,
+      "affectsAdmissionRejection": true,
+      "affectsSearchReadonly": false,
+      "affectsDeviceTrust": true,
+      "affectsOrdinaryMobileUser": true,
+      "testFiles": [
+        "apps/mobile/src/__tests__/operationRuntime.test.js",
+        "apps/mobile/src/__tests__/OperationPanelRuntimeContract.test.js",
+        "apps/mobile/src/__tests__/DormitoryWorkItemNativePilot.test.js"
+      ],
+      "allowDeferral": false,
+      "deferralReasonZh": "不允许暂缓；运行提交协议直接影响 403、409、422、设备信任和证据保护。",
+      "nextActionZh": "优先补矩阵测试覆盖错误状态、重复提交、无 WorkItem、无证据和设备不可信。",
+      "riskDescriptionZh": "若提交协议分支回退，移动端可能把不可确认状态误当成可写业务事实。"
+    },
+    {
+      "filePath": "apps/mobile/src/operationValidation.js",
+      "layer": "P0 业务保护",
+      "riskLevel": "P0",
+      "targetBranchCoveragePct": 70,
+      "currentStageHardBaselinePct": 32.75,
+      "nextStageTargetPct": 70,
+      "affectsBusinessWrite": true,
+      "affectsAdmissionRejection": true,
+      "affectsSearchReadonly": false,
+      "affectsDeviceTrust": false,
+      "affectsOrdinaryMobileUser": true,
+      "testFiles": [
+        "apps/mobile/src/__tests__/OperationFieldKernelContract.test.js",
+        "apps/mobile/src/__tests__/OperationPanelRuntimeContract.test.js"
+      ],
+      "allowDeferral": false,
+      "deferralReasonZh": "不允许暂缓；校验分支直接决定必填、证据、金额和只读状态是否阻断。",
+      "nextActionZh": "补齐必填缺失、格式错误、证据缺失、金额非法、只读完成态和字段不可编辑矩阵。",
+      "riskDescriptionZh": "若校验分支缺测，高风险确认可能绕过业务字段和证据要求。"
+    },
+    {
+      "filePath": "apps/mobile/src/surfaceGuard.js",
+      "layer": "P0 业务保护",
+      "riskLevel": "P0",
+      "targetBranchCoveragePct": 70,
+      "currentStageHardBaselinePct": 64.06,
+      "nextStageTargetPct": 70,
+      "affectsBusinessWrite": false,
+      "affectsAdmissionRejection": true,
+      "affectsSearchReadonly": true,
+      "affectsDeviceTrust": true,
+      "affectsOrdinaryMobileUser": true,
+      "testFiles": [
+        "apps/mobile/src/__tests__/MobilePcSurfaceBoundary.test.js",
+        "apps/mobile/src/__tests__/PermissionExplainability.test.js",
+        "apps/mobile/src/__tests__/SurfaceShellBoundaryContract.test.js"
+      ],
+      "allowDeferral": false,
+      "deferralReasonZh": "不允许暂缓；Surface 边界直接保护 mobile/PC、设备信任、Search 只读和生产阻断。",
+      "nextActionZh": "补齐 mobile/PC、角色不足、设备不可信、production blocked、合同预览和 Search 命中不可办理矩阵。",
+      "riskDescriptionZh": "若边界分支回退，普通移动端可能看到或进入治理面与高风险办理入口。"
+    },
+    {
+      "filePath": "apps/mobile/src/operationCaseContext.js",
+      "layer": "P1 状态决策",
+      "riskLevel": "P1",
+      "targetBranchCoveragePct": 65,
+      "currentStageHardBaselinePct": 48.8,
+      "nextStageTargetPct": 65,
+      "affectsBusinessWrite": true,
+      "affectsAdmissionRejection": false,
+      "affectsSearchReadonly": false,
+      "affectsDeviceTrust": false,
+      "affectsOrdinaryMobileUser": true,
+      "testFiles": [
+        "apps/mobile/src/__tests__/OperationRouteIdentityContract.test.js",
+        "apps/mobile/src/__tests__/OperationPanelRuntimeContract.test.js"
+      ],
+      "allowDeferral": true,
+      "deferralReasonZh": "允许短期暂缓；该文件主要解析上下文，但字段别名和空 payload 仍需下一批补测。",
+      "nextActionZh": "补空 payload、字段别名、缺 actor 和异常上下文矩阵。",
+      "riskDescriptionZh": "若上下文解析分支缺测，可能把错误 WorkItem 或卡片上下文带入提交。"
+    },
+    {
+      "filePath": "apps/mobile/src/authController.js",
+      "layer": "P0 业务保护",
+      "riskLevel": "P0",
+      "targetBranchCoveragePct": 70,
+      "currentStageHardBaselinePct": 42.1,
+      "nextStageTargetPct": 70,
+      "affectsBusinessWrite": false,
+      "affectsAdmissionRejection": true,
+      "affectsSearchReadonly": false,
+      "affectsDeviceTrust": true,
+      "affectsOrdinaryMobileUser": true,
+      "testFiles": [
+        "apps/mobile/src/__tests__/authRoleHome.test.js",
+        "apps/mobile/src/__tests__/MobileDefaultHomeByDevice.test.js",
+        "apps/mobile/src/__tests__/AdminReleaseOwnerLoginContract.test.js"
+      ],
+      "allowDeferral": false,
+      "deferralReasonZh": "不允许暂缓；认证角色和设备态直接影响准入拒绝与默认入口。",
+      "nextActionZh": "补 actor 缺失、session 过期、设备缺失和角色切换矩阵。",
+      "riskDescriptionZh": "若认证分支回退，移动端可能把未可信设备或错误角色带入操作面。"
+    },
+    {
+      "filePath": "apps/mobile/src/operationController.js",
+      "layer": "P0 业务保护",
+      "riskLevel": "P0",
+      "targetBranchCoveragePct": 70,
+      "currentStageHardBaselinePct": 38.7,
+      "nextStageTargetPct": 70,
+      "affectsBusinessWrite": true,
+      "affectsAdmissionRejection": true,
+      "affectsSearchReadonly": false,
+      "affectsDeviceTrust": true,
+      "affectsOrdinaryMobileUser": true,
+      "testFiles": [
+        "apps/mobile/src/__tests__/confirmErrorHandling.test.js",
+        "apps/mobile/src/__tests__/DormitoryWeakNetworkSubmit.test.js",
+        "apps/mobile/src/__tests__/OperationRouteIdentityContract.test.js",
+        "apps/mobile/src/__tests__/OperationPanelRuntimeContract.test.js"
+      ],
+      "allowDeferral": false,
+      "deferralReasonZh": "不允许暂缓；外层提交控制器直接承载 403、409、422、纠错态、完成态和高风险提交保护。",
+      "nextActionZh": "补空提交、重复点击、提交中、403、409、422、纠错态、完成态和弱网矩阵。",
+      "riskDescriptionZh": "若控制器分支缺测，用户可能在错误状态重复提交或绕过业务阻断。"
+    },
+    {
+      "filePath": "apps/mobile/src/navigationController.js",
+      "layer": "P1 状态决策",
+      "riskLevel": "P1",
+      "targetBranchCoveragePct": 65,
+      "currentStageHardBaselinePct": 30.95,
+      "nextStageTargetPct": 65,
+      "affectsBusinessWrite": false,
+      "affectsAdmissionRejection": true,
+      "affectsSearchReadonly": true,
+      "affectsDeviceTrust": false,
+      "affectsOrdinaryMobileUser": true,
+      "testFiles": [
+        "apps/mobile/src/__tests__/OperationRouteIdentityContract.test.js",
+        "apps/mobile/src/__tests__/OperationStartCommandContract.test.js",
+        "apps/mobile/src/__tests__/MobileMeEntryRouteContract.test.js"
+      ],
+      "allowDeferral": true,
+      "deferralReasonZh": "允许短期暂缓；路由状态复杂，先保证无权限、缺 WorkItem、搜索跳转和 PC 拦截不回退。",
+      "nextActionZh": "补深链缺 WorkItem、无权限跳转、搜索跳转、PC 路由拦截和 404 fallback 矩阵。",
+      "riskDescriptionZh": "若路由分支缺测，用户可能从只读或错误入口进入办理面。"
+    },
+    {
+      "filePath": "apps/mobile/src/selectors/queueSelectors.js",
+      "layer": "P1 状态决策",
+      "riskLevel": "P1",
+      "targetBranchCoveragePct": 65,
+      "currentStageHardBaselinePct": 55.39,
+      "nextStageTargetPct": 65,
+      "affectsBusinessWrite": false,
+      "affectsAdmissionRejection": false,
+      "affectsSearchReadonly": false,
+      "affectsDeviceTrust": false,
+      "affectsOrdinaryMobileUser": true,
+      "testFiles": [
+        "apps/mobile/src/__tests__/QueueFilterInteractionContract.test.js",
+        "apps/mobile/src/__tests__/MobileOrdinaryQueueScopeContract.test.js",
+        "apps/mobile/src/__tests__/TodayMissionControlContract.test.js"
+      ],
+      "allowDeferral": true,
+      "deferralReasonZh": "允许短期暂缓；队列筛选不直接写事实，但空态、错误态和权限态必须继续补测。",
+      "nextActionZh": "补空态、损坏存储、超限截断、只读态、错误态和权限态矩阵。",
+      "riskDescriptionZh": "若队列分支缺测，移动端可能把错误任务或不可办理任务显示为可处理。"
+    },
+    {
+      "filePath": "apps/mobile/src/feedbackMessages.js",
+      "layer": "P1 状态决策",
+      "riskLevel": "P1",
+      "targetBranchCoveragePct": 60,
+      "currentStageHardBaselinePct": 31.03,
+      "nextStageTargetPct": 60,
+      "affectsBusinessWrite": false,
+      "affectsAdmissionRejection": true,
+      "affectsSearchReadonly": false,
+      "affectsDeviceTrust": true,
+      "affectsOrdinaryMobileUser": true,
+      "testFiles": [
+        "apps/mobile/src/__tests__/confirmErrorHandling.test.js",
+        "apps/mobile/src/__tests__/MobileSurfaceCopyContract.test.js"
+      ],
+      "allowDeferral": true,
+      "deferralReasonZh": "允许短期暂缓；文案不直接写事实，但 403、409、422、设备不可信和网络失败必须表达安全业务含义。",
+      "nextActionZh": "补错误码、弱网、设备不可信、业务阻断和重复提交文案矩阵。",
+      "riskDescriptionZh": "若反馈分支缺测，用户可能把阻断态误解为已成功或可继续提交。"
+    },
+    {
+      "filePath": "apps/mobile/src/views/simpleView.js",
+      "layer": "P2 展示组合",
+      "riskLevel": "P2",
+      "targetBranchCoveragePct": 55,
+      "currentStageHardBaselinePct": 27.47,
+      "nextStageTargetPct": 55,
+      "affectsBusinessWrite": false,
+      "affectsAdmissionRejection": false,
+      "affectsSearchReadonly": false,
+      "affectsDeviceTrust": false,
+      "affectsOrdinaryMobileUser": true,
+      "testFiles": [
+        "apps/mobile/src/__tests__/MobileSurfaceCopyContract.test.js",
+        "apps/mobile/src/__tests__/VisibleCopyZhCnScreenshotContract.test.js"
+      ],
+      "allowDeferral": true,
+      "deferralReasonZh": "允许暂缓；当前以展示组合为主，达到 Branches 70% 前不做 view registry 大拆。",
+      "nextActionZh": "补空态、只读态、错误态、权限态和超限截断展示矩阵。",
+      "riskDescriptionZh": "若展示组合缺测，普通移动端文案和状态可能误导用户。"
+    },
+    {
+      "filePath": "apps/mobile/src/views/experienceComponents.js",
+      "layer": "P2 展示组合",
+      "riskLevel": "P2",
+      "targetBranchCoveragePct": 70,
+      "currentStageHardBaselinePct": 68.79,
+      "nextStageTargetPct": 70,
+      "affectsBusinessWrite": false,
+      "affectsAdmissionRejection": true,
+      "affectsSearchReadonly": false,
+      "affectsDeviceTrust": true,
+      "affectsOrdinaryMobileUser": true,
+      "testFiles": [
+        "apps/mobile/src/__tests__/ActionDecisionCardContract.test.js",
+        "apps/mobile/src/__tests__/EvidenceTrustExperience.test.js",
+        "apps/mobile/src/__tests__/TrustedConfirmBusinessCommitment.test.js",
+        "apps/mobile/src/__tests__/QueueStateContract.test.js"
+      ],
+      "allowDeferral": true,
+      "deferralReasonZh": "允许短期暂缓；组件组合覆盖较高，但高风险信任、证据态和队列恢复仍需矩阵补强。",
+      "nextActionZh": "补设备信任、证据缺失、只读完成态、projection pending/failed 和队列恢复展示矩阵。",
+      "riskDescriptionZh": "若组件组合分支缺测，页面可能把拒绝态、恢复态或只读态呈现为可办理。"
+    },
+    {
+      "filePath": "apps/mobile/src/fieldSourceRenderer.js",
+      "layer": "P1 状态决策",
+      "riskLevel": "P1",
+      "targetBranchCoveragePct": 70,
+      "currentStageHardBaselinePct": 63.12,
+      "nextStageTargetPct": 70,
+      "affectsBusinessWrite": true,
+      "affectsAdmissionRejection": false,
+      "affectsSearchReadonly": false,
+      "affectsDeviceTrust": false,
+      "affectsOrdinaryMobileUser": true,
+      "testFiles": [
+        "apps/mobile/src/__tests__/OperationFieldKernelContract.test.js",
+        "apps/mobile/src/__tests__/OperationPanelRuntimeContract.test.js"
+      ],
+      "allowDeferral": true,
+      "deferralReasonZh": "允许短期暂缓；字段来源展示不直接提交，但字段可编辑和必填提示影响提交前判断。",
+      "nextActionZh": "补字段别名、只读字段、必填字段、证据字段和异常字段来源矩阵。",
+      "riskDescriptionZh": "若字段来源分支缺测，用户可能编辑不该编辑的字段或漏看必填证据。"
+    },
+    {
+      "filePath": "apps/mobile/src/views/pcGovernanceView.js",
+      "layer": "PC 治理或 debug",
+      "riskLevel": "P1",
+      "targetBranchCoveragePct": 70,
+      "currentStageHardBaselinePct": 65.3,
+      "nextStageTargetPct": 70,
+      "affectsBusinessWrite": false,
+      "affectsAdmissionRejection": true,
+      "affectsSearchReadonly": false,
+      "affectsDeviceTrust": true,
+      "affectsOrdinaryMobileUser": false,
+      "testFiles": [
+        "apps/mobile/src/__tests__/pcGovernanceView.test.js",
+        "apps/pc/src/__tests__/PcGovernancePlaneContract.test.js"
+      ],
+      "allowDeferral": true,
+      "deferralReasonZh": "允许短期暂缓；治理面不属于普通移动端，但不得串入移动办理面。",
+      "nextActionZh": "补 PC 治理权限、设备信任、只读态和普通移动端隔离矩阵。",
+      "riskDescriptionZh": "若治理面分支缺测，管理入口可能被普通移动端误用或显示越权能力。"
+    },
+    {
+      "filePath": "apps/mobile/src/views/workspaceView.js",
+      "layer": "P2 展示组合",
+      "riskLevel": "P1",
+      "targetBranchCoveragePct": 70,
+      "currentStageHardBaselinePct": 70.42,
+      "nextStageTargetPct": 75,
+      "affectsBusinessWrite": true,
+      "affectsAdmissionRejection": true,
+      "affectsSearchReadonly": false,
+      "affectsDeviceTrust": true,
+      "affectsOrdinaryMobileUser": true,
+      "testFiles": [
+        "apps/mobile/src/__tests__/BusinessTechnicalLayeringContract.test.js",
+        "apps/mobile/src/__tests__/OperationActionStateContract.test.js",
+        "apps/mobile/src/__tests__/checkoutServiceView.test.js"
+      ],
+      "allowDeferral": false,
+      "deferralReasonZh": "不允许低于当前基线；工作台承载普通用户主要办理状态和动作按钮。",
+      "nextActionZh": "继续绑定只读完成态、权限态、证据态、纠错态和 Search 跳转后的只读状态。",
+      "riskDescriptionZh": "若工作台分支回退，用户可能在错误状态看到可提交按钮。"
+    },
+    {
+      "filePath": "apps/mobile/src/views/searchView.js",
+      "layer": "P0 业务保护",
+      "riskLevel": "P0",
+      "targetBranchCoveragePct": 70,
+      "currentStageHardBaselinePct": 64.8,
+      "nextStageTargetPct": 70,
+      "affectsBusinessWrite": false,
+      "affectsAdmissionRejection": true,
+      "affectsSearchReadonly": true,
+      "affectsDeviceTrust": false,
+      "affectsOrdinaryMobileUser": true,
+      "testFiles": [
+        "apps/mobile/src/__tests__/SearchIntentHubContract.test.js",
+        "apps/mobile/src/__tests__/SearchResultRenderContract.test.js",
+        "apps/pc/src/__tests__/PcSearchScopeContract.test.js"
+      ],
+      "allowDeferral": false,
+      "deferralReasonZh": "不允许暂缓；Search 命中必须保持只读，不得变成业务事实写入入口。",
+      "nextActionZh": "补 Search 命中不可直接写事实、权限不可见、projection pending/failed 和 PC scope 隔离矩阵。",
+      "riskDescriptionZh": "若搜索分支回退，用户可能把搜索命中误认为可直接办理或确认。"
+    },
+    {
+      "filePath": "apps/mobile/src/views/checkoutServiceView.js",
+      "layer": "P2 展示组合",
+      "riskLevel": "P1",
+      "targetBranchCoveragePct": 65,
+      "currentStageHardBaselinePct": 54.2,
+      "nextStageTargetPct": 65,
+      "affectsBusinessWrite": true,
+      "affectsAdmissionRejection": true,
+      "affectsSearchReadonly": false,
+      "affectsDeviceTrust": false,
+      "affectsOrdinaryMobileUser": true,
+      "testFiles": [
+        "apps/mobile/src/__tests__/checkoutServiceView.test.js",
+        "apps/mobile/src/__tests__/OperationPanelRuntimeContract.test.js"
+      ],
+      "allowDeferral": true,
+      "deferralReasonZh": "允许短期暂缓；退住服务页展示组合较多，先保护只读、证据和结算阻断分支。",
+      "nextActionZh": "补空态、证据缺失、只读完成态、结算阻断和异常费用展示矩阵。",
+      "riskDescriptionZh": "若退住服务页分支缺测，用户可能把未满足条件的退住或结算动作视为可提交。"
+    }
+  ]
+}
