@@ -148,9 +148,12 @@ test("mobile work plane smoke covers login, WorkItem, search, me, and PC boundar
   await bottomNav.getByRole("button", { name: "工作项", exact: true }).click();
   await page.locator('[data-work-item-id="wi-e2e-room-setup"]').click();
   await expect(page.locator('[data-surface="operation-panel-route"]')).toBeVisible();
-  await expect(page.locator('[data-surface="trusted-confirm"]')).toHaveCount(0);
+  await expect(page.locator('[data-surface="trusted-confirm"]')).toBeVisible();
+  await expect(page.locator('[data-surface="evidence-sheet"]')).toBeVisible();
   await expect(page.locator('[data-surface="operation-admission"]')).toBeVisible();
   await expect(page.locator("body")).toContainText("准入状态");
+  await expect(page.locator("body")).toContainText("可信确认");
+  await expect(page.locator("body")).toContainText("可信证据");
   await expect(page.locator("body")).toContainText("提交前检查");
   await expect(page.locator("body")).toContainText("可以提交");
   await expect(page.locator("body")).toContainText("查看检查详情");
@@ -158,7 +161,8 @@ test("mobile work plane smoke covers login, WorkItem, search, me, and PC boundar
   await expect(page.locator("body")).not.toContainText("payloadHash");
   await expect(page.locator("body")).not.toContainText("commandSubmissionId");
   await expect(page.locator("body")).not.toContainText("traceAvailable");
-  await expect(page.locator('[data-surface="operation-runtime-proof"]')).toHaveCount(0);
+  await expect(page.locator('[data-surface="operation-runtime-proof"]')).toHaveCount(1);
+  await expect(page.locator('[data-surface="operation-runtime-proof"]')).not.toHaveAttribute("open", "");
   await expect(page.locator('[data-surface="operation-panel-route"]')).toHaveAttribute("data-admission-decision", "confirm_allowed_production_blocked");
   await expect(page.locator('[data-surface="operation-panel-route"]')).toHaveAttribute("data-runtime-decision", "work_item_confirm_ready:production_blocked");
 
