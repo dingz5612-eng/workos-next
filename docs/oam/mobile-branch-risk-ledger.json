@@ -9,15 +9,15 @@
   "globalCoverage": {
     "statements": {
       "total": 4829,
-      "covered": 4185,
-      "missing": 644,
-      "pct": 86.66
+      "covered": 4191,
+      "missing": 638,
+      "pct": 86.78
     },
     "branches": {
-      "total": 7407,
-      "covered": 5208,
-      "missing": 2199,
-      "pct": 70.31
+      "total": 7410,
+      "covered": 5214,
+      "missing": 2196,
+      "pct": 70.36
     },
     "functions": {
       "total": 1406,
@@ -27,9 +27,9 @@
     },
     "lines": {
       "total": 4005,
-      "covered": 3637,
-      "missing": 368,
-      "pct": 90.81
+      "covered": 3642,
+      "missing": 363,
+      "pct": 90.93
     }
   },
   "stage": {
@@ -67,15 +67,15 @@
     "currentCoverage": {
       "statements": {
         "total": 4829,
-        "covered": 4185,
-        "missing": 644,
-        "pct": 86.66
+        "covered": 4191,
+        "missing": 638,
+        "pct": 86.78
       },
       "branches": {
-        "total": 7407,
-        "covered": 5208,
-        "missing": 2199,
-        "pct": 70.31
+        "total": 7410,
+        "covered": 5214,
+        "missing": 2196,
+        "pct": 70.36
       },
       "functions": {
         "total": 1406,
@@ -85,9 +85,9 @@
       },
       "lines": {
         "total": 4005,
-        "covered": 3637,
-        "missing": 368,
-        "pct": 90.81
+        "covered": 3642,
+        "missing": 363,
+        "pct": 90.93
       }
     },
     "target": {
@@ -108,8 +108,8 @@
       {
         "filePath": "apps/mobile/src/operationController.js",
         "layer": "P0 业务保护",
-        "missingBranches": 139,
-        "branchCoveragePct": 65.5,
+        "missingBranches": 137,
+        "branchCoveragePct": 66,
         "nextActionZh": "补空提交、重复点击、提交中、403、409、422、纠错态、完成态和弱网矩阵。"
       },
       {
@@ -264,15 +264,15 @@
       "coverage": {
         "statements": {
           "total": 368,
-          "covered": 299,
-          "missing": 69,
-          "pct": 81.25
+          "covered": 304,
+          "missing": 64,
+          "pct": 82.6
         },
         "branches": {
           "total": 403,
-          "covered": 264,
-          "missing": 139,
-          "pct": 65.5
+          "covered": 266,
+          "missing": 137,
+          "pct": 66
         },
         "functions": {
           "total": 65,
@@ -282,9 +282,9 @@
         },
         "lines": {
           "total": 332,
-          "covered": 278,
-          "missing": 54,
-          "pct": 83.73
+          "covered": 283,
+          "missing": 49,
+          "pct": 85.24
         }
       },
       "policy": {
@@ -1271,10 +1271,10 @@
           "pct": 85.18
         },
         "branches": {
-          "total": 172,
-          "covered": 131,
+          "total": 175,
+          "covered": 134,
           "missing": 41,
-          "pct": 76.16
+          "pct": 76.57
         },
         "functions": {
           "total": 45,
@@ -1648,63 +1648,6 @@
       }
     },
     {
-      "filePath": "apps/mobile/src/operationCaseContext.js",
-      "coverage": {
-        "statements": {
-          "total": 40,
-          "covered": 33,
-          "missing": 7,
-          "pct": 82.5
-        },
-        "branches": {
-          "total": 84,
-          "covered": 61,
-          "missing": 23,
-          "pct": 72.61
-        },
-        "functions": {
-          "total": 20,
-          "covered": 15,
-          "missing": 5,
-          "pct": 75
-        },
-        "lines": {
-          "total": 34,
-          "covered": 28,
-          "missing": 6,
-          "pct": 82.35
-        }
-      },
-      "policy": {
-        "status": "registered",
-        "layer": "P1 状态决策",
-        "targetBranchCoveragePct": 65,
-        "currentStageHardBaselinePct": 48.8,
-        "nextStageTargetPct": 65,
-        "affectsBusinessWrite": true,
-        "affectsAdmissionRejection": false,
-        "affectsSearchReadonly": false,
-        "affectsDeviceTrust": false,
-        "affectsOrdinaryMobileUser": true,
-        "testFiles": [
-          "apps/mobile/src/__tests__/OperationRouteIdentityContract.test.js",
-          "apps/mobile/src/__tests__/OperationPanelRuntimeContract.test.js"
-        ]
-      },
-      "source": {
-        "isNewSourceFile": false,
-        "gitStatus": "tracked_or_unknown",
-        "isCoveredByCoverageSummary": true
-      },
-      "risk": {
-        "level": "P1",
-        "descriptionZh": "若上下文解析分支缺测，可能把错误 WorkItem 或卡片上下文带入提交。",
-        "allowDeferral": true,
-        "deferralReasonZh": "允许短期暂缓；该文件主要解析上下文，但字段别名和空 payload 仍需下一批补测。",
-        "nextActionZh": "补空 payload、字段别名、缺 actor 和异常上下文矩阵。"
-      }
-    },
-    {
       "filePath": "apps/mobile/src/authController.js",
       "coverage": {
         "statements": {
@@ -1760,6 +1703,63 @@
         "allowDeferral": false,
         "deferralReasonZh": "不允许暂缓；认证角色和设备态直接影响准入拒绝与默认入口。",
         "nextActionZh": "补 actor 缺失、session 过期、设备缺失和角色切换矩阵。"
+      }
+    },
+    {
+      "filePath": "apps/mobile/src/operationCaseContext.js",
+      "coverage": {
+        "statements": {
+          "total": 40,
+          "covered": 34,
+          "missing": 6,
+          "pct": 85
+        },
+        "branches": {
+          "total": 84,
+          "covered": 62,
+          "missing": 22,
+          "pct": 73.8
+        },
+        "functions": {
+          "total": 20,
+          "covered": 15,
+          "missing": 5,
+          "pct": 75
+        },
+        "lines": {
+          "total": 34,
+          "covered": 28,
+          "missing": 6,
+          "pct": 82.35
+        }
+      },
+      "policy": {
+        "status": "registered",
+        "layer": "P1 状态决策",
+        "targetBranchCoveragePct": 65,
+        "currentStageHardBaselinePct": 48.8,
+        "nextStageTargetPct": 65,
+        "affectsBusinessWrite": true,
+        "affectsAdmissionRejection": false,
+        "affectsSearchReadonly": false,
+        "affectsDeviceTrust": false,
+        "affectsOrdinaryMobileUser": true,
+        "testFiles": [
+          "apps/mobile/src/__tests__/OperationRouteIdentityContract.test.js",
+          "apps/mobile/src/__tests__/OperationPanelRuntimeContract.test.js"
+        ]
+      },
+      "source": {
+        "isNewSourceFile": false,
+        "gitStatus": "tracked_or_unknown",
+        "isCoveredByCoverageSummary": true
+      },
+      "risk": {
+        "level": "P1",
+        "descriptionZh": "若上下文解析分支缺测，可能把错误 WorkItem 或卡片上下文带入提交。",
+        "allowDeferral": true,
+        "deferralReasonZh": "允许短期暂缓；该文件主要解析上下文，但字段别名和空 payload 仍需下一批补测。",
+        "nextActionZh": "补空 payload、字段别名、缺 actor 和异常上下文矩阵。"
       }
     },
     {

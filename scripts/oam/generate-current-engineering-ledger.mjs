@@ -5,8 +5,15 @@ import { execFileSync } from "node:child_process";
 const root = process.cwd();
 const ledgerPath = "docs/oam/current-engineering-ledger.json";
 const auditPath = "artifacts/oam/checks/current-engineering-ledger-audit.json";
+const graphPath = "docs/oam/oam-kernel-graph.json";
+const lifecyclePolicyPath = "docs/oam/file-lifecycle-policy.json";
 
 const files = listCurrentFiles();
+const graph = readJson(graphPath);
+const lifecyclePolicy = readJson(lifecyclePolicyPath);
+const fileNodeByPath = new Map((graph.nodes ?? [])
+  .filter((node) => node.nodeType === "File")
+  .map((node) => [slash(node.sourceFile), node]));
 const entries = files.map(classifyFile);
 const byIdentity = entries.reduce((acc, entry) => {
   acc[entry.currentIdentity] = (acc[entry.currentIdentity] ?? 0) + 1;
@@ -18,6 +25,8 @@ const ledger = {
   status: "authoritative",
   architecture: "oam.current",
   authorityEntry: "docs/oam/current-authority-index.json",
+  sourceGraph: graphPath,
+  sourceLifecyclePolicy: lifecyclePolicyPath,
   defaultPolicy: "unregistered_files_are_not_allowed",
   fileCount: entries.length,
   identityCounts: byIdentity,
@@ -69,6 +78,31 @@ function listCurrentFiles() {
 }
 
 function classifyFile(file) {
+  const fileNode = fileNodeByPath.get(file);
+  if (fileNode) {
+    return {
+      path: file,
+      currentIdentity: identityFromLifecycle(fileNode.lifecycleState),
+      lifecycleState: fileNode.lifecycleState,
+      responsibilityScopeZh: scopeFromLifecycle(fileNode.lifecycleState),
+      forbiddenScopeZh: forbiddenFromLifecycle(fileNode.lifecycleState),
+      currentFactAuthorityAllowed: fileNode.currentTruthAllowed,
+      currentFactAuthorityAllowedByGraph: fileNode.currentTruthAllowed,
+      upstreamSource: graphPath,
+      downstreamConsumers: fileNode.consumers,
+      owner: fileNode.owner,
+      sourceKernel: fileNode.sourceKernel,
+      graphBinding: fileNode.nodeId,
+      gates: fileNode.gateBinding,
+      evidence: [fileNode.evidence],
+      manualEditAllowed: fileNode.manualEditAllowed,
+      ciReferenceAllowed: fileNode.ciReferenceAllowed,
+      replacementPath: fileNode.replacementPath,
+      absorbedBy: fileNode.absorbedBy,
+      removalProofGate: fileNode.removalProofGate,
+      deletionConditionZh: fileNode.deletionConditionZh
+    };
+  }
   const rule = classificationFor(file);
   return {
     path: file,
@@ -81,8 +115,62 @@ function classifyFile(file) {
     owner: rule.owner,
     gates: rule.gates,
     evidence: rule.evidence,
+    lifecycleState: "active_validation",
+    sourceKernel: rule.upstream,
+    graphBinding: "graph.oam",
+    manualEditAllowed: true,
+    ciReferenceAllowed: true,
+    replacementPath: file,
+    absorbedBy: file,
+    removalProofGate: rule.gates[0],
     deletionConditionZh: rule.deletionCondition
   };
+}
+
+function identityFromLifecycle(state) {
+  switch (state) {
+    case "active_authority":
+    case "active_contract":
+      return "authority_file";
+    case "active_runtime":
+      return "implementation_file";
+    case "active_validation":
+      return "validation_file";
+    case "active_evidence":
+      return "generated_evidence";
+    case "derived_view":
+      return "derived_view";
+    case "human_manual":
+      return "human_manual";
+    default:
+      return "validation_file";
+  }
+}
+
+function scopeFromLifecycle(state) {
+  const scopes = {
+    active_authority: "当前 OAM 权威入口或系统权威。",
+    active_contract: "当前 OAM 机器合同。",
+    active_runtime: "当前 OAM 运行实现。",
+    active_validation: "当前 OAM 机器门禁、CI 或测试。",
+    active_evidence: "当前 OAM 机器证据。",
+    derived_view: "由系统内核或 OAM 图谱派生的只读视图。",
+    human_manual: "当前 OAM 人读说明。"
+  };
+  return scopes[state] ?? "当前项目支撑文件。";
+}
+
+function forbiddenFromLifecycle(state) {
+  const rules = {
+    active_authority: "不得承载运行时代码或生成证据。",
+    active_contract: "不得绕过系统内核、图谱、门禁或证据根。",
+    active_runtime: "不得定义业务真值或绕过 Admission / Unit of Work。",
+    active_validation: "不得定义业务事实，只能检查或生成指定产物。",
+    active_evidence: "不得定义业务事实或人工放行。",
+    derived_view: "不得手工修改，不得替代源内核。",
+    human_manual: "不得定义当前事实。"
+  };
+  return rules[state] ?? "不得定义当前业务事实。";
 }
 
 function classificationFor(file) {
@@ -177,6 +265,10 @@ function writeJson(file, value) {
   const full = path.join(root, file);
   fs.mkdirSync(path.dirname(full), { recursive: true });
   fs.writeFileSync(full, `${JSON.stringify(value, null, 2)}\n`, "utf8");
+}
+
+function readJson(file) {
+  return JSON.parse(fs.readFileSync(path.join(root, file), "utf8"));
 }
 
 function git(args) {

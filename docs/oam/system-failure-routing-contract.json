@@ -1,0 +1,156 @@
+{
+  "version": "oam.system-failure-routing-contract.v1",
+  "status": "authoritative",
+  "architecture": "oam.current",
+  "graphBinding": "contract.system-failure-routing",
+  "routes": [
+    {
+      "failureId": "field_missing",
+      "owner": "runtime-kernel-owner",
+      "recoveryPath": "route.field_missing.repair",
+      "blockingGate": "scripts/check-runtime-write-paths.mjs",
+      "proofTest": "tests/WorkOS.UnitTests",
+      "evidenceRecord": "artifacts/oam/evidence/evidence-graph.json",
+      "failClosed": true
+    },
+    {
+      "failureId": "definition_missing",
+      "owner": "runtime-kernel-owner",
+      "recoveryPath": "route.definition_missing.repair",
+      "blockingGate": "scripts/check-runtime-write-paths.mjs",
+      "proofTest": "tests/WorkOS.UnitTests",
+      "evidenceRecord": "artifacts/oam/evidence/evidence-graph.json",
+      "failClosed": true
+    },
+    {
+      "failureId": "permission_denied",
+      "owner": "runtime-kernel-owner",
+      "recoveryPath": "route.permission_denied.repair",
+      "blockingGate": "scripts/check-runtime-write-paths.mjs",
+      "proofTest": "tests/WorkOS.UnitTests",
+      "evidenceRecord": "artifacts/oam/evidence/evidence-graph.json",
+      "failClosed": true
+    },
+    {
+      "failureId": "device_untrusted",
+      "owner": "runtime-kernel-owner",
+      "recoveryPath": "route.device_untrusted.repair",
+      "blockingGate": "scripts/check-runtime-write-paths.mjs",
+      "proofTest": "tests/WorkOS.UnitTests",
+      "evidenceRecord": "artifacts/oam/evidence/evidence-graph.json",
+      "failClosed": true
+    },
+    {
+      "failureId": "evidence_missing",
+      "owner": "runtime-kernel-owner",
+      "recoveryPath": "route.evidence_missing.repair",
+      "blockingGate": "scripts/check-runtime-write-paths.mjs",
+      "proofTest": "tests/WorkOS.UnitTests",
+      "evidenceRecord": "artifacts/oam/evidence/evidence-graph.json",
+      "failClosed": true
+    },
+    {
+      "failureId": "duplicate_submission",
+      "owner": "runtime-kernel-owner",
+      "recoveryPath": "route.duplicate_submission.repair",
+      "blockingGate": "scripts/check-runtime-write-paths.mjs",
+      "proofTest": "tests/WorkOS.UnitTests",
+      "evidenceRecord": "artifacts/oam/evidence/evidence-graph.json",
+      "failClosed": true
+    },
+    {
+      "failureId": "finance_unbalanced",
+      "owner": "finance-truth-owner",
+      "recoveryPath": "route.finance_unbalanced.repair",
+      "blockingGate": "scripts/check-runtime-write-paths.mjs",
+      "proofTest": "tests/WorkOS.UnitTests",
+      "evidenceRecord": "artifacts/oam/evidence/evidence-graph.json",
+      "failClosed": true
+    },
+    {
+      "failureId": "projection_pending",
+      "owner": "runtime-kernel-owner",
+      "recoveryPath": "route.projection_pending.repair",
+      "blockingGate": "scripts/check-runtime-write-paths.mjs",
+      "proofTest": "tests/WorkOS.UnitTests",
+      "evidenceRecord": "artifacts/oam/evidence/evidence-graph.json",
+      "failClosed": true
+    },
+    {
+      "failureId": "lens_stale",
+      "owner": "runtime-kernel-owner",
+      "recoveryPath": "route.lens_stale.repair",
+      "blockingGate": "scripts/check-runtime-write-paths.mjs",
+      "proofTest": "tests/WorkOS.UnitTests",
+      "evidenceRecord": "artifacts/oam/evidence/evidence-graph.json",
+      "failClosed": true
+    },
+    {
+      "failureId": "derived_contract_mismatch",
+      "owner": "runtime-kernel-owner",
+      "recoveryPath": "route.derived_contract_mismatch.repair",
+      "blockingGate": "scripts/oam/check-derived-contract-consistency.mjs",
+      "proofTest": "tests/WorkOS.UnitTests",
+      "evidenceRecord": "artifacts/oam/evidence/evidence-graph.json",
+      "failClosed": true
+    },
+    {
+      "failureId": "file_unregistered",
+      "owner": "runtime-kernel-owner",
+      "recoveryPath": "route.file_unregistered.repair",
+      "blockingGate": "scripts/oam/check-current-engineering-ledger.mjs",
+      "proofTest": "tests/WorkOS.UnitTests",
+      "evidenceRecord": "artifacts/oam/evidence/evidence-graph.json",
+      "failClosed": true
+    },
+    {
+      "failureId": "p0_not_passed",
+      "owner": "release-control-owner",
+      "recoveryPath": "route.p0_not_passed.repair",
+      "blockingGate": "scripts/oam/check-p0-rule-ledger.mjs",
+      "proofTest": "tests/WorkOS.ReleaseEvidenceTests",
+      "evidenceRecord": "artifacts/oam/evidence/evidence-graph.json",
+      "failClosed": true
+    },
+    {
+      "failureId": "ci_evidence_missing",
+      "owner": "release-control-owner",
+      "recoveryPath": "route.ci_evidence_missing.repair",
+      "blockingGate": "scripts/check-runtime-write-paths.mjs",
+      "proofTest": "tests/WorkOS.ReleaseEvidenceTests",
+      "evidenceRecord": "artifacts/oam/evidence/evidence-graph.json",
+      "failClosed": true
+    },
+    {
+      "failureId": "db_owner_conflict",
+      "owner": "runtime-db-owner",
+      "recoveryPath": "route.db_owner_conflict.repair",
+      "blockingGate": "scripts/oam/check-db-ownership-map.mjs",
+      "proofTest": "tests/WorkOS.DatabaseSecurityTests",
+      "evidenceRecord": "artifacts/oam/evidence/evidence-graph.json",
+      "failClosed": true
+    },
+    {
+      "failureId": "surface_copy_out_of_boundary",
+      "owner": "surface-owner",
+      "recoveryPath": "route.surface_copy_out_of_boundary.repair",
+      "blockingGate": "scripts/oam/check-surface-language-v2.mjs",
+      "proofTest": "tests/WorkOS.UnitTests",
+      "evidenceRecord": "artifacts/oam/evidence/evidence-graph.json",
+      "failClosed": true
+    },
+    {
+      "failureId": "search_readonly_broken",
+      "owner": "search-kernel-owner",
+      "recoveryPath": "route.search_readonly_broken.repair",
+      "blockingGate": "scripts/check-search-kernel.mjs",
+      "proofTest": "tests/WorkOS.UnitTests",
+      "evidenceRecord": "artifacts/oam/evidence/evidence-graph.json",
+      "failClosed": true
+    }
+  ],
+  "gates": [
+    "scripts/oam/check-system-failure-routing-contract.mjs"
+  ],
+  "evidence": "artifacts/oam/evidence/evidence-graph.json"
+}

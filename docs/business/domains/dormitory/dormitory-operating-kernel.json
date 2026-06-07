@@ -1,0 +1,543 @@
+{
+  "version": "oam.domain-operating-kernel.dormitory.v1",
+  "status": "authoritative",
+  "architecture": "oam.current",
+  "domainId": "dormitory",
+  "graphBinding": "domain.dormitory",
+  "humanRoles": [
+    {
+      "roleId": "dormitory.operator",
+      "nameZh": "宿舍经办人",
+      "responsibilityZh": "办理当前环节资料、证据和提交。"
+    },
+    {
+      "roleId": "dormitory.lead",
+      "nameZh": "宿舍负责人",
+      "responsibilityZh": "负责高风险确认、异常决策和 Go/No-Go。"
+    }
+  ],
+  "systemOwners": [
+    "finance-gate",
+    "Evidence Kernel",
+    "Admission Kernel",
+    "Projection Search Lens Kernel",
+    "Runtime Kernel"
+  ],
+  "capabilities": [
+    "房态准备",
+    "入住确认",
+    "收款确认",
+    "押金确认",
+    "退款审批",
+    "周期复盘",
+    "异常处理"
+  ],
+  "businessObjects": [
+    "Room",
+    "Bed",
+    "Stay",
+    "Payment",
+    "DepositAccount",
+    "Refund",
+    "ServiceTask",
+    "PeriodSnapshot",
+    "ExceptionCase"
+  ],
+  "fieldsSource": "docs/contracts/business/oam-business-object-field-registry.json",
+  "workItems": [
+    {
+      "workItemType": "Dorm.RoomReadinessCheck",
+      "definitionId": "definition.dormitory.roomReadinessCheck.v1",
+      "commandType": "RoomReadiness.Check",
+      "ownerRole": "宿舍经办人",
+      "systemOwner": "Accommodation.ServiceTask",
+      "definitionRequired": true,
+      "admissionPolicyRef": "admission.prepare_only_or_l1_observation.v1",
+      "evidencePolicyRef": "evidence.dormitory.cert.roomReadinessCheck.v1",
+      "ledgerPolicyRef": "ledger.none.v1",
+      "runtimeEntry": "POST /api/operations/work-items/{workItemId}/confirm",
+      "surfaceId": "mobile.work.room-readiness",
+      "dbTableGroups": [
+        "operations-runtime",
+        "maintenance-facts",
+        "evidence-audit",
+        "projection-read-side"
+      ],
+      "tests": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "upstreamLockedFields": [
+        "tenantId",
+        "caseId",
+        "definitionId",
+        "workItemId",
+        "sourceWorkItemId"
+      ],
+      "currentEditableFields": [
+        "currentStepMissingFields",
+        "evidenceRefs",
+        "reason"
+      ],
+      "goNoGo": "admission_confirm_allowed_and_definition_resolved"
+    },
+    {
+      "workItemType": "Dorm.CheckinConfirm",
+      "definitionId": "definition.dormitory.checkinConfirm.v1",
+      "commandType": "Checkin.Confirm",
+      "ownerRole": "宿舍经办人",
+      "systemOwner": "Accommodation.CheckIn",
+      "definitionRequired": true,
+      "admissionPolicyRef": "admission.dormitory.cert.checkin_confirm.v1",
+      "evidencePolicyRef": "evidence.dormitory.cert.checkinConfirm.v1",
+      "ledgerPolicyRef": "ledger.none.v1",
+      "runtimeEntry": "POST /api/operations/work-items/{workItemId}/confirm",
+      "surfaceId": "mobile.work.checkin-confirm",
+      "dbTableGroups": [
+        "operations-runtime",
+        "accommodation-facts",
+        "evidence-audit",
+        "projection-read-side"
+      ],
+      "tests": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "upstreamLockedFields": [
+        "tenantId",
+        "caseId",
+        "definitionId",
+        "workItemId",
+        "sourceWorkItemId"
+      ],
+      "currentEditableFields": [
+        "currentStepMissingFields",
+        "evidenceRefs",
+        "reason"
+      ],
+      "goNoGo": "admission_confirm_allowed_and_definition_resolved"
+    },
+    {
+      "workItemType": "Dorm.PaymentConfirm",
+      "definitionId": "definition.dormitory.paymentConfirm.v1",
+      "commandType": "Payment.Confirm",
+      "ownerRole": "宿舍负责人",
+      "systemOwner": "Accommodation.PaymentLedger",
+      "definitionRequired": true,
+      "admissionPolicyRef": "admission.high_risk_payment_confirm.v1",
+      "evidencePolicyRef": "evidence.dormitory.cert.paymentConfirm.v1",
+      "ledgerPolicyRef": "ledger.payment.balanced_allocation.v1",
+      "runtimeEntry": "POST /api/operations/work-items/{workItemId}/confirm",
+      "surfaceId": "mobile.work.payment-confirm",
+      "dbTableGroups": [
+        "operations-runtime",
+        "finance-ledger",
+        "evidence-audit",
+        "projection-read-side"
+      ],
+      "tests": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.DatabaseSecurityTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "upstreamLockedFields": [
+        "tenantId",
+        "caseId",
+        "definitionId",
+        "workItemId",
+        "sourceWorkItemId"
+      ],
+      "currentEditableFields": [
+        "currentStepMissingFields",
+        "evidenceRefs",
+        "reason"
+      ],
+      "goNoGo": "admission_confirm_allowed_and_definition_resolved"
+    },
+    {
+      "workItemType": "Dorm.DepositConfirm",
+      "definitionId": "definition.dormitory.depositConfirm.v1",
+      "commandType": "Deposit.Confirm",
+      "ownerRole": "宿舍负责人",
+      "systemOwner": "Accommodation.DepositLedger",
+      "definitionRequired": true,
+      "admissionPolicyRef": "admission.high_risk_deposit_confirm.v1",
+      "evidencePolicyRef": "evidence.dormitory.cert.depositConfirm.v1",
+      "ledgerPolicyRef": "ledger.deposit.liability_only.v1",
+      "runtimeEntry": "POST /api/operations/work-items/{workItemId}/confirm",
+      "surfaceId": "mobile.work.deposit-confirm",
+      "dbTableGroups": [
+        "operations-runtime",
+        "finance-ledger",
+        "evidence-audit",
+        "projection-read-side"
+      ],
+      "tests": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.DatabaseSecurityTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "upstreamLockedFields": [
+        "tenantId",
+        "caseId",
+        "definitionId",
+        "workItemId",
+        "sourceWorkItemId"
+      ],
+      "currentEditableFields": [
+        "currentStepMissingFields",
+        "evidenceRefs",
+        "reason"
+      ],
+      "goNoGo": "admission_confirm_allowed_and_definition_resolved"
+    },
+    {
+      "workItemType": "Dorm.RefundApprove",
+      "definitionId": "definition.dormitory.refundApprove.v1",
+      "commandType": "Refund.Approve",
+      "ownerRole": "宿舍经办人",
+      "systemOwner": "Accommodation.CheckOutSettlement",
+      "definitionRequired": true,
+      "admissionPolicyRef": "admission.high_risk_refund_approve.v1",
+      "evidencePolicyRef": "evidence.dormitory.cert.refundApprove.v1",
+      "ledgerPolicyRef": "ledger.refund.balanced_liability.v1",
+      "runtimeEntry": "POST /api/operations/work-items/{workItemId}/confirm",
+      "surfaceId": "mobile.work.refund-approve",
+      "dbTableGroups": [
+        "operations-runtime",
+        "finance-ledger",
+        "accommodation-facts",
+        "evidence-audit",
+        "projection-read-side"
+      ],
+      "tests": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.DatabaseSecurityTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "upstreamLockedFields": [
+        "tenantId",
+        "caseId",
+        "definitionId",
+        "workItemId",
+        "sourceWorkItemId"
+      ],
+      "currentEditableFields": [
+        "currentStepMissingFields",
+        "evidenceRefs",
+        "reason"
+      ],
+      "goNoGo": "admission_confirm_allowed_and_definition_resolved"
+    },
+    {
+      "workItemType": "Dorm.PeriodReview",
+      "definitionId": "definition.dormitory.periodReview.v1",
+      "commandType": "Period.Review",
+      "ownerRole": "宿舍经办人",
+      "systemOwner": "Accommodation.PeriodAnalytics",
+      "definitionRequired": true,
+      "admissionPolicyRef": "admission.prepare_only_or_l1_observation.v1",
+      "evidencePolicyRef": "evidence.dormitory.cert.periodReview.v1",
+      "ledgerPolicyRef": "ledger.period.snapshot_readonly.v1",
+      "runtimeEntry": "POST /api/operations/work-items/{workItemId}/confirm",
+      "surfaceId": "pc.manager.period-review",
+      "dbTableGroups": [
+        "operations-runtime",
+        "accommodation-facts",
+        "control-plane-reports",
+        "evidence-audit",
+        "projection-read-side"
+      ],
+      "tests": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "upstreamLockedFields": [
+        "tenantId",
+        "caseId",
+        "definitionId",
+        "workItemId",
+        "sourceWorkItemId"
+      ],
+      "currentEditableFields": [
+        "currentStepMissingFields",
+        "evidenceRefs",
+        "reason"
+      ],
+      "goNoGo": "admission_confirm_allowed_and_definition_resolved"
+    },
+    {
+      "workItemType": "Dorm.ExceptionResolve",
+      "definitionId": "definition.dormitory.exceptionResolve.v1",
+      "commandType": "Exception.Resolve",
+      "ownerRole": "宿舍经办人",
+      "systemOwner": "Governance.ExceptionResolution",
+      "definitionRequired": true,
+      "admissionPolicyRef": "admission.permission_denied_audit.v1",
+      "evidencePolicyRef": "evidence.dormitory.cert.exceptionResolve.v1",
+      "ledgerPolicyRef": "ledger.none.v1",
+      "runtimeEntry": "POST /api/operations/work-items/{workItemId}/confirm",
+      "surfaceId": "mobile.work.permission-diagnostic",
+      "dbTableGroups": [
+        "operations-runtime",
+        "identity-trust",
+        "evidence-audit"
+      ],
+      "tests": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "upstreamLockedFields": [
+        "tenantId",
+        "caseId",
+        "definitionId",
+        "workItemId",
+        "sourceWorkItemId"
+      ],
+      "currentEditableFields": [
+        "currentStepMissingFields",
+        "evidenceRefs",
+        "reason"
+      ],
+      "goNoGo": "admission_confirm_allowed_and_definition_resolved"
+    }
+  ],
+  "realSystemOperations": [
+    {
+      "workItemType": "Dorm.RoomReadinessCheck",
+      "commandType": "RoomReadiness.Check",
+      "runtimeEntry": "POST /api/operations/work-items/{workItemId}/confirm",
+      "factTraceRequired": true
+    },
+    {
+      "workItemType": "Dorm.CheckinConfirm",
+      "commandType": "Checkin.Confirm",
+      "runtimeEntry": "POST /api/operations/work-items/{workItemId}/confirm",
+      "factTraceRequired": true
+    },
+    {
+      "workItemType": "Dorm.PaymentConfirm",
+      "commandType": "Payment.Confirm",
+      "runtimeEntry": "POST /api/operations/work-items/{workItemId}/confirm",
+      "factTraceRequired": true
+    },
+    {
+      "workItemType": "Dorm.DepositConfirm",
+      "commandType": "Deposit.Confirm",
+      "runtimeEntry": "POST /api/operations/work-items/{workItemId}/confirm",
+      "factTraceRequired": true
+    },
+    {
+      "workItemType": "Dorm.RefundApprove",
+      "commandType": "Refund.Approve",
+      "runtimeEntry": "POST /api/operations/work-items/{workItemId}/confirm",
+      "factTraceRequired": true
+    },
+    {
+      "workItemType": "Dorm.PeriodReview",
+      "commandType": "Period.Review",
+      "runtimeEntry": "POST /api/operations/work-items/{workItemId}/confirm",
+      "factTraceRequired": true
+    },
+    {
+      "workItemType": "Dorm.ExceptionResolve",
+      "commandType": "Exception.Resolve",
+      "runtimeEntry": "POST /api/operations/work-items/{workItemId}/confirm",
+      "factTraceRequired": true
+    }
+  ],
+  "handoffContext": {
+    "source": "docs/oam/system-handoff-contract.json",
+    "lockedFromUpstream": [
+      "tenantId",
+      "caseId",
+      "definitionId",
+      "workItemId",
+      "confirmedFacts",
+      "evidenceRefs"
+    ],
+    "currentStepAdds": [
+      "missingCurrentFields",
+      "reason",
+      "newEvidenceRefs"
+    ],
+    "correctionPath": "Finance.CorrectionApply 或受控 WorkItem"
+  },
+  "stateFlow": {
+    "source": "docs/contracts/business/oam-workflow-state-registry.json",
+    "allowed": [
+      "open",
+      "prepared",
+      "confirmed",
+      "blocked",
+      "corrected"
+    ],
+    "forbidden": [
+      "direct_fact_edit",
+      "surface_identity_edit"
+    ]
+  },
+  "evidence": {
+    "source": "docs/business/dormitory/evidence-policy.yml",
+    "coverage": "docs/business/dormitory/evidence-coverage-contract.yml"
+  },
+  "ledger": {
+    "source": "docs/business/dormitory/ledger-posting-contract.yml",
+    "financeGateRequiredFor": [
+      "Dorm.PaymentConfirm",
+      "Dorm.DepositConfirm",
+      "Dorm.RefundApprove"
+    ]
+  },
+  "lensAndMetrics": {
+    "lensMap": "docs/business/dormitory/lens-map.yml",
+    "metricsTree": "docs/business/dormitory/metrics-tree.yml",
+    "formula": "docs/business/dormitory/metric-formula-contract.yml"
+  },
+  "slaAndRaci": {
+    "sla": "docs/business/dormitory/workitem-sla.yml",
+    "raci": "docs/business/dormitory/workitem-raci.yml"
+  },
+  "goNoGo": {
+    "source": "docs/business/dormitory/go-no-go.yml",
+    "rule": "Definition resolved、Admission passed、Evidence complete、Finance balanced、Projection readable。"
+  },
+  "absorbedOrRemovedActions": [
+    {
+      "workItemType": "Dorm.ResourceSetup",
+      "decision": "preconditionStep",
+      "absorbedBy": [
+        "Dorm.RoomReadinessCheck"
+      ],
+      "deletionRule": "不得进入当前 WorkItem catalog 或执行映射。"
+    },
+    {
+      "workItemType": "Dorm.BedAvailabilityConfirm",
+      "decision": "preconditionStep",
+      "absorbedBy": [
+        "Dorm.CheckinConfirm",
+        "Dorm.RoomReadinessCheck"
+      ],
+      "deletionRule": "不得进入当前 WorkItem catalog 或执行映射。"
+    },
+    {
+      "workItemType": "Dorm.LeadFollowup",
+      "decision": "businessStep",
+      "absorbedBy": [
+        "Dorm.CheckinConfirm"
+      ],
+      "deletionRule": "不得进入当前 WorkItem catalog 或执行映射。"
+    },
+    {
+      "workItemType": "Dorm.ReservationConfirm",
+      "decision": "preconditionStep",
+      "absorbedBy": [
+        "Dorm.CheckinConfirm"
+      ],
+      "deletionRule": "不得进入当前 WorkItem catalog 或执行映射。"
+    },
+    {
+      "workItemType": "Dorm.CheckinPrepare",
+      "decision": "evidenceIntakeStep",
+      "absorbedBy": [
+        "Dorm.CheckinConfirm"
+      ],
+      "deletionRule": "不得进入当前 WorkItem catalog 或执行映射。"
+    },
+    {
+      "workItemType": "Dorm.BedAssignmentConfirm",
+      "decision": "businessStep",
+      "absorbedBy": [
+        "Dorm.CheckinConfirm"
+      ],
+      "deletionRule": "不得进入当前 WorkItem catalog 或执行映射。"
+    },
+    {
+      "workItemType": "Dorm.ChargeGenerate",
+      "decision": "systemDerivedAction",
+      "absorbedBy": [
+        "Dorm.PaymentConfirm"
+      ],
+      "deletionRule": "不得进入当前 WorkItem catalog 或执行映射。"
+    },
+    {
+      "workItemType": "Dorm.PaymentRegister",
+      "decision": "evidenceIntakeStep",
+      "absorbedBy": [
+        "Dorm.PaymentConfirm"
+      ],
+      "deletionRule": "不得进入当前 WorkItem catalog 或执行映射。"
+    },
+    {
+      "workItemType": "Dorm.DepositAssess",
+      "decision": "preconditionStep",
+      "absorbedBy": [
+        "Dorm.DepositConfirm"
+      ],
+      "deletionRule": "不得进入当前 WorkItem catalog 或执行映射。"
+    },
+    {
+      "workItemType": "Dorm.DepositReceive",
+      "decision": "evidenceIntakeStep",
+      "absorbedBy": [
+        "Dorm.DepositConfirm"
+      ],
+      "deletionRule": "不得进入当前 WorkItem catalog 或执行映射。"
+    },
+    {
+      "workItemType": "Dorm.ServiceTaskCreate",
+      "decision": "businessStep",
+      "absorbedBy": [
+        "Dorm.RoomReadinessCheck"
+      ],
+      "deletionRule": "不得进入当前 WorkItem catalog 或执行映射。"
+    },
+    {
+      "workItemType": "Dorm.ServiceTaskComplete",
+      "decision": "evidenceIntakeStep",
+      "absorbedBy": [
+        "Dorm.RoomReadinessCheck"
+      ],
+      "deletionRule": "不得进入当前 WorkItem catalog 或执行映射。"
+    },
+    {
+      "workItemType": "Dorm.RoomInspection",
+      "decision": "evidenceIntakeStep",
+      "absorbedBy": [
+        "Dorm.RefundApprove"
+      ],
+      "deletionRule": "不得进入当前 WorkItem catalog 或执行映射。"
+    },
+    {
+      "workItemType": "Dorm.CheckoutSettlement",
+      "decision": "readSideSettlementStep",
+      "absorbedBy": [
+        "Dorm.RefundApprove"
+      ],
+      "deletionRule": "不得进入当前 WorkItem catalog 或执行映射。"
+    },
+    {
+      "workItemType": "Dorm.DepositDeduct",
+      "decision": "ledgerBasisStep",
+      "absorbedBy": [
+        "Dorm.RefundApprove"
+      ],
+      "deletionRule": "不得进入当前 WorkItem catalog 或执行映射。"
+    },
+    {
+      "workItemType": "Dorm.ResourceRelease",
+      "decision": "systemDerivedAction",
+      "absorbedBy": [
+        "Dorm.RoomReadinessCheck",
+        "Dorm.RefundApprove"
+      ],
+      "deletionRule": "不得进入当前 WorkItem catalog 或执行映射。"
+    }
+  ],
+  "gates": [
+    "scripts/business/check-dormitory-execution-kernel.mjs",
+    "scripts/oam/check-oam-kernel-graph.mjs",
+    "scripts/oam/check-system-handoff-contract.mjs"
+  ],
+  "evidenceBinding": "artifacts/oam/checks/dormitory-business-semantic-contract-result.json"
+}

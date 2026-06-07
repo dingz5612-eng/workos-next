@@ -23,13 +23,17 @@ function main() {
   }
 
   const files = [
-    ...listDocuments("docs/business/domains/dormitory"),
+    ...listDomainPackDocuments("docs/business/domains/dormitory"),
     ...listDocuments(`${positiveFixtureRoot}/domain-packs`)
   ];
   const violations = validateDomainPackFiles(files);
   writeReport(out, checkName, violations, files);
   failIfViolations("Domain pack check", violations);
   console.log(`Domain pack check: PASS (${files.length} files)`);
+}
+
+function listDomainPackDocuments(root) {
+  return listDocuments(root).filter((file) => file.endsWith("/domain-pack.yml") || file.endsWith("\\domain-pack.yml"));
 }
 
 function validateDomainPackFiles(files) {

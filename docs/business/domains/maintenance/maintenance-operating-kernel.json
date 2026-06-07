@@ -1,0 +1,24 @@
+{
+  "version": "oam.domain-operating-kernel.maintenance.v1",
+  "status": "authoritative",
+  "architecture": "oam.current",
+  "domainId": "maintenance",
+  "graphBinding": "domain.maintenance",
+  "scopeZh": "当前只承载 service task、room readiness 和维修事实表归属，不单独定义宿舍 WorkItem。",
+  "currentWorkItems": [
+    "Dorm.RoomReadinessCheck"
+  ],
+  "systemOwners": [
+    "Runtime Kernel",
+    "Evidence Kernel"
+  ],
+  "contracts": [
+    "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+    "docs/contracts/database/oam-db-ownership-map.json"
+  ],
+  "gates": [
+    "scripts/business/check-dormitory-execution-kernel.mjs",
+    "scripts/oam/check-db-ownership-map.mjs"
+  ],
+  "deletionCondition": "当 maintenance 不再为当前宿舍房态闭环提供服务任务事实时删除。"
+}

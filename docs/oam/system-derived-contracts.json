@@ -1,0 +1,298 @@
+{
+  "version": "oam.system-derived-contracts.v1",
+  "status": "generated",
+  "architecture": "oam.current",
+  "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+  "sourceKernel": "docs/oam/system-operating-kernel.json",
+  "sourceGraph": "docs/oam/oam-kernel-graph.json",
+  "sourceKernelVersion": "oam.system-operating-kernel.v1",
+  "sourceGraphVersion": "oam.kernel-graph.v1",
+  "contracts": [
+    {
+      "targetPath": "docs/system/current-system-map.md",
+      "derivedFrom": [
+        "docs/oam/system-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "sourceKernelVersion": "oam.system-operating-kernel.v1",
+      "sourceGraphVersion": "oam.kernel-graph.v1",
+      "manualEditAllowed": false,
+      "graphBinding": "file.docs/system/current-system-map.md",
+      "checker": "scripts/oam/check-derived-contract-consistency.mjs"
+    },
+    {
+      "targetPath": "docs/contracts/oam-responsibility-boundary-matrix.json",
+      "derivedFrom": [
+        "docs/oam/system-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "sourceKernelVersion": "oam.system-operating-kernel.v1",
+      "sourceGraphVersion": "oam.kernel-graph.v1",
+      "manualEditAllowed": false,
+      "graphBinding": "file.docs/contracts/oam-responsibility-boundary-matrix.json",
+      "checker": "scripts/oam/check-derived-contract-consistency.mjs"
+    },
+    {
+      "targetPath": "docs/contracts/business/oam-business-object-field-registry.json",
+      "derivedFrom": [
+        "docs/oam/system-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "sourceKernelVersion": "oam.system-operating-kernel.v1",
+      "sourceGraphVersion": "oam.kernel-graph.v1",
+      "manualEditAllowed": false,
+      "graphBinding": "file.docs/contracts/business/oam-business-object-field-registry.json",
+      "checker": "scripts/oam/check-business-object-field-registry.mjs"
+    },
+    {
+      "targetPath": "docs/contracts/business/oam-workflow-state-registry.json",
+      "derivedFrom": [
+        "docs/oam/system-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "sourceKernelVersion": "oam.system-operating-kernel.v1",
+      "sourceGraphVersion": "oam.kernel-graph.v1",
+      "manualEditAllowed": false,
+      "graphBinding": "file.docs/contracts/business/oam-workflow-state-registry.json",
+      "checker": "scripts/oam/check-workflow-state-registry.mjs"
+    },
+    {
+      "targetPath": "docs/contracts/definition/workitem-definition-registry.json",
+      "derivedFrom": [
+        "docs/oam/system-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "sourceKernelVersion": "oam.system-operating-kernel.v1",
+      "sourceGraphVersion": "oam.kernel-graph.v1",
+      "manualEditAllowed": false,
+      "graphBinding": "file.docs/contracts/definition/workitem-definition-registry.json",
+      "checker": "scripts/oam/check-derived-contract-consistency.mjs"
+    },
+    {
+      "targetPath": "docs/contracts/database/oam-db-ownership-map.json",
+      "derivedFrom": [
+        "docs/oam/system-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "sourceKernelVersion": "oam.system-operating-kernel.v1",
+      "sourceGraphVersion": "oam.kernel-graph.v1",
+      "manualEditAllowed": false,
+      "graphBinding": "file.docs/contracts/database/oam-db-ownership-map.json",
+      "checker": "scripts/oam/check-db-ownership-map.mjs"
+    },
+    {
+      "targetPath": "docs/contracts/admission/admission-matrix.json",
+      "derivedFrom": [
+        "docs/oam/system-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "sourceKernelVersion": "oam.system-operating-kernel.v1",
+      "sourceGraphVersion": "oam.kernel-graph.v1",
+      "manualEditAllowed": false,
+      "graphBinding": "file.docs/contracts/admission/admission-matrix.json",
+      "checker": "scripts/check-admission-kernel.mjs"
+    },
+    {
+      "targetPath": "docs/contracts/admission/admission-contract.json",
+      "derivedFrom": [
+        "docs/oam/system-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "sourceKernelVersion": "oam.system-operating-kernel.v1",
+      "sourceGraphVersion": "oam.kernel-graph.v1",
+      "manualEditAllowed": false,
+      "graphBinding": "file.docs/contracts/admission/admission-contract.json",
+      "checker": "scripts/check-admission-kernel.mjs"
+    },
+    {
+      "targetPath": "docs/contracts/evidence/evidence-graph-refs-contract.json",
+      "derivedFrom": [
+        "docs/oam/system-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "sourceKernelVersion": "oam.system-operating-kernel.v1",
+      "sourceGraphVersion": "oam.kernel-graph.v1",
+      "manualEditAllowed": false,
+      "graphBinding": "file.docs/contracts/evidence/evidence-graph-refs-contract.json",
+      "checker": "scripts/oam/check-derived-contract-consistency.mjs"
+    },
+    {
+      "targetPath": "docs/business/dormitory/evidence-policy.yml",
+      "derivedFrom": [
+        "docs/oam/system-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "sourceKernelVersion": "oam.system-operating-kernel.v1",
+      "sourceGraphVersion": "oam.kernel-graph.v1",
+      "manualEditAllowed": false,
+      "graphBinding": "file.docs/business/dormitory/evidence-policy.yml",
+      "checker": "scripts/business/check-dormitory-execution-kernel.mjs"
+    },
+    {
+      "targetPath": "docs/contracts/search/search-contract.json",
+      "derivedFrom": [
+        "docs/oam/system-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "sourceKernelVersion": "oam.system-operating-kernel.v1",
+      "sourceGraphVersion": "oam.kernel-graph.v1",
+      "manualEditAllowed": false,
+      "graphBinding": "file.docs/contracts/search/search-contract.json",
+      "checker": "scripts/check-search-kernel.mjs"
+    },
+    {
+      "targetPath": "docs/contracts/accommodation-lens-contract.json",
+      "derivedFrom": [
+        "docs/oam/system-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "sourceKernelVersion": "oam.system-operating-kernel.v1",
+      "sourceGraphVersion": "oam.kernel-graph.v1",
+      "manualEditAllowed": false,
+      "graphBinding": "file.docs/contracts/accommodation-lens-contract.json",
+      "checker": "scripts/oam/check-derived-contract-consistency.mjs"
+    },
+    {
+      "targetPath": "docs/surface/surface-contract.yml",
+      "derivedFrom": [
+        "docs/oam/system-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "sourceKernelVersion": "oam.system-operating-kernel.v1",
+      "sourceGraphVersion": "oam.kernel-graph.v1",
+      "manualEditAllowed": false,
+      "graphBinding": "file.docs/surface/surface-contract.yml",
+      "checker": "scripts/oam/check-derived-contract-consistency.mjs"
+    },
+    {
+      "targetPath": "docs/business/dormitory/workitem-catalog.yml",
+      "derivedFrom": [
+        "docs/oam/system-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "sourceKernelVersion": "oam.system-operating-kernel.v1",
+      "sourceGraphVersion": "oam.kernel-graph.v1",
+      "manualEditAllowed": false,
+      "graphBinding": "file.docs/business/dormitory/workitem-catalog.yml",
+      "checker": "scripts/business/check-dormitory-execution-kernel.mjs"
+    },
+    {
+      "targetPath": "docs/business/dormitory/workitem-decision-table.json",
+      "derivedFrom": [
+        "docs/oam/system-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "sourceKernelVersion": "oam.system-operating-kernel.v1",
+      "sourceGraphVersion": "oam.kernel-graph.v1",
+      "manualEditAllowed": false,
+      "graphBinding": "file.docs/business/dormitory/workitem-decision-table.json",
+      "checker": "scripts/business/check-dormitory-execution-kernel.mjs"
+    },
+    {
+      "targetPath": "docs/business/dormitory/value-streams.yml",
+      "derivedFrom": [
+        "docs/oam/system-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "sourceKernelVersion": "oam.system-operating-kernel.v1",
+      "sourceGraphVersion": "oam.kernel-graph.v1",
+      "manualEditAllowed": false,
+      "graphBinding": "file.docs/business/dormitory/value-streams.yml",
+      "checker": "scripts/business/check-dormitory-execution-kernel.mjs"
+    },
+    {
+      "targetPath": "docs/business/dormitory/metrics-tree.yml",
+      "derivedFrom": [
+        "docs/oam/system-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "sourceKernelVersion": "oam.system-operating-kernel.v1",
+      "sourceGraphVersion": "oam.kernel-graph.v1",
+      "manualEditAllowed": false,
+      "graphBinding": "file.docs/business/dormitory/metrics-tree.yml",
+      "checker": "scripts/business/check-dormitory-execution-kernel.mjs"
+    },
+    {
+      "targetPath": "docs/business/dormitory/metric-formula-contract.yml",
+      "derivedFrom": [
+        "docs/oam/system-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "sourceKernelVersion": "oam.system-operating-kernel.v1",
+      "sourceGraphVersion": "oam.kernel-graph.v1",
+      "manualEditAllowed": false,
+      "graphBinding": "file.docs/business/dormitory/metric-formula-contract.yml",
+      "checker": "scripts/business/check-dormitory-execution-kernel.mjs"
+    },
+    {
+      "targetPath": "docs/business/dormitory/lens-map.yml",
+      "derivedFrom": [
+        "docs/oam/system-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "sourceKernelVersion": "oam.system-operating-kernel.v1",
+      "sourceGraphVersion": "oam.kernel-graph.v1",
+      "manualEditAllowed": false,
+      "graphBinding": "file.docs/business/dormitory/lens-map.yml",
+      "checker": "scripts/business/check-dormitory-execution-kernel.mjs"
+    },
+    {
+      "targetPath": "docs/business/dormitory/workitem-sla.yml",
+      "derivedFrom": [
+        "docs/oam/system-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "sourceKernelVersion": "oam.system-operating-kernel.v1",
+      "sourceGraphVersion": "oam.kernel-graph.v1",
+      "manualEditAllowed": false,
+      "graphBinding": "file.docs/business/dormitory/workitem-sla.yml",
+      "checker": "scripts/business/check-dormitory-execution-kernel.mjs"
+    },
+    {
+      "targetPath": "docs/business/dormitory/workitem-raci.yml",
+      "derivedFrom": [
+        "docs/oam/system-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "sourceKernelVersion": "oam.system-operating-kernel.v1",
+      "sourceGraphVersion": "oam.kernel-graph.v1",
+      "manualEditAllowed": false,
+      "graphBinding": "file.docs/business/dormitory/workitem-raci.yml",
+      "checker": "scripts/business/check-dormitory-execution-kernel.mjs"
+    },
+    {
+      "targetPath": "docs/business/dormitory/go-no-go.yml",
+      "derivedFrom": [
+        "docs/oam/system-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "sourceKernelVersion": "oam.system-operating-kernel.v1",
+      "sourceGraphVersion": "oam.kernel-graph.v1",
+      "manualEditAllowed": false,
+      "graphBinding": "file.docs/business/dormitory/go-no-go.yml",
+      "checker": "scripts/business/check-dormitory-execution-kernel.mjs"
+    }
+  ]
+}

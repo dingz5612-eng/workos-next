@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": true,
+  "title": "Domain Operating Kernel",
+  "type": "object",
+  "required": [
+    "version",
+    "status",
+    "domainId",
+    "humanRoles",
+    "capabilities",
+    "workItems",
+    "handoffContext",
+    "goNoGo",
+    "gates"
+  ],
+  "properties": {
+    "version": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string"
+    },
+    "domainId": {
+      "type": "string"
+    },
+    "humanRoles": {
+      "type": "array"
+    },
+    "capabilities": {
+      "type": "array"
+    },
+    "workItems": {
+      "type": "array"
+    },
+    "handoffContext": {
+      "type": "object"
+    },
+    "goNoGo": {
+      "type": "object"
+    },
+    "gates": {
+      "type": "array"
+    }
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "version": "oam.domain-operating-kernel.finance.v1",
+  "status": "authoritative",
+  "architecture": "oam.current",
+  "domainId": "finance",
+  "graphBinding": "domain.finance",
+  "scopeZh": "当前只承载 Money/Ledger Kernel、Finance.CorrectionApply、reconciliation 和账务只增不改规则。",
+  "currentWorkItems": [
+    "Finance.CorrectionApply"
+  ],
+  "systemOwners": [
+    "Finance Truth Kernel",
+    "Release Control Kernel"
+  ],
+  "contracts": [
+    "docs/business/finance/ledger-transaction-contract.yml",
+    "docs/business/finance/ledger-semantic-rules.yml",
+    "docs/finance/finance-semantic-truth-kernel.yml"
+  ],
+  "gates": [
+    "scripts/check-finance-truth.mjs",
+    "scripts/check-ledger-semantic-rules.mjs",
+    "scripts/finance/check-finance-semantic-truth.mjs"
+  ],
+  "deletionCondition": "当 Finance Truth Kernel 迁入新的当前 OAM 财务内核且账务测试同步时删除。"
+}

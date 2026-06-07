@@ -86,6 +86,15 @@ Invoke-Gate node scripts/oam/check-current-oam.mjs
 Invoke-Gate node scripts/oam/check-p0-rule-ledger.mjs --self-test
 Invoke-Gate node scripts/oam/check-p0-rule-ledger.mjs
 Invoke-Gate node scripts/oam/check-current-authority-index.mjs
+Invoke-Gate node scripts/oam/check-system-operating-kernel.mjs
+Invoke-Gate node scripts/oam/check-oam-kernel-graph.mjs
+Invoke-Gate node scripts/oam/check-file-lifecycle-policy.mjs
+Invoke-Gate node scripts/oam/check-retired-reference-blocker.mjs
+Invoke-Gate node scripts/oam/generate-system-derived-contracts.mjs
+Invoke-Gate node scripts/oam/check-derived-contract-consistency.mjs
+Invoke-Gate node scripts/oam/check-system-handoff-contract.mjs
+Invoke-Gate node scripts/oam/check-system-failure-routing-contract.mjs
+Invoke-Gate node scripts/oam/generate-current-engineering-ledger.mjs
 Invoke-Gate node scripts/oam/check-current-engineering-ledger.mjs
 Invoke-Gate node scripts/oam/check-oam-responsibility-boundary-matrix.mjs
 Invoke-Gate node scripts/oam/check-business-object-field-registry.mjs

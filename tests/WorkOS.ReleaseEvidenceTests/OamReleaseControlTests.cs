@@ -137,6 +137,14 @@ public sealed class OamReleaseControlTests
         new[]
         {
             "scripts/oam/check-current-oam.mjs",
+            "scripts/oam/check-system-operating-kernel.mjs",
+            "scripts/oam/check-oam-kernel-graph.mjs",
+            "scripts/oam/check-file-lifecycle-policy.mjs",
+            "scripts/oam/check-retired-reference-blocker.mjs",
+            "scripts/oam/generate-system-derived-contracts.mjs",
+            "scripts/oam/check-derived-contract-consistency.mjs",
+            "scripts/oam/check-system-handoff-contract.mjs",
+            "scripts/oam/check-system-failure-routing-contract.mjs",
             "scripts/validate-contracts.mjs",
             "scripts/check-rule-authority.mjs",
             "scripts/check-local-path-references.mjs",

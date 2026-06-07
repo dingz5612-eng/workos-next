@@ -586,6 +586,74 @@ describe("OAM Surface WorkItem route identity", () => {
     vi.useRealTimers();
     vi.unstubAllGlobals();
   });
+
+  it("auto-advances when the next WorkItem is returned by post-submit refresh", async () => {
+    vi.useFakeTimers();
+    const calls = [];
+    vi.stubGlobal("fetch", vi.fn(async (url) => {
+      const href = String(url);
+      calls.push(href);
+      if (href.endsWith("/prepare")) {
+        return { ok: true, json: async () => ({ prepared: true, commandSubmissionId: "sub-room" }) };
+      }
+      if (href.endsWith("/confirm")) {
+        return {
+          ok: true,
+          json: async () => ({
+            confirmed: true,
+            commitStatus: "committed",
+            projectionStatus: "projected",
+            commandSubmissionId: "sub-room",
+            resultEventIds: ["evt-room"]
+          })
+        };
+      }
+      if (href.includes("/api/operations/work-items")) {
+        return {
+          ok: true,
+          json: async () => ([{
+            workItemId: "wi-bed-refresh-next",
+            workspaceId: "W-STAY-RESOURCE",
+            cardId: "bedSetup",
+            caseId: "case:W-STAY-RESOURCE",
+            workItemType: "Dorm.BedSetup",
+            lifecycleState: "available",
+            ownerRole: "operator"
+          }])
+        };
+      }
+      return { ok: true, json: async () => ({}) };
+    }));
+    const store = runtimeStore();
+    store.workspaces[0].cards = [
+      { ...store.workspaces[0].cards[0], id: "roomSetup", status: "ready", evidence: [], title: { "zh-CN": "房间配置卡" } },
+      { id: "bedSetup", status: "notStarted", title: { "zh-CN": "床位配置卡" }, fields: { business: [], system: [], analytics: [] }, evidence: [], checks: [], blockerRules: [], confirmation: { required: true, requiredRole: "operator" } }
+    ];
+    store.operationWorkItems = [
+      { workItemId: "wi-room-active", workspaceId: "W-STAY-RESOURCE", cardId: "roomSetup", lifecycleState: "ready", ownerRole: "operator" }
+    ];
+    store.workQueue = [...store.operationWorkItems];
+    const ctx = createSurfaceCtx({
+      view: "operationPanel",
+      selectedWorkItemId: "wi-room-active",
+      selectedWorkspace: "W-STAY-RESOURCE",
+      selectedCardId: "roomSetup",
+      runtimeStore: store,
+      render: vi.fn()
+    });
+
+    await submitCurrentCard(ctx);
+
+    expect(calls.some((href) => href.includes("/api/operations/work-items") && href.includes("workspaceId=W-STAY-RESOURCE"))).toBe(true);
+    expect(ctx.state.selectedWorkItemId).toBe("wi-bed-refresh-next");
+    expect(ctx.state.selectedCardId).toBe("bedSetup");
+    expect(ctx.state.lastActionResult?.autoAdvanced).toBe(true);
+    expect(ctx.state.lastActionResult?.autoAdvancedToCardId).toBe("bedSetup");
+    expect(routeView(ctx)).toContain('data-surface="operation-panel-route"');
+    vi.clearAllTimers();
+    vi.useRealTimers();
+    vi.unstubAllGlobals();
+  });
 });
 
 function field(id, zh) {

@@ -1,0 +1,49 @@
+{
+  "version": "oam.file-lifecycle-policy.v1",
+  "status": "authoritative",
+  "architecture": "oam.current",
+  "authorityEntry": "docs/oam/current-authority-index.json",
+  "graph": "docs/oam/oam-kernel-graph.json",
+  "allowedLifecycleStates": [
+    "active_authority",
+    "active_contract",
+    "active_runtime",
+    "active_validation",
+    "active_evidence",
+    "derived_view",
+    "human_manual",
+    "delete_now"
+  ],
+  "defaultStateForUnprovenFile": "delete_now",
+  "referenceBlockedPathPrefixes": [],
+  "fileNodeRequiredFields": [
+    "lifecycleState",
+    "currentTruthAllowed",
+    "manualEditAllowed",
+    "ciReferenceAllowed",
+    "owner",
+    "sourceKernel",
+    "checker",
+    "evidence",
+    "replacementPath",
+    "absorbedBy",
+    "removalProofGate",
+    "deletionConditionZh"
+  ],
+  "derivedViewRule": {
+    "derivedFromRequired": true,
+    "generatedByRequired": true,
+    "sourceKernelVersionRequired": true,
+    "manualEditAllowed": false,
+    "graphBindingRequired": true
+  },
+  "humanManualRule": {
+    "currentTruthAllowed": false
+  },
+  "deleteNowRuleZh": "无法证明服务当前 OAM、无消费者、无门禁、无证据或被当前权威替代的文件默认 delete_now；delete_now 不得存在于 git 跟踪或未跟踪文件中。",
+  "gates": [
+    "scripts/oam/check-file-lifecycle-policy.mjs",
+    "scripts/oam/check-retired-reference-blocker.mjs"
+  ],
+  "evidence": "artifacts/oam/evidence/evidence-graph.json"
+}

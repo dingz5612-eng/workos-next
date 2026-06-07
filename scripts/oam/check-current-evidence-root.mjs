@@ -187,6 +187,14 @@ function workflowContainsEvidenceUpload() {
     workflow.includes("node scripts/oam/generate-mobile-branch-risk-ledger.mjs") &&
     workflow.includes("node scripts/oam/check-mobile-coverage-policy.mjs") &&
     workflow.includes("node scripts/oam/check-mobile-critical-branch-scenarios.mjs") &&
+    workflow.includes("node scripts/oam/check-system-operating-kernel.mjs") &&
+    workflow.includes("node scripts/oam/check-oam-kernel-graph.mjs") &&
+    workflow.includes("node scripts/oam/check-file-lifecycle-policy.mjs") &&
+    workflow.includes("node scripts/oam/check-retired-reference-blocker.mjs") &&
+    workflow.includes("node scripts/oam/generate-system-derived-contracts.mjs") &&
+    workflow.includes("node scripts/oam/check-derived-contract-consistency.mjs") &&
+    workflow.includes("node scripts/oam/check-system-handoff-contract.mjs") &&
+    workflow.includes("node scripts/oam/check-system-failure-routing-contract.mjs") &&
     workflow.includes("pwsh -NoProfile -ExecutionPolicy Bypass -File scripts/surface/run-dormitory-real-browser-audits.ps1") &&
     workflow.includes("node scripts/surface/check-dormitory-l1-browser-e2e-audit.mjs") &&
     workflow.includes("node scripts/surface/check-dormitory-ten-scenario-real-browser-audit.mjs") &&
@@ -204,6 +212,14 @@ function controlPlaneContainsEvidenceRoot() {
     gate.includes("node scripts/oam/generate-mobile-branch-risk-ledger.mjs") &&
     gate.includes("node scripts/oam/check-mobile-coverage-policy.mjs") &&
     gate.includes("node scripts/oam/check-mobile-critical-branch-scenarios.mjs") &&
+    gate.includes("node scripts/oam/check-system-operating-kernel.mjs") &&
+    gate.includes("node scripts/oam/check-oam-kernel-graph.mjs") &&
+    gate.includes("node scripts/oam/check-file-lifecycle-policy.mjs") &&
+    gate.includes("node scripts/oam/check-retired-reference-blocker.mjs") &&
+    gate.includes("node scripts/oam/generate-system-derived-contracts.mjs") &&
+    gate.includes("node scripts/oam/check-derived-contract-consistency.mjs") &&
+    gate.includes("node scripts/oam/check-system-handoff-contract.mjs") &&
+    gate.includes("node scripts/oam/check-system-failure-routing-contract.mjs") &&
     gate.includes("pwsh -NoProfile -ExecutionPolicy Bypass -File scripts/surface/run-dormitory-real-browser-audits.ps1") &&
     gate.includes("node scripts/surface/check-dormitory-l1-browser-e2e-audit.mjs") &&
     gate.includes("node scripts/surface/check-dormitory-ten-scenario-real-browser-audit.mjs");

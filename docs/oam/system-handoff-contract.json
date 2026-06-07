@@ -1,0 +1,67 @@
+{
+  "version": "oam.system-handoff-contract.v1",
+  "status": "authoritative",
+  "architecture": "oam.current",
+  "graphBinding": "contract.system-handoff",
+  "flow": [
+    "Surface",
+    "Admission",
+    "Definition",
+    "OperationCase",
+    "WorkItem",
+    "CommandSubmission",
+    "UnitOfWork",
+    "DomainEventOrLedgerEntry",
+    "EvidenceFactTrace",
+    "Outbox",
+    "ProjectionLensSearch",
+    "ReadSideSurface",
+    "NextWorkItemOrDecision"
+  ],
+  "readonlyFields": [
+    "tenantId",
+    "actorId",
+    "caseId",
+    "workItemId",
+    "definitionId",
+    "commandType",
+    "sourceWorkItemId",
+    "confirmedFacts",
+    "projectionVersion"
+  ],
+  "editableFields": [
+    "currentStepFieldValues",
+    "reason",
+    "newEvidenceRefs",
+    "clientDraftNote"
+  ],
+  "missingFieldPolicy": "缺当前环节字段时阻断 confirm，并返回可读缺失清单。",
+  "lockedFieldPolicy": "上游已确认字段自动带入且只读；修改必须走受控 WorkItem 或纠错路径。",
+  "idempotencyFields": [
+    "idempotencyKey",
+    "submissionId",
+    "payloadHash"
+  ],
+  "evidenceFields": [
+    "evidenceRefs",
+    "admissionDecisionRef",
+    "factTraceRef"
+  ],
+  "projectionVersionFields": [
+    "projectionVersion",
+    "freshness",
+    "lineage"
+  ],
+  "failureFields": [
+    "errorCode",
+    "noGoItems",
+    "recoveryRoute",
+    "evidenceRef"
+  ],
+  "dormitoryImplementation": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+  "gates": [
+    "scripts/oam/check-system-handoff-contract.mjs",
+    "scripts/business/check-dormitory-execution-kernel.mjs"
+  ],
+  "evidence": "artifacts/oam/evidence/runtime-proof.json"
+}

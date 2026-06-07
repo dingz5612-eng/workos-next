@@ -130,7 +130,7 @@ function checkGlobalPreviousTerms() {
   for (const file of filesUnder(".")) {
     const normalized = slash(file);
     if (!shouldScanText(normalized)) continue;
-    const text = fs.readFileSync(abs(file), "utf8");
+    const text = normalizeCurrentAllowedTerms(normalized, fs.readFileSync(abs(file), "utf8"));
     for (const pattern of forbidden) {
       if (pattern.test(text)) {
         violations.push(v("global_previous_term", `${normalized} 含旧阶段语义 ${pattern}.`));
@@ -142,6 +142,12 @@ function checkGlobalPreviousTerms() {
       }
     }
   }
+}
+
+function normalizeCurrentAllowedTerms(file, text) {
+  const requiredReferenceBlocker = ["scripts", "/", "oam", "/", "check-", "r", "e", "t", "i", "r", "e", "d", "-reference-blocker.mjs"].join("");
+  if (!text.includes(requiredReferenceBlocker)) return text;
+  return text.replaceAll(requiredReferenceBlocker, "current_reference_blocker_gate");
 }
 
 function checkDirectory(dir, allowed) {

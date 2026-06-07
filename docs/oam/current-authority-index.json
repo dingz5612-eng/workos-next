@@ -19,7 +19,11 @@
     "current_database_asset",
     "current_evidence_asset",
     "current_engineering_ledger",
-    "read_side_allowed_file"
+    "read_side_allowed_file",
+    "current_system_kernel",
+    "current_oam_graph",
+    "current_domain_kernel",
+    "current_lifecycle_policy"
   ],
   "entries": [
     {
@@ -55,8 +59,8 @@
       "owner": "oam-release-owner",
       "checker": "scripts/check-rule-authority.mjs",
       "evidence": "artifacts/oam/evidence/master-outline-proof.json",
-      "currentTruthAllowed": true,
-      "notesZh": "当前系统边界图。"
+      "currentTruthAllowed": false,
+      "notesZh": "当前系统边界人读派生图；源事实由 system-operating-kernel 和 OAM 图谱约束。"
     },
     {
       "path": "docs/system/oam-p0-rule-ledger.json",
@@ -273,6 +277,132 @@
       "evidence": "artifacts/oam/evidence/evidence-graph.json",
       "currentTruthAllowed": false,
       "notesZh": "证据根证明检查执行状态，不替代业务事实权威。"
+    },
+    {
+      "path": "docs/oam/system-operating-kernel.json",
+      "identity": "current_system_kernel",
+      "owner": "oam-release-owner",
+      "checker": "scripts/oam/check-system-operating-kernel.mjs",
+      "evidence": "artifacts/oam/checks/system-operating-kernel-result.json",
+      "currentTruthAllowed": true,
+      "notesZh": "系统级唯一运行内核，下级于 current-authority-index。"
+    },
+    {
+      "path": "docs/oam/system-operating-kernel.md",
+      "identity": "current_manual",
+      "owner": "documentation-owner",
+      "checker": "scripts/oam/check-system-operating-kernel.mjs",
+      "evidence": "artifacts/oam/checks/system-operating-kernel-result.json",
+      "currentTruthAllowed": false,
+      "notesZh": "系统运行内核人读派生说明，不定义当前事实。"
+    },
+    {
+      "path": "docs/oam/oam-kernel-graph.json",
+      "identity": "current_oam_graph",
+      "owner": "oam-release-owner",
+      "checker": "scripts/oam/check-oam-kernel-graph.mjs",
+      "evidence": "artifacts/oam/checks/oam-kernel-graph-result.json",
+      "currentTruthAllowed": true,
+      "notesZh": "OAM 架构节点、关系、文件生命周期和门禁绑定图谱。"
+    },
+    {
+      "path": "docs/oam/file-lifecycle-policy.json",
+      "identity": "current_lifecycle_policy",
+      "owner": "oam-release-owner",
+      "checker": "scripts/oam/check-file-lifecycle-policy.mjs",
+      "evidence": "artifacts/oam/checks/file-lifecycle-policy-result.json",
+      "currentTruthAllowed": true,
+      "notesZh": "当前文件生命周期机器策略。"
+    },
+    {
+      "path": "docs/oam/system-handoff-contract.json",
+      "identity": "current_system_kernel",
+      "owner": "runtime-kernel-owner",
+      "checker": "scripts/oam/check-system-handoff-contract.mjs",
+      "evidence": "artifacts/oam/checks/system-handoff-contract-result.json",
+      "currentTruthAllowed": true,
+      "notesZh": "系统级操作 handoff 合同。"
+    },
+    {
+      "path": "docs/oam/system-failure-routing-contract.json",
+      "identity": "current_system_kernel",
+      "owner": "release-control-owner",
+      "checker": "scripts/oam/check-system-failure-routing-contract.mjs",
+      "evidence": "artifacts/oam/checks/system-failure-routing-contract-result.json",
+      "currentTruthAllowed": true,
+      "notesZh": "系统级失败路由和修复闭环合同。"
+    },
+    {
+      "path": "docs/oam/system-derived-contracts.json",
+      "identity": "current_system_kernel",
+      "owner": "oam-release-owner",
+      "checker": "scripts/oam/check-derived-contract-consistency.mjs",
+      "evidence": "artifacts/oam/checks/derived-contract-consistency-result.json",
+      "currentTruthAllowed": false,
+      "notesZh": "由系统内核和 OAM 图谱派生的合同一致性 manifest。"
+    },
+    {
+      "path": "docs/oam/kernel-schemas/kernel-node.schema.json",
+      "identity": "current_oam_graph",
+      "owner": "oam-release-owner",
+      "checker": "scripts/oam/check-oam-kernel-graph.mjs",
+      "evidence": "artifacts/oam/checks/oam-kernel-graph-result.json",
+      "currentTruthAllowed": true,
+      "notesZh": "OAM 图谱节点 schema。"
+    },
+    {
+      "path": "docs/oam/kernel-schemas/kernel-edge.schema.json",
+      "identity": "current_oam_graph",
+      "owner": "oam-release-owner",
+      "checker": "scripts/oam/check-oam-kernel-graph.mjs",
+      "evidence": "artifacts/oam/checks/oam-kernel-graph-result.json",
+      "currentTruthAllowed": true,
+      "notesZh": "OAM 图谱关系 schema。"
+    },
+    {
+      "path": "docs/oam/kernel-schemas/domain-kernel.schema.json",
+      "identity": "current_oam_graph",
+      "owner": "oam-release-owner",
+      "checker": "scripts/oam/check-oam-kernel-graph.mjs",
+      "evidence": "artifacts/oam/checks/oam-kernel-graph-result.json",
+      "currentTruthAllowed": true,
+      "notesZh": "领域运行内核 schema。"
+    },
+    {
+      "path": "docs/oam/kernel-schemas/workitem.schema.json",
+      "identity": "current_oam_graph",
+      "owner": "oam-release-owner",
+      "checker": "scripts/oam/check-oam-kernel-graph.mjs",
+      "evidence": "artifacts/oam/checks/oam-kernel-graph-result.json",
+      "currentTruthAllowed": true,
+      "notesZh": "当前 WorkItem schema。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "identity": "current_domain_kernel",
+      "owner": "business-contract-owner",
+      "checker": "scripts/oam/check-oam-kernel-graph.mjs",
+      "evidence": "artifacts/oam/checks/oam-kernel-graph-result.json",
+      "currentTruthAllowed": true,
+      "notesZh": "宿舍领域唯一运行内核。"
+    },
+    {
+      "path": "docs/business/domains/finance/finance-operating-kernel.json",
+      "identity": "current_domain_kernel",
+      "owner": "finance-truth-owner",
+      "checker": "scripts/oam/check-oam-kernel-graph.mjs",
+      "evidence": "artifacts/oam/checks/oam-kernel-graph-result.json",
+      "currentTruthAllowed": true,
+      "notesZh": "Finance 当前运行内核范围。"
+    },
+    {
+      "path": "docs/business/domains/maintenance/maintenance-operating-kernel.json",
+      "identity": "current_domain_kernel",
+      "owner": "maintenance-owner",
+      "checker": "scripts/oam/check-oam-kernel-graph.mjs",
+      "evidence": "artifacts/oam/checks/oam-kernel-graph-result.json",
+      "currentTruthAllowed": true,
+      "notesZh": "Maintenance 当前运行内核范围。"
     }
   ],
   "readSideAllowedTerms": [

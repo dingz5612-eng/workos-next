@@ -1,0 +1,396 @@
+{
+  "version": "oam.system-operating-kernel.v1",
+  "status": "authoritative",
+  "architecture": "oam.current",
+  "authorityEntry": "docs/oam/current-authority-index.json",
+  "currentSystemMap": "docs/system/current-system-map.md",
+  "machineContract": "docs/contracts/oam.current.json",
+  "responsibilityMatrix": "docs/contracts/oam-responsibility-boundary-matrix.json",
+  "engineeringLedger": "docs/oam/current-engineering-ledger.json",
+  "graph": "docs/oam/oam-kernel-graph.json",
+  "derivedContracts": "docs/oam/system-derived-contracts.json",
+  "kernels": [
+    {
+      "kernelId": "kernel.authority",
+      "nameZh": "Authority Kernel",
+      "owner": "oam-release-owner",
+      "responsibilityZh": "Authority Kernel 对当前 OAM 运行链负责。",
+      "inputs": [
+        "docs/oam/current-authority-index.json",
+        "docs/contracts/oam.current.json"
+      ],
+      "outputs": [
+        "唯一权威入口",
+        "身份类别",
+        "当前事实许可"
+      ],
+      "forbiddenBehaviors": [
+        "不得被业务手册替代",
+        "不得放行未登记文件"
+      ],
+      "upstreamAuthorities": [
+        "docs/oam/current-architecture.md"
+      ],
+      "downstreamConsumers": [
+        "Engineering Ledger Kernel",
+        "Release Control Kernel"
+      ],
+      "gates": [
+        "scripts/oam/check-current-authority-index.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "failureHandling": "缺入口、重复权威或未登记文件时阻断总门禁。",
+      "deletionCondition": "仅当权威入口被新的当前 OAM 入口替换且门禁同步更新时删除。"
+    },
+    {
+      "kernelId": "kernel.domain",
+      "nameZh": "Domain Kernel",
+      "owner": "business-contract-owner",
+      "responsibilityZh": "Domain Kernel 对当前 OAM 运行链负责。",
+      "inputs": [
+        "docs/business/business-line-registry.json",
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json"
+      ],
+      "outputs": [
+        "业务能力",
+        "业务对象",
+        "WorkItem 裁决",
+        "领域 handoff"
+      ],
+      "forbiddenBehaviors": [
+        "不得直接写账务事实",
+        "不得绕过 Definition"
+      ],
+      "upstreamAuthorities": [
+        "Authority Kernel"
+      ],
+      "downstreamConsumers": [
+        "Runtime Kernel",
+        "Surface Kernel"
+      ],
+      "gates": [
+        "scripts/business/check-dormitory-execution-kernel.mjs",
+        "scripts/check-dormitory-golden-domain.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/checks/dormitory-business-semantic-contract-result.json"
+      ],
+      "failureHandling": "业务动作无法闭环时降级为步骤、系统派生或删除。",
+      "deletionCondition": "当领域能力退出当前 OAM 且无 WorkItem、门禁、证据消费者时删除。"
+    },
+    {
+      "kernelId": "kernel.runtime",
+      "nameZh": "Runtime Kernel",
+      "owner": "runtime-kernel-owner",
+      "responsibilityZh": "Runtime Kernel 对当前 OAM 运行链负责。",
+      "inputs": [
+        "docs/contracts/definition/workitem-definition-registry.json",
+        "docs/oam/system-handoff-contract.json"
+      ],
+      "outputs": [
+        "OperationCase",
+        "WorkItem",
+        "CommandSubmission",
+        "DomainEvent",
+        "FactTrace"
+      ],
+      "forbiddenBehaviors": [
+        "不得确认未解析 Definition",
+        "不得让 skeleton 进入正式 confirm",
+        "不得绕过 Unit of Work"
+      ],
+      "upstreamAuthorities": [
+        "Authority Kernel",
+        "Domain Kernel",
+        "Admission Kernel"
+      ],
+      "downstreamConsumers": [
+        "Evidence Kernel",
+        "Projection Search Lens Kernel"
+      ],
+      "gates": [
+        "scripts/check-runtime-write-paths.mjs",
+        "scripts/oam/check-operation-identity-boundary.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/runtime-proof.json"
+      ],
+      "failureHandling": "未解析、重复提交、缺幂等或写入越界时 fail-closed。",
+      "deletionCondition": "当运行写入链被当前 OAM 新 Runtime 替换且合同迁移完成时删除。"
+    },
+    {
+      "kernelId": "kernel.finance-truth",
+      "nameZh": "Finance Truth Kernel",
+      "owner": "finance-truth-owner",
+      "responsibilityZh": "Finance Truth Kernel 对当前 OAM 运行链负责。",
+      "inputs": [
+        "docs/business/finance/ledger-transaction-contract.yml",
+        "docs/contracts/database/oam-db-ownership-map.json"
+      ],
+      "outputs": [
+        "LedgerEntry",
+        "LedgerTransaction",
+        "reversal",
+        "correction audit"
+      ],
+      "forbiddenBehaviors": [
+        "不得原地修改账务分录",
+        "不得让非财务领域直接写 LedgerEntry"
+      ],
+      "upstreamAuthorities": [
+        "Domain Kernel",
+        "Runtime Kernel"
+      ],
+      "downstreamConsumers": [
+        "Projection Search Lens Kernel",
+        "Release Control Kernel"
+      ],
+      "gates": [
+        "scripts/check-finance-truth.mjs",
+        "scripts/check-ledger-semantic-rules.mjs",
+        "scripts/finance/check-finance-semantic-truth.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/truth-ownership-proof.json"
+      ],
+      "failureHandling": "不平衡、无反转或无审计时阻断。",
+      "deletionCondition": "当财务真值迁入新的当前 Money Kernel 且账务测试迁移完成时删除。"
+    },
+    {
+      "kernelId": "kernel.evidence",
+      "nameZh": "Evidence Kernel",
+      "owner": "release-evidence-owner",
+      "responsibilityZh": "Evidence Kernel 对当前 OAM 运行链负责。",
+      "inputs": [
+        "docs/contracts/evidence/evidence-graph-refs-contract.json",
+        "scripts/oam/generate-current-evidence-root.mjs"
+      ],
+      "outputs": [
+        "evidence graph",
+        "final report",
+        "artifact digest",
+        "screenshot hash"
+      ],
+      "forbiddenBehaviors": [
+        "浏览器审计不得写最终证据图",
+        "本地 GO 不得替代 CI 发布证据"
+      ],
+      "upstreamAuthorities": [
+        "Runtime Kernel",
+        "Release Control Kernel"
+      ],
+      "downstreamConsumers": [
+        "Authority Kernel",
+        "P0 Rule Ledger"
+      ],
+      "gates": [
+        "scripts/oam/generate-current-evidence-root.mjs",
+        "scripts/oam/check-current-evidence-root.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json",
+        "artifacts/oam/final-report.json"
+      ],
+      "failureHandling": "缺提交、分支、digest、门禁或测试摘要时 NO_GO。",
+      "deletionCondition": "当证据根生成器被当前 OAM 新证据根替换且检查器同步时删除。"
+    },
+    {
+      "kernelId": "kernel.admission",
+      "nameZh": "Admission Kernel",
+      "owner": "admission-kernel-owner",
+      "responsibilityZh": "Admission Kernel 对当前 OAM 运行链负责。",
+      "inputs": [
+        "docs/contracts/admission/admission-matrix.json",
+        "docs/contracts/admission/actor-device-admission-contract.json"
+      ],
+      "outputs": [
+        "AdmissionDecision",
+        "visibleAllowed",
+        "prepareAllowed",
+        "confirmAllowed"
+      ],
+      "forbiddenBehaviors": [
+        "无准入不得默认可写",
+        "设备不可信不得高风险确认"
+      ],
+      "upstreamAuthorities": [
+        "Authority Kernel",
+        "Account Actor Kernel"
+      ],
+      "downstreamConsumers": [
+        "Surface Kernel",
+        "Runtime Kernel"
+      ],
+      "gates": [
+        "scripts/check-admission-kernel.mjs",
+        "scripts/check-business-line-admission.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/high-risk-trust-proof.json"
+      ],
+      "failureHandling": "缺权限、缺设备信任、缺证据或生产模式被封锁时 fail-closed。",
+      "deletionCondition": "当准入合同被当前 OAM 新准入内核替换且测试迁移完成时删除。"
+    },
+    {
+      "kernelId": "kernel.projection-search-lens",
+      "nameZh": "Projection Search Lens Kernel",
+      "owner": "search-kernel-owner",
+      "responsibilityZh": "Projection Search Lens Kernel 对当前 OAM 运行链负责。",
+      "inputs": [
+        "docs/contracts/search/search-contract.json",
+        "docs/contracts/projection-contract.schema.json",
+        "docs/contracts/accommodation-lens-contract.json"
+      ],
+      "outputs": [
+        "SearchResult",
+        "ProjectionReadModel",
+        "Lens"
+      ],
+      "forbiddenBehaviors": [
+        "不得写业务事实",
+        "不得先排序再隐藏",
+        "不得暴露未授权语言或字段"
+      ],
+      "upstreamAuthorities": [
+        "Runtime Kernel",
+        "Finance Truth Kernel"
+      ],
+      "downstreamConsumers": [
+        "Surface Kernel",
+        "BI KPI Kernel"
+      ],
+      "gates": [
+        "scripts/check-search-kernel.mjs",
+        "scripts/oam/check-db-ownership-map.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/search-readonly-proof.json"
+      ],
+      "failureHandling": "投影 pending、Lens 过期或权限不足时只读提示并阻断写入。",
+      "deletionCondition": "当读侧合同被当前 OAM 新读侧内核替换且消费者迁移完成时删除。"
+    },
+    {
+      "kernelId": "kernel.surface",
+      "nameZh": "Surface Kernel",
+      "owner": "surface-owner",
+      "responsibilityZh": "Surface Kernel 对当前 OAM 运行链负责。",
+      "inputs": [
+        "docs/surface/surface-contract.yml",
+        "docs/contracts/language/language-contract.json",
+        "apps/mobile/src",
+        "apps/pc/src"
+      ],
+      "outputs": [
+        "Mobile Surface",
+        "PC Governance Surface",
+        "用户文案",
+        "操作入口"
+      ],
+      "forbiddenBehaviors": [
+        "不得拥有业务事实",
+        "不得显示内部技术态给普通用户",
+        "不得绕过 Admission"
+      ],
+      "upstreamAuthorities": [
+        "Admission Kernel",
+        "Projection Search Lens Kernel"
+      ],
+      "downstreamConsumers": [
+        "Runtime Kernel",
+        "Release Control Kernel"
+      ],
+      "gates": [
+        "scripts/check-surface-contract.mjs",
+        "scripts/oam/check-surface-language-v2.mjs",
+        "npm --prefix apps/mobile run test"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/surface-language-proof.json"
+      ],
+      "failureHandling": "缺 WorkItem、缺证据、投影失败或 PC/mobile 越界时只读或诊断。",
+      "deletionCondition": "当 surface 被当前 OAM 新前端壳替换且检查器迁移完成时删除。"
+    },
+    {
+      "kernelId": "kernel.release-control",
+      "nameZh": "Release Control Kernel",
+      "owner": "release-control-owner",
+      "responsibilityZh": "Release Control Kernel 对当前 OAM 运行链负责。",
+      "inputs": [
+        "docs/system/oam-p0-rule-ledger.json",
+        "scripts/oam/run-control-plane-checks.ps1",
+        ".github/workflows/ci.yml"
+      ],
+      "outputs": [
+        "P0 gate",
+        "control-plane result",
+        "GO/NO_GO"
+      ],
+      "forbiddenBehaviors": [
+        "不得跳过失败门禁",
+        "不得让 final report 与总门禁不一致"
+      ],
+      "upstreamAuthorities": [
+        "Authority Kernel",
+        "Evidence Kernel"
+      ],
+      "downstreamConsumers": [
+        "CI",
+        "Engineering Ledger Kernel"
+      ],
+      "gates": [
+        "scripts/oam/check-p0-rule-ledger.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "evidence": [
+        "artifacts/oam/checks/control-plane-gate-results.json"
+      ],
+      "failureHandling": "任一必跑门禁失败、缺失、过期或未执行时 NO_GO。",
+      "deletionCondition": "当发布控制被当前 OAM 新总门禁替换且 CI 同步时删除。"
+    },
+    {
+      "kernelId": "kernel.engineering-ledger",
+      "nameZh": "Engineering Ledger Kernel",
+      "owner": "oam-release-owner",
+      "responsibilityZh": "Engineering Ledger Kernel 对当前 OAM 运行链负责。",
+      "inputs": [
+        "docs/oam/current-engineering-ledger.json",
+        "scripts/oam/generate-current-engineering-ledger.mjs"
+      ],
+      "outputs": [
+        "文件身份",
+        "职责边界",
+        "owner",
+        "删除条件"
+      ],
+      "forbiddenBehaviors": [
+        "不得长期保留灰色文件桶",
+        "未登记文件不得存在"
+      ],
+      "upstreamAuthorities": [
+        "Authority Kernel",
+        "OAM Kernel Graph"
+      ],
+      "downstreamConsumers": [
+        "Release Control Kernel"
+      ],
+      "gates": [
+        "scripts/oam/generate-current-engineering-ledger.mjs",
+        "scripts/oam/check-current-engineering-ledger.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/checks/current-engineering-ledger-result.json"
+      ],
+      "failureHandling": "未登记、无删除条件、无门禁或旧路径出现时阻断。",
+      "deletionCondition": "当工程总账被当前 OAM 新文件治理入口替换且索引同步时删除。"
+    }
+  ],
+  "invariants": [
+    "current-authority-index 是唯一顶层入口。",
+    "system-operating-kernel 只定义运行职责，不替代顶层权威索引。",
+    "每个内核必须有输入、输出、禁止行为、门禁、证据和失败处理。",
+    "写入链必须经过 Admission、Definition、CommandSubmission 和 Unit of Work。",
+    "Search、Projection、Lens 和 Surface 默认只读，不拥有业务事实。"
+  ]
+}

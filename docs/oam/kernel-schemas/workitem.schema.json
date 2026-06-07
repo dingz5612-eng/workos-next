@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": true,
+  "title": "Current OAM WorkItem",
+  "type": "object",
+  "required": [
+    "workItemType",
+    "definitionId",
+    "commandType",
+    "ownerRole",
+    "definitionRequired",
+    "admissionPolicyRef",
+    "evidencePolicyRef",
+    "runtimeEntry",
+    "dbTableGroups"
+  ],
+  "properties": {
+    "workItemType": {
+      "type": "string"
+    },
+    "definitionId": {
+      "type": "string"
+    },
+    "commandType": {
+      "type": "string"
+    },
+    "ownerRole": {
+      "type": "string"
+    },
+    "definitionRequired": {
+      "type": "boolean"
+    },
+    "admissionPolicyRef": {
+      "type": "string"
+    },
+    "evidencePolicyRef": {
+      "type": "string"
+    },
+    "runtimeEntry": {
+      "type": "string"
+    },
+    "dbTableGroups": {
+      "type": "array"
+    }
+  }
+}

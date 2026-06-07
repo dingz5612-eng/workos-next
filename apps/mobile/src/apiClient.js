@@ -108,12 +108,12 @@ export async function fetchWorkQueue() {
   return response.json();
 }
 
-export async function fetchOperationWorkItems(query = {}) {
+export async function fetchOperationWorkItems(query = {}, options = {}) {
   const url = new URL(`${apiBaseUrl()}${runtimeApiPaths.operationsWorkItems}`);
   for (const [key, value] of Object.entries(query || {})) {
     if (value) url.searchParams.set(key, value);
   }
-  const response = await runtimeFetch(url, { timeoutMs: 6000 });
+  const response = await runtimeFetch(url, { timeoutMs: options.timeoutMs || 20000 });
   if (!response.ok) throw await apiError("operation_work_items_failed", response);
   return response.json();
 }

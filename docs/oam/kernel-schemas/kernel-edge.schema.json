@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": true,
+  "title": "OAM Kernel Edge",
+  "type": "object",
+  "required": [
+    "from",
+    "to",
+    "edgeType",
+    "allowedDirection",
+    "forbiddenDirection",
+    "checker",
+    "evidence"
+  ],
+  "properties": {
+    "from": {
+      "type": "string"
+    },
+    "to": {
+      "type": "string"
+    },
+    "edgeType": {
+      "type": "string"
+    },
+    "allowedDirection": {
+      "type": "string"
+    },
+    "forbiddenDirection": {
+      "type": "string"
+    },
+    "checker": {
+      "type": "string"
+    },
+    "evidence": {
+      "type": "string"
+    }
+  }
+}

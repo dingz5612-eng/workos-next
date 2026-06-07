@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": true,
+  "title": "OAM Kernel Node",
+  "type": "object",
+  "required": [
+    "nodeId",
+    "nodeType",
+    "owner",
+    "sourceFile",
+    "runtimeBinding",
+    "testBinding",
+    "gateBinding",
+    "evidenceBinding",
+    "currentTruthAllowed",
+    "deletionCondition"
+  ],
+  "properties": {
+    "nodeId": {
+      "type": "string"
+    },
+    "nodeType": {
+      "type": "string"
+    },
+    "owner": {
+      "type": "string"
+    },
+    "sourceFile": {
+      "type": "string"
+    },
+    "runtimeBinding": {
+      "type": [
+        "string",
+        "array"
+      ]
+    },
+    "testBinding": {
+      "type": [
+        "string",
+        "array"
+      ]
+    },
+    "gateBinding": {
+      "type": [
+        "string",
+        "array"
+      ]
+    },
+    "evidenceBinding": {
+      "type": [
+        "string",
+        "array"
+      ]
+    },
+    "currentTruthAllowed": {
+      "type": "boolean"
+    },
+    "deletionCondition": {
+      "type": "string"
+    }
+  }
+}
