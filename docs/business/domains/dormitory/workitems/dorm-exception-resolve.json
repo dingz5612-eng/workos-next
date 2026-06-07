@@ -1,0 +1,95 @@
+{
+  "version": "oam.dormitory.workitem-operation.v1",
+  "status": "derived",
+  "derivedFrom": [
+    "docs/business/domains/dormitory/dormitory-operating-kernel.json"
+  ],
+  "generatedBy": "scripts/business/generate-dormitory-derived-contracts.mjs",
+  "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
+  "manualEditAllowed": false,
+  "graphBinding": "workitem.Dorm.ExceptionResolve",
+  "workItemType": "Dorm.ExceptionResolve",
+  "entryFrom": "Mobile Surface 工作台、Search 只读跳转或上游 WorkItem 下游提示",
+  "systemAutoFilled": [
+    "tenantId",
+    "caseId",
+    "definitionId",
+    "workItemId",
+    "sourceWorkItemId",
+    "projectionVersion"
+  ],
+  "operatorFills": [
+    "补充说明",
+    "evidenceRefs"
+  ],
+  "leadApproves": [
+    "exceptionCaseId",
+    "resolutionState",
+    "resolutionReason",
+    "approvalReason"
+  ],
+  "readonlyFields": [
+    "tenantId",
+    "caseId",
+    "definitionId",
+    "workItemId",
+    "sourceWorkItemId",
+    "projectionVersion",
+    "createdAt",
+    "confirmedAt",
+    "ledgerEntryId",
+    "domainEventId"
+  ],
+  "editableFields": [
+    "exceptionCaseId",
+    "resolutionState",
+    "resolutionReason"
+  ],
+  "evidenceRequired": [
+    "exception-audit",
+    "resolution-evidence"
+  ],
+  "submittedEvent": "ExceptionResolveSubmitted",
+  "ledgerImpact": "无账务影响",
+  "lensUpdates": [
+    "ExceptionRiskLens"
+  ],
+  "downstreamWorkItems": [
+    "Finance.CorrectionApply",
+    "Dorm.PeriodReview"
+  ],
+  "failureRoutes": [
+    "Dorm.ExceptionResolve",
+    "append_only_correction_work_item",
+    "blocked_with_missing_fields"
+  ],
+  "definitionId": "definition.dormitory.exceptionResolve.v1",
+  "commandType": "Exception.Resolve",
+  "allowedFacts": [
+    "ExceptionCase",
+    "EvidenceObject",
+    "DomainEvent",
+    "CommandSubmission"
+  ],
+  "forbiddenFacts": [
+    "Payment",
+    "PaymentAllocation",
+    "DepositEntry",
+    "LedgerEntry",
+    "Refund"
+  ],
+  "admissionPolicyRef": "payment_confirmation",
+  "evidencePolicyRef": "evidence.dorm-exception-resolve.v1",
+  "ledgerPolicyRef": "ledger.none.v1",
+  "dbTableGroups": [
+    "operations-runtime",
+    "evidence-audit",
+    "projection-read-side",
+    "accommodation-facts"
+  ],
+  "tests": [
+    "tests/WorkOS.RuntimeIntegrationTests",
+    "tests/WorkOS.RuntimeContractTests",
+    "apps/mobile/src/__tests__"
+  ]
+}

@@ -1,0 +1,84 @@
+{
+  "version": "oam.iteration-kernel.v1",
+  "status": "authoritative",
+  "architecture": "oam.current",
+  "authorityEntry": "docs/oam/current-authority-index.json",
+  "changeGovernance": "docs/oam/system-change-governance-contract.json",
+  "systemKernel": "docs/oam/system-operating-kernel.json",
+  "oamGraph": "docs/oam/oam-kernel-graph.json",
+  "releaseGate": "scripts/oam/run-control-plane-checks.ps1",
+  "ciWorkflow": ".github/workflows/ci.yml",
+  "currentIteration": {
+    "iterationId": "iteration-oam-authority-compile-20260608",
+    "nameZh": "唯一生效工程总账 + 权威编译闭环",
+    "goalZh": "把当前 OAM 的权威入口、系统内核、领域内核、图谱、生命周期、派生合同、运行实现、门禁、测试和证据根收敛为唯一生效链路。",
+    "scopeInZh": [
+      "宿舍内核以 docs/business/domains/dormitory/dormitory-operating-kernel.json 为唯一业务源头",
+      "系统变更治理必须进入权威索引、系统内核、OAM 图谱、工程总账、本地总门禁和 CI",
+      "迭代登记必须记录目标、范围、阶段、失败修复规则、证据和删除条件",
+      "新增或保留文件必须有身份、来源、消费者、门禁、证据和删除条件"
+    ],
+    "scopeOutZh": [
+      "不恢复旧架构代号、旧阶段、旧 7/24 口径或历史兼容路径",
+      "不把人读手册提升为当前事实源",
+      "不通过远端 CI 绿色替代本地当前工作区事实",
+      "不为覆盖率数字随意 exclude 或 ignore"
+    ],
+    "entryConditionsZh": [
+      "本地分支、HEAD、工作区和未跟踪文件已经冻结盘点",
+      "JSON/YAML 合同可解析",
+      "宿舍业务唯一内核路径已经确定",
+      "上一阶段失败项已修复并重跑"
+    ],
+    "exitConditionsZh": [
+      "系统变更治理合同检查通过",
+      "迭代内核检查通过",
+      "OAM 图谱和工程总账重新生成并检查通过",
+      "本地总门禁和 CI 均包含新增治理检查",
+      "证据根与最终报告只能基于真实门禁结果放行"
+    ],
+    "serialStagesZh": [
+      "冻结本地事实",
+      "建立唯一生效工程总账",
+      "收敛宿舍业务唯一内核",
+      "清洗身份与边界",
+      "加固运行与准入 fail-closed",
+      "重构证据根单写权",
+      "闭合数据库和执行映射",
+      "治理覆盖率和分支风险",
+      "清理旧文件和并行表达",
+      "全量验收与提交"
+    ],
+    "parallelWorkZh": [
+      "只读扫描、引用比对、合同解析和路径检查可以并行",
+      "同一阶段内的文档、脚本、测试和证据引用审查可以并行",
+      "阶段验收必须串行汇总，失败先修复再继续"
+    ],
+    "failureRepairRuleZh": "任何阶段失败必须定位原因，修复代码、文档、合同、脚本、测试或证据关系，并重跑该阶段全部验收；不得带失败进入下一阶段。",
+    "evidenceRequirements": [
+      "artifacts/oam/checks/system-change-governance-result.json",
+      "artifacts/oam/checks/iteration-kernel-result.json",
+      "artifacts/oam/checks/oam-kernel-graph-result.json",
+      "artifacts/oam/checks/current-engineering-ledger-result.json",
+      "artifacts/oam/evidence/evidence-graph.json",
+      "artifacts/oam/final-report.json"
+    ],
+    "legacyHandlingZh": [
+      "能被当前 OAM 吸收的内容迁入当前权威、领域内核、派生合同、检查器或证据根",
+      "不能证明服务当前 OAM 的旧文件、旧路径、旧语义、重复解释和临时材料删除",
+      "人读手册只能解释当前权威，currentTruthAllowed 必须为 false"
+    ],
+    "rollbackPolicyZh": "仅当新增治理链破坏当前 OAM 已验证主链时回退本轮治理变更；回退后必须保留失败证据并重新规划更小修复。",
+    "pilotFeedbackZh": "试运行反馈必须登记为迭代输入，能闭环的转为 WorkItem、字段、状态、门禁或证据；不能闭环的进入风险账本而不是散落在手册中。",
+    "nextIterationCarryOverZh": "下一轮只允许承接已登记风险、明确 owner、明确门禁和明确删除条件的事项。"
+  },
+  "requiredGates": [
+    "scripts/oam/check-iteration-kernel.mjs",
+    "scripts/oam/check-system-change-governance.mjs",
+    "scripts/oam/check-current-authority-index.mjs",
+    "scripts/oam/check-system-operating-kernel.mjs",
+    "scripts/oam/check-oam-kernel-graph.mjs",
+    "scripts/oam/check-current-engineering-ledger.mjs"
+  ],
+  "deletionConditionZh": "当当前迭代完成、证据根和提交记录已经保留，且下一轮当前迭代内核替换本文件并同步所有门禁和权威入口后删除。"
+}

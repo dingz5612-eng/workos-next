@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 const root = process.cwd();
-const pack = readJson("docs/business/dormitory/dormitory-pilot-scenario-pack.yml");
+const pack = readJson("docs/business/domains/dormitory/dormitory-pilot-scenario-pack.yml");
 const violations = [];
 const requiredCounts = new Map([
   ["入住", 10],
@@ -14,7 +14,7 @@ const requiredCounts = new Map([
   ["周期复盘", 1]
 ]);
 
-requireValue((pack.derivedFrom ?? []).includes("docs/business/dormitory/dormitory-operating-kernel.json"), "pilot.derived_missing", "试运行场景包必须由宿舍内核派生。");
+requireValue((pack.derivedFrom ?? []).includes("docs/business/domains/dormitory/dormitory-operating-kernel.json"), "pilot.derived_missing", "试运行场景包必须由宿舍内核派生。");
 requireValue(pack.manualEditAllowed === false, "pilot.manual_edit", "试运行场景包不得手改。");
 for (const [categoryZh, count] of requiredCounts) {
   const actual = (pack.scenarios ?? []).filter((item) => item.categoryZh === categoryZh).length;

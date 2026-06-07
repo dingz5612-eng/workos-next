@@ -89,6 +89,8 @@ Invoke-Gate node scripts/oam/check-current-authority-index.mjs
 Invoke-Gate node scripts/oam/check-system-operating-kernel.mjs
 Invoke-Gate node scripts/business/generate-dormitory-derived-contracts.mjs
 Invoke-Gate node scripts/oam/check-oam-kernel-graph.mjs
+Invoke-Gate node scripts/oam/check-system-change-governance.mjs
+Invoke-Gate node scripts/oam/check-iteration-kernel.mjs
 Invoke-Gate node scripts/oam/generate-current-engineering-ledger.mjs
 Invoke-Gate node scripts/oam/check-file-lifecycle-policy.mjs
 Invoke-Gate node scripts/oam/check-retired-reference-blocker.mjs

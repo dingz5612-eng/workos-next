@@ -2,10 +2,13 @@ import fs from "node:fs";
 import path from "node:path";
 
 const root = process.cwd();
-const kernelPath = "docs/business/dormitory/dormitory-operating-kernel.json";
+const kernelPath = "docs/business/domains/dormitory/dormitory-operating-kernel.json";
 const kernelVersion = "oam.domain-operating-kernel.dormitory.v2";
 const sourceKernel = kernelPath;
 const generatedBy = "scripts/business/generate-dormitory-derived-contracts.mjs";
+const changeGovernancePath = "docs/oam/system-change-governance-contract.json";
+const iterationKernelPath = "docs/oam/iteration-kernel.json";
+const iterationManualPath = "docs/oam/iteration-kernel.md";
 
 const trains = [
   {
@@ -110,13 +113,13 @@ const byType = new Map(workItems.map((item) => [item.workItemType, item]));
 writeJson(kernelPath, buildKernel());
 writeJson("docs/business/domains/dormitory/domain-pack.yml", buildDomainPack());
 writeWorkItemFiles();
-writeJson("docs/business/dormitory/handoff-contract.json", buildDormitoryHandoff());
-writeJson("docs/business/dormitory/dormitory-seed-data-pack.json", buildSeedData());
-writeJson("docs/business/dormitory/dormitory-observability-contract.json", buildObservability());
-writeJson("docs/business/dormitory/dormitory-pilot-go-no-go.json", buildPilotGoNoGo());
-writeJsonAsYml("docs/business/dormitory/dormitory-release-train.yml", buildReleaseTrain());
-writeJsonAsYml("docs/business/dormitory/dormitory-pilot-scenario-pack.yml", buildPilotScenarioPack());
-writeText("docs/business/dormitory/dormitory-operator-playbook.md", buildPlaybook());
+writeJson("docs/business/domains/dormitory/handoff-contract.json", buildDormitoryHandoff());
+writeJson("docs/business/domains/dormitory/dormitory-seed-data-pack.json", buildSeedData());
+writeJson("docs/business/domains/dormitory/dormitory-observability-contract.json", buildObservability());
+writeJson("docs/business/domains/dormitory/dormitory-pilot-go-no-go.json", buildPilotGoNoGo());
+writeJsonAsYml("docs/business/domains/dormitory/dormitory-release-train.yml", buildReleaseTrain());
+writeJsonAsYml("docs/business/domains/dormitory/dormitory-pilot-scenario-pack.yml", buildPilotScenarioPack());
+writeText("docs/business/domains/dormitory/dormitory-operator-playbook.md", buildPlaybook());
 writeSourceDerivedViews();
 patchGlobalLensAnalyticsContracts();
 patchRegistries();
@@ -249,7 +252,7 @@ function buildKernel() {
     fieldsSource: "docs/contracts/business/oam-business-object-field-registry.json",
     workflowStateSource: "docs/contracts/business/oam-workflow-state-registry.json",
     definitionRegistry: "docs/contracts/definition/workitem-definition-registry.json",
-    handoffContract: "docs/business/dormitory/handoff-contract.json",
+    handoffContract: "docs/business/domains/dormitory/handoff-contract.json",
     releaseTrains: trains,
     workItems,
     aliases,
@@ -304,13 +307,13 @@ function buildKernel() {
     },
     absorbedOrRemovedActions: aliases,
     derivedContracts: [
-      "docs/business/dormitory/workitems/*.json",
-      "docs/business/dormitory/dormitory-release-train.yml",
-      "docs/business/dormitory/dormitory-pilot-scenario-pack.yml",
-      "docs/business/dormitory/dormitory-seed-data-pack.json",
-      "docs/business/dormitory/dormitory-observability-contract.json",
-      "docs/business/dormitory/dormitory-operator-playbook.md",
-      "docs/business/dormitory/dormitory-pilot-go-no-go.json"
+      "docs/business/domains/dormitory/workitems/*.json",
+      "docs/business/domains/dormitory/dormitory-release-train.yml",
+      "docs/business/domains/dormitory/dormitory-pilot-scenario-pack.yml",
+      "docs/business/domains/dormitory/dormitory-seed-data-pack.json",
+      "docs/business/domains/dormitory/dormitory-observability-contract.json",
+      "docs/business/domains/dormitory/dormitory-operator-playbook.md",
+      "docs/business/domains/dormitory/dormitory-pilot-go-no-go.json"
     ],
     gates: [
       "scripts/business/check-dormitory-operating-kernel.mjs",
@@ -455,7 +458,7 @@ function buildDomainPack() {
     goldenChainTrace: {
       sourceScenario: "docs/scenarios/dormitory/golden-pilot.yml",
       operatingKernel: kernelPath,
-      handoffContract: "docs/business/dormitory/handoff-contract.json",
+      handoffContract: "docs/business/domains/dormitory/handoff-contract.json",
       scenarioMap: "docs/business/dormitory/canonical-scenario-map.json",
       fieldContract: "docs/business/dormitory/scenario-field-contract.yml",
       stateContract: "docs/contracts/definition/workitem-definition-registry.json",
@@ -516,7 +519,7 @@ function trace(objectId, nameZh, workItem, event, writer, producesLedgerEntry, g
 }
 
 function writeWorkItemFiles() {
-  const dir = "docs/business/dormitory/workitems";
+  const dir = "docs/business/domains/dormitory/workitems";
   fs.mkdirSync(abs(dir), { recursive: true });
   for (const item of workItems) {
     writeJson(`${dir}/${slug(item.workItemType)}.json`, {
@@ -1071,13 +1074,13 @@ function patchAuthorityIndex() {
   const entries = new Map((index.entries ?? []).map((entry) => [entry.path, entry]));
   const requiredEntries = [
     [kernelPath, "current_domain_kernel", "domain-owner", "scripts/business/check-dormitory-operating-kernel.mjs", true, "宿舍业务唯一运行内核。"],
-    ["docs/business/dormitory/handoff-contract.json", "current_business_contract", "domain-owner", "scripts/business/check-dormitory-derived-contracts.mjs", true, "宿舍 handoff 合同。"],
-    ["docs/business/dormitory/dormitory-release-train.yml", "current_business_contract", "domain-owner", "scripts/business/check-dormitory-release-train.mjs", false, "宿舍发布列车派生视图。"],
-    ["docs/business/dormitory/dormitory-pilot-scenario-pack.yml", "current_business_contract", "domain-owner", "scripts/business/check-dormitory-pilot-scenario-pack.mjs", false, "宿舍试运行场景派生包。"],
-    ["docs/business/dormitory/dormitory-seed-data-pack.json", "current_business_contract", "domain-owner", "scripts/business/check-dormitory-derived-contracts.mjs", false, "宿舍试运行种子数据派生包。"],
-    ["docs/business/dormitory/dormitory-observability-contract.json", "current_business_contract", "domain-owner", "scripts/business/check-dormitory-derived-contracts.mjs", false, "宿舍可观测合同派生视图。"],
-    ["docs/business/dormitory/dormitory-pilot-go-no-go.json", "current_business_contract", "domain-owner", "scripts/business/check-dormitory-derived-contracts.mjs", false, "宿舍试运行 Go/No-Go 派生视图。"],
-    ["docs/business/dormitory/dormitory-operator-playbook.md", "current_manual", "domain-owner", "scripts/business/check-dormitory-derived-contracts.mjs", false, "宿舍操作手册，人读但不定义当前事实。"]
+    ["docs/business/domains/dormitory/handoff-contract.json", "current_business_contract", "domain-owner", "scripts/business/check-dormitory-derived-contracts.mjs", true, "宿舍 handoff 合同。"],
+    ["docs/business/domains/dormitory/dormitory-release-train.yml", "current_business_contract", "domain-owner", "scripts/business/check-dormitory-release-train.mjs", false, "宿舍发布列车派生视图。"],
+    ["docs/business/domains/dormitory/dormitory-pilot-scenario-pack.yml", "current_business_contract", "domain-owner", "scripts/business/check-dormitory-pilot-scenario-pack.mjs", false, "宿舍试运行场景派生包。"],
+    ["docs/business/domains/dormitory/dormitory-seed-data-pack.json", "current_business_contract", "domain-owner", "scripts/business/check-dormitory-derived-contracts.mjs", false, "宿舍试运行种子数据派生包。"],
+    ["docs/business/domains/dormitory/dormitory-observability-contract.json", "current_business_contract", "domain-owner", "scripts/business/check-dormitory-derived-contracts.mjs", false, "宿舍可观测合同派生视图。"],
+    ["docs/business/domains/dormitory/dormitory-pilot-go-no-go.json", "current_business_contract", "domain-owner", "scripts/business/check-dormitory-derived-contracts.mjs", false, "宿舍试运行 Go/No-Go 派生视图。"],
+    ["docs/business/domains/dormitory/dormitory-operator-playbook.md", "current_manual", "domain-owner", "scripts/business/check-dormitory-derived-contracts.mjs", false, "宿舍操作手册，人读但不定义当前事实。"]
   ];
   for (const [entryPath, identity, owner, checker, currentTruthAllowed, notesZh] of requiredEntries) {
     entries.set(entryPath, {
@@ -1122,6 +1125,8 @@ function patchGraph() {
   const nodes = new Map((graph.nodes ?? []).map((node) => [node.nodeId, node]));
   const addNode = (node) => nodes.set(node.nodeId, { ...(nodes.get(node.nodeId) ?? {}), ...node });
 
+  addNode(node("kernel.change-governance", "kernel", "oam-release-owner", changeGovernancePath, true, "change-governance", "scripts/oam/check-system-change-governance.mjs"));
+  addNode(node("kernel.iteration-governance", "kernel", "oam-release-owner", iterationKernelPath, true, "iteration-governance", "scripts/oam/check-iteration-kernel.mjs"));
   addNode(node("domain.dormitory", "domainKernel", "domain-owner", kernelPath, true, "kernel.domain", "scripts/business/check-dormitory-operating-kernel.mjs"));
   for (const item of workItems) {
     addNode(node(`workitem.${item.workItemType}`, "WorkItem", item.ownerSlice, kernelPath, true, item.commandType, "scripts/business/check-dormitory-operating-kernel.mjs", item.tests));
@@ -1173,8 +1178,10 @@ function patchGraph() {
     addEdge(`definition.${item.definitionId}`, `command.${item.commandType}`, "emits");
   }
   for (const filePath of allNewAndDerivedFiles()) {
-    addEdge("domain.dormitory", `file.${filePath}`, "derivedFrom", "scripts/business/check-dormitory-derived-contracts.mjs");
+    addEdge(graphOwnerNodeForPath(filePath), `file.${filePath}`, filePath.startsWith("docs/oam/") || filePath.startsWith("scripts/oam/") ? "owns" : "derivedFrom", checkerForPath(filePath));
   }
+  addEdge("authority.current-index", "kernel.change-governance", "owns", "scripts/oam/check-system-change-governance.mjs");
+  addEdge("kernel.change-governance", "kernel.iteration-governance", "requires", "scripts/oam/check-iteration-kernel.mjs");
   for (const item of aliases) {
     addEdge(`workitem.${item.workItemType}`, `workitem.${item.canonicalWorkItemType}`, "absorbedBy");
     addEdge(`workitem.${item.workItemType}`, `workitem.${item.canonicalWorkItemType}`, "replacedBy");
@@ -1202,12 +1209,13 @@ function node(nodeId, nodeType, owner, sourceFile, currentTruthAllowed, runtimeB
 
 function fileNode(filePath, state = lifecycleForPath(filePath), owner = ownerForPath(filePath), checker = checkerForPath(filePath)) {
   const derived = state === "derived_view";
+  const sourceKernel = sourceKernelForPath(filePath);
   return {
     nodeId: `file.${filePath}`,
     nodeType: "File",
     owner,
     sourceFile: filePath,
-    runtimeBinding: derived ? "derived-view" : "kernel.domain",
+    runtimeBinding: derived ? "derived-view" : sourceKernel,
     testBinding: [checker, "docs/oam/oam-kernel-graph.json"],
     gateBinding: [checker],
     evidenceBinding: "artifacts/oam/evidence/evidence-graph.json",
@@ -1216,7 +1224,7 @@ function fileNode(filePath, state = lifecycleForPath(filePath), owner = ownerFor
     lifecycleState: state,
     manualEditAllowed: !derived,
     ciReferenceAllowed: true,
-    sourceKernel: "domain.dormitory",
+    sourceKernel,
     checker,
     evidence: "artifacts/oam/evidence/evidence-graph.json",
     replacementPath: filePath,
@@ -1456,15 +1464,20 @@ function groupMetricsByCategory() {
 
 function allNewAndDerivedFiles() {
   return [
+    changeGovernancePath,
+    iterationKernelPath,
+    iterationManualPath,
+    "scripts/oam/check-system-change-governance.mjs",
+    "scripts/oam/check-iteration-kernel.mjs",
     kernelPath,
-    "docs/business/dormitory/handoff-contract.json",
-    "docs/business/dormitory/dormitory-release-train.yml",
-    "docs/business/dormitory/dormitory-pilot-scenario-pack.yml",
-    "docs/business/dormitory/dormitory-seed-data-pack.json",
-    "docs/business/dormitory/dormitory-observability-contract.json",
-    "docs/business/dormitory/dormitory-operator-playbook.md",
-    "docs/business/dormitory/dormitory-pilot-go-no-go.json",
-    ...workItems.map((item) => `docs/business/dormitory/workitems/${slug(item.workItemType)}.json`),
+    "docs/business/domains/dormitory/handoff-contract.json",
+    "docs/business/domains/dormitory/dormitory-release-train.yml",
+    "docs/business/domains/dormitory/dormitory-pilot-scenario-pack.yml",
+    "docs/business/domains/dormitory/dormitory-seed-data-pack.json",
+    "docs/business/domains/dormitory/dormitory-observability-contract.json",
+    "docs/business/domains/dormitory/dormitory-operator-playbook.md",
+    "docs/business/domains/dormitory/dormitory-pilot-go-no-go.json",
+    ...workItems.map((item) => `docs/business/domains/dormitory/workitems/${slug(item.workItemType)}.json`),
     "docs/business/dormitory/workitem-catalog.yml",
     "docs/business/dormitory/workitem-decision-table.json",
     "docs/business/dormitory/value-streams.yml",
@@ -1500,6 +1513,8 @@ function graphBindingForPath(filePath) {
 }
 
 function checkerForPath(filePath) {
+  if (filePath.includes("system-change-governance")) return "scripts/oam/check-system-change-governance.mjs";
+  if (filePath.includes("iteration-kernel")) return "scripts/oam/check-iteration-kernel.mjs";
   if (filePath.includes("release-train")) return "scripts/business/check-dormitory-release-train.mjs";
   if (filePath.includes("pilot-scenario")) return "scripts/business/check-dormitory-pilot-scenario-pack.mjs";
   if (filePath.includes("dormitory-operating-kernel")) return "scripts/business/check-dormitory-operating-kernel.mjs";
@@ -1507,18 +1522,38 @@ function checkerForPath(filePath) {
 }
 
 function lifecycleForPath(filePath) {
+  if (filePath === iterationManualPath) return "human_manual";
+  if (filePath.startsWith("docs/oam/")) return "active_contract";
+  if (filePath.startsWith("scripts/oam/")) return "active_validation";
   if (filePath === kernelPath || filePath.endsWith("handoff-contract.json")) return "active_contract";
   if (filePath.endsWith("operator-playbook.md")) return "human_manual";
-  if (filePath.startsWith("docs/business/dormitory/workitems/")) return "derived_view";
+  if (filePath.startsWith("docs/business/domains/dormitory/workitems/")) return "derived_view";
   if (filePath.includes("dormitory-release-train") || filePath.includes("pilot-scenario") || filePath.includes("seed-data") || filePath.includes("observability") || filePath.includes("pilot-go-no-go")) return "derived_view";
   if (filePath.startsWith("scripts/")) return "active_validation";
   return "active_contract";
 }
 
 function ownerForPath(filePath) {
+  if (filePath.startsWith("docs/oam/") || filePath.startsWith("scripts/oam/")) return "oam-release-owner";
   if (filePath.startsWith("scripts/")) return "oam-release-owner";
   if (filePath.includes("finance") || filePath.includes("ledger")) return "finance-gate";
   return "domain-owner";
+}
+
+function graphOwnerNodeForPath(filePath) {
+  if (filePath.includes("system-change-governance")) return "kernel.change-governance";
+  if (filePath.includes("iteration-kernel")) return "kernel.iteration-governance";
+  if (filePath.includes("check-system-change-governance")) return "kernel.change-governance";
+  if (filePath.includes("check-iteration-kernel")) return "kernel.iteration-governance";
+  return "domain.dormitory";
+}
+
+function sourceKernelForPath(filePath) {
+  if (filePath.includes("system-change-governance")) return "kernel.change-governance";
+  if (filePath.includes("iteration-kernel")) return "kernel.iteration-governance";
+  if (filePath.includes("check-system-change-governance")) return "kernel.change-governance";
+  if (filePath.includes("check-iteration-kernel")) return "kernel.iteration-governance";
+  return "domain.dormitory";
 }
 
 function workspaceFor(trainId) {

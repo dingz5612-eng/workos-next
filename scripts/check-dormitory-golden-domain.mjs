@@ -50,7 +50,7 @@ if (process.argv.includes("--self-test")) {
 
 const scannedFiles = [
   "docs/business/domains/dormitory/domain-pack.yml",
-  "docs/business/dormitory/dormitory-operating-kernel.json",
+  "docs/business/domains/dormitory/dormitory-operating-kernel.json",
   "docs/scenarios/dormitory/golden-pilot.yml",
   "docs/business/dormitory/value-streams.yml",
   "docs/business/dormitory/workitem-catalog.yml",
@@ -87,7 +87,7 @@ function validatePack(pack, kernel = { workItems: [] }) {
   const allowedHumanRoles = new Set(["宿舍经办人", "宿舍负责人"]);
   const allowedSystemWriters = new Set(["finance-gate", "shared-governance-owner", "projection-runtime"]);
 
-  if (!(pack.derivedFrom ?? []).includes("docs/business/dormitory/dormitory-operating-kernel.json") || pack.currentTruthSource !== "docs/business/dormitory/dormitory-operating-kernel.json") {
+  if (!(pack.derivedFrom ?? []).includes("docs/business/domains/dormitory/dormitory-operating-kernel.json") || pack.currentTruthSource !== "docs/business/domains/dormitory/dormitory-operating-kernel.json") {
     violations.push(violation("dormitory.domain_pack_not_derived_from_kernel", "DormitoryDomainPack must be derived from the current dormitory operating kernel."));
   }
   if (JSON.stringify(packWorkItems) !== JSON.stringify(currentWorkItems)) {

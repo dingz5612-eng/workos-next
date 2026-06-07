@@ -69,6 +69,8 @@ jobs:
           node scripts/oam/check-system-operating-kernel.mjs
           node scripts/business/generate-dormitory-derived-contracts.mjs
           node scripts/oam/check-oam-kernel-graph.mjs
+          node scripts/oam/check-system-change-governance.mjs
+          node scripts/oam/check-iteration-kernel.mjs
           node scripts/oam/generate-current-engineering-ledger.mjs
           node scripts/oam/check-file-lifecycle-policy.mjs
           node scripts/oam/check-retired-reference-blocker.mjs

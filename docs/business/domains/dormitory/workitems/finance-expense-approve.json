@@ -1,0 +1,96 @@
+{
+  "version": "oam.dormitory.workitem-operation.v1",
+  "status": "derived",
+  "derivedFrom": [
+    "docs/business/domains/dormitory/dormitory-operating-kernel.json"
+  ],
+  "generatedBy": "scripts/business/generate-dormitory-derived-contracts.mjs",
+  "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
+  "manualEditAllowed": false,
+  "graphBinding": "workitem.Finance.ExpenseApprove",
+  "workItemType": "Finance.ExpenseApprove",
+  "entryFrom": "宿舍 WorkItem 提交后由 finance-gate 生成",
+  "systemAutoFilled": [
+    "tenantId",
+    "caseId",
+    "definitionId",
+    "workItemId",
+    "sourceWorkItemId",
+    "projectionVersion"
+  ],
+  "operatorFills": [
+    "补充说明",
+    "evidenceRefs"
+  ],
+  "leadApproves": [
+    "expenseId",
+    "approvalState",
+    "approvalReason",
+    "approvalReason"
+  ],
+  "readonlyFields": [
+    "tenantId",
+    "caseId",
+    "definitionId",
+    "workItemId",
+    "sourceWorkItemId",
+    "projectionVersion",
+    "createdAt",
+    "confirmedAt",
+    "ledgerEntryId",
+    "domainEventId"
+  ],
+  "editableFields": [
+    "expenseId",
+    "approvalState",
+    "approvalReason"
+  ],
+  "evidenceRequired": [
+    "expense-approval",
+    "expense-invoice"
+  ],
+  "submittedEvent": "ExpenseApproveSubmitted",
+  "ledgerImpact": "支出必须有依据和审批，通过 finance-gate 进入成本统计",
+  "lensUpdates": [
+    "ExpenseControlLens"
+  ],
+  "downstreamWorkItems": [
+    "Finance.ExpenseLink"
+  ],
+  "failureRoutes": [
+    "Dorm.ExceptionResolve",
+    "append_only_correction_work_item",
+    "Finance.CorrectionApply"
+  ],
+  "definitionId": "definition.finance.expenseApprove.v1",
+  "commandType": "Expense.Approve",
+  "allowedFacts": [
+    "Expense",
+    "EvidenceObject",
+    "DomainEvent",
+    "CommandSubmission",
+    "LedgerEntry",
+    "MoneyBasis"
+  ],
+  "forbiddenFacts": [
+    "Room",
+    "Bed",
+    "Stay",
+    "RoomInspection",
+    "ServiceTask"
+  ],
+  "admissionPolicyRef": "payment_confirmation",
+  "evidencePolicyRef": "evidence.finance-expense-approve.v1",
+  "ledgerPolicyRef": "ledger.expense.approved_cost.v1",
+  "dbTableGroups": [
+    "operations-runtime",
+    "evidence-audit",
+    "projection-read-side",
+    "finance-ledger"
+  ],
+  "tests": [
+    "tests/WorkOS.RuntimeIntegrationTests",
+    "tests/WorkOS.RuntimeContractTests",
+    "apps/mobile/src/__tests__"
+  ]
+}

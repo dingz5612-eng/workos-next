@@ -123,7 +123,7 @@
   "dormitoryOamClosure": {
     "version": "oam.dormitory.period-analytics-closure.v1",
     "derivedFrom": [
-      "docs/business/dormitory/dormitory-operating-kernel.json",
+      "docs/business/domains/dormitory/dormitory-operating-kernel.json",
       "docs/business/dormitory/metric-formula-contract.yml",
       "docs/business/dormitory/lens-map.yml"
     ],

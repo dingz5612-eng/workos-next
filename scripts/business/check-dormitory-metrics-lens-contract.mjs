@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 const root = process.cwd();
-const kernelPath = "docs/business/dormitory/dormitory-operating-kernel.json";
+const kernelPath = "docs/business/domains/dormitory/dormitory-operating-kernel.json";
 const formulaPath = "docs/business/dormitory/metric-formula-contract.yml";
 const lensPath = "docs/business/dormitory/lens-map.yml";
 const globalLensPath = "docs/contracts/accommodation-lens-contract.json";

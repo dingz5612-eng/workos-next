@@ -6,10 +6,10 @@ const manifestPath = "docs/oam/system-derived-contracts.json";
 const kernelPath = "docs/oam/system-operating-kernel.json";
 const graphPath = "docs/oam/oam-kernel-graph.json";
 const resultPath = "artifacts/oam/checks/derived-contract-consistency-result.json";
-const dormitoryWorkItemDerivedTargets = fs.existsSync(path.join(root, "docs/business/dormitory/workitems"))
-  ? fs.readdirSync(path.join(root, "docs/business/dormitory/workitems"))
+const dormitoryWorkItemDerivedTargets = fs.existsSync(path.join(root, "docs/business/domains/dormitory/workitems"))
+  ? fs.readdirSync(path.join(root, "docs/business/domains/dormitory/workitems"))
     .filter((file) => file.endsWith(".json"))
-    .map((file) => `docs/business/dormitory/workitems/${file}`)
+    .map((file) => `docs/business/domains/dormitory/workitems/${file}`)
     .sort()
   : [];
 
@@ -37,14 +37,16 @@ const requiredTargets = [
   "docs/business/dormitory/workitem-sla.yml",
   "docs/business/dormitory/workitem-raci.yml",
   "docs/business/dormitory/go-no-go.yml",
-  "docs/business/dormitory/dormitory-operating-kernel.json",
-  "docs/business/dormitory/handoff-contract.json",
-  "docs/business/dormitory/dormitory-release-train.yml",
-  "docs/business/dormitory/dormitory-pilot-scenario-pack.yml",
-  "docs/business/dormitory/dormitory-seed-data-pack.json",
-  "docs/business/dormitory/dormitory-observability-contract.json",
-  "docs/business/dormitory/dormitory-operator-playbook.md",
-  "docs/business/dormitory/dormitory-pilot-go-no-go.json",
+  "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+  "docs/business/domains/dormitory/handoff-contract.json",
+  "docs/business/domains/dormitory/dormitory-release-train.yml",
+  "docs/business/domains/dormitory/dormitory-pilot-scenario-pack.yml",
+  "docs/business/domains/dormitory/dormitory-seed-data-pack.json",
+  "docs/business/domains/dormitory/dormitory-observability-contract.json",
+  "docs/business/domains/dormitory/dormitory-operator-playbook.md",
+  "docs/business/domains/dormitory/dormitory-pilot-go-no-go.json",
+  "docs/oam/system-change-governance-contract.json",
+  "docs/oam/iteration-kernel.json",
   ...dormitoryWorkItemDerivedTargets
 ];
 const violations = [];

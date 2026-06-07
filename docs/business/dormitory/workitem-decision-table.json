@@ -3,7 +3,7 @@
   "status": "derived",
   "domain": "dormitory",
   "derivedFrom": [
-    "docs/business/dormitory/dormitory-operating-kernel.json"
+    "docs/business/domains/dormitory/dormitory-operating-kernel.json"
   ],
   "generatedBy": "scripts/business/generate-dormitory-derived-contracts.mjs",
   "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
@@ -12,7 +12,7 @@
   "productionAllowed": false,
   "currentCatalogPolicy": {
     "catalogKeepsOnly": "currentExecutableWorkItem",
-    "canonicalSource": "docs/business/dormitory/dormitory-operating-kernel.json",
+    "canonicalSource": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
     "oldSevenOrTwentyFourDenied": true
   },
   "decisions": [

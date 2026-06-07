@@ -8,6 +8,8 @@
   "responsibilityMatrix": "docs/contracts/oam-responsibility-boundary-matrix.json",
   "engineeringLedger": "docs/oam/current-engineering-ledger.json",
   "graph": "docs/oam/oam-kernel-graph.json",
+  "changeGovernance": "docs/oam/system-change-governance-contract.json",
+  "iterationKernel": "docs/oam/iteration-kernel.json",
   "derivedContracts": "docs/oam/system-derived-contracts.json",
   "kernels": [
     {
@@ -45,13 +47,92 @@
       "deletionCondition": "仅当权威入口被新的当前 OAM 入口替换且门禁同步更新时删除。"
     },
     {
+      "kernelId": "kernel.change-governance",
+      "nameZh": "Change Governance Kernel",
+      "owner": "oam-release-owner",
+      "responsibilityZh": "Change Governance Kernel 对所有当前 OAM 变更的入口、编译链、失败修复和发布阻断负责。",
+      "inputs": [
+        "docs/oam/system-change-governance-contract.json",
+        "docs/oam/current-authority-index.json",
+        "docs/oam/oam-kernel-graph.json",
+        "docs/oam/file-lifecycle-policy.json"
+      ],
+      "outputs": [
+        "变更类型清单",
+        "权威编译流程",
+        "fail-closed 规则",
+        "本地总门禁和 CI 接入要求"
+      ],
+      "forbiddenBehaviors": [
+        "不得让变更只停留在说明文档",
+        "不得保留未进图谱和工程总账的当前文件",
+        "不得让 CI 弱于本地总门禁"
+      ],
+      "upstreamAuthorities": [
+        "Authority Kernel",
+        "Engineering Ledger Kernel"
+      ],
+      "downstreamConsumers": [
+        "Iteration Governance Kernel",
+        "Release Control Kernel",
+        "Evidence Kernel"
+      ],
+      "gates": [
+        "scripts/oam/check-system-change-governance.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/checks/system-change-governance-result.json"
+      ],
+      "failureHandling": "缺变更类型、缺流程阶段、缺门禁、缺 CI 接入或缺图谱节点时阻断总门禁。",
+      "deletionCondition": "当系统变更治理被新的当前 OAM 治理合同替换且权威索引、图谱、总账、本地总门禁和 CI 同步时删除。"
+    },
+    {
+      "kernelId": "kernel.iteration-governance",
+      "nameZh": "Iteration Governance Kernel",
+      "owner": "oam-release-owner",
+      "responsibilityZh": "Iteration Governance Kernel 对每一轮 OAM 收敛任务的目标、范围、阶段顺序、失败修复、证据和剩余风险负责。",
+      "inputs": [
+        "docs/oam/iteration-kernel.json",
+        "docs/oam/iteration-kernel.md",
+        "docs/oam/system-change-governance-contract.json"
+      ],
+      "outputs": [
+        "当前迭代目标",
+        "阶段进入和退出条件",
+        "失败修复规则",
+        "证据要求",
+        "下一轮承接规则"
+      ],
+      "forbiddenBehaviors": [
+        "不得带失败进入下一阶段",
+        "不得用远端 CI 绿色替代本地事实",
+        "不得把人读手册提升为当前事实源"
+      ],
+      "upstreamAuthorities": [
+        "Change Governance Kernel",
+        "Authority Kernel"
+      ],
+      "downstreamConsumers": [
+        "Release Control Kernel",
+        "Engineering Ledger Kernel"
+      ],
+      "gates": [
+        "scripts/oam/check-iteration-kernel.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/checks/iteration-kernel-result.json"
+      ],
+      "failureHandling": "缺迭代目标、范围、串行阶段、失败修复规则、证据要求或权威登记时阻断总门禁。",
+      "deletionCondition": "当下一轮当前迭代内核替换本轮且证据根、提交记录、权威入口和门禁同步后删除。"
+    },
+    {
       "kernelId": "kernel.domain",
       "nameZh": "Domain Kernel",
       "owner": "business-contract-owner",
       "responsibilityZh": "Domain Kernel 对当前 OAM 运行链负责。",
       "inputs": [
         "docs/business/business-line-registry.json",
-        "docs/business/dormitory/dormitory-operating-kernel.json"
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json"
       ],
       "outputs": [
         "业务能力",

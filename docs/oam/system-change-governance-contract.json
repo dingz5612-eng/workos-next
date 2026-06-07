@@ -1,0 +1,106 @@
+{
+  "version": "oam.system-change-governance-contract.v1",
+  "status": "authoritative",
+  "architecture": "oam.current",
+  "authorityEntry": "docs/oam/current-authority-index.json",
+  "systemKernel": "docs/oam/system-operating-kernel.json",
+  "oamGraph": "docs/oam/oam-kernel-graph.json",
+  "lifecyclePolicy": "docs/oam/file-lifecycle-policy.json",
+  "engineeringLedger": "docs/oam/current-engineering-ledger.json",
+  "iterationKernel": "docs/oam/iteration-kernel.json",
+  "releaseGate": "scripts/oam/run-control-plane-checks.ps1",
+  "ciWorkflow": ".github/workflows/ci.yml",
+  "currentIterationId": "iteration-oam-authority-compile-20260608",
+  "requiredChangeTypes": [
+    "field",
+    "workItem",
+    "databaseTable",
+    "api",
+    "lens",
+    "metric",
+    "evidenceType",
+    "ledgerPath",
+    "surfaceEntry",
+    "deletedFile",
+    "replacementFile",
+    "derivedContract",
+    "test",
+    "gate"
+  ],
+  "requiredPipelineZh": [
+    "变更识别",
+    "迭代登记",
+    "系统/领域内核",
+    "OAM 图谱",
+    "派生合同",
+    "运行实现",
+    "门禁",
+    "测试",
+    "证据根",
+    "发布"
+  ],
+  "rules": [
+    {
+      "ruleId": "change.must_start_from_current_authority",
+      "severity": "P0",
+      "blocksRelease": true,
+      "descriptionZh": "任何字段、WorkItem、接口、数据库、证据、账务、Lens、指标、Surface 或文件生命周期变更，必须从当前权威索引、系统内核、领域内核或迭代内核登记开始。"
+    },
+    {
+      "ruleId": "change.must_compile_to_graph_and_ledger",
+      "severity": "P0",
+      "blocksRelease": true,
+      "descriptionZh": "所有保留文件必须进入 OAM 图谱和当前工程总账，且声明身份、来源、消费者、门禁、证据和删除条件。"
+    },
+    {
+      "ruleId": "change.must_not_leave_parallel_authority",
+      "severity": "P0",
+      "blocksRelease": true,
+      "descriptionZh": "同一事实不得同时由旧架构代号、旧阶段、宿舍旧口径、手册、派生视图和运行代码多头定义。"
+    },
+    {
+      "ruleId": "change.must_fail_closed",
+      "severity": "P0",
+      "blocksRelease": true,
+      "descriptionZh": "缺少准入、Definition、证据、账务 owner、数据库 owner、图谱绑定、门禁或证据根时，默认阻断而不是默认通过。"
+    },
+    {
+      "ruleId": "change.must_remove_unproven_history",
+      "severity": "P0",
+      "blocksRelease": true,
+      "descriptionZh": "无法证明服务当前 OAM 且无法被门禁引用的历史文件、旧路径、旧语义、重复解释和临时产物必须删除。"
+    },
+    {
+      "ruleId": "change.must_bind_local_and_ci_gates",
+      "severity": "P0",
+      "blocksRelease": true,
+      "descriptionZh": "新增权威、内核、合同、检查器和证据规则必须同时进入本地总门禁和 CI，CI 不得弱于本地总门禁。"
+    }
+  ],
+  "requiredGates": [
+    "scripts/oam/check-system-change-governance.mjs",
+    "scripts/oam/check-iteration-kernel.mjs",
+    "scripts/oam/check-current-authority-index.mjs",
+    "scripts/oam/check-system-operating-kernel.mjs",
+    "scripts/oam/check-oam-kernel-graph.mjs",
+    "scripts/oam/check-file-lifecycle-policy.mjs",
+    "scripts/oam/check-current-engineering-ledger.mjs",
+    "scripts/oam/check-current-evidence-root.mjs"
+  ],
+  "evidence": {
+    "localGateReport": "artifacts/oam/checks/control-plane-gate-results.json",
+    "changeGovernanceReport": "artifacts/oam/checks/system-change-governance-result.json",
+    "iterationKernelReport": "artifacts/oam/checks/iteration-kernel-result.json",
+    "graphReport": "artifacts/oam/checks/oam-kernel-graph-result.json",
+    "ledgerReport": "artifacts/oam/checks/current-engineering-ledger-result.json",
+    "evidenceRoot": "artifacts/oam/evidence/evidence-graph.json",
+    "finalReport": "artifacts/oam/final-report.json"
+  },
+  "failurePolicy": {
+    "defaultDecision": "NO_GO",
+    "failClosed": true,
+    "repairBeforeNextStage": true,
+    "descriptionZh": "任一必跑门禁失败、缺失、未接入、过期、未绑定证据或与 CI 不一致时，本轮不得进入发布。"
+  },
+  "deletionConditionZh": "当当前 OAM 变更治理被新的当前权威治理合同替换，且权威索引、系统内核、图谱、工程总账、本地总门禁、CI 和证据根全部同步后删除。"
+}

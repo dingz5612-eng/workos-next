@@ -8,6 +8,8 @@ const graphPath = "docs/oam/oam-kernel-graph.json";
 const resultPath = "artifacts/oam/checks/system-operating-kernel-result.json";
 const requiredKernelIds = new Set([
   "kernel.authority",
+  "kernel.change-governance",
+  "kernel.iteration-governance",
   "kernel.domain",
   "kernel.runtime",
   "kernel.finance-truth",
@@ -46,7 +48,7 @@ if (kernel.architecture !== "oam.current") {
 if (kernel.authorityEntry !== authorityPath) {
   fail("system_kernel_authority_entry", "系统运行内核必须作为 current-authority-index 下级入口。");
 }
-for (const file of [authorityPath, kernel.currentSystemMap, kernel.machineContract, kernel.responsibilityMatrix, kernel.engineeringLedger, graphPath]) {
+for (const file of [authorityPath, kernel.currentSystemMap, kernel.machineContract, kernel.responsibilityMatrix, kernel.engineeringLedger, graphPath, kernel.changeGovernance, kernel.iterationKernel]) {
   requirePath(file, `系统内核引用 ${file}`);
 }
 
