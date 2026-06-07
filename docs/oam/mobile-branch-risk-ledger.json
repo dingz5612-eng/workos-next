@@ -9,15 +9,15 @@
   "globalCoverage": {
     "statements": {
       "total": 4829,
-      "covered": 4187,
-      "missing": 642,
-      "pct": 86.7
+      "covered": 4185,
+      "missing": 644,
+      "pct": 86.66
     },
     "branches": {
       "total": 7407,
-      "covered": 5210,
-      "missing": 2197,
-      "pct": 70.33
+      "covered": 5208,
+      "missing": 2199,
+      "pct": 70.31
     },
     "functions": {
       "total": 1406,
@@ -27,9 +27,9 @@
     },
     "lines": {
       "total": 4005,
-      "covered": 3638,
-      "missing": 367,
-      "pct": 90.83
+      "covered": 3637,
+      "missing": 368,
+      "pct": 90.81
     }
   },
   "stage": {
@@ -67,15 +67,15 @@
     "currentCoverage": {
       "statements": {
         "total": 4829,
-        "covered": 4187,
-        "missing": 642,
-        "pct": 86.7
+        "covered": 4185,
+        "missing": 644,
+        "pct": 86.66
       },
       "branches": {
         "total": 7407,
-        "covered": 5210,
-        "missing": 2197,
-        "pct": 70.33
+        "covered": 5208,
+        "missing": 2199,
+        "pct": 70.31
       },
       "functions": {
         "total": 1406,
@@ -85,9 +85,9 @@
       },
       "lines": {
         "total": 4005,
-        "covered": 3638,
-        "missing": 367,
-        "pct": 90.83
+        "covered": 3637,
+        "missing": 368,
+        "pct": 90.81
       }
     },
     "target": {
@@ -722,15 +722,15 @@
       "coverage": {
         "statements": {
           "total": 190,
-          "covered": 168,
-          "missing": 22,
-          "pct": 88.42
+          "covered": 166,
+          "missing": 24,
+          "pct": 87.36
         },
         "branches": {
           "total": 250,
-          "covered": 181,
-          "missing": 69,
-          "pct": 72.4
+          "covered": 179,
+          "missing": 71,
+          "pct": 71.6
         },
         "functions": {
           "total": 60,
@@ -740,9 +740,9 @@
         },
         "lines": {
           "total": 146,
-          "covered": 137,
-          "missing": 9,
-          "pct": 93.83
+          "covered": 136,
+          "missing": 10,
+          "pct": 93.15
         }
       },
       "policy": {

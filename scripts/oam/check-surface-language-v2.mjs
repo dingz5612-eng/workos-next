@@ -143,7 +143,7 @@ function checkStructuredAdmission() {
   const allowedPreview = evaluateSurfaceAccess("workspace", {
     currentActor: { role: "operator", capabilities: [] },
     currentDevice: { deviceTrustStatus: "trusted", surface: "mobile" },
-    selectedWorkspace: "W-REPAIR-REQUEST",
+    selectedWorkspace: "repair-current-admission-line",
     businessLineAdmission: {
       repair: { surfaceMode: "contract-preview", productionAllowed: false, productionConfirmAllowed: false }
     }
@@ -151,7 +151,7 @@ function checkStructuredAdmission() {
   const blockedPreview = evaluateSurfaceAccess("workspace", {
     currentActor: { role: "operator", capabilities: [] },
     currentDevice: { deviceTrustStatus: "trusted", surface: "mobile" },
-    selectedWorkspace: "W-REPAIR-REQUEST",
+    selectedWorkspace: "repair-current-admission-line",
     businessLineAdmission: {
       repair: { surfaceMode: "contract-preview", productionAllowed: true, productionConfirmAllowed: false }
     }

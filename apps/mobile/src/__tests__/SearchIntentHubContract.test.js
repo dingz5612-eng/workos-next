@@ -91,11 +91,11 @@ describe("OAM Surface search intent hub contract", () => {
   it("keeps create-room intent focused on room setup instead of checkout inspection evidence", () => {
     const ctx = createSurfaceCtx({ view: "search", query: "创建房间" });
     ctx.state.runtimeStore.workspaces.push({
-      id: "W-STAY-CHECKOUT",
+      id: "W-STAY-CHECKOUT-SETTLEMENT",
       domain: "stay",
-      title: { "zh-CN": "我要办理退房" },
-      summary: { "zh-CN": "退房检查" },
-      next: { "zh-CN": "先发起退房并完成房间检查。" },
+      title: { "zh-CN": "我要办理退住结算" },
+      summary: { "zh-CN": "退住查房与结算" },
+      next: { "zh-CN": "先发起退住并完成查房。" },
       cards: [{
         id: "roomInspection",
         status: "notStarted",
@@ -110,7 +110,7 @@ describe("OAM Surface search intent hub contract", () => {
     const text = visibleText(searchView(ctx));
 
     expect(text).toContain("房间床位配置");
-    expect(text).not.toContain("我要办理退房");
+    expect(text).not.toContain("我要办理退住结算");
     expect(text).not.toContain("人工处理记录");
   });
 

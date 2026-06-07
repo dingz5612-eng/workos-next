@@ -271,23 +271,11 @@ const stepContracts = [
     derived: [{ fieldId: "checkoutId", from: ["stayId", "actualCheckOutDate"], surface: "hidden-submit-only" }],
     backend: [{ fieldId: "operatorId", source: "actor-session" }]
   }),
-  contract("Accommodation.Checkout", "roomInspection", ["checkoutStart"], {
+  contract("Accommodation.CheckoutSettlement", "roomInspection", ["checkoutStart"], {
     inherited: ["checkoutId", "stayId", "roomId", "bedId", "depositId"],
     user: ["roomCondition", "bedCondition", "damageFound", "damageDescription", "damageChargeAmount", "cleaningRequired", "inspectionEvidenceId"],
     derived: [],
     backend: [{ fieldId: "operatorId", source: "actor-session" }]
-  }),
-  contract("Accommodation.Checkout", "feeSettlement", ["roomInspection"], {
-    inherited: ["checkoutId", "stayId", "depositId"],
-    user: ["stayFeeAmount", "extraFeeAmount", "depositDeductionAmount", "depositApplyToBalanceAmount", "note"],
-    derived: [{ fieldId: "refundOrSupplementAmount", from: ["stayFeeAmount", "extraFeeAmount", "depositDeductionAmount", "depositApplyToBalanceAmount"] }],
-    backend: [{ fieldId: "operatorId", source: "actor-session" }]
-  }),
-  contract("Accommodation.Checkout", "checkoutFinance", ["feeSettlement"], {
-    inherited: ["checkoutId"],
-    user: ["refundOrSupplementConfirmation", "financeEvidenceId", "note"],
-    derived: [],
-    backend: [{ fieldId: "confirmer", source: "actor-session" }]
   }),
   contract("Accommodation.CheckoutSettlement", "finalBalanceClose", ["roomInspection", "depositSettlement"], {
     inherited: ["checkoutId", "stayId", "depositId", "roomId", "bedId"],

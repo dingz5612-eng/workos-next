@@ -1,4 +1,4 @@
-const checkoutWorkspaceIds = new Set(["W-STAY-CHECKOUT-SETTLEMENT", "W-STAY-CHECKOUT"]);
+const checkoutWorkspaceIds = new Set(["W-STAY-CHECKOUT-SETTLEMENT"]);
 const serviceWorkspaceId = "W-STAY-SERVICE-TASK";
 
 const timelinePhases = [

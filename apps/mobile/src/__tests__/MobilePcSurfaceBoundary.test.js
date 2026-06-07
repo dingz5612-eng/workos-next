@@ -35,7 +35,7 @@ describe("SURFACE-C mobile/PC surface boundary", () => {
   it("uses structured admission fields for preview business-line blocking", () => {
     const ctx = createSurfaceCtx({
       view: "workspace",
-      selectedWorkspace: "W-REPAIR-REQUEST",
+      selectedWorkspace: "repair-current-admission-line",
       businessLineAdmission: {
         repair: {
           surfaceMode: "contract-preview",

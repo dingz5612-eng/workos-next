@@ -44,10 +44,10 @@ const actionByCardId = {
   roomReleaseAfterService: "anchorActionRoomRelease",
   checkoutStart: "anchorActionCheckoutStart",
   roomInspection: "anchorActionRoomInspection",
-  feeSettlement: "anchorActionFeeSettlement",
-  checkoutFinance: "anchorActionCheckoutFinance",
+  depositSettlement: "anchorActionDepositSettlement",
   finalBalanceClose: "anchorActionFinalBalance",
   bedRelease: "anchorActionBedRelease",
+  postCheckoutCleaning: "anchorActionPostCheckoutCleaning",
   expenseRecord: "anchorActionExpense",
   periodScope: "anchorActionPeriodScope",
   periodDiagnosis: "anchorActionPeriodDiagnosis",
@@ -162,7 +162,7 @@ function actionFieldByCardId(cardId = "") {
     deposit: ["depositAssessment", "depositReceipt", "depositConfirmation", "depositDeduction", "depositRefundApproval", "depositRefundPayment", "depositClose"],
     payment: ["paymentReceipt", "paymentConfirmation", "paymentAllocation", "paymentAdjustment"],
     task: ["serviceTaskCreate", "serviceTaskAssign", "serviceTaskComplete", "serviceTaskVerify"],
-    checkout: ["checkoutStart", "roomInspection", "feeSettlement", "checkoutFinance", "finalBalanceClose"],
+    checkout: ["checkoutStart", "roomInspection", "depositSettlement", "finalBalanceClose", "bedRelease", "postCheckoutCleaning"],
     period: ["periodScope", "periodDiagnosis", "periodActionPlan", "periodClose"]
   };
   return Object.entries(groups).find(([, ids]) => ids.includes(cardId))?.[0] || "status";
