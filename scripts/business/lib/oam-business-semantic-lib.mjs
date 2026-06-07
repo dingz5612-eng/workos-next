@@ -5,6 +5,7 @@ export const root = process.cwd();
 export const artifactPath = "artifacts/oam/checks/dormitory-business-semantic-contract-result.json";
 export const requiredScenarioIds = Array.from({ length: 10 }, (_, index) => `dorm-cert-${String(index + 1).padStart(3, "0")}`);
 export const allCheckIds = [
+  "dormitory-execution-kernel",
   "scenario-field-contract",
   "canonical-scenario-map",
   "evidence-coverage-contract",

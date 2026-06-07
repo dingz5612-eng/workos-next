@@ -18,6 +18,7 @@
     "current_runtime_implementation",
     "current_database_asset",
     "current_evidence_asset",
+    "current_engineering_ledger",
     "read_side_allowed_file"
   ],
   "entries": [
@@ -67,6 +68,15 @@
       "notesZh": "P0 发布内核机器账本。"
     },
     {
+      "path": "docs/oam/current-engineering-ledger.json",
+      "identity": "current_engineering_ledger",
+      "owner": "oam-release-owner",
+      "checker": "scripts/oam/check-current-engineering-ledger.mjs",
+      "evidence": "artifacts/oam/checks/current-engineering-ledger-result.json",
+      "currentTruthAllowed": false,
+      "notesZh": "当前保留文件身份、职责、owner、门禁、证据和删除条件总账；只管理工程文件，不替代 OAM 架构权威。"
+    },
+    {
       "path": "docs/contracts/business/oam-business-object-field-registry.json",
       "identity": "current_business_contract",
       "owner": "business-contract-owner",
@@ -112,11 +122,20 @@
       "notesZh": "宿舍当前价值流和业务闭环。"
     },
     {
+      "path": "docs/business/dormitory/workitem-decision-table.json",
+      "identity": "current_business_contract",
+      "owner": "business-contract-owner",
+      "checker": "scripts/business/check-dormitory-execution-kernel.mjs",
+      "evidence": "artifacts/oam/checks/dormitory-business-semantic-contract-result.json",
+      "currentTruthAllowed": true,
+      "notesZh": "宿舍 24 项来源动作裁决表，定义哪些动作可作为当前执行 WorkItem。"
+    },
+    {
       "path": "docs/business/dormitory/workitem-catalog.yml",
       "identity": "current_business_contract",
       "owner": "business-contract-owner",
-      "checker": "scripts/business/check-evidence-coverage-contract.mjs",
-      "evidence": "artifacts/oam/checks/evidence-coverage-contract-result.json",
+      "checker": "scripts/business/check-dormitory-execution-kernel.mjs",
+      "evidence": "artifacts/oam/checks/dormitory-business-semantic-contract-result.json",
       "currentTruthAllowed": true,
       "notesZh": "宿舍当前 WorkItem、owner、证据、SLA 和账务影响目录。"
     },
@@ -160,8 +179,8 @@
       "path": "docs/contracts/definition/workitem-definition-registry.json",
       "identity": "current_business_contract",
       "owner": "definition-kernel-owner",
-      "checker": "scripts/check-admission-kernel.mjs",
-      "evidence": "artifacts/oam/evidence/runtime-proof.json",
+      "checker": "scripts/business/check-dormitory-execution-kernel.mjs",
+      "evidence": "artifacts/oam/checks/dormitory-business-semantic-contract-result.json",
       "currentTruthAllowed": true,
       "notesZh": "WorkItem Definition、allowedFacts、forbiddenFacts、ledgerPolicy 权威。"
     },

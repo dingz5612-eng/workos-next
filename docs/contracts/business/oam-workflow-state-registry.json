@@ -3,181 +3,182 @@
   "status": "authoritative",
   "architecture": "oam.current",
   "definitionRegistry": "docs/contracts/definition/workitem-definition-registry.json",
+  "decisionTable": "docs/business/dormitory/workitem-decision-table.json",
   "admissionMatrix": "docs/contracts/admission/admission-matrix.json",
   "workflows": [
     {
-      "workflowId": "workflow.roomSetup.v1",
-      "sourceCardId": "roomSetup",
-      "initialState": "draft",
-      "allowedStates": ["draft", "ready", "admission_checked", "confirmed", "projecting", "completed", "correction_requested"],
+      "workflowId": "workflow.dormitory.checkinConfirm.v1",
+      "sourceCardId": "cert.checkinConfirm",
+      "initialState": "ready",
+      "allowedStates": ["ready", "admission_checked", "confirmed", "projecting", "completed", "blocked", "correction_requested"],
       "forbiddenStates": ["production_confirmed", "direct_db_written"],
       "actions": [
         {
-          "actionId": "roomSetup.confirm",
+          "actionId": "checkinConfirm.confirm",
           "from": ["ready"],
           "to": "confirmed",
-          "preconditions": ["definition_resolved", "required_fields_present", "idempotency_key_present"],
+          "preconditions": ["definition_resolved", "required_fields_present", "idempotency_key_present", "evidence_refs_present"],
           "admissionMatrixEntry": "dormitory_l1_internal_pilot_observation",
-          "evidenceRequired": ["room_readiness_if_blocked"],
+          "evidenceRequired": ["identity-document", "reservation-acknowledgement", "bed-availability-proof"],
           "visibleRoles": ["operator", "manager"],
           "mobileVisible": true,
           "pcGovernanceAction": false,
           "revokePath": "append_only_correction_work_item",
-          "correctionPath": "room_readiness_or_room_release"
+          "correctionPath": "Dorm.ExceptionResolve"
         }
       ]
     },
     {
-      "workflowId": "workflow.bedSetup.v1",
-      "sourceCardId": "bedSetup",
-      "initialState": "draft",
-      "allowedStates": ["draft", "ready", "admission_checked", "confirmed", "projecting", "completed", "correction_requested"],
-      "forbiddenStates": ["production_confirmed", "direct_db_written"],
+      "workflowId": "workflow.dormitory.depositConfirm.v1",
+      "sourceCardId": "cert.depositConfirm",
+      "initialState": "ready",
+      "allowedStates": ["ready", "admission_checked", "trusted_device_checked", "confirmed", "projecting", "completed", "blocked"],
+      "forbiddenStates": ["deposit_mixed_as_revenue", "untrusted_device_confirmed", "direct_ledger_write"],
       "actions": [
         {
-          "actionId": "bedSetup.confirm",
+          "actionId": "depositConfirmation.confirm",
           "from": ["ready"],
           "to": "confirmed",
-          "preconditions": ["definition_resolved", "room_exists", "bed_count_valid"],
-          "admissionMatrixEntry": "dormitory_l1_internal_pilot_observation",
-          "evidenceRequired": [],
-          "visibleRoles": ["operator", "manager"],
-          "mobileVisible": true,
-          "pcGovernanceAction": false,
-          "revokePath": "append_only_correction_work_item",
-          "correctionPath": "room_readiness_or_room_release"
-        }
-      ]
-    },
-    {
-      "workflowId": "workflow.paymentReceipt.v1",
-      "sourceCardId": "paymentReceipt",
-      "initialState": "draft",
-      "allowedStates": ["draft", "ready", "admission_checked", "confirmed", "projecting", "completed", "correction_requested"],
-      "forbiddenStates": ["deposit_mixed_as_payment", "direct_ledger_write"],
-      "actions": [
-        {
-          "actionId": "paymentReceipt.confirm",
-          "from": ["ready"],
-          "to": "confirmed",
-          "preconditions": ["definition_resolved", "payment_amount_valid", "non_cash_evidence_if_needed"],
-          "admissionMatrixEntry": "dormitory_l1_internal_pilot_observation",
-          "evidenceRequired": ["payment_evidence_for_non_cash"],
+          "preconditions": ["definition_resolved", "finance_capability", "trusted_device", "reason_present", "evidence_refs_present", "admission_decision_ref_present"],
+          "admissionMatrixEntry": "payment_confirmation",
+          "evidenceRequired": ["receipt-proof", "deposit-policy", "admission_decision_ref"],
           "visibleRoles": ["finance", "manager"],
           "mobileVisible": true,
           "pcGovernanceAction": false,
           "revokePath": "ledger_correction_request",
-          "correctionPath": "ledgerCorrectionApply"
+          "correctionPath": "Finance.CorrectionApply"
         }
       ]
     },
     {
-      "workflowId": "workflow.paymentConfirmation.v1",
-      "sourceCardId": "paymentConfirmation",
+      "workflowId": "workflow.dormitory.paymentConfirm.v1",
+      "sourceCardId": "cert.paymentConfirm",
       "initialState": "ready",
       "allowedStates": ["ready", "admission_checked", "trusted_device_checked", "confirmed", "projecting", "completed", "blocked"],
-      "forbiddenStates": ["production_confirmed", "untrusted_device_confirmed", "direct_ledger_write"],
+      "forbiddenStates": ["deposit_mixed_as_payment", "untrusted_device_confirmed", "direct_ledger_write"],
       "actions": [
         {
           "actionId": "paymentConfirmation.confirm",
           "from": ["ready"],
           "to": "confirmed",
-          "preconditions": ["finance_capability", "trusted_device", "reason_present", "evidence_refs_present", "admission_decision_ref_present"],
+          "preconditions": ["definition_resolved", "finance_capability", "trusted_device", "reason_present", "evidence_refs_present", "admission_decision_ref_present"],
           "admissionMatrixEntry": "payment_confirmation",
-          "evidenceRequired": ["payment_evidence", "admission_decision_ref"],
+          "evidenceRequired": ["payment-receipt", "cashier-review", "admission_decision_ref"],
           "visibleRoles": ["finance", "manager"],
           "mobileVisible": true,
           "pcGovernanceAction": false,
           "revokePath": "ledger_correction_request",
-          "correctionPath": "ledgerCorrectionApply"
+          "correctionPath": "Finance.CorrectionApply"
         }
       ]
     },
     {
-      "workflowId": "workflow.depositRefund.v1",
-      "sourceCardId": "depositRefundPayment",
+      "workflowId": "workflow.dormitory.roomReadinessCheck.v1",
+      "sourceCardId": "cert.roomReadinessCheck",
+      "initialState": "ready",
+      "allowedStates": ["ready", "admission_checked", "confirmed", "projecting", "completed", "blocked", "rework_requested"],
+      "forbiddenStates": ["availability_released_without_verification", "direct_db_written"],
+      "actions": [
+        {
+          "actionId": "roomReadinessCheck.confirm",
+          "from": ["ready"],
+          "to": "confirmed",
+          "preconditions": ["definition_resolved", "task_object_fixed", "evidence_refs_present", "manager_or_housekeeping_role"],
+          "admissionMatrixEntry": "dormitory_l1_internal_pilot_observation",
+          "evidenceRequired": ["completion-photo", "verification-check"],
+          "visibleRoles": ["housekeeping", "manager"],
+          "mobileVisible": true,
+          "pcGovernanceAction": false,
+          "revokePath": "rework_work_item",
+          "correctionPath": "Dorm.ExceptionResolve"
+        }
+      ]
+    },
+    {
+      "workflowId": "workflow.dormitory.refundApprove.v1",
+      "sourceCardId": "cert.refundApprove",
       "initialState": "ready",
       "allowedStates": ["ready", "approval_checked", "trusted_device_checked", "confirmed", "projecting", "completed", "blocked"],
       "forbiddenStates": ["refund_without_balance", "refund_as_expense", "untrusted_device_confirmed"],
       "actions": [
         {
-          "actionId": "depositRefundPayment.confirm",
+          "actionId": "depositRefund.confirm",
           "from": ["approval_checked"],
           "to": "confirmed",
-          "preconditions": ["finance_capability", "trusted_device", "refund_balance_valid", "reason_present", "evidence_refs_present"],
+          "preconditions": ["definition_resolved", "finance_capability", "trusted_device", "refund_balance_valid", "reason_present", "evidence_refs_present", "admission_decision_ref_present"],
           "admissionMatrixEntry": "deposit_refund",
-          "evidenceRequired": ["approval_evidence", "payment_evidence", "admission_decision_ref"],
+          "evidenceRequired": ["room-inspection", "settlement-review", "refund-approval", "admission_decision_ref"],
           "visibleRoles": ["finance", "manager"],
           "mobileVisible": true,
           "pcGovernanceAction": true,
           "revokePath": "ledger_correction_request",
-          "correctionPath": "ledgerCorrectionApply"
+          "correctionPath": "Finance.CorrectionApply"
         }
       ]
     },
     {
-      "workflowId": "workflow.serviceTask.v1",
-      "sourceCardId": "roomReadiness",
-      "initialState": "draft",
-      "allowedStates": ["draft", "assigned", "in_progress", "completed", "verified", "rework_requested", "availability_release_requested"],
-      "forbiddenStates": ["object_reselected_after_create", "availability_released_without_verification"],
-      "actions": [
-        {
-          "actionId": "serviceTask.verify",
-          "from": ["completed"],
-          "to": "verified",
-          "preconditions": ["task_object_fixed", "evidence_refs_present", "manager_or_housekeeping_role"],
-          "admissionMatrixEntry": "dormitory_l1_internal_pilot_observation",
-          "evidenceRequired": ["completion_photo_or_note"],
-          "visibleRoles": ["housekeeping", "manager"],
-          "mobileVisible": true,
-          "pcGovernanceAction": false,
-          "revokePath": "rework_work_item",
-          "correctionPath": "roomReadiness"
-        }
-      ]
-    },
-    {
-      "workflowId": "workflow.periodClose.v1",
-      "sourceCardId": "periodClose",
-      "initialState": "ready",
-      "allowedStates": ["ready", "scope_checked", "finance_checked", "operations_checked", "business_signed", "closed", "blocked"],
-      "forbiddenStates": ["closed_without_snapshot", "production_closed"],
-      "actions": [
-        {
-          "actionId": "periodClose.confirm",
-          "from": ["business_signed"],
-          "to": "closed",
-          "preconditions": ["period_scope_present", "finance_snapshot_present", "trusted_device", "reason_present", "evidence_refs_present", "business_signoff_present"],
-          "admissionMatrixEntry": "period_close",
-          "evidenceRequired": ["frozen_snapshot", "business_signoff", "admission_decision_ref"],
-          "visibleRoles": ["manager", "releaseowner"],
-          "mobileVisible": false,
-          "pcGovernanceAction": true,
-          "revokePath": "append_only_period_correction",
-          "correctionPath": "ledgerCorrectionApply"
-        }
-      ]
-    },
-    {
-      "workflowId": "workflow.ledgerCorrectionApply.v1",
-      "sourceCardId": "ledgerCorrectionApply",
+      "workflowId": "workflow.finance.correctionApply.v1",
+      "sourceCardId": "cert.financeCorrectionApply",
       "initialState": "requested",
       "allowedStates": ["requested", "reviewed", "approved", "trusted_device_checked", "applied", "rejected", "audited"],
-      "forbiddenStates": ["old_entry_updated", "old_entry_deleted", "applied_without_approval"],
+      "forbiddenStates": ["entry_updated_in_place", "entry_deleted_in_place", "applied_without_approval"],
       "actions": [
         {
           "actionId": "ledgerCorrectionApply.confirm",
           "from": ["approved"],
           "to": "applied",
-          "preconditions": ["finance_correction_capability", "trusted_device", "reason_present", "evidence_refs_present", "before_after_snapshot", "approval_chain_present", "admission_decision_ref_present"],
+          "preconditions": ["definition_resolved", "finance_correction_capability", "trusted_device", "reason_present", "evidence_refs_present", "before_after_snapshot", "approval_chain_present", "admission_decision_ref_present"],
           "admissionMatrixEntry": "payment_confirmation",
-          "evidenceRequired": ["before_snapshot", "after_snapshot", "approval_chain", "admission_decision_ref"],
+          "evidenceRequired": ["bank-import-row", "correction-approval", "admission_decision_ref"],
           "visibleRoles": ["finance", "releaseowner"],
           "mobileVisible": false,
           "pcGovernanceAction": true,
           "revokePath": "new_compensation_correction",
           "correctionPath": "append_only_ledger_reversal"
+        }
+      ]
+    },
+    {
+      "workflowId": "workflow.dormitory.periodReview.v1",
+      "sourceCardId": "cert.periodReview",
+      "initialState": "ready",
+      "allowedStates": ["ready", "scope_checked", "finance_checked", "operations_checked", "business_signed", "confirmed", "blocked"],
+      "forbiddenStates": ["confirmed_without_pack", "production_closed"],
+      "actions": [
+        {
+          "actionId": "periodReview.confirm",
+          "from": ["business_signed"],
+          "to": "confirmed",
+          "preconditions": ["definition_resolved", "period_scope_present", "finance_snapshot_present", "reason_present", "evidence_refs_present", "business_signoff_present"],
+          "admissionMatrixEntry": "dormitory_l1_internal_pilot_observation",
+          "evidenceRequired": ["period-review-pack"],
+          "visibleRoles": ["manager", "releaseowner"],
+          "mobileVisible": false,
+          "pcGovernanceAction": true,
+          "revokePath": "append_only_period_correction",
+          "correctionPath": "Finance.CorrectionApply"
+        }
+      ]
+    },
+    {
+      "workflowId": "workflow.dormitory.exceptionResolve.v1",
+      "sourceCardId": "cert.exceptionResolve",
+      "initialState": "requested",
+      "allowedStates": ["requested", "reviewed", "resolved", "rejected", "audited"],
+      "forbiddenStates": ["business_fact_written", "ledger_fact_written"],
+      "actions": [
+        {
+          "actionId": "exceptionResolve.confirm",
+          "from": ["reviewed"],
+          "to": "resolved",
+          "preconditions": ["definition_resolved", "rejection_trace_present", "evidence_refs_present", "owner_role_present"],
+          "admissionMatrixEntry": "dormitory_l1_internal_pilot_observation",
+          "evidenceRequired": ["exception-audit"],
+          "visibleRoles": ["operator", "manager"],
+          "mobileVisible": true,
+          "pcGovernanceAction": true,
+          "revokePath": "audit_only_reopen",
+          "correctionPath": "Finance.CorrectionApply"
         }
       ]
     }
@@ -186,6 +187,6 @@
     "Every workflow sourceCardId must exist in WorkItem Definition Registry.",
     "Every action must reference an Admission Matrix entry.",
     "High-risk finance and correction actions must require trusted device, reason, evidence, and admission decision ref.",
-    "Correction paths are append-only and never update old facts in place."
+    "Correction paths are append-only and never update prior facts in place."
   ]
 }

@@ -66,6 +66,7 @@ jobs:
           node scripts/oam/check-p0-rule-ledger.mjs --self-test
           node scripts/oam/check-p0-rule-ledger.mjs
           node scripts/oam/check-current-authority-index.mjs
+          node scripts/oam/check-current-engineering-ledger.mjs
           node scripts/oam/check-oam-responsibility-boundary-matrix.mjs
           node scripts/oam/check-business-object-field-registry.mjs
           node scripts/oam/check-workflow-state-registry.mjs
@@ -79,6 +80,7 @@ jobs:
         run: |
           node scripts/check-api-boundaries.mjs --self-test
           node scripts/check-api-boundaries.mjs
+          node scripts/oam/check-operation-identity-boundary.mjs
           node scripts/check-runtime-write-paths.mjs --self-test
           node scripts/check-runtime-write-paths.mjs
 
@@ -118,6 +120,7 @@ jobs:
 
       - name: Validate business semantic contracts
         run: |
+          node scripts/business/check-dormitory-execution-kernel.mjs
           node scripts/business/check-scenario-field-contract.mjs
           node scripts/business/check-canonical-scenario-map.mjs
           node scripts/business/check-evidence-coverage-contract.mjs

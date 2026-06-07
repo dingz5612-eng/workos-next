@@ -31,7 +31,7 @@
     },
     {
       "basisType": "deposit_deduction",
-      "workItemTypes": ["Dorm.DepositDeduct", "Dorm.CheckoutSettlement"],
+      "workItemTypes": ["Dorm.RefundApprove"],
       "debit": {"accountType":"liability.deposit","semantic":"扣减押金负债"},
       "credit": {"accountType":"receivable.stay","semantic":"抵扣退住结算应收"},
       "requiredRefs": ["depositAccountId", "deductionBasisId", "ledgerTransactionId", "commandSubmissionId"],

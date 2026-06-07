@@ -43,7 +43,7 @@ const gateSummary = buildGateSummary();
 const testSummary = buildTestSummary();
 const coverageSummary = buildCoverageSummary();
 const mobileBranchRiskKernel = buildMobileBranchRiskKernel();
-const preservedEvidenceGraph = preserveCurrentBrowserEvidenceGraph(readJsonIfExists("artifacts/oam/evidence/evidence-graph.json"));
+const realBrowserEvidence = buildRealBrowserEvidence();
 const unresolvedP0 = p0Ledger.filter((item) => item.status !== "passed");
 const releaseReadiness = buildReleaseReadiness();
 const finalDecision = buildFinalDecision();
@@ -313,14 +313,18 @@ const evidenceGraph = {
   testSummary,
   coverageSummary,
   mobileBranchRiskKernel,
-  realBrowserEvidence: preservedEvidenceGraph.summary,
+  realBrowserEvidence: realBrowserEvidence.summary,
+  evidenceRootWriter: {
+    writer: "scripts/oam/generate-current-evidence-root.mjs",
+    browserAuditScriptsWriteFinalGraph: false
+  },
   controlPlaneGateResult,
   releaseReadiness,
   finalDecision,
   finalGoNoGo,
   nextStageAllowed: finalReport.nextStageAllowed,
-  nodes: preservedEvidenceGraph.nodes,
-  edges: preservedEvidenceGraph.edges
+  nodes: realBrowserEvidence.nodes,
+  edges: realBrowserEvidence.edges
 };
 addEvidence("artifacts/oam/evidence/evidence-graph.json", evidenceGraph);
 addTextEvidence("artifacts/oam/evidence/execution-log.jsonl", executionLogText(digestPlaceholder));
@@ -478,30 +482,64 @@ function buildGateSummary() {
 function requiredGateCommands() {
   return [
     "node scripts/oam/check-current-oam.mjs",
+    "node scripts/oam/check-p0-rule-ledger.mjs --self-test",
     "node scripts/oam/check-p0-rule-ledger.mjs",
+    "node scripts/oam/check-current-authority-index.mjs",
+    "node scripts/oam/check-current-engineering-ledger.mjs",
+    "node scripts/oam/check-oam-responsibility-boundary-matrix.mjs",
+    "node scripts/oam/check-business-object-field-registry.mjs",
+    "node scripts/oam/check-workflow-state-registry.mjs",
+    "node scripts/oam/check-db-ownership-map.mjs",
+    "node scripts/oam/check-evidence-contract-refs.mjs",
+    "node scripts/oam/check-runtime-governance-v2.mjs",
+    "node scripts/validate-contracts.mjs",
     "node scripts/check-rule-authority.mjs",
+    "node scripts/check-local-path-references.mjs --self-test",
     "node scripts/check-local-path-references.mjs",
+    "node scripts/check-api-boundaries.mjs --self-test",
     "node scripts/check-api-boundaries.mjs",
+    "node scripts/oam/check-operation-identity-boundary.mjs",
+    "node scripts/check-runtime-write-paths.mjs --self-test",
     "node scripts/check-runtime-write-paths.mjs",
-    "node scripts/check-business-line-admission.mjs",
+    "node scripts/check-admission-kernel.mjs --self-test",
     "node scripts/check-admission-kernel.mjs",
+    "node scripts/check-business-line-admission.mjs",
+    "node scripts/check-account-actor-kernel.mjs --self-test",
     "node scripts/check-account-actor-kernel.mjs",
     "node scripts/check-language-kernel.mjs",
+    "node scripts/oam/check-surface-language-v2.mjs",
+    "node scripts/check-search-kernel.mjs --self-test",
     "node scripts/check-search-kernel.mjs",
+    "node scripts/check-surface-contract.mjs",
+    "node scripts/check-experience-contract.mjs",
+    "node scripts/trust/check-trust-boundary-kernel.mjs",
+    "node scripts/check-policy-as-code.mjs --self-test",
+    "node scripts/check-policy-as-code.mjs",
+    "node scripts/check-domain-packs.mjs --self-test",
+    "node scripts/check-domain-packs.mjs",
+    "node scripts/check-truth-owners.mjs --self-test",
     "node scripts/check-truth-owners.mjs",
+    "node scripts/check-finance-truth.mjs --self-test",
     "node scripts/check-finance-truth.mjs",
     "node scripts/check-ledger-semantic-rules.mjs",
     "node scripts/finance/check-finance-semantic-truth.mjs",
-    "node scripts/check-shared-governance-boundary.mjs",
+    "node scripts/check-management-cockpit-boundary.mjs --self-test",
     "node scripts/check-management-cockpit-boundary.mjs",
+    "node scripts/check-shared-governance-boundary.mjs --self-test",
+    "node scripts/check-shared-governance-boundary.mjs",
+    "node scripts/check-dormitory-golden-domain.mjs --self-test",
     "node scripts/check-dormitory-golden-domain.mjs",
+    "node scripts/business/check-dormitory-execution-kernel.mjs",
+    "node scripts/business/check-scenario-field-contract.mjs",
+    "node scripts/business/check-canonical-scenario-map.mjs",
+    "node scripts/business/check-evidence-coverage-contract.mjs",
+    "node scripts/business/check-ledger-posting-contract.mjs",
     "pwsh -NoProfile -ExecutionPolicy Bypass -File scripts/surface/run-dormitory-real-browser-audits.ps1",
     "node scripts/surface/check-dormitory-l1-browser-e2e-audit.mjs",
     "node scripts/surface/check-dormitory-ten-scenario-real-browser-audit.mjs",
     "node scripts/oam/generate-mobile-branch-risk-ledger.mjs",
     "node scripts/oam/check-mobile-coverage-policy.mjs",
-    "node scripts/oam/check-mobile-critical-branch-scenarios.mjs",
-    "node scripts/validate-contracts.mjs"
+    "node scripts/oam/check-mobile-critical-branch-scenarios.mjs"
   ];
 }
 
@@ -534,25 +572,101 @@ function readControlPlaneGateResult() {
   };
 }
 
-function preserveCurrentBrowserEvidenceGraph(existingGraph) {
-  const currentHead = commitSha;
-  const nodes = (existingGraph?.nodes ?? [])
-    .filter((node) => node?.type === "browser_e2e_evidence")
-    .filter((node) => node.headSha === currentHead)
-    .filter((node) => node.status === "local_passed")
-    .filter((node) => Array.isArray(node.refs) && node.refs.length > 0);
-  const nodeIds = new Set(nodes.map((node) => node.id));
-  const edges = (existingGraph?.edges ?? [])
-    .filter((edge) => nodeIds.has(edge?.from) || nodeIds.has(edge?.to));
+function buildRealBrowserEvidence() {
+  const l1 = readL1BrowserEvidence();
+  const tenScenario = readTenScenarioBrowserEvidence();
+  const nodes = [l1.node, tenScenario.node].filter(Boolean);
+  const edges = [
+    l1.node ? { from: l1.node.id, to: "L1_INTERNAL_PILOT_OBSERVATION", relation: "binds_browser_evidence" } : null,
+    tenScenario.node ? { from: tenScenario.node.id, to: "DORMITORY_TEN_SCENARIO_REAL_BROWSER_AUDIT", relation: "binds_browser_evidence" } : null
+  ].filter(Boolean);
+  const screenshotHashCount = nodes.reduce((total, node) => total + (node.screenshotHashes?.length ?? 0), 0);
+  const status = l1.status === "passed" && tenScenario.status === "passed" ? "passed" : "missing_or_failed";
   return {
     nodes,
     edges,
     summary: {
-      status: nodes.some((node) => node.gate === "DORM-L1-BROWSER-E2E") ? "passed" : "missing",
-      l1BrowserEvidenceNodes: nodes.filter((node) => node.gate === "DORM-L1-BROWSER-E2E").length,
-      screenshotHashCount: nodes.reduce((total, node) => total + (node.screenshotHashes?.length ?? 0), 0),
-      preservedFromExistingGraph: nodes.length > 0
+      status,
+      singleWriter: "scripts/oam/generate-current-evidence-root.mjs",
+      l1,
+      tenScenario,
+      screenshotHashCount
     }
+  };
+}
+
+function readL1BrowserEvidence() {
+  const latestPath = ["artifacts", "oam", "evidence", "dormitory-l1-browser-e2e", "latest-report.json"].join("/");
+  const latest = readJsonIfExists(latestPath);
+  const reportRef = normalizeRepoPath(latest?.report || "");
+  const report = reportRef ? readJsonIfExists(reportRef) : null;
+  const screenshotHashes = (report?.screenshots ?? [])
+    .map((item) => item.sha256)
+    .filter(Boolean);
+  const status = report?.status === "passed" && report?.git?.headSha === commitSha ? "passed" : "missing_or_failed";
+  return {
+    status,
+    report: reportRef || "",
+    runId: report?.runId || "",
+    scenarioCount: report?.scenarios?.length ?? 0,
+    screenshotHashCount: screenshotHashes.length,
+    node: report ? {
+      id: `DORM-L1-BROWSER-E2E-${report.runId || "unknown"}`,
+      type: "browser_e2e_evidence",
+      status,
+      gate: "DORM-L1-BROWSER-E2E",
+      branch: report.git?.branch || branch,
+      headSha: report.git?.headSha || "",
+      ciRunId: report.ciRun?.id || ciRunId,
+      ciRunUrl: report.ciRun?.url || "",
+      scenarioIds: (report.scenarios ?? []).map((scenario) => scenario.scenarioId).filter(Boolean),
+      screenshotHashes,
+      refs: [
+        reportRef,
+        normalizeRepoPath(report.outputs?.markdown || ""),
+        normalizeRepoPath(report.outputs?.screenshotIndex || ""),
+        "scripts/surface/run-dormitory-l1-browser-e2e-audit.mjs",
+        "scripts/surface/check-dormitory-l1-browser-e2e-audit.mjs"
+      ].filter(Boolean)
+    } : null
+  };
+}
+
+function readTenScenarioBrowserEvidence() {
+  const runId = env("WORKOS_TEN_DORM_SCENARIO_RUN_ID") || "ten-dormitory-scenario-real-browser-20260605-post-unified-start";
+  const reportRef = ["artifacts", "oam", "evidence", "dormitory-real-browser", runId, "ten-scenario-real-browser-report.json"].join("/");
+  const report = readJsonIfExists(reportRef);
+  const screenshotHashes = (report?.screenshots ?? [])
+    .map((item) => item.sha256)
+    .filter(Boolean);
+  const status = report?.status === "passed" && report?.git?.headSha === commitSha ? "passed" : "missing_or_failed";
+  return {
+    status,
+    report: report ? reportRef : "",
+    runId: report?.runId || "",
+    scenarioCount: report?.scenarios?.length ?? 0,
+    screenshotHashCount: screenshotHashes.length,
+    node: report ? {
+      id: `DORM-TEN-SCENARIO-REAL-BROWSER-${report.runId || "unknown"}`,
+      type: "browser_e2e_evidence",
+      status,
+      gate: "DORMITORY-TEN-SCENARIO-REAL-BROWSER",
+      branch: report.git?.branch || branch,
+      headSha: report.git?.headSha || "",
+      ciRunId,
+      ciRunUrl: env("GITHUB_SERVER_URL") && env("GITHUB_REPOSITORY") && env("GITHUB_RUN_ID")
+        ? `${env("GITHUB_SERVER_URL")}/${env("GITHUB_REPOSITORY")}/actions/runs/${env("GITHUB_RUN_ID")}`
+        : "",
+      scenarioIds: (report.scenarios ?? []).map((scenario) => scenario.id).filter(Boolean),
+      screenshotHashes,
+      refs: [
+        reportRef,
+        ["artifacts", "oam", "evidence", "dormitory-real-browser", runId, "ten-scenario-real-browser-report.md"].join("/"),
+        ["artifacts", "oam", "evidence", "dormitory-real-browser", runId, "screenshot-index.json"].join("/"),
+        "scripts/surface/run-dormitory-ten-scenario-real-browser-audit.mjs",
+        "scripts/surface/check-dormitory-ten-scenario-real-browser-audit.mjs"
+      ]
+    } : null
   };
 }
 

@@ -68,6 +68,7 @@ if (documents.size === requiredFiles.length) {
   }
 
   checkFinalDecision(finalReport);
+  checkRealBrowserEvidence(graph, finalReport);
 
   if (finalReport.businessProductionStatus !== "BLOCKED") {
     failures.push("Business Production must remain BLOCKED.");
@@ -231,6 +232,43 @@ function checkMobileBranchRiskKernel(graph, finalReport) {
   }
   if (!graph.mobileBranchRiskKernel) {
     failures.push("evidence graph missing mobile branch risk kernel.");
+  }
+}
+
+function checkRealBrowserEvidence(graph, finalReport) {
+  const summary = graph.realBrowserEvidence;
+  if (!summary) {
+    failures.push("evidence graph missing real browser evidence summary.");
+    return;
+  }
+  if (summary.status !== "passed") {
+    failures.push(`real browser evidence summary must be passed, actual: ${summary.status}`);
+  }
+  if (summary.singleWriter !== "scripts/oam/generate-current-evidence-root.mjs") {
+    failures.push("real browser evidence must be written by the current evidence root generator.");
+  }
+  for (const [key, gate] of [
+    ["l1", "DORM-L1-BROWSER-E2E"],
+    ["tenScenario", "DORMITORY-TEN-SCENARIO-REAL-BROWSER"]
+  ]) {
+    const item = summary[key];
+    if (!item) {
+      failures.push(`real browser evidence missing ${key}.`);
+      continue;
+    }
+    if (item.status !== "passed") failures.push(`${key} browser evidence must be passed.`);
+    if (!item.report || !exists(item.report)) failures.push(`${key} browser evidence report is missing: ${item.report || "(empty)"}`);
+    if ((item.scenarioCount ?? 0) <= 0) failures.push(`${key} browser evidence has no scenarios.`);
+    if ((item.screenshotHashCount ?? 0) <= 0) failures.push(`${key} browser evidence has no screenshot hashes.`);
+    const node = (graph.nodes || []).find((candidate) => candidate.gate === gate);
+    if (!node) {
+      failures.push(`evidence graph missing node for ${gate}.`);
+      continue;
+    }
+    if (node.status !== "passed") failures.push(`${gate} node must be passed.`);
+    if (node.headSha !== finalReport.latestCommit) failures.push(`${gate} node commit does not match final report.`);
+    if (!node.screenshotHashes?.length) failures.push(`${gate} node missing screenshot hashes.`);
+    if (!node.refs?.includes(item.report)) failures.push(`${gate} node missing report ref.`);
   }
 }
 

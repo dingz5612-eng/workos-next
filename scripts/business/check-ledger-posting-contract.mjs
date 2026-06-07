@@ -13,15 +13,17 @@ const scannedFiles = [
   "docs/business/finance/money-kernel-rules.yml",
   "docs/business/dormitory/scenario-field-contract.yml",
   "docs/scenarios/dormitory/golden-pilot.yml",
+  "docs/business/dormitory/workitem-decision-table.json",
   "schemas/business/ledger-posting-contract.schema.json"
 ];
 const contract = readJson(scannedFiles[0]);
 const moneyKernel = readJson(scannedFiles[1]);
 const fieldSets = indexBy(readJson(scannedFiles[2]).fieldSets ?? [], "scenarioId");
 const scenarios = readJson(scannedFiles[3]).scenarios ?? [];
+const decisions = indexBy(readJson(scannedFiles[4]).decisions ?? [], "workItemType");
 const postings = indexBy(contract.postings ?? [], "basisType");
 const violations = [
-  ...validateSchemaFile(scannedFiles[4], ["$schema", "$id", "required", "properties"])
+  ...validateSchemaFile(scannedFiles[5], ["$schema", "$id", "required", "properties"])
 ];
 
 requireValue(contract.productionAllowed === false, violations, "ledger.production_allowed", "分录合同不得允许 production。");
@@ -57,6 +59,14 @@ for (const scenario of scenarios.filter((item) => item.moneyCommand && item.scen
 const failureIds = (contract.semanticFailureCases ?? []).map((item) => item.id);
 for (const expected of ["balanced_wrong_account_type", "refund_wrong_deposit_account", "unclear_money_posted_early"]) {
   requireValue(failureIds.includes(expected), violations, "ledger.failure_case_missing", `缺少分录语义失败用例 ${expected}。`, { expected });
+}
+
+for (const posting of contract.postings ?? []) {
+  for (const workItemType of posting.workItemTypes ?? []) {
+    const decision = decisions.get(workItemType);
+    requireValue(Boolean(decision), violations, "ledger.posting_workitem_decision_missing", `${posting.basisType} 引用未裁决动作 ${workItemType}。`, { basisType: posting.basisType, workItemType });
+    requireValue(decision?.keepInDormitoryCatalog === true || decision?.decision === "externalFinanceGovernance", violations, "ledger.posting_non_current_workitem", `${posting.basisType} 不得引用非当前动作 ${workItemType}。`, { basisType: posting.basisType, workItemType });
+  }
 }
 
 failIfViolations(checkId, violations, scannedFiles);

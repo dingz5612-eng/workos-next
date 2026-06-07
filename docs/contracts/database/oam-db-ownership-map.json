@@ -274,11 +274,118 @@
       ]
     }
   ],
+  "executionMappings": [
+    {
+      "businessAction": "Dorm.RoomReadinessCheck",
+      "decision": "currentExecutableWorkItem",
+      "definitionId": "definition.dormitory.roomReadinessCheck.v1",
+      "commandType": "RoomReadiness.Check",
+      "unitOfWork": "OperationsUnitOfWork",
+      "ownerSlice": "Accommodation.ServiceTask",
+      "tableGroups": ["operations-runtime", "maintenance-facts", "evidence-audit", "projection-read-side"],
+      "domainEvent": { "required": true, "owner": "Confirm Runtime", "tableGroup": "operations-runtime" },
+      "ledgerEntry": { "required": false, "policyRef": "ledger.none.v1", "appendOnly": false },
+      "searchProjectionLens": { "search": "Search Kernel", "projection": "Outbox / Projection Kernel", "lens": "room-readiness", "readOnly": true },
+      "tests": ["tests/WorkOS.RuntimeIntegrationTests", "apps/mobile/src/__tests__"]
+    },
+    {
+      "businessAction": "Dorm.CheckinConfirm",
+      "decision": "currentExecutableWorkItem",
+      "definitionId": "definition.dormitory.checkinConfirm.v1",
+      "commandType": "Checkin.Confirm",
+      "unitOfWork": "OperationsUnitOfWork",
+      "ownerSlice": "Accommodation.CheckIn",
+      "tableGroups": ["operations-runtime", "accommodation-facts", "evidence-audit", "projection-read-side"],
+      "domainEvent": { "required": true, "owner": "Confirm Runtime", "tableGroup": "operations-runtime" },
+      "ledgerEntry": { "required": false, "policyRef": "ledger.none.v1", "appendOnly": false },
+      "searchProjectionLens": { "search": "Search Kernel", "projection": "Outbox / Projection Kernel", "lens": "stay-lifecycle", "readOnly": true },
+      "tests": ["tests/WorkOS.RuntimeIntegrationTests", "apps/mobile/src/__tests__"]
+    },
+    {
+      "businessAction": "Dorm.PaymentConfirm",
+      "decision": "currentExecutableWorkItem",
+      "definitionId": "definition.dormitory.paymentConfirm.v1",
+      "commandType": "Payment.Confirm",
+      "unitOfWork": "OperationsUnitOfWork",
+      "ownerSlice": "Accommodation.PaymentLedger",
+      "tableGroups": ["operations-runtime", "finance-ledger", "evidence-audit", "projection-read-side"],
+      "domainEvent": { "required": true, "owner": "Confirm Runtime", "tableGroup": "operations-runtime" },
+      "ledgerEntry": { "required": true, "policyRef": "ledger.payment.balanced_allocation.v1", "appendOnly": true, "tableGroup": "finance-ledger", "mutationPolicy": "no_update_no_delete" },
+      "searchProjectionLens": { "search": "Search Kernel", "projection": "Outbox / Projection Kernel", "lens": "stay-balance", "readOnly": true },
+      "tests": ["tests/WorkOS.RuntimeIntegrationTests", "tests/WorkOS.DatabaseSecurityTests", "apps/mobile/src/__tests__"]
+    },
+    {
+      "businessAction": "Dorm.DepositConfirm",
+      "decision": "currentExecutableWorkItem",
+      "definitionId": "definition.dormitory.depositConfirm.v1",
+      "commandType": "Deposit.Confirm",
+      "unitOfWork": "OperationsUnitOfWork",
+      "ownerSlice": "Accommodation.DepositLedger",
+      "tableGroups": ["operations-runtime", "finance-ledger", "evidence-audit", "projection-read-side"],
+      "domainEvent": { "required": true, "owner": "Confirm Runtime", "tableGroup": "operations-runtime" },
+      "ledgerEntry": { "required": true, "policyRef": "ledger.deposit.liability_only.v1", "appendOnly": true, "tableGroup": "finance-ledger", "mutationPolicy": "no_update_no_delete" },
+      "searchProjectionLens": { "search": "Search Kernel", "projection": "Outbox / Projection Kernel", "lens": "deposit-liability", "readOnly": true },
+      "tests": ["tests/WorkOS.RuntimeIntegrationTests", "tests/WorkOS.DatabaseSecurityTests", "apps/mobile/src/__tests__"]
+    },
+    {
+      "businessAction": "Dorm.RefundApprove",
+      "decision": "currentExecutableWorkItem",
+      "definitionId": "definition.dormitory.refundApprove.v1",
+      "commandType": "Refund.Approve",
+      "unitOfWork": "OperationsUnitOfWork",
+      "ownerSlice": "Accommodation.CheckOutSettlement",
+      "tableGroups": ["operations-runtime", "finance-ledger", "accommodation-facts", "evidence-audit", "projection-read-side"],
+      "domainEvent": { "required": true, "owner": "Confirm Runtime", "tableGroup": "operations-runtime" },
+      "ledgerEntry": { "required": true, "policyRef": "ledger.refund.balanced_liability.v1", "appendOnly": true, "tableGroup": "finance-ledger", "mutationPolicy": "no_update_no_delete" },
+      "searchProjectionLens": { "search": "Search Kernel", "projection": "Outbox / Projection Kernel", "lens": "checkout-queue", "readOnly": true },
+      "tests": ["tests/WorkOS.RuntimeIntegrationTests", "tests/WorkOS.DatabaseSecurityTests", "apps/mobile/src/__tests__"]
+    },
+    {
+      "businessAction": "Dorm.PeriodReview",
+      "decision": "currentExecutableWorkItem",
+      "definitionId": "definition.dormitory.periodReview.v1",
+      "commandType": "Period.Review",
+      "unitOfWork": "OperationsUnitOfWork",
+      "ownerSlice": "Accommodation.PeriodAnalytics",
+      "tableGroups": ["operations-runtime", "accommodation-facts", "control-plane-reports", "evidence-audit", "projection-read-side"],
+      "domainEvent": { "required": true, "owner": "Confirm Runtime", "tableGroup": "operations-runtime" },
+      "ledgerEntry": { "required": false, "policyRef": "ledger.period.snapshot_readonly.v1", "appendOnly": false },
+      "searchProjectionLens": { "search": "Search Kernel", "projection": "Outbox / Projection Kernel", "lens": "period-performance", "readOnly": true },
+      "tests": ["tests/WorkOS.RuntimeIntegrationTests", "apps/mobile/src/__tests__"]
+    },
+    {
+      "businessAction": "Dorm.ExceptionResolve",
+      "decision": "currentExecutableWorkItem",
+      "definitionId": "definition.dormitory.exceptionResolve.v1",
+      "commandType": "Exception.Resolve",
+      "unitOfWork": "OperationsUnitOfWork",
+      "ownerSlice": "Governance.ExceptionResolution",
+      "tableGroups": ["operations-runtime", "identity-trust", "evidence-audit"],
+      "domainEvent": { "required": false, "owner": "Account / Actor / Device / Session Kernel", "tableGroup": "identity-trust" },
+      "ledgerEntry": { "required": false, "policyRef": "ledger.none.v1", "appendOnly": false },
+      "searchProjectionLens": { "search": "Search Kernel", "projection": "Release Evidence", "lens": "permission-diagnostic", "readOnly": true },
+      "tests": ["tests/WorkOS.RuntimeIntegrationTests", "tests/WorkOS.ReleaseEvidenceTests", "apps/mobile/src/__tests__"]
+    },
+    {
+      "businessAction": "Finance.CorrectionApply",
+      "decision": "externalFinanceGovernance",
+      "definitionId": "definition.finance.correctionApply.v1",
+      "commandType": "FinanceCorrection.Apply",
+      "unitOfWork": "OperationsUnitOfWork",
+      "ownerSlice": "Governance.CorrectionCenter",
+      "tableGroups": ["operations-runtime", "finance-ledger", "finance-reconciliation", "evidence-audit"],
+      "domainEvent": { "required": true, "owner": "Confirm Runtime", "tableGroup": "operations-runtime" },
+      "ledgerEntry": { "required": true, "policyRef": "ledger.correction.append_only.v1", "appendOnly": true, "tableGroup": "finance-ledger", "mutationPolicy": "no_update_no_delete" },
+      "searchProjectionLens": { "search": "Search Kernel", "projection": "Outbox / Projection Kernel", "lens": "correction-center", "readOnly": true },
+      "tests": ["tests/WorkOS.RuntimeIntegrationTests", "tests/WorkOS.DatabaseSecurityTests", "tests/WorkOS.PolicyAsCodeTests"]
+    }
+  ],
   "invariants": [
     "Every migration table must appear exactly once in this map.",
     "Every module manifest database table must exist in the migration set and this map.",
     "Every ledger or append-only table must declare protection and a test binding.",
     "Projection and read-side tables are never business fact write owners.",
-    "Finance ledger tables can only be written by Money/Ledger Kernel or append-only correction policy."
+    "Finance ledger tables can only be written by Money/Ledger Kernel or append-only correction policy.",
+    "Every current executable action must bind Definition, Command, Unit of Work, table groups, DomainEvent or explicit no-event reason, LedgerEntry policy, read-only Search / Projection / Lens, and tests."
   ]
 }

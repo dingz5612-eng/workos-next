@@ -55,6 +55,7 @@ const scannedFiles = [
   "docs/scenarios/dormitory/golden-pilot.yml",
   "docs/business/dormitory/value-streams.yml",
   "docs/business/dormitory/workitem-catalog.yml",
+  "docs/business/dormitory/workitem-decision-table.json",
   "docs/business/dormitory/evidence-policy.yml",
   "docs/business/dormitory/finance-control-rules.yml",
   "docs/business/business-line-registry.json"
@@ -63,11 +64,11 @@ const violations = [];
 const pack = readJson(scannedFiles[0]);
 violations.push(...validatePack(pack));
 violations.push(...validateScenarioPack(readJson(scannedFiles[1])));
-violations.push(...validateValueStreams(readJson(scannedFiles[2])));
-violations.push(...validateWorkItemCatalog(readJson(scannedFiles[3])));
-violations.push(...validateEvidencePolicy(readJson(scannedFiles[4])));
-violations.push(...validateFinanceRules(readJson(scannedFiles[5])));
-violations.push(...validateBusinessLineRegistry(readJson(scannedFiles[6])));
+violations.push(...validateValueStreams(readJson(scannedFiles[2]), readJson(scannedFiles[4])));
+violations.push(...validateWorkItemCatalog(readJson(scannedFiles[3]), readJson(scannedFiles[4])));
+violations.push(...validateEvidencePolicy(readJson(scannedFiles[5]), readJson(scannedFiles[4])));
+violations.push(...validateFinanceRules(readJson(scannedFiles[6])));
+violations.push(...validateBusinessLineRegistry(readJson(scannedFiles[7])));
 
 writeReport(violations, scannedFiles);
 if (violations.length > 0) {
@@ -145,10 +146,11 @@ function validateScenarioPack(document) {
   return violations;
 }
 
-function validateValueStreams(document) {
+function validateValueStreams(document, decisionTable) {
   const violations = [];
   const streams = document.valueStreams ?? [];
   const ids = new Set(streams.map((stream) => stream.id));
+  const decisions = new Map((decisionTable.decisions ?? []).map((item) => [item.workItemType, item]));
   for (const streamId of requiredValueStreams) {
     if (!ids.has(streamId)) {
       violations.push(violation("dormitory.value_stream_missing", `Dormitory value streams missing ${streamId}.`, { streamId }));
@@ -163,6 +165,18 @@ function validateValueStreams(document) {
     if (!Array.isArray(stream.workItemTypes) || stream.workItemTypes.length === 0) {
       violations.push(violation("dormitory.value_stream_workitems_missing", `Value stream ${stream.id} must bind workItemTypes.`, { streamId: stream.id }));
     }
+    for (const workItemType of stream.workItemTypes ?? []) {
+      const decision = decisions.get(workItemType);
+      if (!decision || decision.keepInDormitoryCatalog !== true) {
+        violations.push(violation("dormitory.value_stream_non_current_workitem", `Value stream ${stream.id} workItemTypes can only bind current catalog actions: ${workItemType}.`, { streamId: stream.id, workItemType }));
+      }
+    }
+    for (const workItemType of stream.absorbedActionTypes ?? []) {
+      const decision = decisions.get(workItemType);
+      if (!decision || decision.keepInDormitoryCatalog !== false) {
+        violations.push(violation("dormitory.value_stream_absorbed_invalid", `Value stream ${stream.id} absorbedActionTypes must bind non-catalog decisions: ${workItemType}.`, { streamId: stream.id, workItemType }));
+      }
+    }
   }
   if (document.productionAllowed !== false) {
     violations.push(violation("dormitory.value_stream_production_allowed", "Dormitory value streams must keep productionAllowed=false."));
@@ -170,17 +184,31 @@ function validateValueStreams(document) {
   return violations;
 }
 
-function validateWorkItemCatalog(document) {
+function validateWorkItemCatalog(document, decisionTable) {
   const violations = [];
   const workItems = document.workItems ?? [];
   const byType = new Map(workItems.map((item) => [item.workItemType, item]));
+  const decisions = new Map((decisionTable.decisions ?? []).map((item) => [item.workItemType, item]));
   const scenarioPack = readJson("docs/scenarios/dormitory/golden-pilot.yml");
   for (const scenario of scenarioPack.scenarios ?? []) {
-    if (requiredScenarioIds.includes(scenario.scenarioId) && !byType.has(scenario.workItemType)) {
+    if (!requiredScenarioIds.includes(scenario.scenarioId)) continue;
+    const decision = decisions.get(scenario.workItemType);
+    if (!decision) {
+      violations.push(violation("dormitory.workitem_decision_missing", `Scenario ${scenario.scenarioId} references undecided ${scenario.workItemType}.`, { workItemType: scenario.workItemType, scenarioId: scenario.scenarioId }));
+      continue;
+    }
+    if (decision.keepInDormitoryCatalog && !byType.has(scenario.workItemType)) {
       violations.push(violation("dormitory.workitem_catalog_missing_type", `WorkItem catalog missing ${scenario.workItemType}.`, { workItemType: scenario.workItemType, scenarioId: scenario.scenarioId }));
+    }
+    if (!decision.keepInDormitoryCatalog && decision.decision !== "externalFinanceGovernance") {
+      violations.push(violation("dormitory.scenario_non_executable_workitem", `Scenario ${scenario.scenarioId} references non-current ${scenario.workItemType}.`, { workItemType: scenario.workItemType, scenarioId: scenario.scenarioId }));
     }
   }
   for (const item of workItems) {
+    const decision = decisions.get(item.workItemType);
+    if (!decision || decision.keepInDormitoryCatalog !== true) {
+      violations.push(violation("dormitory.workitem_catalog_non_current", `Catalog item ${item.workItemType} is not allowed by current decision table.`, { workItemType: item.workItemType }));
+    }
     for (const field of ["ownerRole", "SLA", "confirmationPolicy", "riskLevel", "idempotencyScope"]) {
       if (!item[field]) {
         violations.push(violation("dormitory.workitem_catalog_field_missing", `WorkItem ${item.workItemType} missing ${field}.`, { workItemType: item.workItemType, field }));
@@ -196,14 +224,24 @@ function validateWorkItemCatalog(document) {
   return violations;
 }
 
-function validateEvidencePolicy(policy) {
+function validateEvidencePolicy(policy, decisionTable) {
   const violations = [];
+  const decisions = new Map((decisionTable.decisions ?? []).map((item) => [item.workItemType, item]));
   if (policy.runtimeBinding?.loader !== "DormitoryEvidencePolicyLoader" || policy.runtimeBinding?.evaluator !== "EvidencePolicyEvaluator") {
     violations.push(violation("dormitory.evidence_policy_not_runtime_bound", "Evidence policy must bind DormitoryEvidencePolicyLoader and EvidencePolicyEvaluator."));
   }
   for (const flag of ["missingEvidenceBlocksConfirm", "rejectedEvidenceBlocksConfirm", "wrongScopeEvidenceBlocksConfirm"]) {
     if (policy[flag] !== true) {
       violations.push(violation("dormitory.evidence_policy_flag_missing", `Evidence policy must set ${flag}=true.`, { flag }));
+    }
+  }
+  for (const requirement of policy.requirements ?? []) {
+    for (const workItemType of requirement.workItemTypes ?? []) {
+      if (workItemType.startsWith("Gate.")) continue;
+      const decision = decisions.get(workItemType);
+      if (!decision || (!decision.keepInDormitoryCatalog && decision.decision !== "externalFinanceGovernance")) {
+        violations.push(violation("dormitory.evidence_policy_non_current_workitem", `Evidence policy references non-current workItemType ${workItemType}.`, { workItemType }));
+      }
     }
   }
   return violations;

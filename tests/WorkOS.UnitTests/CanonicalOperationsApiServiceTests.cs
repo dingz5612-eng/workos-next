@@ -11,8 +11,25 @@ public sealed class CanonicalOperationsApiServiceTests
     public void operations_confirm_uses_unit_of_work_and_exposes_fact_trace()
     {
         var service = Service(out var runtime, out var store);
+        service.CreateWorkItem(new CreateWorkItemRequest(
+            WorkItemId: "wi-current-room-readiness-unit-of-work",
+            TenantId: "tenant-s3",
+            WorkItemType: "Dorm.RoomReadinessCheck",
+            WorkspaceId: "W-STAY-SERVICE-TASK",
+            CardId: "cert.roomReadinessCheck",
+            OwnerRole: "operator",
+            Payload: new Dictionary<string, string>
+            {
+                ["caseId"] = "case-current-room-readiness",
+                ["cardId"] = "cert.roomReadinessCheck",
+                ["definitionId"] = "definition.dormitory.roomReadinessCheck.v1"
+            }));
 
-        var result = service.ConfirmWorkItem("W-S3:roomSetup", Request("idem-s3"), OperatorActor(), "req-s3");
+        var result = service.ConfirmWorkItem(
+            "wi-current-room-readiness-unit-of-work",
+            Request("idem-current-room-readiness", cardId: "cert.roomReadinessCheck", fieldValues: new Dictionary<string, string>()),
+            OperatorActor(),
+            "req-current-room-readiness");
         var trace = service.GetSubmissionTrace(result.CommandSubmissionId!);
 
         Assert.AreEqual(StatusCodes.Status200OK, result.StatusCode);
@@ -26,7 +43,7 @@ public sealed class CanonicalOperationsApiServiceTests
         Assert.AreEqual(result.ResultEventIds[0], trace?.DomainEventRefs[0]);
         Assert.IsTrue(result.ClientInstruction.ContainsKey("admission"));
         Assert.IsTrue(result.ClientInstruction.ContainsKey("definition"));
-        Assert.AreEqual("operations-runtime-native", result.ClientInstruction["definitionMode"]);
+        Assert.AreEqual("oam-certification-current", result.ClientInstruction["definitionMode"]);
         var admission = (IReadOnlyDictionary<string, object>)result.ClientInstruction["admission"];
         Assert.IsFalse((bool)admission["productionAllowed"]);
         Assert.IsTrue((bool)admission["confirmAllowed"]);

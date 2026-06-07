@@ -3,13 +3,18 @@ import path from "node:path";
 
 const root = process.cwd();
 const mapPath = "docs/contracts/database/oam-db-ownership-map.json";
+const decisionPath = "docs/business/dormitory/workitem-decision-table.json";
+const definitionPath = "docs/contracts/definition/workitem-definition-registry.json";
 const reportPath = "artifacts/oam/checks/db-ownership-map-result.json";
 const allowedModules = new Set(["accommodation", "finance-gate", "identity", "maintenance"]);
 const violations = [];
 
 const ownership = readJson(mapPath);
+const decisions = readJson(decisionPath);
+const definitions = readJson(definitionPath);
 const migrationTables = tablesFromMigrations();
 const mappedTables = new Map();
+const mappedGroups = new Set();
 
 if (ownership.version !== "oam.db-ownership-map.v1" || ownership.status !== "authoritative") {
   fail("db_map_identity_invalid", "数据库归属总图必须声明 oam.db-ownership-map.v1 authoritative。");
@@ -24,6 +29,7 @@ for (const group of ownership.tableGroups ?? []) {
   if (!allowedModules.has(group.module)) {
     fail("db_group_module_unknown", `${group.groupId} 使用未知模块 ${group.module}。`);
   }
+  mappedGroups.add(group.groupId);
   requirePath(group.testFile, `${group.groupId} 测试绑定`);
   if ((group.appendOnly || group.ledgerTable || group.auditTable) && !group.protection) {
     fail("db_group_protection_missing", `${group.groupId} 是追加、账务或审计表组，必须声明 protection。`);
@@ -70,6 +76,8 @@ for (const manifestPath of ownership.moduleManifestRefs ?? []) {
   }
 }
 
+validateExecutionMappings();
+
 writeReport();
 
 if (violations.length) {
@@ -78,6 +86,108 @@ if (violations.length) {
 }
 
 console.log("DB ownership map check: PASS");
+
+function validateExecutionMappings() {
+  if (!Array.isArray(ownership.executionMappings) || ownership.executionMappings.length === 0) {
+    fail("execution_mapping_missing", "数据库归属总图必须包含 executionMappings。");
+    return;
+  }
+
+  const currentDecisions = (decisions.decisions ?? []).filter((item) => item.definitionRequired === true);
+  const definitionsById = new Map((definitions.definitions ?? []).map((item) => [item.definitionId, item]));
+  const mappingByAction = new Map();
+  for (const mapping of ownership.executionMappings) {
+    if (!mapping.businessAction) {
+      fail("execution_mapping_action_missing", "executionMappings 存在缺少 businessAction 的项。");
+      continue;
+    }
+    if (mappingByAction.has(mapping.businessAction)) {
+      fail("execution_mapping_duplicate", `执行映射重复登记：${mapping.businessAction}`);
+    }
+    mappingByAction.set(mapping.businessAction, mapping);
+  }
+
+  if (mappingByAction.size !== currentDecisions.length) {
+    fail("execution_mapping_count_mismatch", `执行映射数量必须等于当前 Definition 必需动作数量：expected=${currentDecisions.length}, actual=${mappingByAction.size}`);
+  }
+
+  for (const decision of currentDecisions) {
+    const mapping = mappingByAction.get(decision.workItemType);
+    const definition = definitionsById.get(decision.definitionId);
+    if (!mapping) {
+      fail("execution_mapping_action_missing", `缺少当前动作执行映射：${decision.workItemType}`);
+      continue;
+    }
+    if (!definition) {
+      fail("execution_mapping_definition_missing", `${decision.workItemType} 找不到 Definition：${decision.definitionId}`);
+      continue;
+    }
+    for (const field of ["businessAction", "decision", "definitionId", "commandType", "unitOfWork", "ownerSlice", "tableGroups", "domainEvent", "ledgerEntry", "searchProjectionLens", "tests"]) {
+      if (!(field in mapping) || mapping[field] === "") {
+        fail("execution_mapping_field_missing", `${decision.workItemType} 执行映射缺少 ${field}。`);
+      }
+    }
+    requireEqual(mapping.decision, decision.decision, decision.workItemType, "decision");
+    requireEqual(mapping.definitionId, decision.definitionId, decision.workItemType, "definitionId");
+    requireEqual(mapping.commandType, decision.commandType, decision.workItemType, "commandType");
+    requireEqual(mapping.ownerSlice, decision.ownerSlice, decision.workItemType, "ownerSlice");
+    requireEqual(mapping.unitOfWork, "OperationsUnitOfWork", decision.workItemType, "unitOfWork");
+    requireEqual(definition.definitionMode, "oam-certification-current", decision.workItemType, "definitionMode");
+    requireEqual(definition.commandType, decision.commandType, decision.workItemType, "definition.commandType");
+    requireEqual(definition.ownerSlice, decision.ownerSlice, decision.workItemType, "definition.ownerSlice");
+    if (!sameSet(mapping.tableGroups ?? [], decision.dbTableGroups ?? [])) {
+      fail("execution_mapping_table_groups_mismatch", `${decision.workItemType} tableGroups 必须与裁决表一致。`);
+    }
+    for (const group of mapping.tableGroups ?? []) {
+      if (!mappedGroups.has(group)) {
+        fail("execution_mapping_group_unknown", `${decision.workItemType} 引用未知表组：${group}`);
+      }
+    }
+    for (const requiredGroup of ["operations-runtime", "evidence-audit"]) {
+      if (!(mapping.tableGroups ?? []).includes(requiredGroup)) {
+        fail("execution_mapping_required_group_missing", `${decision.workItemType} 必须绑定 ${requiredGroup}。`);
+      }
+    }
+
+    const allowedFacts = new Set(definition.allowedFacts ?? []);
+    const requiresDomainEvent = allowedFacts.has("DomainEvent");
+    if (mapping.domainEvent?.required !== requiresDomainEvent) {
+      fail("execution_mapping_domain_event_mismatch", `${decision.workItemType} DomainEvent 要求必须与 Definition allowedFacts 一致。`);
+    }
+    if (mapping.domainEvent?.tableGroup && !mappedGroups.has(mapping.domainEvent.tableGroup)) {
+      fail("execution_mapping_domain_event_group_unknown", `${decision.workItemType} DomainEvent 引用未知表组：${mapping.domainEvent.tableGroup}`);
+    }
+
+    const requiresLedger = allowedFacts.has("LedgerEntry");
+    if (mapping.ledgerEntry?.required !== requiresLedger) {
+      fail("execution_mapping_ledger_required_mismatch", `${decision.workItemType} LedgerEntry 要求必须与 Definition allowedFacts 一致。`);
+    }
+    if (mapping.ledgerEntry?.policyRef !== definition.ledgerPolicyRef) {
+      fail("execution_mapping_ledger_policy_mismatch", `${decision.workItemType} ledgerPolicyRef 必须与 Definition 一致。`);
+    }
+    if (requiresLedger) {
+      if (mapping.ledgerEntry?.appendOnly !== true || mapping.ledgerEntry?.tableGroup !== "finance-ledger") {
+        fail("execution_mapping_ledger_append_only_missing", `${decision.workItemType} LedgerEntry 必须绑定 finance-ledger 追加策略。`);
+      }
+      if (mapping.ledgerEntry?.mutationPolicy !== "no_update_no_delete") {
+        fail("execution_mapping_ledger_mutation_policy_missing", `${decision.workItemType} LedgerEntry 必须禁止 update/delete。`);
+      }
+    }
+
+    if (mapping.searchProjectionLens?.readOnly !== true) {
+      fail("execution_mapping_read_side_not_readonly", `${decision.workItemType} Search / Projection / Lens 必须只读。`);
+    }
+    for (const testPath of mapping.tests ?? []) {
+      requirePath(testPath, `${decision.workItemType} 测试绑定`);
+    }
+  }
+
+  for (const mapping of ownership.executionMappings) {
+    if (!currentDecisions.some((decision) => decision.workItemType === mapping.businessAction)) {
+      fail("execution_mapping_non_current_action", `非当前 Definition 必需动作不得进入执行映射：${mapping.businessAction}`);
+    }
+  }
+}
 
 function tablesFromMigrations() {
   const result = new Map();
@@ -117,12 +227,25 @@ function writeReport() {
     checkedAt: new Date().toISOString(),
     architecture: "oam.current",
     status: violations.length ? "fail" : "pass",
+    tableGroupCount: ownership.tableGroups?.length ?? 0,
+    executionMappingCount: ownership.executionMappings?.length ?? 0,
     violations
   }, null, 2));
 }
 
 function fail(id, message) {
   violations.push({ id, severity: "P0", message });
+}
+
+function requireEqual(actual, expected, scope, field) {
+  if (actual !== expected) {
+    fail("execution_mapping_value_mismatch", `${scope} ${field} 不一致：expected=${expected}, actual=${actual}`);
+  }
+}
+
+function sameSet(left, right) {
+  const normalizeArray = (value) => [...new Set(value)].sort();
+  return JSON.stringify(normalizeArray(left)) === JSON.stringify(normalizeArray(right));
 }
 
 function normalize(file) {

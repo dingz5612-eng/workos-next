@@ -4,7 +4,6 @@ import { execSync } from "node:child_process";
 
 const root = process.cwd();
 const latestPath = path.join(root, "artifacts", "oam", "evidence", "dormitory-l1-browser-e2e", "latest-report.json");
-const graphPath = path.join(root, "artifacts", "oam", "evidence", "evidence-graph.json");
 const requiredScenarios = new Set([
   "dormitory_l1_positive_normal",
   "dormitory_l1_negative_illegal_access",
@@ -15,7 +14,6 @@ const requiredScenarios = new Set([
 const reportRef = process.argv[2] || readLatestReportRef();
 const reportPath = path.join(root, reportRef);
 const report = readJson(reportPath);
-const graph = readJson(graphPath);
 const violations = [];
 const currentGit = {
   branch: command("git branch --show-current"),
@@ -90,22 +88,6 @@ if (report.git?.headSha !== currentGit.headSha) {
 }
 if (normalizeDirtyStatus(report.git?.dirtyStatus) !== normalizeDirtyStatus(currentGit.dirtyStatus)) {
   violations.push("Report dirty status does not match current workspace; rerun the real-browser audit after source changes.");
-}
-
-const node = (graph.nodes || []).find((candidate) =>
-  candidate.type === "browser_e2e_evidence" &&
-  candidate.refs?.includes(normalizeRef(reportRef)));
-if (!node) {
-  violations.push("Evidence Graph missing browser_e2e_evidence node for this report.");
-} else {
-  if (node.headSha !== report.git.headSha) violations.push("Evidence Graph node headSha does not match report.");
-  if (node.ciRunId !== report.ciRun.id) violations.push("Evidence Graph node ciRunId does not match report.");
-  if (!node.screenshotHashes?.length) violations.push("Evidence Graph node missing screenshot hashes.");
-  const edge = (graph.edges || []).find((candidate) =>
-    candidate.from === node.id &&
-    candidate.to === "L1_INTERNAL_PILOT_OBSERVATION" &&
-    candidate.relation === "binds_browser_evidence");
-  if (!edge) violations.push("Evidence Graph missing L1 observation binding edge.");
 }
 
 if (violations.length) {

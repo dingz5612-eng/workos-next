@@ -139,8 +139,8 @@
       "admissionPolicyRef": "admission.prepare_only_or_l1_observation.v1",
       "surfacePolicyRef": "surface.Accommodation.ResourceSetup.roomSetup",
       "productionConfirmAllowed": false,
-      "removalImpact": "Remove after native Resource.RoomSetup handler owns Room facts and system validation evidence.",
-      "definitionMode": "operations-runtime-native"
+      "removalImpact": "Surface input adapter only; current execution identity is controlled by dormitory decision table and canonical scenario map.",
+      "definitionMode": "surface-input-adapter"
     },
     {
       "definitionId": "definition.bedSetup.v1",
@@ -170,8 +170,8 @@
       "admissionPolicyRef": "admission.prepare_only_or_l1_observation.v1",
       "surfacePolicyRef": "surface.Accommodation.ResourceSetup.bedSetup",
       "productionConfirmAllowed": false,
-      "removalImpact": "Remove after native Resource.BedSetup handler owns Bed facts and carries prior room context.",
-      "definitionMode": "operations-runtime-native"
+      "removalImpact": "Surface input adapter only; current execution identity is controlled by dormitory decision table and canonical scenario map.",
+      "definitionMode": "surface-input-adapter"
     },
     {
       "definitionId": "definition.rateSetup.v1",
@@ -201,8 +201,8 @@
       "admissionPolicyRef": "admission.prepare_only_or_l1_observation.v1",
       "surfacePolicyRef": "surface.Accommodation.ResourceSetup.rateSetup",
       "productionConfirmAllowed": false,
-      "removalImpact": "Remove after native Resource.RateSetup handler owns RatePlan facts and verifies room/bed prerequisites.",
-      "definitionMode": "operations-runtime-native"
+      "removalImpact": "Surface input adapter only; current execution identity is controlled by dormitory decision table and canonical scenario map.",
+      "definitionMode": "surface-input-adapter"
     },
     {
       "definitionId": "definition.roomReadiness.v1",
@@ -233,8 +233,8 @@
       "admissionPolicyRef": "admission.prepare_only_or_l1_observation.v1",
       "surfacePolicyRef": "surface.Accommodation.ResourceSetup.roomReadiness",
       "productionConfirmAllowed": false,
-      "removalImpact": "Remove after native Resource.RoomReadiness handler owns readiness and bed-status transitions.",
-      "definitionMode": "operations-runtime-native"
+      "removalImpact": "Surface input adapter only; current execution identity is controlled by dormitory decision table and canonical scenario map.",
+      "definitionMode": "surface-input-adapter"
     },
     {
       "definitionId": "definition.roomBlock.v1",
@@ -264,8 +264,8 @@
       "admissionPolicyRef": "admission.prepare_only_or_l1_observation.v1",
       "surfacePolicyRef": "surface.Accommodation.ResourceSetup.roomBlock",
       "productionConfirmAllowed": false,
-      "removalImpact": "Remove after native Resource.RoomBlock handler enforces bed-status ownership.",
-      "definitionMode": "operations-runtime-native"
+      "removalImpact": "Surface input adapter only; current execution identity is controlled by dormitory decision table and canonical scenario map.",
+      "definitionMode": "surface-input-adapter"
     },
     {
       "definitionId": "definition.roomRelease.v1",
@@ -295,8 +295,8 @@
       "admissionPolicyRef": "admission.prepare_only_or_l1_observation.v1",
       "surfacePolicyRef": "surface.Accommodation.ResourceSetup.roomRelease",
       "productionConfirmAllowed": false,
-      "removalImpact": "Remove after native Resource.RoomRelease handler enforces system validation and bed-status ownership.",
-      "definitionMode": "operations-runtime-native"
+      "removalImpact": "Surface input adapter only; current execution identity is controlled by dormitory decision table and canonical scenario map.",
+      "definitionMode": "surface-input-adapter"
     },
     {
       "definitionId": "definition.depositAssessment.v1",
@@ -328,8 +328,8 @@
       "admissionPolicyRef": "admission.prepare_only_or_l1_observation.v1",
       "surfacePolicyRef": "surface.Accommodation.DepositLedger.depositAssessment",
       "productionConfirmAllowed": false,
-      "removalImpact": "Remove source card route after native Deposit.Assess handler and evidence policy are enforced.",
-      "definitionMode": "operations-runtime-native"
+      "removalImpact": "Surface input adapter only; current execution identity is controlled by dormitory decision table and canonical scenario map.",
+      "definitionMode": "surface-input-adapter"
     },
     {
       "definitionId": "definition.depositReceipt.v1",
@@ -361,8 +361,8 @@
       "admissionPolicyRef": "admission.prepare_only_or_l1_observation.v1",
       "surfacePolicyRef": "surface.Accommodation.DepositLedger.depositReceipt",
       "productionConfirmAllowed": false,
-      "removalImpact": "Remove source depositReceipt card once Deposit.Receive handler owns CommandSubmission output.",
-      "definitionMode": "operations-runtime-native"
+      "removalImpact": "Surface input adapter only; current execution identity is controlled by dormitory decision table and canonical scenario map.",
+      "definitionMode": "surface-input-adapter"
     },
     {
       "definitionId": "definition.depositConfirmation.v1",
@@ -394,8 +394,8 @@
       "admissionPolicyRef": "admission.high_risk_deposit_confirmation.v1",
       "surfacePolicyRef": "surface.Accommodation.DepositLedger.depositConfirmation",
       "productionConfirmAllowed": false,
-      "removalImpact": "Requires native finance capability, device trust, evidence validation, and Deposit.Confirm handler before source route removal.",
-      "definitionMode": "operations-runtime-native"
+      "removalImpact": "Surface input adapter only; current execution identity is controlled by dormitory decision table and canonical scenario map.",
+      "definitionMode": "surface-input-adapter"
     },
     {
       "definitionId": "definition.depositDeduction.v1",
@@ -427,8 +427,8 @@
       "admissionPolicyRef": "admission.prepare_only_or_l1_observation.v1",
       "surfacePolicyRef": "surface.Accommodation.DepositLedger.depositDeduction",
       "productionConfirmAllowed": false,
-      "removalImpact": "Remove after native Deposit.Deduct handler proves deposit refund and deduction invariants.",
-      "definitionMode": "operations-runtime-native"
+      "removalImpact": "Surface input adapter only; current execution identity is controlled by dormitory decision table and canonical scenario map.",
+      "definitionMode": "surface-input-adapter"
     },
     {
       "definitionId": "definition.depositRefundApproval.v1",
@@ -460,8 +460,8 @@
       "admissionPolicyRef": "admission.high_risk_deposit_refund.v1",
       "surfacePolicyRef": "surface.Accommodation.DepositLedger.depositRefundApproval",
       "productionConfirmAllowed": false,
-      "removalImpact": "Requires native refund approval handler and finance approval admission before source route removal.",
-      "definitionMode": "operations-runtime-native"
+      "removalImpact": "Surface input adapter only; current execution identity is controlled by dormitory decision table and canonical scenario map.",
+      "definitionMode": "surface-input-adapter"
     },
     {
       "definitionId": "definition.depositRefundPayment.v1",
@@ -493,8 +493,8 @@
       "admissionPolicyRef": "admission.high_risk_deposit_refund.v1",
       "surfacePolicyRef": "surface.Accommodation.DepositLedger.depositRefundPayment",
       "productionConfirmAllowed": false,
-      "removalImpact": "Requires native refund payment handler, trusted evidence, and append-only ledger output.",
-      "definitionMode": "operations-runtime-native"
+      "removalImpact": "Surface input adapter only; current execution identity is controlled by dormitory decision table and canonical scenario map.",
+      "definitionMode": "surface-input-adapter"
     },
     {
       "definitionId": "definition.depositClose.v1",
@@ -526,8 +526,8 @@
       "admissionPolicyRef": "admission.prepare_only_or_l1_observation.v1",
       "surfacePolicyRef": "surface.Accommodation.DepositLedger.depositClose",
       "productionConfirmAllowed": false,
-      "removalImpact": "Remove once Deposit.Close handler enforces zero/settled liability and event output.",
-      "definitionMode": "operations-runtime-native"
+      "removalImpact": "Surface input adapter only; current execution identity is controlled by dormitory decision table and canonical scenario map.",
+      "definitionMode": "surface-input-adapter"
     },
     {
       "definitionId": "definition.paymentReceipt.v1",
@@ -559,8 +559,8 @@
       "admissionPolicyRef": "admission.prepare_only_or_l1_observation.v1",
       "surfacePolicyRef": "surface.Accommodation.PaymentLedger.paymentReceipt",
       "productionConfirmAllowed": false,
-      "removalImpact": "Remove after native Payment.Receive handler owns payment evidence and ledger output.",
-      "definitionMode": "operations-runtime-native"
+      "removalImpact": "Surface input adapter only; current execution identity is controlled by dormitory decision table and canonical scenario map.",
+      "definitionMode": "surface-input-adapter"
     },
     {
       "definitionId": "definition.paymentConfirmation.v1",
@@ -592,8 +592,8 @@
       "admissionPolicyRef": "admission.high_risk_payment_confirmation.v1",
       "surfacePolicyRef": "surface.Accommodation.PaymentLedger.paymentConfirmation",
       "productionConfirmAllowed": false,
-      "removalImpact": "Requires native finance confirmation handler, trusted device, and evidence policy before source route removal.",
-      "definitionMode": "operations-runtime-native"
+      "removalImpact": "Surface input adapter only; current execution identity is controlled by dormitory decision table and canonical scenario map.",
+      "definitionMode": "surface-input-adapter"
     },
     {
       "definitionId": "definition.paymentAllocation.v1",
@@ -625,8 +625,8 @@
       "admissionPolicyRef": "admission.prepare_only_or_l1_observation.v1",
       "surfacePolicyRef": "surface.Accommodation.PaymentLedger.paymentAllocation",
       "productionConfirmAllowed": false,
-      "removalImpact": "Remove after allocation handler enforces available confirmed balance.",
-      "definitionMode": "operations-runtime-native"
+      "removalImpact": "Surface input adapter only; current execution identity is controlled by dormitory decision table and canonical scenario map.",
+      "definitionMode": "surface-input-adapter"
     },
     {
       "definitionId": "definition.paymentAdjustment.v1",
@@ -658,8 +658,8 @@
       "admissionPolicyRef": "admission.prepare_only_or_l1_observation.v1",
       "surfacePolicyRef": "surface.Accommodation.PaymentLedger.paymentAdjustment",
       "productionConfirmAllowed": false,
-      "removalImpact": "Remove after Payment.Adjust handler emits append-only correction events.",
-      "definitionMode": "operations-runtime-native"
+      "removalImpact": "Surface input adapter only; current execution identity is controlled by dormitory decision table and canonical scenario map.",
+      "definitionMode": "surface-input-adapter"
     },
     {
       "definitionId": "definition.finalBalanceClose.v1",
@@ -691,8 +691,8 @@
       "admissionPolicyRef": "admission.prepare_only_or_l1_observation.v1",
       "surfacePolicyRef": "surface.Accommodation.CheckOutSettlement.finalBalanceClose",
       "productionConfirmAllowed": false,
-      "removalImpact": "Remove after checkout settlement handler reads ledgers and emits close event without direct payment/deposit writes.",
-      "definitionMode": "operations-runtime-native"
+      "removalImpact": "Surface input adapter only; current execution identity is controlled by dormitory decision table and canonical scenario map.",
+      "definitionMode": "surface-input-adapter"
     },
     {
       "definitionId": "definition.bedRelease.v1",
@@ -722,8 +722,8 @@
       "admissionPolicyRef": "admission.prepare_only_or_l1_observation.v1",
       "surfacePolicyRef": "surface.Accommodation.CheckOutSettlement.bedRelease",
       "productionConfirmAllowed": false,
-      "removalImpact": "Remove after process manager requests resource release without checkout directly writing BedStatus.",
-      "definitionMode": "operations-runtime-native"
+      "removalImpact": "Surface input adapter only; current execution identity is controlled by dormitory decision table and canonical scenario map.",
+      "definitionMode": "surface-input-adapter"
     },
     {
       "definitionId": "definition.periodClose.v1",
@@ -753,8 +753,8 @@
       "admissionPolicyRef": "admission.high_risk_period_close.v1",
       "surfacePolicyRef": "surface.Accommodation.PeriodAnalytics.periodClose",
       "productionConfirmAllowed": false,
-      "removalImpact": "Requires native Period.Close handler with frozen snapshot evidence and governance admission.",
-      "definitionMode": "operations-runtime-native"
+      "removalImpact": "Surface input adapter only; current execution identity is controlled by dormitory decision table and canonical scenario map.",
+      "definitionMode": "surface-input-adapter"
     },
     {
       "definitionId": "definition.expenseRecord.v1",
@@ -784,8 +784,8 @@
       "admissionPolicyRef": "admission.prepare_only_or_l1_observation.v1",
       "surfacePolicyRef": "surface.Accommodation.ExpenseLedger.expenseRecord",
       "productionConfirmAllowed": false,
-      "removalImpact": "Remove after Expense.Record handler produces append-only ledger entry with evidence.",
-      "definitionMode": "operations-runtime-native"
+      "removalImpact": "Surface input adapter only; current execution identity is controlled by dormitory decision table and canonical scenario map.",
+      "definitionMode": "surface-input-adapter"
     },
     {
       "definitionId": "definition.ledgerCorrectionApply.v1",
@@ -818,8 +818,8 @@
       "admissionPolicyRef": "admission.high_risk_ledger_correction.v1",
       "surfacePolicyRef": "surface.PCGovernance.ledgerCorrectionApply",
       "productionConfirmAllowed": false,
-      "removalImpact": "Requires native correction command handler, append-only ledger policy, and PC governance admission trace.",
-      "definitionMode": "governance-provisional"
+      "removalImpact": "Surface input adapter only; current execution identity is controlled by dormitory decision table and canonical scenario map.",
+      "definitionMode": "surface-input-adapter"
     },
     {
       "definitionId": "definition.dormitory.checkinConfirm.v1",

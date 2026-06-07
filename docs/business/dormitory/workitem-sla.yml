@@ -1,23 +1,17 @@
 {
   "domainId": "dormitory",
   "version": "oam.dormitory.v1",
+  "decisionTable": "docs/business/dormitory/workitem-decision-table.json",
   "slaPolicy": {
     "defaultEscalation": "escalationOwner",
     "breachFact": "WorkItemSlaBreached",
     "lensOutput": "SlaReliabilityLens"
   },
   "workItemSlaRefs": [
-    {"workItemType":"Dorm.ResourceSetup","SLA":"4h"},
     {"workItemType":"Dorm.RoomReadinessCheck","SLA":"1h"},
-    {"workItemType":"Dorm.BedAvailabilityConfirm","SLA":"30m"},
-    {"workItemType":"Dorm.LeadFollowup","SLA":"30m"},
-    {"workItemType":"Dorm.ReservationConfirm","SLA":"2h"},
-    {"workItemType":"Dorm.CheckinPrepare","SLA":"1h"},
     {"workItemType":"Dorm.CheckinConfirm","SLA":"30m"},
     {"workItemType":"Dorm.PaymentConfirm","SLA":"15m"},
     {"workItemType":"Dorm.DepositConfirm","SLA":"15m"},
-    {"workItemType":"Dorm.RoomInspection","SLA":"2h"},
-    {"workItemType":"Dorm.CheckoutSettlement","SLA":"4h"},
     {"workItemType":"Dorm.RefundApprove","SLA":"1d"},
     {"workItemType":"Dorm.PeriodReview","SLA":"weekly"},
     {"workItemType":"Dorm.ExceptionResolve","SLA":"same day"}

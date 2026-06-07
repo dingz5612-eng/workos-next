@@ -18,7 +18,6 @@ const reportPath = path.join(runDir, "dormitory-l1-browser-e2e-report.json");
 const mdPath = path.join(runDir, "dormitory-l1-browser-e2e-report.md");
 const screenshotIndexPath = path.join(runDir, "screenshot-index.json");
 const latestPath = path.join(artifactRoot, "latest-report.json");
-const graphPath = path.join(root, "artifacts", "oam", "evidence", "evidence-graph.json");
 
 fs.mkdirSync(screenshotDir, { recursive: true });
 
@@ -80,7 +79,6 @@ try {
   report.status = report.violations.length ? "failed" : "passed";
   report.outputs = outputRefs();
   writeArtifacts();
-  updateEvidenceGraph(report);
   if (report.status !== "passed") {
     console.error(`Dormitory L1 browser E2E audit: FAIL (${report.violations.length} violations)`);
     process.exitCode = 1;
@@ -645,45 +643,6 @@ function writeArtifacts() {
   }, null, 2));
 }
 
-function updateEvidenceGraph(currentReport) {
-  const graph = fs.existsSync(graphPath)
-    ? JSON.parse(fs.readFileSync(graphPath, "utf8"))
-    : {
-        schemaVersion: "current-oam.evidence.v1",
-        kind: "evidence-graph",
-        title: "当前 OAM 证据根",
-        nodes: [],
-        edges: []
-      };
-  const nodeId = `DORM-L1-BROWSER-E2E-${runId}`;
-  const screenshotHashes = currentReport.screenshots.map((item) => item.sha256);
-  const node = {
-    id: nodeId,
-    type: "browser_e2e_evidence",
-    status: currentReport.status === "passed" ? "local_passed" : "failed",
-    gate: "DORM-L1-BROWSER-E2E",
-    branch: currentReport.git.branch,
-    headSha: currentReport.git.headSha,
-    ciRunId: currentReport.ciRun?.id || "not_available",
-    ciRunUrl: currentReport.ciRun?.url || "",
-    scenarioIds: currentReport.scenarios.map((scenario) => scenario.scenarioId),
-    screenshotHashes,
-    refs: [
-      rel(reportPath),
-      rel(mdPath),
-      rel(screenshotIndexPath),
-      "scripts/surface/run-dormitory-l1-browser-e2e-audit.mjs",
-      "scripts/surface/check-dormitory-l1-browser-e2e-audit.mjs"
-    ]
-  };
-  graph.nodes = [...(graph.nodes || []).filter((item) => !String(item.id || "").startsWith("DORM-L1-BROWSER-E2E-")), node];
-  graph.edges = [
-    ...(graph.edges || []).filter((item) => !String(item.from || "").startsWith("DORM-L1-BROWSER-E2E-")),
-    { from: nodeId, to: "L1_INTERNAL_PILOT_OBSERVATION", relation: "binds_browser_evidence" }
-  ];
-  fs.writeFileSync(graphPath, JSON.stringify(graph, null, 2));
-}
-
 function markdownReport(currentReport) {
   const lines = [
     "# Dormitory L1 Browser E2E Audit",
@@ -748,8 +707,7 @@ function outputRefs() {
   return {
     report: rel(reportPath),
     markdown: rel(mdPath),
-    screenshotIndex: rel(screenshotIndexPath),
-    evidenceGraph: "artifacts/oam/evidence/evidence-graph.json"
+    screenshotIndex: rel(screenshotIndexPath)
   };
 }
 
