@@ -44,7 +44,7 @@
       "sourceKernelVersion": "oam.system-operating-kernel.v1",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
-      "graphBinding": "file.docs/contracts/business/oam-business-object-field-registry.json",
+      "graphBinding": "object.UnclearMoneyCase",
       "checker": "scripts/oam/check-business-object-field-registry.mjs"
     },
     {
@@ -57,7 +57,7 @@
       "sourceKernelVersion": "oam.system-operating-kernel.v1",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
-      "graphBinding": "file.docs/contracts/business/oam-workflow-state-registry.json",
+      "graphBinding": "state.workflow.finance.correctionApply.v1",
       "checker": "scripts/oam/check-workflow-state-registry.mjs"
     },
     {
@@ -96,7 +96,7 @@
       "sourceKernelVersion": "oam.system-operating-kernel.v1",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
-      "graphBinding": "file.docs/contracts/admission/admission-matrix.json",
+      "graphBinding": "surface-readside.0",
       "checker": "scripts/check-admission-kernel.mjs"
     },
     {
@@ -135,7 +135,20 @@
       "sourceKernelVersion": "oam.system-operating-kernel.v1",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
-      "graphBinding": "file.docs/business/dormitory/evidence-policy.yml",
+      "graphBinding": "surface-readside.1",
+      "checker": "scripts/business/check-dormitory-execution-kernel.mjs"
+    },
+    {
+      "targetPath": "docs/business/dormitory/evidence-requirements.yml",
+      "derivedFrom": [
+        "docs/oam/system-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "sourceKernelVersion": "oam.system-operating-kernel.v1",
+      "sourceGraphVersion": "oam.kernel-graph.v1",
+      "manualEditAllowed": false,
+      "graphBinding": "file.docs/business/dormitory/evidence-requirements.yml",
       "checker": "scripts/business/check-dormitory-execution-kernel.mjs"
     },
     {
@@ -148,7 +161,7 @@
       "sourceKernelVersion": "oam.system-operating-kernel.v1",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
-      "graphBinding": "file.docs/contracts/search/search-contract.json",
+      "graphBinding": "surface-readside.2",
       "checker": "scripts/check-search-kernel.mjs"
     },
     {
@@ -161,7 +174,7 @@
       "sourceKernelVersion": "oam.system-operating-kernel.v1",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
-      "graphBinding": "file.docs/contracts/accommodation-lens-contract.json",
+      "graphBinding": "surface-readside.4",
       "checker": "scripts/oam/check-derived-contract-consistency.mjs"
     },
     {
@@ -174,7 +187,7 @@
       "sourceKernelVersion": "oam.system-operating-kernel.v1",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
-      "graphBinding": "file.docs/surface/surface-contract.yml",
+      "graphBinding": "surface-readside.5",
       "checker": "scripts/oam/check-derived-contract-consistency.mjs"
     },
     {
@@ -239,7 +252,7 @@
       "sourceKernelVersion": "oam.system-operating-kernel.v1",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
-      "graphBinding": "file.docs/business/dormitory/metric-formula-contract.yml",
+      "graphBinding": "lens.metric.turnover.checkout_cycle",
       "checker": "scripts/business/check-dormitory-execution-kernel.mjs"
     },
     {
@@ -293,6 +306,513 @@
       "manualEditAllowed": false,
       "graphBinding": "file.docs/business/dormitory/go-no-go.yml",
       "checker": "scripts/business/check-dormitory-execution-kernel.mjs"
+    },
+    {
+      "targetPath": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "derivedFrom": [
+        "docs/oam/system-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "sourceKernelVersion": "oam.system-operating-kernel.v1",
+      "sourceGraphVersion": "oam.kernel-graph.v1",
+      "manualEditAllowed": false,
+      "graphBinding": "workitem.Finance.ExpenseRecord",
+      "checker": "scripts/business/check-dormitory-derived-contracts.mjs"
+    },
+    {
+      "targetPath": "docs/business/domains/dormitory/handoff-contract.json",
+      "derivedFrom": [
+        "docs/oam/system-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "sourceKernelVersion": "oam.system-operating-kernel.v1",
+      "sourceGraphVersion": "oam.kernel-graph.v1",
+      "manualEditAllowed": false,
+      "graphBinding": "file.docs/business/domains/dormitory/handoff-contract.json",
+      "checker": "scripts/business/check-dormitory-derived-contracts.mjs"
+    },
+    {
+      "targetPath": "docs/business/domains/dormitory/dormitory-release-train.yml",
+      "derivedFrom": [
+        "docs/oam/system-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "sourceKernelVersion": "oam.system-operating-kernel.v1",
+      "sourceGraphVersion": "oam.kernel-graph.v1",
+      "manualEditAllowed": false,
+      "graphBinding": "file.docs/business/domains/dormitory/dormitory-release-train.yml",
+      "checker": "scripts/business/check-dormitory-release-train.mjs"
+    },
+    {
+      "targetPath": "docs/business/domains/dormitory/dormitory-pilot-scenario-pack.yml",
+      "derivedFrom": [
+        "docs/oam/system-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "sourceKernelVersion": "oam.system-operating-kernel.v1",
+      "sourceGraphVersion": "oam.kernel-graph.v1",
+      "manualEditAllowed": false,
+      "graphBinding": "file.docs/business/domains/dormitory/dormitory-pilot-scenario-pack.yml",
+      "checker": "scripts/business/check-dormitory-pilot-scenario-pack.mjs"
+    },
+    {
+      "targetPath": "docs/business/domains/dormitory/dormitory-seed-data-pack.json",
+      "derivedFrom": [
+        "docs/oam/system-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "sourceKernelVersion": "oam.system-operating-kernel.v1",
+      "sourceGraphVersion": "oam.kernel-graph.v1",
+      "manualEditAllowed": false,
+      "graphBinding": "file.docs/business/domains/dormitory/dormitory-seed-data-pack.json",
+      "checker": "scripts/business/check-dormitory-derived-contracts.mjs"
+    },
+    {
+      "targetPath": "docs/business/domains/dormitory/dormitory-observability-contract.json",
+      "derivedFrom": [
+        "docs/oam/system-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "sourceKernelVersion": "oam.system-operating-kernel.v1",
+      "sourceGraphVersion": "oam.kernel-graph.v1",
+      "manualEditAllowed": false,
+      "graphBinding": "file.docs/business/domains/dormitory/dormitory-observability-contract.json",
+      "checker": "scripts/business/check-dormitory-derived-contracts.mjs"
+    },
+    {
+      "targetPath": "docs/business/domains/dormitory/dormitory-operator-playbook.md",
+      "derivedFrom": [
+        "docs/oam/system-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "sourceKernelVersion": "oam.system-operating-kernel.v1",
+      "sourceGraphVersion": "oam.kernel-graph.v1",
+      "manualEditAllowed": false,
+      "graphBinding": "file.docs/business/domains/dormitory/dormitory-operator-playbook.md",
+      "checker": "scripts/business/check-dormitory-derived-contracts.mjs"
+    },
+    {
+      "targetPath": "docs/business/domains/dormitory/dormitory-pilot-go-no-go.json",
+      "derivedFrom": [
+        "docs/oam/system-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "sourceKernelVersion": "oam.system-operating-kernel.v1",
+      "sourceGraphVersion": "oam.kernel-graph.v1",
+      "manualEditAllowed": false,
+      "graphBinding": "file.docs/business/domains/dormitory/dormitory-pilot-go-no-go.json",
+      "checker": "scripts/business/check-dormitory-derived-contracts.mjs"
+    },
+    {
+      "targetPath": "docs/business/domains/dormitory/workitems/dorm-access-credential-issue.json",
+      "derivedFrom": [
+        "docs/oam/system-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "sourceKernelVersion": "oam.system-operating-kernel.v1",
+      "sourceGraphVersion": "oam.kernel-graph.v1",
+      "manualEditAllowed": false,
+      "graphBinding": "file.docs/business/domains/dormitory/workitems/dorm-access-credential-issue.json",
+      "checker": "scripts/business/check-dormitory-derived-contracts.mjs"
+    },
+    {
+      "targetPath": "docs/business/domains/dormitory/workitems/dorm-access-credential-revoke.json",
+      "derivedFrom": [
+        "docs/oam/system-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "sourceKernelVersion": "oam.system-operating-kernel.v1",
+      "sourceGraphVersion": "oam.kernel-graph.v1",
+      "manualEditAllowed": false,
+      "graphBinding": "file.docs/business/domains/dormitory/workitems/dorm-access-credential-revoke.json",
+      "checker": "scripts/business/check-dormitory-derived-contracts.mjs"
+    },
+    {
+      "targetPath": "docs/business/domains/dormitory/workitems/dorm-bed-setup-confirm.json",
+      "derivedFrom": [
+        "docs/oam/system-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "sourceKernelVersion": "oam.system-operating-kernel.v1",
+      "sourceGraphVersion": "oam.kernel-graph.v1",
+      "manualEditAllowed": false,
+      "graphBinding": "file.docs/business/domains/dormitory/workitems/dorm-bed-setup-confirm.json",
+      "checker": "scripts/business/check-dormitory-derived-contracts.mjs"
+    },
+    {
+      "targetPath": "docs/business/domains/dormitory/workitems/dorm-bed-transfer-approve.json",
+      "derivedFrom": [
+        "docs/oam/system-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "sourceKernelVersion": "oam.system-operating-kernel.v1",
+      "sourceGraphVersion": "oam.kernel-graph.v1",
+      "manualEditAllowed": false,
+      "graphBinding": "file.docs/business/domains/dormitory/workitems/dorm-bed-transfer-approve.json",
+      "checker": "scripts/business/check-dormitory-derived-contracts.mjs"
+    },
+    {
+      "targetPath": "docs/business/domains/dormitory/workitems/dorm-checkin-confirm.json",
+      "derivedFrom": [
+        "docs/oam/system-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "sourceKernelVersion": "oam.system-operating-kernel.v1",
+      "sourceGraphVersion": "oam.kernel-graph.v1",
+      "manualEditAllowed": false,
+      "graphBinding": "file.docs/business/domains/dormitory/workitems/dorm-checkin-confirm.json",
+      "checker": "scripts/business/check-dormitory-derived-contracts.mjs"
+    },
+    {
+      "targetPath": "docs/business/domains/dormitory/workitems/dorm-checkout-settlement-approve.json",
+      "derivedFrom": [
+        "docs/oam/system-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "sourceKernelVersion": "oam.system-operating-kernel.v1",
+      "sourceGraphVersion": "oam.kernel-graph.v1",
+      "manualEditAllowed": false,
+      "graphBinding": "file.docs/business/domains/dormitory/workitems/dorm-checkout-settlement-approve.json",
+      "checker": "scripts/business/check-dormitory-derived-contracts.mjs"
+    },
+    {
+      "targetPath": "docs/business/domains/dormitory/workitems/dorm-deposit-confirm.json",
+      "derivedFrom": [
+        "docs/oam/system-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "sourceKernelVersion": "oam.system-operating-kernel.v1",
+      "sourceGraphVersion": "oam.kernel-graph.v1",
+      "manualEditAllowed": false,
+      "graphBinding": "file.docs/business/domains/dormitory/workitems/dorm-deposit-confirm.json",
+      "checker": "scripts/business/check-dormitory-derived-contracts.mjs"
+    },
+    {
+      "targetPath": "docs/business/domains/dormitory/workitems/dorm-exception-resolve.json",
+      "derivedFrom": [
+        "docs/oam/system-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "sourceKernelVersion": "oam.system-operating-kernel.v1",
+      "sourceGraphVersion": "oam.kernel-graph.v1",
+      "manualEditAllowed": false,
+      "graphBinding": "file.docs/business/domains/dormitory/workitems/dorm-exception-resolve.json",
+      "checker": "scripts/business/check-dormitory-derived-contracts.mjs"
+    },
+    {
+      "targetPath": "docs/business/domains/dormitory/workitems/dorm-incident-record.json",
+      "derivedFrom": [
+        "docs/oam/system-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "sourceKernelVersion": "oam.system-operating-kernel.v1",
+      "sourceGraphVersion": "oam.kernel-graph.v1",
+      "manualEditAllowed": false,
+      "graphBinding": "file.docs/business/domains/dormitory/workitems/dorm-incident-record.json",
+      "checker": "scripts/business/check-dormitory-derived-contracts.mjs"
+    },
+    {
+      "targetPath": "docs/business/domains/dormitory/workitems/dorm-lead-capture.json",
+      "derivedFrom": [
+        "docs/oam/system-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "sourceKernelVersion": "oam.system-operating-kernel.v1",
+      "sourceGraphVersion": "oam.kernel-graph.v1",
+      "manualEditAllowed": false,
+      "graphBinding": "file.docs/business/domains/dormitory/workitems/dorm-lead-capture.json",
+      "checker": "scripts/business/check-dormitory-derived-contracts.mjs"
+    },
+    {
+      "targetPath": "docs/business/domains/dormitory/workitems/dorm-payment-confirm.json",
+      "derivedFrom": [
+        "docs/oam/system-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "sourceKernelVersion": "oam.system-operating-kernel.v1",
+      "sourceGraphVersion": "oam.kernel-graph.v1",
+      "manualEditAllowed": false,
+      "graphBinding": "file.docs/business/domains/dormitory/workitems/dorm-payment-confirm.json",
+      "checker": "scripts/business/check-dormitory-derived-contracts.mjs"
+    },
+    {
+      "targetPath": "docs/business/domains/dormitory/workitems/dorm-period-action-plan-execute.json",
+      "derivedFrom": [
+        "docs/oam/system-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "sourceKernelVersion": "oam.system-operating-kernel.v1",
+      "sourceGraphVersion": "oam.kernel-graph.v1",
+      "manualEditAllowed": false,
+      "graphBinding": "file.docs/business/domains/dormitory/workitems/dorm-period-action-plan-execute.json",
+      "checker": "scripts/business/check-dormitory-derived-contracts.mjs"
+    },
+    {
+      "targetPath": "docs/business/domains/dormitory/workitems/dorm-period-review.json",
+      "derivedFrom": [
+        "docs/oam/system-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "sourceKernelVersion": "oam.system-operating-kernel.v1",
+      "sourceGraphVersion": "oam.kernel-graph.v1",
+      "manualEditAllowed": false,
+      "graphBinding": "file.docs/business/domains/dormitory/workitems/dorm-period-review.json",
+      "checker": "scripts/business/check-dormitory-derived-contracts.mjs"
+    },
+    {
+      "targetPath": "docs/business/domains/dormitory/workitems/dorm-rate-plan-confirm.json",
+      "derivedFrom": [
+        "docs/oam/system-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "sourceKernelVersion": "oam.system-operating-kernel.v1",
+      "sourceGraphVersion": "oam.kernel-graph.v1",
+      "manualEditAllowed": false,
+      "graphBinding": "file.docs/business/domains/dormitory/workitems/dorm-rate-plan-confirm.json",
+      "checker": "scripts/business/check-dormitory-derived-contracts.mjs"
+    },
+    {
+      "targetPath": "docs/business/domains/dormitory/workitems/dorm-reservation-cancel-close.json",
+      "derivedFrom": [
+        "docs/oam/system-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "sourceKernelVersion": "oam.system-operating-kernel.v1",
+      "sourceGraphVersion": "oam.kernel-graph.v1",
+      "manualEditAllowed": false,
+      "graphBinding": "file.docs/business/domains/dormitory/workitems/dorm-reservation-cancel-close.json",
+      "checker": "scripts/business/check-dormitory-derived-contracts.mjs"
+    },
+    {
+      "targetPath": "docs/business/domains/dormitory/workitems/dorm-reservation-confirm.json",
+      "derivedFrom": [
+        "docs/oam/system-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "sourceKernelVersion": "oam.system-operating-kernel.v1",
+      "sourceGraphVersion": "oam.kernel-graph.v1",
+      "manualEditAllowed": false,
+      "graphBinding": "file.docs/business/domains/dormitory/workitems/dorm-reservation-confirm.json",
+      "checker": "scripts/business/check-dormitory-derived-contracts.mjs"
+    },
+    {
+      "targetPath": "docs/business/domains/dormitory/workitems/dorm-reservation-no-show-close.json",
+      "derivedFrom": [
+        "docs/oam/system-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "sourceKernelVersion": "oam.system-operating-kernel.v1",
+      "sourceGraphVersion": "oam.kernel-graph.v1",
+      "manualEditAllowed": false,
+      "graphBinding": "file.docs/business/domains/dormitory/workitems/dorm-reservation-no-show-close.json",
+      "checker": "scripts/business/check-dormitory-derived-contracts.mjs"
+    },
+    {
+      "targetPath": "docs/business/domains/dormitory/workitems/dorm-resource-readiness-confirm.json",
+      "derivedFrom": [
+        "docs/oam/system-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "sourceKernelVersion": "oam.system-operating-kernel.v1",
+      "sourceGraphVersion": "oam.kernel-graph.v1",
+      "manualEditAllowed": false,
+      "graphBinding": "file.docs/business/domains/dormitory/workitems/dorm-resource-readiness-confirm.json",
+      "checker": "scripts/business/check-dormitory-derived-contracts.mjs"
+    },
+    {
+      "targetPath": "docs/business/domains/dormitory/workitems/dorm-room-inspection-confirm.json",
+      "derivedFrom": [
+        "docs/oam/system-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "sourceKernelVersion": "oam.system-operating-kernel.v1",
+      "sourceGraphVersion": "oam.kernel-graph.v1",
+      "manualEditAllowed": false,
+      "graphBinding": "file.docs/business/domains/dormitory/workitems/dorm-room-inspection-confirm.json",
+      "checker": "scripts/business/check-dormitory-derived-contracts.mjs"
+    },
+    {
+      "targetPath": "docs/business/domains/dormitory/workitems/dorm-room-setup-confirm.json",
+      "derivedFrom": [
+        "docs/oam/system-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "sourceKernelVersion": "oam.system-operating-kernel.v1",
+      "sourceGraphVersion": "oam.kernel-graph.v1",
+      "manualEditAllowed": false,
+      "graphBinding": "file.docs/business/domains/dormitory/workitems/dorm-room-setup-confirm.json",
+      "checker": "scripts/business/check-dormitory-derived-contracts.mjs"
+    },
+    {
+      "targetPath": "docs/business/domains/dormitory/workitems/dorm-service-task-assign.json",
+      "derivedFrom": [
+        "docs/oam/system-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "sourceKernelVersion": "oam.system-operating-kernel.v1",
+      "sourceGraphVersion": "oam.kernel-graph.v1",
+      "manualEditAllowed": false,
+      "graphBinding": "file.docs/business/domains/dormitory/workitems/dorm-service-task-assign.json",
+      "checker": "scripts/business/check-dormitory-derived-contracts.mjs"
+    },
+    {
+      "targetPath": "docs/business/domains/dormitory/workitems/dorm-service-task-complete.json",
+      "derivedFrom": [
+        "docs/oam/system-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "sourceKernelVersion": "oam.system-operating-kernel.v1",
+      "sourceGraphVersion": "oam.kernel-graph.v1",
+      "manualEditAllowed": false,
+      "graphBinding": "file.docs/business/domains/dormitory/workitems/dorm-service-task-complete.json",
+      "checker": "scripts/business/check-dormitory-derived-contracts.mjs"
+    },
+    {
+      "targetPath": "docs/business/domains/dormitory/workitems/dorm-service-task-create.json",
+      "derivedFrom": [
+        "docs/oam/system-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "sourceKernelVersion": "oam.system-operating-kernel.v1",
+      "sourceGraphVersion": "oam.kernel-graph.v1",
+      "manualEditAllowed": false,
+      "graphBinding": "file.docs/business/domains/dormitory/workitems/dorm-service-task-create.json",
+      "checker": "scripts/business/check-dormitory-derived-contracts.mjs"
+    },
+    {
+      "targetPath": "docs/business/domains/dormitory/workitems/dorm-service-task-verify.json",
+      "derivedFrom": [
+        "docs/oam/system-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "sourceKernelVersion": "oam.system-operating-kernel.v1",
+      "sourceGraphVersion": "oam.kernel-graph.v1",
+      "manualEditAllowed": false,
+      "graphBinding": "file.docs/business/domains/dormitory/workitems/dorm-service-task-verify.json",
+      "checker": "scripts/business/check-dormitory-derived-contracts.mjs"
+    },
+    {
+      "targetPath": "docs/business/domains/dormitory/workitems/dorm-stay-extend-approve.json",
+      "derivedFrom": [
+        "docs/oam/system-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "sourceKernelVersion": "oam.system-operating-kernel.v1",
+      "sourceGraphVersion": "oam.kernel-graph.v1",
+      "manualEditAllowed": false,
+      "graphBinding": "file.docs/business/domains/dormitory/workitems/dorm-stay-extend-approve.json",
+      "checker": "scripts/business/check-dormitory-derived-contracts.mjs"
+    },
+    {
+      "targetPath": "docs/business/domains/dormitory/workitems/finance-charge-adjustment-approve.json",
+      "derivedFrom": [
+        "docs/oam/system-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "sourceKernelVersion": "oam.system-operating-kernel.v1",
+      "sourceGraphVersion": "oam.kernel-graph.v1",
+      "manualEditAllowed": false,
+      "graphBinding": "file.docs/business/domains/dormitory/workitems/finance-charge-adjustment-approve.json",
+      "checker": "scripts/business/check-dormitory-derived-contracts.mjs"
+    },
+    {
+      "targetPath": "docs/business/domains/dormitory/workitems/finance-correction-apply.json",
+      "derivedFrom": [
+        "docs/oam/system-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "sourceKernelVersion": "oam.system-operating-kernel.v1",
+      "sourceGraphVersion": "oam.kernel-graph.v1",
+      "manualEditAllowed": false,
+      "graphBinding": "file.docs/business/domains/dormitory/workitems/finance-correction-apply.json",
+      "checker": "scripts/business/check-dormitory-derived-contracts.mjs"
+    },
+    {
+      "targetPath": "docs/business/domains/dormitory/workitems/finance-debt-follow-up.json",
+      "derivedFrom": [
+        "docs/oam/system-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "sourceKernelVersion": "oam.system-operating-kernel.v1",
+      "sourceGraphVersion": "oam.kernel-graph.v1",
+      "manualEditAllowed": false,
+      "graphBinding": "file.docs/business/domains/dormitory/workitems/finance-debt-follow-up.json",
+      "checker": "scripts/business/check-dormitory-derived-contracts.mjs"
+    },
+    {
+      "targetPath": "docs/business/domains/dormitory/workitems/finance-expense-approve.json",
+      "derivedFrom": [
+        "docs/oam/system-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "sourceKernelVersion": "oam.system-operating-kernel.v1",
+      "sourceGraphVersion": "oam.kernel-graph.v1",
+      "manualEditAllowed": false,
+      "graphBinding": "file.docs/business/domains/dormitory/workitems/finance-expense-approve.json",
+      "checker": "scripts/business/check-dormitory-derived-contracts.mjs"
+    },
+    {
+      "targetPath": "docs/business/domains/dormitory/workitems/finance-expense-link.json",
+      "derivedFrom": [
+        "docs/oam/system-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "sourceKernelVersion": "oam.system-operating-kernel.v1",
+      "sourceGraphVersion": "oam.kernel-graph.v1",
+      "manualEditAllowed": false,
+      "graphBinding": "file.docs/business/domains/dormitory/workitems/finance-expense-link.json",
+      "checker": "scripts/business/check-dormitory-derived-contracts.mjs"
+    },
+    {
+      "targetPath": "docs/business/domains/dormitory/workitems/finance-expense-record.json",
+      "derivedFrom": [
+        "docs/oam/system-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "sourceKernelVersion": "oam.system-operating-kernel.v1",
+      "sourceGraphVersion": "oam.kernel-graph.v1",
+      "manualEditAllowed": false,
+      "graphBinding": "file.docs/business/domains/dormitory/workitems/finance-expense-record.json",
+      "checker": "scripts/business/check-dormitory-derived-contracts.mjs"
     }
   ]
 }

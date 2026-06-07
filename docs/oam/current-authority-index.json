@@ -27,76 +27,31 @@
   ],
   "entries": [
     {
-      "path": "docs/oam/current-architecture.md",
-      "identity": "current_architecture_authority",
-      "owner": "oam-release-owner",
-      "checker": "scripts/oam/check-current-authority-index.mjs",
-      "evidence": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
-      "notesZh": "当前 OAM 人工可读架构权威。"
-    },
-    {
-      "path": "docs/contracts/oam.current.json",
-      "identity": "current_architecture_authority",
-      "owner": "oam-release-owner",
-      "checker": "scripts/validate-contracts.mjs",
-      "evidence": "artifacts/oam/evidence/runtime-proof.json",
-      "currentTruthAllowed": true,
-      "notesZh": "当前 OAM 机器合同权威。"
-    },
-    {
-      "path": "docs/oam/current-architecture.manifest.json",
-      "identity": "current_architecture_authority",
-      "owner": "oam-release-owner",
-      "checker": "scripts/oam/check-current-oam.mjs",
-      "evidence": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
-      "notesZh": "当前目录、服务、模块、证据根和 CI 绑定清单。"
-    },
-    {
-      "path": "docs/system/current-system-map.md",
-      "identity": "current_architecture_authority",
-      "owner": "oam-release-owner",
-      "checker": "scripts/check-rule-authority.mjs",
-      "evidence": "artifacts/oam/evidence/master-outline-proof.json",
+      "path": "apps/mobile/src",
+      "identity": "current_runtime_implementation",
+      "owner": "surface-owner",
+      "checker": "scripts/check-language-kernel.mjs",
+      "evidence": "artifacts/oam/evidence/surface-language-proof.json",
       "currentTruthAllowed": false,
-      "notesZh": "当前系统边界人读派生图；源事实由 system-operating-kernel 和 OAM 图谱约束。"
+      "notesZh": "移动端只能展示、解释、排队和跳转，不拥有业务真值。"
     },
     {
-      "path": "docs/system/oam-p0-rule-ledger.json",
-      "identity": "current_rule_script",
-      "owner": "oam-release-owner",
-      "checker": "scripts/oam/check-p0-rule-ledger.mjs",
-      "evidence": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
-      "notesZh": "P0 发布内核机器账本。"
-    },
-    {
-      "path": "docs/oam/current-engineering-ledger.json",
-      "identity": "current_engineering_ledger",
-      "owner": "oam-release-owner",
-      "checker": "scripts/oam/check-current-engineering-ledger.mjs",
-      "evidence": "artifacts/oam/checks/current-engineering-ledger-result.json",
+      "path": "apps/pc/src",
+      "identity": "current_runtime_implementation",
+      "owner": "pc-governance-owner",
+      "checker": "scripts/check-surface-contract.mjs",
+      "evidence": "artifacts/oam/evidence/surface-language-proof.json",
       "currentTruthAllowed": false,
-      "notesZh": "当前保留文件身份、职责、owner、门禁、证据和删除条件总账；只管理工程文件，不替代 OAM 架构权威。"
+      "notesZh": "PC 治理面可以治理和审批，不直接写普通业务事实。"
     },
     {
-      "path": "docs/contracts/business/oam-business-object-field-registry.json",
-      "identity": "current_business_contract",
-      "owner": "business-contract-owner",
-      "checker": "scripts/oam/check-business-object-field-registry.mjs",
-      "evidence": "artifacts/oam/evidence/runtime-proof.json",
-      "currentTruthAllowed": true,
-      "notesZh": "住宿、财务、维修、身份、治理业务对象与字段总表。"
-    },
-    {
-      "path": "docs/contracts/business/oam-workflow-state-registry.json",
-      "identity": "current_business_contract",
-      "owner": "workflow-contract-owner",
-      "checker": "scripts/oam/check-workflow-state-registry.mjs",
-      "evidence": "artifacts/oam/evidence/runtime-proof.json",
-      "currentTruthAllowed": true,
-      "notesZh": "WorkItem 流程、状态、动作、前置条件、证据和修正路径总表。"
+      "path": "artifacts/oam/evidence",
+      "identity": "current_evidence_asset",
+      "owner": "release-evidence-owner",
+      "checker": "scripts/oam/check-current-evidence-root.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "notesZh": "证据根证明检查执行状态，不替代业务事实权威。"
     },
     {
       "path": "docs/business/business-line-registry.json",
@@ -106,6 +61,105 @@
       "evidence": "artifacts/oam/evidence/master-design-proof.json",
       "currentTruthAllowed": true,
       "notesZh": "业务线准入状态权威。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/domain-pack.yml",
+      "identity": "current_business_contract",
+      "owner": "business-contract-owner",
+      "checker": "scripts/check-dormitory-golden-domain.mjs",
+      "evidence": "artifacts/oam/checks/dormitory-golden-domain-report.json",
+      "currentTruthAllowed": true,
+      "notesZh": "宿舍当前领域包、事实归属和金链追踪。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/dormitory-observability-contract.json",
+      "identity": "current_business_contract",
+      "owner": "domain-owner",
+      "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "notesZh": "宿舍可观测合同派生视图。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "identity": "current_domain_kernel",
+      "owner": "domain-owner",
+      "checker": "scripts/business/check-dormitory-operating-kernel.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "notesZh": "宿舍业务唯一运行内核。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/dormitory-operator-playbook.md",
+      "identity": "current_manual",
+      "owner": "domain-owner",
+      "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "notesZh": "宿舍操作手册，人读但不定义当前事实。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/dormitory-pilot-go-no-go.json",
+      "identity": "current_business_contract",
+      "owner": "domain-owner",
+      "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "notesZh": "宿舍试运行 Go/No-Go 派生视图。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/dormitory-pilot-scenario-pack.yml",
+      "identity": "current_business_contract",
+      "owner": "domain-owner",
+      "checker": "scripts/business/check-dormitory-pilot-scenario-pack.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "notesZh": "宿舍试运行场景派生包。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/dormitory-release-train.yml",
+      "identity": "current_business_contract",
+      "owner": "domain-owner",
+      "checker": "scripts/business/check-dormitory-release-train.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "notesZh": "宿舍发布列车派生视图。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/dormitory-seed-data-pack.json",
+      "identity": "current_business_contract",
+      "owner": "domain-owner",
+      "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "notesZh": "宿舍试运行种子数据派生包。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/handoff-contract.json",
+      "identity": "current_business_contract",
+      "owner": "domain-owner",
+      "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "notesZh": "宿舍 handoff 合同。"
+    },
+    {
+      "path": "docs/business/domains/finance/finance-operating-kernel.json",
+      "identity": "current_domain_kernel",
+      "owner": "finance-truth-owner",
+      "checker": "scripts/oam/check-oam-kernel-graph.mjs",
+      "evidence": "artifacts/oam/checks/oam-kernel-graph-result.json",
+      "currentTruthAllowed": true,
+      "notesZh": "Finance 当前运行内核范围。"
+    },
+    {
+      "path": "docs/business/domains/maintenance/maintenance-operating-kernel.json",
+      "identity": "current_domain_kernel",
+      "owner": "maintenance-owner",
+      "checker": "scripts/oam/check-oam-kernel-graph.mjs",
+      "evidence": "artifacts/oam/checks/oam-kernel-graph-result.json",
+      "currentTruthAllowed": true,
+      "notesZh": "Maintenance 当前运行内核范围。"
     },
     {
       "path": "docs/business/dormitory/current-business-journey.md",
@@ -126,15 +180,6 @@
       "notesZh": "宿舍当前价值流和业务闭环。"
     },
     {
-      "path": "docs/business/dormitory/workitem-decision-table.json",
-      "identity": "current_business_contract",
-      "owner": "business-contract-owner",
-      "checker": "scripts/business/check-dormitory-execution-kernel.mjs",
-      "evidence": "artifacts/oam/checks/dormitory-business-semantic-contract-result.json",
-      "currentTruthAllowed": true,
-      "notesZh": "宿舍 24 项来源动作裁决表，定义哪些动作可作为当前执行 WorkItem。"
-    },
-    {
       "path": "docs/business/dormitory/workitem-catalog.yml",
       "identity": "current_business_contract",
       "owner": "business-contract-owner",
@@ -144,31 +189,13 @@
       "notesZh": "宿舍当前 WorkItem、owner、证据、SLA 和账务影响目录。"
     },
     {
-      "path": "docs/scenarios/dormitory/golden-pilot.yml",
+      "path": "docs/business/dormitory/workitem-decision-table.json",
       "identity": "current_business_contract",
       "owner": "business-contract-owner",
-      "checker": "scripts/check-dormitory-golden-domain.mjs",
-      "evidence": "artifacts/oam/checks/dormitory-golden-domain-report.json",
+      "checker": "scripts/business/check-dormitory-execution-kernel.mjs",
+      "evidence": "artifacts/oam/checks/dormitory-business-semantic-contract-result.json",
       "currentTruthAllowed": true,
-      "notesZh": "宿舍当前唯一金标场景源。"
-    },
-    {
-      "path": "docs/business/domains/dormitory/domain-pack.yml",
-      "identity": "current_business_contract",
-      "owner": "business-contract-owner",
-      "checker": "scripts/check-dormitory-golden-domain.mjs",
-      "evidence": "artifacts/oam/checks/dormitory-golden-domain-report.json",
-      "currentTruthAllowed": true,
-      "notesZh": "宿舍当前领域包、事实归属和金链追踪。"
-    },
-    {
-      "path": "docs/contracts/admission/admission-matrix.json",
-      "identity": "current_admission_contract",
-      "owner": "admission-kernel-owner",
-      "checker": "scripts/check-admission-kernel.mjs",
-      "evidence": "artifacts/oam/evidence/high-risk-trust-proof.json",
-      "currentTruthAllowed": true,
-      "notesZh": "准入动作、权限、设备和阻断原因权威。"
+      "notesZh": "宿舍 24 项来源动作裁决表，定义哪些动作可作为当前执行 WorkItem。"
     },
     {
       "path": "docs/business/truth-owner-registry.yml",
@@ -180,49 +207,31 @@
       "notesZh": "业务真值 owner 和禁止 owner 权威。"
     },
     {
-      "path": "docs/contracts/definition/workitem-definition-registry.json",
-      "identity": "current_business_contract",
-      "owner": "definition-kernel-owner",
-      "checker": "scripts/business/check-dormitory-execution-kernel.mjs",
-      "evidence": "artifacts/oam/checks/dormitory-business-semantic-contract-result.json",
+      "path": "docs/contracts/admission/admission-matrix.json",
+      "identity": "current_admission_contract",
+      "owner": "admission-kernel-owner",
+      "checker": "scripts/check-admission-kernel.mjs",
+      "evidence": "artifacts/oam/evidence/high-risk-trust-proof.json",
       "currentTruthAllowed": true,
-      "notesZh": "WorkItem Definition、allowedFacts、forbiddenFacts、ledgerPolicy 权威。"
+      "notesZh": "准入动作、权限、设备和阻断原因权威。"
     },
     {
-      "path": "docs/contracts/search/search-contract.json",
+      "path": "docs/contracts/business/oam-business-object-field-registry.json",
       "identity": "current_business_contract",
-      "owner": "search-kernel-owner",
-      "checker": "scripts/check-search-kernel.mjs",
-      "evidence": "artifacts/oam/evidence/search-readonly-proof.json",
-      "currentTruthAllowed": true,
-      "notesZh": "Search 只读自证合同。"
-    },
-    {
-      "path": "docs/contracts/language/language-contract.json",
-      "identity": "current_business_contract",
-      "owner": "language-kernel-owner",
-      "checker": "scripts/check-language-kernel.mjs",
-      "evidence": "artifacts/oam/evidence/surface-language-proof.json",
-      "currentTruthAllowed": true,
-      "notesZh": "语言内核和多语言目录权威。"
-    },
-    {
-      "path": "scripts/oam/check-surface-language-v2.mjs",
-      "identity": "current_rule_script",
-      "owner": "surface-owner",
-      "checker": "scripts/oam/check-surface-language-v2.mjs",
-      "evidence": "artifacts/oam/checks/surface-language-v2-result.json",
-      "currentTruthAllowed": false,
-      "notesZh": "移动端普通用户语言、PC 治理面隔离、结构化准入和 Search 读侧门禁的当前验收脚本。"
-    },
-    {
-      "path": "infra/db/migrations",
-      "identity": "current_database_asset",
-      "owner": "runtime-db-owner",
-      "checker": "scripts/oam/check-db-ownership-map.mjs",
+      "owner": "business-contract-owner",
+      "checker": "scripts/oam/check-business-object-field-registry.mjs",
       "evidence": "artifacts/oam/evidence/runtime-proof.json",
       "currentTruthAllowed": true,
-      "notesZh": "当前 OAM 数据库迁移链。"
+      "notesZh": "住宿、财务、维修、身份、治理业务对象与字段总表。"
+    },
+    {
+      "path": "docs/contracts/business/oam-workflow-state-registry.json",
+      "identity": "current_business_contract",
+      "owner": "workflow-contract-owner",
+      "checker": "scripts/oam/check-workflow-state-registry.mjs",
+      "evidence": "artifacts/oam/evidence/runtime-proof.json",
+      "currentTruthAllowed": true,
+      "notesZh": "WorkItem 流程、状态、动作、前置条件、证据和修正路径总表。"
     },
     {
       "path": "docs/contracts/database/oam-db-ownership-map.json",
@@ -234,31 +243,13 @@
       "notesZh": "每张当前 OAM 数据库表的 owner、写入口、读侧、迁移和测试绑定。"
     },
     {
-      "path": "services/core-api/WorkOS.Api/Runtime",
-      "identity": "current_runtime_implementation",
-      "owner": "runtime-kernel-owner",
-      "checker": "scripts/check-runtime-write-paths.mjs",
-      "evidence": "artifacts/oam/evidence/runtime-proof.json",
+      "path": "docs/contracts/definition/workitem-definition-registry.json",
+      "identity": "current_business_contract",
+      "owner": "definition-kernel-owner",
+      "checker": "scripts/business/check-dormitory-execution-kernel.mjs",
+      "evidence": "artifacts/oam/checks/dormitory-business-semantic-contract-result.json",
       "currentTruthAllowed": true,
-      "notesZh": "Confirm Runtime、Admission Kernel、Unit of Work、Search、Finance、Trust 的运行实现。"
-    },
-    {
-      "path": "apps/mobile/src",
-      "identity": "current_runtime_implementation",
-      "owner": "surface-owner",
-      "checker": "scripts/check-language-kernel.mjs",
-      "evidence": "artifacts/oam/evidence/surface-language-proof.json",
-      "currentTruthAllowed": false,
-      "notesZh": "移动端只能展示、解释、排队和跳转，不拥有业务真值。"
-    },
-    {
-      "path": "apps/pc/src",
-      "identity": "current_runtime_implementation",
-      "owner": "pc-governance-owner",
-      "checker": "scripts/check-surface-contract.mjs",
-      "evidence": "artifacts/oam/evidence/surface-language-proof.json",
-      "currentTruthAllowed": false,
-      "notesZh": "PC 治理面可以治理和审批，不直接写普通业务事实。"
+      "notesZh": "WorkItem Definition、allowedFacts、forbiddenFacts、ledgerPolicy 权威。"
     },
     {
       "path": "docs/contracts/evidence/evidence-graph-refs-contract.json",
@@ -270,13 +261,139 @@
       "notesZh": "证据根引用合同，证明 required refs 真实存在。"
     },
     {
-      "path": "artifacts/oam/evidence",
-      "identity": "current_evidence_asset",
-      "owner": "release-evidence-owner",
-      "checker": "scripts/oam/check-current-evidence-root.mjs",
+      "path": "docs/contracts/language/language-contract.json",
+      "identity": "current_business_contract",
+      "owner": "language-kernel-owner",
+      "checker": "scripts/check-language-kernel.mjs",
+      "evidence": "artifacts/oam/evidence/surface-language-proof.json",
+      "currentTruthAllowed": true,
+      "notesZh": "语言内核和多语言目录权威。"
+    },
+    {
+      "path": "docs/contracts/oam.current.json",
+      "identity": "current_architecture_authority",
+      "owner": "oam-release-owner",
+      "checker": "scripts/validate-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/runtime-proof.json",
+      "currentTruthAllowed": true,
+      "notesZh": "当前 OAM 机器合同权威。"
+    },
+    {
+      "path": "docs/contracts/search/search-contract.json",
+      "identity": "current_business_contract",
+      "owner": "search-kernel-owner",
+      "checker": "scripts/check-search-kernel.mjs",
+      "evidence": "artifacts/oam/evidence/search-readonly-proof.json",
+      "currentTruthAllowed": true,
+      "notesZh": "Search 只读自证合同。"
+    },
+    {
+      "path": "docs/oam/current-architecture.manifest.json",
+      "identity": "current_architecture_authority",
+      "owner": "oam-release-owner",
+      "checker": "scripts/oam/check-current-oam.mjs",
       "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "notesZh": "当前目录、服务、模块、证据根和 CI 绑定清单。"
+    },
+    {
+      "path": "docs/oam/current-architecture.md",
+      "identity": "current_architecture_authority",
+      "owner": "oam-release-owner",
+      "checker": "scripts/oam/check-current-authority-index.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "notesZh": "当前 OAM 人工可读架构权威。"
+    },
+    {
+      "path": "docs/oam/current-engineering-ledger.json",
+      "identity": "current_engineering_ledger",
+      "owner": "oam-release-owner",
+      "checker": "scripts/oam/check-current-engineering-ledger.mjs",
+      "evidence": "artifacts/oam/checks/current-engineering-ledger-result.json",
       "currentTruthAllowed": false,
-      "notesZh": "证据根证明检查执行状态，不替代业务事实权威。"
+      "notesZh": "当前保留文件身份、职责、owner、门禁、证据和删除条件总账；只管理工程文件，不替代 OAM 架构权威。"
+    },
+    {
+      "path": "docs/oam/file-lifecycle-policy.json",
+      "identity": "current_lifecycle_policy",
+      "owner": "oam-release-owner",
+      "checker": "scripts/oam/check-file-lifecycle-policy.mjs",
+      "evidence": "artifacts/oam/checks/file-lifecycle-policy-result.json",
+      "currentTruthAllowed": true,
+      "notesZh": "当前文件生命周期机器策略。"
+    },
+    {
+      "path": "docs/oam/kernel-schemas/domain-kernel.schema.json",
+      "identity": "current_oam_graph",
+      "owner": "oam-release-owner",
+      "checker": "scripts/oam/check-oam-kernel-graph.mjs",
+      "evidence": "artifacts/oam/checks/oam-kernel-graph-result.json",
+      "currentTruthAllowed": true,
+      "notesZh": "领域运行内核 schema。"
+    },
+    {
+      "path": "docs/oam/kernel-schemas/kernel-edge.schema.json",
+      "identity": "current_oam_graph",
+      "owner": "oam-release-owner",
+      "checker": "scripts/oam/check-oam-kernel-graph.mjs",
+      "evidence": "artifacts/oam/checks/oam-kernel-graph-result.json",
+      "currentTruthAllowed": true,
+      "notesZh": "OAM 图谱关系 schema。"
+    },
+    {
+      "path": "docs/oam/kernel-schemas/kernel-node.schema.json",
+      "identity": "current_oam_graph",
+      "owner": "oam-release-owner",
+      "checker": "scripts/oam/check-oam-kernel-graph.mjs",
+      "evidence": "artifacts/oam/checks/oam-kernel-graph-result.json",
+      "currentTruthAllowed": true,
+      "notesZh": "OAM 图谱节点 schema。"
+    },
+    {
+      "path": "docs/oam/kernel-schemas/workitem.schema.json",
+      "identity": "current_oam_graph",
+      "owner": "oam-release-owner",
+      "checker": "scripts/oam/check-oam-kernel-graph.mjs",
+      "evidence": "artifacts/oam/checks/oam-kernel-graph-result.json",
+      "currentTruthAllowed": true,
+      "notesZh": "当前 WorkItem schema。"
+    },
+    {
+      "path": "docs/oam/oam-kernel-graph.json",
+      "identity": "current_oam_graph",
+      "owner": "oam-release-owner",
+      "checker": "scripts/oam/check-oam-kernel-graph.mjs",
+      "evidence": "artifacts/oam/checks/oam-kernel-graph-result.json",
+      "currentTruthAllowed": true,
+      "notesZh": "OAM 架构节点、关系、文件生命周期和门禁绑定图谱。"
+    },
+    {
+      "path": "docs/oam/system-derived-contracts.json",
+      "identity": "current_system_kernel",
+      "owner": "oam-release-owner",
+      "checker": "scripts/oam/check-derived-contract-consistency.mjs",
+      "evidence": "artifacts/oam/checks/derived-contract-consistency-result.json",
+      "currentTruthAllowed": false,
+      "notesZh": "由系统内核和 OAM 图谱派生的合同一致性 manifest。"
+    },
+    {
+      "path": "docs/oam/system-failure-routing-contract.json",
+      "identity": "current_system_kernel",
+      "owner": "release-control-owner",
+      "checker": "scripts/oam/check-system-failure-routing-contract.mjs",
+      "evidence": "artifacts/oam/checks/system-failure-routing-contract-result.json",
+      "currentTruthAllowed": true,
+      "notesZh": "系统级失败路由和修复闭环合同。"
+    },
+    {
+      "path": "docs/oam/system-handoff-contract.json",
+      "identity": "current_system_kernel",
+      "owner": "runtime-kernel-owner",
+      "checker": "scripts/oam/check-system-handoff-contract.mjs",
+      "evidence": "artifacts/oam/checks/system-handoff-contract-result.json",
+      "currentTruthAllowed": true,
+      "notesZh": "系统级操作 handoff 合同。"
     },
     {
       "path": "docs/oam/system-operating-kernel.json",
@@ -297,112 +414,58 @@
       "notesZh": "系统运行内核人读派生说明，不定义当前事实。"
     },
     {
-      "path": "docs/oam/oam-kernel-graph.json",
-      "identity": "current_oam_graph",
-      "owner": "oam-release-owner",
-      "checker": "scripts/oam/check-oam-kernel-graph.mjs",
-      "evidence": "artifacts/oam/checks/oam-kernel-graph-result.json",
-      "currentTruthAllowed": true,
-      "notesZh": "OAM 架构节点、关系、文件生命周期和门禁绑定图谱。"
-    },
-    {
-      "path": "docs/oam/file-lifecycle-policy.json",
-      "identity": "current_lifecycle_policy",
-      "owner": "oam-release-owner",
-      "checker": "scripts/oam/check-file-lifecycle-policy.mjs",
-      "evidence": "artifacts/oam/checks/file-lifecycle-policy-result.json",
-      "currentTruthAllowed": true,
-      "notesZh": "当前文件生命周期机器策略。"
-    },
-    {
-      "path": "docs/oam/system-handoff-contract.json",
-      "identity": "current_system_kernel",
-      "owner": "runtime-kernel-owner",
-      "checker": "scripts/oam/check-system-handoff-contract.mjs",
-      "evidence": "artifacts/oam/checks/system-handoff-contract-result.json",
-      "currentTruthAllowed": true,
-      "notesZh": "系统级操作 handoff 合同。"
-    },
-    {
-      "path": "docs/oam/system-failure-routing-contract.json",
-      "identity": "current_system_kernel",
-      "owner": "release-control-owner",
-      "checker": "scripts/oam/check-system-failure-routing-contract.mjs",
-      "evidence": "artifacts/oam/checks/system-failure-routing-contract-result.json",
-      "currentTruthAllowed": true,
-      "notesZh": "系统级失败路由和修复闭环合同。"
-    },
-    {
-      "path": "docs/oam/system-derived-contracts.json",
-      "identity": "current_system_kernel",
-      "owner": "oam-release-owner",
-      "checker": "scripts/oam/check-derived-contract-consistency.mjs",
-      "evidence": "artifacts/oam/checks/derived-contract-consistency-result.json",
-      "currentTruthAllowed": false,
-      "notesZh": "由系统内核和 OAM 图谱派生的合同一致性 manifest。"
-    },
-    {
-      "path": "docs/oam/kernel-schemas/kernel-node.schema.json",
-      "identity": "current_oam_graph",
-      "owner": "oam-release-owner",
-      "checker": "scripts/oam/check-oam-kernel-graph.mjs",
-      "evidence": "artifacts/oam/checks/oam-kernel-graph-result.json",
-      "currentTruthAllowed": true,
-      "notesZh": "OAM 图谱节点 schema。"
-    },
-    {
-      "path": "docs/oam/kernel-schemas/kernel-edge.schema.json",
-      "identity": "current_oam_graph",
-      "owner": "oam-release-owner",
-      "checker": "scripts/oam/check-oam-kernel-graph.mjs",
-      "evidence": "artifacts/oam/checks/oam-kernel-graph-result.json",
-      "currentTruthAllowed": true,
-      "notesZh": "OAM 图谱关系 schema。"
-    },
-    {
-      "path": "docs/oam/kernel-schemas/domain-kernel.schema.json",
-      "identity": "current_oam_graph",
-      "owner": "oam-release-owner",
-      "checker": "scripts/oam/check-oam-kernel-graph.mjs",
-      "evidence": "artifacts/oam/checks/oam-kernel-graph-result.json",
-      "currentTruthAllowed": true,
-      "notesZh": "领域运行内核 schema。"
-    },
-    {
-      "path": "docs/oam/kernel-schemas/workitem.schema.json",
-      "identity": "current_oam_graph",
-      "owner": "oam-release-owner",
-      "checker": "scripts/oam/check-oam-kernel-graph.mjs",
-      "evidence": "artifacts/oam/checks/oam-kernel-graph-result.json",
-      "currentTruthAllowed": true,
-      "notesZh": "当前 WorkItem schema。"
-    },
-    {
-      "path": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
-      "identity": "current_domain_kernel",
+      "path": "docs/scenarios/dormitory/golden-pilot.yml",
+      "identity": "current_business_contract",
       "owner": "business-contract-owner",
-      "checker": "scripts/oam/check-oam-kernel-graph.mjs",
-      "evidence": "artifacts/oam/checks/oam-kernel-graph-result.json",
+      "checker": "scripts/check-dormitory-golden-domain.mjs",
+      "evidence": "artifacts/oam/checks/dormitory-golden-domain-report.json",
       "currentTruthAllowed": true,
-      "notesZh": "宿舍领域唯一运行内核。"
+      "notesZh": "宿舍当前唯一金标场景源。"
     },
     {
-      "path": "docs/business/domains/finance/finance-operating-kernel.json",
-      "identity": "current_domain_kernel",
-      "owner": "finance-truth-owner",
-      "checker": "scripts/oam/check-oam-kernel-graph.mjs",
-      "evidence": "artifacts/oam/checks/oam-kernel-graph-result.json",
-      "currentTruthAllowed": true,
-      "notesZh": "Finance 当前运行内核范围。"
+      "path": "docs/system/current-system-map.md",
+      "identity": "current_architecture_authority",
+      "owner": "oam-release-owner",
+      "checker": "scripts/check-rule-authority.mjs",
+      "evidence": "artifacts/oam/evidence/master-outline-proof.json",
+      "currentTruthAllowed": false,
+      "notesZh": "当前系统边界人读派生图；源事实由 system-operating-kernel 和 OAM 图谱约束。"
     },
     {
-      "path": "docs/business/domains/maintenance/maintenance-operating-kernel.json",
-      "identity": "current_domain_kernel",
-      "owner": "maintenance-owner",
-      "checker": "scripts/oam/check-oam-kernel-graph.mjs",
-      "evidence": "artifacts/oam/checks/oam-kernel-graph-result.json",
+      "path": "docs/system/oam-p0-rule-ledger.json",
+      "identity": "current_rule_script",
+      "owner": "oam-release-owner",
+      "checker": "scripts/oam/check-p0-rule-ledger.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
       "currentTruthAllowed": true,
-      "notesZh": "Maintenance 当前运行内核范围。"
+      "notesZh": "P0 发布内核机器账本。"
+    },
+    {
+      "path": "infra/db/migrations",
+      "identity": "current_database_asset",
+      "owner": "runtime-db-owner",
+      "checker": "scripts/oam/check-db-ownership-map.mjs",
+      "evidence": "artifacts/oam/evidence/runtime-proof.json",
+      "currentTruthAllowed": true,
+      "notesZh": "当前 OAM 数据库迁移链。"
+    },
+    {
+      "path": "scripts/oam/check-surface-language-v2.mjs",
+      "identity": "current_rule_script",
+      "owner": "surface-owner",
+      "checker": "scripts/oam/check-surface-language-v2.mjs",
+      "evidence": "artifacts/oam/checks/surface-language-v2-result.json",
+      "currentTruthAllowed": false,
+      "notesZh": "移动端普通用户语言、PC 治理面隔离、结构化准入和 Search 读侧门禁的当前验收脚本。"
+    },
+    {
+      "path": "services/core-api/WorkOS.Api/Runtime",
+      "identity": "current_runtime_implementation",
+      "owner": "runtime-kernel-owner",
+      "checker": "scripts/check-runtime-write-paths.mjs",
+      "evidence": "artifacts/oam/evidence/runtime-proof.json",
+      "currentTruthAllowed": true,
+      "notesZh": "Confirm Runtime、Admission Kernel、Unit of Work、Search、Finance、Trust 的运行实现。"
     }
   ],
   "readSideAllowedTerms": [

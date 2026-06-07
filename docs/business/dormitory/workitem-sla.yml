@@ -1,20 +1,123 @@
 {
-  "domainId": "dormitory",
-  "version": "oam.dormitory.v1",
-  "decisionTable": "docs/business/dormitory/workitem-decision-table.json",
-  "slaPolicy": {
-    "defaultEscalation": "escalationOwner",
-    "breachFact": "WorkItemSlaBreached",
-    "lensOutput": "SlaReliabilityLens"
-  },
-  "workItemSlaRefs": [
-    {"workItemType":"Dorm.RoomReadinessCheck","SLA":"1h"},
-    {"workItemType":"Dorm.CheckinConfirm","SLA":"30m"},
-    {"workItemType":"Dorm.PaymentConfirm","SLA":"15m"},
-    {"workItemType":"Dorm.DepositConfirm","SLA":"15m"},
-    {"workItemType":"Dorm.RefundApprove","SLA":"1d"},
-    {"workItemType":"Dorm.PeriodReview","SLA":"weekly"},
-    {"workItemType":"Dorm.ExceptionResolve","SLA":"same day"}
+  "version": "oam.dormitory.workitem-sla.v2",
+  "status": "derived",
+  "derivedFrom": [
+    "docs/business/domains/dormitory/dormitory-operating-kernel.json"
   ],
-  "productionAllowed": false
+  "generatedBy": "scripts/business/generate-dormitory-derived-contracts.mjs",
+  "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
+  "manualEditAllowed": false,
+  "graphBinding": "domain.dormitory.workitem-sla",
+  "workItemSlaRefs": [
+    {
+      "workItemType": "Dorm.RoomSetupConfirm",
+      "sla": "1h",
+      "breachRoute": "Dorm.ExceptionResolve"
+    },
+    {
+      "workItemType": "Dorm.BedSetupConfirm",
+      "sla": "1h",
+      "breachRoute": "Dorm.ExceptionResolve"
+    },
+    {
+      "workItemType": "Dorm.RatePlanConfirm",
+      "sla": "1h",
+      "breachRoute": "Dorm.ExceptionResolve"
+    },
+    {
+      "workItemType": "Dorm.ResourceReadinessConfirm",
+      "sla": "1h",
+      "breachRoute": "Dorm.ExceptionResolve"
+    },
+    {
+      "workItemType": "Dorm.LeadCapture",
+      "sla": "1h",
+      "breachRoute": "Dorm.ExceptionResolve"
+    },
+    {
+      "workItemType": "Dorm.ReservationConfirm",
+      "sla": "1h",
+      "breachRoute": "Dorm.ExceptionResolve"
+    },
+    {
+      "workItemType": "Dorm.CheckinConfirm",
+      "sla": "1h",
+      "breachRoute": "Dorm.ExceptionResolve"
+    },
+    {
+      "workItemType": "Dorm.ServiceTaskCreate",
+      "sla": "1h",
+      "breachRoute": "Dorm.ExceptionResolve"
+    },
+    {
+      "workItemType": "Dorm.ServiceTaskAssign",
+      "sla": "1h",
+      "breachRoute": "Dorm.ExceptionResolve"
+    },
+    {
+      "workItemType": "Dorm.ServiceTaskComplete",
+      "sla": "1h",
+      "breachRoute": "Dorm.ExceptionResolve"
+    },
+    {
+      "workItemType": "Dorm.ServiceTaskVerify",
+      "sla": "1h",
+      "breachRoute": "Dorm.ExceptionResolve"
+    },
+    {
+      "workItemType": "Dorm.RoomInspectionConfirm",
+      "sla": "1h",
+      "breachRoute": "Dorm.ExceptionResolve"
+    },
+    {
+      "workItemType": "Dorm.StayExtendApprove",
+      "sla": "1h",
+      "breachRoute": "Dorm.ExceptionResolve"
+    },
+    {
+      "workItemType": "Dorm.BedTransferApprove",
+      "sla": "1h",
+      "breachRoute": "Dorm.ExceptionResolve"
+    },
+    {
+      "workItemType": "Dorm.ReservationCancelClose",
+      "sla": "1h",
+      "breachRoute": "Dorm.ExceptionResolve"
+    },
+    {
+      "workItemType": "Dorm.ReservationNoShowClose",
+      "sla": "1h",
+      "breachRoute": "Dorm.ExceptionResolve"
+    },
+    {
+      "workItemType": "Dorm.AccessCredentialIssue",
+      "sla": "1h",
+      "breachRoute": "Dorm.ExceptionResolve"
+    },
+    {
+      "workItemType": "Dorm.AccessCredentialRevoke",
+      "sla": "1h",
+      "breachRoute": "Dorm.ExceptionResolve"
+    },
+    {
+      "workItemType": "Dorm.IncidentRecord",
+      "sla": "1h",
+      "breachRoute": "Dorm.ExceptionResolve"
+    },
+    {
+      "workItemType": "Dorm.PeriodReview",
+      "sla": "weekly",
+      "breachRoute": "Dorm.ExceptionResolve"
+    },
+    {
+      "workItemType": "Dorm.PeriodActionPlanExecute",
+      "sla": "weekly",
+      "breachRoute": "Dorm.ExceptionResolve"
+    },
+    {
+      "workItemType": "Dorm.ExceptionResolve",
+      "sla": "1h",
+      "breachRoute": "Dorm.ExceptionResolve"
+    }
+  ]
 }

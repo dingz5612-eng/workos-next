@@ -1,112 +1,272 @@
 {
+  "version": "oam.dormitory.value-streams.v2",
+  "status": "derived",
+  "derivedFrom": [
+    "docs/business/domains/dormitory/dormitory-operating-kernel.json"
+  ],
+  "generatedBy": "scripts/business/generate-dormitory-derived-contracts.mjs",
+  "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
+  "manualEditAllowed": false,
+  "graphBinding": "domain.dormitory.value-streams",
   "domainId": "dormitory",
-  "version": "oam.dormitory.v1",
-  "decisionTable": "docs/business/dormitory/workitem-decision-table.json",
   "valueStreams": [
     {
-      "id": "resource_availability",
-      "name": "资源可售可信度",
-      "中文名称": "资源可售可信度",
-      "startEvent": "Dorm.ResourceReadinessRequested",
-      "endState": "BedAvailableForSale",
-      "businessObjects": ["Room", "Bed", "RoomReadiness", "ServiceTask"],
-      "factOwners": ["accommodation.resource", "accommodation.service"],
-      "workItemTypes": ["Dorm.RoomReadinessCheck"],
-      "absorbedActionTypes": ["Dorm.ResourceSetup", "Dorm.BedAvailabilityConfirm", "Dorm.ServiceTaskCreate", "Dorm.ServiceTaskComplete"],
-      "requiredEvidence": ["completion-photo", "verification-check"],
-      "ledgerImpact": "无账务影响",
-      "lensOutputs": ["DormAvailabilityLens", "RoomReadinessLens", "ServiceTaskLens"],
-      "risks": ["虚假可售", "阻断床位过早释放"],
-      "SLA": "1 小时完成房态确认",
-      "ownerRole": "Resource Manager",
-      "escalationRole": "Operations Director",
-      "certificationScenario": "dorm-cert-004",
-      "trainingScenario": "train-resource-readiness",
-      "goNoGoCriteria": ["阻断床位没有验收证据不得恢复可售"]
+      "id": "train-1-business-mainline",
+      "name": "第一列车：经营主链",
+      "中文名称": "第一列车：经营主链",
+      "startEvent": "RoomSetupConfirmSubmitted",
+      "endState": "train-1-business-mainline.closed",
+      "businessObjects": [
+        "Room",
+        "Bed",
+        "RatePlan",
+        "Lead",
+        "Reservation",
+        "Stay",
+        "Payment",
+        "DepositAccount"
+      ],
+      "factOwners": [
+        "Accommodation.ResourceSetup",
+        "Accommodation.RatePlan",
+        "Accommodation.ResourceReadiness",
+        "Accommodation.Lead",
+        "Accommodation.Reservation",
+        "Accommodation.CheckIn",
+        "finance-gate"
+      ],
+      "workItemTypes": [
+        "Dorm.RoomSetupConfirm",
+        "Dorm.BedSetupConfirm",
+        "Dorm.RatePlanConfirm",
+        "Dorm.ResourceReadinessConfirm",
+        "Dorm.LeadCapture",
+        "Dorm.ReservationConfirm",
+        "Dorm.CheckinConfirm"
+      ],
+      "externalFinanceWorkItemTypes": [
+        "Dorm.PaymentConfirm",
+        "Dorm.DepositConfirm"
+      ],
+      "absorbedActionTypes": [
+        "Dorm.RoomReadinessCheck",
+        "Dorm.RefundApprove",
+        "Dorm.ExpenseRecord"
+      ],
+      "requiredEvidence": [
+        "room-photo",
+        "room-basic-info",
+        "bed-photo",
+        "room-link-proof",
+        "rate-policy",
+        "completion-photo",
+        "verification-check",
+        "lead-consent",
+        "reservation-acknowledgement",
+        "bed-availability-proof",
+        "identity-document",
+        "checkin-confirmation",
+        "payment-receipt",
+        "cashier-review",
+        "receipt-proof",
+        "deposit-policy"
+      ],
+      "ledgerImpact": "金额事实必须经 finance-gate / Money Kernel。",
+      "lensOutputs": [
+        "RoomReadyLens",
+        "DormAvailabilityLens",
+        "RatePlanLens",
+        "RoomReadinessLens",
+        "LeadFunnelLens",
+        "ReservationLens",
+        "StayOnboardingLens",
+        "StayBalanceLens",
+        "RevenueCollectionLens",
+        "DepositLiabilityLens"
+      ],
+      "risks": [
+        "重复录入上游字段",
+        "绕过 Admission",
+        "金额绕过 finance-gate"
+      ],
+      "SLA": "见 workitem-sla 派生文件",
+      "ownerRole": "宿舍负责人",
+      "certificationScenario": "train-1-business-mainline",
+      "goNoGoCriteria": [
+        "Definition resolved",
+        "Admission passed",
+        "Evidence complete",
+        "No finance bypass"
+      ]
     },
     {
-      "id": "lead_to_stay_conversion",
-      "name": "线索入住转化",
-      "中文名称": "线索入住转化",
-      "startEvent": "Dorm.LeadCaptured",
-      "endState": "StayOpenedWithAssignedBed",
-      "businessObjects": ["Lead", "Reservation", "Stay", "BedAssignment"],
-      "factOwners": ["accommodation.lead-reservation", "accommodation.stay", "accommodation.resource"],
-      "workItemTypes": ["Dorm.CheckinConfirm"],
-      "absorbedActionTypes": ["Dorm.LeadFollowup", "Dorm.ReservationConfirm", "Dorm.CheckinPrepare", "Dorm.BedAssignmentConfirm"],
-      "requiredEvidence": ["identity-document", "reservation-acknowledgement", "checkin-confirmation", "bed-availability-proof"],
-      "ledgerImpact": "可触发押金负债评估，但押金不得确认为收入",
-      "lensOutputs": ["LeadFunnelLens", "StayOnboardingLens", "DormAvailabilityLens"],
-      "risks": ["无容量预订", "缺少身份证据入住"],
-      "SLA": "30 分钟确认入住提交",
-      "ownerRole": "Front Desk Lead",
-      "escalationRole": "Dormitory Operations Owner",
-      "certificationScenario": "dorm-cert-001",
-      "trainingScenario": "train-lead-to-stay",
-      "goNoGoCriteria": ["入住必须具备身份证据", "入住确认不得绕过 WorkItem"]
+      "id": "train-2-service-expense-checkout",
+      "name": "第二列车：服务支出退住",
+      "中文名称": "第二列车：服务支出退住",
+      "startEvent": "ServiceTaskCreateSubmitted",
+      "endState": "train-2-service-expense-checkout.closed",
+      "businessObjects": [
+        "ServiceTask",
+        "Expense",
+        "ExpenseLink",
+        "RoomInspection",
+        "CheckoutCase"
+      ],
+      "factOwners": [
+        "Accommodation.ServiceTask",
+        "finance-gate",
+        "Accommodation.Checkout"
+      ],
+      "workItemTypes": [
+        "Dorm.ServiceTaskCreate",
+        "Dorm.ServiceTaskAssign",
+        "Dorm.ServiceTaskComplete",
+        "Dorm.ServiceTaskVerify",
+        "Dorm.RoomInspectionConfirm"
+      ],
+      "externalFinanceWorkItemTypes": [
+        "Finance.ExpenseRecord",
+        "Finance.ExpenseApprove",
+        "Finance.ExpenseLink",
+        "Dorm.CheckoutSettlementApprove"
+      ],
+      "absorbedActionTypes": [
+        "Dorm.RoomReadinessCheck",
+        "Dorm.RefundApprove",
+        "Dorm.ExpenseRecord"
+      ],
+      "requiredEvidence": [
+        "service-request",
+        "assignment-record",
+        "completion-photo",
+        "completion-note",
+        "verification-check",
+        "expense-invoice",
+        "expense-basis",
+        "expense-approval",
+        "expense-link-proof",
+        "room-inspection",
+        "damage-photo",
+        "settlement-review",
+        "refund-approval"
+      ],
+      "ledgerImpact": "金额事实必须经 finance-gate / Money Kernel。",
+      "lensOutputs": [
+        "ServiceTaskLens",
+        "RoomReadinessLens",
+        "ExpenseControlLens",
+        "CheckoutTurnoverLens",
+        "DepositSettlementLens",
+        "RefundRiskLens"
+      ],
+      "risks": [
+        "重复录入上游字段",
+        "绕过 Admission",
+        "金额绕过 finance-gate"
+      ],
+      "SLA": "见 workitem-sla 派生文件",
+      "ownerRole": "宿舍负责人",
+      "certificationScenario": "train-2-service-expense-checkout",
+      "goNoGoCriteria": [
+        "Definition resolved",
+        "Admission passed",
+        "Evidence complete",
+        "No finance bypass"
+      ]
     },
     {
-      "id": "in_stay_revenue",
-      "name": "在住收入",
-      "中文名称": "在住收入",
-      "startEvent": "Dorm.StayOpened",
-      "endState": "StayBalanceProjected",
-      "businessObjects": ["Charge", "Payment", "PaymentAllocation", "StayBalance"],
-      "factOwners": ["finance.charge-ledger", "finance.payment-ledger"],
-      "workItemTypes": ["Dorm.PaymentConfirm"],
-      "absorbedActionTypes": ["Dorm.ChargeGenerate", "Dorm.PaymentRegister"],
-      "requiredEvidence": ["payment-receipt", "cashier-review"],
-      "ledgerImpact": "只处理普通收款分配，绝不混入押金流转",
-      "lensOutputs": ["StayBalanceLens", "RevenueCollectionLens"],
-      "risks": ["前端余额被当作事实", "收款未分配"],
-      "SLA": "15 分钟完成收款确认",
-      "ownerRole": "Finance Cashier",
-      "escalationRole": "Finance Supervisor",
-      "certificationScenario": "dorm-cert-003",
-      "trainingScenario": "train-payment-allocation",
-      "goNoGoCriteria": ["收款必须生成平衡的 LedgerTransaction", "前端合计不得作为事实源"]
-    },
-    {
-      "id": "deposit_liability",
-      "name": "押金负债",
-      "中文名称": "押金负债",
-      "startEvent": "Dorm.DepositEvidenceSubmitted",
-      "endState": "DepositLiabilityProjected",
-      "businessObjects": ["DepositAccount", "DepositReceipt", "Refund", "Deduction"],
-      "factOwners": ["finance.deposit-ledger"],
-      "workItemTypes": ["Dorm.DepositConfirm", "Dorm.RefundApprove"],
-      "absorbedActionTypes": ["Dorm.DepositAssess", "Dorm.DepositReceive", "Dorm.DepositDeduct"],
-      "requiredEvidence": ["deposit-policy", "receipt-proof", "room-inspection", "settlement-review", "refund-approval"],
-      "ledgerImpact": "押金是负债，退款和扣减都必须走平衡账务",
-      "lensOutputs": ["DepositLiabilityLens", "RefundRiskLens"],
-      "risks": ["押金被当作收入", "无负债余额退款"],
-      "SLA": "15 分钟确认收据，1 天内完成退款审批",
-      "ownerRole": "Finance Supervisor",
-      "escalationRole": "Finance Controller",
-      "certificationScenario": "dorm-cert-002",
-      "trainingScenario": "train-deposit-liability",
-      "goNoGoCriteria": ["押金绝不入收入", "退款不得超过可退余额"]
-    },
-    {
-      "id": "checkout_turnover",
-      "name": "退住周转",
-      "中文名称": "退住周转",
-      "startEvent": "Dorm.CheckoutRequested",
-      "endState": "BedReleaseRequestedAfterSettlement",
-      "businessObjects": ["Checkout", "Inspection", "Settlement", "Cleaning", "ResourceRelease"],
-      "factOwners": ["accommodation.checkout", "finance.deposit-ledger", "accommodation.resource"],
-      "workItemTypes": ["Dorm.RefundApprove", "Dorm.RoomReadinessCheck"],
-      "absorbedActionTypes": ["Dorm.RoomInspection", "Dorm.CheckoutSettlement", "Dorm.DepositDeduct", "Dorm.ResourceRelease"],
-      "requiredEvidence": ["room-inspection", "settlement-review", "refund-approval", "completion-photo", "verification-check"],
-      "ledgerImpact": "结算读取账本投影，退款审批记录平衡交易，房态检查证明恢复可售",
-      "lensOutputs": ["CheckoutTurnoverLens", "DepositSettlementLens", "DormAvailabilityLens"],
-      "risks": ["未验房先释放", "结算伪造金额事实"],
-      "SLA": "1 天内完成退款审批，1 小时完成恢复可售验收",
-      "ownerRole": "Checkout Coordinator",
-      "escalationRole": "Operations Director",
-      "certificationScenario": "dorm-cert-005",
-      "trainingScenario": "train-checkout-turnover",
-      "goNoGoCriteria": ["必须有验房证据", "结算不得更新或删除账本分录"]
+      "id": "train-3-governance-review-optimization",
+      "name": "第三列车：治理复盘优化",
+      "中文名称": "第三列车：治理复盘优化",
+      "startEvent": "StayExtendApproveSubmitted",
+      "endState": "train-3-governance-review-optimization.closed",
+      "businessObjects": [
+        "Stay",
+        "Reservation",
+        "Payment",
+        "Resident",
+        "ExceptionCase",
+        "PeriodSnapshot",
+        "ActionPlan"
+      ],
+      "factOwners": [
+        "Accommodation.Stay",
+        "Accommodation.Reservation",
+        "finance-gate",
+        "identity-trust",
+        "Accommodation.Governance",
+        "Management.Review",
+        "Management.ActionPlan",
+        "Management.Exception"
+      ],
+      "workItemTypes": [
+        "Dorm.StayExtendApprove",
+        "Dorm.BedTransferApprove",
+        "Dorm.ReservationCancelClose",
+        "Dorm.ReservationNoShowClose",
+        "Dorm.AccessCredentialIssue",
+        "Dorm.AccessCredentialRevoke",
+        "Dorm.IncidentRecord",
+        "Dorm.PeriodReview",
+        "Dorm.PeriodActionPlanExecute",
+        "Dorm.ExceptionResolve"
+      ],
+      "externalFinanceWorkItemTypes": [
+        "Finance.ChargeAdjustmentApprove",
+        "Finance.DebtFollowUp",
+        "Finance.CorrectionApply"
+      ],
+      "absorbedActionTypes": [
+        "Dorm.RoomReadinessCheck",
+        "Dorm.RefundApprove",
+        "Dorm.ExpenseRecord"
+      ],
+      "requiredEvidence": [
+        "extend-application",
+        "rate-policy",
+        "transfer-application",
+        "bed-availability-proof",
+        "cancel-request",
+        "no-show-record",
+        "adjustment-approval",
+        "charge-basis",
+        "debt-followup-record",
+        "identity-document",
+        "checkin-confirmation",
+        "checkout-close-proof",
+        "incident-evidence",
+        "audit-note",
+        "period-review-pack",
+        "action-plan-evidence",
+        "exception-audit",
+        "resolution-evidence",
+        "correction-approval"
+      ],
+      "ledgerImpact": "金额事实必须经 finance-gate / Money Kernel。",
+      "lensOutputs": [
+        "StayOnboardingLens",
+        "DormAvailabilityLens",
+        "LeadFunnelLens",
+        "StayBalanceLens",
+        "RevenueCollectionLens",
+        "AccessTrustLens",
+        "ExceptionRiskLens",
+        "ManagementDashboardLens"
+      ],
+      "risks": [
+        "重复录入上游字段",
+        "绕过 Admission",
+        "金额绕过 finance-gate"
+      ],
+      "SLA": "见 workitem-sla 派生文件",
+      "ownerRole": "宿舍负责人",
+      "certificationScenario": "train-3-governance-review-optimization",
+      "goNoGoCriteria": [
+        "Definition resolved",
+        "Admission passed",
+        "Evidence complete",
+        "No finance bypass"
+      ]
     }
   ],
   "productionAllowed": false

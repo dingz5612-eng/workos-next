@@ -6,6 +6,13 @@ const manifestPath = "docs/oam/system-derived-contracts.json";
 const kernelPath = "docs/oam/system-operating-kernel.json";
 const graphPath = "docs/oam/oam-kernel-graph.json";
 const resultPath = "artifacts/oam/checks/derived-contract-consistency-result.json";
+const dormitoryWorkItemDerivedTargets = fs.existsSync(path.join(root, "docs/business/domains/dormitory/workitems"))
+  ? fs.readdirSync(path.join(root, "docs/business/domains/dormitory/workitems"))
+    .filter((file) => file.endsWith(".json"))
+    .map((file) => `docs/business/domains/dormitory/workitems/${file}`)
+    .sort()
+  : [];
+
 const requiredTargets = [
   "docs/system/current-system-map.md",
   "docs/contracts/oam-responsibility-boundary-matrix.json",
@@ -17,6 +24,7 @@ const requiredTargets = [
   "docs/contracts/admission/admission-contract.json",
   "docs/contracts/evidence/evidence-graph-refs-contract.json",
   "docs/business/dormitory/evidence-policy.yml",
+  "docs/business/dormitory/evidence-requirements.yml",
   "docs/contracts/search/search-contract.json",
   "docs/contracts/accommodation-lens-contract.json",
   "docs/surface/surface-contract.yml",
@@ -28,7 +36,16 @@ const requiredTargets = [
   "docs/business/dormitory/lens-map.yml",
   "docs/business/dormitory/workitem-sla.yml",
   "docs/business/dormitory/workitem-raci.yml",
-  "docs/business/dormitory/go-no-go.yml"
+  "docs/business/dormitory/go-no-go.yml",
+  "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+  "docs/business/domains/dormitory/handoff-contract.json",
+  "docs/business/domains/dormitory/dormitory-release-train.yml",
+  "docs/business/domains/dormitory/dormitory-pilot-scenario-pack.yml",
+  "docs/business/domains/dormitory/dormitory-seed-data-pack.json",
+  "docs/business/domains/dormitory/dormitory-observability-contract.json",
+  "docs/business/domains/dormitory/dormitory-operator-playbook.md",
+  "docs/business/domains/dormitory/dormitory-pilot-go-no-go.json",
+  ...dormitoryWorkItemDerivedTargets
 ];
 const violations = [];
 const manifest = readJson(manifestPath);

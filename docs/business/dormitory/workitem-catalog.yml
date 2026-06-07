@@ -1,134 +1,626 @@
 {
+  "version": "oam.dormitory.workitem-catalog.v2",
+  "status": "derived",
+  "derivedFrom": [
+    "docs/business/domains/dormitory/dormitory-operating-kernel.json"
+  ],
+  "generatedBy": "scripts/business/generate-dormitory-derived-contracts.mjs",
+  "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
+  "manualEditAllowed": false,
+  "graphBinding": "domain.dormitory.workitem-catalog",
   "domainId": "dormitory",
-  "version": "oam.dormitory.v1",
-  "decisionTable": "docs/business/dormitory/workitem-decision-table.json",
-  "catalogPolicy": "Only decisions with keepInDormitoryCatalog=true can appear here.",
+  "catalogPolicy": "Only dormitory-owned currentExecutableWorkItem from dormitory-operating-kernel can appear here.",
   "workItems": [
     {
-      "workItemType": "Dorm.RoomReadinessCheck",
-      "decisionRef": "Dorm.RoomReadinessCheck",
-      "中文名称": "房态检查",
-      "ownerRole": "Housekeeping Lead",
-      "backupOwner": "Resource Manager",
-      "escalationOwner": "Operations Director",
+      "workItemType": "Dorm.RoomSetupConfirm",
+      "decisionRef": "Dorm.RoomSetupConfirm",
+      "中文名称": "房间建档确认",
+      "ownerRole": "宿舍经办人",
+      "backupOwner": "宿舍负责人",
+      "escalationOwner": "宿舍负责人",
       "SLA": "1h",
-      "requiredEvidence": ["completion-photo", "verification-check"],
-      "affectedFacts": ["RoomReadiness", "ServiceTask", "BedStatus"],
+      "requiredEvidence": [
+        "room-photo",
+        "room-basic-info"
+      ],
+      "affectedFacts": [
+        "Room",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
       "ledgerImpact": "无账务影响",
-      "confirmationPolicy": "evidence-required",
+      "confirmationPolicy": "dormitory_l1_internal_pilot_observation",
       "riskLevel": "medium",
-      "idempotencyScope": "tenant:room:readiness-check",
+      "idempotencyScope": "tenant:dorm-room-setup-confirm:confirm",
       "factTraceRequired": true,
-      "lensOutputs": ["RoomReadinessLens", "ServiceTaskLens", "DormAvailabilityLens"],
-      "certificationScenario": "dorm-cert-004"
+      "lensOutputs": [
+        "RoomReadyLens"
+      ],
+      "certificationScenario": "train-1-business-mainline"
+    },
+    {
+      "workItemType": "Dorm.BedSetupConfirm",
+      "decisionRef": "Dorm.BedSetupConfirm",
+      "中文名称": "床位建档确认",
+      "ownerRole": "宿舍经办人",
+      "backupOwner": "宿舍负责人",
+      "escalationOwner": "宿舍负责人",
+      "SLA": "1h",
+      "requiredEvidence": [
+        "bed-photo",
+        "room-link-proof"
+      ],
+      "affectedFacts": [
+        "Bed",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "ledgerImpact": "无账务影响",
+      "confirmationPolicy": "dormitory_l1_internal_pilot_observation",
+      "riskLevel": "medium",
+      "idempotencyScope": "tenant:dorm-bed-setup-confirm:confirm",
+      "factTraceRequired": true,
+      "lensOutputs": [
+        "DormAvailabilityLens"
+      ],
+      "certificationScenario": "train-1-business-mainline"
+    },
+    {
+      "workItemType": "Dorm.RatePlanConfirm",
+      "decisionRef": "Dorm.RatePlanConfirm",
+      "中文名称": "价格方案确认",
+      "ownerRole": "宿舍负责人",
+      "backupOwner": "宿舍经办人",
+      "escalationOwner": "宿舍负责人",
+      "SLA": "1h",
+      "requiredEvidence": [
+        "rate-policy"
+      ],
+      "affectedFacts": [
+        "RatePlan",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "ledgerImpact": "无账务影响",
+      "confirmationPolicy": "payment_confirmation",
+      "riskLevel": "medium",
+      "idempotencyScope": "tenant:dorm-rate-plan-confirm:confirm",
+      "factTraceRequired": true,
+      "lensOutputs": [
+        "RatePlanLens"
+      ],
+      "certificationScenario": "train-1-business-mainline"
+    },
+    {
+      "workItemType": "Dorm.ResourceReadinessConfirm",
+      "decisionRef": "Dorm.ResourceReadinessConfirm",
+      "中文名称": "资源可售确认",
+      "ownerRole": "宿舍经办人",
+      "backupOwner": "宿舍负责人",
+      "escalationOwner": "宿舍负责人",
+      "SLA": "1h",
+      "requiredEvidence": [
+        "completion-photo",
+        "verification-check"
+      ],
+      "affectedFacts": [
+        "Room",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "ledgerImpact": "无账务影响",
+      "confirmationPolicy": "dormitory_l1_internal_pilot_observation",
+      "riskLevel": "medium",
+      "idempotencyScope": "tenant:dorm-resource-readiness-confirm:confirm",
+      "factTraceRequired": true,
+      "lensOutputs": [
+        "DormAvailabilityLens",
+        "RoomReadinessLens"
+      ],
+      "certificationScenario": "train-1-business-mainline"
+    },
+    {
+      "workItemType": "Dorm.LeadCapture",
+      "decisionRef": "Dorm.LeadCapture",
+      "中文名称": "线索录入",
+      "ownerRole": "宿舍经办人",
+      "backupOwner": "宿舍负责人",
+      "escalationOwner": "宿舍负责人",
+      "SLA": "1h",
+      "requiredEvidence": [
+        "lead-consent"
+      ],
+      "affectedFacts": [
+        "Lead",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "ledgerImpact": "无账务影响",
+      "confirmationPolicy": "dormitory_l1_internal_pilot_observation",
+      "riskLevel": "medium",
+      "idempotencyScope": "tenant:dorm-lead-capture:confirm",
+      "factTraceRequired": true,
+      "lensOutputs": [
+        "LeadFunnelLens"
+      ],
+      "certificationScenario": "train-1-business-mainline"
+    },
+    {
+      "workItemType": "Dorm.ReservationConfirm",
+      "decisionRef": "Dorm.ReservationConfirm",
+      "中文名称": "预订确认",
+      "ownerRole": "宿舍负责人",
+      "backupOwner": "宿舍经办人",
+      "escalationOwner": "宿舍负责人",
+      "SLA": "1h",
+      "requiredEvidence": [
+        "reservation-acknowledgement",
+        "bed-availability-proof"
+      ],
+      "affectedFacts": [
+        "Reservation",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "ledgerImpact": "无账务影响",
+      "confirmationPolicy": "payment_confirmation",
+      "riskLevel": "medium",
+      "idempotencyScope": "tenant:dorm-reservation-confirm:confirm",
+      "factTraceRequired": true,
+      "lensOutputs": [
+        "ReservationLens"
+      ],
+      "certificationScenario": "train-1-business-mainline"
     },
     {
       "workItemType": "Dorm.CheckinConfirm",
       "decisionRef": "Dorm.CheckinConfirm",
       "中文名称": "入住确认",
-      "ownerRole": "Front Desk Lead",
-      "backupOwner": "Dormitory Operations Owner",
-      "escalationOwner": "Operations Director",
-      "SLA": "30m",
-      "requiredEvidence": ["identity-document", "checkin-confirmation", "reservation-acknowledgement", "bed-availability-proof"],
-      "affectedFacts": ["Stay", "BedAssignment"],
+      "ownerRole": "宿舍经办人",
+      "backupOwner": "宿舍负责人",
+      "escalationOwner": "宿舍负责人",
+      "SLA": "1h",
+      "requiredEvidence": [
+        "identity-document",
+        "checkin-confirmation",
+        "reservation-acknowledgement",
+        "bed-availability-proof"
+      ],
+      "affectedFacts": [
+        "Stay",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
       "ledgerImpact": "无账务影响",
-      "confirmationPolicy": "stay-owner-confirm",
-      "riskLevel": "high",
-      "idempotencyScope": "tenant:stay:confirm",
+      "confirmationPolicy": "dormitory_l1_internal_pilot_observation",
+      "riskLevel": "medium",
+      "idempotencyScope": "tenant:dorm-checkin-confirm:confirm",
       "factTraceRequired": true,
-      "lensOutputs": ["StayOnboardingLens", "DormAvailabilityLens"],
-      "certificationScenario": "dorm-cert-001"
+      "lensOutputs": [
+        "StayOnboardingLens",
+        "DormAvailabilityLens"
+      ],
+      "certificationScenario": "train-1-business-mainline"
     },
     {
-      "workItemType": "Dorm.PaymentConfirm",
-      "decisionRef": "Dorm.PaymentConfirm",
-      "中文名称": "收款确认",
-      "ownerRole": "Finance Supervisor",
-      "backupOwner": "Finance Controller",
-      "escalationOwner": "Finance Controller",
-      "SLA": "15m",
-      "requiredEvidence": ["payment-receipt", "cashier-review"],
-      "affectedFacts": ["Payment", "PaymentAllocation", "LedgerTransaction"],
-      "ledgerImpact": "生成平衡的普通收款分配",
-      "confirmationPolicy": "finance-supervisor-confirm",
-      "riskLevel": "critical",
-      "idempotencyScope": "tenant:payment:confirm",
+      "workItemType": "Dorm.ServiceTaskCreate",
+      "decisionRef": "Dorm.ServiceTaskCreate",
+      "中文名称": "服务任务创建",
+      "ownerRole": "宿舍经办人",
+      "backupOwner": "宿舍负责人",
+      "escalationOwner": "宿舍负责人",
+      "SLA": "1h",
+      "requiredEvidence": [
+        "service-request"
+      ],
+      "affectedFacts": [
+        "ServiceTask",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "ledgerImpact": "无账务影响",
+      "confirmationPolicy": "dormitory_l1_internal_pilot_observation",
+      "riskLevel": "medium",
+      "idempotencyScope": "tenant:dorm-service-task-create:confirm",
       "factTraceRequired": true,
-      "lensOutputs": ["StayBalanceLens", "RevenueCollectionLens"],
-      "certificationScenario": "dorm-cert-003"
+      "lensOutputs": [
+        "ServiceTaskLens"
+      ],
+      "certificationScenario": "train-2-service-expense-checkout"
     },
     {
-      "workItemType": "Dorm.DepositConfirm",
-      "decisionRef": "Dorm.DepositConfirm",
-      "中文名称": "押金确认",
-      "ownerRole": "Finance Supervisor",
-      "backupOwner": "Finance Controller",
-      "escalationOwner": "Finance Controller",
-      "SLA": "15m",
-      "requiredEvidence": ["receipt-proof", "deposit-policy"],
-      "affectedFacts": ["DepositAccount", "LedgerTransaction"],
-      "ledgerImpact": "生成平衡的押金负债交易，不进入收入",
-      "confirmationPolicy": "finance-supervisor-confirm",
-      "riskLevel": "critical",
-      "idempotencyScope": "tenant:deposit-confirm",
+      "workItemType": "Dorm.ServiceTaskAssign",
+      "decisionRef": "Dorm.ServiceTaskAssign",
+      "中文名称": "服务任务派工",
+      "ownerRole": "宿舍负责人",
+      "backupOwner": "宿舍经办人",
+      "escalationOwner": "宿舍负责人",
+      "SLA": "1h",
+      "requiredEvidence": [
+        "assignment-record"
+      ],
+      "affectedFacts": [
+        "ServiceTask",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "ledgerImpact": "无账务影响",
+      "confirmationPolicy": "payment_confirmation",
+      "riskLevel": "medium",
+      "idempotencyScope": "tenant:dorm-service-task-assign:confirm",
       "factTraceRequired": true,
-      "lensOutputs": ["DepositLiabilityLens"],
-      "certificationScenario": "dorm-cert-002"
+      "lensOutputs": [
+        "ServiceTaskLens"
+      ],
+      "certificationScenario": "train-2-service-expense-checkout"
     },
     {
-      "workItemType": "Dorm.RefundApprove",
-      "decisionRef": "Dorm.RefundApprove",
-      "中文名称": "退款审批",
-      "ownerRole": "Finance Controller",
-      "backupOwner": "Finance Supervisor",
-      "escalationOwner": "General Manager",
-      "SLA": "1d",
-      "requiredEvidence": ["room-inspection", "settlement-review", "refund-approval"],
-      "affectedFacts": ["Refund", "CheckoutCase", "LedgerTransaction"],
-      "ledgerImpact": "生成平衡的退款或押金扣减交易",
-      "confirmationPolicy": "controller-approval-required",
-      "riskLevel": "critical",
-      "idempotencyScope": "tenant:refund",
+      "workItemType": "Dorm.ServiceTaskComplete",
+      "decisionRef": "Dorm.ServiceTaskComplete",
+      "中文名称": "服务任务完成",
+      "ownerRole": "宿舍经办人",
+      "backupOwner": "宿舍负责人",
+      "escalationOwner": "宿舍负责人",
+      "SLA": "1h",
+      "requiredEvidence": [
+        "completion-photo",
+        "completion-note"
+      ],
+      "affectedFacts": [
+        "ServiceTask",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "ledgerImpact": "无账务影响",
+      "confirmationPolicy": "dormitory_l1_internal_pilot_observation",
+      "riskLevel": "medium",
+      "idempotencyScope": "tenant:dorm-service-task-complete:confirm",
       "factTraceRequired": true,
-      "lensOutputs": ["DepositSettlementLens", "RefundRiskLens", "DormAvailabilityLens"],
-      "certificationScenario": "dorm-cert-005"
+      "lensOutputs": [
+        "ServiceTaskLens"
+      ],
+      "certificationScenario": "train-2-service-expense-checkout"
+    },
+    {
+      "workItemType": "Dorm.ServiceTaskVerify",
+      "decisionRef": "Dorm.ServiceTaskVerify",
+      "中文名称": "服务任务验收",
+      "ownerRole": "宿舍负责人",
+      "backupOwner": "宿舍经办人",
+      "escalationOwner": "宿舍负责人",
+      "SLA": "1h",
+      "requiredEvidence": [
+        "verification-check"
+      ],
+      "affectedFacts": [
+        "ServiceTask",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "ledgerImpact": "无账务影响",
+      "confirmationPolicy": "payment_confirmation",
+      "riskLevel": "medium",
+      "idempotencyScope": "tenant:dorm-service-task-verify:confirm",
+      "factTraceRequired": true,
+      "lensOutputs": [
+        "RoomReadinessLens",
+        "ServiceTaskLens"
+      ],
+      "certificationScenario": "train-2-service-expense-checkout"
+    },
+    {
+      "workItemType": "Dorm.RoomInspectionConfirm",
+      "decisionRef": "Dorm.RoomInspectionConfirm",
+      "中文名称": "退住验房确认",
+      "ownerRole": "宿舍经办人",
+      "backupOwner": "宿舍负责人",
+      "escalationOwner": "宿舍负责人",
+      "SLA": "1h",
+      "requiredEvidence": [
+        "room-inspection",
+        "damage-photo"
+      ],
+      "affectedFacts": [
+        "RoomInspection",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "ledgerImpact": "无账务影响",
+      "confirmationPolicy": "dormitory_l1_internal_pilot_observation",
+      "riskLevel": "medium",
+      "idempotencyScope": "tenant:dorm-room-inspection-confirm:confirm",
+      "factTraceRequired": true,
+      "lensOutputs": [
+        "CheckoutTurnoverLens"
+      ],
+      "certificationScenario": "train-2-service-expense-checkout"
+    },
+    {
+      "workItemType": "Dorm.StayExtendApprove",
+      "decisionRef": "Dorm.StayExtendApprove",
+      "中文名称": "续住审批",
+      "ownerRole": "宿舍负责人",
+      "backupOwner": "宿舍经办人",
+      "escalationOwner": "宿舍负责人",
+      "SLA": "1h",
+      "requiredEvidence": [
+        "extend-application",
+        "rate-policy"
+      ],
+      "affectedFacts": [
+        "Stay",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "ledgerImpact": "无账务影响",
+      "confirmationPolicy": "payment_confirmation",
+      "riskLevel": "medium",
+      "idempotencyScope": "tenant:dorm-stay-extend-approve:confirm",
+      "factTraceRequired": true,
+      "lensOutputs": [
+        "StayOnboardingLens"
+      ],
+      "certificationScenario": "train-3-governance-review-optimization"
+    },
+    {
+      "workItemType": "Dorm.BedTransferApprove",
+      "decisionRef": "Dorm.BedTransferApprove",
+      "中文名称": "换床审批",
+      "ownerRole": "宿舍负责人",
+      "backupOwner": "宿舍经办人",
+      "escalationOwner": "宿舍负责人",
+      "SLA": "1h",
+      "requiredEvidence": [
+        "transfer-application",
+        "bed-availability-proof"
+      ],
+      "affectedFacts": [
+        "Stay",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "ledgerImpact": "无账务影响",
+      "confirmationPolicy": "payment_confirmation",
+      "riskLevel": "medium",
+      "idempotencyScope": "tenant:dorm-bed-transfer-approve:confirm",
+      "factTraceRequired": true,
+      "lensOutputs": [
+        "DormAvailabilityLens"
+      ],
+      "certificationScenario": "train-3-governance-review-optimization"
+    },
+    {
+      "workItemType": "Dorm.ReservationCancelClose",
+      "decisionRef": "Dorm.ReservationCancelClose",
+      "中文名称": "预订取消关闭",
+      "ownerRole": "宿舍经办人",
+      "backupOwner": "宿舍负责人",
+      "escalationOwner": "宿舍负责人",
+      "SLA": "1h",
+      "requiredEvidence": [
+        "cancel-request"
+      ],
+      "affectedFacts": [
+        "Reservation",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "ledgerImpact": "无账务影响",
+      "confirmationPolicy": "dormitory_l1_internal_pilot_observation",
+      "riskLevel": "medium",
+      "idempotencyScope": "tenant:dorm-reservation-cancel-close:confirm",
+      "factTraceRequired": true,
+      "lensOutputs": [
+        "LeadFunnelLens"
+      ],
+      "certificationScenario": "train-3-governance-review-optimization"
+    },
+    {
+      "workItemType": "Dorm.ReservationNoShowClose",
+      "decisionRef": "Dorm.ReservationNoShowClose",
+      "中文名称": "预订未到关闭",
+      "ownerRole": "宿舍经办人",
+      "backupOwner": "宿舍负责人",
+      "escalationOwner": "宿舍负责人",
+      "SLA": "1h",
+      "requiredEvidence": [
+        "no-show-record"
+      ],
+      "affectedFacts": [
+        "Reservation",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "ledgerImpact": "无账务影响",
+      "confirmationPolicy": "dormitory_l1_internal_pilot_observation",
+      "riskLevel": "medium",
+      "idempotencyScope": "tenant:dorm-reservation-no-show-close:confirm",
+      "factTraceRequired": true,
+      "lensOutputs": [
+        "LeadFunnelLens"
+      ],
+      "certificationScenario": "train-3-governance-review-optimization"
+    },
+    {
+      "workItemType": "Dorm.AccessCredentialIssue",
+      "decisionRef": "Dorm.AccessCredentialIssue",
+      "中文名称": "门禁凭证发放",
+      "ownerRole": "宿舍经办人",
+      "backupOwner": "宿舍负责人",
+      "escalationOwner": "宿舍负责人",
+      "SLA": "1h",
+      "requiredEvidence": [
+        "identity-document",
+        "checkin-confirmation"
+      ],
+      "affectedFacts": [
+        "Resident",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "ledgerImpact": "无账务影响",
+      "confirmationPolicy": "dormitory_l1_internal_pilot_observation",
+      "riskLevel": "medium",
+      "idempotencyScope": "tenant:dorm-access-credential-issue:confirm",
+      "factTraceRequired": true,
+      "lensOutputs": [
+        "AccessTrustLens"
+      ],
+      "certificationScenario": "train-3-governance-review-optimization"
+    },
+    {
+      "workItemType": "Dorm.AccessCredentialRevoke",
+      "decisionRef": "Dorm.AccessCredentialRevoke",
+      "中文名称": "门禁凭证回收",
+      "ownerRole": "宿舍经办人",
+      "backupOwner": "宿舍负责人",
+      "escalationOwner": "宿舍负责人",
+      "SLA": "1h",
+      "requiredEvidence": [
+        "checkout-close-proof"
+      ],
+      "affectedFacts": [
+        "Resident",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "ledgerImpact": "无账务影响",
+      "confirmationPolicy": "dormitory_l1_internal_pilot_observation",
+      "riskLevel": "medium",
+      "idempotencyScope": "tenant:dorm-access-credential-revoke:confirm",
+      "factTraceRequired": true,
+      "lensOutputs": [
+        "AccessTrustLens"
+      ],
+      "certificationScenario": "train-3-governance-review-optimization"
+    },
+    {
+      "workItemType": "Dorm.IncidentRecord",
+      "decisionRef": "Dorm.IncidentRecord",
+      "中文名称": "事件记录",
+      "ownerRole": "宿舍经办人",
+      "backupOwner": "宿舍负责人",
+      "escalationOwner": "宿舍负责人",
+      "SLA": "1h",
+      "requiredEvidence": [
+        "incident-evidence",
+        "audit-note"
+      ],
+      "affectedFacts": [
+        "ExceptionCase",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "ledgerImpact": "无账务影响",
+      "confirmationPolicy": "dormitory_l1_internal_pilot_observation",
+      "riskLevel": "medium",
+      "idempotencyScope": "tenant:dorm-incident-record:confirm",
+      "factTraceRequired": true,
+      "lensOutputs": [
+        "ExceptionRiskLens"
+      ],
+      "certificationScenario": "train-3-governance-review-optimization"
     },
     {
       "workItemType": "Dorm.PeriodReview",
       "decisionRef": "Dorm.PeriodReview",
-      "中文名称": "期间复盘",
-      "ownerRole": "Dormitory Operations Owner",
-      "backupOwner": "Finance Supervisor",
-      "escalationOwner": "General Manager",
+      "中文名称": "周期复盘",
+      "ownerRole": "宿舍负责人",
+      "backupOwner": "宿舍经办人",
+      "escalationOwner": "宿舍负责人",
       "SLA": "weekly",
-      "requiredEvidence": ["period-review-pack"],
-      "affectedFacts": ["ActionPlan", "LensReview"],
-      "ledgerImpact": "只读账本和投影，提交行动计划和复盘结论",
-      "confirmationPolicy": "management-review-only",
+      "requiredEvidence": [
+        "period-review-pack"
+      ],
+      "affectedFacts": [
+        "PeriodSnapshot",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "ledgerImpact": "只读业务事实、财务事实、证据事实和 Lens，不写账",
+      "confirmationPolicy": "period_close",
       "riskLevel": "medium",
-      "idempotencyScope": "tenant:period-review",
+      "idempotencyScope": "tenant:dorm-period-review:confirm",
       "factTraceRequired": true,
-      "lensOutputs": ["ManagementDashboardLens"],
-      "certificationScenario": "dorm-cert-007"
+      "lensOutputs": [
+        "ManagementDashboardLens"
+      ],
+      "certificationScenario": "train-3-governance-review-optimization"
+    },
+    {
+      "workItemType": "Dorm.PeriodActionPlanExecute",
+      "decisionRef": "Dorm.PeriodActionPlanExecute",
+      "中文名称": "周期行动计划执行",
+      "ownerRole": "宿舍经办人",
+      "backupOwner": "宿舍负责人",
+      "escalationOwner": "宿舍负责人",
+      "SLA": "weekly",
+      "requiredEvidence": [
+        "action-plan-evidence"
+      ],
+      "affectedFacts": [
+        "ActionPlan",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "ledgerImpact": "无账务影响",
+      "confirmationPolicy": "dormitory_l1_internal_pilot_observation",
+      "riskLevel": "medium",
+      "idempotencyScope": "tenant:dorm-period-action-plan-execute:confirm",
+      "factTraceRequired": true,
+      "lensOutputs": [
+        "ManagementDashboardLens"
+      ],
+      "certificationScenario": "train-3-governance-review-optimization"
     },
     {
       "workItemType": "Dorm.ExceptionResolve",
       "decisionRef": "Dorm.ExceptionResolve",
       "中文名称": "异常处理",
-      "ownerRole": "Operations Director",
-      "backupOwner": "Dormitory Operations Owner",
-      "escalationOwner": "General Manager",
-      "SLA": "same day",
-      "requiredEvidence": ["exception-audit"],
-      "affectedFacts": ["ExceptionCase", "AuditTrail"],
-      "ledgerImpact": "不得写业务事实或账务事实，只记录拒绝和审计链",
-      "confirmationPolicy": "exception-owner-confirm",
-      "riskLevel": "critical",
-      "idempotencyScope": "tenant:exception",
+      "ownerRole": "宿舍负责人",
+      "backupOwner": "宿舍经办人",
+      "escalationOwner": "宿舍负责人",
+      "SLA": "1h",
+      "requiredEvidence": [
+        "exception-audit",
+        "resolution-evidence"
+      ],
+      "affectedFacts": [
+        "ExceptionCase",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "ledgerImpact": "无账务影响",
+      "confirmationPolicy": "payment_confirmation",
+      "riskLevel": "medium",
+      "idempotencyScope": "tenant:dorm-exception-resolve:confirm",
       "factTraceRequired": true,
-      "lensOutputs": ["ExceptionRiskLens"],
-      "certificationScenario": "dorm-cert-008"
+      "lensOutputs": [
+        "ExceptionRiskLens"
+      ],
+      "certificationScenario": "train-3-governance-review-optimization"
     }
   ],
   "productionAllowed": false

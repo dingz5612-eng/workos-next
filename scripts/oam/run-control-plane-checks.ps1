@@ -87,14 +87,15 @@ Invoke-Gate node scripts/oam/check-p0-rule-ledger.mjs --self-test
 Invoke-Gate node scripts/oam/check-p0-rule-ledger.mjs
 Invoke-Gate node scripts/oam/check-current-authority-index.mjs
 Invoke-Gate node scripts/oam/check-system-operating-kernel.mjs
+Invoke-Gate node scripts/business/generate-dormitory-derived-contracts.mjs
 Invoke-Gate node scripts/oam/check-oam-kernel-graph.mjs
+Invoke-Gate node scripts/oam/generate-current-engineering-ledger.mjs
 Invoke-Gate node scripts/oam/check-file-lifecycle-policy.mjs
 Invoke-Gate node scripts/oam/check-retired-reference-blocker.mjs
 Invoke-Gate node scripts/oam/generate-system-derived-contracts.mjs
 Invoke-Gate node scripts/oam/check-derived-contract-consistency.mjs
 Invoke-Gate node scripts/oam/check-system-handoff-contract.mjs
 Invoke-Gate node scripts/oam/check-system-failure-routing-contract.mjs
-Invoke-Gate node scripts/oam/generate-current-engineering-ledger.mjs
 Invoke-Gate node scripts/oam/check-current-engineering-ledger.mjs
 Invoke-Gate node scripts/oam/check-oam-responsibility-boundary-matrix.mjs
 Invoke-Gate node scripts/oam/check-business-object-field-registry.mjs
@@ -139,6 +140,11 @@ Invoke-Gate node scripts/check-shared-governance-boundary.mjs --self-test
 Invoke-Gate node scripts/check-shared-governance-boundary.mjs
 Invoke-Gate node scripts/check-dormitory-golden-domain.mjs --self-test
 Invoke-Gate node scripts/check-dormitory-golden-domain.mjs
+Invoke-Gate node scripts/business/check-dormitory-operating-kernel.mjs
+Invoke-Gate node scripts/business/check-dormitory-derived-contracts.mjs
+Invoke-Gate node scripts/business/check-dormitory-release-train.mjs
+Invoke-Gate node scripts/business/check-dormitory-pilot-scenario-pack.mjs
+Invoke-Gate node scripts/business/check-dormitory-metrics-lens-contract.mjs
 Invoke-Gate node scripts/business/check-dormitory-execution-kernel.mjs
 Invoke-Gate node scripts/business/check-scenario-field-contract.mjs
 Invoke-Gate node scripts/business/check-canonical-scenario-map.mjs

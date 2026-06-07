@@ -67,14 +67,15 @@ jobs:
           node scripts/oam/check-p0-rule-ledger.mjs
           node scripts/oam/check-current-authority-index.mjs
           node scripts/oam/check-system-operating-kernel.mjs
+          node scripts/business/generate-dormitory-derived-contracts.mjs
           node scripts/oam/check-oam-kernel-graph.mjs
+          node scripts/oam/generate-current-engineering-ledger.mjs
           node scripts/oam/check-file-lifecycle-policy.mjs
           node scripts/oam/check-retired-reference-blocker.mjs
           node scripts/oam/generate-system-derived-contracts.mjs
           node scripts/oam/check-derived-contract-consistency.mjs
           node scripts/oam/check-system-handoff-contract.mjs
           node scripts/oam/check-system-failure-routing-contract.mjs
-          node scripts/oam/generate-current-engineering-ledger.mjs
           node scripts/oam/check-current-engineering-ledger.mjs
           node scripts/oam/check-oam-responsibility-boundary-matrix.mjs
           node scripts/oam/check-business-object-field-registry.mjs
@@ -129,6 +130,11 @@ jobs:
 
       - name: Validate business semantic contracts
         run: |
+          node scripts/business/check-dormitory-operating-kernel.mjs
+          node scripts/business/check-dormitory-derived-contracts.mjs
+          node scripts/business/check-dormitory-release-train.mjs
+          node scripts/business/check-dormitory-pilot-scenario-pack.mjs
+          node scripts/business/check-dormitory-metrics-lens-contract.mjs
           node scripts/business/check-dormitory-execution-kernel.mjs
           node scripts/business/check-scenario-field-contract.mjs
           node scripts/business/check-canonical-scenario-map.mjs

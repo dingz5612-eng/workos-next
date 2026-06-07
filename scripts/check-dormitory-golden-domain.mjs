@@ -27,11 +27,9 @@ const requiredCoverage = [
 ];
 const forbiddenOwnedFacts = ["Subject", "Vehicle", "PaymentFact", "DepositFact", "LedgerTransaction", "EvidenceObject"];
 const requiredValueStreams = [
-  "resource_availability",
-  "lead_to_stay_conversion",
-  "in_stay_revenue",
-  "deposit_liability",
-  "checkout_turnover"
+  "train-1-business-mainline",
+  "train-2-service-expense-checkout",
+  "train-3-governance-review-optimization"
 ];
 
 if (process.argv.includes("--self-test")) {
@@ -167,7 +165,7 @@ function validateValueStreams(document, decisionTable) {
     }
     for (const workItemType of stream.workItemTypes ?? []) {
       const decision = decisions.get(workItemType);
-      if (!decision || decision.keepInDormitoryCatalog !== true) {
+      if (!decision || (decision.keepInDormitoryCatalog !== true && decision.decision !== "externalFinanceGovernance")) {
         violations.push(violation("dormitory.value_stream_non_current_workitem", `Value stream ${stream.id} workItemTypes can only bind current catalog actions: ${workItemType}.`, { streamId: stream.id, workItemType }));
       }
     }

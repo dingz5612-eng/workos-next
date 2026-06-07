@@ -7,20 +7,50 @@
   "admissionMatrix": "docs/contracts/admission/admission-matrix.json",
   "workflows": [
     {
-      "workflowId": "workflow.dormitory.checkinConfirm.v1",
-      "sourceCardId": "cert.checkinConfirm",
+      "workflowId": "workflow.dormitory.RoomSetupConfirm.v1",
+      "workItemType": "Dorm.RoomSetupConfirm",
+      "definitionId": "definition.dormitory.roomSetupConfirm.v1",
+      "sourceCardId": "cert.roomSetupConfirm",
       "initialState": "ready",
-      "allowedStates": ["ready", "admission_checked", "confirmed", "projecting", "completed", "blocked", "correction_requested"],
-      "forbiddenStates": ["production_confirmed", "direct_db_written"],
+      "allowedStates": [
+        "ready",
+        "admission_checked",
+        "trusted_device_checked",
+        "confirmed",
+        "projecting",
+        "completed",
+        "blocked",
+        "correction_requested"
+      ],
+      "forbiddenStates": [
+        "production_confirmed",
+        "direct_db_written",
+        "direct_ledger_write",
+        "card_fallback_confirmed"
+      ],
       "actions": [
         {
-          "actionId": "checkinConfirm.confirm",
-          "from": ["ready"],
+          "actionId": "dorm-room-setup-confirm.confirm",
+          "from": [
+            "ready"
+          ],
           "to": "confirmed",
-          "preconditions": ["definition_resolved", "required_fields_present", "idempotency_key_present", "evidence_refs_present"],
+          "preconditions": [
+            "definition_resolved",
+            "required_fields_present",
+            "idempotency_key_present",
+            "evidence_refs_present",
+            "admission_decision_ref_present"
+          ],
           "admissionMatrixEntry": "dormitory_l1_internal_pilot_observation",
-          "evidenceRequired": ["identity-document", "reservation-acknowledgement", "bed-availability-proof"],
-          "visibleRoles": ["operator", "manager"],
+          "evidenceRequired": [
+            "room-photo",
+            "room-basic-info"
+          ],
+          "visibleRoles": [
+            "宿舍经办人",
+            "宿舍负责人"
+          ],
           "mobileVisible": true,
           "pcGovernanceAction": false,
           "revokePath": "append_only_correction_work_item",
@@ -29,164 +59,1559 @@
       ]
     },
     {
-      "workflowId": "workflow.dormitory.depositConfirm.v1",
-      "sourceCardId": "cert.depositConfirm",
+      "workflowId": "workflow.dormitory.BedSetupConfirm.v1",
+      "workItemType": "Dorm.BedSetupConfirm",
+      "definitionId": "definition.dormitory.bedSetupConfirm.v1",
+      "sourceCardId": "cert.bedSetupConfirm",
       "initialState": "ready",
-      "allowedStates": ["ready", "admission_checked", "trusted_device_checked", "confirmed", "projecting", "completed", "blocked"],
-      "forbiddenStates": ["deposit_mixed_as_revenue", "untrusted_device_confirmed", "direct_ledger_write"],
+      "allowedStates": [
+        "ready",
+        "admission_checked",
+        "trusted_device_checked",
+        "confirmed",
+        "projecting",
+        "completed",
+        "blocked",
+        "correction_requested"
+      ],
+      "forbiddenStates": [
+        "production_confirmed",
+        "direct_db_written",
+        "direct_ledger_write",
+        "card_fallback_confirmed"
+      ],
       "actions": [
         {
-          "actionId": "depositConfirmation.confirm",
-          "from": ["ready"],
+          "actionId": "dorm-bed-setup-confirm.confirm",
+          "from": [
+            "ready"
+          ],
           "to": "confirmed",
-          "preconditions": ["definition_resolved", "finance_capability", "trusted_device", "reason_present", "evidence_refs_present", "admission_decision_ref_present"],
-          "admissionMatrixEntry": "payment_confirmation",
-          "evidenceRequired": ["receipt-proof", "deposit-policy", "admission_decision_ref"],
-          "visibleRoles": ["finance", "manager"],
-          "mobileVisible": true,
-          "pcGovernanceAction": false,
-          "revokePath": "ledger_correction_request",
-          "correctionPath": "Finance.CorrectionApply"
-        }
-      ]
-    },
-    {
-      "workflowId": "workflow.dormitory.paymentConfirm.v1",
-      "sourceCardId": "cert.paymentConfirm",
-      "initialState": "ready",
-      "allowedStates": ["ready", "admission_checked", "trusted_device_checked", "confirmed", "projecting", "completed", "blocked"],
-      "forbiddenStates": ["deposit_mixed_as_payment", "untrusted_device_confirmed", "direct_ledger_write"],
-      "actions": [
-        {
-          "actionId": "paymentConfirmation.confirm",
-          "from": ["ready"],
-          "to": "confirmed",
-          "preconditions": ["definition_resolved", "finance_capability", "trusted_device", "reason_present", "evidence_refs_present", "admission_decision_ref_present"],
-          "admissionMatrixEntry": "payment_confirmation",
-          "evidenceRequired": ["payment-receipt", "cashier-review", "admission_decision_ref"],
-          "visibleRoles": ["finance", "manager"],
-          "mobileVisible": true,
-          "pcGovernanceAction": false,
-          "revokePath": "ledger_correction_request",
-          "correctionPath": "Finance.CorrectionApply"
-        }
-      ]
-    },
-    {
-      "workflowId": "workflow.dormitory.roomReadinessCheck.v1",
-      "sourceCardId": "cert.roomReadinessCheck",
-      "initialState": "ready",
-      "allowedStates": ["ready", "admission_checked", "confirmed", "projecting", "completed", "blocked", "rework_requested"],
-      "forbiddenStates": ["availability_released_without_verification", "direct_db_written"],
-      "actions": [
-        {
-          "actionId": "roomReadinessCheck.confirm",
-          "from": ["ready"],
-          "to": "confirmed",
-          "preconditions": ["definition_resolved", "task_object_fixed", "evidence_refs_present", "manager_or_housekeeping_role"],
+          "preconditions": [
+            "definition_resolved",
+            "required_fields_present",
+            "idempotency_key_present",
+            "evidence_refs_present",
+            "admission_decision_ref_present"
+          ],
           "admissionMatrixEntry": "dormitory_l1_internal_pilot_observation",
-          "evidenceRequired": ["completion-photo", "verification-check"],
-          "visibleRoles": ["housekeeping", "manager"],
+          "evidenceRequired": [
+            "bed-photo",
+            "room-link-proof"
+          ],
+          "visibleRoles": [
+            "宿舍经办人",
+            "宿舍负责人"
+          ],
           "mobileVisible": true,
           "pcGovernanceAction": false,
-          "revokePath": "rework_work_item",
+          "revokePath": "append_only_correction_work_item",
           "correctionPath": "Dorm.ExceptionResolve"
         }
       ]
     },
     {
-      "workflowId": "workflow.dormitory.refundApprove.v1",
-      "sourceCardId": "cert.refundApprove",
+      "workflowId": "workflow.dormitory.RatePlanConfirm.v1",
+      "workItemType": "Dorm.RatePlanConfirm",
+      "definitionId": "definition.dormitory.ratePlanConfirm.v1",
+      "sourceCardId": "cert.ratePlanConfirm",
       "initialState": "ready",
-      "allowedStates": ["ready", "approval_checked", "trusted_device_checked", "confirmed", "projecting", "completed", "blocked"],
-      "forbiddenStates": ["refund_without_balance", "refund_as_expense", "untrusted_device_confirmed"],
+      "allowedStates": [
+        "ready",
+        "admission_checked",
+        "trusted_device_checked",
+        "confirmed",
+        "projecting",
+        "completed",
+        "blocked",
+        "correction_requested"
+      ],
+      "forbiddenStates": [
+        "production_confirmed",
+        "direct_db_written",
+        "direct_ledger_write",
+        "card_fallback_confirmed"
+      ],
       "actions": [
         {
-          "actionId": "depositRefund.confirm",
-          "from": ["approval_checked"],
+          "actionId": "dorm-rate-plan-confirm.confirm",
+          "from": [
+            "ready"
+          ],
           "to": "confirmed",
-          "preconditions": ["definition_resolved", "finance_capability", "trusted_device", "refund_balance_valid", "reason_present", "evidence_refs_present", "admission_decision_ref_present"],
-          "admissionMatrixEntry": "deposit_refund",
-          "evidenceRequired": ["room-inspection", "settlement-review", "refund-approval", "admission_decision_ref"],
-          "visibleRoles": ["finance", "manager"],
+          "preconditions": [
+            "definition_resolved",
+            "required_fields_present",
+            "idempotency_key_present",
+            "evidence_refs_present",
+            "admission_decision_ref_present"
+          ],
+          "admissionMatrixEntry": "payment_confirmation",
+          "evidenceRequired": [
+            "rate-policy"
+          ],
+          "visibleRoles": [
+            "宿舍经办人",
+            "宿舍负责人"
+          ],
           "mobileVisible": true,
           "pcGovernanceAction": true,
-          "revokePath": "ledger_correction_request",
+          "revokePath": "append_only_correction_work_item",
+          "correctionPath": "Dorm.ExceptionResolve"
+        }
+      ]
+    },
+    {
+      "workflowId": "workflow.dormitory.ResourceReadinessConfirm.v1",
+      "workItemType": "Dorm.ResourceReadinessConfirm",
+      "definitionId": "definition.dormitory.resourceReadinessConfirm.v1",
+      "sourceCardId": "cert.resourceReadinessConfirm",
+      "initialState": "ready",
+      "allowedStates": [
+        "ready",
+        "admission_checked",
+        "trusted_device_checked",
+        "confirmed",
+        "projecting",
+        "completed",
+        "blocked",
+        "correction_requested"
+      ],
+      "forbiddenStates": [
+        "production_confirmed",
+        "direct_db_written",
+        "direct_ledger_write",
+        "card_fallback_confirmed"
+      ],
+      "actions": [
+        {
+          "actionId": "dorm-resource-readiness-confirm.confirm",
+          "from": [
+            "ready"
+          ],
+          "to": "confirmed",
+          "preconditions": [
+            "definition_resolved",
+            "required_fields_present",
+            "idempotency_key_present",
+            "evidence_refs_present",
+            "admission_decision_ref_present"
+          ],
+          "admissionMatrixEntry": "dormitory_l1_internal_pilot_observation",
+          "evidenceRequired": [
+            "completion-photo",
+            "verification-check"
+          ],
+          "visibleRoles": [
+            "宿舍经办人",
+            "宿舍负责人"
+          ],
+          "mobileVisible": true,
+          "pcGovernanceAction": false,
+          "revokePath": "append_only_correction_work_item",
+          "correctionPath": "Dorm.ExceptionResolve"
+        }
+      ]
+    },
+    {
+      "workflowId": "workflow.dormitory.LeadCapture.v1",
+      "workItemType": "Dorm.LeadCapture",
+      "definitionId": "definition.dormitory.leadCapture.v1",
+      "sourceCardId": "cert.leadCapture",
+      "initialState": "ready",
+      "allowedStates": [
+        "ready",
+        "admission_checked",
+        "trusted_device_checked",
+        "confirmed",
+        "projecting",
+        "completed",
+        "blocked",
+        "correction_requested"
+      ],
+      "forbiddenStates": [
+        "production_confirmed",
+        "direct_db_written",
+        "direct_ledger_write",
+        "card_fallback_confirmed"
+      ],
+      "actions": [
+        {
+          "actionId": "dorm-lead-capture.confirm",
+          "from": [
+            "ready"
+          ],
+          "to": "confirmed",
+          "preconditions": [
+            "definition_resolved",
+            "required_fields_present",
+            "idempotency_key_present",
+            "evidence_refs_present",
+            "admission_decision_ref_present"
+          ],
+          "admissionMatrixEntry": "dormitory_l1_internal_pilot_observation",
+          "evidenceRequired": [
+            "lead-consent"
+          ],
+          "visibleRoles": [
+            "宿舍经办人",
+            "宿舍负责人"
+          ],
+          "mobileVisible": true,
+          "pcGovernanceAction": false,
+          "revokePath": "append_only_correction_work_item",
+          "correctionPath": "Dorm.ExceptionResolve"
+        }
+      ]
+    },
+    {
+      "workflowId": "workflow.dormitory.ReservationConfirm.v1",
+      "workItemType": "Dorm.ReservationConfirm",
+      "definitionId": "definition.dormitory.reservationConfirm.v1",
+      "sourceCardId": "cert.reservationConfirm",
+      "initialState": "ready",
+      "allowedStates": [
+        "ready",
+        "admission_checked",
+        "trusted_device_checked",
+        "confirmed",
+        "projecting",
+        "completed",
+        "blocked",
+        "correction_requested"
+      ],
+      "forbiddenStates": [
+        "production_confirmed",
+        "direct_db_written",
+        "direct_ledger_write",
+        "card_fallback_confirmed"
+      ],
+      "actions": [
+        {
+          "actionId": "dorm-reservation-confirm.confirm",
+          "from": [
+            "ready"
+          ],
+          "to": "confirmed",
+          "preconditions": [
+            "definition_resolved",
+            "required_fields_present",
+            "idempotency_key_present",
+            "evidence_refs_present",
+            "admission_decision_ref_present"
+          ],
+          "admissionMatrixEntry": "payment_confirmation",
+          "evidenceRequired": [
+            "reservation-acknowledgement",
+            "bed-availability-proof"
+          ],
+          "visibleRoles": [
+            "宿舍经办人",
+            "宿舍负责人"
+          ],
+          "mobileVisible": true,
+          "pcGovernanceAction": true,
+          "revokePath": "append_only_correction_work_item",
+          "correctionPath": "Dorm.ExceptionResolve"
+        }
+      ]
+    },
+    {
+      "workflowId": "workflow.dormitory.CheckinConfirm.v1",
+      "workItemType": "Dorm.CheckinConfirm",
+      "definitionId": "definition.dormitory.checkinConfirm.v1",
+      "sourceCardId": "cert.checkinConfirm",
+      "initialState": "ready",
+      "allowedStates": [
+        "ready",
+        "admission_checked",
+        "trusted_device_checked",
+        "confirmed",
+        "projecting",
+        "completed",
+        "blocked",
+        "correction_requested"
+      ],
+      "forbiddenStates": [
+        "production_confirmed",
+        "direct_db_written",
+        "direct_ledger_write",
+        "card_fallback_confirmed"
+      ],
+      "actions": [
+        {
+          "actionId": "dorm-checkin-confirm.confirm",
+          "from": [
+            "ready"
+          ],
+          "to": "confirmed",
+          "preconditions": [
+            "definition_resolved",
+            "required_fields_present",
+            "idempotency_key_present",
+            "evidence_refs_present",
+            "admission_decision_ref_present"
+          ],
+          "admissionMatrixEntry": "dormitory_l1_internal_pilot_observation",
+          "evidenceRequired": [
+            "identity-document",
+            "checkin-confirmation",
+            "reservation-acknowledgement",
+            "bed-availability-proof"
+          ],
+          "visibleRoles": [
+            "宿舍经办人",
+            "宿舍负责人"
+          ],
+          "mobileVisible": true,
+          "pcGovernanceAction": false,
+          "revokePath": "append_only_correction_work_item",
+          "correctionPath": "Dorm.ExceptionResolve"
+        }
+      ]
+    },
+    {
+      "workflowId": "workflow.dormitory.PaymentConfirm.v1",
+      "workItemType": "Dorm.PaymentConfirm",
+      "definitionId": "definition.dormitory.paymentConfirm.v1",
+      "sourceCardId": "cert.paymentConfirm",
+      "initialState": "ready",
+      "allowedStates": [
+        "ready",
+        "admission_checked",
+        "trusted_device_checked",
+        "confirmed",
+        "projecting",
+        "completed",
+        "blocked",
+        "correction_requested"
+      ],
+      "forbiddenStates": [
+        "production_confirmed",
+        "direct_db_written",
+        "direct_ledger_write",
+        "card_fallback_confirmed"
+      ],
+      "actions": [
+        {
+          "actionId": "dorm-payment-confirm.confirm",
+          "from": [
+            "ready"
+          ],
+          "to": "confirmed",
+          "preconditions": [
+            "definition_resolved",
+            "required_fields_present",
+            "idempotency_key_present",
+            "evidence_refs_present",
+            "admission_decision_ref_present"
+          ],
+          "admissionMatrixEntry": "payment_confirmation",
+          "evidenceRequired": [
+            "payment-receipt",
+            "cashier-review"
+          ],
+          "visibleRoles": [
+            "宿舍经办人",
+            "宿舍负责人"
+          ],
+          "mobileVisible": true,
+          "pcGovernanceAction": true,
+          "revokePath": "append_only_correction_work_item",
           "correctionPath": "Finance.CorrectionApply"
         }
       ]
     },
     {
-      "workflowId": "workflow.finance.correctionApply.v1",
-      "sourceCardId": "cert.financeCorrectionApply",
-      "initialState": "requested",
-      "allowedStates": ["requested", "reviewed", "approved", "trusted_device_checked", "applied", "rejected", "audited"],
-      "forbiddenStates": ["entry_updated_in_place", "entry_deleted_in_place", "applied_without_approval"],
+      "workflowId": "workflow.dormitory.DepositConfirm.v1",
+      "workItemType": "Dorm.DepositConfirm",
+      "definitionId": "definition.dormitory.depositConfirm.v1",
+      "sourceCardId": "cert.depositConfirm",
+      "initialState": "ready",
+      "allowedStates": [
+        "ready",
+        "admission_checked",
+        "trusted_device_checked",
+        "confirmed",
+        "projecting",
+        "completed",
+        "blocked",
+        "correction_requested"
+      ],
+      "forbiddenStates": [
+        "production_confirmed",
+        "direct_db_written",
+        "direct_ledger_write",
+        "card_fallback_confirmed"
+      ],
       "actions": [
         {
-          "actionId": "ledgerCorrectionApply.confirm",
-          "from": ["approved"],
-          "to": "applied",
-          "preconditions": ["definition_resolved", "finance_correction_capability", "trusted_device", "reason_present", "evidence_refs_present", "before_after_snapshot", "approval_chain_present", "admission_decision_ref_present"],
+          "actionId": "dorm-deposit-confirm.confirm",
+          "from": [
+            "ready"
+          ],
+          "to": "confirmed",
+          "preconditions": [
+            "definition_resolved",
+            "required_fields_present",
+            "idempotency_key_present",
+            "evidence_refs_present",
+            "admission_decision_ref_present"
+          ],
           "admissionMatrixEntry": "payment_confirmation",
-          "evidenceRequired": ["bank-import-row", "correction-approval", "admission_decision_ref"],
-          "visibleRoles": ["finance", "releaseowner"],
-          "mobileVisible": false,
+          "evidenceRequired": [
+            "receipt-proof",
+            "deposit-policy"
+          ],
+          "visibleRoles": [
+            "宿舍经办人",
+            "宿舍负责人"
+          ],
+          "mobileVisible": true,
           "pcGovernanceAction": true,
-          "revokePath": "new_compensation_correction",
-          "correctionPath": "append_only_ledger_reversal"
+          "revokePath": "append_only_correction_work_item",
+          "correctionPath": "Finance.CorrectionApply"
         }
       ]
     },
     {
-      "workflowId": "workflow.dormitory.periodReview.v1",
+      "workflowId": "workflow.dormitory.ServiceTaskCreate.v1",
+      "workItemType": "Dorm.ServiceTaskCreate",
+      "definitionId": "definition.dormitory.serviceTaskCreate.v1",
+      "sourceCardId": "cert.serviceTaskCreate",
+      "initialState": "ready",
+      "allowedStates": [
+        "ready",
+        "admission_checked",
+        "trusted_device_checked",
+        "confirmed",
+        "projecting",
+        "completed",
+        "blocked",
+        "correction_requested"
+      ],
+      "forbiddenStates": [
+        "production_confirmed",
+        "direct_db_written",
+        "direct_ledger_write",
+        "card_fallback_confirmed"
+      ],
+      "actions": [
+        {
+          "actionId": "dorm-service-task-create.confirm",
+          "from": [
+            "ready"
+          ],
+          "to": "confirmed",
+          "preconditions": [
+            "definition_resolved",
+            "required_fields_present",
+            "idempotency_key_present",
+            "evidence_refs_present",
+            "admission_decision_ref_present"
+          ],
+          "admissionMatrixEntry": "dormitory_l1_internal_pilot_observation",
+          "evidenceRequired": [
+            "service-request"
+          ],
+          "visibleRoles": [
+            "宿舍经办人",
+            "宿舍负责人"
+          ],
+          "mobileVisible": true,
+          "pcGovernanceAction": false,
+          "revokePath": "append_only_correction_work_item",
+          "correctionPath": "Dorm.ExceptionResolve"
+        }
+      ]
+    },
+    {
+      "workflowId": "workflow.dormitory.ServiceTaskAssign.v1",
+      "workItemType": "Dorm.ServiceTaskAssign",
+      "definitionId": "definition.dormitory.serviceTaskAssign.v1",
+      "sourceCardId": "cert.serviceTaskAssign",
+      "initialState": "ready",
+      "allowedStates": [
+        "ready",
+        "admission_checked",
+        "trusted_device_checked",
+        "confirmed",
+        "projecting",
+        "completed",
+        "blocked",
+        "correction_requested"
+      ],
+      "forbiddenStates": [
+        "production_confirmed",
+        "direct_db_written",
+        "direct_ledger_write",
+        "card_fallback_confirmed"
+      ],
+      "actions": [
+        {
+          "actionId": "dorm-service-task-assign.confirm",
+          "from": [
+            "ready"
+          ],
+          "to": "confirmed",
+          "preconditions": [
+            "definition_resolved",
+            "required_fields_present",
+            "idempotency_key_present",
+            "evidence_refs_present",
+            "admission_decision_ref_present"
+          ],
+          "admissionMatrixEntry": "payment_confirmation",
+          "evidenceRequired": [
+            "assignment-record"
+          ],
+          "visibleRoles": [
+            "宿舍经办人",
+            "宿舍负责人"
+          ],
+          "mobileVisible": true,
+          "pcGovernanceAction": true,
+          "revokePath": "append_only_correction_work_item",
+          "correctionPath": "Dorm.ExceptionResolve"
+        }
+      ]
+    },
+    {
+      "workflowId": "workflow.dormitory.ServiceTaskComplete.v1",
+      "workItemType": "Dorm.ServiceTaskComplete",
+      "definitionId": "definition.dormitory.serviceTaskComplete.v1",
+      "sourceCardId": "cert.serviceTaskComplete",
+      "initialState": "ready",
+      "allowedStates": [
+        "ready",
+        "admission_checked",
+        "trusted_device_checked",
+        "confirmed",
+        "projecting",
+        "completed",
+        "blocked",
+        "correction_requested"
+      ],
+      "forbiddenStates": [
+        "production_confirmed",
+        "direct_db_written",
+        "direct_ledger_write",
+        "card_fallback_confirmed"
+      ],
+      "actions": [
+        {
+          "actionId": "dorm-service-task-complete.confirm",
+          "from": [
+            "ready"
+          ],
+          "to": "confirmed",
+          "preconditions": [
+            "definition_resolved",
+            "required_fields_present",
+            "idempotency_key_present",
+            "evidence_refs_present",
+            "admission_decision_ref_present"
+          ],
+          "admissionMatrixEntry": "dormitory_l1_internal_pilot_observation",
+          "evidenceRequired": [
+            "completion-photo",
+            "completion-note"
+          ],
+          "visibleRoles": [
+            "宿舍经办人",
+            "宿舍负责人"
+          ],
+          "mobileVisible": true,
+          "pcGovernanceAction": false,
+          "revokePath": "append_only_correction_work_item",
+          "correctionPath": "Dorm.ExceptionResolve"
+        }
+      ]
+    },
+    {
+      "workflowId": "workflow.dormitory.ServiceTaskVerify.v1",
+      "workItemType": "Dorm.ServiceTaskVerify",
+      "definitionId": "definition.dormitory.serviceTaskVerify.v1",
+      "sourceCardId": "cert.serviceTaskVerify",
+      "initialState": "ready",
+      "allowedStates": [
+        "ready",
+        "admission_checked",
+        "trusted_device_checked",
+        "confirmed",
+        "projecting",
+        "completed",
+        "blocked",
+        "correction_requested"
+      ],
+      "forbiddenStates": [
+        "production_confirmed",
+        "direct_db_written",
+        "direct_ledger_write",
+        "card_fallback_confirmed"
+      ],
+      "actions": [
+        {
+          "actionId": "dorm-service-task-verify.confirm",
+          "from": [
+            "ready"
+          ],
+          "to": "confirmed",
+          "preconditions": [
+            "definition_resolved",
+            "required_fields_present",
+            "idempotency_key_present",
+            "evidence_refs_present",
+            "admission_decision_ref_present"
+          ],
+          "admissionMatrixEntry": "payment_confirmation",
+          "evidenceRequired": [
+            "verification-check"
+          ],
+          "visibleRoles": [
+            "宿舍经办人",
+            "宿舍负责人"
+          ],
+          "mobileVisible": true,
+          "pcGovernanceAction": true,
+          "revokePath": "append_only_correction_work_item",
+          "correctionPath": "Dorm.ExceptionResolve"
+        }
+      ]
+    },
+    {
+      "workflowId": "workflow.finance.ExpenseRecord.v1",
+      "workItemType": "Finance.ExpenseRecord",
+      "definitionId": "definition.finance.expenseRecord.v1",
+      "sourceCardId": "cert.expenseRecord",
+      "initialState": "ready",
+      "allowedStates": [
+        "ready",
+        "admission_checked",
+        "trusted_device_checked",
+        "confirmed",
+        "projecting",
+        "completed",
+        "blocked",
+        "correction_requested"
+      ],
+      "forbiddenStates": [
+        "production_confirmed",
+        "direct_db_written",
+        "direct_ledger_write",
+        "card_fallback_confirmed"
+      ],
+      "actions": [
+        {
+          "actionId": "finance-expense-record.confirm",
+          "from": [
+            "ready"
+          ],
+          "to": "confirmed",
+          "preconditions": [
+            "definition_resolved",
+            "required_fields_present",
+            "idempotency_key_present",
+            "evidence_refs_present",
+            "admission_decision_ref_present"
+          ],
+          "admissionMatrixEntry": "payment_confirmation",
+          "evidenceRequired": [
+            "expense-invoice",
+            "expense-basis"
+          ],
+          "visibleRoles": [
+            "宿舍经办人",
+            "宿舍负责人"
+          ],
+          "mobileVisible": true,
+          "pcGovernanceAction": false,
+          "revokePath": "append_only_correction_work_item",
+          "correctionPath": "Finance.CorrectionApply"
+        }
+      ]
+    },
+    {
+      "workflowId": "workflow.finance.ExpenseApprove.v1",
+      "workItemType": "Finance.ExpenseApprove",
+      "definitionId": "definition.finance.expenseApprove.v1",
+      "sourceCardId": "cert.expenseApprove",
+      "initialState": "ready",
+      "allowedStates": [
+        "ready",
+        "admission_checked",
+        "trusted_device_checked",
+        "confirmed",
+        "projecting",
+        "completed",
+        "blocked",
+        "correction_requested"
+      ],
+      "forbiddenStates": [
+        "production_confirmed",
+        "direct_db_written",
+        "direct_ledger_write",
+        "card_fallback_confirmed"
+      ],
+      "actions": [
+        {
+          "actionId": "finance-expense-approve.confirm",
+          "from": [
+            "ready"
+          ],
+          "to": "confirmed",
+          "preconditions": [
+            "definition_resolved",
+            "required_fields_present",
+            "idempotency_key_present",
+            "evidence_refs_present",
+            "admission_decision_ref_present"
+          ],
+          "admissionMatrixEntry": "payment_confirmation",
+          "evidenceRequired": [
+            "expense-approval",
+            "expense-invoice"
+          ],
+          "visibleRoles": [
+            "宿舍经办人",
+            "宿舍负责人"
+          ],
+          "mobileVisible": true,
+          "pcGovernanceAction": true,
+          "revokePath": "append_only_correction_work_item",
+          "correctionPath": "Finance.CorrectionApply"
+        }
+      ]
+    },
+    {
+      "workflowId": "workflow.finance.ExpenseLink.v1",
+      "workItemType": "Finance.ExpenseLink",
+      "definitionId": "definition.finance.expenseLink.v1",
+      "sourceCardId": "cert.expenseLink",
+      "initialState": "ready",
+      "allowedStates": [
+        "ready",
+        "admission_checked",
+        "trusted_device_checked",
+        "confirmed",
+        "projecting",
+        "completed",
+        "blocked",
+        "correction_requested"
+      ],
+      "forbiddenStates": [
+        "production_confirmed",
+        "direct_db_written",
+        "direct_ledger_write",
+        "card_fallback_confirmed"
+      ],
+      "actions": [
+        {
+          "actionId": "finance-expense-link.confirm",
+          "from": [
+            "ready"
+          ],
+          "to": "confirmed",
+          "preconditions": [
+            "definition_resolved",
+            "required_fields_present",
+            "idempotency_key_present",
+            "evidence_refs_present",
+            "admission_decision_ref_present"
+          ],
+          "admissionMatrixEntry": "payment_confirmation",
+          "evidenceRequired": [
+            "expense-link-proof"
+          ],
+          "visibleRoles": [
+            "宿舍经办人",
+            "宿舍负责人"
+          ],
+          "mobileVisible": true,
+          "pcGovernanceAction": true,
+          "revokePath": "append_only_correction_work_item",
+          "correctionPath": "Finance.CorrectionApply"
+        }
+      ]
+    },
+    {
+      "workflowId": "workflow.dormitory.RoomInspectionConfirm.v1",
+      "workItemType": "Dorm.RoomInspectionConfirm",
+      "definitionId": "definition.dormitory.roomInspectionConfirm.v1",
+      "sourceCardId": "cert.roomInspectionConfirm",
+      "initialState": "ready",
+      "allowedStates": [
+        "ready",
+        "admission_checked",
+        "trusted_device_checked",
+        "confirmed",
+        "projecting",
+        "completed",
+        "blocked",
+        "correction_requested"
+      ],
+      "forbiddenStates": [
+        "production_confirmed",
+        "direct_db_written",
+        "direct_ledger_write",
+        "card_fallback_confirmed"
+      ],
+      "actions": [
+        {
+          "actionId": "dorm-room-inspection-confirm.confirm",
+          "from": [
+            "ready"
+          ],
+          "to": "confirmed",
+          "preconditions": [
+            "definition_resolved",
+            "required_fields_present",
+            "idempotency_key_present",
+            "evidence_refs_present",
+            "admission_decision_ref_present"
+          ],
+          "admissionMatrixEntry": "dormitory_l1_internal_pilot_observation",
+          "evidenceRequired": [
+            "room-inspection",
+            "damage-photo"
+          ],
+          "visibleRoles": [
+            "宿舍经办人",
+            "宿舍负责人"
+          ],
+          "mobileVisible": true,
+          "pcGovernanceAction": false,
+          "revokePath": "append_only_correction_work_item",
+          "correctionPath": "Dorm.ExceptionResolve"
+        }
+      ]
+    },
+    {
+      "workflowId": "workflow.dormitory.CheckoutSettlementApprove.v1",
+      "workItemType": "Dorm.CheckoutSettlementApprove",
+      "definitionId": "definition.dormitory.checkoutSettlementApprove.v1",
+      "sourceCardId": "cert.checkoutSettlementApprove",
+      "initialState": "ready",
+      "allowedStates": [
+        "ready",
+        "admission_checked",
+        "trusted_device_checked",
+        "confirmed",
+        "projecting",
+        "completed",
+        "blocked",
+        "correction_requested"
+      ],
+      "forbiddenStates": [
+        "production_confirmed",
+        "direct_db_written",
+        "direct_ledger_write",
+        "card_fallback_confirmed"
+      ],
+      "actions": [
+        {
+          "actionId": "dorm-checkout-settlement-approve.confirm",
+          "from": [
+            "ready"
+          ],
+          "to": "confirmed",
+          "preconditions": [
+            "definition_resolved",
+            "required_fields_present",
+            "idempotency_key_present",
+            "evidence_refs_present",
+            "admission_decision_ref_present"
+          ],
+          "admissionMatrixEntry": "deposit_refund",
+          "evidenceRequired": [
+            "room-inspection",
+            "settlement-review",
+            "refund-approval"
+          ],
+          "visibleRoles": [
+            "宿舍经办人",
+            "宿舍负责人"
+          ],
+          "mobileVisible": true,
+          "pcGovernanceAction": true,
+          "revokePath": "append_only_correction_work_item",
+          "correctionPath": "Finance.CorrectionApply"
+        }
+      ]
+    },
+    {
+      "workflowId": "workflow.dormitory.StayExtendApprove.v1",
+      "workItemType": "Dorm.StayExtendApprove",
+      "definitionId": "definition.dormitory.stayExtendApprove.v1",
+      "sourceCardId": "cert.stayExtendApprove",
+      "initialState": "ready",
+      "allowedStates": [
+        "ready",
+        "admission_checked",
+        "trusted_device_checked",
+        "confirmed",
+        "projecting",
+        "completed",
+        "blocked",
+        "correction_requested"
+      ],
+      "forbiddenStates": [
+        "production_confirmed",
+        "direct_db_written",
+        "direct_ledger_write",
+        "card_fallback_confirmed"
+      ],
+      "actions": [
+        {
+          "actionId": "dorm-stay-extend-approve.confirm",
+          "from": [
+            "ready"
+          ],
+          "to": "confirmed",
+          "preconditions": [
+            "definition_resolved",
+            "required_fields_present",
+            "idempotency_key_present",
+            "evidence_refs_present",
+            "admission_decision_ref_present"
+          ],
+          "admissionMatrixEntry": "payment_confirmation",
+          "evidenceRequired": [
+            "extend-application",
+            "rate-policy"
+          ],
+          "visibleRoles": [
+            "宿舍经办人",
+            "宿舍负责人"
+          ],
+          "mobileVisible": true,
+          "pcGovernanceAction": true,
+          "revokePath": "append_only_correction_work_item",
+          "correctionPath": "Dorm.ExceptionResolve"
+        }
+      ]
+    },
+    {
+      "workflowId": "workflow.dormitory.BedTransferApprove.v1",
+      "workItemType": "Dorm.BedTransferApprove",
+      "definitionId": "definition.dormitory.bedTransferApprove.v1",
+      "sourceCardId": "cert.bedTransferApprove",
+      "initialState": "ready",
+      "allowedStates": [
+        "ready",
+        "admission_checked",
+        "trusted_device_checked",
+        "confirmed",
+        "projecting",
+        "completed",
+        "blocked",
+        "correction_requested"
+      ],
+      "forbiddenStates": [
+        "production_confirmed",
+        "direct_db_written",
+        "direct_ledger_write",
+        "card_fallback_confirmed"
+      ],
+      "actions": [
+        {
+          "actionId": "dorm-bed-transfer-approve.confirm",
+          "from": [
+            "ready"
+          ],
+          "to": "confirmed",
+          "preconditions": [
+            "definition_resolved",
+            "required_fields_present",
+            "idempotency_key_present",
+            "evidence_refs_present",
+            "admission_decision_ref_present"
+          ],
+          "admissionMatrixEntry": "payment_confirmation",
+          "evidenceRequired": [
+            "transfer-application",
+            "bed-availability-proof"
+          ],
+          "visibleRoles": [
+            "宿舍经办人",
+            "宿舍负责人"
+          ],
+          "mobileVisible": true,
+          "pcGovernanceAction": true,
+          "revokePath": "append_only_correction_work_item",
+          "correctionPath": "Dorm.ExceptionResolve"
+        }
+      ]
+    },
+    {
+      "workflowId": "workflow.dormitory.ReservationCancelClose.v1",
+      "workItemType": "Dorm.ReservationCancelClose",
+      "definitionId": "definition.dormitory.reservationCancelClose.v1",
+      "sourceCardId": "cert.reservationCancelClose",
+      "initialState": "ready",
+      "allowedStates": [
+        "ready",
+        "admission_checked",
+        "trusted_device_checked",
+        "confirmed",
+        "projecting",
+        "completed",
+        "blocked",
+        "correction_requested"
+      ],
+      "forbiddenStates": [
+        "production_confirmed",
+        "direct_db_written",
+        "direct_ledger_write",
+        "card_fallback_confirmed"
+      ],
+      "actions": [
+        {
+          "actionId": "dorm-reservation-cancel-close.confirm",
+          "from": [
+            "ready"
+          ],
+          "to": "confirmed",
+          "preconditions": [
+            "definition_resolved",
+            "required_fields_present",
+            "idempotency_key_present",
+            "evidence_refs_present",
+            "admission_decision_ref_present"
+          ],
+          "admissionMatrixEntry": "dormitory_l1_internal_pilot_observation",
+          "evidenceRequired": [
+            "cancel-request"
+          ],
+          "visibleRoles": [
+            "宿舍经办人",
+            "宿舍负责人"
+          ],
+          "mobileVisible": true,
+          "pcGovernanceAction": false,
+          "revokePath": "append_only_correction_work_item",
+          "correctionPath": "Dorm.ExceptionResolve"
+        }
+      ]
+    },
+    {
+      "workflowId": "workflow.dormitory.ReservationNoShowClose.v1",
+      "workItemType": "Dorm.ReservationNoShowClose",
+      "definitionId": "definition.dormitory.reservationNoShowClose.v1",
+      "sourceCardId": "cert.reservationNoShowClose",
+      "initialState": "ready",
+      "allowedStates": [
+        "ready",
+        "admission_checked",
+        "trusted_device_checked",
+        "confirmed",
+        "projecting",
+        "completed",
+        "blocked",
+        "correction_requested"
+      ],
+      "forbiddenStates": [
+        "production_confirmed",
+        "direct_db_written",
+        "direct_ledger_write",
+        "card_fallback_confirmed"
+      ],
+      "actions": [
+        {
+          "actionId": "dorm-reservation-no-show-close.confirm",
+          "from": [
+            "ready"
+          ],
+          "to": "confirmed",
+          "preconditions": [
+            "definition_resolved",
+            "required_fields_present",
+            "idempotency_key_present",
+            "evidence_refs_present",
+            "admission_decision_ref_present"
+          ],
+          "admissionMatrixEntry": "dormitory_l1_internal_pilot_observation",
+          "evidenceRequired": [
+            "no-show-record"
+          ],
+          "visibleRoles": [
+            "宿舍经办人",
+            "宿舍负责人"
+          ],
+          "mobileVisible": true,
+          "pcGovernanceAction": false,
+          "revokePath": "append_only_correction_work_item",
+          "correctionPath": "Dorm.ExceptionResolve"
+        }
+      ]
+    },
+    {
+      "workflowId": "workflow.finance.ChargeAdjustmentApprove.v1",
+      "workItemType": "Finance.ChargeAdjustmentApprove",
+      "definitionId": "definition.finance.chargeAdjustmentApprove.v1",
+      "sourceCardId": "cert.chargeAdjustmentApprove",
+      "initialState": "ready",
+      "allowedStates": [
+        "ready",
+        "admission_checked",
+        "trusted_device_checked",
+        "confirmed",
+        "projecting",
+        "completed",
+        "blocked",
+        "correction_requested"
+      ],
+      "forbiddenStates": [
+        "production_confirmed",
+        "direct_db_written",
+        "direct_ledger_write",
+        "card_fallback_confirmed"
+      ],
+      "actions": [
+        {
+          "actionId": "finance-charge-adjustment-approve.confirm",
+          "from": [
+            "ready"
+          ],
+          "to": "confirmed",
+          "preconditions": [
+            "definition_resolved",
+            "required_fields_present",
+            "idempotency_key_present",
+            "evidence_refs_present",
+            "admission_decision_ref_present"
+          ],
+          "admissionMatrixEntry": "payment_confirmation",
+          "evidenceRequired": [
+            "adjustment-approval",
+            "charge-basis"
+          ],
+          "visibleRoles": [
+            "宿舍经办人",
+            "宿舍负责人"
+          ],
+          "mobileVisible": true,
+          "pcGovernanceAction": true,
+          "revokePath": "append_only_correction_work_item",
+          "correctionPath": "Finance.CorrectionApply"
+        }
+      ]
+    },
+    {
+      "workflowId": "workflow.finance.DebtFollowUp.v1",
+      "workItemType": "Finance.DebtFollowUp",
+      "definitionId": "definition.finance.debtFollowUp.v1",
+      "sourceCardId": "cert.debtFollowUp",
+      "initialState": "ready",
+      "allowedStates": [
+        "ready",
+        "admission_checked",
+        "trusted_device_checked",
+        "confirmed",
+        "projecting",
+        "completed",
+        "blocked",
+        "correction_requested"
+      ],
+      "forbiddenStates": [
+        "production_confirmed",
+        "direct_db_written",
+        "direct_ledger_write",
+        "card_fallback_confirmed"
+      ],
+      "actions": [
+        {
+          "actionId": "finance-debt-follow-up.confirm",
+          "from": [
+            "ready"
+          ],
+          "to": "confirmed",
+          "preconditions": [
+            "definition_resolved",
+            "required_fields_present",
+            "idempotency_key_present",
+            "evidence_refs_present",
+            "admission_decision_ref_present"
+          ],
+          "admissionMatrixEntry": "payment_confirmation",
+          "evidenceRequired": [
+            "debt-followup-record"
+          ],
+          "visibleRoles": [
+            "宿舍经办人",
+            "宿舍负责人"
+          ],
+          "mobileVisible": true,
+          "pcGovernanceAction": false,
+          "revokePath": "append_only_correction_work_item",
+          "correctionPath": "Finance.CorrectionApply"
+        }
+      ]
+    },
+    {
+      "workflowId": "workflow.dormitory.AccessCredentialIssue.v1",
+      "workItemType": "Dorm.AccessCredentialIssue",
+      "definitionId": "definition.dormitory.accessCredentialIssue.v1",
+      "sourceCardId": "cert.accessCredentialIssue",
+      "initialState": "ready",
+      "allowedStates": [
+        "ready",
+        "admission_checked",
+        "trusted_device_checked",
+        "confirmed",
+        "projecting",
+        "completed",
+        "blocked",
+        "correction_requested"
+      ],
+      "forbiddenStates": [
+        "production_confirmed",
+        "direct_db_written",
+        "direct_ledger_write",
+        "card_fallback_confirmed"
+      ],
+      "actions": [
+        {
+          "actionId": "dorm-access-credential-issue.confirm",
+          "from": [
+            "ready"
+          ],
+          "to": "confirmed",
+          "preconditions": [
+            "definition_resolved",
+            "required_fields_present",
+            "idempotency_key_present",
+            "evidence_refs_present",
+            "admission_decision_ref_present"
+          ],
+          "admissionMatrixEntry": "dormitory_l1_internal_pilot_observation",
+          "evidenceRequired": [
+            "identity-document",
+            "checkin-confirmation"
+          ],
+          "visibleRoles": [
+            "宿舍经办人",
+            "宿舍负责人"
+          ],
+          "mobileVisible": true,
+          "pcGovernanceAction": false,
+          "revokePath": "append_only_correction_work_item",
+          "correctionPath": "Dorm.ExceptionResolve"
+        }
+      ]
+    },
+    {
+      "workflowId": "workflow.dormitory.AccessCredentialRevoke.v1",
+      "workItemType": "Dorm.AccessCredentialRevoke",
+      "definitionId": "definition.dormitory.accessCredentialRevoke.v1",
+      "sourceCardId": "cert.accessCredentialRevoke",
+      "initialState": "ready",
+      "allowedStates": [
+        "ready",
+        "admission_checked",
+        "trusted_device_checked",
+        "confirmed",
+        "projecting",
+        "completed",
+        "blocked",
+        "correction_requested"
+      ],
+      "forbiddenStates": [
+        "production_confirmed",
+        "direct_db_written",
+        "direct_ledger_write",
+        "card_fallback_confirmed"
+      ],
+      "actions": [
+        {
+          "actionId": "dorm-access-credential-revoke.confirm",
+          "from": [
+            "ready"
+          ],
+          "to": "confirmed",
+          "preconditions": [
+            "definition_resolved",
+            "required_fields_present",
+            "idempotency_key_present",
+            "evidence_refs_present",
+            "admission_decision_ref_present"
+          ],
+          "admissionMatrixEntry": "dormitory_l1_internal_pilot_observation",
+          "evidenceRequired": [
+            "checkout-close-proof"
+          ],
+          "visibleRoles": [
+            "宿舍经办人",
+            "宿舍负责人"
+          ],
+          "mobileVisible": true,
+          "pcGovernanceAction": false,
+          "revokePath": "append_only_correction_work_item",
+          "correctionPath": "Dorm.ExceptionResolve"
+        }
+      ]
+    },
+    {
+      "workflowId": "workflow.dormitory.IncidentRecord.v1",
+      "workItemType": "Dorm.IncidentRecord",
+      "definitionId": "definition.dormitory.incidentRecord.v1",
+      "sourceCardId": "cert.incidentRecord",
+      "initialState": "ready",
+      "allowedStates": [
+        "ready",
+        "admission_checked",
+        "trusted_device_checked",
+        "confirmed",
+        "projecting",
+        "completed",
+        "blocked",
+        "correction_requested"
+      ],
+      "forbiddenStates": [
+        "production_confirmed",
+        "direct_db_written",
+        "direct_ledger_write",
+        "card_fallback_confirmed"
+      ],
+      "actions": [
+        {
+          "actionId": "dorm-incident-record.confirm",
+          "from": [
+            "ready"
+          ],
+          "to": "confirmed",
+          "preconditions": [
+            "definition_resolved",
+            "required_fields_present",
+            "idempotency_key_present",
+            "evidence_refs_present",
+            "admission_decision_ref_present"
+          ],
+          "admissionMatrixEntry": "dormitory_l1_internal_pilot_observation",
+          "evidenceRequired": [
+            "incident-evidence",
+            "audit-note"
+          ],
+          "visibleRoles": [
+            "宿舍经办人",
+            "宿舍负责人"
+          ],
+          "mobileVisible": true,
+          "pcGovernanceAction": false,
+          "revokePath": "append_only_correction_work_item",
+          "correctionPath": "Dorm.ExceptionResolve"
+        }
+      ]
+    },
+    {
+      "workflowId": "workflow.dormitory.PeriodReview.v1",
+      "workItemType": "Dorm.PeriodReview",
+      "definitionId": "definition.dormitory.periodReview.v1",
       "sourceCardId": "cert.periodReview",
       "initialState": "ready",
-      "allowedStates": ["ready", "scope_checked", "finance_checked", "operations_checked", "business_signed", "confirmed", "blocked"],
-      "forbiddenStates": ["confirmed_without_pack", "production_closed"],
+      "allowedStates": [
+        "ready",
+        "snapshot_frozen",
+        "action_plan_generated",
+        "completed",
+        "blocked"
+      ],
+      "forbiddenStates": [
+        "production_confirmed",
+        "direct_db_written",
+        "direct_ledger_write",
+        "card_fallback_confirmed"
+      ],
       "actions": [
         {
-          "actionId": "periodReview.confirm",
-          "from": ["business_signed"],
-          "to": "confirmed",
-          "preconditions": ["definition_resolved", "period_scope_present", "finance_snapshot_present", "reason_present", "evidence_refs_present", "business_signoff_present"],
-          "admissionMatrixEntry": "dormitory_l1_internal_pilot_observation",
-          "evidenceRequired": ["period-review-pack"],
-          "visibleRoles": ["manager", "releaseowner"],
-          "mobileVisible": false,
+          "actionId": "dorm-period-review.confirm",
+          "from": [
+            "ready"
+          ],
+          "to": "snapshot_frozen",
+          "preconditions": [
+            "definition_resolved",
+            "required_fields_present",
+            "idempotency_key_present",
+            "evidence_refs_present",
+            "admission_decision_ref_present"
+          ],
+          "admissionMatrixEntry": "period_close",
+          "evidenceRequired": [
+            "period-review-pack"
+          ],
+          "visibleRoles": [
+            "宿舍经办人",
+            "宿舍负责人"
+          ],
+          "mobileVisible": true,
           "pcGovernanceAction": true,
-          "revokePath": "append_only_period_correction",
-          "correctionPath": "Finance.CorrectionApply"
+          "revokePath": "append_only_correction_work_item",
+          "correctionPath": "Dorm.ExceptionResolve"
         }
       ]
     },
     {
-      "workflowId": "workflow.dormitory.exceptionResolve.v1",
-      "sourceCardId": "cert.exceptionResolve",
-      "initialState": "requested",
-      "allowedStates": ["requested", "reviewed", "resolved", "rejected", "audited"],
-      "forbiddenStates": ["business_fact_written", "ledger_fact_written"],
+      "workflowId": "workflow.dormitory.PeriodActionPlanExecute.v1",
+      "workItemType": "Dorm.PeriodActionPlanExecute",
+      "definitionId": "definition.dormitory.periodActionPlanExecute.v1",
+      "sourceCardId": "cert.periodActionPlanExecute",
+      "initialState": "ready",
+      "allowedStates": [
+        "ready",
+        "admission_checked",
+        "trusted_device_checked",
+        "confirmed",
+        "projecting",
+        "completed",
+        "blocked",
+        "correction_requested"
+      ],
+      "forbiddenStates": [
+        "production_confirmed",
+        "direct_db_written",
+        "direct_ledger_write",
+        "card_fallback_confirmed"
+      ],
       "actions": [
         {
-          "actionId": "exceptionResolve.confirm",
-          "from": ["reviewed"],
-          "to": "resolved",
-          "preconditions": ["definition_resolved", "rejection_trace_present", "evidence_refs_present", "owner_role_present"],
+          "actionId": "dorm-period-action-plan-execute.confirm",
+          "from": [
+            "ready"
+          ],
+          "to": "confirmed",
+          "preconditions": [
+            "definition_resolved",
+            "required_fields_present",
+            "idempotency_key_present",
+            "evidence_refs_present",
+            "admission_decision_ref_present"
+          ],
           "admissionMatrixEntry": "dormitory_l1_internal_pilot_observation",
-          "evidenceRequired": ["exception-audit"],
-          "visibleRoles": ["operator", "manager"],
+          "evidenceRequired": [
+            "action-plan-evidence"
+          ],
+          "visibleRoles": [
+            "宿舍经办人",
+            "宿舍负责人"
+          ],
+          "mobileVisible": true,
+          "pcGovernanceAction": false,
+          "revokePath": "append_only_correction_work_item",
+          "correctionPath": "Dorm.ExceptionResolve"
+        }
+      ]
+    },
+    {
+      "workflowId": "workflow.dormitory.ExceptionResolve.v1",
+      "workItemType": "Dorm.ExceptionResolve",
+      "definitionId": "definition.dormitory.exceptionResolve.v1",
+      "sourceCardId": "cert.exceptionResolve",
+      "initialState": "ready",
+      "allowedStates": [
+        "ready",
+        "admission_checked",
+        "trusted_device_checked",
+        "confirmed",
+        "projecting",
+        "completed",
+        "blocked",
+        "correction_requested"
+      ],
+      "forbiddenStates": [
+        "production_confirmed",
+        "direct_db_written",
+        "direct_ledger_write",
+        "card_fallback_confirmed"
+      ],
+      "actions": [
+        {
+          "actionId": "dorm-exception-resolve.confirm",
+          "from": [
+            "ready"
+          ],
+          "to": "confirmed",
+          "preconditions": [
+            "definition_resolved",
+            "required_fields_present",
+            "idempotency_key_present",
+            "evidence_refs_present",
+            "admission_decision_ref_present"
+          ],
+          "admissionMatrixEntry": "payment_confirmation",
+          "evidenceRequired": [
+            "exception-audit",
+            "resolution-evidence"
+          ],
+          "visibleRoles": [
+            "宿舍经办人",
+            "宿舍负责人"
+          ],
           "mobileVisible": true,
           "pcGovernanceAction": true,
-          "revokePath": "audit_only_reopen",
+          "revokePath": "append_only_correction_work_item",
+          "correctionPath": "Dorm.ExceptionResolve"
+        }
+      ]
+    },
+    {
+      "workflowId": "workflow.finance.CorrectionApply.v1",
+      "workItemType": "Finance.CorrectionApply",
+      "definitionId": "definition.finance.correctionApply.v1",
+      "sourceCardId": "cert.correctionApply",
+      "initialState": "ready",
+      "allowedStates": [
+        "ready",
+        "admission_checked",
+        "trusted_device_checked",
+        "confirmed",
+        "projecting",
+        "completed",
+        "blocked",
+        "correction_requested"
+      ],
+      "forbiddenStates": [
+        "production_confirmed",
+        "direct_db_written",
+        "direct_ledger_write",
+        "card_fallback_confirmed"
+      ],
+      "actions": [
+        {
+          "actionId": "finance-correction-apply.confirm",
+          "from": [
+            "ready"
+          ],
+          "to": "confirmed",
+          "preconditions": [
+            "definition_resolved",
+            "required_fields_present",
+            "idempotency_key_present",
+            "evidence_refs_present",
+            "admission_decision_ref_present"
+          ],
+          "admissionMatrixEntry": "payment_confirmation",
+          "evidenceRequired": [
+            "correction-approval",
+            "audit-note"
+          ],
+          "visibleRoles": [
+            "宿舍经办人",
+            "宿舍负责人"
+          ],
+          "mobileVisible": true,
+          "pcGovernanceAction": true,
+          "revokePath": "append_only_correction_work_item",
           "correctionPath": "Finance.CorrectionApply"
         }
       ]
     }
   ],
   "invariants": [
-    "Every workflow sourceCardId must exist in WorkItem Definition Registry.",
-    "Every action must reference an Admission Matrix entry.",
-    "High-risk finance and correction actions must require trusted device, reason, evidence, and admission decision ref.",
-    "Correction paths are append-only and never update prior facts in place."
-  ]
+    "Every current dormitory WorkItem must require definition_resolved.",
+    "Visible roles are limited to 宿舍经办人 and 宿舍负责人.",
+    "No workflow may use cardId as business identity.",
+    "Finance work items route to finance-gate and append-only correction."
+  ],
+  "generatedBy": "scripts/business/generate-dormitory-derived-contracts.mjs"
 }

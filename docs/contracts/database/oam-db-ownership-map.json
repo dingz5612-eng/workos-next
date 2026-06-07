@@ -16,7 +16,12 @@
       "factType": "operations-runtime-fact",
       "truthOwner": "Confirm Runtime / Operations Unit of Work",
       "writeEntry": "POST /api/operations/work-items/{workItemId}/confirm",
-      "allowedReadSides": ["Search Kernel", "Projection", "Mobile Surface", "PC Governance Surface"],
+      "allowedReadSides": [
+        "Search Kernel",
+        "Projection",
+        "Mobile Surface",
+        "PC Governance Surface"
+      ],
       "testFile": "tests/WorkOS.RuntimeIntegrationTests",
       "appendOnly": true,
       "ledgerTable": false,
@@ -24,20 +29,62 @@
       "projectionTable": false,
       "protection": "idempotency, command submission trace, append-only event log",
       "tables": [
-        { "table": "operations_cases", "migrationFile": "infra/db/migrations/033_operations_case_work_item_persistence.sql" },
-        { "table": "operations_work_items", "migrationFile": "infra/db/migrations/033_operations_case_work_item_persistence.sql" },
-        { "table": "operations_command_submissions", "migrationFile": "infra/db/migrations/030_operations_unit_of_work.sql" },
-        { "table": "operations_domain_events", "migrationFile": "infra/db/migrations/030_operations_unit_of_work.sql" },
-        { "table": "operations_fact_responses", "migrationFile": "infra/db/migrations/030_operations_unit_of_work.sql" },
-        { "table": "operations_outbox_messages", "migrationFile": "infra/db/migrations/030_operations_unit_of_work.sql" },
-        { "table": "operations_work_item_events", "migrationFile": "infra/db/migrations/030_operations_unit_of_work.sql" },
-        { "table": "operations_work_item_assignments", "migrationFile": "infra/db/migrations/033_operations_case_work_item_persistence.sql" },
-        { "table": "operations_work_item_escalations", "migrationFile": "infra/db/migrations/033_operations_case_work_item_persistence.sql" },
-        { "table": "operations_work_item_state_event_log", "migrationFile": "infra/db/migrations/033_operations_case_work_item_persistence.sql" },
-        { "table": "card_instances", "migrationFile": "infra/db/migrations/014_runtime_evidence_card_instances.sql" },
-        { "table": "process_runs", "migrationFile": "infra/db/migrations/016_checkout_service_process_manager.sql" },
-        { "table": "process_request_event_intents", "migrationFile": "infra/db/migrations/016_checkout_service_process_manager.sql" },
-        { "table": "process_work_item_intents", "migrationFile": "infra/db/migrations/016_checkout_service_process_manager.sql" }
+        {
+          "table": "operations_cases",
+          "migrationFile": "infra/db/migrations/033_operations_case_work_item_persistence.sql"
+        },
+        {
+          "table": "operations_work_items",
+          "migrationFile": "infra/db/migrations/033_operations_case_work_item_persistence.sql"
+        },
+        {
+          "table": "operations_command_submissions",
+          "migrationFile": "infra/db/migrations/030_operations_unit_of_work.sql"
+        },
+        {
+          "table": "operations_domain_events",
+          "migrationFile": "infra/db/migrations/030_operations_unit_of_work.sql"
+        },
+        {
+          "table": "operations_fact_responses",
+          "migrationFile": "infra/db/migrations/030_operations_unit_of_work.sql"
+        },
+        {
+          "table": "operations_outbox_messages",
+          "migrationFile": "infra/db/migrations/030_operations_unit_of_work.sql"
+        },
+        {
+          "table": "operations_work_item_events",
+          "migrationFile": "infra/db/migrations/030_operations_unit_of_work.sql"
+        },
+        {
+          "table": "operations_work_item_assignments",
+          "migrationFile": "infra/db/migrations/033_operations_case_work_item_persistence.sql"
+        },
+        {
+          "table": "operations_work_item_escalations",
+          "migrationFile": "infra/db/migrations/033_operations_case_work_item_persistence.sql"
+        },
+        {
+          "table": "operations_work_item_state_event_log",
+          "migrationFile": "infra/db/migrations/033_operations_case_work_item_persistence.sql"
+        },
+        {
+          "table": "card_instances",
+          "migrationFile": "infra/db/migrations/014_runtime_evidence_card_instances.sql"
+        },
+        {
+          "table": "process_runs",
+          "migrationFile": "infra/db/migrations/016_checkout_service_process_manager.sql"
+        },
+        {
+          "table": "process_request_event_intents",
+          "migrationFile": "infra/db/migrations/016_checkout_service_process_manager.sql"
+        },
+        {
+          "table": "process_work_item_intents",
+          "migrationFile": "infra/db/migrations/016_checkout_service_process_manager.sql"
+        }
       ]
     },
     {
@@ -46,7 +93,13 @@
       "factType": "business-fact",
       "truthOwner": "Accommodation Domain Module",
       "writeEntry": "Confirm Runtime -> Operations Unit of Work -> Accommodation handler",
-      "allowedReadSides": ["Search Kernel", "Projection", "Lens", "Mobile Surface", "PC Governance Surface"],
+      "allowedReadSides": [
+        "Search Kernel",
+        "Projection",
+        "Lens",
+        "Mobile Surface",
+        "PC Governance Surface"
+      ],
       "testFile": "tests/WorkOS.RuntimeIntegrationTests",
       "appendOnly": false,
       "ledgerTable": false,
@@ -54,26 +107,86 @@
       "projectionTable": false,
       "protection": "WorkItem Definition allowedFacts and runtime write path guard",
       "tables": [
-        { "table": "accommodation_rooms", "migrationFile": "infra/db/migrations/005_slice_aggregate_roots.sql" },
-        { "table": "accommodation_beds", "migrationFile": "infra/db/migrations/005_slice_aggregate_roots.sql" },
-        { "table": "accommodation_deposits", "migrationFile": "infra/db/migrations/005_slice_aggregate_roots.sql" },
-        { "table": "accommodation_rate_plans", "migrationFile": "infra/db/migrations/011_accommodation_resource_setup_runtime.sql" },
-        { "table": "hostel_leads", "migrationFile": "infra/db/migrations/006_hostel_operating_ledger.sql" },
-        { "table": "hostel_bookings", "migrationFile": "infra/db/migrations/006_hostel_operating_ledger.sql" },
-        { "table": "hostel_stays", "migrationFile": "infra/db/migrations/006_hostel_operating_ledger.sql" },
-        { "table": "hostel_residents", "migrationFile": "infra/db/migrations/010_accommodation_lead_stay_lifecycle.sql" },
-        { "table": "hostel_charges", "migrationFile": "infra/db/migrations/010_accommodation_lead_stay_lifecycle.sql" },
-        { "table": "guest_folios", "migrationFile": "infra/db/migrations/006_hostel_operating_ledger.sql" },
-        { "table": "checkout_settlements", "migrationFile": "infra/db/migrations/008_accommodation_checkout_service_expense.sql" },
-        { "table": "room_inspections", "migrationFile": "infra/db/migrations/008_accommodation_checkout_service_expense.sql" },
-        { "table": "stay_balances", "migrationFile": "infra/db/migrations/007_accommodation_money_ledgers.sql" },
-        { "table": "period_scopes", "migrationFile": "infra/db/migrations/021_period_analytics_schema.sql" },
-        { "table": "period_reviews", "migrationFile": "infra/db/migrations/009_accommodation_period_analytics.sql" },
-        { "table": "period_action_plans", "migrationFile": "infra/db/migrations/009_accommodation_period_analytics.sql" },
-        { "table": "period_metric_snapshots", "migrationFile": "infra/db/migrations/009_accommodation_period_analytics.sql" },
-        { "table": "period_operation_snapshots", "migrationFile": "infra/db/migrations/021_period_analytics_schema.sql" },
-        { "table": "period_operation_diagnoses", "migrationFile": "infra/db/migrations/009_accommodation_period_analytics.sql" },
-        { "table": "period_late_adjustments", "migrationFile": "infra/db/migrations/009_accommodation_period_analytics.sql" }
+        {
+          "table": "accommodation_rooms",
+          "migrationFile": "infra/db/migrations/005_slice_aggregate_roots.sql"
+        },
+        {
+          "table": "accommodation_beds",
+          "migrationFile": "infra/db/migrations/005_slice_aggregate_roots.sql"
+        },
+        {
+          "table": "accommodation_deposits",
+          "migrationFile": "infra/db/migrations/005_slice_aggregate_roots.sql"
+        },
+        {
+          "table": "accommodation_rate_plans",
+          "migrationFile": "infra/db/migrations/011_accommodation_resource_setup_runtime.sql"
+        },
+        {
+          "table": "hostel_leads",
+          "migrationFile": "infra/db/migrations/006_hostel_operating_ledger.sql"
+        },
+        {
+          "table": "hostel_bookings",
+          "migrationFile": "infra/db/migrations/006_hostel_operating_ledger.sql"
+        },
+        {
+          "table": "hostel_stays",
+          "migrationFile": "infra/db/migrations/006_hostel_operating_ledger.sql"
+        },
+        {
+          "table": "hostel_residents",
+          "migrationFile": "infra/db/migrations/010_accommodation_lead_stay_lifecycle.sql"
+        },
+        {
+          "table": "hostel_charges",
+          "migrationFile": "infra/db/migrations/010_accommodation_lead_stay_lifecycle.sql"
+        },
+        {
+          "table": "guest_folios",
+          "migrationFile": "infra/db/migrations/006_hostel_operating_ledger.sql"
+        },
+        {
+          "table": "checkout_settlements",
+          "migrationFile": "infra/db/migrations/008_accommodation_checkout_service_expense.sql"
+        },
+        {
+          "table": "room_inspections",
+          "migrationFile": "infra/db/migrations/008_accommodation_checkout_service_expense.sql"
+        },
+        {
+          "table": "stay_balances",
+          "migrationFile": "infra/db/migrations/007_accommodation_money_ledgers.sql"
+        },
+        {
+          "table": "period_scopes",
+          "migrationFile": "infra/db/migrations/021_period_analytics_schema.sql"
+        },
+        {
+          "table": "period_reviews",
+          "migrationFile": "infra/db/migrations/009_accommodation_period_analytics.sql"
+        },
+        {
+          "table": "period_action_plans",
+          "migrationFile": "infra/db/migrations/009_accommodation_period_analytics.sql"
+        },
+        {
+          "table": "period_metric_snapshots",
+          "migrationFile": "infra/db/migrations/009_accommodation_period_analytics.sql"
+        },
+        {
+          "table": "period_operation_snapshots",
+          "migrationFile": "infra/db/migrations/021_period_analytics_schema.sql"
+        },
+        {
+          "table": "period_operation_diagnoses",
+          "migrationFile": "infra/db/migrations/009_accommodation_period_analytics.sql"
+        },
+        {
+          "table": "period_late_adjustments",
+          "migrationFile": "infra/db/migrations/009_accommodation_period_analytics.sql"
+        }
       ]
     },
     {
@@ -82,7 +195,12 @@
       "factType": "business-fact",
       "truthOwner": "Maintenance Domain Module",
       "writeEntry": "Confirm Runtime -> Operations Unit of Work -> Maintenance handler",
-      "allowedReadSides": ["Search Kernel", "Projection", "Mobile Surface", "PC Governance Surface"],
+      "allowedReadSides": [
+        "Search Kernel",
+        "Projection",
+        "Mobile Surface",
+        "PC Governance Surface"
+      ],
       "testFile": "tests/WorkOS.RuntimeIntegrationTests",
       "appendOnly": false,
       "ledgerTable": false,
@@ -90,10 +208,22 @@
       "projectionTable": false,
       "protection": "task object fixed at create; verification before availability release",
       "tables": [
-        { "table": "service_tasks", "migrationFile": "infra/db/migrations/008_accommodation_checkout_service_expense.sql" },
-        { "table": "repair_stations", "migrationFile": "infra/db/migrations/005_slice_aggregate_roots.sql" },
-        { "table": "repair_technicians", "migrationFile": "infra/db/migrations/005_slice_aggregate_roots.sql" },
-        { "table": "repair_vehicles", "migrationFile": "infra/db/migrations/005_slice_aggregate_roots.sql" }
+        {
+          "table": "service_tasks",
+          "migrationFile": "infra/db/migrations/008_accommodation_checkout_service_expense.sql"
+        },
+        {
+          "table": "repair_stations",
+          "migrationFile": "infra/db/migrations/005_slice_aggregate_roots.sql"
+        },
+        {
+          "table": "repair_technicians",
+          "migrationFile": "infra/db/migrations/005_slice_aggregate_roots.sql"
+        },
+        {
+          "table": "repair_vehicles",
+          "migrationFile": "infra/db/migrations/005_slice_aggregate_roots.sql"
+        }
       ]
     },
     {
@@ -102,7 +232,11 @@
       "factType": "financial-fact",
       "truthOwner": "Money/Ledger Kernel",
       "writeEntry": "Confirm Runtime -> FinanceTruthKernel -> append-only ledger policy",
-      "allowedReadSides": ["Search Kernel", "Projection", "PC Governance Surface"],
+      "allowedReadSides": [
+        "Search Kernel",
+        "Projection",
+        "PC Governance Surface"
+      ],
       "testFile": "tests/WorkOS.DatabaseSecurityTests",
       "appendOnly": true,
       "ledgerTable": true,
@@ -110,29 +244,98 @@
       "projectionTable": false,
       "protection": "append-only ledger entries, reversal entries, correction audit, database security tests",
       "tables": [
-        { "table": "ledger_accounts", "migrationFile": "infra/db/migrations/031_balanced_money_kernel.sql" },
-        { "table": "ledger_transactions", "migrationFile": "infra/db/migrations/031_balanced_money_kernel.sql" },
-        { "table": "ledger_entries", "migrationFile": "infra/db/migrations/015_control_plane_shadow_runtime.sql" },
-        { "table": "ledger_reversal_entries", "migrationFile": "infra/db/migrations/020_correction_center_schema.sql" },
-        { "table": "ledger_correction_entries", "migrationFile": "infra/db/migrations/020_correction_center_schema.sql" },
-        { "table": "ledger_correction_requests", "migrationFile": "infra/db/migrations/020_correction_center_schema.sql" },
-        { "table": "correction_cases", "migrationFile": "infra/db/migrations/020_correction_center_schema.sql" },
-        { "table": "correction_approvals", "migrationFile": "infra/db/migrations/020_correction_center_schema.sql" },
-        { "table": "correction_audit", "migrationFile": "infra/db/migrations/020_correction_center_schema.sql" },
-        { "table": "deposit_accounts", "migrationFile": "infra/db/migrations/031_balanced_money_kernel.sql" },
-        { "table": "deposit_liabilities", "migrationFile": "infra/db/migrations/006_hostel_operating_ledger.sql" },
-        { "table": "deposit_transactions", "migrationFile": "infra/db/migrations/007_accommodation_money_ledgers.sql" },
-        { "table": "payment_allocations", "migrationFile": "infra/db/migrations/007_accommodation_money_ledgers.sql" },
-        { "table": "payments", "migrationFile": "infra/db/migrations/031_balanced_money_kernel.sql" },
-        { "table": "charges", "migrationFile": "infra/db/migrations/031_balanced_money_kernel.sql" },
-        { "table": "expenses", "migrationFile": "infra/db/migrations/008_accommodation_checkout_service_expense.sql" },
-        { "table": "expense_links", "migrationFile": "infra/db/migrations/008_accommodation_checkout_service_expense.sql" },
-        { "table": "expense_ledger_status", "migrationFile": "infra/db/migrations/021_period_analytics_schema.sql" },
-        { "table": "finance_confirmations", "migrationFile": "infra/db/migrations/005_slice_aggregate_roots.sql" },
-        { "table": "finance_reconciliations", "migrationFile": "infra/db/migrations/006_hostel_operating_ledger.sql" },
-        { "table": "hostel_payments", "migrationFile": "infra/db/migrations/006_hostel_operating_ledger.sql" },
-        { "table": "hostel_operating_metrics", "migrationFile": "infra/db/migrations/006_hostel_operating_ledger.sql" },
-        { "table": "period_finance_snapshots", "migrationFile": "infra/db/migrations/009_accommodation_period_analytics.sql" }
+        {
+          "table": "ledger_accounts",
+          "migrationFile": "infra/db/migrations/031_balanced_money_kernel.sql"
+        },
+        {
+          "table": "ledger_transactions",
+          "migrationFile": "infra/db/migrations/031_balanced_money_kernel.sql"
+        },
+        {
+          "table": "ledger_entries",
+          "migrationFile": "infra/db/migrations/015_control_plane_shadow_runtime.sql"
+        },
+        {
+          "table": "ledger_reversal_entries",
+          "migrationFile": "infra/db/migrations/020_correction_center_schema.sql"
+        },
+        {
+          "table": "ledger_correction_entries",
+          "migrationFile": "infra/db/migrations/020_correction_center_schema.sql"
+        },
+        {
+          "table": "ledger_correction_requests",
+          "migrationFile": "infra/db/migrations/020_correction_center_schema.sql"
+        },
+        {
+          "table": "correction_cases",
+          "migrationFile": "infra/db/migrations/020_correction_center_schema.sql"
+        },
+        {
+          "table": "correction_approvals",
+          "migrationFile": "infra/db/migrations/020_correction_center_schema.sql"
+        },
+        {
+          "table": "correction_audit",
+          "migrationFile": "infra/db/migrations/020_correction_center_schema.sql"
+        },
+        {
+          "table": "deposit_accounts",
+          "migrationFile": "infra/db/migrations/031_balanced_money_kernel.sql"
+        },
+        {
+          "table": "deposit_liabilities",
+          "migrationFile": "infra/db/migrations/006_hostel_operating_ledger.sql"
+        },
+        {
+          "table": "deposit_transactions",
+          "migrationFile": "infra/db/migrations/007_accommodation_money_ledgers.sql"
+        },
+        {
+          "table": "payment_allocations",
+          "migrationFile": "infra/db/migrations/007_accommodation_money_ledgers.sql"
+        },
+        {
+          "table": "payments",
+          "migrationFile": "infra/db/migrations/031_balanced_money_kernel.sql"
+        },
+        {
+          "table": "charges",
+          "migrationFile": "infra/db/migrations/031_balanced_money_kernel.sql"
+        },
+        {
+          "table": "expenses",
+          "migrationFile": "infra/db/migrations/008_accommodation_checkout_service_expense.sql"
+        },
+        {
+          "table": "expense_links",
+          "migrationFile": "infra/db/migrations/008_accommodation_checkout_service_expense.sql"
+        },
+        {
+          "table": "expense_ledger_status",
+          "migrationFile": "infra/db/migrations/021_period_analytics_schema.sql"
+        },
+        {
+          "table": "finance_confirmations",
+          "migrationFile": "infra/db/migrations/005_slice_aggregate_roots.sql"
+        },
+        {
+          "table": "finance_reconciliations",
+          "migrationFile": "infra/db/migrations/006_hostel_operating_ledger.sql"
+        },
+        {
+          "table": "hostel_payments",
+          "migrationFile": "infra/db/migrations/006_hostel_operating_ledger.sql"
+        },
+        {
+          "table": "hostel_operating_metrics",
+          "migrationFile": "infra/db/migrations/006_hostel_operating_ledger.sql"
+        },
+        {
+          "table": "period_finance_snapshots",
+          "migrationFile": "infra/db/migrations/009_accommodation_period_analytics.sql"
+        }
       ]
     },
     {
@@ -141,7 +344,10 @@
       "factType": "financial-governance-fact",
       "truthOwner": "Reconciliation Runtime",
       "writeEntry": "POST /api/reconciliation/* -> governance fact -> optional Correction Center request",
-      "allowedReadSides": ["Search Kernel", "PC Governance Surface"],
+      "allowedReadSides": [
+        "Search Kernel",
+        "PC Governance Surface"
+      ],
       "testFile": "tests/WorkOS.RuntimeIntegrationTests",
       "appendOnly": true,
       "ledgerTable": false,
@@ -149,12 +355,30 @@
       "projectionTable": false,
       "protection": "match decision audit and correction request trace",
       "tables": [
-        { "table": "bank_statement_imports", "migrationFile": "infra/db/migrations/017_reconciliation_runtime.sql" },
-        { "table": "bank_transactions", "migrationFile": "infra/db/migrations/017_reconciliation_runtime.sql" },
-        { "table": "payment_match_candidates", "migrationFile": "infra/db/migrations/017_reconciliation_runtime.sql" },
-        { "table": "payment_matches", "migrationFile": "infra/db/migrations/017_reconciliation_runtime.sql" },
-        { "table": "payment_mismatches", "migrationFile": "infra/db/migrations/017_reconciliation_runtime.sql" },
-        { "table": "reconciliation_cases", "migrationFile": "infra/db/migrations/017_reconciliation_runtime.sql" }
+        {
+          "table": "bank_statement_imports",
+          "migrationFile": "infra/db/migrations/017_reconciliation_runtime.sql"
+        },
+        {
+          "table": "bank_transactions",
+          "migrationFile": "infra/db/migrations/017_reconciliation_runtime.sql"
+        },
+        {
+          "table": "payment_match_candidates",
+          "migrationFile": "infra/db/migrations/017_reconciliation_runtime.sql"
+        },
+        {
+          "table": "payment_matches",
+          "migrationFile": "infra/db/migrations/017_reconciliation_runtime.sql"
+        },
+        {
+          "table": "payment_mismatches",
+          "migrationFile": "infra/db/migrations/017_reconciliation_runtime.sql"
+        },
+        {
+          "table": "reconciliation_cases",
+          "migrationFile": "infra/db/migrations/017_reconciliation_runtime.sql"
+        }
       ]
     },
     {
@@ -163,7 +387,11 @@
       "factType": "identity-session-trust-fact",
       "truthOwner": "Account / Actor / Device / Session Kernel",
       "writeEntry": "auth, device-session, and account governance endpoints",
-      "allowedReadSides": ["Admission Kernel", "Search Kernel", "PC Governance Surface"],
+      "allowedReadSides": [
+        "Admission Kernel",
+        "Search Kernel",
+        "PC Governance Surface"
+      ],
       "testFile": "tests/WorkOS.RuntimeIntegrationTests",
       "appendOnly": true,
       "ledgerTable": false,
@@ -171,12 +399,30 @@
       "projectionTable": false,
       "protection": "tenant-scoped session, device trust, account audit",
       "tables": [
-        { "table": "account_users", "migrationFile": "infra/db/migrations/040_account_actor_kernel.sql" },
-        { "table": "account_audit_events", "migrationFile": "infra/db/migrations/040_account_actor_kernel.sql" },
-        { "table": "runtime_sessions", "migrationFile": "infra/db/migrations/002_runtime_sessions.sql" },
-        { "table": "device_sessions", "migrationFile": "infra/db/migrations/027_production_security_hardening.sql" },
-        { "table": "governance_export_audits", "migrationFile": "infra/db/migrations/027_production_security_hardening.sql" },
-        { "table": "file_access_audits", "migrationFile": "infra/db/migrations/027_production_security_hardening.sql" }
+        {
+          "table": "account_users",
+          "migrationFile": "infra/db/migrations/040_account_actor_kernel.sql"
+        },
+        {
+          "table": "account_audit_events",
+          "migrationFile": "infra/db/migrations/040_account_actor_kernel.sql"
+        },
+        {
+          "table": "runtime_sessions",
+          "migrationFile": "infra/db/migrations/002_runtime_sessions.sql"
+        },
+        {
+          "table": "device_sessions",
+          "migrationFile": "infra/db/migrations/027_production_security_hardening.sql"
+        },
+        {
+          "table": "governance_export_audits",
+          "migrationFile": "infra/db/migrations/027_production_security_hardening.sql"
+        },
+        {
+          "table": "file_access_audits",
+          "migrationFile": "infra/db/migrations/027_production_security_hardening.sql"
+        }
       ]
     },
     {
@@ -185,7 +431,12 @@
       "factType": "evidence-trace-audit",
       "truthOwner": "Evidence / Trace / Audit Kernel",
       "writeEntry": "Evidence Runtime and Confirm Runtime trace append",
-      "allowedReadSides": ["Search Kernel", "Mobile Surface", "PC Governance Surface", "Release Evidence"],
+      "allowedReadSides": [
+        "Search Kernel",
+        "Mobile Surface",
+        "PC Governance Surface",
+        "Release Evidence"
+      ],
       "testFile": "tests/WorkOS.RuntimeIntegrationTests",
       "appendOnly": true,
       "ledgerTable": false,
@@ -193,14 +444,38 @@
       "projectionTable": false,
       "protection": "tenant scoped evidence, append-only audit and trace refs",
       "tables": [
-        { "table": "evidence_objects", "migrationFile": "infra/db/migrations/014_runtime_evidence_card_instances.sql" },
-        { "table": "evidence_attachments", "migrationFile": "infra/db/migrations/014_runtime_evidence_card_instances.sql" },
-        { "table": "evidence_requirements", "migrationFile": "infra/db/migrations/014_runtime_evidence_card_instances.sql" },
-        { "table": "audit_events", "migrationFile": "infra/db/migrations/001_runtime_core.sql" },
-        { "table": "behavior_events", "migrationFile": "infra/db/migrations/001_runtime_core.sql" },
-        { "table": "runtime_documents", "migrationFile": "infra/db/migrations/001_runtime_core.sql" },
-        { "table": "outbox_messages", "migrationFile": "infra/db/migrations/001_runtime_core.sql" },
-        { "table": "outbox_dead_letter_replay_audits", "migrationFile": "infra/db/migrations/023_outbox_dead_letter_replay_ops.sql" }
+        {
+          "table": "evidence_objects",
+          "migrationFile": "infra/db/migrations/014_runtime_evidence_card_instances.sql"
+        },
+        {
+          "table": "evidence_attachments",
+          "migrationFile": "infra/db/migrations/014_runtime_evidence_card_instances.sql"
+        },
+        {
+          "table": "evidence_requirements",
+          "migrationFile": "infra/db/migrations/014_runtime_evidence_card_instances.sql"
+        },
+        {
+          "table": "audit_events",
+          "migrationFile": "infra/db/migrations/001_runtime_core.sql"
+        },
+        {
+          "table": "behavior_events",
+          "migrationFile": "infra/db/migrations/001_runtime_core.sql"
+        },
+        {
+          "table": "runtime_documents",
+          "migrationFile": "infra/db/migrations/001_runtime_core.sql"
+        },
+        {
+          "table": "outbox_messages",
+          "migrationFile": "infra/db/migrations/001_runtime_core.sql"
+        },
+        {
+          "table": "outbox_dead_letter_replay_audits",
+          "migrationFile": "infra/db/migrations/023_outbox_dead_letter_replay_ops.sql"
+        }
       ]
     },
     {
@@ -209,7 +484,11 @@
       "factType": "read-side-projection",
       "truthOwner": "Outbox / Projection Kernel",
       "writeEntry": "Outbox processor only; never business fact write",
-      "allowedReadSides": ["Search Kernel", "Mobile Surface", "PC Governance Surface"],
+      "allowedReadSides": [
+        "Search Kernel",
+        "Mobile Surface",
+        "PC Governance Surface"
+      ],
       "testFile": "tests/WorkOS.DatabaseSecurityTests",
       "appendOnly": true,
       "ledgerTable": false,
@@ -217,10 +496,22 @@
       "projectionTable": true,
       "protection": "projection checkpoint namespace guard and rebuild audit",
       "tables": [
-        { "table": "projection_checkpoints", "migrationFile": "infra/db/migrations/022_projection_rebuild_ops.sql" },
-        { "table": "projection_rebuild_audits", "migrationFile": "infra/db/migrations/022_projection_rebuild_ops.sql" },
-        { "table": "deposit_balance_projection", "migrationFile": "infra/db/migrations/031_balanced_money_kernel.sql" },
-        { "table": "stay_balance_projection", "migrationFile": "infra/db/migrations/031_balanced_money_kernel.sql" }
+        {
+          "table": "projection_checkpoints",
+          "migrationFile": "infra/db/migrations/022_projection_rebuild_ops.sql"
+        },
+        {
+          "table": "projection_rebuild_audits",
+          "migrationFile": "infra/db/migrations/022_projection_rebuild_ops.sql"
+        },
+        {
+          "table": "deposit_balance_projection",
+          "migrationFile": "infra/db/migrations/031_balanced_money_kernel.sql"
+        },
+        {
+          "table": "stay_balance_projection",
+          "migrationFile": "infra/db/migrations/031_balanced_money_kernel.sql"
+        }
       ]
     },
     {
@@ -229,7 +520,10 @@
       "factType": "release-governance-fact",
       "truthOwner": "Release Control / PC Governance Kernel",
       "writeEntry": "POST /api/control-plane/* and PC governance commands",
-      "allowedReadSides": ["PC Governance Surface", "Release Evidence"],
+      "allowedReadSides": [
+        "PC Governance Surface",
+        "Release Evidence"
+      ],
       "testFile": "tests/WorkOS.ReleaseEvidenceTests",
       "appendOnly": true,
       "ledgerTable": false,
@@ -237,18 +531,54 @@
       "projectionTable": false,
       "protection": "append-only gate result, release manifest, rollback audit",
       "tables": [
-        { "table": "release_manifests", "migrationFile": "infra/db/migrations/015_control_plane_shadow_runtime.sql" },
-        { "table": "gate_results", "migrationFile": "infra/db/migrations/015_control_plane_shadow_runtime.sql" },
-        { "table": "rollback_instructions", "migrationFile": "infra/db/migrations/015_control_plane_shadow_runtime.sql" },
-        { "table": "slice_cutover_states", "migrationFile": "infra/db/migrations/015_control_plane_shadow_runtime.sql" },
-        { "table": "feature_flags", "migrationFile": "infra/db/migrations/015_control_plane_shadow_runtime.sql" },
-        { "table": "business_signoffs", "migrationFile": "infra/db/migrations/029_control_plane_gate_result_append_only.sql" },
-        { "table": "runtime_invariant_checks", "migrationFile": "infra/db/migrations/015_control_plane_shadow_runtime.sql" },
-        { "table": "shadow_compare_reports", "migrationFile": "infra/db/migrations/015_control_plane_shadow_runtime.sql" },
-        { "table": "compare_inputs", "migrationFile": "infra/db/migrations/015_control_plane_shadow_runtime.sql" },
-        { "table": "command_submissions", "migrationFile": "infra/db/migrations/015_control_plane_shadow_runtime.sql" },
-        { "table": "domain_events", "migrationFile": "infra/db/migrations/015_control_plane_shadow_runtime.sql" },
-        { "table": "lens_snapshots", "migrationFile": "infra/db/migrations/015_control_plane_shadow_runtime.sql" }
+        {
+          "table": "release_manifests",
+          "migrationFile": "infra/db/migrations/015_control_plane_shadow_runtime.sql"
+        },
+        {
+          "table": "gate_results",
+          "migrationFile": "infra/db/migrations/015_control_plane_shadow_runtime.sql"
+        },
+        {
+          "table": "rollback_instructions",
+          "migrationFile": "infra/db/migrations/015_control_plane_shadow_runtime.sql"
+        },
+        {
+          "table": "slice_cutover_states",
+          "migrationFile": "infra/db/migrations/015_control_plane_shadow_runtime.sql"
+        },
+        {
+          "table": "feature_flags",
+          "migrationFile": "infra/db/migrations/015_control_plane_shadow_runtime.sql"
+        },
+        {
+          "table": "business_signoffs",
+          "migrationFile": "infra/db/migrations/029_control_plane_gate_result_append_only.sql"
+        },
+        {
+          "table": "runtime_invariant_checks",
+          "migrationFile": "infra/db/migrations/015_control_plane_shadow_runtime.sql"
+        },
+        {
+          "table": "shadow_compare_reports",
+          "migrationFile": "infra/db/migrations/015_control_plane_shadow_runtime.sql"
+        },
+        {
+          "table": "compare_inputs",
+          "migrationFile": "infra/db/migrations/015_control_plane_shadow_runtime.sql"
+        },
+        {
+          "table": "command_submissions",
+          "migrationFile": "infra/db/migrations/015_control_plane_shadow_runtime.sql"
+        },
+        {
+          "table": "domain_events",
+          "migrationFile": "infra/db/migrations/015_control_plane_shadow_runtime.sql"
+        },
+        {
+          "table": "lens_snapshots",
+          "migrationFile": "infra/db/migrations/015_control_plane_shadow_runtime.sql"
+        }
       ]
     },
     {
@@ -257,7 +587,10 @@
       "factType": "release-evidence-report",
       "truthOwner": "Release Evidence Kernel",
       "writeEntry": "control-plane jobs and release evidence tests",
-      "allowedReadSides": ["PC Governance Surface", "Release Evidence"],
+      "allowedReadSides": [
+        "PC Governance Surface",
+        "Release Evidence"
+      ],
       "testFile": "tests/WorkOS.ReleaseEvidenceTests",
       "appendOnly": true,
       "ledgerTable": false,
@@ -265,28 +598,262 @@
       "projectionTable": false,
       "protection": "job report audit and release evidence test binding",
       "tables": [
-        { "table": "ledger_inspection_job_reports", "migrationFile": "infra/db/migrations/024_ledger_inspection_job_reports.sql" },
-        { "table": "migration_verification_reports", "migrationFile": "infra/db/migrations/025_migration_verification_job_reports.sql" },
-        { "table": "explicit_reconciliation_review_reports", "migrationFile": "infra/db/migrations/025_migration_verification_job_reports.sql" },
-        { "table": "source_locks", "migrationFile": "infra/db/migrations/025_migration_verification_job_reports.sql" },
-        { "table": "backup_restore_smoke_reports", "migrationFile": "infra/db/migrations/026_backup_restore_smoke_reports.sql" },
-        { "table": "risk_command_snapshots", "migrationFile": "infra/db/migrations/021_period_analytics_schema.sql" }
+        {
+          "table": "ledger_inspection_job_reports",
+          "migrationFile": "infra/db/migrations/024_ledger_inspection_job_reports.sql"
+        },
+        {
+          "table": "migration_verification_reports",
+          "migrationFile": "infra/db/migrations/025_migration_verification_job_reports.sql"
+        },
+        {
+          "table": "explicit_reconciliation_review_reports",
+          "migrationFile": "infra/db/migrations/025_migration_verification_job_reports.sql"
+        },
+        {
+          "table": "source_locks",
+          "migrationFile": "infra/db/migrations/025_migration_verification_job_reports.sql"
+        },
+        {
+          "table": "backup_restore_smoke_reports",
+          "migrationFile": "infra/db/migrations/026_backup_restore_smoke_reports.sql"
+        },
+        {
+          "table": "risk_command_snapshots",
+          "migrationFile": "infra/db/migrations/021_period_analytics_schema.sql"
+        }
       ]
     }
   ],
   "executionMappings": [
     {
-      "businessAction": "Dorm.RoomReadinessCheck",
+      "businessAction": "Dorm.RoomSetupConfirm",
       "decision": "currentExecutableWorkItem",
-      "definitionId": "definition.dormitory.roomReadinessCheck.v1",
-      "commandType": "RoomReadiness.Check",
+      "definitionId": "definition.dormitory.roomSetupConfirm.v1",
+      "commandType": "RoomSetup.Confirm",
       "unitOfWork": "OperationsUnitOfWork",
-      "ownerSlice": "Accommodation.ServiceTask",
-      "tableGroups": ["operations-runtime", "maintenance-facts", "evidence-audit", "projection-read-side"],
-      "domainEvent": { "required": true, "owner": "Confirm Runtime", "tableGroup": "operations-runtime" },
-      "ledgerEntry": { "required": false, "policyRef": "ledger.none.v1", "appendOnly": false },
-      "searchProjectionLens": { "search": "Search Kernel", "projection": "Outbox / Projection Kernel", "lens": "room-readiness", "readOnly": true },
-      "tests": ["tests/WorkOS.RuntimeIntegrationTests", "apps/mobile/src/__tests__"]
+      "ownerSlice": "Accommodation.ResourceSetup",
+      "tableGroups": [
+        "operations-runtime",
+        "evidence-audit",
+        "projection-read-side",
+        "accommodation-facts"
+      ],
+      "domainEvent": {
+        "required": true,
+        "tableGroup": "operations-runtime",
+        "eventType": "RoomSetupConfirmSubmitted"
+      },
+      "ledgerEntry": {
+        "required": false,
+        "tableGroup": null,
+        "policyRef": "ledger.none.v1",
+        "appendOnly": false,
+        "mutationPolicy": "not_applicable"
+      },
+      "searchProjectionLens": {
+        "readOnly": true,
+        "tableGroup": "projection-read-side",
+        "lenses": [
+          "RoomReadyLens"
+        ]
+      },
+      "tests": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "tests/WorkOS.DatabaseSecurityTests"
+      ]
+    },
+    {
+      "businessAction": "Dorm.BedSetupConfirm",
+      "decision": "currentExecutableWorkItem",
+      "definitionId": "definition.dormitory.bedSetupConfirm.v1",
+      "commandType": "BedSetup.Confirm",
+      "unitOfWork": "OperationsUnitOfWork",
+      "ownerSlice": "Accommodation.ResourceSetup",
+      "tableGroups": [
+        "operations-runtime",
+        "evidence-audit",
+        "projection-read-side",
+        "accommodation-facts"
+      ],
+      "domainEvent": {
+        "required": true,
+        "tableGroup": "operations-runtime",
+        "eventType": "BedSetupConfirmSubmitted"
+      },
+      "ledgerEntry": {
+        "required": false,
+        "tableGroup": null,
+        "policyRef": "ledger.none.v1",
+        "appendOnly": false,
+        "mutationPolicy": "not_applicable"
+      },
+      "searchProjectionLens": {
+        "readOnly": true,
+        "tableGroup": "projection-read-side",
+        "lenses": [
+          "DormAvailabilityLens"
+        ]
+      },
+      "tests": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "tests/WorkOS.DatabaseSecurityTests"
+      ]
+    },
+    {
+      "businessAction": "Dorm.RatePlanConfirm",
+      "decision": "currentExecutableWorkItem",
+      "definitionId": "definition.dormitory.ratePlanConfirm.v1",
+      "commandType": "RatePlan.Confirm",
+      "unitOfWork": "OperationsUnitOfWork",
+      "ownerSlice": "Accommodation.RatePlan",
+      "tableGroups": [
+        "operations-runtime",
+        "evidence-audit",
+        "projection-read-side",
+        "accommodation-facts"
+      ],
+      "domainEvent": {
+        "required": true,
+        "tableGroup": "operations-runtime",
+        "eventType": "RatePlanConfirmSubmitted"
+      },
+      "ledgerEntry": {
+        "required": false,
+        "tableGroup": null,
+        "policyRef": "ledger.none.v1",
+        "appendOnly": false,
+        "mutationPolicy": "not_applicable"
+      },
+      "searchProjectionLens": {
+        "readOnly": true,
+        "tableGroup": "projection-read-side",
+        "lenses": [
+          "RatePlanLens"
+        ]
+      },
+      "tests": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "tests/WorkOS.DatabaseSecurityTests"
+      ]
+    },
+    {
+      "businessAction": "Dorm.ResourceReadinessConfirm",
+      "decision": "currentExecutableWorkItem",
+      "definitionId": "definition.dormitory.resourceReadinessConfirm.v1",
+      "commandType": "ResourceReadiness.Confirm",
+      "unitOfWork": "OperationsUnitOfWork",
+      "ownerSlice": "Accommodation.ResourceReadiness",
+      "tableGroups": [
+        "operations-runtime",
+        "evidence-audit",
+        "projection-read-side",
+        "accommodation-facts"
+      ],
+      "domainEvent": {
+        "required": true,
+        "tableGroup": "operations-runtime",
+        "eventType": "ResourceReadinessConfirmSubmitted"
+      },
+      "ledgerEntry": {
+        "required": false,
+        "tableGroup": null,
+        "policyRef": "ledger.none.v1",
+        "appendOnly": false,
+        "mutationPolicy": "not_applicable"
+      },
+      "searchProjectionLens": {
+        "readOnly": true,
+        "tableGroup": "projection-read-side",
+        "lenses": [
+          "DormAvailabilityLens",
+          "RoomReadinessLens"
+        ]
+      },
+      "tests": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "tests/WorkOS.DatabaseSecurityTests"
+      ]
+    },
+    {
+      "businessAction": "Dorm.LeadCapture",
+      "decision": "currentExecutableWorkItem",
+      "definitionId": "definition.dormitory.leadCapture.v1",
+      "commandType": "Lead.Capture",
+      "unitOfWork": "OperationsUnitOfWork",
+      "ownerSlice": "Accommodation.Lead",
+      "tableGroups": [
+        "operations-runtime",
+        "evidence-audit",
+        "projection-read-side",
+        "accommodation-facts"
+      ],
+      "domainEvent": {
+        "required": true,
+        "tableGroup": "operations-runtime",
+        "eventType": "LeadCaptureSubmitted"
+      },
+      "ledgerEntry": {
+        "required": false,
+        "tableGroup": null,
+        "policyRef": "ledger.none.v1",
+        "appendOnly": false,
+        "mutationPolicy": "not_applicable"
+      },
+      "searchProjectionLens": {
+        "readOnly": true,
+        "tableGroup": "projection-read-side",
+        "lenses": [
+          "LeadFunnelLens"
+        ]
+      },
+      "tests": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "tests/WorkOS.DatabaseSecurityTests"
+      ]
+    },
+    {
+      "businessAction": "Dorm.ReservationConfirm",
+      "decision": "currentExecutableWorkItem",
+      "definitionId": "definition.dormitory.reservationConfirm.v1",
+      "commandType": "Reservation.Confirm",
+      "unitOfWork": "OperationsUnitOfWork",
+      "ownerSlice": "Accommodation.Reservation",
+      "tableGroups": [
+        "operations-runtime",
+        "evidence-audit",
+        "projection-read-side",
+        "accommodation-facts"
+      ],
+      "domainEvent": {
+        "required": true,
+        "tableGroup": "operations-runtime",
+        "eventType": "ReservationConfirmSubmitted"
+      },
+      "ledgerEntry": {
+        "required": false,
+        "tableGroup": null,
+        "policyRef": "ledger.none.v1",
+        "appendOnly": false,
+        "mutationPolicy": "not_applicable"
+      },
+      "searchProjectionLens": {
+        "readOnly": true,
+        "tableGroup": "projection-read-side",
+        "lenses": [
+          "ReservationLens"
+        ]
+      },
+      "tests": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "tests/WorkOS.DatabaseSecurityTests"
+      ]
     },
     {
       "businessAction": "Dorm.CheckinConfirm",
@@ -295,50 +862,808 @@
       "commandType": "Checkin.Confirm",
       "unitOfWork": "OperationsUnitOfWork",
       "ownerSlice": "Accommodation.CheckIn",
-      "tableGroups": ["operations-runtime", "accommodation-facts", "evidence-audit", "projection-read-side"],
-      "domainEvent": { "required": true, "owner": "Confirm Runtime", "tableGroup": "operations-runtime" },
-      "ledgerEntry": { "required": false, "policyRef": "ledger.none.v1", "appendOnly": false },
-      "searchProjectionLens": { "search": "Search Kernel", "projection": "Outbox / Projection Kernel", "lens": "stay-lifecycle", "readOnly": true },
-      "tests": ["tests/WorkOS.RuntimeIntegrationTests", "apps/mobile/src/__tests__"]
+      "tableGroups": [
+        "operations-runtime",
+        "evidence-audit",
+        "projection-read-side",
+        "accommodation-facts"
+      ],
+      "domainEvent": {
+        "required": true,
+        "tableGroup": "operations-runtime",
+        "eventType": "CheckinConfirmSubmitted"
+      },
+      "ledgerEntry": {
+        "required": false,
+        "tableGroup": null,
+        "policyRef": "ledger.none.v1",
+        "appendOnly": false,
+        "mutationPolicy": "not_applicable"
+      },
+      "searchProjectionLens": {
+        "readOnly": true,
+        "tableGroup": "projection-read-side",
+        "lenses": [
+          "StayOnboardingLens",
+          "DormAvailabilityLens"
+        ]
+      },
+      "tests": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "tests/WorkOS.DatabaseSecurityTests"
+      ]
     },
     {
       "businessAction": "Dorm.PaymentConfirm",
-      "decision": "currentExecutableWorkItem",
+      "decision": "externalFinanceGovernance",
       "definitionId": "definition.dormitory.paymentConfirm.v1",
       "commandType": "Payment.Confirm",
       "unitOfWork": "OperationsUnitOfWork",
-      "ownerSlice": "Accommodation.PaymentLedger",
-      "tableGroups": ["operations-runtime", "finance-ledger", "evidence-audit", "projection-read-side"],
-      "domainEvent": { "required": true, "owner": "Confirm Runtime", "tableGroup": "operations-runtime" },
-      "ledgerEntry": { "required": true, "policyRef": "ledger.payment.balanced_allocation.v1", "appendOnly": true, "tableGroup": "finance-ledger", "mutationPolicy": "no_update_no_delete" },
-      "searchProjectionLens": { "search": "Search Kernel", "projection": "Outbox / Projection Kernel", "lens": "stay-balance", "readOnly": true },
-      "tests": ["tests/WorkOS.RuntimeIntegrationTests", "tests/WorkOS.DatabaseSecurityTests", "apps/mobile/src/__tests__"]
+      "ownerSlice": "finance-gate",
+      "tableGroups": [
+        "operations-runtime",
+        "evidence-audit",
+        "projection-read-side",
+        "finance-ledger"
+      ],
+      "domainEvent": {
+        "required": true,
+        "tableGroup": "operations-runtime",
+        "eventType": "PaymentConfirmSubmitted"
+      },
+      "ledgerEntry": {
+        "required": true,
+        "tableGroup": "finance-ledger",
+        "policyRef": "ledger.payment.balanced_allocation.v1",
+        "appendOnly": true,
+        "mutationPolicy": "no_update_no_delete"
+      },
+      "searchProjectionLens": {
+        "readOnly": true,
+        "tableGroup": "projection-read-side",
+        "lenses": [
+          "StayBalanceLens",
+          "RevenueCollectionLens"
+        ]
+      },
+      "tests": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "tests/WorkOS.DatabaseSecurityTests"
+      ]
     },
     {
       "businessAction": "Dorm.DepositConfirm",
-      "decision": "currentExecutableWorkItem",
+      "decision": "externalFinanceGovernance",
       "definitionId": "definition.dormitory.depositConfirm.v1",
       "commandType": "Deposit.Confirm",
       "unitOfWork": "OperationsUnitOfWork",
-      "ownerSlice": "Accommodation.DepositLedger",
-      "tableGroups": ["operations-runtime", "finance-ledger", "evidence-audit", "projection-read-side"],
-      "domainEvent": { "required": true, "owner": "Confirm Runtime", "tableGroup": "operations-runtime" },
-      "ledgerEntry": { "required": true, "policyRef": "ledger.deposit.liability_only.v1", "appendOnly": true, "tableGroup": "finance-ledger", "mutationPolicy": "no_update_no_delete" },
-      "searchProjectionLens": { "search": "Search Kernel", "projection": "Outbox / Projection Kernel", "lens": "deposit-liability", "readOnly": true },
-      "tests": ["tests/WorkOS.RuntimeIntegrationTests", "tests/WorkOS.DatabaseSecurityTests", "apps/mobile/src/__tests__"]
+      "ownerSlice": "finance-gate",
+      "tableGroups": [
+        "operations-runtime",
+        "evidence-audit",
+        "projection-read-side",
+        "finance-ledger"
+      ],
+      "domainEvent": {
+        "required": true,
+        "tableGroup": "operations-runtime",
+        "eventType": "DepositConfirmSubmitted"
+      },
+      "ledgerEntry": {
+        "required": true,
+        "tableGroup": "finance-ledger",
+        "policyRef": "ledger.deposit.liability.v1",
+        "appendOnly": true,
+        "mutationPolicy": "no_update_no_delete"
+      },
+      "searchProjectionLens": {
+        "readOnly": true,
+        "tableGroup": "projection-read-side",
+        "lenses": [
+          "DepositLiabilityLens"
+        ]
+      },
+      "tests": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "tests/WorkOS.DatabaseSecurityTests"
+      ]
     },
     {
-      "businessAction": "Dorm.RefundApprove",
+      "businessAction": "Dorm.ServiceTaskCreate",
       "decision": "currentExecutableWorkItem",
-      "definitionId": "definition.dormitory.refundApprove.v1",
-      "commandType": "Refund.Approve",
+      "definitionId": "definition.dormitory.serviceTaskCreate.v1",
+      "commandType": "ServiceTask.Create",
       "unitOfWork": "OperationsUnitOfWork",
-      "ownerSlice": "Accommodation.CheckOutSettlement",
-      "tableGroups": ["operations-runtime", "finance-ledger", "accommodation-facts", "evidence-audit", "projection-read-side"],
-      "domainEvent": { "required": true, "owner": "Confirm Runtime", "tableGroup": "operations-runtime" },
-      "ledgerEntry": { "required": true, "policyRef": "ledger.refund.balanced_liability.v1", "appendOnly": true, "tableGroup": "finance-ledger", "mutationPolicy": "no_update_no_delete" },
-      "searchProjectionLens": { "search": "Search Kernel", "projection": "Outbox / Projection Kernel", "lens": "checkout-queue", "readOnly": true },
-      "tests": ["tests/WorkOS.RuntimeIntegrationTests", "tests/WorkOS.DatabaseSecurityTests", "apps/mobile/src/__tests__"]
+      "ownerSlice": "Accommodation.ServiceTask",
+      "tableGroups": [
+        "operations-runtime",
+        "evidence-audit",
+        "projection-read-side",
+        "maintenance-facts",
+        "accommodation-facts"
+      ],
+      "domainEvent": {
+        "required": true,
+        "tableGroup": "operations-runtime",
+        "eventType": "ServiceTaskCreateSubmitted"
+      },
+      "ledgerEntry": {
+        "required": false,
+        "tableGroup": null,
+        "policyRef": "ledger.none.v1",
+        "appendOnly": false,
+        "mutationPolicy": "not_applicable"
+      },
+      "searchProjectionLens": {
+        "readOnly": true,
+        "tableGroup": "projection-read-side",
+        "lenses": [
+          "ServiceTaskLens"
+        ]
+      },
+      "tests": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "tests/WorkOS.DatabaseSecurityTests"
+      ]
+    },
+    {
+      "businessAction": "Dorm.ServiceTaskAssign",
+      "decision": "currentExecutableWorkItem",
+      "definitionId": "definition.dormitory.serviceTaskAssign.v1",
+      "commandType": "ServiceTask.Assign",
+      "unitOfWork": "OperationsUnitOfWork",
+      "ownerSlice": "Accommodation.ServiceTask",
+      "tableGroups": [
+        "operations-runtime",
+        "evidence-audit",
+        "projection-read-side",
+        "maintenance-facts",
+        "accommodation-facts"
+      ],
+      "domainEvent": {
+        "required": true,
+        "tableGroup": "operations-runtime",
+        "eventType": "ServiceTaskAssignSubmitted"
+      },
+      "ledgerEntry": {
+        "required": false,
+        "tableGroup": null,
+        "policyRef": "ledger.none.v1",
+        "appendOnly": false,
+        "mutationPolicy": "not_applicable"
+      },
+      "searchProjectionLens": {
+        "readOnly": true,
+        "tableGroup": "projection-read-side",
+        "lenses": [
+          "ServiceTaskLens"
+        ]
+      },
+      "tests": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "tests/WorkOS.DatabaseSecurityTests"
+      ]
+    },
+    {
+      "businessAction": "Dorm.ServiceTaskComplete",
+      "decision": "currentExecutableWorkItem",
+      "definitionId": "definition.dormitory.serviceTaskComplete.v1",
+      "commandType": "ServiceTask.Complete",
+      "unitOfWork": "OperationsUnitOfWork",
+      "ownerSlice": "Accommodation.ServiceTask",
+      "tableGroups": [
+        "operations-runtime",
+        "evidence-audit",
+        "projection-read-side",
+        "maintenance-facts",
+        "accommodation-facts"
+      ],
+      "domainEvent": {
+        "required": true,
+        "tableGroup": "operations-runtime",
+        "eventType": "ServiceTaskCompleteSubmitted"
+      },
+      "ledgerEntry": {
+        "required": false,
+        "tableGroup": null,
+        "policyRef": "ledger.none.v1",
+        "appendOnly": false,
+        "mutationPolicy": "not_applicable"
+      },
+      "searchProjectionLens": {
+        "readOnly": true,
+        "tableGroup": "projection-read-side",
+        "lenses": [
+          "ServiceTaskLens"
+        ]
+      },
+      "tests": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "tests/WorkOS.DatabaseSecurityTests"
+      ]
+    },
+    {
+      "businessAction": "Dorm.ServiceTaskVerify",
+      "decision": "currentExecutableWorkItem",
+      "definitionId": "definition.dormitory.serviceTaskVerify.v1",
+      "commandType": "ServiceTask.Verify",
+      "unitOfWork": "OperationsUnitOfWork",
+      "ownerSlice": "Accommodation.ServiceTask",
+      "tableGroups": [
+        "operations-runtime",
+        "evidence-audit",
+        "projection-read-side",
+        "maintenance-facts",
+        "accommodation-facts"
+      ],
+      "domainEvent": {
+        "required": true,
+        "tableGroup": "operations-runtime",
+        "eventType": "ServiceTaskVerifySubmitted"
+      },
+      "ledgerEntry": {
+        "required": false,
+        "tableGroup": null,
+        "policyRef": "ledger.none.v1",
+        "appendOnly": false,
+        "mutationPolicy": "not_applicable"
+      },
+      "searchProjectionLens": {
+        "readOnly": true,
+        "tableGroup": "projection-read-side",
+        "lenses": [
+          "RoomReadinessLens",
+          "ServiceTaskLens"
+        ]
+      },
+      "tests": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "tests/WorkOS.DatabaseSecurityTests"
+      ]
+    },
+    {
+      "businessAction": "Finance.ExpenseRecord",
+      "decision": "externalFinanceGovernance",
+      "definitionId": "definition.finance.expenseRecord.v1",
+      "commandType": "Expense.Record",
+      "unitOfWork": "OperationsUnitOfWork",
+      "ownerSlice": "finance-gate",
+      "tableGroups": [
+        "operations-runtime",
+        "evidence-audit",
+        "projection-read-side",
+        "finance-ledger"
+      ],
+      "domainEvent": {
+        "required": true,
+        "tableGroup": "operations-runtime",
+        "eventType": "ExpenseRecordSubmitted"
+      },
+      "ledgerEntry": {
+        "required": true,
+        "tableGroup": "finance-ledger",
+        "policyRef": "ledger.expense.pending_basis.v1",
+        "appendOnly": true,
+        "mutationPolicy": "no_update_no_delete"
+      },
+      "searchProjectionLens": {
+        "readOnly": true,
+        "tableGroup": "projection-read-side",
+        "lenses": [
+          "ExpenseControlLens"
+        ]
+      },
+      "tests": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "tests/WorkOS.DatabaseSecurityTests"
+      ]
+    },
+    {
+      "businessAction": "Finance.ExpenseApprove",
+      "decision": "externalFinanceGovernance",
+      "definitionId": "definition.finance.expenseApprove.v1",
+      "commandType": "Expense.Approve",
+      "unitOfWork": "OperationsUnitOfWork",
+      "ownerSlice": "finance-gate",
+      "tableGroups": [
+        "operations-runtime",
+        "evidence-audit",
+        "projection-read-side",
+        "finance-ledger"
+      ],
+      "domainEvent": {
+        "required": true,
+        "tableGroup": "operations-runtime",
+        "eventType": "ExpenseApproveSubmitted"
+      },
+      "ledgerEntry": {
+        "required": true,
+        "tableGroup": "finance-ledger",
+        "policyRef": "ledger.expense.approved_cost.v1",
+        "appendOnly": true,
+        "mutationPolicy": "no_update_no_delete"
+      },
+      "searchProjectionLens": {
+        "readOnly": true,
+        "tableGroup": "projection-read-side",
+        "lenses": [
+          "ExpenseControlLens"
+        ]
+      },
+      "tests": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "tests/WorkOS.DatabaseSecurityTests"
+      ]
+    },
+    {
+      "businessAction": "Finance.ExpenseLink",
+      "decision": "externalFinanceGovernance",
+      "definitionId": "definition.finance.expenseLink.v1",
+      "commandType": "Expense.Link",
+      "unitOfWork": "OperationsUnitOfWork",
+      "ownerSlice": "finance-gate",
+      "tableGroups": [
+        "operations-runtime",
+        "evidence-audit",
+        "projection-read-side",
+        "finance-ledger"
+      ],
+      "domainEvent": {
+        "required": true,
+        "tableGroup": "operations-runtime",
+        "eventType": "ExpenseLinkSubmitted"
+      },
+      "ledgerEntry": {
+        "required": true,
+        "tableGroup": "finance-ledger",
+        "policyRef": "ledger.expense.linked_cost.v1",
+        "appendOnly": true,
+        "mutationPolicy": "no_update_no_delete"
+      },
+      "searchProjectionLens": {
+        "readOnly": true,
+        "tableGroup": "projection-read-side",
+        "lenses": [
+          "ExpenseControlLens",
+          "ServiceTaskLens"
+        ]
+      },
+      "tests": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "tests/WorkOS.DatabaseSecurityTests"
+      ]
+    },
+    {
+      "businessAction": "Dorm.RoomInspectionConfirm",
+      "decision": "currentExecutableWorkItem",
+      "definitionId": "definition.dormitory.roomInspectionConfirm.v1",
+      "commandType": "RoomInspection.Confirm",
+      "unitOfWork": "OperationsUnitOfWork",
+      "ownerSlice": "Accommodation.Checkout",
+      "tableGroups": [
+        "operations-runtime",
+        "evidence-audit",
+        "projection-read-side",
+        "accommodation-facts"
+      ],
+      "domainEvent": {
+        "required": true,
+        "tableGroup": "operations-runtime",
+        "eventType": "RoomInspectionConfirmSubmitted"
+      },
+      "ledgerEntry": {
+        "required": false,
+        "tableGroup": null,
+        "policyRef": "ledger.none.v1",
+        "appendOnly": false,
+        "mutationPolicy": "not_applicable"
+      },
+      "searchProjectionLens": {
+        "readOnly": true,
+        "tableGroup": "projection-read-side",
+        "lenses": [
+          "CheckoutTurnoverLens"
+        ]
+      },
+      "tests": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "tests/WorkOS.DatabaseSecurityTests"
+      ]
+    },
+    {
+      "businessAction": "Dorm.CheckoutSettlementApprove",
+      "decision": "externalFinanceGovernance",
+      "definitionId": "definition.dormitory.checkoutSettlementApprove.v1",
+      "commandType": "CheckoutSettlement.Approve",
+      "unitOfWork": "OperationsUnitOfWork",
+      "ownerSlice": "finance-gate",
+      "tableGroups": [
+        "operations-runtime",
+        "evidence-audit",
+        "projection-read-side",
+        "finance-ledger"
+      ],
+      "domainEvent": {
+        "required": true,
+        "tableGroup": "operations-runtime",
+        "eventType": "CheckoutSettlementApproveSubmitted"
+      },
+      "ledgerEntry": {
+        "required": true,
+        "tableGroup": "finance-ledger",
+        "policyRef": "ledger.checkout.settlement.v1",
+        "appendOnly": true,
+        "mutationPolicy": "no_update_no_delete"
+      },
+      "searchProjectionLens": {
+        "readOnly": true,
+        "tableGroup": "projection-read-side",
+        "lenses": [
+          "DepositSettlementLens",
+          "RefundRiskLens",
+          "CheckoutTurnoverLens"
+        ]
+      },
+      "tests": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "tests/WorkOS.DatabaseSecurityTests"
+      ]
+    },
+    {
+      "businessAction": "Dorm.StayExtendApprove",
+      "decision": "currentExecutableWorkItem",
+      "definitionId": "definition.dormitory.stayExtendApprove.v1",
+      "commandType": "StayExtend.Approve",
+      "unitOfWork": "OperationsUnitOfWork",
+      "ownerSlice": "Accommodation.Stay",
+      "tableGroups": [
+        "operations-runtime",
+        "evidence-audit",
+        "projection-read-side",
+        "accommodation-facts"
+      ],
+      "domainEvent": {
+        "required": true,
+        "tableGroup": "operations-runtime",
+        "eventType": "StayExtendApproveSubmitted"
+      },
+      "ledgerEntry": {
+        "required": false,
+        "tableGroup": null,
+        "policyRef": "ledger.none.v1",
+        "appendOnly": false,
+        "mutationPolicy": "not_applicable"
+      },
+      "searchProjectionLens": {
+        "readOnly": true,
+        "tableGroup": "projection-read-side",
+        "lenses": [
+          "StayOnboardingLens"
+        ]
+      },
+      "tests": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "tests/WorkOS.DatabaseSecurityTests"
+      ]
+    },
+    {
+      "businessAction": "Dorm.BedTransferApprove",
+      "decision": "currentExecutableWorkItem",
+      "definitionId": "definition.dormitory.bedTransferApprove.v1",
+      "commandType": "BedTransfer.Approve",
+      "unitOfWork": "OperationsUnitOfWork",
+      "ownerSlice": "Accommodation.Stay",
+      "tableGroups": [
+        "operations-runtime",
+        "evidence-audit",
+        "projection-read-side",
+        "accommodation-facts"
+      ],
+      "domainEvent": {
+        "required": true,
+        "tableGroup": "operations-runtime",
+        "eventType": "BedTransferApproveSubmitted"
+      },
+      "ledgerEntry": {
+        "required": false,
+        "tableGroup": null,
+        "policyRef": "ledger.none.v1",
+        "appendOnly": false,
+        "mutationPolicy": "not_applicable"
+      },
+      "searchProjectionLens": {
+        "readOnly": true,
+        "tableGroup": "projection-read-side",
+        "lenses": [
+          "DormAvailabilityLens"
+        ]
+      },
+      "tests": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "tests/WorkOS.DatabaseSecurityTests"
+      ]
+    },
+    {
+      "businessAction": "Dorm.ReservationCancelClose",
+      "decision": "currentExecutableWorkItem",
+      "definitionId": "definition.dormitory.reservationCancelClose.v1",
+      "commandType": "ReservationCancel.Close",
+      "unitOfWork": "OperationsUnitOfWork",
+      "ownerSlice": "Accommodation.Reservation",
+      "tableGroups": [
+        "operations-runtime",
+        "evidence-audit",
+        "projection-read-side",
+        "accommodation-facts"
+      ],
+      "domainEvent": {
+        "required": true,
+        "tableGroup": "operations-runtime",
+        "eventType": "ReservationCancelCloseSubmitted"
+      },
+      "ledgerEntry": {
+        "required": false,
+        "tableGroup": null,
+        "policyRef": "ledger.none.v1",
+        "appendOnly": false,
+        "mutationPolicy": "not_applicable"
+      },
+      "searchProjectionLens": {
+        "readOnly": true,
+        "tableGroup": "projection-read-side",
+        "lenses": [
+          "LeadFunnelLens"
+        ]
+      },
+      "tests": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "tests/WorkOS.DatabaseSecurityTests"
+      ]
+    },
+    {
+      "businessAction": "Dorm.ReservationNoShowClose",
+      "decision": "currentExecutableWorkItem",
+      "definitionId": "definition.dormitory.reservationNoShowClose.v1",
+      "commandType": "ReservationNoShow.Close",
+      "unitOfWork": "OperationsUnitOfWork",
+      "ownerSlice": "Accommodation.Reservation",
+      "tableGroups": [
+        "operations-runtime",
+        "evidence-audit",
+        "projection-read-side",
+        "accommodation-facts"
+      ],
+      "domainEvent": {
+        "required": true,
+        "tableGroup": "operations-runtime",
+        "eventType": "ReservationNoShowCloseSubmitted"
+      },
+      "ledgerEntry": {
+        "required": false,
+        "tableGroup": null,
+        "policyRef": "ledger.none.v1",
+        "appendOnly": false,
+        "mutationPolicy": "not_applicable"
+      },
+      "searchProjectionLens": {
+        "readOnly": true,
+        "tableGroup": "projection-read-side",
+        "lenses": [
+          "LeadFunnelLens"
+        ]
+      },
+      "tests": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "tests/WorkOS.DatabaseSecurityTests"
+      ]
+    },
+    {
+      "businessAction": "Finance.ChargeAdjustmentApprove",
+      "decision": "externalFinanceGovernance",
+      "definitionId": "definition.finance.chargeAdjustmentApprove.v1",
+      "commandType": "ChargeAdjustment.Approve",
+      "unitOfWork": "OperationsUnitOfWork",
+      "ownerSlice": "finance-gate",
+      "tableGroups": [
+        "operations-runtime",
+        "evidence-audit",
+        "projection-read-side",
+        "finance-ledger"
+      ],
+      "domainEvent": {
+        "required": true,
+        "tableGroup": "operations-runtime",
+        "eventType": "ChargeAdjustmentApproveSubmitted"
+      },
+      "ledgerEntry": {
+        "required": true,
+        "tableGroup": "finance-ledger",
+        "policyRef": "ledger.charge.adjustment.v1",
+        "appendOnly": true,
+        "mutationPolicy": "no_update_no_delete"
+      },
+      "searchProjectionLens": {
+        "readOnly": true,
+        "tableGroup": "projection-read-side",
+        "lenses": [
+          "StayBalanceLens"
+        ]
+      },
+      "tests": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "tests/WorkOS.DatabaseSecurityTests"
+      ]
+    },
+    {
+      "businessAction": "Finance.DebtFollowUp",
+      "decision": "externalFinanceGovernance",
+      "definitionId": "definition.finance.debtFollowUp.v1",
+      "commandType": "Debt.FollowUp",
+      "unitOfWork": "OperationsUnitOfWork",
+      "ownerSlice": "finance-gate",
+      "tableGroups": [
+        "operations-runtime",
+        "evidence-audit",
+        "projection-read-side",
+        "finance-ledger"
+      ],
+      "domainEvent": {
+        "required": true,
+        "tableGroup": "operations-runtime",
+        "eventType": "DebtFollowUpSubmitted"
+      },
+      "ledgerEntry": {
+        "required": true,
+        "tableGroup": "finance-ledger",
+        "policyRef": "ledger.none.v1",
+        "appendOnly": true,
+        "mutationPolicy": "no_update_no_delete"
+      },
+      "searchProjectionLens": {
+        "readOnly": true,
+        "tableGroup": "projection-read-side",
+        "lenses": [
+          "RevenueCollectionLens"
+        ]
+      },
+      "tests": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "tests/WorkOS.DatabaseSecurityTests"
+      ]
+    },
+    {
+      "businessAction": "Dorm.AccessCredentialIssue",
+      "decision": "currentExecutableWorkItem",
+      "definitionId": "definition.dormitory.accessCredentialIssue.v1",
+      "commandType": "AccessCredential.Issue",
+      "unitOfWork": "OperationsUnitOfWork",
+      "ownerSlice": "identity-trust",
+      "tableGroups": [
+        "operations-runtime",
+        "evidence-audit",
+        "projection-read-side",
+        "identity-trust",
+        "accommodation-facts"
+      ],
+      "domainEvent": {
+        "required": true,
+        "tableGroup": "operations-runtime",
+        "eventType": "AccessCredentialIssueSubmitted"
+      },
+      "ledgerEntry": {
+        "required": false,
+        "tableGroup": null,
+        "policyRef": "ledger.none.v1",
+        "appendOnly": false,
+        "mutationPolicy": "not_applicable"
+      },
+      "searchProjectionLens": {
+        "readOnly": true,
+        "tableGroup": "projection-read-side",
+        "lenses": [
+          "AccessTrustLens"
+        ]
+      },
+      "tests": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "tests/WorkOS.DatabaseSecurityTests"
+      ]
+    },
+    {
+      "businessAction": "Dorm.AccessCredentialRevoke",
+      "decision": "currentExecutableWorkItem",
+      "definitionId": "definition.dormitory.accessCredentialRevoke.v1",
+      "commandType": "AccessCredential.Revoke",
+      "unitOfWork": "OperationsUnitOfWork",
+      "ownerSlice": "identity-trust",
+      "tableGroups": [
+        "operations-runtime",
+        "evidence-audit",
+        "projection-read-side",
+        "identity-trust",
+        "accommodation-facts"
+      ],
+      "domainEvent": {
+        "required": true,
+        "tableGroup": "operations-runtime",
+        "eventType": "AccessCredentialRevokeSubmitted"
+      },
+      "ledgerEntry": {
+        "required": false,
+        "tableGroup": null,
+        "policyRef": "ledger.none.v1",
+        "appendOnly": false,
+        "mutationPolicy": "not_applicable"
+      },
+      "searchProjectionLens": {
+        "readOnly": true,
+        "tableGroup": "projection-read-side",
+        "lenses": [
+          "AccessTrustLens"
+        ]
+      },
+      "tests": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "tests/WorkOS.DatabaseSecurityTests"
+      ]
+    },
+    {
+      "businessAction": "Dorm.IncidentRecord",
+      "decision": "currentExecutableWorkItem",
+      "definitionId": "definition.dormitory.incidentRecord.v1",
+      "commandType": "Incident.Record",
+      "unitOfWork": "OperationsUnitOfWork",
+      "ownerSlice": "Accommodation.Governance",
+      "tableGroups": [
+        "operations-runtime",
+        "evidence-audit",
+        "projection-read-side",
+        "accommodation-facts"
+      ],
+      "domainEvent": {
+        "required": true,
+        "tableGroup": "operations-runtime",
+        "eventType": "IncidentRecordSubmitted"
+      },
+      "ledgerEntry": {
+        "required": false,
+        "tableGroup": null,
+        "policyRef": "ledger.none.v1",
+        "appendOnly": false,
+        "mutationPolicy": "not_applicable"
+      },
+      "searchProjectionLens": {
+        "readOnly": true,
+        "tableGroup": "projection-read-side",
+        "lenses": [
+          "ExceptionRiskLens"
+        ]
+      },
+      "tests": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "tests/WorkOS.DatabaseSecurityTests"
+      ]
     },
     {
       "businessAction": "Dorm.PeriodReview",
@@ -346,12 +1671,76 @@
       "definitionId": "definition.dormitory.periodReview.v1",
       "commandType": "Period.Review",
       "unitOfWork": "OperationsUnitOfWork",
-      "ownerSlice": "Accommodation.PeriodAnalytics",
-      "tableGroups": ["operations-runtime", "accommodation-facts", "control-plane-reports", "evidence-audit", "projection-read-side"],
-      "domainEvent": { "required": true, "owner": "Confirm Runtime", "tableGroup": "operations-runtime" },
-      "ledgerEntry": { "required": false, "policyRef": "ledger.period.snapshot_readonly.v1", "appendOnly": false },
-      "searchProjectionLens": { "search": "Search Kernel", "projection": "Outbox / Projection Kernel", "lens": "period-performance", "readOnly": true },
-      "tests": ["tests/WorkOS.RuntimeIntegrationTests", "apps/mobile/src/__tests__"]
+      "ownerSlice": "Management.Review",
+      "tableGroups": [
+        "operations-runtime",
+        "evidence-audit",
+        "projection-read-side",
+        "finance-ledger",
+        "accommodation-facts"
+      ],
+      "domainEvent": {
+        "required": true,
+        "tableGroup": "operations-runtime",
+        "eventType": "PeriodReviewSubmitted"
+      },
+      "ledgerEntry": {
+        "required": false,
+        "tableGroup": null,
+        "policyRef": "ledger.readonly.v1",
+        "appendOnly": false,
+        "mutationPolicy": "not_applicable"
+      },
+      "searchProjectionLens": {
+        "readOnly": true,
+        "tableGroup": "projection-read-side",
+        "lenses": [
+          "ManagementDashboardLens"
+        ]
+      },
+      "tests": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "tests/WorkOS.DatabaseSecurityTests"
+      ]
+    },
+    {
+      "businessAction": "Dorm.PeriodActionPlanExecute",
+      "decision": "currentExecutableWorkItem",
+      "definitionId": "definition.dormitory.periodActionPlanExecute.v1",
+      "commandType": "PeriodActionPlan.Execute",
+      "unitOfWork": "OperationsUnitOfWork",
+      "ownerSlice": "Management.ActionPlan",
+      "tableGroups": [
+        "operations-runtime",
+        "evidence-audit",
+        "projection-read-side",
+        "accommodation-facts"
+      ],
+      "domainEvent": {
+        "required": true,
+        "tableGroup": "operations-runtime",
+        "eventType": "PeriodActionPlanExecuteSubmitted"
+      },
+      "ledgerEntry": {
+        "required": false,
+        "tableGroup": null,
+        "policyRef": "ledger.none.v1",
+        "appendOnly": false,
+        "mutationPolicy": "not_applicable"
+      },
+      "searchProjectionLens": {
+        "readOnly": true,
+        "tableGroup": "projection-read-side",
+        "lenses": [
+          "ManagementDashboardLens"
+        ]
+      },
+      "tests": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "tests/WorkOS.DatabaseSecurityTests"
+      ]
     },
     {
       "businessAction": "Dorm.ExceptionResolve",
@@ -359,25 +1748,76 @@
       "definitionId": "definition.dormitory.exceptionResolve.v1",
       "commandType": "Exception.Resolve",
       "unitOfWork": "OperationsUnitOfWork",
-      "ownerSlice": "Governance.ExceptionResolution",
-      "tableGroups": ["operations-runtime", "identity-trust", "evidence-audit"],
-      "domainEvent": { "required": false, "owner": "Account / Actor / Device / Session Kernel", "tableGroup": "identity-trust" },
-      "ledgerEntry": { "required": false, "policyRef": "ledger.none.v1", "appendOnly": false },
-      "searchProjectionLens": { "search": "Search Kernel", "projection": "Release Evidence", "lens": "permission-diagnostic", "readOnly": true },
-      "tests": ["tests/WorkOS.RuntimeIntegrationTests", "tests/WorkOS.ReleaseEvidenceTests", "apps/mobile/src/__tests__"]
+      "ownerSlice": "Management.Exception",
+      "tableGroups": [
+        "operations-runtime",
+        "evidence-audit",
+        "projection-read-side",
+        "accommodation-facts"
+      ],
+      "domainEvent": {
+        "required": true,
+        "tableGroup": "operations-runtime",
+        "eventType": "ExceptionResolveSubmitted"
+      },
+      "ledgerEntry": {
+        "required": false,
+        "tableGroup": null,
+        "policyRef": "ledger.none.v1",
+        "appendOnly": false,
+        "mutationPolicy": "not_applicable"
+      },
+      "searchProjectionLens": {
+        "readOnly": true,
+        "tableGroup": "projection-read-side",
+        "lenses": [
+          "ExceptionRiskLens"
+        ]
+      },
+      "tests": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "tests/WorkOS.DatabaseSecurityTests"
+      ]
     },
     {
       "businessAction": "Finance.CorrectionApply",
       "decision": "externalFinanceGovernance",
       "definitionId": "definition.finance.correctionApply.v1",
-      "commandType": "FinanceCorrection.Apply",
+      "commandType": "Correction.Apply",
       "unitOfWork": "OperationsUnitOfWork",
-      "ownerSlice": "Governance.CorrectionCenter",
-      "tableGroups": ["operations-runtime", "finance-ledger", "finance-reconciliation", "evidence-audit"],
-      "domainEvent": { "required": true, "owner": "Confirm Runtime", "tableGroup": "operations-runtime" },
-      "ledgerEntry": { "required": true, "policyRef": "ledger.correction.append_only.v1", "appendOnly": true, "tableGroup": "finance-ledger", "mutationPolicy": "no_update_no_delete" },
-      "searchProjectionLens": { "search": "Search Kernel", "projection": "Outbox / Projection Kernel", "lens": "correction-center", "readOnly": true },
-      "tests": ["tests/WorkOS.RuntimeIntegrationTests", "tests/WorkOS.DatabaseSecurityTests", "tests/WorkOS.PolicyAsCodeTests"]
+      "ownerSlice": "finance-gate",
+      "tableGroups": [
+        "operations-runtime",
+        "evidence-audit",
+        "projection-read-side",
+        "finance-ledger"
+      ],
+      "domainEvent": {
+        "required": true,
+        "tableGroup": "operations-runtime",
+        "eventType": "CorrectionApplySubmitted"
+      },
+      "ledgerEntry": {
+        "required": true,
+        "tableGroup": "finance-ledger",
+        "policyRef": "ledger.finance.correction.v1",
+        "appendOnly": true,
+        "mutationPolicy": "no_update_no_delete"
+      },
+      "searchProjectionLens": {
+        "readOnly": true,
+        "tableGroup": "projection-read-side",
+        "lenses": [
+          "StayBalanceLens",
+          "ExceptionRiskLens"
+        ]
+      },
+      "tests": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "tests/WorkOS.DatabaseSecurityTests"
+      ]
     }
   ],
   "invariants": [

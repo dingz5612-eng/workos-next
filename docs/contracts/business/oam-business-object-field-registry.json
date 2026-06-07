@@ -6,249 +6,25 @@
   "truthOwnerRegistry": "docs/business/truth-owner-registry.yml",
   "objects": [
     {
-      "objectId": "Room",
-      "module": "accommodation",
-      "ownerCapability": "accommodation.resource",
-      "truthOwnerRef": "Room",
+      "objectId": "AccountUser",
+      "module": "identity",
+      "ownerCapability": "identity.account-actor",
+      "truthOwnerRef": "AccountUser",
       "fields": [
-        { "fieldId": "roomId", "owner": "accommodation", "visibleScope": ["mobile", "pc", "search"], "editableWhen": "system_generated_or_resource_setup_only", "auditRequired": true, "languageKey": "roomId", "source": "Confirm Runtime", "searchable": true, "ledgerRelevant": false },
-        { "fieldId": "roomNo", "owner": "accommodation", "visibleScope": ["mobile", "pc", "search"], "editableWhen": "resource_setup_before_confirm", "auditRequired": true, "languageKey": "roomNo", "source": "WorkItem field contract", "searchable": true, "ledgerRelevant": false },
-        { "fieldId": "readinessState", "owner": "accommodation", "visibleScope": ["mobile", "pc", "search"], "editableWhen": "readiness_work_item_before_confirm", "auditRequired": true, "languageKey": "readinessState", "source": "Domain Event", "searchable": true, "ledgerRelevant": false }
-      ]
-    },
-    {
-      "objectId": "Bed",
-      "module": "accommodation",
-      "ownerCapability": "accommodation.resource",
-      "truthOwnerRef": "Bed",
-      "fields": [
-        { "fieldId": "roomId", "owner": "accommodation", "visibleScope": ["mobile", "pc", "search"], "editableWhen": "bed_setup_before_confirm", "auditRequired": true, "languageKey": "roomId", "source": "Room fact", "searchable": true, "ledgerRelevant": false },
-        { "fieldId": "bedLabels", "owner": "accommodation", "visibleScope": ["mobile", "pc", "search"], "editableWhen": "bed_setup_before_confirm", "auditRequired": true, "languageKey": "bedLabels", "source": "WorkItem field contract", "searchable": true, "ledgerRelevant": false },
-        { "fieldId": "bedType", "owner": "accommodation", "visibleScope": ["mobile", "pc"], "editableWhen": "bed_setup_before_confirm", "auditRequired": true, "languageKey": "bedType", "source": "WorkItem field contract", "searchable": false, "ledgerRelevant": false }
-      ]
-    },
-    {
-      "objectId": "BedStatus",
-      "module": "accommodation",
-      "ownerCapability": "accommodation.resource",
-      "truthOwnerRef": "BedStatus",
-      "fields": [
-        { "fieldId": "readinessState", "owner": "accommodation", "visibleScope": ["mobile", "pc", "search"], "editableWhen": "room_readiness_or_service_completion", "auditRequired": true, "languageKey": "readinessState", "source": "Domain Event", "searchable": true, "ledgerRelevant": false },
-        { "fieldId": "blockReason", "owner": "maintenance", "visibleScope": ["mobile", "pc"], "editableWhen": "service_task_or_room_block_before_confirm", "auditRequired": true, "languageKey": "blockReason", "source": "WorkItem field contract", "searchable": true, "ledgerRelevant": false }
-      ]
-    },
-    {
-      "objectId": "RatePlan",
-      "module": "accommodation",
-      "ownerCapability": "accommodation.resource",
-      "truthOwnerRef": "RatePlan",
-      "fields": [
-        { "fieldId": "ratePlan", "owner": "accommodation", "visibleScope": ["mobile", "pc", "search"], "editableWhen": "rate_setup_before_confirm", "auditRequired": true, "languageKey": "ratePlan", "source": "ledger basis only; Money/Ledger Kernel finalizes", "searchable": true, "ledgerRelevant": true },
-        { "fieldId": "price", "owner": "accommodation", "visibleScope": ["mobile", "pc"], "editableWhen": "rate_setup_before_confirm", "auditRequired": true, "languageKey": "price", "source": "ledger basis only; Money/Ledger Kernel finalizes", "searchable": false, "ledgerRelevant": true }
-      ]
-    },
-    {
-      "objectId": "Lead",
-      "module": "accommodation",
-      "ownerCapability": "accommodation.lead-reservation",
-      "truthOwnerRef": "Lead",
-      "fields": [
-        { "fieldId": "note", "owner": "accommodation", "visibleScope": ["mobile", "pc"], "editableWhen": "lead_followup_before_confirm", "auditRequired": true, "languageKey": "note", "source": "WorkItem field contract", "searchable": true, "ledgerRelevant": false }
-      ]
-    },
-    {
-      "objectId": "Reservation",
-      "module": "accommodation",
-      "ownerCapability": "accommodation.lead-reservation",
-      "truthOwnerRef": "Reservation",
-      "fields": [
-        { "fieldId": "roomId", "owner": "accommodation", "visibleScope": ["mobile", "pc", "search"], "editableWhen": "reservation_before_confirm", "auditRequired": true, "languageKey": "roomId", "source": "Room fact", "searchable": true, "ledgerRelevant": false },
-        { "fieldId": "note", "owner": "accommodation", "visibleScope": ["mobile", "pc"], "editableWhen": "reservation_before_confirm", "auditRequired": true, "languageKey": "note", "source": "WorkItem field contract", "searchable": true, "ledgerRelevant": false }
-      ]
-    },
-    {
-      "objectId": "CheckinHandoff",
-      "module": "accommodation",
-      "ownerCapability": "accommodation.checkin",
-      "truthOwnerRef": "CheckinHandoff",
-      "fields": [
-        { "fieldId": "roomId", "owner": "accommodation", "visibleScope": ["mobile", "pc"], "editableWhen": "checkin_handoff_before_confirm", "auditRequired": true, "languageKey": "roomId", "source": "Reservation or direct checkin", "searchable": true, "ledgerRelevant": false },
-        { "fieldId": "bedLabels", "owner": "accommodation", "visibleScope": ["mobile", "pc"], "editableWhen": "checkin_handoff_before_confirm", "auditRequired": true, "languageKey": "bedLabels", "source": "Bed fact", "searchable": true, "ledgerRelevant": false }
-      ]
-    },
-    {
-      "objectId": "Stay",
-      "module": "accommodation",
-      "ownerCapability": "accommodation.lifecycle",
-      "truthOwnerRef": "Stay",
-      "fields": [
-        { "fieldId": "stayId", "owner": "accommodation", "visibleScope": ["mobile", "pc", "search"], "editableWhen": "system_generated_only", "auditRequired": true, "languageKey": "stayId", "source": "ledger basis only; Money/Ledger Kernel finalizes", "searchable": true, "ledgerRelevant": true },
-        { "fieldId": "roomId", "owner": "accommodation", "visibleScope": ["mobile", "pc", "search"], "editableWhen": "approved_bed_change_only", "auditRequired": true, "languageKey": "roomId", "source": "Room fact", "searchable": true, "ledgerRelevant": false }
-      ]
-    },
-    {
-      "objectId": "CheckoutCase",
-      "module": "accommodation",
-      "ownerCapability": "accommodation.checkout",
-      "truthOwnerRef": "CheckoutCase",
-      "fields": [
-        { "fieldId": "checkoutId", "owner": "accommodation", "visibleScope": ["mobile", "pc", "search"], "editableWhen": "system_generated_only", "auditRequired": true, "languageKey": "checkoutId", "source": "ledger basis only; Money/Ledger Kernel finalizes", "searchable": true, "ledgerRelevant": true },
-        { "fieldId": "finalBalanceAmount", "owner": "finance-gate", "visibleScope": ["mobile", "pc"], "editableWhen": "finance_close_before_confirm", "auditRequired": true, "languageKey": "finalBalanceAmount", "source": "Money/Ledger Kernel", "searchable": false, "ledgerRelevant": true }
-      ]
-    },
-    {
-      "objectId": "ServiceTask",
-      "module": "maintenance",
-      "ownerCapability": "accommodation.service-task",
-      "truthOwnerRef": "ServiceTask",
-      "fields": [
-        { "fieldId": "taskId", "owner": "maintenance", "visibleScope": ["mobile", "pc", "search"], "editableWhen": "system_generated_only", "auditRequired": true, "languageKey": "taskId", "source": "Confirm Runtime", "searchable": true, "ledgerRelevant": false },
-        { "fieldId": "resourceScope", "owner": "maintenance", "visibleScope": ["mobile", "pc"], "editableWhen": "task_create_before_confirm_only", "auditRequired": true, "languageKey": "resourceScope", "source": "WorkItem field contract", "searchable": true, "ledgerRelevant": false }
-      ]
-    },
-    {
-      "objectId": "Payment",
-      "module": "finance-gate",
-      "ownerCapability": "finance.payment",
-      "truthOwnerRef": "Payment",
-      "fields": [
-        { "fieldId": "paymentId", "owner": "finance-gate", "visibleScope": ["mobile", "pc", "search"], "editableWhen": "system_generated_only", "auditRequired": true, "languageKey": "paymentId", "source": "Money/Ledger Kernel", "searchable": true, "ledgerRelevant": true },
-        { "fieldId": "receivedAmount", "owner": "finance-gate", "visibleScope": ["mobile", "pc"], "editableWhen": "payment_receipt_before_confirm", "auditRequired": true, "languageKey": "receivedAmount", "source": "WorkItem field contract", "searchable": false, "ledgerRelevant": true },
-        { "fieldId": "paymentMethod", "owner": "finance-gate", "visibleScope": ["mobile", "pc"], "editableWhen": "payment_receipt_before_confirm", "auditRequired": true, "languageKey": "paymentMethod", "source": "WorkItem field contract", "searchable": false, "ledgerRelevant": true }
-      ]
-    },
-    {
-      "objectId": "PaymentAllocation",
-      "module": "finance-gate",
-      "ownerCapability": "finance.payment",
-      "truthOwnerRef": "PaymentAllocation",
-      "fields": [
-        { "fieldId": "allocationMode", "owner": "finance-gate", "visibleScope": ["mobile", "pc"], "editableWhen": "payment_allocation_before_confirm", "auditRequired": true, "languageKey": "allocationMode", "source": "Money/Ledger Kernel", "searchable": false, "ledgerRelevant": true },
-        { "fieldId": "allocatedAmount", "owner": "finance-gate", "visibleScope": ["mobile", "pc"], "editableWhen": "payment_allocation_before_confirm", "auditRequired": true, "languageKey": "allocatedAmount", "source": "Money/Ledger Kernel", "searchable": false, "ledgerRelevant": true }
-      ]
-    },
-    {
-      "objectId": "DepositAccount",
-      "module": "finance-gate",
-      "ownerCapability": "finance.deposit",
-      "truthOwnerRef": "DepositAccount",
-      "fields": [
-        { "fieldId": "depositId", "owner": "finance-gate", "visibleScope": ["mobile", "pc", "search"], "editableWhen": "system_generated_only", "auditRequired": true, "languageKey": "depositId", "source": "Money/Ledger Kernel", "searchable": true, "ledgerRelevant": true },
-        { "fieldId": "requiredDepositAmount", "owner": "finance-gate", "visibleScope": ["mobile", "pc"], "editableWhen": "deposit_assessment_before_confirm", "auditRequired": true, "languageKey": "requiredDepositAmount", "source": "Money/Ledger Kernel", "searchable": false, "ledgerRelevant": true }
-      ]
-    },
-    {
-      "objectId": "DepositEntry",
-      "module": "finance-gate",
-      "ownerCapability": "finance.deposit",
-      "truthOwnerRef": "DepositEntry",
-      "fields": [
-        { "fieldId": "depositReceiptId", "owner": "finance-gate", "visibleScope": ["mobile", "pc", "search"], "editableWhen": "system_generated_only", "auditRequired": true, "languageKey": "depositReceiptId", "source": "Money/Ledger Kernel", "searchable": true, "ledgerRelevant": true },
-        { "fieldId": "refundAmount", "owner": "finance-gate", "visibleScope": ["mobile", "pc"], "editableWhen": "deposit_refund_before_confirm", "auditRequired": true, "languageKey": "refundAmount", "source": "Money/Ledger Kernel", "searchable": false, "ledgerRelevant": true }
-      ]
-    },
-    {
-      "objectId": "Expense",
-      "module": "finance-gate",
-      "ownerCapability": "finance.expense",
-      "truthOwnerRef": "Expense",
-      "fields": [
-        { "fieldId": "expenseId", "owner": "finance-gate", "visibleScope": ["mobile", "pc", "search"], "editableWhen": "system_generated_only", "auditRequired": true, "languageKey": "expenseId", "source": "Money/Ledger Kernel", "searchable": true, "ledgerRelevant": true },
-        { "fieldId": "expenseAmount", "owner": "finance-gate", "visibleScope": ["mobile", "pc"], "editableWhen": "expense_record_before_confirm", "auditRequired": true, "languageKey": "expenseAmount", "source": "WorkItem field contract", "searchable": false, "ledgerRelevant": true }
-      ]
-    },
-    {
-      "objectId": "ReconciliationCase",
-      "module": "finance-gate",
-      "ownerCapability": "finance.reconciliation",
-      "truthOwnerRef": "ReconciliationCase",
-      "fields": [
-        { "fieldId": "paymentId", "owner": "finance-gate", "visibleScope": ["pc", "search"], "editableWhen": "reconciliation_governance_only", "auditRequired": true, "languageKey": "paymentId", "source": "Reconciliation Runtime", "searchable": true, "ledgerRelevant": true },
-        { "fieldId": "differenceReason", "owner": "finance-gate", "visibleScope": ["pc"], "editableWhen": "reconciliation_review_before_confirm", "auditRequired": true, "languageKey": "differenceReason", "source": "Reconciliation Runtime", "searchable": false, "ledgerRelevant": true }
-      ]
-    },
-    {
-      "objectId": "CorrectionRequest",
-      "module": "finance-gate",
-      "ownerCapability": "finance.reconciliation",
-      "truthOwnerRef": "CorrectionRequest",
-      "fields": [
-        { "fieldId": "correctionRequestId", "owner": "finance-gate", "visibleScope": ["pc", "search"], "editableWhen": "system_generated_only", "auditRequired": true, "languageKey": "correctionRequestId", "source": "Correction Center", "searchable": true, "ledgerRelevant": true },
-        { "fieldId": "correctionReason", "owner": "finance-gate", "visibleScope": ["pc"], "editableWhen": "correction_request_before_approval", "auditRequired": true, "languageKey": "correctionReason", "source": "Correction Center", "searchable": true, "ledgerRelevant": true }
-      ]
-    },
-    {
-      "objectId": "LedgerEntry",
-      "module": "finance-gate",
-      "ownerCapability": "finance.deposit",
-      "truthOwnerRef": "LedgerEntry",
-      "fields": [
-        { "fieldId": "currency", "owner": "finance-gate", "visibleScope": ["pc"], "editableWhen": "money_kernel_only", "auditRequired": true, "languageKey": "currency", "source": "Money/Ledger Kernel", "searchable": false, "ledgerRelevant": true },
-        { "fieldId": "confirmedAmount", "owner": "finance-gate", "visibleScope": ["pc"], "editableWhen": "money_kernel_only", "auditRequired": true, "languageKey": "confirmedAmount", "source": "Money/Ledger Kernel", "searchable": false, "ledgerRelevant": true }
-      ]
-    },
-    {
-      "objectId": "PeriodSnapshot",
-      "module": "accommodation",
-      "ownerCapability": "accommodation.lifecycle",
-      "truthOwnerRef": "PeriodSnapshot",
-      "fields": [
-        { "fieldId": "periodId", "owner": "accommodation", "visibleScope": ["pc", "search"], "editableWhen": "period_scope_before_confirm", "auditRequired": true, "languageKey": "periodId", "source": "Period Runtime", "searchable": true, "ledgerRelevant": false },
-        { "fieldId": "managementConclusion", "owner": "accommodation", "visibleScope": ["pc"], "editableWhen": "period_close_before_confirm", "auditRequired": true, "languageKey": "managementConclusion", "source": "Manager signoff", "searchable": true, "ledgerRelevant": false }
-      ]
-    },
-    {
-      "objectId": "BedAssignment",
-      "module": "accommodation",
-      "ownerCapability": "accommodation.checkin",
-      "truthOwnerRef": "BedAssignment",
-      "fields": [
-        { "fieldId": "stayId", "owner": "accommodation", "visibleScope": ["mobile", "pc", "search"], "editableWhen": "bed_assignment_confirm_only", "auditRequired": true, "languageKey": "stayId", "source": "Confirm Runtime", "searchable": true, "ledgerRelevant": false }
-      ]
-    },
-    {
-      "objectId": "RoomReadiness",
-      "module": "accommodation",
-      "ownerCapability": "accommodation.resource",
-      "truthOwnerRef": "RoomReadiness",
-      "fields": [
-        { "fieldId": "readinessState", "owner": "accommodation", "visibleScope": ["mobile", "pc", "search"], "editableWhen": "room_readiness_or_service_verification", "auditRequired": true, "languageKey": "readinessState", "source": "Domain Event", "searchable": true, "ledgerRelevant": false }
-      ]
-    },
-    {
-      "objectId": "Revenue",
-      "module": "finance-gate",
-      "ownerCapability": "finance.payment",
-      "truthOwnerRef": "Revenue",
-      "fields": [
-        { "fieldId": "confirmedAmount", "owner": "finance-gate", "visibleScope": ["pc"], "editableWhen": "money_kernel_only", "auditRequired": true, "languageKey": "confirmedAmount", "source": "Money/Ledger Kernel", "searchable": false, "ledgerRelevant": true }
-      ]
-    },
-    {
-      "objectId": "Refund",
-      "module": "finance-gate",
-      "ownerCapability": "finance.deposit",
-      "truthOwnerRef": "Refund",
-      "fields": [
-        { "fieldId": "refundAmount", "owner": "finance-gate", "visibleScope": ["mobile", "pc"], "editableWhen": "refund_approval_before_confirm", "auditRequired": true, "languageKey": "refundAmount", "source": "Money/Ledger Kernel", "searchable": false, "ledgerRelevant": true }
-      ]
-    },
-    {
-      "objectId": "FinanceCase",
-      "module": "finance-gate",
-      "ownerCapability": "finance.reconciliation",
-      "truthOwnerRef": "FinanceCase",
-      "fields": [
-        { "fieldId": "correctionReason", "owner": "finance-gate", "visibleScope": ["pc", "search"], "editableWhen": "correction_case_before_approval", "auditRequired": true, "languageKey": "correctionReason", "source": "Correction Center", "searchable": true, "ledgerRelevant": false }
-      ]
-    },
-    {
-      "objectId": "UnclearMoneyCase",
-      "module": "finance-gate",
-      "ownerCapability": "finance.reconciliation",
-      "truthOwnerRef": "UnclearMoneyCase",
-      "fields": [
-        { "fieldId": "differenceReason", "owner": "finance-gate", "visibleScope": ["pc", "search"], "editableWhen": "unclear_money_review_before_confirm", "auditRequired": true, "languageKey": "differenceReason", "source": "Reconciliation Runtime", "searchable": true, "ledgerRelevant": false }
+        {
+          "fieldId": "note",
+          "owner": "identity",
+          "visibleScope": [
+            "pc"
+          ],
+          "editableWhen": "account_governance_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Account Actor Kernel",
+          "searchable": true,
+          "ledgerRelevant": false,
+          "nameZh": "note"
+        }
       ]
     },
     {
@@ -257,79 +33,117 @@
       "ownerCapability": "accommodation.lifecycle",
       "truthOwnerRef": "ActionPlan",
       "fields": [
-        { "fieldId": "note", "owner": "accommodation", "visibleScope": ["mobile", "pc"], "editableWhen": "period_action_plan_before_confirm", "auditRequired": true, "languageKey": "note", "source": "WorkItem field contract", "searchable": true, "ledgerRelevant": false }
-      ]
-    },
-    {
-      "objectId": "LensReview",
-      "module": "accommodation",
-      "ownerCapability": "accommodation.lifecycle",
-      "truthOwnerRef": "LensReview",
-      "fields": [
-        { "fieldId": "managementConclusion", "owner": "accommodation", "visibleScope": ["pc"], "editableWhen": "period_review_before_close", "auditRequired": true, "languageKey": "managementConclusion", "source": "Manager signoff", "searchable": true, "ledgerRelevant": false }
-      ]
-    },
-    {
-      "objectId": "ExceptionCase",
-      "module": "identity",
-      "ownerCapability": "governance.release-control",
-      "truthOwnerRef": "ExceptionCase",
-      "fields": [
-        { "fieldId": "handlingOpinion", "owner": "identity", "visibleScope": ["mobile", "pc"], "editableWhen": "exception_resolution_before_audit", "auditRequired": true, "languageKey": "handlingOpinion", "source": "Admission Kernel", "searchable": true, "ledgerRelevant": false }
-      ]
-    },
-    {
-      "objectId": "AuditTrail",
-      "module": "identity",
-      "ownerCapability": "governance.release-control",
-      "truthOwnerRef": "AuditTrail",
-      "fields": [
-        { "fieldId": "note", "owner": "identity", "visibleScope": ["pc"], "editableWhen": "runtime_only", "auditRequired": true, "languageKey": "note", "source": "Unit of Work", "searchable": false, "ledgerRelevant": false }
-      ]
-    },
-    {
-      "objectId": "EvidenceObject",
-      "module": "identity",
-      "ownerCapability": "identity.account-actor",
-      "truthOwnerRef": "EvidenceObject",
-      "fields": [
-        { "fieldId": "note", "owner": "identity", "visibleScope": ["mobile", "pc"], "editableWhen": "evidence_draft_before_verify", "auditRequired": true, "languageKey": "note", "source": "Evidence Runtime", "searchable": true, "ledgerRelevant": false }
-      ]
-    },
-    {
-      "objectId": "DomainEvent",
-      "module": "identity",
-      "ownerCapability": "governance.release-control",
-      "truthOwnerRef": "DomainEvent",
-      "fields": [
-        { "fieldId": "note", "owner": "identity", "visibleScope": ["pc"], "editableWhen": "runtime_only", "auditRequired": true, "languageKey": "note", "source": "Unit of Work", "searchable": false, "ledgerRelevant": false }
-      ]
-    },
-    {
-      "objectId": "CommandSubmission",
-      "module": "identity",
-      "ownerCapability": "governance.release-control",
-      "truthOwnerRef": "CommandSubmission",
-      "fields": [
-        { "fieldId": "note", "owner": "identity", "visibleScope": ["pc"], "editableWhen": "runtime_only", "auditRequired": true, "languageKey": "note", "source": "Confirm Runtime", "searchable": false, "ledgerRelevant": false }
-      ]
-    },
-    {
-      "objectId": "AccountUser",
-      "module": "identity",
-      "ownerCapability": "identity.account-actor",
-      "truthOwnerRef": "AccountUser",
-      "fields": [
-        { "fieldId": "note", "owner": "identity", "visibleScope": ["pc"], "editableWhen": "account_governance_before_confirm", "auditRequired": true, "languageKey": "note", "source": "Account Actor Kernel", "searchable": true, "ledgerRelevant": false }
-      ]
-    },
-    {
-      "objectId": "DeviceSession",
-      "module": "identity",
-      "ownerCapability": "identity.account-actor",
-      "truthOwnerRef": "DeviceSession",
-      "fields": [
-        { "fieldId": "note", "owner": "identity", "visibleScope": ["pc"], "editableWhen": "device_trust_governance", "auditRequired": true, "languageKey": "note", "source": "Device Trust Kernel", "searchable": false, "ledgerRelevant": false }
+        {
+          "fieldId": "note",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc"
+          ],
+          "editableWhen": "period_action_plan_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "WorkItem field contract",
+          "searchable": true,
+          "ledgerRelevant": false,
+          "nameZh": "note"
+        },
+        {
+          "fieldId": "actionPlanId",
+          "nameZh": "actionPlanId",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "ActionPlan.actionPlanId.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "actionPlanId",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        },
+        {
+          "fieldId": "snapshotId",
+          "nameZh": "snapshotId",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "ActionPlan.snapshotId.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "snapshotId",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        },
+        {
+          "fieldId": "ownerRole",
+          "nameZh": "ownerRole",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "ActionPlan.ownerRole.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "ownerRole",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        },
+        {
+          "fieldId": "targetMetric",
+          "nameZh": "targetMetric",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "ActionPlan.targetMetric.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "targetMetric",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        },
+        {
+          "fieldId": "dueAt",
+          "nameZh": "dueAt",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "ActionPlan.dueAt.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "dueAt",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        },
+        {
+          "fieldId": "executionState",
+          "nameZh": "executionState",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "ActionPlan.executionState.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "executionState",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
       ]
     },
     {
@@ -338,7 +152,420 @@
       "ownerCapability": "identity.account-actor",
       "truthOwnerRef": "AdmissionDecision",
       "fields": [
-        { "fieldId": "handlingOpinion", "owner": "identity", "visibleScope": ["mobile", "pc"], "editableWhen": "admission_kernel_only", "auditRequired": true, "languageKey": "handlingOpinion", "source": "Admission Kernel", "searchable": false, "ledgerRelevant": false }
+        {
+          "fieldId": "handlingOpinion",
+          "owner": "identity",
+          "visibleScope": [
+            "mobile",
+            "pc"
+          ],
+          "editableWhen": "admission_kernel_only",
+          "auditRequired": true,
+          "languageKey": "handlingOpinion",
+          "source": "Admission Kernel",
+          "searchable": false,
+          "ledgerRelevant": false,
+          "nameZh": "handlingOpinion"
+        }
+      ]
+    },
+    {
+      "objectId": "AuditTrail",
+      "module": "identity",
+      "ownerCapability": "governance.release-control",
+      "truthOwnerRef": "AuditTrail",
+      "fields": [
+        {
+          "fieldId": "note",
+          "owner": "identity",
+          "visibleScope": [
+            "pc"
+          ],
+          "editableWhen": "runtime_only",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Unit of Work",
+          "searchable": false,
+          "ledgerRelevant": false,
+          "nameZh": "note"
+        }
+      ]
+    },
+    {
+      "objectId": "Bed",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
+      "truthOwnerRef": "Bed",
+      "fields": [
+        {
+          "fieldId": "roomId",
+          "nameZh": "房间ID",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "bed_setup_before_confirm",
+          "auditRequired": true,
+          "languageKey": "roomId",
+          "source": "Room fact",
+          "searchable": true,
+          "ledgerRelevant": false
+        },
+        {
+          "fieldId": "bedLabels",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "bed_setup_before_confirm",
+          "auditRequired": true,
+          "languageKey": "bedLabels",
+          "source": "WorkItem field contract",
+          "searchable": true,
+          "ledgerRelevant": false,
+          "nameZh": "bedLabels"
+        },
+        {
+          "fieldId": "bedType",
+          "nameZh": "bedType",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc"
+          ],
+          "editableWhen": "bed_setup_before_confirm",
+          "auditRequired": true,
+          "languageKey": "bedType",
+          "source": "WorkItem field contract",
+          "searchable": false,
+          "ledgerRelevant": false
+        },
+        {
+          "fieldId": "bedId",
+          "nameZh": "床位ID",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "Bed.bedId.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "bedId",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        },
+        {
+          "fieldId": "bedNo",
+          "nameZh": "bedNo",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "Bed.bedNo.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "bedNo",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        },
+        {
+          "fieldId": "bedState",
+          "nameZh": "bedState",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "Bed.bedState.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "bedState",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        },
+        {
+          "fieldId": "lastInspectionId",
+          "nameZh": "lastInspectionId",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "Bed.lastInspectionId.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "lastInspectionId",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "BedAssignment",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.checkin",
+      "truthOwnerRef": "BedAssignment",
+      "fields": [
+        {
+          "fieldId": "stayId",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "bed_assignment_confirm_only",
+          "auditRequired": true,
+          "languageKey": "stayId",
+          "source": "Confirm Runtime",
+          "searchable": true,
+          "ledgerRelevant": false,
+          "nameZh": "入住ID"
+        }
+      ]
+    },
+    {
+      "objectId": "BedStatus",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
+      "truthOwnerRef": "BedStatus",
+      "fields": [
+        {
+          "fieldId": "readinessState",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "room_readiness_or_service_completion",
+          "auditRequired": true,
+          "languageKey": "readinessState",
+          "source": "Domain Event",
+          "searchable": true,
+          "ledgerRelevant": false,
+          "nameZh": "readinessState"
+        },
+        {
+          "fieldId": "blockReason",
+          "owner": "maintenance",
+          "visibleScope": [
+            "mobile",
+            "pc"
+          ],
+          "editableWhen": "service_task_or_room_block_before_confirm",
+          "auditRequired": true,
+          "languageKey": "blockReason",
+          "source": "WorkItem field contract",
+          "searchable": true,
+          "ledgerRelevant": false,
+          "nameZh": "blockReason"
+        }
+      ]
+    },
+    {
+      "objectId": "CheckinHandoff",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.checkin",
+      "truthOwnerRef": "CheckinHandoff",
+      "fields": [
+        {
+          "fieldId": "roomId",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc"
+          ],
+          "editableWhen": "checkin_handoff_before_confirm",
+          "auditRequired": true,
+          "languageKey": "roomId",
+          "source": "Reservation or direct checkin",
+          "searchable": true,
+          "ledgerRelevant": false,
+          "nameZh": "房间ID"
+        },
+        {
+          "fieldId": "bedLabels",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc"
+          ],
+          "editableWhen": "checkin_handoff_before_confirm",
+          "auditRequired": true,
+          "languageKey": "bedLabels",
+          "source": "Bed fact",
+          "searchable": true,
+          "ledgerRelevant": false,
+          "nameZh": "bedLabels"
+        }
+      ]
+    },
+    {
+      "objectId": "CheckoutCase",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.checkout",
+      "truthOwnerRef": "CheckoutCase",
+      "fields": [
+        {
+          "fieldId": "checkoutId",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "system_generated_only",
+          "auditRequired": true,
+          "languageKey": "checkoutId",
+          "source": "ledger basis only; Money/Ledger Kernel finalizes",
+          "searchable": true,
+          "ledgerRelevant": true,
+          "nameZh": "checkoutId"
+        },
+        {
+          "fieldId": "finalBalanceAmount",
+          "owner": "finance-gate",
+          "visibleScope": [
+            "mobile",
+            "pc"
+          ],
+          "editableWhen": "finance_close_before_confirm",
+          "auditRequired": true,
+          "languageKey": "finalBalanceAmount",
+          "source": "Money/Ledger Kernel",
+          "searchable": false,
+          "ledgerRelevant": true,
+          "nameZh": "finalBalanceAmount"
+        },
+        {
+          "fieldId": "checkoutCaseId",
+          "nameZh": "checkoutCaseId",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "CheckoutCase.checkoutCaseId.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "checkoutCaseId",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        },
+        {
+          "fieldId": "stayId",
+          "nameZh": "入住ID",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "CheckoutCase.stayId.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "stayId",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        },
+        {
+          "fieldId": "inspectionId",
+          "nameZh": "inspectionId",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "CheckoutCase.inspectionId.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "inspectionId",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        },
+        {
+          "fieldId": "settlementState",
+          "nameZh": "settlementState",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "CheckoutCase.settlementState.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "settlementState",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        },
+        {
+          "fieldId": "refundPaymentId",
+          "nameZh": "refundPaymentId",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "CheckoutCase.refundPaymentId.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "refundPaymentId",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        },
+        {
+          "fieldId": "closedAt",
+          "nameZh": "closedAt",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "CheckoutCase.closedAt.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "closedAt",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "CommandSubmission",
+      "module": "identity",
+      "ownerCapability": "governance.release-control",
+      "truthOwnerRef": "CommandSubmission",
+      "fields": [
+        {
+          "fieldId": "note",
+          "owner": "identity",
+          "visibleScope": [
+            "pc"
+          ],
+          "editableWhen": "runtime_only",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Confirm Runtime",
+          "searchable": false,
+          "ledgerRelevant": false,
+          "nameZh": "note"
+        }
       ]
     },
     {
@@ -347,7 +574,1233 @@
       "ownerCapability": "governance.release-control",
       "truthOwnerRef": "ControlPlaneGateResult",
       "fields": [
-        { "fieldId": "confirmationResult", "owner": "identity", "visibleScope": ["pc"], "editableWhen": "release_control_gate_only", "auditRequired": true, "languageKey": "confirmationResult", "source": "Release Control", "searchable": true, "ledgerRelevant": false }
+        {
+          "fieldId": "confirmationResult",
+          "owner": "identity",
+          "visibleScope": [
+            "pc"
+          ],
+          "editableWhen": "release_control_gate_only",
+          "auditRequired": true,
+          "languageKey": "confirmationResult",
+          "source": "Release Control",
+          "searchable": true,
+          "ledgerRelevant": false,
+          "nameZh": "confirmationResult"
+        }
+      ]
+    },
+    {
+      "objectId": "CorrectionRequest",
+      "module": "finance-gate",
+      "ownerCapability": "finance.reconciliation",
+      "truthOwnerRef": "CorrectionRequest",
+      "fields": [
+        {
+          "fieldId": "correctionRequestId",
+          "owner": "finance-gate",
+          "visibleScope": [
+            "pc",
+            "search"
+          ],
+          "editableWhen": "system_generated_only",
+          "auditRequired": true,
+          "languageKey": "correctionRequestId",
+          "source": "Correction Center",
+          "searchable": true,
+          "ledgerRelevant": true,
+          "nameZh": "correctionRequestId"
+        },
+        {
+          "fieldId": "correctionReason",
+          "owner": "finance-gate",
+          "visibleScope": [
+            "pc"
+          ],
+          "editableWhen": "correction_request_before_approval",
+          "auditRequired": true,
+          "languageKey": "correctionReason",
+          "source": "Correction Center",
+          "searchable": true,
+          "ledgerRelevant": true,
+          "nameZh": "correctionReason"
+        }
+      ]
+    },
+    {
+      "objectId": "DepositAccount",
+      "module": "finance-gate",
+      "ownerCapability": "finance.deposit",
+      "truthOwnerRef": "DepositAccount",
+      "fields": [
+        {
+          "fieldId": "depositId",
+          "nameZh": "押金账户ID",
+          "owner": "finance-gate",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "system_generated_only",
+          "auditRequired": true,
+          "languageKey": "depositId",
+          "source": "Money/Ledger Kernel",
+          "searchable": true,
+          "ledgerRelevant": true
+        },
+        {
+          "fieldId": "requiredDepositAmount",
+          "owner": "finance-gate",
+          "visibleScope": [
+            "mobile",
+            "pc"
+          ],
+          "editableWhen": "deposit_assessment_before_confirm",
+          "auditRequired": true,
+          "languageKey": "requiredDepositAmount",
+          "source": "Money/Ledger Kernel",
+          "searchable": false,
+          "ledgerRelevant": true,
+          "nameZh": "requiredDepositAmount"
+        },
+        {
+          "fieldId": "stayId",
+          "nameZh": "入住ID",
+          "owner": "finance-gate",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "DepositAccount.stayId.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "stayId",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": true
+        },
+        {
+          "fieldId": "liabilityAmount",
+          "nameZh": "liabilityAmount",
+          "owner": "finance-gate",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "DepositAccount.liabilityAmount.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "liabilityAmount",
+          "source": "Dormitory operating kernel",
+          "searchable": false,
+          "ledgerRelevant": true
+        },
+        {
+          "fieldId": "availableRefundAmount",
+          "nameZh": "availableRefundAmount",
+          "owner": "finance-gate",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "DepositAccount.availableRefundAmount.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "availableRefundAmount",
+          "source": "Dormitory operating kernel",
+          "searchable": false,
+          "ledgerRelevant": true
+        },
+        {
+          "fieldId": "policyRef",
+          "nameZh": "policyRef",
+          "owner": "finance-gate",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "DepositAccount.policyRef.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "policyRef",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": true
+        },
+        {
+          "fieldId": "depositState",
+          "nameZh": "depositState",
+          "owner": "finance-gate",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "DepositAccount.depositState.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "depositState",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": true
+        }
+      ]
+    },
+    {
+      "objectId": "DepositEntry",
+      "module": "finance-gate",
+      "ownerCapability": "finance.deposit",
+      "truthOwnerRef": "DepositEntry",
+      "fields": [
+        {
+          "fieldId": "depositReceiptId",
+          "owner": "finance-gate",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "system_generated_only",
+          "auditRequired": true,
+          "languageKey": "depositReceiptId",
+          "source": "Money/Ledger Kernel",
+          "searchable": true,
+          "ledgerRelevant": true,
+          "nameZh": "depositReceiptId"
+        },
+        {
+          "fieldId": "refundAmount",
+          "owner": "finance-gate",
+          "visibleScope": [
+            "mobile",
+            "pc"
+          ],
+          "editableWhen": "deposit_refund_before_confirm",
+          "auditRequired": true,
+          "languageKey": "refundAmount",
+          "source": "Money/Ledger Kernel",
+          "searchable": false,
+          "ledgerRelevant": true,
+          "nameZh": "refundAmount"
+        }
+      ]
+    },
+    {
+      "objectId": "DeviceSession",
+      "module": "identity",
+      "ownerCapability": "identity.account-actor",
+      "truthOwnerRef": "DeviceSession",
+      "fields": [
+        {
+          "fieldId": "note",
+          "owner": "identity",
+          "visibleScope": [
+            "pc"
+          ],
+          "editableWhen": "device_trust_governance",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Device Trust Kernel",
+          "searchable": false,
+          "ledgerRelevant": false,
+          "nameZh": "note"
+        }
+      ]
+    },
+    {
+      "objectId": "DomainEvent",
+      "module": "identity",
+      "ownerCapability": "governance.release-control",
+      "truthOwnerRef": "DomainEvent",
+      "fields": [
+        {
+          "fieldId": "note",
+          "owner": "identity",
+          "visibleScope": [
+            "pc"
+          ],
+          "editableWhen": "runtime_only",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Unit of Work",
+          "searchable": false,
+          "ledgerRelevant": false,
+          "nameZh": "note"
+        }
+      ]
+    },
+    {
+      "objectId": "EvidenceObject",
+      "module": "identity",
+      "ownerCapability": "identity.account-actor",
+      "truthOwnerRef": "EvidenceObject",
+      "fields": [
+        {
+          "fieldId": "note",
+          "owner": "identity",
+          "visibleScope": [
+            "mobile",
+            "pc"
+          ],
+          "editableWhen": "evidence_draft_before_verify",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "Evidence Runtime",
+          "searchable": true,
+          "ledgerRelevant": false,
+          "nameZh": "note"
+        }
+      ]
+    },
+    {
+      "objectId": "ExceptionCase",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.lifecycle",
+      "truthOwnerRef": "ExceptionCase",
+      "fields": [
+        {
+          "fieldId": "handlingOpinion",
+          "owner": "identity",
+          "visibleScope": [
+            "mobile",
+            "pc"
+          ],
+          "editableWhen": "exception_resolution_before_audit",
+          "auditRequired": true,
+          "languageKey": "handlingOpinion",
+          "source": "Admission Kernel",
+          "searchable": true,
+          "ledgerRelevant": false,
+          "nameZh": "handlingOpinion"
+        },
+        {
+          "fieldId": "exceptionCaseId",
+          "nameZh": "exceptionCaseId",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "ExceptionCase.exceptionCaseId.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "exceptionCaseId",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        },
+        {
+          "fieldId": "sourceWorkItemId",
+          "nameZh": "sourceWorkItemId",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "ExceptionCase.sourceWorkItemId.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "sourceWorkItemId",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        },
+        {
+          "fieldId": "exceptionType",
+          "nameZh": "exceptionType",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "ExceptionCase.exceptionType.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "exceptionType",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        },
+        {
+          "fieldId": "severity",
+          "nameZh": "severity",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "ExceptionCase.severity.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "severity",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        },
+        {
+          "fieldId": "resolutionState",
+          "nameZh": "resolutionState",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "ExceptionCase.resolutionState.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "resolutionState",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        },
+        {
+          "fieldId": "auditRefs",
+          "nameZh": "auditRefs",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "ExceptionCase.auditRefs.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "auditRefs",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "Expense",
+      "module": "finance-gate",
+      "ownerCapability": "finance.expense",
+      "truthOwnerRef": "Expense",
+      "fields": [
+        {
+          "fieldId": "expenseId",
+          "nameZh": "支出ID",
+          "owner": "finance-gate",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "system_generated_only",
+          "auditRequired": true,
+          "languageKey": "expenseId",
+          "source": "Money/Ledger Kernel",
+          "searchable": true,
+          "ledgerRelevant": true
+        },
+        {
+          "fieldId": "expenseAmount",
+          "owner": "finance-gate",
+          "visibleScope": [
+            "mobile",
+            "pc"
+          ],
+          "editableWhen": "expense_record_before_confirm",
+          "auditRequired": true,
+          "languageKey": "expenseAmount",
+          "source": "WorkItem field contract",
+          "searchable": false,
+          "ledgerRelevant": true,
+          "nameZh": "expenseAmount"
+        },
+        {
+          "fieldId": "serviceTaskId",
+          "nameZh": "服务任务ID",
+          "owner": "finance-gate",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "Expense.serviceTaskId.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "serviceTaskId",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": true
+        },
+        {
+          "fieldId": "amount",
+          "nameZh": "金额",
+          "owner": "finance-gate",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "Expense.amount.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "amount",
+          "source": "Dormitory operating kernel",
+          "searchable": false,
+          "ledgerRelevant": true
+        },
+        {
+          "fieldId": "currency",
+          "nameZh": "币种",
+          "owner": "finance-gate",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "Expense.currency.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "currency",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": true
+        },
+        {
+          "fieldId": "basisEvidenceRef",
+          "nameZh": "basisEvidenceRef",
+          "owner": "finance-gate",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "Expense.basisEvidenceRef.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "basisEvidenceRef",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": true
+        },
+        {
+          "fieldId": "approvalState",
+          "nameZh": "approvalState",
+          "owner": "finance-gate",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "Expense.approvalState.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "approvalState",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": true
+        }
+      ]
+    },
+    {
+      "objectId": "ExpenseLink",
+      "module": "finance-gate",
+      "ownerCapability": "finance.expense",
+      "truthOwnerRef": "ExpenseLink",
+      "fields": [
+        {
+          "fieldId": "expenseLinkId",
+          "nameZh": "expenseLinkId",
+          "owner": "finance-gate",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "ExpenseLink.expenseLinkId.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "expenseLinkId",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": true
+        },
+        {
+          "fieldId": "expenseId",
+          "nameZh": "支出ID",
+          "owner": "finance-gate",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "ExpenseLink.expenseId.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "expenseId",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": true
+        },
+        {
+          "fieldId": "serviceTaskId",
+          "nameZh": "服务任务ID",
+          "owner": "finance-gate",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "ExpenseLink.serviceTaskId.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "serviceTaskId",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": true
+        },
+        {
+          "fieldId": "linkReason",
+          "nameZh": "linkReason",
+          "owner": "finance-gate",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "ExpenseLink.linkReason.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "linkReason",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": true
+        },
+        {
+          "fieldId": "linkedAt",
+          "nameZh": "linkedAt",
+          "owner": "finance-gate",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "ExpenseLink.linkedAt.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "linkedAt",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": true
+        },
+        {
+          "fieldId": "linkedBy",
+          "nameZh": "linkedBy",
+          "owner": "finance-gate",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "ExpenseLink.linkedBy.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "linkedBy",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": true
+        }
+      ]
+    },
+    {
+      "objectId": "FinanceCase",
+      "module": "finance-gate",
+      "ownerCapability": "finance.reconciliation",
+      "truthOwnerRef": "FinanceCase",
+      "fields": [
+        {
+          "fieldId": "correctionReason",
+          "owner": "finance-gate",
+          "visibleScope": [
+            "pc",
+            "search"
+          ],
+          "editableWhen": "correction_case_before_approval",
+          "auditRequired": true,
+          "languageKey": "correctionReason",
+          "source": "Correction Center",
+          "searchable": true,
+          "ledgerRelevant": false,
+          "nameZh": "correctionReason"
+        }
+      ]
+    },
+    {
+      "objectId": "Lead",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.lead-reservation",
+      "truthOwnerRef": "Lead",
+      "fields": [
+        {
+          "fieldId": "note",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc"
+          ],
+          "editableWhen": "lead_followup_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "WorkItem field contract",
+          "searchable": true,
+          "ledgerRelevant": false,
+          "nameZh": "note"
+        },
+        {
+          "fieldId": "leadId",
+          "nameZh": "线索ID",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "Lead.leadId.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "leadId",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        },
+        {
+          "fieldId": "name",
+          "nameZh": "name",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "Lead.name.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "name",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        },
+        {
+          "fieldId": "phone",
+          "nameZh": "phone",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "Lead.phone.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "phone",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        },
+        {
+          "fieldId": "sourceChannel",
+          "nameZh": "sourceChannel",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "Lead.sourceChannel.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "sourceChannel",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        },
+        {
+          "fieldId": "intentRoomType",
+          "nameZh": "intentRoomType",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "Lead.intentRoomType.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "intentRoomType",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        },
+        {
+          "fieldId": "followUpState",
+          "nameZh": "followUpState",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "Lead.followUpState.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "followUpState",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "LedgerEntry",
+      "module": "finance-gate",
+      "ownerCapability": "finance.deposit",
+      "truthOwnerRef": "LedgerEntry",
+      "fields": [
+        {
+          "fieldId": "currency",
+          "owner": "finance-gate",
+          "visibleScope": [
+            "pc"
+          ],
+          "editableWhen": "money_kernel_only",
+          "auditRequired": true,
+          "languageKey": "currency",
+          "source": "Money/Ledger Kernel",
+          "searchable": false,
+          "ledgerRelevant": true,
+          "nameZh": "币种"
+        },
+        {
+          "fieldId": "confirmedAmount",
+          "owner": "finance-gate",
+          "visibleScope": [
+            "pc"
+          ],
+          "editableWhen": "money_kernel_only",
+          "auditRequired": true,
+          "languageKey": "confirmedAmount",
+          "source": "Money/Ledger Kernel",
+          "searchable": false,
+          "ledgerRelevant": true,
+          "nameZh": "confirmedAmount"
+        }
+      ]
+    },
+    {
+      "objectId": "LensReview",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.lifecycle",
+      "truthOwnerRef": "LensReview",
+      "fields": [
+        {
+          "fieldId": "managementConclusion",
+          "owner": "accommodation",
+          "visibleScope": [
+            "pc"
+          ],
+          "editableWhen": "period_review_before_close",
+          "auditRequired": true,
+          "languageKey": "managementConclusion",
+          "source": "Manager signoff",
+          "searchable": true,
+          "ledgerRelevant": false,
+          "nameZh": "managementConclusion"
+        }
+      ]
+    },
+    {
+      "objectId": "MoneyBasis",
+      "module": "finance-gate",
+      "ownerCapability": "finance.expense",
+      "truthOwnerRef": "MoneyBasis",
+      "fields": [
+        {
+          "fieldId": "basisId",
+          "nameZh": "basisId",
+          "owner": "finance-gate",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "MoneyBasis.basisId.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "basisId",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": true
+        },
+        {
+          "fieldId": "basisType",
+          "nameZh": "basisType",
+          "owner": "finance-gate",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "MoneyBasis.basisType.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "basisType",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": true
+        },
+        {
+          "fieldId": "amount",
+          "nameZh": "金额",
+          "owner": "finance-gate",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "MoneyBasis.amount.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "amount",
+          "source": "Dormitory operating kernel",
+          "searchable": false,
+          "ledgerRelevant": true
+        },
+        {
+          "fieldId": "currency",
+          "nameZh": "币种",
+          "owner": "finance-gate",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "MoneyBasis.currency.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "currency",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": true
+        },
+        {
+          "fieldId": "sourceWorkItemId",
+          "nameZh": "sourceWorkItemId",
+          "owner": "finance-gate",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "MoneyBasis.sourceWorkItemId.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "sourceWorkItemId",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": true
+        },
+        {
+          "fieldId": "evidenceRefs",
+          "nameZh": "证据引用",
+          "owner": "finance-gate",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "MoneyBasis.evidenceRefs.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "evidenceRefs",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": true
+        }
+      ]
+    },
+    {
+      "objectId": "Payment",
+      "module": "finance-gate",
+      "ownerCapability": "finance.payment",
+      "truthOwnerRef": "Payment",
+      "fields": [
+        {
+          "fieldId": "paymentId",
+          "nameZh": "收款ID",
+          "owner": "finance-gate",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "system_generated_only",
+          "auditRequired": true,
+          "languageKey": "paymentId",
+          "source": "Money/Ledger Kernel",
+          "searchable": true,
+          "ledgerRelevant": true
+        },
+        {
+          "fieldId": "receivedAmount",
+          "owner": "finance-gate",
+          "visibleScope": [
+            "mobile",
+            "pc"
+          ],
+          "editableWhen": "payment_receipt_before_confirm",
+          "auditRequired": true,
+          "languageKey": "receivedAmount",
+          "source": "WorkItem field contract",
+          "searchable": false,
+          "ledgerRelevant": true,
+          "nameZh": "receivedAmount"
+        },
+        {
+          "fieldId": "paymentMethod",
+          "owner": "finance-gate",
+          "visibleScope": [
+            "mobile",
+            "pc"
+          ],
+          "editableWhen": "payment_receipt_before_confirm",
+          "auditRequired": true,
+          "languageKey": "paymentMethod",
+          "source": "WorkItem field contract",
+          "searchable": false,
+          "ledgerRelevant": true,
+          "nameZh": "paymentMethod"
+        },
+        {
+          "fieldId": "stayId",
+          "nameZh": "入住ID",
+          "owner": "finance-gate",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "Payment.stayId.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "stayId",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": true
+        },
+        {
+          "fieldId": "amount",
+          "nameZh": "金额",
+          "owner": "finance-gate",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "Payment.amount.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "amount",
+          "source": "Dormitory operating kernel",
+          "searchable": false,
+          "ledgerRelevant": true
+        },
+        {
+          "fieldId": "currency",
+          "nameZh": "币种",
+          "owner": "finance-gate",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "Payment.currency.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "currency",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": true
+        },
+        {
+          "fieldId": "receivedAt",
+          "nameZh": "receivedAt",
+          "owner": "finance-gate",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "Payment.receivedAt.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "receivedAt",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": true
+        },
+        {
+          "fieldId": "basisType",
+          "nameZh": "basisType",
+          "owner": "finance-gate",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "Payment.basisType.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "basisType",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": true
+        }
+      ]
+    },
+    {
+      "objectId": "PaymentAllocation",
+      "module": "finance-gate",
+      "ownerCapability": "finance.payment",
+      "truthOwnerRef": "PaymentAllocation",
+      "fields": [
+        {
+          "fieldId": "allocationMode",
+          "owner": "finance-gate",
+          "visibleScope": [
+            "mobile",
+            "pc"
+          ],
+          "editableWhen": "payment_allocation_before_confirm",
+          "auditRequired": true,
+          "languageKey": "allocationMode",
+          "source": "Money/Ledger Kernel",
+          "searchable": false,
+          "ledgerRelevant": true,
+          "nameZh": "allocationMode"
+        },
+        {
+          "fieldId": "allocatedAmount",
+          "owner": "finance-gate",
+          "visibleScope": [
+            "mobile",
+            "pc"
+          ],
+          "editableWhen": "payment_allocation_before_confirm",
+          "auditRequired": true,
+          "languageKey": "allocatedAmount",
+          "source": "Money/Ledger Kernel",
+          "searchable": false,
+          "ledgerRelevant": true,
+          "nameZh": "allocatedAmount"
+        }
+      ]
+    },
+    {
+      "objectId": "PeriodSnapshot",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.lifecycle",
+      "truthOwnerRef": "PeriodSnapshot",
+      "fields": [
+        {
+          "fieldId": "periodId",
+          "owner": "accommodation",
+          "visibleScope": [
+            "pc",
+            "search"
+          ],
+          "editableWhen": "period_scope_before_confirm",
+          "auditRequired": true,
+          "languageKey": "periodId",
+          "source": "Period Runtime",
+          "searchable": true,
+          "ledgerRelevant": false,
+          "nameZh": "periodId"
+        },
+        {
+          "fieldId": "managementConclusion",
+          "owner": "accommodation",
+          "visibleScope": [
+            "pc"
+          ],
+          "editableWhen": "period_close_before_confirm",
+          "auditRequired": true,
+          "languageKey": "managementConclusion",
+          "source": "Manager signoff",
+          "searchable": true,
+          "ledgerRelevant": false,
+          "nameZh": "managementConclusion"
+        },
+        {
+          "fieldId": "snapshotId",
+          "nameZh": "snapshotId",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "PeriodSnapshot.snapshotId.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "snapshotId",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        },
+        {
+          "fieldId": "periodStart",
+          "nameZh": "periodStart",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "PeriodSnapshot.periodStart.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "periodStart",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        },
+        {
+          "fieldId": "periodEnd",
+          "nameZh": "periodEnd",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "PeriodSnapshot.periodEnd.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "periodEnd",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        },
+        {
+          "fieldId": "resourceKpi",
+          "nameZh": "resourceKpi",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "PeriodSnapshot.resourceKpi.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "resourceKpi",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        },
+        {
+          "fieldId": "financeKpi",
+          "nameZh": "financeKpi",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "PeriodSnapshot.financeKpi.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "financeKpi",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        },
+        {
+          "fieldId": "frozenAt",
+          "nameZh": "frozenAt",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "PeriodSnapshot.frozenAt.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "frozenAt",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
       ]
     },
     {
@@ -356,7 +1809,956 @@
       "ownerCapability": "governance.release-control",
       "truthOwnerRef": "ProjectionReadModel",
       "fields": [
-        { "fieldId": "note", "owner": "identity", "visibleScope": ["mobile", "pc", "search"], "editableWhen": "read_side_never_edits_business_fact", "auditRequired": false, "languageKey": "note", "source": "Outbox Projection", "searchable": true, "ledgerRelevant": false }
+        {
+          "fieldId": "note",
+          "owner": "identity",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "read_side_never_edits_business_fact",
+          "auditRequired": false,
+          "languageKey": "note",
+          "source": "Outbox Projection",
+          "searchable": true,
+          "ledgerRelevant": false,
+          "nameZh": "note"
+        }
+      ]
+    },
+    {
+      "objectId": "RatePlan",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
+      "truthOwnerRef": "RatePlan",
+      "fields": [
+        {
+          "fieldId": "ratePlan",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "rate_setup_before_confirm",
+          "auditRequired": true,
+          "languageKey": "ratePlan",
+          "source": "ledger basis only; Money/Ledger Kernel finalizes",
+          "searchable": true,
+          "ledgerRelevant": true,
+          "nameZh": "ratePlan"
+        },
+        {
+          "fieldId": "price",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc"
+          ],
+          "editableWhen": "rate_setup_before_confirm",
+          "auditRequired": true,
+          "languageKey": "price",
+          "source": "ledger basis only; Money/Ledger Kernel finalizes",
+          "searchable": false,
+          "ledgerRelevant": true,
+          "nameZh": "price"
+        },
+        {
+          "fieldId": "ratePlanId",
+          "nameZh": "价格方案ID",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "RatePlan.ratePlanId.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "ratePlanId",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        },
+        {
+          "fieldId": "name",
+          "nameZh": "name",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "RatePlan.name.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "name",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        },
+        {
+          "fieldId": "billingCycle",
+          "nameZh": "billingCycle",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "RatePlan.billingCycle.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "billingCycle",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        },
+        {
+          "fieldId": "amount",
+          "nameZh": "金额",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "RatePlan.amount.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "amount",
+          "source": "Dormitory operating kernel",
+          "searchable": false,
+          "ledgerRelevant": false
+        },
+        {
+          "fieldId": "currency",
+          "nameZh": "币种",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "RatePlan.currency.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "currency",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        },
+        {
+          "fieldId": "effectiveFrom",
+          "nameZh": "effectiveFrom",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "RatePlan.effectiveFrom.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "effectiveFrom",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "ReconciliationCase",
+      "module": "finance-gate",
+      "ownerCapability": "finance.reconciliation",
+      "truthOwnerRef": "ReconciliationCase",
+      "fields": [
+        {
+          "fieldId": "paymentId",
+          "owner": "finance-gate",
+          "visibleScope": [
+            "pc",
+            "search"
+          ],
+          "editableWhen": "reconciliation_governance_only",
+          "auditRequired": true,
+          "languageKey": "paymentId",
+          "source": "Reconciliation Runtime",
+          "searchable": true,
+          "ledgerRelevant": true,
+          "nameZh": "收款ID"
+        },
+        {
+          "fieldId": "differenceReason",
+          "owner": "finance-gate",
+          "visibleScope": [
+            "pc"
+          ],
+          "editableWhen": "reconciliation_review_before_confirm",
+          "auditRequired": true,
+          "languageKey": "differenceReason",
+          "source": "Reconciliation Runtime",
+          "searchable": false,
+          "ledgerRelevant": true,
+          "nameZh": "differenceReason"
+        }
+      ]
+    },
+    {
+      "objectId": "Refund",
+      "module": "finance-gate",
+      "ownerCapability": "finance.deposit",
+      "truthOwnerRef": "Refund",
+      "fields": [
+        {
+          "fieldId": "refundAmount",
+          "owner": "finance-gate",
+          "visibleScope": [
+            "mobile",
+            "pc"
+          ],
+          "editableWhen": "refund_approval_before_confirm",
+          "auditRequired": true,
+          "languageKey": "refundAmount",
+          "source": "Money/Ledger Kernel",
+          "searchable": false,
+          "ledgerRelevant": true,
+          "nameZh": "refundAmount"
+        }
+      ]
+    },
+    {
+      "objectId": "Reservation",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.lead-reservation",
+      "truthOwnerRef": "Reservation",
+      "fields": [
+        {
+          "fieldId": "roomId",
+          "nameZh": "房间ID",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "reservation_before_confirm",
+          "auditRequired": true,
+          "languageKey": "roomId",
+          "source": "Room fact",
+          "searchable": true,
+          "ledgerRelevant": false
+        },
+        {
+          "fieldId": "note",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc"
+          ],
+          "editableWhen": "reservation_before_confirm",
+          "auditRequired": true,
+          "languageKey": "note",
+          "source": "WorkItem field contract",
+          "searchable": true,
+          "ledgerRelevant": false,
+          "nameZh": "note"
+        },
+        {
+          "fieldId": "reservationId",
+          "nameZh": "预订ID",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "Reservation.reservationId.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "reservationId",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        },
+        {
+          "fieldId": "leadId",
+          "nameZh": "线索ID",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "Reservation.leadId.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "leadId",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        },
+        {
+          "fieldId": "bedId",
+          "nameZh": "床位ID",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "Reservation.bedId.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "bedId",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        },
+        {
+          "fieldId": "ratePlanId",
+          "nameZh": "价格方案ID",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "Reservation.ratePlanId.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "ratePlanId",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        },
+        {
+          "fieldId": "reservationState",
+          "nameZh": "reservationState",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "Reservation.reservationState.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "reservationState",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "Resident",
+      "module": "identity",
+      "ownerCapability": "identity.account-actor",
+      "truthOwnerRef": "Resident",
+      "fields": [
+        {
+          "fieldId": "residentId",
+          "nameZh": "入住人ID",
+          "owner": "identity",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "Resident.residentId.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "residentId",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        },
+        {
+          "fieldId": "name",
+          "nameZh": "name",
+          "owner": "identity",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "Resident.name.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "name",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        },
+        {
+          "fieldId": "identityDocNo",
+          "nameZh": "identityDocNo",
+          "owner": "identity",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "Resident.identityDocNo.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "identityDocNo",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        },
+        {
+          "fieldId": "phone",
+          "nameZh": "phone",
+          "owner": "identity",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "Resident.phone.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "phone",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        },
+        {
+          "fieldId": "emergencyContact",
+          "nameZh": "emergencyContact",
+          "owner": "identity",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "Resident.emergencyContact.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "emergencyContact",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        },
+        {
+          "fieldId": "privacyState",
+          "nameZh": "privacyState",
+          "owner": "identity",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "Resident.privacyState.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "privacyState",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "Revenue",
+      "module": "finance-gate",
+      "ownerCapability": "finance.payment",
+      "truthOwnerRef": "Revenue",
+      "fields": [
+        {
+          "fieldId": "confirmedAmount",
+          "owner": "finance-gate",
+          "visibleScope": [
+            "pc"
+          ],
+          "editableWhen": "money_kernel_only",
+          "auditRequired": true,
+          "languageKey": "confirmedAmount",
+          "source": "Money/Ledger Kernel",
+          "searchable": false,
+          "ledgerRelevant": true,
+          "nameZh": "confirmedAmount"
+        }
+      ]
+    },
+    {
+      "objectId": "Room",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
+      "truthOwnerRef": "Room",
+      "fields": [
+        {
+          "fieldId": "roomId",
+          "nameZh": "房间ID",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "system_generated_or_resource_setup_only",
+          "auditRequired": true,
+          "languageKey": "roomId",
+          "source": "Confirm Runtime",
+          "searchable": true,
+          "ledgerRelevant": false
+        },
+        {
+          "fieldId": "roomNo",
+          "nameZh": "roomNo",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "resource_setup_before_confirm",
+          "auditRequired": true,
+          "languageKey": "roomNo",
+          "source": "WorkItem field contract",
+          "searchable": true,
+          "ledgerRelevant": false
+        },
+        {
+          "fieldId": "readinessState",
+          "nameZh": "readinessState",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "readiness_work_item_before_confirm",
+          "auditRequired": true,
+          "languageKey": "readinessState",
+          "source": "Domain Event",
+          "searchable": true,
+          "ledgerRelevant": false
+        },
+        {
+          "fieldId": "floor",
+          "nameZh": "floor",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "Room.floor.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "floor",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        },
+        {
+          "fieldId": "capacity",
+          "nameZh": "capacity",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "Room.capacity.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "capacity",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        },
+        {
+          "fieldId": "availableBedCount",
+          "nameZh": "availableBedCount",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "Room.availableBedCount.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "availableBedCount",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "RoomInspection",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.checkout",
+      "truthOwnerRef": "RoomInspection",
+      "fields": [
+        {
+          "fieldId": "inspectionId",
+          "nameZh": "inspectionId",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "RoomInspection.inspectionId.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "inspectionId",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        },
+        {
+          "fieldId": "roomId",
+          "nameZh": "房间ID",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "RoomInspection.roomId.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "roomId",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        },
+        {
+          "fieldId": "bedId",
+          "nameZh": "床位ID",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "RoomInspection.bedId.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "bedId",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        },
+        {
+          "fieldId": "damageState",
+          "nameZh": "damageState",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "RoomInspection.damageState.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "damageState",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        },
+        {
+          "fieldId": "evidenceRefs",
+          "nameZh": "证据引用",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "RoomInspection.evidenceRefs.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "evidenceRefs",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        },
+        {
+          "fieldId": "inspectionResult",
+          "nameZh": "inspectionResult",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "RoomInspection.inspectionResult.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "inspectionResult",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "RoomReadiness",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
+      "truthOwnerRef": "RoomReadiness",
+      "fields": [
+        {
+          "fieldId": "readinessState",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "room_readiness_or_service_verification",
+          "auditRequired": true,
+          "languageKey": "readinessState",
+          "source": "Domain Event",
+          "searchable": true,
+          "ledgerRelevant": false,
+          "nameZh": "readinessState"
+        }
+      ]
+    },
+    {
+      "objectId": "ServiceTask",
+      "module": "maintenance",
+      "ownerCapability": "accommodation.service-task",
+      "truthOwnerRef": "ServiceTask",
+      "fields": [
+        {
+          "fieldId": "taskId",
+          "owner": "maintenance",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "system_generated_only",
+          "auditRequired": true,
+          "languageKey": "taskId",
+          "source": "Confirm Runtime",
+          "searchable": true,
+          "ledgerRelevant": false,
+          "nameZh": "taskId"
+        },
+        {
+          "fieldId": "resourceScope",
+          "owner": "maintenance",
+          "visibleScope": [
+            "mobile",
+            "pc"
+          ],
+          "editableWhen": "task_create_before_confirm_only",
+          "auditRequired": true,
+          "languageKey": "resourceScope",
+          "source": "WorkItem field contract",
+          "searchable": true,
+          "ledgerRelevant": false,
+          "nameZh": "resourceScope"
+        },
+        {
+          "fieldId": "serviceTaskId",
+          "nameZh": "服务任务ID",
+          "owner": "maintenance",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "ServiceTask.serviceTaskId.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "serviceTaskId",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        },
+        {
+          "fieldId": "roomId",
+          "nameZh": "房间ID",
+          "owner": "maintenance",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "ServiceTask.roomId.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "roomId",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        },
+        {
+          "fieldId": "bedId",
+          "nameZh": "床位ID",
+          "owner": "maintenance",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "ServiceTask.bedId.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "bedId",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        },
+        {
+          "fieldId": "taskType",
+          "nameZh": "taskType",
+          "owner": "maintenance",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "ServiceTask.taskType.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "taskType",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        },
+        {
+          "fieldId": "taskState",
+          "nameZh": "taskState",
+          "owner": "maintenance",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "ServiceTask.taskState.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "taskState",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        },
+        {
+          "fieldId": "verifiedAt",
+          "nameZh": "verifiedAt",
+          "owner": "maintenance",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "ServiceTask.verifiedAt.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "verifiedAt",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "Stay",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.lifecycle",
+      "truthOwnerRef": "Stay",
+      "fields": [
+        {
+          "fieldId": "stayId",
+          "nameZh": "入住ID",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "system_generated_only",
+          "auditRequired": true,
+          "languageKey": "stayId",
+          "source": "ledger basis only; Money/Ledger Kernel finalizes",
+          "searchable": true,
+          "ledgerRelevant": true
+        },
+        {
+          "fieldId": "roomId",
+          "nameZh": "房间ID",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "approved_bed_change_only",
+          "auditRequired": true,
+          "languageKey": "roomId",
+          "source": "Room fact",
+          "searchable": true,
+          "ledgerRelevant": false
+        },
+        {
+          "fieldId": "residentId",
+          "nameZh": "入住人ID",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "Stay.residentId.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "residentId",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        },
+        {
+          "fieldId": "reservationId",
+          "nameZh": "预订ID",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "Stay.reservationId.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "reservationId",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        },
+        {
+          "fieldId": "bedId",
+          "nameZh": "床位ID",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "Stay.bedId.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "bedId",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        },
+        {
+          "fieldId": "stayState",
+          "nameZh": "stayState",
+          "owner": "accommodation",
+          "visibleScope": [
+            "mobile",
+            "pc",
+            "search"
+          ],
+          "editableWhen": "Stay.stayState.current_workitem_before_confirm",
+          "auditRequired": true,
+          "languageKey": "stayState",
+          "source": "Dormitory operating kernel",
+          "searchable": true,
+          "ledgerRelevant": false
+        }
+      ]
+    },
+    {
+      "objectId": "UnclearMoneyCase",
+      "module": "finance-gate",
+      "ownerCapability": "finance.reconciliation",
+      "truthOwnerRef": "UnclearMoneyCase",
+      "fields": [
+        {
+          "fieldId": "differenceReason",
+          "owner": "finance-gate",
+          "visibleScope": [
+            "pc",
+            "search"
+          ],
+          "editableWhen": "unclear_money_review_before_confirm",
+          "auditRequired": true,
+          "languageKey": "differenceReason",
+          "source": "Reconciliation Runtime",
+          "searchable": true,
+          "ledgerRelevant": false,
+          "nameZh": "differenceReason"
+        }
       ]
     }
   ],
@@ -365,5 +2767,6 @@
     "Every field must bind a language key from the Language Kernel.",
     "Searchable fields are read-side only and do not become fact owners.",
     "Ledger relevant fields can only be finalized by finance-gate or the Money/Ledger Kernel."
-  ]
+  ],
+  "generatedBy": "scripts/business/generate-dormitory-derived-contracts.mjs"
 }

@@ -12,24 +12,24 @@ public sealed class CanonicalOperationsApiServiceTests
     {
         var service = Service(out var runtime, out var store);
         service.CreateWorkItem(new CreateWorkItemRequest(
-            WorkItemId: "wi-current-room-readiness-unit-of-work",
+            WorkItemId: "wi-current-resource-readiness-unit-of-work",
             TenantId: "tenant-s3",
-            WorkItemType: "Dorm.RoomReadinessCheck",
-            WorkspaceId: "W-STAY-SERVICE-TASK",
-            CardId: "cert.roomReadinessCheck",
+            WorkItemType: "Dorm.ResourceReadinessConfirm",
+            WorkspaceId: "W-DORM-MAINLINE",
+            CardId: "cert.resourceReadinessConfirm",
             OwnerRole: "operator",
             Payload: new Dictionary<string, string>
             {
-                ["caseId"] = "case-current-room-readiness",
-                ["cardId"] = "cert.roomReadinessCheck",
-                ["definitionId"] = "definition.dormitory.roomReadinessCheck.v1"
+                ["caseId"] = "case-current-resource-readiness",
+                ["cardId"] = "cert.resourceReadinessConfirm",
+                ["definitionId"] = "definition.dormitory.resourceReadinessConfirm.v1"
             }));
 
         var result = service.ConfirmWorkItem(
-            "wi-current-room-readiness-unit-of-work",
-            Request("idem-current-room-readiness", cardId: "cert.roomReadinessCheck", fieldValues: new Dictionary<string, string>()),
+            "wi-current-resource-readiness-unit-of-work",
+            Request("idem-current-resource-readiness", cardId: "cert.resourceReadinessConfirm", fieldValues: new Dictionary<string, string>()),
             OperatorActor(),
-            "req-current-room-readiness");
+            "req-current-resource-readiness");
         var trace = service.GetSubmissionTrace(result.CommandSubmissionId!);
 
         Assert.AreEqual(StatusCodes.Status200OK, result.StatusCode);

@@ -9,16 +9,38 @@
       "expectedOutcome": "committed_projected",
       "workItemType": "Dorm.CheckinConfirm",
       "moneyCommand": false,
-      "requiredEvidence": ["identity-document", "reservation-acknowledgement", "bed-availability-proof"],
+      "requiredEvidence": [
+        "identity-document",
+        "reservation-acknowledgement",
+        "bed-availability-proof"
+      ],
       "outputs": {
-        "workItem": { "required": true },
-        "commandSubmission": { "required": true },
-        "domainEvents": { "min": 1 },
-        "factTrace": { "required": true },
-        "evidenceTrace": { "required": true },
-        "lensOutputs": { "min": 1 },
-        "operatingControlVisibility": ["operation_control", "manager_control"]
-      }
+        "workItem": {
+          "required": true
+        },
+        "commandSubmission": {
+          "required": true
+        },
+        "domainEvents": {
+          "min": 1
+        },
+        "factTrace": {
+          "required": true
+        },
+        "evidenceTrace": {
+          "required": true
+        },
+        "lensOutputs": {
+          "min": 1
+        },
+        "operatingControlVisibility": [
+          "operation_control",
+          "manager_control"
+        ]
+      },
+      "definitionId": "definition.dormitory.checkinConfirm.v1",
+      "commandType": "Checkin.Confirm",
+      "sourceCardId": "cert.checkinConfirm"
     },
     {
       "scenarioId": "dorm-cert-002",
@@ -27,18 +49,43 @@
       "expectedOutcome": "committed_projected",
       "workItemType": "Dorm.DepositConfirm",
       "moneyCommand": true,
-      "requiredEvidence": ["deposit-policy", "receipt-proof"],
+      "requiredEvidence": [
+        "deposit-policy",
+        "receipt-proof"
+      ],
       "outputs": {
-        "workItem": { "required": true },
-        "commandSubmission": { "required": true },
-        "domainEvents": { "min": 1 },
-        "ledgerTransactions": { "min": 1 },
-        "ledgerEntries": { "min": 2 },
-        "factTrace": { "required": true },
-        "evidenceTrace": { "required": true },
-        "lensOutputs": { "min": 1 },
-        "operatingControlVisibility": ["finance_control", "manager_control"]
-      }
+        "workItem": {
+          "required": true
+        },
+        "commandSubmission": {
+          "required": true
+        },
+        "domainEvents": {
+          "min": 1
+        },
+        "ledgerTransactions": {
+          "min": 1
+        },
+        "ledgerEntries": {
+          "min": 2
+        },
+        "factTrace": {
+          "required": true
+        },
+        "evidenceTrace": {
+          "required": true
+        },
+        "lensOutputs": {
+          "min": 1
+        },
+        "operatingControlVisibility": [
+          "finance_control",
+          "manager_control"
+        ]
+      },
+      "definitionId": "definition.dormitory.depositConfirm.v1",
+      "commandType": "Deposit.Confirm",
+      "sourceCardId": "cert.depositConfirm"
     },
     {
       "scenarioId": "dorm-cert-003",
@@ -47,56 +94,128 @@
       "expectedOutcome": "committed_projected",
       "workItemType": "Dorm.PaymentConfirm",
       "moneyCommand": true,
-      "requiredEvidence": ["payment-receipt", "cashier-review"],
+      "requiredEvidence": [
+        "payment-receipt",
+        "cashier-review"
+      ],
       "outputs": {
-        "workItem": { "required": true },
-        "commandSubmission": { "required": true },
-        "domainEvents": { "min": 1 },
-        "ledgerTransactions": { "min": 1 },
-        "ledgerEntries": { "min": 2 },
-        "factTrace": { "required": true },
-        "evidenceTrace": { "required": true },
-        "lensOutputs": { "min": 1 },
-        "operatingControlVisibility": ["finance_control", "manager_control"]
-      }
+        "workItem": {
+          "required": true
+        },
+        "commandSubmission": {
+          "required": true
+        },
+        "domainEvents": {
+          "min": 1
+        },
+        "ledgerTransactions": {
+          "min": 1
+        },
+        "ledgerEntries": {
+          "min": 2
+        },
+        "factTrace": {
+          "required": true
+        },
+        "evidenceTrace": {
+          "required": true
+        },
+        "lensOutputs": {
+          "min": 1
+        },
+        "operatingControlVisibility": [
+          "finance_control",
+          "manager_control"
+        ]
+      },
+      "definitionId": "definition.dormitory.paymentConfirm.v1",
+      "commandType": "Payment.Confirm",
+      "sourceCardId": "cert.paymentConfirm"
     },
     {
       "scenarioId": "dorm-cert-004",
       "name": "服务任务阻断床位、完成、验收和释放",
       "scenarioType": "committed_scenario",
       "expectedOutcome": "committed_projected",
-      "workItemType": "Dorm.RoomReadinessCheck",
+      "workItemType": "Dorm.ResourceReadinessConfirm",
       "moneyCommand": false,
-      "requiredEvidence": ["completion-photo", "verification-check"],
+      "requiredEvidence": [
+        "completion-photo",
+        "verification-check"
+      ],
       "outputs": {
-        "workItem": { "required": true },
-        "commandSubmission": { "required": true },
-        "domainEvents": { "min": 1 },
-        "factTrace": { "required": true },
-        "evidenceTrace": { "required": true },
-        "lensOutputs": { "min": 1 },
-        "operatingControlVisibility": ["operation_control", "manager_control"]
-      }
+        "workItem": {
+          "required": true
+        },
+        "commandSubmission": {
+          "required": true
+        },
+        "domainEvents": {
+          "min": 1
+        },
+        "factTrace": {
+          "required": true
+        },
+        "evidenceTrace": {
+          "required": true
+        },
+        "lensOutputs": {
+          "min": 1
+        },
+        "operatingControlVisibility": [
+          "operation_control",
+          "manager_control"
+        ]
+      },
+      "definitionId": "definition.dormitory.resourceReadinessConfirm.v1",
+      "commandType": "ResourceReadiness.Confirm",
+      "sourceCardId": "cert.resourceReadinessConfirm"
     },
     {
       "scenarioId": "dorm-cert-005",
       "name": "退住、验房、押金扣退、清洁和恢复可售",
       "scenarioType": "committed_scenario",
       "expectedOutcome": "committed_projected",
-      "workItemType": "Dorm.RefundApprove",
+      "workItemType": "Dorm.CheckoutSettlementApprove",
       "moneyCommand": true,
-      "requiredEvidence": ["room-inspection", "settlement-review", "refund-approval"],
+      "requiredEvidence": [
+        "room-inspection",
+        "settlement-review",
+        "refund-approval"
+      ],
       "outputs": {
-        "workItem": { "required": true },
-        "commandSubmission": { "required": true },
-        "domainEvents": { "min": 1 },
-        "ledgerTransactions": { "min": 1 },
-        "ledgerEntries": { "min": 2 },
-        "factTrace": { "required": true },
-        "evidenceTrace": { "required": true },
-        "lensOutputs": { "min": 1 },
-        "operatingControlVisibility": ["finance_control", "manager_control"]
-      }
+        "workItem": {
+          "required": true
+        },
+        "commandSubmission": {
+          "required": true
+        },
+        "domainEvents": {
+          "min": 1
+        },
+        "ledgerTransactions": {
+          "min": 1
+        },
+        "ledgerEntries": {
+          "min": 2
+        },
+        "factTrace": {
+          "required": true
+        },
+        "evidenceTrace": {
+          "required": true
+        },
+        "lensOutputs": {
+          "min": 1
+        },
+        "operatingControlVisibility": [
+          "finance_control",
+          "manager_control"
+        ]
+      },
+      "definitionId": "definition.dormitory.checkoutSettlementApprove.v1",
+      "commandType": "CheckoutSettlement.Approve",
+      "sourceCardId": "cert.checkoutSettlementApprove"
     },
     {
       "scenarioId": "dorm-cert-006",
@@ -105,18 +224,43 @@
       "expectedOutcome": "committed_projected",
       "workItemType": "Finance.CorrectionApply",
       "moneyCommand": true,
-      "requiredEvidence": ["bank-import-row", "correction-approval"],
+      "requiredEvidence": [
+        "bank-import-row",
+        "correction-approval"
+      ],
       "outputs": {
-        "workItem": { "required": true },
-        "commandSubmission": { "required": true },
-        "domainEvents": { "min": 1 },
-        "ledgerTransactions": { "min": 1 },
-        "ledgerEntries": { "min": 2 },
-        "factTrace": { "required": true },
-        "evidenceTrace": { "required": true },
-        "lensOutputs": { "min": 1 },
-        "operatingControlVisibility": ["finance_control", "risk_control"]
-      }
+        "workItem": {
+          "required": true
+        },
+        "commandSubmission": {
+          "required": true
+        },
+        "domainEvents": {
+          "min": 1
+        },
+        "ledgerTransactions": {
+          "min": 1
+        },
+        "ledgerEntries": {
+          "min": 2
+        },
+        "factTrace": {
+          "required": true
+        },
+        "evidenceTrace": {
+          "required": true
+        },
+        "lensOutputs": {
+          "min": 1
+        },
+        "operatingControlVisibility": [
+          "finance_control",
+          "risk_control"
+        ]
+      },
+      "definitionId": "definition.finance.correctionApply.v1",
+      "commandType": "Correction.Apply",
+      "sourceCardId": "cert.correctionApply"
     },
     {
       "scenarioId": "dorm-cert-007",
@@ -125,16 +269,36 @@
       "expectedOutcome": "projection_pending_committed",
       "workItemType": "Dorm.PeriodReview",
       "moneyCommand": false,
-      "requiredEvidence": ["period-review-pack"],
+      "requiredEvidence": [
+        "period-review-pack"
+      ],
       "outputs": {
-        "workItem": { "required": true },
-        "commandSubmission": { "required": true },
-        "domainEvents": { "min": 1 },
-        "factTrace": { "required": true },
-        "evidenceTrace": { "required": true },
-        "lensOutputs": { "min": 1 },
-        "operatingControlVisibility": ["manager_control", "release_flight_deck"]
-      }
+        "workItem": {
+          "required": true
+        },
+        "commandSubmission": {
+          "required": true
+        },
+        "domainEvents": {
+          "min": 1
+        },
+        "factTrace": {
+          "required": true
+        },
+        "evidenceTrace": {
+          "required": true
+        },
+        "lensOutputs": {
+          "min": 1
+        },
+        "operatingControlVisibility": [
+          "manager_control",
+          "release_flight_deck"
+        ]
+      },
+      "definitionId": "definition.dormitory.periodReview.v1",
+      "commandType": "Period.Review",
+      "sourceCardId": "cert.periodReview"
     },
     {
       "scenarioId": "dorm-cert-008",
@@ -143,17 +307,41 @@
       "expectedOutcome": "permission_denied_403",
       "workItemType": "Dorm.ExceptionResolve",
       "moneyCommand": false,
-      "requiredEvidence": ["exception-audit"],
+      "requiredEvidence": [
+        "exception-audit"
+      ],
       "outputs": {
-        "workItem": { "required": true },
-        "rejectedCommandSubmission": { "required": true },
-        "rejectionTrace": { "required": true },
-        "auditEvidence": { "min": 1 },
-        "domainEvents": { "allowed": false, "max": 0 },
-        "ledgerTransactions": { "allowed": false, "max": 0 },
-        "factTrace": { "required": true },
-        "operatingControlVisibility": ["operation_control", "manager_control"]
-      }
+        "workItem": {
+          "required": true
+        },
+        "rejectedCommandSubmission": {
+          "required": true
+        },
+        "rejectionTrace": {
+          "required": true
+        },
+        "auditEvidence": {
+          "min": 1
+        },
+        "domainEvents": {
+          "allowed": false,
+          "max": 0
+        },
+        "ledgerTransactions": {
+          "allowed": false,
+          "max": 0
+        },
+        "factTrace": {
+          "required": true
+        },
+        "operatingControlVisibility": [
+          "operation_control",
+          "manager_control"
+        ]
+      },
+      "definitionId": "definition.dormitory.exceptionResolve.v1",
+      "commandType": "Exception.Resolve",
+      "sourceCardId": "cert.exceptionResolve"
     },
     {
       "scenarioId": "dorm-cert-009",
@@ -162,18 +350,44 @@
       "expectedOutcome": "idempotency_conflict_409",
       "workItemType": "Dorm.PaymentConfirm",
       "moneyCommand": true,
-      "requiredEvidence": ["payment-receipt"],
+      "requiredEvidence": [
+        "payment-receipt"
+      ],
       "outputs": {
-        "workItem": { "required": true },
-        "rejectedCommandSubmission": { "required": true },
-        "rejectionTrace": { "required": true },
-        "auditEvidence": { "min": 1 },
-        "domainEvents": { "allowed": false, "max": 0 },
-        "ledgerTransactions": { "allowed": false, "max": 0 },
-        "noDuplicateSideEffect": { "required": true },
-        "factTrace": { "required": true },
-        "operatingControlVisibility": ["operation_control", "finance_control"]
-      }
+        "workItem": {
+          "required": true
+        },
+        "rejectedCommandSubmission": {
+          "required": true
+        },
+        "rejectionTrace": {
+          "required": true
+        },
+        "auditEvidence": {
+          "min": 1
+        },
+        "domainEvents": {
+          "allowed": false,
+          "max": 0
+        },
+        "ledgerTransactions": {
+          "allowed": false,
+          "max": 0
+        },
+        "noDuplicateSideEffect": {
+          "required": true
+        },
+        "factTrace": {
+          "required": true
+        },
+        "operatingControlVisibility": [
+          "operation_control",
+          "finance_control"
+        ]
+      },
+      "definitionId": "definition.dormitory.paymentConfirm.v1",
+      "commandType": "Payment.Confirm",
+      "sourceCardId": "cert.paymentConfirm"
     },
     {
       "scenarioId": "dorm-cert-010",
@@ -182,17 +396,42 @@
       "expectedOutcome": "business_blocked_422",
       "workItemType": "Dorm.DepositConfirm",
       "moneyCommand": true,
-      "requiredEvidence": ["receipt-proof", "deposit-policy"],
+      "requiredEvidence": [
+        "receipt-proof",
+        "deposit-policy"
+      ],
       "outputs": {
-        "workItem": { "required": true },
-        "rejectedCommandSubmission": { "required": true },
-        "rejectionTrace": { "required": true },
-        "auditEvidence": { "min": 1 },
-        "domainEvents": { "allowed": false, "max": 0 },
-        "ledgerTransactions": { "allowed": false, "max": 0 },
-        "factTrace": { "required": true },
-        "operatingControlVisibility": ["operation_control", "finance_control"]
-      }
+        "workItem": {
+          "required": true
+        },
+        "rejectedCommandSubmission": {
+          "required": true
+        },
+        "rejectionTrace": {
+          "required": true
+        },
+        "auditEvidence": {
+          "min": 1
+        },
+        "domainEvents": {
+          "allowed": false,
+          "max": 0
+        },
+        "ledgerTransactions": {
+          "allowed": false,
+          "max": 0
+        },
+        "factTrace": {
+          "required": true
+        },
+        "operatingControlVisibility": [
+          "operation_control",
+          "finance_control"
+        ]
+      },
+      "definitionId": "definition.dormitory.depositConfirm.v1",
+      "commandType": "Deposit.Confirm",
+      "sourceCardId": "cert.depositConfirm"
     },
     {
       "scenarioId": "dorm-cert-gate-red-shadow",
@@ -201,15 +440,33 @@
       "expectedOutcome": "semantic_shadow_red_blocked",
       "workItemType": "Gate.SemanticShadowReview",
       "moneyCommand": false,
-      "requiredEvidence": ["shadow-compare-report"],
+      "requiredEvidence": [
+        "shadow-compare-report"
+      ],
       "outputs": {
-        "workItem": { "required": true },
-        "gateResult": { "required": true },
-        "shadowCompareReports": { "min": 1 },
-        "rollbackBlocker": { "required": true },
-        "domainEvents": { "allowed": false, "max": 0 },
-        "ledgerTransactions": { "allowed": false, "max": 0 },
-        "operatingControlVisibility": ["release_flight_deck"]
+        "workItem": {
+          "required": true
+        },
+        "gateResult": {
+          "required": true
+        },
+        "shadowCompareReports": {
+          "min": 1
+        },
+        "rollbackBlocker": {
+          "required": true
+        },
+        "domainEvents": {
+          "allowed": false,
+          "max": 0
+        },
+        "ledgerTransactions": {
+          "allowed": false,
+          "max": 0
+        },
+        "operatingControlVisibility": [
+          "release_flight_deck"
+        ]
       }
     },
     {
@@ -219,16 +476,41 @@
       "expectedOutcome": "missing_rollback_blocked",
       "workItemType": "Gate.RollbackReview",
       "moneyCommand": false,
-      "requiredEvidence": ["rollback-instruction"],
+      "requiredEvidence": [
+        "rollback-instruction"
+      ],
       "outputs": {
-        "workItem": { "required": true },
-        "gateResult": { "required": true },
-        "invariantChecks": { "min": 1 },
-        "rollbackBlocker": { "required": true },
-        "domainEvents": { "allowed": false, "max": 0 },
-        "ledgerTransactions": { "allowed": false, "max": 0 },
-        "operatingControlVisibility": ["release_flight_deck"]
+        "workItem": {
+          "required": true
+        },
+        "gateResult": {
+          "required": true
+        },
+        "invariantChecks": {
+          "min": 1
+        },
+        "rollbackBlocker": {
+          "required": true
+        },
+        "domainEvents": {
+          "allowed": false,
+          "max": 0
+        },
+        "ledgerTransactions": {
+          "allowed": false,
+          "max": 0
+        },
+        "operatingControlVisibility": [
+          "release_flight_deck"
+        ]
       }
     }
-  ]
+  ],
+  "derivedFrom": [
+    "docs/business/domains/dormitory/dormitory-operating-kernel.json"
+  ],
+  "generatedBy": "scripts/business/generate-dormitory-derived-contracts.mjs",
+  "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
+  "manualEditAllowed": false,
+  "graphBinding": "domain.dormitory.golden-pilot"
 }

@@ -1,0 +1,94 @@
+{
+  "version": "oam.dormitory.workitem-operation.v1",
+  "status": "derived",
+  "derivedFrom": [
+    "docs/business/domains/dormitory/dormitory-operating-kernel.json"
+  ],
+  "generatedBy": "scripts/business/generate-dormitory-derived-contracts.mjs",
+  "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
+  "manualEditAllowed": false,
+  "graphBinding": "workitem.Dorm.BedTransferApprove",
+  "workItemType": "Dorm.BedTransferApprove",
+  "entryFrom": "Mobile Surface 工作台、Search 只读跳转或上游 WorkItem 下游提示",
+  "systemAutoFilled": [
+    "tenantId",
+    "caseId",
+    "definitionId",
+    "workItemId",
+    "sourceWorkItemId",
+    "projectionVersion"
+  ],
+  "operatorFills": [
+    "补充说明",
+    "evidenceRefs"
+  ],
+  "leadApproves": [
+    "stayId",
+    "fromBedId",
+    "toBedId",
+    "approvalReason"
+  ],
+  "readonlyFields": [
+    "tenantId",
+    "caseId",
+    "definitionId",
+    "workItemId",
+    "sourceWorkItemId",
+    "projectionVersion",
+    "createdAt",
+    "confirmedAt",
+    "ledgerEntryId",
+    "domainEventId"
+  ],
+  "editableFields": [
+    "stayId",
+    "fromBedId",
+    "toBedId"
+  ],
+  "evidenceRequired": [
+    "transfer-application",
+    "bed-availability-proof"
+  ],
+  "submittedEvent": "BedTransferApproveSubmitted",
+  "ledgerImpact": "无账务影响",
+  "lensUpdates": [
+    "DormAvailabilityLens"
+  ],
+  "downstreamWorkItems": [
+    "Dorm.ResourceReadinessConfirm"
+  ],
+  "failureRoutes": [
+    "Dorm.ExceptionResolve",
+    "append_only_correction_work_item",
+    "blocked_with_missing_fields"
+  ],
+  "definitionId": "definition.dormitory.bedTransferApprove.v1",
+  "commandType": "BedTransfer.Approve",
+  "allowedFacts": [
+    "Stay",
+    "EvidenceObject",
+    "DomainEvent",
+    "CommandSubmission"
+  ],
+  "forbiddenFacts": [
+    "Payment",
+    "PaymentAllocation",
+    "DepositEntry",
+    "LedgerEntry",
+    "Refund"
+  ],
+  "admissionPolicyRef": "payment_confirmation",
+  "evidencePolicyRef": "evidence.dorm-bed-transfer-approve.v1",
+  "ledgerPolicyRef": "ledger.none.v1",
+  "dbTableGroups": [
+    "operations-runtime",
+    "evidence-audit",
+    "projection-read-side",
+    "accommodation-facts"
+  ],
+  "tests": [
+    "tests/WorkOS.RuntimeIntegrationTests",
+    "tests/WorkOS.RuntimeContractTests",
+    "apps/mobile/src/__tests__"
+  ]
+}

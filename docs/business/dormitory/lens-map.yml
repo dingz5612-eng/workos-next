@@ -1,13 +1,286 @@
 {
-  "domainId": "dormitory",
-  "version": "oam.dormitory.v1",
-  "lenses": [
-    {"lensId":"DormAvailabilityLens","sourceFacts":["Room","Bed","BedStatus","RoomReadiness"],"notFactSource":true},
-    {"lensId":"LeadFunnelLens","sourceFacts":["Lead","Reservation","Stay"],"notFactSource":true},
-    {"lensId":"StayBalanceLens","sourceFacts":["Charge","PaymentAllocation","LedgerTransaction"],"notFactSource":true},
-    {"lensId":"DepositLiabilityLens","sourceFacts":["DepositAccount","LedgerTransaction"],"notFactSource":true},
-    {"lensId":"CheckoutTurnoverLens","sourceFacts":["Inspection","Checkout","ResourceRelease"],"notFactSource":true},
-    {"lensId":"ExceptionRiskLens","sourceFacts":["ExceptionCase","AuditTrail"],"notFactSource":true}
+  "version": "oam.dormitory.lens-map.v2",
+  "status": "derived",
+  "derivedFrom": [
+    "docs/business/domains/dormitory/dormitory-operating-kernel.json"
   ],
-  "productionAllowed": false
+  "generatedBy": "scripts/business/generate-dormitory-derived-contracts.mjs",
+  "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
+  "manualEditAllowed": false,
+  "graphBinding": "domain.dormitory.lens-map",
+  "lenses": [
+    {
+      "lensId": "RoomReadyLens",
+      "derivedFromFacts": [
+        "Dorm.RoomSetupConfirm"
+      ],
+      "readonly": true,
+      "drilldown": [
+        "WorkItem",
+        "DomainEvent",
+        "LedgerEntry",
+        "Evidence",
+        "LensSnapshot"
+      ]
+    },
+    {
+      "lensId": "DormAvailabilityLens",
+      "derivedFromFacts": [
+        "Dorm.BedSetupConfirm",
+        "Dorm.ResourceReadinessConfirm",
+        "Dorm.CheckinConfirm",
+        "Dorm.BedTransferApprove"
+      ],
+      "readonly": true,
+      "drilldown": [
+        "WorkItem",
+        "DomainEvent",
+        "LedgerEntry",
+        "Evidence",
+        "LensSnapshot"
+      ]
+    },
+    {
+      "lensId": "RatePlanLens",
+      "derivedFromFacts": [
+        "Dorm.RatePlanConfirm"
+      ],
+      "readonly": true,
+      "drilldown": [
+        "WorkItem",
+        "DomainEvent",
+        "LedgerEntry",
+        "Evidence",
+        "LensSnapshot"
+      ]
+    },
+    {
+      "lensId": "RoomReadinessLens",
+      "derivedFromFacts": [
+        "Dorm.ResourceReadinessConfirm",
+        "Dorm.ServiceTaskVerify"
+      ],
+      "readonly": true,
+      "drilldown": [
+        "WorkItem",
+        "DomainEvent",
+        "LedgerEntry",
+        "Evidence",
+        "LensSnapshot"
+      ]
+    },
+    {
+      "lensId": "LeadFunnelLens",
+      "derivedFromFacts": [
+        "Dorm.LeadCapture",
+        "Dorm.ReservationCancelClose",
+        "Dorm.ReservationNoShowClose"
+      ],
+      "readonly": true,
+      "drilldown": [
+        "WorkItem",
+        "DomainEvent",
+        "LedgerEntry",
+        "Evidence",
+        "LensSnapshot"
+      ]
+    },
+    {
+      "lensId": "ReservationLens",
+      "derivedFromFacts": [
+        "Dorm.ReservationConfirm"
+      ],
+      "readonly": true,
+      "drilldown": [
+        "WorkItem",
+        "DomainEvent",
+        "LedgerEntry",
+        "Evidence",
+        "LensSnapshot"
+      ]
+    },
+    {
+      "lensId": "StayOnboardingLens",
+      "derivedFromFacts": [
+        "Dorm.CheckinConfirm",
+        "Dorm.StayExtendApprove"
+      ],
+      "readonly": true,
+      "drilldown": [
+        "WorkItem",
+        "DomainEvent",
+        "LedgerEntry",
+        "Evidence",
+        "LensSnapshot"
+      ]
+    },
+    {
+      "lensId": "StayBalanceLens",
+      "derivedFromFacts": [
+        "Dorm.PaymentConfirm",
+        "Finance.ChargeAdjustmentApprove",
+        "Finance.CorrectionApply"
+      ],
+      "readonly": true,
+      "drilldown": [
+        "WorkItem",
+        "DomainEvent",
+        "LedgerEntry",
+        "Evidence",
+        "LensSnapshot"
+      ]
+    },
+    {
+      "lensId": "RevenueCollectionLens",
+      "derivedFromFacts": [
+        "Dorm.PaymentConfirm",
+        "Finance.DebtFollowUp"
+      ],
+      "readonly": true,
+      "drilldown": [
+        "WorkItem",
+        "DomainEvent",
+        "LedgerEntry",
+        "Evidence",
+        "LensSnapshot"
+      ]
+    },
+    {
+      "lensId": "DepositLiabilityLens",
+      "derivedFromFacts": [
+        "Dorm.DepositConfirm"
+      ],
+      "readonly": true,
+      "drilldown": [
+        "WorkItem",
+        "DomainEvent",
+        "LedgerEntry",
+        "Evidence",
+        "LensSnapshot"
+      ]
+    },
+    {
+      "lensId": "ServiceTaskLens",
+      "derivedFromFacts": [
+        "Dorm.ServiceTaskCreate",
+        "Dorm.ServiceTaskAssign",
+        "Dorm.ServiceTaskComplete",
+        "Dorm.ServiceTaskVerify",
+        "Finance.ExpenseLink"
+      ],
+      "readonly": true,
+      "drilldown": [
+        "WorkItem",
+        "DomainEvent",
+        "LedgerEntry",
+        "Evidence",
+        "LensSnapshot"
+      ]
+    },
+    {
+      "lensId": "ExpenseControlLens",
+      "derivedFromFacts": [
+        "Finance.ExpenseRecord",
+        "Finance.ExpenseApprove",
+        "Finance.ExpenseLink"
+      ],
+      "readonly": true,
+      "drilldown": [
+        "WorkItem",
+        "DomainEvent",
+        "LedgerEntry",
+        "Evidence",
+        "LensSnapshot"
+      ]
+    },
+    {
+      "lensId": "CheckoutTurnoverLens",
+      "derivedFromFacts": [
+        "Dorm.RoomInspectionConfirm",
+        "Dorm.CheckoutSettlementApprove"
+      ],
+      "readonly": true,
+      "drilldown": [
+        "WorkItem",
+        "DomainEvent",
+        "LedgerEntry",
+        "Evidence",
+        "LensSnapshot"
+      ]
+    },
+    {
+      "lensId": "DepositSettlementLens",
+      "derivedFromFacts": [
+        "Dorm.CheckoutSettlementApprove"
+      ],
+      "readonly": true,
+      "drilldown": [
+        "WorkItem",
+        "DomainEvent",
+        "LedgerEntry",
+        "Evidence",
+        "LensSnapshot"
+      ]
+    },
+    {
+      "lensId": "RefundRiskLens",
+      "derivedFromFacts": [
+        "Dorm.CheckoutSettlementApprove"
+      ],
+      "readonly": true,
+      "drilldown": [
+        "WorkItem",
+        "DomainEvent",
+        "LedgerEntry",
+        "Evidence",
+        "LensSnapshot"
+      ]
+    },
+    {
+      "lensId": "AccessTrustLens",
+      "derivedFromFacts": [
+        "Dorm.AccessCredentialIssue",
+        "Dorm.AccessCredentialRevoke"
+      ],
+      "readonly": true,
+      "drilldown": [
+        "WorkItem",
+        "DomainEvent",
+        "LedgerEntry",
+        "Evidence",
+        "LensSnapshot"
+      ]
+    },
+    {
+      "lensId": "ExceptionRiskLens",
+      "derivedFromFacts": [
+        "Dorm.IncidentRecord",
+        "Dorm.ExceptionResolve",
+        "Finance.CorrectionApply"
+      ],
+      "readonly": true,
+      "drilldown": [
+        "WorkItem",
+        "DomainEvent",
+        "LedgerEntry",
+        "Evidence",
+        "LensSnapshot"
+      ]
+    },
+    {
+      "lensId": "ManagementDashboardLens",
+      "derivedFromFacts": [
+        "Dorm.PeriodReview",
+        "Dorm.PeriodActionPlanExecute"
+      ],
+      "readonly": true,
+      "drilldown": [
+        "WorkItem",
+        "DomainEvent",
+        "LedgerEntry",
+        "Evidence",
+        "LensSnapshot"
+      ]
+    }
+  ]
 }

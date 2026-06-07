@@ -1,73 +1,158 @@
 {
-  "version": "oam.dormitory.workitem-decision-table.v1",
+  "version": "oam.dormitory.workitem-decision-table.v2",
+  "status": "derived",
   "domain": "dormitory",
-  "status": "authoritative",
+  "derivedFrom": [
+    "docs/business/domains/dormitory/dormitory-operating-kernel.json"
+  ],
+  "generatedBy": "scripts/business/generate-dormitory-derived-contracts.mjs",
+  "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
+  "manualEditAllowed": false,
+  "graphBinding": "domain.dormitory.workitem-decisions",
   "productionAllowed": false,
-  "sourceInput": {
-    "path": "docs/business/dormitory/workitem-catalog.yml",
-    "count": 24,
-    "cutoff": "current OAM execution kernel"
-  },
   "currentCatalogPolicy": {
     "catalogKeepsOnly": "currentExecutableWorkItem",
-    "definitionRequiredFor": ["currentExecutableWorkItem", "externalFinanceGovernance"],
-    "externalFinanceGovernanceInDormitoryCatalogAllowed": false,
-    "nonExecutableInCatalogAllowed": false
+    "canonicalSource": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+    "oldSevenOrTwentyFourDenied": true
   },
   "decisions": [
     {
-      "workItemType": "Dorm.ResourceSetup",
-      "decision": "preconditionStep",
-      "keepInDormitoryCatalog": false,
-      "definitionRequired": false,
-      "absorbedBy": ["Dorm.RoomReadinessCheck"],
-      "reasonZh": "资源建档是可售可信度的前置事实准备，不是当前金标确认动作；有效字段和证据由房态检查链吸收。"
-    },
-    {
-      "workItemType": "Dorm.RoomReadinessCheck",
+      "workItemType": "Dorm.RoomSetupConfirm",
       "decision": "currentExecutableWorkItem",
       "keepInDormitoryCatalog": true,
       "definitionRequired": true,
-      "definitionId": "definition.dormitory.roomReadinessCheck.v1",
-      "commandType": "RoomReadiness.Check",
-      "workspaceId": "W-STAY-SERVICE-TASK",
-      "surfaceId": "mobile.work.room-readiness",
-      "ownerSlice": "Accommodation.ServiceTask",
-      "dbTableGroups": ["operations-runtime", "maintenance-facts", "evidence-audit", "projection-read-side"],
-      "tests": ["tests/WorkOS.RuntimeIntegrationTests", "apps/mobile/src/__tests__"],
-      "reasonZh": "服务任务完成、验收、房态释放和床位可售证明在当前金标场景中由一个确认动作闭环。"
+      "definitionId": "definition.dormitory.roomSetupConfirm.v1",
+      "commandType": "RoomSetup.Confirm",
+      "workspaceId": "W-DORM-MAINLINE",
+      "surfaceId": "mobile.work.dorm-room-setup-confirm",
+      "ownerSlice": "Accommodation.ResourceSetup",
+      "dbTableGroups": [
+        "operations-runtime",
+        "evidence-audit",
+        "projection-read-side",
+        "accommodation-facts"
+      ],
+      "tests": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "reasonZh": "当前宿舍内核可执行 WorkItem。"
     },
     {
-      "workItemType": "Dorm.BedAvailabilityConfirm",
-      "decision": "preconditionStep",
-      "keepInDormitoryCatalog": false,
-      "definitionRequired": false,
-      "absorbedBy": ["Dorm.CheckinConfirm", "Dorm.RoomReadinessCheck"],
-      "reasonZh": "床位可售是入住确认和房态检查的准入条件，不单独形成当前 WorkItem。"
+      "workItemType": "Dorm.BedSetupConfirm",
+      "decision": "currentExecutableWorkItem",
+      "keepInDormitoryCatalog": true,
+      "definitionRequired": true,
+      "definitionId": "definition.dormitory.bedSetupConfirm.v1",
+      "commandType": "BedSetup.Confirm",
+      "workspaceId": "W-DORM-MAINLINE",
+      "surfaceId": "mobile.work.dorm-bed-setup-confirm",
+      "ownerSlice": "Accommodation.ResourceSetup",
+      "dbTableGroups": [
+        "operations-runtime",
+        "evidence-audit",
+        "projection-read-side",
+        "accommodation-facts"
+      ],
+      "tests": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "reasonZh": "当前宿舍内核可执行 WorkItem。"
     },
     {
-      "workItemType": "Dorm.LeadFollowup",
-      "decision": "businessStep",
-      "keepInDormitoryCatalog": false,
-      "definitionRequired": false,
-      "absorbedBy": ["Dorm.CheckinConfirm"],
-      "reasonZh": "线索跟进是入住转化过程步骤，当前执行口径以入住确认为提交点。"
+      "workItemType": "Dorm.RatePlanConfirm",
+      "decision": "currentExecutableWorkItem",
+      "keepInDormitoryCatalog": true,
+      "definitionRequired": true,
+      "definitionId": "definition.dormitory.ratePlanConfirm.v1",
+      "commandType": "RatePlan.Confirm",
+      "workspaceId": "W-DORM-MAINLINE",
+      "surfaceId": "mobile.work.dorm-rate-plan-confirm",
+      "ownerSlice": "Accommodation.RatePlan",
+      "dbTableGroups": [
+        "operations-runtime",
+        "evidence-audit",
+        "projection-read-side",
+        "accommodation-facts"
+      ],
+      "tests": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "reasonZh": "当前宿舍内核可执行 WorkItem。"
+    },
+    {
+      "workItemType": "Dorm.ResourceReadinessConfirm",
+      "decision": "currentExecutableWorkItem",
+      "keepInDormitoryCatalog": true,
+      "definitionRequired": true,
+      "definitionId": "definition.dormitory.resourceReadinessConfirm.v1",
+      "commandType": "ResourceReadiness.Confirm",
+      "workspaceId": "W-DORM-MAINLINE",
+      "surfaceId": "mobile.work.dorm-resource-readiness-confirm",
+      "ownerSlice": "Accommodation.ResourceReadiness",
+      "dbTableGroups": [
+        "operations-runtime",
+        "evidence-audit",
+        "projection-read-side",
+        "accommodation-facts"
+      ],
+      "tests": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "reasonZh": "当前宿舍内核可执行 WorkItem。"
+    },
+    {
+      "workItemType": "Dorm.LeadCapture",
+      "decision": "currentExecutableWorkItem",
+      "keepInDormitoryCatalog": true,
+      "definitionRequired": true,
+      "definitionId": "definition.dormitory.leadCapture.v1",
+      "commandType": "Lead.Capture",
+      "workspaceId": "W-DORM-MAINLINE",
+      "surfaceId": "mobile.work.dorm-lead-capture",
+      "ownerSlice": "Accommodation.Lead",
+      "dbTableGroups": [
+        "operations-runtime",
+        "evidence-audit",
+        "projection-read-side",
+        "accommodation-facts"
+      ],
+      "tests": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "reasonZh": "当前宿舍内核可执行 WorkItem。"
     },
     {
       "workItemType": "Dorm.ReservationConfirm",
-      "decision": "preconditionStep",
-      "keepInDormitoryCatalog": false,
-      "definitionRequired": false,
-      "absorbedBy": ["Dorm.CheckinConfirm"],
-      "reasonZh": "预订确认提供容量和承诺证据，不作为当前单独确认动作。"
-    },
-    {
-      "workItemType": "Dorm.CheckinPrepare",
-      "decision": "evidenceIntakeStep",
-      "keepInDormitoryCatalog": false,
-      "definitionRequired": false,
-      "absorbedBy": ["Dorm.CheckinConfirm"],
-      "reasonZh": "入住准备收集身份资料，证据并入住确认，不保留单独 WorkItem。"
+      "decision": "currentExecutableWorkItem",
+      "keepInDormitoryCatalog": true,
+      "definitionRequired": true,
+      "definitionId": "definition.dormitory.reservationConfirm.v1",
+      "commandType": "Reservation.Confirm",
+      "workspaceId": "W-DORM-MAINLINE",
+      "surfaceId": "mobile.work.dorm-reservation-confirm",
+      "ownerSlice": "Accommodation.Reservation",
+      "dbTableGroups": [
+        "operations-runtime",
+        "evidence-audit",
+        "projection-read-side",
+        "accommodation-facts"
+      ],
+      "tests": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "reasonZh": "当前宿舍内核可执行 WorkItem。"
     },
     {
       "workItemType": "Dorm.CheckinConfirm",
@@ -76,142 +161,487 @@
       "definitionRequired": true,
       "definitionId": "definition.dormitory.checkinConfirm.v1",
       "commandType": "Checkin.Confirm",
-      "workspaceId": "W-STAY-CHECKIN",
-      "surfaceId": "mobile.work.checkin-confirm",
+      "workspaceId": "W-DORM-MAINLINE",
+      "surfaceId": "mobile.work.dorm-checkin-confirm",
       "ownerSlice": "Accommodation.CheckIn",
-      "dbTableGroups": ["operations-runtime", "accommodation-facts", "evidence-audit", "projection-read-side"],
-      "tests": ["tests/WorkOS.RuntimeIntegrationTests", "apps/mobile/src/__tests__"],
-      "reasonZh": "线索、预订、身份、床位分配最终由入住确认形成当前业务事实。"
-    },
-    {
-      "workItemType": "Dorm.BedAssignmentConfirm",
-      "decision": "businessStep",
-      "keepInDormitoryCatalog": false,
-      "definitionRequired": false,
-      "absorbedBy": ["Dorm.CheckinConfirm"],
-      "reasonZh": "床位分配是入住确认的业务步骤和准入证据，不单独提交。"
-    },
-    {
-      "workItemType": "Dorm.ChargeGenerate",
-      "decision": "systemDerivedAction",
-      "keepInDormitoryCatalog": false,
-      "definitionRequired": false,
-      "absorbedBy": ["Dorm.PaymentConfirm"],
-      "reasonZh": "费用依据由账务和投影推导，当前执行口径以收款确认为提交点。"
-    },
-    {
-      "workItemType": "Dorm.PaymentRegister",
-      "decision": "evidenceIntakeStep",
-      "keepInDormitoryCatalog": false,
-      "definitionRequired": false,
-      "absorbedBy": ["Dorm.PaymentConfirm"],
-      "reasonZh": "收款登记只提供收款证据，未确认前不写账务事实。"
+      "dbTableGroups": [
+        "operations-runtime",
+        "evidence-audit",
+        "projection-read-side",
+        "accommodation-facts"
+      ],
+      "tests": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "reasonZh": "当前宿舍内核可执行 WorkItem。"
     },
     {
       "workItemType": "Dorm.PaymentConfirm",
-      "decision": "currentExecutableWorkItem",
-      "keepInDormitoryCatalog": true,
+      "decision": "externalFinanceGovernance",
+      "keepInDormitoryCatalog": false,
       "definitionRequired": true,
       "definitionId": "definition.dormitory.paymentConfirm.v1",
       "commandType": "Payment.Confirm",
-      "workspaceId": "W-STAY-PAYMENT-LEDGER",
-      "surfaceId": "mobile.work.payment-confirm",
-      "ownerSlice": "Accommodation.PaymentLedger",
-      "dbTableGroups": ["operations-runtime", "finance-ledger", "evidence-audit", "projection-read-side"],
-      "tests": ["tests/WorkOS.RuntimeIntegrationTests", "tests/WorkOS.DatabaseSecurityTests", "apps/mobile/src/__tests__"],
-      "reasonZh": "普通收款、财务确认、分配和余额更新由收款确认提交，且必须生成平衡账务。"
-    },
-    {
-      "workItemType": "Dorm.DepositAssess",
-      "decision": "preconditionStep",
-      "keepInDormitoryCatalog": false,
-      "definitionRequired": false,
-      "absorbedBy": ["Dorm.DepositConfirm"],
-      "reasonZh": "押金评估是押金确认的政策依据，不单独写账。"
-    },
-    {
-      "workItemType": "Dorm.DepositReceive",
-      "decision": "evidenceIntakeStep",
-      "keepInDormitoryCatalog": false,
-      "definitionRequired": false,
-      "absorbedBy": ["Dorm.DepositConfirm"],
-      "reasonZh": "押金收取只形成待审收据证据，押金负债由押金确认提交。"
+      "workspaceId": "W-DORM-MAINLINE",
+      "surfaceId": "mobile.work.dorm-payment-confirm",
+      "ownerSlice": "finance-gate",
+      "dbTableGroups": [
+        "operations-runtime",
+        "evidence-audit",
+        "projection-read-side",
+        "finance-ledger"
+      ],
+      "tests": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "reasonZh": "财务真值由 finance-gate 拥有，宿舍只发起或引用。"
     },
     {
       "workItemType": "Dorm.DepositConfirm",
-      "decision": "currentExecutableWorkItem",
-      "keepInDormitoryCatalog": true,
+      "decision": "externalFinanceGovernance",
+      "keepInDormitoryCatalog": false,
       "definitionRequired": true,
       "definitionId": "definition.dormitory.depositConfirm.v1",
       "commandType": "Deposit.Confirm",
-      "workspaceId": "W-STAY-DEPOSIT-LEDGER",
-      "surfaceId": "mobile.work.deposit-confirm",
-      "ownerSlice": "Accommodation.DepositLedger",
-      "dbTableGroups": ["operations-runtime", "finance-ledger", "evidence-audit", "projection-read-side"],
-      "tests": ["tests/WorkOS.RuntimeIntegrationTests", "tests/WorkOS.DatabaseSecurityTests", "apps/mobile/src/__tests__"],
-      "reasonZh": "押金收据、政策依据和负债账务只由押金确认闭环。"
+      "workspaceId": "W-DORM-MAINLINE",
+      "surfaceId": "mobile.work.dorm-deposit-confirm",
+      "ownerSlice": "finance-gate",
+      "dbTableGroups": [
+        "operations-runtime",
+        "evidence-audit",
+        "projection-read-side",
+        "finance-ledger"
+      ],
+      "tests": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "reasonZh": "财务真值由 finance-gate 拥有，宿舍只发起或引用。"
     },
     {
       "workItemType": "Dorm.ServiceTaskCreate",
-      "decision": "businessStep",
-      "keepInDormitoryCatalog": false,
-      "definitionRequired": false,
-      "absorbedBy": ["Dorm.RoomReadinessCheck"],
-      "reasonZh": "服务任务创建只是房态检查链的任务来源，不是当前金标提交动作。"
-    },
-    {
-      "workItemType": "Dorm.ServiceTaskComplete",
-      "decision": "evidenceIntakeStep",
-      "keepInDormitoryCatalog": false,
-      "definitionRequired": false,
-      "absorbedBy": ["Dorm.RoomReadinessCheck"],
-      "reasonZh": "服务任务完成提供完成和验收证据，由房态检查确认。"
-    },
-    {
-      "workItemType": "Dorm.RoomInspection",
-      "decision": "evidenceIntakeStep",
-      "keepInDormitoryCatalog": false,
-      "definitionRequired": false,
-      "absorbedBy": ["Dorm.RefundApprove"],
-      "reasonZh": "退房验房是退款审批的证据，不单独写账务事实。"
-    },
-    {
-      "workItemType": "Dorm.CheckoutSettlement",
-      "decision": "readSideSettlementStep",
-      "keepInDormitoryCatalog": false,
-      "definitionRequired": false,
-      "absorbedBy": ["Dorm.RefundApprove"],
-      "reasonZh": "退住结算只能读取账本投影并生成结算依据，当前提交点是退款审批。"
-    },
-    {
-      "workItemType": "Dorm.DepositDeduct",
-      "decision": "ledgerBasisStep",
-      "keepInDormitoryCatalog": false,
-      "definitionRequired": false,
-      "absorbedBy": ["Dorm.RefundApprove"],
-      "reasonZh": "押金扣减是退款审批中的账务 basis，不作为独立当前 WorkItem。"
-    },
-    {
-      "workItemType": "Dorm.RefundApprove",
       "decision": "currentExecutableWorkItem",
       "keepInDormitoryCatalog": true,
       "definitionRequired": true,
-      "definitionId": "definition.dormitory.refundApprove.v1",
-      "commandType": "Refund.Approve",
-      "workspaceId": "W-STAY-CHECKOUT-SETTLEMENT",
-      "surfaceId": "mobile.work.refund-approve",
-      "ownerSlice": "Accommodation.CheckOutSettlement",
-      "dbTableGroups": ["operations-runtime", "finance-ledger", "accommodation-facts", "evidence-audit", "projection-read-side"],
-      "tests": ["tests/WorkOS.RuntimeIntegrationTests", "tests/WorkOS.DatabaseSecurityTests", "apps/mobile/src/__tests__"],
-      "reasonZh": "退住、验房、扣减依据和退款账务由退款审批形成一个高风险提交口。"
+      "definitionId": "definition.dormitory.serviceTaskCreate.v1",
+      "commandType": "ServiceTask.Create",
+      "workspaceId": "W-DORM-SERVICE-CHECKOUT",
+      "surfaceId": "mobile.work.dorm-service-task-create",
+      "ownerSlice": "Accommodation.ServiceTask",
+      "dbTableGroups": [
+        "operations-runtime",
+        "evidence-audit",
+        "projection-read-side",
+        "maintenance-facts",
+        "accommodation-facts"
+      ],
+      "tests": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "reasonZh": "当前宿舍内核可执行 WorkItem。"
     },
     {
-      "workItemType": "Dorm.ResourceRelease",
-      "decision": "systemDerivedAction",
+      "workItemType": "Dorm.ServiceTaskAssign",
+      "decision": "currentExecutableWorkItem",
+      "keepInDormitoryCatalog": true,
+      "definitionRequired": true,
+      "definitionId": "definition.dormitory.serviceTaskAssign.v1",
+      "commandType": "ServiceTask.Assign",
+      "workspaceId": "W-DORM-SERVICE-CHECKOUT",
+      "surfaceId": "mobile.work.dorm-service-task-assign",
+      "ownerSlice": "Accommodation.ServiceTask",
+      "dbTableGroups": [
+        "operations-runtime",
+        "evidence-audit",
+        "projection-read-side",
+        "maintenance-facts",
+        "accommodation-facts"
+      ],
+      "tests": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "reasonZh": "当前宿舍内核可执行 WorkItem。"
+    },
+    {
+      "workItemType": "Dorm.ServiceTaskComplete",
+      "decision": "currentExecutableWorkItem",
+      "keepInDormitoryCatalog": true,
+      "definitionRequired": true,
+      "definitionId": "definition.dormitory.serviceTaskComplete.v1",
+      "commandType": "ServiceTask.Complete",
+      "workspaceId": "W-DORM-SERVICE-CHECKOUT",
+      "surfaceId": "mobile.work.dorm-service-task-complete",
+      "ownerSlice": "Accommodation.ServiceTask",
+      "dbTableGroups": [
+        "operations-runtime",
+        "evidence-audit",
+        "projection-read-side",
+        "maintenance-facts",
+        "accommodation-facts"
+      ],
+      "tests": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "reasonZh": "当前宿舍内核可执行 WorkItem。"
+    },
+    {
+      "workItemType": "Dorm.ServiceTaskVerify",
+      "decision": "currentExecutableWorkItem",
+      "keepInDormitoryCatalog": true,
+      "definitionRequired": true,
+      "definitionId": "definition.dormitory.serviceTaskVerify.v1",
+      "commandType": "ServiceTask.Verify",
+      "workspaceId": "W-DORM-SERVICE-CHECKOUT",
+      "surfaceId": "mobile.work.dorm-service-task-verify",
+      "ownerSlice": "Accommodation.ServiceTask",
+      "dbTableGroups": [
+        "operations-runtime",
+        "evidence-audit",
+        "projection-read-side",
+        "maintenance-facts",
+        "accommodation-facts"
+      ],
+      "tests": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "reasonZh": "当前宿舍内核可执行 WorkItem。"
+    },
+    {
+      "workItemType": "Finance.ExpenseRecord",
+      "decision": "externalFinanceGovernance",
       "keepInDormitoryCatalog": false,
-      "definitionRequired": false,
-      "absorbedBy": ["Dorm.RoomReadinessCheck", "Dorm.RefundApprove"],
-      "reasonZh": "资源释放必须由结算和房态验收驱动，不作为普通确认入口。"
+      "definitionRequired": true,
+      "definitionId": "definition.finance.expenseRecord.v1",
+      "commandType": "Expense.Record",
+      "workspaceId": "W-DORM-SERVICE-CHECKOUT",
+      "surfaceId": "mobile.work.finance-expense-record",
+      "ownerSlice": "finance-gate",
+      "dbTableGroups": [
+        "operations-runtime",
+        "evidence-audit",
+        "projection-read-side",
+        "finance-ledger"
+      ],
+      "tests": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "reasonZh": "财务真值由 finance-gate 拥有，宿舍只发起或引用。"
+    },
+    {
+      "workItemType": "Finance.ExpenseApprove",
+      "decision": "externalFinanceGovernance",
+      "keepInDormitoryCatalog": false,
+      "definitionRequired": true,
+      "definitionId": "definition.finance.expenseApprove.v1",
+      "commandType": "Expense.Approve",
+      "workspaceId": "W-DORM-SERVICE-CHECKOUT",
+      "surfaceId": "mobile.work.finance-expense-approve",
+      "ownerSlice": "finance-gate",
+      "dbTableGroups": [
+        "operations-runtime",
+        "evidence-audit",
+        "projection-read-side",
+        "finance-ledger"
+      ],
+      "tests": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "reasonZh": "财务真值由 finance-gate 拥有，宿舍只发起或引用。"
+    },
+    {
+      "workItemType": "Finance.ExpenseLink",
+      "decision": "externalFinanceGovernance",
+      "keepInDormitoryCatalog": false,
+      "definitionRequired": true,
+      "definitionId": "definition.finance.expenseLink.v1",
+      "commandType": "Expense.Link",
+      "workspaceId": "W-DORM-SERVICE-CHECKOUT",
+      "surfaceId": "mobile.work.finance-expense-link",
+      "ownerSlice": "finance-gate",
+      "dbTableGroups": [
+        "operations-runtime",
+        "evidence-audit",
+        "projection-read-side",
+        "finance-ledger"
+      ],
+      "tests": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "reasonZh": "财务真值由 finance-gate 拥有，宿舍只发起或引用。"
+    },
+    {
+      "workItemType": "Dorm.RoomInspectionConfirm",
+      "decision": "currentExecutableWorkItem",
+      "keepInDormitoryCatalog": true,
+      "definitionRequired": true,
+      "definitionId": "definition.dormitory.roomInspectionConfirm.v1",
+      "commandType": "RoomInspection.Confirm",
+      "workspaceId": "W-DORM-SERVICE-CHECKOUT",
+      "surfaceId": "mobile.work.dorm-room-inspection-confirm",
+      "ownerSlice": "Accommodation.Checkout",
+      "dbTableGroups": [
+        "operations-runtime",
+        "evidence-audit",
+        "projection-read-side",
+        "accommodation-facts"
+      ],
+      "tests": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "reasonZh": "当前宿舍内核可执行 WorkItem。"
+    },
+    {
+      "workItemType": "Dorm.CheckoutSettlementApprove",
+      "decision": "externalFinanceGovernance",
+      "keepInDormitoryCatalog": false,
+      "definitionRequired": true,
+      "definitionId": "definition.dormitory.checkoutSettlementApprove.v1",
+      "commandType": "CheckoutSettlement.Approve",
+      "workspaceId": "W-DORM-SERVICE-CHECKOUT",
+      "surfaceId": "mobile.work.dorm-checkout-settlement-approve",
+      "ownerSlice": "finance-gate",
+      "dbTableGroups": [
+        "operations-runtime",
+        "evidence-audit",
+        "projection-read-side",
+        "finance-ledger"
+      ],
+      "tests": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "reasonZh": "财务真值由 finance-gate 拥有，宿舍只发起或引用。"
+    },
+    {
+      "workItemType": "Dorm.StayExtendApprove",
+      "decision": "currentExecutableWorkItem",
+      "keepInDormitoryCatalog": true,
+      "definitionRequired": true,
+      "definitionId": "definition.dormitory.stayExtendApprove.v1",
+      "commandType": "StayExtend.Approve",
+      "workspaceId": "W-DORM-GOVERNANCE",
+      "surfaceId": "mobile.work.dorm-stay-extend-approve",
+      "ownerSlice": "Accommodation.Stay",
+      "dbTableGroups": [
+        "operations-runtime",
+        "evidence-audit",
+        "projection-read-side",
+        "accommodation-facts"
+      ],
+      "tests": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "reasonZh": "当前宿舍内核可执行 WorkItem。"
+    },
+    {
+      "workItemType": "Dorm.BedTransferApprove",
+      "decision": "currentExecutableWorkItem",
+      "keepInDormitoryCatalog": true,
+      "definitionRequired": true,
+      "definitionId": "definition.dormitory.bedTransferApprove.v1",
+      "commandType": "BedTransfer.Approve",
+      "workspaceId": "W-DORM-GOVERNANCE",
+      "surfaceId": "mobile.work.dorm-bed-transfer-approve",
+      "ownerSlice": "Accommodation.Stay",
+      "dbTableGroups": [
+        "operations-runtime",
+        "evidence-audit",
+        "projection-read-side",
+        "accommodation-facts"
+      ],
+      "tests": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "reasonZh": "当前宿舍内核可执行 WorkItem。"
+    },
+    {
+      "workItemType": "Dorm.ReservationCancelClose",
+      "decision": "currentExecutableWorkItem",
+      "keepInDormitoryCatalog": true,
+      "definitionRequired": true,
+      "definitionId": "definition.dormitory.reservationCancelClose.v1",
+      "commandType": "ReservationCancel.Close",
+      "workspaceId": "W-DORM-GOVERNANCE",
+      "surfaceId": "mobile.work.dorm-reservation-cancel-close",
+      "ownerSlice": "Accommodation.Reservation",
+      "dbTableGroups": [
+        "operations-runtime",
+        "evidence-audit",
+        "projection-read-side",
+        "accommodation-facts"
+      ],
+      "tests": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "reasonZh": "当前宿舍内核可执行 WorkItem。"
+    },
+    {
+      "workItemType": "Dorm.ReservationNoShowClose",
+      "decision": "currentExecutableWorkItem",
+      "keepInDormitoryCatalog": true,
+      "definitionRequired": true,
+      "definitionId": "definition.dormitory.reservationNoShowClose.v1",
+      "commandType": "ReservationNoShow.Close",
+      "workspaceId": "W-DORM-GOVERNANCE",
+      "surfaceId": "mobile.work.dorm-reservation-no-show-close",
+      "ownerSlice": "Accommodation.Reservation",
+      "dbTableGroups": [
+        "operations-runtime",
+        "evidence-audit",
+        "projection-read-side",
+        "accommodation-facts"
+      ],
+      "tests": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "reasonZh": "当前宿舍内核可执行 WorkItem。"
+    },
+    {
+      "workItemType": "Finance.ChargeAdjustmentApprove",
+      "decision": "externalFinanceGovernance",
+      "keepInDormitoryCatalog": false,
+      "definitionRequired": true,
+      "definitionId": "definition.finance.chargeAdjustmentApprove.v1",
+      "commandType": "ChargeAdjustment.Approve",
+      "workspaceId": "W-DORM-GOVERNANCE",
+      "surfaceId": "mobile.work.finance-charge-adjustment-approve",
+      "ownerSlice": "finance-gate",
+      "dbTableGroups": [
+        "operations-runtime",
+        "evidence-audit",
+        "projection-read-side",
+        "finance-ledger"
+      ],
+      "tests": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "reasonZh": "财务真值由 finance-gate 拥有，宿舍只发起或引用。"
+    },
+    {
+      "workItemType": "Finance.DebtFollowUp",
+      "decision": "externalFinanceGovernance",
+      "keepInDormitoryCatalog": false,
+      "definitionRequired": true,
+      "definitionId": "definition.finance.debtFollowUp.v1",
+      "commandType": "Debt.FollowUp",
+      "workspaceId": "W-DORM-GOVERNANCE",
+      "surfaceId": "mobile.work.finance-debt-follow-up",
+      "ownerSlice": "finance-gate",
+      "dbTableGroups": [
+        "operations-runtime",
+        "evidence-audit",
+        "projection-read-side",
+        "finance-ledger"
+      ],
+      "tests": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "reasonZh": "财务真值由 finance-gate 拥有，宿舍只发起或引用。"
+    },
+    {
+      "workItemType": "Dorm.AccessCredentialIssue",
+      "decision": "currentExecutableWorkItem",
+      "keepInDormitoryCatalog": true,
+      "definitionRequired": true,
+      "definitionId": "definition.dormitory.accessCredentialIssue.v1",
+      "commandType": "AccessCredential.Issue",
+      "workspaceId": "W-DORM-GOVERNANCE",
+      "surfaceId": "mobile.work.dorm-access-credential-issue",
+      "ownerSlice": "identity-trust",
+      "dbTableGroups": [
+        "operations-runtime",
+        "evidence-audit",
+        "projection-read-side",
+        "identity-trust",
+        "accommodation-facts"
+      ],
+      "tests": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "reasonZh": "当前宿舍内核可执行 WorkItem。"
+    },
+    {
+      "workItemType": "Dorm.AccessCredentialRevoke",
+      "decision": "currentExecutableWorkItem",
+      "keepInDormitoryCatalog": true,
+      "definitionRequired": true,
+      "definitionId": "definition.dormitory.accessCredentialRevoke.v1",
+      "commandType": "AccessCredential.Revoke",
+      "workspaceId": "W-DORM-GOVERNANCE",
+      "surfaceId": "mobile.work.dorm-access-credential-revoke",
+      "ownerSlice": "identity-trust",
+      "dbTableGroups": [
+        "operations-runtime",
+        "evidence-audit",
+        "projection-read-side",
+        "identity-trust",
+        "accommodation-facts"
+      ],
+      "tests": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "reasonZh": "当前宿舍内核可执行 WorkItem。"
+    },
+    {
+      "workItemType": "Dorm.IncidentRecord",
+      "decision": "currentExecutableWorkItem",
+      "keepInDormitoryCatalog": true,
+      "definitionRequired": true,
+      "definitionId": "definition.dormitory.incidentRecord.v1",
+      "commandType": "Incident.Record",
+      "workspaceId": "W-DORM-GOVERNANCE",
+      "surfaceId": "mobile.work.dorm-incident-record",
+      "ownerSlice": "Accommodation.Governance",
+      "dbTableGroups": [
+        "operations-runtime",
+        "evidence-audit",
+        "projection-read-side",
+        "accommodation-facts"
+      ],
+      "tests": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "reasonZh": "当前宿舍内核可执行 WorkItem。"
     },
     {
       "workItemType": "Dorm.PeriodReview",
@@ -220,12 +650,45 @@
       "definitionRequired": true,
       "definitionId": "definition.dormitory.periodReview.v1",
       "commandType": "Period.Review",
-      "workspaceId": "W-STAY-PERIOD-ANALYTICS",
-      "surfaceId": "pc.manager.period-review",
-      "ownerSlice": "Accommodation.PeriodAnalytics",
-      "dbTableGroups": ["operations-runtime", "accommodation-facts", "control-plane-reports", "evidence-audit", "projection-read-side"],
-      "tests": ["tests/WorkOS.RuntimeIntegrationTests", "apps/mobile/src/__tests__"],
-      "reasonZh": "周期复盘不写账务，但会提交行动计划和复盘结论，因此保留为管理类当前 WorkItem。"
+      "workspaceId": "W-DORM-GOVERNANCE",
+      "surfaceId": "mobile.work.dorm-period-review",
+      "ownerSlice": "Management.Review",
+      "dbTableGroups": [
+        "operations-runtime",
+        "evidence-audit",
+        "projection-read-side",
+        "finance-ledger",
+        "accommodation-facts"
+      ],
+      "tests": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "reasonZh": "当前宿舍内核可执行 WorkItem。"
+    },
+    {
+      "workItemType": "Dorm.PeriodActionPlanExecute",
+      "decision": "currentExecutableWorkItem",
+      "keepInDormitoryCatalog": true,
+      "definitionRequired": true,
+      "definitionId": "definition.dormitory.periodActionPlanExecute.v1",
+      "commandType": "PeriodActionPlan.Execute",
+      "workspaceId": "W-DORM-GOVERNANCE",
+      "surfaceId": "mobile.work.dorm-period-action-plan-execute",
+      "ownerSlice": "Management.ActionPlan",
+      "dbTableGroups": [
+        "operations-runtime",
+        "evidence-audit",
+        "projection-read-side",
+        "accommodation-facts"
+      ],
+      "tests": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "reasonZh": "当前宿舍内核可执行 WorkItem。"
     },
     {
       "workItemType": "Dorm.ExceptionResolve",
@@ -234,12 +697,21 @@
       "definitionRequired": true,
       "definitionId": "definition.dormitory.exceptionResolve.v1",
       "commandType": "Exception.Resolve",
-      "workspaceId": "PC-GOVERNANCE",
-      "surfaceId": "mobile.work.permission-diagnostic",
-      "ownerSlice": "Governance.ExceptionResolution",
-      "dbTableGroups": ["operations-runtime", "identity-trust", "evidence-audit"],
-      "tests": ["tests/WorkOS.RuntimeIntegrationTests", "apps/mobile/src/__tests__"],
-      "reasonZh": "权限拒绝、升级和审计需要当前 WorkItem 记录拒绝链，但不得写业务事实或账务事实。"
+      "workspaceId": "W-DORM-GOVERNANCE",
+      "surfaceId": "mobile.work.dorm-exception-resolve",
+      "ownerSlice": "Management.Exception",
+      "dbTableGroups": [
+        "operations-runtime",
+        "evidence-audit",
+        "projection-read-side",
+        "accommodation-facts"
+      ],
+      "tests": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "reasonZh": "当前宿舍内核可执行 WorkItem。"
     },
     {
       "workItemType": "Finance.CorrectionApply",
@@ -247,13 +719,49 @@
       "keepInDormitoryCatalog": false,
       "definitionRequired": true,
       "definitionId": "definition.finance.correctionApply.v1",
-      "commandType": "FinanceCorrection.Apply",
-      "workspaceId": "PC-GOVERNANCE",
-      "surfaceId": "pc.finance.correction-workitem",
-      "ownerSlice": "Governance.CorrectionCenter",
-      "dbTableGroups": ["operations-runtime", "finance-ledger", "finance-reconciliation", "evidence-audit"],
-      "tests": ["tests/WorkOS.RuntimeIntegrationTests", "tests/WorkOS.DatabaseSecurityTests", "tests/WorkOS.PolicyAsCodeTests"],
-      "reasonZh": "财务纠错属于 Finance Truth / Correction Center 的当前治理动作，可被宿舍金标场景引用，但不属于宿舍 WorkItem 目录。"
+      "commandType": "Correction.Apply",
+      "workspaceId": "W-DORM-GOVERNANCE",
+      "surfaceId": "mobile.work.finance-correction-apply",
+      "ownerSlice": "finance-gate",
+      "dbTableGroups": [
+        "operations-runtime",
+        "evidence-audit",
+        "projection-read-side",
+        "finance-ledger"
+      ],
+      "tests": [
+        "tests/WorkOS.RuntimeIntegrationTests",
+        "tests/WorkOS.RuntimeContractTests",
+        "apps/mobile/src/__tests__"
+      ],
+      "reasonZh": "财务真值由 finance-gate 拥有，宿舍只发起或引用。"
+    },
+    {
+      "workItemType": "Dorm.RoomReadinessCheck",
+      "decision": "alias",
+      "keepInDormitoryCatalog": false,
+      "definitionRequired": false,
+      "canonicalWorkItemType": "Dorm.ResourceReadinessConfirm",
+      "absorbedBy": "Dorm.ResourceReadinessConfirm",
+      "reasonZh": "旧房态检查名称被资源可售确认吸收。"
+    },
+    {
+      "workItemType": "Dorm.RefundApprove",
+      "decision": "alias",
+      "keepInDormitoryCatalog": false,
+      "definitionRequired": false,
+      "canonicalWorkItemType": "Dorm.CheckoutSettlementApprove",
+      "absorbedBy": "Dorm.CheckoutSettlementApprove",
+      "reasonZh": "旧退款审批名称被退住结算审批吸收。"
+    },
+    {
+      "workItemType": "Dorm.ExpenseRecord",
+      "decision": "alias",
+      "keepInDormitoryCatalog": false,
+      "definitionRequired": false,
+      "canonicalWorkItemType": "Finance.ExpenseRecord",
+      "absorbedBy": "Finance.ExpenseRecord",
+      "reasonZh": "旧宿舍支出登记名称降级为 finance-gate alias。"
     }
   ]
 }

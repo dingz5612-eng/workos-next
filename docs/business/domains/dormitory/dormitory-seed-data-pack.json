@@ -1,0 +1,23 @@
+{
+  "version": "oam.dormitory.seed-data-pack.v1",
+  "status": "derived",
+  "derivedFrom": [
+    "docs/business/domains/dormitory/dormitory-operating-kernel.json"
+  ],
+  "generatedBy": "scripts/business/generate-dormitory-derived-contracts.mjs",
+  "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
+  "manualEditAllowed": false,
+  "graphBinding": "domain.dormitory.seed-data",
+  "seeds": {
+    "rooms": 8,
+    "beds": 24,
+    "ratePlans": 3,
+    "leads": 12,
+    "reservations": 8,
+    "stays": 8,
+    "serviceTasks": 5,
+    "expenses": 4,
+    "checkoutCases": 3
+  },
+  "invariantZh": "种子数据只服务 L1 试运行和测试，不定义生产事实。"
+}

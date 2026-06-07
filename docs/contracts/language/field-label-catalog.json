@@ -3,419 +3,11 @@
   "generatedBy": "oam-current",
   "fields": [
     {
-      "fieldId": "buildingName",
+      "fieldId": "actionPlanId",
       "label": {
-        "zh-CN": "楼栋",
-        "ru-RU": "Корпус",
-        "ky-KG": "Корпус"
-      }
-    },
-    {
-      "fieldId": "roomNo",
-      "label": {
-        "zh-CN": "房号",
-        "ru-RU": "Номер комнаты",
-        "ky-KG": "Бөлмө номери"
-      }
-    },
-    {
-      "fieldId": "roomType",
-      "label": {
-        "zh-CN": "房型",
-        "ru-RU": "Тип комнаты",
-        "ky-KG": "Бөлмө түрү"
-      }
-    },
-    {
-      "fieldId": "floor",
-      "label": {
-        "zh-CN": "楼层",
-        "ru-RU": "Этаж",
-        "ky-KG": "Кабат"
-      }
-    },
-    {
-      "fieldId": "roomNote",
-      "label": {
-        "zh-CN": "房间备注",
-        "ru-RU": "Примечание к комнате",
-        "ky-KG": "Бөлмө эскертүүсү"
-      }
-    },
-    {
-      "fieldId": "roomId",
-      "label": {
-        "zh-CN": "房间",
-        "ru-RU": "Комната",
-        "ky-KG": "Бөлмө"
-      }
-    },
-    {
-      "fieldId": "bedCount",
-      "label": {
-        "zh-CN": "床位数",
-        "ru-RU": "Количество коек",
-        "ky-KG": "Койка саны"
-      }
-    },
-    {
-      "fieldId": "bedLabels",
-      "label": {
-        "zh-CN": "床位标签",
-        "ru-RU": "Метки коек",
-        "ky-KG": "Койка белгилери"
-      }
-    },
-    {
-      "fieldId": "bedType",
-      "label": {
-        "zh-CN": "床位类型",
-        "ru-RU": "Тип койки",
-        "ky-KG": "Койка түрү"
-      }
-    },
-    {
-      "fieldId": "ratePlan",
-      "label": {
-        "zh-CN": "价格方案",
-        "ru-RU": "Тарифный план",
-        "ky-KG": "Баалар планы"
-      }
-    },
-    {
-      "fieldId": "price",
-      "label": {
-        "zh-CN": "价格",
-        "ru-RU": "Цена",
-        "ky-KG": "Баасы"
-      }
-    },
-    {
-      "fieldId": "effectiveFrom",
-      "label": {
-        "zh-CN": "生效时间",
-        "ru-RU": "Дата начала",
-        "ky-KG": "Күчүнө кирүү убактысы"
-      }
-    },
-    {
-      "fieldId": "readinessState",
-      "label": {
-        "zh-CN": "可用状态",
-        "ru-RU": "Статус готовности",
-        "ky-KG": "Даярдык абалы"
-      }
-    },
-    {
-      "fieldId": "readinessNote",
-      "label": {
-        "zh-CN": "可用说明",
-        "ru-RU": "Описание готовности",
-        "ky-KG": "Даярдык түшүндүрмөсү"
-      }
-    },
-    {
-      "fieldId": "blockReason",
-      "label": {
-        "zh-CN": "阻断原因",
-        "ru-RU": "Причина блокировки",
-        "ky-KG": "Бөгөт себеби"
-      }
-    },
-    {
-      "fieldId": "blockedUntil",
-      "label": {
-        "zh-CN": "阻断到期",
-        "ru-RU": "Блокировка до",
-        "ky-KG": "Бөгөт мөөнөтү"
-      }
-    },
-    {
-      "fieldId": "releaseReason",
-      "label": {
-        "zh-CN": "释放原因",
-        "ru-RU": "Причина освобождения",
-        "ky-KG": "Бошотуу себеби"
-      }
-    },
-    {
-      "fieldId": "releaseAt",
-      "label": {
-        "zh-CN": "释放时间",
-        "ru-RU": "Время освобождения",
-        "ky-KG": "Бошотуу убактысы"
-      }
-    },
-    {
-      "fieldId": "stayId",
-      "label": {
-        "zh-CN": "住宿单",
-        "ru-RU": "Ордер проживания",
-        "ky-KG": "Жашоо ордери"
-      }
-    },
-    {
-      "fieldId": "depositId",
-      "label": {
-        "zh-CN": "押金单",
-        "ru-RU": "Депозитный ордер",
-        "ky-KG": "Депозит ордери"
-      }
-    },
-    {
-      "fieldId": "depositReceiptId",
-      "label": {
-        "zh-CN": "押金收款记录",
-        "ru-RU": "Запись приема депозита",
-        "ky-KG": "Депозит кабыл алуу жазуусу"
-      }
-    },
-    {
-      "fieldId": "depositType",
-      "label": {
-        "zh-CN": "押金类型",
-        "ru-RU": "Тип депозита",
-        "ky-KG": "Депозит түрү"
-      }
-    },
-    {
-      "fieldId": "depositPolicyName",
-      "label": {
-        "zh-CN": "押金规则",
-        "ru-RU": "Правило депозита",
-        "ky-KG": "Депозит эрежеси"
-      }
-    },
-    {
-      "fieldId": "requiredDepositAmount",
-      "label": {
-        "zh-CN": "应收押金",
-        "ru-RU": "Требуемый депозит",
-        "ky-KG": "Керек депозит"
-      }
-    },
-    {
-      "fieldId": "depositDueAt",
-      "label": {
-        "zh-CN": "押金截止时间",
-        "ru-RU": "Срок депозита",
-        "ky-KG": "Депозит мөөнөтү"
-      }
-    },
-    {
-      "fieldId": "note",
-      "label": {
-        "zh-CN": "备注",
-        "ru-RU": "Примечание",
-        "ky-KG": "Эскертүү"
-      }
-    },
-    {
-      "fieldId": "receivedAmount",
-      "label": {
-        "zh-CN": "收款金额",
-        "ru-RU": "Полученная сумма",
-        "ky-KG": "Кабыл алынган сумма"
-      }
-    },
-    {
-      "fieldId": "confirmedAmount",
-      "label": {
-        "zh-CN": "确认金额",
-        "ru-RU": "Подтвержденная сумма",
-        "ky-KG": "Тастыкталган сумма"
-      }
-    },
-    {
-      "fieldId": "paymentMethod",
-      "label": {
-        "zh-CN": "付款方式",
-        "ru-RU": "Способ оплаты",
-        "ky-KG": "Төлөм ыкмасы"
-      }
-    },
-    {
-      "fieldId": "payerName",
-      "label": {
-        "zh-CN": "付款人",
-        "ru-RU": "Плательщик",
-        "ky-KG": "Төлөөчү"
-      }
-    },
-    {
-      "fieldId": "receivedBy",
-      "label": {
-        "zh-CN": "收款人",
-        "ru-RU": "Получатель платежа",
-        "ky-KG": "Төлөмдү алган адам"
-      }
-    },
-    {
-      "fieldId": "paymentAmount",
-      "label": {
-        "zh-CN": "收款金额",
-        "ru-RU": "Сумма платежа",
-        "ky-KG": "Төлөм суммасы"
-      }
-    },
-    {
-      "fieldId": "receiptNo",
-      "label": {
-        "zh-CN": "收据编号",
-        "ru-RU": "Номер квитанции",
-        "ky-KG": "Квитанция номери"
-      }
-    },
-    {
-      "fieldId": "confirmationResult",
-      "label": {
-        "zh-CN": "确认结果",
-        "ru-RU": "Результат подтверждения",
-        "ky-KG": "Тастыктоо жыйынтыгы"
-      }
-    },
-    {
-      "fieldId": "financeReviewer",
-      "label": {
-        "zh-CN": "财务确认人",
-        "ru-RU": "Финансовый проверяющий",
-        "ky-KG": "Финансы тастыктоочу"
-      }
-    },
-    {
-      "fieldId": "differenceReason",
-      "label": {
-        "zh-CN": "差异原因",
-        "ru-RU": "Причина расхождения",
-        "ky-KG": "Айырма себеби"
-      }
-    },
-    {
-      "fieldId": "confirmedAt",
-      "label": {
-        "zh-CN": "确认时间",
-        "ru-RU": "Время подтверждения",
-        "ky-KG": "Тастыктоо убактысы"
-      }
-    },
-    {
-      "fieldId": "deductionAmount",
-      "label": {
-        "zh-CN": "扣除金额",
-        "ru-RU": "Сумма удержания",
-        "ky-KG": "Кармоо суммасы"
-      }
-    },
-    {
-      "fieldId": "deductionReason",
-      "label": {
-        "zh-CN": "扣除原因",
-        "ru-RU": "Причина удержания",
-        "ky-KG": "Кармоо себеби"
-      }
-    },
-    {
-      "fieldId": "applyToBalanceAmount",
-      "label": {
-        "zh-CN": "抵扣欠款金额",
-        "ru-RU": "Сумма зачета долга",
-        "ky-KG": "Карызга жабуу суммасы"
-      }
-    },
-    {
-      "fieldId": "refundAmount",
-      "label": {
-        "zh-CN": "退款金额",
-        "ru-RU": "Сумма возврата",
-        "ky-KG": "Кайтаруу суммасы"
-      }
-    },
-    {
-      "fieldId": "approverId",
-      "label": {
-        "zh-CN": "审批人",
-        "ru-RU": "Утверждающий",
-        "ky-KG": "Бекитүүчү"
-      }
-    },
-    {
-      "fieldId": "approvalOpinion",
-      "label": {
-        "zh-CN": "审批意见",
-        "ru-RU": "Решение",
-        "ky-KG": "Бекитүү пикири"
-      }
-    },
-    {
-      "fieldId": "handlingOpinion",
-      "label": {
-        "zh-CN": "处理意见",
-        "ru-RU": "Решение по обработке",
-        "ky-KG": "Иштетүү пикири"
-      }
-    },
-    {
-      "fieldId": "refundMethod",
-      "label": {
-        "zh-CN": "退款方式",
-        "ru-RU": "Способ возврата",
-        "ky-KG": "Кайтаруу ыкмасы"
-      }
-    },
-    {
-      "fieldId": "refundReceiver",
-      "label": {
-        "zh-CN": "退款接收人",
-        "ru-RU": "Получатель возврата",
-        "ky-KG": "Кайтарууну алуучу"
-      }
-    },
-    {
-      "fieldId": "paymentTime",
-      "label": {
-        "zh-CN": "付款时间",
-        "ru-RU": "Время оплаты",
-        "ky-KG": "Төлөм убактысы"
-      }
-    },
-    {
-      "fieldId": "closeResult",
-      "label": {
-        "zh-CN": "关闭结果",
-        "ru-RU": "Результат закрытия",
-        "ky-KG": "Жабуу жыйынтыгы"
-      }
-    },
-    {
-      "fieldId": "paymentId",
-      "label": {
-        "zh-CN": "收款记录",
-        "ru-RU": "Платежная запись",
-        "ky-KG": "Төлөм жазуусу"
-      }
-    },
-    {
-      "fieldId": "allocationMode",
-      "label": {
-        "zh-CN": "分配方式",
-        "ru-RU": "Способ распределения",
-        "ky-KG": "Бөлүштүрүү ыкмасы"
-      }
-    },
-    {
-      "fieldId": "allocatedAmount",
-      "label": {
-        "zh-CN": "分配金额",
-        "ru-RU": "Распределенная сумма",
-        "ky-KG": "Бөлүштүрүлгөн сумма"
-      }
-    },
-    {
-      "fieldId": "coveredChargeIds",
-      "label": {
-        "zh-CN": "覆盖应收项",
-        "ru-RU": "Покрытые начисления",
-        "ky-KG": "Жабылган төлөмдөр"
+        "zh-CN": "actionPlanId",
+        "ru-RU": "actionPlanId",
+        "ky-KG": "actionPlanId"
       }
     },
     {
@@ -435,6 +27,206 @@
       }
     },
     {
+      "fieldId": "allocatedAmount",
+      "label": {
+        "zh-CN": "分配金额",
+        "ru-RU": "Распределенная сумма",
+        "ky-KG": "Бөлүштүрүлгөн сумма"
+      }
+    },
+    {
+      "fieldId": "allocationMode",
+      "label": {
+        "zh-CN": "分配方式",
+        "ru-RU": "Способ распределения",
+        "ky-KG": "Бөлүштүрүү ыкмасы"
+      }
+    },
+    {
+      "fieldId": "amount",
+      "label": {
+        "zh-CN": "金额",
+        "ru-RU": "amount",
+        "ky-KG": "amount"
+      }
+    },
+    {
+      "fieldId": "applyToBalanceAmount",
+      "label": {
+        "zh-CN": "抵扣欠款金额",
+        "ru-RU": "Сумма зачета долга",
+        "ky-KG": "Карызга жабуу суммасы"
+      }
+    },
+    {
+      "fieldId": "approvalOpinion",
+      "label": {
+        "zh-CN": "审批意见",
+        "ru-RU": "Решение",
+        "ky-KG": "Бекитүү пикири"
+      }
+    },
+    {
+      "fieldId": "approvalState",
+      "label": {
+        "zh-CN": "approvalState",
+        "ru-RU": "approvalState",
+        "ky-KG": "approvalState"
+      }
+    },
+    {
+      "fieldId": "approverId",
+      "label": {
+        "zh-CN": "审批人",
+        "ru-RU": "Утверждающий",
+        "ky-KG": "Бекитүүчү"
+      }
+    },
+    {
+      "fieldId": "auditRefs",
+      "label": {
+        "zh-CN": "auditRefs",
+        "ru-RU": "auditRefs",
+        "ky-KG": "auditRefs"
+      }
+    },
+    {
+      "fieldId": "availableBedCount",
+      "label": {
+        "zh-CN": "availableBedCount",
+        "ru-RU": "availableBedCount",
+        "ky-KG": "availableBedCount"
+      }
+    },
+    {
+      "fieldId": "availableRefundAmount",
+      "label": {
+        "zh-CN": "availableRefundAmount",
+        "ru-RU": "availableRefundAmount",
+        "ky-KG": "availableRefundAmount"
+      }
+    },
+    {
+      "fieldId": "basisEvidenceRef",
+      "label": {
+        "zh-CN": "basisEvidenceRef",
+        "ru-RU": "basisEvidenceRef",
+        "ky-KG": "basisEvidenceRef"
+      }
+    },
+    {
+      "fieldId": "basisId",
+      "label": {
+        "zh-CN": "basisId",
+        "ru-RU": "basisId",
+        "ky-KG": "basisId"
+      }
+    },
+    {
+      "fieldId": "basisType",
+      "label": {
+        "zh-CN": "basisType",
+        "ru-RU": "basisType",
+        "ky-KG": "basisType"
+      }
+    },
+    {
+      "fieldId": "bedCount",
+      "label": {
+        "zh-CN": "床位数",
+        "ru-RU": "Количество коек",
+        "ky-KG": "Койка саны"
+      }
+    },
+    {
+      "fieldId": "bedId",
+      "label": {
+        "zh-CN": "床位ID",
+        "ru-RU": "bedId",
+        "ky-KG": "bedId"
+      }
+    },
+    {
+      "fieldId": "bedLabels",
+      "label": {
+        "zh-CN": "床位标签",
+        "ru-RU": "Метки коек",
+        "ky-KG": "Койка белгилери"
+      }
+    },
+    {
+      "fieldId": "bedNo",
+      "label": {
+        "zh-CN": "bedNo",
+        "ru-RU": "bedNo",
+        "ky-KG": "bedNo"
+      }
+    },
+    {
+      "fieldId": "bedState",
+      "label": {
+        "zh-CN": "bedState",
+        "ru-RU": "bedState",
+        "ky-KG": "bedState"
+      }
+    },
+    {
+      "fieldId": "bedType",
+      "label": {
+        "zh-CN": "床位类型",
+        "ru-RU": "Тип койки",
+        "ky-KG": "Койка түрү"
+      }
+    },
+    {
+      "fieldId": "billingCycle",
+      "label": {
+        "zh-CN": "billingCycle",
+        "ru-RU": "billingCycle",
+        "ky-KG": "billingCycle"
+      }
+    },
+    {
+      "fieldId": "blockedUntil",
+      "label": {
+        "zh-CN": "阻断到期",
+        "ru-RU": "Блокировка до",
+        "ky-KG": "Бөгөт мөөнөтү"
+      }
+    },
+    {
+      "fieldId": "blockReason",
+      "label": {
+        "zh-CN": "阻断原因",
+        "ru-RU": "Причина блокировки",
+        "ky-KG": "Бөгөт себеби"
+      }
+    },
+    {
+      "fieldId": "buildingName",
+      "label": {
+        "zh-CN": "楼栋",
+        "ru-RU": "Корпус",
+        "ky-KG": "Корпус"
+      }
+    },
+    {
+      "fieldId": "capacity",
+      "label": {
+        "zh-CN": "capacity",
+        "ru-RU": "capacity",
+        "ky-KG": "capacity"
+      }
+    },
+    {
+      "fieldId": "checkoutCaseId",
+      "label": {
+        "zh-CN": "checkoutCaseId",
+        "ru-RU": "checkoutCaseId",
+        "ky-KG": "checkoutCaseId"
+      }
+    },
+    {
       "fieldId": "checkoutId",
       "label": {
         "zh-CN": "退住记录",
@@ -443,99 +235,51 @@
       }
     },
     {
-      "fieldId": "finalBalanceAmount",
+      "fieldId": "closedAt",
       "label": {
-        "zh-CN": "最终余额",
-        "ru-RU": "Итоговый баланс",
-        "ky-KG": "Акыркы баланс"
+        "zh-CN": "closedAt",
+        "ru-RU": "closedAt",
+        "ky-KG": "closedAt"
       }
     },
     {
-      "fieldId": "taskId",
+      "fieldId": "closeResult",
       "label": {
-        "zh-CN": "任务",
-        "ru-RU": "Задача",
-        "ky-KG": "Тапшырма"
+        "zh-CN": "关闭结果",
+        "ru-RU": "Результат закрытия",
+        "ky-KG": "Жабуу жыйынтыгы"
       }
     },
     {
-      "fieldId": "resourceScope",
+      "fieldId": "confirmationResult",
       "label": {
-        "zh-CN": "服务范围",
-        "ru-RU": "Объем сервиса",
-        "ky-KG": "Тейлөө аймагы"
+        "zh-CN": "确认结果",
+        "ru-RU": "Результат подтверждения",
+        "ky-KG": "Тастыктоо жыйынтыгы"
       }
     },
     {
-      "fieldId": "releaseBed",
+      "fieldId": "confirmedAmount",
       "label": {
-        "zh-CN": "释放床位",
-        "ru-RU": "Освободить койку",
-        "ky-KG": "Койканы бошотуу"
+        "zh-CN": "确认金额",
+        "ru-RU": "Подтвержденная сумма",
+        "ky-KG": "Тастыкталган сумма"
       }
     },
     {
-      "fieldId": "releaseAvailableAt",
+      "fieldId": "confirmedAt",
       "label": {
-        "zh-CN": "恢复可售时间",
-        "ru-RU": "Время восстановления продажи",
-        "ky-KG": "Сатууга калыбына келүү убактысы"
+        "zh-CN": "确认时间",
+        "ru-RU": "Время подтверждения",
+        "ky-KG": "Тастыктоо убактысы"
       }
     },
     {
-      "fieldId": "periodId",
+      "fieldId": "correctionReason",
       "label": {
-        "zh-CN": "经营周期",
-        "ru-RU": "Операционный период",
-        "ky-KG": "Операция мезгили"
-      }
-    },
-    {
-      "fieldId": "managementConclusion",
-      "label": {
-        "zh-CN": "管理结论",
-        "ru-RU": "Управленческий вывод",
-        "ky-KG": "Башкаруу жыйынтыгы"
-      }
-    },
-    {
-      "fieldId": "nextPeriodFocus",
-      "label": {
-        "zh-CN": "下一周期重点",
-        "ru-RU": "Фокус следующего периода",
-        "ky-KG": "Кийинки мезгил фокусу"
-      }
-    },
-    {
-      "fieldId": "expenseCategory",
-      "label": {
-        "zh-CN": "支出类别",
-        "ru-RU": "Категория расхода",
-        "ky-KG": "Чыгым категориясы"
-      }
-    },
-    {
-      "fieldId": "expenseAmount",
-      "label": {
-        "zh-CN": "支出金额",
-        "ru-RU": "Сумма расхода",
-        "ky-KG": "Чыгым суммасы"
-      }
-    },
-    {
-      "fieldId": "expenseId",
-      "label": {
-        "zh-CN": "支出记录",
-        "ru-RU": "Запись расхода",
-        "ky-KG": "Чыгым жазуусу"
-      }
-    },
-    {
-      "fieldId": "currency",
-      "label": {
-        "zh-CN": "币种",
-        "ru-RU": "Валюта",
-        "ky-KG": "Валюта"
+        "zh-CN": "修正原因",
+        "ru-RU": "Причина корректировки",
+        "ky-KG": "Түзөтүү себеби"
       }
     },
     {
@@ -547,11 +291,779 @@
       }
     },
     {
-      "fieldId": "correctionReason",
+      "fieldId": "coveredChargeIds",
       "label": {
-        "zh-CN": "修正原因",
-        "ru-RU": "Причина корректировки",
-        "ky-KG": "Түзөтүү себеби"
+        "zh-CN": "覆盖应收项",
+        "ru-RU": "Покрытые начисления",
+        "ky-KG": "Жабылган төлөмдөр"
+      }
+    },
+    {
+      "fieldId": "currency",
+      "label": {
+        "zh-CN": "币种",
+        "ru-RU": "Валюта",
+        "ky-KG": "Валюта"
+      }
+    },
+    {
+      "fieldId": "damageState",
+      "label": {
+        "zh-CN": "damageState",
+        "ru-RU": "damageState",
+        "ky-KG": "damageState"
+      }
+    },
+    {
+      "fieldId": "deductionAmount",
+      "label": {
+        "zh-CN": "扣除金额",
+        "ru-RU": "Сумма удержания",
+        "ky-KG": "Кармоо суммасы"
+      }
+    },
+    {
+      "fieldId": "deductionReason",
+      "label": {
+        "zh-CN": "扣除原因",
+        "ru-RU": "Причина удержания",
+        "ky-KG": "Кармоо себеби"
+      }
+    },
+    {
+      "fieldId": "depositDueAt",
+      "label": {
+        "zh-CN": "押金截止时间",
+        "ru-RU": "Срок депозита",
+        "ky-KG": "Депозит мөөнөтү"
+      }
+    },
+    {
+      "fieldId": "depositId",
+      "label": {
+        "zh-CN": "押金单",
+        "ru-RU": "Депозитный ордер",
+        "ky-KG": "Депозит ордери"
+      }
+    },
+    {
+      "fieldId": "depositPolicyName",
+      "label": {
+        "zh-CN": "押金规则",
+        "ru-RU": "Правило депозита",
+        "ky-KG": "Депозит эрежеси"
+      }
+    },
+    {
+      "fieldId": "depositReceiptId",
+      "label": {
+        "zh-CN": "押金收款记录",
+        "ru-RU": "Запись приема депозита",
+        "ky-KG": "Депозит кабыл алуу жазуусу"
+      }
+    },
+    {
+      "fieldId": "depositState",
+      "label": {
+        "zh-CN": "depositState",
+        "ru-RU": "depositState",
+        "ky-KG": "depositState"
+      }
+    },
+    {
+      "fieldId": "depositType",
+      "label": {
+        "zh-CN": "押金类型",
+        "ru-RU": "Тип депозита",
+        "ky-KG": "Депозит түрү"
+      }
+    },
+    {
+      "fieldId": "differenceReason",
+      "label": {
+        "zh-CN": "差异原因",
+        "ru-RU": "Причина расхождения",
+        "ky-KG": "Айырма себеби"
+      }
+    },
+    {
+      "fieldId": "dueAt",
+      "label": {
+        "zh-CN": "dueAt",
+        "ru-RU": "dueAt",
+        "ky-KG": "dueAt"
+      }
+    },
+    {
+      "fieldId": "effectiveFrom",
+      "label": {
+        "zh-CN": "生效时间",
+        "ru-RU": "Дата начала",
+        "ky-KG": "Күчүнө кирүү убактысы"
+      }
+    },
+    {
+      "fieldId": "emergencyContact",
+      "label": {
+        "zh-CN": "emergencyContact",
+        "ru-RU": "emergencyContact",
+        "ky-KG": "emergencyContact"
+      }
+    },
+    {
+      "fieldId": "evidenceRefs",
+      "label": {
+        "zh-CN": "证据引用",
+        "ru-RU": "evidenceRefs",
+        "ky-KG": "evidenceRefs"
+      }
+    },
+    {
+      "fieldId": "exceptionCaseId",
+      "label": {
+        "zh-CN": "exceptionCaseId",
+        "ru-RU": "exceptionCaseId",
+        "ky-KG": "exceptionCaseId"
+      }
+    },
+    {
+      "fieldId": "exceptionType",
+      "label": {
+        "zh-CN": "exceptionType",
+        "ru-RU": "exceptionType",
+        "ky-KG": "exceptionType"
+      }
+    },
+    {
+      "fieldId": "executionState",
+      "label": {
+        "zh-CN": "executionState",
+        "ru-RU": "executionState",
+        "ky-KG": "executionState"
+      }
+    },
+    {
+      "fieldId": "expenseAmount",
+      "label": {
+        "zh-CN": "支出金额",
+        "ru-RU": "Сумма расхода",
+        "ky-KG": "Чыгым суммасы"
+      }
+    },
+    {
+      "fieldId": "expenseCategory",
+      "label": {
+        "zh-CN": "支出类别",
+        "ru-RU": "Категория расхода",
+        "ky-KG": "Чыгым категориясы"
+      }
+    },
+    {
+      "fieldId": "expenseId",
+      "label": {
+        "zh-CN": "支出记录",
+        "ru-RU": "Запись расхода",
+        "ky-KG": "Чыгым жазуусу"
+      }
+    },
+    {
+      "fieldId": "expenseLinkId",
+      "label": {
+        "zh-CN": "expenseLinkId",
+        "ru-RU": "expenseLinkId",
+        "ky-KG": "expenseLinkId"
+      }
+    },
+    {
+      "fieldId": "finalBalanceAmount",
+      "label": {
+        "zh-CN": "最终余额",
+        "ru-RU": "Итоговый баланс",
+        "ky-KG": "Акыркы баланс"
+      }
+    },
+    {
+      "fieldId": "financeKpi",
+      "label": {
+        "zh-CN": "financeKpi",
+        "ru-RU": "financeKpi",
+        "ky-KG": "financeKpi"
+      }
+    },
+    {
+      "fieldId": "financeReviewer",
+      "label": {
+        "zh-CN": "财务确认人",
+        "ru-RU": "Финансовый проверяющий",
+        "ky-KG": "Финансы тастыктоочу"
+      }
+    },
+    {
+      "fieldId": "floor",
+      "label": {
+        "zh-CN": "楼层",
+        "ru-RU": "Этаж",
+        "ky-KG": "Кабат"
+      }
+    },
+    {
+      "fieldId": "followUpState",
+      "label": {
+        "zh-CN": "followUpState",
+        "ru-RU": "followUpState",
+        "ky-KG": "followUpState"
+      }
+    },
+    {
+      "fieldId": "frozenAt",
+      "label": {
+        "zh-CN": "frozenAt",
+        "ru-RU": "frozenAt",
+        "ky-KG": "frozenAt"
+      }
+    },
+    {
+      "fieldId": "handlingOpinion",
+      "label": {
+        "zh-CN": "处理意见",
+        "ru-RU": "Решение по обработке",
+        "ky-KG": "Иштетүү пикири"
+      }
+    },
+    {
+      "fieldId": "identityDocNo",
+      "label": {
+        "zh-CN": "identityDocNo",
+        "ru-RU": "identityDocNo",
+        "ky-KG": "identityDocNo"
+      }
+    },
+    {
+      "fieldId": "inspectionId",
+      "label": {
+        "zh-CN": "inspectionId",
+        "ru-RU": "inspectionId",
+        "ky-KG": "inspectionId"
+      }
+    },
+    {
+      "fieldId": "inspectionResult",
+      "label": {
+        "zh-CN": "inspectionResult",
+        "ru-RU": "inspectionResult",
+        "ky-KG": "inspectionResult"
+      }
+    },
+    {
+      "fieldId": "intentRoomType",
+      "label": {
+        "zh-CN": "intentRoomType",
+        "ru-RU": "intentRoomType",
+        "ky-KG": "intentRoomType"
+      }
+    },
+    {
+      "fieldId": "lastInspectionId",
+      "label": {
+        "zh-CN": "lastInspectionId",
+        "ru-RU": "lastInspectionId",
+        "ky-KG": "lastInspectionId"
+      }
+    },
+    {
+      "fieldId": "leadId",
+      "label": {
+        "zh-CN": "线索ID",
+        "ru-RU": "leadId",
+        "ky-KG": "leadId"
+      }
+    },
+    {
+      "fieldId": "liabilityAmount",
+      "label": {
+        "zh-CN": "liabilityAmount",
+        "ru-RU": "liabilityAmount",
+        "ky-KG": "liabilityAmount"
+      }
+    },
+    {
+      "fieldId": "linkedAt",
+      "label": {
+        "zh-CN": "linkedAt",
+        "ru-RU": "linkedAt",
+        "ky-KG": "linkedAt"
+      }
+    },
+    {
+      "fieldId": "linkedBy",
+      "label": {
+        "zh-CN": "linkedBy",
+        "ru-RU": "linkedBy",
+        "ky-KG": "linkedBy"
+      }
+    },
+    {
+      "fieldId": "linkReason",
+      "label": {
+        "zh-CN": "linkReason",
+        "ru-RU": "linkReason",
+        "ky-KG": "linkReason"
+      }
+    },
+    {
+      "fieldId": "managementConclusion",
+      "label": {
+        "zh-CN": "管理结论",
+        "ru-RU": "Управленческий вывод",
+        "ky-KG": "Башкаруу жыйынтыгы"
+      }
+    },
+    {
+      "fieldId": "name",
+      "label": {
+        "zh-CN": "name",
+        "ru-RU": "name",
+        "ky-KG": "name"
+      }
+    },
+    {
+      "fieldId": "nextPeriodFocus",
+      "label": {
+        "zh-CN": "下一周期重点",
+        "ru-RU": "Фокус следующего периода",
+        "ky-KG": "Кийинки мезгил фокусу"
+      }
+    },
+    {
+      "fieldId": "note",
+      "label": {
+        "zh-CN": "备注",
+        "ru-RU": "Примечание",
+        "ky-KG": "Эскертүү"
+      }
+    },
+    {
+      "fieldId": "ownerRole",
+      "label": {
+        "zh-CN": "ownerRole",
+        "ru-RU": "ownerRole",
+        "ky-KG": "ownerRole"
+      }
+    },
+    {
+      "fieldId": "payerName",
+      "label": {
+        "zh-CN": "付款人",
+        "ru-RU": "Плательщик",
+        "ky-KG": "Төлөөчү"
+      }
+    },
+    {
+      "fieldId": "paymentAmount",
+      "label": {
+        "zh-CN": "收款金额",
+        "ru-RU": "Сумма платежа",
+        "ky-KG": "Төлөм суммасы"
+      }
+    },
+    {
+      "fieldId": "paymentId",
+      "label": {
+        "zh-CN": "收款记录",
+        "ru-RU": "Платежная запись",
+        "ky-KG": "Төлөм жазуусу"
+      }
+    },
+    {
+      "fieldId": "paymentMethod",
+      "label": {
+        "zh-CN": "付款方式",
+        "ru-RU": "Способ оплаты",
+        "ky-KG": "Төлөм ыкмасы"
+      }
+    },
+    {
+      "fieldId": "paymentTime",
+      "label": {
+        "zh-CN": "付款时间",
+        "ru-RU": "Время оплаты",
+        "ky-KG": "Төлөм убактысы"
+      }
+    },
+    {
+      "fieldId": "periodEnd",
+      "label": {
+        "zh-CN": "periodEnd",
+        "ru-RU": "periodEnd",
+        "ky-KG": "periodEnd"
+      }
+    },
+    {
+      "fieldId": "periodId",
+      "label": {
+        "zh-CN": "经营周期",
+        "ru-RU": "Операционный период",
+        "ky-KG": "Операция мезгили"
+      }
+    },
+    {
+      "fieldId": "periodStart",
+      "label": {
+        "zh-CN": "periodStart",
+        "ru-RU": "periodStart",
+        "ky-KG": "periodStart"
+      }
+    },
+    {
+      "fieldId": "phone",
+      "label": {
+        "zh-CN": "phone",
+        "ru-RU": "phone",
+        "ky-KG": "phone"
+      }
+    },
+    {
+      "fieldId": "policyRef",
+      "label": {
+        "zh-CN": "policyRef",
+        "ru-RU": "policyRef",
+        "ky-KG": "policyRef"
+      }
+    },
+    {
+      "fieldId": "price",
+      "label": {
+        "zh-CN": "价格",
+        "ru-RU": "Цена",
+        "ky-KG": "Баасы"
+      }
+    },
+    {
+      "fieldId": "privacyState",
+      "label": {
+        "zh-CN": "privacyState",
+        "ru-RU": "privacyState",
+        "ky-KG": "privacyState"
+      }
+    },
+    {
+      "fieldId": "ratePlan",
+      "label": {
+        "zh-CN": "价格方案",
+        "ru-RU": "Тарифный план",
+        "ky-KG": "Баалар планы"
+      }
+    },
+    {
+      "fieldId": "ratePlanId",
+      "label": {
+        "zh-CN": "价格方案ID",
+        "ru-RU": "ratePlanId",
+        "ky-KG": "ratePlanId"
+      }
+    },
+    {
+      "fieldId": "readinessNote",
+      "label": {
+        "zh-CN": "可用说明",
+        "ru-RU": "Описание готовности",
+        "ky-KG": "Даярдык түшүндүрмөсү"
+      }
+    },
+    {
+      "fieldId": "readinessState",
+      "label": {
+        "zh-CN": "可用状态",
+        "ru-RU": "Статус готовности",
+        "ky-KG": "Даярдык абалы"
+      }
+    },
+    {
+      "fieldId": "receiptNo",
+      "label": {
+        "zh-CN": "收据编号",
+        "ru-RU": "Номер квитанции",
+        "ky-KG": "Квитанция номери"
+      }
+    },
+    {
+      "fieldId": "receivedAmount",
+      "label": {
+        "zh-CN": "收款金额",
+        "ru-RU": "Полученная сумма",
+        "ky-KG": "Кабыл алынган сумма"
+      }
+    },
+    {
+      "fieldId": "receivedAt",
+      "label": {
+        "zh-CN": "receivedAt",
+        "ru-RU": "receivedAt",
+        "ky-KG": "receivedAt"
+      }
+    },
+    {
+      "fieldId": "receivedBy",
+      "label": {
+        "zh-CN": "收款人",
+        "ru-RU": "Получатель платежа",
+        "ky-KG": "Төлөмдү алган адам"
+      }
+    },
+    {
+      "fieldId": "refundAmount",
+      "label": {
+        "zh-CN": "退款金额",
+        "ru-RU": "Сумма возврата",
+        "ky-KG": "Кайтаруу суммасы"
+      }
+    },
+    {
+      "fieldId": "refundMethod",
+      "label": {
+        "zh-CN": "退款方式",
+        "ru-RU": "Способ возврата",
+        "ky-KG": "Кайтаруу ыкмасы"
+      }
+    },
+    {
+      "fieldId": "refundPaymentId",
+      "label": {
+        "zh-CN": "refundPaymentId",
+        "ru-RU": "refundPaymentId",
+        "ky-KG": "refundPaymentId"
+      }
+    },
+    {
+      "fieldId": "refundReceiver",
+      "label": {
+        "zh-CN": "退款接收人",
+        "ru-RU": "Получатель возврата",
+        "ky-KG": "Кайтарууну алуучу"
+      }
+    },
+    {
+      "fieldId": "releaseAt",
+      "label": {
+        "zh-CN": "释放时间",
+        "ru-RU": "Время освобождения",
+        "ky-KG": "Бошотуу убактысы"
+      }
+    },
+    {
+      "fieldId": "releaseAvailableAt",
+      "label": {
+        "zh-CN": "恢复可售时间",
+        "ru-RU": "Время восстановления продажи",
+        "ky-KG": "Сатууга калыбына келүү убактысы"
+      }
+    },
+    {
+      "fieldId": "releaseBed",
+      "label": {
+        "zh-CN": "释放床位",
+        "ru-RU": "Освободить койку",
+        "ky-KG": "Койканы бошотуу"
+      }
+    },
+    {
+      "fieldId": "releaseReason",
+      "label": {
+        "zh-CN": "释放原因",
+        "ru-RU": "Причина освобождения",
+        "ky-KG": "Бошотуу себеби"
+      }
+    },
+    {
+      "fieldId": "requiredDepositAmount",
+      "label": {
+        "zh-CN": "应收押金",
+        "ru-RU": "Требуемый депозит",
+        "ky-KG": "Керек депозит"
+      }
+    },
+    {
+      "fieldId": "reservationId",
+      "label": {
+        "zh-CN": "预订ID",
+        "ru-RU": "reservationId",
+        "ky-KG": "reservationId"
+      }
+    },
+    {
+      "fieldId": "reservationState",
+      "label": {
+        "zh-CN": "reservationState",
+        "ru-RU": "reservationState",
+        "ky-KG": "reservationState"
+      }
+    },
+    {
+      "fieldId": "residentId",
+      "label": {
+        "zh-CN": "入住人ID",
+        "ru-RU": "residentId",
+        "ky-KG": "residentId"
+      }
+    },
+    {
+      "fieldId": "resolutionState",
+      "label": {
+        "zh-CN": "resolutionState",
+        "ru-RU": "resolutionState",
+        "ky-KG": "resolutionState"
+      }
+    },
+    {
+      "fieldId": "resourceKpi",
+      "label": {
+        "zh-CN": "resourceKpi",
+        "ru-RU": "resourceKpi",
+        "ky-KG": "resourceKpi"
+      }
+    },
+    {
+      "fieldId": "resourceScope",
+      "label": {
+        "zh-CN": "服务范围",
+        "ru-RU": "Объем сервиса",
+        "ky-KG": "Тейлөө аймагы"
+      }
+    },
+    {
+      "fieldId": "roomId",
+      "label": {
+        "zh-CN": "房间",
+        "ru-RU": "Комната",
+        "ky-KG": "Бөлмө"
+      }
+    },
+    {
+      "fieldId": "roomNo",
+      "label": {
+        "zh-CN": "房号",
+        "ru-RU": "Номер комнаты",
+        "ky-KG": "Бөлмө номери"
+      }
+    },
+    {
+      "fieldId": "roomNote",
+      "label": {
+        "zh-CN": "房间备注",
+        "ru-RU": "Примечание к комнате",
+        "ky-KG": "Бөлмө эскертүүсү"
+      }
+    },
+    {
+      "fieldId": "roomType",
+      "label": {
+        "zh-CN": "房型",
+        "ru-RU": "Тип комнаты",
+        "ky-KG": "Бөлмө түрү"
+      }
+    },
+    {
+      "fieldId": "serviceTaskId",
+      "label": {
+        "zh-CN": "服务任务ID",
+        "ru-RU": "serviceTaskId",
+        "ky-KG": "serviceTaskId"
+      }
+    },
+    {
+      "fieldId": "settlementState",
+      "label": {
+        "zh-CN": "settlementState",
+        "ru-RU": "settlementState",
+        "ky-KG": "settlementState"
+      }
+    },
+    {
+      "fieldId": "severity",
+      "label": {
+        "zh-CN": "severity",
+        "ru-RU": "severity",
+        "ky-KG": "severity"
+      }
+    },
+    {
+      "fieldId": "snapshotId",
+      "label": {
+        "zh-CN": "snapshotId",
+        "ru-RU": "snapshotId",
+        "ky-KG": "snapshotId"
+      }
+    },
+    {
+      "fieldId": "sourceChannel",
+      "label": {
+        "zh-CN": "sourceChannel",
+        "ru-RU": "sourceChannel",
+        "ky-KG": "sourceChannel"
+      }
+    },
+    {
+      "fieldId": "sourceWorkItemId",
+      "label": {
+        "zh-CN": "sourceWorkItemId",
+        "ru-RU": "sourceWorkItemId",
+        "ky-KG": "sourceWorkItemId"
+      }
+    },
+    {
+      "fieldId": "stayId",
+      "label": {
+        "zh-CN": "住宿单",
+        "ru-RU": "Ордер проживания",
+        "ky-KG": "Жашоо ордери"
+      }
+    },
+    {
+      "fieldId": "stayState",
+      "label": {
+        "zh-CN": "stayState",
+        "ru-RU": "stayState",
+        "ky-KG": "stayState"
+      }
+    },
+    {
+      "fieldId": "targetMetric",
+      "label": {
+        "zh-CN": "targetMetric",
+        "ru-RU": "targetMetric",
+        "ky-KG": "targetMetric"
+      }
+    },
+    {
+      "fieldId": "taskId",
+      "label": {
+        "zh-CN": "任务",
+        "ru-RU": "Задача",
+        "ky-KG": "Тапшырма"
+      }
+    },
+    {
+      "fieldId": "taskState",
+      "label": {
+        "zh-CN": "taskState",
+        "ru-RU": "taskState",
+        "ky-KG": "taskState"
+      }
+    },
+    {
+      "fieldId": "taskType",
+      "label": {
+        "zh-CN": "taskType",
+        "ru-RU": "taskType",
+        "ky-KG": "taskType"
+      }
+    },
+    {
+      "fieldId": "verifiedAt",
+      "label": {
+        "zh-CN": "verifiedAt",
+        "ru-RU": "verifiedAt",
+        "ky-KG": "verifiedAt"
       }
     }
   ]

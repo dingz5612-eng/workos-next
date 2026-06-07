@@ -6,13 +6,13 @@
   "sourceGraph": "docs/oam/oam-kernel-graph.json",
   "sourceLifecyclePolicy": "docs/oam/file-lifecycle-policy.json",
   "defaultPolicy": "unregistered_files_are_not_allowed",
-  "fileCount": 826,
+  "fileCount": 870,
   "identityCounts": {
-    "validation_file": 277,
+    "validation_file": 282,
     "implementation_file": 329,
-    "authority_file": 200,
-    "human_manual": 17,
-    "derived_view": 3
+    "authority_file": 202,
+    "derived_view": 39,
+    "human_manual": 18
   },
   "files": [
     {
@@ -5207,6 +5207,35 @@
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
     },
     {
+      "path": "docs/business/domains/dormitory/dormitory-observability-contract.json",
+      "currentIdentity": "derived_view",
+      "lifecycleState": "derived_view",
+      "responsibilityScopeZh": "由系统内核或 OAM 图谱派生的只读视图。",
+      "forbiddenScopeZh": "不得手工修改，不得替代源内核。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/business/check-dormitory-derived-contracts.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "owner": "domain-owner",
+      "sourceKernel": "domain.dormitory",
+      "graphBinding": "file.docs/business/domains/dormitory/dormitory-observability-contract.json",
+      "gates": [
+        "scripts/business/check-dormitory-derived-contracts.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": false,
+      "ciReferenceAllowed": true,
+      "replacementPath": "docs/business/domains/dormitory/dormitory-observability-contract.json",
+      "absorbedBy": "docs/business/domains/dormitory/dormitory-observability-contract.json",
+      "removalProofGate": "scripts/business/check-dormitory-derived-contracts.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
       "path": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
       "currentIdentity": "authority_file",
       "lifecycleState": "active_contract",
@@ -5216,14 +5245,14 @@
       "currentFactAuthorityAllowedByGraph": true,
       "upstreamSource": "docs/oam/oam-kernel-graph.json",
       "downstreamConsumers": [
-        "scripts/business/check-dormitory-execution-kernel.mjs",
+        "scripts/business/check-dormitory-operating-kernel.mjs",
         "docs/oam/oam-kernel-graph.json"
       ],
       "owner": "domain-owner",
-      "sourceKernel": "kernel.domain",
+      "sourceKernel": "domain.dormitory",
       "graphBinding": "file.docs/business/domains/dormitory/dormitory-operating-kernel.json",
       "gates": [
-        "scripts/business/check-dormitory-execution-kernel.mjs"
+        "scripts/business/check-dormitory-operating-kernel.mjs"
       ],
       "evidence": [
         "artifacts/oam/evidence/evidence-graph.json"
@@ -5232,7 +5261,1080 @@
       "ciReferenceAllowed": true,
       "replacementPath": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
       "absorbedBy": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
-      "removalProofGate": "scripts/business/check-dormitory-execution-kernel.mjs",
+      "removalProofGate": "scripts/business/check-dormitory-operating-kernel.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/dormitory-operator-playbook.md",
+      "currentIdentity": "human_manual",
+      "lifecycleState": "human_manual",
+      "responsibilityScopeZh": "当前 OAM 人读说明。",
+      "forbiddenScopeZh": "不得定义当前事实。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/business/check-dormitory-derived-contracts.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "owner": "domain-owner",
+      "sourceKernel": "domain.dormitory",
+      "graphBinding": "file.docs/business/domains/dormitory/dormitory-operator-playbook.md",
+      "gates": [
+        "scripts/business/check-dormitory-derived-contracts.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "docs/business/domains/dormitory/dormitory-operator-playbook.md",
+      "absorbedBy": "docs/business/domains/dormitory/dormitory-operator-playbook.md",
+      "removalProofGate": "scripts/business/check-dormitory-derived-contracts.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/dormitory-pilot-go-no-go.json",
+      "currentIdentity": "derived_view",
+      "lifecycleState": "derived_view",
+      "responsibilityScopeZh": "由系统内核或 OAM 图谱派生的只读视图。",
+      "forbiddenScopeZh": "不得手工修改，不得替代源内核。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/business/check-dormitory-derived-contracts.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "owner": "domain-owner",
+      "sourceKernel": "domain.dormitory",
+      "graphBinding": "file.docs/business/domains/dormitory/dormitory-pilot-go-no-go.json",
+      "gates": [
+        "scripts/business/check-dormitory-derived-contracts.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": false,
+      "ciReferenceAllowed": true,
+      "replacementPath": "docs/business/domains/dormitory/dormitory-pilot-go-no-go.json",
+      "absorbedBy": "docs/business/domains/dormitory/dormitory-pilot-go-no-go.json",
+      "removalProofGate": "scripts/business/check-dormitory-derived-contracts.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/dormitory-pilot-scenario-pack.yml",
+      "currentIdentity": "derived_view",
+      "lifecycleState": "derived_view",
+      "responsibilityScopeZh": "由系统内核或 OAM 图谱派生的只读视图。",
+      "forbiddenScopeZh": "不得手工修改，不得替代源内核。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/business/check-dormitory-pilot-scenario-pack.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "owner": "domain-owner",
+      "sourceKernel": "domain.dormitory",
+      "graphBinding": "file.docs/business/domains/dormitory/dormitory-pilot-scenario-pack.yml",
+      "gates": [
+        "scripts/business/check-dormitory-pilot-scenario-pack.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": false,
+      "ciReferenceAllowed": true,
+      "replacementPath": "docs/business/domains/dormitory/dormitory-pilot-scenario-pack.yml",
+      "absorbedBy": "docs/business/domains/dormitory/dormitory-pilot-scenario-pack.yml",
+      "removalProofGate": "scripts/business/check-dormitory-pilot-scenario-pack.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/dormitory-release-train.yml",
+      "currentIdentity": "derived_view",
+      "lifecycleState": "derived_view",
+      "responsibilityScopeZh": "由系统内核或 OAM 图谱派生的只读视图。",
+      "forbiddenScopeZh": "不得手工修改，不得替代源内核。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/business/check-dormitory-release-train.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "owner": "domain-owner",
+      "sourceKernel": "domain.dormitory",
+      "graphBinding": "file.docs/business/domains/dormitory/dormitory-release-train.yml",
+      "gates": [
+        "scripts/business/check-dormitory-release-train.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": false,
+      "ciReferenceAllowed": true,
+      "replacementPath": "docs/business/domains/dormitory/dormitory-release-train.yml",
+      "absorbedBy": "docs/business/domains/dormitory/dormitory-release-train.yml",
+      "removalProofGate": "scripts/business/check-dormitory-release-train.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/dormitory-seed-data-pack.json",
+      "currentIdentity": "derived_view",
+      "lifecycleState": "derived_view",
+      "responsibilityScopeZh": "由系统内核或 OAM 图谱派生的只读视图。",
+      "forbiddenScopeZh": "不得手工修改，不得替代源内核。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/business/check-dormitory-derived-contracts.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "owner": "domain-owner",
+      "sourceKernel": "domain.dormitory",
+      "graphBinding": "file.docs/business/domains/dormitory/dormitory-seed-data-pack.json",
+      "gates": [
+        "scripts/business/check-dormitory-derived-contracts.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": false,
+      "ciReferenceAllowed": true,
+      "replacementPath": "docs/business/domains/dormitory/dormitory-seed-data-pack.json",
+      "absorbedBy": "docs/business/domains/dormitory/dormitory-seed-data-pack.json",
+      "removalProofGate": "scripts/business/check-dormitory-derived-contracts.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/handoff-contract.json",
+      "currentIdentity": "authority_file",
+      "lifecycleState": "active_contract",
+      "responsibilityScopeZh": "当前 OAM 机器合同。",
+      "forbiddenScopeZh": "不得绕过系统内核、图谱、门禁或证据根。",
+      "currentFactAuthorityAllowed": true,
+      "currentFactAuthorityAllowedByGraph": true,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/business/check-dormitory-derived-contracts.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "owner": "domain-owner",
+      "sourceKernel": "domain.dormitory",
+      "graphBinding": "file.docs/business/domains/dormitory/handoff-contract.json",
+      "gates": [
+        "scripts/business/check-dormitory-derived-contracts.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "docs/business/domains/dormitory/handoff-contract.json",
+      "absorbedBy": "docs/business/domains/dormitory/handoff-contract.json",
+      "removalProofGate": "scripts/business/check-dormitory-derived-contracts.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/dorm-access-credential-issue.json",
+      "currentIdentity": "derived_view",
+      "lifecycleState": "derived_view",
+      "responsibilityScopeZh": "由系统内核或 OAM 图谱派生的只读视图。",
+      "forbiddenScopeZh": "不得手工修改，不得替代源内核。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/business/check-dormitory-derived-contracts.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "owner": "domain-owner",
+      "sourceKernel": "domain.dormitory",
+      "graphBinding": "file.docs/business/domains/dormitory/workitems/dorm-access-credential-issue.json",
+      "gates": [
+        "scripts/business/check-dormitory-derived-contracts.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": false,
+      "ciReferenceAllowed": true,
+      "replacementPath": "docs/business/domains/dormitory/workitems/dorm-access-credential-issue.json",
+      "absorbedBy": "docs/business/domains/dormitory/workitems/dorm-access-credential-issue.json",
+      "removalProofGate": "scripts/business/check-dormitory-derived-contracts.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/dorm-access-credential-revoke.json",
+      "currentIdentity": "derived_view",
+      "lifecycleState": "derived_view",
+      "responsibilityScopeZh": "由系统内核或 OAM 图谱派生的只读视图。",
+      "forbiddenScopeZh": "不得手工修改，不得替代源内核。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/business/check-dormitory-derived-contracts.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "owner": "domain-owner",
+      "sourceKernel": "domain.dormitory",
+      "graphBinding": "file.docs/business/domains/dormitory/workitems/dorm-access-credential-revoke.json",
+      "gates": [
+        "scripts/business/check-dormitory-derived-contracts.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": false,
+      "ciReferenceAllowed": true,
+      "replacementPath": "docs/business/domains/dormitory/workitems/dorm-access-credential-revoke.json",
+      "absorbedBy": "docs/business/domains/dormitory/workitems/dorm-access-credential-revoke.json",
+      "removalProofGate": "scripts/business/check-dormitory-derived-contracts.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/dorm-bed-setup-confirm.json",
+      "currentIdentity": "derived_view",
+      "lifecycleState": "derived_view",
+      "responsibilityScopeZh": "由系统内核或 OAM 图谱派生的只读视图。",
+      "forbiddenScopeZh": "不得手工修改，不得替代源内核。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/business/check-dormitory-derived-contracts.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "owner": "domain-owner",
+      "sourceKernel": "domain.dormitory",
+      "graphBinding": "file.docs/business/domains/dormitory/workitems/dorm-bed-setup-confirm.json",
+      "gates": [
+        "scripts/business/check-dormitory-derived-contracts.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": false,
+      "ciReferenceAllowed": true,
+      "replacementPath": "docs/business/domains/dormitory/workitems/dorm-bed-setup-confirm.json",
+      "absorbedBy": "docs/business/domains/dormitory/workitems/dorm-bed-setup-confirm.json",
+      "removalProofGate": "scripts/business/check-dormitory-derived-contracts.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/dorm-bed-transfer-approve.json",
+      "currentIdentity": "derived_view",
+      "lifecycleState": "derived_view",
+      "responsibilityScopeZh": "由系统内核或 OAM 图谱派生的只读视图。",
+      "forbiddenScopeZh": "不得手工修改，不得替代源内核。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/business/check-dormitory-derived-contracts.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "owner": "domain-owner",
+      "sourceKernel": "domain.dormitory",
+      "graphBinding": "file.docs/business/domains/dormitory/workitems/dorm-bed-transfer-approve.json",
+      "gates": [
+        "scripts/business/check-dormitory-derived-contracts.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": false,
+      "ciReferenceAllowed": true,
+      "replacementPath": "docs/business/domains/dormitory/workitems/dorm-bed-transfer-approve.json",
+      "absorbedBy": "docs/business/domains/dormitory/workitems/dorm-bed-transfer-approve.json",
+      "removalProofGate": "scripts/business/check-dormitory-derived-contracts.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/dorm-checkin-confirm.json",
+      "currentIdentity": "derived_view",
+      "lifecycleState": "derived_view",
+      "responsibilityScopeZh": "由系统内核或 OAM 图谱派生的只读视图。",
+      "forbiddenScopeZh": "不得手工修改，不得替代源内核。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/business/check-dormitory-derived-contracts.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "owner": "domain-owner",
+      "sourceKernel": "domain.dormitory",
+      "graphBinding": "file.docs/business/domains/dormitory/workitems/dorm-checkin-confirm.json",
+      "gates": [
+        "scripts/business/check-dormitory-derived-contracts.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": false,
+      "ciReferenceAllowed": true,
+      "replacementPath": "docs/business/domains/dormitory/workitems/dorm-checkin-confirm.json",
+      "absorbedBy": "docs/business/domains/dormitory/workitems/dorm-checkin-confirm.json",
+      "removalProofGate": "scripts/business/check-dormitory-derived-contracts.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/dorm-checkout-settlement-approve.json",
+      "currentIdentity": "derived_view",
+      "lifecycleState": "derived_view",
+      "responsibilityScopeZh": "由系统内核或 OAM 图谱派生的只读视图。",
+      "forbiddenScopeZh": "不得手工修改，不得替代源内核。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/business/check-dormitory-derived-contracts.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "owner": "domain-owner",
+      "sourceKernel": "domain.dormitory",
+      "graphBinding": "file.docs/business/domains/dormitory/workitems/dorm-checkout-settlement-approve.json",
+      "gates": [
+        "scripts/business/check-dormitory-derived-contracts.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": false,
+      "ciReferenceAllowed": true,
+      "replacementPath": "docs/business/domains/dormitory/workitems/dorm-checkout-settlement-approve.json",
+      "absorbedBy": "docs/business/domains/dormitory/workitems/dorm-checkout-settlement-approve.json",
+      "removalProofGate": "scripts/business/check-dormitory-derived-contracts.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/dorm-deposit-confirm.json",
+      "currentIdentity": "derived_view",
+      "lifecycleState": "derived_view",
+      "responsibilityScopeZh": "由系统内核或 OAM 图谱派生的只读视图。",
+      "forbiddenScopeZh": "不得手工修改，不得替代源内核。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/business/check-dormitory-derived-contracts.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "owner": "domain-owner",
+      "sourceKernel": "domain.dormitory",
+      "graphBinding": "file.docs/business/domains/dormitory/workitems/dorm-deposit-confirm.json",
+      "gates": [
+        "scripts/business/check-dormitory-derived-contracts.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": false,
+      "ciReferenceAllowed": true,
+      "replacementPath": "docs/business/domains/dormitory/workitems/dorm-deposit-confirm.json",
+      "absorbedBy": "docs/business/domains/dormitory/workitems/dorm-deposit-confirm.json",
+      "removalProofGate": "scripts/business/check-dormitory-derived-contracts.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/dorm-exception-resolve.json",
+      "currentIdentity": "derived_view",
+      "lifecycleState": "derived_view",
+      "responsibilityScopeZh": "由系统内核或 OAM 图谱派生的只读视图。",
+      "forbiddenScopeZh": "不得手工修改，不得替代源内核。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/business/check-dormitory-derived-contracts.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "owner": "domain-owner",
+      "sourceKernel": "domain.dormitory",
+      "graphBinding": "file.docs/business/domains/dormitory/workitems/dorm-exception-resolve.json",
+      "gates": [
+        "scripts/business/check-dormitory-derived-contracts.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": false,
+      "ciReferenceAllowed": true,
+      "replacementPath": "docs/business/domains/dormitory/workitems/dorm-exception-resolve.json",
+      "absorbedBy": "docs/business/domains/dormitory/workitems/dorm-exception-resolve.json",
+      "removalProofGate": "scripts/business/check-dormitory-derived-contracts.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/dorm-incident-record.json",
+      "currentIdentity": "derived_view",
+      "lifecycleState": "derived_view",
+      "responsibilityScopeZh": "由系统内核或 OAM 图谱派生的只读视图。",
+      "forbiddenScopeZh": "不得手工修改，不得替代源内核。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/business/check-dormitory-derived-contracts.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "owner": "domain-owner",
+      "sourceKernel": "domain.dormitory",
+      "graphBinding": "file.docs/business/domains/dormitory/workitems/dorm-incident-record.json",
+      "gates": [
+        "scripts/business/check-dormitory-derived-contracts.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": false,
+      "ciReferenceAllowed": true,
+      "replacementPath": "docs/business/domains/dormitory/workitems/dorm-incident-record.json",
+      "absorbedBy": "docs/business/domains/dormitory/workitems/dorm-incident-record.json",
+      "removalProofGate": "scripts/business/check-dormitory-derived-contracts.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/dorm-lead-capture.json",
+      "currentIdentity": "derived_view",
+      "lifecycleState": "derived_view",
+      "responsibilityScopeZh": "由系统内核或 OAM 图谱派生的只读视图。",
+      "forbiddenScopeZh": "不得手工修改，不得替代源内核。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/business/check-dormitory-derived-contracts.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "owner": "domain-owner",
+      "sourceKernel": "domain.dormitory",
+      "graphBinding": "file.docs/business/domains/dormitory/workitems/dorm-lead-capture.json",
+      "gates": [
+        "scripts/business/check-dormitory-derived-contracts.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": false,
+      "ciReferenceAllowed": true,
+      "replacementPath": "docs/business/domains/dormitory/workitems/dorm-lead-capture.json",
+      "absorbedBy": "docs/business/domains/dormitory/workitems/dorm-lead-capture.json",
+      "removalProofGate": "scripts/business/check-dormitory-derived-contracts.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/dorm-payment-confirm.json",
+      "currentIdentity": "derived_view",
+      "lifecycleState": "derived_view",
+      "responsibilityScopeZh": "由系统内核或 OAM 图谱派生的只读视图。",
+      "forbiddenScopeZh": "不得手工修改，不得替代源内核。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/business/check-dormitory-derived-contracts.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "owner": "domain-owner",
+      "sourceKernel": "domain.dormitory",
+      "graphBinding": "file.docs/business/domains/dormitory/workitems/dorm-payment-confirm.json",
+      "gates": [
+        "scripts/business/check-dormitory-derived-contracts.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": false,
+      "ciReferenceAllowed": true,
+      "replacementPath": "docs/business/domains/dormitory/workitems/dorm-payment-confirm.json",
+      "absorbedBy": "docs/business/domains/dormitory/workitems/dorm-payment-confirm.json",
+      "removalProofGate": "scripts/business/check-dormitory-derived-contracts.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/dorm-period-action-plan-execute.json",
+      "currentIdentity": "derived_view",
+      "lifecycleState": "derived_view",
+      "responsibilityScopeZh": "由系统内核或 OAM 图谱派生的只读视图。",
+      "forbiddenScopeZh": "不得手工修改，不得替代源内核。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/business/check-dormitory-derived-contracts.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "owner": "domain-owner",
+      "sourceKernel": "domain.dormitory",
+      "graphBinding": "file.docs/business/domains/dormitory/workitems/dorm-period-action-plan-execute.json",
+      "gates": [
+        "scripts/business/check-dormitory-derived-contracts.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": false,
+      "ciReferenceAllowed": true,
+      "replacementPath": "docs/business/domains/dormitory/workitems/dorm-period-action-plan-execute.json",
+      "absorbedBy": "docs/business/domains/dormitory/workitems/dorm-period-action-plan-execute.json",
+      "removalProofGate": "scripts/business/check-dormitory-derived-contracts.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/dorm-period-review.json",
+      "currentIdentity": "derived_view",
+      "lifecycleState": "derived_view",
+      "responsibilityScopeZh": "由系统内核或 OAM 图谱派生的只读视图。",
+      "forbiddenScopeZh": "不得手工修改，不得替代源内核。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/business/check-dormitory-derived-contracts.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "owner": "domain-owner",
+      "sourceKernel": "domain.dormitory",
+      "graphBinding": "file.docs/business/domains/dormitory/workitems/dorm-period-review.json",
+      "gates": [
+        "scripts/business/check-dormitory-derived-contracts.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": false,
+      "ciReferenceAllowed": true,
+      "replacementPath": "docs/business/domains/dormitory/workitems/dorm-period-review.json",
+      "absorbedBy": "docs/business/domains/dormitory/workitems/dorm-period-review.json",
+      "removalProofGate": "scripts/business/check-dormitory-derived-contracts.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/dorm-rate-plan-confirm.json",
+      "currentIdentity": "derived_view",
+      "lifecycleState": "derived_view",
+      "responsibilityScopeZh": "由系统内核或 OAM 图谱派生的只读视图。",
+      "forbiddenScopeZh": "不得手工修改，不得替代源内核。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/business/check-dormitory-derived-contracts.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "owner": "domain-owner",
+      "sourceKernel": "domain.dormitory",
+      "graphBinding": "file.docs/business/domains/dormitory/workitems/dorm-rate-plan-confirm.json",
+      "gates": [
+        "scripts/business/check-dormitory-derived-contracts.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": false,
+      "ciReferenceAllowed": true,
+      "replacementPath": "docs/business/domains/dormitory/workitems/dorm-rate-plan-confirm.json",
+      "absorbedBy": "docs/business/domains/dormitory/workitems/dorm-rate-plan-confirm.json",
+      "removalProofGate": "scripts/business/check-dormitory-derived-contracts.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/dorm-reservation-cancel-close.json",
+      "currentIdentity": "derived_view",
+      "lifecycleState": "derived_view",
+      "responsibilityScopeZh": "由系统内核或 OAM 图谱派生的只读视图。",
+      "forbiddenScopeZh": "不得手工修改，不得替代源内核。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/business/check-dormitory-derived-contracts.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "owner": "domain-owner",
+      "sourceKernel": "domain.dormitory",
+      "graphBinding": "file.docs/business/domains/dormitory/workitems/dorm-reservation-cancel-close.json",
+      "gates": [
+        "scripts/business/check-dormitory-derived-contracts.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": false,
+      "ciReferenceAllowed": true,
+      "replacementPath": "docs/business/domains/dormitory/workitems/dorm-reservation-cancel-close.json",
+      "absorbedBy": "docs/business/domains/dormitory/workitems/dorm-reservation-cancel-close.json",
+      "removalProofGate": "scripts/business/check-dormitory-derived-contracts.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/dorm-reservation-confirm.json",
+      "currentIdentity": "derived_view",
+      "lifecycleState": "derived_view",
+      "responsibilityScopeZh": "由系统内核或 OAM 图谱派生的只读视图。",
+      "forbiddenScopeZh": "不得手工修改，不得替代源内核。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/business/check-dormitory-derived-contracts.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "owner": "domain-owner",
+      "sourceKernel": "domain.dormitory",
+      "graphBinding": "file.docs/business/domains/dormitory/workitems/dorm-reservation-confirm.json",
+      "gates": [
+        "scripts/business/check-dormitory-derived-contracts.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": false,
+      "ciReferenceAllowed": true,
+      "replacementPath": "docs/business/domains/dormitory/workitems/dorm-reservation-confirm.json",
+      "absorbedBy": "docs/business/domains/dormitory/workitems/dorm-reservation-confirm.json",
+      "removalProofGate": "scripts/business/check-dormitory-derived-contracts.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/dorm-reservation-no-show-close.json",
+      "currentIdentity": "derived_view",
+      "lifecycleState": "derived_view",
+      "responsibilityScopeZh": "由系统内核或 OAM 图谱派生的只读视图。",
+      "forbiddenScopeZh": "不得手工修改，不得替代源内核。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/business/check-dormitory-derived-contracts.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "owner": "domain-owner",
+      "sourceKernel": "domain.dormitory",
+      "graphBinding": "file.docs/business/domains/dormitory/workitems/dorm-reservation-no-show-close.json",
+      "gates": [
+        "scripts/business/check-dormitory-derived-contracts.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": false,
+      "ciReferenceAllowed": true,
+      "replacementPath": "docs/business/domains/dormitory/workitems/dorm-reservation-no-show-close.json",
+      "absorbedBy": "docs/business/domains/dormitory/workitems/dorm-reservation-no-show-close.json",
+      "removalProofGate": "scripts/business/check-dormitory-derived-contracts.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/dorm-resource-readiness-confirm.json",
+      "currentIdentity": "derived_view",
+      "lifecycleState": "derived_view",
+      "responsibilityScopeZh": "由系统内核或 OAM 图谱派生的只读视图。",
+      "forbiddenScopeZh": "不得手工修改，不得替代源内核。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/business/check-dormitory-derived-contracts.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "owner": "domain-owner",
+      "sourceKernel": "domain.dormitory",
+      "graphBinding": "file.docs/business/domains/dormitory/workitems/dorm-resource-readiness-confirm.json",
+      "gates": [
+        "scripts/business/check-dormitory-derived-contracts.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": false,
+      "ciReferenceAllowed": true,
+      "replacementPath": "docs/business/domains/dormitory/workitems/dorm-resource-readiness-confirm.json",
+      "absorbedBy": "docs/business/domains/dormitory/workitems/dorm-resource-readiness-confirm.json",
+      "removalProofGate": "scripts/business/check-dormitory-derived-contracts.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/dorm-room-inspection-confirm.json",
+      "currentIdentity": "derived_view",
+      "lifecycleState": "derived_view",
+      "responsibilityScopeZh": "由系统内核或 OAM 图谱派生的只读视图。",
+      "forbiddenScopeZh": "不得手工修改，不得替代源内核。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/business/check-dormitory-derived-contracts.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "owner": "domain-owner",
+      "sourceKernel": "domain.dormitory",
+      "graphBinding": "file.docs/business/domains/dormitory/workitems/dorm-room-inspection-confirm.json",
+      "gates": [
+        "scripts/business/check-dormitory-derived-contracts.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": false,
+      "ciReferenceAllowed": true,
+      "replacementPath": "docs/business/domains/dormitory/workitems/dorm-room-inspection-confirm.json",
+      "absorbedBy": "docs/business/domains/dormitory/workitems/dorm-room-inspection-confirm.json",
+      "removalProofGate": "scripts/business/check-dormitory-derived-contracts.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/dorm-room-setup-confirm.json",
+      "currentIdentity": "derived_view",
+      "lifecycleState": "derived_view",
+      "responsibilityScopeZh": "由系统内核或 OAM 图谱派生的只读视图。",
+      "forbiddenScopeZh": "不得手工修改，不得替代源内核。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/business/check-dormitory-derived-contracts.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "owner": "domain-owner",
+      "sourceKernel": "domain.dormitory",
+      "graphBinding": "file.docs/business/domains/dormitory/workitems/dorm-room-setup-confirm.json",
+      "gates": [
+        "scripts/business/check-dormitory-derived-contracts.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": false,
+      "ciReferenceAllowed": true,
+      "replacementPath": "docs/business/domains/dormitory/workitems/dorm-room-setup-confirm.json",
+      "absorbedBy": "docs/business/domains/dormitory/workitems/dorm-room-setup-confirm.json",
+      "removalProofGate": "scripts/business/check-dormitory-derived-contracts.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/dorm-service-task-assign.json",
+      "currentIdentity": "derived_view",
+      "lifecycleState": "derived_view",
+      "responsibilityScopeZh": "由系统内核或 OAM 图谱派生的只读视图。",
+      "forbiddenScopeZh": "不得手工修改，不得替代源内核。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/business/check-dormitory-derived-contracts.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "owner": "domain-owner",
+      "sourceKernel": "domain.dormitory",
+      "graphBinding": "file.docs/business/domains/dormitory/workitems/dorm-service-task-assign.json",
+      "gates": [
+        "scripts/business/check-dormitory-derived-contracts.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": false,
+      "ciReferenceAllowed": true,
+      "replacementPath": "docs/business/domains/dormitory/workitems/dorm-service-task-assign.json",
+      "absorbedBy": "docs/business/domains/dormitory/workitems/dorm-service-task-assign.json",
+      "removalProofGate": "scripts/business/check-dormitory-derived-contracts.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/dorm-service-task-complete.json",
+      "currentIdentity": "derived_view",
+      "lifecycleState": "derived_view",
+      "responsibilityScopeZh": "由系统内核或 OAM 图谱派生的只读视图。",
+      "forbiddenScopeZh": "不得手工修改，不得替代源内核。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/business/check-dormitory-derived-contracts.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "owner": "domain-owner",
+      "sourceKernel": "domain.dormitory",
+      "graphBinding": "file.docs/business/domains/dormitory/workitems/dorm-service-task-complete.json",
+      "gates": [
+        "scripts/business/check-dormitory-derived-contracts.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": false,
+      "ciReferenceAllowed": true,
+      "replacementPath": "docs/business/domains/dormitory/workitems/dorm-service-task-complete.json",
+      "absorbedBy": "docs/business/domains/dormitory/workitems/dorm-service-task-complete.json",
+      "removalProofGate": "scripts/business/check-dormitory-derived-contracts.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/dorm-service-task-create.json",
+      "currentIdentity": "derived_view",
+      "lifecycleState": "derived_view",
+      "responsibilityScopeZh": "由系统内核或 OAM 图谱派生的只读视图。",
+      "forbiddenScopeZh": "不得手工修改，不得替代源内核。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/business/check-dormitory-derived-contracts.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "owner": "domain-owner",
+      "sourceKernel": "domain.dormitory",
+      "graphBinding": "file.docs/business/domains/dormitory/workitems/dorm-service-task-create.json",
+      "gates": [
+        "scripts/business/check-dormitory-derived-contracts.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": false,
+      "ciReferenceAllowed": true,
+      "replacementPath": "docs/business/domains/dormitory/workitems/dorm-service-task-create.json",
+      "absorbedBy": "docs/business/domains/dormitory/workitems/dorm-service-task-create.json",
+      "removalProofGate": "scripts/business/check-dormitory-derived-contracts.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/dorm-service-task-verify.json",
+      "currentIdentity": "derived_view",
+      "lifecycleState": "derived_view",
+      "responsibilityScopeZh": "由系统内核或 OAM 图谱派生的只读视图。",
+      "forbiddenScopeZh": "不得手工修改，不得替代源内核。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/business/check-dormitory-derived-contracts.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "owner": "domain-owner",
+      "sourceKernel": "domain.dormitory",
+      "graphBinding": "file.docs/business/domains/dormitory/workitems/dorm-service-task-verify.json",
+      "gates": [
+        "scripts/business/check-dormitory-derived-contracts.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": false,
+      "ciReferenceAllowed": true,
+      "replacementPath": "docs/business/domains/dormitory/workitems/dorm-service-task-verify.json",
+      "absorbedBy": "docs/business/domains/dormitory/workitems/dorm-service-task-verify.json",
+      "removalProofGate": "scripts/business/check-dormitory-derived-contracts.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/dorm-stay-extend-approve.json",
+      "currentIdentity": "derived_view",
+      "lifecycleState": "derived_view",
+      "responsibilityScopeZh": "由系统内核或 OAM 图谱派生的只读视图。",
+      "forbiddenScopeZh": "不得手工修改，不得替代源内核。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/business/check-dormitory-derived-contracts.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "owner": "domain-owner",
+      "sourceKernel": "domain.dormitory",
+      "graphBinding": "file.docs/business/domains/dormitory/workitems/dorm-stay-extend-approve.json",
+      "gates": [
+        "scripts/business/check-dormitory-derived-contracts.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": false,
+      "ciReferenceAllowed": true,
+      "replacementPath": "docs/business/domains/dormitory/workitems/dorm-stay-extend-approve.json",
+      "absorbedBy": "docs/business/domains/dormitory/workitems/dorm-stay-extend-approve.json",
+      "removalProofGate": "scripts/business/check-dormitory-derived-contracts.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/finance-charge-adjustment-approve.json",
+      "currentIdentity": "derived_view",
+      "lifecycleState": "derived_view",
+      "responsibilityScopeZh": "由系统内核或 OAM 图谱派生的只读视图。",
+      "forbiddenScopeZh": "不得手工修改，不得替代源内核。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/business/check-dormitory-derived-contracts.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "owner": "finance-gate",
+      "sourceKernel": "domain.dormitory",
+      "graphBinding": "file.docs/business/domains/dormitory/workitems/finance-charge-adjustment-approve.json",
+      "gates": [
+        "scripts/business/check-dormitory-derived-contracts.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": false,
+      "ciReferenceAllowed": true,
+      "replacementPath": "docs/business/domains/dormitory/workitems/finance-charge-adjustment-approve.json",
+      "absorbedBy": "docs/business/domains/dormitory/workitems/finance-charge-adjustment-approve.json",
+      "removalProofGate": "scripts/business/check-dormitory-derived-contracts.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/finance-correction-apply.json",
+      "currentIdentity": "derived_view",
+      "lifecycleState": "derived_view",
+      "responsibilityScopeZh": "由系统内核或 OAM 图谱派生的只读视图。",
+      "forbiddenScopeZh": "不得手工修改，不得替代源内核。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/business/check-dormitory-derived-contracts.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "owner": "finance-gate",
+      "sourceKernel": "domain.dormitory",
+      "graphBinding": "file.docs/business/domains/dormitory/workitems/finance-correction-apply.json",
+      "gates": [
+        "scripts/business/check-dormitory-derived-contracts.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": false,
+      "ciReferenceAllowed": true,
+      "replacementPath": "docs/business/domains/dormitory/workitems/finance-correction-apply.json",
+      "absorbedBy": "docs/business/domains/dormitory/workitems/finance-correction-apply.json",
+      "removalProofGate": "scripts/business/check-dormitory-derived-contracts.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/finance-debt-follow-up.json",
+      "currentIdentity": "derived_view",
+      "lifecycleState": "derived_view",
+      "responsibilityScopeZh": "由系统内核或 OAM 图谱派生的只读视图。",
+      "forbiddenScopeZh": "不得手工修改，不得替代源内核。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/business/check-dormitory-derived-contracts.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "owner": "finance-gate",
+      "sourceKernel": "domain.dormitory",
+      "graphBinding": "file.docs/business/domains/dormitory/workitems/finance-debt-follow-up.json",
+      "gates": [
+        "scripts/business/check-dormitory-derived-contracts.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": false,
+      "ciReferenceAllowed": true,
+      "replacementPath": "docs/business/domains/dormitory/workitems/finance-debt-follow-up.json",
+      "absorbedBy": "docs/business/domains/dormitory/workitems/finance-debt-follow-up.json",
+      "removalProofGate": "scripts/business/check-dormitory-derived-contracts.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/finance-expense-approve.json",
+      "currentIdentity": "derived_view",
+      "lifecycleState": "derived_view",
+      "responsibilityScopeZh": "由系统内核或 OAM 图谱派生的只读视图。",
+      "forbiddenScopeZh": "不得手工修改，不得替代源内核。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/business/check-dormitory-derived-contracts.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "owner": "finance-gate",
+      "sourceKernel": "domain.dormitory",
+      "graphBinding": "file.docs/business/domains/dormitory/workitems/finance-expense-approve.json",
+      "gates": [
+        "scripts/business/check-dormitory-derived-contracts.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": false,
+      "ciReferenceAllowed": true,
+      "replacementPath": "docs/business/domains/dormitory/workitems/finance-expense-approve.json",
+      "absorbedBy": "docs/business/domains/dormitory/workitems/finance-expense-approve.json",
+      "removalProofGate": "scripts/business/check-dormitory-derived-contracts.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/finance-expense-link.json",
+      "currentIdentity": "derived_view",
+      "lifecycleState": "derived_view",
+      "responsibilityScopeZh": "由系统内核或 OAM 图谱派生的只读视图。",
+      "forbiddenScopeZh": "不得手工修改，不得替代源内核。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/business/check-dormitory-derived-contracts.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "owner": "finance-gate",
+      "sourceKernel": "domain.dormitory",
+      "graphBinding": "file.docs/business/domains/dormitory/workitems/finance-expense-link.json",
+      "gates": [
+        "scripts/business/check-dormitory-derived-contracts.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": false,
+      "ciReferenceAllowed": true,
+      "replacementPath": "docs/business/domains/dormitory/workitems/finance-expense-link.json",
+      "absorbedBy": "docs/business/domains/dormitory/workitems/finance-expense-link.json",
+      "removalProofGate": "scripts/business/check-dormitory-derived-contracts.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/finance-expense-record.json",
+      "currentIdentity": "derived_view",
+      "lifecycleState": "derived_view",
+      "responsibilityScopeZh": "由系统内核或 OAM 图谱派生的只读视图。",
+      "forbiddenScopeZh": "不得手工修改，不得替代源内核。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/business/check-dormitory-derived-contracts.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "owner": "finance-gate",
+      "sourceKernel": "domain.dormitory",
+      "graphBinding": "file.docs/business/domains/dormitory/workitems/finance-expense-record.json",
+      "gates": [
+        "scripts/business/check-dormitory-derived-contracts.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": false,
+      "ciReferenceAllowed": true,
+      "replacementPath": "docs/business/domains/dormitory/workitems/finance-expense-record.json",
+      "absorbedBy": "docs/business/domains/dormitory/workitems/finance-expense-record.json",
+      "removalProofGate": "scripts/business/check-dormitory-derived-contracts.mjs",
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
     },
     {
@@ -5303,14 +6405,14 @@
       "currentFactAuthorityAllowedByGraph": true,
       "upstreamSource": "docs/oam/oam-kernel-graph.json",
       "downstreamConsumers": [
-        "scripts/business/check-dormitory-execution-kernel.mjs",
+        "scripts/business/check-dormitory-derived-contracts.mjs",
         "docs/oam/oam-kernel-graph.json"
       ],
       "owner": "domain-owner",
-      "sourceKernel": "kernel.domain",
+      "sourceKernel": "domain.dormitory",
       "graphBinding": "file.docs/business/dormitory/canonical-scenario-map.json",
       "gates": [
-        "scripts/business/check-dormitory-execution-kernel.mjs"
+        "scripts/business/check-dormitory-derived-contracts.mjs"
       ],
       "evidence": [
         "artifacts/oam/evidence/evidence-graph.json"
@@ -5319,7 +6421,7 @@
       "ciReferenceAllowed": true,
       "replacementPath": "docs/business/dormitory/canonical-scenario-map.json",
       "absorbedBy": "docs/business/dormitory/canonical-scenario-map.json",
-      "removalProofGate": "scripts/business/check-dormitory-execution-kernel.mjs",
+      "removalProofGate": "scripts/business/check-dormitory-derived-contracts.mjs",
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
     },
     {
@@ -5390,14 +6492,14 @@
       "currentFactAuthorityAllowedByGraph": true,
       "upstreamSource": "docs/oam/oam-kernel-graph.json",
       "downstreamConsumers": [
-        "scripts/business/check-dormitory-execution-kernel.mjs",
+        "scripts/business/check-dormitory-derived-contracts.mjs",
         "docs/oam/oam-kernel-graph.json"
       ],
       "owner": "domain-owner",
-      "sourceKernel": "kernel.domain",
+      "sourceKernel": "domain.dormitory",
       "graphBinding": "file.docs/business/dormitory/evidence-policy.yml",
       "gates": [
-        "scripts/business/check-dormitory-execution-kernel.mjs"
+        "scripts/business/check-dormitory-derived-contracts.mjs"
       ],
       "evidence": [
         "artifacts/oam/evidence/evidence-graph.json"
@@ -5406,7 +6508,7 @@
       "ciReferenceAllowed": true,
       "replacementPath": "docs/business/dormitory/evidence-policy.yml",
       "absorbedBy": "docs/business/dormitory/evidence-policy.yml",
-      "removalProofGate": "scripts/business/check-dormitory-execution-kernel.mjs",
+      "removalProofGate": "scripts/business/check-dormitory-derived-contracts.mjs",
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
     },
     {
@@ -5419,14 +6521,14 @@
       "currentFactAuthorityAllowedByGraph": true,
       "upstreamSource": "docs/oam/oam-kernel-graph.json",
       "downstreamConsumers": [
-        "scripts/business/check-dormitory-execution-kernel.mjs",
+        "scripts/business/check-dormitory-derived-contracts.mjs",
         "docs/oam/oam-kernel-graph.json"
       ],
       "owner": "domain-owner",
-      "sourceKernel": "kernel.domain",
+      "sourceKernel": "domain.dormitory",
       "graphBinding": "file.docs/business/dormitory/evidence-requirements.yml",
       "gates": [
-        "scripts/business/check-dormitory-execution-kernel.mjs"
+        "scripts/business/check-dormitory-derived-contracts.mjs"
       ],
       "evidence": [
         "artifacts/oam/evidence/evidence-graph.json"
@@ -5435,7 +6537,7 @@
       "ciReferenceAllowed": true,
       "replacementPath": "docs/business/dormitory/evidence-requirements.yml",
       "absorbedBy": "docs/business/dormitory/evidence-requirements.yml",
-      "removalProofGate": "scripts/business/check-dormitory-execution-kernel.mjs",
+      "removalProofGate": "scripts/business/check-dormitory-derived-contracts.mjs",
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
     },
     {
@@ -5477,14 +6579,14 @@
       "currentFactAuthorityAllowedByGraph": true,
       "upstreamSource": "docs/oam/oam-kernel-graph.json",
       "downstreamConsumers": [
-        "scripts/business/check-dormitory-execution-kernel.mjs",
+        "scripts/business/check-dormitory-derived-contracts.mjs",
         "docs/oam/oam-kernel-graph.json"
       ],
       "owner": "domain-owner",
-      "sourceKernel": "kernel.domain",
+      "sourceKernel": "domain.dormitory",
       "graphBinding": "file.docs/business/dormitory/go-no-go.yml",
       "gates": [
-        "scripts/business/check-dormitory-execution-kernel.mjs"
+        "scripts/business/check-dormitory-derived-contracts.mjs"
       ],
       "evidence": [
         "artifacts/oam/evidence/evidence-graph.json"
@@ -5493,7 +6595,7 @@
       "ciReferenceAllowed": true,
       "replacementPath": "docs/business/dormitory/go-no-go.yml",
       "absorbedBy": "docs/business/dormitory/go-no-go.yml",
-      "removalProofGate": "scripts/business/check-dormitory-execution-kernel.mjs",
+      "removalProofGate": "scripts/business/check-dormitory-derived-contracts.mjs",
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
     },
     {
@@ -5506,14 +6608,14 @@
       "currentFactAuthorityAllowedByGraph": true,
       "upstreamSource": "docs/oam/oam-kernel-graph.json",
       "downstreamConsumers": [
-        "scripts/business/check-dormitory-execution-kernel.mjs",
+        "scripts/business/check-dormitory-derived-contracts.mjs",
         "docs/oam/oam-kernel-graph.json"
       ],
-      "owner": "finance-truth-owner",
-      "sourceKernel": "kernel.finance-truth",
+      "owner": "finance-gate",
+      "sourceKernel": "domain.dormitory",
       "graphBinding": "file.docs/business/dormitory/ledger-posting-contract.yml",
       "gates": [
-        "scripts/business/check-dormitory-execution-kernel.mjs"
+        "scripts/business/check-dormitory-derived-contracts.mjs"
       ],
       "evidence": [
         "artifacts/oam/evidence/evidence-graph.json"
@@ -5522,7 +6624,7 @@
       "ciReferenceAllowed": true,
       "replacementPath": "docs/business/dormitory/ledger-posting-contract.yml",
       "absorbedBy": "docs/business/dormitory/ledger-posting-contract.yml",
-      "removalProofGate": "scripts/business/check-dormitory-execution-kernel.mjs",
+      "removalProofGate": "scripts/business/check-dormitory-derived-contracts.mjs",
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
     },
     {
@@ -5535,14 +6637,14 @@
       "currentFactAuthorityAllowedByGraph": true,
       "upstreamSource": "docs/oam/oam-kernel-graph.json",
       "downstreamConsumers": [
-        "scripts/business/check-dormitory-execution-kernel.mjs",
+        "scripts/business/check-dormitory-derived-contracts.mjs",
         "docs/oam/oam-kernel-graph.json"
       ],
-      "owner": "projection-search-lens-owner",
-      "sourceKernel": "kernel.projection-search-lens",
+      "owner": "domain-owner",
+      "sourceKernel": "domain.dormitory",
       "graphBinding": "file.docs/business/dormitory/lens-map.yml",
       "gates": [
-        "scripts/business/check-dormitory-execution-kernel.mjs"
+        "scripts/business/check-dormitory-derived-contracts.mjs"
       ],
       "evidence": [
         "artifacts/oam/evidence/evidence-graph.json"
@@ -5551,7 +6653,7 @@
       "ciReferenceAllowed": true,
       "replacementPath": "docs/business/dormitory/lens-map.yml",
       "absorbedBy": "docs/business/dormitory/lens-map.yml",
-      "removalProofGate": "scripts/business/check-dormitory-execution-kernel.mjs",
+      "removalProofGate": "scripts/business/check-dormitory-derived-contracts.mjs",
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
     },
     {
@@ -5564,14 +6666,14 @@
       "currentFactAuthorityAllowedByGraph": true,
       "upstreamSource": "docs/oam/oam-kernel-graph.json",
       "downstreamConsumers": [
-        "scripts/business/check-dormitory-execution-kernel.mjs",
+        "scripts/business/check-dormitory-derived-contracts.mjs",
         "docs/oam/oam-kernel-graph.json"
       ],
       "owner": "domain-owner",
-      "sourceKernel": "kernel.domain",
+      "sourceKernel": "domain.dormitory",
       "graphBinding": "file.docs/business/dormitory/metric-formula-contract.yml",
       "gates": [
-        "scripts/business/check-dormitory-execution-kernel.mjs"
+        "scripts/business/check-dormitory-derived-contracts.mjs"
       ],
       "evidence": [
         "artifacts/oam/evidence/evidence-graph.json"
@@ -5580,7 +6682,7 @@
       "ciReferenceAllowed": true,
       "replacementPath": "docs/business/dormitory/metric-formula-contract.yml",
       "absorbedBy": "docs/business/dormitory/metric-formula-contract.yml",
-      "removalProofGate": "scripts/business/check-dormitory-execution-kernel.mjs",
+      "removalProofGate": "scripts/business/check-dormitory-derived-contracts.mjs",
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
     },
     {
@@ -5593,14 +6695,14 @@
       "currentFactAuthorityAllowedByGraph": true,
       "upstreamSource": "docs/oam/oam-kernel-graph.json",
       "downstreamConsumers": [
-        "scripts/business/check-dormitory-execution-kernel.mjs",
+        "scripts/business/check-dormitory-derived-contracts.mjs",
         "docs/oam/oam-kernel-graph.json"
       ],
       "owner": "domain-owner",
-      "sourceKernel": "kernel.domain",
+      "sourceKernel": "domain.dormitory",
       "graphBinding": "file.docs/business/dormitory/metrics-tree.yml",
       "gates": [
-        "scripts/business/check-dormitory-execution-kernel.mjs"
+        "scripts/business/check-dormitory-derived-contracts.mjs"
       ],
       "evidence": [
         "artifacts/oam/evidence/evidence-graph.json"
@@ -5609,7 +6711,7 @@
       "ciReferenceAllowed": true,
       "replacementPath": "docs/business/dormitory/metrics-tree.yml",
       "absorbedBy": "docs/business/dormitory/metrics-tree.yml",
-      "removalProofGate": "scripts/business/check-dormitory-execution-kernel.mjs",
+      "removalProofGate": "scripts/business/check-dormitory-derived-contracts.mjs",
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
     },
     {
@@ -5709,14 +6811,14 @@
       "currentFactAuthorityAllowedByGraph": true,
       "upstreamSource": "docs/oam/oam-kernel-graph.json",
       "downstreamConsumers": [
-        "scripts/business/check-dormitory-execution-kernel.mjs",
+        "scripts/business/check-dormitory-derived-contracts.mjs",
         "docs/oam/oam-kernel-graph.json"
       ],
       "owner": "domain-owner",
-      "sourceKernel": "kernel.domain",
+      "sourceKernel": "domain.dormitory",
       "graphBinding": "file.docs/business/dormitory/scenario-field-contract.yml",
       "gates": [
-        "scripts/business/check-dormitory-execution-kernel.mjs"
+        "scripts/business/check-dormitory-derived-contracts.mjs"
       ],
       "evidence": [
         "artifacts/oam/evidence/evidence-graph.json"
@@ -5725,7 +6827,7 @@
       "ciReferenceAllowed": true,
       "replacementPath": "docs/business/dormitory/scenario-field-contract.yml",
       "absorbedBy": "docs/business/dormitory/scenario-field-contract.yml",
-      "removalProofGate": "scripts/business/check-dormitory-execution-kernel.mjs",
+      "removalProofGate": "scripts/business/check-dormitory-derived-contracts.mjs",
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
     },
     {
@@ -5767,14 +6869,14 @@
       "currentFactAuthorityAllowedByGraph": true,
       "upstreamSource": "docs/oam/oam-kernel-graph.json",
       "downstreamConsumers": [
-        "scripts/business/check-dormitory-execution-kernel.mjs",
+        "scripts/business/check-dormitory-derived-contracts.mjs",
         "docs/oam/oam-kernel-graph.json"
       ],
       "owner": "domain-owner",
-      "sourceKernel": "kernel.domain",
+      "sourceKernel": "domain.dormitory",
       "graphBinding": "file.docs/business/dormitory/value-streams.yml",
       "gates": [
-        "scripts/business/check-dormitory-execution-kernel.mjs"
+        "scripts/business/check-dormitory-derived-contracts.mjs"
       ],
       "evidence": [
         "artifacts/oam/evidence/evidence-graph.json"
@@ -5783,7 +6885,7 @@
       "ciReferenceAllowed": true,
       "replacementPath": "docs/business/dormitory/value-streams.yml",
       "absorbedBy": "docs/business/dormitory/value-streams.yml",
-      "removalProofGate": "scripts/business/check-dormitory-execution-kernel.mjs",
+      "removalProofGate": "scripts/business/check-dormitory-derived-contracts.mjs",
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
     },
     {
@@ -5796,14 +6898,14 @@
       "currentFactAuthorityAllowedByGraph": true,
       "upstreamSource": "docs/oam/oam-kernel-graph.json",
       "downstreamConsumers": [
-        "scripts/business/check-dormitory-execution-kernel.mjs",
+        "scripts/business/check-dormitory-derived-contracts.mjs",
         "docs/oam/oam-kernel-graph.json"
       ],
       "owner": "domain-owner",
-      "sourceKernel": "kernel.domain",
+      "sourceKernel": "domain.dormitory",
       "graphBinding": "file.docs/business/dormitory/workitem-catalog.yml",
       "gates": [
-        "scripts/business/check-dormitory-execution-kernel.mjs"
+        "scripts/business/check-dormitory-derived-contracts.mjs"
       ],
       "evidence": [
         "artifacts/oam/evidence/evidence-graph.json"
@@ -5812,7 +6914,7 @@
       "ciReferenceAllowed": true,
       "replacementPath": "docs/business/dormitory/workitem-catalog.yml",
       "absorbedBy": "docs/business/dormitory/workitem-catalog.yml",
-      "removalProofGate": "scripts/business/check-dormitory-execution-kernel.mjs",
+      "removalProofGate": "scripts/business/check-dormitory-derived-contracts.mjs",
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
     },
     {
@@ -5825,14 +6927,14 @@
       "currentFactAuthorityAllowedByGraph": true,
       "upstreamSource": "docs/oam/oam-kernel-graph.json",
       "downstreamConsumers": [
-        "scripts/business/check-dormitory-execution-kernel.mjs",
+        "scripts/business/check-dormitory-derived-contracts.mjs",
         "docs/oam/oam-kernel-graph.json"
       ],
       "owner": "domain-owner",
-      "sourceKernel": "kernel.domain",
+      "sourceKernel": "domain.dormitory",
       "graphBinding": "file.docs/business/dormitory/workitem-decision-table.json",
       "gates": [
-        "scripts/business/check-dormitory-execution-kernel.mjs"
+        "scripts/business/check-dormitory-derived-contracts.mjs"
       ],
       "evidence": [
         "artifacts/oam/evidence/evidence-graph.json"
@@ -5841,7 +6943,7 @@
       "ciReferenceAllowed": true,
       "replacementPath": "docs/business/dormitory/workitem-decision-table.json",
       "absorbedBy": "docs/business/dormitory/workitem-decision-table.json",
-      "removalProofGate": "scripts/business/check-dormitory-execution-kernel.mjs",
+      "removalProofGate": "scripts/business/check-dormitory-derived-contracts.mjs",
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
     },
     {
@@ -5854,14 +6956,14 @@
       "currentFactAuthorityAllowedByGraph": true,
       "upstreamSource": "docs/oam/oam-kernel-graph.json",
       "downstreamConsumers": [
-        "scripts/business/check-dormitory-execution-kernel.mjs",
+        "scripts/business/check-dormitory-derived-contracts.mjs",
         "docs/oam/oam-kernel-graph.json"
       ],
       "owner": "domain-owner",
-      "sourceKernel": "kernel.domain",
+      "sourceKernel": "domain.dormitory",
       "graphBinding": "file.docs/business/dormitory/workitem-raci.yml",
       "gates": [
-        "scripts/business/check-dormitory-execution-kernel.mjs"
+        "scripts/business/check-dormitory-derived-contracts.mjs"
       ],
       "evidence": [
         "artifacts/oam/evidence/evidence-graph.json"
@@ -5870,7 +6972,7 @@
       "ciReferenceAllowed": true,
       "replacementPath": "docs/business/dormitory/workitem-raci.yml",
       "absorbedBy": "docs/business/dormitory/workitem-raci.yml",
-      "removalProofGate": "scripts/business/check-dormitory-execution-kernel.mjs",
+      "removalProofGate": "scripts/business/check-dormitory-derived-contracts.mjs",
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
     },
     {
@@ -5883,14 +6985,14 @@
       "currentFactAuthorityAllowedByGraph": true,
       "upstreamSource": "docs/oam/oam-kernel-graph.json",
       "downstreamConsumers": [
-        "scripts/business/check-dormitory-execution-kernel.mjs",
+        "scripts/business/check-dormitory-derived-contracts.mjs",
         "docs/oam/oam-kernel-graph.json"
       ],
       "owner": "domain-owner",
-      "sourceKernel": "kernel.domain",
+      "sourceKernel": "domain.dormitory",
       "graphBinding": "file.docs/business/dormitory/workitem-sla.yml",
       "gates": [
-        "scripts/business/check-dormitory-execution-kernel.mjs"
+        "scripts/business/check-dormitory-derived-contracts.mjs"
       ],
       "evidence": [
         "artifacts/oam/evidence/evidence-graph.json"
@@ -5899,7 +7001,7 @@
       "ciReferenceAllowed": true,
       "replacementPath": "docs/business/dormitory/workitem-sla.yml",
       "absorbedBy": "docs/business/dormitory/workitem-sla.yml",
-      "removalProofGate": "scripts/business/check-dormitory-execution-kernel.mjs",
+      "removalProofGate": "scripts/business/check-dormitory-derived-contracts.mjs",
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
     },
     {
@@ -6898,14 +8000,14 @@
       "currentFactAuthorityAllowedByGraph": true,
       "upstreamSource": "docs/oam/oam-kernel-graph.json",
       "downstreamConsumers": [
-        "scripts/check-local-path-references.mjs",
+        "scripts/business/check-dormitory-derived-contracts.mjs",
         "docs/oam/oam-kernel-graph.json"
       ],
       "owner": "domain-owner",
-      "sourceKernel": "kernel.domain",
+      "sourceKernel": "domain.dormitory",
       "graphBinding": "file.docs/contracts/business/oam-business-object-field-registry.json",
       "gates": [
-        "scripts/check-local-path-references.mjs"
+        "scripts/business/check-dormitory-derived-contracts.mjs"
       ],
       "evidence": [
         "artifacts/oam/evidence/evidence-graph.json"
@@ -6914,7 +8016,7 @@
       "ciReferenceAllowed": true,
       "replacementPath": "docs/contracts/business/oam-business-object-field-registry.json",
       "absorbedBy": "docs/contracts/business/oam-business-object-field-registry.json",
-      "removalProofGate": "scripts/check-local-path-references.mjs",
+      "removalProofGate": "scripts/business/check-dormitory-derived-contracts.mjs",
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
     },
     {
@@ -6927,14 +8029,14 @@
       "currentFactAuthorityAllowedByGraph": true,
       "upstreamSource": "docs/oam/oam-kernel-graph.json",
       "downstreamConsumers": [
-        "scripts/check-local-path-references.mjs",
+        "scripts/business/check-dormitory-derived-contracts.mjs",
         "docs/oam/oam-kernel-graph.json"
       ],
       "owner": "domain-owner",
-      "sourceKernel": "kernel.domain",
+      "sourceKernel": "domain.dormitory",
       "graphBinding": "file.docs/contracts/business/oam-workflow-state-registry.json",
       "gates": [
-        "scripts/check-local-path-references.mjs"
+        "scripts/business/check-dormitory-derived-contracts.mjs"
       ],
       "evidence": [
         "artifacts/oam/evidence/evidence-graph.json"
@@ -6943,7 +8045,7 @@
       "ciReferenceAllowed": true,
       "replacementPath": "docs/contracts/business/oam-workflow-state-registry.json",
       "absorbedBy": "docs/contracts/business/oam-workflow-state-registry.json",
-      "removalProofGate": "scripts/check-local-path-references.mjs",
+      "removalProofGate": "scripts/business/check-dormitory-derived-contracts.mjs",
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
     },
     {
@@ -7188,14 +8290,14 @@
       "currentFactAuthorityAllowedByGraph": true,
       "upstreamSource": "docs/oam/oam-kernel-graph.json",
       "downstreamConsumers": [
-        "scripts/check-local-path-references.mjs",
+        "scripts/business/check-dormitory-derived-contracts.mjs",
         "docs/oam/oam-kernel-graph.json"
       ],
-      "owner": "authority-owner",
-      "sourceKernel": "kernel.authority",
+      "owner": "domain-owner",
+      "sourceKernel": "domain.dormitory",
       "graphBinding": "file.docs/contracts/definition/workitem-definition-registry.json",
       "gates": [
-        "scripts/check-local-path-references.mjs"
+        "scripts/business/check-dormitory-derived-contracts.mjs"
       ],
       "evidence": [
         "artifacts/oam/evidence/evidence-graph.json"
@@ -7204,7 +8306,7 @@
       "ciReferenceAllowed": true,
       "replacementPath": "docs/contracts/definition/workitem-definition-registry.json",
       "absorbedBy": "docs/contracts/definition/workitem-definition-registry.json",
-      "removalProofGate": "scripts/check-local-path-references.mjs",
+      "removalProofGate": "scripts/business/check-dormitory-derived-contracts.mjs",
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
     },
     {
@@ -8978,22 +10080,22 @@
     },
     {
       "path": "docs/scenarios/dormitory/golden-pilot.yml",
-      "currentIdentity": "validation_file",
-      "lifecycleState": "active_validation",
-      "responsibilityScopeZh": "当前 OAM 机器门禁、CI 或测试。",
-      "forbiddenScopeZh": "不得定义业务事实，只能检查或生成指定产物。",
-      "currentFactAuthorityAllowed": false,
-      "currentFactAuthorityAllowedByGraph": false,
+      "currentIdentity": "authority_file",
+      "lifecycleState": "active_contract",
+      "responsibilityScopeZh": "当前 OAM 机器合同。",
+      "forbiddenScopeZh": "不得绕过系统内核、图谱、门禁或证据根。",
+      "currentFactAuthorityAllowed": true,
+      "currentFactAuthorityAllowedByGraph": true,
       "upstreamSource": "docs/oam/oam-kernel-graph.json",
       "downstreamConsumers": [
-        "scripts/business/check-dormitory-execution-kernel.mjs",
-        "scripts/oam/run-control-plane-checks.ps1"
+        "scripts/business/check-dormitory-derived-contracts.mjs",
+        "docs/oam/oam-kernel-graph.json"
       ],
-      "owner": "release-control-owner",
-      "sourceKernel": "kernel.release-control",
+      "owner": "domain-owner",
+      "sourceKernel": "domain.dormitory",
       "graphBinding": "file.docs/scenarios/dormitory/golden-pilot.yml",
       "gates": [
-        "scripts/business/check-dormitory-execution-kernel.mjs"
+        "scripts/business/check-dormitory-derived-contracts.mjs"
       ],
       "evidence": [
         "artifacts/oam/evidence/evidence-graph.json"
@@ -9002,7 +10104,7 @@
       "ciReferenceAllowed": true,
       "replacementPath": "docs/scenarios/dormitory/golden-pilot.yml",
       "absorbedBy": "docs/scenarios/dormitory/golden-pilot.yml",
-      "removalProofGate": "scripts/business/check-dormitory-execution-kernel.mjs",
+      "removalProofGate": "scripts/business/check-dormitory-derived-contracts.mjs",
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
     },
     {
@@ -12367,6 +13469,35 @@
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
     },
     {
+      "path": "scripts/business/check-dormitory-derived-contracts.mjs",
+      "currentIdentity": "validation_file",
+      "lifecycleState": "active_validation",
+      "responsibilityScopeZh": "当前 OAM 机器门禁、CI 或测试。",
+      "forbiddenScopeZh": "不得定义业务事实，只能检查或生成指定产物。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/run-control-plane-checks.ps1",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "owner": "oam-release-owner",
+      "sourceKernel": "domain.dormitory",
+      "graphBinding": "file.scripts/business/check-dormitory-derived-contracts.mjs",
+      "gates": [
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "scripts/business/check-dormitory-derived-contracts.mjs",
+      "absorbedBy": "scripts/business/check-dormitory-derived-contracts.mjs",
+      "removalProofGate": "scripts/oam/run-control-plane-checks.ps1",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
       "path": "scripts/business/check-dormitory-execution-kernel.mjs",
       "currentIdentity": "validation_file",
       "lifecycleState": "active_validation",
@@ -12393,6 +13524,122 @@
       "replacementPath": "scripts/business/check-dormitory-execution-kernel.mjs",
       "absorbedBy": "scripts/business/check-dormitory-execution-kernel.mjs",
       "removalProofGate": "scripts/business/check-dormitory-execution-kernel.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "scripts/business/check-dormitory-metrics-lens-contract.mjs",
+      "currentIdentity": "validation_file",
+      "lifecycleState": "active_validation",
+      "responsibilityScopeZh": "当前 OAM 机器门禁、CI 或测试。",
+      "forbiddenScopeZh": "不得定义业务事实，只能检查或生成指定产物。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/run-control-plane-checks.ps1",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "owner": "oam-release-owner",
+      "sourceKernel": "domain.dormitory",
+      "graphBinding": "file.scripts/business/check-dormitory-metrics-lens-contract.mjs",
+      "gates": [
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "scripts/business/check-dormitory-metrics-lens-contract.mjs",
+      "absorbedBy": "scripts/business/check-dormitory-metrics-lens-contract.mjs",
+      "removalProofGate": "scripts/oam/run-control-plane-checks.ps1",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "scripts/business/check-dormitory-operating-kernel.mjs",
+      "currentIdentity": "validation_file",
+      "lifecycleState": "active_validation",
+      "responsibilityScopeZh": "当前 OAM 机器门禁、CI 或测试。",
+      "forbiddenScopeZh": "不得定义业务事实，只能检查或生成指定产物。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/run-control-plane-checks.ps1",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "owner": "oam-release-owner",
+      "sourceKernel": "domain.dormitory",
+      "graphBinding": "file.scripts/business/check-dormitory-operating-kernel.mjs",
+      "gates": [
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "scripts/business/check-dormitory-operating-kernel.mjs",
+      "absorbedBy": "scripts/business/check-dormitory-operating-kernel.mjs",
+      "removalProofGate": "scripts/oam/run-control-plane-checks.ps1",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "scripts/business/check-dormitory-pilot-scenario-pack.mjs",
+      "currentIdentity": "validation_file",
+      "lifecycleState": "active_validation",
+      "responsibilityScopeZh": "当前 OAM 机器门禁、CI 或测试。",
+      "forbiddenScopeZh": "不得定义业务事实，只能检查或生成指定产物。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/run-control-plane-checks.ps1",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "owner": "oam-release-owner",
+      "sourceKernel": "domain.dormitory",
+      "graphBinding": "file.scripts/business/check-dormitory-pilot-scenario-pack.mjs",
+      "gates": [
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "scripts/business/check-dormitory-pilot-scenario-pack.mjs",
+      "absorbedBy": "scripts/business/check-dormitory-pilot-scenario-pack.mjs",
+      "removalProofGate": "scripts/oam/run-control-plane-checks.ps1",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "scripts/business/check-dormitory-release-train.mjs",
+      "currentIdentity": "validation_file",
+      "lifecycleState": "active_validation",
+      "responsibilityScopeZh": "当前 OAM 机器门禁、CI 或测试。",
+      "forbiddenScopeZh": "不得定义业务事实，只能检查或生成指定产物。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/run-control-plane-checks.ps1",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "owner": "oam-release-owner",
+      "sourceKernel": "domain.dormitory",
+      "graphBinding": "file.scripts/business/check-dormitory-release-train.mjs",
+      "gates": [
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "scripts/business/check-dormitory-release-train.mjs",
+      "absorbedBy": "scripts/business/check-dormitory-release-train.mjs",
+      "removalProofGate": "scripts/oam/run-control-plane-checks.ps1",
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
     },
     {
@@ -12476,6 +13723,35 @@
       "ciReferenceAllowed": true,
       "replacementPath": "scripts/business/check-scenario-field-contract.mjs",
       "absorbedBy": "scripts/business/check-scenario-field-contract.mjs",
+      "removalProofGate": "scripts/oam/run-control-plane-checks.ps1",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "scripts/business/generate-dormitory-derived-contracts.mjs",
+      "currentIdentity": "validation_file",
+      "lifecycleState": "active_validation",
+      "responsibilityScopeZh": "当前 OAM 机器门禁、CI 或测试。",
+      "forbiddenScopeZh": "不得定义业务事实，只能检查或生成指定产物。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/run-control-plane-checks.ps1",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "owner": "oam-release-owner",
+      "sourceKernel": "domain.dormitory",
+      "graphBinding": "file.scripts/business/generate-dormitory-derived-contracts.mjs",
+      "gates": [
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "scripts/business/generate-dormitory-derived-contracts.mjs",
+      "absorbedBy": "scripts/business/generate-dormitory-derived-contracts.mjs",
       "removalProofGate": "scripts/oam/run-control-plane-checks.ps1",
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
     },

@@ -3,31 +3,452 @@
   "version": "oam.dormitory.v1",
   "decisionTable": "docs/business/dormitory/workitem-decision-table.json",
   "policy": "High-risk Dormitory confirmations require EvidenceObject refs bound to tenantId, caseId, workItemId, submissionId, evidenceHash, capturedAt, capturedBy, and trustLevel.",
-  "runtimeBinding": {"loader":"DormitoryEvidencePolicyLoader","evaluator":"EvidencePolicyEvaluator","sourceMode":"policy-file"},
-  "bindingRules": ["requirementId", "workItemId", "submissionId", "tenantId", "evidenceHash"],
+  "runtimeBinding": {
+    "loader": "DormitoryEvidencePolicyLoader",
+    "evaluator": "EvidencePolicyEvaluator",
+    "sourceMode": "policy-file"
+  },
+  "bindingRules": [
+    "requirementId",
+    "workItemId",
+    "submissionId",
+    "tenantId",
+    "evidenceHash"
+  ],
   "rejectedEvidenceBlocksConfirm": true,
   "missingEvidenceBlocksConfirm": true,
   "wrongScopeEvidenceBlocksConfirm": true,
   "requirements": [
-    {"requirementId":"identity-document","workItemTypes":["Dorm.CheckinConfirm"],"trustLevel":"verified","retention":"regulated"},
-    {"requirementId":"checkin-confirmation","workItemTypes":["Dorm.CheckinConfirm"],"trustLevel":"operator-attested","retention":"operations"},
-    {"requirementId":"reservation-acknowledgement","workItemTypes":["Dorm.CheckinConfirm"],"trustLevel":"operator-attested","retention":"operations"},
-    {"requirementId":"bed-availability-proof","workItemTypes":["Dorm.CheckinConfirm"],"trustLevel":"operator-attested","retention":"operations"},
-    {"requirementId":"payment-receipt","workItemTypes":["Dorm.PaymentConfirm"],"trustLevel":"verified","retention":"finance"},
-    {"requirementId":"cashier-review","workItemTypes":["Dorm.PaymentConfirm"],"trustLevel":"controller-approved","retention":"finance"},
-    {"requirementId":"deposit-policy","workItemTypes":["Dorm.DepositConfirm"],"trustLevel":"verified","retention":"finance"},
-    {"requirementId":"receipt-proof","workItemTypes":["Dorm.DepositConfirm"],"trustLevel":"verified","retention":"finance"},
-    {"requirementId":"room-inspection","workItemTypes":["Dorm.RefundApprove"],"trustLevel":"verified","retention":"operations"},
-    {"requirementId":"settlement-review","workItemTypes":["Dorm.RefundApprove"],"trustLevel":"controller-approved","retention":"finance"},
-    {"requirementId":"refund-approval","workItemTypes":["Dorm.RefundApprove"],"trustLevel":"controller-approved","retention":"finance"},
-    {"requirementId":"completion-photo","workItemTypes":["Dorm.RoomReadinessCheck"],"trustLevel":"operator-attested","retention":"operations"},
-    {"requirementId":"verification-check","workItemTypes":["Dorm.RoomReadinessCheck"],"trustLevel":"operator-attested","retention":"operations"},
-    {"requirementId":"bank-import-row","workItemTypes":["Finance.CorrectionApply"],"trustLevel":"verified","retention":"finance"},
-    {"requirementId":"correction-approval","workItemTypes":["Finance.CorrectionApply"],"trustLevel":"controller-approved","retention":"finance"},
-    {"requirementId":"period-review-pack","workItemTypes":["Dorm.PeriodReview"],"trustLevel":"manager-approved","retention":"operations"},
-    {"requirementId":"exception-audit","workItemTypes":["Dorm.ExceptionResolve"],"trustLevel":"manager-approved","retention":"audit"},
-    {"requirementId":"shadow-compare-report","workItemTypes":["Gate.SemanticShadowReview"],"trustLevel":"machine-generated","retention":"release"},
-    {"requirementId":"rollback-instruction","workItemTypes":["Gate.RollbackReview"],"trustLevel":"release-approved","retention":"release"}
+    {
+      "requirementId": "action-plan-evidence",
+      "requirementNameZh": "action-plan-evidence",
+      "scope": "workItem",
+      "evidenceType": "action-plan-evidence",
+      "workItemTypes": [
+        "Dorm.PeriodActionPlanExecute"
+      ],
+      "blocksConfirmWhenMissing": true
+    },
+    {
+      "requirementId": "adjustment-approval",
+      "requirementNameZh": "adjustment-approval",
+      "scope": "workItem",
+      "evidenceType": "adjustment-approval",
+      "workItemTypes": [
+        "Finance.ChargeAdjustmentApprove"
+      ],
+      "blocksConfirmWhenMissing": true
+    },
+    {
+      "requirementId": "assignment-record",
+      "requirementNameZh": "assignment-record",
+      "scope": "workItem",
+      "evidenceType": "assignment-record",
+      "workItemTypes": [
+        "Dorm.ServiceTaskAssign"
+      ],
+      "blocksConfirmWhenMissing": true
+    },
+    {
+      "requirementId": "audit-note",
+      "requirementNameZh": "audit-note",
+      "scope": "workItem",
+      "evidenceType": "audit-note",
+      "workItemTypes": [
+        "Dorm.IncidentRecord",
+        "Finance.CorrectionApply"
+      ],
+      "blocksConfirmWhenMissing": true
+    },
+    {
+      "requirementId": "bank-import-row",
+      "workItemTypes": [
+        "Finance.CorrectionApply"
+      ],
+      "trustLevel": "verified",
+      "retention": "finance"
+    },
+    {
+      "requirementId": "bed-availability-proof",
+      "workItemTypes": [
+        "Dorm.CheckinConfirm",
+        "Dorm.ReservationConfirm",
+        "Dorm.BedTransferApprove"
+      ],
+      "trustLevel": "operator-attested",
+      "retention": "operations"
+    },
+    {
+      "requirementId": "bed-photo",
+      "requirementNameZh": "bed-photo",
+      "scope": "workItem",
+      "evidenceType": "bed-photo",
+      "workItemTypes": [
+        "Dorm.BedSetupConfirm"
+      ],
+      "blocksConfirmWhenMissing": true
+    },
+    {
+      "requirementId": "cancel-request",
+      "requirementNameZh": "cancel-request",
+      "scope": "workItem",
+      "evidenceType": "cancel-request",
+      "workItemTypes": [
+        "Dorm.ReservationCancelClose"
+      ],
+      "blocksConfirmWhenMissing": true
+    },
+    {
+      "requirementId": "cashier-review",
+      "workItemTypes": [
+        "Dorm.PaymentConfirm"
+      ],
+      "trustLevel": "controller-approved",
+      "retention": "finance"
+    },
+    {
+      "requirementId": "charge-basis",
+      "requirementNameZh": "charge-basis",
+      "scope": "workItem",
+      "evidenceType": "charge-basis",
+      "workItemTypes": [
+        "Finance.ChargeAdjustmentApprove"
+      ],
+      "blocksConfirmWhenMissing": true
+    },
+    {
+      "requirementId": "checkin-confirmation",
+      "workItemTypes": [
+        "Dorm.CheckinConfirm",
+        "Dorm.AccessCredentialIssue"
+      ],
+      "trustLevel": "operator-attested",
+      "retention": "operations"
+    },
+    {
+      "requirementId": "checkout-close-proof",
+      "requirementNameZh": "checkout-close-proof",
+      "scope": "workItem",
+      "evidenceType": "checkout-close-proof",
+      "workItemTypes": [
+        "Dorm.AccessCredentialRevoke"
+      ],
+      "blocksConfirmWhenMissing": true
+    },
+    {
+      "requirementId": "completion-note",
+      "requirementNameZh": "completion-note",
+      "scope": "workItem",
+      "evidenceType": "completion-note",
+      "workItemTypes": [
+        "Dorm.ServiceTaskComplete"
+      ],
+      "blocksConfirmWhenMissing": true
+    },
+    {
+      "requirementId": "completion-photo",
+      "workItemTypes": [
+        "Dorm.ResourceReadinessConfirm",
+        "Dorm.ServiceTaskComplete"
+      ],
+      "trustLevel": "operator-attested",
+      "retention": "operations"
+    },
+    {
+      "requirementId": "correction-approval",
+      "workItemTypes": [
+        "Finance.CorrectionApply"
+      ],
+      "trustLevel": "controller-approved",
+      "retention": "finance"
+    },
+    {
+      "requirementId": "damage-photo",
+      "requirementNameZh": "damage-photo",
+      "scope": "workItem",
+      "evidenceType": "damage-photo",
+      "workItemTypes": [
+        "Dorm.RoomInspectionConfirm"
+      ],
+      "blocksConfirmWhenMissing": true
+    },
+    {
+      "requirementId": "debt-followup-record",
+      "requirementNameZh": "debt-followup-record",
+      "scope": "workItem",
+      "evidenceType": "debt-followup-record",
+      "workItemTypes": [
+        "Finance.DebtFollowUp"
+      ],
+      "blocksConfirmWhenMissing": true
+    },
+    {
+      "requirementId": "deposit-policy",
+      "workItemTypes": [
+        "Dorm.DepositConfirm"
+      ],
+      "trustLevel": "verified",
+      "retention": "finance"
+    },
+    {
+      "requirementId": "exception-audit",
+      "workItemTypes": [
+        "Dorm.ExceptionResolve"
+      ],
+      "trustLevel": "manager-approved",
+      "retention": "audit"
+    },
+    {
+      "requirementId": "expense-approval",
+      "requirementNameZh": "expense-approval",
+      "scope": "workItem",
+      "evidenceType": "expense-approval",
+      "workItemTypes": [
+        "Finance.ExpenseApprove"
+      ],
+      "blocksConfirmWhenMissing": true
+    },
+    {
+      "requirementId": "expense-basis",
+      "requirementNameZh": "expense-basis",
+      "scope": "workItem",
+      "evidenceType": "expense-basis",
+      "workItemTypes": [
+        "Finance.ExpenseRecord"
+      ],
+      "blocksConfirmWhenMissing": true
+    },
+    {
+      "requirementId": "expense-invoice",
+      "requirementNameZh": "expense-invoice",
+      "scope": "workItem",
+      "evidenceType": "expense-invoice",
+      "workItemTypes": [
+        "Finance.ExpenseRecord",
+        "Finance.ExpenseApprove"
+      ],
+      "blocksConfirmWhenMissing": true
+    },
+    {
+      "requirementId": "expense-link-proof",
+      "requirementNameZh": "expense-link-proof",
+      "scope": "workItem",
+      "evidenceType": "expense-link-proof",
+      "workItemTypes": [
+        "Finance.ExpenseLink"
+      ],
+      "blocksConfirmWhenMissing": true
+    },
+    {
+      "requirementId": "extend-application",
+      "requirementNameZh": "extend-application",
+      "scope": "workItem",
+      "evidenceType": "extend-application",
+      "workItemTypes": [
+        "Dorm.StayExtendApprove"
+      ],
+      "blocksConfirmWhenMissing": true
+    },
+    {
+      "requirementId": "identity-document",
+      "workItemTypes": [
+        "Dorm.CheckinConfirm",
+        "Dorm.AccessCredentialIssue"
+      ],
+      "trustLevel": "verified",
+      "retention": "regulated"
+    },
+    {
+      "requirementId": "incident-evidence",
+      "requirementNameZh": "incident-evidence",
+      "scope": "workItem",
+      "evidenceType": "incident-evidence",
+      "workItemTypes": [
+        "Dorm.IncidentRecord"
+      ],
+      "blocksConfirmWhenMissing": true
+    },
+    {
+      "requirementId": "lead-consent",
+      "requirementNameZh": "lead-consent",
+      "scope": "workItem",
+      "evidenceType": "lead-consent",
+      "workItemTypes": [
+        "Dorm.LeadCapture"
+      ],
+      "blocksConfirmWhenMissing": true
+    },
+    {
+      "requirementId": "no-show-record",
+      "requirementNameZh": "no-show-record",
+      "scope": "workItem",
+      "evidenceType": "no-show-record",
+      "workItemTypes": [
+        "Dorm.ReservationNoShowClose"
+      ],
+      "blocksConfirmWhenMissing": true
+    },
+    {
+      "requirementId": "payment-receipt",
+      "workItemTypes": [
+        "Dorm.PaymentConfirm"
+      ],
+      "trustLevel": "verified",
+      "retention": "finance"
+    },
+    {
+      "requirementId": "period-review-pack",
+      "workItemTypes": [
+        "Dorm.PeriodReview"
+      ],
+      "trustLevel": "manager-approved",
+      "retention": "operations"
+    },
+    {
+      "requirementId": "rate-policy",
+      "requirementNameZh": "rate-policy",
+      "scope": "workItem",
+      "evidenceType": "rate-policy",
+      "workItemTypes": [
+        "Dorm.RatePlanConfirm",
+        "Dorm.StayExtendApprove"
+      ],
+      "blocksConfirmWhenMissing": true
+    },
+    {
+      "requirementId": "receipt-proof",
+      "workItemTypes": [
+        "Dorm.DepositConfirm"
+      ],
+      "trustLevel": "verified",
+      "retention": "finance"
+    },
+    {
+      "requirementId": "refund-approval",
+      "workItemTypes": [
+        "Dorm.CheckoutSettlementApprove"
+      ],
+      "trustLevel": "controller-approved",
+      "retention": "finance"
+    },
+    {
+      "requirementId": "reservation-acknowledgement",
+      "workItemTypes": [
+        "Dorm.CheckinConfirm",
+        "Dorm.ReservationConfirm"
+      ],
+      "trustLevel": "operator-attested",
+      "retention": "operations"
+    },
+    {
+      "requirementId": "resolution-evidence",
+      "requirementNameZh": "resolution-evidence",
+      "scope": "workItem",
+      "evidenceType": "resolution-evidence",
+      "workItemTypes": [
+        "Dorm.ExceptionResolve"
+      ],
+      "blocksConfirmWhenMissing": true
+    },
+    {
+      "requirementId": "rollback-instruction",
+      "workItemTypes": [
+        "Gate.RollbackReview"
+      ],
+      "trustLevel": "release-approved",
+      "retention": "release"
+    },
+    {
+      "requirementId": "room-basic-info",
+      "requirementNameZh": "room-basic-info",
+      "scope": "workItem",
+      "evidenceType": "room-basic-info",
+      "workItemTypes": [
+        "Dorm.RoomSetupConfirm"
+      ],
+      "blocksConfirmWhenMissing": true
+    },
+    {
+      "requirementId": "room-inspection",
+      "workItemTypes": [
+        "Dorm.RoomInspectionConfirm",
+        "Dorm.CheckoutSettlementApprove"
+      ],
+      "trustLevel": "verified",
+      "retention": "operations"
+    },
+    {
+      "requirementId": "room-link-proof",
+      "requirementNameZh": "room-link-proof",
+      "scope": "workItem",
+      "evidenceType": "room-link-proof",
+      "workItemTypes": [
+        "Dorm.BedSetupConfirm"
+      ],
+      "blocksConfirmWhenMissing": true
+    },
+    {
+      "requirementId": "room-photo",
+      "requirementNameZh": "room-photo",
+      "scope": "workItem",
+      "evidenceType": "room-photo",
+      "workItemTypes": [
+        "Dorm.RoomSetupConfirm"
+      ],
+      "blocksConfirmWhenMissing": true
+    },
+    {
+      "requirementId": "service-request",
+      "requirementNameZh": "service-request",
+      "scope": "workItem",
+      "evidenceType": "service-request",
+      "workItemTypes": [
+        "Dorm.ServiceTaskCreate"
+      ],
+      "blocksConfirmWhenMissing": true
+    },
+    {
+      "requirementId": "settlement-review",
+      "workItemTypes": [
+        "Dorm.CheckoutSettlementApprove"
+      ],
+      "trustLevel": "controller-approved",
+      "retention": "finance"
+    },
+    {
+      "requirementId": "shadow-compare-report",
+      "workItemTypes": [
+        "Gate.SemanticShadowReview"
+      ],
+      "trustLevel": "machine-generated",
+      "retention": "release"
+    },
+    {
+      "requirementId": "transfer-application",
+      "requirementNameZh": "transfer-application",
+      "scope": "workItem",
+      "evidenceType": "transfer-application",
+      "workItemTypes": [
+        "Dorm.BedTransferApprove"
+      ],
+      "blocksConfirmWhenMissing": true
+    },
+    {
+      "requirementId": "verification-check",
+      "workItemTypes": [
+        "Dorm.ResourceReadinessConfirm",
+        "Dorm.ServiceTaskVerify"
+      ],
+      "trustLevel": "operator-attested",
+      "retention": "operations"
+    }
   ],
-  "productionAllowed": false
+  "productionAllowed": false,
+  "derivedFrom": [
+    "docs/business/domains/dormitory/dormitory-operating-kernel.json"
+  ],
+  "generatedBy": "scripts/business/generate-dormitory-derived-contracts.mjs",
+  "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
+  "manualEditAllowed": false,
+  "graphBinding": "domain.dormitory.evidence-policy"
 }

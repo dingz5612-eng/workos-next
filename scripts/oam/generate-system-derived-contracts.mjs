@@ -5,6 +5,13 @@ const root = process.cwd();
 const outputPath = "docs/oam/system-derived-contracts.json";
 const kernel = readJson("docs/oam/system-operating-kernel.json");
 const graph = readJson("docs/oam/oam-kernel-graph.json");
+const dormitoryWorkItemDerivedTargets = fs.existsSync(path.join(root, "docs/business/domains/dormitory/workitems"))
+  ? fs.readdirSync(path.join(root, "docs/business/domains/dormitory/workitems"))
+    .filter((file) => file.endsWith(".json"))
+    .map((file) => `docs/business/domains/dormitory/workitems/${file}`)
+    .sort()
+  : [];
+
 const targetPaths = [
   "docs/system/current-system-map.md",
   "docs/contracts/oam-responsibility-boundary-matrix.json",
@@ -16,6 +23,7 @@ const targetPaths = [
   "docs/contracts/admission/admission-contract.json",
   "docs/contracts/evidence/evidence-graph-refs-contract.json",
   "docs/business/dormitory/evidence-policy.yml",
+  "docs/business/dormitory/evidence-requirements.yml",
   "docs/contracts/search/search-contract.json",
   "docs/contracts/accommodation-lens-contract.json",
   "docs/surface/surface-contract.yml",
@@ -27,7 +35,16 @@ const targetPaths = [
   "docs/business/dormitory/lens-map.yml",
   "docs/business/dormitory/workitem-sla.yml",
   "docs/business/dormitory/workitem-raci.yml",
-  "docs/business/dormitory/go-no-go.yml"
+  "docs/business/dormitory/go-no-go.yml",
+  "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+  "docs/business/domains/dormitory/handoff-contract.json",
+  "docs/business/domains/dormitory/dormitory-release-train.yml",
+  "docs/business/domains/dormitory/dormitory-pilot-scenario-pack.yml",
+  "docs/business/domains/dormitory/dormitory-seed-data-pack.json",
+  "docs/business/domains/dormitory/dormitory-observability-contract.json",
+  "docs/business/domains/dormitory/dormitory-operator-playbook.md",
+  "docs/business/domains/dormitory/dormitory-pilot-go-no-go.json",
+  ...dormitoryWorkItemDerivedTargets
 ];
 
 const graphNodeBySource = new Map((graph.nodes ?? []).map((node) => [slash(node.sourceFile), node]));
@@ -58,6 +75,9 @@ console.log(`System derived contracts generated: ${outputPath}`);
 console.log(`contracts=${contracts.length}`);
 
 function checkerFor(file) {
+  if (file.includes("/domains/dormitory/dormitory-release-train")) return "scripts/business/check-dormitory-release-train.mjs";
+  if (file.includes("/domains/dormitory/dormitory-pilot-scenario-pack")) return "scripts/business/check-dormitory-pilot-scenario-pack.mjs";
+  if (file.includes("/domains/dormitory/")) return "scripts/business/check-dormitory-derived-contracts.mjs";
   if (file.includes("/dormitory/")) return "scripts/business/check-dormitory-execution-kernel.mjs";
   if (file.includes("/admission/")) return "scripts/check-admission-kernel.mjs";
   if (file.includes("/search/")) return "scripts/check-search-kernel.mjs";

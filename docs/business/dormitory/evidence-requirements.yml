@@ -3,25 +3,705 @@
   "version": "oam.dormitory.v1",
   "decisionTable": "docs/business/dormitory/workitem-decision-table.json",
   "evidenceRequirements": [
-    {"requirementId":"identity-document","requiredFields":["tenantId","workItemId","submissionId","verifiedBy"]},
-    {"requirementId":"checkin-confirmation","requiredFields":["tenantId","workItemId","submissionId","operatorId","confirmedAt"]},
-    {"requirementId":"reservation-acknowledgement","requiredFields":["tenantId","workItemId","submissionId","customerAck"]},
-    {"requirementId":"bed-availability-proof","requiredFields":["tenantId","workItemId","submissionId","bedId","availabilityVersion"]},
-    {"requirementId":"payment-receipt","requiredFields":["tenantId","workItemId","submissionId","amount","currency","evidenceHash"]},
-    {"requirementId":"cashier-review","requiredFields":["tenantId","workItemId","submissionId","reviewer","paymentId"]},
-    {"requirementId":"deposit-policy","requiredFields":["tenantId","workItemId","submissionId","policyVersion"]},
-    {"requirementId":"receipt-proof","requiredFields":["tenantId","workItemId","submissionId","amount","currency","evidenceHash"]},
-    {"requirementId":"room-inspection","requiredFields":["tenantId","workItemId","submissionId","inspectionId","inspector","result"]},
-    {"requirementId":"settlement-review","requiredFields":["tenantId","workItemId","submissionId","reviewer","projectionVersion"]},
-    {"requirementId":"refund-approval","requiredFields":["tenantId","workItemId","submissionId","approver","availableRefundAmount"]},
-    {"requirementId":"completion-photo","requiredFields":["tenantId","workItemId","submissionId","evidenceHash","capturedBy"]},
-    {"requirementId":"verification-check","requiredFields":["tenantId","workItemId","submissionId","verifiedBy","result"]},
-    {"requirementId":"bank-import-row","requiredFields":["tenantId","workItemId","submissionId","bankRowHash","amount","currency"]},
-    {"requirementId":"correction-approval","requiredFields":["tenantId","workItemId","submissionId","approver","correctionReason"]},
-    {"requirementId":"period-review-pack","requiredFields":["tenantId","workItemId","submissionId","periodId","reviewer"]},
-    {"requirementId":"exception-audit","requiredFields":["tenantId","workItemId","submissionId","reasonCode","auditor"]},
-    {"requirementId":"shadow-compare-report","requiredFields":["tenantId","workItemId","submissionId","reportHash","status"]},
-    {"requirementId":"rollback-instruction","requiredFields":["tenantId","workItemId","submissionId","rollbackOwner","instructionHash"]}
+    {
+      "requirementId": "action-plan-evidence",
+      "nameZh": "action-plan-evidence",
+      "scope": "workItem",
+      "requiredFields": [
+        "evidenceRef",
+        "evidenceType",
+        "tenantId",
+        "capturedAt",
+        "capturedBy"
+      ],
+      "auditRequired": true,
+      "wrongScopeBlocksConfirm": true,
+      "missingBlocksConfirm": true
+    },
+    {
+      "requirementId": "adjustment-approval",
+      "nameZh": "adjustment-approval",
+      "scope": "workItem",
+      "requiredFields": [
+        "evidenceRef",
+        "evidenceType",
+        "tenantId",
+        "capturedAt",
+        "capturedBy"
+      ],
+      "auditRequired": true,
+      "wrongScopeBlocksConfirm": true,
+      "missingBlocksConfirm": true
+    },
+    {
+      "requirementId": "assignment-record",
+      "nameZh": "assignment-record",
+      "scope": "workItem",
+      "requiredFields": [
+        "evidenceRef",
+        "evidenceType",
+        "tenantId",
+        "capturedAt",
+        "capturedBy"
+      ],
+      "auditRequired": true,
+      "wrongScopeBlocksConfirm": true,
+      "missingBlocksConfirm": true
+    },
+    {
+      "requirementId": "audit-note",
+      "nameZh": "audit-note",
+      "scope": "workItem",
+      "requiredFields": [
+        "evidenceRef",
+        "evidenceType",
+        "tenantId",
+        "capturedAt",
+        "capturedBy"
+      ],
+      "auditRequired": true,
+      "wrongScopeBlocksConfirm": true,
+      "missingBlocksConfirm": true
+    },
+    {
+      "requirementId": "bank-import-row",
+      "requiredFields": [
+        "tenantId",
+        "workItemId",
+        "submissionId",
+        "bankRowHash",
+        "amount",
+        "currency"
+      ]
+    },
+    {
+      "requirementId": "bed-availability-proof",
+      "requiredFields": [
+        "tenantId",
+        "workItemId",
+        "submissionId",
+        "bedId",
+        "availabilityVersion",
+        "evidenceRef",
+        "evidenceType",
+        "capturedAt",
+        "capturedBy"
+      ],
+      "auditRequired": true,
+      "wrongScopeBlocksConfirm": true,
+      "missingBlocksConfirm": true
+    },
+    {
+      "requirementId": "bed-photo",
+      "nameZh": "bed-photo",
+      "scope": "workItem",
+      "requiredFields": [
+        "evidenceRef",
+        "evidenceType",
+        "tenantId",
+        "capturedAt",
+        "capturedBy"
+      ],
+      "auditRequired": true,
+      "wrongScopeBlocksConfirm": true,
+      "missingBlocksConfirm": true
+    },
+    {
+      "requirementId": "cancel-request",
+      "nameZh": "cancel-request",
+      "scope": "workItem",
+      "requiredFields": [
+        "evidenceRef",
+        "evidenceType",
+        "tenantId",
+        "capturedAt",
+        "capturedBy"
+      ],
+      "auditRequired": true,
+      "wrongScopeBlocksConfirm": true,
+      "missingBlocksConfirm": true
+    },
+    {
+      "requirementId": "cashier-review",
+      "requiredFields": [
+        "tenantId",
+        "workItemId",
+        "submissionId",
+        "reviewer",
+        "paymentId",
+        "evidenceRef",
+        "evidenceType",
+        "capturedAt",
+        "capturedBy"
+      ],
+      "auditRequired": true,
+      "wrongScopeBlocksConfirm": true,
+      "missingBlocksConfirm": true
+    },
+    {
+      "requirementId": "charge-basis",
+      "nameZh": "charge-basis",
+      "scope": "workItem",
+      "requiredFields": [
+        "evidenceRef",
+        "evidenceType",
+        "tenantId",
+        "capturedAt",
+        "capturedBy"
+      ],
+      "auditRequired": true,
+      "wrongScopeBlocksConfirm": true,
+      "missingBlocksConfirm": true
+    },
+    {
+      "requirementId": "checkin-confirmation",
+      "requiredFields": [
+        "tenantId",
+        "workItemId",
+        "submissionId",
+        "operatorId",
+        "confirmedAt",
+        "evidenceRef",
+        "evidenceType",
+        "capturedAt",
+        "capturedBy"
+      ],
+      "auditRequired": true,
+      "wrongScopeBlocksConfirm": true,
+      "missingBlocksConfirm": true
+    },
+    {
+      "requirementId": "checkout-close-proof",
+      "nameZh": "checkout-close-proof",
+      "scope": "workItem",
+      "requiredFields": [
+        "evidenceRef",
+        "evidenceType",
+        "tenantId",
+        "capturedAt",
+        "capturedBy"
+      ],
+      "auditRequired": true,
+      "wrongScopeBlocksConfirm": true,
+      "missingBlocksConfirm": true
+    },
+    {
+      "requirementId": "completion-note",
+      "nameZh": "completion-note",
+      "scope": "workItem",
+      "requiredFields": [
+        "evidenceRef",
+        "evidenceType",
+        "tenantId",
+        "capturedAt",
+        "capturedBy"
+      ],
+      "auditRequired": true,
+      "wrongScopeBlocksConfirm": true,
+      "missingBlocksConfirm": true
+    },
+    {
+      "requirementId": "completion-photo",
+      "requiredFields": [
+        "tenantId",
+        "workItemId",
+        "submissionId",
+        "evidenceHash",
+        "capturedBy",
+        "evidenceRef",
+        "evidenceType",
+        "capturedAt"
+      ],
+      "auditRequired": true,
+      "wrongScopeBlocksConfirm": true,
+      "missingBlocksConfirm": true
+    },
+    {
+      "requirementId": "correction-approval",
+      "requiredFields": [
+        "tenantId",
+        "workItemId",
+        "submissionId",
+        "approver",
+        "correctionReason",
+        "evidenceRef",
+        "evidenceType",
+        "capturedAt",
+        "capturedBy"
+      ],
+      "auditRequired": true,
+      "wrongScopeBlocksConfirm": true,
+      "missingBlocksConfirm": true
+    },
+    {
+      "requirementId": "damage-photo",
+      "nameZh": "damage-photo",
+      "scope": "workItem",
+      "requiredFields": [
+        "evidenceRef",
+        "evidenceType",
+        "tenantId",
+        "capturedAt",
+        "capturedBy"
+      ],
+      "auditRequired": true,
+      "wrongScopeBlocksConfirm": true,
+      "missingBlocksConfirm": true
+    },
+    {
+      "requirementId": "debt-followup-record",
+      "nameZh": "debt-followup-record",
+      "scope": "workItem",
+      "requiredFields": [
+        "evidenceRef",
+        "evidenceType",
+        "tenantId",
+        "capturedAt",
+        "capturedBy"
+      ],
+      "auditRequired": true,
+      "wrongScopeBlocksConfirm": true,
+      "missingBlocksConfirm": true
+    },
+    {
+      "requirementId": "deposit-policy",
+      "requiredFields": [
+        "tenantId",
+        "workItemId",
+        "submissionId",
+        "policyVersion",
+        "evidenceRef",
+        "evidenceType",
+        "capturedAt",
+        "capturedBy"
+      ],
+      "auditRequired": true,
+      "wrongScopeBlocksConfirm": true,
+      "missingBlocksConfirm": true
+    },
+    {
+      "requirementId": "exception-audit",
+      "requiredFields": [
+        "tenantId",
+        "workItemId",
+        "submissionId",
+        "reasonCode",
+        "auditor",
+        "evidenceRef",
+        "evidenceType",
+        "capturedAt",
+        "capturedBy"
+      ],
+      "auditRequired": true,
+      "wrongScopeBlocksConfirm": true,
+      "missingBlocksConfirm": true
+    },
+    {
+      "requirementId": "expense-approval",
+      "nameZh": "expense-approval",
+      "scope": "workItem",
+      "requiredFields": [
+        "evidenceRef",
+        "evidenceType",
+        "tenantId",
+        "capturedAt",
+        "capturedBy"
+      ],
+      "auditRequired": true,
+      "wrongScopeBlocksConfirm": true,
+      "missingBlocksConfirm": true
+    },
+    {
+      "requirementId": "expense-basis",
+      "nameZh": "expense-basis",
+      "scope": "workItem",
+      "requiredFields": [
+        "evidenceRef",
+        "evidenceType",
+        "tenantId",
+        "capturedAt",
+        "capturedBy"
+      ],
+      "auditRequired": true,
+      "wrongScopeBlocksConfirm": true,
+      "missingBlocksConfirm": true
+    },
+    {
+      "requirementId": "expense-invoice",
+      "nameZh": "expense-invoice",
+      "scope": "workItem",
+      "requiredFields": [
+        "evidenceRef",
+        "evidenceType",
+        "tenantId",
+        "capturedAt",
+        "capturedBy"
+      ],
+      "auditRequired": true,
+      "wrongScopeBlocksConfirm": true,
+      "missingBlocksConfirm": true
+    },
+    {
+      "requirementId": "expense-link-proof",
+      "nameZh": "expense-link-proof",
+      "scope": "workItem",
+      "requiredFields": [
+        "evidenceRef",
+        "evidenceType",
+        "tenantId",
+        "capturedAt",
+        "capturedBy"
+      ],
+      "auditRequired": true,
+      "wrongScopeBlocksConfirm": true,
+      "missingBlocksConfirm": true
+    },
+    {
+      "requirementId": "extend-application",
+      "nameZh": "extend-application",
+      "scope": "workItem",
+      "requiredFields": [
+        "evidenceRef",
+        "evidenceType",
+        "tenantId",
+        "capturedAt",
+        "capturedBy"
+      ],
+      "auditRequired": true,
+      "wrongScopeBlocksConfirm": true,
+      "missingBlocksConfirm": true
+    },
+    {
+      "requirementId": "identity-document",
+      "requiredFields": [
+        "tenantId",
+        "workItemId",
+        "submissionId",
+        "verifiedBy",
+        "evidenceRef",
+        "evidenceType",
+        "capturedAt",
+        "capturedBy"
+      ],
+      "auditRequired": true,
+      "wrongScopeBlocksConfirm": true,
+      "missingBlocksConfirm": true
+    },
+    {
+      "requirementId": "incident-evidence",
+      "nameZh": "incident-evidence",
+      "scope": "workItem",
+      "requiredFields": [
+        "evidenceRef",
+        "evidenceType",
+        "tenantId",
+        "capturedAt",
+        "capturedBy"
+      ],
+      "auditRequired": true,
+      "wrongScopeBlocksConfirm": true,
+      "missingBlocksConfirm": true
+    },
+    {
+      "requirementId": "lead-consent",
+      "nameZh": "lead-consent",
+      "scope": "workItem",
+      "requiredFields": [
+        "evidenceRef",
+        "evidenceType",
+        "tenantId",
+        "capturedAt",
+        "capturedBy"
+      ],
+      "auditRequired": true,
+      "wrongScopeBlocksConfirm": true,
+      "missingBlocksConfirm": true
+    },
+    {
+      "requirementId": "no-show-record",
+      "nameZh": "no-show-record",
+      "scope": "workItem",
+      "requiredFields": [
+        "evidenceRef",
+        "evidenceType",
+        "tenantId",
+        "capturedAt",
+        "capturedBy"
+      ],
+      "auditRequired": true,
+      "wrongScopeBlocksConfirm": true,
+      "missingBlocksConfirm": true
+    },
+    {
+      "requirementId": "payment-receipt",
+      "requiredFields": [
+        "tenantId",
+        "workItemId",
+        "submissionId",
+        "amount",
+        "currency",
+        "evidenceHash",
+        "evidenceRef",
+        "evidenceType",
+        "capturedAt",
+        "capturedBy"
+      ],
+      "auditRequired": true,
+      "wrongScopeBlocksConfirm": true,
+      "missingBlocksConfirm": true
+    },
+    {
+      "requirementId": "period-review-pack",
+      "requiredFields": [
+        "tenantId",
+        "workItemId",
+        "submissionId",
+        "periodId",
+        "reviewer",
+        "evidenceRef",
+        "evidenceType",
+        "capturedAt",
+        "capturedBy"
+      ],
+      "auditRequired": true,
+      "wrongScopeBlocksConfirm": true,
+      "missingBlocksConfirm": true
+    },
+    {
+      "requirementId": "rate-policy",
+      "nameZh": "rate-policy",
+      "scope": "workItem",
+      "requiredFields": [
+        "evidenceRef",
+        "evidenceType",
+        "tenantId",
+        "capturedAt",
+        "capturedBy"
+      ],
+      "auditRequired": true,
+      "wrongScopeBlocksConfirm": true,
+      "missingBlocksConfirm": true
+    },
+    {
+      "requirementId": "receipt-proof",
+      "requiredFields": [
+        "tenantId",
+        "workItemId",
+        "submissionId",
+        "amount",
+        "currency",
+        "evidenceHash",
+        "evidenceRef",
+        "evidenceType",
+        "capturedAt",
+        "capturedBy"
+      ],
+      "auditRequired": true,
+      "wrongScopeBlocksConfirm": true,
+      "missingBlocksConfirm": true
+    },
+    {
+      "requirementId": "refund-approval",
+      "requiredFields": [
+        "tenantId",
+        "workItemId",
+        "submissionId",
+        "approver",
+        "availableRefundAmount",
+        "evidenceRef",
+        "evidenceType",
+        "capturedAt",
+        "capturedBy"
+      ],
+      "auditRequired": true,
+      "wrongScopeBlocksConfirm": true,
+      "missingBlocksConfirm": true
+    },
+    {
+      "requirementId": "reservation-acknowledgement",
+      "requiredFields": [
+        "tenantId",
+        "workItemId",
+        "submissionId",
+        "customerAck",
+        "evidenceRef",
+        "evidenceType",
+        "capturedAt",
+        "capturedBy"
+      ],
+      "auditRequired": true,
+      "wrongScopeBlocksConfirm": true,
+      "missingBlocksConfirm": true
+    },
+    {
+      "requirementId": "resolution-evidence",
+      "nameZh": "resolution-evidence",
+      "scope": "workItem",
+      "requiredFields": [
+        "evidenceRef",
+        "evidenceType",
+        "tenantId",
+        "capturedAt",
+        "capturedBy"
+      ],
+      "auditRequired": true,
+      "wrongScopeBlocksConfirm": true,
+      "missingBlocksConfirm": true
+    },
+    {
+      "requirementId": "rollback-instruction",
+      "requiredFields": [
+        "tenantId",
+        "workItemId",
+        "submissionId",
+        "rollbackOwner",
+        "instructionHash"
+      ]
+    },
+    {
+      "requirementId": "room-basic-info",
+      "nameZh": "room-basic-info",
+      "scope": "workItem",
+      "requiredFields": [
+        "evidenceRef",
+        "evidenceType",
+        "tenantId",
+        "capturedAt",
+        "capturedBy"
+      ],
+      "auditRequired": true,
+      "wrongScopeBlocksConfirm": true,
+      "missingBlocksConfirm": true
+    },
+    {
+      "requirementId": "room-inspection",
+      "requiredFields": [
+        "tenantId",
+        "workItemId",
+        "submissionId",
+        "inspectionId",
+        "inspector",
+        "result",
+        "evidenceRef",
+        "evidenceType",
+        "capturedAt",
+        "capturedBy"
+      ],
+      "auditRequired": true,
+      "wrongScopeBlocksConfirm": true,
+      "missingBlocksConfirm": true
+    },
+    {
+      "requirementId": "room-link-proof",
+      "nameZh": "room-link-proof",
+      "scope": "workItem",
+      "requiredFields": [
+        "evidenceRef",
+        "evidenceType",
+        "tenantId",
+        "capturedAt",
+        "capturedBy"
+      ],
+      "auditRequired": true,
+      "wrongScopeBlocksConfirm": true,
+      "missingBlocksConfirm": true
+    },
+    {
+      "requirementId": "room-photo",
+      "nameZh": "room-photo",
+      "scope": "workItem",
+      "requiredFields": [
+        "evidenceRef",
+        "evidenceType",
+        "tenantId",
+        "capturedAt",
+        "capturedBy"
+      ],
+      "auditRequired": true,
+      "wrongScopeBlocksConfirm": true,
+      "missingBlocksConfirm": true
+    },
+    {
+      "requirementId": "service-request",
+      "nameZh": "service-request",
+      "scope": "workItem",
+      "requiredFields": [
+        "evidenceRef",
+        "evidenceType",
+        "tenantId",
+        "capturedAt",
+        "capturedBy"
+      ],
+      "auditRequired": true,
+      "wrongScopeBlocksConfirm": true,
+      "missingBlocksConfirm": true
+    },
+    {
+      "requirementId": "settlement-review",
+      "requiredFields": [
+        "tenantId",
+        "workItemId",
+        "submissionId",
+        "reviewer",
+        "projectionVersion",
+        "evidenceRef",
+        "evidenceType",
+        "capturedAt",
+        "capturedBy"
+      ],
+      "auditRequired": true,
+      "wrongScopeBlocksConfirm": true,
+      "missingBlocksConfirm": true
+    },
+    {
+      "requirementId": "shadow-compare-report",
+      "requiredFields": [
+        "tenantId",
+        "workItemId",
+        "submissionId",
+        "reportHash",
+        "status"
+      ]
+    },
+    {
+      "requirementId": "transfer-application",
+      "nameZh": "transfer-application",
+      "scope": "workItem",
+      "requiredFields": [
+        "evidenceRef",
+        "evidenceType",
+        "tenantId",
+        "capturedAt",
+        "capturedBy"
+      ],
+      "auditRequired": true,
+      "wrongScopeBlocksConfirm": true,
+      "missingBlocksConfirm": true
+    },
+    {
+      "requirementId": "verification-check",
+      "requiredFields": [
+        "tenantId",
+        "workItemId",
+        "submissionId",
+        "verifiedBy",
+        "result",
+        "evidenceRef",
+        "evidenceType",
+        "capturedAt",
+        "capturedBy"
+      ],
+      "auditRequired": true,
+      "wrongScopeBlocksConfirm": true,
+      "missingBlocksConfirm": true
+    }
   ],
-  "productionAllowed": false
+  "productionAllowed": false,
+  "derivedFrom": [
+    "docs/business/domains/dormitory/dormitory-operating-kernel.json"
+  ],
+  "generatedBy": "scripts/business/generate-dormitory-derived-contracts.mjs",
+  "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
+  "manualEditAllowed": false,
+  "graphBinding": "domain.dormitory.evidence-requirements"
 }

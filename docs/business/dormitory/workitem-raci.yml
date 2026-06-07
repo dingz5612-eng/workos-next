@@ -1,20 +1,389 @@
 {
-  "domainId": "dormitory",
-  "version": "oam.dormitory.v1",
-  "roles": [
-    {"role":"Dormitory Operations Owner","responsibilities":["domain go/no-go","business signoff request"],"cannotWriteFactsDirectly":true},
-    {"role":"Resource Manager","responsibilities":["Room","Bed","BedStatus"],"cannotWriteFactsDirectly":true},
-    {"role":"Front Desk Lead","responsibilities":["Lead","Reservation","Stay onboarding"],"cannotWriteFactsDirectly":true},
-    {"role":"Finance Cashier","responsibilities":["payment receipt draft"],"cannotWriteFactsDirectly":true},
-    {"role":"Finance Supervisor","responsibilities":["PaymentConfirmed","DepositConfirmed","Settlement"],"cannotWriteFactsDirectly":true},
-    {"role":"Finance Controller","responsibilities":["refund approval","correction approval"],"cannotWriteFactsDirectly":true},
-    {"role":"Operations Director","responsibilities":["risk escalation","resource release exceptions"],"cannotWriteFactsDirectly":true}
+  "version": "oam.dormitory.workitem-raci.v2",
+  "status": "derived",
+  "derivedFrom": [
+    "docs/business/domains/dormitory/dormitory-operating-kernel.json"
   ],
-  "raciRules": [
-    {"fact":"DepositAccount","responsible":"Finance Supervisor","accountable":"Finance Controller","consulted":["Front Desk Lead"],"informed":["Dormitory Operations Owner"]},
-    {"fact":"Stay","responsible":"Front Desk Lead","accountable":"Dormitory Operations Owner","consulted":["Resource Manager"],"informed":["Finance Supervisor"]},
-    {"fact":"BedStatus","responsible":"Resource Manager","accountable":"Operations Director","consulted":["Housekeeping Lead"],"informed":["Front Desk Lead"]},
-    {"fact":"LedgerTransaction","responsible":"Finance Supervisor","accountable":"Finance Controller","consulted":["Dormitory Operations Owner"],"informed":["Operations Director"]}
+  "generatedBy": "scripts/business/generate-dormitory-derived-contracts.mjs",
+  "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
+  "manualEditAllowed": false,
+  "graphBinding": "domain.dormitory.workitem-raci",
+  "roleModel": [
+    "宿舍经办人",
+    "宿舍负责人"
   ],
-  "productionAllowed": false
+  "assignments": [
+    {
+      "workItemType": "Dorm.RoomSetupConfirm",
+      "responsible": "宿舍经办人",
+      "accountable": "宿舍经办人",
+      "consulted": [
+        "Admission Kernel",
+        "Evidence Kernel"
+      ],
+      "informed": [
+        "Projection/Search/Lens Kernel"
+      ]
+    },
+    {
+      "workItemType": "Dorm.BedSetupConfirm",
+      "responsible": "宿舍经办人",
+      "accountable": "宿舍经办人",
+      "consulted": [
+        "Admission Kernel",
+        "Evidence Kernel"
+      ],
+      "informed": [
+        "Projection/Search/Lens Kernel"
+      ]
+    },
+    {
+      "workItemType": "Dorm.RatePlanConfirm",
+      "responsible": "宿舍负责人",
+      "accountable": "宿舍负责人",
+      "consulted": [
+        "Admission Kernel",
+        "Evidence Kernel"
+      ],
+      "informed": [
+        "Projection/Search/Lens Kernel"
+      ]
+    },
+    {
+      "workItemType": "Dorm.ResourceReadinessConfirm",
+      "responsible": "宿舍经办人",
+      "accountable": "宿舍经办人",
+      "consulted": [
+        "Admission Kernel",
+        "Evidence Kernel"
+      ],
+      "informed": [
+        "Projection/Search/Lens Kernel"
+      ]
+    },
+    {
+      "workItemType": "Dorm.LeadCapture",
+      "responsible": "宿舍经办人",
+      "accountable": "宿舍经办人",
+      "consulted": [
+        "Admission Kernel",
+        "Evidence Kernel"
+      ],
+      "informed": [
+        "Projection/Search/Lens Kernel"
+      ]
+    },
+    {
+      "workItemType": "Dorm.ReservationConfirm",
+      "responsible": "宿舍负责人",
+      "accountable": "宿舍负责人",
+      "consulted": [
+        "Admission Kernel",
+        "Evidence Kernel"
+      ],
+      "informed": [
+        "Projection/Search/Lens Kernel"
+      ]
+    },
+    {
+      "workItemType": "Dorm.CheckinConfirm",
+      "responsible": "宿舍经办人",
+      "accountable": "宿舍经办人",
+      "consulted": [
+        "Admission Kernel",
+        "Evidence Kernel"
+      ],
+      "informed": [
+        "Projection/Search/Lens Kernel"
+      ]
+    },
+    {
+      "workItemType": "Dorm.PaymentConfirm",
+      "responsible": "宿舍负责人",
+      "accountable": "宿舍负责人",
+      "consulted": [
+        "finance-gate",
+        "Evidence Kernel"
+      ],
+      "informed": [
+        "Projection/Search/Lens Kernel"
+      ]
+    },
+    {
+      "workItemType": "Dorm.DepositConfirm",
+      "responsible": "宿舍负责人",
+      "accountable": "宿舍负责人",
+      "consulted": [
+        "finance-gate",
+        "Evidence Kernel"
+      ],
+      "informed": [
+        "Projection/Search/Lens Kernel"
+      ]
+    },
+    {
+      "workItemType": "Dorm.ServiceTaskCreate",
+      "responsible": "宿舍经办人",
+      "accountable": "宿舍经办人",
+      "consulted": [
+        "Admission Kernel",
+        "Evidence Kernel"
+      ],
+      "informed": [
+        "Projection/Search/Lens Kernel"
+      ]
+    },
+    {
+      "workItemType": "Dorm.ServiceTaskAssign",
+      "responsible": "宿舍负责人",
+      "accountable": "宿舍负责人",
+      "consulted": [
+        "Admission Kernel",
+        "Evidence Kernel"
+      ],
+      "informed": [
+        "Projection/Search/Lens Kernel"
+      ]
+    },
+    {
+      "workItemType": "Dorm.ServiceTaskComplete",
+      "responsible": "宿舍经办人",
+      "accountable": "宿舍经办人",
+      "consulted": [
+        "Admission Kernel",
+        "Evidence Kernel"
+      ],
+      "informed": [
+        "Projection/Search/Lens Kernel"
+      ]
+    },
+    {
+      "workItemType": "Dorm.ServiceTaskVerify",
+      "responsible": "宿舍负责人",
+      "accountable": "宿舍负责人",
+      "consulted": [
+        "Admission Kernel",
+        "Evidence Kernel"
+      ],
+      "informed": [
+        "Projection/Search/Lens Kernel"
+      ]
+    },
+    {
+      "workItemType": "Finance.ExpenseRecord",
+      "responsible": "宿舍经办人",
+      "accountable": "宿舍经办人",
+      "consulted": [
+        "finance-gate",
+        "Evidence Kernel"
+      ],
+      "informed": [
+        "Projection/Search/Lens Kernel"
+      ]
+    },
+    {
+      "workItemType": "Finance.ExpenseApprove",
+      "responsible": "宿舍负责人",
+      "accountable": "宿舍负责人",
+      "consulted": [
+        "finance-gate",
+        "Evidence Kernel"
+      ],
+      "informed": [
+        "Projection/Search/Lens Kernel"
+      ]
+    },
+    {
+      "workItemType": "Finance.ExpenseLink",
+      "responsible": "宿舍负责人",
+      "accountable": "宿舍负责人",
+      "consulted": [
+        "finance-gate",
+        "Evidence Kernel"
+      ],
+      "informed": [
+        "Projection/Search/Lens Kernel"
+      ]
+    },
+    {
+      "workItemType": "Dorm.RoomInspectionConfirm",
+      "responsible": "宿舍经办人",
+      "accountable": "宿舍经办人",
+      "consulted": [
+        "Admission Kernel",
+        "Evidence Kernel"
+      ],
+      "informed": [
+        "Projection/Search/Lens Kernel"
+      ]
+    },
+    {
+      "workItemType": "Dorm.CheckoutSettlementApprove",
+      "responsible": "宿舍负责人",
+      "accountable": "宿舍负责人",
+      "consulted": [
+        "finance-gate",
+        "Evidence Kernel"
+      ],
+      "informed": [
+        "Projection/Search/Lens Kernel"
+      ]
+    },
+    {
+      "workItemType": "Dorm.StayExtendApprove",
+      "responsible": "宿舍负责人",
+      "accountable": "宿舍负责人",
+      "consulted": [
+        "Admission Kernel",
+        "Evidence Kernel"
+      ],
+      "informed": [
+        "Projection/Search/Lens Kernel"
+      ]
+    },
+    {
+      "workItemType": "Dorm.BedTransferApprove",
+      "responsible": "宿舍负责人",
+      "accountable": "宿舍负责人",
+      "consulted": [
+        "Admission Kernel",
+        "Evidence Kernel"
+      ],
+      "informed": [
+        "Projection/Search/Lens Kernel"
+      ]
+    },
+    {
+      "workItemType": "Dorm.ReservationCancelClose",
+      "responsible": "宿舍经办人",
+      "accountable": "宿舍经办人",
+      "consulted": [
+        "Admission Kernel",
+        "Evidence Kernel"
+      ],
+      "informed": [
+        "Projection/Search/Lens Kernel"
+      ]
+    },
+    {
+      "workItemType": "Dorm.ReservationNoShowClose",
+      "responsible": "宿舍经办人",
+      "accountable": "宿舍经办人",
+      "consulted": [
+        "Admission Kernel",
+        "Evidence Kernel"
+      ],
+      "informed": [
+        "Projection/Search/Lens Kernel"
+      ]
+    },
+    {
+      "workItemType": "Finance.ChargeAdjustmentApprove",
+      "responsible": "宿舍负责人",
+      "accountable": "宿舍负责人",
+      "consulted": [
+        "finance-gate",
+        "Evidence Kernel"
+      ],
+      "informed": [
+        "Projection/Search/Lens Kernel"
+      ]
+    },
+    {
+      "workItemType": "Finance.DebtFollowUp",
+      "responsible": "宿舍经办人",
+      "accountable": "宿舍经办人",
+      "consulted": [
+        "finance-gate",
+        "Evidence Kernel"
+      ],
+      "informed": [
+        "Projection/Search/Lens Kernel"
+      ]
+    },
+    {
+      "workItemType": "Dorm.AccessCredentialIssue",
+      "responsible": "宿舍经办人",
+      "accountable": "宿舍经办人",
+      "consulted": [
+        "Admission Kernel",
+        "Evidence Kernel"
+      ],
+      "informed": [
+        "Projection/Search/Lens Kernel"
+      ]
+    },
+    {
+      "workItemType": "Dorm.AccessCredentialRevoke",
+      "responsible": "宿舍经办人",
+      "accountable": "宿舍经办人",
+      "consulted": [
+        "Admission Kernel",
+        "Evidence Kernel"
+      ],
+      "informed": [
+        "Projection/Search/Lens Kernel"
+      ]
+    },
+    {
+      "workItemType": "Dorm.IncidentRecord",
+      "responsible": "宿舍经办人",
+      "accountable": "宿舍经办人",
+      "consulted": [
+        "Admission Kernel",
+        "Evidence Kernel"
+      ],
+      "informed": [
+        "Projection/Search/Lens Kernel"
+      ]
+    },
+    {
+      "workItemType": "Dorm.PeriodReview",
+      "responsible": "宿舍负责人",
+      "accountable": "宿舍负责人",
+      "consulted": [
+        "Admission Kernel",
+        "Evidence Kernel"
+      ],
+      "informed": [
+        "Projection/Search/Lens Kernel"
+      ]
+    },
+    {
+      "workItemType": "Dorm.PeriodActionPlanExecute",
+      "responsible": "宿舍经办人",
+      "accountable": "宿舍经办人",
+      "consulted": [
+        "Admission Kernel",
+        "Evidence Kernel"
+      ],
+      "informed": [
+        "Projection/Search/Lens Kernel"
+      ]
+    },
+    {
+      "workItemType": "Dorm.ExceptionResolve",
+      "responsible": "宿舍负责人",
+      "accountable": "宿舍负责人",
+      "consulted": [
+        "Admission Kernel",
+        "Evidence Kernel"
+      ],
+      "informed": [
+        "Projection/Search/Lens Kernel"
+      ]
+    },
+    {
+      "workItemType": "Finance.CorrectionApply",
+      "responsible": "宿舍负责人",
+      "accountable": "宿舍负责人",
+      "consulted": [
+        "finance-gate",
+        "Evidence Kernel"
+      ],
+      "informed": [
+        "Projection/Search/Lens Kernel"
+      ]
+    }
+  ]
 }
