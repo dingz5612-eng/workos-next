@@ -7217,7 +7217,7 @@
       "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "human_manual",
-      "manualEditAllowed": true,
+      "manualEditAllowed": false,
       "ciReferenceAllowed": true,
       "sourceKernel": "domain.dormitory",
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
@@ -7229,7 +7229,11 @@
       "consumers": [
         "scripts/business/check-dormitory-derived-contracts.mjs",
         "docs/oam/oam-kernel-graph.json"
-      ]
+      ],
+      "derivedFrom": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "generatedBy": "scripts/business/generate-dormitory-derived-contracts.mjs",
+      "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
+      "graphBinding": "file.docs/business/domains/dormitory/dormitory-operator-playbook.md"
     },
     {
       "nodeId": "file.docs/business/domains/dormitory/dormitory-pilot-go-no-go.json",
@@ -7388,7 +7392,7 @@
       "currentTruthAllowed": true,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
-      "manualEditAllowed": true,
+      "manualEditAllowed": false,
       "ciReferenceAllowed": true,
       "sourceKernel": "domain.dormitory",
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
@@ -7400,7 +7404,11 @@
       "consumers": [
         "scripts/business/check-dormitory-derived-contracts.mjs",
         "docs/oam/oam-kernel-graph.json"
-      ]
+      ],
+      "derivedFrom": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "generatedBy": "scripts/business/generate-dormitory-derived-contracts.mjs",
+      "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
+      "graphBinding": "file.docs/business/domains/dormitory/handoff-contract.json"
     },
     {
       "nodeId": "file.docs/business/domains/dormitory/workitems/dorm-access-credential-issue.json",
@@ -8554,7 +8562,7 @@
       "nodeType": "File",
       "owner": "domain-owner",
       "sourceFile": "docs/business/dormitory/canonical-scenario-map.json",
-      "runtimeBinding": "domain.dormitory",
+      "runtimeBinding": "derived-view",
       "testBinding": [
         "scripts/business/check-dormitory-derived-contracts.mjs",
         "docs/oam/oam-kernel-graph.json"
@@ -8563,10 +8571,10 @@
         "scripts/business/check-dormitory-derived-contracts.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
-      "lifecycleState": "active_contract",
-      "manualEditAllowed": true,
+      "lifecycleState": "derived_view",
+      "manualEditAllowed": false,
       "ciReferenceAllowed": true,
       "sourceKernel": "domain.dormitory",
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
@@ -8578,7 +8586,11 @@
       "consumers": [
         "scripts/business/check-dormitory-derived-contracts.mjs",
         "docs/oam/oam-kernel-graph.json"
-      ]
+      ],
+      "derivedFrom": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "generatedBy": "scripts/business/generate-dormitory-derived-contracts.mjs",
+      "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
+      "graphBinding": "file.docs/business/dormitory/canonical-scenario-map.json"
     },
     {
       "nodeId": "file.docs/business/dormitory/current-business-journey.md",
@@ -8647,7 +8659,7 @@
       "nodeType": "File",
       "owner": "domain-owner",
       "sourceFile": "docs/business/dormitory/evidence-policy.yml",
-      "runtimeBinding": "domain.dormitory",
+      "runtimeBinding": "derived-view",
       "testBinding": [
         "scripts/business/check-dormitory-derived-contracts.mjs",
         "docs/oam/oam-kernel-graph.json"
@@ -8656,10 +8668,10 @@
         "scripts/business/check-dormitory-derived-contracts.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
-      "lifecycleState": "active_contract",
-      "manualEditAllowed": true,
+      "lifecycleState": "derived_view",
+      "manualEditAllowed": false,
       "ciReferenceAllowed": true,
       "sourceKernel": "domain.dormitory",
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
@@ -8671,14 +8683,18 @@
       "consumers": [
         "scripts/business/check-dormitory-derived-contracts.mjs",
         "docs/oam/oam-kernel-graph.json"
-      ]
+      ],
+      "derivedFrom": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "generatedBy": "scripts/business/generate-dormitory-derived-contracts.mjs",
+      "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
+      "graphBinding": "file.docs/business/dormitory/evidence-policy.yml"
     },
     {
       "nodeId": "file.docs/business/dormitory/evidence-requirements.yml",
       "nodeType": "File",
       "owner": "domain-owner",
       "sourceFile": "docs/business/dormitory/evidence-requirements.yml",
-      "runtimeBinding": "domain.dormitory",
+      "runtimeBinding": "derived-view",
       "testBinding": [
         "scripts/business/check-dormitory-derived-contracts.mjs",
         "docs/oam/oam-kernel-graph.json"
@@ -8687,10 +8703,10 @@
         "scripts/business/check-dormitory-derived-contracts.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
-      "lifecycleState": "active_contract",
-      "manualEditAllowed": true,
+      "lifecycleState": "derived_view",
+      "manualEditAllowed": false,
       "ciReferenceAllowed": true,
       "sourceKernel": "domain.dormitory",
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
@@ -8702,7 +8718,11 @@
       "consumers": [
         "scripts/business/check-dormitory-derived-contracts.mjs",
         "docs/oam/oam-kernel-graph.json"
-      ]
+      ],
+      "derivedFrom": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "generatedBy": "scripts/business/generate-dormitory-derived-contracts.mjs",
+      "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
+      "graphBinding": "file.docs/business/dormitory/evidence-requirements.yml"
     },
     {
       "nodeId": "file.docs/business/dormitory/finance-control-rules.yml",
@@ -8740,7 +8760,7 @@
       "nodeType": "File",
       "owner": "domain-owner",
       "sourceFile": "docs/business/dormitory/go-no-go.yml",
-      "runtimeBinding": "domain.dormitory",
+      "runtimeBinding": "derived-view",
       "testBinding": [
         "scripts/business/check-dormitory-derived-contracts.mjs",
         "docs/oam/oam-kernel-graph.json"
@@ -8749,10 +8769,10 @@
         "scripts/business/check-dormitory-derived-contracts.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
-      "lifecycleState": "active_contract",
-      "manualEditAllowed": true,
+      "lifecycleState": "derived_view",
+      "manualEditAllowed": false,
       "ciReferenceAllowed": true,
       "sourceKernel": "domain.dormitory",
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
@@ -8764,14 +8784,18 @@
       "consumers": [
         "scripts/business/check-dormitory-derived-contracts.mjs",
         "docs/oam/oam-kernel-graph.json"
-      ]
+      ],
+      "derivedFrom": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "generatedBy": "scripts/business/generate-dormitory-derived-contracts.mjs",
+      "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
+      "graphBinding": "file.docs/business/dormitory/go-no-go.yml"
     },
     {
       "nodeId": "file.docs/business/dormitory/ledger-posting-contract.yml",
       "nodeType": "File",
       "owner": "finance-gate",
       "sourceFile": "docs/business/dormitory/ledger-posting-contract.yml",
-      "runtimeBinding": "domain.dormitory",
+      "runtimeBinding": "derived-view",
       "testBinding": [
         "scripts/business/check-dormitory-derived-contracts.mjs",
         "docs/oam/oam-kernel-graph.json"
@@ -8780,10 +8804,10 @@
         "scripts/business/check-dormitory-derived-contracts.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
-      "lifecycleState": "active_contract",
-      "manualEditAllowed": true,
+      "lifecycleState": "derived_view",
+      "manualEditAllowed": false,
       "ciReferenceAllowed": true,
       "sourceKernel": "domain.dormitory",
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
@@ -8795,14 +8819,18 @@
       "consumers": [
         "scripts/business/check-dormitory-derived-contracts.mjs",
         "docs/oam/oam-kernel-graph.json"
-      ]
+      ],
+      "derivedFrom": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "generatedBy": "scripts/business/generate-dormitory-derived-contracts.mjs",
+      "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
+      "graphBinding": "file.docs/business/dormitory/ledger-posting-contract.yml"
     },
     {
       "nodeId": "file.docs/business/dormitory/lens-map.yml",
       "nodeType": "File",
       "owner": "domain-owner",
       "sourceFile": "docs/business/dormitory/lens-map.yml",
-      "runtimeBinding": "domain.dormitory",
+      "runtimeBinding": "derived-view",
       "testBinding": [
         "scripts/business/check-dormitory-derived-contracts.mjs",
         "docs/oam/oam-kernel-graph.json"
@@ -8811,10 +8839,10 @@
         "scripts/business/check-dormitory-derived-contracts.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
-      "lifecycleState": "active_contract",
-      "manualEditAllowed": true,
+      "lifecycleState": "derived_view",
+      "manualEditAllowed": false,
       "ciReferenceAllowed": true,
       "sourceKernel": "domain.dormitory",
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
@@ -8826,14 +8854,18 @@
       "consumers": [
         "scripts/business/check-dormitory-derived-contracts.mjs",
         "docs/oam/oam-kernel-graph.json"
-      ]
+      ],
+      "derivedFrom": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "generatedBy": "scripts/business/generate-dormitory-derived-contracts.mjs",
+      "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
+      "graphBinding": "file.docs/business/dormitory/lens-map.yml"
     },
     {
       "nodeId": "file.docs/business/dormitory/metric-formula-contract.yml",
       "nodeType": "File",
       "owner": "domain-owner",
       "sourceFile": "docs/business/dormitory/metric-formula-contract.yml",
-      "runtimeBinding": "domain.dormitory",
+      "runtimeBinding": "derived-view",
       "testBinding": [
         "scripts/business/check-dormitory-derived-contracts.mjs",
         "docs/oam/oam-kernel-graph.json"
@@ -8842,10 +8874,10 @@
         "scripts/business/check-dormitory-derived-contracts.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
-      "lifecycleState": "active_contract",
-      "manualEditAllowed": true,
+      "lifecycleState": "derived_view",
+      "manualEditAllowed": false,
       "ciReferenceAllowed": true,
       "sourceKernel": "domain.dormitory",
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
@@ -8857,14 +8889,18 @@
       "consumers": [
         "scripts/business/check-dormitory-derived-contracts.mjs",
         "docs/oam/oam-kernel-graph.json"
-      ]
+      ],
+      "derivedFrom": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "generatedBy": "scripts/business/generate-dormitory-derived-contracts.mjs",
+      "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
+      "graphBinding": "file.docs/business/dormitory/metric-formula-contract.yml"
     },
     {
       "nodeId": "file.docs/business/dormitory/metrics-tree.yml",
       "nodeType": "File",
       "owner": "domain-owner",
       "sourceFile": "docs/business/dormitory/metrics-tree.yml",
-      "runtimeBinding": "domain.dormitory",
+      "runtimeBinding": "derived-view",
       "testBinding": [
         "scripts/business/check-dormitory-derived-contracts.mjs",
         "docs/oam/oam-kernel-graph.json"
@@ -8873,10 +8909,10 @@
         "scripts/business/check-dormitory-derived-contracts.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
-      "lifecycleState": "active_contract",
-      "manualEditAllowed": true,
+      "lifecycleState": "derived_view",
+      "manualEditAllowed": false,
       "ciReferenceAllowed": true,
       "sourceKernel": "domain.dormitory",
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
@@ -8888,7 +8924,11 @@
       "consumers": [
         "scripts/business/check-dormitory-derived-contracts.mjs",
         "docs/oam/oam-kernel-graph.json"
-      ]
+      ],
+      "derivedFrom": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "generatedBy": "scripts/business/generate-dormitory-derived-contracts.mjs",
+      "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
+      "graphBinding": "file.docs/business/dormitory/metrics-tree.yml"
     },
     {
       "nodeId": "file.docs/business/dormitory/north-star.md",
@@ -8988,7 +9028,7 @@
       "nodeType": "File",
       "owner": "domain-owner",
       "sourceFile": "docs/business/dormitory/scenario-field-contract.yml",
-      "runtimeBinding": "domain.dormitory",
+      "runtimeBinding": "derived-view",
       "testBinding": [
         "scripts/business/check-dormitory-derived-contracts.mjs",
         "docs/oam/oam-kernel-graph.json"
@@ -8997,10 +9037,10 @@
         "scripts/business/check-dormitory-derived-contracts.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
-      "lifecycleState": "active_contract",
-      "manualEditAllowed": true,
+      "lifecycleState": "derived_view",
+      "manualEditAllowed": false,
       "ciReferenceAllowed": true,
       "sourceKernel": "domain.dormitory",
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
@@ -9012,7 +9052,11 @@
       "consumers": [
         "scripts/business/check-dormitory-derived-contracts.mjs",
         "docs/oam/oam-kernel-graph.json"
-      ]
+      ],
+      "derivedFrom": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "generatedBy": "scripts/business/generate-dormitory-derived-contracts.mjs",
+      "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
+      "graphBinding": "file.docs/business/dormitory/scenario-field-contract.yml"
     },
     {
       "nodeId": "file.docs/business/dormitory/scenario-result-semantics.json",
@@ -9050,7 +9094,7 @@
       "nodeType": "File",
       "owner": "domain-owner",
       "sourceFile": "docs/business/dormitory/value-streams.yml",
-      "runtimeBinding": "domain.dormitory",
+      "runtimeBinding": "derived-view",
       "testBinding": [
         "scripts/business/check-dormitory-derived-contracts.mjs",
         "docs/oam/oam-kernel-graph.json"
@@ -9059,10 +9103,10 @@
         "scripts/business/check-dormitory-derived-contracts.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
-      "lifecycleState": "active_contract",
-      "manualEditAllowed": true,
+      "lifecycleState": "derived_view",
+      "manualEditAllowed": false,
       "ciReferenceAllowed": true,
       "sourceKernel": "domain.dormitory",
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
@@ -9074,14 +9118,18 @@
       "consumers": [
         "scripts/business/check-dormitory-derived-contracts.mjs",
         "docs/oam/oam-kernel-graph.json"
-      ]
+      ],
+      "derivedFrom": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "generatedBy": "scripts/business/generate-dormitory-derived-contracts.mjs",
+      "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
+      "graphBinding": "file.docs/business/dormitory/value-streams.yml"
     },
     {
       "nodeId": "file.docs/business/dormitory/workitem-catalog.yml",
       "nodeType": "File",
       "owner": "domain-owner",
       "sourceFile": "docs/business/dormitory/workitem-catalog.yml",
-      "runtimeBinding": "domain.dormitory",
+      "runtimeBinding": "derived-view",
       "testBinding": [
         "scripts/business/check-dormitory-derived-contracts.mjs",
         "docs/oam/oam-kernel-graph.json"
@@ -9090,10 +9138,10 @@
         "scripts/business/check-dormitory-derived-contracts.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
-      "lifecycleState": "active_contract",
-      "manualEditAllowed": true,
+      "lifecycleState": "derived_view",
+      "manualEditAllowed": false,
       "ciReferenceAllowed": true,
       "sourceKernel": "domain.dormitory",
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
@@ -9105,14 +9153,18 @@
       "consumers": [
         "scripts/business/check-dormitory-derived-contracts.mjs",
         "docs/oam/oam-kernel-graph.json"
-      ]
+      ],
+      "derivedFrom": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "generatedBy": "scripts/business/generate-dormitory-derived-contracts.mjs",
+      "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
+      "graphBinding": "file.docs/business/dormitory/workitem-catalog.yml"
     },
     {
       "nodeId": "file.docs/business/dormitory/workitem-decision-table.json",
       "nodeType": "File",
       "owner": "domain-owner",
       "sourceFile": "docs/business/dormitory/workitem-decision-table.json",
-      "runtimeBinding": "domain.dormitory",
+      "runtimeBinding": "derived-view",
       "testBinding": [
         "scripts/business/check-dormitory-derived-contracts.mjs",
         "docs/oam/oam-kernel-graph.json"
@@ -9121,10 +9173,10 @@
         "scripts/business/check-dormitory-derived-contracts.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
-      "lifecycleState": "active_contract",
-      "manualEditAllowed": true,
+      "lifecycleState": "derived_view",
+      "manualEditAllowed": false,
       "ciReferenceAllowed": true,
       "sourceKernel": "domain.dormitory",
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
@@ -9136,14 +9188,18 @@
       "consumers": [
         "scripts/business/check-dormitory-derived-contracts.mjs",
         "docs/oam/oam-kernel-graph.json"
-      ]
+      ],
+      "derivedFrom": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "generatedBy": "scripts/business/generate-dormitory-derived-contracts.mjs",
+      "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
+      "graphBinding": "file.docs/business/dormitory/workitem-decision-table.json"
     },
     {
       "nodeId": "file.docs/business/dormitory/workitem-raci.yml",
       "nodeType": "File",
       "owner": "domain-owner",
       "sourceFile": "docs/business/dormitory/workitem-raci.yml",
-      "runtimeBinding": "domain.dormitory",
+      "runtimeBinding": "derived-view",
       "testBinding": [
         "scripts/business/check-dormitory-derived-contracts.mjs",
         "docs/oam/oam-kernel-graph.json"
@@ -9152,10 +9208,10 @@
         "scripts/business/check-dormitory-derived-contracts.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
-      "lifecycleState": "active_contract",
-      "manualEditAllowed": true,
+      "lifecycleState": "derived_view",
+      "manualEditAllowed": false,
       "ciReferenceAllowed": true,
       "sourceKernel": "domain.dormitory",
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
@@ -9167,14 +9223,18 @@
       "consumers": [
         "scripts/business/check-dormitory-derived-contracts.mjs",
         "docs/oam/oam-kernel-graph.json"
-      ]
+      ],
+      "derivedFrom": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "generatedBy": "scripts/business/generate-dormitory-derived-contracts.mjs",
+      "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
+      "graphBinding": "file.docs/business/dormitory/workitem-raci.yml"
     },
     {
       "nodeId": "file.docs/business/dormitory/workitem-sla.yml",
       "nodeType": "File",
       "owner": "domain-owner",
       "sourceFile": "docs/business/dormitory/workitem-sla.yml",
-      "runtimeBinding": "domain.dormitory",
+      "runtimeBinding": "derived-view",
       "testBinding": [
         "scripts/business/check-dormitory-derived-contracts.mjs",
         "docs/oam/oam-kernel-graph.json"
@@ -9183,10 +9243,10 @@
         "scripts/business/check-dormitory-derived-contracts.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
-      "lifecycleState": "active_contract",
-      "manualEditAllowed": true,
+      "lifecycleState": "derived_view",
+      "manualEditAllowed": false,
       "ciReferenceAllowed": true,
       "sourceKernel": "domain.dormitory",
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
@@ -9198,7 +9258,11 @@
       "consumers": [
         "scripts/business/check-dormitory-derived-contracts.mjs",
         "docs/oam/oam-kernel-graph.json"
-      ]
+      ],
+      "derivedFrom": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "generatedBy": "scripts/business/generate-dormitory-derived-contracts.mjs",
+      "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
+      "graphBinding": "file.docs/business/dormitory/workitem-sla.yml"
     },
     {
       "nodeId": "file.docs/business/experience-contract.yml",
@@ -12610,7 +12674,7 @@
       "currentTruthAllowed": true,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
-      "manualEditAllowed": true,
+      "manualEditAllowed": false,
       "ciReferenceAllowed": true,
       "sourceKernel": "domain.dormitory",
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
@@ -12622,7 +12686,11 @@
       "consumers": [
         "scripts/business/check-dormitory-derived-contracts.mjs",
         "docs/oam/oam-kernel-graph.json"
-      ]
+      ],
+      "derivedFrom": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "generatedBy": "scripts/business/generate-dormitory-derived-contracts.mjs",
+      "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
+      "graphBinding": "file.docs/scenarios/dormitory/golden-pilot.yml"
     },
     {
       "nodeId": "file.docs/scenarios/finance/money-kernel.yml",

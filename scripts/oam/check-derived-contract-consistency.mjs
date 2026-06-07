@@ -45,9 +45,11 @@ const requiredTargets = [
   "docs/business/domains/dormitory/dormitory-observability-contract.json",
   "docs/business/domains/dormitory/dormitory-operator-playbook.md",
   "docs/business/domains/dormitory/dormitory-pilot-go-no-go.json",
-  "docs/oam/system-change-governance-contract.json",
-  "docs/oam/iteration-kernel.json",
   ...dormitoryWorkItemDerivedTargets
+];
+const forbiddenTargets = [
+  "docs/oam/system-change-governance-contract.json",
+  "docs/oam/iteration-kernel.json"
 ];
 const violations = [];
 const manifest = readJson(manifestPath);
@@ -69,6 +71,11 @@ if (manifest.sourceGraphVersion !== graph.version) {
 for (const target of requiredTargets) {
   if (!contractByTarget.has(target)) {
     fail("derived_target_missing", `派生合同缺少目标：${target}`);
+  }
+}
+for (const target of forbiddenTargets) {
+  if (contractByTarget.has(target)) {
+    fail("authority_file_in_derived_manifest", `${target} 是当前权威输入，不得登记为系统派生合同。`);
   }
 }
 for (const item of contracts) {

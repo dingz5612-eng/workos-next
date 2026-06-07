@@ -9,8 +9,8 @@
     "currentAuthorityIndexEntryRequired": true,
     "oldCatalogsMustBeDerived": true,
     "forbiddenParallelSources": [
-      "旧 7 个 WorkItem 口径",
-      "旧 24 个 WorkItem 口径",
+      "非当前 WorkItem 口径",
+      "非当前内核口径",
       "多角色模型",
       "只读报表冒充 WorkItem",
       "绕过 finance-gate 的账务事实"

@@ -457,18 +457,34 @@
 }
 
 .sticky-action {
-  position: static;
-  margin-top: 12px;
-  min-height: var(--sticky-action-height);
-  z-index: auto;
+  position: fixed;
+  left: 50%;
+  bottom: calc(var(--bottom-nav-height) + var(--safe-bottom) + 20px);
+  width: min(calc(100% - 24px), 406px);
+  min-height: 52px;
+  margin-top: 0;
+  transform: translateX(-50%);
+  z-index: 100;
   pointer-events: auto;
 }
 
 .sticky-action button {
+  position: relative;
+  z-index: 1;
   width: 100%;
   min-height: 52px;
   background: var(--action-gradient);
   box-shadow: var(--action-shadow);
+  pointer-events: auto;
+}
+
+.surface-pc .sticky-action {
+  position: static;
+  width: auto;
+  min-height: var(--sticky-action-height);
+  margin-top: 12px;
+  transform: none;
+  z-index: auto;
   pointer-events: auto;
 }
 

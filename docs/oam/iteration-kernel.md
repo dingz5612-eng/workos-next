@@ -6,4 +6,4 @@
 
 执行规则很硬：阶段之间串行；阶段内只读扫描和交叉比对可以并行；任何门禁失败必须先修复并重跑；不能用远端 CI 绿色替代本地当前工作区；不能保留无法证明服务当前 OAM 的历史材料；人读手册只能解释当前权威。
 
-宿舍业务唯一源头是 `docs/business/domains/dormitory/dormitory-operating-kernel.json`。旧口径、旧角色、多套解释、只读报表冒充 WorkItem 和绕过 finance-gate 的账务事实都不能作为当前事实源。
+宿舍业务唯一源头是 `docs/business/domains/dormitory/dormitory-operating-kernel.json`。非当前内核口径、非当前角色、多套解释、只读报表冒充 WorkItem 和绕过 finance-gate 的账务事实都不能作为当前事实源。

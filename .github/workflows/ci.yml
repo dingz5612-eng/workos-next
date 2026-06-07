@@ -107,6 +107,8 @@ jobs:
           node scripts/oam/check-surface-language-v2.mjs
           node scripts/check-surface-contract.mjs
           node scripts/check-experience-contract.mjs
+          node scripts/surface/check-surface-experience-contract.mjs
+          node scripts/surface/check-experience-module-productization.mjs
           node scripts/check-search-kernel.mjs --self-test
           node scripts/check-search-kernel.mjs
           node scripts/trust/check-trust-boundary-kernel.mjs

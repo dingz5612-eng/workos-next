@@ -178,8 +178,8 @@
       "owner": "business-contract-owner",
       "checker": "scripts/check-dormitory-golden-domain.mjs",
       "evidence": "artifacts/oam/checks/dormitory-golden-domain-report.json",
-      "currentTruthAllowed": true,
-      "notesZh": "宿舍当前价值流和业务闭环。"
+      "currentTruthAllowed": false,
+      "notesZh": "宿舍价值流派生视图；由宿舍唯一运行内核生成，不定义当前事实。"
     },
     {
       "path": "docs/business/dormitory/workitem-catalog.yml",
@@ -187,8 +187,8 @@
       "owner": "business-contract-owner",
       "checker": "scripts/business/check-dormitory-execution-kernel.mjs",
       "evidence": "artifacts/oam/checks/dormitory-business-semantic-contract-result.json",
-      "currentTruthAllowed": true,
-      "notesZh": "宿舍当前 WorkItem、owner、证据、SLA 和账务影响目录。"
+      "currentTruthAllowed": false,
+      "notesZh": "宿舍 WorkItem 目录派生视图；由宿舍唯一运行内核生成，不定义当前事实。"
     },
     {
       "path": "docs/business/dormitory/workitem-decision-table.json",
@@ -196,8 +196,8 @@
       "owner": "business-contract-owner",
       "checker": "scripts/business/check-dormitory-execution-kernel.mjs",
       "evidence": "artifacts/oam/checks/dormitory-business-semantic-contract-result.json",
-      "currentTruthAllowed": true,
-      "notesZh": "宿舍 24 项来源动作裁决表，定义哪些动作可作为当前执行 WorkItem。"
+      "currentTruthAllowed": false,
+      "notesZh": "宿舍来源动作裁决派生视图；由宿舍唯一运行内核生成，不定义当前事实。"
     },
     {
       "path": "docs/business/truth-owner-registry.yml",

@@ -34,7 +34,13 @@ const derivedFiles = [
 const reportPath = "artifacts/oam/checks/dormitory-derived-contracts-result.json";
 const violations = [];
 const kernel = readJson(kernelPath);
+const authority = readJson("docs/oam/current-authority-index.json");
+const graph = readJson("docs/oam/oam-kernel-graph.json");
 const workItems = kernel.workItems ?? [];
+const authorityByPath = new Map((authority.entries ?? []).map((entry) => [entry.path, entry]));
+const fileNodeByPath = new Map((graph.nodes ?? [])
+  .filter((node) => node.nodeType === "File")
+  .map((node) => [node.sourceFile, node]));
 
 for (const file of derivedFiles) {
   requireValue(fs.existsSync(abs(file)), "derived.file_missing", `缺少宿舍派生文件：${file}`, { file });
@@ -73,11 +79,27 @@ const oldViews = [
   "docs/business/dormitory/go-no-go.yml",
   "docs/business/dormitory/metrics-tree.yml",
   "docs/business/dormitory/metric-formula-contract.yml",
-  "docs/business/dormitory/lens-map.yml"
+  "docs/business/dormitory/lens-map.yml",
+  "docs/business/dormitory/canonical-scenario-map.json",
+  "docs/business/dormitory/scenario-field-contract.yml",
+  "docs/business/dormitory/evidence-policy.yml",
+  "docs/business/dormitory/evidence-requirements.yml",
+  "docs/business/dormitory/ledger-posting-contract.yml"
 ];
 for (const file of oldViews) {
   const doc = readJson(file);
   requireDerived(doc, file);
+  const authorityEntry = authorityByPath.get(file);
+  if (authorityEntry) {
+    requireValue(authorityEntry.currentTruthAllowed === false, "authority.derived_truth_allowed", `${file} 是宿舍派生视图，不得在 current-authority-index 中定义当前事实。`, { file });
+  }
+  const fileNode = fileNodeByPath.get(file);
+  requireValue(Boolean(fileNode), "graph.file_node_missing", `${file} 必须进入 OAM 图谱 File 节点。`, { file });
+  if (fileNode) {
+    requireValue(fileNode.lifecycleState === "derived_view", "graph.derived_lifecycle_invalid", `${file} 必须是 derived_view。`, { file });
+    requireValue(fileNode.manualEditAllowed === false, "graph.derived_manual_edit_allowed", `${file} 图谱必须禁止手改。`, { file });
+    requireValue(fileNode.currentTruthAllowed === false, "graph.derived_truth_allowed", `${file} 图谱不得允许定义当前事实。`, { file });
+  }
 }
 
 writeReport();
@@ -93,6 +115,10 @@ function requireDerived(doc, file) {
   requireValue(doc.manualEditAllowed === false, "derived.manual_edit_allowed", `${file} 派生文件不得手改。`, { file });
   requireValue(Boolean(doc.sourceKernelVersion), "derived.kernel_version_missing", `${file} 缺少 sourceKernelVersion。`, { file });
   requireValue(Boolean(doc.graphBinding), "derived.graph_binding_missing", `${file} 缺少 graphBinding。`, { file });
+  const fileNode = fileNodeByPath.get(file);
+  if (fileNode) {
+    requireValue(fileNode.manualEditAllowed === false, "graph.generated_manual_edit_allowed", `${file} 由宿舍内核生成，图谱必须禁止手改。`, { file });
+  }
 }
 
 function hasValue(value) {

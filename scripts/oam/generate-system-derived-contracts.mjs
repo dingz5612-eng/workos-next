@@ -44,8 +44,6 @@ const targetPaths = [
   "docs/business/domains/dormitory/dormitory-observability-contract.json",
   "docs/business/domains/dormitory/dormitory-operator-playbook.md",
   "docs/business/domains/dormitory/dormitory-pilot-go-no-go.json",
-  "docs/oam/system-change-governance-contract.json",
-  "docs/oam/iteration-kernel.json",
   ...dormitoryWorkItemDerivedTargets
 ];
 
@@ -77,8 +75,6 @@ console.log(`System derived contracts generated: ${outputPath}`);
 console.log(`contracts=${contracts.length}`);
 
 function checkerFor(file) {
-  if (file.includes("system-change-governance-contract")) return "scripts/oam/check-system-change-governance.mjs";
-  if (file.includes("iteration-kernel")) return "scripts/oam/check-iteration-kernel.mjs";
   if (file.includes("/domains/dormitory/dormitory-release-train")) return "scripts/business/check-dormitory-release-train.mjs";
   if (file.includes("/domains/dormitory/dormitory-pilot-scenario-pack")) return "scripts/business/check-dormitory-pilot-scenario-pack.mjs";
   if (file.includes("/domains/dormitory/")) return "scripts/business/check-dormitory-derived-contracts.mjs";

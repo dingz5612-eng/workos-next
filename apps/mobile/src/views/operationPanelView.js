@@ -4,7 +4,7 @@ import { buildOperationActionState } from "../operationActionState.js";
 import { syncUrlFromState } from "../navigationController.js";
 import { resolveOperationPanelTarget } from "../operationRouteResolver.js";
 import { activeWorkspaceCard, isTerminalCardStatus } from "../selectors/workspaceSelectors.js";
-import { ActionResult, OperationStepRail, TechnicalAuditDetails, workItemModel } from "./experienceComponents.js";
+import { ActionResult, EvidenceSheet, OperationStepRail, TechnicalAuditDetails, TrustedConfirmSheet, workItemModel } from "./experienceComponents.js";
 import { completedWorkspaceRecord, currentActionResultForOperationCard, primaryActionButton, workspaceCardPanel } from "./workspaceView.js";
 
 export function operationPanelView(ctx) {
@@ -76,22 +76,23 @@ export function operationPanelView(ctx) {
       surface: "operation-panel-route",
       attrs: {
         "data-work-item-id": model.workItemId,
-        "data-case-id": model.caseId,
         "data-lifecycle-state": model.lifecycleState,
         "data-action-state": actionState.status,
         "data-admission-decision": admissionDecision,
         "data-runtime-decision": runtimeDecision
       }
     })}
-    ${state.debugSurface ? TechnicalAuditDetails({
+    ${TechnicalAuditDetails({
       model,
       payloadHash: payloadFingerprint,
       commandSubmissionId: submissionRecord,
       traceCount,
       projectionStatus: currentActionResult?.status || "notSubmitted",
       policyRef: activeCard.policyRef || activeCard.confirmation?.policyRef || "operations-runtime-policy"
-    }, ctx) : ""}
+    }, ctx)}
     ${admissionStatusPanel(actionState, ctx)}
+    ${TrustedConfirmSheet(operationContext, activeCard, ctx)}
+    ${EvidenceSheet(activeCard, draft, ctx)}
     ${operationBody}
     ${ActionResult(currentActionResult || {}, ctx)}
     <div class="sticky-action">${primaryActionButton(actionState, ctx)}</div>

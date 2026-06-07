@@ -538,24 +538,25 @@ export function TrustedConfirmSheet(item, card, ctx) {
 }
 
 export function TechnicalAuditDetails(details = {}, ctx) {
-  const canOpen = technicalDetailsVisible(ctx);
-  return `<details class="operation-technical-details" data-surface="operation-runtime-proof" data-work-item-id="${attr(details.model?.workItemId, ctx)}" data-case-id="${attr(details.model?.caseId, ctx)}" data-submission-id="${attr(details.commandSubmissionId, ctx)}" data-payload-fingerprint="${attr(details.payloadHash, ctx)}" ${canOpen ? "open" : ""}>
-    <summary>${text(ctx.tr(canOpen ? "auditDetails" : "technicalDetails"), ctx)}</summary>
-    <section class="operation-panel-runtime">
+  const canInspect = technicalDetailsVisible(ctx);
+  const shouldOpen = Boolean(ctx.state?.debugSurface);
+  return `<details class="operation-technical-details" data-surface="operation-runtime-proof" data-work-item-id="${attr(details.model?.workItemId, ctx)}" data-case-id="${attr(details.model?.caseId, ctx)}" data-submission-id="${attr(details.commandSubmissionId, ctx)}" data-payload-fingerprint="${attr(details.payloadHash, ctx)}" ${shouldOpen ? "open" : ""}>
+    <summary>${text(ctx.tr(canInspect ? "auditDetails" : "technicalDetails"), ctx)}</summary>
+    ${canInspect ? `<section class="operation-panel-runtime">
       <article><span>${text(ctx.tr("prepareContract"), ctx)}</span><strong>${text(ctx.tr("prepareContractReady"), ctx)}</strong><p>${text(ctx.tr("prepareContractHelp"), ctx)}</p></article>
       <article><span>${text(ctx.tr("confirmCommit"), ctx)}</span><strong>${text(ctx.tr("confirmCommitReady"), ctx)}</strong><p>${text(ctx.tr("confirmCommitHelp"), ctx)}</p></article>
       <article><span>${text(ctx.tr("trace"), ctx)}</span><strong>${text(details.traceCount ? ctx.tr("traceAvailable") : ctx.tr("traceWillBind"), ctx)}</strong><p>${text(ctx.tr("traceHelp"), ctx)}</p></article>
       <article><span>${text(ctx.tr("projection"), ctx)}</span><strong>${text(ctx.tr(details.projectionStatus), ctx)}</strong><p>${text(ctx.tr("projectionPendingBody"), ctx)}</p></article>
       <article><span>${text(ctx.tr("submissionRecord"), ctx)}</span><strong>${text(details.commandSubmissionId ? ctx.tr("traceAvailable") : ctx.tr("traceWillBind"), ctx)}</strong><p>${text(ctx.tr("submissionRecordHelp"), ctx)}</p></article>
       <article><span>${text(ctx.tr("payloadFingerprint"), ctx)}</span><strong>${text(ctx.tr("localDraftFingerprint"), ctx)}</strong><p>${text(ctx.tr("payloadFingerprintHelp"), ctx)}</p></article>
-      ${canOpen ? `<dl>
+      <dl>
         ${field("workItemId", details.model?.workItemId, ctx)}
         ${field("caseId", details.model?.caseId, ctx)}
         ${field("commandSubmissionId", details.commandSubmissionId, ctx)}
         ${field("payloadHash", details.payloadHash, ctx)}
         ${field("policyRef", details.policyRef, ctx)}
-      </dl>` : ""}
-    </section>
+      </dl>
+    </section>` : ""}
   </details>`;
 }
 

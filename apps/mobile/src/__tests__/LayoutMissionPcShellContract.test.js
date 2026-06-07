@@ -3,7 +3,7 @@ import { routeView } from "../appRouter.js";
 import { createSurfaceCtx, renderSurface, source, visibleText } from "./surfaceContractTestHelpers.js";
 
 describe("OAM Surface layout, mission control, and PC shell contract", () => {
-  it("uses fixed-layer tokens and keeps the primary action in flow above bottom nav", () => {
+  it("uses fixed-layer tokens and keeps the primary action in a protected click layer above bottom nav", () => {
     const shellCss = source("../styles/shell.css");
     const operationCss = source("../styles/operation.css");
     const html = renderSurface("operationPanel");
@@ -12,7 +12,10 @@ describe("OAM Surface layout, mission control, and PC shell contract", () => {
     expect(shellCss).toContain("--sticky-action-height: 64px");
     expect(shellCss).toContain("--safe-bottom: env(safe-area-inset-bottom, 0px)");
     expect(shellCss).toContain("calc(var(--bottom-nav-height) + var(--sticky-action-height) + var(--safe-bottom)");
-    expect(operationCss).toContain("position: static");
+    expect(operationCss).toContain("position: fixed");
+    expect(operationCss).toContain("bottom: calc(var(--bottom-nav-height) + var(--safe-bottom) + 20px)");
+    expect(operationCss).toContain("z-index: 100");
+    expect(operationCss).toContain(".surface-pc .sticky-action");
     expect(operationCss).toContain("min-height: var(--bottom-nav-height)");
     expect(operationCss).toContain("bottom: calc(var(--bottom-nav-height) + var(--safe-bottom) + 18px)");
     expect(operationCss).toContain("focus-visible");

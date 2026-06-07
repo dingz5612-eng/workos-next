@@ -412,32 +412,6 @@
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs"
     },
     {
-      "targetPath": "docs/oam/system-change-governance-contract.json",
-      "derivedFrom": [
-        "docs/oam/system-operating-kernel.json",
-        "docs/oam/oam-kernel-graph.json"
-      ],
-      "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
-      "sourceKernelVersion": "oam.system-operating-kernel.v1",
-      "sourceGraphVersion": "oam.kernel-graph.v1",
-      "manualEditAllowed": false,
-      "graphBinding": "kernel.change-governance",
-      "checker": "scripts/oam/check-system-change-governance.mjs"
-    },
-    {
-      "targetPath": "docs/oam/iteration-kernel.json",
-      "derivedFrom": [
-        "docs/oam/system-operating-kernel.json",
-        "docs/oam/oam-kernel-graph.json"
-      ],
-      "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
-      "sourceKernelVersion": "oam.system-operating-kernel.v1",
-      "sourceGraphVersion": "oam.kernel-graph.v1",
-      "manualEditAllowed": false,
-      "graphBinding": "kernel.iteration-governance",
-      "checker": "scripts/oam/check-iteration-kernel.mjs"
-    },
-    {
       "targetPath": "docs/business/domains/dormitory/workitems/dorm-access-credential-issue.json",
       "derivedFrom": [
         "docs/oam/system-operating-kernel.json",

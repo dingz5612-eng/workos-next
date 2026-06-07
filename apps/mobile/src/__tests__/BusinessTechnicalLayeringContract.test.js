@@ -14,10 +14,17 @@ describe("OAM Surface business and technical layering contract", () => {
     const ctx = createSurfaceCtx({ view: "operationPanel" });
     const html = operationPanelView(ctx);
     const text = visibleText(html);
+    const technicalDetails = html.match(/<details class="operation-technical-details"[\s\S]*?<\/details>/)?.[0] || "";
+    const ordinaryHtml = html.replace(technicalDetails, "");
 
     expect(html).toContain('data-work-item-id="W-STAY-RESOURCE:roomSetup"');
-    expect(html).toContain('data-case-id=');
-    expect(html).not.toContain('class="operation-technical-details"');
+    expect(technicalDetails).toContain('data-case-id=');
+    expect(technicalDetails).toContain('data-submission-id=');
+    expect(technicalDetails).toContain('data-payload-fingerprint=');
+    expect(ordinaryHtml).not.toContain('data-case-id=');
+    expect(ordinaryHtml).not.toContain('data-submission-id=');
+    expect(ordinaryHtml).not.toContain('data-payload-fingerprint=');
+    expect(html).toContain('class="operation-technical-details"');
     expect(html).not.toContain("open>");
     expect(text).not.toMatch(/\b(workItemId|caseId|payloadHash|commandSubmissionId)\b/);
   });
@@ -74,8 +81,9 @@ describe("OAM Surface business and technical layering contract", () => {
     expect(visibleText(html)).toContain("提交观察记录");
     expect(visibleText(html)).toContain("提交前检查");
     expect(visibleText(html)).toContain("材料核对");
+    expect(visibleText(html)).toContain("可信确认");
+    expect(visibleText(html)).toContain("可信证据");
     expect(visibleText(html)).not.toContain("提交证据");
-    expect(visibleText(html)).not.toContain("可信确认");
   });
 
   it("marks required business fields and blocks submit locally before prepare/confirm", async () => {

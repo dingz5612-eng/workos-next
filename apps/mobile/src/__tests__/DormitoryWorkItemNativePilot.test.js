@@ -64,7 +64,8 @@ describe("DORM-INT-02 WorkItem-native pilot", () => {
     expect(testCtx.state.selectedWorkItemId).toBe("W-STAY-RESOURCE:roomSetup");
     expect(html).toContain("W-STAY-RESOURCE:roomSetup");
     expect(html).toContain('data-surface="system-validation-summary"');
-    expect(html).not.toContain('data-surface="trusted-confirm"');
+    expect(html).toContain('data-surface="trusted-confirm"');
+    expect(html).toContain('data-surface="evidence-sheet"');
     expect(html).not.toContain("T-ROOM-CREATE");
     vi.unstubAllGlobals();
   });
@@ -94,7 +95,8 @@ describe("DORM-INT-02 WorkItem-native pilot", () => {
 
     expect(html).toContain("W-STAY-RESOURCE:roomSetup");
     expect(html).toContain('data-surface="system-validation-summary"');
-    expect(html).not.toContain('data-surface="trusted-confirm"');
+    expect(html).toContain('data-surface="trusted-confirm"');
+    expect(html).toContain('data-surface="evidence-sheet"');
     expect(html).not.toContain("T-ROOM-CREATE");
     vi.unstubAllGlobals();
   });

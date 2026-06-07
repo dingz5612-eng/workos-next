@@ -125,6 +125,8 @@ Invoke-Gate node scripts/check-search-kernel.mjs --self-test
 Invoke-Gate node scripts/check-search-kernel.mjs
 Invoke-Gate node scripts/check-surface-contract.mjs
 Invoke-Gate node scripts/check-experience-contract.mjs
+Invoke-Gate node scripts/surface/check-surface-experience-contract.mjs
+Invoke-Gate node scripts/surface/check-experience-module-productization.mjs
 Invoke-Gate node scripts/trust/check-trust-boundary-kernel.mjs
 Invoke-Gate node scripts/check-policy-as-code.mjs --self-test
 Invoke-Gate node scripts/check-policy-as-code.mjs

@@ -8,16 +8,16 @@
   "sortOrder": "branches.missing desc, filePath asc",
   "globalCoverage": {
     "statements": {
-      "total": 4829,
-      "covered": 4191,
+      "total": 4830,
+      "covered": 4192,
       "missing": 638,
-      "pct": 86.78
+      "pct": 86.79
     },
     "branches": {
-      "total": 7410,
-      "covered": 5214,
-      "missing": 2196,
-      "pct": 70.36
+      "total": 7408,
+      "covered": 5225,
+      "missing": 2183,
+      "pct": 70.53
     },
     "functions": {
       "total": 1406,
@@ -26,8 +26,8 @@
       "pct": 91.89
     },
     "lines": {
-      "total": 4005,
-      "covered": 3642,
+      "total": 4006,
+      "covered": 3643,
       "missing": 363,
       "pct": 90.93
     }
@@ -66,16 +66,16 @@
     "firstStageTargetReached": true,
     "currentCoverage": {
       "statements": {
-        "total": 4829,
-        "covered": 4191,
+        "total": 4830,
+        "covered": 4192,
         "missing": 638,
-        "pct": 86.78
+        "pct": 86.79
       },
       "branches": {
-        "total": 7410,
-        "covered": 5214,
-        "missing": 2196,
-        "pct": 70.36
+        "total": 7408,
+        "covered": 5225,
+        "missing": 2183,
+        "pct": 70.53
       },
       "functions": {
         "total": 1406,
@@ -84,8 +84,8 @@
         "pct": 91.89
       },
       "lines": {
-        "total": 4005,
-        "covered": 3642,
+        "total": 4006,
+        "covered": 3643,
         "missing": 363,
         "pct": 90.93
       }
@@ -147,16 +147,16 @@
       "filePath": "apps/mobile/src/views/experienceComponents.js",
       "coverage": {
         "statements": {
-          "total": 350,
-          "covered": 296,
+          "total": 351,
+          "covered": 297,
           "missing": 54,
-          "pct": 84.57
+          "pct": 84.61
         },
         "branches": {
           "total": 612,
-          "covered": 421,
-          "missing": 191,
-          "pct": 68.79
+          "covered": 433,
+          "missing": 179,
+          "pct": 70.75
         },
         "functions": {
           "total": 102,
@@ -165,10 +165,10 @@
           "pct": 87.25
         },
         "lines": {
-          "total": 288,
-          "covered": 256,
+          "total": 289,
+          "covered": 257,
           "missing": 32,
-          "pct": 88.88
+          "pct": 88.92
         }
       },
       "policy": {
@@ -1208,31 +1208,31 @@
       }
     },
     {
-      "filePath": "apps/mobile/src/views/operationPanelView.js",
+      "filePath": "apps/mobile/src/apiClient.js",
       "coverage": {
         "statements": {
-          "total": 114,
-          "covered": 100,
-          "missing": 14,
-          "pct": 87.71
+          "total": 189,
+          "covered": 161,
+          "missing": 28,
+          "pct": 85.18
         },
         "branches": {
-          "total": 168,
-          "covered": 126,
-          "missing": 42,
-          "pct": 75
+          "total": 175,
+          "covered": 134,
+          "missing": 41,
+          "pct": 76.57
         },
         "functions": {
-          "total": 10,
-          "covered": 10,
+          "total": 45,
+          "covered": 45,
           "missing": 0,
           "pct": 100
         },
         "lines": {
-          "total": 89,
-          "covered": 86,
-          "missing": 3,
-          "pct": 96.62
+          "total": 146,
+          "covered": 146,
+          "missing": 0,
+          "pct": 100
         }
       },
       "policy": {
@@ -1262,31 +1262,31 @@
       }
     },
     {
-      "filePath": "apps/mobile/src/apiClient.js",
+      "filePath": "apps/mobile/src/views/operationPanelView.js",
       "coverage": {
         "statements": {
-          "total": 189,
-          "covered": 161,
-          "missing": 28,
-          "pct": 85.18
+          "total": 114,
+          "covered": 100,
+          "missing": 14,
+          "pct": 87.71
         },
         "branches": {
-          "total": 175,
-          "covered": 134,
+          "total": 166,
+          "covered": 125,
           "missing": 41,
-          "pct": 76.57
+          "pct": 75.3
         },
         "functions": {
-          "total": 45,
-          "covered": 45,
+          "total": 10,
+          "covered": 10,
           "missing": 0,
           "pct": 100
         },
         "lines": {
-          "total": 146,
-          "covered": 146,
-          "missing": 0,
-          "pct": 100
+          "total": 89,
+          "covered": 86,
+          "missing": 3,
+          "pct": 96.62
         }
       },
       "policy": {

@@ -208,8 +208,8 @@ function buildKernel() {
       currentAuthorityIndexEntryRequired: true,
       oldCatalogsMustBeDerived: true,
       forbiddenParallelSources: [
-        "旧 7 个 WorkItem 口径",
-        "旧 24 个 WorkItem 口径",
+        "非当前 WorkItem 口径",
+        "非当前内核口径",
         "多角色模型",
         "只读报表冒充 WorkItem",
         "绕过 finance-gate 的账务事实"
@@ -1093,6 +1093,16 @@ function patchAuthorityIndex() {
       notesZh
     });
   }
+  for (const entryPath of legacyDormitoryDerivedViewPaths()) {
+    const existing = entries.get(entryPath);
+    if (!existing) continue;
+    const derivedNoteZh = legacyDormitoryDerivedViewNoteFor(entryPath);
+    entries.set(entryPath, {
+      ...existing,
+      currentTruthAllowed: false,
+      notesZh: derivedNoteZh
+    });
+  }
   index.entries = [...entries.values()].sort((a, b) => a.path.localeCompare(b.path));
   writeJson(file, index);
 }
@@ -1209,6 +1219,7 @@ function node(nodeId, nodeType, owner, sourceFile, currentTruthAllowed, runtimeB
 
 function fileNode(filePath, state = lifecycleForPath(filePath), owner = ownerForPath(filePath), checker = checkerForPath(filePath)) {
   const derived = state === "derived_view";
+  const generatedFromDormitoryKernel = isGeneratedDormitoryFile(filePath);
   const sourceKernel = sourceKernelForPath(filePath);
   return {
     nodeId: `file.${filePath}`,
@@ -1219,10 +1230,10 @@ function fileNode(filePath, state = lifecycleForPath(filePath), owner = ownerFor
     testBinding: [checker, "docs/oam/oam-kernel-graph.json"],
     gateBinding: [checker],
     evidenceBinding: "artifacts/oam/evidence/evidence-graph.json",
-    currentTruthAllowed: state === "active_contract" || state === "active_authority",
+    currentTruthAllowed: (state === "active_contract" || state === "active_authority") && !legacyDormitoryDerivedViewPaths().includes(filePath),
     deletionCondition: "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
     lifecycleState: state,
-    manualEditAllowed: !derived,
+    manualEditAllowed: !(derived || generatedFromDormitoryKernel),
     ciReferenceAllowed: true,
     sourceKernel,
     checker,
@@ -1232,7 +1243,7 @@ function fileNode(filePath, state = lifecycleForPath(filePath), owner = ownerFor
     removalProofGate: checker,
     deletionConditionZh: "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
     consumers: [checker, "docs/oam/oam-kernel-graph.json"],
-    ...(derived ? {
+    ...((derived || generatedFromDormitoryKernel) ? {
       derivedFrom: kernelPath,
       generatedBy,
       sourceKernelVersion: kernelVersion,
@@ -1528,6 +1539,7 @@ function lifecycleForPath(filePath) {
   if (filePath === kernelPath || filePath.endsWith("handoff-contract.json")) return "active_contract";
   if (filePath.endsWith("operator-playbook.md")) return "human_manual";
   if (filePath.startsWith("docs/business/domains/dormitory/workitems/")) return "derived_view";
+  if (legacyDormitoryDerivedViewPaths().includes(filePath)) return "derived_view";
   if (filePath.includes("dormitory-release-train") || filePath.includes("pilot-scenario") || filePath.includes("seed-data") || filePath.includes("observability") || filePath.includes("pilot-go-no-go")) return "derived_view";
   if (filePath.startsWith("scripts/")) return "active_validation";
   return "active_contract";
@@ -1554,6 +1566,41 @@ function sourceKernelForPath(filePath) {
   if (filePath.includes("check-system-change-governance")) return "kernel.change-governance";
   if (filePath.includes("check-iteration-kernel")) return "kernel.iteration-governance";
   return "domain.dormitory";
+}
+
+function legacyDormitoryDerivedViewPaths() {
+  return [
+    "docs/business/dormitory/workitem-catalog.yml",
+    "docs/business/dormitory/workitem-decision-table.json",
+    "docs/business/dormitory/value-streams.yml",
+    "docs/business/dormitory/workitem-sla.yml",
+    "docs/business/dormitory/workitem-raci.yml",
+    "docs/business/dormitory/go-no-go.yml",
+    "docs/business/dormitory/metrics-tree.yml",
+    "docs/business/dormitory/metric-formula-contract.yml",
+    "docs/business/dormitory/lens-map.yml",
+    "docs/business/dormitory/canonical-scenario-map.json",
+    "docs/business/dormitory/scenario-field-contract.yml",
+    "docs/business/dormitory/evidence-policy.yml",
+    "docs/business/dormitory/evidence-requirements.yml",
+    "docs/business/dormitory/ledger-posting-contract.yml"
+  ];
+}
+
+function legacyDormitoryDerivedViewNoteFor(filePath) {
+  const notes = {
+    "docs/business/dormitory/value-streams.yml": "宿舍价值流派生视图；由宿舍唯一运行内核生成，不定义当前事实。",
+    "docs/business/dormitory/workitem-catalog.yml": "宿舍 WorkItem 目录派生视图；由宿舍唯一运行内核生成，不定义当前事实。",
+    "docs/business/dormitory/workitem-decision-table.json": "宿舍来源动作裁决派生视图；由宿舍唯一运行内核生成，不定义当前事实。"
+  };
+  return notes[filePath] ?? "宿舍派生视图；由宿舍唯一运行内核生成，不定义当前事实。";
+}
+
+function isGeneratedDormitoryFile(filePath) {
+  if (filePath === kernelPath) return false;
+  return filePath.startsWith("docs/business/domains/dormitory/")
+    || legacyDormitoryDerivedViewPaths().includes(filePath)
+    || filePath === "docs/scenarios/dormitory/golden-pilot.yml";
 }
 
 function workspaceFor(trainId) {

@@ -10,8 +10,8 @@
   "identityCounts": {
     "validation_file": 284,
     "implementation_file": 329,
-    "authority_file": 204,
-    "derived_view": 39,
+    "authority_file": 190,
+    "derived_view": 53,
     "human_manual": 19
   },
   "files": [
@@ -5286,7 +5286,7 @@
       "evidence": [
         "artifacts/oam/evidence/evidence-graph.json"
       ],
-      "manualEditAllowed": true,
+      "manualEditAllowed": false,
       "ciReferenceAllowed": true,
       "replacementPath": "docs/business/domains/dormitory/dormitory-operator-playbook.md",
       "absorbedBy": "docs/business/domains/dormitory/dormitory-operator-playbook.md",
@@ -5431,7 +5431,7 @@
       "evidence": [
         "artifacts/oam/evidence/evidence-graph.json"
       ],
-      "manualEditAllowed": true,
+      "manualEditAllowed": false,
       "ciReferenceAllowed": true,
       "replacementPath": "docs/business/domains/dormitory/handoff-contract.json",
       "absorbedBy": "docs/business/domains/dormitory/handoff-contract.json",
@@ -6397,12 +6397,12 @@
     },
     {
       "path": "docs/business/dormitory/canonical-scenario-map.json",
-      "currentIdentity": "authority_file",
-      "lifecycleState": "active_contract",
-      "responsibilityScopeZh": "当前 OAM 机器合同。",
-      "forbiddenScopeZh": "不得绕过系统内核、图谱、门禁或证据根。",
-      "currentFactAuthorityAllowed": true,
-      "currentFactAuthorityAllowedByGraph": true,
+      "currentIdentity": "derived_view",
+      "lifecycleState": "derived_view",
+      "responsibilityScopeZh": "由系统内核或 OAM 图谱派生的只读视图。",
+      "forbiddenScopeZh": "不得手工修改，不得替代源内核。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
       "upstreamSource": "docs/oam/oam-kernel-graph.json",
       "downstreamConsumers": [
         "scripts/business/check-dormitory-derived-contracts.mjs",
@@ -6417,7 +6417,7 @@
       "evidence": [
         "artifacts/oam/evidence/evidence-graph.json"
       ],
-      "manualEditAllowed": true,
+      "manualEditAllowed": false,
       "ciReferenceAllowed": true,
       "replacementPath": "docs/business/dormitory/canonical-scenario-map.json",
       "absorbedBy": "docs/business/dormitory/canonical-scenario-map.json",
@@ -6484,12 +6484,12 @@
     },
     {
       "path": "docs/business/dormitory/evidence-policy.yml",
-      "currentIdentity": "authority_file",
-      "lifecycleState": "active_contract",
-      "responsibilityScopeZh": "当前 OAM 机器合同。",
-      "forbiddenScopeZh": "不得绕过系统内核、图谱、门禁或证据根。",
-      "currentFactAuthorityAllowed": true,
-      "currentFactAuthorityAllowedByGraph": true,
+      "currentIdentity": "derived_view",
+      "lifecycleState": "derived_view",
+      "responsibilityScopeZh": "由系统内核或 OAM 图谱派生的只读视图。",
+      "forbiddenScopeZh": "不得手工修改，不得替代源内核。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
       "upstreamSource": "docs/oam/oam-kernel-graph.json",
       "downstreamConsumers": [
         "scripts/business/check-dormitory-derived-contracts.mjs",
@@ -6504,7 +6504,7 @@
       "evidence": [
         "artifacts/oam/evidence/evidence-graph.json"
       ],
-      "manualEditAllowed": true,
+      "manualEditAllowed": false,
       "ciReferenceAllowed": true,
       "replacementPath": "docs/business/dormitory/evidence-policy.yml",
       "absorbedBy": "docs/business/dormitory/evidence-policy.yml",
@@ -6513,12 +6513,12 @@
     },
     {
       "path": "docs/business/dormitory/evidence-requirements.yml",
-      "currentIdentity": "authority_file",
-      "lifecycleState": "active_contract",
-      "responsibilityScopeZh": "当前 OAM 机器合同。",
-      "forbiddenScopeZh": "不得绕过系统内核、图谱、门禁或证据根。",
-      "currentFactAuthorityAllowed": true,
-      "currentFactAuthorityAllowedByGraph": true,
+      "currentIdentity": "derived_view",
+      "lifecycleState": "derived_view",
+      "responsibilityScopeZh": "由系统内核或 OAM 图谱派生的只读视图。",
+      "forbiddenScopeZh": "不得手工修改，不得替代源内核。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
       "upstreamSource": "docs/oam/oam-kernel-graph.json",
       "downstreamConsumers": [
         "scripts/business/check-dormitory-derived-contracts.mjs",
@@ -6533,7 +6533,7 @@
       "evidence": [
         "artifacts/oam/evidence/evidence-graph.json"
       ],
-      "manualEditAllowed": true,
+      "manualEditAllowed": false,
       "ciReferenceAllowed": true,
       "replacementPath": "docs/business/dormitory/evidence-requirements.yml",
       "absorbedBy": "docs/business/dormitory/evidence-requirements.yml",
@@ -6571,12 +6571,12 @@
     },
     {
       "path": "docs/business/dormitory/go-no-go.yml",
-      "currentIdentity": "authority_file",
-      "lifecycleState": "active_contract",
-      "responsibilityScopeZh": "当前 OAM 机器合同。",
-      "forbiddenScopeZh": "不得绕过系统内核、图谱、门禁或证据根。",
-      "currentFactAuthorityAllowed": true,
-      "currentFactAuthorityAllowedByGraph": true,
+      "currentIdentity": "derived_view",
+      "lifecycleState": "derived_view",
+      "responsibilityScopeZh": "由系统内核或 OAM 图谱派生的只读视图。",
+      "forbiddenScopeZh": "不得手工修改，不得替代源内核。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
       "upstreamSource": "docs/oam/oam-kernel-graph.json",
       "downstreamConsumers": [
         "scripts/business/check-dormitory-derived-contracts.mjs",
@@ -6591,7 +6591,7 @@
       "evidence": [
         "artifacts/oam/evidence/evidence-graph.json"
       ],
-      "manualEditAllowed": true,
+      "manualEditAllowed": false,
       "ciReferenceAllowed": true,
       "replacementPath": "docs/business/dormitory/go-no-go.yml",
       "absorbedBy": "docs/business/dormitory/go-no-go.yml",
@@ -6600,12 +6600,12 @@
     },
     {
       "path": "docs/business/dormitory/ledger-posting-contract.yml",
-      "currentIdentity": "authority_file",
-      "lifecycleState": "active_contract",
-      "responsibilityScopeZh": "当前 OAM 机器合同。",
-      "forbiddenScopeZh": "不得绕过系统内核、图谱、门禁或证据根。",
-      "currentFactAuthorityAllowed": true,
-      "currentFactAuthorityAllowedByGraph": true,
+      "currentIdentity": "derived_view",
+      "lifecycleState": "derived_view",
+      "responsibilityScopeZh": "由系统内核或 OAM 图谱派生的只读视图。",
+      "forbiddenScopeZh": "不得手工修改，不得替代源内核。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
       "upstreamSource": "docs/oam/oam-kernel-graph.json",
       "downstreamConsumers": [
         "scripts/business/check-dormitory-derived-contracts.mjs",
@@ -6620,7 +6620,7 @@
       "evidence": [
         "artifacts/oam/evidence/evidence-graph.json"
       ],
-      "manualEditAllowed": true,
+      "manualEditAllowed": false,
       "ciReferenceAllowed": true,
       "replacementPath": "docs/business/dormitory/ledger-posting-contract.yml",
       "absorbedBy": "docs/business/dormitory/ledger-posting-contract.yml",
@@ -6629,12 +6629,12 @@
     },
     {
       "path": "docs/business/dormitory/lens-map.yml",
-      "currentIdentity": "authority_file",
-      "lifecycleState": "active_contract",
-      "responsibilityScopeZh": "当前 OAM 机器合同。",
-      "forbiddenScopeZh": "不得绕过系统内核、图谱、门禁或证据根。",
-      "currentFactAuthorityAllowed": true,
-      "currentFactAuthorityAllowedByGraph": true,
+      "currentIdentity": "derived_view",
+      "lifecycleState": "derived_view",
+      "responsibilityScopeZh": "由系统内核或 OAM 图谱派生的只读视图。",
+      "forbiddenScopeZh": "不得手工修改，不得替代源内核。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
       "upstreamSource": "docs/oam/oam-kernel-graph.json",
       "downstreamConsumers": [
         "scripts/business/check-dormitory-derived-contracts.mjs",
@@ -6649,7 +6649,7 @@
       "evidence": [
         "artifacts/oam/evidence/evidence-graph.json"
       ],
-      "manualEditAllowed": true,
+      "manualEditAllowed": false,
       "ciReferenceAllowed": true,
       "replacementPath": "docs/business/dormitory/lens-map.yml",
       "absorbedBy": "docs/business/dormitory/lens-map.yml",
@@ -6658,12 +6658,12 @@
     },
     {
       "path": "docs/business/dormitory/metric-formula-contract.yml",
-      "currentIdentity": "authority_file",
-      "lifecycleState": "active_contract",
-      "responsibilityScopeZh": "当前 OAM 机器合同。",
-      "forbiddenScopeZh": "不得绕过系统内核、图谱、门禁或证据根。",
-      "currentFactAuthorityAllowed": true,
-      "currentFactAuthorityAllowedByGraph": true,
+      "currentIdentity": "derived_view",
+      "lifecycleState": "derived_view",
+      "responsibilityScopeZh": "由系统内核或 OAM 图谱派生的只读视图。",
+      "forbiddenScopeZh": "不得手工修改，不得替代源内核。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
       "upstreamSource": "docs/oam/oam-kernel-graph.json",
       "downstreamConsumers": [
         "scripts/business/check-dormitory-derived-contracts.mjs",
@@ -6678,7 +6678,7 @@
       "evidence": [
         "artifacts/oam/evidence/evidence-graph.json"
       ],
-      "manualEditAllowed": true,
+      "manualEditAllowed": false,
       "ciReferenceAllowed": true,
       "replacementPath": "docs/business/dormitory/metric-formula-contract.yml",
       "absorbedBy": "docs/business/dormitory/metric-formula-contract.yml",
@@ -6687,12 +6687,12 @@
     },
     {
       "path": "docs/business/dormitory/metrics-tree.yml",
-      "currentIdentity": "authority_file",
-      "lifecycleState": "active_contract",
-      "responsibilityScopeZh": "当前 OAM 机器合同。",
-      "forbiddenScopeZh": "不得绕过系统内核、图谱、门禁或证据根。",
-      "currentFactAuthorityAllowed": true,
-      "currentFactAuthorityAllowedByGraph": true,
+      "currentIdentity": "derived_view",
+      "lifecycleState": "derived_view",
+      "responsibilityScopeZh": "由系统内核或 OAM 图谱派生的只读视图。",
+      "forbiddenScopeZh": "不得手工修改，不得替代源内核。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
       "upstreamSource": "docs/oam/oam-kernel-graph.json",
       "downstreamConsumers": [
         "scripts/business/check-dormitory-derived-contracts.mjs",
@@ -6707,7 +6707,7 @@
       "evidence": [
         "artifacts/oam/evidence/evidence-graph.json"
       ],
-      "manualEditAllowed": true,
+      "manualEditAllowed": false,
       "ciReferenceAllowed": true,
       "replacementPath": "docs/business/dormitory/metrics-tree.yml",
       "absorbedBy": "docs/business/dormitory/metrics-tree.yml",
@@ -6803,12 +6803,12 @@
     },
     {
       "path": "docs/business/dormitory/scenario-field-contract.yml",
-      "currentIdentity": "authority_file",
-      "lifecycleState": "active_contract",
-      "responsibilityScopeZh": "当前 OAM 机器合同。",
-      "forbiddenScopeZh": "不得绕过系统内核、图谱、门禁或证据根。",
-      "currentFactAuthorityAllowed": true,
-      "currentFactAuthorityAllowedByGraph": true,
+      "currentIdentity": "derived_view",
+      "lifecycleState": "derived_view",
+      "responsibilityScopeZh": "由系统内核或 OAM 图谱派生的只读视图。",
+      "forbiddenScopeZh": "不得手工修改，不得替代源内核。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
       "upstreamSource": "docs/oam/oam-kernel-graph.json",
       "downstreamConsumers": [
         "scripts/business/check-dormitory-derived-contracts.mjs",
@@ -6823,7 +6823,7 @@
       "evidence": [
         "artifacts/oam/evidence/evidence-graph.json"
       ],
-      "manualEditAllowed": true,
+      "manualEditAllowed": false,
       "ciReferenceAllowed": true,
       "replacementPath": "docs/business/dormitory/scenario-field-contract.yml",
       "absorbedBy": "docs/business/dormitory/scenario-field-contract.yml",
@@ -6861,12 +6861,12 @@
     },
     {
       "path": "docs/business/dormitory/value-streams.yml",
-      "currentIdentity": "authority_file",
-      "lifecycleState": "active_contract",
-      "responsibilityScopeZh": "当前 OAM 机器合同。",
-      "forbiddenScopeZh": "不得绕过系统内核、图谱、门禁或证据根。",
-      "currentFactAuthorityAllowed": true,
-      "currentFactAuthorityAllowedByGraph": true,
+      "currentIdentity": "derived_view",
+      "lifecycleState": "derived_view",
+      "responsibilityScopeZh": "由系统内核或 OAM 图谱派生的只读视图。",
+      "forbiddenScopeZh": "不得手工修改，不得替代源内核。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
       "upstreamSource": "docs/oam/oam-kernel-graph.json",
       "downstreamConsumers": [
         "scripts/business/check-dormitory-derived-contracts.mjs",
@@ -6881,7 +6881,7 @@
       "evidence": [
         "artifacts/oam/evidence/evidence-graph.json"
       ],
-      "manualEditAllowed": true,
+      "manualEditAllowed": false,
       "ciReferenceAllowed": true,
       "replacementPath": "docs/business/dormitory/value-streams.yml",
       "absorbedBy": "docs/business/dormitory/value-streams.yml",
@@ -6890,12 +6890,12 @@
     },
     {
       "path": "docs/business/dormitory/workitem-catalog.yml",
-      "currentIdentity": "authority_file",
-      "lifecycleState": "active_contract",
-      "responsibilityScopeZh": "当前 OAM 机器合同。",
-      "forbiddenScopeZh": "不得绕过系统内核、图谱、门禁或证据根。",
-      "currentFactAuthorityAllowed": true,
-      "currentFactAuthorityAllowedByGraph": true,
+      "currentIdentity": "derived_view",
+      "lifecycleState": "derived_view",
+      "responsibilityScopeZh": "由系统内核或 OAM 图谱派生的只读视图。",
+      "forbiddenScopeZh": "不得手工修改，不得替代源内核。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
       "upstreamSource": "docs/oam/oam-kernel-graph.json",
       "downstreamConsumers": [
         "scripts/business/check-dormitory-derived-contracts.mjs",
@@ -6910,7 +6910,7 @@
       "evidence": [
         "artifacts/oam/evidence/evidence-graph.json"
       ],
-      "manualEditAllowed": true,
+      "manualEditAllowed": false,
       "ciReferenceAllowed": true,
       "replacementPath": "docs/business/dormitory/workitem-catalog.yml",
       "absorbedBy": "docs/business/dormitory/workitem-catalog.yml",
@@ -6919,12 +6919,12 @@
     },
     {
       "path": "docs/business/dormitory/workitem-decision-table.json",
-      "currentIdentity": "authority_file",
-      "lifecycleState": "active_contract",
-      "responsibilityScopeZh": "当前 OAM 机器合同。",
-      "forbiddenScopeZh": "不得绕过系统内核、图谱、门禁或证据根。",
-      "currentFactAuthorityAllowed": true,
-      "currentFactAuthorityAllowedByGraph": true,
+      "currentIdentity": "derived_view",
+      "lifecycleState": "derived_view",
+      "responsibilityScopeZh": "由系统内核或 OAM 图谱派生的只读视图。",
+      "forbiddenScopeZh": "不得手工修改，不得替代源内核。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
       "upstreamSource": "docs/oam/oam-kernel-graph.json",
       "downstreamConsumers": [
         "scripts/business/check-dormitory-derived-contracts.mjs",
@@ -6939,7 +6939,7 @@
       "evidence": [
         "artifacts/oam/evidence/evidence-graph.json"
       ],
-      "manualEditAllowed": true,
+      "manualEditAllowed": false,
       "ciReferenceAllowed": true,
       "replacementPath": "docs/business/dormitory/workitem-decision-table.json",
       "absorbedBy": "docs/business/dormitory/workitem-decision-table.json",
@@ -6948,12 +6948,12 @@
     },
     {
       "path": "docs/business/dormitory/workitem-raci.yml",
-      "currentIdentity": "authority_file",
-      "lifecycleState": "active_contract",
-      "responsibilityScopeZh": "当前 OAM 机器合同。",
-      "forbiddenScopeZh": "不得绕过系统内核、图谱、门禁或证据根。",
-      "currentFactAuthorityAllowed": true,
-      "currentFactAuthorityAllowedByGraph": true,
+      "currentIdentity": "derived_view",
+      "lifecycleState": "derived_view",
+      "responsibilityScopeZh": "由系统内核或 OAM 图谱派生的只读视图。",
+      "forbiddenScopeZh": "不得手工修改，不得替代源内核。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
       "upstreamSource": "docs/oam/oam-kernel-graph.json",
       "downstreamConsumers": [
         "scripts/business/check-dormitory-derived-contracts.mjs",
@@ -6968,7 +6968,7 @@
       "evidence": [
         "artifacts/oam/evidence/evidence-graph.json"
       ],
-      "manualEditAllowed": true,
+      "manualEditAllowed": false,
       "ciReferenceAllowed": true,
       "replacementPath": "docs/business/dormitory/workitem-raci.yml",
       "absorbedBy": "docs/business/dormitory/workitem-raci.yml",
@@ -6977,12 +6977,12 @@
     },
     {
       "path": "docs/business/dormitory/workitem-sla.yml",
-      "currentIdentity": "authority_file",
-      "lifecycleState": "active_contract",
-      "responsibilityScopeZh": "当前 OAM 机器合同。",
-      "forbiddenScopeZh": "不得绕过系统内核、图谱、门禁或证据根。",
-      "currentFactAuthorityAllowed": true,
-      "currentFactAuthorityAllowedByGraph": true,
+      "currentIdentity": "derived_view",
+      "lifecycleState": "derived_view",
+      "responsibilityScopeZh": "由系统内核或 OAM 图谱派生的只读视图。",
+      "forbiddenScopeZh": "不得手工修改，不得替代源内核。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
       "upstreamSource": "docs/oam/oam-kernel-graph.json",
       "downstreamConsumers": [
         "scripts/business/check-dormitory-derived-contracts.mjs",
@@ -6997,7 +6997,7 @@
       "evidence": [
         "artifacts/oam/evidence/evidence-graph.json"
       ],
-      "manualEditAllowed": true,
+      "manualEditAllowed": false,
       "ciReferenceAllowed": true,
       "replacementPath": "docs/business/dormitory/workitem-sla.yml",
       "absorbedBy": "docs/business/dormitory/workitem-sla.yml",
@@ -10187,7 +10187,7 @@
       "evidence": [
         "artifacts/oam/evidence/evidence-graph.json"
       ],
-      "manualEditAllowed": true,
+      "manualEditAllowed": false,
       "ciReferenceAllowed": true,
       "replacementPath": "docs/scenarios/dormitory/golden-pilot.yml",
       "absorbedBy": "docs/scenarios/dormitory/golden-pilot.yml",

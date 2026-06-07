@@ -56,7 +56,7 @@
       "ruleId": "change.must_not_leave_parallel_authority",
       "severity": "P0",
       "blocksRelease": true,
-      "descriptionZh": "同一事实不得同时由旧架构代号、旧阶段、宿舍旧口径、手册、派生视图和运行代码多头定义。"
+      "descriptionZh": "同一事实不得同时由旧架构代号、旧阶段、非当前内核口径、手册、派生视图和运行代码多头定义。"
     },
     {
       "ruleId": "change.must_fail_closed",
