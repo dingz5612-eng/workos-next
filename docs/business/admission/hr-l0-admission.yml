@@ -1,0 +1,99 @@
+{
+  "businessLineId": "hr",
+  "displayName": "HR",
+  "level": "L0 Contract Preview",
+  "admissionLevel": "L0 Contract Preview",
+  "productionAllowed": false,
+  "requiresBusinessDiscovery": true,
+  "domainScopes": [
+    "HR.MasterData",
+    "HR.Recruiting",
+    "HR.Onboarding",
+    "HR.Attendance",
+    "HR.Payroll"
+  ],
+  "boundaries": [
+    "employee",
+    "contract",
+    "attendance",
+    "payroll",
+    "expense",
+    "permission"
+  ],
+  "factOwners": [
+    {
+      "fact": "employee master data preview",
+      "ownerRole": "HR Controller"
+    },
+    {
+      "fact": "recruiting candidate draft",
+      "ownerRole": "HR Controller"
+    },
+    {
+      "fact": "onboarding task proposal",
+      "ownerRole": "HR Controller"
+    },
+    {
+      "fact": "payroll and expense boundary",
+      "ownerRole": "Finance Controller"
+    }
+  ],
+  "previewFacts": [
+    "employee draft",
+    "candidate intake draft",
+    "onboarding checklist proposal",
+    "attendance exception proposal"
+  ],
+  "factsWaitForL1L2": [
+    "employee employment fact",
+    "attendance approval fact",
+    "payroll liability fact",
+    "expense reimbursement fact"
+  ],
+  "prepareOnlyActions": [
+    "HR.MasterData.prepare",
+    "HR.Recruiting.prepare",
+    "HR.Onboarding.prepare",
+    "HR.Attendance.prepare",
+    "HR.Payroll.prepare"
+  ],
+  "confirmActions": [],
+  "evidenceRequiredActions": [
+    "HR.Onboarding.prepare",
+    "HR.Attendance.prepare",
+    "HR.Payroll.prepare"
+  ],
+  "ledgerImpactedActions": [
+    "HR.Payroll.prepare"
+  ],
+  "certificationScenarios": [
+    "hr-l0-cert-001 employee preview",
+    "hr-l0-cert-002 payroll prepare cannot book liability"
+  ],
+  "answers": {
+    "factOwnership": true,
+    "workItemCatalog": true,
+    "evidencePolicy": true,
+    "confirmationAuthority": true,
+    "financeBoundary": true,
+    "exceptionHandling": true,
+    "lensMetrics": true,
+    "auditRecords": true,
+    "rollbackCompensation": true,
+    "certificationScenarios": true,
+    "ownerRole": true,
+    "escalationRole": true,
+    "admissionLevel": "L0 Contract Preview",
+    "productionForbidden": true,
+    "l1EntryConditions": [
+      "approved HR fact owners",
+      "HR evidence policy",
+      "HR certification pack"
+    ]
+  },
+  "ownerRole": "HR Controller",
+  "escalationRole": "People Operations Manager",
+  "productionWriteRoutes": [],
+  "pageSpecificWriteApis": [],
+  "productionWorkItems": []
+}

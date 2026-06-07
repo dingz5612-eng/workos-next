@@ -843,8 +843,8 @@ public sealed class RuntimeHardeningTests
         public BankStatementImportResult ConfirmBankStatementImport(BankStatementImportRequest request, string actorId) => throw new NotSupportedException();
         public ReconciliationCandidateGenerationResult GenerateReconciliationMatchCandidates(ReconciliationCandidateGenerationRequest request) => throw new NotSupportedException();
         public IReadOnlyList<ReconciliationMatchCandidate> GetReconciliationMatchCandidates(string tenantId, string? bankTransactionId = null) => throw new NotSupportedException();
-        public ReconciliationManualMatchResult AcceptReconciliationMatchCandidate(string candidateId, string actorId) => throw new NotSupportedException();
-        public ReconciliationCandidateDecisionResult RejectReconciliationMatchCandidate(string candidateId, string actorId, string reason) => throw new NotSupportedException();
+        public ReconciliationManualMatchResult AcceptReconciliationMatchCandidate(string candidateId, string tenantId, string actorId) => throw new NotSupportedException();
+        public ReconciliationCandidateDecisionResult RejectReconciliationMatchCandidate(string candidateId, string tenantId, string actorId, string reason) => throw new NotSupportedException();
         public ReconciliationMismatchResult MarkBankTransactionMismatch(string bankTransactionId, ReconciliationMismatchRequest request, string actorId) => throw new NotSupportedException();
         public ReconciliationTransactionDecisionResult IgnoreBankTransaction(string bankTransactionId, string tenantId, string actorId, string reason) => throw new NotSupportedException();
         public ReconciliationMismatchDetectionResult DetectReconciliationMismatches(ReconciliationMismatchDetectionRequest request) => throw new NotSupportedException();
@@ -993,9 +993,9 @@ public sealed class RuntimeHardeningTests
 
         public IReadOnlyList<ReconciliationMatchCandidate> GetReconciliationMatchCandidates(string tenantId, string? bankTransactionId = null) => throw new NotSupportedException();
 
-        public ReconciliationManualMatchResult AcceptReconciliationMatchCandidate(string candidateId, string actorId) => throw new NotSupportedException();
+        public ReconciliationManualMatchResult AcceptReconciliationMatchCandidate(string candidateId, string tenantId, string actorId) => throw new NotSupportedException();
 
-        public ReconciliationCandidateDecisionResult RejectReconciliationMatchCandidate(string candidateId, string actorId, string reason) => throw new NotSupportedException();
+        public ReconciliationCandidateDecisionResult RejectReconciliationMatchCandidate(string candidateId, string tenantId, string actorId, string reason) => throw new NotSupportedException();
 
         public ReconciliationMismatchResult MarkBankTransactionMismatch(string bankTransactionId, ReconciliationMismatchRequest request, string actorId) => throw new NotSupportedException();
 

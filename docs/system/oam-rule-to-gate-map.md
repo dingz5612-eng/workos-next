@@ -7,7 +7,7 @@
 | P0-01 | Business Production 不得被间接打开 | `scripts/check-admission-kernel.mjs` | `scripts/check-business-line-admission.mjs` | `artifacts/oam/evidence/master-design-proof.json` |
 | P0-02 | Dormitory L2 不得被间接打开 | `scripts/check-business-line-admission.mjs` | `scripts/check-dormitory-golden-domain.mjs` | `artifacts/oam/evidence/master-outline-proof.json` |
 | P0-03 | production_confirm 默认 false | `scripts/check-admission-kernel.mjs` | `scripts/check-rule-authority.mjs` | `artifacts/oam/evidence/master-design-proof.json` |
-| P0-04 | 业务写入只能通过 OAM Confirm Runtime / Unit of Work | `scripts/check-runtime-write-paths.mjs` | `scripts/check-api-boundaries.mjs` | `artifacts/oam/evidence/runtime-proof.json` |
+| P0-04 | 所有写路径必须有 actor / tenant / audit 治理，业务事实只能通过 OAM Confirm Runtime / Unit of Work | `scripts/check-runtime-write-paths.mjs` | `scripts/check-api-boundaries.mjs` | `artifacts/oam/evidence/runtime-proof.json` |
 | P0-05 | 读取面不得写业务事实 | `scripts/check-api-boundaries.mjs` | `scripts/check-search-kernel.mjs` | `artifacts/oam/evidence/search-readonly-proof.json` |
 | P0-06 | 管理驾驶舱不得直接写事实 | `scripts/check-management-cockpit-boundary.mjs` | `scripts/check-runtime-write-paths.mjs` | `artifacts/oam/evidence/runtime-proof.json` |
 | P0-07 | 共享治理回执不得替代 AdmissionDecision | `scripts/check-shared-governance-boundary.mjs` | `scripts/check-admission-kernel.mjs` | `artifacts/oam/evidence/master-outline-proof.json` |

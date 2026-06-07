@@ -14,11 +14,11 @@ public sealed partial class PostgresProjectionStore
     public IReadOnlyList<ReconciliationMatchCandidate> GetReconciliationMatchCandidates(string tenantId, string? bankTransactionId = null) =>
         reconciliationMatching.GetCandidates(tenantId, bankTransactionId);
 
-    public ReconciliationManualMatchResult AcceptReconciliationMatchCandidate(string candidateId, string actorId) =>
-        reconciliationMatching.AcceptCandidate(candidateId, actorId);
+    public ReconciliationManualMatchResult AcceptReconciliationMatchCandidate(string candidateId, string tenantId, string actorId) =>
+        reconciliationMatching.AcceptCandidate(candidateId, tenantId, actorId);
 
-    public ReconciliationCandidateDecisionResult RejectReconciliationMatchCandidate(string candidateId, string actorId, string reason) =>
-        reconciliationMatching.RejectCandidate(candidateId, actorId, reason);
+    public ReconciliationCandidateDecisionResult RejectReconciliationMatchCandidate(string candidateId, string tenantId, string actorId, string reason) =>
+        reconciliationMatching.RejectCandidate(candidateId, tenantId, actorId, reason);
 
     public ReconciliationMismatchResult MarkBankTransactionMismatch(string bankTransactionId, ReconciliationMismatchRequest request, string actorId)
     {
@@ -36,7 +36,8 @@ public sealed partial class PostgresProjectionStore
             request.TenantId,
             request.BankTransactionId,
             request.ImportId,
-            request.WindowDays));
+            request.WindowDays,
+            request.ActorId));
         return reconciliationMismatchCases.DetectMismatches(request);
     }
 

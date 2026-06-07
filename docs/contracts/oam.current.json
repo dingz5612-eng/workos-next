@@ -263,6 +263,38 @@
         "POST /api/behavior-events"
       ]
     },
+    "writeGovernance": {
+      "defaultRequiresActor": true,
+      "actorExemptRoutes": [
+        "POST /api/auth/login"
+      ],
+      "previewRoutesRequireActorNoCommitProof": [
+        "POST /api/reconciliation/bank-statement-imports/preview"
+      ],
+      "tenantScopedCategories": [
+        "workItemCreation",
+        "identitySession",
+        "accountGovernance",
+        "evidenceObject",
+        "reconciliationGovernance",
+        "correctionCenter",
+        "pcGovernance",
+        "mobileAuxiliary",
+        "behaviorEvent"
+      ],
+      "auditRequiredCategories": [
+        "businessConfirm",
+        "workItemCreation",
+        "accountGovernance",
+        "evidenceObject",
+        "reconciliationGovernance",
+        "correctionCenter",
+        "pcGovernance",
+        "projectionMaintenance",
+        "mobileAuxiliary",
+        "behaviorEvent"
+      ]
+    },
     "routePolicies": {
       "businessConfirm": {
         "writesBusinessFact": true,

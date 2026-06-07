@@ -6,9 +6,9 @@ internal interface IReconciliationMatchingStore
 
     IReadOnlyList<ReconciliationMatchCandidate> GetCandidates(string tenantId, string? bankTransactionId = null);
 
-    ReconciliationManualMatchResult AcceptCandidate(string candidateId, string actorId);
+    ReconciliationManualMatchResult AcceptCandidate(string candidateId, string tenantId, string actorId);
 
-    ReconciliationCandidateDecisionResult RejectCandidate(string candidateId, string actorId, string reason);
+    ReconciliationCandidateDecisionResult RejectCandidate(string candidateId, string tenantId, string actorId, string reason);
 
     ReconciliationMismatchResult MarkMismatch(string bankTransactionId, ReconciliationMismatchRequest request, string actorId);
 
@@ -29,7 +29,8 @@ internal sealed class ReconciliationMatchingService
         var normalized = request with
         {
             TenantId = Required(request.TenantId, "tenant_required"),
-            WindowDays = Math.Clamp(request.WindowDays <= 0 ? 3 : request.WindowDays, 1, 30)
+            WindowDays = Math.Clamp(request.WindowDays <= 0 ? 3 : request.WindowDays, 1, 30),
+            ActorId = Actor(request.ActorId)
         };
 
         return store.GenerateCandidates(normalized);
@@ -38,11 +39,15 @@ internal sealed class ReconciliationMatchingService
     public IReadOnlyList<ReconciliationMatchCandidate> GetCandidates(string tenantId, string? bankTransactionId = null) =>
         store.GetCandidates(Required(tenantId, "tenant_required"), bankTransactionId);
 
-    public ReconciliationManualMatchResult AcceptCandidate(string candidateId, string actorId) =>
-        store.AcceptCandidate(Required(candidateId, "candidate_required"), Actor(actorId));
+    public ReconciliationManualMatchResult AcceptCandidate(string candidateId, string tenantId, string actorId) =>
+        store.AcceptCandidate(Required(candidateId, "candidate_required"), Required(tenantId, "tenant_required"), Actor(actorId));
 
-    public ReconciliationCandidateDecisionResult RejectCandidate(string candidateId, string actorId, string reason) =>
-        store.RejectCandidate(Required(candidateId, "candidate_required"), Actor(actorId), DefaultReason(reason, "manual_rejected"));
+    public ReconciliationCandidateDecisionResult RejectCandidate(string candidateId, string tenantId, string actorId, string reason) =>
+        store.RejectCandidate(
+            Required(candidateId, "candidate_required"),
+            Required(tenantId, "tenant_required"),
+            Actor(actorId),
+            DefaultReason(reason, "manual_rejected"));
 
     public ReconciliationMismatchResult MarkMismatch(string bankTransactionId, ReconciliationMismatchRequest request, string actorId) =>
         store.MarkMismatch(

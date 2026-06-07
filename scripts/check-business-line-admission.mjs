@@ -4,10 +4,18 @@ import path from "node:path";
 const root = process.cwd();
 const admissionRoot = path.join(root, "docs/business/admission");
 const registryPath = path.join(root, "docs/business/business-line-registry.json");
-const admissionFiles = [
-  "repair-l0-admission.yml",
-  "parts-l0-admission.yml"
-];
+const registry = JSON.parse(fs.readFileSync(registryPath, "utf8"));
+const lines = registry.businessLines ?? [];
+const l0Lines = lines.filter(line => line.businessLineId !== "dormitory" && line.level === "L0 Contract Preview");
+const admissionFiles = l0Lines.map(line => `${line.businessLineId}-l0-admission.yml`);
+const expectedAdmissionIds = new Set(l0Lines.map(line => line.businessLineId));
+const discoveredAdmissionIds = fs.readdirSync(admissionRoot)
+  .filter(file => file.endsWith("-l0-admission.yml"))
+  .map(file => file.replace("-l0-admission.yml", ""));
+
+for (const id of discoveredAdmissionIds) {
+  assert(expectedAdmissionIds.has(id), `Unregistered L0 admission file must be removed or registered: ${id}`);
+}
 
 const levels = read("business-line-levels.yml");
 const gate = read("business-line-gate.yml");
@@ -36,7 +44,9 @@ for (const question of [
 }
 
 for (const file of admissionFiles) {
+  const businessLineId = file.replace("-l0-admission.yml", "");
   const admission = read(file);
+  assert(admission.businessLineId === businessLineId, `${file} must declare businessLineId=${businessLineId}`);
   assert(admission.level === "L0 Contract Preview", `${file} must stay L0 Contract Preview`);
   assert(admission.admissionLevel === "L0 Contract Preview", `${file} must declare L0 admission level`);
   assert(admission.productionAllowed === false, `${file} must keep productionAllowed=false`);
@@ -52,24 +62,36 @@ for (const file of admissionFiles) {
   assert(!hasConfirm, `${file} is L0 and must not define production confirm actions`);
 }
 
-const repair = read("repair-l0-admission.yml");
-for (const scope of ["Repair.Request", "Repair.MasterData", "Repair.Dispatch", "Repair.Close"]) {
-  assert(repair.domainScopes.includes(scope), `Repair L0 missing ${scope}`);
-}
-for (const boundary of ["customer", "vehicle", "serviceOrder", "technician", "parts", "warranty", "payment"]) {
-  assert(repair.boundaries.includes(boundary), `Repair L0 missing boundary ${boundary}`);
+const expectedContracts = {
+  repair: {
+    scopes: ["Repair.Request", "Repair.MasterData", "Repair.Dispatch", "Repair.Close"],
+    boundaries: ["customer", "vehicle", "serviceOrder", "technician", "parts", "warranty", "payment"]
+  },
+  parts: {
+    scopes: ["Parts.MasterData", "Parts.Inventory", "Parts.Sale", "Parts.Return", "Parts.Purchase"],
+    boundaries: ["stock movement", "payment", "refund", "cost", "revenue"]
+  },
+  hr: {
+    scopes: ["HR.MasterData", "HR.Recruiting", "HR.Onboarding", "HR.Attendance", "HR.Payroll"],
+    boundaries: ["employee", "contract", "attendance", "payroll", "expense", "permission"]
+  }
+};
+
+for (const [businessLineId, expected] of Object.entries(expectedContracts)) {
+  if (!expectedAdmissionIds.has(businessLineId)) {
+    continue;
+  }
+
+  const admission = read(`${businessLineId}-l0-admission.yml`);
+  for (const scope of expected.scopes) {
+    assert(admission.domainScopes.includes(scope), `${businessLineId} L0 missing ${scope}`);
+  }
+
+  for (const boundary of expected.boundaries) {
+    assert(admission.boundaries.includes(boundary), `${businessLineId} L0 missing boundary ${boundary}`);
+  }
 }
 
-const parts = read("parts-l0-admission.yml");
-for (const scope of ["Parts.MasterData", "Parts.Inventory", "Parts.Sale", "Parts.Return", "Parts.Purchase"]) {
-  assert(parts.domainScopes.includes(scope), `Parts L0 missing ${scope}`);
-}
-for (const boundary of ["stock movement", "payment", "refund", "cost", "revenue"]) {
-  assert(parts.boundaries.includes(boundary), `Parts L0 missing boundary ${boundary}`);
-}
-
-const registry = JSON.parse(fs.readFileSync(registryPath, "utf8"));
-const lines = registry.businessLines ?? [];
 for (const id of ["dormitory", "repair", "parts", "hr"]) {
   assert(lines.some(line => line.businessLineId === id), `Business line registry missing ${id}`);
 }

@@ -6,7 +6,8 @@ public sealed record ReconciliationMismatchDetectionRequest(
     string? ImportId = null,
     int WindowDays = 3,
     int ConfirmedPaymentThresholdDays = 3,
-    int RefundThresholdDays = 3);
+    int RefundThresholdDays = 3,
+    string? ActorId = null);
 
 public sealed record ReconciliationCaseRecord(
     string ReconciliationCaseId,

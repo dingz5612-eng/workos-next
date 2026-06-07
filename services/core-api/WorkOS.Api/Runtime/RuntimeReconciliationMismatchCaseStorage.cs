@@ -30,10 +30,11 @@ internal sealed class RuntimeReconciliationMismatchCaseStorage : IReconciliation
         InsertEvidenceAmountMismatches(db, request);
         InsertRefundsWithoutBankDebit(db, request);
 
-        var cases = CreateCasesForOpenMismatches(db, request.TenantId, null, "runtime");
+        var actorId = string.IsNullOrWhiteSpace(request.ActorId) ? "system" : request.ActorId.Trim();
+        var cases = CreateCasesForOpenMismatches(db, request.TenantId, null, actorId);
         db.Commit();
 
-        var intents = DispatchProcessWorkItems(cases, "runtime");
+        var intents = DispatchProcessWorkItems(cases, actorId);
         return new ReconciliationMismatchDetectionResult(cases.Count, cases, intents);
     }
 

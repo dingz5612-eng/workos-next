@@ -177,12 +177,17 @@ app.MapPost("/api/auth/sessions/{token}/revoke", (string token, HttpRequest http
 app.MapPost("/api/device-sessions", (RuntimeDeviceSessionRequest request, HttpRequest httpRequest) =>
 {
     var actor = httpRequest.HttpContext.RequireActor();
+    if (!TenantMatches(request.TenantId, actor.TenantId))
+    {
+        return TenantScopeForbidden("device_session_tenant_mismatch");
+    }
+
     if (!string.Equals(request.ActorId, actor.ActorId, StringComparison.OrdinalIgnoreCase))
     {
         return Results.Json(new { error = "device_actor_mismatch" }, statusCode: StatusCodes.Status403Forbidden);
     }
 
-    return Results.Ok(runtime.RegisterDeviceSession(request));
+    return Results.Ok(runtime.RegisterDeviceSession(request with { TenantId = actor.TenantId, ActorId = actor.ActorId }));
 });
 app.MapGet("/api/device-sessions", (HttpRequest httpRequest) =>
 {
@@ -367,14 +372,29 @@ app.MapGet("/api/evidence/{evidenceId}/signed-url", (string evidenceId, string? 
     }
 });
 
-app.MapPost("/api/reconciliation/bank-statement-imports/preview", (BankStatementImportRequest request) =>
-    Results.Ok(runtime.PreviewBankStatementImport(request)));
+app.MapPost("/api/reconciliation/bank-statement-imports/preview", (BankStatementImportRequest request, HttpRequest httpRequest) =>
+{
+    var actor = httpRequest.HttpContext.RequireActor();
+    if (!TenantMatches(request.TenantId, actor.TenantId))
+    {
+        return TenantScopeForbidden("bank_statement_preview_tenant_mismatch");
+    }
+
+    return Results.Ok(runtime.PreviewBankStatementImport(request with { TenantId = actor.TenantId, ImportedBy = actor.ActorId }));
+});
 app.MapPost("/api/reconciliation/bank-statement-imports", (BankStatementImportRequest request, HttpRequest httpRequest) =>
 {
-    var actorId = httpRequest.HttpContext.RequireActor().ActorId;
+    var actor = httpRequest.HttpContext.RequireActor();
+    if (!TenantMatches(request.TenantId, actor.TenantId))
+    {
+        return TenantScopeForbidden("bank_statement_import_tenant_mismatch");
+    }
+
     try
     {
-        return Results.Ok(runtime.ConfirmBankStatementImport(request, actorId));
+        return Results.Ok(runtime.ConfirmBankStatementImport(
+            request with { TenantId = actor.TenantId, ImportedBy = actor.ActorId },
+            actor.ActorId));
     }
     catch (InvalidOperationException ex) when (ex.Message.StartsWith("bank_import_", StringComparison.OrdinalIgnoreCase))
     {
@@ -382,13 +402,27 @@ app.MapPost("/api/reconciliation/bank-statement-imports", (BankStatementImportRe
     }
 });
 
-app.MapPost("/api/reconciliation/match-candidates/generate", (ReconciliationCandidateGenerationRequest request) =>
-    Results.Ok(runtime.GenerateReconciliationMatchCandidates(request)));
-app.MapPost("/api/reconciliation/mismatches/detect", (ReconciliationMismatchDetectionRequest request) =>
+app.MapPost("/api/reconciliation/match-candidates/generate", (ReconciliationCandidateGenerationRequest request, HttpRequest httpRequest) =>
 {
+    var actor = httpRequest.HttpContext.RequireActor();
+    if (!TenantMatches(request.TenantId, actor.TenantId))
+    {
+        return TenantScopeForbidden("reconciliation_candidate_generation_tenant_mismatch");
+    }
+
+    return Results.Ok(runtime.GenerateReconciliationMatchCandidates(request with { TenantId = actor.TenantId, ActorId = actor.ActorId }));
+});
+app.MapPost("/api/reconciliation/mismatches/detect", (ReconciliationMismatchDetectionRequest request, HttpRequest httpRequest) =>
+{
+    var actor = httpRequest.HttpContext.RequireActor();
+    if (!TenantMatches(request.TenantId, actor.TenantId))
+    {
+        return TenantScopeForbidden("reconciliation_mismatch_detection_tenant_mismatch");
+    }
+
     try
     {
-        return Results.Ok(runtime.DetectReconciliationMismatches(request));
+        return Results.Ok(runtime.DetectReconciliationMismatches(request with { TenantId = actor.TenantId, ActorId = actor.ActorId }));
     }
     catch (InvalidOperationException ex) when (ex.Message.StartsWith("reconciliation_", StringComparison.OrdinalIgnoreCase))
     {
@@ -408,10 +442,10 @@ app.MapGet("/api/reconciliation/match-candidates", (string? tenantId, string? ba
 });
 app.MapPost("/api/reconciliation/match-candidates/{candidateId}/accept", (string candidateId, HttpRequest httpRequest) =>
 {
-    var actorId = httpRequest.HttpContext.RequireActor().ActorId;
+    var actor = httpRequest.HttpContext.RequireActor();
     try
     {
-        return Results.Ok(runtime.AcceptReconciliationMatchCandidate(candidateId, actorId));
+        return Results.Ok(runtime.AcceptReconciliationMatchCandidate(candidateId, actor.TenantId, actor.ActorId));
     }
     catch (InvalidOperationException ex) when (ex.Message.StartsWith("reconciliation_", StringComparison.OrdinalIgnoreCase))
     {
@@ -420,10 +454,10 @@ app.MapPost("/api/reconciliation/match-candidates/{candidateId}/accept", (string
 });
 app.MapPost("/api/reconciliation/match-candidates/{candidateId}/reject", (string candidateId, ReconciliationMatchDecisionRequest request, HttpRequest httpRequest) =>
 {
-    var actorId = httpRequest.HttpContext.RequireActor().ActorId;
+    var actor = httpRequest.HttpContext.RequireActor();
     try
     {
-        return Results.Ok(runtime.RejectReconciliationMatchCandidate(candidateId, actorId, request.Reason ?? "manual_rejected"));
+        return Results.Ok(runtime.RejectReconciliationMatchCandidate(candidateId, actor.TenantId, actor.ActorId, request.Reason ?? "manual_rejected"));
     }
     catch (InvalidOperationException ex) when (ex.Message.StartsWith("reconciliation_", StringComparison.OrdinalIgnoreCase))
     {
@@ -432,10 +466,18 @@ app.MapPost("/api/reconciliation/match-candidates/{candidateId}/reject", (string
 });
 app.MapPost("/api/reconciliation/bank-transactions/{bankTransactionId}/mismatch", (string bankTransactionId, ReconciliationMismatchRequest request, HttpRequest httpRequest) =>
 {
-    var actorId = httpRequest.HttpContext.RequireActor().ActorId;
+    var actor = httpRequest.HttpContext.RequireActor();
+    if (!TenantMatches(request.TenantId, actor.TenantId))
+    {
+        return TenantScopeForbidden("reconciliation_mismatch_tenant_mismatch");
+    }
+
     try
     {
-        return Results.Ok(runtime.MarkBankTransactionMismatch(bankTransactionId, request, actorId));
+        return Results.Ok(runtime.MarkBankTransactionMismatch(
+            bankTransactionId,
+            request with { TenantId = actor.TenantId },
+            actor.ActorId));
     }
     catch (InvalidOperationException ex) when (ex.Message.StartsWith("reconciliation_", StringComparison.OrdinalIgnoreCase))
     {
@@ -444,10 +486,15 @@ app.MapPost("/api/reconciliation/bank-transactions/{bankTransactionId}/mismatch"
 });
 app.MapPost("/api/reconciliation/bank-transactions/{bankTransactionId}/ignore", (string bankTransactionId, ReconciliationTransactionDecisionRequest request, HttpRequest httpRequest) =>
 {
-    var actorId = httpRequest.HttpContext.RequireActor().ActorId;
+    var actor = httpRequest.HttpContext.RequireActor();
+    if (!TenantMatches(request.TenantId, actor.TenantId))
+    {
+        return TenantScopeForbidden("reconciliation_ignore_tenant_mismatch");
+    }
+
     try
     {
-        return Results.Ok(runtime.IgnoreBankTransaction(bankTransactionId, request.TenantId, actorId, request.Reason ?? "manual_ignored"));
+        return Results.Ok(runtime.IgnoreBankTransaction(bankTransactionId, actor.TenantId, actor.ActorId, request.Reason ?? "manual_ignored"));
     }
     catch (InvalidOperationException ex) when (ex.Message.StartsWith("reconciliation_", StringComparison.OrdinalIgnoreCase))
     {
@@ -455,11 +502,17 @@ app.MapPost("/api/reconciliation/bank-transactions/{bankTransactionId}/ignore", 
     }
 });
 
-app.MapPost("/api/correction-center/ledger-correction-requests", (LedgerCorrectionRequestCommand request) =>
+app.MapPost("/api/correction-center/ledger-correction-requests", (LedgerCorrectionRequestCommand request, HttpRequest httpRequest) =>
 {
+    var actor = httpRequest.HttpContext.RequireActor();
+    if (!TenantMatches(request.TenantId, actor.TenantId))
+    {
+        return TenantScopeForbidden("ledger_correction_request_tenant_mismatch");
+    }
+
     try
     {
-        return Results.Ok(runtime.RequestLedgerCorrection(request));
+        return Results.Ok(runtime.RequestLedgerCorrection(request with { TenantId = actor.TenantId, RequestedBy = actor.ActorId }));
     }
     catch (InvalidOperationException ex) when (ex.Message.StartsWith("correction_", StringComparison.OrdinalIgnoreCase))
     {
@@ -469,11 +522,16 @@ app.MapPost("/api/correction-center/ledger-correction-requests", (LedgerCorrecti
 app.MapPost("/api/correction-center/ledger-correction-requests/{correctionRequestId}/approve", (string correctionRequestId, LedgerCorrectionApproveRequest request, HttpRequest httpRequest) =>
 {
     var actor = httpRequest.HttpContext.RequireActor();
+    if (!TenantMatches(request.TenantId, actor.TenantId))
+    {
+        return TenantScopeForbidden("ledger_correction_approval_tenant_mismatch");
+    }
+
     var device = RuntimeActorAuthorization.TrustedDeviceFromRequest(runtime, actor, request.DeviceId);
     try
     {
         return Results.Ok(runtime.ApproveLedgerCorrection(new LedgerCorrectionApproveCommand(
-            request.TenantId,
+            actor.TenantId,
             correctionRequestId,
             actor.ActorId,
             request.Note,
@@ -491,10 +549,15 @@ app.MapPost("/api/correction-center/ledger-correction-requests/{correctionReques
 app.MapPost("/api/correction-center/ledger-correction-requests/{correctionRequestId}/reject", (string correctionRequestId, LedgerCorrectionRejectRequest request, HttpRequest httpRequest) =>
 {
     var actor = httpRequest.HttpContext.RequireActor();
+    if (!TenantMatches(request.TenantId, actor.TenantId))
+    {
+        return TenantScopeForbidden("ledger_correction_rejection_tenant_mismatch");
+    }
+
     try
     {
         return Results.Ok(runtime.RejectLedgerCorrection(new LedgerCorrectionRejectCommand(
-            request.TenantId,
+            actor.TenantId,
             correctionRequestId,
             actor.ActorId,
             request.Reason)));
@@ -507,11 +570,16 @@ app.MapPost("/api/correction-center/ledger-correction-requests/{correctionReques
 app.MapPost("/api/correction-center/ledger-correction-requests/{correctionRequestId}/apply", (string correctionRequestId, LedgerCorrectionApplyRequest request, HttpRequest httpRequest) =>
 {
     var actor = httpRequest.HttpContext.RequireActor();
+    if (!TenantMatches(request.TenantId, actor.TenantId))
+    {
+        return TenantScopeForbidden("ledger_correction_apply_tenant_mismatch");
+    }
+
     var device = RuntimeActorAuthorization.TrustedDeviceFromRequest(runtime, actor, request.DeviceId);
     try
     {
         return Results.Ok(runtime.ApplyLedgerCorrection(new LedgerCorrectionApplyCommand(
-            request.TenantId,
+            actor.TenantId,
             correctionRequestId,
             actor.ActorId,
             request.WorkItemId,
@@ -646,6 +714,15 @@ app.MapPost("/api/behavior-events", (BehaviorEventRequest request, HttpRequest h
 });
 
 app.Run();
+
+static bool TenantMatches(string? requestedTenantId, string actorTenantId) =>
+    string.IsNullOrWhiteSpace(requestedTenantId) ||
+    requestedTenantId.Equals(actorTenantId, StringComparison.OrdinalIgnoreCase);
+
+static IResult TenantScopeForbidden(string reason) =>
+    Results.Json(
+        new { error = "business_write_tenant_scope_mismatch", reason },
+        statusCode: StatusCodes.Status403Forbidden);
 
 static string[] DormitoryTemplateWorkspaceIds() =>
     new[]

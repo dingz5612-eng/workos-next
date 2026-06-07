@@ -4,7 +4,8 @@ public sealed record ReconciliationCandidateGenerationRequest(
     string TenantId,
     string? BankTransactionId = null,
     string? ImportId = null,
-    int WindowDays = 3);
+    int WindowDays = 3,
+    string? ActorId = null);
 
 public sealed record ReconciliationCandidateGenerationResult(
     int CandidateCount,

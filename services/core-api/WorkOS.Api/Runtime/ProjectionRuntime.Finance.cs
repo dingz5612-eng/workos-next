@@ -22,14 +22,14 @@ public sealed partial class ProjectionRuntime
         lock (gate) return store.GetReconciliationMatchCandidates(tenantId, bankTransactionId);
     }
 
-    public ReconciliationManualMatchResult AcceptReconciliationMatchCandidate(string candidateId, string actorId)
+    public ReconciliationManualMatchResult AcceptReconciliationMatchCandidate(string candidateId, string tenantId, string actorId)
     {
-        lock (gate) return store.AcceptReconciliationMatchCandidate(candidateId, actorId);
+        lock (gate) return store.AcceptReconciliationMatchCandidate(candidateId, tenantId, actorId);
     }
 
-    public ReconciliationCandidateDecisionResult RejectReconciliationMatchCandidate(string candidateId, string actorId, string reason)
+    public ReconciliationCandidateDecisionResult RejectReconciliationMatchCandidate(string candidateId, string tenantId, string actorId, string reason)
     {
-        lock (gate) return store.RejectReconciliationMatchCandidate(candidateId, actorId, reason);
+        lock (gate) return store.RejectReconciliationMatchCandidate(candidateId, tenantId, actorId, reason);
     }
 
     public ReconciliationMismatchResult MarkBankTransactionMismatch(string bankTransactionId, ReconciliationMismatchRequest request, string actorId)

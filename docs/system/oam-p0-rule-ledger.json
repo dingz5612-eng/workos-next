@@ -54,10 +54,10 @@
     },
     {
       "ruleId": "P0-04",
-      "ruleNameZh": "业务写入只能通过 OAM Confirm Runtime / Unit of Work",
+      "ruleNameZh": "所有写路径必须有 actor、租户、权限、准入、设备信任、证据引用和审计治理；业务事实只能通过 OAM Confirm Runtime / Unit of Work",
       "authorityFile": "docs/contracts/oam.current.json",
-      "structuredContract": "docs/contracts/definition/workitem-definition-registry.json",
-      "runtimeExecutionPoint": "OperationsUnitOfWork",
+      "structuredContract": "docs/contracts/oam.current.json",
+      "runtimeExecutionPoint": "API boundary governance + OperationsUnitOfWork",
       "primaryGate": "scripts/check-runtime-write-paths.mjs",
       "auxiliaryGates": [
         "scripts/check-api-boundaries.mjs"
@@ -66,7 +66,7 @@
       "status": "passed",
       "riskLevel": "P0",
       "blocksRelease": true,
-      "riskDescriptionZh": "若出现旁路写入，业务事实来源会失去唯一权威。"
+      "riskDescriptionZh": "若写路径缺少 actor、租户或审计治理，或绕过 Confirm Runtime 写业务事实，当前 OAM 的事实来源和追责链会失去唯一权威。"
     },
     {
       "ruleId": "P0-05",

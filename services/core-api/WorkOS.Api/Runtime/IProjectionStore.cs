@@ -75,9 +75,9 @@ public interface IProjectionStore
 
     IReadOnlyList<ReconciliationMatchCandidate> GetReconciliationMatchCandidates(string tenantId, string? bankTransactionId = null);
 
-    ReconciliationManualMatchResult AcceptReconciliationMatchCandidate(string candidateId, string actorId);
+    ReconciliationManualMatchResult AcceptReconciliationMatchCandidate(string candidateId, string tenantId, string actorId);
 
-    ReconciliationCandidateDecisionResult RejectReconciliationMatchCandidate(string candidateId, string actorId, string reason);
+    ReconciliationCandidateDecisionResult RejectReconciliationMatchCandidate(string candidateId, string tenantId, string actorId, string reason);
 
     ReconciliationMismatchResult MarkBankTransactionMismatch(string bankTransactionId, ReconciliationMismatchRequest request, string actorId);
 

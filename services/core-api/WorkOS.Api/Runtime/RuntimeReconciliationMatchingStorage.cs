@@ -21,6 +21,7 @@ internal sealed class RuntimeReconciliationMatchingStorage : IReconciliationMatc
         GenerateDepositCandidates(db, request);
         GenerateRefundCandidates(db, request);
         MarkTransactionsWithCandidates(db, request);
+        InsertCandidateGenerationAuditEvent(db, request);
 
         db.Commit();
         var candidates = GetCandidates(request.TenantId, request.BankTransactionId);
@@ -71,11 +72,12 @@ internal sealed class RuntimeReconciliationMatchingStorage : IReconciliationMatc
         return items;
     }
 
-    public ReconciliationManualMatchResult AcceptCandidate(string candidateId, string actorId)
+    public ReconciliationManualMatchResult AcceptCandidate(string candidateId, string tenantId, string actorId)
     {
         using var connection = connections.Open();
         using var db = new RuntimeDbSession(connection);
         var candidate = LoadCandidateForUpdate(db, candidateId);
+        EnsureCandidateTenant(candidate, tenantId);
         if (candidate.Status is not "proposed" and not "reviewing")
         {
             throw new InvalidOperationException("reconciliation_candidate_not_acceptable");
@@ -107,11 +109,13 @@ internal sealed class RuntimeReconciliationMatchingStorage : IReconciliationMatc
             matchedAtUtc);
     }
 
-    public ReconciliationCandidateDecisionResult RejectCandidate(string candidateId, string actorId, string reason)
+    public ReconciliationCandidateDecisionResult RejectCandidate(string candidateId, string tenantId, string actorId, string reason)
     {
         using var connection = connections.Open();
         using var db = new RuntimeDbSession(connection);
         var candidate = LoadCandidateForUpdate(db, candidateId);
+        EnsureCandidateTenant(candidate, tenantId);
+        InsertCandidateDecisionAuditEvent(db, candidate, "ReconciliationCandidateRejected", actorId, reason);
         UpdateCandidateStatus(db, candidate.CandidateId, "rejected");
         db.Commit();
         return new ReconciliationCandidateDecisionResult(candidate.CandidateId, "rejected", reason);
@@ -165,6 +169,7 @@ internal sealed class RuntimeReconciliationMatchingStorage : IReconciliationMatc
         EnsureBankTransaction(db, tenantId, bankTransactionId);
         UpdateBankTransactionStatus(db, tenantId, bankTransactionId, "ignored");
         SupersedeOpenCandidatesForTransaction(db, tenantId, bankTransactionId);
+        InsertTransactionDecisionAuditEvent(db, tenantId, bankTransactionId, "BankTransactionIgnored", actorId, reason);
         db.Commit();
         return new ReconciliationTransactionDecisionResult(bankTransactionId, "ignored", reason);
     }
@@ -328,6 +333,47 @@ internal sealed class RuntimeReconciliationMatchingStorage : IReconciliationMatc
         command.ExecuteNonQuery();
     }
 
+    private static void InsertCandidateGenerationAuditEvent(RuntimeDbSession db, ReconciliationCandidateGenerationRequest request)
+    {
+        var actorId = string.IsNullOrWhiteSpace(request.ActorId) ? "system" : request.ActorId.Trim();
+        var eventId = $"recon-event-{Guid.NewGuid():N}";
+        var occurredAtUtc = DateTimeOffset.UtcNow;
+        var body = new
+        {
+            eventId,
+            eventType = "ReconciliationCandidatesGenerated",
+            tenantId = request.TenantId,
+            bankTransactionId = request.BankTransactionId,
+            importId = request.ImportId,
+            windowDays = request.WindowDays,
+            actorId,
+            occurredAtUtc,
+            note = "Candidate generation is reconciliation governance; it creates proposals and does not confirm payment, deposit, refund, or StayBalance facts."
+        };
+
+        using var command = db.CreateCommand("""
+            insert into audit_events(
+                event_id, idempotency_key, workspace_id, card_id, event_type,
+                correlation_id, causation_id, request_id, actor_type, actor_id,
+                occurred_at_utc, body)
+            values (
+                @eventId, @idempotencyKey, @tenantId, 'reconciliation-candidates', 'ReconciliationCandidatesGenerated',
+                @correlationId, @causationId, @requestId, 'finance', @actorId,
+                @occurredAtUtc, @body::jsonb)
+            on conflict(idempotency_key) do nothing
+            """);
+        command.Parameters.AddWithValue("eventId", eventId);
+        command.Parameters.AddWithValue("idempotencyKey", $"reconciliation-candidates-generated:{eventId}");
+        command.Parameters.AddWithValue("tenantId", request.TenantId);
+        command.Parameters.AddWithValue("correlationId", request.BankTransactionId ?? request.ImportId ?? request.TenantId);
+        command.Parameters.AddWithValue("causationId", request.ImportId ?? request.BankTransactionId ?? eventId);
+        command.Parameters.AddWithValue("requestId", eventId);
+        command.Parameters.AddWithValue("actorId", actorId);
+        command.Parameters.AddWithValue("occurredAtUtc", occurredAtUtc);
+        command.Parameters.AddWithValue("body", NpgsqlDbType.Jsonb, JsonSerializer.Serialize(body, PostgresProjectionStore.JsonOptions));
+        command.ExecuteNonQuery();
+    }
+
     private static void AddGenerationParameters(Npgsql.NpgsqlCommand command, ReconciliationCandidateGenerationRequest request)
     {
         command.Parameters.AddWithValue("tenantId", request.TenantId);
@@ -391,6 +437,14 @@ internal sealed class RuntimeReconciliationMatchingStorage : IReconciliationMatc
             reader.GetString(13),
             reader.GetString(14),
             reader.GetString(15));
+
+    private static void EnsureCandidateTenant(ReconciliationMatchCandidate candidate, string tenantId)
+    {
+        if (!string.Equals(candidate.TenantId, tenantId, StringComparison.OrdinalIgnoreCase))
+        {
+            throw new InvalidOperationException("reconciliation_candidate_tenant_mismatch");
+        }
+    }
 
     private static void EnsureTargetExists(ReconciliationMatchCandidate candidate)
     {
@@ -456,19 +510,115 @@ internal sealed class RuntimeReconciliationMatchingStorage : IReconciliationMatc
                 correlation_id, causation_id, request_id, actor_type, actor_id,
                 occurred_at_utc, body)
             values (
-                @eventId, @idempotencyKey, 'reconciliation', 'bank-statement-match', @eventType,
+                @eventId, @idempotencyKey, @tenantId, 'bank-statement-match', @eventType,
                 @correlationId, @causationId, @requestId, 'finance', @actorId,
                 @occurredAtUtc, @body::jsonb)
             on conflict(idempotency_key) do nothing
             """);
         command.Parameters.AddWithValue("eventId", eventId);
         command.Parameters.AddWithValue("idempotencyKey", $"reconciliation-match:{candidate.CandidateId}");
+        command.Parameters.AddWithValue("tenantId", candidate.TenantId);
         command.Parameters.AddWithValue("eventType", eventType);
         command.Parameters.AddWithValue("correlationId", candidate.BankTransactionId);
         command.Parameters.AddWithValue("causationId", candidate.CandidateId);
         command.Parameters.AddWithValue("requestId", matchId);
         command.Parameters.AddWithValue("actorId", actorId);
         command.Parameters.AddWithValue("occurredAtUtc", matchedAtUtc);
+        command.Parameters.AddWithValue("body", NpgsqlDbType.Jsonb, JsonSerializer.Serialize(body, PostgresProjectionStore.JsonOptions));
+        command.ExecuteNonQuery();
+    }
+
+    private static void InsertCandidateDecisionAuditEvent(
+        RuntimeDbSession db,
+        ReconciliationMatchCandidate candidate,
+        string eventType,
+        string actorId,
+        string reason)
+    {
+        var eventId = $"recon-event-{Guid.NewGuid():N}";
+        var occurredAtUtc = DateTimeOffset.UtcNow;
+        var body = new
+        {
+            eventId,
+            eventType,
+            tenantId = candidate.TenantId,
+            candidateId = candidate.CandidateId,
+            bankTransactionId = candidate.BankTransactionId,
+            paymentId = candidate.PaymentId,
+            depositId = candidate.DepositId,
+            refundPaymentId = candidate.RefundPaymentId,
+            reason,
+            actorId,
+            occurredAtUtc,
+            note = "Candidate decision is reconciliation governance and does not confirm payment, deposit, refund, or StayBalance facts."
+        };
+
+        using var command = db.CreateCommand("""
+            insert into audit_events(
+                event_id, idempotency_key, workspace_id, card_id, event_type,
+                correlation_id, causation_id, request_id, actor_type, actor_id,
+                occurred_at_utc, body)
+            values (
+                @eventId, @idempotencyKey, @tenantId, 'bank-statement-match', @eventType,
+                @correlationId, @causationId, @requestId, 'finance', @actorId,
+                @occurredAtUtc, @body::jsonb)
+            on conflict(idempotency_key) do nothing
+            """);
+        command.Parameters.AddWithValue("eventId", eventId);
+        command.Parameters.AddWithValue("idempotencyKey", $"reconciliation-candidate-decision:{candidate.CandidateId}:{eventId}");
+        command.Parameters.AddWithValue("tenantId", candidate.TenantId);
+        command.Parameters.AddWithValue("eventType", eventType);
+        command.Parameters.AddWithValue("correlationId", candidate.BankTransactionId);
+        command.Parameters.AddWithValue("causationId", candidate.CandidateId);
+        command.Parameters.AddWithValue("requestId", eventId);
+        command.Parameters.AddWithValue("actorId", actorId);
+        command.Parameters.AddWithValue("occurredAtUtc", occurredAtUtc);
+        command.Parameters.AddWithValue("body", NpgsqlDbType.Jsonb, JsonSerializer.Serialize(body, PostgresProjectionStore.JsonOptions));
+        command.ExecuteNonQuery();
+    }
+
+    private static void InsertTransactionDecisionAuditEvent(
+        RuntimeDbSession db,
+        string tenantId,
+        string bankTransactionId,
+        string eventType,
+        string actorId,
+        string reason)
+    {
+        var eventId = $"recon-event-{Guid.NewGuid():N}";
+        var occurredAtUtc = DateTimeOffset.UtcNow;
+        var body = new
+        {
+            eventId,
+            eventType,
+            tenantId,
+            bankTransactionId,
+            reason,
+            actorId,
+            occurredAtUtc,
+            note = "Bank transaction decision is reconciliation governance and does not confirm payment, deposit, refund, or StayBalance facts."
+        };
+
+        using var command = db.CreateCommand("""
+            insert into audit_events(
+                event_id, idempotency_key, workspace_id, card_id, event_type,
+                correlation_id, causation_id, request_id, actor_type, actor_id,
+                occurred_at_utc, body)
+            values (
+                @eventId, @idempotencyKey, @tenantId, 'bank-statement-transaction', @eventType,
+                @correlationId, @causationId, @requestId, 'finance', @actorId,
+                @occurredAtUtc, @body::jsonb)
+            on conflict(idempotency_key) do nothing
+            """);
+        command.Parameters.AddWithValue("eventId", eventId);
+        command.Parameters.AddWithValue("idempotencyKey", $"reconciliation-transaction-decision:{bankTransactionId}:{eventId}");
+        command.Parameters.AddWithValue("tenantId", tenantId);
+        command.Parameters.AddWithValue("eventType", eventType);
+        command.Parameters.AddWithValue("correlationId", bankTransactionId);
+        command.Parameters.AddWithValue("causationId", bankTransactionId);
+        command.Parameters.AddWithValue("requestId", eventId);
+        command.Parameters.AddWithValue("actorId", actorId);
+        command.Parameters.AddWithValue("occurredAtUtc", occurredAtUtc);
         command.Parameters.AddWithValue("body", NpgsqlDbType.Jsonb, JsonSerializer.Serialize(body, PostgresProjectionStore.JsonOptions));
         command.ExecuteNonQuery();
     }

@@ -29,6 +29,7 @@ const forbiddenWritePatterns = [
   /^POST \/api\/checkout\/close$/,
   /^POST \/api\/projection.*\/confirm$/
 ];
+const strictTenantGovernanceCategories = new Set(["reconciliationGovernance", "correctionCenter"]);
 
 function readContract() {
   return JSON.parse(fs.readFileSync(contractPath, "utf8"));
@@ -98,6 +99,33 @@ function routeCategoryMap(contract) {
   return { map, duplicates, writeRoutes };
 }
 
+function writeGovernance(contract) {
+  return contract.apiBoundary?.writeGovernance ?? {};
+}
+
+function isActorExemptRoute(route, contract) {
+  return (writeGovernance(contract).actorExemptRoutes ?? []).includes(route.key);
+}
+
+function hasActorGovernance(route) {
+  if (!route.handlerSource.includes("HttpRequest")) {
+    return false;
+  }
+
+  return route.handlerSource.includes("RequireActor(") ||
+    route.handlerSource.includes("StartOperationsWorkspace(") ||
+    route.handlerSource.includes("AppendExperienceEvent(");
+}
+
+function hasTenantGovernance(route) {
+  if (!route.handlerSource.includes("HttpRequest")) {
+    return false;
+  }
+
+  return route.handlerSource.includes("TenantMatches(") ||
+    route.handlerSource.includes("actor.TenantId");
+}
+
 function isApiRoute(route) {
   return route.route.startsWith("/api/");
 }
@@ -129,6 +157,27 @@ function validateContract(contract) {
   if (contract.primaryWritePath !== businessConfirmRoute) {
     violations.push(`primaryWritePath must be ${businessConfirmRoute}`);
   }
+  const governance = writeGovernance(contract);
+  if (governance.defaultRequiresActor !== true) {
+    violations.push("apiBoundary.writeGovernance.defaultRequiresActor must be true");
+  }
+  if (!Array.isArray(governance.actorExemptRoutes) ||
+      governance.actorExemptRoutes.length !== 1 ||
+      !governance.actorExemptRoutes.includes("POST /api/auth/login")) {
+    violations.push("apiBoundary.writeGovernance.actorExemptRoutes must explicitly list only actor-exempt login");
+  }
+  if (!Array.isArray(governance.previewRoutesRequireActorNoCommitProof) ||
+      !governance.previewRoutesRequireActorNoCommitProof.includes("POST /api/reconciliation/bank-statement-imports/preview")) {
+    violations.push("apiBoundary.writeGovernance.previewRoutesRequireActorNoCommitProof must include bank statement preview");
+  }
+  for (const category of ["reconciliationGovernance", "correctionCenter"]) {
+    if (!(governance.tenantScopedCategories ?? []).includes(category)) {
+      violations.push(`apiBoundary.writeGovernance.tenantScopedCategories must include ${category}`);
+    }
+    if (!(governance.auditRequiredCategories ?? []).includes(category)) {
+      violations.push(`apiBoundary.writeGovernance.auditRequiredCategories must include ${category}`);
+    }
+  }
   for (const category of allowedWriteCategories) {
     if (!Array.isArray(contract.apiBoundary?.writeRoutes?.[category])) {
       violations.push(`apiBoundary.writeRoutes.${category} must be an array`);
@@ -152,6 +201,18 @@ function validateRoute(route, category, contract) {
   const violations = [];
   const policy = contract.apiBoundary.routePolicies[category] ?? {};
   const businessToken = containsBusinessFactToken(route);
+  const governance = writeGovernance(contract);
+
+  if (governance.defaultRequiresActor === true &&
+      !isActorExemptRoute(route, contract) &&
+      !hasActorGovernance(route)) {
+    violations.push(`${route.file}: current OAM write route must require actor governance: ${route.key}`);
+  }
+  if (strictTenantGovernanceCategories.has(category) &&
+      (governance.tenantScopedCategories ?? []).includes(category) &&
+      !hasTenantGovernance(route)) {
+    violations.push(`${route.file}: current OAM ${category} route must bind tenant governance to current actor: ${route.key}`);
+  }
 
   if (category !== "businessConfirm" && category !== "correctionCenter" && businessToken) {
     violations.push(`${route.file}: ${category} route must not write business fact token ${businessToken}: ${route.key}`);
@@ -286,13 +347,25 @@ function runSelfTest() {
     "POST /api/reconciliation/unknown",
     "unclassified reconciliation route was not rejected");
 
+  expectViolation(
+    extractRoutes('app.MapPost("/api/reconciliation/match-candidates/generate", (ReconciliationCandidateGenerationRequest request) => Results.Ok());', "simulated-reconciliation-missing-actor.cs"),
+    contract,
+    "POST /api/reconciliation/match-candidates/generate",
+    "classified write route without actor governance was not rejected");
+
+  expectViolation(
+    extractRoutes('app.MapPost("/api/reconciliation/match-candidates/generate", (ReconciliationCandidateGenerationRequest request, HttpRequest httpRequest) => { var actor = httpRequest.HttpContext.RequireActor(); return Results.Ok(runtime.GenerateReconciliationMatchCandidates(request)); });', "simulated-reconciliation-missing-tenant.cs"),
+    contract,
+    "POST /api/reconciliation/match-candidates/generate",
+    "reconciliation write route without actor tenant governance was not rejected");
+
   expectNoViolation(
-    extractRoutes('app.MapPost("/api/operations/work-items/{workItemId}/confirm", () => Results.Ok());', "simulated-operations-confirm.cs"),
+    extractRoutes('app.MapPost("/api/operations/work-items/{workItemId}/confirm", (ConfirmCardRequest request, HttpRequest httpRequest) => { httpRequest.HttpContext.RequireActor(); return Results.Ok(); });', "simulated-operations-confirm.cs"),
     contract,
     "Operations Confirm route was rejected");
 
   expectNoViolation(
-    extractRoutes('app.MapPost("/api/operations/workspaces/start", () => Results.Ok());', "simulated-workspace-start.cs"),
+    extractRoutes('app.MapPost("/api/operations/workspaces/start", (StartWorkspaceRequest request, HttpRequest httpRequest) => StartOperationsWorkspace(request, "W", httpRequest, runtime, operations, roles, "forbidden"));', "simulated-workspace-start.cs"),
     contract,
     "Operations workspace start route was rejected");
 
@@ -303,7 +376,7 @@ function runSelfTest() {
     "blocked Workspace/Card confirm was not rejected");
 
   expectNoViolation(
-    extractRoutes('app.MapPost("/api/evidence/{evidenceId}/attachments", () => Results.Ok());', "simulated-evidence-attachment.cs"),
+    extractRoutes('app.MapPost("/api/evidence/{evidenceId}/attachments", (string evidenceId, EvidenceAttachmentRequest request, HttpRequest httpRequest) => { httpRequest.HttpContext.RequireActor(); return Results.Ok(); });', "simulated-evidence-attachment.cs"),
     contract,
     "evidence attachment route was rejected");
 
