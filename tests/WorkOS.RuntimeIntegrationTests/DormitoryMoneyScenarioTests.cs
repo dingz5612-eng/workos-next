@@ -22,11 +22,11 @@ public sealed class DormitoryMoneyScenarioTests
             var result = harness.Commit(scenario);
             Assert.AreEqual("committed", result.CommitStatus);
             var transactions = harness.Store.LedgerTransactions.Where(item => item.SubmissionId == result.SubmissionId).ToArray();
-            Assert.AreEqual(1, transactions.Length);
+            Assert.HasCount(1, transactions);
             Assert.AreEqual("balanced", transactions[0].BalanceStatus);
 
             var entries = harness.Store.LedgerEntries.Where(item => item.LedgerTransactionId == transactions[0].LedgerTransactionId).ToArray();
-            Assert.AreEqual(2, entries.Length);
+            Assert.HasCount(2, entries);
             Assert.AreEqual(entries.Where(item => item.DebitCredit == "debit").Sum(item => item.Amount), entries.Where(item => item.DebitCredit == "credit").Sum(item => item.Amount));
         }
     }

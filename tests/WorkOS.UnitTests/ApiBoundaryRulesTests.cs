@@ -37,7 +37,7 @@ public sealed class ApiBoundaryRulesTests
         })
         {
             Assert.IsTrue(writeRoutes.TryGetProperty(category, out var routes), $"{category} must be declared.");
-            Assert.IsTrue(routes.ValueKind == JsonValueKind.Array, $"{category} must be an array.");
+            Assert.AreEqual(JsonValueKind.Array, routes.ValueKind, $"{category} must be an array.");
             Assert.IsTrue(boundary.GetProperty("routePolicies").TryGetProperty(category, out _), $"{category} must have a route policy.");
         }
     }

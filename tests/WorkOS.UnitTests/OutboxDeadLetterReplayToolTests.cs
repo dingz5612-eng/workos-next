@@ -20,7 +20,7 @@ public sealed class OutboxDeadLetterReplayToolTests
         Assert.AreEqual("replay_queued", result.Status);
         Assert.AreEqual(1, result.MessageCount);
         Assert.AreEqual("outbox-1", store.Released.Single());
-        Assert.AreEqual(1, store.Audits.Count);
+        Assert.HasCount(1, store.Audits);
         Assert.AreEqual("replay", store.Audits.Single().Action);
     }
 
@@ -41,7 +41,7 @@ public sealed class OutboxDeadLetterReplayToolTests
 
         Assert.AreEqual("replay_queued", result.Status);
         CollectionAssert.AreEquivalent(new[] { "outbox-1", "outbox-2" }, store.Released.ToArray());
-        Assert.AreEqual(2, store.Audits.Count);
+        Assert.HasCount(2, store.Audits);
         Assert.IsTrue(store.Audits.All(item => item.Reason == "replay payment projection after deploy"));
     }
 
@@ -56,8 +56,8 @@ public sealed class OutboxDeadLetterReplayToolTests
 
         Assert.AreEqual("replay_queued", first.Status);
         Assert.AreEqual("already_pending", second.Status);
-        Assert.AreEqual(1, store.Released.Count);
-        Assert.AreEqual(2, store.Audits.Count);
+        Assert.HasCount(1, store.Released);
+        Assert.HasCount(2, store.Audits);
     }
 
     [TestMethod]
@@ -158,7 +158,7 @@ public sealed class OutboxDeadLetterReplayToolTests
             "--take", "10"
         });
 
-        Assert.IsTrue(script.Contains("dead-letter"));
+        Assert.Contains("dead-letter", script);
         Assert.AreEqual("replay", parsed.Request.Action);
         Assert.AreEqual("Accommodation.PaymentConfirmed", parsed.Request.EventType);
         Assert.AreEqual("T1", parsed.Request.TenantId);

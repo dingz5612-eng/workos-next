@@ -60,7 +60,7 @@ public sealed class PolicyAsCodeTests
         var repairSurfaces = LoadSurfaceSnapshots()
             .Where(item => item.SliceId.StartsWith("Repair.", StringComparison.OrdinalIgnoreCase))
             .ToArray();
-        Assert.IsTrue(repairSurfaces.Length >= 1);
+        Assert.IsGreaterThanOrEqualTo(1, repairSurfaces.Length);
 
         foreach (var surface in repairSurfaces)
         {
@@ -172,7 +172,7 @@ public sealed class PolicyAsCodeTests
         public void Replace(string oldValue, string newValue)
         {
             var text = File.ReadAllText(Path);
-            Assert.IsTrue(text.Contains(oldValue), $"Temp policy did not contain {oldValue}");
+            Assert.Contains(oldValue, text, $"Temp policy did not contain {oldValue}");
             File.WriteAllText(Path, text.Replace(oldValue, newValue));
         }
 

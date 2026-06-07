@@ -70,7 +70,7 @@ public sealed class RiskCommandLensTests
             Input("risk-open-blockers", "open_blockers", count: 1, sourceTables: ["process_request_event_intents"], ledgerRefs: ["blocker-001"], workItemIds: ["work-blocker"], eventIds: ["evt-blocker"])
         });
 
-        Assert.AreEqual(11, items.Count);
+        Assert.HasCount(11, items);
         foreach (var item in items)
         {
             Assert.AreEqual(RiskCommandLensBuilder.LensName, item.lens);
@@ -88,7 +88,7 @@ public sealed class RiskCommandLensTests
             Input("risk-demo-count", "demo_count", count: 99, sourceTables: ["demoQueue"], ledgerRefs: ["demo-risk"])
         });
 
-        Assert.AreEqual(0, items.Count);
+        Assert.IsEmpty(items);
     }
 
     private static RiskCommandLensInput Input(

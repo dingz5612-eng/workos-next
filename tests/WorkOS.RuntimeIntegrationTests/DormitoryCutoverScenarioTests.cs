@@ -38,11 +38,11 @@ public sealed class DormitoryCutoverScenarioTests
         var harness = DormitoryScenarioHarness.Create();
         var denied = DormitoryPilotGuard.PermissionDenied("actor-worker-without-finance-role");
         Assert.AreEqual(StatusCodes.Status403Forbidden, denied.StatusCode);
-        Assert.AreEqual(0, harness.Store.DomainEvents.Count);
+        Assert.IsEmpty(harness.Store.DomainEvents);
 
         var blocked = DormitoryPilotGuard.BusinessBlocked("missing_evidence");
         Assert.AreEqual(StatusCodes.Status422UnprocessableEntity, blocked.StatusCode);
-        Assert.AreEqual(0, harness.Store.DomainEvents.Count);
+        Assert.IsEmpty(harness.Store.DomainEvents);
     }
 
     [TestMethod]

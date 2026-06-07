@@ -18,9 +18,9 @@ public sealed class OperationsUnitOfWorkTests
         Assert.AreEqual("committed", result.CommitStatus);
         Assert.IsTrue(store.WriteLog[0].StartsWith("CommandSubmission:", StringComparison.Ordinal));
         Assert.IsTrue(store.WriteLog.Any(item => item.StartsWith("DomainEvent:", StringComparison.Ordinal)));
-        Assert.IsTrue(
-            store.WriteLog.FindIndex(item => item.StartsWith("CommandSubmission:", StringComparison.Ordinal)) <
+        Assert.IsLessThan(
             store.WriteLog.FindIndex(item => item.StartsWith("DomainEvent:", StringComparison.Ordinal)),
+            store.WriteLog.FindIndex(item => item.StartsWith("CommandSubmission:", StringComparison.Ordinal)),
             "CommandSubmission must be recorded before DomainEvent.");
     }
 
@@ -44,7 +44,7 @@ public sealed class OperationsUnitOfWorkTests
         Assert.AreEqual(first.PayloadHash, duplicate.PayloadHash);
         CollectionAssert.AreEqual(first.DomainEventIds.ToArray(), duplicate.DomainEventIds.ToArray());
         Assert.IsTrue(duplicate.Duplicate);
-        Assert.AreEqual(1, store.DomainEvents.Count);
+        Assert.HasCount(1, store.DomainEvents);
     }
 
     [TestMethod]
@@ -66,7 +66,7 @@ public sealed class OperationsUnitOfWorkTests
         Assert.AreEqual("same_idempotency_different_payload", conflict.Reason);
         Assert.AreEqual(first.SubmissionId, conflict.SubmissionId);
         Assert.AreEqual(1, handlerCalls);
-        Assert.AreEqual(1, store.DomainEvents.Count);
+        Assert.HasCount(1, store.DomainEvents);
     }
 
     [TestMethod]
@@ -80,8 +80,8 @@ public sealed class OperationsUnitOfWorkTests
         Assert.AreEqual(StatusCodes.Status200OK, result.StatusCode);
         Assert.AreEqual("committed", result.CommitStatus);
         Assert.AreEqual("pending", result.ProjectionStatus);
-        Assert.AreEqual(1, store.DomainEvents.Count);
-        Assert.AreEqual(1, store.OutboxMessages.Count);
+        Assert.HasCount(1, store.DomainEvents);
+        Assert.HasCount(1, store.OutboxMessages);
     }
 
     [TestMethod]
@@ -119,12 +119,12 @@ public sealed class OperationsUnitOfWorkTests
 
         Assert.AreEqual(StatusCodes.Status500InternalServerError, result.StatusCode);
         Assert.AreEqual("handler_failure", result.ResponseBody["error"]);
-        Assert.AreEqual(1, store.Submissions.Count);
+        Assert.HasCount(1, store.Submissions);
         Assert.AreEqual("failed", store.Submissions[0].Status);
         Assert.AreEqual("handler_failure", store.Submissions[0].FailureCode);
         Assert.IsNotNull(store.Submissions[0].FailedAtUtc);
         Assert.AreEqual(result.SubmissionId, store.GetFactTraceBySubmission(result.SubmissionId)!.SubmissionRef);
-        Assert.AreEqual(0, store.DomainEvents.Count);
+        Assert.IsEmpty(store.DomainEvents);
     }
 
     [TestMethod]
@@ -137,11 +137,11 @@ public sealed class OperationsUnitOfWorkTests
 
         Assert.AreEqual(StatusCodes.Status403Forbidden, result.StatusCode);
         Assert.AreEqual("not_committed", result.CommitStatus);
-        Assert.AreEqual(1, store.Submissions.Count);
+        Assert.HasCount(1, store.Submissions);
         Assert.AreEqual("rejected", store.Submissions[0].Status);
         Assert.AreEqual("permission_denied", store.Submissions[0].FailureCode);
         Assert.IsNotNull(store.Submissions[0].RejectedAtUtc);
-        Assert.AreEqual(0, store.DomainEvents.Count);
+        Assert.IsEmpty(store.DomainEvents);
         Assert.AreEqual(result.SubmissionId, store.GetFactTraceBySubmission(result.SubmissionId)!.SubmissionRef);
     }
 
@@ -173,8 +173,8 @@ public sealed class OperationsUnitOfWorkTests
         Assert.AreEqual(StatusCodes.Status500InternalServerError, result.StatusCode);
         Assert.AreEqual("handler_failure", result.ResponseBody["error"]);
         StringAssert.Contains(result.ResponseBody["reason"]!.ToString(), "operations_handler_fact_not_allowed");
-        Assert.AreEqual(0, store.DomainEvents.Count);
-        Assert.AreEqual(0, store.WorkItemEvents.Count);
+        Assert.IsEmpty(store.DomainEvents);
+        Assert.IsEmpty(store.WorkItemEvents);
     }
 
     [TestMethod]
@@ -218,8 +218,8 @@ public sealed class OperationsUnitOfWorkTests
         Assert.AreEqual(StatusCodes.Status500InternalServerError, result.StatusCode);
         Assert.AreEqual("handler_failure", result.ResponseBody["error"]);
         StringAssert.Contains(result.ResponseBody["reason"]!.ToString(), "operations_handler_fact_not_allowed");
-        Assert.AreEqual(0, store.DomainEvents.Count);
-        Assert.AreEqual(0, store.LedgerEntries.Count);
+        Assert.IsEmpty(store.DomainEvents);
+        Assert.IsEmpty(store.LedgerEntries);
     }
 
     [TestMethod]
@@ -233,10 +233,10 @@ public sealed class OperationsUnitOfWorkTests
 
         Assert.AreEqual(StatusCodes.Status200OK, result.StatusCode);
         Assert.AreEqual("committed", result.CommitStatus);
-        Assert.AreEqual(1, store.LedgerTransactions.Count);
+        Assert.HasCount(1, store.LedgerTransactions);
         Assert.AreEqual("balanced", store.LedgerTransactions[0].BalanceStatus);
         Assert.AreEqual(result.SubmissionId, store.LedgerTransactions[0].SubmissionId);
-        Assert.AreEqual(2, store.LedgerEntries.Count);
+        Assert.HasCount(2, store.LedgerEntries);
         Assert.AreEqual(
             store.LedgerEntries.Where(item => item.DebitCredit == "debit").Sum(item => item.Amount),
             store.LedgerEntries.Where(item => item.DebitCredit == "credit").Sum(item => item.Amount));
@@ -282,10 +282,10 @@ public sealed class OperationsUnitOfWorkTests
         var result = unitOfWork.Commit(Request("idem-unbalanced"));
 
         Assert.AreEqual(StatusCodes.Status500InternalServerError, result.StatusCode);
-        Assert.AreEqual(1, store.Submissions.Count);
+        Assert.HasCount(1, store.Submissions);
         Assert.AreEqual("failed", store.Submissions[0].Status);
-        Assert.AreEqual(0, store.DomainEvents.Count);
-        Assert.AreEqual(0, store.LedgerEntries.Count);
+        Assert.IsEmpty(store.DomainEvents);
+        Assert.IsEmpty(store.LedgerEntries);
     }
 
     [TestMethod]
@@ -310,10 +310,10 @@ public sealed class OperationsUnitOfWorkTests
         var result = unitOfWork.Commit(Request("idem-currency"));
 
         Assert.AreEqual(StatusCodes.Status500InternalServerError, result.StatusCode);
-        Assert.AreEqual(1, store.Submissions.Count);
+        Assert.HasCount(1, store.Submissions);
         Assert.AreEqual("failed", store.Submissions[0].Status);
-        Assert.AreEqual(0, store.DomainEvents.Count);
-        Assert.AreEqual(0, store.LedgerTransactions.Count);
+        Assert.IsEmpty(store.DomainEvents);
+        Assert.IsEmpty(store.LedgerTransactions);
     }
 
     private static OperationsUnitOfWork UnitOfWork(

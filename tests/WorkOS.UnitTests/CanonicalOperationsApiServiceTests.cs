@@ -20,7 +20,7 @@ public sealed class CanonicalOperationsApiServiceTests
         Assert.AreEqual("committed", result.CommitStatus);
         Assert.AreEqual("pending", result.ProjectionStatus);
         Assert.AreEqual(0, runtime.ConfirmCount);
-        Assert.AreEqual(1, store.DomainEvents.Count);
+        Assert.HasCount(1, store.DomainEvents);
         Assert.AreEqual(result.CommandSubmissionId, trace?.SubmissionRef);
         Assert.AreEqual($"/api/operations/trace/submissions/{result.CommandSubmissionId}", result.TraceUrl);
         Assert.AreEqual(result.ResultEventIds[0], trace?.DomainEventRefs[0]);
@@ -28,8 +28,8 @@ public sealed class CanonicalOperationsApiServiceTests
         Assert.IsTrue(result.ClientInstruction.ContainsKey("definition"));
         Assert.AreEqual("operations-runtime-native", result.ClientInstruction["definitionMode"]);
         var admission = (IReadOnlyDictionary<string, object>)result.ClientInstruction["admission"];
-        Assert.AreEqual(false, admission["productionAllowed"]);
-        Assert.AreEqual(true, admission["confirmAllowed"]);
+        Assert.IsFalse((bool)admission["productionAllowed"]);
+        Assert.IsTrue((bool)admission["confirmAllowed"]);
     }
 
     [TestMethod]
@@ -43,7 +43,7 @@ public sealed class CanonicalOperationsApiServiceTests
         Assert.AreEqual(StatusCodes.Status200OK, first.StatusCode);
         Assert.AreEqual(StatusCodes.Status409Conflict, conflict.StatusCode);
         Assert.AreEqual("idempotency_conflict", conflict.Error);
-        Assert.AreEqual(1, store.DomainEvents.Count);
+        Assert.HasCount(1, store.DomainEvents);
     }
 
     [TestMethod]
@@ -91,8 +91,8 @@ public sealed class CanonicalOperationsApiServiceTests
         Assert.IsEmpty(store.Submissions);
         Assert.IsTrue(result.ClientInstruction.ContainsKey("admission"));
         var admission = (IReadOnlyDictionary<string, object>)result.ClientInstruction["admission"];
-        Assert.AreEqual(false, admission["confirmAllowed"]);
-        Assert.AreEqual(false, admission["productionAllowed"]);
+        Assert.IsFalse((bool)admission["confirmAllowed"]);
+        Assert.IsFalse((bool)admission["productionAllowed"]);
     }
 
     [TestMethod]
@@ -112,10 +112,10 @@ public sealed class CanonicalOperationsApiServiceTests
         Assert.IsEmpty(store.DomainEvents);
         var admission = (IReadOnlyDictionary<string, object>)result.ClientInstruction["admission"];
         Assert.AreEqual("prepare_only", admission["mode"]);
-        Assert.AreEqual(false, admission["confirmAllowed"]);
-        Assert.AreEqual(false, admission["productionAllowed"]);
+        Assert.IsFalse((bool)admission["confirmAllowed"]);
+        Assert.IsFalse((bool)admission["productionAllowed"]);
         var definition = (IReadOnlyDictionary<string, object>)result.ClientInstruction["definition"];
-        Assert.AreEqual(false, definition["resolved"]);
+        Assert.IsFalse((bool)definition["resolved"]);
     }
 
     [TestMethod]
@@ -175,7 +175,7 @@ public sealed class CanonicalOperationsApiServiceTests
         Assert.IsFalse(result.Confirmed);
         Assert.IsEmpty(store.DomainEvents);
         var admission = (IReadOnlyDictionary<string, object>)result.ClientInstruction["admission"];
-        Assert.AreEqual(false, admission["confirmAllowed"]);
+        Assert.IsFalse((bool)admission["confirmAllowed"]);
         Assert.AreEqual("role_forbidden", admission["mode"]);
     }
 
@@ -208,7 +208,7 @@ public sealed class CanonicalOperationsApiServiceTests
         Assert.IsEmpty(store.Submissions);
         Assert.IsEmpty(store.DomainEvents);
         var admission = (IReadOnlyDictionary<string, object>)result.ClientInstruction["admission"];
-        Assert.AreEqual(false, admission["confirmAllowed"]);
+        Assert.IsFalse((bool)admission["confirmAllowed"]);
         var noGo = (IReadOnlyList<string>)admission["noGoItems"];
         CollectionAssert.Contains(noGo.ToArray(), "trusted_device_required");
         CollectionAssert.Contains(noGo.ToArray(), "high_risk_reason_required");
@@ -250,8 +250,8 @@ public sealed class CanonicalOperationsApiServiceTests
         Assert.AreEqual("committed", result.CommitStatus);
         Assert.HasCount(1, store.Submissions);
         var admission = (IReadOnlyDictionary<string, object>)result.ClientInstruction["admission"];
-        Assert.AreEqual(true, admission["confirmAllowed"]);
-        Assert.AreEqual(false, admission["productionAllowed"]);
+        Assert.IsTrue((bool)admission["confirmAllowed"]);
+        Assert.IsFalse((bool)admission["productionAllowed"]);
     }
 
     [TestMethod]

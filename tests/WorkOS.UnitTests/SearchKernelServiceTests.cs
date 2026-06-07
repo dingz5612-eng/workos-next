@@ -89,8 +89,8 @@ public sealed class SearchKernelServiceTests
         Assert.AreEqual("OperationsRuntime.SearchOperations", ((IReadOnlyDictionary<string, object?>)result["sourceRefs"]!)["inputAdapter"]);
         var gateResult = (IReadOnlyDictionary<string, object?>)result["gateResult"]!;
         Assert.AreEqual("operationsDomainEvent", gateResult["sourceType"]);
-        Assert.AreEqual(false, gateResult["writeThroughSearchAllowed"]);
-        Assert.AreEqual(false, gateResult["writeBusinessFactAllowed"]);
+        Assert.IsFalse((bool)gateResult["writeThroughSearchAllowed"]!);
+        Assert.IsFalse((bool)gateResult["writeBusinessFactAllowed"]!);
     }
 
     [TestMethod]
@@ -121,7 +121,7 @@ public sealed class SearchKernelServiceTests
 
         var results = readStore.SearchOperations("tenant-s3", "DING");
 
-        Assert.AreEqual(0, results.Count);
+        Assert.IsEmpty(results);
     }
 
     private static RuntimeActorContext OperatorActor() =>

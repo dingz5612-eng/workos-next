@@ -115,10 +115,10 @@ public sealed class FinalEndToEndAcceptanceSuiteTests
             Assert.IsFalse(string.IsNullOrWhiteSpace(risk.drilldownUrl), $"{risk.riskType} must drill down.");
             Assert.IsFalse(string.IsNullOrWhiteSpace(risk.relatedObject), $"{risk.riskType} must link an Object.");
             Assert.IsFalse(string.IsNullOrWhiteSpace(risk.relatedCaseId), $"{risk.riskType} must link a Case.");
-            Assert.IsTrue(risk.relatedWorkItemIds.Count > 0, $"{risk.riskType} must link WorkItem.");
-            Assert.IsTrue(risk.relatedLedgerRefs.Count > 0, $"{risk.riskType} must link Ledger.");
-            Assert.IsTrue(risk.relatedEvidenceRefs.Count > 0, $"{risk.riskType} must link Evidence.");
-            Assert.IsTrue(risk.relatedEventIds.Count > 0, $"{risk.riskType} must link Event.");
+            Assert.IsNotEmpty(risk.relatedWorkItemIds, $"{risk.riskType} must link WorkItem.");
+            Assert.IsNotEmpty(risk.relatedLedgerRefs, $"{risk.riskType} must link Ledger.");
+            Assert.IsNotEmpty(risk.relatedEvidenceRefs, $"{risk.riskType} must link Evidence.");
+            Assert.IsNotEmpty(risk.relatedEventIds, $"{risk.riskType} must link Event.");
             Assert.IsFalse(string.IsNullOrWhiteSpace(risk.ownerRole), $"{risk.riskType} must link Owner.");
         }
 
@@ -129,7 +129,7 @@ public sealed class FinalEndToEndAcceptanceSuiteTests
 
         Assert.AreEqual("closed", closed.Status);
         Assert.AreEqual(frozenFinanceSnapshot, suite.GetFinanceSnapshotBody(period.PeriodId));
-        Assert.AreEqual(1, suite.GetLateAdjustments(period.PeriodId).Count);
+        Assert.HasCount(1, suite.GetLateAdjustments(period.PeriodId));
         Assert.AreEqual("append_only", lateAdjustment.WriteMode);
     }
 
@@ -212,7 +212,7 @@ public sealed class FinalEndToEndAcceptanceSuiteTests
 
         var import = suite.ImportBankStatement(finance, "MB-A901", seed.Payment.Amount, "KGS", "credit", "A901 rent payment");
 
-        Assert.AreEqual(1, import.Transactions.Count);
+        Assert.HasCount(1, import.Transactions);
         Assert.AreEqual(beforeConfirmedCount, suite.CountEvents("PaymentConfirmed"));
         Assert.AreEqual(beforeConfirmedCount, suite.CountEvents("Accommodation.PaymentConfirmed"));
     }
@@ -366,7 +366,7 @@ public sealed class FinalEndToEndAcceptanceSuiteTests
         {
             var index = payments.FindIndex(item => item.PaymentId == paymentId);
             Assert.AreNotEqual(-1, index);
-            Assert.IsTrue(payments[index].EvidenceIds.Count > 0, "PaymentConfirmed requires evidence.");
+            Assert.IsNotEmpty(payments[index].EvidenceIds, "PaymentConfirmed requires evidence.");
             payments[index] = payments[index] with { Status = "confirmed" };
             MarkWorkDone($"wi-confirm-{paymentId}");
             return Commit(actor, $"confirm-{paymentId}", "PaymentConfirmed", paymentId, "payments", "PaymentRiskLens");
@@ -461,7 +461,7 @@ public sealed class FinalEndToEndAcceptanceSuiteTests
 
         public DamageAssessmentResult AssessDamage(ActorSession actor, string inspectionId, decimal amount, string currency, string reason)
         {
-            Assert.IsTrue(amount >= 0);
+            Assert.IsGreaterThanOrEqualTo(0, amount);
             var workItem = new WorkItemRecord($"wi-deposit-settlement-{inspectionId}", "DepositSettlement", "deposit.settlement", "WorkItem", inspectionId, false, "open");
             workItems.Add(workItem);
             Commit(actor, $"damage-{inspectionId}", "DamageAssessed", inspectionId, "damage_assessments", "CaseTimelineLens");

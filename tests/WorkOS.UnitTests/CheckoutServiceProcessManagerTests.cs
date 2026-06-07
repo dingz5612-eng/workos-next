@@ -124,12 +124,12 @@ public sealed class CheckoutServiceProcessManagerTests
         var first = Manager().Handle(workspaceEvent, sink);
         var second = Manager().Handle(workspaceEvent, sink);
 
-        Assert.AreEqual(1, first.ProcessRuns.Count);
-        Assert.AreEqual(1, first.WorkItemIntents.Count);
-        Assert.AreEqual(0, second.ProcessRuns.Count);
-        Assert.AreEqual(0, second.WorkItemIntents.Count);
-        Assert.AreEqual(1, sink.WorkItemIntents.Count);
-        Assert.AreEqual(1, sink.ProcessRuns.Count);
+        Assert.HasCount(1, first.ProcessRuns);
+        Assert.HasCount(1, first.WorkItemIntents);
+        Assert.IsEmpty(second.ProcessRuns);
+        Assert.IsEmpty(second.WorkItemIntents);
+        Assert.HasCount(1, sink.WorkItemIntents);
+        Assert.HasCount(1, sink.ProcessRuns);
     }
 
     private static CheckoutServiceProcessManager Manager() => new();

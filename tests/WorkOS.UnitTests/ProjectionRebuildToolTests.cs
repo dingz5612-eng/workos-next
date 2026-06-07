@@ -14,9 +14,9 @@ public sealed class ProjectionRebuildToolTests
 
         Assert.AreEqual("matched", result.Status);
         CollectionAssert.Contains(result.LensNames.ToArray(), "WorkQueueLens");
-        Assert.AreEqual(1, store.Checkpoints.Count);
+        Assert.HasCount(1, store.Checkpoints);
         Assert.AreEqual("WorkQueueLens", store.Checkpoints.Single().LensName);
-        Assert.AreEqual(1, store.Audits.Count);
+        Assert.HasCount(1, store.Audits);
     }
 
     [TestMethod]
@@ -48,7 +48,7 @@ public sealed class ProjectionRebuildToolTests
 
         Assert.AreEqual("RiskCommandLens", result.Lenses.Single().LensName);
         Assert.AreEqual(0, result.MismatchCount);
-        Assert.AreEqual(1, store.Checkpoints.Count);
+        Assert.HasCount(1, store.Checkpoints);
     }
 
     [TestMethod]
@@ -68,9 +68,9 @@ public sealed class ProjectionRebuildToolTests
         var result = new ProjectionRebuildService(store).Rebuild(AuthorizedRequest("T1", "StayBalanceLens", dryRun: true));
 
         Assert.IsTrue(result.DryRun);
-        Assert.AreEqual(0, result.CheckpointIds.Count);
-        Assert.AreEqual(0, store.Checkpoints.Count);
-        Assert.AreEqual(1, store.Audits.Count);
+        Assert.IsEmpty(result.CheckpointIds);
+        Assert.IsEmpty(store.Checkpoints);
+        Assert.HasCount(1, store.Audits);
         Assert.AreEqual(result.BeforeHash, result.AfterHash);
     }
 
@@ -148,7 +148,7 @@ public sealed class ProjectionRebuildToolTests
             "--dry-run"
         });
 
-        Assert.IsTrue(script.Contains("WorkOS.ProjectionTools.csproj"));
+        Assert.Contains("WorkOS.ProjectionTools.csproj", script);
         Assert.AreEqual("T1", parsed.Request.TenantId);
         Assert.AreEqual("StayBalanceLens", parsed.Request.LensName);
         Assert.AreEqual("EVT-1", parsed.Request.FromEventId);

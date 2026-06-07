@@ -27,9 +27,9 @@ public sealed class RuntimeScenarioFactoryTests
         Assert.IsNotNull(result.CommandSubmission);
         Assert.IsNull(result.RejectedCommandSubmission);
         Assert.IsNotNull(result.FactTrace);
-        Assert.IsTrue(result.DomainEventRefs.Count > 0);
-        Assert.IsTrue(result.LedgerTransactionRefs.Count > 0);
-        Assert.IsTrue(result.LedgerEntryRefs.Count >= 2);
+        Assert.IsNotEmpty(result.DomainEventRefs);
+        Assert.IsNotEmpty(result.LedgerTransactionRefs);
+        Assert.IsGreaterThanOrEqualTo(2, result.LedgerEntryRefs.Count);
         CollectionAssert.Contains(result.FactGraph.CommandSubmissions.ToArray(), result.CommandSubmission!.SubmissionId);
     }
 
@@ -54,8 +54,8 @@ public sealed class RuntimeScenarioFactoryTests
         Assert.IsNotNull(result.RejectionTrace);
         Assert.AreEqual(StatusCodes.Status403Forbidden, result.RejectedCommandSubmission!.StatusCode);
         Assert.AreEqual("permission_denied", result.RejectionTrace!.Reason);
-        Assert.AreEqual(0, result.DomainEventRefs.Count);
-        Assert.AreEqual(0, result.LedgerTransactionRefs.Count);
+        Assert.IsEmpty(result.DomainEventRefs);
+        Assert.IsEmpty(result.LedgerTransactionRefs);
         Assert.IsNotNull(result.FactTrace);
     }
 
@@ -102,8 +102,8 @@ public sealed class RuntimeScenarioFactoryTests
         Assert.AreEqual("passed", result.Status);
         Assert.IsNull(result.CommandSubmission);
         Assert.IsNull(result.RejectedCommandSubmission);
-        Assert.AreEqual(0, result.DomainEventRefs.Count);
-        Assert.AreEqual(0, result.LedgerTransactionRefs.Count);
+        Assert.IsEmpty(result.DomainEventRefs);
+        Assert.IsEmpty(result.LedgerTransactionRefs);
         CollectionAssert.Contains(result.FactGraph.GateImpactRefs.ToArray(), "gate-red-shadow");
         CollectionAssert.Contains(result.FactGraph.GateImpactRefs.ToArray(), "rollback-required");
         CollectionAssert.Contains(result.FactGraph.SemanticShadowRefs.ToArray(), "shadow-red");

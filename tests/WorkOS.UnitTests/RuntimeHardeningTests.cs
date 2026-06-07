@@ -254,8 +254,8 @@ public sealed class RuntimeHardeningTests
 
         Assert.AreEqual(ConfirmStatus.Forbidden, result.Status);
         Assert.AreEqual("actor_session_required", result.Reason);
-        Assert.AreEqual(0, store.AuditEvents.Count);
-        Assert.AreEqual(0, store.OutboxMessages.Count);
+        Assert.IsEmpty(store.AuditEvents);
+        Assert.IsEmpty(store.OutboxMessages);
     }
 
     [TestMethod]
@@ -278,7 +278,7 @@ public sealed class RuntimeHardeningTests
 
         Assert.AreEqual(ConfirmStatus.Forbidden, result.Status);
         StringAssert.StartsWith(result.Reason, "trusted_device_required");
-        Assert.AreEqual(0, store.AuditEvents.Count);
+        Assert.IsEmpty(store.AuditEvents);
     }
 
     [TestMethod]
@@ -302,7 +302,7 @@ public sealed class RuntimeHardeningTests
 
         Assert.AreEqual(ConfirmStatus.Forbidden, result.Status);
         Assert.AreEqual("ai_terminal_action_forbidden", result.Reason);
-        Assert.AreEqual(0, store.AuditEvents.Count);
+        Assert.IsEmpty(store.AuditEvents);
     }
 
     [TestMethod]
@@ -326,8 +326,8 @@ public sealed class RuntimeHardeningTests
 
         Assert.AreEqual(ConfirmStatus.Forbidden, result.Status);
         StringAssert.StartsWith(result.Reason, "role_confirmation_forbidden");
-        Assert.AreEqual(0, store.AuditEvents.Count);
-        Assert.AreEqual(0, store.OutboxMessages.Count);
+        Assert.IsEmpty(store.AuditEvents);
+        Assert.IsEmpty(store.OutboxMessages);
     }
 
     [TestMethod]
@@ -498,7 +498,7 @@ public sealed class RuntimeHardeningTests
     {
         var options = new RuntimeCorsOptions();
 
-        Assert.IsTrue(options.AllowedOrigins.Length > 0);
+        Assert.IsNotEmpty(options.AllowedOrigins);
         Assert.IsFalse(options.AllowedOrigins.Contains("*"));
         Assert.IsTrue(options.AllowedOrigins.All(origin =>
             origin.StartsWith("http://127.0.0.1:", StringComparison.OrdinalIgnoreCase) ||
@@ -558,7 +558,7 @@ public sealed class RuntimeHardeningTests
             new RuntimeMigrationOptions { RunOnStartup = false });
 
         Assert.AreEqual("passed", result.Status);
-        Assert.AreEqual(0, result.Errors.Count);
+        Assert.IsEmpty(result.Errors);
         Assert.IsFalse(RuntimeStartupValidator.ShouldRunMigrations("Production", new RuntimeMigrationOptions()));
         Assert.IsTrue(RuntimeStartupValidator.ShouldRunMigrations("Development", new RuntimeMigrationOptions()));
     }
@@ -575,7 +575,7 @@ public sealed class RuntimeHardeningTests
             new RuntimeMigrationOptions { RunOnStartup = false });
 
         Assert.AreEqual("passed", result.Status);
-        Assert.AreEqual(0, result.Errors.Count);
+        Assert.IsEmpty(result.Errors);
     }
 
     [TestMethod]
@@ -608,8 +608,8 @@ public sealed class RuntimeHardeningTests
         Assert.AreEqual(ConfirmStatus.Confirmed, result.Status);
         Assert.AreEqual("committed", payload.CommitStatus);
         Assert.AreEqual("failed", payload.ProjectionStatus);
-        Assert.AreEqual(1, store.AuditEvents.Count);
-        Assert.AreEqual(1, store.OutboxMessages.Count);
+        Assert.HasCount(1, store.AuditEvents);
+        Assert.HasCount(1, store.OutboxMessages);
         Assert.AreEqual("projector_failed", store.OutboxMessages[0].LastError);
     }
 
@@ -628,7 +628,7 @@ public sealed class RuntimeHardeningTests
         Assert.AreEqual(ConfirmStatus.Duplicate, secondResult.Status);
         Assert.AreEqual("pending", first.ProjectionStatus);
         Assert.AreEqual("pending", second.ProjectionStatus);
-        Assert.AreEqual(1, store.AuditEvents.Count);
+        Assert.HasCount(1, store.AuditEvents);
         Assert.AreEqual(first.ResultEventIds[0], second.ResultEventIds[0]);
     }
 

@@ -21,12 +21,12 @@ public sealed class BankStatementImportTests
         Assert.AreEqual("imported", result.Status);
         Assert.AreEqual(2, result.ParsedCount);
         Assert.AreEqual(0, result.RejectedCount);
-        Assert.AreEqual(2, result.Transactions.Count);
+        Assert.HasCount(2, result.Transactions);
         Assert.AreEqual("MB-001", result.Transactions[0].ExternalRef);
         Assert.AreEqual("credit", result.Transactions[0].Direction);
         Assert.AreEqual(1200.50m, result.Transactions[0].Amount);
         Assert.IsNotNull(writer.LastWrite);
-        Assert.AreEqual(2, writer.LastWrite!.Transactions.Count);
+        Assert.HasCount(2, writer.LastWrite!.Transactions);
     }
 
     [TestMethod]
@@ -45,7 +45,7 @@ public sealed class BankStatementImportTests
         Assert.AreEqual("partially_rejected", result.Status);
         Assert.AreEqual(1, result.ParsedCount);
         Assert.AreEqual(2, result.RejectedCount);
-        Assert.AreEqual(1, result.Transactions.Count);
+        Assert.HasCount(1, result.Transactions);
         Assert.AreEqual("generated-row-4", result.Transactions[0].ExternalRef);
         Assert.IsTrue(result.RejectedRows.Any(row => row.Errors.Contains("invalid_occurredAt")));
         Assert.IsTrue(result.RejectedRows.Any(row => row.Errors.Contains("invalid_amount")));
@@ -64,7 +64,7 @@ public sealed class BankStatementImportTests
             """), "finance-1");
 
         Assert.IsNotNull(writer.LastWrite);
-        Assert.AreEqual(1, writer.LastWrite!.Transactions.Count);
+        Assert.HasCount(1, writer.LastWrite!.Transactions);
         Assert.AreEqual(0, writer.PaymentFactWrites);
 
         var storage = File.ReadAllText(RepoPath("services", "core-api", "WorkOS.Api", "Runtime", "RuntimeBankStatementImportStorage.cs"));

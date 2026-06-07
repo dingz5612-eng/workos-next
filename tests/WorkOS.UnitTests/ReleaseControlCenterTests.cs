@@ -32,11 +32,11 @@ public sealed class ReleaseControlCenterTests
             "MapGet(\"/api/control-plane/rollback-instructions/{id}\""
         })
         {
-            Assert.IsTrue(program.Contains(route), $"Program.cs must declare {route}");
+            Assert.Contains(route, program, $"Program.cs must declare {route}");
         }
 
-        Assert.IsFalse(program.Contains("MapPost(\"/api/control-plane/"), "Release Control Center must be read-only in the first batch.");
-        Assert.IsFalse(program.Contains("MapPut(\"/api/control-plane/"), "Release Control Center must not update runtime mode directly.");
+        Assert.DoesNotContain("MapPost(\"/api/control-plane/", program, "Release Control Center must be read-only in the first batch.");
+        Assert.DoesNotContain("MapPut(\"/api/control-plane/", program, "Release Control Center must not update runtime mode directly.");
     }
 
     [TestMethod]
@@ -65,7 +65,7 @@ public sealed class ReleaseControlCenterTests
             "control_plane.rollback_instructions"
         })
         {
-            Assert.IsTrue(source.Contains(term), $"ControlPlaneReadStore must expose {term}");
+            Assert.Contains(term, source, $"ControlPlaneReadStore must expose {term}");
         }
     }
 

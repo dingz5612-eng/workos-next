@@ -20,13 +20,13 @@ public sealed class OperationsConfirmPilotScopeTests
             service.Contains("projectionRuntime.Confirm", StringComparison.Ordinal) ||
             service.Contains("ProjectDormitoryResourceLifecycle", StringComparison.Ordinal),
             "Canonical confirm must not synchronously route through ProjectionRuntime source facade.");
-        Assert.IsTrue(
-            service.IndexOf("var workItem = catalog.GetWorkItem(workItemId);", StringComparison.Ordinal)
-            < service.IndexOf("unitOfWork.Commit(command)", StringComparison.Ordinal),
+        Assert.IsLessThan(
+            service.IndexOf("unitOfWork.Commit(command)", StringComparison.Ordinal),
+            service.IndexOf("var workItem = catalog.GetWorkItem(workItemId);", StringComparison.Ordinal),
             "Canonical confirm must resolve persisted WorkItem before committing facts.");
-        Assert.IsTrue(
-            service.IndexOf("ConfirmWorkItemResult.NotFound(workItemId", StringComparison.Ordinal)
-            < service.IndexOf("unitOfWork.Commit(command)", StringComparison.Ordinal),
+        Assert.IsLessThan(
+            service.IndexOf("unitOfWork.Commit(command)", StringComparison.Ordinal),
+            service.IndexOf("ConfirmWorkItemResult.NotFound(workItemId", StringComparison.Ordinal),
             "Missing persisted WorkItem must return operation_work_item_not_found before any UoW commit.");
     }
 }

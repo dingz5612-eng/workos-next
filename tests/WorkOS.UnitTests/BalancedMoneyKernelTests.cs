@@ -39,7 +39,7 @@ public sealed class BalancedMoneyKernelTests
     {
         var facts = BalancedMoneyKernel.FromEnvelope(Envelope("depositReceipt", "1500.00"));
 
-        Assert.AreEqual(1, facts.LedgerTransactions.Count);
+        Assert.HasCount(1, facts.LedgerTransactions);
         Assert.AreEqual("balanced", facts.LedgerTransactions[0].BalanceStatus);
         CollectionAssert.Contains(facts.LedgerEntries.Select(item => item.AccountType).ToArray(), "liability");
         CollectionAssert.DoesNotContain(facts.LedgerEntries.Select(item => item.AccountType).ToArray(), "revenue");
@@ -63,8 +63,8 @@ public sealed class BalancedMoneyKernelTests
     {
         var facts = BalancedMoneyKernel.FromEnvelope(Envelope("checkoutSettlement", "900.00"));
 
-        Assert.AreEqual(0, facts.LedgerTransactions.Count);
-        Assert.AreEqual(0, facts.LedgerEntries.Count);
+        Assert.IsEmpty(facts.LedgerTransactions);
+        Assert.IsEmpty(facts.LedgerEntries);
         Assert.AreEqual("checkout_reads_projection_only", facts.ResponseFields["moneyBoundary"]);
     }
 
@@ -73,7 +73,7 @@ public sealed class BalancedMoneyKernelTests
     {
         var facts = BalancedMoneyKernel.FromEnvelope(Envelope("paymentAdjustment", "25.00", "adjustmentAmount"));
 
-        Assert.AreEqual(1, facts.LedgerTransactions.Count);
+        Assert.HasCount(1, facts.LedgerTransactions);
         Assert.AreEqual("balanced", facts.LedgerTransactions[0].BalanceStatus);
         Assert.IsTrue(facts.LedgerEntries.All(item => item.Amount == 25.00m));
     }

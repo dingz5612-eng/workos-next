@@ -65,7 +65,7 @@ public sealed class LedgerMutationKillTests
 
         Assert.AreEqual("failed", result.Status);
         Assert.AreEqual("not_committed", result.CommitStatus);
-        Assert.AreEqual(0, store.LedgerTransactions.Count);
+        Assert.IsEmpty(store.LedgerTransactions);
         Assert.IsTrue(store.Submissions.Single().FailureReason!.Contains("operations_uow_rejects_unbalanced_ledger_transaction", StringComparison.OrdinalIgnoreCase));
     }
 

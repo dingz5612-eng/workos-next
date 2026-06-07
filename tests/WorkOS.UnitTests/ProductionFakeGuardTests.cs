@@ -64,7 +64,7 @@ public sealed class FakeFallbackGuardTests
         }
 
         var results = RunnerJson.Read<InvariantCheckEvidence[]>(outputPath);
-        Assert.AreEqual(1, results.Length);
+        Assert.HasCount(1, results);
         Assert.AreEqual("runtime.no_production_demo_fallback", results[0].InvariantKey);
         Assert.IsTrue(results[0].Status is "passed" or "failed");
         Assert.AreEqual("blocking", results[0].Mode);

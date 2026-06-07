@@ -23,8 +23,8 @@ public sealed class ContractGovernanceTests
     {
         using var document = JsonDocument.Parse(File.ReadAllText(RepoPath("docs", "contracts", "slice-manifest.json")));
         var manifestText = document.RootElement.ToString();
-        Assert.IsFalse(manifestText.Contains("\"确认\""), "Contracts must not use localized labels as enum values.");
-        Assert.IsFalse(manifestText.Contains("\"拒绝\""), "Contracts must not use localized labels as enum values.");
+        Assert.DoesNotContain("\"确认\"", manifestText, "Contracts must not use localized labels as enum values.");
+        Assert.DoesNotContain("\"拒绝\"", manifestText, "Contracts must not use localized labels as enum values.");
     }
 
     [TestMethod]
@@ -58,7 +58,7 @@ public sealed class ContractGovernanceTests
         var codes = document.RootElement.GetProperty("decisionCodes").EnumerateArray().Select(item => item.GetString()).ToHashSet();
         foreach (var code in new[] { "business_rule_violation", "idempotency_duplicate", "idempotency_conflict", "invalid_actor_token" })
         {
-            Assert.IsTrue(codes.Contains(code), $"Policy contract must include {code}.");
+            Assert.Contains(code, codes, $"Policy contract must include {code}.");
         }
     }
 
@@ -94,7 +94,7 @@ public sealed class ContractGovernanceTests
         {
             Assert.IsTrue(lenses.ContainsKey(lensId), $"Lens contract must include {lensId}.");
             var lens = lenses[lensId];
-            Assert.IsTrue(lens.GetProperty("sourceOfTruthTables").GetArrayLength() > 0, $"{lensId} must declare source-of-truth tables.");
+            Assert.IsGreaterThan(0, lens.GetProperty("sourceOfTruthTables").GetArrayLength(), $"{lensId} must declare source-of-truth tables.");
             Assert.AreEqual("projectionLagSeconds", lens.GetProperty("freshness").GetProperty("lagMetric").GetString(), $"{lensId} must declare projection lag metric.");
             Assert.IsFalse(string.IsNullOrWhiteSpace(lens.GetProperty("crossCheck").GetString()), $"{lensId} must declare a cross-check.");
         }

@@ -37,9 +37,9 @@ public sealed class DormitoryFinanceRuntimeSemanticTests
         Assert.AreEqual("not_committed", result.CommitStatus);
         Assert.AreEqual("failed", store.Submissions.Single().Status);
         Assert.IsTrue(store.Submissions.Single().FailureReason!.Contains("finance_semantic_deposit_receipt", StringComparison.OrdinalIgnoreCase));
-        Assert.AreEqual(0, store.DomainEvents.Count);
-        Assert.AreEqual(0, store.LedgerTransactions.Count);
-        Assert.AreEqual(0, store.LedgerEntries.Count);
+        Assert.IsEmpty(store.DomainEvents);
+        Assert.IsEmpty(store.LedgerTransactions);
+        Assert.IsEmpty(store.LedgerEntries);
     }
 
     [TestMethod]

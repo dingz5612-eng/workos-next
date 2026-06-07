@@ -112,7 +112,7 @@ public sealed class CorrectionCenterSchemaTests
     private static string CreateTableSection(string migration, string tableName)
     {
         var start = migration.IndexOf($"create table if not exists {tableName}", StringComparison.OrdinalIgnoreCase);
-        Assert.IsTrue(start >= 0, $"Could not find create table section for {tableName}.");
+        Assert.IsGreaterThanOrEqualTo(0, start, $"Could not find create table section for {tableName}.");
 
         var next = migration.IndexOf("create table if not exists", start + 1, StringComparison.OrdinalIgnoreCase);
         return next < 0

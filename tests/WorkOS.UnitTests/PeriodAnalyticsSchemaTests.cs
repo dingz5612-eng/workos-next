@@ -179,7 +179,7 @@ public sealed class PeriodAnalyticsSchemaTests
     private static string SectionStartingAt(string source, string marker)
     {
         var start = source.IndexOf(marker, StringComparison.OrdinalIgnoreCase);
-        Assert.IsTrue(start >= 0, $"Could not find section marker {marker}.");
+        Assert.IsGreaterThanOrEqualTo(0, start, $"Could not find section marker {marker}.");
         var next = source.IndexOf("alter table", start + marker.Length, StringComparison.OrdinalIgnoreCase);
         return next < 0
             ? source[start..]
