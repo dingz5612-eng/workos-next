@@ -9,16 +9,16 @@ const resultPath = path.join(root, "artifacts/oam/checks/dormitory-scenario-jour
 const indexPath = path.join(screenshotDir, "index.json");
 
 const scenarios = [
-  scenario("dorm-live-001", "线索入住分床", ["新线索", "预订", "入住", "分床", "生成应收"], "committed", "Dorm.CheckIn", "DomainEvent + Lens update"),
-  scenario("dorm-live-002", "押金负债确认", ["押金评估", "收取", "财务确认", "押金负债更新"], "money_committed", "Dorm.DepositAssessment", "LedgerTransaction liability only"),
-  scenario("dorm-live-003", "普通收款分配", ["普通收款", "财务确认", "分配", "欠款更新"], "money_committed", "Dorm.PaymentReceipt", "LedgerTransaction ordinary payment"),
-  scenario("dorm-live-004", "服务任务释放床位", ["服务任务阻断床位", "完成", "验收", "释放"], "committed", "Dorm.ServiceTask", "DomainEvent + room readiness lens"),
-  scenario("dorm-live-005", "退住与押金退款", ["退住", "查房", "押金扣除/退款", "清洁", "可售"], "money_committed", "Dorm.Checkout", "Refund <= available liability"),
-  scenario("dorm-live-006", "银行流水异常纠错", ["银行流水导入", "匹配", "异常", "纠错"], "finance_exception", "Dorm.BankMismatch", "FinanceCase + CorrectionWorkItem"),
+  scenario("dorm-live-001", "线索入住分床", ["新线索", "预订", "入住", "分床", "生成应收"], "committed", "Dorm.CheckinConfirm", "DomainEvent + Lens update"),
+  scenario("dorm-live-002", "押金负债确认", ["押金评估", "收取", "财务确认", "押金负债更新"], "money_committed", "Dorm.DepositConfirm", "LedgerTransaction liability only"),
+  scenario("dorm-live-003", "普通收款分配", ["普通收款", "财务确认", "分配", "欠款更新"], "money_committed", "Dorm.PaymentConfirm", "LedgerTransaction ordinary payment"),
+  scenario("dorm-live-004", "服务任务释放床位", ["服务任务阻断床位", "完成", "验收", "释放"], "committed", "Dorm.ServiceTaskComplete", "DomainEvent + room readiness lens"),
+  scenario("dorm-live-005", "退住与押金退款", ["退住", "查房", "押金扣除/退款", "清洁", "可售"], "money_committed", "Dorm.CheckoutSettlementApprove", "Refund <= available liability"),
+  scenario("dorm-live-006", "银行流水异常纠错", ["银行流水导入", "匹配", "异常", "纠错"], "finance_exception", "Finance.CorrectionApply", "FinanceCase + CorrectionWorkItem"),
   scenario("dorm-live-007", "周期复盘行动", ["周期复盘", "行动计划", "周期关闭"], "gate_controlled", "Dorm.PeriodReview", "GateResult / review lens"),
-  scenario("dorm-live-008", "权限不足升级", ["权限不足", "阻断", "升级", "审计"], "rejected_403", "Dorm.PermissionDenied", "RejectedCommandSubmission + RejectionTrace"),
-  scenario("dorm-live-009", "重复提交幂等", ["重复提交", "幂等返回", "无重复副作用"], "rejected_409", "Dorm.IdempotencyConflict", "Stable response + no duplicate side effect"),
-  scenario("dorm-live-010", "缺证补证再确认", ["证据缺失", "阻断确认", "补证据", "再确认"], "rejected_then_committed", "Dorm.MissingEvidence", "422 RejectionTrace then committed")
+  scenario("dorm-live-008", "权限不足升级", ["权限不足", "阻断", "升级", "审计"], "rejected_403", "Dorm.CheckinConfirm", "RejectedCommandSubmission + RejectionTrace"),
+  scenario("dorm-live-009", "重复提交幂等", ["重复提交", "幂等返回", "无重复副作用"], "rejected_409", "Dorm.PaymentConfirm", "Stable response + no duplicate side effect"),
+  scenario("dorm-live-010", "缺证补证再确认", ["证据缺失", "阻断确认", "补证据", "再确认"], "rejected_then_committed", "Dorm.CheckinConfirm", "422 RejectionTrace then committed")
 ];
 
 fs.mkdirSync(screenshotDir, { recursive: true });

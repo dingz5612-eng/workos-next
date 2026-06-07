@@ -1,0 +1,91 @@
+{
+  "version": "oam.dormitory.workitem-operation.v1",
+  "status": "derived",
+  "derivedFrom": [
+    "docs/business/dormitory/dormitory-operating-kernel.json"
+  ],
+  "generatedBy": "scripts/business/generate-dormitory-derived-contracts.mjs",
+  "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
+  "manualEditAllowed": false,
+  "graphBinding": "workitem.Dorm.PeriodActionPlanExecute",
+  "workItemType": "Dorm.PeriodActionPlanExecute",
+  "entryFrom": "PC Governance Surface 或周期调度生成",
+  "systemAutoFilled": [
+    "tenantId",
+    "caseId",
+    "definitionId",
+    "workItemId",
+    "sourceWorkItemId",
+    "projectionVersion"
+  ],
+  "operatorFills": [
+    "actionPlanId",
+    "targetMetric",
+    "executionState"
+  ],
+  "leadApproves": [
+    "仅在例外或升级时审批"
+  ],
+  "readonlyFields": [
+    "tenantId",
+    "caseId",
+    "definitionId",
+    "workItemId",
+    "sourceWorkItemId",
+    "projectionVersion",
+    "createdAt",
+    "confirmedAt",
+    "ledgerEntryId",
+    "domainEventId"
+  ],
+  "editableFields": [
+    "actionPlanId",
+    "targetMetric",
+    "executionState"
+  ],
+  "evidenceRequired": [
+    "action-plan-evidence"
+  ],
+  "submittedEvent": "PeriodActionPlanExecuteSubmitted",
+  "ledgerImpact": "无账务影响",
+  "lensUpdates": [
+    "ManagementDashboardLens"
+  ],
+  "downstreamWorkItems": [
+    "Dorm.PeriodReview"
+  ],
+  "failureRoutes": [
+    "Dorm.ExceptionResolve",
+    "append_only_correction_work_item",
+    "blocked_with_missing_fields"
+  ],
+  "definitionId": "definition.dormitory.periodActionPlanExecute.v1",
+  "commandType": "PeriodActionPlan.Execute",
+  "allowedFacts": [
+    "ActionPlan",
+    "EvidenceObject",
+    "DomainEvent",
+    "CommandSubmission"
+  ],
+  "forbiddenFacts": [
+    "Payment",
+    "PaymentAllocation",
+    "DepositEntry",
+    "LedgerEntry",
+    "Refund"
+  ],
+  "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+  "evidencePolicyRef": "evidence.dorm-period-action-plan-execute.v1",
+  "ledgerPolicyRef": "ledger.none.v1",
+  "dbTableGroups": [
+    "operations-runtime",
+    "evidence-audit",
+    "projection-read-side",
+    "accommodation-facts"
+  ],
+  "tests": [
+    "tests/WorkOS.RuntimeIntegrationTests",
+    "tests/WorkOS.RuntimeContractTests",
+    "apps/mobile/src/__tests__"
+  ]
+}

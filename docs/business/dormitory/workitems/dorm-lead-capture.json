@@ -1,0 +1,91 @@
+{
+  "version": "oam.dormitory.workitem-operation.v1",
+  "status": "derived",
+  "derivedFrom": [
+    "docs/business/dormitory/dormitory-operating-kernel.json"
+  ],
+  "generatedBy": "scripts/business/generate-dormitory-derived-contracts.mjs",
+  "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
+  "manualEditAllowed": false,
+  "graphBinding": "workitem.Dorm.LeadCapture",
+  "workItemType": "Dorm.LeadCapture",
+  "entryFrom": "Mobile Surface 工作台、Search 只读跳转或上游 WorkItem 下游提示",
+  "systemAutoFilled": [
+    "tenantId",
+    "caseId",
+    "definitionId",
+    "workItemId",
+    "sourceWorkItemId",
+    "projectionVersion"
+  ],
+  "operatorFills": [
+    "name",
+    "phone",
+    "sourceChannel"
+  ],
+  "leadApproves": [
+    "仅在例外或升级时审批"
+  ],
+  "readonlyFields": [
+    "tenantId",
+    "caseId",
+    "definitionId",
+    "workItemId",
+    "sourceWorkItemId",
+    "projectionVersion",
+    "createdAt",
+    "confirmedAt",
+    "ledgerEntryId",
+    "domainEventId"
+  ],
+  "editableFields": [
+    "name",
+    "phone",
+    "sourceChannel"
+  ],
+  "evidenceRequired": [
+    "lead-consent"
+  ],
+  "submittedEvent": "LeadCaptureSubmitted",
+  "ledgerImpact": "无账务影响",
+  "lensUpdates": [
+    "LeadFunnelLens"
+  ],
+  "downstreamWorkItems": [
+    "Dorm.ReservationConfirm"
+  ],
+  "failureRoutes": [
+    "Dorm.ExceptionResolve",
+    "append_only_correction_work_item",
+    "blocked_with_missing_fields"
+  ],
+  "definitionId": "definition.dormitory.leadCapture.v1",
+  "commandType": "Lead.Capture",
+  "allowedFacts": [
+    "Lead",
+    "EvidenceObject",
+    "DomainEvent",
+    "CommandSubmission"
+  ],
+  "forbiddenFacts": [
+    "Payment",
+    "PaymentAllocation",
+    "DepositEntry",
+    "LedgerEntry",
+    "Refund"
+  ],
+  "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
+  "evidencePolicyRef": "evidence.dorm-lead-capture.v1",
+  "ledgerPolicyRef": "ledger.none.v1",
+  "dbTableGroups": [
+    "operations-runtime",
+    "evidence-audit",
+    "projection-read-side",
+    "accommodation-facts"
+  ],
+  "tests": [
+    "tests/WorkOS.RuntimeIntegrationTests",
+    "tests/WorkOS.RuntimeContractTests",
+    "apps/mobile/src/__tests__"
+  ]
+}

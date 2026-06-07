@@ -2,11 +2,11 @@ import fs from "node:fs";
 import path from "node:path";
 
 const root = process.cwd();
-const kernel = readJson("docs/business/domains/dormitory/dormitory-operating-kernel.json");
-const releaseTrain = readJson("docs/business/domains/dormitory/dormitory-release-train.yml");
+const kernel = readJson("docs/business/dormitory/dormitory-operating-kernel.json");
+const releaseTrain = readJson("docs/business/dormitory/dormitory-release-train.yml");
 const violations = [];
 
-requireValue((releaseTrain.derivedFrom ?? []).includes("docs/business/domains/dormitory/dormitory-operating-kernel.json"), "release.derived_missing", "发布列车必须由宿舍内核派生。");
+requireValue((releaseTrain.derivedFrom ?? []).includes("docs/business/dormitory/dormitory-operating-kernel.json"), "release.derived_missing", "发布列车必须由宿舍内核派生。");
 requireValue(releaseTrain.manualEditAllowed === false, "release.manual_edit", "发布列车不得手改。");
 requireValue((releaseTrain.trains ?? []).length === 3, "release.train_count", "宿舍发布列车必须是三条。");
 const trainIds = new Set((kernel.releaseTrains ?? []).map((item) => item.id));

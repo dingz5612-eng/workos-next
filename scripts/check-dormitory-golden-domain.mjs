@@ -50,6 +50,7 @@ if (process.argv.includes("--self-test")) {
 
 const scannedFiles = [
   "docs/business/domains/dormitory/domain-pack.yml",
+  "docs/business/dormitory/dormitory-operating-kernel.json",
   "docs/scenarios/dormitory/golden-pilot.yml",
   "docs/business/dormitory/value-streams.yml",
   "docs/business/dormitory/workitem-catalog.yml",
@@ -60,13 +61,14 @@ const scannedFiles = [
 ];
 const violations = [];
 const pack = readJson(scannedFiles[0]);
-violations.push(...validatePack(pack));
-violations.push(...validateScenarioPack(readJson(scannedFiles[1])));
-violations.push(...validateValueStreams(readJson(scannedFiles[2]), readJson(scannedFiles[4])));
-violations.push(...validateWorkItemCatalog(readJson(scannedFiles[3]), readJson(scannedFiles[4])));
-violations.push(...validateEvidencePolicy(readJson(scannedFiles[5]), readJson(scannedFiles[4])));
-violations.push(...validateFinanceRules(readJson(scannedFiles[6])));
-violations.push(...validateBusinessLineRegistry(readJson(scannedFiles[7])));
+const kernel = readJson(scannedFiles[1]);
+violations.push(...validatePack(pack, kernel));
+violations.push(...validateScenarioPack(readJson(scannedFiles[2])));
+violations.push(...validateValueStreams(readJson(scannedFiles[3]), readJson(scannedFiles[5])));
+violations.push(...validateWorkItemCatalog(readJson(scannedFiles[4]), readJson(scannedFiles[5])));
+violations.push(...validateEvidencePolicy(readJson(scannedFiles[6]), readJson(scannedFiles[5])));
+violations.push(...validateFinanceRules(readJson(scannedFiles[7])));
+violations.push(...validateBusinessLineRegistry(readJson(scannedFiles[8])));
 
 writeReport(violations, scannedFiles);
 if (violations.length > 0) {
@@ -78,8 +80,32 @@ if (violations.length > 0) {
 
 console.log("Dormitory golden domain check: PASS");
 
-function validatePack(pack) {
+function validatePack(pack, kernel = { workItems: [] }) {
   const violations = [];
+  const currentWorkItems = (kernel.workItems ?? []).map((item) => item.workItemType).sort();
+  const packWorkItems = [...(pack.workitems ?? [])].sort();
+  const allowedHumanRoles = new Set(["宿舍经办人", "宿舍负责人"]);
+  const allowedSystemWriters = new Set(["finance-gate", "shared-governance-owner", "projection-runtime"]);
+
+  if (!(pack.derivedFrom ?? []).includes("docs/business/dormitory/dormitory-operating-kernel.json") || pack.currentTruthSource !== "docs/business/dormitory/dormitory-operating-kernel.json") {
+    violations.push(violation("dormitory.domain_pack_not_derived_from_kernel", "DormitoryDomainPack must be derived from the current dormitory operating kernel."));
+  }
+  if (JSON.stringify(packWorkItems) !== JSON.stringify(currentWorkItems)) {
+    violations.push(violation("dormitory.domain_pack_workitems_not_current", "DormitoryDomainPack workitems must exactly match current operating kernel workitems."));
+  }
+  for (const item of pack.absorbedActionTypes ?? []) {
+    if (item.currentExecutableWorkItem !== false || item.decision !== "sourceAliasOnly") {
+      violations.push(violation("dormitory.domain_pack_absorbed_action_not_downgraded", `Absorbed action ${item.workItemType} must be sourceAliasOnly and non executable.`, { workItemType: item.workItemType }));
+    }
+  }
+  for (const item of pack.objectTraceability ?? []) {
+    for (const writer of item.writers ?? []) {
+      if (!allowedHumanRoles.has(writer) && !allowedSystemWriters.has(writer)) {
+        violations.push(violation("dormitory.domain_pack_unknown_writer_role", `DormitoryDomainPack object ${item.objectId} uses non-current writer role ${writer}.`, { objectId: item.objectId, writer }));
+      }
+    }
+  }
+
   for (const fact of pack.ownedFacts ?? []) {
     if (forbiddenOwnedFacts.includes(fact)) {
       violations.push(violation("dormitory.domain_pack_owns_center_truth", `DormitoryDomainPack must not own center truth ${fact}.`, { fact }));

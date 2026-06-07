@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 const root = process.cwd();
-const kernelPath = "docs/business/domains/dormitory/dormitory-operating-kernel.json";
+const kernelPath = "docs/business/dormitory/dormitory-operating-kernel.json";
 const definitionPath = "docs/contracts/definition/workitem-definition-registry.json";
 const fieldPath = "docs/contracts/business/oam-business-object-field-registry.json";
 const statePath = "docs/contracts/business/oam-workflow-state-registry.json";

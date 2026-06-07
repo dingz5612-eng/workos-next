@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 const root = process.cwd();
-const kernelPath = "docs/business/domains/dormitory/dormitory-operating-kernel.json";
+const kernelPath = "docs/business/dormitory/dormitory-operating-kernel.json";
 const requiredHandoffFields = [
   "caseId",
   "sourceWorkItemId",
@@ -23,13 +23,13 @@ const requiredHandoffFields = [
   "nextWorkItemHints"
 ];
 const derivedFiles = [
-  "docs/business/domains/dormitory/handoff-contract.json",
-  "docs/business/domains/dormitory/dormitory-release-train.yml",
-  "docs/business/domains/dormitory/dormitory-pilot-scenario-pack.yml",
-  "docs/business/domains/dormitory/dormitory-seed-data-pack.json",
-  "docs/business/domains/dormitory/dormitory-observability-contract.json",
-  "docs/business/domains/dormitory/dormitory-pilot-go-no-go.json",
-  "docs/business/domains/dormitory/dormitory-operator-playbook.md"
+  "docs/business/dormitory/handoff-contract.json",
+  "docs/business/dormitory/dormitory-release-train.yml",
+  "docs/business/dormitory/dormitory-pilot-scenario-pack.yml",
+  "docs/business/dormitory/dormitory-seed-data-pack.json",
+  "docs/business/dormitory/dormitory-observability-contract.json",
+  "docs/business/dormitory/dormitory-pilot-go-no-go.json",
+  "docs/business/dormitory/dormitory-operator-playbook.md"
 ];
 const reportPath = "artifacts/oam/checks/dormitory-derived-contracts-result.json";
 const violations = [];
@@ -43,7 +43,7 @@ for (const file of derivedFiles) {
   requireDerived(doc, file);
 }
 
-const handoff = readJson("docs/business/domains/dormitory/handoff-contract.json");
+const handoff = readJson("docs/business/dormitory/handoff-contract.json");
 const handoffFieldIds = new Set((handoff.fields ?? []).map((item) => item.fieldId));
 for (const field of requiredHandoffFields) {
   requireValue(handoffFieldIds.has(field), "handoff.field_missing", `handoff 缺少 ${field}。`, { field });
@@ -51,7 +51,7 @@ for (const field of requiredHandoffFields) {
 requireValue(String(handoff.invariantZh ?? "").includes("自动带入") && String(handoff.invariantZh ?? "").includes("只读"), "handoff.invariant_missing", "handoff 必须证明上游字段自动带入且只读。");
 
 for (const item of workItems) {
-  const file = `docs/business/domains/dormitory/workitems/${slug(item.workItemType)}.json`;
+  const file = `docs/business/dormitory/workitems/${slug(item.workItemType)}.json`;
   requireValue(fs.existsSync(abs(file)), "workitem.file_missing", `${item.workItemType} 缺少派生操作文件。`, { workItemType: item.workItemType });
   if (!fs.existsSync(abs(file))) continue;
   const doc = readJson(file);

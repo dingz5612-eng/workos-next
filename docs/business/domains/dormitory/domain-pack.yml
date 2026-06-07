@@ -1,14 +1,26 @@
 {
-  "version": 1,
+  "version": 2,
   "packId": "DormitoryDomainPack",
   "domainId": "dormitory",
   "owner": "DormitoryDomainPack",
+  "derivedFrom": [
+    "docs/business/dormitory/dormitory-operating-kernel.json"
+  ],
+  "currentTruthSource": "docs/business/dormitory/dormitory-operating-kernel.json",
+  "currentTruthAllowed": false,
   "domainOwner": "dormitory.operations",
+  "humanRoles": [
+    "宿舍经办人",
+    "宿舍负责人"
+  ],
   "ownedFacts": [
     "Room",
     "Bed",
+    "RatePlan",
+    "Lead",
+    "Reservation",
+    "Resident",
     "Stay",
-    "AccommodationOrder",
     "BedOccupancyInterval",
     "StayChargeBasis",
     "DepositRequest",
@@ -17,6 +29,12 @@
     "CheckoutCase",
     "CleaningTask",
     "DamageAssessment",
+    "ServiceTask",
+    "Expense",
+    "ExpenseLink",
+    "RoomInspection",
+    "PeriodSnapshot",
+    "ActionPlan",
     "StayBalanceLens",
     "DepositLiabilityLens",
     "DormitoryRiskSummary"
@@ -42,44 +60,627 @@
     "FinanceReceipt"
   ],
   "events": [
+    "DormitoryRoomPrepared",
+    "DormitoryBedPrepared",
+    "DormitoryRatePlanConfirmed",
+    "DormitoryResourceReadinessConfirmed",
+    "DormitoryLeadCaptured",
+    "DormitoryReservationConfirmed",
     "DormitoryStayPrepared",
-    "DormitoryBedAssigned",
-    "DormitoryDepositBasisCaptured",
     "DormitoryPaymentBasisCaptured",
+    "DormitoryDepositBasisCaptured",
     "DormitoryServiceTaskCompleted",
+    "FinanceExpenseBasisRecorded",
     "DormitoryCheckoutInspected",
     "DormitoryCorrectionRequested",
     "DormitoryPeriodReviewed",
     "DormitoryCommandRejected"
   ],
   "workitems": [
+    "Dorm.RoomSetupConfirm",
+    "Dorm.BedSetupConfirm",
+    "Dorm.RatePlanConfirm",
+    "Dorm.ResourceReadinessConfirm",
+    "Dorm.LeadCapture",
+    "Dorm.ReservationConfirm",
     "Dorm.CheckinConfirm",
-    "Dorm.BedAssignmentConfirm",
-    "Dorm.DepositConfirm",
     "Dorm.PaymentConfirm",
-    "Dorm.RoomReadinessCheck",
-    "Dorm.RefundApprove",
-    "Finance.CorrectionApply",
+    "Dorm.DepositConfirm",
+    "Dorm.ServiceTaskCreate",
+    "Dorm.ServiceTaskAssign",
+    "Dorm.ServiceTaskComplete",
+    "Dorm.ServiceTaskVerify",
+    "Finance.ExpenseRecord",
+    "Finance.ExpenseApprove",
+    "Finance.ExpenseLink",
+    "Dorm.RoomInspectionConfirm",
+    "Dorm.CheckoutSettlementApprove",
+    "Dorm.StayExtendApprove",
+    "Dorm.BedTransferApprove",
+    "Dorm.ReservationCancelClose",
+    "Dorm.ReservationNoShowClose",
+    "Finance.ChargeAdjustmentApprove",
+    "Finance.DebtFollowUp",
+    "Dorm.AccessCredentialIssue",
+    "Dorm.AccessCredentialRevoke",
+    "Dorm.IncidentRecord",
     "Dorm.PeriodReview",
-    "Dorm.ExceptionResolve"
+    "Dorm.PeriodActionPlanExecute",
+    "Dorm.ExceptionResolve",
+    "Finance.CorrectionApply"
+  ],
+  "absorbedActionTypes": [
+    {
+      "workItemType": "Dorm.RoomReadinessCheck",
+      "absorbedBy": "Dorm.ResourceReadinessConfirm",
+      "decision": "sourceAliasOnly",
+      "currentExecutableWorkItem": false
+    },
+    {
+      "workItemType": "Dorm.RefundApprove",
+      "absorbedBy": "Dorm.CheckoutSettlementApprove",
+      "decision": "sourceAliasOnly",
+      "currentExecutableWorkItem": false
+    },
+    {
+      "workItemType": "Dorm.ExpenseRecord",
+      "absorbedBy": "Finance.ExpenseRecord",
+      "decision": "sourceAliasOnly",
+      "currentExecutableWorkItem": false
+    }
   ],
   "objectTraceability": [
-    {"objectId":"Subject","中文名称":"主体","owner":"SubjectVehicleTruthPack","writers":["shared-governance-owner"],"readers":["DormitoryDomainPack","FinanceTruthPack","SearchKernel","ManagementCockpit"],"workItem":"Dorm.CheckinConfirm","event":"SubjectLinkedToStay","producesLedgerEntry":false,"searchable":true,"kpiIncluded":false,"evidenceRequired":true,"protectedByGate":"scripts/check-shared-governance-boundary.mjs"},
-    {"objectId":"Vehicle","中文名称":"车辆","owner":"SubjectVehicleTruthPack","writers":["shared-governance-owner"],"readers":["DormitoryDomainPack","SearchKernel","ManagementCockpit"],"workItem":"Dorm.CheckinConfirm","event":"VehicleLinkedForVisit","producesLedgerEntry":false,"searchable":true,"kpiIncluded":false,"evidenceRequired":false,"protectedByGate":"scripts/check-shared-governance-boundary.mjs"},
-    {"objectId":"Room","中文名称":"房间","owner":"DormitoryDomainPack","writers":["Resource Manager"],"readers":["SearchKernel","ManagementCockpit","FinanceTruthPack"],"workItem":"Dorm.ResourceSetup","event":"DormitoryRoomPrepared","producesLedgerEntry":false,"searchable":true,"kpiIncluded":true,"evidenceRequired":true,"protectedByGate":"scripts/check-dormitory-golden-domain.mjs"},
-    {"objectId":"Bed","中文名称":"床位","owner":"DormitoryDomainPack","writers":["Resource Manager"],"readers":["SearchKernel","ManagementCockpit","FinanceTruthPack"],"workItem":"Dorm.BedAvailabilityConfirm","event":"DormitoryBedAssigned","producesLedgerEntry":false,"searchable":true,"kpiIncluded":true,"evidenceRequired":true,"protectedByGate":"scripts/check-dormitory-golden-domain.mjs"},
-    {"objectId":"AccommodationOrder","中文名称":"住宿单","owner":"DormitoryDomainPack","writers":["Front Desk Lead"],"readers":["FinanceTruthPack","SearchKernel","ManagementCockpit"],"workItem":"Dorm.CheckinConfirm","event":"DormitoryStayPrepared","producesLedgerEntry":false,"searchable":true,"kpiIncluded":true,"evidenceRequired":true,"protectedByGate":"scripts/business/check-canonical-scenario-map.mjs"},
-    {"objectId":"StayChargeBasis","中文名称":"费用依据","owner":"DormitoryDomainPack","writers":["Finance Cashier"],"readers":["FinanceTruthPack","SearchKernel","ManagementCockpit"],"workItem":"Dorm.ChargeGenerate","event":"DormitoryPaymentBasisCaptured","producesLedgerEntry":false,"searchable":true,"kpiIncluded":true,"evidenceRequired":true,"protectedByGate":"scripts/check-finance-truth.mjs"},
-    {"objectId":"DepositRequest","中文名称":"押金申请","owner":"DormitoryDomainPack","writers":["Finance Supervisor"],"readers":["FinanceTruthPack","SearchKernel","ManagementCockpit"],"workItem":"Dorm.DepositAssess","event":"DormitoryDepositBasisCaptured","producesLedgerEntry":false,"searchable":true,"kpiIncluded":true,"evidenceRequired":true,"protectedByGate":"scripts/finance/check-finance-semantic-truth.mjs"},
-    {"objectId":"FinancialFact","中文名称":"财务事实","owner":"FinanceTruthPack","writers":["Finance Controller"],"readers":["DormitoryDomainPack","SearchKernel","ManagementCockpit"],"workItem":"Dorm.PaymentConfirm","event":"FinanceTruthCommitted","producesLedgerEntry":true,"searchable":true,"kpiIncluded":true,"evidenceRequired":true,"protectedByGate":"scripts/check-finance-truth.mjs"},
-    {"objectId":"LedgerEntry","中文名称":"账务事实","owner":"FinanceTruthPack","writers":["Finance Controller"],"readers":["DormitoryDomainPack","SearchKernel","ManagementCockpit"],"workItem":"Finance.CorrectionApply","event":"LedgerEntryAppended","producesLedgerEntry":true,"searchable":false,"kpiIncluded":true,"evidenceRequired":true,"protectedByGate":"scripts/check-ledger-semantic-rules.mjs"},
-    {"objectId":"ExceptionCase","中文名称":"异常","owner":"DormitoryDomainPack","writers":["Operations Director"],"readers":["FinanceTruthPack","SearchKernel","ManagementCockpit"],"workItem":"Dorm.ExceptionResolve","event":"DormitoryCorrectionRequested","producesLedgerEntry":false,"searchable":true,"kpiIncluded":true,"evidenceRequired":true,"protectedByGate":"scripts/check-runtime-write-paths.mjs"},
-    {"objectId":"SharedReceipt","中文名称":"回执","owner":"SharedGovernancePack","writers":["shared-governance-owner"],"readers":["DormitoryDomainPack","SearchKernel","ManagementCockpit"],"workItem":"Dorm.CheckinConfirm","event":"SharedReceiptIssued","producesLedgerEntry":false,"searchable":true,"kpiIncluded":false,"evidenceRequired":true,"protectedByGate":"scripts/check-shared-governance-boundary.mjs"},
-    {"objectId":"Profile","中文名称":"画像","owner":"ProfileProjectionPack","writers":["projection-runtime"],"readers":["DormitoryDomainPack","SearchKernel","ManagementCockpit"],"workItem":"Dorm.PeriodReview","event":"ProfileProjectionUpdated","producesLedgerEntry":false,"searchable":true,"kpiIncluded":false,"evidenceRequired":false,"protectedByGate":"scripts/check-api-boundaries.mjs"},
-    {"objectId":"DashboardSummary","中文名称":"驾驶舱摘要","owner":"ManagementCockpit","writers":["projection-runtime"],"readers":["DormitoryDomainPack","SearchKernel","ManagementCockpit"],"workItem":"Dorm.PeriodReview","event":"DashboardSummaryProjected","producesLedgerEntry":false,"searchable":true,"kpiIncluded":true,"evidenceRequired":false,"protectedByGate":"scripts/check-management-cockpit-boundary.mjs"}
+    {
+      "objectId": "Subject",
+      "中文名称": "主体",
+      "owner": "SubjectVehicleTruthPack",
+      "writers": [
+        "shared-governance-owner"
+      ],
+      "readers": [
+        "DormitoryDomainPack",
+        "FinanceTruthPack",
+        "SearchKernel",
+        "ManagementCockpit"
+      ],
+      "workItem": "Dorm.CheckinConfirm",
+      "event": "SubjectLinkedToStay",
+      "producesLedgerEntry": false,
+      "searchable": true,
+      "kpiIncluded": true,
+      "evidenceRequired": true,
+      "protectedByGate": "scripts/check-shared-governance-boundary.mjs"
+    },
+    {
+      "objectId": "Vehicle",
+      "中文名称": "车辆",
+      "owner": "SubjectVehicleTruthPack",
+      "writers": [
+        "shared-governance-owner"
+      ],
+      "readers": [
+        "DormitoryDomainPack",
+        "FinanceTruthPack",
+        "SearchKernel",
+        "ManagementCockpit"
+      ],
+      "workItem": "Dorm.CheckinConfirm",
+      "event": "VehicleLinkedForVisit",
+      "producesLedgerEntry": false,
+      "searchable": true,
+      "kpiIncluded": true,
+      "evidenceRequired": true,
+      "protectedByGate": "scripts/check-shared-governance-boundary.mjs"
+    },
+    {
+      "objectId": "Room",
+      "中文名称": "房间",
+      "owner": "DormitoryDomainPack",
+      "writers": [
+        "宿舍经办人"
+      ],
+      "readers": [
+        "DormitoryDomainPack",
+        "FinanceTruthPack",
+        "SearchKernel",
+        "ManagementCockpit"
+      ],
+      "workItem": "Dorm.RoomSetupConfirm",
+      "event": "DormitoryRoomPrepared",
+      "producesLedgerEntry": false,
+      "searchable": true,
+      "kpiIncluded": true,
+      "evidenceRequired": true,
+      "protectedByGate": "scripts/business/check-dormitory-operating-kernel.mjs"
+    },
+    {
+      "objectId": "Bed",
+      "中文名称": "床位",
+      "owner": "DormitoryDomainPack",
+      "writers": [
+        "宿舍经办人"
+      ],
+      "readers": [
+        "DormitoryDomainPack",
+        "FinanceTruthPack",
+        "SearchKernel",
+        "ManagementCockpit"
+      ],
+      "workItem": "Dorm.BedSetupConfirm",
+      "event": "DormitoryBedPrepared",
+      "producesLedgerEntry": false,
+      "searchable": true,
+      "kpiIncluded": true,
+      "evidenceRequired": true,
+      "protectedByGate": "scripts/business/check-dormitory-operating-kernel.mjs"
+    },
+    {
+      "objectId": "RatePlan",
+      "中文名称": "价格方案",
+      "owner": "DormitoryDomainPack",
+      "writers": [
+        "宿舍负责人"
+      ],
+      "readers": [
+        "DormitoryDomainPack",
+        "FinanceTruthPack",
+        "SearchKernel",
+        "ManagementCockpit"
+      ],
+      "workItem": "Dorm.RatePlanConfirm",
+      "event": "DormitoryRatePlanConfirmed",
+      "producesLedgerEntry": false,
+      "searchable": true,
+      "kpiIncluded": true,
+      "evidenceRequired": true,
+      "protectedByGate": "scripts/business/check-dormitory-operating-kernel.mjs"
+    },
+    {
+      "objectId": "Lead",
+      "中文名称": "线索",
+      "owner": "DormitoryDomainPack",
+      "writers": [
+        "宿舍经办人"
+      ],
+      "readers": [
+        "DormitoryDomainPack",
+        "FinanceTruthPack",
+        "SearchKernel",
+        "ManagementCockpit"
+      ],
+      "workItem": "Dorm.LeadCapture",
+      "event": "DormitoryLeadCaptured",
+      "producesLedgerEntry": false,
+      "searchable": true,
+      "kpiIncluded": true,
+      "evidenceRequired": true,
+      "protectedByGate": "scripts/business/check-dormitory-operating-kernel.mjs"
+    },
+    {
+      "objectId": "Reservation",
+      "中文名称": "预订",
+      "owner": "DormitoryDomainPack",
+      "writers": [
+        "宿舍负责人"
+      ],
+      "readers": [
+        "DormitoryDomainPack",
+        "FinanceTruthPack",
+        "SearchKernel",
+        "ManagementCockpit"
+      ],
+      "workItem": "Dorm.ReservationConfirm",
+      "event": "DormitoryReservationConfirmed",
+      "producesLedgerEntry": false,
+      "searchable": true,
+      "kpiIncluded": true,
+      "evidenceRequired": true,
+      "protectedByGate": "scripts/business/check-dormitory-operating-kernel.mjs"
+    },
+    {
+      "objectId": "AccommodationOrder",
+      "中文名称": "住宿单",
+      "owner": "DormitoryDomainPack",
+      "writers": [
+        "宿舍经办人"
+      ],
+      "readers": [
+        "DormitoryDomainPack",
+        "FinanceTruthPack",
+        "SearchKernel",
+        "ManagementCockpit"
+      ],
+      "workItem": "Dorm.CheckinConfirm",
+      "event": "DormitoryStayPrepared",
+      "producesLedgerEntry": false,
+      "searchable": true,
+      "kpiIncluded": true,
+      "evidenceRequired": true,
+      "protectedByGate": "scripts/business/check-canonical-scenario-map.mjs"
+    },
+    {
+      "objectId": "Resident",
+      "中文名称": "入住人",
+      "owner": "DormitoryDomainPack",
+      "writers": [
+        "宿舍经办人"
+      ],
+      "readers": [
+        "DormitoryDomainPack",
+        "FinanceTruthPack",
+        "SearchKernel",
+        "ManagementCockpit"
+      ],
+      "workItem": "Dorm.CheckinConfirm",
+      "event": "DormitoryResidentLinked",
+      "producesLedgerEntry": false,
+      "searchable": true,
+      "kpiIncluded": true,
+      "evidenceRequired": true,
+      "protectedByGate": "scripts/business/check-dormitory-operating-kernel.mjs"
+    },
+    {
+      "objectId": "Stay",
+      "中文名称": "住宿",
+      "owner": "DormitoryDomainPack",
+      "writers": [
+        "宿舍经办人"
+      ],
+      "readers": [
+        "DormitoryDomainPack",
+        "FinanceTruthPack",
+        "SearchKernel",
+        "ManagementCockpit"
+      ],
+      "workItem": "Dorm.CheckinConfirm",
+      "event": "DormitoryStayPrepared",
+      "producesLedgerEntry": false,
+      "searchable": true,
+      "kpiIncluded": true,
+      "evidenceRequired": true,
+      "protectedByGate": "scripts/business/check-dormitory-operating-kernel.mjs"
+    },
+    {
+      "objectId": "StayChargeBasis",
+      "中文名称": "费用依据",
+      "owner": "DormitoryDomainPack",
+      "writers": [
+        "宿舍负责人"
+      ],
+      "readers": [
+        "DormitoryDomainPack",
+        "FinanceTruthPack",
+        "SearchKernel",
+        "ManagementCockpit"
+      ],
+      "workItem": "Dorm.PaymentConfirm",
+      "event": "DormitoryPaymentBasisCaptured",
+      "producesLedgerEntry": false,
+      "searchable": true,
+      "kpiIncluded": true,
+      "evidenceRequired": true,
+      "protectedByGate": "scripts/check-finance-truth.mjs"
+    },
+    {
+      "objectId": "PaymentBasis",
+      "中文名称": "收款依据",
+      "owner": "DormitoryDomainPack",
+      "writers": [
+        "宿舍负责人"
+      ],
+      "readers": [
+        "DormitoryDomainPack",
+        "FinanceTruthPack",
+        "SearchKernel",
+        "ManagementCockpit"
+      ],
+      "workItem": "Dorm.PaymentConfirm",
+      "event": "DormitoryPaymentBasisCaptured",
+      "producesLedgerEntry": false,
+      "searchable": true,
+      "kpiIncluded": true,
+      "evidenceRequired": true,
+      "protectedByGate": "scripts/check-finance-truth.mjs"
+    },
+    {
+      "objectId": "DepositRequest",
+      "中文名称": "押金请求",
+      "owner": "DormitoryDomainPack",
+      "writers": [
+        "宿舍负责人"
+      ],
+      "readers": [
+        "DormitoryDomainPack",
+        "FinanceTruthPack",
+        "SearchKernel",
+        "ManagementCockpit"
+      ],
+      "workItem": "Dorm.DepositConfirm",
+      "event": "DormitoryDepositBasisCaptured",
+      "producesLedgerEntry": false,
+      "searchable": true,
+      "kpiIncluded": true,
+      "evidenceRequired": true,
+      "protectedByGate": "scripts/finance/check-finance-semantic-truth.mjs"
+    },
+    {
+      "objectId": "ServiceTask",
+      "中文名称": "服务任务",
+      "owner": "DormitoryDomainPack",
+      "writers": [
+        "宿舍经办人"
+      ],
+      "readers": [
+        "DormitoryDomainPack",
+        "FinanceTruthPack",
+        "SearchKernel",
+        "ManagementCockpit"
+      ],
+      "workItem": "Dorm.ServiceTaskCreate",
+      "event": "DormitoryServiceTaskCreated",
+      "producesLedgerEntry": false,
+      "searchable": true,
+      "kpiIncluded": true,
+      "evidenceRequired": true,
+      "protectedByGate": "scripts/business/check-dormitory-operating-kernel.mjs"
+    },
+    {
+      "objectId": "Expense",
+      "中文名称": "支出",
+      "owner": "DormitoryDomainPack",
+      "writers": [
+        "宿舍负责人"
+      ],
+      "readers": [
+        "DormitoryDomainPack",
+        "FinanceTruthPack",
+        "SearchKernel",
+        "ManagementCockpit"
+      ],
+      "workItem": "Finance.ExpenseRecord",
+      "event": "FinanceExpenseBasisRecorded",
+      "producesLedgerEntry": false,
+      "searchable": true,
+      "kpiIncluded": true,
+      "evidenceRequired": true,
+      "protectedByGate": "scripts/check-finance-truth.mjs"
+    },
+    {
+      "objectId": "ExpenseLink",
+      "中文名称": "支出关联",
+      "owner": "DormitoryDomainPack",
+      "writers": [
+        "宿舍负责人"
+      ],
+      "readers": [
+        "DormitoryDomainPack",
+        "FinanceTruthPack",
+        "SearchKernel",
+        "ManagementCockpit"
+      ],
+      "workItem": "Finance.ExpenseLink",
+      "event": "FinanceExpenseLinked",
+      "producesLedgerEntry": false,
+      "searchable": true,
+      "kpiIncluded": true,
+      "evidenceRequired": true,
+      "protectedByGate": "scripts/check-finance-truth.mjs"
+    },
+    {
+      "objectId": "CheckoutCase",
+      "中文名称": "退住结算",
+      "owner": "DormitoryDomainPack",
+      "writers": [
+        "宿舍负责人"
+      ],
+      "readers": [
+        "DormitoryDomainPack",
+        "FinanceTruthPack",
+        "SearchKernel",
+        "ManagementCockpit"
+      ],
+      "workItem": "Dorm.CheckoutSettlementApprove",
+      "event": "DormitoryCheckoutSettled",
+      "producesLedgerEntry": false,
+      "searchable": true,
+      "kpiIncluded": true,
+      "evidenceRequired": true,
+      "protectedByGate": "scripts/business/check-dormitory-operating-kernel.mjs"
+    },
+    {
+      "objectId": "RoomInspection",
+      "中文名称": "验房",
+      "owner": "DormitoryDomainPack",
+      "writers": [
+        "宿舍经办人"
+      ],
+      "readers": [
+        "DormitoryDomainPack",
+        "FinanceTruthPack",
+        "SearchKernel",
+        "ManagementCockpit"
+      ],
+      "workItem": "Dorm.RoomInspectionConfirm",
+      "event": "DormitoryRoomInspected",
+      "producesLedgerEntry": false,
+      "searchable": true,
+      "kpiIncluded": true,
+      "evidenceRequired": true,
+      "protectedByGate": "scripts/business/check-dormitory-operating-kernel.mjs"
+    },
+    {
+      "objectId": "PeriodSnapshot",
+      "中文名称": "周期快照",
+      "owner": "DormitoryDomainPack",
+      "writers": [
+        "宿舍负责人"
+      ],
+      "readers": [
+        "DormitoryDomainPack",
+        "FinanceTruthPack",
+        "SearchKernel",
+        "ManagementCockpit"
+      ],
+      "workItem": "Dorm.PeriodReview",
+      "event": "DormitoryPeriodSnapshotFrozen",
+      "producesLedgerEntry": false,
+      "searchable": true,
+      "kpiIncluded": true,
+      "evidenceRequired": true,
+      "protectedByGate": "scripts/business/check-dormitory-metrics-lens-contract.mjs"
+    },
+    {
+      "objectId": "ActionPlan",
+      "中文名称": "行动计划",
+      "owner": "DormitoryDomainPack",
+      "writers": [
+        "宿舍经办人"
+      ],
+      "readers": [
+        "DormitoryDomainPack",
+        "FinanceTruthPack",
+        "SearchKernel",
+        "ManagementCockpit"
+      ],
+      "workItem": "Dorm.PeriodActionPlanExecute",
+      "event": "DormitoryActionPlanExecuted",
+      "producesLedgerEntry": false,
+      "searchable": true,
+      "kpiIncluded": true,
+      "evidenceRequired": true,
+      "protectedByGate": "scripts/business/check-dormitory-metrics-lens-contract.mjs"
+    },
+    {
+      "objectId": "ExceptionCase",
+      "中文名称": "异常",
+      "owner": "DormitoryDomainPack",
+      "writers": [
+        "宿舍负责人"
+      ],
+      "readers": [
+        "DormitoryDomainPack",
+        "FinanceTruthPack",
+        "SearchKernel",
+        "ManagementCockpit"
+      ],
+      "workItem": "Dorm.ExceptionResolve",
+      "event": "DormitoryExceptionResolved",
+      "producesLedgerEntry": false,
+      "searchable": true,
+      "kpiIncluded": true,
+      "evidenceRequired": true,
+      "protectedByGate": "scripts/check-runtime-write-paths.mjs"
+    },
+    {
+      "objectId": "FinancialFact",
+      "中文名称": "财务事实",
+      "owner": "FinanceTruthPack",
+      "writers": [
+        "finance-gate"
+      ],
+      "readers": [
+        "DormitoryDomainPack",
+        "FinanceTruthPack",
+        "SearchKernel",
+        "ManagementCockpit"
+      ],
+      "workItem": "Dorm.PaymentConfirm",
+      "event": "FinanceTruthCommitted",
+      "producesLedgerEntry": true,
+      "searchable": true,
+      "kpiIncluded": true,
+      "evidenceRequired": true,
+      "protectedByGate": "scripts/check-finance-truth.mjs"
+    },
+    {
+      "objectId": "LedgerEntry",
+      "中文名称": "账务事实",
+      "owner": "FinanceTruthPack",
+      "writers": [
+        "finance-gate"
+      ],
+      "readers": [
+        "DormitoryDomainPack",
+        "FinanceTruthPack",
+        "SearchKernel",
+        "ManagementCockpit"
+      ],
+      "workItem": "Finance.CorrectionApply",
+      "event": "LedgerEntryAppended",
+      "producesLedgerEntry": true,
+      "searchable": true,
+      "kpiIncluded": true,
+      "evidenceRequired": true,
+      "protectedByGate": "scripts/check-ledger-semantic-rules.mjs"
+    },
+    {
+      "objectId": "SharedReceipt",
+      "中文名称": "回执",
+      "owner": "DormitoryDomainPack",
+      "writers": [
+        "shared-governance-owner"
+      ],
+      "readers": [
+        "DormitoryDomainPack",
+        "FinanceTruthPack",
+        "SearchKernel",
+        "ManagementCockpit"
+      ],
+      "workItem": "Dorm.CheckinConfirm",
+      "event": "SharedReceiptIssued",
+      "producesLedgerEntry": false,
+      "searchable": true,
+      "kpiIncluded": true,
+      "evidenceRequired": true,
+      "protectedByGate": "scripts/check-shared-governance-boundary.mjs"
+    },
+    {
+      "objectId": "Profile",
+      "中文名称": "画像",
+      "owner": "DormitoryDomainPack",
+      "writers": [
+        "projection-runtime"
+      ],
+      "readers": [
+        "DormitoryDomainPack",
+        "FinanceTruthPack",
+        "SearchKernel",
+        "ManagementCockpit"
+      ],
+      "workItem": "Dorm.PeriodReview",
+      "event": "ProfileProjectionUpdated",
+      "producesLedgerEntry": false,
+      "searchable": true,
+      "kpiIncluded": true,
+      "evidenceRequired": true,
+      "protectedByGate": "scripts/check-api-boundaries.mjs"
+    },
+    {
+      "objectId": "DashboardSummary",
+      "中文名称": "驾驶舱摘要",
+      "owner": "DormitoryDomainPack",
+      "writers": [
+        "projection-runtime"
+      ],
+      "readers": [
+        "DormitoryDomainPack",
+        "FinanceTruthPack",
+        "SearchKernel",
+        "ManagementCockpit"
+      ],
+      "workItem": "Dorm.PeriodReview",
+      "event": "DashboardSummaryProjected",
+      "producesLedgerEntry": false,
+      "searchable": true,
+      "kpiIncluded": true,
+      "evidenceRequired": true,
+      "protectedByGate": "scripts/check-management-cockpit-boundary.mjs"
+    }
   ],
   "goldenChainTrace": {
     "sourceScenario": "docs/scenarios/dormitory/golden-pilot.yml",
+    "operatingKernel": "docs/business/dormitory/dormitory-operating-kernel.json",
+    "handoffContract": "docs/business/dormitory/handoff-contract.json",
     "scenarioMap": "docs/business/dormitory/canonical-scenario-map.json",
     "fieldContract": "docs/business/dormitory/scenario-field-contract.yml",
     "stateContract": "docs/contracts/definition/workitem-definition-registry.json",
@@ -93,22 +694,7 @@
   },
   "evidence": {
     "required": [
-      "identity-document",
-      "reservation-acknowledgement",
-      "bed-availability-proof",
-      "deposit-policy",
-      "receipt-proof",
-      "payment-receipt",
-      "cashier-review",
-      "completion-photo",
-      "verification-check",
-      "room-inspection",
-      "settlement-review",
-      "refund-approval",
-      "bank-import-row",
-      "correction-approval",
-      "period-review-pack",
-      "exception-audit"
+      null
     ],
     "policy": "referenceOnly"
   },
@@ -117,6 +703,7 @@
     "ledgerPolicy": "noDirectLedgerCommit"
   },
   "invariants": [
+    "dormitory.operating_kernel_is_only_current_truth",
     "dormitory.no_center_truth_ownership",
     "dormitory.confirm_uses_operations_uow",
     "dormitory.money_basis_routes_to_finance_truth",
@@ -142,8 +729,19 @@
   "goNoGo": {
     "productionAllowedDefault": false
   },
-  "allowedCapabilities": ["propose", "validate", "project", "routeToFinanceTruth", "routeToEvidenceTrust"],
-  "forbiddenCapabilities": ["ownCenterTruth", "commitLedgerWithProvisionalRef", "processDomainExceptionFromManagementCockpit", "declareL2Production"],
+  "allowedCapabilities": [
+    "propose",
+    "validate",
+    "project",
+    "routeToFinanceTruth",
+    "routeToEvidenceTrust"
+  ],
+  "forbiddenCapabilities": [
+    "ownCenterTruth",
+    "commitLedgerWithProvisionalRef",
+    "processDomainExceptionFromManagementCockpit",
+    "declareL2Production"
+  ],
   "receiptPolicy": "referenceOnly",
   "managementCockpitBoundary": "observeAndRouteOnly"
 }

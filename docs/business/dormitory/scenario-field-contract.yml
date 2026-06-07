@@ -373,7 +373,7 @@
     }
   ],
   "derivedFrom": [
-    "docs/business/domains/dormitory/dormitory-operating-kernel.json"
+    "docs/business/dormitory/dormitory-operating-kernel.json"
   ],
   "generatedBy": "scripts/business/generate-dormitory-derived-contracts.mjs",
   "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",

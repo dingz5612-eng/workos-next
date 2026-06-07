@@ -12,19 +12,35 @@
       "Accommodation.PeriodActionPlanWorkItemCreated",
       "Accommodation.PeriodActionPlanCompleted"
     ],
-    "rule": "After a period snapshot is frozen, late source events do not mutate the frozen values. They append adjustment events that are visible in the next review or an explicit reopened review."
+    "rule": "After a period snapshot is frozen, late source events do not mutate the frozen values. They append adjustment events that are visible in the next review or an explicit reopened review.",
+    "readOnlyInputs": [
+      "businessFacts",
+      "financeFacts",
+      "evidenceFacts",
+      "lensSnapshots"
+    ],
+    "forbiddenDirectWrites": [
+      "businessFacts",
+      "financeFacts",
+      "ledgerEntries"
+    ]
   },
   "actionPlanWorkItems": {
     "commitEvent": "Accommodation.PeriodActionPlanCommitted",
     "workItemCreatedEvent": "Accommodation.PeriodActionPlanWorkItemCreated",
     "completeEvent": "Accommodation.PeriodActionPlanCompleted",
     "workItemType": "periodActionPlanExecution",
-    "requiredFields": ["ownerRole", "dueAtUtc", "priority"],
+    "requiredFields": [
+      "ownerRole",
+      "dueAtUtc",
+      "priority"
+    ],
     "rules": [
       "PeriodActionPlanCommitted creates executable WorkItem intent and does not mark the action plan completed.",
       "PeriodActionPlanCompleted is a later event and must reference the action plan WorkItem.",
       "Action plans are structured governance work and must not be stored as free-text notes only."
-    ]
+    ],
+    "currentOamWorkItemType": "Dorm.PeriodActionPlanExecute"
   },
   "periodClose": {
     "closeEvent": "Accommodation.PeriodReviewClosed",
@@ -45,7 +61,12 @@
   },
   "lateAdjustments": {
     "table": "period_late_adjustments",
-    "requiredFields": ["reason", "createdBy", "body.before", "body.after"],
+    "requiredFields": [
+      "reason",
+      "createdBy",
+      "body.before",
+      "body.after"
+    ],
     "rules": [
       "LateAdjustment can only append after PeriodReviewClosed.",
       "LateAdjustment must not overwrite the original frozen snapshot.",
@@ -86,7 +107,10 @@
       "id": "periodNetCashFlow",
       "label": "周期净现金流",
       "expression": "rentRevenue + otherRevenue - approvedExpenseAmount",
-      "excludes": ["depositReceivedAmount", "depositRefundedAmount"],
+      "excludes": [
+        "depositReceivedAmount",
+        "depositRefundedAmount"
+      ],
       "zeroDenominator": "not_applicable"
     },
     {
@@ -95,5 +119,51 @@
       "expression": "depositReceivedAmount - depositRefundedAmount - depositDeductedAmount - depositAppliedToBalanceAmount",
       "zeroDenominator": "not_applicable"
     }
-  ]
+  ],
+  "dormitoryOamClosure": {
+    "version": "oam.dormitory.period-analytics-closure.v1",
+    "derivedFrom": [
+      "docs/business/dormitory/dormitory-operating-kernel.json",
+      "docs/business/dormitory/metric-formula-contract.yml",
+      "docs/business/dormitory/lens-map.yml"
+    ],
+    "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
+    "currentTruthAllowed": false,
+    "manualEditAllowed": false,
+    "periodReviewWorkItemType": "Dorm.PeriodReview",
+    "actionPlanWorkItemType": "Dorm.PeriodActionPlanExecute",
+    "readOnlyInputs": [
+      "businessFacts",
+      "financeFacts",
+      "evidenceFacts",
+      "lensSnapshots"
+    ],
+    "forbiddenWrites": [
+      "businessFacts",
+      "financeFacts",
+      "ledgerEntries"
+    ],
+    "allowedOutputs": [
+      "PeriodSnapshot",
+      "ActionPlan",
+      "ExceptionCase"
+    ],
+    "categories": [
+      "资源",
+      "转化",
+      "收入",
+      "押金",
+      "支出",
+      "周转",
+      "治理"
+    ],
+    "drilldown": [
+      "WorkItem",
+      "DomainEvent",
+      "LedgerEntry",
+      "Evidence",
+      "LensSnapshot"
+    ],
+    "financeTruthBoundary": "finance-gate / Money Kernel"
+  }
 }

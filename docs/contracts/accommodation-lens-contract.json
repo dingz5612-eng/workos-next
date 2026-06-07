@@ -4,58 +4,270 @@
     {
       "id": "payment-risk",
       "name": "PaymentRiskLens",
-      "sourceOfTruthTables": ["hostel_payments"],
-      "workspaceScope": ["W-STAY-PAYMENT-LEDGER"],
-      "freshness": { "timestampField": "updated_at_utc", "lagMetric": "projectionLagSeconds" },
+      "sourceOfTruthTables": [
+        "hostel_payments"
+      ],
+      "workspaceScope": [
+        "W-STAY-PAYMENT-LEDGER"
+      ],
+      "freshness": {
+        "timestampField": "updated_at_utc",
+        "lagMetric": "projectionLagSeconds"
+      },
       "crossCheck": "PaymentRiskLens must not read source CheckIn payment rows."
     },
     {
       "id": "checkout-queue",
       "name": "CheckoutQueueLens",
-      "sourceOfTruthTables": ["checkout_settlements"],
-      "workspaceScope": ["W-STAY-CHECKOUT-SETTLEMENT"],
-      "freshness": { "timestampField": "updated_at_utc", "lagMetric": "projectionLagSeconds" },
+      "sourceOfTruthTables": [
+        "checkout_settlements"
+      ],
+      "workspaceScope": [
+        "W-STAY-CHECKOUT-SETTLEMENT"
+      ],
+      "freshness": {
+        "timestampField": "updated_at_utc",
+        "lagMetric": "projectionLagSeconds"
+      },
       "crossCheck": "CheckoutQueueLens reads checkout workflow state only and never writes deposit facts."
     },
     {
       "id": "service-task-queue",
       "name": "ServiceTaskQueueLens",
-      "sourceOfTruthTables": ["service_tasks"],
-      "workspaceScope": ["W-STAY-SERVICE-TASK"],
-      "freshness": { "timestampField": "updated_at_utc", "lagMetric": "projectionLagSeconds" },
+      "sourceOfTruthTables": [
+        "service_tasks"
+      ],
+      "workspaceScope": [
+        "W-STAY-SERVICE-TASK"
+      ],
+      "freshness": {
+        "timestampField": "updated_at_utc",
+        "lagMetric": "projectionLagSeconds"
+      },
       "crossCheck": "ServiceTaskQueueLens reads ServiceTask state; BedStatus remains ResourceSetup-owned."
     },
     {
       "id": "risk-command",
       "name": "RiskCommandLens",
-      "sourceOfTruthTables": ["stay_balances", "hostel_payments", "service_tasks", "accommodation_beds", "deposit_liabilities", "deposit_transactions", "payment_mismatches", "reconciliation_cases", "ledger_correction_requests", "process_work_item_intents", "process_request_event_intents", "expense_ledger_status", "period_reviews"],
-      "workspaceScope": ["W-STAY-PAYMENT-LEDGER", "W-STAY-SERVICE-TASK", "W-STAY-RESOURCE", "W-STAY-DEPOSIT-LEDGER", "W-STAY-PERIOD-ANALYTICS"],
-      "freshness": { "timestampField": "updated_at_utc", "lagMetric": "projectionLagSeconds" },
+      "sourceOfTruthTables": [
+        "stay_balances",
+        "hostel_payments",
+        "service_tasks",
+        "accommodation_beds",
+        "deposit_liabilities",
+        "deposit_transactions",
+        "payment_mismatches",
+        "reconciliation_cases",
+        "ledger_correction_requests",
+        "process_work_item_intents",
+        "process_request_event_intents",
+        "expense_ledger_status",
+        "period_reviews"
+      ],
+      "workspaceScope": [
+        "W-STAY-PAYMENT-LEDGER",
+        "W-STAY-SERVICE-TASK",
+        "W-STAY-RESOURCE",
+        "W-STAY-DEPOSIT-LEDGER",
+        "W-STAY-PERIOD-ANALYTICS"
+      ],
+      "freshness": {
+        "timestampField": "updated_at_utc",
+        "lagMetric": "projectionLagSeconds"
+      },
       "crossCheck": "RiskCommandLens is drilldown-first. Every official risk item must carry source refs, owner, resolveAction, severity reason, and drilldownUrl; demo or projection-only counts are forbidden."
     },
     {
       "id": "period-performance",
       "name": "PeriodPerformanceLens",
-      "sourceOfTruthTables": ["period_reviews", "period_metric_snapshots", "period_finance_snapshots", "expense_ledger_status", "period_action_plans"],
-      "workspaceScope": ["W-STAY-PERIOD-ANALYTICS"],
-      "freshness": { "timestampField": "updated_at_utc", "lagMetric": "projectionLagSeconds" },
+      "sourceOfTruthTables": [
+        "period_reviews",
+        "period_metric_snapshots",
+        "period_finance_snapshots",
+        "expense_ledger_status",
+        "period_action_plans"
+      ],
+      "workspaceScope": [
+        "W-STAY-PERIOD-ANALYTICS"
+      ],
+      "freshness": {
+        "timestampField": "updated_at_utc",
+        "lagMetric": "projectionLagSeconds"
+      },
       "crossCheck": "PeriodPerformanceLens reads frozen PeriodAnalytics snapshots and explicit ExpenseLedger integration state, not confirm payload totals."
     },
     {
       "id": "room-revenue-potential",
       "name": "RoomRevenuePotentialLens",
-      "sourceOfTruthTables": ["accommodation_rooms", "accommodation_rate_plans"],
-      "workspaceScope": ["W-STAY-RESOURCE"],
-      "freshness": { "timestampField": "updated_at_utc", "lagMetric": "projectionLagSeconds" },
+      "sourceOfTruthTables": [
+        "accommodation_rooms",
+        "accommodation_rate_plans"
+      ],
+      "workspaceScope": [
+        "W-STAY-RESOURCE"
+      ],
+      "freshness": {
+        "timestampField": "updated_at_utc",
+        "lagMetric": "projectionLagSeconds"
+      },
       "crossCheck": "RoomRevenuePotentialLens calculates capacity from ResourceSetup room and rate plan facts."
     },
     {
       "id": "lead-funnel",
       "name": "LeadFunnelLens",
-      "sourceOfTruthTables": ["hostel_leads", "hostel_bookings", "hostel_stays"],
-      "workspaceScope": ["W-STAY-LEAD-RESERVATION", "W-STAY-CHECKIN", "W-STAY-LIFECYCLE"],
-      "freshness": { "timestampField": "updated_at_utc", "lagMetric": "projectionLagSeconds" },
+      "sourceOfTruthTables": [
+        "hostel_leads",
+        "hostel_bookings",
+        "hostel_stays"
+      ],
+      "workspaceScope": [
+        "W-STAY-LEAD-RESERVATION",
+        "W-STAY-CHECKIN",
+        "W-STAY-LIFECYCLE"
+      ],
+      "freshness": {
+        "timestampField": "updated_at_utc",
+        "lagMetric": "projectionLagSeconds"
+      },
       "crossCheck": "LeadFunnelLens reads intake and lifecycle tables once; it does not infer ledger facts."
     }
-  ]
+  ],
+  "dormitoryOamClosure": {
+    "version": "oam.dormitory.global-lens-closure.v1",
+    "derivedFrom": [
+      "docs/business/dormitory/dormitory-operating-kernel.json",
+      "docs/business/dormitory/metric-formula-contract.yml",
+      "docs/business/dormitory/lens-map.yml"
+    ],
+    "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
+    "currentTruthAllowed": false,
+    "manualEditAllowed": false,
+    "readOnlyPolicy": "Accommodation lenses are projection-only; they may drill down to WorkItem, Event, Ledger, Evidence, and LensSnapshot but must not mutate business or ledger facts.",
+    "categories": [
+      "资源",
+      "转化",
+      "收入",
+      "押金",
+      "支出",
+      "周转",
+      "治理"
+    ],
+    "metricBindings": [
+      {
+        "metricId": "resource.available_beds",
+        "categoryZh": "资源",
+        "owner": "dormitory",
+        "sourceFacts": "Bed.bedState",
+        "drilldownWorkItemType": "Dorm.ResourceReadinessConfirm",
+        "drilldown": [
+          "WorkItem",
+          "DomainEvent",
+          "LedgerEntry",
+          "Evidence",
+          "LensSnapshot"
+        ],
+        "readonly": true,
+        "correctionStrategyZh": "低于阈值生成资源准备行动"
+      },
+      {
+        "metricId": "conversion.lead_to_checkin",
+        "categoryZh": "转化",
+        "owner": "dormitory",
+        "sourceFacts": "Lead + Reservation + Stay",
+        "drilldownWorkItemType": "Dorm.PeriodActionPlanExecute",
+        "drilldown": [
+          "WorkItem",
+          "DomainEvent",
+          "LedgerEntry",
+          "Evidence",
+          "LensSnapshot"
+        ],
+        "readonly": true,
+        "correctionStrategyZh": "低于阈值生成转化行动"
+      },
+      {
+        "metricId": "revenue.received",
+        "categoryZh": "收入",
+        "owner": "finance-gate",
+        "sourceFacts": "LedgerEntry.payment",
+        "drilldownWorkItemType": "Dorm.PaymentConfirm",
+        "drilldown": [
+          "WorkItem",
+          "DomainEvent",
+          "LedgerEntry",
+          "Evidence",
+          "LensSnapshot"
+        ],
+        "readonly": true,
+        "correctionStrategyZh": "钻取到收款 WorkItem 和 Ledger"
+      },
+      {
+        "metricId": "deposit.liability",
+        "categoryZh": "押金",
+        "owner": "finance-gate",
+        "sourceFacts": "LedgerEntry.deposit_liability",
+        "drilldownWorkItemType": "Dorm.DepositConfirm",
+        "drilldown": [
+          "WorkItem",
+          "DomainEvent",
+          "LedgerEntry",
+          "Evidence",
+          "LensSnapshot"
+        ],
+        "readonly": true,
+        "correctionStrategyZh": "钻取到押金账户和证据"
+      },
+      {
+        "metricId": "expense.approved_cost",
+        "categoryZh": "支出",
+        "owner": "finance-gate",
+        "sourceFacts": "LedgerEntry.expense",
+        "drilldownWorkItemType": "Finance.ExpenseApprove",
+        "drilldown": [
+          "WorkItem",
+          "DomainEvent",
+          "LedgerEntry",
+          "Evidence",
+          "LensSnapshot"
+        ],
+        "readonly": true,
+        "correctionStrategyZh": "钻取到支出审批和凭证"
+      },
+      {
+        "metricId": "turnover.checkout_cycle",
+        "categoryZh": "周转",
+        "owner": "dormitory",
+        "sourceFacts": "CheckoutCase + RoomInspection",
+        "drilldownWorkItemType": "Dorm.CheckoutSettlementApprove",
+        "drilldown": [
+          "WorkItem",
+          "DomainEvent",
+          "LedgerEntry",
+          "Evidence",
+          "LensSnapshot"
+        ],
+        "readonly": true,
+        "correctionStrategyZh": "钻取到验房和结算"
+      },
+      {
+        "metricId": "governance.exception_resolution",
+        "categoryZh": "治理",
+        "owner": "dormitory",
+        "sourceFacts": "ExceptionCase",
+        "drilldownWorkItemType": "Dorm.ExceptionResolve",
+        "drilldown": [
+          "WorkItem",
+          "DomainEvent",
+          "LedgerEntry",
+          "Evidence",
+          "LensSnapshot"
+        ],
+        "readonly": true,
+        "correctionStrategyZh": "钻取到异常和行动计划"
+      }
+    ],
+    "periodReviewWorkItemType": "Dorm.PeriodReview",
+    "actionPlanWorkItemType": "Dorm.PeriodActionPlanExecute",
+    "financeTruthBoundary": "finance-gate / Money Kernel"
+  }
 }

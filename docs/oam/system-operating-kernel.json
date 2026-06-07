@@ -51,7 +51,7 @@
       "responsibilityZh": "Domain Kernel 对当前 OAM 运行链负责。",
       "inputs": [
         "docs/business/business-line-registry.json",
-        "docs/business/domains/dormitory/dormitory-operating-kernel.json"
+        "docs/business/dormitory/dormitory-operating-kernel.json"
       ],
       "outputs": [
         "业务能力",

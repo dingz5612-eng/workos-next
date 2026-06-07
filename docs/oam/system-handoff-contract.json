@@ -58,7 +58,7 @@
     "recoveryRoute",
     "evidenceRef"
   ],
-  "dormitoryImplementation": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+  "dormitoryImplementation": "docs/business/dormitory/dormitory-operating-kernel.json",
   "gates": [
     "scripts/oam/check-system-handoff-contract.mjs",
     "scripts/business/check-dormitory-execution-kernel.mjs"

@@ -148,7 +148,7 @@ internal sealed class DormitoryScenarioHarness
     public static IReadOnlyList<DormitoryScenario> CommittedScenarios() =>
         new[]
         {
-            new DormitoryScenario("dorm-cert-001", "BedAssignmentConfirm", "case-dorm-cert-001", "wi-dorm-cert-001", "idem-dorm-001", ["identity-document", "reservation-acknowledgement", "bed-availability-proof"]),
+            new DormitoryScenario("dorm-cert-001", "CheckinConfirm", "case-dorm-cert-001", "wi-dorm-cert-001", "idem-dorm-001", ["identity-document", "reservation-acknowledgement", "bed-availability-proof"]),
             new DormitoryScenario("dorm-cert-004", "ServiceTaskComplete", "case-dorm-cert-004", "wi-dorm-cert-004", "idem-dorm-004", ["completion-photo", "verification-check"]),
             new DormitoryScenario("dorm-cert-007", "PeriodReview", "case-dorm-cert-007", "wi-dorm-cert-007", "idem-dorm-007", ["period-review-pack"])
         };

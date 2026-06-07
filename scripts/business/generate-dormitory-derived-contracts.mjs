@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 const root = process.cwd();
-const kernelPath = "docs/business/domains/dormitory/dormitory-operating-kernel.json";
+const kernelPath = "docs/business/dormitory/dormitory-operating-kernel.json";
 const kernelVersion = "oam.domain-operating-kernel.dormitory.v2";
 const sourceKernel = kernelPath;
 const generatedBy = "scripts/business/generate-dormitory-derived-contracts.mjs";
@@ -108,15 +108,17 @@ const aliases = [
 const byType = new Map(workItems.map((item) => [item.workItemType, item]));
 
 writeJson(kernelPath, buildKernel());
+writeJson("docs/business/domains/dormitory/domain-pack.yml", buildDomainPack());
 writeWorkItemFiles();
-writeJson("docs/business/domains/dormitory/handoff-contract.json", buildDormitoryHandoff());
-writeJson("docs/business/domains/dormitory/dormitory-seed-data-pack.json", buildSeedData());
-writeJson("docs/business/domains/dormitory/dormitory-observability-contract.json", buildObservability());
-writeJson("docs/business/domains/dormitory/dormitory-pilot-go-no-go.json", buildPilotGoNoGo());
-writeJsonAsYml("docs/business/domains/dormitory/dormitory-release-train.yml", buildReleaseTrain());
-writeJsonAsYml("docs/business/domains/dormitory/dormitory-pilot-scenario-pack.yml", buildPilotScenarioPack());
-writeText("docs/business/domains/dormitory/dormitory-operator-playbook.md", buildPlaybook());
+writeJson("docs/business/dormitory/handoff-contract.json", buildDormitoryHandoff());
+writeJson("docs/business/dormitory/dormitory-seed-data-pack.json", buildSeedData());
+writeJson("docs/business/dormitory/dormitory-observability-contract.json", buildObservability());
+writeJson("docs/business/dormitory/dormitory-pilot-go-no-go.json", buildPilotGoNoGo());
+writeJsonAsYml("docs/business/dormitory/dormitory-release-train.yml", buildReleaseTrain());
+writeJsonAsYml("docs/business/dormitory/dormitory-pilot-scenario-pack.yml", buildPilotScenarioPack());
+writeText("docs/business/dormitory/dormitory-operator-playbook.md", buildPlaybook());
 writeSourceDerivedViews();
+patchGlobalLensAnalyticsContracts();
 patchRegistries();
 patchLanguageCatalog();
 patchDbOwnershipMap();
@@ -247,7 +249,7 @@ function buildKernel() {
     fieldsSource: "docs/contracts/business/oam-business-object-field-registry.json",
     workflowStateSource: "docs/contracts/business/oam-workflow-state-registry.json",
     definitionRegistry: "docs/contracts/definition/workitem-definition-registry.json",
-    handoffContract: "docs/business/domains/dormitory/handoff-contract.json",
+    handoffContract: "docs/business/dormitory/handoff-contract.json",
     releaseTrains: trains,
     workItems,
     aliases,
@@ -302,13 +304,13 @@ function buildKernel() {
     },
     absorbedOrRemovedActions: aliases,
     derivedContracts: [
-      "docs/business/domains/dormitory/workitems/*.json",
-      "docs/business/domains/dormitory/dormitory-release-train.yml",
-      "docs/business/domains/dormitory/dormitory-pilot-scenario-pack.yml",
-      "docs/business/domains/dormitory/dormitory-seed-data-pack.json",
-      "docs/business/domains/dormitory/dormitory-observability-contract.json",
-      "docs/business/domains/dormitory/dormitory-operator-playbook.md",
-      "docs/business/domains/dormitory/dormitory-pilot-go-no-go.json"
+      "docs/business/dormitory/workitems/*.json",
+      "docs/business/dormitory/dormitory-release-train.yml",
+      "docs/business/dormitory/dormitory-pilot-scenario-pack.yml",
+      "docs/business/dormitory/dormitory-seed-data-pack.json",
+      "docs/business/dormitory/dormitory-observability-contract.json",
+      "docs/business/dormitory/dormitory-operator-playbook.md",
+      "docs/business/dormitory/dormitory-pilot-go-no-go.json"
     ],
     gates: [
       "scripts/business/check-dormitory-operating-kernel.mjs",
@@ -339,8 +341,182 @@ function operationFor(item) {
   };
 }
 
+function buildDomainPack() {
+  const currentWorkItems = workItems.map((item) => item.workItemType);
+  const traceability = [
+    trace("Subject", "主体", "Dorm.CheckinConfirm", "SubjectLinkedToStay", "shared-governance-owner", false, "scripts/check-shared-governance-boundary.mjs", "SubjectVehicleTruthPack"),
+    trace("Vehicle", "车辆", "Dorm.CheckinConfirm", "VehicleLinkedForVisit", "shared-governance-owner", false, "scripts/check-shared-governance-boundary.mjs", "SubjectVehicleTruthPack"),
+    trace("Room", "房间", "Dorm.RoomSetupConfirm", "DormitoryRoomPrepared", "宿舍经办人", false, "scripts/business/check-dormitory-operating-kernel.mjs"),
+    trace("Bed", "床位", "Dorm.BedSetupConfirm", "DormitoryBedPrepared", "宿舍经办人", false, "scripts/business/check-dormitory-operating-kernel.mjs"),
+    trace("RatePlan", "价格方案", "Dorm.RatePlanConfirm", "DormitoryRatePlanConfirmed", "宿舍负责人", false, "scripts/business/check-dormitory-operating-kernel.mjs"),
+    trace("Lead", "线索", "Dorm.LeadCapture", "DormitoryLeadCaptured", "宿舍经办人", false, "scripts/business/check-dormitory-operating-kernel.mjs"),
+    trace("Reservation", "预订", "Dorm.ReservationConfirm", "DormitoryReservationConfirmed", "宿舍负责人", false, "scripts/business/check-dormitory-operating-kernel.mjs"),
+    trace("AccommodationOrder", "住宿单", "Dorm.CheckinConfirm", "DormitoryStayPrepared", "宿舍经办人", false, "scripts/business/check-canonical-scenario-map.mjs"),
+    trace("Resident", "入住人", "Dorm.CheckinConfirm", "DormitoryResidentLinked", "宿舍经办人", false, "scripts/business/check-dormitory-operating-kernel.mjs"),
+    trace("Stay", "住宿", "Dorm.CheckinConfirm", "DormitoryStayPrepared", "宿舍经办人", false, "scripts/business/check-dormitory-operating-kernel.mjs"),
+    trace("StayChargeBasis", "费用依据", "Dorm.PaymentConfirm", "DormitoryPaymentBasisCaptured", "宿舍负责人", false, "scripts/check-finance-truth.mjs"),
+    trace("PaymentBasis", "收款依据", "Dorm.PaymentConfirm", "DormitoryPaymentBasisCaptured", "宿舍负责人", false, "scripts/check-finance-truth.mjs"),
+    trace("DepositRequest", "押金请求", "Dorm.DepositConfirm", "DormitoryDepositBasisCaptured", "宿舍负责人", false, "scripts/finance/check-finance-semantic-truth.mjs"),
+    trace("ServiceTask", "服务任务", "Dorm.ServiceTaskCreate", "DormitoryServiceTaskCreated", "宿舍经办人", false, "scripts/business/check-dormitory-operating-kernel.mjs"),
+    trace("Expense", "支出", "Finance.ExpenseRecord", "FinanceExpenseBasisRecorded", "宿舍负责人", false, "scripts/check-finance-truth.mjs"),
+    trace("ExpenseLink", "支出关联", "Finance.ExpenseLink", "FinanceExpenseLinked", "宿舍负责人", false, "scripts/check-finance-truth.mjs"),
+    trace("CheckoutCase", "退住结算", "Dorm.CheckoutSettlementApprove", "DormitoryCheckoutSettled", "宿舍负责人", false, "scripts/business/check-dormitory-operating-kernel.mjs"),
+    trace("RoomInspection", "验房", "Dorm.RoomInspectionConfirm", "DormitoryRoomInspected", "宿舍经办人", false, "scripts/business/check-dormitory-operating-kernel.mjs"),
+    trace("PeriodSnapshot", "周期快照", "Dorm.PeriodReview", "DormitoryPeriodSnapshotFrozen", "宿舍负责人", false, "scripts/business/check-dormitory-metrics-lens-contract.mjs"),
+    trace("ActionPlan", "行动计划", "Dorm.PeriodActionPlanExecute", "DormitoryActionPlanExecuted", "宿舍经办人", false, "scripts/business/check-dormitory-metrics-lens-contract.mjs"),
+    trace("ExceptionCase", "异常", "Dorm.ExceptionResolve", "DormitoryExceptionResolved", "宿舍负责人", false, "scripts/check-runtime-write-paths.mjs"),
+    trace("FinancialFact", "财务事实", "Dorm.PaymentConfirm", "FinanceTruthCommitted", "finance-gate", true, "scripts/check-finance-truth.mjs"),
+    trace("LedgerEntry", "账务事实", "Finance.CorrectionApply", "LedgerEntryAppended", "finance-gate", true, "scripts/check-ledger-semantic-rules.mjs"),
+    trace("SharedReceipt", "回执", "Dorm.CheckinConfirm", "SharedReceiptIssued", "shared-governance-owner", false, "scripts/check-shared-governance-boundary.mjs"),
+    trace("Profile", "画像", "Dorm.PeriodReview", "ProfileProjectionUpdated", "projection-runtime", false, "scripts/check-api-boundaries.mjs"),
+    trace("DashboardSummary", "驾驶舱摘要", "Dorm.PeriodReview", "DashboardSummaryProjected", "projection-runtime", false, "scripts/check-management-cockpit-boundary.mjs")
+  ];
+  return {
+    version: 2,
+    packId: "DormitoryDomainPack",
+    domainId: "dormitory",
+    owner: "DormitoryDomainPack",
+    derivedFrom: [kernelPath],
+    currentTruthSource: kernelPath,
+    currentTruthAllowed: false,
+    domainOwner: "dormitory.operations",
+    humanRoles: ["宿舍经办人", "宿舍负责人"],
+    ownedFacts: [
+      "Room",
+      "Bed",
+      "RatePlan",
+      "Lead",
+      "Reservation",
+      "Resident",
+      "Stay",
+      "BedOccupancyInterval",
+      "StayChargeBasis",
+      "DepositRequest",
+      "PaymentBasis",
+      "EvidenceRequirement",
+      "CheckoutCase",
+      "CleaningTask",
+      "DamageAssessment",
+      "ServiceTask",
+      "Expense",
+      "ExpenseLink",
+      "RoomInspection",
+      "PeriodSnapshot",
+      "ActionPlan",
+      "StayBalanceLens",
+      "DepositLiabilityLens",
+      "DormitoryRiskSummary"
+    ],
+    requestedFacts: [
+      "Subject",
+      "SubjectRelationship",
+      "SharedReceipt",
+      "Profile",
+      "MoneyBasis",
+      "AmountBasis",
+      "PaymentFact",
+      "DepositFact",
+      "FinancialFact",
+      "LedgerEntry",
+      "LedgerTransaction",
+      "EvidenceObject",
+      "ExceptionCase",
+      "DashboardSummary",
+      "DepositReceipt",
+      "PaymentReceipt",
+      "RefundDeposit",
+      "FinanceReceipt"
+    ],
+    events: [
+      "DormitoryRoomPrepared",
+      "DormitoryBedPrepared",
+      "DormitoryRatePlanConfirmed",
+      "DormitoryResourceReadinessConfirmed",
+      "DormitoryLeadCaptured",
+      "DormitoryReservationConfirmed",
+      "DormitoryStayPrepared",
+      "DormitoryPaymentBasisCaptured",
+      "DormitoryDepositBasisCaptured",
+      "DormitoryServiceTaskCompleted",
+      "FinanceExpenseBasisRecorded",
+      "DormitoryCheckoutInspected",
+      "DormitoryCorrectionRequested",
+      "DormitoryPeriodReviewed",
+      "DormitoryCommandRejected"
+    ],
+    workitems: currentWorkItems,
+    absorbedActionTypes: aliases.map((item) => ({
+      workItemType: item.workItemType,
+      absorbedBy: item.absorbedBy,
+      decision: "sourceAliasOnly",
+      currentExecutableWorkItem: false
+    })),
+    objectTraceability: traceability,
+    goldenChainTrace: {
+      sourceScenario: "docs/scenarios/dormitory/golden-pilot.yml",
+      operatingKernel: kernelPath,
+      handoffContract: "docs/business/dormitory/handoff-contract.json",
+      scenarioMap: "docs/business/dormitory/canonical-scenario-map.json",
+      fieldContract: "docs/business/dormitory/scenario-field-contract.yml",
+      stateContract: "docs/contracts/definition/workitem-definition-registry.json",
+      eventContract: "services/core-api/WorkOS.Api/Runtime/OperationsUnitOfWork.cs",
+      evidenceContract: "docs/business/dormitory/evidence-coverage-contract.yml",
+      financeBoundary: "docs/business/dormitory/ledger-posting-contract.yml",
+      searchBoundary: "docs/contracts/search/search-contract.json",
+      kpiBoundary: "docs/business/dormitory/metric-formula-contract.yml",
+      surfaceBoundary: "docs/surface/surface-contract.yml",
+      gate: "scripts/oam/run-control-plane-checks.ps1"
+    },
+    evidence: {
+      required: Array.from(new Set(workItems.flatMap((item) => item.evidenceRefs))).sort(),
+      policy: "referenceOnly"
+    },
+    finance: {
+      moneyBasisPolicy: "routeToFinanceTruthPack",
+      ledgerPolicy: "noDirectLedgerCommit"
+    },
+    invariants: [
+      "dormitory.operating_kernel_is_only_current_truth",
+      "dormitory.no_center_truth_ownership",
+      "dormitory.confirm_uses_operations_uow",
+      "dormitory.money_basis_routes_to_finance_truth",
+      "dormitory.evidence_required_before_confirm",
+      "dormitory.l1_pilot_not_production",
+      "dormitory.downstream_steps_carry_forward_fixed_objects",
+      "dormitory.ocr_suggestions_must_be_user_adopted_before_write"
+    ],
+    certification: {
+      requiredScenarios: Array.from({ length: 10 }, (_, index) => `dorm-cert-${String(index + 1).padStart(3, "0")}`)
+    },
+    goNoGo: {
+      productionAllowedDefault: false
+    },
+    allowedCapabilities: ["propose", "validate", "project", "routeToFinanceTruth", "routeToEvidenceTrust"],
+    forbiddenCapabilities: ["ownCenterTruth", "commitLedgerWithProvisionalRef", "processDomainExceptionFromManagementCockpit", "declareL2Production"],
+    receiptPolicy: "referenceOnly",
+    managementCockpitBoundary: "observeAndRouteOnly"
+  };
+}
+
+function trace(objectId, nameZh, workItem, event, writer, producesLedgerEntry, gate, owner = undefined) {
+  return {
+    objectId,
+    中文名称: nameZh,
+    owner: owner ?? (producesLedgerEntry ? "FinanceTruthPack" : "DormitoryDomainPack"),
+    writers: [writer],
+    readers: ["DormitoryDomainPack", "FinanceTruthPack", "SearchKernel", "ManagementCockpit"],
+    workItem,
+    event,
+    producesLedgerEntry,
+    searchable: true,
+    kpiIncluded: true,
+    evidenceRequired: true,
+    protectedByGate: gate
+  };
+}
+
 function writeWorkItemFiles() {
-  const dir = "docs/business/domains/dormitory/workitems";
+  const dir = "docs/business/dormitory/workitems";
   fs.mkdirSync(abs(dir), { recursive: true });
   for (const item of workItems) {
     writeJson(`${dir}/${slug(item.workItemType)}.json`, {
@@ -520,6 +696,65 @@ function buildPilotGoNoGo() {
 
 function buildPlaybook() {
   return `# 宿舍操作手册\n\n> 派生自 ${kernelPath}，不得作为第二权威。\n\n## 两个角色\n\n- 宿舍经办人：录入、办理、补证、执行。\n- 宿舍负责人：审批、财务确认、纠错、周期复盘、例外放行。\n\n## 操作原则\n\n系统自动带入上游已确认字段并锁定；当前环节只补缺失字段、证据和原因。金额事实只由 finance-gate / Money Kernel 生成。周期复盘只读业务事实、财务事实、证据事实和 Lens 快照，只生成行动计划或异常处理。\n\n## 当前 WorkItem\n\n${workItems.map((item) => `- ${item.workItemType}：${item.nameZh}，${item.ownerRole}，${item.ledgerImpact}`).join("\n")}\n`;
+}
+
+function patchGlobalLensAnalyticsContracts() {
+  const requiredDrilldown = ["WorkItem", "DomainEvent", "LedgerEntry", "Evidence", "LensSnapshot"];
+  const metricBindings = metrics.map((item) => ({
+    metricId: item.metricId,
+    categoryZh: item.categoryZh,
+    owner: item.owner,
+    sourceFacts: item.sourceFacts,
+    drilldownWorkItemType: item.drilldownWorkItemType,
+    drilldown: requiredDrilldown,
+    readonly: true,
+    correctionStrategyZh: item.correctionStrategyZh
+  }));
+
+  const lensFile = "docs/contracts/accommodation-lens-contract.json";
+  const lensContract = readJson(lensFile);
+  lensContract.dormitoryOamClosure = {
+    version: "oam.dormitory.global-lens-closure.v1",
+    derivedFrom: [kernelPath, "docs/business/dormitory/metric-formula-contract.yml", "docs/business/dormitory/lens-map.yml"],
+    sourceKernelVersion: kernelVersion,
+    currentTruthAllowed: false,
+    manualEditAllowed: false,
+    readOnlyPolicy: "Accommodation lenses are projection-only; they may drill down to WorkItem, Event, Ledger, Evidence, and LensSnapshot but must not mutate business or ledger facts.",
+    categories: ["资源", "转化", "收入", "押金", "支出", "周转", "治理"],
+    metricBindings,
+    periodReviewWorkItemType: "Dorm.PeriodReview",
+    actionPlanWorkItemType: "Dorm.PeriodActionPlanExecute",
+    financeTruthBoundary: "finance-gate / Money Kernel"
+  };
+  writeJson(lensFile, lensContract);
+
+  const analyticsFile = "docs/contracts/period-analytics-contract.json";
+  const analytics = readJson(analyticsFile);
+  analytics.dormitoryOamClosure = {
+    version: "oam.dormitory.period-analytics-closure.v1",
+    derivedFrom: [kernelPath, "docs/business/dormitory/metric-formula-contract.yml", "docs/business/dormitory/lens-map.yml"],
+    sourceKernelVersion: kernelVersion,
+    currentTruthAllowed: false,
+    manualEditAllowed: false,
+    periodReviewWorkItemType: "Dorm.PeriodReview",
+    actionPlanWorkItemType: "Dorm.PeriodActionPlanExecute",
+    readOnlyInputs: ["businessFacts", "financeFacts", "evidenceFacts", "lensSnapshots"],
+    forbiddenWrites: ["businessFacts", "financeFacts", "ledgerEntries"],
+    allowedOutputs: ["PeriodSnapshot", "ActionPlan", "ExceptionCase"],
+    categories: ["资源", "转化", "收入", "押金", "支出", "周转", "治理"],
+    drilldown: requiredDrilldown,
+    financeTruthBoundary: "finance-gate / Money Kernel"
+  };
+  analytics.actionPlanWorkItems = {
+    ...(analytics.actionPlanWorkItems ?? {}),
+    currentOamWorkItemType: "Dorm.PeriodActionPlanExecute"
+  };
+  analytics.snapshotPolicy = {
+    ...(analytics.snapshotPolicy ?? {}),
+    readOnlyInputs: ["businessFacts", "financeFacts", "evidenceFacts", "lensSnapshots"],
+    forbiddenDirectWrites: ["businessFacts", "financeFacts", "ledgerEntries"]
+  };
+  writeJson(analyticsFile, analytics);
 }
 
 function writeSourceDerivedViews() {
@@ -836,13 +1071,13 @@ function patchAuthorityIndex() {
   const entries = new Map((index.entries ?? []).map((entry) => [entry.path, entry]));
   const requiredEntries = [
     [kernelPath, "current_domain_kernel", "domain-owner", "scripts/business/check-dormitory-operating-kernel.mjs", true, "宿舍业务唯一运行内核。"],
-    ["docs/business/domains/dormitory/handoff-contract.json", "current_business_contract", "domain-owner", "scripts/business/check-dormitory-derived-contracts.mjs", true, "宿舍 handoff 合同。"],
-    ["docs/business/domains/dormitory/dormitory-release-train.yml", "current_business_contract", "domain-owner", "scripts/business/check-dormitory-release-train.mjs", false, "宿舍发布列车派生视图。"],
-    ["docs/business/domains/dormitory/dormitory-pilot-scenario-pack.yml", "current_business_contract", "domain-owner", "scripts/business/check-dormitory-pilot-scenario-pack.mjs", false, "宿舍试运行场景派生包。"],
-    ["docs/business/domains/dormitory/dormitory-seed-data-pack.json", "current_business_contract", "domain-owner", "scripts/business/check-dormitory-derived-contracts.mjs", false, "宿舍试运行种子数据派生包。"],
-    ["docs/business/domains/dormitory/dormitory-observability-contract.json", "current_business_contract", "domain-owner", "scripts/business/check-dormitory-derived-contracts.mjs", false, "宿舍可观测合同派生视图。"],
-    ["docs/business/domains/dormitory/dormitory-pilot-go-no-go.json", "current_business_contract", "domain-owner", "scripts/business/check-dormitory-derived-contracts.mjs", false, "宿舍试运行 Go/No-Go 派生视图。"],
-    ["docs/business/domains/dormitory/dormitory-operator-playbook.md", "current_manual", "domain-owner", "scripts/business/check-dormitory-derived-contracts.mjs", false, "宿舍操作手册，人读但不定义当前事实。"]
+    ["docs/business/dormitory/handoff-contract.json", "current_business_contract", "domain-owner", "scripts/business/check-dormitory-derived-contracts.mjs", true, "宿舍 handoff 合同。"],
+    ["docs/business/dormitory/dormitory-release-train.yml", "current_business_contract", "domain-owner", "scripts/business/check-dormitory-release-train.mjs", false, "宿舍发布列车派生视图。"],
+    ["docs/business/dormitory/dormitory-pilot-scenario-pack.yml", "current_business_contract", "domain-owner", "scripts/business/check-dormitory-pilot-scenario-pack.mjs", false, "宿舍试运行场景派生包。"],
+    ["docs/business/dormitory/dormitory-seed-data-pack.json", "current_business_contract", "domain-owner", "scripts/business/check-dormitory-derived-contracts.mjs", false, "宿舍试运行种子数据派生包。"],
+    ["docs/business/dormitory/dormitory-observability-contract.json", "current_business_contract", "domain-owner", "scripts/business/check-dormitory-derived-contracts.mjs", false, "宿舍可观测合同派生视图。"],
+    ["docs/business/dormitory/dormitory-pilot-go-no-go.json", "current_business_contract", "domain-owner", "scripts/business/check-dormitory-derived-contracts.mjs", false, "宿舍试运行 Go/No-Go 派生视图。"],
+    ["docs/business/dormitory/dormitory-operator-playbook.md", "current_manual", "domain-owner", "scripts/business/check-dormitory-derived-contracts.mjs", false, "宿舍操作手册，人读但不定义当前事实。"]
   ];
   for (const [entryPath, identity, owner, checker, currentTruthAllowed, notesZh] of requiredEntries) {
     entries.set(entryPath, {
@@ -1222,14 +1457,14 @@ function groupMetricsByCategory() {
 function allNewAndDerivedFiles() {
   return [
     kernelPath,
-    "docs/business/domains/dormitory/handoff-contract.json",
-    "docs/business/domains/dormitory/dormitory-release-train.yml",
-    "docs/business/domains/dormitory/dormitory-pilot-scenario-pack.yml",
-    "docs/business/domains/dormitory/dormitory-seed-data-pack.json",
-    "docs/business/domains/dormitory/dormitory-observability-contract.json",
-    "docs/business/domains/dormitory/dormitory-operator-playbook.md",
-    "docs/business/domains/dormitory/dormitory-pilot-go-no-go.json",
-    ...workItems.map((item) => `docs/business/domains/dormitory/workitems/${slug(item.workItemType)}.json`),
+    "docs/business/dormitory/handoff-contract.json",
+    "docs/business/dormitory/dormitory-release-train.yml",
+    "docs/business/dormitory/dormitory-pilot-scenario-pack.yml",
+    "docs/business/dormitory/dormitory-seed-data-pack.json",
+    "docs/business/dormitory/dormitory-observability-contract.json",
+    "docs/business/dormitory/dormitory-operator-playbook.md",
+    "docs/business/dormitory/dormitory-pilot-go-no-go.json",
+    ...workItems.map((item) => `docs/business/dormitory/workitems/${slug(item.workItemType)}.json`),
     "docs/business/dormitory/workitem-catalog.yml",
     "docs/business/dormitory/workitem-decision-table.json",
     "docs/business/dormitory/value-streams.yml",
@@ -1274,7 +1509,7 @@ function checkerForPath(filePath) {
 function lifecycleForPath(filePath) {
   if (filePath === kernelPath || filePath.endsWith("handoff-contract.json")) return "active_contract";
   if (filePath.endsWith("operator-playbook.md")) return "human_manual";
-  if (filePath.startsWith("docs/business/domains/dormitory/workitems/")) return "derived_view";
+  if (filePath.startsWith("docs/business/dormitory/workitems/")) return "derived_view";
   if (filePath.includes("dormitory-release-train") || filePath.includes("pilot-scenario") || filePath.includes("seed-data") || filePath.includes("observability") || filePath.includes("pilot-go-no-go")) return "derived_view";
   if (filePath.startsWith("scripts/")) return "active_validation";
   return "active_contract";

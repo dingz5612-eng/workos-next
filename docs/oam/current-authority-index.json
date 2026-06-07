@@ -72,78 +72,6 @@
       "notesZh": "宿舍当前领域包、事实归属和金链追踪。"
     },
     {
-      "path": "docs/business/domains/dormitory/dormitory-observability-contract.json",
-      "identity": "current_business_contract",
-      "owner": "domain-owner",
-      "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
-      "evidence": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": false,
-      "notesZh": "宿舍可观测合同派生视图。"
-    },
-    {
-      "path": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
-      "identity": "current_domain_kernel",
-      "owner": "domain-owner",
-      "checker": "scripts/business/check-dormitory-operating-kernel.mjs",
-      "evidence": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
-      "notesZh": "宿舍业务唯一运行内核。"
-    },
-    {
-      "path": "docs/business/domains/dormitory/dormitory-operator-playbook.md",
-      "identity": "current_manual",
-      "owner": "domain-owner",
-      "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
-      "evidence": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": false,
-      "notesZh": "宿舍操作手册，人读但不定义当前事实。"
-    },
-    {
-      "path": "docs/business/domains/dormitory/dormitory-pilot-go-no-go.json",
-      "identity": "current_business_contract",
-      "owner": "domain-owner",
-      "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
-      "evidence": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": false,
-      "notesZh": "宿舍试运行 Go/No-Go 派生视图。"
-    },
-    {
-      "path": "docs/business/domains/dormitory/dormitory-pilot-scenario-pack.yml",
-      "identity": "current_business_contract",
-      "owner": "domain-owner",
-      "checker": "scripts/business/check-dormitory-pilot-scenario-pack.mjs",
-      "evidence": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": false,
-      "notesZh": "宿舍试运行场景派生包。"
-    },
-    {
-      "path": "docs/business/domains/dormitory/dormitory-release-train.yml",
-      "identity": "current_business_contract",
-      "owner": "domain-owner",
-      "checker": "scripts/business/check-dormitory-release-train.mjs",
-      "evidence": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": false,
-      "notesZh": "宿舍发布列车派生视图。"
-    },
-    {
-      "path": "docs/business/domains/dormitory/dormitory-seed-data-pack.json",
-      "identity": "current_business_contract",
-      "owner": "domain-owner",
-      "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
-      "evidence": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": false,
-      "notesZh": "宿舍试运行种子数据派生包。"
-    },
-    {
-      "path": "docs/business/domains/dormitory/handoff-contract.json",
-      "identity": "current_business_contract",
-      "owner": "domain-owner",
-      "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
-      "evidence": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
-      "notesZh": "宿舍 handoff 合同。"
-    },
-    {
       "path": "docs/business/domains/finance/finance-operating-kernel.json",
       "identity": "current_domain_kernel",
       "owner": "finance-truth-owner",
@@ -169,6 +97,78 @@
       "evidence": "artifacts/oam/checks/dormitory-golden-domain-report.json",
       "currentTruthAllowed": false,
       "notesZh": "宿舍当前业务旅程人读入口；只解释当前合同，不替代机器权威。"
+    },
+    {
+      "path": "docs/business/dormitory/dormitory-observability-contract.json",
+      "identity": "current_business_contract",
+      "owner": "domain-owner",
+      "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "notesZh": "宿舍可观测合同派生视图。"
+    },
+    {
+      "path": "docs/business/dormitory/dormitory-operating-kernel.json",
+      "identity": "current_domain_kernel",
+      "owner": "domain-owner",
+      "checker": "scripts/business/check-dormitory-operating-kernel.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "notesZh": "宿舍业务唯一运行内核。"
+    },
+    {
+      "path": "docs/business/dormitory/dormitory-operator-playbook.md",
+      "identity": "current_manual",
+      "owner": "domain-owner",
+      "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "notesZh": "宿舍操作手册，人读但不定义当前事实。"
+    },
+    {
+      "path": "docs/business/dormitory/dormitory-pilot-go-no-go.json",
+      "identity": "current_business_contract",
+      "owner": "domain-owner",
+      "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "notesZh": "宿舍试运行 Go/No-Go 派生视图。"
+    },
+    {
+      "path": "docs/business/dormitory/dormitory-pilot-scenario-pack.yml",
+      "identity": "current_business_contract",
+      "owner": "domain-owner",
+      "checker": "scripts/business/check-dormitory-pilot-scenario-pack.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "notesZh": "宿舍试运行场景派生包。"
+    },
+    {
+      "path": "docs/business/dormitory/dormitory-release-train.yml",
+      "identity": "current_business_contract",
+      "owner": "domain-owner",
+      "checker": "scripts/business/check-dormitory-release-train.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "notesZh": "宿舍发布列车派生视图。"
+    },
+    {
+      "path": "docs/business/dormitory/dormitory-seed-data-pack.json",
+      "identity": "current_business_contract",
+      "owner": "domain-owner",
+      "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "notesZh": "宿舍试运行种子数据派生包。"
+    },
+    {
+      "path": "docs/business/dormitory/handoff-contract.json",
+      "identity": "current_business_contract",
+      "owner": "domain-owner",
+      "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "notesZh": "宿舍 handoff 合同。"
     },
     {
       "path": "docs/business/dormitory/value-streams.yml",
