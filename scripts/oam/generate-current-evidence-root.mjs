@@ -43,6 +43,7 @@ const gateSummary = buildGateSummary();
 const testSummary = buildTestSummary();
 const coverageSummary = buildCoverageSummary();
 const mobileBranchRiskKernel = buildMobileBranchRiskKernel();
+const preservedEvidenceGraph = preserveCurrentBrowserEvidenceGraph(readJsonIfExists("artifacts/oam/evidence/evidence-graph.json"));
 const unresolvedP0 = p0Ledger.filter((item) => item.status !== "passed");
 const releaseReadiness = buildReleaseReadiness();
 const finalDecision = buildFinalDecision();
@@ -312,11 +313,14 @@ const evidenceGraph = {
   testSummary,
   coverageSummary,
   mobileBranchRiskKernel,
+  realBrowserEvidence: preservedEvidenceGraph.summary,
   controlPlaneGateResult,
   releaseReadiness,
   finalDecision,
   finalGoNoGo,
-  nextStageAllowed: finalReport.nextStageAllowed
+  nextStageAllowed: finalReport.nextStageAllowed,
+  nodes: preservedEvidenceGraph.nodes,
+  edges: preservedEvidenceGraph.edges
 };
 addEvidence("artifacts/oam/evidence/evidence-graph.json", evidenceGraph);
 addTextEvidence("artifacts/oam/evidence/execution-log.jsonl", executionLogText(digestPlaceholder));
@@ -491,6 +495,9 @@ function requiredGateCommands() {
     "node scripts/check-shared-governance-boundary.mjs",
     "node scripts/check-management-cockpit-boundary.mjs",
     "node scripts/check-dormitory-golden-domain.mjs",
+    "pwsh -NoProfile -ExecutionPolicy Bypass -File scripts/surface/run-dormitory-real-browser-audits.ps1",
+    "node scripts/surface/check-dormitory-l1-browser-e2e-audit.mjs",
+    "node scripts/surface/check-dormitory-ten-scenario-real-browser-audit.mjs",
     "node scripts/oam/generate-mobile-branch-risk-ledger.mjs",
     "node scripts/oam/check-mobile-coverage-policy.mjs",
     "node scripts/oam/check-mobile-critical-branch-scenarios.mjs",
@@ -524,6 +531,28 @@ function readControlPlaneGateResult() {
     status: result.status ?? "missing",
     missingRequiredGates,
     stale: result.commitSha !== commitSha
+  };
+}
+
+function preserveCurrentBrowserEvidenceGraph(existingGraph) {
+  const currentHead = commitSha;
+  const nodes = (existingGraph?.nodes ?? [])
+    .filter((node) => node?.type === "browser_e2e_evidence")
+    .filter((node) => node.headSha === currentHead)
+    .filter((node) => node.status === "local_passed")
+    .filter((node) => Array.isArray(node.refs) && node.refs.length > 0);
+  const nodeIds = new Set(nodes.map((node) => node.id));
+  const edges = (existingGraph?.edges ?? [])
+    .filter((edge) => nodeIds.has(edge?.from) || nodeIds.has(edge?.to));
+  return {
+    nodes,
+    edges,
+    summary: {
+      status: nodes.some((node) => node.gate === "DORM-L1-BROWSER-E2E") ? "passed" : "missing",
+      l1BrowserEvidenceNodes: nodes.filter((node) => node.gate === "DORM-L1-BROWSER-E2E").length,
+      screenshotHashCount: nodes.reduce((total, node) => total + (node.screenshotHashes?.length ?? 0), 0),
+      preservedFromExistingGraph: nodes.length > 0
+    }
   };
 }
 

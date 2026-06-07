@@ -1,6 +1,7 @@
 import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
+import { execSync } from "node:child_process";
 import { createRequire } from "node:module";
 
 const require = createRequire(import.meta.url);
@@ -42,6 +43,11 @@ const report = {
   scenarios: [],
   screenshots: [],
   networkEvents: [],
+  git: {
+    branch: command("git branch --show-current"),
+    headSha: command("git rev-parse HEAD"),
+    dirtyStatus: command("git status --short")
+  },
   networkPolicy: {},
   assertions: [],
   findings: []
@@ -589,4 +595,12 @@ function sha256(filePath) {
 
 function rel(filePath) {
   return path.relative(root, filePath).replace(/\\/g, "/");
+}
+
+function command(cmd) {
+  try {
+    return execSync(cmd, { cwd: root, encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] }).trim();
+  } catch {
+    return "";
+  }
 }

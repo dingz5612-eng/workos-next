@@ -165,6 +165,16 @@ jobs:
       - name: Runtime contract tests
         run: dotnet run --project tests/WorkOS.RuntimeContractTests/WorkOS.RuntimeContractTests.csproj -c Release
 
+      - name: Generate dormitory real-browser evidence
+        env:
+          WORKOS_REAL_BROWSER_HEADLESS: "1"
+          WORKOS_MOBILE_URL: http://127.0.0.1:5175
+          WORKOS_API_URL: http://127.0.0.1:5191
+        run: |
+          pwsh -NoProfile -ExecutionPolicy Bypass -File scripts/surface/run-dormitory-real-browser-audits.ps1
+          node scripts/surface/check-dormitory-l1-browser-e2e-audit.mjs
+          node scripts/surface/check-dormitory-ten-scenario-real-browser-audit.mjs
+
       - name: OAM total gate
         run: pwsh -NoProfile -ExecutionPolicy Bypass -File scripts/oam/run-control-plane-checks.ps1
 

@@ -132,6 +132,9 @@ Invoke-Gate node scripts/business/check-scenario-field-contract.mjs
 Invoke-Gate node scripts/business/check-canonical-scenario-map.mjs
 Invoke-Gate node scripts/business/check-evidence-coverage-contract.mjs
 Invoke-Gate node scripts/business/check-ledger-posting-contract.mjs
+Invoke-Gate pwsh -NoProfile -ExecutionPolicy Bypass -File scripts/surface/run-dormitory-real-browser-audits.ps1
+Invoke-Gate node scripts/surface/check-dormitory-l1-browser-e2e-audit.mjs
+Invoke-Gate node scripts/surface/check-dormitory-ten-scenario-real-browser-audit.mjs
 if (-not (Test-Path "artifacts/oam/test-results/mobile/coverage/coverage-summary.json")) {
   Invoke-Gate npm --prefix apps/mobile run test:coverage
 }

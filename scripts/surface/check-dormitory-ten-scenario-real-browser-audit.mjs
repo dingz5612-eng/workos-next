@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
+import { execSync } from "node:child_process";
 
 const root = process.cwd();
 const reportPath = path.join(
@@ -11,6 +12,11 @@ const reportPath = path.join(
 const outputPath = path.join(root, "artifacts", "oam", "checks", "dormitory-ten-scenario-real-browser-result.json");
 const violations = [];
 const report = readJson(reportPath);
+const currentGit = {
+  branch: command("git branch --show-current"),
+  headSha: command("git rev-parse HEAD"),
+  dirtyStatus: command("git status --short")
+};
 
 validateReport();
 writeResult();
@@ -26,12 +32,18 @@ function validateReport() {
   if (report.status !== "passed") {
     violations.push(v("ten_scenario.status", "10 场景真实浏览器审计结果必须 passed。"));
   }
-  if (report.browserMode !== "playwright-chromium-visible" && process.env.WORKOS_REAL_BROWSER_HEADLESS !== "1") {
-    violations.push(v("ten_scenario.browser_mode", "本地用户可见证据必须使用可见真实浏览器模式。", { browserMode: report.browserMode }));
+  if (!["playwright-chromium-visible", "playwright-chromium-headless"].includes(report.browserMode)) {
+    violations.push(v("ten_scenario.browser_mode", "证据必须来自 Playwright Chromium 真实浏览器模式。", { browserMode: report.browserMode }));
   }
   if (!String(report.mockPolicy || "").includes("real browser clicks") ||
       !String(report.mockPolicy || "").includes("no route mocks")) {
     violations.push(v("ten_scenario.mock_policy", "证据策略必须声明真实浏览器点击且不得使用路由 mock。"));
+  }
+  if (report.git?.headSha !== currentGit.headSha) {
+    violations.push(v("ten_scenario.git_head_stale", "10 场景真实浏览器报告不是当前提交生成。", { reportHeadSha: report.git?.headSha || "", currentHeadSha: currentGit.headSha }));
+  }
+  if (normalizeDirtyStatus(report.git?.dirtyStatus) !== normalizeDirtyStatus(currentGit.dirtyStatus)) {
+    violations.push(v("ten_scenario.git_dirty_stale", "10 场景真实浏览器报告不是当前工作区差异生成，必须重跑。"));
   }
   if (!Array.isArray(report.scenarios) || report.scenarios.length !== 10) {
     violations.push(v("ten_scenario.count", "必须覆盖 10 个宿舍业务场景。", { count: report.scenarios?.length || 0 }));
@@ -116,4 +128,21 @@ function exists(relativePath) {
 
 function v(id, message, extra = {}) {
   return { severity: "P0", id, message, ...extra };
+}
+
+function normalizeDirtyStatus(value) {
+  return String(value || "")
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .sort()
+    .join("\n");
+}
+
+function command(cmd) {
+  try {
+    return execSync(cmd, { cwd: root, encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] }).trim();
+  } catch {
+    return "";
+  }
 }

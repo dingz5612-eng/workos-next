@@ -572,7 +572,7 @@ function isProgressed(domState, beforeUrl) {
 
 function roleForCard(cardId = "") {
   const id = String(cardId || "");
-  if (/^(finance|checkoutFinance|feeMaterial|depositConfirmation|depositDeduction|depositRefundPayment|depositClose|paymentConfirmation|paymentAllocation|paymentAdjustment|debtFollowUp|expenseApproval|periodFinanceReview)$/i.test(id)) return "finance";
+  if (/^(finance|depositConfirmation|depositDeduction|depositRefundPayment|depositClose|paymentConfirmation|paymentAllocation|paymentAdjustment|debtFollowUp|expenseApproval|periodFinanceReview)$/i.test(id)) return "finance";
   if (/^(depositRefundApproval|serviceTaskVerify|periodScope|periodMetricsReview|periodOperationsDiagnosis|periodActionPlan|periodActionPlanComplete|periodClose|operatingDashboard)$/i.test(id)) return "manager";
   return "operator";
 }

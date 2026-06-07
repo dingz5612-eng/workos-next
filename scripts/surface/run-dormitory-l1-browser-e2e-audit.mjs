@@ -318,46 +318,77 @@ async function completeOnboardingIfNeeded(page, scenario) {
 }
 
 async function fillRequiredOperationFields(page, scenario) {
-  const fields = await page.locator("[data-operation-field][data-required-field=\"true\"], [data-operation-field][required]").evaluateAll((nodes) =>
-    nodes.map((node) => ({
-      id: node.dataset.operationField,
-      tag: node.tagName.toLowerCase(),
-      type: node.getAttribute("type") || "",
-      value: node.value || "",
-      readonly: node.hasAttribute("readonly") || node.getAttribute("aria-readonly") === "true",
-      options: node.tagName.toLowerCase() === "select"
-        ? Array.from(node.options).map((option) => ({ value: option.value, text: option.textContent || "" }))
-        : []
-    }))
-  );
-  const unique = dedupeBy(fields, (field) => field.id);
-  for (const [index, field] of unique.entries()) {
-    if (!field.id || (field.value && String(field.value).trim())) continue;
-    if (field.readonly) {
-      addViolation(scenario, `field.${field.id}.readonly_empty`, `Required field ${field.id} is readonly and empty.`);
-      continue;
-    }
-    const segmentedButton = page.locator(`[data-operation-field-button="${cssEscape(field.id)}"]`).first();
-    if (await segmentedButton.isVisible().catch(() => false)) {
-      scenario.clickSequence.push({ type: "click", label: `fill segmented field ${field.id}`, selector: `[data-operation-field-button="${field.id}"]`, beforeUrl: page.url() });
-      await segmentedButton.click();
-      await waitForHydrated(page);
-      scenario.clickSequence.at(-1).afterUrl = page.url();
-      continue;
-    }
-    if (field.type === "hidden") continue;
-    const selector = `[data-operation-field="${cssEscape(field.id)}"]`;
-    if (field.tag === "select") {
-      const option = field.options.find((item) => item.value && !/请选择|select/i.test(item.text)) || field.options.find((item) => item.value);
-      if (!option) {
-        addViolation(scenario, `field.${field.id}.no_select_option`, `Required select ${field.id} has no usable option.`);
+  for (let pass = 0; pass < 5; pass += 1) {
+    const fields = await operationFields(page);
+    let changed = 0;
+    for (const [index, field] of fields.entries()) {
+      if (!field.required || !field.id || field.valuePresent) continue;
+      if (field.readonly) {
+        addViolation(scenario, `field.${field.id}.readonly_empty`, `Required field ${field.id} is readonly and empty.`);
         continue;
       }
-      await select(page, scenario, selector, option.value, `fill required select ${field.id}`);
-    } else {
+      const segmentedButton = page.locator(`[data-operation-field-button="${cssEscape(field.id)}"]`).first();
+      if (await segmentedButton.isVisible().catch(() => false)) {
+        scenario.clickSequence.push({ type: "click", label: `fill segmented field ${field.id}`, selector: `[data-operation-field-button="${field.id}"]`, beforeUrl: page.url() });
+        await segmentedButton.click();
+        await waitForHydrated(page);
+        scenario.clickSequence.at(-1).afterUrl = page.url();
+        changed += 1;
+        continue;
+      }
+      if (!field.visible) continue;
+      const selector = `[data-operation-field="${cssEscape(field.id)}"]`;
+      if (field.tag === "select") {
+        const option = field.options.find((item) => item.value && !/请选择|select/i.test(item.text)) || field.options.find((item) => item.value);
+        if (!option) {
+          addViolation(scenario, `field.${field.id}.no_select_option`, `Required select ${field.id} has no usable option.`);
+          continue;
+        }
+        await select(page, scenario, selector, option.value, `fill required select ${field.id}`);
+        changed += 1;
+        continue;
+      }
+      if (field.type === "checkbox" || field.type === "radio") {
+        const target = await firstVisible(page.locator(selector));
+        scenario.clickSequence.push({ type: "check", label: `fill required option ${field.id}`, selector, beforeUrl: page.url() });
+        await target.check().catch(async () => target.click());
+        await waitForHydrated(page);
+        scenario.clickSequence.at(-1).afterUrl = page.url();
+        changed += 1;
+        continue;
+      }
       await fill(page, scenario, selector, valueForField(field.id, field.type, index), `fill required field ${field.id}`);
+      changed += 1;
     }
+    await waitForHydrated(page);
+    if (changed === 0) break;
   }
+}
+
+async function operationFields(page) {
+  return page.locator("[data-operation-field]").evaluateAll((nodes) => {
+    const seen = new Set();
+    return nodes.map((node) => {
+      const id = node.dataset.operationField || node.getAttribute("name") || node.id || "";
+      const key = `${id}:${node.tagName}:${node.getAttribute("type") || ""}`;
+      if (seen.has(key)) return null;
+      seen.add(key);
+      return {
+        id,
+        tag: node.tagName.toLowerCase(),
+        type: node.getAttribute("type") || "",
+        required: node.hasAttribute("required") || node.dataset.requiredField === "true",
+        readonly: node.hasAttribute("readonly") || node.getAttribute("aria-readonly") === "true",
+        visible: !!(node.offsetWidth || node.offsetHeight || node.getClientRects().length),
+        valuePresent: node.type === "checkbox" || node.type === "radio"
+          ? node.checked
+          : Boolean(String(node.value || "").trim()),
+        options: node.tagName.toLowerCase() === "select"
+          ? Array.from(node.options).map((option) => ({ value: option.value, text: option.textContent || "" }))
+          : []
+      };
+    }).filter(Boolean);
+  });
 }
 
 async function capture(page, scenario, stepId, title) {
@@ -615,7 +646,15 @@ function writeArtifacts() {
 }
 
 function updateEvidenceGraph(currentReport) {
-  const graph = JSON.parse(fs.readFileSync(graphPath, "utf8"));
+  const graph = fs.existsSync(graphPath)
+    ? JSON.parse(fs.readFileSync(graphPath, "utf8"))
+    : {
+        schemaVersion: "current-oam.evidence.v1",
+        kind: "evidence-graph",
+        title: "当前 OAM 证据根",
+        nodes: [],
+        edges: []
+      };
   const nodeId = `DORM-L1-BROWSER-E2E-${runId}`;
   const screenshotHashes = currentReport.screenshots.map((item) => item.sha256);
   const node = {
@@ -800,7 +839,7 @@ function valueForField(fieldId, type, index) {
 function cardIdPrimaryField(cardId) {
   return {
     roomSetup: "roomNo",
-    bedSetup: "bedLabels",
+    bedSetup: "bedType",
     rateSetup: "dailyRatePerBed",
     roomReadiness: "availabilityStatus",
     roomBlock: "resourceScope",
