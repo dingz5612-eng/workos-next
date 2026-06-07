@@ -63,7 +63,7 @@ export function evidenceStateFor(item = {}) {
   const explicit = item.evidenceState || item.card?.evidenceState;
   if (explicit) return normalizeEvidenceState(explicit);
   const drafts = item.evidenceDrafts || item.card?.evidenceDrafts || [];
-  if (drafts.some((draft) => ["rejected", "scope_mismatch", "wrong_scope", "expired", "upload_failed"].includes(normalizeEvidenceState(draft.status || draft.verificationStatus)))) return "missing";
+  if (drafts.some((draft) => normalizeEvidenceState(draft.status || draft.verificationStatus) === "missing")) return "missing";
   if (drafts.length) return "draft";
   return (item.card?.evidence || item.evidenceRequirements || []).length ? "system_ready" : "ready";
 }

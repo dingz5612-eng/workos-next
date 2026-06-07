@@ -35,7 +35,6 @@ const missingFromCoverage = sourceFiles
 const ledger = {
   version: "current-oam.mobile-branch-risk-ledger.v1",
   status: "generated",
-  generatedAt: new Date().toISOString(),
   generatedBy: "scripts/oam/generate-mobile-branch-risk-ledger.mjs",
   policyFile: policyPath,
   policyVersion: policy.version,
@@ -73,7 +72,7 @@ function buildLedgerEntry(rawFile, summary, policyByFile, gitStatusByPath) {
     policy: policyView(filePath, rule),
     source: {
       isNewSourceFile: isNewSourceStatus(status),
-      gitStatus: status || "tracked_or_unknown",
+      gitStatus: isNewSourceStatus(status) ? status : "tracked_or_unknown",
       isCoveredByCoverageSummary: true
     },
     risk: {
@@ -95,7 +94,7 @@ function buildMissingCoverageEntry(filePath, policyByFile, gitStatusByPath) {
     policy: policyView(filePath, rule),
     source: {
       isNewSourceFile: isNewSourceStatus(status),
-      gitStatus: status || "tracked_or_unknown",
+      gitStatus: isNewSourceStatus(status) ? status : "tracked_or_unknown",
       isCoveredByCoverageSummary: false
     },
     risk: {

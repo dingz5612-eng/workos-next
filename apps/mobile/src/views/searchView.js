@@ -107,9 +107,7 @@ function shouldHideHeaderAnchor(source = {}, ctx = {}, hasOverview = false) {
 }
 
 function searchBusinessTaskBody(normalized, ctx, item = {}) {
-  const issue = normalized.admissionDecision === "confirmDenied" ||
-    normalized.admissionDecision === "productionBlocked" ||
-    normalized.admissionDecision === "visibleOnly";
+  const issue = searchAdmissionRequiresExplanation(normalized.admissionDecision);
   const overview = BusinessTaskOverview({
     workItemType: normalized.title,
     nextAction: normalized.nextActionLabel,
@@ -130,7 +128,16 @@ function searchBusinessTaskBody(normalized, ctx, item = {}) {
 }
 
 function searchResultState(normalized) {
-  return ["confirmDenied", "productionBlocked", "visibleOnly"].includes(normalized.admissionDecision) ? "blocked" : "ready";
+  return searchAdmissionRequiresExplanation(normalized.admissionDecision) ? "blocked" : "ready";
+}
+
+function searchAdmissionRequiresExplanation(decision = "") {
+  return [
+    "visible_blocked",
+    "visible_only",
+    "prepare_only_confirm_denied",
+    "confirm_allowed_production_blocked"
+  ].includes(decision);
 }
 
 function activeCommands(workspaces, ctx) {

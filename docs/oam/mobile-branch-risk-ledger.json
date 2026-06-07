@@ -1,7 +1,6 @@
 {
   "version": "current-oam.mobile-branch-risk-ledger.v1",
   "status": "generated",
-  "generatedAt": "2026-06-07T04:52:25.580Z",
   "generatedBy": "scripts/oam/generate-mobile-branch-risk-ledger.mjs",
   "policyFile": "docs/oam/mobile-branch-risk-policy.json",
   "policyVersion": "current-oam.mobile-branch-risk-policy.v1",
@@ -9,28 +8,28 @@
   "sortOrder": "branches.missing desc, filePath asc",
   "globalCoverage": {
     "statements": {
-      "total": 4828,
-      "covered": 3976,
-      "missing": 852,
-      "pct": 82.35
+      "total": 4829,
+      "covered": 4187,
+      "missing": 642,
+      "pct": 86.7
     },
     "branches": {
-      "total": 7409,
-      "covered": 4938,
-      "missing": 2471,
-      "pct": 66.64
+      "total": 7407,
+      "covered": 5210,
+      "missing": 2197,
+      "pct": 70.33
     },
     "functions": {
-      "total": 1405,
-      "covered": 1250,
-      "missing": 155,
-      "pct": 88.96
+      "total": 1406,
+      "covered": 1292,
+      "missing": 114,
+      "pct": 91.89
     },
     "lines": {
-      "total": 4004,
-      "covered": 3463,
-      "missing": 541,
-      "pct": 86.48
+      "total": 4005,
+      "covered": 3638,
+      "missing": 367,
+      "pct": 90.83
     }
   },
   "stage": {
@@ -62,33 +61,33 @@
     "pcGovernanceFiles": 1
   },
   "targetAssessment": {
-    "status": "no_regression_only",
-    "branches70Reached": false,
-    "firstStageTargetReached": false,
+    "status": "first_stage_target_reached",
+    "branches70Reached": true,
+    "firstStageTargetReached": true,
     "currentCoverage": {
       "statements": {
-        "total": 4828,
-        "covered": 3976,
-        "missing": 852,
-        "pct": 82.35
+        "total": 4829,
+        "covered": 4187,
+        "missing": 642,
+        "pct": 86.7
       },
       "branches": {
-        "total": 7409,
-        "covered": 4938,
-        "missing": 2471,
-        "pct": 66.64
+        "total": 7407,
+        "covered": 5210,
+        "missing": 2197,
+        "pct": 70.33
       },
       "functions": {
-        "total": 1405,
-        "covered": 1250,
-        "missing": 155,
-        "pct": 88.96
+        "total": 1406,
+        "covered": 1292,
+        "missing": 114,
+        "pct": 91.89
       },
       "lines": {
-        "total": 4004,
-        "covered": 3463,
-        "missing": 541,
-        "pct": 86.48
+        "total": 4005,
+        "covered": 3638,
+        "missing": 367,
+        "pct": 90.83
       }
     },
     "target": {
@@ -97,17 +96,8 @@
       "functionsPct": 88,
       "linesPct": 85
     },
-    "unmetReasonsZh": [
-      "全局 Branches 当前 66.64%，尚未达到 70%。"
-    ],
+    "unmetReasonsZh": [],
     "nextBatchFiles": [
-      {
-        "filePath": "apps/mobile/src/operationController.js",
-        "layer": "P0 业务保护",
-        "missingBranches": 247,
-        "branchCoveragePct": 38.7,
-        "nextActionZh": "补空提交、重复点击、提交中、403、409、422、纠错态、完成态和弱网矩阵。"
-      },
       {
         "filePath": "apps/mobile/src/fieldSourceRenderer.js",
         "layer": "P1 状态决策",
@@ -116,39 +106,25 @@
         "nextActionZh": "补字段别名、只读字段、必填字段、证据字段和异常字段来源矩阵。"
       },
       {
+        "filePath": "apps/mobile/src/operationController.js",
+        "layer": "P0 业务保护",
+        "missingBranches": 139,
+        "branchCoveragePct": 65.5,
+        "nextActionZh": "补空提交、重复点击、提交中、403、409、422、纠错态、完成态和弱网矩阵。"
+      },
+      {
         "filePath": "apps/mobile/src/navigationController.js",
         "layer": "P1 状态决策",
-        "missingBranches": 125,
-        "branchCoveragePct": 57.48,
+        "missingBranches": 89,
+        "branchCoveragePct": 69.72,
         "nextActionZh": "补深链缺 WorkItem、无权限跳转、搜索跳转、PC 路由拦截和 404 fallback 矩阵。"
-      },
-      {
-        "filePath": "apps/mobile/src/views/searchView.js",
-        "layer": "P0 业务保护",
-        "missingBranches": 107,
-        "branchCoveragePct": 64.8,
-        "nextActionZh": "补 Search 命中不可直接写事实、权限不可见、projection pending/failed 和 PC scope 隔离矩阵。"
-      },
-      {
-        "filePath": "apps/mobile/src/selectors/queueSelectors.js",
-        "layer": "P1 状态决策",
-        "missingBranches": 67,
-        "branchCoveragePct": 67.15,
-        "nextActionZh": "补空态、损坏存储、超限截断、只读态、错误态和权限态矩阵。"
       },
       {
         "filePath": "apps/mobile/src/operationRuntime.js",
         "layer": "P0 业务保护",
-        "missingBranches": 44,
-        "branchCoveragePct": 50,
+        "missingBranches": 27,
+        "branchCoveragePct": 69.31,
         "nextActionZh": "优先补矩阵测试覆盖错误状态、重复提交、无 WorkItem、无证据和设备不可信。"
-      },
-      {
-        "filePath": "apps/mobile/src/surfaceGuard.js",
-        "layer": "P0 业务保护",
-        "missingBranches": 42,
-        "branchCoveragePct": 67.18,
-        "nextActionZh": "补齐 mobile/PC、角色不足、设备不可信、production blocked、合同预览和 Search 命中不可办理矩阵。"
       },
       {
         "filePath": "apps/mobile/src/authController.js",
@@ -156,69 +132,17 @@
         "missingBranches": 22,
         "branchCoveragePct": 42.1,
         "nextActionZh": "补 actor 缺失、session 过期、设备缺失和角色切换矩阵。"
+      },
+      {
+        "filePath": "apps/mobile/src/operationValidation.js",
+        "layer": "P0 业务保护",
+        "missingBranches": 19,
+        "branchCoveragePct": 67.24,
+        "nextActionZh": "补齐必填缺失、格式错误、证据缺失、金额非法、只读完成态和字段不可编辑矩阵。"
       }
     ]
   },
   "files": [
-    {
-      "filePath": "apps/mobile/src/operationController.js",
-      "coverage": {
-        "statements": {
-          "total": 368,
-          "covered": 184,
-          "missing": 184,
-          "pct": 50
-        },
-        "branches": {
-          "total": 403,
-          "covered": 156,
-          "missing": 247,
-          "pct": 38.7
-        },
-        "functions": {
-          "total": 65,
-          "covered": 41,
-          "missing": 24,
-          "pct": 63.07
-        },
-        "lines": {
-          "total": 332,
-          "covered": 170,
-          "missing": 162,
-          "pct": 51.2
-        }
-      },
-      "policy": {
-        "status": "registered",
-        "layer": "P0 业务保护",
-        "targetBranchCoveragePct": 70,
-        "currentStageHardBaselinePct": 38.7,
-        "nextStageTargetPct": 70,
-        "affectsBusinessWrite": true,
-        "affectsAdmissionRejection": true,
-        "affectsSearchReadonly": false,
-        "affectsDeviceTrust": true,
-        "affectsOrdinaryMobileUser": true,
-        "testFiles": [
-          "apps/mobile/src/__tests__/confirmErrorHandling.test.js",
-          "apps/mobile/src/__tests__/DormitoryWeakNetworkSubmit.test.js",
-          "apps/mobile/src/__tests__/OperationRouteIdentityContract.test.js",
-          "apps/mobile/src/__tests__/OperationPanelRuntimeContract.test.js"
-        ]
-      },
-      "source": {
-        "isNewSourceFile": false,
-        "gitStatus": "tracked_or_unknown",
-        "isCoveredByCoverageSummary": true
-      },
-      "risk": {
-        "level": "P0",
-        "descriptionZh": "若控制器分支缺测，用户可能在错误状态重复提交或绕过业务阻断。",
-        "allowDeferral": false,
-        "deferralReasonZh": "不允许暂缓；外层提交控制器直接承载 403、409、422、纠错态、完成态和高风险提交保护。",
-        "nextActionZh": "补空提交、重复点击、提交中、403、409、422、纠错态、完成态和弱网矩阵。"
-      }
-    },
     {
       "filePath": "apps/mobile/src/views/experienceComponents.js",
       "coverage": {
@@ -336,6 +260,65 @@
       }
     },
     {
+      "filePath": "apps/mobile/src/operationController.js",
+      "coverage": {
+        "statements": {
+          "total": 368,
+          "covered": 299,
+          "missing": 69,
+          "pct": 81.25
+        },
+        "branches": {
+          "total": 403,
+          "covered": 264,
+          "missing": 139,
+          "pct": 65.5
+        },
+        "functions": {
+          "total": 65,
+          "covered": 56,
+          "missing": 9,
+          "pct": 86.15
+        },
+        "lines": {
+          "total": 332,
+          "covered": 278,
+          "missing": 54,
+          "pct": 83.73
+        }
+      },
+      "policy": {
+        "status": "registered",
+        "layer": "P0 业务保护",
+        "targetBranchCoveragePct": 70,
+        "currentStageHardBaselinePct": 38.7,
+        "nextStageTargetPct": 70,
+        "affectsBusinessWrite": true,
+        "affectsAdmissionRejection": true,
+        "affectsSearchReadonly": false,
+        "affectsDeviceTrust": true,
+        "affectsOrdinaryMobileUser": true,
+        "testFiles": [
+          "apps/mobile/src/__tests__/confirmErrorHandling.test.js",
+          "apps/mobile/src/__tests__/DormitoryWeakNetworkSubmit.test.js",
+          "apps/mobile/src/__tests__/OperationRouteIdentityContract.test.js",
+          "apps/mobile/src/__tests__/OperationPanelRuntimeContract.test.js"
+        ]
+      },
+      "source": {
+        "isNewSourceFile": false,
+        "gitStatus": "tracked_or_unknown",
+        "isCoveredByCoverageSummary": true
+      },
+      "risk": {
+        "level": "P0",
+        "descriptionZh": "若控制器分支缺测，用户可能在错误状态重复提交或绕过业务阻断。",
+        "allowDeferral": false,
+        "deferralReasonZh": "不允许暂缓；外层提交控制器直接承载 403、409、422、纠错态、完成态和高风险提交保护。",
+        "nextActionZh": "补空提交、重复点击、提交中、403、409、422、纠错态、完成态和弱网矩阵。"
+      }
+    },
+    {
       "filePath": "apps/mobile/src/views/pcGovernanceView.js",
       "coverage": {
         "statements": {
@@ -390,64 +373,6 @@
         "allowDeferral": true,
         "deferralReasonZh": "允许短期暂缓；治理面不属于普通移动端，但不得串入移动办理面。",
         "nextActionZh": "补 PC 治理权限、设备信任、只读态和普通移动端隔离矩阵。"
-      }
-    },
-    {
-      "filePath": "apps/mobile/src/navigationController.js",
-      "coverage": {
-        "statements": {
-          "total": 233,
-          "covered": 184,
-          "missing": 49,
-          "pct": 78.96
-        },
-        "branches": {
-          "total": 294,
-          "covered": 169,
-          "missing": 125,
-          "pct": 57.48
-        },
-        "functions": {
-          "total": 37,
-          "covered": 29,
-          "missing": 8,
-          "pct": 78.37
-        },
-        "lines": {
-          "total": 214,
-          "covered": 172,
-          "missing": 42,
-          "pct": 80.37
-        }
-      },
-      "policy": {
-        "status": "registered",
-        "layer": "P1 状态决策",
-        "targetBranchCoveragePct": 65,
-        "currentStageHardBaselinePct": 30.95,
-        "nextStageTargetPct": 65,
-        "affectsBusinessWrite": false,
-        "affectsAdmissionRejection": true,
-        "affectsSearchReadonly": true,
-        "affectsDeviceTrust": false,
-        "affectsOrdinaryMobileUser": true,
-        "testFiles": [
-          "apps/mobile/src/__tests__/OperationRouteIdentityContract.test.js",
-          "apps/mobile/src/__tests__/OperationStartCommandContract.test.js",
-          "apps/mobile/src/__tests__/MobileMeEntryRouteContract.test.js"
-        ]
-      },
-      "source": {
-        "isNewSourceFile": false,
-        "gitStatus": "tracked_or_unknown",
-        "isCoveredByCoverageSummary": true
-      },
-      "risk": {
-        "level": "P1",
-        "descriptionZh": "若路由分支缺测，用户可能从只读或错误入口进入办理面。",
-        "allowDeferral": true,
-        "deferralReasonZh": "允许短期暂缓；路由状态复杂，先保证无权限、缺 WorkItem、搜索跳转和 PC 拦截不回退。",
-        "nextActionZh": "补深链缺 WorkItem、无权限跳转、搜索跳转、PC 路由拦截和 404 fallback 矩阵。"
       }
     },
     {
@@ -509,121 +434,6 @@
       }
     },
     {
-      "filePath": "apps/mobile/src/views/searchView.js",
-      "coverage": {
-        "statements": {
-          "total": 163,
-          "covered": 154,
-          "missing": 9,
-          "pct": 94.47
-        },
-        "branches": {
-          "total": 304,
-          "covered": 197,
-          "missing": 107,
-          "pct": 64.8
-        },
-        "functions": {
-          "total": 66,
-          "covered": 65,
-          "missing": 1,
-          "pct": 98.48
-        },
-        "lines": {
-          "total": 131,
-          "covered": 127,
-          "missing": 4,
-          "pct": 96.94
-        }
-      },
-      "policy": {
-        "status": "registered",
-        "layer": "P0 业务保护",
-        "targetBranchCoveragePct": 70,
-        "currentStageHardBaselinePct": 64.8,
-        "nextStageTargetPct": 70,
-        "affectsBusinessWrite": false,
-        "affectsAdmissionRejection": true,
-        "affectsSearchReadonly": true,
-        "affectsDeviceTrust": false,
-        "affectsOrdinaryMobileUser": true,
-        "testFiles": [
-          "apps/mobile/src/__tests__/SearchIntentHubContract.test.js",
-          "apps/mobile/src/__tests__/SearchResultRenderContract.test.js",
-          "apps/pc/src/__tests__/PcSearchScopeContract.test.js"
-        ]
-      },
-      "source": {
-        "isNewSourceFile": false,
-        "gitStatus": "tracked_or_unknown",
-        "isCoveredByCoverageSummary": true
-      },
-      "risk": {
-        "level": "P0",
-        "descriptionZh": "若搜索分支回退，用户可能把搜索命中误认为可直接办理或确认。",
-        "allowDeferral": false,
-        "deferralReasonZh": "不允许暂缓；Search 命中必须保持只读，不得变成业务事实写入入口。",
-        "nextActionZh": "补 Search 命中不可直接写事实、权限不可见、projection pending/failed 和 PC scope 隔离矩阵。"
-      }
-    },
-    {
-      "filePath": "apps/mobile/src/views/simpleView.js",
-      "coverage": {
-        "statements": {
-          "total": 106,
-          "covered": 75,
-          "missing": 31,
-          "pct": 70.75
-        },
-        "branches": {
-          "total": 182,
-          "covered": 77,
-          "missing": 105,
-          "pct": 42.3
-        },
-        "functions": {
-          "total": 32,
-          "covered": 20,
-          "missing": 12,
-          "pct": 62.5
-        },
-        "lines": {
-          "total": 84,
-          "covered": 66,
-          "missing": 18,
-          "pct": 78.57
-        }
-      },
-      "policy": {
-        "status": "registered",
-        "layer": "P2 展示组合",
-        "targetBranchCoveragePct": 55,
-        "currentStageHardBaselinePct": 27.47,
-        "nextStageTargetPct": 55,
-        "affectsBusinessWrite": false,
-        "affectsAdmissionRejection": false,
-        "affectsSearchReadonly": false,
-        "affectsDeviceTrust": false,
-        "affectsOrdinaryMobileUser": true,
-        "testFiles": [
-          "apps/mobile/src/__tests__/MobileSurfaceCopyContract.test.js",
-          "apps/mobile/src/__tests__/VisibleCopyZhCnScreenshotContract.test.js"
-        ]
-      },
-      "source": {
-        "isNewSourceFile": false,
-        "gitStatus": "tracked_or_unknown",
-        "isCoveredByCoverageSummary": true
-      },
-      "risk": {
-        "level": "P2",
-        "descriptionZh": "若展示组合缺测，普通移动端文案和状态可能误导用户。",
-        "allowDeferral": true,
-        "deferralReasonZh": "允许暂缓；当前以展示组合为主，达到 Branches 70% 前不做 view registry 大拆。",
-        "nextActionZh": "补空态、只读态、错误态、权限态和超限截断展示矩阵。"
-      }
-    },
-    {
       "filePath": "apps/mobile/src/views/checkoutServiceView.js",
       "coverage": {
         "statements": {
@@ -681,6 +491,122 @@
       }
     },
     {
+      "filePath": "apps/mobile/src/navigationController.js",
+      "coverage": {
+        "statements": {
+          "total": 233,
+          "covered": 207,
+          "missing": 26,
+          "pct": 88.84
+        },
+        "branches": {
+          "total": 294,
+          "covered": 205,
+          "missing": 89,
+          "pct": 69.72
+        },
+        "functions": {
+          "total": 37,
+          "covered": 33,
+          "missing": 4,
+          "pct": 89.18
+        },
+        "lines": {
+          "total": 214,
+          "covered": 192,
+          "missing": 22,
+          "pct": 89.71
+        }
+      },
+      "policy": {
+        "status": "registered",
+        "layer": "P1 状态决策",
+        "targetBranchCoveragePct": 65,
+        "currentStageHardBaselinePct": 30.95,
+        "nextStageTargetPct": 65,
+        "affectsBusinessWrite": false,
+        "affectsAdmissionRejection": true,
+        "affectsSearchReadonly": true,
+        "affectsDeviceTrust": false,
+        "affectsOrdinaryMobileUser": true,
+        "testFiles": [
+          "apps/mobile/src/__tests__/OperationRouteIdentityContract.test.js",
+          "apps/mobile/src/__tests__/OperationStartCommandContract.test.js",
+          "apps/mobile/src/__tests__/MobileMeEntryRouteContract.test.js"
+        ]
+      },
+      "source": {
+        "isNewSourceFile": false,
+        "gitStatus": "tracked_or_unknown",
+        "isCoveredByCoverageSummary": true
+      },
+      "risk": {
+        "level": "P1",
+        "descriptionZh": "若路由分支缺测，用户可能从只读或错误入口进入办理面。",
+        "allowDeferral": true,
+        "deferralReasonZh": "允许短期暂缓；路由状态复杂，先保证无权限、缺 WorkItem、搜索跳转和 PC 拦截不回退。",
+        "nextActionZh": "补深链缺 WorkItem、无权限跳转、搜索跳转、PC 路由拦截和 404 fallback 矩阵。"
+      }
+    },
+    {
+      "filePath": "apps/mobile/src/views/searchView.js",
+      "coverage": {
+        "statements": {
+          "total": 164,
+          "covered": 157,
+          "missing": 7,
+          "pct": 95.73
+        },
+        "branches": {
+          "total": 302,
+          "covered": 214,
+          "missing": 88,
+          "pct": 70.86
+        },
+        "functions": {
+          "total": 67,
+          "covered": 66,
+          "missing": 1,
+          "pct": 98.5
+        },
+        "lines": {
+          "total": 132,
+          "covered": 128,
+          "missing": 4,
+          "pct": 96.96
+        }
+      },
+      "policy": {
+        "status": "registered",
+        "layer": "P0 业务保护",
+        "targetBranchCoveragePct": 70,
+        "currentStageHardBaselinePct": 64.8,
+        "nextStageTargetPct": 70,
+        "affectsBusinessWrite": false,
+        "affectsAdmissionRejection": true,
+        "affectsSearchReadonly": true,
+        "affectsDeviceTrust": false,
+        "affectsOrdinaryMobileUser": true,
+        "testFiles": [
+          "apps/mobile/src/__tests__/SearchIntentHubContract.test.js",
+          "apps/mobile/src/__tests__/SearchResultRenderContract.test.js",
+          "apps/pc/src/__tests__/PcSearchScopeContract.test.js"
+        ]
+      },
+      "source": {
+        "isNewSourceFile": false,
+        "gitStatus": "tracked_or_unknown",
+        "isCoveredByCoverageSummary": true
+      },
+      "risk": {
+        "level": "P0",
+        "descriptionZh": "若搜索分支回退，用户可能把搜索命中误认为可直接办理或确认。",
+        "allowDeferral": false,
+        "deferralReasonZh": "不允许暂缓；Search 命中必须保持只读，不得变成业务事实写入入口。",
+        "nextActionZh": "补 Search 命中不可直接写事实、权限不可见、projection pending/failed 和 PC scope 隔离矩阵。"
+      }
+    },
+    {
       "filePath": "apps/mobile/src/views/financeReconciliationView.js",
       "coverage": {
         "statements": {
@@ -735,19 +661,76 @@
       }
     },
     {
+      "filePath": "apps/mobile/src/views/simpleView.js",
+      "coverage": {
+        "statements": {
+          "total": 106,
+          "covered": 94,
+          "missing": 12,
+          "pct": 88.67
+        },
+        "branches": {
+          "total": 182,
+          "covered": 108,
+          "missing": 74,
+          "pct": 59.34
+        },
+        "functions": {
+          "total": 32,
+          "covered": 30,
+          "missing": 2,
+          "pct": 93.75
+        },
+        "lines": {
+          "total": 84,
+          "covered": 80,
+          "missing": 4,
+          "pct": 95.23
+        }
+      },
+      "policy": {
+        "status": "registered",
+        "layer": "P2 展示组合",
+        "targetBranchCoveragePct": 55,
+        "currentStageHardBaselinePct": 27.47,
+        "nextStageTargetPct": 55,
+        "affectsBusinessWrite": false,
+        "affectsAdmissionRejection": false,
+        "affectsSearchReadonly": false,
+        "affectsDeviceTrust": false,
+        "affectsOrdinaryMobileUser": true,
+        "testFiles": [
+          "apps/mobile/src/__tests__/MobileSurfaceCopyContract.test.js",
+          "apps/mobile/src/__tests__/VisibleCopyZhCnScreenshotContract.test.js"
+        ]
+      },
+      "source": {
+        "isNewSourceFile": false,
+        "gitStatus": "tracked_or_unknown",
+        "isCoveredByCoverageSummary": true
+      },
+      "risk": {
+        "level": "P2",
+        "descriptionZh": "若展示组合缺测，普通移动端文案和状态可能误导用户。",
+        "allowDeferral": true,
+        "deferralReasonZh": "允许暂缓；当前以展示组合为主，达到 Branches 70% 前不做 view registry 大拆。",
+        "nextActionZh": "补空态、只读态、错误态、权限态和超限截断展示矩阵。"
+      }
+    },
+    {
       "filePath": "apps/mobile/src/selectors/surfaceSelectors.js",
       "coverage": {
         "statements": {
           "total": 190,
-          "covered": 164,
-          "missing": 26,
-          "pct": 86.31
+          "covered": 168,
+          "missing": 22,
+          "pct": 88.42
         },
         "branches": {
           "total": 250,
-          "covered": 175,
-          "missing": 75,
-          "pct": 70
+          "covered": 181,
+          "missing": 69,
+          "pct": 72.4
         },
         "functions": {
           "total": 60,
@@ -757,9 +740,9 @@
         },
         "lines": {
           "total": 146,
-          "covered": 135,
-          "missing": 11,
-          "pct": 92.46
+          "covered": 137,
+          "missing": 9,
+          "pct": 93.83
         }
       },
       "policy": {
@@ -786,64 +769,6 @@
         "allowDeferral": false,
         "deferralReasonZh": "未登记文件缺少中文暂缓原因。",
         "nextActionZh": "判断风险层级并登记 policy，或补充中文暂缓原因。"
-      }
-    },
-    {
-      "filePath": "apps/mobile/src/selectors/queueSelectors.js",
-      "coverage": {
-        "statements": {
-          "total": 127,
-          "covered": 99,
-          "missing": 28,
-          "pct": 77.95
-        },
-        "branches": {
-          "total": 204,
-          "covered": 137,
-          "missing": 67,
-          "pct": 67.15
-        },
-        "functions": {
-          "total": 59,
-          "covered": 49,
-          "missing": 10,
-          "pct": 83.05
-        },
-        "lines": {
-          "total": 100,
-          "covered": 87,
-          "missing": 13,
-          "pct": 87
-        }
-      },
-      "policy": {
-        "status": "registered",
-        "layer": "P1 状态决策",
-        "targetBranchCoveragePct": 65,
-        "currentStageHardBaselinePct": 55.39,
-        "nextStageTargetPct": 65,
-        "affectsBusinessWrite": false,
-        "affectsAdmissionRejection": false,
-        "affectsSearchReadonly": false,
-        "affectsDeviceTrust": false,
-        "affectsOrdinaryMobileUser": true,
-        "testFiles": [
-          "apps/mobile/src/__tests__/QueueFilterInteractionContract.test.js",
-          "apps/mobile/src/__tests__/MobileOrdinaryQueueScopeContract.test.js",
-          "apps/mobile/src/__tests__/TodayMissionControlContract.test.js"
-        ]
-      },
-      "source": {
-        "isNewSourceFile": false,
-        "gitStatus": "tracked_or_unknown",
-        "isCoveredByCoverageSummary": true
-      },
-      "risk": {
-        "level": "P1",
-        "descriptionZh": "若队列分支缺测，移动端可能把错误任务或不可办理任务显示为可处理。",
-        "allowDeferral": true,
-        "deferralReasonZh": "允许短期暂缓；队列筛选不直接写事实，但空态、错误态和权限态必须继续补测。",
-        "nextActionZh": "补空态、损坏存储、超限截断、只读态、错误态和权限态矩阵。"
       }
     },
     {
@@ -857,9 +782,9 @@
         },
         "branches": {
           "total": 267,
-          "covered": 201,
-          "missing": 66,
-          "pct": 75.28
+          "covered": 203,
+          "missing": 64,
+          "pct": 76.02
         },
         "functions": {
           "total": 20,
@@ -872,60 +797,6 @@
           "covered": 78,
           "missing": 10,
           "pct": 88.63
-        }
-      },
-      "policy": {
-        "status": "unregistered",
-        "layer": "未登记",
-        "targetBranchCoveragePct": null,
-        "currentStageHardBaselinePct": null,
-        "nextStageTargetPct": null,
-        "affectsBusinessWrite": null,
-        "affectsAdmissionRejection": null,
-        "affectsSearchReadonly": null,
-        "affectsDeviceTrust": null,
-        "affectsOrdinaryMobileUser": null,
-        "testFiles": []
-      },
-      "source": {
-        "isNewSourceFile": false,
-        "gitStatus": "tracked_or_unknown",
-        "isCoveredByCoverageSummary": true
-      },
-      "risk": {
-        "level": "未登记",
-        "descriptionZh": "该文件未进入移动端分支风险政策，需要确认是否属于关键业务分支或允许暂缓。",
-        "allowDeferral": false,
-        "deferralReasonZh": "未登记文件缺少中文暂缓原因。",
-        "nextActionZh": "判断风险层级并登记 policy，或补充中文暂缓原因。"
-      }
-    },
-    {
-      "filePath": "apps/mobile/src/operationSystemValues.js",
-      "coverage": {
-        "statements": {
-          "total": 170,
-          "covered": 146,
-          "missing": 24,
-          "pct": 85.88
-        },
-        "branches": {
-          "total": 207,
-          "covered": 145,
-          "missing": 62,
-          "pct": 70.04
-        },
-        "functions": {
-          "total": 32,
-          "covered": 26,
-          "missing": 6,
-          "pct": 81.25
-        },
-        "lines": {
-          "total": 143,
-          "covered": 126,
-          "missing": 17,
-          "pct": 88.11
         }
       },
       "policy": {
@@ -1009,6 +880,60 @@
       }
     },
     {
+      "filePath": "apps/mobile/src/operationSystemValues.js",
+      "coverage": {
+        "statements": {
+          "total": 170,
+          "covered": 147,
+          "missing": 23,
+          "pct": 86.47
+        },
+        "branches": {
+          "total": 207,
+          "covered": 146,
+          "missing": 61,
+          "pct": 70.53
+        },
+        "functions": {
+          "total": 32,
+          "covered": 26,
+          "missing": 6,
+          "pct": 81.25
+        },
+        "lines": {
+          "total": 143,
+          "covered": 126,
+          "missing": 17,
+          "pct": 88.11
+        }
+      },
+      "policy": {
+        "status": "unregistered",
+        "layer": "未登记",
+        "targetBranchCoveragePct": null,
+        "currentStageHardBaselinePct": null,
+        "nextStageTargetPct": null,
+        "affectsBusinessWrite": null,
+        "affectsAdmissionRejection": null,
+        "affectsSearchReadonly": null,
+        "affectsDeviceTrust": null,
+        "affectsOrdinaryMobileUser": null,
+        "testFiles": []
+      },
+      "source": {
+        "isNewSourceFile": false,
+        "gitStatus": "tracked_or_unknown",
+        "isCoveredByCoverageSummary": true
+      },
+      "risk": {
+        "level": "未登记",
+        "descriptionZh": "该文件未进入移动端分支风险政策，需要确认是否属于关键业务分支或允许暂缓。",
+        "allowDeferral": false,
+        "deferralReasonZh": "未登记文件缺少中文暂缓原因。",
+        "nextActionZh": "判断风险层级并登记 policy，或补充中文暂缓原因。"
+      }
+    },
+    {
       "filePath": "apps/mobile/src/runtime/runtimeStore.js",
       "coverage": {
         "statements": {
@@ -1060,6 +985,64 @@
         "allowDeferral": false,
         "deferralReasonZh": "未登记文件缺少中文暂缓原因。",
         "nextActionZh": "判断风险层级并登记 policy，或补充中文暂缓原因。"
+      }
+    },
+    {
+      "filePath": "apps/mobile/src/selectors/queueSelectors.js",
+      "coverage": {
+        "statements": {
+          "total": 127,
+          "covered": 108,
+          "missing": 19,
+          "pct": 85.03
+        },
+        "branches": {
+          "total": 204,
+          "covered": 151,
+          "missing": 53,
+          "pct": 74.01
+        },
+        "functions": {
+          "total": 59,
+          "covered": 52,
+          "missing": 7,
+          "pct": 88.13
+        },
+        "lines": {
+          "total": 100,
+          "covered": 92,
+          "missing": 8,
+          "pct": 92
+        }
+      },
+      "policy": {
+        "status": "registered",
+        "layer": "P1 状态决策",
+        "targetBranchCoveragePct": 65,
+        "currentStageHardBaselinePct": 55.39,
+        "nextStageTargetPct": 65,
+        "affectsBusinessWrite": false,
+        "affectsAdmissionRejection": false,
+        "affectsSearchReadonly": false,
+        "affectsDeviceTrust": false,
+        "affectsOrdinaryMobileUser": true,
+        "testFiles": [
+          "apps/mobile/src/__tests__/QueueFilterInteractionContract.test.js",
+          "apps/mobile/src/__tests__/MobileOrdinaryQueueScopeContract.test.js",
+          "apps/mobile/src/__tests__/TodayMissionControlContract.test.js"
+        ]
+      },
+      "source": {
+        "isNewSourceFile": false,
+        "gitStatus": "tracked_or_unknown",
+        "isCoveredByCoverageSummary": true
+      },
+      "risk": {
+        "level": "P1",
+        "descriptionZh": "若队列分支缺测，移动端可能把错误任务或不可办理任务显示为可处理。",
+        "allowDeferral": true,
+        "deferralReasonZh": "允许短期暂缓；队列筛选不直接写事实，但空态、错误态和权限态必须继续补测。",
+        "nextActionZh": "补空态、损坏存储、超限截断、只读态、错误态和权限态矩阵。"
       }
     },
     {
@@ -1225,122 +1208,6 @@
       }
     },
     {
-      "filePath": "apps/mobile/src/operationRuntime.js",
-      "coverage": {
-        "statements": {
-          "total": 93,
-          "covered": 69,
-          "missing": 24,
-          "pct": 74.19
-        },
-        "branches": {
-          "total": 88,
-          "covered": 44,
-          "missing": 44,
-          "pct": 50
-        },
-        "functions": {
-          "total": 25,
-          "covered": 21,
-          "missing": 4,
-          "pct": 84
-        },
-        "lines": {
-          "total": 77,
-          "covered": 62,
-          "missing": 15,
-          "pct": 80.51
-        }
-      },
-      "policy": {
-        "status": "registered",
-        "layer": "P0 业务保护",
-        "targetBranchCoveragePct": 70,
-        "currentStageHardBaselinePct": 29.54,
-        "nextStageTargetPct": 70,
-        "affectsBusinessWrite": true,
-        "affectsAdmissionRejection": true,
-        "affectsSearchReadonly": false,
-        "affectsDeviceTrust": true,
-        "affectsOrdinaryMobileUser": true,
-        "testFiles": [
-          "apps/mobile/src/__tests__/operationRuntime.test.js",
-          "apps/mobile/src/__tests__/OperationPanelRuntimeContract.test.js",
-          "apps/mobile/src/__tests__/DormitoryWorkItemNativePilot.test.js"
-        ]
-      },
-      "source": {
-        "isNewSourceFile": false,
-        "gitStatus": "tracked_or_unknown",
-        "isCoveredByCoverageSummary": true
-      },
-      "risk": {
-        "level": "P0",
-        "descriptionZh": "若提交协议分支回退，移动端可能把不可确认状态误当成可写业务事实。",
-        "allowDeferral": false,
-        "deferralReasonZh": "不允许暂缓；运行提交协议直接影响 403、409、422、设备信任和证据保护。",
-        "nextActionZh": "优先补矩阵测试覆盖错误状态、重复提交、无 WorkItem、无证据和设备不可信。"
-      }
-    },
-    {
-      "filePath": "apps/mobile/src/surfaceGuard.js",
-      "coverage": {
-        "statements": {
-          "total": 89,
-          "covered": 70,
-          "missing": 19,
-          "pct": 78.65
-        },
-        "branches": {
-          "total": 128,
-          "covered": 86,
-          "missing": 42,
-          "pct": 67.18
-        },
-        "functions": {
-          "total": 19,
-          "covered": 15,
-          "missing": 4,
-          "pct": 78.94
-        },
-        "lines": {
-          "total": 72,
-          "covered": 60,
-          "missing": 12,
-          "pct": 83.33
-        }
-      },
-      "policy": {
-        "status": "registered",
-        "layer": "P0 业务保护",
-        "targetBranchCoveragePct": 70,
-        "currentStageHardBaselinePct": 64.06,
-        "nextStageTargetPct": 70,
-        "affectsBusinessWrite": false,
-        "affectsAdmissionRejection": true,
-        "affectsSearchReadonly": true,
-        "affectsDeviceTrust": true,
-        "affectsOrdinaryMobileUser": true,
-        "testFiles": [
-          "apps/mobile/src/__tests__/MobilePcSurfaceBoundary.test.js",
-          "apps/mobile/src/__tests__/PermissionExplainability.test.js",
-          "apps/mobile/src/__tests__/SurfaceShellBoundaryContract.test.js"
-        ]
-      },
-      "source": {
-        "isNewSourceFile": false,
-        "gitStatus": "tracked_or_unknown",
-        "isCoveredByCoverageSummary": true
-      },
-      "risk": {
-        "level": "P0",
-        "descriptionZh": "若边界分支回退，普通移动端可能看到或进入治理面与高风险办理入口。",
-        "allowDeferral": false,
-        "deferralReasonZh": "不允许暂缓；Surface 边界直接保护 mobile/PC、设备信任、Search 只读和生产阻断。",
-        "nextActionZh": "补齐 mobile/PC、角色不足、设备不可信、production blocked、合同预览和 Search 命中不可办理矩阵。"
-      }
-    },
-    {
       "filePath": "apps/mobile/src/views/operationPanelView.js",
       "coverage": {
         "statements": {
@@ -1503,45 +1370,49 @@
       }
     },
     {
-      "filePath": "apps/mobile/src/admissionSurface.js",
+      "filePath": "apps/mobile/src/surfaceGuard.js",
       "coverage": {
         "statements": {
-          "total": 70,
-          "covered": 53,
-          "missing": 17,
-          "pct": 75.71
+          "total": 89,
+          "covered": 77,
+          "missing": 12,
+          "pct": 86.51
         },
         "branches": {
-          "total": 137,
-          "covered": 104,
-          "missing": 33,
-          "pct": 75.91
+          "total": 128,
+          "covered": 94,
+          "missing": 34,
+          "pct": 73.43
         },
         "functions": {
-          "total": 16,
+          "total": 19,
           "covered": 16,
-          "missing": 0,
-          "pct": 100
+          "missing": 3,
+          "pct": 84.21
         },
         "lines": {
-          "total": 52,
-          "covered": 43,
-          "missing": 9,
-          "pct": 82.69
+          "total": 72,
+          "covered": 65,
+          "missing": 7,
+          "pct": 90.27
         }
       },
       "policy": {
-        "status": "unregistered",
-        "layer": "未登记",
-        "targetBranchCoveragePct": null,
-        "currentStageHardBaselinePct": null,
-        "nextStageTargetPct": null,
-        "affectsBusinessWrite": null,
-        "affectsAdmissionRejection": null,
-        "affectsSearchReadonly": null,
-        "affectsDeviceTrust": null,
-        "affectsOrdinaryMobileUser": null,
-        "testFiles": []
+        "status": "registered",
+        "layer": "P0 业务保护",
+        "targetBranchCoveragePct": 70,
+        "currentStageHardBaselinePct": 64.06,
+        "nextStageTargetPct": 70,
+        "affectsBusinessWrite": false,
+        "affectsAdmissionRejection": true,
+        "affectsSearchReadonly": true,
+        "affectsDeviceTrust": true,
+        "affectsOrdinaryMobileUser": true,
+        "testFiles": [
+          "apps/mobile/src/__tests__/MobilePcSurfaceBoundary.test.js",
+          "apps/mobile/src/__tests__/PermissionExplainability.test.js",
+          "apps/mobile/src/__tests__/SurfaceShellBoundaryContract.test.js"
+        ]
       },
       "source": {
         "isNewSourceFile": false,
@@ -1549,11 +1420,11 @@
         "isCoveredByCoverageSummary": true
       },
       "risk": {
-        "level": "未登记",
-        "descriptionZh": "该文件未进入移动端分支风险政策，需要确认是否属于关键业务分支或允许暂缓。",
+        "level": "P0",
+        "descriptionZh": "若边界分支回退，普通移动端可能看到或进入治理面与高风险办理入口。",
         "allowDeferral": false,
-        "deferralReasonZh": "未登记文件缺少中文暂缓原因。",
-        "nextActionZh": "判断风险层级并登记 policy，或补充中文暂缓原因。"
+        "deferralReasonZh": "不允许暂缓；Surface 边界直接保护 mobile/PC、设备信任、Search 只读和生产阻断。",
+        "nextActionZh": "补齐 mobile/PC、角色不足、设备不可信、production blocked、合同预览和 Search 命中不可办理矩阵。"
       }
     },
     {
@@ -1611,47 +1482,102 @@
       }
     },
     {
-      "filePath": "apps/mobile/src/operationCaseContext.js",
+      "filePath": "apps/mobile/src/admissionSurface.js",
       "coverage": {
         "statements": {
-          "total": 40,
-          "covered": 32,
-          "missing": 8,
-          "pct": 80
+          "total": 70,
+          "covered": 54,
+          "missing": 16,
+          "pct": 77.14
         },
         "branches": {
-          "total": 84,
-          "covered": 59,
-          "missing": 25,
-          "pct": 70.23
+          "total": 137,
+          "covered": 107,
+          "missing": 30,
+          "pct": 78.1
         },
         "functions": {
-          "total": 20,
-          "covered": 14,
-          "missing": 6,
-          "pct": 70
+          "total": 16,
+          "covered": 16,
+          "missing": 0,
+          "pct": 100
         },
         "lines": {
-          "total": 34,
-          "covered": 27,
-          "missing": 7,
-          "pct": 79.41
+          "total": 52,
+          "covered": 44,
+          "missing": 8,
+          "pct": 84.61
+        }
+      },
+      "policy": {
+        "status": "unregistered",
+        "layer": "未登记",
+        "targetBranchCoveragePct": null,
+        "currentStageHardBaselinePct": null,
+        "nextStageTargetPct": null,
+        "affectsBusinessWrite": null,
+        "affectsAdmissionRejection": null,
+        "affectsSearchReadonly": null,
+        "affectsDeviceTrust": null,
+        "affectsOrdinaryMobileUser": null,
+        "testFiles": []
+      },
+      "source": {
+        "isNewSourceFile": false,
+        "gitStatus": "tracked_or_unknown",
+        "isCoveredByCoverageSummary": true
+      },
+      "risk": {
+        "level": "未登记",
+        "descriptionZh": "该文件未进入移动端分支风险政策，需要确认是否属于关键业务分支或允许暂缓。",
+        "allowDeferral": false,
+        "deferralReasonZh": "未登记文件缺少中文暂缓原因。",
+        "nextActionZh": "判断风险层级并登记 policy，或补充中文暂缓原因。"
+      }
+    },
+    {
+      "filePath": "apps/mobile/src/operationRuntime.js",
+      "coverage": {
+        "statements": {
+          "total": 93,
+          "covered": 85,
+          "missing": 8,
+          "pct": 91.39
+        },
+        "branches": {
+          "total": 88,
+          "covered": 61,
+          "missing": 27,
+          "pct": 69.31
+        },
+        "functions": {
+          "total": 25,
+          "covered": 23,
+          "missing": 2,
+          "pct": 92
+        },
+        "lines": {
+          "total": 77,
+          "covered": 72,
+          "missing": 5,
+          "pct": 93.5
         }
       },
       "policy": {
         "status": "registered",
-        "layer": "P1 状态决策",
-        "targetBranchCoveragePct": 65,
-        "currentStageHardBaselinePct": 48.8,
-        "nextStageTargetPct": 65,
+        "layer": "P0 业务保护",
+        "targetBranchCoveragePct": 70,
+        "currentStageHardBaselinePct": 29.54,
+        "nextStageTargetPct": 70,
         "affectsBusinessWrite": true,
-        "affectsAdmissionRejection": false,
+        "affectsAdmissionRejection": true,
         "affectsSearchReadonly": false,
-        "affectsDeviceTrust": false,
+        "affectsDeviceTrust": true,
         "affectsOrdinaryMobileUser": true,
         "testFiles": [
-          "apps/mobile/src/__tests__/OperationRouteIdentityContract.test.js",
-          "apps/mobile/src/__tests__/OperationPanelRuntimeContract.test.js"
+          "apps/mobile/src/__tests__/operationRuntime.test.js",
+          "apps/mobile/src/__tests__/OperationPanelRuntimeContract.test.js",
+          "apps/mobile/src/__tests__/DormitoryWorkItemNativePilot.test.js"
         ]
       },
       "source": {
@@ -1660,11 +1586,11 @@
         "isCoveredByCoverageSummary": true
       },
       "risk": {
-        "level": "P1",
-        "descriptionZh": "若上下文解析分支缺测，可能把错误 WorkItem 或卡片上下文带入提交。",
-        "allowDeferral": true,
-        "deferralReasonZh": "允许短期暂缓；该文件主要解析上下文，但字段别名和空 payload 仍需下一批补测。",
-        "nextActionZh": "补空 payload、字段别名、缺 actor 和异常上下文矩阵。"
+        "level": "P0",
+        "descriptionZh": "若提交协议分支回退，移动端可能把不可确认状态误当成可写业务事实。",
+        "allowDeferral": false,
+        "deferralReasonZh": "不允许暂缓；运行提交协议直接影响 403、409、422、设备信任和证据保护。",
+        "nextActionZh": "优先补矩阵测试覆盖错误状态、重复提交、无 WorkItem、无证据和设备不可信。"
       }
     },
     {
@@ -1722,45 +1648,48 @@
       }
     },
     {
-      "filePath": "apps/mobile/src/views/feedbackView.js",
+      "filePath": "apps/mobile/src/operationCaseContext.js",
       "coverage": {
         "statements": {
-          "total": 24,
-          "covered": 15,
-          "missing": 9,
-          "pct": 62.5
+          "total": 40,
+          "covered": 33,
+          "missing": 7,
+          "pct": 82.5
         },
         "branches": {
-          "total": 34,
-          "covered": 11,
+          "total": 84,
+          "covered": 61,
           "missing": 23,
-          "pct": 32.35
+          "pct": 72.61
         },
         "functions": {
-          "total": 11,
-          "covered": 8,
-          "missing": 3,
-          "pct": 72.72
+          "total": 20,
+          "covered": 15,
+          "missing": 5,
+          "pct": 75
         },
         "lines": {
-          "total": 19,
-          "covered": 13,
+          "total": 34,
+          "covered": 28,
           "missing": 6,
-          "pct": 68.42
+          "pct": 82.35
         }
       },
       "policy": {
-        "status": "unregistered",
-        "layer": "未登记",
-        "targetBranchCoveragePct": null,
-        "currentStageHardBaselinePct": null,
-        "nextStageTargetPct": null,
-        "affectsBusinessWrite": null,
-        "affectsAdmissionRejection": null,
-        "affectsSearchReadonly": null,
-        "affectsDeviceTrust": null,
-        "affectsOrdinaryMobileUser": null,
-        "testFiles": []
+        "status": "registered",
+        "layer": "P1 状态决策",
+        "targetBranchCoveragePct": 65,
+        "currentStageHardBaselinePct": 48.8,
+        "nextStageTargetPct": 65,
+        "affectsBusinessWrite": true,
+        "affectsAdmissionRejection": false,
+        "affectsSearchReadonly": false,
+        "affectsDeviceTrust": false,
+        "affectsOrdinaryMobileUser": true,
+        "testFiles": [
+          "apps/mobile/src/__tests__/OperationRouteIdentityContract.test.js",
+          "apps/mobile/src/__tests__/OperationPanelRuntimeContract.test.js"
+        ]
       },
       "source": {
         "isNewSourceFile": false,
@@ -1768,11 +1697,11 @@
         "isCoveredByCoverageSummary": true
       },
       "risk": {
-        "level": "未登记",
-        "descriptionZh": "该文件未进入移动端分支风险政策，需要确认是否属于关键业务分支或允许暂缓。",
-        "allowDeferral": false,
-        "deferralReasonZh": "未登记文件缺少中文暂缓原因。",
-        "nextActionZh": "判断风险层级并登记 policy，或补充中文暂缓原因。"
+        "level": "P1",
+        "descriptionZh": "若上下文解析分支缺测，可能把错误 WorkItem 或卡片上下文带入提交。",
+        "allowDeferral": true,
+        "deferralReasonZh": "允许短期暂缓；该文件主要解析上下文，但字段别名和空 payload 仍需下一批补测。",
+        "nextActionZh": "补空 payload、字段别名、缺 actor 和异常上下文矩阵。"
       }
     },
     {
@@ -2009,9 +1938,9 @@
         },
         "branches": {
           "total": 50,
-          "covered": 36,
-          "missing": 14,
-          "pct": 72
+          "covered": 37,
+          "missing": 13,
+          "pct": 74
         },
         "functions": {
           "total": 9,
@@ -2107,60 +2036,6 @@
       }
     },
     {
-      "filePath": "apps/mobile/src/surfaceResolver.js",
-      "coverage": {
-        "statements": {
-          "total": 30,
-          "covered": 26,
-          "missing": 4,
-          "pct": 86.66
-        },
-        "branches": {
-          "total": 58,
-          "covered": 46,
-          "missing": 12,
-          "pct": 79.31
-        },
-        "functions": {
-          "total": 8,
-          "covered": 7,
-          "missing": 1,
-          "pct": 87.5
-        },
-        "lines": {
-          "total": 23,
-          "covered": 22,
-          "missing": 1,
-          "pct": 95.65
-        }
-      },
-      "policy": {
-        "status": "unregistered",
-        "layer": "未登记",
-        "targetBranchCoveragePct": null,
-        "currentStageHardBaselinePct": null,
-        "nextStageTargetPct": null,
-        "affectsBusinessWrite": null,
-        "affectsAdmissionRejection": null,
-        "affectsSearchReadonly": null,
-        "affectsDeviceTrust": null,
-        "affectsOrdinaryMobileUser": null,
-        "testFiles": []
-      },
-      "source": {
-        "isNewSourceFile": false,
-        "gitStatus": "tracked_or_unknown",
-        "isCoveredByCoverageSummary": true
-      },
-      "risk": {
-        "level": "未登记",
-        "descriptionZh": "该文件未进入移动端分支风险政策，需要确认是否属于关键业务分支或允许暂缓。",
-        "allowDeferral": false,
-        "deferralReasonZh": "未登记文件缺少中文暂缓原因。",
-        "nextActionZh": "判断风险层级并登记 policy，或补充中文暂缓原因。"
-      }
-    },
-    {
       "filePath": "apps/mobile/src/appState.js",
       "coverage": {
         "statements": {
@@ -2186,60 +2061,6 @@
           "covered": 34,
           "missing": 8,
           "pct": 80.95
-        }
-      },
-      "policy": {
-        "status": "unregistered",
-        "layer": "未登记",
-        "targetBranchCoveragePct": null,
-        "currentStageHardBaselinePct": null,
-        "nextStageTargetPct": null,
-        "affectsBusinessWrite": null,
-        "affectsAdmissionRejection": null,
-        "affectsSearchReadonly": null,
-        "affectsDeviceTrust": null,
-        "affectsOrdinaryMobileUser": null,
-        "testFiles": []
-      },
-      "source": {
-        "isNewSourceFile": false,
-        "gitStatus": "tracked_or_unknown",
-        "isCoveredByCoverageSummary": true
-      },
-      "risk": {
-        "level": "未登记",
-        "descriptionZh": "该文件未进入移动端分支风险政策，需要确认是否属于关键业务分支或允许暂缓。",
-        "allowDeferral": false,
-        "deferralReasonZh": "未登记文件缺少中文暂缓原因。",
-        "nextActionZh": "判断风险层级并登记 policy，或补充中文暂缓原因。"
-      }
-    },
-    {
-      "filePath": "apps/mobile/src/controls/bedLabelControls.js",
-      "coverage": {
-        "statements": {
-          "total": 30,
-          "covered": 25,
-          "missing": 5,
-          "pct": 83.33
-        },
-        "branches": {
-          "total": 39,
-          "covered": 28,
-          "missing": 11,
-          "pct": 71.79
-        },
-        "functions": {
-          "total": 13,
-          "covered": 12,
-          "missing": 1,
-          "pct": 92.3
-        },
-        "lines": {
-          "total": 25,
-          "covered": 23,
-          "missing": 2,
-          "pct": 92
         }
       },
       "policy": {
@@ -2377,6 +2198,60 @@
       }
     },
     {
+      "filePath": "apps/mobile/src/surfaceResolver.js",
+      "coverage": {
+        "statements": {
+          "total": 30,
+          "covered": 26,
+          "missing": 4,
+          "pct": 86.66
+        },
+        "branches": {
+          "total": 58,
+          "covered": 47,
+          "missing": 11,
+          "pct": 81.03
+        },
+        "functions": {
+          "total": 8,
+          "covered": 7,
+          "missing": 1,
+          "pct": 87.5
+        },
+        "lines": {
+          "total": 23,
+          "covered": 22,
+          "missing": 1,
+          "pct": 95.65
+        }
+      },
+      "policy": {
+        "status": "unregistered",
+        "layer": "未登记",
+        "targetBranchCoveragePct": null,
+        "currentStageHardBaselinePct": null,
+        "nextStageTargetPct": null,
+        "affectsBusinessWrite": null,
+        "affectsAdmissionRejection": null,
+        "affectsSearchReadonly": null,
+        "affectsDeviceTrust": null,
+        "affectsOrdinaryMobileUser": null,
+        "testFiles": []
+      },
+      "source": {
+        "isNewSourceFile": false,
+        "gitStatus": "tracked_or_unknown",
+        "isCoveredByCoverageSummary": true
+      },
+      "risk": {
+        "level": "未登记",
+        "descriptionZh": "该文件未进入移动端分支风险政策，需要确认是否属于关键业务分支或允许暂缓。",
+        "allowDeferral": false,
+        "deferralReasonZh": "未登记文件缺少中文暂缓原因。",
+        "nextActionZh": "判断风险层级并登记 policy，或补充中文暂缓原因。"
+      }
+    },
+    {
       "filePath": "apps/mobile/src/systemContextContract.js",
       "coverage": {
         "statements": {
@@ -2428,63 +2303,6 @@
         "allowDeferral": false,
         "deferralReasonZh": "未登记文件缺少中文暂缓原因。",
         "nextActionZh": "判断风险层级并登记 policy，或补充中文暂缓原因。"
-      }
-    },
-    {
-      "filePath": "apps/mobile/src/feedbackMessages.js",
-      "coverage": {
-        "statements": {
-          "total": 35,
-          "covered": 30,
-          "missing": 5,
-          "pct": 85.71
-        },
-        "branches": {
-          "total": 58,
-          "covered": 49,
-          "missing": 9,
-          "pct": 84.48
-        },
-        "functions": {
-          "total": 13,
-          "covered": 13,
-          "missing": 0,
-          "pct": 100
-        },
-        "lines": {
-          "total": 28,
-          "covered": 25,
-          "missing": 3,
-          "pct": 89.28
-        }
-      },
-      "policy": {
-        "status": "registered",
-        "layer": "P1 状态决策",
-        "targetBranchCoveragePct": 60,
-        "currentStageHardBaselinePct": 31.03,
-        "nextStageTargetPct": 60,
-        "affectsBusinessWrite": false,
-        "affectsAdmissionRejection": true,
-        "affectsSearchReadonly": false,
-        "affectsDeviceTrust": true,
-        "affectsOrdinaryMobileUser": true,
-        "testFiles": [
-          "apps/mobile/src/__tests__/confirmErrorHandling.test.js",
-          "apps/mobile/src/__tests__/MobileSurfaceCopyContract.test.js"
-        ]
-      },
-      "source": {
-        "isNewSourceFile": false,
-        "gitStatus": "tracked_or_unknown",
-        "isCoveredByCoverageSummary": true
-      },
-      "risk": {
-        "level": "P1",
-        "descriptionZh": "若反馈分支缺测，用户可能把阻断态误解为已成功或可继续提交。",
-        "allowDeferral": true,
-        "deferralReasonZh": "允许短期暂缓；文案不直接写事实，但 403、409、422、设备不可信和网络失败必须表达安全业务含义。",
-        "nextActionZh": "补错误码、弱网、设备不可信、业务阻断和重复提交文案矩阵。"
       }
     },
     {
@@ -2542,31 +2360,31 @@
       }
     },
     {
-      "filePath": "apps/mobile/src/selectors/searchSelectors.js",
+      "filePath": "apps/mobile/src/controls/bedLabelControls.js",
       "coverage": {
         "statements": {
-          "total": 9,
-          "covered": 6,
+          "total": 30,
+          "covered": 27,
           "missing": 3,
-          "pct": 66.66
+          "pct": 90
         },
         "branches": {
-          "total": 13,
-          "covered": 5,
+          "total": 39,
+          "covered": 31,
           "missing": 8,
-          "pct": 38.46
+          "pct": 79.48
         },
         "functions": {
-          "total": 7,
-          "covered": 5,
-          "missing": 2,
-          "pct": 71.42
+          "total": 13,
+          "covered": 13,
+          "missing": 0,
+          "pct": 100
         },
         "lines": {
-          "total": 7,
-          "covered": 6,
-          "missing": 1,
-          "pct": 85.71
+          "total": 25,
+          "covered": 25,
+          "missing": 0,
+          "pct": 100
         }
       },
       "policy": {
@@ -2596,45 +2414,48 @@
       }
     },
     {
-      "filePath": "apps/mobile/src/searchIntentRegistry.js",
+      "filePath": "apps/mobile/src/feedbackMessages.js",
       "coverage": {
         "statements": {
-          "total": 15,
-          "covered": 13,
-          "missing": 2,
-          "pct": 86.66
+          "total": 35,
+          "covered": 30,
+          "missing": 5,
+          "pct": 85.71
         },
         "branches": {
-          "total": 20,
-          "covered": 13,
-          "missing": 7,
-          "pct": 65
+          "total": 58,
+          "covered": 50,
+          "missing": 8,
+          "pct": 86.2
         },
         "functions": {
-          "total": 10,
-          "covered": 9,
-          "missing": 1,
-          "pct": 90
+          "total": 13,
+          "covered": 13,
+          "missing": 0,
+          "pct": 100
         },
         "lines": {
-          "total": 12,
-          "covered": 11,
-          "missing": 1,
-          "pct": 91.66
+          "total": 28,
+          "covered": 25,
+          "missing": 3,
+          "pct": 89.28
         }
       },
       "policy": {
-        "status": "unregistered",
-        "layer": "未登记",
-        "targetBranchCoveragePct": null,
-        "currentStageHardBaselinePct": null,
-        "nextStageTargetPct": null,
-        "affectsBusinessWrite": null,
-        "affectsAdmissionRejection": null,
-        "affectsSearchReadonly": null,
-        "affectsDeviceTrust": null,
-        "affectsOrdinaryMobileUser": null,
-        "testFiles": []
+        "status": "registered",
+        "layer": "P1 状态决策",
+        "targetBranchCoveragePct": 60,
+        "currentStageHardBaselinePct": 31.03,
+        "nextStageTargetPct": 60,
+        "affectsBusinessWrite": false,
+        "affectsAdmissionRejection": true,
+        "affectsSearchReadonly": false,
+        "affectsDeviceTrust": true,
+        "affectsOrdinaryMobileUser": true,
+        "testFiles": [
+          "apps/mobile/src/__tests__/confirmErrorHandling.test.js",
+          "apps/mobile/src/__tests__/MobileSurfaceCopyContract.test.js"
+        ]
       },
       "source": {
         "isNewSourceFile": false,
@@ -2642,11 +2463,11 @@
         "isCoveredByCoverageSummary": true
       },
       "risk": {
-        "level": "未登记",
-        "descriptionZh": "该文件未进入移动端分支风险政策，需要确认是否属于关键业务分支或允许暂缓。",
-        "allowDeferral": false,
-        "deferralReasonZh": "未登记文件缺少中文暂缓原因。",
-        "nextActionZh": "判断风险层级并登记 policy，或补充中文暂缓原因。"
+        "level": "P1",
+        "descriptionZh": "若反馈分支缺测，用户可能把阻断态误解为已成功或可继续提交。",
+        "allowDeferral": true,
+        "deferralReasonZh": "允许短期暂缓；文案不直接写事实，但 403、409、422、设备不可信和网络失败必须表达安全业务含义。",
+        "nextActionZh": "补错误码、弱网、设备不可信、业务阻断和重复提交文案矩阵。"
       }
     },
     {
@@ -2729,6 +2550,168 @@
           "covered": 11,
           "missing": 0,
           "pct": 100
+        }
+      },
+      "policy": {
+        "status": "unregistered",
+        "layer": "未登记",
+        "targetBranchCoveragePct": null,
+        "currentStageHardBaselinePct": null,
+        "nextStageTargetPct": null,
+        "affectsBusinessWrite": null,
+        "affectsAdmissionRejection": null,
+        "affectsSearchReadonly": null,
+        "affectsDeviceTrust": null,
+        "affectsOrdinaryMobileUser": null,
+        "testFiles": []
+      },
+      "source": {
+        "isNewSourceFile": false,
+        "gitStatus": "tracked_or_unknown",
+        "isCoveredByCoverageSummary": true
+      },
+      "risk": {
+        "level": "未登记",
+        "descriptionZh": "该文件未进入移动端分支风险政策，需要确认是否属于关键业务分支或允许暂缓。",
+        "allowDeferral": false,
+        "deferralReasonZh": "未登记文件缺少中文暂缓原因。",
+        "nextActionZh": "判断风险层级并登记 policy，或补充中文暂缓原因。"
+      }
+    },
+    {
+      "filePath": "apps/mobile/src/searchIntentRegistry.js",
+      "coverage": {
+        "statements": {
+          "total": 15,
+          "covered": 13,
+          "missing": 2,
+          "pct": 86.66
+        },
+        "branches": {
+          "total": 20,
+          "covered": 14,
+          "missing": 6,
+          "pct": 70
+        },
+        "functions": {
+          "total": 10,
+          "covered": 9,
+          "missing": 1,
+          "pct": 90
+        },
+        "lines": {
+          "total": 12,
+          "covered": 11,
+          "missing": 1,
+          "pct": 91.66
+        }
+      },
+      "policy": {
+        "status": "unregistered",
+        "layer": "未登记",
+        "targetBranchCoveragePct": null,
+        "currentStageHardBaselinePct": null,
+        "nextStageTargetPct": null,
+        "affectsBusinessWrite": null,
+        "affectsAdmissionRejection": null,
+        "affectsSearchReadonly": null,
+        "affectsDeviceTrust": null,
+        "affectsOrdinaryMobileUser": null,
+        "testFiles": []
+      },
+      "source": {
+        "isNewSourceFile": false,
+        "gitStatus": "tracked_or_unknown",
+        "isCoveredByCoverageSummary": true
+      },
+      "risk": {
+        "level": "未登记",
+        "descriptionZh": "该文件未进入移动端分支风险政策，需要确认是否属于关键业务分支或允许暂缓。",
+        "allowDeferral": false,
+        "deferralReasonZh": "未登记文件缺少中文暂缓原因。",
+        "nextActionZh": "判断风险层级并登记 policy，或补充中文暂缓原因。"
+      }
+    },
+    {
+      "filePath": "apps/mobile/src/views/feedbackView.js",
+      "coverage": {
+        "statements": {
+          "total": 24,
+          "covered": 23,
+          "missing": 1,
+          "pct": 95.83
+        },
+        "branches": {
+          "total": 34,
+          "covered": 28,
+          "missing": 6,
+          "pct": 82.35
+        },
+        "functions": {
+          "total": 11,
+          "covered": 11,
+          "missing": 0,
+          "pct": 100
+        },
+        "lines": {
+          "total": 19,
+          "covered": 19,
+          "missing": 0,
+          "pct": 100
+        }
+      },
+      "policy": {
+        "status": "unregistered",
+        "layer": "未登记",
+        "targetBranchCoveragePct": null,
+        "currentStageHardBaselinePct": null,
+        "nextStageTargetPct": null,
+        "affectsBusinessWrite": null,
+        "affectsAdmissionRejection": null,
+        "affectsSearchReadonly": null,
+        "affectsDeviceTrust": null,
+        "affectsOrdinaryMobileUser": null,
+        "testFiles": []
+      },
+      "source": {
+        "isNewSourceFile": false,
+        "gitStatus": "tracked_or_unknown",
+        "isCoveredByCoverageSummary": true
+      },
+      "risk": {
+        "level": "未登记",
+        "descriptionZh": "该文件未进入移动端分支风险政策，需要确认是否属于关键业务分支或允许暂缓。",
+        "allowDeferral": false,
+        "deferralReasonZh": "未登记文件缺少中文暂缓原因。",
+        "nextActionZh": "判断风险层级并登记 policy，或补充中文暂缓原因。"
+      }
+    },
+    {
+      "filePath": "apps/mobile/src/selectors/searchSelectors.js",
+      "coverage": {
+        "statements": {
+          "total": 9,
+          "covered": 8,
+          "missing": 1,
+          "pct": 88.88
+        },
+        "branches": {
+          "total": 13,
+          "covered": 8,
+          "missing": 5,
+          "pct": 61.53
+        },
+        "functions": {
+          "total": 7,
+          "covered": 6,
+          "missing": 1,
+          "pct": 85.71
+        },
+        "lines": {
+          "total": 7,
+          "covered": 6,
+          "missing": 1,
+          "pct": 85.71
         }
       },
       "policy": {
