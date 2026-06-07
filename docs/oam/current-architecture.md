@@ -44,6 +44,7 @@ Product Capability
 | 每类文件负责什么、禁止什么 | `docs/contracts/oam-responsibility-boundary-matrix.json` | `scripts/oam/check-oam-responsibility-boundary-matrix.mjs` |
 | 业务对象、字段、owner、语言键 | `docs/contracts/business/oam-business-object-field-registry.json` | `scripts/oam/check-business-object-field-registry.mjs` |
 | WorkItem 状态、动作、证据和修正路径 | `docs/contracts/business/oam-workflow-state-registry.json` | `scripts/oam/check-workflow-state-registry.mjs` |
+| 宿舍业务旅程和场景主线 | `docs/business/dormitory/current-business-journey.md`、`docs/scenarios/dormitory/golden-pilot.yml` | `scripts/check-dormitory-golden-domain.mjs` |
 | 每张数据库表 owner 和唯一写入口 | `docs/contracts/database/oam-db-ownership-map.json` | `scripts/oam/check-db-ownership-map.mjs` |
 | 证据根引用是否真实存在 | `docs/contracts/evidence/evidence-graph-refs-contract.json` | `scripts/oam/check-evidence-contract-refs.mjs` |
 | 高风险准入、可信设备、修正和 UOW | `docs/contracts/admission/admission-matrix.json` | `scripts/oam/check-runtime-governance-v2.mjs` |
@@ -51,6 +52,10 @@ Product Capability
 | 普通用户语言、PC 治理隔离和结构化准入 | `docs/surface/surface-contract.yml` | `scripts/oam/check-surface-language-v2.mjs` |
 
 人工手册只能解释这些权威如何使用，不重复定义机器合同。修改业务场景、字段、流程、数据库或可见文案时，先改对应合同，再改实现、测试和证据。
+
+历史设计输入桶、弃用文件桶和静态审查快照都不是当前架构身份。可复用内容必须吸收进上表当前权威；吸收后删除原来源。
+
+`artifacts/oam/evidence` 和 `artifacts/oam/final-report.json` 是本地/CI 运行产物，不作为源码真值提交。放行结论必须来自当前运行的 `scripts/oam/run-control-plane-checks.ps1`、证据生成器和证据检查器。
 
 ## 3. 一等目录
 

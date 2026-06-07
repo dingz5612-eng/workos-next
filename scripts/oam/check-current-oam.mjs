@@ -4,6 +4,18 @@ import path from "node:path";
 const root = process.cwd();
 const violations = [];
 const mobileArtifactDir = ["apps", "mobile", "artifacts"].join("/");
+const forbiddenGreyPaths = [
+  ["docs", "product"].join("/"),
+  ["docs", "review"].join("/"),
+  ["docs", "decisions", "ADR-0001-phase-0-1-bootstrap.md"].join("/"),
+  ["docs", "oam", "final-acceptance-report.md"].join("/"),
+  ["docs", "oam", "review-defect-record.md"].join("/"),
+  ["docs", "oam", "mobile-refactor-readiness-plan.md"].join("/"),
+  ["docs", "system", "oam-warning-baseline.md"].join("/"),
+  ["docs", "oam", "certification-scenarios.json"].join("/"),
+  ["docs", "oam", "dormitory-certification-scenarios.json"].join("/"),
+  ["docs", "business", "dormitory", "certification-scenarios.json"].join("/")
+];
 
 const requiredJson = [
   "docs/oam/current-architecture.manifest.json",
@@ -26,6 +38,12 @@ requireFile("scripts/oam/check-current-evidence-root.mjs");
 checkDirectory("services", ["core-api"]);
 checkDirectory("modules", ["accommodation", "finance-gate", "identity", "maintenance"]);
 checkDirectory("packages", ["surface-view-models"]);
+
+for (const item of forbiddenGreyPaths) {
+  if (exists(item)) {
+    violations.push(v("grey_history_path_present", `当前纯净 OAM 不允许保留历史输入、旧报告、旧计划或重复场景副本：${item}`));
+  }
+}
 
 for (const moduleName of ["accommodation", "finance-gate", "identity", "maintenance"]) {
   const manifest = readJson(`modules/${moduleName}/oam-module.manifest.json`);

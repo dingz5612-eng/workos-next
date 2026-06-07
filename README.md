@@ -12,6 +12,8 @@ docs/oam/current-architecture.manifest.json
 docs/contracts/oam.current.json
 docs/oam/current-authority-index.json
 docs/contracts/oam-responsibility-boundary-matrix.json
+docs/business/dormitory/current-business-journey.md
+docs/scenarios/dormitory/golden-pilot.yml
 docs/business/experience-contract.yml
 docs/surface/surface-contract.yml
 ```
@@ -52,6 +54,8 @@ Evidence references: docs/contracts/evidence/evidence-graph-refs-contract.json
 Search read-side proof: docs/contracts/search/search-contract.json
 Language and visible copy: docs/contracts/language/language-contract.json
 Surface responsibility: docs/surface/surface-contract.yml
+Dormitory business journey: docs/business/dormitory/current-business-journey.md
+Dormitory golden scenarios: docs/scenarios/dormitory/golden-pilot.yml
 ```
 
 Every current contract must have an owner, checker, runtime binding, test binding, and OAM evidence binding in `docs/contracts/oam-responsibility-boundary-matrix.json`.

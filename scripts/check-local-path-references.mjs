@@ -100,7 +100,7 @@ function normalizeReference(rawRef) {
 }
 
 function shouldSkipFile(relativeFile) {
-  return relativeFile === "docs/oam/review-defect-record.md";
+  return false;
 }
 
 function shouldSkipReference(relativeFile, line, normalizedRef) {

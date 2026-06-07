@@ -6,7 +6,7 @@
     "machineContract": "docs/contracts/oam.current.json",
     "systemMap": "docs/system/current-system-map.md",
     "decisionRecord": "docs/decisions/ADR-0002-oam-authority-correction.md",
-    "designInputAudit": "docs/review/oam-business-operating-input-audit.md",
+    "businessJourney": "docs/business/dormitory/current-business-journey.md",
     "currentEvidenceRoot": "artifacts/oam/evidence"
   },
   "runtimeAxis": [
@@ -245,6 +245,20 @@
   },
   "purity": {
     "deleteHistoricalArtifactsByDefault": true,
+    "historicalDesignInputsAllowed": false,
+    "greyAuthorityBucketsAllowed": false,
+    "forbiddenGreyPaths": [
+      { "forbiddenPath": "docs/product" },
+      { "forbiddenPath": "docs/review" },
+      { "forbiddenPath": "docs/decisions/ADR-0001-phase-0-1-bootstrap.md" },
+      { "forbiddenPath": "docs/oam/final-acceptance-report.md" },
+      { "forbiddenPath": "docs/oam/review-defect-record.md" },
+      { "forbiddenPath": "docs/oam/mobile-refactor-readiness-plan.md" },
+      { "forbiddenPath": "docs/system/oam-warning-baseline.md" },
+      { "forbiddenPath": "docs/oam/certification-scenarios.json" },
+      { "forbiddenPath": "docs/oam/dormitory-certification-scenarios.json" },
+      { "forbiddenPath": "docs/business/dormitory/certification-scenarios.json" }
+    ],
     "forbiddenStageTerms": [
       "previous-architecture-stage-terms",
       "previous-runtime-stage-terms",
@@ -255,6 +269,9 @@
   "currentEvidenceRoot": {
     "path": "artifacts/oam/evidence",
     "finalReport": "artifacts/oam/final-report.json",
+    "sourceControlled": false,
+    "generatedAtRuntime": true,
+    "sourceOfTruth": "scripts/oam/run-control-plane-checks.ps1",
     "generator": "scripts/oam/generate-current-evidence-root.mjs",
     "checker": "scripts/oam/check-current-evidence-root.mjs",
     "ciWorkflow": ".github/workflows/ci.yml",

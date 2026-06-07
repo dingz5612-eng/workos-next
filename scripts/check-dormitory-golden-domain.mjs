@@ -26,6 +26,13 @@ const requiredCoverage = [
   "FinanceReceipt"
 ];
 const forbiddenOwnedFacts = ["Subject", "Vehicle", "PaymentFact", "DepositFact", "LedgerTransaction", "EvidenceObject"];
+const requiredValueStreams = [
+  "resource_availability",
+  "lead_to_stay_conversion",
+  "in_stay_revenue",
+  "deposit_liability",
+  "checkout_turnover"
+];
 
 if (process.argv.includes("--self-test")) {
   const invalid = validatePack({
@@ -46,7 +53,8 @@ if (process.argv.includes("--self-test")) {
 const scannedFiles = [
   "docs/business/domains/dormitory/domain-pack.yml",
   "docs/scenarios/dormitory/golden-pilot.yml",
-  "docs/business/dormitory/certification-scenarios.json",
+  "docs/business/dormitory/value-streams.yml",
+  "docs/business/dormitory/workitem-catalog.yml",
   "docs/business/dormitory/evidence-policy.yml",
   "docs/business/dormitory/finance-control-rules.yml",
   "docs/business/business-line-registry.json"
@@ -55,10 +63,11 @@ const violations = [];
 const pack = readJson(scannedFiles[0]);
 violations.push(...validatePack(pack));
 violations.push(...validateScenarioPack(readJson(scannedFiles[1])));
-violations.push(...validateCertificationFile(readJson(scannedFiles[2])));
-violations.push(...validateEvidencePolicy(readJson(scannedFiles[3])));
-violations.push(...validateFinanceRules(readJson(scannedFiles[4])));
-violations.push(...validateBusinessLineRegistry(readJson(scannedFiles[5])));
+violations.push(...validateValueStreams(readJson(scannedFiles[2])));
+violations.push(...validateWorkItemCatalog(readJson(scannedFiles[3])));
+violations.push(...validateEvidencePolicy(readJson(scannedFiles[4])));
+violations.push(...validateFinanceRules(readJson(scannedFiles[5])));
+violations.push(...validateBusinessLineRegistry(readJson(scannedFiles[6])));
 
 writeReport(violations, scannedFiles);
 if (violations.length > 0) {
@@ -136,23 +145,53 @@ function validateScenarioPack(document) {
   return violations;
 }
 
-function validateCertificationFile(document) {
+function validateValueStreams(document) {
   const violations = [];
-  const scenarios = document.scenarios ?? [];
-  const ids = scenarios.map((scenario) => scenario.scenarioId ?? scenario.scenario_id);
-  for (const scenarioId of requiredScenarioIds) {
-    if (!ids.includes(scenarioId)) {
-      violations.push(violation("dormitory.certification_missing_scenario", `Certification file missing ${scenarioId}.`, { scenarioId }));
+  const streams = document.valueStreams ?? [];
+  const ids = new Set(streams.map((stream) => stream.id));
+  for (const streamId of requiredValueStreams) {
+    if (!ids.has(streamId)) {
+      violations.push(violation("dormitory.value_stream_missing", `Dormitory value streams missing ${streamId}.`, { streamId }));
     }
   }
-  for (const scenario of scenarios) {
-    const scenarioId = scenario.scenarioId ?? scenario.scenario_id;
-    if (!Array.isArray(scenario.requires) || scenario.requires.length === 0) {
-      violations.push(violation("dormitory.certification_missing_requires", `Scenario ${scenarioId} missing requires.`, { scenarioId }));
+  for (const stream of streams) {
+    for (const field of ["startEvent", "endState", "ownerRole", "certificationScenario"]) {
+      if (!stream[field]) {
+        violations.push(violation("dormitory.value_stream_field_missing", `Value stream ${stream.id} missing ${field}.`, { streamId: stream.id, field }));
+      }
+    }
+    if (!Array.isArray(stream.workItemTypes) || stream.workItemTypes.length === 0) {
+      violations.push(violation("dormitory.value_stream_workitems_missing", `Value stream ${stream.id} must bind workItemTypes.`, { streamId: stream.id }));
     }
   }
   if (document.productionAllowed !== false) {
-    violations.push(violation("dormitory.certification_production_allowed", "Dormitory certification file must keep productionAllowed=false."));
+    violations.push(violation("dormitory.value_stream_production_allowed", "Dormitory value streams must keep productionAllowed=false."));
+  }
+  return violations;
+}
+
+function validateWorkItemCatalog(document) {
+  const violations = [];
+  const workItems = document.workItems ?? [];
+  const byType = new Map(workItems.map((item) => [item.workItemType, item]));
+  const scenarioPack = readJson("docs/scenarios/dormitory/golden-pilot.yml");
+  for (const scenario of scenarioPack.scenarios ?? []) {
+    if (requiredScenarioIds.includes(scenario.scenarioId) && !byType.has(scenario.workItemType)) {
+      violations.push(violation("dormitory.workitem_catalog_missing_type", `WorkItem catalog missing ${scenario.workItemType}.`, { workItemType: scenario.workItemType, scenarioId: scenario.scenarioId }));
+    }
+  }
+  for (const item of workItems) {
+    for (const field of ["ownerRole", "SLA", "confirmationPolicy", "riskLevel", "idempotencyScope"]) {
+      if (!item[field]) {
+        violations.push(violation("dormitory.workitem_catalog_field_missing", `WorkItem ${item.workItemType} missing ${field}.`, { workItemType: item.workItemType, field }));
+      }
+    }
+    if (item.factTraceRequired !== true) {
+      violations.push(violation("dormitory.workitem_catalog_fact_trace_missing", `WorkItem ${item.workItemType} must require fact trace.`, { workItemType: item.workItemType }));
+    }
+  }
+  if (document.productionAllowed !== false) {
+    violations.push(violation("dormitory.workitem_catalog_production_allowed", "Dormitory work item catalog must keep productionAllowed=false."));
   }
   return violations;
 }

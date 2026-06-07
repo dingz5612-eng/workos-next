@@ -18,8 +18,6 @@
     "current_runtime_implementation",
     "current_database_asset",
     "current_evidence_asset",
-    "historical_design_input",
-    "deprecated_file",
     "read_side_allowed_file"
   ],
   "entries": [
@@ -94,6 +92,51 @@
       "evidence": "artifacts/oam/evidence/master-design-proof.json",
       "currentTruthAllowed": true,
       "notesZh": "业务线准入状态权威。"
+    },
+    {
+      "path": "docs/business/dormitory/current-business-journey.md",
+      "identity": "current_manual",
+      "owner": "business-contract-owner",
+      "checker": "scripts/check-dormitory-golden-domain.mjs",
+      "evidence": "artifacts/oam/checks/dormitory-golden-domain-report.json",
+      "currentTruthAllowed": false,
+      "notesZh": "宿舍当前业务旅程人读入口；只解释当前合同，不替代机器权威。"
+    },
+    {
+      "path": "docs/business/dormitory/value-streams.yml",
+      "identity": "current_business_contract",
+      "owner": "business-contract-owner",
+      "checker": "scripts/check-dormitory-golden-domain.mjs",
+      "evidence": "artifacts/oam/checks/dormitory-golden-domain-report.json",
+      "currentTruthAllowed": true,
+      "notesZh": "宿舍当前价值流和业务闭环。"
+    },
+    {
+      "path": "docs/business/dormitory/workitem-catalog.yml",
+      "identity": "current_business_contract",
+      "owner": "business-contract-owner",
+      "checker": "scripts/business/check-evidence-coverage-contract.mjs",
+      "evidence": "artifacts/oam/checks/evidence-coverage-contract-result.json",
+      "currentTruthAllowed": true,
+      "notesZh": "宿舍当前 WorkItem、owner、证据、SLA 和账务影响目录。"
+    },
+    {
+      "path": "docs/scenarios/dormitory/golden-pilot.yml",
+      "identity": "current_business_contract",
+      "owner": "business-contract-owner",
+      "checker": "scripts/check-dormitory-golden-domain.mjs",
+      "evidence": "artifacts/oam/checks/dormitory-golden-domain-report.json",
+      "currentTruthAllowed": true,
+      "notesZh": "宿舍当前唯一金标场景源。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/domain-pack.yml",
+      "identity": "current_business_contract",
+      "owner": "business-contract-owner",
+      "checker": "scripts/check-dormitory-golden-domain.mjs",
+      "evidence": "artifacts/oam/checks/dormitory-golden-domain-report.json",
+      "currentTruthAllowed": true,
+      "notesZh": "宿舍当前领域包、事实归属和金链追踪。"
     },
     {
       "path": "docs/contracts/admission/admission-matrix.json",
@@ -213,23 +256,6 @@
       "notesZh": "证据根证明检查执行状态，不替代业务事实权威。"
     }
   ],
-  "historicalDesignInputs": [
-    {
-      "path": "docs/review/oam-business-operating-input-audit.md",
-      "allowedUseZh": "只能作为业务梳理输入，不得作为当前业务真值、运行合同或准入权威。",
-      "currentTruthAllowed": false
-    },
-    {
-      "path": "docs/review/PROJECT_REVIEW_MANUAL.md",
-      "allowedUseZh": "只能作为审查手册入口，不重复定义机器合同。",
-      "currentTruthAllowed": false
-    },
-    {
-      "path": "docs/oam/review-defect-record.md",
-      "allowedUseZh": "只能记录已处理缺陷，不得作为当前 GO/NO_GO 权威。",
-      "currentTruthAllowed": false
-    }
-  ],
   "readSideAllowedTerms": [
     {
       "term": "workspace",
@@ -257,10 +283,10 @@
       "forbiddenUseZh": "不得确认 WorkItem 或替代 Truth Owner。"
     }
   ],
-  "deprecatedFiles": [],
   "invariants": [
     "Current authority must resolve through the four core OAM files.",
-    "Historical design input cannot be referenced as current truth authority.",
+    "Historical design input buckets are not allowed in the current project.",
+    "Grey deprecated-file buckets are not allowed in the current project.",
     "读侧允许术语不能拥有业务事实。",
     "Every current authority entry must bind owner, checker, and evidence path."
   ]
