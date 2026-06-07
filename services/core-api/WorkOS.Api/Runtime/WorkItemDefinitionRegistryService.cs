@@ -35,9 +35,6 @@ public sealed class WorkItemDefinitionRegistryService
         var payloadDefinitionId = PayloadValue(workItem.Payload, "definitionId");
         var definition = FindByDefinitionId(payloadDefinitionId)
             ?? FindByDefinitionId(workItem.DefinitionVersionId)
-            ?? FindBySourceCardId(PayloadValue(workItem.Payload, "cardId"))
-            ?? FindBySourceCardId(requestedCardId)
-            ?? FindBySourceCardId(workItem.WorkItemType)
             ?? FindByWorkItemType(workItem.WorkItemType);
 
         return definition is null
@@ -52,8 +49,8 @@ public sealed class WorkItemDefinitionRegistryService
     public WorkItemDefinitionResolution ResolveByWorkspaceCard(string? workspaceId, string? cardId)
     {
         var definition = definitions.FirstOrDefault(item =>
-            item.WorkspaceId.Equals(workspaceId ?? string.Empty, StringComparison.OrdinalIgnoreCase) &&
-            item.SourceCardId.Equals(cardId ?? string.Empty, StringComparison.OrdinalIgnoreCase));
+            (item.WorkspaceId ?? string.Empty).Equals(workspaceId ?? string.Empty, StringComparison.OrdinalIgnoreCase) &&
+            (item.SourceCardId ?? string.Empty).Equals(cardId ?? string.Empty, StringComparison.OrdinalIgnoreCase));
         return definition is null
             ? WorkItemDefinitionResolution.Unresolved(
                 string.Empty,

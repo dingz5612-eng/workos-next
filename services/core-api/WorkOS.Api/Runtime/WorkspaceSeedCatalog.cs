@@ -49,7 +49,7 @@ internal static class WorkspaceSeedCatalog
             "Сначала лид и бронь, затем койка, фолио, депозит и финансы."),
         Workspace("W-STAY-LEAD-RESERVATION", "stay", "T-STAY-LEAD-RESERVATION", "我要管理线索预订", "Управлять лидами и бронью",
             "线索、跟进、预订、取消和转入住以合同形式并行进入宿舍运行时。",
-            "Лиды, follow-up, бронь, отмена и конвертация в проживание как contract-only slice.",
+            "Лиды, follow-up, бронь, отмена и конвертация в проживание как текущий runtime contract.",
             new[]
             {
                 Card("leadCapture", "ready", "线索捕获卡", "Захват лида", new[] { "leadId", "operatorId" }, new[] { "联系日期", "线索姓名", "电话", "通讯方式", "需要床位数", "期望入住日期", "住宿时长", "来源渠道", "预算金额", "线索状态", "线索备注" }, new[] { "线索转预订率", "来源转化率" }),
@@ -152,79 +152,7 @@ internal static class WorkspaceSeedCatalog
                 Card("periodClose", "notStarted", "周期关闭卡", "Закрытие периода", new[] { "periodId", "managerId" }, new[] { "经营周期", "关闭结果", "管理结论", "下一周期重点" }, new[] { "范围已确认", "指标已复核", "财务已复核", "运营已诊断", "行动计划已提交", "行动计划已跳过", "无阻断不变量", "业务签署完成", "行动计划数量", "阻断问题数量", "阻断不变量数量" })
             },
             "周期关闭前必须完成指标、财务、运营诊断和行动计划。",
-            "Перед закрытием нужны метрики, финансы, диагностика и план действий."),
-        Workspace("W-STAY-CHECKOUT", "stay", "T-STAY-CHECKOUT", "我要办理退房", "Оформить выселение",
-            "退房发起、房间检查、费用结算、财务确认和释放床位在一个办理面完成。",
-            "Выселение, проверка, расчет, финансы и освобождение койки вместе.",
-            new[]
-            {
-                Card("checkoutStart", "ready", "退房发起卡", "Начало", new[] { "checkoutId", "stayOrderId" }, new[] { "退房人", "退房原因", "预计退房时间" }, new[] { "checkoutStartLeadTime" }),
-                Card("roomInspection", "notStarted", "房间检查卡", "Проверка", new[] { "inspectionId", "roomId", "bedId" }, new[] { "房间状态", "物品/损坏检查", "照片证据" }, new[] { "damageCount", "inspectionDuration" }),
-                Card("feeSettlement", "notStarted", "费用结算卡", "Расчет", new[] { "settlementId", "stayOrderId" }, new[] { "住宿费用", "额外费用", "押金抵扣", "应退/应补" }, new[] { "settlementDuration", "refundAmount" }),
-                Card("checkoutFinance", "notStarted", "财务确认卡", "Финансы", new[] { "financeReviewId", "settlementId" }, new[] { "退款/补款确认", "财务凭证", "确认人" }, new[] { "refundDuration" }),
-                Card("checkoutClose", "notStarted", "退房关闭卡", "Закрытие", new[] { "auditTraceId", "bedId" }, new[] { "释放床位", "关闭住宿单", "人工确认摘要" }, new[] { "checkoutTotalDuration" })
-            },
-            "先发起退房并完成房间检查。",
-            "Начните выселение и проверьте комнату."),
-        Workspace("W-STAY-DEPOSIT-EXCEPTION", "finance", "T-FIN-DEPOSIT", "我要处理押金异常", "Разобрать исключение депозита",
-            "围绕押金异常原因、补交材料、财务复核和回到业务闭环处理。",
-            "Причина, материалы, фин. проверка и возврат в процесс.",
-            new[]
-            {
-                Card("reason", "done", "异常原因卡", "Причина", new[] { "exceptionId", "depositEvidenceId" }, new[] { "金额不一致", "凭证不清晰", "付款人不一致" }, new[] { "exceptionTypeCount" }),
-                Card("resubmit", "ready", "补交材料卡", "Материалы", new[] { "depositEvidenceId", "stayOrderId" }, new[] { "新凭证", "收据编号", "补充说明" }, new[] { "resubmitDuration" }),
-                Card("review", "notStarted", "财务复核卡", "Проверка", new[] { "financeReviewId", "reviewerId" }, new[] { "通过", "退回", "需人工沟通" }, new[] { "reviewDuration", "returnCount" }),
-                Card("returnBusiness", "notStarted", "回到业务卡", "Возврат", new[] { "stayOrderId", "currentStage" }, new[] { "回到入住", "回到退房", "保持阻断" }, new[] { "exceptionResolutionDuration" })
-            },
-            "补交材料后等待财务复核。",
-            "После материалов ждите фин. проверку."),
-        Workspace("W-REPAIR-REQUEST", "repair", "T-AUTO-DIAGNOSE", "我要处理报修", "Обработать заявку ремонта",
-            "客户车辆、报修信息、到场确认和派工入口形成报修闭环。",
-            "Клиент, авто, заявка, прибытие и готовность к назначению.",
-            new[]
-            {
-                Card("customerVehicle", "done", "客户车辆卡", "Клиент/авто", new[] { "repairCustomerId", "vehicleId" }, new[] { "客户", "车牌", "车型", "VIN", "联系方式" }, new[] { "vehicleMatchRate" }),
-                Card("request", "done", "报修信息卡", "Заявка", new[] { "repairOrderId", "driverId" }, new[] { "故障描述", "车辆位置", "司机", "紧急程度" }, new[] { "requestCompleteness" }),
-                Card("arrival", "ready", "到场确认卡", "Прибытие", new[] { "arrivalId", "vehicleId" }, new[] { "到场时间", "车辆状态", "接车人", "初步风险" }, new[] { "arrivalLeadTime" }),
-                Card("dispatchEntry", "notStarted", "派工入口卡", "Назначение", new[] { "repairOrderId", "queueItemId" }, new[] { "是否可派工", "阻断原因", "下一步责任人" }, new[] { "dispatchReadyRate" })
-            },
-            "确认车辆到场后进入派工。",
-            "После прибытия можно назначать диагностику."),
-        Workspace("W-REPAIR-DISPATCH", "repair", "T-AUTO-DIAGNOSE", "我要安排维修", "Назначить ремонт",
-            "派工、诊断、维修执行和阻断恢复在一个维修办理面中处理。",
-            "Назначение, диагностика, ремонт и блокировки в одной области.",
-            new[]
-            {
-                Card("dispatch", "ready", "派工卡", "Назначение", new[] { "technicianId", "workbayId" }, new[] { "技师", "工位", "预计开始时间", "优先级" }, new[] { "dispatchLeadTime" }),
-                Card("diagnosis", "notStarted", "诊断卡", "Диагностика", new[] { "diagnosisId", "repairOrderId" }, new[] { "故障分类", "诊断结论", "所需配件", "预计费用" }, new[] { "diagnosisDuration" }),
-                Card("execution", "notStarted", "维修执行卡", "Ремонт", new[] { "repairProgressId", "partsRequestId" }, new[] { "维修项目", "工时", "配件", "过程照片" }, new[] { "vehicleDowntime" }),
-                Card("repairBlocker", "notStarted", "阻断卡", "Блокировка", new[] { "blockerId", "repairOrderId" }, new[] { "无技师", "缺配件", "费用待确认", "客户不同意" }, new[] { "blockerDuration" })
-            },
-            "先选择技师和工位，不会自动关闭维修单。",
-            "Выберите механика и пост; заявка не закроется автоматически."),
-        Workspace("W-REPAIR-CLOSE", "repair", "T-REPAIR-CLOSE", "我要验收关闭", "Принять и закрыть ремонт",
-            "验收、费用材料、客户确认和关闭摘要形成关闭闭环。",
-            "Приемка, расходы, клиент и закрытие.",
-            new[]
-            {
-                Card("inspection", "ready", "验收卡", "Приемка", new[] { "inspectionId", "repairOrderId" }, new[] { "维修结果", "试车结果", "验收照片", "验收人" }, new[] { "inspectionDuration" }),
-                Card("feeMaterial", "notStarted", "费用材料卡", "Расходы", new[] { "feeMaterialId", "repairOrderId" }, new[] { "工时费", "配件费", "其它费用", "财务材料" }, new[] { "feeMaterialDuration" }),
-                Card("customerConfirm", "notStarted", "客户确认卡", "Клиент", new[] { "customerConfirmId", "driverId" }, new[] { "客户签字", "司机确认", "异议说明" }, new[] { "disputeCount" }),
-                Card("close", "notStarted", "关闭卡", "Закрытие", new[] { "auditTraceId", "repairOrderId" }, new[] { "关闭摘要", "车辆恢复状态", "人工确认关闭" }, new[] { "closeDuration" })
-            },
-            "先完成验收，费用材料齐全后才能关闭。",
-            "Сначала приемка; закрыть можно после расходов."),
-        Workspace("W-REPAIR-MASTER-DATA", "repair", "T-VEHICLE-CREATE", "我要创建维修资料", "Создать ремонтные справочники",
-            "客户、车辆和服务规则在同一资料建档办理面完成。",
-            "Клиент, авто и правила сервиса вместе.",
-            new[]
-            {
-                Card("customer", "ready", "客户建档卡", "Клиент", new[] { "repairCustomerId", "operatorId" }, new[] { "客户名称", "联系人", "电话", "类型" }, new[] { "customerCreationDuration" }),
-                Card("vehicle", "ready", "车辆建档卡", "Авто", new[] { "vehicleId", "repairCustomerId" }, new[] { "车牌", "品牌车型", "VIN", "发动机号", "里程" }, new[] { "duplicatePlateCount", "duplicateVinCount" }),
-                Card("serviceRule", "notStarted", "服务规则卡", "Правила", new[] { "serviceRuleId", "vehicleId" }, new[] { "结算方式", "常用司机", "维修优先级", "授权规则" }, new[] { "ruleCompletionRate" })
-            },
-            "先建客户和车辆，再补服务规则。",
-            "Создайте клиента и авто, затем правила.")
+            "Перед закрытием нужны метрики, финансы, диагностика и план действий.")
     };
 
     private static WorkspaceSeed Workspace(string id, string domain, string taskId, string zhTitle, string ruTitle, string zhSummary, string ruSummary, IReadOnlyList<CardSeed> cards, string zhNext, string ruNext) =>

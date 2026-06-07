@@ -77,11 +77,7 @@ ResetPostgres(connectionString);
     Assert(operatorFinance.Status == ConfirmStatus.Forbidden, "operator must not confirm finance card");
     Assert(operatorFinance.Reason?.StartsWith("role_confirmation_forbidden:") == true, "role rejection must use stable policy decision code");
 
-    var runtimeSkeletonPrepare = runtime.Prepare("W-STAY-CHECKOUT", "checkoutStart");
-    Assert(runtimeSkeletonPrepare is not null, "runtime-skeleton slices should allow prepare");
-    var runtimeSkeletonConfirm = runtime.Confirm("W-STAY-CHECKOUT", "checkoutStart", Human("runtime-skeleton-checkout-start"), managerToken);
-    Assert(runtimeSkeletonConfirm.Status == ConfirmStatus.Confirmed, "runtime-skeleton checkout should confirm for dormitory internal pilot observation");
-    ValidateAllContractOnlySlicesAreGated(runtime, connectionString, projection, managerToken);
+    ValidateAllManifestSlicesAreCurrentProduction(runtime, projection);
 
     var financeRoomSetup = AssertNoSideEffects(connectionString, () => runtime.Confirm("W-STAY-RESOURCE", "roomSetup", Human("resource-finance-role"), financeToken));
     Assert(financeRoomSetup.Status == ConfirmStatus.Forbidden, "finance actor must not confirm ResourceSetup operator-owned cards");
@@ -1489,30 +1485,25 @@ static void ValidateProductionSliceAdmission(ProjectionRuntime runtime)
     }
 }
 
-static void ValidateAllContractOnlySlicesAreGated(
+static void ValidateAllManifestSlicesAreCurrentProduction(
     ProjectionRuntime runtime,
-    string connectionString,
-    ProjectionEnvelope projection,
-    string managerToken)
+    ProjectionEnvelope projection)
 {
     using var manifest = JsonDocument.Parse(File.ReadAllText(Path.Combine("docs", "contracts", "slice-manifest.json")));
-    var contractOnlySlices = manifest.RootElement
+    var slices = manifest.RootElement
         .GetProperty("slices")
         .EnumerateArray()
-        .Where(slice => slice.GetProperty("status").GetString() == "contract-only")
         .ToArray();
 
-    Assert(contractOnlySlices.Length > 0, "at least one contract-only slice must remain covered by the status gate tests");
-    foreach (var slice in contractOnlySlices)
+    Assert(slices.Length > 0, "slice manifest must declare current OAM runtime slices");
+    foreach (var slice in slices)
     {
         var sliceId = slice.GetProperty("id").GetString()!;
         var workspaceId = slice.GetProperty("workspaceId").GetString()!;
         var cardId = slice.GetProperty("cards").EnumerateArray().First().GetString()!;
-        Assert(projection.Workspaces.Any(workspace => workspace.Id == workspaceId), $"contract-only slice {sliceId} must reference an existing workspace");
-        Assert(runtime.Prepare(workspaceId, cardId) is not null, $"contract-only slice {sliceId} should allow prepare");
-        var result = AssertNoSideEffects(connectionString, () => runtime.Confirm(workspaceId, cardId, Human($"contract-only-{workspaceId}-{cardId}"), managerToken));
-        Assert(result.Status == ConfirmStatus.Forbidden, $"contract-only slice {sliceId} must forbid confirm");
-        Assert(result.Reason == $"slice_runtime_forbidden:{sliceId}:contract-only", $"contract-only slice {sliceId} rejection must name status and owner");
+        Assert(slice.GetProperty("status").GetString() == "production-slice", $"slice {sliceId} must be current production-slice, not historical preview/skeleton status");
+        Assert(projection.Workspaces.Any(workspace => workspace.Id == workspaceId), $"current slice {sliceId} must reference an existing workspace");
+        Assert(runtime.Prepare(workspaceId, cardId) is not null, $"current slice {sliceId} should allow prepare");
     }
 }
 
@@ -2396,12 +2387,7 @@ static void ValidateSliceManifest(ProjectionEnvelope projection)
         Assert(slice.GetProperty("cards").GetArrayLength() > 0, $"slice {required} must own cards");
         Assert(slice.GetProperty("events").GetArrayLength() > 0, $"slice {required} must own events");
         Assert(slice.GetProperty("ownsAggregates").GetArrayLength() > 0, $"slice {required} must declare aggregate ownership");
-        Assert(new[] { "contract-only", "runtime-skeleton", "production-slice" }.Contains(slice.GetProperty("status").GetString()), $"slice {required} must declare a supported runtime status");
-        if (slice.GetProperty("status").GetString() == "runtime-skeleton")
-        {
-            var policyPath = Path.Combine("services", "core-api", "WorkOS.Api", "Slices", Path.Combine(required.Split('.')), "Policies", $"{required.Split('.').Last()}Policy.cs");
-            Assert(File.Exists(policyPath), $"runtime-skeleton slice {required} must have an explicit skeleton policy");
-        }
+        Assert(slice.GetProperty("status").GetString() == "production-slice", $"slice {required} must declare current production-slice status");
 
         foreach (var cardId in slice.GetProperty("cards").EnumerateArray().Select(item => item.GetString()))
         {

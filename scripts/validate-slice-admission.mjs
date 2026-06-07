@@ -13,17 +13,22 @@ const fieldValidatorSource = fs.readFileSync("services/core-api/WorkOS.Api/Runti
 const runtimeContractTests = fs.readFileSync("tests/WorkOS.RuntimeContractTests/Program.cs", "utf8");
 
 const policiesBySlice = new Map((surfacePolicy.policies || []).map((policy) => [policy.sliceId, policy]));
+const manifestSliceIds = new Set((manifest.slices || []).map((slice) => slice.id));
 const policiesByWorkspace = new Map((surfacePolicy.policies || []).map((policy) => [policy.workspaceId, policy]));
 const lensById = new Map((lensContract.lenses || []).map((lens) => [lens.id, lens]));
 const eventTypesByCard = parseEventCatalog(eventCatalogSource);
 
 assert(surfacePolicy.version, "runtime-surface-policy.json must declare version");
 assert((surfacePolicy.policies || []).length >= (manifest.slices || []).length, "Every manifest slice must have a surface policy entry.");
+for (const policy of surfacePolicy.policies || []) {
+  assert(manifestSliceIds.has(policy.sliceId), `RuntimeSurfacePolicy ${policy.sliceId} is not declared in current slice manifest.`);
+}
 
 const productionSlices = (manifest.slices || []).filter((slice) => slice.status === "production-slice");
 const aggregateOwners = new Map();
 for (const slice of manifest.slices || []) {
   const policy = policiesBySlice.get(slice.id);
+  assert(slice.status === "production-slice", `Slice ${slice.id} must be current production-slice; non-current runtime entries are forbidden.`);
   assert(policy, `Slice ${slice.id} missing runtime surface policy.`);
   assert(policy.workspaceId === slice.workspaceId, `Slice ${slice.id} surface policy workspaceId mismatch.`);
   assert(policiesByWorkspace.get(slice.workspaceId)?.sliceId === slice.id, `Workspace ${slice.workspaceId} has duplicate or mismatched surface policy.`);
@@ -39,9 +44,6 @@ for (const slice of manifest.slices || []) {
     }
   }
 
-  if (slice.status === "contract-only") {
-    assert(runtimeContractTests.includes("ValidateAllContractOnlySlicesAreGated"), "Contract-only slices must be covered by manifest-driven gate tests.");
-  }
 }
 
 for (const requiredLens of ["payment-risk", "checkout-queue", "service-task-queue", "risk-command", "period-performance", "room-revenue-potential", "lead-funnel"]) {

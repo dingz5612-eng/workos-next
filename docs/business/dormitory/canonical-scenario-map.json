@@ -3,20 +3,20 @@
   "domain": "dormitory",
   "productionAllowed": false,
   "mappings": [
-    {"scenarioId":"dorm-cert-001","workItemType":"Dorm.CheckinConfirm","cardId":"checkin","ownerDomain":"DormitoryDomainPack","surfaceCardId":"mobile.work.checkin-confirm","sourceScenario":"docs/scenarios/dormitory/golden-pilot.yml"},
-    {"scenarioId":"dorm-cert-002","workItemType":"Dorm.DepositConfirm","cardId":"deposit","ownerDomain":"FinanceTruthPack","surfaceCardId":"mobile.work.deposit-confirm","sourceScenario":"docs/scenarios/dormitory/golden-pilot.yml"},
-    {"scenarioId":"dorm-cert-003","workItemType":"Dorm.PaymentConfirm","cardId":"payment","ownerDomain":"FinanceTruthPack","surfaceCardId":"mobile.work.payment-confirm","sourceScenario":"docs/scenarios/dormitory/golden-pilot.yml"},
-    {"scenarioId":"dorm-cert-004","workItemType":"Dorm.RoomReadinessCheck","cardId":"roomReadiness","ownerDomain":"DormitoryDomainPack","surfaceCardId":"mobile.work.room-readiness","sourceScenario":"docs/scenarios/dormitory/golden-pilot.yml"},
-    {"scenarioId":"dorm-cert-005","workItemType":"Dorm.RefundApprove","cardId":"refundApprove","ownerDomain":"FinanceTruthPack","surfaceCardId":"mobile.work.refund-approve","sourceScenario":"docs/scenarios/dormitory/golden-pilot.yml"},
-    {"scenarioId":"dorm-cert-006","workItemType":"Finance.CorrectionApply","cardId":"financeCorrection","ownerDomain":"FinanceTruthPack","surfaceCardId":"pc.finance.correction-workitem","sourceScenario":"docs/scenarios/dormitory/golden-pilot.yml"},
-    {"scenarioId":"dorm-cert-007","workItemType":"Dorm.PeriodReview","cardId":"periodReview","ownerDomain":"OperatingControlPack","surfaceCardId":"pc.manager.period-review","sourceScenario":"docs/scenarios/dormitory/golden-pilot.yml"},
-    {"scenarioId":"dorm-cert-008","workItemType":"Dorm.ExceptionResolve","cardId":"exceptionResolve","ownerDomain":"DormitoryDomainPack","surfaceCardId":"mobile.work.permission-diagnostic","sourceScenario":"docs/scenarios/dormitory/golden-pilot.yml"},
-    {"scenarioId":"dorm-cert-009","workItemType":"Dorm.PaymentConfirm","cardId":"paymentDuplicate","ownerDomain":"FinanceTruthPack","surfaceCardId":"mobile.work.payment-confirm-duplicate","sourceScenario":"docs/scenarios/dormitory/golden-pilot.yml"},
-    {"scenarioId":"dorm-cert-010","workItemType":"Dorm.DepositConfirm","cardId":"depositMissingEvidence","ownerDomain":"FinanceTruthPack","surfaceCardId":"mobile.work.deposit-confirm-evidence-blocker","sourceScenario":"docs/scenarios/dormitory/golden-pilot.yml"}
+    {"scenarioId":"dorm-cert-001","definitionId":"definition.dormitory.checkinConfirm.v1","workItemType":"Dorm.CheckinConfirm","workItemId":"wi.dorm-cert-001.checkin-confirm","ownerDomain":"DormitoryDomainPack","surfaceId":"mobile.work.checkin-confirm","sourceCardId":"cert.checkinConfirm","sourceScenario":"docs/scenarios/dormitory/golden-pilot.yml"},
+    {"scenarioId":"dorm-cert-002","definitionId":"definition.dormitory.depositConfirm.v1","workItemType":"Dorm.DepositConfirm","workItemId":"wi.dorm-cert-002.deposit-confirm","ownerDomain":"FinanceTruthPack","surfaceId":"mobile.work.deposit-confirm","sourceCardId":"cert.depositConfirm","sourceScenario":"docs/scenarios/dormitory/golden-pilot.yml"},
+    {"scenarioId":"dorm-cert-003","definitionId":"definition.dormitory.paymentConfirm.v1","workItemType":"Dorm.PaymentConfirm","workItemId":"wi.dorm-cert-003.payment-confirm","ownerDomain":"FinanceTruthPack","surfaceId":"mobile.work.payment-confirm","sourceCardId":"cert.paymentConfirm","sourceScenario":"docs/scenarios/dormitory/golden-pilot.yml"},
+    {"scenarioId":"dorm-cert-004","definitionId":"definition.dormitory.roomReadinessCheck.v1","workItemType":"Dorm.RoomReadinessCheck","workItemId":"wi.dorm-cert-004.room-readiness-check","ownerDomain":"DormitoryDomainPack","surfaceId":"mobile.work.room-readiness","sourceCardId":"cert.roomReadinessCheck","sourceScenario":"docs/scenarios/dormitory/golden-pilot.yml"},
+    {"scenarioId":"dorm-cert-005","definitionId":"definition.dormitory.refundApprove.v1","workItemType":"Dorm.RefundApprove","workItemId":"wi.dorm-cert-005.refund-approve","ownerDomain":"FinanceTruthPack","surfaceId":"mobile.work.refund-approve","sourceCardId":"cert.refundApprove","sourceScenario":"docs/scenarios/dormitory/golden-pilot.yml"},
+    {"scenarioId":"dorm-cert-006","definitionId":"definition.finance.correctionApply.v1","workItemType":"Finance.CorrectionApply","workItemId":"wi.dorm-cert-006.finance-correction-apply","ownerDomain":"FinanceTruthPack","surfaceId":"pc.finance.correction-workitem","sourceCardId":"cert.financeCorrectionApply","sourceScenario":"docs/scenarios/dormitory/golden-pilot.yml"},
+    {"scenarioId":"dorm-cert-007","definitionId":"definition.dormitory.periodReview.v1","workItemType":"Dorm.PeriodReview","workItemId":"wi.dorm-cert-007.period-review","ownerDomain":"OperatingControlPack","surfaceId":"pc.manager.period-review","sourceCardId":"cert.periodReview","sourceScenario":"docs/scenarios/dormitory/golden-pilot.yml"},
+    {"scenarioId":"dorm-cert-008","definitionId":"definition.dormitory.exceptionResolve.v1","workItemType":"Dorm.ExceptionResolve","workItemId":"wi.dorm-cert-008.exception-resolve","ownerDomain":"DormitoryDomainPack","surfaceId":"mobile.work.permission-diagnostic","sourceCardId":"cert.exceptionResolve","sourceScenario":"docs/scenarios/dormitory/golden-pilot.yml"},
+    {"scenarioId":"dorm-cert-009","definitionId":"definition.dormitory.paymentConfirm.v1","workItemType":"Dorm.PaymentConfirm","workItemId":"wi.dorm-cert-009.payment-confirm-idempotency","ownerDomain":"FinanceTruthPack","surfaceId":"mobile.work.payment-confirm-duplicate","sourceCardId":"cert.paymentConfirm","sourceScenario":"docs/scenarios/dormitory/golden-pilot.yml"},
+    {"scenarioId":"dorm-cert-010","definitionId":"definition.dormitory.depositConfirm.v1","workItemType":"Dorm.DepositConfirm","workItemId":"wi.dorm-cert-010.deposit-confirm-evidence-blocker","ownerDomain":"FinanceTruthPack","surfaceId":"mobile.work.deposit-confirm-evidence-blocker","sourceCardId":"cert.depositConfirm","sourceScenario":"docs/scenarios/dormitory/golden-pilot.yml"}
   ],
   "uniqueness": {
     "scenarioId": true,
-    "scenarioWorkItemCardOwnerSurfaceTuple": true,
+    "scenarioDefinitionWorkItemOwnerSurfaceTuple": true,
     "ordinaryMobileConfirmCannotUseWorkspaceCardFallback": true
   }
 }

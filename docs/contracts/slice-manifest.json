@@ -81,38 +81,6 @@
       "events": ["Accommodation.PeriodScopeConfirmed", "Accommodation.PeriodMetricsReviewed", "Accommodation.PeriodFinanceReviewed", "Accommodation.PeriodOperationsDiagnosed", "Accommodation.PeriodActionPlanCommitted", "Accommodation.PeriodActionPlanWorkItemCreated", "Accommodation.PeriodReviewClosed", "Accommodation.PeriodActionPlanCompleted"],
       "ownsAggregates": ["PeriodReview", "ActionPlan"],
       "status": "production-slice"
-    },
-    {
-      "id": "Accommodation.CheckOut",
-      "workspaceId": "W-STAY-CHECKOUT",
-      "cards": ["checkoutStart", "roomInspection", "feeSettlement", "checkoutFinance", "checkoutClose"],
-      "events": ["CheckoutStartConfirmed", "RoomInspectionConfirmed", "FeeSettlementConfirmed", "CheckoutFinanceConfirmed", "CheckoutCloseConfirmed"],
-      "ownsAggregates": ["Checkout", "RoomInspection", "Settlement", "FinanceConfirmation"],
-      "status": "runtime-skeleton"
-    },
-    {
-      "id": "Finance.DepositException",
-      "workspaceId": "W-STAY-DEPOSIT-EXCEPTION",
-      "cards": ["reason", "resubmit", "review", "returnBusiness"],
-      "events": ["ReasonConfirmed", "ResubmitConfirmed", "ReviewConfirmed", "ReturnBusinessConfirmed"],
-      "ownsAggregates": ["DepositException", "FinanceReview"],
-      "status": "contract-only"
-    },
-    {
-      "id": "Repair.Dispatch",
-      "workspaceId": "W-REPAIR-DISPATCH",
-      "cards": ["dispatch", "diagnosis", "execution", "repairBlocker"],
-      "events": ["DispatchConfirmed", "DiagnosisConfirmed", "ExecutionConfirmed", "RepairBlockerConfirmed"],
-      "ownsAggregates": ["RepairOrder", "Technician", "Workbay", "DispatchAssignment"],
-      "status": "contract-only"
-    },
-    {
-      "id": "Repair.Close",
-      "workspaceId": "W-REPAIR-CLOSE",
-      "cards": ["inspection", "feeMaterial", "customerConfirm", "close"],
-      "events": ["InspectionConfirmed", "FeeMaterialConfirmed", "CustomerConfirmConfirmed", "CloseConfirmed"],
-      "ownsAggregates": ["RepairInspection", "FeeMaterial", "CustomerConfirmation", "RepairClose"],
-      "status": "contract-only"
     }
   ]
 }

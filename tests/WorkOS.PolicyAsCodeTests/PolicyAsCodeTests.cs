@@ -50,23 +50,36 @@ public sealed class PolicyAsCodeTests
     [TestMethod]
     public void AdmissionAndSurfacePolicyBlockL0ProductionLikeExposure()
     {
-        var repair = BusinessAdmissionPolicyLoader.LoadDefault()
-            .Single(item => item.BusinessLineId.Equals("repair", StringComparison.OrdinalIgnoreCase));
-
-        var admission = AdmissionPolicyEvaluator.EvaluateProductionConfirm(repair);
-        Assert.IsFalse(admission.Allowed);
-        Assert.AreEqual("admission_blocks_production_confirm", admission.Code);
-
-        var repairSurfaces = LoadSurfaceSnapshots()
-            .Where(item => item.SliceId.StartsWith("Repair.", StringComparison.OrdinalIgnoreCase))
+        var l0Policies = BusinessAdmissionPolicyLoader.LoadDefault()
+            .Where(item => item.Level.Equals("L0 Contract Preview", StringComparison.OrdinalIgnoreCase))
             .ToArray();
-        Assert.IsGreaterThanOrEqualTo(1, repairSurfaces.Length);
+        Assert.IsGreaterThanOrEqualTo(1, l0Policies.Length);
 
-        foreach (var surface in repairSurfaces)
+        foreach (var policy in l0Policies)
         {
-            var decision = SurfacePolicyEvaluator.EvaluateL0SurfaceAlignment(repair, surface);
-            Assert.IsTrue(decision.Allowed, $"{surface.SliceId} must stay contract-preview / prepare_only while Repair is L0.");
+            var admission = AdmissionPolicyEvaluator.EvaluateProductionConfirm(policy);
+            Assert.IsFalse(admission.Allowed, $"{policy.BusinessLineId} L0 must not allow production confirm.");
+            Assert.AreEqual("admission_blocks_production_confirm", admission.Code);
         }
+
+        var l0SurfacePrefixes = l0Policies
+            .Select(item => $"{item.BusinessLineId}.")
+            .ToArray();
+        var l0Surfaces = LoadSurfaceSnapshots()
+            .Where(surface => l0SurfacePrefixes.Any(prefix => surface.SliceId.StartsWith(prefix, StringComparison.OrdinalIgnoreCase)))
+            .ToArray();
+
+        foreach (var surface in l0Surfaces)
+        {
+            var admission = l0Policies.Single(item => surface.SliceId.StartsWith($"{item.BusinessLineId}.", StringComparison.OrdinalIgnoreCase));
+            var decision = SurfacePolicyEvaluator.EvaluateL0SurfaceAlignment(admission, surface);
+            Assert.IsTrue(decision.Allowed, $"{surface.SliceId} must stay contract-preview / prepare_only while its business line is L0.");
+        }
+
+        Assert.AreEqual(
+            0,
+            LoadSurfaceSnapshots().Count(item => item.SliceId.StartsWith("Repair.", StringComparison.OrdinalIgnoreCase)),
+            "Pure current OAM must not keep old Repair runtime surfaces.");
     }
 
     [TestMethod]

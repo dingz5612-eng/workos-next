@@ -77,10 +77,11 @@ if (!fs.existsSync("scripts/validate-runtime-api.mjs")) {
 const requiredSlices = [
   "Accommodation.ResourceSetup",
   "Accommodation.CheckIn",
-  "Accommodation.CheckOut",
-  "Finance.DepositException",
-  "Repair.Dispatch",
-  "Repair.Close"
+  "Accommodation.CheckOutSettlement",
+  "Accommodation.DepositLedger",
+  "Accommodation.PaymentLedger",
+  "Accommodation.ServiceTask",
+  "Accommodation.PeriodAnalytics"
 ];
 const sliceIds = new Set(sliceManifest.slices?.map((slice) => slice.id));
 for (const slice of requiredSlices) {
@@ -88,6 +89,9 @@ for (const slice of requiredSlices) {
 }
 
 for (const slice of sliceManifest.slices || []) {
+  if (slice.status !== "production-slice") {
+    throw new Error(`Slice ${slice.id} must be current production-slice; non-current runtime statuses are forbidden.`);
+  }
   for (const field of ["workspaceId", "cards", "events", "ownsAggregates", "status"]) {
     if (!slice[field] || (Array.isArray(slice[field]) && slice[field].length === 0)) {
       throw new Error(`Slice ${slice.id} missing ${field}`);
@@ -97,6 +101,11 @@ for (const slice of sliceManifest.slices || []) {
 
 const policiesBySlice = new Map((surfacePolicy.policies || []).map((policy) => [policy.sliceId, policy]));
 const lensIds = new Set((lensContract.lenses || []).map((lens) => lens.id));
+for (const policy of surfacePolicy.policies || []) {
+  if (!sliceIds.has(policy.sliceId)) {
+    throw new Error(`RuntimeSurfacePolicy ${policy.sliceId} is not declared in current slice manifest.`);
+  }
+}
 for (const slice of sliceManifest.slices || []) {
   const policy = policiesBySlice.get(slice.id);
   if (!policy) {

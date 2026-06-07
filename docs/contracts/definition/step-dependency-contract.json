@@ -2853,7 +2853,7 @@
       "suppressedFields": []
     },
     {
-      "caseType": "Accommodation.Checkout",
+      "caseType": "Accommodation.CheckoutSettlement",
       "workItemId": "roomInspection",
       "contractKind": "dormitory-system-context",
       "dependsOn": [
@@ -2950,140 +2950,6 @@
       "backendDefaultFields": [
         {
           "fieldId": "operatorId",
-          "source": "actor-session",
-          "surface": "hidden-no-client-trust",
-          "defaultValue": "runtime-owned"
-        }
-      ],
-      "hiddenBackendDefaults": [],
-      "suppressedFields": []
-    },
-    {
-      "caseType": "Accommodation.Checkout",
-      "workItemId": "feeSettlement",
-      "contractKind": "dormitory-system-context",
-      "dependsOn": [
-        "roomInspection"
-      ],
-      "inheritedFields": [
-        {
-          "fieldId": "checkoutId",
-          "sourceWorkItemId": "roomInspection",
-          "surface": "readonly-hidden-submit",
-          "priority": [
-            "latest-runtime-event-or-projection",
-            "operations-start-context",
-            "completed-record-snapshot",
-            "non-conflicting-draft-fallback"
-          ]
-        },
-        {
-          "fieldId": "stayId",
-          "sourceWorkItemId": "roomInspection",
-          "surface": "readonly-hidden-submit",
-          "priority": [
-            "latest-runtime-event-or-projection",
-            "operations-start-context",
-            "completed-record-snapshot",
-            "non-conflicting-draft-fallback"
-          ]
-        },
-        {
-          "fieldId": "depositId",
-          "sourceWorkItemId": "roomInspection",
-          "surface": "readonly-hidden-submit",
-          "priority": [
-            "latest-runtime-event-or-projection",
-            "operations-start-context",
-            "completed-record-snapshot",
-            "non-conflicting-draft-fallback"
-          ]
-        }
-      ],
-      "userSelectableFields": [
-        {
-          "fieldId": "stayFeeAmount",
-          "surface": "editable"
-        },
-        {
-          "fieldId": "extraFeeAmount",
-          "surface": "editable"
-        },
-        {
-          "fieldId": "depositDeductionAmount",
-          "surface": "editable"
-        },
-        {
-          "fieldId": "depositApplyToBalanceAmount",
-          "surface": "editable"
-        },
-        {
-          "fieldId": "note",
-          "surface": "editable"
-        }
-      ],
-      "derivedFields": [
-        {
-          "fieldId": "refundOrSupplementAmount",
-          "derivedFrom": [
-            "stayFeeAmount",
-            "extraFeeAmount",
-            "depositDeductionAmount",
-            "depositApplyToBalanceAmount"
-          ],
-          "surface": "preview-hidden-submit",
-          "staleDraftPolicy": "always-recompute"
-        }
-      ],
-      "backendDefaultFields": [
-        {
-          "fieldId": "operatorId",
-          "source": "actor-session",
-          "surface": "hidden-no-client-trust",
-          "defaultValue": "runtime-owned"
-        }
-      ],
-      "hiddenBackendDefaults": [],
-      "suppressedFields": []
-    },
-    {
-      "caseType": "Accommodation.Checkout",
-      "workItemId": "checkoutFinance",
-      "contractKind": "dormitory-system-context",
-      "dependsOn": [
-        "feeSettlement"
-      ],
-      "inheritedFields": [
-        {
-          "fieldId": "checkoutId",
-          "sourceWorkItemId": "feeSettlement",
-          "surface": "readonly-hidden-submit",
-          "priority": [
-            "latest-runtime-event-or-projection",
-            "operations-start-context",
-            "completed-record-snapshot",
-            "non-conflicting-draft-fallback"
-          ]
-        }
-      ],
-      "userSelectableFields": [
-        {
-          "fieldId": "refundOrSupplementConfirmation",
-          "surface": "editable"
-        },
-        {
-          "fieldId": "financeEvidenceId",
-          "surface": "editable"
-        },
-        {
-          "fieldId": "note",
-          "surface": "editable"
-        }
-      ],
-      "derivedFields": [],
-      "backendDefaultFields": [
-        {
-          "fieldId": "confirmer",
           "source": "actor-session",
           "surface": "hidden-no-client-trust",
           "defaultValue": "runtime-owned"

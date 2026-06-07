@@ -1,7 +1,7 @@
 {
   "version": "oam.definition-registry.v1",
   "generatedBy": "oam-current",
-  "status": "contract-only",
+  "status": "current-oam",
   "axis": "Definition -> OperationCase -> WorkItem -> CommandSubmission -> SliceCommandHandler -> DomainEvent / LedgerEntry -> ProcessManager -> Projection / Lens -> Surface",
   "companyKernelScope": {
     "eventDefinitions": [
@@ -820,6 +820,273 @@
       "productionConfirmAllowed": false,
       "removalImpact": "Requires native correction command handler, append-only ledger policy, and PC governance admission trace.",
       "definitionMode": "governance-provisional"
+    },
+    {
+      "definitionId": "definition.dormitory.checkinConfirm.v1",
+      "businessLineId": "dormitory",
+      "sliceId": "Accommodation.CheckIn",
+      "workspaceId": "W-STAY-CHECKIN",
+      "sourceCardId": "cert.checkinConfirm",
+      "workItemType": "Dorm.CheckinConfirm",
+      "commandType": "Checkin.Confirm",
+      "ownerSlice": "Accommodation.CheckIn",
+      "allowedFacts": [
+        "Stay",
+        "BedAssignment",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "forbiddenFacts": [
+        "LedgerEntry",
+        "Payment",
+        "DepositAccount",
+        "DepositEntry"
+      ],
+      "fieldContractRef": "field.dormitory.cert.checkinConfirm.v1",
+      "evidencePolicyRef": "evidence.dormitory.cert.checkinConfirm.v1",
+      "riskPolicyRef": "risk.dormitory.high_risk_stay_confirm.v1",
+      "ledgerPolicyRef": "ledger.none.v1",
+      "admissionPolicyRef": "admission.dormitory.cert.checkin_confirm.v1",
+      "surfacePolicyRef": "surface.MobileWork.checkinConfirm",
+      "productionConfirmAllowed": false,
+      "removalImpact": "Current OAM dormitory certification definition for dorm-cert-001; removing it breaks canonical scenario identity.",
+      "definitionMode": "oam-certification-current"
+    },
+    {
+      "definitionId": "definition.dormitory.depositConfirm.v1",
+      "businessLineId": "dormitory",
+      "sliceId": "Accommodation.DepositLedger",
+      "workspaceId": "W-STAY-DEPOSIT-LEDGER",
+      "sourceCardId": "cert.depositConfirm",
+      "workItemType": "Dorm.DepositConfirm",
+      "commandType": "Deposit.Confirm",
+      "ownerSlice": "Accommodation.DepositLedger",
+      "allowedFacts": [
+        "DepositAccount",
+        "LedgerEntry",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "forbiddenFacts": [
+        "Revenue",
+        "PaymentAllocation",
+        "Room",
+        "Bed",
+        "BedStatus"
+      ],
+      "fieldContractRef": "field.dormitory.cert.depositConfirm.v1",
+      "evidencePolicyRef": "evidence.dormitory.cert.depositConfirm.v1",
+      "riskPolicyRef": "risk.deposit.high_risk_confirm.v1",
+      "ledgerPolicyRef": "ledger.deposit.liability_only.v1",
+      "admissionPolicyRef": "admission.high_risk_deposit_confirm.v1",
+      "surfacePolicyRef": "surface.MobileWork.depositConfirm",
+      "productionConfirmAllowed": false,
+      "removalImpact": "Current OAM dormitory certification definition for dorm-cert-002 and dorm-cert-010; removing it breaks deposit liability closure.",
+      "definitionMode": "oam-certification-current"
+    },
+    {
+      "definitionId": "definition.dormitory.paymentConfirm.v1",
+      "businessLineId": "dormitory",
+      "sliceId": "Accommodation.PaymentLedger",
+      "workspaceId": "W-STAY-PAYMENT-LEDGER",
+      "sourceCardId": "cert.paymentConfirm",
+      "workItemType": "Dorm.PaymentConfirm",
+      "commandType": "Payment.Confirm",
+      "ownerSlice": "Accommodation.PaymentLedger",
+      "allowedFacts": [
+        "Payment",
+        "PaymentAllocation",
+        "LedgerEntry",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "forbiddenFacts": [
+        "DepositAccount",
+        "Room",
+        "Bed",
+        "BedStatus"
+      ],
+      "fieldContractRef": "field.dormitory.cert.paymentConfirm.v1",
+      "evidencePolicyRef": "evidence.dormitory.cert.paymentConfirm.v1",
+      "riskPolicyRef": "risk.payment.high_risk_confirm.v1",
+      "ledgerPolicyRef": "ledger.payment.balanced_allocation.v1",
+      "admissionPolicyRef": "admission.high_risk_payment_confirm.v1",
+      "surfacePolicyRef": "surface.MobileWork.paymentConfirm",
+      "productionConfirmAllowed": false,
+      "removalImpact": "Current OAM dormitory certification definition for dorm-cert-003 and dorm-cert-009; removing it breaks payment confirmation and idempotency coverage.",
+      "definitionMode": "oam-certification-current"
+    },
+    {
+      "definitionId": "definition.dormitory.roomReadinessCheck.v1",
+      "businessLineId": "dormitory",
+      "sliceId": "Accommodation.ServiceTask",
+      "workspaceId": "W-STAY-SERVICE-TASK",
+      "sourceCardId": "cert.roomReadinessCheck",
+      "workItemType": "Dorm.RoomReadinessCheck",
+      "commandType": "RoomReadiness.Check",
+      "ownerSlice": "Accommodation.ServiceTask",
+      "allowedFacts": [
+        "RoomReadiness",
+        "ServiceTask",
+        "BedStatus",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "forbiddenFacts": [
+        "LedgerEntry",
+        "Payment",
+        "DepositAccount",
+        "DepositEntry"
+      ],
+      "fieldContractRef": "field.dormitory.cert.roomReadinessCheck.v1",
+      "evidencePolicyRef": "evidence.dormitory.cert.roomReadinessCheck.v1",
+      "riskPolicyRef": "risk.resource.room_readiness.v1",
+      "ledgerPolicyRef": "ledger.none.v1",
+      "admissionPolicyRef": "admission.prepare_only_or_l1_observation.v1",
+      "surfacePolicyRef": "surface.MobileWork.roomReadiness",
+      "productionConfirmAllowed": false,
+      "removalImpact": "Current OAM dormitory certification definition for dorm-cert-004; removing it breaks service-task readiness closure.",
+      "definitionMode": "oam-certification-current"
+    },
+    {
+      "definitionId": "definition.dormitory.refundApprove.v1",
+      "businessLineId": "dormitory",
+      "sliceId": "Accommodation.CheckOutSettlement",
+      "workspaceId": "W-STAY-CHECKOUT-SETTLEMENT",
+      "sourceCardId": "cert.refundApprove",
+      "workItemType": "Dorm.RefundApprove",
+      "commandType": "Refund.Approve",
+      "ownerSlice": "Accommodation.CheckOutSettlement",
+      "allowedFacts": [
+        "Refund",
+        "CheckoutCase",
+        "LedgerEntry",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "forbiddenFacts": [
+        "Revenue",
+        "Room",
+        "Bed",
+        "BedStatus"
+      ],
+      "fieldContractRef": "field.dormitory.cert.refundApprove.v1",
+      "evidencePolicyRef": "evidence.dormitory.cert.refundApprove.v1",
+      "riskPolicyRef": "risk.refund.high_risk_approval.v1",
+      "ledgerPolicyRef": "ledger.refund.balanced_liability.v1",
+      "admissionPolicyRef": "admission.high_risk_refund_approve.v1",
+      "surfacePolicyRef": "surface.MobileWork.refundApprove",
+      "productionConfirmAllowed": false,
+      "removalImpact": "Current OAM dormitory certification definition for dorm-cert-005; removing it breaks checkout settlement and refund closure.",
+      "definitionMode": "oam-certification-current"
+    },
+    {
+      "definitionId": "definition.finance.correctionApply.v1",
+      "businessLineId": "dormitory",
+      "sliceId": "Governance.CorrectionCenter",
+      "workspaceId": "PC-GOVERNANCE",
+      "sourceCardId": "cert.financeCorrectionApply",
+      "workItemType": "Finance.CorrectionApply",
+      "commandType": "FinanceCorrection.Apply",
+      "ownerSlice": "Governance.CorrectionCenter",
+      "allowedFacts": [
+        "FinanceCase",
+        "UnclearMoneyCase",
+        "LedgerEntry",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "forbiddenFacts": [
+        "Payment",
+        "PaymentAllocation",
+        "DepositAccount",
+        "Room",
+        "Bed",
+        "BedStatus"
+      ],
+      "fieldContractRef": "field.finance.cert.correctionApply.v1",
+      "evidencePolicyRef": "evidence.finance.cert.correctionApply.v1",
+      "riskPolicyRef": "risk.ledger.high_risk_correction.v1",
+      "ledgerPolicyRef": "ledger.correction.append_only.v1",
+      "admissionPolicyRef": "admission.high_risk_ledger_correction.v1",
+      "surfacePolicyRef": "surface.PCGovernance.financeCorrectionApply",
+      "productionConfirmAllowed": false,
+      "removalImpact": "Current OAM finance certification definition for dorm-cert-006; removing it breaks correction and unclear-money closure.",
+      "definitionMode": "oam-certification-current"
+    },
+    {
+      "definitionId": "definition.dormitory.periodReview.v1",
+      "businessLineId": "dormitory",
+      "sliceId": "Accommodation.PeriodAnalytics",
+      "workspaceId": "W-STAY-PERIOD-ANALYTICS",
+      "sourceCardId": "cert.periodReview",
+      "workItemType": "Dorm.PeriodReview",
+      "commandType": "Period.Review",
+      "ownerSlice": "Accommodation.PeriodAnalytics",
+      "allowedFacts": [
+        "ActionPlan",
+        "LensReview",
+        "PeriodSnapshot",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "forbiddenFacts": [
+        "LedgerEntry",
+        "Payment",
+        "DepositAccount",
+        "Room",
+        "Bed",
+        "BedStatus"
+      ],
+      "fieldContractRef": "field.dormitory.cert.periodReview.v1",
+      "evidencePolicyRef": "evidence.dormitory.cert.periodReview.v1",
+      "riskPolicyRef": "risk.period.review.v1",
+      "ledgerPolicyRef": "ledger.period.snapshot_readonly.v1",
+      "admissionPolicyRef": "admission.prepare_only_or_l1_observation.v1",
+      "surfacePolicyRef": "surface.PCGovernance.periodReview",
+      "productionConfirmAllowed": false,
+      "removalImpact": "Current OAM dormitory certification definition for dorm-cert-007; removing it breaks period review closure.",
+      "definitionMode": "oam-certification-current"
+    },
+    {
+      "definitionId": "definition.dormitory.exceptionResolve.v1",
+      "businessLineId": "dormitory",
+      "sliceId": "Governance.ExceptionResolution",
+      "workspaceId": "PC-GOVERNANCE",
+      "sourceCardId": "cert.exceptionResolve",
+      "workItemType": "Dorm.ExceptionResolve",
+      "commandType": "Exception.Resolve",
+      "ownerSlice": "Governance.ExceptionResolution",
+      "allowedFacts": [
+        "ExceptionCase",
+        "AuditTrail",
+        "EvidenceObject",
+        "CommandSubmission"
+      ],
+      "forbiddenFacts": [
+        "LedgerEntry",
+        "Payment",
+        "DepositAccount",
+        "Room",
+        "Bed",
+        "BedStatus"
+      ],
+      "fieldContractRef": "field.dormitory.cert.exceptionResolve.v1",
+      "evidencePolicyRef": "evidence.dormitory.cert.exceptionResolve.v1",
+      "riskPolicyRef": "risk.exception.permission_denied.v1",
+      "ledgerPolicyRef": "ledger.none.v1",
+      "admissionPolicyRef": "admission.permission_denied_audit.v1",
+      "surfacePolicyRef": "surface.MobileWork.permissionDiagnostic",
+      "productionConfirmAllowed": false,
+      "removalImpact": "Current OAM dormitory certification definition for dorm-cert-008; removing it breaks permission rejection and audit closure.",
+      "definitionMode": "oam-certification-current"
     }
   ]
 }

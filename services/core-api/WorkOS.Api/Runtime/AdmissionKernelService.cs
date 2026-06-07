@@ -216,7 +216,7 @@ public sealed class AdmissionKernelService
     private static IReadOnlyList<string> RequiredCapabilitiesFor(WorkItemDefinitionResolution definition)
     {
         var policy = definition.Definition?.RiskPolicyRef ?? string.Empty;
-        var sourceCard = definition.SourceCardId;
+        var sourceCard = definition.SourceCardId ?? string.Empty;
         if (policy.Contains("payment.high_risk_confirm", StringComparison.OrdinalIgnoreCase)) return new[] { "finance.payment.confirm" };
         if (policy.Contains("deposit.high_risk_confirm", StringComparison.OrdinalIgnoreCase)) return new[] { "finance.deposit.confirm" };
         if (policy.Contains("deposit.high_risk_refund", StringComparison.OrdinalIgnoreCase)) return new[] { "finance.deposit.refund" };

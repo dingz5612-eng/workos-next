@@ -12,13 +12,16 @@
       "minItems": 10,
       "items": {
         "type": "object",
-        "required": ["scenarioId", "workItemType", "cardId", "ownerDomain", "surfaceCardId", "sourceScenario"],
+        "additionalProperties": false,
+        "required": ["scenarioId", "definitionId", "workItemType", "workItemId", "ownerDomain", "surfaceId", "sourceCardId", "sourceScenario"],
         "properties": {
           "scenarioId": { "type": "string" },
+          "definitionId": { "type": "string", "pattern": "^definition\\." },
           "workItemType": { "type": "string" },
-          "cardId": { "type": "string" },
+          "workItemId": { "type": "string", "pattern": "^wi\\." },
           "ownerDomain": { "type": "string" },
-          "surfaceCardId": { "type": "string" },
+          "surfaceId": { "type": "string" },
+          "sourceCardId": { "type": "string" },
           "sourceScenario": { "type": "string" }
         }
       }

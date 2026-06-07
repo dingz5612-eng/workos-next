@@ -234,7 +234,7 @@ public sealed class RuntimeHardeningTests
         Assert.AreEqual(StatusCodes.Status404NotFound, ConfirmHttpStatusMapper.StatusCodeFor(new ConfirmResult(ConfirmStatus.NotFound, null, null)));
         Assert.AreEqual(StatusCodes.Status400BadRequest, ConfirmHttpStatusMapper.StatusCodeFor(new ConfirmResult(ConfirmStatus.Invalid, "canonical_field_id_required", null)));
         Assert.AreEqual(StatusCodes.Status401Unauthorized, ConfirmHttpStatusMapper.StatusCodeFor(new ConfirmResult(ConfirmStatus.Forbidden, "actor_session_required", null)));
-        Assert.AreEqual(StatusCodes.Status403Forbidden, ConfirmHttpStatusMapper.StatusCodeFor(new ConfirmResult(ConfirmStatus.Forbidden, "slice_runtime_forbidden:Slice:contract-only", null)));
+        Assert.AreEqual(StatusCodes.Status403Forbidden, ConfirmHttpStatusMapper.StatusCodeFor(new ConfirmResult(ConfirmStatus.Forbidden, "slice_runtime_forbidden:Slice:unregistered", null)));
         Assert.AreEqual(StatusCodes.Status403Forbidden, ConfirmHttpStatusMapper.StatusCodeFor(new ConfirmResult(ConfirmStatus.Forbidden, "trusted_device_required:payment.confirm", null)));
         Assert.AreEqual(StatusCodes.Status422UnprocessableEntity, ConfirmHttpStatusMapper.StatusCodeFor(new ConfirmResult(ConfirmStatus.Forbidden, "deposit_evidence_required", null)));
         Assert.AreEqual(StatusCodes.Status200OK, ConfirmHttpStatusMapper.StatusCodeFor(new ConfirmResult(ConfirmStatus.Duplicate, null, null)));
@@ -250,7 +250,7 @@ public sealed class RuntimeHardeningTests
         var service = ConfirmService(store, requireTrustedDevice: true);
         var state = ConfirmState();
 
-        var result = service.Confirm(state, "W-CONFIRM", "confirmationCard", Request(new Dictionary<string, string>()), "session-token");
+        var result = service.Confirm(state, "W-STAY-RESOURCE", "roomSetup", Request(new Dictionary<string, string>()), "session-token");
 
         Assert.AreEqual(ConfirmStatus.Forbidden, result.Status);
         Assert.AreEqual("actor_session_required", result.Reason);
@@ -265,13 +265,13 @@ public sealed class RuntimeHardeningTests
         store.RegisterDeviceSession(new RuntimeDeviceSessionRequest("T1", "user-1", "device-untrusted", "untrusted", "ua"));
         var service = ConfirmService(store, requireTrustedDevice: true);
         var state = new RuntimeState(
-            new List<WorkspaceProjection> { Workspace("W-CONFIRM", Card("paymentConfirmation", "Accommodation.PaymentConfirmed") with { Confirmation = new ConfirmationPolicy(true, true, "operator", Text("Confirm")) }) },
+            new List<WorkspaceProjection> { Workspace("W-STAY-PAYMENT-LEDGER", Card("paymentConfirmation", "Accommodation.PaymentConfirmed") with { Confirmation = new ConfirmationPolicy(true, true, "operator", Text("Confirm")) }) },
             new List<WorkspaceEvent>(),
             new List<RuntimeUser> { new("user-1", "operator", "Operator", "operator", true) });
 
         var result = service.Confirm(
             state,
-            "W-CONFIRM",
+            "W-STAY-PAYMENT-LEDGER",
             "paymentConfirmation",
             Request(new Dictionary<string, string> { ["confirmedAmount"] = "5000" }) with { DeviceId = "device-untrusted" },
             "session-token");
@@ -289,7 +289,7 @@ public sealed class RuntimeHardeningTests
         var state = new RuntimeState(
             new List<WorkspaceProjection>
             {
-                Workspace("W-CONFIRM",
+                Workspace("W-STAY-CHECKOUT-SETTLEMENT",
                     Card("finalBalanceClose", "Accommodation.FinalBalanceClosed") with
                     {
                         Confirmation = new ConfirmationPolicy(true, false, "ai", Text("Confirm"))
@@ -298,7 +298,7 @@ public sealed class RuntimeHardeningTests
             new List<WorkspaceEvent>(),
             new List<RuntimeUser> { new("user-1", "ai", "AI", "ai", true) });
 
-        var result = service.Confirm(state, "W-CONFIRM", "finalBalanceClose", Request(new Dictionary<string, string>()), "session-token");
+        var result = service.Confirm(state, "W-STAY-CHECKOUT-SETTLEMENT", "finalBalanceClose", Request(new Dictionary<string, string>()), "session-token");
 
         Assert.AreEqual(ConfirmStatus.Forbidden, result.Status);
         Assert.AreEqual("ai_terminal_action_forbidden", result.Reason);
@@ -313,7 +313,7 @@ public sealed class RuntimeHardeningTests
         var state = new RuntimeState(
             new List<WorkspaceProjection>
             {
-                Workspace("W-CONFIRM",
+                Workspace("W-STAY-PAYMENT-LEDGER",
                     Card("paymentConfirmation", "Accommodation.PaymentConfirmed") with
                     {
                         Confirmation = new ConfirmationPolicy(true, true, "finance", Text("Confirm"))
@@ -322,7 +322,7 @@ public sealed class RuntimeHardeningTests
             new List<WorkspaceEvent>(),
             new List<RuntimeUser> { new("user-1", "operator", "Operator", "operator", true) });
 
-        var result = service.Confirm(state, "W-CONFIRM", "paymentConfirmation", Request(new Dictionary<string, string> { ["confirmedAmount"] = "100" }), "session-token");
+        var result = service.Confirm(state, "W-STAY-PAYMENT-LEDGER", "paymentConfirmation", Request(new Dictionary<string, string> { ["confirmedAmount"] = "100" }), "session-token");
 
         Assert.AreEqual(ConfirmStatus.Forbidden, result.Status);
         StringAssert.StartsWith(result.Reason, "role_confirmation_forbidden");
@@ -585,7 +585,7 @@ public sealed class RuntimeHardeningTests
         var service = ConfirmService(store);
         var state = ConfirmState();
 
-        var result = service.Confirm(state, "W-CONFIRM", "confirmationCard", Request(new Dictionary<string, string>()), "session-token");
+        var result = service.Confirm(state, "W-STAY-RESOURCE", "roomSetup", Request(new Dictionary<string, string>()), "session-token");
         var payload = AssertConfirmResponse(result);
 
         Assert.AreEqual(ConfirmStatus.Confirmed, result.Status);
@@ -602,7 +602,7 @@ public sealed class RuntimeHardeningTests
         var service = ConfirmService(store);
         var state = ConfirmState();
 
-        var result = service.Confirm(state, "W-CONFIRM", "confirmationCard", Request(new Dictionary<string, string>()), "session-token");
+        var result = service.Confirm(state, "W-STAY-RESOURCE", "roomSetup", Request(new Dictionary<string, string>()), "session-token");
         var payload = AssertConfirmResponse(result);
 
         Assert.AreEqual(ConfirmStatus.Confirmed, result.Status);
@@ -621,8 +621,8 @@ public sealed class RuntimeHardeningTests
         var state = ConfirmState();
         var request = Request(new Dictionary<string, string>());
 
-        var first = AssertConfirmResponse(service.Confirm(state, "W-CONFIRM", "confirmationCard", request, "session-token"));
-        var secondResult = service.Confirm(state, "W-CONFIRM", "confirmationCard", request, "session-token");
+        var first = AssertConfirmResponse(service.Confirm(state, "W-STAY-RESOURCE", "roomSetup", request, "session-token"));
+        var secondResult = service.Confirm(state, "W-STAY-RESOURCE", "roomSetup", request, "session-token");
         var second = AssertConfirmResponse(secondResult);
 
         Assert.AreEqual(ConfirmStatus.Duplicate, secondResult.Status);
@@ -730,7 +730,7 @@ public sealed class RuntimeHardeningTests
 
     private static RuntimeState ConfirmState() =>
         new(
-            new List<WorkspaceProjection> { Workspace("W-CONFIRM", Card("confirmationCard", "Confirm.Event")) },
+            new List<WorkspaceProjection> { Workspace("W-STAY-RESOURCE", Card("roomSetup", "Confirm.Event")) },
             new List<WorkspaceEvent>(),
             new List<RuntimeUser> { new("user-1", "operator", "Operator", "operator", true) });
 
@@ -740,8 +740,8 @@ public sealed class RuntimeHardeningTests
         var payload = (ConfirmCardResponse)result.Payload!;
         Assert.IsTrue(payload.Confirmed);
         Assert.AreEqual("committed", payload.CommitStatus);
-        Assert.AreEqual("W-CONFIRM", payload.CaseId);
-        Assert.AreEqual("W-CONFIRM:confirmationCard", payload.WorkItemId);
+        Assert.AreEqual("W-STAY-RESOURCE", payload.CaseId);
+        Assert.AreEqual("W-STAY-RESOURCE:roomSetup", payload.WorkItemId);
         Assert.AreEqual("sub-1", payload.SubmissionId);
         Assert.IsTrue((bool)payload.ClientInstruction["disableRetry"]);
         return payload;

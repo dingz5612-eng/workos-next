@@ -6,8 +6,7 @@ internal static class ConfirmationPolicyCatalog
     {
         var critical = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {
-            "finance", "checkin", "checkoutFinance", "checkoutClose", "review", "returnBusiness",
-            "dispatch", "diagnosis", "inspection", "feeMaterial", "customerConfirm", "close",
+            "finance", "checkin",
             "depositRequirement", "payment", "operatingDashboard", "depositConfirmation",
             "depositRefundApproval", "depositRefundPayment", "depositClose", "paymentConfirmation", "paymentAllocation",
             "paymentAdjustment", "expenseApproval", "periodFinanceReview", "periodClose",
@@ -26,8 +25,6 @@ internal static class ConfirmationPolicyCatalog
     {
         if (ContractText.ContainsAny(cardId,
             "finance",
-            "checkoutFinance",
-            "feeMaterial",
             "depositConfirmation",
             "depositDeduction",
             "depositRefundPayment",
@@ -48,7 +45,6 @@ internal static class ConfirmationPolicyCatalog
             "periodActionPlanComplete",
             "periodClose",
             "operatingDashboard")) return "manager";
-        if (ContractText.ContainsAny(cardId, "repairBlocker", "repairDispatch", "repairExecution")) return "repair";
         return "operator";
     }
 

@@ -119,6 +119,42 @@ public sealed class CanonicalOperationsApiServiceTests
     }
 
     [TestMethod]
+    public void operations_confirm_does_not_resolve_definition_from_card_id_fallback()
+    {
+        var service = Service(
+            out _,
+            out var store,
+            definitions: RegistryWith(Definition("roomSetup", "Dorm.StrictDefinitionOnly", "W-S3")));
+        service.CreateWorkItem(new CreateWorkItemRequest(
+            WorkItemId: "wi-card-fallback-blocked",
+            TenantId: "tenant-s3",
+            WorkItemType: "roomSetup",
+            WorkspaceId: "W-S3",
+            CardId: "roomSetup",
+            OwnerRole: "operator",
+            Payload: new Dictionary<string, string>
+            {
+                ["caseId"] = "case-card-fallback-blocked",
+                ["cardId"] = "roomSetup"
+            }));
+
+        var result = service.ConfirmWorkItem(
+            "wi-card-fallback-blocked",
+            Request("idem-card-fallback-blocked", fieldValues: new Dictionary<string, string>()),
+            OperatorActor(),
+            "req-card-fallback-blocked");
+
+        Assert.AreEqual(StatusCodes.Status403Forbidden, result.StatusCode);
+        Assert.AreEqual("admission_rejected", result.Error);
+        Assert.IsFalse(result.Confirmed);
+        Assert.IsEmpty(store.Submissions);
+        Assert.IsEmpty(store.DomainEvents);
+        var definition = (IReadOnlyDictionary<string, object>)result.ClientInstruction["definition"];
+        Assert.IsFalse((bool)definition["resolved"]);
+        Assert.AreEqual("definition_registry_not_resolved", definition["reason"]);
+    }
+
+    [TestMethod]
     public void trace_routes_can_resolve_work_item_and_case_fact_graphs()
     {
         var service = Service(out _, out _);
@@ -138,11 +174,16 @@ public sealed class CanonicalOperationsApiServiceTests
         service.CreateWorkItem(new CreateWorkItemRequest(
             WorkItemId: "wi-money-trace",
             TenantId: "tenant-s3",
-            WorkItemType: "depositReceipt",
+            WorkItemType: "Dorm.DepositReceipt",
             WorkspaceId: "W-S3",
             CardId: "depositReceipt",
             OwnerRole: "finance",
-            Payload: new Dictionary<string, string> { ["caseId"] = "case-money-trace" }));
+            Payload: new Dictionary<string, string>
+            {
+                ["caseId"] = "case-money-trace",
+                ["cardId"] = "depositReceipt",
+                ["definitionId"] = "definition.depositReceipt.v1"
+            }));
 
         var result = service.ConfirmWorkItem(
             "wi-money-trace",
@@ -298,7 +339,7 @@ public sealed class CanonicalOperationsApiServiceTests
         service.CreateWorkItem(new CreateWorkItemRequest(
             WorkItemId: "wi-deposit-receipt-shared-flow",
             TenantId: "tenant-s3",
-            WorkItemType: "depositReceipt",
+            WorkItemType: "Dorm.DepositReceipt",
             WorkspaceId: "W-STAY-DEPOSIT-LEDGER",
             CardId: "depositReceipt",
             OwnerRole: "operator",
@@ -306,6 +347,7 @@ public sealed class CanonicalOperationsApiServiceTests
             {
                 ["caseId"] = "case-deposit-shared-flow",
                 ["cardId"] = "depositReceipt",
+                ["definitionId"] = "definition.depositReceipt.v1",
                 ["templateWorkspaceId"] = "W-STAY-DEPOSIT-LEDGER"
             }));
 
@@ -387,11 +429,16 @@ public sealed class CanonicalOperationsApiServiceTests
         service.CreateWorkItem(new CreateWorkItemRequest(
             WorkItemId: "wi-money-business-blocked",
             TenantId: "tenant-s3",
-            WorkItemType: "depositReceipt",
+            WorkItemType: "Dorm.DepositReceipt",
             WorkspaceId: "W-S3",
             CardId: "depositReceipt",
             OwnerRole: "finance",
-            Payload: new Dictionary<string, string> { ["caseId"] = "case-money-business-blocked" }));
+            Payload: new Dictionary<string, string>
+            {
+                ["caseId"] = "case-money-business-blocked",
+                ["cardId"] = "depositReceipt",
+                ["definitionId"] = "definition.depositReceipt.v1"
+            }));
 
         var result = service.ConfirmWorkItem(
             "wi-money-business-blocked",
@@ -496,7 +543,7 @@ public sealed class CanonicalOperationsApiServiceTests
                 "process-run-s3",
                 "tenant-s3",
                 "W-S3:roomSetup",
-                "roomSetup",
+                "Dorm.RoomSetup",
                 "W-S3",
                 "operator",
                 "evt-intent-s3",
@@ -505,7 +552,8 @@ public sealed class CanonicalOperationsApiServiceTests
                 new Dictionary<string, string>
                 {
                     ["caseId"] = "W-S3",
-                    ["cardId"] = "roomSetup"
+                    ["cardId"] = "roomSetup",
+                    ["definitionId"] = "definition.roomSetup.v1"
                 })
         };
 

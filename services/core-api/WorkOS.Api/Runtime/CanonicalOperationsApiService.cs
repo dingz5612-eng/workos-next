@@ -332,8 +332,7 @@ public sealed class CanonicalOperationsApiService
         {
             context["paymentStatus"] = "普通收款待登记";
         }
-        else if (templateWorkspaceId.Equals("W-STAY-CHECKOUT-SETTLEMENT", StringComparison.OrdinalIgnoreCase) ||
-                 templateWorkspaceId.Equals("W-STAY-CHECKOUT", StringComparison.OrdinalIgnoreCase))
+        else if (templateWorkspaceId.Equals("W-STAY-CHECKOUT-SETTLEMENT", StringComparison.OrdinalIgnoreCase))
         {
             context["checkoutStatus"] = "退住待办理";
         }
@@ -346,8 +345,7 @@ public sealed class CanonicalOperationsApiService
         {
             "W-STAY-DEPOSIT-LEDGER",
             "W-STAY-PAYMENT-LEDGER",
-            "W-STAY-CHECKOUT-SETTLEMENT",
-            "W-STAY-CHECKOUT"
+            "W-STAY-CHECKOUT-SETTLEMENT"
         }.Contains(templateWorkspaceId, StringComparer.OrdinalIgnoreCase);
 
     private sealed record DormitoryAnchor(

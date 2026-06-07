@@ -84,7 +84,7 @@ public sealed class ActionRuntimeService
             return new ConfirmResult(ConfirmStatus.NotFound, null, null);
         }
 
-        var capabilityFailure = capabilityGate.ForbidConfirmIfContractOnly(workspace.Id);
+        var capabilityFailure = capabilityGate.ForbidConfirmIfNotCurrentSlice(workspace.Id);
         if (capabilityFailure is not null)
         {
             return capabilityFailure;
@@ -285,7 +285,7 @@ public sealed class ActionRuntimeService
             return requiredFieldFailure;
         }
 
-        var capabilityFailure = capabilityGate.ForbidConfirmIfContractOnly(workspace.Id);
+        var capabilityFailure = capabilityGate.ForbidConfirmIfNotCurrentSlice(workspace.Id);
         if (capabilityFailure is not null)
         {
             return capabilityFailure;

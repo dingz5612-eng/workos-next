@@ -198,6 +198,96 @@
       ]
     },
     {
+      "objectId": "BedAssignment",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.checkin",
+      "truthOwnerRef": "BedAssignment",
+      "fields": [
+        { "fieldId": "stayId", "owner": "accommodation", "visibleScope": ["mobile", "pc", "search"], "editableWhen": "bed_assignment_confirm_only", "auditRequired": true, "languageKey": "stayId", "source": "Confirm Runtime", "searchable": true, "ledgerRelevant": false }
+      ]
+    },
+    {
+      "objectId": "RoomReadiness",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.resource",
+      "truthOwnerRef": "RoomReadiness",
+      "fields": [
+        { "fieldId": "readinessState", "owner": "accommodation", "visibleScope": ["mobile", "pc", "search"], "editableWhen": "room_readiness_or_service_verification", "auditRequired": true, "languageKey": "readinessState", "source": "Domain Event", "searchable": true, "ledgerRelevant": false }
+      ]
+    },
+    {
+      "objectId": "Revenue",
+      "module": "finance-gate",
+      "ownerCapability": "finance.payment",
+      "truthOwnerRef": "Revenue",
+      "fields": [
+        { "fieldId": "confirmedAmount", "owner": "finance-gate", "visibleScope": ["pc"], "editableWhen": "money_kernel_only", "auditRequired": true, "languageKey": "confirmedAmount", "source": "Money/Ledger Kernel", "searchable": false, "ledgerRelevant": true }
+      ]
+    },
+    {
+      "objectId": "Refund",
+      "module": "finance-gate",
+      "ownerCapability": "finance.deposit",
+      "truthOwnerRef": "Refund",
+      "fields": [
+        { "fieldId": "refundAmount", "owner": "finance-gate", "visibleScope": ["mobile", "pc"], "editableWhen": "refund_approval_before_confirm", "auditRequired": true, "languageKey": "refundAmount", "source": "Money/Ledger Kernel", "searchable": false, "ledgerRelevant": true }
+      ]
+    },
+    {
+      "objectId": "FinanceCase",
+      "module": "finance-gate",
+      "ownerCapability": "finance.reconciliation",
+      "truthOwnerRef": "FinanceCase",
+      "fields": [
+        { "fieldId": "correctionReason", "owner": "finance-gate", "visibleScope": ["pc", "search"], "editableWhen": "correction_case_before_approval", "auditRequired": true, "languageKey": "correctionReason", "source": "Correction Center", "searchable": true, "ledgerRelevant": false }
+      ]
+    },
+    {
+      "objectId": "UnclearMoneyCase",
+      "module": "finance-gate",
+      "ownerCapability": "finance.reconciliation",
+      "truthOwnerRef": "UnclearMoneyCase",
+      "fields": [
+        { "fieldId": "differenceReason", "owner": "finance-gate", "visibleScope": ["pc", "search"], "editableWhen": "unclear_money_review_before_confirm", "auditRequired": true, "languageKey": "differenceReason", "source": "Reconciliation Runtime", "searchable": true, "ledgerRelevant": false }
+      ]
+    },
+    {
+      "objectId": "ActionPlan",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.lifecycle",
+      "truthOwnerRef": "ActionPlan",
+      "fields": [
+        { "fieldId": "note", "owner": "accommodation", "visibleScope": ["mobile", "pc"], "editableWhen": "period_action_plan_before_confirm", "auditRequired": true, "languageKey": "note", "source": "WorkItem field contract", "searchable": true, "ledgerRelevant": false }
+      ]
+    },
+    {
+      "objectId": "LensReview",
+      "module": "accommodation",
+      "ownerCapability": "accommodation.lifecycle",
+      "truthOwnerRef": "LensReview",
+      "fields": [
+        { "fieldId": "managementConclusion", "owner": "accommodation", "visibleScope": ["pc"], "editableWhen": "period_review_before_close", "auditRequired": true, "languageKey": "managementConclusion", "source": "Manager signoff", "searchable": true, "ledgerRelevant": false }
+      ]
+    },
+    {
+      "objectId": "ExceptionCase",
+      "module": "identity",
+      "ownerCapability": "governance.release-control",
+      "truthOwnerRef": "ExceptionCase",
+      "fields": [
+        { "fieldId": "handlingOpinion", "owner": "identity", "visibleScope": ["mobile", "pc"], "editableWhen": "exception_resolution_before_audit", "auditRequired": true, "languageKey": "handlingOpinion", "source": "Admission Kernel", "searchable": true, "ledgerRelevant": false }
+      ]
+    },
+    {
+      "objectId": "AuditTrail",
+      "module": "identity",
+      "ownerCapability": "governance.release-control",
+      "truthOwnerRef": "AuditTrail",
+      "fields": [
+        { "fieldId": "note", "owner": "identity", "visibleScope": ["pc"], "editableWhen": "runtime_only", "auditRequired": true, "languageKey": "note", "source": "Unit of Work", "searchable": false, "ledgerRelevant": false }
+      ]
+    },
+    {
       "objectId": "EvidenceObject",
       "module": "identity",
       "ownerCapability": "identity.account-actor",

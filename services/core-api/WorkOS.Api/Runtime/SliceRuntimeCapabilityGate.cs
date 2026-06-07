@@ -19,7 +19,7 @@ public sealed class SliceRuntimeCapabilityGate
             ? capability
             : DynamicTemplateCapability(workspaceId) is { } dynamicCapability
                 ? dynamicCapability
-            : new SliceRuntimeCapability("unknown", workspaceId, "runtime-skeleton");
+            : new SliceRuntimeCapability("unknown", workspaceId, "unregistered");
 
     private SliceRuntimeCapability? DynamicTemplateCapability(string workspaceId)
     {
@@ -34,12 +34,12 @@ public sealed class SliceRuntimeCapabilityGate
         return null;
     }
 
-    public ConfirmResult? ForbidConfirmIfContractOnly(string workspaceId)
+    public ConfirmResult? ForbidConfirmIfNotCurrentSlice(string workspaceId)
     {
         var capability = CapabilityFor(workspaceId);
-        return capability.Status.Equals("contract-only", StringComparison.OrdinalIgnoreCase)
-            ? new ConfirmResult(ConfirmStatus.Forbidden, $"slice_runtime_forbidden:{capability.SliceId}:contract-only", null)
-            : null;
+        return capability.Status.Equals("production-slice", StringComparison.OrdinalIgnoreCase)
+            ? null
+            : new ConfirmResult(ConfirmStatus.Forbidden, $"slice_runtime_forbidden:{capability.SliceId}:{capability.Status}", null);
     }
 
     private static IReadOnlyDictionary<string, SliceRuntimeCapability> LoadCapabilities(string? manifestPath)
@@ -56,7 +56,7 @@ public sealed class SliceRuntimeCapabilityGate
             .Select(slice => new SliceRuntimeCapability(
                 slice.GetProperty("id").GetString() ?? "unknown",
                 slice.GetProperty("workspaceId").GetString() ?? "unknown",
-                slice.GetProperty("status").GetString() ?? "contract-only"))
+                slice.GetProperty("status").GetString() ?? "unregistered"))
             .ToDictionary(item => item.WorkspaceId, StringComparer.OrdinalIgnoreCase);
     }
 
