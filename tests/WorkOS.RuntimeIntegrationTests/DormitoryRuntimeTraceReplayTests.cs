@@ -36,9 +36,9 @@ public sealed class DormitoryRuntimeTraceReplayTests
         Assert.AreEqual(request.CaseId, trace.CaseRef);
         Assert.AreEqual(request.WorkItemId, trace.WorkItemRef);
         Assert.AreEqual(result.SubmissionId, trace.SubmissionRef);
-        Assert.IsTrue(trace.DomainEventRefs.Count > 0, "committed replay must have DomainEvent refs.");
-        Assert.IsTrue(trace.LedgerTransactionRefs.Count > 0, "deposit replay must have LedgerTransaction refs.");
-        Assert.IsTrue(trace.LedgerEntryRefs.Count >= 2, "deposit replay must have balanced LedgerEntry refs.");
+        Assert.IsNotEmpty(trace.DomainEventRefs, "committed replay must have DomainEvent refs.");
+        Assert.IsNotEmpty(trace.LedgerTransactionRefs, "deposit replay must have LedgerTransaction refs.");
+        Assert.IsGreaterThanOrEqualTo(2, trace.LedgerEntryRefs.Count, "deposit replay must have balanced LedgerEntry refs.");
     }
 }
 

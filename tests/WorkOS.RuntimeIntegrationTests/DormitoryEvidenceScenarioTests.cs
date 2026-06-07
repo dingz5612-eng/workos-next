@@ -23,19 +23,19 @@ public sealed class DormitoryEvidenceScenarioTests
         var policy = DormitoryEvidencePolicyLoader.LoadDefault();
         var blocked = EvidencePolicyEvaluator.Evaluate(policy, EvidenceRequest("Dorm.DepositConfirm", scenario, []));
         Assert.AreEqual(StatusCodes.Status422UnprocessableEntity, blocked.StatusCode);
-        Assert.AreEqual(0, harness.Store.DomainEvents.Count);
+        Assert.IsEmpty(harness.Store.DomainEvents);
 
         var rejected = EvidencePolicyEvaluator.Evaluate(policy, EvidenceRequest("Dorm.DepositConfirm", scenario, [
             EvidenceRef("receipt-proof", scenario, "rejected")
         ]));
         Assert.AreEqual(StatusCodes.Status422UnprocessableEntity, rejected.StatusCode);
-        Assert.AreEqual(0, harness.Store.DomainEvents.Count);
+        Assert.IsEmpty(harness.Store.DomainEvents);
 
         var wrongScope = EvidencePolicyEvaluator.Evaluate(policy, EvidenceRequest("Dorm.DepositConfirm", scenario, [
             new EvidencePolicyRef("receipt-proof", "tenant-dormitory", "wi-other", $"submission-{scenario.ScenarioId}", "verified")
         ]));
         Assert.AreEqual(StatusCodes.Status422UnprocessableEntity, wrongScope.StatusCode);
-        Assert.AreEqual(0, harness.Store.DomainEvents.Count);
+        Assert.IsEmpty(harness.Store.DomainEvents);
 
         var accepted = EvidencePolicyEvaluator.Evaluate(policy, EvidenceRequest("Dorm.DepositConfirm", scenario, [
             EvidenceRef("receipt-proof", scenario, "verified"),
@@ -45,8 +45,8 @@ public sealed class DormitoryEvidenceScenarioTests
 
         var committed = harness.Commit(scenario);
         Assert.AreEqual("committed", committed.CommitStatus);
-        Assert.AreEqual(1, harness.Store.DomainEvents.Count);
-        Assert.IsTrue(harness.Store.LedgerTransactions.Count > 0);
+        Assert.HasCount(1, harness.Store.DomainEvents);
+        Assert.IsNotEmpty(harness.Store.LedgerTransactions);
     }
     private static EvidencePolicyRequest EvidenceRequest(
         string workItemType,

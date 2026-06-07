@@ -56,6 +56,6 @@ public sealed class AccountActorKernelContractTests
         StringAssert.Contains(developmentSettings, "\"AllowDevelopmentAccounts\": true");
         StringAssert.Contains(startup, "禁止启用 development-only demo accounts");
         StringAssert.Contains(startup, "IsDevelopment(environmentName)");
-        Assert.IsFalse(startup.Contains("Auth.PasswordSha256ByUsername 不能为空"));
+        Assert.DoesNotContain("Auth.PasswordSha256ByUsername 不能为空", startup);
     }
 }

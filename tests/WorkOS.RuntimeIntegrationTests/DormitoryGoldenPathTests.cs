@@ -25,7 +25,7 @@ public sealed class DormitoryGoldenPathTests
             Assert.AreEqual(scenario.CaseId, trace!.CaseRef);
             Assert.AreEqual(scenario.WorkItemId, trace.WorkItemRef);
             Assert.AreEqual(result.SubmissionId, trace.SubmissionRef);
-            Assert.IsTrue(trace.DomainEventRefs.Count > 0);
+            Assert.IsNotEmpty(trace.DomainEventRefs);
         }
     }
 
@@ -48,7 +48,7 @@ public sealed class DormitoryGoldenPathTests
             "accommodation.service-task"
         })
         {
-            Assert.IsTrue(capabilities.Contains(capability), $"{capability} must be part of the current OAM contract.");
+            Assert.Contains(capability, capabilities, $"{capability} must be part of the current OAM contract.");
         }
     }
 }
