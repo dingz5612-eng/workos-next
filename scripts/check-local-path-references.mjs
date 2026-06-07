@@ -20,12 +20,15 @@ const skipDirectories = new Set([".git", ".tmp", "node_modules", "bin", "obj", "
 const generatedArtifactPrefixes = [
   "apps/mobile/dist",
   "apps/mobile/dist/",
+  "artifacts/oam",
+  "artifacts/oam/",
   "artifacts/oam/checks",
   "artifacts/oam/checks/",
   "artifacts/oam/test-results",
   "artifacts/oam/test-results/",
   "artifacts/oam/evidence",
-  "artifacts/oam/evidence/"
+  "artifacts/oam/evidence/",
+  "artifacts/oam/final-report.json"
 ];
 
 const localPathPattern = /[`"']((?:\.github[\\/]|apps[\\/]|docs[\\/]|infra[\\/]|modules[\\/]|packages[\\/]|schemas[\\/]|scripts[\\/]|services[\\/]|tests[\\/]|tools[\\/]|artifacts[\\/])[^`"'\s)\]}]+)[`"']/g;

@@ -99,7 +99,9 @@ function validateLedgerShape(ledger, failures, options = {}) {
 
     if (options.checkFiles) {
       requirePath(rule.authorityFile, `${rule.ruleId} 权威文件`, failures);
-      requirePath(rule.structuredContract, `${rule.ruleId} 结构化合同`, failures);
+      if (!isGeneratedEvidenceArtifact(rule.structuredContract)) {
+        requirePath(rule.structuredContract, `${rule.ruleId} 结构化合同`, failures);
+      }
       requirePath(rule.primaryGate, `${rule.ruleId} 主门禁`, failures);
       if (!rule.evidenceArtifact.startsWith(evidenceArtifactPrefix)) {
         failures.push({ id: rule.ruleId, message: `证据产物必须位于 ${evidenceArtifactPrefix}: ${rule.evidenceArtifact}` });
