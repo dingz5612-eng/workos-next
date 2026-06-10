@@ -172,6 +172,19 @@ public sealed class CanonicalOperationsApiService
                 definition);
         }
 
+        if (!definition.Resolved)
+        {
+            return ConfirmWorkItemResult.Rejected(
+                StatusCodes.Status422UnprocessableEntity,
+                "definition_not_resolved_for_production_confirm",
+                "definition_not_resolved_for_production_confirm",
+                caseId,
+                workItem.WorkItemId,
+                normalized.SubmissionId,
+                normalized.IdempotencyKey,
+                null);
+        }
+
         var command = new OperationsCommandRequest(
             workItem.TenantId,
             caseId,
