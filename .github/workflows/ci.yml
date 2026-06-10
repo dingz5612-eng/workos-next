@@ -212,7 +212,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v6
         with:
-          name: current-oam-evidence
+          name: workosnext-current-oam-evidence-${{ github.run_id }}
           path: |
             artifacts/oam/evidence/**
             artifacts/oam/checks/**

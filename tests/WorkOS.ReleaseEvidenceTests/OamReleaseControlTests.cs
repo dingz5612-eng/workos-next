@@ -64,6 +64,19 @@ public sealed class OamReleaseControlTests
     }
 
     [TestMethod]
+    public void CiArtifactNameMatchesCurrentOamEvidenceContract()
+    {
+        var workflow = File.ReadAllText(RepoPath(".github", "workflows", "ci.yml"));
+        var generator = File.ReadAllText(RepoPath("scripts", "oam", "generate-current-evidence-root.mjs"));
+        var checker = File.ReadAllText(RepoPath("scripts", "oam", "check-current-evidence-root.mjs"));
+        const string expectedArtifactName = "workosnext-current-oam-evidence-${{ github.run_id }}";
+
+        StringAssert.Contains(workflow, $"name: {expectedArtifactName}");
+        StringAssert.Contains(generator, $"artifactName = \"{expectedArtifactName}\"");
+        StringAssert.Contains(checker, expectedArtifactName);
+    }
+
+    [TestMethod]
     public void CiAndLocalControlPlaneGateCoverCurrentOamCoreChecks()
     {
         var workflow = File.ReadAllText(RepoPath(".github", "workflows", "ci.yml"));
