@@ -4,6 +4,7 @@ import path from "node:path";
 
 const root = process.cwd();
 const digestPlaceholder = "__CURRENT_OAM_EVIDENCE_DIGEST__";
+const expectedArtifactName = "workosnext-current-oam-evidence-${{ github.run_id }}";
 const requiredFiles = [
   "artifacts/oam/evidence/evidence-graph.json",
   "artifacts/oam/evidence/execution-log.jsonl",
@@ -61,6 +62,10 @@ if (documents.size === requiredFiles.length) {
 
   if (!["GO", "NO_GO"].includes(finalReport.finalGoNoGo)) {
     failures.push(`final report must be GO or NO_GO, actual: ${finalReport.finalGoNoGo}`);
+  }
+
+  if (finalReport.artifactName !== expectedArtifactName) {
+    failures.push(`final report artifactName must be ${expectedArtifactName}, actual: ${finalReport.artifactName || "missing"}`);
   }
 
   if (Array.isArray(finalReport.unresolvedP0) && finalReport.unresolvedP0.length > 0) {

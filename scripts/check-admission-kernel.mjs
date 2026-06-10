@@ -265,6 +265,14 @@ function checkRuntimeImplementation(failures) {
   ]) {
     if (!canonical.includes(term)) failures.push(`CanonicalOperationsApiService.cs missing Admission Kernel binding: ${term}.`);
   }
+  const unresolvedGate = canonical.indexOf("if (!definition.Resolved)");
+  const commandIndex = canonical.indexOf("var command = new OperationsCommandRequest(");
+  const commitIndex = canonical.indexOf("var commit = unitOfWork.Commit(command)");
+  if (unresolvedGate < 0 || commandIndex < 0 || commitIndex < 0) {
+    failures.push("CanonicalOperationsApiService.cs cannot find unresolved gate, command construction, or commit statement.");
+  } else if (!(unresolvedGate < commandIndex && commandIndex < commitIndex)) {
+    failures.push("CanonicalOperationsApiService.cs must reject unresolved definition before command creation and commit.");
+  }
 
   const correctionModels = read("services/core-api/WorkOS.Api/Runtime/CorrectionCenterModels.cs");
   for (const term of ["EvidenceRefs", "AdmissionDecisionRef", "DeviceTrustStatus", "Surface"]) {

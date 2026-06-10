@@ -8,6 +8,7 @@ const evidenceDir = "artifacts/oam/evidence";
 const finalReportPath = "artifacts/oam/final-report.json";
 const controlPlaneGateResultPath = "artifacts/oam/checks/control-plane-gate-results.json";
 const digestPlaceholder = "__CURRENT_OAM_EVIDENCE_DIGEST__";
+const artifactName = "workosnext-current-oam-evidence-${{ github.run_id }}";
 
 const requiredEvidenceFiles = [
   "artifacts/oam/evidence/evidence-graph.json",
@@ -250,6 +251,7 @@ addEvidence(
 
 const finalReport = {
   ...proof("current-oam-final-report", "当前 OAM 可信运行闭环最终报告", {}),
+  artifactName,
   currentBranch: branch,
   latestCommit: commitSha,
   workspaceStatus: workspace.summary,
