@@ -1,0 +1,183 @@
+version: oam.dormitory.resource-saleability-golden-chain.v1
+status: authoritative
+architecture: oam.current
+layer: source
+manualEditAllowed: true
+generated: false
+doNotEdit: false
+sourcePath: docs/business/domains/dormitory/scenarios/dormitory-resource-saleability.golden-chain.yml
+scenarioNameZh: 宿舍资源可售第一金链
+goldenChainId: dormitory.resource-saleability.golden-chain.v1
+scenarioId: dormitory.resource-saleability.l1-internal-pilot.v1
+businessGoalZh: 房间、床位、资源准备达到 L1 internal pilot 可售条件。
+sourceReferences:
+  - docs/business/domains/dormitory/dormitory-operating-kernel.json
+  - docs/business/admission/business-line-levels.yml
+  - docs/oam/current-admission-state.json
+inScope:
+  - Dorm.RoomSetupConfirm
+  - Dorm.BedSetupConfirm
+  - Dorm.ResourceReadinessConfirm
+outOfScope:
+  - 入住
+  - 预订
+  - 押金
+  - 收款
+  - 账务入账
+  - 退住
+  - Dashboard 写事实
+  - Search 写事实
+  - Surface 推断事实
+mainFlow:
+  - step: 1
+    workItemType: Dorm.RoomSetupConfirm
+    definitionId: definition.dormitory.roomSetupConfirm.v1
+    commandType: RoomSetup.Confirm
+  - step: 2
+    workItemType: Dorm.BedSetupConfirm
+    definitionId: definition.dormitory.bedSetupConfirm.v1
+    commandType: BedSetup.Confirm
+  - step: 3
+    workItemType: Dorm.ResourceReadinessConfirm
+    definitionId: definition.dormitory.resourceReadinessConfirm.v1
+    commandType: ResourceReadiness.Confirm
+branchFlows:
+  - id: missing-field
+    nameZh: 缺字段
+    outcome: NO_GO
+  - id: missing-evidence
+    nameZh: 缺证据
+    outcome: NO_GO
+  - id: untrusted-evidence
+    nameZh: 证据不可信
+    outcome: NO_GO
+  - id: duplicate-room
+    nameZh: 重复房间
+    outcome: NO_GO
+  - id: wrong-bed-room-owner
+    nameZh: 床位归属错误
+    outcome: NO_GO
+  - id: resource-not-saleable
+    nameZh: 资源不可售
+    outcome: NO_GO
+  - id: manual-review
+    nameZh: 人工复核
+    outcome: NO_GO
+  - id: correction
+    nameZh: 纠错
+    outcome: NO_GO
+businessIdentity:
+  allowed:
+    - goldenChainId
+    - scenarioId
+    - workItemType
+    - definitionId
+    - commandType
+    - objectId
+    - fieldId
+    - factId
+    - policyRef
+  forbidden:
+    - cardId
+    - sourceCardId
+    - workspace card
+    - old catalog id
+    - old seed id
+roles:
+  allowedHumanRoles:
+    - 宿舍经办人
+    - 宿舍负责人
+  thirdRoleAllowed: false
+allowedFacts:
+  - Room
+  - Bed
+  - EvidenceObject
+  - DomainEvent
+  - CommandSubmission
+forbiddenFacts:
+  - Payment
+  - Deposit
+  - LedgerEntry
+  - PaymentAllocation
+  - Refund
+  - DashboardSummary 写入
+admissionPolicyRef: dormitory_l1_internal_pilot_observation
+admissionPolicy:
+  maturity: L1 internal pilot
+  internalPilotConfirmAllowed: true
+  productionConfirmAllowed: false
+ledgerPolicyRef: ledger.none.v1
+evidencePolicyRef: evidence.dormitory.resource-saleability.v1
+evidencePolicy:
+  roomSetup:
+    requiredEvidence:
+      - room-photo
+      - room-basic-info
+  bedSetup:
+    requiredEvidence:
+      - bed-photo
+      - room-link-proof
+  resourceReadiness:
+    requiredEvidence:
+      - completion-photo
+      - verification-check
+surfacePolicyRef: surface.generated.dormitory.resource-saleability.v1
+surfacePolicy:
+  consumes: generated surface model
+  fallbackAllowed: false
+readModelOutputs:
+  SearchResult:
+    mode: readonly
+  Lens:
+    mode: readonly
+  Projection:
+    mode: readonly
+  Dashboard:
+    mode: readonly
+migrationFences:
+  - term: cardId
+    readOnly: true
+    executable: false
+    affectsAdmission: false
+    affectsRuntimeConfirm: false
+    affectsLedger: false
+    deletionProofRef: docs/contracts/definition/source-id-migration-fence.json
+  - term: sourceCardId
+    readOnly: true
+    executable: false
+    affectsAdmission: false
+    affectsRuntimeConfirm: false
+    affectsLedger: false
+    deletionProofRef: docs/contracts/definition/source-id-migration-fence.json
+  - term: workspace card
+    readOnly: true
+    executable: false
+    affectsAdmission: false
+    affectsRuntimeConfirm: false
+    affectsLedger: false
+    deletionProofRef: docs/contracts/definition/source-id-migration-fence.json
+  - term: old catalog id
+    readOnly: true
+    executable: false
+    affectsAdmission: false
+    affectsRuntimeConfirm: false
+    affectsLedger: false
+    deletionProofRef: docs/contracts/definition/source-id-migration-fence.json
+  - term: old seed id
+    readOnly: true
+    executable: false
+    affectsAdmission: false
+    affectsRuntimeConfirm: false
+    affectsLedger: false
+    deletionProofRef: docs/contracts/definition/source-id-migration-fence.json
+goNoGoConditions:
+  finalDecisionOwner: artifacts/oam/final-report.json
+  goAllowedOnlyWhen:
+    - evidence satisfied
+    - admission satisfied
+    - generated contracts compiled
+    - runtime boundary passed
+    - negative tests passed
+    - evidence graph proof DAG passed
+    - release evidence current
+  noGoUntilAllSatisfied: true

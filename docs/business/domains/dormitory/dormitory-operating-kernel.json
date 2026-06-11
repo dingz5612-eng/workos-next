@@ -104,7 +104,19 @@
       "systemOwner": "Accommodation.ResourceSetup",
       "definitionId": "definition.dormitory.roomSetupConfirm.v1",
       "commandType": "RoomSetup.Confirm",
-      "sourceCardId": "cert.roomSetupConfirm",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.roomSetupConfirm",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
       "workspaceId": "W-DORM-MAINLINE",
       "surfaceId": "mobile.work.dorm-room-setup-confirm",
       "objectId": "Room",
@@ -227,7 +239,19 @@
       "systemOwner": "Accommodation.ResourceSetup",
       "definitionId": "definition.dormitory.bedSetupConfirm.v1",
       "commandType": "BedSetup.Confirm",
-      "sourceCardId": "cert.bedSetupConfirm",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.bedSetupConfirm",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
       "workspaceId": "W-DORM-MAINLINE",
       "surfaceId": "mobile.work.dorm-bed-setup-confirm",
       "objectId": "Bed",
@@ -351,7 +375,19 @@
       "systemOwner": "Accommodation.RatePlan",
       "definitionId": "definition.dormitory.ratePlanConfirm.v1",
       "commandType": "RatePlan.Confirm",
-      "sourceCardId": "cert.ratePlanConfirm",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.ratePlanConfirm",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
       "workspaceId": "W-DORM-MAINLINE",
       "surfaceId": "mobile.work.dorm-rate-plan-confirm",
       "objectId": "RatePlan",
@@ -474,7 +510,19 @@
       "systemOwner": "Accommodation.ResourceReadiness",
       "definitionId": "definition.dormitory.resourceReadinessConfirm.v1",
       "commandType": "ResourceReadiness.Confirm",
-      "sourceCardId": "cert.resourceReadinessConfirm",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.resourceReadinessConfirm",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
       "workspaceId": "W-DORM-MAINLINE",
       "surfaceId": "mobile.work.dorm-resource-readiness-confirm",
       "objectId": "Room",
@@ -600,7 +648,19 @@
       "systemOwner": "Accommodation.Lead",
       "definitionId": "definition.dormitory.leadCapture.v1",
       "commandType": "Lead.Capture",
-      "sourceCardId": "cert.leadCapture",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.leadCapture",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
       "workspaceId": "W-DORM-MAINLINE",
       "surfaceId": "mobile.work.dorm-lead-capture",
       "objectId": "Lead",
@@ -722,7 +782,19 @@
       "systemOwner": "Accommodation.Reservation",
       "definitionId": "definition.dormitory.reservationConfirm.v1",
       "commandType": "Reservation.Confirm",
-      "sourceCardId": "cert.reservationConfirm",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.reservationConfirm",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
       "workspaceId": "W-DORM-MAINLINE",
       "surfaceId": "mobile.work.dorm-reservation-confirm",
       "objectId": "Reservation",
@@ -847,7 +919,19 @@
       "systemOwner": "Accommodation.CheckIn",
       "definitionId": "definition.dormitory.checkinConfirm.v1",
       "commandType": "Checkin.Confirm",
-      "sourceCardId": "cert.checkinConfirm",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.checkinConfirm",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
       "workspaceId": "W-DORM-MAINLINE",
       "surfaceId": "mobile.work.dorm-checkin-confirm",
       "objectId": "Stay",
@@ -977,7 +1061,19 @@
       "systemOwner": "finance-gate",
       "definitionId": "definition.dormitory.paymentConfirm.v1",
       "commandType": "Payment.Confirm",
-      "sourceCardId": "cert.paymentConfirm",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.paymentConfirm",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
       "workspaceId": "W-DORM-MAINLINE",
       "surfaceId": "mobile.work.dorm-payment-confirm",
       "objectId": "Payment",
@@ -1106,7 +1202,19 @@
       "systemOwner": "finance-gate",
       "definitionId": "definition.dormitory.depositConfirm.v1",
       "commandType": "Deposit.Confirm",
-      "sourceCardId": "cert.depositConfirm",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.depositConfirm",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
       "workspaceId": "W-DORM-MAINLINE",
       "surfaceId": "mobile.work.dorm-deposit-confirm",
       "objectId": "DepositAccount",
@@ -1234,7 +1342,19 @@
       "systemOwner": "Accommodation.ServiceTask",
       "definitionId": "definition.dormitory.serviceTaskCreate.v1",
       "commandType": "ServiceTask.Create",
-      "sourceCardId": "cert.serviceTaskCreate",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.serviceTaskCreate",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
       "workspaceId": "W-DORM-SERVICE-CHECKOUT",
       "surfaceId": "mobile.work.dorm-service-task-create",
       "objectId": "ServiceTask",
@@ -1358,7 +1478,19 @@
       "systemOwner": "Accommodation.ServiceTask",
       "definitionId": "definition.dormitory.serviceTaskAssign.v1",
       "commandType": "ServiceTask.Assign",
-      "sourceCardId": "cert.serviceTaskAssign",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.serviceTaskAssign",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
       "workspaceId": "W-DORM-SERVICE-CHECKOUT",
       "surfaceId": "mobile.work.dorm-service-task-assign",
       "objectId": "ServiceTask",
@@ -1482,7 +1614,19 @@
       "systemOwner": "Accommodation.ServiceTask",
       "definitionId": "definition.dormitory.serviceTaskComplete.v1",
       "commandType": "ServiceTask.Complete",
-      "sourceCardId": "cert.serviceTaskComplete",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.serviceTaskComplete",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
       "workspaceId": "W-DORM-SERVICE-CHECKOUT",
       "surfaceId": "mobile.work.dorm-service-task-complete",
       "objectId": "ServiceTask",
@@ -1606,7 +1750,19 @@
       "systemOwner": "Accommodation.ServiceTask",
       "definitionId": "definition.dormitory.serviceTaskVerify.v1",
       "commandType": "ServiceTask.Verify",
-      "sourceCardId": "cert.serviceTaskVerify",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.serviceTaskVerify",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
       "workspaceId": "W-DORM-SERVICE-CHECKOUT",
       "surfaceId": "mobile.work.dorm-service-task-verify",
       "objectId": "ServiceTask",
@@ -1729,7 +1885,19 @@
       "systemOwner": "finance-gate",
       "definitionId": "definition.finance.expenseRecord.v1",
       "commandType": "Expense.Record",
-      "sourceCardId": "cert.expenseRecord",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.expenseRecord",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
       "workspaceId": "W-DORM-SERVICE-CHECKOUT",
       "surfaceId": "mobile.work.finance-expense-record",
       "objectId": "Expense",
@@ -1857,7 +2025,19 @@
       "systemOwner": "finance-gate",
       "definitionId": "definition.finance.expenseApprove.v1",
       "commandType": "Expense.Approve",
-      "sourceCardId": "cert.expenseApprove",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.expenseApprove",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
       "workspaceId": "W-DORM-SERVICE-CHECKOUT",
       "surfaceId": "mobile.work.finance-expense-approve",
       "objectId": "Expense",
@@ -1982,7 +2162,19 @@
       "systemOwner": "finance-gate",
       "definitionId": "definition.finance.expenseLink.v1",
       "commandType": "Expense.Link",
-      "sourceCardId": "cert.expenseLink",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.expenseLink",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
       "workspaceId": "W-DORM-SERVICE-CHECKOUT",
       "surfaceId": "mobile.work.finance-expense-link",
       "objectId": "ExpenseLink",
@@ -2108,7 +2300,19 @@
       "systemOwner": "Accommodation.Checkout",
       "definitionId": "definition.dormitory.roomInspectionConfirm.v1",
       "commandType": "RoomInspection.Confirm",
-      "sourceCardId": "cert.roomInspectionConfirm",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.roomInspectionConfirm",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
       "workspaceId": "W-DORM-SERVICE-CHECKOUT",
       "surfaceId": "mobile.work.dorm-room-inspection-confirm",
       "objectId": "RoomInspection",
@@ -2234,7 +2438,19 @@
       "systemOwner": "finance-gate",
       "definitionId": "definition.dormitory.checkoutSettlementApprove.v1",
       "commandType": "CheckoutSettlement.Approve",
-      "sourceCardId": "cert.checkoutSettlementApprove",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.checkoutSettlementApprove",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
       "workspaceId": "W-DORM-SERVICE-CHECKOUT",
       "surfaceId": "mobile.work.dorm-checkout-settlement-approve",
       "objectId": "CheckoutCase",
@@ -2365,7 +2581,19 @@
       "systemOwner": "Accommodation.Stay",
       "definitionId": "definition.dormitory.stayExtendApprove.v1",
       "commandType": "StayExtend.Approve",
-      "sourceCardId": "cert.stayExtendApprove",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.stayExtendApprove",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
       "workspaceId": "W-DORM-GOVERNANCE",
       "surfaceId": "mobile.work.dorm-stay-extend-approve",
       "objectId": "Stay",
@@ -2489,7 +2717,19 @@
       "systemOwner": "Accommodation.Stay",
       "definitionId": "definition.dormitory.bedTransferApprove.v1",
       "commandType": "BedTransfer.Approve",
-      "sourceCardId": "cert.bedTransferApprove",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.bedTransferApprove",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
       "workspaceId": "W-DORM-GOVERNANCE",
       "surfaceId": "mobile.work.dorm-bed-transfer-approve",
       "objectId": "Stay",
@@ -2612,7 +2852,19 @@
       "systemOwner": "Accommodation.Reservation",
       "definitionId": "definition.dormitory.reservationCancelClose.v1",
       "commandType": "ReservationCancel.Close",
-      "sourceCardId": "cert.reservationCancelClose",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.reservationCancelClose",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
       "workspaceId": "W-DORM-GOVERNANCE",
       "surfaceId": "mobile.work.dorm-reservation-cancel-close",
       "objectId": "Reservation",
@@ -2733,7 +2985,19 @@
       "systemOwner": "Accommodation.Reservation",
       "definitionId": "definition.dormitory.reservationNoShowClose.v1",
       "commandType": "ReservationNoShow.Close",
-      "sourceCardId": "cert.reservationNoShowClose",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.reservationNoShowClose",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
       "workspaceId": "W-DORM-GOVERNANCE",
       "surfaceId": "mobile.work.dorm-reservation-no-show-close",
       "objectId": "Reservation",
@@ -2854,7 +3118,19 @@
       "systemOwner": "finance-gate",
       "definitionId": "definition.finance.chargeAdjustmentApprove.v1",
       "commandType": "ChargeAdjustment.Approve",
-      "sourceCardId": "cert.chargeAdjustmentApprove",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.chargeAdjustmentApprove",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
       "workspaceId": "W-DORM-GOVERNANCE",
       "surfaceId": "mobile.work.finance-charge-adjustment-approve",
       "objectId": "Payment",
@@ -2980,7 +3256,19 @@
       "systemOwner": "finance-gate",
       "definitionId": "definition.finance.debtFollowUp.v1",
       "commandType": "Debt.FollowUp",
-      "sourceCardId": "cert.debtFollowUp",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.debtFollowUp",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
       "workspaceId": "W-DORM-GOVERNANCE",
       "surfaceId": "mobile.work.finance-debt-follow-up",
       "objectId": "Payment",
@@ -3105,7 +3393,19 @@
       "systemOwner": "identity-trust",
       "definitionId": "definition.dormitory.accessCredentialIssue.v1",
       "commandType": "AccessCredential.Issue",
-      "sourceCardId": "cert.accessCredentialIssue",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.accessCredentialIssue",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
       "workspaceId": "W-DORM-GOVERNANCE",
       "surfaceId": "mobile.work.dorm-access-credential-issue",
       "objectId": "Resident",
@@ -3229,7 +3529,19 @@
       "systemOwner": "identity-trust",
       "definitionId": "definition.dormitory.accessCredentialRevoke.v1",
       "commandType": "AccessCredential.Revoke",
-      "sourceCardId": "cert.accessCredentialRevoke",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.accessCredentialRevoke",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
       "workspaceId": "W-DORM-GOVERNANCE",
       "surfaceId": "mobile.work.dorm-access-credential-revoke",
       "objectId": "Resident",
@@ -3353,7 +3665,19 @@
       "systemOwner": "Accommodation.Governance",
       "definitionId": "definition.dormitory.incidentRecord.v1",
       "commandType": "Incident.Record",
-      "sourceCardId": "cert.incidentRecord",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.incidentRecord",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
       "workspaceId": "W-DORM-GOVERNANCE",
       "surfaceId": "mobile.work.dorm-incident-record",
       "objectId": "ExceptionCase",
@@ -3477,7 +3801,19 @@
       "systemOwner": "Management.Review",
       "definitionId": "definition.dormitory.periodReview.v1",
       "commandType": "Period.Review",
-      "sourceCardId": "cert.periodReview",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.periodReview",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
       "workspaceId": "W-DORM-GOVERNANCE",
       "surfaceId": "mobile.work.dorm-period-review",
       "objectId": "PeriodSnapshot",
@@ -3489,6 +3825,11 @@
         "CommandSubmission"
       ],
       "forbiddenFacts": [
+        "Room",
+        "Bed",
+        "Stay",
+        "RoomInspection",
+        "ServiceTask",
         "Payment",
         "PaymentAllocation",
         "DepositEntry",
@@ -3602,7 +3943,19 @@
       "systemOwner": "Management.ActionPlan",
       "definitionId": "definition.dormitory.periodActionPlanExecute.v1",
       "commandType": "PeriodActionPlan.Execute",
-      "sourceCardId": "cert.periodActionPlanExecute",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.periodActionPlanExecute",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
       "workspaceId": "W-DORM-GOVERNANCE",
       "surfaceId": "mobile.work.dorm-period-action-plan-execute",
       "objectId": "ActionPlan",
@@ -3725,7 +4078,19 @@
       "systemOwner": "Management.Exception",
       "definitionId": "definition.dormitory.exceptionResolve.v1",
       "commandType": "Exception.Resolve",
-      "sourceCardId": "cert.exceptionResolve",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.exceptionResolve",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
       "workspaceId": "W-DORM-GOVERNANCE",
       "surfaceId": "mobile.work.dorm-exception-resolve",
       "objectId": "ExceptionCase",
@@ -3850,7 +4215,19 @@
       "systemOwner": "finance-gate",
       "definitionId": "definition.finance.correctionApply.v1",
       "commandType": "Correction.Apply",
-      "sourceCardId": "cert.correctionApply",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.correctionApply",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
       "workspaceId": "W-DORM-GOVERNANCE",
       "surfaceId": "mobile.work.finance-correction-apply",
       "objectId": "Payment",

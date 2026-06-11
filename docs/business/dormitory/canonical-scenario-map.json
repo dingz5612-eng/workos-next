@@ -10,8 +10,21 @@
       "workItemId": "wi.dorm-cert-001.checkin-confirm",
       "ownerDomain": "dormitory",
       "surfaceId": "mobile.work.dorm-checkin-confirm",
-      "sourceCardId": "cert.checkinConfirm",
-      "sourceScenario": "docs/scenarios/dormitory/golden-pilot.yml"
+      "sourceScenario": "docs/business/domains/dormitory/scenarios/dormitory-resource-saleability.golden-chain.yml",
+      "commandType": "Checkin.Confirm",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.checkinConfirm",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ]
     },
     {
       "scenarioId": "dorm-cert-002",
@@ -20,8 +33,21 @@
       "workItemId": "wi.dorm-cert-002.deposit-confirm",
       "ownerDomain": "finance-gate",
       "surfaceId": "mobile.work.dorm-deposit-confirm",
-      "sourceCardId": "cert.depositConfirm",
-      "sourceScenario": "docs/scenarios/dormitory/golden-pilot.yml"
+      "sourceScenario": "docs/business/domains/dormitory/scenarios/dormitory-resource-saleability.golden-chain.yml",
+      "commandType": "Deposit.Confirm",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.depositConfirm",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ]
     },
     {
       "scenarioId": "dorm-cert-003",
@@ -30,8 +56,21 @@
       "workItemId": "wi.dorm-cert-003.payment-confirm",
       "ownerDomain": "finance-gate",
       "surfaceId": "mobile.work.dorm-payment-confirm",
-      "sourceCardId": "cert.paymentConfirm",
-      "sourceScenario": "docs/scenarios/dormitory/golden-pilot.yml"
+      "sourceScenario": "docs/business/domains/dormitory/scenarios/dormitory-resource-saleability.golden-chain.yml",
+      "commandType": "Payment.Confirm",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.paymentConfirm",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ]
     },
     {
       "scenarioId": "dorm-cert-004",
@@ -40,8 +79,21 @@
       "workItemId": "wi.dorm-cert-004.room-readiness-check",
       "ownerDomain": "dormitory",
       "surfaceId": "mobile.work.dorm-resource-readiness-confirm",
-      "sourceCardId": "cert.resourceReadinessConfirm",
-      "sourceScenario": "docs/scenarios/dormitory/golden-pilot.yml"
+      "sourceScenario": "docs/business/domains/dormitory/scenarios/dormitory-resource-saleability.golden-chain.yml",
+      "commandType": "ResourceReadiness.Confirm",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.resourceReadinessConfirm",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ]
     },
     {
       "scenarioId": "dorm-cert-005",
@@ -50,8 +102,21 @@
       "workItemId": "wi.dorm-cert-005.refund-approve",
       "ownerDomain": "finance-gate",
       "surfaceId": "mobile.work.dorm-checkout-settlement-approve",
-      "sourceCardId": "cert.checkoutSettlementApprove",
-      "sourceScenario": "docs/scenarios/dormitory/golden-pilot.yml"
+      "sourceScenario": "docs/business/domains/dormitory/scenarios/dormitory-resource-saleability.golden-chain.yml",
+      "commandType": "CheckoutSettlement.Approve",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.checkoutSettlementApprove",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ]
     },
     {
       "scenarioId": "dorm-cert-006",
@@ -60,8 +125,21 @@
       "workItemId": "wi.dorm-cert-006.finance-correction-apply",
       "ownerDomain": "finance-gate",
       "surfaceId": "mobile.work.finance-correction-apply",
-      "sourceCardId": "cert.correctionApply",
-      "sourceScenario": "docs/scenarios/dormitory/golden-pilot.yml"
+      "sourceScenario": "docs/business/domains/dormitory/scenarios/dormitory-resource-saleability.golden-chain.yml",
+      "commandType": "Correction.Apply",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.correctionApply",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ]
     },
     {
       "scenarioId": "dorm-cert-007",
@@ -70,8 +148,21 @@
       "workItemId": "wi.dorm-cert-007.period-review",
       "ownerDomain": "dormitory",
       "surfaceId": "mobile.work.dorm-period-review",
-      "sourceCardId": "cert.periodReview",
-      "sourceScenario": "docs/scenarios/dormitory/golden-pilot.yml"
+      "sourceScenario": "docs/business/domains/dormitory/scenarios/dormitory-resource-saleability.golden-chain.yml",
+      "commandType": "Period.Review",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.periodReview",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ]
     },
     {
       "scenarioId": "dorm-cert-008",
@@ -80,8 +171,21 @@
       "workItemId": "wi.dorm-cert-008.exception-resolve",
       "ownerDomain": "dormitory",
       "surfaceId": "mobile.work.dorm-exception-resolve",
-      "sourceCardId": "cert.exceptionResolve",
-      "sourceScenario": "docs/scenarios/dormitory/golden-pilot.yml"
+      "sourceScenario": "docs/business/domains/dormitory/scenarios/dormitory-resource-saleability.golden-chain.yml",
+      "commandType": "Exception.Resolve",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.exceptionResolve",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ]
     },
     {
       "scenarioId": "dorm-cert-009",
@@ -90,8 +194,21 @@
       "workItemId": "wi.dorm-cert-009.payment-confirm-idempotency",
       "ownerDomain": "finance-gate",
       "surfaceId": "mobile.work.dorm-payment-confirm",
-      "sourceCardId": "cert.paymentConfirm",
-      "sourceScenario": "docs/scenarios/dormitory/golden-pilot.yml"
+      "sourceScenario": "docs/business/domains/dormitory/scenarios/dormitory-resource-saleability.golden-chain.yml",
+      "commandType": "Payment.Confirm",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.paymentConfirm",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ]
     },
     {
       "scenarioId": "dorm-cert-010",
@@ -100,14 +217,27 @@
       "workItemId": "wi.dorm-cert-010.deposit-confirm-evidence-blocker",
       "ownerDomain": "finance-gate",
       "surfaceId": "mobile.work.dorm-deposit-confirm",
-      "sourceCardId": "cert.depositConfirm",
-      "sourceScenario": "docs/scenarios/dormitory/golden-pilot.yml"
+      "sourceScenario": "docs/business/domains/dormitory/scenarios/dormitory-resource-saleability.golden-chain.yml",
+      "commandType": "Deposit.Confirm",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.depositConfirm",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ]
     }
   ],
   "uniqueness": {
     "scenarioId": true,
-    "scenarioDefinitionWorkItemOwnerSurfaceTuple": true,
-    "ordinaryMobileConfirmCannotUseWorkspaceCardFallback": true
+    "ordinaryMobileConfirmCannotUseWorkspaceCardFallback": true,
+    "scenarioDefinitionWorkItemCommandOwnerSurfaceTuple": true
   },
   "derivedFrom": [
     "docs/business/domains/dormitory/dormitory-operating-kernel.json"

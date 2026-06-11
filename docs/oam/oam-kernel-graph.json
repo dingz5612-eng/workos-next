@@ -10,8 +10,8 @@
     "domainKernel": "docs/oam/kernel-schemas/domain-kernel.schema.json",
     "workItem": "docs/oam/kernel-schemas/workitem.schema.json"
   },
-  "nodeCount": 1262,
-  "edgeCount": 1086,
+  "nodeCount": 1271,
+  "edgeCount": 1095,
   "nodes": [
     {
       "runtimeBinding": "current-oam",
@@ -7446,6 +7446,70 @@
       "graphBinding": "file.docs/business/domains/dormitory/handoff-contract.json"
     },
     {
+      "nodeId": "file.docs/business/domains/dormitory/scenarios/dormitory-resource-saleability.golden-chain.yml",
+      "nodeType": "File",
+      "owner": "domain-dormitory-owner",
+      "sourceFile": "docs/business/domains/dormitory/scenarios/dormitory-resource-saleability.golden-chain.yml",
+      "runtimeBinding": "domain.dormitory",
+      "testBinding": [
+        "scripts/business/check-dormitory-resource-saleability-golden-chain.mjs",
+        "scripts/business/check-dormitory-golden-chain-tests.mjs"
+      ],
+      "gateBinding": [
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "domain.dormitory",
+      "checker": "scripts/business/check-dormitory-resource-saleability-golden-chain.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/business/domains/dormitory/scenarios/dormitory-resource-saleability.golden-chain.yml",
+      "absorbedBy": "docs/business/domains/dormitory/scenarios/dormitory-resource-saleability.golden-chain.yml",
+      "removalProofGate": "scripts/oam/run-control-plane-checks.ps1",
+      "deletionConditionZh": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "consumers": [
+        "scripts/business/check-dormitory-resource-saleability-golden-chain.mjs",
+        "scripts/business/check-dormitory-golden-chain-tests.mjs",
+        "docs/oam/current-authority-index.json"
+      ]
+    },
+    {
+      "nodeId": "file.docs/business/domains/dormitory/scenarios/dormitory-scenario-package-matrix.yml",
+      "nodeType": "File",
+      "owner": "domain-dormitory-owner",
+      "sourceFile": "docs/business/domains/dormitory/scenarios/dormitory-scenario-package-matrix.yml",
+      "runtimeBinding": "domain.dormitory",
+      "testBinding": [
+        "scripts/business/check-dormitory-scenario-package-matrix.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "gateBinding": [
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "domain.dormitory",
+      "checker": "scripts/business/check-dormitory-scenario-package-matrix.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/business/domains/dormitory/scenarios/dormitory-scenario-package-matrix.yml",
+      "absorbedBy": "docs/business/domains/dormitory/scenarios/dormitory-scenario-package-matrix.yml",
+      "removalProofGate": "scripts/oam/run-control-plane-checks.ps1",
+      "deletionConditionZh": "当上游当前权威删除且消费者、门禁、证据同步删除时删除。",
+      "consumers": [
+        "scripts/business/check-dormitory-scenario-package-matrix.mjs",
+        "docs/oam/current-authority-index.json",
+        "docs/oam/current-architecture.md"
+      ]
+    },
+    {
       "nodeId": "file.docs/business/domains/dormitory/workitems/dorm-access-credential-issue.json",
       "nodeType": "File",
       "owner": "domain-owner",
@@ -11014,6 +11078,39 @@
       "consumers": [
         "scripts/check-local-path-references.mjs",
         "docs/oam/oam-kernel-graph.json"
+      ]
+    },
+    {
+      "nodeId": "file.docs/contracts/definition/source-id-migration-fence.json",
+      "nodeType": "File",
+      "owner": "authority-owner",
+      "sourceFile": "docs/contracts/definition/source-id-migration-fence.json",
+      "runtimeBinding": "kernel.authority",
+      "testBinding": [
+        "scripts/validate-contracts.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.authority",
+      "checker": "scripts/oam/run-control-plane-checks.ps1",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/definition/source-id-migration-fence.json",
+      "absorbedBy": "docs/contracts/definition/source-id-migration-fence.json",
+      "removalProofGate": "scripts/oam/run-control-plane-checks.ps1",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "docs/contracts/definition/workitem-definition-registry.json",
+        "docs/contracts/business/oam-workflow-state-registry.json",
+        "scripts/business/generate-dormitory-derived-contracts.mjs",
+        "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs"
       ]
     },
     {
@@ -17914,6 +18011,37 @@
       ]
     },
     {
+      "nodeId": "file.scripts/business/check-dormitory-golden-chain-tests.mjs",
+      "nodeType": "File",
+      "owner": "oam-release-owner",
+      "sourceFile": "scripts/business/check-dormitory-golden-chain-tests.mjs",
+      "runtimeBinding": "domain.dormitory",
+      "testBinding": [
+        "scripts/oam/run-control-plane-checks.ps1",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "domain.dormitory",
+      "checker": "scripts/oam/run-control-plane-checks.ps1",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "scripts/business/check-dormitory-golden-chain-tests.mjs",
+      "absorbedBy": "scripts/business/check-dormitory-golden-chain-tests.mjs",
+      "removalProofGate": "scripts/oam/run-control-plane-checks.ps1",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/oam/run-control-plane-checks.ps1",
+        "docs/oam/oam-kernel-graph.json"
+      ]
+    },
+    {
       "nodeId": "file.scripts/business/check-dormitory-metrics-lens-contract.mjs",
       "nodeType": "File",
       "owner": "oam-release-owner",
@@ -17976,6 +18104,37 @@
       ]
     },
     {
+      "nodeId": "file.scripts/business/check-dormitory-period-correction-closure.mjs",
+      "nodeType": "File",
+      "owner": "oam-release-owner",
+      "sourceFile": "scripts/business/check-dormitory-period-correction-closure.mjs",
+      "runtimeBinding": "domain.dormitory",
+      "testBinding": [
+        "scripts/oam/run-control-plane-checks.ps1",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "domain.dormitory",
+      "checker": "scripts/oam/run-control-plane-checks.ps1",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "scripts/business/check-dormitory-period-correction-closure.mjs",
+      "absorbedBy": "scripts/business/check-dormitory-period-correction-closure.mjs",
+      "removalProofGate": "scripts/oam/run-control-plane-checks.ps1",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/oam/run-control-plane-checks.ps1",
+        "docs/oam/oam-kernel-graph.json"
+      ]
+    },
+    {
       "nodeId": "file.scripts/business/check-dormitory-pilot-scenario-pack.mjs",
       "nodeType": "File",
       "owner": "oam-release-owner",
@@ -18030,6 +18189,130 @@
       "evidence": "artifacts/oam/evidence/evidence-graph.json",
       "replacementPath": "scripts/business/check-dormitory-release-train.mjs",
       "absorbedBy": "scripts/business/check-dormitory-release-train.mjs",
+      "removalProofGate": "scripts/oam/run-control-plane-checks.ps1",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/oam/run-control-plane-checks.ps1",
+        "docs/oam/oam-kernel-graph.json"
+      ]
+    },
+    {
+      "nodeId": "file.scripts/business/check-dormitory-resource-saleability-golden-chain.mjs",
+      "nodeType": "File",
+      "owner": "oam-release-owner",
+      "sourceFile": "scripts/business/check-dormitory-resource-saleability-golden-chain.mjs",
+      "runtimeBinding": "domain.dormitory",
+      "testBinding": [
+        "scripts/oam/run-control-plane-checks.ps1",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "domain.dormitory",
+      "checker": "scripts/oam/run-control-plane-checks.ps1",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "scripts/business/check-dormitory-resource-saleability-golden-chain.mjs",
+      "absorbedBy": "scripts/business/check-dormitory-resource-saleability-golden-chain.mjs",
+      "removalProofGate": "scripts/oam/run-control-plane-checks.ps1",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/oam/run-control-plane-checks.ps1",
+        "docs/oam/oam-kernel-graph.json"
+      ]
+    },
+    {
+      "nodeId": "file.scripts/business/check-dormitory-scenario-closure-tests.mjs",
+      "nodeType": "File",
+      "owner": "oam-release-owner",
+      "sourceFile": "scripts/business/check-dormitory-scenario-closure-tests.mjs",
+      "runtimeBinding": "domain.dormitory",
+      "testBinding": [
+        "scripts/oam/run-control-plane-checks.ps1",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "domain.dormitory",
+      "checker": "scripts/oam/run-control-plane-checks.ps1",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "scripts/business/check-dormitory-scenario-closure-tests.mjs",
+      "absorbedBy": "scripts/business/check-dormitory-scenario-closure-tests.mjs",
+      "removalProofGate": "scripts/oam/run-control-plane-checks.ps1",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/oam/run-control-plane-checks.ps1",
+        "docs/oam/oam-kernel-graph.json"
+      ]
+    },
+    {
+      "nodeId": "file.scripts/business/check-dormitory-scenario-package-matrix.mjs",
+      "nodeType": "File",
+      "owner": "oam-release-owner",
+      "sourceFile": "scripts/business/check-dormitory-scenario-package-matrix.mjs",
+      "runtimeBinding": "domain.dormitory",
+      "testBinding": [
+        "scripts/oam/run-control-plane-checks.ps1",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "domain.dormitory",
+      "checker": "scripts/oam/run-control-plane-checks.ps1",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "scripts/business/check-dormitory-scenario-package-matrix.mjs",
+      "absorbedBy": "scripts/business/check-dormitory-scenario-package-matrix.mjs",
+      "removalProofGate": "scripts/oam/run-control-plane-checks.ps1",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/oam/run-control-plane-checks.ps1",
+        "docs/oam/oam-kernel-graph.json"
+      ]
+    },
+    {
+      "nodeId": "file.scripts/business/check-dormitory-ui-readside-experience.mjs",
+      "nodeType": "File",
+      "owner": "oam-release-owner",
+      "sourceFile": "scripts/business/check-dormitory-ui-readside-experience.mjs",
+      "runtimeBinding": "domain.dormitory",
+      "testBinding": [
+        "scripts/oam/run-control-plane-checks.ps1",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "domain.dormitory",
+      "checker": "scripts/oam/run-control-plane-checks.ps1",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "scripts/business/check-dormitory-ui-readside-experience.mjs",
+      "absorbedBy": "scripts/business/check-dormitory-ui-readside-experience.mjs",
       "removalProofGate": "scripts/oam/run-control-plane-checks.ps1",
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "consumers": [
@@ -35461,6 +35744,24 @@
     },
     {
       "from": "domain.dormitory",
+      "to": "file.docs/business/domains/dormitory/scenarios/dormitory-resource-saleability.golden-chain.yml",
+      "edgeType": "owns",
+      "allowedDirection": "domain.dormitory -> file.docs/business/domains/dormitory/scenarios/dormitory-resource-saleability.golden-chain.yml",
+      "forbiddenDirection": "file.docs/business/domains/dormitory/scenarios/dormitory-resource-saleability.golden-chain.yml 不得反向覆盖 domain.dormitory",
+      "checker": "scripts/business/check-dormitory-resource-saleability-golden-chain.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json"
+    },
+    {
+      "from": "domain.dormitory",
+      "to": "file.docs/business/domains/dormitory/scenarios/dormitory-scenario-package-matrix.yml",
+      "edgeType": "owns",
+      "allowedDirection": "domain.dormitory -> file.docs/business/domains/dormitory/scenarios/dormitory-scenario-package-matrix.yml",
+      "forbiddenDirection": "file.docs/business/domains/dormitory/scenarios/dormitory-scenario-package-matrix.yml 不得反向覆盖 domain.dormitory",
+      "checker": "scripts/business/check-dormitory-scenario-package-matrix.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json"
+    },
+    {
+      "from": "domain.dormitory",
       "to": "file.docs/business/domains/dormitory/workitems/dorm-access-credential-issue.json",
       "edgeType": "derivedFrom",
       "allowedDirection": "domain.dormitory -> file.docs/business/domains/dormitory/workitems/dorm-access-credential-issue.json",
@@ -35898,6 +36199,60 @@
       "allowedDirection": "domain.dormitory -> file.docs/scenarios/dormitory/golden-pilot.yml",
       "forbiddenDirection": "file.docs/scenarios/dormitory/golden-pilot.yml 不得反向覆盖 domain.dormitory",
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json"
+    },
+    {
+      "from": "domain.dormitory",
+      "to": "file.scripts/business/check-dormitory-golden-chain-tests.mjs",
+      "edgeType": "testedBy",
+      "allowedDirection": "domain.dormitory -> file.scripts/business/check-dormitory-golden-chain-tests.mjs",
+      "forbiddenDirection": "file.scripts/business/check-dormitory-golden-chain-tests.mjs 不得反向覆盖 domain.dormitory",
+      "checker": "scripts/oam/run-control-plane-checks.ps1",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json"
+    },
+    {
+      "from": "domain.dormitory",
+      "to": "file.scripts/business/check-dormitory-period-correction-closure.mjs",
+      "edgeType": "guardedBy",
+      "allowedDirection": "domain.dormitory -> file.scripts/business/check-dormitory-period-correction-closure.mjs",
+      "forbiddenDirection": "file.scripts/business/check-dormitory-period-correction-closure.mjs 不得反向覆盖 domain.dormitory",
+      "checker": "scripts/oam/run-control-plane-checks.ps1",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json"
+    },
+    {
+      "from": "domain.dormitory",
+      "to": "file.scripts/business/check-dormitory-resource-saleability-golden-chain.mjs",
+      "edgeType": "guardedBy",
+      "allowedDirection": "domain.dormitory -> file.scripts/business/check-dormitory-resource-saleability-golden-chain.mjs",
+      "forbiddenDirection": "file.scripts/business/check-dormitory-resource-saleability-golden-chain.mjs 不得反向覆盖 domain.dormitory",
+      "checker": "scripts/oam/run-control-plane-checks.ps1",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json"
+    },
+    {
+      "from": "domain.dormitory",
+      "to": "file.scripts/business/check-dormitory-scenario-closure-tests.mjs",
+      "edgeType": "guardedBy",
+      "allowedDirection": "domain.dormitory -> file.scripts/business/check-dormitory-scenario-closure-tests.mjs",
+      "forbiddenDirection": "file.scripts/business/check-dormitory-scenario-closure-tests.mjs 不得反向覆盖 domain.dormitory",
+      "checker": "scripts/oam/run-control-plane-checks.ps1",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json"
+    },
+    {
+      "from": "domain.dormitory",
+      "to": "file.scripts/business/check-dormitory-scenario-package-matrix.mjs",
+      "edgeType": "guardedBy",
+      "allowedDirection": "domain.dormitory -> file.scripts/business/check-dormitory-scenario-package-matrix.mjs",
+      "forbiddenDirection": "file.scripts/business/check-dormitory-scenario-package-matrix.mjs 不得反向覆盖 domain.dormitory",
+      "checker": "scripts/oam/run-control-plane-checks.ps1",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json"
+    },
+    {
+      "from": "domain.dormitory",
+      "to": "file.scripts/business/check-dormitory-ui-readside-experience.mjs",
+      "edgeType": "guardedBy",
+      "allowedDirection": "domain.dormitory -> file.scripts/business/check-dormitory-ui-readside-experience.mjs",
+      "forbiddenDirection": "file.scripts/business/check-dormitory-ui-readside-experience.mjs 不得反向覆盖 domain.dormitory",
+      "checker": "scripts/oam/run-control-plane-checks.ps1",
       "evidence": "artifacts/oam/evidence/evidence-graph.json"
     },
     {
@@ -36518,6 +36873,15 @@
       "edgeType": "owns",
       "allowedDirection": "kernel.authority -> file.docs/contracts/definition/risk-policy-refs.json",
       "forbiddenDirection": "file.docs/contracts/definition/risk-policy-refs.json 不得反向覆盖 kernel.authority",
+      "checker": "scripts/oam/check-file-lifecycle-policy.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json"
+    },
+    {
+      "from": "kernel.authority",
+      "to": "file.docs/contracts/definition/source-id-migration-fence.json",
+      "edgeType": "owns",
+      "allowedDirection": "kernel.authority -> file.docs/contracts/definition/source-id-migration-fence.json",
+      "forbiddenDirection": "file.docs/contracts/definition/source-id-migration-fence.json 不得反向覆盖 kernel.authority",
       "checker": "scripts/oam/check-file-lifecycle-policy.mjs",
       "evidence": "artifacts/oam/evidence/evidence-graph.json"
     },

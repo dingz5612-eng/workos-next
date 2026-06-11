@@ -10,7 +10,20 @@
       "workflowId": "workflow.dormitory.RoomSetupConfirm.v1",
       "workItemType": "Dorm.RoomSetupConfirm",
       "definitionId": "definition.dormitory.roomSetupConfirm.v1",
-      "sourceCardId": "cert.roomSetupConfirm",
+      "commandType": "RoomSetup.Confirm",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.roomSetupConfirm",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
       "initialState": "ready",
       "allowedStates": [
         "ready",
@@ -62,7 +75,20 @@
       "workflowId": "workflow.dormitory.BedSetupConfirm.v1",
       "workItemType": "Dorm.BedSetupConfirm",
       "definitionId": "definition.dormitory.bedSetupConfirm.v1",
-      "sourceCardId": "cert.bedSetupConfirm",
+      "commandType": "BedSetup.Confirm",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.bedSetupConfirm",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
       "initialState": "ready",
       "allowedStates": [
         "ready",
@@ -114,7 +140,20 @@
       "workflowId": "workflow.dormitory.RatePlanConfirm.v1",
       "workItemType": "Dorm.RatePlanConfirm",
       "definitionId": "definition.dormitory.ratePlanConfirm.v1",
-      "sourceCardId": "cert.ratePlanConfirm",
+      "commandType": "RatePlan.Confirm",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.ratePlanConfirm",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
       "initialState": "ready",
       "allowedStates": [
         "ready",
@@ -165,7 +204,20 @@
       "workflowId": "workflow.dormitory.ResourceReadinessConfirm.v1",
       "workItemType": "Dorm.ResourceReadinessConfirm",
       "definitionId": "definition.dormitory.resourceReadinessConfirm.v1",
-      "sourceCardId": "cert.resourceReadinessConfirm",
+      "commandType": "ResourceReadiness.Confirm",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.resourceReadinessConfirm",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
       "initialState": "ready",
       "allowedStates": [
         "ready",
@@ -217,7 +269,20 @@
       "workflowId": "workflow.dormitory.LeadCapture.v1",
       "workItemType": "Dorm.LeadCapture",
       "definitionId": "definition.dormitory.leadCapture.v1",
-      "sourceCardId": "cert.leadCapture",
+      "commandType": "Lead.Capture",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.leadCapture",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
       "initialState": "ready",
       "allowedStates": [
         "ready",
@@ -268,7 +333,20 @@
       "workflowId": "workflow.dormitory.ReservationConfirm.v1",
       "workItemType": "Dorm.ReservationConfirm",
       "definitionId": "definition.dormitory.reservationConfirm.v1",
-      "sourceCardId": "cert.reservationConfirm",
+      "commandType": "Reservation.Confirm",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.reservationConfirm",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
       "initialState": "ready",
       "allowedStates": [
         "ready",
@@ -320,7 +398,20 @@
       "workflowId": "workflow.dormitory.CheckinConfirm.v1",
       "workItemType": "Dorm.CheckinConfirm",
       "definitionId": "definition.dormitory.checkinConfirm.v1",
-      "sourceCardId": "cert.checkinConfirm",
+      "commandType": "Checkin.Confirm",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.checkinConfirm",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
       "initialState": "ready",
       "allowedStates": [
         "ready",
@@ -374,7 +465,20 @@
       "workflowId": "workflow.dormitory.PaymentConfirm.v1",
       "workItemType": "Dorm.PaymentConfirm",
       "definitionId": "definition.dormitory.paymentConfirm.v1",
-      "sourceCardId": "cert.paymentConfirm",
+      "commandType": "Payment.Confirm",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.paymentConfirm",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
       "initialState": "ready",
       "allowedStates": [
         "ready",
@@ -426,7 +530,20 @@
       "workflowId": "workflow.dormitory.DepositConfirm.v1",
       "workItemType": "Dorm.DepositConfirm",
       "definitionId": "definition.dormitory.depositConfirm.v1",
-      "sourceCardId": "cert.depositConfirm",
+      "commandType": "Deposit.Confirm",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.depositConfirm",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
       "initialState": "ready",
       "allowedStates": [
         "ready",
@@ -478,7 +595,20 @@
       "workflowId": "workflow.dormitory.ServiceTaskCreate.v1",
       "workItemType": "Dorm.ServiceTaskCreate",
       "definitionId": "definition.dormitory.serviceTaskCreate.v1",
-      "sourceCardId": "cert.serviceTaskCreate",
+      "commandType": "ServiceTask.Create",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.serviceTaskCreate",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
       "initialState": "ready",
       "allowedStates": [
         "ready",
@@ -529,7 +659,20 @@
       "workflowId": "workflow.dormitory.ServiceTaskAssign.v1",
       "workItemType": "Dorm.ServiceTaskAssign",
       "definitionId": "definition.dormitory.serviceTaskAssign.v1",
-      "sourceCardId": "cert.serviceTaskAssign",
+      "commandType": "ServiceTask.Assign",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.serviceTaskAssign",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
       "initialState": "ready",
       "allowedStates": [
         "ready",
@@ -580,7 +723,20 @@
       "workflowId": "workflow.dormitory.ServiceTaskComplete.v1",
       "workItemType": "Dorm.ServiceTaskComplete",
       "definitionId": "definition.dormitory.serviceTaskComplete.v1",
-      "sourceCardId": "cert.serviceTaskComplete",
+      "commandType": "ServiceTask.Complete",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.serviceTaskComplete",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
       "initialState": "ready",
       "allowedStates": [
         "ready",
@@ -632,7 +788,20 @@
       "workflowId": "workflow.dormitory.ServiceTaskVerify.v1",
       "workItemType": "Dorm.ServiceTaskVerify",
       "definitionId": "definition.dormitory.serviceTaskVerify.v1",
-      "sourceCardId": "cert.serviceTaskVerify",
+      "commandType": "ServiceTask.Verify",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.serviceTaskVerify",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
       "initialState": "ready",
       "allowedStates": [
         "ready",
@@ -683,7 +852,20 @@
       "workflowId": "workflow.finance.ExpenseRecord.v1",
       "workItemType": "Finance.ExpenseRecord",
       "definitionId": "definition.finance.expenseRecord.v1",
-      "sourceCardId": "cert.expenseRecord",
+      "commandType": "Expense.Record",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.expenseRecord",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
       "initialState": "ready",
       "allowedStates": [
         "ready",
@@ -735,7 +917,20 @@
       "workflowId": "workflow.finance.ExpenseApprove.v1",
       "workItemType": "Finance.ExpenseApprove",
       "definitionId": "definition.finance.expenseApprove.v1",
-      "sourceCardId": "cert.expenseApprove",
+      "commandType": "Expense.Approve",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.expenseApprove",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
       "initialState": "ready",
       "allowedStates": [
         "ready",
@@ -787,7 +982,20 @@
       "workflowId": "workflow.finance.ExpenseLink.v1",
       "workItemType": "Finance.ExpenseLink",
       "definitionId": "definition.finance.expenseLink.v1",
-      "sourceCardId": "cert.expenseLink",
+      "commandType": "Expense.Link",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.expenseLink",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
       "initialState": "ready",
       "allowedStates": [
         "ready",
@@ -838,7 +1046,20 @@
       "workflowId": "workflow.dormitory.RoomInspectionConfirm.v1",
       "workItemType": "Dorm.RoomInspectionConfirm",
       "definitionId": "definition.dormitory.roomInspectionConfirm.v1",
-      "sourceCardId": "cert.roomInspectionConfirm",
+      "commandType": "RoomInspection.Confirm",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.roomInspectionConfirm",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
       "initialState": "ready",
       "allowedStates": [
         "ready",
@@ -890,7 +1111,20 @@
       "workflowId": "workflow.dormitory.CheckoutSettlementApprove.v1",
       "workItemType": "Dorm.CheckoutSettlementApprove",
       "definitionId": "definition.dormitory.checkoutSettlementApprove.v1",
-      "sourceCardId": "cert.checkoutSettlementApprove",
+      "commandType": "CheckoutSettlement.Approve",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.checkoutSettlementApprove",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
       "initialState": "ready",
       "allowedStates": [
         "ready",
@@ -943,7 +1177,20 @@
       "workflowId": "workflow.dormitory.StayExtendApprove.v1",
       "workItemType": "Dorm.StayExtendApprove",
       "definitionId": "definition.dormitory.stayExtendApprove.v1",
-      "sourceCardId": "cert.stayExtendApprove",
+      "commandType": "StayExtend.Approve",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.stayExtendApprove",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
       "initialState": "ready",
       "allowedStates": [
         "ready",
@@ -995,7 +1242,20 @@
       "workflowId": "workflow.dormitory.BedTransferApprove.v1",
       "workItemType": "Dorm.BedTransferApprove",
       "definitionId": "definition.dormitory.bedTransferApprove.v1",
-      "sourceCardId": "cert.bedTransferApprove",
+      "commandType": "BedTransfer.Approve",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.bedTransferApprove",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
       "initialState": "ready",
       "allowedStates": [
         "ready",
@@ -1047,7 +1307,20 @@
       "workflowId": "workflow.dormitory.ReservationCancelClose.v1",
       "workItemType": "Dorm.ReservationCancelClose",
       "definitionId": "definition.dormitory.reservationCancelClose.v1",
-      "sourceCardId": "cert.reservationCancelClose",
+      "commandType": "ReservationCancel.Close",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.reservationCancelClose",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
       "initialState": "ready",
       "allowedStates": [
         "ready",
@@ -1098,7 +1371,20 @@
       "workflowId": "workflow.dormitory.ReservationNoShowClose.v1",
       "workItemType": "Dorm.ReservationNoShowClose",
       "definitionId": "definition.dormitory.reservationNoShowClose.v1",
-      "sourceCardId": "cert.reservationNoShowClose",
+      "commandType": "ReservationNoShow.Close",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.reservationNoShowClose",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
       "initialState": "ready",
       "allowedStates": [
         "ready",
@@ -1149,7 +1435,20 @@
       "workflowId": "workflow.finance.ChargeAdjustmentApprove.v1",
       "workItemType": "Finance.ChargeAdjustmentApprove",
       "definitionId": "definition.finance.chargeAdjustmentApprove.v1",
-      "sourceCardId": "cert.chargeAdjustmentApprove",
+      "commandType": "ChargeAdjustment.Approve",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.chargeAdjustmentApprove",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
       "initialState": "ready",
       "allowedStates": [
         "ready",
@@ -1201,7 +1500,20 @@
       "workflowId": "workflow.finance.DebtFollowUp.v1",
       "workItemType": "Finance.DebtFollowUp",
       "definitionId": "definition.finance.debtFollowUp.v1",
-      "sourceCardId": "cert.debtFollowUp",
+      "commandType": "Debt.FollowUp",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.debtFollowUp",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
       "initialState": "ready",
       "allowedStates": [
         "ready",
@@ -1252,7 +1564,20 @@
       "workflowId": "workflow.dormitory.AccessCredentialIssue.v1",
       "workItemType": "Dorm.AccessCredentialIssue",
       "definitionId": "definition.dormitory.accessCredentialIssue.v1",
-      "sourceCardId": "cert.accessCredentialIssue",
+      "commandType": "AccessCredential.Issue",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.accessCredentialIssue",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
       "initialState": "ready",
       "allowedStates": [
         "ready",
@@ -1304,7 +1629,20 @@
       "workflowId": "workflow.dormitory.AccessCredentialRevoke.v1",
       "workItemType": "Dorm.AccessCredentialRevoke",
       "definitionId": "definition.dormitory.accessCredentialRevoke.v1",
-      "sourceCardId": "cert.accessCredentialRevoke",
+      "commandType": "AccessCredential.Revoke",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.accessCredentialRevoke",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
       "initialState": "ready",
       "allowedStates": [
         "ready",
@@ -1355,7 +1693,20 @@
       "workflowId": "workflow.dormitory.IncidentRecord.v1",
       "workItemType": "Dorm.IncidentRecord",
       "definitionId": "definition.dormitory.incidentRecord.v1",
-      "sourceCardId": "cert.incidentRecord",
+      "commandType": "Incident.Record",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.incidentRecord",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
       "initialState": "ready",
       "allowedStates": [
         "ready",
@@ -1407,7 +1758,20 @@
       "workflowId": "workflow.dormitory.PeriodReview.v1",
       "workItemType": "Dorm.PeriodReview",
       "definitionId": "definition.dormitory.periodReview.v1",
-      "sourceCardId": "cert.periodReview",
+      "commandType": "Period.Review",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.periodReview",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
       "initialState": "ready",
       "allowedStates": [
         "ready",
@@ -1455,7 +1819,20 @@
       "workflowId": "workflow.dormitory.PeriodActionPlanExecute.v1",
       "workItemType": "Dorm.PeriodActionPlanExecute",
       "definitionId": "definition.dormitory.periodActionPlanExecute.v1",
-      "sourceCardId": "cert.periodActionPlanExecute",
+      "commandType": "PeriodActionPlan.Execute",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.periodActionPlanExecute",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
       "initialState": "ready",
       "allowedStates": [
         "ready",
@@ -1506,7 +1883,20 @@
       "workflowId": "workflow.dormitory.ExceptionResolve.v1",
       "workItemType": "Dorm.ExceptionResolve",
       "definitionId": "definition.dormitory.exceptionResolve.v1",
-      "sourceCardId": "cert.exceptionResolve",
+      "commandType": "Exception.Resolve",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.exceptionResolve",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
       "initialState": "ready",
       "allowedStates": [
         "ready",
@@ -1558,7 +1948,20 @@
       "workflowId": "workflow.finance.CorrectionApply.v1",
       "workItemType": "Finance.CorrectionApply",
       "definitionId": "definition.finance.correctionApply.v1",
-      "sourceCardId": "cert.correctionApply",
+      "commandType": "Correction.Apply",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.correctionApply",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ],
       "initialState": "ready",
       "allowedStates": [
         "ready",

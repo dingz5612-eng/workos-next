@@ -1,10 +1,12 @@
 {
   "version": "authority-cleanup.source-layer-audit.v1",
-  "generatedAtUtc": "2026-06-11T19:54:03.014Z",
+  "generatedAtUtc": "2026-06-11T22:20:46.523Z",
   "sourceWhitelist": [
     "docs/business/admission/business-line-levels.yml",
     "docs/business/business-line-registry.json",
     "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+    "docs/business/domains/dormitory/scenarios/dormitory-resource-saleability.golden-chain.yml",
+    "docs/business/domains/dormitory/scenarios/dormitory-scenario-package-matrix.yml",
     "docs/business/domains/finance/finance-operating-kernel.json",
     "docs/business/domains/maintenance/maintenance-operating-kernel.json",
     "docs/business/truth-owner-registry.yml",
@@ -548,6 +550,52 @@
         "generated-or-derived-marker-scan"
       ],
       "notesZh": "文件带派生或生成标记，不能作为 Source 业务事实权威。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/scenarios/dormitory-resource-saleability.golden-chain.yml",
+      "currentIdentity": "current_domain_kernel",
+      "targetLayer": "source",
+      "manualEditAllowed": true,
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": true,
+      "derived": false,
+      "upstreamSource": "docs/business/domains/dormitory/scenarios/dormitory-resource-saleability.golden-chain.yml",
+      "downstreamConsumers": [
+        "docs/oam/current-authority-index.json",
+        "scripts/business/check-dormitory-golden-chain-tests.mjs",
+        "scripts/business/check-dormitory-resource-saleability-golden-chain.mjs"
+      ],
+      "recommendedAction": "keep_source",
+      "deletionRisk": "high",
+      "controlledOldTermUse": false,
+      "scanReasons": [
+        "current-authority-index.currentTruthAllowed=true",
+        "generated-or-derived-marker-scan"
+      ],
+      "notesZh": "保留为少而硬的 Source Layer 权威源；只能人工维护，不得声明 generatedBy 或 derivedFrom。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/scenarios/dormitory-scenario-package-matrix.yml",
+      "currentIdentity": "current_domain_kernel",
+      "targetLayer": "source",
+      "manualEditAllowed": true,
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": true,
+      "derived": false,
+      "upstreamSource": "docs/business/domains/dormitory/scenarios/dormitory-scenario-package-matrix.yml",
+      "downstreamConsumers": [
+        "docs/oam/current-architecture.md",
+        "docs/oam/current-authority-index.json",
+        "scripts/business/check-dormitory-scenario-package-matrix.mjs"
+      ],
+      "recommendedAction": "keep_source",
+      "deletionRisk": "high",
+      "controlledOldTermUse": false,
+      "scanReasons": [
+        "current-authority-index.currentTruthAllowed=true",
+        "generated-or-derived-marker-scan"
+      ],
+      "notesZh": "保留为少而硬的 Source Layer 权威源；只能人工维护，不得声明 generatedBy 或 derivedFrom。"
     },
     {
       "path": "docs/business/domains/dormitory/workitems/dorm-access-credential-issue.json",
@@ -2330,6 +2378,29 @@
       "scanReasons": [
         "authority-pollution-target-scan",
         "generated-or-derived-marker-scan"
+      ],
+      "notesZh": "业务对象、流程、定义和引用合同只能作为生成合同，不得作为 Source 业务事实权威。"
+    },
+    {
+      "path": "docs/contracts/definition/source-id-migration-fence.json",
+      "currentIdentity": "authority_file",
+      "targetLayer": "generated",
+      "manualEditAllowed": false,
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": true,
+      "derived": true,
+      "upstreamSource": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "downstreamConsumers": [
+        "docs/contracts/business/oam-workflow-state-registry.json",
+        "docs/contracts/definition/workitem-definition-registry.json",
+        "scripts/business/generate-dormitory-derived-contracts.mjs",
+        "services/core-api/WorkOS.Api/Runtime/WorkItemDefinitionRegistryService.cs"
+      ],
+      "recommendedAction": "downgrade_to_generated_contract",
+      "deletionRisk": "medium",
+      "controlledOldTermUse": true,
+      "scanReasons": [
+        "authority-pollution-target-scan"
       ],
       "notesZh": "业务对象、流程、定义和引用合同只能作为生成合同，不得作为 Source 业务事实权威。"
     },
@@ -5283,6 +5354,48 @@
     },
     {
       "path": "scripts/business/check-dormitory-release-train.mjs",
+      "currentIdentity": "validation_file",
+      "targetLayer": "generated",
+      "manualEditAllowed": false,
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": true,
+      "derived": true,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "docs/oam/oam-kernel-graph.json",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "recommendedAction": "downgrade_to_generated",
+      "deletionRisk": "medium",
+      "controlledOldTermUse": false,
+      "scanReasons": [
+        "generated-or-derived-marker-scan"
+      ],
+      "notesZh": "文件带派生或生成标记，不能作为 Source 业务事实权威。"
+    },
+    {
+      "path": "scripts/business/check-dormitory-resource-saleability-golden-chain.mjs",
+      "currentIdentity": "validation_file",
+      "targetLayer": "generated",
+      "manualEditAllowed": false,
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": true,
+      "derived": true,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "docs/oam/oam-kernel-graph.json",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "recommendedAction": "downgrade_to_generated",
+      "deletionRisk": "medium",
+      "controlledOldTermUse": false,
+      "scanReasons": [
+        "generated-or-derived-marker-scan"
+      ],
+      "notesZh": "文件带派生或生成标记，不能作为 Source 业务事实权威。"
+    },
+    {
+      "path": "scripts/business/check-dormitory-scenario-package-matrix.mjs",
       "currentIdentity": "validation_file",
       "targetLayer": "generated",
       "manualEditAllowed": false,

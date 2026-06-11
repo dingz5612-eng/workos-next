@@ -159,6 +159,12 @@ Invoke-Gate node scripts/oam/check-db-no-side-effects-proof.mjs
 Invoke-Gate node scripts/check-dormitory-golden-domain.mjs --self-test
 Invoke-Gate node scripts/check-dormitory-golden-domain.mjs
 Invoke-Gate node scripts/business/check-dormitory-operating-kernel.mjs
+Invoke-Gate node scripts/business/check-dormitory-resource-saleability-golden-chain.mjs
+Invoke-Gate node scripts/business/check-dormitory-scenario-package-matrix.mjs
+Invoke-Gate node scripts/business/check-dormitory-ui-readside-experience.mjs
+Invoke-Gate node scripts/business/check-dormitory-period-correction-closure.mjs
+Invoke-Gate node scripts/business/check-dormitory-scenario-closure-tests.mjs
+Invoke-Gate node scripts/business/check-dormitory-golden-chain-tests.mjs
 Invoke-Gate node scripts/business/check-dormitory-derived-contracts.mjs
 Invoke-Gate node scripts/business/check-dormitory-release-train.mjs
 Invoke-Gate node scripts/business/check-dormitory-pilot-scenario-pack.mjs

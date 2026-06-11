@@ -304,9 +304,26 @@ public sealed class SearchKernelService
             "dormitory");
         var definition = definitions.FindByDefinitionId(definitionId);
         return definition is null
-            ? WorkItemDefinitionResolution.Unresolved(definitionId, sourceCardId, businessLineId, "search_record_definition_not_resolved")
+            ? WorkItemDefinitionResolution.Unresolved(definitionId, MigrationRefsForSourceCardId(sourceCardId), businessLineId, "search_record_definition_not_resolved")
             : WorkItemDefinitionResolution.FromDefinition(definition);
     }
+
+    private static IReadOnlyList<DefinitionMigrationRef> MigrationRefsForSourceCardId(string? sourceCardId) =>
+        string.IsNullOrWhiteSpace(sourceCardId)
+            ? Array.Empty<DefinitionMigrationRef>()
+            : new[]
+            {
+                new DefinitionMigrationRef(
+                    "sourceCardId",
+                    sourceCardId,
+                    true,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    "docs/contracts/definition/source-id-migration-fence.json")
+            };
 
     private static Dictionary<string, object?> Permission(
         string visibility,

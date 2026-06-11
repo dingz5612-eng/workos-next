@@ -216,15 +216,15 @@ public sealed class AdmissionKernelService
     private static IReadOnlyList<string> RequiredCapabilitiesFor(WorkItemDefinitionResolution definition)
     {
         var policy = definition.Definition?.RiskPolicyRef ?? string.Empty;
-        var sourceCard = definition.SourceCardId ?? string.Empty;
+        var definitionIdentity = FirstNonEmpty(definition.DefinitionId, definition.Definition?.CommandType);
         if (policy.Contains("payment.high_risk_confirm", StringComparison.OrdinalIgnoreCase)) return new[] { "finance.payment.confirm" };
         if (policy.Contains("deposit.high_risk_confirm", StringComparison.OrdinalIgnoreCase)) return new[] { "finance.deposit.confirm" };
         if (policy.Contains("deposit.high_risk_refund", StringComparison.OrdinalIgnoreCase)) return new[] { "finance.deposit.refund" };
         if (policy.Contains("period.high_risk_close", StringComparison.OrdinalIgnoreCase)) return new[] { "period.close" };
         if (policy.Contains("ledger.high_risk_correction", StringComparison.OrdinalIgnoreCase)) return new[] { "finance.correction.apply" };
-        if (sourceCard.Contains("room", StringComparison.OrdinalIgnoreCase) ||
-            sourceCard.Contains("bed", StringComparison.OrdinalIgnoreCase) ||
-            sourceCard.Contains("rate", StringComparison.OrdinalIgnoreCase))
+        if (definitionIdentity.Contains("room", StringComparison.OrdinalIgnoreCase) ||
+            definitionIdentity.Contains("bed", StringComparison.OrdinalIgnoreCase) ||
+            definitionIdentity.Contains("rate", StringComparison.OrdinalIgnoreCase))
         {
             return new[] { "operations.confirm" };
         }
@@ -426,5 +426,5 @@ public sealed record AdmissionKernelDecision(
         };
 
     private static string RefFor(WorkItemDefinitionResolution definition, string mode) =>
-        $"admission:{definition.SourceCardId}:{mode}:{OperationsHash.Short(definition.DefinitionId, definition.SourceCardId, mode)[..12]}";
+        $"admission:{definition.DefinitionId}:{mode}:{OperationsHash.Short(definition.DefinitionId, mode)[..12]}";
 }

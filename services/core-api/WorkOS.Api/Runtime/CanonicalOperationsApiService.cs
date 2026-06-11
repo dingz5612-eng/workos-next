@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Http;
+using System.Text.Json;
 
 namespace WorkOS.Api.Runtime;
 
@@ -78,7 +79,7 @@ public sealed class CanonicalOperationsApiService
                 templateWorkspaceId,
                 routeCardId,
                 definition.DefinitionId,
-                definition.SourceCardId,
+                definition.MigrationRefs,
                 operationCase.CaseId,
                 actor,
                 anchorPayload,
@@ -261,7 +262,7 @@ public sealed class CanonicalOperationsApiService
             return;
         }
 
-        var nextCardId = UiRouteCardIdForDefinition(nextDefinition, nextDefinition.SourceCardId);
+        var nextCardId = UiRouteCardIdForDefinition(nextDefinition, nextDefinition.MigrationSourceCardId);
         catalog.CreateWorkItem(new CreateWorkItemRequest(
             OperationsWorkItemIdFor(current.WorkspaceId, nextDefinition.DefinitionId),
             current.TenantId,
@@ -275,7 +276,7 @@ public sealed class CanonicalOperationsApiService
                 ["caseId"] = caseId,
                 ["cardId"] = nextCardId,
                 ["definitionId"] = nextDefinition.DefinitionId,
-                ["definitionSourceCardId"] = nextDefinition.SourceCardId,
+                ["definitionMigrationRefs"] = MigrationRefsJson(nextDefinition.MigrationRefs),
                 ["generatedTransitionPolicyId"] = transition.PolicyId,
                 ["generatedTransitionSource"] = GeneratedTransitionPolicy.SourceContract,
                 ["operationAxis"] = "DomainEvent -> GeneratedTransitionPolicy -> WorkItem",
@@ -293,7 +294,7 @@ public sealed class CanonicalOperationsApiService
         string templateWorkspaceId,
         string cardId,
         string definitionId,
-        string definitionSourceCardId,
+        IReadOnlyList<DefinitionMigrationRef> migrationRefs,
         string caseId,
         RuntimeActorContext actor,
         IReadOnlyDictionary<string, string>? anchorPayload = null,
@@ -305,7 +306,7 @@ public sealed class CanonicalOperationsApiService
             ["cardId"] = cardId,
             ["templateWorkspaceId"] = templateWorkspaceId,
             ["definitionId"] = definitionId,
-            ["definitionSourceCardId"] = definitionSourceCardId,
+            ["definitionMigrationRefs"] = MigrationRefsJson(migrationRefs),
             ["operationAxis"] = "Definition -> OperationCase -> WorkItem",
             ["startedByActorId"] = actor.ActorId
         };
@@ -706,7 +707,7 @@ public sealed class CanonicalOperationsApiService
             ["reason"] = FirstNonEmpty(HighRiskReason(request), admission.Reason),
             ["definition"] = definition.ToTrace(),
             ["definitionId"] = definition.DefinitionId,
-            ["sourceCardId"] = definition.SourceCardId,
+            ["definitionMigrationRefs"] = definition.MigrationRefs,
             ["definitionMode"] = definition.DefinitionMode,
             ["admission"] = admission.ToContract(),
             ["admissionDecisionRef"] = admission.AdmissionDecisionRef,
@@ -807,6 +808,9 @@ public sealed class CanonicalOperationsApiService
 
     private static string PayloadValue(IReadOnlyDictionary<string, string> payload, string key) =>
         payload.TryGetValue(key, out var value) ? value : string.Empty;
+
+    private static string MigrationRefsJson(IReadOnlyList<DefinitionMigrationRef>? migrationRefs) =>
+        JsonSerializer.Serialize(migrationRefs ?? Array.Empty<DefinitionMigrationRef>(), new JsonSerializerOptions(JsonSerializerDefaults.Web));
 
     private static ConfirmWorkItemResult ToConfirmResult(OperationsCommitResult result, ConfirmWorkItemRequest request)
     {

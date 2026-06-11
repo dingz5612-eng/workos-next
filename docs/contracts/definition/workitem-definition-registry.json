@@ -116,7 +116,6 @@
       "businessLineId": "dormitory",
       "sliceId": "identity-trust",
       "workspaceId": "W-DORM-GOVERNANCE",
-      "sourceCardId": "cert.accessCredentialIssue",
       "workItemType": "Dorm.AccessCredentialIssue",
       "commandType": "AccessCredential.Issue",
       "ownerSlice": "identity-trust",
@@ -141,14 +140,26 @@
       "surfacePolicyRef": "surface.mobile.work.dorm-access-credential-issue",
       "productionConfirmAllowed": false,
       "removalImpact": "Current OAM dormitory operating kernel canonical definition.",
-      "definitionMode": "oam-certification-current"
+      "definitionMode": "oam-certification-current",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.accessCredentialIssue",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ]
     },
     {
       "definitionId": "definition.dormitory.accessCredentialRevoke.v1",
       "businessLineId": "dormitory",
       "sliceId": "identity-trust",
       "workspaceId": "W-DORM-GOVERNANCE",
-      "sourceCardId": "cert.accessCredentialRevoke",
       "workItemType": "Dorm.AccessCredentialRevoke",
       "commandType": "AccessCredential.Revoke",
       "ownerSlice": "identity-trust",
@@ -173,7 +184,20 @@
       "surfacePolicyRef": "surface.mobile.work.dorm-access-credential-revoke",
       "productionConfirmAllowed": false,
       "removalImpact": "Current OAM dormitory operating kernel canonical definition.",
-      "definitionMode": "oam-certification-current"
+      "definitionMode": "oam-certification-current",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.accessCredentialRevoke",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ]
     },
     {
       "definitionId": "definition.bedRelease.v1",
@@ -242,7 +266,6 @@
       "businessLineId": "dormitory",
       "sliceId": "Accommodation.ResourceSetup",
       "workspaceId": "W-DORM-MAINLINE",
-      "sourceCardId": "cert.bedSetupConfirm",
       "workItemType": "Dorm.BedSetupConfirm",
       "commandType": "BedSetup.Confirm",
       "ownerSlice": "Accommodation.ResourceSetup",
@@ -267,14 +290,26 @@
       "surfacePolicyRef": "surface.mobile.work.dorm-bed-setup-confirm",
       "productionConfirmAllowed": false,
       "removalImpact": "Current OAM dormitory operating kernel canonical definition.",
-      "definitionMode": "oam-certification-current"
+      "definitionMode": "oam-certification-current",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.bedSetupConfirm",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ]
     },
     {
       "definitionId": "definition.dormitory.bedTransferApprove.v1",
       "businessLineId": "dormitory",
       "sliceId": "Accommodation.Stay",
       "workspaceId": "W-DORM-GOVERNANCE",
-      "sourceCardId": "cert.bedTransferApprove",
       "workItemType": "Dorm.BedTransferApprove",
       "commandType": "BedTransfer.Approve",
       "ownerSlice": "Accommodation.Stay",
@@ -299,14 +334,26 @@
       "surfacePolicyRef": "surface.mobile.work.dorm-bed-transfer-approve",
       "productionConfirmAllowed": false,
       "removalImpact": "Current OAM dormitory operating kernel canonical definition.",
-      "definitionMode": "oam-certification-current"
+      "definitionMode": "oam-certification-current",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.bedTransferApprove",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ]
     },
     {
       "definitionId": "definition.dormitory.checkinConfirm.v1",
       "businessLineId": "dormitory",
       "sliceId": "Accommodation.CheckIn",
       "workspaceId": "W-DORM-MAINLINE",
-      "sourceCardId": "cert.checkinConfirm",
       "workItemType": "Dorm.CheckinConfirm",
       "commandType": "Checkin.Confirm",
       "ownerSlice": "Accommodation.CheckIn",
@@ -331,14 +378,26 @@
       "surfacePolicyRef": "surface.mobile.work.dorm-checkin-confirm",
       "productionConfirmAllowed": false,
       "removalImpact": "Current OAM dormitory operating kernel canonical definition.",
-      "definitionMode": "oam-certification-current"
+      "definitionMode": "oam-certification-current",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.checkinConfirm",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ]
     },
     {
       "definitionId": "definition.dormitory.checkoutSettlementApprove.v1",
       "businessLineId": "dormitory",
       "sliceId": "finance-gate",
       "workspaceId": "W-DORM-SERVICE-CHECKOUT",
-      "sourceCardId": "cert.checkoutSettlementApprove",
       "workItemType": "Dorm.CheckoutSettlementApprove",
       "commandType": "CheckoutSettlement.Approve",
       "ownerSlice": "finance-gate",
@@ -365,7 +424,20 @@
       "surfacePolicyRef": "surface.mobile.work.dorm-checkout-settlement-approve",
       "productionConfirmAllowed": false,
       "removalImpact": "Current OAM dormitory operating kernel canonical definition.",
-      "definitionMode": "oam-certification-current"
+      "definitionMode": "oam-certification-current",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.checkoutSettlementApprove",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ]
     },
     {
       "definitionId": "definition.depositAssessment.v1",
@@ -438,7 +510,6 @@
       "businessLineId": "dormitory",
       "sliceId": "finance-gate",
       "workspaceId": "W-DORM-MAINLINE",
-      "sourceCardId": "cert.depositConfirm",
       "workItemType": "Dorm.DepositConfirm",
       "commandType": "Deposit.Confirm",
       "ownerSlice": "finance-gate",
@@ -465,7 +536,20 @@
       "surfacePolicyRef": "surface.mobile.work.dorm-deposit-confirm",
       "productionConfirmAllowed": false,
       "removalImpact": "Current OAM dormitory operating kernel canonical definition.",
-      "definitionMode": "oam-certification-current"
+      "definitionMode": "oam-certification-current",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.depositConfirm",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ]
     },
     {
       "definitionId": "definition.depositConfirmation.v1",
@@ -637,7 +721,6 @@
       "businessLineId": "dormitory",
       "sliceId": "Management.Exception",
       "workspaceId": "W-DORM-GOVERNANCE",
-      "sourceCardId": "cert.exceptionResolve",
       "workItemType": "Dorm.ExceptionResolve",
       "commandType": "Exception.Resolve",
       "ownerSlice": "Management.Exception",
@@ -662,14 +745,26 @@
       "surfacePolicyRef": "surface.mobile.work.dorm-exception-resolve",
       "productionConfirmAllowed": false,
       "removalImpact": "Current OAM dormitory operating kernel canonical definition.",
-      "definitionMode": "oam-certification-current"
+      "definitionMode": "oam-certification-current",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.exceptionResolve",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ]
     },
     {
       "definitionId": "definition.expenseRecord.v1",
       "businessLineId": "dormitory",
       "sliceId": "Accommodation.ExpenseLedger",
       "workspaceId": "W-STAY-EXPENSE-LEDGER",
-      "sourceCardId": "expenseRecord",
       "workItemType": "Dorm.ExpenseRecord",
       "commandType": "Expense.Record",
       "ownerSlice": "Accommodation.ExpenseLedger",
@@ -733,7 +828,6 @@
       "businessLineId": "dormitory",
       "sliceId": "Accommodation.Governance",
       "workspaceId": "W-DORM-GOVERNANCE",
-      "sourceCardId": "cert.incidentRecord",
       "workItemType": "Dorm.IncidentRecord",
       "commandType": "Incident.Record",
       "ownerSlice": "Accommodation.Governance",
@@ -758,14 +852,26 @@
       "surfacePolicyRef": "surface.mobile.work.dorm-incident-record",
       "productionConfirmAllowed": false,
       "removalImpact": "Current OAM dormitory operating kernel canonical definition.",
-      "definitionMode": "oam-certification-current"
+      "definitionMode": "oam-certification-current",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.incidentRecord",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ]
     },
     {
       "definitionId": "definition.dormitory.leadCapture.v1",
       "businessLineId": "dormitory",
       "sliceId": "Accommodation.Lead",
       "workspaceId": "W-DORM-MAINLINE",
-      "sourceCardId": "cert.leadCapture",
       "workItemType": "Dorm.LeadCapture",
       "commandType": "Lead.Capture",
       "ownerSlice": "Accommodation.Lead",
@@ -790,7 +896,20 @@
       "surfacePolicyRef": "surface.mobile.work.dorm-lead-capture",
       "productionConfirmAllowed": false,
       "removalImpact": "Current OAM dormitory operating kernel canonical definition.",
-      "definitionMode": "oam-certification-current"
+      "definitionMode": "oam-certification-current",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.leadCapture",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ]
     },
     {
       "definitionId": "definition.paymentAdjustment.v1",
@@ -863,7 +982,6 @@
       "businessLineId": "dormitory",
       "sliceId": "finance-gate",
       "workspaceId": "W-DORM-MAINLINE",
-      "sourceCardId": "cert.paymentConfirm",
       "workItemType": "Dorm.PaymentConfirm",
       "commandType": "Payment.Confirm",
       "ownerSlice": "finance-gate",
@@ -890,7 +1008,20 @@
       "surfacePolicyRef": "surface.mobile.work.dorm-payment-confirm",
       "productionConfirmAllowed": false,
       "removalImpact": "Current OAM dormitory operating kernel canonical definition.",
-      "definitionMode": "oam-certification-current"
+      "definitionMode": "oam-certification-current",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.paymentConfirm",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ]
     },
     {
       "definitionId": "definition.paymentConfirmation.v1",
@@ -963,7 +1094,6 @@
       "businessLineId": "dormitory",
       "sliceId": "Management.ActionPlan",
       "workspaceId": "W-DORM-GOVERNANCE",
-      "sourceCardId": "cert.periodActionPlanExecute",
       "workItemType": "Dorm.PeriodActionPlanExecute",
       "commandType": "PeriodActionPlan.Execute",
       "ownerSlice": "Management.ActionPlan",
@@ -988,7 +1118,20 @@
       "surfacePolicyRef": "surface.mobile.work.dorm-period-action-plan-execute",
       "productionConfirmAllowed": false,
       "removalImpact": "Current OAM dormitory operating kernel canonical definition.",
-      "definitionMode": "oam-certification-current"
+      "definitionMode": "oam-certification-current",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.periodActionPlanExecute",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ]
     },
     {
       "definitionId": "definition.periodClose.v1",
@@ -1026,7 +1169,6 @@
       "businessLineId": "dormitory",
       "sliceId": "Management.Review",
       "workspaceId": "W-DORM-GOVERNANCE",
-      "sourceCardId": "cert.periodReview",
       "workItemType": "Dorm.PeriodReview",
       "commandType": "Period.Review",
       "ownerSlice": "Management.Review",
@@ -1037,6 +1179,11 @@
         "CommandSubmission"
       ],
       "forbiddenFacts": [
+        "Room",
+        "Bed",
+        "Stay",
+        "RoomInspection",
+        "ServiceTask",
         "Payment",
         "PaymentAllocation",
         "DepositEntry",
@@ -1051,14 +1198,26 @@
       "surfacePolicyRef": "surface.mobile.work.dorm-period-review",
       "productionConfirmAllowed": false,
       "removalImpact": "Current OAM dormitory operating kernel canonical definition.",
-      "definitionMode": "oam-certification-current"
+      "definitionMode": "oam-certification-current",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.periodReview",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ]
     },
     {
       "definitionId": "definition.dormitory.ratePlanConfirm.v1",
       "businessLineId": "dormitory",
       "sliceId": "Accommodation.RatePlan",
       "workspaceId": "W-DORM-MAINLINE",
-      "sourceCardId": "cert.ratePlanConfirm",
       "workItemType": "Dorm.RatePlanConfirm",
       "commandType": "RatePlan.Confirm",
       "ownerSlice": "Accommodation.RatePlan",
@@ -1083,7 +1242,20 @@
       "surfacePolicyRef": "surface.mobile.work.dorm-rate-plan-confirm",
       "productionConfirmAllowed": false,
       "removalImpact": "Current OAM dormitory operating kernel canonical definition.",
-      "definitionMode": "oam-certification-current"
+      "definitionMode": "oam-certification-current",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.ratePlanConfirm",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ]
     },
     {
       "definitionId": "definition.rateSetup.v1",
@@ -1121,7 +1293,6 @@
       "businessLineId": "dormitory",
       "sliceId": "Accommodation.CheckOutSettlement",
       "workspaceId": "W-STAY-CHECKOUT-SETTLEMENT",
-      "sourceCardId": "cert.refundApprove",
       "workItemType": "Dorm.RefundApprove",
       "commandType": "Refund.Approve",
       "ownerSlice": "Accommodation.CheckOutSettlement",
@@ -1154,7 +1325,6 @@
       "businessLineId": "dormitory",
       "sliceId": "Accommodation.Reservation",
       "workspaceId": "W-DORM-GOVERNANCE",
-      "sourceCardId": "cert.reservationCancelClose",
       "workItemType": "Dorm.ReservationCancelClose",
       "commandType": "ReservationCancel.Close",
       "ownerSlice": "Accommodation.Reservation",
@@ -1179,14 +1349,26 @@
       "surfacePolicyRef": "surface.mobile.work.dorm-reservation-cancel-close",
       "productionConfirmAllowed": false,
       "removalImpact": "Current OAM dormitory operating kernel canonical definition.",
-      "definitionMode": "oam-certification-current"
+      "definitionMode": "oam-certification-current",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.reservationCancelClose",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ]
     },
     {
       "definitionId": "definition.dormitory.reservationConfirm.v1",
       "businessLineId": "dormitory",
       "sliceId": "Accommodation.Reservation",
       "workspaceId": "W-DORM-MAINLINE",
-      "sourceCardId": "cert.reservationConfirm",
       "workItemType": "Dorm.ReservationConfirm",
       "commandType": "Reservation.Confirm",
       "ownerSlice": "Accommodation.Reservation",
@@ -1211,14 +1393,26 @@
       "surfacePolicyRef": "surface.mobile.work.dorm-reservation-confirm",
       "productionConfirmAllowed": false,
       "removalImpact": "Current OAM dormitory operating kernel canonical definition.",
-      "definitionMode": "oam-certification-current"
+      "definitionMode": "oam-certification-current",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.reservationConfirm",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ]
     },
     {
       "definitionId": "definition.dormitory.reservationNoShowClose.v1",
       "businessLineId": "dormitory",
       "sliceId": "Accommodation.Reservation",
       "workspaceId": "W-DORM-GOVERNANCE",
-      "sourceCardId": "cert.reservationNoShowClose",
       "workItemType": "Dorm.ReservationNoShowClose",
       "commandType": "ReservationNoShow.Close",
       "ownerSlice": "Accommodation.Reservation",
@@ -1243,14 +1437,26 @@
       "surfacePolicyRef": "surface.mobile.work.dorm-reservation-no-show-close",
       "productionConfirmAllowed": false,
       "removalImpact": "Current OAM dormitory operating kernel canonical definition.",
-      "definitionMode": "oam-certification-current"
+      "definitionMode": "oam-certification-current",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.reservationNoShowClose",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ]
     },
     {
       "definitionId": "definition.dormitory.resourceReadinessConfirm.v1",
       "businessLineId": "dormitory",
       "sliceId": "Accommodation.ResourceReadiness",
       "workspaceId": "W-DORM-MAINLINE",
-      "sourceCardId": "cert.resourceReadinessConfirm",
       "workItemType": "Dorm.ResourceReadinessConfirm",
       "commandType": "ResourceReadiness.Confirm",
       "ownerSlice": "Accommodation.ResourceReadiness",
@@ -1275,7 +1481,20 @@
       "surfacePolicyRef": "surface.mobile.work.dorm-resource-readiness-confirm",
       "productionConfirmAllowed": false,
       "removalImpact": "Current OAM dormitory operating kernel canonical definition.",
-      "definitionMode": "oam-certification-current"
+      "definitionMode": "oam-certification-current",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.resourceReadinessConfirm",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ]
     },
     {
       "definitionId": "definition.roomBlock.v1",
@@ -1313,7 +1532,6 @@
       "businessLineId": "dormitory",
       "sliceId": "Accommodation.Checkout",
       "workspaceId": "W-DORM-SERVICE-CHECKOUT",
-      "sourceCardId": "cert.roomInspectionConfirm",
       "workItemType": "Dorm.RoomInspectionConfirm",
       "commandType": "RoomInspection.Confirm",
       "ownerSlice": "Accommodation.Checkout",
@@ -1338,7 +1556,20 @@
       "surfacePolicyRef": "surface.mobile.work.dorm-room-inspection-confirm",
       "productionConfirmAllowed": false,
       "removalImpact": "Current OAM dormitory operating kernel canonical definition.",
-      "definitionMode": "oam-certification-current"
+      "definitionMode": "oam-certification-current",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.roomInspectionConfirm",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ]
     },
     {
       "definitionId": "definition.roomReadiness.v1",
@@ -1377,7 +1608,6 @@
       "businessLineId": "dormitory",
       "sliceId": "Accommodation.ServiceTask",
       "workspaceId": "W-STAY-SERVICE-TASK",
-      "sourceCardId": "cert.roomReadinessCheck",
       "workItemType": "Dorm.RoomReadinessCheck",
       "commandType": "RoomReadiness.Check",
       "ownerSlice": "Accommodation.ServiceTask",
@@ -1472,7 +1702,6 @@
       "businessLineId": "dormitory",
       "sliceId": "Accommodation.ResourceSetup",
       "workspaceId": "W-DORM-MAINLINE",
-      "sourceCardId": "cert.roomSetupConfirm",
       "workItemType": "Dorm.RoomSetupConfirm",
       "commandType": "RoomSetup.Confirm",
       "ownerSlice": "Accommodation.ResourceSetup",
@@ -1497,14 +1726,26 @@
       "surfacePolicyRef": "surface.mobile.work.dorm-room-setup-confirm",
       "productionConfirmAllowed": false,
       "removalImpact": "Current OAM dormitory operating kernel canonical definition.",
-      "definitionMode": "oam-certification-current"
+      "definitionMode": "oam-certification-current",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.roomSetupConfirm",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ]
     },
     {
       "definitionId": "definition.dormitory.serviceTaskAssign.v1",
       "businessLineId": "dormitory",
       "sliceId": "Accommodation.ServiceTask",
       "workspaceId": "W-DORM-SERVICE-CHECKOUT",
-      "sourceCardId": "cert.serviceTaskAssign",
       "workItemType": "Dorm.ServiceTaskAssign",
       "commandType": "ServiceTask.Assign",
       "ownerSlice": "Accommodation.ServiceTask",
@@ -1529,14 +1770,26 @@
       "surfacePolicyRef": "surface.mobile.work.dorm-service-task-assign",
       "productionConfirmAllowed": false,
       "removalImpact": "Current OAM dormitory operating kernel canonical definition.",
-      "definitionMode": "oam-certification-current"
+      "definitionMode": "oam-certification-current",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.serviceTaskAssign",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ]
     },
     {
       "definitionId": "definition.dormitory.serviceTaskComplete.v1",
       "businessLineId": "dormitory",
       "sliceId": "Accommodation.ServiceTask",
       "workspaceId": "W-DORM-SERVICE-CHECKOUT",
-      "sourceCardId": "cert.serviceTaskComplete",
       "workItemType": "Dorm.ServiceTaskComplete",
       "commandType": "ServiceTask.Complete",
       "ownerSlice": "Accommodation.ServiceTask",
@@ -1561,14 +1814,26 @@
       "surfacePolicyRef": "surface.mobile.work.dorm-service-task-complete",
       "productionConfirmAllowed": false,
       "removalImpact": "Current OAM dormitory operating kernel canonical definition.",
-      "definitionMode": "oam-certification-current"
+      "definitionMode": "oam-certification-current",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.serviceTaskComplete",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ]
     },
     {
       "definitionId": "definition.dormitory.serviceTaskCreate.v1",
       "businessLineId": "dormitory",
       "sliceId": "Accommodation.ServiceTask",
       "workspaceId": "W-DORM-SERVICE-CHECKOUT",
-      "sourceCardId": "cert.serviceTaskCreate",
       "workItemType": "Dorm.ServiceTaskCreate",
       "commandType": "ServiceTask.Create",
       "ownerSlice": "Accommodation.ServiceTask",
@@ -1593,14 +1858,26 @@
       "surfacePolicyRef": "surface.mobile.work.dorm-service-task-create",
       "productionConfirmAllowed": false,
       "removalImpact": "Current OAM dormitory operating kernel canonical definition.",
-      "definitionMode": "oam-certification-current"
+      "definitionMode": "oam-certification-current",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.serviceTaskCreate",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ]
     },
     {
       "definitionId": "definition.dormitory.serviceTaskVerify.v1",
       "businessLineId": "dormitory",
       "sliceId": "Accommodation.ServiceTask",
       "workspaceId": "W-DORM-SERVICE-CHECKOUT",
-      "sourceCardId": "cert.serviceTaskVerify",
       "workItemType": "Dorm.ServiceTaskVerify",
       "commandType": "ServiceTask.Verify",
       "ownerSlice": "Accommodation.ServiceTask",
@@ -1625,14 +1902,26 @@
       "surfacePolicyRef": "surface.mobile.work.dorm-service-task-verify",
       "productionConfirmAllowed": false,
       "removalImpact": "Current OAM dormitory operating kernel canonical definition.",
-      "definitionMode": "oam-certification-current"
+      "definitionMode": "oam-certification-current",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.serviceTaskVerify",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ]
     },
     {
       "definitionId": "definition.dormitory.stayExtendApprove.v1",
       "businessLineId": "dormitory",
       "sliceId": "Accommodation.Stay",
       "workspaceId": "W-DORM-GOVERNANCE",
-      "sourceCardId": "cert.stayExtendApprove",
       "workItemType": "Dorm.StayExtendApprove",
       "commandType": "StayExtend.Approve",
       "ownerSlice": "Accommodation.Stay",
@@ -1657,14 +1946,26 @@
       "surfacePolicyRef": "surface.mobile.work.dorm-stay-extend-approve",
       "productionConfirmAllowed": false,
       "removalImpact": "Current OAM dormitory operating kernel canonical definition.",
-      "definitionMode": "oam-certification-current"
+      "definitionMode": "oam-certification-current",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.stayExtendApprove",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ]
     },
     {
       "definitionId": "definition.finance.chargeAdjustmentApprove.v1",
       "businessLineId": "finance",
       "sliceId": "finance-gate",
       "workspaceId": "W-DORM-GOVERNANCE",
-      "sourceCardId": "cert.chargeAdjustmentApprove",
       "workItemType": "Finance.ChargeAdjustmentApprove",
       "commandType": "ChargeAdjustment.Approve",
       "ownerSlice": "finance-gate",
@@ -1691,14 +1992,26 @@
       "surfacePolicyRef": "surface.mobile.work.finance-charge-adjustment-approve",
       "productionConfirmAllowed": false,
       "removalImpact": "Current OAM dormitory operating kernel canonical definition.",
-      "definitionMode": "oam-certification-current"
+      "definitionMode": "oam-certification-current",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.chargeAdjustmentApprove",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ]
     },
     {
       "definitionId": "definition.finance.correctionApply.v1",
       "businessLineId": "finance",
       "sliceId": "finance-gate",
       "workspaceId": "W-DORM-GOVERNANCE",
-      "sourceCardId": "cert.correctionApply",
       "workItemType": "Finance.CorrectionApply",
       "commandType": "Correction.Apply",
       "ownerSlice": "finance-gate",
@@ -1725,14 +2038,26 @@
       "surfacePolicyRef": "surface.mobile.work.finance-correction-apply",
       "productionConfirmAllowed": false,
       "removalImpact": "Current OAM dormitory operating kernel canonical definition.",
-      "definitionMode": "oam-certification-current"
+      "definitionMode": "oam-certification-current",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.correctionApply",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ]
     },
     {
       "definitionId": "definition.finance.debtFollowUp.v1",
       "businessLineId": "finance",
       "sliceId": "finance-gate",
       "workspaceId": "W-DORM-GOVERNANCE",
-      "sourceCardId": "cert.debtFollowUp",
       "workItemType": "Finance.DebtFollowUp",
       "commandType": "Debt.FollowUp",
       "ownerSlice": "finance-gate",
@@ -1759,14 +2084,26 @@
       "surfacePolicyRef": "surface.mobile.work.finance-debt-follow-up",
       "productionConfirmAllowed": false,
       "removalImpact": "Current OAM dormitory operating kernel canonical definition.",
-      "definitionMode": "oam-certification-current"
+      "definitionMode": "oam-certification-current",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.debtFollowUp",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ]
     },
     {
       "definitionId": "definition.finance.expenseApprove.v1",
       "businessLineId": "finance",
       "sliceId": "finance-gate",
       "workspaceId": "W-DORM-SERVICE-CHECKOUT",
-      "sourceCardId": "cert.expenseApprove",
       "workItemType": "Finance.ExpenseApprove",
       "commandType": "Expense.Approve",
       "ownerSlice": "finance-gate",
@@ -1793,14 +2130,26 @@
       "surfacePolicyRef": "surface.mobile.work.finance-expense-approve",
       "productionConfirmAllowed": false,
       "removalImpact": "Current OAM dormitory operating kernel canonical definition.",
-      "definitionMode": "oam-certification-current"
+      "definitionMode": "oam-certification-current",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.expenseApprove",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ]
     },
     {
       "definitionId": "definition.finance.expenseLink.v1",
       "businessLineId": "finance",
       "sliceId": "finance-gate",
       "workspaceId": "W-DORM-SERVICE-CHECKOUT",
-      "sourceCardId": "cert.expenseLink",
       "workItemType": "Finance.ExpenseLink",
       "commandType": "Expense.Link",
       "ownerSlice": "finance-gate",
@@ -1827,14 +2176,26 @@
       "surfacePolicyRef": "surface.mobile.work.finance-expense-link",
       "productionConfirmAllowed": false,
       "removalImpact": "Current OAM dormitory operating kernel canonical definition.",
-      "definitionMode": "oam-certification-current"
+      "definitionMode": "oam-certification-current",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.expenseLink",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ]
     },
     {
       "definitionId": "definition.finance.expenseRecord.v1",
       "businessLineId": "finance",
       "sliceId": "finance-gate",
       "workspaceId": "W-DORM-SERVICE-CHECKOUT",
-      "sourceCardId": "cert.expenseRecord",
       "workItemType": "Finance.ExpenseRecord",
       "commandType": "Expense.Record",
       "ownerSlice": "finance-gate",
@@ -1861,7 +2222,20 @@
       "surfacePolicyRef": "surface.mobile.work.finance-expense-record",
       "productionConfirmAllowed": false,
       "removalImpact": "Current OAM dormitory operating kernel canonical definition.",
-      "definitionMode": "oam-certification-current"
+      "definitionMode": "oam-certification-current",
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.expenseRecord",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ]
     },
     {
       "definitionId": "definition.ledgerCorrectionApply.v1",

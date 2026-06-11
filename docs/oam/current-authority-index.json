@@ -379,6 +379,59 @@
       ]
     },
     {
+      "path": "docs/business/domains/dormitory/scenarios/dormitory-resource-saleability.golden-chain.yml",
+      "identity": "current_domain_kernel",
+      "owner": "domain-owner",
+      "checker": "scripts/business/check-dormitory-resource-saleability-golden-chain.mjs",
+      "evidence": "artifacts/oam/checks/dormitory-resource-saleability-golden-chain-result.json",
+      "currentTruthAllowed": true,
+      "notesZh": "宿舍资源可售第一金链 Source 级场景定稿包。",
+      "layer": "source",
+      "authorityRole": "sourceKernel",
+      "businessFactAuthorityAllowed": true,
+      "contractAuthorityAllowed": true,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": true,
+      "generated": false,
+      "doNotEdit": false,
+      "checkerRef": "scripts/business/check-dormitory-resource-saleability-golden-chain.mjs",
+      "evidenceRef": "artifacts/oam/checks/dormitory-resource-saleability-golden-chain-result.json",
+      "responsibilityZh": "人工维护的 Source 级业务场景定稿包，定义第一金链范围、身份、准入、证据和 NO_GO 条件。",
+      "sourceRefs": [
+        "docs/oam/current-authority-index.json",
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json"
+      ]
+    },
+    {
+      "path": "docs/business/domains/dormitory/scenarios/dormitory-scenario-package-matrix.yml",
+      "identity": "current_domain_kernel",
+      "owner": "domain-owner",
+      "checker": "scripts/business/check-dormitory-scenario-package-matrix.mjs",
+      "evidence": "artifacts/oam/checks/dormitory-scenario-package-matrix-result.json",
+      "currentTruthAllowed": true,
+      "notesZh": "宿舍场景包矩阵与衔接合同 Source，定义场景职责、字段边界、handoff、读侧和 GO/NO_GO。",
+      "layer": "source",
+      "authorityRole": "sourceKernel",
+      "businessFactAuthorityAllowed": true,
+      "contractAuthorityAllowed": true,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": true,
+      "generated": false,
+      "doNotEdit": false,
+      "checkerRef": "scripts/business/check-dormitory-scenario-package-matrix.mjs",
+      "evidenceRef": "artifacts/oam/checks/dormitory-scenario-package-matrix-result.json",
+      "responsibilityZh": "人工维护的宿舍场景包矩阵 Source，定义业务落地前的场景职责、衔接和边界。",
+      "sourceRefs": [
+        "docs/oam/current-authority-index.json",
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/business/domains/dormitory/scenarios/dormitory-resource-saleability.golden-chain.yml"
+      ]
+    },
+    {
       "path": "docs/business/domains/finance/finance-operating-kernel.json",
       "identity": "current_domain_kernel",
       "owner": "finance-truth-owner",
@@ -1520,7 +1573,7 @@
       "checker": "scripts/check-dormitory-golden-domain.mjs",
       "evidence": "artifacts/oam/checks/dormitory-golden-domain-report.json",
       "currentTruthAllowed": false,
-      "notesZh": "宿舍当前唯一金标场景源。",
+      "notesZh": "宿舍金标场景派生视图，只读解释当前 Source，不是业务 Source。",
       "layer": "generated",
       "authorityRole": "generatedContract",
       "businessFactAuthorityAllowed": false,
@@ -1799,36 +1852,38 @@
       "humanManual"
     ],
     "sourceLayerWhitelist": [
-      "docs/oam/current-architecture.md",
-      "docs/oam/current-architecture.manifest.json",
-      "docs/oam/current-authority-index.json",
+      "docs/business/admission/business-line-levels.yml",
+      "docs/business/business-line-registry.json",
+      "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "docs/business/domains/dormitory/scenarios/dormitory-resource-saleability.golden-chain.yml",
+      "docs/business/domains/dormitory/scenarios/dormitory-scenario-package-matrix.yml",
+      "docs/business/domains/finance/finance-operating-kernel.json",
+      "docs/business/domains/maintenance/maintenance-operating-kernel.json",
+      "docs/business/truth-owner-registry.yml",
+      "docs/contracts/database/oam-db-ownership-map.json",
+      "docs/contracts/language/language-contract.json",
       "docs/contracts/oam.current.json",
-      "docs/oam/current-oam-kernel-responsibility-map.json",
-      "docs/oam/oam-kernel-graph.json",
-      "docs/oam/system-operating-kernel.json",
-      "docs/oam/compiler-generated-contract-kernel.json",
-      "docs/oam/file-lifecycle-policy.json",
-      "docs/oam/current-oam-cross-domain-conflict-rules.json",
+      "docs/finance/finance-ledger-kernel.json",
+      "docs/identity/identity-permission-kernel.json",
       "docs/oam/codex-execution-channel-policy.json",
+      "docs/oam/compiler-generated-contract-kernel.json",
+      "docs/oam/current-admission-state.json",
+      "docs/oam/current-architecture.manifest.json",
+      "docs/oam/current-architecture.md",
+      "docs/oam/current-authority-index.json",
+      "docs/oam/current-oam-cross-domain-conflict-rules.json",
+      "docs/oam/current-oam-kernel-responsibility-map.json",
+      "docs/oam/file-lifecycle-policy.json",
+      "docs/oam/iteration-kernel.json",
+      "docs/oam/oam-kernel-graph.json",
       "docs/oam/professional-ai-review-seats.json",
       "docs/oam/system-change-governance-contract.json",
       "docs/oam/system-failure-routing-contract.json",
       "docs/oam/system-handoff-contract.json",
-      "docs/oam/iteration-kernel.json",
-      "docs/system/oam-p0-rule-ledger.json",
-      "docs/business/business-line-registry.json",
-      "docs/business/admission/business-line-levels.yml",
-      "docs/oam/current-admission-state.json",
-      "docs/business/truth-owner-registry.yml",
-      "docs/business/domains/dormitory/dormitory-operating-kernel.json",
-      "docs/business/domains/finance/finance-operating-kernel.json",
-      "docs/business/domains/maintenance/maintenance-operating-kernel.json",
-      "docs/finance/finance-ledger-kernel.json",
-      "docs/identity/identity-permission-kernel.json",
+      "docs/oam/system-operating-kernel.json",
       "docs/read-intelligence/read-intelligence-kernel.json",
       "docs/surface/surface-contract.yml",
-      "docs/contracts/language/language-contract.json",
-      "docs/contracts/database/oam-db-ownership-map.json"
+      "docs/system/oam-p0-rule-ledger.json"
     ]
   },
   "sourceLayerWhitelist": [
@@ -1921,6 +1976,10 @@
       "reasonZh": "宿舍领域唯一 Source，派生文件不得覆盖它。"
     },
     {
+      "path": "docs/business/domains/dormitory/scenarios/dormitory-resource-saleability.golden-chain.yml",
+      "reasonZh": "宿舍资源可售第一金链 Source 级场景定稿包，只能人工维护。"
+    },
+    {
       "path": "docs/business/domains/finance/finance-operating-kernel.json",
       "reasonZh": "少而硬的 Source Layer 权威输入，只能人工维护。"
     },
@@ -1951,6 +2010,10 @@
     {
       "path": "docs/contracts/database/oam-db-ownership-map.json",
       "reasonZh": "数据库 ownership 边界 Source；具体 migration 不得作为业务 Source。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/scenarios/dormitory-scenario-package-matrix.yml",
+      "reasonZh": "宿舍场景包矩阵与衔接合同 Source，只能人工维护。"
     }
   ]
 }

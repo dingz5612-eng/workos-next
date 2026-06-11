@@ -19,9 +19,9 @@
   "sourceGraph": "docs/oam/oam-kernel-graph.json",
   "sourceKernelVersion": "oam.system-operating-kernel.v1",
   "sourceGraphVersion": "oam.kernel-graph.v1",
-  "sourceHash": "sha256:565eae6705a31168016acf7ffc320c9f81fb912621586616b44922a916a51c96",
-  "sourceContentDigest": "sha256:565eae6705a31168016acf7ffc320c9f81fb912621586616b44922a916a51c96",
-  "kernelGraphHash": "sha256:ead084842f71c79b590fd6b76577e5951dae6b8033f13758fbe20a32392f662e",
+  "sourceHash": "sha256:a85ec573e4b5a55ae7d2b1c9425030ce2b02137a106eb3427033294c99747b69",
+  "sourceContentDigest": "sha256:a85ec573e4b5a55ae7d2b1c9425030ce2b02137a106eb3427033294c99747b69",
+  "kernelGraphHash": "sha256:5945fca7077cdf1cd4e09765030fdb5b6eed8e9c66baea6eaa4bbd2185195fb9",
   "deterministicSort": true,
   "contracts": [
     {
@@ -39,7 +39,7 @@
       "checker": "scripts/oam/check-derived-contract-consistency.mjs",
       "sourceHashes": {
         "docs/oam/system-operating-kernel.json": "sha256:7f68ee0b45409c126845840223617d3eaf24f2a9af8910fe47d8e35081c63867",
-        "docs/oam/oam-kernel-graph.json": "sha256:ead084842f71c79b590fd6b76577e5951dae6b8033f13758fbe20a32392f662e"
+        "docs/oam/oam-kernel-graph.json": "sha256:5945fca7077cdf1cd4e09765030fdb5b6eed8e9c66baea6eaa4bbd2185195fb9"
       }
     },
     {
@@ -57,7 +57,7 @@
       "checker": "scripts/oam/check-derived-contract-consistency.mjs",
       "sourceHashes": {
         "docs/oam/system-operating-kernel.json": "sha256:7f68ee0b45409c126845840223617d3eaf24f2a9af8910fe47d8e35081c63867",
-        "docs/oam/oam-kernel-graph.json": "sha256:ead084842f71c79b590fd6b76577e5951dae6b8033f13758fbe20a32392f662e"
+        "docs/oam/oam-kernel-graph.json": "sha256:5945fca7077cdf1cd4e09765030fdb5b6eed8e9c66baea6eaa4bbd2185195fb9"
       }
     },
     {
@@ -75,10 +75,10 @@
       "checker": "scripts/oam/check-derived-contract-consistency.mjs",
       "sourceHashes": {
         "docs/oam/system-operating-kernel.json": "sha256:7f68ee0b45409c126845840223617d3eaf24f2a9af8910fe47d8e35081c63867",
-        "docs/oam/oam-kernel-graph.json": "sha256:ead084842f71c79b590fd6b76577e5951dae6b8033f13758fbe20a32392f662e"
+        "docs/oam/oam-kernel-graph.json": "sha256:5945fca7077cdf1cd4e09765030fdb5b6eed8e9c66baea6eaa4bbd2185195fb9"
       }
     }
   ],
   "compilerInputDigest": "sha256:7ac4b5968c68f785ba7aacbd668d1dc45637c772c43bc57f99362acbd56c7572",
-  "outputContentDigest": "sha256:b917fe1493a9762214d810439ba6f3bf636ab419b6f27ba70dd2b651110deda5"
+  "outputContentDigest": "sha256:e1aa471ebc21a91c0ba97b7a25a81fe0b877328d2f53ca3e1b829308439d70c5"
 }

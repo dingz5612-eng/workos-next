@@ -167,13 +167,13 @@ function wi(workItemType, nameZh, trainId, ownerRole, systemOwner, commandType, 
     systemOwner,
     definitionId,
     commandType,
-    sourceCardId,
+    migrationRefs: migrationRefsFor(sourceCardId),
     workspaceId: workspaceFor(trainId),
     surfaceId,
     objectId,
     ownerSlice: systemOwner,
     allowedFacts: allowedFactsFor(objectId, financeOwned),
-    forbiddenFacts: forbiddenFactsFor(financeOwned),
+    forbiddenFacts: forbiddenFactsFor(financeOwned, ledgerPolicyRef),
     admissionPolicyRef: admissionFor(workItemType, financeOwned, ownerRole),
     evidencePolicyRef: `evidence.${slug(workItemType)}.v1`,
     ledgerPolicyRef,
@@ -208,6 +208,22 @@ function wi(workItemType, nameZh, trainId, ownerRole, systemOwner, commandType, 
     goNoGo: "definition_resolved_and_admission_confirm_allowed",
     operationZh: `${ownerRole}只补本环节缺失字段，系统自动带入并锁定上游确认字段；提交后写入 CommandSubmission、DomainEvent、Evidence/FactTrace，并刷新 Lens/Search。`
   };
+}
+
+function migrationRefsFor(sourceCardId) {
+  return [
+    {
+      type: "sourceCardId",
+      value: sourceCardId,
+      readOnly: true,
+      executable: false,
+      affectsAdmission: false,
+      affectsRuntimeConfirm: false,
+      affectsBusinessIdentity: false,
+      affectsLedger: false,
+      deletionProofRef: "docs/contracts/definition/source-id-migration-fence.json"
+    }
+  ];
 }
 
 function fieldClassificationFor(editableFields) {
@@ -537,7 +553,7 @@ function buildDomainPack() {
     })),
     objectTraceability: traceability,
     goldenChainTrace: {
-      sourceScenario: "docs/scenarios/dormitory/golden-pilot.yml",
+      sourceScenario: "docs/business/domains/dormitory/scenarios/dormitory-resource-saleability.golden-chain.yml",
       operatingKernel: kernelPath,
       handoffContract: "docs/business/domains/dormitory/handoff-contract.json",
       scenarioMap: "docs/business/dormitory/canonical-scenario-map.json",
@@ -952,15 +968,16 @@ function patchRegistries() {
   const definitions = [...(registry.definitions ?? []).filter((item) => !byType.has(item.workItemType) && !aliasTypes.has(item.workItemType))];
   for (const item of workItems) {
     const current = existing.get(item.workItemType) ?? {};
+    const { sourceCardId: _legacySourceCardId, ...currentWithoutLegacySourceCard } = current;
     definitions.push({
-      ...current,
+      ...currentWithoutLegacySourceCard,
       definitionId: item.definitionId,
       businessLineId: item.workItemType.startsWith("Finance.") ? "finance" : "dormitory",
       sliceId: item.ownerSlice,
       workspaceId: item.workspaceId,
-      sourceCardId: item.sourceCardId,
       workItemType: item.workItemType,
       commandType: item.commandType,
+      migrationRefs: item.migrationRefs,
       ownerSlice: item.ownerSlice,
       allowedFacts: item.allowedFacts,
       forbiddenFacts: item.forbiddenFacts,
@@ -978,8 +995,9 @@ function patchRegistries() {
   for (const item of aliases) {
     const current = existing.get(item.workItemType);
     if (!current) continue;
+    const { sourceCardId: _legacySourceCardId, ...currentWithoutLegacySourceCard } = current;
     definitions.push({
-      ...current,
+      ...currentWithoutLegacySourceCard,
       productionConfirmAllowed: false,
       removalImpact: `${item.workItemType} 已由 ${item.canonicalWorkItemType} 吸收，只允许作为 surface input adapter。`,
       definitionMode: "surface-input-adapter"
@@ -1074,7 +1092,8 @@ function patchWorkflowRegistry() {
     workflowId: `workflow.${item.workItemType.replace(/\./g, ".").replace(/^Finance/, "finance").replace(/^Dorm/, "dormitory")}.v1`,
     workItemType: item.workItemType,
     definitionId: item.definitionId,
-    sourceCardId: item.sourceCardId,
+    commandType: item.commandType,
+    migrationRefs: item.migrationRefs,
     initialState: "ready",
     allowedStates: item.ledgerPolicyRef === "ledger.readonly.v1"
       ? ["ready", "snapshot_frozen", "action_plan_generated", "completed", "blocked"]
@@ -1367,7 +1386,8 @@ function updateGoldenPilot() {
     if (item) {
       scenario.definitionId = item.definitionId;
       scenario.commandType = item.commandType;
-      scenario.sourceCardId = item.sourceCardId;
+      scenario.migrationRefs = item.migrationRefs;
+      delete scenario.sourceCardId;
       scenario.requiredEvidence = scenario.requiredEvidence?.length ? scenario.requiredEvidence : item.requiredEvidence;
     }
   }
@@ -1388,7 +1408,10 @@ function updateCanonicalScenarioMap() {
     const item = byType.get(mapping.workItemType);
     if (item) {
       mapping.definitionId = item.definitionId;
-      mapping.sourceCardId = item.sourceCardId;
+      mapping.commandType = item.commandType;
+      mapping.migrationRefs = item.migrationRefs;
+      delete mapping.sourceCardId;
+      mapping.sourceScenario = "docs/business/domains/dormitory/scenarios/dormitory-resource-saleability.golden-chain.yml";
       mapping.surfaceId = item.surfaceId;
       mapping.ownerDomain = item.canonicalOwner;
     }
@@ -1398,6 +1421,13 @@ function updateCanonicalScenarioMap() {
   doc.sourceKernelVersion = kernelVersion;
   doc.manualEditAllowed = false;
   doc.graphBinding = "domain.dormitory.canonical-scenario-map";
+  doc.uniqueness = {
+    ...(doc.uniqueness ?? {}),
+    scenarioDefinitionWorkItemCommandOwnerSurfaceTuple: true,
+    ordinaryMobileConfirmCannotUseWorkspaceCardFallback: true
+  };
+  delete doc.uniqueness.scenarioDefinitionWorkItemOwnerSurfaceTuple;
+  delete doc.uniqueness.scenarioWorkItemCardOwnerSurfaceTuple;
   writeJson(file, doc);
 }
 
@@ -1723,7 +1753,10 @@ function allowedFactsFor(objectId, financeOwned) {
   return facts;
 }
 
-function forbiddenFactsFor(financeOwned) {
+function forbiddenFactsFor(financeOwned, ledgerPolicyRef) {
+  if (ledgerPolicyRef === "ledger.readonly.v1") {
+    return ["Room", "Bed", "Stay", "RoomInspection", "ServiceTask", "Payment", "PaymentAllocation", "DepositEntry", "LedgerEntry", "Refund"];
+  }
   return financeOwned
     ? ["Room", "Bed", "Stay", "RoomInspection", "ServiceTask"]
     : ["Payment", "PaymentAllocation", "DepositEntry", "LedgerEntry", "Refund"];

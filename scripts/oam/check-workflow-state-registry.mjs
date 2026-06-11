@@ -15,24 +15,36 @@ if (registry.version !== "oam.workflow-state-registry.v1" || registry.status !==
   fail("registry_identity_invalid", "流程状态总表必须声明 oam.workflow-state-registry.v1 authoritative。");
 }
 
-const sourceCards = new Set((definitions.definitions ?? []).map((item) => item.sourceCardId));
+const definitionsById = new Map((definitions.definitions ?? []).map((item) => [item.definitionId, item]));
 const admissionIds = new Set((admission.entries ?? []).map((item) => item.id));
 const objectIds = new Set((objectRegistry.objects ?? []).map((item) => item.objectId));
 const workflowIds = new Set();
 
 for (const workflow of registry.workflows ?? []) {
-  for (const field of ["workflowId", "sourceCardId", "initialState", "allowedStates", "forbiddenStates", "actions"]) {
+  for (const field of ["workflowId", "definitionId", "workItemType", "commandType", "initialState", "allowedStates", "forbiddenStates", "actions"]) {
     if (!(field in workflow) || workflow[field] === "") {
       fail("workflow_field_missing", `${workflow.workflowId ?? "<missing>"} 缺少 ${field}。`);
     }
+  }
+  if ("sourceCardId" in workflow) {
+    fail("workflow_source_card_current_identity", `${workflow.workflowId} 不得把 sourceCardId 作为当前 workflow 绑定字段。`);
   }
   if (workflowIds.has(workflow.workflowId)) {
     fail("workflow_duplicate", `流程重复：${workflow.workflowId}`);
   }
   workflowIds.add(workflow.workflowId);
-  if (!sourceCards.has(workflow.sourceCardId)) {
-    fail("workflow_definition_missing", `${workflow.workflowId} 的 sourceCardId 不在 Definition Registry：${workflow.sourceCardId}`);
+  const definition = definitionsById.get(workflow.definitionId);
+  if (!definition) {
+    fail("workflow_definition_missing", `${workflow.workflowId} 的 definitionId 不在 Definition Registry：${workflow.definitionId}`);
+  } else {
+    if (definition.workItemType !== workflow.workItemType) {
+      fail("workflow_definition_workitem_mismatch", `${workflow.workflowId} 的 workItemType 与 Definition 不一致。`);
+    }
+    if (definition.commandType !== workflow.commandType) {
+      fail("workflow_definition_command_mismatch", `${workflow.workflowId} 的 commandType 与 Definition 不一致。`);
+    }
   }
+  requireMigrationRefs(workflow, `${workflow.workflowId}`);
   if (!workflow.allowedStates?.includes(workflow.initialState)) {
     fail("workflow_initial_state_not_allowed", `${workflow.workflowId} 的 initialState 不在 allowedStates。`);
   }
@@ -106,6 +118,29 @@ function writeReport() {
 
 function fail(id, message) {
   violations.push({ id, severity: "P0", message });
+}
+
+function requireMigrationRefs(item, label) {
+  const sourceCardRef = (item.migrationRefs ?? []).find((ref) => ref.type === "sourceCardId");
+  if (!sourceCardRef) {
+    fail("workflow_migration_ref_missing", `${label} 必须把 sourceCardId 放入 migrationRefs。`);
+    return;
+  }
+  for (const [key, expected] of [
+    ["readOnly", true],
+    ["executable", false],
+    ["affectsAdmission", false],
+    ["affectsRuntimeConfirm", false],
+    ["affectsBusinessIdentity", false],
+    ["affectsLedger", false]
+  ]) {
+    if (sourceCardRef[key] !== expected) {
+      fail("workflow_migration_ref_policy_invalid", `${label} migrationRefs.sourceCardId.${key} 必须是 ${expected}。`);
+    }
+  }
+  if (sourceCardRef.deletionProofRef !== "docs/contracts/definition/source-id-migration-fence.json") {
+    fail("workflow_migration_ref_deletion_proof_missing", `${label} migrationRefs.sourceCardId 必须绑定删除证明。`);
+  }
 }
 
 function abs(file) {
