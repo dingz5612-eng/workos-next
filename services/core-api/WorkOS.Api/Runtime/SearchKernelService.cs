@@ -207,7 +207,7 @@ public sealed class SearchKernelService
         var surface = operations.GetWorkItemSurface(targetWorkItem.WorkItemId);
         var workspace = surface?.Workspace;
         var card = surface?.Card;
-        var definition = definitions.Resolve(targetWorkItem, cardId);
+        var definition = definitions.Resolve(targetWorkItem);
         var decision = admission.EvaluateSearch(definition, actor);
         var fieldValues = FieldValues(record.Payload);
         var businessAnchor = BusinessAnchorPayload(fieldValues);

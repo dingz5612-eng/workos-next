@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "workosnext.read-intelligence-kernel.schema.v1",
+  "title": "Read Intelligence Kernel Schema",
+  "type": "object",
+  "required": ["version", "status", "generatedReadModelRef", "surfaceInputModelRef", "surfaceProof", "readProof", "languageGlossary"],
+  "properties": {
+    "version": { "const": "oam.read-intelligence-kernel.v1" },
+    "status": { "const": "authoritative-current-no-go" },
+    "generatedReadModelRef": { "type": "string" },
+    "surfaceInputModelRef": { "type": "string" },
+    "surfaceProof": { "type": "object" },
+    "readProof": { "type": "object" },
+    "languageGlossary": { "type": "object" }
+  }
+}

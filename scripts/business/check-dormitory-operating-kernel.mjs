@@ -61,6 +61,19 @@ const requiredObjects = [
   "ExceptionCase"
 ];
 const allowedRoles = new Set(["宿舍经办人", "宿舍负责人"]);
+const p0GeneratedCandidates = new Set([
+  "Dorm.RoomSetupConfirm",
+  "Dorm.BedSetupConfirm",
+  "Dorm.ResourceReadinessConfirm"
+]);
+const requiredFieldClassifications = [
+  "clientSubmitted",
+  "selectedStableRef",
+  "contextReadonly",
+  "systemGenerated",
+  "derived",
+  "forbidden"
+];
 const violations = [];
 
 const kernel = readJson(kernelPath);
@@ -78,6 +91,18 @@ requireValue(kernel.status === "authoritative", "kernel.status", "宿舍内核�
 requireValue(kernel.uniqueSourcePolicy?.sourcePath === kernelPath, "kernel.unique_source", "宿舍内核必须声明唯一源路径。");
 requireValue(JSON.stringify((kernel.humanRoles ?? []).map((item) => item.nameZh).sort()) === JSON.stringify([...allowedRoles].sort()), "kernel.roles", "宿舍业务角色只能是宿舍经办人和宿舍负责人。");
 requireValue(workItems.length === requiredWorkItems.length, "kernel.workitem_count", `宿舍当前 WorkItem 必须是 ${requiredWorkItems.length} 个。`);
+requireValue(
+  JSON.stringify((kernel.p0GeneratedCandidates ?? []).map((item) => item.workItemType).sort()) === JSON.stringify([...p0GeneratedCandidates].sort()),
+  "kernel.p0_generated_candidates_invalid",
+  "第一轮 P0 active generated candidates 只能是 RoomSetupConfirm / BedSetupConfirm / ResourceReadinessConfirm。");
+requireValue(
+  JSON.stringify(kernel.fieldClassificationEnum ?? []) === JSON.stringify(requiredFieldClassifications),
+  "kernel.field_classification_enum_invalid",
+  "字段分类必须是 clientSubmitted / selectedStableRef / contextReadonly / systemGenerated / derived / forbidden。");
+requireValue(
+  JSON.stringify(kernel.ledgerEffectModel?.modeEnum ?? []) === JSON.stringify(["none", "basis_only", "finance_kernel"]),
+  "kernel.ledger_effect_mode_invalid",
+  "ledgerEffect.mode 必须使用 none / basis_only / finance_kernel。");
 
 for (const workItemType of requiredWorkItems) {
   const item = workItemsByType.get(workItemType);
@@ -88,6 +113,22 @@ for (const workItemType of requiredWorkItems) {
   }
   requireValue(allowedRoles.has(item.ownerRole), "kernel.role_invalid", `${workItemType} 使用了第三套角色：${item.ownerRole}`, { workItemType });
   requireValue(Array.isArray(item.allowedHumanRoles) && item.allowedHumanRoles.every((role) => allowedRoles.has(role)), "kernel.allowed_roles_invalid", `${workItemType} allowedHumanRoles 只能使用两角色。`, { workItemType });
+  for (const classification of requiredFieldClassifications) {
+    requireValue(Array.isArray(item.fieldClassification?.[classification]), "kernel.field_classification_missing", `${workItemType} 缺少 fieldClassification.${classification}。`, { workItemType, classification });
+  }
+  if (p0GeneratedCandidates.has(workItemType)) {
+    requireValue(item.p0GeneratedCandidate === true, "kernel.p0_candidate_flag_missing", `${workItemType} 必须是 P0 active generated candidate。`, { workItemType });
+    requireValue(item.generatedStage === "P0_ACTIVE", "kernel.p0_stage_invalid", `${workItemType} generatedStage 必须是 P0_ACTIVE。`, { workItemType });
+    requireValue(item.ledgerEffect?.mode === "none", "kernel.p0_ledger_mode_invalid", `${workItemType} ledgerEffect.mode 必须为 none。`, { workItemType });
+    requireValue(item.ledgerEffect?.financeKernelEffectType === null, "kernel.p0_finance_effect_invalid", `${workItemType} financeKernelEffectType 必须为 null。`, { workItemType });
+  }
+  if (/RatePlan|Lead|Checkin|Payment|Deposit|Expense/i.test(workItemType)) {
+    requireValue(item.generatedStage === "P1_BLOCKED", "kernel.p1_blocked_stage_missing", `${workItemType} 必须标记为 P1_BLOCKED，不得进入第一轮 P0 generated contracts。`, { workItemType });
+    requireValue(item.p0GeneratedCandidate === false, "kernel.p1_blocked_p0_flag_invalid", `${workItemType} 不得是 P0 generated candidate。`, { workItemType });
+  }
+  if (/Payment|Deposit|Refund|Expense/i.test(workItemType)) {
+    requireValue(item.ledgerEffect?.mode === "finance_kernel", "kernel.finance_effect_owner_invalid", `${workItemType} 必须通过 Finance / Ledger Kernel 表达账务 effect。`, { workItemType });
+  }
   if (workItemType.startsWith("Finance.")) {
     requireValue(item.canonicalOwner === "finance-gate", "kernel.finance_owner_invalid", `${workItemType} canonicalOwner 必须是 finance-gate。`, { workItemType });
     requireValue(["Room", "Bed", "Stay", "RoomInspection", "ServiceTask"].some((fact) => item.forbiddenFacts?.includes(fact)), "kernel.finance_bypass_not_blocked", `${workItemType} 必须禁止写住宿业务事实。`, { workItemType });

@@ -152,12 +152,30 @@ public sealed class CanonicalOperationsApiService
                 null);
         }
 
-        var definition = definitions.Resolve(workItem, normalized.CardId);
+        var definition = definitions.Resolve(workItem);
+        if (!definition.Resolved)
+        {
+            var unresolvedDecision = AdmissionKernelDecision.UnresolvedDefinition(definition);
+            return ConfirmWorkItemResult.AdmissionRejected(
+                caseId,
+                workItem.WorkItemId,
+                normalized.SubmissionId,
+                normalized.IdempotencyKey,
+                unresolvedDecision,
+                definition,
+                StatusCodes.Status422UnprocessableEntity);
+        }
+
+        var deviceTrust = VerifiedDeviceTrustContext.FromServerSession(
+            normalized.DeviceId,
+            actor.TenantId,
+            normalized.Surface,
+            catalog.FindDeviceSession(actor.TenantId, normalized.DeviceId));
         var admissionDecision = admission.EvaluateConfirm(
             definition,
             actor,
             workItem.OwnerRole,
-            VerifiedDeviceTrustContext.FromRequest(normalized.DeviceId, normalized.DeviceTrustStatus, normalized.Surface),
+            deviceTrust,
             HighRiskReason(normalized),
             normalized.EvidenceIds,
             ProductionRequested(normalized));
@@ -172,28 +190,15 @@ public sealed class CanonicalOperationsApiService
                 definition);
         }
 
-        if (!definition.Resolved)
-        {
-            return ConfirmWorkItemResult.Rejected(
-                StatusCodes.Status422UnprocessableEntity,
-                "definition_not_resolved_for_production_confirm",
-                "definition_not_resolved_for_production_confirm",
-                caseId,
-                workItem.WorkItemId,
-                normalized.SubmissionId,
-                normalized.IdempotencyKey,
-                null);
-        }
-
         var command = new OperationsCommandRequest(
             workItem.TenantId,
             caseId,
             workItem.WorkItemId,
             ConfirmCommandType,
             "CommandEnvelope.v1",
-            FirstNonEmpty(definition.DefinitionId, $"work-item:{workItem.WorkItemType}:v1"),
+            definition.DefinitionId,
             normalized.IdempotencyKey!,
-            PayloadFor(workItem, normalized, actor, definition, admissionDecision),
+            PayloadFor(workItem, normalized, actor, definition, admissionDecision, deviceTrust),
             actor.ActorId,
             $"{workItem.TenantId}:{workItem.WorkItemId}:confirm",
             normalized.SubmissionId,
@@ -213,7 +218,7 @@ public sealed class CanonicalOperationsApiService
                 actor.ActorId);
             DispatchNextOperationWorkItem(
                 workItem,
-                FirstNonEmpty(normalized.CardId, PayloadValue(workItem.Payload, "cardId"), workItem.WorkItemType),
+                definition,
                 normalized.FieldValues,
                 actor,
                 caseId);
@@ -224,7 +229,7 @@ public sealed class CanonicalOperationsApiService
 
     private void DispatchNextOperationWorkItem(
         WorkItem current,
-        string currentCardId,
+        WorkItemDefinitionResolution currentDefinition,
         IReadOnlyDictionary<string, string>? fieldValues,
         RuntimeActorContext actor,
         string caseId)
@@ -234,26 +239,23 @@ public sealed class CanonicalOperationsApiService
             return;
         }
 
-        var templateWorkspaceId = FirstNonEmpty(
-            PayloadValue(current.Payload, "templateWorkspaceId"),
-            WorkspaceSeedCatalog.FindWorkspace(current.WorkspaceId)?.Id);
-        var seed = WorkspaceSeedCatalog.FindWorkspace(templateWorkspaceId);
-        if (seed is null)
+        var transition = GeneratedTransitionPolicy.ResolveNext(current, currentDefinition, fieldValues);
+        if (transition is null)
         {
             return;
         }
 
-        var nextCardId = OperationBranchResolver.NextCardId(seed, current.WorkspaceId, currentCardId, fieldValues);
-        if (string.IsNullOrWhiteSpace(nextCardId))
+        var nextDefinition = definitions.FindByDefinitionId(transition.NextDefinitionId);
+        if (nextDefinition is null)
         {
             return;
         }
 
-        var definition = definitions.ResolveByWorkspaceCard(seed.Id, nextCardId);
+        var nextCardId = nextDefinition.SourceCardId;
         catalog.CreateWorkItem(new CreateWorkItemRequest(
-            OperationsWorkItemIdFor(current.WorkspaceId, nextCardId),
+            OperationsWorkItemIdFor(current.WorkspaceId, nextDefinition.DefinitionId),
             current.TenantId,
-            FirstNonEmpty(definition.Definition?.WorkItemType, nextCardId),
+            nextDefinition.WorkItemType,
             current.WorkspaceId,
             current.WorkspaceId,
             nextCardId,
@@ -262,12 +264,13 @@ public sealed class CanonicalOperationsApiService
             {
                 ["caseId"] = caseId,
                 ["cardId"] = nextCardId,
-                ["templateWorkspaceId"] = seed.Id,
-                ["definitionId"] = definition.DefinitionId,
-                ["operationAxis"] = "DomainEvent -> ProcessManager -> WorkItem",
+                ["definitionId"] = nextDefinition.DefinitionId,
+                ["generatedTransitionPolicyId"] = transition.PolicyId,
+                ["generatedTransitionSource"] = GeneratedTransitionPolicy.SourceContract,
+                ["operationAxis"] = "DomainEvent -> GeneratedTransitionPolicy -> WorkItem",
                 ["sourceWorkItemId"] = current.WorkItemId,
                 ["ownerRole"] = ConfirmationPolicyCatalog.OwnerRoleForCard(nextCardId),
-                ["dispatchedBy"] = "operation_flow_process_manager"
+                ["dispatchedBy"] = "generated_transition_policy"
             }));
     }
 
@@ -638,7 +641,8 @@ public sealed class CanonicalOperationsApiService
         ConfirmWorkItemRequest request,
         RuntimeActorContext actor,
         WorkItemDefinitionResolution definition,
-        AdmissionKernelDecision admission) =>
+        AdmissionKernelDecision admission,
+        VerifiedDeviceTrustContext deviceTrust) =>
         new Dictionary<string, object>
         {
             ["workspaceId"] = request.WorkspaceId ?? workItem.WorkspaceId,
@@ -647,8 +651,10 @@ public sealed class CanonicalOperationsApiService
             ["cardInstanceId"] = request.CardInstanceId ?? string.Empty,
             ["aggregateRef"] = request.AggregateRef ?? string.Empty,
             ["deviceId"] = request.DeviceId ?? string.Empty,
-            ["deviceTrustStatus"] = request.DeviceTrustStatus ?? (string.IsNullOrWhiteSpace(request.DeviceId) ? "not_provided" : "unknown"),
-            ["surface"] = request.Surface ?? "operations-api",
+            ["deviceTrustStatus"] = deviceTrust.DeviceTrustStatus,
+            ["surface"] = deviceTrust.Surface,
+            ["tenantMatched"] = deviceTrust.TenantMatched,
+            ["deviceRevokedAtUtc"] = deviceTrust.RevokedAtUtc?.ToString("O") ?? string.Empty,
             ["reason"] = FirstNonEmpty(HighRiskReason(request), admission.Reason),
             ["definition"] = definition.ToTrace(),
             ["definitionId"] = definition.DefinitionId,
@@ -815,3 +821,47 @@ public sealed record OperationsWorkspaceStartResult(
     OperationCase OperationCase,
     WorkItem WorkItem,
     IReadOnlyList<WorkItem> OperationWorkItems);
+
+internal static class GeneratedTransitionPolicy
+{
+    public const string SourceContract = "docs/oam/kernel/oam-kernel-graph.generated.json";
+
+    private static readonly IReadOnlyList<GeneratedTransitionRule> Rules = new[]
+    {
+        new GeneratedTransitionRule(
+            "generated-transition.dormitory.room-setup-to-bed-setup.v1",
+            "definition.dormitory.roomSetupConfirm.v1",
+            "definition.dormitory.bedSetupConfirm.v1"),
+        new GeneratedTransitionRule(
+            "generated-transition.dormitory.bed-setup-to-resource-readiness.v1",
+            "definition.dormitory.bedSetupConfirm.v1",
+            "definition.dormitory.resourceReadinessConfirm.v1")
+    };
+
+    public static GeneratedTransitionDecision? ResolveNext(
+        WorkItem current,
+        WorkItemDefinitionResolution currentDefinition,
+        IReadOnlyDictionary<string, string>? fieldValues)
+    {
+        if (!currentDefinition.Resolved || string.IsNullOrWhiteSpace(currentDefinition.DefinitionId))
+        {
+            return null;
+        }
+
+        var rule = Rules.FirstOrDefault(item =>
+            item.FromDefinitionId.Equals(currentDefinition.DefinitionId, StringComparison.OrdinalIgnoreCase));
+        return rule is null
+            ? null
+            : new GeneratedTransitionDecision(rule.PolicyId, rule.NextDefinitionId, SourceContract);
+    }
+}
+
+internal sealed record GeneratedTransitionRule(
+    string PolicyId,
+    string FromDefinitionId,
+    string NextDefinitionId);
+
+internal sealed record GeneratedTransitionDecision(
+    string PolicyId,
+    string NextDefinitionId,
+    string Source);

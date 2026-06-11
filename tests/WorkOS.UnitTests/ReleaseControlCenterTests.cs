@@ -104,8 +104,11 @@ public sealed class ReleaseControlCenterTests
             [Invariant("blocking", "P0", "passed", 0)],
             Rollback());
 
-        Assert.IsTrue(admission.CanActivate);
+        Assert.IsFalse(admission.CanActivate);
         Assert.IsFalse(admission.CanLock);
+        CollectionAssert.Contains(admission.ActiveBlockers.ToArray(), "business_production_blocked_by_current_admission_state");
+        CollectionAssert.Contains(admission.ActiveBlockers.ToArray(), "dormitory_l2_blocked_by_current_admission_state");
+        CollectionAssert.Contains(admission.ActiveBlockers.ToArray(), "production_confirm_blocked_by_current_admission_state");
         CollectionAssert.Contains(admission.LockedBlockers.ToArray(), "business_signoff_missing");
     }
 

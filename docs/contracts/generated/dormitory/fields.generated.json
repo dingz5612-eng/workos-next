@@ -1,0 +1,143 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "fields.generated",
+  "kernelGraphHash": "sha256:491276e27210f2f16b6f1a79b67fa1f964156475f408e498df2b4de419ddcdd0",
+  "sourceNodeRefs": [
+    "dormitory.workItem.Dorm.RoomSetupConfirm",
+    "dormitory.workItem.Dorm.BedSetupConfirm",
+    "dormitory.workItem.Dorm.ResourceReadinessConfirm"
+  ],
+  "generatorVersion": "current-oam-kernel-compiler.v1",
+  "generatedFrom": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+  "fieldClassificationEnum": [
+    "clientSubmitted",
+    "selectedStableRef",
+    "contextReadonly",
+    "systemGenerated",
+    "derived",
+    "forbidden"
+  ],
+  "ledgerEffectModel": {
+    "modeEnum": [
+      "none",
+      "basis_only",
+      "finance_kernel"
+    ],
+    "financeKernelEffectTypeEnum": [
+      "posting",
+      "reversal",
+      "correction",
+      "payment",
+      "deposit",
+      "refund",
+      "expense",
+      null
+    ],
+    "p0GeneratedCandidatesRequire": {
+      "mode": "none",
+      "financeKernelEffectType": null
+    },
+    "financeTruthOwner": "docs/finance/finance-ledger-kernel.json"
+  },
+  "workItemFields": [
+    {
+      "workItemType": "Dorm.RoomSetupConfirm",
+      "definitionId": "definition.dormitory.roomSetupConfirm.v1",
+      "fieldClassification": {
+        "clientSubmitted": [
+          "roomNo",
+          "floor",
+          "capacity"
+        ],
+        "selectedStableRef": [],
+        "contextReadonly": [
+          "tenantId",
+          "caseId",
+          "definitionId",
+          "sourceWorkItemId"
+        ],
+        "systemGenerated": [
+          "workItemId",
+          "projectionVersion",
+          "createdAt",
+          "confirmedAt",
+          "ledgerEntryId",
+          "domainEventId"
+        ],
+        "derived": [],
+        "forbidden": []
+      },
+      "ledgerEffect": {
+        "mode": "none",
+        "financeKernelEffectType": null
+      }
+    },
+    {
+      "workItemType": "Dorm.BedSetupConfirm",
+      "definitionId": "definition.dormitory.bedSetupConfirm.v1",
+      "fieldClassification": {
+        "clientSubmitted": [
+          "bedNo",
+          "bedType"
+        ],
+        "selectedStableRef": [
+          "roomId"
+        ],
+        "contextReadonly": [
+          "tenantId",
+          "caseId",
+          "definitionId",
+          "sourceWorkItemId"
+        ],
+        "systemGenerated": [
+          "workItemId",
+          "projectionVersion",
+          "createdAt",
+          "confirmedAt",
+          "ledgerEntryId",
+          "domainEventId"
+        ],
+        "derived": [],
+        "forbidden": []
+      },
+      "ledgerEffect": {
+        "mode": "none",
+        "financeKernelEffectType": null
+      }
+    },
+    {
+      "workItemType": "Dorm.ResourceReadinessConfirm",
+      "definitionId": "definition.dormitory.resourceReadinessConfirm.v1",
+      "fieldClassification": {
+        "clientSubmitted": [
+          "readinessState"
+        ],
+        "selectedStableRef": [
+          "roomId",
+          "bedId"
+        ],
+        "contextReadonly": [
+          "tenantId",
+          "caseId",
+          "definitionId",
+          "sourceWorkItemId"
+        ],
+        "systemGenerated": [
+          "workItemId",
+          "projectionVersion",
+          "createdAt",
+          "confirmedAt",
+          "ledgerEntryId",
+          "domainEventId"
+        ],
+        "derived": [],
+        "forbidden": []
+      },
+      "ledgerEffect": {
+        "mode": "none",
+        "financeKernelEffectType": null
+      }
+    }
+  ]
+}

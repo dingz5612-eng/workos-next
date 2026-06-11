@@ -8,11 +8,15 @@ const evidenceDir = "artifacts/oam/evidence";
 const finalReportPath = "artifacts/oam/final-report.json";
 const controlPlaneGateResultPath = "artifacts/oam/checks/control-plane-gate-results.json";
 const responsibilityMapPath = "docs/oam/current-oam-kernel-responsibility-map.json";
+const releaseEvidenceObjectPath = "artifacts/oam/evidence/current-oam-release-evidence-object.json";
 const digestPlaceholder = "__CURRENT_OAM_EVIDENCE_DIGEST__";
-const artifactName = "workosnext-current-oam-evidence-${{ github.run_id }}";
+const evidenceRootDigestPlaceholder = "__CURRENT_OAM_EVIDENCE_ROOT_DIGEST__";
+const ciRunId = env("GITHUB_RUN_ID") || "local";
+const artifactName = artifactNameForRun(ciRunId);
 
 const requiredEvidenceFiles = [
   "artifacts/oam/evidence/evidence-graph.json",
+  releaseEvidenceObjectPath,
   "artifacts/oam/evidence/execution-log.jsonl",
   "artifacts/oam/evidence/current-oam-final-report.json",
   "artifacts/oam/evidence/runtime-proof.json",
@@ -29,6 +33,18 @@ const requiredEvidenceFiles = [
   "docs/finance/finance-ledger-kernel.json",
   "docs/oam/compiler-generated-contract-kernel.json",
   "docs/identity/identity-permission-kernel.json",
+  "docs/oam/kernel/oam-kernel-source.schema.json",
+  "docs/oam/kernel/oam-kernel-generated.schema.json",
+  "docs/oam/kernel/oam-kernel-graph.generated.json",
+  "docs/contracts/generated/dormitory/dormitory-kernel.generated.manifest.json",
+  "docs/contracts/generated/dormitory/fields.generated.json",
+  "docs/contracts/generated/dormitory/workitems.generated.json",
+  "docs/contracts/generated/dormitory/surface-input-model.generated.json",
+  "docs/contracts/generated/dormitory/read-model.generated.json",
+  "apps/mobile/src/generated/oam/dormitory-surface-input-model.generated.json",
+  "docs/read-intelligence/read-intelligence-kernel.json",
+  "docs/read-intelligence/read-intelligence-kernel.schema.json",
+  "docs/oam/db-no-side-effects-proof.json",
   "artifacts/oam/checks/kernel-responsibility-map-result.json",
   "artifacts/oam/checks/professional-ai-review-seats-result.json",
   "artifacts/oam/checks/codex-execution-channel-policy-result.json",
@@ -46,7 +62,6 @@ const requiredEvidenceFiles = [
 const generatedAt = new Date().toISOString();
 const commitSha = env("GITHUB_SHA") || git("rev-parse HEAD") || "local";
 const branch = env("GITHUB_HEAD_REF") || env("GITHUB_REF_NAME") || git("branch --show-current") || "local";
-const ciRunId = env("GITHUB_RUN_ID") || "local";
 const admission = readJson("docs/oam/current-admission-state.json");
 const responsibilityMap = readJson(responsibilityMapPath);
 const p0Ledger = readP0Ledger("docs/system/oam-p0-rule-ledger.json");
@@ -70,6 +85,18 @@ const forcedCurrentStageGoNoGo = {
   productionConfirmGoNoGo: "NO_GO",
   finalGoNoGo: "NO_GO"
 };
+const multiDimensionalGoNoGo = {
+  responsibilityGovernanceGoNoGo: "NO_GO",
+  evidenceBindingGoNoGo: "NO_GO",
+  kernelCompileGoNoGo: "NO_GO",
+  runtimeGateGoNoGo: "NO_GO",
+  workItemEffectGoNoGo: "NO_GO",
+  financeTruthGoNoGo: "NO_GO",
+  readIntelligenceGoNoGo: "NO_GO",
+  surfaceLanguageGoNoGo: "NO_GO",
+  releaseEvidenceGoNoGo: "NO_GO"
+};
+const p0ClosureProofNodes = buildP0ClosureProofNodes();
 
 const files = new Map();
 
@@ -313,6 +340,7 @@ const finalReport = {
   dormitoryL2Status: admission.dormitoryProduction,
   productionConfirmAllowed: admission.productionConfirmAllowed,
   ...workstreamGoNoGoFields,
+  ...multiDimensionalGoNoGo,
   businessProductionGoNoGo: forcedCurrentStageGoNoGo.businessProductionGoNoGo,
   dormitoryL2GoNoGo: forcedCurrentStageGoNoGo.dormitoryL2GoNoGo,
   productionConfirmGoNoGo: forcedCurrentStageGoNoGo.productionConfirmGoNoGo,
@@ -364,43 +392,56 @@ const evidenceGraph = {
   nextStageAllowed: finalReport.nextStageAllowed,
   nodes: [
     ...workstreamProofNodes,
+    ...p0ClosureProofNodes,
     ...realBrowserEvidence.nodes
   ],
   edges: realBrowserEvidence.edges
 };
 addEvidence("artifacts/oam/evidence/evidence-graph.json", evidenceGraph);
+const releaseEvidenceObject = {
+  ...proof("current-oam-release-evidence-object", "当前 OAM Release Evidence Object", {
+    currentAdmissionState: "docs/oam/current-admission-state.json",
+    releaseObjectPurpose: "Bind concrete CI run, artifact identity, evidence root digest, graph hash, and final report digest while current stage remains NO_GO."
+  }),
+  githubSha: commitSha,
+  githubRunId: ciRunId,
+  githubRefName: branch,
+  artifactName,
+  githubArtifactDigest: digestPlaceholder,
+  evidenceRootDigest: evidenceRootDigestPlaceholder,
+  kernelGraphHash: hashFileStrict("docs/oam/oam-kernel-graph.json"),
+  evidenceGraphHash: digestPlaceholder,
+  finalReportDigest: digestPlaceholder,
+  currentStage: {
+    businessProduction: admission.businessProduction,
+    dormitoryL2: admission.dormitoryProduction,
+    productionConfirmAllowed: admission.productionConfirmAllowed,
+    finalGoNoGo: forcedCurrentStageGoNoGo.finalGoNoGo
+  }
+};
+addEvidence(releaseEvidenceObjectPath, releaseEvidenceObject);
 addTextEvidence("artifacts/oam/evidence/execution-log.jsonl", executionLogText(digestPlaceholder));
 
-for (const [file, document] of files) {
-  writeJson(file, document);
+writeAllEvidence();
+
+let artifactDigest = "";
+let artifactDigestStable = false;
+for (let attempt = 0; attempt < 10; attempt += 1) {
+  refreshReleaseEvidenceObjectDigests();
+  const nextDigest = digestForDisk(requiredEvidenceFiles);
+  applyArtifactDigest(nextDigest);
+  writeAllEvidence();
+  const actualDigest = digestForDisk(requiredEvidenceFiles);
+  if (actualDigest === nextDigest) {
+    artifactDigest = nextDigest;
+    artifactDigestStable = true;
+    break;
+  }
+  artifactDigest = actualDigest;
 }
 
-let artifactDigest = digestForDisk(requiredEvidenceFiles);
-for (const [file, document] of files) {
-  if (typeof document === "string") {
-    files.set(file, document.replaceAll(digestPlaceholder, artifactDigest));
-  } else {
-    setDigest(document, artifactDigest);
-  }
-}
-
-for (const [file, document] of files) {
-  writeJson(file, document);
-}
-
-const finalDigest = digestForDisk(requiredEvidenceFiles);
-if (finalDigest !== artifactDigest) {
-  artifactDigest = finalDigest;
-  for (const [file, document] of files) {
-    if (typeof document === "string") {
-      files.set(file, document.replaceAll(/sha256:[a-f0-9]{64}|__CURRENT_OAM_EVIDENCE_DIGEST__/g, artifactDigest));
-    } else {
-      setDigest(document, artifactDigest);
-    }
-  }
-  for (const [file, document] of files) {
-    writeJson(file, document);
-  }
+if (!artifactDigestStable) {
+  throw new Error(`current OAM evidence artifact digest did not stabilize; last digest ${artifactDigest || "missing"}`);
 }
 
 console.log(`Current OAM evidence root generated: ${evidenceDir}`);
@@ -447,6 +488,33 @@ function addTextEvidence(file, text) {
   files.set(file, text);
 }
 
+function writeAllEvidence() {
+  for (const [file, document] of files) {
+    writeJson(file, document);
+  }
+}
+
+function refreshReleaseEvidenceObjectDigests() {
+  releaseEvidenceObject.evidenceRootDigest = digestForDisk(requiredEvidenceFiles.filter((file) => file !== releaseEvidenceObjectPath));
+  releaseEvidenceObject.evidenceGraphHash = digestForDisk(["artifacts/oam/evidence/evidence-graph.json"]);
+  releaseEvidenceObject.finalReportDigest = digestForDisk([finalReportPath]);
+  files.set(releaseEvidenceObjectPath, releaseEvidenceObject);
+  writeJson(releaseEvidenceObjectPath, releaseEvidenceObject);
+}
+
+function applyArtifactDigest(digest) {
+  for (const [file, document] of files) {
+    if (file === "artifacts/oam/evidence/execution-log.jsonl") {
+      files.set(file, executionLogText(digest));
+    } else if (typeof document === "string") {
+      files.set(file, document.replaceAll(digestPlaceholder, digest));
+    } else {
+      setDigest(document, digest);
+    }
+  }
+  releaseEvidenceObject.githubArtifactDigest = digest;
+}
+
 function setDigest(value, digest) {
   if (Array.isArray(value)) {
     for (const item of value) setDigest(item, digest);
@@ -488,14 +556,25 @@ function documentForDigest(file, document) {
 }
 
 function normalizeForDigest(value) {
-  if (typeof value === "string") return value.replaceAll(/sha256:[a-f0-9]{64}|__CURRENT_OAM_EVIDENCE_DIGEST__/g, digestPlaceholder);
+  if (typeof value === "string") return value.replaceAll(/sha256:[a-f0-9]{64}|__CURRENT_OAM_EVIDENCE_DIGEST__|__CURRENT_OAM_EVIDENCE_ROOT_DIGEST__/g, digestPlaceholder);
   if (Array.isArray(value)) return value.map(normalizeForDigest);
   if (!value || typeof value !== "object") return value;
   const output = {};
   for (const key of Object.keys(value).sort()) {
-    output[key] = key === "artifactDigest" ? digestPlaceholder : normalizeForDigest(value[key]);
+    output[key] = isDigestOrHashKey(key) ? digestPlaceholder : normalizeForDigest(value[key]);
   }
   return output;
+}
+
+function isDigestOrHashKey(key) {
+  return [
+    "artifactDigest",
+    "githubArtifactDigest",
+    "evidenceRootDigest",
+    "kernelGraphHash",
+    "evidenceGraphHash",
+    "finalReportDigest"
+  ].includes(key);
 }
 
 function buildWorkstreamProofNodes() {
@@ -545,6 +624,43 @@ function buildWorkstreamGoNoGoFields(nodes) {
     }
   }
   return result;
+}
+
+function buildP0ClosureProofNodes() {
+  const dimensions = [
+    ["responsibility-governance", "responsibilityGovernanceGoNoGo", [responsibilityMapPath, "scripts/oam/check-kernel-responsibility-map.mjs"]],
+    ["evidence-binding", "evidenceBindingGoNoGo", ["scripts/oam/check-current-evidence-root.mjs", releaseEvidenceObjectPath]],
+    ["kernel-compile", "kernelCompileGoNoGo", ["scripts/oam/compile-current-kernel-graph.mjs", "docs/oam/kernel/oam-kernel-graph.generated.json"]],
+    ["runtime-gate", "runtimeGateGoNoGo", ["services/core-api/WorkOS.Api/Runtime/CanonicalOperationsApiService.cs", "scripts/check-admission-kernel.mjs"]],
+    ["workitem-effect", "workItemEffectGoNoGo", ["docs/business/domains/dormitory/dormitory-operating-kernel.json", "scripts/oam/check-generated-contract-consistency.mjs"]],
+    ["finance-truth", "financeTruthGoNoGo", ["docs/finance/finance-ledger-kernel.json", "scripts/finance/check-finance-semantic-truth.mjs"]],
+    ["read-intelligence", "readIntelligenceGoNoGo", ["docs/read-intelligence/read-intelligence-kernel.json", "scripts/oam/check-read-intelligence-kernel.mjs"]],
+    ["surface-language", "surfaceLanguageGoNoGo", ["apps/mobile/src/generated/oam/dormitory-surface-input-model.generated.json", "scripts/oam/check-surface-language-v2.mjs"]],
+    ["release-evidence", "releaseEvidenceGoNoGo", [releaseEvidenceObjectPath, "tests/WorkOS.ReleaseEvidenceTests/OamReleaseControlTests.cs"]]
+  ];
+  return dimensions.map(([id, field, sources]) => {
+    const payload = {
+      id,
+      field,
+      sources,
+      goNoGo: multiDimensionalGoNoGo[field],
+      finalGoNoGo
+    };
+    return {
+      id: `p0-closure-proof.${id}`,
+      type: "p0_closure_proof",
+      status: "blocked",
+      workstreamId: "00-current-oam-p0-closure",
+      proofType: "current-oam-branch-governed-p0-closure",
+      source: sources,
+      hash: `sha256:${sha256(JSON.stringify(normalizeForDigest(payload)))}`,
+      dependsOn: sources,
+      gateResult: { status: "bound", field },
+      negativeTestResult: "blocked",
+      goNoGo: multiDimensionalGoNoGo[field] ?? "NO_GO",
+      finalReportField: field
+    };
+  });
 }
 
 function summarizeWorkstreamGates(gates) {
@@ -1215,6 +1331,18 @@ function git(command) {
 
 function env(name) {
   return process.env[name] || "";
+}
+
+function artifactNameForRun(runId) {
+  const normalized = String(runId || "").trim();
+  if (!normalized || normalized.includes("${{")) {
+    throw new Error("GITHUB_RUN_ID must resolve before current OAM evidence artifactName is generated.");
+  }
+  return `workosnext-current-oam-evidence-${normalized}`;
+}
+
+function hashFileStrict(file) {
+  return `sha256:${sha256(readText(file))}`;
 }
 
 function sha256(value) {

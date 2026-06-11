@@ -36,6 +36,20 @@ const commonLockedFields = [
   "sourceWorkItemId",
   "projectionVersion"
 ];
+const p0GeneratedCandidateTypes = new Set([
+  "Dorm.RoomSetupConfirm",
+  "Dorm.BedSetupConfirm",
+  "Dorm.ResourceReadinessConfirm"
+]);
+const p1BlockedGeneratedCandidatePattern = /RatePlan|Lead|Checkin|Payment|Deposit|Expense|Refund/i;
+const fieldClassificationEnum = [
+  "clientSubmitted",
+  "selectedStableRef",
+  "contextReadonly",
+  "systemGenerated",
+  "derived",
+  "forbidden"
+];
 
 const objectFields = {
   Room: ["roomId", "roomNo", "floor", "readinessState", "capacity", "availableBedCount"],
@@ -70,7 +84,7 @@ const metrics = [
 
 const workItems = [
   wi("Dorm.RoomSetupConfirm", "房间建档确认", "train-1-business-mainline", "宿舍经办人", "Accommodation.ResourceSetup", "RoomSetup.Confirm", "Room", ["roomNo", "floor", "capacity"], ["room-photo", "room-basic-info"], "ledger.none.v1", ["Dorm.BedSetupConfirm"], ["RoomReadyLens"]),
-  wi("Dorm.BedSetupConfirm", "床位建档确认", "train-1-business-mainline", "宿舍经办人", "Accommodation.ResourceSetup", "BedSetup.Confirm", "Bed", ["roomId", "bedNo", "bedType"], ["bed-photo", "room-link-proof"], "ledger.none.v1", ["Dorm.RatePlanConfirm"], ["DormAvailabilityLens"]),
+  wi("Dorm.BedSetupConfirm", "床位建档确认", "train-1-business-mainline", "宿舍经办人", "Accommodation.ResourceSetup", "BedSetup.Confirm", "Bed", ["roomId", "bedNo", "bedType"], ["bed-photo", "room-link-proof"], "ledger.none.v1", ["Dorm.ResourceReadinessConfirm"], ["DormAvailabilityLens"]),
   wi("Dorm.RatePlanConfirm", "价格方案确认", "train-1-business-mainline", "宿舍负责人", "Accommodation.RatePlan", "RatePlan.Confirm", "RatePlan", ["ratePlanId", "amount", "billingCycle"], ["rate-policy"], "ledger.none.v1", ["Dorm.ResourceReadinessConfirm"], ["RatePlanLens"]),
   wi("Dorm.ResourceReadinessConfirm", "资源可售确认", "train-1-business-mainline", "宿舍经办人", "Accommodation.ResourceReadiness", "ResourceReadiness.Confirm", "Room", ["roomId", "bedId", "readinessState"], ["completion-photo", "verification-check"], "ledger.none.v1", ["Dorm.LeadCapture", "Dorm.CheckinConfirm"], ["DormAvailabilityLens", "RoomReadinessLens"]),
   wi("Dorm.LeadCapture", "线索录入", "train-1-business-mainline", "宿舍经办人", "Accommodation.Lead", "Lead.Capture", "Lead", ["name", "phone", "sourceChannel"], ["lead-consent"], "ledger.none.v1", ["Dorm.ReservationConfirm"], ["LeadFunnelLens"]),
@@ -139,6 +153,10 @@ function wi(workItemType, nameZh, trainId, ownerRole, systemOwner, commandType, 
   const sourceCardId = `cert.${camel}`;
   const surfaceId = `mobile.work.${slug(workItemType)}`;
   const financeOwned = systemOwner === "finance-gate";
+  const p0GeneratedCandidate = p0GeneratedCandidateTypes.has(workItemType);
+  const generatedStage = p0GeneratedCandidate
+    ? "P0_ACTIVE"
+    : p1BlockedGeneratedCandidatePattern.test(workItemType) ? "P1_BLOCKED" : "NOT_P0";
   return {
     workItemType,
     nameZh,
@@ -165,6 +183,14 @@ function wi(workItemType, nameZh, trainId, ownerRole, systemOwner, commandType, 
     upstreamLockedFields: commonLockedFields,
     currentEditableFields: editableFields,
     readonlyFields: commonLockedFields.concat(["createdAt", "confirmedAt", "ledgerEntryId", "domainEventId"]),
+    p0GeneratedCandidate,
+    generatedCandidateId: p0GeneratedCandidate ? `${workItemType}.v1` : null,
+    generatedStage,
+    fieldClassification: fieldClassificationFor(editableFields),
+    ledgerEffect: p0GeneratedCandidate
+      ? { mode: "none", financeKernelEffectType: null }
+      : ledgerEffectFor(workItemType, commandType, ledgerPolicyRef),
+    generatedBlockedReason: generatedStage === "P1_BLOCKED" ? "P1_BLOCKED_NOT_IN_FIRST_P0_GENERATED_CONTRACTS" : null,
     requiredEvidence: evidenceRefs,
     ledgerImpact: ledgerImpactFor(ledgerPolicyRef),
     lensOutputs,
@@ -182,6 +208,35 @@ function wi(workItemType, nameZh, trainId, ownerRole, systemOwner, commandType, 
     goNoGo: "definition_resolved_and_admission_confirm_allowed",
     operationZh: `${ownerRole}只补本环节缺失字段，系统自动带入并锁定上游确认字段；提交后写入 CommandSubmission、DomainEvent、Evidence/FactTrace，并刷新 Lens/Search。`
   };
+}
+
+function fieldClassificationFor(editableFields) {
+  const selectedStableRef = editableFields.filter((field) =>
+    /Id$/.test(field) && !["paymentId", "depositId", "expenseId"].includes(field));
+  const clientSubmitted = editableFields.filter((field) => !selectedStableRef.includes(field));
+  const systemGenerated = ["workItemId", "projectionVersion", "createdAt", "confirmedAt", "ledgerEntryId", "domainEventId"];
+  return {
+    clientSubmitted,
+    selectedStableRef,
+    contextReadonly: commonLockedFields.filter((field) => !systemGenerated.includes(field)),
+    systemGenerated,
+    derived: [],
+    forbidden: []
+  };
+}
+
+function ledgerEffectFor(workItemType, commandType, ledgerPolicyRef) {
+  const text = `${workItemType} ${commandType} ${ledgerPolicyRef}`;
+  if (/refund/i.test(text)) return { mode: "finance_kernel", financeKernelEffectType: "refund" };
+  if (/deposit/i.test(text)) return { mode: "finance_kernel", financeKernelEffectType: "deposit" };
+  if (/expense/i.test(text)) return { mode: "finance_kernel", financeKernelEffectType: "expense" };
+  if (/payment/i.test(text)) return { mode: "finance_kernel", financeKernelEffectType: "payment" };
+  if (/correction/i.test(text)) return { mode: "finance_kernel", financeKernelEffectType: "correction" };
+  if (/reversal/i.test(text)) return { mode: "finance_kernel", financeKernelEffectType: "reversal" };
+  if (ledgerPolicyRef !== "ledger.none.v1" && ledgerPolicyRef !== "ledger.readonly.v1") {
+    return { mode: "finance_kernel", financeKernelEffectType: "posting" };
+  }
+  return { mode: "basis_only", financeKernelEffectType: null };
 }
 
 function alias(workItemType, canonicalWorkItemType, reasonZh) {
@@ -255,6 +310,32 @@ function buildKernel() {
     handoffContract: "docs/business/domains/dormitory/handoff-contract.json",
     releaseTrains: trains,
     workItems,
+    p0GeneratedCandidates: workItems
+      .filter((item) => p0GeneratedCandidateTypes.has(item.workItemType))
+      .map((item) => ({
+        generatedCandidateId: item.generatedCandidateId,
+        workItemType: item.workItemType,
+        definitionId: item.definitionId,
+        sourceNodeRef: `dormitory.workItem.${item.workItemType}`,
+        generatedStage: item.generatedStage,
+        ledgerEffect: item.ledgerEffect
+      })),
+    blockedGeneratedCandidates: workItems
+      .filter((item) => item.generatedStage === "P1_BLOCKED")
+      .map((item) => ({
+        workItemType: item.workItemType,
+        definitionId: item.definitionId,
+        generatedStage: item.generatedStage,
+        reason: item.generatedBlockedReason,
+        financeKernelOnly: /Payment|Deposit|Refund|Expense/i.test(item.workItemType)
+      })),
+    fieldClassificationEnum,
+    ledgerEffectModel: {
+      modeEnum: ["none", "basis_only", "finance_kernel"],
+      financeKernelEffectTypeEnum: ["posting", "reversal", "correction", "payment", "deposit", "refund", "expense", null],
+      p0GeneratedCandidatesRequire: { mode: "none", financeKernelEffectType: null },
+      financeTruthOwner: "docs/finance/finance-ledger-kernel.json"
+    },
     aliases,
     realSystemOperations: workItems.map(operationFor),
     handoffContext: handoffFields(),

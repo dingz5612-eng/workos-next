@@ -158,6 +158,38 @@
         "ledgerEntryId",
         "domainEventId"
       ],
+      "p0GeneratedCandidate": true,
+      "generatedCandidateId": "Dorm.RoomSetupConfirm.v1",
+      "generatedStage": "P0_ACTIVE",
+      "fieldClassification": {
+        "clientSubmitted": [
+          "roomNo",
+          "floor",
+          "capacity"
+        ],
+        "selectedStableRef": [],
+        "contextReadonly": [
+          "tenantId",
+          "caseId",
+          "definitionId",
+          "sourceWorkItemId"
+        ],
+        "systemGenerated": [
+          "workItemId",
+          "projectionVersion",
+          "createdAt",
+          "confirmedAt",
+          "ledgerEntryId",
+          "domainEventId"
+        ],
+        "derived": [],
+        "forbidden": []
+      },
+      "ledgerEffect": {
+        "mode": "none",
+        "financeKernelEffectType": null
+      },
+      "generatedBlockedReason": null,
       "requiredEvidence": [
         "room-photo",
         "room-basic-info"
@@ -249,6 +281,39 @@
         "ledgerEntryId",
         "domainEventId"
       ],
+      "p0GeneratedCandidate": true,
+      "generatedCandidateId": "Dorm.BedSetupConfirm.v1",
+      "generatedStage": "P0_ACTIVE",
+      "fieldClassification": {
+        "clientSubmitted": [
+          "bedNo",
+          "bedType"
+        ],
+        "selectedStableRef": [
+          "roomId"
+        ],
+        "contextReadonly": [
+          "tenantId",
+          "caseId",
+          "definitionId",
+          "sourceWorkItemId"
+        ],
+        "systemGenerated": [
+          "workItemId",
+          "projectionVersion",
+          "createdAt",
+          "confirmedAt",
+          "ledgerEntryId",
+          "domainEventId"
+        ],
+        "derived": [],
+        "forbidden": []
+      },
+      "ledgerEffect": {
+        "mode": "none",
+        "financeKernelEffectType": null
+      },
+      "generatedBlockedReason": null,
       "requiredEvidence": [
         "bed-photo",
         "room-link-proof"
@@ -258,7 +323,7 @@
         "DormAvailabilityLens"
       ],
       "downstreamWorkItems": [
-        "Dorm.RatePlanConfirm"
+        "Dorm.ResourceReadinessConfirm"
       ],
       "failureRoutes": [
         "Dorm.ExceptionResolve",
@@ -340,6 +405,39 @@
         "ledgerEntryId",
         "domainEventId"
       ],
+      "p0GeneratedCandidate": false,
+      "generatedCandidateId": null,
+      "generatedStage": "P1_BLOCKED",
+      "fieldClassification": {
+        "clientSubmitted": [
+          "amount",
+          "billingCycle"
+        ],
+        "selectedStableRef": [
+          "ratePlanId"
+        ],
+        "contextReadonly": [
+          "tenantId",
+          "caseId",
+          "definitionId",
+          "sourceWorkItemId"
+        ],
+        "systemGenerated": [
+          "workItemId",
+          "projectionVersion",
+          "createdAt",
+          "confirmedAt",
+          "ledgerEntryId",
+          "domainEventId"
+        ],
+        "derived": [],
+        "forbidden": []
+      },
+      "ledgerEffect": {
+        "mode": "basis_only",
+        "financeKernelEffectType": null
+      },
+      "generatedBlockedReason": "P1_BLOCKED_NOT_IN_FIRST_P0_GENERATED_CONTRACTS",
       "requiredEvidence": [
         "rate-policy"
       ],
@@ -430,6 +528,39 @@
         "ledgerEntryId",
         "domainEventId"
       ],
+      "p0GeneratedCandidate": true,
+      "generatedCandidateId": "Dorm.ResourceReadinessConfirm.v1",
+      "generatedStage": "P0_ACTIVE",
+      "fieldClassification": {
+        "clientSubmitted": [
+          "readinessState"
+        ],
+        "selectedStableRef": [
+          "roomId",
+          "bedId"
+        ],
+        "contextReadonly": [
+          "tenantId",
+          "caseId",
+          "definitionId",
+          "sourceWorkItemId"
+        ],
+        "systemGenerated": [
+          "workItemId",
+          "projectionVersion",
+          "createdAt",
+          "confirmedAt",
+          "ledgerEntryId",
+          "domainEventId"
+        ],
+        "derived": [],
+        "forbidden": []
+      },
+      "ledgerEffect": {
+        "mode": "none",
+        "financeKernelEffectType": null
+      },
+      "generatedBlockedReason": null,
       "requiredEvidence": [
         "completion-photo",
         "verification-check"
@@ -523,6 +654,38 @@
         "ledgerEntryId",
         "domainEventId"
       ],
+      "p0GeneratedCandidate": false,
+      "generatedCandidateId": null,
+      "generatedStage": "P1_BLOCKED",
+      "fieldClassification": {
+        "clientSubmitted": [
+          "name",
+          "phone",
+          "sourceChannel"
+        ],
+        "selectedStableRef": [],
+        "contextReadonly": [
+          "tenantId",
+          "caseId",
+          "definitionId",
+          "sourceWorkItemId"
+        ],
+        "systemGenerated": [
+          "workItemId",
+          "projectionVersion",
+          "createdAt",
+          "confirmedAt",
+          "ledgerEntryId",
+          "domainEventId"
+        ],
+        "derived": [],
+        "forbidden": []
+      },
+      "ledgerEffect": {
+        "mode": "basis_only",
+        "financeKernelEffectType": null
+      },
+      "generatedBlockedReason": "P1_BLOCKED_NOT_IN_FIRST_P0_GENERATED_CONTRACTS",
       "requiredEvidence": [
         "lead-consent"
       ],
@@ -614,6 +777,39 @@
         "ledgerEntryId",
         "domainEventId"
       ],
+      "p0GeneratedCandidate": false,
+      "generatedCandidateId": null,
+      "generatedStage": "NOT_P0",
+      "fieldClassification": {
+        "clientSubmitted": [],
+        "selectedStableRef": [
+          "leadId",
+          "roomId",
+          "bedId",
+          "ratePlanId"
+        ],
+        "contextReadonly": [
+          "tenantId",
+          "caseId",
+          "definitionId",
+          "sourceWorkItemId"
+        ],
+        "systemGenerated": [
+          "workItemId",
+          "projectionVersion",
+          "createdAt",
+          "confirmedAt",
+          "ledgerEntryId",
+          "domainEventId"
+        ],
+        "derived": [],
+        "forbidden": []
+      },
+      "ledgerEffect": {
+        "mode": "basis_only",
+        "financeKernelEffectType": null
+      },
+      "generatedBlockedReason": null,
       "requiredEvidence": [
         "reservation-acknowledgement",
         "bed-availability-proof"
@@ -706,6 +902,39 @@
         "ledgerEntryId",
         "domainEventId"
       ],
+      "p0GeneratedCandidate": false,
+      "generatedCandidateId": null,
+      "generatedStage": "P1_BLOCKED",
+      "fieldClassification": {
+        "clientSubmitted": [],
+        "selectedStableRef": [
+          "residentId",
+          "stayId",
+          "roomId",
+          "bedId"
+        ],
+        "contextReadonly": [
+          "tenantId",
+          "caseId",
+          "definitionId",
+          "sourceWorkItemId"
+        ],
+        "systemGenerated": [
+          "workItemId",
+          "projectionVersion",
+          "createdAt",
+          "confirmedAt",
+          "ledgerEntryId",
+          "domainEventId"
+        ],
+        "derived": [],
+        "forbidden": []
+      },
+      "ledgerEffect": {
+        "mode": "basis_only",
+        "financeKernelEffectType": null
+      },
+      "generatedBlockedReason": "P1_BLOCKED_NOT_IN_FIRST_P0_GENERATED_CONTRACTS",
       "requiredEvidence": [
         "identity-document",
         "checkin-confirmation",
@@ -805,6 +1034,40 @@
         "ledgerEntryId",
         "domainEventId"
       ],
+      "p0GeneratedCandidate": false,
+      "generatedCandidateId": null,
+      "generatedStage": "P1_BLOCKED",
+      "fieldClassification": {
+        "clientSubmitted": [
+          "paymentId",
+          "amount",
+          "basisType"
+        ],
+        "selectedStableRef": [
+          "stayId"
+        ],
+        "contextReadonly": [
+          "tenantId",
+          "caseId",
+          "definitionId",
+          "sourceWorkItemId"
+        ],
+        "systemGenerated": [
+          "workItemId",
+          "projectionVersion",
+          "createdAt",
+          "confirmedAt",
+          "ledgerEntryId",
+          "domainEventId"
+        ],
+        "derived": [],
+        "forbidden": []
+      },
+      "ledgerEffect": {
+        "mode": "finance_kernel",
+        "financeKernelEffectType": "payment"
+      },
+      "generatedBlockedReason": "P1_BLOCKED_NOT_IN_FIRST_P0_GENERATED_CONTRACTS",
       "requiredEvidence": [
         "payment-receipt",
         "cashier-review"
@@ -900,6 +1163,40 @@
         "ledgerEntryId",
         "domainEventId"
       ],
+      "p0GeneratedCandidate": false,
+      "generatedCandidateId": null,
+      "generatedStage": "P1_BLOCKED",
+      "fieldClassification": {
+        "clientSubmitted": [
+          "depositId",
+          "liabilityAmount",
+          "policyRef"
+        ],
+        "selectedStableRef": [
+          "stayId"
+        ],
+        "contextReadonly": [
+          "tenantId",
+          "caseId",
+          "definitionId",
+          "sourceWorkItemId"
+        ],
+        "systemGenerated": [
+          "workItemId",
+          "projectionVersion",
+          "createdAt",
+          "confirmedAt",
+          "ledgerEntryId",
+          "domainEventId"
+        ],
+        "derived": [],
+        "forbidden": []
+      },
+      "ledgerEffect": {
+        "mode": "finance_kernel",
+        "financeKernelEffectType": "deposit"
+      },
+      "generatedBlockedReason": "P1_BLOCKED_NOT_IN_FIRST_P0_GENERATED_CONTRACTS",
       "requiredEvidence": [
         "receipt-proof",
         "deposit-policy"
@@ -992,6 +1289,39 @@
         "ledgerEntryId",
         "domainEventId"
       ],
+      "p0GeneratedCandidate": false,
+      "generatedCandidateId": null,
+      "generatedStage": "NOT_P0",
+      "fieldClassification": {
+        "clientSubmitted": [
+          "taskType"
+        ],
+        "selectedStableRef": [
+          "roomId",
+          "bedId"
+        ],
+        "contextReadonly": [
+          "tenantId",
+          "caseId",
+          "definitionId",
+          "sourceWorkItemId"
+        ],
+        "systemGenerated": [
+          "workItemId",
+          "projectionVersion",
+          "createdAt",
+          "confirmedAt",
+          "ledgerEntryId",
+          "domainEventId"
+        ],
+        "derived": [],
+        "forbidden": []
+      },
+      "ledgerEffect": {
+        "mode": "basis_only",
+        "financeKernelEffectType": null
+      },
+      "generatedBlockedReason": null,
       "requiredEvidence": [
         "service-request"
       ],
@@ -1083,6 +1413,39 @@
         "ledgerEntryId",
         "domainEventId"
       ],
+      "p0GeneratedCandidate": false,
+      "generatedCandidateId": null,
+      "generatedStage": "NOT_P0",
+      "fieldClassification": {
+        "clientSubmitted": [
+          "dueAt"
+        ],
+        "selectedStableRef": [
+          "serviceTaskId",
+          "assigneeId"
+        ],
+        "contextReadonly": [
+          "tenantId",
+          "caseId",
+          "definitionId",
+          "sourceWorkItemId"
+        ],
+        "systemGenerated": [
+          "workItemId",
+          "projectionVersion",
+          "createdAt",
+          "confirmedAt",
+          "ledgerEntryId",
+          "domainEventId"
+        ],
+        "derived": [],
+        "forbidden": []
+      },
+      "ledgerEffect": {
+        "mode": "basis_only",
+        "financeKernelEffectType": null
+      },
+      "generatedBlockedReason": null,
       "requiredEvidence": [
         "assignment-record"
       ],
@@ -1173,6 +1536,38 @@
         "ledgerEntryId",
         "domainEventId"
       ],
+      "p0GeneratedCandidate": false,
+      "generatedCandidateId": null,
+      "generatedStage": "NOT_P0",
+      "fieldClassification": {
+        "clientSubmitted": [
+          "completionNote"
+        ],
+        "selectedStableRef": [
+          "serviceTaskId"
+        ],
+        "contextReadonly": [
+          "tenantId",
+          "caseId",
+          "definitionId",
+          "sourceWorkItemId"
+        ],
+        "systemGenerated": [
+          "workItemId",
+          "projectionVersion",
+          "createdAt",
+          "confirmedAt",
+          "ledgerEntryId",
+          "domainEventId"
+        ],
+        "derived": [],
+        "forbidden": []
+      },
+      "ledgerEffect": {
+        "mode": "basis_only",
+        "financeKernelEffectType": null
+      },
+      "generatedBlockedReason": null,
       "requiredEvidence": [
         "completion-photo",
         "completion-note"
@@ -1265,6 +1660,38 @@
         "ledgerEntryId",
         "domainEventId"
       ],
+      "p0GeneratedCandidate": false,
+      "generatedCandidateId": null,
+      "generatedStage": "NOT_P0",
+      "fieldClassification": {
+        "clientSubmitted": [
+          "verificationResult"
+        ],
+        "selectedStableRef": [
+          "serviceTaskId"
+        ],
+        "contextReadonly": [
+          "tenantId",
+          "caseId",
+          "definitionId",
+          "sourceWorkItemId"
+        ],
+        "systemGenerated": [
+          "workItemId",
+          "projectionVersion",
+          "createdAt",
+          "confirmedAt",
+          "ledgerEntryId",
+          "domainEventId"
+        ],
+        "derived": [],
+        "forbidden": []
+      },
+      "ledgerEffect": {
+        "mode": "basis_only",
+        "financeKernelEffectType": null
+      },
+      "generatedBlockedReason": null,
       "requiredEvidence": [
         "verification-check"
       ],
@@ -1359,6 +1786,40 @@
         "ledgerEntryId",
         "domainEventId"
       ],
+      "p0GeneratedCandidate": false,
+      "generatedCandidateId": null,
+      "generatedStage": "P1_BLOCKED",
+      "fieldClassification": {
+        "clientSubmitted": [
+          "expenseId",
+          "amount",
+          "basisEvidenceRef"
+        ],
+        "selectedStableRef": [
+          "serviceTaskId"
+        ],
+        "contextReadonly": [
+          "tenantId",
+          "caseId",
+          "definitionId",
+          "sourceWorkItemId"
+        ],
+        "systemGenerated": [
+          "workItemId",
+          "projectionVersion",
+          "createdAt",
+          "confirmedAt",
+          "ledgerEntryId",
+          "domainEventId"
+        ],
+        "derived": [],
+        "forbidden": []
+      },
+      "ledgerEffect": {
+        "mode": "finance_kernel",
+        "financeKernelEffectType": "expense"
+      },
+      "generatedBlockedReason": "P1_BLOCKED_NOT_IN_FIRST_P0_GENERATED_CONTRACTS",
       "requiredEvidence": [
         "expense-invoice",
         "expense-basis"
@@ -1452,6 +1913,38 @@
         "ledgerEntryId",
         "domainEventId"
       ],
+      "p0GeneratedCandidate": false,
+      "generatedCandidateId": null,
+      "generatedStage": "P1_BLOCKED",
+      "fieldClassification": {
+        "clientSubmitted": [
+          "expenseId",
+          "approvalState",
+          "approvalReason"
+        ],
+        "selectedStableRef": [],
+        "contextReadonly": [
+          "tenantId",
+          "caseId",
+          "definitionId",
+          "sourceWorkItemId"
+        ],
+        "systemGenerated": [
+          "workItemId",
+          "projectionVersion",
+          "createdAt",
+          "confirmedAt",
+          "ledgerEntryId",
+          "domainEventId"
+        ],
+        "derived": [],
+        "forbidden": []
+      },
+      "ledgerEffect": {
+        "mode": "finance_kernel",
+        "financeKernelEffectType": "expense"
+      },
+      "generatedBlockedReason": "P1_BLOCKED_NOT_IN_FIRST_P0_GENERATED_CONTRACTS",
       "requiredEvidence": [
         "expense-approval",
         "expense-invoice"
@@ -1545,6 +2038,39 @@
         "ledgerEntryId",
         "domainEventId"
       ],
+      "p0GeneratedCandidate": false,
+      "generatedCandidateId": null,
+      "generatedStage": "P1_BLOCKED",
+      "fieldClassification": {
+        "clientSubmitted": [
+          "expenseId",
+          "linkReason"
+        ],
+        "selectedStableRef": [
+          "serviceTaskId"
+        ],
+        "contextReadonly": [
+          "tenantId",
+          "caseId",
+          "definitionId",
+          "sourceWorkItemId"
+        ],
+        "systemGenerated": [
+          "workItemId",
+          "projectionVersion",
+          "createdAt",
+          "confirmedAt",
+          "ledgerEntryId",
+          "domainEventId"
+        ],
+        "derived": [],
+        "forbidden": []
+      },
+      "ledgerEffect": {
+        "mode": "finance_kernel",
+        "financeKernelEffectType": "expense"
+      },
+      "generatedBlockedReason": "P1_BLOCKED_NOT_IN_FIRST_P0_GENERATED_CONTRACTS",
       "requiredEvidence": [
         "expense-link-proof"
       ],
@@ -1637,6 +2163,40 @@
         "ledgerEntryId",
         "domainEventId"
       ],
+      "p0GeneratedCandidate": false,
+      "generatedCandidateId": null,
+      "generatedStage": "NOT_P0",
+      "fieldClassification": {
+        "clientSubmitted": [
+          "inspectionResult"
+        ],
+        "selectedStableRef": [
+          "inspectionId",
+          "roomId",
+          "bedId"
+        ],
+        "contextReadonly": [
+          "tenantId",
+          "caseId",
+          "definitionId",
+          "sourceWorkItemId"
+        ],
+        "systemGenerated": [
+          "workItemId",
+          "projectionVersion",
+          "createdAt",
+          "confirmedAt",
+          "ledgerEntryId",
+          "domainEventId"
+        ],
+        "derived": [],
+        "forbidden": []
+      },
+      "ledgerEffect": {
+        "mode": "basis_only",
+        "financeKernelEffectType": null
+      },
+      "generatedBlockedReason": null,
       "requiredEvidence": [
         "room-inspection",
         "damage-photo"
@@ -1731,6 +2291,39 @@
         "ledgerEntryId",
         "domainEventId"
       ],
+      "p0GeneratedCandidate": false,
+      "generatedCandidateId": null,
+      "generatedStage": "NOT_P0",
+      "fieldClassification": {
+        "clientSubmitted": [],
+        "selectedStableRef": [
+          "checkoutCaseId",
+          "stayId",
+          "inspectionId",
+          "refundPaymentId"
+        ],
+        "contextReadonly": [
+          "tenantId",
+          "caseId",
+          "definitionId",
+          "sourceWorkItemId"
+        ],
+        "systemGenerated": [
+          "workItemId",
+          "projectionVersion",
+          "createdAt",
+          "confirmedAt",
+          "ledgerEntryId",
+          "domainEventId"
+        ],
+        "derived": [],
+        "forbidden": []
+      },
+      "ledgerEffect": {
+        "mode": "finance_kernel",
+        "financeKernelEffectType": "posting"
+      },
+      "generatedBlockedReason": null,
       "requiredEvidence": [
         "room-inspection",
         "settlement-review",
@@ -1826,6 +2419,39 @@
         "ledgerEntryId",
         "domainEventId"
       ],
+      "p0GeneratedCandidate": false,
+      "generatedCandidateId": null,
+      "generatedStage": "NOT_P0",
+      "fieldClassification": {
+        "clientSubmitted": [
+          "extendTo"
+        ],
+        "selectedStableRef": [
+          "stayId",
+          "ratePlanId"
+        ],
+        "contextReadonly": [
+          "tenantId",
+          "caseId",
+          "definitionId",
+          "sourceWorkItemId"
+        ],
+        "systemGenerated": [
+          "workItemId",
+          "projectionVersion",
+          "createdAt",
+          "confirmedAt",
+          "ledgerEntryId",
+          "domainEventId"
+        ],
+        "derived": [],
+        "forbidden": []
+      },
+      "ledgerEffect": {
+        "mode": "basis_only",
+        "financeKernelEffectType": null
+      },
+      "generatedBlockedReason": null,
       "requiredEvidence": [
         "extend-application",
         "rate-policy"
@@ -1917,6 +2543,38 @@
         "ledgerEntryId",
         "domainEventId"
       ],
+      "p0GeneratedCandidate": false,
+      "generatedCandidateId": null,
+      "generatedStage": "NOT_P0",
+      "fieldClassification": {
+        "clientSubmitted": [],
+        "selectedStableRef": [
+          "stayId",
+          "fromBedId",
+          "toBedId"
+        ],
+        "contextReadonly": [
+          "tenantId",
+          "caseId",
+          "definitionId",
+          "sourceWorkItemId"
+        ],
+        "systemGenerated": [
+          "workItemId",
+          "projectionVersion",
+          "createdAt",
+          "confirmedAt",
+          "ledgerEntryId",
+          "domainEventId"
+        ],
+        "derived": [],
+        "forbidden": []
+      },
+      "ledgerEffect": {
+        "mode": "basis_only",
+        "financeKernelEffectType": null
+      },
+      "generatedBlockedReason": null,
       "requiredEvidence": [
         "transfer-application",
         "bed-availability-proof"
@@ -2007,6 +2665,38 @@
         "ledgerEntryId",
         "domainEventId"
       ],
+      "p0GeneratedCandidate": false,
+      "generatedCandidateId": null,
+      "generatedStage": "NOT_P0",
+      "fieldClassification": {
+        "clientSubmitted": [
+          "cancelReason"
+        ],
+        "selectedStableRef": [
+          "reservationId"
+        ],
+        "contextReadonly": [
+          "tenantId",
+          "caseId",
+          "definitionId",
+          "sourceWorkItemId"
+        ],
+        "systemGenerated": [
+          "workItemId",
+          "projectionVersion",
+          "createdAt",
+          "confirmedAt",
+          "ledgerEntryId",
+          "domainEventId"
+        ],
+        "derived": [],
+        "forbidden": []
+      },
+      "ledgerEffect": {
+        "mode": "basis_only",
+        "financeKernelEffectType": null
+      },
+      "generatedBlockedReason": null,
       "requiredEvidence": [
         "cancel-request"
       ],
@@ -2096,6 +2786,38 @@
         "ledgerEntryId",
         "domainEventId"
       ],
+      "p0GeneratedCandidate": false,
+      "generatedCandidateId": null,
+      "generatedStage": "NOT_P0",
+      "fieldClassification": {
+        "clientSubmitted": [
+          "noShowReason"
+        ],
+        "selectedStableRef": [
+          "reservationId"
+        ],
+        "contextReadonly": [
+          "tenantId",
+          "caseId",
+          "definitionId",
+          "sourceWorkItemId"
+        ],
+        "systemGenerated": [
+          "workItemId",
+          "projectionVersion",
+          "createdAt",
+          "confirmedAt",
+          "ledgerEntryId",
+          "domainEventId"
+        ],
+        "derived": [],
+        "forbidden": []
+      },
+      "ledgerEffect": {
+        "mode": "basis_only",
+        "financeKernelEffectType": null
+      },
+      "generatedBlockedReason": null,
       "requiredEvidence": [
         "no-show-record"
       ],
@@ -2188,6 +2910,39 @@
         "ledgerEntryId",
         "domainEventId"
       ],
+      "p0GeneratedCandidate": false,
+      "generatedCandidateId": null,
+      "generatedStage": "NOT_P0",
+      "fieldClassification": {
+        "clientSubmitted": [
+          "amount",
+          "adjustmentReason"
+        ],
+        "selectedStableRef": [
+          "stayId"
+        ],
+        "contextReadonly": [
+          "tenantId",
+          "caseId",
+          "definitionId",
+          "sourceWorkItemId"
+        ],
+        "systemGenerated": [
+          "workItemId",
+          "projectionVersion",
+          "createdAt",
+          "confirmedAt",
+          "ledgerEntryId",
+          "domainEventId"
+        ],
+        "derived": [],
+        "forbidden": []
+      },
+      "ledgerEffect": {
+        "mode": "finance_kernel",
+        "financeKernelEffectType": "posting"
+      },
+      "generatedBlockedReason": null,
       "requiredEvidence": [
         "adjustment-approval",
         "charge-basis"
@@ -2281,6 +3036,39 @@
         "ledgerEntryId",
         "domainEventId"
       ],
+      "p0GeneratedCandidate": false,
+      "generatedCandidateId": null,
+      "generatedStage": "NOT_P0",
+      "fieldClassification": {
+        "clientSubmitted": [
+          "followUpState",
+          "nextContactAt"
+        ],
+        "selectedStableRef": [
+          "stayId"
+        ],
+        "contextReadonly": [
+          "tenantId",
+          "caseId",
+          "definitionId",
+          "sourceWorkItemId"
+        ],
+        "systemGenerated": [
+          "workItemId",
+          "projectionVersion",
+          "createdAt",
+          "confirmedAt",
+          "ledgerEntryId",
+          "domainEventId"
+        ],
+        "derived": [],
+        "forbidden": []
+      },
+      "ledgerEffect": {
+        "mode": "basis_only",
+        "financeKernelEffectType": null
+      },
+      "generatedBlockedReason": null,
       "requiredEvidence": [
         "debt-followup-record"
       ],
@@ -2372,6 +3160,38 @@
         "ledgerEntryId",
         "domainEventId"
       ],
+      "p0GeneratedCandidate": false,
+      "generatedCandidateId": null,
+      "generatedStage": "NOT_P0",
+      "fieldClassification": {
+        "clientSubmitted": [],
+        "selectedStableRef": [
+          "residentId",
+          "stayId",
+          "credentialId"
+        ],
+        "contextReadonly": [
+          "tenantId",
+          "caseId",
+          "definitionId",
+          "sourceWorkItemId"
+        ],
+        "systemGenerated": [
+          "workItemId",
+          "projectionVersion",
+          "createdAt",
+          "confirmedAt",
+          "ledgerEntryId",
+          "domainEventId"
+        ],
+        "derived": [],
+        "forbidden": []
+      },
+      "ledgerEffect": {
+        "mode": "basis_only",
+        "financeKernelEffectType": null
+      },
+      "generatedBlockedReason": null,
       "requiredEvidence": [
         "identity-document",
         "checkin-confirmation"
@@ -2464,6 +3284,39 @@
         "ledgerEntryId",
         "domainEventId"
       ],
+      "p0GeneratedCandidate": false,
+      "generatedCandidateId": null,
+      "generatedStage": "NOT_P0",
+      "fieldClassification": {
+        "clientSubmitted": [
+          "revokeReason"
+        ],
+        "selectedStableRef": [
+          "residentId",
+          "credentialId"
+        ],
+        "contextReadonly": [
+          "tenantId",
+          "caseId",
+          "definitionId",
+          "sourceWorkItemId"
+        ],
+        "systemGenerated": [
+          "workItemId",
+          "projectionVersion",
+          "createdAt",
+          "confirmedAt",
+          "ledgerEntryId",
+          "domainEventId"
+        ],
+        "derived": [],
+        "forbidden": []
+      },
+      "ledgerEffect": {
+        "mode": "basis_only",
+        "financeKernelEffectType": null
+      },
+      "generatedBlockedReason": null,
       "requiredEvidence": [
         "checkout-close-proof"
       ],
@@ -2554,6 +3407,39 @@
         "ledgerEntryId",
         "domainEventId"
       ],
+      "p0GeneratedCandidate": false,
+      "generatedCandidateId": null,
+      "generatedStage": "NOT_P0",
+      "fieldClassification": {
+        "clientSubmitted": [
+          "exceptionType",
+          "severity"
+        ],
+        "selectedStableRef": [
+          "exceptionCaseId"
+        ],
+        "contextReadonly": [
+          "tenantId",
+          "caseId",
+          "definitionId",
+          "sourceWorkItemId"
+        ],
+        "systemGenerated": [
+          "workItemId",
+          "projectionVersion",
+          "createdAt",
+          "confirmedAt",
+          "ledgerEntryId",
+          "domainEventId"
+        ],
+        "derived": [],
+        "forbidden": []
+      },
+      "ledgerEffect": {
+        "mode": "basis_only",
+        "financeKernelEffectType": null
+      },
+      "generatedBlockedReason": null,
       "requiredEvidence": [
         "incident-evidence",
         "audit-note"
@@ -2646,6 +3532,39 @@
         "ledgerEntryId",
         "domainEventId"
       ],
+      "p0GeneratedCandidate": false,
+      "generatedCandidateId": null,
+      "generatedStage": "NOT_P0",
+      "fieldClassification": {
+        "clientSubmitted": [
+          "periodStart",
+          "periodEnd"
+        ],
+        "selectedStableRef": [
+          "snapshotId"
+        ],
+        "contextReadonly": [
+          "tenantId",
+          "caseId",
+          "definitionId",
+          "sourceWorkItemId"
+        ],
+        "systemGenerated": [
+          "workItemId",
+          "projectionVersion",
+          "createdAt",
+          "confirmedAt",
+          "ledgerEntryId",
+          "domainEventId"
+        ],
+        "derived": [],
+        "forbidden": []
+      },
+      "ledgerEffect": {
+        "mode": "basis_only",
+        "financeKernelEffectType": null
+      },
+      "generatedBlockedReason": null,
       "requiredEvidence": [
         "period-review-pack"
       ],
@@ -2737,6 +3656,39 @@
         "ledgerEntryId",
         "domainEventId"
       ],
+      "p0GeneratedCandidate": false,
+      "generatedCandidateId": null,
+      "generatedStage": "NOT_P0",
+      "fieldClassification": {
+        "clientSubmitted": [
+          "targetMetric",
+          "executionState"
+        ],
+        "selectedStableRef": [
+          "actionPlanId"
+        ],
+        "contextReadonly": [
+          "tenantId",
+          "caseId",
+          "definitionId",
+          "sourceWorkItemId"
+        ],
+        "systemGenerated": [
+          "workItemId",
+          "projectionVersion",
+          "createdAt",
+          "confirmedAt",
+          "ledgerEntryId",
+          "domainEventId"
+        ],
+        "derived": [],
+        "forbidden": []
+      },
+      "ledgerEffect": {
+        "mode": "basis_only",
+        "financeKernelEffectType": null
+      },
+      "generatedBlockedReason": null,
       "requiredEvidence": [
         "action-plan-evidence"
       ],
@@ -2827,6 +3779,39 @@
         "ledgerEntryId",
         "domainEventId"
       ],
+      "p0GeneratedCandidate": false,
+      "generatedCandidateId": null,
+      "generatedStage": "NOT_P0",
+      "fieldClassification": {
+        "clientSubmitted": [
+          "resolutionState",
+          "resolutionReason"
+        ],
+        "selectedStableRef": [
+          "exceptionCaseId"
+        ],
+        "contextReadonly": [
+          "tenantId",
+          "caseId",
+          "definitionId",
+          "sourceWorkItemId"
+        ],
+        "systemGenerated": [
+          "workItemId",
+          "projectionVersion",
+          "createdAt",
+          "confirmedAt",
+          "ledgerEntryId",
+          "domainEventId"
+        ],
+        "derived": [],
+        "forbidden": []
+      },
+      "ledgerEffect": {
+        "mode": "basis_only",
+        "financeKernelEffectType": null
+      },
+      "generatedBlockedReason": null,
       "requiredEvidence": [
         "exception-audit",
         "resolution-evidence"
@@ -2921,6 +3906,39 @@
         "ledgerEntryId",
         "domainEventId"
       ],
+      "p0GeneratedCandidate": false,
+      "generatedCandidateId": null,
+      "generatedStage": "NOT_P0",
+      "fieldClassification": {
+        "clientSubmitted": [
+          "basisType",
+          "correctionReason"
+        ],
+        "selectedStableRef": [
+          "correctionId"
+        ],
+        "contextReadonly": [
+          "tenantId",
+          "caseId",
+          "definitionId",
+          "sourceWorkItemId"
+        ],
+        "systemGenerated": [
+          "workItemId",
+          "projectionVersion",
+          "createdAt",
+          "confirmedAt",
+          "ledgerEntryId",
+          "domainEventId"
+        ],
+        "derived": [],
+        "forbidden": []
+      },
+      "ledgerEffect": {
+        "mode": "finance_kernel",
+        "financeKernelEffectType": "correction"
+      },
+      "generatedBlockedReason": null,
       "requiredEvidence": [
         "correction-approval",
         "audit-note"
@@ -2947,6 +3965,129 @@
       "operationZh": "宿舍负责人只补本环节缺失字段，系统自动带入并锁定上游确认字段；提交后写入 CommandSubmission、DomainEvent、Evidence/FactTrace，并刷新 Lens/Search。"
     }
   ],
+  "p0GeneratedCandidates": [
+    {
+      "generatedCandidateId": "Dorm.RoomSetupConfirm.v1",
+      "workItemType": "Dorm.RoomSetupConfirm",
+      "definitionId": "definition.dormitory.roomSetupConfirm.v1",
+      "sourceNodeRef": "dormitory.workItem.Dorm.RoomSetupConfirm",
+      "generatedStage": "P0_ACTIVE",
+      "ledgerEffect": {
+        "mode": "none",
+        "financeKernelEffectType": null
+      }
+    },
+    {
+      "generatedCandidateId": "Dorm.BedSetupConfirm.v1",
+      "workItemType": "Dorm.BedSetupConfirm",
+      "definitionId": "definition.dormitory.bedSetupConfirm.v1",
+      "sourceNodeRef": "dormitory.workItem.Dorm.BedSetupConfirm",
+      "generatedStage": "P0_ACTIVE",
+      "ledgerEffect": {
+        "mode": "none",
+        "financeKernelEffectType": null
+      }
+    },
+    {
+      "generatedCandidateId": "Dorm.ResourceReadinessConfirm.v1",
+      "workItemType": "Dorm.ResourceReadinessConfirm",
+      "definitionId": "definition.dormitory.resourceReadinessConfirm.v1",
+      "sourceNodeRef": "dormitory.workItem.Dorm.ResourceReadinessConfirm",
+      "generatedStage": "P0_ACTIVE",
+      "ledgerEffect": {
+        "mode": "none",
+        "financeKernelEffectType": null
+      }
+    }
+  ],
+  "blockedGeneratedCandidates": [
+    {
+      "workItemType": "Dorm.RatePlanConfirm",
+      "definitionId": "definition.dormitory.ratePlanConfirm.v1",
+      "generatedStage": "P1_BLOCKED",
+      "reason": "P1_BLOCKED_NOT_IN_FIRST_P0_GENERATED_CONTRACTS",
+      "financeKernelOnly": false
+    },
+    {
+      "workItemType": "Dorm.LeadCapture",
+      "definitionId": "definition.dormitory.leadCapture.v1",
+      "generatedStage": "P1_BLOCKED",
+      "reason": "P1_BLOCKED_NOT_IN_FIRST_P0_GENERATED_CONTRACTS",
+      "financeKernelOnly": false
+    },
+    {
+      "workItemType": "Dorm.CheckinConfirm",
+      "definitionId": "definition.dormitory.checkinConfirm.v1",
+      "generatedStage": "P1_BLOCKED",
+      "reason": "P1_BLOCKED_NOT_IN_FIRST_P0_GENERATED_CONTRACTS",
+      "financeKernelOnly": false
+    },
+    {
+      "workItemType": "Dorm.PaymentConfirm",
+      "definitionId": "definition.dormitory.paymentConfirm.v1",
+      "generatedStage": "P1_BLOCKED",
+      "reason": "P1_BLOCKED_NOT_IN_FIRST_P0_GENERATED_CONTRACTS",
+      "financeKernelOnly": true
+    },
+    {
+      "workItemType": "Dorm.DepositConfirm",
+      "definitionId": "definition.dormitory.depositConfirm.v1",
+      "generatedStage": "P1_BLOCKED",
+      "reason": "P1_BLOCKED_NOT_IN_FIRST_P0_GENERATED_CONTRACTS",
+      "financeKernelOnly": true
+    },
+    {
+      "workItemType": "Finance.ExpenseRecord",
+      "definitionId": "definition.finance.expenseRecord.v1",
+      "generatedStage": "P1_BLOCKED",
+      "reason": "P1_BLOCKED_NOT_IN_FIRST_P0_GENERATED_CONTRACTS",
+      "financeKernelOnly": true
+    },
+    {
+      "workItemType": "Finance.ExpenseApprove",
+      "definitionId": "definition.finance.expenseApprove.v1",
+      "generatedStage": "P1_BLOCKED",
+      "reason": "P1_BLOCKED_NOT_IN_FIRST_P0_GENERATED_CONTRACTS",
+      "financeKernelOnly": true
+    },
+    {
+      "workItemType": "Finance.ExpenseLink",
+      "definitionId": "definition.finance.expenseLink.v1",
+      "generatedStage": "P1_BLOCKED",
+      "reason": "P1_BLOCKED_NOT_IN_FIRST_P0_GENERATED_CONTRACTS",
+      "financeKernelOnly": true
+    }
+  ],
+  "fieldClassificationEnum": [
+    "clientSubmitted",
+    "selectedStableRef",
+    "contextReadonly",
+    "systemGenerated",
+    "derived",
+    "forbidden"
+  ],
+  "ledgerEffectModel": {
+    "modeEnum": [
+      "none",
+      "basis_only",
+      "finance_kernel"
+    ],
+    "financeKernelEffectTypeEnum": [
+      "posting",
+      "reversal",
+      "correction",
+      "payment",
+      "deposit",
+      "refund",
+      "expense",
+      null
+    ],
+    "p0GeneratedCandidatesRequire": {
+      "mode": "none",
+      "financeKernelEffectType": null
+    },
+    "financeTruthOwner": "docs/finance/finance-ledger-kernel.json"
+  },
   "aliases": [
     {
       "workItemType": "Dorm.RoomReadinessCheck",
@@ -3077,7 +4218,7 @@
         "DormAvailabilityLens"
       ],
       "downstreamWorkItems": [
-        "Dorm.RatePlanConfirm"
+        "Dorm.ResourceReadinessConfirm"
       ],
       "failureRoutes": [
         "Dorm.ExceptionResolve",

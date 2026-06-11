@@ -31,8 +31,14 @@ if (!resolveMethod.includes("FindByDefinitionId(payloadDefinitionId)") ||
 if (resolveMethod.includes("FindBySourceCardId") || resolveMethod.includes("ResolveByWorkspaceCard")) {
   fail("confirm_resolution_uses_surface_source", "Confirm Definition resolution must not use sourceCardId or workspace/card resolution.");
 }
-if (!confirmMethod.includes("definitions.Resolve(workItem, normalized.CardId)")) {
+if (!confirmMethod.includes("definitions.Resolve(workItem)")) {
   fail("confirm_definition_resolve_missing", "Canonical confirm must resolve Definition from WorkItem identity.");
+}
+if (confirmMethod.includes("definitions.Resolve(workItem, normalized.CardId)")) {
+  fail("confirm_definition_resolve_uses_card_id", "Canonical confirm must not use normalized.CardId as business definition identity.");
+}
+if (confirmMethod.includes("FirstNonEmpty(definition.DefinitionId")) {
+  fail("confirm_definition_fallback_present", "Command definition identity must be resolved-only; workItemType fallback is forbidden.");
 }
 if (confirmMethod.includes("ResolveByWorkspaceCard")) {
   fail("confirm_workspace_card_resolve_present", "Canonical confirm must not resolve Definition through workspace/card.");

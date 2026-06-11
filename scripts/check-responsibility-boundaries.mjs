@@ -108,17 +108,16 @@ for (const forbidden of [
   }
 }
 
-if (!canonicalOperations.includes("OperationBranchResolver.NextCardId")) {
-  violations.push(v("responsibility.backend_service_missing_resolver", "CanonicalOperationsApiService.cs must delegate next-step branching to OperationBranchResolver."));
+if (canonicalOperations.includes("OperationBranchResolver.NextCardId")) {
+  violations.push(v("responsibility.backend_service_uses_seed_resolver", "CanonicalOperationsApiService.cs must not delegate business downstream selection to OperationBranchResolver."));
 }
-
 for (const required of [
-  "internal static class OperationBranchResolver",
-  "public static string NextCardId",
-  "reservationNextAction"
+  "GeneratedTransitionPolicy.ResolveNext",
+  "generated_transition_policy",
+  "docs/oam/kernel/oam-kernel-graph.generated.json"
 ]) {
-  if (!operationBranchResolver.includes(required)) {
-    violations.push(v("responsibility.branch_resolver_incomplete", `OperationBranchResolver.cs is missing ${required}.`, { required }));
+  if (!canonicalOperations.includes(required)) {
+    violations.push(v("responsibility.generated_transition_policy_missing", `CanonicalOperationsApiService.cs is missing ${required}.`, { required }));
   }
 }
 

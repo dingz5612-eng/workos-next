@@ -161,7 +161,7 @@ public sealed class OperationsRuntimeServiceTests
     }
 
     [TestMethod]
-    public void operations_confirm_dispatches_next_resource_lifecycle_work_item()
+    public void operations_confirm_does_not_dispatch_next_resource_lifecycle_work_item_from_seed()
     {
         var workspace = FakeOperationsRuntime.ResourceWorkspace("W-STAY-RESOURCE-202606040002");
         var service = Service(out _, out _, out var workItems, workspaces: new[] { workspace });
@@ -197,7 +197,7 @@ public sealed class OperationsRuntimeServiceTests
             "req-resource-next");
 
         Assert.IsTrue(result.Confirmed);
-        Assert.IsTrue(workItems.List("tenant-start").Any(item =>
+        Assert.IsFalse(workItems.List("tenant-start").Any(item =>
             item.WorkspaceId == workspace.Id &&
             item.Payload.TryGetValue("cardId", out var cardId) &&
             cardId == "bedSetup"));

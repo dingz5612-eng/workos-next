@@ -72,6 +72,9 @@ jobs:
           node scripts/oam/check-cross-domain-conflict-rules.mjs
           node scripts/oam/check-system-operating-kernel.mjs
           node scripts/business/generate-dormitory-derived-contracts.mjs
+          node scripts/oam/compile-current-kernel-graph.mjs
+          node scripts/oam/check-generated-contract-consistency.mjs
+          node scripts/oam/check-generated-files-not-manually-edited.mjs
           node scripts/oam/check-oam-kernel-graph.mjs
           node scripts/oam/check-system-change-governance.mjs
           node scripts/oam/check-iteration-kernel.mjs
@@ -109,6 +112,7 @@ jobs:
           node scripts/check-account-actor-kernel.mjs
           node scripts/check-language-kernel.mjs
           node scripts/oam/check-surface-language-v2.mjs
+          node scripts/oam/check-read-intelligence-kernel.mjs
           node scripts/check-surface-contract.mjs
           node scripts/check-experience-contract.mjs
           node scripts/surface/check-surface-experience-contract.mjs
@@ -133,6 +137,7 @@ jobs:
           node scripts/check-management-cockpit-boundary.mjs
           node scripts/check-shared-governance-boundary.mjs --self-test
           node scripts/check-shared-governance-boundary.mjs
+          node scripts/oam/check-db-no-side-effects-proof.mjs
           node scripts/check-dormitory-golden-domain.mjs --self-test
           node scripts/check-dormitory-golden-domain.mjs
 

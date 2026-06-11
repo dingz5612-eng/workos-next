@@ -69,11 +69,33 @@ public sealed class OamReleaseControlTests
         var workflow = File.ReadAllText(RepoPath(".github", "workflows", "ci.yml"));
         var generator = File.ReadAllText(RepoPath("scripts", "oam", "generate-current-evidence-root.mjs"));
         var checker = File.ReadAllText(RepoPath("scripts", "oam", "check-current-evidence-root.mjs"));
-        const string expectedArtifactName = "workosnext-current-oam-evidence-${{ github.run_id }}";
+        const string forbiddenLiteral = "workosnext-current-oam-evidence-${{ github.run_id }}";
 
-        StringAssert.Contains(workflow, $"name: {expectedArtifactName}");
-        StringAssert.Contains(generator, $"artifactName = \"{expectedArtifactName}\"");
-        StringAssert.Contains(checker, expectedArtifactName);
+        StringAssert.Contains(workflow, "name: workosnext-current-oam-evidence-${{ github.run_id }}");
+        StringAssert.Contains(generator, "artifactNameForRun(ciRunId)");
+        StringAssert.Contains(checker, "artifactNameForRun(ciRunId)");
+        Assert.IsFalse(generator.Contains($"artifactName = \"{forbiddenLiteral}\"", StringComparison.Ordinal), "generator must not use the GitHub expression as a JavaScript artifactName literal.");
+        Assert.IsFalse(checker.Contains($"expectedArtifactName = \"{forbiddenLiteral}\"", StringComparison.Ordinal), "checker must not use the GitHub expression as a JavaScript artifactName literal.");
+        Assert.IsFalse(generator.Contains("\"current-oam-evidence\"", StringComparison.Ordinal), "generator must not use current-oam-evidence as artifactName.");
+        StringAssert.Contains(checker, "artifactName === \"current-oam-evidence\"");
+    }
+
+    [TestMethod]
+    public void ReleaseEvidenceObjectIsRequiredAndHashBound()
+    {
+        var generator = File.ReadAllText(RepoPath("scripts", "oam", "generate-current-evidence-root.mjs"));
+        var checker = File.ReadAllText(RepoPath("scripts", "oam", "check-current-evidence-root.mjs"));
+        const string releaseObject = "artifacts/oam/evidence/current-oam-release-evidence-object.json";
+
+        foreach (var source in new[] { generator, checker })
+        {
+            StringAssert.Contains(source, releaseObject);
+            StringAssert.Contains(source, "kernelGraphHash");
+            StringAssert.Contains(source, "evidenceGraphHash");
+            StringAssert.Contains(source, "finalReportDigest");
+            StringAssert.Contains(source, "githubArtifactDigest");
+            StringAssert.Contains(source, "evidenceRootDigest");
+        }
     }
 
     [TestMethod]
@@ -151,6 +173,9 @@ public sealed class OamReleaseControlTests
         {
             "scripts/oam/check-current-oam.mjs",
             "scripts/oam/check-system-operating-kernel.mjs",
+            "scripts/oam/compile-current-kernel-graph.mjs",
+            "scripts/oam/check-generated-contract-consistency.mjs",
+            "scripts/oam/check-generated-files-not-manually-edited.mjs",
             "scripts/oam/check-oam-kernel-graph.mjs",
             "scripts/oam/check-file-lifecycle-policy.mjs",
             "scripts/oam/check-retired-reference-blocker.mjs",
@@ -172,9 +197,11 @@ public sealed class OamReleaseControlTests
             "scripts/check-shared-governance-boundary.mjs",
             "scripts/check-dormitory-golden-domain.mjs",
             "scripts/check-language-kernel.mjs",
+            "scripts/oam/check-read-intelligence-kernel.mjs",
             "scripts/check-search-kernel.mjs",
             "scripts/check-admission-kernel.mjs",
-            "scripts/check-account-actor-kernel.mjs"
+            "scripts/check-account-actor-kernel.mjs",
+            "scripts/oam/check-db-no-side-effects-proof.mjs"
         };
 
     private static ProcessResult RunNode(params string[] arguments)

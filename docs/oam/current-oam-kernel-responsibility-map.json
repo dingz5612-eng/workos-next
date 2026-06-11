@@ -53,7 +53,16 @@
     "businessProductionGoNoGo",
     "dormitoryL2GoNoGo",
     "productionConfirmGoNoGo",
-    "finalGoNoGo"
+    "finalGoNoGo",
+    "responsibilityGovernanceGoNoGo",
+    "evidenceBindingGoNoGo",
+    "kernelCompileGoNoGo",
+    "runtimeGateGoNoGo",
+    "workItemEffectGoNoGo",
+    "financeTruthGoNoGo",
+    "readIntelligenceGoNoGo",
+    "surfaceLanguageGoNoGo",
+    "releaseEvidenceGoNoGo"
   ],
   "forcedCurrentStage": {
     "businessProductionGoNoGo": "NO_GO",
@@ -389,7 +398,9 @@
       "authorityFiles": [
         "docs/contracts/oam.current.json",
         "docs/contracts/definition/workitem-definition-registry.json",
-        "services/core-api/WorkOS.Api/Runtime/OperationsContracts.cs"
+        "services/core-api/WorkOS.Api/Runtime/OperationsContracts.cs",
+        "services/core-api/WorkOS.Api/Runtime/CanonicalOperationsApiService.cs",
+        "services/core-api/WorkOS.Api/Runtime/AdmissionKernelService.cs"
       ],
       "forbidden": [
         "Business write outside Operations Runtime",
@@ -398,10 +409,13 @@
       ],
       "gates": [
         "node scripts/check-runtime-write-paths.mjs",
-        "dotnet test tests/WorkOS.RuntimeIntegrationTests/WorkOS.RuntimeIntegrationTests.csproj -c Release"
+        "dotnet test tests/WorkOS.RuntimeIntegrationTests/WorkOS.RuntimeIntegrationTests.csproj -c Release",
+        "node scripts/check-admission-kernel.mjs",
+        "node scripts/oam/check-db-no-side-effects-proof.mjs"
       ],
       "evidence": [
-        "artifacts/oam/evidence/runtime-proof.json"
+        "artifacts/oam/evidence/runtime-proof.json",
+        "docs/oam/db-no-side-effects-proof.json"
       ],
       "negativeTests": [
         "No-side-effects tests fail",
@@ -409,7 +423,8 @@
         "Business write route not in Unit of Work"
       ],
       "finalReportFields": [
-        "operationsRuntimeGoNoGo"
+        "operationsRuntimeGoNoGo",
+        "runtimeGateGoNoGo"
       ]
     },
     {
@@ -459,7 +474,8 @@
         "Dashboard summary mutates ledger"
       ],
       "finalReportFields": [
-        "financeLedgerGoNoGo"
+        "financeLedgerGoNoGo",
+        "financeTruthGoNoGo"
       ]
     },
     {
@@ -631,7 +647,9 @@
       "authorityFiles": [
         "docs/surface/surface-experience-contract.yml",
         "docs/contracts/frontend-experience/frontend-experience-system-contract.json",
-        "apps/mobile/src/experienceContract.js"
+        "apps/mobile/src/experienceContract.js",
+        "apps/mobile/src/generated/oam/dormitory-surface-input-model.generated.json",
+        "docs/contracts/generated/dormitory/surface-input-model.generated.json"
       ],
       "forbidden": [
         "Surface visible as confirmAllowed",
@@ -641,10 +659,12 @@
       "gates": [
         "node scripts/check-experience-contract.mjs",
         "node scripts/surface/check-surface-experience-contract.mjs",
-        "npm --prefix apps/mobile run test"
+        "npm --prefix apps/mobile run test",
+        "node scripts/oam/check-read-intelligence-kernel.mjs"
       ],
       "evidence": [
-        "artifacts/oam/evidence/surface-language-proof.json"
+        "artifacts/oam/evidence/surface-language-proof.json",
+        "apps/mobile/src/generated/oam/dormitory-surface-input-model.generated.json"
       ],
       "negativeTests": [
         "UI route id used for business write",
@@ -652,7 +672,8 @@
         "Read-side surface mutates business fact"
       ],
       "finalReportFields": [
-        "experienceKernelGoNoGo"
+        "experienceKernelGoNoGo",
+        "surfaceLanguageGoNoGo"
       ]
     },
     {
@@ -728,7 +749,9 @@
       "authorityFiles": [
         "docs/contracts/search/search-contract.json",
         "docs/contracts/search/search-result-schema.json",
-        "docs/contracts/search/search-permission-policy.json"
+        "docs/contracts/search/search-permission-policy.json",
+        "docs/read-intelligence/read-intelligence-kernel.json",
+        "docs/contracts/generated/dormitory/read-model.generated.json"
       ],
       "forbidden": [
         "Search result writes business fact",
@@ -737,10 +760,12 @@
       ],
       "gates": [
         "node scripts/check-search-kernel.mjs",
-        "node scripts/oam/check-cross-domain-conflict-rules.mjs"
+        "node scripts/oam/check-cross-domain-conflict-rules.mjs",
+        "node scripts/oam/check-read-intelligence-kernel.mjs"
       ],
       "evidence": [
-        "artifacts/oam/evidence/search-readonly-proof.json"
+        "artifacts/oam/evidence/search-readonly-proof.json",
+        "docs/read-intelligence/read-intelligence-kernel.json"
       ],
       "negativeTests": [
         "Search result exposes confirm action as allowed",
@@ -748,7 +773,8 @@
         "Search result consumes human-maintained contract instead of generated read model"
       ],
       "finalReportFields": [
-        "searchKernelGoNoGo"
+        "searchKernelGoNoGo",
+        "readIntelligenceGoNoGo"
       ]
     },
     {
@@ -825,7 +851,15 @@
       "authorityFiles": [
         "docs/oam/compiler-generated-contract-kernel.json",
         "docs/oam/system-derived-contracts.json",
-        "scripts/oam/generate-system-derived-contracts.mjs"
+        "scripts/oam/generate-system-derived-contracts.mjs",
+        "docs/oam/kernel/oam-kernel-source.schema.json",
+        "docs/oam/kernel/oam-kernel-generated.schema.json",
+        "docs/oam/kernel/oam-kernel-graph.generated.json",
+        "docs/contracts/generated/dormitory/dormitory-kernel.generated.manifest.json",
+        "docs/contracts/generated/dormitory/fields.generated.json",
+        "docs/contracts/generated/dormitory/workitems.generated.json",
+        "docs/contracts/generated/dormitory/surface-input-model.generated.json",
+        "docs/contracts/generated/dormitory/read-model.generated.json"
       ],
       "forbidden": [
         "Generated file marked source truth",
@@ -835,11 +869,16 @@
       "gates": [
         "node scripts/oam/generate-system-derived-contracts.mjs",
         "node scripts/oam/check-derived-contract-consistency.mjs",
-        "node scripts/oam/check-cross-domain-conflict-rules.mjs"
+        "node scripts/oam/check-cross-domain-conflict-rules.mjs",
+        "node scripts/oam/compile-current-kernel-graph.mjs",
+        "node scripts/oam/check-generated-contract-consistency.mjs",
+        "node scripts/oam/check-generated-files-not-manually-edited.mjs"
       ],
       "evidence": [
         "artifacts/oam/checks/derived-contract-consistency-result.json",
-        "artifacts/oam/evidence/evidence-graph.json"
+        "artifacts/oam/evidence/evidence-graph.json",
+        "docs/contracts/generated/dormitory/dormitory-kernel.generated.manifest.json",
+        "docs/oam/kernel/oam-kernel-graph.generated.json"
       ],
       "negativeTests": [
         "generated=true missing",
@@ -848,7 +887,9 @@
         "sourceNodeRefs missing"
       ],
       "finalReportFields": [
-        "compilerGeneratedContractGoNoGo"
+        "compilerGeneratedContractGoNoGo",
+        "kernelCompileGoNoGo",
+        "workItemEffectGoNoGo"
       ]
     },
     {
@@ -875,7 +916,9 @@
       "authorityFiles": [
         "docs/contracts/evidence/evidence-graph-refs-contract.json",
         "scripts/oam/generate-current-evidence-root.mjs",
-        "scripts/oam/check-current-evidence-root.mjs"
+        "scripts/oam/check-current-evidence-root.mjs",
+        "artifacts/oam/evidence/current-oam-release-evidence-object.json",
+        "docs/oam/db-no-side-effects-proof.json"
       ],
       "forbidden": [
         "Evidence Graph replaces OAM Kernel Graph",
@@ -885,11 +928,14 @@
       "gates": [
         "node scripts/oam/generate-current-evidence-root.mjs",
         "node scripts/oam/check-current-evidence-root.mjs",
-        "node scripts/oam/check-kernel-responsibility-map.mjs"
+        "node scripts/oam/check-kernel-responsibility-map.mjs",
+        "node scripts/oam/check-db-no-side-effects-proof.mjs"
       ],
       "evidence": [
         "artifacts/oam/evidence/evidence-graph.json",
-        "artifacts/oam/final-report.json"
+        "artifacts/oam/final-report.json",
+        "artifacts/oam/evidence/current-oam-release-evidence-object.json",
+        "docs/oam/db-no-side-effects-proof.json"
       ],
       "negativeTests": [
         "Workstream proof node missing",
@@ -897,7 +943,10 @@
         "Final report digest missing on release GO"
       ],
       "finalReportFields": [
-        "evidenceGraphGoNoGo"
+        "evidenceGraphGoNoGo",
+        "evidenceBindingGoNoGo",
+        "releaseEvidenceGoNoGo",
+        "responsibilityGovernanceGoNoGo"
       ]
     }
   ]

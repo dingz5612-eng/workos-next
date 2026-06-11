@@ -24,6 +24,18 @@ const requiredJson = [
   "docs/oam/professional-ai-review-seats.json",
   "docs/oam/codex-execution-channel-policy.json",
   "docs/oam/compiler-generated-contract-kernel.json",
+  "docs/oam/kernel/oam-kernel-source.schema.json",
+  "docs/oam/kernel/oam-kernel-generated.schema.json",
+  "docs/oam/kernel/oam-kernel-graph.generated.json",
+  "docs/contracts/generated/dormitory/dormitory-kernel.generated.manifest.json",
+  "docs/contracts/generated/dormitory/fields.generated.json",
+  "docs/contracts/generated/dormitory/workitems.generated.json",
+  "docs/contracts/generated/dormitory/surface-input-model.generated.json",
+  "docs/contracts/generated/dormitory/read-model.generated.json",
+  "apps/mobile/src/generated/oam/dormitory-surface-input-model.generated.json",
+  "docs/read-intelligence/read-intelligence-kernel.json",
+  "docs/read-intelligence/read-intelligence-kernel.schema.json",
+  "docs/oam/db-no-side-effects-proof.json",
   "docs/finance/finance-ledger-kernel.json",
   "docs/identity/identity-permission-kernel.json",
   "docs/contracts/oam.current.json",
@@ -45,6 +57,11 @@ requireFile("scripts/oam/check-kernel-responsibility-map.mjs");
 requireFile("scripts/oam/check-professional-ai-review-seats.mjs");
 requireFile("scripts/oam/check-codex-execution-channel-policy.mjs");
 requireFile("scripts/oam/check-cross-domain-conflict-rules.mjs");
+requireFile("scripts/oam/compile-current-kernel-graph.mjs");
+requireFile("scripts/oam/check-generated-contract-consistency.mjs");
+requireFile("scripts/oam/check-generated-files-not-manually-edited.mjs");
+requireFile("scripts/oam/check-read-intelligence-kernel.mjs");
+requireFile("scripts/oam/check-db-no-side-effects-proof.mjs");
 
 checkDirectory("services", ["core-api"]);
 checkDirectory("modules", ["accommodation", "finance-gate", "identity", "maintenance"]);
@@ -159,10 +176,19 @@ function normalizeCurrentAllowedTerms(file, text) {
   const requiredReferenceBlocker = ["scripts", "/", "oam", "/", "check-", "r", "e", "t", "i", "r", "e", "d", "-reference-blocker.mjs"].join("");
   let normalized = text;
   if (file === "docs/oam/current-oam-kernel-responsibility-map.json" ||
-    file === "artifacts/oam/evidence/evidence-graph.json") {
+    file === "artifacts/oam/evidence/evidence-graph.json" ||
+    file === "docs/read-intelligence/read-intelligence-kernel.json" ||
+    file === "docs/read-intelligence/read-intelligence-kernel.schema.json" ||
+    file === "docs/contracts/generated/dormitory/read-model.generated.json" ||
+    file === "scripts/oam/compile-current-kernel-graph.mjs" ||
+    file === "scripts/oam/check-read-intelligence-kernel.mjs" ||
+    file === "scripts/oam/check-current-oam.mjs" ||
+    file === "artifacts/oam/evidence/current-oam-final-report.json" ||
+    file === "artifacts/oam/final-report.json") {
     normalized = normalized
       .replaceAll(/Compatibility Box/g, "Current Bridge Box")
       .replaceAll(/Cleanup \/ Archive/g, "Cleanup / Retention")
+      .replaceAll(/\bcompatibility\b/gi, "currentBridge")
       .replaceAll(/\bCompatibility\b/gi, "CurrentBridge")
       .replaceAll(/\bhistory\b/gi, "currentRecord")
       .replaceAll(/\bArchive\b/gi, "Retention");

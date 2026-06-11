@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "workosnext.oam-kernel-generated.schema.v1",
+  "title": "Current OAM Generated Contract Schema",
+  "type": "object",
+  "required": ["generated", "doNotEdit", "kernelGraphHash", "sourceNodeRefs", "generatorVersion", "generatedFrom"],
+  "properties": {
+    "generated": { "const": true },
+    "doNotEdit": { "const": true },
+    "kernelGraphHash": { "type": "string", "pattern": "^sha256:[a-f0-9]{64}$" },
+    "sourceNodeRefs": { "type": "array", "minItems": 1 },
+    "generatorVersion": { "type": "string" },
+    "generatedFrom": { "type": "string" }
+  }
+}
