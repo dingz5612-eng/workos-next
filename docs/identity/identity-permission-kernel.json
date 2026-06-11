@@ -1,0 +1,38 @@
+{
+  "version": "identity.permission-kernel.v1",
+  "status": "authoritative",
+  "architecture": "oam.current",
+  "accountable": "00-OAM-Total-Control",
+  "kernel": "Identity / Permission Kernel",
+  "domainObjects": [
+    "Subject",
+    "Actor",
+    "Account",
+    "Role",
+    "Capability",
+    "PermissionEnvelope",
+    "DeviceSession",
+    "TenantMatch",
+    "Relationship"
+  ],
+  "forbidden": {
+    "requestSelfReportedDeviceTrustStatus": true,
+    "tenantMatchedFixedTrue": true,
+    "readSideOutputWithoutPermissionEnvelope": true
+  },
+  "required": {
+    "permissionEnvelopeRequiredForReadSideOutputs": true,
+    "deviceTrustStatusResolvedServerSide": true,
+    "tenantMatchResolvedFromServerContext": true
+  },
+  "requiredGates": [
+    "node scripts/check-account-actor-kernel.mjs",
+    "node scripts/trust/check-trust-boundary-kernel.mjs",
+    "node scripts/oam/check-cross-domain-conflict-rules.mjs"
+  ],
+  "negativeTests": [
+    "Request self-reported deviceTrustStatus accepted.",
+    "TenantMatched fixed true accepted.",
+    "Read-side output lacks PermissionEnvelope."
+  ]
+}

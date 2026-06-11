@@ -1,0 +1,34 @@
+{
+  "version": "oam.db-no-side-effects-proof.v1",
+  "status": "authoritative-current-no-go",
+  "rejectedPaths": [
+    "unresolved definition",
+    "unknown field",
+    "forbidden field",
+    "systemGenerated submitted",
+    "derived submitted",
+    "contextReadonly submitted",
+    "cardId business identity",
+    "missing evidence",
+    "invalid selectedStableRef",
+    "finance_kernel without admission"
+  ],
+  "noSideEffects": [
+    "no UnitOfWork commit",
+    "no CommandSubmission",
+    "no DomainEvent",
+    "no LedgerEntry",
+    "no Outbox",
+    "no confirmed transition",
+    "no next WorkItem dispatch",
+    "no Projection mutation",
+    "no Lens mutation",
+    "no Search read model mutation"
+  ],
+  "proofRefs": [
+    "services/core-api/WorkOS.Api/Runtime/CanonicalOperationsApiService.cs",
+    "tests/WorkOS.UnitTests/CanonicalOperationsApiServiceTests.cs",
+    "scripts/check-admission-kernel.mjs",
+    "scripts/oam/check-generated-contract-consistency.mjs"
+  ]
+}

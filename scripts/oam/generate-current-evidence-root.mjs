@@ -7,11 +7,16 @@ const root = process.cwd();
 const evidenceDir = "artifacts/oam/evidence";
 const finalReportPath = "artifacts/oam/final-report.json";
 const controlPlaneGateResultPath = "artifacts/oam/checks/control-plane-gate-results.json";
+const responsibilityMapPath = "docs/oam/current-oam-kernel-responsibility-map.json";
+const releaseEvidenceObjectPath = "artifacts/oam/evidence/current-oam-release-evidence-object.json";
 const digestPlaceholder = "__CURRENT_OAM_EVIDENCE_DIGEST__";
-const artifactName = "workosnext-current-oam-evidence-${{ github.run_id }}";
+const evidenceRootDigestPlaceholder = "__CURRENT_OAM_EVIDENCE_ROOT_DIGEST__";
+const ciRunId = env("GITHUB_RUN_ID") || "local";
+const artifactName = artifactNameForRun(ciRunId);
 
 const requiredEvidenceFiles = [
   "artifacts/oam/evidence/evidence-graph.json",
+  releaseEvidenceObjectPath,
   "artifacts/oam/evidence/execution-log.jsonl",
   "artifacts/oam/evidence/current-oam-final-report.json",
   "artifacts/oam/evidence/runtime-proof.json",
@@ -21,6 +26,29 @@ const requiredEvidenceFiles = [
   "artifacts/oam/evidence/high-risk-trust-proof.json",
   "artifacts/oam/evidence/master-design-proof.json",
   "artifacts/oam/evidence/master-outline-proof.json",
+  responsibilityMapPath,
+  "docs/oam/current-oam-cross-domain-conflict-rules.json",
+  "docs/oam/professional-ai-review-seats.json",
+  "docs/oam/codex-execution-channel-policy.json",
+  "docs/finance/finance-ledger-kernel.json",
+  "docs/oam/compiler-generated-contract-kernel.json",
+  "docs/identity/identity-permission-kernel.json",
+  "docs/oam/kernel/oam-kernel-source.schema.json",
+  "docs/oam/kernel/oam-kernel-generated.schema.json",
+  "docs/oam/kernel/oam-kernel-graph.generated.json",
+  "docs/contracts/generated/dormitory/dormitory-kernel.generated.manifest.json",
+  "docs/contracts/generated/dormitory/fields.generated.json",
+  "docs/contracts/generated/dormitory/workitems.generated.json",
+  "docs/contracts/generated/dormitory/surface-input-model.generated.json",
+  "docs/contracts/generated/dormitory/read-model.generated.json",
+  "apps/mobile/src/generated/oam/dormitory-surface-input-model.generated.json",
+  "docs/read-intelligence/read-intelligence-kernel.json",
+  "docs/read-intelligence/read-intelligence-kernel.schema.json",
+  "docs/oam/db-no-side-effects-proof.json",
+  "artifacts/oam/checks/kernel-responsibility-map-result.json",
+  "artifacts/oam/checks/professional-ai-review-seats-result.json",
+  "artifacts/oam/checks/codex-execution-channel-policy-result.json",
+  "artifacts/oam/checks/cross-domain-conflict-rules-result.json",
   "docs/oam/mobile-branch-risk-policy.json",
   "docs/oam/mobile-branch-risk-ledger.json",
   "docs/oam/mobile-critical-branch-scenarios.json",
@@ -34,8 +62,8 @@ const requiredEvidenceFiles = [
 const generatedAt = new Date().toISOString();
 const commitSha = env("GITHUB_SHA") || git("rev-parse HEAD") || "local";
 const branch = env("GITHUB_HEAD_REF") || env("GITHUB_REF_NAME") || git("branch --show-current") || "local";
-const ciRunId = env("GITHUB_RUN_ID") || "local";
 const admission = readJson("docs/oam/current-admission-state.json");
+const responsibilityMap = readJson(responsibilityMapPath);
 const p0Ledger = readP0Ledger("docs/system/oam-p0-rule-ledger.json");
 const workspace = workspaceStatus();
 const workspaceEvidence = workspaceEvidenceStatus(workspace);
@@ -49,6 +77,26 @@ const unresolvedP0 = p0Ledger.filter((item) => item.status !== "passed");
 const releaseReadiness = buildReleaseReadiness();
 const finalDecision = buildFinalDecision();
 const finalGoNoGo = finalDecision.finalGoNoGo;
+const workstreamProofNodes = buildWorkstreamProofNodes();
+const workstreamGoNoGoFields = buildWorkstreamGoNoGoFields(workstreamProofNodes);
+const forcedCurrentStageGoNoGo = {
+  businessProductionGoNoGo: "NO_GO",
+  dormitoryL2GoNoGo: "NO_GO",
+  productionConfirmGoNoGo: "NO_GO",
+  finalGoNoGo: "NO_GO"
+};
+const multiDimensionalGoNoGo = {
+  responsibilityGovernanceGoNoGo: "NO_GO",
+  evidenceBindingGoNoGo: "NO_GO",
+  kernelCompileGoNoGo: "NO_GO",
+  runtimeGateGoNoGo: "NO_GO",
+  workItemEffectGoNoGo: "NO_GO",
+  financeTruthGoNoGo: "NO_GO",
+  readIntelligenceGoNoGo: "NO_GO",
+  surfaceLanguageGoNoGo: "NO_GO",
+  releaseEvidenceGoNoGo: "NO_GO"
+};
+const p0ClosureProofNodes = buildP0ClosureProofNodes();
 
 const files = new Map();
 
@@ -259,6 +307,13 @@ const finalReport = {
   releaseReadiness,
   controlPlaneGateResult,
   finalDecision,
+  responsibilityMap: {
+    path: responsibilityMapPath,
+    workstreamCount: responsibilityMap.workstreams?.length ?? 0,
+    proofNodeCount: workstreamProofNodes.length,
+    forcedCurrentStage: responsibilityMap.forcedCurrentStage,
+    p0RuntimeSafetyCarryForward: responsibilityMap.p0RuntimeSafetyCarryForward ?? []
+  },
   authorityClosure: statusLine("权威闭环", "passed"),
   businessDefinitionClosure: statusLine("业务定义闭环", "passed"),
   surfaceLanguageClosure: statusLine("Surface 用户语义闭环", "passed"),
@@ -284,10 +339,15 @@ const finalReport = {
   businessProductionStatus: admission.businessProduction,
   dormitoryL2Status: admission.dormitoryProduction,
   productionConfirmAllowed: admission.productionConfirmAllowed,
+  ...workstreamGoNoGoFields,
+  ...multiDimensionalGoNoGo,
+  businessProductionGoNoGo: forcedCurrentStageGoNoGo.businessProductionGoNoGo,
+  dormitoryL2GoNoGo: forcedCurrentStageGoNoGo.dormitoryL2GoNoGo,
+  productionConfirmGoNoGo: forcedCurrentStageGoNoGo.productionConfirmGoNoGo,
   unresolvedP0,
   unresolvedP1: [],
   unresolvedP2: [],
-  finalGoNoGo,
+  finalGoNoGo: forcedCurrentStageGoNoGo.finalGoNoGo,
   noGoReasons: finalDecision.noGoReasons,
   nextStageAllowed: finalGoNoGo === "GO"
     ? "仅允许进入补强下一阶段准入证据和 P1/P2 收敛；不得进入 Business Production、Dormitory L2 或 production_confirm。"
@@ -323,44 +383,65 @@ const evidenceGraph = {
   controlPlaneGateResult,
   releaseReadiness,
   finalDecision,
+  responsibilityMap: {
+    path: responsibilityMapPath,
+    workstreamCount: responsibilityMap.workstreams?.length ?? 0
+  },
+  workstreamProofNodeCount: workstreamProofNodes.length,
   finalGoNoGo,
   nextStageAllowed: finalReport.nextStageAllowed,
-  nodes: realBrowserEvidence.nodes,
+  nodes: [
+    ...workstreamProofNodes,
+    ...p0ClosureProofNodes,
+    ...realBrowserEvidence.nodes
+  ],
   edges: realBrowserEvidence.edges
 };
 addEvidence("artifacts/oam/evidence/evidence-graph.json", evidenceGraph);
+const releaseEvidenceObject = {
+  ...proof("current-oam-release-evidence-object", "当前 OAM Release Evidence Object", {
+    currentAdmissionState: "docs/oam/current-admission-state.json",
+    releaseObjectPurpose: "Bind concrete CI run, artifact identity, evidence root digest, graph hash, and final report digest while current stage remains NO_GO."
+  }),
+  githubSha: commitSha,
+  githubRunId: ciRunId,
+  githubRefName: branch,
+  artifactName,
+  githubArtifactDigest: digestPlaceholder,
+  evidenceRootDigest: evidenceRootDigestPlaceholder,
+  kernelGraphHash: hashFileStrict("docs/oam/oam-kernel-graph.json"),
+  evidenceGraphHash: digestPlaceholder,
+  finalReportDigest: digestPlaceholder,
+  currentStage: {
+    businessProduction: admission.businessProduction,
+    dormitoryL2: admission.dormitoryProduction,
+    productionConfirmAllowed: admission.productionConfirmAllowed,
+    finalGoNoGo: forcedCurrentStageGoNoGo.finalGoNoGo
+  }
+};
+addEvidence(releaseEvidenceObjectPath, releaseEvidenceObject);
 addTextEvidence("artifacts/oam/evidence/execution-log.jsonl", executionLogText(digestPlaceholder));
 
-for (const [file, document] of files) {
-  writeJson(file, document);
+writeAllEvidence();
+
+let artifactDigest = "";
+let artifactDigestStable = false;
+for (let attempt = 0; attempt < 10; attempt += 1) {
+  refreshReleaseEvidenceObjectDigests();
+  const nextDigest = digestForDisk(requiredEvidenceFiles);
+  applyArtifactDigest(nextDigest);
+  writeAllEvidence();
+  const actualDigest = digestForDisk(requiredEvidenceFiles);
+  if (actualDigest === nextDigest) {
+    artifactDigest = nextDigest;
+    artifactDigestStable = true;
+    break;
+  }
+  artifactDigest = actualDigest;
 }
 
-let artifactDigest = digestForDisk(requiredEvidenceFiles);
-for (const [file, document] of files) {
-  if (typeof document === "string") {
-    files.set(file, document.replaceAll(digestPlaceholder, artifactDigest));
-  } else {
-    setDigest(document, artifactDigest);
-  }
-}
-
-for (const [file, document] of files) {
-  writeJson(file, document);
-}
-
-const finalDigest = digestForDisk(requiredEvidenceFiles);
-if (finalDigest !== artifactDigest) {
-  artifactDigest = finalDigest;
-  for (const [file, document] of files) {
-    if (typeof document === "string") {
-      files.set(file, document.replaceAll(/sha256:[a-f0-9]{64}|__CURRENT_OAM_EVIDENCE_DIGEST__/g, artifactDigest));
-    } else {
-      setDigest(document, artifactDigest);
-    }
-  }
-  for (const [file, document] of files) {
-    writeJson(file, document);
-  }
+if (!artifactDigestStable) {
+  throw new Error(`current OAM evidence artifact digest did not stabilize; last digest ${artifactDigest || "missing"}`);
 }
 
 console.log(`Current OAM evidence root generated: ${evidenceDir}`);
@@ -407,6 +488,33 @@ function addTextEvidence(file, text) {
   files.set(file, text);
 }
 
+function writeAllEvidence() {
+  for (const [file, document] of files) {
+    writeJson(file, document);
+  }
+}
+
+function refreshReleaseEvidenceObjectDigests() {
+  releaseEvidenceObject.evidenceRootDigest = digestForDisk(requiredEvidenceFiles.filter((file) => file !== releaseEvidenceObjectPath));
+  releaseEvidenceObject.evidenceGraphHash = digestForDisk(["artifacts/oam/evidence/evidence-graph.json"]);
+  releaseEvidenceObject.finalReportDigest = digestForDisk([finalReportPath]);
+  files.set(releaseEvidenceObjectPath, releaseEvidenceObject);
+  writeJson(releaseEvidenceObjectPath, releaseEvidenceObject);
+}
+
+function applyArtifactDigest(digest) {
+  for (const [file, document] of files) {
+    if (file === "artifacts/oam/evidence/execution-log.jsonl") {
+      files.set(file, executionLogText(digest));
+    } else if (typeof document === "string") {
+      files.set(file, document.replaceAll(digestPlaceholder, digest));
+    } else {
+      setDigest(document, digest);
+    }
+  }
+  releaseEvidenceObject.githubArtifactDigest = digest;
+}
+
 function setDigest(value, digest) {
   if (Array.isArray(value)) {
     for (const item of value) setDigest(item, digest);
@@ -448,14 +556,138 @@ function documentForDigest(file, document) {
 }
 
 function normalizeForDigest(value) {
-  if (typeof value === "string") return value.replaceAll(/sha256:[a-f0-9]{64}|__CURRENT_OAM_EVIDENCE_DIGEST__/g, digestPlaceholder);
+  if (typeof value === "string") return value.replaceAll(/sha256:[a-f0-9]{64}|__CURRENT_OAM_EVIDENCE_DIGEST__|__CURRENT_OAM_EVIDENCE_ROOT_DIGEST__/g, digestPlaceholder);
   if (Array.isArray(value)) return value.map(normalizeForDigest);
   if (!value || typeof value !== "object") return value;
   const output = {};
   for (const key of Object.keys(value).sort()) {
-    output[key] = key === "artifactDigest" ? digestPlaceholder : normalizeForDigest(value[key]);
+    output[key] = isDigestOrHashKey(key) ? digestPlaceholder : normalizeForDigest(value[key]);
   }
   return output;
+}
+
+function isDigestOrHashKey(key) {
+  return [
+    "artifactDigest",
+    "githubArtifactDigest",
+    "evidenceRootDigest",
+    "kernelGraphHash",
+    "evidenceGraphHash",
+    "finalReportDigest"
+  ].includes(key);
+}
+
+function buildWorkstreamProofNodes() {
+  return (responsibilityMap.workstreams ?? []).map((workstream) => {
+    const sources = [...new Set([
+      responsibilityMapPath,
+      ...(workstream.authorityFiles ?? []),
+      ...(workstream.evidence ?? [])
+    ])];
+    const sourceHashes = sources.map((file) => ({
+      path: file,
+      hash: hashFileIfPresent(file)
+    }));
+    const gateResult = summarizeWorkstreamGates(workstream.gates ?? []);
+    const negativeTestResult = finalGoNoGo === "GO" ? "passed" : "blocked";
+    const proofPayload = {
+      workstreamId: workstream.id,
+      name: workstream.name,
+      layer: workstream.layer,
+      sourceHashes,
+      gateResult,
+      negativeTestResult,
+      goNoGo: finalGoNoGo
+    };
+    return {
+      id: `workstream-proof.${workstream.id}`,
+      type: "workstream_proof",
+      status: finalGoNoGo === "GO" ? "passed" : "blocked",
+      workstreamId: workstream.id,
+      proofType: "current-oam-kernel-responsibility",
+      source: sources,
+      hash: `sha256:${sha256(JSON.stringify(normalizeForDigest(proofPayload)))}`,
+      dependsOn: sources,
+      gateResult,
+      negativeTestResult,
+      goNoGo: finalGoNoGo,
+      finalReportFields: workstream.finalReportFields ?? []
+    };
+  });
+}
+
+function buildWorkstreamGoNoGoFields(nodes) {
+  const result = {};
+  for (const node of nodes) {
+    for (const field of node.finalReportFields ?? []) {
+      result[field] = node.goNoGo;
+    }
+  }
+  return result;
+}
+
+function buildP0ClosureProofNodes() {
+  const dimensions = [
+    ["responsibility-governance", "responsibilityGovernanceGoNoGo", [responsibilityMapPath, "scripts/oam/check-kernel-responsibility-map.mjs"]],
+    ["evidence-binding", "evidenceBindingGoNoGo", ["scripts/oam/check-current-evidence-root.mjs", releaseEvidenceObjectPath]],
+    ["kernel-compile", "kernelCompileGoNoGo", ["scripts/oam/compile-current-kernel-graph.mjs", "docs/oam/kernel/oam-kernel-graph.generated.json"]],
+    ["runtime-gate", "runtimeGateGoNoGo", ["services/core-api/WorkOS.Api/Runtime/CanonicalOperationsApiService.cs", "scripts/check-admission-kernel.mjs"]],
+    ["workitem-effect", "workItemEffectGoNoGo", ["docs/business/domains/dormitory/dormitory-operating-kernel.json", "scripts/oam/check-generated-contract-consistency.mjs"]],
+    ["finance-truth", "financeTruthGoNoGo", ["docs/finance/finance-ledger-kernel.json", "scripts/finance/check-finance-semantic-truth.mjs"]],
+    ["read-intelligence", "readIntelligenceGoNoGo", ["docs/read-intelligence/read-intelligence-kernel.json", "scripts/oam/check-read-intelligence-kernel.mjs"]],
+    ["surface-language", "surfaceLanguageGoNoGo", ["apps/mobile/src/generated/oam/dormitory-surface-input-model.generated.json", "scripts/oam/check-surface-language-v2.mjs"]],
+    ["release-evidence", "releaseEvidenceGoNoGo", [releaseEvidenceObjectPath, "tests/WorkOS.ReleaseEvidenceTests/OamReleaseControlTests.cs"]]
+  ];
+  return dimensions.map(([id, field, sources]) => {
+    const payload = {
+      id,
+      field,
+      sources,
+      goNoGo: multiDimensionalGoNoGo[field],
+      finalGoNoGo
+    };
+    return {
+      id: `p0-closure-proof.${id}`,
+      type: "p0_closure_proof",
+      status: "blocked",
+      workstreamId: "00-current-oam-p0-closure",
+      proofType: "current-oam-branch-governed-p0-closure",
+      source: sources,
+      hash: `sha256:${sha256(JSON.stringify(normalizeForDigest(payload)))}`,
+      dependsOn: sources,
+      gateResult: { status: "bound", field },
+      negativeTestResult: "blocked",
+      goNoGo: multiDimensionalGoNoGo[field] ?? "NO_GO",
+      finalReportField: field
+    };
+  });
+}
+
+function summarizeWorkstreamGates(gates) {
+  const commands = gates.map((command) => {
+    const summary = gateSummary.commands.find((item) => item.command === command)
+      ?? testSummary.commands.find((item) => item.command === command);
+    return {
+      command,
+      status: summary?.status ?? "bound",
+      exitCode: summary?.exitCode ?? null
+    };
+  });
+  const statuses = new Set(commands.map((item) => item.status));
+  return {
+    status: statuses.has("failed") ? "failed" : statuses.has("missing") ? "missing" : statuses.has("required") ? "required" : "bound",
+    commands
+  };
+}
+
+function hashFileIfPresent(file) {
+  if (!file || file.startsWith("artifacts/oam/") && !fileExists(file)) {
+    return "missing";
+  }
+  if (!fileExists(file)) {
+    return "missing";
+  }
+  return `sha256:${sha256(readText(file))}`;
 }
 
 function buildGateSummary() {
@@ -487,6 +719,10 @@ function requiredGateCommands() {
     "node scripts/oam/check-p0-rule-ledger.mjs --self-test",
     "node scripts/oam/check-p0-rule-ledger.mjs",
     "node scripts/oam/check-current-authority-index.mjs",
+    "node scripts/oam/check-kernel-responsibility-map.mjs",
+    "node scripts/oam/check-professional-ai-review-seats.mjs",
+    "node scripts/oam/check-codex-execution-channel-policy.mjs",
+    "node scripts/oam/check-cross-domain-conflict-rules.mjs",
     "node scripts/oam/check-system-operating-kernel.mjs",
     "node scripts/oam/check-oam-kernel-graph.mjs",
     "node scripts/oam/check-file-lifecycle-policy.mjs",
@@ -716,15 +952,28 @@ function buildFinalDecision() {
   if (mobileBranchRiskKernel.status !== "passed") {
     noGoReasons.push(`移动端分支风险门禁未通过：${mobileBranchRiskKernel.status}`);
   }
+  if (realBrowserEvidence.summary.status !== "passed") {
+    noGoReasons.push(`真实浏览器证据未通过或已过期：${realBrowserEvidence.summary.status}`);
+  }
   if (coverageSummary.status === "pending_coverage_command") {
     noGoReasons.push("覆盖率报告缺失或未执行。");
   }
   if (!releaseReadiness.releaseEligible) {
     noGoReasons.push("工作区仍有未提交的当前源码/文档变更或删除项，不符合发布放行条件。");
   }
+  if (admission.businessProduction !== "BLOCKED") {
+    noGoReasons.push(`Business Production 状态必须保持 BLOCKED，实际：${admission.businessProduction}`);
+  }
+  if (admission.dormitoryProduction !== "BLOCKED") {
+    noGoReasons.push(`Dormitory L2 状态必须保持 BLOCKED，实际：${admission.dormitoryProduction}`);
+  }
+  if (admission.productionConfirmAllowed !== false) {
+    noGoReasons.push("production_confirm 当前阶段必须保持阻断。");
+  }
+  noGoReasons.push("当前阶段显式阻断：businessProductionGoNoGo、dormitoryL2GoNoGo、productionConfirmGoNoGo、finalGoNoGo 均为 NO_GO。");
 
   return {
-    finalGoNoGo: noGoReasons.length === 0 ? "GO" : "NO_GO",
+    finalGoNoGo: "NO_GO",
     noGoReasons
   };
 }
@@ -1082,6 +1331,18 @@ function git(command) {
 
 function env(name) {
   return process.env[name] || "";
+}
+
+function artifactNameForRun(runId) {
+  const normalized = String(runId || "").trim();
+  if (!normalized || normalized.includes("${{")) {
+    throw new Error("GITHUB_RUN_ID must resolve before current OAM evidence artifactName is generated.");
+  }
+  return `workosnext-current-oam-evidence-${normalized}`;
+}
+
+function hashFileStrict(file) {
+  return `sha256:${sha256(readText(file))}`;
 }
 
 function sha256(value) {

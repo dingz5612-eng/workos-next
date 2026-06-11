@@ -1,0 +1,953 @@
+{
+  "version": "oam.current-kernel-responsibility-map.v1",
+  "status": "authoritative",
+  "architecture": "oam.current",
+  "latestReviewedMain": "f5a64ed",
+  "currentStatus": "NO_GO",
+  "nextStageAllowed": false,
+  "accountabilityModel": {
+    "accountableAuthority": "00-OAM-Total-Control",
+    "reviewSeats": [
+      "01｜产品业务",
+      "02｜架构运行时",
+      "03｜体验语言",
+      "04｜搜索数据",
+      "05｜安全发布",
+      "06｜质量证据"
+    ],
+    "reviewSeatRule": "01-06 may appear only in responsible or consulted; they never become accountable.",
+    "executionChannelRule": "Codex Execution is an execution channel only, not a governance workstream."
+  },
+  "layers": [
+    "Authority Layer",
+    "Runtime Layer",
+    "Experience-Read Layer",
+    "Release-Evidence Layer"
+  ],
+  "executionChannels": [
+    {
+      "id": "codex-execution",
+      "name": "Codex Execution",
+      "governanceDomain": false,
+      "policy": "docs/oam/codex-execution-channel-policy.json"
+    }
+  ],
+  "finalReportRequiredFields": [
+    "architectureAuthorityGoNoGo",
+    "productBusinessGoNoGo",
+    "truthOwnershipGoNoGo",
+    "compatibilityBoxGoNoGo",
+    "cleanupArchiveGoNoGo",
+    "admissionKernelGoNoGo",
+    "operationsRuntimeGoNoGo",
+    "financeLedgerGoNoGo",
+    "identityPermissionGoNoGo",
+    "securityTrustGoNoGo",
+    "controlPlaneGoNoGo",
+    "experienceKernelGoNoGo",
+    "languageKernelGoNoGo",
+    "searchKernelGoNoGo",
+    "dataKpiGoNoGo",
+    "compilerGeneratedContractGoNoGo",
+    "evidenceGraphGoNoGo",
+    "businessProductionGoNoGo",
+    "dormitoryL2GoNoGo",
+    "productionConfirmGoNoGo",
+    "finalGoNoGo",
+    "responsibilityGovernanceGoNoGo",
+    "evidenceBindingGoNoGo",
+    "kernelCompileGoNoGo",
+    "runtimeGateGoNoGo",
+    "workItemEffectGoNoGo",
+    "financeTruthGoNoGo",
+    "readIntelligenceGoNoGo",
+    "surfaceLanguageGoNoGo",
+    "releaseEvidenceGoNoGo"
+  ],
+  "forcedCurrentStage": {
+    "businessProductionGoNoGo": "NO_GO",
+    "dormitoryL2GoNoGo": "NO_GO",
+    "productionConfirmGoNoGo": "NO_GO",
+    "finalGoNoGo": "NO_GO"
+  },
+  "p0RuntimeSafetyCarryForward": [
+    "Canonical unresolved hard gate immediately follows definitions.Resolve.",
+    "Hard gate runs before admission.EvaluateConfirm.",
+    "cardId remains UI-route-only.",
+    "Command definition fallback is deleted or protected by resolved-only invariant.",
+    "No-side-effects integration tests remain required.",
+    "current-oam-release-evidence-object.json remains a next-round required artifact.",
+    "artifactName must bind a concrete GITHUB_RUN_ID before release GO.",
+    "ReleaseAdmissionPolicy consumes current-admission-state.",
+    "VerifiedDeviceTrustContext is resolved server-side.",
+    "Read Intelligence Kernel keeps a minimum model.",
+    "Generated contract minimum layer remains required."
+  ],
+  "workstreams": [
+    {
+      "id": "architecture-authority",
+      "name": "Architecture Authority",
+      "layer": "Authority Layer",
+      "scope": "Owns current OAM architecture authority, current authority index, system map, and architecture manifest.",
+      "nonScope": [
+        "Business feature design",
+        "Runtime implementation",
+        "Release GO override"
+      ],
+      "accountable": "00-OAM-Total-Control",
+      "responsible": [
+        "02｜架构运行时",
+        "06｜质量证据"
+      ],
+      "consulted": [
+        "01｜产品业务",
+        "05｜安全发布"
+      ],
+      "informed": [
+        "Codex Execution"
+      ],
+      "authorityFiles": [
+        "docs/oam/current-architecture.md",
+        "docs/oam/current-architecture.manifest.json",
+        "docs/oam/current-authority-index.json",
+        "docs/contracts/oam.current.json"
+      ],
+      "forbidden": [
+        "Parallel architecture source",
+        "01-06 accountable override",
+        "Codex architecture interpretation"
+      ],
+      "gates": [
+        "node scripts/oam/check-current-oam.mjs",
+        "node scripts/oam/check-current-authority-index.mjs",
+        "node scripts/oam/check-kernel-responsibility-map.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/master-design-proof.json",
+        "artifacts/oam/evidence/evidence-graph.json"
+      ],
+      "negativeTests": [
+        "Accountable changed away from 00",
+        "Codex Execution added as a workstream",
+        "Architecture authority split across unregistered files"
+      ],
+      "finalReportFields": [
+        "architectureAuthorityGoNoGo"
+      ]
+    },
+    {
+      "id": "product-business",
+      "name": "Product / Business",
+      "layer": "Authority Layer",
+      "scope": "Owns product capability meaning, business line admission meaning, and current business contract interpretation.",
+      "nonScope": [
+        "Finance ledger truth",
+        "Permission envelope truth",
+        "Production enablement"
+      ],
+      "accountable": "00-OAM-Total-Control",
+      "responsible": [
+        "01｜产品业务"
+      ],
+      "consulted": [
+        "02｜架构运行时",
+        "06｜质量证据"
+      ],
+      "informed": [
+        "Codex Execution"
+      ],
+      "authorityFiles": [
+        "docs/business/business-line-registry.json",
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/contracts/business/oam-business-object-field-registry.json"
+      ],
+      "forbidden": [
+        "Direct ledger truth ownership",
+        "Direct permission truth ownership",
+        "Dormitory L2 promotion"
+      ],
+      "gates": [
+        "node scripts/check-business-line-admission.mjs",
+        "node scripts/business/check-dormitory-operating-kernel.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/master-design-proof.json"
+      ],
+      "negativeTests": [
+        "Business contract declares production_confirm allowed",
+        "Dormitory business basis becomes finance truth",
+        "Business write bypasses Operations Runtime"
+      ],
+      "finalReportFields": [
+        "productBusinessGoNoGo"
+      ]
+    },
+    {
+      "id": "truth-ownership",
+      "name": "Truth Ownership",
+      "layer": "Authority Layer",
+      "scope": "Owns source-of-truth assignment, non-owner prohibition, and current fact authority boundaries.",
+      "nonScope": [
+        "Read-side display wording",
+        "Search ranking",
+        "Evidence artifact authorship"
+      ],
+      "accountable": "00-OAM-Total-Control",
+      "responsible": [
+        "02｜架构运行时",
+        "06｜质量证据"
+      ],
+      "consulted": [
+        "01｜产品业务",
+        "04｜搜索数据"
+      ],
+      "informed": [
+        "Codex Execution"
+      ],
+      "authorityFiles": [
+        "docs/business/truth-owner-registry.yml",
+        "docs/oam/current-authority-index.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "forbidden": [
+        "Generated file as source truth",
+        "Evidence Graph replacing OAM Kernel Graph",
+        "Dashboard or KPI owning finance truth"
+      ],
+      "gates": [
+        "node scripts/check-truth-owners.mjs",
+        "node scripts/oam/check-oam-kernel-graph.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/truth-ownership-proof.json"
+      ],
+      "negativeTests": [
+        "Generated contract marked source truth",
+        "Evidence asset declares current fact authority",
+        "Data KPI owns ledger fact"
+      ],
+      "finalReportFields": [
+        "truthOwnershipGoNoGo"
+      ]
+    },
+    {
+      "id": "compatibility-box",
+      "name": "Compatibility Box",
+      "layer": "Authority Layer",
+      "scope": "Owns explicitly allowed read-side bridge terms and prevents bridge terms from becoming write authority.",
+      "nonScope": [
+        "Old stage preservation",
+        "Business production opening",
+        "Unbounded route fallback"
+      ],
+      "accountable": "00-OAM-Total-Control",
+      "responsible": [
+        "02｜架构运行时"
+      ],
+      "consulted": [
+        "03｜体验语言",
+        "04｜搜索数据"
+      ],
+      "informed": [
+        "Codex Execution"
+      ],
+      "authorityFiles": [
+        "docs/oam/current-authority-index.json",
+        "docs/contracts/runtime-surface-policy.json"
+      ],
+      "forbidden": [
+        "Search or Surface visible means confirmAllowed",
+        "Bridge term owns business fact",
+        "UI route identifier becomes command identity"
+      ],
+      "gates": [
+        "node scripts/oam/check-current-authority-index.mjs",
+        "node scripts/check-admission-surface-alignment.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/search-readonly-proof.json",
+        "artifacts/oam/evidence/surface-language-proof.json"
+      ],
+      "negativeTests": [
+        "cardId used outside UI route identity",
+        "visible interpreted as confirmAllowed",
+        "read-side bridge bypasses Admission Kernel"
+      ],
+      "finalReportFields": [
+        "compatibilityBoxGoNoGo"
+      ]
+    },
+    {
+      "id": "cleanup-archive",
+      "name": "Cleanup / Archive",
+      "layer": "Authority Layer",
+      "scope": "Owns file lifecycle, deletion proof, and current-only retention of authority material.",
+      "nonScope": [
+        "Historical stage restoration",
+        "Runtime behavior change",
+        "Business feature deletion"
+      ],
+      "accountable": "00-OAM-Total-Control",
+      "responsible": [
+        "06｜质量证据"
+      ],
+      "consulted": [
+        "02｜架构运行时",
+        "05｜安全发布"
+      ],
+      "informed": [
+        "Codex Execution"
+      ],
+      "authorityFiles": [
+        "docs/oam/file-lifecycle-policy.json",
+        "docs/oam/current-engineering-ledger.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "forbidden": [
+        "Unregistered retained file",
+        "Grey history bucket",
+        "Evidence deletion without replacement proof"
+      ],
+      "gates": [
+        "node scripts/oam/check-file-lifecycle-policy.mjs",
+        "node scripts/oam/check-current-engineering-ledger.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/checks/file-lifecycle-policy-result.json",
+        "artifacts/oam/checks/current-engineering-ledger-result.json"
+      ],
+      "negativeTests": [
+        "Current file missing File node",
+        "Unregistered authority file retained",
+        "Deletion proof gate missing"
+      ],
+      "finalReportFields": [
+        "cleanupArchiveGoNoGo"
+      ]
+    },
+    {
+      "id": "admission-kernel",
+      "name": "Admission Kernel",
+      "layer": "Runtime Layer",
+      "scope": "Owns admission decision, hard gates, confirm eligibility, and current admission state consumption.",
+      "nonScope": [
+        "Business object truth",
+        "Finance ledger posting",
+        "Read-side display"
+      ],
+      "accountable": "00-OAM-Total-Control",
+      "responsible": [
+        "02｜架构运行时",
+        "05｜安全发布"
+      ],
+      "consulted": [
+        "01｜产品业务",
+        "06｜质量证据"
+      ],
+      "informed": [
+        "Codex Execution"
+      ],
+      "authorityFiles": [
+        "docs/contracts/admission/admission-matrix.json",
+        "docs/contracts/admission/current-admission-state-contract.json",
+        "docs/oam/current-admission-state.json"
+      ],
+      "forbidden": [
+        "Admission bypass",
+        "Search visible as confirmAllowed",
+        "production_confirm allowed in current stage"
+      ],
+      "gates": [
+        "node scripts/check-admission-kernel.mjs",
+        "node scripts/check-business-line-admission.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/high-risk-trust-proof.json"
+      ],
+      "negativeTests": [
+        "Gate after admission.EvaluateConfirm",
+        "ReleaseAdmissionPolicy ignores current-admission-state",
+        "productionConfirmAllowed true"
+      ],
+      "finalReportFields": [
+        "admissionKernelGoNoGo"
+      ]
+    },
+    {
+      "id": "operations-runtime",
+      "name": "Operations Runtime",
+      "layer": "Runtime Layer",
+      "scope": "Owns command execution, Unit of Work, domain event emission, and business write closure.",
+      "nonScope": [
+        "Ledger truth creation outside finance kernel",
+        "Search read-model ownership",
+        "Surface route ownership"
+      ],
+      "accountable": "00-OAM-Total-Control",
+      "responsible": [
+        "02｜架构运行时"
+      ],
+      "consulted": [
+        "01｜产品业务",
+        "05｜安全发布",
+        "06｜质量证据"
+      ],
+      "informed": [
+        "Codex Execution"
+      ],
+      "authorityFiles": [
+        "docs/contracts/oam.current.json",
+        "docs/contracts/definition/workitem-definition-registry.json",
+        "services/core-api/WorkOS.Api/Runtime/OperationsContracts.cs",
+        "services/core-api/WorkOS.Api/Runtime/CanonicalOperationsApiService.cs",
+        "services/core-api/WorkOS.Api/Runtime/AdmissionKernelService.cs"
+      ],
+      "forbidden": [
+        "Business write outside Operations Runtime",
+        "Unresolved definition confirm",
+        "Command definition fallback without resolved-only invariant"
+      ],
+      "gates": [
+        "node scripts/check-runtime-write-paths.mjs",
+        "dotnet test tests/WorkOS.RuntimeIntegrationTests/WorkOS.RuntimeIntegrationTests.csproj -c Release",
+        "node scripts/check-admission-kernel.mjs",
+        "node scripts/oam/check-db-no-side-effects-proof.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/runtime-proof.json",
+        "docs/oam/db-no-side-effects-proof.json"
+      ],
+      "negativeTests": [
+        "No-side-effects tests fail",
+        "Unresolved hard gate missing",
+        "Business write route not in Unit of Work"
+      ],
+      "finalReportFields": [
+        "operationsRuntimeGoNoGo",
+        "runtimeGateGoNoGo"
+      ]
+    },
+    {
+      "id": "finance-ledger-kernel",
+      "name": "Finance / Ledger Kernel",
+      "layer": "Runtime Layer",
+      "scope": "Owns finance truth, ledger effects, ledger posting admission, and finance semantic closure.",
+      "nonScope": [
+        "Dormitory business basis",
+        "Shared receipt display",
+        "Dashboard summary"
+      ],
+      "accountable": "00-OAM-Total-Control",
+      "responsible": [
+        "02｜架构运行时",
+        "05｜安全发布"
+      ],
+      "consulted": [
+        "01｜产品业务",
+        "06｜质量证据"
+      ],
+      "informed": [
+        "Codex Execution"
+      ],
+      "authorityFiles": [
+        "docs/finance/finance-ledger-kernel.json",
+        "docs/finance/finance-semantic-truth-kernel.yml",
+        "docs/business/finance/ledger-semantic-rules.yml"
+      ],
+      "forbidden": [
+        "Dormitory business basis as finance truth",
+        "SharedReceipt as finance truth",
+        "DashboardSummary as finance truth",
+        "Data KPI as ledger owner"
+      ],
+      "gates": [
+        "node scripts/check-finance-truth.mjs",
+        "node scripts/finance/check-finance-semantic-truth.mjs",
+        "node scripts/oam/check-cross-domain-conflict-rules.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/truth-ownership-proof.json"
+      ],
+      "negativeTests": [
+        "LedgerEntry bypasses Finance / Ledger Kernel",
+        "ledgerEffect.mode outside allowed enum",
+        "Dashboard summary mutates ledger"
+      ],
+      "finalReportFields": [
+        "financeLedgerGoNoGo",
+        "financeTruthGoNoGo"
+      ]
+    },
+    {
+      "id": "identity-permission-kernel",
+      "name": "Identity / Permission Kernel",
+      "layer": "Runtime Layer",
+      "scope": "Owns Subject, Actor, Account, Role, Capability, PermissionEnvelope, DeviceSession, TenantMatch, and Relationship.",
+      "nonScope": [
+        "Business fact ownership",
+        "Finance ledger truth",
+        "Search ranking ownership"
+      ],
+      "accountable": "00-OAM-Total-Control",
+      "responsible": [
+        "02｜架构运行时",
+        "05｜安全发布"
+      ],
+      "consulted": [
+        "03｜体验语言",
+        "04｜搜索数据",
+        "06｜质量证据"
+      ],
+      "informed": [
+        "Codex Execution"
+      ],
+      "authorityFiles": [
+        "docs/identity/identity-permission-kernel.json",
+        "docs/contracts/admission/actor-device-admission-contract.json",
+        "docs/contracts/language/permission-explainability-contract.json"
+      ],
+      "forbidden": [
+        "Request self-reported deviceTrustStatus",
+        "TenantMatched fixed true",
+        "Read-side output without PermissionEnvelope"
+      ],
+      "gates": [
+        "node scripts/check-account-actor-kernel.mjs",
+        "node scripts/trust/check-trust-boundary-kernel.mjs",
+        "node scripts/oam/check-cross-domain-conflict-rules.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/high-risk-trust-proof.json"
+      ],
+      "negativeTests": [
+        "Client-supplied device trust accepted",
+        "Tenant match hard-coded true",
+        "Search result lacks PermissionEnvelope"
+      ],
+      "finalReportFields": [
+        "identityPermissionGoNoGo"
+      ]
+    },
+    {
+      "id": "security-trust",
+      "name": "Security / Trust",
+      "layer": "Runtime Layer",
+      "scope": "Owns high-risk trust checks, device trust resolution, tenant isolation, and security evidence.",
+      "nonScope": [
+        "Product approval",
+        "Search relevance",
+        "Surface copy"
+      ],
+      "accountable": "00-OAM-Total-Control",
+      "responsible": [
+        "05｜安全发布"
+      ],
+      "consulted": [
+        "02｜架构运行时",
+        "06｜质量证据"
+      ],
+      "informed": [
+        "Codex Execution"
+      ],
+      "authorityFiles": [
+        "docs/trust/trust-boundary-kernel.yml",
+        "docs/trust/device-session-tenant-scope-contract.yml",
+        "docs/contracts/admission/actor-device-admission-contract.json"
+      ],
+      "forbidden": [
+        "Client trusted device status",
+        "Cross-tenant evidence access",
+        "High-risk action without verified device trust"
+      ],
+      "gates": [
+        "node scripts/trust/check-trust-boundary-kernel.mjs",
+        "dotnet test tests/WorkOS.DatabaseSecurityTests/WorkOS.DatabaseSecurityTests.csproj -c Release"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/high-risk-trust-proof.json"
+      ],
+      "negativeTests": [
+        "Wrong-tenant evidence confirm accepted",
+        "Untrusted device evidence access allowed",
+        "VerifiedDeviceTrustContext missing server resolution"
+      ],
+      "finalReportFields": [
+        "securityTrustGoNoGo"
+      ]
+    },
+    {
+      "id": "control-plane",
+      "name": "Control Plane",
+      "layer": "Runtime Layer",
+      "scope": "Owns OAM total gate execution, CI parity, release control state, and fail-closed command governance.",
+      "nonScope": [
+        "Business write facts",
+        "Search read facts",
+        "01-06 final execution instruction"
+      ],
+      "accountable": "00-OAM-Total-Control",
+      "responsible": [
+        "05｜安全发布",
+        "06｜质量证据"
+      ],
+      "consulted": [
+        "02｜架构运行时"
+      ],
+      "informed": [
+        "Codex Execution"
+      ],
+      "authorityFiles": [
+        "scripts/oam/run-control-plane-checks.ps1",
+        ".github/workflows/ci.yml",
+        "docs/oam/system-change-governance-contract.json"
+      ],
+      "forbidden": [
+        "Local gate weaker than CI",
+        "Missing required checker",
+        "Manual GO override"
+      ],
+      "gates": [
+        "pwsh -NoProfile -ExecutionPolicy Bypass -File scripts/oam/run-control-plane-checks.ps1",
+        "node scripts/oam/check-system-change-governance.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/checks/control-plane-gate-results.json"
+      ],
+      "negativeTests": [
+        "Required gate absent from CI",
+        "Control plane result stale",
+        "Any P0 not forcing NO_GO"
+      ],
+      "finalReportFields": [
+        "controlPlaneGoNoGo"
+      ]
+    },
+    {
+      "id": "experience-kernel",
+      "name": "Experience Kernel",
+      "layer": "Experience-Read Layer",
+      "scope": "Owns user-facing workflow ergonomics, route-only display behavior, and read-side surface experience.",
+      "nonScope": [
+        "Business confirmation",
+        "Finance truth",
+        "Permission truth"
+      ],
+      "accountable": "00-OAM-Total-Control",
+      "responsible": [
+        "03｜体验语言"
+      ],
+      "consulted": [
+        "01｜产品业务",
+        "02｜架构运行时",
+        "06｜质量证据"
+      ],
+      "informed": [
+        "Codex Execution"
+      ],
+      "authorityFiles": [
+        "docs/surface/surface-experience-contract.yml",
+        "docs/contracts/frontend-experience/frontend-experience-system-contract.json",
+        "apps/mobile/src/experienceContract.js",
+        "apps/mobile/src/generated/oam/dormitory-surface-input-model.generated.json",
+        "docs/contracts/generated/dormitory/surface-input-model.generated.json"
+      ],
+      "forbidden": [
+        "Surface visible as confirmAllowed",
+        "cardId as business command identity",
+        "User-facing text implies production confirm"
+      ],
+      "gates": [
+        "node scripts/check-experience-contract.mjs",
+        "node scripts/surface/check-surface-experience-contract.mjs",
+        "npm --prefix apps/mobile run test",
+        "node scripts/oam/check-read-intelligence-kernel.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/surface-language-proof.json",
+        "apps/mobile/src/generated/oam/dormitory-surface-input-model.generated.json"
+      ],
+      "negativeTests": [
+        "UI route id used for business write",
+        "Surface copy opens production flow",
+        "Read-side surface mutates business fact"
+      ],
+      "finalReportFields": [
+        "experienceKernelGoNoGo",
+        "surfaceLanguageGoNoGo"
+      ]
+    },
+    {
+      "id": "language-kernel",
+      "name": "Language Kernel",
+      "layer": "Experience-Read Layer",
+      "scope": "Owns visible language, multi-locale terminology, and user-facing explanation safety.",
+      "nonScope": [
+        "Admission decision",
+        "Search ranking",
+        "Ledger posting"
+      ],
+      "accountable": "00-OAM-Total-Control",
+      "responsible": [
+        "03｜体验语言"
+      ],
+      "consulted": [
+        "01｜产品业务",
+        "04｜搜索数据",
+        "06｜质量证据"
+      ],
+      "informed": [
+        "Codex Execution"
+      ],
+      "authorityFiles": [
+        "docs/contracts/language/language-contract.json",
+        "docs/contracts/language/surface-copy-catalog.json",
+        "docs/contracts/language/permission-explainability-contract.json"
+      ],
+      "forbidden": [
+        "Ready means confirmAllowed",
+        "Receipt means production release",
+        "Ordinary user sees internal runtime terms"
+      ],
+      "gates": [
+        "node scripts/check-language-kernel.mjs",
+        "node scripts/oam/check-surface-language-v2.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/surface-language-proof.json"
+      ],
+      "negativeTests": [
+        "Visible copy contains production confirmation promise",
+        "Internal runtime term exposed to ordinary user",
+        "Permission explanation missing envelope"
+      ],
+      "finalReportFields": [
+        "languageKernelGoNoGo"
+      ]
+    },
+    {
+      "id": "search-kernel",
+      "name": "Search Kernel",
+      "layer": "Experience-Read Layer",
+      "scope": "Owns search read model, result permissions, lineage, freshness, and read-only behavior.",
+      "nonScope": [
+        "Business write",
+        "Admission confirmation",
+        "Finance ledger truth"
+      ],
+      "accountable": "00-OAM-Total-Control",
+      "responsible": [
+        "04｜搜索数据"
+      ],
+      "consulted": [
+        "02｜架构运行时",
+        "03｜体验语言",
+        "06｜质量证据"
+      ],
+      "informed": [
+        "Codex Execution"
+      ],
+      "authorityFiles": [
+        "docs/contracts/search/search-contract.json",
+        "docs/contracts/search/search-result-schema.json",
+        "docs/contracts/search/search-permission-policy.json",
+        "docs/read-intelligence/read-intelligence-kernel.json",
+        "docs/contracts/generated/dormitory/read-model.generated.json"
+      ],
+      "forbidden": [
+        "Search result writes business fact",
+        "Search visible means confirmAllowed",
+        "Search result without generated read model"
+      ],
+      "gates": [
+        "node scripts/check-search-kernel.mjs",
+        "node scripts/oam/check-cross-domain-conflict-rules.mjs",
+        "node scripts/oam/check-read-intelligence-kernel.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/search-readonly-proof.json",
+        "docs/read-intelligence/read-intelligence-kernel.json"
+      ],
+      "negativeTests": [
+        "Search result exposes confirm action as allowed",
+        "Search result lacks source lineage",
+        "Search result consumes human-maintained contract instead of generated read model"
+      ],
+      "finalReportFields": [
+        "searchKernelGoNoGo",
+        "readIntelligenceGoNoGo"
+      ]
+    },
+    {
+      "id": "data-kpi",
+      "name": "Data / KPI",
+      "layer": "Experience-Read Layer",
+      "scope": "Owns KPI read derivation, sourceFacts lineage, and non-authoritative analytics display.",
+      "nonScope": [
+        "Ledger write",
+        "Business fact write",
+        "Permission decision"
+      ],
+      "accountable": "00-OAM-Total-Control",
+      "responsible": [
+        "04｜搜索数据"
+      ],
+      "consulted": [
+        "01｜产品业务",
+        "02｜架构运行时",
+        "06｜质量证据"
+      ],
+      "informed": [
+        "Codex Execution"
+      ],
+      "authorityFiles": [
+        "docs/contracts/bi-kpi/bi-kpi-contract.json",
+        "docs/business/dormitory/metric-formula-contract.yml",
+        "docs/business/domains/dormitory/dormitory-observability-contract.json"
+      ],
+      "forbidden": [
+        "KPI owns source fact",
+        "Dashboard summary owns finance truth",
+        "KPI without sourceFacts lineage"
+      ],
+      "gates": [
+        "node scripts/business/check-dormitory-metrics-lens-contract.mjs",
+        "node scripts/oam/check-cross-domain-conflict-rules.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/search-readonly-proof.json"
+      ],
+      "negativeTests": [
+        "KPI missing sourceFacts lineage",
+        "KPI writes ledger effect",
+        "Dashboard summary promoted to truth owner"
+      ],
+      "finalReportFields": [
+        "dataKpiGoNoGo"
+      ]
+    },
+    {
+      "id": "compiler-generated-contract-kernel",
+      "name": "Compiler / Generated Contract Kernel",
+      "layer": "Release-Evidence Layer",
+      "scope": "Owns source kernel to generated contract compilation and do-not-edit generated metadata.",
+      "nonScope": [
+        "Human-maintained source kernel ownership",
+        "Runtime write execution",
+        "Manual generated file edits"
+      ],
+      "accountable": "00-OAM-Total-Control",
+      "responsible": [
+        "02｜架构运行时",
+        "06｜质量证据"
+      ],
+      "consulted": [
+        "03｜体验语言",
+        "04｜搜索数据",
+        "05｜安全发布"
+      ],
+      "informed": [
+        "Codex Execution"
+      ],
+      "authorityFiles": [
+        "docs/oam/compiler-generated-contract-kernel.json",
+        "docs/oam/system-derived-contracts.json",
+        "scripts/oam/generate-system-derived-contracts.mjs",
+        "docs/oam/kernel/oam-kernel-source.schema.json",
+        "docs/oam/kernel/oam-kernel-generated.schema.json",
+        "docs/oam/kernel/oam-kernel-graph.generated.json",
+        "docs/contracts/generated/dormitory/dormitory-kernel.generated.manifest.json",
+        "docs/contracts/generated/dormitory/fields.generated.json",
+        "docs/contracts/generated/dormitory/workitems.generated.json",
+        "docs/contracts/generated/dormitory/surface-input-model.generated.json",
+        "docs/contracts/generated/dormitory/read-model.generated.json"
+      ],
+      "forbidden": [
+        "Generated file marked source truth",
+        "Generated file manually edited",
+        "Runtime / Surface / Search consume human source instead of generated contract"
+      ],
+      "gates": [
+        "node scripts/oam/generate-system-derived-contracts.mjs",
+        "node scripts/oam/check-derived-contract-consistency.mjs",
+        "node scripts/oam/check-cross-domain-conflict-rules.mjs",
+        "node scripts/oam/compile-current-kernel-graph.mjs",
+        "node scripts/oam/check-generated-contract-consistency.mjs",
+        "node scripts/oam/check-generated-files-not-manually-edited.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/checks/derived-contract-consistency-result.json",
+        "artifacts/oam/evidence/evidence-graph.json",
+        "docs/contracts/generated/dormitory/dormitory-kernel.generated.manifest.json",
+        "docs/oam/kernel/oam-kernel-graph.generated.json"
+      ],
+      "negativeTests": [
+        "generated=true missing",
+        "doNotEdit=true missing",
+        "kernelGraphHash missing",
+        "sourceNodeRefs missing"
+      ],
+      "finalReportFields": [
+        "compilerGeneratedContractGoNoGo",
+        "kernelCompileGoNoGo",
+        "workItemEffectGoNoGo"
+      ]
+    },
+    {
+      "id": "evidence-graph",
+      "name": "Evidence Graph",
+      "layer": "Release-Evidence Layer",
+      "scope": "Owns proof nodes, evidence refs, hashes, gate results, negative test results, and final report binding.",
+      "nonScope": [
+        "OAM Kernel Graph replacement",
+        "Business fact ownership",
+        "Manual GO decision"
+      ],
+      "accountable": "00-OAM-Total-Control",
+      "responsible": [
+        "05｜安全发布",
+        "06｜质量证据"
+      ],
+      "consulted": [
+        "02｜架构运行时"
+      ],
+      "informed": [
+        "Codex Execution"
+      ],
+      "authorityFiles": [
+        "docs/contracts/evidence/evidence-graph-refs-contract.json",
+        "scripts/oam/generate-current-evidence-root.mjs",
+        "scripts/oam/check-current-evidence-root.mjs",
+        "artifacts/oam/evidence/current-oam-release-evidence-object.json",
+        "docs/oam/db-no-side-effects-proof.json"
+      ],
+      "forbidden": [
+        "Evidence Graph replaces OAM Kernel Graph",
+        "Proof node without hash",
+        "Final Report missing workstream Go/No-Go"
+      ],
+      "gates": [
+        "node scripts/oam/generate-current-evidence-root.mjs",
+        "node scripts/oam/check-current-evidence-root.mjs",
+        "node scripts/oam/check-kernel-responsibility-map.mjs",
+        "node scripts/oam/check-db-no-side-effects-proof.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/evidence/evidence-graph.json",
+        "artifacts/oam/final-report.json",
+        "artifacts/oam/evidence/current-oam-release-evidence-object.json",
+        "docs/oam/db-no-side-effects-proof.json"
+      ],
+      "negativeTests": [
+        "Workstream proof node missing",
+        "Proof node dependsOn missing",
+        "Final report digest missing on release GO"
+      ],
+      "finalReportFields": [
+        "evidenceGraphGoNoGo",
+        "evidenceBindingGoNoGo",
+        "releaseEvidenceGoNoGo",
+        "responsibilityGovernanceGoNoGo"
+      ]
+    }
+  ]
+}

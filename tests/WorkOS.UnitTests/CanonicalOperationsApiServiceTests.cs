@@ -122,7 +122,7 @@ public sealed class CanonicalOperationsApiServiceTests
 
         var result = service.ConfirmWorkItem("W-S3:roomSetup", Request("idem-unresolved-definition"), OperatorActor(), "req-unresolved-definition");
 
-        Assert.AreEqual(StatusCodes.Status403Forbidden, result.StatusCode);
+        Assert.AreEqual(StatusCodes.Status422UnprocessableEntity, result.StatusCode);
         Assert.AreEqual("admission_rejected", result.Error);
         Assert.IsFalse(result.Confirmed);
         Assert.IsEmpty(store.Submissions);
@@ -133,6 +133,8 @@ public sealed class CanonicalOperationsApiServiceTests
         Assert.IsFalse((bool)admission["productionAllowed"]);
         var definition = (IReadOnlyDictionary<string, object>)result.ClientInstruction["definition"];
         Assert.IsFalse((bool)definition["resolved"]);
+        var noGo = (IReadOnlyList<string>)admission["noGoItems"];
+        CollectionAssert.Contains(noGo.ToArray(), "definition_not_resolved_for_production_confirm");
     }
 
     [TestMethod]
@@ -161,7 +163,7 @@ public sealed class CanonicalOperationsApiServiceTests
             OperatorActor(),
             "req-card-fallback-blocked");
 
-        Assert.AreEqual(StatusCodes.Status403Forbidden, result.StatusCode);
+        Assert.AreEqual(StatusCodes.Status422UnprocessableEntity, result.StatusCode);
         Assert.AreEqual("admission_rejected", result.Error);
         Assert.IsFalse(result.Confirmed);
         Assert.IsEmpty(store.Submissions);
@@ -276,7 +278,8 @@ public sealed class CanonicalOperationsApiServiceTests
     [TestMethod]
     public void high_risk_confirm_with_verified_device_reason_and_evidence_reaches_unit_of_work()
     {
-        var service = Service(out _, out var store);
+        var service = Service(out var runtime, out var store);
+        runtime.UpsertDevice(Device("tenant-s3", "u-finance-test", "device-trusted", "trusted"));
         service.CreateWorkItem(new CreateWorkItemRequest(
             WorkItemId: "wi-high-risk-trusted",
             TenantId: "tenant-s3",
@@ -297,7 +300,7 @@ public sealed class CanonicalOperationsApiServiceTests
             {
                 EvidenceIds = new[] { "ev-high-risk-trusted" },
                 DeviceId = "device-trusted",
-                DeviceTrustStatus = "trusted",
+                DeviceTrustStatus = "untrusted",
                 Surface = "pc",
                 Reason = "财务复核通过，允许进入内部试点确认。"
             },
@@ -313,7 +316,91 @@ public sealed class CanonicalOperationsApiServiceTests
     }
 
     [TestMethod]
-    public void operations_confirm_dispatches_next_work_item_from_shared_workspace_seed()
+    public void high_risk_confirm_ignores_self_reported_trusted_device_before_unit_of_work()
+    {
+        var service = Service(out _, out var store);
+        service.CreateWorkItem(new CreateWorkItemRequest(
+            WorkItemId: "wi-high-risk-self-reported",
+            TenantId: "tenant-s3",
+            WorkItemType: "Dorm.DepositConfirmation",
+            WorkspaceId: "W-STAY-DEPOSIT-LEDGER",
+            CardId: "depositConfirmation",
+            OwnerRole: "finance",
+            Payload: new Dictionary<string, string>
+            {
+                ["caseId"] = "case-high-risk-self-reported",
+                ["cardId"] = "depositConfirmation",
+                ["definitionId"] = "definition.depositConfirmation.v1"
+            }));
+
+        var result = service.ConfirmWorkItem(
+            "wi-high-risk-self-reported",
+            Request("idem-high-risk-self-reported", cardId: "depositConfirmation", fieldValues: new Dictionary<string, string>()) with
+            {
+                EvidenceIds = new[] { "ev-self-reported" },
+                DeviceId = "device-client-only",
+                DeviceTrustStatus = "trusted",
+                Surface = "pc",
+                Reason = "客户端自报 trusted 不能作为准入事实。"
+            },
+            FinanceActor(),
+            "req-high-risk-self-reported");
+
+        Assert.AreEqual(StatusCodes.Status403Forbidden, result.StatusCode);
+        Assert.AreEqual("admission_rejected", result.Error);
+        Assert.IsEmpty(store.Submissions);
+        Assert.IsEmpty(store.DomainEvents);
+    }
+
+    [TestMethod]
+    public void high_risk_confirm_blocks_untrusted_and_revoked_server_devices()
+    {
+        var untrustedService = Service(out var untrustedRuntime, out var untrustedStore);
+        untrustedRuntime.UpsertDevice(Device("tenant-s3", "u-finance-test", "device-untrusted", "untrusted"));
+        untrustedService.CreateWorkItem(HighRiskWorkItem("wi-high-risk-untrusted", "case-high-risk-untrusted", "depositConfirmation"));
+
+        var untrusted = untrustedService.ConfirmWorkItem(
+            "wi-high-risk-untrusted",
+            TrustedHighRiskRequest("idem-high-risk-untrusted", "device-untrusted"),
+            FinanceActor(),
+            "req-high-risk-untrusted");
+
+        Assert.AreEqual(StatusCodes.Status403Forbidden, untrusted.StatusCode);
+        Assert.IsEmpty(untrustedStore.Submissions);
+        var untrustedAdmission = (IReadOnlyDictionary<string, object>)untrusted.ClientInstruction["admission"];
+        CollectionAssert.Contains(((IReadOnlyList<string>)untrustedAdmission["noGoItems"]).ToArray(), "trusted_device_unverified");
+
+        var revokedService = Service(out var revokedRuntime, out var revokedStore);
+        revokedRuntime.UpsertDevice(Device("tenant-s3", "u-finance-test", "device-revoked", "revoked", DateTimeOffset.UtcNow));
+        revokedService.CreateWorkItem(HighRiskWorkItem("wi-high-risk-revoked", "case-high-risk-revoked", "depositConfirmation"));
+
+        var revoked = revokedService.ConfirmWorkItem(
+            "wi-high-risk-revoked",
+            TrustedHighRiskRequest("idem-high-risk-revoked", "device-revoked"),
+            FinanceActor(),
+            "req-high-risk-revoked");
+
+        Assert.AreEqual(StatusCodes.Status403Forbidden, revoked.StatusCode);
+        Assert.IsEmpty(revokedStore.Submissions);
+        var revokedAdmission = (IReadOnlyDictionary<string, object>)revoked.ClientInstruction["admission"];
+        CollectionAssert.Contains(((IReadOnlyList<string>)revokedAdmission["noGoItems"]).ToArray(), "trusted_device_revoked");
+    }
+
+    [TestMethod]
+    public void verified_device_context_blocks_tenant_mismatch()
+    {
+        var context = VerifiedDeviceTrustContext.FromServerSession(
+            "device-cross-tenant",
+            "tenant-s3",
+            "pc",
+            Device("tenant-other", "u-finance-test", "device-cross-tenant", "trusted"));
+
+        Assert.IsFalse(context.Verified);
+        Assert.AreEqual("trusted_device_tenant_mismatch", context.NoGoItem);
+    }
+
+    [TestMethod]
+    public void operations_confirm_does_not_dispatch_next_work_item_from_shared_workspace_seed()
     {
         var service = Service(
             out _,
@@ -342,56 +429,46 @@ public sealed class CanonicalOperationsApiServiceTests
             .SingleOrDefault(item => item.WorkspaceId == "W-STAY-LEAD-RESERVATION-UNIT" && item.Payload.TryGetValue("cardId", out var cardId) && cardId == "leadFollowUp");
 
         Assert.AreEqual(StatusCodes.Status200OK, result.StatusCode);
-        Assert.IsNotNull(next);
-        Assert.AreEqual("available", next!.Status);
-        Assert.AreEqual("operation_flow_process_manager", next.Payload["dispatchedBy"]);
-        Assert.AreEqual("W-STAY-LEAD-RESERVATION", next.Payload["templateWorkspaceId"]);
-        Assert.AreEqual("wi-lead-capture-shared-flow", next.Payload["sourceWorkItemId"]);
+        Assert.IsNull(next);
     }
 
     [TestMethod]
-    public void operations_confirm_dispatches_next_work_item_with_next_card_owner_role()
+    public void operations_confirm_dispatches_next_work_item_from_generated_transition_policy()
     {
-        var service = Service(out _, out _, ProjectionSeed.Create().Workspaces);
+        var service = Service(out _, out _);
         service.CreateWorkItem(new CreateWorkItemRequest(
-            WorkItemId: "wi-deposit-receipt-shared-flow",
+            WorkItemId: "wi-room-setup-confirm-generated-flow",
             TenantId: "tenant-s3",
-            WorkItemType: "Dorm.DepositReceipt",
-            WorkspaceId: "W-STAY-DEPOSIT-LEDGER",
-            CardId: "depositReceipt",
+            WorkItemType: "Dorm.RoomSetupConfirm",
+            WorkspaceId: "W-DORM-MAINLINE",
+            CardId: "cert.roomSetupConfirm",
             OwnerRole: "operator",
             Payload: new Dictionary<string, string>
             {
-                ["caseId"] = "case-deposit-shared-flow",
-                ["cardId"] = "depositReceipt",
-                ["definitionId"] = "definition.depositReceipt.v1",
-                ["templateWorkspaceId"] = "W-STAY-DEPOSIT-LEDGER"
+                ["caseId"] = "case-generated-room-flow",
+                ["cardId"] = "cert.roomSetupConfirm",
+                ["definitionId"] = "definition.dormitory.roomSetupConfirm.v1"
             }));
 
         var result = service.ConfirmWorkItem(
-            "wi-deposit-receipt-shared-flow",
-            Request("idem-deposit-owner-role", cardId: "depositReceipt", fieldValues: new Dictionary<string, string>
-            {
-                ["depositId"] = "deposit-owner-role-001",
-                ["depositReceiptId"] = "deposit-receipt-owner-role-001",
-                ["receivedAmount"] = "300",
-                ["paymentMethod"] = "cash",
-                ["payerName"] = "住客",
-                ["receivedDate"] = "2026-06-05T10:30"
-            }),
+            "wi-room-setup-confirm-generated-flow",
+            Request("idem-generated-room-flow", cardId: "cert.roomSetupConfirm", fieldValues: new Dictionary<string, string>()),
             OperatorActor(),
-            "req-deposit-owner-role");
+            "req-generated-room-flow");
         var next = service.ListWorkItems("tenant-s3")
-            .SingleOrDefault(item => item.WorkspaceId == "W-STAY-DEPOSIT-LEDGER" && item.Payload.TryGetValue("cardId", out var cardId) && cardId == "depositConfirmation");
+            .SingleOrDefault(item => item.WorkspaceId == "W-DORM-MAINLINE" && item.Payload.TryGetValue("cardId", out var cardId) && cardId == "bedSetup");
 
         Assert.AreEqual(StatusCodes.Status200OK, result.StatusCode);
         Assert.IsNotNull(next);
-        Assert.AreEqual("finance", next!.OwnerRole);
-        Assert.AreEqual("finance", next.Payload["ownerRole"]);
+        Assert.AreEqual("Dorm.BedSetupConfirm", next!.WorkItemType);
+        Assert.AreEqual("definition.dormitory.bedSetupConfirm.v1", next.Payload["definitionId"]);
+        Assert.AreEqual("cert.bedSetupConfirm", next.Payload["definitionSourceCardId"]);
+        Assert.AreEqual("generated_transition_policy", next.Payload["dispatchedBy"]);
+        Assert.AreEqual("docs/oam/kernel/oam-kernel-graph.generated.json", next.Payload["generatedTransitionSource"]);
     }
 
     [TestMethod]
-    public void lead_reservation_create_dispatches_cancel_branch_from_business_action()
+    public void lead_reservation_create_does_not_dispatch_from_business_action_without_generated_policy()
     {
         var service = Service(
             out _,
@@ -435,7 +512,7 @@ public sealed class CanonicalOperationsApiServiceTests
             .SingleOrDefault(item => item.WorkspaceId == "W-STAY-LEAD-RESERVATION" && item.Payload.TryGetValue("cardId", out var cardId) && cardId == "reservationConvert");
 
         Assert.AreEqual(StatusCodes.Status200OK, result.StatusCode);
-        Assert.IsNotNull(cancel);
+        Assert.IsNull(cancel);
         Assert.IsNull(convert);
     }
 
@@ -507,6 +584,47 @@ public sealed class CanonicalOperationsApiServiceTests
             SubmissionId: $"sub-{idempotencyKey}",
             CardInstanceId: $"ci-{idempotencyKey}");
 
+    private static ConfirmWorkItemRequest TrustedHighRiskRequest(string idempotencyKey, string deviceId) =>
+        Request(idempotencyKey, cardId: "depositConfirmation", fieldValues: new Dictionary<string, string>()) with
+        {
+            EvidenceIds = new[] { $"ev-{idempotencyKey}" },
+            DeviceId = deviceId,
+            Surface = "pc",
+            Reason = "财务复核通过，允许进入内部试点确认。"
+        };
+
+    private static CreateWorkItemRequest HighRiskWorkItem(string workItemId, string caseId, string cardId) =>
+        new(
+            WorkItemId: workItemId,
+            TenantId: "tenant-s3",
+            WorkItemType: "Dorm.DepositConfirmation",
+            WorkspaceId: "W-STAY-DEPOSIT-LEDGER",
+            CardId: cardId,
+            OwnerRole: "finance",
+            Payload: new Dictionary<string, string>
+            {
+                ["caseId"] = caseId,
+                ["cardId"] = cardId,
+                ["definitionId"] = "definition.depositConfirmation.v1"
+            });
+
+    private static RuntimeDeviceSession Device(
+        string tenantId,
+        string actorId,
+        string deviceId,
+        string trust,
+        DateTimeOffset? revokedAtUtc = null) =>
+        new(
+            $"devsess-{deviceId}",
+            tenantId,
+            actorId,
+            deviceId,
+            trust,
+            $"ua-{deviceId}",
+            DateTimeOffset.UtcNow,
+            DateTimeOffset.UtcNow,
+            revokedAtUtc);
+
     private static RuntimeActorContext OperatorActor() =>
         new(
             "u-operator-test",
@@ -553,6 +671,7 @@ public sealed class CanonicalOperationsApiServiceTests
     private sealed class FakeCatalogRuntime : IOperationsRuntimeAdapter
     {
         private readonly IReadOnlyList<WorkspaceProjection> workspaces;
+        private readonly Dictionary<string, RuntimeDeviceSession> devices = new(StringComparer.OrdinalIgnoreCase);
         private readonly IReadOnlyList<ProcessWorkItemIntentRecord> intents = new[]
         {
             new ProcessWorkItemIntentRecord(
@@ -581,6 +700,9 @@ public sealed class CanonicalOperationsApiServiceTests
 
         public int ConfirmCount { get; private set; }
 
+        public void UpsertDevice(RuntimeDeviceSession session) =>
+            devices[$"{session.TenantId}:{session.DeviceId}"] = session;
+
         public WorkspaceProjection? FindWorkspace(string workspaceId) =>
             workspaces.FirstOrDefault(workspace => workspace.Id.Equals(workspaceId, StringComparison.OrdinalIgnoreCase));
 
@@ -588,6 +710,9 @@ public sealed class CanonicalOperationsApiServiceTests
             string.IsNullOrWhiteSpace(tenantId)
                 ? intents
                 : intents.Where(intent => intent.TenantId.Equals(tenantId, StringComparison.OrdinalIgnoreCase)).ToArray();
+
+        public RuntimeDeviceSession? FindDeviceSession(string tenantId, string deviceId) =>
+            devices.TryGetValue($"{tenantId}:{deviceId}", out var session) ? session : null;
 
         public object? Prepare(string workspaceId, string cardId, PrepareCardRequest? request = null) =>
             new { prepared = true };

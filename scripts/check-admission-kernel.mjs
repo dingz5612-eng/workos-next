@@ -88,6 +88,9 @@ function checkCurrentState(state, failures) {
   if (state.businessProduction !== "BLOCKED") {
     failures.push("current admission state businessProduction must remain BLOCKED.");
   }
+  if (state.dormitoryProduction !== "BLOCKED") {
+    failures.push("current admission state dormitoryProduction must remain BLOCKED.");
+  }
   if (state.productionConfirmAllowed !== false) {
     failures.push("current admission state productionConfirmAllowed must be false.");
   }
@@ -258,7 +261,8 @@ function checkRuntimeImplementation(failures) {
     "AdmissionRejected",
     "[\"admission\"]",
     "[\"admissionDecisionRef\"]",
-    "VerifiedDeviceTrustContext.FromRequest",
+    "VerifiedDeviceTrustContext.FromServerSession",
+    "catalog.FindDeviceSession",
     "HighRiskReason",
     "DeviceTrustStatus",
     "EvidenceIds"
@@ -266,12 +270,40 @@ function checkRuntimeImplementation(failures) {
     if (!canonical.includes(term)) failures.push(`CanonicalOperationsApiService.cs missing Admission Kernel binding: ${term}.`);
   }
   const unresolvedGate = canonical.indexOf("if (!definition.Resolved)");
+  const resolveIndex = canonical.indexOf("var definition = definitions.Resolve(workItem);");
+  const admissionIndex = canonical.indexOf("var admissionDecision = admission.EvaluateConfirm(");
   const commandIndex = canonical.indexOf("var command = new OperationsCommandRequest(");
   const commitIndex = canonical.indexOf("var commit = unitOfWork.Commit(command)");
-  if (unresolvedGate < 0 || commandIndex < 0 || commitIndex < 0) {
-    failures.push("CanonicalOperationsApiService.cs cannot find unresolved gate, command construction, or commit statement.");
-  } else if (!(unresolvedGate < commandIndex && commandIndex < commitIndex)) {
-    failures.push("CanonicalOperationsApiService.cs must reject unresolved definition before command creation and commit.");
+  const transitionIndex = canonical.indexOf("catalog.RecordWorkItemTransition(");
+  const dispatchIndex = canonical.indexOf("DispatchNextOperationWorkItem(");
+  if ([resolveIndex, unresolvedGate, admissionIndex, commandIndex, commitIndex, transitionIndex, dispatchIndex].some((index) => index < 0)) {
+    failures.push("CanonicalOperationsApiService.cs cannot find definition resolve, unresolved gate, admission, command, commit, transition, or dispatch statement.");
+  } else if (!(resolveIndex < unresolvedGate &&
+      unresolvedGate < admissionIndex &&
+      admissionIndex < commandIndex &&
+      commandIndex < commitIndex &&
+      commitIndex < transitionIndex &&
+      transitionIndex < dispatchIndex)) {
+    failures.push("CanonicalOperationsApiService.cs must resolve definition, hard-gate unresolved, then evaluate admission, command, commit, transition, and dispatch in that order.");
+  }
+  if (canonical.includes("definitions.Resolve(workItem, normalized.CardId)")) {
+    failures.push("CanonicalOperationsApiService.cs must not resolve business definition from normalized.CardId.");
+  }
+  if (canonical.includes("FirstNonEmpty(definition.DefinitionId")) {
+    failures.push("CanonicalOperationsApiService.cs must not fall back from definition.DefinitionId to workItemType for command definition identity.");
+  }
+  if (!canonical.includes("StatusCodes.Status422UnprocessableEntity") || !admissionSource.includes("definition_not_resolved_for_production_confirm")) {
+    failures.push("Unresolved definition hard gate must return 422 AdmissionRejected with definition_not_resolved_for_production_confirm.");
+  }
+  const dispatchMethod = methodBody(canonical, "DispatchNextOperationWorkItem");
+  if (dispatchMethod.includes("WorkspaceSeedCatalog") || dispatchMethod.includes("OperationBranchResolver.NextCardId")) {
+    failures.push("DispatchNextOperationWorkItem must use generated transition policy, not WorkspaceSeedCatalog or OperationBranchResolver.NextCardId.");
+  }
+  if (!dispatchMethod.includes("GeneratedTransitionPolicy.ResolveNext")) {
+    failures.push("DispatchNextOperationWorkItem must delegate downstream WorkItem selection to GeneratedTransitionPolicy.");
+  }
+  if (canonical.includes("VerifiedDeviceTrustContext.FromRequest")) {
+    failures.push("CanonicalOperationsApiService.cs must not trust request.DeviceTrustStatus for VerifiedDeviceTrustContext.");
   }
 
   const correctionModels = read("services/core-api/WorkOS.Api/Runtime/CorrectionCenterModels.cs");
@@ -301,6 +333,30 @@ function read(relativePath) {
   const fullPath = path.join(root, relativePath);
   if (!fs.existsSync(fullPath)) throw new Error(`Missing file: ${relativePath}`);
   return fs.readFileSync(fullPath, "utf8");
+}
+
+function methodBody(source, methodName) {
+  const markers = [
+    `private void ${methodName}(`,
+    `public void ${methodName}(`,
+    `private static void ${methodName}(`,
+    `public static void ${methodName}(`
+  ];
+  const start = markers
+    .map((marker) => source.indexOf(marker))
+    .filter((index) => index >= 0)
+    .sort((left, right) => left - right)[0] ?? -1;
+  if (start < 0) return "";
+  const brace = source.indexOf("{", start);
+  if (brace < 0) return "";
+  let depth = 0;
+  for (let index = brace; index < source.length; index += 1) {
+    const char = source[index];
+    if (char === "{") depth += 1;
+    if (char === "}") depth -= 1;
+    if (depth === 0) return source.slice(start, index + 1);
+  }
+  return source.slice(start);
 }
 
 function readJson(relativePath) {

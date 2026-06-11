@@ -261,14 +261,18 @@ public sealed record VerifiedDeviceTrustContext(
     bool TenantMatched,
     DateTimeOffset? RevokedAtUtc = null)
 {
-    public static VerifiedDeviceTrustContext FromRequest(string? deviceId, string? deviceTrustStatus, string? surface) =>
+    public static VerifiedDeviceTrustContext FromServerSession(
+        string? requestedDeviceId,
+        string actorTenantId,
+        string? surface,
+        RuntimeDeviceSession? deviceSession) =>
         new(
-            deviceId ?? string.Empty,
-            string.IsNullOrWhiteSpace(deviceTrustStatus)
-                ? (string.IsNullOrWhiteSpace(deviceId) ? "not_provided" : "unknown")
-                : deviceTrustStatus!,
+            requestedDeviceId ?? string.Empty,
+            deviceSession?.DeviceTrustStatus ?? (string.IsNullOrWhiteSpace(requestedDeviceId) ? "not_provided" : "unknown"),
             string.IsNullOrWhiteSpace(surface) ? "operations-api" : surface!,
-            true);
+            deviceSession is not null &&
+                deviceSession.TenantId.Equals(actorTenantId, StringComparison.OrdinalIgnoreCase),
+            deviceSession?.RevokedAtUtc);
 
     public bool Verified =>
         !string.IsNullOrWhiteSpace(DeviceId) &&
@@ -316,6 +320,18 @@ public sealed record AdmissionKernelDecision(
     IReadOnlyList<string> NoGoItems,
     string AdmissionDecisionRef)
 {
+    public static AdmissionKernelDecision UnresolvedDefinition(WorkItemDefinitionResolution definition) =>
+        Blocked(
+            definition,
+            "prepare_only",
+            "Definition Registry did not resolve this WorkItem; Operations Runtime can show prepare-only context, but confirm is blocked before Unit of Work.",
+            new[] { "docs/contracts/definition/workitem-definition-registry.json" },
+            Array.Empty<string>(),
+            Array.Empty<string>(),
+            "unknown",
+            "operations-runtime",
+            new[] { "definition_not_resolved_for_production_confirm" });
+
     public static AdmissionKernelDecision AllowedInternalPilot(
         WorkItemDefinitionResolution definition,
         string reason,

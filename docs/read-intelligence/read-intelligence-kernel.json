@@ -1,0 +1,39 @@
+{
+  "version": "oam.read-intelligence-kernel.v1",
+  "status": "authoritative-current-no-go",
+  "generatedReadModelRef": "docs/contracts/generated/dormitory/read-model.generated.json",
+  "surfaceInputModelRef": "apps/mobile/src/generated/oam/dormitory-surface-input-model.generated.json",
+  "writeFactsAllowed": false,
+  "surfaceProof": {
+    "onlyConsumesGeneratedSurfaceModel": true,
+    "roomNo": {
+      "controlType": "text",
+      "fallbackAllowed": false,
+      "forbiddenFallbackControls": ["dropdown", "select", "combobox"]
+    },
+    "labelInferenceAllowed": false,
+    "visibleAllowed": true,
+    "confirmAllowed": false,
+    "searchVisibleAllowed": true,
+    "searchVisibleMeansConfirmAllowed": false
+  },
+  "readProof": {
+    "searchConsumesGeneratedReadModelsOnly": true,
+    "lensConsumesGeneratedReadModelsOnly": true,
+    "projectionConsumesGeneratedReadModelsOnly": true,
+    "searchLensProjectionWriteFactsAllowed": false,
+    "searchResultTargetRequiredFields": ["targetId", "runtimeOwner", "compatibility"],
+    "permissionFilterOrder": "before_ranking",
+    "hiddenResultRanked": false,
+    "confirmAllowedRankingBoost": false,
+    "metricDashboardReportDatasetRequireSourceFactsLineage": true
+  },
+  "languageGlossary": {
+    "supports": ["objectKind", "resultType", "metric", "dashboard", "lineage", "readiness"]
+  },
+  "proofRefs": [
+    "docs/contracts/generated/dormitory/read-model.generated.json",
+    "docs/contracts/generated/dormitory/surface-input-model.generated.json",
+    "apps/mobile/src/generated/oam/dormitory-surface-input-model.generated.json"
+  ]
+}

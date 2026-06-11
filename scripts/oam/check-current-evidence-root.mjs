@@ -4,9 +4,12 @@ import path from "node:path";
 
 const root = process.cwd();
 const digestPlaceholder = "__CURRENT_OAM_EVIDENCE_DIGEST__";
-const expectedArtifactName = "workosnext-current-oam-evidence-${{ github.run_id }}";
+const ciRunId = env("GITHUB_RUN_ID") || "local";
+const expectedArtifactName = artifactNameForRun(ciRunId);
+const releaseEvidenceObjectPath = "artifacts/oam/evidence/current-oam-release-evidence-object.json";
 const requiredFiles = [
   "artifacts/oam/evidence/evidence-graph.json",
+  releaseEvidenceObjectPath,
   "artifacts/oam/evidence/execution-log.jsonl",
   "artifacts/oam/evidence/current-oam-final-report.json",
   "artifacts/oam/evidence/runtime-proof.json",
@@ -16,6 +19,29 @@ const requiredFiles = [
   "artifacts/oam/evidence/high-risk-trust-proof.json",
   "artifacts/oam/evidence/master-design-proof.json",
   "artifacts/oam/evidence/master-outline-proof.json",
+  "docs/oam/current-oam-kernel-responsibility-map.json",
+  "docs/oam/current-oam-cross-domain-conflict-rules.json",
+  "docs/oam/professional-ai-review-seats.json",
+  "docs/oam/codex-execution-channel-policy.json",
+  "docs/finance/finance-ledger-kernel.json",
+  "docs/oam/compiler-generated-contract-kernel.json",
+  "docs/identity/identity-permission-kernel.json",
+  "docs/oam/kernel/oam-kernel-source.schema.json",
+  "docs/oam/kernel/oam-kernel-generated.schema.json",
+  "docs/oam/kernel/oam-kernel-graph.generated.json",
+  "docs/contracts/generated/dormitory/dormitory-kernel.generated.manifest.json",
+  "docs/contracts/generated/dormitory/fields.generated.json",
+  "docs/contracts/generated/dormitory/workitems.generated.json",
+  "docs/contracts/generated/dormitory/surface-input-model.generated.json",
+  "docs/contracts/generated/dormitory/read-model.generated.json",
+  "apps/mobile/src/generated/oam/dormitory-surface-input-model.generated.json",
+  "docs/read-intelligence/read-intelligence-kernel.json",
+  "docs/read-intelligence/read-intelligence-kernel.schema.json",
+  "docs/oam/db-no-side-effects-proof.json",
+  "artifacts/oam/checks/kernel-responsibility-map-result.json",
+  "artifacts/oam/checks/professional-ai-review-seats-result.json",
+  "artifacts/oam/checks/codex-execution-channel-policy-result.json",
+  "artifacts/oam/checks/cross-domain-conflict-rules-result.json",
   "docs/oam/mobile-branch-risk-policy.json",
   "docs/oam/mobile-branch-risk-ledger.json",
   "docs/oam/mobile-critical-branch-scenarios.json",
@@ -40,6 +66,8 @@ for (const file of requiredFiles) {
 if (documents.size === requiredFiles.length) {
   const graph = documents.get("artifacts/oam/evidence/evidence-graph.json");
   const finalReport = documents.get("artifacts/oam/final-report.json");
+  const releaseObject = documents.get(releaseEvidenceObjectPath);
+  const responsibilityMap = documents.get("docs/oam/current-oam-kernel-responsibility-map.json");
   const expectedDigest = graph?.binding?.artifactDigest;
   const actualDigest = digestFor(documents);
 
@@ -64,15 +92,16 @@ if (documents.size === requiredFiles.length) {
     failures.push(`final report must be GO or NO_GO, actual: ${finalReport.finalGoNoGo}`);
   }
 
-  if (finalReport.artifactName !== expectedArtifactName) {
-    failures.push(`final report artifactName must be ${expectedArtifactName}, actual: ${finalReport.artifactName || "missing"}`);
-  }
+  checkArtifactName("final report", finalReport.artifactName);
+  checkReleaseEvidenceObject(releaseObject, graph, finalReport, documents);
 
   if (Array.isArray(finalReport.unresolvedP0) && finalReport.unresolvedP0.length > 0) {
     failures.push(`final report has unresolved P0: ${finalReport.unresolvedP0.map((item) => item.ruleId).join(", ")}`);
   }
 
   checkFinalDecision(finalReport);
+  checkFinalReportGoNoGoFields(finalReport, responsibilityMap);
+  checkWorkstreamProofNodes(graph, responsibilityMap, finalReport);
   checkRealBrowserEvidence(graph, finalReport);
 
   if (finalReport.businessProductionStatus !== "BLOCKED") {
@@ -85,6 +114,22 @@ if (documents.size === requiredFiles.length) {
 
   if (finalReport.productionConfirmAllowed !== false) {
     failures.push("production_confirm must remain false.");
+  }
+
+  if (finalReport.businessProductionGoNoGo !== "NO_GO") {
+    failures.push("businessProductionGoNoGo must remain NO_GO.");
+  }
+
+  if (finalReport.dormitoryL2GoNoGo !== "NO_GO") {
+    failures.push("dormitoryL2GoNoGo must remain NO_GO.");
+  }
+
+  if (finalReport.productionConfirmGoNoGo !== "NO_GO") {
+    failures.push("productionConfirmGoNoGo must remain NO_GO.");
+  }
+
+  if (finalReport.finalGoNoGo !== "NO_GO") {
+    failures.push("finalGoNoGo must remain NO_GO for the current stage.");
   }
 
   if (!workflowContainsEvidenceUpload()) {
@@ -107,6 +152,78 @@ if (failures.length > 0) {
 }
 
 console.log("Current OAM evidence root check: PASS");
+
+function checkArtifactName(label, artifactName) {
+  if (artifactName !== expectedArtifactName) {
+    failures.push(`${label} artifactName must be ${expectedArtifactName}, actual: ${artifactName || "missing"}`);
+  }
+  if (artifactName === "current-oam-evidence") {
+    failures.push(`${label} artifactName must not be current-oam-evidence.`);
+  }
+  if (String(artifactName ?? "").includes("${{")) {
+    failures.push(`${label} artifactName must be concrete and must not contain a GitHub expression literal.`);
+  }
+}
+
+function checkReleaseEvidenceObject(releaseObject, graph, finalReport, allDocuments) {
+  if (!releaseObject || typeof releaseObject !== "object") {
+    failures.push("release evidence object is missing or invalid.");
+    return;
+  }
+
+  checkArtifactName("release evidence object", releaseObject.artifactName);
+  for (const field of [
+    "githubSha",
+    "githubRunId",
+    "githubRefName",
+    "artifactName",
+    "githubArtifactDigest",
+    "evidenceRootDigest",
+    "kernelGraphHash",
+    "evidenceGraphHash",
+    "finalReportDigest"
+  ]) {
+    if (!releaseObject[field]) {
+      failures.push(`release evidence object missing ${field}.`);
+    }
+  }
+
+  if (releaseObject.githubRunId !== ciRunId) {
+    failures.push(`release evidence object githubRunId must be ${ciRunId}, actual: ${releaseObject.githubRunId || "missing"}`);
+  }
+  if (releaseObject.githubSha !== graph?.binding?.commitSha) {
+    failures.push("release evidence object githubSha must match evidence graph binding commitSha.");
+  }
+  if (releaseObject.githubRefName !== graph?.binding?.branch) {
+    failures.push("release evidence object githubRefName must match evidence graph binding branch.");
+  }
+  if (releaseObject.githubArtifactDigest !== graph?.binding?.artifactDigest) {
+    failures.push("release evidence object githubArtifactDigest must match evidence graph artifactDigest.");
+  }
+  if (releaseObject.githubArtifactDigest === releaseObject.evidenceRootDigest) {
+    failures.push("release evidence object must distinguish githubArtifactDigest from evidenceRootDigest.");
+  }
+
+  const expectedEvidenceRootDigest = digestFor(new Map([...allDocuments.entries()].filter(([file]) => file !== releaseEvidenceObjectPath)));
+  if (releaseObject.evidenceRootDigest !== expectedEvidenceRootDigest) {
+    failures.push(`release evidence object evidenceRootDigest mismatch: expected ${expectedEvidenceRootDigest}, actual ${releaseObject.evidenceRootDigest || "missing"}`);
+  }
+
+  const expectedKernelGraphHash = `sha256:${sha256(readText("docs/oam/oam-kernel-graph.json"))}`;
+  if (releaseObject.kernelGraphHash !== expectedKernelGraphHash) {
+    failures.push(`release evidence object kernelGraphHash mismatch: expected ${expectedKernelGraphHash}, actual ${releaseObject.kernelGraphHash || "missing"}`);
+  }
+
+  const expectedEvidenceGraphHash = digestFor(new Map([["artifacts/oam/evidence/evidence-graph.json", graph]]));
+  if (releaseObject.evidenceGraphHash !== expectedEvidenceGraphHash) {
+    failures.push(`release evidence object evidenceGraphHash mismatch: expected ${expectedEvidenceGraphHash}, actual ${releaseObject.evidenceGraphHash || "missing"}`);
+  }
+
+  const expectedFinalReportDigest = digestFor(new Map([["artifacts/oam/final-report.json", finalReport]]));
+  if (releaseObject.finalReportDigest !== expectedFinalReportDigest) {
+    failures.push(`release evidence object finalReportDigest mismatch: expected ${expectedFinalReportDigest}, actual ${releaseObject.finalReportDigest || "missing"}`);
+  }
+}
 
 function checkBinding(file, document, expectedDigest) {
   if (typeof document === "string") return;
@@ -175,14 +292,25 @@ function digestFor(fileMap) {
 }
 
 function normalizeForDigest(value) {
-  if (typeof value === "string") return value.replaceAll(/sha256:[a-f0-9]{64}|__CURRENT_OAM_EVIDENCE_DIGEST__/g, digestPlaceholder);
+  if (typeof value === "string") return value.replaceAll(/sha256:[a-f0-9]{64}|__CURRENT_OAM_EVIDENCE_DIGEST__|__CURRENT_OAM_EVIDENCE_ROOT_DIGEST__/g, digestPlaceholder);
   if (Array.isArray(value)) return value.map(normalizeForDigest);
   if (!value || typeof value !== "object") return value;
   const output = {};
   for (const key of Object.keys(value).sort()) {
-    output[key] = key === "artifactDigest" ? digestPlaceholder : normalizeForDigest(value[key]);
+    output[key] = isDigestOrHashKey(key) ? digestPlaceholder : normalizeForDigest(value[key]);
   }
   return output;
+}
+
+function isDigestOrHashKey(key) {
+  return [
+    "artifactDigest",
+    "githubArtifactDigest",
+    "evidenceRootDigest",
+    "kernelGraphHash",
+    "evidenceGraphHash",
+    "finalReportDigest"
+  ].includes(key);
 }
 
 function workflowContainsEvidenceUpload() {
@@ -192,7 +320,16 @@ function workflowContainsEvidenceUpload() {
     workflow.includes("node scripts/oam/generate-mobile-branch-risk-ledger.mjs") &&
     workflow.includes("node scripts/oam/check-mobile-coverage-policy.mjs") &&
     workflow.includes("node scripts/oam/check-mobile-critical-branch-scenarios.mjs") &&
+    workflow.includes("node scripts/oam/check-kernel-responsibility-map.mjs") &&
+    workflow.includes("node scripts/oam/check-professional-ai-review-seats.mjs") &&
+    workflow.includes("node scripts/oam/check-codex-execution-channel-policy.mjs") &&
+    workflow.includes("node scripts/oam/check-cross-domain-conflict-rules.mjs") &&
     workflow.includes("node scripts/oam/check-system-operating-kernel.mjs") &&
+    workflow.includes("node scripts/oam/compile-current-kernel-graph.mjs") &&
+    workflow.includes("node scripts/oam/check-generated-contract-consistency.mjs") &&
+    workflow.includes("node scripts/oam/check-generated-files-not-manually-edited.mjs") &&
+    workflow.includes("node scripts/oam/check-read-intelligence-kernel.mjs") &&
+    workflow.includes("node scripts/oam/check-db-no-side-effects-proof.mjs") &&
     workflow.includes("node scripts/oam/check-oam-kernel-graph.mjs") &&
     workflow.includes("node scripts/oam/check-file-lifecycle-policy.mjs") &&
     workflow.includes("node scripts/oam/check-retired-reference-blocker.mjs") &&
@@ -217,7 +354,16 @@ function controlPlaneContainsEvidenceRoot() {
     gate.includes("node scripts/oam/generate-mobile-branch-risk-ledger.mjs") &&
     gate.includes("node scripts/oam/check-mobile-coverage-policy.mjs") &&
     gate.includes("node scripts/oam/check-mobile-critical-branch-scenarios.mjs") &&
+    gate.includes("node scripts/oam/check-kernel-responsibility-map.mjs") &&
+    gate.includes("node scripts/oam/check-professional-ai-review-seats.mjs") &&
+    gate.includes("node scripts/oam/check-codex-execution-channel-policy.mjs") &&
+    gate.includes("node scripts/oam/check-cross-domain-conflict-rules.mjs") &&
     gate.includes("node scripts/oam/check-system-operating-kernel.mjs") &&
+    gate.includes("node scripts/oam/compile-current-kernel-graph.mjs") &&
+    gate.includes("node scripts/oam/check-generated-contract-consistency.mjs") &&
+    gate.includes("node scripts/oam/check-generated-files-not-manually-edited.mjs") &&
+    gate.includes("node scripts/oam/check-read-intelligence-kernel.mjs") &&
+    gate.includes("node scripts/oam/check-db-no-side-effects-proof.mjs") &&
     gate.includes("node scripts/oam/check-oam-kernel-graph.mjs") &&
     gate.includes("node scripts/oam/check-file-lifecycle-policy.mjs") &&
     gate.includes("node scripts/oam/check-retired-reference-blocker.mjs") &&
@@ -262,8 +408,13 @@ function checkRealBrowserEvidence(graph, finalReport) {
     failures.push("evidence graph missing real browser evidence summary.");
     return;
   }
-  if (summary.status !== "passed") {
+  const requirePassed = finalReport.finalGoNoGo === "GO";
+  const reasons = finalReport.finalDecision?.noGoReasons ?? finalReport.noGoReasons ?? [];
+  if (summary.status !== "passed" && requirePassed) {
     failures.push(`real browser evidence summary must be passed, actual: ${summary.status}`);
+  }
+  if (summary.status !== "passed" && !reasons.some((reason) => /真实浏览器|real browser/i.test(reason))) {
+    failures.push("real browser evidence is not passed but Final Report does not record a NO_GO reason.");
   }
   if (summary.singleWriter !== "scripts/oam/generate-current-evidence-root.mjs") {
     failures.push("real browser evidence must be written by the current evidence root generator.");
@@ -277,7 +428,7 @@ function checkRealBrowserEvidence(graph, finalReport) {
       failures.push(`real browser evidence missing ${key}.`);
       continue;
     }
-    if (item.status !== "passed") failures.push(`${key} browser evidence must be passed.`);
+    if (item.status !== "passed" && requirePassed) failures.push(`${key} browser evidence must be passed.`);
     if (!item.report || !exists(item.report)) failures.push(`${key} browser evidence report is missing: ${item.report || "(empty)"}`);
     if ((item.scenarioCount ?? 0) <= 0) failures.push(`${key} browser evidence has no scenarios.`);
     if ((item.screenshotHashCount ?? 0) <= 0) failures.push(`${key} browser evidence has no screenshot hashes.`);
@@ -286,10 +437,61 @@ function checkRealBrowserEvidence(graph, finalReport) {
       failures.push(`evidence graph missing node for ${gate}.`);
       continue;
     }
-    if (node.status !== "passed") failures.push(`${gate} node must be passed.`);
-    if (node.headSha !== finalReport.latestCommit) failures.push(`${gate} node commit does not match final report.`);
+    if (node.status !== "passed" && requirePassed) failures.push(`${gate} node must be passed.`);
+    if (node.headSha !== finalReport.latestCommit && requirePassed) failures.push(`${gate} node commit does not match final report.`);
     if (!node.screenshotHashes?.length) failures.push(`${gate} node missing screenshot hashes.`);
     if (!node.refs?.includes(item.report)) failures.push(`${gate} node missing report ref.`);
+  }
+}
+
+function checkFinalReportGoNoGoFields(finalReport, responsibilityMap) {
+  const requiredFields = responsibilityMap?.finalReportRequiredFields ?? [];
+  if (!Array.isArray(requiredFields) || requiredFields.length === 0) {
+    failures.push("responsibility map missing finalReportRequiredFields.");
+    return;
+  }
+  for (const field of requiredFields) {
+    if (!["GO", "NO_GO"].includes(finalReport[field])) {
+      failures.push(`final report missing or invalid Go/No-Go field ${field}: ${finalReport[field] ?? "missing"}`);
+    }
+  }
+  for (const [field, expected] of Object.entries(responsibilityMap?.forcedCurrentStage ?? {})) {
+    if (finalReport[field] !== expected) {
+      failures.push(`final report ${field} must be ${expected}, actual ${finalReport[field] ?? "missing"}`);
+    }
+  }
+}
+
+function checkWorkstreamProofNodes(graph, responsibilityMap, finalReport) {
+  const workstreams = responsibilityMap?.workstreams ?? [];
+  const proofNodes = (graph.nodes ?? []).filter((node) => node.type === "workstream_proof");
+  const proofByWorkstream = new Map(proofNodes.map((node) => [node.workstreamId, node]));
+  if (proofNodes.length !== workstreams.length) {
+    failures.push(`evidence graph must contain one proof node per workstream: expected ${workstreams.length}, actual ${proofNodes.length}`);
+  }
+  for (const workstream of workstreams) {
+    const proof = proofByWorkstream.get(workstream.id);
+    if (!proof) {
+      failures.push(`missing workstream proof node: ${workstream.id}`);
+      continue;
+    }
+    for (const field of ["workstreamId", "proofType", "source", "hash", "dependsOn", "gateResult", "negativeTestResult", "goNoGo"]) {
+      const value = proof[field];
+      if (value === undefined || value === null || value === "" || (Array.isArray(value) && value.length === 0)) {
+        failures.push(`workstream proof node ${workstream.id} missing ${field}.`);
+      }
+    }
+    if (!String(proof.hash ?? "").startsWith("sha256:")) {
+      failures.push(`workstream proof node ${workstream.id} hash must be sha256.`);
+    }
+    if (proof.goNoGo !== finalReport.finalGoNoGo) {
+      failures.push(`workstream proof node ${workstream.id} goNoGo must match final report.`);
+    }
+    for (const field of workstream.finalReportFields ?? []) {
+      if (finalReport[field] !== proof.goNoGo) {
+        failures.push(`final report field ${field} does not match proof node ${workstream.id}.`);
+      }
+    }
   }
 }
 
@@ -387,6 +589,19 @@ function readText(file) {
 
 function exists(file) {
   return fs.existsSync(path.join(root, file));
+}
+
+function env(name) {
+  return process.env[name] || "";
+}
+
+function artifactNameForRun(runId) {
+  const normalized = String(runId || "").trim();
+  if (!normalized || normalized.includes("${{")) {
+    failures.push("GITHUB_RUN_ID must resolve before current OAM evidence artifactName is checked.");
+    return "workosnext-current-oam-evidence-invalid";
+  }
+  return `workosnext-current-oam-evidence-${normalized}`;
 }
 
 function sha256(value) {

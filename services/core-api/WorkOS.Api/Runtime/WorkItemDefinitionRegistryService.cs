@@ -30,7 +30,7 @@ public sealed class WorkItemDefinitionRegistryService
 
     public IReadOnlyList<WorkItemDefinition> Definitions => definitions;
 
-    public WorkItemDefinitionResolution Resolve(WorkItem workItem, string? requestedCardId = null)
+    public WorkItemDefinitionResolution Resolve(WorkItem workItem)
     {
         var payloadDefinitionId = PayloadValue(workItem.Payload, "definitionId");
         var definition = FindByDefinitionId(payloadDefinitionId)
@@ -40,7 +40,7 @@ public sealed class WorkItemDefinitionRegistryService
         return definition is null
             ? WorkItemDefinitionResolution.Unresolved(
                 FirstNonEmpty(payloadDefinitionId, workItem.DefinitionVersionId),
-                FirstNonEmpty(PayloadValue(workItem.Payload, "cardId"), requestedCardId, workItem.WorkItemType),
+                FirstNonEmpty(PayloadValue(workItem.Payload, "definitionSourceId"), workItem.WorkItemType),
                 GuessBusinessLine(workItem.WorkspaceId),
                 "definition_registry_not_resolved")
             : WorkItemDefinitionResolution.FromDefinition(definition);

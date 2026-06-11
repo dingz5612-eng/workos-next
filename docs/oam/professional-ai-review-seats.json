@@ -1,0 +1,60 @@
+{
+  "version": "oam.professional-ai-review-seats.v1",
+  "status": "authoritative",
+  "accountable": "00-OAM-Total-Control",
+  "seats": [
+    {
+      "id": "01",
+      "label": "01｜产品业务",
+      "scope": "Product and business review opinion.",
+      "role": "review-only",
+      "finalInstructionToCodexAllowed": false
+    },
+    {
+      "id": "02",
+      "label": "02｜架构运行时",
+      "scope": "Architecture and runtime review opinion.",
+      "role": "review-only",
+      "finalInstructionToCodexAllowed": false
+    },
+    {
+      "id": "03",
+      "label": "03｜体验语言",
+      "scope": "Experience and language review opinion.",
+      "role": "review-only",
+      "finalInstructionToCodexAllowed": false
+    },
+    {
+      "id": "04",
+      "label": "04｜搜索数据",
+      "scope": "Search and data review opinion.",
+      "role": "review-only",
+      "finalInstructionToCodexAllowed": false
+    },
+    {
+      "id": "05",
+      "label": "05｜安全发布",
+      "scope": "Security, release, and release evidence mechanics review opinion.",
+      "role": "review-only",
+      "releaseEvidenceMechanicsResponsible": true,
+      "finalInstructionToCodexAllowed": false
+    },
+    {
+      "id": "06",
+      "label": "06｜质量证据",
+      "scope": "Quality, evidence validity, and negative test review opinion.",
+      "role": "review-only",
+      "evidenceValidityResponsible": true,
+      "finalInstructionToCodexAllowed": false
+    }
+  ],
+  "rules": {
+    "reviewOnly": true,
+    "seat01To06OnlyGiveReviewOpinions": true,
+    "seat05ResponsibleForReleaseEvidenceMechanics": true,
+    "seat06ResponsibleForEvidenceValidity": true,
+    "seat05Seat06ConflictAdjudicator": "00-OAM-Total-Control",
+    "seat01To06MayNotDirectlyGiveCodexFinalExecutionInstruction": true
+  },
+  "codexBinding": "docs/oam/codex-execution-channel-policy.json"
+}

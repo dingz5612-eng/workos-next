@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "workosnext.oam-kernel-source.schema.v1",
+  "title": "Current OAM Kernel Source Schema",
+  "type": "object",
+  "required": ["version", "status", "domainId", "workItems", "p0GeneratedCandidates", "fieldClassificationEnum", "ledgerEffectModel"],
+  "properties": {
+    "version": { "type": "string" },
+    "status": { "const": "authoritative" },
+    "domainId": { "type": "string" },
+    "workItems": { "type": "array", "minItems": 1 },
+    "p0GeneratedCandidates": {
+      "type": "array",
+      "minItems": 3,
+      "items": {
+        "type": "object",
+        "required": ["generatedCandidateId", "workItemType", "definitionId", "sourceNodeRef", "generatedStage", "ledgerEffect"]
+      }
+    },
+    "fieldClassificationEnum": {
+      "type": "array",
+      "contains": { "const": "clientSubmitted" }
+    },
+    "ledgerEffectModel": {
+      "type": "object",
+      "required": ["modeEnum", "financeKernelEffectTypeEnum", "p0GeneratedCandidatesRequire", "financeTruthOwner"]
+    }
+  }
+}

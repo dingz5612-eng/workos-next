@@ -1,0 +1,70 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "oam-kernel-graph.generated",
+  "kernelGraphHash": "sha256:491276e27210f2f16b6f1a79b67fa1f964156475f408e498df2b4de419ddcdd0",
+  "sourceNodeRefs": [
+    "dormitory.workItem.Dorm.RoomSetupConfirm",
+    "dormitory.workItem.Dorm.BedSetupConfirm",
+    "dormitory.workItem.Dorm.ResourceReadinessConfirm"
+  ],
+  "generatorVersion": "current-oam-kernel-compiler.v1",
+  "generatedFrom": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+  "graphType": "current-oam-generated-contract-dag",
+  "nodeCount": 5,
+  "edgeCount": 2,
+  "nodes": [
+    {
+      "nodeId": "generated.workItem.Dorm.RoomSetupConfirm",
+      "nodeType": "generatedWorkItem",
+      "workItemType": "Dorm.RoomSetupConfirm",
+      "definitionId": "definition.dormitory.roomSetupConfirm.v1",
+      "sourceNodeRef": "dormitory.workItem.Dorm.RoomSetupConfirm",
+      "goNoGo": "NO_GO"
+    },
+    {
+      "nodeId": "generated.workItem.Dorm.BedSetupConfirm",
+      "nodeType": "generatedWorkItem",
+      "workItemType": "Dorm.BedSetupConfirm",
+      "definitionId": "definition.dormitory.bedSetupConfirm.v1",
+      "sourceNodeRef": "dormitory.workItem.Dorm.BedSetupConfirm",
+      "goNoGo": "NO_GO"
+    },
+    {
+      "nodeId": "generated.workItem.Dorm.ResourceReadinessConfirm",
+      "nodeType": "generatedWorkItem",
+      "workItemType": "Dorm.ResourceReadinessConfirm",
+      "definitionId": "definition.dormitory.resourceReadinessConfirm.v1",
+      "sourceNodeRef": "dormitory.workItem.Dorm.ResourceReadinessConfirm",
+      "goNoGo": "NO_GO"
+    },
+    {
+      "nodeId": "generated-transition.dormitory.room-setup-to-bed-setup.v1",
+      "nodeType": "generatedTransitionPolicy",
+      "sourceNodeRef": "services/core-api/WorkOS.Api/Runtime/CanonicalOperationsApiService.cs",
+      "policyId": "generated-transition.dormitory.room-setup-to-bed-setup.v1",
+      "fromDefinitionId": "definition.dormitory.roomSetupConfirm.v1",
+      "toDefinitionId": "definition.dormitory.bedSetupConfirm.v1"
+    },
+    {
+      "nodeId": "generated-transition.dormitory.bed-setup-to-resource-readiness.v1",
+      "nodeType": "generatedTransitionPolicy",
+      "sourceNodeRef": "services/core-api/WorkOS.Api/Runtime/CanonicalOperationsApiService.cs",
+      "policyId": "generated-transition.dormitory.bed-setup-to-resource-readiness.v1",
+      "fromDefinitionId": "definition.dormitory.bedSetupConfirm.v1",
+      "toDefinitionId": "definition.dormitory.resourceReadinessConfirm.v1"
+    }
+  ],
+  "edges": [
+    {
+      "from": "definition.dormitory.roomSetupConfirm.v1",
+      "to": "definition.dormitory.bedSetupConfirm.v1",
+      "edgeType": "generated_transition_policy"
+    },
+    {
+      "from": "definition.dormitory.bedSetupConfirm.v1",
+      "to": "definition.dormitory.resourceReadinessConfirm.v1",
+      "edgeType": "generated_transition_policy"
+    }
+  ]
+}

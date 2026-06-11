@@ -1,0 +1,376 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "surface-input-model.generated",
+  "kernelGraphHash": "sha256:491276e27210f2f16b6f1a79b67fa1f964156475f408e498df2b4de419ddcdd0",
+  "sourceNodeRefs": [
+    "dormitory.workItem.Dorm.RoomSetupConfirm",
+    "dormitory.workItem.Dorm.BedSetupConfirm",
+    "dormitory.workItem.Dorm.ResourceReadinessConfirm"
+  ],
+  "generatorVersion": "current-oam-kernel-compiler.v1",
+  "generatedFrom": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+  "consumer": "apps/mobile/src/generated/oam/dormitory-surface-input-model.generated.json",
+  "surfaceOnlyConsumesGeneratedSurfaceModel": true,
+  "visibleAllowed": true,
+  "confirmAllowed": false,
+  "searchVisibleAllowed": true,
+  "labelInferenceAllowed": false,
+  "controls": [
+    {
+      "workItemType": "Dorm.RoomSetupConfirm",
+      "definitionId": "definition.dormitory.roomSetupConfirm.v1",
+      "fieldId": "roomNo",
+      "classification": "clientSubmitted",
+      "controlType": "text",
+      "fallbackAllowed": false,
+      "forbiddenFallbackControls": [
+        "dropdown",
+        "select",
+        "combobox"
+      ]
+    },
+    {
+      "workItemType": "Dorm.RoomSetupConfirm",
+      "definitionId": "definition.dormitory.roomSetupConfirm.v1",
+      "fieldId": "floor",
+      "classification": "clientSubmitted",
+      "controlType": "text",
+      "fallbackAllowed": false,
+      "forbiddenFallbackControls": []
+    },
+    {
+      "workItemType": "Dorm.RoomSetupConfirm",
+      "definitionId": "definition.dormitory.roomSetupConfirm.v1",
+      "fieldId": "capacity",
+      "classification": "clientSubmitted",
+      "controlType": "text",
+      "fallbackAllowed": false,
+      "forbiddenFallbackControls": []
+    },
+    {
+      "workItemType": "Dorm.RoomSetupConfirm",
+      "definitionId": "definition.dormitory.roomSetupConfirm.v1",
+      "fieldId": "tenantId",
+      "classification": "contextReadonly",
+      "controlType": "stableRef",
+      "fallbackAllowed": false,
+      "forbiddenFallbackControls": []
+    },
+    {
+      "workItemType": "Dorm.RoomSetupConfirm",
+      "definitionId": "definition.dormitory.roomSetupConfirm.v1",
+      "fieldId": "caseId",
+      "classification": "contextReadonly",
+      "controlType": "stableRef",
+      "fallbackAllowed": false,
+      "forbiddenFallbackControls": []
+    },
+    {
+      "workItemType": "Dorm.RoomSetupConfirm",
+      "definitionId": "definition.dormitory.roomSetupConfirm.v1",
+      "fieldId": "definitionId",
+      "classification": "contextReadonly",
+      "controlType": "stableRef",
+      "fallbackAllowed": false,
+      "forbiddenFallbackControls": []
+    },
+    {
+      "workItemType": "Dorm.RoomSetupConfirm",
+      "definitionId": "definition.dormitory.roomSetupConfirm.v1",
+      "fieldId": "sourceWorkItemId",
+      "classification": "contextReadonly",
+      "controlType": "stableRef",
+      "fallbackAllowed": false,
+      "forbiddenFallbackControls": []
+    },
+    {
+      "workItemType": "Dorm.RoomSetupConfirm",
+      "definitionId": "definition.dormitory.roomSetupConfirm.v1",
+      "fieldId": "workItemId",
+      "classification": "systemGenerated",
+      "controlType": "stableRef",
+      "fallbackAllowed": false,
+      "forbiddenFallbackControls": []
+    },
+    {
+      "workItemType": "Dorm.RoomSetupConfirm",
+      "definitionId": "definition.dormitory.roomSetupConfirm.v1",
+      "fieldId": "projectionVersion",
+      "classification": "systemGenerated",
+      "controlType": "text",
+      "fallbackAllowed": false,
+      "forbiddenFallbackControls": []
+    },
+    {
+      "workItemType": "Dorm.RoomSetupConfirm",
+      "definitionId": "definition.dormitory.roomSetupConfirm.v1",
+      "fieldId": "createdAt",
+      "classification": "systemGenerated",
+      "controlType": "text",
+      "fallbackAllowed": false,
+      "forbiddenFallbackControls": []
+    },
+    {
+      "workItemType": "Dorm.RoomSetupConfirm",
+      "definitionId": "definition.dormitory.roomSetupConfirm.v1",
+      "fieldId": "confirmedAt",
+      "classification": "systemGenerated",
+      "controlType": "text",
+      "fallbackAllowed": false,
+      "forbiddenFallbackControls": []
+    },
+    {
+      "workItemType": "Dorm.RoomSetupConfirm",
+      "definitionId": "definition.dormitory.roomSetupConfirm.v1",
+      "fieldId": "ledgerEntryId",
+      "classification": "systemGenerated",
+      "controlType": "stableRef",
+      "fallbackAllowed": false,
+      "forbiddenFallbackControls": []
+    },
+    {
+      "workItemType": "Dorm.RoomSetupConfirm",
+      "definitionId": "definition.dormitory.roomSetupConfirm.v1",
+      "fieldId": "domainEventId",
+      "classification": "systemGenerated",
+      "controlType": "stableRef",
+      "fallbackAllowed": false,
+      "forbiddenFallbackControls": []
+    },
+    {
+      "workItemType": "Dorm.BedSetupConfirm",
+      "definitionId": "definition.dormitory.bedSetupConfirm.v1",
+      "fieldId": "bedNo",
+      "classification": "clientSubmitted",
+      "controlType": "text",
+      "fallbackAllowed": false,
+      "forbiddenFallbackControls": []
+    },
+    {
+      "workItemType": "Dorm.BedSetupConfirm",
+      "definitionId": "definition.dormitory.bedSetupConfirm.v1",
+      "fieldId": "bedType",
+      "classification": "clientSubmitted",
+      "controlType": "text",
+      "fallbackAllowed": false,
+      "forbiddenFallbackControls": []
+    },
+    {
+      "workItemType": "Dorm.BedSetupConfirm",
+      "definitionId": "definition.dormitory.bedSetupConfirm.v1",
+      "fieldId": "roomId",
+      "classification": "selectedStableRef",
+      "controlType": "stableRef",
+      "fallbackAllowed": false,
+      "forbiddenFallbackControls": []
+    },
+    {
+      "workItemType": "Dorm.BedSetupConfirm",
+      "definitionId": "definition.dormitory.bedSetupConfirm.v1",
+      "fieldId": "tenantId",
+      "classification": "contextReadonly",
+      "controlType": "stableRef",
+      "fallbackAllowed": false,
+      "forbiddenFallbackControls": []
+    },
+    {
+      "workItemType": "Dorm.BedSetupConfirm",
+      "definitionId": "definition.dormitory.bedSetupConfirm.v1",
+      "fieldId": "caseId",
+      "classification": "contextReadonly",
+      "controlType": "stableRef",
+      "fallbackAllowed": false,
+      "forbiddenFallbackControls": []
+    },
+    {
+      "workItemType": "Dorm.BedSetupConfirm",
+      "definitionId": "definition.dormitory.bedSetupConfirm.v1",
+      "fieldId": "definitionId",
+      "classification": "contextReadonly",
+      "controlType": "stableRef",
+      "fallbackAllowed": false,
+      "forbiddenFallbackControls": []
+    },
+    {
+      "workItemType": "Dorm.BedSetupConfirm",
+      "definitionId": "definition.dormitory.bedSetupConfirm.v1",
+      "fieldId": "sourceWorkItemId",
+      "classification": "contextReadonly",
+      "controlType": "stableRef",
+      "fallbackAllowed": false,
+      "forbiddenFallbackControls": []
+    },
+    {
+      "workItemType": "Dorm.BedSetupConfirm",
+      "definitionId": "definition.dormitory.bedSetupConfirm.v1",
+      "fieldId": "workItemId",
+      "classification": "systemGenerated",
+      "controlType": "stableRef",
+      "fallbackAllowed": false,
+      "forbiddenFallbackControls": []
+    },
+    {
+      "workItemType": "Dorm.BedSetupConfirm",
+      "definitionId": "definition.dormitory.bedSetupConfirm.v1",
+      "fieldId": "projectionVersion",
+      "classification": "systemGenerated",
+      "controlType": "text",
+      "fallbackAllowed": false,
+      "forbiddenFallbackControls": []
+    },
+    {
+      "workItemType": "Dorm.BedSetupConfirm",
+      "definitionId": "definition.dormitory.bedSetupConfirm.v1",
+      "fieldId": "createdAt",
+      "classification": "systemGenerated",
+      "controlType": "text",
+      "fallbackAllowed": false,
+      "forbiddenFallbackControls": []
+    },
+    {
+      "workItemType": "Dorm.BedSetupConfirm",
+      "definitionId": "definition.dormitory.bedSetupConfirm.v1",
+      "fieldId": "confirmedAt",
+      "classification": "systemGenerated",
+      "controlType": "text",
+      "fallbackAllowed": false,
+      "forbiddenFallbackControls": []
+    },
+    {
+      "workItemType": "Dorm.BedSetupConfirm",
+      "definitionId": "definition.dormitory.bedSetupConfirm.v1",
+      "fieldId": "ledgerEntryId",
+      "classification": "systemGenerated",
+      "controlType": "stableRef",
+      "fallbackAllowed": false,
+      "forbiddenFallbackControls": []
+    },
+    {
+      "workItemType": "Dorm.BedSetupConfirm",
+      "definitionId": "definition.dormitory.bedSetupConfirm.v1",
+      "fieldId": "domainEventId",
+      "classification": "systemGenerated",
+      "controlType": "stableRef",
+      "fallbackAllowed": false,
+      "forbiddenFallbackControls": []
+    },
+    {
+      "workItemType": "Dorm.ResourceReadinessConfirm",
+      "definitionId": "definition.dormitory.resourceReadinessConfirm.v1",
+      "fieldId": "readinessState",
+      "classification": "clientSubmitted",
+      "controlType": "text",
+      "fallbackAllowed": false,
+      "forbiddenFallbackControls": []
+    },
+    {
+      "workItemType": "Dorm.ResourceReadinessConfirm",
+      "definitionId": "definition.dormitory.resourceReadinessConfirm.v1",
+      "fieldId": "roomId",
+      "classification": "selectedStableRef",
+      "controlType": "stableRef",
+      "fallbackAllowed": false,
+      "forbiddenFallbackControls": []
+    },
+    {
+      "workItemType": "Dorm.ResourceReadinessConfirm",
+      "definitionId": "definition.dormitory.resourceReadinessConfirm.v1",
+      "fieldId": "bedId",
+      "classification": "selectedStableRef",
+      "controlType": "stableRef",
+      "fallbackAllowed": false,
+      "forbiddenFallbackControls": []
+    },
+    {
+      "workItemType": "Dorm.ResourceReadinessConfirm",
+      "definitionId": "definition.dormitory.resourceReadinessConfirm.v1",
+      "fieldId": "tenantId",
+      "classification": "contextReadonly",
+      "controlType": "stableRef",
+      "fallbackAllowed": false,
+      "forbiddenFallbackControls": []
+    },
+    {
+      "workItemType": "Dorm.ResourceReadinessConfirm",
+      "definitionId": "definition.dormitory.resourceReadinessConfirm.v1",
+      "fieldId": "caseId",
+      "classification": "contextReadonly",
+      "controlType": "stableRef",
+      "fallbackAllowed": false,
+      "forbiddenFallbackControls": []
+    },
+    {
+      "workItemType": "Dorm.ResourceReadinessConfirm",
+      "definitionId": "definition.dormitory.resourceReadinessConfirm.v1",
+      "fieldId": "definitionId",
+      "classification": "contextReadonly",
+      "controlType": "stableRef",
+      "fallbackAllowed": false,
+      "forbiddenFallbackControls": []
+    },
+    {
+      "workItemType": "Dorm.ResourceReadinessConfirm",
+      "definitionId": "definition.dormitory.resourceReadinessConfirm.v1",
+      "fieldId": "sourceWorkItemId",
+      "classification": "contextReadonly",
+      "controlType": "stableRef",
+      "fallbackAllowed": false,
+      "forbiddenFallbackControls": []
+    },
+    {
+      "workItemType": "Dorm.ResourceReadinessConfirm",
+      "definitionId": "definition.dormitory.resourceReadinessConfirm.v1",
+      "fieldId": "workItemId",
+      "classification": "systemGenerated",
+      "controlType": "stableRef",
+      "fallbackAllowed": false,
+      "forbiddenFallbackControls": []
+    },
+    {
+      "workItemType": "Dorm.ResourceReadinessConfirm",
+      "definitionId": "definition.dormitory.resourceReadinessConfirm.v1",
+      "fieldId": "projectionVersion",
+      "classification": "systemGenerated",
+      "controlType": "text",
+      "fallbackAllowed": false,
+      "forbiddenFallbackControls": []
+    },
+    {
+      "workItemType": "Dorm.ResourceReadinessConfirm",
+      "definitionId": "definition.dormitory.resourceReadinessConfirm.v1",
+      "fieldId": "createdAt",
+      "classification": "systemGenerated",
+      "controlType": "text",
+      "fallbackAllowed": false,
+      "forbiddenFallbackControls": []
+    },
+    {
+      "workItemType": "Dorm.ResourceReadinessConfirm",
+      "definitionId": "definition.dormitory.resourceReadinessConfirm.v1",
+      "fieldId": "confirmedAt",
+      "classification": "systemGenerated",
+      "controlType": "text",
+      "fallbackAllowed": false,
+      "forbiddenFallbackControls": []
+    },
+    {
+      "workItemType": "Dorm.ResourceReadinessConfirm",
+      "definitionId": "definition.dormitory.resourceReadinessConfirm.v1",
+      "fieldId": "ledgerEntryId",
+      "classification": "systemGenerated",
+      "controlType": "stableRef",
+      "fallbackAllowed": false,
+      "forbiddenFallbackControls": []
+    },
+    {
+      "workItemType": "Dorm.ResourceReadinessConfirm",
+      "definitionId": "definition.dormitory.resourceReadinessConfirm.v1",
+      "fieldId": "domainEventId",
+      "classification": "systemGenerated",
+      "controlType": "stableRef",
+      "fallbackAllowed": false,
+      "forbiddenFallbackControls": []
+    }
+  ]
+}

@@ -290,6 +290,42 @@
       "notesZh": "Search 只读自证合同。"
     },
     {
+      "path": "docs/finance/finance-ledger-kernel.json",
+      "identity": "current_truth_contract",
+      "owner": "finance-truth-owner",
+      "checker": "scripts/oam/check-cross-domain-conflict-rules.mjs",
+      "evidence": "artifacts/oam/checks/cross-domain-conflict-rules-result.json",
+      "currentTruthAllowed": true,
+      "notesZh": "Finance / Ledger Kernel 最小权威，阻断 Dormitory basis、SharedReceipt、DashboardSummary 和 KPI 占用 finance truth。"
+    },
+    {
+      "path": "docs/identity/identity-permission-kernel.json",
+      "identity": "current_admission_contract",
+      "owner": "identity-trust-owner",
+      "checker": "scripts/oam/check-cross-domain-conflict-rules.mjs",
+      "evidence": "artifacts/oam/checks/cross-domain-conflict-rules-result.json",
+      "currentTruthAllowed": true,
+      "notesZh": "Identity / Permission Kernel 最小权威，声明 Subject、Actor、Account、Role、Capability、PermissionEnvelope、DeviceSession、TenantMatch 和 Relationship。"
+    },
+    {
+      "path": "docs/oam/codex-execution-channel-policy.json",
+      "identity": "current_system_kernel",
+      "owner": "oam-release-owner",
+      "checker": "scripts/oam/check-codex-execution-channel-policy.mjs",
+      "evidence": "artifacts/oam/checks/codex-execution-channel-policy-result.json",
+      "currentTruthAllowed": true,
+      "notesZh": "Codex 执行通道权威，限定 Codex 只执行 00 明确指令，不自行改 GO/NO_GO 或扩大范围。"
+    },
+    {
+      "path": "docs/oam/compiler-generated-contract-kernel.json",
+      "identity": "current_system_kernel",
+      "owner": "oam-release-owner",
+      "checker": "scripts/oam/check-cross-domain-conflict-rules.mjs",
+      "evidence": "artifacts/oam/checks/cross-domain-conflict-rules-result.json",
+      "currentTruthAllowed": true,
+      "notesZh": "人维护源内核与编译生成合同边界权威，生成文件不得手工编辑或标成 source truth。"
+    },
+    {
       "path": "docs/oam/current-architecture.manifest.json",
       "identity": "current_architecture_authority",
       "owner": "oam-release-owner",
@@ -315,6 +351,24 @@
       "evidence": "artifacts/oam/checks/current-engineering-ledger-result.json",
       "currentTruthAllowed": false,
       "notesZh": "当前保留文件身份、职责、owner、门禁、证据和删除条件总账；只管理工程文件，不替代 OAM 架构权威。"
+    },
+    {
+      "path": "docs/oam/current-oam-cross-domain-conflict-rules.json",
+      "identity": "current_system_kernel",
+      "owner": "oam-release-owner",
+      "checker": "scripts/oam/check-cross-domain-conflict-rules.mjs",
+      "evidence": "artifacts/oam/checks/cross-domain-conflict-rules-result.json",
+      "currentTruthAllowed": true,
+      "notesZh": "当前跨域冲突裁决规则，定义 business write、field display、search result、KPI、ledger、permission、release GO、Codex scope 和 P0 的归属。"
+    },
+    {
+      "path": "docs/oam/current-oam-kernel-responsibility-map.json",
+      "identity": "current_architecture_authority",
+      "owner": "oam-release-owner",
+      "checker": "scripts/oam/check-kernel-responsibility-map.mjs",
+      "evidence": "artifacts/oam/checks/kernel-responsibility-map-result.json",
+      "currentTruthAllowed": true,
+      "notesZh": "当前 OAM 责任域、四层模型、00 accountable、01-06 审查席位边界和 Codex 执行通道权威。"
     },
     {
       "path": "docs/oam/file-lifecycle-policy.json",
@@ -387,6 +441,15 @@
       "evidence": "artifacts/oam/checks/oam-kernel-graph-result.json",
       "currentTruthAllowed": true,
       "notesZh": "OAM 架构节点、关系、文件生命周期和门禁绑定图谱。"
+    },
+    {
+      "path": "docs/oam/professional-ai-review-seats.json",
+      "identity": "current_system_kernel",
+      "owner": "oam-release-owner",
+      "checker": "scripts/oam/check-professional-ai-review-seats.mjs",
+      "evidence": "artifacts/oam/checks/professional-ai-review-seats-result.json",
+      "currentTruthAllowed": true,
+      "notesZh": "01-06 专业 AI 审查席位权威，只能给审查意见，不得直接给 Codex 最终执行指令。"
     },
     {
       "path": "docs/oam/system-change-governance-contract.json",

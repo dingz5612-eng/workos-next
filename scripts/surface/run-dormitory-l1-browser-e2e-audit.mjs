@@ -127,7 +127,7 @@ async function runPositiveScenario(browser, allNetworkEvents) {
     assertScenario(scenario, blocked.runtimeDecision === "blocked:required_field_missing", "positive.required_fields_blocked", "Empty required fields must block before runtime confirm.");
     assertScenario(scenario, blocked.domState.invalidFields.length > 0, "positive.required_fields_marked", "Blocked fields must be marked in DOM.");
 
-    const lifecycleCards = ["roomSetup", "bedSetup", "rateSetup", "roomReadiness", "roomBlock", "roomRelease"];
+    const lifecycleCards = ["roomSetup", "bedSetup", "roomReadiness"];
     let completed = null;
     for (const [index, cardId] of lifecycleCards.entries()) {
       if (index > 0) {
@@ -588,7 +588,7 @@ function architectureAssertions(currentReport) {
     assertion("coverage.illegal_access", scenarioIds.has("dormitory_l1_negative_illegal_access"), "Illegal access scenario is present."),
     assertion("coverage.unauthorized", scenarioIds.has("dormitory_l1_negative_unauthorized"), "Unauthorized role scenario is present."),
     assertion("coverage.wrong_status", scenarioIds.has("dormitory_l1_negative_wrong_status"), "Wrong status scenario is present."),
-    assertion("coverage.resource_lifecycle", resourceLifecycleCaptured(steps), "Full dormitory resource lifecycle is captured with post-submit auto-advance and final readonly completion."),
+    assertion("coverage.resource_lifecycle", resourceLifecycleCaptured(steps), "P0 generated dormitory resource lifecycle is captured with post-submit auto-advance and final readonly completion."),
     assertion("admission.visible_not_allowed", steps.some((step) => /visible_blocked|visible_allowed_requires/.test(step.admissionDecision)), "Visible blocked/required admission state is captured."),
     assertion("admission.completed_readonly", steps.some((step) => step.admissionDecision === "visible_readonly_completed"), "Completed WorkItem is visible but read-only."),
     assertion("runtime.blocked_required", steps.some((step) => step.runtimeDecision === "blocked:required_field_missing"), "Required field blocker is enforced before runtime confirm."),
@@ -611,10 +611,10 @@ function assertion(id, passed, message) {
 }
 
 function resourceLifecycleCaptured(steps) {
-  const cards = ["roomSetup", "bedSetup", "rateSetup", "roomReadiness", "roomBlock", "roomRelease"];
+  const cards = ["roomSetup", "bedSetup", "roomReadiness"];
   const filled = cards.every((cardId) => steps.some((step) => step.stepId.includes(`${cardId}-filled-before-submit`)));
   const autoAdvanced = cards.slice(0, -1).every((cardId) => steps.some((step) => step.stepId.includes(`${cardId}-auto-advanced-next`)));
-  const finalReadonly = steps.some((step) => step.stepId.includes("roomRelease-completed-readonly") &&
+  const finalReadonly = steps.some((step) => step.stepId.includes("roomReadiness-completed-readonly") &&
     step.admissionDecision === "visible_readonly_completed");
   return filled && autoAdvanced && finalReadonly;
 }

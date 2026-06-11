@@ -1,0 +1,33 @@
+{
+  "version": "oam.codex-execution-channel-policy.v1",
+  "status": "authoritative",
+  "channel": "Codex Execution",
+  "governanceDomain": false,
+  "accountable": "00-OAM-Total-Control",
+  "rules": {
+    "codexOnlyExecutes00ExplicitInstructions": true,
+    "codexDoesNotInterpretArchitectureDirection": true,
+    "codexDoesNotModifyGoNoGoByItself": true,
+    "codexRejectsIndividual0106Instruction": true,
+    "codexDoesNotExpandTaskScope": true
+  },
+  "forbidden": [
+    "Codex self-interprets architecture direction",
+    "Codex changes GO/NO_GO without 00 instruction",
+    "Codex accepts standalone 01-06 final instruction",
+    "Codex expands scope beyond 00 instruction",
+    "Codex opens Business Production, Dormitory L2, or production_confirm"
+  ],
+  "allowedInput": {
+    "finalExecutionInstructionSource": "00-OAM-Total-Control",
+    "reviewInputSources": [
+      "01｜产品业务",
+      "02｜架构运行时",
+      "03｜体验语言",
+      "04｜搜索数据",
+      "05｜安全发布",
+      "06｜质量证据"
+    ],
+    "reviewInputIsNotFinalInstruction": true
+  }
+}

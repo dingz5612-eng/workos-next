@@ -103,6 +103,9 @@ public sealed class OperationsRuntimeService
     public IReadOnlyList<OperationsWorkItemSurface> ListWorkItemSurfaces(string? tenantId = null, string? caseId = null) =>
         ListWorkItems(tenantId, caseId).Select(ToSurface).ToArray();
 
+    public RuntimeDeviceSession? FindDeviceSession(string tenantId, string? deviceId) =>
+        string.IsNullOrWhiteSpace(deviceId) ? null : runtime.FindDeviceSession(tenantId, deviceId);
+
     public WorkItem? GetWorkItem(string workItemId)
     {
         var persisted = workItems.Get(workItemId);
@@ -484,6 +487,8 @@ public interface IOperationsRuntimeAdapter
     WorkspaceProjection? FindWorkspace(string workspaceId);
 
     IReadOnlyList<ProcessWorkItemIntentRecord> GetProcessWorkItemIntents(string? tenantId = null);
+
+    RuntimeDeviceSession? FindDeviceSession(string tenantId, string deviceId) => null;
 }
 
 public sealed class ProjectionOperationsRuntimeAdapter : IOperationsRuntimeAdapter
@@ -499,6 +504,9 @@ public sealed class ProjectionOperationsRuntimeAdapter : IOperationsRuntimeAdapt
 
     public IReadOnlyList<ProcessWorkItemIntentRecord> GetProcessWorkItemIntents(string? tenantId = null) =>
         runtime.GetProcessWorkItemIntents(tenantId);
+
+    public RuntimeDeviceSession? FindDeviceSession(string tenantId, string deviceId) =>
+        runtime.FindDeviceSession(tenantId, deviceId);
 }
 
 public sealed record CreateOperationCaseRequest(
@@ -753,9 +761,10 @@ public sealed record ConfirmWorkItemResult(
         string? submissionId,
         string? idempotencyKey,
         AdmissionKernelDecision admission,
-        WorkItemDefinitionResolution definition) =>
+        WorkItemDefinitionResolution definition,
+        int statusCode = StatusCodes.Status403Forbidden) =>
         new(
-            StatusCodes.Status403Forbidden,
+            statusCode,
             "admission_rejected",
             admission.Reason,
             false,

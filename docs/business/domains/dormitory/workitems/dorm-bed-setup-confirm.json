@@ -53,7 +53,7 @@
     "DormAvailabilityLens"
   ],
   "downstreamWorkItems": [
-    "Dorm.RatePlanConfirm"
+    "Dorm.ResourceReadinessConfirm"
   ],
   "failureRoutes": [
     "Dorm.ExceptionResolve",

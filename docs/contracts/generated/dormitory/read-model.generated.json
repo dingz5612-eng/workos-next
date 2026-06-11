@@ -1,0 +1,132 @@
+{
+  "generated": true,
+  "doNotEdit": true,
+  "kind": "read-model.generated",
+  "kernelGraphHash": "sha256:491276e27210f2f16b6f1a79b67fa1f964156475f408e498df2b4de419ddcdd0",
+  "sourceNodeRefs": [
+    "dormitory.workItem.Dorm.RoomSetupConfirm",
+    "dormitory.workItem.Dorm.BedSetupConfirm",
+    "dormitory.workItem.Dorm.ResourceReadinessConfirm"
+  ],
+  "generatorVersion": "current-oam-kernel-compiler.v1",
+  "generatedFrom": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+  "generatedReadModelsOnly": true,
+  "searchLensProjectionReadonly": true,
+  "searchResultTargetContract": {
+    "requiredFields": [
+      "targetId",
+      "runtimeOwner",
+      "compatibility"
+    ],
+    "permissionFilterOrder": "before_ranking",
+    "hiddenResultRanked": false,
+    "confirmAllowedRankingBoost": false
+  },
+  "targets": [
+    {
+      "targetId": "definition.dormitory.roomSetupConfirm.v1",
+      "runtimeOwner": "Accommodation.ResourceSetup",
+      "compatibility": "current-oam-read-model-v1",
+      "sourceFacts": [
+        "Room",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "lineage": [
+        "dormitory.workItem.Dorm.RoomSetupConfirm"
+      ]
+    },
+    {
+      "targetId": "definition.dormitory.bedSetupConfirm.v1",
+      "runtimeOwner": "Accommodation.ResourceSetup",
+      "compatibility": "current-oam-read-model-v1",
+      "sourceFacts": [
+        "Bed",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "lineage": [
+        "dormitory.workItem.Dorm.BedSetupConfirm"
+      ]
+    },
+    {
+      "targetId": "definition.dormitory.resourceReadinessConfirm.v1",
+      "runtimeOwner": "Accommodation.ResourceReadiness",
+      "compatibility": "current-oam-read-model-v1",
+      "sourceFacts": [
+        "Room",
+        "EvidenceObject",
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "lineage": [
+        "dormitory.workItem.Dorm.ResourceReadinessConfirm"
+      ]
+    }
+  ],
+  "metrics": [
+    {
+      "metricId": "dormitory.resourceReadiness",
+      "sourceFacts": [
+        "Room",
+        "Bed"
+      ],
+      "lineage": [
+        "dormitory.workItem.Dorm.RoomSetupConfirm",
+        "dormitory.workItem.Dorm.BedSetupConfirm",
+        "dormitory.workItem.Dorm.ResourceReadinessConfirm"
+      ]
+    },
+    {
+      "metricId": "dormitory.generatedContractCoverage",
+      "sourceFacts": [
+        "CommandSubmission"
+      ],
+      "lineage": [
+        "dormitory.workItem.Dorm.RoomSetupConfirm",
+        "dormitory.workItem.Dorm.BedSetupConfirm",
+        "dormitory.workItem.Dorm.ResourceReadinessConfirm"
+      ]
+    }
+  ],
+  "dashboards": [
+    {
+      "dashboardId": "dormitory.currentReadiness",
+      "sourceFacts": [
+        "Room",
+        "Bed"
+      ],
+      "lineage": [
+        "dormitory.workItem.Dorm.RoomSetupConfirm",
+        "dormitory.workItem.Dorm.BedSetupConfirm",
+        "dormitory.workItem.Dorm.ResourceReadinessConfirm"
+      ]
+    }
+  ],
+  "reportDatasets": [
+    {
+      "reportDatasetId": "dormitory.generatedP0Contracts",
+      "sourceFacts": [
+        "DomainEvent",
+        "CommandSubmission"
+      ],
+      "lineage": [
+        "dormitory.workItem.Dorm.RoomSetupConfirm",
+        "dormitory.workItem.Dorm.BedSetupConfirm",
+        "dormitory.workItem.Dorm.ResourceReadinessConfirm"
+      ]
+    }
+  ],
+  "languageGlossary": {
+    "supports": [
+      "objectKind",
+      "resultType",
+      "metric",
+      "dashboard",
+      "lineage",
+      "readiness"
+    ]
+  }
+}

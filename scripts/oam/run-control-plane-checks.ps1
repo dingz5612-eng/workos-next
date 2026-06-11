@@ -86,8 +86,15 @@ Invoke-Gate node scripts/oam/check-current-oam.mjs
 Invoke-Gate node scripts/oam/check-p0-rule-ledger.mjs --self-test
 Invoke-Gate node scripts/oam/check-p0-rule-ledger.mjs
 Invoke-Gate node scripts/oam/check-current-authority-index.mjs
+Invoke-Gate node scripts/oam/check-kernel-responsibility-map.mjs
+Invoke-Gate node scripts/oam/check-professional-ai-review-seats.mjs
+Invoke-Gate node scripts/oam/check-codex-execution-channel-policy.mjs
+Invoke-Gate node scripts/oam/check-cross-domain-conflict-rules.mjs
 Invoke-Gate node scripts/oam/check-system-operating-kernel.mjs
 Invoke-Gate node scripts/business/generate-dormitory-derived-contracts.mjs
+Invoke-Gate node scripts/oam/compile-current-kernel-graph.mjs
+Invoke-Gate node scripts/oam/check-generated-contract-consistency.mjs
+Invoke-Gate node scripts/oam/check-generated-files-not-manually-edited.mjs
 Invoke-Gate node scripts/oam/check-oam-kernel-graph.mjs
 Invoke-Gate node scripts/oam/check-system-change-governance.mjs
 Invoke-Gate node scripts/oam/check-iteration-kernel.mjs
@@ -121,6 +128,7 @@ Invoke-Gate node scripts/check-account-actor-kernel.mjs --self-test
 Invoke-Gate node scripts/check-account-actor-kernel.mjs
 Invoke-Gate node scripts/check-language-kernel.mjs
 Invoke-Gate node scripts/oam/check-surface-language-v2.mjs
+Invoke-Gate node scripts/oam/check-read-intelligence-kernel.mjs
 Invoke-Gate node scripts/check-search-kernel.mjs --self-test
 Invoke-Gate node scripts/check-search-kernel.mjs
 Invoke-Gate node scripts/check-surface-contract.mjs
@@ -142,6 +150,7 @@ Invoke-Gate node scripts/check-management-cockpit-boundary.mjs --self-test
 Invoke-Gate node scripts/check-management-cockpit-boundary.mjs
 Invoke-Gate node scripts/check-shared-governance-boundary.mjs --self-test
 Invoke-Gate node scripts/check-shared-governance-boundary.mjs
+Invoke-Gate node scripts/oam/check-db-no-side-effects-proof.mjs
 Invoke-Gate node scripts/check-dormitory-golden-domain.mjs --self-test
 Invoke-Gate node scripts/check-dormitory-golden-domain.mjs
 Invoke-Gate node scripts/business/check-dormitory-operating-kernel.mjs
