@@ -5,6 +5,13 @@ const root = process.cwd();
 const reportPath = "artifacts/oam/authority-cleanup/mutation-tests-result.json";
 const index = readJson("docs/oam/current-authority-index.json");
 const generatedManifest = readJson("docs/oam/generated-contracts-manifest.json");
+const dashboardContract = readJson("docs/contracts/bi-kpi/dashboard-contract.json");
+const evidenceGraph = fs.existsSync(abs("artifacts/oam/evidence/evidence-graph.json"))
+  ? readJson("artifacts/oam/evidence/evidence-graph.json")
+  : { nodes: [{ id: "placeholder", proofType: "placeholder", source: ["placeholder"], hash: "sha256:0000000000000000000000000000000000000000000000000000000000000000", dependsOn: ["placeholder"], status: "blocked", goNoGo: "NO_GO" }] };
+const releaseEvidenceObject = fs.existsSync(abs("artifacts/oam/evidence/current-oam-release-evidence-object.json"))
+  ? readJson("artifacts/oam/evidence/current-oam-release-evidence-object.json")
+  : { sourceCommitSha: "0000000000000000000000000000000000000000", evidenceRunSha: "0000000000000000000000000000000000000000", referenceOnly: true, stale: true, finalGoNoGo: "NO_GO" };
 const finalReport = fs.existsSync(abs("artifacts/oam/final-report.json"))
   ? readJson("artifacts/oam/final-report.json")
   : { finalGoNoGo: "NO_GO", controlPlaneGateResult: { status: "passed" }, noGoReasons: ["当前阶段 NO_GO。"] };
@@ -38,6 +45,51 @@ const tests = [
       if (entry) entry.businessFactAuthorityAllowed = true;
     }
     return validateAuthorityIndex(clone).some((item) => item.id === "business_fact_forbidden_path" || item.id === "surface_business_fact_forbidden");
+  }),
+  mutationTest("search_business_fact_should_fail", () => {
+    const clone = cloneIndex();
+    const entry = clone.entries.find((item) => item.path === "docs/contracts/search/search-contract.json");
+    if (entry) entry.businessFactAuthorityAllowed = true;
+    return validateAuthorityIndex(clone).some((item) => item.id === "business_fact_forbidden_path");
+  }),
+  mutationTest("surface_business_fact_should_fail", () => {
+    const clone = cloneIndex();
+    const entry = mustEntry(clone, "docs/surface/surface-contract.yml");
+    entry.businessFactAuthorityAllowed = true;
+    return validateAuthorityIndex(clone).some((item) => item.id === "surface_business_fact_forbidden");
+  }),
+  mutationTest("dashboard_business_fact_should_fail", () => {
+    const contract = structuredClone(dashboardContract);
+    contract.businessFactWriteAllowed = true;
+    contract.dashboards[0].writeFactsAllowed = true;
+    return validateDashboardReadonly(contract).some((item) => item.id === "dashboard_business_fact_write");
+  }),
+  mutationTest("non_finance_kernel_ledger_entry_should_fail", () => {
+    const consumer = {
+      owner: "dashboard",
+      file: "docs/contracts/bi-kpi/dashboard-contract.json",
+      writes: ["LedgerEntry"]
+    };
+    return validateLedgerEntryWriter(consumer).some((item) => item.id === "ledger_entry_non_finance_writer");
+  }),
+  mutationTest("evidence_graph_node_missing_proof_fields_should_fail", () => {
+    const graph = structuredClone(evidenceGraph);
+    const node = graph.nodes?.[0] ?? {};
+    delete node.proofType;
+    delete node.source;
+    delete node.hash;
+    delete node.dependsOn;
+    return validateEvidenceGraphNodes(graph).some((item) => item.id === "evidence_node_missing_minimum_field");
+  }),
+  mutationTest("release_evidence_old_sha_should_fail_or_no_go", () => {
+    const release = structuredClone(releaseEvidenceObject);
+    release.sourceCommitSha = "0000000000000000000000000000000000000000";
+    release.evidenceRunSha = "0000000000000000000000000000000000000000";
+    release.stale = false;
+    release.referenceOnly = false;
+    release.bindingStatus = "current";
+    release.finalGoNoGo = "GO";
+    return validateReleaseBinding(release).some((item) => item.id === "release_old_sha_not_reference_only" || item.id === "release_stale_go");
   }),
   mutationTest("generated_manifest_source_hash_removed_should_fail", () => {
     const manifest = structuredClone(generatedManifest);
@@ -146,6 +198,58 @@ function validateGoNoGo(report) {
   const violations = [];
   if (report.controlPlaneGateResult?.status === "passed" && report.finalGoNoGo === "GO") {
     violations.push({ id: "ci_green_cannot_promote_go" });
+  }
+  return violations;
+}
+
+function validateDashboardReadonly(contract) {
+  const violations = [];
+  if (contract.businessFactWriteAllowed !== false) violations.push({ id: "dashboard_business_fact_write" });
+  if (contract.financeFactWriteAllowed !== false) violations.push({ id: "dashboard_finance_fact_write" });
+  if (contract.ledgerEntryWriteAllowed !== false) violations.push({ id: "dashboard_ledger_write" });
+  if (contract.workItemDefinitionMutationAllowed !== false) violations.push({ id: "dashboard_workitem_definition_write" });
+  for (const dashboard of contract.dashboards ?? []) {
+    if (dashboard.writeFactsAllowed !== false) violations.push({ id: "dashboard_business_fact_write", dashboardId: dashboard.dashboardId });
+    if (dashboard.writeFinancialFactsAllowed !== false) violations.push({ id: "dashboard_finance_fact_write", dashboardId: dashboard.dashboardId });
+    if (dashboard.writeLedgerEntryAllowed !== false) violations.push({ id: "dashboard_ledger_write", dashboardId: dashboard.dashboardId });
+    if (dashboard.modifyWorkItemDefinitionAllowed !== false) violations.push({ id: "dashboard_workitem_definition_write", dashboardId: dashboard.dashboardId });
+    if (dashboard.truthOwnerAllowed !== false) violations.push({ id: "dashboard_truth_owner", dashboardId: dashboard.dashboardId });
+  }
+  return violations;
+}
+
+function validateLedgerEntryWriter(consumer) {
+  const violations = [];
+  const allowedFinanceKernel = consumer.owner === "finance-ledger-kernel" ||
+    consumer.file === "docs/finance/finance-ledger-kernel.json";
+  if ((consumer.writes ?? []).includes("LedgerEntry") && !allowedFinanceKernel) {
+    violations.push({ id: "ledger_entry_non_finance_writer", file: consumer.file });
+  }
+  return violations;
+}
+
+function validateEvidenceGraphNodes(graph) {
+  const violations = [];
+  for (const node of graph.nodes ?? []) {
+    for (const field of ["proofType", "source", "hash", "dependsOn"]) {
+      const value = node[field];
+      if (value === undefined || value === null || value === "" || (Array.isArray(value) && value.length === 0)) {
+        violations.push({ id: "evidence_node_missing_minimum_field", nodeId: node.id, field });
+      }
+    }
+  }
+  return violations;
+}
+
+function validateReleaseBinding(release) {
+  const violations = [];
+  const current = finalReport.latestCommit ?? finalReport.binding?.sourceCommitSha ?? release.sourceCommitSha;
+  const stale = release.sourceCommitSha !== current || release.evidenceRunSha !== current;
+  if (stale && (release.stale !== true || release.referenceOnly !== true || release.bindingStatus !== "stale")) {
+    violations.push({ id: "release_old_sha_not_reference_only" });
+  }
+  if (stale && release.finalGoNoGo === "GO") {
+    violations.push({ id: "release_stale_go" });
   }
   return violations;
 }

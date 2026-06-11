@@ -41,6 +41,8 @@ const requiredEvidenceFiles = [
   "docs/oam/system-derived-contracts.json",
   "docs/oam/domain-derived-contracts.json",
   "docs/oam/generated-contracts-manifest.json",
+  "artifacts/oam/authority-cleanup/source-layer-audit.json",
+  "artifacts/oam/authority-cleanup/mutation-tests-result.json",
   "docs/oam/kernel/oam-kernel-graph.generated.json",
   "docs/contracts/generated/dormitory/dormitory-kernel.generated.manifest.json",
   "docs/contracts/generated/dormitory/fields.generated.json",
@@ -55,6 +57,7 @@ const requiredEvidenceFiles = [
   "artifacts/oam/checks/professional-ai-review-seats-result.json",
   "artifacts/oam/checks/codex-execution-channel-policy-result.json",
   "artifacts/oam/checks/cross-domain-conflict-rules-result.json",
+  "artifacts/oam/checks/dashboard-readonly-report.json",
   "docs/oam/mobile-branch-risk-policy.json",
   "docs/oam/mobile-branch-risk-ledger.json",
   "docs/oam/mobile-critical-branch-scenarios.json",
@@ -79,6 +82,10 @@ const generatedContractFiles = [
 
 const generatedAt = new Date().toISOString();
 const commitSha = env("GITHUB_SHA") || git("rev-parse HEAD") || "local";
+const sourceCommitSha = commitSha;
+const evidenceRunSha = env("GITHUB_SHA") || git("rev-parse HEAD") || commitSha;
+const currentRepositoryHead = git("rev-parse HEAD") || evidenceRunSha;
+const bindingStale = sourceCommitSha !== currentRepositoryHead || evidenceRunSha !== currentRepositoryHead;
 const branch = env("GITHUB_HEAD_REF") || env("GITHUB_REF_NAME") || git("branch --show-current") || "local";
 const kernelGraphHash = hashFileStrict("docs/oam/oam-kernel-graph.json");
 const generatedContractsHash = digestForDisk(generatedContractFiles);
@@ -320,6 +327,13 @@ addEvidence(
 const finalReport = {
   ...proof("current-oam-final-report", "当前 OAM 可信运行闭环最终报告", {}),
   artifactName,
+  sourceCommitSha,
+  evidenceRunSha,
+  artifactDigest: digestPlaceholder,
+  generatedContractsHash,
+  evidenceGraphHash: digestPlaceholder,
+  finalReportDigest: digestPlaceholder,
+  evidenceBinding: evidenceBindingState(),
   currentBranch: branch,
   latestCommit: commitSha,
   workspaceStatus: workspace.summary,
@@ -384,6 +398,13 @@ addEvidence(finalReportPath, finalReport);
 
 const evidenceGraph = {
   ...proof("evidence-graph", "当前 OAM 证据根", {}),
+  sourceCommitSha,
+  evidenceRunSha,
+  artifactDigest: digestPlaceholder,
+  generatedContractsHash,
+  evidenceGraphHash: digestPlaceholder,
+  finalReportDigest: digestPlaceholder,
+  evidenceBinding: evidenceBindingState(),
   evidenceRoot: evidenceDir,
   requiredFiles: requiredEvidenceFiles,
   fileRefs: requiredEvidenceFiles.map((file) => ({
@@ -429,12 +450,19 @@ const releaseEvidenceObject = {
   }),
   repository,
   workflow,
+  sourceCommitSha,
+  evidenceRunSha,
+  currentRepositoryHead,
+  stale: bindingStale,
+  referenceOnly: bindingStale,
+  bindingStatus: bindingStale ? "stale" : "current",
   githubSha: commitSha,
   githubRunId: ciRunId,
   githubRunAttempt: ciRunAttempt,
   githubRefName: branch,
   generatedAtUtc: generatedAt,
   artifactName,
+  artifactDigest: digestPlaceholder,
   githubArtifactDigest: digestPlaceholder,
   evidenceRootDigest: evidenceRootDigestPlaceholder,
   generatedContractsHash,
@@ -511,6 +539,12 @@ function binding(kind) {
     kind,
     repository,
     workflow,
+    sourceCommitSha,
+    evidenceRunSha,
+    currentRepositoryHead,
+    stale: bindingStale,
+    referenceOnly: bindingStale,
+    bindingStatus: bindingStale ? "stale" : "current",
     commitSha,
     githubSha: commitSha,
     branch,
@@ -528,6 +562,25 @@ function binding(kind) {
     kernelGraphHash,
     evidenceGraphHash: digestPlaceholder,
     finalReportDigest: digestPlaceholder
+  };
+}
+
+function evidenceBindingState() {
+  return {
+    sourceCommitSha,
+    evidenceRunSha,
+    currentRepositoryHead,
+    stale: bindingStale,
+    referenceOnly: bindingStale,
+    bindingStatus: bindingStale ? "stale" : "current",
+    artifactDigest: digestPlaceholder,
+    generatedContractsHash,
+    evidenceGraphHash: digestPlaceholder,
+    finalReportDigest: digestPlaceholder,
+    noGoWhenStale: true,
+    notesZh: bindingStale
+      ? "证据绑定的源码提交或运行提交不是当前仓库 HEAD，本产物只能作为 referenceOnly，不得作为 GO 依据。"
+      : "证据绑定当前被验证源码提交、证据运行提交和当前仓库 HEAD。"
   };
 }
 
@@ -825,11 +878,18 @@ function requiredGateCommands() {
     "node scripts/oam/check-p0-rule-ledger.mjs --self-test",
     "node scripts/oam/check-p0-rule-ledger.mjs",
     "node scripts/oam/check-current-authority-index.mjs",
+    "node scripts/oam/generate-authority-source-layer-audit.mjs",
+    "node scripts/oam/check-authority-source-layer-audit.mjs",
+    "node scripts/oam/check-authority-cleanup-mutation-tests.mjs",
     "node scripts/oam/check-kernel-responsibility-map.mjs",
     "node scripts/oam/check-professional-ai-review-seats.mjs",
     "node scripts/oam/check-codex-execution-channel-policy.mjs",
     "node scripts/oam/check-cross-domain-conflict-rules.mjs",
     "node scripts/oam/check-system-operating-kernel.mjs",
+    "node scripts/business/generate-dormitory-derived-contracts.mjs",
+    "node scripts/oam/compile-current-kernel-graph.mjs",
+    "node scripts/oam/check-generated-contract-consistency.mjs",
+    "node scripts/oam/check-generated-files-not-manually-edited.mjs",
     "node scripts/oam/check-oam-kernel-graph.mjs",
     "node scripts/oam/check-file-lifecycle-policy.mjs",
     "node scripts/oam/check-retired-reference-blocker.mjs",
@@ -861,6 +921,7 @@ function requiredGateCommands() {
     "node scripts/check-account-actor-kernel.mjs",
     "node scripts/check-language-kernel.mjs",
     "node scripts/oam/check-surface-language-v2.mjs",
+    "node scripts/oam/check-read-intelligence-kernel.mjs",
     "node scripts/check-search-kernel.mjs --self-test",
     "node scripts/check-search-kernel.mjs",
     "node scripts/check-surface-contract.mjs",
@@ -876,10 +937,12 @@ function requiredGateCommands() {
     "node scripts/check-finance-truth.mjs",
     "node scripts/check-ledger-semantic-rules.mjs",
     "node scripts/finance/check-finance-semantic-truth.mjs",
+    "node scripts/oam/check-dashboard-readonly.mjs",
     "node scripts/check-management-cockpit-boundary.mjs --self-test",
     "node scripts/check-management-cockpit-boundary.mjs",
     "node scripts/check-shared-governance-boundary.mjs --self-test",
     "node scripts/check-shared-governance-boundary.mjs",
+    "node scripts/oam/check-db-no-side-effects-proof.mjs",
     "node scripts/check-dormitory-golden-domain.mjs --self-test",
     "node scripts/check-dormitory-golden-domain.mjs",
     "node scripts/business/check-dormitory-execution-kernel.mjs",
@@ -963,9 +1026,8 @@ function readL1BrowserEvidence() {
     runId: report?.runId || "",
     scenarioCount: report?.scenarios?.length ?? 0,
     screenshotHashCount: screenshotHashes.length,
-    node: report ? {
+    node: report ? buildBrowserProofNode({
       id: `DORM-L1-BROWSER-E2E-${report.runId || "unknown"}`,
-      type: "browser_e2e_evidence",
       status,
       gate: "DORM-L1-BROWSER-E2E",
       branch: report.git?.branch || branch,
@@ -974,6 +1036,7 @@ function readL1BrowserEvidence() {
       ciRunUrl: report.ciRun?.url || "",
       scenarioIds: (report.scenarios ?? []).map((scenario) => scenario.scenarioId).filter(Boolean),
       screenshotHashes,
+      reportRef,
       refs: [
         reportRef,
         normalizeRepoPath(report.outputs?.markdown || ""),
@@ -981,7 +1044,7 @@ function readL1BrowserEvidence() {
         "scripts/surface/run-dormitory-l1-browser-e2e-audit.mjs",
         "scripts/surface/check-dormitory-l1-browser-e2e-audit.mjs"
       ].filter(Boolean)
-    } : null
+    }) : null
   };
 }
 
@@ -999,9 +1062,8 @@ function readTenScenarioBrowserEvidence() {
     runId: report?.runId || "",
     scenarioCount: report?.scenarios?.length ?? 0,
     screenshotHashCount: screenshotHashes.length,
-    node: report ? {
+    node: report ? buildBrowserProofNode({
       id: `DORM-TEN-SCENARIO-REAL-BROWSER-${report.runId || "unknown"}`,
-      type: "browser_e2e_evidence",
       status,
       gate: "DORMITORY-TEN-SCENARIO-REAL-BROWSER",
       branch: report.git?.branch || branch,
@@ -1012,6 +1074,7 @@ function readTenScenarioBrowserEvidence() {
         : "",
       scenarioIds: (report.scenarios ?? []).map((scenario) => scenario.id).filter(Boolean),
       screenshotHashes,
+      reportRef,
       refs: [
         reportRef,
         ["artifacts", "oam", "evidence", "dormitory-real-browser", runId, "ten-scenario-real-browser-report.md"].join("/"),
@@ -1019,7 +1082,61 @@ function readTenScenarioBrowserEvidence() {
         "scripts/surface/run-dormitory-ten-scenario-real-browser-audit.mjs",
         "scripts/surface/check-dormitory-ten-scenario-real-browser-audit.mjs"
       ]
-    } : null
+    }) : null
+  };
+}
+
+function buildBrowserProofNode(input) {
+  const refs = [...new Set((input.refs ?? []).filter(Boolean).map(normalizeRepoPath))];
+  const screenshotInputHashes = (input.screenshotHashes ?? [])
+    .filter(Boolean)
+    .map((hash, index) => ({
+      path: `browser-screenshot:${input.gate}:${index + 1}`,
+      hash: String(hash).startsWith("sha256:") ? String(hash) : `sha256:${hash}`
+    }));
+  const sourceHashes = refs.map((file) => ({
+    path: file,
+    hash: hashFileIfPresent(file)
+  }));
+  const payload = {
+    id: input.id,
+    gate: input.gate,
+    status: input.status,
+    reportRef: input.reportRef,
+    refs,
+    screenshotHashes: input.screenshotHashes,
+    headSha: input.headSha,
+    sourceCommitSha,
+    evidenceRunSha,
+    finalGoNoGo: "NO_GO"
+  };
+  const proofHash = `sha256:${sha256(JSON.stringify(normalizeForDigest(payload)))}`;
+  return {
+    id: input.id,
+    type: "browser_e2e_evidence",
+    proofType: "current-oam-browser-e2e-proof",
+    source: refs,
+    hash: proofHash,
+    dependsOn: refs,
+    status: input.status,
+    goNoGo: "NO_GO",
+    gate: input.gate,
+    branch: input.branch,
+    headSha: input.headSha,
+    sourceCommitSha,
+    evidenceRunSha,
+    ciRunId: input.ciRunId,
+    ciRunUrl: input.ciRunUrl,
+    scenarioIds: input.scenarioIds,
+    screenshotHashes: input.screenshotHashes,
+    reportRef: input.reportRef,
+    refs,
+    command: refs.find((file) => file.includes("/run-")) ?? input.gate,
+    checker: refs.find((file) => file.includes("/check-")) ?? input.gate,
+    inputHashes: [...sourceHashes, ...screenshotInputHashes],
+    outputHashes: [{ path: `evidence-node:${input.id}`, hash: proofHash }],
+    goNoGoImpact: ["surfaceLanguageGoNoGo", "finalGoNoGo"],
+    notesZh: `${input.gate} 的真实浏览器 proof DAG 节点；截图哈希、报告和检查器均作为依赖，CI 绿色不等于业务 GO。`
   };
 }
 
@@ -1054,6 +1171,9 @@ function buildFinalDecision() {
   }
   if (controlPlaneGateResult.stale) {
     noGoReasons.push(`OAM 总门禁结果过期：${controlPlaneGateResult.commitSha} != ${commitSha}`);
+  }
+  if (bindingStale) {
+    noGoReasons.push(`证据绑定过期：sourceCommitSha=${sourceCommitSha}, evidenceRunSha=${evidenceRunSha}, currentRepositoryHead=${currentRepositoryHead}`);
   }
   if (mobileBranchRiskKernel.status !== "passed") {
     noGoReasons.push(`移动端分支风险门禁未通过：${mobileBranchRiskKernel.status}`);
@@ -1090,6 +1210,8 @@ function executionLogText(digest) {
       event: "冻结检查",
       status: workspace.summary,
       commitSha,
+      sourceCommitSha,
+      evidenceRunSha,
       branch,
       ciRunId,
       generatedAt,
@@ -1100,6 +1222,8 @@ function executionLogText(digest) {
       event: "P0 账本状态",
       status: unresolvedP0.length === 0 ? "passed" : "failed",
       commitSha,
+      sourceCommitSha,
+      evidenceRunSha,
       branch,
       ciRunId,
       generatedAt,
@@ -1113,6 +1237,8 @@ function executionLogText(digest) {
       event: "本地总门禁绑定",
       status: gateSummary.status,
       commitSha,
+      sourceCommitSha,
+      evidenceRunSha,
       branch,
       ciRunId,
       generatedAt,
@@ -1123,6 +1249,8 @@ function executionLogText(digest) {
       event: "测试验收绑定",
       status: "required",
       commitSha,
+      sourceCommitSha,
+      evidenceRunSha,
       branch,
       ciRunId,
       generatedAt,
@@ -1133,6 +1261,8 @@ function executionLogText(digest) {
       event: "覆盖率绑定",
       status: coverageSummary.status,
       commitSha,
+      sourceCommitSha,
+      evidenceRunSha,
       branch,
       ciRunId,
       generatedAt,
@@ -1143,6 +1273,8 @@ function executionLogText(digest) {
       event: "移动覆盖率治理",
       status: mobileBranchRiskKernel.status,
       commitSha,
+      sourceCommitSha,
+      evidenceRunSha,
       branch,
       ciRunId,
       generatedAt,
@@ -1153,6 +1285,8 @@ function executionLogText(digest) {
       event: "最终裁决",
       status: finalGoNoGo,
       commitSha,
+      sourceCommitSha,
+      evidenceRunSha,
       branch,
       ciRunId,
       generatedAt,

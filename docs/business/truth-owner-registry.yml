@@ -197,7 +197,7 @@
       "owner": "projection-kernel",
       "truthLevel": "readModel",
       "allowedCommitters": [],
-      "forbiddenOwners": ["domain-pack", "management-cockpit-direct-write", "finance-truth"],
+      "forbiddenOwners": ["domain-pack", "management-cockpit-direct-write", "dashboard", "finance-truth"],
       "receiptProjection": "referenceOnly",
       "provisionalRefPolicy": "notAllowedForLedgerCommit"
     },

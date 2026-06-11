@@ -136,6 +136,8 @@ jobs:
           node scripts/check-finance-truth.mjs
           node scripts/check-ledger-semantic-rules.mjs
           node scripts/finance/check-finance-semantic-truth.mjs
+          node scripts/oam/check-dashboard-readonly.mjs --self-test
+          node scripts/oam/check-dashboard-readonly.mjs
           node scripts/check-management-cockpit-boundary.mjs --self-test
           node scripts/check-management-cockpit-boundary.mjs
           node scripts/check-shared-governance-boundary.mjs --self-test

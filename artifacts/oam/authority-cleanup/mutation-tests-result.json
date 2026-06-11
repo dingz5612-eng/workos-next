@@ -1,8 +1,8 @@
 {
   "version": "oam.authority-cleanup-mutation-tests.v1",
-  "checkedAtUtc": "2026-06-11T17:53:31.708Z",
+  "checkedAtUtc": "2026-06-11T19:00:33.136Z",
   "status": "passed",
-  "mutationCount": 6,
+  "mutationCount": 12,
   "failedMutationCount": 0,
   "tests": [
     {
@@ -17,6 +17,36 @@
     },
     {
       "id": "search_bi_surface_business_fact_should_fail",
+      "status": "passed",
+      "messageZh": "突变已被门禁识别。"
+    },
+    {
+      "id": "search_business_fact_should_fail",
+      "status": "passed",
+      "messageZh": "突变已被门禁识别。"
+    },
+    {
+      "id": "surface_business_fact_should_fail",
+      "status": "passed",
+      "messageZh": "突变已被门禁识别。"
+    },
+    {
+      "id": "dashboard_business_fact_should_fail",
+      "status": "passed",
+      "messageZh": "突变已被门禁识别。"
+    },
+    {
+      "id": "non_finance_kernel_ledger_entry_should_fail",
+      "status": "passed",
+      "messageZh": "突变已被门禁识别。"
+    },
+    {
+      "id": "evidence_graph_node_missing_proof_fields_should_fail",
+      "status": "passed",
+      "messageZh": "突变已被门禁识别。"
+    },
+    {
+      "id": "release_evidence_old_sha_should_fail_or_no_go",
       "status": "passed",
       "messageZh": "突变已被门禁识别。"
     },

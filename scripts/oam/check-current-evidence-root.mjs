@@ -1,6 +1,7 @@
 import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
+import { execSync } from "node:child_process";
 
 const root = process.cwd();
 const digestPlaceholder = "__CURRENT_OAM_EVIDENCE_DIGEST__";
@@ -9,7 +10,11 @@ const ciRunAttempt = env("GITHUB_RUN_ATTEMPT") || "local";
 const expectedRepository = env("GITHUB_REPOSITORY") || "";
 const expectedWorkflow = env("GITHUB_WORKFLOW") || "CI";
 const expectedArtifactName = artifactNameForRun(ciRunId);
+const currentRepositoryHead = env("GITHUB_SHA") || git("rev-parse HEAD") || "local";
 const releaseEvidenceObjectPath = "artifacts/oam/evidence/current-oam-release-evidence-object.json";
+const sha256DigestPattern = /^sha256:[a-f0-9]{64}$/;
+const bareSha256Pattern = /^[a-f0-9]{64}$/;
+const allowedNodeStatuses = new Set(["passed", "blocked", "failed", "missing_or_failed", "bound", "required", "missing"]);
 const requiredFiles = [
   "artifacts/oam/evidence/evidence-graph.json",
   releaseEvidenceObjectPath,
@@ -34,6 +39,8 @@ const requiredFiles = [
   "docs/oam/system-derived-contracts.json",
   "docs/oam/domain-derived-contracts.json",
   "docs/oam/generated-contracts-manifest.json",
+  "artifacts/oam/authority-cleanup/source-layer-audit.json",
+  "artifacts/oam/authority-cleanup/mutation-tests-result.json",
   "docs/oam/kernel/oam-kernel-graph.generated.json",
   "docs/contracts/generated/dormitory/dormitory-kernel.generated.manifest.json",
   "docs/contracts/generated/dormitory/fields.generated.json",
@@ -48,6 +55,7 @@ const requiredFiles = [
   "artifacts/oam/checks/professional-ai-review-seats-result.json",
   "artifacts/oam/checks/codex-execution-channel-policy-result.json",
   "artifacts/oam/checks/cross-domain-conflict-rules-result.json",
+  "artifacts/oam/checks/dashboard-readonly-report.json",
   "docs/oam/mobile-branch-risk-policy.json",
   "docs/oam/mobile-branch-risk-ledger.json",
   "docs/oam/mobile-critical-branch-scenarios.json",
@@ -100,6 +108,8 @@ if (documents.size === requiredFiles.length) {
 
   checkArtifactName("final report", finalReport.artifactName);
   checkReleaseEvidenceObject(releaseObject, graph, finalReport, documents);
+  checkEvidenceBindingConsistency(graph, releaseObject, finalReport, expectedDigest);
+  checkEvidenceGraphNodes(graph, finalReport);
 
   if (Array.isArray(finalReport.unresolvedP0) && finalReport.unresolvedP0.length > 0) {
     failures.push(`final report has unresolved P0: ${finalReport.unresolvedP0.map((item) => item.ruleId).join(", ")}`);
@@ -189,12 +199,19 @@ function checkReleaseEvidenceObject(releaseObject, graph, finalReport, allDocume
   for (const field of [
     "repository",
     "workflow",
+    "sourceCommitSha",
+    "evidenceRunSha",
+    "currentRepositoryHead",
+    "stale",
+    "referenceOnly",
+    "bindingStatus",
     "githubSha",
     "githubRunId",
     "githubRunAttempt",
     "githubRefName",
     "generatedAtUtc",
     "artifactName",
+    "artifactDigest",
     "githubArtifactDigest",
     "evidenceRootDigest",
     "generatedContractsHash",
@@ -227,8 +244,17 @@ function checkReleaseEvidenceObject(releaseObject, graph, finalReport, allDocume
   if (releaseObject.githubSha !== graph?.binding?.commitSha) {
     failures.push("release evidence object githubSha must match evidence graph binding commitSha.");
   }
+  if (releaseObject.sourceCommitSha !== graph?.binding?.sourceCommitSha || releaseObject.sourceCommitSha !== finalReport?.binding?.sourceCommitSha) {
+    failures.push("release evidence object sourceCommitSha must match evidence graph and final report.");
+  }
+  if (releaseObject.evidenceRunSha !== graph?.binding?.evidenceRunSha || releaseObject.evidenceRunSha !== finalReport?.binding?.evidenceRunSha) {
+    failures.push("release evidence object evidenceRunSha must match evidence graph and final report.");
+  }
   if (releaseObject.githubRefName !== graph?.binding?.branch) {
     failures.push("release evidence object githubRefName must match evidence graph binding branch.");
+  }
+  if (releaseObject.artifactDigest !== graph?.binding?.artifactDigest) {
+    failures.push("release evidence object artifactDigest must match evidence graph artifactDigest.");
   }
   if (releaseObject.githubArtifactDigest !== graph?.binding?.artifactDigest) {
     failures.push("release evidence object githubArtifactDigest must match evidence graph artifactDigest.");
@@ -278,6 +304,173 @@ function checkReleaseEvidenceObject(releaseObject, graph, finalReport, allDocume
   }
 }
 
+function checkEvidenceBindingConsistency(graph, releaseObject, finalReport, expectedDigest) {
+  const graphBinding = graph?.binding ?? {};
+  const finalBinding = finalReport?.binding ?? {};
+  const releaseBinding = releaseObject?.binding ?? {};
+  const graphSourceSha = graphBinding.sourceCommitSha ?? graph.sourceCommitSha ?? graphBinding.commitSha;
+  const finalSourceSha = finalBinding.sourceCommitSha ?? finalReport.sourceCommitSha ?? finalReport.latestCommit;
+  const releaseSourceSha = releaseObject?.sourceCommitSha ?? releaseBinding.sourceCommitSha ?? releaseObject?.githubSha;
+  const graphRunSha = graphBinding.evidenceRunSha ?? graph.evidenceRunSha ?? graphBinding.githubSha;
+  const finalRunSha = finalBinding.evidenceRunSha ?? finalReport.evidenceRunSha ?? finalBinding.githubSha;
+  const releaseRunSha = releaseObject?.evidenceRunSha ?? releaseBinding.evidenceRunSha ?? releaseObject?.githubSha;
+
+  for (const [label, value] of [
+    ["evidence graph sourceCommitSha", graphSourceSha],
+    ["final report sourceCommitSha", finalSourceSha],
+    ["release evidence sourceCommitSha", releaseSourceSha],
+    ["evidence graph evidenceRunSha", graphRunSha],
+    ["final report evidenceRunSha", finalRunSha],
+    ["release evidence evidenceRunSha", releaseRunSha]
+  ]) {
+    if (!isGitSha(value)) failures.push(`${label} must be a concrete git SHA, actual: ${value || "missing"}`);
+  }
+
+  if (graphSourceSha !== finalSourceSha || graphSourceSha !== releaseSourceSha) {
+    failures.push("Release Evidence Object, Evidence Graph, and Final Report sourceCommitSha must match.");
+  }
+  if (graphRunSha !== finalRunSha || graphRunSha !== releaseRunSha) {
+    failures.push("Release Evidence Object, Evidence Graph, and Final Report evidenceRunSha must match.");
+  }
+  if (finalReport.latestCommit !== graphSourceSha) {
+    failures.push("Final Report latestCommit must match sourceCommitSha.");
+  }
+
+  for (const [label, digest] of [
+    ["evidence graph artifactDigest", graphBinding.artifactDigest ?? graph.artifactDigest],
+    ["final report artifactDigest", finalBinding.artifactDigest ?? finalReport.artifactDigest],
+    ["release evidence artifactDigest", releaseObject?.artifactDigest ?? releaseBinding.artifactDigest],
+    ["release evidence githubArtifactDigest", releaseObject?.githubArtifactDigest]
+  ]) {
+    if (digest !== expectedDigest) {
+      failures.push(`${label} must match current artifact digest ${expectedDigest}, actual: ${digest || "missing"}`);
+    }
+  }
+
+  const graphGeneratedHash = graphBinding.generatedContractsHash ?? graph.generatedContractsHash;
+  const finalGeneratedHash = finalBinding.generatedContractsHash ?? finalReport.generatedContractsHash;
+  const releaseGeneratedHash = releaseObject?.generatedContractsHash ?? releaseBinding.generatedContractsHash;
+  if (graphGeneratedHash !== finalGeneratedHash || graphGeneratedHash !== releaseGeneratedHash) {
+    failures.push("Release Evidence Object, Evidence Graph, and Final Report generatedContractsHash must match.");
+  }
+  if (!sha256DigestPattern.test(String(graphGeneratedHash ?? ""))) {
+    failures.push("generatedContractsHash must be sha256.");
+  }
+
+  const graphHash = graphBinding.evidenceGraphHash ?? graph.evidenceGraphHash;
+  const finalGraphHash = finalBinding.evidenceGraphHash ?? finalReport.evidenceGraphHash;
+  const releaseGraphHash = releaseObject?.evidenceGraphHash ?? releaseBinding.evidenceGraphHash;
+  if (graphHash !== finalGraphHash || graphHash !== releaseGraphHash) {
+    failures.push("Release Evidence Object, Evidence Graph, and Final Report evidenceGraphHash must match.");
+  }
+  if (!sha256DigestPattern.test(String(graphHash ?? ""))) {
+    failures.push("evidenceGraphHash must be sha256.");
+  }
+
+  const graphFinalDigest = graphBinding.finalReportDigest ?? graph.finalReportDigest;
+  const finalDigest = finalBinding.finalReportDigest ?? finalReport.finalReportDigest;
+  const releaseFinalDigest = releaseObject?.finalReportDigest ?? releaseBinding.finalReportDigest;
+  if (graphFinalDigest !== finalDigest || graphFinalDigest !== releaseFinalDigest) {
+    failures.push("Release Evidence Object, Evidence Graph, and Final Report finalReportDigest must match.");
+  }
+  if (!sha256DigestPattern.test(String(finalDigest ?? ""))) {
+    failures.push("finalReportDigest must be sha256.");
+  }
+
+  const stale = graphSourceSha !== currentRepositoryHead || graphRunSha !== currentRepositoryHead;
+  for (const [label, state] of [
+    ["evidence graph binding", graphBinding],
+    ["final report binding", finalBinding],
+    ["release evidence object", releaseObject],
+    ["release evidence binding", releaseBinding],
+    ["evidence graph evidenceBinding", graph.evidenceBinding],
+    ["final report evidenceBinding", finalReport.evidenceBinding]
+  ]) {
+    if (!state || typeof state !== "object") {
+      failures.push(`${label} missing stale/referenceOnly binding state.`);
+      continue;
+    }
+    if (state.stale !== stale) failures.push(`${label} stale must be ${stale}.`);
+    if (state.referenceOnly !== stale) failures.push(`${label} referenceOnly must be ${stale}.`);
+    if (state.bindingStatus !== (stale ? "stale" : "current")) {
+      failures.push(`${label} bindingStatus must be ${stale ? "stale" : "current"}.`);
+    }
+  }
+  if (stale && finalReport.finalGoNoGo === "GO") {
+    failures.push("stale/referenceOnly evidence must never support Final Report GO.");
+  }
+}
+
+function checkEvidenceGraphNodes(graph, finalReport) {
+  const nodes = graph?.nodes ?? [];
+  if (!Array.isArray(nodes) || nodes.length === 0) {
+    failures.push("Evidence Graph must contain proof DAG nodes.");
+    return;
+  }
+  for (const node of nodes) {
+    const id = node.id ?? "<missing>";
+    for (const field of ["proofType", "source", "hash", "dependsOn", "status", "goNoGo"]) {
+      const value = node[field];
+      if (isEmptyProofField(value)) {
+        failures.push(`evidence graph node ${id} missing ${field}.`);
+      }
+    }
+    if (!sha256DigestPattern.test(String(node.hash ?? ""))) {
+      failures.push(`evidence graph node ${id} hash must be sha256.`);
+    }
+    if (!Array.isArray(node.dependsOn) || node.dependsOn.length === 0) {
+      failures.push(`evidence graph node ${id} dependsOn must be a non-empty array.`);
+    }
+    if (!isNonEmptySource(node.source)) {
+      failures.push(`evidence graph node ${id} source must be non-empty.`);
+    }
+    if (!allowedNodeStatuses.has(node.status)) {
+      failures.push(`evidence graph node ${id} status is not controlled: ${node.status || "missing"}`);
+    }
+    if (!["GO", "NO_GO"].includes(node.goNoGo)) {
+      failures.push(`evidence graph node ${id} goNoGo must be GO or NO_GO.`);
+    }
+    if (node.type === "browser_e2e_evidence") {
+      checkBrowserEvidenceNode(node, finalReport);
+    }
+  }
+}
+
+function checkBrowserEvidenceNode(node, finalReport) {
+  const id = node.id ?? "<missing>";
+  const sourceCommitSha = finalReport.binding?.sourceCommitSha ?? finalReport.sourceCommitSha ?? finalReport.latestCommit;
+  if (node.proofType !== "current-oam-browser-e2e-proof") {
+    failures.push(`browser evidence node ${id} proofType must distinguish browser E2E proof.`);
+  }
+  if (!node.reportRef || !exists(node.reportRef)) {
+    failures.push(`browser evidence node ${id} must bind an existing report ref.`);
+  }
+  if (!Array.isArray(node.refs) || !node.refs.includes(node.reportRef)) {
+    failures.push(`browser evidence node ${id} refs must include reportRef.`);
+  }
+  if (!Array.isArray(node.screenshotHashes) || node.screenshotHashes.length === 0) {
+    failures.push(`browser evidence node ${id} must bind screenshot hashes.`);
+  }
+  for (const hash of node.screenshotHashes ?? []) {
+    const normalized = String(hash).replace(/^sha256:/, "");
+    if (!bareSha256Pattern.test(normalized)) {
+      failures.push(`browser evidence node ${id} screenshot hash must be sha256: ${hash}`);
+    }
+  }
+  if (node.headSha !== sourceCommitSha) {
+    failures.push(`browser evidence node ${id} headSha must match current verified sourceCommitSha.`);
+  }
+  if (node.sourceCommitSha !== sourceCommitSha) {
+    failures.push(`browser evidence node ${id} sourceCommitSha must match Final Report.`);
+  }
+  if (!node.refs?.some((ref) => String(ref).includes("screenshot-index"))) {
+    failures.push(`browser evidence node ${id} must bind screenshot index ref.`);
+  }
+  if (!node.checker || !String(node.checker).includes("check-")) {
+    failures.push(`browser evidence node ${id} must bind checker ref.`);
+  }
+}
+
 function generatedContractFiles() {
   return [
     "docs/oam/system-derived-contracts.json",
@@ -323,6 +516,12 @@ function checkBinding(file, document, expectedDigest) {
   for (const key of [
     "repository",
     "workflow",
+    "sourceCommitSha",
+    "evidenceRunSha",
+    "currentRepositoryHead",
+    "stale",
+    "referenceOnly",
+    "bindingStatus",
     "commitSha",
     "githubSha",
     "branch",
@@ -347,6 +546,25 @@ function checkBinding(file, document, expectedDigest) {
   }
   if (binding.githubSha !== binding.commitSha) {
     failures.push(`${file} binding githubSha must match commitSha.`);
+  }
+  if (binding.commitSha !== binding.sourceCommitSha) {
+    failures.push(`${file} binding commitSha must match sourceCommitSha.`);
+  }
+  if (binding.evidenceRunSha !== binding.sourceCommitSha) {
+    failures.push(`${file} binding evidenceRunSha must match sourceCommitSha for current single-commit evidence runs.`);
+  }
+  if (!isGitSha(binding.sourceCommitSha)) {
+    failures.push(`${file} binding sourceCommitSha must be a concrete git SHA.`);
+  }
+  const stale = binding.sourceCommitSha !== currentRepositoryHead || binding.evidenceRunSha !== currentRepositoryHead;
+  if (binding.stale !== stale) {
+    failures.push(`${file} binding stale must be ${stale}.`);
+  }
+  if (binding.referenceOnly !== stale) {
+    failures.push(`${file} binding referenceOnly must be ${stale}.`);
+  }
+  if (binding.bindingStatus !== (stale ? "stale" : "current")) {
+    failures.push(`${file} bindingStatus must be ${stale ? "stale" : "current"}.`);
   }
   if (binding.githubRefName !== binding.branch) {
     failures.push(`${file} binding githubRefName must match branch.`);
@@ -432,10 +650,14 @@ function workflowContainsEvidenceUpload() {
     workflow.includes("node scripts/oam/check-codex-execution-channel-policy.mjs") &&
     workflow.includes("node scripts/oam/check-cross-domain-conflict-rules.mjs") &&
     workflow.includes("node scripts/oam/check-system-operating-kernel.mjs") &&
+    workflow.includes("node scripts/oam/generate-authority-source-layer-audit.mjs") &&
+    workflow.includes("node scripts/oam/check-authority-source-layer-audit.mjs") &&
+    workflow.includes("node scripts/oam/check-authority-cleanup-mutation-tests.mjs") &&
     workflow.includes("node scripts/oam/compile-current-kernel-graph.mjs") &&
     workflow.includes("node scripts/oam/check-generated-contract-consistency.mjs") &&
     workflow.includes("node scripts/oam/check-generated-files-not-manually-edited.mjs") &&
     workflow.includes("node scripts/oam/check-read-intelligence-kernel.mjs") &&
+    workflow.includes("node scripts/oam/check-dashboard-readonly.mjs") &&
     workflow.includes("node scripts/oam/check-db-no-side-effects-proof.mjs") &&
     workflow.includes("node scripts/oam/check-oam-kernel-graph.mjs") &&
     workflow.includes("node scripts/oam/check-file-lifecycle-policy.mjs") &&
@@ -466,10 +688,14 @@ function controlPlaneContainsEvidenceRoot() {
     gate.includes("node scripts/oam/check-codex-execution-channel-policy.mjs") &&
     gate.includes("node scripts/oam/check-cross-domain-conflict-rules.mjs") &&
     gate.includes("node scripts/oam/check-system-operating-kernel.mjs") &&
+    gate.includes("node scripts/oam/generate-authority-source-layer-audit.mjs") &&
+    gate.includes("node scripts/oam/check-authority-source-layer-audit.mjs") &&
+    gate.includes("node scripts/oam/check-authority-cleanup-mutation-tests.mjs") &&
     gate.includes("node scripts/oam/compile-current-kernel-graph.mjs") &&
     gate.includes("node scripts/oam/check-generated-contract-consistency.mjs") &&
     gate.includes("node scripts/oam/check-generated-files-not-manually-edited.mjs") &&
     gate.includes("node scripts/oam/check-read-intelligence-kernel.mjs") &&
+    gate.includes("node scripts/oam/check-dashboard-readonly.mjs") &&
     gate.includes("node scripts/oam/check-db-no-side-effects-proof.mjs") &&
     gate.includes("node scripts/oam/check-oam-kernel-graph.mjs") &&
     gate.includes("node scripts/oam/check-file-lifecycle-policy.mjs") &&
@@ -674,10 +900,13 @@ function checkExecutionLog(entries, expectedDigest) {
     if (entry.artifactDigest !== expectedDigest) {
       failures.push(`execution log event ${entry.event || "unknown"} digest does not match evidence graph.`);
     }
-    for (const key of ["commitSha", "branch", "ciRunId", "generatedAt"]) {
+    for (const key of ["commitSha", "sourceCommitSha", "evidenceRunSha", "branch", "ciRunId", "generatedAt"]) {
       if (!entry[key]) {
         failures.push(`execution log event ${entry.event || "unknown"} missing ${key}.`);
       }
+    }
+    if (entry.sourceCommitSha !== entry.commitSha || entry.evidenceRunSha !== entry.commitSha) {
+      failures.push(`execution log event ${entry.event || "unknown"} source/evidence SHA must match commitSha for the current evidence run.`);
     }
   }
 }
@@ -722,6 +951,14 @@ function env(name) {
   return process.env[name] || "";
 }
 
+function git(command) {
+  try {
+    return execSync(`git ${command}`, { cwd: root, encoding: "utf8" }).trim();
+  } catch {
+    return "";
+  }
+}
+
 function artifactNameForRun(runId) {
   const normalized = String(runId || "").trim();
   if (!normalized || normalized.includes("${{")) {
@@ -729,6 +966,22 @@ function artifactNameForRun(runId) {
     return "workosnext-current-oam-evidence-invalid";
   }
   return `workosnext-current-oam-evidence-${normalized}`;
+}
+
+function isGitSha(value) {
+  return /^[a-f0-9]{40}$/i.test(String(value ?? ""));
+}
+
+function isEmptyProofField(value) {
+  return value === undefined ||
+    value === null ||
+    value === "" ||
+    (Array.isArray(value) && value.length === 0);
+}
+
+function isNonEmptySource(value) {
+  if (Array.isArray(value)) return value.length > 0 && value.every((item) => String(item ?? "").trim().length > 0);
+  return String(value ?? "").trim().length > 0;
 }
 
 function sha256(value) {

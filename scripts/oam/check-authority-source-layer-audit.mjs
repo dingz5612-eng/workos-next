@@ -33,6 +33,46 @@ if (!fs.existsSync(abs(auditPath))) {
   if (audit.unknownCount !== 0) {
     fail("audit_unknown_count", "权威层审计不得存在 unknown 结论。");
   }
+  for (const field of [
+    "sourceWhitelistUnique",
+    "unknownCount",
+    "derivedAsSourceCount",
+    "generatedAsSourceCount",
+    "businessFactAuthorityOutsideSourceCount",
+    "generatedManualEditAllowedCount",
+    "currentDecision",
+    "blockingReasons"
+  ]) {
+    if (!(field in audit)) {
+      fail("audit_decision_field_missing", `source-layer-audit.json 缺少机器裁决字段 ${field}。`);
+    }
+  }
+  if (audit.sourceWhitelistUnique !== true) {
+    fail("source_whitelist_not_unique", "current-authority-index 的 Source 白名单必须唯一生效。");
+  }
+  for (const field of [
+    "unknownCount",
+    "derivedAsSourceCount",
+    "generatedAsSourceCount",
+    "businessFactAuthorityOutsideSourceCount",
+    "generatedManualEditAllowedCount"
+  ]) {
+    if (audit[field] !== 0) {
+      fail("audit_blocking_count", `${field} 必须为 0，实际为 ${audit[field] ?? "missing"}。`);
+    }
+  }
+  if (!["PASS", "FAIL"].includes(audit.currentDecision)) {
+    fail("audit_current_decision_invalid", "currentDecision 只能是 PASS 或 FAIL。");
+  }
+  if (!Array.isArray(audit.blockingReasons)) {
+    fail("audit_blocking_reasons_invalid", "blockingReasons 必须是数组。");
+  }
+  if (audit.currentDecision !== "PASS") {
+    fail("audit_current_decision_fail", `Source Layer 审计未通过：${(audit.blockingReasons ?? []).join("; ")}`);
+  }
+  if (audit.currentDecision === "PASS" && Array.isArray(audit.blockingReasons) && audit.blockingReasons.length > 0) {
+    fail("audit_pass_with_blockers", "currentDecision=PASS 时 blockingReasons 必须为空。");
+  }
 
   const paths = new Set();
   for (const entry of audit.entries ?? []) {

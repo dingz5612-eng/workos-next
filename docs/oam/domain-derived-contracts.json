@@ -19,9 +19,9 @@
   "sourceGraph": "docs/oam/oam-kernel-graph.json",
   "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
   "sourceGraphVersion": "oam.kernel-graph.v1",
-  "sourceHash": "sha256:0e921036d4e850d2236a733aa53b6c7d6371694d20f9fbfd111df2e55c5f7a03",
-  "sourceContentDigest": "sha256:0e921036d4e850d2236a733aa53b6c7d6371694d20f9fbfd111df2e55c5f7a03",
-  "kernelGraphHash": "sha256:6ce12760e202cb9fceb6b5ad8a26d5b9688e59e7bee641178411ff5936ee3fd3",
+  "sourceHash": "sha256:417d431c2b0724209e54e76f6bceccb69f9765835c843711a898a7843fed1961",
+  "sourceContentDigest": "sha256:417d431c2b0724209e54e76f6bceccb69f9765835c843711a898a7843fed1961",
+  "kernelGraphHash": "sha256:ead084842f71c79b590fd6b76577e5951dae6b8033f13758fbe20a32392f662e",
   "deterministicSort": true,
   "contracts": [
     {
@@ -39,7 +39,7 @@
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:15cd44d47717fc2b6753ac8483d4a6ca1fb8207b5477bbf1f08c63105bb2386f",
-        "docs/oam/oam-kernel-graph.json": "sha256:6ce12760e202cb9fceb6b5ad8a26d5b9688e59e7bee641178411ff5936ee3fd3"
+        "docs/oam/oam-kernel-graph.json": "sha256:ead084842f71c79b590fd6b76577e5951dae6b8033f13758fbe20a32392f662e"
       }
     },
     {
@@ -57,7 +57,7 @@
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:15cd44d47717fc2b6753ac8483d4a6ca1fb8207b5477bbf1f08c63105bb2386f",
-        "docs/oam/oam-kernel-graph.json": "sha256:6ce12760e202cb9fceb6b5ad8a26d5b9688e59e7bee641178411ff5936ee3fd3"
+        "docs/oam/oam-kernel-graph.json": "sha256:ead084842f71c79b590fd6b76577e5951dae6b8033f13758fbe20a32392f662e"
       }
     },
     {
@@ -75,7 +75,7 @@
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:15cd44d47717fc2b6753ac8483d4a6ca1fb8207b5477bbf1f08c63105bb2386f",
-        "docs/oam/oam-kernel-graph.json": "sha256:6ce12760e202cb9fceb6b5ad8a26d5b9688e59e7bee641178411ff5936ee3fd3"
+        "docs/oam/oam-kernel-graph.json": "sha256:ead084842f71c79b590fd6b76577e5951dae6b8033f13758fbe20a32392f662e"
       }
     },
     {
@@ -93,7 +93,7 @@
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:15cd44d47717fc2b6753ac8483d4a6ca1fb8207b5477bbf1f08c63105bb2386f",
-        "docs/oam/oam-kernel-graph.json": "sha256:6ce12760e202cb9fceb6b5ad8a26d5b9688e59e7bee641178411ff5936ee3fd3"
+        "docs/oam/oam-kernel-graph.json": "sha256:ead084842f71c79b590fd6b76577e5951dae6b8033f13758fbe20a32392f662e"
       }
     },
     {
@@ -111,7 +111,7 @@
       "checker": "scripts/business/check-dormitory-pilot-scenario-pack.mjs",
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:15cd44d47717fc2b6753ac8483d4a6ca1fb8207b5477bbf1f08c63105bb2386f",
-        "docs/oam/oam-kernel-graph.json": "sha256:6ce12760e202cb9fceb6b5ad8a26d5b9688e59e7bee641178411ff5936ee3fd3"
+        "docs/oam/oam-kernel-graph.json": "sha256:ead084842f71c79b590fd6b76577e5951dae6b8033f13758fbe20a32392f662e"
       }
     },
     {
@@ -129,7 +129,7 @@
       "checker": "scripts/business/check-dormitory-release-train.mjs",
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:15cd44d47717fc2b6753ac8483d4a6ca1fb8207b5477bbf1f08c63105bb2386f",
-        "docs/oam/oam-kernel-graph.json": "sha256:6ce12760e202cb9fceb6b5ad8a26d5b9688e59e7bee641178411ff5936ee3fd3"
+        "docs/oam/oam-kernel-graph.json": "sha256:ead084842f71c79b590fd6b76577e5951dae6b8033f13758fbe20a32392f662e"
       }
     },
     {
@@ -147,7 +147,7 @@
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:15cd44d47717fc2b6753ac8483d4a6ca1fb8207b5477bbf1f08c63105bb2386f",
-        "docs/oam/oam-kernel-graph.json": "sha256:6ce12760e202cb9fceb6b5ad8a26d5b9688e59e7bee641178411ff5936ee3fd3"
+        "docs/oam/oam-kernel-graph.json": "sha256:ead084842f71c79b590fd6b76577e5951dae6b8033f13758fbe20a32392f662e"
       }
     },
     {
@@ -165,7 +165,7 @@
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:15cd44d47717fc2b6753ac8483d4a6ca1fb8207b5477bbf1f08c63105bb2386f",
-        "docs/oam/oam-kernel-graph.json": "sha256:6ce12760e202cb9fceb6b5ad8a26d5b9688e59e7bee641178411ff5936ee3fd3"
+        "docs/oam/oam-kernel-graph.json": "sha256:ead084842f71c79b590fd6b76577e5951dae6b8033f13758fbe20a32392f662e"
       }
     },
     {
@@ -183,7 +183,7 @@
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:15cd44d47717fc2b6753ac8483d4a6ca1fb8207b5477bbf1f08c63105bb2386f",
-        "docs/oam/oam-kernel-graph.json": "sha256:6ce12760e202cb9fceb6b5ad8a26d5b9688e59e7bee641178411ff5936ee3fd3"
+        "docs/oam/oam-kernel-graph.json": "sha256:ead084842f71c79b590fd6b76577e5951dae6b8033f13758fbe20a32392f662e"
       }
     },
     {
@@ -201,7 +201,7 @@
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:15cd44d47717fc2b6753ac8483d4a6ca1fb8207b5477bbf1f08c63105bb2386f",
-        "docs/oam/oam-kernel-graph.json": "sha256:6ce12760e202cb9fceb6b5ad8a26d5b9688e59e7bee641178411ff5936ee3fd3"
+        "docs/oam/oam-kernel-graph.json": "sha256:ead084842f71c79b590fd6b76577e5951dae6b8033f13758fbe20a32392f662e"
       }
     },
     {
@@ -219,7 +219,7 @@
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:15cd44d47717fc2b6753ac8483d4a6ca1fb8207b5477bbf1f08c63105bb2386f",
-        "docs/oam/oam-kernel-graph.json": "sha256:6ce12760e202cb9fceb6b5ad8a26d5b9688e59e7bee641178411ff5936ee3fd3"
+        "docs/oam/oam-kernel-graph.json": "sha256:ead084842f71c79b590fd6b76577e5951dae6b8033f13758fbe20a32392f662e"
       }
     },
     {
@@ -237,7 +237,7 @@
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:15cd44d47717fc2b6753ac8483d4a6ca1fb8207b5477bbf1f08c63105bb2386f",
-        "docs/oam/oam-kernel-graph.json": "sha256:6ce12760e202cb9fceb6b5ad8a26d5b9688e59e7bee641178411ff5936ee3fd3"
+        "docs/oam/oam-kernel-graph.json": "sha256:ead084842f71c79b590fd6b76577e5951dae6b8033f13758fbe20a32392f662e"
       }
     },
     {
@@ -255,7 +255,7 @@
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:15cd44d47717fc2b6753ac8483d4a6ca1fb8207b5477bbf1f08c63105bb2386f",
-        "docs/oam/oam-kernel-graph.json": "sha256:6ce12760e202cb9fceb6b5ad8a26d5b9688e59e7bee641178411ff5936ee3fd3"
+        "docs/oam/oam-kernel-graph.json": "sha256:ead084842f71c79b590fd6b76577e5951dae6b8033f13758fbe20a32392f662e"
       }
     },
     {
@@ -273,7 +273,7 @@
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:15cd44d47717fc2b6753ac8483d4a6ca1fb8207b5477bbf1f08c63105bb2386f",
-        "docs/oam/oam-kernel-graph.json": "sha256:6ce12760e202cb9fceb6b5ad8a26d5b9688e59e7bee641178411ff5936ee3fd3"
+        "docs/oam/oam-kernel-graph.json": "sha256:ead084842f71c79b590fd6b76577e5951dae6b8033f13758fbe20a32392f662e"
       }
     },
     {
@@ -291,7 +291,7 @@
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:15cd44d47717fc2b6753ac8483d4a6ca1fb8207b5477bbf1f08c63105bb2386f",
-        "docs/oam/oam-kernel-graph.json": "sha256:6ce12760e202cb9fceb6b5ad8a26d5b9688e59e7bee641178411ff5936ee3fd3"
+        "docs/oam/oam-kernel-graph.json": "sha256:ead084842f71c79b590fd6b76577e5951dae6b8033f13758fbe20a32392f662e"
       }
     },
     {
@@ -309,7 +309,7 @@
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:15cd44d47717fc2b6753ac8483d4a6ca1fb8207b5477bbf1f08c63105bb2386f",
-        "docs/oam/oam-kernel-graph.json": "sha256:6ce12760e202cb9fceb6b5ad8a26d5b9688e59e7bee641178411ff5936ee3fd3"
+        "docs/oam/oam-kernel-graph.json": "sha256:ead084842f71c79b590fd6b76577e5951dae6b8033f13758fbe20a32392f662e"
       }
     },
     {
@@ -327,7 +327,7 @@
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:15cd44d47717fc2b6753ac8483d4a6ca1fb8207b5477bbf1f08c63105bb2386f",
-        "docs/oam/oam-kernel-graph.json": "sha256:6ce12760e202cb9fceb6b5ad8a26d5b9688e59e7bee641178411ff5936ee3fd3"
+        "docs/oam/oam-kernel-graph.json": "sha256:ead084842f71c79b590fd6b76577e5951dae6b8033f13758fbe20a32392f662e"
       }
     },
     {
@@ -345,7 +345,7 @@
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:15cd44d47717fc2b6753ac8483d4a6ca1fb8207b5477bbf1f08c63105bb2386f",
-        "docs/oam/oam-kernel-graph.json": "sha256:6ce12760e202cb9fceb6b5ad8a26d5b9688e59e7bee641178411ff5936ee3fd3"
+        "docs/oam/oam-kernel-graph.json": "sha256:ead084842f71c79b590fd6b76577e5951dae6b8033f13758fbe20a32392f662e"
       }
     },
     {
@@ -363,7 +363,7 @@
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:15cd44d47717fc2b6753ac8483d4a6ca1fb8207b5477bbf1f08c63105bb2386f",
-        "docs/oam/oam-kernel-graph.json": "sha256:6ce12760e202cb9fceb6b5ad8a26d5b9688e59e7bee641178411ff5936ee3fd3"
+        "docs/oam/oam-kernel-graph.json": "sha256:ead084842f71c79b590fd6b76577e5951dae6b8033f13758fbe20a32392f662e"
       }
     },
     {
@@ -381,7 +381,7 @@
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:15cd44d47717fc2b6753ac8483d4a6ca1fb8207b5477bbf1f08c63105bb2386f",
-        "docs/oam/oam-kernel-graph.json": "sha256:6ce12760e202cb9fceb6b5ad8a26d5b9688e59e7bee641178411ff5936ee3fd3"
+        "docs/oam/oam-kernel-graph.json": "sha256:ead084842f71c79b590fd6b76577e5951dae6b8033f13758fbe20a32392f662e"
       }
     },
     {
@@ -399,7 +399,7 @@
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:15cd44d47717fc2b6753ac8483d4a6ca1fb8207b5477bbf1f08c63105bb2386f",
-        "docs/oam/oam-kernel-graph.json": "sha256:6ce12760e202cb9fceb6b5ad8a26d5b9688e59e7bee641178411ff5936ee3fd3"
+        "docs/oam/oam-kernel-graph.json": "sha256:ead084842f71c79b590fd6b76577e5951dae6b8033f13758fbe20a32392f662e"
       }
     },
     {
@@ -417,7 +417,7 @@
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:15cd44d47717fc2b6753ac8483d4a6ca1fb8207b5477bbf1f08c63105bb2386f",
-        "docs/oam/oam-kernel-graph.json": "sha256:6ce12760e202cb9fceb6b5ad8a26d5b9688e59e7bee641178411ff5936ee3fd3"
+        "docs/oam/oam-kernel-graph.json": "sha256:ead084842f71c79b590fd6b76577e5951dae6b8033f13758fbe20a32392f662e"
       }
     },
     {
@@ -435,7 +435,7 @@
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:15cd44d47717fc2b6753ac8483d4a6ca1fb8207b5477bbf1f08c63105bb2386f",
-        "docs/oam/oam-kernel-graph.json": "sha256:6ce12760e202cb9fceb6b5ad8a26d5b9688e59e7bee641178411ff5936ee3fd3"
+        "docs/oam/oam-kernel-graph.json": "sha256:ead084842f71c79b590fd6b76577e5951dae6b8033f13758fbe20a32392f662e"
       }
     },
     {
@@ -453,7 +453,7 @@
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:15cd44d47717fc2b6753ac8483d4a6ca1fb8207b5477bbf1f08c63105bb2386f",
-        "docs/oam/oam-kernel-graph.json": "sha256:6ce12760e202cb9fceb6b5ad8a26d5b9688e59e7bee641178411ff5936ee3fd3"
+        "docs/oam/oam-kernel-graph.json": "sha256:ead084842f71c79b590fd6b76577e5951dae6b8033f13758fbe20a32392f662e"
       }
     },
     {
@@ -471,7 +471,7 @@
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:15cd44d47717fc2b6753ac8483d4a6ca1fb8207b5477bbf1f08c63105bb2386f",
-        "docs/oam/oam-kernel-graph.json": "sha256:6ce12760e202cb9fceb6b5ad8a26d5b9688e59e7bee641178411ff5936ee3fd3"
+        "docs/oam/oam-kernel-graph.json": "sha256:ead084842f71c79b590fd6b76577e5951dae6b8033f13758fbe20a32392f662e"
       }
     },
     {
@@ -489,7 +489,7 @@
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:15cd44d47717fc2b6753ac8483d4a6ca1fb8207b5477bbf1f08c63105bb2386f",
-        "docs/oam/oam-kernel-graph.json": "sha256:6ce12760e202cb9fceb6b5ad8a26d5b9688e59e7bee641178411ff5936ee3fd3"
+        "docs/oam/oam-kernel-graph.json": "sha256:ead084842f71c79b590fd6b76577e5951dae6b8033f13758fbe20a32392f662e"
       }
     },
     {
@@ -507,7 +507,7 @@
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:15cd44d47717fc2b6753ac8483d4a6ca1fb8207b5477bbf1f08c63105bb2386f",
-        "docs/oam/oam-kernel-graph.json": "sha256:6ce12760e202cb9fceb6b5ad8a26d5b9688e59e7bee641178411ff5936ee3fd3"
+        "docs/oam/oam-kernel-graph.json": "sha256:ead084842f71c79b590fd6b76577e5951dae6b8033f13758fbe20a32392f662e"
       }
     },
     {
@@ -525,7 +525,7 @@
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:15cd44d47717fc2b6753ac8483d4a6ca1fb8207b5477bbf1f08c63105bb2386f",
-        "docs/oam/oam-kernel-graph.json": "sha256:6ce12760e202cb9fceb6b5ad8a26d5b9688e59e7bee641178411ff5936ee3fd3"
+        "docs/oam/oam-kernel-graph.json": "sha256:ead084842f71c79b590fd6b76577e5951dae6b8033f13758fbe20a32392f662e"
       }
     },
     {
@@ -543,7 +543,7 @@
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:15cd44d47717fc2b6753ac8483d4a6ca1fb8207b5477bbf1f08c63105bb2386f",
-        "docs/oam/oam-kernel-graph.json": "sha256:6ce12760e202cb9fceb6b5ad8a26d5b9688e59e7bee641178411ff5936ee3fd3"
+        "docs/oam/oam-kernel-graph.json": "sha256:ead084842f71c79b590fd6b76577e5951dae6b8033f13758fbe20a32392f662e"
       }
     },
     {
@@ -561,7 +561,7 @@
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:15cd44d47717fc2b6753ac8483d4a6ca1fb8207b5477bbf1f08c63105bb2386f",
-        "docs/oam/oam-kernel-graph.json": "sha256:6ce12760e202cb9fceb6b5ad8a26d5b9688e59e7bee641178411ff5936ee3fd3"
+        "docs/oam/oam-kernel-graph.json": "sha256:ead084842f71c79b590fd6b76577e5951dae6b8033f13758fbe20a32392f662e"
       }
     },
     {
@@ -579,7 +579,7 @@
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:15cd44d47717fc2b6753ac8483d4a6ca1fb8207b5477bbf1f08c63105bb2386f",
-        "docs/oam/oam-kernel-graph.json": "sha256:6ce12760e202cb9fceb6b5ad8a26d5b9688e59e7bee641178411ff5936ee3fd3"
+        "docs/oam/oam-kernel-graph.json": "sha256:ead084842f71c79b590fd6b76577e5951dae6b8033f13758fbe20a32392f662e"
       }
     },
     {
@@ -597,7 +597,7 @@
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:15cd44d47717fc2b6753ac8483d4a6ca1fb8207b5477bbf1f08c63105bb2386f",
-        "docs/oam/oam-kernel-graph.json": "sha256:6ce12760e202cb9fceb6b5ad8a26d5b9688e59e7bee641178411ff5936ee3fd3"
+        "docs/oam/oam-kernel-graph.json": "sha256:ead084842f71c79b590fd6b76577e5951dae6b8033f13758fbe20a32392f662e"
       }
     },
     {
@@ -615,7 +615,7 @@
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:15cd44d47717fc2b6753ac8483d4a6ca1fb8207b5477bbf1f08c63105bb2386f",
-        "docs/oam/oam-kernel-graph.json": "sha256:6ce12760e202cb9fceb6b5ad8a26d5b9688e59e7bee641178411ff5936ee3fd3"
+        "docs/oam/oam-kernel-graph.json": "sha256:ead084842f71c79b590fd6b76577e5951dae6b8033f13758fbe20a32392f662e"
       }
     },
     {
@@ -633,7 +633,7 @@
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:15cd44d47717fc2b6753ac8483d4a6ca1fb8207b5477bbf1f08c63105bb2386f",
-        "docs/oam/oam-kernel-graph.json": "sha256:6ce12760e202cb9fceb6b5ad8a26d5b9688e59e7bee641178411ff5936ee3fd3"
+        "docs/oam/oam-kernel-graph.json": "sha256:ead084842f71c79b590fd6b76577e5951dae6b8033f13758fbe20a32392f662e"
       }
     },
     {
@@ -651,7 +651,7 @@
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:15cd44d47717fc2b6753ac8483d4a6ca1fb8207b5477bbf1f08c63105bb2386f",
-        "docs/oam/oam-kernel-graph.json": "sha256:6ce12760e202cb9fceb6b5ad8a26d5b9688e59e7bee641178411ff5936ee3fd3"
+        "docs/oam/oam-kernel-graph.json": "sha256:ead084842f71c79b590fd6b76577e5951dae6b8033f13758fbe20a32392f662e"
       }
     },
     {
@@ -669,7 +669,7 @@
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:15cd44d47717fc2b6753ac8483d4a6ca1fb8207b5477bbf1f08c63105bb2386f",
-        "docs/oam/oam-kernel-graph.json": "sha256:6ce12760e202cb9fceb6b5ad8a26d5b9688e59e7bee641178411ff5936ee3fd3"
+        "docs/oam/oam-kernel-graph.json": "sha256:ead084842f71c79b590fd6b76577e5951dae6b8033f13758fbe20a32392f662e"
       }
     },
     {
@@ -687,7 +687,7 @@
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:15cd44d47717fc2b6753ac8483d4a6ca1fb8207b5477bbf1f08c63105bb2386f",
-        "docs/oam/oam-kernel-graph.json": "sha256:6ce12760e202cb9fceb6b5ad8a26d5b9688e59e7bee641178411ff5936ee3fd3"
+        "docs/oam/oam-kernel-graph.json": "sha256:ead084842f71c79b590fd6b76577e5951dae6b8033f13758fbe20a32392f662e"
       }
     },
     {
@@ -705,7 +705,7 @@
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:15cd44d47717fc2b6753ac8483d4a6ca1fb8207b5477bbf1f08c63105bb2386f",
-        "docs/oam/oam-kernel-graph.json": "sha256:6ce12760e202cb9fceb6b5ad8a26d5b9688e59e7bee641178411ff5936ee3fd3"
+        "docs/oam/oam-kernel-graph.json": "sha256:ead084842f71c79b590fd6b76577e5951dae6b8033f13758fbe20a32392f662e"
       }
     },
     {
@@ -723,7 +723,7 @@
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:15cd44d47717fc2b6753ac8483d4a6ca1fb8207b5477bbf1f08c63105bb2386f",
-        "docs/oam/oam-kernel-graph.json": "sha256:6ce12760e202cb9fceb6b5ad8a26d5b9688e59e7bee641178411ff5936ee3fd3"
+        "docs/oam/oam-kernel-graph.json": "sha256:ead084842f71c79b590fd6b76577e5951dae6b8033f13758fbe20a32392f662e"
       }
     },
     {
@@ -741,7 +741,7 @@
       "checker": "scripts/business/check-dormitory-execution-kernel.mjs",
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:15cd44d47717fc2b6753ac8483d4a6ca1fb8207b5477bbf1f08c63105bb2386f",
-        "docs/oam/oam-kernel-graph.json": "sha256:6ce12760e202cb9fceb6b5ad8a26d5b9688e59e7bee641178411ff5936ee3fd3"
+        "docs/oam/oam-kernel-graph.json": "sha256:ead084842f71c79b590fd6b76577e5951dae6b8033f13758fbe20a32392f662e"
       }
     },
     {
@@ -759,7 +759,7 @@
       "checker": "scripts/business/check-dormitory-execution-kernel.mjs",
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:15cd44d47717fc2b6753ac8483d4a6ca1fb8207b5477bbf1f08c63105bb2386f",
-        "docs/oam/oam-kernel-graph.json": "sha256:6ce12760e202cb9fceb6b5ad8a26d5b9688e59e7bee641178411ff5936ee3fd3"
+        "docs/oam/oam-kernel-graph.json": "sha256:ead084842f71c79b590fd6b76577e5951dae6b8033f13758fbe20a32392f662e"
       }
     },
     {
@@ -777,7 +777,7 @@
       "checker": "scripts/business/check-dormitory-execution-kernel.mjs",
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:15cd44d47717fc2b6753ac8483d4a6ca1fb8207b5477bbf1f08c63105bb2386f",
-        "docs/oam/oam-kernel-graph.json": "sha256:6ce12760e202cb9fceb6b5ad8a26d5b9688e59e7bee641178411ff5936ee3fd3"
+        "docs/oam/oam-kernel-graph.json": "sha256:ead084842f71c79b590fd6b76577e5951dae6b8033f13758fbe20a32392f662e"
       }
     },
     {
@@ -795,7 +795,7 @@
       "checker": "scripts/business/check-dormitory-execution-kernel.mjs",
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:15cd44d47717fc2b6753ac8483d4a6ca1fb8207b5477bbf1f08c63105bb2386f",
-        "docs/oam/oam-kernel-graph.json": "sha256:6ce12760e202cb9fceb6b5ad8a26d5b9688e59e7bee641178411ff5936ee3fd3"
+        "docs/oam/oam-kernel-graph.json": "sha256:ead084842f71c79b590fd6b76577e5951dae6b8033f13758fbe20a32392f662e"
       }
     },
     {
@@ -813,7 +813,7 @@
       "checker": "scripts/business/check-dormitory-execution-kernel.mjs",
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:15cd44d47717fc2b6753ac8483d4a6ca1fb8207b5477bbf1f08c63105bb2386f",
-        "docs/oam/oam-kernel-graph.json": "sha256:6ce12760e202cb9fceb6b5ad8a26d5b9688e59e7bee641178411ff5936ee3fd3"
+        "docs/oam/oam-kernel-graph.json": "sha256:ead084842f71c79b590fd6b76577e5951dae6b8033f13758fbe20a32392f662e"
       }
     },
     {
@@ -831,7 +831,7 @@
       "checker": "scripts/business/check-dormitory-execution-kernel.mjs",
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:15cd44d47717fc2b6753ac8483d4a6ca1fb8207b5477bbf1f08c63105bb2386f",
-        "docs/oam/oam-kernel-graph.json": "sha256:6ce12760e202cb9fceb6b5ad8a26d5b9688e59e7bee641178411ff5936ee3fd3"
+        "docs/oam/oam-kernel-graph.json": "sha256:ead084842f71c79b590fd6b76577e5951dae6b8033f13758fbe20a32392f662e"
       }
     },
     {
@@ -849,7 +849,7 @@
       "checker": "scripts/business/check-dormitory-execution-kernel.mjs",
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:15cd44d47717fc2b6753ac8483d4a6ca1fb8207b5477bbf1f08c63105bb2386f",
-        "docs/oam/oam-kernel-graph.json": "sha256:6ce12760e202cb9fceb6b5ad8a26d5b9688e59e7bee641178411ff5936ee3fd3"
+        "docs/oam/oam-kernel-graph.json": "sha256:ead084842f71c79b590fd6b76577e5951dae6b8033f13758fbe20a32392f662e"
       }
     },
     {
@@ -867,7 +867,7 @@
       "checker": "scripts/business/check-dormitory-execution-kernel.mjs",
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:15cd44d47717fc2b6753ac8483d4a6ca1fb8207b5477bbf1f08c63105bb2386f",
-        "docs/oam/oam-kernel-graph.json": "sha256:6ce12760e202cb9fceb6b5ad8a26d5b9688e59e7bee641178411ff5936ee3fd3"
+        "docs/oam/oam-kernel-graph.json": "sha256:ead084842f71c79b590fd6b76577e5951dae6b8033f13758fbe20a32392f662e"
       }
     },
     {
@@ -885,7 +885,7 @@
       "checker": "scripts/business/check-dormitory-execution-kernel.mjs",
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:15cd44d47717fc2b6753ac8483d4a6ca1fb8207b5477bbf1f08c63105bb2386f",
-        "docs/oam/oam-kernel-graph.json": "sha256:6ce12760e202cb9fceb6b5ad8a26d5b9688e59e7bee641178411ff5936ee3fd3"
+        "docs/oam/oam-kernel-graph.json": "sha256:ead084842f71c79b590fd6b76577e5951dae6b8033f13758fbe20a32392f662e"
       }
     },
     {
@@ -903,7 +903,7 @@
       "checker": "scripts/business/check-dormitory-execution-kernel.mjs",
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:15cd44d47717fc2b6753ac8483d4a6ca1fb8207b5477bbf1f08c63105bb2386f",
-        "docs/oam/oam-kernel-graph.json": "sha256:6ce12760e202cb9fceb6b5ad8a26d5b9688e59e7bee641178411ff5936ee3fd3"
+        "docs/oam/oam-kernel-graph.json": "sha256:ead084842f71c79b590fd6b76577e5951dae6b8033f13758fbe20a32392f662e"
       }
     },
     {
@@ -921,7 +921,7 @@
       "checker": "scripts/business/check-dormitory-execution-kernel.mjs",
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:15cd44d47717fc2b6753ac8483d4a6ca1fb8207b5477bbf1f08c63105bb2386f",
-        "docs/oam/oam-kernel-graph.json": "sha256:6ce12760e202cb9fceb6b5ad8a26d5b9688e59e7bee641178411ff5936ee3fd3"
+        "docs/oam/oam-kernel-graph.json": "sha256:ead084842f71c79b590fd6b76577e5951dae6b8033f13758fbe20a32392f662e"
       }
     },
     {
@@ -939,10 +939,10 @@
       "checker": "scripts/business/check-dormitory-execution-kernel.mjs",
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:15cd44d47717fc2b6753ac8483d4a6ca1fb8207b5477bbf1f08c63105bb2386f",
-        "docs/oam/oam-kernel-graph.json": "sha256:6ce12760e202cb9fceb6b5ad8a26d5b9688e59e7bee641178411ff5936ee3fd3"
+        "docs/oam/oam-kernel-graph.json": "sha256:ead084842f71c79b590fd6b76577e5951dae6b8033f13758fbe20a32392f662e"
       }
     }
   ],
   "compilerInputDigest": "sha256:4c8432b80df72ac513e6b31a298ea1f84e27b35889a27b88abe46d681aa96aac",
-  "outputContentDigest": "sha256:64ff81b8a74020dd892e536eebbbf84ba8d4812dcebb5daf6f4b64bf8c1573e3"
+  "outputContentDigest": "sha256:b2adb0fe433e41c0a656da5c4fc414b04bdfbe750c7541b1fba9beda770115e0"
 }

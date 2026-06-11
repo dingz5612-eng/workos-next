@@ -3,6 +3,38 @@
   "status": "authoritative-readonly",
   "readOnly": true,
   "businessFactWriteAllowed": false,
+  "financeFactWriteAllowed": false,
+  "ledgerEntryWriteAllowed": false,
+  "workItemDefinitionMutationAllowed": false,
+  "truthOwnerAllowed": false,
+  "allowedInputKinds": [
+    "generatedReadModel",
+    "readModel",
+    "projection",
+    "metric"
+  ],
+  "forbiddenWrites": [
+    "businessFact",
+    "financeFact",
+    "LedgerEntry",
+    "WorkItemDefinition",
+    "truthOwner"
+  ],
+  "actionPolicy": {
+    "directFactWriteAllowed": false,
+    "directLedgerWriteAllowed": false,
+    "directWorkItemDefinitionMutationAllowed": false,
+    "onlyNavigationToWorkItemConfirmPath": true,
+    "allowedActionKinds": ["navigateToWorkItemConfirmPath"],
+    "forbiddenActionKinds": [
+      "writeBusinessFact",
+      "writeFinanceFact",
+      "writeLedgerEntry",
+      "modifyWorkItemDefinition",
+      "becomeTruthOwner",
+      "confirmInline"
+    ]
+  },
   "requiredFields": [
     "dashboardId",
     "metricIds",
@@ -16,7 +48,29 @@
       "dashboardId": "dormitory.currentReadiness",
       "metricIds": ["dormitory.resourceReadiness"],
       "dimensionIds": ["tenantId", "buildingId", "date"],
-      "writeFactsAllowed": false
+      "consumes": [
+        {
+          "kind": "generatedReadModel",
+          "ref": "docs/contracts/generated/dormitory/read-model.generated.json"
+        },
+        {
+          "kind": "metric",
+          "ref": "docs/contracts/bi-kpi/metric-registry.contract.json"
+        }
+      ],
+      "pageActions": [
+        {
+          "actionId": "open-workitem-confirm",
+          "kind": "navigateToWorkItemConfirmPath",
+          "target": "runtimeWorkItemConfirmPath",
+          "directWriteAllowed": false
+        }
+      ],
+      "writeFactsAllowed": false,
+      "writeFinancialFactsAllowed": false,
+      "writeLedgerEntryAllowed": false,
+      "modifyWorkItemDefinitionAllowed": false,
+      "truthOwnerAllowed": false
     }
   ]
 }

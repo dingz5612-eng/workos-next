@@ -149,6 +149,8 @@ Invoke-Gate node scripts/check-finance-truth.mjs --self-test
 Invoke-Gate node scripts/check-finance-truth.mjs
 Invoke-Gate node scripts/check-ledger-semantic-rules.mjs
 Invoke-Gate node scripts/finance/check-finance-semantic-truth.mjs
+Invoke-Gate node scripts/oam/check-dashboard-readonly.mjs --self-test
+Invoke-Gate node scripts/oam/check-dashboard-readonly.mjs
 Invoke-Gate node scripts/check-management-cockpit-boundary.mjs --self-test
 Invoke-Gate node scripts/check-management-cockpit-boundary.mjs
 Invoke-Gate node scripts/check-shared-governance-boundary.mjs --self-test

@@ -10,7 +10,7 @@
     "domainKernel": "docs/oam/kernel-schemas/domain-kernel.schema.json",
     "workItem": "docs/oam/kernel-schemas/workitem.schema.json"
   },
-  "nodeCount": 1261,
+  "nodeCount": 1262,
   "edgeCount": 1086,
   "nodes": [
     {
@@ -19523,6 +19523,39 @@
       "consumers": [
         "scripts/oam/check-current-oam.mjs",
         "scripts/oam/run-control-plane-checks.ps1"
+      ]
+    },
+    {
+      "runtimeBinding": "validation-gate",
+      "testBinding": [
+        "scripts/oam/check-dashboard-readonly.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "gateBinding": [
+        "scripts/oam/check-dashboard-readonly.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "deletionCondition": "当且仅当内容已被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "nodeId": "file.scripts/oam/check-dashboard-readonly.mjs",
+      "nodeType": "File",
+      "owner": "search-kernel-owner",
+      "sourceFile": "scripts/oam/check-dashboard-readonly.mjs",
+      "currentTruthAllowed": false,
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/read-intelligence/read-intelligence-kernel.json",
+      "checker": "scripts/oam/check-dashboard-readonly.mjs",
+      "evidence": "artifacts/oam/checks/dashboard-readonly-report.json",
+      "replacementPath": "scripts/oam/check-dashboard-readonly.mjs",
+      "absorbedBy": "scripts/oam/check-dashboard-readonly.mjs",
+      "removalProofGate": "scripts/oam/check-dashboard-readonly.mjs",
+      "deletionConditionZh": "当且仅当内容已被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/oam/check-dashboard-readonly.mjs",
+        "scripts/oam/run-control-plane-checks.ps1",
+        ".github/workflows/ci.yml",
+        "scripts/oam/generate-current-evidence-root.mjs"
       ]
     },
     {

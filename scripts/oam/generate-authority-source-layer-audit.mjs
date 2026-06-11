@@ -10,7 +10,7 @@ const ledgerByPath = new Map((ledger.files ?? []).map((item) => [slash(item.path
 const indexByPath = new Map((index.entries ?? []).map((item) => [slash(item.path), item]));
 const audited = new Map();
 
-const sourceWhitelist = new Set([
+const sourceWhitelistEntries = [
   "docs/oam/current-architecture.md",
   "docs/oam/current-architecture.manifest.json",
   "docs/oam/current-authority-index.json",
@@ -41,7 +41,8 @@ const sourceWhitelist = new Set([
   "docs/surface/surface-contract.yml",
   "docs/contracts/language/language-contract.json",
   "docs/contracts/database/oam-db-ownership-map.json"
-]);
+];
+const sourceWhitelist = new Set(sourceWhitelistEntries);
 
 for (const entry of index.entries ?? []) {
   if (entry.currentTruthAllowed === true) {
@@ -79,18 +80,82 @@ for (const file of gitFiles()) {
 }
 
 const entries = [...audited.values()].sort((left, right) => left.path.localeCompare(right.path));
+const unknownCount = entries.filter((item) => item.targetLayer === "unknown" || item.recommendedAction === "unknown").length;
+const derivedAsSourceCount = entries.filter((item) => item.targetLayer === "source" && item.derived === true).length;
+const generatedAsSourceCount = entries.filter((item) =>
+  item.targetLayer === "source" &&
+  (item.manualEditAllowed === false || item.derived === true || hasTopLevelGeneratedMarker(item.path))
+).length;
+const businessFactAuthorityOutsideSourceCount = entries.filter((item) =>
+  item.targetLayer !== "source" && item.businessFactAuthorityAllowed === true
+).length;
+const generatedManualEditAllowedCount = entries.filter((item) =>
+  item.targetLayer === "generated" && item.manualEditAllowed === true
+).length;
+const sourceWhitelistUnique = checkSourceWhitelistUnique();
+const blockingReasons = [
+  sourceWhitelistUnique ? null : "sourceWhitelistUnique=false",
+  unknownCount === 0 ? null : `unknownCount=${unknownCount}`,
+  derivedAsSourceCount === 0 ? null : `derivedAsSourceCount=${derivedAsSourceCount}`,
+  generatedAsSourceCount === 0 ? null : `generatedAsSourceCount=${generatedAsSourceCount}`,
+  businessFactAuthorityOutsideSourceCount === 0 ? null : `businessFactAuthorityOutsideSourceCount=${businessFactAuthorityOutsideSourceCount}`,
+  generatedManualEditAllowedCount === 0 ? null : `generatedManualEditAllowedCount=${generatedManualEditAllowedCount}`
+].filter(Boolean);
 const report = {
   version: "authority-cleanup.source-layer-audit.v1",
   generatedAtUtc: new Date().toISOString(),
   sourceWhitelist: [...sourceWhitelist].sort(),
-  unknownCount: entries.filter((item) => item.targetLayer === "unknown" || item.recommendedAction === "unknown").length,
+  sourceWhitelistUnique,
+  unknownCount,
+  derivedAsSourceCount,
+  generatedAsSourceCount,
+  businessFactAuthorityOutsideSourceCount,
+  generatedManualEditAllowedCount,
+  currentDecision: blockingReasons.length === 0 ? "PASS" : "FAIL",
+  blockingReasons,
   entries
 };
 
 fs.mkdirSync(path.dirname(abs(outputPath)), { recursive: true });
 fs.writeFileSync(abs(outputPath), `${JSON.stringify(report, null, 2)}\n`, "utf8");
 console.log(`Authority source layer audit generated: ${outputPath}`);
-console.log(`audited=${entries.length} unknown=${report.unknownCount}`);
+console.log(`audited=${entries.length} decision=${report.currentDecision} unknown=${report.unknownCount}`);
+
+function checkSourceWhitelistUnique() {
+  const declared = (index.classificationModel?.sourceLayerWhitelist ?? []).map(slash);
+  const declaredSet = new Set(declared);
+  const indexSourceEntries = (index.entries ?? [])
+    .filter((entry) => entry.layer === "source")
+    .map((entry) => slash(entry.path));
+  const indexSourceSet = new Set(indexSourceEntries);
+  const localUnique = sourceWhitelistEntries.length === sourceWhitelist.size;
+  const declaredUnique = declared.length === declaredSet.size;
+  const indexSourceUnique = indexSourceEntries.length === indexSourceSet.size;
+  const declaredMatchesLocal = sameSet(declaredSet, sourceWhitelist);
+  const sourceEntriesMatchDeclared = sameSet(indexSourceSet, declaredSet);
+  return localUnique && declaredUnique && indexSourceUnique && declaredMatchesLocal && sourceEntriesMatchDeclared;
+}
+
+function sameSet(left, right) {
+  if (left.size !== right.size) return false;
+  for (const item of left) {
+    if (!right.has(item)) return false;
+  }
+  return true;
+}
+
+function hasTopLevelGeneratedMarker(file) {
+  if (!file.endsWith(".json") || !isTextFile(file)) return false;
+  try {
+    const document = JSON.parse(readText(file));
+    return document?.generated === true ||
+      document?.doNotEdit === true ||
+      Boolean(document?.generatedBy) ||
+      Boolean(document?.derivedFrom);
+  } catch {
+    return false;
+  }
+}
 
 function addAudit(file, reason) {
   const normalized = slash(file);

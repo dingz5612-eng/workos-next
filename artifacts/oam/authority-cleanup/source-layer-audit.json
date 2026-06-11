@@ -1,6 +1,6 @@
 {
   "version": "authority-cleanup.source-layer-audit.v1",
-  "generatedAtUtc": "2026-06-11T17:53:30.771Z",
+  "generatedAtUtc": "2026-06-11T19:00:31.842Z",
   "sourceWhitelist": [
     "docs/business/admission/business-line-levels.yml",
     "docs/business/business-line-registry.json",
@@ -33,7 +33,14 @@
     "docs/surface/surface-contract.yml",
     "docs/system/oam-p0-rule-ledger.json"
   ],
+  "sourceWhitelistUnique": true,
   "unknownCount": 0,
+  "derivedAsSourceCount": 0,
+  "generatedAsSourceCount": 0,
+  "businessFactAuthorityOutsideSourceCount": 0,
+  "generatedManualEditAllowedCount": 0,
+  "currentDecision": "PASS",
+  "blockingReasons": [],
   "entries": [
     {
       "path": ".github/workflows/ci.yml",
