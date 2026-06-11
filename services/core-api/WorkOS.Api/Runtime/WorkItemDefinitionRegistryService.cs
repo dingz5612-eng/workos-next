@@ -17,8 +17,8 @@ public sealed class WorkItemDefinitionRegistryService
             .GroupBy(item => item.DefinitionId, StringComparer.OrdinalIgnoreCase)
             .ToDictionary(group => group.Key, group => group.First(), StringComparer.OrdinalIgnoreCase);
         bySourceCardId = definitions
-            .Where(item => !string.IsNullOrWhiteSpace(item.SourceCardId))
-            .GroupBy(item => item.SourceCardId, StringComparer.OrdinalIgnoreCase)
+            .Where(item => !string.IsNullOrWhiteSpace(item.MigrationSourceCardId))
+            .GroupBy(item => item.MigrationSourceCardId, StringComparer.OrdinalIgnoreCase)
             .ToDictionary(group => group.Key, group => group.First(), StringComparer.OrdinalIgnoreCase);
         byWorkItemType = definitions
             .Where(item => !string.IsNullOrWhiteSpace(item.WorkItemType))
@@ -40,7 +40,7 @@ public sealed class WorkItemDefinitionRegistryService
         return definition is null
             ? WorkItemDefinitionResolution.Unresolved(
                 FirstNonEmpty(payloadDefinitionId, workItem.DefinitionVersionId),
-                FirstNonEmpty(PayloadValue(workItem.Payload, "definitionSourceId"), workItem.WorkItemType),
+                Array.Empty<DefinitionMigrationRef>(),
                 GuessBusinessLine(workItem.WorkspaceId),
                 "definition_registry_not_resolved")
             : WorkItemDefinitionResolution.FromDefinition(definition);
@@ -50,11 +50,11 @@ public sealed class WorkItemDefinitionRegistryService
     {
         var definition = definitions.FirstOrDefault(item =>
             (item.WorkspaceId ?? string.Empty).Equals(workspaceId ?? string.Empty, StringComparison.OrdinalIgnoreCase) &&
-            (item.SourceCardId ?? string.Empty).Equals(cardId ?? string.Empty, StringComparison.OrdinalIgnoreCase));
+            item.MigrationSourceCardId.Equals(cardId ?? string.Empty, StringComparison.OrdinalIgnoreCase));
         return definition is null
             ? WorkItemDefinitionResolution.Unresolved(
                 string.Empty,
-                cardId ?? string.Empty,
+                MigrationRefsForSourceCardId(cardId),
                 GuessBusinessLine(workspaceId),
                 "definition_registry_not_resolved")
             : WorkItemDefinitionResolution.FromDefinition(definition);
@@ -111,6 +111,23 @@ public sealed class WorkItemDefinitionRegistryService
     private static string FirstNonEmpty(params string?[] values) =>
         values.FirstOrDefault(value => !string.IsNullOrWhiteSpace(value)) ?? string.Empty;
 
+    private static IReadOnlyList<DefinitionMigrationRef> MigrationRefsForSourceCardId(string? sourceCardId) =>
+        string.IsNullOrWhiteSpace(sourceCardId)
+            ? Array.Empty<DefinitionMigrationRef>()
+            : new[]
+            {
+                new DefinitionMigrationRef(
+                    "sourceCardId",
+                    sourceCardId,
+                    true,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    "docs/contracts/definition/source-id-migration-fence.json")
+            };
+
     private static string GuessBusinessLine(string? workspaceId) =>
         string.IsNullOrWhiteSpace(workspaceId)
             ? "unknown"
@@ -129,10 +146,10 @@ public sealed record WorkItemDefinition(
     string BusinessLineId,
     string SliceId,
     string WorkspaceId,
-    string SourceCardId,
     string WorkItemType,
     string CommandType,
     string OwnerSlice,
+    IReadOnlyList<DefinitionMigrationRef>? MigrationRefs,
     IReadOnlyList<string> AllowedFacts,
     IReadOnlyList<string> ForbiddenFacts,
     string FieldContractRef,
@@ -143,13 +160,29 @@ public sealed record WorkItemDefinition(
     string SurfacePolicyRef,
     bool ProductionConfirmAllowed,
     string DefinitionMode,
-    string RemovalImpact);
+    string RemovalImpact)
+{
+    public string MigrationSourceCardId =>
+        MigrationRefs?.FirstOrDefault(item => item.Type.Equals("sourceCardId", StringComparison.OrdinalIgnoreCase))?.Value
+        ?? string.Empty;
+}
+
+public sealed record DefinitionMigrationRef(
+    string Type,
+    string Value,
+    bool ReadOnly,
+    bool Executable,
+    bool AffectsAdmission,
+    bool AffectsRuntimeConfirm,
+    bool AffectsBusinessIdentity,
+    bool AffectsLedger,
+    string DeletionProofRef);
 
 public sealed record WorkItemDefinitionResolution(
     bool Resolved,
     WorkItemDefinition? Definition,
     string DefinitionId,
-    string SourceCardId,
+    IReadOnlyList<DefinitionMigrationRef> MigrationRefs,
     string BusinessLineId,
     string SliceId,
     string DefinitionMode,
@@ -161,7 +194,7 @@ public sealed record WorkItemDefinitionResolution(
             true,
             definition,
             definition.DefinitionId,
-            definition.SourceCardId,
+            definition.MigrationRefs ?? Array.Empty<DefinitionMigrationRef>(),
             definition.BusinessLineId,
             definition.SliceId,
             definition.DefinitionMode,
@@ -170,14 +203,14 @@ public sealed record WorkItemDefinitionResolution(
 
     public static WorkItemDefinitionResolution Unresolved(
         string definitionId,
-        string sourceCardId,
+        IReadOnlyList<DefinitionMigrationRef>? migrationRefs,
         string businessLineId,
         string reason) =>
         new(
             false,
             null,
             definitionId,
-            sourceCardId,
+            migrationRefs ?? Array.Empty<DefinitionMigrationRef>(),
             businessLineId,
             string.Empty,
             "unregistered-definition",
@@ -189,7 +222,7 @@ public sealed record WorkItemDefinitionResolution(
         {
             ["resolved"] = Resolved,
             ["definitionId"] = DefinitionId,
-            ["sourceCardId"] = SourceCardId,
+            ["migrationRefs"] = MigrationRefs,
             ["businessLineId"] = BusinessLineId,
             ["sliceId"] = SliceId,
             ["definitionMode"] = DefinitionMode,

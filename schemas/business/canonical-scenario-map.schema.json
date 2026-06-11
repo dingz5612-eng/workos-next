@@ -13,7 +13,7 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["scenarioId", "definitionId", "workItemType", "workItemId", "ownerDomain", "surfaceId", "sourceCardId", "sourceScenario"],
+        "required": ["scenarioId", "definitionId", "workItemType", "workItemId", "ownerDomain", "surfaceId", "commandType", "sourceScenario", "migrationRefs"],
         "properties": {
           "scenarioId": { "type": "string" },
           "definitionId": { "type": "string", "pattern": "^definition\\." },
@@ -21,8 +21,26 @@
           "workItemId": { "type": "string", "pattern": "^wi\\." },
           "ownerDomain": { "type": "string" },
           "surfaceId": { "type": "string" },
-          "sourceCardId": { "type": "string" },
-          "sourceScenario": { "type": "string" }
+          "commandType": { "type": "string" },
+          "sourceScenario": { "type": "string" },
+          "migrationRefs": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["type", "value", "readOnly", "executable", "affectsAdmission", "affectsRuntimeConfirm", "affectsBusinessIdentity", "affectsLedger", "deletionProofRef"],
+              "properties": {
+                "type": { "const": "sourceCardId" },
+                "value": { "type": "string" },
+                "readOnly": { "const": true },
+                "executable": { "const": false },
+                "affectsAdmission": { "const": false },
+                "affectsRuntimeConfirm": { "const": false },
+                "affectsBusinessIdentity": { "const": false },
+                "affectsLedger": { "const": false },
+                "deletionProofRef": { "type": "string" }
+              }
+            }
+          }
         }
       }
     },

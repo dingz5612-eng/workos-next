@@ -462,7 +462,8 @@ public sealed class CanonicalOperationsApiServiceTests
         Assert.IsNotNull(next);
         Assert.AreEqual("Dorm.BedSetupConfirm", next!.WorkItemType);
         Assert.AreEqual("definition.dormitory.bedSetupConfirm.v1", next.Payload["definitionId"]);
-        Assert.AreEqual("cert.bedSetupConfirm", next.Payload["definitionSourceCardId"]);
+        Assert.IsFalse(next.Payload.ContainsKey("definitionSourceCardId"));
+        StringAssert.Contains(next.Payload["definitionMigrationRefs"], "cert.bedSetupConfirm");
         Assert.AreEqual("generated_transition_policy", next.Payload["dispatchedBy"]);
         Assert.AreEqual("docs/oam/kernel/oam-kernel-graph.generated.json", next.Payload["generatedTransitionSource"]);
     }
@@ -652,10 +653,22 @@ public sealed class CanonicalOperationsApiServiceTests
             "dormitory",
             "Accommodation.TestFixture",
             workspaceId,
-            sourceCardId,
             workItemType,
             $"Test.{sourceCardId}.Confirm",
             "Accommodation.TestFixture",
+            new[]
+            {
+                new DefinitionMigrationRef(
+                    "sourceCardId",
+                    sourceCardId,
+                    true,
+                    false,
+                    false,
+                    false,
+                    false,
+                    false,
+                    "docs/contracts/definition/source-id-migration-fence.json")
+            },
             new[] { "DomainEvent", "WorkItem" },
             new[] { "LedgerEntry", "LedgerTransaction", "PaymentFact", "DepositFact", "FinancialFact", "DashboardSummary", "Profile", "SharedReceipt" },
             "field.test.v1",

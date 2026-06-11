@@ -33,6 +33,8 @@ const sourceWhitelistEntries = [
   "docs/oam/current-admission-state.json",
   "docs/business/truth-owner-registry.yml",
   "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+  "docs/business/domains/dormitory/scenarios/dormitory-resource-saleability.golden-chain.yml",
+  "docs/business/domains/dormitory/scenarios/dormitory-scenario-package-matrix.yml",
   "docs/business/domains/finance/finance-operating-kernel.json",
   "docs/business/domains/maintenance/maintenance-operating-kernel.json",
   "docs/finance/finance-ledger-kernel.json",

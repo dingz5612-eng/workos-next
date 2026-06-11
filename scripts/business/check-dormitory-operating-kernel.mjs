@@ -108,9 +108,11 @@ for (const workItemType of requiredWorkItems) {
   const item = workItemsByType.get(workItemType);
   requireValue(Boolean(item), "kernel.workitem_missing", `宿舍内核缺少 ${workItemType}。`, { workItemType });
   if (!item) continue;
-  for (const field of ["definitionId", "commandType", "ownerRole", "canonicalOwner", "allowedFacts", "forbiddenFacts", "requiredEvidence", "ledgerPolicyRef", "admissionPolicyRef", "downstreamWorkItems", "operationZh"]) {
+  for (const field of ["definitionId", "commandType", "ownerRole", "canonicalOwner", "allowedFacts", "forbiddenFacts", "requiredEvidence", "ledgerPolicyRef", "admissionPolicyRef", "downstreamWorkItems", "operationZh", "migrationRefs"]) {
     requireValue(hasValue(item[field]), "kernel.workitem_field_missing", `${workItemType} 缺少 ${field}。`, { workItemType, field });
   }
+  requireValue(!("sourceCardId" in item), "kernel.source_card_current_identity", `${workItemType} 不得把 sourceCardId 作为当前 Source 身份字段。`, { workItemType });
+  requireMigrationRefs(item, `${workItemType}`);
   requireValue(allowedRoles.has(item.ownerRole), "kernel.role_invalid", `${workItemType} 使用了第三套角色：${item.ownerRole}`, { workItemType });
   requireValue(Array.isArray(item.allowedHumanRoles) && item.allowedHumanRoles.every((role) => allowedRoles.has(role)), "kernel.allowed_roles_invalid", `${workItemType} allowedHumanRoles 只能使用两角色。`, { workItemType });
   for (const classification of requiredFieldClassifications) {
@@ -141,6 +143,8 @@ for (const workItemType of requiredWorkItems) {
   if (definition) {
     requireValue(definition.definitionId === item.definitionId, "definition.id_mismatch", `${workItemType} definitionId 不一致。`, { workItemType });
     requireValue(definition.commandType === item.commandType, "definition.command_mismatch", `${workItemType} commandType 不一致。`, { workItemType });
+    requireValue(!("sourceCardId" in definition), "definition.source_card_current_identity", `${workItemType} Definition 不得把 sourceCardId 作为当前身份字段。`, { workItemType });
+    requireMigrationRefs(definition, `${workItemType} Definition`);
     requireValue(definition.definitionMode === "oam-certification-current", "definition.mode_invalid", `${workItemType} 必须是当前 OAM Definition。`, { workItemType });
     requireValue(definition.productionConfirmAllowed === false, "definition.production_allowed", `${workItemType} 不得允许 production confirm。`, { workItemType });
   }
@@ -149,8 +153,10 @@ for (const workItemType of requiredWorkItems) {
   if (workflow) {
     const roles = workflow.actions?.flatMap((action) => action.visibleRoles ?? []) ?? [];
     requireValue(roles.length > 0 && roles.every((role) => allowedRoles.has(role)), "workflow.roles_invalid", `${workItemType} 状态机只能暴露两角色。`, { workItemType });
+    requireValue(workflow.definitionId === item.definitionId && workflow.commandType === item.commandType, "workflow.identity_mismatch", `${workItemType} 状态机必须绑定 definitionId/workItemType/commandType。`, { workItemType });
     requireValue(JSON.stringify(workflow).includes("definition_resolved"), "workflow.definition_gate_missing", `${workItemType} 状态机必须要求 definition_resolved。`, { workItemType });
-    requireValue(!JSON.stringify(workflow).includes("cardId"), "workflow.card_identity_present", `${workItemType} 状态机不得把 cardId 当业务身份。`, { workItemType });
+    requireValue(!("sourceCardId" in workflow), "workflow.source_card_current_identity", `${workItemType} 状态机不得把 sourceCardId 当当前业务身份。`, { workItemType });
+    requireMigrationRefs(workflow, `${workItemType} Workflow`);
   }
 }
 
@@ -183,6 +189,23 @@ function requireValue(condition, id, message, extra = {}) {
 
 function hasValue(value) {
   return value !== undefined && value !== null && value !== "" && (!Array.isArray(value) || value.length > 0);
+}
+
+function requireMigrationRefs(item, label) {
+  const sourceCardRef = (item.migrationRefs ?? []).find((ref) => ref.type === "sourceCardId");
+  requireValue(Boolean(sourceCardRef), "migration_ref_missing", `${label} 必须把 sourceCardId 放入 migrationRefs。`, { label });
+  if (!sourceCardRef) return;
+  for (const [key, expected] of [
+    ["readOnly", true],
+    ["executable", false],
+    ["affectsAdmission", false],
+    ["affectsRuntimeConfirm", false],
+    ["affectsBusinessIdentity", false],
+    ["affectsLedger", false]
+  ]) {
+    requireValue(sourceCardRef[key] === expected, "migration_ref_policy_invalid", `${label} migrationRefs.sourceCardId.${key} 必须是 ${expected}。`, { label, key });
+  }
+  requireValue(sourceCardRef.deletionProofRef === "docs/contracts/definition/source-id-migration-fence.json", "migration_ref_deletion_proof_missing", `${label} migrationRefs.sourceCardId 必须绑定删除证明。`, { label });
 }
 
 function readJson(file) {

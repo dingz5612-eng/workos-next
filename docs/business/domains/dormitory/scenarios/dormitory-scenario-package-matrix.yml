@@ -1,0 +1,1156 @@
+version: oam.dormitory.scenario-package-matrix.v1
+status: authoritative
+architecture: oam.current
+layer: source
+manualEditAllowed: true
+generated: false
+doNotEdit: false
+sourcePath: docs/business/domains/dormitory/scenarios/dormitory-scenario-package-matrix.yml
+matrixNameZh: 宿舍场景包矩阵与衔接合同
+businessGoalZh: 定义宿舍业务落地前的场景职责、字段边界、衔接关系、读侧输出和 GO/NO_GO 条件。
+sourceReferences:
+  - docs/business/domains/dormitory/dormitory-operating-kernel.json
+  - docs/business/domains/dormitory/scenarios/dormitory-resource-saleability.golden-chain.yml
+  - docs/business/admission/business-line-levels.yml
+  - docs/oam/current-admission-state.json
+globalRules:
+  sourceOnly: true
+  generatedViewMayNotOverride: true
+  uiMayNotInferAdmission: true
+  dashboardSearchSurfaceMayNotWriteFacts: true
+  financeKernelOwnsLedgerEntry: true
+businessIdentity:
+  allowed:
+    - goldenChainId
+    - scenarioId
+    - workItemType
+    - definitionId
+    - commandType
+    - objectId
+    - fieldId
+    - factId
+    - policyRef
+  forbidden:
+    - cardId
+    - sourceCardId
+    - workspace card
+    - old catalog id
+    - old seed id
+scenarioPackages:
+  - packageId: resource-saleability
+    nameZh: 资源可售
+    businessGoalZh: 房间、床位、资源达到 L1 internal pilot 可售准备。
+    inScope:
+      - Dorm.RoomSetupConfirm
+      - Dorm.BedSetupConfirm
+      - Dorm.ResourceReadinessConfirm
+    outOfScope:
+      - 线索
+      - 预订
+      - 入住
+      - 普通收款
+      - 押金
+      - 账务入账
+      - 退住
+      - Dashboard 写事实
+      - Search 写事实
+      - Surface 推断事实
+    mainFlowZh:
+      - 房间确认
+      - 床位确认
+      - 资源可售确认
+    branchFlows:
+      - 缺字段
+      - 缺证据
+      - 证据不可信
+      - 重复房间
+      - 床位归属错误
+      - 资源不可售
+      - 人工复核
+      - 纠错
+    fields:
+      - fieldId: room.basicProfile
+        displayNameZh: 房间基础信息
+        type: object
+        category: required-current-input
+        editable: true
+        source: currentWorkItem
+        truthOwner: Dorm.RoomSetupConfirm
+        fallbackAllowed: false
+        validationRules:
+          - 必须包含楼栋、房号、房型、可售状态。
+        evidenceRequirements:
+          - room-photo
+      - fieldId: bed.roomBinding
+        displayNameZh: 床位归属
+        type: object
+        category: required-current-input
+        editable: true
+        source: currentWorkItem
+        truthOwner: Dorm.BedSetupConfirm
+        fallbackAllowed: false
+        validationRules:
+          - 床位必须归属于已确认房间。
+        evidenceRequirements:
+          - room-link-proof
+      - fieldId: resource.readinessState
+        displayNameZh: 资源可售状态
+        type: enum
+        category: required-current-input
+        editable: true
+        source: currentWorkItem
+        truthOwner: Dorm.ResourceReadinessConfirm
+        fallbackAllowed: false
+        validationRules:
+          - 只能由资源可售确认工单写入。
+        evidenceRequirements:
+          - verification-check
+    handoff:
+      produces:
+        - Room
+        - Bed
+        - EvidenceObject
+      enablesNext: lead-reservation
+      carryForwardReadonly:
+        - room.basicProfile
+        - bed.roomBinding
+        - resource.readinessState
+      nextAdmission: admission.dormitory.lead-reservation.prepare.v1
+    roles:
+      allowed:
+        - 宿舍经办人
+        - 宿舍负责人
+      denied:
+        - 财务经办人
+    factOwnership:
+      allowedFacts:
+        - Room
+        - Bed
+        - EvidenceObject
+        - DomainEvent
+        - CommandSubmission
+      forbiddenFacts:
+        - Payment
+        - Deposit
+        - LedgerEntry
+        - DashboardSummary 写入
+    admission:
+      policyRef: dormitory_l1_internal_pilot_observation
+      productionConfirmAllowed: false
+    evidence:
+      policyRef: evidence.dormitory.resource-saleability.v1
+      missingEvidenceOutcome: NO_GO
+    ledger:
+      policyRef: ledger.none.v1
+      ledgerEntryAllowed: false
+    readSideOutputs:
+      SearchResult: readonly
+      Lens: readonly
+      Projection: readonly
+      Dashboard: readonly
+    uiUxBoundary:
+      currentWorkItemOnly: true
+      readonlyCarryForward: true
+      confirmPathOnly: true
+      noInlineConfirm: true
+    goNoGo:
+      untilAllSatisfied: NO_GO
+      finalDecisionOwner: artifacts/oam/final-report.json
+  - packageId: lead-reservation
+    nameZh: 线索与预订
+    businessGoalZh: 在资源只读上下文下记录线索、预订意向、保留期限和下一步动作。
+    inScope:
+      - Dorm.LeadCapture
+      - Dorm.ReservationConfirm
+    outOfScope:
+      - 入住办理
+      - 普通收款
+      - 押金入账
+      - Dashboard 写事实
+      - Search 写事实
+    mainFlowZh:
+      - 线索登记
+      - 预订确认
+      - 预订到期处理
+    branchFlows:
+      - 缺联系方式
+      - 资源已不可售
+      - 重复预订
+      - 保留期限过期
+      - 取消预订
+      - 转入住
+    fields:
+      - fieldId: lead.personContact
+        displayNameZh: 客户联系方式
+        type: object
+        category: required-current-input
+        editable: true
+        source: currentWorkItem
+        truthOwner: Dorm.LeadCapture
+        fallbackAllowed: false
+        validationRules:
+          - 姓名和联系电话不能为空。
+        evidenceRequirements:
+          - contact-proof
+      - fieldId: reservation.resourceIntent
+        displayNameZh: 预订资源意向
+        type: object
+        category: required-current-input
+        editable: true
+        source: currentWorkItem
+        truthOwner: Dorm.ReservationConfirm
+        fallbackAllowed: false
+        validationRules:
+          - 只能选择资源可售包产出的只读资源。
+        evidenceRequirements:
+          - reservation-intent-proof
+      - fieldId: reservation.holdUntil
+        displayNameZh: 保留截止时间
+        type: datetime
+        category: required-current-input
+        editable: true
+        source: currentWorkItem
+        truthOwner: Dorm.ReservationConfirm
+        fallbackAllowed: false
+        validationRules:
+          - 必须晚于当前提交时间。
+        evidenceRequirements:
+          - reservation-policy-proof
+    handoff:
+      produces:
+        - Lead
+        - Reservation
+        - EvidenceObject
+      enablesNext: check-in
+      carryForwardReadonly:
+        - lead.personContact
+        - reservation.resourceIntent
+        - reservation.holdUntil
+      nextAdmission: admission.dormitory.check-in.prepare.v1
+    roles:
+      allowed:
+        - 宿舍经办人
+        - 宿舍负责人
+      denied:
+        - 财务经办人
+    factOwnership:
+      allowedFacts:
+        - Lead
+        - Reservation
+        - EvidenceObject
+        - DomainEvent
+        - CommandSubmission
+      forbiddenFacts:
+        - Payment
+        - Deposit
+        - LedgerEntry
+        - DashboardSummary 写入
+    admission:
+      policyRef: dormitory_l1_internal_pilot_observation
+      productionConfirmAllowed: false
+    evidence:
+      policyRef: evidence.dormitory.lead-reservation.v1
+      missingEvidenceOutcome: NO_GO
+    ledger:
+      policyRef: ledger.none.v1
+      ledgerEntryAllowed: false
+    readSideOutputs:
+      SearchResult: readonly
+      Lens: readonly
+      Projection: readonly
+      Dashboard: readonly
+    uiUxBoundary:
+      currentWorkItemOnly: true
+      readonlyCarryForward: true
+      confirmPathOnly: true
+      noInlineConfirm: true
+    goNoGo:
+      untilAllSatisfied: NO_GO
+      finalDecisionOwner: artifacts/oam/final-report.json
+  - packageId: check-in
+    nameZh: 入住办理
+    businessGoalZh: 基于预订或现场办理上下文确认入住人与床位占用。
+    inScope:
+      - Dorm.CheckinConfirm
+      - Dorm.AccessCredentialIssue
+    outOfScope:
+      - 普通收款
+      - 押金负债
+      - 账务入账
+      - Dashboard 写事实
+    mainFlowZh:
+      - 入住信息确认
+      - 证件与协议核验
+      - 门禁或入住凭证发放
+    branchFlows:
+      - 缺证件
+      - 协议未确认
+      - 床位不可用
+      - 入住人与预订不一致
+      - 人工复核
+    fields:
+      - fieldId: stay.residentIdentity
+        displayNameZh: 入住人身份
+        type: object
+        category: required-current-input
+        editable: true
+        source: currentWorkItem
+        truthOwner: Dorm.CheckinConfirm
+        fallbackAllowed: false
+        validationRules:
+          - 身份信息必须通过证据核验。
+        evidenceRequirements:
+          - identity-proof
+      - fieldId: stay.bedAssignment
+        displayNameZh: 床位分配
+        type: object
+        category: readonly-carry-forward
+        editable: false
+        source: handoff
+        truthOwner: Dorm.BedSetupConfirm
+        fallbackAllowed: false
+        validationRules:
+          - 只能从上游已确认床位继承。
+        evidenceRequirements:
+          - room-link-proof
+      - fieldId: stay.agreementAccepted
+        displayNameZh: 入住协议确认
+        type: boolean
+        category: required-current-input
+        editable: true
+        source: currentWorkItem
+        truthOwner: Dorm.CheckinConfirm
+        fallbackAllowed: false
+        validationRules:
+          - 必须为已确认。
+        evidenceRequirements:
+          - agreement-proof
+    handoff:
+      produces:
+        - Stay
+        - AccessCredential
+        - EvidenceObject
+      enablesNext: ordinary-payment
+      carryForwardReadonly:
+        - stay.residentIdentity
+        - stay.bedAssignment
+        - stay.agreementAccepted
+      nextAdmission: admission.dormitory.ordinary-payment.prepare.v1
+    roles:
+      allowed:
+        - 宿舍经办人
+        - 宿舍负责人
+      denied:
+        - 财务经办人
+    factOwnership:
+      allowedFacts:
+        - Stay
+        - AccessCredential
+        - EvidenceObject
+        - DomainEvent
+        - CommandSubmission
+      forbiddenFacts:
+        - Payment
+        - Deposit
+        - LedgerEntry
+        - DashboardSummary 写入
+    admission:
+      policyRef: dormitory_l1_internal_pilot_observation
+      productionConfirmAllowed: false
+    evidence:
+      policyRef: evidence.dormitory.check-in.v1
+      missingEvidenceOutcome: NO_GO
+    ledger:
+      policyRef: ledger.none.v1
+      ledgerEntryAllowed: false
+    readSideOutputs:
+      SearchResult: readonly
+      Lens: readonly
+      Projection: readonly
+      Dashboard: readonly
+    uiUxBoundary:
+      currentWorkItemOnly: true
+      readonlyCarryForward: true
+      confirmPathOnly: true
+      noInlineConfirm: true
+    goNoGo:
+      untilAllSatisfied: NO_GO
+      finalDecisionOwner: artifacts/oam/final-report.json
+  - packageId: ordinary-payment
+    nameZh: 普通收款
+    businessGoalZh: 收集普通收款意向和收款凭证，并移交财务内核判断。
+    inScope:
+      - Dorm.PaymentConfirm
+      - Finance.PaymentReview
+    outOfScope:
+      - 押金负债
+      - 直接写 LedgerEntry
+      - Dashboard 写事实
+    mainFlowZh:
+      - 应收摘要只读带入
+      - 收款凭证提交
+      - 财务内核复核
+    branchFlows:
+      - 金额缺失
+      - 收款凭证缺失
+      - 金额与应收不一致
+      - 财务拒绝
+      - 人工复核
+    fields:
+      - fieldId: payment.receiptEvidence
+        displayNameZh: 收款凭证
+        type: evidenceRef
+        category: required-current-input
+        editable: true
+        source: currentWorkItem
+        truthOwner: Dorm.PaymentConfirm
+        fallbackAllowed: false
+        validationRules:
+          - 必须绑定可核验证据。
+        evidenceRequirements:
+          - payment-receipt-proof
+      - fieldId: payment.amountIntent
+        displayNameZh: 收款金额意向
+        type: money
+        category: required-current-input
+        editable: true
+        source: currentWorkItem
+        truthOwner: Dorm.PaymentConfirm
+        fallbackAllowed: false
+        validationRules:
+          - 金额必须大于零。
+        evidenceRequirements:
+          - payment-amount-proof
+    handoff:
+      produces:
+        - PaymentIntent
+        - EvidenceObject
+      enablesNext: deposit-liability
+      carryForwardReadonly:
+        - stay.residentIdentity
+        - payment.receiptEvidence
+        - payment.amountIntent
+      nextAdmission: admission.finance.payment-review.prepare.v1
+    roles:
+      allowed:
+        - 宿舍经办人
+        - 宿舍负责人
+      denied:
+        - 非授权财务确认
+    factOwnership:
+      allowedFacts:
+        - PaymentIntent
+        - EvidenceObject
+        - DomainEvent
+        - CommandSubmission
+      forbiddenFacts:
+        - Payment
+        - Deposit
+        - LedgerEntry
+        - DashboardSummary 写入
+    admission:
+      policyRef: dormitory_l1_internal_pilot_observation
+      productionConfirmAllowed: false
+    evidence:
+      policyRef: evidence.dormitory.ordinary-payment.v1
+      missingEvidenceOutcome: NO_GO
+    ledger:
+      policyRef: finance.kernel.required.v1
+      ledgerEntryAllowed: false
+      handoffToFinanceKernel: true
+    readSideOutputs:
+      SearchResult: readonly
+      Lens: readonly
+      Projection: readonly
+      Dashboard: readonly
+    uiUxBoundary:
+      currentWorkItemOnly: true
+      readonlyCarryForward: true
+      confirmPathOnly: true
+      noInlineConfirm: true
+    goNoGo:
+      untilAllSatisfied: NO_GO
+      finalDecisionOwner: artifacts/oam/final-report.json
+  - packageId: deposit-liability
+    nameZh: 押金负债
+    businessGoalZh: 押金只形成财务内核可验证负债，不由宿舍域直接入账。
+    inScope:
+      - Dorm.DepositConfirm
+      - Finance.DepositReview
+    outOfScope:
+      - 押金作为收入
+      - 直接写 LedgerEntry
+      - Dashboard 写事实
+    mainFlowZh:
+      - 押金意向确认
+      - 押金凭证提交
+      - 财务内核负债复核
+    branchFlows:
+      - 押金金额缺失
+      - 凭证缺失
+      - 押金超额
+      - 财务拒绝
+      - 纠错
+    fields:
+      - fieldId: deposit.amountIntent
+        displayNameZh: 押金金额意向
+        type: money
+        category: required-current-input
+        editable: true
+        source: currentWorkItem
+        truthOwner: Dorm.DepositConfirm
+        fallbackAllowed: false
+        validationRules:
+          - 金额必须大于零且不得标记为收入。
+        evidenceRequirements:
+          - deposit-receipt-proof
+      - fieldId: deposit.liabilityTarget
+        displayNameZh: 押金负债对象
+        type: objectRef
+        category: readonly-carry-forward
+        editable: false
+        source: handoff
+        truthOwner: Finance.DepositReview
+        fallbackAllowed: false
+        validationRules:
+          - 只能由财务内核确认。
+        evidenceRequirements:
+          - finance-review-proof
+    handoff:
+      produces:
+        - DepositIntent
+        - EvidenceObject
+      enablesNext: service-task
+      carryForwardReadonly:
+        - stay.residentIdentity
+        - deposit.amountIntent
+      nextAdmission: admission.finance.deposit-review.prepare.v1
+    roles:
+      allowed:
+        - 宿舍经办人
+        - 宿舍负责人
+      denied:
+        - 非授权财务确认
+    factOwnership:
+      allowedFacts:
+        - DepositIntent
+        - EvidenceObject
+        - DomainEvent
+        - CommandSubmission
+      forbiddenFacts:
+        - Deposit
+        - Payment
+        - LedgerEntry
+        - DashboardSummary 写入
+    admission:
+      policyRef: dormitory_l1_internal_pilot_observation
+      productionConfirmAllowed: false
+    evidence:
+      policyRef: evidence.dormitory.deposit-liability.v1
+      missingEvidenceOutcome: NO_GO
+    ledger:
+      policyRef: finance.kernel.required.v1
+      ledgerEntryAllowed: false
+      handoffToFinanceKernel: true
+    readSideOutputs:
+      SearchResult: readonly
+      Lens: readonly
+      Projection: readonly
+      Dashboard: readonly
+    uiUxBoundary:
+      currentWorkItemOnly: true
+      readonlyCarryForward: true
+      confirmPathOnly: true
+      noInlineConfirm: true
+    goNoGo:
+      untilAllSatisfied: NO_GO
+      finalDecisionOwner: artifacts/oam/final-report.json
+  - packageId: service-task
+    nameZh: 服务任务
+    businessGoalZh: 对入住后的服务请求、分派、完成和核验形成可追踪工单链。
+    inScope:
+      - Dorm.ServiceTaskCreate
+      - Dorm.ServiceTaskAssign
+      - Dorm.ServiceTaskComplete
+      - Dorm.ServiceTaskVerify
+    outOfScope:
+      - 财务入账
+      - 支出审批
+      - Dashboard 写事实
+    mainFlowZh:
+      - 服务请求创建
+      - 服务任务分派
+      - 服务完成
+      - 服务核验
+    branchFlows:
+      - 请求描述缺失
+      - 无负责人
+      - 超时
+      - 核验不通过
+      - 返工
+    fields:
+      - fieldId: service.requestDetail
+        displayNameZh: 服务请求说明
+        type: text
+        category: required-current-input
+        editable: true
+        source: currentWorkItem
+        truthOwner: Dorm.ServiceTaskCreate
+        fallbackAllowed: false
+        validationRules:
+          - 必须说明服务对象和问题。
+        evidenceRequirements:
+          - service-request-proof
+      - fieldId: service.completionProof
+        displayNameZh: 服务完成证据
+        type: evidenceRef
+        category: required-current-input
+        editable: true
+        source: currentWorkItem
+        truthOwner: Dorm.ServiceTaskComplete
+        fallbackAllowed: false
+        validationRules:
+          - 完成证据不能为空。
+        evidenceRequirements:
+          - service-completion-proof
+    handoff:
+      produces:
+        - ServiceTask
+        - EvidenceObject
+      enablesNext: expense-governance
+      carryForwardReadonly:
+        - service.requestDetail
+        - service.completionProof
+      nextAdmission: admission.dormitory.expense-governance.prepare.v1
+    roles:
+      allowed:
+        - 宿舍经办人
+        - 宿舍负责人
+      denied:
+        - 财务经办人
+    factOwnership:
+      allowedFacts:
+        - ServiceTask
+        - EvidenceObject
+        - DomainEvent
+        - CommandSubmission
+      forbiddenFacts:
+        - Payment
+        - Deposit
+        - LedgerEntry
+        - DashboardSummary 写入
+    admission:
+      policyRef: dormitory_l1_internal_pilot_observation
+      productionConfirmAllowed: false
+    evidence:
+      policyRef: evidence.dormitory.service-task.v1
+      missingEvidenceOutcome: NO_GO
+    ledger:
+      policyRef: ledger.none.v1
+      ledgerEntryAllowed: false
+    readSideOutputs:
+      SearchResult: readonly
+      Lens: readonly
+      Projection: readonly
+      Dashboard: readonly
+    uiUxBoundary:
+      currentWorkItemOnly: true
+      readonlyCarryForward: true
+      confirmPathOnly: true
+      noInlineConfirm: true
+    goNoGo:
+      untilAllSatisfied: NO_GO
+      finalDecisionOwner: artifacts/oam/final-report.json
+  - packageId: expense-governance
+    nameZh: 支出治理
+    businessGoalZh: 记录支出申请和治理审批，支出入账只能移交财务内核。
+    inScope:
+      - Dorm.ExpenseRecord
+      - Dorm.ExpenseApprove
+      - Finance.ExpenseReview
+    outOfScope:
+      - 直接写 LedgerEntry
+      - 未审批支出
+      - Dashboard 写事实
+    mainFlowZh:
+      - 支出申请
+      - 宿舍负责人审批
+      - 财务复核
+    branchFlows:
+      - 缺票据
+      - 金额异常
+      - 审批拒绝
+      - 财务拒绝
+      - 纠错
+    fields:
+      - fieldId: expense.requestAmount
+        displayNameZh: 支出申请金额
+        type: money
+        category: required-current-input
+        editable: true
+        source: currentWorkItem
+        truthOwner: Dorm.ExpenseRecord
+        fallbackAllowed: false
+        validationRules:
+          - 金额必须大于零。
+        evidenceRequirements:
+          - expense-invoice-proof
+      - fieldId: expense.approvalReason
+        displayNameZh: 审批理由
+        type: text
+        category: required-current-input
+        editable: true
+        source: currentWorkItem
+        truthOwner: Dorm.ExpenseApprove
+        fallbackAllowed: false
+        validationRules:
+          - 审批通过或拒绝必须填写理由。
+        evidenceRequirements:
+          - approval-proof
+    handoff:
+      produces:
+        - ExpenseIntent
+        - ApprovalDecision
+        - EvidenceObject
+      enablesNext: bed-transfer-extend
+      carryForwardReadonly:
+        - expense.requestAmount
+        - expense.approvalReason
+      nextAdmission: admission.finance.expense-review.prepare.v1
+    roles:
+      allowed:
+        - 宿舍经办人
+        - 宿舍负责人
+      denied:
+        - 非授权财务确认
+    factOwnership:
+      allowedFacts:
+        - ExpenseIntent
+        - ApprovalDecision
+        - EvidenceObject
+        - DomainEvent
+        - CommandSubmission
+      forbiddenFacts:
+        - LedgerEntry
+        - Payment
+        - Deposit
+        - DashboardSummary 写入
+    admission:
+      policyRef: dormitory_l1_internal_pilot_observation
+      productionConfirmAllowed: false
+    evidence:
+      policyRef: evidence.dormitory.expense-governance.v1
+      missingEvidenceOutcome: NO_GO
+    ledger:
+      policyRef: finance.kernel.required.v1
+      ledgerEntryAllowed: false
+      handoffToFinanceKernel: true
+    readSideOutputs:
+      SearchResult: readonly
+      Lens: readonly
+      Projection: readonly
+      Dashboard: readonly
+    uiUxBoundary:
+      currentWorkItemOnly: true
+      readonlyCarryForward: true
+      confirmPathOnly: true
+      noInlineConfirm: true
+    goNoGo:
+      untilAllSatisfied: NO_GO
+      finalDecisionOwner: artifacts/oam/final-report.json
+  - packageId: bed-transfer-extend
+    nameZh: 换床续住
+    businessGoalZh: 处理换床、续住和资源重新占用，不重复填写已确认入住字段。
+    inScope:
+      - Dorm.BedTransferApprove
+      - Dorm.StayExtendApprove
+    outOfScope:
+      - 新入住重新录入
+      - 直接收费入账
+      - Dashboard 写事实
+    mainFlowZh:
+      - 换床或续住申请
+      - 资源和期限校验
+      - 负责人审批
+    branchFlows:
+      - 新床位不可用
+      - 续住期限缺失
+      - 审批拒绝
+      - 人工复核
+    fields:
+      - fieldId: stay.changeRequest
+        displayNameZh: 变更申请
+        type: object
+        category: required-current-input
+        editable: true
+        source: currentWorkItem
+        truthOwner: Dorm.BedTransferApprove
+        fallbackAllowed: false
+        validationRules:
+          - 必须说明换床或续住原因。
+        evidenceRequirements:
+          - change-request-proof
+      - fieldId: stay.currentContext
+        displayNameZh: 当前入住上下文
+        type: object
+        category: readonly-carry-forward
+        editable: false
+        source: handoff
+        truthOwner: Dorm.CheckinConfirm
+        fallbackAllowed: false
+        validationRules:
+          - 只能只读继承。
+        evidenceRequirements:
+          - identity-proof
+    handoff:
+      produces:
+        - StayChange
+        - ApprovalDecision
+        - EvidenceObject
+      enablesNext: checkout-settlement
+      carryForwardReadonly:
+        - stay.currentContext
+        - stay.changeRequest
+      nextAdmission: admission.dormitory.checkout-settlement.prepare.v1
+    roles:
+      allowed:
+        - 宿舍经办人
+        - 宿舍负责人
+      denied:
+        - 财务经办人
+    factOwnership:
+      allowedFacts:
+        - StayChange
+        - ApprovalDecision
+        - EvidenceObject
+        - DomainEvent
+        - CommandSubmission
+      forbiddenFacts:
+        - Payment
+        - Deposit
+        - LedgerEntry
+        - DashboardSummary 写入
+    admission:
+      policyRef: dormitory_l1_internal_pilot_observation
+      productionConfirmAllowed: false
+    evidence:
+      policyRef: evidence.dormitory.bed-transfer-extend.v1
+      missingEvidenceOutcome: NO_GO
+    ledger:
+      policyRef: ledger.none.v1
+      ledgerEntryAllowed: false
+    readSideOutputs:
+      SearchResult: readonly
+      Lens: readonly
+      Projection: readonly
+      Dashboard: readonly
+    uiUxBoundary:
+      currentWorkItemOnly: true
+      readonlyCarryForward: true
+      confirmPathOnly: true
+      noInlineConfirm: true
+    goNoGo:
+      untilAllSatisfied: NO_GO
+      finalDecisionOwner: artifacts/oam/final-report.json
+  - packageId: checkout-settlement
+    nameZh: 退住结算
+    businessGoalZh: 退住只确认业务状态和结算意向，账务结算交给财务内核。
+    inScope:
+      - Dorm.CheckoutSettlementApprove
+      - Finance.CheckoutReview
+    outOfScope:
+      - 直接退款
+      - 直接写 LedgerEntry
+      - Dashboard 写事实
+    mainFlowZh:
+      - 退住申请
+      - 资产和费用核验
+      - 结算意向移交财务
+    branchFlows:
+      - 资产损坏
+      - 费用争议
+      - 退款超额
+      - 财务拒绝
+      - 纠错
+    fields:
+      - fieldId: checkout.assetInspection
+        displayNameZh: 退住资产核验
+        type: object
+        category: required-current-input
+        editable: true
+        source: currentWorkItem
+        truthOwner: Dorm.CheckoutSettlementApprove
+        fallbackAllowed: false
+        validationRules:
+          - 必须记录资产状态。
+        evidenceRequirements:
+          - checkout-inspection-proof
+      - fieldId: checkout.settlementIntent
+        displayNameZh: 结算意向
+        type: object
+        category: required-current-input
+        editable: true
+        source: currentWorkItem
+        truthOwner: Dorm.CheckoutSettlementApprove
+        fallbackAllowed: false
+        validationRules:
+          - 结算意向不得直接生成账务分录。
+        evidenceRequirements:
+          - settlement-proof
+    handoff:
+      produces:
+        - CheckoutIntent
+        - EvidenceObject
+      enablesNext: period-review
+      carryForwardReadonly:
+        - stay.currentContext
+        - checkout.assetInspection
+        - checkout.settlementIntent
+      nextAdmission: admission.finance.checkout-review.prepare.v1
+    roles:
+      allowed:
+        - 宿舍经办人
+        - 宿舍负责人
+      denied:
+        - 非授权财务确认
+    factOwnership:
+      allowedFacts:
+        - CheckoutIntent
+        - EvidenceObject
+        - DomainEvent
+        - CommandSubmission
+      forbiddenFacts:
+        - Payment
+        - Deposit
+        - LedgerEntry
+        - DashboardSummary 写入
+    admission:
+      policyRef: dormitory_l1_internal_pilot_observation
+      productionConfirmAllowed: false
+    evidence:
+      policyRef: evidence.dormitory.checkout-settlement.v1
+      missingEvidenceOutcome: NO_GO
+    ledger:
+      policyRef: finance.kernel.required.v1
+      ledgerEntryAllowed: false
+      handoffToFinanceKernel: true
+    readSideOutputs:
+      SearchResult: readonly
+      Lens: readonly
+      Projection: readonly
+      Dashboard: readonly
+    uiUxBoundary:
+      currentWorkItemOnly: true
+      readonlyCarryForward: true
+      confirmPathOnly: true
+      noInlineConfirm: true
+    goNoGo:
+      untilAllSatisfied: NO_GO
+      finalDecisionOwner: artifacts/oam/final-report.json
+  - packageId: period-review
+    nameZh: 周期复盘
+    businessGoalZh: 只读消费指标和投影，形成复盘快照、行动计划和后续工单。
+    inScope:
+      - Dorm.PeriodReview
+      - Dorm.PeriodActionPlanExecute
+    outOfScope:
+      - 直接改 Room
+      - 直接改 Bed
+      - 直接改 Payment
+      - 直接写 LedgerEntry
+      - Dashboard 写事实
+    mainFlowZh:
+      - 周期指标读取
+      - 复盘快照生成
+      - 行动计划创建
+    branchFlows:
+      - 指标新鲜度不足
+      - 权限不足
+      - 口径缺失
+      - 需要异常纠错
+    fields:
+      - fieldId: period.metricDataset
+        displayNameZh: 周期指标数据集
+        type: datasetRef
+        category: readonly-carry-forward
+        editable: false
+        source: generatedReadModel
+        truthOwner: ReadModel.Projection
+        fallbackAllowed: false
+        validationRules:
+          - 必须带 PermissionEnvelope、LineageEnvelope、FreshnessEnvelope。
+        evidenceRequirements:
+          - metric-lineage-proof
+      - fieldId: period.actionPlan
+        displayNameZh: 行动计划
+        type: object
+        category: required-current-input
+        editable: true
+        source: currentWorkItem
+        truthOwner: Dorm.PeriodActionPlanExecute
+        fallbackAllowed: false
+        validationRules:
+          - 行动计划只能生成后续 WorkItem。
+        evidenceRequirements:
+          - action-plan-proof
+    handoff:
+      produces:
+        - PeriodSnapshot
+        - ActionPlan
+        - ExceptionWorkItem
+      enablesNext: exception-correction
+      carryForwardReadonly:
+        - period.metricDataset
+        - period.actionPlan
+      nextAdmission: admission.dormitory.exception-correction.prepare.v1
+    roles:
+      allowed:
+        - 宿舍经办人
+        - 宿舍负责人
+      denied:
+        - 财务经办人
+    factOwnership:
+      allowedFacts:
+        - PeriodSnapshot
+        - ActionPlan
+        - ExceptionWorkItem
+        - DomainEvent
+        - CommandSubmission
+      forbiddenFacts:
+        - Room
+        - Bed
+        - Payment
+        - Deposit
+        - LedgerEntry
+        - DashboardSummary 写入
+    admission:
+      policyRef: dormitory_l1_internal_pilot_observation
+      productionConfirmAllowed: false
+    evidence:
+      policyRef: evidence.dormitory.period-review.v1
+      missingEvidenceOutcome: NO_GO
+    ledger:
+      policyRef: ledger.none.v1
+      ledgerEntryAllowed: false
+    readSideOutputs:
+      SearchResult: readonly
+      Lens: readonly
+      Projection: readonly
+      Dashboard: readonly
+    uiUxBoundary:
+      currentWorkItemOnly: true
+      readonlyCarryForward: true
+      confirmPathOnly: true
+      noInlineConfirm: true
+    goNoGo:
+      untilAllSatisfied: NO_GO
+      finalDecisionOwner: artifacts/oam/final-report.json
+  - packageId: exception-correction
+    nameZh: 异常纠错
+    businessGoalZh: 以 append-only 方式生成纠错工单和纠错事件，不覆盖已确认事实。
+    inScope:
+      - Dorm.ExceptionResolve
+      - Finance.CorrectionApply
+    outOfScope:
+      - 覆盖原事实
+      - 直接改账
+      - Dashboard 写事实
+    mainFlowZh:
+      - 异常登记
+      - 原事实和新事实绑定
+      - 证据和审批确认
+      - 纠错事件追加
+    branchFlows:
+      - 原事实缺失
+      - 新事实缺失
+      - 缺纠错原因
+      - 缺审批
+      - 财务纠错移交
+    fields:
+      - fieldId: correction.originalFactRef
+        displayNameZh: 原事实引用
+        type: factRef
+        category: readonly-carry-forward
+        editable: false
+        source: handoff
+        truthOwner: OriginalFactOwner
+        fallbackAllowed: false
+        validationRules:
+          - 原事实只能引用，不能覆盖。
+        evidenceRequirements:
+          - original-fact-proof
+      - fieldId: correction.newFactProposal
+        displayNameZh: 新事实提议
+        type: object
+        category: required-current-input
+        editable: true
+        source: currentWorkItem
+        truthOwner: Dorm.ExceptionResolve
+        fallbackAllowed: false
+        validationRules:
+          - 必须绑定纠错原因、证据和审批。
+        evidenceRequirements:
+          - correction-proof
+      - fieldId: correction.approvalReason
+        displayNameZh: 纠错审批理由
+        type: text
+        category: required-current-input
+        editable: true
+        source: currentWorkItem
+        truthOwner: Dorm.ExceptionResolve
+        fallbackAllowed: false
+        validationRules:
+          - 审批理由不能为空。
+        evidenceRequirements:
+          - correction-approval-proof
+    handoff:
+      produces:
+        - CorrectionWorkItem
+        - CorrectionEvent
+        - EvidenceObject
+      enablesNext: resource-saleability
+      carryForwardReadonly:
+        - correction.originalFactRef
+        - correction.newFactProposal
+        - correction.approvalReason
+      nextAdmission: admission.dormitory.resource-saleability.prepare.v1
+    roles:
+      allowed:
+        - 宿舍经办人
+        - 宿舍负责人
+      denied:
+        - 非授权财务确认
+    factOwnership:
+      allowedFacts:
+        - CorrectionWorkItem
+        - CorrectionEvent
+        - EvidenceObject
+        - DomainEvent
+        - CommandSubmission
+      forbiddenFacts:
+        - LedgerEntry
+        - DashboardSummary 写入
+        - 原事实覆盖
+    admission:
+      policyRef: dormitory_l1_internal_pilot_observation
+      productionConfirmAllowed: false
+    evidence:
+      policyRef: evidence.dormitory.exception-correction.v1
+      missingEvidenceOutcome: NO_GO
+    ledger:
+      policyRef: finance.kernel.required.v1
+      ledgerEntryAllowed: false
+      handoffToFinanceKernel: true
+    readSideOutputs:
+      SearchResult: readonly
+      Lens: readonly
+      Projection: readonly
+      Dashboard: readonly
+    uiUxBoundary:
+      currentWorkItemOnly: true
+      readonlyCarryForward: true
+      confirmPathOnly: true
+      noInlineConfirm: true
+    goNoGo:
+      untilAllSatisfied: NO_GO
+      finalDecisionOwner: artifacts/oam/final-report.json

@@ -30,7 +30,7 @@ const violations = [
 
 requireValue(map.productionAllowed === false, violations, "canonical.production_allowed", "canonical scenario map 不得允许 production。");
 requireValue(map.uniqueness?.ordinaryMobileConfirmCannotUseWorkspaceCardFallback === true, violations, "canonical.fallback_not_forbidden", "ordinary mobile confirm 必须禁止 workspace/card fallback。");
-requireValue(map.uniqueness?.scenarioDefinitionWorkItemOwnerSurfaceTuple === true, violations, "canonical.definition_tuple_not_unique", "canonical scenario map 必须以 definition/workItem/surface tuple 作为唯一性口径。");
+requireValue(map.uniqueness?.scenarioDefinitionWorkItemCommandOwnerSurfaceTuple === true, violations, "canonical.definition_tuple_not_unique", "canonical scenario map 必须以 scenario/definition/workItem/command/surface tuple 作为唯一性口径。");
 requireValue(!("scenarioWorkItemCardOwnerSurfaceTuple" in (map.uniqueness ?? {})), violations, "canonical.old_card_tuple_still_present", "canonical scenario map 不得继续声明 cardId 业务 tuple。");
 
 const mappings = map.mappings ?? [];
@@ -40,11 +40,13 @@ const workItemIds = new Set();
 const tupleIds = new Set();
 
 for (const item of mappings) {
-  for (const forbiddenKey of ["cardId", "surfaceCardId"]) {
+  for (const forbiddenKey of ["cardId", "surfaceCardId", "sourceCardId"]) {
     requireValue(!(forbiddenKey in item), violations, "canonical.forbidden_card_identity_key", `canonical mapping 不得使用 ${forbiddenKey} 作为业务身份字段。`, { scenarioId: item.scenarioId, key: forbiddenKey });
   }
 
-  const tuple = `${item.scenarioId}|${item.definitionId}|${item.workItemType}|${item.workItemId}|${item.ownerDomain}|${item.surfaceId}|${item.sourceCardId}`;
+  requireMigrationRefs(item, `canonical mapping ${item.scenarioId}`);
+
+  const tuple = `${item.scenarioId}|${item.definitionId}|${item.workItemType}|${item.workItemId}|${item.commandType}|${item.ownerDomain}|${item.surfaceId}`;
   if (scenarioIds.has(item.scenarioId)) {
     violations.push(violation("canonical.duplicate_scenario", `scenarioId ${item.scenarioId} 重复。`, { scenarioId: item.scenarioId }));
   }
@@ -79,12 +81,31 @@ for (const scenarioId of requiredScenarioIds) {
   requireValue(Boolean(definition), violations, "canonical.definition_missing", `${mapping.definitionId} 不在 OperationDefinition 注册表中。`, { scenarioId, definitionId: mapping.definitionId });
   if (definition) {
     requireValue(definition.workItemType === mapping.workItemType, violations, "canonical.definition_workitem_mismatch", `${scenarioId} mapping 与 OperationDefinition workItemType 不一致。`, { scenarioId, definitionId: mapping.definitionId, expected: mapping.workItemType, actual: definition.workItemType });
-    requireValue(definition.sourceCardId === mapping.sourceCardId, violations, "canonical.definition_source_card_mismatch", `${scenarioId} sourceCardId 必须只作为 Definition 技术来源，且与注册表一致。`, { scenarioId, definitionId: mapping.definitionId, expected: definition.sourceCardId, actual: mapping.sourceCardId });
+    requireValue(definition.commandType === mapping.commandType, violations, "canonical.definition_command_mismatch", `${scenarioId} mapping 与 OperationDefinition commandType 不一致。`, { scenarioId, definitionId: mapping.definitionId, expected: definition.commandType, actual: mapping.commandType });
+    requireMigrationRefs(definition, `definition ${definition.definitionId}`);
     requireValue(definition.productionConfirmAllowed === false, violations, "canonical.definition_production_allowed", `${scenarioId} 对应 OperationDefinition 不得允许 production confirm。`, { scenarioId, definitionId: mapping.definitionId });
   }
-  for (const key of ["definitionId", "workItemType", "workItemId", "ownerDomain", "surfaceId", "sourceCardId"]) {
+  for (const key of ["definitionId", "workItemType", "workItemId", "commandType", "ownerDomain", "surfaceId"]) {
     requireValue(typeof mapping[key] === "string" && mapping[key].length > 0, violations, "canonical.key_missing", `${scenarioId}.${key} 不能为空。`, { scenarioId, key });
   }
 }
 
 failIfViolations(checkId, violations, scannedFiles);
+
+function requireMigrationRefs(item, label) {
+  const refs = item.migrationRefs ?? [];
+  const sourceCardRef = refs.find((ref) => ref.type === "sourceCardId");
+  requireValue(Boolean(sourceCardRef), violations, "canonical.migration_ref_missing", `${label} 必须把 sourceCardId 放入 migrationRefs。`, { label });
+  if (!sourceCardRef) return;
+  for (const [key, value] of [
+    ["readOnly", true],
+    ["executable", false],
+    ["affectsAdmission", false],
+    ["affectsRuntimeConfirm", false],
+    ["affectsBusinessIdentity", false],
+    ["affectsLedger", false]
+  ]) {
+    requireValue(sourceCardRef[key] === value, violations, "canonical.migration_ref_policy_invalid", `${label} migrationRefs.sourceCardId.${key} 必须是 ${value}。`, { label, key });
+  }
+  requireValue(sourceCardRef.deletionProofRef === "docs/contracts/definition/source-id-migration-fence.json", violations, "canonical.migration_ref_deletion_proof_missing", `${label} migrationRefs.sourceCardId 必须绑定删除证明。`, { label });
+}

@@ -21,7 +21,7 @@ const currentDecisionTypes = new Set(
 );
 const currentDefinitions = (definitionRegistry.definitions ?? [])
   .filter((item) => currentDecisionTypes.has(item.workItemType));
-const sourceCardsInWorkflow = new Set((workflowRegistry.workflows ?? []).map((item) => item.sourceCardId));
+const workflowsByDefinition = new Map((workflowRegistry.workflows ?? []).map((item) => [item.definitionId, item]));
 
 if (!resolveMethod.includes("FindByDefinitionId(payloadDefinitionId)") ||
     !resolveMethod.includes("FindByDefinitionId(workItem.DefinitionVersionId)") ||
@@ -43,12 +43,16 @@ if (confirmMethod.includes("FirstNonEmpty(definition.DefinitionId")) {
 if (confirmMethod.includes("ResolveByWorkspaceCard")) {
   fail("confirm_workspace_card_resolve_present", "Canonical confirm must not resolve Definition through workspace/card.");
 }
+for (const forbiddenTraceField of ["[\"sourceCardId\"]", "[\"definitionSourceCardId\"]"]) {
+  if (confirmMethod.includes(forbiddenTraceField)) {
+    fail("confirm_source_card_trace_present", `Canonical confirm must not write ${forbiddenTraceField} as current trace identity.`);
+  }
+}
 for (const required of [
   "admission.EvaluateConfirm",
   "AdmissionRejected",
   "definition.ToTrace()",
   "[\"definitionId\"] = definition.DefinitionId",
-  "[\"sourceCardId\"] = definition.SourceCardId",
   "[\"admissionDecisionRef\"] = admission.AdmissionDecisionRef"
 ]) {
   if (!canonicalSource.includes(required)) {
@@ -63,25 +67,35 @@ if ("scenarioWorkItemCardOwnerSurfaceTuple" in (canonicalMap.uniqueness ?? {})) 
   fail("canonical_card_tuple_present", "Canonical map must not define card-based business identity tuple.");
 }
 for (const mapping of canonicalMap.mappings ?? []) {
-  for (const forbiddenKey of ["cardId", "surfaceCardId"]) {
+  for (const forbiddenKey of ["cardId", "surfaceCardId", "sourceCardId"]) {
     if (forbiddenKey in mapping) {
       fail("canonical_forbidden_card_key", `Canonical mapping must not include ${forbiddenKey}: ${mapping.scenarioId}`);
     }
   }
-  if (!mapping.definitionId || !mapping.workItemId || !mapping.workItemType || !mapping.surfaceId || !mapping.sourceCardId) {
+  if (!mapping.definitionId || !mapping.workItemId || !mapping.workItemType || !mapping.commandType || !mapping.surfaceId) {
     fail("canonical_identity_tuple_incomplete", `Canonical mapping identity tuple incomplete: ${mapping.scenarioId}`);
   }
+  requireMigrationRefs(mapping, `canonical mapping ${mapping.scenarioId}`);
 }
 
 for (const definition of currentDefinitions) {
   if (definition.definitionMode !== "oam-certification-current") {
     fail("current_definition_mode_invalid", `${definition.definitionId} must be oam-certification-current.`);
   }
-  if (!String(definition.sourceCardId ?? "").startsWith("cert.")) {
-    fail("current_definition_source_invalid", `${definition.definitionId} sourceCardId must be a canonical surface source.`);
+  if ("sourceCardId" in definition) {
+    fail("current_definition_source_card_current_identity", `${definition.definitionId} must not expose sourceCardId as current definition identity.`);
   }
-  if (!sourceCardsInWorkflow.has(definition.sourceCardId)) {
-    fail("current_definition_workflow_missing", `${definition.definitionId} sourceCardId is not bound by workflow registry.`);
+  if (!definition.commandType || !definition.workItemType || !definition.definitionId) {
+    fail("current_definition_identity_incomplete", `${definition.definitionId} must bind definitionId/workItemType/commandType.`);
+  }
+  requireMigrationRefs(definition, `definition ${definition.definitionId}`);
+  const workflow = workflowsByDefinition.get(definition.definitionId);
+  if (!workflow) {
+    fail("current_definition_workflow_missing", `${definition.definitionId} is not bound by workflow registry.`);
+  } else {
+    if (workflow.workItemType !== definition.workItemType || workflow.commandType !== definition.commandType) {
+      fail("current_definition_workflow_identity_mismatch", `${definition.definitionId} workflow must bind the same workItemType and commandType.`);
+    }
   }
 }
 
@@ -128,6 +142,29 @@ function read(file) {
 
 function fail(id, message) {
   violations.push({ severity: "P0", id, message });
+}
+
+function requireMigrationRefs(item, label) {
+  const sourceCardRef = (item.migrationRefs ?? []).find((ref) => ref.type === "sourceCardId");
+  if (!sourceCardRef) {
+    fail("migration_ref_missing", `${label} must preserve sourceCardId only in migrationRefs.`);
+    return;
+  }
+  for (const [key, expected] of [
+    ["readOnly", true],
+    ["executable", false],
+    ["affectsAdmission", false],
+    ["affectsRuntimeConfirm", false],
+    ["affectsBusinessIdentity", false],
+    ["affectsLedger", false]
+  ]) {
+    if (sourceCardRef[key] !== expected) {
+      fail("migration_ref_policy_invalid", `${label} migrationRefs.sourceCardId.${key} must be ${expected}.`);
+    }
+  }
+  if (sourceCardRef.deletionProofRef !== "docs/contracts/definition/source-id-migration-fence.json") {
+    fail("migration_ref_deletion_proof_missing", `${label} migrationRefs.sourceCardId must bind deletion proof.`);
+  }
 }
 
 function writeReport() {

@@ -678,7 +678,7 @@
     }
   ],
   "goldenChainTrace": {
-    "sourceScenario": "docs/scenarios/dormitory/golden-pilot.yml",
+    "sourceScenario": "docs/business/domains/dormitory/scenarios/dormitory-resource-saleability.golden-chain.yml",
     "operatingKernel": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
     "handoffContract": "docs/business/domains/dormitory/handoff-contract.json",
     "scenarioMap": "docs/business/dormitory/canonical-scenario-map.json",

@@ -61,7 +61,8 @@ public sealed class OperationsRuntimeServiceTests
         Assert.AreEqual("Dorm.RoomSetupConfirm", started.WorkItem.WorkItemType);
         Assert.AreEqual("roomSetup", started.WorkItem.Payload["cardId"]);
         Assert.AreEqual("definition.dormitory.roomSetupConfirm.v1", started.WorkItem.Payload["definitionId"]);
-        Assert.AreEqual("cert.roomSetupConfirm", started.WorkItem.Payload["definitionSourceCardId"]);
+        Assert.IsFalse(started.WorkItem.Payload.ContainsKey("definitionSourceCardId"));
+        StringAssert.Contains(started.WorkItem.Payload["definitionMigrationRefs"], "cert.roomSetupConfirm");
         Assert.AreEqual("operations-work-item-store", started.WorkItem.Source);
         Assert.HasCount(1, cases.List("tenant-start"));
         Assert.HasCount(1, workItems.List("tenant-start"));
@@ -204,7 +205,8 @@ public sealed class OperationsRuntimeServiceTests
             cardId == "bedSetup");
         Assert.IsNotNull(next);
         Assert.AreEqual("definition.dormitory.bedSetupConfirm.v1", next!.Payload["definitionId"]);
-        Assert.AreEqual("cert.bedSetupConfirm", next.Payload["definitionSourceCardId"]);
+        Assert.IsFalse(next.Payload.ContainsKey("definitionSourceCardId"));
+        StringAssert.Contains(next.Payload["definitionMigrationRefs"], "cert.bedSetupConfirm");
         Assert.IsFalse(workItems.List("tenant-start").Any(item =>
             item.WorkspaceId == workspace.Id &&
             item.Payload.TryGetValue("cardId", out var cardId) &&

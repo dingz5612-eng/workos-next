@@ -40,7 +40,19 @@
       },
       "definitionId": "definition.dormitory.checkinConfirm.v1",
       "commandType": "Checkin.Confirm",
-      "sourceCardId": "cert.checkinConfirm"
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.checkinConfirm",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ]
     },
     {
       "scenarioId": "dorm-cert-002",
@@ -85,7 +97,19 @@
       },
       "definitionId": "definition.dormitory.depositConfirm.v1",
       "commandType": "Deposit.Confirm",
-      "sourceCardId": "cert.depositConfirm"
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.depositConfirm",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ]
     },
     {
       "scenarioId": "dorm-cert-003",
@@ -130,7 +154,19 @@
       },
       "definitionId": "definition.dormitory.paymentConfirm.v1",
       "commandType": "Payment.Confirm",
-      "sourceCardId": "cert.paymentConfirm"
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.paymentConfirm",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ]
     },
     {
       "scenarioId": "dorm-cert-004",
@@ -169,7 +205,19 @@
       },
       "definitionId": "definition.dormitory.resourceReadinessConfirm.v1",
       "commandType": "ResourceReadiness.Confirm",
-      "sourceCardId": "cert.resourceReadinessConfirm"
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.resourceReadinessConfirm",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ]
     },
     {
       "scenarioId": "dorm-cert-005",
@@ -215,7 +263,19 @@
       },
       "definitionId": "definition.dormitory.checkoutSettlementApprove.v1",
       "commandType": "CheckoutSettlement.Approve",
-      "sourceCardId": "cert.checkoutSettlementApprove"
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.checkoutSettlementApprove",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ]
     },
     {
       "scenarioId": "dorm-cert-006",
@@ -260,7 +320,19 @@
       },
       "definitionId": "definition.finance.correctionApply.v1",
       "commandType": "Correction.Apply",
-      "sourceCardId": "cert.correctionApply"
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.correctionApply",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ]
     },
     {
       "scenarioId": "dorm-cert-007",
@@ -298,7 +370,19 @@
       },
       "definitionId": "definition.dormitory.periodReview.v1",
       "commandType": "Period.Review",
-      "sourceCardId": "cert.periodReview"
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.periodReview",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ]
     },
     {
       "scenarioId": "dorm-cert-008",
@@ -341,7 +425,19 @@
       },
       "definitionId": "definition.dormitory.exceptionResolve.v1",
       "commandType": "Exception.Resolve",
-      "sourceCardId": "cert.exceptionResolve"
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.exceptionResolve",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ]
     },
     {
       "scenarioId": "dorm-cert-009",
@@ -387,7 +483,19 @@
       },
       "definitionId": "definition.dormitory.paymentConfirm.v1",
       "commandType": "Payment.Confirm",
-      "sourceCardId": "cert.paymentConfirm"
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.paymentConfirm",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ]
     },
     {
       "scenarioId": "dorm-cert-010",
@@ -431,7 +539,19 @@
       },
       "definitionId": "definition.dormitory.depositConfirm.v1",
       "commandType": "Deposit.Confirm",
-      "sourceCardId": "cert.depositConfirm"
+      "migrationRefs": [
+        {
+          "type": "sourceCardId",
+          "value": "cert.depositConfirm",
+          "readOnly": true,
+          "executable": false,
+          "affectsAdmission": false,
+          "affectsRuntimeConfirm": false,
+          "affectsBusinessIdentity": false,
+          "affectsLedger": false,
+          "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
+        }
+      ]
     },
     {
       "scenarioId": "dorm-cert-gate-red-shadow",

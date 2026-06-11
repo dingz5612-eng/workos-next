@@ -71,6 +71,11 @@
     "CommandSubmission"
   ],
   "forbiddenFacts": [
+    "Room",
+    "Bed",
+    "Stay",
+    "RoomInspection",
+    "ServiceTask",
     "Payment",
     "PaymentAllocation",
     "DepositEntry",
