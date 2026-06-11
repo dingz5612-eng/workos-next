@@ -292,6 +292,17 @@
       "artifacts/oam/evidence/high-risk-trust-proof.json",
       "artifacts/oam/evidence/master-design-proof.json",
       "artifacts/oam/evidence/master-outline-proof.json",
+      "docs/oam/current-oam-kernel-responsibility-map.json",
+      "docs/oam/current-oam-cross-domain-conflict-rules.json",
+      "docs/oam/professional-ai-review-seats.json",
+      "docs/oam/codex-execution-channel-policy.json",
+      "docs/finance/finance-ledger-kernel.json",
+      "docs/oam/compiler-generated-contract-kernel.json",
+      "docs/identity/identity-permission-kernel.json",
+      "artifacts/oam/checks/kernel-responsibility-map-result.json",
+      "artifacts/oam/checks/professional-ai-review-seats-result.json",
+      "artifacts/oam/checks/codex-execution-channel-policy-result.json",
+      "artifacts/oam/checks/cross-domain-conflict-rules-result.json",
       "artifacts/oam/final-report.json"
     ],
     "binding": [

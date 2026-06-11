@@ -1,0 +1,45 @@
+{
+  "version": "oam.compiler-generated-contract-kernel.v1",
+  "status": "authoritative",
+  "architecture": "oam.current",
+  "accountable": "00-OAM-Total-Control",
+  "kernel": "Compiler / Generated Contract Kernel",
+  "humanMaintainedSourceKernels": [
+    "docs/oam/oam-kernel-graph.json",
+    "docs/oam/system-operating-kernel.json",
+    "docs/oam/current-authority-index.json",
+    "docs/business/domains/dormitory/dormitory-operating-kernel.json"
+  ],
+  "compilerGeneratedContracts": [
+    "docs/oam/system-derived-contracts.json",
+    "apps/mobile/src/generated/workosContracts.d.ts",
+    "apps/mobile/src/generated/runtimeApiPaths.js"
+  ],
+  "runtimeSurfaceSearchConsumption": {
+    "Runtime": "consume generated contracts only",
+    "Surface": "consume generated contracts only",
+    "Search": "consume generated read model only"
+  },
+  "generatedFiles": {
+    "manualEditAllowed": false,
+    "sourceTruthAllowed": false,
+    "requiredMetadata": {
+      "generated": true,
+      "doNotEdit": true,
+      "kernelGraphHash": "required",
+      "sourceNodeRefs": "required",
+      "generatorVersion": "required",
+      "generatedFrom": "required"
+    }
+  },
+  "forbidden": [
+    "Generated file marked source truth",
+    "Generated file manually edited",
+    "Runtime / Surface / Search consume human-maintained source kernel directly"
+  ],
+  "requiredGates": [
+    "node scripts/oam/generate-system-derived-contracts.mjs",
+    "node scripts/oam/check-derived-contract-consistency.mjs",
+    "node scripts/oam/check-cross-domain-conflict-rules.mjs"
+  ]
+}

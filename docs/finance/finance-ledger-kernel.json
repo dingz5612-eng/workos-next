@@ -1,0 +1,41 @@
+{
+  "version": "finance.ledger-kernel.v1",
+  "status": "authoritative",
+  "architecture": "oam.current",
+  "accountable": "00-OAM-Total-Control",
+  "kernel": "Finance / Ledger Kernel",
+  "statements": {
+    "dormitoryBusinessBasisIsNotFinanceTruth": true,
+    "sharedReceiptIsNotFinanceTruth": true,
+    "dashboardSummaryIsNotFinanceTruth": true,
+    "ledgerEntryMustPassFinanceLedgerKernel": true
+  },
+  "financeTruthOwner": "Finance / Ledger Kernel",
+  "forbiddenFinanceTruthOwners": [
+    "Dormitory business basis",
+    "SharedReceipt",
+    "DashboardSummary",
+    "Data / KPI",
+    "Control Plane"
+  ],
+  "ledgerEffect": {
+    "mode": [
+      "none",
+      "basis_only",
+      "finance_kernel"
+    ],
+    "financeTruthRequiredMode": "finance_kernel",
+    "basisOnlyIsNotFinanceTruth": true
+  },
+  "requiredGates": [
+    "node scripts/check-finance-truth.mjs",
+    "node scripts/finance/check-finance-semantic-truth.mjs",
+    "node scripts/oam/check-cross-domain-conflict-rules.mjs"
+  ],
+  "negativeTests": [
+    "Dormitory business basis declares finance truth.",
+    "SharedReceipt declares finance truth.",
+    "DashboardSummary declares finance truth.",
+    "LedgerEntry bypasses Finance / Ledger Kernel."
+  ]
+}

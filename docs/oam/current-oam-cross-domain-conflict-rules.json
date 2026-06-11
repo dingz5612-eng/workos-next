@@ -1,0 +1,91 @@
+{
+  "version": "oam.current-cross-domain-conflict-rules.v1",
+  "status": "authoritative",
+  "architecture": "oam.current",
+  "accountable": "00-OAM-Total-Control",
+  "rules": [
+    {
+      "id": "business-write",
+      "conflict": "business write",
+      "resolution": "Operations Runtime",
+      "mustRouteTo": "Operations Runtime",
+      "goNoGoOnViolation": "NO_GO"
+    },
+    {
+      "id": "field-display",
+      "conflict": "field display",
+      "resolution": "generated surface model",
+      "mustRouteTo": "Compiler / Generated Contract Kernel",
+      "goNoGoOnViolation": "NO_GO"
+    },
+    {
+      "id": "search-result",
+      "conflict": "search result",
+      "resolution": "generated read model",
+      "mustRouteTo": "Search Kernel",
+      "goNoGoOnViolation": "NO_GO"
+    },
+    {
+      "id": "kpi",
+      "conflict": "KPI",
+      "resolution": "sourceFacts lineage",
+      "mustRouteTo": "Data / KPI",
+      "goNoGoOnViolation": "NO_GO"
+    },
+    {
+      "id": "ledger-write",
+      "conflict": "ledger write",
+      "resolution": "Finance / Ledger Kernel",
+      "mustRouteTo": "Finance / Ledger Kernel",
+      "goNoGoOnViolation": "NO_GO"
+    },
+    {
+      "id": "permission",
+      "conflict": "permission",
+      "resolution": "Identity / Permission Kernel",
+      "mustRouteTo": "Identity / Permission Kernel",
+      "goNoGoOnViolation": "NO_GO"
+    },
+    {
+      "id": "release-go",
+      "conflict": "release GO",
+      "resolution": "latest SHA + CI run id + artifact digest + final report digest",
+      "requiredEvidence": [
+        "latest SHA",
+        "CI run id",
+        "artifact digest",
+        "final report digest"
+      ],
+      "goNoGoOnViolation": "NO_GO"
+    },
+    {
+      "id": "codex-scope-expansion",
+      "conflict": "Codex scope expansion",
+      "resolution": "00 总控",
+      "mustRouteTo": "00-OAM-Total-Control",
+      "goNoGoOnViolation": "NO_GO"
+    },
+    {
+      "id": "any-p0",
+      "conflict": "any P0",
+      "resolution": "NO_GO",
+      "mustRouteTo": "00-OAM-Total-Control",
+      "goNoGoOnViolation": "NO_GO"
+    }
+  ],
+  "evidenceGraphPolicy": {
+    "replacesOamKernelGraph": false,
+    "oamKernelGraphAuthority": "docs/oam/oam-kernel-graph.json",
+    "evidenceGraphProofOnly": true
+  },
+  "financeTruthPolicy": {
+    "forbiddenOwners": [
+      "Dormitory",
+      "Dashboard",
+      "SharedReceipt",
+      "Data / KPI",
+      "Control Plane"
+    ],
+    "authority": "docs/finance/finance-ledger-kernel.json"
+  }
+}

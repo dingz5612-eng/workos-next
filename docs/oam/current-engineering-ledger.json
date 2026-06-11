@@ -6,11 +6,11 @@
   "sourceGraph": "docs/oam/oam-kernel-graph.json",
   "sourceLifecyclePolicy": "docs/oam/file-lifecycle-policy.json",
   "defaultPolicy": "unregistered_files_are_not_allowed",
-  "fileCount": 875,
+  "fileCount": 886,
   "identityCounts": {
-    "validation_file": 284,
+    "validation_file": 288,
     "implementation_file": 329,
-    "authority_file": 190,
+    "authority_file": 197,
     "derived_view": 53,
     "human_manual": 19
   },
@@ -9209,6 +9209,37 @@
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
     },
     {
+      "path": "docs/finance/finance-ledger-kernel.json",
+      "currentIdentity": "authority_file",
+      "lifecycleState": "active_contract",
+      "responsibilityScopeZh": "当前 OAM 机器合同。",
+      "forbiddenScopeZh": "不得绕过系统内核、图谱、门禁或证据根。",
+      "currentFactAuthorityAllowed": true,
+      "currentFactAuthorityAllowedByGraph": true,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-cross-domain-conflict-rules.mjs",
+        "scripts/check-finance-truth.mjs",
+        "scripts/finance/check-finance-semantic-truth.mjs"
+      ],
+      "owner": "finance-truth-owner",
+      "sourceKernel": "kernel.finance-truth",
+      "graphBinding": "file.docs/finance/finance-ledger-kernel.json",
+      "gates": [
+        "scripts/oam/check-cross-domain-conflict-rules.mjs",
+        "scripts/check-finance-truth.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/checks/cross-domain-conflict-rules-result.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "docs/finance/finance-ledger-kernel.json",
+      "absorbedBy": "docs/finance/finance-ledger-kernel.json",
+      "removalProofGate": "scripts/oam/check-cross-domain-conflict-rules.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
       "path": "docs/finance/finance-semantic-truth-kernel.yml",
       "currentIdentity": "validation_file",
       "lifecycleState": "active_validation",
@@ -9296,6 +9327,37 @@
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
     },
     {
+      "path": "docs/identity/identity-permission-kernel.json",
+      "currentIdentity": "authority_file",
+      "lifecycleState": "active_contract",
+      "responsibilityScopeZh": "当前 OAM 机器合同。",
+      "forbiddenScopeZh": "不得绕过系统内核、图谱、门禁或证据根。",
+      "currentFactAuthorityAllowed": true,
+      "currentFactAuthorityAllowedByGraph": true,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-cross-domain-conflict-rules.mjs",
+        "scripts/check-account-actor-kernel.mjs",
+        "scripts/trust/check-trust-boundary-kernel.mjs"
+      ],
+      "owner": "identity-trust-owner",
+      "sourceKernel": "kernel.system",
+      "graphBinding": "file.docs/identity/identity-permission-kernel.json",
+      "gates": [
+        "scripts/oam/check-cross-domain-conflict-rules.mjs",
+        "scripts/check-account-actor-kernel.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/checks/cross-domain-conflict-rules-result.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "docs/identity/identity-permission-kernel.json",
+      "absorbedBy": "docs/identity/identity-permission-kernel.json",
+      "removalProofGate": "scripts/oam/check-cross-domain-conflict-rules.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
       "path": "docs/oam/checkout-service-cutover.config.json",
       "currentIdentity": "authority_file",
       "lifecycleState": "active_contract",
@@ -9322,6 +9384,68 @@
       "replacementPath": "docs/oam/checkout-service-cutover.config.json",
       "absorbedBy": "docs/oam/checkout-service-cutover.config.json",
       "removalProofGate": "scripts/check-local-path-references.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "docs/oam/codex-execution-channel-policy.json",
+      "currentIdentity": "authority_file",
+      "lifecycleState": "active_contract",
+      "responsibilityScopeZh": "当前 OAM 机器合同。",
+      "forbiddenScopeZh": "不得绕过系统内核、图谱、门禁或证据根。",
+      "currentFactAuthorityAllowed": true,
+      "currentFactAuthorityAllowedByGraph": true,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-codex-execution-channel-policy.mjs",
+        "scripts/oam/generate-current-evidence-root.mjs",
+        "scripts/oam/run-control-plane-checks.ps1",
+        ".github/workflows/ci.yml"
+      ],
+      "owner": "oam-release-owner",
+      "sourceKernel": "kernel.authority",
+      "graphBinding": "file.docs/oam/codex-execution-channel-policy.json",
+      "gates": [
+        "scripts/oam/check-codex-execution-channel-policy.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/checks/codex-execution-channel-policy-result.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "docs/oam/codex-execution-channel-policy.json",
+      "absorbedBy": "docs/oam/codex-execution-channel-policy.json",
+      "removalProofGate": "scripts/oam/check-codex-execution-channel-policy.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "docs/oam/compiler-generated-contract-kernel.json",
+      "currentIdentity": "authority_file",
+      "lifecycleState": "active_contract",
+      "responsibilityScopeZh": "当前 OAM 机器合同。",
+      "forbiddenScopeZh": "不得绕过系统内核、图谱、门禁或证据根。",
+      "currentFactAuthorityAllowed": true,
+      "currentFactAuthorityAllowedByGraph": true,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-cross-domain-conflict-rules.mjs",
+        "scripts/oam/generate-system-derived-contracts.mjs",
+        "scripts/oam/check-derived-contract-consistency.mjs"
+      ],
+      "owner": "oam-release-owner",
+      "sourceKernel": "kernel.system",
+      "graphBinding": "file.docs/oam/compiler-generated-contract-kernel.json",
+      "gates": [
+        "scripts/oam/check-cross-domain-conflict-rules.mjs",
+        "scripts/oam/check-derived-contract-consistency.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/checks/cross-domain-conflict-rules-result.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "docs/oam/compiler-generated-contract-kernel.json",
+      "absorbedBy": "docs/oam/compiler-generated-contract-kernel.json",
+      "removalProofGate": "scripts/oam/check-cross-domain-conflict-rules.mjs",
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
     },
     {
@@ -9525,6 +9649,68 @@
       "replacementPath": "docs/oam/current-engineering-ledger.json",
       "absorbedBy": "docs/oam/current-engineering-ledger.json",
       "removalProofGate": "scripts/oam/check-current-engineering-ledger.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "docs/oam/current-oam-cross-domain-conflict-rules.json",
+      "currentIdentity": "authority_file",
+      "lifecycleState": "active_contract",
+      "responsibilityScopeZh": "当前 OAM 机器合同。",
+      "forbiddenScopeZh": "不得绕过系统内核、图谱、门禁或证据根。",
+      "currentFactAuthorityAllowed": true,
+      "currentFactAuthorityAllowedByGraph": true,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-cross-domain-conflict-rules.mjs",
+        "scripts/oam/generate-current-evidence-root.mjs",
+        "scripts/oam/run-control-plane-checks.ps1",
+        ".github/workflows/ci.yml"
+      ],
+      "owner": "oam-release-owner",
+      "sourceKernel": "kernel.authority",
+      "graphBinding": "file.docs/oam/current-oam-cross-domain-conflict-rules.json",
+      "gates": [
+        "scripts/oam/check-cross-domain-conflict-rules.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/checks/cross-domain-conflict-rules-result.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "docs/oam/current-oam-cross-domain-conflict-rules.json",
+      "absorbedBy": "docs/oam/current-oam-cross-domain-conflict-rules.json",
+      "removalProofGate": "scripts/oam/check-cross-domain-conflict-rules.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "docs/oam/current-oam-kernel-responsibility-map.json",
+      "currentIdentity": "authority_file",
+      "lifecycleState": "active_authority",
+      "responsibilityScopeZh": "当前 OAM 权威入口或系统权威。",
+      "forbiddenScopeZh": "不得承载运行时代码或生成证据。",
+      "currentFactAuthorityAllowed": true,
+      "currentFactAuthorityAllowedByGraph": true,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-kernel-responsibility-map.mjs",
+        "scripts/oam/generate-current-evidence-root.mjs",
+        "scripts/oam/run-control-plane-checks.ps1",
+        ".github/workflows/ci.yml"
+      ],
+      "owner": "oam-release-owner",
+      "sourceKernel": "kernel.authority",
+      "graphBinding": "file.docs/oam/current-oam-kernel-responsibility-map.json",
+      "gates": [
+        "scripts/oam/check-kernel-responsibility-map.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/checks/kernel-responsibility-map-result.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "docs/oam/current-oam-kernel-responsibility-map.json",
+      "absorbedBy": "docs/oam/current-oam-kernel-responsibility-map.json",
+      "removalProofGate": "scripts/oam/check-kernel-responsibility-map.mjs",
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
     },
     {
@@ -9873,6 +10059,37 @@
       "replacementPath": "docs/oam/oam-kernel-graph.json",
       "absorbedBy": "docs/oam/oam-kernel-graph.json",
       "removalProofGate": "scripts/oam/check-oam-kernel-graph.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "docs/oam/professional-ai-review-seats.json",
+      "currentIdentity": "authority_file",
+      "lifecycleState": "active_contract",
+      "responsibilityScopeZh": "当前 OAM 机器合同。",
+      "forbiddenScopeZh": "不得绕过系统内核、图谱、门禁或证据根。",
+      "currentFactAuthorityAllowed": true,
+      "currentFactAuthorityAllowedByGraph": true,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-professional-ai-review-seats.mjs",
+        "scripts/oam/generate-current-evidence-root.mjs",
+        "scripts/oam/run-control-plane-checks.ps1",
+        ".github/workflows/ci.yml"
+      ],
+      "owner": "oam-release-owner",
+      "sourceKernel": "kernel.authority",
+      "graphBinding": "file.docs/oam/professional-ai-review-seats.json",
+      "gates": [
+        "scripts/oam/check-professional-ai-review-seats.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/checks/professional-ai-review-seats-result.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "docs/oam/professional-ai-review-seats.json",
+      "absorbedBy": "docs/oam/professional-ai-review-seats.json",
+      "removalProofGate": "scripts/oam/check-professional-ai-review-seats.mjs",
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
     },
     {
@@ -14916,6 +15133,66 @@
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
     },
     {
+      "path": "scripts/oam/check-codex-execution-channel-policy.mjs",
+      "currentIdentity": "validation_file",
+      "lifecycleState": "active_validation",
+      "responsibilityScopeZh": "当前 OAM 机器门禁、CI 或测试。",
+      "forbiddenScopeZh": "不得定义业务事实，只能检查或生成指定产物。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/run-control-plane-checks.ps1",
+        ".github/workflows/ci.yml",
+        "scripts/oam/generate-current-evidence-root.mjs"
+      ],
+      "owner": "release-control-owner",
+      "sourceKernel": "kernel.release-control",
+      "graphBinding": "file.scripts/oam/check-codex-execution-channel-policy.mjs",
+      "gates": [
+        "scripts/oam/check-codex-execution-channel-policy.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/checks/codex-execution-channel-policy-result.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "scripts/oam/check-codex-execution-channel-policy.mjs",
+      "absorbedBy": "scripts/oam/check-codex-execution-channel-policy.mjs",
+      "removalProofGate": "scripts/oam/check-codex-execution-channel-policy.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "scripts/oam/check-cross-domain-conflict-rules.mjs",
+      "currentIdentity": "validation_file",
+      "lifecycleState": "active_validation",
+      "responsibilityScopeZh": "当前 OAM 机器门禁、CI 或测试。",
+      "forbiddenScopeZh": "不得定义业务事实，只能检查或生成指定产物。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/run-control-plane-checks.ps1",
+        ".github/workflows/ci.yml",
+        "scripts/oam/generate-current-evidence-root.mjs"
+      ],
+      "owner": "release-control-owner",
+      "sourceKernel": "kernel.release-control",
+      "graphBinding": "file.scripts/oam/check-cross-domain-conflict-rules.mjs",
+      "gates": [
+        "scripts/oam/check-cross-domain-conflict-rules.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/checks/cross-domain-conflict-rules-result.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "scripts/oam/check-cross-domain-conflict-rules.mjs",
+      "absorbedBy": "scripts/oam/check-cross-domain-conflict-rules.mjs",
+      "removalProofGate": "scripts/oam/check-cross-domain-conflict-rules.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
       "path": "scripts/oam/check-current-authority-index.mjs",
       "currentIdentity": "validation_file",
       "lifecycleState": "active_validation",
@@ -15177,6 +15454,36 @@
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
     },
     {
+      "path": "scripts/oam/check-kernel-responsibility-map.mjs",
+      "currentIdentity": "validation_file",
+      "lifecycleState": "active_validation",
+      "responsibilityScopeZh": "当前 OAM 机器门禁、CI 或测试。",
+      "forbiddenScopeZh": "不得定义业务事实，只能检查或生成指定产物。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/run-control-plane-checks.ps1",
+        ".github/workflows/ci.yml",
+        "scripts/oam/generate-current-evidence-root.mjs"
+      ],
+      "owner": "release-control-owner",
+      "sourceKernel": "kernel.release-control",
+      "graphBinding": "file.scripts/oam/check-kernel-responsibility-map.mjs",
+      "gates": [
+        "scripts/oam/check-kernel-responsibility-map.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/checks/kernel-responsibility-map-result.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "scripts/oam/check-kernel-responsibility-map.mjs",
+      "absorbedBy": "scripts/oam/check-kernel-responsibility-map.mjs",
+      "removalProofGate": "scripts/oam/check-kernel-responsibility-map.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
       "path": "scripts/oam/check-mobile-coverage-policy.mjs",
       "currentIdentity": "validation_file",
       "lifecycleState": "active_validation",
@@ -15348,6 +15655,36 @@
       "replacementPath": "scripts/oam/check-p0-rule-ledger.mjs",
       "absorbedBy": "scripts/oam/check-p0-rule-ledger.mjs",
       "removalProofGate": "scripts/oam/check-p0-rule-ledger.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "scripts/oam/check-professional-ai-review-seats.mjs",
+      "currentIdentity": "validation_file",
+      "lifecycleState": "active_validation",
+      "responsibilityScopeZh": "当前 OAM 机器门禁、CI 或测试。",
+      "forbiddenScopeZh": "不得定义业务事实，只能检查或生成指定产物。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/run-control-plane-checks.ps1",
+        ".github/workflows/ci.yml",
+        "scripts/oam/generate-current-evidence-root.mjs"
+      ],
+      "owner": "release-control-owner",
+      "sourceKernel": "kernel.release-control",
+      "graphBinding": "file.scripts/oam/check-professional-ai-review-seats.mjs",
+      "gates": [
+        "scripts/oam/check-professional-ai-review-seats.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/checks/professional-ai-review-seats-result.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "scripts/oam/check-professional-ai-review-seats.mjs",
+      "absorbedBy": "scripts/oam/check-professional-ai-review-seats.mjs",
+      "removalProofGate": "scripts/oam/check-professional-ai-review-seats.mjs",
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
     },
     {
