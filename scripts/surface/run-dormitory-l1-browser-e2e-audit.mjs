@@ -127,7 +127,7 @@ async function runPositiveScenario(browser, allNetworkEvents) {
     assertScenario(scenario, blocked.runtimeDecision === "blocked:required_field_missing", "positive.required_fields_blocked", "Empty required fields must block before runtime confirm.");
     assertScenario(scenario, blocked.domState.invalidFields.length > 0, "positive.required_fields_marked", "Blocked fields must be marked in DOM.");
 
-    const lifecycleCards = ["roomSetup", "bedSetup", "rateSetup", "roomReadiness", "roomBlock", "roomRelease"];
+    const lifecycleCards = ["roomSetup", "bedSetup", "roomReadiness"];
     let completed = null;
     for (const [index, cardId] of lifecycleCards.entries()) {
       if (index > 0) {

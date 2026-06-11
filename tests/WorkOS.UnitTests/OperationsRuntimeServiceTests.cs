@@ -58,9 +58,10 @@ public sealed class OperationsRuntimeServiceTests
 
         Assert.AreEqual(workspace.Id, started.OperationCase.CaseId);
         StringAssert.StartsWith(started.WorkItem.WorkItemId, "wi-");
-        Assert.AreEqual("Dorm.RoomSetup", started.WorkItem.WorkItemType);
+        Assert.AreEqual("Dorm.RoomSetupConfirm", started.WorkItem.WorkItemType);
         Assert.AreEqual("roomSetup", started.WorkItem.Payload["cardId"]);
-        Assert.AreEqual("definition.roomSetup.v1", started.WorkItem.Payload["definitionId"]);
+        Assert.AreEqual("definition.dormitory.roomSetupConfirm.v1", started.WorkItem.Payload["definitionId"]);
+        Assert.AreEqual("cert.roomSetupConfirm", started.WorkItem.Payload["definitionSourceCardId"]);
         Assert.AreEqual("operations-work-item-store", started.WorkItem.Source);
         Assert.HasCount(1, cases.List("tenant-start"));
         Assert.HasCount(1, workItems.List("tenant-start"));
@@ -161,7 +162,7 @@ public sealed class OperationsRuntimeServiceTests
     }
 
     [TestMethod]
-    public void operations_confirm_does_not_dispatch_next_resource_lifecycle_work_item_from_seed()
+    public void operations_confirm_dispatches_generated_resource_lifecycle_work_item_without_seed_rate_plan()
     {
         var workspace = FakeOperationsRuntime.ResourceWorkspace("W-STAY-RESOURCE-202606040002");
         var service = Service(out _, out _, out var workItems, workspaces: new[] { workspace });
@@ -197,10 +198,17 @@ public sealed class OperationsRuntimeServiceTests
             "req-resource-next");
 
         Assert.IsTrue(result.Confirmed);
+        var next = workItems.List("tenant-start").SingleOrDefault(item =>
+            item.WorkspaceId == workspace.Id &&
+            item.Payload.TryGetValue("cardId", out var cardId) &&
+            cardId == "bedSetup");
+        Assert.IsNotNull(next);
+        Assert.AreEqual("definition.dormitory.bedSetupConfirm.v1", next!.Payload["definitionId"]);
+        Assert.AreEqual("cert.bedSetupConfirm", next.Payload["definitionSourceCardId"]);
         Assert.IsFalse(workItems.List("tenant-start").Any(item =>
             item.WorkspaceId == workspace.Id &&
             item.Payload.TryGetValue("cardId", out var cardId) &&
-            cardId == "bedSetup"));
+            cardId == "rateSetup"));
     }
 
     [TestMethod]

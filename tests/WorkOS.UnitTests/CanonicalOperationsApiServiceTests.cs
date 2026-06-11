@@ -456,12 +456,13 @@ public sealed class CanonicalOperationsApiServiceTests
             OperatorActor(),
             "req-generated-room-flow");
         var next = service.ListWorkItems("tenant-s3")
-            .SingleOrDefault(item => item.WorkspaceId == "W-DORM-MAINLINE" && item.Payload.TryGetValue("cardId", out var cardId) && cardId == "cert.bedSetupConfirm");
+            .SingleOrDefault(item => item.WorkspaceId == "W-DORM-MAINLINE" && item.Payload.TryGetValue("cardId", out var cardId) && cardId == "bedSetup");
 
         Assert.AreEqual(StatusCodes.Status200OK, result.StatusCode);
         Assert.IsNotNull(next);
         Assert.AreEqual("Dorm.BedSetupConfirm", next!.WorkItemType);
         Assert.AreEqual("definition.dormitory.bedSetupConfirm.v1", next.Payload["definitionId"]);
+        Assert.AreEqual("cert.bedSetupConfirm", next.Payload["definitionSourceCardId"]);
         Assert.AreEqual("generated_transition_policy", next.Payload["dispatchedBy"]);
         Assert.AreEqual("docs/oam/kernel/oam-kernel-graph.generated.json", next.Payload["generatedTransitionSource"]);
     }
