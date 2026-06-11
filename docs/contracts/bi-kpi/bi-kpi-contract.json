@@ -15,6 +15,16 @@
   ],
   "readOnly": true,
   "businessFactWriteAllowed": false,
+  "contractRefs": [
+    "docs/contracts/bi-kpi/metric-registry.contract.json",
+    "docs/contracts/bi-kpi/dimension-contract.json",
+    "docs/contracts/bi-kpi/sla-clock-contract.json",
+    "docs/contracts/bi-kpi/dashboard-contract.json",
+    "docs/contracts/bi-kpi/report-contract.json",
+    "docs/contracts/bi-kpi/lineage-contract.json",
+    "docs/contracts/bi-kpi/permission-contract.json",
+    "docs/contracts/bi-kpi/freshness-contract.json"
+  ],
   "invariants": [
     "Dashboard, report, management cockpit, and KPI pages are read-only.",
     "KPI definitions must state lineage and maturityScope.",

@@ -7,6 +7,16 @@ const kernel = readJson("docs/read-intelligence/read-intelligence-kernel.json");
 const readModel = readJson("docs/contracts/generated/dormitory/read-model.generated.json");
 const surface = readJson("docs/contracts/generated/dormitory/surface-input-model.generated.json");
 const mobileSurface = readJson("apps/mobile/src/generated/oam/dormitory-surface-input-model.generated.json");
+const readOwnerRegistry = readJson("docs/contracts/read/read-model-owner-registry.json");
+const readSchemas = [
+  readJson("docs/contracts/read/oam-object-envelope.schema.json"),
+  readJson("docs/contracts/read/search-index-record.schema.json"),
+  readJson("docs/contracts/read/search-result-envelope.schema.json"),
+  readJson("docs/contracts/read/lens-read-model.schema.json"),
+  readJson("docs/contracts/read/permission-envelope.schema.json"),
+  readJson("docs/contracts/read/lineage-envelope.schema.json"),
+  readJson("docs/contracts/read/freshness-envelope.schema.json")
+];
 
 if (kernel.version !== "oam.read-intelligence-kernel.v1") fail("read intelligence kernel version mismatch.");
 if (kernel.status !== "authoritative-current-no-go") fail("read intelligence kernel must remain current NO_GO.");
@@ -41,7 +51,7 @@ for (const field of ["generatedReadModelsOnly", "searchLensProjectionReadonly"])
   if (readModel[field] !== true) fail(`read model missing ${field}=true.`);
 }
 const requiredTargetFields = readModel.searchResultTargetContract?.requiredFields ?? [];
-for (const required of ["targetId", "runtimeOwner", "compatibility"]) {
+for (const required of ["view", "kind", "targetId", "runtimeOwner", "compatibility", "writeThroughSearchAllowed"]) {
   if (!requiredTargetFields.includes(required)) fail(`SearchResult target missing ${required}.`);
 }
 if (readModel.searchResultTargetContract?.permissionFilterOrder !== "before_ranking") {
@@ -67,6 +77,32 @@ for (const term of ["objectKind", "resultType", "metric", "dashboard", "lineage"
   if (!(kernel.languageGlossary?.supports ?? []).includes(term) || !(readModel.languageGlossary?.supports ?? []).includes(term)) {
     fail(`LanguageGlossary must support ${term}.`);
   }
+}
+for (const proofRef of kernel.proofRefs ?? []) {
+  if (!fs.existsSync(path.join(root, proofRef))) fail(`Read Intelligence proofRef missing ${proofRef}.`);
+}
+if (readOwnerRegistry.writeFactsAllowed !== false) {
+  fail("read-model-owner-registry must forbid fact writes.");
+}
+for (const owner of readOwnerRegistry.owners ?? []) {
+  if (owner.sourceTruthAllowed !== false) fail(`read model ${owner.readModel} must not be source truth.`);
+}
+for (const schema of readSchemas) {
+  if (schema.type !== "object" || !Array.isArray(schema.required) || schema.required.length === 0) {
+    fail(`read schema ${schema.$id ?? "<missing id>"} must be an object with required fields.`);
+  }
+}
+const permissionRequired = readSchemas.find((schema) => schema.$id === "workosnext.read.permission-envelope.schema.v1")?.required ?? [];
+for (const field of ["visibility", "redaction", "dataClassification", "requiredPermissions", "checkedAt", "policyVersion", "decisionSource", "actorScope"]) {
+  if (!permissionRequired.includes(field)) fail(`permission envelope missing ${field}.`);
+}
+const lineageRequired = readSchemas.find((schema) => schema.$id === "workosnext.read.lineage-envelope.schema.v1")?.required ?? [];
+for (const field of ["sourceSystem", "sourceType", "sourceId", "sourceUpdatedAt", "definitionVersion", "sourceNodeRefs"]) {
+  if (!lineageRequired.includes(field)) fail(`lineage envelope missing ${field}.`);
+}
+const freshnessRequired = readSchemas.find((schema) => schema.$id === "workosnext.read.freshness-envelope.schema.v1")?.required ?? [];
+for (const field of ["indexedAt", "indexLagMs", "stale", "maxStalenessMs", "checkedAt"]) {
+  if (!freshnessRequired.includes(field)) fail(`freshness envelope missing ${field}.`);
 }
 
 if (failures.length > 0) {

@@ -53,9 +53,20 @@ public static class ReleaseAdmissionPolicy
             lockedBlockers.Add("business_signoff_missing");
         }
 
+        var canActivate = activeBlockers.Count == 0;
+        var canLock = lockedBlockers.Count == 0;
+        var canEnableProductionConfirm = canLock &&
+            currentAdmission.ProductionConfirmAllowed &&
+            !currentAdmission.BusinessProduction.Equals("BLOCKED", StringComparison.OrdinalIgnoreCase);
+        var canPromoteDormitoryL2 = canLock &&
+            !currentAdmission.BusinessProduction.Equals("BLOCKED", StringComparison.OrdinalIgnoreCase) &&
+            !currentAdmission.DormitoryProduction.Equals("BLOCKED", StringComparison.OrdinalIgnoreCase);
+
         return new ReleaseAdmissionStatus(
-            activeBlockers.Count == 0,
-            lockedBlockers.Count == 0,
+            canActivate,
+            canLock,
+            canEnableProductionConfirm,
+            canPromoteDormitoryL2,
             activeBlockers,
             lockedBlockers);
     }
@@ -106,5 +117,7 @@ internal sealed record CurrentAdmissionStateRead(
 public sealed record ReleaseAdmissionStatus(
     bool CanActivate,
     bool CanLock,
+    bool CanEnableProductionConfirm,
+    bool CanPromoteDormitoryL2,
     IReadOnlyList<string> ActiveBlockers,
     IReadOnlyList<string> LockedBlockers);

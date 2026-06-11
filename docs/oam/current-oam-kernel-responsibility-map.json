@@ -2,7 +2,7 @@
   "version": "oam.current-kernel-responsibility-map.v1",
   "status": "authoritative",
   "architecture": "oam.current",
-  "latestReviewedMain": "f5a64ed",
+  "latestReviewedMain": "0af775c6fdc92da0b34706eb6f723c5e86ef2421",
   "currentStatus": "NO_GO",
   "nextStageAllowed": false,
   "accountabilityModel": {

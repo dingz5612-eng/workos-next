@@ -12,6 +12,9 @@ const releaseEvidenceObjectPath = "artifacts/oam/evidence/current-oam-release-ev
 const digestPlaceholder = "__CURRENT_OAM_EVIDENCE_DIGEST__";
 const evidenceRootDigestPlaceholder = "__CURRENT_OAM_EVIDENCE_ROOT_DIGEST__";
 const ciRunId = env("GITHUB_RUN_ID") || "local";
+const ciRunAttempt = env("GITHUB_RUN_ATTEMPT") || "local";
+const repository = env("GITHUB_REPOSITORY") || repositoryFromGitRemote() || "dingz5612-eng/workos-next";
+const workflow = env("GITHUB_WORKFLOW") || "CI";
 const artifactName = artifactNameForRun(ciRunId);
 
 const requiredEvidenceFiles = [
@@ -62,6 +65,7 @@ const requiredEvidenceFiles = [
 const generatedAt = new Date().toISOString();
 const commitSha = env("GITHUB_SHA") || git("rev-parse HEAD") || "local";
 const branch = env("GITHUB_HEAD_REF") || env("GITHUB_REF_NAME") || git("branch --show-current") || "local";
+const kernelGraphHash = hashFileStrict("docs/oam/oam-kernel-graph.json");
 const admission = readJson("docs/oam/current-admission-state.json");
 const responsibilityMap = readJson(responsibilityMapPath);
 const p0Ledger = readP0Ledger("docs/system/oam-p0-rule-ledger.json");
@@ -336,8 +340,11 @@ const finalReport = {
     uploadedByCi: workflowContainsEvidenceUpload(),
     evidenceRoot: evidenceDir
   },
+  businessProduction: admission.businessProduction,
   businessProductionStatus: admission.businessProduction,
+  dormitoryL2: admission.dormitoryProduction,
   dormitoryL2Status: admission.dormitoryProduction,
+  productionConfirm: admission.productionConfirmAllowed ? "ALLOWED" : "BLOCKED",
   productionConfirmAllowed: admission.productionConfirmAllowed,
   ...workstreamGoNoGoFields,
   ...multiDimensionalGoNoGo,
@@ -349,7 +356,8 @@ const finalReport = {
   unresolvedP2: [],
   finalGoNoGo: forcedCurrentStageGoNoGo.finalGoNoGo,
   noGoReasons: finalDecision.noGoReasons,
-  nextStageAllowed: finalGoNoGo === "GO"
+  nextStageAllowed: false,
+  nextStageReason: finalGoNoGo === "GO"
     ? "仅允许进入补强下一阶段准入证据和 P1/P2 收敛；不得进入 Business Production、Dormitory L2 或 production_confirm。"
     : `不允许进入下一阶段；必须先修复：${finalDecision.noGoReasons.join("；")}`,
   p0RuleLedger: p0Ledger
@@ -403,15 +411,27 @@ const releaseEvidenceObject = {
     currentAdmissionState: "docs/oam/current-admission-state.json",
     releaseObjectPurpose: "Bind concrete CI run, artifact identity, evidence root digest, graph hash, and final report digest while current stage remains NO_GO."
   }),
+  repository,
+  workflow,
   githubSha: commitSha,
   githubRunId: ciRunId,
+  githubRunAttempt: ciRunAttempt,
   githubRefName: branch,
+  generatedAtUtc: generatedAt,
   artifactName,
   githubArtifactDigest: digestPlaceholder,
   evidenceRootDigest: evidenceRootDigestPlaceholder,
-  kernelGraphHash: hashFileStrict("docs/oam/oam-kernel-graph.json"),
+  kernelGraphHash,
   evidenceGraphHash: digestPlaceholder,
   finalReportDigest: digestPlaceholder,
+  businessProduction: admission.businessProduction,
+  dormitoryL2: admission.dormitoryProduction,
+  productionConfirmAllowed: admission.productionConfirmAllowed,
+  finalGoNoGo: forcedCurrentStageGoNoGo.finalGoNoGo,
+  nextStageAllowed: false,
+  businessProductionGoNoGo: forcedCurrentStageGoNoGo.businessProductionGoNoGo,
+  dormitoryL2GoNoGo: forcedCurrentStageGoNoGo.dormitoryL2GoNoGo,
+  productionConfirmGoNoGo: forcedCurrentStageGoNoGo.productionConfirmGoNoGo,
   currentStage: {
     businessProduction: admission.businessProduction,
     dormitoryL2: admission.dormitoryProduction,
@@ -472,11 +492,24 @@ function binding(kind) {
   return {
     root: "current-oam-trust-closure-v1",
     kind,
+    repository,
+    workflow,
     commitSha,
+    githubSha: commitSha,
     branch,
+    githubRefName: branch,
     ciRunId,
+    githubRunId: ciRunId,
+    githubRunAttempt: ciRunAttempt,
+    artifactName,
     generatedAt,
-    artifactDigest: digestPlaceholder
+    generatedAtUtc: generatedAt,
+    artifactDigest: digestPlaceholder,
+    githubArtifactDigest: digestPlaceholder,
+    evidenceRootDigest: evidenceRootDigestPlaceholder,
+    kernelGraphHash,
+    evidenceGraphHash: digestPlaceholder,
+    finalReportDigest: digestPlaceholder
   };
 }
 
@@ -495,9 +528,13 @@ function writeAllEvidence() {
 }
 
 function refreshReleaseEvidenceObjectDigests() {
-  releaseEvidenceObject.evidenceRootDigest = digestForDisk(requiredEvidenceFiles.filter((file) => file !== releaseEvidenceObjectPath));
-  releaseEvidenceObject.evidenceGraphHash = digestForDisk(["artifacts/oam/evidence/evidence-graph.json"]);
-  releaseEvidenceObject.finalReportDigest = digestForDisk([finalReportPath]);
+  const evidenceRootDigest = digestForDisk(requiredEvidenceFiles.filter((file) => file !== releaseEvidenceObjectPath));
+  const evidenceGraphHash = digestForDisk(["artifacts/oam/evidence/evidence-graph.json"]);
+  const finalReportDigest = digestForDisk([finalReportPath]);
+  releaseEvidenceObject.evidenceRootDigest = evidenceRootDigest;
+  releaseEvidenceObject.evidenceGraphHash = evidenceGraphHash;
+  releaseEvidenceObject.finalReportDigest = finalReportDigest;
+  applyReleaseDigestFields(evidenceRootDigest, evidenceGraphHash, finalReportDigest);
   files.set(releaseEvidenceObjectPath, releaseEvidenceObject);
   writeJson(releaseEvidenceObjectPath, releaseEvidenceObject);
 }
@@ -524,8 +561,39 @@ function setDigest(value, digest) {
   if (Object.prototype.hasOwnProperty.call(value, "artifactDigest")) {
     value.artifactDigest = digest;
   }
+  if (Object.prototype.hasOwnProperty.call(value, "githubArtifactDigest")) {
+    value.githubArtifactDigest = digest;
+  }
   for (const item of Object.values(value)) {
     setDigest(item, digest);
+  }
+}
+
+function applyReleaseDigestFields(evidenceRootDigest, evidenceGraphHash, finalReportDigest) {
+  for (const document of files.values()) {
+    if (typeof document !== "string") {
+      setReleaseDigestFields(document, evidenceRootDigest, evidenceGraphHash, finalReportDigest);
+    }
+  }
+}
+
+function setReleaseDigestFields(value, evidenceRootDigest, evidenceGraphHash, finalReportDigest) {
+  if (Array.isArray(value)) {
+    for (const item of value) setReleaseDigestFields(item, evidenceRootDigest, evidenceGraphHash, finalReportDigest);
+    return;
+  }
+  if (!value || typeof value !== "object") return;
+  if (Object.prototype.hasOwnProperty.call(value, "evidenceRootDigest")) {
+    value.evidenceRootDigest = evidenceRootDigest;
+  }
+  if (Object.prototype.hasOwnProperty.call(value, "evidenceGraphHash")) {
+    value.evidenceGraphHash = evidenceGraphHash;
+  }
+  if (Object.prototype.hasOwnProperty.call(value, "finalReportDigest")) {
+    value.finalReportDigest = finalReportDigest;
+  }
+  for (const item of Object.values(value)) {
+    setReleaseDigestFields(item, evidenceRootDigest, evidenceGraphHash, finalReportDigest);
   }
 }
 
@@ -1331,6 +1399,12 @@ function git(command) {
 
 function env(name) {
   return process.env[name] || "";
+}
+
+function repositoryFromGitRemote() {
+  const remote = git("remote get-url origin");
+  const match = remote.match(/github\.com[:/](?<owner>[^/]+)\/(?<repo>[^/.]+)(?:\.git)?$/i);
+  return match?.groups ? `${match.groups.owner}/${match.groups.repo}` : "";
 }
 
 function artifactNameForRun(runId) {

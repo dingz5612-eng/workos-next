@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "workosnext.read.permission-envelope.schema.v1",
+  "title": "Read Permission Envelope",
+  "type": "object",
+  "required": [
+    "visibility",
+    "redaction",
+    "dataClassification",
+    "requiredPermissions",
+    "checkedAt",
+    "policyVersion",
+    "decisionSource",
+    "actorScope"
+  ],
+  "properties": {
+    "visibility": { "type": "string" },
+    "redaction": { "type": "string" },
+    "dataClassification": { "type": "string" },
+    "requiredPermissions": { "type": "array", "items": { "type": "string" } },
+    "checkedAt": { "type": "string" },
+    "policyVersion": { "type": "string" },
+    "decisionSource": { "type": "string" },
+    "actorScope": { "type": "string" }
+  },
+  "additionalProperties": true
+}

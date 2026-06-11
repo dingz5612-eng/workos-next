@@ -28,6 +28,7 @@ function main() {
     "docs/business/finance/ledger-transaction-contract.yml",
     "docs/business/finance/unclear-money-policy.yml",
     "docs/business/finance/correction-policy.yml",
+    "docs/finance/finance-ledger-kernel.json",
     "schemas/finance-truth-pipeline.schema.json",
     ...listDocuments(positiveRoot)
   ];
@@ -76,6 +77,28 @@ function validateContracts() {
   }
   if (pipeline.goNoGo?.productionAllowed !== false) {
     violations.push(violation("finance_truth.production_claim", "docs/business/finance/finance-truth-pipeline.yml", "OAM finance-gate must not declare production allowed."));
+  }
+  const requiredStateChain = ["AmountBasisProposal", "AmountBasisReviewed", "AmountBasis", "FinancialFact", "LedgerTransaction", "LedgerEntry"];
+  if (JSON.stringify(pipeline.amountBasisStateChain) !== JSON.stringify(requiredStateChain)) {
+    violations.push(violation("finance_truth.amount_basis_chain_missing", "docs/business/finance/finance-truth-pipeline.yml", "Amount basis state chain must be explicit from proposal to ledger entry."));
+  }
+  for (const input of ["AmountBasisProposal", "AmountBasisReviewed", "AmountBasis"]) {
+    if (!pipeline.acceptedInputs?.includes(input)) {
+      violations.push(violation("finance_truth.amount_basis_input_missing", "docs/business/finance/finance-truth-pipeline.yml", `${input} must be an accepted finance pipeline input.`, { input }));
+    }
+  }
+  const ledgerKernel = readDocument("docs/finance/finance-ledger-kernel.json");
+  if (JSON.stringify(ledgerKernel.amountBasisStateChain) !== JSON.stringify(requiredStateChain)) {
+    violations.push(violation("finance_truth.ledger_kernel_chain_missing", "docs/finance/finance-ledger-kernel.json", "Finance ledger kernel must declare the amount basis state chain."));
+  }
+  if (ledgerKernel.semanticDistinctions?.deposits?.creditAccountType !== "liability") {
+    violations.push(violation("finance_truth.deposit_liability_missing", "docs/finance/finance-ledger-kernel.json", "Deposits must be distinguished as liability, not income."));
+  }
+  if (ledgerKernel.semanticDistinctions?.refunds?.requiresOriginalDepositAccount !== true) {
+    violations.push(violation("finance_truth.refund_original_ref_missing", "docs/finance/finance-ledger-kernel.json", "Refunds must require the original deposit liability reference."));
+  }
+  if (ledgerKernel.semanticDistinctions?.normalPayments?.depositLiabilityAllowed !== false) {
+    violations.push(violation("finance_truth.normal_payment_deposit_boundary", "docs/finance/finance-ledger-kernel.json", "Normal payments must not use deposit liability."));
   }
 
   const kernel = readDocument("docs/business/finance/money-kernel-rules.yml");

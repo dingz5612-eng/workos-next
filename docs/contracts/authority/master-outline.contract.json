@@ -1,0 +1,46 @@
+{
+  "version": "workosnext.authority.master-outline.v1",
+  "status": "authoritative-current-no-go",
+  "architecture": "oam.current",
+  "outlineId": "current-oam-p0b-p0c-master-outline",
+  "authorityRefs": [
+    "docs/oam/current-architecture.md",
+    "docs/oam/current-architecture.manifest.json",
+    "docs/contracts/oam.current.json",
+    "docs/oam/current-admission-state.json",
+    "docs/oam/current-oam-kernel-responsibility-map.json",
+    "docs/business/admission/business-line-levels.yml"
+  ],
+  "businessProduction": "BLOCKED",
+  "dormitoryL2": "BLOCKED",
+  "productionConfirmAllowed": false,
+  "finalGoNoGo": "NO_GO",
+  "nextStageAllowed": false,
+  "businessLineLevels": [
+    {
+      "machineValue": "L0_CONTRACT_PREVIEW",
+      "productionAllowed": false
+    },
+    {
+      "machineValue": "L1_INTERNAL_PILOT",
+      "productionAllowed": false
+    },
+    {
+      "machineValue": "L2_PRODUCTION",
+      "productionAllowed": true,
+      "currentlyAllowed": false
+    }
+  ],
+  "retiredRegistryTerms": [
+    "business-3",
+    "business-4",
+    "business-5",
+    "business-6",
+    "business-7"
+  ],
+  "invariants": [
+    "CI green is evidence only and cannot change finalGoNoGo.",
+    "Merged pull requests are evidence only and cannot open production confirm.",
+    "Artifacts are evidence only and cannot open Business Production or Dormitory L2."
+  ]
+}

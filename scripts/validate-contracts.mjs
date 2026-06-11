@@ -10,6 +10,9 @@ const lensContract = JSON.parse(fs.readFileSync("docs/contracts/accommodation-le
 const oamContract = JSON.parse(fs.readFileSync("docs/contracts/oam.current.json", "utf8"));
 const oamManifest = JSON.parse(fs.readFileSync("docs/oam/current-architecture.manifest.json", "utf8"));
 const architectureExceptions = JSON.parse(fs.readFileSync("docs/oam/current-architecture-exceptions.json", "utf8"));
+const biKpiContract = JSON.parse(fs.readFileSync("docs/contracts/bi-kpi/bi-kpi-contract.json", "utf8"));
+const businessLineLevels = JSON.parse(fs.readFileSync("docs/business/admission/business-line-levels.yml", "utf8"));
+const definitionCompatibilityFence = JSON.parse(fs.readFileSync("docs/contracts/definition/definition-compatibility-fence.json", "utf8"));
 
 const requiredProjectionFields = ["projection", "version", "languages", "sourceOfTruth", "workspaces", "events"];
 for (const field of requiredProjectionFields) {
@@ -196,6 +199,53 @@ for (const exception of architectureExceptions.exceptions || []) {
   if (Date.parse(exception.expiresAt) < Date.now()) {
     throw new Error(`OAM architecture exception expired for ${exception.ruleId}`);
   }
+}
+
+if (biKpiContract.readOnly !== true || biKpiContract.businessFactWriteAllowed !== false) {
+  throw new Error("BI/KPI contract must stay read-only and forbid business fact writes.");
+}
+for (const ref of biKpiContract.contractRefs || []) {
+  if (!fs.existsSync(ref)) {
+    throw new Error(`BI/KPI contract ref missing: ${ref}`);
+  }
+  const subContract = JSON.parse(fs.readFileSync(ref, "utf8"));
+  if (subContract.readOnly !== true || subContract.businessFactWriteAllowed !== false) {
+    throw new Error(`BI/KPI sub-contract must stay read-only: ${ref}`);
+  }
+  for (const field of ["version", "status", "requiredFields"]) {
+    if (!(field in subContract)) {
+      throw new Error(`BI/KPI sub-contract ${ref} missing ${field}`);
+    }
+  }
+}
+
+const levelMachineValues = new Set((businessLineLevels.levels || []).map((level) => level.machineValue));
+if (!levelMachineValues.has("L1_INTERNAL_PILOT")) {
+  throw new Error("Business line levels must define L1_INTERNAL_PILOT.");
+}
+for (const level of businessLineLevels.levels || []) {
+  for (const language of ["zh-CN", "ru-RU", "ky-KG"]) {
+    if (typeof level.display?.[language] !== "string" || level.display[language].trim() === "") {
+      throw new Error(`Business line level ${level.machineValue} missing ${language} display text.`);
+    }
+  }
+}
+for (const value of ["business-3", "business-4", "business-5", "business-6", "business-7"]) {
+  if (!(businessLineLevels.retiredRegistryValues || []).includes(value)) {
+    throw new Error(`Business line levels must list ${value} as retired.`);
+  }
+}
+for (const resolver of ["ResolveByWorkspaceCard", "FindBySourceCardId"]) {
+  const entry = (definitionCompatibilityFence.compatibilityOnlyResolvers || []).find((item) => item.name === resolver);
+  if (!entry) throw new Error(`Definition compatibility fence missing ${resolver}.`);
+  for (const forbidden of ["confirm path", "command identity", "truth owner resolution", "ledger source", "production admission"]) {
+    if (!entry.forbidden?.includes(forbidden)) {
+      throw new Error(`${resolver} must forbid ${forbidden}.`);
+    }
+  }
+}
+if (definitionCompatibilityFence.businessRegistryDecision?.L1MachineValue !== "L1_INTERNAL_PILOT") {
+  throw new Error("Definition compatibility fence must normalize L1 to L1_INTERNAL_PILOT.");
 }
 
 const pathReferenceViolations = validateLocalPathReferences();

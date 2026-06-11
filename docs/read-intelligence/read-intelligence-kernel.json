@@ -22,7 +22,7 @@
     "lensConsumesGeneratedReadModelsOnly": true,
     "projectionConsumesGeneratedReadModelsOnly": true,
     "searchLensProjectionWriteFactsAllowed": false,
-    "searchResultTargetRequiredFields": ["targetId", "runtimeOwner", "compatibility"],
+    "searchResultTargetRequiredFields": ["view", "kind", "targetId", "runtimeOwner", "compatibility", "writeThroughSearchAllowed"],
     "permissionFilterOrder": "before_ranking",
     "hiddenResultRanked": false,
     "confirmAllowedRankingBoost": false,
@@ -34,6 +34,14 @@
   "proofRefs": [
     "docs/contracts/generated/dormitory/read-model.generated.json",
     "docs/contracts/generated/dormitory/surface-input-model.generated.json",
-    "apps/mobile/src/generated/oam/dormitory-surface-input-model.generated.json"
+    "apps/mobile/src/generated/oam/dormitory-surface-input-model.generated.json",
+    "docs/contracts/read/oam-object-envelope.schema.json",
+    "docs/contracts/read/search-index-record.schema.json",
+    "docs/contracts/read/search-result-envelope.schema.json",
+    "docs/contracts/read/lens-read-model.schema.json",
+    "docs/contracts/read/permission-envelope.schema.json",
+    "docs/contracts/read/lineage-envelope.schema.json",
+    "docs/contracts/read/freshness-envelope.schema.json",
+    "docs/contracts/read/read-model-owner-registry.json"
   ]
 }

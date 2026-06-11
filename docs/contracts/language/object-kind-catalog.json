@@ -1,0 +1,52 @@
+{
+  "version": "oam.language.object-kind-catalog.v1",
+  "status": "authoritative-read-side-kernel",
+  "languages": ["zh-CN", "ru-RU", "ky-KG"],
+  "objectKinds": [
+    {
+      "objectKind": "workItem",
+      "copy": {
+        "zh-CN": "工作项",
+        "ru-RU": "Задача",
+        "ky-KG": "Иш"
+      }
+    },
+    {
+      "objectKind": "operationCase",
+      "copy": {
+        "zh-CN": "业务案件",
+        "ru-RU": "Операционное дело",
+        "ky-KG": "Операция иши"
+      }
+    },
+    {
+      "objectKind": "businessObject",
+      "copy": {
+        "zh-CN": "业务对象",
+        "ru-RU": "Бизнес-объект",
+        "ky-KG": "Бизнес объекти"
+      }
+    },
+    {
+      "objectKind": "ledger",
+      "copy": {
+        "zh-CN": "账本读数",
+        "ru-RU": "Чтение журнала",
+        "ky-KG": "Журнал окуусу"
+      }
+    },
+    {
+      "objectKind": "gateResult",
+      "copy": {
+        "zh-CN": "门禁结果",
+        "ru-RU": "Результат допуска",
+        "ky-KG": "Кирүү жыйынтыгы"
+      }
+    }
+  ],
+  "invariants": [
+    "Object-kind copy is read-side display text only.",
+    "Object-kind copy cannot grant visibleAllowed, confirmAllowed, or productionAllowed.",
+    "Object-kind copy cannot create or mutate business facts."
+  ]
+}

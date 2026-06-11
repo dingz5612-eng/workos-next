@@ -121,6 +121,24 @@
       "provisionalRefPolicy": "allowedForDraftOnly"
     },
     {
+      "factId": "AmountBasisProposal",
+      "owner": "BusinessDomainPack",
+      "truthLevel": "proposal",
+      "allowedCommitters": ["DormitoryDomainPack", "RepairDomainPack", "PartsDomainPack", "HRDomainPack"],
+      "forbiddenOwners": ["management-cockpit", "receipt-projection", "search", "dashboard"],
+      "receiptProjection": "referenceOnly",
+      "provisionalRefPolicy": "allowedForDraftOnly"
+    },
+    {
+      "factId": "AmountBasisReviewed",
+      "owner": "FinanceTruthPack",
+      "truthLevel": "workflowTruth",
+      "allowedCommitters": ["FinanceTruthPack"],
+      "forbiddenOwners": ["domain-pack", "management-cockpit", "receipt-projection", "search", "dashboard"],
+      "receiptProjection": "referenceOnly",
+      "provisionalRefPolicy": "allowedForDraftOnly"
+    },
+    {
       "factId": "AmountBasis",
       "owner": "FinanceTruthPack",
       "truthLevel": "workflowTruth",

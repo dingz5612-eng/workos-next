@@ -1,0 +1,51 @@
+{
+  "version": "workosnext.authority.master-design.v1",
+  "status": "authoritative-current-no-go",
+  "architecture": "oam.current",
+  "designId": "current-oam-p0b-p0c-master-design",
+  "authorityRefs": [
+    "docs/oam/current-architecture.md",
+    "docs/contracts/oam.current.json",
+    "docs/contracts/admission/admission-contract.json",
+    "docs/contracts/definition/workitem-definition-registry.json",
+    "docs/business/truth-owner-registry.yml"
+  ],
+  "canonicalConfirmOrder": [
+    "catalog.GetWorkItem",
+    "definitions.Resolve(workItem)",
+    "unresolved 422 reject",
+    "VerifiedDeviceTrustContext.FromServerSession",
+    "admission.EvaluateConfirm",
+    "OperationsCommandRequest",
+    "unitOfWork.Commit",
+    "RecordWorkItemTransition",
+    "DispatchNextOperationWorkItem"
+  ],
+  "blockedMutationClasses": [
+    "UnitOfWork",
+    "CommandSubmission",
+    "DomainEvent",
+    "WorkItemEvent",
+    "LedgerTransaction",
+    "LedgerEntry",
+    "Outbox",
+    "confirmed transition",
+    "next work item",
+    "projection",
+    "lens",
+    "search",
+    "WriteLog"
+  ],
+  "compatibilityFences": [
+    "ResolveByWorkspaceCard is read-only compatibility and migration only.",
+    "FindBySourceCardId is read-only compatibility and migration only.",
+    "cardId is UI route identity only and never command identity."
+  ],
+  "releaseLocks": {
+    "businessProduction": "BLOCKED",
+    "dormitoryL2": "BLOCKED",
+    "productionConfirmAllowed": false,
+    "finalGoNoGo": "NO_GO",
+    "nextStageAllowed": false
+  }
+}

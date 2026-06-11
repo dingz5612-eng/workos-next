@@ -327,6 +327,23 @@ function checkRuntimeImplementation(failures) {
   if (!searchKernel.includes("admission.EvaluateSearch")) {
     failures.push("SearchKernelService must label search results through Admission Kernel.");
   }
+
+  const releasePolicy = read("services/core-api/WorkOS.Api/Runtime/ReleaseAdmissionPolicy.cs");
+  for (const term of [
+    "CanEnableProductionConfirm",
+    "CanPromoteDormitoryL2",
+    "business_production_blocked_by_current_admission_state",
+    "dormitory_l2_blocked_by_current_admission_state",
+    "production_confirm_blocked_by_current_admission_state"
+  ]) {
+    if (!releasePolicy.includes(term)) failures.push(`ReleaseAdmissionPolicy.cs missing release admission lock: ${term}.`);
+  }
+  if (!/canEnableProductionConfirm\s*=\s*canLock[\s\S]*ProductionConfirmAllowed[\s\S]*BusinessProduction\.Equals\("BLOCKED"/.test(releasePolicy)) {
+    failures.push("CanEnableProductionConfirm must be false while current-admission-state blocks production.");
+  }
+  if (!/canPromoteDormitoryL2\s*=\s*canLock[\s\S]*BusinessProduction\.Equals\("BLOCKED"[\s\S]*DormitoryProduction\.Equals\("BLOCKED"/.test(releasePolicy)) {
+    failures.push("CanPromoteDormitoryL2 must be false while current-admission-state blocks Dormitory L2.");
+  }
 }
 
 function read(relativePath) {

@@ -5,6 +5,9 @@ import path from "node:path";
 const root = process.cwd();
 const digestPlaceholder = "__CURRENT_OAM_EVIDENCE_DIGEST__";
 const ciRunId = env("GITHUB_RUN_ID") || "local";
+const ciRunAttempt = env("GITHUB_RUN_ATTEMPT") || "local";
+const expectedRepository = env("GITHUB_REPOSITORY") || "";
+const expectedWorkflow = env("GITHUB_WORKFLOW") || "CI";
 const expectedArtifactName = artifactNameForRun(ciRunId);
 const releaseEvidenceObjectPath = "artifacts/oam/evidence/current-oam-release-evidence-object.json";
 const requiredFiles = [
@@ -132,6 +135,14 @@ if (documents.size === requiredFiles.length) {
     failures.push("finalGoNoGo must remain NO_GO for the current stage.");
   }
 
+  if (finalReport.nextStageAllowed !== false) {
+    failures.push("final report nextStageAllowed must be boolean false.");
+  }
+
+  if (graph.nextStageAllowed !== false) {
+    failures.push("evidence graph nextStageAllowed must be boolean false.");
+  }
+
   if (!workflowContainsEvidenceUpload()) {
     failures.push("CI workflow must generate, check, and upload current OAM evidence root.");
   }
@@ -173,23 +184,41 @@ function checkReleaseEvidenceObject(releaseObject, graph, finalReport, allDocume
 
   checkArtifactName("release evidence object", releaseObject.artifactName);
   for (const field of [
+    "repository",
+    "workflow",
     "githubSha",
     "githubRunId",
+    "githubRunAttempt",
     "githubRefName",
+    "generatedAtUtc",
     "artifactName",
     "githubArtifactDigest",
     "evidenceRootDigest",
     "kernelGraphHash",
     "evidenceGraphHash",
-    "finalReportDigest"
+    "finalReportDigest",
+    "businessProduction",
+    "dormitoryL2",
+    "productionConfirmAllowed",
+    "finalGoNoGo",
+    "nextStageAllowed"
   ]) {
-    if (!releaseObject[field]) {
+    if (releaseObject[field] === undefined || releaseObject[field] === null || releaseObject[field] === "") {
       failures.push(`release evidence object missing ${field}.`);
     }
   }
 
   if (releaseObject.githubRunId !== ciRunId) {
     failures.push(`release evidence object githubRunId must be ${ciRunId}, actual: ${releaseObject.githubRunId || "missing"}`);
+  }
+  if (releaseObject.githubRunAttempt !== ciRunAttempt) {
+    failures.push(`release evidence object githubRunAttempt must be ${ciRunAttempt}, actual: ${releaseObject.githubRunAttempt || "missing"}`);
+  }
+  if (expectedRepository && releaseObject.repository !== expectedRepository) {
+    failures.push(`release evidence object repository must be ${expectedRepository}, actual: ${releaseObject.repository || "missing"}`);
+  }
+  if (releaseObject.workflow !== expectedWorkflow) {
+    failures.push(`release evidence object workflow must be ${expectedWorkflow}, actual: ${releaseObject.workflow || "missing"}`);
   }
   if (releaseObject.githubSha !== graph?.binding?.commitSha) {
     failures.push("release evidence object githubSha must match evidence graph binding commitSha.");
@@ -202,6 +231,21 @@ function checkReleaseEvidenceObject(releaseObject, graph, finalReport, allDocume
   }
   if (releaseObject.githubArtifactDigest === releaseObject.evidenceRootDigest) {
     failures.push("release evidence object must distinguish githubArtifactDigest from evidenceRootDigest.");
+  }
+  if (releaseObject.finalGoNoGo !== "NO_GO") {
+    failures.push("release evidence object finalGoNoGo must remain NO_GO.");
+  }
+  if (releaseObject.nextStageAllowed !== false) {
+    failures.push("release evidence object nextStageAllowed must remain false.");
+  }
+  if (releaseObject.businessProduction !== "BLOCKED") {
+    failures.push("release evidence object businessProduction must remain BLOCKED.");
+  }
+  if (releaseObject.dormitoryL2 !== "BLOCKED") {
+    failures.push("release evidence object dormitoryL2 must remain BLOCKED.");
+  }
+  if (releaseObject.productionConfirmAllowed !== false) {
+    failures.push("release evidence object productionConfirmAllowed must remain false.");
   }
 
   const expectedEvidenceRootDigest = digestFor(new Map([...allDocuments.entries()].filter(([file]) => file !== releaseEvidenceObjectPath)));
@@ -252,10 +296,47 @@ function checkBinding(file, document, expectedDigest) {
     failures.push(`${file} missing binding.`);
     return;
   }
-  for (const key of ["commitSha", "branch", "ciRunId", "generatedAt", "artifactDigest"]) {
+  for (const key of [
+    "repository",
+    "workflow",
+    "commitSha",
+    "githubSha",
+    "branch",
+    "githubRefName",
+    "ciRunId",
+    "githubRunId",
+    "githubRunAttempt",
+    "artifactName",
+    "generatedAt",
+    "generatedAtUtc",
+    "artifactDigest",
+    "githubArtifactDigest",
+    "evidenceRootDigest",
+    "kernelGraphHash",
+    "evidenceGraphHash",
+    "finalReportDigest"
+  ]) {
     if (binding[key] === undefined || binding[key] === null || binding[key] === "") {
       failures.push(`${file} binding missing ${key}.`);
     }
+  }
+  if (binding.githubSha !== binding.commitSha) {
+    failures.push(`${file} binding githubSha must match commitSha.`);
+  }
+  if (binding.githubRefName !== binding.branch) {
+    failures.push(`${file} binding githubRefName must match branch.`);
+  }
+  if (binding.githubRunId !== binding.ciRunId) {
+    failures.push(`${file} binding githubRunId must match ciRunId.`);
+  }
+  if (binding.githubRunAttempt !== ciRunAttempt) {
+    failures.push(`${file} binding githubRunAttempt must be ${ciRunAttempt}.`);
+  }
+  if (binding.artifactName !== expectedArtifactName) {
+    failures.push(`${file} binding artifactName must be ${expectedArtifactName}.`);
+  }
+  if (binding.githubArtifactDigest !== binding.artifactDigest) {
+    failures.push(`${file} binding githubArtifactDigest must match artifactDigest.`);
   }
   if (binding.artifactDigest !== expectedDigest) {
     failures.push(`${file} binding digest does not match evidence graph.`);

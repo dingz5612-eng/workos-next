@@ -39,6 +39,8 @@ if (!builder.Environment.IsDevelopment())
 }
 var migrationOptions = builder.Configuration.GetSection("Migrations").Get<RuntimeMigrationOptions>() ?? new RuntimeMigrationOptions();
 var allowedHosts = builder.Configuration["AllowedHosts"];
+var useRealBrowserInMemoryRuntime = builder.Environment.IsDevelopment() &&
+    string.Equals(Environment.GetEnvironmentVariable("WORKOS_REAL_BROWSER_USE_INMEMORY"), "1", StringComparison.Ordinal);
 RuntimeStartupValidator.ThrowIfInvalid(
     builder.Environment.EnvironmentName,
     authOptions,
@@ -47,19 +49,40 @@ RuntimeStartupValidator.ThrowIfInvalid(
     allowedHosts,
     migrationOptions);
 var runMigrations = RuntimeStartupValidator.ShouldRunMigrations(builder.Environment.EnvironmentName, migrationOptions);
-var runtime = ProjectionRuntime.OpenPostgres(connectionString, authOptions, migrationOptions.Path, runMigrations);
+var runtime = useRealBrowserInMemoryRuntime
+    ? ProjectionRuntime.OpenInMemory(authOptions)
+    : ProjectionRuntime.OpenPostgres(connectionString, authOptions, migrationOptions.Path, runMigrations);
 var controlPlaneReadStore = new ControlPlaneReadStore(connectionString);
-var operationsFactStore = new PostgresOperationsStore(connectionString);
-var operationsOutboxProjectionStore = new OperationsOutboxProjectionStore(connectionString);
+OperationsWriteStore operationsWriteStore;
+OperationsReadStore operationsReadStore;
+IOperationsCaseStore operationsCaseStore;
+IOperationsWorkItemStore operationsWorkItemStore;
+OperationsOutboxProjectionStore? operationsOutboxProjectionStore = null;
+if (useRealBrowserInMemoryRuntime)
+{
+    var inMemoryOperationsStore = new InMemoryOperationsStore();
+    operationsWriteStore = inMemoryOperationsStore;
+    operationsReadStore = inMemoryOperationsStore;
+    operationsCaseStore = new InMemoryOperationsCaseStore();
+    operationsWorkItemStore = new InMemoryOperationsWorkItemStore();
+}
+else
+{
+    var postgresOperationsStore = new PostgresOperationsStore(connectionString);
+    operationsWriteStore = postgresOperationsStore;
+    operationsReadStore = postgresOperationsStore;
+    operationsCaseStore = new PostgresOperationsCaseStore(connectionString);
+    operationsWorkItemStore = new PostgresOperationsWorkItemStore(connectionString);
+    operationsOutboxProjectionStore = new OperationsOutboxProjectionStore(connectionString);
+}
 builder.Services.AddSingleton(runtime);
 builder.Services.AddSingleton(controlPlaneReadStore);
-builder.Services.AddSingleton(operationsOutboxProjectionStore);
 builder.Services.AddSingleton(new OperationsRuntimeService(
     runtime,
-    new PostgresOperationsCaseStore(connectionString),
-    new PostgresOperationsWorkItemStore(connectionString)));
-builder.Services.AddSingleton<OperationsWriteStore>(operationsFactStore);
-builder.Services.AddSingleton<OperationsReadStore>(operationsFactStore);
+    operationsCaseStore,
+    operationsWorkItemStore));
+builder.Services.AddSingleton<OperationsWriteStore>(operationsWriteStore);
+builder.Services.AddSingleton<OperationsReadStore>(operationsReadStore);
 builder.Services.AddSingleton<CommandEnvelopeBuilder>();
 builder.Services.AddSingleton<CommandSubmissionService>();
 builder.Services.AddSingleton<IdempotencyService>();
@@ -72,8 +95,12 @@ builder.Services.AddSingleton(_ => new SliceCommandHandlerRouter()
     .Register(CanonicalOperationsApiService.ConfirmCommandDefinition, CanonicalOperationsApiService.HandleConfirmCommand));
 builder.Services.AddSingleton<OperationsUnitOfWork>();
 builder.Services.AddSingleton<CanonicalOperationsApiService>();
-builder.Services.AddHostedService<OperationsOutboxProjectionWorker>();
-builder.Services.AddHostedService<ProjectionOutboxWorker>();
+if (!useRealBrowserInMemoryRuntime && operationsOutboxProjectionStore is not null)
+{
+    builder.Services.AddSingleton<OperationsOutboxProjectionStore>(operationsOutboxProjectionStore);
+    builder.Services.AddHostedService<OperationsOutboxProjectionWorker>();
+    builder.Services.AddHostedService<ProjectionOutboxWorker>();
+}
 builder.Services
     .AddAuthentication(RuntimeActorAuthenticationDefaults.Scheme)
     .AddScheme<AuthenticationSchemeOptions, RuntimeActorAuthenticationHandler>(
@@ -97,9 +124,19 @@ app.MapGet("/live", () => new
     timestampUtc = DateTimeOffset.UtcNow
 });
 
+RuntimeReadinessResult CurrentReadiness() =>
+    useRealBrowserInMemoryRuntime
+        ? new RuntimeReadinessResult(
+            "ready",
+            DatabaseConnected: false,
+            SchemaMigrationsAccessible: true,
+            MissingTables: Array.Empty<string>(),
+            Errors: Array.Empty<string>())
+        : RuntimeReadiness.Check(connectionString);
+
 app.MapGet("/ready", () =>
 {
-    var readiness = RuntimeReadiness.Check(connectionString);
+    var readiness = CurrentReadiness();
     return readiness.Status == "ready"
         ? Results.Ok(readiness)
         : Results.Json(readiness, statusCode: StatusCodes.Status503ServiceUnavailable);
@@ -107,12 +144,12 @@ app.MapGet("/ready", () =>
 
 app.MapGet("/health", () => new
 {
-    status = RuntimeReadiness.Check(connectionString).Status == "ready" ? "ok" : "degraded",
+    status = CurrentReadiness().Status == "ready" ? "ok" : "degraded",
     service = "WorkOSNext Core API",
     version = "0.13.0-backend-runtime",
     runtimeTarget = ".NET 10 LTS",
-    persistence = "postgresql",
-    readiness = RuntimeReadiness.Check(connectionString),
+    persistence = useRealBrowserInMemoryRuntime ? "in-memory-real-browser-audit" : "postgresql",
+    readiness = CurrentReadiness(),
     timestampUtc = DateTimeOffset.UtcNow
 });
 

@@ -1,1 +1,69 @@
-{"levels":[{"level":"L0 Contract Preview","productionAllowed":false,"allowed":["domain discovery","fact ownership draft","workitem catalog draft","evidence policy draft","certification gap list"],"forbidden":["production write route","production Workbench activation","page-specific business write API"]},{"level":"L1 Pilot","productionAllowed":false,"requires":["approved fact owners","workitem catalog","evidence policy","certification scenarios","cutover state plan"]},{"level":"L2 Production","productionAllowed":true,"requires":["green certification pack","green semantic shadow","rollback instruction","business signoff","main CI green","current OAM guards green"]},{"level":"L3 Scaled Operation","productionAllowed":true,"requires":["observation window","no P0 invariant failures","training pack","operating cadence"]}]}
+{
+  "version": "oam.business-line-levels.v1",
+  "status": "authoritative-current-no-go",
+  "architecture": "oam.current",
+  "levels": [
+    {
+      "level": "L0 Contract Preview",
+      "machineValue": "L0_CONTRACT_PREVIEW",
+      "productionAllowed": false,
+      "display": {
+        "zh-CN": "合同预览",
+        "ru-RU": "Предпросмотр контракта",
+        "ky-KG": "Келишим алдын ала көрүү"
+      },
+      "allowed": ["domain discovery", "fact ownership draft", "workitem catalog draft", "evidence policy draft", "certification gap list"],
+      "forbidden": ["production write route", "production Workbench activation", "page-specific business write API"]
+    },
+    {
+      "level": "L1 Internal Pilot",
+      "machineValue": "L1_INTERNAL_PILOT",
+      "productionAllowed": false,
+      "display": {
+        "zh-CN": "内部试点",
+        "ru-RU": "Внутренний пилот",
+        "ky-KG": "Ички пилот"
+      },
+      "requires": ["approved fact owners", "workitem catalog", "evidence policy", "certification scenarios", "cutover state plan"],
+      "forbidden": ["business production", "dormitory L2", "production confirm"]
+    },
+    {
+      "level": "L2 Production",
+      "machineValue": "L2_PRODUCTION",
+      "productionAllowed": true,
+      "currentlyAllowed": false,
+      "display": {
+        "zh-CN": "生产",
+        "ru-RU": "Продакшен",
+        "ky-KG": "Өндүрүш"
+      },
+      "requires": ["green certification pack", "green semantic shadow", "rollback instruction", "business signoff", "main CI green", "current OAM guards green"]
+    },
+    {
+      "level": "L3 Scaled Operation",
+      "machineValue": "L3_SCALED_OPERATION",
+      "productionAllowed": true,
+      "currentlyAllowed": false,
+      "display": {
+        "zh-CN": "规模化运行",
+        "ru-RU": "Масштабная эксплуатация",
+        "ky-KG": "Кеңейтилген иштетүү"
+      },
+      "requires": ["observation window", "no P0 invariant failures", "training pack", "operating cadence"]
+    }
+  ],
+  "retiredRegistryValues": [
+    "business-3",
+    "business-4",
+    "business-5",
+    "business-6",
+    "business-7"
+  ],
+  "currentLocks": {
+    "businessProduction": "BLOCKED",
+    "dormitoryL2": "BLOCKED",
+    "productionConfirmAllowed": false,
+    "finalGoNoGo": "NO_GO",
+    "nextStageAllowed": false
+  }
+}

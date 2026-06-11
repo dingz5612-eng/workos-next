@@ -2,7 +2,7 @@
   "generated": true,
   "doNotEdit": true,
   "kind": "read-model.generated",
-  "kernelGraphHash": "sha256:491276e27210f2f16b6f1a79b67fa1f964156475f408e498df2b4de419ddcdd0",
+  "kernelGraphHash": "sha256:3a5374d09387e22a4c84315490a6ebccce4983f53fd12c98a460b9eef921d583",
   "sourceNodeRefs": [
     "dormitory.workItem.Dorm.RoomSetupConfirm",
     "dormitory.workItem.Dorm.BedSetupConfirm",
@@ -14,9 +14,12 @@
   "searchLensProjectionReadonly": true,
   "searchResultTargetContract": {
     "requiredFields": [
+      "view",
+      "kind",
       "targetId",
       "runtimeOwner",
-      "compatibility"
+      "compatibility",
+      "writeThroughSearchAllowed"
     ],
     "permissionFilterOrder": "before_ranking",
     "hiddenResultRanked": false,
@@ -24,9 +27,12 @@
   },
   "targets": [
     {
+      "view": "operationPanel",
+      "kind": "operationsWorkItem",
       "targetId": "definition.dormitory.roomSetupConfirm.v1",
       "runtimeOwner": "Accommodation.ResourceSetup",
       "compatibility": "current-oam-read-model-v1",
+      "writeThroughSearchAllowed": false,
       "sourceFacts": [
         "Room",
         "EvidenceObject",
@@ -38,9 +44,12 @@
       ]
     },
     {
+      "view": "operationPanel",
+      "kind": "operationsWorkItem",
       "targetId": "definition.dormitory.bedSetupConfirm.v1",
       "runtimeOwner": "Accommodation.ResourceSetup",
       "compatibility": "current-oam-read-model-v1",
+      "writeThroughSearchAllowed": false,
       "sourceFacts": [
         "Bed",
         "EvidenceObject",
@@ -52,9 +61,12 @@
       ]
     },
     {
+      "view": "operationPanel",
+      "kind": "operationsWorkItem",
       "targetId": "definition.dormitory.resourceReadinessConfirm.v1",
       "runtimeOwner": "Accommodation.ResourceReadiness",
       "compatibility": "current-oam-read-model-v1",
+      "writeThroughSearchAllowed": false,
       "sourceFacts": [
         "Room",
         "EvidenceObject",

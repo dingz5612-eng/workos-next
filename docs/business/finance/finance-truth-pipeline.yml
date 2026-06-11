@@ -3,9 +3,12 @@
   "packId": "FinanceTruthPack",
   "moneyKernelPack": "MoneyKernelPack",
   "goal": "所有金额依据必须先进入 FinanceTruthPack，才能形成正式财务事实或账本分录。",
-  "acceptedInputs": ["MoneyBasis", "AmountBasis", "ExpenseBasis", "CompanyExpenseBasis", "FinanceIntake", "FinanceReviewWorkItem"],
+  "acceptedInputs": ["MoneyBasis", "AmountBasisProposal", "AmountBasisReviewed", "AmountBasis", "ExpenseBasis", "CompanyExpenseBasis", "FinanceIntake", "FinanceReviewWorkItem"],
   "forbiddenDirectFacts": ["PaymentFact", "DepositFact", "FinancialFact", "LedgerTransaction", "LedgerEntry"],
   "pipeline": [
+    "AmountBasisProposal",
+    "AmountBasisReviewed",
+    "AmountBasis",
     "MoneyBasis",
     "FinanceIntake",
     "FinanceCase",
@@ -16,6 +19,21 @@
     "FinanceReceipt",
     "LedgerProjectionRebuilder"
   ],
+  "amountBasisStateChain": [
+    "AmountBasisProposal",
+    "AmountBasisReviewed",
+    "AmountBasis",
+    "FinancialFact",
+    "LedgerTransaction",
+    "LedgerEntry"
+  ],
+  "semanticDistinctions": {
+    "nonFinanceTruthBeforeReview": ["AmountBasisProposal", "SharedReceipt", "DashboardSummary", "SearchResult"],
+    "financeTruthBeginsAt": "FinancialFact",
+    "depositLiabilityBasisType": "deposit_receipt",
+    "refundBasisType": "refund_deposit",
+    "normalPaymentBasisType": "payment_receipt"
+  },
   "runtimeServices": [
     "FinanceTruthPipeline",
     "DepositAccountService",

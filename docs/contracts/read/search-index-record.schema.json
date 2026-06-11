@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "workosnext.read.search-index-record.schema.v1",
+  "title": "Search Index Record",
+  "type": "object",
+  "required": [
+    "version",
+    "indexRecordId",
+    "objectEnvelope",
+    "searchableText",
+    "language",
+    "permission",
+    "lineage",
+    "freshness"
+  ],
+  "properties": {
+    "version": { "const": "workosnext.read.search-index-record.v1" },
+    "indexRecordId": { "type": "string" },
+    "objectEnvelope": { "$ref": "docs/contracts/read/oam-object-envelope.schema.json" },
+    "searchableText": { "type": "string" },
+    "language": { "enum": ["zh-CN", "ru-RU", "ky-KG"] },
+    "permission": { "$ref": "docs/contracts/read/permission-envelope.schema.json" },
+    "lineage": { "$ref": "docs/contracts/read/lineage-envelope.schema.json" },
+    "freshness": { "$ref": "docs/contracts/read/freshness-envelope.schema.json" }
+  },
+  "additionalProperties": true
+}

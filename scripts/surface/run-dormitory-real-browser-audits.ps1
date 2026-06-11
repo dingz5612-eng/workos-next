@@ -60,9 +60,32 @@ function Wait-HttpOk {
   throw "$Name did not become ready at $Url. Last error: $last"
 }
 
+function Test-TcpReady {
+  param(
+    [Parameter(Mandatory = $true)][string] $HostName,
+    [Parameter(Mandatory = $true)][int] $Port
+  )
+
+  try {
+    $client = [System.Net.Sockets.TcpClient]::new()
+    $connect = $client.ConnectAsync($HostName, $Port)
+    if (-not $connect.Wait(1000)) {
+      $client.Dispose()
+      return $false
+    }
+    $client.Dispose()
+    return $connect.IsCompletedSuccessfully
+  } catch {
+    return $false
+  }
+}
+
 if (-not $env:ASPNETCORE_ENVIRONMENT) { $env:ASPNETCORE_ENVIRONMENT = "Development" }
 if (-not $env:ASPNETCORE_URLS) { $env:ASPNETCORE_URLS = "http://127.0.0.1:5191" }
 if (-not $env:ConnectionStrings__WorkOSRuntime) { $env:ConnectionStrings__WorkOSRuntime = "Host=localhost;Port=54329;Database=workosnext;Username=workosnext;Password=workosnext_dev" }
+if (-not $env:WORKOS_REAL_BROWSER_USE_INMEMORY -and -not (Test-TcpReady -HostName "127.0.0.1" -Port 54329)) {
+  $env:WORKOS_REAL_BROWSER_USE_INMEMORY = "1"
+}
 if (-not $env:WORKOS_MOBILE_URL) { $env:WORKOS_MOBILE_URL = "http://127.0.0.1:5175" }
 if (-not $env:WORKOS_API_URL) { $env:WORKOS_API_URL = "http://127.0.0.1:5191" }
 if (-not $env:WORKOS_REAL_BROWSER_HEADLESS) { $env:WORKOS_REAL_BROWSER_HEADLESS = "1" }

@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "workosnext.read.lineage-envelope.schema.v1",
+  "title": "Read Lineage Envelope",
+  "type": "object",
+  "required": [
+    "sourceSystem",
+    "sourceType",
+    "sourceId",
+    "sourceUpdatedAt",
+    "definitionVersion",
+    "sourceNodeRefs"
+  ],
+  "properties": {
+    "sourceSystem": { "type": "string" },
+    "sourceType": { "type": "string" },
+    "sourceId": { "type": "string" },
+    "sourceUpdatedAt": { "type": "string" },
+    "definitionVersion": { "type": "string" },
+    "sourceNodeRefs": { "type": "array", "items": { "type": "string" } }
+  },
+  "additionalProperties": true
+}

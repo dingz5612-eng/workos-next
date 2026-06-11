@@ -728,7 +728,7 @@ async function latestCiRun(branch) {
     if (!response.ok) throw new Error(`github_actions_${response.status}`);
     const body = await response.json();
     const run = body.workflow_runs?.[0];
-    if (!run) return { id: "", source: "github_actions_api", status: "not_available" };
+    if (!run) return localCiRun("github_actions_api_not_available");
     return {
       id: String(run.id),
       source: "github_actions_api",
@@ -741,8 +741,19 @@ async function latestCiRun(branch) {
       updatedAtUtc: run.updated_at
     };
   } catch (error) {
-    return { id: "", source: "github_actions_api", status: "not_available", error: error?.message || String(error) };
+    return localCiRun(error?.message || String(error));
   }
+}
+
+function localCiRun(reason) {
+  return {
+    id: `local-${runId}`,
+    source: "local-control-plane",
+    status: "local",
+    headSha: git.headSha,
+    url: "",
+    reason
+  };
 }
 
 async function requireHealthy(url, label) {

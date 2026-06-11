@@ -149,15 +149,18 @@ function buildReadModel() {
     generatedReadModelsOnly: true,
     searchLensProjectionReadonly: true,
     searchResultTargetContract: {
-      requiredFields: ["targetId", "runtimeOwner", "compatibility"],
+      requiredFields: ["view", "kind", "targetId", "runtimeOwner", "compatibility", "writeThroughSearchAllowed"],
       permissionFilterOrder: "before_ranking",
       hiddenResultRanked: false,
       confirmAllowedRankingBoost: false
     },
     targets: p0WorkItems.map((item) => ({
+      view: "operationPanel",
+      kind: "operationsWorkItem",
       targetId: item.definitionId,
       runtimeOwner: item.ownerSlice,
       compatibility: "current-oam-read-model-v1",
+      writeThroughSearchAllowed: false,
       sourceFacts: item.allowedFacts,
       lineage: [`dormitory.workItem.${item.workItemType}`]
     })),

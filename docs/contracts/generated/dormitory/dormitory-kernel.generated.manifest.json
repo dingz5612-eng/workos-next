@@ -2,7 +2,7 @@
   "generated": true,
   "doNotEdit": true,
   "kind": "dormitory-kernel.generated.manifest",
-  "kernelGraphHash": "sha256:491276e27210f2f16b6f1a79b67fa1f964156475f408e498df2b4de419ddcdd0",
+  "kernelGraphHash": "sha256:3a5374d09387e22a4c84315490a6ebccce4983f53fd12c98a460b9eef921d583",
   "sourceNodeRefs": [
     "dormitory.workItem.Dorm.RoomSetupConfirm",
     "dormitory.workItem.Dorm.BedSetupConfirm",

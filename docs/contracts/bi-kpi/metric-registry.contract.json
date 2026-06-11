@@ -1,0 +1,25 @@
+{
+  "version": "oam.bi-kpi.metric-registry-contract.v1",
+  "status": "authoritative-readonly",
+  "readOnly": true,
+  "businessFactWriteAllowed": false,
+  "requiredFields": [
+    "metricId",
+    "displayName",
+    "formula",
+    "sourceFacts",
+    "dimensions",
+    "lineageRef",
+    "permissionRef",
+    "freshnessRef",
+    "definitionVersion"
+  ],
+  "metricExamples": [
+    {
+      "metricId": "dormitory.resourceReadiness",
+      "sourceFacts": ["Room", "Bed"],
+      "dimensions": ["tenantId", "buildingId", "date"],
+      "writeFactsAllowed": false
+    }
+  ]
+}

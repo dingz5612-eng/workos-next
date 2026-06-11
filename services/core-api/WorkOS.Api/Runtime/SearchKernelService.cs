@@ -6,7 +6,6 @@ namespace WorkOS.Api.Runtime;
 public sealed class SearchKernelService
 {
     private readonly ProjectionWorkspaceSearchAdapter projectionWorkspaceSearch;
-    private readonly OperationsRuntimeService? operations;
     private readonly OperationsReadStore? operationsReadStore;
     private readonly WorkItemDefinitionRegistryService definitions;
     private readonly AdmissionKernelService admission;
@@ -16,11 +15,9 @@ public sealed class SearchKernelService
         ProjectionWorkspaceSearchAdapter projectionWorkspaceSearch,
         WorkItemDefinitionRegistryService definitions,
         AdmissionKernelService admission,
-        OperationsRuntimeService? operations = null,
         OperationsReadStore? operationsReadStore = null)
     {
         this.projectionWorkspaceSearch = projectionWorkspaceSearch;
-        this.operations = operations;
         this.operationsReadStore = operationsReadStore;
         this.definitions = definitions;
         this.admission = admission;
@@ -69,7 +66,7 @@ public sealed class SearchKernelService
         RuntimeActorContext actor,
         string language)
     {
-        if (operations is null || operationsReadStore is null || string.IsNullOrWhiteSpace(query))
+        if (operationsReadStore is null || string.IsNullOrWhiteSpace(query))
         {
             return Array.Empty<Dictionary<string, object?>>();
         }
@@ -127,7 +124,7 @@ public sealed class SearchKernelService
             .Distinct(StringComparer.OrdinalIgnoreCase)
             .ToArray();
         var baseScore = ReadInt(projectionSource, "score");
-        var score = baseScore + matchedTerms.Length * 40 + (decision.ConfirmAllowed ? 25 : 0);
+        var score = baseScore + matchedTerms.Length * 40;
         var indexedAt = DateTimeOffset.UtcNow;
 
         return new Dictionary<string, object?>
@@ -145,6 +142,9 @@ public sealed class SearchKernelService
             {
                 ["view"] = "operationPanel",
                 ["kind"] = "workspaceCard",
+                ["targetId"] = FirstNonEmpty(cardId, workspaceId, resultId),
+                ["runtimeOwner"] = "ProjectionWorkspaceSearchAdapter",
+                ["compatibility"] = "workspaceCardCompatibility",
                 ["workspaceId"] = workspaceId,
                 ["cardId"] = cardId,
                 ["writeThroughSearchAllowed"] = false
@@ -190,58 +190,40 @@ public sealed class SearchKernelService
         RuntimeActorContext actor,
         string language)
     {
-        if (operations is null)
-        {
-            return null;
-        }
-
-        var sourceWorkItem = operations.GetWorkItem(record.WorkItemId);
-        var targetWorkItem = NextActionableWorkItem(record, sourceWorkItem, actor)
-            ?? sourceWorkItem;
-        if (targetWorkItem is null)
-        {
-            return null;
-        }
-
-        var cardId = PayloadValue(targetWorkItem.Payload, "cardId");
-        var surface = operations.GetWorkItemSurface(targetWorkItem.WorkItemId);
-        var workspace = surface?.Workspace;
-        var card = surface?.Card;
-        var definition = definitions.Resolve(targetWorkItem);
+        var input = ReadObject(record.Payload, "input");
+        var definition = ResolveDefinition(record);
         var decision = admission.EvaluateSearch(definition, actor);
         var fieldValues = FieldValues(record.Payload);
         var businessAnchor = BusinessAnchorPayload(fieldValues);
-        var title = card is null
-            ? Localized(FirstNonEmpty(targetWorkItem.WorkItemType, cardId, "Operations WorkItem"))
-            : card.Title;
-        var workspaceTitle = workspace?.Title ?? Localized("Operations");
+        var cardId = FirstNonEmpty(ReadStringOrEmpty(input, "cardId"), ReadStringOrEmpty(record.Payload, "cardId"));
+        var workspaceId = FirstNonEmpty(ReadStringOrEmpty(input, "workspaceId"), ReadStringOrEmpty(record.Payload, "workspaceId"), record.CaseId);
+        var title = businessAnchor.Count > 0
+            ? Localized(string.Join(" / ", businessAnchor.Values.Select(value => Convert.ToString(value)).Where(value => !string.IsNullOrWhiteSpace(value)).Take(3)))
+            : Localized(FirstNonEmpty(definition.Definition?.WorkItemType, record.EventType, "Operations WorkItem"));
+        var workspaceTitle = Localized(FirstNonEmpty(workspaceId, record.CaseId, "Operations"));
         var text = SafeText(record);
         var matchedTerms = queryTerms
             .Where(term => text.Contains(term, StringComparison.OrdinalIgnoreCase))
             .Distinct(StringComparer.OrdinalIgnoreCase)
             .ToArray();
-        var targetIsTerminal = IsTerminalStatus(targetWorkItem.Status);
-        var resultType = targetIsTerminal ? "operationCase" : "workItem";
-        var score = 220 + matchedTerms.Length * 45 + (targetIsTerminal ? 0 : 80) + (decision.ConfirmAllowed ? 25 : 0);
+        var score = 220 + matchedTerms.Length * 45;
         var indexedAt = DateTimeOffset.UtcNow;
 
         return new Dictionary<string, object?>
         {
-            ["resultId"] = $"operations:{record.EventId}:{targetWorkItem.WorkItemId}",
-            ["resultType"] = resultType,
-            ["objectKind"] = targetIsTerminal ? "operationCase" : "workItem",
-            ["workItemId"] = targetWorkItem.WorkItemId,
-            ["workspaceId"] = targetWorkItem.WorkspaceId,
+            ["resultId"] = $"operations:{record.EventId}:{record.WorkItemId}",
+            ["resultType"] = "operationCase",
+            ["objectKind"] = "operationCase",
+            ["workItemId"] = record.WorkItemId,
+            ["workspaceId"] = workspaceId,
             ["cardId"] = cardId,
-            ["caseId"] = targetWorkItem.CaseId,
-            ["workItemType"] = targetWorkItem.WorkItemType,
+            ["caseId"] = record.CaseId,
+            ["workItemType"] = definition.Definition?.WorkItemType ?? string.Empty,
             ["title"] = title,
             ["summary"] = workspaceTitle,
             ["subtitle"] = workspaceTitle,
-            ["status"] = targetWorkItem.Status,
-            ["nextAction"] = targetIsTerminal
-                ? LocalizedByLanguage(language, "查看已完成记录", "View completed record", "View completed record")
-                : LocalizedByLanguage(language, "继续当前办理", "Continue current work", "Continue current work"),
+            ["status"] = "confirmed_event_readonly",
+            ["nextAction"] = LocalizedByLanguage(language, "查看已完成记录", "View completed record", "View completed record"),
             ["matchedTerms"] = matchedTerms,
             ["score"] = score,
             ["businessAnchor"] = businessAnchor,
@@ -254,12 +236,15 @@ public sealed class SearchKernelService
             },
             ["target"] = new Dictionary<string, object?>
             {
-                ["view"] = targetIsTerminal ? "completedRecords" : "operationPanel",
-                ["kind"] = "operationsWorkItem",
-                ["workspaceId"] = targetWorkItem.WorkspaceId,
+                ["view"] = "completedRecords",
+                ["kind"] = "operationsDomainEvent",
+                ["targetId"] = record.WorkItemId,
+                ["runtimeOwner"] = "OperationsReadStore.SearchOperations",
+                ["compatibility"] = "completed-operation-readonly",
+                ["workspaceId"] = workspaceId,
                 ["cardId"] = cardId,
-                ["workItemId"] = targetWorkItem.WorkItemId,
-                ["caseId"] = targetWorkItem.CaseId,
+                ["workItemId"] = record.WorkItemId,
+                ["caseId"] = record.CaseId,
                 ["writeThroughSearchAllowed"] = false
             },
             ["admission"] = decision.ToContract(),
@@ -269,24 +254,24 @@ public sealed class SearchKernelService
             ["ranking"] = Ranking("oam.search-ranking-policy.v1", matchedTerms, decision.ConfirmAllowed),
             ["businessContext"] = new Dictionary<string, object?>
             {
-                ["workspaceId"] = targetWorkItem.WorkspaceId,
-                ["caseId"] = targetWorkItem.CaseId,
-                ["workItemId"] = targetWorkItem.WorkItemId,
+                ["workspaceId"] = workspaceId,
+                ["caseId"] = record.CaseId,
+                ["workItemId"] = record.WorkItemId,
                 ["businessLine"] = "dormitory"
             },
-            ["availableActions"] = ReadonlyActions(targetIsTerminal ? "view" : "navigate", targetIsTerminal ? "completedRecords" : "operationPanel"),
+            ["availableActions"] = ReadonlyActions("view", "completedRecords"),
             ["gateResult"] = GateResult(decision, indexedAt, "operationsDomainEvent"),
             ["traceRefs"] = new[] { record.SubmissionId, record.EventId },
             ["sourceRefs"] = new Dictionary<string, object?>
             {
                 ["source"] = "SearchKernelService",
                 ["sourceType"] = "operationsDomainEvent",
-                ["inputAdapter"] = "OperationsRuntime.SearchOperations",
+                ["inputAdapter"] = "OperationsReadStore.SearchOperations",
                 ["projectionAdapter"] = "OperationsReadStore.SearchOperations",
-                ["workspaceId"] = targetWorkItem.WorkspaceId,
+                ["workspaceId"] = workspaceId,
                 ["cardId"] = cardId,
-                ["workItemId"] = targetWorkItem.WorkItemId,
-                ["caseId"] = targetWorkItem.CaseId,
+                ["workItemId"] = record.WorkItemId,
+                ["caseId"] = record.CaseId,
                 ["sourceEventId"] = record.EventId,
                 ["sourceSubmissionId"] = record.SubmissionId,
                 ["definitionId"] = definition.DefinitionId,
@@ -302,60 +287,26 @@ public sealed class SearchKernelService
         };
     }
 
-    private WorkItem? NextActionableWorkItem(
-        OperationsSearchRecord record,
-        WorkItem? sourceWorkItem,
-        RuntimeActorContext actor)
+    private WorkItemDefinitionResolution ResolveDefinition(OperationsSearchRecord record)
     {
-        if (operations is null)
-        {
-            return null;
-        }
-
-        var workItems = operations.ListWorkItems(actor.TenantId, record.CaseId)
-            .Where(item => !IsTerminalStatus(item.Status))
-            .Where(item => !item.WorkItemId.Equals(record.WorkItemId, StringComparison.OrdinalIgnoreCase))
-            .ToArray();
-        if (workItems.Length == 0)
-        {
-            return null;
-        }
-
-        var direct = workItems.FirstOrDefault(item =>
-            PayloadValue(item.Payload, "sourceWorkItemId").Equals(record.WorkItemId, StringComparison.OrdinalIgnoreCase));
-        if (direct is not null)
-        {
-            return direct;
-        }
-
-        if (sourceWorkItem is null)
-        {
-            return workItems.OrderBy(item => item.CreatedAtUtc).FirstOrDefault();
-        }
-
-        var templateWorkspaceId = FirstNonEmpty(
-            PayloadValue(sourceWorkItem.Payload, "templateWorkspaceId"),
-            WorkspaceSeedCatalog.FindWorkspace(sourceWorkItem.WorkspaceId)?.Id);
-        var seed = WorkspaceSeedCatalog.FindWorkspace(templateWorkspaceId);
-        var sourceCardId = PayloadValue(sourceWorkItem.Payload, "cardId");
-        if (seed is null || string.IsNullOrWhiteSpace(sourceCardId))
-        {
-            return workItems.OrderBy(item => item.CreatedAtUtc).FirstOrDefault();
-        }
-
-        var sourceIndex = CardIndex(seed, sourceCardId);
-        return workItems
-            .Select(item => new { Item = item, Index = CardIndex(seed, PayloadValue(item.Payload, "cardId")) })
-            .Where(item => item.Index > sourceIndex)
-            .OrderBy(item => item.Index)
-            .ThenBy(item => item.Item.CreatedAtUtc)
-            .Select(item => item.Item)
-            .FirstOrDefault()
-            ?? workItems.OrderBy(item => item.CreatedAtUtc).FirstOrDefault();
+        var input = ReadObject(record.Payload, "input");
+        var definitionTrace = ReadObject(record.Payload, "definition");
+        var definitionId = FirstNonEmpty(
+            ReadStringOrEmpty(record.Payload, "definitionVersionId"),
+            ReadStringOrEmpty(definitionTrace, "definitionId"),
+            ReadStringOrEmpty(input, "definitionId"));
+        var sourceCardId = FirstNonEmpty(
+            ReadStringOrEmpty(definitionTrace, "sourceCardId"),
+            ReadStringOrEmpty(input, "sourceCardId"),
+            ReadStringOrEmpty(input, "cardId"));
+        var businessLineId = FirstNonEmpty(
+            ReadStringOrEmpty(definitionTrace, "businessLineId"),
+            "dormitory");
+        var definition = definitions.FindByDefinitionId(definitionId);
+        return definition is null
+            ? WorkItemDefinitionResolution.Unresolved(definitionId, sourceCardId, businessLineId, "search_record_definition_not_resolved")
+            : WorkItemDefinitionResolution.FromDefinition(definition);
     }
-
-    private static int CardIndex(WorkspaceSeed seed, string cardId) =>
-        seed.Cards.ToList().FindIndex(card => card.Id.Equals(cardId, StringComparison.OrdinalIgnoreCase));
 
     private static Dictionary<string, object?> Permission(
         string visibility,
@@ -404,7 +355,7 @@ public sealed class SearchKernelService
         {
             ["policyVersion"] = policyVersion,
             ["matchedTermCount"] = matchedTerms.Count,
-            ["rankReason"] = confirmAllowed ? "visible_with_confirm_admission" : "visible_readonly_or_prepare_only"
+            ["rankReason"] = "permission_filtered_read_result"
         };
 
     private static IReadOnlyList<Dictionary<string, object?>> ReadonlyActions(string action, string view) =>
@@ -546,6 +497,9 @@ public sealed class SearchKernelService
             BindingFlags.Instance | BindingFlags.Public | BindingFlags.IgnoreCase);
         return property?.GetValue(source);
     }
+
+    private static string ReadStringOrEmpty(object? source, string propertyName) =>
+        source is null ? string.Empty : ReadString(source, propertyName);
 
     private static string ReadString(object source, string propertyName) =>
         Convert.ToString(ReadValue(source, propertyName)) ?? string.Empty;
