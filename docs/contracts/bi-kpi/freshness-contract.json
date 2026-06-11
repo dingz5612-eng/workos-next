@@ -1,0 +1,14 @@
+{
+  "version": "oam.bi-kpi.freshness-contract.v1",
+  "status": "authoritative-readonly",
+  "readOnly": true,
+  "businessFactWriteAllowed": false,
+  "requiredFields": [
+    "indexedAt",
+    "indexLagMs",
+    "stale",
+    "maxStalenessMs",
+    "checkedAt"
+  ],
+  "envelopeRef": "docs/contracts/read/freshness-envelope.schema.json"
+}

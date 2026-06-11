@@ -13,6 +13,8 @@
   ],
   "compilerGeneratedContracts": [
     "docs/oam/system-derived-contracts.json",
+    "docs/oam/domain-derived-contracts.json",
+    "docs/oam/generated-contracts-manifest.json",
     "docs/oam/kernel/oam-kernel-graph.generated.json",
     "docs/contracts/generated/dormitory/dormitory-kernel.generated.manifest.json",
     "docs/contracts/generated/dormitory/fields.generated.json",
@@ -36,6 +38,11 @@
       "doNotEdit": true,
       "kernelGraphHash": "required",
       "sourceNodeRefs": "required",
+      "sourceHash": "required",
+      "sourceContentDigest": "required",
+      "compilerInputDigest": "required",
+      "outputContentDigest": "required",
+      "deterministicSort": true,
       "generatorVersion": "required",
       "generatedFrom": "required"
     }

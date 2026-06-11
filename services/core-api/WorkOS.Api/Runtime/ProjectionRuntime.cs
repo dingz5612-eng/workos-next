@@ -41,6 +41,9 @@ public sealed partial class ProjectionRuntime
         bool runDbSetup = true) =>
         new(new PostgresProjectionStore(connectionString, migrationsPath, runDbSetup), authOptions ?? new RuntimeAuthOptions());
 
+    public static ProjectionRuntime OpenInMemory(RuntimeAuthOptions? authOptions = null) =>
+        new(new InMemoryProjectionStore(), authOptions ?? RuntimeAuthOptions.Development);
+
     public ProjectionEnvelope GetAll()
     {
         lock (gate) return queryService.Envelope(state);

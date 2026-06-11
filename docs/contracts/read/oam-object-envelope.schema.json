@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "workosnext.read.oam-object-envelope.schema.v1",
+  "title": "OAM Object Read Envelope",
+  "type": "object",
+  "required": [
+    "version",
+    "objectKind",
+    "objectId",
+    "runtimeOwner",
+    "permission",
+    "lineage",
+    "freshness",
+    "sourceRefs"
+  ],
+  "properties": {
+    "version": { "const": "workosnext.read.oam-object-envelope.v1" },
+    "objectKind": { "type": "string" },
+    "objectId": { "type": "string" },
+    "runtimeOwner": { "type": "string" },
+    "permission": { "$ref": "docs/contracts/read/permission-envelope.schema.json" },
+    "lineage": { "$ref": "docs/contracts/read/lineage-envelope.schema.json" },
+    "freshness": { "$ref": "docs/contracts/read/freshness-envelope.schema.json" },
+    "sourceRefs": { "type": "object" }
+  },
+  "additionalProperties": true
+}

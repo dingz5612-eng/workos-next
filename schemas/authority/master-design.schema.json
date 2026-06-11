@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "workosnext.authority.master-design.schema.v1",
+  "title": "WorkOSNext Current OAM Master Design",
+  "type": "object",
+  "required": [
+    "version",
+    "status",
+    "architecture",
+    "designId",
+    "authorityRefs",
+    "canonicalConfirmOrder",
+    "blockedMutationClasses",
+    "releaseLocks"
+  ],
+  "properties": {
+    "version": { "const": "workosnext.authority.master-design.v1" },
+    "status": { "const": "authoritative-current-no-go" },
+    "architecture": { "const": "oam.current" },
+    "designId": { "type": "string" },
+    "authorityRefs": { "type": "array", "items": { "type": "string" }, "minItems": 4 },
+    "canonicalConfirmOrder": { "type": "array", "minItems": 9 },
+    "blockedMutationClasses": { "type": "array", "minItems": 10 },
+    "releaseLocks": { "type": "object" }
+  },
+  "additionalProperties": true
+}

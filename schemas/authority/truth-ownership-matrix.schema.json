@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "workosnext.authority.truth-ownership-matrix.schema.v1",
+  "title": "WorkOSNext Current OAM Truth Ownership Matrix",
+  "type": "object",
+  "required": [
+    "version",
+    "status",
+    "architecture",
+    "matrixId",
+    "truthOwners",
+    "financeStateChain",
+    "readSideBoundaries"
+  ],
+  "properties": {
+    "version": { "const": "workosnext.authority.truth-ownership-matrix.v1" },
+    "status": { "const": "authoritative-current-no-go" },
+    "architecture": { "const": "oam.current" },
+    "matrixId": { "type": "string" },
+    "truthOwners": { "type": "array", "minItems": 6 },
+    "financeStateChain": { "type": "array", "minItems": 6 },
+    "readSideBoundaries": { "type": "array", "minItems": 4 }
+  },
+  "additionalProperties": true
+}

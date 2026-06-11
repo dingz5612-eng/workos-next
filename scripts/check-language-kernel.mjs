@@ -9,6 +9,7 @@ const contract = readJson("docs/contracts/language/language-contract.json");
 const domainTerms = readJson("docs/contracts/language/domain-term-catalog.json");
 const errorCopy = readJson("docs/contracts/language/error-code-copy.json");
 const fieldLabels = readJson("docs/contracts/language/field-label-catalog.json");
+const objectKinds = readJson("docs/contracts/language/object-kind-catalog.json");
 const surfaceCopy = readJson("docs/contracts/language/surface-copy-catalog.json");
 const searchSynonyms = readJson("docs/contracts/language/search-synonyms.json");
 const fieldRefs = readJson("docs/contracts/definition/field-contract-refs.json");
@@ -70,6 +71,9 @@ function checkCatalogLanguages() {
   for (const field of fieldLabels.fields || []) {
     assertLocalized(field.label, `field label ${field.fieldId}`);
   }
+  for (const objectKind of objectKinds.objectKinds || []) {
+    assertLocalized(objectKind.copy, `object kind ${objectKind.objectKind}`);
+  }
   for (const copy of surfaceCopy.copies || []) {
     assertLocalized(copy.copy, `surface copy ${copy.copyId}`);
   }
@@ -111,6 +115,9 @@ function checkHighRiskReasons() {
     "semantic.financeTruth.explain"
   ]) {
     if (!copyIds.has(copyId)) failures.push(`surface-copy-catalog missing high-risk reason ${copyId}.`);
+  }
+  for (const canonicalKey of ["objectKind.workItem", "surface.visibleDoesNotImplyConfirm", "permission.reason.deviceUntrusted"]) {
+    if (!(contract.canonicalKeys ?? []).includes(canonicalKey)) failures.push(`language-contract missing canonical key ${canonicalKey}.`);
   }
   const operationCopy = read("apps/mobile/src/i18n/operationCopy.js");
   for (const copyKey of [

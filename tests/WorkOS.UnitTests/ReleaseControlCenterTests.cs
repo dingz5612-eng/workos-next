@@ -106,10 +106,30 @@ public sealed class ReleaseControlCenterTests
 
         Assert.IsFalse(admission.CanActivate);
         Assert.IsFalse(admission.CanLock);
+        Assert.IsFalse(admission.CanEnableProductionConfirm);
+        Assert.IsFalse(admission.CanPromoteDormitoryL2);
         CollectionAssert.Contains(admission.ActiveBlockers.ToArray(), "business_production_blocked_by_current_admission_state");
         CollectionAssert.Contains(admission.ActiveBlockers.ToArray(), "dormitory_l2_blocked_by_current_admission_state");
         CollectionAssert.Contains(admission.ActiveBlockers.ToArray(), "production_confirm_blocked_by_current_admission_state");
         CollectionAssert.Contains(admission.LockedBlockers.ToArray(), "business_signoff_missing");
+    }
+
+    [TestMethod]
+    public void current_admission_state_blocks_production_confirm_and_dormitory_l2()
+    {
+        var admission = ReleaseAdmissionPolicy.Evaluate(
+            Gate("passed", ["business-signoff-1"]),
+            [Shadow("green")],
+            [Invariant("blocking", "P0", "passed", 0)],
+            Rollback());
+
+        Assert.IsFalse(admission.CanActivate);
+        Assert.IsFalse(admission.CanLock);
+        Assert.IsFalse(admission.CanEnableProductionConfirm);
+        Assert.IsFalse(admission.CanPromoteDormitoryL2);
+        CollectionAssert.Contains(admission.ActiveBlockers.ToArray(), "business_production_blocked_by_current_admission_state");
+        CollectionAssert.Contains(admission.ActiveBlockers.ToArray(), "dormitory_l2_blocked_by_current_admission_state");
+        CollectionAssert.Contains(admission.ActiveBlockers.ToArray(), "production_confirm_blocked_by_current_admission_state");
     }
 
     [TestMethod]

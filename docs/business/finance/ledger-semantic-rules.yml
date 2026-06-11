@@ -54,6 +54,12 @@
     "FinanceTruthPipeline.ValidateBalanced",
     "OperationsUnitOfWork.ValidateLedgerBoundary"
   ],
+  "semanticDistinctions": {
+    "nonFinanceTruthCannotCommitLedger": ["AmountBasisProposal", "SharedReceipt", "DashboardSummary", "SearchResult", "LensReadModel"],
+    "depositReceiptCreditsLiability": true,
+    "refundRequiresOriginalLiability": true,
+    "normalPaymentMustNotUseDepositLiability": true
+  },
   "currentDesignInputBoundaries": [
     {
       "boundaryId": "ledger.business-domain-no-direct-write",

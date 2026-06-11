@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "workosnext.read.search-result-envelope.schema.v1",
+  "title": "Search Result Envelope",
+  "type": "object",
+  "required": [
+    "version",
+    "searchResultId",
+    "target",
+    "admission",
+    "permission",
+    "lineage",
+    "freshness",
+    "ranking",
+    "language"
+  ],
+  "properties": {
+    "version": { "const": "workosnext.read.search-result-envelope.v1" },
+    "searchResultId": { "type": "string" },
+    "target": {
+      "type": "object",
+      "required": [
+        "view",
+        "kind",
+        "targetId",
+        "runtimeOwner",
+        "compatibility",
+        "writeThroughSearchAllowed"
+      ]
+    },
+    "admission": { "type": "object" },
+    "permission": { "$ref": "docs/contracts/read/permission-envelope.schema.json" },
+    "lineage": { "$ref": "docs/contracts/read/lineage-envelope.schema.json" },
+    "freshness": { "$ref": "docs/contracts/read/freshness-envelope.schema.json" },
+    "ranking": { "type": "object" },
+    "language": { "enum": ["zh-CN", "ru-RU", "ky-KG"] }
+  },
+  "additionalProperties": true
+}

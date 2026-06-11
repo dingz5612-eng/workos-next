@@ -4,6 +4,7 @@ import path from "node:path";
 
 const root = process.cwd();
 const mapPath = "docs/oam/current-oam-kernel-responsibility-map.json";
+const architecturePath = "docs/oam/current-architecture.md";
 const resultPath = "artifacts/oam/checks/kernel-responsibility-map-result.json";
 const accountable = "00-OAM-Total-Control";
 const reviewSeats = [
@@ -14,14 +15,26 @@ const reviewSeats = [
   "05｜安全发布",
   "06｜质量证据"
 ];
-const requiredLayers = new Set([
+const requiredResponsibilityLanes = new Set([
   "Authority Layer",
   "Runtime Layer",
   "Experience-Read Layer",
   "Release-Evidence Layer"
 ]);
+const requiredPartitions = ["Source Layer", "Generated Layer", "Runtime / Evidence Layer"];
+const requiredViews = ["权威图", "内核编译图", "运行效果图", "读侧与证据图"];
+const requiredViewIds = ["authorityGraph", "kernelCompileGraph", "runtimeEffectGraph", "readEvidenceGraph"];
+const requiredExecutionRings = [
+  "Authority Closure",
+  "Source Kernel Closure",
+  "Compiler Closure",
+  "Runtime WorkItem Effect Closure",
+  "Read / Surface Consumption Closure",
+  "Release Evidence Closure"
+];
 const requiredFields = [
   "layer",
+  "partition",
   "scope",
   "nonScope",
   "accountable",
@@ -108,6 +121,7 @@ const expectedFieldByWorkstream = new Map([
 
 const violations = [];
 const map = readJson(mapPath);
+const architectureText = fs.readFileSync(abs(architecturePath), "utf8");
 const workstreams = map.workstreams ?? [];
 const workstreamNames = new Set(workstreams.map((item) => item.name));
 const workstreamIds = new Set(workstreams.map((item) => item.id));
@@ -124,6 +138,7 @@ if ((map.executionChannels ?? []).some((item) => item.name === "Codex Execution"
 if (workstreamNames.has("Codex Execution") || workstreamIds.has("codex-execution")) {
   fail("codex_as_workstream", "Codex Execution must not be a governance workstream.");
 }
+checkOperationModel();
 if (workstreams.length !== requiredWorkstreamNames.length) {
   fail("workstream_count", `Responsibility map must contain ${requiredWorkstreamNames.length} workstreams, actual ${workstreams.length}.`);
 }
@@ -132,9 +147,12 @@ for (const name of requiredWorkstreamNames) {
     fail("workstream_missing", `Missing workstream: ${name}.`);
   }
 }
-for (const layer of requiredLayers) {
-  if (!(map.layers ?? []).includes(layer)) {
-    fail("layer_missing", `Missing responsibility layer: ${layer}.`);
+if (JSON.stringify(map.layers ?? []) !== JSON.stringify(requiredPartitions)) {
+  fail("partition_layers_invalid", `Responsibility map layers must be the fixed three partitions: ${requiredPartitions.join(", ")}.`);
+}
+for (const lane of requiredResponsibilityLanes) {
+  if (!(map.legacyResponsibilityLanes ?? []).includes(lane)) {
+    fail("responsibility_lane_missing", `Missing legacy responsibility lane: ${lane}.`);
   }
 }
 for (const field of requiredFinalReportFields) {
@@ -156,8 +174,11 @@ for (const workstream of workstreams) {
       fail("workstream_field_missing", `${label} missing ${field}.`);
     }
   }
-  if (!requiredLayers.has(workstream.layer)) {
-    fail("workstream_layer_unknown", `${label} uses unknown layer: ${workstream.layer}.`);
+  if (!requiredResponsibilityLanes.has(workstream.layer)) {
+    fail("workstream_layer_unknown", `${label} uses unknown responsibility lane: ${workstream.layer}.`);
+  }
+  if (!requiredPartitions.includes(workstream.partition)) {
+    fail("workstream_partition_unknown", `${label} uses unknown partition: ${workstream.partition}.`);
   }
   if (workstream.accountable !== accountable) {
     fail("workstream_accountable_not_00", `${label} accountable must be ${accountable}.`);
@@ -214,6 +235,73 @@ function checkGeneratedContractKernel() {
   for (const key of ["generated", "doNotEdit", "kernelGraphHash", "sourceNodeRefs", "generatorVersion", "generatedFrom"]) {
     if (!(key in requiredMetadata)) {
       fail("generated_metadata_missing", `Generated file metadata missing ${key}.`);
+    }
+  }
+}
+
+function checkOperationModel() {
+  const model = map.operationModel ?? {};
+  if (model.ruleZh !== "四图是视角，三层是分区，六环是执行顺序。") {
+    fail("operation_model_rule_missing", "操作模型必须固定声明：四图是视角，三层是分区，六环是执行顺序。");
+  }
+  if (model.viewsAreArtifactCategories !== false) {
+    fail("views_artifact_category_guard_missing", "四图必须声明不是 artifact 分类。");
+  }
+  if (model.layersAreExecutionOrder !== false) {
+    fail("layers_execution_order_guard_missing", "三层必须声明不是执行顺序。");
+  }
+  if (model.ringsAreLooseChecklist !== false) {
+    fail("rings_loose_checklist_guard_missing", "六环必须声明不是散点清单。");
+  }
+
+  const views = model.views ?? [];
+  const viewNames = views.map((item) => item.nameZh);
+  const viewIds = views.map((item) => item.id);
+  for (const [index, name] of requiredViews.entries()) {
+    if (viewNames[index] !== name || viewIds[index] !== requiredViewIds[index]) {
+      fail("operation_view_invalid", `四图第 ${index + 1} 项必须是 ${requiredViewIds[index]} / ${name}。`);
+    }
+  }
+  for (const view of views) {
+    if (view.role !== "view") fail("operation_view_role_invalid", `${view.id ?? "<missing>"} 必须声明 role=view。`);
+    if ("artifactCategory" in view || /artifact\s*分类/i.test(JSON.stringify(view))) {
+      fail("operation_view_artifact_category", `${view.id ?? "<missing>"} 不得被写成 artifact 分类。`);
+    }
+  }
+
+  const partitions = model.partitions ?? [];
+  const partitionNames = partitions.map((item) => item.name);
+  for (const [index, partition] of requiredPartitions.entries()) {
+    if (partitionNames[index] !== partition) {
+      fail("operation_partition_invalid", `三层第 ${index + 1} 项必须是 ${partition}。`);
+    }
+  }
+  for (const partition of partitions) {
+    if (partition.role !== "partition") fail("operation_partition_role_invalid", `${partition.id ?? "<missing>"} 必须声明 role=partition。`);
+    if (partition.executionOrder !== false || "order" in partition) {
+      fail("operation_partition_order_forbidden", `${partition.name ?? "<missing>"} 不得被写成执行顺序。`);
+    }
+  }
+
+  const rings = model.executionRings ?? [];
+  for (const [index, expectedName] of requiredExecutionRings.entries()) {
+    const ring = rings[index] ?? {};
+    if (ring.order !== index + 1 || ring.name !== expectedName || ring.role !== "executionRing") {
+      fail("operation_ring_invalid", `六环第 ${index + 1} 项必须是 ${expectedName}。`);
+    }
+    if ("layer" in ring || "partition" in ring) {
+      fail("operation_ring_partition_forbidden", `${ring.name ?? "<missing>"} 不得被写成三层分区。`);
+    }
+  }
+
+  for (const phrase of [
+    "四图是视角，三层是分区，六环是执行顺序",
+    ...requiredViews,
+    ...requiredPartitions,
+    ...requiredExecutionRings
+  ]) {
+    if (!architectureText.includes(phrase)) {
+      fail("operation_model_missing_from_architecture", `current-architecture.md 缺少操作模型文本：${phrase}`);
     }
   }
 }

@@ -85,6 +85,15 @@
     "ordinaryUserNoInternalRuntimeTerms": ["DomainEvent", "LedgerEntry", "ProcessManager", "Lens", "slice", "Confirm Runtime", "Unit of Work", "Projection", "Outbox", "raw capability", "raw surface view id"],
     "permissionExplainabilityUsesLanguageKernel": "权限解释标题、原因、负责人、权限范围和下一步必须来自 Language Kernel。"
   },
+  "surfaceSemanticBoundaries": {
+    "visibleAllowed": "read-side visibility only",
+    "confirmAllowed": "server admission decision only",
+    "productionAllowed": "release admission policy only",
+    "receipt": "evidence of submit or record only",
+    "dashboard": "observation only",
+    "search": "read-only discovery and navigation only",
+    "languageCopy": "display copy only"
+  },
   "collaborationFeedback": {
     "surface": "feedback-message-channel",
     "entry": "right-bottom safe floating entry on mobile business surfaces",

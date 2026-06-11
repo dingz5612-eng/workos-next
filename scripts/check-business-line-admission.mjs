@@ -19,9 +19,17 @@ for (const id of discoveredAdmissionIds) {
 
 const levels = read("business-line-levels.yml");
 const gate = read("business-line-gate.yml");
-for (const level of ["L0 Contract Preview", "L1 Pilot", "L2 Production", "L3 Scaled Operation"]) {
+for (const level of ["L0 Contract Preview", "L1 Internal Pilot", "L2 Production", "L3 Scaled Operation"]) {
   assert((levels.levels ?? []).some(item => item.level === level), `Missing business line level ${level}`);
 }
+for (const machineValue of ["L0_CONTRACT_PREVIEW", "L1_INTERNAL_PILOT", "L2_PRODUCTION", "L3_SCALED_OPERATION"]) {
+  assert((levels.levels ?? []).some(item => item.machineValue === machineValue), `Missing business line level machineValue ${machineValue}`);
+}
+assert(levels.currentLocks?.businessProduction === "BLOCKED", "Business Production must remain BLOCKED in business line levels");
+assert(levels.currentLocks?.dormitoryL2 === "BLOCKED", "Dormitory L2 must remain BLOCKED in business line levels");
+assert(levels.currentLocks?.productionConfirmAllowed === false, "production_confirm must remain blocked in business line levels");
+assert(levels.currentLocks?.finalGoNoGo === "NO_GO", "business line levels finalGoNoGo must remain NO_GO");
+assert(levels.currentLocks?.nextStageAllowed === false, "business line levels nextStageAllowed must remain false");
 
 for (const question of [
   "factOwnership",

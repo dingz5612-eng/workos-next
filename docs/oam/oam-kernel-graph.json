@@ -10,8 +10,8 @@
     "domainKernel": "docs/oam/kernel-schemas/domain-kernel.schema.json",
     "workItem": "docs/oam/kernel-schemas/workitem.schema.json"
   },
-  "nodeCount": 1226,
-  "edgeCount": 1057,
+  "nodeCount": 1262,
+  "edgeCount": 1086,
   "nodes": [
     {
       "runtimeBinding": "current-oam",
@@ -7424,7 +7424,7 @@
         "scripts/business/check-dormitory-derived-contracts.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": false,
@@ -10292,6 +10292,111 @@
       ]
     },
     {
+      "nodeId": "file.docs/contracts/authority/master-design.contract.json",
+      "nodeType": "File",
+      "owner": "authority-owner",
+      "sourceFile": "docs/contracts/authority/master-design.contract.json",
+      "runtimeBinding": "generated-authority-view",
+      "testBinding": [
+        "scripts/authority/check-master-design-schema.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/authority/check-master-design-schema.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "唯一事实已吸收到现有 Source；仅在仍有消费者和证据引用时作为 generated authority view 保留。",
+      "lifecycleState": "derived_view",
+      "manualEditAllowed": false,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.authority",
+      "checker": "scripts/authority/check-master-design-schema.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/authority/master-design.contract.json",
+      "absorbedBy": "docs/contracts/authority/master-design.contract.json",
+      "removalProofGate": "scripts/authority/check-master-design-schema.mjs",
+      "deletionConditionZh": "唯一事实已吸收到现有 Source；仅在仍有消费者和证据引用时作为 generated authority view 保留。",
+      "consumers": [
+        "scripts/authority/check-master-design-schema.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "derivedFrom": "docs/oam/current-architecture.md",
+      "generatedBy": "authority-cleanup.absorbed-source.v1",
+      "sourceKernelVersion": "oam.current",
+      "graphBinding": "file.docs/contracts/authority/master-design.contract.json"
+    },
+    {
+      "nodeId": "file.docs/contracts/authority/master-outline.contract.json",
+      "nodeType": "File",
+      "owner": "authority-owner",
+      "sourceFile": "docs/contracts/authority/master-outline.contract.json",
+      "runtimeBinding": "generated-authority-view",
+      "testBinding": [
+        "scripts/authority/check-master-outline-schema.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/authority/check-master-outline-schema.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "唯一事实已吸收到现有 Source；仅在仍有消费者和证据引用时作为 generated authority view 保留。",
+      "lifecycleState": "derived_view",
+      "manualEditAllowed": false,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.authority",
+      "checker": "scripts/authority/check-master-outline-schema.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/authority/master-outline.contract.json",
+      "absorbedBy": "docs/contracts/authority/master-outline.contract.json",
+      "removalProofGate": "scripts/authority/check-master-outline-schema.mjs",
+      "deletionConditionZh": "唯一事实已吸收到现有 Source；仅在仍有消费者和证据引用时作为 generated authority view 保留。",
+      "consumers": [
+        "scripts/authority/check-master-outline-schema.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "derivedFrom": "docs/oam/current-architecture.md",
+      "generatedBy": "authority-cleanup.absorbed-source.v1",
+      "sourceKernelVersion": "oam.current",
+      "graphBinding": "file.docs/contracts/authority/master-outline.contract.json"
+    },
+    {
+      "nodeId": "file.docs/contracts/authority/truth-ownership-matrix.contract.json",
+      "nodeType": "File",
+      "owner": "authority-owner",
+      "sourceFile": "docs/contracts/authority/truth-ownership-matrix.contract.json",
+      "runtimeBinding": "generated-authority-view",
+      "testBinding": [
+        "scripts/authority/check-truth-ownership-matrix.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/authority/check-truth-ownership-matrix.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "唯一事实已吸收到现有 Source；仅在仍有消费者和证据引用时作为 generated authority view 保留。",
+      "lifecycleState": "derived_view",
+      "manualEditAllowed": false,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.authority",
+      "checker": "scripts/authority/check-truth-ownership-matrix.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/authority/truth-ownership-matrix.contract.json",
+      "absorbedBy": "docs/contracts/authority/truth-ownership-matrix.contract.json",
+      "removalProofGate": "scripts/authority/check-truth-ownership-matrix.mjs",
+      "deletionConditionZh": "唯一事实已吸收到现有 Source；仅在仍有消费者和证据引用时作为 generated authority view 保留。",
+      "consumers": [
+        "scripts/authority/check-truth-ownership-matrix.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "derivedFrom": "docs/business/truth-owner-registry.yml",
+      "generatedBy": "authority-cleanup.absorbed-source.v1",
+      "sourceKernelVersion": "oam.current",
+      "graphBinding": "file.docs/contracts/authority/truth-ownership-matrix.contract.json"
+    },
+    {
       "nodeId": "file.docs/contracts/bi-kpi/bi-kpi-contract.json",
       "nodeType": "File",
       "owner": "authority-owner",
@@ -10305,7 +10410,7 @@
         "scripts/check-local-path-references.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -10319,6 +10424,254 @@
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "consumers": [
         "scripts/check-local-path-references.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ]
+    },
+    {
+      "nodeId": "file.docs/contracts/bi-kpi/dashboard-contract.json",
+      "nodeType": "File",
+      "owner": "authority-owner",
+      "sourceFile": "docs/contracts/bi-kpi/dashboard-contract.json",
+      "runtimeBinding": "kernel.authority",
+      "testBinding": [
+        "scripts/validate-contracts.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/validate-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.authority",
+      "checker": "scripts/validate-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/bi-kpi/dashboard-contract.json",
+      "absorbedBy": "docs/contracts/bi-kpi/dashboard-contract.json",
+      "removalProofGate": "scripts/validate-contracts.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/validate-contracts.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ]
+    },
+    {
+      "nodeId": "file.docs/contracts/bi-kpi/dimension-contract.json",
+      "nodeType": "File",
+      "owner": "authority-owner",
+      "sourceFile": "docs/contracts/bi-kpi/dimension-contract.json",
+      "runtimeBinding": "kernel.authority",
+      "testBinding": [
+        "scripts/validate-contracts.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/validate-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.authority",
+      "checker": "scripts/validate-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/bi-kpi/dimension-contract.json",
+      "absorbedBy": "docs/contracts/bi-kpi/dimension-contract.json",
+      "removalProofGate": "scripts/validate-contracts.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/validate-contracts.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ]
+    },
+    {
+      "nodeId": "file.docs/contracts/bi-kpi/freshness-contract.json",
+      "nodeType": "File",
+      "owner": "authority-owner",
+      "sourceFile": "docs/contracts/bi-kpi/freshness-contract.json",
+      "runtimeBinding": "kernel.authority",
+      "testBinding": [
+        "scripts/validate-contracts.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/validate-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.authority",
+      "checker": "scripts/validate-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/bi-kpi/freshness-contract.json",
+      "absorbedBy": "docs/contracts/bi-kpi/freshness-contract.json",
+      "removalProofGate": "scripts/validate-contracts.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/validate-contracts.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ]
+    },
+    {
+      "nodeId": "file.docs/contracts/bi-kpi/lineage-contract.json",
+      "nodeType": "File",
+      "owner": "authority-owner",
+      "sourceFile": "docs/contracts/bi-kpi/lineage-contract.json",
+      "runtimeBinding": "kernel.authority",
+      "testBinding": [
+        "scripts/validate-contracts.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/validate-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.authority",
+      "checker": "scripts/validate-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/bi-kpi/lineage-contract.json",
+      "absorbedBy": "docs/contracts/bi-kpi/lineage-contract.json",
+      "removalProofGate": "scripts/validate-contracts.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/validate-contracts.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ]
+    },
+    {
+      "nodeId": "file.docs/contracts/bi-kpi/metric-registry.contract.json",
+      "nodeType": "File",
+      "owner": "authority-owner",
+      "sourceFile": "docs/contracts/bi-kpi/metric-registry.contract.json",
+      "runtimeBinding": "kernel.authority",
+      "testBinding": [
+        "scripts/validate-contracts.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/validate-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.authority",
+      "checker": "scripts/validate-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/bi-kpi/metric-registry.contract.json",
+      "absorbedBy": "docs/contracts/bi-kpi/metric-registry.contract.json",
+      "removalProofGate": "scripts/validate-contracts.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/validate-contracts.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ]
+    },
+    {
+      "nodeId": "file.docs/contracts/bi-kpi/permission-contract.json",
+      "nodeType": "File",
+      "owner": "authority-owner",
+      "sourceFile": "docs/contracts/bi-kpi/permission-contract.json",
+      "runtimeBinding": "kernel.authority",
+      "testBinding": [
+        "scripts/validate-contracts.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/validate-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.authority",
+      "checker": "scripts/validate-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/bi-kpi/permission-contract.json",
+      "absorbedBy": "docs/contracts/bi-kpi/permission-contract.json",
+      "removalProofGate": "scripts/validate-contracts.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/validate-contracts.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ]
+    },
+    {
+      "nodeId": "file.docs/contracts/bi-kpi/report-contract.json",
+      "nodeType": "File",
+      "owner": "authority-owner",
+      "sourceFile": "docs/contracts/bi-kpi/report-contract.json",
+      "runtimeBinding": "kernel.authority",
+      "testBinding": [
+        "scripts/validate-contracts.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/validate-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.authority",
+      "checker": "scripts/validate-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/bi-kpi/report-contract.json",
+      "absorbedBy": "docs/contracts/bi-kpi/report-contract.json",
+      "removalProofGate": "scripts/validate-contracts.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/validate-contracts.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ]
+    },
+    {
+      "nodeId": "file.docs/contracts/bi-kpi/sla-clock-contract.json",
+      "nodeType": "File",
+      "owner": "authority-owner",
+      "sourceFile": "docs/contracts/bi-kpi/sla-clock-contract.json",
+      "runtimeBinding": "kernel.authority",
+      "testBinding": [
+        "scripts/validate-contracts.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/validate-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.authority",
+      "checker": "scripts/validate-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/bi-kpi/sla-clock-contract.json",
+      "absorbedBy": "docs/contracts/bi-kpi/sla-clock-contract.json",
+      "removalProofGate": "scripts/validate-contracts.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/validate-contracts.mjs",
         "docs/oam/oam-kernel-graph.json"
       ]
     },
@@ -10367,7 +10720,7 @@
         "scripts/business/check-dormitory-derived-contracts.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -10398,7 +10751,7 @@
         "scripts/business/check-dormitory-derived-contracts.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -10509,6 +10862,37 @@
       ]
     },
     {
+      "nodeId": "file.docs/contracts/definition/definition-compatibility-fence.json",
+      "nodeType": "File",
+      "owner": "authority-owner",
+      "sourceFile": "docs/contracts/definition/definition-compatibility-fence.json",
+      "runtimeBinding": "kernel.authority",
+      "testBinding": [
+        "scripts/validate-contracts.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/validate-contracts.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.authority",
+      "checker": "scripts/validate-contracts.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/definition/definition-compatibility-fence.json",
+      "absorbedBy": "docs/contracts/definition/definition-compatibility-fence.json",
+      "removalProofGate": "scripts/validate-contracts.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/validate-contracts.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ]
+    },
+    {
       "nodeId": "file.docs/contracts/definition/evidence-policy-refs.json",
       "nodeType": "File",
       "owner": "authority-owner",
@@ -10522,7 +10906,7 @@
         "scripts/check-local-path-references.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -10553,7 +10937,7 @@
         "scripts/check-local-path-references.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -10584,7 +10968,7 @@
         "scripts/check-local-path-references.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -10615,7 +10999,7 @@
         "scripts/check-local-path-references.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -10646,7 +11030,7 @@
         "scripts/check-local-path-references.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -10677,7 +11061,7 @@
         "scripts/business/check-dormitory-derived-contracts.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -10708,7 +11092,7 @@
         "scripts/check-local-path-references.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -11139,6 +11523,37 @@
       ]
     },
     {
+      "nodeId": "file.docs/contracts/language/object-kind-catalog.json",
+      "nodeType": "File",
+      "owner": "authority-owner",
+      "sourceFile": "docs/contracts/language/object-kind-catalog.json",
+      "runtimeBinding": "kernel.authority",
+      "testBinding": [
+        "scripts/check-language-kernel.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/check-language-kernel.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.authority",
+      "checker": "scripts/check-language-kernel.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/language/object-kind-catalog.json",
+      "absorbedBy": "docs/contracts/language/object-kind-catalog.json",
+      "removalProofGate": "scripts/check-language-kernel.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/check-language-kernel.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ]
+    },
+    {
       "nodeId": "file.docs/contracts/language/permission-explainability-contract.json",
       "nodeType": "File",
       "owner": "authority-owner",
@@ -11511,6 +11926,254 @@
       ]
     },
     {
+      "nodeId": "file.docs/contracts/read/freshness-envelope.schema.json",
+      "nodeType": "File",
+      "owner": "search-kernel-owner",
+      "sourceFile": "docs/contracts/read/freshness-envelope.schema.json",
+      "runtimeBinding": "kernel.projection-search-lens",
+      "testBinding": [
+        "scripts/oam/check-read-intelligence-kernel.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/oam/check-read-intelligence-kernel.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.projection-search-lens",
+      "checker": "scripts/oam/check-read-intelligence-kernel.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/read/freshness-envelope.schema.json",
+      "absorbedBy": "docs/contracts/read/freshness-envelope.schema.json",
+      "removalProofGate": "scripts/oam/check-read-intelligence-kernel.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/oam/check-read-intelligence-kernel.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ]
+    },
+    {
+      "nodeId": "file.docs/contracts/read/lens-read-model.schema.json",
+      "nodeType": "File",
+      "owner": "search-kernel-owner",
+      "sourceFile": "docs/contracts/read/lens-read-model.schema.json",
+      "runtimeBinding": "kernel.projection-search-lens",
+      "testBinding": [
+        "scripts/oam/check-read-intelligence-kernel.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/oam/check-read-intelligence-kernel.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.projection-search-lens",
+      "checker": "scripts/oam/check-read-intelligence-kernel.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/read/lens-read-model.schema.json",
+      "absorbedBy": "docs/contracts/read/lens-read-model.schema.json",
+      "removalProofGate": "scripts/oam/check-read-intelligence-kernel.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/oam/check-read-intelligence-kernel.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ]
+    },
+    {
+      "nodeId": "file.docs/contracts/read/lineage-envelope.schema.json",
+      "nodeType": "File",
+      "owner": "search-kernel-owner",
+      "sourceFile": "docs/contracts/read/lineage-envelope.schema.json",
+      "runtimeBinding": "kernel.projection-search-lens",
+      "testBinding": [
+        "scripts/oam/check-read-intelligence-kernel.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/oam/check-read-intelligence-kernel.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.projection-search-lens",
+      "checker": "scripts/oam/check-read-intelligence-kernel.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/read/lineage-envelope.schema.json",
+      "absorbedBy": "docs/contracts/read/lineage-envelope.schema.json",
+      "removalProofGate": "scripts/oam/check-read-intelligence-kernel.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/oam/check-read-intelligence-kernel.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ]
+    },
+    {
+      "nodeId": "file.docs/contracts/read/oam-object-envelope.schema.json",
+      "nodeType": "File",
+      "owner": "search-kernel-owner",
+      "sourceFile": "docs/contracts/read/oam-object-envelope.schema.json",
+      "runtimeBinding": "kernel.projection-search-lens",
+      "testBinding": [
+        "scripts/oam/check-read-intelligence-kernel.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/oam/check-read-intelligence-kernel.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.projection-search-lens",
+      "checker": "scripts/oam/check-read-intelligence-kernel.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/read/oam-object-envelope.schema.json",
+      "absorbedBy": "docs/contracts/read/oam-object-envelope.schema.json",
+      "removalProofGate": "scripts/oam/check-read-intelligence-kernel.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/oam/check-read-intelligence-kernel.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ]
+    },
+    {
+      "nodeId": "file.docs/contracts/read/permission-envelope.schema.json",
+      "nodeType": "File",
+      "owner": "search-kernel-owner",
+      "sourceFile": "docs/contracts/read/permission-envelope.schema.json",
+      "runtimeBinding": "kernel.projection-search-lens",
+      "testBinding": [
+        "scripts/oam/check-read-intelligence-kernel.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/oam/check-read-intelligence-kernel.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.projection-search-lens",
+      "checker": "scripts/oam/check-read-intelligence-kernel.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/read/permission-envelope.schema.json",
+      "absorbedBy": "docs/contracts/read/permission-envelope.schema.json",
+      "removalProofGate": "scripts/oam/check-read-intelligence-kernel.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/oam/check-read-intelligence-kernel.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ]
+    },
+    {
+      "nodeId": "file.docs/contracts/read/read-model-owner-registry.json",
+      "nodeType": "File",
+      "owner": "search-kernel-owner",
+      "sourceFile": "docs/contracts/read/read-model-owner-registry.json",
+      "runtimeBinding": "kernel.projection-search-lens",
+      "testBinding": [
+        "scripts/oam/check-read-intelligence-kernel.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/oam/check-read-intelligence-kernel.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.projection-search-lens",
+      "checker": "scripts/oam/check-read-intelligence-kernel.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/read/read-model-owner-registry.json",
+      "absorbedBy": "docs/contracts/read/read-model-owner-registry.json",
+      "removalProofGate": "scripts/oam/check-read-intelligence-kernel.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/oam/check-read-intelligence-kernel.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ]
+    },
+    {
+      "nodeId": "file.docs/contracts/read/search-index-record.schema.json",
+      "nodeType": "File",
+      "owner": "search-kernel-owner",
+      "sourceFile": "docs/contracts/read/search-index-record.schema.json",
+      "runtimeBinding": "kernel.projection-search-lens",
+      "testBinding": [
+        "scripts/oam/check-read-intelligence-kernel.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/oam/check-read-intelligence-kernel.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.projection-search-lens",
+      "checker": "scripts/oam/check-read-intelligence-kernel.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/read/search-index-record.schema.json",
+      "absorbedBy": "docs/contracts/read/search-index-record.schema.json",
+      "removalProofGate": "scripts/oam/check-read-intelligence-kernel.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/oam/check-read-intelligence-kernel.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ]
+    },
+    {
+      "nodeId": "file.docs/contracts/read/search-result-envelope.schema.json",
+      "nodeType": "File",
+      "owner": "search-kernel-owner",
+      "sourceFile": "docs/contracts/read/search-result-envelope.schema.json",
+      "runtimeBinding": "kernel.projection-search-lens",
+      "testBinding": [
+        "scripts/oam/check-read-intelligence-kernel.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/oam/check-read-intelligence-kernel.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.projection-search-lens",
+      "checker": "scripts/oam/check-read-intelligence-kernel.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/contracts/read/search-result-envelope.schema.json",
+      "absorbedBy": "docs/contracts/read/search-result-envelope.schema.json",
+      "removalProofGate": "scripts/oam/check-read-intelligence-kernel.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/oam/check-read-intelligence-kernel.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ]
+    },
+    {
       "nodeId": "file.docs/contracts/runtime-surface-policy.json",
       "nodeType": "File",
       "owner": "authority-owner",
@@ -11555,7 +12218,7 @@
         "scripts/check-search-kernel.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -11586,7 +12249,7 @@
         "scripts/check-search-kernel.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -11617,7 +12280,7 @@
         "scripts/check-search-kernel.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -11648,7 +12311,7 @@
         "scripts/check-search-kernel.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -11679,7 +12342,7 @@
         "scripts/check-search-kernel.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -11782,6 +12445,37 @@
       "evidence": "artifacts/oam/evidence/evidence-graph.json",
       "replacementPath": "docs/decisions/ADR-0002-oam-authority-correction.md",
       "absorbedBy": "docs/decisions/ADR-0002-oam-authority-correction.md",
+      "removalProofGate": "scripts/check-local-path-references.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/check-local-path-references.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ]
+    },
+    {
+      "nodeId": "file.docs/decisions/ADR-business-3-7-current-registry-decision.md",
+      "nodeType": "File",
+      "owner": "authority-owner",
+      "sourceFile": "docs/decisions/ADR-business-3-7-current-registry-decision.md",
+      "runtimeBinding": "kernel.authority",
+      "testBinding": [
+        "scripts/check-local-path-references.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/check-local-path-references.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "human_manual",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.authority",
+      "checker": "scripts/check-local-path-references.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "docs/decisions/ADR-business-3-7-current-registry-decision.md",
+      "absorbedBy": "docs/decisions/ADR-business-3-7-current-registry-decision.md",
       "removalProofGate": "scripts/check-local-path-references.mjs",
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "consumers": [
@@ -12399,6 +13093,41 @@
       ]
     },
     {
+      "nodeId": "file.docs/oam/domain-derived-contracts.json",
+      "nodeType": "File",
+      "owner": "oam-release-owner",
+      "sourceFile": "docs/oam/domain-derived-contracts.json",
+      "runtimeBinding": "generated-layer-manifest",
+      "testBinding": [
+        "scripts/oam/generate-system-derived-contracts.mjs",
+        "scripts/oam/check-derived-contract-consistency.mjs"
+      ],
+      "gateBinding": [
+        "scripts/oam/check-derived-contract-consistency.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/checks/derived-contract-consistency-result.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当生成层 manifest 编译链删除且消费者、门禁、证据同步删除时删除。",
+      "lifecycleState": "derived_view",
+      "manualEditAllowed": false,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.release-control",
+      "checker": "scripts/oam/check-derived-contract-consistency.mjs",
+      "evidence": "artifacts/oam/checks/derived-contract-consistency-result.json",
+      "replacementPath": "docs/oam/domain-derived-contracts.json",
+      "absorbedBy": "docs/oam/domain-derived-contracts.json",
+      "removalProofGate": "scripts/oam/check-derived-contract-consistency.mjs",
+      "deletionConditionZh": "当生成层 manifest 编译链删除且消费者、门禁、证据同步删除时删除。",
+      "consumers": [
+        "scripts/oam/check-derived-contract-consistency.mjs",
+        "scripts/oam/generate-current-evidence-root.mjs"
+      ],
+      "derivedFrom": "docs/oam/system-operating-kernel.json",
+      "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "sourceKernelVersion": "oam.system-operating-kernel.v1",
+      "graphBinding": "file.docs/oam/domain-derived-contracts.json"
+    },
+    {
       "nodeId": "file.docs/oam/file-lifecycle-policy.json",
       "nodeType": "File",
       "owner": "authority-owner",
@@ -12428,6 +13157,41 @@
         "scripts/oam/check-file-lifecycle-policy.mjs",
         "docs/oam/oam-kernel-graph.json"
       ]
+    },
+    {
+      "nodeId": "file.docs/oam/generated-contracts-manifest.json",
+      "nodeType": "File",
+      "owner": "oam-release-owner",
+      "sourceFile": "docs/oam/generated-contracts-manifest.json",
+      "runtimeBinding": "generated-layer-manifest",
+      "testBinding": [
+        "scripts/oam/generate-system-derived-contracts.mjs",
+        "scripts/oam/check-derived-contract-consistency.mjs"
+      ],
+      "gateBinding": [
+        "scripts/oam/check-derived-contract-consistency.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/checks/derived-contract-consistency-result.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当生成层 manifest 编译链删除且消费者、门禁、证据同步删除时删除。",
+      "lifecycleState": "derived_view",
+      "manualEditAllowed": false,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.release-control",
+      "checker": "scripts/oam/check-derived-contract-consistency.mjs",
+      "evidence": "artifacts/oam/checks/derived-contract-consistency-result.json",
+      "replacementPath": "docs/oam/generated-contracts-manifest.json",
+      "absorbedBy": "docs/oam/generated-contracts-manifest.json",
+      "removalProofGate": "scripts/oam/check-derived-contract-consistency.mjs",
+      "deletionConditionZh": "当生成层 manifest 编译链删除且消费者、门禁、证据同步删除时删除。",
+      "consumers": [
+        "scripts/oam/check-derived-contract-consistency.mjs",
+        "scripts/oam/generate-current-evidence-root.mjs"
+      ],
+      "derivedFrom": "docs/oam/system-operating-kernel.json",
+      "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "sourceKernelVersion": "oam.system-operating-kernel.v1",
+      "graphBinding": "file.docs/oam/generated-contracts-manifest.json"
     },
     {
       "nodeId": "file.docs/oam/invariant-definitions.json",
@@ -12536,7 +13300,7 @@
         "scripts/oam/check-oam-kernel-graph.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -12567,7 +13331,7 @@
         "scripts/oam/check-oam-kernel-graph.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -12598,7 +13362,7 @@
         "scripts/oam/check-oam-kernel-graph.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -12629,7 +13393,7 @@
         "scripts/oam/check-oam-kernel-graph.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -13283,7 +14047,7 @@
         "scripts/business/check-dormitory-derived-contracts.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": false,
@@ -14410,7 +15174,7 @@
         "scripts/oam/check-db-ownership-map.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -14441,7 +15205,7 @@
         "scripts/oam/check-db-ownership-map.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -14472,7 +15236,7 @@
         "scripts/oam/check-db-ownership-map.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -14503,7 +15267,7 @@
         "scripts/oam/check-db-ownership-map.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -14534,7 +15298,7 @@
         "scripts/oam/check-db-ownership-map.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -14565,7 +15329,7 @@
         "scripts/oam/check-db-ownership-map.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -14596,7 +15360,7 @@
         "scripts/oam/check-db-ownership-map.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -14627,7 +15391,7 @@
         "scripts/oam/check-db-ownership-map.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -14658,7 +15422,7 @@
         "scripts/oam/check-db-ownership-map.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -14689,7 +15453,7 @@
         "scripts/oam/check-db-ownership-map.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -14720,7 +15484,7 @@
         "scripts/oam/check-db-ownership-map.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -14751,7 +15515,7 @@
         "scripts/oam/check-db-ownership-map.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -14782,7 +15546,7 @@
         "scripts/oam/check-db-ownership-map.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -14813,7 +15577,7 @@
         "scripts/oam/check-db-ownership-map.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -14844,7 +15608,7 @@
         "scripts/oam/check-db-ownership-map.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -14875,7 +15639,7 @@
         "scripts/oam/check-db-ownership-map.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -14906,7 +15670,7 @@
         "scripts/oam/check-db-ownership-map.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -14937,7 +15701,7 @@
         "scripts/oam/check-db-ownership-map.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -14968,7 +15732,7 @@
         "scripts/oam/check-db-ownership-map.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -14999,7 +15763,7 @@
         "scripts/oam/check-db-ownership-map.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -15030,7 +15794,7 @@
         "scripts/oam/check-db-ownership-map.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -15061,7 +15825,7 @@
         "scripts/oam/check-db-ownership-map.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -15092,7 +15856,7 @@
         "scripts/oam/check-db-ownership-map.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -15123,7 +15887,7 @@
         "scripts/oam/check-db-ownership-map.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -15154,7 +15918,7 @@
         "scripts/oam/check-db-ownership-map.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -15185,7 +15949,7 @@
         "scripts/oam/check-db-ownership-map.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -15216,7 +15980,7 @@
         "scripts/oam/check-db-ownership-map.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -15247,7 +16011,7 @@
         "scripts/oam/check-db-ownership-map.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -15278,7 +16042,7 @@
         "scripts/oam/check-db-ownership-map.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -15309,7 +16073,7 @@
         "scripts/oam/check-db-ownership-map.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -15340,7 +16104,7 @@
         "scripts/oam/check-db-ownership-map.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -15371,7 +16135,7 @@
         "scripts/oam/check-db-ownership-map.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -15402,7 +16166,7 @@
         "scripts/oam/check-db-ownership-map.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -15433,7 +16197,7 @@
         "scripts/oam/check-db-ownership-map.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -15464,7 +16228,7 @@
         "scripts/oam/check-db-ownership-map.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -15495,7 +16259,7 @@
         "scripts/oam/check-db-ownership-map.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -15526,7 +16290,7 @@
         "scripts/oam/check-db-ownership-map.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -15557,7 +16321,7 @@
         "scripts/oam/check-db-ownership-map.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -15588,7 +16352,7 @@
         "scripts/oam/check-db-ownership-map.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -15619,7 +16383,7 @@
         "scripts/oam/check-db-ownership-map.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -15650,7 +16414,7 @@
         "scripts/oam/check-db-ownership-map.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -15916,6 +16680,99 @@
       ]
     },
     {
+      "nodeId": "file.schemas/authority/master-design.schema.json",
+      "nodeType": "File",
+      "owner": "authority-owner",
+      "sourceFile": "schemas/authority/master-design.schema.json",
+      "runtimeBinding": "kernel.authority",
+      "testBinding": [
+        "scripts/authority/check-master-design-schema.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/authority/check-master-design-schema.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.authority",
+      "checker": "scripts/authority/check-master-design-schema.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "schemas/authority/master-design.schema.json",
+      "absorbedBy": "schemas/authority/master-design.schema.json",
+      "removalProofGate": "scripts/authority/check-master-design-schema.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/authority/check-master-design-schema.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ]
+    },
+    {
+      "nodeId": "file.schemas/authority/master-outline.schema.json",
+      "nodeType": "File",
+      "owner": "authority-owner",
+      "sourceFile": "schemas/authority/master-outline.schema.json",
+      "runtimeBinding": "kernel.authority",
+      "testBinding": [
+        "scripts/authority/check-master-outline-schema.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/authority/check-master-outline-schema.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.authority",
+      "checker": "scripts/authority/check-master-outline-schema.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "schemas/authority/master-outline.schema.json",
+      "absorbedBy": "schemas/authority/master-outline.schema.json",
+      "removalProofGate": "scripts/authority/check-master-outline-schema.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/authority/check-master-outline-schema.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ]
+    },
+    {
+      "nodeId": "file.schemas/authority/truth-ownership-matrix.schema.json",
+      "nodeType": "File",
+      "owner": "authority-owner",
+      "sourceFile": "schemas/authority/truth-ownership-matrix.schema.json",
+      "runtimeBinding": "kernel.authority",
+      "testBinding": [
+        "scripts/authority/check-truth-ownership-matrix.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/authority/check-truth-ownership-matrix.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_contract",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.authority",
+      "checker": "scripts/authority/check-truth-ownership-matrix.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "schemas/authority/truth-ownership-matrix.schema.json",
+      "absorbedBy": "schemas/authority/truth-ownership-matrix.schema.json",
+      "removalProofGate": "scripts/authority/check-truth-ownership-matrix.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/authority/check-truth-ownership-matrix.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ]
+    },
+    {
       "nodeId": "file.schemas/business/canonical-scenario-map.schema.json",
       "nodeType": "File",
       "owner": "domain-owner",
@@ -15929,7 +16786,7 @@
         "scripts/check-local-path-references.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -15960,7 +16817,7 @@
         "scripts/check-local-path-references.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -15991,7 +16848,7 @@
         "scripts/check-local-path-references.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -16022,7 +16879,7 @@
         "scripts/check-local-path-references.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -16053,7 +16910,7 @@
         "scripts/check-local-path-references.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -16084,7 +16941,7 @@
         "scripts/check-local-path-references.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -16115,7 +16972,7 @@
         "scripts/check-local-path-references.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -16146,7 +17003,7 @@
         "scripts/check-local-path-references.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -16177,7 +17034,7 @@
         "scripts/check-local-path-references.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -16208,7 +17065,7 @@
         "scripts/check-local-path-references.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -16239,7 +17096,7 @@
         "scripts/check-local-path-references.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -16270,7 +17127,7 @@
         "scripts/check-local-path-references.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -16301,7 +17158,7 @@
         "scripts/check-local-path-references.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -16332,7 +17189,7 @@
         "scripts/check-local-path-references.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -16363,7 +17220,7 @@
         "scripts/check-local-path-references.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -16394,7 +17251,7 @@
         "scripts/check-search-kernel.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -16425,7 +17282,7 @@
         "scripts/check-local-path-references.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -16456,7 +17313,7 @@
         "scripts/check-local-path-references.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -16487,7 +17344,7 @@
         "scripts/check-local-path-references.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -16518,7 +17375,7 @@
         "scripts/check-local-path-references.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -16549,7 +17406,7 @@
         "scripts/check-local-path-references.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -16580,7 +17437,7 @@
         "scripts/check-local-path-references.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -16611,7 +17468,7 @@
         "scripts/check-local-path-references.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -16642,7 +17499,7 @@
         "scripts/check-local-path-references.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -16673,7 +17530,7 @@
         "scripts/check-local-path-references.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -16704,7 +17561,7 @@
         "scripts/check-local-path-references.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -16735,7 +17592,7 @@
         "scripts/check-local-path-references.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -16766,7 +17623,7 @@
         "scripts/check-local-path-references.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -16797,7 +17654,7 @@
         "scripts/check-local-path-references.mjs"
       ],
       "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
+      "currentTruthAllowed": false,
       "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "lifecycleState": "active_contract",
       "manualEditAllowed": true,
@@ -16841,6 +17698,99 @@
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "consumers": [
         "scripts/oam/run-control-plane-checks.ps1"
+      ]
+    },
+    {
+      "nodeId": "file.scripts/authority/check-master-design-schema.mjs",
+      "nodeType": "File",
+      "owner": "authority-owner",
+      "sourceFile": "scripts/authority/check-master-design-schema.mjs",
+      "runtimeBinding": "kernel.authority",
+      "testBinding": [
+        "scripts/authority/check-master-design-schema.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/authority/check-master-design-schema.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.authority",
+      "checker": "scripts/authority/check-master-design-schema.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "scripts/authority/check-master-design-schema.mjs",
+      "absorbedBy": "scripts/authority/check-master-design-schema.mjs",
+      "removalProofGate": "scripts/authority/check-master-design-schema.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/authority/check-master-design-schema.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ]
+    },
+    {
+      "nodeId": "file.scripts/authority/check-master-outline-schema.mjs",
+      "nodeType": "File",
+      "owner": "authority-owner",
+      "sourceFile": "scripts/authority/check-master-outline-schema.mjs",
+      "runtimeBinding": "kernel.authority",
+      "testBinding": [
+        "scripts/authority/check-master-outline-schema.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/authority/check-master-outline-schema.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.authority",
+      "checker": "scripts/authority/check-master-outline-schema.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "scripts/authority/check-master-outline-schema.mjs",
+      "absorbedBy": "scripts/authority/check-master-outline-schema.mjs",
+      "removalProofGate": "scripts/authority/check-master-outline-schema.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/authority/check-master-outline-schema.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ]
+    },
+    {
+      "nodeId": "file.scripts/authority/check-truth-ownership-matrix.mjs",
+      "nodeType": "File",
+      "owner": "authority-owner",
+      "sourceFile": "scripts/authority/check-truth-ownership-matrix.mjs",
+      "runtimeBinding": "kernel.authority",
+      "testBinding": [
+        "scripts/authority/check-truth-ownership-matrix.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/authority/check-truth-ownership-matrix.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.authority",
+      "checker": "scripts/authority/check-truth-ownership-matrix.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "scripts/authority/check-truth-ownership-matrix.mjs",
+      "absorbedBy": "scripts/authority/check-truth-ownership-matrix.mjs",
+      "removalProofGate": "scripts/authority/check-truth-ownership-matrix.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/authority/check-truth-ownership-matrix.mjs",
+        "docs/oam/oam-kernel-graph.json"
       ]
     },
     {
@@ -18295,6 +19245,68 @@
       ]
     },
     {
+      "nodeId": "file.scripts/oam/check-authority-cleanup-mutation-tests.mjs",
+      "nodeType": "File",
+      "owner": "oam-release-owner",
+      "sourceFile": "scripts/oam/check-authority-cleanup-mutation-tests.mjs",
+      "runtimeBinding": "authority-cleanup-validation",
+      "testBinding": [
+        "scripts/oam/check-authority-cleanup-mutation-tests.mjs",
+        "scripts/oam/check-current-authority-index.mjs"
+      ],
+      "gateBinding": [
+        "scripts/oam/check-authority-cleanup-mutation-tests.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/authority-cleanup/mutation-tests-result.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当 authority-cleanup mutation 门禁被替代且证据归档时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.release-control",
+      "checker": "scripts/oam/check-authority-cleanup-mutation-tests.mjs",
+      "evidence": "artifacts/oam/authority-cleanup/mutation-tests-result.json",
+      "replacementPath": "scripts/oam/check-authority-cleanup-mutation-tests.mjs",
+      "absorbedBy": "scripts/oam/check-authority-cleanup-mutation-tests.mjs",
+      "removalProofGate": "scripts/oam/check-authority-cleanup-mutation-tests.mjs",
+      "deletionConditionZh": "当 authority-cleanup mutation 门禁被替代且证据归档时删除。",
+      "consumers": [
+        "scripts/oam/check-authority-cleanup-mutation-tests.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ]
+    },
+    {
+      "nodeId": "file.scripts/oam/check-authority-source-layer-audit.mjs",
+      "nodeType": "File",
+      "owner": "oam-release-owner",
+      "sourceFile": "scripts/oam/check-authority-source-layer-audit.mjs",
+      "runtimeBinding": "authority-cleanup-validation",
+      "testBinding": [
+        "scripts/oam/check-authority-source-layer-audit.mjs",
+        "scripts/oam/check-current-authority-index.mjs"
+      ],
+      "gateBinding": [
+        "scripts/oam/check-authority-source-layer-audit.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/authority-cleanup/source-layer-audit.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当 authority-cleanup 证据被归档且当前门禁不再引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.release-control",
+      "checker": "scripts/oam/check-authority-source-layer-audit.mjs",
+      "evidence": "artifacts/oam/authority-cleanup/source-layer-audit.json",
+      "replacementPath": "scripts/oam/check-authority-source-layer-audit.mjs",
+      "absorbedBy": "scripts/oam/check-authority-source-layer-audit.mjs",
+      "removalProofGate": "scripts/oam/check-authority-source-layer-audit.mjs",
+      "deletionConditionZh": "当 authority-cleanup 证据被归档且当前门禁不再引用时删除。",
+      "consumers": [
+        "scripts/oam/check-authority-source-layer-audit.mjs",
+        "scripts/oam/check-current-authority-index.mjs"
+      ]
+    },
+    {
       "nodeId": "file.scripts/oam/check-business-object-field-registry.mjs",
       "nodeType": "File",
       "owner": "release-control-owner",
@@ -18511,6 +19523,39 @@
       "consumers": [
         "scripts/oam/check-current-oam.mjs",
         "scripts/oam/run-control-plane-checks.ps1"
+      ]
+    },
+    {
+      "runtimeBinding": "validation-gate",
+      "testBinding": [
+        "scripts/oam/check-dashboard-readonly.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "gateBinding": [
+        "scripts/oam/check-dashboard-readonly.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "deletionCondition": "当且仅当内容已被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "nodeId": "file.scripts/oam/check-dashboard-readonly.mjs",
+      "nodeType": "File",
+      "owner": "search-kernel-owner",
+      "sourceFile": "scripts/oam/check-dashboard-readonly.mjs",
+      "currentTruthAllowed": false,
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "docs/read-intelligence/read-intelligence-kernel.json",
+      "checker": "scripts/oam/check-dashboard-readonly.mjs",
+      "evidence": "artifacts/oam/checks/dashboard-readonly-report.json",
+      "replacementPath": "scripts/oam/check-dashboard-readonly.mjs",
+      "absorbedBy": "scripts/oam/check-dashboard-readonly.mjs",
+      "removalProofGate": "scripts/oam/check-dashboard-readonly.mjs",
+      "deletionConditionZh": "当且仅当内容已被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/oam/check-dashboard-readonly.mjs",
+        "scripts/oam/run-control-plane-checks.ps1",
+        ".github/workflows/ci.yml",
+        "scripts/oam/generate-current-evidence-root.mjs"
       ]
     },
     {
@@ -19345,6 +20390,37 @@
       ]
     },
     {
+      "nodeId": "file.scripts/oam/generate-authority-source-layer-audit.mjs",
+      "nodeType": "File",
+      "owner": "oam-release-owner",
+      "sourceFile": "scripts/oam/generate-authority-source-layer-audit.mjs",
+      "runtimeBinding": "authority-cleanup-validation",
+      "testBinding": [
+        "scripts/oam/generate-authority-source-layer-audit.mjs",
+        "scripts/oam/check-current-authority-index.mjs"
+      ],
+      "gateBinding": [
+        "scripts/oam/generate-authority-source-layer-audit.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/authority-cleanup/source-layer-audit.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当 authority-cleanup 证据被归档且当前门禁不再引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.release-control",
+      "checker": "scripts/oam/generate-authority-source-layer-audit.mjs",
+      "evidence": "artifacts/oam/authority-cleanup/source-layer-audit.json",
+      "replacementPath": "scripts/oam/generate-authority-source-layer-audit.mjs",
+      "absorbedBy": "scripts/oam/generate-authority-source-layer-audit.mjs",
+      "removalProofGate": "scripts/oam/generate-authority-source-layer-audit.mjs",
+      "deletionConditionZh": "当 authority-cleanup 证据被归档且当前门禁不再引用时删除。",
+      "consumers": [
+        "scripts/oam/generate-authority-source-layer-audit.mjs",
+        "scripts/oam/check-current-authority-index.mjs"
+      ]
+    },
+    {
       "nodeId": "file.scripts/oam/generate-current-engineering-ledger.mjs",
       "nodeType": "File",
       "owner": "release-control-owner",
@@ -19466,6 +20542,37 @@
       "consumers": [
         "scripts/oam/generate-system-derived-contracts.mjs",
         "scripts/oam/run-control-plane-checks.ps1"
+      ]
+    },
+    {
+      "nodeId": "file.scripts/oam/normalize-authority-classification.mjs",
+      "nodeType": "File",
+      "owner": "oam-release-owner",
+      "sourceFile": "scripts/oam/normalize-authority-classification.mjs",
+      "runtimeBinding": "authority-cleanup-validation",
+      "testBinding": [
+        "scripts/oam/normalize-authority-classification.mjs",
+        "scripts/oam/check-current-authority-index.mjs"
+      ],
+      "gateBinding": [
+        "scripts/oam/normalize-authority-classification.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/authority-cleanup/source-layer-audit.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当 authority-cleanup 证据被归档且当前门禁不再引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.release-control",
+      "checker": "scripts/oam/normalize-authority-classification.mjs",
+      "evidence": "artifacts/oam/authority-cleanup/source-layer-audit.json",
+      "replacementPath": "scripts/oam/normalize-authority-classification.mjs",
+      "absorbedBy": "scripts/oam/normalize-authority-classification.mjs",
+      "removalProofGate": "scripts/oam/normalize-authority-classification.mjs",
+      "deletionConditionZh": "当 authority-cleanup 证据被归档且当前门禁不再引用时删除。",
+      "consumers": [
+        "scripts/oam/normalize-authority-classification.mjs",
+        "scripts/oam/check-current-authority-index.mjs"
       ]
     },
     {
@@ -21852,6 +22959,37 @@
       "evidence": "artifacts/oam/evidence/evidence-graph.json",
       "replacementPath": "services/core-api/WorkOS.Api/Runtime/FinanceTruthKernel.cs",
       "absorbedBy": "services/core-api/WorkOS.Api/Runtime/FinanceTruthKernel.cs",
+      "removalProofGate": "scripts/check-runtime-write-paths.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/check-runtime-write-paths.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ]
+    },
+    {
+      "nodeId": "file.services/core-api/WorkOS.Api/Runtime/InMemoryProjectionStore.cs",
+      "nodeType": "File",
+      "owner": "runtime-owner",
+      "sourceFile": "services/core-api/WorkOS.Api/Runtime/InMemoryProjectionStore.cs",
+      "runtimeBinding": "kernel.runtime",
+      "testBinding": [
+        "scripts/check-runtime-write-paths.mjs",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "gateBinding": [
+        "scripts/check-runtime-write-paths.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_runtime",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.runtime",
+      "checker": "scripts/check-runtime-write-paths.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "replacementPath": "services/core-api/WorkOS.Api/Runtime/InMemoryProjectionStore.cs",
+      "absorbedBy": "services/core-api/WorkOS.Api/Runtime/InMemoryProjectionStore.cs",
       "removalProofGate": "scripts/check-runtime-write-paths.mjs",
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
       "consumers": [
@@ -35214,10 +36352,109 @@
     },
     {
       "from": "kernel.authority",
+      "to": "file.docs/contracts/authority/master-design.contract.json",
+      "edgeType": "owns",
+      "allowedDirection": "kernel.authority -> file.docs/contracts/authority/master-design.contract.json",
+      "forbiddenDirection": "file.docs/contracts/authority/master-design.contract.json 不得反向覆盖 kernel.authority",
+      "checker": "scripts/oam/check-file-lifecycle-policy.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json"
+    },
+    {
+      "from": "kernel.authority",
+      "to": "file.docs/contracts/authority/master-outline.contract.json",
+      "edgeType": "owns",
+      "allowedDirection": "kernel.authority -> file.docs/contracts/authority/master-outline.contract.json",
+      "forbiddenDirection": "file.docs/contracts/authority/master-outline.contract.json 不得反向覆盖 kernel.authority",
+      "checker": "scripts/oam/check-file-lifecycle-policy.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json"
+    },
+    {
+      "from": "kernel.authority",
+      "to": "file.docs/contracts/authority/truth-ownership-matrix.contract.json",
+      "edgeType": "owns",
+      "allowedDirection": "kernel.authority -> file.docs/contracts/authority/truth-ownership-matrix.contract.json",
+      "forbiddenDirection": "file.docs/contracts/authority/truth-ownership-matrix.contract.json 不得反向覆盖 kernel.authority",
+      "checker": "scripts/oam/check-file-lifecycle-policy.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json"
+    },
+    {
+      "from": "kernel.authority",
       "to": "file.docs/contracts/bi-kpi/bi-kpi-contract.json",
       "edgeType": "owns",
       "allowedDirection": "kernel.authority -> file.docs/contracts/bi-kpi/bi-kpi-contract.json",
       "forbiddenDirection": "file.docs/contracts/bi-kpi/bi-kpi-contract.json 不得反向覆盖 kernel.authority",
+      "checker": "scripts/oam/check-file-lifecycle-policy.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json"
+    },
+    {
+      "from": "kernel.authority",
+      "to": "file.docs/contracts/bi-kpi/dashboard-contract.json",
+      "edgeType": "owns",
+      "allowedDirection": "kernel.authority -> file.docs/contracts/bi-kpi/dashboard-contract.json",
+      "forbiddenDirection": "file.docs/contracts/bi-kpi/dashboard-contract.json 不得反向覆盖 kernel.authority",
+      "checker": "scripts/oam/check-file-lifecycle-policy.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json"
+    },
+    {
+      "from": "kernel.authority",
+      "to": "file.docs/contracts/bi-kpi/dimension-contract.json",
+      "edgeType": "owns",
+      "allowedDirection": "kernel.authority -> file.docs/contracts/bi-kpi/dimension-contract.json",
+      "forbiddenDirection": "file.docs/contracts/bi-kpi/dimension-contract.json 不得反向覆盖 kernel.authority",
+      "checker": "scripts/oam/check-file-lifecycle-policy.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json"
+    },
+    {
+      "from": "kernel.authority",
+      "to": "file.docs/contracts/bi-kpi/freshness-contract.json",
+      "edgeType": "owns",
+      "allowedDirection": "kernel.authority -> file.docs/contracts/bi-kpi/freshness-contract.json",
+      "forbiddenDirection": "file.docs/contracts/bi-kpi/freshness-contract.json 不得反向覆盖 kernel.authority",
+      "checker": "scripts/oam/check-file-lifecycle-policy.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json"
+    },
+    {
+      "from": "kernel.authority",
+      "to": "file.docs/contracts/bi-kpi/lineage-contract.json",
+      "edgeType": "owns",
+      "allowedDirection": "kernel.authority -> file.docs/contracts/bi-kpi/lineage-contract.json",
+      "forbiddenDirection": "file.docs/contracts/bi-kpi/lineage-contract.json 不得反向覆盖 kernel.authority",
+      "checker": "scripts/oam/check-file-lifecycle-policy.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json"
+    },
+    {
+      "from": "kernel.authority",
+      "to": "file.docs/contracts/bi-kpi/metric-registry.contract.json",
+      "edgeType": "owns",
+      "allowedDirection": "kernel.authority -> file.docs/contracts/bi-kpi/metric-registry.contract.json",
+      "forbiddenDirection": "file.docs/contracts/bi-kpi/metric-registry.contract.json 不得反向覆盖 kernel.authority",
+      "checker": "scripts/oam/check-file-lifecycle-policy.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json"
+    },
+    {
+      "from": "kernel.authority",
+      "to": "file.docs/contracts/bi-kpi/permission-contract.json",
+      "edgeType": "owns",
+      "allowedDirection": "kernel.authority -> file.docs/contracts/bi-kpi/permission-contract.json",
+      "forbiddenDirection": "file.docs/contracts/bi-kpi/permission-contract.json 不得反向覆盖 kernel.authority",
+      "checker": "scripts/oam/check-file-lifecycle-policy.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json"
+    },
+    {
+      "from": "kernel.authority",
+      "to": "file.docs/contracts/bi-kpi/report-contract.json",
+      "edgeType": "owns",
+      "allowedDirection": "kernel.authority -> file.docs/contracts/bi-kpi/report-contract.json",
+      "forbiddenDirection": "file.docs/contracts/bi-kpi/report-contract.json 不得反向覆盖 kernel.authority",
+      "checker": "scripts/oam/check-file-lifecycle-policy.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json"
+    },
+    {
+      "from": "kernel.authority",
+      "to": "file.docs/contracts/bi-kpi/sla-clock-contract.json",
+      "edgeType": "owns",
+      "allowedDirection": "kernel.authority -> file.docs/contracts/bi-kpi/sla-clock-contract.json",
+      "forbiddenDirection": "file.docs/contracts/bi-kpi/sla-clock-contract.json 不得反向覆盖 kernel.authority",
       "checker": "scripts/oam/check-file-lifecycle-policy.mjs",
       "evidence": "artifacts/oam/evidence/evidence-graph.json"
     },
@@ -35245,6 +36482,15 @@
       "edgeType": "owns",
       "allowedDirection": "kernel.authority -> file.docs/contracts/database/oam-db-ownership-map.json",
       "forbiddenDirection": "file.docs/contracts/database/oam-db-ownership-map.json 不得反向覆盖 kernel.authority",
+      "checker": "scripts/oam/check-file-lifecycle-policy.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json"
+    },
+    {
+      "from": "kernel.authority",
+      "to": "file.docs/contracts/definition/definition-compatibility-fence.json",
+      "edgeType": "owns",
+      "allowedDirection": "kernel.authority -> file.docs/contracts/definition/definition-compatibility-fence.json",
+      "forbiddenDirection": "file.docs/contracts/definition/definition-compatibility-fence.json 不得反向覆盖 kernel.authority",
       "checker": "scripts/oam/check-file-lifecycle-policy.mjs",
       "evidence": "artifacts/oam/evidence/evidence-graph.json"
     },
@@ -35367,6 +36613,15 @@
     },
     {
       "from": "kernel.authority",
+      "to": "file.docs/contracts/language/object-kind-catalog.json",
+      "edgeType": "owns",
+      "allowedDirection": "kernel.authority -> file.docs/contracts/language/object-kind-catalog.json",
+      "forbiddenDirection": "file.docs/contracts/language/object-kind-catalog.json 不得反向覆盖 kernel.authority",
+      "checker": "scripts/oam/check-file-lifecycle-policy.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json"
+    },
+    {
+      "from": "kernel.authority",
       "to": "file.docs/contracts/language/permission-explainability-contract.json",
       "edgeType": "owns",
       "allowedDirection": "kernel.authority -> file.docs/contracts/language/permission-explainability-contract.json",
@@ -35470,6 +36725,15 @@
       "edgeType": "owns",
       "allowedDirection": "kernel.authority -> file.docs/decisions/ADR-0002-oam-authority-correction.md",
       "forbiddenDirection": "file.docs/decisions/ADR-0002-oam-authority-correction.md 不得反向覆盖 kernel.authority",
+      "checker": "scripts/oam/check-file-lifecycle-policy.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json"
+    },
+    {
+      "from": "kernel.authority",
+      "to": "file.docs/decisions/ADR-business-3-7-current-registry-decision.md",
+      "edgeType": "owns",
+      "allowedDirection": "kernel.authority -> file.docs/decisions/ADR-business-3-7-current-registry-decision.md",
+      "forbiddenDirection": "file.docs/decisions/ADR-business-3-7-current-registry-decision.md 不得反向覆盖 kernel.authority",
       "checker": "scripts/oam/check-file-lifecycle-policy.mjs",
       "evidence": "artifacts/oam/evidence/evidence-graph.json"
     },
@@ -36150,6 +37414,33 @@
     },
     {
       "from": "kernel.authority",
+      "to": "file.schemas/authority/master-design.schema.json",
+      "edgeType": "owns",
+      "allowedDirection": "kernel.authority -> file.schemas/authority/master-design.schema.json",
+      "forbiddenDirection": "file.schemas/authority/master-design.schema.json 不得反向覆盖 kernel.authority",
+      "checker": "scripts/oam/check-file-lifecycle-policy.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json"
+    },
+    {
+      "from": "kernel.authority",
+      "to": "file.schemas/authority/master-outline.schema.json",
+      "edgeType": "owns",
+      "allowedDirection": "kernel.authority -> file.schemas/authority/master-outline.schema.json",
+      "forbiddenDirection": "file.schemas/authority/master-outline.schema.json 不得反向覆盖 kernel.authority",
+      "checker": "scripts/oam/check-file-lifecycle-policy.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json"
+    },
+    {
+      "from": "kernel.authority",
+      "to": "file.schemas/authority/truth-ownership-matrix.schema.json",
+      "edgeType": "owns",
+      "allowedDirection": "kernel.authority -> file.schemas/authority/truth-ownership-matrix.schema.json",
+      "forbiddenDirection": "file.schemas/authority/truth-ownership-matrix.schema.json 不得反向覆盖 kernel.authority",
+      "checker": "scripts/oam/check-file-lifecycle-policy.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json"
+    },
+    {
+      "from": "kernel.authority",
       "to": "file.schemas/domain-pack.schema.json",
       "edgeType": "owns",
       "allowedDirection": "kernel.authority -> file.schemas/domain-pack.schema.json",
@@ -36334,6 +37625,33 @@
       "edgeType": "owns",
       "allowedDirection": "kernel.authority -> file.schemas/truth-promotion.schema.json",
       "forbiddenDirection": "file.schemas/truth-promotion.schema.json 不得反向覆盖 kernel.authority",
+      "checker": "scripts/oam/check-file-lifecycle-policy.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json"
+    },
+    {
+      "from": "kernel.authority",
+      "to": "file.scripts/authority/check-master-design-schema.mjs",
+      "edgeType": "owns",
+      "allowedDirection": "kernel.authority -> file.scripts/authority/check-master-design-schema.mjs",
+      "forbiddenDirection": "file.scripts/authority/check-master-design-schema.mjs 不得反向覆盖 kernel.authority",
+      "checker": "scripts/oam/check-file-lifecycle-policy.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json"
+    },
+    {
+      "from": "kernel.authority",
+      "to": "file.scripts/authority/check-master-outline-schema.mjs",
+      "edgeType": "owns",
+      "allowedDirection": "kernel.authority -> file.scripts/authority/check-master-outline-schema.mjs",
+      "forbiddenDirection": "file.scripts/authority/check-master-outline-schema.mjs 不得反向覆盖 kernel.authority",
+      "checker": "scripts/oam/check-file-lifecycle-policy.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json"
+    },
+    {
+      "from": "kernel.authority",
+      "to": "file.scripts/authority/check-truth-ownership-matrix.mjs",
+      "edgeType": "owns",
+      "allowedDirection": "kernel.authority -> file.scripts/authority/check-truth-ownership-matrix.mjs",
+      "forbiddenDirection": "file.scripts/authority/check-truth-ownership-matrix.mjs 不得反向覆盖 kernel.authority",
       "checker": "scripts/oam/check-file-lifecycle-policy.mjs",
       "evidence": "artifacts/oam/evidence/evidence-graph.json"
     },
@@ -37081,6 +38399,78 @@
       "edgeType": "owns",
       "allowedDirection": "kernel.projection-search-lens -> file.docs/contracts/projection-contract.schema.json",
       "forbiddenDirection": "file.docs/contracts/projection-contract.schema.json 不得反向覆盖 kernel.projection-search-lens",
+      "checker": "scripts/oam/check-file-lifecycle-policy.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json"
+    },
+    {
+      "from": "kernel.projection-search-lens",
+      "to": "file.docs/contracts/read/freshness-envelope.schema.json",
+      "edgeType": "owns",
+      "allowedDirection": "kernel.projection-search-lens -> file.docs/contracts/read/freshness-envelope.schema.json",
+      "forbiddenDirection": "file.docs/contracts/read/freshness-envelope.schema.json 不得反向覆盖 kernel.projection-search-lens",
+      "checker": "scripts/oam/check-file-lifecycle-policy.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json"
+    },
+    {
+      "from": "kernel.projection-search-lens",
+      "to": "file.docs/contracts/read/lens-read-model.schema.json",
+      "edgeType": "owns",
+      "allowedDirection": "kernel.projection-search-lens -> file.docs/contracts/read/lens-read-model.schema.json",
+      "forbiddenDirection": "file.docs/contracts/read/lens-read-model.schema.json 不得反向覆盖 kernel.projection-search-lens",
+      "checker": "scripts/oam/check-file-lifecycle-policy.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json"
+    },
+    {
+      "from": "kernel.projection-search-lens",
+      "to": "file.docs/contracts/read/lineage-envelope.schema.json",
+      "edgeType": "owns",
+      "allowedDirection": "kernel.projection-search-lens -> file.docs/contracts/read/lineage-envelope.schema.json",
+      "forbiddenDirection": "file.docs/contracts/read/lineage-envelope.schema.json 不得反向覆盖 kernel.projection-search-lens",
+      "checker": "scripts/oam/check-file-lifecycle-policy.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json"
+    },
+    {
+      "from": "kernel.projection-search-lens",
+      "to": "file.docs/contracts/read/oam-object-envelope.schema.json",
+      "edgeType": "owns",
+      "allowedDirection": "kernel.projection-search-lens -> file.docs/contracts/read/oam-object-envelope.schema.json",
+      "forbiddenDirection": "file.docs/contracts/read/oam-object-envelope.schema.json 不得反向覆盖 kernel.projection-search-lens",
+      "checker": "scripts/oam/check-file-lifecycle-policy.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json"
+    },
+    {
+      "from": "kernel.projection-search-lens",
+      "to": "file.docs/contracts/read/permission-envelope.schema.json",
+      "edgeType": "owns",
+      "allowedDirection": "kernel.projection-search-lens -> file.docs/contracts/read/permission-envelope.schema.json",
+      "forbiddenDirection": "file.docs/contracts/read/permission-envelope.schema.json 不得反向覆盖 kernel.projection-search-lens",
+      "checker": "scripts/oam/check-file-lifecycle-policy.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json"
+    },
+    {
+      "from": "kernel.projection-search-lens",
+      "to": "file.docs/contracts/read/read-model-owner-registry.json",
+      "edgeType": "owns",
+      "allowedDirection": "kernel.projection-search-lens -> file.docs/contracts/read/read-model-owner-registry.json",
+      "forbiddenDirection": "file.docs/contracts/read/read-model-owner-registry.json 不得反向覆盖 kernel.projection-search-lens",
+      "checker": "scripts/oam/check-file-lifecycle-policy.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json"
+    },
+    {
+      "from": "kernel.projection-search-lens",
+      "to": "file.docs/contracts/read/search-index-record.schema.json",
+      "edgeType": "owns",
+      "allowedDirection": "kernel.projection-search-lens -> file.docs/contracts/read/search-index-record.schema.json",
+      "forbiddenDirection": "file.docs/contracts/read/search-index-record.schema.json 不得反向覆盖 kernel.projection-search-lens",
+      "checker": "scripts/oam/check-file-lifecycle-policy.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json"
+    },
+    {
+      "from": "kernel.projection-search-lens",
+      "to": "file.docs/contracts/read/search-result-envelope.schema.json",
+      "edgeType": "owns",
+      "allowedDirection": "kernel.projection-search-lens -> file.docs/contracts/read/search-result-envelope.schema.json",
+      "forbiddenDirection": "file.docs/contracts/read/search-result-envelope.schema.json 不得反向覆盖 kernel.projection-search-lens",
       "checker": "scripts/oam/check-file-lifecycle-policy.mjs",
       "evidence": "artifacts/oam/evidence/evidence-graph.json"
     },
@@ -40069,6 +41459,15 @@
       "edgeType": "owns",
       "allowedDirection": "kernel.runtime -> file.services/core-api/WorkOS.Api/Runtime/FinanceTruthKernel.cs",
       "forbiddenDirection": "file.services/core-api/WorkOS.Api/Runtime/FinanceTruthKernel.cs 不得反向覆盖 kernel.runtime",
+      "checker": "scripts/oam/check-file-lifecycle-policy.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json"
+    },
+    {
+      "from": "kernel.runtime",
+      "to": "file.services/core-api/WorkOS.Api/Runtime/InMemoryProjectionStore.cs",
+      "edgeType": "owns",
+      "allowedDirection": "kernel.runtime -> file.services/core-api/WorkOS.Api/Runtime/InMemoryProjectionStore.cs",
+      "forbiddenDirection": "file.services/core-api/WorkOS.Api/Runtime/InMemoryProjectionStore.cs 不得反向覆盖 kernel.runtime",
       "checker": "scripts/oam/check-file-lifecycle-policy.mjs",
       "evidence": "artifacts/oam/evidence/evidence-graph.json"
     },

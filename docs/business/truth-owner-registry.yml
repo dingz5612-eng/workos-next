@@ -121,6 +121,24 @@
       "provisionalRefPolicy": "allowedForDraftOnly"
     },
     {
+      "factId": "AmountBasisProposal",
+      "owner": "BusinessDomainPack",
+      "truthLevel": "proposal",
+      "allowedCommitters": ["DormitoryDomainPack", "RepairDomainPack", "PartsDomainPack", "HRDomainPack"],
+      "forbiddenOwners": ["management-cockpit", "receipt-projection", "search", "dashboard"],
+      "receiptProjection": "referenceOnly",
+      "provisionalRefPolicy": "allowedForDraftOnly"
+    },
+    {
+      "factId": "AmountBasisReviewed",
+      "owner": "FinanceTruthPack",
+      "truthLevel": "workflowTruth",
+      "allowedCommitters": ["FinanceTruthPack"],
+      "forbiddenOwners": ["domain-pack", "management-cockpit", "receipt-projection", "search", "dashboard"],
+      "receiptProjection": "referenceOnly",
+      "provisionalRefPolicy": "allowedForDraftOnly"
+    },
+    {
       "factId": "AmountBasis",
       "owner": "FinanceTruthPack",
       "truthLevel": "workflowTruth",
@@ -179,7 +197,7 @@
       "owner": "projection-kernel",
       "truthLevel": "readModel",
       "allowedCommitters": [],
-      "forbiddenOwners": ["domain-pack", "management-cockpit-direct-write", "finance-truth"],
+      "forbiddenOwners": ["domain-pack", "management-cockpit-direct-write", "dashboard", "finance-truth"],
       "receiptProjection": "referenceOnly",
       "provisionalRefPolicy": "notAllowedForLedgerCommit"
     },

@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "workosnext.read.freshness-envelope.schema.v1",
+  "title": "Read Freshness Envelope",
+  "type": "object",
+  "required": [
+    "indexedAt",
+    "indexLagMs",
+    "stale",
+    "maxStalenessMs",
+    "checkedAt"
+  ],
+  "properties": {
+    "indexedAt": { "type": "string" },
+    "indexLagMs": { "type": "number" },
+    "stale": { "type": "boolean" },
+    "maxStalenessMs": { "type": "number" },
+    "checkedAt": { "type": "string" }
+  },
+  "additionalProperties": true
+}

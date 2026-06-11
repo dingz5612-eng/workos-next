@@ -1155,7 +1155,7 @@ function patchAuthorityIndex() {
   const entries = new Map((index.entries ?? []).map((entry) => [entry.path, entry]));
   const requiredEntries = [
     [kernelPath, "current_domain_kernel", "domain-owner", "scripts/business/check-dormitory-operating-kernel.mjs", true, "宿舍业务唯一运行内核。"],
-    ["docs/business/domains/dormitory/handoff-contract.json", "current_business_contract", "domain-owner", "scripts/business/check-dormitory-derived-contracts.mjs", true, "宿舍 handoff 合同。"],
+    ["docs/business/domains/dormitory/handoff-contract.json", "current_business_contract", "domain-owner", "scripts/business/check-dormitory-derived-contracts.mjs", false, "宿舍 handoff 合同派生视图；唯一 Source 是 dormitory-operating-kernel.json。"],
     ["docs/business/domains/dormitory/dormitory-release-train.yml", "current_business_contract", "domain-owner", "scripts/business/check-dormitory-release-train.mjs", false, "宿舍发布列车派生视图。"],
     ["docs/business/domains/dormitory/dormitory-pilot-scenario-pack.yml", "current_business_contract", "domain-owner", "scripts/business/check-dormitory-pilot-scenario-pack.mjs", false, "宿舍试运行场景派生包。"],
     ["docs/business/domains/dormitory/dormitory-seed-data-pack.json", "current_business_contract", "domain-owner", "scripts/business/check-dormitory-derived-contracts.mjs", false, "宿舍试运行种子数据派生包。"],
@@ -1164,7 +1164,9 @@ function patchAuthorityIndex() {
     ["docs/business/domains/dormitory/dormitory-operator-playbook.md", "current_manual", "domain-owner", "scripts/business/check-dormitory-derived-contracts.mjs", false, "宿舍操作手册，人读但不定义当前事实。"]
   ];
   for (const [entryPath, identity, owner, checker, currentTruthAllowed, notesZh] of requiredEntries) {
+    const existing = entries.get(entryPath) ?? {};
     entries.set(entryPath, {
+      ...existing,
       path: entryPath,
       identity,
       owner,
@@ -1311,7 +1313,7 @@ function fileNode(filePath, state = lifecycleForPath(filePath), owner = ownerFor
     testBinding: [checker, "docs/oam/oam-kernel-graph.json"],
     gateBinding: [checker],
     evidenceBinding: "artifacts/oam/evidence/evidence-graph.json",
-    currentTruthAllowed: (state === "active_contract" || state === "active_authority") && !legacyDormitoryDerivedViewPaths().includes(filePath),
+    currentTruthAllowed: sourceTruthAllowedForFile(filePath, state),
     deletionCondition: "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
     lifecycleState: state,
     manualEditAllowed: !(derived || generatedFromDormitoryKernel),
@@ -1331,6 +1333,22 @@ function fileNode(filePath, state = lifecycleForPath(filePath), owner = ownerFor
       graphBinding: graphBindingForPath(filePath)
     } : {})
   };
+}
+
+function sourceTruthAllowedForFile(filePath, state) {
+  if (isGeneratedDormitoryFile(filePath)) return false;
+  if (legacyDormitoryDerivedViewPaths().includes(filePath)) return false;
+  if (filePath.startsWith("docs/business/domains/dormitory/workitems/")) return false;
+  if (filePath.startsWith("docs/contracts/business/")) return false;
+  if (filePath.startsWith("docs/contracts/definition/")) return false;
+  if (filePath.startsWith("docs/contracts/read/")) return false;
+  if (filePath.startsWith("docs/contracts/search/")) return false;
+  if (filePath.startsWith("docs/contracts/bi-kpi/")) return false;
+  if (filePath.startsWith("infra/db/migrations/")) return false;
+  if (filePath.startsWith("schemas/")) return false;
+  if (filePath.startsWith("services/")) return false;
+  if (filePath.startsWith("apps/")) return false;
+  return state === "active_contract" || state === "active_authority";
 }
 
 function patchArrayByPath(file, updater) {

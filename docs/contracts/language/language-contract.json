@@ -1,6 +1,5 @@
 {
   "version": "oam.language-contract.v1",
-  "generatedBy": "oam-current",
   "status": "authoritative-read-side-kernel",
   "supportedLanguages": [
     "zh-CN",
@@ -17,9 +16,20 @@
     "domainTerms": "docs/contracts/language/domain-term-catalog.json",
     "errorCodeCopy": "docs/contracts/language/error-code-copy.json",
     "fieldLabels": "docs/contracts/language/field-label-catalog.json",
+    "objectKinds": "docs/contracts/language/object-kind-catalog.json",
     "surfaceCopy": "docs/contracts/language/surface-copy-catalog.json",
     "searchSynonyms": "docs/contracts/language/search-synonyms.json"
   },
+  "canonicalKeys": [
+    "objectKind.workItem",
+    "objectKind.operationCase",
+    "objectKind.businessObject",
+    "objectKind.ledger",
+    "objectKind.gateResult",
+    "surface.visibleDoesNotImplyConfirm",
+    "surface.receiptDoesNotImplyProduction",
+    "permission.reason.deviceUntrusted"
+  ],
   "runtimeBindings": {
     "frontendSupportedLanguages": "apps/mobile/src/i18n.js",
     "frontendShellCopy": "apps/mobile/src/i18n/shellCopy.js",

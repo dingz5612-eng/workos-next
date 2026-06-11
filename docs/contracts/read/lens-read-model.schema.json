@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "workosnext.read.lens-read-model.schema.v1",
+  "title": "Lens Read Model",
+  "type": "object",
+  "required": [
+    "version",
+    "lensId",
+    "sourceEnvelopes",
+    "permission",
+    "lineage",
+    "freshness",
+    "writeFactsAllowed"
+  ],
+  "properties": {
+    "version": { "const": "workosnext.read.lens-read-model.v1" },
+    "lensId": { "type": "string" },
+    "sourceEnvelopes": { "type": "array", "items": { "$ref": "docs/contracts/read/oam-object-envelope.schema.json" } },
+    "permission": { "$ref": "docs/contracts/read/permission-envelope.schema.json" },
+    "lineage": { "$ref": "docs/contracts/read/lineage-envelope.schema.json" },
+    "freshness": { "$ref": "docs/contracts/read/freshness-envelope.schema.json" },
+    "writeFactsAllowed": { "const": false }
+  },
+  "additionalProperties": true
+}

@@ -1,0 +1,2 @@
+Current OAM evidence root generated: artifacts/oam/evidence
+artifactDigest=sha256:2d9aaf7ab1e195c51894cd172c891b917971d29b76133198e45b15f85b869132

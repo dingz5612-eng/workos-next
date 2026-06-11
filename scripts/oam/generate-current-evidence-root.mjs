@@ -12,6 +12,9 @@ const releaseEvidenceObjectPath = "artifacts/oam/evidence/current-oam-release-ev
 const digestPlaceholder = "__CURRENT_OAM_EVIDENCE_DIGEST__";
 const evidenceRootDigestPlaceholder = "__CURRENT_OAM_EVIDENCE_ROOT_DIGEST__";
 const ciRunId = env("GITHUB_RUN_ID") || "local";
+const ciRunAttempt = env("GITHUB_RUN_ATTEMPT") || "local";
+const repository = env("GITHUB_REPOSITORY") || repositoryFromGitRemote() || "dingz5612-eng/workos-next";
+const workflow = env("GITHUB_WORKFLOW") || "CI";
 const artifactName = artifactNameForRun(ciRunId);
 
 const requiredEvidenceFiles = [
@@ -35,6 +38,11 @@ const requiredEvidenceFiles = [
   "docs/identity/identity-permission-kernel.json",
   "docs/oam/kernel/oam-kernel-source.schema.json",
   "docs/oam/kernel/oam-kernel-generated.schema.json",
+  "docs/oam/system-derived-contracts.json",
+  "docs/oam/domain-derived-contracts.json",
+  "docs/oam/generated-contracts-manifest.json",
+  "artifacts/oam/authority-cleanup/source-layer-audit.json",
+  "artifacts/oam/authority-cleanup/mutation-tests-result.json",
   "docs/oam/kernel/oam-kernel-graph.generated.json",
   "docs/contracts/generated/dormitory/dormitory-kernel.generated.manifest.json",
   "docs/contracts/generated/dormitory/fields.generated.json",
@@ -49,6 +57,7 @@ const requiredEvidenceFiles = [
   "artifacts/oam/checks/professional-ai-review-seats-result.json",
   "artifacts/oam/checks/codex-execution-channel-policy-result.json",
   "artifacts/oam/checks/cross-domain-conflict-rules-result.json",
+  "artifacts/oam/checks/dashboard-readonly-report.json",
   "docs/oam/mobile-branch-risk-policy.json",
   "docs/oam/mobile-branch-risk-ledger.json",
   "docs/oam/mobile-critical-branch-scenarios.json",
@@ -58,10 +67,29 @@ const requiredEvidenceFiles = [
   controlPlaneGateResultPath,
   finalReportPath
 ];
+const generatedContractFiles = [
+  "docs/oam/system-derived-contracts.json",
+  "docs/oam/domain-derived-contracts.json",
+  "docs/oam/generated-contracts-manifest.json",
+  "docs/oam/kernel/oam-kernel-graph.generated.json",
+  "docs/contracts/generated/dormitory/dormitory-kernel.generated.manifest.json",
+  "docs/contracts/generated/dormitory/fields.generated.json",
+  "docs/contracts/generated/dormitory/workitems.generated.json",
+  "docs/contracts/generated/dormitory/surface-input-model.generated.json",
+  "docs/contracts/generated/dormitory/read-model.generated.json",
+  "apps/mobile/src/generated/oam/dormitory-surface-input-model.generated.json"
+];
 
+const files = new Map();
 const generatedAt = new Date().toISOString();
 const commitSha = env("GITHUB_SHA") || git("rev-parse HEAD") || "local";
+const sourceCommitSha = commitSha;
+const evidenceRunSha = env("GITHUB_SHA") || git("rev-parse HEAD") || commitSha;
+const currentRepositoryHead = git("rev-parse HEAD") || evidenceRunSha;
+const bindingStale = sourceCommitSha !== currentRepositoryHead || evidenceRunSha !== currentRepositoryHead;
 const branch = env("GITHUB_HEAD_REF") || env("GITHUB_REF_NAME") || git("branch --show-current") || "local";
+const kernelGraphHash = hashFileStrict("docs/oam/oam-kernel-graph.json");
+const generatedContractsHash = digestForDisk(generatedContractFiles);
 const admission = readJson("docs/oam/current-admission-state.json");
 const responsibilityMap = readJson(responsibilityMapPath);
 const p0Ledger = readP0Ledger("docs/system/oam-p0-rule-ledger.json");
@@ -77,8 +105,6 @@ const unresolvedP0 = p0Ledger.filter((item) => item.status !== "passed");
 const releaseReadiness = buildReleaseReadiness();
 const finalDecision = buildFinalDecision();
 const finalGoNoGo = finalDecision.finalGoNoGo;
-const workstreamProofNodes = buildWorkstreamProofNodes();
-const workstreamGoNoGoFields = buildWorkstreamGoNoGoFields(workstreamProofNodes);
 const forcedCurrentStageGoNoGo = {
   businessProductionGoNoGo: "NO_GO",
   dormitoryL2GoNoGo: "NO_GO",
@@ -96,10 +122,6 @@ const multiDimensionalGoNoGo = {
   surfaceLanguageGoNoGo: "NO_GO",
   releaseEvidenceGoNoGo: "NO_GO"
 };
-const p0ClosureProofNodes = buildP0ClosureProofNodes();
-
-const files = new Map();
-
 addEvidence(
   "artifacts/oam/evidence/runtime-proof.json",
   proof("runtime-proof", "运行写入可信", {
@@ -297,9 +319,20 @@ addEvidence(
   })
 );
 
+const workstreamProofNodes = buildWorkstreamProofNodes();
+const workstreamGoNoGoFields = buildWorkstreamGoNoGoFields(workstreamProofNodes);
+const p0ClosureProofNodes = buildP0ClosureProofNodes();
+
 const finalReport = {
   ...proof("current-oam-final-report", "当前 OAM 可信运行闭环最终报告", {}),
   artifactName,
+  sourceCommitSha,
+  evidenceRunSha,
+  artifactDigest: digestPlaceholder,
+  generatedContractsHash,
+  evidenceGraphHash: digestPlaceholder,
+  finalReportDigest: digestPlaceholder,
+  evidenceBinding: evidenceBindingState(),
   currentBranch: branch,
   latestCommit: commitSha,
   workspaceStatus: workspace.summary,
@@ -336,8 +369,11 @@ const finalReport = {
     uploadedByCi: workflowContainsEvidenceUpload(),
     evidenceRoot: evidenceDir
   },
+  businessProduction: admission.businessProduction,
   businessProductionStatus: admission.businessProduction,
+  dormitoryL2: admission.dormitoryProduction,
   dormitoryL2Status: admission.dormitoryProduction,
+  productionConfirm: admission.productionConfirmAllowed ? "ALLOWED" : "BLOCKED",
   productionConfirmAllowed: admission.productionConfirmAllowed,
   ...workstreamGoNoGoFields,
   ...multiDimensionalGoNoGo,
@@ -349,7 +385,8 @@ const finalReport = {
   unresolvedP2: [],
   finalGoNoGo: forcedCurrentStageGoNoGo.finalGoNoGo,
   noGoReasons: finalDecision.noGoReasons,
-  nextStageAllowed: finalGoNoGo === "GO"
+  nextStageAllowed: false,
+  nextStageReason: finalGoNoGo === "GO"
     ? "仅允许进入补强下一阶段准入证据和 P1/P2 收敛；不得进入 Business Production、Dormitory L2 或 production_confirm。"
     : `不允许进入下一阶段；必须先修复：${finalDecision.noGoReasons.join("；")}`,
   p0RuleLedger: p0Ledger
@@ -360,6 +397,13 @@ addEvidence(finalReportPath, finalReport);
 
 const evidenceGraph = {
   ...proof("evidence-graph", "当前 OAM 证据根", {}),
+  sourceCommitSha,
+  evidenceRunSha,
+  artifactDigest: digestPlaceholder,
+  generatedContractsHash,
+  evidenceGraphHash: digestPlaceholder,
+  finalReportDigest: digestPlaceholder,
+  evidenceBinding: evidenceBindingState(),
   evidenceRoot: evidenceDir,
   requiredFiles: requiredEvidenceFiles,
   fileRefs: requiredEvidenceFiles.map((file) => ({
@@ -401,17 +445,37 @@ addEvidence("artifacts/oam/evidence/evidence-graph.json", evidenceGraph);
 const releaseEvidenceObject = {
   ...proof("current-oam-release-evidence-object", "当前 OAM Release Evidence Object", {
     currentAdmissionState: "docs/oam/current-admission-state.json",
-    releaseObjectPurpose: "Bind concrete CI run, artifact identity, evidence root digest, graph hash, and final report digest while current stage remains NO_GO."
+    releaseObjectPurpose: "Bind concrete CI run, artifact identity, generated contracts hash, evidence root digest, graph hash, and final report digest while current stage remains NO_GO."
   }),
+  repository,
+  workflow,
+  sourceCommitSha,
+  evidenceRunSha,
+  currentRepositoryHead,
+  stale: bindingStale,
+  referenceOnly: bindingStale,
+  bindingStatus: bindingStale ? "stale" : "current",
   githubSha: commitSha,
   githubRunId: ciRunId,
+  githubRunAttempt: ciRunAttempt,
   githubRefName: branch,
+  generatedAtUtc: generatedAt,
   artifactName,
+  artifactDigest: digestPlaceholder,
   githubArtifactDigest: digestPlaceholder,
   evidenceRootDigest: evidenceRootDigestPlaceholder,
-  kernelGraphHash: hashFileStrict("docs/oam/oam-kernel-graph.json"),
+  generatedContractsHash,
+  kernelGraphHash,
   evidenceGraphHash: digestPlaceholder,
   finalReportDigest: digestPlaceholder,
+  businessProduction: admission.businessProduction,
+  dormitoryL2: admission.dormitoryProduction,
+  productionConfirmAllowed: admission.productionConfirmAllowed,
+  finalGoNoGo: forcedCurrentStageGoNoGo.finalGoNoGo,
+  nextStageAllowed: false,
+  businessProductionGoNoGo: forcedCurrentStageGoNoGo.businessProductionGoNoGo,
+  dormitoryL2GoNoGo: forcedCurrentStageGoNoGo.dormitoryL2GoNoGo,
+  productionConfirmGoNoGo: forcedCurrentStageGoNoGo.productionConfirmGoNoGo,
   currentStage: {
     businessProduction: admission.businessProduction,
     dormitoryL2: admission.dormitoryProduction,
@@ -472,11 +536,50 @@ function binding(kind) {
   return {
     root: "current-oam-trust-closure-v1",
     kind,
+    repository,
+    workflow,
+    sourceCommitSha,
+    evidenceRunSha,
+    currentRepositoryHead,
+    stale: bindingStale,
+    referenceOnly: bindingStale,
+    bindingStatus: bindingStale ? "stale" : "current",
     commitSha,
+    githubSha: commitSha,
     branch,
+    githubRefName: branch,
     ciRunId,
+    githubRunId: ciRunId,
+    githubRunAttempt: ciRunAttempt,
+    artifactName,
     generatedAt,
-    artifactDigest: digestPlaceholder
+    generatedAtUtc: generatedAt,
+    artifactDigest: digestPlaceholder,
+    githubArtifactDigest: digestPlaceholder,
+    evidenceRootDigest: evidenceRootDigestPlaceholder,
+    generatedContractsHash,
+    kernelGraphHash,
+    evidenceGraphHash: digestPlaceholder,
+    finalReportDigest: digestPlaceholder
+  };
+}
+
+function evidenceBindingState() {
+  return {
+    sourceCommitSha,
+    evidenceRunSha,
+    currentRepositoryHead,
+    stale: bindingStale,
+    referenceOnly: bindingStale,
+    bindingStatus: bindingStale ? "stale" : "current",
+    artifactDigest: digestPlaceholder,
+    generatedContractsHash,
+    evidenceGraphHash: digestPlaceholder,
+    finalReportDigest: digestPlaceholder,
+    noGoWhenStale: true,
+    notesZh: bindingStale
+      ? "证据绑定的源码提交或运行提交不是当前仓库 HEAD，本产物只能作为 referenceOnly，不得作为 GO 依据。"
+      : "证据绑定当前被验证源码提交、证据运行提交和当前仓库 HEAD。"
   };
 }
 
@@ -495,9 +598,13 @@ function writeAllEvidence() {
 }
 
 function refreshReleaseEvidenceObjectDigests() {
-  releaseEvidenceObject.evidenceRootDigest = digestForDisk(requiredEvidenceFiles.filter((file) => file !== releaseEvidenceObjectPath));
-  releaseEvidenceObject.evidenceGraphHash = digestForDisk(["artifacts/oam/evidence/evidence-graph.json"]);
-  releaseEvidenceObject.finalReportDigest = digestForDisk([finalReportPath]);
+  const evidenceRootDigest = digestForDisk(requiredEvidenceFiles.filter((file) => file !== releaseEvidenceObjectPath));
+  const evidenceGraphHash = digestForDisk(["artifacts/oam/evidence/evidence-graph.json"]);
+  const finalReportDigest = digestForDisk([finalReportPath]);
+  releaseEvidenceObject.evidenceRootDigest = evidenceRootDigest;
+  releaseEvidenceObject.evidenceGraphHash = evidenceGraphHash;
+  releaseEvidenceObject.finalReportDigest = finalReportDigest;
+  applyReleaseDigestFields(evidenceRootDigest, evidenceGraphHash, finalReportDigest);
   files.set(releaseEvidenceObjectPath, releaseEvidenceObject);
   writeJson(releaseEvidenceObjectPath, releaseEvidenceObject);
 }
@@ -524,8 +631,39 @@ function setDigest(value, digest) {
   if (Object.prototype.hasOwnProperty.call(value, "artifactDigest")) {
     value.artifactDigest = digest;
   }
+  if (Object.prototype.hasOwnProperty.call(value, "githubArtifactDigest")) {
+    value.githubArtifactDigest = digest;
+  }
   for (const item of Object.values(value)) {
     setDigest(item, digest);
+  }
+}
+
+function applyReleaseDigestFields(evidenceRootDigest, evidenceGraphHash, finalReportDigest) {
+  for (const document of files.values()) {
+    if (typeof document !== "string") {
+      setReleaseDigestFields(document, evidenceRootDigest, evidenceGraphHash, finalReportDigest);
+    }
+  }
+}
+
+function setReleaseDigestFields(value, evidenceRootDigest, evidenceGraphHash, finalReportDigest) {
+  if (Array.isArray(value)) {
+    for (const item of value) setReleaseDigestFields(item, evidenceRootDigest, evidenceGraphHash, finalReportDigest);
+    return;
+  }
+  if (!value || typeof value !== "object") return;
+  if (Object.prototype.hasOwnProperty.call(value, "evidenceRootDigest")) {
+    value.evidenceRootDigest = evidenceRootDigest;
+  }
+  if (Object.prototype.hasOwnProperty.call(value, "evidenceGraphHash")) {
+    value.evidenceGraphHash = evidenceGraphHash;
+  }
+  if (Object.prototype.hasOwnProperty.call(value, "finalReportDigest")) {
+    value.finalReportDigest = finalReportDigest;
+  }
+  for (const item of Object.values(value)) {
+    setReleaseDigestFields(item, evidenceRootDigest, evidenceGraphHash, finalReportDigest);
   }
 }
 
@@ -571,6 +709,7 @@ function isDigestOrHashKey(key) {
     "artifactDigest",
     "githubArtifactDigest",
     "evidenceRootDigest",
+    "generatedContractsHash",
     "kernelGraphHash",
     "evidenceGraphHash",
     "finalReportDigest"
@@ -589,6 +728,7 @@ function buildWorkstreamProofNodes() {
       hash: hashFileIfPresent(file)
     }));
     const gateResult = summarizeWorkstreamGates(workstream.gates ?? []);
+    const command = gateResult.commands[0]?.command ?? "no-command-bound";
     const negativeTestResult = finalGoNoGo === "GO" ? "passed" : "blocked";
     const proofPayload = {
       workstreamId: workstream.id,
@@ -597,8 +737,10 @@ function buildWorkstreamProofNodes() {
       sourceHashes,
       gateResult,
       negativeTestResult,
-      goNoGo: finalGoNoGo
+      goNoGo: finalGoNoGo,
+      goNoGoImpact: workstream.finalReportFields ?? []
     };
+    const proofHash = `sha256:${sha256(JSON.stringify(normalizeForDigest(proofPayload)))}`;
     return {
       id: `workstream-proof.${workstream.id}`,
       type: "workstream_proof",
@@ -606,10 +748,16 @@ function buildWorkstreamProofNodes() {
       workstreamId: workstream.id,
       proofType: "current-oam-kernel-responsibility",
       source: sources,
-      hash: `sha256:${sha256(JSON.stringify(normalizeForDigest(proofPayload)))}`,
+      hash: proofHash,
       dependsOn: sources,
+      command,
+      checker: command,
+      inputHashes: sourceHashes,
+      outputHashes: [{ path: `evidence-node:workstream-proof.${workstream.id}`, hash: proofHash }],
       gateResult,
       negativeTestResult,
+      goNoGoImpact: workstream.finalReportFields ?? [],
+      notesZh: `工作流 ${workstream.name ?? workstream.id} 的 proof DAG 节点；当前阶段保持 NO_GO，CI 绿色只作为证据。`,
       goNoGo: finalGoNoGo,
       finalReportFields: workstream.finalReportFields ?? []
     };
@@ -639,13 +787,17 @@ function buildP0ClosureProofNodes() {
     ["release-evidence", "releaseEvidenceGoNoGo", [releaseEvidenceObjectPath, "tests/WorkOS.ReleaseEvidenceTests/OamReleaseControlTests.cs"]]
   ];
   return dimensions.map(([id, field, sources]) => {
+    const sourceHashes = sources.map((file) => ({ path: file, hash: hashFileIfPresent(file) }));
+    const command = sources.find((file) => String(file).startsWith("scripts/")) ?? sources[0];
     const payload = {
       id,
       field,
       sources,
+      sourceHashes,
       goNoGo: multiDimensionalGoNoGo[field],
       finalGoNoGo
     };
+    const proofHash = `sha256:${sha256(JSON.stringify(normalizeForDigest(payload)))}`;
     return {
       id: `p0-closure-proof.${id}`,
       type: "p0_closure_proof",
@@ -653,10 +805,16 @@ function buildP0ClosureProofNodes() {
       workstreamId: "00-current-oam-p0-closure",
       proofType: "current-oam-branch-governed-p0-closure",
       source: sources,
-      hash: `sha256:${sha256(JSON.stringify(normalizeForDigest(payload)))}`,
+      hash: proofHash,
       dependsOn: sources,
+      command,
+      checker: command,
+      inputHashes: sourceHashes,
+      outputHashes: [{ path: `evidence-node:p0-closure-proof.${id}`, hash: proofHash }],
       gateResult: { status: "bound", field },
       negativeTestResult: "blocked",
+      goNoGoImpact: [field],
+      notesZh: `${field} 的 P0 收口 proof DAG 节点；当前阶段保持 NO_GO，CI 绿色不等于 GO。`,
       goNoGo: multiDimensionalGoNoGo[field] ?? "NO_GO",
       finalReportField: field
     };
@@ -681,11 +839,14 @@ function summarizeWorkstreamGates(gates) {
 }
 
 function hashFileIfPresent(file) {
-  if (!file || file.startsWith("artifacts/oam/") && !fileExists(file)) {
-    return "missing";
+  if (!file) {
+    return `sha256:${sha256("missing:<empty>")}`;
+  }
+  if (files.has(file)) {
+    return `sha256:${sha256(JSON.stringify(normalizeForDigest(documentForDigest(file, files.get(file)))))}`;
   }
   if (!fileExists(file)) {
-    return "missing";
+    return `sha256:${sha256(`missing:${file}`)}`;
   }
   return `sha256:${sha256(readText(file))}`;
 }
@@ -719,11 +880,18 @@ function requiredGateCommands() {
     "node scripts/oam/check-p0-rule-ledger.mjs --self-test",
     "node scripts/oam/check-p0-rule-ledger.mjs",
     "node scripts/oam/check-current-authority-index.mjs",
+    "node scripts/oam/generate-authority-source-layer-audit.mjs",
+    "node scripts/oam/check-authority-source-layer-audit.mjs",
+    "node scripts/oam/check-authority-cleanup-mutation-tests.mjs",
     "node scripts/oam/check-kernel-responsibility-map.mjs",
     "node scripts/oam/check-professional-ai-review-seats.mjs",
     "node scripts/oam/check-codex-execution-channel-policy.mjs",
     "node scripts/oam/check-cross-domain-conflict-rules.mjs",
     "node scripts/oam/check-system-operating-kernel.mjs",
+    "node scripts/business/generate-dormitory-derived-contracts.mjs",
+    "node scripts/oam/compile-current-kernel-graph.mjs",
+    "node scripts/oam/check-generated-contract-consistency.mjs",
+    "node scripts/oam/check-generated-files-not-manually-edited.mjs",
     "node scripts/oam/check-oam-kernel-graph.mjs",
     "node scripts/oam/check-file-lifecycle-policy.mjs",
     "node scripts/oam/check-retired-reference-blocker.mjs",
@@ -755,6 +923,7 @@ function requiredGateCommands() {
     "node scripts/check-account-actor-kernel.mjs",
     "node scripts/check-language-kernel.mjs",
     "node scripts/oam/check-surface-language-v2.mjs",
+    "node scripts/oam/check-read-intelligence-kernel.mjs",
     "node scripts/check-search-kernel.mjs --self-test",
     "node scripts/check-search-kernel.mjs",
     "node scripts/check-surface-contract.mjs",
@@ -770,10 +939,12 @@ function requiredGateCommands() {
     "node scripts/check-finance-truth.mjs",
     "node scripts/check-ledger-semantic-rules.mjs",
     "node scripts/finance/check-finance-semantic-truth.mjs",
+    "node scripts/oam/check-dashboard-readonly.mjs",
     "node scripts/check-management-cockpit-boundary.mjs --self-test",
     "node scripts/check-management-cockpit-boundary.mjs",
     "node scripts/check-shared-governance-boundary.mjs --self-test",
     "node scripts/check-shared-governance-boundary.mjs",
+    "node scripts/oam/check-db-no-side-effects-proof.mjs",
     "node scripts/check-dormitory-golden-domain.mjs --self-test",
     "node scripts/check-dormitory-golden-domain.mjs",
     "node scripts/business/check-dormitory-execution-kernel.mjs",
@@ -857,9 +1028,8 @@ function readL1BrowserEvidence() {
     runId: report?.runId || "",
     scenarioCount: report?.scenarios?.length ?? 0,
     screenshotHashCount: screenshotHashes.length,
-    node: report ? {
+    node: report ? buildBrowserProofNode({
       id: `DORM-L1-BROWSER-E2E-${report.runId || "unknown"}`,
-      type: "browser_e2e_evidence",
       status,
       gate: "DORM-L1-BROWSER-E2E",
       branch: report.git?.branch || branch,
@@ -868,6 +1038,7 @@ function readL1BrowserEvidence() {
       ciRunUrl: report.ciRun?.url || "",
       scenarioIds: (report.scenarios ?? []).map((scenario) => scenario.scenarioId).filter(Boolean),
       screenshotHashes,
+      reportRef,
       refs: [
         reportRef,
         normalizeRepoPath(report.outputs?.markdown || ""),
@@ -875,7 +1046,7 @@ function readL1BrowserEvidence() {
         "scripts/surface/run-dormitory-l1-browser-e2e-audit.mjs",
         "scripts/surface/check-dormitory-l1-browser-e2e-audit.mjs"
       ].filter(Boolean)
-    } : null
+    }) : null
   };
 }
 
@@ -893,9 +1064,8 @@ function readTenScenarioBrowserEvidence() {
     runId: report?.runId || "",
     scenarioCount: report?.scenarios?.length ?? 0,
     screenshotHashCount: screenshotHashes.length,
-    node: report ? {
+    node: report ? buildBrowserProofNode({
       id: `DORM-TEN-SCENARIO-REAL-BROWSER-${report.runId || "unknown"}`,
-      type: "browser_e2e_evidence",
       status,
       gate: "DORMITORY-TEN-SCENARIO-REAL-BROWSER",
       branch: report.git?.branch || branch,
@@ -906,6 +1076,7 @@ function readTenScenarioBrowserEvidence() {
         : "",
       scenarioIds: (report.scenarios ?? []).map((scenario) => scenario.id).filter(Boolean),
       screenshotHashes,
+      reportRef,
       refs: [
         reportRef,
         ["artifacts", "oam", "evidence", "dormitory-real-browser", runId, "ten-scenario-real-browser-report.md"].join("/"),
@@ -913,7 +1084,65 @@ function readTenScenarioBrowserEvidence() {
         "scripts/surface/run-dormitory-ten-scenario-real-browser-audit.mjs",
         "scripts/surface/check-dormitory-ten-scenario-real-browser-audit.mjs"
       ]
-    } : null
+    }) : null
+  };
+}
+
+function buildBrowserProofNode(input) {
+  const refs = [...new Set((input.refs ?? []).filter(Boolean).map(normalizeRepoPath))];
+  const screenshotInputHashes = (input.screenshotHashes ?? [])
+    .filter(Boolean)
+    .map((hash, index) => ({
+      path: `browser-screenshot:${input.gate}:${index + 1}`,
+      hash: String(hash).startsWith("sha256:") ? String(hash) : `sha256:${hash}`
+    }));
+  const sourceHashes = refs.map((file) => ({
+    path: file,
+    hash: hashFileIfPresent(file)
+  }));
+  const payload = {
+    id: input.id,
+    gate: input.gate,
+    status: input.status,
+    reportRef: input.reportRef,
+    refs,
+    screenshotHashes: input.screenshotHashes,
+    headSha: sourceCommitSha,
+    reportHeadSha: input.headSha,
+    reportFresh: input.headSha === sourceCommitSha,
+    sourceCommitSha,
+    evidenceRunSha,
+    finalGoNoGo: "NO_GO"
+  };
+  const proofHash = `sha256:${sha256(JSON.stringify(normalizeForDigest(payload)))}`;
+  return {
+    id: input.id,
+    type: "browser_e2e_evidence",
+    proofType: "current-oam-browser-e2e-proof",
+    source: refs,
+    hash: proofHash,
+    dependsOn: refs,
+    status: input.status,
+    goNoGo: "NO_GO",
+    gate: input.gate,
+    branch: input.branch,
+    headSha: sourceCommitSha,
+    reportHeadSha: input.headSha,
+    reportFresh: input.headSha === sourceCommitSha,
+    sourceCommitSha,
+    evidenceRunSha,
+    ciRunId: input.ciRunId,
+    ciRunUrl: input.ciRunUrl,
+    scenarioIds: input.scenarioIds,
+    screenshotHashes: input.screenshotHashes,
+    reportRef: input.reportRef,
+    refs,
+    command: refs.find((file) => file.includes("/run-")) ?? input.gate,
+    checker: refs.find((file) => file.includes("/check-")) ?? input.gate,
+    inputHashes: [...sourceHashes, ...screenshotInputHashes],
+    outputHashes: [{ path: `evidence-node:${input.id}`, hash: proofHash }],
+    goNoGoImpact: ["surfaceLanguageGoNoGo", "finalGoNoGo"],
+    notesZh: `${input.gate} 的真实浏览器 proof DAG 节点；截图哈希、报告和检查器均作为依赖，CI 绿色不等于业务 GO。`
   };
 }
 
@@ -948,6 +1177,9 @@ function buildFinalDecision() {
   }
   if (controlPlaneGateResult.stale) {
     noGoReasons.push(`OAM 总门禁结果过期：${controlPlaneGateResult.commitSha} != ${commitSha}`);
+  }
+  if (bindingStale) {
+    noGoReasons.push(`证据绑定过期：sourceCommitSha=${sourceCommitSha}, evidenceRunSha=${evidenceRunSha}, currentRepositoryHead=${currentRepositoryHead}`);
   }
   if (mobileBranchRiskKernel.status !== "passed") {
     noGoReasons.push(`移动端分支风险门禁未通过：${mobileBranchRiskKernel.status}`);
@@ -984,6 +1216,8 @@ function executionLogText(digest) {
       event: "冻结检查",
       status: workspace.summary,
       commitSha,
+      sourceCommitSha,
+      evidenceRunSha,
       branch,
       ciRunId,
       generatedAt,
@@ -994,6 +1228,8 @@ function executionLogText(digest) {
       event: "P0 账本状态",
       status: unresolvedP0.length === 0 ? "passed" : "failed",
       commitSha,
+      sourceCommitSha,
+      evidenceRunSha,
       branch,
       ciRunId,
       generatedAt,
@@ -1007,6 +1243,8 @@ function executionLogText(digest) {
       event: "本地总门禁绑定",
       status: gateSummary.status,
       commitSha,
+      sourceCommitSha,
+      evidenceRunSha,
       branch,
       ciRunId,
       generatedAt,
@@ -1017,6 +1255,8 @@ function executionLogText(digest) {
       event: "测试验收绑定",
       status: "required",
       commitSha,
+      sourceCommitSha,
+      evidenceRunSha,
       branch,
       ciRunId,
       generatedAt,
@@ -1027,6 +1267,8 @@ function executionLogText(digest) {
       event: "覆盖率绑定",
       status: coverageSummary.status,
       commitSha,
+      sourceCommitSha,
+      evidenceRunSha,
       branch,
       ciRunId,
       generatedAt,
@@ -1037,6 +1279,8 @@ function executionLogText(digest) {
       event: "移动覆盖率治理",
       status: mobileBranchRiskKernel.status,
       commitSha,
+      sourceCommitSha,
+      evidenceRunSha,
       branch,
       ciRunId,
       generatedAt,
@@ -1047,6 +1291,8 @@ function executionLogText(digest) {
       event: "最终裁决",
       status: finalGoNoGo,
       commitSha,
+      sourceCommitSha,
+      evidenceRunSha,
       branch,
       ciRunId,
       generatedAt,
@@ -1331,6 +1577,12 @@ function git(command) {
 
 function env(name) {
   return process.env[name] || "";
+}
+
+function repositoryFromGitRemote() {
+  const remote = git("remote get-url origin");
+  const match = remote.match(/github\.com[:/](?<owner>[^/]+)\/(?<repo>[^/.]+)(?:\.git)?$/i);
+  return match?.groups ? `${match.groups.owner}/${match.groups.repo}` : "";
 }
 
 function artifactNameForRun(runId) {

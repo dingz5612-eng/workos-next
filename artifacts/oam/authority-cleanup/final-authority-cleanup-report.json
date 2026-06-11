@@ -1,0 +1,2915 @@
+{
+  "version": "oam.authority-cleanup-final-report.v1",
+  "generatedAtUtc": "2026-06-11T18:02:29.179Z",
+  "branch": "codex/oam-p0b-p0c-closure",
+  "latestCommit": "a7d4c7feb3e00eca3a0d97c1bd3301bcd979dc19",
+  "status": "completed-locally",
+  "authorityLayerClean": true,
+  "uniqueEffectiveSourceWhitelist": true,
+  "stillNoGo": true,
+  "currentGoNoGo": "NO_GO",
+  "sourceWhitelist": [
+    {
+      "path": "docs/oam/current-architecture.md",
+      "reasonZh": "架构权威 Source，定义当前 OAM 结构、边界和权威入口。"
+    },
+    {
+      "path": "docs/oam/current-architecture.manifest.json",
+      "reasonZh": "架构权威 Source，定义当前 OAM 结构、边界和权威入口。"
+    },
+    {
+      "path": "docs/oam/current-authority-index.json",
+      "reasonZh": "架构权威 Source，定义当前 OAM 结构、边界和权威入口。"
+    },
+    {
+      "path": "docs/contracts/oam.current.json",
+      "reasonZh": "架构权威 Source，定义当前 OAM 结构、边界和权威入口。"
+    },
+    {
+      "path": "docs/oam/current-oam-kernel-responsibility-map.json",
+      "reasonZh": "架构权威 Source，定义当前 OAM 结构、边界和权威入口。"
+    },
+    {
+      "path": "docs/oam/oam-kernel-graph.json",
+      "reasonZh": "架构权威 Source，定义当前 OAM 结构、边界和权威入口。"
+    },
+    {
+      "path": "docs/oam/system-operating-kernel.json",
+      "reasonZh": "少而硬的 Source Layer 权威输入，只能人工维护。"
+    },
+    {
+      "path": "docs/oam/compiler-generated-contract-kernel.json",
+      "reasonZh": "少而硬的 Source Layer 权威输入，只能人工维护。"
+    },
+    {
+      "path": "docs/oam/file-lifecycle-policy.json",
+      "reasonZh": "少而硬的 Source Layer 权威输入，只能人工维护。"
+    },
+    {
+      "path": "docs/oam/current-oam-cross-domain-conflict-rules.json",
+      "reasonZh": "少而硬的 Source Layer 权威输入，只能人工维护。"
+    },
+    {
+      "path": "docs/oam/codex-execution-channel-policy.json",
+      "reasonZh": "少而硬的 Source Layer 权威输入，只能人工维护。"
+    },
+    {
+      "path": "docs/oam/professional-ai-review-seats.json",
+      "reasonZh": "少而硬的 Source Layer 权威输入，只能人工维护。"
+    },
+    {
+      "path": "docs/oam/system-change-governance-contract.json",
+      "reasonZh": "少而硬的 Source Layer 权威输入，只能人工维护。"
+    },
+    {
+      "path": "docs/oam/system-failure-routing-contract.json",
+      "reasonZh": "少而硬的 Source Layer 权威输入，只能人工维护。"
+    },
+    {
+      "path": "docs/oam/system-handoff-contract.json",
+      "reasonZh": "少而硬的 Source Layer 权威输入，只能人工维护。"
+    },
+    {
+      "path": "docs/oam/iteration-kernel.json",
+      "reasonZh": "少而硬的 Source Layer 权威输入，只能人工维护。"
+    },
+    {
+      "path": "docs/system/oam-p0-rule-ledger.json",
+      "reasonZh": "少而硬的 Source Layer 权威输入，只能人工维护。"
+    },
+    {
+      "path": "docs/business/business-line-registry.json",
+      "reasonZh": "少而硬的 Source Layer 权威输入，只能人工维护。"
+    },
+    {
+      "path": "docs/business/admission/business-line-levels.yml",
+      "reasonZh": "少而硬的 Source Layer 权威输入，只能人工维护。"
+    },
+    {
+      "path": "docs/oam/current-admission-state.json",
+      "reasonZh": "少而硬的 Source Layer 权威输入，只能人工维护。"
+    },
+    {
+      "path": "docs/business/truth-owner-registry.yml",
+      "reasonZh": "少而硬的 Source Layer 权威输入，只能人工维护。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "reasonZh": "宿舍领域唯一 Source，派生文件不得覆盖它。"
+    },
+    {
+      "path": "docs/business/domains/finance/finance-operating-kernel.json",
+      "reasonZh": "少而硬的 Source Layer 权威输入，只能人工维护。"
+    },
+    {
+      "path": "docs/business/domains/maintenance/maintenance-operating-kernel.json",
+      "reasonZh": "少而硬的 Source Layer 权威输入，只能人工维护。"
+    },
+    {
+      "path": "docs/finance/finance-ledger-kernel.json",
+      "reasonZh": "Finance / Ledger Source，只有它可以定义账务真值边界。"
+    },
+    {
+      "path": "docs/identity/identity-permission-kernel.json",
+      "reasonZh": "少而硬的 Source Layer 权威输入，只能人工维护。"
+    },
+    {
+      "path": "docs/read-intelligence/read-intelligence-kernel.json",
+      "reasonZh": "读侧智能 Source，只定义读侧消费边界，不写业务事实。"
+    },
+    {
+      "path": "docs/surface/surface-contract.yml",
+      "reasonZh": "Surface Source，只定义展示、解释和交互边界。"
+    },
+    {
+      "path": "docs/contracts/language/language-contract.json",
+      "reasonZh": "少而硬的 Source Layer 权威输入，只能人工维护。"
+    },
+    {
+      "path": "docs/contracts/database/oam-db-ownership-map.json",
+      "reasonZh": "数据库 ownership 边界 Source；具体 migration 不得作为业务 Source。"
+    }
+  ],
+  "downgradedToGenerated": [
+    {
+      "path": "apps/mobile/src/__tests__/OperationControllerHardeningMatrix.test.js",
+      "recommendedAction": "downgrade_to_generated",
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "deletionRisk": "medium",
+      "notesZh": "文件带派生或生成标记，不能作为 Source 业务事实权威。"
+    },
+    {
+      "path": "apps/mobile/src/__tests__/OperationPanelRuntimeContract.test.js",
+      "recommendedAction": "downgrade_to_generated",
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "deletionRisk": "medium",
+      "notesZh": "文件带派生或生成标记，不能作为 Source 业务事实权威。"
+    },
+    {
+      "path": "apps/mobile/src/__tests__/OperationRouteIdentityContract.test.js",
+      "recommendedAction": "downgrade_to_generated",
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "deletionRisk": "medium",
+      "notesZh": "文件带派生或生成标记，不能作为 Source 业务事实权威。"
+    },
+    {
+      "path": "apps/mobile/src/__tests__/releaseControlView.test.js",
+      "recommendedAction": "downgrade_to_generated",
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "deletionRisk": "medium",
+      "notesZh": "文件带派生或生成标记，不能作为 Source 业务事实权威。"
+    },
+    {
+      "path": "apps/mobile/src/controls/fieldControls.js",
+      "recommendedAction": "downgrade_to_generated",
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "deletionRisk": "medium",
+      "notesZh": "文件带派生或生成标记，不能作为 Source 业务事实权威。"
+    },
+    {
+      "path": "apps/mobile/src/fieldSourceRenderer.js",
+      "recommendedAction": "downgrade_to_generated",
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "deletionRisk": "medium",
+      "notesZh": "文件带派生或生成标记，不能作为 Source 业务事实权威。"
+    },
+    {
+      "path": "apps/mobile/src/generated/oam/dormitory-surface-input-model.generated.json",
+      "recommendedAction": "downgrade_to_generated",
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "deletionRisk": "medium",
+      "notesZh": "文件带派生或生成标记，不能作为 Source 业务事实权威。"
+    },
+    {
+      "path": "apps/mobile/src/operationController.js",
+      "recommendedAction": "downgrade_to_generated",
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "deletionRisk": "medium",
+      "notesZh": "文件带派生或生成标记，不能作为 Source 业务事实权威。"
+    },
+    {
+      "path": "apps/mobile/src/systemContextContract.js",
+      "recommendedAction": "downgrade_to_generated",
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "deletionRisk": "medium",
+      "notesZh": "文件带派生或生成标记，不能作为 Source 业务事实权威。"
+    },
+    {
+      "path": "apps/mobile/src/views/experienceComponents.js",
+      "recommendedAction": "downgrade_to_generated",
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "deletionRisk": "medium",
+      "notesZh": "文件带派生或生成标记，不能作为 Source 业务事实权威。"
+    },
+    {
+      "path": "apps/mobile/src/views/releaseControlView.js",
+      "recommendedAction": "downgrade_to_generated",
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "deletionRisk": "medium",
+      "notesZh": "文件带派生或生成标记，不能作为 Source 业务事实权威。"
+    },
+    {
+      "path": "apps/mobile/src/views/workspaceView.js",
+      "recommendedAction": "downgrade_to_generated",
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "deletionRisk": "medium",
+      "notesZh": "文件带派生或生成标记，不能作为 Source 业务事实权威。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/domain-pack.yml",
+      "recommendedAction": "downgrade_to_generated",
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "deletionRisk": "medium",
+      "notesZh": "文件带派生或生成标记，不能作为 Source 业务事实权威。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/dormitory-observability-contract.json",
+      "recommendedAction": "downgrade_to_generated",
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "deletionRisk": "medium",
+      "notesZh": "文件带派生或生成标记，不能作为 Source 业务事实权威。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/dormitory-operator-playbook.md",
+      "authorityRole": "generatedContract",
+      "generatedFrom": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json"
+      ],
+      "businessFactAuthorityAllowed": false,
+      "currentTruthAllowed": false
+    },
+    {
+      "path": "docs/business/domains/dormitory/dormitory-pilot-go-no-go.json",
+      "recommendedAction": "downgrade_to_generated",
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "deletionRisk": "medium",
+      "notesZh": "文件带派生或生成标记，不能作为 Source 业务事实权威。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/dormitory-pilot-scenario-pack.yml",
+      "recommendedAction": "downgrade_to_generated",
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "deletionRisk": "medium",
+      "notesZh": "文件带派生或生成标记，不能作为 Source 业务事实权威。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/dormitory-release-train.yml",
+      "recommendedAction": "downgrade_to_generated",
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "deletionRisk": "medium",
+      "notesZh": "文件带派生或生成标记，不能作为 Source 业务事实权威。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/dormitory-seed-data-pack.json",
+      "recommendedAction": "downgrade_to_generated",
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "deletionRisk": "medium",
+      "notesZh": "文件带派生或生成标记，不能作为 Source 业务事实权威。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/handoff-contract.json",
+      "recommendedAction": "downgrade_to_generated",
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "deletionRisk": "medium",
+      "notesZh": "文件带派生或生成标记，不能作为 Source 业务事实权威。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/dorm-access-credential-issue.json",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "upstreamSource": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "deletionRisk": "medium",
+      "notesZh": "宿舍派生副本不得作为业务事实权威，唯一 Source 是 dormitory-operating-kernel.json。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/dorm-access-credential-revoke.json",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "upstreamSource": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "deletionRisk": "medium",
+      "notesZh": "宿舍派生副本不得作为业务事实权威，唯一 Source 是 dormitory-operating-kernel.json。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/dorm-bed-setup-confirm.json",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "upstreamSource": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "deletionRisk": "medium",
+      "notesZh": "宿舍派生副本不得作为业务事实权威，唯一 Source 是 dormitory-operating-kernel.json。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/dorm-bed-transfer-approve.json",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "upstreamSource": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "deletionRisk": "medium",
+      "notesZh": "宿舍派生副本不得作为业务事实权威，唯一 Source 是 dormitory-operating-kernel.json。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/dorm-checkin-confirm.json",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "upstreamSource": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "deletionRisk": "medium",
+      "notesZh": "宿舍派生副本不得作为业务事实权威，唯一 Source 是 dormitory-operating-kernel.json。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/dorm-checkout-settlement-approve.json",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "upstreamSource": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "deletionRisk": "medium",
+      "notesZh": "宿舍派生副本不得作为业务事实权威，唯一 Source 是 dormitory-operating-kernel.json。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/dorm-deposit-confirm.json",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "upstreamSource": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "deletionRisk": "medium",
+      "notesZh": "宿舍派生副本不得作为业务事实权威，唯一 Source 是 dormitory-operating-kernel.json。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/dorm-exception-resolve.json",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "upstreamSource": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "deletionRisk": "medium",
+      "notesZh": "宿舍派生副本不得作为业务事实权威，唯一 Source 是 dormitory-operating-kernel.json。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/dorm-incident-record.json",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "upstreamSource": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "deletionRisk": "medium",
+      "notesZh": "宿舍派生副本不得作为业务事实权威，唯一 Source 是 dormitory-operating-kernel.json。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/dorm-lead-capture.json",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "upstreamSource": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "deletionRisk": "medium",
+      "notesZh": "宿舍派生副本不得作为业务事实权威，唯一 Source 是 dormitory-operating-kernel.json。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/dorm-payment-confirm.json",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "upstreamSource": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "deletionRisk": "medium",
+      "notesZh": "宿舍派生副本不得作为业务事实权威，唯一 Source 是 dormitory-operating-kernel.json。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/dorm-period-action-plan-execute.json",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "upstreamSource": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "deletionRisk": "medium",
+      "notesZh": "宿舍派生副本不得作为业务事实权威，唯一 Source 是 dormitory-operating-kernel.json。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/dorm-period-review.json",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "upstreamSource": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "deletionRisk": "medium",
+      "notesZh": "宿舍派生副本不得作为业务事实权威，唯一 Source 是 dormitory-operating-kernel.json。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/dorm-rate-plan-confirm.json",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "upstreamSource": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "deletionRisk": "medium",
+      "notesZh": "宿舍派生副本不得作为业务事实权威，唯一 Source 是 dormitory-operating-kernel.json。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/dorm-reservation-cancel-close.json",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "upstreamSource": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "deletionRisk": "medium",
+      "notesZh": "宿舍派生副本不得作为业务事实权威，唯一 Source 是 dormitory-operating-kernel.json。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/dorm-reservation-confirm.json",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "upstreamSource": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "deletionRisk": "medium",
+      "notesZh": "宿舍派生副本不得作为业务事实权威，唯一 Source 是 dormitory-operating-kernel.json。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/dorm-reservation-no-show-close.json",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "upstreamSource": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "deletionRisk": "medium",
+      "notesZh": "宿舍派生副本不得作为业务事实权威，唯一 Source 是 dormitory-operating-kernel.json。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/dorm-resource-readiness-confirm.json",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "upstreamSource": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "deletionRisk": "medium",
+      "notesZh": "宿舍派生副本不得作为业务事实权威，唯一 Source 是 dormitory-operating-kernel.json。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/dorm-room-inspection-confirm.json",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "upstreamSource": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "deletionRisk": "medium",
+      "notesZh": "宿舍派生副本不得作为业务事实权威，唯一 Source 是 dormitory-operating-kernel.json。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/dorm-room-setup-confirm.json",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "upstreamSource": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "deletionRisk": "medium",
+      "notesZh": "宿舍派生副本不得作为业务事实权威，唯一 Source 是 dormitory-operating-kernel.json。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/dorm-service-task-assign.json",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "upstreamSource": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "deletionRisk": "medium",
+      "notesZh": "宿舍派生副本不得作为业务事实权威，唯一 Source 是 dormitory-operating-kernel.json。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/dorm-service-task-complete.json",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "upstreamSource": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "deletionRisk": "medium",
+      "notesZh": "宿舍派生副本不得作为业务事实权威，唯一 Source 是 dormitory-operating-kernel.json。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/dorm-service-task-create.json",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "upstreamSource": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "deletionRisk": "medium",
+      "notesZh": "宿舍派生副本不得作为业务事实权威，唯一 Source 是 dormitory-operating-kernel.json。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/dorm-service-task-verify.json",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "upstreamSource": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "deletionRisk": "medium",
+      "notesZh": "宿舍派生副本不得作为业务事实权威，唯一 Source 是 dormitory-operating-kernel.json。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/dorm-stay-extend-approve.json",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "upstreamSource": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "deletionRisk": "medium",
+      "notesZh": "宿舍派生副本不得作为业务事实权威，唯一 Source 是 dormitory-operating-kernel.json。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/finance-charge-adjustment-approve.json",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "upstreamSource": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "deletionRisk": "medium",
+      "notesZh": "宿舍派生副本不得作为业务事实权威，唯一 Source 是 dormitory-operating-kernel.json。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/finance-correction-apply.json",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "upstreamSource": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "deletionRisk": "medium",
+      "notesZh": "宿舍派生副本不得作为业务事实权威，唯一 Source 是 dormitory-operating-kernel.json。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/finance-debt-follow-up.json",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "upstreamSource": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "deletionRisk": "medium",
+      "notesZh": "宿舍派生副本不得作为业务事实权威，唯一 Source 是 dormitory-operating-kernel.json。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/finance-expense-approve.json",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "upstreamSource": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "deletionRisk": "medium",
+      "notesZh": "宿舍派生副本不得作为业务事实权威，唯一 Source 是 dormitory-operating-kernel.json。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/finance-expense-link.json",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "upstreamSource": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "deletionRisk": "medium",
+      "notesZh": "宿舍派生副本不得作为业务事实权威，唯一 Source 是 dormitory-operating-kernel.json。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/finance-expense-record.json",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "upstreamSource": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "deletionRisk": "medium",
+      "notesZh": "宿舍派生副本不得作为业务事实权威，唯一 Source 是 dormitory-operating-kernel.json。"
+    },
+    {
+      "path": "docs/business/dormitory/canonical-scenario-map.json",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "upstreamSource": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "deletionRisk": "medium",
+      "notesZh": "宿舍派生副本不得作为业务事实权威，唯一 Source 是 dormitory-operating-kernel.json。"
+    },
+    {
+      "path": "docs/business/dormitory/current-business-journey.md",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "upstreamSource": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "deletionRisk": "medium",
+      "notesZh": "宿舍派生副本不得作为业务事实权威，唯一 Source 是 dormitory-operating-kernel.json。"
+    },
+    {
+      "path": "docs/business/dormitory/evidence-coverage-contract.yml",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "upstreamSource": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "deletionRisk": "medium",
+      "notesZh": "宿舍派生副本不得作为业务事实权威，唯一 Source 是 dormitory-operating-kernel.json。"
+    },
+    {
+      "path": "docs/business/dormitory/evidence-policy.yml",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "upstreamSource": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "deletionRisk": "medium",
+      "notesZh": "宿舍派生副本不得作为业务事实权威，唯一 Source 是 dormitory-operating-kernel.json。"
+    },
+    {
+      "path": "docs/business/dormitory/evidence-requirements.yml",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "upstreamSource": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "deletionRisk": "medium",
+      "notesZh": "宿舍派生副本不得作为业务事实权威，唯一 Source 是 dormitory-operating-kernel.json。"
+    },
+    {
+      "path": "docs/business/dormitory/finance-control-rules.yml",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "upstreamSource": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "deletionRisk": "medium",
+      "notesZh": "宿舍派生副本不得作为业务事实权威，唯一 Source 是 dormitory-operating-kernel.json。"
+    },
+    {
+      "path": "docs/business/dormitory/go-no-go.yml",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "upstreamSource": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "deletionRisk": "medium",
+      "notesZh": "宿舍派生副本不得作为业务事实权威，唯一 Source 是 dormitory-operating-kernel.json。"
+    },
+    {
+      "path": "docs/business/dormitory/ledger-posting-contract.yml",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "upstreamSource": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "deletionRisk": "medium",
+      "notesZh": "宿舍派生副本不得作为业务事实权威，唯一 Source 是 dormitory-operating-kernel.json。"
+    },
+    {
+      "path": "docs/business/dormitory/lens-map.yml",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "upstreamSource": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "deletionRisk": "medium",
+      "notesZh": "宿舍派生副本不得作为业务事实权威，唯一 Source 是 dormitory-operating-kernel.json。"
+    },
+    {
+      "path": "docs/business/dormitory/metric-formula-contract.yml",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "upstreamSource": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "deletionRisk": "medium",
+      "notesZh": "宿舍派生副本不得作为业务事实权威，唯一 Source 是 dormitory-operating-kernel.json。"
+    },
+    {
+      "path": "docs/business/dormitory/metrics-tree.yml",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "upstreamSource": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "deletionRisk": "medium",
+      "notesZh": "宿舍派生副本不得作为业务事实权威，唯一 Source 是 dormitory-operating-kernel.json。"
+    },
+    {
+      "path": "docs/business/dormitory/north-star.md",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "upstreamSource": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "deletionRisk": "medium",
+      "notesZh": "宿舍派生副本不得作为业务事实权威，唯一 Source 是 dormitory-operating-kernel.json。"
+    },
+    {
+      "path": "docs/business/dormitory/pilot-go-no-go.md",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "upstreamSource": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "deletionRisk": "medium",
+      "notesZh": "宿舍派生副本不得作为业务事实权威，唯一 Source 是 dormitory-operating-kernel.json。"
+    },
+    {
+      "path": "docs/business/dormitory/risk-command-rules.yml",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "upstreamSource": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "deletionRisk": "medium",
+      "notesZh": "宿舍派生副本不得作为业务事实权威，唯一 Source 是 dormitory-operating-kernel.json。"
+    },
+    {
+      "path": "docs/business/dormitory/scenario-field-contract.yml",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "upstreamSource": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "deletionRisk": "medium",
+      "notesZh": "宿舍派生副本不得作为业务事实权威，唯一 Source 是 dormitory-operating-kernel.json。"
+    },
+    {
+      "path": "docs/business/dormitory/scenario-result-semantics.json",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "upstreamSource": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "deletionRisk": "medium",
+      "notesZh": "宿舍派生副本不得作为业务事实权威，唯一 Source 是 dormitory-operating-kernel.json。"
+    },
+    {
+      "path": "docs/business/dormitory/value-streams.yml",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "upstreamSource": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "deletionRisk": "medium",
+      "notesZh": "宿舍派生副本不得作为业务事实权威，唯一 Source 是 dormitory-operating-kernel.json。"
+    },
+    {
+      "path": "docs/business/dormitory/workitem-catalog.yml",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "upstreamSource": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "deletionRisk": "medium",
+      "notesZh": "宿舍派生副本不得作为业务事实权威，唯一 Source 是 dormitory-operating-kernel.json。"
+    },
+    {
+      "path": "docs/business/dormitory/workitem-decision-table.json",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "upstreamSource": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "deletionRisk": "medium",
+      "notesZh": "宿舍派生副本不得作为业务事实权威，唯一 Source 是 dormitory-operating-kernel.json。"
+    },
+    {
+      "path": "docs/business/dormitory/workitem-raci.yml",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "upstreamSource": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "deletionRisk": "medium",
+      "notesZh": "宿舍派生副本不得作为业务事实权威，唯一 Source 是 dormitory-operating-kernel.json。"
+    },
+    {
+      "path": "docs/business/dormitory/workitem-sla.yml",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "upstreamSource": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "deletionRisk": "medium",
+      "notesZh": "宿舍派生副本不得作为业务事实权威，唯一 Source 是 dormitory-operating-kernel.json。"
+    },
+    {
+      "path": "docs/contracts/accommodation-lens-contract.json",
+      "recommendedAction": "downgrade_to_generated",
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "deletionRisk": "medium",
+      "notesZh": "文件带派生或生成标记，不能作为 Source 业务事实权威。"
+    },
+    {
+      "path": "docs/contracts/admission/actor-device-admission-contract.json",
+      "recommendedAction": "downgrade_to_generated",
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "deletionRisk": "medium",
+      "notesZh": "文件带派生或生成标记，不能作为 Source 业务事实权威。"
+    },
+    {
+      "path": "docs/contracts/admission/admission-contract.json",
+      "recommendedAction": "downgrade_to_generated",
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "deletionRisk": "medium",
+      "notesZh": "文件带派生或生成标记，不能作为 Source 业务事实权威。"
+    },
+    {
+      "path": "docs/contracts/admission/admission-matrix.json",
+      "recommendedAction": "downgrade_to_generated",
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "deletionRisk": "medium",
+      "notesZh": "文件带派生或生成标记，不能作为 Source 业务事实权威。"
+    },
+    {
+      "path": "docs/contracts/admission/admission-sources.json",
+      "recommendedAction": "downgrade_to_generated",
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "deletionRisk": "medium",
+      "notesZh": "文件带派生或生成标记，不能作为 Source 业务事实权威。"
+    },
+    {
+      "path": "docs/contracts/admission/production-admission-contract.json",
+      "recommendedAction": "downgrade_to_generated",
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "deletionRisk": "medium",
+      "notesZh": "文件带派生或生成标记，不能作为 Source 业务事实权威。"
+    },
+    {
+      "path": "docs/contracts/authority/master-design.contract.json",
+      "recommendedAction": "downgrade_to_generated_authority_view+review_old_term_fence_or_remove",
+      "upstreamSource": "docs/oam/current-architecture.md",
+      "deletionRisk": "medium",
+      "notesZh": "该 authority contract 只能作为生成视图或迁移证明，唯一事实需吸收到现有 Source。 旧词已纳入审计，必须由受控 fence、ADR 或明确迁移证明约束，不能解释为当前业务事实权威。"
+    },
+    {
+      "path": "docs/contracts/authority/master-outline.contract.json",
+      "recommendedAction": "downgrade_to_generated_authority_view",
+      "upstreamSource": "docs/oam/current-architecture.md",
+      "deletionRisk": "medium",
+      "notesZh": "该 authority contract 只能作为生成视图或迁移证明，唯一事实需吸收到现有 Source。"
+    },
+    {
+      "path": "docs/contracts/authority/truth-ownership-matrix.contract.json",
+      "recommendedAction": "downgrade_to_generated_authority_view",
+      "upstreamSource": "docs/oam/current-architecture.md",
+      "deletionRisk": "medium",
+      "notesZh": "该 authority contract 只能作为生成视图或迁移证明，唯一事实需吸收到现有 Source。"
+    },
+    {
+      "path": "docs/contracts/bi-kpi/bi-kpi-contract.json",
+      "recommendedAction": "keep_as_read_or_metric_contract",
+      "upstreamSource": "docs/read-intelligence/read-intelligence-kernel.json",
+      "deletionRisk": "medium",
+      "notesZh": "读侧、搜索和 BI-KPI 合同只能支持读取、展示和指标，不得拥有业务事实写权。"
+    },
+    {
+      "path": "docs/contracts/bi-kpi/dashboard-contract.json",
+      "recommendedAction": "keep_as_read_or_metric_contract",
+      "upstreamSource": "docs/read-intelligence/read-intelligence-kernel.json",
+      "deletionRisk": "medium",
+      "notesZh": "读侧、搜索和 BI-KPI 合同只能支持读取、展示和指标，不得拥有业务事实写权。"
+    },
+    {
+      "path": "docs/contracts/bi-kpi/dimension-contract.json",
+      "recommendedAction": "keep_as_read_or_metric_contract",
+      "upstreamSource": "docs/read-intelligence/read-intelligence-kernel.json",
+      "deletionRisk": "medium",
+      "notesZh": "读侧、搜索和 BI-KPI 合同只能支持读取、展示和指标，不得拥有业务事实写权。"
+    },
+    {
+      "path": "docs/contracts/bi-kpi/freshness-contract.json",
+      "recommendedAction": "keep_as_read_or_metric_contract",
+      "upstreamSource": "docs/read-intelligence/read-intelligence-kernel.json",
+      "deletionRisk": "medium",
+      "notesZh": "读侧、搜索和 BI-KPI 合同只能支持读取、展示和指标，不得拥有业务事实写权。"
+    },
+    {
+      "path": "docs/contracts/bi-kpi/lineage-contract.json",
+      "recommendedAction": "keep_as_read_or_metric_contract",
+      "upstreamSource": "docs/read-intelligence/read-intelligence-kernel.json",
+      "deletionRisk": "medium",
+      "notesZh": "读侧、搜索和 BI-KPI 合同只能支持读取、展示和指标，不得拥有业务事实写权。"
+    },
+    {
+      "path": "docs/contracts/bi-kpi/metric-registry.contract.json",
+      "recommendedAction": "keep_as_read_or_metric_contract",
+      "upstreamSource": "docs/read-intelligence/read-intelligence-kernel.json",
+      "deletionRisk": "medium",
+      "notesZh": "读侧、搜索和 BI-KPI 合同只能支持读取、展示和指标，不得拥有业务事实写权。"
+    },
+    {
+      "path": "docs/contracts/bi-kpi/permission-contract.json",
+      "recommendedAction": "keep_as_read_or_metric_contract",
+      "upstreamSource": "docs/read-intelligence/read-intelligence-kernel.json",
+      "deletionRisk": "medium",
+      "notesZh": "读侧、搜索和 BI-KPI 合同只能支持读取、展示和指标，不得拥有业务事实写权。"
+    },
+    {
+      "path": "docs/contracts/bi-kpi/report-contract.json",
+      "recommendedAction": "keep_as_read_or_metric_contract",
+      "upstreamSource": "docs/read-intelligence/read-intelligence-kernel.json",
+      "deletionRisk": "medium",
+      "notesZh": "读侧、搜索和 BI-KPI 合同只能支持读取、展示和指标，不得拥有业务事实写权。"
+    },
+    {
+      "path": "docs/contracts/bi-kpi/sla-clock-contract.json",
+      "recommendedAction": "keep_as_read_or_metric_contract",
+      "upstreamSource": "docs/read-intelligence/read-intelligence-kernel.json",
+      "deletionRisk": "medium",
+      "notesZh": "读侧、搜索和 BI-KPI 合同只能支持读取、展示和指标，不得拥有业务事实写权。"
+    },
+    {
+      "path": "docs/contracts/business/oam-business-object-field-registry.json",
+      "recommendedAction": "downgrade_to_generated_contract",
+      "upstreamSource": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "deletionRisk": "medium",
+      "notesZh": "业务对象、流程、定义和引用合同只能作为生成合同，不得作为 Source 业务事实权威。"
+    },
+    {
+      "path": "docs/contracts/business/oam-workflow-state-registry.json",
+      "recommendedAction": "downgrade_to_generated_contract",
+      "upstreamSource": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "deletionRisk": "medium",
+      "notesZh": "业务对象、流程、定义和引用合同只能作为生成合同，不得作为 Source 业务事实权威。"
+    },
+    {
+      "path": "docs/contracts/definition/definition-compatibility-fence.json",
+      "recommendedAction": "downgrade_to_generated_contract",
+      "upstreamSource": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "deletionRisk": "medium",
+      "notesZh": "业务对象、流程、定义和引用合同只能作为生成合同，不得作为 Source 业务事实权威。"
+    },
+    {
+      "path": "docs/contracts/definition/evidence-policy-refs.json",
+      "recommendedAction": "downgrade_to_generated_contract",
+      "upstreamSource": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "deletionRisk": "medium",
+      "notesZh": "业务对象、流程、定义和引用合同只能作为生成合同，不得作为 Source 业务事实权威。"
+    },
+    {
+      "path": "docs/contracts/definition/field-contract-refs.json",
+      "recommendedAction": "downgrade_to_generated_contract",
+      "upstreamSource": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "deletionRisk": "medium",
+      "notesZh": "业务对象、流程、定义和引用合同只能作为生成合同，不得作为 Source 业务事实权威。"
+    },
+    {
+      "path": "docs/contracts/definition/ledger-policy-refs.json",
+      "recommendedAction": "downgrade_to_generated_contract",
+      "upstreamSource": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "deletionRisk": "medium",
+      "notesZh": "业务对象、流程、定义和引用合同只能作为生成合同，不得作为 Source 业务事实权威。"
+    },
+    {
+      "path": "docs/contracts/definition/risk-policy-refs.json",
+      "recommendedAction": "downgrade_to_generated_contract",
+      "upstreamSource": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "deletionRisk": "medium",
+      "notesZh": "业务对象、流程、定义和引用合同只能作为生成合同，不得作为 Source 业务事实权威。"
+    },
+    {
+      "path": "docs/contracts/definition/step-dependency-contract.json",
+      "recommendedAction": "downgrade_to_generated_contract",
+      "upstreamSource": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "deletionRisk": "medium",
+      "notesZh": "业务对象、流程、定义和引用合同只能作为生成合同，不得作为 Source 业务事实权威。"
+    },
+    {
+      "path": "docs/contracts/definition/workitem-definition-registry.json",
+      "recommendedAction": "downgrade_to_generated_contract",
+      "upstreamSource": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "deletionRisk": "medium",
+      "notesZh": "业务对象、流程、定义和引用合同只能作为生成合同，不得作为 Source 业务事实权威。"
+    },
+    {
+      "path": "docs/contracts/evidence/evidence-graph-refs-contract.json",
+      "authorityRole": "generatedContract",
+      "generatedFrom": [
+        "docs/oam/system-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "businessFactAuthorityAllowed": false,
+      "currentTruthAllowed": false
+    },
+    {
+      "path": "docs/contracts/generated/dormitory/dormitory-kernel.generated.manifest.json",
+      "recommendedAction": "downgrade_to_generated",
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "deletionRisk": "medium",
+      "notesZh": "文件带派生或生成标记，不能作为 Source 业务事实权威。"
+    },
+    {
+      "path": "docs/contracts/generated/dormitory/fields.generated.json",
+      "recommendedAction": "downgrade_to_generated",
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "deletionRisk": "medium",
+      "notesZh": "文件带派生或生成标记，不能作为 Source 业务事实权威。"
+    },
+    {
+      "path": "docs/contracts/generated/dormitory/read-model.generated.json",
+      "recommendedAction": "downgrade_to_generated+review_old_term_fence_or_remove",
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "deletionRisk": "medium",
+      "notesZh": "文件带派生或生成标记，不能作为 Source 业务事实权威。 旧词已纳入审计，必须由受控 fence、ADR 或明确迁移证明约束，不能解释为当前业务事实权威。"
+    },
+    {
+      "path": "docs/contracts/generated/dormitory/surface-input-model.generated.json",
+      "recommendedAction": "downgrade_to_generated",
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "deletionRisk": "medium",
+      "notesZh": "文件带派生或生成标记，不能作为 Source 业务事实权威。"
+    },
+    {
+      "path": "docs/contracts/generated/dormitory/workitems.generated.json",
+      "recommendedAction": "downgrade_to_generated",
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "deletionRisk": "medium",
+      "notesZh": "文件带派生或生成标记，不能作为 Source 业务事实权威。"
+    },
+    {
+      "path": "docs/contracts/governance/business-signoff-contract.json",
+      "recommendedAction": "downgrade_to_generated",
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "deletionRisk": "medium",
+      "notesZh": "文件带派生或生成标记，不能作为 Source 业务事实权威。"
+    },
+    {
+      "path": "docs/contracts/language/domain-term-catalog.json",
+      "recommendedAction": "downgrade_to_generated",
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "deletionRisk": "medium",
+      "notesZh": "文件带派生或生成标记，不能作为 Source 业务事实权威。"
+    },
+    {
+      "path": "docs/contracts/language/error-code-copy.json",
+      "recommendedAction": "downgrade_to_generated",
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "deletionRisk": "medium",
+      "notesZh": "文件带派生或生成标记，不能作为 Source 业务事实权威。"
+    },
+    {
+      "path": "docs/contracts/language/field-label-catalog.json",
+      "recommendedAction": "downgrade_to_generated",
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "deletionRisk": "medium",
+      "notesZh": "文件带派生或生成标记，不能作为 Source 业务事实权威。"
+    },
+    {
+      "path": "docs/contracts/language/search-synonyms.json",
+      "recommendedAction": "downgrade_to_generated",
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "deletionRisk": "medium",
+      "notesZh": "文件带派生或生成标记，不能作为 Source 业务事实权威。"
+    },
+    {
+      "path": "docs/contracts/language/surface-copy-catalog.json",
+      "recommendedAction": "downgrade_to_generated",
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "deletionRisk": "medium",
+      "notesZh": "文件带派生或生成标记，不能作为 Source 业务事实权威。"
+    },
+    {
+      "path": "docs/contracts/operations-command-submission-context.json",
+      "recommendedAction": "downgrade_to_generated",
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "deletionRisk": "medium",
+      "notesZh": "文件带派生或生成标记，不能作为 Source 业务事实权威。"
+    },
+    {
+      "path": "docs/contracts/period-analytics-contract.json",
+      "recommendedAction": "downgrade_to_generated",
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "deletionRisk": "medium",
+      "notesZh": "文件带派生或生成标记，不能作为 Source 业务事实权威。"
+    },
+    {
+      "path": "docs/contracts/read/freshness-envelope.schema.json",
+      "recommendedAction": "keep_as_read_or_metric_contract",
+      "upstreamSource": "docs/read-intelligence/read-intelligence-kernel.json",
+      "deletionRisk": "medium",
+      "notesZh": "读侧、搜索和 BI-KPI 合同只能支持读取、展示和指标，不得拥有业务事实写权。"
+    },
+    {
+      "path": "docs/contracts/read/lens-read-model.schema.json",
+      "recommendedAction": "keep_as_read_or_metric_contract",
+      "upstreamSource": "docs/read-intelligence/read-intelligence-kernel.json",
+      "deletionRisk": "medium",
+      "notesZh": "读侧、搜索和 BI-KPI 合同只能支持读取、展示和指标，不得拥有业务事实写权。"
+    },
+    {
+      "path": "docs/contracts/read/lineage-envelope.schema.json",
+      "recommendedAction": "keep_as_read_or_metric_contract",
+      "upstreamSource": "docs/read-intelligence/read-intelligence-kernel.json",
+      "deletionRisk": "medium",
+      "notesZh": "读侧、搜索和 BI-KPI 合同只能支持读取、展示和指标，不得拥有业务事实写权。"
+    },
+    {
+      "path": "docs/contracts/read/oam-object-envelope.schema.json",
+      "recommendedAction": "keep_as_read_or_metric_contract",
+      "upstreamSource": "docs/read-intelligence/read-intelligence-kernel.json",
+      "deletionRisk": "medium",
+      "notesZh": "读侧、搜索和 BI-KPI 合同只能支持读取、展示和指标，不得拥有业务事实写权。"
+    },
+    {
+      "path": "docs/contracts/read/permission-envelope.schema.json",
+      "recommendedAction": "keep_as_read_or_metric_contract",
+      "upstreamSource": "docs/read-intelligence/read-intelligence-kernel.json",
+      "deletionRisk": "medium",
+      "notesZh": "读侧、搜索和 BI-KPI 合同只能支持读取、展示和指标，不得拥有业务事实写权。"
+    },
+    {
+      "path": "docs/contracts/read/read-model-owner-registry.json",
+      "recommendedAction": "keep_as_read_or_metric_contract+review_old_term_fence_or_remove",
+      "upstreamSource": "docs/read-intelligence/read-intelligence-kernel.json",
+      "deletionRisk": "medium",
+      "notesZh": "读侧、搜索和 BI-KPI 合同只能支持读取、展示和指标，不得拥有业务事实写权。 旧词已纳入审计，必须由受控 fence、ADR 或明确迁移证明约束，不能解释为当前业务事实权威。"
+    },
+    {
+      "path": "docs/contracts/read/search-index-record.schema.json",
+      "recommendedAction": "keep_as_read_or_metric_contract",
+      "upstreamSource": "docs/read-intelligence/read-intelligence-kernel.json",
+      "deletionRisk": "medium",
+      "notesZh": "读侧、搜索和 BI-KPI 合同只能支持读取、展示和指标，不得拥有业务事实写权。"
+    },
+    {
+      "path": "docs/contracts/read/search-result-envelope.schema.json",
+      "recommendedAction": "keep_as_read_or_metric_contract+review_old_term_fence_or_remove",
+      "upstreamSource": "docs/read-intelligence/read-intelligence-kernel.json",
+      "deletionRisk": "medium",
+      "notesZh": "读侧、搜索和 BI-KPI 合同只能支持读取、展示和指标，不得拥有业务事实写权。 旧词已纳入审计，必须由受控 fence、ADR 或明确迁移证明约束，不能解释为当前业务事实权威。"
+    },
+    {
+      "path": "docs/contracts/search/search-contract.json",
+      "recommendedAction": "keep_as_read_or_metric_contract",
+      "upstreamSource": "docs/read-intelligence/read-intelligence-kernel.json",
+      "deletionRisk": "medium",
+      "notesZh": "读侧、搜索和 BI-KPI 合同只能支持读取、展示和指标，不得拥有业务事实写权。"
+    },
+    {
+      "path": "docs/contracts/search/search-index-sources.json",
+      "recommendedAction": "keep_as_read_or_metric_contract",
+      "upstreamSource": "docs/read-intelligence/read-intelligence-kernel.json",
+      "deletionRisk": "medium",
+      "notesZh": "读侧、搜索和 BI-KPI 合同只能支持读取、展示和指标，不得拥有业务事实写权。"
+    },
+    {
+      "path": "docs/contracts/search/search-permission-policy.json",
+      "recommendedAction": "keep_as_read_or_metric_contract",
+      "upstreamSource": "docs/read-intelligence/read-intelligence-kernel.json",
+      "deletionRisk": "medium",
+      "notesZh": "读侧、搜索和 BI-KPI 合同只能支持读取、展示和指标，不得拥有业务事实写权。"
+    },
+    {
+      "path": "docs/contracts/search/search-ranking-policy.json",
+      "recommendedAction": "keep_as_read_or_metric_contract",
+      "upstreamSource": "docs/read-intelligence/read-intelligence-kernel.json",
+      "deletionRisk": "medium",
+      "notesZh": "读侧、搜索和 BI-KPI 合同只能支持读取、展示和指标，不得拥有业务事实写权。"
+    },
+    {
+      "path": "docs/contracts/search/search-result-schema.json",
+      "recommendedAction": "keep_as_read_or_metric_contract+review_old_term_fence_or_remove",
+      "upstreamSource": "docs/read-intelligence/read-intelligence-kernel.json",
+      "deletionRisk": "medium",
+      "notesZh": "读侧、搜索和 BI-KPI 合同只能支持读取、展示和指标，不得拥有业务事实写权。 旧词已纳入审计，必须由受控 fence、ADR 或明确迁移证明约束，不能解释为当前业务事实权威。"
+    },
+    {
+      "path": "docs/oam/domain-derived-contracts.json",
+      "recommendedAction": "downgrade_to_generated",
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "deletionRisk": "medium",
+      "notesZh": "文件带派生或生成标记，不能作为 Source 业务事实权威。"
+    },
+    {
+      "path": "docs/oam/generated-contracts-manifest.json",
+      "recommendedAction": "downgrade_to_generated",
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "deletionRisk": "medium",
+      "notesZh": "文件带派生或生成标记，不能作为 Source 业务事实权威。"
+    },
+    {
+      "path": "docs/oam/kernel/oam-kernel-graph.generated.json",
+      "recommendedAction": "downgrade_to_generated",
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "deletionRisk": "medium",
+      "notesZh": "文件带派生或生成标记，不能作为 Source 业务事实权威。"
+    },
+    {
+      "path": "docs/oam/mobile-branch-risk-ledger.json",
+      "recommendedAction": "downgrade_to_generated",
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "deletionRisk": "medium",
+      "notesZh": "文件带派生或生成标记，不能作为 Source 业务事实权威。"
+    },
+    {
+      "path": "docs/oam/system-derived-contracts.json",
+      "recommendedAction": "downgrade_to_generated",
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "deletionRisk": "medium",
+      "notesZh": "文件带派生或生成标记，不能作为 Source 业务事实权威。"
+    },
+    {
+      "path": "docs/scenarios/dormitory/golden-pilot.yml",
+      "recommendedAction": "downgrade_to_generated",
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "deletionRisk": "medium",
+      "notesZh": "文件带派生或生成标记，不能作为 Source 业务事实权威。"
+    },
+    {
+      "path": "docs/system/current-system-map.md",
+      "authorityRole": "generatedContract",
+      "generatedFrom": [
+        "docs/oam/system-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "businessFactAuthorityAllowed": false,
+      "currentTruthAllowed": false
+    },
+    {
+      "path": "scripts/business/check-dormitory-derived-contracts.mjs",
+      "recommendedAction": "downgrade_to_generated",
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "deletionRisk": "medium",
+      "notesZh": "文件带派生或生成标记，不能作为 Source 业务事实权威。"
+    },
+    {
+      "path": "scripts/business/check-dormitory-metrics-lens-contract.mjs",
+      "recommendedAction": "downgrade_to_generated",
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "deletionRisk": "medium",
+      "notesZh": "文件带派生或生成标记，不能作为 Source 业务事实权威。"
+    },
+    {
+      "path": "scripts/business/check-dormitory-pilot-scenario-pack.mjs",
+      "recommendedAction": "downgrade_to_generated",
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "deletionRisk": "medium",
+      "notesZh": "文件带派生或生成标记，不能作为 Source 业务事实权威。"
+    },
+    {
+      "path": "scripts/business/check-dormitory-release-train.mjs",
+      "recommendedAction": "downgrade_to_generated",
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "deletionRisk": "medium",
+      "notesZh": "文件带派生或生成标记，不能作为 Source 业务事实权威。"
+    },
+    {
+      "path": "scripts/business/generate-dormitory-derived-contracts.mjs",
+      "recommendedAction": "downgrade_to_generated",
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "deletionRisk": "medium",
+      "notesZh": "文件带派生或生成标记，不能作为 Source 业务事实权威。"
+    },
+    {
+      "path": "scripts/check-dormitory-golden-domain.mjs",
+      "recommendedAction": "downgrade_to_generated",
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "deletionRisk": "medium",
+      "notesZh": "文件带派生或生成标记，不能作为 Source 业务事实权威。"
+    },
+    {
+      "path": "scripts/check-experience-contract.mjs",
+      "recommendedAction": "downgrade_to_generated",
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "deletionRisk": "medium",
+      "notesZh": "文件带派生或生成标记，不能作为 Source 业务事实权威。"
+    },
+    {
+      "path": "scripts/generate-contract-dtos.mjs",
+      "recommendedAction": "downgrade_to_generated",
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "deletionRisk": "medium",
+      "notesZh": "文件带派生或生成标记，不能作为 Source 业务事实权威。"
+    },
+    {
+      "path": "scripts/oam/check-authority-cleanup-mutation-tests.mjs",
+      "recommendedAction": "downgrade_to_generated",
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "deletionRisk": "medium",
+      "notesZh": "文件带派生或生成标记，不能作为 Source 业务事实权威。"
+    },
+    {
+      "path": "scripts/oam/check-cross-domain-conflict-rules.mjs",
+      "recommendedAction": "downgrade_to_generated",
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "deletionRisk": "medium",
+      "notesZh": "文件带派生或生成标记，不能作为 Source 业务事实权威。"
+    },
+    {
+      "path": "scripts/oam/check-current-authority-index.mjs",
+      "recommendedAction": "downgrade_to_generated",
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "deletionRisk": "medium",
+      "notesZh": "文件带派生或生成标记，不能作为 Source 业务事实权威。"
+    },
+    {
+      "path": "scripts/oam/check-derived-contract-consistency.mjs",
+      "recommendedAction": "downgrade_to_generated",
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "deletionRisk": "medium",
+      "notesZh": "文件带派生或生成标记，不能作为 Source 业务事实权威。"
+    },
+    {
+      "path": "scripts/oam/check-file-lifecycle-policy.mjs",
+      "recommendedAction": "downgrade_to_generated",
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "deletionRisk": "medium",
+      "notesZh": "文件带派生或生成标记，不能作为 Source 业务事实权威。"
+    },
+    {
+      "path": "scripts/oam/check-generated-contract-consistency.mjs",
+      "recommendedAction": "downgrade_to_generated",
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "deletionRisk": "medium",
+      "notesZh": "文件带派生或生成标记，不能作为 Source 业务事实权威。"
+    },
+    {
+      "path": "scripts/oam/check-kernel-responsibility-map.mjs",
+      "recommendedAction": "downgrade_to_generated+review_old_term_fence_or_remove",
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "deletionRisk": "medium",
+      "notesZh": "文件带派生或生成标记，不能作为 Source 业务事实权威。 旧词已纳入审计，必须由受控 fence、ADR 或明确迁移证明约束，不能解释为当前业务事实权威。"
+    },
+    {
+      "path": "scripts/oam/check-mobile-coverage-policy.mjs",
+      "recommendedAction": "downgrade_to_generated",
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "deletionRisk": "medium",
+      "notesZh": "文件带派生或生成标记，不能作为 Source 业务事实权威。"
+    },
+    {
+      "path": "scripts/oam/check-oam-kernel-graph.mjs",
+      "recommendedAction": "downgrade_to_generated",
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "deletionRisk": "medium",
+      "notesZh": "文件带派生或生成标记，不能作为 Source 业务事实权威。"
+    },
+    {
+      "path": "scripts/oam/check-surface-language-v2.mjs",
+      "recommendedAction": "downgrade_to_generated",
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "deletionRisk": "medium",
+      "notesZh": "文件带派生或生成标记，不能作为 Source 业务事实权威。"
+    },
+    {
+      "path": "scripts/oam/compile-current-kernel-graph.mjs",
+      "recommendedAction": "downgrade_to_generated+review_old_term_fence_or_remove",
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "deletionRisk": "medium",
+      "notesZh": "文件带派生或生成标记，不能作为 Source 业务事实权威。 旧词已纳入审计，必须由受控 fence、ADR 或明确迁移证明约束，不能解释为当前业务事实权威。"
+    },
+    {
+      "path": "scripts/oam/generate-authority-source-layer-audit.mjs",
+      "recommendedAction": "downgrade_to_generated+review_old_term_fence_or_remove",
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "deletionRisk": "medium",
+      "notesZh": "文件带派生或生成标记，不能作为 Source 业务事实权威。 旧词已纳入审计，必须由受控 fence、ADR 或明确迁移证明约束，不能解释为当前业务事实权威。"
+    },
+    {
+      "path": "scripts/oam/generate-mobile-branch-risk-ledger.mjs",
+      "recommendedAction": "downgrade_to_generated",
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "deletionRisk": "medium",
+      "notesZh": "文件带派生或生成标记，不能作为 Source 业务事实权威。"
+    },
+    {
+      "path": "scripts/oam/generate-system-derived-contracts.mjs",
+      "recommendedAction": "downgrade_to_generated",
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "deletionRisk": "medium",
+      "notesZh": "文件带派生或生成标记，不能作为 Source 业务事实权威。"
+    },
+    {
+      "path": "scripts/oam/normalize-authority-classification.mjs",
+      "recommendedAction": "downgrade_to_generated",
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "deletionRisk": "medium",
+      "notesZh": "文件带派生或生成标记，不能作为 Source 业务事实权威。"
+    },
+    {
+      "path": "scripts/surface/check-dormitory-ten-scenario-real-browser-audit.mjs",
+      "recommendedAction": "downgrade_to_generated",
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "deletionRisk": "medium",
+      "notesZh": "文件带派生或生成标记，不能作为 Source 业务事实权威。"
+    },
+    {
+      "path": "scripts/surface/check-experience-envelope-not-fact-source.mjs",
+      "recommendedAction": "downgrade_to_generated",
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "deletionRisk": "medium",
+      "notesZh": "文件带派生或生成标记，不能作为 Source 业务事实权威。"
+    },
+    {
+      "path": "scripts/surface/check-experience-module-productization.mjs",
+      "recommendedAction": "downgrade_to_generated",
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "deletionRisk": "medium",
+      "notesZh": "文件带派生或生成标记，不能作为 Source 业务事实权威。"
+    },
+    {
+      "path": "scripts/surface/check-mobile-work-shell.mjs",
+      "recommendedAction": "downgrade_to_generated",
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "deletionRisk": "medium",
+      "notesZh": "文件带派生或生成标记，不能作为 Source 业务事实权威。"
+    },
+    {
+      "path": "scripts/surface/check-pc-desktop-shell.mjs",
+      "recommendedAction": "downgrade_to_generated",
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "deletionRisk": "medium",
+      "notesZh": "文件带派生或生成标记，不能作为 Source 业务事实权威。"
+    },
+    {
+      "path": "scripts/surface/check-user-facing-surface-copy.mjs",
+      "recommendedAction": "downgrade_to_generated",
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "deletionRisk": "medium",
+      "notesZh": "文件带派生或生成标记，不能作为 Source 业务事实权威。"
+    },
+    {
+      "path": "scripts/surface/check-view-model-contract.mjs",
+      "recommendedAction": "downgrade_to_generated",
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "deletionRisk": "medium",
+      "notesZh": "文件带派生或生成标记，不能作为 Source 业务事实权威。"
+    },
+    {
+      "path": "scripts/surface/run-dormitory-scenario-journey-snapshots.mjs",
+      "recommendedAction": "downgrade_to_generated",
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "deletionRisk": "medium",
+      "notesZh": "文件带派生或生成标记，不能作为 Source 业务事实权威。"
+    },
+    {
+      "path": "services/core-api/WorkOS.Api/Slices/Accommodation/PeriodAnalytics/Persistence/PeriodAnalyticsStorage.cs",
+      "recommendedAction": "downgrade_to_generated",
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "deletionRisk": "medium",
+      "notesZh": "文件带派生或生成标记，不能作为 Source 业务事实权威。"
+    },
+    {
+      "path": "tools/control-plane/WorkOS.ControlPlaneRunners/ControlPlaneDatabase.cs",
+      "recommendedAction": "downgrade_to_generated",
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "deletionRisk": "medium",
+      "notesZh": "文件带派生或生成标记，不能作为 Source 业务事实权威。"
+    }
+  ],
+  "deletedFiles": [],
+  "deletionPolicyZh": "本轮未直接删除文件；凡仍有消费者、证据强引用或门禁引用的文件均先降级并保留，待消费者迁移和删除证明闭环后再删。",
+  "absorbedFacts": [
+    {
+      "sourceView": "docs/contracts/authority/master-design.contract.json",
+      "absorbedBy": "docs/oam/current-architecture.md",
+      "notesZh": "确认顺序、NO_GO 锁和变更边界已由当前架构与运行门禁承接；该文件降级为 generated authority view。"
+    },
+    {
+      "sourceView": "docs/contracts/authority/master-outline.contract.json",
+      "absorbedBy": "docs/oam/current-architecture.md",
+      "notesZh": "业务阶段、NO_GO 和准入边界由当前架构、准入状态和业务线等级承接。"
+    },
+    {
+      "sourceView": "docs/contracts/authority/truth-ownership-matrix.contract.json",
+      "absorbedBy": "docs/business/truth-owner-registry.yml",
+      "notesZh": "事实 owner 与 finance truth chain 由 truth-owner registry 和 finance-ledger-kernel 承接。"
+    },
+    {
+      "sourceView": "docs/business/domains/dormitory/domain-pack.yml / handoff / workitems / golden-pilot",
+      "absorbedBy": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "notesZh": "宿舍唯一 Source 收缩到 dormitory-operating-kernel.json，其余为领域派生视图。"
+    },
+    {
+      "sourceView": "docs/contracts/business/* 与 docs/contracts/definition/*",
+      "absorbedBy": "docs/oam/generated-contracts-manifest.json",
+      "notesZh": "业务对象、流程状态、Definition registry 降级为 generated contracts，不拥有业务事实写权。"
+    }
+  ],
+  "retainedButNotBusinessFactAuthority": [
+    {
+      "path": ".github/workflows/ci.yml",
+      "targetLayer": "manual",
+      "recommendedAction": "keep_non_authority_manual+review_old_term_fence_or_remove",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "apps/mobile/src/__tests__/BusinessTechnicalLayeringContract.test.js",
+      "targetLayer": "manual",
+      "recommendedAction": "keep_non_authority_manual+review_old_term_fence_or_remove",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "apps/mobile/src/__tests__/OperationControllerHardeningMatrix.test.js",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "apps/mobile/src/__tests__/OperationPanelRuntimeContract.test.js",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "apps/mobile/src/__tests__/OperationRouteIdentityContract.test.js",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "apps/mobile/src/__tests__/releaseControlView.test.js",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "apps/mobile/src/controls/fieldControls.js",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "apps/mobile/src/fieldSourceRenderer.js",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "apps/mobile/src/generated/oam/dormitory-surface-input-model.generated.json",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "apps/mobile/src/operationController.js",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "apps/mobile/src/systemContextContract.js",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "apps/mobile/src/views/experienceComponents.js",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "apps/mobile/src/views/releaseControlView.js",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "apps/mobile/src/views/workspaceView.js",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/business/domains/dormitory/domain-pack.yml",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/business/domains/dormitory/dormitory-observability-contract.json",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/business/domains/dormitory/dormitory-pilot-go-no-go.json",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/business/domains/dormitory/dormitory-pilot-scenario-pack.yml",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/business/domains/dormitory/dormitory-release-train.yml",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/business/domains/dormitory/dormitory-seed-data-pack.json",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/business/domains/dormitory/handoff-contract.json",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/dorm-access-credential-issue.json",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/dorm-access-credential-revoke.json",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/dorm-bed-setup-confirm.json",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/dorm-bed-transfer-approve.json",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/dorm-checkin-confirm.json",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/dorm-checkout-settlement-approve.json",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/dorm-deposit-confirm.json",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/dorm-exception-resolve.json",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/dorm-incident-record.json",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/dorm-lead-capture.json",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/dorm-payment-confirm.json",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/dorm-period-action-plan-execute.json",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/dorm-period-review.json",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/dorm-rate-plan-confirm.json",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/dorm-reservation-cancel-close.json",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/dorm-reservation-confirm.json",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/dorm-reservation-no-show-close.json",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/dorm-resource-readiness-confirm.json",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/dorm-room-inspection-confirm.json",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/dorm-room-setup-confirm.json",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/dorm-service-task-assign.json",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/dorm-service-task-complete.json",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/dorm-service-task-create.json",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/dorm-service-task-verify.json",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/dorm-stay-extend-approve.json",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/finance-charge-adjustment-approve.json",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/finance-correction-apply.json",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/finance-debt-follow-up.json",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/finance-expense-approve.json",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/finance-expense-link.json",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/business/domains/dormitory/workitems/finance-expense-record.json",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/business/dormitory/canonical-scenario-map.json",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/business/dormitory/current-business-journey.md",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/business/dormitory/evidence-coverage-contract.yml",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/business/dormitory/evidence-policy.yml",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/business/dormitory/evidence-requirements.yml",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/business/dormitory/finance-control-rules.yml",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/business/dormitory/go-no-go.yml",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/business/dormitory/ledger-posting-contract.yml",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/business/dormitory/lens-map.yml",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/business/dormitory/metric-formula-contract.yml",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/business/dormitory/metrics-tree.yml",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/business/dormitory/north-star.md",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/business/dormitory/pilot-go-no-go.md",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/business/dormitory/risk-command-rules.yml",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/business/dormitory/scenario-field-contract.yml",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/business/dormitory/scenario-result-semantics.json",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/business/dormitory/value-streams.yml",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/business/dormitory/workitem-catalog.yml",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/business/dormitory/workitem-decision-table.json",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/business/dormitory/workitem-raci.yml",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/business/dormitory/workitem-sla.yml",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated_or_delete_after_absorption",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/business/experience-contract.yml",
+      "targetLayer": "manual",
+      "recommendedAction": "keep_non_authority_manual+review_old_term_fence_or_remove",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/contracts/accommodation-lens-contract.json",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/contracts/admission/actor-device-admission-contract.json",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/contracts/admission/admission-contract.json",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/contracts/admission/admission-matrix.json",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/contracts/admission/admission-sources.json",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/contracts/admission/production-admission-contract.json",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/contracts/authority/master-design.contract.json",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated_authority_view+review_old_term_fence_or_remove",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/contracts/authority/master-outline.contract.json",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated_authority_view",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/contracts/authority/truth-ownership-matrix.contract.json",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated_authority_view",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/contracts/bi-kpi/bi-kpi-contract.json",
+      "targetLayer": "generated",
+      "recommendedAction": "keep_as_read_or_metric_contract",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/contracts/bi-kpi/dashboard-contract.json",
+      "targetLayer": "generated",
+      "recommendedAction": "keep_as_read_or_metric_contract",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/contracts/bi-kpi/dimension-contract.json",
+      "targetLayer": "generated",
+      "recommendedAction": "keep_as_read_or_metric_contract",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/contracts/bi-kpi/freshness-contract.json",
+      "targetLayer": "generated",
+      "recommendedAction": "keep_as_read_or_metric_contract",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/contracts/bi-kpi/lineage-contract.json",
+      "targetLayer": "generated",
+      "recommendedAction": "keep_as_read_or_metric_contract",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/contracts/bi-kpi/metric-registry.contract.json",
+      "targetLayer": "generated",
+      "recommendedAction": "keep_as_read_or_metric_contract",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/contracts/bi-kpi/permission-contract.json",
+      "targetLayer": "generated",
+      "recommendedAction": "keep_as_read_or_metric_contract",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/contracts/bi-kpi/report-contract.json",
+      "targetLayer": "generated",
+      "recommendedAction": "keep_as_read_or_metric_contract",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/contracts/bi-kpi/sla-clock-contract.json",
+      "targetLayer": "generated",
+      "recommendedAction": "keep_as_read_or_metric_contract",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/contracts/business/oam-business-object-field-registry.json",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated_contract",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/contracts/business/oam-workflow-state-registry.json",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated_contract",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/contracts/definition/definition-compatibility-fence.json",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated_contract",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/contracts/definition/evidence-policy-refs.json",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated_contract",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/contracts/definition/field-contract-refs.json",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated_contract",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/contracts/definition/ledger-policy-refs.json",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated_contract",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/contracts/definition/risk-policy-refs.json",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated_contract",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/contracts/definition/step-dependency-contract.json",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated_contract",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/contracts/definition/workitem-definition-registry.json",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated_contract",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/contracts/frontend-experience/frontend-experience-system-contract.json",
+      "targetLayer": "manual",
+      "recommendedAction": "keep_non_authority_manual+review_old_term_fence_or_remove",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/contracts/generated/dormitory/dormitory-kernel.generated.manifest.json",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/contracts/generated/dormitory/fields.generated.json",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/contracts/generated/dormitory/read-model.generated.json",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated+review_old_term_fence_or_remove",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/contracts/generated/dormitory/surface-input-model.generated.json",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/contracts/generated/dormitory/workitems.generated.json",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/contracts/governance/business-signoff-contract.json",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/contracts/language/domain-term-catalog.json",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/contracts/language/error-code-copy.json",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/contracts/language/field-label-catalog.json",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/contracts/language/search-synonyms.json",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/contracts/language/surface-copy-catalog.json",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/contracts/operations-command-submission-context.json",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/contracts/period-analytics-contract.json",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/contracts/projection-contract.schema.json",
+      "targetLayer": "runtime",
+      "recommendedAction": "keep_as_validation_schema",
+      "deletionRisk": "high"
+    },
+    {
+      "path": "docs/contracts/read/freshness-envelope.schema.json",
+      "targetLayer": "generated",
+      "recommendedAction": "keep_as_read_or_metric_contract",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/contracts/read/lens-read-model.schema.json",
+      "targetLayer": "generated",
+      "recommendedAction": "keep_as_read_or_metric_contract",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/contracts/read/lineage-envelope.schema.json",
+      "targetLayer": "generated",
+      "recommendedAction": "keep_as_read_or_metric_contract",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/contracts/read/oam-object-envelope.schema.json",
+      "targetLayer": "generated",
+      "recommendedAction": "keep_as_read_or_metric_contract",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/contracts/read/permission-envelope.schema.json",
+      "targetLayer": "generated",
+      "recommendedAction": "keep_as_read_or_metric_contract",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/contracts/read/read-model-owner-registry.json",
+      "targetLayer": "generated",
+      "recommendedAction": "keep_as_read_or_metric_contract+review_old_term_fence_or_remove",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/contracts/read/search-index-record.schema.json",
+      "targetLayer": "generated",
+      "recommendedAction": "keep_as_read_or_metric_contract",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/contracts/read/search-result-envelope.schema.json",
+      "targetLayer": "generated",
+      "recommendedAction": "keep_as_read_or_metric_contract+review_old_term_fence_or_remove",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/contracts/search/search-contract.json",
+      "targetLayer": "generated",
+      "recommendedAction": "keep_as_read_or_metric_contract",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/contracts/search/search-index-sources.json",
+      "targetLayer": "generated",
+      "recommendedAction": "keep_as_read_or_metric_contract",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/contracts/search/search-permission-policy.json",
+      "targetLayer": "generated",
+      "recommendedAction": "keep_as_read_or_metric_contract",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/contracts/search/search-ranking-policy.json",
+      "targetLayer": "generated",
+      "recommendedAction": "keep_as_read_or_metric_contract",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/contracts/search/search-result-schema.json",
+      "targetLayer": "generated",
+      "recommendedAction": "keep_as_read_or_metric_contract+review_old_term_fence_or_remove",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/decisions/ADR-business-3-7-current-registry-decision.md",
+      "targetLayer": "manual",
+      "recommendedAction": "keep_controlled_fence_or_adr",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/oam/current-engineering-ledger.json",
+      "targetLayer": "manual",
+      "recommendedAction": "keep_non_authority_manual+review_old_term_fence_or_remove",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/oam/domain-derived-contracts.json",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/oam/generated-contracts-manifest.json",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/oam/kernel/oam-kernel-generated.schema.json",
+      "targetLayer": "runtime",
+      "recommendedAction": "keep_as_validation_schema",
+      "deletionRisk": "high"
+    },
+    {
+      "path": "docs/oam/kernel/oam-kernel-graph.generated.json",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/oam/mobile-branch-risk-ledger.json",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/oam/system-derived-contracts.json",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "docs/scenarios/dormitory/golden-pilot.yml",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "infra/db/migrations/001_runtime_core.sql",
+      "targetLayer": "runtime",
+      "recommendedAction": "keep_as_database_asset",
+      "deletionRisk": "high"
+    },
+    {
+      "path": "infra/db/migrations/002_runtime_sessions.sql",
+      "targetLayer": "runtime",
+      "recommendedAction": "keep_as_database_asset",
+      "deletionRisk": "high"
+    },
+    {
+      "path": "infra/db/migrations/003_idempotency_columns.sql",
+      "targetLayer": "runtime",
+      "recommendedAction": "keep_as_database_asset",
+      "deletionRisk": "high"
+    },
+    {
+      "path": "infra/db/migrations/004_event_correlation_columns.sql",
+      "targetLayer": "runtime",
+      "recommendedAction": "keep_as_database_asset",
+      "deletionRisk": "high"
+    },
+    {
+      "path": "infra/db/migrations/005_slice_aggregate_roots.sql",
+      "targetLayer": "runtime",
+      "recommendedAction": "keep_as_database_asset",
+      "deletionRisk": "high"
+    },
+    {
+      "path": "infra/db/migrations/006_hostel_operating_ledger.sql",
+      "targetLayer": "runtime",
+      "recommendedAction": "keep_as_database_asset",
+      "deletionRisk": "high"
+    },
+    {
+      "path": "infra/db/migrations/007_accommodation_money_ledgers.sql",
+      "targetLayer": "runtime",
+      "recommendedAction": "keep_as_database_asset",
+      "deletionRisk": "high"
+    },
+    {
+      "path": "infra/db/migrations/008_accommodation_checkout_service_expense.sql",
+      "targetLayer": "runtime",
+      "recommendedAction": "keep_as_database_asset",
+      "deletionRisk": "high"
+    },
+    {
+      "path": "infra/db/migrations/009_accommodation_period_analytics.sql",
+      "targetLayer": "runtime",
+      "recommendedAction": "keep_as_database_asset",
+      "deletionRisk": "high"
+    },
+    {
+      "path": "infra/db/migrations/010_accommodation_lead_stay_lifecycle.sql",
+      "targetLayer": "runtime",
+      "recommendedAction": "keep_as_database_asset",
+      "deletionRisk": "high"
+    },
+    {
+      "path": "infra/db/migrations/011_accommodation_resource_setup_runtime.sql",
+      "targetLayer": "runtime",
+      "recommendedAction": "keep_as_database_asset",
+      "deletionRisk": "high"
+    },
+    {
+      "path": "infra/db/migrations/012_outbox_claim_dead_letter.sql",
+      "targetLayer": "runtime",
+      "recommendedAction": "keep_as_database_asset",
+      "deletionRisk": "high"
+    },
+    {
+      "path": "infra/db/migrations/013_outbox_attempt_count.sql",
+      "targetLayer": "runtime",
+      "recommendedAction": "keep_as_database_asset",
+      "deletionRisk": "high"
+    },
+    {
+      "path": "infra/db/migrations/014_runtime_evidence_card_instances.sql",
+      "targetLayer": "runtime",
+      "recommendedAction": "keep_as_database_asset",
+      "deletionRisk": "high"
+    },
+    {
+      "path": "infra/db/migrations/015_control_plane_shadow_runtime.sql",
+      "targetLayer": "runtime",
+      "recommendedAction": "keep_as_database_asset",
+      "deletionRisk": "high"
+    },
+    {
+      "path": "infra/db/migrations/016_checkout_service_process_manager.sql",
+      "targetLayer": "runtime",
+      "recommendedAction": "keep_as_database_asset",
+      "deletionRisk": "high"
+    },
+    {
+      "path": "infra/db/migrations/017_reconciliation_runtime.sql",
+      "targetLayer": "runtime",
+      "recommendedAction": "keep_as_database_asset",
+      "deletionRisk": "high"
+    },
+    {
+      "path": "infra/db/migrations/018_reconciliation_matching_manual_decisions.sql",
+      "targetLayer": "runtime",
+      "recommendedAction": "keep_as_database_asset",
+      "deletionRisk": "high"
+    },
+    {
+      "path": "infra/db/migrations/019_reconciliation_mismatch_cases.sql",
+      "targetLayer": "runtime",
+      "recommendedAction": "keep_as_database_asset",
+      "deletionRisk": "high"
+    },
+    {
+      "path": "infra/db/migrations/020_correction_center_schema.sql",
+      "targetLayer": "runtime",
+      "recommendedAction": "keep_as_database_asset",
+      "deletionRisk": "high"
+    },
+    {
+      "path": "infra/db/migrations/021_period_analytics_schema.sql",
+      "targetLayer": "runtime",
+      "recommendedAction": "keep_as_database_asset",
+      "deletionRisk": "high"
+    },
+    {
+      "path": "infra/db/migrations/022_projection_rebuild_ops.sql",
+      "targetLayer": "runtime",
+      "recommendedAction": "keep_as_database_asset",
+      "deletionRisk": "high"
+    },
+    {
+      "path": "infra/db/migrations/023_outbox_dead_letter_replay_ops.sql",
+      "targetLayer": "runtime",
+      "recommendedAction": "keep_as_database_asset",
+      "deletionRisk": "high"
+    },
+    {
+      "path": "infra/db/migrations/024_ledger_inspection_job_reports.sql",
+      "targetLayer": "runtime",
+      "recommendedAction": "keep_as_database_asset",
+      "deletionRisk": "high"
+    },
+    {
+      "path": "infra/db/migrations/025_migration_verification_job_reports.sql",
+      "targetLayer": "runtime",
+      "recommendedAction": "keep_as_database_asset",
+      "deletionRisk": "high"
+    },
+    {
+      "path": "infra/db/migrations/026_backup_restore_smoke_reports.sql",
+      "targetLayer": "runtime",
+      "recommendedAction": "keep_as_database_asset",
+      "deletionRisk": "high"
+    },
+    {
+      "path": "infra/db/migrations/027_production_security_hardening.sql",
+      "targetLayer": "runtime",
+      "recommendedAction": "keep_as_database_asset",
+      "deletionRisk": "high"
+    },
+    {
+      "path": "infra/db/migrations/028_projection_checkpoint_source_namespace.sql",
+      "targetLayer": "runtime",
+      "recommendedAction": "keep_as_database_asset",
+      "deletionRisk": "high"
+    },
+    {
+      "path": "infra/db/migrations/029_control_plane_gate_result_append_only.sql",
+      "targetLayer": "runtime",
+      "recommendedAction": "keep_as_database_asset",
+      "deletionRisk": "high"
+    },
+    {
+      "path": "infra/db/migrations/030_operations_unit_of_work.sql",
+      "targetLayer": "runtime",
+      "recommendedAction": "keep_as_database_asset",
+      "deletionRisk": "high"
+    },
+    {
+      "path": "infra/db/migrations/031_balanced_money_kernel.sql",
+      "targetLayer": "runtime",
+      "recommendedAction": "keep_as_database_asset",
+      "deletionRisk": "high"
+    },
+    {
+      "path": "infra/db/migrations/032_operations_failed_submission_audit.sql",
+      "targetLayer": "runtime",
+      "recommendedAction": "keep_as_database_asset",
+      "deletionRisk": "high"
+    },
+    {
+      "path": "infra/db/migrations/033_operations_case_work_item_persistence.sql",
+      "targetLayer": "runtime",
+      "recommendedAction": "keep_as_database_asset",
+      "deletionRisk": "high"
+    },
+    {
+      "path": "infra/db/migrations/034_next_control_plane_runtime_roles.sql",
+      "targetLayer": "runtime",
+      "recommendedAction": "keep_as_database_asset",
+      "deletionRisk": "high"
+    },
+    {
+      "path": "infra/db/migrations/035_operations_command_submission_context.sql",
+      "targetLayer": "runtime",
+      "recommendedAction": "keep_as_database_asset",
+      "deletionRisk": "high"
+    },
+    {
+      "path": "infra/db/migrations/036_evidence_tenant_scope.sql",
+      "targetLayer": "runtime",
+      "recommendedAction": "keep_as_database_asset",
+      "deletionRisk": "high"
+    },
+    {
+      "path": "infra/db/migrations/037_device_session_tenant_scope.sql",
+      "targetLayer": "runtime",
+      "recommendedAction": "keep_as_database_asset",
+      "deletionRisk": "high"
+    },
+    {
+      "path": "infra/db/migrations/038_runtime_outbox_claim_repair.sql",
+      "targetLayer": "runtime",
+      "recommendedAction": "keep_as_database_asset",
+      "deletionRisk": "high"
+    },
+    {
+      "path": "infra/db/migrations/039_operations_outbox_claim_projection.sql",
+      "targetLayer": "runtime",
+      "recommendedAction": "keep_as_database_asset",
+      "deletionRisk": "high"
+    },
+    {
+      "path": "infra/db/migrations/040_account_actor_kernel.sql",
+      "targetLayer": "runtime",
+      "recommendedAction": "keep_as_database_asset",
+      "deletionRisk": "high"
+    },
+    {
+      "path": "infra/db/migrations/041_current_oam_work_item_state_event_log.sql",
+      "targetLayer": "runtime",
+      "recommendedAction": "keep_as_database_asset",
+      "deletionRisk": "high"
+    },
+    {
+      "path": "schemas/authority/master-design.schema.json",
+      "targetLayer": "runtime",
+      "recommendedAction": "keep_as_validation_schema",
+      "deletionRisk": "high"
+    },
+    {
+      "path": "schemas/authority/master-outline.schema.json",
+      "targetLayer": "runtime",
+      "recommendedAction": "keep_as_validation_schema",
+      "deletionRisk": "high"
+    },
+    {
+      "path": "schemas/authority/truth-ownership-matrix.schema.json",
+      "targetLayer": "runtime",
+      "recommendedAction": "keep_as_validation_schema",
+      "deletionRisk": "high"
+    },
+    {
+      "path": "schemas/business/canonical-scenario-map.schema.json",
+      "targetLayer": "runtime",
+      "recommendedAction": "keep_as_validation_schema",
+      "deletionRisk": "high"
+    },
+    {
+      "path": "schemas/business/evidence-coverage-contract.schema.json",
+      "targetLayer": "runtime",
+      "recommendedAction": "keep_as_validation_schema",
+      "deletionRisk": "high"
+    },
+    {
+      "path": "schemas/business/ledger-posting-contract.schema.json",
+      "targetLayer": "runtime",
+      "recommendedAction": "keep_as_validation_schema",
+      "deletionRisk": "high"
+    },
+    {
+      "path": "schemas/business/metric-formula-contract.schema.json",
+      "targetLayer": "runtime",
+      "recommendedAction": "keep_as_validation_schema",
+      "deletionRisk": "high"
+    },
+    {
+      "path": "schemas/business/scenario-field-contract.schema.json",
+      "targetLayer": "runtime",
+      "recommendedAction": "keep_as_validation_schema",
+      "deletionRisk": "high"
+    },
+    {
+      "path": "schemas/domain-pack.schema.json",
+      "targetLayer": "runtime",
+      "recommendedAction": "keep_as_validation_schema",
+      "deletionRisk": "high"
+    },
+    {
+      "path": "schemas/finance-truth-pipeline.schema.json",
+      "targetLayer": "runtime",
+      "recommendedAction": "keep_as_validation_schema",
+      "deletionRisk": "high"
+    },
+    {
+      "path": "schemas/finance/ledger-semantic-rules.schema.json",
+      "targetLayer": "runtime",
+      "recommendedAction": "keep_as_validation_schema",
+      "deletionRisk": "high"
+    },
+    {
+      "path": "schemas/policy.schema.json",
+      "targetLayer": "runtime",
+      "recommendedAction": "keep_as_validation_schema",
+      "deletionRisk": "high"
+    },
+    {
+      "path": "schemas/receipt.schema.json",
+      "targetLayer": "runtime",
+      "recommendedAction": "keep_as_validation_schema",
+      "deletionRisk": "high"
+    },
+    {
+      "path": "schemas/shared-governance.schema.json",
+      "targetLayer": "runtime",
+      "recommendedAction": "keep_as_validation_schema",
+      "deletionRisk": "high"
+    },
+    {
+      "path": "schemas/surface-contract.schema.json",
+      "targetLayer": "runtime",
+      "recommendedAction": "keep_as_validation_schema",
+      "deletionRisk": "high"
+    },
+    {
+      "path": "schemas/surface/device-trust-experience-contract.schema.json",
+      "targetLayer": "runtime",
+      "recommendedAction": "keep_as_validation_schema",
+      "deletionRisk": "high"
+    },
+    {
+      "path": "schemas/surface/evidence-trust-experience-contract.schema.json",
+      "targetLayer": "runtime",
+      "recommendedAction": "keep_as_validation_schema",
+      "deletionRisk": "high"
+    },
+    {
+      "path": "schemas/surface/learning-center-contract.schema.json",
+      "targetLayer": "runtime",
+      "recommendedAction": "keep_as_validation_schema",
+      "deletionRisk": "high"
+    },
+    {
+      "path": "schemas/surface/mobile-search-contract.schema.json",
+      "targetLayer": "runtime",
+      "recommendedAction": "keep_as_validation_schema",
+      "deletionRisk": "high"
+    },
+    {
+      "path": "schemas/surface/mobile-work-plane-contract.schema.json",
+      "targetLayer": "runtime",
+      "recommendedAction": "keep_as_validation_schema",
+      "deletionRisk": "high"
+    },
+    {
+      "path": "schemas/surface/operation-panel-runtime-contract.schema.json",
+      "targetLayer": "runtime",
+      "recommendedAction": "keep_as_validation_schema",
+      "deletionRisk": "high"
+    },
+    {
+      "path": "schemas/surface/operational-copy-matrix.schema.json",
+      "targetLayer": "runtime",
+      "recommendedAction": "keep_as_validation_schema",
+      "deletionRisk": "high"
+    },
+    {
+      "path": "schemas/surface/pc-governance-plane-contract.schema.json",
+      "targetLayer": "runtime",
+      "recommendedAction": "keep_as_validation_schema",
+      "deletionRisk": "high"
+    },
+    {
+      "path": "schemas/surface/permission-explainability-contract.schema.json",
+      "targetLayer": "runtime",
+      "recommendedAction": "keep_as_validation_schema",
+      "deletionRisk": "high"
+    },
+    {
+      "path": "schemas/surface/queue-state-contract.schema.json",
+      "targetLayer": "runtime",
+      "recommendedAction": "keep_as_validation_schema",
+      "deletionRisk": "high"
+    },
+    {
+      "path": "schemas/surface/surface-api-boundary.schema.json",
+      "targetLayer": "runtime",
+      "recommendedAction": "keep_as_validation_schema",
+      "deletionRisk": "high"
+    },
+    {
+      "path": "schemas/surface/surface-experience-contract.schema.json",
+      "targetLayer": "runtime",
+      "recommendedAction": "keep_as_validation_schema",
+      "deletionRisk": "high"
+    },
+    {
+      "path": "schemas/surface/surface-runtime-guard-contract.schema.json",
+      "targetLayer": "runtime",
+      "recommendedAction": "keep_as_validation_schema",
+      "deletionRisk": "high"
+    },
+    {
+      "path": "schemas/surface/view-model-contract.schema.json",
+      "targetLayer": "runtime",
+      "recommendedAction": "keep_as_validation_schema",
+      "deletionRisk": "high"
+    },
+    {
+      "path": "schemas/trust/trust-boundary-kernel.schema.json",
+      "targetLayer": "runtime",
+      "recommendedAction": "keep_as_validation_schema",
+      "deletionRisk": "high"
+    },
+    {
+      "path": "schemas/truth-owner-registry.schema.json",
+      "targetLayer": "runtime",
+      "recommendedAction": "keep_as_validation_schema",
+      "deletionRisk": "high"
+    },
+    {
+      "path": "schemas/truth-promotion.schema.json",
+      "targetLayer": "runtime",
+      "recommendedAction": "keep_as_validation_schema",
+      "deletionRisk": "high"
+    },
+    {
+      "path": "scripts/authority/check-master-outline-schema.mjs",
+      "targetLayer": "manual",
+      "recommendedAction": "keep_non_authority_manual+review_old_term_fence_or_remove",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "scripts/business/check-dormitory-derived-contracts.mjs",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "scripts/business/check-dormitory-metrics-lens-contract.mjs",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "scripts/business/check-dormitory-pilot-scenario-pack.mjs",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "scripts/business/check-dormitory-release-train.mjs",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "scripts/business/generate-dormitory-derived-contracts.mjs",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "scripts/check-dormitory-golden-domain.mjs",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "scripts/check-experience-contract.mjs",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "scripts/check-search-kernel.mjs",
+      "targetLayer": "manual",
+      "recommendedAction": "keep_non_authority_manual+review_old_term_fence_or_remove",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "scripts/generate-contract-dtos.mjs",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "scripts/oam/check-authority-cleanup-mutation-tests.mjs",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "scripts/oam/check-cross-domain-conflict-rules.mjs",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "scripts/oam/check-current-authority-index.mjs",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "scripts/oam/check-current-evidence-root.mjs",
+      "targetLayer": "manual",
+      "recommendedAction": "keep_non_authority_manual+review_old_term_fence_or_remove",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "scripts/oam/check-current-oam.mjs",
+      "targetLayer": "manual",
+      "recommendedAction": "keep_non_authority_manual+review_old_term_fence_or_remove",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "scripts/oam/check-derived-contract-consistency.mjs",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "scripts/oam/check-file-lifecycle-policy.mjs",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "scripts/oam/check-generated-contract-consistency.mjs",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "scripts/oam/check-kernel-responsibility-map.mjs",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated+review_old_term_fence_or_remove",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "scripts/oam/check-mobile-coverage-policy.mjs",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "scripts/oam/check-oam-kernel-graph.mjs",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "scripts/oam/check-read-intelligence-kernel.mjs",
+      "targetLayer": "manual",
+      "recommendedAction": "keep_non_authority_manual+review_old_term_fence_or_remove",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "scripts/oam/check-surface-language-v2.mjs",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "scripts/oam/compile-current-kernel-graph.mjs",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated+review_old_term_fence_or_remove",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "scripts/oam/generate-authority-source-layer-audit.mjs",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated+review_old_term_fence_or_remove",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "scripts/oam/generate-current-evidence-root.mjs",
+      "targetLayer": "manual",
+      "recommendedAction": "keep_non_authority_manual+review_old_term_fence_or_remove",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "scripts/oam/generate-mobile-branch-risk-ledger.mjs",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "scripts/oam/generate-system-derived-contracts.mjs",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "scripts/oam/normalize-authority-classification.mjs",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "scripts/oam/run-control-plane-checks.ps1",
+      "targetLayer": "manual",
+      "recommendedAction": "keep_non_authority_manual+review_old_term_fence_or_remove",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "scripts/surface/check-dormitory-ten-scenario-real-browser-audit.mjs",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "scripts/surface/check-experience-envelope-not-fact-source.mjs",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "scripts/surface/check-experience-module-productization.mjs",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "scripts/surface/check-mobile-work-shell.mjs",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "scripts/surface/check-pc-desktop-shell.mjs",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "scripts/surface/check-user-facing-surface-copy.mjs",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "scripts/surface/check-view-model-contract.mjs",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "scripts/surface/run-dormitory-scenario-journey-snapshots.mjs",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "scripts/validate-contracts.mjs",
+      "targetLayer": "manual",
+      "recommendedAction": "keep_non_authority_manual+review_old_term_fence_or_remove",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "services/core-api/WorkOS.Api/Runtime/ControlPlaneWriteStore.cs",
+      "targetLayer": "runtime",
+      "recommendedAction": "keep_as_runtime_implementation",
+      "deletionRisk": "high"
+    },
+    {
+      "path": "services/core-api/WorkOS.Api/Runtime/SearchKernelService.cs",
+      "targetLayer": "runtime",
+      "recommendedAction": "keep_as_runtime_implementation+review_old_term_fence_or_remove",
+      "deletionRisk": "high"
+    },
+    {
+      "path": "services/core-api/WorkOS.Api/Slices/Accommodation/PeriodAnalytics/Persistence/PeriodAnalyticsStorage.cs",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "tests/WorkOS.ReleaseEvidenceTests/OamReleaseControlTests.cs",
+      "targetLayer": "manual",
+      "recommendedAction": "keep_non_authority_manual+review_old_term_fence_or_remove",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "tests/WorkOS.UnitTests/OutboxDeadLetterReplayToolTests.cs",
+      "targetLayer": "manual",
+      "recommendedAction": "keep_non_authority_manual+review_old_term_fence_or_remove",
+      "deletionRisk": "medium"
+    },
+    {
+      "path": "tools/control-plane/WorkOS.ControlPlaneRunners/ControlPlaneDatabase.cs",
+      "targetLayer": "generated",
+      "recommendedAction": "downgrade_to_generated",
+      "deletionRisk": "medium"
+    }
+  ],
+  "generatedLayerManifests": [
+    "docs/oam/system-derived-contracts.json",
+    "docs/oam/domain-derived-contracts.json",
+    "docs/oam/generated-contracts-manifest.json"
+  ],
+  "evidenceGraphPath": "artifacts/oam/evidence/evidence-graph.json",
+  "releaseEvidenceObjectPath": "artifacts/oam/evidence/current-oam-release-evidence-object.json",
+  "releaseEvidenceBinding": {
+    "githubSha": "a7d4c7feb3e00eca3a0d97c1bd3301bcd979dc19",
+    "generatedContractsHash": "sha256:cfebca11b30cfe987cce8e2e659a3b79ca1381cc81c1a2bf23d2cd7e80b3b9cc",
+    "kernelGraphHash": "sha256:6ce12760e202cb9fceb6b5ad8a26d5b9688e59e7bee641178411ff5936ee3fd3",
+    "finalReportDigest": "sha256:b5f9b39f91c9798f75f2d89e736c86d0d5847feeefefdee65c6f3f35cf34f1af",
+    "evidenceRootDigest": "sha256:a5d38bffa6b9798df78d7c808dc15c4c9f4b1859e923d6e7484e602286503351",
+    "finalGoNoGo": "NO_GO"
+  },
+  "gates": {
+    "controlPlane": {
+      "status": "passed",
+      "requiredGateCount": 90,
+      "failedGateCount": 0
+    },
+    "sourceLayerAudit": {
+      "status": "passed",
+      "auditedCount": 286,
+      "unknownCount": 0
+    },
+    "mutationTests": {
+      "status": "passed",
+      "mutationCount": 6
+    },
+    "evidenceGraph": {
+      "finalGoNoGo": "NO_GO",
+      "workstreamProofNodeCount": 17
+    }
+  },
+  "remainingRisks": [
+    "当前仍为 NO_GO；CI green 和本地总门禁 green 只是证据，不等于 GO。",
+    "部分 generated authority view 仍有消费者和证据引用，删除必须等替代路径、引用修复和删除证明闭环。",
+    "下一步若要物理删除冗余文件，必须逐项证明唯一事实已吸收、无运行时消费者、无证据强引用、checker 覆盖删除。"
+  ],
+  "nextRequiredStepZh": "继续保持 NO_GO；下一轮只允许在消费者迁移和删除证明齐备后删除已降级视图，并重新跑总门禁和 evidence root。",
+  "summaryZh": "权威层已收缩为唯一 Source 白名单并由门禁约束；Generated、Runtime/Evidence 与 Manual 边界已分层；当前仍为 NO_GO，下一步是按删除条件清理仍被引用的降级视图。",
+  "reportContentHash": "sha256:c0bcfbbfe8310ea71d4b4478799fbc7e959fca389f3b07fee03cf4a6403a9114"
+}

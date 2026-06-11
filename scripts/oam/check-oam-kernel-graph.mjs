@@ -67,6 +67,24 @@ const nodeRequiredFields = [
   "deletionCondition"
 ];
 const edgeRequiredFields = ["from", "to", "edgeType", "allowedDirection", "forbiddenDirection", "checker", "evidence"];
+const fileFactAuthorityForbiddenPrefixes = [
+  "apps/",
+  "artifacts/oam/",
+  "docs/contracts/authority/",
+  "docs/contracts/bi-kpi/",
+  "docs/contracts/business/",
+  "docs/contracts/definition/",
+  "docs/contracts/evidence/",
+  "docs/contracts/generated/",
+  "docs/contracts/read/",
+  "docs/contracts/search/",
+  "docs/oam/kernel-schemas/",
+  "infra/db/migrations/",
+  "schemas/",
+  "scripts/",
+  "services/",
+  "tests/"
+];
 const violations = [];
 const graph = readJson(graphPath);
 const decisions = readJson(decisionPath);
@@ -102,6 +120,7 @@ for (const node of nodes) {
     }
   }
   requirePath(node.sourceFile, `${node.nodeId} sourceFile`, { allowEvidence: true });
+  checkFileNodeAuthorityBoundary(node);
 }
 for (const edge of edges) {
   for (const field of edgeRequiredFields) {
@@ -147,12 +166,28 @@ function requireNode(nodeId, label) {
   if (!nodeById.has(nodeId)) fail("graph_required_node_missing", `${label} 缺少节点：${nodeId}`);
 }
 
+function checkFileNodeAuthorityBoundary(node) {
+  if (node.nodeType !== "File") return;
+  const file = String(node.sourceFile ?? "").replace(/\\/g, "/");
+  if (node.currentTruthAllowed === true && fileFactAuthorityForbiddenPrefixes.some((prefix) => file.startsWith(prefix))) {
+    fail("graph_file_truth_forbidden_path", `${file} 是 schema/read/BI/runtime/db/evidence/generated/validation 文件，不得在图谱中 currentTruthAllowed=true。`);
+  }
+  const hasGeneratedMarker = node.generated === true || node.doNotEdit === true || node.generatedBy || node.derivedFrom || node.lifecycleState === "derived_view";
+  if (hasGeneratedMarker && node.currentTruthAllowed === true) {
+    fail("graph_generated_file_truth_forbidden", `${file} 是 generated/derived 文件，图谱不得允许定义当前事实。`);
+  }
+  if (node.lifecycleState === "derived_view" && node.manualEditAllowed !== false) {
+    fail("graph_derived_manual_edit_allowed", `${file} 是 derived_view，必须 manualEditAllowed=false。`);
+  }
+}
+
 function listCurrentFiles() {
   const output = execFileSync("git", ["ls-files", "--cached", "--others", "--exclude-standard"], { cwd: root, encoding: "utf8" });
   return output
     .split(/\r?\n/)
     .map((item) => item.trim().replace(/\\/g, "/"))
     .filter(Boolean)
+    .filter((item) => !item.startsWith("artifacts/oam/authority-cleanup/"))
     .filter((item) => !item.startsWith("artifacts/oam/checks/"))
     .filter((item) => !item.startsWith("artifacts/oam/evidence/"))
     .filter((item) => !item.startsWith("artifacts/oam/test-results/"))

@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "workosnext.authority.master-outline.schema.v1",
+  "title": "WorkOSNext Current OAM Master Outline",
+  "type": "object",
+  "required": [
+    "version",
+    "status",
+    "architecture",
+    "outlineId",
+    "authorityRefs",
+    "businessProduction",
+    "dormitoryL2",
+    "productionConfirmAllowed",
+    "finalGoNoGo",
+    "nextStageAllowed",
+    "businessLineLevels"
+  ],
+  "properties": {
+    "version": { "const": "workosnext.authority.master-outline.v1" },
+    "status": { "const": "authoritative-current-no-go" },
+    "architecture": { "const": "oam.current" },
+    "outlineId": { "type": "string" },
+    "authorityRefs": { "type": "array", "items": { "type": "string" }, "minItems": 4 },
+    "businessProduction": { "const": "BLOCKED" },
+    "dormitoryL2": { "const": "BLOCKED" },
+    "productionConfirmAllowed": { "const": false },
+    "finalGoNoGo": { "const": "NO_GO" },
+    "nextStageAllowed": { "const": false },
+    "businessLineLevels": { "type": "array", "minItems": 3 }
+  },
+  "additionalProperties": true
+}

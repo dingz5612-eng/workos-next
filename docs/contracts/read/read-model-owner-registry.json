@@ -1,0 +1,43 @@
+{
+  "version": "workosnext.read-model-owner-registry.v1",
+  "status": "authoritative-current-no-go",
+  "architecture": "oam.current",
+  "writeFactsAllowed": false,
+  "owners": [
+    {
+      "readModel": "SearchResult",
+      "owner": "Search Kernel",
+      "schemaRef": "docs/contracts/read/search-result-envelope.schema.json",
+      "sourceTruthAllowed": false
+    },
+    {
+      "readModel": "SearchIndexRecord",
+      "owner": "Search Kernel",
+      "schemaRef": "docs/contracts/read/search-index-record.schema.json",
+      "sourceTruthAllowed": false
+    },
+    {
+      "readModel": "LensReadModel",
+      "owner": "Projection / Lens Kernel",
+      "schemaRef": "docs/contracts/read/lens-read-model.schema.json",
+      "sourceTruthAllowed": false
+    },
+    {
+      "readModel": "OamObjectEnvelope",
+      "owner": "Read Intelligence Kernel",
+      "schemaRef": "docs/contracts/read/oam-object-envelope.schema.json",
+      "sourceTruthAllowed": false
+    }
+  ],
+  "envelopeRefs": [
+    "docs/contracts/read/permission-envelope.schema.json",
+    "docs/contracts/read/lineage-envelope.schema.json",
+    "docs/contracts/read/freshness-envelope.schema.json"
+  ],
+  "invariants": [
+    "Read models cannot write business facts.",
+    "Permission envelope is evaluated before ranking.",
+    "Lineage and freshness travel with every SearchResult and LensReadModel.",
+    "SearchResult target carries view, kind, targetId, runtimeOwner, compatibility, and writeThroughSearchAllowed."
+  ]
+}

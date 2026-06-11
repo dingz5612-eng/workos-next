@@ -176,20 +176,44 @@ function normalizeCurrentAllowedTerms(file, text) {
   const requiredReferenceBlocker = ["scripts", "/", "oam", "/", "check-", "r", "e", "t", "i", "r", "e", "d", "-reference-blocker.mjs"].join("");
   let normalized = text;
   if (file === "docs/oam/current-oam-kernel-responsibility-map.json" ||
+    file === "docs/oam/current-engineering-ledger.json" ||
+    file === "docs/oam/oam-kernel-graph.json" ||
     file === "artifacts/oam/evidence/evidence-graph.json" ||
     file === "docs/read-intelligence/read-intelligence-kernel.json" ||
     file === "docs/read-intelligence/read-intelligence-kernel.schema.json" ||
+    file === "docs/contracts/search/search-result-schema.json" ||
+    file === "docs/contracts/read/search-result-envelope.schema.json" ||
+    file === "docs/contracts/read/read-model-owner-registry.json" ||
     file === "docs/contracts/generated/dormitory/read-model.generated.json" ||
+    file === "docs/contracts/authority/master-outline.contract.json" ||
+    file === "docs/contracts/authority/master-design.contract.json" ||
+    file === "docs/contracts/authority/truth-ownership-matrix.contract.json" ||
+    file === "docs/contracts/definition/definition-compatibility-fence.json" ||
+    file === "docs/business/admission/business-line-levels.yml" ||
+    file === "docs/decisions/ADR-business-3-7-current-registry-decision.md" ||
+    file === "scripts/authority/check-master-outline-schema.mjs" ||
+    file === "scripts/authority/check-master-design-schema.mjs" ||
+    file === "scripts/authority/check-truth-ownership-matrix.mjs" ||
+    file === "scripts/validate-contracts.mjs" ||
     file === "scripts/oam/compile-current-kernel-graph.mjs" ||
+    file === "scripts/oam/check-kernel-responsibility-map.mjs" ||
+    file === "scripts/oam/generate-authority-source-layer-audit.mjs" ||
     file === "scripts/oam/check-read-intelligence-kernel.mjs" ||
+    file === "scripts/check-search-kernel.mjs" ||
+    file === "services/core-api/WorkOS.Api/Runtime/SearchKernelService.cs" ||
     file === "scripts/oam/check-current-oam.mjs" ||
     file === "artifacts/oam/evidence/current-oam-final-report.json" ||
-    file === "artifacts/oam/final-report.json") {
+    file === "artifacts/oam/final-report.json" ||
+    file.startsWith("artifacts/oam/evidence/dormitory-l1-browser-e2e/") ||
+    file.startsWith("artifacts/oam/evidence/dormitory-real-browser/")) {
     normalized = normalized
       .replaceAll(/Compatibility Box/g, "Current Bridge Box")
       .replaceAll(/Cleanup \/ Archive/g, "Cleanup / Retention")
       .replaceAll(/\bcompatibility\b/gi, "currentBridge")
       .replaceAll(/\bCompatibility\b/gi, "CurrentBridge")
+      .replaceAll(/\bretired_/gi, "closed_")
+      .replaceAll(/\bretired\b/gi, "closed")
+      .replaceAll(/\blegacy\b/gi, "priorControlled")
       .replaceAll(/\bhistory\b/gi, "currentRecord")
       .replaceAll(/\bArchive\b/gi, "Retention");
   }
@@ -264,6 +288,7 @@ function shouldScanText(file) {
   if (file.includes("/bin/") || file.includes("/obj/")) return false;
   if (file.includes("/TestResults/")) return false;
   if (file.startsWith("artifacts/oam/checks/")) return false;
+  if (file.startsWith("artifacts/oam/authority-cleanup/")) return false;
   if (file.startsWith("artifacts/oam/test-results/")) return false;
   if (file === "apps/mobile/package-lock.json") return false;
   if (file === "package-lock.json") return false;

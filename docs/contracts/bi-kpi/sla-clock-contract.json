@@ -1,0 +1,23 @@
+{
+  "version": "oam.bi-kpi.sla-clock-contract.v1",
+  "status": "authoritative-readonly",
+  "readOnly": true,
+  "businessFactWriteAllowed": false,
+  "requiredFields": [
+    "clockId",
+    "startsAtSource",
+    "stopsAtSource",
+    "timezone",
+    "lineageRef",
+    "freshnessRef"
+  ],
+  "clocks": [
+    {
+      "clockId": "dormitory.resourceReadinessSla",
+      "startsAtSource": "WorkItem.createdAt",
+      "stopsAtSource": "WorkItem.confirmedAt",
+      "timezone": "tenant",
+      "writeFactsAllowed": false
+    }
+  ]
+}

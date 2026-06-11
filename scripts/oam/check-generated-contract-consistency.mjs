@@ -1,4 +1,5 @@
 import fs from "node:fs";
+import crypto from "node:crypto";
 import path from "node:path";
 
 const root = process.cwd();
@@ -110,10 +111,15 @@ console.log("Generated contract consistency check: PASS");
 function checkGeneratedMetadata(file, document) {
   if (document.generated !== true) fail(`${file} must include generated=true.`);
   if (document.doNotEdit !== true) fail(`${file} must include doNotEdit=true.`);
-  for (const field of ["kernelGraphHash", "sourceNodeRefs", "generatorVersion", "generatedFrom"]) {
+  if (document.deterministicSort !== true) fail(`${file} must include deterministicSort=true.`);
+  for (const field of ["kernelGraphHash", "sourceNodeRefs", "sourceRefs", "sourceHash", "sourceContentDigest", "compilerInputDigest", "outputContentDigest", "generatorVersion", "generatedFrom"]) {
     if (!document[field] || (Array.isArray(document[field]) && document[field].length === 0)) {
       fail(`${file} missing generated metadata ${field}.`);
     }
+  }
+  const expectedOutputDigest = digest({ ...document, outputContentDigest: "sha256:pending" });
+  if (document.outputContentDigest !== expectedOutputDigest) {
+    fail(`${file} outputContentDigest does not match content.`);
   }
 }
 
@@ -133,4 +139,8 @@ function exists(file) {
 
 function fail(message) {
   failures.push(message);
+}
+
+function digest(value) {
+  return `sha256:${crypto.createHash("sha256").update(JSON.stringify(value)).digest("hex")}`;
 }

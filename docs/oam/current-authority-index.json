@@ -35,7 +35,23 @@
       "checker": "scripts/check-language-kernel.mjs",
       "evidence": "artifacts/oam/evidence/surface-language-proof.json",
       "currentTruthAllowed": false,
-      "notesZh": "移动端只能展示、解释、排队和跳转，不拥有业务真值。"
+      "notesZh": "移动端只能展示、解释、排队和跳转，不拥有业务真值。",
+      "layer": "runtime",
+      "authorityRole": "runtimeImplementation",
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": false,
+      "runtimeWriteAllowed": true,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": true,
+      "generated": false,
+      "doNotEdit": false,
+      "checkerRef": "scripts/check-language-kernel.mjs",
+      "evidenceRef": "artifacts/oam/evidence/surface-language-proof.json",
+      "responsibilityZh": "Surface 实现只展示、解释和触发已准入动作，不写业务事实权威。",
+      "sourceRefs": [
+        "docs/oam/current-authority-index.json"
+      ]
     },
     {
       "path": "apps/pc/src",
@@ -44,7 +60,23 @@
       "checker": "scripts/check-surface-contract.mjs",
       "evidence": "artifacts/oam/evidence/surface-language-proof.json",
       "currentTruthAllowed": false,
-      "notesZh": "PC 治理面可以治理和审批，不直接写普通业务事实。"
+      "notesZh": "PC 治理面可以治理和审批，不直接写普通业务事实。",
+      "layer": "runtime",
+      "authorityRole": "runtimeImplementation",
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": false,
+      "runtimeWriteAllowed": true,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": true,
+      "generated": false,
+      "doNotEdit": false,
+      "checkerRef": "scripts/check-surface-contract.mjs",
+      "evidenceRef": "artifacts/oam/evidence/surface-language-proof.json",
+      "responsibilityZh": "Surface 实现只展示、解释和触发已准入动作，不写业务事实权威。",
+      "sourceRefs": [
+        "docs/oam/current-authority-index.json"
+      ]
     },
     {
       "path": "artifacts/oam/evidence",
@@ -53,7 +85,48 @@
       "checker": "scripts/oam/check-current-evidence-root.mjs",
       "evidence": "artifacts/oam/evidence/evidence-graph.json",
       "currentTruthAllowed": false,
-      "notesZh": "证据根证明检查执行状态，不替代业务事实权威。"
+      "notesZh": "证据根证明检查执行状态，不替代业务事实权威。",
+      "layer": "evidence",
+      "authorityRole": "evidenceProof",
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": false,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": false,
+      "generated": false,
+      "doNotEdit": false,
+      "checkerRef": "scripts/oam/check-current-evidence-root.mjs",
+      "evidenceRef": "artifacts/oam/evidence/evidence-graph.json",
+      "responsibilityZh": "证据或证据合同只证明执行状态，不定义业务事实。",
+      "sourceRefs": [
+        "docs/oam/current-authority-index.json"
+      ]
+    },
+    {
+      "path": "docs/business/admission/business-line-levels.yml",
+      "identity": "current_admission_contract",
+      "owner": "business-admission-owner",
+      "checker": "scripts/check-business-line-admission.mjs",
+      "evidence": "artifacts/oam/evidence/high-risk-trust-proof.json",
+      "currentTruthAllowed": true,
+      "notesZh": "业务线成熟度与准入等级 Source。",
+      "layer": "source",
+      "authorityRole": "policySource",
+      "businessFactAuthorityAllowed": true,
+      "contractAuthorityAllowed": true,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": true,
+      "generated": false,
+      "doNotEdit": false,
+      "checkerRef": "scripts/check-business-line-admission.mjs",
+      "evidenceRef": "artifacts/oam/evidence/high-risk-trust-proof.json",
+      "responsibilityZh": "少而硬的 Source Layer 权威输入，只能人工维护。",
+      "sourceRefs": [
+        "docs/oam/current-authority-index.json"
+      ]
     },
     {
       "path": "docs/business/business-line-registry.json",
@@ -62,7 +135,23 @@
       "checker": "scripts/check-business-line-admission.mjs",
       "evidence": "artifacts/oam/evidence/master-design-proof.json",
       "currentTruthAllowed": true,
-      "notesZh": "业务线准入状态权威。"
+      "notesZh": "业务线准入状态权威。",
+      "layer": "source",
+      "authorityRole": "policySource",
+      "businessFactAuthorityAllowed": true,
+      "contractAuthorityAllowed": true,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": true,
+      "generated": false,
+      "doNotEdit": false,
+      "checkerRef": "scripts/check-business-line-admission.mjs",
+      "evidenceRef": "artifacts/oam/evidence/master-design-proof.json",
+      "responsibilityZh": "少而硬的 Source Layer 权威输入，只能人工维护。",
+      "sourceRefs": [
+        "docs/oam/current-authority-index.json"
+      ]
     },
     {
       "path": "docs/business/domains/dormitory/domain-pack.yml",
@@ -70,8 +159,24 @@
       "owner": "business-contract-owner",
       "checker": "scripts/check-dormitory-golden-domain.mjs",
       "evidence": "artifacts/oam/checks/dormitory-golden-domain-report.json",
-      "currentTruthAllowed": true,
-      "notesZh": "宿舍当前领域包、事实归属和金链追踪。"
+      "currentTruthAllowed": false,
+      "notesZh": "宿舍当前领域包、事实归属和金链追踪。",
+      "layer": "generated",
+      "authorityRole": "generatedContract",
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": true,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": false,
+      "generated": true,
+      "doNotEdit": true,
+      "checkerRef": "scripts/check-dormitory-golden-domain.mjs",
+      "evidenceRef": "artifacts/oam/checks/dormitory-golden-domain-report.json",
+      "responsibilityZh": "机器派生合同只能被消费和校验，不得作为人工业务事实 Source。",
+      "generatedFrom": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json"
+      ]
     },
     {
       "path": "docs/business/domains/dormitory/dormitory-observability-contract.json",
@@ -80,7 +185,23 @@
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
       "evidence": "artifacts/oam/evidence/evidence-graph.json",
       "currentTruthAllowed": false,
-      "notesZh": "宿舍可观测合同派生视图。"
+      "notesZh": "宿舍可观测合同派生视图。",
+      "layer": "generated",
+      "authorityRole": "generatedContract",
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": true,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": false,
+      "generated": true,
+      "doNotEdit": true,
+      "checkerRef": "scripts/business/check-dormitory-derived-contracts.mjs",
+      "evidenceRef": "artifacts/oam/evidence/evidence-graph.json",
+      "responsibilityZh": "机器派生合同只能被消费和校验，不得作为人工业务事实 Source。",
+      "generatedFrom": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json"
+      ]
     },
     {
       "path": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
@@ -89,7 +210,23 @@
       "checker": "scripts/business/check-dormitory-operating-kernel.mjs",
       "evidence": "artifacts/oam/evidence/evidence-graph.json",
       "currentTruthAllowed": true,
-      "notesZh": "宿舍业务唯一运行内核。"
+      "notesZh": "宿舍业务唯一运行内核。",
+      "layer": "source",
+      "authorityRole": "sourceKernel",
+      "businessFactAuthorityAllowed": true,
+      "contractAuthorityAllowed": true,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": true,
+      "generated": false,
+      "doNotEdit": false,
+      "checkerRef": "scripts/business/check-dormitory-operating-kernel.mjs",
+      "evidenceRef": "artifacts/oam/evidence/evidence-graph.json",
+      "responsibilityZh": "宿舍领域唯一 Source，派生文件不得覆盖它。",
+      "sourceRefs": [
+        "docs/oam/current-authority-index.json"
+      ]
     },
     {
       "path": "docs/business/domains/dormitory/dormitory-operator-playbook.md",
@@ -98,7 +235,23 @@
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
       "evidence": "artifacts/oam/evidence/evidence-graph.json",
       "currentTruthAllowed": false,
-      "notesZh": "宿舍操作手册，人读但不定义当前事实。"
+      "notesZh": "宿舍操作手册，人读但不定义当前事实。",
+      "layer": "generated",
+      "authorityRole": "generatedContract",
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": true,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": false,
+      "generated": true,
+      "doNotEdit": true,
+      "checkerRef": "scripts/business/check-dormitory-derived-contracts.mjs",
+      "evidenceRef": "artifacts/oam/evidence/evidence-graph.json",
+      "responsibilityZh": "机器派生合同只能被消费和校验，不得作为人工业务事实 Source。",
+      "generatedFrom": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json"
+      ]
     },
     {
       "path": "docs/business/domains/dormitory/dormitory-pilot-go-no-go.json",
@@ -107,7 +260,23 @@
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
       "evidence": "artifacts/oam/evidence/evidence-graph.json",
       "currentTruthAllowed": false,
-      "notesZh": "宿舍试运行 Go/No-Go 派生视图。"
+      "notesZh": "宿舍试运行 Go/No-Go 派生视图。",
+      "layer": "generated",
+      "authorityRole": "generatedContract",
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": true,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": false,
+      "generated": true,
+      "doNotEdit": true,
+      "checkerRef": "scripts/business/check-dormitory-derived-contracts.mjs",
+      "evidenceRef": "artifacts/oam/evidence/evidence-graph.json",
+      "responsibilityZh": "机器派生合同只能被消费和校验，不得作为人工业务事实 Source。",
+      "generatedFrom": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json"
+      ]
     },
     {
       "path": "docs/business/domains/dormitory/dormitory-pilot-scenario-pack.yml",
@@ -116,7 +285,23 @@
       "checker": "scripts/business/check-dormitory-pilot-scenario-pack.mjs",
       "evidence": "artifacts/oam/evidence/evidence-graph.json",
       "currentTruthAllowed": false,
-      "notesZh": "宿舍试运行场景派生包。"
+      "notesZh": "宿舍试运行场景派生包。",
+      "layer": "generated",
+      "authorityRole": "generatedContract",
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": true,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": false,
+      "generated": true,
+      "doNotEdit": true,
+      "checkerRef": "scripts/business/check-dormitory-pilot-scenario-pack.mjs",
+      "evidenceRef": "artifacts/oam/evidence/evidence-graph.json",
+      "responsibilityZh": "机器派生合同只能被消费和校验，不得作为人工业务事实 Source。",
+      "generatedFrom": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json"
+      ]
     },
     {
       "path": "docs/business/domains/dormitory/dormitory-release-train.yml",
@@ -125,7 +310,23 @@
       "checker": "scripts/business/check-dormitory-release-train.mjs",
       "evidence": "artifacts/oam/evidence/evidence-graph.json",
       "currentTruthAllowed": false,
-      "notesZh": "宿舍发布列车派生视图。"
+      "notesZh": "宿舍发布列车派生视图。",
+      "layer": "generated",
+      "authorityRole": "generatedContract",
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": true,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": false,
+      "generated": true,
+      "doNotEdit": true,
+      "checkerRef": "scripts/business/check-dormitory-release-train.mjs",
+      "evidenceRef": "artifacts/oam/evidence/evidence-graph.json",
+      "responsibilityZh": "机器派生合同只能被消费和校验，不得作为人工业务事实 Source。",
+      "generatedFrom": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json"
+      ]
     },
     {
       "path": "docs/business/domains/dormitory/dormitory-seed-data-pack.json",
@@ -134,7 +335,23 @@
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
       "evidence": "artifacts/oam/evidence/evidence-graph.json",
       "currentTruthAllowed": false,
-      "notesZh": "宿舍试运行种子数据派生包。"
+      "notesZh": "宿舍试运行种子数据派生包。",
+      "layer": "generated",
+      "authorityRole": "generatedContract",
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": true,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": false,
+      "generated": true,
+      "doNotEdit": true,
+      "checkerRef": "scripts/business/check-dormitory-derived-contracts.mjs",
+      "evidenceRef": "artifacts/oam/evidence/evidence-graph.json",
+      "responsibilityZh": "机器派生合同只能被消费和校验，不得作为人工业务事实 Source。",
+      "generatedFrom": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json"
+      ]
     },
     {
       "path": "docs/business/domains/dormitory/handoff-contract.json",
@@ -142,8 +359,24 @@
       "owner": "domain-owner",
       "checker": "scripts/business/check-dormitory-derived-contracts.mjs",
       "evidence": "artifacts/oam/evidence/evidence-graph.json",
-      "currentTruthAllowed": true,
-      "notesZh": "宿舍 handoff 合同。"
+      "currentTruthAllowed": false,
+      "notesZh": "宿舍 handoff 合同派生视图；唯一 Source 是 dormitory-operating-kernel.json。",
+      "layer": "generated",
+      "authorityRole": "generatedContract",
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": true,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": false,
+      "generated": true,
+      "doNotEdit": true,
+      "checkerRef": "scripts/business/check-dormitory-derived-contracts.mjs",
+      "evidenceRef": "artifacts/oam/evidence/evidence-graph.json",
+      "responsibilityZh": "机器派生合同只能被消费和校验，不得作为人工业务事实 Source。",
+      "generatedFrom": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json"
+      ]
     },
     {
       "path": "docs/business/domains/finance/finance-operating-kernel.json",
@@ -152,7 +385,23 @@
       "checker": "scripts/oam/check-oam-kernel-graph.mjs",
       "evidence": "artifacts/oam/checks/oam-kernel-graph-result.json",
       "currentTruthAllowed": true,
-      "notesZh": "Finance 当前运行内核范围。"
+      "notesZh": "Finance 当前运行内核范围。",
+      "layer": "source",
+      "authorityRole": "sourceKernel",
+      "businessFactAuthorityAllowed": true,
+      "contractAuthorityAllowed": true,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": true,
+      "generated": false,
+      "doNotEdit": false,
+      "checkerRef": "scripts/oam/check-oam-kernel-graph.mjs",
+      "evidenceRef": "artifacts/oam/checks/oam-kernel-graph-result.json",
+      "responsibilityZh": "少而硬的 Source Layer 权威输入，只能人工维护。",
+      "sourceRefs": [
+        "docs/oam/current-authority-index.json"
+      ]
     },
     {
       "path": "docs/business/domains/maintenance/maintenance-operating-kernel.json",
@@ -161,7 +410,23 @@
       "checker": "scripts/oam/check-oam-kernel-graph.mjs",
       "evidence": "artifacts/oam/checks/oam-kernel-graph-result.json",
       "currentTruthAllowed": true,
-      "notesZh": "Maintenance 当前运行内核范围。"
+      "notesZh": "Maintenance 当前运行内核范围。",
+      "layer": "source",
+      "authorityRole": "sourceKernel",
+      "businessFactAuthorityAllowed": true,
+      "contractAuthorityAllowed": true,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": true,
+      "generated": false,
+      "doNotEdit": false,
+      "checkerRef": "scripts/oam/check-oam-kernel-graph.mjs",
+      "evidenceRef": "artifacts/oam/checks/oam-kernel-graph-result.json",
+      "responsibilityZh": "少而硬的 Source Layer 权威输入，只能人工维护。",
+      "sourceRefs": [
+        "docs/oam/current-authority-index.json"
+      ]
     },
     {
       "path": "docs/business/dormitory/current-business-journey.md",
@@ -170,7 +435,23 @@
       "checker": "scripts/check-dormitory-golden-domain.mjs",
       "evidence": "artifacts/oam/checks/dormitory-golden-domain-report.json",
       "currentTruthAllowed": false,
-      "notesZh": "宿舍当前业务旅程人读入口；只解释当前合同，不替代机器权威。"
+      "notesZh": "宿舍当前业务旅程人读入口；只解释当前合同，不替代机器权威。",
+      "layer": "generated",
+      "authorityRole": "generatedContract",
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": true,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": false,
+      "generated": true,
+      "doNotEdit": true,
+      "checkerRef": "scripts/check-dormitory-golden-domain.mjs",
+      "evidenceRef": "artifacts/oam/checks/dormitory-golden-domain-report.json",
+      "responsibilityZh": "机器派生合同只能被消费和校验，不得作为人工业务事实 Source。",
+      "generatedFrom": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json"
+      ]
     },
     {
       "path": "docs/business/dormitory/value-streams.yml",
@@ -179,7 +460,23 @@
       "checker": "scripts/check-dormitory-golden-domain.mjs",
       "evidence": "artifacts/oam/checks/dormitory-golden-domain-report.json",
       "currentTruthAllowed": false,
-      "notesZh": "宿舍价值流派生视图；由宿舍唯一运行内核生成，不定义当前事实。"
+      "notesZh": "宿舍价值流派生视图；由宿舍唯一运行内核生成，不定义当前事实。",
+      "layer": "generated",
+      "authorityRole": "generatedContract",
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": true,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": false,
+      "generated": true,
+      "doNotEdit": true,
+      "checkerRef": "scripts/check-dormitory-golden-domain.mjs",
+      "evidenceRef": "artifacts/oam/checks/dormitory-golden-domain-report.json",
+      "responsibilityZh": "机器派生合同只能被消费和校验，不得作为人工业务事实 Source。",
+      "generatedFrom": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json"
+      ]
     },
     {
       "path": "docs/business/dormitory/workitem-catalog.yml",
@@ -188,7 +485,23 @@
       "checker": "scripts/business/check-dormitory-execution-kernel.mjs",
       "evidence": "artifacts/oam/checks/dormitory-business-semantic-contract-result.json",
       "currentTruthAllowed": false,
-      "notesZh": "宿舍 WorkItem 目录派生视图；由宿舍唯一运行内核生成，不定义当前事实。"
+      "notesZh": "宿舍 WorkItem 目录派生视图；由宿舍唯一运行内核生成，不定义当前事实。",
+      "layer": "generated",
+      "authorityRole": "generatedContract",
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": true,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": false,
+      "generated": true,
+      "doNotEdit": true,
+      "checkerRef": "scripts/business/check-dormitory-execution-kernel.mjs",
+      "evidenceRef": "artifacts/oam/checks/dormitory-business-semantic-contract-result.json",
+      "responsibilityZh": "机器派生合同只能被消费和校验，不得作为人工业务事实 Source。",
+      "generatedFrom": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json"
+      ]
     },
     {
       "path": "docs/business/dormitory/workitem-decision-table.json",
@@ -197,7 +510,23 @@
       "checker": "scripts/business/check-dormitory-execution-kernel.mjs",
       "evidence": "artifacts/oam/checks/dormitory-business-semantic-contract-result.json",
       "currentTruthAllowed": false,
-      "notesZh": "宿舍来源动作裁决派生视图；由宿舍唯一运行内核生成，不定义当前事实。"
+      "notesZh": "宿舍来源动作裁决派生视图；由宿舍唯一运行内核生成，不定义当前事实。",
+      "layer": "generated",
+      "authorityRole": "generatedContract",
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": true,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": false,
+      "generated": true,
+      "doNotEdit": true,
+      "checkerRef": "scripts/business/check-dormitory-execution-kernel.mjs",
+      "evidenceRef": "artifacts/oam/checks/dormitory-business-semantic-contract-result.json",
+      "responsibilityZh": "机器派生合同只能被消费和校验，不得作为人工业务事实 Source。",
+      "generatedFrom": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json"
+      ]
     },
     {
       "path": "docs/business/truth-owner-registry.yml",
@@ -206,7 +535,23 @@
       "checker": "scripts/check-truth-owners.mjs",
       "evidence": "artifacts/oam/evidence/truth-ownership-proof.json",
       "currentTruthAllowed": true,
-      "notesZh": "业务真值 owner 和禁止 owner 权威。"
+      "notesZh": "业务真值 owner 和禁止 owner 权威。",
+      "layer": "source",
+      "authorityRole": "sourceKernel",
+      "businessFactAuthorityAllowed": true,
+      "contractAuthorityAllowed": true,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": true,
+      "generated": false,
+      "doNotEdit": false,
+      "checkerRef": "scripts/check-truth-owners.mjs",
+      "evidenceRef": "artifacts/oam/evidence/truth-ownership-proof.json",
+      "responsibilityZh": "少而硬的 Source Layer 权威输入，只能人工维护。",
+      "sourceRefs": [
+        "docs/oam/current-authority-index.json"
+      ]
     },
     {
       "path": "docs/contracts/admission/admission-matrix.json",
@@ -214,8 +559,25 @@
       "owner": "admission-kernel-owner",
       "checker": "scripts/check-admission-kernel.mjs",
       "evidence": "artifacts/oam/evidence/high-risk-trust-proof.json",
-      "currentTruthAllowed": true,
-      "notesZh": "准入动作、权限、设备和阻断原因权威。"
+      "currentTruthAllowed": false,
+      "notesZh": "准入动作、权限、设备和阻断原因权威。",
+      "layer": "generated",
+      "authorityRole": "generatedContract",
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": true,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": false,
+      "generated": true,
+      "doNotEdit": true,
+      "checkerRef": "scripts/check-admission-kernel.mjs",
+      "evidenceRef": "artifacts/oam/evidence/high-risk-trust-proof.json",
+      "responsibilityZh": "机器派生合同只能被消费和校验，不得作为人工业务事实 Source。",
+      "generatedFrom": [
+        "docs/oam/system-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ]
     },
     {
       "path": "docs/contracts/business/oam-business-object-field-registry.json",
@@ -223,8 +585,25 @@
       "owner": "business-contract-owner",
       "checker": "scripts/oam/check-business-object-field-registry.mjs",
       "evidence": "artifacts/oam/evidence/runtime-proof.json",
-      "currentTruthAllowed": true,
-      "notesZh": "住宿、财务、维修、身份、治理业务对象与字段总表。"
+      "currentTruthAllowed": false,
+      "notesZh": "住宿、财务、维修、身份、治理业务对象与字段总表。",
+      "layer": "generated",
+      "authorityRole": "generatedContract",
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": true,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": false,
+      "generated": true,
+      "doNotEdit": true,
+      "checkerRef": "scripts/oam/check-business-object-field-registry.mjs",
+      "evidenceRef": "artifacts/oam/evidence/runtime-proof.json",
+      "responsibilityZh": "机器派生合同只能被消费和校验，不得作为人工业务事实 Source。",
+      "generatedFrom": [
+        "docs/oam/system-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ]
     },
     {
       "path": "docs/contracts/business/oam-workflow-state-registry.json",
@@ -232,8 +611,25 @@
       "owner": "workflow-contract-owner",
       "checker": "scripts/oam/check-workflow-state-registry.mjs",
       "evidence": "artifacts/oam/evidence/runtime-proof.json",
-      "currentTruthAllowed": true,
-      "notesZh": "WorkItem 流程、状态、动作、前置条件、证据和修正路径总表。"
+      "currentTruthAllowed": false,
+      "notesZh": "WorkItem 流程、状态、动作、前置条件、证据和修正路径总表。",
+      "layer": "generated",
+      "authorityRole": "generatedContract",
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": true,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": false,
+      "generated": true,
+      "doNotEdit": true,
+      "checkerRef": "scripts/oam/check-workflow-state-registry.mjs",
+      "evidenceRef": "artifacts/oam/evidence/runtime-proof.json",
+      "responsibilityZh": "机器派生合同只能被消费和校验，不得作为人工业务事实 Source。",
+      "generatedFrom": [
+        "docs/oam/system-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ]
     },
     {
       "path": "docs/contracts/database/oam-db-ownership-map.json",
@@ -242,7 +638,23 @@
       "checker": "scripts/oam/check-db-ownership-map.mjs",
       "evidence": "artifacts/oam/evidence/runtime-proof.json",
       "currentTruthAllowed": true,
-      "notesZh": "每张当前 OAM 数据库表的 owner、写入口、读侧、迁移和测试绑定。"
+      "notesZh": "每张当前 OAM 数据库表的 owner、写入口、读侧、迁移和测试绑定。",
+      "layer": "source",
+      "authorityRole": "policySource",
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": true,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": true,
+      "generated": false,
+      "doNotEdit": false,
+      "checkerRef": "scripts/oam/check-db-ownership-map.mjs",
+      "evidenceRef": "artifacts/oam/evidence/runtime-proof.json",
+      "responsibilityZh": "数据库 ownership 边界 Source；具体 migration 不得作为业务 Source。",
+      "sourceRefs": [
+        "docs/oam/current-authority-index.json"
+      ]
     },
     {
       "path": "docs/contracts/definition/workitem-definition-registry.json",
@@ -250,8 +662,25 @@
       "owner": "definition-kernel-owner",
       "checker": "scripts/business/check-dormitory-execution-kernel.mjs",
       "evidence": "artifacts/oam/checks/dormitory-business-semantic-contract-result.json",
-      "currentTruthAllowed": true,
-      "notesZh": "WorkItem Definition、allowedFacts、forbiddenFacts、ledgerPolicy 权威。"
+      "currentTruthAllowed": false,
+      "notesZh": "WorkItem Definition、allowedFacts、forbiddenFacts、ledgerPolicy 权威。",
+      "layer": "generated",
+      "authorityRole": "generatedContract",
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": true,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": false,
+      "generated": true,
+      "doNotEdit": true,
+      "checkerRef": "scripts/business/check-dormitory-execution-kernel.mjs",
+      "evidenceRef": "artifacts/oam/checks/dormitory-business-semantic-contract-result.json",
+      "responsibilityZh": "机器派生合同只能被消费和校验，不得作为人工业务事实 Source。",
+      "generatedFrom": [
+        "docs/oam/system-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ]
     },
     {
       "path": "docs/contracts/evidence/evidence-graph-refs-contract.json",
@@ -260,7 +689,24 @@
       "checker": "scripts/oam/check-evidence-contract-refs.mjs",
       "evidence": "artifacts/oam/checks/company-kernel-alignment-result.json",
       "currentTruthAllowed": false,
-      "notesZh": "证据根引用合同，证明 required refs 真实存在。"
+      "notesZh": "证据根引用合同，证明 required refs 真实存在。",
+      "layer": "generated",
+      "authorityRole": "generatedContract",
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": true,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": false,
+      "generated": true,
+      "doNotEdit": true,
+      "checkerRef": "scripts/oam/check-evidence-contract-refs.mjs",
+      "evidenceRef": "artifacts/oam/checks/company-kernel-alignment-result.json",
+      "responsibilityZh": "证据或证据合同只证明执行状态，不定义业务事实。",
+      "generatedFrom": [
+        "docs/oam/system-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ]
     },
     {
       "path": "docs/contracts/language/language-contract.json",
@@ -269,7 +715,23 @@
       "checker": "scripts/check-language-kernel.mjs",
       "evidence": "artifacts/oam/evidence/surface-language-proof.json",
       "currentTruthAllowed": true,
-      "notesZh": "语言内核和多语言目录权威。"
+      "notesZh": "语言内核和多语言目录权威。",
+      "layer": "source",
+      "authorityRole": "sourceKernel",
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": true,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": true,
+      "generated": false,
+      "doNotEdit": false,
+      "checkerRef": "scripts/check-language-kernel.mjs",
+      "evidenceRef": "artifacts/oam/evidence/surface-language-proof.json",
+      "responsibilityZh": "少而硬的 Source Layer 权威输入，只能人工维护。",
+      "sourceRefs": [
+        "docs/oam/current-authority-index.json"
+      ]
     },
     {
       "path": "docs/contracts/oam.current.json",
@@ -278,7 +740,23 @@
       "checker": "scripts/validate-contracts.mjs",
       "evidence": "artifacts/oam/evidence/runtime-proof.json",
       "currentTruthAllowed": true,
-      "notesZh": "当前 OAM 机器合同权威。"
+      "notesZh": "当前 OAM 机器合同权威。",
+      "layer": "source",
+      "authorityRole": "architectureRoot",
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": true,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": true,
+      "generated": false,
+      "doNotEdit": false,
+      "checkerRef": "scripts/validate-contracts.mjs",
+      "evidenceRef": "artifacts/oam/evidence/runtime-proof.json",
+      "responsibilityZh": "架构权威 Source，定义当前 OAM 结构、边界和权威入口。",
+      "sourceRefs": [
+        "docs/oam/current-authority-index.json"
+      ]
     },
     {
       "path": "docs/contracts/search/search-contract.json",
@@ -286,8 +764,25 @@
       "owner": "search-kernel-owner",
       "checker": "scripts/check-search-kernel.mjs",
       "evidence": "artifacts/oam/evidence/search-readonly-proof.json",
-      "currentTruthAllowed": true,
-      "notesZh": "Search 只读自证合同。"
+      "currentTruthAllowed": false,
+      "notesZh": "Search 只读自证合同。",
+      "layer": "generated",
+      "authorityRole": "generatedContract",
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": true,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": false,
+      "generated": true,
+      "doNotEdit": true,
+      "checkerRef": "scripts/check-search-kernel.mjs",
+      "evidenceRef": "artifacts/oam/evidence/search-readonly-proof.json",
+      "responsibilityZh": "机器派生合同只能被消费和校验，不得作为人工业务事实 Source。",
+      "generatedFrom": [
+        "docs/oam/system-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ]
     },
     {
       "path": "docs/finance/finance-ledger-kernel.json",
@@ -296,7 +791,23 @@
       "checker": "scripts/oam/check-cross-domain-conflict-rules.mjs",
       "evidence": "artifacts/oam/checks/cross-domain-conflict-rules-result.json",
       "currentTruthAllowed": true,
-      "notesZh": "Finance / Ledger Kernel 最小权威，阻断 Dormitory basis、SharedReceipt、DashboardSummary 和 KPI 占用 finance truth。"
+      "notesZh": "Finance / Ledger Kernel 最小权威，阻断 Dormitory basis、SharedReceipt、DashboardSummary 和 KPI 占用 finance truth。",
+      "layer": "source",
+      "authorityRole": "sourceKernel",
+      "businessFactAuthorityAllowed": true,
+      "contractAuthorityAllowed": true,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": true,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": true,
+      "generated": false,
+      "doNotEdit": false,
+      "checkerRef": "scripts/oam/check-cross-domain-conflict-rules.mjs",
+      "evidenceRef": "artifacts/oam/checks/cross-domain-conflict-rules-result.json",
+      "responsibilityZh": "Finance / Ledger Source，只有它可以定义账务真值边界。",
+      "sourceRefs": [
+        "docs/oam/current-authority-index.json"
+      ]
     },
     {
       "path": "docs/identity/identity-permission-kernel.json",
@@ -305,7 +816,23 @@
       "checker": "scripts/oam/check-cross-domain-conflict-rules.mjs",
       "evidence": "artifacts/oam/checks/cross-domain-conflict-rules-result.json",
       "currentTruthAllowed": true,
-      "notesZh": "Identity / Permission Kernel 最小权威，声明 Subject、Actor、Account、Role、Capability、PermissionEnvelope、DeviceSession、TenantMatch 和 Relationship。"
+      "notesZh": "Identity / Permission Kernel 最小权威，声明 Subject、Actor、Account、Role、Capability、PermissionEnvelope、DeviceSession、TenantMatch 和 Relationship。",
+      "layer": "source",
+      "authorityRole": "sourceKernel",
+      "businessFactAuthorityAllowed": true,
+      "contractAuthorityAllowed": true,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": true,
+      "generated": false,
+      "doNotEdit": false,
+      "checkerRef": "scripts/oam/check-cross-domain-conflict-rules.mjs",
+      "evidenceRef": "artifacts/oam/checks/cross-domain-conflict-rules-result.json",
+      "responsibilityZh": "少而硬的 Source Layer 权威输入，只能人工维护。",
+      "sourceRefs": [
+        "docs/oam/current-authority-index.json"
+      ]
     },
     {
       "path": "docs/oam/codex-execution-channel-policy.json",
@@ -314,7 +841,23 @@
       "checker": "scripts/oam/check-codex-execution-channel-policy.mjs",
       "evidence": "artifacts/oam/checks/codex-execution-channel-policy-result.json",
       "currentTruthAllowed": true,
-      "notesZh": "Codex 执行通道权威，限定 Codex 只执行 00 明确指令，不自行改 GO/NO_GO 或扩大范围。"
+      "notesZh": "Codex 执行通道权威，限定 Codex 只执行 00 明确指令，不自行改 GO/NO_GO 或扩大范围。",
+      "layer": "source",
+      "authorityRole": "policySource",
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": true,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": true,
+      "generated": false,
+      "doNotEdit": false,
+      "checkerRef": "scripts/oam/check-codex-execution-channel-policy.mjs",
+      "evidenceRef": "artifacts/oam/checks/codex-execution-channel-policy-result.json",
+      "responsibilityZh": "少而硬的 Source Layer 权威输入，只能人工维护。",
+      "sourceRefs": [
+        "docs/oam/current-authority-index.json"
+      ]
     },
     {
       "path": "docs/oam/compiler-generated-contract-kernel.json",
@@ -323,7 +866,48 @@
       "checker": "scripts/oam/check-cross-domain-conflict-rules.mjs",
       "evidence": "artifacts/oam/checks/cross-domain-conflict-rules-result.json",
       "currentTruthAllowed": true,
-      "notesZh": "人维护源内核与编译生成合同边界权威，生成文件不得手工编辑或标成 source truth。"
+      "notesZh": "人维护源内核与编译生成合同边界权威，生成文件不得手工编辑或标成 source truth。",
+      "layer": "source",
+      "authorityRole": "sourceKernel",
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": true,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": true,
+      "generated": false,
+      "doNotEdit": false,
+      "checkerRef": "scripts/oam/check-cross-domain-conflict-rules.mjs",
+      "evidenceRef": "artifacts/oam/checks/cross-domain-conflict-rules-result.json",
+      "responsibilityZh": "少而硬的 Source Layer 权威输入，只能人工维护。",
+      "sourceRefs": [
+        "docs/oam/current-authority-index.json"
+      ]
+    },
+    {
+      "path": "docs/oam/current-admission-state.json",
+      "identity": "current_admission_contract",
+      "owner": "admission-kernel-owner",
+      "checker": "scripts/check-admission-kernel.mjs",
+      "evidence": "artifacts/oam/evidence/high-risk-trust-proof.json",
+      "currentTruthAllowed": true,
+      "notesZh": "当前准入状态 Source，生产确认保持阻断。",
+      "layer": "source",
+      "authorityRole": "policySource",
+      "businessFactAuthorityAllowed": true,
+      "contractAuthorityAllowed": true,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": true,
+      "generated": false,
+      "doNotEdit": false,
+      "checkerRef": "scripts/check-admission-kernel.mjs",
+      "evidenceRef": "artifacts/oam/evidence/high-risk-trust-proof.json",
+      "responsibilityZh": "少而硬的 Source Layer 权威输入，只能人工维护。",
+      "sourceRefs": [
+        "docs/oam/current-authority-index.json"
+      ]
     },
     {
       "path": "docs/oam/current-architecture.manifest.json",
@@ -332,7 +916,23 @@
       "checker": "scripts/oam/check-current-oam.mjs",
       "evidence": "artifacts/oam/evidence/evidence-graph.json",
       "currentTruthAllowed": true,
-      "notesZh": "当前目录、服务、模块、证据根和 CI 绑定清单。"
+      "notesZh": "当前目录、服务、模块、证据根和 CI 绑定清单。",
+      "layer": "source",
+      "authorityRole": "architectureRoot",
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": true,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": true,
+      "generated": false,
+      "doNotEdit": false,
+      "checkerRef": "scripts/oam/check-current-oam.mjs",
+      "evidenceRef": "artifacts/oam/evidence/evidence-graph.json",
+      "responsibilityZh": "架构权威 Source，定义当前 OAM 结构、边界和权威入口。",
+      "sourceRefs": [
+        "docs/oam/current-authority-index.json"
+      ]
     },
     {
       "path": "docs/oam/current-architecture.md",
@@ -341,7 +941,49 @@
       "checker": "scripts/oam/check-current-authority-index.mjs",
       "evidence": "artifacts/oam/evidence/evidence-graph.json",
       "currentTruthAllowed": true,
-      "notesZh": "当前 OAM 人工可读架构权威。"
+      "notesZh": "当前 OAM 人工可读架构权威。",
+      "layer": "source",
+      "authorityRole": "architectureRoot",
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": true,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": true,
+      "generated": false,
+      "doNotEdit": false,
+      "checkerRef": "scripts/oam/check-current-authority-index.mjs",
+      "evidenceRef": "artifacts/oam/evidence/evidence-graph.json",
+      "responsibilityZh": "架构权威 Source，定义当前 OAM 结构、边界和权威入口。",
+      "sourceRefs": [
+        "docs/oam/current-authority-index.json"
+      ]
+    },
+    {
+      "path": "docs/oam/current-authority-index.json",
+      "identity": "current_architecture_authority",
+      "owner": "oam-release-owner",
+      "checker": "scripts/oam/check-current-authority-index.mjs",
+      "evidence": "artifacts/oam/evidence/evidence-graph.json",
+      "currentTruthAllowed": true,
+      "notesZh": "当前权威索引 Source，声明唯一分类模型和 Source 白名单。",
+      "layer": "source",
+      "authorityRole": "architectureRoot",
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": true,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": true,
+      "generated": false,
+      "doNotEdit": false,
+      "checkerRef": "scripts/oam/check-current-authority-index.mjs",
+      "evidenceRef": "artifacts/oam/evidence/evidence-graph.json",
+      "responsibilityZh": "架构权威 Source，定义当前 OAM 结构、边界和权威入口。",
+      "sourceRefs": [
+        "docs/oam/current-architecture.md",
+        "docs/contracts/oam.current.json"
+      ]
     },
     {
       "path": "docs/oam/current-engineering-ledger.json",
@@ -350,7 +992,23 @@
       "checker": "scripts/oam/check-current-engineering-ledger.mjs",
       "evidence": "artifacts/oam/checks/current-engineering-ledger-result.json",
       "currentTruthAllowed": false,
-      "notesZh": "当前保留文件身份、职责、owner、门禁、证据和删除条件总账；只管理工程文件，不替代 OAM 架构权威。"
+      "notesZh": "当前保留文件身份、职责、owner、门禁、证据和删除条件总账；只管理工程文件，不替代 OAM 架构权威。",
+      "layer": "runtime",
+      "authorityRole": "validationSchema",
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": false,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": true,
+      "generated": false,
+      "doNotEdit": false,
+      "checkerRef": "scripts/oam/check-current-engineering-ledger.mjs",
+      "evidenceRef": "artifacts/oam/checks/current-engineering-ledger-result.json",
+      "responsibilityZh": "保留文件默认只作为工程支撑，不定义业务事实权威。",
+      "sourceRefs": [
+        "docs/oam/current-authority-index.json"
+      ]
     },
     {
       "path": "docs/oam/current-oam-cross-domain-conflict-rules.json",
@@ -359,7 +1017,23 @@
       "checker": "scripts/oam/check-cross-domain-conflict-rules.mjs",
       "evidence": "artifacts/oam/checks/cross-domain-conflict-rules-result.json",
       "currentTruthAllowed": true,
-      "notesZh": "当前跨域冲突裁决规则，定义 business write、field display、search result、KPI、ledger、permission、release GO、Codex scope 和 P0 的归属。"
+      "notesZh": "当前跨域冲突裁决规则，定义 business write、field display、search result、KPI、ledger、permission、release GO、Codex scope 和 P0 的归属。",
+      "layer": "source",
+      "authorityRole": "policySource",
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": true,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": true,
+      "generated": false,
+      "doNotEdit": false,
+      "checkerRef": "scripts/oam/check-cross-domain-conflict-rules.mjs",
+      "evidenceRef": "artifacts/oam/checks/cross-domain-conflict-rules-result.json",
+      "responsibilityZh": "少而硬的 Source Layer 权威输入，只能人工维护。",
+      "sourceRefs": [
+        "docs/oam/current-authority-index.json"
+      ]
     },
     {
       "path": "docs/oam/current-oam-kernel-responsibility-map.json",
@@ -368,7 +1042,49 @@
       "checker": "scripts/oam/check-kernel-responsibility-map.mjs",
       "evidence": "artifacts/oam/checks/kernel-responsibility-map-result.json",
       "currentTruthAllowed": true,
-      "notesZh": "当前 OAM 责任域、四层模型、00 accountable、01-06 审查席位边界和 Codex 执行通道权威。"
+      "notesZh": "当前 OAM 责任域、四层模型、00 accountable、01-06 审查席位边界和 Codex 执行通道权威。",
+      "layer": "source",
+      "authorityRole": "architectureRoot",
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": true,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": true,
+      "generated": false,
+      "doNotEdit": false,
+      "checkerRef": "scripts/oam/check-kernel-responsibility-map.mjs",
+      "evidenceRef": "artifacts/oam/checks/kernel-responsibility-map-result.json",
+      "responsibilityZh": "架构权威 Source，定义当前 OAM 结构、边界和权威入口。",
+      "sourceRefs": [
+        "docs/oam/current-authority-index.json"
+      ]
+    },
+    {
+      "path": "docs/oam/domain-derived-contracts.json",
+      "identity": "current_system_kernel",
+      "owner": "oam-release-owner",
+      "checker": "scripts/oam/check-derived-contract-consistency.mjs",
+      "evidence": "artifacts/oam/checks/derived-contract-consistency-result.json",
+      "currentTruthAllowed": false,
+      "notesZh": "领域派生 manifest，只登记由领域内核生成的视图。",
+      "layer": "generated",
+      "authorityRole": "generatedContract",
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": true,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": false,
+      "generated": true,
+      "doNotEdit": true,
+      "checkerRef": "scripts/oam/check-derived-contract-consistency.mjs",
+      "evidenceRef": "artifacts/oam/checks/derived-contract-consistency-result.json",
+      "responsibilityZh": "机器派生合同只能被消费和校验，不得作为人工业务事实 Source。",
+      "generatedFrom": [
+        "docs/oam/system-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ]
     },
     {
       "path": "docs/oam/file-lifecycle-policy.json",
@@ -377,7 +1093,49 @@
       "checker": "scripts/oam/check-file-lifecycle-policy.mjs",
       "evidence": "artifacts/oam/checks/file-lifecycle-policy-result.json",
       "currentTruthAllowed": true,
-      "notesZh": "当前文件生命周期机器策略。"
+      "notesZh": "当前文件生命周期机器策略。",
+      "layer": "source",
+      "authorityRole": "policySource",
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": true,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": true,
+      "generated": false,
+      "doNotEdit": false,
+      "checkerRef": "scripts/oam/check-file-lifecycle-policy.mjs",
+      "evidenceRef": "artifacts/oam/checks/file-lifecycle-policy-result.json",
+      "responsibilityZh": "少而硬的 Source Layer 权威输入，只能人工维护。",
+      "sourceRefs": [
+        "docs/oam/current-authority-index.json"
+      ]
+    },
+    {
+      "path": "docs/oam/generated-contracts-manifest.json",
+      "identity": "current_system_kernel",
+      "owner": "oam-release-owner",
+      "checker": "scripts/oam/check-derived-contract-consistency.mjs",
+      "evidence": "artifacts/oam/checks/derived-contract-consistency-result.json",
+      "currentTruthAllowed": false,
+      "notesZh": "生成合同 manifest，只登记 runtime/surface/search/lens/test 合同。",
+      "layer": "generated",
+      "authorityRole": "generatedContract",
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": true,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": false,
+      "generated": true,
+      "doNotEdit": true,
+      "checkerRef": "scripts/oam/check-derived-contract-consistency.mjs",
+      "evidenceRef": "artifacts/oam/checks/derived-contract-consistency-result.json",
+      "responsibilityZh": "机器派生合同只能被消费和校验，不得作为人工业务事实 Source。",
+      "generatedFrom": [
+        "docs/oam/system-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ]
     },
     {
       "path": "docs/oam/iteration-kernel.json",
@@ -386,7 +1144,23 @@
       "checker": "scripts/oam/check-iteration-kernel.mjs",
       "evidence": "artifacts/oam/checks/iteration-kernel-result.json",
       "currentTruthAllowed": true,
-      "notesZh": "当前迭代目标、阶段、失败修复和证据要求权威。"
+      "notesZh": "当前迭代目标、阶段、失败修复和证据要求权威。",
+      "layer": "source",
+      "authorityRole": "sourceKernel",
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": true,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": true,
+      "generated": false,
+      "doNotEdit": false,
+      "checkerRef": "scripts/oam/check-iteration-kernel.mjs",
+      "evidenceRef": "artifacts/oam/checks/iteration-kernel-result.json",
+      "responsibilityZh": "少而硬的 Source Layer 权威输入，只能人工维护。",
+      "sourceRefs": [
+        "docs/oam/current-authority-index.json"
+      ]
     },
     {
       "path": "docs/oam/iteration-kernel.md",
@@ -395,7 +1169,23 @@
       "checker": "scripts/oam/check-iteration-kernel.mjs",
       "evidence": "artifacts/oam/checks/iteration-kernel-result.json",
       "currentTruthAllowed": false,
-      "notesZh": "当前迭代人读说明，只解释 iteration-kernel.json，不定义当前事实。"
+      "notesZh": "当前迭代人读说明，只解释 iteration-kernel.json，不定义当前事实。",
+      "layer": "manual",
+      "authorityRole": "humanManual",
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": false,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": true,
+      "generated": false,
+      "doNotEdit": false,
+      "checkerRef": "scripts/oam/check-iteration-kernel.mjs",
+      "evidenceRef": "artifacts/oam/checks/iteration-kernel-result.json",
+      "responsibilityZh": "人读说明只能解释当前权威，不定义业务事实。",
+      "sourceRefs": [
+        "docs/oam/current-authority-index.json"
+      ]
     },
     {
       "path": "docs/oam/kernel-schemas/domain-kernel.schema.json",
@@ -403,8 +1193,24 @@
       "owner": "oam-release-owner",
       "checker": "scripts/oam/check-oam-kernel-graph.mjs",
       "evidence": "artifacts/oam/checks/oam-kernel-graph-result.json",
-      "currentTruthAllowed": true,
-      "notesZh": "领域运行内核 schema。"
+      "currentTruthAllowed": false,
+      "notesZh": "领域运行内核 schema。",
+      "layer": "runtime",
+      "authorityRole": "validationSchema",
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": false,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": true,
+      "generated": false,
+      "doNotEdit": false,
+      "checkerRef": "scripts/oam/check-oam-kernel-graph.mjs",
+      "evidenceRef": "artifacts/oam/checks/oam-kernel-graph-result.json",
+      "responsibilityZh": "保留文件默认只作为工程支撑，不定义业务事实权威。",
+      "sourceRefs": [
+        "docs/oam/current-authority-index.json"
+      ]
     },
     {
       "path": "docs/oam/kernel-schemas/kernel-edge.schema.json",
@@ -412,8 +1218,24 @@
       "owner": "oam-release-owner",
       "checker": "scripts/oam/check-oam-kernel-graph.mjs",
       "evidence": "artifacts/oam/checks/oam-kernel-graph-result.json",
-      "currentTruthAllowed": true,
-      "notesZh": "OAM 图谱关系 schema。"
+      "currentTruthAllowed": false,
+      "notesZh": "OAM 图谱关系 schema。",
+      "layer": "runtime",
+      "authorityRole": "validationSchema",
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": false,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": true,
+      "generated": false,
+      "doNotEdit": false,
+      "checkerRef": "scripts/oam/check-oam-kernel-graph.mjs",
+      "evidenceRef": "artifacts/oam/checks/oam-kernel-graph-result.json",
+      "responsibilityZh": "保留文件默认只作为工程支撑，不定义业务事实权威。",
+      "sourceRefs": [
+        "docs/oam/current-authority-index.json"
+      ]
     },
     {
       "path": "docs/oam/kernel-schemas/kernel-node.schema.json",
@@ -421,8 +1243,24 @@
       "owner": "oam-release-owner",
       "checker": "scripts/oam/check-oam-kernel-graph.mjs",
       "evidence": "artifacts/oam/checks/oam-kernel-graph-result.json",
-      "currentTruthAllowed": true,
-      "notesZh": "OAM 图谱节点 schema。"
+      "currentTruthAllowed": false,
+      "notesZh": "OAM 图谱节点 schema。",
+      "layer": "runtime",
+      "authorityRole": "validationSchema",
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": false,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": true,
+      "generated": false,
+      "doNotEdit": false,
+      "checkerRef": "scripts/oam/check-oam-kernel-graph.mjs",
+      "evidenceRef": "artifacts/oam/checks/oam-kernel-graph-result.json",
+      "responsibilityZh": "保留文件默认只作为工程支撑，不定义业务事实权威。",
+      "sourceRefs": [
+        "docs/oam/current-authority-index.json"
+      ]
     },
     {
       "path": "docs/oam/kernel-schemas/workitem.schema.json",
@@ -430,8 +1268,24 @@
       "owner": "oam-release-owner",
       "checker": "scripts/oam/check-oam-kernel-graph.mjs",
       "evidence": "artifacts/oam/checks/oam-kernel-graph-result.json",
-      "currentTruthAllowed": true,
-      "notesZh": "当前 WorkItem schema。"
+      "currentTruthAllowed": false,
+      "notesZh": "当前 WorkItem schema。",
+      "layer": "runtime",
+      "authorityRole": "validationSchema",
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": false,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": true,
+      "generated": false,
+      "doNotEdit": false,
+      "checkerRef": "scripts/oam/check-oam-kernel-graph.mjs",
+      "evidenceRef": "artifacts/oam/checks/oam-kernel-graph-result.json",
+      "responsibilityZh": "保留文件默认只作为工程支撑，不定义业务事实权威。",
+      "sourceRefs": [
+        "docs/oam/current-authority-index.json"
+      ]
     },
     {
       "path": "docs/oam/oam-kernel-graph.json",
@@ -440,7 +1294,23 @@
       "checker": "scripts/oam/check-oam-kernel-graph.mjs",
       "evidence": "artifacts/oam/checks/oam-kernel-graph-result.json",
       "currentTruthAllowed": true,
-      "notesZh": "OAM 架构节点、关系、文件生命周期和门禁绑定图谱。"
+      "notesZh": "OAM 架构节点、关系、文件生命周期和门禁绑定图谱。",
+      "layer": "source",
+      "authorityRole": "architectureRoot",
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": true,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": true,
+      "generated": false,
+      "doNotEdit": false,
+      "checkerRef": "scripts/oam/check-oam-kernel-graph.mjs",
+      "evidenceRef": "artifacts/oam/checks/oam-kernel-graph-result.json",
+      "responsibilityZh": "架构权威 Source，定义当前 OAM 结构、边界和权威入口。",
+      "sourceRefs": [
+        "docs/oam/current-authority-index.json"
+      ]
     },
     {
       "path": "docs/oam/professional-ai-review-seats.json",
@@ -449,7 +1319,23 @@
       "checker": "scripts/oam/check-professional-ai-review-seats.mjs",
       "evidence": "artifacts/oam/checks/professional-ai-review-seats-result.json",
       "currentTruthAllowed": true,
-      "notesZh": "01-06 专业 AI 审查席位权威，只能给审查意见，不得直接给 Codex 最终执行指令。"
+      "notesZh": "01-06 专业 AI 审查席位权威，只能给审查意见，不得直接给 Codex 最终执行指令。",
+      "layer": "source",
+      "authorityRole": "policySource",
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": true,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": true,
+      "generated": false,
+      "doNotEdit": false,
+      "checkerRef": "scripts/oam/check-professional-ai-review-seats.mjs",
+      "evidenceRef": "artifacts/oam/checks/professional-ai-review-seats-result.json",
+      "responsibilityZh": "少而硬的 Source Layer 权威输入，只能人工维护。",
+      "sourceRefs": [
+        "docs/oam/current-authority-index.json"
+      ]
     },
     {
       "path": "docs/oam/system-change-governance-contract.json",
@@ -458,7 +1344,23 @@
       "checker": "scripts/oam/check-system-change-governance.mjs",
       "evidence": "artifacts/oam/checks/system-change-governance-result.json",
       "currentTruthAllowed": true,
-      "notesZh": "当前 OAM 系统变更治理、编译流程和 fail-closed 发布阻断权威。"
+      "notesZh": "当前 OAM 系统变更治理、编译流程和 fail-closed 发布阻断权威。",
+      "layer": "source",
+      "authorityRole": "policySource",
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": true,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": true,
+      "generated": false,
+      "doNotEdit": false,
+      "checkerRef": "scripts/oam/check-system-change-governance.mjs",
+      "evidenceRef": "artifacts/oam/checks/system-change-governance-result.json",
+      "responsibilityZh": "少而硬的 Source Layer 权威输入，只能人工维护。",
+      "sourceRefs": [
+        "docs/oam/current-authority-index.json"
+      ]
     },
     {
       "path": "docs/oam/system-derived-contracts.json",
@@ -467,7 +1369,24 @@
       "checker": "scripts/oam/check-derived-contract-consistency.mjs",
       "evidence": "artifacts/oam/checks/derived-contract-consistency-result.json",
       "currentTruthAllowed": false,
-      "notesZh": "由系统内核和 OAM 图谱派生的合同一致性 manifest。"
+      "notesZh": "由系统内核和 OAM 图谱派生的合同一致性 manifest。",
+      "layer": "generated",
+      "authorityRole": "generatedContract",
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": true,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": false,
+      "generated": true,
+      "doNotEdit": true,
+      "checkerRef": "scripts/oam/check-derived-contract-consistency.mjs",
+      "evidenceRef": "artifacts/oam/checks/derived-contract-consistency-result.json",
+      "responsibilityZh": "机器派生合同只能被消费和校验，不得作为人工业务事实 Source。",
+      "generatedFrom": [
+        "docs/oam/system-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ]
     },
     {
       "path": "docs/oam/system-failure-routing-contract.json",
@@ -476,7 +1395,23 @@
       "checker": "scripts/oam/check-system-failure-routing-contract.mjs",
       "evidence": "artifacts/oam/checks/system-failure-routing-contract-result.json",
       "currentTruthAllowed": true,
-      "notesZh": "系统级失败路由和修复闭环合同。"
+      "notesZh": "系统级失败路由和修复闭环合同。",
+      "layer": "source",
+      "authorityRole": "policySource",
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": true,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": true,
+      "generated": false,
+      "doNotEdit": false,
+      "checkerRef": "scripts/oam/check-system-failure-routing-contract.mjs",
+      "evidenceRef": "artifacts/oam/checks/system-failure-routing-contract-result.json",
+      "responsibilityZh": "少而硬的 Source Layer 权威输入，只能人工维护。",
+      "sourceRefs": [
+        "docs/oam/current-authority-index.json"
+      ]
     },
     {
       "path": "docs/oam/system-handoff-contract.json",
@@ -485,7 +1420,23 @@
       "checker": "scripts/oam/check-system-handoff-contract.mjs",
       "evidence": "artifacts/oam/checks/system-handoff-contract-result.json",
       "currentTruthAllowed": true,
-      "notesZh": "系统级操作 handoff 合同。"
+      "notesZh": "系统级操作 handoff 合同。",
+      "layer": "source",
+      "authorityRole": "policySource",
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": true,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": true,
+      "generated": false,
+      "doNotEdit": false,
+      "checkerRef": "scripts/oam/check-system-handoff-contract.mjs",
+      "evidenceRef": "artifacts/oam/checks/system-handoff-contract-result.json",
+      "responsibilityZh": "少而硬的 Source Layer 权威输入，只能人工维护。",
+      "sourceRefs": [
+        "docs/oam/current-authority-index.json"
+      ]
     },
     {
       "path": "docs/oam/system-operating-kernel.json",
@@ -494,7 +1445,23 @@
       "checker": "scripts/oam/check-system-operating-kernel.mjs",
       "evidence": "artifacts/oam/checks/system-operating-kernel-result.json",
       "currentTruthAllowed": true,
-      "notesZh": "系统级唯一运行内核，下级于 current-authority-index。"
+      "notesZh": "系统级唯一运行内核，下级于 current-authority-index。",
+      "layer": "source",
+      "authorityRole": "sourceKernel",
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": true,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": true,
+      "generated": false,
+      "doNotEdit": false,
+      "checkerRef": "scripts/oam/check-system-operating-kernel.mjs",
+      "evidenceRef": "artifacts/oam/checks/system-operating-kernel-result.json",
+      "responsibilityZh": "少而硬的 Source Layer 权威输入，只能人工维护。",
+      "sourceRefs": [
+        "docs/oam/current-authority-index.json"
+      ]
     },
     {
       "path": "docs/oam/system-operating-kernel.md",
@@ -503,7 +1470,48 @@
       "checker": "scripts/oam/check-system-operating-kernel.mjs",
       "evidence": "artifacts/oam/checks/system-operating-kernel-result.json",
       "currentTruthAllowed": false,
-      "notesZh": "系统运行内核人读派生说明，不定义当前事实。"
+      "notesZh": "系统运行内核人读派生说明，不定义当前事实。",
+      "layer": "manual",
+      "authorityRole": "humanManual",
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": false,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": true,
+      "generated": false,
+      "doNotEdit": false,
+      "checkerRef": "scripts/oam/check-system-operating-kernel.mjs",
+      "evidenceRef": "artifacts/oam/checks/system-operating-kernel-result.json",
+      "responsibilityZh": "人读说明只能解释当前权威，不定义业务事实。",
+      "sourceRefs": [
+        "docs/oam/current-authority-index.json"
+      ]
+    },
+    {
+      "path": "docs/read-intelligence/read-intelligence-kernel.json",
+      "identity": "read_side_allowed_file",
+      "owner": "read-intelligence-owner",
+      "checker": "scripts/oam/check-read-intelligence-kernel.mjs",
+      "evidence": "artifacts/oam/evidence/search-readonly-proof.json",
+      "currentTruthAllowed": true,
+      "notesZh": "读侧智能内核 Source，只定义读侧边界。",
+      "layer": "source",
+      "authorityRole": "sourceKernel",
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": true,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": true,
+      "manualEditAllowed": true,
+      "generated": false,
+      "doNotEdit": false,
+      "checkerRef": "scripts/oam/check-read-intelligence-kernel.mjs",
+      "evidenceRef": "artifacts/oam/evidence/search-readonly-proof.json",
+      "responsibilityZh": "读侧智能 Source，只定义读侧消费边界，不写业务事实。",
+      "sourceRefs": [
+        "docs/oam/current-authority-index.json"
+      ]
     },
     {
       "path": "docs/scenarios/dormitory/golden-pilot.yml",
@@ -511,8 +1519,49 @@
       "owner": "business-contract-owner",
       "checker": "scripts/check-dormitory-golden-domain.mjs",
       "evidence": "artifacts/oam/checks/dormitory-golden-domain-report.json",
+      "currentTruthAllowed": false,
+      "notesZh": "宿舍当前唯一金标场景源。",
+      "layer": "generated",
+      "authorityRole": "generatedContract",
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": true,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": false,
+      "generated": true,
+      "doNotEdit": true,
+      "checkerRef": "scripts/check-dormitory-golden-domain.mjs",
+      "evidenceRef": "artifacts/oam/checks/dormitory-golden-domain-report.json",
+      "responsibilityZh": "机器派生合同只能被消费和校验，不得作为人工业务事实 Source。",
+      "generatedFrom": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json"
+      ]
+    },
+    {
+      "path": "docs/surface/surface-contract.yml",
+      "identity": "current_business_contract",
+      "owner": "surface-owner",
+      "checker": "scripts/check-surface-contract.mjs",
+      "evidence": "artifacts/oam/evidence/surface-language-proof.json",
       "currentTruthAllowed": true,
-      "notesZh": "宿舍当前唯一金标场景源。"
+      "notesZh": "Surface 边界 Source，只定义展示和交互边界。",
+      "layer": "source",
+      "authorityRole": "sourceKernel",
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": true,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": true,
+      "generated": false,
+      "doNotEdit": false,
+      "checkerRef": "scripts/check-surface-contract.mjs",
+      "evidenceRef": "artifacts/oam/evidence/surface-language-proof.json",
+      "responsibilityZh": "Surface Source，只定义展示、解释和交互边界。",
+      "sourceRefs": [
+        "docs/oam/current-authority-index.json"
+      ]
     },
     {
       "path": "docs/system/current-system-map.md",
@@ -521,7 +1570,24 @@
       "checker": "scripts/check-rule-authority.mjs",
       "evidence": "artifacts/oam/evidence/master-outline-proof.json",
       "currentTruthAllowed": false,
-      "notesZh": "当前系统边界人读派生图；源事实由 system-operating-kernel 和 OAM 图谱约束。"
+      "notesZh": "当前系统边界人读派生图；源事实由 system-operating-kernel 和 OAM 图谱约束。",
+      "layer": "generated",
+      "authorityRole": "generatedContract",
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": true,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": false,
+      "generated": true,
+      "doNotEdit": true,
+      "checkerRef": "scripts/check-rule-authority.mjs",
+      "evidenceRef": "artifacts/oam/evidence/master-outline-proof.json",
+      "responsibilityZh": "机器派生合同只能被消费和校验，不得作为人工业务事实 Source。",
+      "generatedFrom": [
+        "docs/oam/system-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ]
     },
     {
       "path": "docs/system/oam-p0-rule-ledger.json",
@@ -530,7 +1596,23 @@
       "checker": "scripts/oam/check-p0-rule-ledger.mjs",
       "evidence": "artifacts/oam/evidence/evidence-graph.json",
       "currentTruthAllowed": true,
-      "notesZh": "P0 发布内核机器账本。"
+      "notesZh": "P0 发布内核机器账本。",
+      "layer": "source",
+      "authorityRole": "policySource",
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": true,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": true,
+      "generated": false,
+      "doNotEdit": false,
+      "checkerRef": "scripts/oam/check-p0-rule-ledger.mjs",
+      "evidenceRef": "artifacts/oam/evidence/evidence-graph.json",
+      "responsibilityZh": "少而硬的 Source Layer 权威输入，只能人工维护。",
+      "sourceRefs": [
+        "docs/oam/current-authority-index.json"
+      ]
     },
     {
       "path": "infra/db/migrations",
@@ -538,8 +1620,24 @@
       "owner": "runtime-db-owner",
       "checker": "scripts/oam/check-db-ownership-map.mjs",
       "evidence": "artifacts/oam/evidence/runtime-proof.json",
-      "currentTruthAllowed": true,
-      "notesZh": "当前 OAM 数据库迁移链。"
+      "currentTruthAllowed": false,
+      "notesZh": "当前 OAM 数据库迁移链。",
+      "layer": "runtime",
+      "authorityRole": "databaseAsset",
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": false,
+      "runtimeWriteAllowed": true,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": true,
+      "generated": false,
+      "doNotEdit": false,
+      "checkerRef": "scripts/oam/check-db-ownership-map.mjs",
+      "evidenceRef": "artifacts/oam/evidence/runtime-proof.json",
+      "responsibilityZh": "数据库 migration 是运行时数据库资产，不定义 Source 业务事实。",
+      "sourceRefs": [
+        "docs/oam/current-authority-index.json"
+      ]
     },
     {
       "path": "scripts/oam/check-iteration-kernel.mjs",
@@ -548,7 +1646,23 @@
       "checker": "scripts/oam/check-iteration-kernel.mjs",
       "evidence": "artifacts/oam/checks/iteration-kernel-result.json",
       "currentTruthAllowed": false,
-      "notesZh": "当前迭代内核检查器，验证目标、阶段、失败修复、证据和权威边界。"
+      "notesZh": "当前迭代内核检查器，验证目标、阶段、失败修复、证据和权威边界。",
+      "layer": "runtime",
+      "authorityRole": "validationSchema",
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": false,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": true,
+      "generated": false,
+      "doNotEdit": false,
+      "checkerRef": "scripts/oam/check-iteration-kernel.mjs",
+      "evidenceRef": "artifacts/oam/checks/iteration-kernel-result.json",
+      "responsibilityZh": "门禁、CI 和测试只验证边界，不承载业务事实权威。",
+      "sourceRefs": [
+        "docs/oam/current-authority-index.json"
+      ]
     },
     {
       "path": "scripts/oam/check-surface-language-v2.mjs",
@@ -557,7 +1671,23 @@
       "checker": "scripts/oam/check-surface-language-v2.mjs",
       "evidence": "artifacts/oam/checks/surface-language-v2-result.json",
       "currentTruthAllowed": false,
-      "notesZh": "移动端普通用户语言、PC 治理面隔离、结构化准入和 Search 读侧门禁的当前验收脚本。"
+      "notesZh": "移动端普通用户语言、PC 治理面隔离、结构化准入和 Search 读侧门禁的当前验收脚本。",
+      "layer": "runtime",
+      "authorityRole": "validationSchema",
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": false,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": true,
+      "generated": false,
+      "doNotEdit": false,
+      "checkerRef": "scripts/oam/check-surface-language-v2.mjs",
+      "evidenceRef": "artifacts/oam/checks/surface-language-v2-result.json",
+      "responsibilityZh": "门禁、CI 和测试只验证边界，不承载业务事实权威。",
+      "sourceRefs": [
+        "docs/oam/current-authority-index.json"
+      ]
     },
     {
       "path": "scripts/oam/check-system-change-governance.mjs",
@@ -566,7 +1696,23 @@
       "checker": "scripts/oam/check-system-change-governance.mjs",
       "evidence": "artifacts/oam/checks/system-change-governance-result.json",
       "currentTruthAllowed": false,
-      "notesZh": "系统变更治理检查器，验证治理合同、图谱、本地总门禁和 CI 接入。"
+      "notesZh": "系统变更治理检查器，验证治理合同、图谱、本地总门禁和 CI 接入。",
+      "layer": "runtime",
+      "authorityRole": "validationSchema",
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": false,
+      "runtimeWriteAllowed": false,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": true,
+      "generated": false,
+      "doNotEdit": false,
+      "checkerRef": "scripts/oam/check-system-change-governance.mjs",
+      "evidenceRef": "artifacts/oam/checks/system-change-governance-result.json",
+      "responsibilityZh": "门禁、CI 和测试只验证边界，不承载业务事实权威。",
+      "sourceRefs": [
+        "docs/oam/current-authority-index.json"
+      ]
     },
     {
       "path": "services/core-api/WorkOS.Api/Runtime",
@@ -574,8 +1720,24 @@
       "owner": "runtime-kernel-owner",
       "checker": "scripts/check-runtime-write-paths.mjs",
       "evidence": "artifacts/oam/evidence/runtime-proof.json",
-      "currentTruthAllowed": true,
-      "notesZh": "Confirm Runtime、Admission Kernel、Unit of Work、Search、Finance、Trust 的运行实现。"
+      "currentTruthAllowed": false,
+      "notesZh": "Confirm Runtime、Admission Kernel、Unit of Work、Search、Finance、Trust 的运行实现。",
+      "layer": "runtime",
+      "authorityRole": "runtimeImplementation",
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": false,
+      "runtimeWriteAllowed": true,
+      "financeLedgerTruthAllowed": false,
+      "readModelTruthAllowed": false,
+      "manualEditAllowed": true,
+      "generated": false,
+      "doNotEdit": false,
+      "checkerRef": "scripts/check-runtime-write-paths.mjs",
+      "evidenceRef": "artifacts/oam/evidence/runtime-proof.json",
+      "responsibilityZh": "Runtime 实现只能消费 Source 边界或 generated contract，不重新解释业务权威。",
+      "sourceRefs": [
+        "docs/oam/current-authority-index.json"
+      ]
     }
   ],
   "readSideAllowedTerms": [
@@ -611,5 +1773,184 @@
     "Grey deprecated-file buckets are not allowed in the current project.",
     "读侧允许术语不能拥有业务事实。",
     "Every current authority entry must bind owner, checker, and evidence path."
+  ],
+  "classificationModel": {
+    "version": "oam.authority-classification.v1",
+    "status": "authoritative",
+    "architecture": "oam.current",
+    "decisionRuleZh": "layer、authorityRole 和显式写权字段是当前权威分类决策源；currentTruthAllowed 仅作为兼容派生字段。",
+    "currentTruthAllowedCompatibilityZh": "旧 checker 暂时可读取 currentTruthAllowed，但不得把它作为唯一权威判断。",
+    "layers": [
+      "source",
+      "generated",
+      "runtime",
+      "evidence",
+      "manual"
+    ],
+    "authorityRoles": [
+      "architectureRoot",
+      "sourceKernel",
+      "policySource",
+      "generatedContract",
+      "validationSchema",
+      "runtimeImplementation",
+      "databaseAsset",
+      "evidenceProof",
+      "humanManual"
+    ],
+    "sourceLayerWhitelist": [
+      "docs/oam/current-architecture.md",
+      "docs/oam/current-architecture.manifest.json",
+      "docs/oam/current-authority-index.json",
+      "docs/contracts/oam.current.json",
+      "docs/oam/current-oam-kernel-responsibility-map.json",
+      "docs/oam/oam-kernel-graph.json",
+      "docs/oam/system-operating-kernel.json",
+      "docs/oam/compiler-generated-contract-kernel.json",
+      "docs/oam/file-lifecycle-policy.json",
+      "docs/oam/current-oam-cross-domain-conflict-rules.json",
+      "docs/oam/codex-execution-channel-policy.json",
+      "docs/oam/professional-ai-review-seats.json",
+      "docs/oam/system-change-governance-contract.json",
+      "docs/oam/system-failure-routing-contract.json",
+      "docs/oam/system-handoff-contract.json",
+      "docs/oam/iteration-kernel.json",
+      "docs/system/oam-p0-rule-ledger.json",
+      "docs/business/business-line-registry.json",
+      "docs/business/admission/business-line-levels.yml",
+      "docs/oam/current-admission-state.json",
+      "docs/business/truth-owner-registry.yml",
+      "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "docs/business/domains/finance/finance-operating-kernel.json",
+      "docs/business/domains/maintenance/maintenance-operating-kernel.json",
+      "docs/finance/finance-ledger-kernel.json",
+      "docs/identity/identity-permission-kernel.json",
+      "docs/read-intelligence/read-intelligence-kernel.json",
+      "docs/surface/surface-contract.yml",
+      "docs/contracts/language/language-contract.json",
+      "docs/contracts/database/oam-db-ownership-map.json"
+    ]
+  },
+  "sourceLayerWhitelist": [
+    {
+      "path": "docs/oam/current-architecture.md",
+      "reasonZh": "架构权威 Source，定义当前 OAM 结构、边界和权威入口。"
+    },
+    {
+      "path": "docs/oam/current-architecture.manifest.json",
+      "reasonZh": "架构权威 Source，定义当前 OAM 结构、边界和权威入口。"
+    },
+    {
+      "path": "docs/oam/current-authority-index.json",
+      "reasonZh": "架构权威 Source，定义当前 OAM 结构、边界和权威入口。"
+    },
+    {
+      "path": "docs/contracts/oam.current.json",
+      "reasonZh": "架构权威 Source，定义当前 OAM 结构、边界和权威入口。"
+    },
+    {
+      "path": "docs/oam/current-oam-kernel-responsibility-map.json",
+      "reasonZh": "架构权威 Source，定义当前 OAM 结构、边界和权威入口。"
+    },
+    {
+      "path": "docs/oam/oam-kernel-graph.json",
+      "reasonZh": "架构权威 Source，定义当前 OAM 结构、边界和权威入口。"
+    },
+    {
+      "path": "docs/oam/system-operating-kernel.json",
+      "reasonZh": "少而硬的 Source Layer 权威输入，只能人工维护。"
+    },
+    {
+      "path": "docs/oam/compiler-generated-contract-kernel.json",
+      "reasonZh": "少而硬的 Source Layer 权威输入，只能人工维护。"
+    },
+    {
+      "path": "docs/oam/file-lifecycle-policy.json",
+      "reasonZh": "少而硬的 Source Layer 权威输入，只能人工维护。"
+    },
+    {
+      "path": "docs/oam/current-oam-cross-domain-conflict-rules.json",
+      "reasonZh": "少而硬的 Source Layer 权威输入，只能人工维护。"
+    },
+    {
+      "path": "docs/oam/codex-execution-channel-policy.json",
+      "reasonZh": "少而硬的 Source Layer 权威输入，只能人工维护。"
+    },
+    {
+      "path": "docs/oam/professional-ai-review-seats.json",
+      "reasonZh": "少而硬的 Source Layer 权威输入，只能人工维护。"
+    },
+    {
+      "path": "docs/oam/system-change-governance-contract.json",
+      "reasonZh": "少而硬的 Source Layer 权威输入，只能人工维护。"
+    },
+    {
+      "path": "docs/oam/system-failure-routing-contract.json",
+      "reasonZh": "少而硬的 Source Layer 权威输入，只能人工维护。"
+    },
+    {
+      "path": "docs/oam/system-handoff-contract.json",
+      "reasonZh": "少而硬的 Source Layer 权威输入，只能人工维护。"
+    },
+    {
+      "path": "docs/oam/iteration-kernel.json",
+      "reasonZh": "少而硬的 Source Layer 权威输入，只能人工维护。"
+    },
+    {
+      "path": "docs/system/oam-p0-rule-ledger.json",
+      "reasonZh": "少而硬的 Source Layer 权威输入，只能人工维护。"
+    },
+    {
+      "path": "docs/business/business-line-registry.json",
+      "reasonZh": "少而硬的 Source Layer 权威输入，只能人工维护。"
+    },
+    {
+      "path": "docs/business/admission/business-line-levels.yml",
+      "reasonZh": "少而硬的 Source Layer 权威输入，只能人工维护。"
+    },
+    {
+      "path": "docs/oam/current-admission-state.json",
+      "reasonZh": "少而硬的 Source Layer 权威输入，只能人工维护。"
+    },
+    {
+      "path": "docs/business/truth-owner-registry.yml",
+      "reasonZh": "少而硬的 Source Layer 权威输入，只能人工维护。"
+    },
+    {
+      "path": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+      "reasonZh": "宿舍领域唯一 Source，派生文件不得覆盖它。"
+    },
+    {
+      "path": "docs/business/domains/finance/finance-operating-kernel.json",
+      "reasonZh": "少而硬的 Source Layer 权威输入，只能人工维护。"
+    },
+    {
+      "path": "docs/business/domains/maintenance/maintenance-operating-kernel.json",
+      "reasonZh": "少而硬的 Source Layer 权威输入，只能人工维护。"
+    },
+    {
+      "path": "docs/finance/finance-ledger-kernel.json",
+      "reasonZh": "Finance / Ledger Source，只有它可以定义账务真值边界。"
+    },
+    {
+      "path": "docs/identity/identity-permission-kernel.json",
+      "reasonZh": "少而硬的 Source Layer 权威输入，只能人工维护。"
+    },
+    {
+      "path": "docs/read-intelligence/read-intelligence-kernel.json",
+      "reasonZh": "读侧智能 Source，只定义读侧消费边界，不写业务事实。"
+    },
+    {
+      "path": "docs/surface/surface-contract.yml",
+      "reasonZh": "Surface Source，只定义展示、解释和交互边界。"
+    },
+    {
+      "path": "docs/contracts/language/language-contract.json",
+      "reasonZh": "少而硬的 Source Layer 权威输入，只能人工维护。"
+    },
+    {
+      "path": "docs/contracts/database/oam-db-ownership-map.json",
+      "reasonZh": "数据库 ownership 边界 Source；具体 migration 不得作为业务 Source。"
+    }
   ]
 }

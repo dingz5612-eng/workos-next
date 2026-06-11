@@ -1,0 +1,68 @@
+{
+  "version": "workosnext.authority.truth-ownership-matrix.v1",
+  "status": "authoritative-current-no-go",
+  "architecture": "oam.current",
+  "matrixId": "current-oam-p0b-p0c-truth-ownership-matrix",
+  "truthOwnerRegistryRef": "docs/business/truth-owner-registry.yml",
+  "truthOwners": [
+    {
+      "factId": "AmountBasisProposal",
+      "owner": "BusinessDomainPack",
+      "truthLevel": "proposal",
+      "financeTruth": false
+    },
+    {
+      "factId": "AmountBasisReviewed",
+      "owner": "FinanceTruthPack",
+      "truthLevel": "workflowTruth",
+      "financeTruth": false
+    },
+    {
+      "factId": "AmountBasis",
+      "owner": "FinanceTruthPack",
+      "truthLevel": "workflowTruth",
+      "financeTruth": false
+    },
+    {
+      "factId": "FinancialFact",
+      "owner": "FinanceTruthPack",
+      "truthLevel": "centerTruth",
+      "financeTruth": true
+    },
+    {
+      "factId": "LedgerTransaction",
+      "owner": "MoneyKernelPack",
+      "truthLevel": "centerTruth",
+      "financeTruth": true
+    },
+    {
+      "factId": "LedgerEntry",
+      "owner": "MoneyKernelPack",
+      "truthLevel": "centerTruth",
+      "financeTruth": true
+    }
+  ],
+  "financeStateChain": [
+    "AmountBasisProposal",
+    "AmountBasisReviewed",
+    "AmountBasis",
+    "FinancialFact",
+    "LedgerTransaction",
+    "LedgerEntry"
+  ],
+  "readSideBoundaries": [
+    "SearchResult",
+    "LensReadModel",
+    "DashboardSummary",
+    "SharedReceipt"
+  ],
+  "readSideFinanceTruthAllowed": false,
+  "nonOwnerCommitAllowed": false,
+  "productionLocks": {
+    "businessProduction": "BLOCKED",
+    "dormitoryL2": "BLOCKED",
+    "productionConfirmAllowed": false,
+    "finalGoNoGo": "NO_GO",
+    "nextStageAllowed": false
+  }
+}

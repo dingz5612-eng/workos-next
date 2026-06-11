@@ -134,7 +134,7 @@ function checkSourcesAndSchema(failures) {
       failures.push(`SearchResult.admission missing ${admissionField}.`);
     }
   }
-  for (const targetField of ["view", "kind", "writeThroughSearchAllowed"]) {
+  for (const targetField of ["view", "kind", "targetId", "runtimeOwner", "compatibility", "writeThroughSearchAllowed"]) {
     if (!(resultSchema.properties?.target?.required || []).includes(targetField)) {
       failures.push(`SearchResult.target missing ${targetField}.`);
     }
@@ -225,12 +225,17 @@ function checkRuntimeImplementation(failures) {
     "\"sourceRefs\"",
     "\"language\"",
     "SearchOperationsSources",
-    "OperationsRuntime.SearchOperations",
     "OperationsReadStore.SearchOperations",
-    "NextActionableWorkItem",
+    "ResolveDefinition",
     "BusinessAnchorKeys"
   ]) {
     if (!searchKernel.includes(term)) failures.push(`SearchKernelService.cs missing ${term}`);
+  }
+  for (const forbidden of ["OperationsRuntimeService", "GetWorkItem(", "GetWorkItemSurface(", "ListWorkItems(", "OperationsRuntime.SearchOperations", "NextActionableWorkItem"]) {
+    if (searchKernel.includes(forbidden)) failures.push(`SearchKernelService.cs must not inject or call runtime catalog term: ${forbidden}`);
+  }
+  if (searchKernel.includes("decision.ConfirmAllowed ? 25") || searchKernel.includes("visible_with_confirm_admission")) {
+    failures.push("SearchKernelService.cs must not use confirmAllowed as a ranking boost or rank reason.");
   }
   if (searchKernel.includes("[\"resultType\"] = FirstNonEmpty(ReadString(projectionSource, \"resultType\"), \"workspaceCardProjection\")")) {
     failures.push("Projection source results must expose workspaceCardCompatibility, not workspaceCardProjection.");

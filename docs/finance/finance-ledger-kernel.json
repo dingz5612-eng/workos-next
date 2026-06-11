@@ -27,6 +27,38 @@
     "financeTruthRequiredMode": "finance_kernel",
     "basisOnlyIsNotFinanceTruth": true
   },
+  "amountBasisStateChain": [
+    "AmountBasisProposal",
+    "AmountBasisReviewed",
+    "AmountBasis",
+    "FinancialFact",
+    "LedgerTransaction",
+    "LedgerEntry"
+  ],
+  "semanticDistinctions": {
+    "nonFinanceTruth": [
+      "AmountBasisProposal",
+      "SharedReceipt",
+      "DashboardSummary",
+      "SearchResult",
+      "LensReadModel"
+    ],
+    "deposits": {
+      "basisType": "deposit_receipt",
+      "creditAccountType": "liability",
+      "ordinaryIncomeAllowed": false
+    },
+    "refunds": {
+      "basisType": "refund_deposit",
+      "requiresOriginalDepositAccount": true,
+      "expenseAllowed": false
+    },
+    "normalPayments": {
+      "basisType": "payment_receipt",
+      "creditAccountType": "receivable",
+      "depositLiabilityAllowed": false
+    }
+  },
   "requiredGates": [
     "node scripts/check-finance-truth.mjs",
     "node scripts/finance/check-finance-semantic-truth.mjs",
