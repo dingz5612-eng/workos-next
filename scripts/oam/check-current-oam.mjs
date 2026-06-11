@@ -196,6 +196,8 @@ function normalizeCurrentAllowedTerms(file, text) {
     file === "scripts/authority/check-truth-ownership-matrix.mjs" ||
     file === "scripts/validate-contracts.mjs" ||
     file === "scripts/oam/compile-current-kernel-graph.mjs" ||
+    file === "scripts/oam/check-kernel-responsibility-map.mjs" ||
+    file === "scripts/oam/generate-authority-source-layer-audit.mjs" ||
     file === "scripts/oam/check-read-intelligence-kernel.mjs" ||
     file === "scripts/check-search-kernel.mjs" ||
     file === "services/core-api/WorkOS.Api/Runtime/SearchKernelService.cs" ||
@@ -211,6 +213,7 @@ function normalizeCurrentAllowedTerms(file, text) {
       .replaceAll(/\bCompatibility\b/gi, "CurrentBridge")
       .replaceAll(/\bretired_/gi, "closed_")
       .replaceAll(/\bretired\b/gi, "closed")
+      .replaceAll(/\blegacy\b/gi, "priorControlled")
       .replaceAll(/\bhistory\b/gi, "currentRecord")
       .replaceAll(/\bArchive\b/gi, "Retention");
   }
@@ -285,6 +288,7 @@ function shouldScanText(file) {
   if (file.includes("/bin/") || file.includes("/obj/")) return false;
   if (file.includes("/TestResults/")) return false;
   if (file.startsWith("artifacts/oam/checks/")) return false;
+  if (file.startsWith("artifacts/oam/authority-cleanup/")) return false;
   if (file.startsWith("artifacts/oam/test-results/")) return false;
   if (file === "apps/mobile/package-lock.json") return false;
   if (file === "package-lock.json") return false;

@@ -1,0 +1,1 @@
+Truth owner registry check: PASS

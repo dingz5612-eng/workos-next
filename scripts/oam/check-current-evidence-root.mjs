@@ -31,6 +31,9 @@ const requiredFiles = [
   "docs/identity/identity-permission-kernel.json",
   "docs/oam/kernel/oam-kernel-source.schema.json",
   "docs/oam/kernel/oam-kernel-generated.schema.json",
+  "docs/oam/system-derived-contracts.json",
+  "docs/oam/domain-derived-contracts.json",
+  "docs/oam/generated-contracts-manifest.json",
   "docs/oam/kernel/oam-kernel-graph.generated.json",
   "docs/contracts/generated/dormitory/dormitory-kernel.generated.manifest.json",
   "docs/contracts/generated/dormitory/fields.generated.json",
@@ -194,6 +197,7 @@ function checkReleaseEvidenceObject(releaseObject, graph, finalReport, allDocume
     "artifactName",
     "githubArtifactDigest",
     "evidenceRootDigest",
+    "generatedContractsHash",
     "kernelGraphHash",
     "evidenceGraphHash",
     "finalReportDigest",
@@ -258,6 +262,11 @@ function checkReleaseEvidenceObject(releaseObject, graph, finalReport, allDocume
     failures.push(`release evidence object kernelGraphHash mismatch: expected ${expectedKernelGraphHash}, actual ${releaseObject.kernelGraphHash || "missing"}`);
   }
 
+  const expectedGeneratedContractsHash = digestFor(new Map(generatedContractFiles().map((file) => [file, readJson(file)])));
+  if (releaseObject.generatedContractsHash !== expectedGeneratedContractsHash) {
+    failures.push(`release evidence object generatedContractsHash mismatch: expected ${expectedGeneratedContractsHash}, actual ${releaseObject.generatedContractsHash || "missing"}`);
+  }
+
   const expectedEvidenceGraphHash = digestFor(new Map([["artifacts/oam/evidence/evidence-graph.json", graph]]));
   if (releaseObject.evidenceGraphHash !== expectedEvidenceGraphHash) {
     failures.push(`release evidence object evidenceGraphHash mismatch: expected ${expectedEvidenceGraphHash}, actual ${releaseObject.evidenceGraphHash || "missing"}`);
@@ -267,6 +276,21 @@ function checkReleaseEvidenceObject(releaseObject, graph, finalReport, allDocume
   if (releaseObject.finalReportDigest !== expectedFinalReportDigest) {
     failures.push(`release evidence object finalReportDigest mismatch: expected ${expectedFinalReportDigest}, actual ${releaseObject.finalReportDigest || "missing"}`);
   }
+}
+
+function generatedContractFiles() {
+  return [
+    "docs/oam/system-derived-contracts.json",
+    "docs/oam/domain-derived-contracts.json",
+    "docs/oam/generated-contracts-manifest.json",
+    "docs/oam/kernel/oam-kernel-graph.generated.json",
+    "docs/contracts/generated/dormitory/dormitory-kernel.generated.manifest.json",
+    "docs/contracts/generated/dormitory/fields.generated.json",
+    "docs/contracts/generated/dormitory/workitems.generated.json",
+    "docs/contracts/generated/dormitory/surface-input-model.generated.json",
+    "docs/contracts/generated/dormitory/read-model.generated.json",
+    "apps/mobile/src/generated/oam/dormitory-surface-input-model.generated.json"
+  ];
 }
 
 function checkBinding(file, document, expectedDigest) {
@@ -312,6 +336,7 @@ function checkBinding(file, document, expectedDigest) {
     "artifactDigest",
     "githubArtifactDigest",
     "evidenceRootDigest",
+    "generatedContractsHash",
     "kernelGraphHash",
     "evidenceGraphHash",
     "finalReportDigest"
@@ -388,6 +413,7 @@ function isDigestOrHashKey(key) {
     "artifactDigest",
     "githubArtifactDigest",
     "evidenceRootDigest",
+    "generatedContractsHash",
     "kernelGraphHash",
     "evidenceGraphHash",
     "finalReportDigest"
@@ -556,7 +582,7 @@ function checkWorkstreamProofNodes(graph, responsibilityMap, finalReport) {
       failures.push(`missing workstream proof node: ${workstream.id}`);
       continue;
     }
-    for (const field of ["workstreamId", "proofType", "source", "hash", "dependsOn", "gateResult", "negativeTestResult", "goNoGo"]) {
+    for (const field of ["workstreamId", "proofType", "source", "hash", "dependsOn", "command", "checker", "inputHashes", "outputHashes", "status", "goNoGoImpact", "notesZh", "gateResult", "negativeTestResult", "goNoGo"]) {
       const value = proof[field];
       if (value === undefined || value === null || value === "" || (Array.isArray(value) && value.length === 0)) {
         failures.push(`workstream proof node ${workstream.id} missing ${field}.`);
@@ -568,10 +594,30 @@ function checkWorkstreamProofNodes(graph, responsibilityMap, finalReport) {
     if (proof.goNoGo !== finalReport.finalGoNoGo) {
       failures.push(`workstream proof node ${workstream.id} goNoGo must match final report.`);
     }
+    if (!/[\u3400-\u9fff]/.test(String(proof.notesZh ?? ""))) {
+      failures.push(`workstream proof node ${workstream.id} must include Chinese notesZh.`);
+    }
+    if (!Array.isArray(proof.inputHashes) || proof.inputHashes.some((item) => !item.path || !String(item.hash ?? "").startsWith("sha256:"))) {
+      failures.push(`workstream proof node ${workstream.id} inputHashes must bind path and sha256 hash.`);
+    }
+    if (!Array.isArray(proof.outputHashes) || proof.outputHashes.some((item) => !item.path || !String(item.hash ?? "").startsWith("sha256:"))) {
+      failures.push(`workstream proof node ${workstream.id} outputHashes must bind path and sha256 hash.`);
+    }
     for (const field of workstream.finalReportFields ?? []) {
       if (finalReport[field] !== proof.goNoGo) {
         failures.push(`final report field ${field} does not match proof node ${workstream.id}.`);
       }
+    }
+  }
+  for (const proof of (graph.nodes ?? []).filter((node) => node.type === "p0_closure_proof")) {
+    for (const field of ["proofType", "source", "hash", "dependsOn", "command", "checker", "inputHashes", "outputHashes", "status", "goNoGoImpact", "notesZh", "goNoGo"]) {
+      const value = proof[field];
+      if (value === undefined || value === null || value === "" || (Array.isArray(value) && value.length === 0)) {
+        failures.push(`p0 closure proof node ${proof.id ?? "<missing>"} missing ${field}.`);
+      }
+    }
+    if (!/[\u3400-\u9fff]/.test(String(proof.notesZh ?? ""))) {
+      failures.push(`p0 closure proof node ${proof.id ?? "<missing>"} must include Chinese notesZh.`);
     }
   }
 }

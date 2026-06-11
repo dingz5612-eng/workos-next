@@ -2,12 +2,22 @@
   "generated": true,
   "doNotEdit": true,
   "kind": "fields.generated",
-  "kernelGraphHash": "sha256:3a5374d09387e22a4c84315490a6ebccce4983f53fd12c98a460b9eef921d583",
+  "kernelGraphHash": "sha256:6ce12760e202cb9fceb6b5ad8a26d5b9688e59e7bee641178411ff5936ee3fd3",
   "sourceNodeRefs": [
     "dormitory.workItem.Dorm.RoomSetupConfirm",
     "dormitory.workItem.Dorm.BedSetupConfirm",
     "dormitory.workItem.Dorm.ResourceReadinessConfirm"
   ],
+  "sourceRefs": [
+    "dormitory.workItem.Dorm.RoomSetupConfirm",
+    "dormitory.workItem.Dorm.BedSetupConfirm",
+    "dormitory.workItem.Dorm.ResourceReadinessConfirm"
+  ],
+  "sourceHash": "sha256:15cd44d47717fc2b6753ac8483d4a6ca1fb8207b5477bbf1f08c63105bb2386f",
+  "sourceContentDigest": "sha256:15cd44d47717fc2b6753ac8483d4a6ca1fb8207b5477bbf1f08c63105bb2386f",
+  "compilerInputDigest": "sha256:03c00ad06eed735a7b10d44d27d84806b1cee5d11e7a535d3c619186da197e1e",
+  "outputContentDigest": "sha256:50203a357491d1cf6fe78ddcdf125e27f87c3c954d5ee620fbca79193dba4ee8",
+  "deterministicSort": true,
   "generatorVersion": "current-oam-kernel-compiler.v1",
   "generatedFrom": "docs/business/domains/dormitory/dormitory-operating-kernel.json",
   "fieldClassificationEnum": [

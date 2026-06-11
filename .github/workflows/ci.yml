@@ -66,6 +66,9 @@ jobs:
           node scripts/oam/check-p0-rule-ledger.mjs --self-test
           node scripts/oam/check-p0-rule-ledger.mjs
           node scripts/oam/check-current-authority-index.mjs
+          node scripts/oam/generate-authority-source-layer-audit.mjs
+          node scripts/oam/check-authority-source-layer-audit.mjs
+          node scripts/oam/check-authority-cleanup-mutation-tests.mjs
           node scripts/oam/check-kernel-responsibility-map.mjs
           node scripts/oam/check-professional-ai-review-seats.mjs
           node scripts/oam/check-codex-execution-channel-policy.mjs

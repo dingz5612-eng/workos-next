@@ -86,6 +86,9 @@ Invoke-Gate node scripts/oam/check-current-oam.mjs
 Invoke-Gate node scripts/oam/check-p0-rule-ledger.mjs --self-test
 Invoke-Gate node scripts/oam/check-p0-rule-ledger.mjs
 Invoke-Gate node scripts/oam/check-current-authority-index.mjs
+Invoke-Gate node scripts/oam/generate-authority-source-layer-audit.mjs
+Invoke-Gate node scripts/oam/check-authority-source-layer-audit.mjs
+Invoke-Gate node scripts/oam/check-authority-cleanup-mutation-tests.mjs
 Invoke-Gate node scripts/oam/check-kernel-responsibility-map.mjs
 Invoke-Gate node scripts/oam/check-professional-ai-review-seats.mjs
 Invoke-Gate node scripts/oam/check-codex-execution-channel-policy.mjs

@@ -1,0 +1,1 @@
+Read Intelligence kernel check: PASS

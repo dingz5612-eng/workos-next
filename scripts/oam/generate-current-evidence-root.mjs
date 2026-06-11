@@ -38,6 +38,9 @@ const requiredEvidenceFiles = [
   "docs/identity/identity-permission-kernel.json",
   "docs/oam/kernel/oam-kernel-source.schema.json",
   "docs/oam/kernel/oam-kernel-generated.schema.json",
+  "docs/oam/system-derived-contracts.json",
+  "docs/oam/domain-derived-contracts.json",
+  "docs/oam/generated-contracts-manifest.json",
   "docs/oam/kernel/oam-kernel-graph.generated.json",
   "docs/contracts/generated/dormitory/dormitory-kernel.generated.manifest.json",
   "docs/contracts/generated/dormitory/fields.generated.json",
@@ -61,11 +64,24 @@ const requiredEvidenceFiles = [
   controlPlaneGateResultPath,
   finalReportPath
 ];
+const generatedContractFiles = [
+  "docs/oam/system-derived-contracts.json",
+  "docs/oam/domain-derived-contracts.json",
+  "docs/oam/generated-contracts-manifest.json",
+  "docs/oam/kernel/oam-kernel-graph.generated.json",
+  "docs/contracts/generated/dormitory/dormitory-kernel.generated.manifest.json",
+  "docs/contracts/generated/dormitory/fields.generated.json",
+  "docs/contracts/generated/dormitory/workitems.generated.json",
+  "docs/contracts/generated/dormitory/surface-input-model.generated.json",
+  "docs/contracts/generated/dormitory/read-model.generated.json",
+  "apps/mobile/src/generated/oam/dormitory-surface-input-model.generated.json"
+];
 
 const generatedAt = new Date().toISOString();
 const commitSha = env("GITHUB_SHA") || git("rev-parse HEAD") || "local";
 const branch = env("GITHUB_HEAD_REF") || env("GITHUB_REF_NAME") || git("branch --show-current") || "local";
 const kernelGraphHash = hashFileStrict("docs/oam/oam-kernel-graph.json");
+const generatedContractsHash = digestForDisk(generatedContractFiles);
 const admission = readJson("docs/oam/current-admission-state.json");
 const responsibilityMap = readJson(responsibilityMapPath);
 const p0Ledger = readP0Ledger("docs/system/oam-p0-rule-ledger.json");
@@ -409,7 +425,7 @@ addEvidence("artifacts/oam/evidence/evidence-graph.json", evidenceGraph);
 const releaseEvidenceObject = {
   ...proof("current-oam-release-evidence-object", "当前 OAM Release Evidence Object", {
     currentAdmissionState: "docs/oam/current-admission-state.json",
-    releaseObjectPurpose: "Bind concrete CI run, artifact identity, evidence root digest, graph hash, and final report digest while current stage remains NO_GO."
+    releaseObjectPurpose: "Bind concrete CI run, artifact identity, generated contracts hash, evidence root digest, graph hash, and final report digest while current stage remains NO_GO."
   }),
   repository,
   workflow,
@@ -421,6 +437,7 @@ const releaseEvidenceObject = {
   artifactName,
   githubArtifactDigest: digestPlaceholder,
   evidenceRootDigest: evidenceRootDigestPlaceholder,
+  generatedContractsHash,
   kernelGraphHash,
   evidenceGraphHash: digestPlaceholder,
   finalReportDigest: digestPlaceholder,
@@ -507,6 +524,7 @@ function binding(kind) {
     artifactDigest: digestPlaceholder,
     githubArtifactDigest: digestPlaceholder,
     evidenceRootDigest: evidenceRootDigestPlaceholder,
+    generatedContractsHash,
     kernelGraphHash,
     evidenceGraphHash: digestPlaceholder,
     finalReportDigest: digestPlaceholder
@@ -639,6 +657,7 @@ function isDigestOrHashKey(key) {
     "artifactDigest",
     "githubArtifactDigest",
     "evidenceRootDigest",
+    "generatedContractsHash",
     "kernelGraphHash",
     "evidenceGraphHash",
     "finalReportDigest"
@@ -657,6 +676,7 @@ function buildWorkstreamProofNodes() {
       hash: hashFileIfPresent(file)
     }));
     const gateResult = summarizeWorkstreamGates(workstream.gates ?? []);
+    const command = gateResult.commands[0]?.command ?? "no-command-bound";
     const negativeTestResult = finalGoNoGo === "GO" ? "passed" : "blocked";
     const proofPayload = {
       workstreamId: workstream.id,
@@ -665,8 +685,10 @@ function buildWorkstreamProofNodes() {
       sourceHashes,
       gateResult,
       negativeTestResult,
-      goNoGo: finalGoNoGo
+      goNoGo: finalGoNoGo,
+      goNoGoImpact: workstream.finalReportFields ?? []
     };
+    const proofHash = `sha256:${sha256(JSON.stringify(normalizeForDigest(proofPayload)))}`;
     return {
       id: `workstream-proof.${workstream.id}`,
       type: "workstream_proof",
@@ -674,10 +696,16 @@ function buildWorkstreamProofNodes() {
       workstreamId: workstream.id,
       proofType: "current-oam-kernel-responsibility",
       source: sources,
-      hash: `sha256:${sha256(JSON.stringify(normalizeForDigest(proofPayload)))}`,
+      hash: proofHash,
       dependsOn: sources,
+      command,
+      checker: command,
+      inputHashes: sourceHashes,
+      outputHashes: [{ path: `evidence-node:workstream-proof.${workstream.id}`, hash: proofHash }],
       gateResult,
       negativeTestResult,
+      goNoGoImpact: workstream.finalReportFields ?? [],
+      notesZh: `工作流 ${workstream.name ?? workstream.id} 的 proof DAG 节点；当前阶段保持 NO_GO，CI 绿色只作为证据。`,
       goNoGo: finalGoNoGo,
       finalReportFields: workstream.finalReportFields ?? []
     };
@@ -707,13 +735,17 @@ function buildP0ClosureProofNodes() {
     ["release-evidence", "releaseEvidenceGoNoGo", [releaseEvidenceObjectPath, "tests/WorkOS.ReleaseEvidenceTests/OamReleaseControlTests.cs"]]
   ];
   return dimensions.map(([id, field, sources]) => {
+    const sourceHashes = sources.map((file) => ({ path: file, hash: hashFileIfPresent(file) }));
+    const command = sources.find((file) => String(file).startsWith("scripts/")) ?? sources[0];
     const payload = {
       id,
       field,
       sources,
+      sourceHashes,
       goNoGo: multiDimensionalGoNoGo[field],
       finalGoNoGo
     };
+    const proofHash = `sha256:${sha256(JSON.stringify(normalizeForDigest(payload)))}`;
     return {
       id: `p0-closure-proof.${id}`,
       type: "p0_closure_proof",
@@ -721,10 +753,16 @@ function buildP0ClosureProofNodes() {
       workstreamId: "00-current-oam-p0-closure",
       proofType: "current-oam-branch-governed-p0-closure",
       source: sources,
-      hash: `sha256:${sha256(JSON.stringify(normalizeForDigest(payload)))}`,
+      hash: proofHash,
       dependsOn: sources,
+      command,
+      checker: command,
+      inputHashes: sourceHashes,
+      outputHashes: [{ path: `evidence-node:p0-closure-proof.${id}`, hash: proofHash }],
       gateResult: { status: "bound", field },
       negativeTestResult: "blocked",
+      goNoGoImpact: [field],
+      notesZh: `${field} 的 P0 收口 proof DAG 节点；当前阶段保持 NO_GO，CI 绿色不等于 GO。`,
       goNoGo: multiDimensionalGoNoGo[field] ?? "NO_GO",
       finalReportField: field
     };

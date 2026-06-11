@@ -1,0 +1,1 @@
+Rule authority check: PASS

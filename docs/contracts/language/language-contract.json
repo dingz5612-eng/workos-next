@@ -1,6 +1,5 @@
 {
   "version": "oam.language-contract.v1",
-  "generatedBy": "oam-current",
   "status": "authoritative-read-side-kernel",
   "supportedLanguages": [
     "zh-CN",

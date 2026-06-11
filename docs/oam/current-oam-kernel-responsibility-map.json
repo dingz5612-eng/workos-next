@@ -19,10 +19,9 @@
     "executionChannelRule": "Codex Execution is an execution channel only, not a governance workstream."
   },
   "layers": [
-    "Authority Layer",
-    "Runtime Layer",
-    "Experience-Read Layer",
-    "Release-Evidence Layer"
+    "Source Layer",
+    "Generated Layer",
+    "Runtime / Evidence Layer"
   ],
   "executionChannels": [
     {
@@ -133,7 +132,8 @@
       ],
       "finalReportFields": [
         "architectureAuthorityGoNoGo"
-      ]
+      ],
+      "partition": "Source Layer"
     },
     {
       "id": "product-business",
@@ -180,7 +180,8 @@
       ],
       "finalReportFields": [
         "productBusinessGoNoGo"
-      ]
+      ],
+      "partition": "Source Layer"
     },
     {
       "id": "truth-ownership",
@@ -228,7 +229,8 @@
       ],
       "finalReportFields": [
         "truthOwnershipGoNoGo"
-      ]
+      ],
+      "partition": "Source Layer"
     },
     {
       "id": "compatibility-box",
@@ -275,7 +277,8 @@
       ],
       "finalReportFields": [
         "compatibilityBoxGoNoGo"
-      ]
+      ],
+      "partition": "Source Layer"
     },
     {
       "id": "cleanup-archive",
@@ -323,7 +326,8 @@
       ],
       "finalReportFields": [
         "cleanupArchiveGoNoGo"
-      ]
+      ],
+      "partition": "Source Layer"
     },
     {
       "id": "admission-kernel",
@@ -371,7 +375,8 @@
       ],
       "finalReportFields": [
         "admissionKernelGoNoGo"
-      ]
+      ],
+      "partition": "Source Layer"
     },
     {
       "id": "operations-runtime",
@@ -425,7 +430,8 @@
       "finalReportFields": [
         "operationsRuntimeGoNoGo",
         "runtimeGateGoNoGo"
-      ]
+      ],
+      "partition": "Runtime / Evidence Layer"
     },
     {
       "id": "finance-ledger-kernel",
@@ -476,7 +482,8 @@
       "finalReportFields": [
         "financeLedgerGoNoGo",
         "financeTruthGoNoGo"
-      ]
+      ],
+      "partition": "Source Layer"
     },
     {
       "id": "identity-permission-kernel",
@@ -526,7 +533,8 @@
       ],
       "finalReportFields": [
         "identityPermissionGoNoGo"
-      ]
+      ],
+      "partition": "Source Layer"
     },
     {
       "id": "security-trust",
@@ -573,7 +581,8 @@
       ],
       "finalReportFields": [
         "securityTrustGoNoGo"
-      ]
+      ],
+      "partition": "Runtime / Evidence Layer"
     },
     {
       "id": "control-plane",
@@ -620,7 +629,8 @@
       ],
       "finalReportFields": [
         "controlPlaneGoNoGo"
-      ]
+      ],
+      "partition": "Runtime / Evidence Layer"
     },
     {
       "id": "experience-kernel",
@@ -674,7 +684,8 @@
       "finalReportFields": [
         "experienceKernelGoNoGo",
         "surfaceLanguageGoNoGo"
-      ]
+      ],
+      "partition": "Source Layer"
     },
     {
       "id": "language-kernel",
@@ -722,7 +733,8 @@
       ],
       "finalReportFields": [
         "languageKernelGoNoGo"
-      ]
+      ],
+      "partition": "Source Layer"
     },
     {
       "id": "search-kernel",
@@ -775,7 +787,8 @@
       "finalReportFields": [
         "searchKernelGoNoGo",
         "readIntelligenceGoNoGo"
-      ]
+      ],
+      "partition": "Source Layer"
     },
     {
       "id": "data-kpi",
@@ -823,7 +836,8 @@
       ],
       "finalReportFields": [
         "dataKpiGoNoGo"
-      ]
+      ],
+      "partition": "Source Layer"
     },
     {
       "id": "compiler-generated-contract-kernel",
@@ -890,7 +904,8 @@
         "compilerGeneratedContractGoNoGo",
         "kernelCompileGoNoGo",
         "workItemEffectGoNoGo"
-      ]
+      ],
+      "partition": "Generated Layer"
     },
     {
       "id": "evidence-graph",
@@ -947,7 +962,114 @@
         "evidenceBindingGoNoGo",
         "releaseEvidenceGoNoGo",
         "responsibilityGovernanceGoNoGo"
-      ]
+      ],
+      "partition": "Runtime / Evidence Layer"
     }
+  ],
+  "operationModel": {
+    "version": "oam.operation-model.v1",
+    "ruleZh": "四图是视角，三层是分区，六环是执行顺序。",
+    "viewsAreArtifactCategories": false,
+    "layersAreExecutionOrder": false,
+    "ringsAreLooseChecklist": false,
+    "views": [
+      {
+        "id": "authorityGraph",
+        "nameZh": "权威图",
+        "role": "view",
+        "descriptionZh": "观察 Source 权威、职责、边界、谁能写和谁不能写。"
+      },
+      {
+        "id": "kernelCompileGraph",
+        "nameZh": "内核编译图",
+        "role": "view",
+        "descriptionZh": "观察 Source 如何编译成 Generated 合同、模型、图和测试输入。"
+      },
+      {
+        "id": "runtimeEffectGraph",
+        "nameZh": "运行效果图",
+        "role": "view",
+        "descriptionZh": "观察 Runtime 如何消费合同并产生 WorkItem、事件、账务、Outbox 和投影效果。"
+      },
+      {
+        "id": "readEvidenceGraph",
+        "nameZh": "读侧与证据图",
+        "role": "view",
+        "descriptionZh": "观察 Search、Surface、Lens、Proof DAG、Release Evidence 和 Final Report 如何证明执行结果。"
+      }
+    ],
+    "partitions": [
+      {
+        "id": "source",
+        "name": "Source Layer",
+        "role": "partition",
+        "descriptionZh": "只允许人工维护的权威输入：规则、边界、事实归属、成熟度、谁能写、谁不能写。",
+        "executionOrder": false
+      },
+      {
+        "id": "generated",
+        "name": "Generated Layer",
+        "role": "partition",
+        "descriptionZh": "只允许机器从 Source 编译出的合同、模型、图、surface、search、lens、test 合同，禁止手改。",
+        "executionOrder": false
+      },
+      {
+        "id": "runtimeEvidence",
+        "name": "Runtime / Evidence Layer",
+        "role": "partition",
+        "descriptionZh": "只允许运行时代码、数据库资产、CI、checker、proof DAG、release evidence、final report，不得重新发明权威规则。",
+        "executionOrder": false
+      }
+    ],
+    "executionRings": [
+      {
+        "order": 1,
+        "id": "authority-closure",
+        "name": "Authority Closure",
+        "role": "executionRing",
+        "descriptionZh": "收拢唯一权威入口和职责边界。"
+      },
+      {
+        "order": 2,
+        "id": "source-kernel-closure",
+        "name": "Source Kernel Closure",
+        "role": "executionRing",
+        "descriptionZh": "收拢 Source 内核事实、规则和归属。"
+      },
+      {
+        "order": 3,
+        "id": "compiler-closure",
+        "name": "Compiler Closure",
+        "role": "executionRing",
+        "descriptionZh": "证明 Generated Layer 由 Source 稳定编译。"
+      },
+      {
+        "order": 4,
+        "id": "runtime-workitem-effect-closure",
+        "name": "Runtime WorkItem Effect Closure",
+        "role": "executionRing",
+        "descriptionZh": "证明 Runtime 只按合同执行 WorkItem 效果。"
+      },
+      {
+        "order": 5,
+        "id": "read-surface-consumption-closure",
+        "name": "Read / Surface Consumption Closure",
+        "role": "executionRing",
+        "descriptionZh": "证明读侧和界面只消费授权模型，不写事实。"
+      },
+      {
+        "order": 6,
+        "id": "release-evidence-closure",
+        "name": "Release Evidence Closure",
+        "role": "executionRing",
+        "descriptionZh": "证明证据、报告和 NO_GO 锁定闭环。"
+      }
+    ]
+  },
+  "legacyResponsibilityLanes": [
+    "Authority Layer",
+    "Runtime Layer",
+    "Experience-Read Layer",
+    "Release-Evidence Layer"
   ]
 }

@@ -18,6 +18,7 @@ const p0WorkItemTypes = [
 
 const kernel = readJson(generatedFrom);
 const kernelGraphHash = hashFile(kernelGraphPath);
+const sourceHash = hashFile(generatedFrom);
 const workItems = kernel.workItems ?? [];
 const p0WorkItems = p0WorkItemTypes.map((type) => {
   const item = workItems.find((candidate) => candidate.workItemType === type);
@@ -196,12 +197,26 @@ function toCandidate(item) {
 }
 
 function meta(kind, refs) {
+  const compilerInputDigest = digest({
+    generatorVersion,
+    kind,
+    generatedFrom,
+    sourceHash,
+    kernelGraphHash,
+    sourceNodeRefs: refs
+  });
   return {
     generated: true,
     doNotEdit: true,
     kind,
     kernelGraphHash,
     sourceNodeRefs: refs,
+    sourceRefs: refs,
+    sourceHash,
+    sourceContentDigest: sourceHash,
+    compilerInputDigest,
+    outputContentDigest: "sha256:pending",
+    deterministicSort: true,
     generatorVersion,
     generatedFrom
   };
@@ -214,9 +229,21 @@ function readJson(file) {
 function writeJson(file, value) {
   const target = path.join(outputRoot, file);
   fs.mkdirSync(path.dirname(target), { recursive: true });
-  fs.writeFileSync(target, `${JSON.stringify(value, null, 2)}\n`, "utf8");
+  const document = finalizeGenerated(value);
+  fs.writeFileSync(target, `${JSON.stringify(document, null, 2)}\n`, "utf8");
 }
 
 function hashFile(file) {
   return `sha256:${crypto.createHash("sha256").update(fs.readFileSync(path.join(root, file), "utf8")).digest("hex")}`;
+}
+
+function finalizeGenerated(value) {
+  if (value?.generated !== true) return value;
+  const document = { ...value, outputContentDigest: "sha256:pending" };
+  document.outputContentDigest = digest(document);
+  return document;
+}
+
+function digest(value) {
+  return `sha256:${crypto.createHash("sha256").update(JSON.stringify(value)).digest("hex")}`;
 }

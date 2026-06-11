@@ -1,0 +1,39 @@
+{
+  "version": "oam.authority-cleanup-mutation-tests.v1",
+  "checkedAtUtc": "2026-06-11T17:53:31.708Z",
+  "status": "passed",
+  "mutationCount": 6,
+  "failedMutationCount": 0,
+  "tests": [
+    {
+      "id": "generated_file_manual_edit_should_fail",
+      "status": "passed",
+      "messageZh": "突变已被门禁识别。"
+    },
+    {
+      "id": "derived_file_marked_source_should_fail",
+      "status": "passed",
+      "messageZh": "突变已被门禁识别。"
+    },
+    {
+      "id": "search_bi_surface_business_fact_should_fail",
+      "status": "passed",
+      "messageZh": "突变已被门禁识别。"
+    },
+    {
+      "id": "generated_manifest_source_hash_removed_should_fail",
+      "status": "passed",
+      "messageZh": "突变已被门禁识别。"
+    },
+    {
+      "id": "runtime_consumes_old_derived_authority_view_should_fail",
+      "status": "passed",
+      "messageZh": "突变已被门禁识别。"
+    },
+    {
+      "id": "ci_green_as_go_should_fail",
+      "status": "passed",
+      "messageZh": "突变已被门禁识别。"
+    }
+  ]
+}

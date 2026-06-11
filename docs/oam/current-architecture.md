@@ -57,6 +57,38 @@ Product Capability
 
 `artifacts/oam/evidence` 和 `artifacts/oam/final-report.json` 是本地/CI 运行产物，不作为源码真值提交。放行结论必须来自当前运行的 `scripts/oam/run-control-plane-checks.ps1`、证据生成器和证据检查器。
 
+## 2.2 当前操作模型
+
+当前 OAM 的操作模型固定为：四图是视角，三层是分区，六环是执行顺序。
+
+四图只表示观察视角，不是 artifact 分类：
+
+| 视角 | 中文名 | 说明 |
+| --- | --- | --- |
+| `authorityGraph` | 权威图 | 观察 Source 权威、职责、边界、谁能写和谁不能写。 |
+| `kernelCompileGraph` | 内核编译图 | 观察 Source 如何编译成 Generated 合同、模型、图和测试输入。 |
+| `runtimeEffectGraph` | 运行效果图 | 观察 Runtime 如何消费合同并产生 WorkItem、事件、账务、Outbox 和投影效果。 |
+| `readEvidenceGraph` | 读侧与证据图 | 观察 Search、Surface、Lens、Proof DAG、Release Evidence 和 Final Report 如何证明执行结果。 |
+
+三层只表示文件和职责分区，不是执行顺序：
+
+| 分区 | 允许内容 | 禁止内容 |
+| --- | --- | --- |
+| `Source Layer` | 人工维护的权威输入、规则、边界、事实归属、成熟度、写入权限。 | 派生合同、运行时代码、CI 证据重新解释业务事实。 |
+| `Generated Layer` | 从 Source 编译出的合同、模型、图、Surface、Search、Lens、测试合同。 | 手改、声明业务事实权威、绕过上游 Source。 |
+| `Runtime / Evidence Layer` | 运行时代码、数据库资产、CI、checker、proof DAG、release evidence、final report。 | 重新发明 Source 规则、把 CI green 或证据存在解释为 GO。 |
+
+六环只表示整改和发布执行顺序：
+
+1. `Authority Closure`
+2. `Source Kernel Closure`
+3. `Compiler Closure`
+4. `Runtime WorkItem Effect Closure`
+5. `Read / Surface Consumption Closure`
+6. `Release Evidence Closure`
+
+任何 checker、报告或图谱不得把四图写成 artifact 分类，不得把三层写成执行顺序，不得把六环写成散点清单。
+
 ## 3. 一等目录
 
 ### 3.1 services

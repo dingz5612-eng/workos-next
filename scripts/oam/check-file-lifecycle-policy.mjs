@@ -150,6 +150,7 @@ function listCurrentFiles() {
     .split(/\r?\n/)
     .map((item) => slash(item.trim()))
     .filter(Boolean)
+    .filter((item) => !item.startsWith("artifacts/oam/authority-cleanup/"))
     .filter((item) => !item.startsWith("artifacts/oam/checks/"))
     .filter((item) => !item.startsWith("artifacts/oam/evidence/"))
     .filter((item) => !item.startsWith("artifacts/oam/test-results/"))
