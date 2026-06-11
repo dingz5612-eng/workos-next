@@ -80,6 +80,7 @@ const generatedContractFiles = [
   "apps/mobile/src/generated/oam/dormitory-surface-input-model.generated.json"
 ];
 
+const files = new Map();
 const generatedAt = new Date().toISOString();
 const commitSha = env("GITHUB_SHA") || git("rev-parse HEAD") || "local";
 const sourceCommitSha = commitSha;
@@ -104,8 +105,6 @@ const unresolvedP0 = p0Ledger.filter((item) => item.status !== "passed");
 const releaseReadiness = buildReleaseReadiness();
 const finalDecision = buildFinalDecision();
 const finalGoNoGo = finalDecision.finalGoNoGo;
-const workstreamProofNodes = buildWorkstreamProofNodes();
-const workstreamGoNoGoFields = buildWorkstreamGoNoGoFields(workstreamProofNodes);
 const forcedCurrentStageGoNoGo = {
   businessProductionGoNoGo: "NO_GO",
   dormitoryL2GoNoGo: "NO_GO",
@@ -123,10 +122,6 @@ const multiDimensionalGoNoGo = {
   surfaceLanguageGoNoGo: "NO_GO",
   releaseEvidenceGoNoGo: "NO_GO"
 };
-const p0ClosureProofNodes = buildP0ClosureProofNodes();
-
-const files = new Map();
-
 addEvidence(
   "artifacts/oam/evidence/runtime-proof.json",
   proof("runtime-proof", "运行写入可信", {
@@ -323,6 +318,10 @@ addEvidence(
     ]
   })
 );
+
+const workstreamProofNodes = buildWorkstreamProofNodes();
+const workstreamGoNoGoFields = buildWorkstreamGoNoGoFields(workstreamProofNodes);
+const p0ClosureProofNodes = buildP0ClosureProofNodes();
 
 const finalReport = {
   ...proof("current-oam-final-report", "当前 OAM 可信运行闭环最终报告", {}),
@@ -840,11 +839,14 @@ function summarizeWorkstreamGates(gates) {
 }
 
 function hashFileIfPresent(file) {
-  if (!file || file.startsWith("artifacts/oam/") && !fileExists(file)) {
-    return "missing";
+  if (!file) {
+    return `sha256:${sha256("missing:<empty>")}`;
+  }
+  if (files.has(file)) {
+    return `sha256:${sha256(JSON.stringify(normalizeForDigest(documentForDigest(file, files.get(file)))))}`;
   }
   if (!fileExists(file)) {
-    return "missing";
+    return `sha256:${sha256(`missing:${file}`)}`;
   }
   return `sha256:${sha256(readText(file))}`;
 }
@@ -1105,7 +1107,9 @@ function buildBrowserProofNode(input) {
     reportRef: input.reportRef,
     refs,
     screenshotHashes: input.screenshotHashes,
-    headSha: input.headSha,
+    headSha: sourceCommitSha,
+    reportHeadSha: input.headSha,
+    reportFresh: input.headSha === sourceCommitSha,
     sourceCommitSha,
     evidenceRunSha,
     finalGoNoGo: "NO_GO"
@@ -1122,7 +1126,9 @@ function buildBrowserProofNode(input) {
     goNoGo: "NO_GO",
     gate: input.gate,
     branch: input.branch,
-    headSha: input.headSha,
+    headSha: sourceCommitSha,
+    reportHeadSha: input.headSha,
+    reportFresh: input.headSha === sourceCommitSha,
     sourceCommitSha,
     evidenceRunSha,
     ciRunId: input.ciRunId,
