@@ -1,8 +1,10 @@
 import fs from "node:fs";
 import path from "node:path";
+import { execSync } from "node:child_process";
 
 const root = process.cwd();
 const reportPath = "artifacts/oam/authority-cleanup/mutation-tests-result.json";
+const currentGitHead = gitHead();
 const index = readJson("docs/oam/current-authority-index.json");
 const generatedManifest = readJson("docs/oam/generated-contracts-manifest.json");
 const dashboardContract = readJson("docs/contracts/bi-kpi/dashboard-contract.json");
@@ -11,10 +13,10 @@ const evidenceGraph = fs.existsSync(abs("artifacts/oam/evidence/evidence-graph.j
   : { nodes: [{ id: "placeholder", proofType: "placeholder", source: ["placeholder"], hash: "sha256:0000000000000000000000000000000000000000000000000000000000000000", dependsOn: ["placeholder"], status: "blocked", goNoGo: "NO_GO" }] };
 const releaseEvidenceObject = fs.existsSync(abs("artifacts/oam/evidence/current-oam-release-evidence-object.json"))
   ? readJson("artifacts/oam/evidence/current-oam-release-evidence-object.json")
-  : { sourceCommitSha: "0000000000000000000000000000000000000000", evidenceRunSha: "0000000000000000000000000000000000000000", referenceOnly: true, stale: true, finalGoNoGo: "NO_GO" };
+  : { sourceCommitSha: currentGitHead, evidenceRunSha: currentGitHead, referenceOnly: false, stale: false, bindingStatus: "current", finalGoNoGo: "NO_GO" };
 const finalReport = fs.existsSync(abs("artifacts/oam/final-report.json"))
   ? readJson("artifacts/oam/final-report.json")
-  : { finalGoNoGo: "NO_GO", controlPlaneGateResult: { status: "passed" }, noGoReasons: ["当前阶段 NO_GO。"] };
+  : { latestCommit: currentGitHead, finalGoNoGo: "NO_GO", controlPlaneGateResult: { status: "passed" }, noGoReasons: ["当前阶段 NO_GO。"] };
 
 const tests = [
   mutationTest("generated_file_manual_edit_should_fail", () => {
@@ -243,7 +245,7 @@ function validateEvidenceGraphNodes(graph) {
 
 function validateReleaseBinding(release) {
   const violations = [];
-  const current = finalReport.latestCommit ?? finalReport.binding?.sourceCommitSha ?? release.sourceCommitSha;
+  const current = finalReport.latestCommit ?? finalReport.binding?.sourceCommitSha ?? currentGitHead;
   const stale = release.sourceCommitSha !== current || release.evidenceRunSha !== current;
   if (stale && (release.stale !== true || release.referenceOnly !== true || release.bindingStatus !== "stale")) {
     violations.push({ id: "release_old_sha_not_reference_only" });
@@ -291,4 +293,13 @@ function writeJson(file, value) {
 
 function abs(file) {
   return path.join(root, file);
+}
+
+function gitHead() {
+  try {
+    return execSync("git rev-parse HEAD", { cwd: root, encoding: "utf8" }).trim();
+  } catch {
+    // Fall through to a stable non-SHA marker; validation will still treat old SHA as stale.
+  }
+  return "current-git-head-unavailable";
 }
