@@ -26,12 +26,29 @@
   "contracts": [
     {
       "targetPath": "docs/contracts/evidence/evidence-graph-refs-contract.json",
+      "generated": true,
+      "doNotEdit": true,
       "manifestKind": "system-derived",
       "derivedFrom": [
         "docs/oam/system-operating-kernel.json",
         "docs/oam/oam-kernel-graph.json"
       ],
       "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "generatorVersion": "oam.generated-layer-manifest-compiler.v1",
+      "generatedFrom": [
+        "docs/oam/system-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceRefs": [
+        "docs/oam/system-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceNodeRefs": [
+        "kernel.system",
+        "graph.oam"
+      ],
+      "sourceContentDigest": "sha256:f0b1dfb80e81517c4638fe1f9b269c137f1600a6bd5d7bac08c7cd8f369ac69b",
+      "kernelGraphHash": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2",
       "sourceKernelVersion": "oam.system-operating-kernel.v1",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
@@ -40,16 +57,34 @@
       "sourceHashes": {
         "docs/oam/system-operating-kernel.json": "sha256:7f68ee0b45409c126845840223617d3eaf24f2a9af8910fe47d8e35081c63867",
         "docs/oam/oam-kernel-graph.json": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2"
-      }
+      },
+      "compilerInputDigest": "sha256:0ca038e5d4be22ad21bf16a04291a6c5a8d6fed4a11b4443e12bd49a1ee3faa3"
     },
     {
       "targetPath": "docs/contracts/oam-responsibility-boundary-matrix.json",
+      "generated": true,
+      "doNotEdit": true,
       "manifestKind": "system-derived",
       "derivedFrom": [
         "docs/oam/system-operating-kernel.json",
         "docs/oam/oam-kernel-graph.json"
       ],
       "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "generatorVersion": "oam.generated-layer-manifest-compiler.v1",
+      "generatedFrom": [
+        "docs/oam/system-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceRefs": [
+        "docs/oam/system-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceNodeRefs": [
+        "kernel.system",
+        "graph.oam"
+      ],
+      "sourceContentDigest": "sha256:f0b1dfb80e81517c4638fe1f9b269c137f1600a6bd5d7bac08c7cd8f369ac69b",
+      "kernelGraphHash": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2",
       "sourceKernelVersion": "oam.system-operating-kernel.v1",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
@@ -58,16 +93,34 @@
       "sourceHashes": {
         "docs/oam/system-operating-kernel.json": "sha256:7f68ee0b45409c126845840223617d3eaf24f2a9af8910fe47d8e35081c63867",
         "docs/oam/oam-kernel-graph.json": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2"
-      }
+      },
+      "compilerInputDigest": "sha256:19e7bcb9615784fc3b326d6fb03553b2b6ddf13765813fef11f020e04fa90618"
     },
     {
       "targetPath": "docs/system/current-system-map.md",
+      "generated": true,
+      "doNotEdit": true,
       "manifestKind": "system-derived",
       "derivedFrom": [
         "docs/oam/system-operating-kernel.json",
         "docs/oam/oam-kernel-graph.json"
       ],
       "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "generatorVersion": "oam.generated-layer-manifest-compiler.v1",
+      "generatedFrom": [
+        "docs/oam/system-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceRefs": [
+        "docs/oam/system-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceNodeRefs": [
+        "kernel.system",
+        "graph.oam"
+      ],
+      "sourceContentDigest": "sha256:f0b1dfb80e81517c4638fe1f9b269c137f1600a6bd5d7bac08c7cd8f369ac69b",
+      "kernelGraphHash": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2",
       "sourceKernelVersion": "oam.system-operating-kernel.v1",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
@@ -76,9 +129,10 @@
       "sourceHashes": {
         "docs/oam/system-operating-kernel.json": "sha256:7f68ee0b45409c126845840223617d3eaf24f2a9af8910fe47d8e35081c63867",
         "docs/oam/oam-kernel-graph.json": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2"
-      }
+      },
+      "compilerInputDigest": "sha256:2c4ef3c20032541605acc0cb23ea5a7880953fe3812af8400b4b12130ce3dd8e"
     }
   ],
   "compilerInputDigest": "sha256:7ac4b5968c68f785ba7aacbd668d1dc45637c772c43bc57f99362acbd56c7572",
-  "outputContentDigest": "sha256:41fedec69bb3e2ac07535d23fca2214e0e53918d435b7129110b13ddd9c20241"
+  "outputContentDigest": "sha256:44fb8ce82867e7e766d46b918c1cbf747a5ad31c057eef3fe7e925cfb4114aab"
 }

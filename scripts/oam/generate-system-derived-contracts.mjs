@@ -87,11 +87,21 @@ console.log(`Generated layer manifests written: ${systemOutputPath}, ${domainOut
 console.log(`contracts=${systemTargets.length + domainTargets.length + generatedContractTargets.length}`);
 
 function contracts(targetPaths, derivedFrom, manifestKind) {
+  const sourceNodeRefs = derivedFrom.map((file) => graphNodeBySource.get(file)?.nodeId ?? graphBindingFor(file));
+  const sourceHashes = Object.fromEntries(derivedFrom.map((file) => [file, hashFile(file)]));
   return [...targetPaths].sort((a, b) => a.localeCompare(b)).map((targetPath) => ({
     targetPath,
+    generated: true,
+    doNotEdit: true,
     manifestKind,
     derivedFrom,
     generatedBy,
+    generatorVersion,
+    generatedFrom: derivedFrom,
+    sourceRefs: derivedFrom,
+    sourceNodeRefs,
+    sourceContentDigest: hashFiles(derivedFrom),
+    kernelGraphHash: hashFile(graphPath),
     sourceKernelVersion: targetPath.includes("/domains/dormitory/") || targetPath.includes("/dormitory/") || targetPath.includes("/scenarios/")
       ? domainKernel.version
       : kernel.version,
@@ -99,7 +109,15 @@ function contracts(targetPaths, derivedFrom, manifestKind) {
     manualEditAllowed: false,
     graphBinding: graphNodeBySource.get(targetPath)?.nodeId ?? graphBindingFor(targetPath),
     checker: checkerFor(targetPath),
-    sourceHashes: Object.fromEntries(derivedFrom.map((file) => [file, hashFile(file)]))
+    sourceHashes,
+    compilerInputDigest: digest({
+      generatorVersion,
+      manifestKind,
+      targetPath,
+      generatedFrom: derivedFrom,
+      sourceNodeRefs,
+      sourceHashes
+    })
   }));
 }
 

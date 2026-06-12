@@ -1,7 +1,7 @@
 {
   "schemaVersion": "workosnext.search-proof.v1",
   "status": "passed",
-  "checkedAtUtc": "2026-06-12T09:09:20.301Z",
+  "checkedAtUtc": "2026-06-12T09:33:10.883Z",
   "failures": [],
   "gates": [
     "node scripts/check-search-kernel.mjs"

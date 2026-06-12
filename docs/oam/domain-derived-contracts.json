@@ -26,12 +26,29 @@
   "contracts": [
     {
       "targetPath": "docs/business/domains/dormitory/domain-pack.yml",
+      "generated": true,
+      "doNotEdit": true,
       "manifestKind": "domain-derived",
       "derivedFrom": [
         "docs/business/domains/dormitory/dormitory-operating-kernel.json",
         "docs/oam/oam-kernel-graph.json"
       ],
       "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "generatorVersion": "oam.generated-layer-manifest-compiler.v1",
+      "generatedFrom": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceRefs": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceNodeRefs": [
+        "workitem.Finance.ExpenseRecord",
+        "graph.oam"
+      ],
+      "sourceContentDigest": "sha256:2a533e5e6dae39ba4648496707c69a9b01a8ef5094ec01915be4da1c6eda3d0c",
+      "kernelGraphHash": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
@@ -40,16 +57,34 @@
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:10d25a1fc98fe40c912db3bce2ebfb9569a20abdfe206e4ca59ca140ddf98865",
         "docs/oam/oam-kernel-graph.json": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2"
-      }
+      },
+      "compilerInputDigest": "sha256:d30775630d7d2027d983321a5ec3aa38035899449ff97b259d692b720b8c4453"
     },
     {
       "targetPath": "docs/business/domains/dormitory/dormitory-observability-contract.json",
+      "generated": true,
+      "doNotEdit": true,
       "manifestKind": "domain-derived",
       "derivedFrom": [
         "docs/business/domains/dormitory/dormitory-operating-kernel.json",
         "docs/oam/oam-kernel-graph.json"
       ],
       "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "generatorVersion": "oam.generated-layer-manifest-compiler.v1",
+      "generatedFrom": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceRefs": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceNodeRefs": [
+        "workitem.Finance.ExpenseRecord",
+        "graph.oam"
+      ],
+      "sourceContentDigest": "sha256:2a533e5e6dae39ba4648496707c69a9b01a8ef5094ec01915be4da1c6eda3d0c",
+      "kernelGraphHash": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
@@ -58,16 +93,34 @@
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:10d25a1fc98fe40c912db3bce2ebfb9569a20abdfe206e4ca59ca140ddf98865",
         "docs/oam/oam-kernel-graph.json": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2"
-      }
+      },
+      "compilerInputDigest": "sha256:8101726d093e1e029d17f61deeea1a2cdf80605f300b44621dca7b807b8c3a5d"
     },
     {
       "targetPath": "docs/business/domains/dormitory/dormitory-operator-playbook.md",
+      "generated": true,
+      "doNotEdit": true,
       "manifestKind": "domain-derived",
       "derivedFrom": [
         "docs/business/domains/dormitory/dormitory-operating-kernel.json",
         "docs/oam/oam-kernel-graph.json"
       ],
       "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "generatorVersion": "oam.generated-layer-manifest-compiler.v1",
+      "generatedFrom": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceRefs": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceNodeRefs": [
+        "workitem.Finance.ExpenseRecord",
+        "graph.oam"
+      ],
+      "sourceContentDigest": "sha256:2a533e5e6dae39ba4648496707c69a9b01a8ef5094ec01915be4da1c6eda3d0c",
+      "kernelGraphHash": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
@@ -76,16 +129,34 @@
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:10d25a1fc98fe40c912db3bce2ebfb9569a20abdfe206e4ca59ca140ddf98865",
         "docs/oam/oam-kernel-graph.json": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2"
-      }
+      },
+      "compilerInputDigest": "sha256:0ffb584a341df92373c8517b75420ee4b30b8b5dd85e14bbe04088453a0bc626"
     },
     {
       "targetPath": "docs/business/domains/dormitory/dormitory-pilot-go-no-go.json",
+      "generated": true,
+      "doNotEdit": true,
       "manifestKind": "domain-derived",
       "derivedFrom": [
         "docs/business/domains/dormitory/dormitory-operating-kernel.json",
         "docs/oam/oam-kernel-graph.json"
       ],
       "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "generatorVersion": "oam.generated-layer-manifest-compiler.v1",
+      "generatedFrom": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceRefs": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceNodeRefs": [
+        "workitem.Finance.ExpenseRecord",
+        "graph.oam"
+      ],
+      "sourceContentDigest": "sha256:2a533e5e6dae39ba4648496707c69a9b01a8ef5094ec01915be4da1c6eda3d0c",
+      "kernelGraphHash": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
@@ -94,16 +165,34 @@
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:10d25a1fc98fe40c912db3bce2ebfb9569a20abdfe206e4ca59ca140ddf98865",
         "docs/oam/oam-kernel-graph.json": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2"
-      }
+      },
+      "compilerInputDigest": "sha256:0ef4aafc0980e009a52100768104035d0523838099c0158520ad3f5aa1fc7bfa"
     },
     {
       "targetPath": "docs/business/domains/dormitory/dormitory-pilot-scenario-pack.yml",
+      "generated": true,
+      "doNotEdit": true,
       "manifestKind": "domain-derived",
       "derivedFrom": [
         "docs/business/domains/dormitory/dormitory-operating-kernel.json",
         "docs/oam/oam-kernel-graph.json"
       ],
       "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "generatorVersion": "oam.generated-layer-manifest-compiler.v1",
+      "generatedFrom": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceRefs": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceNodeRefs": [
+        "workitem.Finance.ExpenseRecord",
+        "graph.oam"
+      ],
+      "sourceContentDigest": "sha256:2a533e5e6dae39ba4648496707c69a9b01a8ef5094ec01915be4da1c6eda3d0c",
+      "kernelGraphHash": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
@@ -112,16 +201,34 @@
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:10d25a1fc98fe40c912db3bce2ebfb9569a20abdfe206e4ca59ca140ddf98865",
         "docs/oam/oam-kernel-graph.json": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2"
-      }
+      },
+      "compilerInputDigest": "sha256:ffc5192350804358cc800a0034426d5e69996201b2b6e70b1f0db2706bb2eba8"
     },
     {
       "targetPath": "docs/business/domains/dormitory/dormitory-release-train.yml",
+      "generated": true,
+      "doNotEdit": true,
       "manifestKind": "domain-derived",
       "derivedFrom": [
         "docs/business/domains/dormitory/dormitory-operating-kernel.json",
         "docs/oam/oam-kernel-graph.json"
       ],
       "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "generatorVersion": "oam.generated-layer-manifest-compiler.v1",
+      "generatedFrom": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceRefs": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceNodeRefs": [
+        "workitem.Finance.ExpenseRecord",
+        "graph.oam"
+      ],
+      "sourceContentDigest": "sha256:2a533e5e6dae39ba4648496707c69a9b01a8ef5094ec01915be4da1c6eda3d0c",
+      "kernelGraphHash": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
@@ -130,16 +237,34 @@
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:10d25a1fc98fe40c912db3bce2ebfb9569a20abdfe206e4ca59ca140ddf98865",
         "docs/oam/oam-kernel-graph.json": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2"
-      }
+      },
+      "compilerInputDigest": "sha256:4b8a16372cac59bf2d90113ca582e03704729b59664dae2bbe0ebd3f3bc00ea0"
     },
     {
       "targetPath": "docs/business/domains/dormitory/dormitory-seed-data-pack.json",
+      "generated": true,
+      "doNotEdit": true,
       "manifestKind": "domain-derived",
       "derivedFrom": [
         "docs/business/domains/dormitory/dormitory-operating-kernel.json",
         "docs/oam/oam-kernel-graph.json"
       ],
       "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "generatorVersion": "oam.generated-layer-manifest-compiler.v1",
+      "generatedFrom": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceRefs": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceNodeRefs": [
+        "workitem.Finance.ExpenseRecord",
+        "graph.oam"
+      ],
+      "sourceContentDigest": "sha256:2a533e5e6dae39ba4648496707c69a9b01a8ef5094ec01915be4da1c6eda3d0c",
+      "kernelGraphHash": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
@@ -148,16 +273,34 @@
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:10d25a1fc98fe40c912db3bce2ebfb9569a20abdfe206e4ca59ca140ddf98865",
         "docs/oam/oam-kernel-graph.json": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2"
-      }
+      },
+      "compilerInputDigest": "sha256:e3e04d099b1c27ceed486f04df030721c3f87ea1fcda975bb5c18fd10d17f7d4"
     },
     {
       "targetPath": "docs/business/domains/dormitory/handoff-contract.json",
+      "generated": true,
+      "doNotEdit": true,
       "manifestKind": "domain-derived",
       "derivedFrom": [
         "docs/business/domains/dormitory/dormitory-operating-kernel.json",
         "docs/oam/oam-kernel-graph.json"
       ],
       "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "generatorVersion": "oam.generated-layer-manifest-compiler.v1",
+      "generatedFrom": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceRefs": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceNodeRefs": [
+        "workitem.Finance.ExpenseRecord",
+        "graph.oam"
+      ],
+      "sourceContentDigest": "sha256:2a533e5e6dae39ba4648496707c69a9b01a8ef5094ec01915be4da1c6eda3d0c",
+      "kernelGraphHash": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
@@ -166,16 +309,34 @@
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:10d25a1fc98fe40c912db3bce2ebfb9569a20abdfe206e4ca59ca140ddf98865",
         "docs/oam/oam-kernel-graph.json": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2"
-      }
+      },
+      "compilerInputDigest": "sha256:bce19e78920cccff73609bb589d6dd8b3bad7b5ff865eae2b7cec7b34e6f042c"
     },
     {
       "targetPath": "docs/business/domains/dormitory/workitems/dorm-access-credential-issue.json",
+      "generated": true,
+      "doNotEdit": true,
       "manifestKind": "domain-derived",
       "derivedFrom": [
         "docs/business/domains/dormitory/dormitory-operating-kernel.json",
         "docs/oam/oam-kernel-graph.json"
       ],
       "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "generatorVersion": "oam.generated-layer-manifest-compiler.v1",
+      "generatedFrom": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceRefs": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceNodeRefs": [
+        "workitem.Finance.ExpenseRecord",
+        "graph.oam"
+      ],
+      "sourceContentDigest": "sha256:2a533e5e6dae39ba4648496707c69a9b01a8ef5094ec01915be4da1c6eda3d0c",
+      "kernelGraphHash": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
@@ -184,16 +345,34 @@
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:10d25a1fc98fe40c912db3bce2ebfb9569a20abdfe206e4ca59ca140ddf98865",
         "docs/oam/oam-kernel-graph.json": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2"
-      }
+      },
+      "compilerInputDigest": "sha256:182956b4d0800177514ae6cc566b621bbc0ca4d2e3cb080fd59180a52483f798"
     },
     {
       "targetPath": "docs/business/domains/dormitory/workitems/dorm-access-credential-revoke.json",
+      "generated": true,
+      "doNotEdit": true,
       "manifestKind": "domain-derived",
       "derivedFrom": [
         "docs/business/domains/dormitory/dormitory-operating-kernel.json",
         "docs/oam/oam-kernel-graph.json"
       ],
       "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "generatorVersion": "oam.generated-layer-manifest-compiler.v1",
+      "generatedFrom": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceRefs": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceNodeRefs": [
+        "workitem.Finance.ExpenseRecord",
+        "graph.oam"
+      ],
+      "sourceContentDigest": "sha256:2a533e5e6dae39ba4648496707c69a9b01a8ef5094ec01915be4da1c6eda3d0c",
+      "kernelGraphHash": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
@@ -202,16 +381,34 @@
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:10d25a1fc98fe40c912db3bce2ebfb9569a20abdfe206e4ca59ca140ddf98865",
         "docs/oam/oam-kernel-graph.json": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2"
-      }
+      },
+      "compilerInputDigest": "sha256:396c1b8b2d81e80f402bbcbcda817fde0e8ccc480420a08059253cee1ddf8244"
     },
     {
       "targetPath": "docs/business/domains/dormitory/workitems/dorm-bed-setup-confirm.json",
+      "generated": true,
+      "doNotEdit": true,
       "manifestKind": "domain-derived",
       "derivedFrom": [
         "docs/business/domains/dormitory/dormitory-operating-kernel.json",
         "docs/oam/oam-kernel-graph.json"
       ],
       "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "generatorVersion": "oam.generated-layer-manifest-compiler.v1",
+      "generatedFrom": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceRefs": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceNodeRefs": [
+        "workitem.Finance.ExpenseRecord",
+        "graph.oam"
+      ],
+      "sourceContentDigest": "sha256:2a533e5e6dae39ba4648496707c69a9b01a8ef5094ec01915be4da1c6eda3d0c",
+      "kernelGraphHash": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
@@ -220,16 +417,34 @@
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:10d25a1fc98fe40c912db3bce2ebfb9569a20abdfe206e4ca59ca140ddf98865",
         "docs/oam/oam-kernel-graph.json": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2"
-      }
+      },
+      "compilerInputDigest": "sha256:8b2bc697469b5e97ce008f8037e0420acc697ab94a1250951b17a02b94db3d29"
     },
     {
       "targetPath": "docs/business/domains/dormitory/workitems/dorm-bed-transfer-approve.json",
+      "generated": true,
+      "doNotEdit": true,
       "manifestKind": "domain-derived",
       "derivedFrom": [
         "docs/business/domains/dormitory/dormitory-operating-kernel.json",
         "docs/oam/oam-kernel-graph.json"
       ],
       "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "generatorVersion": "oam.generated-layer-manifest-compiler.v1",
+      "generatedFrom": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceRefs": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceNodeRefs": [
+        "workitem.Finance.ExpenseRecord",
+        "graph.oam"
+      ],
+      "sourceContentDigest": "sha256:2a533e5e6dae39ba4648496707c69a9b01a8ef5094ec01915be4da1c6eda3d0c",
+      "kernelGraphHash": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
@@ -238,16 +453,34 @@
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:10d25a1fc98fe40c912db3bce2ebfb9569a20abdfe206e4ca59ca140ddf98865",
         "docs/oam/oam-kernel-graph.json": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2"
-      }
+      },
+      "compilerInputDigest": "sha256:3d1c670c3278571799da6ad1c8c21a408671be2880bbaf970f255ab02954709a"
     },
     {
       "targetPath": "docs/business/domains/dormitory/workitems/dorm-checkin-confirm.json",
+      "generated": true,
+      "doNotEdit": true,
       "manifestKind": "domain-derived",
       "derivedFrom": [
         "docs/business/domains/dormitory/dormitory-operating-kernel.json",
         "docs/oam/oam-kernel-graph.json"
       ],
       "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "generatorVersion": "oam.generated-layer-manifest-compiler.v1",
+      "generatedFrom": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceRefs": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceNodeRefs": [
+        "workitem.Finance.ExpenseRecord",
+        "graph.oam"
+      ],
+      "sourceContentDigest": "sha256:2a533e5e6dae39ba4648496707c69a9b01a8ef5094ec01915be4da1c6eda3d0c",
+      "kernelGraphHash": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
@@ -256,16 +489,34 @@
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:10d25a1fc98fe40c912db3bce2ebfb9569a20abdfe206e4ca59ca140ddf98865",
         "docs/oam/oam-kernel-graph.json": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2"
-      }
+      },
+      "compilerInputDigest": "sha256:57090a78efb4cd59ea0f7fd775d9f8e9d62db3300f9e475c3d02d456481e5441"
     },
     {
       "targetPath": "docs/business/domains/dormitory/workitems/dorm-checkout-settlement-approve.json",
+      "generated": true,
+      "doNotEdit": true,
       "manifestKind": "domain-derived",
       "derivedFrom": [
         "docs/business/domains/dormitory/dormitory-operating-kernel.json",
         "docs/oam/oam-kernel-graph.json"
       ],
       "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "generatorVersion": "oam.generated-layer-manifest-compiler.v1",
+      "generatedFrom": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceRefs": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceNodeRefs": [
+        "workitem.Finance.ExpenseRecord",
+        "graph.oam"
+      ],
+      "sourceContentDigest": "sha256:2a533e5e6dae39ba4648496707c69a9b01a8ef5094ec01915be4da1c6eda3d0c",
+      "kernelGraphHash": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
@@ -274,16 +525,34 @@
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:10d25a1fc98fe40c912db3bce2ebfb9569a20abdfe206e4ca59ca140ddf98865",
         "docs/oam/oam-kernel-graph.json": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2"
-      }
+      },
+      "compilerInputDigest": "sha256:ecffd3dc6a769cdad0981bc2d5fe85a26b08858a70d489a2f8827535d089e747"
     },
     {
       "targetPath": "docs/business/domains/dormitory/workitems/dorm-deposit-confirm.json",
+      "generated": true,
+      "doNotEdit": true,
       "manifestKind": "domain-derived",
       "derivedFrom": [
         "docs/business/domains/dormitory/dormitory-operating-kernel.json",
         "docs/oam/oam-kernel-graph.json"
       ],
       "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "generatorVersion": "oam.generated-layer-manifest-compiler.v1",
+      "generatedFrom": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceRefs": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceNodeRefs": [
+        "workitem.Finance.ExpenseRecord",
+        "graph.oam"
+      ],
+      "sourceContentDigest": "sha256:2a533e5e6dae39ba4648496707c69a9b01a8ef5094ec01915be4da1c6eda3d0c",
+      "kernelGraphHash": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
@@ -292,16 +561,34 @@
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:10d25a1fc98fe40c912db3bce2ebfb9569a20abdfe206e4ca59ca140ddf98865",
         "docs/oam/oam-kernel-graph.json": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2"
-      }
+      },
+      "compilerInputDigest": "sha256:a6e82d803e5a0b609b8abfaf18b9a010bbcf2d196d3956556b84dfcedef35869"
     },
     {
       "targetPath": "docs/business/domains/dormitory/workitems/dorm-exception-resolve.json",
+      "generated": true,
+      "doNotEdit": true,
       "manifestKind": "domain-derived",
       "derivedFrom": [
         "docs/business/domains/dormitory/dormitory-operating-kernel.json",
         "docs/oam/oam-kernel-graph.json"
       ],
       "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "generatorVersion": "oam.generated-layer-manifest-compiler.v1",
+      "generatedFrom": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceRefs": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceNodeRefs": [
+        "workitem.Finance.ExpenseRecord",
+        "graph.oam"
+      ],
+      "sourceContentDigest": "sha256:2a533e5e6dae39ba4648496707c69a9b01a8ef5094ec01915be4da1c6eda3d0c",
+      "kernelGraphHash": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
@@ -310,16 +597,34 @@
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:10d25a1fc98fe40c912db3bce2ebfb9569a20abdfe206e4ca59ca140ddf98865",
         "docs/oam/oam-kernel-graph.json": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2"
-      }
+      },
+      "compilerInputDigest": "sha256:819026d92a9ccb40d938aa405adbddd8a6ebc5762da90d91fe88ba7fce91e9c3"
     },
     {
       "targetPath": "docs/business/domains/dormitory/workitems/dorm-incident-record.json",
+      "generated": true,
+      "doNotEdit": true,
       "manifestKind": "domain-derived",
       "derivedFrom": [
         "docs/business/domains/dormitory/dormitory-operating-kernel.json",
         "docs/oam/oam-kernel-graph.json"
       ],
       "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "generatorVersion": "oam.generated-layer-manifest-compiler.v1",
+      "generatedFrom": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceRefs": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceNodeRefs": [
+        "workitem.Finance.ExpenseRecord",
+        "graph.oam"
+      ],
+      "sourceContentDigest": "sha256:2a533e5e6dae39ba4648496707c69a9b01a8ef5094ec01915be4da1c6eda3d0c",
+      "kernelGraphHash": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
@@ -328,16 +633,34 @@
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:10d25a1fc98fe40c912db3bce2ebfb9569a20abdfe206e4ca59ca140ddf98865",
         "docs/oam/oam-kernel-graph.json": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2"
-      }
+      },
+      "compilerInputDigest": "sha256:2af84f94ae4ae10f5733248e5e583eb67b0eeea6b5421e1be006dd859c5474db"
     },
     {
       "targetPath": "docs/business/domains/dormitory/workitems/dorm-lead-capture.json",
+      "generated": true,
+      "doNotEdit": true,
       "manifestKind": "domain-derived",
       "derivedFrom": [
         "docs/business/domains/dormitory/dormitory-operating-kernel.json",
         "docs/oam/oam-kernel-graph.json"
       ],
       "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "generatorVersion": "oam.generated-layer-manifest-compiler.v1",
+      "generatedFrom": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceRefs": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceNodeRefs": [
+        "workitem.Finance.ExpenseRecord",
+        "graph.oam"
+      ],
+      "sourceContentDigest": "sha256:2a533e5e6dae39ba4648496707c69a9b01a8ef5094ec01915be4da1c6eda3d0c",
+      "kernelGraphHash": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
@@ -346,16 +669,34 @@
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:10d25a1fc98fe40c912db3bce2ebfb9569a20abdfe206e4ca59ca140ddf98865",
         "docs/oam/oam-kernel-graph.json": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2"
-      }
+      },
+      "compilerInputDigest": "sha256:9c7bab4db0f5fac1148aef1b545419a5f0d5566c737745c727b2183e66b30719"
     },
     {
       "targetPath": "docs/business/domains/dormitory/workitems/dorm-payment-confirm.json",
+      "generated": true,
+      "doNotEdit": true,
       "manifestKind": "domain-derived",
       "derivedFrom": [
         "docs/business/domains/dormitory/dormitory-operating-kernel.json",
         "docs/oam/oam-kernel-graph.json"
       ],
       "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "generatorVersion": "oam.generated-layer-manifest-compiler.v1",
+      "generatedFrom": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceRefs": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceNodeRefs": [
+        "workitem.Finance.ExpenseRecord",
+        "graph.oam"
+      ],
+      "sourceContentDigest": "sha256:2a533e5e6dae39ba4648496707c69a9b01a8ef5094ec01915be4da1c6eda3d0c",
+      "kernelGraphHash": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
@@ -364,16 +705,34 @@
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:10d25a1fc98fe40c912db3bce2ebfb9569a20abdfe206e4ca59ca140ddf98865",
         "docs/oam/oam-kernel-graph.json": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2"
-      }
+      },
+      "compilerInputDigest": "sha256:1f1d78088190529a87bb9f765e3d15bb2430b7590aba35ba15d32e58d1422a36"
     },
     {
       "targetPath": "docs/business/domains/dormitory/workitems/dorm-period-action-plan-execute.json",
+      "generated": true,
+      "doNotEdit": true,
       "manifestKind": "domain-derived",
       "derivedFrom": [
         "docs/business/domains/dormitory/dormitory-operating-kernel.json",
         "docs/oam/oam-kernel-graph.json"
       ],
       "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "generatorVersion": "oam.generated-layer-manifest-compiler.v1",
+      "generatedFrom": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceRefs": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceNodeRefs": [
+        "workitem.Finance.ExpenseRecord",
+        "graph.oam"
+      ],
+      "sourceContentDigest": "sha256:2a533e5e6dae39ba4648496707c69a9b01a8ef5094ec01915be4da1c6eda3d0c",
+      "kernelGraphHash": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
@@ -382,16 +741,34 @@
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:10d25a1fc98fe40c912db3bce2ebfb9569a20abdfe206e4ca59ca140ddf98865",
         "docs/oam/oam-kernel-graph.json": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2"
-      }
+      },
+      "compilerInputDigest": "sha256:b0db70a2fa69ce452e4514b77fde400b243461c6ba8e9579a8313473482ece84"
     },
     {
       "targetPath": "docs/business/domains/dormitory/workitems/dorm-period-review.json",
+      "generated": true,
+      "doNotEdit": true,
       "manifestKind": "domain-derived",
       "derivedFrom": [
         "docs/business/domains/dormitory/dormitory-operating-kernel.json",
         "docs/oam/oam-kernel-graph.json"
       ],
       "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "generatorVersion": "oam.generated-layer-manifest-compiler.v1",
+      "generatedFrom": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceRefs": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceNodeRefs": [
+        "workitem.Finance.ExpenseRecord",
+        "graph.oam"
+      ],
+      "sourceContentDigest": "sha256:2a533e5e6dae39ba4648496707c69a9b01a8ef5094ec01915be4da1c6eda3d0c",
+      "kernelGraphHash": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
@@ -400,16 +777,34 @@
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:10d25a1fc98fe40c912db3bce2ebfb9569a20abdfe206e4ca59ca140ddf98865",
         "docs/oam/oam-kernel-graph.json": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2"
-      }
+      },
+      "compilerInputDigest": "sha256:1e7493cee839217ae37c3bcb39f154dff5b973aa0811ad87f1b51d7dc57e830f"
     },
     {
       "targetPath": "docs/business/domains/dormitory/workitems/dorm-rate-plan-confirm.json",
+      "generated": true,
+      "doNotEdit": true,
       "manifestKind": "domain-derived",
       "derivedFrom": [
         "docs/business/domains/dormitory/dormitory-operating-kernel.json",
         "docs/oam/oam-kernel-graph.json"
       ],
       "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "generatorVersion": "oam.generated-layer-manifest-compiler.v1",
+      "generatedFrom": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceRefs": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceNodeRefs": [
+        "workitem.Finance.ExpenseRecord",
+        "graph.oam"
+      ],
+      "sourceContentDigest": "sha256:2a533e5e6dae39ba4648496707c69a9b01a8ef5094ec01915be4da1c6eda3d0c",
+      "kernelGraphHash": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
@@ -418,16 +813,34 @@
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:10d25a1fc98fe40c912db3bce2ebfb9569a20abdfe206e4ca59ca140ddf98865",
         "docs/oam/oam-kernel-graph.json": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2"
-      }
+      },
+      "compilerInputDigest": "sha256:626f288b7661039de970048161137294a1588e208ee557dbce488218b0b3ef46"
     },
     {
       "targetPath": "docs/business/domains/dormitory/workitems/dorm-reservation-cancel-close.json",
+      "generated": true,
+      "doNotEdit": true,
       "manifestKind": "domain-derived",
       "derivedFrom": [
         "docs/business/domains/dormitory/dormitory-operating-kernel.json",
         "docs/oam/oam-kernel-graph.json"
       ],
       "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "generatorVersion": "oam.generated-layer-manifest-compiler.v1",
+      "generatedFrom": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceRefs": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceNodeRefs": [
+        "workitem.Finance.ExpenseRecord",
+        "graph.oam"
+      ],
+      "sourceContentDigest": "sha256:2a533e5e6dae39ba4648496707c69a9b01a8ef5094ec01915be4da1c6eda3d0c",
+      "kernelGraphHash": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
@@ -436,16 +849,34 @@
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:10d25a1fc98fe40c912db3bce2ebfb9569a20abdfe206e4ca59ca140ddf98865",
         "docs/oam/oam-kernel-graph.json": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2"
-      }
+      },
+      "compilerInputDigest": "sha256:432d7d4b2aef7ce3a9c8ce0a15952ce0219c662412a48f4b7d1dc1cc720f67c6"
     },
     {
       "targetPath": "docs/business/domains/dormitory/workitems/dorm-reservation-confirm.json",
+      "generated": true,
+      "doNotEdit": true,
       "manifestKind": "domain-derived",
       "derivedFrom": [
         "docs/business/domains/dormitory/dormitory-operating-kernel.json",
         "docs/oam/oam-kernel-graph.json"
       ],
       "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "generatorVersion": "oam.generated-layer-manifest-compiler.v1",
+      "generatedFrom": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceRefs": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceNodeRefs": [
+        "workitem.Finance.ExpenseRecord",
+        "graph.oam"
+      ],
+      "sourceContentDigest": "sha256:2a533e5e6dae39ba4648496707c69a9b01a8ef5094ec01915be4da1c6eda3d0c",
+      "kernelGraphHash": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
@@ -454,16 +885,34 @@
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:10d25a1fc98fe40c912db3bce2ebfb9569a20abdfe206e4ca59ca140ddf98865",
         "docs/oam/oam-kernel-graph.json": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2"
-      }
+      },
+      "compilerInputDigest": "sha256:e0556f42ac5ed22f5edfbc2242b4eb8ea15c7943b2f45ec3382c6e6a0b06584e"
     },
     {
       "targetPath": "docs/business/domains/dormitory/workitems/dorm-reservation-no-show-close.json",
+      "generated": true,
+      "doNotEdit": true,
       "manifestKind": "domain-derived",
       "derivedFrom": [
         "docs/business/domains/dormitory/dormitory-operating-kernel.json",
         "docs/oam/oam-kernel-graph.json"
       ],
       "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "generatorVersion": "oam.generated-layer-manifest-compiler.v1",
+      "generatedFrom": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceRefs": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceNodeRefs": [
+        "workitem.Finance.ExpenseRecord",
+        "graph.oam"
+      ],
+      "sourceContentDigest": "sha256:2a533e5e6dae39ba4648496707c69a9b01a8ef5094ec01915be4da1c6eda3d0c",
+      "kernelGraphHash": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
@@ -472,16 +921,34 @@
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:10d25a1fc98fe40c912db3bce2ebfb9569a20abdfe206e4ca59ca140ddf98865",
         "docs/oam/oam-kernel-graph.json": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2"
-      }
+      },
+      "compilerInputDigest": "sha256:eb1c6ef5b0f2aeb19ae9111e01c84b944deb9fe1f53d0ddda9a5559a3269c278"
     },
     {
       "targetPath": "docs/business/domains/dormitory/workitems/dorm-resource-readiness-confirm.json",
+      "generated": true,
+      "doNotEdit": true,
       "manifestKind": "domain-derived",
       "derivedFrom": [
         "docs/business/domains/dormitory/dormitory-operating-kernel.json",
         "docs/oam/oam-kernel-graph.json"
       ],
       "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "generatorVersion": "oam.generated-layer-manifest-compiler.v1",
+      "generatedFrom": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceRefs": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceNodeRefs": [
+        "workitem.Finance.ExpenseRecord",
+        "graph.oam"
+      ],
+      "sourceContentDigest": "sha256:2a533e5e6dae39ba4648496707c69a9b01a8ef5094ec01915be4da1c6eda3d0c",
+      "kernelGraphHash": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
@@ -490,16 +957,34 @@
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:10d25a1fc98fe40c912db3bce2ebfb9569a20abdfe206e4ca59ca140ddf98865",
         "docs/oam/oam-kernel-graph.json": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2"
-      }
+      },
+      "compilerInputDigest": "sha256:3089e5372657cdb282b9ae4cf3de978c052cfa5a430becaed5c21a924b817096"
     },
     {
       "targetPath": "docs/business/domains/dormitory/workitems/dorm-room-inspection-confirm.json",
+      "generated": true,
+      "doNotEdit": true,
       "manifestKind": "domain-derived",
       "derivedFrom": [
         "docs/business/domains/dormitory/dormitory-operating-kernel.json",
         "docs/oam/oam-kernel-graph.json"
       ],
       "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "generatorVersion": "oam.generated-layer-manifest-compiler.v1",
+      "generatedFrom": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceRefs": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceNodeRefs": [
+        "workitem.Finance.ExpenseRecord",
+        "graph.oam"
+      ],
+      "sourceContentDigest": "sha256:2a533e5e6dae39ba4648496707c69a9b01a8ef5094ec01915be4da1c6eda3d0c",
+      "kernelGraphHash": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
@@ -508,16 +993,34 @@
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:10d25a1fc98fe40c912db3bce2ebfb9569a20abdfe206e4ca59ca140ddf98865",
         "docs/oam/oam-kernel-graph.json": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2"
-      }
+      },
+      "compilerInputDigest": "sha256:c095f4ed5cc2925d6dc584be53996dac39f56982b9a4641ea010cf1a00b2c92a"
     },
     {
       "targetPath": "docs/business/domains/dormitory/workitems/dorm-room-setup-confirm.json",
+      "generated": true,
+      "doNotEdit": true,
       "manifestKind": "domain-derived",
       "derivedFrom": [
         "docs/business/domains/dormitory/dormitory-operating-kernel.json",
         "docs/oam/oam-kernel-graph.json"
       ],
       "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "generatorVersion": "oam.generated-layer-manifest-compiler.v1",
+      "generatedFrom": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceRefs": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceNodeRefs": [
+        "workitem.Finance.ExpenseRecord",
+        "graph.oam"
+      ],
+      "sourceContentDigest": "sha256:2a533e5e6dae39ba4648496707c69a9b01a8ef5094ec01915be4da1c6eda3d0c",
+      "kernelGraphHash": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
@@ -526,16 +1029,34 @@
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:10d25a1fc98fe40c912db3bce2ebfb9569a20abdfe206e4ca59ca140ddf98865",
         "docs/oam/oam-kernel-graph.json": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2"
-      }
+      },
+      "compilerInputDigest": "sha256:c36c50ea557bad1601b0bdafe6dbce2c2456fa567e77cab7dabd9d351a84ff7a"
     },
     {
       "targetPath": "docs/business/domains/dormitory/workitems/dorm-service-task-assign.json",
+      "generated": true,
+      "doNotEdit": true,
       "manifestKind": "domain-derived",
       "derivedFrom": [
         "docs/business/domains/dormitory/dormitory-operating-kernel.json",
         "docs/oam/oam-kernel-graph.json"
       ],
       "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "generatorVersion": "oam.generated-layer-manifest-compiler.v1",
+      "generatedFrom": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceRefs": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceNodeRefs": [
+        "workitem.Finance.ExpenseRecord",
+        "graph.oam"
+      ],
+      "sourceContentDigest": "sha256:2a533e5e6dae39ba4648496707c69a9b01a8ef5094ec01915be4da1c6eda3d0c",
+      "kernelGraphHash": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
@@ -544,16 +1065,34 @@
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:10d25a1fc98fe40c912db3bce2ebfb9569a20abdfe206e4ca59ca140ddf98865",
         "docs/oam/oam-kernel-graph.json": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2"
-      }
+      },
+      "compilerInputDigest": "sha256:96ecb2753419ca12ab9de493d7e23c74014ea1791bd0083d8be0d1e89fa2085b"
     },
     {
       "targetPath": "docs/business/domains/dormitory/workitems/dorm-service-task-complete.json",
+      "generated": true,
+      "doNotEdit": true,
       "manifestKind": "domain-derived",
       "derivedFrom": [
         "docs/business/domains/dormitory/dormitory-operating-kernel.json",
         "docs/oam/oam-kernel-graph.json"
       ],
       "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "generatorVersion": "oam.generated-layer-manifest-compiler.v1",
+      "generatedFrom": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceRefs": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceNodeRefs": [
+        "workitem.Finance.ExpenseRecord",
+        "graph.oam"
+      ],
+      "sourceContentDigest": "sha256:2a533e5e6dae39ba4648496707c69a9b01a8ef5094ec01915be4da1c6eda3d0c",
+      "kernelGraphHash": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
@@ -562,16 +1101,34 @@
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:10d25a1fc98fe40c912db3bce2ebfb9569a20abdfe206e4ca59ca140ddf98865",
         "docs/oam/oam-kernel-graph.json": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2"
-      }
+      },
+      "compilerInputDigest": "sha256:1d30b277520cd4d6bd80297e6330bc78e64fe4863e107617d95258f6d20c5b60"
     },
     {
       "targetPath": "docs/business/domains/dormitory/workitems/dorm-service-task-create.json",
+      "generated": true,
+      "doNotEdit": true,
       "manifestKind": "domain-derived",
       "derivedFrom": [
         "docs/business/domains/dormitory/dormitory-operating-kernel.json",
         "docs/oam/oam-kernel-graph.json"
       ],
       "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "generatorVersion": "oam.generated-layer-manifest-compiler.v1",
+      "generatedFrom": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceRefs": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceNodeRefs": [
+        "workitem.Finance.ExpenseRecord",
+        "graph.oam"
+      ],
+      "sourceContentDigest": "sha256:2a533e5e6dae39ba4648496707c69a9b01a8ef5094ec01915be4da1c6eda3d0c",
+      "kernelGraphHash": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
@@ -580,16 +1137,34 @@
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:10d25a1fc98fe40c912db3bce2ebfb9569a20abdfe206e4ca59ca140ddf98865",
         "docs/oam/oam-kernel-graph.json": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2"
-      }
+      },
+      "compilerInputDigest": "sha256:9cf26d862edd0097d0c9a3c58bb4fa1a29a7a2e0f772a61530dcd3e986ad80ca"
     },
     {
       "targetPath": "docs/business/domains/dormitory/workitems/dorm-service-task-verify.json",
+      "generated": true,
+      "doNotEdit": true,
       "manifestKind": "domain-derived",
       "derivedFrom": [
         "docs/business/domains/dormitory/dormitory-operating-kernel.json",
         "docs/oam/oam-kernel-graph.json"
       ],
       "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "generatorVersion": "oam.generated-layer-manifest-compiler.v1",
+      "generatedFrom": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceRefs": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceNodeRefs": [
+        "workitem.Finance.ExpenseRecord",
+        "graph.oam"
+      ],
+      "sourceContentDigest": "sha256:2a533e5e6dae39ba4648496707c69a9b01a8ef5094ec01915be4da1c6eda3d0c",
+      "kernelGraphHash": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
@@ -598,16 +1173,34 @@
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:10d25a1fc98fe40c912db3bce2ebfb9569a20abdfe206e4ca59ca140ddf98865",
         "docs/oam/oam-kernel-graph.json": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2"
-      }
+      },
+      "compilerInputDigest": "sha256:99b4e322a88c430b9b5e15f8f30c1898b1e77e066b365f0efbd839adf77751bc"
     },
     {
       "targetPath": "docs/business/domains/dormitory/workitems/dorm-stay-extend-approve.json",
+      "generated": true,
+      "doNotEdit": true,
       "manifestKind": "domain-derived",
       "derivedFrom": [
         "docs/business/domains/dormitory/dormitory-operating-kernel.json",
         "docs/oam/oam-kernel-graph.json"
       ],
       "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "generatorVersion": "oam.generated-layer-manifest-compiler.v1",
+      "generatedFrom": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceRefs": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceNodeRefs": [
+        "workitem.Finance.ExpenseRecord",
+        "graph.oam"
+      ],
+      "sourceContentDigest": "sha256:2a533e5e6dae39ba4648496707c69a9b01a8ef5094ec01915be4da1c6eda3d0c",
+      "kernelGraphHash": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
@@ -616,16 +1209,34 @@
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:10d25a1fc98fe40c912db3bce2ebfb9569a20abdfe206e4ca59ca140ddf98865",
         "docs/oam/oam-kernel-graph.json": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2"
-      }
+      },
+      "compilerInputDigest": "sha256:5e49c0fbfa809dce322ec7588a43ef8be5205b6edd2e6c235e119b5e7e9f9ef8"
     },
     {
       "targetPath": "docs/business/domains/dormitory/workitems/finance-charge-adjustment-approve.json",
+      "generated": true,
+      "doNotEdit": true,
       "manifestKind": "domain-derived",
       "derivedFrom": [
         "docs/business/domains/dormitory/dormitory-operating-kernel.json",
         "docs/oam/oam-kernel-graph.json"
       ],
       "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "generatorVersion": "oam.generated-layer-manifest-compiler.v1",
+      "generatedFrom": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceRefs": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceNodeRefs": [
+        "workitem.Finance.ExpenseRecord",
+        "graph.oam"
+      ],
+      "sourceContentDigest": "sha256:2a533e5e6dae39ba4648496707c69a9b01a8ef5094ec01915be4da1c6eda3d0c",
+      "kernelGraphHash": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
@@ -634,16 +1245,34 @@
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:10d25a1fc98fe40c912db3bce2ebfb9569a20abdfe206e4ca59ca140ddf98865",
         "docs/oam/oam-kernel-graph.json": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2"
-      }
+      },
+      "compilerInputDigest": "sha256:bdee7e9b59e1f4ac598ab5d5461792144f472d6eeac6c7c9595951494fc18fbf"
     },
     {
       "targetPath": "docs/business/domains/dormitory/workitems/finance-correction-apply.json",
+      "generated": true,
+      "doNotEdit": true,
       "manifestKind": "domain-derived",
       "derivedFrom": [
         "docs/business/domains/dormitory/dormitory-operating-kernel.json",
         "docs/oam/oam-kernel-graph.json"
       ],
       "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "generatorVersion": "oam.generated-layer-manifest-compiler.v1",
+      "generatedFrom": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceRefs": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceNodeRefs": [
+        "workitem.Finance.ExpenseRecord",
+        "graph.oam"
+      ],
+      "sourceContentDigest": "sha256:2a533e5e6dae39ba4648496707c69a9b01a8ef5094ec01915be4da1c6eda3d0c",
+      "kernelGraphHash": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
@@ -652,16 +1281,34 @@
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:10d25a1fc98fe40c912db3bce2ebfb9569a20abdfe206e4ca59ca140ddf98865",
         "docs/oam/oam-kernel-graph.json": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2"
-      }
+      },
+      "compilerInputDigest": "sha256:2e46943ba5ef8890fa05483e21366d1b7ac0471a598b626d1f7f3a0e02d6e601"
     },
     {
       "targetPath": "docs/business/domains/dormitory/workitems/finance-debt-follow-up.json",
+      "generated": true,
+      "doNotEdit": true,
       "manifestKind": "domain-derived",
       "derivedFrom": [
         "docs/business/domains/dormitory/dormitory-operating-kernel.json",
         "docs/oam/oam-kernel-graph.json"
       ],
       "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "generatorVersion": "oam.generated-layer-manifest-compiler.v1",
+      "generatedFrom": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceRefs": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceNodeRefs": [
+        "workitem.Finance.ExpenseRecord",
+        "graph.oam"
+      ],
+      "sourceContentDigest": "sha256:2a533e5e6dae39ba4648496707c69a9b01a8ef5094ec01915be4da1c6eda3d0c",
+      "kernelGraphHash": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
@@ -670,16 +1317,34 @@
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:10d25a1fc98fe40c912db3bce2ebfb9569a20abdfe206e4ca59ca140ddf98865",
         "docs/oam/oam-kernel-graph.json": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2"
-      }
+      },
+      "compilerInputDigest": "sha256:05bb10d27e2c85ae1bff927f647d0013f65f68b2dc2a83ade3a156fc944ecb60"
     },
     {
       "targetPath": "docs/business/domains/dormitory/workitems/finance-expense-approve.json",
+      "generated": true,
+      "doNotEdit": true,
       "manifestKind": "domain-derived",
       "derivedFrom": [
         "docs/business/domains/dormitory/dormitory-operating-kernel.json",
         "docs/oam/oam-kernel-graph.json"
       ],
       "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "generatorVersion": "oam.generated-layer-manifest-compiler.v1",
+      "generatedFrom": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceRefs": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceNodeRefs": [
+        "workitem.Finance.ExpenseRecord",
+        "graph.oam"
+      ],
+      "sourceContentDigest": "sha256:2a533e5e6dae39ba4648496707c69a9b01a8ef5094ec01915be4da1c6eda3d0c",
+      "kernelGraphHash": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
@@ -688,16 +1353,34 @@
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:10d25a1fc98fe40c912db3bce2ebfb9569a20abdfe206e4ca59ca140ddf98865",
         "docs/oam/oam-kernel-graph.json": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2"
-      }
+      },
+      "compilerInputDigest": "sha256:510e5efe3adc61f74c178246f7fe852a137d973b26af2bb26c056ce65e9d632c"
     },
     {
       "targetPath": "docs/business/domains/dormitory/workitems/finance-expense-link.json",
+      "generated": true,
+      "doNotEdit": true,
       "manifestKind": "domain-derived",
       "derivedFrom": [
         "docs/business/domains/dormitory/dormitory-operating-kernel.json",
         "docs/oam/oam-kernel-graph.json"
       ],
       "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "generatorVersion": "oam.generated-layer-manifest-compiler.v1",
+      "generatedFrom": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceRefs": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceNodeRefs": [
+        "workitem.Finance.ExpenseRecord",
+        "graph.oam"
+      ],
+      "sourceContentDigest": "sha256:2a533e5e6dae39ba4648496707c69a9b01a8ef5094ec01915be4da1c6eda3d0c",
+      "kernelGraphHash": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
@@ -706,16 +1389,34 @@
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:10d25a1fc98fe40c912db3bce2ebfb9569a20abdfe206e4ca59ca140ddf98865",
         "docs/oam/oam-kernel-graph.json": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2"
-      }
+      },
+      "compilerInputDigest": "sha256:45758e0f8527b93eeb9ca2235cb6016286a843b683f53aef13af0f498785528e"
     },
     {
       "targetPath": "docs/business/domains/dormitory/workitems/finance-expense-record.json",
+      "generated": true,
+      "doNotEdit": true,
       "manifestKind": "domain-derived",
       "derivedFrom": [
         "docs/business/domains/dormitory/dormitory-operating-kernel.json",
         "docs/oam/oam-kernel-graph.json"
       ],
       "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "generatorVersion": "oam.generated-layer-manifest-compiler.v1",
+      "generatedFrom": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceRefs": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceNodeRefs": [
+        "workitem.Finance.ExpenseRecord",
+        "graph.oam"
+      ],
+      "sourceContentDigest": "sha256:2a533e5e6dae39ba4648496707c69a9b01a8ef5094ec01915be4da1c6eda3d0c",
+      "kernelGraphHash": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
@@ -724,16 +1425,34 @@
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:10d25a1fc98fe40c912db3bce2ebfb9569a20abdfe206e4ca59ca140ddf98865",
         "docs/oam/oam-kernel-graph.json": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2"
-      }
+      },
+      "compilerInputDigest": "sha256:2a441ec6de76caecb7c7c74ffb4b3f8936b13dcce3d06ec22dde84d377bac2ef"
     },
     {
       "targetPath": "docs/business/dormitory/evidence-policy.yml",
+      "generated": true,
+      "doNotEdit": true,
       "manifestKind": "domain-derived",
       "derivedFrom": [
         "docs/business/domains/dormitory/dormitory-operating-kernel.json",
         "docs/oam/oam-kernel-graph.json"
       ],
       "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "generatorVersion": "oam.generated-layer-manifest-compiler.v1",
+      "generatedFrom": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceRefs": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceNodeRefs": [
+        "workitem.Finance.ExpenseRecord",
+        "graph.oam"
+      ],
+      "sourceContentDigest": "sha256:2a533e5e6dae39ba4648496707c69a9b01a8ef5094ec01915be4da1c6eda3d0c",
+      "kernelGraphHash": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
@@ -742,16 +1461,34 @@
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:10d25a1fc98fe40c912db3bce2ebfb9569a20abdfe206e4ca59ca140ddf98865",
         "docs/oam/oam-kernel-graph.json": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2"
-      }
+      },
+      "compilerInputDigest": "sha256:9d7e39b2ae9dc6319550e6abdf8ea57f3f2b1b1320dbcb9d6b25d8aaba6d53a3"
     },
     {
       "targetPath": "docs/business/dormitory/evidence-requirements.yml",
+      "generated": true,
+      "doNotEdit": true,
       "manifestKind": "domain-derived",
       "derivedFrom": [
         "docs/business/domains/dormitory/dormitory-operating-kernel.json",
         "docs/oam/oam-kernel-graph.json"
       ],
       "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "generatorVersion": "oam.generated-layer-manifest-compiler.v1",
+      "generatedFrom": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceRefs": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceNodeRefs": [
+        "workitem.Finance.ExpenseRecord",
+        "graph.oam"
+      ],
+      "sourceContentDigest": "sha256:2a533e5e6dae39ba4648496707c69a9b01a8ef5094ec01915be4da1c6eda3d0c",
+      "kernelGraphHash": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
@@ -760,16 +1497,34 @@
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:10d25a1fc98fe40c912db3bce2ebfb9569a20abdfe206e4ca59ca140ddf98865",
         "docs/oam/oam-kernel-graph.json": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2"
-      }
+      },
+      "compilerInputDigest": "sha256:58fa24865ac6ee1919ee1de717308a70ace6dcc486c5f08a61ef220c5e195948"
     },
     {
       "targetPath": "docs/business/dormitory/go-no-go.yml",
+      "generated": true,
+      "doNotEdit": true,
       "manifestKind": "domain-derived",
       "derivedFrom": [
         "docs/business/domains/dormitory/dormitory-operating-kernel.json",
         "docs/oam/oam-kernel-graph.json"
       ],
       "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "generatorVersion": "oam.generated-layer-manifest-compiler.v1",
+      "generatedFrom": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceRefs": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceNodeRefs": [
+        "workitem.Finance.ExpenseRecord",
+        "graph.oam"
+      ],
+      "sourceContentDigest": "sha256:2a533e5e6dae39ba4648496707c69a9b01a8ef5094ec01915be4da1c6eda3d0c",
+      "kernelGraphHash": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
@@ -778,16 +1533,34 @@
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:10d25a1fc98fe40c912db3bce2ebfb9569a20abdfe206e4ca59ca140ddf98865",
         "docs/oam/oam-kernel-graph.json": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2"
-      }
+      },
+      "compilerInputDigest": "sha256:341fe1c0e3172fe8265ed775ffc558cd58eaf83d72477da147a547833b128828"
     },
     {
       "targetPath": "docs/business/dormitory/lens-map.yml",
+      "generated": true,
+      "doNotEdit": true,
       "manifestKind": "domain-derived",
       "derivedFrom": [
         "docs/business/domains/dormitory/dormitory-operating-kernel.json",
         "docs/oam/oam-kernel-graph.json"
       ],
       "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "generatorVersion": "oam.generated-layer-manifest-compiler.v1",
+      "generatedFrom": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceRefs": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceNodeRefs": [
+        "workitem.Finance.ExpenseRecord",
+        "graph.oam"
+      ],
+      "sourceContentDigest": "sha256:2a533e5e6dae39ba4648496707c69a9b01a8ef5094ec01915be4da1c6eda3d0c",
+      "kernelGraphHash": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
@@ -796,16 +1569,34 @@
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:10d25a1fc98fe40c912db3bce2ebfb9569a20abdfe206e4ca59ca140ddf98865",
         "docs/oam/oam-kernel-graph.json": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2"
-      }
+      },
+      "compilerInputDigest": "sha256:82c459070ba606f1d4a4188ea8a35c281d9882ff91c45b349bd90d9b24655ffa"
     },
     {
       "targetPath": "docs/business/dormitory/metric-formula-contract.yml",
+      "generated": true,
+      "doNotEdit": true,
       "manifestKind": "domain-derived",
       "derivedFrom": [
         "docs/business/domains/dormitory/dormitory-operating-kernel.json",
         "docs/oam/oam-kernel-graph.json"
       ],
       "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "generatorVersion": "oam.generated-layer-manifest-compiler.v1",
+      "generatedFrom": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceRefs": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceNodeRefs": [
+        "workitem.Finance.ExpenseRecord",
+        "graph.oam"
+      ],
+      "sourceContentDigest": "sha256:2a533e5e6dae39ba4648496707c69a9b01a8ef5094ec01915be4da1c6eda3d0c",
+      "kernelGraphHash": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
@@ -814,16 +1605,34 @@
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:10d25a1fc98fe40c912db3bce2ebfb9569a20abdfe206e4ca59ca140ddf98865",
         "docs/oam/oam-kernel-graph.json": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2"
-      }
+      },
+      "compilerInputDigest": "sha256:d3c059ed6da7d5efbcc6c613a657da62605f03573002e6a8bf98a3034e90a463"
     },
     {
       "targetPath": "docs/business/dormitory/metrics-tree.yml",
+      "generated": true,
+      "doNotEdit": true,
       "manifestKind": "domain-derived",
       "derivedFrom": [
         "docs/business/domains/dormitory/dormitory-operating-kernel.json",
         "docs/oam/oam-kernel-graph.json"
       ],
       "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "generatorVersion": "oam.generated-layer-manifest-compiler.v1",
+      "generatedFrom": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceRefs": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceNodeRefs": [
+        "workitem.Finance.ExpenseRecord",
+        "graph.oam"
+      ],
+      "sourceContentDigest": "sha256:2a533e5e6dae39ba4648496707c69a9b01a8ef5094ec01915be4da1c6eda3d0c",
+      "kernelGraphHash": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
@@ -832,16 +1641,34 @@
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:10d25a1fc98fe40c912db3bce2ebfb9569a20abdfe206e4ca59ca140ddf98865",
         "docs/oam/oam-kernel-graph.json": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2"
-      }
+      },
+      "compilerInputDigest": "sha256:6aae9440738ce1b1de1fc1a03903e8304566f9a68ea76cfee866bc84575854a2"
     },
     {
       "targetPath": "docs/business/dormitory/value-streams.yml",
+      "generated": true,
+      "doNotEdit": true,
       "manifestKind": "domain-derived",
       "derivedFrom": [
         "docs/business/domains/dormitory/dormitory-operating-kernel.json",
         "docs/oam/oam-kernel-graph.json"
       ],
       "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "generatorVersion": "oam.generated-layer-manifest-compiler.v1",
+      "generatedFrom": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceRefs": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceNodeRefs": [
+        "workitem.Finance.ExpenseRecord",
+        "graph.oam"
+      ],
+      "sourceContentDigest": "sha256:2a533e5e6dae39ba4648496707c69a9b01a8ef5094ec01915be4da1c6eda3d0c",
+      "kernelGraphHash": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
@@ -850,16 +1677,34 @@
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:10d25a1fc98fe40c912db3bce2ebfb9569a20abdfe206e4ca59ca140ddf98865",
         "docs/oam/oam-kernel-graph.json": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2"
-      }
+      },
+      "compilerInputDigest": "sha256:2229b97c2e16121d56412eb6966a2d6a55e6cb21f73f0b38b08e946a60deaddb"
     },
     {
       "targetPath": "docs/business/dormitory/workitem-catalog.yml",
+      "generated": true,
+      "doNotEdit": true,
       "manifestKind": "domain-derived",
       "derivedFrom": [
         "docs/business/domains/dormitory/dormitory-operating-kernel.json",
         "docs/oam/oam-kernel-graph.json"
       ],
       "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "generatorVersion": "oam.generated-layer-manifest-compiler.v1",
+      "generatedFrom": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceRefs": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceNodeRefs": [
+        "workitem.Finance.ExpenseRecord",
+        "graph.oam"
+      ],
+      "sourceContentDigest": "sha256:2a533e5e6dae39ba4648496707c69a9b01a8ef5094ec01915be4da1c6eda3d0c",
+      "kernelGraphHash": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
@@ -868,16 +1713,34 @@
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:10d25a1fc98fe40c912db3bce2ebfb9569a20abdfe206e4ca59ca140ddf98865",
         "docs/oam/oam-kernel-graph.json": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2"
-      }
+      },
+      "compilerInputDigest": "sha256:0f1d1d78ac770596fb3b211bd2a1dbdb41275c1e1a736fb60f0777cd2d7b16d5"
     },
     {
       "targetPath": "docs/business/dormitory/workitem-decision-table.json",
+      "generated": true,
+      "doNotEdit": true,
       "manifestKind": "domain-derived",
       "derivedFrom": [
         "docs/business/domains/dormitory/dormitory-operating-kernel.json",
         "docs/oam/oam-kernel-graph.json"
       ],
       "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "generatorVersion": "oam.generated-layer-manifest-compiler.v1",
+      "generatedFrom": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceRefs": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceNodeRefs": [
+        "workitem.Finance.ExpenseRecord",
+        "graph.oam"
+      ],
+      "sourceContentDigest": "sha256:2a533e5e6dae39ba4648496707c69a9b01a8ef5094ec01915be4da1c6eda3d0c",
+      "kernelGraphHash": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
@@ -886,16 +1749,34 @@
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:10d25a1fc98fe40c912db3bce2ebfb9569a20abdfe206e4ca59ca140ddf98865",
         "docs/oam/oam-kernel-graph.json": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2"
-      }
+      },
+      "compilerInputDigest": "sha256:5bf7f546a6634ce2b0f8095be73b0b85590e3cb70cf61f01e29693b05e6148d3"
     },
     {
       "targetPath": "docs/business/dormitory/workitem-raci.yml",
+      "generated": true,
+      "doNotEdit": true,
       "manifestKind": "domain-derived",
       "derivedFrom": [
         "docs/business/domains/dormitory/dormitory-operating-kernel.json",
         "docs/oam/oam-kernel-graph.json"
       ],
       "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "generatorVersion": "oam.generated-layer-manifest-compiler.v1",
+      "generatedFrom": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceRefs": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceNodeRefs": [
+        "workitem.Finance.ExpenseRecord",
+        "graph.oam"
+      ],
+      "sourceContentDigest": "sha256:2a533e5e6dae39ba4648496707c69a9b01a8ef5094ec01915be4da1c6eda3d0c",
+      "kernelGraphHash": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
@@ -904,16 +1785,34 @@
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:10d25a1fc98fe40c912db3bce2ebfb9569a20abdfe206e4ca59ca140ddf98865",
         "docs/oam/oam-kernel-graph.json": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2"
-      }
+      },
+      "compilerInputDigest": "sha256:1f939c9c24f95fc97a76d797b0c5f2d8b7b68ad1982f260549dd98db92caaa55"
     },
     {
       "targetPath": "docs/business/dormitory/workitem-sla.yml",
+      "generated": true,
+      "doNotEdit": true,
       "manifestKind": "domain-derived",
       "derivedFrom": [
         "docs/business/domains/dormitory/dormitory-operating-kernel.json",
         "docs/oam/oam-kernel-graph.json"
       ],
       "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "generatorVersion": "oam.generated-layer-manifest-compiler.v1",
+      "generatedFrom": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceRefs": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceNodeRefs": [
+        "workitem.Finance.ExpenseRecord",
+        "graph.oam"
+      ],
+      "sourceContentDigest": "sha256:2a533e5e6dae39ba4648496707c69a9b01a8ef5094ec01915be4da1c6eda3d0c",
+      "kernelGraphHash": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
@@ -922,16 +1821,34 @@
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:10d25a1fc98fe40c912db3bce2ebfb9569a20abdfe206e4ca59ca140ddf98865",
         "docs/oam/oam-kernel-graph.json": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2"
-      }
+      },
+      "compilerInputDigest": "sha256:82955d19c4ac2b75f2051529512fabdd382bc44f9d8ef240072deab682db02b0"
     },
     {
       "targetPath": "docs/scenarios/dormitory/golden-pilot.yml",
+      "generated": true,
+      "doNotEdit": true,
       "manifestKind": "domain-derived",
       "derivedFrom": [
         "docs/business/domains/dormitory/dormitory-operating-kernel.json",
         "docs/oam/oam-kernel-graph.json"
       ],
       "generatedBy": "scripts/oam/generate-system-derived-contracts.mjs",
+      "generatorVersion": "oam.generated-layer-manifest-compiler.v1",
+      "generatedFrom": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceRefs": [
+        "docs/business/domains/dormitory/dormitory-operating-kernel.json",
+        "docs/oam/oam-kernel-graph.json"
+      ],
+      "sourceNodeRefs": [
+        "workitem.Finance.ExpenseRecord",
+        "graph.oam"
+      ],
+      "sourceContentDigest": "sha256:2a533e5e6dae39ba4648496707c69a9b01a8ef5094ec01915be4da1c6eda3d0c",
+      "kernelGraphHash": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2",
       "sourceKernelVersion": "oam.domain-operating-kernel.dormitory.v2",
       "sourceGraphVersion": "oam.kernel-graph.v1",
       "manualEditAllowed": false,
@@ -940,9 +1857,10 @@
       "sourceHashes": {
         "docs/business/domains/dormitory/dormitory-operating-kernel.json": "sha256:10d25a1fc98fe40c912db3bce2ebfb9569a20abdfe206e4ca59ca140ddf98865",
         "docs/oam/oam-kernel-graph.json": "sha256:4db889e7fea1957fc8efc15f48a78a6e6d07672ea2f19e7ae3df05657fbc6ef2"
-      }
+      },
+      "compilerInputDigest": "sha256:563da2789ca3102e3a3eb52ceda81801ccd77a212216b2f4b1f66dbd654e1b0c"
     }
   ],
   "compilerInputDigest": "sha256:4c8432b80df72ac513e6b31a298ea1f84e27b35889a27b88abe46d681aa96aac",
-  "outputContentDigest": "sha256:8a7635165f3c0cda9c8638184cb111e7aa236177c976a30e15aea7b26df67147"
+  "outputContentDigest": "sha256:b102a7ca82a3f4625494a8596da255ee1412278e8167350c2fdf887311f3400a"
 }

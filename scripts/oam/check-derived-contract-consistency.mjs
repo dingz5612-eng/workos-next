@@ -144,6 +144,27 @@ function checkManifest(spec, manifest) {
     requirePath(target, `派生目标 ${target}`);
     requirePath(item.generatedBy, `派生生成器 ${item.generatedBy}`);
     requirePath(item.checker, `派生检查器 ${item.checker}`);
+    for (const field of ["generated", "doNotEdit", "generatorVersion", "generatedFrom", "sourceRefs", "sourceNodeRefs", "sourceContentDigest", "kernelGraphHash", "compilerInputDigest"]) {
+      const value = item[field];
+      if (value === undefined || value === null || value === "" || (Array.isArray(value) && value.length === 0)) {
+        fail("derived_item_generated_metadata_missing", `${target} 缺少 generated target metadata：${field}。`);
+      }
+    }
+    if (item.generated !== true || item.doNotEdit !== true) {
+      fail("derived_item_generated_flags_invalid", `${target} 必须 generated=true 且 doNotEdit=true。`);
+    }
+    if (item.generatorVersion !== manifest.generatorVersion) {
+      fail("derived_item_generator_version_mismatch", `${target} generatorVersion 必须匹配 manifest。`);
+    }
+    if (JSON.stringify(item.generatedFrom) !== JSON.stringify(spec.requiredSources)) {
+      fail("derived_item_generated_from_invalid", `${target} generatedFrom 必须是 ${spec.requiredSources.join(", ")}。`);
+    }
+    if (JSON.stringify(item.sourceRefs) !== JSON.stringify(spec.requiredSources)) {
+      fail("derived_item_source_refs_invalid", `${target} sourceRefs 必须是 ${spec.requiredSources.join(", ")}。`);
+    }
+    if (item.kernelGraphHash !== hashFile(graphPath)) {
+      fail("derived_item_kernel_graph_hash_invalid", `${target} kernelGraphHash 与当前 OAM 图谱不一致。`);
+    }
     if (item.manifestKind !== spec.kind) {
       fail("derived_item_manifest_kind_invalid", `${target} manifestKind 必须是 ${spec.kind}。`);
     }
