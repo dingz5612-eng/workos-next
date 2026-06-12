@@ -3,7 +3,7 @@ import path from "node:path";
 
 const root = process.cwd();
 const auditPath = "artifacts/oam/authority-cleanup/source-layer-audit.json";
-const allowedLayers = new Set(["source", "generated", "runtime", "evidence", "manual"]);
+const allowedLayers = new Set(["source", "generated", "runtime", "evidence", "tooling", "manual"]);
 const requiredFields = [
   "path",
   "currentIdentity",
@@ -99,6 +99,15 @@ if (!fs.existsSync(abs(auditPath))) {
     }
     if (["generated", "runtime", "evidence"].includes(entry.targetLayer) && entry.businessFactAuthorityAllowed === true) {
       fail("non_source_business_authority", `${entry.path} 不在 Source Layer，不得拥有业务事实权威。`);
+    }
+    if (entry.targetLayer === "tooling" && entry.businessFactAuthorityAllowed === true) {
+      fail("tooling_business_authority", `${entry.path} 是 Tooling，不得拥有业务事实权威。`);
+    }
+    if (/^scripts\//.test(entry.path) && entry.targetLayer === "generated" && entry.manualEditAllowed === false) {
+      fail("tooling_misclassified_generated", `${entry.path} 是人工维护脚本，不得被误判为 generated 禁手改文件。`);
+    }
+    if (/^scripts\//.test(entry.path) && entry.manualEditAllowed !== true) {
+      fail("tooling_manual_edit_forbidden", `${entry.path} 是人工维护脚本，manualEditAllowed 必须为 true。`);
     }
     if (entry.scanReasons?.includes("controlled-old-term-scan") &&
       entry.controlledOldTermUse !== true &&

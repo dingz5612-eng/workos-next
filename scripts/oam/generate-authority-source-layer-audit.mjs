@@ -233,6 +233,9 @@ function classify(file) {
   if (/^artifacts\/oam\//.test(file)) {
     return evidence(file, "keep_as_evidence_artifact", "OAM 产物只证明执行结果，不替代 Source。");
   }
+  if (/^scripts\//.test(file)) {
+    return tooling(file, "keep_as_tooling", "脚本属于人工维护的 Tooling / Checker / Generator，只执行或验证边界，不拥有业务事实权威。");
+  }
   if (hasDerivedMarker) {
     return generated(file, inferUpstream(file), "downgrade_to_generated", "文件带派生或生成标记，不能作为 Source 业务事实权威。");
   }
@@ -292,6 +295,21 @@ function evidence(file, action, notesZh) {
     upstreamSource: "scripts/oam/run-control-plane-checks.ps1",
     action,
     deletionRisk: "low",
+    controlledOldTermUse: isControlledOldTermFile(file),
+    notesZh
+  };
+}
+
+function tooling(file, action, notesZh) {
+  return {
+    layer: "tooling",
+    manualEditAllowed: true,
+    businessFactAuthorityAllowed: false,
+    contractAuthorityAllowed: false,
+    derived: false,
+    upstreamSource: inferUpstream(file),
+    action,
+    deletionRisk: "medium",
     controlledOldTermUse: isControlledOldTermFile(file),
     notesZh
   };

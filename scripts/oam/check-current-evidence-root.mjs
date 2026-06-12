@@ -96,6 +96,7 @@ if (documents.size === requiredFiles.length) {
   const finalReport = documents.get("artifacts/oam/final-report.json");
   const releaseObject = documents.get(releaseEvidenceObjectPath);
   const releaseAttestation = documents.get(releaseAttestationPath);
+  const mutationTestsResult = documents.get("artifacts/oam/authority-cleanup/mutation-tests-result.json");
   const responsibilityMap = documents.get("docs/oam/current-oam-kernel-responsibility-map.json");
   const expectedDigest = graph?.binding?.artifactDigest;
   const actualDigest = digestFor(documents);
@@ -132,6 +133,7 @@ if (documents.size === requiredFiles.length) {
   }
 
   checkFinalDecision(finalReport);
+  checkMutationTests(finalReport, graph, mutationTestsResult);
   checkFinalReportGoNoGoFields(finalReport, responsibilityMap);
   checkWorkstreamProofNodes(graph, responsibilityMap, finalReport);
   checkRealBrowserEvidence(graph, finalReport);
@@ -944,6 +946,12 @@ function checkFinalDecision(finalReport) {
   const reasons = finalReport.finalDecision?.noGoReasons ?? finalReport.noGoReasons ?? [];
   const controlPlane = finalReport.controlPlaneGateResult;
   const release = finalReport.releaseReadiness;
+  const reasonsText = reasons.join("\n");
+  const requireNoGoReason = (predicate, pattern, description) => {
+    if (predicate && !pattern.test(reasonsText)) {
+      failures.push(`final report missing NO_GO reason for ${description}.`);
+    }
+  };
 
   if (!controlPlane) {
     failures.push("final report missing control plane gate result.");
@@ -975,6 +983,98 @@ function checkFinalDecision(finalReport) {
 
   if (finalReport.finalGoNoGo === "NO_GO" && reasons.length === 0) {
     failures.push("final report is NO_GO but has no noGoReasons.");
+  }
+  if (finalReport.finalGoNoGo === "NO_GO") {
+    requireNoGoReason(
+      controlPlane && controlPlane.status !== "passed",
+      /Control Plane|OAM 总门禁/i,
+      "control plane not passed"
+    );
+    requireNoGoReason(
+      controlPlane && (controlPlane.failedGateCount ?? 0) > 0,
+      /Control Plane.*失败|OAM 总门禁.*失败/i,
+      "control plane failed gates"
+    );
+    requireNoGoReason(
+      controlPlane && (controlPlane.missingRequiredGates ?? []).length > 0,
+      /Control Plane.*缺失|OAM 总门禁.*缺失/i,
+      "control plane missing required gates"
+    );
+    requireNoGoReason(
+      controlPlane?.stale === true,
+      /Control Plane.*过期|OAM 总门禁.*过期/i,
+      "stale control plane gate result"
+    );
+    requireNoGoReason(
+      finalReport.binding?.bindingStatus === "stale" || finalReport.binding?.stale === true,
+      /Release Evidence Object 未绑定当前 HEAD|证据绑定过期|stale/i,
+      "stale release evidence binding"
+    );
+    requireNoGoReason(
+      finalReport.binding?.githubArtifactDigestStatus === pendingExternalAttestation,
+      /pending_external_attestation|外部摘要证明/i,
+      "pending GitHub artifact attestation"
+    );
+    requireNoGoReason(
+      finalReport.binding?.releaseAuthority === false,
+      /releaseAuthority=false|发布权威/i,
+      "releaseAuthority=false"
+    );
+    requireNoGoReason(
+      release?.releaseEligible === false,
+      /工作区|未提交/i,
+      "dirty workspace release readiness"
+    );
+    requireNoGoReason(
+      finalReport.businessProduction === "BLOCKED" || finalReport.businessProductionStatus === "BLOCKED",
+      /Business Production.*BLOCKED|业务落地不允许/i,
+      "Business Production BLOCKED"
+    );
+    requireNoGoReason(
+      finalReport.dormitoryL2 === "BLOCKED" || finalReport.dormitoryL2Status === "BLOCKED",
+      /Dormitory L2.*BLOCKED|宿舍业务 L2 不允许/i,
+      "Dormitory L2 BLOCKED"
+    );
+    requireNoGoReason(
+      finalReport.productionConfirmAllowed === false,
+      /productionConfirmAllowed=false|production_confirm.*阻断|生产确认不允许/i,
+      "productionConfirmAllowed=false"
+    );
+  }
+}
+
+function checkMutationTests(finalReport, graph, mutationTestsResult) {
+  const mutationResultPath = "artifacts/oam/authority-cleanup/mutation-tests-result.json";
+  if (!mutationTestsResult) {
+    failures.push("mutation tests result artifact is missing.");
+    return;
+  }
+  if (mutationTestsResult.status !== "passed") {
+    failures.push(`mutation tests result must be passed, actual: ${mutationTestsResult.status || "missing"}.`);
+  }
+  if ((mutationTestsResult.failedMutationCount ?? 0) !== 0) {
+    failures.push(`mutation tests must have zero failed mutations, actual: ${mutationTestsResult.failedMutationCount}.`);
+  }
+  if ((mutationTestsResult.mutationCount ?? 0) < 8) {
+    failures.push(`mutation tests must cover required negative cases, actual mutationCount=${mutationTestsResult.mutationCount ?? "missing"}.`);
+  }
+  if (finalReport.mutationTests?.path !== mutationResultPath) {
+    failures.push("final report must explicitly reference mutation tests result artifact.");
+  }
+  if (finalReport.mutationTests?.status !== mutationTestsResult.status) {
+    failures.push("final report mutationTests.status must match mutation tests result.");
+  }
+  if (finalReport.mutationTests?.mutationCount !== mutationTestsResult.mutationCount) {
+    failures.push("final report mutationTests.mutationCount must match mutation tests result.");
+  }
+  if (finalReport.mutationTests?.failedMutationCount !== mutationTestsResult.failedMutationCount) {
+    failures.push("final report mutationTests.failedMutationCount must match mutation tests result.");
+  }
+  if (!graph.requiredFiles?.includes(mutationResultPath)) {
+    failures.push("evidence graph must include mutation tests result in requiredFiles.");
+  }
+  if (!JSON.stringify(graph).includes(mutationResultPath)) {
+    failures.push("evidence graph must reference mutation tests result artifact.");
   }
 }
 

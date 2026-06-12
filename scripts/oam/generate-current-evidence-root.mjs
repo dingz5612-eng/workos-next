@@ -118,6 +118,7 @@ const testSummary = buildTestSummary();
 const coverageSummary = buildCoverageSummary();
 const mobileBranchRiskKernel = buildMobileBranchRiskKernel();
 const realBrowserEvidence = buildRealBrowserEvidence();
+const mutationTests = readMutationTestsResult();
 const unresolvedP0 = p0Ledger.filter((item) => item.status !== "passed");
 const releaseReadiness = buildReleaseReadiness();
 const finalDecision = buildFinalDecision();
@@ -421,6 +422,7 @@ const finalReport = {
     fileExists(path.join("docs", "system", "oam-next-stage-admission.md")) ? "passed" : "pending"),
   gateSummary,
   testSummary,
+  mutationTests,
   failedChecks: [],
   skippedOrNotApplicable: buildSkippedOrNotApplicable(),
   coverageSummary,
@@ -489,6 +491,7 @@ const evidenceGraph = {
   controlPlaneGateResult,
   releaseReadiness,
   finalDecision,
+  mutationTests,
   responsibilityMap: {
     path: responsibilityMapPath,
     workstreamCount: responsibilityMap.workstreams?.length ?? 0
@@ -1260,6 +1263,31 @@ function requiredGateCommands() {
   ];
 }
 
+function readMutationTestsResult() {
+  const mutationResultPath = "artifacts/oam/authority-cleanup/mutation-tests-result.json";
+  if (!fileExists(mutationResultPath)) {
+    return {
+      path: mutationResultPath,
+      status: "missing",
+      mutationCount: 0,
+      failedMutationCount: null,
+      tests: []
+    };
+  }
+  const result = readJson(mutationResultPath);
+  return {
+    path: mutationResultPath,
+    status: result.status ?? "missing",
+    checkedAtUtc: result.checkedAtUtc ?? null,
+    mutationCount: result.mutationCount ?? (result.tests?.length ?? 0),
+    failedMutationCount: result.failedMutationCount ?? null,
+    tests: (result.tests ?? []).map((test) => ({
+      id: test.id,
+      status: test.status
+    }))
+  };
+}
+
 function readControlPlaneGateResult() {
   const requiredCommands = requiredGateCommands();
   if (!fileExists(controlPlaneGateResultPath)) {
@@ -1462,46 +1490,61 @@ function buildReleaseReadiness() {
 
 function buildFinalDecision() {
   const noGoReasons = [];
+  const addNoGoReason = (reason) => {
+    if (!noGoReasons.includes(reason)) noGoReasons.push(reason);
+  };
   if (unresolvedP0.length > 0) {
-    noGoReasons.push(`P0 未清零：${unresolvedP0.map((item) => item.ruleId).join(", ")}`);
+    addNoGoReason(`P0 未清零：${unresolvedP0.map((item) => item.ruleId).join(", ")}`);
   }
   if (controlPlaneGateResult.status !== "passed") {
-    noGoReasons.push(`OAM 总门禁未通过或未执行：${controlPlaneGateResult.status}`);
+    addNoGoReason(`Control Plane 未通过或未执行：${controlPlaneGateResult.status}`);
   }
   if ((controlPlaneGateResult.failedGateCount ?? 0) > 0) {
-    noGoReasons.push(`OAM 总门禁失败项数量：${controlPlaneGateResult.failedGateCount}`);
+    addNoGoReason(`Control Plane 失败项数量：${controlPlaneGateResult.failedGateCount}`);
   }
   if ((controlPlaneGateResult.missingRequiredGates ?? []).length > 0) {
-    noGoReasons.push(`OAM 总门禁缺失必跑项：${controlPlaneGateResult.missingRequiredGates.join("; ")}`);
+    addNoGoReason(`Control Plane 缺失必跑项：${controlPlaneGateResult.missingRequiredGates.join("; ")}`);
   }
   if (controlPlaneGateResult.stale) {
-    noGoReasons.push(`OAM 总门禁结果过期：${controlPlaneGateResult.commitSha} != ${commitSha}`);
+    addNoGoReason(`Control Plane 结果过期：${controlPlaneGateResult.commitSha} != ${commitSha}`);
   }
   if (bindingStale) {
-    noGoReasons.push(`证据绑定过期：sourceCommitSha=${sourceCommitSha}, evidenceRunSha=${evidenceRunSha}, currentRepositoryHead=${currentRepositoryHead}`);
+    addNoGoReason(`Release Evidence Object 未绑定当前 HEAD：sourceCommitSha=${sourceCommitSha}, evidenceRunSha=${evidenceRunSha}, currentRepositoryHead=${currentRepositoryHead}`);
+  }
+  if (githubArtifactDigestStatus === pendingExternalAttestation) {
+    addNoGoReason("GitHub artifact 外部摘要证明仍为 pending_external_attestation；releaseAuthority=false，不能发布放行。");
+  } else if (githubArtifactDigestStatus !== "attested") {
+    addNoGoReason(`GitHub artifact 外部摘要证明状态非法：${githubArtifactDigestStatus}`);
   }
   if (mobileBranchRiskKernel.status !== "passed") {
-    noGoReasons.push(`移动端分支风险门禁未通过：${mobileBranchRiskKernel.status}`);
+    addNoGoReason(`移动端分支风险门禁未通过：${mobileBranchRiskKernel.status}`);
   }
   if (realBrowserEvidence.summary.status !== "passed") {
-    noGoReasons.push(`真实浏览器证据未通过或已过期：${realBrowserEvidence.summary.status}`);
+    addNoGoReason(`真实浏览器证据未通过或已过期：${realBrowserEvidence.summary.status}`);
   }
   if (coverageSummary.status === "pending_coverage_command") {
-    noGoReasons.push("覆盖率报告缺失或未执行。");
+    addNoGoReason("覆盖率报告缺失或未执行。");
   }
   if (!releaseReadiness.releaseEligible) {
-    noGoReasons.push("工作区仍有未提交的当前源码/文档变更或删除项，不符合发布放行条件。");
+    addNoGoReason("工作区仍有未提交的当前源码/文档变更或删除项，不符合发布放行条件。");
   }
-  if (admission.businessProduction !== "BLOCKED") {
-    noGoReasons.push(`Business Production 状态必须保持 BLOCKED，实际：${admission.businessProduction}`);
+  if (admission.businessProduction === "BLOCKED") {
+    addNoGoReason("Business Production 当前仍为 BLOCKED，业务落地不允许。");
+  } else {
+    addNoGoReason(`Business Production 状态必须保持 BLOCKED，实际：${admission.businessProduction}`);
   }
-  if (admission.dormitoryProduction !== "BLOCKED") {
-    noGoReasons.push(`Dormitory L2 状态必须保持 BLOCKED，实际：${admission.dormitoryProduction}`);
+  if (admission.dormitoryProduction === "BLOCKED") {
+    addNoGoReason("Dormitory L2 当前仍为 BLOCKED，宿舍业务 L2 不允许。");
+  } else {
+    addNoGoReason(`Dormitory L2 状态必须保持 BLOCKED，实际：${admission.dormitoryProduction}`);
   }
-  if (admission.productionConfirmAllowed !== false) {
-    noGoReasons.push("production_confirm 当前阶段必须保持阻断。");
+  if (admission.productionConfirmAllowed === false) {
+    addNoGoReason("productionConfirmAllowed=false，生产确认不允许。");
+  } else {
+    addNoGoReason("production_confirm 当前阶段必须保持阻断。");
   }
-  noGoReasons.push("当前阶段显式阻断：businessProductionGoNoGo、dormitoryL2GoNoGo、productionConfirmGoNoGo、finalGoNoGo 均为 NO_GO。");
+  addNoGoReason("Release Evidence Object 当前 releaseAuthority=false；CI green、artifact exists、browser evidence、Final Report exists 均不等于 GO。");
+  addNoGoReason("当前阶段显式阻断：businessProductionGoNoGo、dormitoryL2GoNoGo、productionConfirmGoNoGo、finalGoNoGo 均为 NO_GO。");
 
   return {
     finalGoNoGo: "NO_GO",
