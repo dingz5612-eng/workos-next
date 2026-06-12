@@ -17,6 +17,8 @@ const releaseEvidenceObject = fs.existsSync(abs("artifacts/oam/evidence/current-
 const finalReport = fs.existsSync(abs("artifacts/oam/final-report.json"))
   ? readJson("artifacts/oam/final-report.json")
   : { latestCommit: currentGitHead, finalGoNoGo: "NO_GO", controlPlaneGateResult: { status: "passed" }, noGoReasons: ["当前阶段 NO_GO。"] };
+const admissionSurfaceSource = readText("apps/mobile/src/admissionSurface.js");
+const searchIntentHubSource = readText("apps/mobile/src/searchIntentHub.js");
 
 const tests = [
   mutationTest("generated_file_manual_edit_should_fail", () => {
@@ -73,6 +75,20 @@ const tests = [
       writes: ["LedgerEntry"]
     };
     return validateLedgerEntryWriter(consumer).some((item) => item.id === "ledger_entry_non_finance_writer");
+  }),
+  mutationTest("missing_admission_surface_confirm_true_should_fail", () => {
+    const mutated = admissionSurfaceSource.replace(
+      "export function missingAdmissionState(mode = \"contract_preview\") {",
+      "export function missingAdmissionState(mode = \"contract_preview\") {"
+    ).replace("confirmAllowed: false,", "confirmAllowed: true,");
+    return validateMissingAdmissionFallback(mutated, searchIntentHubSource).some((item) => item.id === "missing_admission_confirm_allowed");
+  }),
+  mutationTest("missing_admission_search_infers_confirm_should_fail", () => {
+    const mutated = searchIntentHubSource.replace(
+      "return missingAdmissionState(\"contract_preview\");",
+      "return normalizeAdmissionState({ visibleAllowed: true, prepareAllowed: true, confirmAllowed: true, productionAllowed: false });"
+    );
+    return validateMissingAdmissionFallback(admissionSurfaceSource, mutated).some((item) => item.id === "search_missing_admission_infers_confirm");
   }),
   mutationTest("evidence_graph_node_missing_proof_fields_should_fail", () => {
     const graph = structuredClone(evidenceGraph);
@@ -237,6 +253,23 @@ function validateLedgerEntryWriter(consumer) {
   return violations;
 }
 
+function validateMissingAdmissionFallback(admissionSurface, searchIntentHub) {
+  const violations = [];
+  if (!/function\s+missingAdmissionState[\s\S]*prepareAllowed:\s*false[\s\S]*confirmAllowed:\s*false[\s\S]*productionAllowed:\s*false/.test(admissionSurface)) {
+    violations.push({ id: "missing_admission_confirm_allowed" });
+  }
+  if (admissionSurface.includes("prepareAllowed: value.prepareAllowed !== false")) {
+    violations.push({ id: "missing_admission_prepare_default_true" });
+  }
+  if (!/if\s*\(!hasExplicitAdmission\)\s*return\s+missingAdmissionState/.test(admissionSurface)) {
+    violations.push({ id: "surface_missing_admission_bypasses_kernel" });
+  }
+  if (!searchIntentHub.includes("missingAdmissionState") || /prepareAllowed:\s*true[\s\S]{0,160}confirmAllowed:\s*true/.test(searchIntentHub)) {
+    violations.push({ id: "search_missing_admission_infers_confirm" });
+  }
+  return violations;
+}
+
 function validateEvidenceGraphNodes(graph) {
   const violations = [];
   for (const node of graph.nodes ?? []) {
@@ -290,6 +323,10 @@ function mustEntry(doc, file) {
 
 function readJson(file) {
   return JSON.parse(fs.readFileSync(abs(file), "utf8"));
+}
+
+function readText(file) {
+  return fs.readFileSync(abs(file), "utf8");
 }
 
 function writeJson(file, value) {

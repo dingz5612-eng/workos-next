@@ -32,6 +32,7 @@ const requiredEvidenceFiles = [
   releaseAttestationPath,
   "artifacts/oam/evidence/execution-log.jsonl",
   "artifacts/oam/evidence/current-oam-final-report.json",
+  "artifacts/oam/evidence/admission-p0-proof.json",
   "artifacts/oam/evidence/runtime-proof.json",
   "artifacts/oam/evidence/truth-ownership-proof.json",
   "artifacts/oam/evidence/search-readonly-proof.json",
@@ -55,6 +56,8 @@ const requiredEvidenceFiles = [
   "docs/oam/professional-ai-review-seats.json",
   "docs/oam/codex-execution-channel-policy.json",
   "docs/finance/finance-ledger-kernel.json",
+  "docs/contracts/admission/admission-contract.json",
+  "docs/business/policies/admission-policy.yml",
   "docs/oam/compiler-generated-contract-kernel.json",
   "docs/oam/file-lifecycle-policy.json",
   "docs/identity/identity-permission-kernel.json",
@@ -93,6 +96,7 @@ const generatedContractFiles = [
   "docs/oam/system-derived-contracts.json",
   "docs/oam/domain-derived-contracts.json",
   "docs/oam/generated-contracts-manifest.json",
+  "docs/contracts/admission/admission-contract.json",
   "docs/oam/kernel/oam-kernel-graph.generated.json",
   "docs/contracts/generated/dormitory/dormitory-kernel.generated.manifest.json",
   "docs/contracts/generated/dormitory/fields.generated.json",
@@ -128,9 +132,14 @@ const sourceAuthorityDigest = digestForFiles(sourceAuthorityFiles());
 const generatedContractDigest = generatedContractsHash;
 const fileLifecycleDigest = hashFileStrict("docs/oam/file-lifecycle-policy.json");
 const runtimeBoundaryDigest = digestForFiles([
+  "artifacts/oam/evidence/admission-p0-proof.json",
   "artifacts/oam/evidence/runtime-proof.json",
   "scripts/check-runtime-write-paths.mjs",
-  "scripts/check-api-boundaries.mjs"
+  "scripts/check-api-boundaries.mjs",
+  "scripts/check-admission-kernel.mjs",
+  "apps/mobile/src/admissionSurface.js",
+  "apps/mobile/src/searchIntentHub.js",
+  "tests/WorkOS.UnitTests/CanonicalOperationsApiServiceTests.cs"
 ]);
 const readSurfaceFinanceBoundaryDigest = digestForFiles([
   "artifacts/oam/evidence/search-readonly-proof.json",
@@ -176,11 +185,65 @@ const multiDimensionalGoNoGo = {
   releaseEvidenceGoNoGo: "NO_GO"
 };
 addEvidence(
+  "artifacts/oam/evidence/admission-p0-proof.json",
+  proof("admission-p0-proof", "Admission P0 缺省阻断可信", {
+    admissionP0Closure: {
+      missingAdmissionVisibleAllowed: true,
+      missingAdmissionPrepareAllowed: false,
+      missingAdmissionConfirmAllowed: false,
+      missingAdmissionProductionAllowed: false,
+      surfaceMissingAdmissionSubmitAllowed: false,
+      searchMissingAdmissionConfirmAllowed: false,
+      runtimeMissingAdmissionEntersUnitOfWork: false,
+      uiVisibleImpliesConfirmAllowed: false,
+      uiPrepareImpliesProductionAllowed: false
+    },
+    generatedAdmissionContract: {
+      contractRef: "docs/contracts/admission/admission-contract.json",
+      generated: true,
+      doNotEdit: true,
+      sourceNodeRefs: ["kernel.system", "domain.dormitory", "graph.oam"],
+      missingAdmissionBehavior: "confirmAllowed=false"
+    },
+    negativeTests: [
+      "Search item without admission is readonly.",
+      "Surface card without admission cannot submit.",
+      "Runtime confirm with missing admissionPolicyRef is rejected before UnitOfWork."
+    ],
+    mutationTests: [
+      "missing_admission_surface_confirm_true_should_fail",
+      "missing_admission_search_infers_confirm_should_fail"
+    ],
+    authorityRefs: [
+      "docs/business/policies/admission-policy.yml",
+      "docs/contracts/admission/admission-contract.json",
+      "docs/oam/current-admission-state.json"
+    ],
+    implementationRefs: [
+      "apps/mobile/src/admissionSurface.js",
+      "apps/mobile/src/searchIntentHub.js",
+      "services/core-api/WorkOS.Api/Runtime/AdmissionKernelService.cs"
+    ],
+    gates: [
+      "node scripts/check-admission-kernel.mjs --self-test",
+      "node scripts/check-admission-kernel.mjs",
+      "npm --prefix apps/mobile test",
+      "dotnet test tests/WorkOS.UnitTests/WorkOS.UnitTests.csproj --filter FullyQualifiedName~CanonicalOperationsApiServiceTests",
+      "node scripts/oam/check-authority-cleanup-mutation-tests.mjs"
+    ]
+  })
+);
+addEvidence(
   "artifacts/oam/evidence/runtime-proof.json",
   proof("runtime-proof", "运行写入可信", {
     runtimeTruthOutputClosure: {
+      missingAdmissionConfirmAllowed: false,
+      missingAdmissionEntersUnitOfWork: false,
       unresolvedDefinitionConfirmAllowed: false,
       unresolvedDefinitionEntersUnitOfWork: false,
+      noWorkItemEventOnRejectedAdmission: true,
+      noLedgerTransactionOnRejectedAdmission: true,
+      noWriteLogOnRejectedAdmission: true,
       nonFinanceDomainLedgerEntryAllowed: false,
       unitOfWorkTruthOwnerGuard: true,
       unitOfWorkAllowedFactsGuard: true,

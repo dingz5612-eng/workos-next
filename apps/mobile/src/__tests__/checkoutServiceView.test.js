@@ -143,6 +143,16 @@ function ctx(overrides = {}) {
           dueAt: "2026-05-01T10:00:00Z"
         }
       ],
+      operationWorkItems: [
+        {
+          workItemId: "wi-checkout-start",
+          workspaceId: "W-STAY-CHECKOUT-SETTLEMENT",
+          cardId: "checkoutStart",
+          lifecycleState: "ready",
+          ownerRole: "operator",
+          admission: internalPilotAdmission()
+        }
+      ],
       accommodationLenses: {}
     },
     ...overrides.state
@@ -157,6 +167,18 @@ function ctx(overrides = {}) {
     localTerm: (value) => tx(value?.label || value?.title || value, state.lang),
     escapeHtml,
     escapeAttr
+  };
+}
+
+function internalPilotAdmission() {
+  return {
+    visibleAllowed: true,
+    prepareAllowed: true,
+    confirmAllowed: true,
+    productionAllowed: false,
+    mode: "internal_pilot_observation",
+    reason: "business_production_blocked",
+    admissionDecisionRef: "admission:test:checkout"
   };
 }
 

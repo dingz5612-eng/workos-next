@@ -31,6 +31,15 @@ if (!resolveMethod.includes("FindByDefinitionId(payloadDefinitionId)") ||
 if (resolveMethod.includes("FindBySourceCardId") || resolveMethod.includes("ResolveByWorkspaceCard")) {
   fail("confirm_resolution_uses_surface_source", "Confirm Definition resolution must not use sourceCardId or workspace/card resolution.");
 }
+if (confirmMethod.includes("ResolveStartAdapter")) {
+  fail("confirm_resolution_uses_start_adapter", "Canonical confirm must not resolve Definition through the Start Adapter Map.");
+}
+if (/public\s+string\?\s+SourceCardId/.test(registrySource) || /SourceCardId\s*\?\?/.test(registrySource)) {
+  fail("registry_source_card_promoted_to_current_identity", "Top-level sourceCardId must remain migration/UI read-only data and cannot be promoted into definition resolution.");
+}
+if (!registrySource.includes("StartAdapterDefinitionIds") || !registrySource.includes("ResolveStartAdapter")) {
+  fail("start_adapter_map_missing", "Search/Start admission must use a server-side Start Adapter Map instead of client-submitted admission.");
+}
 if (!confirmMethod.includes("definitions.Resolve(workItem)")) {
   fail("confirm_definition_resolve_missing", "Canonical confirm must resolve Definition from WorkItem identity.");
 }
@@ -82,9 +91,6 @@ for (const definition of currentDefinitions) {
   if (definition.definitionMode !== "oam-certification-current") {
     fail("current_definition_mode_invalid", `${definition.definitionId} must be oam-certification-current.`);
   }
-  if ("sourceCardId" in definition) {
-    fail("current_definition_source_card_current_identity", `${definition.definitionId} must not expose sourceCardId as current definition identity.`);
-  }
   if (!definition.commandType || !definition.workItemType || !definition.definitionId) {
     fail("current_definition_identity_incomplete", `${definition.definitionId} must bind definitionId/workItemType/commandType.`);
   }
@@ -100,6 +106,9 @@ for (const definition of currentDefinitions) {
 }
 
 for (const definition of definitionRegistry.definitions ?? []) {
+  if ("sourceCardId" in definition) {
+    fail("definition_top_level_source_card_id_present", `${definition.definitionId} must preserve sourceCardId only as read-only migrationRefs.`);
+  }
   if (currentDecisionTypes.has(definition.workItemType)) continue;
   if (definition.definitionMode !== "surface-input-adapter") {
     fail("non_current_definition_mode_invalid", `${definition.definitionId} is not a current execution identity and must be surface-input-adapter.`);

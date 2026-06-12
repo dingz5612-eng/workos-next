@@ -57,6 +57,14 @@ public sealed class AdmissionKernelService
                 new[] { "business_line_not_registered" });
         }
 
+        if (MissingAdmissionPolicy(definition))
+        {
+            return AdmissionKernelDecision.MissingAdmissionContract(
+                definition,
+                businessLine.Level,
+                businessLine.SurfaceMode);
+        }
+
         if (businessLine.Level.Equals("L0 Contract Preview", StringComparison.OrdinalIgnoreCase))
         {
             return AdmissionKernelDecision.Blocked(
@@ -182,6 +190,14 @@ public sealed class AdmissionKernelService
                 new[] { "business_line_not_registered" });
         }
 
+        if (MissingAdmissionPolicy(definition))
+        {
+            return AdmissionKernelDecision.MissingAdmissionContract(
+                definition,
+                businessLine.Level,
+                businessLine.SurfaceMode);
+        }
+
         if (businessLine.Level.Equals("L0 Contract Preview", StringComparison.OrdinalIgnoreCase))
         {
             return AdmissionKernelDecision.SearchVisible(
@@ -209,6 +225,9 @@ public sealed class AdmissionKernelService
             businessLine.SurfaceMode,
             definition.Resolved ? Array.Empty<string>() : new[] { "definition_not_resolved_for_production_confirm" });
     }
+
+    private static bool MissingAdmissionPolicy(WorkItemDefinitionResolution definition) =>
+        string.IsNullOrWhiteSpace(definition.Definition?.AdmissionPolicyRef);
 
     private static bool IsHighRisk(WorkItemDefinitionResolution definition) =>
         HighRiskActionMatrix.RequiresVerifiedTrust(definition);
@@ -380,6 +399,26 @@ public sealed record AdmissionKernelDecision(
             surfaceState,
             noGoItems,
             RefFor(definition, mode));
+
+    public static AdmissionKernelDecision MissingAdmissionContract(
+        WorkItemDefinitionResolution definition,
+        string businessLineState,
+        string surfaceState) =>
+        new(
+            true,
+            false,
+            false,
+            false,
+            "contract_preview",
+            "Admission contract is missing for this WorkItem definition; surface may show context only, and confirm is blocked before Unit of Work.",
+            new[] { "docs/contracts/admission/admission-contract.json", "docs/contracts/definition/workitem-definition-registry.json" },
+            Array.Empty<string>(),
+            Array.Empty<string>(),
+            businessLineState,
+            "BUSINESS_PRODUCTION_BLOCKED",
+            surfaceState,
+            new[] { "missing_admission_contract" },
+            RefFor(definition, "missing_admission_contract"));
 
     public static AdmissionKernelDecision SearchVisible(
         WorkItemDefinitionResolution definition,

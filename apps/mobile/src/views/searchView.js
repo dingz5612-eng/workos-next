@@ -144,16 +144,44 @@ function activeCommands(workspaces, ctx) {
   const query = String(ctx.state.query || "").trim();
   return dormitoryCommandCatalog(ctx)
     .filter((command) => !query || command.keywords.some((keyword) => query.toLocaleLowerCase().includes(keyword.toLocaleLowerCase())))
-    .map((command) => ({
-      resultType: "command",
-      commandId: "startOperationsWorkspace",
-      templateWorkspaceId: command.templateWorkspaceId,
-      firstCardId: command.firstCardId,
-      title: command.title,
-      subtitle: command.subtitle,
-      status: "ready",
-      nextAction: command.nextAction
-    }));
+    .map((command) => {
+      const admission = commandAdmission(ctx, command);
+      return {
+        resultType: "command",
+        commandId: "startOperationsWorkspace",
+        templateWorkspaceId: command.templateWorkspaceId,
+        firstCardId: command.firstCardId,
+        title: command.title,
+        subtitle: command.subtitle,
+        status: "ready",
+        nextAction: command.nextAction,
+        ...(admission ? { admission } : {})
+      };
+    });
+}
+
+function commandAdmission(ctx = {}, command = {}) {
+  return searchKernelAdmissionForCommand(ctx, command);
+}
+
+function searchKernelAdmissionForCommand(ctx = {}, command = {}) {
+  const results = ctx.state.runtimeStore?.searchResultsByQuery?.[normalizeQuery(ctx.state.query)] || [];
+  const match = results.find((item) => {
+    const workspaceId = item.workspaceId || item.workspace_id || item.target?.workspaceId || "";
+    const cardId = item.cardId || item.card_id || item.target?.cardId || "";
+    const source = item.sourceRefs?.source || item.gateResult?.source || "";
+    const admissionDecisionRef =
+      item.admission?.admissionDecisionRef ||
+      item.sourceRefs?.admissionDecisionRef ||
+      item.gateResult?.admissionDecisionRef ||
+      "";
+    return workspaceId === command.templateWorkspaceId &&
+      cardId === command.firstCardId &&
+      source === "SearchKernelService" &&
+      Boolean(admissionDecisionRef) &&
+      item.admission;
+  });
+  return match?.admission || null;
 }
 
 function dormitoryCommandCatalog(ctx) {
@@ -258,7 +286,7 @@ function searchAction(result, ctx) {
     return `<button data-work-item-id="${ctx.escapeAttr(result.workItemId)}" data-workspace-id="${ctx.escapeAttr(result.workspaceId)}" data-card-id="${ctx.escapeAttr(result.cardId)}">${ctx.escapeHtml(label)}</button>`;
   }
   if (result.actionType === "startOperationsWorkspace") {
-    if (!result.confirmAllowed) {
+    if (!result.prepareAllowed) {
       return `<button data-view="learning">${ctx.tr("searchActionLearning")}</button>`;
     }
     return `<button data-start-operations-workspace="${ctx.escapeAttr(result.templateWorkspaceId)}" data-first-card-id="${ctx.escapeAttr(result.firstCardId)}" data-anchor-query="${ctx.escapeAttr(ctx.state.query || "")}">${ctx.escapeHtml(result.actionLabel)}</button>`;

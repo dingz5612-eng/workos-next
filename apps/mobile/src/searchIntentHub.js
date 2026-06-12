@@ -1,7 +1,7 @@
 import { resolveOperationPanelTarget } from "./operationRouteResolver.js";
 import { operationStatusTranslationKey } from "./operationStatus.js";
 import { isAccommodationResourceSetupQuery } from "./searchIntentRegistry.js";
-import { admissionCopy, normalizeAdmissionState } from "./admissionSurface.js";
+import { admissionCopy, missingAdmissionState, normalizeAdmissionState } from "./admissionSurface.js";
 
 export function buildSearchResultVM(item = {}, ctx = {}) {
   const resultType = item.resultType || item.type || item.kind || "object";
@@ -205,7 +205,7 @@ function admissionActionLabel(action = {}, admission = {}, ctx = {}) {
     if (!admission.productionAllowed) return ctx.tr?.("searchActionObservation") || "继续观察记录";
   }
   if (action.type === "startOperationsWorkspace") {
-    if (!admission.confirmAllowed) return ctx.tr?.("searchActionLearning") || "开始学习";
+    if (!admission.prepareAllowed) return ctx.tr?.("searchActionLearning") || "开始学习";
     if (!admission.productionAllowed) return ctx.tr?.("startObservation") || "开始观察记录";
   }
   return action.label;
@@ -224,23 +224,9 @@ function genericProcessCopy(value, ctx = {}) {
 function admissionForSearchItem(item = {}, action = {}) {
   if (item.admission) return normalizeAdmissionState(item.admission);
   if (["openWorkItem", "startOperationsWorkspace"].includes(action.type)) {
-    return normalizeAdmissionState({
-      visibleAllowed: true,
-      prepareAllowed: true,
-      confirmAllowed: true,
-      productionAllowed: false,
-      mode: "internal_pilot_observation",
-      reason: "business_production_blocked"
-    });
+    return missingAdmissionState("contract_preview");
   }
-  return normalizeAdmissionState({
-    visibleAllowed: true,
-    prepareAllowed: false,
-    confirmAllowed: false,
-    productionAllowed: false,
-    mode: "contract_preview",
-    reason: "visible_only"
-  });
+  return missingAdmissionState("contract_preview");
 }
 
 function gateResultForSearchItem(item = {}, admission = {}) {

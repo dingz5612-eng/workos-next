@@ -85,7 +85,7 @@ public sealed class SearchKernelService
         var workspaceId = ReadString(projectionSource, "workspaceId");
         var cardId = ReadString(projectionSource, "cardId");
         var resultId = FirstNonEmpty(ReadString(projectionSource, "resultId"), $"search:{workspaceId}:{cardId}");
-        var definition = definitions.ResolveByWorkspaceCard(workspaceId, cardId);
+        var definition = definitions.ResolveStartAdapter(workspaceId, cardId);
         var decision = admission.EvaluateSearch(definition, actor);
         var existingTerms = ReadStringArray(projectionSource, "matchedTerms");
         var text = SafeText(projectionSource);

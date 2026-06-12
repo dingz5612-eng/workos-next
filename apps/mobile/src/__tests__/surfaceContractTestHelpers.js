@@ -29,6 +29,7 @@ export function createSurfaceCtx(overrides = {}) {
     runtimeStore: runtimeStore(),
     ...overrides
   };
+  decorateRuntimeStoreAdmissions(state.runtimeStore);
   const ctx = {
     state,
     shell: (content) => shell(content, ctx),
@@ -45,6 +46,33 @@ export function createSurfaceCtx(overrides = {}) {
   return ctx;
 }
 
+export function internalPilotAdmissionFixture() {
+  return {
+    visibleAllowed: true,
+    prepareAllowed: true,
+    confirmAllowed: true,
+    productionAllowed: false,
+    mode: "internal_pilot_observation",
+    reason: "business_production_blocked",
+    admissionDecisionRef: "admission:test:internal-pilot"
+  };
+}
+
+export function decorateRuntimeStoreAdmissions(store = {}) {
+  const admission = store.commandAdmission || internalPilotAdmissionFixture();
+  for (const collectionName of ["workQueue", "operationWorkItems"]) {
+    for (const item of store[collectionName] || []) {
+      if (!item.admission) item.admission = admission;
+    }
+  }
+  for (const results of Object.values(store.searchResultsByQuery || {})) {
+    for (const item of Array.isArray(results) ? results : []) {
+      if ((item.resultType || item.result_type) === "workItem" && !item.admission) item.admission = admission;
+    }
+  }
+  return store;
+}
+
 export function renderSurface(view, overrides = {}) {
   ensureBrowserMocks();
   const ctx = createSurfaceCtx({ view, ...overrides });
@@ -52,6 +80,7 @@ export function renderSurface(view, overrides = {}) {
 }
 
 export function runtimeStore() {
+  const internalPilotAdmission = internalPilotAdmissionFixture();
   const workspace = {
     id: "W-STAY-RESOURCE",
     domain: "stay",
@@ -86,7 +115,8 @@ export function runtimeStore() {
       badges: ["mine", "ready"],
       traceRefs: ["trace-room"],
       commandSubmissionId: "cmd-room",
-      reason: "先配置房间和床位"
+      reason: "先配置房间和床位",
+      admission: internalPilotAdmission
     }],
     operationWorkItems: [{
       workItemId: "W-STAY-RESOURCE:roomSetup",
@@ -97,7 +127,8 @@ export function runtimeStore() {
       lifecycleState: "ready",
       ownerRole: "operator",
       traceRefs: ["trace-room"],
-      reason: "先配置房间和床位"
+      reason: "先配置房间和床位",
+      admission: internalPilotAdmission
     }],
     homeSurface: [],
     learningCatalog: [],

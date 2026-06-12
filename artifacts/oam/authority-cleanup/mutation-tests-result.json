@@ -1,8 +1,8 @@
 {
   "version": "oam.authority-cleanup-mutation-tests.v1",
-  "checkedAtUtc": "2026-06-12T10:23:41.447Z",
+  "checkedAtUtc": "2026-06-12T14:22:56.473Z",
   "status": "passed",
-  "mutationCount": 12,
+  "mutationCount": 14,
   "failedMutationCount": 0,
   "tests": [
     {
@@ -37,6 +37,16 @@
     },
     {
       "id": "non_finance_kernel_ledger_entry_should_fail",
+      "status": "passed",
+      "messageZh": "突变已被门禁识别。"
+    },
+    {
+      "id": "missing_admission_surface_confirm_true_should_fail",
+      "status": "passed",
+      "messageZh": "突变已被门禁识别。"
+    },
+    {
+      "id": "missing_admission_search_infers_confirm_should_fail",
       "status": "passed",
       "messageZh": "突变已被门禁识别。"
     },

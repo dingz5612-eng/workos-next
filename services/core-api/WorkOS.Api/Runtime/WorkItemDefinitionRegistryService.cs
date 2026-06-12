@@ -5,6 +5,20 @@ namespace WorkOS.Api.Runtime;
 public sealed class WorkItemDefinitionRegistryService
 {
     private static readonly Lazy<WorkItemDefinitionRegistryService> Default = new(LoadDefaultRegistry);
+    private static readonly IReadOnlyDictionary<string, string> StartAdapterDefinitionIds =
+        new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["W-STAY-RESOURCE:roomSetup"] = "definition.dormitory.roomSetupConfirm.v1",
+            ["W-STAY-LEAD-RESERVATION:leadCapture"] = "definition.dormitory.leadCapture.v1",
+            ["W-STAY-CHECKIN:lead"] = "definition.dormitory.checkinConfirm.v1",
+            ["W-STAY-LIFECYCLE:residentProfile"] = "definition.dormitory.stayExtendApprove.v1",
+            ["W-STAY-DEPOSIT-LEDGER:depositAssessment"] = "definition.dormitory.depositConfirm.v1",
+            ["W-STAY-PAYMENT-LEDGER:paymentReceipt"] = "definition.dormitory.paymentConfirm.v1",
+            ["W-STAY-CHECKOUT-SETTLEMENT:checkoutStart"] = "definition.dormitory.checkoutSettlementApprove.v1",
+            ["W-STAY-SERVICE-TASK:serviceTaskCreate"] = "definition.dormitory.serviceTaskCreate.v1",
+            ["W-STAY-EXPENSE-LEDGER:expenseRecord"] = "definition.expenseRecord.v1",
+            ["W-STAY-PERIOD-ANALYTICS:periodScope"] = "definition.dormitory.periodReview.v1"
+        };
     private readonly IReadOnlyList<WorkItemDefinition> definitions;
     private readonly IReadOnlyDictionary<string, WorkItemDefinition> byDefinitionId;
     private readonly IReadOnlyDictionary<string, WorkItemDefinition> bySourceCardId;
@@ -58,6 +72,12 @@ public sealed class WorkItemDefinitionRegistryService
                 GuessBusinessLine(workspaceId),
                 "definition_registry_not_resolved")
             : WorkItemDefinitionResolution.FromDefinition(definition);
+    }
+
+    public WorkItemDefinitionResolution ResolveStartAdapter(string? workspaceId, string? cardId)
+    {
+        var definition = FindByDefinitionId(StartAdapterDefinitionId(workspaceId, cardId));
+        return definition is null ? ResolveByWorkspaceCard(workspaceId, cardId) : WorkItemDefinitionResolution.FromDefinition(definition);
     }
 
     public WorkItemDefinition? FindByDefinitionId(string? definitionId) =>
@@ -127,6 +147,11 @@ public sealed class WorkItemDefinitionRegistryService
                     false,
                     "docs/contracts/definition/source-id-migration-fence.json")
             };
+
+    private static string StartAdapterDefinitionId(string? workspaceId, string? cardId) =>
+        StartAdapterDefinitionIds.TryGetValue($"{workspaceId ?? string.Empty}:{cardId ?? string.Empty}", out var definitionId)
+            ? definitionId
+            : string.Empty;
 
     private static string GuessBusinessLine(string? workspaceId) =>
         string.IsNullOrWhiteSpace(workspaceId)

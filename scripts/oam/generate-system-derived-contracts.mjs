@@ -11,6 +11,7 @@ const graphPath = "docs/oam/oam-kernel-graph.json";
 const systemOutputPath = "docs/oam/system-derived-contracts.json";
 const domainOutputPath = "docs/oam/domain-derived-contracts.json";
 const generatedContractsOutputPath = "docs/oam/generated-contracts-manifest.json";
+const admissionContractPath = "docs/contracts/admission/admission-contract.json";
 
 const kernel = readJson(systemKernelPath);
 const domainKernel = readJson(domainKernelPath);
@@ -93,6 +94,7 @@ writeJson(generatedContractsOutputPath, manifest({
   sourceRefs: sourceRefsFor([systemKernelPath, domainKernelPath, graphPath]),
   contracts: contracts(generatedContractTargets, [systemKernelPath, domainKernelPath, graphPath], "generated-contracts")
 }));
+writeAdmissionGeneratedContract();
 
 console.log(`Generated layer manifests written: ${systemOutputPath}, ${domainOutputPath}, ${generatedContractsOutputPath}`);
 console.log(`contracts=${systemTargets.length + domainTargets.length + generatedContractTargets.length}`);
@@ -197,6 +199,51 @@ function sourceAuthorityNodeRefFor(file) {
     throw new Error(`source authority node ref missing from OAM graph: ${file} -> ${authorityNodeRef}`);
   }
   return authorityNodeRef;
+}
+
+function writeAdmissionGeneratedContract() {
+  const generatedFrom = [systemKernelPath, domainKernelPath, graphPath];
+  const sourceRefs = sourceRefsFor(generatedFrom);
+  const sourceHashes = Object.fromEntries(generatedFrom.map((file) => [file, hashFile(file)]));
+  const base = readJson(admissionContractPath);
+  const doc = {
+    ...base,
+    generated: true,
+    doNotEdit: true,
+    architecture: "oam.current",
+    generatedBy,
+    generatorVersion,
+    generatedFrom,
+    sourceRefs,
+    sourceNodeRefs: sourceRefs,
+    sourceHash: hashFiles(generatedFrom),
+    sourceContentDigest: hashFiles(generatedFrom),
+    kernelGraphHash: hashFile(graphPath),
+    sourceKernelVersion: kernel.version,
+    sourceGraphVersion: graph.version,
+    sourceHashes,
+    manualEditAllowed: false,
+    deterministicSort: true,
+    missingAdmissionBehavior: {
+      visibleAllowed: true,
+      prepareAllowed: false,
+      confirmAllowed: false,
+      productionAllowed: false,
+      mode: "contract_preview",
+      reason: "missing_admission_contract",
+      noGoItems: ["missing_admission_contract"]
+    },
+    compilerInputDigest: digest({
+      generatorVersion,
+      targetPath: admissionContractPath,
+      generatedFrom,
+      sourceRefs,
+      sourceHashes,
+      missingAdmissionBehavior: "confirmAllowed=false"
+    })
+  };
+  doc.outputContentDigest = digest({ ...doc, outputContentDigest: "sha256:pending" });
+  writeJson(admissionContractPath, doc);
 }
 
 function readJson(file) {

@@ -85,7 +85,12 @@ public sealed class OperationsRuntimeService
                 null,
                 "normal",
                 "medium",
-                $"{request.TenantId}:{request.WorkItemId}:confirm"));
+                $"{request.TenantId}:{request.WorkItemId}:confirm",
+                null,
+                null,
+                null,
+                null,
+                null));
         }
 
         return null;
@@ -558,7 +563,9 @@ public sealed record WorkItem(
     string? BackupOwnerId = null,
     string? EscalationOwnerRole = null,
     IReadOnlyList<string>? RequiredEvidenceRefs = null,
-    IReadOnlyList<string>? AffectedFactRefs = null);
+    IReadOnlyList<string>? AffectedFactRefs = null,
+    IReadOnlyDictionary<string, object>? Admission = null,
+    string? AdmissionDecisionRef = null);
 
 public sealed record OperationsWorkItemSurface(
     string WorkItemId,
@@ -584,7 +591,9 @@ public sealed record OperationsWorkItemSurface(
     IReadOnlyList<string>? RequiredEvidenceRefs,
     IReadOnlyList<string>? AffectedFactRefs,
     WorkspaceProjection? Workspace,
-    CardProjection? Card)
+    CardProjection? Card,
+    IReadOnlyDictionary<string, object>? Admission = null,
+    string? AdmissionDecisionRef = null)
 {
     public static OperationsWorkItemSurface From(
         WorkItem workItem,
@@ -615,7 +624,9 @@ public sealed record OperationsWorkItemSurface(
             workItem.RequiredEvidenceRefs,
             workItem.AffectedFactRefs,
             workspace,
-            card);
+            card,
+            workItem.Admission,
+            workItem.AdmissionDecisionRef);
 }
 
 public sealed record PrepareWorkItemRequest(

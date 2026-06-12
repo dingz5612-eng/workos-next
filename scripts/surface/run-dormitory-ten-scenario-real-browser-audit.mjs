@@ -100,8 +100,9 @@ try {
 
     await login(page);
     await openSearch(page);
-    const entry = await capture(page, "00-search-entry", "搜索入口和 10 个统一新建入口");
-    addAssertion("search.entry.unified_count", entry.domState.unifiedStartCount === 10, "搜索页必须暴露 10 个统一 Operations workspace 启动入口。", entry.domState);
+    const entry = await capture(page, "00-search-entry", "搜索入口缺 admission 时保持学习入口");
+    addAssertion("search.entry.no_start_without_backend_admission", entry.domState.unifiedStartCount === 0, "缺少后端 Search Kernel admission 时，搜索页不得暴露 Operations workspace 启动入口。", entry.domState);
+    addAssertion("search.entry.learning_without_backend_admission", entry.domState.learningActionCount >= 10, "缺少后端 Search Kernel admission 时，10 个主动入口必须降级为学习/只读入口。", entry.domState);
     addAssertion("search.entry.no_resource_special_start", entry.domState.suppressedResourceStartCount === 0, "房源入口不得继续使用旧的专用启动分支。", entry.domState);
 
     for (const item of scenarios) {
@@ -399,6 +400,7 @@ async function readDomState(page) {
       submitCount: document.querySelectorAll("[data-submit-card]").length,
       nextStageCount: document.querySelectorAll("[data-work-item-id][data-card-id]").length,
       unifiedStartCount: document.querySelectorAll("[data-start-operations-workspace]").length,
+      learningActionCount: document.querySelectorAll("[data-view=\"learning\"]").length,
       suppressedResourceStartCount: document.querySelectorAll("[data-start-operations-resource-setup]").length,
       invalidFields: fields.filter((field) => field.invalid).map((field) => field.id),
       emptyRequiredFields: fields.filter((field) => field.required && field.visible && !field.readonly && !field.valuePresent).map((field) => field.id),

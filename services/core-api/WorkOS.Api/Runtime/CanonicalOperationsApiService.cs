@@ -64,16 +64,18 @@ public sealed class CanonicalOperationsApiService
 
         var definition = ResolveStartDefinition(templateWorkspaceId, card.Id);
         var routeCardId = UiRouteCardIdForDefinition(definition.Definition, card.Id);
+        var ownerRole = FirstNonEmpty(card.Confirmation.RequiredRole, actor.Role, "operator");
+        var admissionDecision = StartAdmissionDecision(definition, actor, ownerRole);
         var operationCase = CreateCase(new CreateOperationCaseRequest(workspace.Id, actor.TenantId, workspace.Id))
             ?? throw new InvalidOperationException("operation_workspace_start_case_not_resolved");
-        var workItem = CreateWorkItem(new CreateWorkItemRequest(
+        var createdWorkItem = CreateWorkItem(new CreateWorkItemRequest(
             OperationsWorkItemIdFor(workspace.Id, StartWorkItemIdentityKey(definition, routeCardId)),
             actor.TenantId,
             FirstNonEmpty(definition.Definition?.WorkItemType, card.Id),
             workspace.Id,
             workspace.Id,
             routeCardId,
-            FirstNonEmpty(card.Confirmation.RequiredRole, actor.Role, "operator"),
+            ownerRole,
             StartWorkspacePayload(
                 workspace,
                 templateWorkspaceId,
@@ -85,12 +87,17 @@ public sealed class CanonicalOperationsApiService
                 anchorPayload,
                 anchorQuery))) ??
             throw new InvalidOperationException("operation_workspace_start_work_item_not_resolved");
+        var workItem = createdWorkItem with
+        {
+            Admission = admissionDecision.ToContract(),
+            AdmissionDecisionRef = admissionDecision.AdmissionDecisionRef
+        };
 
         return new OperationsWorkspaceStartResult(
             workspace,
             operationCase,
             workItem,
-            ListWorkItems(actor.TenantId));
+            ListWorkItems(actor.TenantId).Select(item => AttachAdmission(item, actor)).ToArray());
     }
 
     public IReadOnlyList<WorkItem> ListWorkItems(string? tenantId = null, string? caseId = null) =>
@@ -99,11 +106,95 @@ public sealed class CanonicalOperationsApiService
     public IReadOnlyList<OperationsWorkItemSurface> ListWorkItemSurfaces(string? tenantId = null, string? caseId = null) =>
         catalog.ListWorkItemSurfaces(tenantId, caseId);
 
+    public IReadOnlyList<OperationsWorkItemSurface> ListWorkItemSurfaces(RuntimeActorContext actor, string? caseId = null) =>
+        catalog.ListWorkItemSurfaces(actor.TenantId, caseId)
+            .Select(item => AttachAdmission(item, actor))
+            .ToArray();
+
     public WorkItem? GetWorkItem(string workItemId) =>
         catalog.GetWorkItem(workItemId);
 
     public OperationsWorkItemSurface? GetWorkItemSurface(string workItemId) =>
         catalog.GetWorkItemSurface(workItemId);
+
+    public OperationsWorkItemSurface? GetWorkItemSurface(string workItemId, RuntimeActorContext actor)
+    {
+        var surface = catalog.GetWorkItemSurface(workItemId);
+        return surface is null ? null : AttachAdmission(surface, actor);
+    }
+
+    private WorkItem AttachAdmission(WorkItem workItem, RuntimeActorContext actor)
+    {
+        if (workItem.Admission is not null)
+        {
+            return workItem;
+        }
+
+        var definition = definitions.Resolve(workItem);
+        var decision = StartAdmissionDecision(definition, actor, workItem.OwnerRole);
+        return workItem with
+        {
+            Admission = decision.ToContract(),
+            AdmissionDecisionRef = decision.AdmissionDecisionRef
+        };
+    }
+
+    private OperationsWorkItemSurface AttachAdmission(OperationsWorkItemSurface surface, RuntimeActorContext actor)
+    {
+        if (surface.Admission is not null)
+        {
+            return surface;
+        }
+
+        var workItem = new WorkItem(
+            surface.WorkItemId,
+            surface.WorkItemType,
+            surface.Status,
+            surface.CaseId,
+            surface.TenantId,
+            surface.WorkspaceId,
+            surface.OwnerRole,
+            surface.Source,
+            surface.SourceEventId,
+            surface.CreatedAtUtc,
+            surface.Payload,
+            surface.DefinitionVersionId,
+            surface.DueAtUtc,
+            surface.Priority,
+            surface.RiskLevel,
+            surface.IdempotencyScope,
+            surface.OwnerActorId,
+            surface.BackupOwnerId,
+            surface.EscalationOwnerRole,
+            surface.RequiredEvidenceRefs,
+            surface.AffectedFactRefs);
+        var admitted = AttachAdmission(workItem, actor);
+        return surface with
+        {
+            Admission = admitted.Admission,
+            AdmissionDecisionRef = admitted.AdmissionDecisionRef
+        };
+    }
+
+    private AdmissionKernelDecision StartAdmissionDecision(
+        WorkItemDefinitionResolution definition,
+        RuntimeActorContext actor,
+        string? ownerRole)
+    {
+        if (!definition.Resolved)
+        {
+            return AdmissionKernelDecision.UnresolvedDefinition(definition);
+        }
+
+        return admission.EvaluateConfirm(
+            definition,
+            actor,
+            ownerRole,
+            VerifiedDeviceTrustContext.FromServerSession(null, actor.TenantId, "operations-start", null),
+            null,
+            Array.Empty<string>(),
+            false);
+    }
 
     public PrepareWorkItemResult? PrepareWorkItem(string workItemId, PrepareWorkItemRequest request) =>
         catalog.PrepareWorkItem(workItemId, request);
@@ -380,24 +471,8 @@ public sealed class CanonicalOperationsApiService
 
     private WorkItemDefinitionResolution ResolveStartDefinition(string templateWorkspaceId, string uiRouteCardId)
     {
-        var generatedDefinitionId = GeneratedP0StartDefinitionId(templateWorkspaceId, uiRouteCardId);
-        if (!string.IsNullOrWhiteSpace(generatedDefinitionId))
-        {
-            var generated = definitions.FindByDefinitionId(generatedDefinitionId);
-            if (generated is not null)
-            {
-                return WorkItemDefinitionResolution.FromDefinition(generated);
-            }
-        }
-
-        return definitions.ResolveByWorkspaceCard(templateWorkspaceId, uiRouteCardId);
+        return definitions.ResolveStartAdapter(templateWorkspaceId, uiRouteCardId);
     }
-
-    private static string GeneratedP0StartDefinitionId(string templateWorkspaceId, string uiRouteCardId) =>
-        templateWorkspaceId.Equals("W-STAY-RESOURCE", StringComparison.OrdinalIgnoreCase) &&
-        uiRouteCardId.Equals("roomSetup", StringComparison.OrdinalIgnoreCase)
-            ? "definition.dormitory.roomSetupConfirm.v1"
-            : string.Empty;
 
     private static string StartWorkItemIdentityKey(WorkItemDefinitionResolution definition, string routeCardId) =>
         definition.Resolved && !string.IsNullOrWhiteSpace(definition.DefinitionId)

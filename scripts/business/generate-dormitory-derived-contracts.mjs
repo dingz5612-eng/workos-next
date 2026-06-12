@@ -1003,11 +1003,29 @@ function patchRegistries() {
       definitionMode: "surface-input-adapter"
     });
   }
-  registry.definitions = definitions.sort((a, b) => a.workItemType.localeCompare(b.workItemType));
+  registry.definitions = definitions
+    .map(normalizeDefinitionMigrationRefs)
+    .sort((a, b) => a.workItemType.localeCompare(b.workItemType));
   writeJson(registryPath, registry);
 
   patchFieldRegistry();
   patchWorkflowRegistry();
+}
+
+function normalizeDefinitionMigrationRefs(definition) {
+  const { sourceCardId, ...current } = definition;
+  if (!sourceCardId) return current;
+  const migrationRefs = current.migrationRefs ?? [];
+  const hasSourceCardRef = migrationRefs.some((ref) =>
+    ref.type === "sourceCardId" &&
+    String(ref.value || "").toLocaleLowerCase() === String(sourceCardId).toLocaleLowerCase()
+  );
+  return {
+    ...current,
+    migrationRefs: hasSourceCardRef
+      ? migrationRefs
+      : [...migrationRefs, ...migrationRefsFor(sourceCardId)]
+  };
 }
 
 function patchFieldRegistry() {

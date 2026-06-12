@@ -80,7 +80,8 @@ function validateReport() {
   if (!policy.noDirectBusinessFactWrites) violations.push(v("ten_scenario.direct_fact_write", "前端不得直接写业务事实、outbox 或投影。", policy));
   const assertions = new Map((report.assertions || []).map((item) => [item.id, item.status]));
   for (const id of [
-    "search.entry.unified_count",
+    "search.entry.no_start_without_backend_admission",
+    "search.entry.learning_without_backend_admission",
     "search.entry.no_resource_special_start",
     "network.workspace_start_count",
     "network.operations_confirm_count",
