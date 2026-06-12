@@ -14252,6 +14252,38 @@
       ]
     },
     {
+      "nodeId": "file.docs/oam/reviews/dormitory-golden-chain-source-package-00-review.md",
+      "nodeType": "File",
+      "owner": "release-control-owner",
+      "sourceFile": "docs/oam/reviews/dormitory-golden-chain-source-package-00-review.md",
+      "runtimeBinding": "kernel.release-control",
+      "testBinding": [
+        "scripts/oam/check-dormitory-golden-chain-source-package.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "gateBinding": [
+        "scripts/oam/check-dormitory-golden-chain-source-package.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/checks/dormitory-golden-chain-source-package-result.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_evidence",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.release-control",
+      "checker": "scripts/oam/check-dormitory-golden-chain-source-package.mjs",
+      "evidence": "artifacts/oam/checks/dormitory-golden-chain-source-package-result.json",
+      "replacementPath": "docs/oam/reviews/dormitory-golden-chain-source-package-00-review.md",
+      "absorbedBy": "docs/oam/reviews/dormitory-golden-chain-source-package-00-review.md",
+      "removalProofGate": "scripts/oam/check-dormitory-golden-chain-source-package.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/oam/check-dormitory-golden-chain-source-package.mjs",
+        "scripts/oam/generate-current-evidence-root.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ]
+    },
+    {
       "nodeId": "file.docs/oam/shadow-compare-semantic-rules.json",
       "nodeType": "File",
       "owner": "authority-owner",
@@ -20491,6 +20523,39 @@
       "consumers": [
         "scripts/oam/check-derived-contract-consistency.mjs",
         "scripts/oam/run-control-plane-checks.ps1"
+      ]
+    },
+    {
+      "nodeId": "file.scripts/oam/check-dormitory-golden-chain-source-package.mjs",
+      "nodeType": "File",
+      "owner": "release-control-owner",
+      "sourceFile": "scripts/oam/check-dormitory-golden-chain-source-package.mjs",
+      "runtimeBinding": "kernel.release-control",
+      "testBinding": [
+        "scripts/oam/check-dormitory-golden-chain-source-package.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "gateBinding": [
+        "scripts/oam/check-dormitory-golden-chain-source-package.mjs"
+      ],
+      "evidenceBinding": "artifacts/oam/checks/dormitory-golden-chain-source-package-result.json",
+      "currentTruthAllowed": false,
+      "deletionCondition": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "lifecycleState": "active_validation",
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "sourceKernel": "kernel.release-control",
+      "checker": "scripts/oam/check-dormitory-golden-chain-source-package.mjs",
+      "evidence": "artifacts/oam/checks/dormitory-golden-chain-source-package-result.json",
+      "replacementPath": "scripts/oam/check-dormitory-golden-chain-source-package.mjs",
+      "absorbedBy": "scripts/oam/check-dormitory-golden-chain-source-package.mjs",
+      "removalProofGate": "scripts/oam/check-dormitory-golden-chain-source-package.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。",
+      "consumers": [
+        "scripts/oam/check-dormitory-golden-chain-source-package.mjs",
+        "scripts/oam/generate-current-evidence-root.mjs",
+        "scripts/oam/run-control-plane-checks.ps1",
+        ".github/workflows/ci.yml"
       ]
     },
     {

@@ -69,10 +69,17 @@
   ],
   "forbiddenFacts": [
     "Payment",
-    "PaymentAllocation",
-    "DepositEntry",
+    "Deposit",
+    "DepositAccount",
     "LedgerEntry",
-    "Refund"
+    "LedgerTransaction",
+    "PaymentAllocation",
+    "Refund",
+    "AmountBasis",
+    "MoneyBasis",
+    "FinancialFact",
+    "FinanceReceipt",
+    "DepositEntry"
   ],
   "admissionPolicyRef": "dormitory_l1_internal_pilot_observation",
   "evidencePolicyRef": "evidence.dorm-period-action-plan-execute.v1",

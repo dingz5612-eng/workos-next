@@ -74,10 +74,17 @@
   ],
   "forbiddenFacts": [
     "Payment",
-    "PaymentAllocation",
-    "DepositEntry",
+    "Deposit",
+    "DepositAccount",
     "LedgerEntry",
-    "Refund"
+    "LedgerTransaction",
+    "PaymentAllocation",
+    "Refund",
+    "AmountBasis",
+    "MoneyBasis",
+    "FinancialFact",
+    "FinanceReceipt",
+    "DepositEntry"
   ],
   "admissionPolicyRef": "payment_confirmation",
   "evidencePolicyRef": "evidence.dorm-reservation-confirm.v1",

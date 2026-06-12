@@ -6,13 +6,14 @@
   "sourceGraph": "docs/oam/oam-kernel-graph.json",
   "sourceLifecyclePolicy": "docs/oam/file-lifecycle-policy.json",
   "defaultPolicy": "unregistered_files_are_not_allowed",
-  "fileCount": 970,
+  "fileCount": 972,
   "identityCounts": {
-    "validation_file": 314,
+    "validation_file": 315,
     "implementation_file": 330,
     "derived_view": 65,
     "authority_file": 241,
-    "human_manual": 20
+    "human_manual": 20,
+    "generated_evidence": 1
   },
   "files": [
     {
@@ -11625,6 +11626,36 @@
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
     },
     {
+      "path": "docs/oam/reviews/dormitory-golden-chain-source-package-00-review.md",
+      "currentIdentity": "generated_evidence",
+      "lifecycleState": "active_evidence",
+      "responsibilityScopeZh": "当前 OAM 机器证据。",
+      "forbiddenScopeZh": "不得定义业务事实或人工放行。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-dormitory-golden-chain-source-package.mjs",
+        "scripts/oam/generate-current-evidence-root.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "owner": "release-control-owner",
+      "sourceKernel": "kernel.release-control",
+      "graphBinding": "file.docs/oam/reviews/dormitory-golden-chain-source-package-00-review.md",
+      "gates": [
+        "scripts/oam/check-dormitory-golden-chain-source-package.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/checks/dormitory-golden-chain-source-package-result.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "docs/oam/reviews/dormitory-golden-chain-source-package-00-review.md",
+      "absorbedBy": "docs/oam/reviews/dormitory-golden-chain-source-package-00-review.md",
+      "removalProofGate": "scripts/oam/check-dormitory-golden-chain-source-package.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
       "path": "docs/oam/shadow-compare-semantic-rules.json",
       "currentIdentity": "authority_file",
       "lifecycleState": "active_contract",
@@ -17477,6 +17508,37 @@
       "replacementPath": "scripts/oam/check-derived-contract-consistency.mjs",
       "absorbedBy": "scripts/oam/check-derived-contract-consistency.mjs",
       "removalProofGate": "scripts/oam/check-derived-contract-consistency.mjs",
+      "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
+    },
+    {
+      "path": "scripts/oam/check-dormitory-golden-chain-source-package.mjs",
+      "currentIdentity": "validation_file",
+      "lifecycleState": "active_validation",
+      "responsibilityScopeZh": "当前 OAM 机器门禁、CI 或测试。",
+      "forbiddenScopeZh": "不得定义业务事实，只能检查或生成指定产物。",
+      "currentFactAuthorityAllowed": false,
+      "currentFactAuthorityAllowedByGraph": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-dormitory-golden-chain-source-package.mjs",
+        "scripts/oam/generate-current-evidence-root.mjs",
+        "scripts/oam/run-control-plane-checks.ps1",
+        ".github/workflows/ci.yml"
+      ],
+      "owner": "release-control-owner",
+      "sourceKernel": "kernel.release-control",
+      "graphBinding": "file.scripts/oam/check-dormitory-golden-chain-source-package.mjs",
+      "gates": [
+        "scripts/oam/check-dormitory-golden-chain-source-package.mjs"
+      ],
+      "evidence": [
+        "artifacts/oam/checks/dormitory-golden-chain-source-package-result.json"
+      ],
+      "manualEditAllowed": true,
+      "ciReferenceAllowed": true,
+      "replacementPath": "scripts/oam/check-dormitory-golden-chain-source-package.mjs",
+      "absorbedBy": "scripts/oam/check-dormitory-golden-chain-source-package.mjs",
+      "removalProofGate": "scripts/oam/check-dormitory-golden-chain-source-package.mjs",
       "deletionConditionZh": "当内容被当前权威吸收且无消费者、无门禁、无证据引用时删除。"
     },
     {

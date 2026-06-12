@@ -10,7 +10,7 @@
       "workItemId": "wi.dorm-cert-001.checkin-confirm",
       "ownerDomain": "dormitory",
       "surfaceId": "mobile.work.dorm-checkin-confirm",
-      "sourceScenario": "docs/business/domains/dormitory/scenarios/dormitory-resource-saleability.golden-chain.yml",
+      "sourceScenario": "PENDING_SOURCE_PACKAGE_REVIEW",
       "commandType": "Checkin.Confirm",
       "migrationRefs": [
         {
@@ -24,7 +24,10 @@
           "affectsLedger": false,
           "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
         }
-      ]
+      ],
+      "sourceScenarioRef": "PENDING_00_SOURCE_PACKAGE_DECISION",
+      "scenarioMatrixRef": "docs/business/domains/dormitory/scenarios/dormitory-scenario-package-matrix.yml",
+      "sourceKernelRef": "docs/business/domains/dormitory/dormitory-operating-kernel.json"
     },
     {
       "scenarioId": "dorm-cert-002",
@@ -33,7 +36,7 @@
       "workItemId": "wi.dorm-cert-002.deposit-confirm",
       "ownerDomain": "finance-gate",
       "surfaceId": "mobile.work.dorm-deposit-confirm",
-      "sourceScenario": "docs/business/domains/dormitory/scenarios/dormitory-resource-saleability.golden-chain.yml",
+      "sourceScenario": "PENDING_SOURCE_PACKAGE_REVIEW",
       "commandType": "Deposit.Confirm",
       "migrationRefs": [
         {
@@ -47,7 +50,10 @@
           "affectsLedger": false,
           "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
         }
-      ]
+      ],
+      "sourceScenarioRef": "PENDING_00_SOURCE_PACKAGE_DECISION",
+      "scenarioMatrixRef": "docs/business/domains/dormitory/scenarios/dormitory-scenario-package-matrix.yml",
+      "sourceKernelRef": "docs/business/domains/dormitory/dormitory-operating-kernel.json"
     },
     {
       "scenarioId": "dorm-cert-003",
@@ -56,7 +62,7 @@
       "workItemId": "wi.dorm-cert-003.payment-confirm",
       "ownerDomain": "finance-gate",
       "surfaceId": "mobile.work.dorm-payment-confirm",
-      "sourceScenario": "docs/business/domains/dormitory/scenarios/dormitory-resource-saleability.golden-chain.yml",
+      "sourceScenario": "PENDING_SOURCE_PACKAGE_REVIEW",
       "commandType": "Payment.Confirm",
       "migrationRefs": [
         {
@@ -70,7 +76,10 @@
           "affectsLedger": false,
           "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
         }
-      ]
+      ],
+      "sourceScenarioRef": "PENDING_00_SOURCE_PACKAGE_DECISION",
+      "scenarioMatrixRef": "docs/business/domains/dormitory/scenarios/dormitory-scenario-package-matrix.yml",
+      "sourceKernelRef": "docs/business/domains/dormitory/dormitory-operating-kernel.json"
     },
     {
       "scenarioId": "dorm-cert-004",
@@ -93,7 +102,10 @@
           "affectsLedger": false,
           "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
         }
-      ]
+      ],
+      "sourceScenarioRef": "docs/business/domains/dormitory/scenarios/dormitory-resource-saleability.golden-chain.yml",
+      "scenarioMatrixRef": "docs/business/domains/dormitory/scenarios/dormitory-scenario-package-matrix.yml",
+      "sourceKernelRef": "docs/business/domains/dormitory/dormitory-operating-kernel.json"
     },
     {
       "scenarioId": "dorm-cert-005",
@@ -102,7 +114,7 @@
       "workItemId": "wi.dorm-cert-005.refund-approve",
       "ownerDomain": "finance-gate",
       "surfaceId": "mobile.work.dorm-checkout-settlement-approve",
-      "sourceScenario": "docs/business/domains/dormitory/scenarios/dormitory-resource-saleability.golden-chain.yml",
+      "sourceScenario": "PENDING_SOURCE_PACKAGE_REVIEW",
       "commandType": "CheckoutSettlement.Approve",
       "migrationRefs": [
         {
@@ -116,7 +128,10 @@
           "affectsLedger": false,
           "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
         }
-      ]
+      ],
+      "sourceScenarioRef": "PENDING_00_SOURCE_PACKAGE_DECISION",
+      "scenarioMatrixRef": "docs/business/domains/dormitory/scenarios/dormitory-scenario-package-matrix.yml",
+      "sourceKernelRef": "docs/business/domains/dormitory/dormitory-operating-kernel.json"
     },
     {
       "scenarioId": "dorm-cert-006",
@@ -125,7 +140,7 @@
       "workItemId": "wi.dorm-cert-006.finance-correction-apply",
       "ownerDomain": "finance-gate",
       "surfaceId": "mobile.work.finance-correction-apply",
-      "sourceScenario": "docs/business/domains/dormitory/scenarios/dormitory-resource-saleability.golden-chain.yml",
+      "sourceScenario": "PENDING_SOURCE_PACKAGE_REVIEW",
       "commandType": "Correction.Apply",
       "migrationRefs": [
         {
@@ -139,7 +154,10 @@
           "affectsLedger": false,
           "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
         }
-      ]
+      ],
+      "sourceScenarioRef": "PENDING_00_SOURCE_PACKAGE_DECISION",
+      "scenarioMatrixRef": "docs/business/domains/dormitory/scenarios/dormitory-scenario-package-matrix.yml",
+      "sourceKernelRef": "docs/business/domains/dormitory/dormitory-operating-kernel.json"
     },
     {
       "scenarioId": "dorm-cert-007",
@@ -148,7 +166,7 @@
       "workItemId": "wi.dorm-cert-007.period-review",
       "ownerDomain": "dormitory",
       "surfaceId": "mobile.work.dorm-period-review",
-      "sourceScenario": "docs/business/domains/dormitory/scenarios/dormitory-resource-saleability.golden-chain.yml",
+      "sourceScenario": "PENDING_SOURCE_PACKAGE_REVIEW",
       "commandType": "Period.Review",
       "migrationRefs": [
         {
@@ -162,7 +180,10 @@
           "affectsLedger": false,
           "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
         }
-      ]
+      ],
+      "sourceScenarioRef": "PENDING_00_SOURCE_PACKAGE_DECISION",
+      "scenarioMatrixRef": "docs/business/domains/dormitory/scenarios/dormitory-scenario-package-matrix.yml",
+      "sourceKernelRef": "docs/business/domains/dormitory/dormitory-operating-kernel.json"
     },
     {
       "scenarioId": "dorm-cert-008",
@@ -171,7 +192,7 @@
       "workItemId": "wi.dorm-cert-008.exception-resolve",
       "ownerDomain": "dormitory",
       "surfaceId": "mobile.work.dorm-exception-resolve",
-      "sourceScenario": "docs/business/domains/dormitory/scenarios/dormitory-resource-saleability.golden-chain.yml",
+      "sourceScenario": "PENDING_SOURCE_PACKAGE_REVIEW",
       "commandType": "Exception.Resolve",
       "migrationRefs": [
         {
@@ -185,7 +206,10 @@
           "affectsLedger": false,
           "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
         }
-      ]
+      ],
+      "sourceScenarioRef": "PENDING_00_SOURCE_PACKAGE_DECISION",
+      "scenarioMatrixRef": "docs/business/domains/dormitory/scenarios/dormitory-scenario-package-matrix.yml",
+      "sourceKernelRef": "docs/business/domains/dormitory/dormitory-operating-kernel.json"
     },
     {
       "scenarioId": "dorm-cert-009",
@@ -194,7 +218,7 @@
       "workItemId": "wi.dorm-cert-009.payment-confirm-idempotency",
       "ownerDomain": "finance-gate",
       "surfaceId": "mobile.work.dorm-payment-confirm",
-      "sourceScenario": "docs/business/domains/dormitory/scenarios/dormitory-resource-saleability.golden-chain.yml",
+      "sourceScenario": "PENDING_SOURCE_PACKAGE_REVIEW",
       "commandType": "Payment.Confirm",
       "migrationRefs": [
         {
@@ -208,7 +232,10 @@
           "affectsLedger": false,
           "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
         }
-      ]
+      ],
+      "sourceScenarioRef": "PENDING_00_SOURCE_PACKAGE_DECISION",
+      "scenarioMatrixRef": "docs/business/domains/dormitory/scenarios/dormitory-scenario-package-matrix.yml",
+      "sourceKernelRef": "docs/business/domains/dormitory/dormitory-operating-kernel.json"
     },
     {
       "scenarioId": "dorm-cert-010",
@@ -217,7 +244,7 @@
       "workItemId": "wi.dorm-cert-010.deposit-confirm-evidence-blocker",
       "ownerDomain": "finance-gate",
       "surfaceId": "mobile.work.dorm-deposit-confirm",
-      "sourceScenario": "docs/business/domains/dormitory/scenarios/dormitory-resource-saleability.golden-chain.yml",
+      "sourceScenario": "PENDING_SOURCE_PACKAGE_REVIEW",
       "commandType": "Deposit.Confirm",
       "migrationRefs": [
         {
@@ -231,7 +258,10 @@
           "affectsLedger": false,
           "deletionProofRef": "docs/contracts/definition/source-id-migration-fence.json"
         }
-      ]
+      ],
+      "sourceScenarioRef": "PENDING_00_SOURCE_PACKAGE_DECISION",
+      "scenarioMatrixRef": "docs/business/domains/dormitory/scenarios/dormitory-scenario-package-matrix.yml",
+      "sourceKernelRef": "docs/business/domains/dormitory/dormitory-operating-kernel.json"
     }
   ],
   "uniqueness": {

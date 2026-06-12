@@ -1,6 +1,6 @@
 {
   "version": "authority-cleanup.source-layer-audit.v1",
-  "generatedAtUtc": "2026-06-12T15:23:40.586Z",
+  "generatedAtUtc": "2026-06-12T18:08:56.639Z",
   "fileLifecycleRegistry": {
     "policyPath": "docs/oam/file-lifecycle-policy.json",
     "registryVersion": "oam.file-lifecycle-registry.v1",
@@ -4049,6 +4049,29 @@
       "notesZh": "保留为少而硬的 Source Layer 权威源；只能由 Source 白名单授权，不得由 artifact、dashboard、search 或 surface 替代。"
     },
     {
+      "path": "docs/oam/reviews/dormitory-golden-chain-source-package-00-review.md",
+      "currentIdentity": "generated_evidence",
+      "targetLayer": "referenceOnly",
+      "fileLifecycle": "referenceOnly",
+      "manualEditAllowed": true,
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": false,
+      "derived": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        "scripts/oam/check-dormitory-golden-chain-source-package.mjs",
+        "scripts/oam/generate-current-evidence-root.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "recommendedAction": "keep_as_reference_only+review_old_term_fence_or_remove",
+      "deletionRisk": "medium",
+      "controlledOldTermUse": false,
+      "scanReasons": [
+        "controlled-old-term-scan"
+      ],
+      "notesZh": "参考材料只能用于说明背景，不得成为当前事实权威。 旧词已纳入审计，必须由受控 fence、ADR 或明确迁移证明约束，不能解释为当前业务事实权威。"
+    },
+    {
       "path": "docs/oam/system-change-governance-contract.json",
       "currentIdentity": "current_change_governance",
       "targetLayer": "source",
@@ -6286,6 +6309,30 @@
       "upstreamSource": "docs/oam/oam-kernel-graph.json",
       "downstreamConsumers": [
         "scripts/oam/check-derived-contract-consistency.mjs",
+        "scripts/oam/run-control-plane-checks.ps1"
+      ],
+      "recommendedAction": "keep_as_tooling",
+      "deletionRisk": "medium",
+      "controlledOldTermUse": false,
+      "scanReasons": [
+        "generated-or-derived-marker-scan"
+      ],
+      "notesZh": "脚本属于人工维护的 Tooling / Checker / Generator，只执行或验证边界，不拥有业务事实权威。"
+    },
+    {
+      "path": "scripts/oam/check-dormitory-golden-chain-source-package.mjs",
+      "currentIdentity": "validation_file",
+      "targetLayer": "tooling",
+      "fileLifecycle": "tooling",
+      "manualEditAllowed": true,
+      "businessFactAuthorityAllowed": false,
+      "contractAuthorityAllowed": false,
+      "derived": false,
+      "upstreamSource": "docs/oam/oam-kernel-graph.json",
+      "downstreamConsumers": [
+        ".github/workflows/ci.yml",
+        "scripts/oam/check-dormitory-golden-chain-source-package.mjs",
+        "scripts/oam/generate-current-evidence-root.mjs",
         "scripts/oam/run-control-plane-checks.ps1"
       ],
       "recommendedAction": "keep_as_tooling",

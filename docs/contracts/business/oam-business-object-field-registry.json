@@ -170,6 +170,59 @@
       ]
     },
     {
+      "objectId": "AmountBasis",
+      "module": "finance-gate",
+      "ownerCapability": "finance.expense",
+      "truthOwnerRef": "AmountBasis",
+      "fields": [
+        {
+          "fieldId": "basisId",
+          "nameZh": "basisId",
+          "owner": "finance-gate",
+          "visibleScope": [
+            "pc",
+            "search"
+          ],
+          "editableWhen": "finance_truth_kernel_only",
+          "auditRequired": true,
+          "languageKey": "basisId",
+          "source": "FinanceTruthPack after AmountBasisReviewed",
+          "searchable": true,
+          "ledgerRelevant": true
+        },
+        {
+          "fieldId": "amount",
+          "nameZh": "金额",
+          "owner": "finance-gate",
+          "visibleScope": [
+            "pc",
+            "search"
+          ],
+          "editableWhen": "finance_truth_kernel_only",
+          "auditRequired": true,
+          "languageKey": "amount",
+          "source": "FinanceTruthPack after AmountBasisReviewed",
+          "searchable": false,
+          "ledgerRelevant": true
+        },
+        {
+          "fieldId": "currency",
+          "nameZh": "币种",
+          "owner": "finance-gate",
+          "visibleScope": [
+            "pc",
+            "search"
+          ],
+          "editableWhen": "finance_truth_kernel_only",
+          "auditRequired": true,
+          "languageKey": "currency",
+          "source": "FinanceTruthPack after AmountBasisReviewed",
+          "searchable": true,
+          "ledgerRelevant": true
+        }
+      ]
+    },
+    {
       "objectId": "AuditTrail",
       "module": "identity",
       "ownerCapability": "governance.release-control",
@@ -624,6 +677,59 @@
           "searchable": true,
           "ledgerRelevant": true,
           "nameZh": "correctionReason"
+        }
+      ]
+    },
+    {
+      "objectId": "Deposit",
+      "module": "finance-gate",
+      "ownerCapability": "finance.deposit",
+      "truthOwnerRef": "DepositFact",
+      "fields": [
+        {
+          "fieldId": "depositId",
+          "nameZh": "押金ID",
+          "owner": "finance-gate",
+          "visibleScope": [
+            "pc",
+            "search"
+          ],
+          "editableWhen": "finance_truth_kernel_only",
+          "auditRequired": true,
+          "languageKey": "depositId",
+          "source": "FinanceTruthPack / Money/Ledger Kernel",
+          "searchable": true,
+          "ledgerRelevant": true
+        },
+        {
+          "fieldId": "amount",
+          "nameZh": "金额",
+          "owner": "finance-gate",
+          "visibleScope": [
+            "pc",
+            "search"
+          ],
+          "editableWhen": "finance_truth_kernel_only",
+          "auditRequired": true,
+          "languageKey": "amount",
+          "source": "FinanceTruthPack / Money/Ledger Kernel",
+          "searchable": false,
+          "ledgerRelevant": true
+        },
+        {
+          "fieldId": "currency",
+          "nameZh": "币种",
+          "owner": "finance-gate",
+          "visibleScope": [
+            "pc",
+            "search"
+          ],
+          "editableWhen": "finance_truth_kernel_only",
+          "auditRequired": true,
+          "languageKey": "currency",
+          "source": "FinanceTruthPack / Money/Ledger Kernel",
+          "searchable": true,
+          "ledgerRelevant": true
         }
       ]
     },
@@ -1218,6 +1324,82 @@
       ]
     },
     {
+      "objectId": "FinanceReceipt",
+      "module": "finance-gate",
+      "ownerCapability": "finance.payment",
+      "truthOwnerRef": "FinanceTruthPack",
+      "fields": [
+        {
+          "fieldId": "paymentId",
+          "nameZh": "收款ID",
+          "owner": "finance-gate",
+          "visibleScope": [
+            "pc",
+            "search"
+          ],
+          "editableWhen": "finance_truth_kernel_only",
+          "auditRequired": true,
+          "languageKey": "paymentId",
+          "source": "FinanceTruthPack receipt projection",
+          "searchable": true,
+          "ledgerRelevant": true
+        },
+        {
+          "fieldId": "currency",
+          "nameZh": "币种",
+          "owner": "finance-gate",
+          "visibleScope": [
+            "pc",
+            "search"
+          ],
+          "editableWhen": "finance_truth_kernel_only",
+          "auditRequired": true,
+          "languageKey": "currency",
+          "source": "FinanceTruthPack receipt projection",
+          "searchable": true,
+          "ledgerRelevant": true
+        }
+      ]
+    },
+    {
+      "objectId": "FinancialFact",
+      "module": "finance-gate",
+      "ownerCapability": "finance.payment",
+      "truthOwnerRef": "FinanceTruthPack",
+      "fields": [
+        {
+          "fieldId": "amount",
+          "nameZh": "金额",
+          "owner": "finance-gate",
+          "visibleScope": [
+            "pc",
+            "search"
+          ],
+          "editableWhen": "finance_truth_kernel_only",
+          "auditRequired": true,
+          "languageKey": "amount",
+          "source": "FinanceTruthPack",
+          "searchable": false,
+          "ledgerRelevant": true
+        },
+        {
+          "fieldId": "currency",
+          "nameZh": "币种",
+          "owner": "finance-gate",
+          "visibleScope": [
+            "pc",
+            "search"
+          ],
+          "editableWhen": "finance_truth_kernel_only",
+          "auditRequired": true,
+          "languageKey": "currency",
+          "source": "FinanceTruthPack",
+          "searchable": true,
+          "ledgerRelevant": true
+        }
+      ]
+    },
+    {
       "objectId": "Lead",
       "module": "accommodation",
       "ownerCapability": "accommodation.lead-reservation",
@@ -1369,6 +1551,44 @@
           "searchable": false,
           "ledgerRelevant": true,
           "nameZh": "confirmedAmount"
+        }
+      ]
+    },
+    {
+      "objectId": "LedgerTransaction",
+      "module": "finance-gate",
+      "ownerCapability": "finance.reconciliation",
+      "truthOwnerRef": "MoneyKernelPack",
+      "fields": [
+        {
+          "fieldId": "amount",
+          "nameZh": "金额",
+          "owner": "finance-gate",
+          "visibleScope": [
+            "pc",
+            "search"
+          ],
+          "editableWhen": "money_kernel_only",
+          "auditRequired": true,
+          "languageKey": "amount",
+          "source": "Money/Ledger Kernel",
+          "searchable": false,
+          "ledgerRelevant": true
+        },
+        {
+          "fieldId": "currency",
+          "nameZh": "币种",
+          "owner": "finance-gate",
+          "visibleScope": [
+            "pc",
+            "search"
+          ],
+          "editableWhen": "money_kernel_only",
+          "auditRequired": true,
+          "languageKey": "currency",
+          "source": "Money/Ledger Kernel",
+          "searchable": true,
+          "ledgerRelevant": true
         }
       ]
     },
